@@ -49,11 +49,9 @@ const float maemo6magnetometer::NANO = 0.000000001;
 maemo6magnetometer::maemo6magnetometer(QSensor *sensor)
     : maemo6sensorbase(sensor)
 {
-    const QString sensorName = "magnetometersensor";
-    initSensor<MagnetometerSensorChannelInterface>(sensorName, m_initDone);
+    initSensor<MagnetometerSensorChannelInterface>(m_initDone);
     setDescription(QLatin1String("magnetic flux density in teslas (T)"));
     setRanges(NANO);
-    doConnect(sensorName);
     setReading<QMagnetometerReading>(&m_reading);
 }
 
@@ -87,18 +85,25 @@ void maemo6magnetometer::slotFrameAvailable(const QVector<MagneticField>&   fram
     }
 }
 
-void maemo6magnetometer::doConnect(QString sensorName){
-    if (!m_sensorInterface) return;
-    if (m_bufferSize == m_exBufferSize) return;
+bool maemo6magnetometer::doConnect(){
     if (m_bufferSize==1){
         QObject::disconnect(m_sensorInterface, SIGNAL(frameAvailable(const QVector<MagneticField>& )));
         if (!(QObject::connect(m_sensorInterface, SIGNAL(dataAvailable(const MagneticField&)),
-                               this, SLOT(slotDataAvailable(const MagneticField&)))))
-            qWarning() << "Unable to connect "<< sensorName;
-        return;
+                               this, SLOT(slotDataAvailable(const MagneticField&))))){
+            qWarning() << "Unable to connect "<< sensorName();
+            return false;
+        }
+        return true;
     }
     QObject::disconnect(m_sensorInterface, SIGNAL(slotDataAvailable(const MagneticField&)));
     if (!(QObject::connect(m_sensorInterface,SIGNAL(frameAvailable(const QVector<MagneticField>& )),
-                           this, SLOT(slotFrameAvailable(const QVector<MagneticField>& )))));
-        qWarning() << "Unable to connect "<< sensorName;
+                           this, SLOT(slotFrameAvailable(const QVector<MagneticField>& ))))){
+        qWarning() << "Unable to connect "<< sensorName();
+        return false;
+    }
+    return true;
+}
+
+const QString maemo6magnetometer::sensorName(){
+    return "magnetometersensor";
 }

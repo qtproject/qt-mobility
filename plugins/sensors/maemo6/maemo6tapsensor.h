@@ -58,8 +58,10 @@ public:
     static char const * const id;
     maemo6tapsensor(QSensor *sensor);
 protected:
-    virtual void doConnect(QString sensorName);
+    virtual bool doConnect();
     virtual void start();
+    virtual const QString sensorName();
+
 private:
     QTapReading m_reading;
     static bool m_initDone;

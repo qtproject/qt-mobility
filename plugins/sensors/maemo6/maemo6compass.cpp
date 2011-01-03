@@ -47,9 +47,7 @@ bool maemo6compass::m_initDone = false;
 maemo6compass::maemo6compass(QSensor *sensor)
     : maemo6sensorbase(sensor)
 {
-    const QString sensorName = "compasssensor";
-    initSensor<CompassSensorChannelInterface>(sensorName, m_initDone);
-    doConnect(sensorName);
+    initSensor<CompassSensorChannelInterface>(m_initDone);
     setReading<QCompassReading>(&m_reading);
 }
 
@@ -68,15 +66,16 @@ void maemo6compass::slotDataAvailable(const Compass& data)
 }
 
 
-void maemo6compass::doConnect(QString sensorName){
-    if (m_sensorInterface){
-        if (m_bufferSize == m_exBufferSize) return;
-
-        if (!(QObject::connect(m_sensorInterface, SIGNAL(dataAvailable(const Compass&)),
-                               this, SLOT(slotDataAvailable(const Compass&)))))
-            qWarning() << "Unable to connect "<< sensorName;
+bool maemo6compass::doConnect(){
+    if (!(QObject::connect(m_sensorInterface, SIGNAL(dataAvailable(const Compass&)),
+                           this, SLOT(slotDataAvailable(const Compass&))))){
+        qWarning() << "Unable to connect "<< sensorName();
+        return false;
     }
-    else
-        qWarning() << "Unable to initialize "<<sensorName;
-
+    return true;
 }
+
+const QString maemo6compass::sensorName(){
+    return "compasssensor";
+}
+

@@ -47,11 +47,9 @@ bool maemo6accelerometer::m_initDone = false;
 maemo6accelerometer::maemo6accelerometer(QSensor *sensor)
     : maemo6sensorbase(sensor)
 {
-    const QString sensorName = "accelerometersensor";
-    initSensor<AccelerometerSensorChannelInterface>(sensorName, m_initDone);
+    initSensor<AccelerometerSensorChannelInterface>(m_initDone);
     setDescription(QLatin1String("x, y, and z axes accelerations in m/s^2"));
     setRanges(GRAVITY_EARTH_THOUSANDTH);
-    doConnect(sensorName);
     setReading<QAccelerometerReading>(&m_reading);
 }
 
@@ -77,18 +75,26 @@ void maemo6accelerometer::slotFrameAvailable(const QVector<XYZ>&  frame)
     }
 }
 
-void maemo6accelerometer::doConnect(QString sensorName){
-    if (!m_sensorInterface) return;
-    if (m_bufferSize == m_exBufferSize) return;
+bool maemo6accelerometer::doConnect(){
     if (m_bufferSize==1){
         QObject::disconnect(m_sensorInterface, SIGNAL(frameAvailable(const QVector<XYZ>& )));
         if (!(QObject::connect(m_sensorInterface, SIGNAL(dataAvailable(const XYZ&)),
-                               this, SLOT(slotDataAvailable(const XYZ&)))))
-            qWarning() << "Unable to connect "<< sensorName;
-        return;
+                               this, SLOT(slotDataAvailable(const XYZ&))))){
+            qWarning() << "Unable to connect "<< sensorName();
+            return false;
+        }
+        return true;
     }
     QObject::disconnect(m_sensorInterface, SIGNAL(dataAvailable(const XYZ&)));
     if (!(QObject::connect(m_sensorInterface,SIGNAL(frameAvailable(const QVector<XYZ>& )),
-                           this, SLOT(slotFrameAvailable(const QVector<XYZ>& )))));
-        qWarning() << "Unable to connect "<< sensorName;
+                           this, SLOT(slotFrameAvailable(const QVector<XYZ>& )))));{
+        qWarning() << "Unable to connect "<< sensorName();
+        return false;
+    }
+    return true;
+}
+
+
+const QString maemo6accelerometer::sensorName(){
+    return "accelerometersensor";
 }

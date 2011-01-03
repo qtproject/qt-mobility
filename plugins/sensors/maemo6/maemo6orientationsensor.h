@@ -58,7 +58,9 @@ public:
     static char const * const id;
     maemo6orientationsensor(QSensor *sensor);
 protected:
-    virtual void doConnect(QString sensorName);
+    virtual bool doConnect();
+    virtual const QString sensorName();
+
 private:
     QOrientationReading m_reading;
     static bool m_initDone;

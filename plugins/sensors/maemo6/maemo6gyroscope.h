@@ -58,7 +58,9 @@ public:
     static char const * const id;
     maemo6gyroscope(QSensor *sensor);
 protected:
-    virtual void doConnect(QString sensorName);
+    virtual bool doConnect();
+    virtual const QString sensorName();
+
 private:
     QGyroscopeReading m_reading;
     static bool m_initDone;

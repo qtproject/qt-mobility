@@ -52,7 +52,7 @@ const char* const maemo6sensorbase::ALWAYS_ON = "alwaysOn";
 const char* const maemo6sensorbase::BUFFER_SIZE = "bufferSize";
 
 maemo6sensorbase::maemo6sensorbase(QSensor *sensor)
-    : QSensorBackend(sensor), m_sensorInterface(0), m_prevOutputRange(-1), m_bufferSize(-1), m_exBufferSize(-1)
+    : QSensorBackend(sensor), m_sensorInterface(0), m_bufferSize(-1), m_prevOutputRange(-1)
 {
     if (!m_remoteSensorManager)
         m_remoteSensorManager = &SensorManagerInterface::instance();
@@ -99,12 +99,8 @@ void maemo6sensorbase::start()
                 m_sensorInterface->setStandbyOverride(alwaysOn.toBool()):
                 m_sensorInterface->setStandbyOverride(false);
 
-        // buffer size
-        QVariant bufferSize = sensor()->property(BUFFER_SIZE);
-        m_exBufferSize = m_bufferSize;
-        m_bufferSize = bufferSize.isValid()?bufferSize.toInt():1;
-        m_sensorInterface->setBufferSize(m_bufferSize);
-        doConnect("");
+        // buffering
+        doConnectAfterCheck();
         
         int returnCode = m_sensorInterface->start().error().type();
         if (returnCode==0) return;
@@ -117,7 +113,7 @@ void maemo6sensorbase::stop()
 {
     if (m_sensorInterface)
         m_sensorInterface->stop();
-    m_bufferSize= m_exBufferSize = -1;
+    m_bufferSize= -1;
 }
 
 void maemo6sensorbase::setRanges(qreal correctionFactor){
@@ -134,4 +130,32 @@ void maemo6sensorbase::setRanges(qreal correctionFactor){
     }
 }
 
-void maemo6sensorbase::doConnect(QString ){}
+
+bool maemo6sensorbase::doConnectAfterCheck(){
+    if (!m_sensorInterface) return false;
+
+    // buffer size
+    int size = bufferSize();
+    if (size == m_bufferSize) return true;
+
+    m_sensorInterface->setBufferSize(size);
+    // if multiple->single or single->multiple or if uninitialized
+    if ((m_bufferSize>1 && size==1) || (m_bufferSize==1 && size>1) || m_bufferSize==-1){
+        m_bufferSize = size;
+        return doConnect();
+    }
+    m_bufferSize = size;
+    return true;
+}
+
+
+
+const int maemo6sensorbase::bufferSize(){
+    QVariant bufferVariant = sensor()->property(BUFFER_SIZE);
+    int bufferSize = bufferVariant.isValid()?bufferVariant.toInt():1;
+    if (bufferSize<1) return 1;     // min
+    if (bufferSize>256) return 256; // max
+    return bufferSize;
+}
+
+

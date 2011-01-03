@@ -58,7 +58,9 @@ public:
     static char const * const id;
     maemo6accelerometer(QSensor *sensor);
 protected:
-    virtual void doConnect(QString sensorName);
+    virtual bool doConnect();
+    virtual const QString sensorName();
+
 private:
     QAccelerometerReading m_reading;
     static bool m_initDone;

@@ -58,8 +58,10 @@ public:
     static char const * const id;
     maemo6magnetometer(QSensor *sensor);
 protected:
-    virtual void doConnect(QString sensorName);
+    virtual bool doConnect();
     virtual void start();
+    virtual const QString sensorName();
+
 private:
     static const float NANO;
     QMagnetometerReading m_reading;

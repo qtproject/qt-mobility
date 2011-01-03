@@ -47,11 +47,8 @@ bool maemo6proximitysensor::m_initDone = false;
 maemo6proximitysensor::maemo6proximitysensor(QSensor *sensor)
     : maemo6sensorbase(sensor)
 {
-    const QString sensorName = "proximitysensor";
-    initSensor<ProximitySensorChannelInterface>(sensorName, m_initDone);
-    doConnect(sensorName);
+    initSensor<ProximitySensorChannelInterface>(m_initDone);
     setReading<QProximityReading>(&m_reading);
-
 }
 
 void maemo6proximitysensor::slotDataAvailable(const Unsigned& data)
@@ -61,14 +58,16 @@ void maemo6proximitysensor::slotDataAvailable(const Unsigned& data)
     newReadingAvailable();
 }
 
-void maemo6proximitysensor::doConnect(QString sensorName){
-    if (m_sensorInterface){
-        if (m_bufferSize==m_exBufferSize) return;
-        if (!(QObject::connect(m_sensorInterface, SIGNAL(dataAvailable(const Unsigned&)),
-                               this, SLOT(slotDataAvailable(const Unsigned&)))))
-            qWarning() << "Unable to connect "<< sensorName;
+bool maemo6proximitysensor::doConnect(){
+    if (!(QObject::connect(m_sensorInterface, SIGNAL(dataAvailable(const Unsigned&)),
+                           this, SLOT(slotDataAvailable(const Unsigned&))))){
+        qWarning() << "Unable to connect "<< sensorName();
+        return false;
     }
-    else
-        qWarning() << "Unable to initialize "<<sensorName;
+    return true;
+}
 
+
+const QString maemo6proximitysensor::sensorName(){
+    return "proximitysensor";
 }
