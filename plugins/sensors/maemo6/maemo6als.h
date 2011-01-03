@@ -57,11 +57,13 @@ class maemo6als : public maemo6sensorbase
 public:
     static char const * const id;
     maemo6als(QSensor *sensor);
+protected:
+    virtual bool doConnect();
+    virtual const QString sensorName();
 
 private:
     QAmbientLightReading m_reading;
     static bool m_initDone;
-
 private slots:
     void slotDataAvailable(const Unsigned& data);
 };
