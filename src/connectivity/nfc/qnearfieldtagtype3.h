@@ -39,28 +39,44 @@
 **
 ****************************************************************************/
 
+#ifndef QNEARFIELDTAGTYPE3_H
+#define QNEARFIELDTAGTYPE3_H
 
-#include "qbluetoothtransferreply_p.h"
+#include <qnearfieldtarget.h>
+
+#include <QtCore/QList>
+#include <QtCore/QMap>
+
+QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
-QBluetoothTransferReplyPrivate::QBluetoothTransferReplyPrivate(QBluetoothTransferReply *parent)
-:   q(parent)
+class Q_CONNECTIVITY_EXPORT QNearFieldTagType3 : public QNearFieldTarget
 {
-}
+    Q_OBJECT
 
-/*!
-    Destroys the QBluetoothTransferReply object.
-*/
-QBluetoothTransferReplyPrivate::~QBluetoothTransferReplyPrivate()
-{
-}
+public:
+    explicit QNearFieldTagType3(QObject *parent = 0);
 
-/*!
-    Returns the attribute associated with the code \a code. If the attribute has not been set, it
-    returns an invalid QVariant.
-*/
+    Type type() const { return NfcTagType3; }
 
-#include "moc_qbluetoothtransferreply_p.cpp"
+    quint16 systemCode();
+    QList<quint16> services();
+    int serviceMemorySize(quint16 serviceCode);
+
+    virtual RequestId serviceData(quint16 serviceCode);
+    virtual RequestId writeServiceData(quint16 serviceCode, const QByteArray &data);
+
+    virtual RequestId check(const QMap<quint16, QList<quint16> > &serviceBlockList);
+    virtual RequestId update(const QMap<quint16, QList<quint16> > &serviceBlockList,
+                             const QByteArray &data);
+
+protected:
+    bool handleResponse(const QNearFieldTarget::RequestId &id, const QByteArray &response);
+};
 
 QTM_END_NAMESPACE
+
+QT_END_HEADER
+
+#endif // QNEARFIELDTAGTYPE3_H

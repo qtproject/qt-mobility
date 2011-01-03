@@ -71,10 +71,14 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn QBluetoothTransferReply::abort() = 0
+    \fn QBluetoothTransferReply::abort()
 
     Aborts this reply.
 */
+void QBluetoothTransferReply::abort()
+{
+
+}
 
 /*!
     \fn void QBluetoothTransferReply::downloadProgress(qint64 bytesReceived, qint64 bytesTotal)
@@ -100,7 +104,7 @@ QTM_BEGIN_NAMESPACE
     Constructs a new QBluetoothTransferReply with parent \a parent.
 */
 QBluetoothTransferReply::QBluetoothTransferReply(QObject *parent)
-:   QIODevice(parent)
+:   QObject(parent)
 {
 }
 
@@ -121,6 +125,8 @@ QVariant QBluetoothTransferReply::attribute(QBluetoothTransferRequest::Attribute
 }
 
 /*!
+   \fn void QBluetoothTransferReply::isFinished()
+
     Returns true if this reply has finished; otherwise returns false.
 */
 //bool QBluetoothTransferReply::isFinished() const
@@ -129,6 +135,8 @@ QVariant QBluetoothTransferReply::attribute(QBluetoothTransferRequest::Attribute
 //}
 
 /*!
+   \fn void QBluetoothTransferReply::isRunning()
+
     Returns true if this reply is running; otherwise returns false.
 */
 //bool QBluetoothTransferReply::isRunning() const
@@ -161,31 +169,6 @@ QBluetoothTransferManager::Operation QBluetoothTransferReply::operation() const
 //{
 //    return QBluetoothTransferRequest(QBluetoothAddress());
 //}
-
-/*!
-    Returns the read buffer size.
-*/
-qint64 QBluetoothTransferReply::readBufferSize() const
-{
-    return m_buffersize;
-}
-
-/*!
-    Sets the read buffer size to \a size.
-*/
-void QBluetoothTransferReply::setReadBufferSize(qint64 size)
-{
-    m_buffersize = size;
-}
-
-/*!
-    Sets the attribute associated with code \a code to \a value.
-*/
-void QBluetoothTransferReply::setAttribute(QBluetoothTransferRequest::Attribute code,
-                                           const QVariant &value)
-{
-    m_attributes.insert(code, value);
-}
 
 /*!
     Sets the operation of this QBluetoothTransferReply to \a operation.
