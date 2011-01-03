@@ -172,6 +172,11 @@ void TestQGeoPositionInfoSource::base_cleanupTestCase()
 void TestQGeoPositionInfoSource::initTestCase()
 {
     base_initTestCase();
+#ifdef Q_WS_MEEGO
+    qDebug ("Note: if running on MeeGo with real libraries, make sure GPS is configured.");
+    qDebug ("Use gconftool-2 to set it, e.g.: ");
+    qDebug ("gconftool-2 -t string -s /apps/geoclue/master/org.freedesktop.Geoclue.GPSDevice /dev/ttyUSB0");
+#endif
 #ifdef TST_GEOCLUEMOCK_ENABLED
     m_threadGeoclueMock.start();
 #endif
@@ -461,12 +466,13 @@ void TestQGeoPositionInfoSource::lastKnownPosition_data()
     QTest::addColumn<bool>("positionValid");
 
 #ifndef Q_WS_MEEGO
-    // no good way to determine on MeeGo what are supported.
+    // no good way to determine on MeeGo what are supported. If we ask for all or non-satellites, we
+    // typically get geoclue-example provider, which is not suitable for this test.
     QTest::newRow("nonsatellite - false") << int(QGeoPositionInfoSource::NonSatellitePositioningMethods) << false << false;
     QTest::newRow("nonsatellite - true") << int(QGeoPositionInfoSource::NonSatellitePositioningMethods) << true << true;
-#endif
     QTest::newRow("all - false") << int(QGeoPositionInfoSource::AllPositioningMethods) << false << true;
     QTest::newRow("all - true") << int(QGeoPositionInfoSource::AllPositioningMethods) << true << true;
+#endif
     QTest::newRow("satellite - false") << int(QGeoPositionInfoSource::SatellitePositioningMethods) << false << true;
     QTest::newRow("satellite - true") << int(QGeoPositionInfoSource::SatellitePositioningMethods) << true << true;
 }

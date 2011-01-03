@@ -7,6 +7,7 @@ License: LGPLv2.1 with exception or GPLv3
 URL: http://qt.gitorious.org/qt-mobility
 Sources:
     - http://get.qt.nokia.com/qt/add-ons/%{name}-opensource-src-%{version}.tar.gz
+SourcePrefix: "%{name}-opensource-src-%{version}"
 Patches:
     - no_rpath.patch
     - fix_translations_install_path.patch
@@ -54,6 +55,8 @@ PkgConfigBR:
     - xrandr
     - xrender
     - xv
+    - QtSparql
+    - QtSparqlTrackerExtensions
 PkgBR:
     - qt-devel-tools
 Configure: none

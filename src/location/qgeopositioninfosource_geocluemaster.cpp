@@ -46,6 +46,7 @@
 #endif
 
 #include "qgeopositioninfosource_geocluemaster_p.h"
+#include <gconf/gconf-client.h>
 
 QTM_BEGIN_NAMESPACE
 
@@ -105,11 +106,13 @@ static void position_callback (GeocluePosition      *pos,
 {
     Q_UNUSED(pos);
     Q_UNUSED(accuracy);
-    if (error || !(fields & GEOCLUE_POSITION_FIELDS_LATITUDE &&
+
+    if (error)
+        g_error_free (error);
+    if (!(fields & GEOCLUE_POSITION_FIELDS_LATITUDE &&
                    fields & GEOCLUE_POSITION_FIELDS_LONGITUDE)) {
         static_cast<QGeoPositionInfoSourceGeoclueMaster*>(userdata)->singleUpdateFailed();
-        if (error)
-            g_error_free (error);
+
     } else {
         static_cast<QGeoPositionInfoSourceGeoclueMaster*>(userdata)->singleUpdateSucceeded(
                     fields, timestamp, latitude, longitude, altitude, accuracy);
@@ -118,6 +121,7 @@ static void position_callback (GeocluePosition      *pos,
 
 QGeoPositionInfoSourceGeoclueMaster::QGeoPositionInfoSourceGeoclueMaster(QObject *parent)
     : QGeoPositionInfoSource(parent), m_updateInterval(0), m_preferredResources(GEOCLUE_RESOURCE_ALL),
+      m_preferredAccuracy(GEOCLUE_ACCURACY_LEVEL_NONE),
       m_client(0), m_pos(0), m_vel(0), m_lastPositionIsFresh(false), m_lastVelocityIsFresh(false),
       m_lastVelocity(0), m_lastPositionFromSatellite(false)
 {
@@ -197,7 +201,8 @@ void QGeoPositionInfoSourceGeoclueMaster::regularUpdateFailed()
     // This assumption may be invalid.
     m_lastVelocityIsFresh = false;
     m_lastPositionIsFresh = false;
-    emit updateTimeout();
+    if (m_updateTimer.isActive())
+        emit updateTimeout();
 }
 
 void QGeoPositionInfoSourceGeoclueMaster::regularUpdateSucceeded(GeocluePositionFields fields,
@@ -224,10 +229,48 @@ void QGeoPositionInfoSourceGeoclueMaster::regularUpdateSucceeded(GeocluePosition
 #endif
 }
 
+bool QGeoPositionInfoSourceGeoclueMaster::tryGPS()
+{
+    // Check if the gconf value is set properly
+    GConfClient* client;
+    gchar* device_name;
+    client = gconf_client_get_default();
+    device_name = gconf_client_get_string(client, "/apps/geoclue/master/org.freedesktop.Geoclue.GPSDevice", NULL);
+    QString deviceName(QString::fromAscii(device_name));
+    g_object_unref(client);
+    g_free(device_name);
+
+    if (deviceName.isEmpty()) {
+        return false;
+    } else {
+        // Check if the device exists (does nothing if a bluetooth address)
+        if (deviceName.trimmed().at(0) == '/' && QFile::exists(deviceName.trimmed())) {
+            qDebug() << "QGeoPositionInfoSourceGeoclueMaster GPS device: " << deviceName;
+            return true;
+        }
+        return false;
+    }
+}
+
 int QGeoPositionInfoSourceGeoclueMaster::init()
 {
     g_type_init ();
-    return configurePositionSource();
+    // Check if there is sense to try GPS
+    if (tryGPS()) {
+        m_preferredResources = GEOCLUE_RESOURCE_GPS;
+        m_preferredAccuracy = GEOCLUE_ACCURACY_LEVEL_DETAILED;
+        if (configurePositionSource() != -1) {
+            return 0;
+        } else {
+            // If not successful, try to get any resource
+            m_preferredResources = GEOCLUE_RESOURCE_ALL;
+            m_preferredAccuracy = GEOCLUE_ACCURACY_LEVEL_NONE;
+            return configurePositionSource();
+        }
+    } else {
+        qDebug("QGeoPositionInfoSourceGeoclueMaster: GPS device not set (gconftool-2).");
+        return configurePositionSource();
+    }
 }
 
 int QGeoPositionInfoSourceGeoclueMaster::configurePositionSource()
@@ -248,7 +291,7 @@ int QGeoPositionInfoSourceGeoclueMaster::configurePositionSource()
     }
     if (m_pos) {
         g_object_unref(m_pos);
-        m_client = 0;
+        m_pos = 0;
     }
     if (m_vel) {
         g_object_unref(m_vel);
@@ -267,9 +310,9 @@ int QGeoPositionInfoSourceGeoclueMaster::configurePositionSource()
     }
 
     if (!geoclue_master_client_set_requirements (m_client,
-                                                 GEOCLUE_ACCURACY_LEVEL_NONE, // min_accuracy
-                                                 0,                           // min_time
-                                                 TRUE,                        // require_updates (signals)
+                                                 m_preferredAccuracy,   // min_accuracy
+                                                 0,                     // min_time
+                                                 TRUE,                  // require_updates (signals)
                                                  m_preferredResources,
                                                  &error)){
         qCritical ("QGeoPositionInfoSourceGeoclueMaster geoclue set_requirements failed.");
@@ -315,16 +358,19 @@ void QGeoPositionInfoSourceGeoclueMaster::setPreferredPositioningMethods(Positio
     switch (methods) {
     case SatellitePositioningMethods:
         m_preferredResources = GEOCLUE_RESOURCE_GPS;
+        m_preferredAccuracy = GEOCLUE_ACCURACY_LEVEL_DETAILED;
         break;
     case NonSatellitePositioningMethods:
         m_preferredResources = (GeoclueResourceFlags)(GEOCLUE_RESOURCE_CELL | GEOCLUE_RESOURCE_NETWORK);
+        m_preferredAccuracy = GEOCLUE_ACCURACY_LEVEL_NONE;
         break;
     case AllPositioningMethods:
         m_preferredResources = GEOCLUE_RESOURCE_ALL;
+        m_preferredAccuracy = GEOCLUE_ACCURACY_LEVEL_NONE;
         break;
     default:
         qWarning("GeoPositionInfoSourceGeoClueMaster unknown preferred method.");
-        break;
+        return;
     }
     QGeoPositionInfoSource::setPreferredPositioningMethods(methods);
 #ifdef Q_LOCATION_GEOCLUE_DEBUG
@@ -364,16 +410,21 @@ QGeoPositionInfoSourceGeoclueMaster::PositioningMethods QGeoPositionInfoSourceGe
 
 void QGeoPositionInfoSourceGeoclueMaster::startUpdates()
 {
-    if (m_updateTimer.isActive())
+    if (m_updateTimer.isActive()) {
+#ifdef Q_LOCATION_GEOCLUE_DEBUG
+      qDebug() << "QGeoPositionInfoSourceGeoclueMaster timer was active, ignoring startUpdates: " << m_updateInterval;
+#endif
         return;
+    }
     if (m_updateInterval > 0) {
 #ifdef Q_LOCATION_GEOCLUE_DEBUG
         qDebug() << "QGeoPositionInfoSourceGeoclueMaster startUpdates with interval: " << m_updateInterval;
 #endif
         m_updateTimer.start(m_updateInterval);
     }
-    g_signal_connect (G_OBJECT (m_pos), "position-changed",
-                      G_CALLBACK (position_changed),this);
+    if (m_pos)
+        g_signal_connect (G_OBJECT (m_pos), "position-changed",
+                          G_CALLBACK (position_changed),this);
     if (m_vel) {
         g_signal_connect (G_OBJECT (m_vel), "velocity-changed",
                           G_CALLBACK (velocity_changed),this);
@@ -386,19 +437,24 @@ int QGeoPositionInfoSourceGeoclueMaster::minimumUpdateInterval() const {
 
 void QGeoPositionInfoSourceGeoclueMaster::stopUpdates()
 {
-    g_signal_handlers_disconnect_by_func(G_OBJECT(m_pos), (void*)position_changed, this);
-    g_signal_handlers_disconnect_by_func(G_OBJECT(m_vel), (void*)velocity_changed, this);
     if (m_updateTimer.isActive())
         m_updateTimer.stop();
+    if (m_pos)
+        g_signal_handlers_disconnect_by_func(G_OBJECT(m_pos), (void*)position_changed, this);
+    if (m_vel)
+        g_signal_handlers_disconnect_by_func(G_OBJECT(m_vel), (void*)velocity_changed, this);
 }
 
 void QGeoPositionInfoSourceGeoclueMaster::requestUpdate(int timeout)
 {
-    if (timeout < minimumUpdateInterval() && timeout != 0) {
+    if ((timeout < minimumUpdateInterval() && timeout != 0) || !m_pos) {
         emit updateTimeout();
         return;
     }
     if (m_requestTimer.isActive()) {
+#ifdef Q_LOCATION_GEOCLUE_DEBUG
+      qDebug() << "QGeoPositionInfoSourceGeoclueMaster request timer was active, ignoring startUpdates.";
+#endif
         return;
     }
     // Create better logic for timeout value (specs leave it impl dependant).

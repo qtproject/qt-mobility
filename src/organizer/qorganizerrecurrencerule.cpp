@@ -43,6 +43,10 @@
 #include <QDateTime>
 #include <QList>
 
+#ifndef QT_NO_DEBUG_STREAM
+#include <QDebug>
+#endif
+
 #include "qtorganizerglobal.h"
 #include "qorganizerrecurrencerule_p.h"
 #include "qorganizerrecurrencerule.h"
@@ -524,6 +528,68 @@ uint qHash(const QOrganizerRecurrenceRule& r)
 
     return hash * prime1;
 }
+
+#ifndef QT_NO_DEBUG_STREAM
+/*!
+  Outputs \a rule to the debug stream \a dbg
+ */
+QDebug operator<<(QDebug dbg, const QOrganizerRecurrenceRule& rule)
+{
+    dbg.nospace() << "QOrganizerRecurrenceRule(frequency=" << rule.frequency() << ",";
+    dbg.nospace() << "interval=" << rule.interval() << ",";
+    switch (rule.limitType()) {
+        case QOrganizerRecurrenceRule::CountLimit:
+            dbg.nospace() << "limitCount=" << rule.limitCount();
+            break;
+        case QOrganizerRecurrenceRule::DateLimit:
+            dbg.nospace() << "limitDate=" << rule.limitDate().toString();
+            break;
+        case QOrganizerRecurrenceRule::NoLimit:
+            dbg.nospace() << "no limit";
+            break;
+        default:
+            break;
+    }
+    dbg.nospace() << ",daysOfWeek=\"";
+    foreach(Qt::DayOfWeek day, rule.daysOfWeek()){
+        dbg.nospace() << static_cast<quint32>(day);
+        dbg.space();
+    }
+    dbg.nospace() << "\"";
+
+    dbg.nospace() << ",daysOfMonth=\"";
+    foreach(int day, rule.daysOfMonth()){
+        dbg.nospace() << day;
+        dbg.space();
+    }
+    dbg.nospace() << "\"";
+
+    dbg.nospace() << ",daysOfYear=\"";
+    foreach(int day, rule.daysOfYear()){
+        dbg.nospace() << day;
+        dbg.space();
+    }
+    dbg.nospace() << "\"";
+
+    dbg.nospace() << ",monthsOfYear=\"";
+    foreach(QOrganizerRecurrenceRule::Month month, rule.monthsOfYear()){
+        dbg.nospace() << static_cast<quint32>(month);
+        dbg.space();
+    }
+    dbg.nospace() << "\"";
+
+    dbg.nospace() << ",positions=\"";
+    foreach(int position, rule.positions()){
+        dbg.nospace() << position;
+        dbg.space();
+    }
+    dbg.nospace() << "\",";
+
+    dbg.nospace() << "firstDayOfWeek=" << static_cast<quint32>(rule.firstDayOfWeek());
+    dbg.nospace() << ')';
+    return dbg.maybeSpace();
+}
+#endif
 
 QTM_END_NAMESPACE
 
