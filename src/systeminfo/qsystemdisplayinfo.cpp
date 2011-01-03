@@ -131,7 +131,8 @@ int QSystemDisplayInfo::colorDepth(int screenNumber)
 }
 
 /*!
-    Returns the orientation of the \a screen.
+    Returns the orientation of the hardware \a screen.
+    This value will change depending on how the user is holding the device.
 
     \sa QDesktopWidget::screenCount()
 */
