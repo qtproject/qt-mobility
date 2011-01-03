@@ -99,6 +99,24 @@ guint	 g_signal_handlers_disconnect_matched (gpointer	  instance,
     qDebug("=mocked= g_signal_handlers_disconnect_by_func (_matched)");
 #endif
     lg_currentMockend->disconnectSignal(func, data);
+    return 1; // dummy
+}
+
+void geoclue_accuracy_get_details (GeoclueAccuracy      *accuracy,
+                                   GeoclueAccuracyLevel *level,
+                                   double               *horizontal_accuracy,
+                                   double               *vertical_accuracy)
+{
+    // Dummy, todo take from journal file
+    if (accuracy) {
+        *level = (GeoclueAccuracyLevel)6;
+        *horizontal_accuracy = 8;
+        *vertical_accuracy = 9;
+    } else {
+        *level = (GeoclueAccuracyLevel)0;
+        *horizontal_accuracy = 0;
+        *vertical_accuracy = 0;
+    }
 }
 
 GeoclueMaster *geoclue_master_get_default (void)

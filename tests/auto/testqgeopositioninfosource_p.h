@@ -131,6 +131,12 @@ private slots:
     void removeSlotForRequestTimeout();
     void removeSlotForPositionUpdated();
 
+#ifdef TST_GEOCLUEMOCK_ENABLED
+    // Test cases only ran against mock backend
+    void updateValues();
+    void changeSource();
+#endif
+
 private:
 #ifdef TST_GEOCLUEMOCK_ENABLED
     GeoclueMock* m_geoclueMock;
