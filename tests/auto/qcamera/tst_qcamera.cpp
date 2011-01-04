@@ -1568,7 +1568,6 @@ void tst_QCamera::testCameraEncodingProperyChange()
     camera.setCaptureMode(QCamera::CaptureStillImage);
     imageCapture.setEncodingSettings(QImageEncoderSettings());
     imageCapture.setEncodingSettings(QImageEncoderSettings());
-    QTest::ignoreMessage(QtWarningMsg, "QMediaObject: Trying to unbind not connected helper object ");
     camera.setViewfinder(new QGraphicsVideoItem());
 
     QCOMPARE(stateChangedSignal.count(), 0);
