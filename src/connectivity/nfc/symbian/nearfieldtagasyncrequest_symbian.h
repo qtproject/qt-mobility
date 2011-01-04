@@ -67,7 +67,20 @@ public:
     virtual ~MNearFieldTagAsyncRequest();
     virtual void IssueRequest() = 0;
     virtual void ProcessResponse(TInt aError);
-    virtual void ProcessTimeout();
+    
+    // inline to get fast speed since this function is used internally 
+    // to convert async ndef request to sync.
+    virtual void ProcessTimeout()
+    {
+        if (iWait)
+        {
+            if (iWait->IsStarted())
+            {
+                ProcessResponse(KErrTimedOut);
+            }
+        }
+    }
+    
     virtual void ProcessWaitRequestCompleted(TInt aError);
 
     // emit signal defined in QNearFieldTarget

@@ -52,7 +52,21 @@ public:
     NearFieldTagCommandRequest();
     ~NearFieldTagCommandRequest();
     void IssueRequest();
-    void ProcessTimeout();
+    void ProcessTimeout()
+    {
+        if (iWait)
+        {
+            if (iWait->IsStarted())
+            {
+                if (iRequestIssued)
+                {    
+                    iOperator->DoCancelSendCommand();
+                    iRequestIssued = EFalse;
+                }
+                ProcessResponse(HandlePassiveCommand(KErrTimedOut));
+            }
+        }
+    }
     void ProcessEmitSignal(TInt aError);
     void HandleResponse(TInt aError);
     void SetInputCommand(QByteArray aCommand) { iCommand = aCommand; }

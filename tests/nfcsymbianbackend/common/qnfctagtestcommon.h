@@ -696,12 +696,6 @@ template<typename TAG>
 void QNfcTagTestCommon<TAG>::testCancelNdefOperation()
 {
     touchTarget();
-    int okCount = 0;
-    int errCount = 0;
-    QSignalSpy okSpy(target, SIGNAL(requestCompleted(const QNearFieldTarget::RequestId&)));
-    QSignalSpy errSpy(target, SIGNAL(error(QNearFieldTarget::Error, const QNearFieldTarget::RequestId&)));
-    QSignalSpy ndefMessageReadSpy(target, SIGNAL(ndefMessageRead(QNdefMessage))); 
-    QSignalSpy ndefMessageWriteSpy(target, SIGNAL(ndefMessagesWritten()));
     
     target->readNdefMessages();
     delete target;
@@ -725,11 +719,5 @@ void QNfcTagTestCommon<TAG>::testCancelNdefOperation()
     target = 0;
 
     QNfcTestUtil::ShowMessage("please remove tag");
-
-    qDebug()<<"signal count check"<<endl;
-    QTRY_COMPARE(okSpy.count(), 0);
-    QTRY_COMPARE(errSpy.count(), 0);
-    QTRY_VERIFY(ndefMessageReadSpy.isEmpty());
-    QTRY_VERIFY(ndefMessageWriteSpy.isEmpty());
 }
 #endif // QNFCTAGTESTCOMMON_H

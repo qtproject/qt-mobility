@@ -218,20 +218,7 @@ void MNearFieldTagAsyncRequest::ProcessResponse(TInt aError)
     delete this;
     END
 } 
-            
-void MNearFieldTagAsyncRequest::ProcessTimeout()
-{
-    BEGIN
-    if (iWait)
-    {
-        if (iWait->IsStarted())
-        {
-            LOG("wait timeout");
-            ProcessResponse(KErrTimedOut);
-        }
-    }
-    END
-}
+
 void MNearFieldTagAsyncRequest::ProcessWaitRequestCompleted(TInt aError)
 {
     BEGIN

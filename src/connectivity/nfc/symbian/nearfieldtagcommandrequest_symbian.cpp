@@ -108,34 +108,6 @@ void NearFieldTagCommandRequest::HandleResponse(TInt aError)
     END
 }
 
-void NearFieldTagCommandRequest::ProcessTimeout()
-{
-    BEGIN
-    if (iWait)
-    {
-        if (iWait->IsStarted())
-        {
-            if (iRequestIssued)
-            {    
-                iOperator->DoCancelSendCommand();
-                iRequestIssued = EFalse;
-            }
-            LOG("wait timeout");
-            
-            // For coverage, remove after submit!
-            if (KErrTimedOut == HandlePassiveCommand(KErrTimedOut))
-            {
-                MNearFieldTagAsyncRequest::ProcessTimeout();
-            }
-            else
-            {
-                ProcessResponse(HandlePassiveCommand(KErrTimedOut));
-            }
-        }
-    }
-    END
-}
-
 TInt NearFieldTagCommandRequest::HandlePassiveCommand(TInt aError)
 {
     BEGIN
