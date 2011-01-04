@@ -86,6 +86,7 @@ void QDeclarativeScreenSaver::setScreenSaverDelayed(bool on)
 {
     if(on && !screenSaverDelay) {
         screensaverInfo = new QSystemScreenSaver(this);
+        screensaverInfo->setScreenSaverInhibit();
         screenSaverDelay = screensaverInfo->screenSaverInhibited();
     } else if(screenSaverDelay) {
         delete screensaverInfo;
