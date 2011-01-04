@@ -50,15 +50,11 @@
 
 VideoPlayer::VideoPlayer(QWidget *parent, Qt::WindowFlags flags)
     : QWidget(parent, flags)
+    , mediaPlayer(0, QMediaPlayer::VideoSurface)
     , videoItem(0)
     , playButton(0)
     , positionSlider(0)
 {
-    connect(&movie, SIGNAL(stateChanged(QMovie::MovieState)),
-            this, SLOT(movieStateChanged(QMovie::MovieState)));
-    connect(&movie, SIGNAL(frameChanged(int)),
-            this, SLOT(frameChanged(int)));
-
     videoItem = new VideoItem;
 
     QGraphicsScene *scene = new QGraphicsScene(this);
@@ -93,9 +89,6 @@ VideoPlayer::VideoPlayer(QWidget *parent, Qt::WindowFlags flags)
     connect(positionSlider, SIGNAL(sliderMoved(int)),
             this, SLOT(setPosition(int)));
 
-    connect(&movie, SIGNAL(frameChanged(int)),
-            positionSlider, SLOT(setValue(int)));
-
     QBoxLayout *controlLayout = new QHBoxLayout;
     controlLayout->setMargin(0);
     controlLayout->addWidget(openButton);
@@ -108,84 +101,69 @@ VideoPlayer::VideoPlayer(QWidget *parent, Qt::WindowFlags flags)
     layout->addLayout(controlLayout);
 
     setLayout(layout);
+
+    mediaPlayer.setVideoOutput(videoItem);
+    connect(&mediaPlayer, SIGNAL(stateChanged(QMediaPlayer::State)),
+            this, SLOT(mediaStateChanged(QMediaPlayer::State)));
+    connect(&mediaPlayer, SIGNAL(positionChanged(qint64)), this, SLOT(positionChanged(qint64)));
+    connect(&mediaPlayer, SIGNAL(durationChanged(qint64)), this, SLOT(durationChanged(qint64)));
 }
 
 VideoPlayer::~VideoPlayer()
 {
 }
 
+
 void VideoPlayer::openFile()
 {
-    QStringList supportedFormats;
-    foreach (QString fmt, QMovie::supportedFormats())
-        supportedFormats << fmt;
-    foreach (QString fmt, QImageReader::supportedImageFormats())
-        supportedFormats << fmt;
-
-    QString filter = "Images (";
-    foreach ( QString fmt, supportedFormats) {
-        filter.append(QString("*.%1 ").arg(fmt));
-    }
-    filter.append(")");
-
-    QString fileName = QFileDialog::getOpenFileName(this, tr("Open Movie"),
-            QDir::homePath(), filter);
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Open Movie"),QDir::homePath());
 
     if (!fileName.isEmpty()) {
-        videoItem->stop();
-
-        movie.setFileName(fileName);
+        mediaPlayer.setMedia(QUrl::fromLocalFile(fileName));
 
         playButton->setEnabled(true);
-        positionSlider->setMaximum(movie.frameCount());
-
-        movie.jumpToFrame(0);
     }
 }
 
 void VideoPlayer::play()
 {
-    switch(movie.state()) {
-    case QMovie::NotRunning:
-        movie.start();
+    switch(mediaPlayer.state()) {
+    case QMediaPlayer::PlayingState:
+        mediaPlayer.pause();
         break;
-    case QMovie::Paused:
-        movie.setPaused(false);
-        break;
-    case QMovie::Running:
-        movie.setPaused(true);
+    default:
+        mediaPlayer.play();
         break;
     }
 }
 
-void VideoPlayer::movieStateChanged(QMovie::MovieState state)
+void VideoPlayer::mediaStateChanged(QMediaPlayer::State state)
 {
     switch(state) {
-    case QMovie::NotRunning:
-    case QMovie::Paused:
-        playButton->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
-        break;
-    case QMovie::Running:
+    case QMediaPlayer::PlayingState:
         playButton->setIcon(style()->standardIcon(QStyle::SP_MediaPause));
         break;
+    default:
+        playButton->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
+        break;
     }
 }
 
-void VideoPlayer::frameChanged(int frame)
+void VideoPlayer::positionChanged(qint64 position)
 {
-    if (!presentImage(movie.currentImage())) {
-        movie.stop();
-        playButton->setEnabled(false);
-        positionSlider->setMaximum(0);
-    } else {
-        positionSlider->setValue(frame);
-    }
+    positionSlider->setValue(position);
 }
 
-void VideoPlayer::setPosition(int frame)
+void VideoPlayer::durationChanged(qint64 duration)
 {
-    movie.jumpToFrame(frame);
+    positionSlider->setRange(0, duration);
 }
+
+void VideoPlayer::setPosition(int position)
+{
+    mediaPlayer.setPosition(position);
+}
+
 
 void VideoPlayer::rotateVideo(int angle)
 {
@@ -193,30 +171,4 @@ void VideoPlayer::rotateVideo(int angle)
     qreal x = videoItem->boundingRect().width() / 2.0;
     qreal y = videoItem->boundingRect().height() / 2.0;
     videoItem->setTransform(QTransform().translate(x, y).rotate(angle).translate(-x, -y));
-}
-
-bool VideoPlayer::presentImage(const QImage &image)
-{
-    QVideoFrame frame(image);
-
-    if (!frame.isValid())
-        return false;
-
-    QVideoSurfaceFormat currentFormat = videoItem->surfaceFormat();
-
-    if (frame.pixelFormat() != currentFormat.pixelFormat()
-            || frame.size() != currentFormat.frameSize()) {
-        QVideoSurfaceFormat format(frame.size(), frame.pixelFormat());
-
-        if (!videoItem->start(format))
-            return false;
-    }
-
-    if (!videoItem->present(frame)) {
-        videoItem->stop();
-
-        return false;
-    } else {
-        return true;
-    }
 }
