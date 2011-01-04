@@ -188,7 +188,7 @@ void tst_qnearfieldtagtype1::testCommandSet()
 
     QNearFieldTarget::RequestId id9 = tester.target->readSegment(0xf1);
     QVERIFY(!id9.isValid());
-    QNearFieldTarget::RequestId id10 = tester.target->readByte(0x01);
+    QNearFieldTarget::RequestId id10 = tester.target->readSegment(0x01);
     QVERIFY(!tester.target->waitForRequestCompleted(id4));
     ++errCount;
 

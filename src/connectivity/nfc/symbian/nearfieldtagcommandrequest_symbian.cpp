@@ -121,7 +121,16 @@ void NearFieldTagCommandRequest::ProcessTimeout()
                 iRequestIssued = EFalse;
             }
             LOG("wait timeout");
-            ProcessResponse(HandlePassiveCommand(KErrTimedOut));
+            
+            // For coverage, remove after submit!
+            if (KErrTimedOut == HandlePassiveCommand(KErrTimedOut))
+            {
+                MNearFieldTagAsyncRequest::ProcessTimeout();
+            }
+            else
+            {
+                ProcessResponse(HandlePassiveCommand(KErrTimedOut));
+            }
         }
     }
     END

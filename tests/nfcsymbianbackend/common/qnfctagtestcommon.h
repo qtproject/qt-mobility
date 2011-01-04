@@ -731,11 +731,5 @@ void QNfcTagTestCommon<TAG>::testCancelNdefOperation()
     QTRY_COMPARE(errSpy.count(), 0);
     QTRY_VERIFY(ndefMessageReadSpy.isEmpty());
     QTRY_VERIFY(ndefMessageWriteSpy.isEmpty());
-
-    touchTarget();
-    QNfcTestUtil::ShowMessage("please remove tag");
-    QVERIFY(!target->hasNdefMessage());
-    delete target;
-    target = 0;
 }
 #endif // QNFCTAGTESTCOMMON_H
