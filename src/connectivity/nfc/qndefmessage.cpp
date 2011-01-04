@@ -81,7 +81,7 @@ QTM_BEGIN_NAMESPACE
 /*!
     Returns an NDEF message parsed from the contents of \a message.
 
-    The \a message paramater is interpreted as the raw message format defined in the NFC
+    The \a message parameter is interpreted as the raw message format defined in the NFC
     Specifications.
 
     If a parse error occurs an empty NDEF message is returned.
