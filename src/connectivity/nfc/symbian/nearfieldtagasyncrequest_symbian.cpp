@@ -160,7 +160,7 @@ int MNearFieldTagAsyncRequest::WaitRequestCompletedNoSignal(int aMsecs)
         {
             LOG("waiter has already started");
             // the request is already waited, return false.
-            return false;
+            return KErrInUse;
         }
     }
     else

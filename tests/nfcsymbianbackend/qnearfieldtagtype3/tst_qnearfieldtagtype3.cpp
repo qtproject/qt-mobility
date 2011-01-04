@@ -45,6 +45,7 @@ private Q_SLOTS:
     void testRemoveTargetBeforeAsyncRequestComplete_data();
     void testRemoveTargetBeforeAsyncRequestComplete();
 
+    void testCancelNdefOperation();
     void cleanupTestCase(){}
 private:
     QNfcTagTestCommon<QtMobility::QNearFieldTagType3> tester;
@@ -388,6 +389,10 @@ void tst_qnearfieldtagtype3::testRemoveTargetBeforeAsyncRequestComplete()
     tester.testRemoveTargetBeforeAsyncRequestComplete(dsp, cmd, rsp);
 }
 
+void tst_qnearfieldtagtype3::testCancelNdefOperation()
+{
+    tester.testCancelNdefOperation();
+}
 QTEST_MAIN(tst_qnearfieldtagtype3);
 
 #include "tst_qnearfieldtagtype3.moc"

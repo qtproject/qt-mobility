@@ -131,6 +131,8 @@ public:
     // delete and remove tag before async request completed
     void testDeleteTargetBeforeAsyncRequestComplete(const QStringList& discription, const QVariantList& commandSet, const QVariantList& responseSet);
     void testRemoveTargetBeforeAsyncRequestComplete(const QStringList& discription, const QVariantList& commandSet, const QVariantList& responseSet);
+    void testCancelNdefOperation();
+
 private:
     void GetSignalCount(const QVariantList& responseSet, int& errCount, int& okCount)
     {
@@ -690,4 +692,50 @@ void QNfcTagTestCommon<TAG>::testRemoveTargetBeforeAsyncRequestComplete(const QS
     target = 0;
 }
 
+template<typename TAG>
+void QNfcTagTestCommon<TAG>::testCancelNdefOperation()
+{
+    touchTarget();
+    int okCount = 0;
+    int errCount = 0;
+    QSignalSpy okSpy(target, SIGNAL(requestCompleted(const QNearFieldTarget::RequestId&)));
+    QSignalSpy errSpy(target, SIGNAL(error(QNearFieldTarget::Error, const QNearFieldTarget::RequestId&)));
+    QSignalSpy ndefMessageReadSpy(target, SIGNAL(ndefMessageRead(QNdefMessage))); 
+    QSignalSpy ndefMessageWriteSpy(target, SIGNAL(ndefMessagesWritten()));
+    
+    target->readNdefMessages();
+    delete target;
+    target = 0;
+
+    QNfcTestUtil::ShowMessage("please remove tag");
+
+    touchTarget();
+    
+    QNdefMessage message;
+    QNdefNfcTextRecord textRecord;
+    textRecord.setText(QLatin1String("nfc tag test"));
+    
+    message.append(textRecord);
+    
+    QList<QNdefMessage> messages;
+    messages.append(message);
+    
+    target->writeNdefMessages(messages);
+    delete target;
+    target = 0;
+
+    QNfcTestUtil::ShowMessage("please remove tag");
+
+    qDebug()<<"signal count check"<<endl;
+    QTRY_COMPARE(okSpy.count(), 0);
+    QTRY_COMPARE(errSpy.count(), 0);
+    QTRY_VERIFY(ndefMessageReadSpy.isEmpty());
+    QTRY_VERIFY(ndefMessageWriteSpy.isEmpty());
+
+    touchTarget();
+    QNfcTestUtil::ShowMessage("please remove tag");
+    QVERIFY(!target->hasNdefMessage());
+    delete target;
+    target = 0;
+}
 #endif // QNFCTAGTESTCOMMON_H

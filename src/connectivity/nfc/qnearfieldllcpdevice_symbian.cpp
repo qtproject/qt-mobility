@@ -46,6 +46,7 @@ QTM_BEGIN_NAMESPACE
 QNearFieldLlcpDeviceSymbian::QNearFieldLlcpDeviceSymbian(RNfcServer& nfcServer, QObject *parent)
                                   : QNearFieldTarget(parent), mNfcServer(nfcServer) 
 {
+    setAccessMethods(QNearFieldTarget::LlcpAccess);
 }
 
 QByteArray QNearFieldLlcpDeviceSymbian::uid() const
