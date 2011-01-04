@@ -85,7 +85,7 @@ public:
     enum CoordinateUnit {
         PixelUnit,
         MeterUnit,
-        RelativeDegreeUnit,
+        RelativeArcSecondUnit,
         AbsoluteDegreeUnit
     };
 

@@ -216,19 +216,19 @@ QGeoBoundingBox QGeoMapObject::boundingBox() const
 
     QRectF latLonBounds = poly.boundingRect();
     QPointF topLeft = latLonBounds.bottomLeft();
-    if (topLeft.x() > 180.0)
-        topLeft.setX(topLeft.x() - 360.0);
-    if (topLeft.x() < -180.0)
-        topLeft.setX(topLeft.x() + 360.0);
+    if (topLeft.x() > 180.0 * 3600.0)
+        topLeft.setX(topLeft.x() - 360.0 * 3600.0);
+    if (topLeft.x() < -180.0 * 3600.0)
+        topLeft.setX(topLeft.x() + 360.0 * 3600.0);
 
     QPointF bottomRight = latLonBounds.topRight();
-    if (bottomRight.x() > 180.0)
-        bottomRight.setX(bottomRight.x() - 360.0);
-    if (bottomRight.x() < -180.0)
-        bottomRight.setX(bottomRight.x() + 360.0);
+    if (bottomRight.x() > 180.0 * 3600.0)
+        bottomRight.setX(bottomRight.x() - 360.0 * 3600.0);
+    if (bottomRight.x() < -180.0 * 3600.0)
+        bottomRight.setX(bottomRight.x() + 360.0 * 3600.0);
 
-    QGeoCoordinate tlc(topLeft.y(), topLeft.x());
-    QGeoCoordinate brc(bottomRight.y(), bottomRight.x());
+    QGeoCoordinate tlc(topLeft.y() / 3600.0, topLeft.x() / 3600.0);
+    QGeoCoordinate brc(bottomRight.y() / 3600.0, bottomRight.x() / 3600.0);
 
     return QGeoBoundingBox(tlc, brc);
 }

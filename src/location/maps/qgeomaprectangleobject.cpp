@@ -68,7 +68,7 @@ QGeoMapRectangleObject::QGeoMapRectangleObject()
     : d_ptr(new QGeoMapRectangleObjectPrivate())
 {
     setGraphicsItem(d_ptr->item);
-    setUnits(QGeoMapObject::DegreeUnit);
+    setUnits(QGeoMapObject::RelativeArcSecondUnit);
 }
 
 /*!
@@ -79,10 +79,10 @@ QGeoMapRectangleObject::QGeoMapRectangleObject(const QGeoBoundingBox &boundingBo
 {
     d_ptr->bounds = boundingBox;
     setGraphicsItem(d_ptr->item);
-    setUnits(QGeoMapObject::DegreeUnit);
+    setUnits(QGeoMapObject::RelativeArcSecondUnit);
     setOrigin(boundingBox.center());
-    d_ptr->item->setRect(-0.5*boundingBox.width(), -0.5*boundingBox.height(),
-                         0.5*boundingBox.width(), 0.5*boundingBox.height());
+    d_ptr->item->setRect(-0.5*boundingBox.width()*3600.0, -0.5*boundingBox.height()*3600.0,
+                         0.5*boundingBox.width()*3600.0, 0.5*boundingBox.height()*3600.0);
 }
 
 /*!
@@ -94,10 +94,10 @@ QGeoMapRectangleObject::QGeoMapRectangleObject(const QGeoCoordinate &topLeft, co
 {
     d_ptr->bounds = QGeoBoundingBox(topLeft, bottomRight);
     setGraphicsItem(d_ptr->item);
-    setUnits(QGeoMapObject::DegreeUnit);
+    setUnits(QGeoMapObject::RelativeArcSecondUnit);
     setOrigin(d_ptr->bounds.center());
-    d_ptr->item->setRect(-0.5*d_ptr->bounds.width(), -0.5*d_ptr->bounds.height(),
-                         0.5*d_ptr->bounds.width(), 0.5*d_ptr->bounds.height());
+    d_ptr->item->setRect(-0.5*d_ptr->bounds.width()*3600.0, -0.5*d_ptr->bounds.height()*3600.0,
+                         0.5*d_ptr->bounds.width()*3600.0, 0.5*d_ptr->bounds.height()*3600.0);
 }
 
 /*!
@@ -152,8 +152,8 @@ void QGeoMapRectangleObject::setBounds(const QGeoBoundingBox &bounds)
 
     d_ptr->bounds = bounds;
     setOrigin(d_ptr->bounds.center());
-    d_ptr->item->setRect(-0.5*d_ptr->bounds.width(), -0.5*d_ptr->bounds.height(),
-                         0.5*d_ptr->bounds.width(), 0.5*d_ptr->bounds.height());
+    d_ptr->item->setRect(-0.5*d_ptr->bounds.width()*3600.0, -0.5*d_ptr->bounds.height()*3600.0,
+                         0.5*d_ptr->bounds.width()*3600.0, 0.5*d_ptr->bounds.height()*3600.0);
 
     if (d_ptr->bounds.topLeft() != oldBounds.topLeft())
         emit topLeftChanged(d_ptr->bounds.topLeft());
@@ -184,8 +184,8 @@ void QGeoMapRectangleObject::setTopLeft(const QGeoCoordinate &topLeft)
         d_ptr->bounds.setTopLeft(topLeft);
         emit topLeftChanged(d_ptr->bounds.topLeft());
         setOrigin(d_ptr->bounds.center());
-        d_ptr->item->setRect(-0.5*d_ptr->bounds.width(), -0.5*d_ptr->bounds.height(),
-                             0.5*d_ptr->bounds.width(), 0.5*d_ptr->bounds.height());
+        d_ptr->item->setRect(-0.5*d_ptr->bounds.width()*3600.0, -0.5*d_ptr->bounds.height()*3600.0,
+                             0.5*d_ptr->bounds.width()*3600.0, 0.5*d_ptr->bounds.height()*3600.0);
         emit mapNeedsUpdate();
     }
 }
@@ -210,8 +210,8 @@ void QGeoMapRectangleObject::setBottomRight(const QGeoCoordinate &bottomRight)
         d_ptr->bounds.setBottomRight(bottomRight);
         emit bottomRightChanged(d_ptr->bounds.bottomRight());
         setOrigin(d_ptr->bounds.center());
-        d_ptr->item->setRect(-0.5*d_ptr->bounds.width(), -0.5*d_ptr->bounds.height(),
-                             0.5*d_ptr->bounds.width(), 0.5*d_ptr->bounds.height());
+        d_ptr->item->setRect(-0.5*d_ptr->bounds.width()*3600.0, -0.5*d_ptr->bounds.height()*3600.0,
+                             0.5*d_ptr->bounds.width()*3600.0, 0.5*d_ptr->bounds.height()*3600.0);
         emit mapNeedsUpdate();
     }
 }

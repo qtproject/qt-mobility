@@ -813,7 +813,7 @@ void QGeoMapDataPrivate::updateLatLonTransform(QGeoMapObject *object)
         foreach (QPointF pt, local) {
             ProjCoordinate c(pt.x(), pt.y(), 0.0, localSys);
             c.convert(wgs84);
-            wgs.append(QPointF(c.x(), c.y()));
+            wgs.append(QPointF(c.x() * 3600.0, c.y() * 3600.0));
         }
 
         // QTransform expects the last vertex (closing vertex) to be dropped
@@ -823,11 +823,11 @@ void QGeoMapDataPrivate::updateLatLonTransform(QGeoMapObject *object)
         // perform wrapping
         if (wgs.at(2).x() < wgs.at(3).x()) {
             QPointF topRight = wgs.at(1);
-            topRight.setX(topRight.x() + 360.0);
+            topRight.setX(topRight.x() + 360.0 * 3600.0);
             wgs.replace(1, topRight);
 
             QPointF bottomRight = wgs.at(2);
-            bottomRight.setX(bottomRight.x() + 360.0);
+            bottomRight.setX(bottomRight.x() + 360.0 * 3600.0);
             wgs.replace(2, bottomRight);
         }
 
@@ -835,8 +835,8 @@ void QGeoMapDataPrivate::updateLatLonTransform(QGeoMapObject *object)
         if (!ok)
             return;
 
-    } else if (object->units() == QGeoMapObject::RelativeDegreeUnit) {
-        latLon.translate(origin.longitude(), origin.latitude());
+    } else if (object->units() == QGeoMapObject::RelativeArcSecondUnit) {
+        latLon.translate(origin.longitude() * 3600.0, origin.latitude() * 3600.0);
     } else if (object->units() == QGeoMapObject::PixelUnit) {
         QPointF pixelOrigin = this->coordinateToScreenPosition(origin.longitude(),
                                                                origin.latitude());
@@ -845,7 +845,7 @@ void QGeoMapDataPrivate::updateLatLonTransform(QGeoMapObject *object)
         foreach (const QPointF &pt, local) {
             const QGeoCoordinate coord =
                     q_ptr->screenPositionToCoordinate(pt + pixelOrigin);
-            const QPointF lpt(coord.longitude(), coord.latitude());
+            const QPointF lpt(coord.longitude() * 3600.0, coord.latitude() * 3600.0);
             wgs.append(lpt);
         }
 
@@ -856,11 +856,11 @@ void QGeoMapDataPrivate::updateLatLonTransform(QGeoMapObject *object)
         // perform wrapping
         if (wgs.at(2).x() < wgs.at(3).x()) {
             QPointF topRight = wgs.at(1);
-            topRight.setX(topRight.x() + 360.0);
+            topRight.setX(topRight.x() + 360.0 * 3600.0);
             wgs.replace(1, topRight);
 
             QPointF bottomRight = wgs.at(2);
-            bottomRight.setX(bottomRight.x() + 360.0);
+            bottomRight.setX(bottomRight.x() + 360.0 * 3600.0);
             wgs.replace(2, bottomRight);
         }
 
@@ -879,14 +879,14 @@ void QGeoMapDataPrivate::updateLatLonTransform(QGeoMapObject *object)
         const QPolygonF poly = polys.at(0);
 
         QTransform latLonWest;
-        latLonWest.translate(360.0, 0.0);
+        latLonWest.translate(360.0 * 3600.0, 0.0);
         latLonWest = latLon * latLonWest;
 
         polys << latLonWest.map(object->graphicsItem()->boundingRect());
         latLonTrans.insertMulti(object, latLonWest);
 
         QTransform latLonEast;
-        latLonEast.translate(-360.0, 0.0);
+        latLonEast.translate(-360.0 * 3600.0, 0.0);
         latLonEast = latLon * latLonEast;
 
         polys << latLonEast.map(object->graphicsItem()->boundingRect());
@@ -917,15 +917,15 @@ QPolygonF QGeoMapDataPrivate::latLonViewport()
     double offset = 0.0;
 
     c = viewport.bottomLeft();
-    view << QPointF(c.longitude(), c.latitude());
+    view << QPointF(c.longitude() * 3600.0, c.latitude() * 3600.0);
     c2 = viewport.bottomRight();
     if (c2.longitude() < c.longitude())
-        offset = 360.0;
-    view << QPointF(c2.longitude() + offset, c2.latitude());
+        offset = 360.0 * 3600.0;
+    view << QPointF(c2.longitude() * 3600.0 + offset, c2.latitude() * 3600.0);
     c = viewport.topRight();
-    view << QPointF(c.longitude() + offset, c.latitude());
+    view << QPointF(c.longitude() * 3600.0 + offset, c.latitude() * 3600.0);
     c = viewport.topLeft();
-    view << QPointF(c.longitude(), c.latitude());
+    view << QPointF(c.longitude() * 3600.0, c.latitude() * 3600.0);
 
     return view;
 }
@@ -1008,7 +1008,7 @@ void QGeoMapDataPrivate::updatePixelTransform(QGeoMapObject *object)
             QPolygonF pixelPoly;
 
             foreach (QPointF pt, latLonPoly) {
-                QPointF pixel = this->coordinateToScreenPosition(pt.x(), pt.y());
+                QPointF pixel = this->coordinateToScreenPosition(pt.x() / 3600.0, pt.y() / 3600.0);
                 pixelPoly.append(pixel);
             }
 
