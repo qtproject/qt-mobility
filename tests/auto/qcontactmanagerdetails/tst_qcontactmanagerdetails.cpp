@@ -95,6 +95,8 @@ private slots:
     void testNickName_data() {addManagers();}
     void testOrganisation();
     void testOrganisation_data() {addManagers();}
+    void testOnlineAccount();
+    void testOnlineAccount_data() {addManagers();}
     void testPhoneNumber();
     void testPhoneNumber_data() {addManagers();}
     void testUrl();
@@ -404,6 +406,30 @@ void tst_QContactManagerDetails::testOrganisation()
     QContactOrganization o;
     o.setName( "Foreign legion" );
     o.setTitle( "Bicycle mechanic" );
+    c.saveDetail( &o );
+
+    saveAndVerifyContact( cm.data(), c );
+}
+
+void tst_QContactManagerDetails::testOnlineAccount()
+{
+    QFETCH(QString, uri);
+    QScopedPointer<QContactManager> cm(QContactManager::fromUri(uri));
+
+    QContactDetailDefinition def = cm->detailDefinition(QContactOnlineAccount::DefinitionName);
+    if (def.isEmpty())
+        QSKIP("This backend does not support the required detail!", SkipSingle);
+
+    QContact c;
+
+    QContactOnlineAccount o;
+    o.setAccountUri( "john@example.com" );
+
+    if (def.fields().contains(QContactOnlineAccount::FieldProtocol))
+        o.setProtocol(QContactOnlineAccount::ProtocolJabber);
+    else
+        qDebug() << "Manager doesn't support Protocol";
+
     c.saveDetail( &o );
 
     saveAndVerifyContact( cm.data(), c );

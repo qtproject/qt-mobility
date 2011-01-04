@@ -57,6 +57,9 @@ class maemo6accelerometer : public maemo6sensorbase
 public:
     static char const * const id;
     maemo6accelerometer(QSensor *sensor);
+protected:
+    virtual bool doConnect();
+    virtual const QString sensorName();
 
 private:
     QAccelerometerReading m_reading;
@@ -64,6 +67,7 @@ private:
 
 private slots:
     void slotDataAvailable(const XYZ& data);
+    void slotFrameAvailable(const QVector<XYZ>&);
 };
 
 #endif

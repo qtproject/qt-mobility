@@ -47,18 +47,7 @@ bool maemo6tapsensor::m_initDone = false;
 maemo6tapsensor::maemo6tapsensor(QSensor *sensor)
     : maemo6sensorbase(sensor)
 {
-    const QString sensorName = "tapsensor";
-    initSensor<TapSensorChannelInterface>(sensorName, m_initDone);
-
-
-    if (m_sensorInterface){
-        if (!(QObject::connect(m_sensorInterface, SIGNAL(dataAvailable(const Tap&)),
-                               this, SLOT(slotDataAvailable(const Tap&)))))
-            qWarning() << "Unable to connect "<< sensorName;
-    }
-    else
-        qWarning() << "Unable to initialize "<<sensorName;
-
+    initSensor<TapSensorChannelInterface>(m_initDone);
     setReading<QTapReading>(&m_reading);
 }
 
@@ -79,8 +68,6 @@ void maemo6tapsensor::start(){
 
 void maemo6tapsensor::slotDataAvailable(const Tap& data)
 {
-
-
     if (data.type() == TapData::DoubleTap){
         if (!m_isDoubleTapSensor) return;
     }
@@ -89,19 +76,34 @@ void maemo6tapsensor::slotDataAvailable(const Tap& data)
     // Set tap direction
     QTapReading::TapDirection o;
     switch (data.direction()) {
-        case TapData::X:         o = QTapReading::X;         break;
-        case TapData::Y:         o = QTapReading::Y;         break;
-        case TapData::Z:         o = QTapReading::Z;         break;
-        case TapData::LeftRight: o = QTapReading::X_Pos;     break;
-        case TapData::RightLeft: o = QTapReading::X_Neg;     break;
-        case TapData::TopBottom: o = QTapReading::Z_Neg;     break;
-        case TapData::BottomTop: o = QTapReading::Z_Pos;     break;
-        case TapData::FaceBack:  o = QTapReading::Y_Pos;     break;
-        case TapData::BackFace:  o = QTapReading::Y_Neg;     break;
-        default:                 o = QTapReading::Undefined;
+    case TapData::X:         o = QTapReading::X;         break;
+    case TapData::Y:         o = QTapReading::Y;         break;
+    case TapData::Z:         o = QTapReading::Z;         break;
+    case TapData::LeftRight: o = QTapReading::X_Pos;     break;
+    case TapData::RightLeft: o = QTapReading::X_Neg;     break;
+    case TapData::TopBottom: o = QTapReading::Z_Neg;     break;
+    case TapData::BottomTop: o = QTapReading::Z_Pos;     break;
+    case TapData::FaceBack:  o = QTapReading::Y_Pos;     break;
+    case TapData::BackFace:  o = QTapReading::Y_Neg;     break;
+    default:                 o = QTapReading::Undefined;
     }
 
     m_reading.setTapDirection(o);
     m_reading.setTimestamp(data.tapData().timestamp_);
     newReadingAvailable();
+}
+
+
+bool maemo6tapsensor::doConnect(){
+    if (!(QObject::connect(m_sensorInterface, SIGNAL(dataAvailable(const Tap&)),
+                           this, SLOT(slotDataAvailable(const Tap&))))){
+        qWarning() << "Unable to connect "<< sensorName();
+        return false;
+    }
+    return true;
+}
+
+
+const QString maemo6tapsensor::sensorName(){
+    return "tapsensor";
 }
