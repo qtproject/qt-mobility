@@ -54,6 +54,8 @@ BuildRequires:  pkgconfig(xext)
 BuildRequires:  pkgconfig(xrandr)
 BuildRequires:  pkgconfig(xrender)
 BuildRequires:  pkgconfig(xv)
+BuildRequires:  pkgconfig(QtSparql)
+BuildRequires:  pkgconfig(QtSparqlTrackerExtensions)
 BuildRequires:  qt-devel-tools
 BuildRequires:  fdupes
 
@@ -486,6 +488,8 @@ find %{buildroot}%{_libdir}/pkgconfig -type f -name '*.pc' \
 find %{buildroot}%{_libdir}/qtmobility -type f -perm /u+x,g+x,o+x \( -false \
 -o -name \*.qml \
 -o -name \*.sci \
+-o -name qmldir \
+-o -name \*.txt \
 \) | xargs chmod -x
 # Fix duplicate files
 %fdupes %{buildroot}%{_includedir}
@@ -1112,7 +1116,7 @@ find %{buildroot}%{_libdir}/qtmobility -type f -perm /u+x,g+x,o+x \( -false \
 # >> files libqtlocation1
 %{_libdir}/libQtLocation.so.*
 %{_libdir}/qt4/plugins/geoservices/libqtgeoservices_nokia.so
-%{_libdir}/qt4/plugins/landmarks/libqtlandmarks_sqlite.so
+%{_libdir}/qt4/plugins/landmarks/libqtlandmarks_qsparql.so
 # << files libqtlocation1
 
 %files -n libqtmessaging1
