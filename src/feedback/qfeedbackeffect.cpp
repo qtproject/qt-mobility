@@ -380,12 +380,7 @@ bool QFeedbackEffect::supportsThemeEffect()
 */
 QFeedbackHapticsEffect::QFeedbackHapticsEffect(QObject *parent) : QFeedbackEffect(parent), priv(new QFeedbackHapticsEffectPrivate)
 {
-    QList<QFeedbackActuator*> list = QFeedbackActuator::actuators();
-    if  (!list.isEmpty()) {
-        priv->actuator = list.first();
-    } else {
-        priv->actuator = new QFeedbackActuator(this);
-    }
+    setActuator(0);
 }
 
 
@@ -517,7 +512,8 @@ void QFeedbackHapticsEffect::setFadeIntensity(qreal intensity)
     \brief the actuator on which the effect operates.
 
     This property defines the actuator on which the effect operates.  You can only
-    change the actuator used when the effect is stopped.
+    change the actuator used when the effect is stopped.  Setting a null actuator
+    resets the effect to use the default actuator.
 */
 QFeedbackActuator* QFeedbackHapticsEffect::actuator() const
 {
@@ -530,7 +526,16 @@ void QFeedbackHapticsEffect::setActuator(QFeedbackActuator *actuator)
         return;
     }
 
-    priv->actuator = actuator;
+    if (actuator) {
+        priv->actuator = actuator;
+    } else {
+        QList<QFeedbackActuator*> list = QFeedbackActuator::actuators();
+        if  (!list.isEmpty()) {
+            priv->actuator = list.first();
+        } else {
+            priv->actuator = new QFeedbackActuator(this);
+        }
+    }
 }
 
 /*!
