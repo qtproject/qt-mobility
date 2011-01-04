@@ -89,7 +89,7 @@ QTM_BEGIN_NAMESPACE
     \value HostConnectable      Remote Bluetooth devices can connect to the local Bluetooth device
                                 if they have previously been paired with it or otherwise know its
                                 address.
-    \value HostDiscoverable     Remote Bluetooth devices can discover the presense of the local
+    \value HostDiscoverable     Remote Bluetooth devices can discover the presence of the local
                                 Bluetooth device.
 */
 

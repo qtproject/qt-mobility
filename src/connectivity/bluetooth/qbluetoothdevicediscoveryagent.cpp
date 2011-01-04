@@ -66,9 +66,9 @@ QTM_BEGIN_NAMESPACE
 
     Indicates all possible error conditions found during Bluetooth device discovery.
 
-    \value NoError          No error has occured.
+    \value NoError          No error has occurred.
     \value Canceled         Device discovery was canceled by a call to stop().
-    \value UnknownError     An unknown error has occured.
+    \value UnknownError     An unknown error has occurred.
 */
 
 /*!
@@ -179,7 +179,7 @@ bool QBluetoothDeviceDiscoveryAgent::isActive() const
 
 
 /*!
-    Returns the last error which has occured.
+    Returns the last error which has occurred.
 */
 QBluetoothDeviceDiscoveryAgent::Error QBluetoothDeviceDiscoveryAgent::error() const
 {
