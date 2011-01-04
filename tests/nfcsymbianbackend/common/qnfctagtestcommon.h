@@ -581,7 +581,7 @@ void QNfcTagTestCommon<TAG>::_testWaitInSlot(const QStringList& discription, con
         if (!needTimeOut)
             QVERIFY(target->waitForRequestCompleted(requests.at(1)));
         else
-            target->waitForRequestCompleted(requests.at(1), 1);
+            target->waitForRequestCompleted(requests.at(1), 0);
     }
     else
     {
@@ -589,7 +589,7 @@ void QNfcTagTestCommon<TAG>::_testWaitInSlot(const QStringList& discription, con
         if (!needTimeOut)
             QVERIFY(!(target->waitForRequestCompleted(requests.at(1))));
         else
-            target->waitForRequestCompleted(requests.at(1), 1);
+            target->waitForRequestCompleted(requests.at(1), 0);
     }   
 
     QObject::disconnect(target, 0, &waitSlot, 0);

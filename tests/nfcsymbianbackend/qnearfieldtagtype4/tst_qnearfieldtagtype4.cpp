@@ -212,6 +212,19 @@ void tst_qnearfieldtagtype4::testSmoke_data()
     rsp.append(dataPool["CC select"].second);
     rsp.append(dataPool["Combine"].second);
     QTest::newRow("data 1")<<dsp<<cmd<<rsp;
+
+    dsp.clear();
+    cmd.clear();
+    rsp.clear();
+
+    dsp<<"NDEF Select"<<"Combine"<<"CC select";
+    cmd.append(dataPool["NDEF Select"].first);
+    cmd.append(dataPool["Combine"].first);
+    cmd.append(dataPool["CC select"].first);
+    rsp.append(dataPool["NDEF Select"].second);
+    rsp.append(dataPool["Combine"].second);
+    rsp.append(dataPool["CC select"].second);
+    QTest::newRow("data 2")<<dsp<<cmd<<rsp;
 }
 
 void tst_qnearfieldtagtype4::testSmoke()

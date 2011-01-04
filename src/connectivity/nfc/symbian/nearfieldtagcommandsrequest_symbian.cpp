@@ -76,7 +76,7 @@ void NearFieldTagCommandsRequest::IssueRequest()
                 // start timer here
                 LOG("Start timer");
                 TCallBack callback(MNearFieldTagAsyncRequest::TimeoutCallback, this);
-                iTimer->Start(0, iMsecs, callback);
+                iTimer->Start(iMsecs, iMsecs, callback);
             }
         }
         iOperator->DoSendCommand(iCommands.at(iCurrentCommand), this);
