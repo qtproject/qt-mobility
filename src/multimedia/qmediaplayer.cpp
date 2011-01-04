@@ -694,10 +694,7 @@ void QMediaPlayer::setVideoOutput(QVideoWidget *output)
     if (d->videoOutput)
         unbind(d->videoOutput);
 
-    d->videoOutput = output;
-
-    if (d->videoOutput)
-        bind(d->videoOutput);
+    d->videoOutput = output && bind(output) ? output : 0;
 }
 
 /*!
@@ -715,10 +712,7 @@ void QMediaPlayer::setVideoOutput(QGraphicsVideoItem *output)
     if (d->videoOutput)
         unbind(d->videoOutput);
 
-    d->videoOutput = output;
-
-    if (d->videoOutput)
-        bind(d->videoOutput);
+    d->videoOutput = output && bind(output) ? output : 0;
 }
 
 // Enums
