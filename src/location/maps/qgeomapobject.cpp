@@ -54,12 +54,38 @@ QTM_BEGIN_NAMESPACE
 /*!
     \class QGeoMapObject
     \brief The QGeoMapObject class is graphical item for display in
-    QGraphicsGeoMap instancse, that is specified in terms of coordinates and
+    QGraphicsGeoMap instances, that is specified in terms of coordinates and
     distances.
 
     \inmodule QtLocation
 
     \ingroup maps-mapping-objects
+
+    QGeoMapObject itself can be used to facilitate the display of any
+    arbitrary QGraphicsItem on a map. To this end, it supports different
+    coordinate systems and the concept of an "origin point" for translation
+    into map coordinates.
+
+    For example, the following code creates a QGraphicsEllipseItem and a
+    QGeoMapObject to display it. The EllipseItem extends from the origin point,
+    out 20 meters to the east and 30 metres south.
+
+    \code
+    QGraphicsEllipseItem *ellipseItem = new QGraphicsEllipseItem;
+    ellipseItem->setRect(0, 0, 20, 30);
+
+    QGeoMapObject *mapObject = new QGeoMapObject;
+    mapObject->setGraphicsItem(ellipseItem);
+    mapObject->setUnits(QGeoMapObject::MeterUnit);
+    mapObject->setOrigin(QGeoCoordinate(-27.5796, 153.1));
+    \endcode
+
+    By default, the GraphicsItem will be transformed into map coordinates using
+    a bilinear interpolation. Another option is the ExactTransform, which
+    converts the GraphicsItem exactly into map coordinates, but is only available
+    for certain subclasses. Other interpolation methods may be provided in
+    future for greater accuracy near poles and in different map projections,
+    without the limitations of ExactTransform.
 
     QGeoMapObject instances can also be grouped into heirarchies in order to
     simplify the process of creating compound objects and managing groups of
@@ -101,13 +127,14 @@ QTM_BEGIN_NAMESPACE
         Units are in pixels on the screen. Pixel coordinate (0,0) is
         translated to the origin coordinate.
     \value MeterUnit
-        Units are in meters on the ground -- a local transverse mercator
-        coordinate system (WGS84 ellipsoid) is used for translation, centered
-        on the origin coordinate.
+        Units are in meters on the ground -- a local Transverse Mercator
+        coordinate system (on the WGS84 ellipsoid) is used for translation,
+        centered on the origin coordinate.
     \value RelativeArcSecondUnit
-        Units are in arc seconds relative to the origin coordinate.
+        Units are in arc seconds relative to the origin coordinate (along the
+        WGS84 ellipsoid).
     \value AbsoluteArcSecondUnit
-        Units are in arc seconds, origin ignored.
+        Units are in arc seconds on WGS84, origin ignored.
 */
 
 /*!
@@ -123,7 +150,7 @@ QTM_BEGIN_NAMESPACE
     \value ExactTransform
         Individual key points on the object are transformed and the GraphicsItem
         is constructed in direct pixel coordinates. This is only available for
-        certain subclasses, depending on the implementation of QGeoMapData.
+        certain subclasses, depending on the implementation of QGeoMapData used.
 */
 
 /*!
