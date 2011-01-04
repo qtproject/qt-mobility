@@ -158,15 +158,17 @@ void tst_QFeedbackMMK::goodFile()
     QSignalSpy errorSpy(&fe, SIGNAL(error(QFeedbackEffect::ErrorType)));
     QSignalSpy stateSpy(&fe, SIGNAL(stateChanged()));
 
-    qDebug() << "URL for test data:" << url;
+    QFileInfo fi(url.toLocalFile());
+    qDebug() << "URL for test data:" << url << url.toLocalFile() << fi.exists();
+
     fe.setSource(url);
 
-    QTRY_COMPARE(fe.state(),  QFeedbackFileEffect::Loading);
+    QTRY_COMPARE((int)fe.state(),  (int)QFeedbackFileEffect::Loading);
     QCOMPARE(errorSpy.count(), 0);
     QCOMPARE(stateSpy.count(), 1); // Stopped to Loading
 
     // Wait for it to be loaded
-    QTRY_COMPARE(fe.state(),  QFeedbackFileEffect::Stopped);
+    QTRY_COMPARE((int)fe.state(),  (int)QFeedbackFileEffect::Stopped);
     QCOMPARE(errorSpy.count(), 0);
     QCOMPARE(stateSpy.count(), 2); // Stopped to Loading to Stopped
 
@@ -174,7 +176,7 @@ void tst_QFeedbackMMK::goodFile()
     fe.start();
 
     // Now wait for it to be playing
-    QTRY_COMPARE(fe.state(),  QFeedbackFileEffect::Running);
+    QTRY_COMPARE((int)fe.state(),  (int)QFeedbackFileEffect::Running);
     QCOMPARE(errorSpy.count(), 0);
     QCOMPARE(stateSpy.count(), 3); // Stopped to Loading to Stopped to Running
     QVERIFY(fe.isLoaded());
@@ -182,46 +184,40 @@ void tst_QFeedbackMMK::goodFile()
 
     // Try pausing - not supported
     fe.pause(); // XXX this emits stateChanged even when it fails
-    QTRY_COMPARE(fe.state(),  QFeedbackFileEffect::Running);
-    QCOMPARE(errorSpy.count(), 1);
-    QCOMPARE(stateSpy.count(), 4); // Stopped to Loading to Stopped to Running
-
-    // Start again
-    fe.start();
-    QTRY_COMPARE(fe.state(),  QFeedbackFileEffect::Running);
+    QTRY_COMPARE((int)fe.state(),  (int)QFeedbackFileEffect::Running);
     QCOMPARE(errorSpy.count(), 1);
     QCOMPARE(stateSpy.count(), 4); // Stopped to Loading to Stopped to Running
 
     // It should run out, eventually
-    QTRY_COMPARE(fe.state(),  QFeedbackFileEffect::Stopped);
+    QTRY_COMPARE((int)fe.state(),  (int)QFeedbackFileEffect::Stopped);
     QCOMPARE(errorSpy.count(), 1);
     QCOMPARE(stateSpy.count(), 5); // Stopped to Loading to Stopped to Running to Stopped
 
     // Play it again..
     fe.start();
-    QTRY_COMPARE(fe.state(),  QFeedbackFileEffect::Running);
+    QTRY_COMPARE((int)fe.state(),  (int)QFeedbackFileEffect::Running);
     QCOMPARE(errorSpy.count(), 1);
     QCOMPARE(stateSpy.count(), 6); // Stopped to Loading to Stopped to Running to Stopped to Running
 
     fe.stop();
-    QTRY_COMPARE(fe.state(),  QFeedbackFileEffect::Stopped);
+    QTRY_COMPARE((int)fe.state(),  (int)QFeedbackFileEffect::Stopped);
     QCOMPARE(errorSpy.count(), 1);
     QCOMPARE(stateSpy.count(), 7); // Stopped to Loading to Stopped to Running to Stopped to Running to Stopped
 
     fe.unload();
-    QTRY_COMPARE(fe.state(),  QFeedbackFileEffect::Stopped);
+    QTRY_COMPARE((int)fe.state(),  (int)QFeedbackFileEffect::Stopped);
     QCOMPARE(stateSpy.count(), 7); // no change
     QCOMPARE(fe.isLoaded(), false);
     QCOMPARE(fe.duration(), 0);
 
     // now load again
     fe.load();
-    QTRY_COMPARE(fe.state(),  QFeedbackFileEffect::Loading);
+    QTRY_COMPARE((int)fe.state(),  (int)QFeedbackFileEffect::Loading);
     QCOMPARE(errorSpy.count(), 1);
     QCOMPARE(stateSpy.count(), 8); // Stopped to Loading
 
     // Now wait for it to be loaded and playing
-    QTRY_COMPARE(fe.state(),  QFeedbackFileEffect::Stopped);
+    QTRY_COMPARE((int)fe.state(), (int) QFeedbackFileEffect::Stopped);
     QCOMPARE(errorSpy.count(), 1);
     QCOMPARE(stateSpy.count(), 9); // Stopped to Loading to Stopped
     QVERIFY(fe.isLoaded());
