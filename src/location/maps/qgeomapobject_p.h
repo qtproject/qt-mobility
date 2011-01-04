@@ -73,6 +73,7 @@ public:
     bool isVisible;
     bool isSelected;
     QGeoMapObject::CoordinateUnit units;
+    QGeoMapObject::TransformType transType;
 
     QGeoMapData *mapData;
     QGraphicsItem *graphicsItem;

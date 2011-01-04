@@ -86,7 +86,12 @@ public:
         PixelUnit,
         MeterUnit,
         RelativeArcSecondUnit,
-        AbsoluteDegreeUnit
+        AbsoluteArcSecondUnit
+    };
+
+    enum TransformType {
+        BilinearTransform,
+        ExactTransform
     };
 
     QGeoMapObject(QGeoMapData *mapData = 0);
@@ -122,6 +127,9 @@ public:
 
     QGraphicsItem * const graphicsItem() const;
     void setGraphicsItem(QGraphicsItem *item);
+
+    TransformType transformType() const;
+    void setTransformType(const TransformType &type);
 
     void update();
 

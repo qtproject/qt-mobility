@@ -326,6 +326,17 @@ void QGeoMapObject::setGraphicsItem(QGraphicsItem *item)
     emit graphicsItemChanged(item);
 }
 
+QGeoMapObject::TransformType QGeoMapObject::transformType() const
+{
+    return d_ptr->transType;
+}
+
+void QGeoMapObject::setTransformType(const TransformType &type)
+{
+    d_ptr->transType = type;
+    emit mapNeedsUpdate();
+}
+
 QGeoCoordinate QGeoMapObject::origin() const
 {
     return d_ptr->origin;
@@ -387,6 +398,7 @@ QGeoMapObjectPrivate::QGeoMapObjectPrivate()
       isSelected(false),
       mapData(0),
       units(QGeoMapObject::PixelUnit),
+      transType(QGeoMapObject::BilinearTransform),
       graphicsItem(0) {}
 
 QGeoMapObjectPrivate::~QGeoMapObjectPrivate()
