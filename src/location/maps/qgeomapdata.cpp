@@ -778,6 +778,45 @@ void QGeoMapDataPrivate::clearObjects()
     containerObject->clearChildObjects();
 }
 
+/*
+  A quick note about how the transforms are set up:
+
+  Each QGeoMapObject has its own "local" coordinate system, whether this
+  a pixel system or meters or whatever.
+
+  For local systems that are not in pixels, we do a two-stage transform --
+  first we transform the object to arc-seconds, then we transform from
+  arc-seconds to pixels on the screen. This is necessary as QGeoMapData
+  subclasses only provide a mapping from lat/lon coordinates to screen pixels
+  and no other source.
+
+  For local systems that are in pixels, we simply translate to the screen
+  coordinates. However, we still generate a transform to arc-seconds for these
+  objects, to speed up the drawing process.
+
+  QGeoMapDataPrivate has two sets of 3 fields that are used here:
+    - xxxTrans
+    - xxxScene
+    - xxxItems
+  (where xxx = [latLon, pixel])
+
+  xxxTrans = a multi-hash of transforms associated with each QGeoMapObject
+             (a given map object may appear at more than one coordinate if
+              it wraps over the dateline)
+  xxxScene = a QGraphicsScene filled with bounding boxes for each object, one
+             for each entry in xxxTrans
+  xxxItems = a hash taking the items in the xxxScene and giving back the original
+             QGeoMapObject they were created for
+
+  the "latLon" entries describe the transformations from local coordinates to
+  arc-seconds, and the "pixel" entries describe the transformations from local
+  coordinates to pixels on screen.
+
+  Items within latLonScene have their coordinates in arc-seconds, and items
+  within pixelScene have theirs in pixels.
+
+*/
+
 void QGeoMapDataPrivate::updateLatLonTransforms(QGeoMapGroupObject *group)
 {
     if (!group)
@@ -1077,6 +1116,7 @@ void QGeoMapDataPrivate::forceUpdate(QGeoMapObject *obj)
     }
 }
 
+// update the transform tables as necessary
 void QGeoMapDataPrivate::updateTransforms()
 {
     if (zoomOutOfDate)
@@ -1088,6 +1128,7 @@ void QGeoMapDataPrivate::updateTransforms()
     pixelsOutOfDate = false;
 }
 
+// ensures the sender is up to date on the map
 void QGeoMapDataPrivate::updateSender()
 {
     QGeoMapGroupObject *group = qobject_cast<QGeoMapGroupObject*>(sender());

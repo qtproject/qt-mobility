@@ -70,7 +70,7 @@ class Q_LOCATION_EXPORT QGeoMapObject : public QObject
     Q_PROPERTY(QGeoCoordinate origin READ origin WRITE setOrigin)
     Q_PROPERTY(CoordinateUnit units READ units WRITE setUnits)
     Q_PROPERTY(QGraphicsItem* graphicsItem READ graphicsItem WRITE setGraphicsItem)
-    Q_PROPERTY(TransformType transformType READ transformType WRITE transformType)
+    Q_PROPERTY(TransformType transformType READ transformType WRITE setTransformType)
 
 public:
     enum Type {

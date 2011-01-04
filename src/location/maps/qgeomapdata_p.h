@@ -94,8 +94,6 @@ public:
     QGraphicsScene *pixelScene;
     QHash<QGraphicsItem*, QGeoMapObject*> pixelItems;
 
-    QSet<QGeoMapObject*> scaleInvariantObjects;
-
     virtual void addObject(QGeoMapObject *object);
     virtual void removeObject(QGeoMapObject *object);
     virtual void updateLatLonTransform(QGeoMapObject *object);
