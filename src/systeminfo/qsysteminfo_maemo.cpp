@@ -1426,7 +1426,7 @@ bool QSystemScreenSaverPrivate::screenSaverInhibited()
         displayOn = ("on" == reply.value());
     }
 #endif
-    return (displayOn && isBlankingInhibited && isInhibited);
+    return ((displayOn && isBlankingInhibited) || (displayOn && isInhibited));
 }
 
 #include "moc_qsysteminfo_maemo_p.cpp"
