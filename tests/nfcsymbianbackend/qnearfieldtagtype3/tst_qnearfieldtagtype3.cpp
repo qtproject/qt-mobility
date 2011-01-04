@@ -94,7 +94,7 @@ void tst_qnearfieldtagtype3::initTestCase()
 
         dataPool.insert(name, qMakePair(QVariant(command), QVariant()));
     }
-    
+
     {
         QString name = "INVALID";
         QByteArray command;
@@ -108,8 +108,15 @@ void tst_qnearfieldtagtype3::initTestCase()
         command.append(1);
         command.append(1);
 
-        dataPool.insert(name, qMakePair(QVariant(command), QVariant()));
-    }
+        QVariantList cmdList;
+        cmdList.append(command);
+        cmdList.append(command);
+        QVariantList rspList;
+        rspList.append(QVariant());
+        rspList.append(QVariant());
+
+        dataPool.insert(name, qMakePair(QVariant(cmdList), QVariant(rspList)));
+    }   
 }
 
 void tst_qnearfieldtagtype3::testSmoke_data()
