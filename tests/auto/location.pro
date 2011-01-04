@@ -10,7 +10,6 @@ SUBDIRS += qgeocoordinate \
       qgeotiledmapdata \
       qgeopositioninfo \
       qgeosatelliteinfo \
-      qgeosatelliteinfosource \
       qgeoareamonitor \
       qlocationutils \
       qnmeapositioninfosource \
