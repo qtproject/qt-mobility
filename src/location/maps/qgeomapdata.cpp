@@ -393,7 +393,7 @@ QList<QGeoMapObject*> QGeoMapData::mapObjectsAtScreenPosition(const QPointF &scr
                 QTransform inv = t.inverted(&ok);
                 if (ok) {
                     QPointF testPt = screenPosition * inv;
-                    if (object->graphicsItem()->contains(testPt)) {
+                    if (object->graphicsItem()->shape().contains(testPt)) {
                         contains = true;
                         break;
                     }
