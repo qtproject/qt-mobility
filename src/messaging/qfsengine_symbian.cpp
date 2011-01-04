@@ -449,14 +449,10 @@ void CFSEngine::notificationL(const TMailboxId& aMailbox, const TMessageId& aMes
     bool messageRetrieved = false;
     MEmailMailbox* mailbox = m_clientApi->MailboxL(aMailbox);
 
-    /* 
-     * TODO: Dirty hack: Currently clientapi return NULL if mailbox is not found.
-     * We can't do anything if mailbox if NULL so we can just return from function.
-     * Remove this if MEmailClientApi::MailboxL(aMailbox) is changed to leave if mailbox is not found.
-     */ 
+    // Some older versions of Email client API will return NULL instead of 
+    // leaving with KErrNotFound if mailbox is not found.
     if( !mailbox )
         return;
-    
     
     CleanupReleasePushL(*mailbox);
     for ( ; it != end; ++it) {
