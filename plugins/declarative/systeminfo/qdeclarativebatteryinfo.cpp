@@ -52,6 +52,10 @@ Q_GLOBAL_STATIC(QSystemBatteryInfo, batteryInfo)
     \qmlclass BatteryInfo QDeclarativeBatteryInfo
     \brief The BatteryInfo element allows you to receive battery change notifications from the device.
 
+    \inherits QSystemBatteryInfo
+
+    \ingroup qml-systeminfo
+
     This element is part of the \bold{QtMobility.systeminfo 1.1} module.
     It is a convience class to make QML usage easier.
 
@@ -88,7 +92,6 @@ void QDeclarativeBatteryInfo::startConnections()
     startCurrentFlowChanged();
     startRemainingCapacityBarsChanged();
     startRemainingChargingTimeChanged();
-    startVoltageChanged();
 }
 
 void QDeclarativeBatteryInfo::startBatteryStatusChanged()
@@ -144,11 +147,5 @@ void QDeclarativeBatteryInfo::startRemainingChargingTimeChanged()
 {
     connect(batteryInfo(),SIGNAL(remainingChargingTimeChanged(int)),
             this,SIGNAL(remainingChargingTimeChanged(int)),Qt::UniqueConnection);
-}
-
-void QDeclarativeBatteryInfo::startVoltageChanged()
-{
-    connect(batteryInfo(),SIGNAL(voltageChanged(int)),
-            this,SIGNAL(voltageChanged(int)),Qt::UniqueConnection);
 }
 
