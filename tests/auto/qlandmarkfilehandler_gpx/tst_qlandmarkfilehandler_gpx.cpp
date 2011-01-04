@@ -67,7 +67,7 @@ public:
 
 protected:
     void run() {
-        msleep(50);
+        msleep(10);
         m_cancel = true;
     }
 };
@@ -197,7 +197,7 @@ private slots:
         QLandmarkFileHandlerGpx handler(&(cancelThread.m_cancel));
         QLandmark lm;
         QList<QLandmark> lms;
-        for (int i=0; i < 50000; ++i) {
+        for (int i=0; i < 100000; ++i) {
             lm.setName(QString("LM%1").arg(0));
             lms.append(lm);
         }
@@ -205,7 +205,11 @@ private slots:
         handler.setWaypoints(lms);
         cancelThread.start();
         QFile file(m_exportFile);
-        QVERIFY(!handler.exportData(&file));
+        bool result = handler.exportData(&file);
+        if (result)
+            cancelThread.wait();
+
+        QVERIFY(!result);
         QCOMPARE(handler.error(), QLandmarkManager::CancelError);
         cancelThread.wait();
     }
