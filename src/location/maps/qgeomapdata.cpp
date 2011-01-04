@@ -715,6 +715,7 @@ QGeoMapDataPrivate::QGeoMapDataPrivate(QGeoMapData *parent, QGeoMappingManagerEn
       zoomLevel(-1.0),
       zoomOutOfDate(true),
       pixelsOutOfDate(true),
+      windowSize(0, 0),
       blockPropertyChangeSignals(false),
       pixelScene(new QGraphicsScene),
       latLonScene(new QGraphicsScene)
@@ -837,6 +838,11 @@ void QGeoMapDataPrivate::updateLatLonTransform(QGeoMapObject *object)
     QGeoCoordinate origin = object->origin();
 
     QGraphicsItem *item = object->graphicsItem();
+
+    // skip any objects without graphicsitems
+    if (!item)
+        return;
+
     QPolygonF local = item->boundingRect() * item->transform();
 
     if (object->units() == QGeoMapObject::MeterUnit) {
@@ -1011,6 +1017,10 @@ QPointF QGeoMapDataPrivate::coordinateToScreenPosition(double lon, double lat) c
 void QGeoMapDataPrivate::updatePixelTransform(QGeoMapObject *object)
 {
     QGeoCoordinate origin = object->origin();
+
+    // skip any objects without graphicsitems
+    if (!object->graphicsItem())
+        return;
 
     QList<QTransform> latLons = latLonTrans.values(object);
 

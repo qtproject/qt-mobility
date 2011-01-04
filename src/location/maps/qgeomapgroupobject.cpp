@@ -45,6 +45,9 @@
 #include "qgeocoordinate.h"
 #include "qgeoboundingbox.h"
 
+#include "qgeomapdata.h"
+#include "qgeomapdata_p.h"
+
 QTM_BEGIN_NAMESPACE
 
 /*!
@@ -157,6 +160,7 @@ void QGeoMapGroupObject::addChildObject(QGeoMapObject *childObject)
                                                     childObject,
                                                     mapObjectLessThan);
     d_ptr->children.insert(i, childObject);
+    emit mapNeedsUpdate();
 
     emit childAdded(childObject);
 }
@@ -175,6 +179,8 @@ void QGeoMapGroupObject::removeChildObject(QGeoMapObject *childObject)
         emit childRemoved(childObject);
         childObject->setMapData(0);
     }
+
+    emit mapNeedsUpdate();
 }
 
 /*!
@@ -199,6 +205,8 @@ void QGeoMapGroupObject::clearChildObjects()
     }
 
     d_ptr->children.clear();
+
+    emit mapNeedsUpdate();
 }
 
 /*!
@@ -210,6 +218,8 @@ void QGeoMapGroupObject::setVisible(bool visible)
         d_ptr->children[i]->setVisible(visible);
 
     QGeoMapObject::setVisible(visible);
+
+    emit mapNeedsUpdate();
 }
 
 /*!
