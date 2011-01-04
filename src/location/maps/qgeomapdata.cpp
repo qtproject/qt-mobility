@@ -551,7 +551,7 @@ void QGeoMapData::paintObjects(QPainter *painter, const QStyleOptionGraphicsItem
         Q_ASSERT(object);
         if (object->isVisible() && !objsDone.contains(object)) {
             foreach (QTransform trans, d_ptr->pixelTrans.values(object)) {
-                painter->setTransform(baseTrans * trans);
+                painter->setTransform(trans * baseTrans);
 
                 QStyleOptionGraphicsItem *style = new QStyleOptionGraphicsItem;
                 object->graphicsItem()->paint(painter, style);
@@ -813,7 +813,9 @@ void QGeoMapDataPrivate::updateLatLonTransform(QGeoMapObject *object)
         foreach (QPointF pt, local) {
             ProjCoordinate c(pt.x(), pt.y(), 0.0, localSys);
             c.convert(wgs84);
-            wgs.append(QPointF(c.x() * 3600.0, c.y() * 3600.0));
+            double x = c.x() * 3600.0;
+            double y = c.y() * 3600.0;
+            wgs.append(QPointF(x, y));
         }
 
         // QTransform expects the last vertex (closing vertex) to be dropped
@@ -834,6 +836,8 @@ void QGeoMapDataPrivate::updateLatLonTransform(QGeoMapObject *object)
         bool ok = QTransform::quadToQuad(local, wgs, latLon);
         if (!ok)
             return;
+
+        latLon = item->transform() * latLon;
 
     } else if (object->units() == QGeoMapObject::RelativeArcSecondUnit) {
         latLon.translate(origin.longitude() * 3600.0, origin.latitude() * 3600.0);
@@ -867,6 +871,8 @@ void QGeoMapDataPrivate::updateLatLonTransform(QGeoMapObject *object)
         bool ok = QTransform::quadToQuad(local, wgs, latLon);
         if (!ok)
             return;
+
+        latLon = item->transform() * latLon;
     }
 
     latLonTrans.remove(object);
@@ -876,8 +882,6 @@ void QGeoMapDataPrivate::updateLatLonTransform(QGeoMapObject *object)
     polys << latLon.map(object->graphicsItem()->boundingRect());
 
     {
-        const QPolygonF poly = polys.at(0);
-
         QTransform latLonWest;
         latLonWest.translate(360.0 * 3600.0, 0.0);
         latLonWest = latLon * latLonWest;
@@ -1003,28 +1007,28 @@ void QGeoMapDataPrivate::updatePixelTransform(QGeoMapObject *object)
             QTransform pixel;
 
             QGraphicsItem *item = object->graphicsItem();
-            QPolygonF local = item->boundingRect() * item->transform();
+            QPolygonF local = item->boundingRect();
             QPolygonF latLonPoly = latLon.map(local);
             QPolygonF pixelPoly;
 
             foreach (QPointF pt, latLonPoly) {
-                QPointF pixel = this->coordinateToScreenPosition(pt.x() / 3600.0, pt.y() / 3600.0);
+                double x = pt.x() / 3600.0;
+                double y = pt.y() / 3600.0;
+                QPointF pixel = this->coordinateToScreenPosition(x, y);
                 pixelPoly.append(pixel);
             }
 
             // QTransform expects the last vertex (closing vertex) to be dropped
-            latLonPoly.remove(4);
+            local.remove(4);
             pixelPoly.remove(4);
 
-            bool ok = QTransform::quadToQuad(latLonPoly, pixelPoly, pixel);
+            bool ok = QTransform::quadToQuad(local, pixelPoly, pixel);
             if (!ok)
                 continue;
 
-            pixel = latLon * pixel;
-
             pixelTrans.insertMulti(object, pixel);
 
-            polys << pixel.map(object->graphicsItem()->boundingRect());
+            polys << pixelPoly;
         }
     }
 
