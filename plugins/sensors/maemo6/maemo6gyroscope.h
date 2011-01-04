@@ -57,6 +57,9 @@ class maemo6gyroscope : public maemo6sensorbase
 public:
     static char const * const id;
     maemo6gyroscope(QSensor *sensor);
+protected:
+    virtual bool doConnect();
+    virtual const QString sensorName();
 
 private:
     QGyroscopeReading m_reading;
@@ -64,6 +67,8 @@ private:
     static const float MILLI;
 private slots:
     void slotDataAvailable(const XYZ& data);
+    void slotFrameAvailable(const QVector<XYZ>&);
+
 };
 
 

@@ -57,6 +57,9 @@ class maemo6orientationsensor : public maemo6sensorbase
 public:
     static char const * const id;
     maemo6orientationsensor(QSensor *sensor);
+protected:
+    virtual bool doConnect();
+    virtual const QString sensorName();
 
 private:
     QOrientationReading m_reading;
