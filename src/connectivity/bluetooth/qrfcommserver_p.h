@@ -62,7 +62,7 @@ class QBluetoothAddress;
 class QBluetoothSocket;
 
 #ifdef Q_OS_SYMBIAN
-class QBluetoothSocketSymbianPrivate;
+class QBluetoothSocketPrivate;
 #endif
 
 class QRfcommServer;
@@ -99,7 +99,7 @@ public:
 #ifdef Q_OS_SYMBIAN
     QBluetoothSocket *pendingSocket;
     mutable QList<QBluetoothSocket *> activeSockets;
-    QBluetoothSocketSymbianPrivate *ds;
+    QBluetoothSocketPrivate *ds;
 #endif
 
     int maxPendingConnections;

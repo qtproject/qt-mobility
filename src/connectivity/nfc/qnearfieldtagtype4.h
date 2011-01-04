@@ -39,38 +39,39 @@
 **
 ****************************************************************************/
 
-#ifndef QBLUETOOTHDEVICEDISCOVERYAGENT_SYMBIAN_P_H
-#define QBLUETOOTHDEVICEDISCOVERYAGENT_SYMBIAN_P_H
+#ifndef QNEARFIELDTAGTYPE4_H
+#define QNEARFIELDTAGTYPE4_H
 
-#include "qbluetoothdevicediscoveryagent.h"
-#include "qbluetoothdevicediscoveryagent_p.h"
+#include <qnearfieldtarget.h>
 
-#include <es_sock.h>
-#include <bt_sock.h>
+QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
-        
-class QBluetoothDeviceDiscoveryAgentPrivateSymbian : public QBluetoothDeviceDiscoveryAgentPrivate, public CActive
+
+class Q_CONNECTIVITY_EXPORT QNearFieldTagType4 : public QNearFieldTarget
 {
-  Q_OBJECT
+    Q_OBJECT
+
 public:
-    QBluetoothDeviceDiscoveryAgentPrivateSymbian(QObject *parent);
-    virtual ~QBluetoothDeviceDiscoveryAgentPrivateSymbian();
+    explicit QNearFieldTagType4(QObject *parent = 0);
+    ~QNearFieldTagType4();
 
-    virtual void start();
-    virtual void stop();
-    virtual bool isActive() const;
-    
+    Type type() const { return NfcTagType4; }
 
-private:
-    void RunL();
-    void DoCancel();     
+    quint8 version();
 
-    RHostResolver hostResolver;
-    RSocketServ socketServer;
-    TNameEntry entry;
+    virtual RequestId select(const QByteArray &name);
+    virtual RequestId select(quint16 fileIdentifier);
+
+    virtual RequestId read(quint16 length = 0, quint16 startOffset = 0);
+    virtual RequestId write(const QByteArray &data, quint16 startOffset = 0);
+
+protected:
+    bool handleResponse(const QNearFieldTarget::RequestId &id, const QByteArray &response);
 };
 
 QTM_END_NAMESPACE
 
-#endif
+QT_END_HEADER
+
+#endif // QNEARFIELDTAGTYPE4_H
