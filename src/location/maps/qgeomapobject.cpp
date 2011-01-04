@@ -92,6 +92,41 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
+    \enum QGeoMapObject::CoordinateUnit
+
+    Describes the units of measurement used for a map object's
+    graphics item.
+
+    \value PixelUnit
+        Units are in pixels on the screen. Pixel coordinate (0,0) is
+        translated to the origin coordinate.
+    \value MeterUnit
+        Units are in meters on the ground -- a local transverse mercator
+        coordinate system (WGS84 ellipsoid) is used for translation, centered
+        on the origin coordinate.
+    \value RelativeArcSecondUnit
+        Units are in arc seconds relative to the origin coordinate.
+    \value AbsoluteArcSecondUnit
+        Units are in arc seconds, origin ignored.
+*/
+
+/*!
+    \enum QGeoMapObject::TransformType
+
+    Describes the type of transformation applied to change this object's
+    coordinate system into screen coordinates.
+
+    \value BilinearTransform
+        This object's bounding box is taken, and transformed at each of its
+        corners into screen coordinates. A bilinear interpolation is then used
+        to draw the rest of the object's GraphicsItem.
+    \value ExactTransform
+        Individual key points on the object are transformed and the GraphicsItem
+        is constructed in direct pixel coordinates. This is only available for
+        certain subclasses, depending on the implementation of QGeoMapData.
+*/
+
+/*!
     Constructs a new map object associated with \a mapData.
 */
 QGeoMapObject::QGeoMapObject(QGeoMapData *mapData)
@@ -120,6 +155,9 @@ QGeoMapObject::~QGeoMapObject()
     delete d_ptr;
 }
 
+/*!
+    Causes the QGeoMapData containing this object to be updated.
+*/
 void QGeoMapObject::update()
 {
     emit mapNeedsUpdate();
@@ -311,6 +349,17 @@ QGeoMapData* QGeoMapObject::mapData() const
     return d_ptr->mapData;
 }
 
+/*!
+    \property QGeoMapObject::graphicsItem
+    \brief This property holds the GraphicsItem that will be drawn on the map.
+
+    The GraphicsItem's coordinates are in the units specified by the
+    QGeoMapObject::units property.
+
+    To offset the coordinates of the GraphicsItem (for items that can only
+    be constructed about their parent position), use the QGraphicsItem::setTransform
+    method with a QTransform containing the desired translation.
+*/
 QGraphicsItem * const QGeoMapObject::graphicsItem() const
 {
     return d_ptr->graphicsItem;
@@ -326,6 +375,12 @@ void QGeoMapObject::setGraphicsItem(QGraphicsItem *item)
     emit graphicsItemChanged(item);
 }
 
+/*!
+    \property QGeoMapObject::transformType
+    \brief This property holds the transformation type used to draw the object.
+
+    \sa QGeoMapObject::TransformType
+*/
 QGeoMapObject::TransformType QGeoMapObject::transformType() const
 {
     return d_ptr->transType;
@@ -337,6 +392,13 @@ void QGeoMapObject::setTransformType(const TransformType &type)
     emit mapNeedsUpdate();
 }
 
+/*!
+    \property QGeoMapObject::origin
+    \brief This property holds the origin of the object's coordinate system.
+
+    How the origin coordinate is used depends on the selected coordinate
+    system, see QGeoMapObject::TransformType for more details.
+*/
 QGeoCoordinate QGeoMapObject::origin() const
 {
     return d_ptr->origin;
@@ -351,6 +413,10 @@ void QGeoMapObject::setOrigin(const QGeoCoordinate &origin)
     emit originChanged(origin);
 }
 
+/*!
+    \property QGeoMapObject::units
+    \brief This property holds the units of measurement for the object.
+*/
 QGeoMapObject::CoordinateUnit QGeoMapObject::units() const
 {
     return d_ptr->units;
