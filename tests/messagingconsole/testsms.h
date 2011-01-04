@@ -34,6 +34,7 @@ public:
     void testCountAccounts();
     void testQueryAccounts();
     bool testRemoveQMFAccount(const QString & accountIdStr);
+    bool testMoveSMSToFolder(const QString &messageIdStr, const QString &folderIdStr);
 
 signals:
 

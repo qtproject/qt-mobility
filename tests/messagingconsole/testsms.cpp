@@ -447,6 +447,30 @@ bool TestSms::testRemoveQMFAccount(const QString & accountIdStr)
     return result;
 }
 
+bool TestSms::testMoveSMSToFolder(const QString &messageIdStr, const QString &folderIdStr)
+{
+    bool result = false;
+    QMessageFolderId fId(folderIdStr);
+    QMessageId mId(messageIdStr);
+
+    if (mId.isValid() && fId.isValid() && m_pMM) {
+        QMessage m = m_pMM->message(mId);
+
+        qDebug() << "Old Folder: " << m.parentFolderId().toString();
+        qDebug() << "New Folder: " << fId.toString();
+
+        result = m_pMM->moveMessageToFolder(&m, fId);
+
+        if (result) {
+            qDebug() << "Message is moved successfully to folder" << m.parentFolderId().toString();
+        } else {
+             qDebug() << "Message cannot be moved" ;
+        }
+    }
+
+    return result;
+}
+
 void TestSms::onMessageAdded(const QMessageId & id, const QMessageManager::NotificationFilterIdSet & matchingFilterIds)
 {
     qDebug() << __PRETTY_FUNCTION__ << "Message ID = " << id.toString();

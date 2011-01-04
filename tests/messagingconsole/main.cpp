@@ -22,6 +22,7 @@ QTM_USE_NAMESPACE
 #define COMMAND_COUNT_ACCOUNTS      "count-accounts"
 #define COMMAND_QUERY_ACCOUNTS      "query-accounts"
 #define COMMAND_REMOVE_QMF_ACCOUNT  "remove-qmf-account"
+#define COMMAND_MOVE_SMS            "move-sms"
 
 
 
@@ -97,6 +98,9 @@ int main(int argc, char *argv[])
     } else if (QString(argv[1]) == QString(COMMAND_REMOVE_QMF_ACCOUNT))
     {
         test.testRemoveQMFAccount(QString(argv[2]));
+    } else if (QString(argv[1]) == QString(COMMAND_MOVE_SMS))
+    {
+        test.testMoveSMSToFolder(QString(argv[2]), QString(argv[3]));
     } else {
         printUsage(argv[0]);
         return -1;
