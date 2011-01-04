@@ -229,6 +229,31 @@ Event StorageEngine::eventFromMessage(const QMessage &message)
            return event;
    }
 
+   QString folderIdStr = message.parentFolderId().toString();
+
+   if (folderIdStr == FOLDER_ID_INBOX) {
+       event.setParentId(INBOX);
+       event.setDirection(Event::Inbound);
+       event.setIsDraft(false);
+   } else if (folderIdStr == FOLDER_ID_OUTBOX) {
+       event.setParentId(OUTBOX);
+       event.setDirection(Event::Outbound);
+       event.setIsDraft(false);
+   } else if (folderIdStr == FOLDER_ID_DRAFTS) {
+       event.setParentId(DRAFT);
+       event.setDirection(Event::Outbound);
+       event.setIsDraft(true);
+   } else if (folderIdStr == FOLDER_ID_SENT) {
+       event.setParentId(SENT);
+       event.setDirection(Event::Outbound);
+       event.setIsDraft(false);
+   } else {
+       event.setParentId(0);
+       event.setDirection(Event::UnknownDirection);
+       event.setIsDraft(true);
+   }
+
+    /*
    switch (message.standardFolder())
    {
    case QMessage::InboxFolder:
@@ -255,7 +280,7 @@ Event StorageEngine::eventFromMessage(const QMessage &message)
        event.setParentId(0);
        event.setDirection(Event::UnknownDirection);
        event.setIsDraft(true);
-   }
+   }*/
 
    // depends on direction
    event.setRemoteUid(event.direction() == Event::Inbound ? message.from().addressee() : MessagingHelper::addressListToString(message.to()));

@@ -81,8 +81,9 @@ public:
 
     bool addMessage(QMessage *m);
     bool updateMessage(QMessage *m);
+    bool moveMessageToFolder(QMessage *m, const QMessageFolderId &folderId);
     bool removeMessage(const QMessageId &id, QMessageManager::RemovalOption option = QMessageManager::RemoveOnOriginatingServer);
-    bool removeMessages(const QMessageFilter &filter, QMessageManager::RemovalOption option = QMessageManager::RemoveOnOriginatingServer);
+    bool removeMessages(const QMessageFilter &filter, QMessageManager::RemovalOption option = QMessageManager::RemoveOnOriginatingServer);    
 
     bool removeAccount(const QMessageAccountId &id);
 

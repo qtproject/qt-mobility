@@ -110,6 +110,7 @@ public:
 
     bool addMessage(QMessage *m);
     bool updateMessage(QMessage *m);
+    bool moveMessageToFolder(QMessage *m, const QMessageFolderId &folderId);
     bool removeMessage(const QMessageId &id, RemovalOption option = RemoveOnOriginatingServer);
     bool removeMessages(const QMessageFilter &filter, RemovalOption option = RemoveOnOriginatingServer);
 
