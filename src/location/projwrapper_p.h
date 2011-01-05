@@ -57,6 +57,8 @@
 #include "qmobilityglobal.h"
 #include <QSharedDataPointer>
 #include <QString>
+#include <QList>
+#include <QPolygonF>
 
 QTM_BEGIN_NAMESPACE
 
@@ -93,7 +95,22 @@ public:
     bool convert(const ProjCoordinateSystem &system);
 
 private:
-    ProjCoordinatePrivate * const d;
+    ProjCoordinatePrivate *d;
+};
+
+class ProjPolygonPrivate;
+class ProjPolygon : public QList<ProjCoordinate>
+{
+public:
+    ProjPolygon(const ProjCoordinateSystem &system);
+    ProjPolygon(const QPolygonF &poly, const ProjCoordinateSystem &system);
+    ~ProjPolygon();
+
+    bool convert(const ProjCoordinateSystem &system);
+    QPolygonF toPolygonF() const;
+
+private:
+    ProjPolygonPrivate *d;
 };
 
 QTM_END_NAMESPACE

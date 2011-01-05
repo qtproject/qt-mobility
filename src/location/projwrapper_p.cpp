@@ -43,6 +43,8 @@
 #include <proj_api.h>
 #include <QSharedData>
 #include <QString>
+#include <QPolygonF>
+#include <QPointF>
 
 QTM_BEGIN_NAMESPACE
 
@@ -158,6 +160,51 @@ bool ProjCoordinate::convert(const ProjCoordinateSystem &system)
         d->currentSystem = system;
         return true;
     }
+}
+
+class ProjPolygonPrivate
+{
+public:
+    ProjCoordinateSystem currentSystem;
+};
+
+ProjPolygon::ProjPolygon(const ProjCoordinateSystem &system) :
+    QList<ProjCoordinate>(),
+    d(new ProjPolygonPrivate)
+{
+    d->currentSystem = system;
+}
+
+ProjPolygon::ProjPolygon(const QPolygonF &poly, const ProjCoordinateSystem &system) :
+    QList<ProjCoordinate>(),
+    d(new ProjPolygonPrivate)
+{
+    d->currentSystem = system;
+    foreach (QPointF point, poly)
+        append(ProjCoordinate(point.x(), point.y(), 0.0, system));
+}
+
+bool ProjPolygon::convert(const ProjCoordinateSystem &system)
+{
+    for (int i=0; i<size(); ++i) {
+        ProjCoordinate coord = at(i);
+        if (!coord.convert(system))
+            return false;
+        replace(i, coord);
+    }
+
+    d->currentSystem = system;
+    return true;
+}
+
+QPolygonF ProjPolygon::toPolygonF() const
+{
+    QPolygonF poly;
+    for (int i=0; i<size(); ++i) {
+        const ProjCoordinate &coord = at(i);
+        poly << QPointF(coord.x(), coord.y());
+    }
+    return poly;
 }
 
 QTM_END_NAMESPACE
