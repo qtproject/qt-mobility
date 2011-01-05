@@ -1137,6 +1137,12 @@ void QGeoMapDataPrivate::updateLatLonTransform(QGeoMapObject *object)
     if (!item)
         return;
 
+    QRectF localRect = item->boundingRect();
+
+    // skip any objects with invalid bounds
+    if (!localRect.isValid() || localRect.isEmpty() || localRect.isNull())
+        return;
+
     QPolygonF local = item->boundingRect() * item->transform();
     QList<QPolygonF> polys;
 
@@ -1145,10 +1151,6 @@ void QGeoMapDataPrivate::updateLatLonTransform(QGeoMapObject *object)
     if (object->transformType() == QGeoMapObject::BilinearTransform ||
             object->units() == QGeoMapObject::PixelUnit) {
         QTransform latLon;
-
-        if (local.isEmpty() || local.boundingRect().width() <= 0 ||
-                local.boundingRect().height() <= 0)
-            return;
 
         if (object->units() == QGeoMapObject::MeterUnit) {
             bilinearMetersToSeconds(origin, item, local, latLon);
