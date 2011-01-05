@@ -1094,6 +1094,10 @@ void QMediaPlayer::setVideoOutput(QAbstractVideoSurface *surface)
             The player is expected to play QIODevice based streams.
             If passed to QMediaPlayer constructor, the service supporting
             streams playback will be chosen.
+
+    \value VideoSurface
+            The player is expected to be able to render to a
+            QAbstractVideoSurface \l {setVideoOutput()}{output}.
 */
 
 #include "moc_qmediaplayer.cpp"

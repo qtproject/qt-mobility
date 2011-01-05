@@ -105,6 +105,10 @@ public:
 
     \value StreamPlayback
             The service is capable of playing QIODevice based streams.
+
+    \value VideoSurface
+            The service is capable of renderering to a QAbstractVideoSurface
+            output.
 */
 
 /*!
