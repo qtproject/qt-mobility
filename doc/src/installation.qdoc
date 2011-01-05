@@ -78,7 +78,7 @@ these domains have dependencies and these are outlined below:
        The landmarks backend for *nix,Windows and Fremantle platforms depends on QtSql. QtSql also needs the SQLite 3 driver (enabled by default in qt) at runtime.
 
        The landmarks backend on the harmattan platform depends on QtSparql and QtSparql Tracker Extensions.  There is also a runtime dependency
-       for \l {http://project.gnome.org/Tracker}{Tracker} 0.9.30 or greater.
+       for \l {http://project.gnome.org/Tracker}{Tracker} 0.9.30 or greater, and on libqtsparql-tracker which is the Tracker driver for QtSparql.
 \row
     \o Messaging
     \o On Linux, QtMessaging depends on qtopiamail from \l {http://labs.trolltech.com/blogs/category/qtmessaging}{QMF}.
