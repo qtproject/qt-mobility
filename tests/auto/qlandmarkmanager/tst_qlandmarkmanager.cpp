@@ -97,6 +97,7 @@
 #endif
 
 //defines to turn on and off tests for symbian
+
 #define INVALID_MANAGER
 #define RETRIEVE_CATEGORY
 #define RETRIEVE_LANDMARK
@@ -106,6 +107,7 @@
 #define SAVE_MULTIPLE_LANDMARKS
 #define REMOVE_CATEGORY
 #define REMOVE_LANDMARK
+
 #define GET_ALL_CATEGORIES
 #define FILTER_DEFAULT
 #define FILTER_NAME
@@ -349,8 +351,12 @@ private:
             fetchRequest.setOffset(offset);
             fetchRequest.setSorting(sortOrder);
             fetchRequest.start();
-
-            bool waitResult = waitForAsync(spy, &fetchRequest, error);
+            bool waitResult;
+#if defined(Q_WS_MAEMO_6)
+            waitResult = waitForAsync(spy, &fetchRequest, error,8000);
+#else
+            waitResult = waitForAsync(spy, &fetchRequest, error);
+#endif
             if (!waitResult)
                     qWarning("Wait for async failed for landmark fetch");
             result = waitResult;
@@ -362,7 +368,11 @@ private:
             idFetchRequest.setOffset(offset);
             idFetchRequest.setSorting(sortOrder);
             idFetchRequest.start();
+#if defined(Q_WS_MAEMO_6)
+            waitResult = waitForAsync(spyId, &idFetchRequest, error,8000);
+#else
             waitResult = waitForAsync(spyId, &idFetchRequest, error);
+#endif
             if (!waitResult)
                 qWarning("Wait for async failed for landmark id fetch");
             QList<QLandmarkId> lmIds = idFetchRequest.landmarkIds();
@@ -387,7 +397,6 @@ private:
             QSignalSpy spy(&fetchRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
             fetchRequest.setLandmarkIds(lmIds);
             fetchRequest.start();
-            result = waitForAsync(spy, &fetchRequest,error,100);
             result = waitForAsync(spy, &fetchRequest,error);
             *lms = fetchRequest.landmarks();
         } else {
@@ -541,6 +550,7 @@ private:
              catRemoveRequest.setCategoryId(categoryId);
              catRemoveRequest.start();
              result = waitForAsync(spy, &catRemoveRequest,error);
+
              bool alreadyWarned = false;
              if (!result) {
                  qWarning() << "Wait for asynchronous request failed";
@@ -599,6 +609,7 @@ private:
              lmRemoveRequest.setLandmarkId(landmarkId);
              lmRemoveRequest.start();
              result = waitForAsync(spy, &lmRemoveRequest,error);
+
              bool alreadyWarned = false;
              if (!result) {
                  qWarning() << "Wait for asynchronous request failed";
@@ -2468,7 +2479,6 @@ void tst_QLandmarkManager::saveLandmark() {
     QVERIFY(doSingleLandmarkSave(type, &lm1,QLandmarkManager::NoError));
     QVERIFY(checkLandmarkCount(originalLandmarkCount +2));
     int newLandmarkCount = originalLandmarkCount + 2;
-
     QCOMPARE(lm1, m_manager->landmark(lm1.landmarkId()));
     lm1Initial.setLandmarkId(lm1.landmarkId());
     QCOMPARE(lm1,lm1Initial);
@@ -4995,7 +5005,12 @@ void tst_QLandmarkManager::asyncLandmarkFetchCancel() {
      fetchRequest.setFilter(unionFilter);
      fetchRequest.start();
      fetchRequest.cancel();
+#if defined(Q_WS_MAEMO_6)
+     QVERIFY(waitForAsync(spy, &fetchRequest, QLandmarkManager::CancelError, 16000));
+#else
      QVERIFY(waitForAsync(spy, &fetchRequest, QLandmarkManager::CancelError));
+#endif
+
      QCOMPARE(fetchRequest.landmarks().count(), 0);
 
      //test canceling of a landmark id fetch
@@ -5005,7 +5020,11 @@ void tst_QLandmarkManager::asyncLandmarkFetchCancel() {
      idFetchRequest.start();
      QTest::qWait(75);
      idFetchRequest.cancel();
+#if defined(Q_WS_MAEMO_6)
+     QVERIFY(waitForAsync(spy2, &idFetchRequest, QLandmarkManager::CancelError, 16000));
+#else
      QVERIFY(waitForAsync(spy2, &idFetchRequest, QLandmarkManager::CancelError));
+#endif
      QCOMPARE(idFetchRequest.landmarkIds().count(), 0);
 
      //check that we can delete an request halfway during an operation.
@@ -5013,7 +5032,11 @@ void tst_QLandmarkManager::asyncLandmarkFetchCancel() {
      QSignalSpy spy3(fetchRequestPointer, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
      fetchRequestPointer->setFilter(unionFilter);
      fetchRequestPointer->start();
+#if defined(Q_WS_MAEMO_6)
+     QTest::qWait(200);
+#else
      QTest::qWait(75);
+#endif
      QCOMPARE(spy3.count(),1);
      QCOMPARE(qvariant_cast<QLandmarkAbstractRequest::State>(spy3.at(0).at(0)), QLandmarkAbstractRequest::ActiveState);
      delete fetchRequestPointer; //failure to delete usually results in a segfault
@@ -6540,7 +6563,11 @@ void tst_QLandmarkManager::filterAttribute3()
     //testing setAttributes
     QLandmarkAttributeFilter attributeFilter;
     QStringList attributeList;
+#ifndef Q_WS_MAEMO_6
     attributeList << "description" << "countryCode" << "country" << "state" << "city" << "district" << "street";
+#else
+    attributeList << "description" << "country" << "state" << "city" << "district" << "street";
+#endif
     attributeFilter.setAttributes(attributeList, "kent",QLandmarkFilter::MatchContains);
     attributeFilter.setOperationType(QLandmarkAttributeFilter::OrOperation);
 
@@ -7031,7 +7058,7 @@ void tst_QLandmarkManager::importGpx() {
 #else
     prefix = ":";
 #endif
-     int originalCategoryCount = m_manager->categoryIds().count();
+    int originalCategoryCount = m_manager->categoryIds().count();
 
     QSignalSpy spyAdd(m_manager, SIGNAL(landmarksAdded(QList<QLandmarkId>)));
     QSignalSpy spyChange(m_manager,SIGNAL(landmarksChanged(QList<QLandmarkId>)));
@@ -7040,20 +7067,16 @@ void tst_QLandmarkManager::importGpx() {
 
     QLandmarkImportRequest importRequest(m_manager);
     QSignalSpy spy(&importRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
-
     QLandmarkCategory cat1;
     cat1.setName("CAT1");
     QVERIFY(m_manager->saveCategory(&cat1));
-
     QLandmarkCategory cat2;
     cat2.setName("CAT2");
     QVERIFY(m_manager->saveCategory(&cat2));
-
     QLandmarkCategory cat3;
     cat3.setName("CAT3");
     QVERIFY(m_manager->saveCategory(&cat3));
     QVERIFY(m_manager->removeCategory(cat3.categoryId()));
-
     QFETCH(QString, type);
     if (type == "sync")  {
         QVERIFY(!m_manager->importLandmarks(NULL, QLandmarkManager::Gpx)); //no iodevice set
@@ -7121,14 +7144,22 @@ void tst_QLandmarkManager::importGpx() {
         importRequest.setFileName(prefix + "data/AUS-PublicToilet-AustralianCapitalTerritory.gpx");
         importRequest.setFormat(QLandmarkManager::Gpx);
         importRequest.start();
+#if defined(Q_WS_MAEMO_6)
+        QVERIFY(waitForAsync(spy, &importRequest, QLandmarkManager::NoError,12000));
+#else
         QVERIFY(waitForAsync(spy, &importRequest, QLandmarkManager::NoError));
+#endif
         QCOMPARE(importRequest.landmarkIds().count(),187);
     } else if (type == "asyncExcludeCategoryData") {
         importRequest.setFileName(prefix + "data/AUS-PublicToilet-AustralianCapitalTerritory.gpx");
         importRequest.setFormat(QLandmarkManager::Gpx);
         importRequest.setTransferOption(QLandmarkManager::ExcludeCategoryData);
         importRequest.start();
+#if defined(Q_WS_MAEMO_6)
+        QVERIFY(waitForAsync(spy, &importRequest, QLandmarkManager::NoError,12000));
+#else
         QVERIFY(waitForAsync(spy, &importRequest, QLandmarkManager::NoError));
+#endif
         QCOMPARE(importRequest.landmarkIds().count(),187);
     } else if (type == "asyncAttachSingleCategory") {
         importRequest.setFileName(prefix + "data/AUS-PublicToilet-AustralianCapitalTerritory.gpx");
@@ -7158,7 +7189,6 @@ void tst_QLandmarkManager::importGpx() {
     } else {
         qFatal("Unknown row test type");
     }
-
     QList<QLandmark> landmarks = m_manager->landmarks(QLandmarkFilter());
     QCOMPARE(m_manager->categories().count(),originalCategoryCount + 2);
 
@@ -7179,21 +7209,12 @@ void tst_QLandmarkManager::importGpx() {
     QCOMPARE(spyChange.count(), 0);
 
     QList<QLandmarkId> ids;
-#if (!defined(Q_WS_MAEMO_6))
     QCOMPARE(spyAdd.count(), 0);
-#endif
 #ifdef Q_OS_SYMBIAN
     if (type == "asyncAttachSingleCategory")
         QEXPECT_FAIL("", "MOBILITY-1733: inconsistent datachanged signalling on symbian", Continue);
 #endif
-#if defined(Q_WS_MAEMO_6)
-    if (type != "asyncExcludeCategoryData")
-        QVERIFY(dataChanged.count() > 0);
-    else
-        QVERIFY(spyAdd.count() > 0);
-#else
     QCOMPARE(dataChanged.count(),1);
-#endif
     spyAdd.clear();
     dataChanged.clear();
 
@@ -7233,7 +7254,6 @@ void tst_QLandmarkManager::importGpx() {
 
     QCOMPARE(lmLast, retrievedLast);
     QCOMPARE(lmLast.coordinate(), retrievedLast.coordinate());
-
     if (type == "sync") {
         QVERIFY(m_manager->importLandmarks(prefix + "data/test.gpx", QLandmarkManager::Gpx));
         QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
@@ -7265,7 +7285,6 @@ void tst_QLandmarkManager::importGpx() {
     } else {
         qFatal("Unknown test row type");
     }
-
 #if defined(Q_WS_MAEMO_6)
     QTest::qWait(2000);
 #else
@@ -7314,7 +7333,6 @@ void tst_QLandmarkManager::importGpx() {
     QVERIFY(lmNames.contains("test1"));
     QVERIFY(lmNames.contains("test2"));
     QVERIFY(lmNames.contains("test3"));
-
     if ((type=="syncAttachSingleCategory") || (type == "asyncAttachSingleCategory")) {
         foreach(const QLandmark &landmark,lms) {
             QCOMPARE(landmark.categoryIds().count(),1);
@@ -7341,26 +7359,24 @@ void tst_QLandmarkManager::importGpx() {
 
         QCOMPARE(spyRemove.count(), 0);
         QCOMPARE(spyChange.count(), 0);
-#if (!defined(Q_WS_MAEMO_6))
         QCOMPARE(spyAdd.count(), 0);
-#endif
+
         //check that we can use canceled request again
         importRequest.setFileName(prefix + "data/AUS-PublicToilet-AustralianCapitalTerritory.gpx");
         importRequest.setFormat(QLandmarkManager::Gpx);
         importRequest.setTransferOption(QLandmarkManager::IncludeCategoryData);
         importRequest.start();
+#if defined(Q_WS_MAEMO_6)
+        QVERIFY(waitForAsync(spy, &importRequest, QLandmarkManager::NoError,16000));
+#else
         QVERIFY(waitForAsync(spy, &importRequest, QLandmarkManager::NoError));
+#endif
         QCOMPARE(originalLandmarksCount + 187, m_manager->landmarks().count());
 
         QCOMPARE(spyRemove.count(), 0);
         QCOMPARE(spyChange.count(), 0);
-
-#if defined(Q_WS_MAEMO_6)
-        QVERIFY(dataChanged.count() > 0);
-#else
         QCOMPARE(spyAdd.count(), 0);
         QCOMPARE(dataChanged.count(), 1);
-#endif
     }
 #endif
 }
@@ -7510,7 +7526,11 @@ void tst_QLandmarkManager::importLmx() {
         importRequest.setTransferOption(QLandmarkManager::AttachSingleCategory);
         importRequest.setCategoryId(catAlpha.categoryId());
         importRequest.start();
-        QVERIFY(waitForAsync(spy, &importRequest, QLandmarkManager::NoError));
+#if defined(Q_WS_MAEMO_6)
+        QVERIFY(waitForAsync(spy, &importRequest, QLandmarkManager::NoError, 10000));
+#else
+       QVERIFY(waitForAsync(spy, &importRequest, QLandmarkManager::NoError));
+#endif
         QCOMPARE(importRequest.landmarkIds().count(), 16);
     } else {
         qFatal("Unknown row test type");
@@ -7564,8 +7584,14 @@ void tst_QLandmarkManager::importLmx() {
     else
         QCOMPARE(addedCategories, 3);
 
-
-    QList<QLandmarkId> ids = spyAdd.at(0).at(0).value<QList<QLandmarkId> >();
+    QList<QLandmarkId> ids;
+#if defined(Q_WS_MAEMO_6)
+    for (int i=0; i < spyAdd.count();++i) {
+        ids.append(spyAdd.at(i).at(0).value<QList<QLandmarkId> >());
+    }
+#else
+    ids = spyAdd.at(0).at(0).value<QList<QLandmarkId> >();
+#endif
     QCOMPARE(ids.count(), 16);
     spyAdd.clear();
     spyCatAdd.clear();
@@ -8198,11 +8224,17 @@ void tst_QLandmarkManager::simpleWaitForFinished()
 #ifdef WAIT_FOR_FINISHED
 void tst_QLandmarkManager::importWaitForFinished()
 {
+    QString prefix;
+#ifdef Q_OS_SYMBIAN
+    prefix = "";
+#else
+    prefix = ":";
+#endif
     QLandmarkImportRequest importRequest(m_manager);
     QSignalSpy spy(&importRequest,SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
-
     //try wait for finished with default arguments to block
     importRequest.setFileName(prefix + "data/AUS-PublicToilet-AustralianCapitalTerritory.gpx");
+    importRequest.setFormat(QLandmarkManager::Gpx);
     importRequest.start();
     QVERIFY(waitForActive(spy, &importRequest,100));
 #ifdef Q_OS_SYMBIAN
@@ -8211,29 +8243,33 @@ void tst_QLandmarkManager::importWaitForFinished()
 #else
     QVERIFY(importRequest.waitForFinished());
     spy.clear();
-
     const int fileLandmarkCount = 187;
     QCOMPARE(m_manager->landmarkIds().count(), fileLandmarkCount);
-
     //try wait for finished but providing a time period less than the time needed
     //to finish the operation
     importRequest.setFileName(prefix + "data/AUS-PublicToilet-AustralianCapitalTerritory.gpx");
+    importRequest.setFormat(QLandmarkManager::Gpx);
     importRequest.start();
-    QVERIFY(waitForActive(spy, &importRequest,100));
+    QVERIFY(waitForActive(spy, &importRequest,100));    
     QVERIFY(!importRequest.waitForFinished(5));
+#ifndef Q_WS_MAEMO_6
     QCOMPARE(m_manager->landmarkIds().count(), fileLandmarkCount);
-
+#endif
     //try wait for finished with a negative time period
     importRequest.waitForFinished(-1);
     QCOMPARE(m_manager->landmarkIds().count(), fileLandmarkCount*2);
     spy.clear();
-
     //try wait for finished with a time period greater than the amount of time
     //needed to complete the operation
     importRequest.setFileName(prefix + "data/AUS-PublicToilet-AustralianCapitalTerritory.gpx");
+    importRequest.setFormat(QLandmarkManager::Gpx);
     importRequest.start();
     QVERIFY(waitForActive(spy, &importRequest,100));
+#ifdef Q_WS_MAEMO_6
+    QVERIFY(importRequest.waitForFinished(30000));
+#else
     QVERIFY(importRequest.waitForFinished(10000));
+#endif
     spy.clear();
     QCOMPARE(m_manager->landmarkIds().count(), fileLandmarkCount*3);
 #endif
@@ -8241,6 +8277,12 @@ void tst_QLandmarkManager::importWaitForFinished()
 
 void tst_QLandmarkManager::fetchWaitForFinished()
 {
+    QString prefix;
+#ifdef Q_OS_SYMBIAN
+    prefix = "";
+#else
+    prefix = ":";
+#endif
     int fileLandmarksCount = 187;
     QVERIFY(m_manager->importLandmarks(prefix + "data/AUS-PublicToilet-AustralianCapitalTerritory.gpx"));
     QVERIFY(m_manager->importLandmarks(prefix + "data/AUS-PublicToilet-AustralianCapitalTerritory.gpx"));
@@ -8250,6 +8292,7 @@ void tst_QLandmarkManager::fetchWaitForFinished()
     QVERIFY(m_manager->importLandmarks(prefix + "data/AUS-PublicToilet-AustralianCapitalTerritory.gpx"));
     QVERIFY(m_manager->importLandmarks(prefix + "data/AUS-PublicToilet-AustralianCapitalTerritory.gpx"));
     QVERIFY(m_manager->importLandmarks(prefix + "data/AUS-PublicToilet-AustralianCapitalTerritory.gpx"));
+
     int expectedLandmarksCount = fileLandmarksCount * 8;
 
     QLandmarkFetchRequest fetchRequest(m_manager);
@@ -8260,21 +8303,25 @@ void tst_QLandmarkManager::fetchWaitForFinished()
     QVERIFY(waitForActive(spy, &fetchRequest,100));
     QVERIFY(fetchRequest.waitForFinished());
     QCOMPARE(fetchRequest.landmarks().count(), expectedLandmarksCount);
-
+    spy.clear();
     //try wait for finished by providing time period less than the time needed to finish the operation.
     QVERIFY(fetchRequest.start());
     QVERIFY(waitForActive(spy, &fetchRequest,100));
     QVERIFY(!fetchRequest.waitForFinished(5));
-
     //try wait with a negative time period
     fetchRequest.waitForFinished(-1);
     QCOMPARE(fetchRequest.landmarks().count(), expectedLandmarksCount);
-
+    spy.clear();
     //try wait for finished with a time period greater than the amount of time
     //needed to complete the operation
     QVERIFY(fetchRequest.start());
     QVERIFY(waitForActive(spy, &fetchRequest,100));
+#if (defined(Q_WS_MAEMO_6))
+    QVERIFY(fetchRequest.waitForFinished(140000));
+#else
     QVERIFY(fetchRequest.waitForFinished(10000));
+#endif
+
     QCOMPARE(fetchRequest.landmarks().count(), expectedLandmarksCount);
 
 #ifdef Q_OS_SYMBIAN
@@ -8288,7 +8335,6 @@ void tst_QLandmarkManager::fetchWaitForFinished()
     }
 #endif
 }
-
 #endif
 
 #ifdef MISC
@@ -9490,7 +9536,7 @@ void tst_QLandmarkManager::removeStress()
         lmRemoveRequest.setLandmarks(lms);
         lmRemoveRequest.start();
 #if defined(Q_WS_MAEMO_6)
-        waitForAsync(spy, &lmRemoveRequest, QLandmarkManager::NoError,6000);
+        waitForAsync(spy, &lmRemoveRequest, QLandmarkManager::NoError,12000);
 #else
         waitForAsync(spy, &lmRemoveRequest, QLandmarkManager::NoError);
 #endif
@@ -9633,7 +9679,11 @@ void tst_QLandmarkManager::saveCategoryStress()
         QSignalSpy spy(&catSaveRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
         catSaveRequest.setCategories(cats);
         catSaveRequest.start();
+#if defined(Q_WS_MAEMO_6)
+        waitForAsync(spy, &catSaveRequest,QLandmarkManager::NoError, 12000);
+#else
         waitForAsync(spy, &catSaveRequest,QLandmarkManager::NoError);
+#endif
         qDebug() << "Async cat save error=" << catSaveRequest.error();
         qDebug() << "Async cat save errorstring= " << catSaveRequest.errorString();
         qDebug() << "Async error map size =" << catSaveRequest.errorMap().count();
@@ -9690,7 +9740,11 @@ void tst_QLandmarkManager::removeCategoryStress()
         QSignalSpy spy(&catRemoveRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
         catRemoveRequest.setCategories(cats);
         catRemoveRequest.start();
+#if defined(Q_WS_MAEMO_6)
+        waitForAsync(spy, &catRemoveRequest, QLandmarkManager::NoError, 12000);
+#else
         waitForAsync(spy, &catRemoveRequest, QLandmarkManager::NoError);
+#endif
         qDebug() << "Async remove error = " << catRemoveRequest.error();
         qDebug() << "Async remove string=" << catRemoveRequest.errorString();
         qDebug() << "Async remove Error map size =" << catRemoveRequest.errorMap().count();

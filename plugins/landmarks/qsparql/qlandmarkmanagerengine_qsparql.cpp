@@ -44,6 +44,7 @@
 #include "qlandmarkfilehandler_lmx_p.h"
 #include "databaseoperations_p.h"
 
+#include <QBuffer>
 #include <QDateTime>
 #include <QDebug>
 #include <QDir>
@@ -51,6 +52,7 @@
 #include <QFileInfo>
 #include <QMutexLocker>
 #include <QSettings>
+#include <QSharedMemory>
 #include <QString>
 #include <QStringList>
 #include <QTextStream>
@@ -107,11 +109,14 @@ QLandmarkManagerEngineQsparql::QLandmarkManagerEngineQsparql(const QString &file
         : m_filename(filename),
         m_dbConnectionName(QUuid::createUuid().toString()),
         m_isCustomAttributesEnabled(false),
-        m_databaseOperations()
+        m_databaseOperations(),
+        sharedMemory("QLandmarksSharedMemory")
 {
     m_changeNotificationsEnabled = false;
     *error = QLandmarkManager::NoError;
     *errorString ="";
+    m_timeStamp = QString("");
+    m_signalsPrevented = false;
 
     qRegisterMetaType<ERROR_MAP >();
     qRegisterMetaType<QList<QLandmarkCategoryId> >();
@@ -321,9 +326,7 @@ bool QLandmarkManagerEngineQsparql::saveLandmarks(QList<QLandmark> * landmarks,
         QLandmarkManager::Error *error,
         QString *errorString)
 {
-    QList <QLandmarkId> addedIds;
-    QList <QLandmarkId> changedIds;
-    return m_databaseOperations.saveLandmarks(landmarks, errorMap, error, errorString, &addedIds, &changedIds);
+    return m_databaseOperations.saveLandmarks(landmarks, errorMap, error, errorString);
 }
 
 bool QLandmarkManagerEngineQsparql::removeLandmark(const QLandmarkId &landmarkId,
@@ -338,8 +341,7 @@ bool QLandmarkManagerEngineQsparql::removeLandmarks(const QList<QLandmarkId> &la
         QLandmarkManager::Error *error,
         QString *errorString)
 {
-    QList <QLandmarkId> removedIds;
-    return  m_databaseOperations.removeLandmarks(landmarkIds , errorMap, error, errorString, &removedIds);
+    return  m_databaseOperations.removeLandmarks(landmarkIds , errorMap, error, errorString);
 }
 
 bool QLandmarkManagerEngineQsparql::saveCategory(QLandmarkCategory* category,
@@ -354,9 +356,7 @@ bool QLandmarkManagerEngineQsparql::saveCategories(QList<QLandmarkCategory> * ca
         QLandmarkManager::Error *error,
         QString *errorString)
 {
-    QList<QLandmarkCategoryId> addedIds;
-    QList<QLandmarkCategoryId> changedIds;
-    return m_databaseOperations.saveCategories(categories, errorMap, error, errorString, &addedIds, &changedIds);
+    return m_databaseOperations.saveCategories(categories, errorMap, error, errorString);
 }
 
 bool QLandmarkManagerEngineQsparql::removeCategory(const QLandmarkCategoryId &categoryId,
@@ -371,8 +371,7 @@ bool QLandmarkManagerEngineQsparql::removeCategories(const QList<QLandmarkCatego
         QLandmarkManager::Error *error,
         QString *errorString)
 {
-    QList<QLandmarkCategoryId> removedIds;
-    return  m_databaseOperations.removeCategories(categoryIds , errorMap, error, errorString, &removedIds);
+    return  m_databaseOperations.removeCategories(categoryIds , errorMap, error, errorString);
 }
 
 bool QLandmarkManagerEngineQsparql::importLandmarks(QIODevice *device,
@@ -382,9 +381,7 @@ bool QLandmarkManagerEngineQsparql::importLandmarks(QIODevice *device,
                                                    QLandmarkManager::Error *error,
                                                    QString *errorString)
 {
-    QList<QLandmarkId> addedLandmarkIds;
-    QList<QLandmarkCategoryId> addedCategoryIds;
-    return m_databaseOperations.importLandmarks(device, format, option, categoryId, error, errorString, &addedLandmarkIds, &addedCategoryIds);
+    return m_databaseOperations.importLandmarks(device, format, option, categoryId, error, errorString);
 }
 
 bool QLandmarkManagerEngineQsparql::exportLandmarks(QIODevice *device,
@@ -603,6 +600,32 @@ bool QLandmarkManagerEngineQsparql::waitForRequestFinished(QLandmarkAbstractRequ
 void QLandmarkManagerEngineQsparql::landmarksNotified(QList<TrackerChangeNotifier::Quad>, QList<TrackerChangeNotifier::Quad>)
 {
     if (m_changeNotificationsEnabled) {
+        bool dataChangedSignallingOnly = false;
+        QDateTime dateTime = QDateTime::currentDateTime();
+        qint64 currentTime = (qint64)dateTime.toTime_t() *1000 + dateTime.time().msec();
+
+        if (sharedMemory.attach()) {
+            QBuffer buffer;
+            QDataStream in(&buffer);
+            QString timeStamp;
+            sharedMemory.lock();
+            buffer.setData((char*)sharedMemory.constData(), sharedMemory.size());
+            buffer.open(QBuffer::ReadOnly);
+            in >> timeStamp;
+            sharedMemory.unlock();
+            sharedMemory.detach();
+            if (currentTime < timeStamp.toLongLong()) {
+                m_signalsPrevented = true;
+            } else {
+                m_signalsPrevented = false;
+                if (timeStamp.compare(m_timeStamp) != 0) {
+                    dataChangedSignallingOnly = true;
+                }
+            }
+            m_timeStamp = timeStamp;
+        } else {
+            m_signalsPrevented = false;
+        }
         QLandmarkId landmarkId;
         landmarkId.setManagerUri(managerUri());
         QList<QLandmarkId> addedLandmarkIds;
@@ -622,35 +645,40 @@ void QLandmarkManagerEngineQsparql::landmarksNotified(QList<TrackerChangeNotifie
             }
         }
         delete r;
-
-        foreach(QString localId, m_landmarkHash.keys()) {
-            if (!landmarkHash.contains(localId)) {
-                landmarkId.setLocalId(localId);
-                removedLandmarkIds << landmarkId;
-            }
-        }
-        foreach(QString localId, landmarkHash.keys()) {
-            if (!m_landmarkHash.contains(localId)) {
-                landmarkId.setLocalId(localId);
-                addedLandmarkIds << landmarkId;
+        if (!m_signalsPrevented) {
+            if (dataChangedSignallingOnly) {
+                emit dataChanged();
             } else {
-                if(m_landmarkHash.value(localId).compare(landmarkHash.value(localId), Qt::CaseSensitive) != 0) {
-                    landmarkId.setLocalId(localId);
-                    changedLandmarkIds << landmarkId;
+                foreach(QString localId, m_landmarkHash.keys()) {
+                    if (!landmarkHash.contains(localId)) {
+                        landmarkId.setLocalId(localId);
+                        removedLandmarkIds << landmarkId;
+                    }
+                }
+                foreach(QString localId, landmarkHash.keys()) {
+                    if (!m_landmarkHash.contains(localId)) {
+                        landmarkId.setLocalId(localId);
+                        addedLandmarkIds << landmarkId;
+                    } else {
+                        if(m_landmarkHash.value(localId).compare(landmarkHash.value(localId), Qt::CaseSensitive) != 0) {
+                            landmarkId.setLocalId(localId);
+                            changedLandmarkIds << landmarkId;
+                        }
+                    }
+                }
+                int totalChangeCount = addedLandmarkIds.count() + changedLandmarkIds.count() + removedLandmarkIds.count();
+
+                if (totalChangeCount > 50 ) {
+                    emit dataChanged();
+                } else {
+                    if (addedLandmarkIds.count() > 0)
+                        emit landmarksAdded(addedLandmarkIds);
+                    if (changedLandmarkIds.count() > 0)
+                        emit landmarksChanged(changedLandmarkIds);
+                    if (removedLandmarkIds.count() > 0)
+                        emit landmarksRemoved(removedLandmarkIds);
                 }
             }
-        }
-        int totalChangeCount = addedLandmarkIds.count() + changedLandmarkIds.count() + removedLandmarkIds.count();
-
-        if (totalChangeCount > 50 ) {
-            emit dataChanged();
-        } else {
-            if (addedLandmarkIds.count() > 0)
-                emit landmarksAdded(addedLandmarkIds);
-            if (changedLandmarkIds.count() > 0)
-                emit landmarksChanged(changedLandmarkIds);
-            if (removedLandmarkIds.count() > 0)
-                emit landmarksRemoved(removedLandmarkIds);
         }
         m_landmarkHash.clear();
         m_landmarkHash = landmarkHash;
@@ -660,6 +688,32 @@ void QLandmarkManagerEngineQsparql::landmarksNotified(QList<TrackerChangeNotifie
 void QLandmarkManagerEngineQsparql::categoriesNotified(QList<TrackerChangeNotifier::Quad>, QList<TrackerChangeNotifier::Quad>)
 {
     if (m_changeNotificationsEnabled) {
+        bool dataChangedSignallingOnly = false;
+        QDateTime dateTime = QDateTime::currentDateTime();
+        qint64 currentTime = (qint64)dateTime.toTime_t() *1000 + dateTime.time().msec();
+
+        if (sharedMemory.attach()) {
+            QBuffer buffer;
+            QDataStream in(&buffer);
+            QString timeStamp;
+            sharedMemory.lock();
+            buffer.setData((char*)sharedMemory.constData(), sharedMemory.size());
+            buffer.open(QBuffer::ReadOnly);
+            in >> timeStamp;
+            sharedMemory.unlock();
+            sharedMemory.detach();
+            if (currentTime < timeStamp.toLongLong()) {
+                m_signalsPrevented = true;
+            } else {
+                m_signalsPrevented = false;
+                if (timeStamp.compare(m_timeStamp) != 0) {
+                    dataChangedSignallingOnly = true;
+                }
+            }
+            m_timeStamp = timeStamp;
+        } else {
+            m_signalsPrevented = false;
+        }
         QLandmarkCategoryId categoryId;
         categoryId.setManagerUri(managerUri());
         QList<QLandmarkCategoryId> addedCategoryIds;
@@ -679,35 +733,41 @@ void QLandmarkManagerEngineQsparql::categoriesNotified(QList<TrackerChangeNotifi
             }
         }
         delete r;
-
-        foreach(QString localId, m_categoryHash.keys()) {
-            if (!categoryHash.contains(localId)) {
-                categoryId.setLocalId(localId);
-                removedCategoryIds << categoryId;
-            }
-        }
-        foreach(QString localId, categoryHash.keys()) {
-            if (!m_categoryHash.contains(localId)) {
-                categoryId.setLocalId(localId);
-                addedCategoryIds << categoryId;
+        if (!m_signalsPrevented) {
+            if (dataChangedSignallingOnly) {
+                emit dataChanged();
             } else {
-                if(m_categoryHash.value(localId).compare(categoryHash.value(localId), Qt::CaseSensitive) != 0) {
-                    categoryId.setLocalId(localId);
-                    changedCategoryIds << categoryId;
+
+                foreach(QString localId, m_categoryHash.keys()) {
+                    if (!categoryHash.contains(localId)) {
+                        categoryId.setLocalId(localId);
+                        removedCategoryIds << categoryId;
+                    }
+                }
+                foreach(QString localId, categoryHash.keys()) {
+                    if (!m_categoryHash.contains(localId)) {
+                        categoryId.setLocalId(localId);
+                        addedCategoryIds << categoryId;
+                    } else {
+                        if(m_categoryHash.value(localId).compare(categoryHash.value(localId), Qt::CaseSensitive) != 0) {
+                            categoryId.setLocalId(localId);
+                            changedCategoryIds << categoryId;
+                        }
+                    }
+                }
+                int totalChangeCount = addedCategoryIds.count() + changedCategoryIds.count() + removedCategoryIds.count();
+
+                if (totalChangeCount > 50 ) {
+                    emit dataChanged();
+                } else {
+                    if (addedCategoryIds.count() > 0)
+                        emit categoriesAdded(addedCategoryIds);
+                    if (changedCategoryIds.count() > 0)
+                        emit categoriesChanged(changedCategoryIds);
+                    if (removedCategoryIds.count() > 0)
+                        emit categoriesRemoved(removedCategoryIds);
                 }
             }
-        }
-        int totalChangeCount = addedCategoryIds.count() + changedCategoryIds.count() + removedCategoryIds.count();
-
-        if (totalChangeCount > 50 ) {
-            emit dataChanged();
-        } else {
-            if (addedCategoryIds.count() > 0)
-                emit categoriesAdded(addedCategoryIds);
-            if (changedCategoryIds.count() > 0)
-                emit categoriesChanged(changedCategoryIds);
-            if (removedCategoryIds.count() > 0)
-                emit categoriesRemoved(removedCategoryIds);
         }
         m_categoryHash.clear();
         m_categoryHash = categoryHash;
