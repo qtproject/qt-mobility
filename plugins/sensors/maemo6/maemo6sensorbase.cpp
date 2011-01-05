@@ -50,12 +50,14 @@ const float maemo6sensorbase::GRAVITY_EARTH_THOUSANDTH = 0.00980665;
 const int maemo6sensorbase::KErrNotFound=-1;
 const char* const maemo6sensorbase::ALWAYS_ON = "alwaysOn";
 const char* const maemo6sensorbase::BUFFER_SIZE = "bufferSize";
+const char* const maemo6sensorbase::MAX_BUFFER_SIZE = "maxBufferSize";
+const char* const maemo6sensorbase::EFFICIENT_BUFFER_SIZE = "efficientBufferSize";
 
 maemo6sensorbase::maemo6sensorbase(QSensor *sensor)
-    : QSensorBackend(sensor), m_sensorInterface(0), m_bufferSize(-1), m_prevOutputRange(-1)
+    : QSensorBackend(sensor), m_sensorInterface(0), m_bufferSize(-1), m_prevOutputRange(-1), m_efficientBufferSize(1), m_maxBufferSize(1)
 {
     if (!m_remoteSensorManager)
-        m_remoteSensorManager = &SensorManagerInterface::instance();
+        m_remoteSensorManager = &SensorManagerInterface::instance();    
 }
 
 maemo6sensorbase::~maemo6sensorbase()
@@ -99,7 +101,7 @@ void maemo6sensorbase::start()
                 m_sensorInterface->setStandbyOverride(alwaysOn.toBool()):
                 m_sensorInterface->setStandbyOverride(false);
 
-        // buffering
+        // connects after buffering checks
         doConnectAfterCheck();
         
         int returnCode = m_sensorInterface->start().error().type();
@@ -111,9 +113,7 @@ void maemo6sensorbase::start()
 
 void maemo6sensorbase::stop()
 {
-    if (m_sensorInterface)
-        m_sensorInterface->stop();
-    m_bufferSize= -1;
+    if (m_sensorInterface) m_sensorInterface->stop();
 }
 
 void maemo6sensorbase::setRanges(qreal correctionFactor){
@@ -139,7 +139,7 @@ bool maemo6sensorbase::doConnectAfterCheck(){
     if (size == m_bufferSize) return true;
 
     //TODO: waiting next sensord version
-    // m_sensorInterface->setBufferSize(size);
+//    m_sensorInterface->setBufferSize(size);
 
     // if multiple->single or single->multiple or if uninitialized
     if ((m_bufferSize>1 && size==1) || (m_bufferSize==1 && size>1) || m_bufferSize==-1){
@@ -155,8 +155,21 @@ bool maemo6sensorbase::doConnectAfterCheck(){
 const int maemo6sensorbase::bufferSize(){
     QVariant bufferVariant = sensor()->property(BUFFER_SIZE);
     int bufferSize = bufferVariant.isValid()?bufferVariant.toInt():1;
-    if (bufferSize<1) return 1;     // min
-    if (bufferSize>256) return 256; // max
+    if (bufferSize==1) return 1;
+
+    // otherwise check validity
+    if (bufferSize<1){
+        qWarning()<<"bufferSize cannot be "<<bufferSize<<", must be a positive number";
+        return m_bufferSize>0?m_bufferSize:1;
+    }
+    if (bufferSize>m_maxBufferSize){
+        qWarning()<<"bufferSize cannot be "<<bufferSize<<", MAX value is "<<m_maxBufferSize;
+        return m_bufferSize>0?m_bufferSize:1;
+    }
+    if (m_efficientBufferSize>1 && bufferSize%m_efficientBufferSize!=0){
+        qWarning()<<"bufferSize must be multifold of "<<m_efficientBufferSize<<" or 1";
+        return m_bufferSize>0?m_bufferSize:1;
+    }
     return bufferSize;
 }
 
