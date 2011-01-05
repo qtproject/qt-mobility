@@ -554,11 +554,20 @@ void QGeoMapData::paintObjects(QPainter *painter, const QStyleOptionGraphicsItem
         QGeoMapObject *object = d_ptr->pixelItems.value(item);
         Q_ASSERT(object);
         if (object->isVisible() && !objsDone.contains(object)) {
-            foreach (QTransform trans, d_ptr->pixelTrans.values(object)) {
-                painter->setTransform(trans * baseTrans);
+            if (d_ptr->pixelExact.contains(object)) {
+                foreach (QGraphicsItem *it, d_ptr->pixelExact.values(object)) {
+                    painter->setTransform(baseTrans);
 
-                QStyleOptionGraphicsItem *style = new QStyleOptionGraphicsItem;
-                object->graphicsItem()->paint(painter, style);
+                    QStyleOptionGraphicsItem *style = new QStyleOptionGraphicsItem;
+                    it->paint(painter, style);
+                }
+            } else {
+                foreach (QTransform trans, d_ptr->pixelTrans.values(object)) {
+                    painter->setTransform(trans * baseTrans);
+
+                    QStyleOptionGraphicsItem *style = new QStyleOptionGraphicsItem;
+                    object->graphicsItem()->paint(painter, style);
+                }
             }
             objsDone.insert(object);
         }
