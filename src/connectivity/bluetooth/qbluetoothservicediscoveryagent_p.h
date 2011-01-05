@@ -42,8 +42,6 @@
 #ifndef QBLUETOOTHSERVICEDISCOVERYAGENT_P_H
 #define QBLUETOOTHSERVICEDISCOVERYAGENT_P_H
 
-#include "qobjectpriv_p.h"
-
 #include "qbluetoothaddress.h"
 #include "qbluetoothdeviceinfo.h"
 #include "qbluetoothserviceinfo.h"
@@ -69,9 +67,9 @@ QTM_BEGIN_NAMESPACE
 
 class QBluetoothDeviceDiscoveryAgent;
 
-class QBluetoothServiceDiscoveryAgentPrivate : public QObjectPrivate
+class QBluetoothServiceDiscoveryAgentPrivate
 #ifdef Q_OS_SYMBIAN
-, public MSdpAgentNotifier, public MSdpAttributeValueVisitor
+: public MSdpAgentNotifier, public MSdpAttributeValueVisitor
 #endif
 {
     Q_DECLARE_PUBLIC(QBluetoothServiceDiscoveryAgent)
@@ -94,11 +92,16 @@ public:
     void setDiscoveryState(DiscoveryState s) { state = s; }
     DiscoveryState discoveryState() { return state; }
 
+    void setDiscoveryMode(QBluetoothServiceDiscoveryAgent::DiscoveryMode m) { mode = m; }
+    QBluetoothServiceDiscoveryAgent::DiscoveryMode DiscoveryMode() { return mode; }
+
     // private slots
     void _q_deviceDiscoveryFinished();
+    void _q_deviceDiscovered(const QBluetoothDeviceInfo &info);
     void _q_serviceDiscoveryFinished();
 #ifndef QT_NO_DBUS
     void _q_discoveredServices(QDBusPendingCallWatcher *watcher);
+    void _q_createdDevice(QDBusPendingCallWatcher *watcher);
 #endif
 
 #ifdef Q_OS_SYMBIAN
@@ -115,6 +118,7 @@ public:
 
 private:
     void start(const QBluetoothAddress &address);
+    bool quickDiscovery(const QBluetoothAddress &address, const QBluetoothDeviceInfo &info);
     void stop();
 
 #ifdef Q_OS_SYMBIAN
@@ -136,6 +140,8 @@ private:
 
     QBluetoothDeviceDiscoveryAgent *deviceDiscoveryAgent;
 
+    QBluetoothServiceDiscoveryAgent::DiscoveryMode mode;
+
 #ifdef Q_OS_SYMBIAN
     CSdpAgent *sdpAgent;
     CSdpSearchPattern *filter;
@@ -149,6 +155,9 @@ private:
     OrgBluezAdapterInterface *adapter;
     OrgBluezDeviceInterface *device;
 #endif
+
+protected:
+    QBluetoothServiceDiscoveryAgent *q_ptr;
 };
 
 QTM_END_NAMESPACE

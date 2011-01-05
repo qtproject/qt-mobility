@@ -39,46 +39,52 @@
 **
 ****************************************************************************/
 
-#ifndef QBLUETOOTHDEVICEDISCOVERYAGENT_BLUEZ_P_H
-#define QBLUETOOTHDEVICEDISCOVERYAGENT_BLUEZ_P_H
+#ifndef QL2CAPSERVER_P_H
+#define QL2CAPSERVER_P_H
 
-#include "qbluetoothdevicediscoveryagent.h"
-#include "qbluetoothdevicediscoveryagent_p.h"
-
-#include <QVariant>
+#include <qmobilityglobal.h>
 
 #ifndef QT_NO_DBUS
-class OrgBluezManagerInterface;
-class OrgBluezAdapterInterface;
-class QDBusVariant;
+QT_FORWARD_DECLARE_CLASS(QSocketNotifier)
 #endif
 
 QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
-class QBluetoothDeviceDiscoveryAgentPrivateBluez : public QBluetoothDeviceDiscoveryAgentPrivate
+class QBluetoothAddress;
+class QBluetoothSocket;
+
+#ifdef Q_OS_SYMBIAN
+class QBluetoothSocketSymbianPrivate;
+#endif
+
+class QL2capServer;
+
+class QL2capServerPrivate
 {
-  Q_OBJECT
+    Q_DECLARE_PUBLIC(QL2capServer)
+
 public:
-    QBluetoothDeviceDiscoveryAgentPrivateBluez(QObject *parent = 0);
-    ~QBluetoothDeviceDiscoveryAgentPrivateBluez();
+    QL2capServerPrivate();
+    ~QL2capServerPrivate();
 
-    void start();
-    void stop();
-    bool isActive() const;
+#ifndef QT_NO_DBUS
+    void _q_newConnection();
+#endif
 
-    // private slots
-private Q_SLOTS:
-    void _q_deviceFound(const QString &address, const QVariantMap &dict);
-    void _q_propertyChanged(const QString &name, const QDBusVariant &value);
+public:
+    QBluetoothSocket *socket;
+    bool pending;
+
+    int maxPendingConnections;
+
+protected:
+    QL2capServer *q_ptr;
 
 private:
-//    QBluetoothDeviceDiscoveryAgent::InquiryType inquiryType;
-
-#if !defined(QT_NO_DBUS)
-    OrgBluezManagerInterface *manager;
-    OrgBluezAdapterInterface *adapter;
+#ifndef QT_NO_DBUS
+    QSocketNotifier *socketNotifier;
 #endif
 };
 

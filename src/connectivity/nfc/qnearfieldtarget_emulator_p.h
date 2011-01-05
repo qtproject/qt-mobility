@@ -39,63 +39,78 @@
 **
 ****************************************************************************/
 
-#ifndef QBLUETOOTHSOCKET_BLUEZ_P_H
-#define QBLUETOOTHSOCKET_BLUEZ_P_H
+#ifndef QNEARFIELDTARGET_EMULATOR_P_H
+#define QNEARFIELDTARGET_EMULATOR_P_H
 
-#include "qbluetoothsocket.h"
+#include "qnearfieldtagtype1.h"
+#include "qnearfieldtagtype2.h"
+#include "targetemulator_p.h"
 
-#include <QtGlobal>
+#include <QtCore/QMap>
 
-QT_FORWARD_DECLARE_CLASS(QSocketNotifier)
+QTM_USE_NAMESPACE
 
-QT_BEGIN_HEADER
-
-QTM_BEGIN_NAMESPACE
-
-class QBluetoothSocketBluezPrivate : public QBluetoothSocketPrivate
-{    
+class TagType1 : public QNearFieldTagType1
+{
     Q_OBJECT
 
 public:
-    QBluetoothSocketBluezPrivate(QBluetoothSocket *parent);
-    ~QBluetoothSocketBluezPrivate();
+    TagType1(TagBase *tag, QObject *parent);
+    ~TagType1();
 
-    void connectToService(const QBluetoothAddress &address, quint16 port, QIODevice::OpenMode openMode);
+    QByteArray uid() const;
 
-    bool ensureNativeSocket(QBluetoothSocket::SocketType type);    
+    AccessMethods accessMethods() const;
 
-public:
-    QSocketNotifier *connectNotifier;
+    RequestId sendCommand(const QByteArray &command);
+    bool waitForRequestCompleted(const RequestId &id, int msecs = 5000);
 
-    bool connecting;
-
-public Q_SLOTS:
-    void writeNotify();
-    
+private:
+    TagBase *m_tag;
 };
 
-static inline void convertAddress(quint64 from, quint8 (&to)[6])
+class TagType2 : public QNearFieldTagType2
 {
-    to[0] = (from >> 0) & 0xff;
-    to[1] = (from >> 8) & 0xff;
-    to[2] = (from >> 16) & 0xff;
-    to[3] = (from >> 24) & 0xff;
-    to[4] = (from >> 32) & 0xff;
-    to[5] = (from >> 40) & 0xff;
-}
+    Q_OBJECT
 
-static inline void convertAddress(quint8 (&from)[6], quint64 &to)
+public:
+    TagType2(TagBase *tag, QObject *parent);
+    ~TagType2();
+
+    QByteArray uid() const;
+
+    AccessMethods accessMethods() const;
+
+    RequestId sendCommand(const QByteArray &command);
+    bool waitForRequestCompleted(const RequestId &id, int msecs = 5000);
+
+private:
+    TagBase *m_tag;
+};
+
+class TagActivator : public QObject
 {
-    to = (quint64(from[0]) << 0) |
-         (quint64(from[1]) << 8) |
-         (quint64(from[2]) << 16) |
-         (quint64(from[3]) << 24) |
-         (quint64(from[4]) << 32) |
-         (quint64(from[5]) << 40);
-}
+    Q_OBJECT
 
-QTM_END_NAMESPACE
+public:
+    TagActivator();
+    ~TagActivator();
 
-QT_END_HEADER
+    void initialize();
+    void reset();
 
-#endif
+    static TagActivator *instance();
+
+protected:
+    void timerEvent(QTimerEvent *e);
+
+signals:
+    void tagActivated(TagBase *tag);
+    void tagDeactivated(TagBase *tag);
+
+private:
+    QMap<TagBase *, bool>::Iterator m_current;
+    int timerId;
+};
+
+#endif // QNEARFIELDTARGET_EMULATOR_P_H
