@@ -80,9 +80,6 @@ private slots:
     void testPlugin();
     void testFileEffect();
     void testThemeEffect();
-
-private:
-    QFeedbackHapticsEffect m_testEffect;
 };
 
 tst_QFeedbackPlugin::tst_QFeedbackPlugin()
@@ -141,6 +138,11 @@ void tst_QFeedbackPlugin::testFileEffect()
     QVERIFY(fileEffect.state() == QFeedbackEffect::Stopped);
     // Now we should be able to change things again
 
+    // Make sure setting the source to the same thing is a noop
+    fileEffect.setSource(fileEffect.source());
+    QVERIFY(fileEffect.state() == QFeedbackEffect::Stopped);
+
+    // Now unload
     QVERIFY(fileEffect.isLoaded());
     fileEffect.unload();
     QVERIFY(!fileEffect.isLoaded());
@@ -169,6 +171,7 @@ void tst_QFeedbackPlugin::testFileEffect()
 
 void tst_QFeedbackPlugin::testPlugin()
 {
+    QFeedbackHapticsEffect testEffect;
     // first get the actuators.  we want to use the test plugin actuator.
     QFeedbackActuator* testActuator;
     QList<QFeedbackActuator*> actuators = QFeedbackActuator::actuators();
@@ -195,23 +198,23 @@ void tst_QFeedbackPlugin::testPlugin()
     // XXX TODO: ensure that a "working" plugin returns real values..
 
     // then, ensure that the test effect uses this actuator.
-    m_testEffect.setActuator(testActuator);
+    testEffect.setActuator(testActuator);
 
     // it will do nothing, so stick some values in and play it.
-    m_testEffect.setAttackIntensity(0.0);
-    m_testEffect.setAttackTime(250);
-    m_testEffect.setIntensity(1.0);
-    m_testEffect.setDuration(100);
-    m_testEffect.setFadeTime(250);
-    m_testEffect.setFadeIntensity(0.0);
-    m_testEffect.start();
-    QVERIFY(m_testEffect.state() == QFeedbackHapticsEffect::Running);
-    m_testEffect.pause();
-    QVERIFY(m_testEffect.state() == QFeedbackHapticsEffect::Paused);
-    m_testEffect.start();
-    QVERIFY(m_testEffect.state() == QFeedbackHapticsEffect::Running);
-    m_testEffect.stop();
-    QVERIFY(m_testEffect.state() == QFeedbackHapticsEffect::Stopped);
+    testEffect.setAttackIntensity(0.0);
+    testEffect.setAttackTime(250);
+    testEffect.setIntensity(1.0);
+    testEffect.setDuration(100);
+    testEffect.setFadeTime(250);
+    testEffect.setFadeIntensity(0.0);
+    testEffect.start();
+    QVERIFY(testEffect.state() == QFeedbackHapticsEffect::Running);
+    testEffect.pause();
+    QVERIFY(testEffect.state() == QFeedbackHapticsEffect::Paused);
+    testEffect.start();
+    QVERIFY(testEffect.state() == QFeedbackHapticsEffect::Running);
+    testEffect.stop();
+    QVERIFY(testEffect.state() == QFeedbackHapticsEffect::Stopped);
 }
 
 QTEST_MAIN(tst_QFeedbackPlugin)

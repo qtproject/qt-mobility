@@ -1,12 +1,12 @@
 symbian: {
-    exists($${EPOCROOT}epoc32/data/z/system/install/Symbianv4.0.sis) {
-        message("S^3 PS3 or later platform")
+    exists($${EPOCROOT}epoc32/data/z/system/install/productid_helen.sis) {
+        message("S^3 1.11 or later platform")
         DEFINES += SYMBIAN_BACKEND_USE_SQLITE
             
         # This will enable signals to be emitted sychronously with every
         # operation instead of them beeing emitted when database event observer
         # interface if called (HandleDatabaseEventL). This is an optimization
-        # for S^3 PS3+ platform. However enabling this will cause some problems
+        # for S^3 1.11+ platform. However enabling this will cause some problems
         # with signals concerning adding/removing groups/group participants. 
         DEFINES += SYMBIAN_BACKEND_SIGNAL_EMISSION_TWEAK
     } else {

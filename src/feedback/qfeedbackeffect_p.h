@@ -60,23 +60,6 @@
 
 QTM_BEGIN_NAMESPACE
 
-
-class QFeedbackEffectPrivate
-{
-public:
-    QFeedbackEffectPrivate() : state(QFeedbackEffect::Stopped)
-    {
-    }
-
-    virtual ~QFeedbackEffectPrivate()
-    {
-    }
-
-
-    QFeedbackEffect::State state;
-
-};
-
 class QFeedbackHapticsEffectPrivate
 {
 public:
