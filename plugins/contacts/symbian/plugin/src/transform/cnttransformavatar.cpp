@@ -52,7 +52,14 @@ QList<CContactItemField *> CntTransformAvatar::transformDetailL(const QContactDe
     const QContactAvatar &avatar(static_cast<const QContactAvatar&>(detail));
 
     //create new field
-    QString urlString = avatar.imageUrl().toString();
+    QUrl avatarUrl(avatar.imageUrl());
+    QString urlString;
+    if (avatarUrl.scheme() == QLatin1String("file")) {
+        urlString = avatarUrl.toLocalFile();
+        urlString.replace("/", "\\");  // Must be stored with backslashes in Symbian
+    } else {
+        urlString = avatarUrl.toString();
+    }
     TPtrC fieldText(reinterpret_cast<const TUint16*>(urlString.utf16()));
 
     //copy filename and replace slash with a backslash
@@ -90,7 +97,7 @@ QContactDetail *CntTransformAvatar::transformItemField(const CContactItemField& 
     if (field.ContentType().ContainsFieldType(KUidContactFieldCodImage)) {
         CContactTextField* storage = field.TextStorage();
         QString avatarString = QString::fromUtf16(storage->Text().Ptr(), storage->Text().Length());
-        avatar->setImageUrl(QUrl(avatarString));
+        avatar->setImageUrl(QUrl::fromUserInput(avatarString));
     }
 
     return avatar;
