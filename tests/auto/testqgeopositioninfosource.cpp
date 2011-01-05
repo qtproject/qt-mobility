@@ -202,6 +202,10 @@ void TestQGeoPositionInfoSource::cleanup()
 
 void TestQGeoPositionInfoSource::cleanupTestCase()
 {
+#ifdef TST_GEOCLUEMOCK_ENABLED
+    m_threadGeoclueMock.quit();
+    m_threadGeoclueMock.wait();
+#endif
     base_cleanupTestCase();
 }
 
@@ -940,6 +944,51 @@ void TestQGeoPositionInfoSource::changeSource()
     QTRY_COMPARE_WITH_TIMEOUT_RANGE(positionUpdatedSpy.count(), 1, 1900, 2100);
 }
 
+void TestQGeoPositionInfoSource::initGoneBad()
+{
+    // Test various error conditions during init.
+    QGeoPositionInfoSource* bad_source = 0;
+
+    geocluemock_set_gcmaster_get_default(false);
+    bad_source = QGeoPositionInfoSource::createDefaultSource(this);
+    QVERIFY(!bad_source);
+    geocluemock_set_gcmaster_get_default(true);
+    bad_source = QGeoPositionInfoSource::createDefaultSource(this);
+    QVERIFY(bad_source);
+    delete bad_source;
+
+    geocluemock_set_gcmaster_create_client(false);
+    bad_source = QGeoPositionInfoSource::createDefaultSource(this);
+    QVERIFY(!bad_source);
+    geocluemock_set_gcmaster_create_client(true);
+    bad_source = QGeoPositionInfoSource::createDefaultSource(this);
+    QVERIFY(bad_source);
+    delete bad_source;
+
+    geocluemock_set_gcmaster_set_requirements(false);
+    bad_source = QGeoPositionInfoSource::createDefaultSource(this);
+    QVERIFY(!bad_source);
+    geocluemock_set_gcmaster_set_requirements(true);
+    bad_source = QGeoPositionInfoSource::createDefaultSource(this);
+    QVERIFY(bad_source);
+    delete bad_source;
+
+    geocluemock_set_gcmaster_create_position(false);
+    bad_source = QGeoPositionInfoSource::createDefaultSource(this);
+    QVERIFY(!bad_source);
+    geocluemock_set_gcmaster_create_position(true);
+    bad_source = QGeoPositionInfoSource::createDefaultSource(this);
+    QVERIFY(bad_source);
+    delete bad_source;
+
+    geocluemock_set_geoclue_velocity_new(false);
+    bad_source = QGeoPositionInfoSource::createDefaultSource(this);
+    QVERIFY(bad_source); // velocity is not mandatory
+    delete bad_source;
+
+}
+
 #endif
 
 #include "testqgeopositioninfosource.moc"
+

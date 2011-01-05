@@ -56,6 +56,11 @@
 //#define TST_GEOCLUE_MOCK_TRACE 1
 
 void geocluemock_setjournal(QString journal);
+void geocluemock_set_gcmaster_get_default(bool value);
+void geocluemock_set_gcmaster_create_client(bool value);
+void geocluemock_set_gcmaster_set_requirements(bool value);
+void geocluemock_set_gcmaster_create_position(bool value);
+void geocluemock_set_geoclue_velocity_new(bool value);
 
 typedef void (*PositionChangedCallback) (GeocluePosition*,
                    GeocluePositionFields,

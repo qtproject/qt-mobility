@@ -49,6 +49,11 @@
 // though its in different thread). now going a bit dangerously, but seems to work..
 static GeoclueMock* lg_currentMockend = 0;
 static QString lg_currentJournal;
+static bool lg_geocluemock_gcmaster_get_default = true;
+static bool lg_geocluemock_gcmaster_create_client = true;
+static bool lg_geocluemock_gcmaster_set_requirements = true;
+static bool lg_geocluemock_gcmaster_create_position = true;
+static bool lg_geocluemock_geoclue_velocity_new = true;
 
 // These symbols override the symbols in the actual geoclue library;
 // they are used to mock the backend. ld won't resolve the actualy symbols
@@ -125,8 +130,12 @@ GeoclueMaster *geoclue_master_get_default (void)
 #ifdef TST_GEOCLUE_MOCK_TRACE
     qDebug("=mocked= geoclue_master_get_default");
 #endif
-    GeoclueMaster* master = (GeoclueMaster*)g_object_new (G_TYPE_OBJECT, NULL);
-    return master;
+    if (lg_geocluemock_gcmaster_get_default) {
+        GeoclueMaster* master = (GeoclueMaster*)g_object_new (G_TYPE_OBJECT, NULL);
+        return master;
+    } else {
+        return NULL;
+    }
 }
 
 GeoclueMasterClient *geoclue_master_create_client (GeoclueMaster *master,
@@ -140,8 +149,17 @@ GeoclueMasterClient *geoclue_master_create_client (GeoclueMaster *master,
 #ifdef TST_GEOCLUE_MOCK_TRACE
     qDebug("=mocked= geoclue_master_create_client");
 #endif
-    GeoclueMasterClient* client = (GeoclueMasterClient*)g_object_new (G_TYPE_OBJECT, NULL);
-    return client;
+    if (lg_geocluemock_gcmaster_create_client) {
+        GeoclueMasterClient* client = (GeoclueMasterClient*)g_object_new (G_TYPE_OBJECT, NULL);
+        return client;
+    } else {
+        if (error) {
+            *error = g_error_new ((GQuark)1, // dummy
+                                  2,         // dummy
+                                  "=mock= Failing gcmaster_create_client on purpose.");
+        }
+        return NULL;
+    }
 }
 
 gboolean geoclue_master_client_set_requirements (GeoclueMasterClient   *client,
@@ -161,7 +179,16 @@ gboolean geoclue_master_client_set_requirements (GeoclueMasterClient   *client,
 #ifdef TST_GEOCLUE_MOCK_TRACE
     qDebug("=mocked= geoclue_master_client_set_requirements");
 #endif
-    return true;
+    if (lg_geocluemock_gcmaster_set_requirements) {
+        return true;
+    } else {
+        if (error) {
+            *error = g_error_new ((GQuark)1, // dummy
+                                  2,         // dummy
+                                  "=mock= Failing gcmaster_client set requirements on purpose.");
+        }
+        return false;
+    }
 }
 
 GeocluePosition *geoclue_master_client_create_position (GeoclueMasterClient *client, GError **error)
@@ -172,9 +199,17 @@ GeocluePosition *geoclue_master_client_create_position (GeoclueMasterClient *cli
 #ifdef TST_GEOCLUE_MOCK_TRACE
     qDebug("=mocked= geoclue_master_client_create_position");
 #endif
-    GeocluePosition* position = (GeocluePosition*)g_object_new (G_TYPE_OBJECT, NULL);
-    return position;
-
+    if (lg_geocluemock_gcmaster_create_position) {
+        GeocluePosition* position = (GeocluePosition*)g_object_new (G_TYPE_OBJECT, NULL);
+        return position;
+    } else {
+        if (error) {
+            *error = g_error_new ((GQuark)1, // dummy
+                                  2,         // dummy
+                                  "=mock= Failing gcmaster_client create position on purpose.");
+        }
+        return NULL;
+    }
 }
 
 GeoclueVelocity *geoclue_velocity_new (const char *service,
@@ -186,8 +221,12 @@ GeoclueVelocity *geoclue_velocity_new (const char *service,
 #ifdef TST_GEOCLUE_MOCK_TRACE
     qDebug("=mocked= geoclue_velocity_new");
 #endif
-    GeoclueVelocity* velocity = (GeoclueVelocity*)g_object_new (G_TYPE_OBJECT, NULL);
-    return velocity;
+    if (lg_geocluemock_geoclue_velocity_new) {
+        GeoclueVelocity* velocity = (GeoclueVelocity*)g_object_new (G_TYPE_OBJECT, NULL);
+        return velocity;
+    } else {
+        return NULL;
+    }
 }
 
 void geoclue_position_get_position_async (GeocluePosition         *position,
@@ -468,4 +507,29 @@ void GeoclueMock::singleUpdate()
 void geocluemock_setjournal(QString journal)
 {
     lg_currentJournal = journal;
+}
+
+void geocluemock_set_gcmaster_get_default(bool value)
+{
+    lg_geocluemock_gcmaster_get_default = value;
+}
+
+void geocluemock_set_gcmaster_create_client(bool value)
+{
+    lg_geocluemock_gcmaster_create_client = value;
+}
+
+void geocluemock_set_gcmaster_set_requirements(bool value)
+{
+    lg_geocluemock_gcmaster_set_requirements = value;
+}
+
+void geocluemock_set_gcmaster_create_position(bool value)
+{
+    lg_geocluemock_gcmaster_create_position = value;
+}
+
+void geocluemock_set_geoclue_velocity_new(bool value)
+{
+    lg_geocluemock_geoclue_velocity_new = value;
 }

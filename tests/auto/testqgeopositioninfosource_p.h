@@ -135,6 +135,7 @@ private slots:
     // Test cases only ran against mock backend
     void updateValues();
     void changeSource();
+    void initGoneBad();
 #endif
 
 private:
