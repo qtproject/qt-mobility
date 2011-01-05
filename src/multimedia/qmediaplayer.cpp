@@ -206,6 +206,8 @@ void QMediaPlayerPrivate::_q_error(int error, const QString &errorString)
 
 void QMediaPlayerPrivate::_q_updateMedia(const QMediaContent &media)
 {
+    Q_Q(QMediaPlayer);
+
     if (!control)
         return;
 
@@ -230,8 +232,14 @@ void QMediaPlayerPrivate::_q_updateMedia(const QMediaContent &media)
 
     state = control->state();
 
-    if (state != currentState)
-        emit q_func()->stateChanged(state);
+    if (state != currentState) {
+        if (state == QMediaPlayer::PlayingState)
+            q->addPropertyWatch("position");
+        else
+            q->removePropertyWatch("position");
+
+        emit q->stateChanged(state);
+    }
 }
 
 void QMediaPlayerPrivate::_q_playlistDestroyed()
