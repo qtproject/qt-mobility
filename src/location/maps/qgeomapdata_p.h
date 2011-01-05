@@ -86,6 +86,10 @@ public:
 
     bool blockPropertyChangeSignals;
 
+    QHash<const QGeoMapObject*, QPolygonF> latLonExact;
+    QHash<const QGeoMapObject*, QPolygonF> pixelExact;
+    QHash<const QGeoMapObject*, QGraphicsItem*> pixelExactItems;
+
     QHash<const QGeoMapObject*, QTransform> latLonTrans;
     QGraphicsScene *latLonScene;
     QHash<QGraphicsItem*, QGeoMapObject*> latLonItems;
@@ -98,6 +102,23 @@ public:
     virtual void removeObject(QGeoMapObject *object);
     virtual void updateLatLonTransform(QGeoMapObject *object);
     virtual void updatePixelTransform(QGeoMapObject *object);
+
+    void bilinearMetersToSeconds(const QGeoCoordinate &origin,
+                                 QGraphicsItem *item,
+                                 QPolygonF &local,
+                                 QTransform &latLon);
+    void bilinearPixelsToSeconds(const QGeoCoordinate &origin,
+                                 QGraphicsItem *item,
+                                 QPolygonF &local,
+                                 QTransform &latLon);
+
+    void pixelShiftToScreen(const QGeoCoordinate &origin,
+                            QGeoMapObject *object,
+                            QList<QPolygonF> &polys);
+    void bilinearSecondsToScreen(const QGeoCoordinate &origin,
+                                 QGeoMapObject *object,
+                                 QList<QPolygonF> &polys);
+
     void clearObjects();
     void updateTransforms();
 

@@ -832,6 +832,88 @@ void QGeoMapDataPrivate::updateLatLonTransforms(QGeoMapGroupObject *group)
     }
 }
 
+void QGeoMapDataPrivate::bilinearMetersToSeconds(const QGeoCoordinate &origin,
+                                                 QGraphicsItem *item,
+                                                 QPolygonF &local,
+                                                 QTransform &latLon)
+{
+    QString projStr = "+proj=tmerc +lat_0=%1 +lon_0=%2 +k=1.0 +x_0=0 +y_0=0 +ellps=WGS84";
+    projStr = projStr.arg(origin.latitude(), 0, 'f', 10)
+                     .arg(origin.longitude(), 0, 'f', 10);
+
+    ProjCoordinateSystem localSys(projStr, false);
+    ProjCoordinateSystem wgs84("+proj=latlon +ellps=WGS84");
+
+    QPolygonF wgs;
+
+    foreach (QPointF pt, local) {
+        ProjCoordinate c(pt.x(), pt.y(), 0.0, localSys);
+        c.convert(wgs84);
+        double x = c.x() * 3600.0;
+        double y = c.y() * 3600.0;
+        wgs.append(QPointF(x, y));
+    }
+
+    // QTransform expects the last vertex (closing vertex) to be dropped
+    local.remove(4);
+    wgs.remove(4);
+
+    // perform wrapping
+    if (wgs.at(2).x() < wgs.at(3).x()) {
+        QPointF topRight = wgs.at(1);
+        topRight.setX(topRight.x() + 360.0 * 3600.0);
+        wgs.replace(1, topRight);
+
+        QPointF bottomRight = wgs.at(2);
+        bottomRight.setX(bottomRight.x() + 360.0 * 3600.0);
+        wgs.replace(2, bottomRight);
+    }
+
+    bool ok = QTransform::quadToQuad(local, wgs, latLon);
+    if (!ok)
+        return;
+
+    latLon = item->transform() * latLon;
+}
+
+void QGeoMapDataPrivate::bilinearPixelsToSeconds(const QGeoCoordinate &origin,
+                                                 QGraphicsItem *item,
+                                                 QPolygonF &local,
+                                                 QTransform &latLon)
+{
+    QPointF pixelOrigin = this->coordinateToScreenPosition(origin.longitude(),
+                                                           origin.latitude());
+
+    QPolygonF wgs;
+    foreach (const QPointF &pt, local) {
+        const QGeoCoordinate coord =
+                q_ptr->screenPositionToCoordinate(pt + pixelOrigin);
+        const QPointF lpt(coord.longitude() * 3600.0, coord.latitude() * 3600.0);
+        wgs.append(lpt);
+    }
+
+    // QTransform expects the last vertex (closing vertex) to be dropped
+    local.remove(4);
+    wgs.remove(4);
+
+    // perform wrapping
+    if (wgs.at(2).x() < wgs.at(3).x()) {
+        QPointF topRight = wgs.at(1);
+        topRight.setX(topRight.x() + 360.0 * 3600.0);
+        wgs.replace(1, topRight);
+
+        QPointF bottomRight = wgs.at(2);
+        bottomRight.setX(bottomRight.x() + 360.0 * 3600.0);
+        wgs.replace(2, bottomRight);
+    }
+
+    bool ok = QTransform::quadToQuad(local, wgs, latLon);
+    if (!ok)
+        return;
+
+    latLon = item->transform() * latLon;
+}
+
 void QGeoMapDataPrivate::updateLatLonTransform(QGeoMapObject *object)
 {
     QTransform latLon;
@@ -840,84 +922,21 @@ void QGeoMapDataPrivate::updateLatLonTransform(QGeoMapObject *object)
     QGraphicsItem *item = object->graphicsItem();
 
     // skip any objects without graphicsitems
-    if (!item)
+    if (!item && object->transformType() != QGeoMapObject::ExactTransform)
         return;
 
     QPolygonF local = item->boundingRect() * item->transform();
 
-    if (object->units() == QGeoMapObject::MeterUnit) {
-        QString projStr = "+proj=tmerc +lat_0=%1 +lon_0=%2 +k=1.0 +x_0=0 +y_0=0 +ellps=WGS84";
-        projStr = projStr.arg(origin.latitude(), 0, 'f', 10)
-                         .arg(origin.longitude(), 0, 'f', 10);
-
-        ProjCoordinateSystem localSys(projStr, false);
-        ProjCoordinateSystem wgs84("+proj=latlon +ellps=WGS84");
-
-        QPolygonF wgs;
-
-        foreach (QPointF pt, local) {
-            ProjCoordinate c(pt.x(), pt.y(), 0.0, localSys);
-            c.convert(wgs84);
-            double x = c.x() * 3600.0;
-            double y = c.y() * 3600.0;
-            wgs.append(QPointF(x, y));
+    if (object->transformType() == QGeoMapObject::BilinearTransform) {
+        if (object->units() == QGeoMapObject::MeterUnit) {
+            bilinearMetersToSeconds(origin, item, local, latLon);
+        } else if (object->units() == QGeoMapObject::RelativeArcSecondUnit) {
+            latLon.translate(origin.longitude() * 3600.0, origin.latitude() * 3600.0);
+        } else if (object->units() == QGeoMapObject::PixelUnit) {
+            bilinearPixelsToSeconds(origin, item, local, latLon);
         }
+    } else if (object->transformType() == QGeoMapObject::ExactTransform) {
 
-        // QTransform expects the last vertex (closing vertex) to be dropped
-        local.remove(4);
-        wgs.remove(4);
-
-        // perform wrapping
-        if (wgs.at(2).x() < wgs.at(3).x()) {
-            QPointF topRight = wgs.at(1);
-            topRight.setX(topRight.x() + 360.0 * 3600.0);
-            wgs.replace(1, topRight);
-
-            QPointF bottomRight = wgs.at(2);
-            bottomRight.setX(bottomRight.x() + 360.0 * 3600.0);
-            wgs.replace(2, bottomRight);
-        }
-
-        bool ok = QTransform::quadToQuad(local, wgs, latLon);
-        if (!ok)
-            return;
-
-        latLon = item->transform() * latLon;
-
-    } else if (object->units() == QGeoMapObject::RelativeArcSecondUnit) {
-        latLon.translate(origin.longitude() * 3600.0, origin.latitude() * 3600.0);
-    } else if (object->units() == QGeoMapObject::PixelUnit) {
-        QPointF pixelOrigin = this->coordinateToScreenPosition(origin.longitude(),
-                                                               origin.latitude());
-
-        QPolygonF wgs;
-        foreach (const QPointF &pt, local) {
-            const QGeoCoordinate coord =
-                    q_ptr->screenPositionToCoordinate(pt + pixelOrigin);
-            const QPointF lpt(coord.longitude() * 3600.0, coord.latitude() * 3600.0);
-            wgs.append(lpt);
-        }
-
-        // QTransform expects the last vertex (closing vertex) to be dropped
-        local.remove(4);
-        wgs.remove(4);
-
-        // perform wrapping
-        if (wgs.at(2).x() < wgs.at(3).x()) {
-            QPointF topRight = wgs.at(1);
-            topRight.setX(topRight.x() + 360.0 * 3600.0);
-            wgs.replace(1, topRight);
-
-            QPointF bottomRight = wgs.at(2);
-            bottomRight.setX(bottomRight.x() + 360.0 * 3600.0);
-            wgs.replace(2, bottomRight);
-        }
-
-        bool ok = QTransform::quadToQuad(local, wgs, latLon);
-        if (!ok)
-            return;
-
-        latLon = item->transform() * latLon;
     }
 
     latLonTrans.remove(object);
@@ -1014,15 +1033,69 @@ QPointF QGeoMapDataPrivate::coordinateToScreenPosition(double lon, double lat) c
     return q_ptr->coordinateToScreenPosition(c);
 }
 
+void QGeoMapDataPrivate::pixelShiftToScreen(const QGeoCoordinate &origin,
+                                            QGeoMapObject *object,
+                                            QList<QPolygonF> &polys)
+{
+    // compute the transform as an origin shift
+    QList<QPointF> origins;
+    origins << QPointF(origin.longitude(), origin.latitude());
+    origins << QPointF(origin.longitude() + 360.0, origin.latitude());
+    origins << QPointF(origin.longitude() - 360.0, origin.latitude());
+
+    foreach (QPointF o, origins) {
+        QTransform pixel = object->graphicsItem()->transform();
+        QPointF pixelOrigin = coordinateToScreenPosition(o.x(), o.y());
+        pixel.translate(pixelOrigin.x(), pixelOrigin.y());
+        pixelTrans.insertMulti(object, pixel);
+        polys << pixel.map(object->graphicsItem()->boundingRect());
+    }
+}
+
+void QGeoMapDataPrivate::bilinearSecondsToScreen(const QGeoCoordinate &origin,
+                                                 QGeoMapObject *object,
+                                                 QList<QPolygonF> &polys)
+{
+    QList<QTransform> latLons = latLonTrans.values(object);
+
+    // compute the transform by linearising from the lat/lon space
+    foreach (QTransform latLon, latLons) {
+        QTransform pixel;
+
+        QGraphicsItem *item = object->graphicsItem();
+        QPolygonF local = item->boundingRect();
+        QPolygonF latLonPoly = latLon.map(local);
+        QPolygonF pixelPoly;
+
+        foreach (QPointF pt, latLonPoly) {
+            double x = pt.x() / 3600.0;
+            double y = pt.y() / 3600.0;
+            QPointF pixel = this->coordinateToScreenPosition(x, y);
+            pixelPoly.append(pixel);
+        }
+
+        // QTransform expects the last vertex (closing vertex) to be dropped
+        local.remove(4);
+        pixelPoly.remove(4);
+
+        bool ok = QTransform::quadToQuad(local, pixelPoly, pixel);
+        if (!ok)
+            continue;
+
+        pixelTrans.insertMulti(object, pixel);
+
+        polys << pixelPoly;
+    }
+}
+
 void QGeoMapDataPrivate::updatePixelTransform(QGeoMapObject *object)
 {
     QGeoCoordinate origin = object->origin();
+    QGraphicsItem *item = object->graphicsItem();
 
     // skip any objects without graphicsitems
-    if (!object->graphicsItem())
+    if (!item && object->transformType() != QGeoMapObject::ExactTransform)
         return;
-
-    QList<QTransform> latLons = latLonTrans.values(object);
 
     QList<QGraphicsItem*> items = pixelItems.keys(object);
     foreach (QGraphicsItem *item, items) {
@@ -1034,50 +1107,11 @@ void QGeoMapDataPrivate::updatePixelTransform(QGeoMapObject *object)
     QList<QPolygonF> polys;
 
     pixelTrans.remove(object);
-    if (object->units() == QGeoMapObject::PixelUnit) {
-        // compute the transform as an origin shift
-
-        QList<QPointF> origins;
-        origins << QPointF(origin.longitude(), origin.latitude());
-        origins << QPointF(origin.longitude() + 360.0, origin.latitude());
-        origins << QPointF(origin.longitude() - 360.0, origin.latitude());
-
-        foreach (QPointF o, origins) {
-            QTransform pixel = object->graphicsItem()->transform();
-            QPointF pixelOrigin = coordinateToScreenPosition(o.x(), o.y());
-            pixel.translate(pixelOrigin.x(), pixelOrigin.y());
-            pixelTrans.insertMulti(object, pixel);
-            polys << pixel.map(object->graphicsItem()->boundingRect());
-        }
-
-    } else {
-        // compute the transform by linearising from the lat/lon space
-        foreach (QTransform latLon, latLons) {
-            QTransform pixel;
-
-            QGraphicsItem *item = object->graphicsItem();
-            QPolygonF local = item->boundingRect();
-            QPolygonF latLonPoly = latLon.map(local);
-            QPolygonF pixelPoly;
-
-            foreach (QPointF pt, latLonPoly) {
-                double x = pt.x() / 3600.0;
-                double y = pt.y() / 3600.0;
-                QPointF pixel = this->coordinateToScreenPosition(x, y);
-                pixelPoly.append(pixel);
-            }
-
-            // QTransform expects the last vertex (closing vertex) to be dropped
-            local.remove(4);
-            pixelPoly.remove(4);
-
-            bool ok = QTransform::quadToQuad(local, pixelPoly, pixel);
-            if (!ok)
-                continue;
-
-            pixelTrans.insertMulti(object, pixel);
-
-            polys << pixelPoly;
+    if (object->transformType() == QGeoMapObject::BilinearTransform) {
+        bilinearSecondsToScreen(origin, object, polys);
+    } else if (object->transformType() == QGeoMapObject::ExactTransform) {
+        if (object->units() == QGeoMapObject::PixelUnit) {
+            pixelShiftToScreen(origin, object, polys);
         }
     }
 

@@ -443,6 +443,9 @@ void QGeoMapObject::setOrigin(const QGeoCoordinate &origin)
 /*!
     \property QGeoMapObject::units
     \brief This property holds the units of measurement for the object.
+
+    Note that setting the units to PixelUnit will result in the transformType
+    property being set to ExactTransform automatically.
 */
 QGeoMapObject::CoordinateUnit QGeoMapObject::units() const
 {
@@ -452,6 +455,8 @@ QGeoMapObject::CoordinateUnit QGeoMapObject::units() const
 void QGeoMapObject::setUnits(const CoordinateUnit &unit)
 {
     d_ptr->units = unit;
+    if (unit == QGeoMapObject::PixelUnit)
+        setTransformType(QGeoMapObject::ExactTransform);
     emit mapNeedsUpdate();
 }
 
