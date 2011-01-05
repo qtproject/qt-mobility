@@ -389,17 +389,27 @@ QList<QGeoMapObject*> QGeoMapData::mapObjectsAtScreenPosition(const QPointF &scr
         Q_ASSERT(object);
 
         if (object->isVisible() && !considered.contains(object)) {
-            QList<QTransform> trans = d_ptr->pixelTrans.values(object);
             bool contains = false;
 
-            foreach (QTransform t, trans) {
-                bool ok;
-                QTransform inv = t.inverted(&ok);
-                if (ok) {
-                    QPointF testPt = screenPosition * inv;
-                    if (object->graphicsItem()->shape().contains(testPt)) {
+            if (d_ptr->pixelExact.contains(object)) {
+                foreach (QGraphicsItem *item, d_ptr->pixelExact.values(object)) {
+                    if (item->shape().contains(screenPosition)) {
                         contains = true;
                         break;
+                    }
+                }
+            } else {
+                QList<QTransform> trans = d_ptr->pixelTrans.values(object);
+
+                foreach (QTransform t, trans) {
+                    bool ok;
+                    QTransform inv = t.inverted(&ok);
+                    if (ok) {
+                        QPointF testPt = screenPosition * inv;
+                        if (object->graphicsItem()->shape().contains(testPt)) {
+                            contains = true;
+                            break;
+                        }
                     }
                 }
             }
