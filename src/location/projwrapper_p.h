@@ -103,11 +103,11 @@ class ProjPolygon : public QList<ProjCoordinate>
 {
 public:
     ProjPolygon(const ProjCoordinateSystem &system);
-    ProjPolygon(const QPolygonF &poly, const ProjCoordinateSystem &system);
+    ProjPolygon(const QPolygonF &poly, const ProjCoordinateSystem &system, double scale=1.0);
     ~ProjPolygon();
 
     bool convert(const ProjCoordinateSystem &system);
-    QPolygonF toPolygonF() const;
+    QPolygonF toPolygonF(double scale=1.0) const;
 
 private:
     ProjPolygonPrivate *d;

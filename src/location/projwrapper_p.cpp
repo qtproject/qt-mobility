@@ -175,13 +175,18 @@ ProjPolygon::ProjPolygon(const ProjCoordinateSystem &system) :
     d->currentSystem = system;
 }
 
-ProjPolygon::ProjPolygon(const QPolygonF &poly, const ProjCoordinateSystem &system) :
+ProjPolygon::ProjPolygon(const QPolygonF &poly, const ProjCoordinateSystem &system, double scale) :
     QList<ProjCoordinate>(),
     d(new ProjPolygonPrivate)
 {
     d->currentSystem = system;
-    foreach (QPointF point, poly)
-        append(ProjCoordinate(point.x(), point.y(), 0.0, system));
+    foreach (QPointF point, poly) {
+        double x = point.x();
+        x /= scale;
+        double y = point.y();
+        y /= scale;
+        append(ProjCoordinate(x, y, 0.0, system));
+    }
 }
 
 bool ProjPolygon::convert(const ProjCoordinateSystem &system)
@@ -197,12 +202,14 @@ bool ProjPolygon::convert(const ProjCoordinateSystem &system)
     return true;
 }
 
-QPolygonF ProjPolygon::toPolygonF() const
+QPolygonF ProjPolygon::toPolygonF(double scale) const
 {
     QPolygonF poly;
     for (int i=0; i<size(); ++i) {
         const ProjCoordinate &coord = at(i);
-        poly << QPointF(coord.x(), coord.y());
+        double x = coord.x() * scale;
+        double y = coord.y() * scale;
+        poly << QPointF(x, y);
     }
     return poly;
 }

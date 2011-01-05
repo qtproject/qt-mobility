@@ -44,6 +44,10 @@
 
 #include <QGraphicsScene>
 #include <QGraphicsItem>
+#include <QGraphicsPolygonItem>
+#include <QGraphicsLineItem>
+#include <QGraphicsEllipseItem>
+#include <QGraphicsPathItem>
 
 #include "qgeoboundingbox.h"
 #include "qgeocoordinate.h"
@@ -832,27 +836,184 @@ void QGeoMapDataPrivate::updateLatLonTransforms(QGeoMapGroupObject *group)
     }
 }
 
+bool QGeoMapDataPrivate::exactMetersToSeconds(const QGeoCoordinate &origin,
+                                              QGeoMapObject *object,
+                                              QGraphicsItem *item,
+                                              QList<QPolygonF> &polys)
+{
+    QString projStr = "+proj=tmerc +lat_0=%1 +lon_0=%2 +k=1.0 +x_0=0 +y_0=0 +ellps=WGS84";
+    projStr = projStr.arg(origin.latitude(), 0, 'f', 12)
+                     .arg(origin.longitude(), 0, 'f', 12);
+
+    ProjCoordinateSystem localSys(projStr, false);
+    ProjCoordinateSystem wgs84("+proj=latlon +ellps=WGS84");
+
+    QTransform west;
+    west.translate(360.0 * 3600.0, 0.0);
+
+    QTransform east;
+    east.translate(-360.0 * 3600.0, 0.0);
+
+    QGraphicsPolygonItem *polyItem = dynamic_cast<QGraphicsPolygonItem*>(item);
+    if (polyItem) {
+        QPolygonF poly = polyItem->polygon() * polyItem->transform();
+
+        ProjPolygon p(poly, localSys);
+        p.convert(wgs84);
+        QPolygonF wgs = p.toPolygonF(3600.0);
+
+        latLonExact.remove(object);
+        QGraphicsPolygonItem *pi = new QGraphicsPolygonItem(*polyItem);
+        pi->setPolygon(wgs);
+        latLonExact.insertMulti(object, pi);
+        polys << wgs;
+
+        QPolygonF westPoly = wgs * west;
+        pi = new QGraphicsPolygonItem(*polyItem);
+        pi->setPolygon(westPoly);
+        latLonExact.insertMulti(object, pi);
+        polys << westPoly;
+
+        QPolygonF eastPoly = wgs * east;
+        pi = new QGraphicsPolygonItem(*polyItem);
+        pi->setPolygon(eastPoly);
+        latLonExact.insertMulti(object, pi);
+        polys << eastPoly;
+
+        return true;
+    }
+
+    QGraphicsPathItem *pathItem = dynamic_cast<QGraphicsPathItem*>(item);
+    if (pathItem) {
+        QPainterPath path = pathItem->path() * pathItem->transform();
+
+        for (int i = 0; i < path.elementCount(); ++i) {
+            QPainterPath::Element e = path.elementAt(i);
+
+            ProjCoordinate c(e.x, e.y, 0.0, localSys);
+            Q_ASSERT(c.convert(wgs84));
+
+            path.setElementPositionAt(i, c.x() * 3600.0, c.y() * 3600.0);
+        }
+
+        latLonExact.remove(object);
+        QGraphicsPathItem *pi = new QGraphicsPathItem(*pathItem);
+        pi->setPath(path);
+        latLonExact.insertMulti(object, pi);
+        polys << QPolygonF(path.boundingRect());
+
+        QPainterPath westPath = path * west;
+        pi = new QGraphicsPathItem(*pathItem);
+        pi->setPath(westPath);
+        latLonExact.insertMulti(object, pi);
+        polys << QPolygonF(westPath.boundingRect());
+
+        QPainterPath eastPath = path * east;
+        pi = new QGraphicsPathItem(*pathItem);
+        pi->setPath(eastPath);
+        latLonExact.insertMulti(object, pi);
+        polys << QPolygonF(eastPath.boundingRect());
+
+        return true;
+    }
+
+    qWarning("QGeoMapData: did not recognize type of exact-transformed"
+             "object: type #%d (object not supported for exact transform)",
+             item->type());
+    return false;
+}
+
+bool QGeoMapDataPrivate::exactSecondsToSeconds(const QGeoCoordinate &origin,
+                                               QGeoMapObject *object,
+                                               QGraphicsItem *item,
+                                               QList<QPolygonF> &polys)
+{
+    QTransform west;
+    west.translate(360.0 * 3600.0, 0.0);
+
+    QTransform east;
+    east.translate(-360.0 * 3600.0, 0.0);
+
+    QTransform toAbs;
+    if (object->units() == QGeoMapObject::RelativeArcSecondUnit) {
+        double ox = origin.longitude() * 3600.0;
+        double oy = origin.latitude() * 3600.0;
+        toAbs.translate(ox, oy);
+    }
+
+    QGraphicsPolygonItem *polyItem = dynamic_cast<QGraphicsPolygonItem*>(item);
+    if (polyItem) {
+        QPolygonF poly = polyItem->polygon() * polyItem->transform();
+        poly = poly * toAbs;
+
+        latLonExact.remove(object);
+        QGraphicsPolygonItem *pi = new QGraphicsPolygonItem(*polyItem);
+        pi->setPolygon(poly);
+        latLonExact.insertMulti(object, pi);
+        polys << poly;
+
+        QPolygonF westPoly = poly * west;
+        pi = new QGraphicsPolygonItem(*polyItem);
+        pi->setPolygon(westPoly);
+        latLonExact.insertMulti(object, pi);
+        polys << westPoly;
+
+        QPolygonF eastPoly = poly * east;
+        pi = new QGraphicsPolygonItem(*polyItem);
+        pi->setPolygon(eastPoly);
+        latLonExact.insertMulti(object, pi);
+        polys << eastPoly;
+
+        return true;
+    }
+
+    QGraphicsPathItem *pathItem = dynamic_cast<QGraphicsPathItem*>(item);
+    if (pathItem) {
+        QPainterPath path = pathItem->path() * pathItem->transform();
+        path = path * toAbs;
+
+        latLonExact.remove(object);
+        QGraphicsPathItem *pi = new QGraphicsPathItem(*pathItem);
+        pi->setPath(path);
+        latLonExact.insertMulti(object, pi);
+        polys << QPolygonF(path.boundingRect());
+
+        QPainterPath westPath = path * west;
+        pi = new QGraphicsPathItem(*pathItem);
+        pi->setPath(westPath);
+        latLonExact.insertMulti(object, pi);
+        polys << QPolygonF(westPath.boundingRect());
+
+        QPainterPath eastPath = path * east;
+        pi = new QGraphicsPathItem(*pathItem);
+        pi->setPath(eastPath);
+        latLonExact.insertMulti(object, pi);
+        polys << QPolygonF(eastPath.boundingRect());
+
+        return true;
+    }
+
+    qWarning("QGeoMapData: did not recognize type of exact-transformed"
+             "object: type #%d (object not supported for exact transform)",
+             item->type());
+    return false;
+}
+
 void QGeoMapDataPrivate::bilinearMetersToSeconds(const QGeoCoordinate &origin,
                                                  QGraphicsItem *item,
                                                  QPolygonF &local,
                                                  QTransform &latLon)
 {
     QString projStr = "+proj=tmerc +lat_0=%1 +lon_0=%2 +k=1.0 +x_0=0 +y_0=0 +ellps=WGS84";
-    projStr = projStr.arg(origin.latitude(), 0, 'f', 10)
-                     .arg(origin.longitude(), 0, 'f', 10);
+    projStr = projStr.arg(origin.latitude(), 0, 'f', 12)
+                     .arg(origin.longitude(), 0, 'f', 12);
 
     ProjCoordinateSystem localSys(projStr, false);
     ProjCoordinateSystem wgs84("+proj=latlon +ellps=WGS84");
 
-    QPolygonF wgs;
-
-    foreach (QPointF pt, local) {
-        ProjCoordinate c(pt.x(), pt.y(), 0.0, localSys);
-        c.convert(wgs84);
-        double x = c.x() * 3600.0;
-        double y = c.y() * 3600.0;
-        wgs.append(QPointF(x, y));
-    }
+    ProjPolygon p(local, localSys);
+    p.convert(wgs84);
+    QPolygonF wgs = p.toPolygonF(3600.0);
 
     // QTransform expects the last vertex (closing vertex) to be dropped
     local.remove(4);
@@ -916,7 +1077,6 @@ void QGeoMapDataPrivate::bilinearPixelsToSeconds(const QGeoCoordinate &origin,
 
 void QGeoMapDataPrivate::updateLatLonTransform(QGeoMapObject *object)
 {
-    QTransform latLon;
     QGeoCoordinate origin = object->origin();
 
     QGraphicsItem *item = object->graphicsItem();
@@ -926,8 +1086,12 @@ void QGeoMapDataPrivate::updateLatLonTransform(QGeoMapObject *object)
         return;
 
     QPolygonF local = item->boundingRect() * item->transform();
+    QList<QPolygonF> polys;
 
-    if (object->transformType() == QGeoMapObject::BilinearTransform) {
+    if (object->transformType() == QGeoMapObject::BilinearTransform ||
+            object->units() == QGeoMapObject::PixelUnit) {
+        QTransform latLon;
+
         if (object->units() == QGeoMapObject::MeterUnit) {
             bilinearMetersToSeconds(origin, item, local, latLon);
         } else if (object->units() == QGeoMapObject::RelativeArcSecondUnit) {
@@ -935,17 +1099,9 @@ void QGeoMapDataPrivate::updateLatLonTransform(QGeoMapObject *object)
         } else if (object->units() == QGeoMapObject::PixelUnit) {
             bilinearPixelsToSeconds(origin, item, local, latLon);
         }
-    } else if (object->transformType() == QGeoMapObject::ExactTransform) {
 
-    }
+        polys << latLon.map(object->graphicsItem()->boundingRect());
 
-    latLonTrans.remove(object);
-    latLonTrans.insertMulti(object, latLon);
-
-    QList<QPolygonF> polys;
-    polys << latLon.map(object->graphicsItem()->boundingRect());
-
-    {
         QTransform latLonWest;
         latLonWest.translate(360.0 * 3600.0, 0.0);
         latLonWest = latLon * latLonWest;
@@ -959,6 +1115,19 @@ void QGeoMapDataPrivate::updateLatLonTransform(QGeoMapObject *object)
 
         polys << latLonEast.map(object->graphicsItem()->boundingRect());
         latLonTrans.insertMulti(object, latLonEast);
+
+    } else if (object->transformType() == QGeoMapObject::ExactTransform) {
+        if (object->units() == QGeoMapObject::MeterUnit) {
+            if (!exactMetersToSeconds(origin, object, item, polys))
+                return;
+        } else if (object->units() == QGeoMapObject::AbsoluteArcSecondUnit ||
+                   object->units() == QGeoMapObject::RelativeArcSecondUnit) {
+            if (!exactSecondsToSeconds(origin, object, item, polys))
+                return;
+        } else {
+            qWarning("QGeoMapData: unknown units for map object");
+            return;
+        }
     }
 
     QList<QGraphicsItem*> items = latLonItems.keys(object);
@@ -1052,6 +1221,18 @@ void QGeoMapDataPrivate::pixelShiftToScreen(const QGeoCoordinate &origin,
     }
 }
 
+QPolygonF QGeoMapDataPrivate::polyToScreen(const QPolygonF &poly)
+{
+    QPolygonF r;
+    foreach (QPointF pt, poly) {
+        double x = pt.x() / 3600.0;
+        double y = pt.y() / 3600.0;
+        QPointF pixel = this->coordinateToScreenPosition(x, y);
+        r.append(pixel);
+    }
+    return r;
+}
+
 void QGeoMapDataPrivate::bilinearSecondsToScreen(const QGeoCoordinate &origin,
                                                  QGeoMapObject *object,
                                                  QList<QPolygonF> &polys)
@@ -1065,14 +1246,8 @@ void QGeoMapDataPrivate::bilinearSecondsToScreen(const QGeoCoordinate &origin,
         QGraphicsItem *item = object->graphicsItem();
         QPolygonF local = item->boundingRect();
         QPolygonF latLonPoly = latLon.map(local);
-        QPolygonF pixelPoly;
 
-        foreach (QPointF pt, latLonPoly) {
-            double x = pt.x() / 3600.0;
-            double y = pt.y() / 3600.0;
-            QPointF pixel = this->coordinateToScreenPosition(x, y);
-            pixelPoly.append(pixel);
-        }
+        QPolygonF pixelPoly = polyToScreen(latLonPoly);
 
         // QTransform expects the last vertex (closing vertex) to be dropped
         local.remove(4);
@@ -1086,6 +1261,13 @@ void QGeoMapDataPrivate::bilinearSecondsToScreen(const QGeoCoordinate &origin,
 
         polys << pixelPoly;
     }
+}
+
+bool QGeoMapDataPrivate::exactPixelMap(const QGeoCoordinate &origin,
+                                       QGeoMapObject *object,
+                                       QList<QPolygonF> &polys);
+{
+
 }
 
 void QGeoMapDataPrivate::updatePixelTransform(QGeoMapObject *object)
