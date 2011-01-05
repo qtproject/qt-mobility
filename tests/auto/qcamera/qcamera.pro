@@ -1,5 +1,7 @@
 TARGET = tst_qcamera
-INCLUDEPATH += ../../../src/multimedia
+INCLUDEPATH += \
+        ../../../src/multimedia \
+        ../../../src/multimedia/video
 CONFIG += testcase
 
 SOURCES += tst_qcamera.cpp
