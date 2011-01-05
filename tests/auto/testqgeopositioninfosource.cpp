@@ -985,10 +985,75 @@ void TestQGeoPositionInfoSource::initGoneBad()
     bad_source = QGeoPositionInfoSource::createDefaultSource(this);
     QVERIFY(bad_source); // velocity is not mandatory
     delete bad_source;
-
+    geocluemock_set_geoclue_velocity_new(true); // cleanup
 }
 
-#endif
+void TestQGeoPositionInfoSource::updateInferno()
+{
+    // Tests different position update failure scenarios
+    // Successful, normal update
+    m_source->setUpdateInterval(1000);
+    QSignalSpy updateSpy(m_source, SIGNAL(positionUpdated(const QGeoPositionInfo&)));
+    QSignalSpy timeoutSpy(m_source, SIGNAL(updateTimeout()));
+    m_source->startUpdates();
+    QTRY_VERIFY_WITH_TIMEOUT(!updateSpy.isEmpty(), 2100);
+    QVERIFY(timeoutSpy.isEmpty());
+
+    // Suppress the regular updates and check that timeouts are received
+    // Then resume the updates and see it goes ok.
+    geocluemock_set_suppress_regular_updates(true);
+    updateSpy.clear(); timeoutSpy.clear();
+    QTest::qWait(2000);
+    // there is no updateTimeout because there is no error
+    QTRY_VERIFY_WITH_TIMEOUT(timeoutSpy.isEmpty(), 2000);
+    QVERIFY(updateSpy.isEmpty());
+    geocluemock_set_suppress_regular_updates(false);
+    QTRY_VERIFY_WITH_TIMEOUT(!updateSpy.isEmpty(), 4000);
+    QVERIFY(timeoutSpy.isEmpty());
+
+    // Restart updates and check velocity is received when expected
+    m_source->stopUpdates();
+    updateSpy.clear(); timeoutSpy.clear();
+    // start updates without velocity
+    geocluemock_set_suppress_velocity_update(true);
+    m_source->startUpdates();
+    QTRY_VERIFY_WITH_TIMEOUT(!updateSpy.isEmpty(), 4000);
+    QGeoPositionInfo info = updateSpy.takeFirst().at(0).value<QGeoPositionInfo>();
+    QVERIFY(info.isValid());
+    QVERIFY(!info.hasAttribute(QGeoPositionInfo::GroundSpeed));
+    // enable velocity updates again
+    geocluemock_set_suppress_velocity_update(false);
+    updateSpy.clear(); timeoutSpy.clear();
+    QTest::qWait(3000);
+    QTRY_VERIFY_WITH_TIMEOUT(!updateSpy.isEmpty(), 4000);
+    info = updateSpy.takeLast().at(0).value<QGeoPositionInfo>();
+    QVERIFY(info.isValid());
+    QVERIFY(info.hasAttribute(QGeoPositionInfo::GroundSpeed));
+    m_source->stopUpdates();
+
+    // Test that bad updatedata produces timeout both on regular updates
+    // and single updates
+    geocluemock_set_position_fields(0);
+    updateSpy.clear(); timeoutSpy.clear();
+    m_source->startUpdates();
+    QTRY_VERIFY_WITH_TIMEOUT(!timeoutSpy.isEmpty(), 2000);
+    QVERIFY(updateSpy.isEmpty());
+    updateSpy.clear(); timeoutSpy.clear();
+    m_source->requestUpdate(1000);
+    QTRY_VERIFY_WITH_TIMEOUT(!timeoutSpy.isEmpty(), 2000);
+    QVERIFY(updateSpy.isEmpty());
+    geocluemock_unset_position_fields(); // clear
+
+    // Test that lib works ok with instane lat/lon values
+    geocluemock_set_position_latitude(1000);
+    updateSpy.clear(); timeoutSpy.clear();
+    QTRY_VERIFY_WITH_TIMEOUT(!updateSpy.isEmpty(), 2000);
+    QVERIFY(timeoutSpy.isEmpty());
+    info = updateSpy.takeLast().at(0).value<QGeoPositionInfo>();
+    QVERIFY(!info.isValid());
+    geocluemock_unset_position_latitude(); // clear
+}
+
+#endif // TST_GEOCLUEMOCK_ENABLED
 
 #include "testqgeopositioninfosource.moc"
-
