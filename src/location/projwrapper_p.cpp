@@ -189,6 +189,9 @@ ProjPolygon::ProjPolygon(const QPolygonF &poly, const ProjCoordinateSystem &syst
     }
 }
 
+ProjPolygon::~ProjPolygon()
+{}
+
 bool ProjPolygon::convert(const ProjCoordinateSystem &system)
 {
     for (int i=0; i<size(); ++i) {
