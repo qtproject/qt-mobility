@@ -455,8 +455,12 @@ QGeoMapObject::CoordinateUnit QGeoMapObject::units() const
 void QGeoMapObject::setUnits(const CoordinateUnit &unit)
 {
     d_ptr->units = unit;
+
     if (unit == QGeoMapObject::PixelUnit)
         setTransformType(QGeoMapObject::ExactTransform);
+    else
+        setTransformType(QGeoMapObject::BilinearTransform);
+
     emit mapNeedsUpdate();
 }
 
@@ -496,7 +500,7 @@ QGeoMapObjectPrivate::QGeoMapObjectPrivate()
       isSelected(false),
       mapData(0),
       units(QGeoMapObject::PixelUnit),
-      transType(QGeoMapObject::BilinearTransform),
+      transType(QGeoMapObject::ExactTransform),
       graphicsItem(0) {}
 
 QGeoMapObjectPrivate::~QGeoMapObjectPrivate()

@@ -1020,7 +1020,7 @@ bool QGeoMapDataPrivate::exactSecondsToSeconds(const QGeoCoordinate &origin,
         return true;
     }
 
-    qWarning("QGeoMapData: did not recognize type of exact-transformed"
+    qWarning("QGeoMapData: did not recognize type of exact-transformed "
              "object: type #%d (object not supported for exact transform)",
              item->type());
     return false;
@@ -1039,7 +1039,11 @@ void QGeoMapDataPrivate::bilinearMetersToSeconds(const QGeoCoordinate &origin,
     ProjCoordinateSystem wgs84("+proj=latlon +ellps=WGS84");
 
     ProjPolygon p(local, localSys);
-    p.convert(wgs84);
+    if (!p.convert(wgs84)) {
+        qWarning("QGeoMapData: bilinear transform from meters to arc-seconds "
+                 "failed: projection is singular");
+        return;
+    }
     QPolygonF wgs = p.toPolygonF(3600.0);
 
     // QTransform expects the last vertex (closing vertex) to be dropped
@@ -1058,8 +1062,11 @@ void QGeoMapDataPrivate::bilinearMetersToSeconds(const QGeoCoordinate &origin,
     }
 
     bool ok = QTransform::quadToQuad(local, wgs, latLon);
-    if (!ok)
+    if (!ok) {
+        qWarning("QGeoMapData: bilinear transform from meters to arc-seconds "
+                 "failed: could not obtain a transformation matrix");
         return;
+    }
 
     latLon = item->transform() * latLon;
 }
@@ -1096,8 +1103,11 @@ void QGeoMapDataPrivate::bilinearPixelsToSeconds(const QGeoCoordinate &origin,
     }
 
     bool ok = QTransform::quadToQuad(local, wgs, latLon);
-    if (!ok)
+    if (!ok) {
+        qWarning("QGeoMapData: bilinear transform from meters to arc-seconds "
+                 "failed: could not obtain a transformation matrix");
         return;
+    }
 
     latLon = item->transform() * latLon;
 }
@@ -1109,11 +1119,13 @@ void QGeoMapDataPrivate::updateLatLonTransform(QGeoMapObject *object)
     QGraphicsItem *item = object->graphicsItem();
 
     // skip any objects without graphicsitems
-    if (!item && object->transformType() != QGeoMapObject::ExactTransform)
+    if (!item)
         return;
 
     QPolygonF local = item->boundingRect() * item->transform();
     QList<QPolygonF> polys;
+
+    latLonTrans.remove(object);
 
     if (object->transformType() == QGeoMapObject::BilinearTransform ||
             object->units() == QGeoMapObject::PixelUnit) {
@@ -1128,6 +1140,7 @@ void QGeoMapDataPrivate::updateLatLonTransform(QGeoMapObject *object)
         }
 
         polys << latLon.map(object->graphicsItem()->boundingRect());
+        latLonTrans.insertMulti(object, latLon);
 
         QTransform latLonWest;
         latLonWest.translate(360.0 * 3600.0, 0.0);
@@ -1281,8 +1294,11 @@ void QGeoMapDataPrivate::bilinearSecondsToScreen(const QGeoCoordinate &origin,
         pixelPoly.remove(4);
 
         bool ok = QTransform::quadToQuad(local, pixelPoly, pixel);
-        if (!ok)
-            continue;
+        if (!ok) {
+            qWarning("QGeoMapData: bilinear transform to screen from arc-seconds "
+                     "failed: could not compute transformation matrix");
+            return;
+        }
 
         pixelTrans.insertMulti(object, pixel);
 
@@ -1341,7 +1357,7 @@ void QGeoMapDataPrivate::updatePixelTransform(QGeoMapObject *object)
     QGraphicsItem *item = object->graphicsItem();
 
     // skip any objects without graphicsitems
-    if (!item && object->transformType() != QGeoMapObject::ExactTransform)
+    if (!item)
         return;
 
     QList<QGraphicsItem*> items = pixelItems.keys(object);
