@@ -836,6 +836,31 @@ void QGeoMapDataPrivate::updateLatLonTransforms(QGeoMapGroupObject *group)
     }
 }
 
+static QGraphicsPolygonItem *polyCopy(const QGraphicsPolygonItem *polyItem)
+{
+    QGraphicsPolygonItem *pi = new QGraphicsPolygonItem;
+    pi->setBrush(polyItem->brush());
+    pi->setPen(polyItem->pen());
+    pi->setVisible(polyItem->isVisible());
+    pi->setFillRule(polyItem->fillRule());
+    pi->setOpacity(polyItem->opacity());
+    pi->setPolygon(polyItem->polygon());
+    pi->setGraphicsEffect(polyItem->graphicsEffect());
+    return pi;
+}
+
+static QGraphicsPathItem *pathCopy(const QGraphicsPathItem *pathItem)
+{
+    QGraphicsPathItem *pi = new QGraphicsPathItem;
+    pi->setBrush(pathItem->brush());
+    pi->setPen(pathItem->pen());
+    pi->setVisible(pathItem->isVisible());
+    pi->setOpacity(pathItem->opacity());
+    pi->setGraphicsEffect(pathItem->graphicsEffect());
+    pi->setPath(pathItem->path());
+    return pi;
+}
+
 bool QGeoMapDataPrivate::exactMetersToSeconds(const QGeoCoordinate &origin,
                                               QGeoMapObject *object,
                                               QGraphicsItem *item,
@@ -863,19 +888,19 @@ bool QGeoMapDataPrivate::exactMetersToSeconds(const QGeoCoordinate &origin,
         QPolygonF wgs = p.toPolygonF(3600.0);
 
         latLonExact.remove(object);
-        QGraphicsPolygonItem *pi = new QGraphicsPolygonItem(*polyItem);
+        QGraphicsPolygonItem *pi = polyCopy(polyItem);
         pi->setPolygon(wgs);
         latLonExact.insertMulti(object, pi);
         polys << wgs;
 
         QPolygonF westPoly = wgs * west;
-        pi = new QGraphicsPolygonItem(*polyItem);
+        pi = polyCopy(polyItem);
         pi->setPolygon(westPoly);
         latLonExact.insertMulti(object, pi);
         polys << westPoly;
 
         QPolygonF eastPoly = wgs * east;
-        pi = new QGraphicsPolygonItem(*polyItem);
+        pi = polyCopy(polyItem);
         pi->setPolygon(eastPoly);
         latLonExact.insertMulti(object, pi);
         polys << eastPoly;
@@ -897,19 +922,21 @@ bool QGeoMapDataPrivate::exactMetersToSeconds(const QGeoCoordinate &origin,
         }
 
         latLonExact.remove(object);
-        QGraphicsPathItem *pi = new QGraphicsPathItem(*pathItem);
+
+
+        QGraphicsPathItem *pi = pathCopy(pathItem);
         pi->setPath(path);
         latLonExact.insertMulti(object, pi);
         polys << QPolygonF(path.boundingRect());
 
         QPainterPath westPath = path * west;
-        pi = new QGraphicsPathItem(*pathItem);
+        pi = pathCopy(pathItem);
         pi->setPath(westPath);
         latLonExact.insertMulti(object, pi);
         polys << QPolygonF(westPath.boundingRect());
 
         QPainterPath eastPath = path * east;
-        pi = new QGraphicsPathItem(*pathItem);
+        pi = pathCopy(pathItem);
         pi->setPath(eastPath);
         latLonExact.insertMulti(object, pi);
         polys << QPolygonF(eastPath.boundingRect());
@@ -947,19 +974,19 @@ bool QGeoMapDataPrivate::exactSecondsToSeconds(const QGeoCoordinate &origin,
         poly = poly * toAbs;
 
         latLonExact.remove(object);
-        QGraphicsPolygonItem *pi = new QGraphicsPolygonItem(*polyItem);
+        QGraphicsPolygonItem *pi = polyCopy(polyItem);
         pi->setPolygon(poly);
         latLonExact.insertMulti(object, pi);
         polys << poly;
 
         QPolygonF westPoly = poly * west;
-        pi = new QGraphicsPolygonItem(*polyItem);
+        pi = polyCopy(polyItem);
         pi->setPolygon(westPoly);
         latLonExact.insertMulti(object, pi);
         polys << westPoly;
 
         QPolygonF eastPoly = poly * east;
-        pi = new QGraphicsPolygonItem(*polyItem);
+        pi = polyCopy(polyItem);
         pi->setPolygon(eastPoly);
         latLonExact.insertMulti(object, pi);
         polys << eastPoly;
@@ -973,19 +1000,19 @@ bool QGeoMapDataPrivate::exactSecondsToSeconds(const QGeoCoordinate &origin,
         path = path * toAbs;
 
         latLonExact.remove(object);
-        QGraphicsPathItem *pi = new QGraphicsPathItem(*pathItem);
+        QGraphicsPathItem *pi = pathCopy(pathItem);
         pi->setPath(path);
         latLonExact.insertMulti(object, pi);
         polys << QPolygonF(path.boundingRect());
 
         QPainterPath westPath = path * west;
-        pi = new QGraphicsPathItem(*pathItem);
+        pi = pathCopy(pathItem);
         pi->setPath(westPath);
         latLonExact.insertMulti(object, pi);
         polys << QPolygonF(westPath.boundingRect());
 
         QPainterPath eastPath = path * east;
-        pi = new QGraphicsPathItem(*pathItem);
+        pi = pathCopy(pathItem);
         pi->setPath(eastPath);
         latLonExact.insertMulti(object, pi);
         polys << QPolygonF(eastPath.boundingRect());
@@ -1277,7 +1304,7 @@ void QGeoMapDataPrivate::exactPixelMap(const QGeoCoordinate &origin,
             QPolygonF poly = polyItem->polygon();
             QPolygonF pixelPoly = polyToScreen(poly);
 
-            QGraphicsPolygonItem *pi = new QGraphicsPolygonItem(*polyItem);
+            QGraphicsPolygonItem *pi = polyCopy(polyItem);
             pi->setPolygon(pixelPoly);
             pixelExact.insertMulti(object, pi);
             polys << pixelPoly;
@@ -1300,7 +1327,7 @@ void QGeoMapDataPrivate::exactPixelMap(const QGeoCoordinate &origin,
                 path.setElementPositionAt(i, pixel.x(), pixel.y());
             }
 
-            QGraphicsPathItem *pi = new QGraphicsPathItem(*pathItem);
+            QGraphicsPathItem *pi = pathCopy(pathItem);
             pi->setPath(path);
             pixelExact.insertMulti(object, pi);
             polys << QPolygonF(path.boundingRect());
