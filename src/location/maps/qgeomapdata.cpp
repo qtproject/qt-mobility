@@ -1263,11 +1263,49 @@ void QGeoMapDataPrivate::bilinearSecondsToScreen(const QGeoCoordinate &origin,
     }
 }
 
-bool QGeoMapDataPrivate::exactPixelMap(const QGeoCoordinate &origin,
+void QGeoMapDataPrivate::exactPixelMap(const QGeoCoordinate &origin,
                                        QGeoMapObject *object,
-                                       QList<QPolygonF> &polys);
+                                       QList<QPolygonF> &polys)
 {
+    QList<QGraphicsItem*> latLonItems = latLonExact.values(object);
 
+    pixelExact.remove(object);
+
+    foreach (QGraphicsItem *latLonItem, latLonItems) {
+        QGraphicsPolygonItem *polyItem = dynamic_cast<QGraphicsPolygonItem*>(latLonItem);
+        if (polyItem) {
+            QPolygonF poly = polyItem->polygon();
+            QPolygonF pixelPoly = polyToScreen(poly);
+
+            QGraphicsPolygonItem *pi = new QGraphicsPolygonItem(*polyItem);
+            pi->setPolygon(pixelPoly);
+            pixelExact.insertMulti(object, pi);
+            polys << pixelPoly;
+        }
+
+        QGraphicsPathItem *pathItem = dynamic_cast<QGraphicsPathItem*>(latLonItem);
+        if (pathItem) {
+            QPainterPath path = pathItem->path();
+
+            for (int i = 0; i < path.elementCount(); ++i) {
+                QPainterPath::Element e = path.elementAt(i);
+
+                double x = e.x;
+                x /= 3600.0;
+                double y = e.y;
+                y /= 3600.0;
+
+                QPointF pixel = this->coordinateToScreenPosition(x, y);
+
+                path.setElementPositionAt(i, pixel.x(), pixel.y());
+            }
+
+            QGraphicsPathItem *pi = new QGraphicsPathItem(*pathItem);
+            pi->setPath(path);
+            pixelExact.insertMulti(object, pi);
+            polys << QPolygonF(path.boundingRect());
+        }
+    }
 }
 
 void QGeoMapDataPrivate::updatePixelTransform(QGeoMapObject *object)
@@ -1294,6 +1332,8 @@ void QGeoMapDataPrivate::updatePixelTransform(QGeoMapObject *object)
     } else if (object->transformType() == QGeoMapObject::ExactTransform) {
         if (object->units() == QGeoMapObject::PixelUnit) {
             pixelShiftToScreen(origin, object, polys);
+        } else {
+            exactPixelMap(origin, object, polys);
         }
     }
 

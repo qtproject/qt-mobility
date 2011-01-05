@@ -104,18 +104,18 @@ public:
 
     QPolygonF polyToScreen(const QPolygonF &poly);
 
-    bool exactMetersToSeconds(const QGeoCoordinate &origin,
-                              QGeoMapObject *object,
-                              QGraphicsItem *item,
-                              QList<QPolygonF> &polys);
-    bool exactSecondsToSeconds(const QGeoCoordinate &origin,
-                               QGeoMapObject *object,
-                               QGraphicsItem *item,
-                               QList<QPolygonF> &polys);
+    virtual bool exactMetersToSeconds(const QGeoCoordinate &origin,
+                                      QGeoMapObject *object,
+                                      QGraphicsItem *item,
+                                      QList<QPolygonF> &polys);
+    virtual bool exactSecondsToSeconds(const QGeoCoordinate &origin,
+                                       QGeoMapObject *object,
+                                       QGraphicsItem *item,
+                                       QList<QPolygonF> &polys);
 
-    bool exactPixelMap(const QGeoCoordinate &origin,
-                       QGeoMapObject *object,
-                       QList<QPolygonF> &polys);
+    virtual void exactPixelMap(const QGeoCoordinate &origin,
+                               QGeoMapObject *object,
+                               QList<QPolygonF> &polys);
 
     void bilinearMetersToSeconds(const QGeoCoordinate &origin,
                                  QGraphicsItem *item,
