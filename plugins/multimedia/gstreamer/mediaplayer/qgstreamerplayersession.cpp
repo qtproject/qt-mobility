@@ -116,6 +116,7 @@ QGstreamerPlayerSession::QGstreamerPlayerSession(QObject *parent)
     gst_object_ref(GST_OBJECT(m_videoOutputBin));
 
     m_videoIdentity = GST_ELEMENT(g_object_new(gst_video_connector_get_type(), 0));
+    g_signal_connect(G_OBJECT(m_videoIdentity), "connection-failed", G_CALLBACK(insertColorSpaceElement), (gpointer)this);
     m_colorSpace = gst_element_factory_make("ffmpegcolorspace", "ffmpegcolorspace-vo");
     gst_object_ref(GST_OBJECT(m_colorSpace));
 
@@ -309,10 +310,6 @@ static void block_pad_cb(GstPad *pad, gboolean blocked, gpointer user_data)
     }
 }
 
-#ifdef DEBUG_VO_BIN_DUMP
-    static int dumpNum = 0;
-#endif
-
 void QGstreamerPlayerSession::updateVideoRenderer()
 {
 #ifdef DEBUG_PLAYBIN
@@ -348,11 +345,9 @@ void QGstreamerPlayerSession::setVideoRenderer(QObject *videoOutput)
     m_renderer = renderer;
 
 #ifdef DEBUG_VO_BIN_DUMP
-    dumpNum++;
-
-    _gst_debug_bin_to_dot_file(GST_BIN(m_playbin),
+    _gst_debug_bin_to_dot_file_with_ts(GST_BIN(m_playbin),
                                   GstDebugGraphDetails(GST_DEBUG_GRAPH_SHOW_ALL /* GST_DEBUG_GRAPH_SHOW_MEDIA_TYPE | GST_DEBUG_GRAPH_SHOW_NON_DEFAULT_PARAMS | GST_DEBUG_GRAPH_SHOW_STATES*/),
-                                  QString("playbin_%1_set").arg(dumpNum).toAscii().constData());
+                                  "playbin_set");
 #endif
 
     GstElement *videoSink = 0;
@@ -403,14 +398,15 @@ void QGstreamerPlayerSession::setVideoRenderer(QObject *videoOutput)
 
         gst_bin_add(GST_BIN(m_videoOutputBin), m_videoSink);
 
-        m_usingColorspaceElement = (m_videoSink != m_nullVideoSink) &&
-                m_renderer->isColorSpaceElementRequired();
-
-        if (m_usingColorspaceElement) {
+        m_usingColorspaceElement = false;
+        bool linked = gst_element_link(m_videoIdentity, m_videoSink);
+        if (!linked) {
+            m_usingColorspaceElement = true;
+#ifdef DEBUG_PLAYBIN
+            qDebug() << "Failed to connect video output, inserting the colorspace element.";
+#endif
             gst_bin_add(GST_BIN(m_videoOutputBin), m_colorSpace);
-            gst_element_link_many(m_videoIdentity, m_colorSpace, m_videoSink, NULL);
-        } else {
-            gst_element_link(m_videoIdentity, m_videoSink);
+            linked = gst_element_link_many(m_videoIdentity, m_colorSpace, m_videoSink, NULL);
         }
 
         switch (m_pendingState) {
@@ -506,21 +502,23 @@ void QGstreamerPlayerSession::finishVideoOutputChange()
 
     gst_bin_add(GST_BIN(m_videoOutputBin), m_videoSink);
 
-    m_usingColorspaceElement = (m_videoSink != m_nullVideoSink) &&
-            m_renderer->isColorSpaceElementRequired();
-
-    bool linked = false;
-    if (m_usingColorspaceElement) {
+    m_usingColorspaceElement = false;
+    bool linked = gst_element_link(m_videoIdentity, m_videoSink);
+    if (!linked) {
+        m_usingColorspaceElement = true;
+#ifdef DEBUG_PLAYBIN
+        qDebug() << "Failed to connect video output, inserting the colorspace element.";
+#endif
         gst_bin_add(GST_BIN(m_videoOutputBin), m_colorSpace);
         linked = gst_element_link_many(m_videoIdentity, m_colorSpace, m_videoSink, NULL);
-    } else {
-        linked = gst_element_link(m_videoIdentity, m_videoSink);
     }
 
     if (!linked)
         qWarning() << "Linking video output element failed";
 
+#ifdef DEBUG_PLAYBIN
     qDebug() << "notify the video connector it has to emit a new segment message...";
+#endif
     //it's necessary to send a new segment event just before
     //the first buffer pushed to the new sink
     GST_VIDEO_CONNECTOR(m_videoIdentity)->relinked = true;
@@ -554,11 +552,48 @@ void QGstreamerPlayerSession::finishVideoOutputChange()
     gst_object_unref(GST_OBJECT(srcPad));
 
 #ifdef DEBUG_VO_BIN_DUMP
-    dumpNum++;
-    _gst_debug_bin_to_dot_file(GST_BIN(m_playbin),
-                                  GstDebugGraphDetails(/*GST_DEBUG_GRAPH_SHOW_ALL */ GST_DEBUG_GRAPH_SHOW_MEDIA_TYPE | GST_DEBUG_GRAPH_SHOW_NON_DEFAULT_PARAMS | GST_DEBUG_GRAPH_SHOW_STATES),
-                                  QString("playbin_%1_finish").arg(dumpNum).toAscii().constData());
+    _gst_debug_bin_to_dot_file_with_ts(GST_BIN(m_playbin),
+                                  GstDebugGraphDetails(GST_DEBUG_GRAPH_SHOW_ALL /* GST_DEBUG_GRAPH_SHOW_MEDIA_TYPE | GST_DEBUG_GRAPH_SHOW_NON_DEFAULT_PARAMS | GST_DEBUG_GRAPH_SHOW_STATES*/),
+                                  "playbin_finish");
 #endif
+}
+
+void QGstreamerPlayerSession::insertColorSpaceElement(GstElement *element, gpointer data)
+{
+    Q_UNUSED(element);
+    QGstreamerPlayerSession* session = reinterpret_cast<QGstreamerPlayerSession*>(data);
+
+    if (session->m_usingColorspaceElement)
+        return;
+    session->m_usingColorspaceElement = true;
+
+#ifdef DEBUG_PLAYBIN
+    qDebug() << "Failed to connect video output, inserting the colorspace elemnt.";
+    qDebug() << "notify the video connector it has to emit a new segment message...";
+#endif
+    //it's necessary to send a new segment event just before
+    //the first buffer pushed to the new sink
+    GST_VIDEO_CONNECTOR(session->m_videoIdentity)->relinked = true;
+
+    gst_element_unlink(session->m_videoIdentity, session->m_videoSink);
+    gst_bin_add(GST_BIN(session->m_videoOutputBin), session->m_colorSpace);
+    gst_element_link_many(session->m_videoIdentity, session->m_colorSpace, session->m_videoSink, NULL);
+
+    GstState state;
+
+    switch (session->m_pendingState) {
+    case QMediaPlayer::StoppedState:
+        state = GST_STATE_NULL;
+        break;
+    case QMediaPlayer::PausedState:
+        state = GST_STATE_PAUSED;
+        break;
+    case QMediaPlayer::PlayingState:
+        state = GST_STATE_PLAYING;
+        break;
+    }
+
+    gst_element_set_state(session->m_colorSpace, state);
 }
 
 
