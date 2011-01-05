@@ -64,7 +64,11 @@ QTM_BEGIN_NAMESPACE
     Constructs a new polygon object.
 */
 QGeoMapPolygonObject::QGeoMapPolygonObject()
-    : d_ptr(new QGeoMapPolygonObjectPrivate()) {}
+    : d_ptr(new QGeoMapPolygonObjectPrivate())
+{
+    setGraphicsItem(d_ptr->item);
+    setUnits(QGeoMapObject::RelativeArcSecondUnit);
+}
 
 /*!
     Destroys this polygon object.
@@ -101,7 +105,10 @@ void QGeoMapPolygonObject::setPath(const QList<QGeoCoordinate> &path)
 {
     if (d_ptr->path != path) {
         d_ptr->path = path;
+        setOrigin(path.at(0));
+        d_ptr->genPoly();
         emit pathChanged(emit d_ptr->path);
+        emit mapNeedsUpdate();
     }
 }
 
@@ -126,16 +133,17 @@ void QGeoMapPolygonObject::setPen(const QPen &pen)
     QPen newPen = pen;
     newPen.setCosmetic(true);
 
-    if (d_ptr->pen == newPen)
+    if (d_ptr->item->pen() == newPen)
         return;
 
-    d_ptr->pen = newPen;
-    emit penChanged(d_ptr->pen);
+    d_ptr->item->setPen(pen);
+    emit penChanged(pen);
+    emit mapNeedsUpdate();
 }
 
 QPen QGeoMapPolygonObject::pen() const
 {
-    return d_ptr->pen;
+    return d_ptr->item->pen();
 }
 
 /*!
@@ -149,15 +157,15 @@ QPen QGeoMapPolygonObject::pen() const
 */
 void QGeoMapPolygonObject::setBrush(const QBrush &brush)
 {
-    if (d_ptr->brush != brush) {
-        d_ptr->brush = brush;
-        emit brushChanged(d_ptr->brush);
+    if (d_ptr->item->brush() != brush) {
+        d_ptr->item->setBrush(brush);
+        emit brushChanged(brush);
     }
 }
 
 QBrush QGeoMapPolygonObject::brush() const
 {
-    return d_ptr->brush;
+    return d_ptr->item->brush();
 }
 
 /*!
@@ -190,12 +198,34 @@ QBrush QGeoMapPolygonObject::brush() const
 /*******************************************************************************
 *******************************************************************************/
 
-QGeoMapPolygonObjectPrivate::QGeoMapPolygonObjectPrivate()
+QGeoMapPolygonObjectPrivate::QGeoMapPolygonObjectPrivate() :
+    item(new QGraphicsPolygonItem)
 {
+    QPen pen = item->pen();
     pen.setCosmetic(true);
+    item->setPen(pen);
 }
 
 QGeoMapPolygonObjectPrivate::~QGeoMapPolygonObjectPrivate() {}
+
+void QGeoMapPolygonObjectPrivate::genPoly()
+{
+    QPolygonF poly;
+
+    QGeoCoordinate origin = path.at(0);
+    double ox = origin.longitude() * 3600.0;
+    double oy = origin.latitude() * 3600.0;
+
+    poly << QPointF(0,0);
+    for (int i = 0; i < path.size(); ++i) {
+        QGeoCoordinate pt = path.at(i);
+        double x = pt.longitude() * 3600.0 - ox;
+        double y = pt.latitude() * 3600.0 - oy;
+        poly << QPointF(x, y);
+    }
+
+    item->setPolygon(poly);
+}
 
 #include "moc_qgeomappolygonobject.cpp"
 
