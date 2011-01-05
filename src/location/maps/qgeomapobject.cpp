@@ -314,21 +314,30 @@ bool QGeoMapObject::contains(const QGeoCoordinate &coordinate) const
         return false;
 
     d_ptr->mapData->d_ptr->updateTransforms();
-    QPointF latLonPoint(coordinate.longitude(), coordinate.latitude());
+    QPointF latLonPoint(coordinate.longitude()*3600.0, coordinate.latitude()*3600.0);
 
-    QList<QTransform> transList = d_ptr->mapData->d_ptr->latLonTrans.values(this);
-    foreach (QTransform trans, transList) {
-        bool ok;
-        QTransform inv = trans.inverted(&ok);
-        if (!ok)
-            continue;
+    if (d_ptr->mapData->d_ptr->latLonExact.contains(this)) {
+        QList<QGraphicsItem*> items = d_ptr->mapData->d_ptr->latLonExact.values(this);
+        foreach (QGraphicsItem *item, items) {
+            if (item->contains(latLonPoint))
+                return true;
+        }
+        return false;
+    } else {
+        QList<QTransform> transList = d_ptr->mapData->d_ptr->latLonTrans.values(this);
+        foreach (QTransform trans, transList) {
+            bool ok;
+            QTransform inv = trans.inverted(&ok);
+            if (!ok)
+                continue;
 
-        QPointF localPoint = latLonPoint * inv;
+            QPointF localPoint = latLonPoint * inv;
 
-        if (d_ptr->graphicsItem->contains(localPoint))
-            return true;
+            if (d_ptr->graphicsItem->contains(localPoint))
+                return true;
+        }
+        return false;
     }
-    return false;
 }
 
 /*!

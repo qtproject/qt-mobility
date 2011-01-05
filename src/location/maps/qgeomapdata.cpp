@@ -444,24 +444,31 @@ QList<QGeoMapObject*> QGeoMapData::mapObjectsInScreenRect(const QRectF &screenRe
         Q_ASSERT(object);
 
         if (object->isVisible() && !considered.contains(object)) {
-            QList<QTransform> trans = d_ptr->pixelTrans.values(object);
             bool contains = false;
 
-            foreach (QTransform t, trans) {
-                bool ok;
-                QTransform inv = t.inverted(&ok);
-                if (ok) {
-                    QPolygonF testPoly = screenRect * inv;
-
-                    QPainterPath testPath;
-                    testPath.moveTo(testPoly[0]);
-                    testPath.lineTo(testPoly[1]);
-                    testPath.lineTo(testPoly[2]);
-                    testPath.lineTo(testPoly[3]);
-                    testPath.closeSubpath();
-
-                    if (object->graphicsItem()->shape().intersects(testPath))
+            if (d_ptr->pixelExact.contains(object)) {
+                foreach (QGraphicsItem *item, d_ptr->pixelExact.values(object))
+                    if (item->shape().intersects(screenRect))
                         contains = true;
+            } else {
+                QList<QTransform> trans = d_ptr->pixelTrans.values(object);
+
+                foreach (QTransform t, trans) {
+                    bool ok;
+                    QTransform inv = t.inverted(&ok);
+                    if (ok) {
+                        QPolygonF testPoly = screenRect * inv;
+
+                        QPainterPath testPath;
+                        testPath.moveTo(testPoly[0]);
+                        testPath.lineTo(testPoly[1]);
+                        testPath.lineTo(testPoly[2]);
+                        testPath.lineTo(testPoly[3]);
+                        testPath.closeSubpath();
+
+                        if (object->graphicsItem()->shape().intersects(testPath))
+                            contains = true;
+                    }
                 }
             }
 
