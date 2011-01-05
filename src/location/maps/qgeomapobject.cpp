@@ -80,12 +80,16 @@ QTM_BEGIN_NAMESPACE
     mapObject->setOrigin(QGeoCoordinate(-27.5796, 153.1));
     \endcode
 
-    By default, the GraphicsItem will be transformed into map coordinates using
+    Normally, the GraphicsItem will be transformed into map coordinates using
     a bilinear interpolation. Another option is the ExactTransform, which
     converts the GraphicsItem exactly into map coordinates, but is only available
     for certain subclasses. Other interpolation methods may be provided in
     future for greater accuracy near poles and in different map projections,
     without the limitations of ExactTransform.
+
+    Calling setUnits() or setting the units property will result in the
+    default value of transformType being restored. See QGeoMapObject::transformType
+    for more details.
 
     QGeoMapObject instances can also be grouped into heirarchies in order to
     simplify the process of creating compound objects and managing groups of
@@ -155,6 +159,8 @@ QTM_BEGIN_NAMESPACE
 
 /*!
     Constructs a new map object associated with \a mapData.
+
+    The object will be in pixel coordinates, with exact transform.
 */
 QGeoMapObject::QGeoMapObject(QGeoMapData *mapData)
     : d_ptr(new QGeoMapObjectPrivate())
@@ -444,8 +450,11 @@ void QGeoMapObject::setOrigin(const QGeoCoordinate &origin)
     \property QGeoMapObject::units
     \brief This property holds the units of measurement for the object.
 
-    Note that setting the units to PixelUnit will result in the transformType
-    property being set to ExactTransform automatically.
+    Note that setting this property will reset the transformType property to
+    the default for the units given. For PixelUnit, this is ExactTransform,
+    and for all others, BilinearTransform.
+
+    \sa QGeoMapObject::CoordinateUnit
 */
 QGeoMapObject::CoordinateUnit QGeoMapObject::units() const
 {
