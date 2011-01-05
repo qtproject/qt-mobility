@@ -1,5 +1,5 @@
 /****************************************************************************
-**
+184**
 ** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
@@ -42,14 +42,14 @@
 //TESTED_COMPONENT=src/systeminfo
 
 #include <QtTest/QtTest>
-#include "qsysteminfo.h"
+#include "qdeclarativenetworkinfo_p.h"
 
 QTM_USE_NAMESPACE
 Q_DECLARE_METATYPE(QSystemNetworkInfo::NetworkStatus);
 Q_DECLARE_METATYPE(QSystemNetworkInfo::NetworkMode);
 
 
-class tst_QSystemNetworkInfo : public QObject
+class tst_QDeclarativeNetworkInfo : public QObject
 {
     Q_OBJECT
 
@@ -80,14 +80,14 @@ private slots:
 //signal todo:
 //    void networkStatusChanged(QSystemNetworkInfo::NetworkMode netmode, QSystemNetworkInfo::CellNetworkStatus netStatus);
 
-void tst_QSystemNetworkInfo::initTestCase()
+void tst_QDeclarativeNetworkInfo::initTestCase()
 {
     qRegisterMetaType<QSystemNetworkInfo::NetworkStatus>("QSystemNetworkInfo::NetworkStatus");
     qRegisterMetaType<QSystemNetworkInfo::NetworkMode>("QSystemNetworkInfo::NetworkMode");
 }
 
 
-void tst_QSystemNetworkInfo::tst_networkStatus()
+void tst_QDeclarativeNetworkInfo::tst_networkStatus()
 {
     QSystemNetworkInfo ni;
     QList<QSystemNetworkInfo::NetworkMode> modeList;
@@ -120,7 +120,7 @@ void tst_QSystemNetworkInfo::tst_networkStatus()
 
 }
 
-void tst_QSystemNetworkInfo::tst_networkSignalStrength_data()
+void tst_QDeclarativeNetworkInfo::tst_networkSignalStrength_data()
 {
     QTest::addColumn<QSystemNetworkInfo::NetworkMode>("mode");
 
@@ -138,7 +138,7 @@ void tst_QSystemNetworkInfo::tst_networkSignalStrength_data()
     QTest::newRow("LteMode") << QSystemNetworkInfo::LteMode;
 }
 
-void tst_QSystemNetworkInfo::tst_networkSignalStrength()
+void tst_QDeclarativeNetworkInfo::tst_networkSignalStrength()
 {
     {
         QFETCH(QSystemNetworkInfo::NetworkMode, mode);
@@ -149,14 +149,14 @@ void tst_QSystemNetworkInfo::tst_networkSignalStrength()
     }
 }
 
-void  tst_QSystemNetworkInfo::tst_cellId()
+void  tst_QDeclarativeNetworkInfo::tst_cellId()
 {
     QSystemNetworkInfo ni;
     qint32 id = ni.cellId();
     QVERIFY(id > -2);
 }
 
-void  tst_QSystemNetworkInfo::tst_locationAreaCode()
+void  tst_QDeclarativeNetworkInfo::tst_locationAreaCode()
 {
     QSystemNetworkInfo ni;
     qint32 lac = ni.locationAreaCode();
@@ -164,7 +164,7 @@ void  tst_QSystemNetworkInfo::tst_locationAreaCode()
 }
 
 
-void  tst_QSystemNetworkInfo::tst_currentMobileCountryCode()
+void  tst_QDeclarativeNetworkInfo::tst_currentMobileCountryCode()
 {
     QSystemNetworkInfo ni;
 //    qDebug() << ni.currentMobileCountryCode();
@@ -181,7 +181,7 @@ void  tst_QSystemNetworkInfo::tst_currentMobileCountryCode()
         ) {
         QVERIFY(!ni.currentMobileCountryCode().isEmpty());
         bool ok;
-         ni.currentMobileCountryCode().toInt(&ok);
+        ni.currentMobileCountryCode().toInt(&ok);
         QVERIFY(ok);
         QVERIFY(ni.currentMobileCountryCode().count() == 3);
     } else {
@@ -189,7 +189,7 @@ void  tst_QSystemNetworkInfo::tst_currentMobileCountryCode()
     }
 }
 
-void  tst_QSystemNetworkInfo::tst_currentMobileNetworkCode()
+void  tst_QDeclarativeNetworkInfo::tst_currentMobileNetworkCode()
 {
     QSystemNetworkInfo ni;
     if(QSystemNetworkInfo::HomeNetwork == ni.networkStatus(QSystemNetworkInfo::GsmMode)
@@ -215,7 +215,7 @@ void  tst_QSystemNetworkInfo::tst_currentMobileNetworkCode()
 }
 
 
-void  tst_QSystemNetworkInfo::tst_homeMobileCountryCode()
+void  tst_QDeclarativeNetworkInfo::tst_homeMobileCountryCode()
 {
     QSystemNetworkInfo ni;
     if(QSystemNetworkInfo::HomeNetwork == ni.networkStatus(QSystemNetworkInfo::GsmMode)
@@ -239,7 +239,7 @@ void  tst_QSystemNetworkInfo::tst_homeMobileCountryCode()
     }
 }
 
-void  tst_QSystemNetworkInfo::tst_homeMobileNetworkCode()
+void  tst_QDeclarativeNetworkInfo::tst_homeMobileNetworkCode()
 {
     QSystemNetworkInfo ni;
     if(QSystemNetworkInfo::HomeNetwork == ni.networkStatus(QSystemNetworkInfo::GsmMode)
@@ -264,7 +264,7 @@ void  tst_QSystemNetworkInfo::tst_homeMobileNetworkCode()
     }
 }
 
-void  tst_QSystemNetworkInfo::tst_networkName()
+void  tst_QDeclarativeNetworkInfo::tst_networkName()
 {
     QSystemNetworkInfo ni;
     QList<QSystemNetworkInfo::NetworkMode> modeList;
@@ -288,12 +288,12 @@ void  tst_QSystemNetworkInfo::tst_networkName()
 }
 
 
-void tst_QSystemNetworkInfo::tst_macAddress_data()
+void tst_QDeclarativeNetworkInfo::tst_macAddress_data()
 {
    tst_networkSignalStrength_data();
 }
 
-void tst_QSystemNetworkInfo::tst_macAddress()
+void tst_QDeclarativeNetworkInfo::tst_macAddress()
 {
    QFETCH(QSystemNetworkInfo::NetworkMode, mode);
    QSystemNetworkInfo ni;
@@ -304,7 +304,7 @@ void tst_QSystemNetworkInfo::tst_macAddress()
    }
 }
 
-void tst_QSystemNetworkInfo::tst_interfaceForMode()
+void tst_QDeclarativeNetworkInfo::tst_interfaceForMode()
 {
     QSystemNetworkInfo ni;
     QList<QSystemNetworkInfo::NetworkMode> modeList;
@@ -328,7 +328,7 @@ void tst_QSystemNetworkInfo::tst_interfaceForMode()
 
 }
 
-void tst_QSystemNetworkInfo::tst_currentMode()
+void tst_QDeclarativeNetworkInfo::tst_currentMode()
 {
     QSystemNetworkInfo ni;
     QSystemNetworkInfo::NetworkMode mode = ni.currentMode();
@@ -350,5 +350,5 @@ void tst_QSystemNetworkInfo::tst_currentMode()
 }
 
 
-QTEST_MAIN(tst_QSystemNetworkInfo)
-#include "tst_qsystemnetworkinfo.moc"
+QTEST_MAIN(tst_QDeclarativeNetworkInfo)
+#include "tst_qdeclarativenetworkinfo.moc"

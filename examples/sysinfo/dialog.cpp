@@ -186,8 +186,49 @@ void Dialog::setupDevice()
     bluetoothPowerLabel->setText((di->currentBluetoothPowerState() ? "On" : "Off"));
     connect(di,SIGNAL(bluetoothStateChanged(bool)), this,SLOT(bluetoothChanged(bool)));
 
-    hostIdLabel->setText(di->hostId());
+    uniqueIDLabel->setText(di->uniqueDeviceID());
 
+    updateKeyboard(di->keyboardTypes());
+
+    keyboardFlipRadioButton->setChecked(di->isKeyboardFlippedOpen());
+    wirelessKeyboardConnectedRadioButton->setChecked(di->isWirelessKeyboardConnected());
+
+    QString lockState;
+    QSystemDeviceInfo::LockTypeFlags lock = di->lockStatus();
+    if((lock & QSystemDeviceInfo::UnknownLock)){
+        lockState = "Unknown";
+    }
+    if((lock & QSystemDeviceInfo::PinLocked)){
+        lockState = "Pin/Password Locked";
+    }
+    if((lock & QSystemDeviceInfo::TouchAndKeyboardLocked)){
+        lockState = "Touch and keyboard locked";
+    }
+    lockStateLabel->setText(lockState);
+}
+
+void Dialog::updateKeyboard(QSystemDeviceInfo::KeyboardTypeFlags type)
+{
+
+    if((type & QSystemDeviceInfo::UnknownKeyboard)) {
+        uknownKeysRadioButton->setChecked(true);
+    }
+    if ((type & QSystemDeviceInfo::SoftwareKeyboard)) {
+        softkeysRadioButton->setChecked(true);
+    }
+    if ((type & QSystemDeviceInfo::ITUKeypad)) {
+        ituRadioButton->setChecked(true);
+    }
+    if ((type & QSystemDeviceInfo::HalfQwertyKeyboard)) {
+        halfKeysRadioButton->setChecked(true);
+    }
+    if ((type & QSystemDeviceInfo::FullQwertyKeyboard)) {
+        qwertyKeysRadioButton->setChecked(true);
+    }
+    if((type & QSystemDeviceInfo::WirelessKeyboard)) {
+        wirelessRadioButton->setChecked(true);
+    }
+    keyboardLightCheckBox->setChecked(di->keypadLightOn(QSystemDeviceInfo::PrimaryKeypad));
 }
 
 void Dialog::updateDeviceLockedState()
@@ -263,7 +304,6 @@ void Dialog::updateStorage()
         if(volType == QSystemStorageInfo::InternalDrive) {
             type =  "Internal";
         }
-
         if(volType == QSystemStorageInfo::RemovableDrive) {
             type = "Removable";
         }
@@ -273,11 +313,18 @@ void Dialog::updateStorage()
         if(volType == QSystemStorageInfo::RemoteDrive) {
             type =  "Network";
         }
+        if(volType == QSystemStorageInfo::InternalFlashDrive) {
+            type =  "Flash";
+        }
+        if(volType == QSystemStorageInfo::RamDrive) {
+            type =  "Ram";
+        }
         QStringList items;
         items << volName;
         items << type;
         items << QString::number(sti->totalDiskSpace(volName));
         items << QString::number(sti->availableDiskSpace(volName));
+        items << sti->uriForDrive(volName);
         QTreeWidgetItem *item = new QTreeWidgetItem(items);
         storageTreeWidget->addTopLevelItem(item);
     }
@@ -441,6 +488,9 @@ void Dialog::getFeature(int index)
         break;
     case 13:
         feature = QSystemInfo::HapticsFeature;
+        break;
+    case 14:
+        feature = QSystemInfo::FmTransmitterFeature;
         break;
     };
 //! [feature test]
@@ -784,6 +834,11 @@ void Dialog::updateProfile()
             }
         };
         profileLabel->setText(profilestring);
+
+        QSystemDeviceInfo::ActiveProfileDetails pDetails = di->getActiveProfileDetails();
+        messageRingtonVolumeLcdNumber->display(pDetails.messageRingtoneVolume());
+        voiceRingtoneVolumeLcdNumber->display(pDetails.voiceRingtoneVolume());
+        vibrationActiveRadioButton->setChecked(pDetails.vibrationActive());
     }
 }
 
@@ -852,15 +907,10 @@ void Dialog::setupBattery()
     connect(bi,SIGNAL(chargerTypeChanged(QSystemBatteryInfo::ChargerType)),
             this,SLOT(chargerTypeChanged(QSystemBatteryInfo::ChargerType)));
 
-    connect(startMeasurementPushButton,SIGNAL(clicked()),
-            this,SLOT(startCurrentPushed()));
-
     connect(bi,SIGNAL(nominalCapacityChanged(int)),
             NominalCaplcdNumber,SLOT(display(int)));
     connect(bi,SIGNAL(remainingCapacityChanged(int)),
             remainCaplcdNumber,SLOT(display(int)));
-    connect(bi,SIGNAL(voltageChanged(int)),
-            voltagelcdNumber,SLOT(display(int)));
     connect(bi,SIGNAL(currentFlowChanged(int)),
             currentFLowlcdNumber,SLOT(display(int)));
     connect(bi,SIGNAL(remainingCapacityBarsChanged(int)),
@@ -930,7 +980,4 @@ void Dialog::chargerTypeChanged(QSystemBatteryInfo::ChargerType chargerType)
     currentChargerType = chargerType;
 }
 
-void Dialog::startCurrentPushed()
-{
-    bi->startCurrentMeasurement(currentMeasurementSpinBox->value());
-}
+
