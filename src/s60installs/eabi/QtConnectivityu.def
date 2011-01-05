@@ -163,7 +163,7 @@ EXPORTS
 	_ZN10QtMobility16QNearFieldTarget17writeNdefMessagesERK5QListINS_12QNdefMessageEE @ 162 NONAME
 	_ZN10QtMobility16QNearFieldTarget19getStaticMetaObjectEv @ 163 NONAME
 	_ZN10QtMobility16QNearFieldTarget19ndefMessagesWrittenEv @ 164 NONAME
-	_ZN10QtMobility16QNearFieldTarget21setResponseForRequestERKNS0_9RequestIdERK8QVariant @ 165 NONAME
+	_ZN10QtMobility16QNearFieldTarget21setResponseForRequestERKNS0_9RequestIdERK8QVariant @ 165 NONAME ABSENT
 	_ZN10QtMobility16QNearFieldTarget23waitForRequestCompletedERKNS0_9RequestIdEi @ 166 NONAME
 	_ZN10QtMobility16QNearFieldTarget5errorENS0_5ErrorERKNS0_9RequestIdE @ 167 NONAME
 	_ZN10QtMobility16QNearFieldTarget9RequestIdC1EPNS0_16RequestIdPrivateE @ 168 NONAME
@@ -543,4 +543,5 @@ EXPORTS
 	_ZTVN10QtMobility25QBluetoothTransferManagerE @ 542 NONAME
 	_ZTVN10QtMobility30QBluetoothDeviceDiscoveryAgentE @ 543 NONAME
 	_ZTVN10QtMobility31QBluetoothServiceDiscoveryAgentE @ 544 NONAME
+	_ZN10QtMobility16QNearFieldTarget21setResponseForRequestERKNS0_9RequestIdERK8QVariantb @ 545 NONAME
 
