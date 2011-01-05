@@ -191,7 +191,8 @@ void QFeedbackTestPlugin::setLoaded(QFeedbackFileEffect *effect, bool load)
 void QFeedbackTestPlugin::setEffectState(QFeedbackFileEffect *effect, QFeedbackEffect::State state)
 {
     Q_UNUSED(effect)
-    mFileState = state;
+    if (effect->source() == QUrl("load")) // we only change state for good effects
+        mFileState = state;
 }
 
 QFeedbackEffect::State QFeedbackTestPlugin::effectState(const QFeedbackFileEffect *effect)
@@ -215,6 +216,8 @@ bool QFeedbackTestPlugin::play(QFeedbackEffect::ThemeEffect themeEffect)
 {
     if (themeEffect == QFeedbackEffect::ThemeBasic)
         return true;
-    else
+    else {
+        reportError(0, QFeedbackEffect::UnknownError);
         return false;
+    }
 }

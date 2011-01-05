@@ -38,54 +38,34 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-
-#ifndef QFEEDBACKPLUGIN_P_H
-#define QFEEDBACKPLUGIN_P_H
+#ifndef QFEEDBACKTESTPLUGIN_H
+#define QFEEDBACKTESTPLUGIN_H
 
 #include <qmobilityglobal.h>
-#include "qfeedbackactuator.h"
-#include "qfeedbackeffect.h"
-#include "qfeedbackplugininterfaces.h"
+#include <QtCore/QList>
+#include <QtCore/QVector>
+#include <QtCore/QHash>
+#include <QtCore/QMap>
+#include <QtCore/QObject>
+#include <QtCore/QMutex>
+#include <QtCore/QTimer>
 
-#include <QtCore/QCoreApplication>
-#include <QtCore/QVariant>
-
-
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists for the convenience
-// of Qt Feedback framework.  This header file may change from version
-// to version without notice, or even be removed.
-//
-// We mean it.
-//
-//
+#include <qfeedbackplugininterfaces.h>
 
 QT_BEGIN_HEADER
+QTM_USE_NAMESPACE
 
-QTM_BEGIN_NAMESPACE
-
-class QDummyBackend : QObject, public QFeedbackHapticsInterface
+class QFeedbackTestPlugin : public QObject, public QFeedbackThemeInterface
 {
+    Q_OBJECT
+    Q_INTERFACES(QTM_NAMESPACE::QFeedbackThemeInterface)
 public:
-    QDummyBackend() : QObject(qApp) { pluginPriority(); }
+    QFeedbackTestPlugin();
+    virtual ~QFeedbackTestPlugin();
 
-    QList<QFeedbackActuator*> actuators() { return QList<QFeedbackActuator*>(); }
-
-    void setActuatorProperty(const QFeedbackActuator &, ActuatorProperty, const QVariant &) { }
-    QVariant actuatorProperty(const QFeedbackActuator &, ActuatorProperty) { return QVariant(); }
-    bool isActuatorCapabilitySupported(const QFeedbackActuator &, QFeedbackActuator::Capability) { return false; }
-
-    void updateEffectProperty(const QFeedbackHapticsEffect *, EffectProperty) { }
-    void setEffectState(const QFeedbackHapticsEffect *, QFeedbackEffect::State) { }
-    QFeedbackEffect::State effectState(const QFeedbackHapticsEffect *) { return QFeedbackEffect::Stopped; }
-
-    virtual PluginPriority pluginPriority() { return PluginLowPriority; }
+    virtual PluginPriority pluginPriority() {return QFeedbackInterface::PluginLowPriority;}
+    virtual bool play(QFeedbackEffect::ThemeEffect) {return false;}
 };
-
-QTM_END_NAMESPACE
 
 QT_END_HEADER
 

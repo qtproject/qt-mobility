@@ -140,8 +140,8 @@ void tst_qdeclarativefeedback::fileEffect()
     fileEffect->setProperty("paused", true);
 
     // dummy backend
-    QCOMPARE(fileEffect->property("running").toBool(), false);
-    QCOMPARE(fileEffect->property("paused").toBool(), false);
+    QTRY_COMPARE(fileEffect->property("running").toBool(), false);
+    QTRY_COMPARE(fileEffect->property("paused").toBool(), false);
 
     delete fileEffect;
 }
