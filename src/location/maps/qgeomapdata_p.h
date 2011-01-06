@@ -109,35 +109,6 @@ public:
 
     QPolygonF polyToScreen(const QPolygonF &poly);
 
-    virtual bool exactMetersToSeconds(const QGeoCoordinate &origin,
-                                      QGeoMapObject *object,
-                                      QGraphicsItem *item,
-                                      QList<QPolygonF> &polys);
-    virtual bool exactSecondsToSeconds(const QGeoCoordinate &origin,
-                                       QGeoMapObject *object,
-                                       QGraphicsItem *item,
-                                       QList<QPolygonF> &polys);
-
-    virtual void exactPixelMap(const QGeoCoordinate &origin,
-                               QGeoMapObject *object,
-                               QList<QPolygonF> &polys);
-
-    void bilinearMetersToSeconds(const QGeoCoordinate &origin,
-                                 QGraphicsItem *item,
-                                 QPolygonF &local,
-                                 QTransform &latLon);
-    void bilinearPixelsToSeconds(const QGeoCoordinate &origin,
-                                 QGraphicsItem *item,
-                                 QPolygonF &local,
-                                 QTransform &latLon);
-
-    void pixelShiftToScreen(const QGeoCoordinate &origin,
-                            QGeoMapObject *object,
-                            QList<QPolygonF> &polys);
-    void bilinearSecondsToScreen(const QGeoCoordinate &origin,
-                                 QGeoMapObject *object,
-                                 QList<QPolygonF> &polys);
-
     void clearObjects();
     void updateTransforms();
 

@@ -56,7 +56,8 @@ PRIVATE_HEADERS += \
                     maps/qgeosearchmanagerengine_p.h \
                     maps/qgeosearchreply_p.h \
                     maps/qgeoserviceprovider_p.h \
-                    maps/qgraphicsgeomap_p.h
+                    maps/qgraphicsgeomap_p.h \
+                    maps/qgeomapobjectengine_p.h
 
 SOURCES += \
             maps/qgeomaneuver.cpp \
@@ -85,7 +86,8 @@ SOURCES += \
             maps/qgeoserviceprovider.cpp \
             maps/qgeoserviceproviderfactory.cpp \
             maps/qgraphicsgeomap.cpp \
-    maps/qgeomapobjectinfo.cpp
+            maps/qgeomapobjectinfo.cpp \
+            maps/qgeomapobjectengine_p.cpp
 
 PUBLIC_HEADERS += \
     maps/qgeomapobjectinfo.h
