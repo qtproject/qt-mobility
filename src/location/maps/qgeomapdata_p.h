@@ -99,6 +99,11 @@ public:
 
     virtual void addObject(QGeoMapObject *object);
     virtual void removeObject(QGeoMapObject *object);
+
+protected:
+    virtual void _removeObject(QGeoMapObject *object);
+
+public:
     virtual void updateLatLonTransform(QGeoMapObject *object);
     virtual void updatePixelTransform(QGeoMapObject *object);
 
@@ -140,15 +145,17 @@ public:
 
     QPolygonF latLonViewport();
 
-    bool pixelsOutOfDate;
-    bool zoomOutOfDate;
+    QList<QGeoMapObject*> objectsForPixelUpdate;
+    QList<QGeoMapObject*> objectsForLatLonUpdate;
 
 public slots:
     void forceUpdate(const QRectF &target = QRectF());
     void forceUpdate(QGeoMapObject *obj);
 
     void updateSender();
+    void updateZoom(QGeoMapGroupObject *group=0);
     virtual void updatePixelTransforms(QGeoMapGroupObject *group=0);
+    void invalidatePixelViewport();
     virtual void updateLatLonTransforms(QGeoMapGroupObject *group=0);
 
 public:

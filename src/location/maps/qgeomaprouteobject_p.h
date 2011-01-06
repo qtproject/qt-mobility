@@ -45,6 +45,7 @@
 #include "qgeoroute.h"
 
 #include <QPen>
+#include <QGraphicsPathItem>
 
 QTM_BEGIN_NAMESPACE
 

@@ -159,7 +159,7 @@ void QGeoMapData::setWindowSize(const QSizeF &size)
         return;
 
     d_ptr->windowSize = size;
-    d_ptr->pixelsOutOfDate = true;
+    d_ptr->updateZoom();
 
     if (!d_ptr->blockPropertyChangeSignals)
         emit windowSizeChanged(d_ptr->windowSize);
@@ -195,7 +195,7 @@ void QGeoMapData::setZoomLevel(qreal zoomLevel)
         return;
 
     d_ptr->zoomLevel = zoomLevel;
-    d_ptr->zoomOutOfDate = true;
+    d_ptr->updateZoom();
 
     if (!d_ptr->blockPropertyChangeSignals)
         emit zoomLevelChanged(d_ptr->zoomLevel);
@@ -240,7 +240,7 @@ void QGeoMapData::setCenter(const QGeoCoordinate &center)
         return;
 
     d_ptr->center = center;
-    d_ptr->pixelsOutOfDate = true;
+    d_ptr->invalidatePixelViewport();
 
     if (!d_ptr->blockPropertyChangeSignals)
         emit centerChanged(d_ptr->center);
@@ -743,8 +743,6 @@ QGeoMapDataPrivate::QGeoMapDataPrivate(QGeoMapData *parent, QGeoMappingManagerEn
       engine(engine),
       containerObject(0),
       zoomLevel(-1.0),
-      zoomOutOfDate(true),
-      pixelsOutOfDate(true),
       windowSize(0, 0),
       blockPropertyChangeSignals(false),
       pixelScene(new QGraphicsScene),
@@ -761,22 +759,18 @@ QGeoMapDataPrivate::~QGeoMapDataPrivate()
 void QGeoMapDataPrivate::addObject(QGeoMapObject *object)
 {
     containerObject->addChildObject(object);
-    QGeoMapGroupObject *group = qobject_cast<QGeoMapGroupObject*>(object);
 
-    zoomOutOfDate = true;
-    pixelsOutOfDate = true;
+    objectsForLatLonUpdate << object;
+    objectsForPixelUpdate << object;
     emit q_ptr->updateMapDisplay();
 }
 
-void QGeoMapDataPrivate::removeObject(QGeoMapObject *object)
+void QGeoMapDataPrivate::_removeObject(QGeoMapObject *object)
 {
-    containerObject->removeChildObject(object);
-
     QGeoMapGroupObject *group = qobject_cast<QGeoMapGroupObject*>(object);
     if (group) {
-        zoomOutOfDate = true;
-        pixelsOutOfDate = true;
-        emit q_ptr->updateMapDisplay();
+        foreach (QGeoMapObject *child, group->childObjects())
+            _removeObject(child);
     } else {
         QList<QRectF> rectsToUpdate;
         foreach (QGraphicsItem *item, pixelItems.keys(object))
@@ -799,6 +793,13 @@ void QGeoMapDataPrivate::removeObject(QGeoMapObject *object)
         foreach (QRectF rect, rectsToUpdate)
             emit q_ptr->updateMapDisplay(rect);
     }
+}
+
+void QGeoMapDataPrivate::removeObject(QGeoMapObject *object)
+{
+    containerObject->removeChildObject(object);
+
+    _removeObject(object);
 }
 
 void QGeoMapDataPrivate::clearObjects()
@@ -1209,18 +1210,28 @@ void QGeoMapDataPrivate::updateLatLonTransform(QGeoMapObject *object)
     }
 
     QList<QGraphicsItem*> items = latLonItems.keys(object);
-    foreach (QGraphicsItem *item, items) {
-        latLonScene->removeItem(item);
-        latLonItems.remove(item);
-        delete item;
-    }
+    if (items.size() != polys.size()) {
+        foreach (QGraphicsItem *item, items) {
+            latLonScene->removeItem(item);
+            latLonItems.remove(item);
+            delete item;
+        }
 
-    foreach (QPolygonF poly, polys) {
-        QGraphicsItem *item = new QGraphicsPolygonItem(poly);
-        item->setZValue(object->zValue());
-        item->setVisible(true);
-        latLonItems.insert(item, object);
-        latLonScene->addItem(item);
+        foreach (QPolygonF poly, polys) {
+            QGraphicsItem *item = new QGraphicsPolygonItem(poly);
+            item->setZValue(object->zValue());
+            item->setVisible(true);
+            latLonItems.insert(item, object);
+            latLonScene->addItem(item);
+        }
+    } else {
+        for (int i = 0; i < polys.size(); ++i) {
+            QGraphicsItem *item = items.at(i);
+            QGraphicsPolygonItem *pi = dynamic_cast<QGraphicsPolygonItem*>(item);
+            Q_ASSERT(pi);
+            pi->setPolygon(polys.at(i));
+            pi->setZValue(object->zValue());
+        }
     }
 }
 
@@ -1245,31 +1256,59 @@ QPolygonF QGeoMapDataPrivate::latLonViewport()
     return view;
 }
 
-void QGeoMapDataPrivate::updatePixelTransforms(QGeoMapGroupObject *group)
+void QGeoMapDataPrivate::invalidatePixelViewport()
 {
-    if (group == 0)
-        group = containerObject;
-
     QPolygonF view = latLonViewport();
 
     QList<QGraphicsItem*> itemsInView;
     itemsInView = latLonScene->items(view, Qt::IntersectsItemShape,
                                      Qt::AscendingOrder);
 
-    pixelTrans.clear();
-    pixelItems.clear();
-    if (pixelScene)
-        delete pixelScene;
-    pixelScene = new QGraphicsScene();
-
-    QSet<QGeoMapObject*> done;
+    QSet<QGeoMapObject*> done = objectsForPixelUpdate.toSet();
 
     foreach (QGraphicsItem *latLonItem, itemsInView) {
         QGeoMapObject *object = latLonItems.value(latLonItem);
         Q_ASSERT(object);
         if (!done.contains(object)) {
-            updatePixelTransform(object);
+            objectsForPixelUpdate << object;
             done.insert(object);
+        }
+    }
+}
+
+void QGeoMapDataPrivate::updatePixelTransforms(QGeoMapGroupObject *group)
+{
+    if (group == 0) {
+        QPolygonF view = latLonViewport();
+
+        QList<QGraphicsItem*> itemsInView;
+        itemsInView = latLonScene->items(view, Qt::IntersectsItemShape,
+                                         Qt::AscendingOrder);
+
+        pixelTrans.clear();
+        pixelItems.clear();
+        if (pixelScene)
+            delete pixelScene;
+        pixelScene = new QGraphicsScene();
+
+        QSet<QGeoMapObject*> done;
+
+        foreach (QGraphicsItem *latLonItem, itemsInView) {
+            QGeoMapObject *object = latLonItems.value(latLonItem);
+            Q_ASSERT(object);
+            if (!done.contains(object)) {
+                updatePixelTransform(object);
+                done.insert(object);
+            }
+        }
+    } else {
+        foreach (QGeoMapObject *obj, group->childObjects()) {
+            QGeoMapGroupObject *subgroup = qobject_cast<QGeoMapGroupObject*>(obj);
+            if (subgroup) {
+                updatePixelTransforms(subgroup);
+            } else {
+                updatePixelTransform(obj);
+            }
         }
     }
 }
@@ -1398,13 +1437,6 @@ void QGeoMapDataPrivate::updatePixelTransform(QGeoMapObject *object)
     if (!item)
         return;
 
-    QList<QGraphicsItem*> items = pixelItems.keys(object);
-    foreach (QGraphicsItem *item, items) {
-        pixelItems.remove(item);
-        pixelScene->removeItem(item);
-        delete item;
-    }
-
     QList<QPolygonF> polys;
 
     pixelTrans.remove(object);
@@ -1418,12 +1450,29 @@ void QGeoMapDataPrivate::updatePixelTransform(QGeoMapObject *object)
         }
     }
 
-    foreach (QPolygonF poly, polys) {
-        QGraphicsPolygonItem *item = new QGraphicsPolygonItem(poly);
-        item->setZValue(object->zValue());
-        item->setVisible(true);
-        pixelItems.insert(item, object);
-        pixelScene->addItem(item);
+    QList<QGraphicsItem*> items = pixelItems.keys(object);
+
+    if (items.size() != polys.size()) {
+        foreach (QGraphicsItem *item, items) {
+            pixelItems.remove(item);
+            pixelScene->removeItem(item);
+            delete item;
+        }
+        foreach (QPolygonF poly, polys) {
+            QGraphicsPolygonItem *item = new QGraphicsPolygonItem(poly);
+            item->setZValue(object->zValue());
+            item->setVisible(true);
+            pixelItems.insert(item, object);
+            pixelScene->addItem(item);
+        }
+    } else {
+        for (int i = 0; i < polys.size(); ++i) {
+            QGraphicsItem *item = items.at(i);
+            QGraphicsPolygonItem *pi = dynamic_cast<QGraphicsPolygonItem*>(item);
+            Q_ASSERT(pi);
+            pi->setPolygon(polys.at(i));
+            pi->setZValue(object->zValue());
+        }
     }
 }
 
@@ -1466,22 +1515,65 @@ void QGeoMapDataPrivate::forceUpdate(QGeoMapObject *obj)
 // update the transform tables as necessary
 void QGeoMapDataPrivate::updateTransforms()
 {
-    if (zoomOutOfDate)
-        updateLatLonTransforms();
-    if (pixelsOutOfDate)
-        updatePixelTransforms();
+    foreach (QGeoMapObject *obj, objectsForLatLonUpdate) {
+        QGeoMapGroupObject *group = qobject_cast<QGeoMapGroupObject*>(obj);
+        if (group)
+            updateLatLonTransforms(group);
+        else
+            updateLatLonTransform(obj);
+    }
 
-    zoomOutOfDate = false;
-    pixelsOutOfDate = false;
+    objectsForLatLonUpdate.clear();
+
+    foreach (QGeoMapObject *obj, objectsForPixelUpdate) {
+        QGeoMapGroupObject *group = qobject_cast<QGeoMapGroupObject*>(obj);
+        if (group)
+            updatePixelTransforms(group);
+        else
+            updatePixelTransform(obj);
+    }
+
+    objectsForPixelUpdate.clear();
+}
+
+void QGeoMapDataPrivate::updateZoom(QGeoMapGroupObject *group)
+{
+    if (group == 0)
+        group = containerObject;
+
+    // this can occur when subclasses set zoom during their constructors
+    if (group == 0)
+        return;
+
+    foreach (QGeoMapObject *obj, group->childObjects()) {
+        QGeoMapGroupObject *subgroup = qobject_cast<QGeoMapGroupObject*>(obj);
+        if (subgroup) {
+            updateZoom(subgroup);
+        } else {
+            if (obj->units() == QGeoMapObject::PixelUnit) {
+                objectsForLatLonUpdate << obj;
+                objectsForPixelUpdate << obj;
+            }
+        }
+    }
 }
 
 // ensures the sender is up to date on the map
 void QGeoMapDataPrivate::updateSender()
 {
-    // TODO: find some way of making partial updates work here
-    zoomOutOfDate = true;
-    pixelsOutOfDate = true;
-    emit q_ptr->updateMapDisplay();
+    QGeoMapObject *obj = qobject_cast<QGeoMapObject*>(sender());
+    if (obj) {
+        QGeoMapGroupObject *group = qobject_cast<QGeoMapGroupObject*>(obj);
+        if (group) {
+            objectsForLatLonUpdate << group;
+            objectsForPixelUpdate << group;
+            emit q_ptr->updateMapDisplay();
+        } else {
+            forceUpdate(obj);
+        }
+    } else {
+        emit q_ptr->updateMapDisplay();
+    }
 }
 
 #include "moc_qgeomapdata.cpp"
