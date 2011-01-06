@@ -486,7 +486,7 @@ QString QDeclarativeOrganizerModel::error() const
 }
 
 /*!
-  \qmlproperty QDeclarativeListProperty OrganizerModel::sortOrders
+  \qmlproperty list<SortOrder> OrganizerModel::sortOrders
 
   This property holds a list of sort orders used by the organizer model.
 
@@ -966,7 +966,7 @@ QVariant QDeclarativeOrganizerModel::data(const QModelIndex &index, int role) co
 }
 
 /*!
-  \qmlproperty QDeclarativeListProperty OrganizerModel::items
+  \qmlproperty list<OrganizerItem> OrganizerModel::items
 
   This property holds a list of organizer items in the organizer model.
 
@@ -978,9 +978,10 @@ QDeclarativeListProperty<QDeclarativeOrganizerItem> QDeclarativeOrganizerModel::
 }
 
 /*!
-  \qmlproperty QDeclarativeListProperty OrganizerModel::occurrences
+  \qmlproperty list<OrganizerItem> OrganizerModel::occurrences
 
   This property holds a list of event or todo occurrence items in the organizer model.
+  \note This property is not currently supported yet.
 
   \sa Event, Todo, EventOccurrence, TodoOccurrence
   */
@@ -992,7 +993,7 @@ QDeclarativeListProperty<QDeclarativeOrganizerItem> QDeclarativeOrganizerModel::
 }
 
 /*!
-  \qmlproperty QDeclarativeListProperty OrganizerModel::events
+  \qmlproperty list<OrganizerItem> OrganizerModel::events
 
   This property holds a list of events in the organizer model.
 
@@ -1005,7 +1006,7 @@ QDeclarativeListProperty<QDeclarativeOrganizerItem> QDeclarativeOrganizerModel::
 }
 
 /*!
-  \qmlproperty QDeclarativeListProperty OrganizerModel::eventOccurrences
+  \qmlproperty list<OrganizerItem> OrganizerModel::eventOccurrences
 
   This property holds a list of event occurrences in the organizer model.
 
@@ -1018,7 +1019,7 @@ QDeclarativeListProperty<QDeclarativeOrganizerItem> QDeclarativeOrganizerModel::
 }
 
 /*!
-  \qmlproperty QDeclarativeListProperty OrganizerModel::todos
+  \qmlproperty list<OrganizerItem> OrganizerModel::todos
 
   This property holds a list of todos in the organizer model.
 
@@ -1031,7 +1032,7 @@ QDeclarativeListProperty<QDeclarativeOrganizerItem> QDeclarativeOrganizerModel::
 }
 
 /*!
-  \qmlproperty QDeclarativeListProperty OrganizerModel::todoOccurrences
+  \qmlproperty list<OrganizerItem> OrganizerModel::todoOccurrences
 
   This property holds a list of todo occurrences in the organizer model.
 
@@ -1044,7 +1045,7 @@ QDeclarativeListProperty<QDeclarativeOrganizerItem> QDeclarativeOrganizerModel::
 }
 
 /*!
-  \qmlproperty QDeclarativeListProperty OrganizerModel::journals
+  \qmlproperty list<OrganizerItem> OrganizerModel::journals
 
   This property holds a list of journal items in the organizer model.
 
@@ -1058,7 +1059,7 @@ QDeclarativeListProperty<QDeclarativeOrganizerItem> QDeclarativeOrganizerModel::
 
 
 /*!
-  \qmlproperty QDeclarativeListProperty OrganizerModel::notes
+  \qmlproperty list<OrganizerItem> OrganizerModel::notes
 
   This property holds a list of note items in the organizer model.
 

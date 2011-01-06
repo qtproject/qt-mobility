@@ -245,7 +245,7 @@ void QDeclarativeOrganizerItem::setModified()
 }
 
 /*!
-  \qmlmethod QDeclarativeListProperty OrganizerItem::detail(name)
+  \qmlmethod Detail OrganizerItem::detail(name)
 
     This method returns an ItemDetail object which detail name is \a name.
   */
@@ -255,7 +255,7 @@ QVariant QDeclarativeOrganizerItem::detail(const QString& name)
 }
 
 /*!
-    \qmlproperty QDeclarativeListProperty OrganizerItem::details
+    \qmlproperty list<Detail> OrganizerItem::details
 
     This property holds the list of \l ItemDetail elements that the organizer item has.
 */
@@ -265,7 +265,7 @@ QDeclarativeListProperty<QDeclarativeOrganizerItemDetail> QDeclarativeOrganizerI
 }
 
 /*!
-  \qmlmethod QDeclarativeListProperty OrganizerItem::details(name)
+  \qmlmethod list<Detail> OrganizerItem::details(name)
 
     This method returns a list of details which detail name is \a name.
   */

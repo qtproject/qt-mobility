@@ -883,7 +883,7 @@ QString QDeclarativeOrganizerItemTimestamp::fieldNameFromFieldType(int type)
  */
 
 /*!
-  \qmlproperty QDeclarativeListProperty Recurrence::recurrenceRules
+  \qmlproperty list<RecurrenceRule> Recurrence::recurrenceRules
 
   This property holds the list of recurrence rules.
 
@@ -891,7 +891,7 @@ QString QDeclarativeOrganizerItemTimestamp::fieldNameFromFieldType(int type)
   */
 
 /*!
-  \qmlproperty QDeclarativeListProperty Recurrence::exceptionRules
+  \qmlproperty list<RecurrenceRule> Recurrence::exceptionRules
 
   This property holds the list of exception rules.
 
