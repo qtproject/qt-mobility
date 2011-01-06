@@ -4095,6 +4095,18 @@ void tst_QLandmarkManager::filterLandmarksById()
     QCOMPARE(idFilter.landmarkIds().count(),0);
     QVERIFY(doFetch(type,idFilter, &lms, QLandmarkManager::NoError));
     QCOMPARE(lms.count(), 0);
+
+    //test detcahment of an idfilter
+    //by forcing a deep copy
+    idFilter.append(lm1.landmarkId());
+    QLandmarkIdFilter idFilterCopy = idFilter;
+    QVERIFY(idFilterCopy == idFilter);
+
+    idFilterCopy.append(lm2.landmarkId());
+    QVERIFY(idFilterCopy != idFilter);
+
+    idFilterCopy.remove(lm2.landmarkId());
+    QVERIFY(idFilterCopy == idFilter);
 }
 
 void tst_QLandmarkManager::filterLandmarksById_data()
@@ -4647,6 +4659,18 @@ void tst_QLandmarkManager::filterLandmarksCategory() {
     filter.setCategoryId(idNotExist3);
     QVERIFY(doFetch(type,filter, &lms, QLandmarkManager::NoError));
     QCOMPARE(lms.count(),0);
+
+    //test detachment of a cateory id filter
+    //by forcing a deep copy
+    filter.setCategoryId(cat1.categoryId());
+    QLandmarkCategoryFilter filterCopy = filter;
+    QVERIFY(filterCopy == filter);
+
+    filterCopy.setCategoryId(cat2.categoryId());
+    QVERIFY(filterCopy != filter);
+
+    filterCopy.setCategoryId(cat1.categoryId());
+    QVERIFY(filterCopy == filter);
 }
 
 void tst_QLandmarkManager::filterLandmarksCategory_data()
@@ -4899,6 +4923,17 @@ void tst_QLandmarkManager::filterLandmarksBox() {
     QCOMPARE(lms.count(), 0);
 
     //TODO: more invalid types of boxes
+
+    //check detachment of box filter
+    //by forcing a deep copy
+    QLandmarkBoxFilter filterCopy = filter;
+    QVERIFY(filterCopy == filter);
+
+    filterCopy.setTopLeft(QGeoCoordinate(-69,-69));
+    QVERIFY(filterCopy != filter);
+
+    filterCopy.setTopLeft(QGeoCoordinate(-70,-70));
+    QVERIFY(filterCopy == filter);
 }
 
 void tst_QLandmarkManager::filterLandmarksBox_data()
@@ -6556,6 +6591,29 @@ void tst_QLandmarkManager::filterAttribute3()
     attributeFilter2.setAttribute("street", "val", QLandmarkAttributeFilter::MatchContains);
     QCOMPARE(attributeFilter, attributeFilter2);
 
+    //Compare filter assignment
+    QLandmarkAttributeFilter attributeFilter3;
+    attributeFilter3 = attributeFilter2;
+    QCOMPARE(attributeFilter3, attributeFilter2);
+
+    //compare attribute filter that has been "detached"
+    //force a deep copy by modifying a variable
+    attributeFilter3.setAttribute("description", "descript");
+    QVERIFY(attributeFilter3 != attributeFilter2);
+
+    attributeFilter3.removeAttribute("description");
+    QVERIFY(attributeFilter3 == attributeFilter2);
+
+    //vary the match flag to see if there is a difference
+    attributeFilter3.setAttribute("name", "val", QLandmarkAttributeFilter::MatchStartsWith);
+    QVERIFY(attributeFilter3 != attributeFilter2);
+
+    attributeFilter3.setAttribute("name", "val", QLandmarkAttributeFilter::MatchContains);
+    QVERIFY(attributeFilter3 == attributeFilter2);
+
+    //vary the operation type to see if there is a difference
+    attributeFilter3.setOperationType(QLandmarkAttributeFilter::OrOperation);
+    QVERIFY(attributeFilter3 != attributeFilter2);
 }
 
 void tst_QLandmarkManager::filterAttribute3_data()
@@ -6741,6 +6799,18 @@ void tst_QLandmarkManager::sortLandmarksName() {
     QCOMPARE(lms.count(), 2);
     QCOMPARE(lms.at(0), lmA);
     QCOMPARE(lms.at(1), lmE);
+
+    //test detacment of name sort by forcing
+    // a deep copy
+    QLandmarkNameSort nameSortCopy;
+    nameSortCopy = nameSort;
+    QVERIFY(nameSortCopy == nameSort);
+
+    nameSortCopy.setDirection(Qt::DescendingOrder);
+    QVERIFY(nameSortCopy != nameSort);
+
+    nameSortCopy.setDirection(Qt::AscendingOrder);
+    QVERIFY(nameSortCopy == nameSort);
 }
 
 void tst_QLandmarkManager::sortLandmarksName_data() {
@@ -9295,6 +9365,7 @@ void tst_QLandmarkManager::testSignals()
     QCOMPARE(spyCatRemove.count(), 0);
     QCOMPARE(spyCatChange.count(),0);
     QCOMPARE(spyDataChanged.count(), 0);
+    spyChange.clear();
 
 #ifdef Q_OS_SYMBIAN
     //symbian should give a datachanged signal for this small file
@@ -9357,6 +9428,20 @@ void tst_QLandmarkManager::testSignals()
     QCOMPARE(spyCatChange2.count(),0);
     QCOMPARE(spyDataChanged2.count(), 0);
 #endif
+
+    //check disconection of signals
+    disconnectNotifications();
+    QLandmark lmOmega;
+    lmOmega.setName("lmOmega");
+    m_manager->saveLandmark(&lmOmega);
+    QTest::qWait(10);
+    QCOMPARE(spyAdd.count(), 0);
+    QCOMPARE(spyChange.count(), 0);
+    QCOMPARE(spyRemove.count(), 0);
+    QCOMPARE(spyCatAdd.count(), 0);
+    QCOMPARE(spyCatRemove.count(), 0);
+    QCOMPARE(spyCatChange.count(),0);
+    QCOMPARE(spyDataChanged.count(), 0);
 }
 #endif
 
