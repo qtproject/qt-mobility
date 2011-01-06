@@ -1144,7 +1144,6 @@ private slots:
     void isReadOnly();
     void isFeatureSupported();
     void notificationCheck();
-    void managerMetadata();
 #endif
 
 #ifdef TEST_SIGNALS
@@ -8682,21 +8681,6 @@ void tst_QLandmarkManager::notificationCheck()
     QCOMPARE(spyLmAdd2.count(),0);
 
     //check that we can receive an signal from import from another process
-}
-
-void tst_QLandmarkManager::managerMetadata()
-{
-    QLandmarkManager manager;
-    QString managerName;
-#ifdef Q_OS_SYMBIAN
-     managerName = "com.nokia.qt.landmarks.engines.symbian";
-#elif defined Q_WS_MAEMO_6
-     managerName = "com.nokia.qt.landmarks.engines.qsparql";
-#else
-    managerName = "com.nokia.qt.landmarks.engines.sqlite";
-#endif
-    QCOMPARE(managerName, manager.managerName());
-    QCOMPARE(manager.managerVersion(), 1);
 }
 
 #endif
