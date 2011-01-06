@@ -38,6 +38,39 @@ SOURCES += \
     nfc/qtlv.cpp \
     nfc/qllcpserver.cpp
 
+maemo6|meego {
+    QT *= dbus
+
+    PRIVATE_HEADERS += \
+        nfc/qnearfieldmanager_meego_p.h \
+        nfc/qnearfieldtarget_meego_p.h \
+        nfc/qllcpsocket_meego_p.h \
+        nfc/qllcpserver_meego_p.h \
+        nfc/meego/dbustypes_p.h \
+        nfc/meego/manager_interface_p.h \
+        nfc/meego/adapter_interface_p.h \
+        nfc/meego/accessrequestor_adaptor_p.h \
+        nfc/meego/target_interface_p.h \
+        nfc/meego/tag_interface_p.h \
+        nfc/meego/ndefhandler_adaptor_p.h \
+        nfc/meego/llcprequestor_adaptor_p.h
+
+
+    SOURCES += \
+        nfc/qnearfieldmanager_meego.cpp \
+        nfc/qnearfieldtarget_meego.cpp \
+        nfc/qllcpsocket_meego_p.cpp \
+        nfc/qllcpserver_meego_p.cpp \
+        nfc/meego/manager_interface.cpp \
+        nfc/meego/adapter_interface.cpp \
+        nfc/meego/accessrequestor_adaptor.cpp \
+        nfc/meego/target_interface.cpp \
+        nfc/meego/tag_interface.cpp \
+        nfc/meego/ndefhandler_adaptor.cpp \
+        nfc/meego/llcprequestor_adaptor.cpp
+
+}
+
 simulator {
     QT *= gui
 
@@ -63,7 +96,7 @@ symbian {
         nfc/qllcpserver_symbian_p.cpp
 }
 
-!simulator:!symbian {
+!meego:!maemo6:!simulator:!symbian {
     # unsupported platform stub
 
     PRIVATE_HEADERS += \
