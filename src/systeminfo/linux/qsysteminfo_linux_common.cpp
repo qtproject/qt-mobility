@@ -2951,7 +2951,7 @@ QUuid QSystemDeviceInfoLinuxCommonPrivate::uniqueDeviceID()
     return QUuid(QString::number(gethostid()));
 }
 
-QSystemDeviceInfo::LockType QSystemDeviceInfoLinuxCommonPrivate::lockStatus()
+QSystemDeviceInfo::LockTypeFlags QSystemDeviceInfoLinuxCommonPrivate::lockStatus()
 {
     return QSystemDeviceInfo::UnknownLock;
 }
@@ -3528,12 +3528,6 @@ void QSystemBatteryInfoLinuxCommonPrivate::getBatteryStats()
 void QSystemBatteryInfoLinuxCommonPrivate::timeout()
 {
 
-}
-
-
-qint32 QSystemBatteryInfoLinuxCommonPrivate::startCurrentMeasurement(qint32 /*rate*/)
-{
- return 0;
 }
 
 QSystemBatteryInfo::EnergyUnit QSystemBatteryInfoLinuxCommonPrivate::energyMeasurementUnit() const

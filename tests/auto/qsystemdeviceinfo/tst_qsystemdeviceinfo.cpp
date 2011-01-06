@@ -219,7 +219,7 @@ void tst_QSystemDeviceInfo::initTestCase()
     qRegisterMetaType<QSystemDeviceInfo::SimStatus>("QSystemDeviceInfo::SimStatus");
 
     qRegisterMetaType<QSystemDeviceInfo::KeyboardTypeFlags>("QSystemDeviceInfo::KeyboardTypeFlags");
-    qRegisterMetaType<QSystemDeviceInfo::LockType>("QSystemDeviceInfo::LockType");
+    qRegisterMetaType<QSystemDeviceInfo::LockTypeFlags>("QSystemDeviceInfo::LockTypeFlags");
 
 }
 
@@ -422,7 +422,7 @@ void tst_QSystemDeviceInfo::tst_uniqueDeviceID()
 void tst_QSystemDeviceInfo::tst_lockStatus()
 {
     QSystemDeviceInfo di;
-    QSystemDeviceInfo::LockType lock = di.lockStatus();
+    QSystemDeviceInfo::LockTypeFlags lock = di.lockStatus();
     if (di.isDeviceLocked()) {
         QVERIFY((lock == QSystemDeviceInfo::DeviceLocked)
                 || (lock == QSystemDeviceInfo::TouchAndKeyboardLocked));

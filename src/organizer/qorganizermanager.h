@@ -106,7 +106,8 @@ public:
         LimitReachedError,
         InvalidItemTypeError,
         InvalidCollectionError,
-        InvalidOccurrenceError
+        InvalidOccurrenceError,
+        TimeoutError
     };
 
     /* Error reporting */
@@ -128,6 +129,7 @@ public:
 
     bool saveItem(QOrganizerItem* item);
     bool saveItems(QList<QOrganizerItem>* items);
+    bool saveItems(QList<QOrganizerItem>* items, const QStringList& definitionMask);
     bool removeItem(const QOrganizerItemId& itemId);
     bool removeItems(const QList<QOrganizerItemId>& itemIds);
 

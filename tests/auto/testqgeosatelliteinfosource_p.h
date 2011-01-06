@@ -46,6 +46,7 @@
 #include <QTest>
 #include <QObject>
 
+
 QTM_BEGIN_NAMESPACE
 class QGeoSatelliteInfoSource;
 QTM_END_NAMESPACE

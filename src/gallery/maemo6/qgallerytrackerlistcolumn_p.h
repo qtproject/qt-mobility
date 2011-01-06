@@ -79,29 +79,6 @@ public:
     virtual QVariant value(QVector<QVariant>::const_iterator row) const = 0;
 };
 
-class QM_AUTOTEST_EXPORT QGalleryTrackerImageColumn : public QObject
-{
-    Q_OBJECT
-public:
-    QGalleryTrackerImageColumn(QObject *parent = 0) : QObject(parent), m_offset(0) {}
-
-    void moveOffset(int offset) { m_offset = offset; }
-
-    QVariant image(int index) const { return m_images.at(index); }
-
-    virtual void insertImages(
-            int index, int count, QVector<QVariant>::const_iterator begin, int tableWidth) = 0;
-
-    virtual void removeImages(int index, int count) = 0;
-
-Q_SIGNALS:
-    void imagesChanged(int index, int count, const QList<int> &keys);
-
-protected:
-    int m_offset;
-    QVector<QVariant> m_images;
-};
-
 class QGalleryTrackerStringColumn : public QGalleryTrackerValueColumn
 {
 public:

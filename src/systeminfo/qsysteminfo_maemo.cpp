@@ -1489,7 +1489,7 @@ bool QSystemScreenSaverPrivate::screenSaverInhibited()
         displayOn = ("on" == reply.value());
     }
 #endif
-    return (displayOn && isBlankingInhibited && isInhibited);
+    return ((displayOn && isBlankingInhibited) || (displayOn && isInhibited));
 }
 
 QSystemBatteryInfoPrivate::QSystemBatteryInfoPrivate(QSystemBatteryInfoLinuxCommonPrivate *parent)

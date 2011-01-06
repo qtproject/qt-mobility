@@ -22,3 +22,5 @@ symbian {
     TARGET.CAPABILITY = ALL -TCB
 }
 
+RESOURCES += \
+    resources.qrc

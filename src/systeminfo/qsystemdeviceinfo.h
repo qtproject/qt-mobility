@@ -60,7 +60,7 @@ class  Q_SYSINFO_EXPORT QSystemDeviceInfo : public QObject
     Q_PROPERTY(PowerState powerState READ currentPowerState NOTIFY powerStateChanged)
     Q_PROPERTY(SimStatus simStatus READ simStatus CONSTANT)
     Q_PROPERTY(BatteryStatus batteryStatus READ batteryStatus NOTIFY batteryStatusChanged)
-    Q_PROPERTY(InputMethodFlags inputMethodType READ inputMethodType)
+    Q_PROPERTY(QSystemDeviceInfo::InputMethodFlags inputMethodType READ inputMethodType)
 
     Q_PROPERTY(QString imei READ imei CONSTANT)
     Q_PROPERTY(QString imsi READ imsi CONSTANT)
@@ -74,7 +74,7 @@ class  Q_SYSINFO_EXPORT QSystemDeviceInfo : public QObject
     Q_PROPERTY(KeyboardTypeFlags keyboardTypes READ keyboardTypes)//1.2
     Q_PROPERTY(bool isWirelessKeyboardConnected READ isWirelessKeyboardConnected NOTIFY wirelessKeyboardConnected)//1.2
     Q_PROPERTY(bool isKeyboardFlippedOpen READ isKeyboardFlippedOpen NOTIFY keyboardFlipped)//1.2
-    Q_PROPERTY(QSystemDeviceInfo::LockType lockStatus READ lockStatus NOTIFY lockStatusChanged)
+    Q_PROPERTY(QSystemDeviceInfo::LockTypeFlags lockStatus READ lockStatus NOTIFY lockStatusChanged)
     Q_PROPERTY(QSystemDeviceInfo::PowerState currentPowerState READ currentPowerState NOTIFY powerStateChanged)
 
     Q_ENUMS(BatteryStatus)
@@ -141,7 +141,7 @@ public:
 
     enum KeyboardType {
         UnknownKeyboard = 0xfffffff,
-        SoftwareKeyboard= 0x0000001,
+        SoftwareKeyboard = 0x0000001,
         ITUKeypad = 0x0000002,
         HalfQwertyKeyboard = 0x0000004,
         FullQwertyKeyboard = 0x0000008,
@@ -156,11 +156,11 @@ public:
     }; //1.2
 
     enum LockType {
-        UnknownLock = 0,
-        DeviceUnlocked,
-        DeviceLocked,
-        TouchAndKeyboardLocked
+        UnknownLock = 0xfffffff,
+        PinLocked = 0x0000001,
+        TouchAndKeyboardLocked = 0x0000002
     }; //1.2
+    Q_DECLARE_FLAGS(LockTypeFlags, LockType)//1.2
 
     QSystemDeviceInfo::InputMethodFlags inputMethodType();
 

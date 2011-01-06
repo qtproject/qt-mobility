@@ -4,6 +4,11 @@
 <key name="/testConstructor/value" />
 <key name="/testConstructor/subpath/value" />
 <key name="/valuePermanence/value" />
+<key name="/testSetValue" />
+<key name="/testSetValue/key" />
+<key name="/testSignals" />
+<key name="/Device/State" />
+<key name="/Device/State/Memory" />
 
 <key name="/threads/thread0/key0" />
 <key name="/threads/thread0/key1" />

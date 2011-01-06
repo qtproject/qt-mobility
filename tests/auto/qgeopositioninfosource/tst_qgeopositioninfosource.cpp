@@ -45,5 +45,7 @@ int main(int argc, char *argv[])
 {
     QCoreApplication app(argc, argv);
     TestQGeoPositionInfoSource *test = TestQGeoPositionInfoSource::createDefaultSourceTest();
-    return QTest::qExec(test, argc, argv);
+    int ret = QTest::qExec(test, argc, argv);
+    delete test; // keep valgrind happy
+    return ret;
 }

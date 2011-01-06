@@ -318,7 +318,7 @@ public:
     void keyboardConnected(bool connect);//1.2
     bool keypadLightOn(QSystemDeviceInfo::KeypadType type); //1.2
     QUuid uniqueDeviceID(); //1.2
-    QSystemDeviceInfo::LockType lockStatus(); //1.2
+    QSystemDeviceInfo::LockTypeFlags lockStatus(); //1.2
 
 Q_SIGNALS:
     void batteryLevelChanged(int);
@@ -331,7 +331,7 @@ Q_SIGNALS:
     void wirelessKeyboardConnected(bool connected);//1.2
     void keyboardFlipped(bool open);//1.2
     void deviceLocked(bool isLocked); // 1.2
-    void lockStatusChanged(QSystemDeviceInfo::LockType); //1.2
+    void lockStatusChanged(QSystemDeviceInfo::LockTypeFlags); //1.2
 
 
 protected:
@@ -398,7 +398,6 @@ public:
     int maxBars() const;
     QSystemBatteryInfo::BatteryStatus batteryStatus() const;
     QSystemBatteryInfo::EnergyUnit energyMeasurementUnit() const;
-    int startCurrentMeasurement(int rate);
     bool batteryIsPresent;
 
 Q_SIGNALS:

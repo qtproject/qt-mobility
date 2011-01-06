@@ -178,10 +178,9 @@ QSystemDeviceInfoPrivate *getSystemDeviceInfoPrivate() { return deviceInfoPrivat
           This enum describes the type of lock.
 
           \value UnknownLock                    Lock type is unknown, or error.
-          \value DeviceUnlocked                 Device is unlocked.
-          \value DeviceLocked                   Device is locked.
-          \value TouchAndKeyboardLocked         Touch and/or keyboard lock.
-
+          \value SimLocked                      SIM is locked.
+          \value PinLocked                      Device is PIN or password locked.
+          \value TouchAndKeyboardLocked         Touch and/or keyboard is locked.
           */
 
 
@@ -203,7 +202,7 @@ QSystemDeviceInfoPrivate *getSystemDeviceInfoPrivate() { return deviceInfoPrivat
 */
 
 /*!
-    \fn void QSystemDeviceInfo::lockChanged(QSystemDeviceInfo::LockType type, bool on)
+    \fn void QSystemDeviceInfo::lockChanged(QSystemDeviceInfo::LockTypeFlags type, bool on)
 
      This signal is emitted whenever the lock state changes, with LockType \a type, and \a on, locked or unlocked.
 */
@@ -229,7 +228,7 @@ QSystemDeviceInfo::QSystemDeviceInfo(QObject *parent)
     qRegisterMetaType<QSystemDeviceInfo::SimStatus>("QSystemDeviceInfo::SimStatus");
     qRegisterMetaType<QSystemDeviceInfo::Profile>("QSystemDeviceInfo::Profile");
     qRegisterMetaType<QSystemDeviceInfo::InputMethodFlags>("QSystemDeviceInfo::InputMethodFlags");
-    qRegisterMetaType<QSystemDeviceInfo::LockType>("QSystemDeviceInfo::LockType");
+    qRegisterMetaType<QSystemDeviceInfo::LockTypeFlags>("QSystemDeviceInfo::LockTypeFlags");
     qRegisterMetaType<QSystemDeviceInfo::KeypadType>("QSystemDeviceInfo::KeypadType");
     qRegisterMetaType<QSystemDeviceInfo::KeyboardType>("QSystemDeviceInfo::KeyboardType");
 }
@@ -297,9 +296,9 @@ void QSystemDeviceInfo::connectNotify(const char *signal)
     }
 
     if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
-            lockStatusChanged(QSystemDeviceInfo::LockType))))) {
-        connect(d,SIGNAL(lockStatusChanged(QSystemDeviceInfo::LockType)),
-                this,SIGNAL(lockStatusChanged(QSystemDeviceInfo::LockType)),Qt::UniqueConnection);
+            lockStatusChanged(QSystemDeviceInfo::LockTypeFlags))))) {
+        connect(d,SIGNAL(lockStatusChanged(QSystemDeviceInfo::LockTypeFlags)),
+                this,SIGNAL(lockStatusChanged(QSystemDeviceInfo::LockTypeFlags)),Qt::UniqueConnection);
     }
 
     if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
@@ -384,9 +383,9 @@ void QSystemDeviceInfo::disconnectNotify(const char *signal)
                 this,SIGNAL(deviceLocked(bool)));
     }
     if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
-            lockStatusChanged(QSystemDeviceInfo::LockType))))) {
-        disconnect(d,SIGNAL(lockStatusChanged(QSystemDeviceInfo::LockType)),
-                this,SIGNAL(lockStatusChanged(QSystemDeviceInfo::LockType)));
+            lockStatusChanged(QSystemDeviceInfo::LockTypeFlags))))) {
+        disconnect(d,SIGNAL(lockStatusChanged(QSystemDeviceInfo::LockTypeFlags)),
+                this,SIGNAL(lockStatusChanged(QSystemDeviceInfo::LockTypeFlags)));
     }
 }
 
@@ -606,11 +605,12 @@ QUuid QSystemDeviceInfo::uniqueDeviceID()
 
 /*!
   \property QSystemDeviceInfo::lockStatus
- \brief Type of lock.
+  \brief Type of lock.
 
- Returns the QSystemDeviceInfo::DeviceType type of lock the device might be in.
+  Returns the QSystemDeviceInfo::LockTypeFlags type of lock state the device might be in.
+  The LockType must be currently active not just enabled.
  */
-QSystemDeviceInfo::LockType QSystemDeviceInfo::lockStatus()
+QSystemDeviceInfo::LockTypeFlags QSystemDeviceInfo::lockStatus()
 {
     return deviceInfoPrivate()->lockStatus();
 }

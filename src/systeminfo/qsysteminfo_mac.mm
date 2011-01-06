@@ -2313,8 +2313,11 @@ QUuid QSystemDeviceInfoPrivate::uniqueDeviceID()
     return QUuid(QString::number(gethostid()));
 }
 
-QSystemDeviceInfo::LockType QSystemDeviceInfoPrivate::lockStatus()
+QSystemDeviceInfo::LockTypeFlags QSystemDeviceInfoPrivate::lockStatus()
 {
+    if(isDeviceLocked()) {
+        return QSystemDeviceInfo::PinLocked;
+    }
     return QSystemDeviceInfo::UnknownLock;
 }
 
@@ -2444,10 +2447,6 @@ QSystemBatteryInfo::BatteryStatus QSystemBatteryInfoPrivate::batteryStatus() con
     return currentBatStatus;
 }
 
-int QSystemBatteryInfoPrivate::startCurrentMeasurement(qint32 /*rate*/)
-{
-    return 0;
-}
 
 QSystemBatteryInfo::EnergyUnit QSystemBatteryInfoPrivate::energyMeasurementUnit()
 {

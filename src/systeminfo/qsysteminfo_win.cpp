@@ -2144,7 +2144,7 @@ QUuid QSystemDeviceInfoPrivate::uniqueDeviceID()
     return  QUuid(wHelper->getWMIData().toString());
 }
 
-QSystemDeviceInfo::LockType QSystemDeviceInfoPrivate::lockStatus()
+QSystemDeviceInfo::LockTypeFlags QSystemDeviceInfoPrivate::lockStatus()
 {
     return QSystemDeviceInfo::UnknownLock;
 }
@@ -2351,11 +2351,6 @@ void QSystemBatteryInfoPrivate::notificationArrived()
 void QSystemBatteryInfoPrivate::disconnectNotify(const char *signal)
 {
 
-}
-
-qint32 QSystemBatteryInfoPrivate::startCurrentMeasurement(qint32 rate)
-{
- return 0;
 }
 
 QSystemBatteryInfo::EnergyUnit QSystemBatteryInfoPrivate::energyMeasurementUnit()

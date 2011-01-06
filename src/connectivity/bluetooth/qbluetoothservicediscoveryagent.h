@@ -76,6 +76,7 @@ public:
 
     QBluetoothServiceDiscoveryAgent(QObject *parent = 0);
     QBluetoothServiceDiscoveryAgent(const QBluetoothAddress &remoteAddress, QObject *parent = 0);
+    ~QBluetoothServiceDiscoveryAgent();
 
     bool isActive() const;
 
@@ -99,10 +100,14 @@ signals:
     void error(QBluetoothServiceDiscoveryAgent::Error error);
 
 private:
+    QBluetoothServiceDiscoveryAgentPrivate *d_ptr;
+
+    Q_PRIVATE_SLOT(d_func(), void _q_deviceDiscovered(const QBluetoothDeviceInfo &info))
     Q_PRIVATE_SLOT(d_func(), void _q_deviceDiscoveryFinished())
     Q_PRIVATE_SLOT(d_func(), void _q_serviceDiscoveryFinished())
 #ifndef QT_NO_DBUS
     Q_PRIVATE_SLOT(d_func(), void _q_discoveredServices(QDBusPendingCallWatcher*))
+    Q_PRIVATE_SLOT(d_func(), void _q_createdDevice(QDBusPendingCallWatcher*))
 #endif
 };
 

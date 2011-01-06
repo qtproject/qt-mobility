@@ -194,23 +194,17 @@ void Dialog::setupDevice()
     wirelessKeyboardConnectedRadioButton->setChecked(di->isWirelessKeyboardConnected());
 
     QString lockState;
-    QSystemDeviceInfo::LockType lock = di->lockStatus();
-    switch(lock) {
-    case QSystemDeviceInfo::UnknownLock:
+    QSystemDeviceInfo::LockTypeFlags lock = di->lockStatus();
+    if((lock & QSystemDeviceInfo::UnknownLock)){
         lockState = "Unknown";
-        break;
-    case QSystemDeviceInfo::DeviceLocked:
-        lockState = "Device Locked";
-        break;
-    case QSystemDeviceInfo::DeviceUnlocked:
-        lockState = "Device unlocked";
-        break;
-    case QSystemDeviceInfo::TouchAndKeyboardLocked:
+    }
+    if((lock & QSystemDeviceInfo::PinLocked)){
+        lockState = "Pin/Password Locked";
+    }
+    if((lock & QSystemDeviceInfo::TouchAndKeyboardLocked)){
         lockState = "Touch and keyboard locked";
-        break;
-    };
+    }
     lockStateLabel->setText(lockState);
-
 }
 
 void Dialog::updateKeyboard(QSystemDeviceInfo::KeyboardTypeFlags type)
@@ -913,9 +907,6 @@ void Dialog::setupBattery()
     connect(bi,SIGNAL(chargerTypeChanged(QSystemBatteryInfo::ChargerType)),
             this,SLOT(chargerTypeChanged(QSystemBatteryInfo::ChargerType)));
 
-    connect(startMeasurementPushButton,SIGNAL(clicked()),
-            this,SLOT(startCurrentPushed()));
-
     connect(bi,SIGNAL(nominalCapacityChanged(int)),
             NominalCaplcdNumber,SLOT(display(int)));
     connect(bi,SIGNAL(remainingCapacityChanged(int)),
@@ -989,7 +980,4 @@ void Dialog::chargerTypeChanged(QSystemBatteryInfo::ChargerType chargerType)
     currentChargerType = chargerType;
 }
 
-void Dialog::startCurrentPushed()
-{
-    bi->startCurrentMeasurement(currentMeasurementSpinBox->value());
-}
+

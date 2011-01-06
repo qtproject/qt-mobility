@@ -336,6 +336,14 @@ bool QMessageStore::removeMessages(const QMessageFilter& filter, QMessageManager
     return noErrors;
 }
 
+bool QMessageStore::removeAccount(const QMessageAccountId &id)
+{
+    d_ptr->error = QMessageManager::NoError;
+
+    return QMFStore::instance()->removeAccount(id, d_ptr->error);
+}
+
+
 bool QMessageStore::addMessage(QMessage *m)
 {
     bool retVal = true;

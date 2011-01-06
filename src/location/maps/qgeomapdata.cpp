@@ -364,6 +364,7 @@ QList<QGeoMapObject*> QGeoMapData::mapObjectsAtScreenPosition(const QPointF &scr
     QList<QGeoMapObject*> results;
 
     QGeoCoordinate coord = screenPositionToCoordinate(screenPosition);
+
     int childObjectCount = d_ptr->containerObject->childObjects().count();
     for (int i = 0; i < childObjectCount; ++i) {
         QGeoMapObject *object = d_ptr->containerObject->childObjects().at(i);

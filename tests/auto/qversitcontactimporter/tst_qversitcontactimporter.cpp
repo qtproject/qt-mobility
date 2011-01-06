@@ -1105,7 +1105,7 @@ void tst_QVersitContactImporter::testOnlineAccount()
     subTypes = onlineAccount.subTypes();
     QCOMPARE(subTypes.count(),1);
     QVERIFY(subTypes.first() == QContactOnlineAccount::SubTypeImpp);
-    QVERIFY(onlineAccount.serviceProvider() == QContactOnlineAccount::ServiceJabber);
+    QVERIFY(onlineAccount.protocol() == QContactOnlineAccount::ProtocolJabber);
 
     document = QVersitDocument(QVersitDocument::VCard30Type);
     property.setName("X-AIM");
@@ -1139,23 +1139,23 @@ void tst_QVersitContactImporter::testOnlineAccount()
     contact = mImporter->contacts().first();
     QList<QContactOnlineAccount> onlineAccounts = contact.details<QContactOnlineAccount>();
     QCOMPARE(onlineAccounts.size(), 9);
-    QVERIFY(onlineAccounts[0].serviceProvider() == QContactOnlineAccount::ServiceAim);
+    QVERIFY(onlineAccounts[0].protocol() == QContactOnlineAccount::ProtocolAim);
     QVERIFY(onlineAccounts[0].accountUri() == "a");
-    QVERIFY(onlineAccounts[1].serviceProvider() == QContactOnlineAccount::ServiceIcq);
+    QVERIFY(onlineAccounts[1].protocol() == QContactOnlineAccount::ProtocolIcq);
     QVERIFY(onlineAccounts[1].accountUri() == "b");
-    QVERIFY(onlineAccounts[2].serviceProvider() == QContactOnlineAccount::ServiceMsn);
+    QVERIFY(onlineAccounts[2].protocol() == QContactOnlineAccount::ProtocolMsn);
     QVERIFY(onlineAccounts[2].accountUri() == "c");
-    QVERIFY(onlineAccounts[3].serviceProvider() == QContactOnlineAccount::ServiceQq);
+    QVERIFY(onlineAccounts[3].protocol() == QContactOnlineAccount::ProtocolQq);
     QVERIFY(onlineAccounts[3].accountUri() == "d");
-    QVERIFY(onlineAccounts[4].serviceProvider() == QContactOnlineAccount::ServiceYahoo);
+    QVERIFY(onlineAccounts[4].protocol() == QContactOnlineAccount::ProtocolYahoo);
     QVERIFY(onlineAccounts[4].accountUri() == "e");
-    QVERIFY(onlineAccounts[5].serviceProvider() == QContactOnlineAccount::ServiceSkype);
+    QVERIFY(onlineAccounts[5].protocol() == QContactOnlineAccount::ProtocolSkype);
     QVERIFY(onlineAccounts[5].accountUri() == "f");
-    QVERIFY(onlineAccounts[6].serviceProvider() == QContactOnlineAccount::ServiceSkype);
+    QVERIFY(onlineAccounts[6].protocol() == QContactOnlineAccount::ProtocolSkype);
     QVERIFY(onlineAccounts[6].accountUri() == "g");
-    QVERIFY(onlineAccounts[7].serviceProvider().isEmpty());
+    QVERIFY(onlineAccounts[7].protocol().isEmpty());
     QVERIFY(onlineAccounts[7].accountUri() == "h");
-    QVERIFY(onlineAccounts[8].serviceProvider().isEmpty());
+    QVERIFY(onlineAccounts[8].protocol().isEmpty());
     QVERIFY(onlineAccounts[8].accountUri() == "i");
 }
 

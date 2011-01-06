@@ -153,25 +153,33 @@ void ContactEditor::setCurrentContact(QContactManager* manager, QContactLocalId 
     m_saveBtn->setEnabled(true);
 
     // otherwise, build from the contact details.
-    QContact curr;
+    QContact contact;
     if (m_contactId != QContactLocalId(0))
-        curr = manager->contact(m_contactId);
+        contact = manager->contact(m_contactId);
 
+    // Set an observer on the contact to watch it for changes from another process
+    m_observer = manager->observeContact(m_contactId);
+    connect(m_observer.data(), SIGNAL(contactChanged()), this, SLOT(contactChanged()));
+
+    updateUi(contact);
+}
+
+void ContactEditor::updateUi(const QContact& contact)
+{
     // Disable fields & buttons according to what the backend supports
     QMap<QString, QContactDetailDefinition> defs = m_manager->detailDefinitions(QContactType::TypeContact);
 
     // name
-    //QContactName nm = curr.detail(QContactName::DefinitionName);
     if (m_contactId != QContactLocalId(0))
-        m_nameEdit->setText(manager->synthesizedContactDisplayLabel(curr));
+        m_nameEdit->setText(contact.displayLabel());
 
     // phonenumber
-    QContactPhoneNumber phn = curr.detail(QContactPhoneNumber::DefinitionName);
+    QContactPhoneNumber phn = contact.detail(QContactPhoneNumber::DefinitionName);
     m_phoneEdit->setText(phn.value(QContactPhoneNumber::FieldNumber));
 
     // email
     if (defs.contains(QContactEmailAddress::DefinitionName)) {
-        QContactEmailAddress em = curr.detail(QContactEmailAddress::DefinitionName);
+        QContactEmailAddress em = contact.detail(QContactEmailAddress::DefinitionName);
         m_emailEdit->setText(em.value(QContactEmailAddress::FieldEmailAddress));
         m_emailEdit->setReadOnly(false);
     } else {
@@ -181,7 +189,7 @@ void ContactEditor::setCurrentContact(QContactManager* manager, QContactLocalId 
 
     // address
     if (defs.contains(QContactAddress::DefinitionName)) {
-        QContactAddress adr = curr.detail(QContactAddress::DefinitionName);
+        QContactAddress adr = contact.detail(QContactAddress::DefinitionName);
         m_addrEdit->setText(adr.value(QContactAddress::FieldStreet)); // ugly hack.
         m_addrEdit->setReadOnly(false);
     } else {
@@ -193,8 +201,8 @@ void ContactEditor::setCurrentContact(QContactManager* manager, QContactLocalId 
     if (defs.contains(QContactAvatar::DefinitionName)
         || defs.contains(QContactThumbnail::DefinitionName)) {
         m_avatarBtn->setEnabled(true);
-        QContactAvatar av = curr.detail(QContactAvatar::DefinitionName);
-        QContactThumbnail thumb = curr.detail(QContactThumbnail::DefinitionName);
+        QContactAvatar av = contact.detail(QContactAvatar::DefinitionName);
+        QContactThumbnail thumb = contact.detail(QContactThumbnail::DefinitionName);
         m_avatarView->clear();
         m_newAvatarPath = av.imageUrl().toLocalFile();
         m_thumbnail = thumb.thumbnail();
@@ -267,6 +275,11 @@ void ContactEditor::avatarClicked()
 
 void ContactEditor::saveClicked()
 {
+    // Stop observing the contact
+    if (!m_observer.isNull()) {
+        m_observer->disconnect();
+    }
+
     if (!m_manager) {
         qWarning() << "No manager selected; cannot save.";
     } else {
@@ -333,4 +346,15 @@ void ContactEditor::saveClicked()
 void ContactEditor::cancelClicked()
 {
     emit showListPage();
+}
+
+void ContactEditor::contactChanged()
+{
+    QMessageBox::StandardButton button =
+        QMessageBox::question(this, "Contact updated",
+                "The contact has been changed by some other process.\n\nDo you want to reload it?",
+                QMessageBox::Yes | QMessageBox::No);
+    if (button == QMessageBox::Yes) {
+        updateUi(m_manager->contact(m_contactId));
+    }
 }

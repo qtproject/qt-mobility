@@ -63,7 +63,7 @@ semantics and quirks of the underlying datastores on any platform may be
 entirely opaque from the perspective of Qt-based, cross-platform client
 applications.
 
-\section1 Overview 
+\section1 Overview
 
 The QtMobility APIs are placed into the \i{QtMobility} namespace. This is done
 to facilitate the future migration of Mobility APIs into Qt. See the
@@ -386,7 +386,7 @@ The following sample applications show examples of API usage:
 \endlist
 See also: \l{Contacts API Usage}
 
-\section1 QML support
+\section1 QML Elements
 
 For details on the QML support provided for the Contacts API see the documentation for the \l {Contacts QML Plugin}.
 */

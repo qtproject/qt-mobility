@@ -53,7 +53,7 @@
 #include <QDebug>
 #include <QtGui>
 
-#include "pixelindexengine.h"
+#include "../pixelindex/pixelindexengine.h"
 
 QTM_USE_NAMESPACE
 Q_DECLARE_METATYPE(QGeoCoordinate)
@@ -101,9 +101,9 @@ void tst_QGeoTiledMappingManagerEngine::centering_data()
     QTest::addColumn<qreal>("lon");
     QTest::addColumn<QPoint>("centerPixel");
 
-    QTest::newRow("Brisbane @z=3") << 3.0 << -27.58 << 153.10;
-    QTest::newRow("Somewhere random") << 3.0 << 50.0 << -120.0;
-    QTest::newRow("Just before the date line") << 3.0 << -85.0 << 179.99;
+    QTest::newRow("Brisbane @z=3") << qreal(3.0) << qreal(-27.58) << qreal(153.10);
+    QTest::newRow("Somewhere random") << qreal(3.0) << qreal(50.0) << qreal(-120.0);
+    QTest::newRow("Just before the date line") << qreal(3.0) << qreal(-85.0) << qreal(179.8);
 }
 
 /*!
@@ -185,9 +185,9 @@ void tst_QGeoTiledMappingManagerEngine::zoomLevels_data()
     QTest::addColumn<uint>("midx");
     QTest::addColumn<uint>("midy");
 
-    QTest::newRow("zoom level 1") << 1.0 << 128u << 128u;
-    QTest::newRow("zoom level 2") << 2.0 << 256u << 256u;
-    QTest::newRow("zoom level 3") << 3.0 << 512u << 512u;
+    QTest::newRow("zoom level 1") << qreal(1.0) << 128u << 128u;
+    QTest::newRow("zoom level 2") << qreal(2.0) << 256u << 256u;
+    QTest::newRow("zoom level 3") << qreal(3.0) << 512u << 512u;
 }
 
 /*!

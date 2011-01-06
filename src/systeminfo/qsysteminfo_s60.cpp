@@ -1234,7 +1234,7 @@ QUuid QSystemDeviceInfoPrivate::uniqueDeviceID()
     return 0;//getuniqueID();
 }
 
-QSystemDeviceInfo::LockType QSystemDeviceInfoPrivate::lockStatus()
+QSystemDeviceInfo::LockTypeFlags QSystemDeviceInfoPrivate::lockStatus()
 {
     return QSystemDeviceInfo::UnknownLock;
 }
@@ -1398,10 +1398,6 @@ void QSystemBatteryInfoPrivate::disconnectNotify(const char *signal)
 
 }
 
-int QSystemBatteryInfoPrivate::startCurrentMeasurement(int rate)
-{
- return 0;
-}
 
 QSystemBatteryInfo::EnergyUnit QSystemBatteryInfoPrivate::energyMeasurementUnit() const
 {

@@ -73,127 +73,126 @@ EXPORTS
 	_ZN10QtMobility18QSystemBatteryInfo20batteryStatusChangedENS0_13BatteryStatusE @ 72 NONAME
 	_ZN10QtMobility18QSystemBatteryInfo20chargingStateChangedENS0_13ChargingStateE @ 73 NONAME
 	_ZN10QtMobility18QSystemBatteryInfo22nominalCapacityChangedEi @ 74 NONAME
-	_ZN10QtMobility18QSystemBatteryInfo23startCurrentMeasurementEi @ 75 NONAME
-	_ZN10QtMobility18QSystemBatteryInfo24remainingCapacityChangedEi @ 76 NONAME
-	_ZN10QtMobility18QSystemBatteryInfo28remainingCapacityBarsChangedEi @ 77 NONAME
-	_ZN10QtMobility18QSystemBatteryInfo28remainingChargingTimeChangedEi @ 78 NONAME
-	_ZN10QtMobility18QSystemBatteryInfo31remainingCapacityPercentChangedEi @ 79 NONAME
-	_ZN10QtMobility18QSystemBatteryInfoC1EP7QObject @ 80 NONAME
-	_ZN10QtMobility18QSystemBatteryInfoC2EP7QObject @ 81 NONAME
-	_ZN10QtMobility18QSystemBatteryInfoD0Ev @ 82 NONAME
-	_ZN10QtMobility18QSystemBatteryInfoD1Ev @ 83 NONAME
-	_ZN10QtMobility18QSystemBatteryInfoD2Ev @ 84 NONAME
-	_ZN10QtMobility18QSystemDisplayInfo10colorDepthEi @ 85 NONAME
-	_ZN10QtMobility18QSystemDisplayInfo11getDPIWidthEi @ 86 NONAME
-	_ZN10QtMobility18QSystemDisplayInfo11qt_metacallEN11QMetaObject4CallEiPPv @ 87 NONAME
-	_ZN10QtMobility18QSystemDisplayInfo11qt_metacastEPKc @ 88 NONAME
-	_ZN10QtMobility18QSystemDisplayInfo12getDPIHeightEi @ 89 NONAME
-	_ZN10QtMobility18QSystemDisplayInfo13physicalWidthEi @ 90 NONAME
-	_ZN10QtMobility18QSystemDisplayInfo14getOrientationEi @ 91 NONAME
-	_ZN10QtMobility18QSystemDisplayInfo14physicalHeightEi @ 92 NONAME
-	_ZN10QtMobility18QSystemDisplayInfo15backlightStatusEi @ 93 NONAME
-	_ZN10QtMobility18QSystemDisplayInfo16staticMetaObjectE @ 94 NONAME DATA 16
-	_ZN10QtMobility18QSystemDisplayInfo17displayBrightnessEi @ 95 NONAME
-	_ZN10QtMobility18QSystemDisplayInfo19getStaticMetaObjectEv @ 96 NONAME
-	_ZN10QtMobility18QSystemDisplayInfo8contrastEi @ 97 NONAME
-	_ZN10QtMobility18QSystemDisplayInfoC1EP7QObject @ 98 NONAME
-	_ZN10QtMobility18QSystemDisplayInfoC2EP7QObject @ 99 NONAME
-	_ZN10QtMobility18QSystemDisplayInfoD0Ev @ 100 NONAME
-	_ZN10QtMobility18QSystemDisplayInfoD1Ev @ 101 NONAME
-	_ZN10QtMobility18QSystemDisplayInfoD2Ev @ 102 NONAME
-	_ZN10QtMobility18QSystemNetworkInfo10macAddressENS0_11NetworkModeE @ 103 NONAME
-	_ZN10QtMobility18QSystemNetworkInfo11currentModeEv @ 104 NONAME
-	_ZN10QtMobility18QSystemNetworkInfo11networkNameENS0_11NetworkModeE @ 105 NONAME
-	_ZN10QtMobility18QSystemNetworkInfo11qt_metacallEN11QMetaObject4CallEiPPv @ 106 NONAME
-	_ZN10QtMobility18QSystemNetworkInfo11qt_metacastEPKc @ 107 NONAME
-	_ZN10QtMobility18QSystemNetworkInfo13cellIdChangedEi @ 108 NONAME
-	_ZN10QtMobility18QSystemNetworkInfo13connectNotifyEPKc @ 109 NONAME
-	_ZN10QtMobility18QSystemNetworkInfo13networkStatusENS0_11NetworkModeE @ 110 NONAME
-	_ZN10QtMobility18QSystemNetworkInfo16disconnectNotifyEPKc @ 111 NONAME
-	_ZN10QtMobility18QSystemNetworkInfo16interfaceForModeENS0_11NetworkModeE @ 112 NONAME
-	_ZN10QtMobility18QSystemNetworkInfo16locationAreaCodeEv @ 113 NONAME
-	_ZN10QtMobility18QSystemNetworkInfo16staticMetaObjectE @ 114 NONAME DATA 16
-	_ZN10QtMobility18QSystemNetworkInfo18networkModeChangedENS0_11NetworkModeE @ 115 NONAME
-	_ZN10QtMobility18QSystemNetworkInfo18networkNameChangedENS0_11NetworkModeERK7QString @ 116 NONAME
-	_ZN10QtMobility18QSystemNetworkInfo19getStaticMetaObjectEv @ 117 NONAME
-	_ZN10QtMobility18QSystemNetworkInfo20networkStatusChangedENS0_11NetworkModeENS0_13NetworkStatusE @ 118 NONAME
-	_ZN10QtMobility18QSystemNetworkInfo21homeMobileCountryCodeEv @ 119 NONAME
-	_ZN10QtMobility18QSystemNetworkInfo21homeMobileNetworkCodeEv @ 120 NONAME
-	_ZN10QtMobility18QSystemNetworkInfo21networkSignalStrengthENS0_11NetworkModeE @ 121 NONAME
-	_ZN10QtMobility18QSystemNetworkInfo24currentMobileCountryCodeEv @ 122 NONAME
-	_ZN10QtMobility18QSystemNetworkInfo24currentMobileNetworkCodeEv @ 123 NONAME
-	_ZN10QtMobility18QSystemNetworkInfo28networkSignalStrengthChangedENS0_11NetworkModeEi @ 124 NONAME
-	_ZN10QtMobility18QSystemNetworkInfo31currentMobileCountryCodeChangedERK7QString @ 125 NONAME
-	_ZN10QtMobility18QSystemNetworkInfo31currentMobileNetworkCodeChangedERK7QString @ 126 NONAME
-	_ZN10QtMobility18QSystemNetworkInfo6cellIdEv @ 127 NONAME
-	_ZN10QtMobility18QSystemNetworkInfoC1EP7QObject @ 128 NONAME
-	_ZN10QtMobility18QSystemNetworkInfoC2EP7QObject @ 129 NONAME
-	_ZN10QtMobility18QSystemNetworkInfoD0Ev @ 130 NONAME
-	_ZN10QtMobility18QSystemNetworkInfoD1Ev @ 131 NONAME
-	_ZN10QtMobility18QSystemNetworkInfoD2Ev @ 132 NONAME
-	_ZN10QtMobility18QSystemScreenSaver11qt_metacallEN11QMetaObject4CallEiPPv @ 133 NONAME
-	_ZN10QtMobility18QSystemScreenSaver11qt_metacastEPKc @ 134 NONAME
-	_ZN10QtMobility18QSystemScreenSaver16staticMetaObjectE @ 135 NONAME DATA 16
-	_ZN10QtMobility18QSystemScreenSaver19getStaticMetaObjectEv @ 136 NONAME
-	_ZN10QtMobility18QSystemScreenSaver20screenSaverInhibitedEv @ 137 NONAME
-	_ZN10QtMobility18QSystemScreenSaver21setScreenSaverInhibitEv @ 138 NONAME
-	_ZN10QtMobility18QSystemScreenSaverC1EP7QObject @ 139 NONAME
-	_ZN10QtMobility18QSystemScreenSaverC2EP7QObject @ 140 NONAME
-	_ZN10QtMobility18QSystemScreenSaverD0Ev @ 141 NONAME
-	_ZN10QtMobility18QSystemScreenSaverD1Ev @ 142 NONAME
-	_ZN10QtMobility18QSystemScreenSaverD2Ev @ 143 NONAME
-	_ZN10QtMobility18QSystemStorageInfo11qt_metacallEN11QMetaObject4CallEiPPv @ 144 NONAME
-	_ZN10QtMobility18QSystemStorageInfo11qt_metacastEPKc @ 145 NONAME
-	_ZN10QtMobility18QSystemStorageInfo11uriForDriveERK7QString @ 146 NONAME
-	_ZN10QtMobility18QSystemStorageInfo12typeForDriveERK7QString @ 147 NONAME
-	_ZN10QtMobility18QSystemStorageInfo13logicalDrivesEv @ 148 NONAME
-	_ZN10QtMobility18QSystemStorageInfo14totalDiskSpaceERK7QString @ 149 NONAME
-	_ZN10QtMobility18QSystemStorageInfo15getStorageStateERK7QString @ 150 NONAME
-	_ZN10QtMobility18QSystemStorageInfo16staticMetaObjectE @ 151 NONAME DATA 16
-	_ZN10QtMobility18QSystemStorageInfo18availableDiskSpaceERK7QString @ 152 NONAME
-	_ZN10QtMobility18QSystemStorageInfo19getStaticMetaObjectEv @ 153 NONAME
-	_ZN10QtMobility18QSystemStorageInfo19logicalDriveChangedEbRK7QString @ 154 NONAME
-	_ZN10QtMobility18QSystemStorageInfo19storageStateChangedERK7QStringNS0_12StorageStateE @ 155 NONAME
-	_ZN10QtMobility18QSystemStorageInfoC1EP7QObject @ 156 NONAME
-	_ZN10QtMobility18QSystemStorageInfoC2EP7QObject @ 157 NONAME
-	_ZN10QtMobility18QSystemStorageInfoD0Ev @ 158 NONAME
-	_ZN10QtMobility18QSystemStorageInfoD1Ev @ 159 NONAME
-	_ZN10QtMobility18QSystemStorageInfoD2Ev @ 160 NONAME
-	_ZNK10QtMobility11QSystemInfo10metaObjectEv @ 161 NONAME
-	_ZNK10QtMobility17QSystemDeviceInfo10metaObjectEv @ 162 NONAME
-	_ZNK10QtMobility17QSystemDeviceInfo12batteryLevelEv @ 163 NONAME
-	_ZNK10QtMobility17QSystemDeviceInfo20ActiveProfileDetails15vibrationActiveEv @ 164 NONAME
-	_ZNK10QtMobility17QSystemDeviceInfo20ActiveProfileDetails19voiceRingtoneVolumeEv @ 165 NONAME
-	_ZNK10QtMobility17QSystemDeviceInfo20ActiveProfileDetails21messageRingtoneVolumeEv @ 166 NONAME
-	_ZNK10QtMobility18QSystemBatteryInfo10metaObjectEv @ 167 NONAME
-	_ZNK10QtMobility18QSystemBatteryInfo11chargerTypeEv @ 168 NONAME
-	_ZNK10QtMobility18QSystemBatteryInfo11currentFlowEv @ 169 NONAME
-	_ZNK10QtMobility18QSystemBatteryInfo13batteryStatusEv @ 170 NONAME
-	_ZNK10QtMobility18QSystemBatteryInfo13chargingStateEv @ 171 NONAME
-	_ZNK10QtMobility18QSystemBatteryInfo15nominalCapacityEv @ 172 NONAME
-	_ZNK10QtMobility18QSystemBatteryInfo17remainingCapacityEv @ 173 NONAME
-	_ZNK10QtMobility18QSystemBatteryInfo21energyMeasurementUnitEv @ 174 NONAME
-	_ZNK10QtMobility18QSystemBatteryInfo21remainingCapacityBarsEv @ 175 NONAME
-	_ZNK10QtMobility18QSystemBatteryInfo21remainingChargingTimeEv @ 176 NONAME
-	_ZNK10QtMobility18QSystemBatteryInfo24remainingCapacityPercentEv @ 177 NONAME
-	_ZNK10QtMobility18QSystemBatteryInfo7maxBarsEv @ 178 NONAME
-	_ZNK10QtMobility18QSystemBatteryInfo7voltageEv @ 179 NONAME
-	_ZNK10QtMobility18QSystemDisplayInfo10metaObjectEv @ 180 NONAME
-	_ZNK10QtMobility18QSystemNetworkInfo10metaObjectEv @ 181 NONAME
-	_ZNK10QtMobility18QSystemScreenSaver10metaObjectEv @ 182 NONAME
-	_ZNK10QtMobility18QSystemStorageInfo10metaObjectEv @ 183 NONAME
-	_ZTIN10QtMobility11QSystemInfoE @ 184 NONAME ; #<TI>#
-	_ZTIN10QtMobility17QSystemDeviceInfoE @ 185 NONAME ; #<TI>#
-	_ZTIN10QtMobility18QSystemBatteryInfoE @ 186 NONAME ; #<TI>#
-	_ZTIN10QtMobility18QSystemDisplayInfoE @ 187 NONAME ; #<TI>#
-	_ZTIN10QtMobility18QSystemNetworkInfoE @ 188 NONAME ; #<TI>#
-	_ZTIN10QtMobility18QSystemScreenSaverE @ 189 NONAME ; #<TI>#
-	_ZTIN10QtMobility18QSystemStorageInfoE @ 190 NONAME ; #<TI>#
-	_ZTVN10QtMobility11QSystemInfoE @ 191 NONAME ; #<VT>#
-	_ZTVN10QtMobility17QSystemDeviceInfoE @ 192 NONAME ; #<VT>#
-	_ZTVN10QtMobility18QSystemBatteryInfoE @ 193 NONAME ; #<VT>#
-	_ZTVN10QtMobility18QSystemDisplayInfoE @ 194 NONAME ; #<VT>#
-	_ZTVN10QtMobility18QSystemNetworkInfoE @ 195 NONAME ; #<VT>#
-	_ZTVN10QtMobility18QSystemScreenSaverE @ 196 NONAME ; #<VT>#
-	_ZTVN10QtMobility18QSystemStorageInfoE @ 197 NONAME ; #<VT>#
+	_ZN10QtMobility18QSystemBatteryInfo24remainingCapacityChangedEi @ 75 NONAME
+	_ZN10QtMobility18QSystemBatteryInfo28remainingCapacityBarsChangedEi @ 76 NONAME
+	_ZN10QtMobility18QSystemBatteryInfo28remainingChargingTimeChangedEi @ 77 NONAME
+	_ZN10QtMobility18QSystemBatteryInfo31remainingCapacityPercentChangedEi @ 78 NONAME
+	_ZN10QtMobility18QSystemBatteryInfoC1EP7QObject @ 79 NONAME
+	_ZN10QtMobility18QSystemBatteryInfoC2EP7QObject @ 80 NONAME
+	_ZN10QtMobility18QSystemBatteryInfoD0Ev @ 81 NONAME
+	_ZN10QtMobility18QSystemBatteryInfoD1Ev @ 82 NONAME
+	_ZN10QtMobility18QSystemBatteryInfoD2Ev @ 83 NONAME
+	_ZN10QtMobility18QSystemDisplayInfo10colorDepthEi @ 84 NONAME
+	_ZN10QtMobility18QSystemDisplayInfo11getDPIWidthEi @ 85 NONAME
+	_ZN10QtMobility18QSystemDisplayInfo11qt_metacallEN11QMetaObject4CallEiPPv @ 86 NONAME
+	_ZN10QtMobility18QSystemDisplayInfo11qt_metacastEPKc @ 87 NONAME
+	_ZN10QtMobility18QSystemDisplayInfo12getDPIHeightEi @ 88 NONAME
+	_ZN10QtMobility18QSystemDisplayInfo13physicalWidthEi @ 89 NONAME
+	_ZN10QtMobility18QSystemDisplayInfo14getOrientationEi @ 90 NONAME
+	_ZN10QtMobility18QSystemDisplayInfo14physicalHeightEi @ 91 NONAME
+	_ZN10QtMobility18QSystemDisplayInfo15backlightStatusEi @ 92 NONAME
+	_ZN10QtMobility18QSystemDisplayInfo16staticMetaObjectE @ 93 NONAME DATA 16
+	_ZN10QtMobility18QSystemDisplayInfo17displayBrightnessEi @ 94 NONAME
+	_ZN10QtMobility18QSystemDisplayInfo19getStaticMetaObjectEv @ 95 NONAME
+	_ZN10QtMobility18QSystemDisplayInfo8contrastEi @ 96 NONAME
+	_ZN10QtMobility18QSystemDisplayInfoC1EP7QObject @ 97 NONAME
+	_ZN10QtMobility18QSystemDisplayInfoC2EP7QObject @ 98 NONAME
+	_ZN10QtMobility18QSystemDisplayInfoD0Ev @ 99 NONAME
+	_ZN10QtMobility18QSystemDisplayInfoD1Ev @ 100 NONAME
+	_ZN10QtMobility18QSystemDisplayInfoD2Ev @ 101 NONAME
+	_ZN10QtMobility18QSystemNetworkInfo10macAddressENS0_11NetworkModeE @ 102 NONAME
+	_ZN10QtMobility18QSystemNetworkInfo11currentModeEv @ 103 NONAME
+	_ZN10QtMobility18QSystemNetworkInfo11networkNameENS0_11NetworkModeE @ 104 NONAME
+	_ZN10QtMobility18QSystemNetworkInfo11qt_metacallEN11QMetaObject4CallEiPPv @ 105 NONAME
+	_ZN10QtMobility18QSystemNetworkInfo11qt_metacastEPKc @ 106 NONAME
+	_ZN10QtMobility18QSystemNetworkInfo13cellIdChangedEi @ 107 NONAME
+	_ZN10QtMobility18QSystemNetworkInfo13connectNotifyEPKc @ 108 NONAME
+	_ZN10QtMobility18QSystemNetworkInfo13networkStatusENS0_11NetworkModeE @ 109 NONAME
+	_ZN10QtMobility18QSystemNetworkInfo16disconnectNotifyEPKc @ 110 NONAME
+	_ZN10QtMobility18QSystemNetworkInfo16interfaceForModeENS0_11NetworkModeE @ 111 NONAME
+	_ZN10QtMobility18QSystemNetworkInfo16locationAreaCodeEv @ 112 NONAME
+	_ZN10QtMobility18QSystemNetworkInfo16staticMetaObjectE @ 113 NONAME DATA 16
+	_ZN10QtMobility18QSystemNetworkInfo18networkModeChangedENS0_11NetworkModeE @ 114 NONAME
+	_ZN10QtMobility18QSystemNetworkInfo18networkNameChangedENS0_11NetworkModeERK7QString @ 115 NONAME
+	_ZN10QtMobility18QSystemNetworkInfo19getStaticMetaObjectEv @ 116 NONAME
+	_ZN10QtMobility18QSystemNetworkInfo20networkStatusChangedENS0_11NetworkModeENS0_13NetworkStatusE @ 117 NONAME
+	_ZN10QtMobility18QSystemNetworkInfo21homeMobileCountryCodeEv @ 118 NONAME
+	_ZN10QtMobility18QSystemNetworkInfo21homeMobileNetworkCodeEv @ 119 NONAME
+	_ZN10QtMobility18QSystemNetworkInfo21networkSignalStrengthENS0_11NetworkModeE @ 120 NONAME
+	_ZN10QtMobility18QSystemNetworkInfo24currentMobileCountryCodeEv @ 121 NONAME
+	_ZN10QtMobility18QSystemNetworkInfo24currentMobileNetworkCodeEv @ 122 NONAME
+	_ZN10QtMobility18QSystemNetworkInfo28networkSignalStrengthChangedENS0_11NetworkModeEi @ 123 NONAME
+	_ZN10QtMobility18QSystemNetworkInfo31currentMobileCountryCodeChangedERK7QString @ 124 NONAME
+	_ZN10QtMobility18QSystemNetworkInfo31currentMobileNetworkCodeChangedERK7QString @ 125 NONAME
+	_ZN10QtMobility18QSystemNetworkInfo6cellIdEv @ 126 NONAME
+	_ZN10QtMobility18QSystemNetworkInfoC1EP7QObject @ 127 NONAME
+	_ZN10QtMobility18QSystemNetworkInfoC2EP7QObject @ 128 NONAME
+	_ZN10QtMobility18QSystemNetworkInfoD0Ev @ 129 NONAME
+	_ZN10QtMobility18QSystemNetworkInfoD1Ev @ 130 NONAME
+	_ZN10QtMobility18QSystemNetworkInfoD2Ev @ 131 NONAME
+	_ZN10QtMobility18QSystemScreenSaver11qt_metacallEN11QMetaObject4CallEiPPv @ 132 NONAME
+	_ZN10QtMobility18QSystemScreenSaver11qt_metacastEPKc @ 133 NONAME
+	_ZN10QtMobility18QSystemScreenSaver16staticMetaObjectE @ 134 NONAME DATA 16
+	_ZN10QtMobility18QSystemScreenSaver19getStaticMetaObjectEv @ 135 NONAME
+	_ZN10QtMobility18QSystemScreenSaver20screenSaverInhibitedEv @ 136 NONAME
+	_ZN10QtMobility18QSystemScreenSaver21setScreenSaverInhibitEv @ 137 NONAME
+	_ZN10QtMobility18QSystemScreenSaverC1EP7QObject @ 138 NONAME
+	_ZN10QtMobility18QSystemScreenSaverC2EP7QObject @ 139 NONAME
+	_ZN10QtMobility18QSystemScreenSaverD0Ev @ 140 NONAME
+	_ZN10QtMobility18QSystemScreenSaverD1Ev @ 141 NONAME
+	_ZN10QtMobility18QSystemScreenSaverD2Ev @ 142 NONAME
+	_ZN10QtMobility18QSystemStorageInfo11qt_metacallEN11QMetaObject4CallEiPPv @ 143 NONAME
+	_ZN10QtMobility18QSystemStorageInfo11qt_metacastEPKc @ 144 NONAME
+	_ZN10QtMobility18QSystemStorageInfo11uriForDriveERK7QString @ 145 NONAME
+	_ZN10QtMobility18QSystemStorageInfo12typeForDriveERK7QString @ 146 NONAME
+	_ZN10QtMobility18QSystemStorageInfo13logicalDrivesEv @ 147 NONAME
+	_ZN10QtMobility18QSystemStorageInfo14totalDiskSpaceERK7QString @ 148 NONAME
+	_ZN10QtMobility18QSystemStorageInfo15getStorageStateERK7QString @ 149 NONAME
+	_ZN10QtMobility18QSystemStorageInfo16staticMetaObjectE @ 150 NONAME DATA 16
+	_ZN10QtMobility18QSystemStorageInfo18availableDiskSpaceERK7QString @ 151 NONAME
+	_ZN10QtMobility18QSystemStorageInfo19getStaticMetaObjectEv @ 152 NONAME
+	_ZN10QtMobility18QSystemStorageInfo19logicalDriveChangedEbRK7QString @ 153 NONAME
+	_ZN10QtMobility18QSystemStorageInfo19storageStateChangedERK7QStringNS0_12StorageStateE @ 154 NONAME
+	_ZN10QtMobility18QSystemStorageInfoC1EP7QObject @ 155 NONAME
+	_ZN10QtMobility18QSystemStorageInfoC2EP7QObject @ 156 NONAME
+	_ZN10QtMobility18QSystemStorageInfoD0Ev @ 157 NONAME
+	_ZN10QtMobility18QSystemStorageInfoD1Ev @ 158 NONAME
+	_ZN10QtMobility18QSystemStorageInfoD2Ev @ 159 NONAME
+	_ZNK10QtMobility11QSystemInfo10metaObjectEv @ 160 NONAME
+	_ZNK10QtMobility17QSystemDeviceInfo10metaObjectEv @ 161 NONAME
+	_ZNK10QtMobility17QSystemDeviceInfo12batteryLevelEv @ 162 NONAME
+	_ZNK10QtMobility17QSystemDeviceInfo20ActiveProfileDetails15vibrationActiveEv @ 163 NONAME
+	_ZNK10QtMobility17QSystemDeviceInfo20ActiveProfileDetails19voiceRingtoneVolumeEv @ 164 NONAME
+	_ZNK10QtMobility17QSystemDeviceInfo20ActiveProfileDetails21messageRingtoneVolumeEv @ 165 NONAME
+	_ZNK10QtMobility18QSystemBatteryInfo10metaObjectEv @ 166 NONAME
+	_ZNK10QtMobility18QSystemBatteryInfo11chargerTypeEv @ 167 NONAME
+	_ZNK10QtMobility18QSystemBatteryInfo11currentFlowEv @ 168 NONAME
+	_ZNK10QtMobility18QSystemBatteryInfo13batteryStatusEv @ 169 NONAME
+	_ZNK10QtMobility18QSystemBatteryInfo13chargingStateEv @ 170 NONAME
+	_ZNK10QtMobility18QSystemBatteryInfo15nominalCapacityEv @ 171 NONAME
+	_ZNK10QtMobility18QSystemBatteryInfo17remainingCapacityEv @ 172 NONAME
+	_ZNK10QtMobility18QSystemBatteryInfo21energyMeasurementUnitEv @ 173 NONAME
+	_ZNK10QtMobility18QSystemBatteryInfo21remainingCapacityBarsEv @ 174 NONAME
+	_ZNK10QtMobility18QSystemBatteryInfo21remainingChargingTimeEv @ 175 NONAME
+	_ZNK10QtMobility18QSystemBatteryInfo24remainingCapacityPercentEv @ 176 NONAME
+	_ZNK10QtMobility18QSystemBatteryInfo7maxBarsEv @ 177 NONAME
+	_ZNK10QtMobility18QSystemBatteryInfo7voltageEv @ 178 NONAME
+	_ZNK10QtMobility18QSystemDisplayInfo10metaObjectEv @ 179 NONAME
+	_ZNK10QtMobility18QSystemNetworkInfo10metaObjectEv @ 180 NONAME
+	_ZNK10QtMobility18QSystemScreenSaver10metaObjectEv @ 181 NONAME
+	_ZNK10QtMobility18QSystemStorageInfo10metaObjectEv @ 182 NONAME
+	_ZTIN10QtMobility11QSystemInfoE @ 183 NONAME ; #<TI>#
+	_ZTIN10QtMobility17QSystemDeviceInfoE @ 184 NONAME ; #<TI>#
+	_ZTIN10QtMobility18QSystemBatteryInfoE @ 185 NONAME ; #<TI>#
+	_ZTIN10QtMobility18QSystemDisplayInfoE @ 186 NONAME ; #<TI>#
+	_ZTIN10QtMobility18QSystemNetworkInfoE @ 187 NONAME ; #<TI>#
+	_ZTIN10QtMobility18QSystemScreenSaverE @ 188 NONAME ; #<TI>#
+	_ZTIN10QtMobility18QSystemStorageInfoE @ 189 NONAME ; #<TI>#
+	_ZTVN10QtMobility11QSystemInfoE @ 190 NONAME ; #<VT>#
+	_ZTVN10QtMobility17QSystemDeviceInfoE @ 191 NONAME ; #<VT>#
+	_ZTVN10QtMobility18QSystemBatteryInfoE @ 192 NONAME ; #<VT>#
+	_ZTVN10QtMobility18QSystemDisplayInfoE @ 193 NONAME ; #<VT>#
+	_ZTVN10QtMobility18QSystemNetworkInfoE @ 194 NONAME ; #<VT>#
+	_ZTVN10QtMobility18QSystemScreenSaverE @ 195 NONAME ; #<VT>#
+	_ZTVN10QtMobility18QSystemStorageInfoE @ 196 NONAME ; #<VT>#
 

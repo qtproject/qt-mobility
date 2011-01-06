@@ -1,3 +1,44 @@
+/****************************************************************************
+**
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
+** Contact: Nokia Corporation (qt-info@nokia.com)
+**
+** This file is part of the Qt Mobility Components.
+**
+** $QT_BEGIN_LICENSE:LGPL$
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
+**
+** GNU Lesser General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU Lesser
+** General Public License version 2.1 as published by the Free Software
+** Foundation and appearing in the file LICENSE.LGPL included in the
+** packaging of this file.  Please review the following information to
+** ensure the GNU Lesser General Public License version 2.1 requirements
+** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+**
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
+**
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
 #include <stdio.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -15,6 +56,7 @@
 
 #include <bluetooth/bluetooth.h>
 #include <bluetooth/rfcomm.h>
+#include <bluetooth/l2cap.h>
 
 #include <dbus/dbus.h>
 
@@ -150,6 +192,41 @@ int createListening(int channel){
         return -1;
     }
     printf("Got socket: %d\n", sk);
+    return sk;
+}
+
+int createListeningL2cap(int psm){
+    struct sockaddr_l2 addr;
+    int flags;
+    socklen_t addrLength = sizeof(struct sockaddr_l2);
+    int sk, opt = 1;
+
+    sk = socket(AF_BLUETOOTH, SOCK_SEQPACKET, BTPROTO_L2CAP);
+
+    memset(&addr,0, addrLength);
+    addr.l2_family = AF_BLUETOOTH;
+    addr.l2_psm = htobs(psm);
+    memset(&addr.l2_bdaddr, 0, sizeof(bdaddr_t));
+
+    if (bind(sk, (struct sockaddr *)&addr, addrLength) < 0) {
+        perror("Failed to bind to Bluetooth socket");
+        return -1;
+    }
+
+    if(setsockopt(sk, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0){
+        perror("Warning: Failed to set SO_REUSEADDR options");
+    }
+
+    // ensure that O_NONBLOCK is set on new connections.
+    flags = fcntl(sk, F_GETFL, 0);
+    if (!(flags & O_NONBLOCK))
+        fcntl(sk, F_SETFL, flags | O_NONBLOCK);
+
+    if (listen(sk, 10) < 0){
+        perror("Can't start listening on bluetooth socket");
+        return -1;
+    }
+    printf("Got L2cap socket: %d\n", sk);
     return sk;
 }
 
@@ -305,6 +382,41 @@ void id_print(int socket){
     printf("We are: %d:%d:%d:%d:%d:%d port %d\n", a[0], a[1], a[2], a[3], a[4], a[5], addr.rc_channel);
 }
 
+void l2_process(int fd, short revents, void *data){
+    char buff[1024];
+
+    UNUSED(data);
+
+    if(revents&POLLHUP || revents&POLLNVAL){
+        close(fd);
+        removefd(head, fd);
+        return;
+    }
+    int size = read(fd, buff, 1024);
+    printf("%d: Read: %d bytes\n", fd, size);
+    size = write(fd, buff, size);
+    printf("%d: Wrote: %d bytes\n", fd, size);
+}
+
+void l2_connect(int fd, short revents, void *data){
+
+    struct sockaddr_l2 addr;
+    unsigned char *a;
+    socklen_t length = sizeof(struct sockaddr_l2);
+
+    UNUSED(revents);
+    UNUSED(data);
+
+    printf("L2 connect started\n");
+
+    int sk = accept(fd, (struct sockaddr *)&addr, &length);
+
+    a = addr.l2_bdaddr.b;
+    printf("Connect from: %02x:%02x:%02x:%02x:%02x:%02x port %d\n", a[5], a[4], a[3], a[2], a[1], a[0], addr.l2_psm);
+    addfd(head, sk, POLLIN|POLLHUP|POLLNVAL, l2_process, 0);
+    l2_process(sk, POLLIN, 0x0);
+}
+
 void dbus_error(int fd, short revents, void *data){
     UNUSED(fd);
     UNUSED(data);
@@ -440,6 +552,9 @@ int main(int argc, char **argv)
 
         socket = createListening(11);
         addfd(head, socket, POLLIN, id_connect, 0);
+
+        socket = createListeningL2cap(0x1011); // must be > 0x1001 and odd
+        addfd(head, socket, POLLIN, l2_connect, 0);
 
         while(1){
             int n = mkpoll(head, fds, MAX_POLL);

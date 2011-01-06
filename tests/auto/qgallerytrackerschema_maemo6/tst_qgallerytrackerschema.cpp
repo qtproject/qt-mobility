@@ -62,7 +62,6 @@ Q_DECLARE_METATYPE(QGalleryProperty::Attributes)
 Q_DECLARE_METATYPE(QVector<QGalleryProperty::Attributes>)
 Q_DECLARE_METATYPE(QVector<int>)
 Q_DECLARE_METATYPE(QGalleryFilter)
-Q_DECLARE_METATYPE(QVector<QGalleryTrackerSortCriteria>)
 
 #define QT_FILE_QUERY_ARGUMENTS_COUNT 9
 #define QT_FILE_QUERY_SERVICE_POSITION 1
@@ -71,12 +70,6 @@ Q_DECLARE_METATYPE(QVector<QGalleryTrackerSortCriteria>)
 #define QT_AGGREGATE_QUERY_ARGUMENTS_COUNT 6
 #define QT_AGGREGATE_QUERY_SERVICE_POSITION 0
 #define QT_AGGREGATE_QUERY_STRING_POSITION 2
-
-
-bool operator ==(const QGalleryTrackerSortCriteria &left, const QGalleryTrackerSortCriteria &right)
-{
-    return left.column == right.column && left.flags == right.flags;
-}
 
 class tst_QGalleryTrackerSchema : public QObject, public QGalleryDBusInterfaceFactory
 {
@@ -157,7 +150,6 @@ void tst_QGalleryTrackerSchema::initTestCase()
     qRegisterMetaType<QVector<QGalleryProperty::Attributes> >();
     qRegisterMetaType<QVector<int> >();
     qRegisterMetaType<QGalleryFilter>();
-    qRegisterMetaType<QVector<QGalleryTrackerSortCriteria> >();
 
     // Initialize dbus interfaces of some sort here.
 }

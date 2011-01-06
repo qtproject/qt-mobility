@@ -283,7 +283,7 @@ public:
     void keyboardConnected(bool connect);//1.2
     bool keypadLightOn(QSystemDeviceInfo::KeypadType type); //1.2
     QUuid uniqueDeviceID(); //1.2
-    QSystemDeviceInfo::LockType lockStatus(); //1.2
+    QSystemDeviceInfo::LockTypeFlags lockStatus(); //1.2
 
     int messageRingtoneVolume();//1.2
     int voiceRingtoneVolume();//1.2
@@ -300,7 +300,7 @@ Q_SIGNALS:
     void wirelessKeyboardConnected(bool connected);//1.2
     void keyboardFlipped(bool open);//1.2
     void deviceLocked(bool isLocked); // 1.2
-    void lockStatusChanged(QSystemDeviceInfo::LockType); //1.2
+    void lockStatusChanged(QSystemDeviceInfo::LockTypeFlags); //1.2
 
 private:
     bool btPowered;
@@ -354,7 +354,6 @@ public:
     int maxBars() const;
     QSystemBatteryInfo::BatteryStatus batteryStatus() const;
     QSystemBatteryInfo::EnergyUnit energyMeasurementUnit();
-    int startCurrentMeasurement(int rate);
 
     void getBatteryStatus();
     static QSystemBatteryInfoPrivate *instance() {return batself;}
