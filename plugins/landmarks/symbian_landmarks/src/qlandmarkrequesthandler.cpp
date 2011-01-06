@@ -266,7 +266,6 @@ void CLandmarkRequestAO::DoCancel()
         iOperation = NULL;
     }
     else {
-        // TODO: Modify this hack if required
         if (IsActive())
             memset(&iStatus, 0, sizeof(TRequestStatus));
     }

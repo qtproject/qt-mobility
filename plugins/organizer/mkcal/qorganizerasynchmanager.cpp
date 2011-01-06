@@ -41,8 +41,6 @@
 
 #include "qorganizerasynchmanager.h"
 #include "qtorganizer.h"
-#include "mkcalengine.h"
-#include "mkcalid.h"
 
 QTM_USE_NAMESPACE
 

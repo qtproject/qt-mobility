@@ -57,7 +57,6 @@ contains(symbian_camera_ecamadvsettings_enabled, yes) {
     }
 }
 
-
 # DevVideo API Check (Requires both, DevVideoPlay and DevVideoRecord plugins):
 # DevVideoConstants has been problematic since not being included in SDK plugins
 # For S60 5.0 this has changed with plugin extension 1.1
@@ -124,7 +123,7 @@ HEADERS += $$PWD/s60cameraconstants.h \
     $$PWD/s60imageencodercontrol.h \
     $$PWD/s60videowidgetcontrol.h \
     $$PWD/s60camerasettings.h \
-    $$PWD/s60cameraengine.h	\
+    $$PWD/s60cameraengine.h \
     $$PWD/s60cameraviewfinderengine.h \
     $$PWD/s60cameraengineobserver.h \
     $$PWD/s60videorenderercontrol.h

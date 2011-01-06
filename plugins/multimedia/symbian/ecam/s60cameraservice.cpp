@@ -86,7 +86,6 @@ S60CameraService::S60CameraService(QObject *parent) :
         m_imageEncoderControl = new S60ImageEncoderControl(m_imagesession, this);
         m_locksControl = new S60CameraLocksControl(m_imagesession, this);
         m_rendererControl = new S60VideoRendererControl(this);
-
     }
 }
 

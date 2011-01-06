@@ -151,7 +151,7 @@ public:
 
         QString dfn;
         if (m_field.type() != QVariant::String) {
-           QDeclarativeOrganizerItemDetail::ItemDetailType dt = QDeclarativeOrganizerItemDetail::detailType(ddn);
+           QDeclarativeOrganizerItemDetail::ItemDetailType dt = QDeclarativeOrganizerItemDetail::detailTypeByDefinitionName(ddn);
            dfn = QDeclarativeOrganizerItemDetail::fieldName(dt, m_field.toInt());
         } else {
             dfn = m_field.toString();
