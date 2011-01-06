@@ -1052,6 +1052,28 @@ void TestQGeoPositionInfoSource::updateInferno()
     info = updateSpy.takeLast().at(0).value<QGeoPositionInfo>();
     QVERIFY(!info.isValid());
     geocluemock_unset_position_latitude(); // clear
+
+    // Test that invalid velocity updates are not emitted
+    geocluemock_set_velocity_fields(0);
+    updateSpy.clear(); timeoutSpy.clear();
+    QTest::qWait(1500);
+    QTRY_VERIFY_WITH_TIMEOUT(!updateSpy.isEmpty(), 2000);
+    QVERIFY(timeoutSpy.isEmpty());
+    info = updateSpy.takeLast().at(0).value<QGeoPositionInfo>();
+    QVERIFY(info.isValid());
+    QVERIFY(!info.hasAttribute(QGeoPositionInfo::GroundSpeed));
+    geocluemock_unset_velocity_fields();
+
+    // Test that requestUpdate timeouts correctly
+    geocluemock_set_suppress_single_update(true);
+    geocluemock_set_suppress_regular_updates(true);
+    m_source->stopUpdates();
+    updateSpy.clear(); timeoutSpy.clear();
+    m_source->requestUpdate(2000);
+    QTRY_COMPARE_WITH_TIMEOUT(timeoutSpy.count(), 1, 2100);
+    QVERIFY(updateSpy.isEmpty());
+    geocluemock_set_suppress_single_update(false);
+    geocluemock_set_suppress_regular_updates(false);
 }
 
 #endif // TST_GEOCLUEMOCK_ENABLED

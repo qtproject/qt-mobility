@@ -60,6 +60,7 @@ static bool lg_geocluemock_suppress_single_update = false;
 static bool lg_geocluemock_suppress_velocity_update = false;
 
 static int lg_position_fields = -1;
+static int lg_velocity_fields = -1;
 static double lg_position_latitude = -1;
 
 // These symbols override the symbols in the actual geoclue library;
@@ -355,7 +356,7 @@ void GeoclueMock::timerEvent(QTimerEvent *event)
 #endif
         if (m_velocityChangedCallback && !lg_geocluemock_suppress_velocity_update)
             (*m_velocityChangedCallback)((GeoclueVelocity*)1, // dummy
-                                         (GeoclueVelocityFields)m_velocity.fields,
+                                         lg_velocity_fields == -1? (GeoclueVelocityFields)m_velocity.fields : (GeoclueVelocityFields)lg_velocity_fields,
                                          1, // dummy
                                          m_velocity.speed,
                                          1, // dummy
@@ -585,4 +586,14 @@ void geocluemock_set_position_latitude(double latitude)
 void geocluemock_unset_position_latitude()
 {
     lg_position_latitude = -1;
+}
+
+void geocluemock_set_velocity_fields(int fields)
+{
+    lg_velocity_fields = fields;
+}
+
+void geocluemock_unset_velocity_fields()
+{
+    lg_velocity_fields = -1;
 }
