@@ -55,13 +55,14 @@ QLlcpSocketPrivate::QLlcpSocketPrivate(QLlcpSocket *q)
          m_error(QLlcpSocket::UnknownSocketError),
          q_ptr(q),
          m_emittedReadyRead(false),
-         m_emittedBytesWritten(false)
+         m_emittedBytesWritten(false),
+         m_writeDatagramRefCount(0)
 {
     BEGIN
-    m_unconnectedState = QSharedPointer<QLLCPSocketState>(new QLLCPUnconnected(this));
-    m_connectingState = QSharedPointer<QLLCPSocketState>(new QLLCPConnecting(this));
-    m_connectedState = QSharedPointer<QLLCPSocketState>(new QLLCPConnected(this));
-    m_bindState = QSharedPointer<QLLCPSocketState>(new QLLCPBind(this));
+    m_unconnectedState = new QLLCPUnconnected(this);
+    m_connectingState = new QLLCPConnecting(this);
+    m_connectedState = new QLLCPConnected(this);
+    m_bindState = new QLLCPBind(this);
 
     m_state = m_unconnectedState;
     END
@@ -78,6 +79,11 @@ QLlcpSocketPrivate::~QLlcpSocketPrivate()
     if (q->isOpen()) {
         q->close();
     }
+
+    delete m_unconnectedState;
+    delete m_connectingState;
+    delete m_connectedState;
+    delete m_bindState;
     delete m_symbianSocketType1;
     delete m_symbianSocketType2;
     END
@@ -91,15 +97,14 @@ QLlcpSocketPrivate::QLlcpSocketPrivate(CLlcpSocketType2* socketType2_symbian)
       m_symbianSocketType2(socketType2_symbian),
       m_error(QLlcpSocket::UnknownSocketError),
       m_emittedReadyRead(false),
-      m_emittedBytesWritten(false)
+      m_emittedBytesWritten(false),
+      m_writeDatagramRefCount(0)
 {
     BEGIN
-    Q_CHECK_PTR(m_symbianSocketType2);
-
-    m_unconnectedState = QSharedPointer<QLLCPSocketState>(new QLLCPUnconnected(this));
-    m_connectingState = QSharedPointer<QLLCPSocketState>(new QLLCPConnecting(this));
-    m_connectedState = QSharedPointer<QLLCPSocketState>(new QLLCPConnected(this));
-    m_bindState = QSharedPointer<QLLCPSocketState>(new QLLCPBind(this));
+    m_unconnectedState = new QLLCPUnconnected(this);
+    m_connectingState = new QLLCPConnecting(this);
+    m_connectedState = new QLLCPConnected(this);
+    m_bindState = new QLLCPBind(this);
 
     m_state = m_connectedState;
 
@@ -112,7 +117,9 @@ void QLlcpSocketPrivate::connectToService(QNearFieldTarget *target, const QStrin
     Q_Q(QLlcpSocket);
     if (!q->isOpen())
     {
-        q->open(QIODevice::ReadWrite | QIODevice::Unbuffered);
+       bool ret = q->open(QIODevice::ReadWrite | QIODevice::Unbuffered);
+       if (false == ret)
+           invokeError();
     }
     m_state->ConnectToService(target,serviceUri);
     END
@@ -135,10 +142,11 @@ void QLlcpSocketPrivate::invokeConnected()
 {
     BEGIN
     Q_Q(QLlcpSocket);
-    QLLCPConnecting *state = dynamic_cast<QLLCPConnecting *>(m_state.data());
-    if (state != NULL)
+
+    if (m_state->state() == QLlcpSocket::ConnectingState)
     {
-      state->ConnectToServiceComplete();
+      changeState(getConnectedState());
+      invokeStateChanged(QLlcpSocket::ConnectedState);
       emit q->connected();
     }
     END
@@ -163,7 +171,11 @@ void QLlcpSocketPrivate::attachCallbackHandler(QLlcpSocket *q)
     BEGIN
     q_ptr = q;
     if (!q->isOpen())
-        q->open(QIODevice::ReadWrite | QIODevice::Unbuffered);
+    {
+       bool ret = q->open(QIODevice::ReadWrite | QIODevice::Unbuffered);
+       if (false == ret)
+          invokeError();
+    }
     END
 }
 
@@ -248,7 +260,7 @@ bool QLlcpSocketPrivate::hasPendingDatagrams() const
 qint64 QLlcpSocketPrivate::pendingDatagramSize() const
 {
     BEGIN
-    int val = -1;
+    qint64 val = -1;
     if (m_symbianSocketType1)
     {
         val = m_symbianSocketType1->PendingDatagramSize();
@@ -381,7 +393,7 @@ bool QLlcpSocketPrivate::waitForDisconnected(int msecs)
     return m_state->WaitForDisconnected(msecs);
 }
 
-void QLlcpSocketPrivate::changeState(QSharedPointer<QLLCPSocketState>& state)
+void QLlcpSocketPrivate::changeState(QLLCPSocketState* state)
 {
     m_state = state;
     BEGIN_END

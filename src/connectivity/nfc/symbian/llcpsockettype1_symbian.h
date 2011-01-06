@@ -54,7 +54,7 @@
 /*!
  *   FORWARD DECLARATIONS
  */
-class COwnLlcpConnLess;
+class COwnLlcpConnectionWrapper;
 class CLlcpSenderType1;
 class CLlcpReceiverType1;
 class CLlcpTimer;
@@ -105,13 +105,13 @@ public:
    TInt StartWriteDatagram(const TDesC8& aData,TUint8 portNum);
    TInt ReadDatagram(TDes8& aData);
    TInt ReadDatagram(TDes8& aData, TUint8& aRemotePortNum);
-   bool Bind(TUint8 portNum);
+   TBool Bind(TUint8 portNum);
    
    /*!
        Returns true if at least one datagram is waiting to be read;
        otherwise returns false.
    */
-   bool HasPendingDatagrams() const;  
+   TBool HasPendingDatagrams() const;
    TInt64 PendingDatagramSize() const;
    TBool WaitForBytesWritten(TInt aMilliSeconds);
  
@@ -163,7 +163,7 @@ private:
     *
     * This is used to send data to local device.
     */ 
-   COwnLlcpConnLess* iConnection;  // Own
+   COwnLlcpConnectionWrapper* iConnection;  // Own
   
    CActiveSchedulerWait * iWait;  //Own
    CLlcpTimer * iTimer;  // Own
@@ -177,27 +177,27 @@ private:
    };
 
 /*!
- *  CLASS DECLARATION for COwnLlcpConnLess.
+ *  CLASS DECLARATION for COwnLlcpConnectionWrapper.
  *
  */   
-class COwnLlcpConnLess : public CBase
+class COwnLlcpConnectionWrapper : public CBase
     {
 public:
 
    /*!
     * Creates a new COwnLlcpConnection object.
     */
-   static COwnLlcpConnLess* NewL( MLlcpConnLessTransporter*);
+   static COwnLlcpConnectionWrapper* NewL( MLlcpConnLessTransporter*);
    
    /*!
     * Creates a new COwnLlcpConnection object.
     */
-   static COwnLlcpConnLess* NewLC(MLlcpConnLessTransporter*);
+   static COwnLlcpConnectionWrapper* NewLC(MLlcpConnLessTransporter*);
    
    /*!
     * Destructor.
     */
-   ~COwnLlcpConnLess();
+   ~COwnLlcpConnectionWrapper();
 
 public: 
    /*!
@@ -205,23 +205,13 @@ public:
     */
    TInt TransferL(MLlcpReadWriteCb&, const TDesC8& aData );
    
-   bool TransferQueued(MLlcpReadWriteCb& aLlcpSendCb);
-   
-   /*!
-    * Cancels COwnLlcpConnection::Tranfer() request.
-    */ 
-   void TransferCancel();
-   
+   bool TransferQueued(MLlcpReadWriteCb& aLlcpSendCb); 
+
    /*!
     * Starts receive data from ConnLess.
     */
    TInt Receive(MLlcpReadWriteCb&);
-   
-   /*!
-    * Cancels COwnLlcpConnection::Receive() request.
-    */ 
-   void ReceiveCancel();
-    
+
    TInt ReceiveDataFromBuf(TDes8& aData);
    bool HasPendingDatagrams() const;
    TInt64 PendingDatagramSize() const;
@@ -230,7 +220,7 @@ public:
 private:
 
     // Constructor
-    COwnLlcpConnLess( MLlcpConnLessTransporter*);   
+    COwnLlcpConnectionWrapper( MLlcpConnLessTransporter*);
     // Second phase constructor
     void ConstructL();
   

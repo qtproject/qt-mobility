@@ -74,7 +74,7 @@ public:
     ~CLlcpSocketType2();
 
 public:
-    TInt ConnectToService( const TDesC8& aServiceName);
+    void ConnectToServiceL( const QString &serviceUri);
     TInt DisconnectFromService();
 
     TInt StartWriteDatagram(const TDesC8& aData);

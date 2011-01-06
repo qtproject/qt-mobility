@@ -109,13 +109,15 @@ CLlcpSocketType2::~CLlcpSocketType2()
 /*!
     Connects to the service identified by the URI \a serviceUri (on \a target).
 */
-TInt CLlcpSocketType2::ConnectToService( const TDesC8& aServiceName)
+void CLlcpSocketType2::ConnectToServiceL( const QString &serviceUri)
     {
     BEGIN
-    TInt err = KErrNone;
-    TRAP( err, ConnectToServiceL(aServiceName) );
+    HBufC8* serviceName = QtMobility::QNFCNdefUtility::QString2HBufC8L(serviceUri);
+
+    CleanupStack::PushL(serviceName);
+    ConnectToServiceL(serviceName->Des()) ;
+    CleanupStack::PopAndDestroy(serviceName);
     END
-    return err;
     }
 
 void CLlcpSocketType2::ConnectToServiceL( const TDesC8& aServiceName)
