@@ -108,6 +108,7 @@ void QGeoMapObjectEngine::addObject(QGeoMapObject *object)
 {
     objectsForLatLonUpdate << object;
     objectsForPixelUpdate << object;
+    updateTransforms();
 }
 
 void QGeoMapObjectEngine::removeObject(QGeoMapObject *object)
@@ -544,7 +545,8 @@ static void _zoomDepsRecurse(QGeoMapObjectEngine *eng, QGeoMapGroupObject *group
 
 void QGeoMapObjectEngine::invalidateZoomDependents()
 {
-    _zoomDepsRecurse(this, mdp->containerObject);
+    if (mdp->containerObject)
+        _zoomDepsRecurse(this, mdp->containerObject);
 }
 
 void QGeoMapObjectEngine::invalidatePixelsForViewport()
@@ -565,11 +567,15 @@ void QGeoMapObjectEngine::invalidatePixelsForViewport()
             done.insert(object);
         }
     }
+
+    mdp->emitUpdateMapDisplay();
 }
 
 void QGeoMapObjectEngine::invalidateObject(QGeoMapObject *obj)
 {
-    objectsForLatLonUpdate << obj;
+    // force the lat lon to update now
+    // otherwise we can't tell if it's supposed to be on screen
+    updateLatLonTransform(obj);
 
     const QRectF view = mdp->latLonViewport().boundingRect();
 
@@ -583,9 +589,7 @@ void QGeoMapObjectEngine::invalidateObject(QGeoMapObject *obj)
 
     if (needsPixelUpdate) {
         objectsForPixelUpdate << obj;
-
-        foreach (QGraphicsItem *item, pixelItems.keys(obj))
-            mdp->emitUpdateMapDisplay(item->boundingRect());
+        mdp->emitUpdateMapDisplay();
     }
 }
 
@@ -737,6 +741,12 @@ void QGeoMapObjectEngine::updatePixelTransform(QGeoMapObject *object)
 
     // skip any objects without graphicsitems
     if (!item)
+        return;
+
+    QRectF localRect = item->boundingRect();
+
+    // skip any objects with invalid bounds
+    if (!localRect.isValid() || localRect.isEmpty() || localRect.isNull())
         return;
 
     QList<QPolygonF> polys;
