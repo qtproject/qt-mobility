@@ -58,7 +58,7 @@ public:
     }
 
     QM3uPlaylistReader(const QUrl& location)
-        :m_ownDevice(true)
+        :m_location(location), m_ownDevice(true)
     {
         QFile *f = new QFile(location.toLocalFile());
         if (f->open(QIODevice::ReadOnly | QIODevice::Text)) {
@@ -96,14 +96,19 @@ public:
         nextResource = QMediaContent();
 
         while (m_textStream && !m_textStream->atEnd()) {
-            QString line = m_textStream->readLine();
+            QString line = m_textStream->readLine().trimmed();
             if (line.isEmpty() || line[0] == '#')
                 continue;
 
-            if (QFile::exists(line))
+            if (QFile::exists(line)) {
                 nextResource = QMediaContent(QUrl::fromLocalFile(line));
-            else
-                nextResource = QMediaContent(QUrl(line));
+            } else {
+                QUrl url(line);
+                if (!m_location.isEmpty() && url.isRelative())
+                    url = m_location.resolved(url);
+
+                nextResource = QMediaContent(url);
+            }
             break;
         }
 
@@ -115,6 +120,7 @@ public:
     }
 
 private:
+    QUrl m_location;
     bool m_ownDevice;
     QIODevice *m_device;
     QTextStream *m_textStream;
