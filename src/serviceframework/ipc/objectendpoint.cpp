@@ -48,10 +48,8 @@
 #include <QEventLoop>
 #include <QEvent>
 #include <QVarLengthArray>
-#ifdef Q_OS_WIN
-#  include <QCoreApplication>
-#  include <QTime>
-#endif
+#include <QTime>
+#include <QCoreApplication>
 
 QTM_BEGIN_NAMESPACE
 
@@ -173,8 +171,8 @@ ObjectEndPoint::ObjectEndPoint(Type type, QServiceIpcEndPoint* comm, QObject* pa
     d->endPointType = type;
 
     dispatch->setParent(this);
-    connect(dispatch, SIGNAL(readyRead()), this, SLOT(newPackageReady()));
-    connect(dispatch, SIGNAL(disconnected()), this, SLOT(disconnected()));
+    connect(dispatch, SIGNAL(readyRead()), this, SLOT(newPackageReady()), Qt::QueuedConnection);
+    connect(dispatch, SIGNAL(disconnected()), this, SLOT(disconnected()), Qt::QueuedConnection);
     if (type == Client) {
         return; //we are waiting for conctructProxy() call
     } else {
@@ -497,16 +495,18 @@ void ObjectEndPoint::methodCall(const QServicePackage& p)
         Q_ASSERT(d->endPointType == ObjectEndPoint::Client);
 
         Response* response = openRequests()->value(p.d->messageId);
-        response->isFinished = true;
-        if (p.d->responseType == QServicePackage::Failed) {
-            response->result = 0;
-            QTimer::singleShot(0, this, SIGNAL(pendingRequestFinished()));
-            return;
-        }
-        QVariant* variant = new QVariant(p.d->payload);
-        response->result = reinterpret_cast<void *>(variant);
+        if(response){
+            response->isFinished = true;
+            if (p.d->responseType == QServicePackage::Failed) {
+                response->result = 0;
+                QTimer::singleShot(0, this, SIGNAL(pendingRequestFinished()));
+                return;
+            }
+            QVariant* variant = new QVariant(p.d->payload);
+            response->result = reinterpret_cast<void *>(variant);
 
-        QTimer::singleShot(0, this, SIGNAL(pendingRequestFinished()));
+            QTimer::singleShot(0, this, SIGNAL(pendingRequestFinished()));
+        }
     }
 }
 
@@ -616,28 +616,25 @@ QVariant ObjectEndPoint::invokeRemote(int metaIndex, const QVariantList& args, i
 
 void ObjectEndPoint::waitForResponse(const QUuid& requestId)
 {
+    qDebug() << "start ObjectEndPoint::waitForResponse";
     Q_ASSERT(d->endPointType == ObjectEndPoint::Client);
     if (openRequests()->contains(requestId) ) {
         Response* response = openRequests()->value(requestId);
-#ifdef Q_OS_WIN
+        QEventLoop* loop = new QEventLoop( this );
+        connect(this, SIGNAL(pendingRequestFinished()), loop, SLOT(quit()));
         QTime timer;
         timer.start();
+
         while(!response->isFinished) {
-            if(QCoreApplication::instance())
-                QCoreApplication::instance()->processEvents(QEventLoop::ExcludeUserInputEvents);
+            loop->processEvents(QEventLoop::AllEvents, 30000);
             if(timer.elapsed() > 30000)
                 break;
         }
-#else
-        QEventLoop* loop = new QEventLoop( this );
-        connect(this, SIGNAL(pendingRequestFinished()), loop, SLOT(quit())); 
-
-        while(!response->isFinished) {
-            loop->exec();
-        }
         delete loop;
-#endif
-    }
+        qDebug() << "- response->isFinished: " << response->isFinished;
+
+	}
+    qDebug() << "finished ObjectEndPoint::waitForResponse";
 }
 
 #include "moc_objectendpoint_p.cpp"

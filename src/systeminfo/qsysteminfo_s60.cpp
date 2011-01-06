@@ -1109,7 +1109,7 @@ QSystemDeviceInfo::BatteryStatus QSystemDeviceInfoPrivate::batteryStatus()
     int batteryLevel = DeviceInfo::instance()->batteryInfo()->batteryLevel();
     QSystemDeviceInfo::PowerState currentpwrstate = currentPowerState();
     if (batteryLevel < 15 ) {
-        if( (currentpwrstate == QSystemDeviceInfo::WallPowerChargingBattery) || (currentpwrstate == QSystemDeviceInfo::WallPower) ) {
+        if ( (currentpwrstate == QSystemDeviceInfo::WallPowerChargingBattery) || (currentpwrstate == QSystemDeviceInfo::WallPower) ) {
                 return QSystemDeviceInfo::BatteryLow;
         }   else  {
                 return QSystemDeviceInfo::BatteryVeryLow;
@@ -1117,7 +1117,7 @@ QSystemDeviceInfo::BatteryStatus QSystemDeviceInfoPrivate::batteryStatus()
     }   else if (batteryLevel < 29) {
             return QSystemDeviceInfo::BatteryLow;
     }   else if (batteryLevel < 43) {
-            if( (currentpwrstate == QSystemDeviceInfo::WallPowerChargingBattery) || (currentpwrstate == QSystemDeviceInfo::WallPower) ){
+            if ( (currentpwrstate == QSystemDeviceInfo::WallPowerChargingBattery) || (currentpwrstate == QSystemDeviceInfo::WallPower) ){
                 return QSystemDeviceInfo::BatteryNormal;
             }  else {
                 return QSystemDeviceInfo::BatteryLow;

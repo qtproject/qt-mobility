@@ -262,6 +262,19 @@ void tst_QGalleryFilter::unionFilter()
     QCOMPARE(filters.at(1).type(), QGalleryFilter::Intersection);
     QCOMPARE(filters.at(2).type(), QGalleryFilter::MetaData);
     QCOMPARE(filters.at(3).type(), QGalleryFilter::MetaData);
+
+    unionFilter.prepend(intersectionFilter || metaDataFilter);
+    QCOMPARE(unionFilter.isEmpty(), false);
+    QCOMPARE(unionFilter.filterCount(), 6);
+
+    filters = unionFilter.filters();
+    QCOMPARE(filters.count(), 6);
+    QCOMPARE(filters.at(0).type(), QGalleryFilter::Intersection);
+    QCOMPARE(filters.at(1).type(), QGalleryFilter::MetaData);
+    QCOMPARE(filters.at(2).type(), QGalleryFilter::MetaData);
+    QCOMPARE(filters.at(3).type(), QGalleryFilter::Intersection);
+    QCOMPARE(filters.at(4).type(), QGalleryFilter::MetaData);
+    QCOMPARE(filters.at(5).type(), QGalleryFilter::MetaData);
 }
 
 void tst_QGalleryFilter::intersectionFilter()
@@ -373,6 +386,19 @@ void tst_QGalleryFilter::intersectionFilter()
     QCOMPARE(filters.at(1).type(), QGalleryFilter::Union);
     QCOMPARE(filters.at(2).type(), QGalleryFilter::MetaData);
     QCOMPARE(filters.at(3).type(), QGalleryFilter::MetaData);
+
+    intersectionFilter.prepend(unionFilter && metaDataFilter);
+    QCOMPARE(intersectionFilter.isEmpty(), false);
+    QCOMPARE(intersectionFilter.filterCount(), 6);
+
+    filters = intersectionFilter.filters();
+    QCOMPARE(filters.count(), 6);
+    QCOMPARE(filters.at(0).type(), QGalleryFilter::Union);
+    QCOMPARE(filters.at(1).type(), QGalleryFilter::MetaData);
+    QCOMPARE(filters.at(2).type(), QGalleryFilter::MetaData);
+    QCOMPARE(filters.at(3).type(), QGalleryFilter::Union);
+    QCOMPARE(filters.at(4).type(), QGalleryFilter::MetaData);
+    QCOMPARE(filters.at(5).type(), QGalleryFilter::MetaData);
 }
 
 void tst_QGalleryFilter::assignment()

@@ -50,7 +50,7 @@ HapticSquare::HapticSquare()
     m_rumble.setAttackIntensity(0.1);
     m_rumble.setAttackTime(250);
     m_rumble.setIntensity(1.0);
-    m_rumble.setDuration(100);
+    m_rumble.setDuration(1000);
     m_rumble.setFadeTime(250);
     m_rumble.setFadeIntensity(0.1);
 //! [0]

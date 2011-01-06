@@ -86,14 +86,14 @@ void QGeoTiledMapPixmapObjectInfo::updateValidity()
     setValid((pixmap->coordinate().isValid() && !pixmap->pixmap().isNull()));
 }
 
-void QGeoTiledMapPixmapObjectInfo::coordinateChanged(const QGeoCoordinate &coordinate)
+void QGeoTiledMapPixmapObjectInfo::coordinateChanged(const QGeoCoordinate &/*coordinate*/)
 {
     updateValidity();
     if (valid())
         update();
 }
 
-void QGeoTiledMapPixmapObjectInfo::pixmapChanged(const QPixmap &pixmap)
+void QGeoTiledMapPixmapObjectInfo::pixmapChanged(const QPixmap &/*pixmap*/)
 {
     updateValidity();
     if (!this->pixmap->pixmap().isNull()) {
@@ -105,13 +105,13 @@ void QGeoTiledMapPixmapObjectInfo::pixmapChanged(const QPixmap &pixmap)
         updateItem();
 }
 
-void QGeoTiledMapPixmapObjectInfo::offsetChanged(const QPoint &offset)
+void QGeoTiledMapPixmapObjectInfo::offsetChanged(const QPoint &/*offset*/)
 {
     if (valid())
         update();
 }
 
-void QGeoTiledMapPixmapObjectInfo::zoomLevelChanged(qreal zoomLevel)
+void QGeoTiledMapPixmapObjectInfo::zoomLevelChanged(qreal /*zoomLevel*/)
 {
     if (valid())
         update();

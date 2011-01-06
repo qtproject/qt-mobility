@@ -335,16 +335,12 @@ static void test_systemnetworkinfo(void)
       QtMobility::QSystemNetworkInfo::NetworkMode mode =
               (QtMobility::QSystemNetworkInfo::NetworkMode) sym->val;
 
-      if(qApp->arguments().count() > 2) {
-          if(!QString(sym->key).contains(qApp->arguments().at(2),Qt::CaseInsensitive)) {
-              continue;
-          }
-        //  continue;
-      } /*else {
-      }*/
+    if(QCoreApplication::arguments().count() > 2)
+        if(!QString(sym->key).contains(QCoreApplication::arguments().at(2),Qt::CaseInsensitive))
+            continue;
 
-      qDebug() << "";
-      qDebug() << "NetworkMode:" << sym->key;
+    qDebug() << "";
+    qDebug() << "NetworkMode:" << sym->key;
 
     QNetworkInterface iface = networkinfo.interfaceForMode(mode);
     qDebug() << "  networkinfo.interfaceForMode() ->" << iface;
