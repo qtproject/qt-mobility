@@ -71,61 +71,63 @@ Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerTodoTime::DetailName, "todoTime");
 /* ==================== QDeclarativeOrganizerItemDetail ======================= */
 
 /*!
-   \qmlclass ItemDetail QDeclarativeOrganizerItemDetail
-   \brief The ItemDetail element represents a single, complete detail about a organizer item.
+   \qmlclass Detail QDeclarativeOrganizerItemDetail
+   \brief The Detail element represents a single, complete detail about a organizer item.
    \ingroup qml-organizer
 
    \sa QOrganizerItemDetail
 
-    The ItemDetail element is part of the \bold{QtMobility.organizer 1.1} module.
+    The Detail element is part of the \bold{QtMobility.organizer 1.1} module.
  */
 
 
 /*!
-  \qmlproperty string ItemDetail::definitionName
+  \qmlproperty string Detail::definitionName
   This property holds the string constant for the definition name of the detail.
   This property is read only.
   */
 
 /*!
-  \qmlproperty enumeration ItemDetail::type
-  This property holds the type of the detail.
-  This property is read only.
+  \qmlproperty enumeration Detail::type
 
-    \sa EventTime
-    \sa JournalTime
-    \sa TodoTime
-    \sa TodoProgress
-    \sa AudibleReminder
-    \sa VisualReminder
-    \sa EmailReminder
-    \sa Comment
-    \sa Description
-    \sa DisplayLabel
-    \sa Guid
-    \sa Location
-    \sa Parent
-    \sa Priority
-    \sa Recurrence
-    \sa Timestamp
-    \sa Type
-    \sa Tag
+  This property holds the type of the detail and is read only. It can be one of:
+
+    \list
+    \o Detail.EventTime
+    \o Detail.JournalTime
+    \o Detail.TodoTime
+    \o Detail.TodoProgress
+    \o Detail.AudibleReminder
+    \o Detail.VisualReminder
+    \o Detail.EmailReminder
+    \o Detail.Comment
+    \o Detail.Description
+    \o Detail.DisplayLabel
+    \o Detail.Guid
+    \o Detail.Location
+    \o Detail.Parent
+    \o Detail.Priority
+    \o Detail.Recurrence
+    \o Detail.Timestamp
+    \o Detail.Type
+    \o Detail.Tag
+    \endlist
   */
 
 
 /*!
-  \qmlproperty list<string> ItemDetail::fieldNames
+  \qmlproperty list<string> Detail::fieldNames
   This property holds the list of all field names which this detail supports.
 
   This property is read only.
   */
 /*!
-  \qmlproperty bool ItemDetail::readOnly
+  \qmlproperty bool Detail::readOnly
   This property indicates whether or not this detail is writable.
   This property is read only.
   */
 /*!
-  \qmlproperty bool ItemDetail::removable
+  \qmlproperty bool Detail::removable
   This property indicates whether or not this detail is removale.
   This property is read only.
   */
