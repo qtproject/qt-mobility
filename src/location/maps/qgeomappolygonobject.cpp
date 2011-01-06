@@ -68,6 +68,7 @@ QGeoMapPolygonObject::QGeoMapPolygonObject()
 {
     setGraphicsItem(d_ptr->item);
     setUnits(QGeoMapObject::RelativeArcSecondUnit);
+    setTransformType(QGeoMapObject::ExactTransform);
 }
 
 /*!
