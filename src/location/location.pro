@@ -84,7 +84,7 @@ wince* {
     LIBS += -lgpsapi
 }
 
-maemo6 {
+maemo6|meego {
     CONFIG += qdbus link_pkgconfig
     SOURCES += qgeopositioninfosource_maemo.cpp \
                 qgeosatelliteinfosource_maemo.cpp \
@@ -125,7 +125,7 @@ meego {
     contains (geoclue-master_enabled, yes) {
         message("Building location with GeoClue master support.")
         SOURCES += qgeopositioninfosource_geocluemaster.cpp
-        HEADERS += qgeopositioninfosource_geocluemaster_p.h
+        PRIVATE_HEADERS += qgeopositioninfosource_geocluemaster_p.h
         DEFINES += GEOCLUE_MASTER_AVAILABLE=1
         PKGCONFIG += geoclue
         QMAKE_PKGCONFIG_REQUIRES += geoclue
@@ -135,7 +135,7 @@ meego {
     contains (gypsy_enabled, yes) {
         message("Building location with Gypsy support.")
         SOURCES += qgeosatelliteinfosource_gypsy.cpp
-        HEADERS += qgeosatelliteinfosource_gypsy_p.h
+        PRIVATE_HEADERS += qgeosatelliteinfosource_gypsy_p.h
         DEFINES += GYPSY_AVAILABLE=1
         PKGCONFIG += gypsy
         QMAKE_PKGCONFIG_REQUIRES += gypsy

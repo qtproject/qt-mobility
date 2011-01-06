@@ -429,6 +429,7 @@ QBluetoothDeviceInfo::DataCompleteness QBluetoothDeviceInfo::serviceUuidsComplet
 */
 void QBluetoothDeviceInfo::setManufacturerSpecificData(const QByteArray &data)
 {
+    Q_UNUSED(data);
 }
 
 /*!
@@ -437,6 +438,7 @@ void QBluetoothDeviceInfo::setManufacturerSpecificData(const QByteArray &data)
 */
 QByteArray QBluetoothDeviceInfo::manufacturerSpecificData(bool *available) const
 {
+    Q_UNUSED(available);
     return QByteArray();
 }
 

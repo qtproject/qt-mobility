@@ -56,6 +56,21 @@
 //#define TST_GEOCLUE_MOCK_TRACE 1
 
 void geocluemock_setjournal(QString journal);
+void geocluemock_set_gcmaster_get_default(bool value);
+void geocluemock_set_gcmaster_create_client(bool value);
+void geocluemock_set_gcmaster_set_requirements(bool value);
+void geocluemock_set_gcmaster_create_position(bool value);
+void geocluemock_set_geoclue_velocity_new(bool value);
+
+void geocluemock_set_suppress_regular_updates(bool value);
+void geocluemock_set_suppress_single_update(bool value);
+void geocluemock_set_suppress_velocity_update(bool value);
+
+void geocluemock_set_position_fields(int fields);
+void geocluemock_unset_position_fields();
+
+void geocluemock_set_position_latitude(double latitude);
+void geocluemock_unset_position_latitude();
 
 typedef void (*PositionChangedCallback) (GeocluePosition*,
                    GeocluePositionFields,
@@ -136,6 +151,7 @@ private:
     QFile m_currentJournalFile;
     QObject* m_positionSource;
     UpdateData m_regular;
+    UpdateData m_velocity;
     UpdateData m_single;
     PositionChangedCallback m_positionChangedCallback;
     VelocityChangedCallback m_velocityChangedCallback;

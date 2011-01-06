@@ -232,7 +232,7 @@ QString QVersitProperty::name() const
 
 /*!
  * Replaces all the parameters with \a parameters.
- * The parameters are converted to upper-case.
+ * The names of the parameters are converted to upper-case.
  */
 void QVersitProperty::setParameters(const QMultiHash<QString,QString>& parameters)
 {
@@ -252,7 +252,7 @@ void QVersitProperty::setParameters(const QMultiHash<QString,QString>& parameter
 
 /*!
  * Adds a new parameter with \a name and \a value.
- * Both the name and the value are converted to upper-case.
+ * The parameter name is converted to upper-case.
  */
 void QVersitProperty::insertParameter(const QString& name, const QString& value)
 {
