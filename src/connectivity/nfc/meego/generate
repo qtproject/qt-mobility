@@ -6,5 +6,5 @@ qdbusxml2cpp -i meego/dbustypes_p.h -p target_interface_p.h:target_interface.cpp
 qdbusxml2cpp -i meego/dbustypes_p.h -p tag_interface_p.h:tag_interface.cpp  com.nokia.nfc.Tag.xml
 qdbusxml2cpp -i meego/dbustypes_p.h -p device_interface_p.h:device_interface.cpp com.nokia.nfc.Device.xml
 
-qdbusxml2cpp -i meego/dbustypes_p.h -p secureelement_interface_p.h:secureelement_interface.cpp com.nokia.nfc.SecureElement.xml
+#qdbusxml2cpp -i meego/dbustypes_p.h -p secureelement_interface_p.h:secureelement_interface.cpp com.nokia.nfc.SecureElement.xml
 
