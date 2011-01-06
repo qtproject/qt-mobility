@@ -58,7 +58,7 @@
 #include <geoclue/geoclue-velocity.h>
 #include <QTimer>
 
-#define Q_LOCATION_GEOCLUE_DEBUG
+// #define Q_LOCATION_GEOCLUE_DEBUG
 
 QTM_BEGIN_NAMESPACE
 

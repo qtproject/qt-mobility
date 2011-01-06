@@ -65,7 +65,6 @@ Q_DECLARE_METATYPE(QList<QGeoSatelliteInfo>)
 // Must provide a valid source, unless testing the source
 // returned by QGeoSatelliteInfoSource::createDefaultSource() on a system
 // that has no default source
-// todo is a mock check useful here?
 #define CHECK_SOURCE_VALID { \
         if (!m_source) { \
             if (m_testingDefaultSource && QGeoSatelliteInfoSource::createDefaultSource(0) == 0) \
@@ -88,11 +87,26 @@ public:
 };
 
 #ifdef TST_GYPSYMOCK_ENABLED
-// Mocked platform calls. Depending on environment variable,
-// either calls the mocked version or the real one (parentclass).
+// Mocked platform calls.
 class TestSatelliteGypsyEngine : public SatelliteGypsyEngine
 {
 public:
+
+    static bool gconf_client_get_default_fail;
+    static void set_fail_gconf_client_get_default() {gconf_client_get_default_fail = true;}
+    static bool gconf_client_get_string_fail;
+    static void set_fail_gconf_client_get_string() {gconf_client_get_string_fail = true;}
+    static bool gypsy_control_get_default_fail;
+    static void set_fail_gypsy_control_get_default() {gypsy_control_get_default_fail = true;}
+    static bool gypsy_control_create_fail;
+    static void set_fail_gypsy_control_create() {gypsy_control_create_fail = true;}
+    static bool gypsy_devivce_new_fail;
+    static void set_fail_gypsy_device_new() {gypsy_devivce_new_fail = true;}
+    static bool gypsy_satellite_new_fail;
+    static void set_fail_gypsy_satellite_new() {gypsy_satellite_new_fail = true;}
+    static bool gypsy_device_start_fail;
+    static void set_fail_gypsy_device_start() {gypsy_device_start_fail = true;}
+
     TestSatelliteGypsyEngine(QGeoSatelliteInfoSource *parent = 0):
         SatelliteGypsyEngine(parent), m_gypsymock(0)
     {
@@ -142,24 +156,31 @@ public:
 
     void eng_g_free(gpointer mem)
     {
+        Q_UNUSED(mem);
         // todo crashes
         //free((char*)mem);
     }
 
     GypsyControl* eng_gypsy_control_get_default (void)
     {
-        return (GypsyControl*)g_object_new (G_TYPE_OBJECT, NULL); // dummy
+        if (!gypsy_control_get_default_fail) {
+            return (GypsyControl*)g_object_new (G_TYPE_OBJECT, NULL); // dummy
+        } else {
+            gypsy_control_get_default_fail = false;
+            return NULL;
+        }
     }
     char *eng_gypsy_control_create (GypsyControl *control, const char* device_name, GError **error)
     {
         // use root '/' here because it usually exists (sat source makes
         // existense checks)
-        if (!control || QString::compare(QString::fromAscii(device_name), "/")) {
+        if (gypsy_control_create_fail || !control || QString::compare(QString::fromAscii(device_name), "/")) {
             if (error) {
                 *error = g_error_new ((GQuark)1, // dummy
                                       2,         // dummy
                                       "=mock= No control or wrong device_name.");
             }
+            gypsy_control_create_fail = false;
             return NULL;
         }
         return (char*)"/my/little/gypsycontrol";
@@ -168,8 +189,9 @@ public:
     GypsyDevice *eng_gypsy_device_new (const char* object_path)
     {
         // Create new mockend.
-        if (!object_path || QString::compare(QString::fromAscii(object_path), "/my/little/gypsycontrol")) {
+        if (gypsy_devivce_new_fail || !object_path || QString::compare(QString::fromAscii(object_path), "/my/little/gypsycontrol")) {
             TRACE1("No correctobject path given or mockend already existed.");
+            gypsy_devivce_new_fail = false;
             return NULL;
         }
 
@@ -182,19 +204,21 @@ public:
     }
     GypsySatellite *eng_gypsy_satellite_new (const char *object_path)
     {
-        if (!object_path || QString::compare(QString::fromAscii(object_path), "/my/little/gypsycontrol")) {
+        if (gypsy_satellite_new_fail || !object_path || QString::compare(QString::fromAscii(object_path), "/my/little/gypsycontrol")) {
+            gypsy_satellite_new_fail = false;
             return NULL;
         }
         return (GypsySatellite*)g_object_new (G_TYPE_OBJECT, NULL); // dummy
     }
     gboolean eng_gypsy_device_start (GypsyDevice *device, GError **error)
     {
-        if (!device || !m_gypsymock) {
+        if (gypsy_device_start_fail || !device || !m_gypsymock) {
             if (error) {
                 *error = g_error_new ((GQuark)1, // dummy
                                       2,         // dummy
                                       "=mock= No device provided or mockend not created at gypsy_device_start");
             }
+            gypsy_device_start_fail = false;
             return false;
         }
         //TRACE1("============= blocking call to start");
@@ -260,33 +284,48 @@ public:
     // GConf symbols (mockability due to gconf X11 requirement)
     GConfClient* eng_gconf_client_get_default(void)
     {
-        return (GConfClient*)g_object_new (G_TYPE_OBJECT, NULL); // dummy
+        if (!gconf_client_get_default_fail) {
+            return (GConfClient*)g_object_new (G_TYPE_OBJECT, NULL); // dummy
+        } else {
+            gconf_client_get_default_fail = false;
+            return NULL;
+        }
     }
     gchar* eng_gconf_client_get_string(GConfClient* client, const gchar* key, GError** err)
     {
         // QString::compare return value is a bit 'unintuitive'
         TRACE1(key);
-        if (!client || QString::compare(QString::fromAscii(key),"/apps/geoclue/master/org.freedesktop.Geoclue.GPSDevice")) {
+        if (gconf_client_get_string_fail || !client || QString::compare(QString::fromAscii(key),"/apps/geoclue/master/org.freedesktop.Geoclue.GPSDevice")) {
             if (err) {
                 *err = g_error_new ((GQuark)1, // dummy
                                     2,       // dummy
                                     "=mock= No client or wrong key in gconf_client_get_string");
             }
+            gconf_client_get_string_fail = false;
             return 0;
         }  else {
             return (gchar*)"/";
         }
     }
-private:
+public:
     GypsyMock* m_gypsymock;
     QThread m_thread;
 };
+
+bool TestSatelliteGypsyEngine::gconf_client_get_default_fail = false;
+bool TestSatelliteGypsyEngine::gconf_client_get_string_fail = false;
+bool TestSatelliteGypsyEngine::gypsy_control_get_default_fail = false;
+bool TestSatelliteGypsyEngine::gypsy_control_create_fail = false;
+bool TestSatelliteGypsyEngine::gypsy_devivce_new_fail = false;
+bool TestSatelliteGypsyEngine::gypsy_satellite_new_fail = false;
+bool TestSatelliteGypsyEngine::gypsy_device_start_fail = false;
 
 class TestQGeoSatelliteInfoSourceGypsy : public QGeoSatelliteInfoSourceGypsy
 {
 public:
     TestQGeoSatelliteInfoSourceGypsy(QObject *parent = 0) :
         QGeoSatelliteInfoSourceGypsy(parent) {}
+    GypsyMock* mockEngine() {return ((TestSatelliteGypsyEngine*)m_engine)->m_gypsymock;}
 protected:
     // override to mock platform calls
     void createEngine() { m_engine = new TestSatelliteGypsyEngine(this); }
@@ -786,5 +825,140 @@ void TestQGeoSatelliteInfoSource::removeSlotForSatellitesInViewUpdated()
 
     QTRY_VERIFY_WITH_TIMEOUT((m_testSlot2Called == true), 7000);
 }
+
+#ifdef TST_GYPSYMOCK_ENABLED
+void TestQGeoSatelliteInfoSource::updateValues()
+{
+    CHECK_SOURCE_VALID;
+
+    // Test that correct values are received (values are from the .journal)
+    QSignalSpy spyView(m_source, SIGNAL(satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &)));
+    QSignalSpy spyUse(m_source, SIGNAL(satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &)));
+    m_source->requestUpdate(1000);
+    QTRY_VERIFY_WITH_TIMEOUT(!spyView.isEmpty(), 1100);
+    QTRY_VERIFY_WITH_TIMEOUT(!spyUse.isEmpty(), 1100);
+
+    QList<QGeoSatelliteInfo> viewList = spyView.first().at(0).value<QList<QGeoSatelliteInfo> >();
+    QCOMPARE(viewList.count(), 6);
+    QGeoSatelliteInfo viewSat = viewList.at(0);
+    QCOMPARE(viewSat.prnNumber(), 13);
+    QVERIFY(viewSat.hasAttribute(QGeoSatelliteInfo::Azimuth));
+    QVERIFY(viewSat.hasAttribute(QGeoSatelliteInfo::Elevation));
+    QVERIFY(qFuzzyCompare(viewSat.attribute(QGeoSatelliteInfo::Azimuth), 12.0));
+    QVERIFY(qFuzzyCompare(viewSat.attribute(QGeoSatelliteInfo::Elevation), 1));
+
+    QList<QGeoSatelliteInfo> useList = spyUse.first().at(0).value<QList<QGeoSatelliteInfo> >();
+    QCOMPARE(useList.count(), 3);
+    QGeoSatelliteInfo useSat = useList.at(1);
+    QCOMPARE(useSat.prnNumber(), 33);
+    QVERIFY(useSat.hasAttribute(QGeoSatelliteInfo::Azimuth));
+    QVERIFY(useSat.hasAttribute(QGeoSatelliteInfo::Elevation));
+    QVERIFY(qFuzzyCompare(useSat.attribute(QGeoSatelliteInfo::Azimuth), 32));
+    QVERIFY(qFuzzyCompare(useSat.attribute(QGeoSatelliteInfo::Elevation), 3));
+}
+
+void TestQGeoSatelliteInfoSource::initGoneBad()
+{
+    // Verify failures during init are handled gracefully
+    int status;
+    TestQGeoSatelliteInfoSourceGypsy* bad_source;
+
+    TestSatelliteGypsyEngine::set_fail_gconf_client_get_default();
+    bad_source = new TestQGeoSatelliteInfoSourceGypsy(0);
+    status = bad_source->init();
+    QVERIFY(status == -1);
+    delete bad_source;
+
+    TestSatelliteGypsyEngine::set_fail_gconf_client_get_string();
+    bad_source = new TestQGeoSatelliteInfoSourceGypsy(0);
+    status = bad_source->init();
+    QVERIFY(status == -1);
+    delete bad_source;
+
+    TestSatelliteGypsyEngine::set_fail_gypsy_control_get_default();
+    bad_source = new TestQGeoSatelliteInfoSourceGypsy(0);
+    status = bad_source->init();
+    QVERIFY(status == -1);
+    delete bad_source;
+
+    TestSatelliteGypsyEngine::set_fail_gypsy_control_create();
+    bad_source = new TestQGeoSatelliteInfoSourceGypsy(0);
+    status = bad_source->init();
+    QVERIFY(status == -1);
+    delete bad_source;
+
+    TestSatelliteGypsyEngine::set_fail_gypsy_device_new();
+    bad_source = new TestQGeoSatelliteInfoSourceGypsy(0);
+    status = bad_source->init();
+    QVERIFY(status == -1);
+    delete bad_source;
+
+    TestSatelliteGypsyEngine::set_fail_gypsy_satellite_new();
+    bad_source = new TestQGeoSatelliteInfoSourceGypsy(0);
+    status = bad_source->init();
+    QVERIFY(status == -1);
+    delete bad_source;
+
+    TestSatelliteGypsyEngine::set_fail_gypsy_satellite_new();
+    TestSatelliteGypsyEngine::set_fail_gypsy_device_new();
+    bad_source = new TestQGeoSatelliteInfoSourceGypsy(0);
+    status = bad_source->init();
+    QVERIFY(status == -1);
+    delete bad_source;
+
+    TestSatelliteGypsyEngine::set_fail_gypsy_device_start();
+    bad_source = new TestQGeoSatelliteInfoSourceGypsy(0);
+    status = bad_source->init();
+    QVERIFY(status == -1);
+    delete bad_source;
+
+}
+
+void TestQGeoSatelliteInfoSource::badUpdates()
+{
+    CHECK_SOURCE_VALID;
+
+    // zzz
+    // Check that timeout is received if updates are stopped
+
+    QSignalSpy spyView(m_source, SIGNAL(satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &)));
+    QSignalSpy spyUse(m_source, SIGNAL(satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &)));
+    QSignalSpy spyTimeout(m_source, SIGNAL(requestTimeout()));
+
+    // Check basic updates work
+    m_source->startUpdates();
+    QTRY_VERIFY_WITH_TIMEOUT(!spyView.isEmpty(), 4000);
+    m_source->stopUpdates();
+    spyView.clear(); spyUse.clear(); spyTimeout.clear();
+    m_source->requestUpdate(2000);
+    QTRY_VERIFY_WITH_TIMEOUT(!spyView.isEmpty(), 2100);
+
+    // Check timeout is sent when a requestUpdate is active
+    GypsyMock* mockEngine = static_cast<TestQGeoSatelliteInfoSourceGypsy*>(m_source)->mockEngine();
+    mockEngine->disableUpdates(true);
+    spyView.clear(); spyUse.clear(); spyTimeout.clear();
+    m_source->requestUpdate(2000);
+    QTRY_VERIFY_WITH_TIMEOUT(!spyTimeout.isEmpty(), 2100);
+    QVERIFY(spyView.isEmpty());
+
+    // Check that update comes ok once enabled again
+    mockEngine->disableUpdates(false);
+    spyView.clear(); spyUse.clear(); spyTimeout.clear();
+    m_source->requestUpdate(2000);
+    QTRY_VERIFY_WITH_TIMEOUT(!spyView.isEmpty(), 2100);
+    QVERIFY(spyTimeout.isEmpty());
+
+    // Check that regular updates do not produce timeout,
+    // and that it resumes automatically
+    mockEngine->disableUpdates(true);
+    spyView.clear(); spyUse.clear(); spyTimeout.clear();
+    m_source->startUpdates();
+    QTest::qWait(2000);
+    QVERIFY(spyView.isEmpty() && spyUse.isEmpty() && spyTimeout.isEmpty());
+    mockEngine->disableUpdates(false);
+    QTRY_VERIFY_WITH_TIMEOUT(!spyView.isEmpty() && !spyUse.isEmpty() && spyTimeout.isEmpty(), 4000);
+}
+
+#endif
 
 #include "testqgeosatelliteinfosource.moc"
