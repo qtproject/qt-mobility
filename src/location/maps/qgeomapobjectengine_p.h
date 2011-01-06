@@ -78,6 +78,8 @@ public:
     QGeoMapData *md;
     QGeoMapDataPrivate *mdp;
 
+    double exactMappingTolerance;
+
     /*** Lookup hashes and scenes ***/
 
     QHash<const QGeoMapObject*, QGraphicsItem*> latLonExact;

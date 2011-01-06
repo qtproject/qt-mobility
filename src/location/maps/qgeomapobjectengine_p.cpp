@@ -93,7 +93,8 @@ QGeoMapObjectEngine::QGeoMapObjectEngine(QGeoMapData *mapData, QGeoMapDataPrivat
     md(mapData),
     mdp(mapDataP),
     pixelScene(new QGraphicsScene),
-    latLonScene(new QGraphicsScene)
+    latLonScene(new QGraphicsScene),
+    exactMappingTolerance(1.0)
 {
 }
 
@@ -483,22 +484,54 @@ void QGeoMapObjectEngine::exactPixelMap(const QGeoCoordinate &origin,
         QGraphicsPathItem *pathItem = dynamic_cast<QGraphicsPathItem*>(latLonItem);
         if (pathItem) {
             QPainterPath path = pathItem->path();
+            QPainterPath mpath;
+
+            QRectF screen = mdp->latLonViewport().boundingRect();
+
+            QPointF lastPixelAdded;
+            bool lastOutside = true;
 
             for (int i = 0; i < path.elementCount(); ++i) {
                 QPainterPath::Element e = path.elementAt(i);
+                double x = e.x; x /= 3600.0;
+                double y = e.y; y /= 3600.0;
 
-                double x = e.x;
-                x /= 3600.0;
-                double y = e.y;
-                y /= 3600.0;
+                bool outside = !screen.contains(e.x, e.y);
+
+                // skip points not inside the screen rect
+                // or attached to points inside it
+                if (outside && lastOutside)
+                    continue;
+
+                // entering the screen rect
+                if (!outside && lastOutside) {
+                    if (i > 0) {
+                        QPainterPath::Element e2 = path.elementAt(i-1);
+                        double x2 = e2.x; x2 /= 3600.0;
+                        double y2 = e2.y; y2 /= 3600.0;
+                        QPointF pixel2 = mdp->coordinateToScreenPosition(x2, y2);
+                        mpath.moveTo(pixel2);
+                        lastPixelAdded = pixel2;
+                    }
+                }
+                lastOutside = outside;
 
                 QPointF pixel = mdp->coordinateToScreenPosition(x, y);
+                double delta = (pixel - lastPixelAdded).manhattanLength();
 
-                path.setElementPositionAt(i, pixel.x(), pixel.y());
+                if (lastPixelAdded.isNull() || delta > exactMappingTolerance) {
+                    if (e.isMoveTo()) {
+                        mpath.moveTo(pixel);
+                    } else {
+                        mpath.lineTo(pixel);
+                    }
+
+                    lastPixelAdded = pixel;
+                }
             }
 
             QGraphicsPathItem *pi = pathCopy(pathItem);
-            pi->setPath(path);
+            pi->setPath(mpath);
             pixelExact.insertMulti(object, pi);
             polys << QPolygonF(pi->boundingRect());
         }
