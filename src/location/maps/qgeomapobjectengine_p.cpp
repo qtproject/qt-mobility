@@ -438,6 +438,93 @@ void QGeoMapObjectEngine::pixelShiftToScreen(const QGeoCoordinate &origin,
     }
 }
 
+static void _zoomDepsRecurse(QGeoMapObjectEngine *eng, QGeoMapGroupObject *group)
+{
+    foreach (QGeoMapObject *obj, group->childObjects()) {
+        QGeoMapGroupObject *subgroup = qobject_cast<QGeoMapGroupObject*>(obj);
+        if (subgroup) {
+            _zoomDepsRecurse(eng, subgroup);
+        } else {
+            if (obj->units() == QGeoMapObject::PixelUnit) {
+                eng->objectsForLatLonUpdate << obj;
+                eng->objectsForPixelUpdate << obj;
+            }
+        }
+    }
+}
+
+void QGeoMapObjectEngine::invalidateZoomDependents()
+{
+    _zoomDepsRecurse(this, mdp->containerObject);
+}
+
+// update the transform tables as necessary
+void QGeoMapObjectEngine::updateTransforms()
+{
+    foreach (QGeoMapObject *obj, objectsForLatLonUpdate) {
+        QGeoMapGroupObject *group = qobject_cast<QGeoMapGroupObject*>(obj);
+        if (group)
+            updateLatLonTransforms(group);
+        else
+            updateLatLonTransform(obj);
+    }
+
+    objectsForLatLonUpdate.clear();
+
+    foreach (QGeoMapObject *obj, objectsForPixelUpdate) {
+        QGeoMapGroupObject *group = qobject_cast<QGeoMapGroupObject*>(obj);
+        if (group)
+            updatePixelTransforms(group);
+        else
+            updatePixelTransform(obj);
+    }
+
+    objectsForPixelUpdate.clear();
+}
+
+void QGeoMapObjectEngine::invalidatePixelsForViewport()
+{
+    QPolygonF view = mdp->latLonViewport();
+
+    QList<QGraphicsItem*> itemsInView;
+    itemsInView = latLonScene->items(view, Qt::IntersectsItemShape,
+                                     Qt::AscendingOrder);
+
+    QSet<QGeoMapObject*> done = objectsForPixelUpdate.toSet();
+
+    foreach (QGraphicsItem *latLonItem, itemsInView) {
+        QGeoMapObject *object = latLonItems.value(latLonItem);
+        Q_ASSERT(object);
+        if (!done.contains(object)) {
+            objectsForPixelUpdate << object;
+            done.insert(object);
+        }
+    }
+}
+
+void QGeoMapObjectEngine::updatePixelsForGroup(QGeoMapGroupObject *group)
+{
+    foreach (QGeoMapObject *obj, group->childObjects()) {
+        QGeoMapGroupObject *subgroup = qobject_cast<QGeoMapGroupObject*>(obj);
+        if (subgroup) {
+            updatePixelsForGroup(subgroup);
+        } else {
+            updatePixelTransform(obj);
+        }
+    }
+}
+
+void QGeoMapObjectEngine::updateLatLonsForGroup(QGeoMapGroupObject *group)
+{
+    foreach (QGeoMapObject *object, group->childObjects()) {
+        QGeoMapGroupObject *subGroup = qobject_cast<QGeoMapGroupObject*>(object);
+        if (subGroup)
+            updateLatLonsForGroup(subGroup);
+        else
+            updateLatLonTransform(object);
+    }
+}
+
 #include "moc_qgeomapobjectengine_p.cpp"
 
 QTM_END_NAMESPACE

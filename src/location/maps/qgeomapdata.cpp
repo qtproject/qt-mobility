@@ -849,24 +849,6 @@ void QGeoMapDataPrivate::clearObjects()
 
 */
 
-void QGeoMapDataPrivate::updateLatLonTransforms(QGeoMapGroupObject *group)
-{
-    if (!group)
-        group = containerObject;
-
-    foreach (QGeoMapObject *object, group->childObjects()) {
-        QGeoMapGroupObject *subGroup = qobject_cast<QGeoMapGroupObject*>(object);
-        if (subGroup)
-            updateLatLonTransforms(subGroup);
-        else
-            updateLatLonTransform(object);
-    }
-}
-
-
-
-
-
 void QGeoMapDataPrivate::updateLatLonTransform(QGeoMapObject *object)
 {
     QGeoCoordinate origin = object->origin();
@@ -978,63 +960,6 @@ QPolygonF QGeoMapDataPrivate::latLonViewport()
     return view;
 }
 
-void QGeoMapDataPrivate::invalidatePixelViewport()
-{
-    QPolygonF view = latLonViewport();
-
-    QList<QGraphicsItem*> itemsInView;
-    itemsInView = latLonScene->items(view, Qt::IntersectsItemShape,
-                                     Qt::AscendingOrder);
-
-    QSet<QGeoMapObject*> done = objectsForPixelUpdate.toSet();
-
-    foreach (QGraphicsItem *latLonItem, itemsInView) {
-        QGeoMapObject *object = latLonItems.value(latLonItem);
-        Q_ASSERT(object);
-        if (!done.contains(object)) {
-            objectsForPixelUpdate << object;
-            done.insert(object);
-        }
-    }
-}
-
-void QGeoMapDataPrivate::updatePixelTransforms(QGeoMapGroupObject *group)
-{
-    if (group == 0) {
-        QPolygonF view = latLonViewport();
-
-        QList<QGraphicsItem*> itemsInView;
-        itemsInView = latLonScene->items(view, Qt::IntersectsItemShape,
-                                         Qt::AscendingOrder);
-
-        pixelTrans.clear();
-        pixelItems.clear();
-        if (pixelScene)
-            delete pixelScene;
-        pixelScene = new QGraphicsScene();
-
-        QSet<QGeoMapObject*> done;
-
-        foreach (QGraphicsItem *latLonItem, itemsInView) {
-            QGeoMapObject *object = latLonItems.value(latLonItem);
-            Q_ASSERT(object);
-            if (!done.contains(object)) {
-                updatePixelTransform(object);
-                done.insert(object);
-            }
-        }
-    } else {
-        foreach (QGeoMapObject *obj, group->childObjects()) {
-            QGeoMapGroupObject *subgroup = qobject_cast<QGeoMapGroupObject*>(obj);
-            if (subgroup) {
-                updatePixelTransforms(subgroup);
-            } else {
-                updatePixelTransform(obj);
-            }
-        }
-    }
-}
-
 QPointF QGeoMapDataPrivate::coordinateToScreenPosition(double lon, double lat) const
 {
     QGeoCoordinate c(lat, lon);
@@ -1134,52 +1059,6 @@ void QGeoMapDataPrivate::forceUpdate(QGeoMapObject *obj)
 
         foreach (QRectF rect, rectsToUpdate)
             emit q_ptr->updateMapDisplay(rect);
-    }
-}
-
-// update the transform tables as necessary
-void QGeoMapDataPrivate::updateTransforms()
-{
-    foreach (QGeoMapObject *obj, objectsForLatLonUpdate) {
-        QGeoMapGroupObject *group = qobject_cast<QGeoMapGroupObject*>(obj);
-        if (group)
-            updateLatLonTransforms(group);
-        else
-            updateLatLonTransform(obj);
-    }
-
-    objectsForLatLonUpdate.clear();
-
-    foreach (QGeoMapObject *obj, objectsForPixelUpdate) {
-        QGeoMapGroupObject *group = qobject_cast<QGeoMapGroupObject*>(obj);
-        if (group)
-            updatePixelTransforms(group);
-        else
-            updatePixelTransform(obj);
-    }
-
-    objectsForPixelUpdate.clear();
-}
-
-void QGeoMapDataPrivate::updateZoom(QGeoMapGroupObject *group)
-{
-    if (group == 0)
-        group = containerObject;
-
-    // this can occur when subclasses set zoom during their constructors
-    if (group == 0)
-        return;
-
-    foreach (QGeoMapObject *obj, group->childObjects()) {
-        QGeoMapGroupObject *subgroup = qobject_cast<QGeoMapGroupObject*>(obj);
-        if (subgroup) {
-            updateZoom(subgroup);
-        } else {
-            if (obj->units() == QGeoMapObject::PixelUnit) {
-                objectsForLatLonUpdate << obj;
-                objectsForPixelUpdate << obj;
-            }
-        }
     }
 }
 

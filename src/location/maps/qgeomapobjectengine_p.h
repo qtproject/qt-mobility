@@ -103,15 +103,15 @@ public:
     QList<QGeoMapObject*> objectsForPixelUpdate;
     QList<QGeoMapObject*> objectsForLatLonUpdate;
 
-    virtual void updatePixelsForGroup(QGeoMapGroupObject *group=0);
-    virtual void updateLatLonsForGroup(QGeoMapGroupObject *group=0);
+    virtual void updatePixelsForGroup(QGeoMapGroupObject *group);
+    virtual void updateLatLonsForGroup(QGeoMapGroupObject *group);
 
     virtual void updateLatLonTransform(QGeoMapObject *object);
     virtual void updatePixelTransform(QGeoMapObject *object);
 
     virtual void updateObject(QGeoMapObject *obj);
 
-    virtual void invalidateZoomDependents(QGeoMapGroupObject *group=0);
+    virtual void invalidateZoomDependents();
     virtual void invalidatePixelsForViewport();
 
 public:
