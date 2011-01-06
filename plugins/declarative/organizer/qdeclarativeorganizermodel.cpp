@@ -119,12 +119,18 @@ public:
     Whether the model is automatically updated when the store or \l organizer item changes, can be
     controlled with \l OrganizerModel::autoUpdate property.
 
-    There are two ways of accessing the organizer item data: via model by using views and delegates,
+    There are two ways of accessing the organizer item data: via the model by using views and delegates,
     or alternatively via \l items list property. Of the two, the model access is preferred.
     Direct list access (i.e. non-model) is not guaranteed to be in order set by \l sortOrder.
 
-    At the moment the model roles provided by OrganizerModel are display and \c item.
+    At the moment the model roles provided by OrganizerModel are \c display and \c item.
     Through the \c item role can access any data provided by the OrganizerItem element.
+
+
+    \note Both the \c startPeriod and \c endPeriod are set by default to the current time (when the OrganizerModel was created). 
+     In most cases, both (or at least one) of the startPeriod and endPeriod should be set; otherwise, the OrganizerModel will contain 
+     zero items because the \c startPeriod and \c endPeriod are the same value. For example, if only \c endPeriod is provided, 
+     the OrganizerModel will contain all items from now (the time of the OrganizerModel's creation) to the \c endPeriod time.
 
     \sa OrganizerItem, {QOrganizerManager}
 */
@@ -267,6 +273,7 @@ void QDeclarativeOrganizerModel::cancelUpdate()
   \qmlproperty date OrganizerModel::startPeriod
 
   This property holds the start date and time period used by the organizer model to fetch organizer items.
+  The default value is the datetime of OrganizerModel creation.
   */
 QDateTime QDeclarativeOrganizerModel::startPeriod() const
 {
@@ -284,6 +291,7 @@ void QDeclarativeOrganizerModel::setStartPeriod(const QDateTime& start)
   \qmlproperty date OrganizerModel::endPeriod
 
   This property holds the end date and time period used by the organizer model to fetch organizer items.
+  The default value is the datetime of OrganizerModel creation.
   */
 QDateTime QDeclarativeOrganizerModel::endPeriod() const
 {
