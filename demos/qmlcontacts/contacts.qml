@@ -44,6 +44,7 @@ import "contents"
 Item {
     id: screen; width: 360; height: 640
     property string viewType : "contactListView"
+    property bool showContact: false
 
     Rectangle {
         id: background
@@ -76,6 +77,23 @@ Item {
             anchors.bottom: parent.bottom
             x: 0
             contacts: contactModel
+            onOpenContact: {
+                    screen.showContact = true;
+                    contactView.contact = contact;
+                    }
+            onNewContact: {
+                    var contactComponent = Qt.createComponent("NewContact.qml");
+                    var finishCreation = function() {
+                        screen.showContact = true;
+                        contactView.contact = contactComponent.createObject(screen);
+                        console.log(contactView.contact.name.firstName);
+                    };
+                    if (contactComponent.status == Component.Ready) {
+                        finishCreation();
+                    } else {
+                        contactComponent.statusChanged.connect(finishCreation);
+                    }
+                }
         }
 
         ContactView {
@@ -85,20 +103,20 @@ Item {
             anchors.bottom: parent.bottom
             anchors.left: contactListView.right
             opacity: 0
-            onDismissed: {contactListView.showContact = false;}
-            contact: contactListView.selectedContact
+            onDismissed: {screen.showContact = false;}
+            onDeleted: {contactModel.removeContact(id);}
         }
 
         states: [
                 State {
                     name: "List";
-                    when: !contactListView.showContact
+                    when: !screen.showContact
                     PropertyChanges { target: contactListView; opacity: 1; }
                     PropertyChanges { target: contactView; opacity: 0; }
                 },
                 State {
                     name: "Detailed";
-                    when: contactListView.showContact
+                    when: screen.showContact
                     PropertyChanges { target: contactListView; opacity: 0; x: -screen.width }
                     PropertyChanges { target: contactView; opacity: 1; }
                 }

@@ -45,6 +45,7 @@ import QtMobility.contacts 1.1
 Item {
     property variant contact
     signal dismissed
+    signal deleted(int id)
 
     ListView {
         id: detailView
@@ -86,19 +87,40 @@ Item {
                                 text: modelData
                                 color: "white"
                             }
-                            TextEdit {
-                                id: textEdit
-                                width: parent.width * 0.5;
-                                height: 20;
-                                anchors.margins: 3
+                            Rectangle {
+                                id: textRect
                                 anchors.left: fieldName.right
-                                text: fieldView.detail.value(modelData).toString();
-                                color: "#ffffaa";
-//                                    onActiveFocusChanged: {
-//                                                              if (!activeFocus) {
-//                                                                  fieldView.detail.setValue(modelData, text);
-//                                                              }
-//                                                          }
+                                anchors.right: parent.right
+                                anchors.rightMargin: 3
+                                height: 30;
+                                color: "#00000000";
+                                border.color: "#00000000";
+                                border.width: 0
+                                TextInput {
+                                    id: textEdit
+                                    anchors.fill: parent
+                                    anchors.margins: 3
+                                    text: fieldView.detail.value(modelData).toString();
+                                    color: activeFocus? "black" : "#ffffaa";
+                                    onActiveFocusChanged: {
+                                            if (!activeFocus) {
+                                                fieldView.detail.setValue(modelData, text);
+                                            }
+                                        }
+                                }
+                                states: [
+                                        State {
+                                            name: "focused"
+                                            when: textEdit.activeFocus
+                                            PropertyChanges {
+                                                target: textRect
+                                                color: "#aaffffff"
+                                                radius: 2
+                                                border.width: 1
+                                                border.color: "black"
+                                            }
+                                        }
+                                    ]
                             }
                         }
                 }
@@ -111,7 +133,19 @@ Item {
         anchors.bottom: parent.bottom;
         width: parent.width;
         opacity: 0.9
-        labels: ["Done"]
-        onButtonClicked: dismissed()
+        labels: ["Save", "Cancel", "Delete"]
+        onButtonClicked: {
+                // force the focus away from any TextInputs, to ensure they save
+                toolBar.focus = true
+                switch (index) {
+                    case 0:
+                        contact.save()
+                        break;
+                    case 2:
+                        deleted(contact.contactId)
+                        break;
+                }
+                dismissed()
+            }
     }
 }

@@ -45,10 +45,11 @@ import QtMobility.contacts 1.1
 Item {
     id: mainItem
     property variant contacts
-    property bool showContact: false
-    property variant selectedContact
     property alias visibleArea: mainList.visibleArea
     property alias count: mainList.count
+
+    signal newContact
+    signal openContact(variant contact)
 
     ListView {
         id: mainList
@@ -175,10 +176,7 @@ Item {
                                         id: viewButton
                                         text: "More..."
                                         opacity: 0;
-                                        onClicked: {
-                                                       mainItem.showContact = true;
-                                                       mainItem.selectedContact = model.contact;
-                                                   }
+                                        onClicked: { openContact(model.contact); }
                                     }
                                 }
                             }
@@ -239,12 +237,10 @@ Item {
         opacity: 0.9
         labels: ["Change manager", "New contact"]
         onButtonClicked: {
-            console.log(index + " clicked")
-            messageBox.messageString = "Not implemented :("
-            if (viewType == "contactListView")
-                viewType = "managerListView";
-            else if (viewType == "detailListView") {
-                //Delete contact
+            if (index == 1) {
+                newContact();
+            } else {
+                messageBox.messageString = "Not implemented :("
             }
         }
     }
