@@ -1993,6 +1993,12 @@ void tst_QLandmarkManager::retrieveLandmark() {
 
    } else if (type == "async") {
        QLandmarkFetchByIdRequest fetchByIdRequest(m_manager);
+       QVERIFY(fetchByIdRequest.manager() == m_manager);
+       fetchByIdRequest.setManager(0);
+       QVERIFY(fetchByIdRequest.manager() == 0);
+       fetchByIdRequest.setManager(m_manager);
+       QVERIFY(fetchByIdRequest.manager() == m_manager);
+
        QSignalSpy spy(&fetchByIdRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
        QSignalSpy spyResult(&fetchByIdRequest, SIGNAL(resultsAvailable()));
        fetchByIdRequest.setLandmarkIds(lmIds);
