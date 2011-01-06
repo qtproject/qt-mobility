@@ -96,6 +96,8 @@
 #include <QSqlError>
 #endif
 
+#include "qlandmarkmanagerdataholder.h"
+
 //defines to turn on and off tests for symbian
 
 #define INVALID_MANAGER
@@ -175,6 +177,7 @@ private:
     ManagerListener *m_listener;
     QString exportFile;
     QString prefix;  //prefix for path strings for importing and exporting depending on symbian or not.
+    QScopedPointer<QLandmarkManagerDataHolder> managerDataHolder;
 
     bool waitForActive(QSignalSpy &spy, QLandmarkAbstractRequest* request, int ms=100) {
         if (request->isActive())
@@ -895,23 +898,8 @@ private:
         connectNotifications();
     }
 
-#ifdef Q_OS_SYMBIAN
-    void deleteDefaultDb(){
-        CPosLmDatabaseManager* lmDbManager = CPosLmDatabaseManager::NewL();
-        CleanupStack::PushL(lmDbManager);
-        HBufC* defaultDbUri = lmDbManager->DefaultDatabaseUriLC();
-        if (lmDbManager->DatabaseExistsL(defaultDbUri->Des())) {
-            lmDbManager->DeleteDatabaseL(defaultDbUri->Des());
-        }
-        CleanupStack::PopAndDestroy(defaultDbUri);
-        CleanupStack::PopAndDestroy(lmDbManager);
-    }
-#endif
-
-    void deleteDb() {
+    void clearDb() {
         QFile file;
-
-#if (defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_6))
         QList<QLandmarkId> lmIds = m_manager->landmarkIds();
         for(int i=0; i < lmIds.count(); ++i) {
             QVERIFY(m_manager->removeLandmark(lmIds.at(i)));
@@ -922,19 +910,15 @@ private:
             if (!m_manager->isReadOnly(catIds.at(i)))
                 QVERIFY(m_manager->removeCategory(catIds.at(i)));
         }
-#else
-        {
-            QSqlDatabase db = QSqlDatabase::database("landmarks");
-            QSqlQuery q1("delete from landmark;", db);
-            q1.exec();
-            QSqlQuery q2("delete from category;", db);
-            q2.exec();
-            QSqlQuery q3("delete from landmark_category;", db);
-            q3.exec();
-        }
 
-        QFile::remove("test.db");
-#endif
+        //try ensure notifications for these deletions
+        //are made prior to each test function
+        #ifdef Q_OS_SYMBIAN
+            QTest::qWait(100);
+        #else
+            QTest::qWait(20);
+        #endif
+
         delete m_manager;
         m_manager = 0;
 
@@ -946,30 +930,6 @@ private:
         file.setPermissions(QFile::WriteOwner | QFile::WriteUser | QFile::WriteOther);
         file.remove();
     }
-
-#if (defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_6))
-        void clearDb() {
-
-        QList<QLandmarkId> lmIds = m_manager->landmarkIds();
-        for(int i=0; i < lmIds.count(); ++i)
-            QVERIFY(m_manager->removeLandmark(lmIds.at(i)));
-
-        QList<QLandmarkCategoryId> catIds = m_manager->categoryIds();
-        for (int i=0; i < catIds.count(); ++i) {
-            if (!m_manager->isReadOnly(catIds.at(i)))
-                QVERIFY(m_manager->removeCategory(catIds.at(i)));
-        }
-
-            //try ensure notifications for these deletions
-            //are made prior to each test function
-#ifdef Q_OS_SYMBIAN
-            QTest::qWait(100);
-#else
-            QTest::qWait(20);
-#endif
-    }
-#endif
-
 
 #ifndef Q_OS_SYMBIAN
     bool tablesExist() {
@@ -1250,20 +1210,19 @@ void testViewport_data();
 void tst_QLandmarkManager::initTestCase() {
     m_manager = 0;
     m_listener = 0;
+    managerDataHolder.reset(new QLandmarkManagerDataHolder());
 }
 
 void tst_QLandmarkManager::init() {
     createDb();
-#if (defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_6))
-    clearDb();
-#endif
 }
 
 void tst_QLandmarkManager::cleanup() {
-    deleteDb();
+    clearDb();
 }
 
 void tst_QLandmarkManager::cleanupTestCase() {
+    managerDataHolder.reset(0);
     QFile::remove(exportFile);
     if (QFile::exists("nopermfile"))
         QFile::remove("nopermfile");
@@ -1274,7 +1233,7 @@ void tst_QLandmarkManager::createDbNew() {
     QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
     QVERIFY(tablesExist());
 
-    deleteDb();
+    QFile::remove("test.db");
     createDb();
     QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
 
@@ -1329,7 +1288,6 @@ tst_QLandmarkManager::tst_QLandmarkManager() {
     QFile::remove(exportFile);
 
 #ifdef Q_OS_SYMBIAN
-    deleteDefaultDb();
     prefix ="";
 #else
 #if !defined(Q_WS_MAEMO_6)
@@ -8256,7 +8214,7 @@ void tst_QLandmarkManager::importWaitForFinished()
     importRequest.setFileName(prefix + "data/AUS-PublicToilet-AustralianCapitalTerritory.gpx");
     importRequest.setFormat(QLandmarkManager::Gpx);
     importRequest.start();
-    QVERIFY(waitForActive(spy, &importRequest,100));    
+    QVERIFY(waitForActive(spy, &importRequest,100));
     QVERIFY(!importRequest.waitForFinished(5));
 #ifndef Q_WS_MAEMO_6
     QCOMPARE(m_manager->landmarkIds().count(), fileLandmarkCount);
