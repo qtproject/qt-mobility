@@ -58,12 +58,14 @@
 #include <QGraphicsScene>
 #include <QGraphicsItem>
 #include "qgeocoordinate.h"
+#include "qgraphicsgeomap.h"
 #include "projwrapper_p.h"
 #include <QList>
 
 QTM_BEGIN_NAMESPACE
 
 class QGeoMappingManagerEngine;
+class QGeoMapObjectEngine;
 class QGeoMapOverlay;
 
 class QGeoMapDataPrivate : public QObject
@@ -86,50 +88,21 @@ public:
 
     bool blockPropertyChangeSignals;
 
-    QHash<const QGeoMapObject*, QGraphicsItem*> latLonExact;
-    QHash<const QGeoMapObject*, QGraphicsItem*> pixelExact;
-
-    QHash<const QGeoMapObject*, QTransform> latLonTrans;
-    QGraphicsScene *latLonScene;
-    QHash<QGraphicsItem*, QGeoMapObject*> latLonItems;
-
-    QHash<const QGeoMapObject*, QTransform> pixelTrans;
-    QGraphicsScene *pixelScene;
-    QHash<QGraphicsItem*, QGeoMapObject*> pixelItems;
-
     virtual void addObject(QGeoMapObject *object);
     virtual void removeObject(QGeoMapObject *object);
-
-protected:
-    virtual void _removeObject(QGeoMapObject *object);
-
-public:
-    virtual void updateLatLonTransform(QGeoMapObject *object);
-    virtual void updatePixelTransform(QGeoMapObject *object);
+    void clearObjects();
 
     QPolygonF polyToScreen(const QPolygonF &poly);
-
-    void clearObjects();
-    void updateTransforms();
-
     virtual QPointF coordinateToScreenPosition(double lon, double lat) const;
-
     QPolygonF latLonViewport();
 
-    QList<QGeoMapObject*> objectsForPixelUpdate;
-    QList<QGeoMapObject*> objectsForLatLonUpdate;
-
 public slots:
-    void forceUpdate(const QRectF &target = QRectF());
-    void forceUpdate(QGeoMapObject *obj);
-
     void updateSender();
-    void updateZoom(QGeoMapGroupObject *group=0);
-    virtual void updatePixelTransforms(QGeoMapGroupObject *group=0);
-    void invalidatePixelViewport();
-    virtual void updateLatLonTransforms(QGeoMapGroupObject *group=0);
+    void emitUpdateMapDisplay(const QRectF &target = QRectF());
 
 public:
+    QGeoMapObjectEngine *oe;
+
     QGeoMapData *q_ptr;
     Q_DECLARE_PUBLIC(QGeoMapData)
 private:

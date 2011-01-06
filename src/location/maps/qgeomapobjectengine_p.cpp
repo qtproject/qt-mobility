@@ -50,14 +50,99 @@
 
 QTM_BEGIN_NAMESPACE
 
+/*
+  A quick note about how the transforms are set up:
+
+  Each QGeoMapObject has its own "local" coordinate system, whether this
+  a pixel system or meters or whatever.
+
+  For local systems that are not in pixels, we do a two-stage transform --
+  first we transform the object to arc-seconds, then we transform from
+  arc-seconds to pixels on the screen. This is necessary as QGeoMapData
+  subclasses only provide a mapping from lat/lon coordinates to screen pixels
+  and no other source.
+
+  For local systems that are in pixels, we simply translate to the screen
+  coordinates. However, we still generate a transform to arc-seconds for these
+  objects, to speed up the drawing process.
+
+  QGeoMapDataPrivate has two sets of 3 fields that are used here:
+    - xxxTrans
+    - xxxScene
+    - xxxItems
+  (where xxx = [latLon, pixel])
+
+  xxxTrans = a multi-hash of transforms associated with each QGeoMapObject
+             (a given map object may appear at more than one coordinate if
+              it wraps over the dateline)
+  xxxScene = a QGraphicsScene filled with bounding boxes for each object, one
+             for each entry in xxxTrans
+  xxxItems = a hash taking the items in the xxxScene and giving back the original
+             QGeoMapObject they were created for
+
+  the "latLon" entries describe the transformations from local coordinates to
+  arc-seconds, and the "pixel" entries describe the transformations from local
+  coordinates to pixels on screen.
+
+  Items within latLonScene have their coordinates in arc-seconds, and items
+  within pixelScene have theirs in pixels.
+
+*/
+
 QGeoMapObjectEngine::QGeoMapObjectEngine(QGeoMapData *mapData, QGeoMapDataPrivate *mapDataP) :
     md(mapData),
-    mdp(mapDataP)
+    mdp(mapDataP),
+    pixelScene(new QGraphicsScene),
+    latLonScene(new QGraphicsScene)
 {
 }
 
 QGeoMapObjectEngine::~QGeoMapObjectEngine()
 {}
+
+/*****************************************************************************
+  Object management
+ *****************************************************************************/
+
+void QGeoMapObjectEngine::addObject(QGeoMapObject *object)
+{
+    objectsForLatLonUpdate << object;
+    objectsForPixelUpdate << object;
+}
+
+void QGeoMapObjectEngine::removeObject(QGeoMapObject *object)
+{
+    QGeoMapGroupObject *group = qobject_cast<QGeoMapGroupObject*>(object);
+    if (group) {
+        foreach (QGeoMapObject *child, group->childObjects())
+            removeObject(child);
+    } else {
+        QList<QRectF> rectsToUpdate;
+        foreach (QGraphicsItem *item, pixelItems.keys(object))
+            rectsToUpdate << item->boundingRect();
+
+        latLonTrans.remove(object);
+        foreach (QGraphicsItem *item, latLonItems.keys(object)) {
+            latLonItems.remove(item);
+            latLonScene->removeItem(item);
+            delete item;
+        }
+
+        pixelTrans.remove(object);
+        foreach (QGraphicsItem *item, pixelItems.keys(object)) {
+            pixelItems.remove(item);
+            pixelScene->removeItem(item);
+            delete item;
+        }
+
+        foreach (QRectF rect, rectsToUpdate)
+            mdp->emitUpdateMapDisplay(rect);
+    }
+}
+
+/*****************************************************************************
+  Transform support functions
+ *****************************************************************************/
 
 static QGraphicsPolygonItem *polyCopy(const QGraphicsPolygonItem *polyItem)
 {
@@ -305,8 +390,8 @@ void QGeoMapObjectEngine::bilinearPixelsToSeconds(const QGeoCoordinate &origin,
                                                  QPolygonF &local,
                                                  QTransform &latLon)
 {
-    QPointF pixelOrigin = this->coordinateToScreenPosition(origin.longitude(),
-                                                           origin.latitude());
+    QPointF pixelOrigin = mdp->coordinateToScreenPosition(origin.longitude(),
+                                                          origin.latitude());
 
     QPolygonF wgs;
     foreach (const QPointF &pt, local) {
@@ -438,6 +523,10 @@ void QGeoMapObjectEngine::pixelShiftToScreen(const QGeoCoordinate &origin,
     }
 }
 
+/*****************************************************************************
+  Update utility functions
+ *****************************************************************************/
+
 static void _zoomDepsRecurse(QGeoMapObjectEngine *eng, QGeoMapGroupObject *group)
 {
     foreach (QGeoMapObject *obj, group->childObjects()) {
@@ -456,30 +545,6 @@ static void _zoomDepsRecurse(QGeoMapObjectEngine *eng, QGeoMapGroupObject *group
 void QGeoMapObjectEngine::invalidateZoomDependents()
 {
     _zoomDepsRecurse(this, mdp->containerObject);
-}
-
-// update the transform tables as necessary
-void QGeoMapObjectEngine::updateTransforms()
-{
-    foreach (QGeoMapObject *obj, objectsForLatLonUpdate) {
-        QGeoMapGroupObject *group = qobject_cast<QGeoMapGroupObject*>(obj);
-        if (group)
-            updateLatLonTransforms(group);
-        else
-            updateLatLonTransform(obj);
-    }
-
-    objectsForLatLonUpdate.clear();
-
-    foreach (QGeoMapObject *obj, objectsForPixelUpdate) {
-        QGeoMapGroupObject *group = qobject_cast<QGeoMapGroupObject*>(obj);
-        if (group)
-            updatePixelTransforms(group);
-        else
-            updatePixelTransform(obj);
-    }
-
-    objectsForPixelUpdate.clear();
 }
 
 void QGeoMapObjectEngine::invalidatePixelsForViewport()
@@ -502,6 +567,52 @@ void QGeoMapObjectEngine::invalidatePixelsForViewport()
     }
 }
 
+void QGeoMapObjectEngine::invalidateObject(QGeoMapObject *obj)
+{
+    objectsForLatLonUpdate << obj;
+
+    const QRectF view = mdp->latLonViewport().boundingRect();
+
+    bool needsPixelUpdate = false;
+    foreach (QGraphicsItem *item, latLonItems.keys(obj)) {
+        if (item->boundingRect().intersects(view)) {
+            needsPixelUpdate = true;
+            break;
+        }
+    }
+
+    if (needsPixelUpdate) {
+        objectsForPixelUpdate << obj;
+
+        foreach (QGraphicsItem *item, pixelItems.keys(obj))
+            mdp->emitUpdateMapDisplay(item->boundingRect());
+    }
+}
+
+// update the transform tables as necessary
+void QGeoMapObjectEngine::updateTransforms()
+{
+    foreach (QGeoMapObject *obj, objectsForLatLonUpdate) {
+        QGeoMapGroupObject *group = qobject_cast<QGeoMapGroupObject*>(obj);
+        if (group)
+            updateLatLonsForGroup(group);
+        else
+            updateLatLonTransform(obj);
+    }
+
+    objectsForLatLonUpdate.clear();
+
+    foreach (QGeoMapObject *obj, objectsForPixelUpdate) {
+        QGeoMapGroupObject *group = qobject_cast<QGeoMapGroupObject*>(obj);
+        if (group)
+            updatePixelsForGroup(group);
+        else
+            updatePixelTransform(obj);
+    }
+
+    objectsForPixelUpdate.clear();
+}
+
 void QGeoMapObjectEngine::updatePixelsForGroup(QGeoMapGroupObject *group)
 {
     foreach (QGeoMapObject *obj, group->childObjects()) {
@@ -522,6 +633,148 @@ void QGeoMapObjectEngine::updateLatLonsForGroup(QGeoMapGroupObject *group)
             updateLatLonsForGroup(subGroup);
         else
             updateLatLonTransform(object);
+    }
+}
+
+/*****************************************************************************
+  Actual update functions
+ *****************************************************************************/
+
+void QGeoMapObjectEngine::updateLatLonTransform(QGeoMapObject *object)
+{
+    QGeoCoordinate origin = object->origin();
+
+    QGraphicsItem *item = object->graphicsItem();
+
+    // skip any objects without graphicsitems
+    if (!item)
+        return;
+
+    QRectF localRect = item->boundingRect();
+
+    // skip any objects with invalid bounds
+    if (!localRect.isValid() || localRect.isEmpty() || localRect.isNull())
+        return;
+
+    QPolygonF local = item->boundingRect() * item->transform();
+    QList<QPolygonF> polys;
+
+    latLonTrans.remove(object);
+
+    if (object->transformType() == QGeoMapObject::BilinearTransform ||
+            object->units() == QGeoMapObject::PixelUnit) {
+        QTransform latLon;
+
+        if (object->units() == QGeoMapObject::MeterUnit) {
+            bilinearMetersToSeconds(origin, item, local, latLon);
+        } else if (object->units() == QGeoMapObject::RelativeArcSecondUnit) {
+            latLon.translate(origin.longitude() * 3600.0, origin.latitude() * 3600.0);
+        } else if (object->units() == QGeoMapObject::PixelUnit) {
+            bilinearPixelsToSeconds(origin, item, local, latLon);
+        }
+
+        polys << latLon.map(object->graphicsItem()->boundingRect());
+        latLonTrans.insertMulti(object, latLon);
+
+        QTransform latLonWest;
+        latLonWest.translate(360.0 * 3600.0, 0.0);
+        latLonWest = latLon * latLonWest;
+
+        polys << latLonWest.map(object->graphicsItem()->boundingRect());
+        latLonTrans.insertMulti(object, latLonWest);
+
+        QTransform latLonEast;
+        latLonEast.translate(-360.0 * 3600.0, 0.0);
+        latLonEast = latLon * latLonEast;
+
+        polys << latLonEast.map(object->graphicsItem()->boundingRect());
+        latLonTrans.insertMulti(object, latLonEast);
+
+    } else if (object->transformType() == QGeoMapObject::ExactTransform) {
+        if (object->units() == QGeoMapObject::MeterUnit) {
+            if (!exactMetersToSeconds(origin, object, item, polys))
+                return;
+        } else if (object->units() == QGeoMapObject::AbsoluteArcSecondUnit ||
+                   object->units() == QGeoMapObject::RelativeArcSecondUnit) {
+            if (!exactSecondsToSeconds(origin, object, item, polys))
+                return;
+        } else {
+            qWarning("QGeoMapData: unknown units for map object");
+            return;
+        }
+    }
+
+    QList<QGraphicsItem*> items = latLonItems.keys(object);
+    if (items.size() != polys.size()) {
+        foreach (QGraphicsItem *item, items) {
+            latLonScene->removeItem(item);
+            latLonItems.remove(item);
+            delete item;
+        }
+
+        foreach (QPolygonF poly, polys) {
+            QGraphicsItem *item = new QGraphicsPolygonItem(poly);
+            item->setZValue(object->zValue());
+            item->setVisible(true);
+            latLonItems.insert(item, object);
+            latLonScene->addItem(item);
+        }
+    } else {
+        for (int i = 0; i < polys.size(); ++i) {
+            QGraphicsItem *item = items.at(i);
+            QGraphicsPolygonItem *pi = dynamic_cast<QGraphicsPolygonItem*>(item);
+            Q_ASSERT(pi);
+            pi->setPolygon(polys.at(i));
+            pi->setZValue(object->zValue());
+        }
+    }
+}
+
+void QGeoMapObjectEngine::updatePixelTransform(QGeoMapObject *object)
+{
+    QGeoCoordinate origin = object->origin();
+    QGraphicsItem *item = object->graphicsItem();
+
+    // skip any objects without graphicsitems
+    if (!item)
+        return;
+
+    QList<QPolygonF> polys;
+
+    pixelTrans.remove(object);
+    if (object->transformType() == QGeoMapObject::BilinearTransform) {
+        bilinearSecondsToScreen(origin, object, polys);
+    } else if (object->transformType() == QGeoMapObject::ExactTransform) {
+        if (object->units() == QGeoMapObject::PixelUnit) {
+            pixelShiftToScreen(origin, object, polys);
+        } else {
+            exactPixelMap(origin, object, polys);
+        }
+    }
+
+    QList<QGraphicsItem*> items = pixelItems.keys(object);
+
+    if (items.size() != polys.size()) {
+        foreach (QGraphicsItem *item, items) {
+            pixelItems.remove(item);
+            pixelScene->removeItem(item);
+            delete item;
+        }
+        foreach (QPolygonF poly, polys) {
+            QGraphicsPolygonItem *item = new QGraphicsPolygonItem(poly);
+            item->setZValue(object->zValue());
+            item->setVisible(true);
+            pixelItems.insert(item, object);
+            pixelScene->addItem(item);
+        }
+    } else {
+        for (int i = 0; i < polys.size(); ++i) {
+            QGraphicsItem *item = items.at(i);
+            QGraphicsPolygonItem *pi = dynamic_cast<QGraphicsPolygonItem*>(item);
+            Q_ASSERT(pi);
+            pi->setPolygon(polys.at(i));
+            pi->setZValue(object->zValue());
+        }
     }
 }
 

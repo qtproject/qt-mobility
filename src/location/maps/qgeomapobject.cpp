@@ -41,6 +41,7 @@
 
 #include "qgeomapobject.h"
 #include "qgeomapobject_p.h"
+#include "qgeomapobjectengine_p.h"
 #include "qgeomapdata.h"
 #include "qgeomapdata_p.h"
 #include "qgeoboundingbox.h"
@@ -279,8 +280,10 @@ QGeoBoundingBox QGeoMapObject::boundingBox() const
     if (!d_ptr->graphicsItem || !d_ptr->mapData)
         return QGeoBoundingBox();
 
-    d_ptr->mapData->d_ptr->updateTransforms();
-    QTransform trans = d_ptr->mapData->d_ptr->latLonTrans.value(this);
+    QGeoMapObjectEngine *e = d_ptr->mapData->d_ptr->oe;
+
+    e->updateTransforms();
+    QTransform trans = e->latLonTrans.value(this);
 
     QRectF bounds = d_ptr->graphicsItem->boundingRect();
     QPolygonF poly = bounds * trans;
@@ -313,18 +316,20 @@ bool QGeoMapObject::contains(const QGeoCoordinate &coordinate) const
     if (!d_ptr->graphicsItem || !d_ptr->mapData)
         return false;
 
-    d_ptr->mapData->d_ptr->updateTransforms();
+    QGeoMapObjectEngine *e = d_ptr->mapData->d_ptr->oe;
+
+    e->updateTransforms();
     QPointF latLonPoint(coordinate.longitude()*3600.0, coordinate.latitude()*3600.0);
 
-    if (d_ptr->mapData->d_ptr->latLonExact.contains(this)) {
-        QList<QGraphicsItem*> items = d_ptr->mapData->d_ptr->latLonExact.values(this);
+    if (e->latLonExact.contains(this)) {
+        QList<QGraphicsItem*> items = e->latLonExact.values(this);
         foreach (QGraphicsItem *item, items) {
             if (item->contains(latLonPoint))
                 return true;
         }
         return false;
     } else {
-        QList<QTransform> transList = d_ptr->mapData->d_ptr->latLonTrans.values(this);
+        QList<QTransform> transList = e->latLonTrans.values(this);
         foreach (QTransform trans, transList) {
             bool ok;
             QTransform inv = trans.inverted(&ok);
