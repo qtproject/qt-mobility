@@ -155,6 +155,22 @@ QDeclarativeOrganizerModel::QDeclarativeOrganizerModel(QObject *parent) :
   This property holds the manager name or manager uri of the organizer backend engine.
   The manager uri format: qtorganizer:<managerid>:<key>=<value>&<key>=<value>.
 
+  For example, memory organizer engine has an optional id parameter, if user want to
+  share the same memory engine with multiple OrganizerModel instances, the manager property
+  should declared like this:
+  \code
+    model : OrganizerModel {
+       manager:"qtorganizer:memory:id=organizer1
+    }
+  \endcode
+
+  instead of just the manager name:
+  \code
+    model : OrganizerModel {
+       manager:"memory"
+    }
+  \endcode
+
   \sa QOrganizerManager::fromUri()
   */
 QString QDeclarativeOrganizerModel::manager() const
