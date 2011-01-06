@@ -178,7 +178,7 @@ bool QDeclarativeOrganizerItem::isFloatingTime() const
 }
 
 /*!
-  \qmlproperty bool OrganizerItem::itemStartTime
+  \qmlproperty date OrganizerItem::itemStartTime
 
    This property holds the start date time of the OrganizerItem object.
    For differrent organizer item type, the return value is differrent, too.
@@ -207,7 +207,7 @@ QDateTime QDeclarativeOrganizerItem::itemStartTime() const
 }
 
 /*!
-  \qmlproperty bool OrganizerItem::itemEndTime
+  \qmlproperty date OrganizerItem::itemEndTime
 
    This property holds the end date time of the OrganizerItem object.
    For differrent organizer item type, the return value is differrent, too.
