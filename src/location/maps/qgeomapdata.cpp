@@ -1478,16 +1478,10 @@ void QGeoMapDataPrivate::updateTransforms()
 // ensures the sender is up to date on the map
 void QGeoMapDataPrivate::updateSender()
 {
-    QGeoMapGroupObject *group = qobject_cast<QGeoMapGroupObject*>(sender());
-    if (group) {
-        zoomOutOfDate = true;
-        pixelsOutOfDate = true;
-        emit q_ptr->updateMapDisplay();
-    } else {
-        QGeoMapObject *obj = qobject_cast<QGeoMapObject*>(sender());
-        if (obj)
-            forceUpdate(obj);
-    }
+    // TODO: find some way of making partial updates work here
+    zoomOutOfDate = true;
+    pixelsOutOfDate = true;
+    emit q_ptr->updateMapDisplay();
 }
 
 #include "moc_qgeomapdata.cpp"
