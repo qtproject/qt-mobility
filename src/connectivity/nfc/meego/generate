@@ -1,15 +1,10 @@
 #!/bin/sh
 
-qdbusxml2cpp -i meego/dbustypes_p.h -p manager_interface_p.h:manager_interface.cpp com.nokia.nfc.Manager.xml
 qdbusxml2cpp -i meego/dbustypes_p.h -p adapter_interface_p.h:adapter_interface.cpp com.nokia.nfc.Adapter.xml
-qdbusxml2cpp -a accessrequestor_adaptor_p.h:accessrequestor_adaptor.cpp com.nokia.nfc.AccessRequestor.xml
 
 qdbusxml2cpp -i meego/dbustypes_p.h -p target_interface_p.h:target_interface.cpp com.nokia.nfc.Target.xml
 qdbusxml2cpp -i meego/dbustypes_p.h -p tag_interface_p.h:tag_interface.cpp  com.nokia.nfc.Tag.xml
 qdbusxml2cpp -i meego/dbustypes_p.h -p device_interface_p.h:device_interface.cpp com.nokia.nfc.Device.xml
-
-qdbusxml2cpp -a llcprequestor_adaptor_p.h:llcprequestor_adaptor.cpp com.nokia.nfc.LLCPRequestor.xml
-qdbusxml2cpp -a ndefhandler_adaptor_p.h:ndefhandler_adaptor.cpp com.nokia.nfc.NDEFHandler.xml
 
 qdbusxml2cpp -i meego/dbustypes_p.h -p secureelement_interface_p.h:secureelement_interface.cpp com.nokia.nfc.SecureElement.xml
 

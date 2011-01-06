@@ -41,10 +41,10 @@
 
 #include "qllcpsocket_meego_p.h"
 
-#include "meego/manager_interface_p.h"
+#include "manager_interface.h"
 #include "meego/adapter_interface_p.h"
-#include "meego/accessrequestor_adaptor_p.h"
-#include "meego/llcprequestor_adaptor_p.h"
+#include "accessrequestor_adaptor.h"
+#include "llcprequestor_adaptor.h"
 
 using namespace com::nokia::nfc;
 

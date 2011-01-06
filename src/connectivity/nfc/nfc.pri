@@ -41,34 +41,42 @@ SOURCES += \
 maemo6|meego {
     QT *= dbus
 
+    DBUS_INTERFACES += \
+        nfc/meego/com.nokia.nfc.Manager.xml
+
+    DBUS_ADAPTORS += \
+        nfc/meego/com.nokia.nfc.AccessRequestor.xml \
+        nfc/meego/com.nokia.nfc.LLCPRequestor.xml \
+        nfc/meego/com.nokia.nfc.NDEFHandler.xml
+
+    # work around bug in Qt
+    dbus_interface_source.depends = ${QMAKE_FILE_OUT_BASE}.h
+    dbus_adaptor_source.depends = ${QMAKE_FILE_OUT_BASE}.h
+
     PRIVATE_HEADERS += \
         nfc/qnearfieldmanager_meego_p.h \
         nfc/qnearfieldtarget_meego_p.h \
         nfc/qllcpsocket_meego_p.h \
         nfc/qllcpserver_meego_p.h \
         nfc/meego/dbustypes_p.h \
-        nfc/meego/manager_interface_p.h \
         nfc/meego/adapter_interface_p.h \
-        nfc/meego/accessrequestor_adaptor_p.h \
         nfc/meego/target_interface_p.h \
-        nfc/meego/tag_interface_p.h \
-        nfc/meego/ndefhandler_adaptor_p.h \
-        nfc/meego/llcprequestor_adaptor_p.h
-
+        nfc/meego/tag_interface_p.h
 
     SOURCES += \
         nfc/qnearfieldmanager_meego.cpp \
         nfc/qnearfieldtarget_meego.cpp \
         nfc/qllcpsocket_meego_p.cpp \
         nfc/qllcpserver_meego_p.cpp \
-        nfc/meego/manager_interface.cpp \
         nfc/meego/adapter_interface.cpp \
-        nfc/meego/accessrequestor_adaptor.cpp \
         nfc/meego/target_interface.cpp \
-        nfc/meego/tag_interface.cpp \
-        nfc/meego/ndefhandler_adaptor.cpp \
-        nfc/meego/llcprequestor_adaptor.cpp
+        nfc/meego/tag_interface.cpp
 
+    OTHER_FILES += $$DBUS_INTERFACES $$DBUS_ADAPTORS
+
+    # Add OUT_PWD to INCLUDEPATH so that creator picks up headers for generated files
+    # This is not needed for the build otherwise.
+    INCLUDEPATH += $$OUT_PWD
 }
 
 simulator {

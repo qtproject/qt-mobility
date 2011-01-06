@@ -41,12 +41,12 @@
 
 #include "qnearfieldmanager_meego_p.h"
 #include "qnearfieldtarget_meego_p.h"
-#include "meego/manager_interface_p.h"
+#include "manager_interface.h"
 #include "meego/adapter_interface_p.h"
 #include "meego/target_interface_p.h"
 #include "meego/tag_interface_p.h"
-#include "meego/ndefhandler_adaptor_p.h"
-#include "meego/accessrequestor_adaptor_p.h"
+#include "ndefhandler_adaptor.h"
+#include "accessrequestor_adaptor.h"
 
 #include <qnearfieldtagtype1.h>
 
