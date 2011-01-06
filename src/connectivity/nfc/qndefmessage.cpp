@@ -193,6 +193,9 @@ QNdefMessage QNdefMessage::fromByteArray(const QByteArray &message)
         if (!cf)
             result.append(record);
 
+        if (!cf && seenMessageEnd)
+            break;
+
         // move to start of next record
         ++i;
     }
