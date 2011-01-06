@@ -168,21 +168,23 @@ QLandmarkManagerEngine::~QLandmarkManagerEngine()
 {
 }
 
-/*! Returns the manager name for this QLandmarkManagerEngine */
-QString QLandmarkManagerEngine::managerName() const
-{
-    return QString(QLatin1String("base"));
-}
+/*!
+    \fn QLandmarkManagerEngine::managerName() const
+    Returns the manager name for this QLandmarkManagerEngine
+*/
 
 /*!
+  \fn QLandmarkManagerEngine::managerParameters() const
+
   Returns the parameters with which this engine was constructed.  Note that
   the engine may have discarded unused or invalid parameters at the time of
   construction, and these will not be returned.
  */
-QMap<QString, QString> QLandmarkManagerEngine::managerParameters() const
-{
-    return QMap<QString, QString>(); // default implementation requires no parameters.
-}
+
+/*!
+  \fn QLandmarkManagerEngine::managerVersion() const
+  Returns the engine backend implementation version number
+ */
 
 /*!
   Returns the unique URI of this manager, which is built from the manager name and the parameters
@@ -193,55 +195,45 @@ QString QLandmarkManagerEngine::managerUri() const
     return QLandmarkManager::buildUri(managerName(), managerParameters(), managerVersion());
 }
 
-/*!
-  Returns the engine backend implementation version number
- */
-int QLandmarkManagerEngine::managerVersion() const
-{
-    return 0;
-}
 
 /*!
+    \fn QLandmarkManagerEngine::landmarkIds(const QLandmarkFilter& filter,
+        int limit, int offset, const QList<QLandmarkSortOrder>& sortOrders, QLandmarkManager::Error* error,
+        QString * errorString) const
+
     Returns a list of landmark identifiers which match the given \a filter and are sorted according to
     the given \a sortOrders. The \a limit defines the maximum number of landmark IDs to return and the
     \a offset defines the index offset of the first landmark ID.
     A \a limit of -1 means that IDs of all matching landmarks should be returned.
 
     Any error which occurs will be saved in \a error and \a errorString.
- */
-QList<QLandmarkId> QLandmarkManagerEngine::landmarkIds(const QLandmarkFilter& /*filter*/,
-        int /*limit*/, int /*offset*/, const QList<QLandmarkSortOrder>& /*sortOrders*/, QLandmarkManager::Error* /*error*/,
-        QString */* errorString */) const
-{
-    return QList<QLandmarkId>();
-}
+*/
 
 /*!
+    \fn QLandmarkManagerEngine::categoryIds(int limit, int offset, const QLandmarkNameSort& nameSort, QLandmarkManager::Error* error,
+        QString* errorString) const
+
     Returns a list of category identifiers
     The \a limit defines the maximum number of IDs to return and the \a offset defines the index offset
     of the first ID.  A \a limit of -1 means IDs for all categories should be returned.
     Any error which occurs will be saved in \a error and \a errorString.
     The identifiers are returned in order according to the given \a nameSort.
 */
-QList<QLandmarkCategoryId> QLandmarkManagerEngine::categoryIds(int /*limit*/, int /*offset*/, const QLandmarkNameSort& /*nameSort*/, QLandmarkManager::Error* /*error*/,
-        QString* /*errorString*/) const
-{
-    return QList<QLandmarkCategoryId>();
-}
 
 /*!
+    \fn QLandmarkManagerEngine::landmark(const QLandmarkId &landmarkId, QLandmarkManager::Error * error,
+        QString* errorString) const
+
     Returns the landmark in the datastore identified by \a landmarkId.
 
     Any errors encountered are:stored in \a error and \a errorString.
     The \a error is set to QLandmarkManager::LandmarkDoesNotExistError if the landmark could not be found.
 */
-QLandmark QLandmarkManagerEngine::landmark(const QLandmarkId &/*landmarkId*/, QLandmarkManager::Error * /*error*/,
-        QString* /*errorString*/) const
-{
-    return QLandmark();
-}
 
 /*!
+    \fn QLandmarkManagerEngine::landmarks(const QList<QLandmarkId>& landmarkIds, QMap<int, QLandmarkManager::Error>* errorMap,
+                                        QLandmarkManager::Error* error, QString* errorString) const
+
     Returns a list of landmarks which match the given \a landmarkIds.  The engine will populate \a errorMap
     (the map of indices of the \a landmarkIds list to errors) for the indexes where the landmark could not
     be retrieved.
@@ -250,38 +242,34 @@ QLandmark QLandmarkManagerEngine::landmark(const QLandmarkId &/*landmarkId*/, QL
     \a errorString.  \a error is set to QLandmarkManager::NoError,
     all landmarks were successfully retrieved.
 */
-QList<QLandmark> QLandmarkManagerEngine::landmarks(const QList<QLandmarkId>& /*landmarkIds*/, QMap<int, QLandmarkManager::Error>* /*errorMap*/,
-                                        QLandmarkManager::Error* /*error*/, QString* /*errorString*/) const
-{
-    return QList<QLandmark>();
-}
 
 /*!
+    \fn QLandmarkManagerEngine::landmarks(const QLandmarkFilter& filter, int limit, int offset,
+                    const QList<QLandmarkSortOrder>& sortOrders, QLandmarkManager::Error* error, QString* errorString) const
+
     Returns a list of landmarks which match the given \a filter and are sorted according to the \a sortOrders.
     The \a limit defines the maximum number of landmarks to return and the \a offset defines the index offset
     of the first landmark.  A \a limit of -1 means all matching landmarks should be returned.
 
     Overall operation errors are stored in \a error and \a errorString.
 */
-QList<QLandmark> QLandmarkManagerEngine::landmarks(const QLandmarkFilter& /*filter*/, int /*limit*/, int /*offset*/,
-                    const QList<QLandmarkSortOrder>& /*sortOrders*/, QLandmarkManager::Error* /*error*/, QString* /*errorString*/) const
-{
-    return QList<QLandmark>();
-}
 
 /*!
+    \fn QLandmarkCategory QLandmarkManagerEngine::category(const QLandmarkCategoryId& categoryId,
+        QLandmarkManager::Error* error, QString* errorString) const
+
     Returns the category in the datastore identified by \a categoryId.
 
     Any errors encountered are stored in \a error and \a errorString.
-        A QLandmarkManager::CategoryDoesNotExist error is set if the category could not be found.
+    A QLandmarkManager::CategoryDoesNotExist error is set if the category could not be found.
 */
-QLandmarkCategory QLandmarkManagerEngine::category(const QLandmarkCategoryId& /*categoryId*/,
-        QLandmarkManager::Error* /*error*/, QString* /*errorString*/) const
-{
-    return QLandmarkCategory();
-}
+
 
 /*!
+    \fn QLandmarkManagerEngine::categories(const QList<QLandmarkCategoryId>& categoryIds,
+                                                            QMap<int, QLandmarkManager::Error>* errorMap,
+                                                            QLandmarkManager::Error* error, QString* errorString) const
+
     Returns a list of categories which match the given \a categoryIds.  The engine will populate \a errorMap
     (the map of indices of the \a categoryIds list to errors) for the indexes where the category could not
     be retrieved.
@@ -290,26 +278,21 @@ QLandmarkCategory QLandmarkManagerEngine::category(const QLandmarkCategoryId& /*
     \a errorString.  \a error is set to QLandmarkManager::NoError, if
     all categories were successfully retrieved.
 */
-QList<QLandmarkCategory> QLandmarkManagerEngine::categories(const QList<QLandmarkCategoryId>& /*categoryIds*/,
-                                                            QMap<int, QLandmarkManager::Error>* /*errorMap*/,
-                                                            QLandmarkManager::Error* /*error*/, QString* /*errorString*/) const
-{
-    return QList<QLandmarkCategory>();
-}
 
 /*!
+    \fn QLandmarkManagerEngine::categories(int limit, int offset, const QLandmarkNameSort& nameSort,
+                                                            QLandmarkManager::Error* error, QString* errorString) const
+
     Returns a list of categories.
     The \a limit defines the maximum number of categories to return and the \a offset defines the index offset
     of the first category.  A \a limit of -1 means all categories should be returned.
     The returned categories ordered according to the gien \a nameSort.
 */
-QList<QLandmarkCategory> QLandmarkManagerEngine::categories(int /*limit*/, int /*offset*/, const QLandmarkNameSort& /*nameSort*/,
-                                                            QLandmarkManager::Error* /*error*/, QString* /*errorString*/) const
-{
-    return QList<QLandmarkCategory>();
-}
 
 /*!
+    \fn QLandmarkManagerEngine::saveLandmark(QLandmark* landmark,
+        QLandmarkManager::Error* error, QString* errorString)
+
     Adds the given \a landmark to the datastore if \a landmark has a
     default-constructed identifer, or an identifier with the manager
     URI set to the URI of this manager and an empty id.
@@ -334,13 +317,11 @@ QList<QLandmarkCategory> QLandmarkManagerEngine::categories(int /*limit*/, int /
     Any errors encountered during this operation should be stored in
     \a error and \a errorString.
 */
-bool QLandmarkManagerEngine::saveLandmark(QLandmark* /*landmark*/,
-        QLandmarkManager::Error* /*error*/, QString* /*errorString*/)
-{
-    return false;
-}
 
 /*!
+    \fn QLandmarkManagerEngine::saveLandmarks(QList<QLandmark> * landmarks, QMap<int, QLandmarkManager::Error>* errorMap,
+        QLandmarkManager::Error* error, QString* errorString)
+
     Adds the list of \a landmarks to the datastore.
     Returns true if the landmarks were saved successfully, otherwise returns
     false.
@@ -362,13 +343,11 @@ bool QLandmarkManagerEngine::saveLandmark(QLandmark* /*landmark*/,
 
     \sa QLandmarkManagerEngine::saveLandmark()
 */
-bool QLandmarkManagerEngine::saveLandmarks(QList<QLandmark> * /*landmarks*/, QMap<int, QLandmarkManager::Error>* /*errorMap*/,
-        QLandmarkManager::Error* /*error*/, QString* /*errorString*/)
-{
-    return false;
-}
 
 /*!
+    \fn QLandmarkManagerEngine::removeLandmark(const QLandmarkId& landmarkId,
+        QLandmarkManager::Error* error, QString* errorString)
+
     Remove the landmark identified by \a landmarkId from the datastore.
 
     Returns true if the landmark was removed successfully, otherwise
@@ -380,12 +359,11 @@ bool QLandmarkManagerEngine::saveLandmarks(QList<QLandmark> * /*landmarks*/, QMa
     Any errors encountered during this operation should be stored to
     \a error and \a errorString.
 */
-bool QLandmarkManagerEngine::removeLandmark(const QLandmarkId& /*landmarkId*/, QLandmarkManager::Error* /*error*/, QString* /*errorString*/)
-{
-    return false;
-}
 
 /*!
+    \fn QLandmarkManagerEngine::removeLandmarks(const QList<QLandmarkId>& landmarkIds, QMap<int, QLandmarkManager::Error>* errorMap,
+        QLandmarkManager::Error* error, QString* errorString)
+
     Removes every landmark whose identifier is contained in the list
     of \a landmarkIds.  Returns true if all landmarks were removed
     successfully, otherwise false.
@@ -403,13 +381,11 @@ bool QLandmarkManagerEngine::removeLandmark(const QLandmarkId& /*landmarkId*/, Q
 
     \sa QLandmarkManagerEngine::removeLandmark()
 */
-bool QLandmarkManagerEngine::removeLandmarks(const QList<QLandmarkId>& /*landmarkIds*/, QMap<int, QLandmarkManager::Error>* /*errorMap*/,
-        QLandmarkManager::Error* /*error*/, QString* /*errorString*/)
-{
-    return false;
-}
 
 /*!
+    \fn QLandmarkManagerEngine::saveCategory(QLandmarkCategory* category,
+        QLandmarkManager::Error* error, QString* errorString)
+
     Adds the given \a category to the datastore if \a category has a
     default-constructed identifier, or an identifier with the manager
     URI set to the URI of this manager and an empty id.
@@ -434,13 +410,11 @@ bool QLandmarkManagerEngine::removeLandmarks(const QList<QLandmarkId>& /*landmar
     Overall operations errors should be stored in \a error and
     \a errorString.
 */
-bool QLandmarkManagerEngine::saveCategory(QLandmarkCategory* /*category*/,
-        QLandmarkManager::Error* /*error*/, QString* /*errorString*/)
-{
-    return false;
-}
 
 /*!
+
+    \fn QLandmarkManagerEngine::removeCategory(const QLandmarkCategoryId& categoryId,
+        QLandmarkManager::Error* error, QString* errorString)
     Removes the category identified by \a categoryId from the datastore.
 
     Returns true if the category was removed successfully, otherwise
@@ -452,13 +426,11 @@ bool QLandmarkManagerEngine::saveCategory(QLandmarkCategory* /*category*/,
     Overall operational errors are stored in \a error and
     \a errorString.
 */
-bool QLandmarkManagerEngine::removeCategory(const QLandmarkCategoryId& /*categoryId*/,
-        QLandmarkManager::Error* /*error*/, QString* /*errorString*/)
-{
-    return false;
-}
 
 /*!
+    \fn QLandmarkManagerEngine::importLandmarks(QIODevice* device, const QString& format, QLandmarkManager::TransferOption option, const QLandmarkCategoryId& categoryId,
+        QLandmarkManager::Error *error, QString *errorString)
+
     Reads landmarks from the given \a device and saves them.  The data from the \a device
     is expected to adhere to the provided \a format.  If no \a format is provided,
     the manager engine tries to autodetect the \a format.
@@ -475,17 +447,11 @@ bool QLandmarkManagerEngine::removeCategory(const QLandmarkCategoryId& /*categor
     Overall operational errors are stored in \a error and
     \a errorString.
 */
-bool QLandmarkManagerEngine::importLandmarks(QIODevice* /*device*/, const QString& /*format*/, QLandmarkManager::TransferOption /*option*/, const QLandmarkCategoryId& /*categoryId*/,
-        QLandmarkManager::Error *error, QString *errorString)
-{
-    Q_ASSERT(error);
-    Q_ASSERT(errorString);
-    *error = QLandmarkManager::NotSupportedError;
-    *errorString ="Not supported";
-    return false;
-}
 
 /*!
+    \fn QLandmarkManagerEngine::exportLandmarks(QIODevice * device, const QString& format, const QList<QLandmarkId> &landmarkIds, QLandmarkManager::TransferOption option,
+        QLandmarkManager::Error *error, QString *errorString) const
+
     Writes landmarks to the given \a device.  The landmarks will be written
     according to the specified \a format.  If  \a landmarkIds is empty, then
     all landmarks will be exported, otherwise only those landmarks that
@@ -503,15 +469,6 @@ bool QLandmarkManagerEngine::importLandmarks(QIODevice* /*device*/, const QStrin
     Overall operation errors are stored in \a error and
     \a errorString.
 */
-bool QLandmarkManagerEngine::exportLandmarks(QIODevice * /*device*/, const QString& /*format*/, const QList<QLandmarkId> &/*landmarkIds*/, QLandmarkManager::TransferOption /*option*/,
-        QLandmarkManager::Error *error, QString *errorString) const
-{
-    Q_ASSERT(error);
-    Q_ASSERT(errorString);
-    *error = QLandmarkManager::NotSupportedError;
-    *errorString = "Not supported";
-    return false;
-}
 
 /*!
     Returns the supported file formats for the given transfer \a operation, i.e. import or export.
@@ -587,14 +544,14 @@ QStringList QLandmarkManagerEngine::supportedFormats(QLandmarkManager::TransferO
 */
 
 /*!
+    \fn QLandmarkManagerEngine::requestDestroyed(QLandmarkAbstractRequest* request)
+
     Notifies the manager engine that the given \a request has been destroyed.
 */
-void QLandmarkManagerEngine::requestDestroyed(QLandmarkAbstractRequest* request)
-{
-    Q_UNUSED(request);
-}
 
 /*!
+    \fn QLandmarkManagerEngine::startRequest(QLandmarkAbstractRequest* request)
+
     Asks the manager engine to begin the given \a request
     which is currently in a re(startable) state.
 
@@ -603,13 +560,8 @@ void QLandmarkManagerEngine::requestDestroyed(QLandmarkAbstractRequest* request)
 
     \sa QLandmarkAbstractRequest::start()
 */
-bool QLandmarkManagerEngine::startRequest(QLandmarkAbstractRequest* request)
-{
-    Q_UNUSED(request);
-    return false;
-}
 
-/*!
+/*! \fn QLandmarkManagerEngine::cancelRequest(QLandmarkAbstractRequest* request)
     Asks the manager engine to cancel the given \a request which was
     previously started and is currently in a cancellable state.
     Returns true if cancelation of the request was started successfully,
@@ -617,13 +569,10 @@ bool QLandmarkManagerEngine::startRequest(QLandmarkAbstractRequest* request)
 
      \sa startRequest(), QLandmarkAbstractRequest::cancel()
  */
-bool QLandmarkManagerEngine::cancelRequest(QLandmarkAbstractRequest* request)
-{
-    Q_UNUSED(request);
-    return false;
-}
 
 /*!
+    \fn QLandmarkManagerEngine::waitForRequestFinished(QLandmarkAbstractRequest* request, int msecs)
+
     Blocks until the manager engine has completed the given \a request
     which was previously started, or until \a msecs milliseconds have passed.
     Returns true if the request was completed, and false if the request was not in the
@@ -632,12 +581,6 @@ bool QLandmarkManagerEngine::cancelRequest(QLandmarkAbstractRequest* request)
 
     \sa startRequest()
  */
-bool QLandmarkManagerEngine::waitForRequestFinished(QLandmarkAbstractRequest* request, int msecs)
-{
-    Q_UNUSED(request);
-    Q_UNUSED(msecs);
-    return false;
-}
 
 /*!
     \fn QLandmarkManagerEngine::dataChanged()

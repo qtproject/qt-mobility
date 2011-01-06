@@ -96,6 +96,8 @@
 #include <QSqlError>
 #endif
 
+#include "qlandmarkmanagerdataholder.h"
+
 //defines to turn on and off tests for symbian
 
 #define INVALID_MANAGER
@@ -175,6 +177,7 @@ private:
     ManagerListener *m_listener;
     QString exportFile;
     QString prefix;  //prefix for path strings for importing and exporting depending on symbian or not.
+    QScopedPointer<QLandmarkManagerDataHolder> managerDataHolder;
 
     bool waitForActive(QSignalSpy &spy, QLandmarkAbstractRequest* request, int ms=100) {
         if (request->isActive())
@@ -895,23 +898,8 @@ private:
         connectNotifications();
     }
 
-#ifdef Q_OS_SYMBIAN
-    void deleteDefaultDb(){
-        CPosLmDatabaseManager* lmDbManager = CPosLmDatabaseManager::NewL();
-        CleanupStack::PushL(lmDbManager);
-        HBufC* defaultDbUri = lmDbManager->DefaultDatabaseUriLC();
-        if (lmDbManager->DatabaseExistsL(defaultDbUri->Des())) {
-            lmDbManager->DeleteDatabaseL(defaultDbUri->Des());
-        }
-        CleanupStack::PopAndDestroy(defaultDbUri);
-        CleanupStack::PopAndDestroy(lmDbManager);
-    }
-#endif
-
-    void deleteDb() {
+    void clearDb() {
         QFile file;
-
-#if (defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_6))
         QList<QLandmarkId> lmIds = m_manager->landmarkIds();
         for(int i=0; i < lmIds.count(); ++i) {
             QVERIFY(m_manager->removeLandmark(lmIds.at(i)));
@@ -922,19 +910,15 @@ private:
             if (!m_manager->isReadOnly(catIds.at(i)))
                 QVERIFY(m_manager->removeCategory(catIds.at(i)));
         }
-#else
-        {
-            QSqlDatabase db = QSqlDatabase::database("landmarks");
-            QSqlQuery q1("delete from landmark;", db);
-            q1.exec();
-            QSqlQuery q2("delete from category;", db);
-            q2.exec();
-            QSqlQuery q3("delete from landmark_category;", db);
-            q3.exec();
-        }
 
-        QFile::remove("test.db");
-#endif
+        //try ensure notifications for these deletions
+        //are made prior to each test function
+        #ifdef Q_OS_SYMBIAN
+            QTest::qWait(100);
+        #else
+            QTest::qWait(20);
+        #endif
+
         delete m_manager;
         m_manager = 0;
 
@@ -946,30 +930,6 @@ private:
         file.setPermissions(QFile::WriteOwner | QFile::WriteUser | QFile::WriteOther);
         file.remove();
     }
-
-#if (defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_6))
-        void clearDb() {
-
-        QList<QLandmarkId> lmIds = m_manager->landmarkIds();
-        for(int i=0; i < lmIds.count(); ++i)
-            QVERIFY(m_manager->removeLandmark(lmIds.at(i)));
-
-        QList<QLandmarkCategoryId> catIds = m_manager->categoryIds();
-        for (int i=0; i < catIds.count(); ++i) {
-            if (!m_manager->isReadOnly(catIds.at(i)))
-                QVERIFY(m_manager->removeCategory(catIds.at(i)));
-        }
-
-            //try ensure notifications for these deletions
-            //are made prior to each test function
-#ifdef Q_OS_SYMBIAN
-            QTest::qWait(100);
-#else
-            QTest::qWait(20);
-#endif
-    }
-#endif
-
 
 #ifndef Q_OS_SYMBIAN
     bool tablesExist() {
@@ -1184,6 +1144,7 @@ private slots:
     void isReadOnly();
     void isFeatureSupported();
     void notificationCheck();
+    void managerMetadata();
 #endif
 
 #ifdef TEST_SIGNALS
@@ -1250,20 +1211,19 @@ void testViewport_data();
 void tst_QLandmarkManager::initTestCase() {
     m_manager = 0;
     m_listener = 0;
+    managerDataHolder.reset(new QLandmarkManagerDataHolder());
 }
 
 void tst_QLandmarkManager::init() {
     createDb();
-#if (defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_6))
-    clearDb();
-#endif
 }
 
 void tst_QLandmarkManager::cleanup() {
-    deleteDb();
+    clearDb();
 }
 
 void tst_QLandmarkManager::cleanupTestCase() {
+    managerDataHolder.reset(0);
     QFile::remove(exportFile);
     if (QFile::exists("nopermfile"))
         QFile::remove("nopermfile");
@@ -1274,7 +1234,7 @@ void tst_QLandmarkManager::createDbNew() {
     QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
     QVERIFY(tablesExist());
 
-    deleteDb();
+    QFile::remove("test.db");
     createDb();
     QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
 
@@ -1329,7 +1289,6 @@ tst_QLandmarkManager::tst_QLandmarkManager() {
     QFile::remove(exportFile);
 
 #ifdef Q_OS_SYMBIAN
-    deleteDefaultDb();
     prefix ="";
 #else
 #if !defined(Q_WS_MAEMO_6)
@@ -2035,6 +1994,12 @@ void tst_QLandmarkManager::retrieveLandmark() {
 
    } else if (type == "async") {
        QLandmarkFetchByIdRequest fetchByIdRequest(m_manager);
+       QVERIFY(fetchByIdRequest.manager() == m_manager);
+       fetchByIdRequest.setManager(0);
+       QVERIFY(fetchByIdRequest.manager() == 0);
+       fetchByIdRequest.setManager(m_manager);
+       QVERIFY(fetchByIdRequest.manager() == m_manager);
+
        QSignalSpy spy(&fetchByIdRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
        QSignalSpy spyResult(&fetchByIdRequest, SIGNAL(resultsAvailable()));
        fetchByIdRequest.setLandmarkIds(lmIds);
@@ -4137,6 +4102,18 @@ void tst_QLandmarkManager::filterLandmarksById()
     QCOMPARE(idFilter.landmarkIds().count(),0);
     QVERIFY(doFetch(type,idFilter, &lms, QLandmarkManager::NoError));
     QCOMPARE(lms.count(), 0);
+
+    //test detcahment of an idfilter
+    //by forcing a deep copy
+    idFilter.append(lm1.landmarkId());
+    QLandmarkIdFilter idFilterCopy = idFilter;
+    QVERIFY(idFilterCopy == idFilter);
+
+    idFilterCopy.append(lm2.landmarkId());
+    QVERIFY(idFilterCopy != idFilter);
+
+    idFilterCopy.remove(lm2.landmarkId());
+    QVERIFY(idFilterCopy == idFilter);
 }
 
 void tst_QLandmarkManager::filterLandmarksById_data()
@@ -4689,6 +4666,18 @@ void tst_QLandmarkManager::filterLandmarksCategory() {
     filter.setCategoryId(idNotExist3);
     QVERIFY(doFetch(type,filter, &lms, QLandmarkManager::NoError));
     QCOMPARE(lms.count(),0);
+
+    //test detachment of a cateory id filter
+    //by forcing a deep copy
+    filter.setCategoryId(cat1.categoryId());
+    QLandmarkCategoryFilter filterCopy = filter;
+    QVERIFY(filterCopy == filter);
+
+    filterCopy.setCategoryId(cat2.categoryId());
+    QVERIFY(filterCopy != filter);
+
+    filterCopy.setCategoryId(cat1.categoryId());
+    QVERIFY(filterCopy == filter);
 }
 
 void tst_QLandmarkManager::filterLandmarksCategory_data()
@@ -4941,6 +4930,17 @@ void tst_QLandmarkManager::filterLandmarksBox() {
     QCOMPARE(lms.count(), 0);
 
     //TODO: more invalid types of boxes
+
+    //check detachment of box filter
+    //by forcing a deep copy
+    QLandmarkBoxFilter filterCopy = filter;
+    QVERIFY(filterCopy == filter);
+
+    filterCopy.setTopLeft(QGeoCoordinate(-69,-69));
+    QVERIFY(filterCopy != filter);
+
+    filterCopy.setTopLeft(QGeoCoordinate(-70,-70));
+    QVERIFY(filterCopy == filter);
 }
 
 void tst_QLandmarkManager::filterLandmarksBox_data()
@@ -6598,6 +6598,29 @@ void tst_QLandmarkManager::filterAttribute3()
     attributeFilter2.setAttribute("street", "val", QLandmarkAttributeFilter::MatchContains);
     QCOMPARE(attributeFilter, attributeFilter2);
 
+    //Compare filter assignment
+    QLandmarkAttributeFilter attributeFilter3;
+    attributeFilter3 = attributeFilter2;
+    QCOMPARE(attributeFilter3, attributeFilter2);
+
+    //compare attribute filter that has been "detached"
+    //force a deep copy by modifying a variable
+    attributeFilter3.setAttribute("description", "descript");
+    QVERIFY(attributeFilter3 != attributeFilter2);
+
+    attributeFilter3.removeAttribute("description");
+    QVERIFY(attributeFilter3 == attributeFilter2);
+
+    //vary the match flag to see if there is a difference
+    attributeFilter3.setAttribute("name", "val", QLandmarkAttributeFilter::MatchStartsWith);
+    QVERIFY(attributeFilter3 != attributeFilter2);
+
+    attributeFilter3.setAttribute("name", "val", QLandmarkAttributeFilter::MatchContains);
+    QVERIFY(attributeFilter3 == attributeFilter2);
+
+    //vary the operation type to see if there is a difference
+    attributeFilter3.setOperationType(QLandmarkAttributeFilter::OrOperation);
+    QVERIFY(attributeFilter3 != attributeFilter2);
 }
 
 void tst_QLandmarkManager::filterAttribute3_data()
@@ -6783,6 +6806,18 @@ void tst_QLandmarkManager::sortLandmarksName() {
     QCOMPARE(lms.count(), 2);
     QCOMPARE(lms.at(0), lmA);
     QCOMPARE(lms.at(1), lmE);
+
+    //test detacment of name sort by forcing
+    // a deep copy
+    QLandmarkNameSort nameSortCopy;
+    nameSortCopy = nameSort;
+    QVERIFY(nameSortCopy == nameSort);
+
+    nameSortCopy.setDirection(Qt::DescendingOrder);
+    QVERIFY(nameSortCopy != nameSort);
+
+    nameSortCopy.setDirection(Qt::AscendingOrder);
+    QVERIFY(nameSortCopy == nameSort);
 }
 
 void tst_QLandmarkManager::sortLandmarksName_data() {
@@ -8256,7 +8291,7 @@ void tst_QLandmarkManager::importWaitForFinished()
     importRequest.setFileName(prefix + "data/AUS-PublicToilet-AustralianCapitalTerritory.gpx");
     importRequest.setFormat(QLandmarkManager::Gpx);
     importRequest.start();
-    QVERIFY(waitForActive(spy, &importRequest,100));    
+    QVERIFY(waitForActive(spy, &importRequest,100));
     QVERIFY(!importRequest.waitForFinished(5));
 #ifndef Q_WS_MAEMO_6
     QCOMPARE(m_manager->landmarkIds().count(), fileLandmarkCount);
@@ -8647,6 +8682,21 @@ void tst_QLandmarkManager::notificationCheck()
     QCOMPARE(spyLmAdd2.count(),0);
 
     //check that we can receive an signal from import from another process
+}
+
+void tst_QLandmarkManager::managerMetadata()
+{
+    QLandmarkManager manager;
+    QString managerName;
+#ifdef Q_OS_SYMBIAN
+     managerName = "com.nokia.qt.landmarks.engines.symbian";
+#elif defined Q_WS_MAEMO_6
+     managerName = "com.nokia.qt.landmarks.engines.qsparql";
+#else
+    managerName = "com.nokia.qt.landmarks.engines.sqlite";
+#endif
+    QCOMPARE(managerName, manager.managerName());
+    QCOMPARE(manager.managerVersion(), 1);
 }
 
 #endif
@@ -9337,6 +9387,7 @@ void tst_QLandmarkManager::testSignals()
     QCOMPARE(spyCatRemove.count(), 0);
     QCOMPARE(spyCatChange.count(),0);
     QCOMPARE(spyDataChanged.count(), 0);
+    spyChange.clear();
 
 #ifdef Q_OS_SYMBIAN
     //symbian should give a datachanged signal for this small file
@@ -9399,6 +9450,20 @@ void tst_QLandmarkManager::testSignals()
     QCOMPARE(spyCatChange2.count(),0);
     QCOMPARE(spyDataChanged2.count(), 0);
 #endif
+
+    //check disconection of signals
+    disconnectNotifications();
+    QLandmark lmOmega;
+    lmOmega.setName("lmOmega");
+    m_manager->saveLandmark(&lmOmega);
+    QTest::qWait(10);
+    QCOMPARE(spyAdd.count(), 0);
+    QCOMPARE(spyChange.count(), 0);
+    QCOMPARE(spyRemove.count(), 0);
+    QCOMPARE(spyCatAdd.count(), 0);
+    QCOMPARE(spyCatRemove.count(), 0);
+    QCOMPARE(spyCatChange.count(),0);
+    QCOMPARE(spyDataChanged.count(), 0);
 }
 #endif
 
