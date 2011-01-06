@@ -253,7 +253,7 @@ void QDeclarativeContactRelationshipModel::setAutoUpdate(bool autoUpdate)
 }
 
 /*!
-  \qmlproperty QDeclarativeListProperty RelationshipModel::relationships
+  \qmlproperty list<Relationship> RelationshipModel::relationships
 
   This property holds a list of relationships.
 

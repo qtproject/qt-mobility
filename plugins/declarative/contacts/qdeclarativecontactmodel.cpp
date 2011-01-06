@@ -384,7 +384,7 @@ void QDeclarativeContactModel::setFetchHint(QDeclarativeContactFetchHint* fetchH
 }
 
 /*!
-  \qmlproperty QDeclarativeListProperty ContactModel::contacts
+  \qmlproperty list<Contact> ContactModel::contacts
 
   This property holds a list of contacts.
 
@@ -428,7 +428,7 @@ void QDeclarativeContactModel::contacts_clear(QDeclarativeListProperty<QDeclarat
 
 
 /*!
-  \qmlproperty QDeclarativeListProperty ContactModel::sortOrders
+  \qmlproperty list<SortOrder> ContactModel::sortOrders
 
   This property holds a list of sort orders used by the organizer model.
 
