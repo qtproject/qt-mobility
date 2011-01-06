@@ -963,7 +963,7 @@ void tst_QMessageStore::testMessage()
 #if !defined(Q_OS_SYMBIAN) || defined(FREESTYLEMAILUSED)
     QCOMPARE(removeCatcher.removed.count(), 1);
     QCOMPARE(removeCatcher.removed.first().first, messageId);
-#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)|| defined(FREESTYLEMAILUSED)
+#if defined(Q_WS_MAEMO_5) || defined(FREESTYLEMAILUSED)
     QCOMPARE(removeCatcher.removed.first().second.count(), 2);
     QCOMPARE(removeCatcher.removed.first().second, QSet<QMessageManager::NotificationFilterId>() << filter2->id << filter3->id);
 #else
