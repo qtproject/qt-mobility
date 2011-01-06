@@ -917,19 +917,19 @@ bool QGeoMapDataPrivate::exactMetersToSeconds(const QGeoCoordinate &origin,
         QGraphicsPolygonItem *pi = polyCopy(polyItem);
         pi->setPolygon(wgs);
         latLonExact.insertMulti(object, pi);
-        polys << wgs.boundingRect();
+        polys << pi->boundingRect();
 
         QPolygonF westPoly = wgs * west;
         pi = polyCopy(polyItem);
         pi->setPolygon(westPoly);
         latLonExact.insertMulti(object, pi);
-        polys << westPoly.boundingRect();
+        polys << pi->boundingRect();
 
         QPolygonF eastPoly = wgs * east;
         pi = polyCopy(polyItem);
         pi->setPolygon(eastPoly);
         latLonExact.insertMulti(object, pi);
-        polys << eastPoly.boundingRect();
+        polys << pi->boundingRect();
 
         return true;
     }
@@ -953,19 +953,19 @@ bool QGeoMapDataPrivate::exactMetersToSeconds(const QGeoCoordinate &origin,
         QGraphicsPathItem *pi = pathCopy(pathItem);
         pi->setPath(path);
         latLonExact.insertMulti(object, pi);
-        polys << QPolygonF(path.boundingRect());
+        polys << pi->boundingRect();
 
         QPainterPath westPath = path * west;
         pi = pathCopy(pathItem);
         pi->setPath(westPath);
         latLonExact.insertMulti(object, pi);
-        polys << QPolygonF(westPath.boundingRect());
+        polys << pi->boundingRect();
 
         QPainterPath eastPath = path * east;
         pi = pathCopy(pathItem);
         pi->setPath(eastPath);
         latLonExact.insertMulti(object, pi);
-        polys << QPolygonF(eastPath.boundingRect());
+        polys << pi->boundingRect();
 
         return true;
     }
@@ -1006,19 +1006,19 @@ bool QGeoMapDataPrivate::exactSecondsToSeconds(const QGeoCoordinate &origin,
         QGraphicsPolygonItem *pi = polyCopy(polyItem);
         pi->setPolygon(poly);
         latLonExact.insertMulti(object, pi);
-        polys << poly.boundingRect();
+        polys << pi->boundingRect();
 
         QPolygonF westPoly = poly * west;
         pi = polyCopy(polyItem);
         pi->setPolygon(westPoly);
         latLonExact.insertMulti(object, pi);
-        polys << westPoly.boundingRect();
+        polys << pi->boundingRect();
 
         QPolygonF eastPoly = poly * east;
         pi = polyCopy(polyItem);
         pi->setPolygon(eastPoly);
         latLonExact.insertMulti(object, pi);
-        polys << eastPoly.boundingRect();
+        polys << pi->boundingRect();
 
         return true;
     }
@@ -1035,19 +1035,19 @@ bool QGeoMapDataPrivate::exactSecondsToSeconds(const QGeoCoordinate &origin,
         QGraphicsPathItem *pi = pathCopy(pathItem);
         pi->setPath(path);
         latLonExact.insertMulti(object, pi);
-        polys << QPolygonF(path.boundingRect());
+        polys << pi->boundingRect();
 
         QPainterPath westPath = path * west;
         pi = pathCopy(pathItem);
         pi->setPath(westPath);
         latLonExact.insertMulti(object, pi);
-        polys << QPolygonF(westPath.boundingRect());
+        polys << pi->boundingRect();
 
         QPainterPath eastPath = path * east;
         pi = pathCopy(pathItem);
         pi->setPath(eastPath);
         latLonExact.insertMulti(object, pi);
-        polys << QPolygonF(eastPath.boundingRect());
+        polys << pi->boundingRect();
 
         return true;
     }
@@ -1361,7 +1361,7 @@ void QGeoMapDataPrivate::exactPixelMap(const QGeoCoordinate &origin,
             QGraphicsPolygonItem *pi = polyCopy(polyItem);
             pi->setPolygon(pixelPoly);
             pixelExact.insertMulti(object, pi);
-            polys << pixelPoly.boundingRect();
+            polys << pi->boundingRect();
         }
 
         QGraphicsPathItem *pathItem = dynamic_cast<QGraphicsPathItem*>(latLonItem);
@@ -1384,7 +1384,7 @@ void QGeoMapDataPrivate::exactPixelMap(const QGeoCoordinate &origin,
             QGraphicsPathItem *pi = pathCopy(pathItem);
             pi->setPath(path);
             pixelExact.insertMulti(object, pi);
-            polys << QPolygonF(path.boundingRect());
+            polys << QPolygonF(pi->boundingRect());
         }
     }
 }
