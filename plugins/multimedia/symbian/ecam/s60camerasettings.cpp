@@ -208,9 +208,8 @@ void S60CameraSettings::setFocusMode(QCameraFocus::FocusMode mode)
 void S60CameraSettings::cancelFocusing()
 {
 #ifdef POST_31_PLATFORM
-    if (m_advancedSettings) {
+    if (m_advancedSettings)
         m_advancedSettings->SetAutoFocusType(CCamera::CCameraAdvancedSettings::EAutoFocusTypeOff);
-    }
     else
         emit error(QCamera::CameraError, QString("Unexpected camera error."));
 #endif // POST_31_PLATFORM
@@ -303,9 +302,8 @@ qreal S60CameraSettings::opticalZoomFactorL() const
         else
             User::Leave(KErrNotSupported);
 
-    if (symbianFactor != 0) {
+    if (symbianFactor != 0)
         factor = symbianFactor; factor /= KSymbianFineResolutionFactor;
-    }
 #endif // POST_31_PLATFORM
 
     return factor;
@@ -344,9 +342,8 @@ qreal S60CameraSettings::digitalZoomFactorL() const
         else
             User::Leave(KErrNotSupported);
 
-    if (symbianFactor != 0) {
+    if (symbianFactor != 0)
         factor = symbianFactor; factor /= KSymbianFineResolutionFactor;
-    }
 #endif // POST_31_PLATFORM
 
     return factor;
@@ -373,6 +370,7 @@ void S60CameraSettings::setDigitalZoomFactorL(const qreal zoomFactor)
 void S60CameraSettings::HandleAdvancedEvent(const TECAMEvent& aEvent)
 {
 #ifdef POST_31_PLATFORM
+
     if (aEvent.iErrorCode != KErrNone) {
         switch (aEvent.iErrorCode) {
             case KErrECamCameraDisabled:
@@ -646,9 +644,8 @@ void S60CameraSettings::setAutoIsoSensitivity()
 #ifdef POST_31_PLATFORM
     if (m_advancedSettings) {
         TRAPD(err, m_advancedSettings->SetISORateL(CCamera::CCameraAdvancedSettings::EISOAutoUnPrioritised, 0));
-        if (err) {
+        if (err)
             emit error(QCamera::CameraError, QString("Setting auto iso sensitivity failed."));
-        }
         return;
     }
     else

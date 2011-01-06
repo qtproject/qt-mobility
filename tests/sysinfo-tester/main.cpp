@@ -308,6 +308,10 @@ static void test_systemnetworkinfo(void)
     QtMobility::QSystemNetworkInfo::NetworkMode mode =
     (QtMobility::QSystemNetworkInfo::NetworkMode) sym->val;
 
+    if(QCoreApplication::arguments().count() > 2)
+        if(!QString(sym->key).contains(QCoreApplication::arguments().at(2),Qt::CaseInsensitive))
+            continue;
+
     qDebug() << "";
     qDebug() << "NetworkMode:" << sym->key;
 

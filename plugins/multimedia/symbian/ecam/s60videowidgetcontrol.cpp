@@ -49,7 +49,6 @@
 #include <coecntrl.h>   // CCoeControl
 #include <w32std.h>
 
-
 S60ViewFinderWidget::S60ViewFinderWidget(QWidget *parent):
     QLabel(parent),
     m_isDirect(false) // Bitmap as default
@@ -208,9 +207,8 @@ Qt::AspectRatioMode S60VideoWidgetControl::aspectRatioMode() const
 
 void S60VideoWidgetControl::setAspectRatioMode(Qt::AspectRatioMode ratio)
 {
-    if (m_aspectRatioMode == ratio) {
+    if (m_aspectRatioMode == ratio)
         return;
-    }
     m_aspectRatioMode = ratio;
 
     if (!m_isViewFinderDirect) {

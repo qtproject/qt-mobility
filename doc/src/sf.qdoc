@@ -712,6 +712,10 @@ the client application.
 
 
 \section1 QML Elements
+<<<<<<< HEAD
+=======
+
+>>>>>>> 1.1
 The Qt Service Framework offers discovery and selection of services through declarative
 UI by providing service and service list elements. Detailed information can be found
 at \l{QML Service Framework Plugin}.
