@@ -38,33 +38,41 @@ SOURCES += \
     nfc/qtlv.cpp \
     nfc/qllcpserver.cpp
 
-simulator:PRIVATE_HEADERS += \
-    nfc/qnearfieldmanager_simulator_p.h \
-    nfc/qllcpsocket_simulator_p.h \
-    nfc/qllcpserver_simulator_p.h
+simulator {
+    QT *= gui
 
-simulator:SOURCES += \
-    nfc/qnearfieldmanager_simulator.cpp \
-    nfc/qllcpsocket_simulator_p.cpp \
-    nfc/qllcpserver_simulator_p.cpp
+    PRIVATE_HEADERS += \
+        nfc/qnearfieldmanager_simulator_p.h \
+        nfc/qllcpsocket_simulator_p.h \
+        nfc/qllcpserver_simulator_p.h
 
-simulator:QT *= gui
+    SOURCES += \
+        nfc/qnearfieldmanager_simulator.cpp \
+        nfc/qllcpsocket_simulator_p.cpp \
+        nfc/qllcpserver_simulator_p.cpp
+}
 
-symbian:PRIVATE_HEADERS += \
-    nfc/qnearfieldmanager_symbian_p.h \
-    nfc/qllcpsocket_symbian_p.h \
-    nfc/qllcpserver_symbian_p.h
+symbian {
+    PRIVATE_HEADERS += \
+        nfc/qnearfieldmanager_symbian_p.h \
+        nfc/qllcpsocket_symbian_p.h \
+        nfc/qllcpserver_symbian_p.h
 
-symbian:SOURCES += \
-    nfc/qllcpsocket_symbian_p.cpp \
-    nfc/qllcpserver_symbian_p.cpp
+    SOURCES += \
+        nfc/qllcpsocket_symbian_p.cpp \
+        nfc/qllcpserver_symbian_p.cpp
+}
 
-!simulator:!symbian:PRIVATE_HEADERS += \
-    nfc/qllcpsocket_p.h \
-    nfc/qllcpserver_p.h
+!simulator:!symbian {
+    # unsupported platform stub
 
-!simulator:!symbian:SOURCES += \
-    nfc/qllcpsocket_p.cpp \
-    nfc/qllcpserver_p.cpp
+    PRIVATE_HEADERS += \
+        nfc/qllcpsocket_p.h \
+        nfc/qllcpserver_p.h
+
+    SOURCES += \
+        nfc/qllcpsocket_p.cpp \
+        nfc/qllcpserver_p.cpp
+}
 
 INCLUDEPATH += $$PWD
