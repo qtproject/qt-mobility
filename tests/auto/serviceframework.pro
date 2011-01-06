@@ -10,8 +10,11 @@ SUBDIRS += servicemetadata \
     qabstractsecuritysession \
     qservicecontext \
     qmetaobjectbuilder \
-    icheck \
     qservicemanager_ipc \
     servicedatabase
     # databasemanager # disabled from auto builds
+
+contains(build_tools,yes) {
+    SUBDIRS += icheck
+}
 
