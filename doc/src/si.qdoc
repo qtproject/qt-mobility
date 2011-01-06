@@ -104,10 +104,7 @@ multitouch etc)
 
 \section1 Building and compiling
 
-<<<<<<< HEAD
 To build the library, run \tt configure and \tt make.
-=======
-To build the library, run \tt qmake and \tt make.
 
 Linux supports a NetworkManager based backend and generic backend using
 QNetworkInterface only. By default the generic backend is selected.
