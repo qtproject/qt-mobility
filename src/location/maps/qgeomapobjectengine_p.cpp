@@ -607,32 +607,6 @@ void QGeoMapObjectEngine::invalidateZoomDependents()
         _zoomDepsRecurse(this, mdp->containerObject);
 }
 
-void QGeoMapObjectEngine::shiftPixels(qreal dx, qreal dy)
-{
-    foreach (const QGeoMapObject *oconst, pixelTrans.uniqueKeys()) {
-        // HACK
-        QGeoMapObject *obj = const_cast<QGeoMapObject*>(oconst);
-
-        QList<QTransform> ts = pixelTrans.values(obj);
-        QList<QPolygonF> polys;
-        pixelTrans.remove(obj);
-        foreach (QTransform t, ts) {
-            t.translate(dx, dy);
-            polys << obj->graphicsItem()->boundingRect() * t;
-            pixelTrans.insertMulti(obj, t);
-        }
-
-        QList<QGraphicsItem*> items = pixelItems.keys(obj);
-        Q_ASSERT(items.size() == polys.size());
-        for (int i = 0; i < items.size(); ++i) {
-            QGraphicsItem *item = items.at(i);
-            QGraphicsPolygonItem *pi = dynamic_cast<QGraphicsPolygonItem*>(item);
-            Q_ASSERT(pi);
-            pi->setPolygon(polys.at(i));
-        }
-    }
-}
-
 void QGeoMapObjectEngine::invalidatePixelsForViewport()
 {
     QPolygonF view = mdp->latLonViewport();

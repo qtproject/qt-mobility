@@ -229,18 +229,7 @@ qreal QGeoMapData::zoomLevel() const
 void QGeoMapData::pan(int dx, int dy)
 {
     QPointF pos = coordinateToScreenPosition(center());
-    d_ptr->center = screenPositionToCoordinate(QPointF(pos.x() + dx, pos.y() + dy));
-
-    d_ptr->shiftSinceLastInval += QPointF(dx, dy);
-    if (d_ptr->shiftSinceLastInval.manhattanLength() > 10.0) {
-        d_ptr->oe->invalidatePixelsForViewport();
-        d_ptr->shiftSinceLastInval = QPointF(0, 0);
-    } else {
-        d_ptr->oe->shiftPixels(dx, dy);
-    }
-
-    if (!d_ptr->blockPropertyChangeSignals)
-        emit centerChanged(d_ptr->center);
+    setCenter(screenPositionToCoordinate(QPointF(pos.x() + dx, pos.y() + dy)));
 }
 
 /*!
@@ -251,6 +240,7 @@ void QGeoMapData::setCenter(const QGeoCoordinate &center)
     if (d_ptr->center == center)
         return;
 
+    d_ptr->oe->invalidatePixelsForViewport();
     d_ptr->center = center;
     d_ptr->oe->invalidatePixelsForViewport();
 
