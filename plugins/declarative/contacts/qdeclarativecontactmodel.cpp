@@ -615,7 +615,7 @@ void QDeclarativeContactModel::removeContacts(const QList<QContactLocalId>& ids)
     req->setManager(d->m_manager);
     req->setContactIds(ids);
 
-    connect(req,SIGNAL(stateChanged(QContactAbstractRequest::State)), this, SLOT(contactRemoved()));
+    connect(req,SIGNAL(stateChanged(QContactAbstractRequest::State)), this, SLOT(contactsRemoved()));
 
     req->start();
 }
