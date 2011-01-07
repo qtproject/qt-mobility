@@ -79,6 +79,9 @@ S60VideoPlayerSession::S60VideoPlayerSession(QMediaService *service)
         0,
         EMdaPriorityPreferenceNone
         ));
+    //enabling the register for notification gives a blank screen during video playback.. 
+    //Will be handled as part of error: QTMOBILITY-782 
+    //m_player->RegisterForVideoLoadingNotification(*this);
 #else
     RWindow *window = 0;
     QRect rect;
@@ -289,7 +292,13 @@ bool S60VideoPlayerSession::isAudioAvailable()
 
 void S60VideoPlayerSession::doPlay()
 {
+    //temporary hack for bufferring.. To be removed when register for notification is enabled
+    buffering();
+    
     m_player->Play();
+    
+    //temporary.. To be removed when register for notification is enabled
+    buffered();
 }
 
 void S60VideoPlayerSession::doPauseL()

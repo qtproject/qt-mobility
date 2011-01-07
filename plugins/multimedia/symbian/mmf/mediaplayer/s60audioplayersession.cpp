@@ -111,15 +111,16 @@ void S60AudioPlayerSession::MaloLoadingComplete()
 
 void S60AudioPlayerSession::doPlay()
 {
-// For some reason loading progress callbalck are not called on emulator
-#ifdef __WINSCW__
-    buffering();
-#endif
-    m_player->Play();
-#ifdef __WINSCW__
-    buffered();
-#endif
-
+    // For some reason loading progress callback are not called on emulator
+    // Same is the case with hardware. Will be fixed as part of QTMOBILITY-782.
+        
+    //#ifdef __WINSCW__
+        buffering();
+    //#endif
+        m_player->Play();
+    //#ifdef __WINSCW__
+        buffered();
+    //#endif
 }
 
 void S60AudioPlayerSession::doPauseL()
