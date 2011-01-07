@@ -41,16 +41,19 @@
 
 
 #include "qbluetoothtransferreply_symbian_p.h"
+#include "utils_symbian_p.h"
 
 #include <QDebug>
 #include <QFile>
 #include <QFileInfo>
+#include <QDir>
 
 QTM_BEGIN_NAMESPACE
 
 QBluetoothTransferReplySymbian::QBluetoothTransferReplySymbian(QIODevice *input, QObject *parent)
-:   QBluetoothTransferReply(parent), m_source(input), CActive(EPriorityStandard), m_client(NULL),
-    m_running(false), m_finished(false)
+:   QBluetoothTransferReply(parent), CActive(EPriorityStandard), m_source(input),
+    m_running(false), m_finished(false), m_client(NULL),
+    m_error(QBluetoothTransferReply::NoError), m_errorStr()
 {
     //add this active object to scheduler
     CActiveScheduler::Add(this);
@@ -85,7 +88,7 @@ bool QBluetoothTransferReplySymbian::start()
 
     protocolInfo.iTransport.Copy(KBTSProtocol);
     protocolInfo.iAddr.SetBTAddr(deviceAddress);
-    //protocolInfo.iAddr.SetPort( /*set port here*/ );
+    //protocolInfo.iAddr.SetPort( port ); // TODO: set port if needed
 
     if ( m_client ) {
         delete m_client;
@@ -93,8 +96,11 @@ bool QBluetoothTransferReplySymbian::start()
     }
 
     TRAPD( err, m_client = CObexClient::NewL(protocolInfo));
-    if (err)
+    if (err) {
+        qDebug() << "Error in" << __FUNCTION__ << err;
+        m_error = err == KErrNotFound ? HostNotFoundError: UnknownError;
         return false;
+    }
 
     m_client->Connect( iStatus );
 
@@ -136,12 +142,12 @@ qint64 QBluetoothTransferReplySymbian::writeData(const char*, qint64)
 
 QBluetoothTransferReply::TransferError QBluetoothTransferReplySymbian::error() const
 {
-    return NoError;
+    return m_error;
 }
 
 QString QBluetoothTransferReplySymbian::errorString() const
 {
-    return QString();
+    return m_errorStr;
 }
 
 void QBluetoothTransferReplySymbian::DoCancel()
@@ -152,6 +158,7 @@ void QBluetoothTransferReplySymbian::DoCancel()
         m_client = NULL;
         m_state = EIdle;
     }
+    m_error = UserCancelledTransferError;
 }
 
 void QBluetoothTransferReplySymbian::RunL()
@@ -164,11 +171,13 @@ void QBluetoothTransferReplySymbian::RunL()
             QString filename;
             if (file) {
                 QFileInfo info(*file);
-                filename = info.absoluteFilePath();
+                m_fileSize = info.size();
+                filename = QDir::toNativeSeparators(info.absoluteFilePath());
             } else {
                 if (copyToTempFile(m_tempfile, m_source)) {
                    QFileInfo info(*m_tempfile);
-                   filename = info.absoluteFilePath();
+                   m_fileSize = info.size();
+                   filename = QDir::toNativeSeparators(info.absoluteFilePath());
                 } else {
                     m_state = EDisconnecting;
                     disconnect();
@@ -178,6 +187,7 @@ void QBluetoothTransferReplySymbian::RunL()
             break;
         }
         case ESending: {
+            emit uploadProgress(0, m_fileSize);
             m_state = EDisconnecting;
             disconnect();
             break;
@@ -186,6 +196,7 @@ void QBluetoothTransferReplySymbian::RunL()
             m_state = EIdle;
             m_finished = true;
             m_running = false;
+            emit finished(this);
             break;
         }
         case EIdle:
@@ -206,13 +217,19 @@ void QBluetoothTransferReplySymbian::sendObject(QString filename)
         if (!error) {
             m_client->Put( *m_object, iStatus );
             SetActive();
+        } else {
+            qDebug() << "Error in" << __FUNCTION__ << error;
+            m_error = error == KErrNotFound ? FileNotFoundError: UnknownError;
+            disconnect();
         }
     }
 }
 
 void QBluetoothTransferReplySymbian::disconnect()
 {
-    if ( m_state == ESending ) {
+    if ( m_state == EDisconnecting || m_error != NoError) {
+        delete m_object;
+        m_object = NULL;
         m_client->Disconnect( iStatus );
         SetActive();
     }
