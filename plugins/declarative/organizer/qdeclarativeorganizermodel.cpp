@@ -818,7 +818,7 @@ void QDeclarativeOrganizerModel::itemsSaved()
                     //new saved item
                     di = createItem(item);
                     d->m_itemMap.insert(itemId, di);
-                    beginInsertRows(QModelIndex(), d->m_items.count(), d->m_items.count() + 1);
+                    beginInsertRows(QModelIndex(), d->m_items.count(), d->m_items.count());
                     d->m_items.append(di);
                     endInsertRows();
                 }
