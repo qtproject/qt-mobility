@@ -306,7 +306,7 @@ void QDeclarativeContactMetaObject::detail_append(QDeclarativeListProperty<QDecl
         ContactDetailNameMap* data = (ContactDetailNameMap*)(p->data);
         if (!data || detail->detail().definitionName() == data->definitionName) {
             detail->connect(detail, SIGNAL(fieldsChanged()), SIGNAL(valueChanged()), Qt::UniqueConnection);
-            detail->connect(detail, SIGNAL(fieldsChanged()), dc, SIGNAL(detailsChanged()), Qt::UniqueConnection);
+            detail->connect(detail, SIGNAL(valueChanged()), dc, SIGNAL(detailsChanged()), Qt::UniqueConnection);
             dc->d->m_details.append(detail);
         }
     }
