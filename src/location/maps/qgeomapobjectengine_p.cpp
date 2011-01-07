@@ -510,13 +510,28 @@ void QGeoMapObjectEngine::exactPixelMap(const QGeoCoordinate &origin,
                     lastPixelAdded = pixel;
             }
 
+            QPainterPath::Element em = path.elementAt(0);
+
             for (int i = 0; i < path.elementCount(); ++i) {
                 QPainterPath::Element e = path.elementAt(i);
 
                 if (tooClose.contains(i))
                     continue;
 
-                bool outside = !screen.contains(e.x, e.y);
+                // guilty until proven innocent
+                bool outside = true;
+                if (screen.contains(e.x, e.y))
+                    outside = false;
+                if (lastOutside) {
+                    if (em.x < screen.left() && e.x > screen.right())
+                        outside = false;
+                    if (em.x > screen.right() && e.x < screen.left())
+                        outside = false;
+                    if (em.y < screen.bottom() && e.y > screen.top())
+                        outside = false;
+                    if (em.y > screen.top() && e.y < screen.bottom())
+                        outside = false;
+                }
 
                 // skip points not inside the screen rect
                 // or attached to points inside it
@@ -536,6 +551,8 @@ void QGeoMapObjectEngine::exactPixelMap(const QGeoCoordinate &origin,
                     mpath.moveTo(pixel);
                 else
                     mpath.lineTo(pixel);
+
+                em = e;
             }
 
             QGraphicsPathItem *pi = pathCopy(pathItem);
