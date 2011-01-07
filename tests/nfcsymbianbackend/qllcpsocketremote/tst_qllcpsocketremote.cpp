@@ -179,11 +179,12 @@ void tst_qllcpsocketremote::testCase1()
 void tst_qllcpsocketremote::testCase2()
 {
     QLlcpSocket localSocket;
+    QSignalSpy readyReadSpy(&localSocket, SIGNAL(readyRead()));
     bool ret = localSocket.bind(m_port);
     QVERIFY(ret);
 
     // STEP 1:  bind the local port for current socket
-    QSignalSpy readyReadSpy(&localSocket, SIGNAL(readyRead()));
+
     QString expectedMessage1("testcase2 string str1");
     QString expectedMessage2("testcase2 string str2");
 
