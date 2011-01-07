@@ -46,6 +46,110 @@ Item {
     property variant contact
     signal dismissed
     signal deleted(int id)
+    property bool showDetailed: false
+
+    ListView {
+        id: normalView
+        focus: true
+        keyNavigationWraps: true
+        width: parent.width
+        anchors.top: parent.top
+        anchors.bottom: toolBar.top
+        opacity: 1
+        transform: Scale {
+            id: normalViewScale;
+            xScale: 1
+            origin.x: normalView.width/2
+        }
+
+        model: VisualItemModel {
+            Text {
+                width: normalView.width - 6;
+                height: 30
+                text: "Name"
+                verticalAlignment: Text.AlignVCenter
+                horizontalAlignment: Text.AlignHCenter
+                color: "white";
+                font.weight: Font.Bold
+            }
+            FieldRow {
+                id: customLabelRow
+                width: normalView.width
+                label: "Display"
+                value: contact ? contact.name.customLabel : ""
+            }
+            FieldRow {
+                id: firstNameRow
+                width: normalView.width
+                label: "First name"
+                value: contact ? contact.name.firstName : ""
+            }
+            FieldRow {
+                id: lastNameRow
+                width: normalView.width
+                label: "Last name"
+                value: contact ? contact.name.lastName : ""
+            }
+
+            Text {
+                width: normalView.width - 6;
+                height: 30
+                text: "Phone Numbers"
+                verticalAlignment: Text.AlignVCenter
+                horizontalAlignment: Text.AlignHCenter
+                color: "white";
+                font.weight: Font.Bold
+            }
+            Column {
+                Repeater {
+                    model: contact ? contact.phoneNumbers : []
+                    delegate:
+                        FieldRow {
+                            width: normalView.width
+                            label: modelData.contexts.toString()
+                            value: modelData.number
+                            onBlur: {
+                                        modelData.setValue("PhoneNumber", newValue);
+                                }
+                        }
+                }
+            }
+            /* Not implemented yet
+            MediaButton {
+                text: "Add Phone";
+            }
+            */
+
+            Text {
+                width: normalView.width - 6;
+                height: 30
+                text: "Email Addresses"
+                verticalAlignment: Text.AlignVCenter
+                horizontalAlignment: Text.AlignHCenter
+                color: "white";
+                font.weight: Font.Bold
+            }
+            Column {
+                Repeater {
+                    model: contact ? contact.emails : []
+                    delegate:
+                        FieldRow {
+                            width: normalView.width
+                            label: modelData.contexts.toString()
+                            value: modelData.emailAddress
+                            onBlur: {
+                                        modelData.setValue("EmailAddress", newValue);
+                                }
+                        }
+                }
+            }
+            /* Not implemented yet
+            MediaButton {
+                text: "Add Email";
+            }
+            */
+        }
+    }
 
     ListView {
         id: detailView
@@ -54,6 +158,12 @@ Item {
         width: parent.width
         anchors.top: parent.top
         anchors.bottom: toolBar.top
+        opacity: 1
+        transform: Scale {
+            id: detailViewScale;
+            xScale: 0
+            origin.x: detailView.width/2
+        }
 
         model: contact ? contact.details : null
 
@@ -62,7 +172,7 @@ Item {
                 Text {
                     width: detailView.width - 6;
                     height: 30
-                    anchors.horizontalCenter: parent.horizontalCenter
+                    horizontalAlignment: Text.AlignHCenter
                     text: modelData.definitionName;
                     verticalAlignment: Text.AlignVCenter
                     color: "white";
@@ -76,7 +186,7 @@ Item {
 
                     delegate:
                         Item {
-                            width: parent.width
+                            width: detailView.width
                             height: childrenRect.height
                             Text {
                                 id: fieldName
@@ -87,40 +197,14 @@ Item {
                                 text: modelData
                                 color: "white"
                             }
-                            Rectangle {
+                            Text {
                                 id: textRect
                                 anchors.left: fieldName.right
                                 anchors.right: parent.right
                                 anchors.rightMargin: 3
-                                height: 30;
-                                color: "#00000000";
-                                border.color: "#00000000";
-                                border.width: 0
-                                TextInput {
-                                    id: textEdit
-                                    anchors.fill: parent
-                                    anchors.margins: 3
-                                    text: fieldView.detail.value(modelData).toString();
-                                    color: activeFocus? "black" : "#ffffaa";
-                                    onActiveFocusChanged: {
-                                            if (!activeFocus) {
-                                                fieldView.detail.setValue(modelData, text);
-                                            }
-                                        }
-                                }
-                                states: [
-                                        State {
-                                            name: "focused"
-                                            when: textEdit.activeFocus
-                                            PropertyChanges {
-                                                target: textRect
-                                                color: "#aaffffff"
-                                                radius: 2
-                                                border.width: 1
-                                                border.color: "black"
-                                            }
-                                        }
-                                    ]
+                                height: 30
+                                color: "white"
+                                text: fieldView.detail.value(modelData).toString()
                             }
                         }
                 }
@@ -133,19 +217,52 @@ Item {
         anchors.bottom: parent.bottom;
         width: parent.width;
         opacity: 0.9
-        labels: ["Save", "Cancel", "Delete"]
+        labels: ["Save", "Cancel", "Delete", "Details"]
         onButtonClicked: {
                 // force the focus away from any TextInputs, to ensure they save
                 toolBar.focus = true
+                contact.name.customLabel = customLabelRow.newValue
+                contact.name.firstName = firstNameRow.newValue
+                contact.name.lastName = lastNameRow.newValue
                 switch (index) {
                     case 0:
-                        contact.save()
+                        contact.save();
                         break;
                     case 2:
                         deleted(contact.contactId)
                         break;
+                    case 3:
+                        showDetailed = !showDetailed;
+                        break;
                 }
-                dismissed()
+                if (index != 3)
+                    dismissed();
             }
     }
+
+    states: [
+        State {
+            name: "Detailed"
+            when: showDetailed
+            PropertyChanges {
+                target: normalViewScale
+                xScale: 0
+            }
+            PropertyChanges {
+                target: detailViewScale
+                xScale: 1
+            }
+        }
+        ]
+    transitions:  [
+            Transition {
+                from: ""
+                to: "Detailed"
+                reversible: true
+                SequentialAnimation {
+                    NumberAnimation { duration: 100; target: normalViewScale; properties: "xScale" }
+                    NumberAnimation { duration: 100; target: detailViewScale; properties: "xScale" }
+                }
+            }
+        ]
 }

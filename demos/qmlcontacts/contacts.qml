@@ -82,17 +82,11 @@ Item {
                     contactView.contact = contact;
                     }
             onNewContact: {
-                    var contactComponent = Qt.createComponent("NewContact.qml");
-                    var finishCreation = function() {
-                        screen.showContact = true;
-                        contactView.contact = contactComponent.createObject(screen);
-                        console.log(contactView.contact.name.firstName);
-                    };
-                    if (contactComponent.status == Component.Ready) {
-                        finishCreation();
-                    } else {
-                        contactComponent.statusChanged.connect(finishCreation);
-                    }
+                    var contact = Qt.createQmlObject(
+                        "import QtMobility.contacts 1.1;" +
+                        "Contact {}", contactModel);
+                    screen.showContact = true;
+                    contactView.contact = contact;
                 }
         }
 
