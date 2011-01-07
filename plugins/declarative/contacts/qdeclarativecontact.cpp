@@ -173,7 +173,7 @@ bool QDeclarativeContact::removeDetail(QDeclarativeContactDetail* detail)
 }
 
 /*!
-    \qmlproperty QDeclarativeListProperty Contact::details
+    \qmlproperty list<ContactDetail> Contact::details
 
     This property holds the list of \l ContactDetail elements that the contact has.
 */
