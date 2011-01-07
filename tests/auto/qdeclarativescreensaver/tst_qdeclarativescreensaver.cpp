@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,43 +39,31 @@
 **
 ****************************************************************************/
 
+//TESTED_COMPONENT=src/systeminfo
 
-#ifndef DATABASEWATCHER_P_H
-#define DATABASEwATCHER_P_H
+#include <QtTest/QtTest>
+#include "qdeclarativescreensaver_p.h"
 
-#include <QObject>
-
-#include <QStringList>
-#include <QString>
-#include <QFileSystemWatcher>
-
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
-
-class DatabaseFileWatcher : public QObject
+QTM_USE_NAMESPACE
+class tst_QDeclarativeScreenSaver : public QObject
 {
     Q_OBJECT
-public:
-    DatabaseFileWatcher(const QString &databaseWatcherPath, QObject *parent = 0);
-    void setEnabled(bool enabled);
-
-signals:
-    void notifyChange();
 
 private slots:
-    void databaseChanged(const QString &path);
-
-private:
-    QFileSystemWatcher *m_watcher;
-    QString m_databaseWatcherPath;
+    void tst_setScreenSaverDelayed();
 };
 
-#endif
+void tst_QDeclarativeScreenSaver::tst_setScreenSaverDelayed()
+{
+    QDeclarativeScreenSaver si;
+    si.setScreenSaverDelayed(true);
+    bool enabled = si.screenSaverDelayed();
+    QVERIFY(enabled);
+    si.setScreenSaverDelayed(false);
+    enabled = si.screenSaverDelayed();
+    QVERIFY(!enabled);
+
+}
+
+QTEST_MAIN(tst_QDeclarativeScreenSaver)
+#include "tst_qdeclarativescreensaver.moc"

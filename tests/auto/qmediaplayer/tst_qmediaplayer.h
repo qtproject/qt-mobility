@@ -300,6 +300,7 @@ private slots:
     void testStop();
     void testMediaStatus();
     void testPlaylist();
+    void testPositionPropertyWatch();
 
 private:
     MockProvider *mockProvider;

@@ -260,6 +260,7 @@ bool QGraphicsVideoItem::setMediaObject(QMediaObject *object)
         }
     }
 
+    d->mediaObject = 0;
     return false;
 }
 

@@ -103,20 +103,19 @@ QStringList S60VideoEncoderControl::supportedEncodingOptions(const QString &code
 
 QVariant S60VideoEncoderControl::encodingOption(const QString &codec, const QString &name) const
 {
+    Q_UNUSED(codec);
+
     // Possible settings: EncodingMode, Codec, Resolution, FrameRate, BitRate, Quality
     // Possible (codec specific) options: PixelAspectRatio, Gain, MaxClipSizeInBytes
 
     QVariant returnValue;
 
-    if(qstrcmp(name.toLocal8Bit().constData(), "pixelAspectRatio") == 0) {
+    if (qstrcmp(name.toLocal8Bit().constData(), "pixelAspectRatio") == 0)
         returnValue.setValue(m_session->pixelAspectRatio());
-    }
-    else if(qstrcmp(name.toLocal8Bit().constData(), "gain") == 0) {
+    else if (qstrcmp(name.toLocal8Bit().constData(), "gain") == 0)
         returnValue.setValue((int)m_session->gain());
-    }
-    else if(qstrcmp(name.toLocal8Bit().constData(), "maxClipSizeInBytes") == 0) {
+    else if (qstrcmp(name.toLocal8Bit().constData(), "maxClipSizeInBytes") == 0)
         returnValue.setValue(m_session->maxClipSizeInBytes());
-    }
 
     return returnValue;
 }
@@ -127,18 +126,14 @@ void S60VideoEncoderControl::setEncodingOption(
     // Set the codec first if not already set
     m_session->setVideoCaptureCodec(codec);
 
-    if(qstrcmp(name.toLocal8Bit().constData(), "pixelAspectRatio") == 0) {
+    if (qstrcmp(name.toLocal8Bit().constData(), "pixelAspectRatio") == 0)
         m_session->setPixelAspectRatio(value.toSize());
-    }
-    else if(qstrcmp(name.toLocal8Bit().constData(), "gain") == 0) {
+    else if (qstrcmp(name.toLocal8Bit().constData(), "gain") == 0)
         m_session->setGain(value.toInt());
-    }
-    else if(qstrcmp(name.toLocal8Bit().constData(), "maxClipSizeInBytes") == 0) {
+    else if (qstrcmp(name.toLocal8Bit().constData(), "maxClipSizeInBytes") == 0)
         m_session->setMaxClipSizeInBytes(value.toInt());
-    }
-    else {
+    else
         m_session->setError(KErrNotSupported, QString("Requested encoding option is not supported"));
-    }
 }
 
 QVideoEncoderSettings S60VideoEncoderControl::videoSettings() const
@@ -151,41 +146,55 @@ QVideoEncoderSettings S60VideoEncoderControl::videoSettings() const
 
 void S60VideoEncoderControl::setVideoSettings(const QVideoEncoderSettings &settings)
 {
-    if (settings.codec().isEmpty()) {
+    // Notify that settings have been implicitly set and there's no need to
+    // initialize them in case camera is changed
+    m_session->notifySettingsSet();
+
+    if (settings.codec().isEmpty()
+        || (settings.resolution() == QSize(-1,-1) && settings.frameRate() == 0 && settings.bitRate() == -1)) {
+        if (!settings.codec().isEmpty())
+            m_session->setVideoCaptureCodec(settings.codec());
+        m_session->setVideoEncodingMode(settings.encodingMode());
         m_session->setVideoCaptureQuality(settings.quality(), S60VideoCaptureSession::EOnlyVideoQuality);
-    } else if (settings.resolution() != QSize() && settings.frameRate() == 0 && settings.bitRate() == -1) { // Only Resolution
+    } else if (settings.resolution() != QSize(-1,-1) && settings.frameRate() == 0 && settings.bitRate() == -1) { // Only Resolution
         m_session->setVideoCaptureCodec(settings.codec());
         m_session->setVideoEncodingMode(settings.encodingMode());
         m_session->setVideoResolution(settings.resolution());
         m_session->setVideoCaptureQuality(settings.quality(), S60VideoCaptureSession::EVideoQualityAndResolution);
-    } else if (settings.resolution() != QSize() && settings.frameRate() == 0 && settings.bitRate() == -1) { // Only Framerate
+
+    } else if (settings.resolution() == QSize(-1,-1) && settings.frameRate() != 0 && settings.bitRate() == -1) { // Only Framerate
         m_session->setVideoCaptureCodec(settings.codec());
         m_session->setVideoEncodingMode(settings.encodingMode());
         m_session->setFrameRate(settings.frameRate());
         m_session->setVideoCaptureQuality(settings.quality(), S60VideoCaptureSession::EVideoQualityAndFrameRate);
-    } else if (settings.resolution() != QSize() && settings.frameRate() == 0 && settings.bitRate() == -1) { // Only BitRate
+
+    } else if (settings.resolution() == QSize(-1,-1) && settings.frameRate() == 0 && settings.bitRate() != -1) { // Only BitRate
         m_session->setVideoCaptureCodec(settings.codec());
         m_session->setVideoEncodingMode(settings.encodingMode());
         m_session->setBitrate(settings.bitRate());
         m_session->setVideoCaptureQuality(settings.quality(), S60VideoCaptureSession::EVideoQualityAndBitRate);
-    } else if (settings.resolution() != QSize() && settings.frameRate() == 0 && settings.bitRate() == -1) { // Resolution and FrameRate
+
+    } else if (settings.resolution() != QSize(-1,-1) && settings.frameRate() != 0 && settings.bitRate() == -1) { // Resolution and FrameRate
         m_session->setVideoCaptureCodec(settings.codec());
         m_session->setVideoEncodingMode(settings.encodingMode());
         m_session->setVideoResolution(settings.resolution());
         m_session->setFrameRate(settings.frameRate());
         m_session->setVideoCaptureQuality(settings.quality(), S60VideoCaptureSession::EVideoQualityAndResolutionAndFrameRate);
-    } else if (settings.resolution() != QSize() && settings.frameRate() == 0 && settings.bitRate() == -1) { // Resolution and BitRate
+
+    } else if (settings.resolution() != QSize(-1,-1) && settings.frameRate() == 0 && settings.bitRate() != -1) { // Resolution and BitRate
         m_session->setVideoCaptureCodec(settings.codec());
         m_session->setVideoEncodingMode(settings.encodingMode());
         m_session->setVideoResolution(settings.resolution());
         m_session->setBitrate(settings.bitRate());
         m_session->setVideoCaptureQuality(settings.quality(), S60VideoCaptureSession::EVideoQualityAndResolutionAndBitRate);
-    } else if (settings.resolution() != QSize() && settings.frameRate() == 0 && settings.bitRate() == -1) { // FrameRate and BitRate
+
+    } else if (settings.resolution() == QSize(-1,-1) && settings.frameRate() != 0 && settings.bitRate() != -1) { // FrameRate and BitRate
         m_session->setVideoCaptureCodec(settings.codec());
         m_session->setVideoEncodingMode(settings.encodingMode());
         m_session->setFrameRate(settings.frameRate());
         m_session->setBitrate(settings.bitRate());
         m_session->setVideoCaptureQuality(settings.quality(), S60VideoCaptureSession::EVideoQualityAndFrameRateAndBitRate);
+
     } else { // All: Resolution, BitRate and FrameRate
         m_session->setVideoCaptureCodec(settings.codec());
         m_session->setVideoEncodingMode(settings.encodingMode());

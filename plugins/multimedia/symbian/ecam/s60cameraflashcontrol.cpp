@@ -104,9 +104,8 @@ bool S60CameraFlashControl::isFlashModeSupported(QCameraExposure::FlashModes mod
 
 bool S60CameraFlashControl::isFlashReady() const
 {
-    if (m_advancedSettings) {
+    if (m_advancedSettings)
         return m_advancedSettings->isFlashReady();
-    }
 
     return false;
 }

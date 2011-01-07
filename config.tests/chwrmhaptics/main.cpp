@@ -39,37 +39,11 @@
 **
 ****************************************************************************/
 
-#include <QDir>
-#include <QFile>
-#include <QDebug>
+#include <hwrmhaptics.h>
+#include <hwrmlogicalactuators.h>
 
-#include "databasefilewatcher_p.h"
-
-DatabaseFileWatcher::DatabaseFileWatcher(const QString &databaseWatcherPath, QObject *parent)
-    : QObject(parent),
-      m_watcher(0),
-      m_databaseWatcherPath(databaseWatcherPath)
+int main(int, char**)
 {
-}
-
-void DatabaseFileWatcher::setEnabled(bool enabled)
-{
-    if (!m_watcher) {
-        m_watcher = new QFileSystemWatcher(this);
-        connect(m_watcher, SIGNAL(fileChanged(QString)),
-           SLOT(databaseChanged(QString)));
-    }
-    if (enabled) {
-        if (QFile::exists(m_databaseWatcherPath)) {
-            if (!m_watcher->files().contains(m_databaseWatcherPath))
-                    m_watcher->addPath(m_databaseWatcherPath);
-        }
-    } else {
-        m_watcher->removePath(m_databaseWatcherPath);
-    }
-}
-
-void DatabaseFileWatcher::databaseChanged(const QString &)
-{
-     emit notifyChange();
+    CHWRMHaptics *haptics = CHWRMHaptics::NewL( NULL, NULL );
+    return 0;
 }

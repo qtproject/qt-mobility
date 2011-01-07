@@ -68,8 +68,6 @@ Q_SIGNALS:
 //    void currentFlowChanged(int);
 //    void remainingCapacityBarsChanged(int);
 //    void remainingChargingTimeChanged(int);
-//    void voltageChanged(int);
-
 public slots:
     void startBatteryStatusChanged();
 
@@ -83,7 +81,6 @@ public slots:
     void startCurrentFlowChanged();
     void startRemainingCapacityBarsChanged();
     void startRemainingChargingTimeChanged();
-    void startVoltageChanged();
     void startConnections();
 
 };
