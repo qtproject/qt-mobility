@@ -79,6 +79,7 @@ public:
     QGeoMapGroupObject* containerObject;
 
     qreal zoomLevel;
+    QPointF shiftSinceLastInval;
     QGeoCoordinate center;
     QSizeF windowSize;
     QGraphicsGeoMap::MapType mapType;

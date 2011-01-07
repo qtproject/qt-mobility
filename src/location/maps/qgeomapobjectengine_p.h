@@ -115,6 +115,8 @@ public:
     virtual void invalidateZoomDependents();
     virtual void invalidatePixelsForViewport();
 
+    virtual void shiftPixels(qreal dx, qreal dy);
+
 public:
 
     /*** Exact transform functions ***/

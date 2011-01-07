@@ -94,7 +94,7 @@ QGeoMapObjectEngine::QGeoMapObjectEngine(QGeoMapData *mapData, QGeoMapDataPrivat
     mdp(mapDataP),
     pixelScene(new QGraphicsScene),
     latLonScene(new QGraphicsScene),
-    exactMappingTolerance(1.0)
+    exactMappingTolerance(8.0)
 {
 }
 
@@ -491,10 +491,30 @@ void QGeoMapObjectEngine::exactPixelMap(const QGeoCoordinate &origin,
             QPointF lastPixelAdded;
             bool lastOutside = true;
 
+            QSet<int> tooClose;
+            QList<QPointF> pixelPoints;
+
             for (int i = 0; i < path.elementCount(); ++i) {
                 QPainterPath::Element e = path.elementAt(i);
                 double x = e.x; x /= 3600.0;
                 double y = e.y; y /= 3600.0;
+
+                QPointF pixel = mdp->coordinateToScreenPosition(x, y);
+                double delta = (pixel - lastPixelAdded).manhattanLength();
+
+                pixelPoints.append(pixel);
+
+                if (!lastPixelAdded.isNull() && delta < exactMappingTolerance)
+                    tooClose.insert(i);
+                else
+                    lastPixelAdded = pixel;
+            }
+
+            for (int i = 0; i < path.elementCount(); ++i) {
+                QPainterPath::Element e = path.elementAt(i);
+
+                if (tooClose.contains(i))
+                    continue;
 
                 bool outside = !screen.contains(e.x, e.y);
 
@@ -504,30 +524,18 @@ void QGeoMapObjectEngine::exactPixelMap(const QGeoCoordinate &origin,
                     continue;
 
                 // entering the screen rect
-                if (!outside && lastOutside) {
-                    if (i > 0) {
-                        QPainterPath::Element e2 = path.elementAt(i-1);
-                        double x2 = e2.x; x2 /= 3600.0;
-                        double y2 = e2.y; y2 /= 3600.0;
-                        QPointF pixel2 = mdp->coordinateToScreenPosition(x2, y2);
-                        mpath.moveTo(pixel2);
-                        lastPixelAdded = pixel2;
-                    }
+                if (!outside && lastOutside && i > 0) {
+                    QPointF lastPixel = pixelPoints.at(i-1);
+                    mpath.moveTo(lastPixel);
                 }
                 lastOutside = outside;
 
-                QPointF pixel = mdp->coordinateToScreenPosition(x, y);
-                double delta = (pixel - lastPixelAdded).manhattanLength();
+                QPointF pixel = pixelPoints.at(i);
 
-                if (lastPixelAdded.isNull() || delta > exactMappingTolerance) {
-                    if (e.isMoveTo()) {
-                        mpath.moveTo(pixel);
-                    } else {
-                        mpath.lineTo(pixel);
-                    }
-
-                    lastPixelAdded = pixel;
-                }
+                if (e.isMoveTo())
+                    mpath.moveTo(pixel);
+                else
+                    mpath.lineTo(pixel);
             }
 
             QGraphicsPathItem *pi = pathCopy(pathItem);
@@ -580,6 +588,32 @@ void QGeoMapObjectEngine::invalidateZoomDependents()
 {
     if (mdp->containerObject)
         _zoomDepsRecurse(this, mdp->containerObject);
+}
+
+void QGeoMapObjectEngine::shiftPixels(qreal dx, qreal dy)
+{
+    foreach (const QGeoMapObject *oconst, pixelTrans.uniqueKeys()) {
+        // HACK
+        QGeoMapObject *obj = const_cast<QGeoMapObject*>(oconst);
+
+        QList<QTransform> ts = pixelTrans.values(obj);
+        QList<QPolygonF> polys;
+        pixelTrans.remove(obj);
+        foreach (QTransform t, ts) {
+            t.translate(dx, dy);
+            polys << obj->graphicsItem()->boundingRect() * t;
+            pixelTrans.insertMulti(obj, t);
+        }
+
+        QList<QGraphicsItem*> items = pixelItems.keys(obj);
+        Q_ASSERT(items.size() == polys.size());
+        for (int i = 0; i < items.size(); ++i) {
+            QGraphicsItem *item = items.at(i);
+            QGraphicsPolygonItem *pi = dynamic_cast<QGraphicsPolygonItem*>(item);
+            Q_ASSERT(pi);
+            pi->setPolygon(polys.at(i));
+        }
+    }
 }
 
 void QGeoMapObjectEngine::invalidatePixelsForViewport()
