@@ -327,11 +327,7 @@ TInt CLlcpSocketType1::CreateConnection(TUint8 portNum)
         {
           iRemotePort = portNum;
           qDebug() << "CreateConnection " << iRemotePort;
-          if ( !iConnection )
-              {
-              // Creating wrapper for connection.
-              TRAP( error, iConnection = COwnLlcpConnectionWrapper::NewL(llcpConnection ) );
-              }
+          error = StartTransportedAndReceive(llcpConnection);
         }
     END
     return error;        
@@ -351,7 +347,7 @@ TInt CLlcpSocketType1::StartTransportedAndReceive(MLlcpConnLessTransporter* aCon
 
      if ( error == KErrNone && iConnection != NULL)
          {
-         iConnection->Receive(*this);
+         error = iConnection->Receive(*this);
          }
      END
      return error;  
