@@ -249,13 +249,15 @@ void tst_qllcpsocketlocal::testCase2()
 void tst_qllcpsocketlocal::testCase2()
 {
     QLlcpSocket *socket = new QLlcpSocket;
+    quint8 localPort = 38;
+
     // STEP 1:
     QSignalSpy bytesWrittenSpy(socket, SIGNAL(bytesWritten(qint64)));
     QString message("testcase2 string str1");
     QByteArray tmpArray(message.toAscii());
     const char* data =  tmpArray.data();
     qint64 strSize = message.size();
-    qint64 val = socket->writeDatagram(data,strSize,m_target, m_port);
+    qint64 val = socket->writeDatagram(data,strSize,m_target, localPort);
     QVERIFY(val != -1);
 
     // STEP 2:
@@ -263,7 +265,7 @@ void tst_qllcpsocketlocal::testCase2()
     QByteArray tmpArray2(message2.toAscii());
     const char* data2 =  tmpArray2.data();
     qint64 strSize2 = message2.size();
-    qint64 val2 = socket->writeDatagram(data2,strSize2,m_target, m_port);
+    qint64 val2 = socket->writeDatagram(data2,strSize2,m_target, localPort);
     QVERIFY(val2 != -1);
 
     // STEP 3:
