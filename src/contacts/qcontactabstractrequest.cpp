@@ -48,6 +48,10 @@
 #include <QMutex>
 #include <QMutexLocker>
 
+#ifndef QT_NO_DEBUG_STREAM
+#include <QDebug>
+#endif
+
 QTM_BEGIN_NAMESPACE
 /*!
   \class QContactAbstractRequest
@@ -333,6 +337,23 @@ bool QContactAbstractRequest::waitForFinished(int msecs)
 
     return false; // unable to wait for operation; not in progress or no engine.
 }
+
+#ifndef QT_NO_DEBUG_STREAM
+/*!
+  Outputs \a request to the debug stream \a dbg
+ */
+QDebug operator<<(QDebug dbg, const QContactAbstractRequest& request)
+{
+    dbg.nospace() << "QContactAbstractRequest(";
+    if (request.d_ptr)
+        request.d_ptr->debugStreamOut(dbg);
+    else
+        dbg.nospace() << "(null)";
+    dbg.nospace() << ")";
+
+    return dbg.maybeSpace();
+}
+#endif
 
 #include "moc_qcontactabstractrequest.cpp"
 

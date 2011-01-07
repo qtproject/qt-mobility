@@ -79,27 +79,32 @@ QNearFieldTarget::RequestId TagType1::sendCommand(const QByteArray &command)
 {
     QMutexLocker locker(&tagMutex);
 
+    RequestId id(new RequestIdPrivate);
+
     // tag not in proximity
     if (!tagMap.value(m_tag)) {
-        emit error(TargetOutOfRangeError);
-        return RequestId();
+        QMetaObject::invokeMethod(this, "error", Qt::QueuedConnection,
+                                  Q_ARG(QNearFieldTarget::Error, TargetOutOfRangeError),
+                                  Q_ARG(QNearFieldTarget::RequestId, id));
+        return id;
     }
 
     quint16 crc = qNfcChecksum(command.constData(), command.length());
 
-    RequestIdPrivate *idPrivate = new RequestIdPrivate;
-    RequestId id(idPrivate);
-
     QByteArray response = m_tag->processCommand(command + char(crc & 0xff) + char(crc >> 8));
 
     if (response.isEmpty()) {
-        emit error(NoResponseError);
+        QMetaObject::invokeMethod(this, "error", Qt::QueuedConnection,
+                                  Q_ARG(QNearFieldTarget::Error, NoResponseError),
+                                  Q_ARG(QNearFieldTarget::RequestId, id));
         return id;
     }
 
     // check crc
     if (qNfcChecksum(response.constData(), response.length()) != 0) {
-        emit error(ChecksumMismatchError);
+        QMetaObject::invokeMethod(this, "error", Qt::QueuedConnection,
+                                  Q_ARG(QNearFieldTarget::Error, ChecksumMismatchError),
+                                  Q_ARG(QNearFieldTarget::RequestId, id));
         return id;
     }
 
@@ -144,10 +149,14 @@ QNearFieldTarget::RequestId TagType2::sendCommand(const QByteArray &command)
 {
     QMutexLocker locker(&tagMutex);
 
+    RequestId id(new RequestIdPrivate);
+
     // tag not in proximity
     if (!tagMap.value(m_tag)) {
-        emit error(TargetOutOfRangeError);
-        return RequestId();
+        QMetaObject::invokeMethod(this, "error", Qt::QueuedConnection,
+                                  Q_ARG(QNearFieldTarget::Error, TargetOutOfRangeError),
+                                  Q_ARG(QNearFieldTarget::RequestId, id));
+        return id;
     }
 
     quint16 crc = qNfcChecksum(command.constData(), command.length());
@@ -155,15 +164,14 @@ QNearFieldTarget::RequestId TagType2::sendCommand(const QByteArray &command)
     QByteArray response = m_tag->processCommand(command + char(crc & 0xff) + char(crc >> 8));
 
     if (response.isEmpty())
-        return RequestId();
-
-    RequestIdPrivate *idPrivate = new RequestIdPrivate;
-    RequestId id(idPrivate);
+        return id;
 
     if (response.length() > 1) {
         // check crc
         if (qNfcChecksum(response.constData(), response.length()) != 0) {
-            emit error(ChecksumMismatchError);
+            QMetaObject::invokeMethod(this, "error", Qt::QueuedConnection,
+                                      Q_ARG(QNearFieldTarget::Error, ChecksumMismatchError),
+                                      Q_ARG(QNearFieldTarget::RequestId, id));
             return id;
         }
 

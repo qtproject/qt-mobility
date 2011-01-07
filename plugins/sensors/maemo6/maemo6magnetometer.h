@@ -57,9 +57,10 @@ class maemo6magnetometer : public maemo6sensorbase
 public:
     static char const * const id;
     maemo6magnetometer(QSensor *sensor);
-
 protected:
+    virtual bool doConnect();
     virtual void start();
+    virtual const QString sensorName();
 
 private:
     static const float NANO;
@@ -69,6 +70,8 @@ private:
 
 private slots:
     void slotDataAvailable(const MagneticField& data);
+    void slotFrameAvailable(const QVector<MagneticField>&);
+
 };
 
 #endif

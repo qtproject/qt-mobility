@@ -251,6 +251,12 @@ bool QMessageStore::removeMessages(const QMessageFilter& filter, QMessageManager
     return d_ptr->_store->removeMessages(convert(filter), convert(option));
 }
 
+bool QMessageStore::removeAccount(const QMessageAccountId &id)
+{
+    d_ptr->_error = QMessageManager::NoError;
+    return d_ptr->_store->removeAccount(convert(id));
+}
+
 bool QMessageStore::addMessage(QMessage *m)
 {
     // Ensure that the size estimate is updated if necessary

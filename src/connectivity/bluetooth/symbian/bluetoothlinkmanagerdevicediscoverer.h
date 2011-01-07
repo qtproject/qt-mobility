@@ -55,9 +55,8 @@
 
 #include <qmobilityglobal.h>
 #include <QtCore/QObject>
-#include <qstring.h>
+#include "qbluetoothdevicediscoveryagent.h"
 
-//#include "qbluetoothdeviceinfo.h"
 #include <es_sock.h>
 #include <e32base.h>
 #include <btdevice.h>
@@ -88,13 +87,17 @@ protected: // From CActive
     void RunL();
     void DoCancel();
 
+private:
+    void setError(int error);
+
 private: // private helper functions
 
     QBluetoothDeviceInfo currentDeviceDataToQBluetoothDeviceInfo() const;
+
 signals:
     void deviceDiscoveryComplete(int aError);
     void deviceDiscovered(const QBluetoothDeviceInfo &device);
-    void linkManagerError(int error);
+    void linkManagerError(QBluetoothDeviceDiscoveryAgent::Error error);
 
 private:
 

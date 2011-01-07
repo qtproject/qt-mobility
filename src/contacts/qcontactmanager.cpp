@@ -411,6 +411,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactManager::ParameterValueOnlyOtherProcesses, "Onl
   \value LimitReachedError The most recent operation failed because the limit for that type of object has been reached
   \value NotSupportedError The most recent operation failed because the requested operation is not supported in the specified store
   \value BadArgumentError The most recent operation failed because one or more of the parameters to the operation were invalid
+  \value TimeoutError The most recent operation failed because it took longer than expected.  It may be possible to try again.
   \value UnspecifiedError The most recent operation failed for an undocumented reason
  */
 

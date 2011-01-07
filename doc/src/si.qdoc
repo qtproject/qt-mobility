@@ -114,7 +114,7 @@ If the NetworkManager backend is required run qmake as follows:
     qmake BACKEND=NetworkManager
 \endcode
 
-The backend selection is expected to disappear once the API is integrated into Qt. 
+The backend selection is expected to disappear once the API is integrated into Qt.
 
 
 
@@ -122,7 +122,7 @@ The backend selection is expected to disappear once the API is integrated into Q
 \annotatedlist systeminfo
 
 
-\section1 QML Classes
+\section1 QML Elements
 The Qt SystemInfo offers access to system information through declarative
 UI by providing systeminfo elements. Detailed information can be found
 at \l{QML System Information Plugin}.

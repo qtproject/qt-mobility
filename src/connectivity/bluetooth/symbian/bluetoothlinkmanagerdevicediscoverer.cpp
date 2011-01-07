@@ -43,6 +43,7 @@
 #include "bluetoothlinkmanagerdevicediscoverer.h"
 #include "qbluetoothaddress.h"
 #include "qbluetoothdeviceinfo.h"
+#include <qstring.h>
 
 #include "utils_symbian_p.h"
 #include <qdebug.h>
@@ -79,12 +80,12 @@ BluetoothLinkManagerDeviceDiscoverer::BluetoothLinkManagerDeviceDiscoverer(RSock
     TProtocolDesc protocol;
     result = m_socketServer.FindProtocol(KBTLinkManagerTxt(),protocol);
     if (result != KErrNone) {
-        emit linkManagerError(result);
+        setError(result);
     }
     /* Create and initialise an RHostResolver */
     result = m_hostResolver.Open(m_socketServer, protocol.iAddrFamily, protocol.iProtocol);
     if (result != KErrNone) {
-        emit linkManagerError(result);
+        setError(result);
     }
 
     //add this active object to scheduler
@@ -166,7 +167,35 @@ QBluetoothDeviceInfo BluetoothLinkManagerDeviceDiscoverer::currentDeviceDataToQB
     qDebug()<< "Discovered device: name="<< deviceName <<", address=" << bluetoothAddress.toString() <<", class=" << deviceClass;
     return deviceInfo;
 }
-
+void BluetoothLinkManagerDeviceDiscoverer::setError(int errorCode)
+{
+    QString errorDescription;
+    switch (errorCode) {
+        case KLinkManagerErrBase:
+            errorDescription.append("Link manager base error value or Insufficient baseband resources error value");
+            break;
+        case KErrProxyWriteNotAvailable:
+            errorDescription.append("Proxy write not available error value");
+            break;
+        case KErrReflexiveBluetoothLink:
+            errorDescription.append("Reflexive BT link error value");
+            break;
+        case KErrPendingPhysicalLink:
+            errorDescription.append("Physical link connection already pending when trying to connect the physical link");
+            break;
+        case KErrRemoteDeviceIndicatedNoBonding:
+            errorDescription.append("Dedicated bonding attempt failure when the remote device responds with No-Bonding");
+            break;
+        case KErrNotReady:
+            errorDescription.append("KErrNotReady");
+        default:
+            break;
+    }
+    if (errorCode == KErrCancel)
+        emit linkManagerError(QBluetoothDeviceDiscoveryAgent::Canceled);
+    else if (errorCode != KErrNone)
+        emit linkManagerError(QBluetoothDeviceDiscoveryAgent::UnknownError);
+}
 #include "moc_bluetoothlinkmanagerdevicediscoverer.cpp"
 
 QTM_END_NAMESPACE

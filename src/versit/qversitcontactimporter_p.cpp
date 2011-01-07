@@ -582,20 +582,20 @@ bool QVersitContactImporterPrivate::createOnlineAccount(
         onlineAccount.setSubTypes(QContactOnlineAccount::SubTypeImpp);
     } else if (property.name() == QLatin1String("X-JABBER")) {
         onlineAccount.setSubTypes(QContactOnlineAccount::SubTypeImpp);
-        onlineAccount.setServiceProvider(QContactOnlineAccount::ServiceJabber);
+        onlineAccount.setProtocol(QContactOnlineAccount::ProtocolJabber);
     } else if (property.name() == QLatin1String("X-AIM")) {
-        onlineAccount.setServiceProvider(QContactOnlineAccount::ServiceAim);
+        onlineAccount.setProtocol(QContactOnlineAccount::ProtocolAim);
     } else if (property.name() == QLatin1String("X-ICQ")) {
-        onlineAccount.setServiceProvider(QContactOnlineAccount::ServiceIcq);
+        onlineAccount.setProtocol(QContactOnlineAccount::ProtocolIcq);
     } else if (property.name() == QLatin1String("X-MSN")) {
-        onlineAccount.setServiceProvider(QContactOnlineAccount::ServiceMsn);
+        onlineAccount.setProtocol(QContactOnlineAccount::ProtocolMsn);
     } else if (property.name() == QLatin1String("X-QQ")) {
-        onlineAccount.setServiceProvider(QContactOnlineAccount::ServiceQq);
+        onlineAccount.setProtocol(QContactOnlineAccount::ProtocolQq);
     } else if (property.name() == QLatin1String("X-YAHOO")) {
-        onlineAccount.setServiceProvider(QContactOnlineAccount::ServiceYahoo);
+        onlineAccount.setProtocol(QContactOnlineAccount::ProtocolYahoo);
     } else if (property.name() == QLatin1String("X-SKYPE") ||
             property.name() == QLatin1String("X-SKYPE-USERNAME")) {
-        onlineAccount.setServiceProvider(QContactOnlineAccount::ServiceSkype);
+        onlineAccount.setProtocol(QContactOnlineAccount::ProtocolSkype);
     }
 
     saveDetailWithContext(updatedDetails, onlineAccount, extractContexts(property));

@@ -38,12 +38,15 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#include <gypsy/gypsy-satellite.h>
+#include <gypsy/gypsy-control.h>
+#include <gconf/gconf-client.h>
 
-#include "../testqgeosatelliteinfosource_p.h"
-
-int main(int argc, char *argv[])
+int main(int, char**)
 {
-    QCoreApplication app(argc, argv);
-    TestQGeoSatelliteInfoSource *test = TestQGeoSatelliteInfoSource::createDefaultSourceTest();
-    return QTest::qExec(test, argc, argv);
+    GConfClient* client(0);
+    GypsyControl *control(0);
+    GypsyDevice *device(0);
+    g_type_init ();
+    return 0;
 }

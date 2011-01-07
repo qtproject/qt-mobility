@@ -57,6 +57,10 @@
 #include <QSharedData>
 #include <QDataStream>
 
+#ifndef QT_NO_DEBUG_STREAM
+#include <QDebug>
+#endif
+
 /* Boiler plate code */
 #define Q_IMPLEMENT_ORGANIZERITEMFILTER_PRIVATE(Class) \
     Class##Private* Class::d_func() { return reinterpret_cast<Class##Private *>(d_ptr.data()); } \
@@ -89,6 +93,10 @@ public:
     virtual bool compare(const QOrganizerItemFilterPrivate* other) const = 0;
     virtual QDataStream& outputToStream(QDataStream& stream, quint8 formatVersion) const = 0;
     virtual QDataStream& inputFromStream(QDataStream& stream, quint8 formatVersion) = 0;
+#ifndef QT_NO_DEBUG_STREAM
+    // NOTE: on platforms where Qt is built without debug streams enabled, vtable will differ!
+    virtual QDebug& debugStreamOut(QDebug& dbg) const = 0;
+#endif
     virtual QOrganizerItemFilterPrivate* clone() const = 0;
     virtual QOrganizerItemFilter::FilterType type() const = 0;
 

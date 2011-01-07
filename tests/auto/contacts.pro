@@ -10,6 +10,7 @@ SUBDIRS +=  qcontact \
     qcontactdetails \
     qcontactfilter \
     qcontactmanager \
+    qcontactmanagerdetails \
     qcontactmanagerplugins \
     qcontactrelationship \
     qlatin1constant

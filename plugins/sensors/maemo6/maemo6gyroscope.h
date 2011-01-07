@@ -39,51 +39,37 @@
 **
 ****************************************************************************/
 
-#ifndef QBLUETOOTHDEVICEDISCOVERYAGENT_BLUEZ_P_H
-#define QBLUETOOTHDEVICEDISCOVERYAGENT_BLUEZ_P_H
+#ifndef MAEMO6GYROSCOPE_H
+#define MAEMO6GYROSCOPE_H
 
-#include "qbluetoothdevicediscoveryagent.h"
-#include "qbluetoothdevicediscoveryagent_p.h"
+#include "maemo6sensorbase.h"
+#include <qgyroscope.h>
+#include <datatypes/xyz.h>
+//#include <gyroscopesensor_i.h>
 
-#include <QVariant>
 
-#ifndef QT_NO_DBUS
-class OrgBluezManagerInterface;
-class OrgBluezAdapterInterface;
-class QDBusVariant;
-#endif
+QTM_USE_NAMESPACE
 
-QT_BEGIN_HEADER
-
-QTM_BEGIN_NAMESPACE
-
-class QBluetoothDeviceDiscoveryAgentPrivateBluez : public QBluetoothDeviceDiscoveryAgentPrivate
+class maemo6gyroscope : public maemo6sensorbase
 {
-  Q_OBJECT
+    Q_OBJECT
+
 public:
-    QBluetoothDeviceDiscoveryAgentPrivateBluez(QObject *parent = 0);
-    ~QBluetoothDeviceDiscoveryAgentPrivateBluez();
-
-    void start();
-    void stop();
-    bool isActive() const;
-
-    // private slots
-private Q_SLOTS:
-    void _q_deviceFound(const QString &address, const QVariantMap &dict);
-    void _q_propertyChanged(const QString &name, const QDBusVariant &value);
+    static char const * const id;
+    maemo6gyroscope(QSensor *sensor);
+protected:
+    virtual bool doConnect();
+    virtual const QString sensorName();
 
 private:
-//    QBluetoothDeviceDiscoveryAgent::InquiryType inquiryType;
+    QGyroscopeReading m_reading;
+    static bool m_initDone;
+    static const float MILLI;
+private slots:
+    void slotDataAvailable(const XYZ& data);
+    void slotFrameAvailable(const QVector<XYZ>&);
 
-#if !defined(QT_NO_DBUS)
-    OrgBluezManagerInterface *manager;
-    OrgBluezAdapterInterface *adapter;
-#endif
 };
 
-QTM_END_NAMESPACE
 
-QT_END_HEADER
-
-#endif
+#endif // MAEMO6GYROSCOPE_H

@@ -10,6 +10,7 @@ DEPENDPATH += ../../../buid/Debug/bin
 # Input 
 HEADERS += ../qlocationtestutils_p.h \
            ../testqgeopositioninfosource_p.h
+
 SOURCES += ../qlocationtestutils.cpp \
            ../testqgeopositioninfosource.cpp \
            tst_qgeopositioninfosource.cpp
@@ -21,3 +22,5 @@ symbian {
         TARGET.CAPABILITY = ALL -TCB
 }
 
+CONFIG += middleware
+include(../../../features/deploy.pri)

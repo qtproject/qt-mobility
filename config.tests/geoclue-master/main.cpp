@@ -39,54 +39,14 @@
 **
 ****************************************************************************/
 
-#ifndef QBLUETOOTHDEVICEDISCOVERYAGENT_SYMBIAN_P_H
-#define QBLUETOOTHDEVICEDISCOVERYAGENT_SYMBIAN_P_H
+#include <geoclue/geoclue-master.h>
+#include <gconf/gconf-client.h>
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API. It exists purely as an
-// implementation detail. This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
-
-#include "qbluetoothdevicediscoveryagent_p.h"
-#include "symbian/bluetoothlinkmanagerdevicediscoverer.h"
-
-#include <es_sock.h>
-
-QTM_BEGIN_NAMESPACE
-
-class QBluetoothDeviceDiscoveryAgentPrivateSymbian : public QBluetoothDeviceDiscoveryAgentPrivate
+int main(int, char**)
 {
-  Q_OBJECT
-public:
-    QBluetoothDeviceDiscoveryAgentPrivateSymbian(QObject *parent);
-    virtual ~QBluetoothDeviceDiscoveryAgentPrivateSymbian();
-
-    virtual void start();
-    virtual void stop();
-    virtual bool isActive() const;
-    
-
-private:
-    uint inquiryTypeToIAC(const QBluetoothDeviceDiscoveryAgent::InquiryType type);
-
-protected slots:
-    void setError(int errorCode);
-    void setError(int errorCode, QString errorDescription);
-    void newDeviceFound(const QBluetoothDeviceInfo &device);
-private:
-    // shared socket servet among RHostResolvers
-    RSocketServ m_socketServer;
-    // active object for device discovery
-    BluetoothLinkManagerDeviceDiscoverer *m_deviceDiscovery;
-
-};
-
-QTM_END_NAMESPACE
-
-#endif
+    GeoclueMaster *master(0);
+    GConfClient* client(0);
+    GError *error(0);
+    g_type_init ();
+    return 0;
+}
