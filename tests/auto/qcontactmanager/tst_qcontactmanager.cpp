@@ -621,11 +621,17 @@ void tst_QContactManager::ctors()
     QContactManager cm3(defaultStore, QMap<QString, QString>());
     QContactManager cm4(cm.managerUri()); // should fail
 
+    QContactManager cm9b(0); // QObject* ctor, should be same as cm2 etc
+    QContactManager cm9c(&parent); // same as cm2 etc.
+
     QScopedPointer<QContactManager> cm5(QContactManager::fromUri(QContactManager::buildUri(defaultStore, QMap<QString, QString>())));
     QScopedPointer<QContactManager> cm6(QContactManager::fromUri(cm.managerUri())); // uri is not a name; should fail.
     QScopedPointer<QContactManager> cm9(QContactManager::fromUri(QString(), &parent));
 
     QVERIFY(cm9->parent() == &parent);
+    QVERIFY(cm9b.parent() == 0);
+    QVERIFY(cm9c.parent() == &parent);
+
 
     /* OLD TEST WAS THIS: */
     //QCOMPARE(cm.managerUri(), cm2.managerUri());
@@ -639,6 +645,8 @@ void tst_QContactManager::ctors()
     QCOMPARE(cm.managerName(), cm5->managerName());
     QCOMPARE(cm.managerName(), cm6->managerName());
     QCOMPARE(cm.managerName(), cm9->managerName());
+    QCOMPARE(cm.managerName(), cm9b.managerName());
+    QCOMPARE(cm.managerName(), cm9c.managerName());
 
     QVERIFY(cm.managerUri() != cm4.managerUri()); // don't pass a uri to the ctor
 
@@ -2200,11 +2208,16 @@ void tst_QContactManager::signalEmission()
     QVERIFY(arg.count() == 1);
     QCOMPARE(QContactLocalId(arg.at(0)), cid);
 
+    QSharedPointer<QContactObserver> c1Observer = m1->observeContact(cid);
+    QScopedPointer<QSignalSpy> spyCOM1(new QSignalSpy(c1Observer.data(), SIGNAL(contactChanged())));
+    QScopedPointer<QSignalSpy> spyCOR1(new QSignalSpy(c1Observer.data(), SIGNAL(contactRemoved())));
+
     // verify save modified emits signal changed
     saveContactName(&c, nameDef, &nc, "Citizen");
     QVERIFY(m1->saveContact(&c));
     modSigCount += 1;
     QTRY_COMPARE(spyCM.count(), modSigCount);
+    QTRY_COMPARE(spyCOM1->count(), 1);
     args = spyCM.takeFirst();
     modSigCount -= 1;
     arg = args.first().value<QList<quint32> >();
@@ -2215,6 +2228,7 @@ void tst_QContactManager::signalEmission()
     m1->removeContact(c.id().localId());
     remSigCount += 1;
     QTRY_COMPARE(spyCR.count(), remSigCount);
+    QTRY_COMPARE(spyCOR1->count(), 1);
     args = spyCR.takeFirst();
     remSigCount -= 1;
     arg = args.first().value<QList<quint32> >();
@@ -2240,6 +2254,15 @@ void tst_QContactManager::signalEmission()
     QTRY_COMPARE(spyCM.count(), modSigCount);
     QTRY_COMPARE(spyCA.count(), addSigCount);
 
+    spyCOM1->clear();
+    spyCOR1->clear();
+    QSharedPointer<QContactObserver> c2Observer = m1->observeContact(c2.localId());
+    QSharedPointer<QContactObserver> c3Observer = m1->observeContact(c3.localId());
+    QScopedPointer<QSignalSpy> spyCOM2(new QSignalSpy(c2Observer.data(), SIGNAL(contactChanged())));
+    QScopedPointer<QSignalSpy> spyCOM3(new QSignalSpy(c3Observer.data(), SIGNAL(contactChanged())));
+    QScopedPointer<QSignalSpy> spyCOR2(new QSignalSpy(c2Observer.data(), SIGNAL(contactRemoved())));
+    QScopedPointer<QSignalSpy> spyCOR3(new QSignalSpy(c3Observer.data(), SIGNAL(contactRemoved())));
+
     // verify multiple modifies works as advertised
     saveContactName(&c2, nameDef, &nc2, "M.");
     QVERIFY(m1->saveContact(&c2));
@@ -2251,6 +2274,9 @@ void tst_QContactManager::signalEmission()
     QVERIFY(m1->saveContact(&c3));
     modSigCount += 1;
     QTRY_COMPARE(spyCM.count(), modSigCount);
+    QTRY_COMPARE(spyCOM2->count(), 2);
+    QTRY_COMPARE(spyCOM3->count(), 1);
+    QCOMPARE(spyCOM1->count(), 0);
 
     // verify multiple removes works as advertised
     m1->removeContact(c3.id().localId());
@@ -2258,6 +2284,9 @@ void tst_QContactManager::signalEmission()
     m1->removeContact(c2.id().localId());
     remSigCount += 1;
     QTRY_COMPARE(spyCR.count(), remSigCount);
+    QTRY_COMPARE(spyCOR2->count(), 1);
+    QTRY_COMPARE(spyCOR3->count(), 1);
+    QCOMPARE(spyCOR1->count(), 0);
 
     QVERIFY(!m1->removeContact(c.id().localId())); // not saved.
 
@@ -2284,6 +2313,16 @@ void tst_QContactManager::signalEmission()
 
     QTRY_WAIT( while(spyCA.size() > 0) {sigids += spyCA.takeFirst().at(0).value<QList<QContactLocalId> >(); }, sigids.contains(c.localId()) && sigids.contains(c2.localId()) && sigids.contains(c3.localId()));
     QTRY_COMPARE(spyCM.count(), 0);
+
+    c1Observer = m1->observeContact(c.localId());
+    c2Observer = m1->observeContact(c2.localId());
+    c3Observer = m1->observeContact(c3.localId());
+    spyCOM1.reset(new QSignalSpy(c1Observer.data(), SIGNAL(contactChanged())));
+    spyCOM2.reset(new QSignalSpy(c2Observer.data(), SIGNAL(contactChanged())));
+    spyCOM3.reset(new QSignalSpy(c3Observer.data(), SIGNAL(contactChanged())));
+    spyCOR1.reset(new QSignalSpy(c1Observer.data(), SIGNAL(contactRemoved())));
+    spyCOR2.reset(new QSignalSpy(c2Observer.data(), SIGNAL(contactRemoved())));
+    spyCOR3.reset(new QSignalSpy(c3Observer.data(), SIGNAL(contactRemoved())));
     QTRY_COMPARE(spyCR.count(), 0);
 
     /* Batch modifies */
@@ -2300,6 +2339,9 @@ void tst_QContactManager::signalEmission()
 
     sigids.clear();
     QTRY_WAIT( while(spyCM.size() > 0) {sigids += spyCM.takeFirst().at(0).value<QList<QContactLocalId> >(); }, sigids.contains(c.localId()) && sigids.contains(c2.localId()) && sigids.contains(c3.localId()));
+    QTRY_COMPARE(spyCOM1->count(), 1);
+    QTRY_COMPARE(spyCOM2->count(), 1);
+    QTRY_COMPARE(spyCOM3->count(), 1);
 
     /* Batch removes */
     batchRemove << c.id().localId() << c2.id().localId() << c3.id().localId();
@@ -2307,6 +2349,9 @@ void tst_QContactManager::signalEmission()
 
     sigids.clear();
     QTRY_WAIT( while(spyCR.size() > 0) {sigids += spyCR.takeFirst().at(0).value<QList<QContactLocalId> >(); }, sigids.contains(c.localId()) && sigids.contains(c2.localId()) && sigids.contains(c3.localId()));
+    QTRY_COMPARE(spyCOR1->count(), 1);
+    QTRY_COMPARE(spyCOR2->count(), 1);
+    QTRY_COMPARE(spyCOR3->count(), 1);
 
     QTRY_COMPARE(spyCA.count(), 0);
     QTRY_COMPARE(spyCM.count(), 0);

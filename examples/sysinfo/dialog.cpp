@@ -186,31 +186,25 @@ void Dialog::setupDevice()
     bluetoothPowerLabel->setText((di->currentBluetoothPowerState() ? "On" : "Off"));
     connect(di,SIGNAL(bluetoothStateChanged(bool)), this,SLOT(bluetoothChanged(bool)));
 
-    uniqueIDLabel->setText(di->uniqueID());
+    uniqueIDLabel->setText(di->uniqueDeviceID());
 
-    updateKeyboard(di->keyboardType());
+    updateKeyboard(di->keyboardTypes());
 
-    keyboardFlipRadioButton->setChecked(di->isKeyboardFlipOpen());
+    keyboardFlipRadioButton->setChecked(di->isKeyboardFlippedOpen());
     wirelessKeyboardConnectedRadioButton->setChecked(di->isWirelessKeyboardConnected());
 
     QString lockState;
-    QSystemDeviceInfo::LockType lock = di->lockStatus();
-    switch(lock) {
-    case QSystemDeviceInfo::UnknownLock:
+    QSystemDeviceInfo::LockTypeFlags lock = di->lockStatus();
+    if((lock & QSystemDeviceInfo::UnknownLock)){
         lockState = "Unknown";
-        break;
-    case QSystemDeviceInfo::DeviceLocked:
-        lockState = "Device Locked";
-        break;
-    case QSystemDeviceInfo::DeviceUnlocked:
-        lockState = "Device unlocked";
-        break;
-    case QSystemDeviceInfo::TouchAndKeyboardLocked:
+    }
+    if((lock & QSystemDeviceInfo::PinLocked)){
+        lockState = "Pin/Password Locked";
+    }
+    if((lock & QSystemDeviceInfo::TouchAndKeyboardLocked)){
         lockState = "Touch and keyboard locked";
-        break;
-    };
+    }
     lockStateLabel->setText(lockState);
-
 }
 
 void Dialog::updateKeyboard(QSystemDeviceInfo::KeyboardTypeFlags type)
@@ -841,10 +835,10 @@ void Dialog::updateProfile()
         };
         profileLabel->setText(profilestring);
 
-        QSystemDeviceInfo::ActiveProfileDetails *pDetails = di->getActiveProfileDetails();
-        messageRingtonVolumeLcdNumber->display(pDetails->messageRingtoneVolume());
-        voiceRingtoneVolumeLcdNumber->display(pDetails->voiceRingtoneVolume());
-        vibrationActiveRadioButton->setChecked(pDetails->vibrationActive());
+        QSystemDeviceInfo::ActiveProfileDetails pDetails = di->getActiveProfileDetails();
+        messageRingtonVolumeLcdNumber->display(pDetails.messageRingtoneVolume());
+        voiceRingtoneVolumeLcdNumber->display(pDetails.voiceRingtoneVolume());
+        vibrationActiveRadioButton->setChecked(pDetails.vibrationActive());
     }
 }
 
@@ -913,15 +907,10 @@ void Dialog::setupBattery()
     connect(bi,SIGNAL(chargerTypeChanged(QSystemBatteryInfo::ChargerType)),
             this,SLOT(chargerTypeChanged(QSystemBatteryInfo::ChargerType)));
 
-    connect(startMeasurementPushButton,SIGNAL(clicked()),
-            this,SLOT(startCurrentPushed()));
-
     connect(bi,SIGNAL(nominalCapacityChanged(int)),
             NominalCaplcdNumber,SLOT(display(int)));
     connect(bi,SIGNAL(remainingCapacityChanged(int)),
             remainCaplcdNumber,SLOT(display(int)));
-    connect(bi,SIGNAL(voltageChanged(int)),
-            voltagelcdNumber,SLOT(display(int)));
     connect(bi,SIGNAL(currentFlowChanged(int)),
             currentFLowlcdNumber,SLOT(display(int)));
     connect(bi,SIGNAL(remainingCapacityBarsChanged(int)),
@@ -991,7 +980,4 @@ void Dialog::chargerTypeChanged(QSystemBatteryInfo::ChargerType chargerType)
     currentChargerType = chargerType;
 }
 
-void Dialog::startCurrentPushed()
-{
-    bi->startCurrentMeasurement(currentMeasurementSpinBox->value());
-}
+

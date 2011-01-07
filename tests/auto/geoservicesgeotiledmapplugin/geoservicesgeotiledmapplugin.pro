@@ -1,6 +1,6 @@
 TEMPLATE = lib
-CONFIG += plugin static testplugin
-TARGET = $$qtLibraryTarget(qtgeoservices_statictiledgeomapplugin)
+CONFIG += plugin testplugin
+TARGET = $$qtLibraryTarget(qtgeoservices_tiledgeomapplugin)
 PLUGIN_TYPE=geoservices
 
 include(../../../common.pri)

@@ -527,7 +527,6 @@ bool QSystemInfoLinuxCommonPrivate::hasFeatureSupported(QSystemInfo::Feature fea
             QTextStream in(&versionFile2);
             do {
                 line = in.readLine();
-                qDebug() << line;
                 line.remove("\\n");
                 line.remove("\\l");
                 strvalue = line.simplified();
@@ -2858,7 +2857,7 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoLinuxCommonPrivate::currentPowerS
  }
 
 
- QSystemDeviceInfo::KeyboardTypeFlags QSystemDeviceInfoLinuxCommonPrivate::keyboardType()
+ QSystemDeviceInfo::KeyboardTypeFlags QSystemDeviceInfoLinuxCommonPrivate::keyboardTypes()
  {
      QSystemDeviceInfo::InputMethodFlags methods = inputMethodType();
      QSystemDeviceInfo::KeyboardTypeFlags keyboardFlags = QSystemDeviceInfo::UnknownKeyboard;
@@ -2878,7 +2877,7 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoLinuxCommonPrivate::currentPowerS
      return hasWirelessKeyboardConnected;
  }
 
- bool QSystemDeviceInfoLinuxCommonPrivate::isKeyboardFlipOpen()
+ bool QSystemDeviceInfoLinuxCommonPrivate::isKeyboardFlippedOpen()
  {
      return false;
  }
@@ -2895,7 +2894,7 @@ bool QSystemDeviceInfoLinuxCommonPrivate::keypadLightOn(QSystemDeviceInfo::Keypa
     return false;
 }
 
-QUuid QSystemDeviceInfoLinuxCommonPrivate::uniqueID()
+QUuid QSystemDeviceInfoLinuxCommonPrivate::uniqueDeviceID()
 {
 #if defined(Q_WS_MAEMO_6)
     // create one from imei and uuid of /
@@ -2952,7 +2951,7 @@ QUuid QSystemDeviceInfoLinuxCommonPrivate::uniqueID()
     return QUuid(QString::number(gethostid()));
 }
 
-QSystemDeviceInfo::LockType QSystemDeviceInfoLinuxCommonPrivate::lockStatus()
+QSystemDeviceInfo::LockTypeFlags QSystemDeviceInfoLinuxCommonPrivate::lockStatus()
 {
     return QSystemDeviceInfo::UnknownLock;
 }
@@ -3103,43 +3102,43 @@ QSystemBatteryInfo::ChargingState QSystemBatteryInfoLinuxCommonPrivate::charging
 }
 
 
-qint32 QSystemBatteryInfoLinuxCommonPrivate::nominalCapacity() const
+int QSystemBatteryInfoLinuxCommonPrivate::nominalCapacity() const
 {
     return capacity;
 }
 
-qint32 QSystemBatteryInfoLinuxCommonPrivate::remainingCapacityPercent() const
+int QSystemBatteryInfoLinuxCommonPrivate::remainingCapacityPercent() const
 {
     return currentBatLevelPercent;
 }
 
-qint32 QSystemBatteryInfoLinuxCommonPrivate::remainingCapacity() const
+int QSystemBatteryInfoLinuxCommonPrivate::remainingCapacity() const
 {
     return remainingEnergy;
 }
 
 
-qint32 QSystemBatteryInfoLinuxCommonPrivate::voltage() const
+int QSystemBatteryInfoLinuxCommonPrivate::voltage() const
 {
     return currentVoltage;
 }
 
-qint32 QSystemBatteryInfoLinuxCommonPrivate::remainingChargingTime() const
+int QSystemBatteryInfoLinuxCommonPrivate::remainingChargingTime() const
 {
     return timeToFull;
 }
 
-qint32 QSystemBatteryInfoLinuxCommonPrivate::currentFlow() const
+int QSystemBatteryInfoLinuxCommonPrivate::currentFlow() const
 {
     return dischargeRate;
 }
 
-qint32 QSystemBatteryInfoLinuxCommonPrivate::remainingCapacityBars() const
+int QSystemBatteryInfoLinuxCommonPrivate::remainingCapacityBars() const
 {
     return 0;
 }
 
-qint32 QSystemBatteryInfoLinuxCommonPrivate::maxBars() const
+int QSystemBatteryInfoLinuxCommonPrivate::maxBars() const
 {
     return 0;
 }
@@ -3187,9 +3186,6 @@ void QSystemBatteryInfoLinuxCommonPrivate::connectNotify(const char *signal)
     }
     if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
             remainingChargingTimeChanged(int))))) {
-    }
-    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
-            voltageChanged(int))))) {
     }
 
 }
@@ -3312,7 +3308,7 @@ void QSystemBatteryInfoLinuxCommonPrivate::halChanged(int count,QVariantList map
                     stat = QSystemBatteryInfo::BatteryVeryLow;
                 } else if (currentBatLevelPercent < 41) {
                     stat =  QSystemBatteryInfo::BatteryLow;
-                } else if (currentBatLevelPercent > 40 && currentBatLevelPercent < 99) {
+                } else if (currentBatLevelPercent > 40 && currentBatLevelPercent < 100) {
                     stat = QSystemBatteryInfo::BatteryOk;
                 } else if (currentBatLevelPercent == 100) {
                     stat = QSystemBatteryInfo::BatteryFull;
@@ -3341,7 +3337,6 @@ void QSystemBatteryInfoLinuxCommonPrivate::halChanged(int count,QVariantList map
 
             if (mapS == "battery.voltage.current") {
                 currentVoltage = ifaceDevice.getPropertyInt("battery.voltage.current");
-                Q_EMIT voltageChanged(currentVoltage);
             }
 
             if (mapS == "battery.charge_level.rate") {
@@ -3535,12 +3530,6 @@ void QSystemBatteryInfoLinuxCommonPrivate::timeout()
 
 }
 
-
-qint32 QSystemBatteryInfoLinuxCommonPrivate::startCurrentMeasurement(qint32 /*rate*/)
-{
- return 0;
-}
-
 QSystemBatteryInfo::EnergyUnit QSystemBatteryInfoLinuxCommonPrivate::energyMeasurementUnit() const
 {
 #if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5) && !defined(QT_NO_UDISKS)
@@ -3661,7 +3650,7 @@ void QSystemBatteryInfoLinuxCommonPrivate::propertyChanged(const QString & prop,
              stat = QSystemBatteryInfo::BatteryVeryLow;
         } else if (currentBatLevelPercent < 41) {
              stat =  QSystemBatteryInfo::BatteryLow;
-        } else if (currentBatLevelPercent > 40 && currentBatLevelPercent < 99) {
+        } else if (currentBatLevelPercent > 40 && currentBatLevelPercent < 100) {
              stat = QSystemBatteryInfo::BatteryOk;
         } else if (currentBatLevelPercent == 100) {
              stat = QSystemBatteryInfo::BatteryFull;
@@ -3673,7 +3662,6 @@ void QSystemBatteryInfoLinuxCommonPrivate::propertyChanged(const QString & prop,
 
     } else if (prop == QLatin1String("Voltage")) {
         currentVoltage = v.toDouble() * 1000;
-        emit voltageChanged(currentVoltage);
     } else if (prop == QLatin1String("State")) {
         switch(v.toUInt()) {
         case 1: // charging

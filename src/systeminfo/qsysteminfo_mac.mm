@@ -2252,7 +2252,7 @@ bool QSystemDeviceInfoPrivate::currentBluetoothPowerState()
     return false;
 }
 
-QSystemDeviceInfo::KeyboardTypeFlags QSystemDeviceInfoPrivate::keyboardType()
+QSystemDeviceInfo::KeyboardTypeFlags QSystemDeviceInfoPrivate::keyboardTypes()
 {
     QSystemDeviceInfo::InputMethodFlags methods = inputMethodType();
     QSystemDeviceInfo::KeyboardTypeFlags keyboardFlags = QSystemDeviceInfo::UnknownKeyboard;
@@ -2282,7 +2282,7 @@ bool QSystemDeviceInfoPrivate::isWirelessKeyboardConnected()
     return hasWirelessKeyboardConnected;
 }
 
-bool QSystemDeviceInfoPrivate::isKeyboardFlipOpen()
+bool QSystemDeviceInfoPrivate::isKeyboardFlippedOpen()
 {
     return false;
 }
@@ -2299,7 +2299,7 @@ bool QSystemDeviceInfoPrivate::keypadLightOn(QSystemDeviceInfo::KeypadType /*typ
     return false;
 }
 
-QUuid QSystemDeviceInfoPrivate::uniqueID()
+QUuid QSystemDeviceInfoPrivate::uniqueDeviceID()
 {
     CFStringRef uuidKey = CFSTR(kIOPlatformUUIDKey);
     io_service_t ioService = IOServiceGetMatchingService(kIOMasterPortDefault,
@@ -2313,8 +2313,11 @@ QUuid QSystemDeviceInfoPrivate::uniqueID()
     return QUuid(QString::number(gethostid()));
 }
 
-QSystemDeviceInfo::LockType QSystemDeviceInfoPrivate::lockStatus()
+QSystemDeviceInfo::LockTypeFlags QSystemDeviceInfoPrivate::lockStatus()
 {
+    if(isDeviceLocked()) {
+        return QSystemDeviceInfo::PinLocked;
+    }
     return QSystemDeviceInfo::UnknownLock;
 }
 
@@ -2444,10 +2447,6 @@ QSystemBatteryInfo::BatteryStatus QSystemBatteryInfoPrivate::batteryStatus() con
     return currentBatStatus;
 }
 
-int QSystemBatteryInfoPrivate::startCurrentMeasurement(qint32 /*rate*/)
-{
-    return 0;
-}
 
 QSystemBatteryInfo::EnergyUnit QSystemBatteryInfoPrivate::energyMeasurementUnit()
 {
@@ -2508,7 +2507,7 @@ void QSystemBatteryInfoPrivate::getBatteryInfo()
              stat = QSystemBatteryInfo::BatteryVeryLow;
         } else if (currentBatLevelPercent < 41) {
              stat =  QSystemBatteryInfo::BatteryLow;
-        } else if (currentBatLevelPercent > 40 && currentBatLevelPercent < 99) {
+        } else if (currentBatLevelPercent > 40 && currentBatLevelPercent < 100) {
              stat = QSystemBatteryInfo::BatteryOk;
         } else if (currentBatLevelPercent == 100) {
              stat = QSystemBatteryInfo::BatteryFull;
@@ -2542,7 +2541,6 @@ void QSystemBatteryInfoPrivate::getBatteryInfo()
         cVoltage = [[(NSDictionary*)batDoctionary objectForKey:@"Voltage"] intValue];
         if (cVoltage != currentVoltage ) {
             currentVoltage = cVoltage;
-            Q_EMIT voltageChanged(currentVoltage);
         }
 
         int amp = [[legacyDict objectForKey:@"Current"] intValue];

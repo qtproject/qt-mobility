@@ -86,9 +86,11 @@ public:
     void createEngine(const QString& managerName, const QMap<QString, QString>& parameters);
     static QContactManagerEngineV2* engine(const QContactManager* manager);
 
-    QContactManagerEngineV3* m_engine;
+    QContactManagerEngineV2* m_engine;
     QContactManager::Error m_error;
     QMap<int, QContactManager::Error> m_errorMap;
+
+    QMultiHash<QContactLocalId, QContactObserver*> m_observerForContact;
 
     /* Manager plugins */
     static QHash<QString, QContactManagerEngineFactory*> m_engines;

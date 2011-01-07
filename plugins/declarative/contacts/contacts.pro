@@ -8,16 +8,19 @@ INCLUDEPATH += . \
                ../../../src/versit
 DEPENDPATH += ../../../src/contacts
 
+TEMPLATE = lib
+CONFIG += plugin
 TARGET = $$qtLibraryTarget(declarative_contacts)
 TARGETPATH = QtMobility/contacts
 
-TEMPLATE = lib
-CONFIG += plugin
 PLUGIN_TYPE = declarative
 
 include(../../../common.pri)
 include(details/details.pri)
 include(filters/filters.pri)
+
+# support headers/sources for dynamic properties
+include(../common/dynamicproperties.pri)
 
 QT += declarative script network
 
@@ -34,8 +37,6 @@ qmldir.path +=  $$[QT_INSTALL_IMPORTS]/$$TARGETPATH
 HEADERS += qdeclarativecontactmodel_p.h \
            qdeclarativecontact_p.h \
            qdeclarativecontactdetail_p.h \
-           qdeclarativeopenmetaobject_p.h \
-           qmetaobjectbuilder_p.h \
            qdeclarativecontactfilter_p.h \
            qdeclarativecontactmetaobject_p.h \
            qdeclarativecontactimageprovider_p.h \
@@ -48,8 +49,6 @@ SOURCES += plugin.cpp \
     qdeclarativecontactmodel.cpp \
     qdeclarativecontact.cpp \
     qdeclarativecontactdetail.cpp \
-    qdeclarativeopenmetaobject.cpp \
-    qmetaobjectbuilder.cpp \
     qdeclarativecontactfilter.cpp \
     qdeclarativecontactmetaobject.cpp \
     qdeclarativecontactimageprovider.cpp \
@@ -74,5 +73,3 @@ symbian {
     importFiles.path = $$QT_IMPORTS_BASE_DIR/$$TARGETPATH
     DEPLOYMENT = importFiles
  }
-
-

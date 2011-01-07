@@ -109,7 +109,6 @@ private slots:
     void chargingStateChanged(QSystemBatteryInfo::ChargingState chargingState);
     void chargerTypeChanged(QSystemBatteryInfo::ChargerType chargerType);
 
-    void startCurrentPushed();
 
 };
 

@@ -97,6 +97,7 @@ public:
 private:
     QAudio::Mode mode;
     QString device;
+    quint32 devId;
     QAudioFormat nearest;
     QList<int> freqz;
     QList<int> channelz;

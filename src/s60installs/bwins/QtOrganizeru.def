@@ -1219,4 +1219,5 @@ EXPORTS
 	?participationRole@QOrganizerEventAttendee@QtMobility@@QBE?AW4ParticipationRole@12@XZ @ 1218 NONAME ; enum QtMobility::QOrganizerEventAttendee::ParticipationRole QtMobility::QOrganizerEventAttendee::participationRole(void) const
 	??0QOrganizerItemTag@QtMobility@@QAE@ABV01@@Z @ 1219 NONAME ; QtMobility::QOrganizerItemTag::QOrganizerItemTag(class QtMobility::QOrganizerItemTag const &)
 	?errorMap@QOrganizerItemFetchByIdRequest@QtMobility@@QBE?AV?$QMap@HW4Error@QOrganizerManager@QtMobility@@@@XZ @ 1220 NONAME ; class QMap<int, enum QtMobility::QOrganizerManager::Error> QtMobility::QOrganizerItemFetchByIdRequest::errorMap(void) const
+	?saveItems@QOrganizerManager@QtMobility@@QAE_NPAV?$QList@VQOrganizerItem@QtMobility@@@@ABVQStringList@@@Z @ 1221 NONAME ; bool QtMobility::QOrganizerManager::saveItems(class QList<class QtMobility::QOrganizerItem> *, class QStringList const &)
 

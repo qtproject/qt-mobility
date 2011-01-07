@@ -178,10 +178,9 @@ QSystemDeviceInfoPrivate *getSystemDeviceInfoPrivate() { return deviceInfoPrivat
           This enum describes the type of lock.
 
           \value UnknownLock                    Lock type is unknown, or error.
-          \value DeviceUnlocked                 Device is unlocked.
-          \value DeviceLocked                   Device is locked.
-          \value TouchAndKeyboardLocked         Touch and/or keyboard lock.
-
+          \value SimLocked                      SIM is locked.
+          \value PinLocked                      Device is PIN or password locked.
+          \value TouchAndKeyboardLocked         Touch and/or keyboard is locked.
           */
 
 
@@ -197,13 +196,13 @@ QSystemDeviceInfoPrivate *getSystemDeviceInfoPrivate() { return deviceInfoPrivat
   This signal is emitted whenever a wireless keyboard is connected, specified by \a connected
 */
 /*!
-  \fn void QSystemDeviceInfo::keyboardFlip(bool open)
+  \fn void QSystemDeviceInfo::keyboardFlipped(bool open)
 
   This signal is emitted whenever a phone flips open, specified by \a open.
 */
 
 /*!
-    \fn void QSystemDeviceInfo::lockChanged(QSystemDeviceInfo::LockType type, bool on)
+    \fn void QSystemDeviceInfo::lockChanged(QSystemDeviceInfo::LockTypeFlags type, bool on)
 
      This signal is emitted whenever the lock state changes, with LockType \a type, and \a on, locked or unlocked.
 */
@@ -222,15 +221,16 @@ QSystemDeviceInfoPrivate *getSystemDeviceInfoPrivate() { return deviceInfoPrivat
    */
 
 QSystemDeviceInfo::QSystemDeviceInfo(QObject *parent)
-    : QObject(parent), d(deviceInfoPrivate()),activeProfileDetails(0)
+    : QObject(parent), d(deviceInfoPrivate())
 {
     qRegisterMetaType<QSystemDeviceInfo::BatteryStatus>("QSystemDeviceInfo::BatteryStatus");
     qRegisterMetaType<QSystemDeviceInfo::PowerState>("QSystemDeviceInfo::PowerState");
     qRegisterMetaType<QSystemDeviceInfo::SimStatus>("QSystemDeviceInfo::SimStatus");
     qRegisterMetaType<QSystemDeviceInfo::Profile>("QSystemDeviceInfo::Profile");
     qRegisterMetaType<QSystemDeviceInfo::InputMethodFlags>("QSystemDeviceInfo::InputMethodFlags");
-    qRegisterMetaType<QSystemDeviceInfo::LockType>("QSystemDeviceInfo::LockType");
+    qRegisterMetaType<QSystemDeviceInfo::LockTypeFlags>("QSystemDeviceInfo::LockTypeFlags");
     qRegisterMetaType<QSystemDeviceInfo::KeypadType>("QSystemDeviceInfo::KeypadType");
+    qRegisterMetaType<QSystemDeviceInfo::KeyboardType>("QSystemDeviceInfo::KeyboardType");
 }
 
 /*!
@@ -238,8 +238,6 @@ QSystemDeviceInfo::QSystemDeviceInfo(QObject *parent)
  */
 QSystemDeviceInfo::~QSystemDeviceInfo()
 {
-    if(activeProfileDetails != NULL)
-        delete activeProfileDetails;
 }
 
 
@@ -286,9 +284,9 @@ void QSystemDeviceInfo::connectNotify(const char *signal)
     }
 
     if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
-            keyboardFlip(bool))))) {
-        connect(d,SIGNAL(keyboardFlip(bool)),
-                this,SIGNAL(keyboardFlip(bool)),Qt::UniqueConnection);
+            keyboardFlipped(bool))))) {
+        connect(d,SIGNAL(keyboardFlipped(bool)),
+                this,SIGNAL(keyboardFlipped(bool)),Qt::UniqueConnection);
     }
 
     if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
@@ -298,9 +296,9 @@ void QSystemDeviceInfo::connectNotify(const char *signal)
     }
 
     if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
-            lockStatusChanged(QSystemDeviceInfo::LockType))))) {
-        connect(d,SIGNAL(lockStatusChanged(QSystemDeviceInfo::LockType)),
-                this,SIGNAL(lockStatusChanged(QSystemDeviceInfo::LockType)),Qt::UniqueConnection);
+            lockStatusChanged(QSystemDeviceInfo::LockTypeFlags))))) {
+        connect(d,SIGNAL(lockStatusChanged(QSystemDeviceInfo::LockTypeFlags)),
+                this,SIGNAL(lockStatusChanged(QSystemDeviceInfo::LockTypeFlags)),Qt::UniqueConnection);
     }
 }
 
@@ -350,9 +348,9 @@ void QSystemDeviceInfo::disconnectNotify(const char *signal)
     }
 
     if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
-            keyboardFlip(bool))))) {
-        disconnect(d,SIGNAL(keyboardFlip(bool)),
-                this,SIGNAL(keyboardFlip(bool)));
+            keyboardFlipped(bool))))) {
+        disconnect(d,SIGNAL(keyboardFlipped(bool)),
+                this,SIGNAL(keyboardFlipped(bool)));
     }
 
     if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
@@ -361,9 +359,9 @@ void QSystemDeviceInfo::disconnectNotify(const char *signal)
                 this,SIGNAL(deviceLocked(bool)));
     }
     if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
-            lockStatusChanged(QSystemDeviceInfo::LockType))))) {
-        disconnect(d,SIGNAL(lockStatusChanged(QSystemDeviceInfo::LockType)),
-                this,SIGNAL(lockStatusChanged(QSystemDeviceInfo::LockType)));
+            lockStatusChanged(QSystemDeviceInfo::LockTypeFlags))))) {
+        disconnect(d,SIGNAL(lockStatusChanged(QSystemDeviceInfo::LockTypeFlags)),
+                this,SIGNAL(lockStatusChanged(QSystemDeviceInfo::LockTypeFlags)));
     }
 }
 
@@ -523,14 +521,14 @@ bool QSystemDeviceInfo::currentBluetoothPowerState()
 }
 
 /*!
-  \property QSystemDeviceInfo::keyboardType
+  \property QSystemDeviceInfo::keyboardTypes
   \brief The Keyboard Type
 
   Returns the type of keyboards found.
   */
-QSystemDeviceInfo::KeyboardTypeFlags QSystemDeviceInfo::keyboardType()
+QSystemDeviceInfo::KeyboardTypeFlags QSystemDeviceInfo::keyboardTypes()
 {
-    return deviceInfoPrivate()->keyboardType();
+    return deviceInfoPrivate()->keyboardTypes();
 }
 
 /*!
@@ -545,14 +543,14 @@ bool QSystemDeviceInfo::isWirelessKeyboardConnected()
 }
 
 /*!
-  \property QSystemDeviceInfo::isKeyboardFlipOpen
+  \property QSystemDeviceInfo::isKeyboardFlippedOpen
   \brief Flip keyboard open.
 
   Returns true if the flip keyboard is open, otherwise false;
   */
-bool QSystemDeviceInfo::isKeyboardFlipOpen()
+bool QSystemDeviceInfo::isKeyboardFlippedOpen()
 {
-    return deviceInfoPrivate()->isKeyboardFlipOpen();
+    return deviceInfoPrivate()->isKeyboardFlippedOpen();
 }
 
 /*!
@@ -568,7 +566,7 @@ bool QSystemDeviceInfo::keypadLightOn(QSystemDeviceInfo::KeypadType type)
 
 
 /*!
-  \property QSystemDeviceInfo::uniqueID
+  \property QSystemDeviceInfo::uniqueDeviceID
   \brief unique host id.
 
   Returns a unique identifier for the machine.
@@ -576,18 +574,19 @@ bool QSystemDeviceInfo::keypadLightOn(QSystemDeviceInfo::KeypadType type)
   Depending on security enforcement on platform, this may return a non unique number, or 0.
 
   */
-QUuid QSystemDeviceInfo::uniqueID()
+QUuid QSystemDeviceInfo::uniqueDeviceID()
 {
-    return deviceInfoPrivate()->uniqueID();
+    return deviceInfoPrivate()->uniqueDeviceID();
 }
 
 /*!
   \property QSystemDeviceInfo::lockStatus
- \brief Type of lock.
+  \brief Type of lock.
 
- Returns the QSystemDeviceInfo::DeviceType type of lock the device might be in.
+  Returns the QSystemDeviceInfo::LockTypeFlags type of lock state the device might be in.
+  The LockType must be currently active not just enabled.
  */
-QSystemDeviceInfo::LockType QSystemDeviceInfo::lockStatus()
+QSystemDeviceInfo::LockTypeFlags QSystemDeviceInfo::lockStatus()
 {
     return deviceInfoPrivate()->lockStatus();
 }
@@ -595,10 +594,9 @@ QSystemDeviceInfo::LockType QSystemDeviceInfo::lockStatus()
 /*!
   Returns a QSystemDeviceInfo::ActiveProfileDetails for the currently active profile.
   */
-QSystemDeviceInfo::ActiveProfileDetails *QSystemDeviceInfo::getActiveProfileDetails()
+QSystemDeviceInfo::ActiveProfileDetails QSystemDeviceInfo::getActiveProfileDetails()
 {
-    if(activeProfileDetails == NULL)
-        activeProfileDetails = new QSystemDeviceInfo::ActiveProfileDetails();
+  //  QSystemDeviceInfo::ActiveProfileDetails activeProfileDetails;
     return activeProfileDetails;
 }
 
@@ -608,9 +606,25 @@ QSystemDeviceInfo::ActiveProfileDetails *QSystemDeviceInfo::getActiveProfileDeta
 */
 QSystemDeviceInfo::ActiveProfileDetails::ActiveProfileDetails()
 {
-
+  //   d = new QSystemDeviceInfoPrivate;
 }
 
+/*!
+    Constructs the ActiveProfileDetails that is a copy of \a other.
+*/
+QSystemDeviceInfo::ActiveProfileDetails::ActiveProfileDetails(const ActiveProfileDetails& other)
+//    : d(other.d)
+{
+}
+
+/*!
+    Assigns \a other to this ActiveProfileDetails and returns a reference to it.
+*/
+QSystemDeviceInfo::ActiveProfileDetails &QSystemDeviceInfo::ActiveProfileDetails::operator=(const ActiveProfileDetails& other)
+{
+   // d = other.d;
+    return *this;
+}
 /*!
     Destroys the ActiveProfileDetails.
 */

@@ -216,13 +216,14 @@ QSharedPointer<QOrganizerItemObserver> QOrganizerManagerEngineV2Wrapper::observe
 {
     QOrganizerItemObserver* observer = createOrganizerItemObserver(this);
     connect(observer, SIGNAL(destroyed(QObject*)),
-            this, SLOT(observerDestroyed(QOrganizerItemObserver*)));
+            this, SLOT(observerDestroyed(QObject*)));
     m_observerForItem.insert(itemId, observer);
     return QSharedPointer<QOrganizerItemObserver>(observer);
 }
 
-void QOrganizerManagerEngineV2Wrapper::observerDestroyed(QOrganizerItemObserver* observer)
+void QOrganizerManagerEngineV2Wrapper::observerDestroyed(QObject* object)
 {
+    QOrganizerItemObserver* observer = reinterpret_cast<QOrganizerItemObserver*>(object);
     QOrganizerItemId key = m_observerForItem.key(observer);
     if (!key.isNull()) {
         m_observerForItem.remove(key, observer);
@@ -231,22 +232,20 @@ void QOrganizerManagerEngineV2Wrapper::observerDestroyed(QOrganizerItemObserver*
 
 void QOrganizerManagerEngineV2Wrapper::itemsUpdated(const QList<QOrganizerItemId>& ids)
 {
-    foreach (QOrganizerItemId id, ids) {
-        QHash<QOrganizerItemId, QOrganizerItemObserver*>::iterator it = m_observerForItem.find(id);
-        while (it != m_observerForItem.end()) {
-            (*it)->emitItemChanged();
-            it++;
+    foreach (const QOrganizerItemId& id, ids) {
+        QList<QOrganizerItemObserver*> observers = m_observerForItem.values(id);
+        foreach (QOrganizerItemObserver* observer, observers) {
+            observer->emitItemChanged();
         }
     }
 }
 
 void QOrganizerManagerEngineV2Wrapper::itemsDeleted(const QList<QOrganizerItemId>& ids)
 {
-    foreach (QOrganizerItemId id, ids) {
-        QHash<QOrganizerItemId, QOrganizerItemObserver*>::iterator it = m_observerForItem.find(id);
-        while (it != m_observerForItem.end()) {
-            (*it)->emitItemRemoved();
-            it++;
+    foreach (const QOrganizerItemId& id, ids) {
+        QList<QOrganizerItemObserver*> observers = m_observerForItem.values(id);
+        foreach (QOrganizerItemObserver* observer, observers) {
+            observer->emitItemRemoved();
         }
     }
 }

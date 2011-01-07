@@ -71,10 +71,8 @@ S60CameraFocusControl::S60CameraFocusControl(S60ImageCaptureSession *session, QO
     m_advancedSettings = m_session->advancedSettings();
 
     TRAPD(err, m_session->doSetZoomFactorL(m_opticalZoomValue, m_digitalZoomValue));
-    if (err) {
+    if (err)
         m_session->setError(KErrNotSupported, QString("Setting default zoom factors failed."));
-    }
-
 }
 
 S60CameraFocusControl::~S60CameraFocusControl()
@@ -102,9 +100,8 @@ bool S60CameraFocusControl::isFocusModeSupported(QCameraFocus::FocusMode mode) c
     if (m_advancedSettings) {
         return m_advancedSettings->supportedFocusModes() & mode;
     } else {
-        if (mode == QCameraFocus::AutoFocus) {
+        if (mode == QCameraFocus::AutoFocus)
             return m_session->isFocusSupported();
-        }
     }
 
     return false;
@@ -133,9 +130,8 @@ qreal S60CameraFocusControl::digitalZoom() const
 void S60CameraFocusControl::zoomTo(qreal optical, qreal digital)
 {
     TRAPD(err, m_session->doSetZoomFactorL(optical, digital));
-    if (err) {
+    if (err)
         m_session->setError(KErrNotSupported, QString("Requested zoom factor is not supported."));
-    }
 
     // Query new values
     if (m_opticalZoomValue != m_session->opticalZoomFactor()) {

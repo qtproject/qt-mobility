@@ -90,6 +90,7 @@ public:
     // From S60MediaPlayerAudioEndpointSelector
     QString activeEndpoint() const;
     QString defaultEndpoint() const;
+    void setPlaybackRate(qreal rate);
 public Q_SLOTS:
     void setActiveEndpoint(const QString& name);
 

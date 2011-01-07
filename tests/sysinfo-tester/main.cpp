@@ -182,15 +182,15 @@ static void test_systemdeviceinfo(void)
   X(deviceinfo.imsi());
   X(deviceinfo.inputMethodType());
   X(deviceinfo.isDeviceLocked());
-  X(deviceinfo.isKeyboardFlipOpen());
+  X(deviceinfo.isKeyboardFlippedOpen());
   X(deviceinfo.isWirelessKeyboardConnected());
-  X(deviceinfo.keyboardType());
+  X(deviceinfo.keyboardTypes());
   X(deviceinfo.manufacturer());
   X(deviceinfo.model());
   X(deviceinfo.productName());
   X(deviceinfo.simStatus());
   X(deviceinfo.lockStatus());
-  X(deviceinfo.uniqueID());
+  X(deviceinfo.uniqueDeviceID());
 }
 
 /* ------------------------------------------------------------------------- *
@@ -308,6 +308,10 @@ static void test_systemnetworkinfo(void)
     QtMobility::QSystemNetworkInfo::NetworkMode mode =
     (QtMobility::QSystemNetworkInfo::NetworkMode) sym->val;
 
+    if(QCoreApplication::arguments().count() > 2)
+        if(!QString(sym->key).contains(QCoreApplication::arguments().at(2),Qt::CaseInsensitive))
+            continue;
+
     qDebug() << "";
     qDebug() << "NetworkMode:" << sym->key;
 
@@ -321,7 +325,7 @@ static void test_systemnetworkinfo(void)
     qDebug() << "  networkinfo.networkStatus() ->" << status;
 
     QString network = networkinfo.networkName(mode);
-    qDebug() << "  networkinfo.netwoerkName() ->" << network;
+    qDebug() << "  networkinfo.networkName() ->" << network;
 
     int sigstr = networkinfo.networkSignalStrength(mode);
     qDebug() << "  networkinfo.networkSignalStrength() ->" << sigstr;

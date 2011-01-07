@@ -191,9 +191,9 @@ public:
     int voiceRingtoneVolume();//1.2
     bool vibrationActive();//1.2
 
-//    QSystemDeviceInfo::KeyboardTypeFlags keyboardType(); //1.2
+//    QSystemDeviceInfo::KeyboardTypeFlags keyboardTypes(); //1.2
 //    bool isWirelessKeyboardConnected(); //1.2
-//    bool isKeyboardFlipOpen();//1.2
+//    bool isKeyboardFlippedOpen();//1.2
 
 
 private:

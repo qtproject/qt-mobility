@@ -1,9 +1,9 @@
 INCLUDEPATH += ../../../src/messaging
 INCLUDEPATH += ../../../src/global
 
-TARGET  = $$qtLibraryTarget(declarative_messaging)
 TEMPLATE = lib
 CONFIG += plugin
+TARGET  = $$qtLibraryTarget(declarative_messaging)
 TARGETPATH = QtMobility/messaging
 PLUGIN_TYPE = declarative
 
@@ -37,7 +37,12 @@ simulator|contains(qmf_enabled, yes) {
         QMAKE_LFLAGS += -F$$(QMF_LIBDIR)
         LIBS += -framework qmfclient
     } else {
-        LIBS += -L$$(QMF_LIBDIR) -l$$qtLibraryTarget(qmfclient)
+        maemo6:meego {
+            CONFIG += link_pkgconfig
+            PKGCONFIG += qmfclient
+        } else {
+            LIBS += -L$$(QMF_LIBDIR) -l$$qtLibraryTarget(qmfclient)
+        }
     }
 }
 

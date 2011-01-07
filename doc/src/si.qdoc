@@ -106,12 +106,23 @@ multitouch etc)
 
 To build the library, run \tt configure and \tt make.
 
+Linux supports a NetworkManager based backend and generic backend using
+QNetworkInterface only. By default the generic backend is selected.
+If the NetworkManager backend is required run qmake as follows:
+
+\code
+    qmake BACKEND=NetworkManager
+\endcode
+
+The backend selection is expected to disappear once the API is integrated into Qt.
+
+
 
 \section1 Main Classes
 \annotatedlist systeminfo
 
 
-\section1 QML Classes
+\section1 QML Elements
 The Qt SystemInfo offers access to system information through declarative
 UI by providing systeminfo elements. Detailed information can be found
 at \l{QML System Information Plugin}.

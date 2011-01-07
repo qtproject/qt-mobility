@@ -140,6 +140,7 @@ QRfcommServer::QRfcommServer(QObject *parent)
 */
 QRfcommServer::~QRfcommServer()
 {
+    delete d_ptr;
 }
 
 /*!

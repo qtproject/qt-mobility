@@ -70,9 +70,9 @@ QString S60AudioEncoderControl::codecDescription(const QString &codecName) const
 {
     // According to ForumNokia MMF camcorder plugin supports AAC, AMR and QCELP
     // QCELP is speech codec and can be discarded
-	if(qstrcmp(codecName.toLocal8Bit().constData(), "audio/aac") == 0)
+    if (qstrcmp(codecName.toLocal8Bit().constData(), "audio/aac") == 0)
         return QString("Advanced Audio Coding");
-	else if(qstrcmp(codecName.toLocal8Bit().constData(), "audio/amr") == 0)
+    else if (qstrcmp(codecName.toLocal8Bit().constData(), "audio/amr") == 0)
         return QString("Adaptive Multi-Rate Audio Codec");
 
     return QString();
@@ -122,6 +122,10 @@ QAudioEncoderSettings S60AudioEncoderControl::audioSettings() const
 
 void S60AudioEncoderControl::setAudioSettings(const QAudioEncoderSettings &settings)
 {
+    // Notify that settings have been implicitly set and there's no need to
+    // initialize them in case camera is changed
+    m_session->notifySettingsSet();
+
     // Quality defines SampleRate/BitRate combination if either or both are missing
     if (settings.codec().isEmpty()) { // Empty settings
         m_session->setAudioCaptureQuality(settings.quality(), S60VideoCaptureSession::EOnlyAudioQuality);
@@ -139,6 +143,12 @@ void S60AudioEncoderControl::setAudioSettings(const QAudioEncoderSettings &setti
         m_session->setAudioBitRate(settings.bitRate());
         m_session->setAudioEncodingMode(settings.encodingMode());
         m_session->setAudioCaptureQuality(settings.quality(), S60VideoCaptureSession::EAudioQualityAndBitRate);
+
+    } else if (settings.bitRate() == -1 && settings.sampleRate() == -1) { // No BitRate or SampleRate set
+        m_session->setAudioCaptureCodec(settings.codec());
+        m_session->setAudioChannelCount(settings.channelCount());
+        m_session->setAudioEncodingMode(settings.encodingMode());
+        m_session->setAudioCaptureQuality(settings.quality(), S60VideoCaptureSession::EOnlyAudioQuality);
 
     } else { // Both SampleRate and BitRate set
         m_session->setAudioCaptureCodec(settings.codec());

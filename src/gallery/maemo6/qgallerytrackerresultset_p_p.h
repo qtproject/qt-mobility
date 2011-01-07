@@ -64,13 +64,27 @@
 #include <QtCore/qcoreapplication.h>
 #include <QtCore/qbasictimer.h>
 #include <QtCore/qcoreevent.h>
-#include <QtCore/qfuturewatcher.h>
+#include <QtCore/qmutex.h>
 #include <QtCore/qqueue.h>
+#include <QtCore/qrunnable.h>
+#include <QtCore/qthread.h>
 #include <QtCore/qwaitcondition.h>
+#include <QtDBus/qdbusargument.h>
 
 QTM_BEGIN_NAMESPACE
 
-class QGalleryTrackerResultSetPrivate : public QGalleryResultSetPrivate
+class QGalleryTrackerResultSetThread : public QThread
+{
+public:
+    QGalleryTrackerResultSetThread(QRunnable *runnable) : runnable(runnable) {}
+
+    void run() { runnable->run(); }
+
+private:
+    QRunnable *runnable;
+};
+
+class QGalleryTrackerResultSetPrivate : public QGalleryResultSetPrivate, public QRunnable
 {
     Q_DECLARE_PUBLIC(QGalleryTrackerResultSet)
 public:
@@ -236,14 +250,11 @@ public:
         QVector<QVariant> values;
     };
 
-    typedef QVector<QGalleryTrackerSortCriteria>::const_iterator sort_iterator;
-
     enum Flag
     {
         Cancelled       = 0x01,
         Live            = 0x02,
         Refresh         = 0x04,
-        Reset           = 0x08,
         UpdateRequested = 0x10,
         Active          = 0x20,
         SyncFinished    = 0x40
@@ -251,11 +262,7 @@ public:
 
     Q_DECLARE_FLAGS(Flags, Flag)
 
-    QGalleryTrackerResultSetPrivate(
-            QGalleryTrackerResultSetArguments *arguments,
-            bool autoUpdate,
-            int offset,
-            int limit)
+    QGalleryTrackerResultSetPrivate(QGalleryTrackerResultSetArguments *arguments, bool autoUpdate)
         : m_service( arguments->service )
         , idColumn(arguments->idColumn.take())
         , urlColumn(arguments->urlColumn.take())
@@ -267,23 +274,20 @@ public:
         , compositeOffset(arguments->compositeOffset)
         , aliasOffset(compositeOffset + arguments->compositeColumns.count())
         , columnCount(aliasOffset + arguments->aliasColumns.count())
-        , queryOffset(offset)
-        , queryLimit(limit)
         , currentRow(0)
         , currentIndex(-1)
         , rowCount(0)
         , progressMaximum(0)
         , queryInterface(arguments->queryInterface)
-        , queryMethod(arguments->queryMethod)
-        , queryArguments(arguments->queryArguments)
+        , sparql(arguments->sparql)
         , propertyNames(arguments->propertyNames)
         , propertyAttributes(arguments->propertyAttributes)
         , propertyTypes(arguments->propertyTypes)
         , valueColumns(arguments->valueColumns)
         , compositeColumns(arguments->compositeColumns)
         , aliasColumns(arguments->aliasColumns)
-        , sortCriteria(arguments->sortCriteria)
         , resourceKeys(arguments->resourceKeys)
+        , parserThread(this)
     {
         arguments->clear();
 
@@ -311,15 +315,12 @@ public:
     const int compositeOffset;
     const int aliasOffset;
     const int columnCount;
-    const int queryOffset;
-    const int queryLimit;
     QVector<QVariant>::const_iterator currentRow;
     int currentIndex;
     int rowCount;
     int progressMaximum;
     const QGalleryDBusInterfacePointer queryInterface;
-    const QString queryMethod;
-    const QVariantList queryArguments;
+    const QString sparql;
     const QStringList propertyNames;
     const QList<int> propertyKeys;
     const QVector<QGalleryProperty::Attributes> propertyAttributes;
@@ -327,13 +328,13 @@ public:
     const QVector<QGalleryTrackerValueColumn *> valueColumns;
     const QVector<QGalleryTrackerCompositeColumn *> compositeColumns;
     const QVector<int> aliasColumns;
-    const QVector<QGalleryTrackerSortCriteria> sortCriteria;
     const QVector<int> resourceKeys;
     Cache rCache;   // Remove cache.
     Cache iCache;   // Insert cache.
 
     QScopedPointer<QDBusPendingCallWatcher> queryWatcher;
-    QFutureWatcher<bool> parseWatcher;
+    QDBusArgument queryReply;
+    QGalleryTrackerResultSetThread parserThread;
     QList<QGalleryTrackerMetaDataEdit *> edits;
     QBasicTimer updateTimer;
     SyncEventQueue syncEvents;
@@ -355,13 +356,7 @@ public:
     void query();
 
     void queryFinished(const QDBusPendingCall &call);
-    bool parseRows(const QDBusPendingCall &call, int limit, bool reset);
-    void correctRows(
-            row_iterator begin,
-            row_iterator end,
-            const sort_iterator sortBegin,
-            const sort_iterator sortEnd,
-            bool reversed = false) const;
+    void run();
 
     void synchronize();
 

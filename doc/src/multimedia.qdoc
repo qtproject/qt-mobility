@@ -36,7 +36,7 @@
 
 \page multimedia.html
 \title Multimedia
-\brief Provides a set of APIs to play and record media, and manage a 
+\brief Provides a set of APIs to play and record media, and manage a
 collection of media content.
 \ingroup mobility
 
@@ -53,7 +53,7 @@ Unlike the other APIs in Qt Mobility, the Multimedia API is \i not in the
 
 \section1 Overview
 
-This API delivers an easy to use interface to multimedia functions. The 
+This API delivers an easy to use interface to multimedia functions. The
 developer can use the API to display an image, or a video, record sound or play a
 multimedia stream.
 
@@ -413,7 +413,7 @@ QVideoWidget classes.
 
 \annotatedlist multimedia-serv
 
-\section2 QML multimedia elements
+\section2 QML Multimedia Elements
 \list
 \o \l {SoundEffect}{SoundEffect: Low Latency Sound Effects}
 \o \l {Audio}{Audio: Music playback}

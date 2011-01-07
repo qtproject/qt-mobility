@@ -113,6 +113,8 @@ public:
     bool removeMessage(const QMessageId &id, RemovalOption option = RemoveOnOriginatingServer);
     bool removeMessages(const QMessageFilter &filter, RemovalOption option = RemoveOnOriginatingServer);
 
+    bool removeAccount(const QMessageAccountId &id);
+
     QMessage message(const QMessageId &id) const;
     QMessageFolder folder(const QMessageFolderId &id) const;
     QMessageAccount account(const QMessageAccountId &id) const;
@@ -124,6 +126,8 @@ Q_SIGNALS:
     void messageAdded(const QMessageId &id, const QMessageManager::NotificationFilterIdSet &matchingFilterIds);
     void messageRemoved(const QMessageId &id, const QMessageManager::NotificationFilterIdSet &matchingFilterIds);
     void messageUpdated(const QMessageId &id, const QMessageManager::NotificationFilterIdSet &matchingFilterIds);
+
+    void accountRemoved(const QMessageAccountId &id);
 
 private:
     QMessageStore *store;

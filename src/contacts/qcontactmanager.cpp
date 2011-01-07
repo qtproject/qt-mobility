@@ -261,7 +261,8 @@ QContactManager* QContactManager::fromUri(const QString& managerUri, QObject* pa
   The default implementation for the platform will be created.
  */
 QContactManager::QContactManager(QObject* parent)
-    : QObject(parent)
+    : QObject(parent),
+    d(new QContactManagerData)
 {
     createEngine(QString(), QMap<QString, QString>());
 }
@@ -291,6 +292,12 @@ void QContactManager::createEngine(const QString& managerName, const QMap<QStrin
     connect(d->m_engine, SIGNAL(relationshipsAdded(QList<QContactLocalId>)), this, SIGNAL(relationshipsAdded(QList<QContactLocalId>)));
     connect(d->m_engine, SIGNAL(relationshipsRemoved(QList<QContactLocalId>)), this, SIGNAL(relationshipsRemoved(QList<QContactLocalId>)));
     connect(d->m_engine, SIGNAL(selfContactIdChanged(QContactLocalId,QContactLocalId)), this, SIGNAL(selfContactIdChanged(QContactLocalId,QContactLocalId)));
+
+    connect(d->m_engine, SIGNAL(contactsChanged(QList<QContactLocalId>)),
+            this, SLOT(contactsUpdated(QList<QContactLocalId>)));
+    connect(d->m_engine, SIGNAL(contactsRemoved(QList<QContactLocalId>)),
+            this, SLOT(contactsDeleted(QList<QContactLocalId>)));
+
 
     QContactManagerData::m_aliveEngines.insert(this);
 }
@@ -405,6 +412,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactManager::ParameterValueOnlyOtherProcesses, "Onl
   \value LimitReachedError The most recent operation failed because the limit for that type of object has been reached
   \value NotSupportedError The most recent operation failed because the requested operation is not supported in the specified store
   \value BadArgumentError The most recent operation failed because one or more of the parameters to the operation were invalid
+  \value TimeoutError The most recent operation failed because it took longer than expected.  It may be possible to try again.
   \value UnspecifiedError The most recent operation failed for an undocumented reason
  */
 
@@ -618,8 +626,7 @@ bool QContactManager::removeContact(const QContactLocalId& contactId)
   if all contacts were saved successfully.
 
   For each newly saved contact that was successful, the id of the contact
-  in the \a contacts list will be updated with the new value.  If a failure occurs
-  when saving a new contact, the id will be cleared.
+  in the \a contacts list will be updated with the new value.
 
   \sa QContactManager::saveContact()
  */
@@ -655,8 +662,7 @@ bool QContactManager::saveContacts(QList<QContact>* contacts, QMap<int, QContact
   if all contacts were saved successfully.
 
   For each newly saved contact that was successful, the id of the contact
-  in the \a contacts list will be updated with the new value.  If a failure occurs
-  when saving a new contact, the id will be cleared.
+  in the \a contacts list will be updated with the new value.
 
   \sa QContactManager::saveContact()
  */
@@ -735,7 +741,40 @@ bool QContactManager::removeContacts(const QList<QContactLocalId>& contactIds, Q
  */
 QSharedPointer<QContactObserver> QContactManager::observeContact(QContactLocalId contactId)
 {
-    return d->m_engine->observeContact(contactId);
+    QContactObserver* observer = new QContactObserver(this);
+    connect(observer, SIGNAL(destroyed(QObject*)), this, SLOT(observerDestroyed(QObject*)));
+    d->m_observerForContact.insert(contactId, observer);
+    return QSharedPointer<QContactObserver>(observer);
+}
+
+// Some private slots for observing contacts
+void QContactManager::observerDestroyed(QObject* object)
+{
+    QContactObserver* observer = reinterpret_cast<QContactObserver*>(object);
+    QContactLocalId key = d->m_observerForContact.key(observer);
+    if (key != 0) {
+        d->m_observerForContact.remove(key, observer);
+    }
+}
+
+void QContactManager::contactsUpdated(const QList<QContactLocalId>& ids)
+{
+    foreach (QContactLocalId id, ids) {
+        QList<QContactObserver*> observers = d->m_observerForContact.values(id);
+        foreach (QContactObserver* observer, observers) {
+            observer->emitContactChanged();
+        }
+    }
+}
+
+void QContactManager::contactsDeleted(const QList<QContactLocalId>& ids)
+{
+    foreach (QContactLocalId id, ids) {
+        QList<QContactObserver*> observers = d->m_observerForContact.values(id);
+        foreach (QContactObserver* observer, observers) {
+            observer->emitContactRemoved();
+        }
+    }
 }
 
 /*!

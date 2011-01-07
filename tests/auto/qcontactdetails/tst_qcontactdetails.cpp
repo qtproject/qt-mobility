@@ -69,15 +69,19 @@ private slots:
     void displayLabel();
     void emailAddress();
     void family();
+    void favorite();
     void gender();
     void geolocation();
+    void globalPresence();
     void guid();
+    void hobby();
     void name();
     void nickname();
     void note();
     void onlineAccount();
     void organization();
     void phoneNumber();
+    void presence();
     void ringtone();
     void syncTarget();
     void tag();
@@ -427,6 +431,48 @@ void tst_QContactDetails::family()
     QCOMPARE(c.details(QContactFamily::DefinitionName).count(), 0);
 }
 
+void tst_QContactDetails::favorite()
+{
+    QContact c;
+    QContactFavorite f1, f2;
+
+    // first, ensure that the default value is "false"
+    QCOMPARE(c.detail<QContactFavorite>().isFavorite(), false);
+    QCOMPARE(c.detail<QContactFavorite>().index(), 0); // 0 being "no index" :-/  -1 would be better, but not default...
+    QVERIFY(!f1.isFavorite());
+
+    // test property set
+    f1.setFavorite(true);
+    QCOMPARE(f1.isFavorite(), true);
+    QCOMPARE(f1.value<bool>(QContactFavorite::FieldFavorite), true);
+
+    // test property add
+    QVERIFY(c.saveDetail(&f1));
+    QCOMPARE(c.details(QContactFavorite::DefinitionName).count(), 1);
+    QCOMPARE(QContactFavorite(c.details(QContactFavorite::DefinitionName).value(0)).isFavorite(), f1.isFavorite());
+
+    // test property update
+    f1.setValue("label","label1");
+    f1.setFavorite(false);
+    f1.setIndex(5);
+    QVERIFY(c.saveDetail(&f1));
+    QCOMPARE(c.details(QContactFavorite::DefinitionName).value(0).value("label"), QString("label1"));
+    QCOMPARE(c.details(QContactFavorite::DefinitionName).value(0).value<bool>(QContactFavorite::FieldFavorite), false);
+    QCOMPARE(c.details(QContactFavorite::DefinitionName).value(0).value<int>(QContactFavorite::FieldIndex), 5);
+    QCOMPARE(c.details<QContactFavorite>().value(0).index(), 5);
+
+    // test property remove
+    f2.setFavorite(true);
+    QVERIFY(c.removeDetail(&f1));
+    QCOMPARE(c.details(QContactFavorite::DefinitionName).count(), 0);
+    QVERIFY(c.saveDetail(&f2));
+    QCOMPARE(c.details(QContactFavorite::DefinitionName).count(), 1);
+    QVERIFY(c.removeDetail(&f2));
+    QCOMPARE(c.details(QContactFavorite::DefinitionName).count(), 0);
+    QVERIFY(c.removeDetail(&f2) == false);
+    QCOMPARE(c.details(QContactFavorite::DefinitionName).count(), 0);
+}
+
 void tst_QContactDetails::gender()
 {
     QContact c;
@@ -516,6 +562,62 @@ void tst_QContactDetails::geolocation()
     QCOMPARE(c.details(QContactGeoLocation::DefinitionName).count(), 0);
 }
 
+void tst_QContactDetails::globalPresence()
+{
+    QContact c;
+    QContactGlobalPresence p1, p2;
+
+    // test property set
+    QDateTime ts = QDateTime::currentDateTime();
+    p1.setTimestamp(ts);
+    p1.setNickname(QString("nick"));
+    p1.setPresenceState(QContactPresence::PresenceExtendedAway);
+    p1.setPresenceStateText("1234");
+    p1.setPresenceStateImageUrl(QUrl("http://example.com/someimage.png"));
+    p1.setCustomMessage("gone fishing!");
+    QCOMPARE(p1.timestamp(), ts);
+    QCOMPARE(p1.value<QDateTime>(QContactGlobalPresence::FieldTimestamp), ts);
+    QCOMPARE(p1.nickname(), QString("nick"));
+    QCOMPARE(p1.value(QContactGlobalPresence::FieldNickname), QString("nick"));
+    QCOMPARE(p1.presenceState(), QContactPresence::PresenceExtendedAway);
+    QCOMPARE(p1.value<int>(QContactGlobalPresence::FieldPresenceState), static_cast<int>(QContactPresence::PresenceExtendedAway));
+    QCOMPARE(p1.presenceStateText(), QString("1234"));
+    QCOMPARE(p1.value(QContactGlobalPresence::FieldPresenceStateText), QString("1234"));
+    QCOMPARE(p1.presenceStateImageUrl(), QUrl("http://example.com/someimage.png"));
+    QCOMPARE(p1.value<QUrl>(QContactGlobalPresence::FieldPresenceStateImageUrl), QUrl("http://example.com/someimage.png"));
+    QCOMPARE(p1.customMessage(), QString("gone fishing!"));
+    QCOMPARE(p1.value(QContactGlobalPresence::FieldCustomMessage), QString("gone fishing!"));
+
+    // test property add
+    QVERIFY(c.saveDetail(&p1));
+    QCOMPARE(c.details(QContactGlobalPresence::DefinitionName).count(), 1);
+    QCOMPARE(QContactGlobalPresence(c.details(QContactGlobalPresence::DefinitionName).value(0)).presenceStateText(), p1.presenceStateText());
+
+    // test property update
+    p1.setValue("label","label1");
+    p1.setPresenceStateText("12345");
+    QVERIFY(c.saveDetail(&p1));
+    QCOMPARE(c.details(QContactGlobalPresence::DefinitionName).value(0).value("label"), QString("label1"));
+    QCOMPARE(c.details(QContactGlobalPresence::DefinitionName).value(0).value(QContactGlobalPresence::FieldPresenceStateText), QString("12345"));
+
+    p2.setTimestamp(ts);
+    p2.setNickname(QString("test"));
+    p2.setPresenceState(QContactPresence::PresenceAvailable);
+    p2.setPresenceStateText("online");
+    p2.setPresenceStateImageUrl(QUrl("http://example.com/someimage.png"));
+    p2.setCustomMessage("C is for generic biscuit-type pastry product!");
+
+    // test property remove
+    QVERIFY(c.removeDetail(&p1));
+    QCOMPARE(c.details(QContactGlobalPresence::DefinitionName).count(), 0);
+    QVERIFY(c.saveDetail(&p2));
+    QCOMPARE(c.details(QContactGlobalPresence::DefinitionName).count(), 1);
+    QVERIFY(c.removeDetail(&p2));
+    QCOMPARE(c.details(QContactGlobalPresence::DefinitionName).count(), 0);
+    QVERIFY(c.removeDetail(&p2) == false);
+    QCOMPARE(c.details(QContactGlobalPresence::DefinitionName).count(), 0);
+}
+
 void tst_QContactDetails::guid()
 {
     QContact c;
@@ -547,6 +649,40 @@ void tst_QContactDetails::guid()
     QCOMPARE(c.details(QContactGuid::DefinitionName).count(), 0);
     QVERIFY(c.removeDetail(&g2) == false);
     QCOMPARE(c.details(QContactGuid::DefinitionName).count(), 0);
+}
+
+void tst_QContactDetails::hobby()
+{
+    QContact c;
+    QContactHobby h1, h2;
+
+    // test property set
+    h1.setHobby("1234");
+    QCOMPARE(h1.hobby(), QString("1234"));
+    QCOMPARE(h1.value(QContactHobby::FieldHobby), QString("1234"));
+
+    // test property add
+    QVERIFY(c.saveDetail(&h1));
+    QCOMPARE(c.details(QContactHobby::DefinitionName).count(), 1);
+    QCOMPARE(QContactHobby(c.details(QContactHobby::DefinitionName).value(0)).hobby(), h1.hobby());
+
+    // test property update
+    h1.setValue("label","label1");
+    h1.setHobby("12345");
+    QVERIFY(c.saveDetail(&h1));
+    QCOMPARE(c.details(QContactHobby::DefinitionName).value(0).value("label"), QString("label1"));
+    QCOMPARE(c.details(QContactHobby::DefinitionName).value(0).value(QContactHobby::FieldHobby), QString("12345"));
+
+    // test property remove
+    h2.setHobby("1111");
+    QVERIFY(c.removeDetail(&h1));
+    QCOMPARE(c.details(QContactHobby::DefinitionName).count(), 0);
+    QVERIFY(c.saveDetail(&h2));
+    QCOMPARE(c.details(QContactHobby::DefinitionName).count(), 1);
+    QVERIFY(c.removeDetail(&h2));
+    QCOMPARE(c.details(QContactHobby::DefinitionName).count(), 0);
+    QVERIFY(c.removeDetail(&h2) == false);
+    QCOMPARE(c.details(QContactHobby::DefinitionName).count(), 0);
 }
 
 void tst_QContactDetails::name()
@@ -689,6 +825,8 @@ void tst_QContactDetails::onlineAccount()
     o1.setAccountUri("test@nokia.com");
     QCOMPARE(o1.accountUri(), QString("test@nokia.com"));
     QCOMPARE(o1.value(QContactOnlineAccount::FieldAccountUri), QString("test@nokia.com"));
+    o1.setProtocol(QContactOnlineAccount::ProtocolJabber);
+    QCOMPARE(o1.protocol(), QLatin1String(QContactOnlineAccount::ProtocolJabber));
 
     // Sub types
     o1.setSubTypes(QContactOnlineAccount::SubTypeSip);
@@ -709,11 +847,19 @@ void tst_QContactDetails::onlineAccount()
     QCOMPARE(QContactOnlineAccount(c.details(QContactOnlineAccount::DefinitionName).value(0)).accountUri(), o1.accountUri());
 
     // test property update
+    QStringList caps;
+    caps << "cap1" << "cap3" << "cap4";
     o1.setValue("label","label1");
     o1.setAccountUri("test2@nokia.com");
+    o1.setServiceProvider("some provider");
+    o1.setCapabilities(caps);
     QVERIFY(c.saveDetail(&o1));
     QCOMPARE(c.details(QContactOnlineAccount::DefinitionName).value(0).value("label"), QString("label1"));
     QCOMPARE(c.details(QContactOnlineAccount::DefinitionName).value(0).value(QContactOnlineAccount::FieldAccountUri), QString("test2@nokia.com"));
+    QCOMPARE(c.details(QContactOnlineAccount::DefinitionName).value(0).value<QStringList>(QContactOnlineAccount::FieldCapabilities), caps);
+    QCOMPARE(c.details<QContactOnlineAccount>().value(0).capabilities(), caps);
+    QCOMPARE(c.details(QContactOnlineAccount::DefinitionName).value(0).value(QContactOnlineAccount::FieldServiceProvider), QString("some provider"));
+    QCOMPARE(c.details<QContactOnlineAccount>().value(0).serviceProvider(), QString("some provider"));
 
     // test property remove
     QVERIFY(c.removeDetail(&o1));
@@ -837,6 +983,62 @@ void tst_QContactDetails::phoneNumber()
     QCOMPARE(c.details(QContactPhoneNumber::DefinitionName).count(), 0);
     QVERIFY(c.removeDetail(&p2) == false);
     QCOMPARE(c.details(QContactPhoneNumber::DefinitionName).count(), 0);
+}
+
+void tst_QContactDetails::presence()
+{
+    QContact c;
+    QContactPresence p1, p2;
+
+    // test property set
+    QDateTime ts = QDateTime::currentDateTime();
+    p1.setTimestamp(ts);
+    p1.setNickname(QString("nick"));
+    p1.setPresenceState(QContactPresence::PresenceExtendedAway);
+    p1.setPresenceStateText("1234");
+    p1.setPresenceStateImageUrl(QUrl("http://example.com/someimage.png"));
+    p1.setCustomMessage("gone fishing!");
+    QCOMPARE(p1.timestamp(), ts);
+    QCOMPARE(p1.value<QDateTime>(QContactPresence::FieldTimestamp), ts);
+    QCOMPARE(p1.nickname(), QString("nick"));
+    QCOMPARE(p1.value(QContactPresence::FieldNickname), QString("nick"));
+    QCOMPARE(p1.presenceState(), QContactPresence::PresenceExtendedAway);
+    QCOMPARE(p1.value<int>(QContactPresence::FieldPresenceState), static_cast<int>(QContactPresence::PresenceExtendedAway));
+    QCOMPARE(p1.presenceStateText(), QString("1234"));
+    QCOMPARE(p1.value(QContactPresence::FieldPresenceStateText), QString("1234"));
+    QCOMPARE(p1.presenceStateImageUrl(), QUrl("http://example.com/someimage.png"));
+    QCOMPARE(p1.value<QUrl>(QContactPresence::FieldPresenceStateImageUrl), QUrl("http://example.com/someimage.png"));
+    QCOMPARE(p1.customMessage(), QString("gone fishing!"));
+    QCOMPARE(p1.value(QContactPresence::FieldCustomMessage), QString("gone fishing!"));
+
+    // test property add
+    QVERIFY(c.saveDetail(&p1));
+    QCOMPARE(c.details(QContactPresence::DefinitionName).count(), 1);
+    QCOMPARE(QContactPresence(c.details(QContactPresence::DefinitionName).value(0)).presenceStateText(), p1.presenceStateText());
+
+    // test property update
+    p1.setValue("label","label1");
+    p1.setPresenceStateText("12345");
+    QVERIFY(c.saveDetail(&p1));
+    QCOMPARE(c.details(QContactPresence::DefinitionName).value(0).value("label"), QString("label1"));
+    QCOMPARE(c.details(QContactPresence::DefinitionName).value(0).value(QContactPresence::FieldPresenceStateText), QString("12345"));
+
+    p2.setTimestamp(ts);
+    p2.setNickname(QString("test"));
+    p2.setPresenceState(QContactPresence::PresenceAvailable);
+    p2.setPresenceStateText("online");
+    p2.setPresenceStateImageUrl(QUrl("http://example.com/someimage.png"));
+    p2.setCustomMessage("C is for generic biscuit-type pastry product!");
+
+    // test property remove
+    QVERIFY(c.removeDetail(&p1));
+    QCOMPARE(c.details(QContactPresence::DefinitionName).count(), 0);
+    QVERIFY(c.saveDetail(&p2));
+    QCOMPARE(c.details(QContactPresence::DefinitionName).count(), 1);
+    QVERIFY(c.removeDetail(&p2));
+    QCOMPARE(c.details(QContactPresence::DefinitionName).count(), 0);
+    QVERIFY(c.removeDetail(&p2) == false);
+    QCOMPARE(c.details(QContactPresence::DefinitionName).count(), 0);
 }
 
 void tst_QContactDetails::ringtone()

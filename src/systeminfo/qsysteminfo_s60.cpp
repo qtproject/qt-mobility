@@ -1109,7 +1109,7 @@ QSystemDeviceInfo::BatteryStatus QSystemDeviceInfoPrivate::batteryStatus()
     int batteryLevel = DeviceInfo::instance()->batteryInfo()->batteryLevel();
     QSystemDeviceInfo::PowerState currentpwrstate = currentPowerState();
     if (batteryLevel < 15 ) {
-        if( (currentpwrstate == QSystemDeviceInfo::WallPowerChargingBattery) || (currentpwrstate == QSystemDeviceInfo::WallPower) ) {
+        if ( (currentpwrstate == QSystemDeviceInfo::WallPowerChargingBattery) || (currentpwrstate == QSystemDeviceInfo::WallPower) ) {
                 return QSystemDeviceInfo::BatteryLow;
         }   else  {
                 return QSystemDeviceInfo::BatteryVeryLow;
@@ -1117,7 +1117,7 @@ QSystemDeviceInfo::BatteryStatus QSystemDeviceInfoPrivate::batteryStatus()
     }   else if (batteryLevel < 29) {
             return QSystemDeviceInfo::BatteryLow;
     }   else if (batteryLevel < 43) {
-            if( (currentpwrstate == QSystemDeviceInfo::WallPowerChargingBattery) || (currentpwrstate == QSystemDeviceInfo::WallPower) ){
+            if ( (currentpwrstate == QSystemDeviceInfo::WallPowerChargingBattery) || (currentpwrstate == QSystemDeviceInfo::WallPower) ){
                 return QSystemDeviceInfo::BatteryNormal;
             }  else {
                 return QSystemDeviceInfo::BatteryLow;
@@ -1192,7 +1192,7 @@ bool QSystemDeviceInfoPrivate::currentBluetoothPowerState()
     return btPowerState == EBTPowerOn;
 }
 
-QSystemDeviceInfo::KeyboardTypeFlags QSystemDeviceInfoPrivate::keyboardType()
+QSystemDeviceInfo::KeyboardTypeFlags QSystemDeviceInfoPrivate::keyboardTypes()
 {
     QSystemDeviceInfo::InputMethodFlags methods = inputMethodType();
     QSystemDeviceInfo::KeyboardTypeFlags keyboardFlags = QSystemDeviceInfo::UnknownKeyboard;
@@ -1212,7 +1212,7 @@ bool QSystemDeviceInfoPrivate::isWirelessKeyboardConnected()
     return false;
 }
 
-bool QSystemDeviceInfoPrivate::isKeyboardFlipOpen()
+bool QSystemDeviceInfoPrivate::isKeyboardFlippedOpen()
 {
     return false;
 }
@@ -1229,12 +1229,12 @@ bool QSystemDeviceInfoPrivate::keypadLightOn(QSystemDeviceInfo::KeypadType type)
     return false;
 }
 
-QUuid QSystemDeviceInfoPrivate::uniqueID()
+QUuid QSystemDeviceInfoPrivate::uniqueDeviceID()
 {
     return 0;//getuniqueID();
 }
 
-QSystemDeviceInfo::LockType QSystemDeviceInfoPrivate::lockStatus()
+QSystemDeviceInfo::LockTypeFlags QSystemDeviceInfoPrivate::lockStatus()
 {
     return QSystemDeviceInfo::UnknownLock;
 }
@@ -1391,11 +1391,6 @@ void QSystemBatteryInfoPrivate::connectNotify(const char *signal)
     if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
             remainingChargingTimeChanged(int))))) {
     }
-    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
-            voltageChanged(int))))) {
-    }
-
-
 }
 
 void QSystemBatteryInfoPrivate::disconnectNotify(const char *signal)
@@ -1403,10 +1398,6 @@ void QSystemBatteryInfoPrivate::disconnectNotify(const char *signal)
 
 }
 
-int QSystemBatteryInfoPrivate::startCurrentMeasurement(int rate)
-{
- return 0;
-}
 
 QSystemBatteryInfo::EnergyUnit QSystemBatteryInfoPrivate::energyMeasurementUnit() const
 {

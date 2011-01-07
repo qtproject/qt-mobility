@@ -65,6 +65,7 @@ private slots:
 	void invalidFirstContactGroupRelationship();
 	void invalidSecondContactGroupRelationship();
 	void invalidFirstAndSecondContactGroupRelationship();
+	void batchOperationGroupRelationship();
 
 private:
     bool validateRelationshipFilter(const QContactRelationship::Role role, const QContactId contactId, const QList<QContactLocalId> expectedContacts);

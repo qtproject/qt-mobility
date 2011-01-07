@@ -49,6 +49,7 @@ QT_FORWARD_DECLARE_CLASS(QLabel)
 
 QTM_BEGIN_NAMESPACE
 class QNearFieldTarget;
+class QNdefMessage;
 QTM_END_NAMESPACE
 
 QTM_USE_NAMESPACE
@@ -63,9 +64,13 @@ public:
 
 public slots:
     void targetDetected(QNearFieldTarget *target);
+    void targetLost(QNearFieldTarget *target);
 
 protected:
     void mouseReleaseEvent(QMouseEvent *event);
+
+private slots:
+    void displayNdefMessage(const QNdefMessage &message);
 
 private:
     QLabel *m_image;

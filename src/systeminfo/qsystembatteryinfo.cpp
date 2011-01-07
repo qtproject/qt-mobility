@@ -99,13 +99,7 @@ QSystemBatteryInfoPrivate *getSystemBatteryInfoPrivate() { return d; }
       \value UnitmAh                Energy described in milli Amp hours (mAh)
       \value UnitmWh                Energy described in milli watt hours (mWh)
 */
-/*!
 
-  \fn void QSystemBatteryInfo::batteryLevelChanged(int level)
-
-  This signal is emitted when battery level has changed.
-  \a level is the new level.
- */
 /*!
   \fn void QSystemBatteryInfo::chargingStateChanged(QSystemBatteryInfo::ChargingState chargingState)
 
@@ -138,12 +132,6 @@ This signal is emitted when the charger type has changed, such as when a phone g
  */
 
 /*!
-  \fn void QSystemBatteryInfo::voltageChanged(int level)
-
-  This signal is emitted when battery voltage level has changed, in millivolts (mV).
-  \a level is the new level.
- */
-/*!
   \fn void QSystemBatteryInfo::remainingChargingTimeChanged(int level)
 
   This signal is emitted when remianing charge time has changed.
@@ -152,9 +140,11 @@ This signal is emitted when the charger type has changed, such as when a phone g
 /*!
   \fn void QSystemBatteryInfo::currentFlowChanged(int level)
 
-  This signal is emitted when the short term averge battery current has changed.
-  Sent at desired interval when battery current measurement is enabled .
-\sa QSystemBatteryInfo::startCurrentMeasurement
+  This signal is emitted when the short term averge battery current has changed,
+  or on some systems at regular intervals.
+
+  On some systems where this can lead to a CPU intensive process, you should disconnect
+  from this signal when you are finished.
 
   \a level is the new level.
  */
@@ -269,6 +259,7 @@ int QSystemBatteryInfo::remainingChargingTime() const
 
     Returns the amount of current flowing out from the battery (a short term averge), milliapmeres (mA).
     Positive current means discharging and negative current means charging.
+
   */
 int QSystemBatteryInfo::currentFlow() const
 {
@@ -309,11 +300,6 @@ int QSystemBatteryInfo::maxBars() const
 
 void QSystemBatteryInfo::connectNotify(const char *signal)
 {
-//    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
-//            batteryLevelChanged(int))))) {
-//        connect(d,SIGNAL(batteryLevelChanged(int)),
-//                this,SIGNAL(batteryLevelChanged(int)),Qt::UniqueConnection);
-//    }
     if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
             batteryStatusChanged(QSystemBatteryInfo::BatteryStatus))))) {
         connect(d,SIGNAL(batteryStatusChanged(QSystemBatteryInfo::BatteryStatus)),
@@ -365,11 +351,6 @@ void QSystemBatteryInfo::connectNotify(const char *signal)
             remainingChargingTimeChanged(int))))) {
         connect(d,SIGNAL(remainingChargingTimeChanged(int)),
                 this,SIGNAL(remainingChargingTimeChanged(int)),Qt::UniqueConnection);
-    }
-    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
-            voltageChanged(int))))) {
-        connect(d,SIGNAL(voltageChanged(int)),
-                this,SIGNAL(voltageChanged(int)),Qt::UniqueConnection);
     }
 }
 
@@ -435,11 +416,6 @@ void QSystemBatteryInfo::disconnectNotify(const char *signal)
         disconnect(d,SIGNAL(remainingChargingTimeChanged(int)),
                 this,SIGNAL(remainingChargingTimeChanged(int)));
     }
-    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
-            voltageChanged(int))))) {
-        disconnect(d,SIGNAL(voltageChanged(int)),
-                this,SIGNAL(voltageChanged(int)));
-    }
 }
 
 /*!
@@ -453,15 +429,6 @@ QSystemBatteryInfo::BatteryStatus QSystemBatteryInfo::batteryStatus() const
    return batteryInfoPrivate()->batteryStatus();
 }
 
-/*!
-  Starts battery current measurement with given \a rate.
-  Return value is actual rate used by the system.
-  */
-int QSystemBatteryInfo::startCurrentMeasurement(int rate)
-{
-    return batteryInfoPrivate()->startCurrentMeasurement(rate);
-
-}
 
 /*!
     \property QSystemBatteryInfo::energyMeasurementUnit

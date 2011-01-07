@@ -101,7 +101,7 @@ void QGeoTiledMapObjectInfo::visibleChanged(bool visible)
     }
 }
 
-void QGeoTiledMapObjectInfo::selectedChanged(bool selected)
+void QGeoTiledMapObjectInfo::selectedChanged(bool /*selected*/)
 {
     // don't want to draw the selection box
 //    if (graphicsItem) {

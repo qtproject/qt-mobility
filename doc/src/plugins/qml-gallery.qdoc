@@ -98,11 +98,9 @@
 
         ...
 
-        model: DocumentGalleryQueryModel {
-            gallery: DocumentGallery {}
-
-            itemType: "Image"
-            properties: ["thumbnailImage"]
+        model: DocumentGalleryModel {
+            rootType: DocumentGallery.Image
+            properties: ["url"]
             filter: GalleryWildcardFilter {
                 property: "fileName";
                 value: "*.jpg";

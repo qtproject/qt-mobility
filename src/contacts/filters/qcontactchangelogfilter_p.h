@@ -106,6 +106,16 @@ public:
         return stream;
     }
 
+#ifndef QT_NO_DEBUG_STREAM
+    QDebug& debugStreamOut(QDebug& dbg) const
+    {
+        dbg.nospace() << "QContactChangeLogFilter(";
+        dbg.nospace() << "eventType=" << static_cast<quint32>(m_eventType) << ",since=" << m_since;
+        dbg.nospace() << ")";
+        return dbg.maybeSpace();
+    }
+#endif
+
     Q_IMPLEMENT_CONTACTFILTER_VIRTUALCTORS(QContactChangeLogFilter, QContactFilter::ChangeLogFilter)
 
     QContactChangeLogFilter::EventType m_eventType;

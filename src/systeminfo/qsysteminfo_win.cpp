@@ -1823,8 +1823,8 @@ QSystemDeviceInfo::InputMethodFlags QSystemDeviceInfoPrivate::inputMethodType()
     // (by virtue of being written for one particular device) shipping a library which will cause
     // just the Qt apps to fail may not be the best move.
 #endif
-    int keyboardType = GetKeyboardType(0);
-    switch(keyboardType) {
+    int keyboardTypes = GetKeyboardType(0);
+    switch(keyboardTypes) {
     case 1:
     case 3:
         {
@@ -2096,7 +2096,7 @@ bool QSystemDeviceInfoPrivate::isDeviceLocked()
     return false;
 }
 
-QSystemDeviceInfo::KeyboardTypeFlags QSystemDeviceInfoPrivate::keyboardType()
+QSystemDeviceInfo::KeyboardTypeFlags QSystemDeviceInfoPrivate::keyboardTypes()
 {
     QSystemDeviceInfo::InputMethodFlags methods = inputMethodType();
     QSystemDeviceInfo::KeyboardTypeFlags keyboardFlags = QSystemDeviceInfo::UnknownKeyboard;
@@ -2116,7 +2116,7 @@ bool QSystemDeviceInfoPrivate::isWirelessKeyboardConnected()
     return hasWirelessKeyboardConnected;
 }
 
-bool QSystemDeviceInfoPrivate::isKeyboardFlipOpen()
+bool QSystemDeviceInfoPrivate::isKeyboardFlippedOpen()
 {
     return false;
 }
@@ -2133,7 +2133,7 @@ bool QSystemDeviceInfoPrivate::keypadLightOn(QSystemDeviceInfo::KeypadType type)
     return false;
 }
 
-QUuid QSystemDeviceInfoPrivate::uniqueID()
+QUuid QSystemDeviceInfoPrivate::uniqueDeviceID()
 {
     WMIHelper *wHelper;
     wHelper = new WMIHelper(this);
@@ -2144,7 +2144,7 @@ QUuid QSystemDeviceInfoPrivate::uniqueID()
     return  QUuid(wHelper->getWMIData().toString());
 }
 
-QSystemDeviceInfo::LockType QSystemDeviceInfoPrivate::lockStatus()
+QSystemDeviceInfo::LockTypeFlags QSystemDeviceInfoPrivate::lockStatus()
 {
     return QSystemDeviceInfo::UnknownLock;
 }
@@ -2314,10 +2314,6 @@ void QSystemBatteryInfoPrivate::connectNotify(const char *signal)
     if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
             remainingChargingTimeChanged(int))))) {
     }
-    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
-            voltageChanged(int))))) {
-    }
-
 }
 
 void QSystemBatteryInfoPrivate::setConnection()
@@ -2355,11 +2351,6 @@ void QSystemBatteryInfoPrivate::notificationArrived()
 void QSystemBatteryInfoPrivate::disconnectNotify(const char *signal)
 {
 
-}
-
-qint32 QSystemBatteryInfoPrivate::startCurrentMeasurement(qint32 rate)
-{
- return 0;
 }
 
 QSystemBatteryInfo::EnergyUnit QSystemBatteryInfoPrivate::energyMeasurementUnit()
@@ -2514,7 +2505,6 @@ void QSystemBatteryInfoPrivate::getBatteryStatus()
                                                 cVoltage = batteryStatus.Voltage;
                                                 if(cVoltage != currentVoltage) {
                                                     currentVoltage= cVoltage;
-                                                    emit voltageChanged(currentVoltage);
                                                 }
                                             }
                                         }
