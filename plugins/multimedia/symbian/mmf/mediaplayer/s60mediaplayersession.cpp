@@ -167,6 +167,8 @@ void S60MediaPlayerSession::play()
     }
     
     m_play_requested = false;
+    setVolume(m_volume);
+    setMuted(m_muted);
     setState(QMediaPlayer::PlayingState);
     startProgressTimer();
     doPlay();
@@ -403,8 +405,6 @@ void S60MediaPlayerSession::loaded()
         setMediaStatus(QMediaPlayer::LoadedMedia);
         TRAPD(err, updateMetaDataEntriesL());
         setError(err);
-        setVolume(m_volume);
-        setMuted(m_muted);
         emit durationChanged(duration());
         emit videoAvailableChanged(isVideoAvailable());
         emit audioAvailableChanged(isAudioAvailable());
