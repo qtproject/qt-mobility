@@ -123,9 +123,11 @@ void tst_qllcpsocketremote::testCase0()
 */
 void tst_qllcpsocketremote::testCase1()
 {
+
     // STEP 1:  bind the local port for current socket
     QSignalSpy readyReadSpy(m_socket, SIGNAL(readyRead()));
     bool ret = m_socket->bind(m_port);
+    QVERIFY(ret);
 
     QString message("handshake 1");
     QNfcTestUtil::ShowMessage(message);
@@ -176,8 +178,12 @@ void tst_qllcpsocketremote::testCase1()
 */
 void tst_qllcpsocketremote::testCase2()
 {
+    QLlcpSocket localSocket;
+    bool ret = localSocket.bind(m_port);
+    QVERIFY(ret);
+
     // STEP 1:  bind the local port for current socket
-    QSignalSpy readyReadSpy(m_socket, SIGNAL(readyRead()));
+    QSignalSpy readyReadSpy(&localSocket, SIGNAL(readyRead()));
     QString expectedMessage1("testcase2 string str1");
     QString expectedMessage2("testcase2 string str2");
 
@@ -187,34 +193,32 @@ void tst_qllcpsocketremote::testCase2()
     QTRY_VERIFY(readyReadSpy.count() == 1);
 
     QByteArray datagram;
-    if (m_socket->hasPendingDatagrams())
+    if (localSocket.hasPendingDatagrams())
     {
-       datagram.resize(m_socket->pendingDatagramSize());
-       qint64 readSize = m_socket->readDatagram(datagram.data(), datagram.size());
+       datagram.resize(localSocket.pendingDatagramSize());
+       qint64 readSize = localSocket.readDatagram(datagram.data(), datagram.size());
        QVERIFY(readSize != -1);
     }
 
     QString receivedMessage1 = datagram.data();
     qDebug() << "receivedMessage1: " << receivedMessage1;
-    //QVERIFY(expectedMessage1 == receivedMessage1);
-    QVERIFY(expectedMessage1.size() > 0);
+    QVERIFY(expectedMessage1 == receivedMessage1);
 
     QTRY_VERIFY(readyReadSpy.count() == 2);
 
      QByteArray datagram2;
-    if (m_socket->hasPendingDatagrams())
+    if (localSocket.hasPendingDatagrams())
     {
-       datagram2.resize(m_socket->pendingDatagramSize());
-       qint64 readSize = m_socket->readDatagram(datagram2.data(), datagram2.size());
+       datagram2.resize(localSocket.pendingDatagramSize());
+       qint64 readSize = localSocket.readDatagram(datagram2.data(), datagram2.size());
        QVERIFY(readSize != -1);
     }
     QString receivedMessage2 = datagram2.data();
     qDebug() << "receivedMessage2: " << receivedMessage2;
-    //QVERIFY(expectedMessage2 == receivedMessage2);
-    QVERIFY(expectedMessage2.size() > 0);
+    QVERIFY(expectedMessage2 == receivedMessage2);
 
     const int Timeout = 10 * 1000;
-    bool ret = m_socket->waitForReadyRead(Timeout);
+    ret = localSocket.waitForReadyRead(Timeout);
 
     QVERIFY(ret);
  }
