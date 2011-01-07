@@ -240,7 +240,12 @@ QVariant QDeclarativeContactMetaObject::details(const QString& name)
 {
     if (name.isEmpty()) {
         //return all
-        return QVariant::fromValue(QDeclarativeListProperty<QDeclarativeContactDetail>(object(), m_details));
+        return QVariant::fromValue(QDeclarativeListProperty<QDeclarativeContactDetail>(object(),
+                                                                                       0,
+                                                                                       detail_append,
+                                                                                       detail_count,
+                                                                                       detail_at,
+                                                                                       detail_clear));
     } else {
         int propId = indexOfProperty(name.toLatin1());
         if (propId <= 0) {
@@ -296,11 +301,12 @@ QContactId QDeclarativeContactMetaObject::contactId() const
 }
 void QDeclarativeContactMetaObject::detail_append(QDeclarativeListProperty<QDeclarativeContactDetail> *p, QDeclarativeContactDetail *detail)
 {
-    ContactDetailNameMap* data = (ContactDetailNameMap*)(p->data);
-    if (data) {
-        QDeclarativeContact* dc = qobject_cast<QDeclarativeContact*>(p->object);
-        if (dc && detail->detail().definitionName() == data->definitionName) {
-            detail->connect(detail, SIGNAL(fieldsChanged()), dc, SIGNAL(detailsChanged()));
+    QDeclarativeContact* dc = qobject_cast<QDeclarativeContact*>(p->object);
+    if (dc) {
+        ContactDetailNameMap* data = (ContactDetailNameMap*)(p->data);
+        if (!data || detail->detail().definitionName() == data->definitionName) {
+            detail->connect(detail, SIGNAL(fieldsChanged()), SIGNAL(valueChanged()), Qt::UniqueConnection);
+            detail->connect(detail, SIGNAL(fieldsChanged()), dc, SIGNAL(detailsChanged()), Qt::UniqueConnection);
             dc->d->m_details.append(detail);
         }
     }
@@ -308,13 +314,17 @@ void QDeclarativeContactMetaObject::detail_append(QDeclarativeListProperty<QDecl
 
 int  QDeclarativeContactMetaObject::detail_count(QDeclarativeListProperty<QDeclarativeContactDetail> *p)
 {
-    ContactDetailNameMap* data = (ContactDetailNameMap*)(p->data);
     int count = 0;
     QDeclarativeContact* dc = qobject_cast<QDeclarativeContact*>(p->object);
-    if (dc && data) {
-        foreach(const QDeclarativeContactDetail* detail, dc->d->m_details) {
-            if (detail->detail().definitionName() == data->definitionName)
-                count++;
+    if (dc) {
+        ContactDetailNameMap* data = (ContactDetailNameMap*)(p->data);
+        if (data) {
+            foreach(const QDeclarativeContactDetail* detail, dc->d->m_details) {
+                if (detail->detail().definitionName() == data->definitionName)
+                    count++;
+            }
+        } else {
+            count = dc->d->m_details.size();
         }
     }
     return count;
@@ -322,20 +332,24 @@ int  QDeclarativeContactMetaObject::detail_count(QDeclarativeListProperty<QDecla
 
 QDeclarativeContactDetail * QDeclarativeContactMetaObject::detail_at(QDeclarativeListProperty<QDeclarativeContactDetail> *p, int idx)
 {
-    ContactDetailNameMap* data = (ContactDetailNameMap*)(p->data);
     QDeclarativeContactDetail* detail = 0;
     QDeclarativeContact* dc = qobject_cast<QDeclarativeContact*>(p->object);
-    if (dc && data) {
-        int i = 0;
-        foreach(QDeclarativeContactDetail* cd,dc->d->m_details) {
-            if (cd->detail().definitionName() == data->definitionName) {
-                if (i == idx) {
-                    detail = cd;
-                    break;
-                } else {
-                    i++;
+    if (dc) {
+        ContactDetailNameMap* data = (ContactDetailNameMap*)(p->data);
+        if (data) {
+            int i = 0;
+            foreach(QDeclarativeContactDetail* cd,dc->d->m_details) {
+                if (cd->detail().definitionName() == data->definitionName) {
+                    if (i == idx) {
+                        detail = cd;
+                        break;
+                    } else {
+                        i++;
+                    }
                 }
             }
+        } else if (idx < dc->d->m_details.size()) {
+            detail = dc->d->m_details.at(idx);
         }
     }
     return detail;
@@ -343,13 +357,17 @@ QDeclarativeContactDetail * QDeclarativeContactMetaObject::detail_at(QDeclarativ
 
 void  QDeclarativeContactMetaObject::detail_clear(QDeclarativeListProperty<QDeclarativeContactDetail> *p)
 {
-    ContactDetailNameMap* data = (ContactDetailNameMap*)(p->data);
     QDeclarativeContact* dc = qobject_cast<QDeclarativeContact*>(p->object);
-    if (dc && data) {
-        foreach(QDeclarativeContactDetail* cd, dc->d->m_details) {
-            if (cd->detail().definitionName() == data->definitionName) {
-                dc->d->m_details.removeAll(cd);
+    if (dc) {
+        ContactDetailNameMap* data = (ContactDetailNameMap*)(p->data);
+        if (data) {
+            foreach(QDeclarativeContactDetail* cd, dc->d->m_details) {
+                if (cd->detail().definitionName() == data->definitionName) {
+                    dc->d->m_details.removeAll(cd);
+                }
             }
+        } else {
+            dc->d->m_details.clear();
         }
     }
 }

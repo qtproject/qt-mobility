@@ -584,7 +584,7 @@ void QDeclarativeContactModel::contactsSaved()
                     //new saved contact
                     QDeclarativeContact* dc = new QDeclarativeContact(c, d->m_manager->detailDefinitions(c.type()) , this);
                     d->m_contactMap.insert(c.localId(), dc);
-                    beginInsertRows(QModelIndex(), d->m_contacts.count(), d->m_contacts.count() + 1);
+                    beginInsertRows(QModelIndex(), d->m_contacts.count(), d->m_contacts.count());
                     d->m_contacts.append(dc);
                     endInsertRows();
                 }
