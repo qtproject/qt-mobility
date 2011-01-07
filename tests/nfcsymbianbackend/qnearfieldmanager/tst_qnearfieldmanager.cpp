@@ -116,7 +116,7 @@ void tst_QNearFieldManager::targetDetected()
     QNfcTestUtil::ShowMessage(hint);
     QTRY_VERIFY(!targetDetectedSpy.isEmpty());
 
-    QNearFieldTarget *target = targetDetectedSpy.first().at(0).value<QNearFieldTarget *>();
+    QNearFieldTarget *target = targetDetectedSpy.at(targetDetectedSpy.count()-1).at(0).value<QNearFieldTarget *>();
 
     QSignalSpy disconnectedSpy(target, SIGNAL(disconnected()));
     QVERIFY(target);
@@ -146,9 +146,9 @@ void tst_QNearFieldManager::targetDetected_data()
     QTest::addColumn<QString>("hint");
     QTest::newRow("llcp device") << QNearFieldTarget::AnyTarget << "Please touch llcp device";
     QTest::newRow("NfcTagType1") << QNearFieldTarget::NfcTagType1 << "Please touch tag type1";
-    QTest::newRow("NfcTagType2") << QNearFieldTarget::NfcTagType1 << "Please touch tag type2";
-    QTest::newRow("NfcTagType3") << QNearFieldTarget::NfcTagType1 << "Please touch tag type3";
-    QTest::newRow("NfcTagType4") << QNearFieldTarget::NfcTagType1 << "Please touch tag type4";
+    QTest::newRow("NfcTagType2") << QNearFieldTarget::NfcTagType2 << "Please touch tag type2";
+    QTest::newRow("NfcTagType3") << QNearFieldTarget::NfcTagType3 << "Please touch tag type3";
+    QTest::newRow("NfcTagType4") << QNearFieldTarget::NfcTagType4 << "Please touch tag type4";
 }
 
 /*!
