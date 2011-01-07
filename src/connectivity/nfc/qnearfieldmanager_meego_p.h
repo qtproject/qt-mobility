@@ -50,6 +50,7 @@
 #include <QtCore/QMap>
 #include <QtCore/QPair>
 #include <QtCore/QMetaMethod>
+#include <QtCore/QBasicTimer>
 
 #include <QtDBus/QDBusConnection>
 
@@ -105,14 +106,17 @@ public:
     void requestAccess(QNearFieldManager::TargetAccessModes accessModes);
     void releaseAccess(QNearFieldManager::TargetAccessModes accessModes);
 
-public:
     // Access Agent Adaptor
     Q_INVOKABLE void AccessFailed(const QDBusObjectPath &target, const QString &error);
     Q_INVOKABLE void AccessGranted(const QDBusObjectPath &target, const QString &kind);
 
+protected:
+    void timerEvent(QTimerEvent *event);
+
 private slots:
-    void _q_targetDetected(const QDBusObjectPath &targetPath);
-    void _q_targetLost(const QDBusObjectPath &targetPath);
+    void emitTargetDetected(const QString &targetPath);
+    void _q_targetDetected(const QString &targetPath);
+    void _q_targetLost(const QString &targetPath);
 
 private:
     int getFreeId();
@@ -124,11 +128,12 @@ private:
     QList<QNearFieldTarget::Type> m_detectTargetTypes;
     QMap<QString, QPointer<QNearFieldTarget> > m_targets;
 
-
     AccessRequestorAdaptor *m_accessAgent;
 
     QList<NdefHandler *> m_registeredHandlers;
     QList<int> m_freeIds;
+
+    QMap<QString, QBasicTimer> m_pendingDetectedTargets;
 };
 
 QTM_END_NAMESPACE

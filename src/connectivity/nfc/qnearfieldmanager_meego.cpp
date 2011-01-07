@@ -115,9 +115,6 @@ QNearFieldManagerPrivateImpl::QNearFieldManagerPrivateImpl()
 
 QNearFieldManagerPrivateImpl::~QNearFieldManagerPrivateImpl()
 {
-    qDebug() << Q_FUNC_INFO;
-    qDebug() << "***************** DESTROY *******************";
-
     delete m_manager;
     delete m_adapter;
 }
@@ -128,10 +125,10 @@ void QNearFieldManagerPrivateImpl::startTargetDetection(const QList<QNearFieldTa
 
     m_detectTargetTypes = targetTypes;
 
-    connect(m_adapter, SIGNAL(TargetDetected(QDBusObjectPath)),
-            this, SLOT(_q_targetDetected(QDBusObjectPath)));
-    connect(m_adapter, SIGNAL(TargetLost(QDBusObjectPath)),
-            this, SLOT(_q_targetLost(QDBusObjectPath)));
+    connect(m_adapter, SIGNAL(TargetDetected(QString)),
+            this, SLOT(_q_targetDetected(QString)));
+    connect(m_adapter, SIGNAL(TargetLost(QString)),
+            this, SLOT(_q_targetLost(QString)));
 }
 
 void QNearFieldManagerPrivateImpl::stopTargetDetection()
@@ -140,10 +137,10 @@ void QNearFieldManagerPrivateImpl::stopTargetDetection()
 
     m_detectTargetTypes.clear();
 
-    disconnect(m_adapter, SIGNAL(TargetDetected(QDBusObjectPath)),
-               this, SLOT(_q_targetDetected(QDBusObjectPath)));
-    disconnect(m_adapter, SIGNAL(TargetLost(QDBusObjectPath)),
-               this, SLOT(_q_targetLost(QDBusObjectPath)));
+    disconnect(m_adapter, SIGNAL(TargetDetected(QString)),
+               this, SLOT(_q_targetDetected(QString)));
+    disconnect(m_adapter, SIGNAL(TargetLost(QString)),
+               this, SLOT(_q_targetLost(QString)));
 }
 
 QNearFieldTarget *QNearFieldManagerPrivateImpl::targetForPath(const QString &path)
@@ -263,9 +260,11 @@ static QStringList accessModesToKind(QNearFieldManager::TargetAccessModes access
 
     if (accessModes & QNearFieldManager::NdefReadTargetAccess)
         kind.append(QLatin1String("tag.ndef.read"));
-    else if (accessModes & QNearFieldManager::NdefWriteTargetAccess)
+
+    if (accessModes & QNearFieldManager::NdefWriteTargetAccess)
         kind.append(QLatin1String("tag.ndef.write"));
-    else if (accessModes & QNearFieldManager::TagTypeSpecificTargetAccess)
+
+    if (accessModes & QNearFieldManager::TagTypeSpecificTargetAccess)
         kind.append(QLatin1String("tag.raw"));
 
     return kind;
@@ -273,19 +272,14 @@ static QStringList accessModesToKind(QNearFieldManager::TargetAccessModes access
 
 void QNearFieldManagerPrivateImpl::requestAccess(QNearFieldManager::TargetAccessModes accessModes)
 {
-    qDebug() << Q_FUNC_INFO;
-
     if (!m_accessAgent) {
         m_accessAgent = new AccessRequestorAdaptor(this);
         if (!m_connection.registerObject(QLatin1String("/test"), this)) {
-            qDebug() << "failed to register agent";
             delete m_accessAgent;
             m_accessAgent = 0;
             return;
         }
     }
-
-    qDebug() << "agent registered, calling RequestAccess";
 
     foreach (const QString &kind, accessModesToKind(accessModes))
         m_adapter->RequestAccess(QDBusObjectPath("/test"), kind);
@@ -318,29 +312,62 @@ void QNearFieldManagerPrivateImpl::AccessGranted(const QDBusObjectPath &target,
 
     qDebug() << "Access granted for" << target.path() << kind;
 
-    _q_targetDetected(target);
+    if (m_pendingDetectedTargets.contains(target.path())) {
+        m_pendingDetectedTargets[target.path()].stop();
+        m_pendingDetectedTargets.remove(target.path());
+    }
+
+    emitTargetDetected(target.path());
 }
 
-void QNearFieldManagerPrivateImpl::_q_targetDetected(const QDBusObjectPath &targetPath)
+void QNearFieldManagerPrivateImpl::timerEvent(QTimerEvent *event)
+{
+    QMutableMapIterator<QString, QBasicTimer> i(m_pendingDetectedTargets);
+    while (i.hasNext()) {
+        i.next();
+
+        if (i.value().timerId() == event->timerId()) {
+            i.value().stop();
+
+            const QString target = i.key();
+
+            i.remove();
+
+            emitTargetDetected(target);
+
+            break;
+        }
+    }
+}
+
+void QNearFieldManagerPrivateImpl::emitTargetDetected(const QString &targetPath)
 {
     qDebug() << Q_FUNC_INFO;
 
-    QNearFieldTarget *target = targetForPath(targetPath.path());
+    QNearFieldTarget *target = targetForPath(targetPath);
     if (target && matchesTarget(target->type(), m_detectTargetTypes))
         emit targetDetected(target);
 }
 
-void QNearFieldManagerPrivateImpl::_q_targetLost(const QDBusObjectPath &targetPath)
+void QNearFieldManagerPrivateImpl::_q_targetDetected(const QString &targetPath)
+{
+    if (!m_requestedModes)
+        emitTargetDetected(targetPath);
+    else
+        m_pendingDetectedTargets[targetPath].start(500, this);
+}
+
+void QNearFieldManagerPrivateImpl::_q_targetLost(const QString &targetPath)
 {
     qDebug() << Q_FUNC_INFO;
 
-    QNearFieldTarget *nearFieldTarget = m_targets.value(targetPath.path());
+    QNearFieldTarget *nearFieldTarget = m_targets.value(targetPath);
 
     // haven't seen target so just drop this event
     if (!nearFieldTarget) {
         // We either haven't seen target (started after target was detected by system) or the
         // application deleted the target. Remove from map and dont emit anything.
-        m_targets.remove(targetPath.path());
+        m_targets.remove(targetPath);
         return;
     }
 

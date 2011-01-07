@@ -109,6 +109,8 @@ int QNearFieldManager::registerTargetDetectedHandler(QObject *object, const char
                                          object, method);
 }
 
+Q_DECLARE_OPERATORS_FOR_FLAGS(QNearFieldManager::TargetAccessModes)
+
 QTM_END_NAMESPACE
 
 QT_END_HEADER
