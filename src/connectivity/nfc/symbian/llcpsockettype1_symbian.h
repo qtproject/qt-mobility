@@ -203,14 +203,15 @@ public:
    /*!
     * Transfer given data to remote device.
     */
-   TInt TransferL(MLlcpReadWriteCb&, const TDesC8& aData );
-   
+   TInt TransferL(MLlcpReadWriteCb&, const TDesC8& aData );  
    bool TransferQueued(MLlcpReadWriteCb& aLlcpSendCb); 
+   void TransferCancel();
+   TInt Receive(MLlcpReadWriteCb&);
 
    /*!
-    * Starts receive data from ConnLess.
+    * Cancels COwnLlcpConnection::Receive() request.
     */
-   TInt Receive(MLlcpReadWriteCb&);
+   void ReceiveCancel();
 
    TInt ReceiveDataFromBuf(TDes8& aData);
    bool HasPendingDatagrams() const;

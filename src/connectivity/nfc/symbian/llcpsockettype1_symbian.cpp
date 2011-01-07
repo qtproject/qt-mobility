@@ -115,6 +115,8 @@ void CLlcpSocketType1::Cleanup()
     // Deleting connection
     if ( iConnection )
         {
+        iConnection->TransferCancel();
+        iConnection->ReceiveCancel();
         delete iConnection;
         iConnection = NULL;
         } 
@@ -481,7 +483,7 @@ bool COwnLlcpConnectionWrapper::TransferQueued(MLlcpReadWriteCb& aLlcpSendCb)
         return ret;
 
     TPtrC8 ptr(bufRef->Ptr(), bufRef->Length());
-    if(iSenderAO->Transfer(aLlcpSendCb, ptr) == KErrNone)
+    if(!iSenderAO->IsActive() && iSenderAO->Transfer(aLlcpSendCb, ptr) == KErrNone)
         {
         ret = true;
         }
@@ -557,6 +559,32 @@ bool COwnLlcpConnectionWrapper::HasQueuedWrittenDatagram() const
 TInt64 COwnLlcpConnectionWrapper::PendingDatagramSize() const
     {
     return iReceiverAO->PendingDatagramSize();
+    }
+
+/*!
+    Cancel data transfer from local peer to remote peer via connectionLess transport
+*/
+void COwnLlcpConnectionWrapper::TransferCancel()
+    {
+    BEGIN
+    if (iSenderAO->IsActive())
+        {
+        iSenderAO->Cancel();
+        }
+    END
+    }
+
+/*!
+    Cancel data receive from local peer to remote peer via connectionLess transport
+*/
+void COwnLlcpConnectionWrapper::ReceiveCancel()
+    {
+    BEGIN
+    if (iReceiverAO->IsActive())
+        {
+        iReceiverAO->Cancel();
+        }
+    END
     }
 
 /*!
@@ -693,7 +721,7 @@ void CLlcpReceiverType1::RunL(void)
     BEGIN
     TInt error = iStatus.Int();
      // Call back functions of notifying the llcp receiver completed.
-    if (iReceiveObserver)
+    if (error == KErrNone && iReceiveObserver)
        {
        iReceiveObserver->ReceiveComplete(error);
        }          
@@ -716,6 +744,7 @@ TInt CLlcpReceiverType1::ReceiveDataFromBuf(TDes8& aData)
         return 0;
 
     TInt requiredLength = aData.Length();
+    qDebug() << "length: " << aData.Length() << " Vs maxLength: " << aData.MaxLength();
     TInt bufLength =  iReceiveBuf.Length();
 
     TInt readLength = requiredLength < bufLength ? requiredLength : bufLength;

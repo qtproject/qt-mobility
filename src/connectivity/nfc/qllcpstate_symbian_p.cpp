@@ -122,8 +122,11 @@ bool QLLCPSocketState::WaitForBytesWrittenType1Private(int msecs)
 {
     bool ret = false;
 
+    qDebug() <<  "m_writeDatagramRefCount: " << m_socket->m_writeDatagramRefCount;
     if (m_socket->m_writeDatagramRefCount <= 0)
+    {
         return ret;
+    }
 
     CLlcpSocketType1* socketHandler =  m_socket->socketType1Instance();
     if (socketHandler != NULL)
