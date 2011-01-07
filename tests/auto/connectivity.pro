@@ -22,4 +22,14 @@ SUBDIRS += \
 #        qrfcommserver \
 #        qbluetoothtransferrequest
 
-
+#enable autotests on symbian
+symbian:SUBDIRS += \
+        qbluetoothaddress\
+        qbluetoothuuid\
+        qbluetoothdeviceinfo\
+        qbluetoothdevicediscoveryagent\
+        qbluetoothserviceinfo\
+        qbluetoothservicediscoveryagent\
+        qbluetoothsocket\
+        qrfcommserver \
+        qbluetoothtransferrequest
