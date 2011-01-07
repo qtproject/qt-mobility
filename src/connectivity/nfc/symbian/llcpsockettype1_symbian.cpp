@@ -236,7 +236,7 @@ void CLlcpSocketType1::FrameReceived( MLlcpConnLessTransporter* aConnection )
     BEGIN
     iRemotePort = aConnection->SsapL();
     qDebug() << "FrameReceived " << iRemotePort;
-    StartTransportedAndReceive(aConnection);
+    StartTransportAndReceive(aConnection);
     END
     }
 
@@ -327,13 +327,13 @@ TInt CLlcpSocketType1::CreateConnection(TUint8 portNum)
         {
           iRemotePort = portNum;
           qDebug() << "CreateConnection " << iRemotePort;
-          error = StartTransportedAndReceive(llcpConnection);
+          error = StartTransportAndReceive(llcpConnection);
         }
     END
     return error;        
     }
 
-TInt CLlcpSocketType1::StartTransportedAndReceive(MLlcpConnLessTransporter* aConnection)
+TInt CLlcpSocketType1::StartTransportAndReceive(MLlcpConnLessTransporter* aConnection)
     {
     BEGIN
     TInt error = KErrNone;
