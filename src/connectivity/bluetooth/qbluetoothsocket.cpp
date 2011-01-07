@@ -244,6 +244,7 @@ QBluetoothSocket::QBluetoothSocket(QObject *parent)
 QBluetoothSocket::~QBluetoothSocket()
 {
     delete d_ptr;
+    d_ptr = 0;
 }
 
 /*!
@@ -465,8 +466,7 @@ void QBluetoothSocket::discoveryFinished()
 {
     Q_D(QBluetoothSocket);
     if(d->discoveryAgent){
-        qDebug() << "Could not find service";
-        emit error(QBluetoothSocket::UnknownSocketError);
+        emit error(QBluetoothSocket::UnknownService);
         delete d->discoveryAgent;
         d->discoveryAgent = 0;
     }

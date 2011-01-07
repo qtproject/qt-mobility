@@ -218,6 +218,9 @@ void Tennis::clientDisconnected()
 
 void Tennis::serverConnected(const QString &name)
 {
+    // TODO find out why name is null
+    // XXX FIXME
+    qDebug() << "Why is name blank?";
     board->setStatus("Server for " + name, 100, 0);
     m_discoveryAgent->stop();
     isConnected = true;
