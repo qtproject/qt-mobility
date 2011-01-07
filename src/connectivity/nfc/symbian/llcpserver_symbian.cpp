@@ -56,20 +56,11 @@ const TInt KInterestingSsap = 35;
 CLlcpServer* CLlcpServer::NewL(QtMobility::QLlcpServerPrivate& aCallback)
     {
     BEGIN
-    CLlcpServer* self = CLlcpServer::NewLC(aCallback);
-    CleanupStack::Pop( self );
-    END
-    return self;
-    }
-
-/*!
-    CLlcpServer::NewLC()
-*/
-CLlcpServer* CLlcpServer::NewLC(QtMobility::QLlcpServerPrivate& aCallback)
-    {
     CLlcpServer* self = new (ELeave) CLlcpServer(aCallback);
     CleanupStack::PushL( self );
     self->ConstructL();
+    CleanupStack::Pop( self );
+    END
     return self;
     }
 

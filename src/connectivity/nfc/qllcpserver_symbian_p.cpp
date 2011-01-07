@@ -65,20 +65,16 @@ QLlcpServerPrivate::~QLlcpServerPrivate()
 bool QLlcpServerPrivate::listen(const QString &serviceUri)
 {
     BEGIN
-    TPtrC wide(static_cast<const TUint16*>(serviceUri.utf16()),serviceUri.length());
-    RBuf8 narrow;
-
-    TInt val = narrow.CreateMax(wide.Length());
-    if( val != KErrNone)
-    {
-        END
+    LOG(serviceUri);
+    HBufC8* uri = NULL;
+    TRAPD(err, uri = QNFCNdefUtility::QString2HBufC8L(serviceUri));
+    if(err != KErrNone)
+        {
         return false;
-    }
-    narrow.Copy(wide);
+        }
+    bool ret =  m_symbianbackend->Listen(*uri);
 
-    bool ret =  m_symbianbackend->Listen(narrow);
-
-    narrow.Close();
+    delete uri;
     END
     return ret;
 }
@@ -105,19 +101,10 @@ void QLlcpServerPrivate::close()
 QString QLlcpServerPrivate::serviceUri() const
 {
     BEGIN
-    const TDesC8& theDescriptor= m_symbianbackend->serviceUri();
+    const TDesC8& uri= m_symbianbackend->serviceUri();
 
-    RBuf wide;
-    TInt val = wide.CreateMax(theDescriptor.Length());
-    if( val != KErrNone)
-    {
-        END
-        return false;
-    }
-    wide.Copy(theDescriptor);
-    QString ret = QString::fromUtf16(wide.Ptr(),wide.Length());
+    QString ret = QNFCNdefUtility::TDesC82QStringL(uri);
     LOG("QLlcpServerPrivate::serviceUri() ret="<<ret);
-    wide.Close();
     END
     return ret;
 
@@ -156,7 +143,8 @@ QLlcpSocket *QLlcpServerPrivate::nextPendingConnection()
         qSocket = new QLlcpSocket(qSocket_p,NULL);
         qSocket_p->attachCallbackHandler(qSocket);
         socket_symbian->AttachCallbackHandler(qSocket_p);
-        m_pendingConnections.append(qSocket);
+        QPointer<QLlcpSocket> p(qSocket);
+        m_pendingConnections.append(p);
     }
     END
     return qSocket;

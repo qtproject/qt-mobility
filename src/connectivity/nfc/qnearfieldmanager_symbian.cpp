@@ -67,12 +67,12 @@ void ContentHandlerInterface::handleMessage(const QByteArray& btArray)
      // incoming message from ECOM content handler loader eventually cause object & method registered via below
      // registerTargetDetectHandler to be invoked with message as parameter.  i.e. MyContentHandler::handleMessage(message)
      // from above.
-   
-     
+
+
      QNdefMessage msg = QNdefMessage::fromByteArray(btArray);
      QMetaObject::invokeMethod(&contentHandlerProxy, "handleMessage", Q_ARG(QNdefMessage, msg));
-  
-    
+
+
 }
 /*!
     \class QNearFieldManagerPrivateImpl
@@ -87,7 +87,7 @@ void ContentHandlerInterface::handleMessage(const QByteArray& btArray)
 /*!
     Constructs a new near field manager private implementation.
 */
-QNearFieldManagerPrivateImpl::QNearFieldManagerPrivateImpl(): m_target(NULL), m_symbianbackend(NULL), m_serviceRegister(NULL)
+QNearFieldManagerPrivateImpl::QNearFieldManagerPrivateImpl(): m_symbianbackend(NULL),m_target(NULL),m_serviceRegister(NULL)
 {
     BEGIN
     QT_TRAP_THROWING(m_symbianbackend = CNearFieldManager::NewL(*this));
@@ -141,30 +141,30 @@ int QNearFieldManagerPrivateImpl::registerTargetDetectedHandler(QObject *object,
     TInt lastdot = appfilepath.lastIndexOf(".");
     QString servicename = appfilepath.mid(lastseprator+1, lastdot-lastseprator-1);
     qDebug() << "application name: " << servicename << endl;
-           
+
     filter.setServiceName(servicename);
     QServiceManager sfManager;
-    
+
     if (!sfManager.findInterfaces(filter).isEmpty())
         {
         // This application has been registered as a content handler (via the xml at install time), start the service
         chobject = object;
         chmethod = method;
-       
+
         connect(&contentHandlerProxy, SIGNAL(handleMessage(QNdefMessage)),
                     this, SLOT(_q_privateHandleMessageSlot(QNdefMessage)));
         m_serviceRegister = new QRemoteServiceRegister();
-        QRemoteServiceRegister::Entry entry = 
-                m_serviceRegister->createEntry<ContentHandlerInterface>(servicename, 
-                                                                     "com.nokia.symbian.NdefMessageHandler", 
+        QRemoteServiceRegister::Entry entry =
+                m_serviceRegister->createEntry<ContentHandlerInterface>(servicename,
+                                                                     "com.nokia.symbian.NdefMessageHandler",
                                                                      "1.0");
         entry.setInstantiationType(QRemoteServiceRegister::PrivateInstance);
         m_serviceRegister->publishEntries(servicename);
         //m_serviceRegister->setQuitOnLastInstanceClosed(true);
         //delete serviceRegister;
-        
+
         return 0xffff;
-        
+
     } else {
         // not supported if not registered as a content handler using this API
         return -1;
@@ -284,7 +284,7 @@ void QNearFieldManagerPrivateImpl::targetFound(QNearFieldTarget *target)
  */
 void QNearFieldManagerPrivateImpl::_q_privateHandleMessageSlot(QNdefMessage aMsg)
     {
-   
+
     chmethod.invoke(chobject, Q_ARG(QNdefMessage, aMsg), Q_ARG(QNearFieldTarget* , NULL));
     }
 
