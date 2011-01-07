@@ -67,10 +67,34 @@ Notes:
         '));
     },
 
-
-    Proximity_values: function()
+    Sym_Rotation : function()
     {
-        prompt(twiki('*Verify Proximity values*
+        prompt(twiki('*Verify Sym Rotation values*
+
+    | *Step* | *Verification* |
+    | Launch *Sensor Explorer* application | |
+    | Select Sym Rotation from the sensors list | |
+    | In *Sensor Properties* click *Start* | |
+    | Position device flat on its back with screen showing upwards | Verify that values for x, y and z gravitate around zero* |
+    | Rotate device on x axis toward user | Verify that x axis value increases from 0 all the way to 90 when held straight up |
+    | Keep rotating device past vertical position | Verify that x axis value decrees from 90 down towards to 0 when held upside down (screen towards ground)  |
+    | Return device flat on its back with screen showing upwards | Verify that value for x has returned to zero** |
+    | Rotate device on y axis to right side | Verify that y axis value increases from 0 all the way to 90 when held straight up |
+    | Keep rotating device past vertical position | Verify that y axis value keeps increasing from 90 towards 180 |
+    | Rotate device on y axis until upside down - screen towards ground | Verify that y axis value gravitates around and switches between 180/-180 |
+    | Keep rotating device on y axis past inverted horizontal  | Verify that y axis value rises from -180 towards 0 |
+    | In this test, z values will always be 0 | |
+
+Notes:
+    * * Small variations in value due to sensor sensitivity and large precision employed
+    * ** On some Maemo5 devices, due to camera housing, device is not flat when resting on hard surface, so small variation will be present
+        '));
+    },
+
+
+    Sym_Proximity_values: function()
+    {
+        prompt(twiki('*Verify Sym Proximity values*
 
     *Note: On Maemo5 devices, Proximity is a bool value
 
@@ -84,9 +108,9 @@ Notes:
     },
 
 
-    Sensor_Accelerometer: function()
+    Sym_Accelerometer: function()
     {
-        prompt(twiki('*Verify Sensor Accelerometer*
+        prompt(twiki('*Verify Sym Accelerometer*
 
     | *Step* | *Verification* |
     | Launch *Sensor Explorer* application | |
@@ -99,9 +123,9 @@ Notes:
      },
 
 
-    Ambient_Light: function()
+    Sym_Ambient_Light: function()
     {
-        prompt(twiki('*Verify Ambient Light Sensor*
+        prompt(twiki('*Verify Sym Ambient Light Sensor*
 
 
     | *Step* | *Verification* |
@@ -136,7 +160,7 @@ Note:
     },
 
 
-    Sensor_Orientation: function()
+    Small_Sensor_Orientation: function()
     {
         prompt(twiki('*Verify Sensor Orientation*
 
@@ -156,7 +180,7 @@ Note:
     },
 
 
-    Sensor_Acceleration : function()
+    Small_Sensor_Acceleration : function()
     {
         prompt(twiki('*Verify Sensor Acceleration*
 
@@ -166,6 +190,62 @@ Note:
     | Position device flat on its y axis | Verify the values displayed are close to: x=0, y=9.8, z=0 |
     | Position device flat on its x axis | Verify the values displayed are close to: x=9.8, y=0, z=0 |
     | Position device flat on its z axis | Verify the values displayed are close to: x=0, y=0, z=9.8 |
+            '));
+     }
+
+    Sym_Tap : function()
+    {
+        prompt(twiki('*Verify Sym Tap Sensor*
+
+    | *Step* | *Verification* |
+    | Launch *bluewheel* application | |
+    | select *Sensors* and click on *sensor explorer* ||
+    | select *sym.tap* as sensor type ||
+    | click on *start* button ||
+    | select *reading properties* tab ||
+    | double tap on the device | Verify the values displayed are changed |
+            '));
+     }
+
+    Sym_Orientation : function()
+    {
+        prompt(twiki('*Verify Sym Orientation Sensor*
+
+    | *Step* | *Verification* |
+    | Launch *bluewheel* application | |
+    | select *Sensors* and click on *sensor explorer* ||
+    | select *sym.orientation* as sensor type ||
+    | click on *start* button ||
+    | select *reading properties* tab ||
+    | slowly rotate the device | Verify the values displayed are changed accordingly |
+            '));
+     }
+
+    Sym_MagnetoMeter : function()
+    {
+        prompt(twiki('*Verify Sym Magneto Meter*
+
+    | *Step* | *Verification* |
+    | Launch *bluewheel* application | |
+    | select *Sensors* and click on *sensor explorer* ||
+    | select *sym.magnetometer* as sensor type ||
+    | click on *start* button ||
+    | select *reading properties* tab ||
+    | put the device closer to a iron or steel object | Verify the values displayed are changed accordingly |
+            '));
+     }
+
+    Sym_Compass : function()
+    {
+        prompt(twiki('*Verify Sym Compass Sensor*
+
+    | *Step* | *Verification* |
+    | Launch *bluewheel* application | |
+    | select *Sensors* and click on *sensor explorer* ||
+    | select *sym.compass* as sensor type ||
+    | click on *start* button ||
+    | select *reading properties* tab ||
+    | slowly turn the device around | Verify the values displayed are changed accordingly |
             '));
      }
 

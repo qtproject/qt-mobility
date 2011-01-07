@@ -236,6 +236,25 @@ testcase = {
         }
     },
 
+    keepInTouch_showMessages : function() {
+     if (automatedTestEnvironment()){
+     }else{
+         prompt(twiki('---++++ Keep In Touch: show messages
+
+    1. Synchronize a set of test messages sent on a range of dates from various contacts to the phone using Nokia Ovi Suite or an equal tool
+    1. Launch *keepintouch* application using command line
+    1. Select *Year* from *Contacted within the last* combo box
+    1. Click on *Search*
+    1. Verify that all contacts contacted in the last year are displayed
+    1. Click on a contact name
+    1. Verify the messages with the contact are shown
+    1. Select one message
+    1. Click on *Show* button and verify the message details are shown
+    1. Go back and click on *Forward* button, verify the forward dialog is shown
+     '));
+     }
+    },
+
     messagingEx_startQuit : function() {
         if (automatedTestEnvironment()){
         }else{
@@ -365,12 +384,224 @@ testcase = {
      declarativeMessaging_ShowDetails : function() {
           if (automatedTestEnvironment()){
           }else{
-              prompt(twiki('---++++ Declarative Messaging
+              prompt(twiki('---++++ Declarative Messaging: Show Details
 
       1. Start declarativeMessaging application
       1. Verify that the sample messages are listed
       1. Randomly click on a sample message
       1. Verify that the message details are shown
+          '));
+          }
+      },
+
+     bluewheelMessaging_startQuit : function() {
+          if (automatedTestEnvironment()){
+          }else{
+              prompt(twiki('---++++ Blue Wheel Messaging: Start and Quit
+
+      1. Start blue wheel test application
+      1. Verify the application is loaded properly
+      1. Select Messaging from the list
+      1. Verify the messaging test application is launched
+          '));
+          }
+      },
+
+      bluewheelMessaging_SMS_Compose : function() {
+          if (automatedTestEnvironment()){
+          }else{
+              prompt(twiki('---++++ Blue Wheel Messaging: SMS Compose
+
+      1. Start messaging test application
+      1. select SMS tab
+      1. Type in destination phone number
+      1. Type in some content
+      1. Click on Compose
+      1. Verify the native SMS client program is launched
+      1. Save draft and return
+          '));
+          }
+      },
+      bluewheelMessaging_SMS_Store : function() {
+          if (automatedTestEnvironment()){
+          }else{
+              prompt(twiki('---++++ Blue Wheel Messaging: SMS Store
+
+      1. Start messaging test application
+      1. select SMS tab
+      1. Type in destination phone number
+      1. Type in some content
+      1. Click on Store
+      1. Verify the message has been stored in draft folder
+          '));
+          }
+      },
+
+      bluewheelMessaging_SMS_Send : function() {
+          if (automatedTestEnvironment()){
+          }else{
+              prompt(twiki('---++++ Blue Wheel Messaging: SMS Send
+
+      1. Start messaging test application
+      1. select SMS tab
+      1. Type in destination phone number
+      1. Type in some content
+      1. Click on Send
+      1. Verify the message has been sent correctly
+          '));
+          }
+      },
+
+      bluewheelMessaging_Email_Compose : function() {
+          if (automatedTestEnvironment()){
+          }else{
+              prompt(twiki('---++++ Blue Wheel Messaging: Email Compose
+
+      1. Create at least one email account on the phone
+      1. Start messaging test application
+      1. select Email tab
+      1. Select account for From, if necessary, change Settings by clicking on Settings
+      1. Type in destination email address, together with To, CC, BCC
+      1. Type in subject and some content
+      1. Insert some attachments
+      1. Click on Compose
+      1. Verify the native Email client program is launched
+      1. Save draft and return
+          '));
+          }
+      },
+
+      bluewheelMessaging_Email_Store : function() {
+          if (automatedTestEnvironment()){
+          }else{
+              prompt(twiki('---++++ Blue Wheel Messaging: Email Store
+
+      1. Create at least one email account on the phone
+      1. Start messaging test application
+      1. select Email tab
+      1. Select account for From, if necessary, change Settings by clicking on Settings
+      1. Type in destination email address, together with To, CC, BCC
+      1. Type in subject and some content
+      1. Insert some attachments
+      1. Click on Store
+      1. Verify the email is stored in the draft folder of selected account
+          '));
+          }
+      },
+
+      bluewheelMessaging_Email_Send : function() {
+          if (automatedTestEnvironment()){
+          }else{
+              prompt(twiki('---++++ Blue Wheel Messaging: Email Send
+
+      1. Create at least one email account on the phone
+      1. Start messaging test application
+      1. select Email tab
+      1. Select account for From, if necessary, change Settings by clicking on Settings
+      1. Type in destination email address, together with To, CC, BCC
+      1. Type in subject and some content
+      1. Insert some attachments
+      1. Click on Send
+      1. Verify the email has been sent to the receivers, including to, cc, and bcc
+          '));
+          }
+      },
+
+      bluewheelMessaging_MMS_Compose : function() {
+          if (automatedTestEnvironment()){
+          }else{
+              prompt(twiki('---++++ Blue Wheel Messaging: MMS Compose
+
+      1. Start messaging test application
+      1. select MMS tab
+      1. Type in destination phone number
+      1. Type in a subject and some content
+      1. Insert some attachments
+      1. Click on Compose
+      1. Verify the native SMS client program is launched
+      1. Save draft and return
+          '));
+          }
+      },
+      bluewheelMessaging_MMS_Store : function() {
+          if (automatedTestEnvironment()){
+          }else{
+              prompt(twiki('---++++ Blue Wheel Messaging: MMS Store
+
+      1. Start messaging test application
+      1. select MMS tab
+      1. Type in destination phone number
+      1. Type in a subject and some content
+      1. Insert some attachments
+      1. Click on Store
+      1. Verify the message has been stored in draft folder
+          '));
+          }
+      },
+
+      bluewheelMessaging_MMS_Send : function() {
+          if (automatedTestEnvironment()){
+          }else{
+              prompt(twiki('---++++ Blue Wheel Messaging: MMS Send
+
+      1. Start messaging test application
+      1. select MMS tab
+      1. Type in destination phone number
+      1. Type in a subject and some content
+      1. Insert some attachments
+      1. Click on Send
+      1. Verify the message has been sent correctly
+          '));
+          }
+      },
+
+      bluewheelMessaging_Search_Accounts_By_Name : function() {
+          if (automatedTestEnvironment()){
+          }else{
+              prompt(twiki('---++++ Blue Wheel Messaging: Search Accounts by Name
+
+      1. Start Messaging test application
+      1. Select Search Accounts tab
+      1. Type in an account name, eg. sms, which is not case sensitive
+      1. Click on Search
+      1. Verify the correct accounts are found and shown in dialog
+          '));
+          }
+      },
+
+      bluewheelMessaging_Search_Accounts_By_Id : function() {
+          if (automatedTestEnvironment()){
+          }else{
+              prompt(twiki('---++++ Blue Wheel Messaging: Search Accounts by Id
+
+      1. Start Messaging test application
+      1. Select Search Accounts tab
+      1. Type in a full Id, case sensitive. You can find the Id strings by doing a search by name
+      1. Click on Search
+      1. Verify the correct accounts are found and shown in dialog
+          '));
+          }
+      },
+
+      bluewheelMessaging_Search_Messages : function() {
+          if (automatedTestEnvironment()){
+          }else{
+              prompt(twiki('---++++ Blue Wheel Messaging: Search Messages
+
+      1. Start Messaging test application
+      1. Select Search Messsages tab
+      1. Select a search type
+      1. Fill in according parameters
+      1. Click on Make Query
+      1. Verify correct messages are found and shown
+      1. Select an message and click on Show
+      1. Answer Yes to open it in native client
+      1. Verify the message is properly shown
+      1. return to search results
+      1. Select an message and click on Show
+      1. Answer No to open it within the test application
+      1. Verify the message is properly shown
+      1. Repeat the test for each search type with random query parameters
           '));
           }
       },
