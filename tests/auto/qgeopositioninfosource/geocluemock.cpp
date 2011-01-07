@@ -49,6 +49,19 @@
 // though its in different thread). now going a bit dangerously, but seems to work..
 static GeoclueMock* lg_currentMockend = 0;
 static QString lg_currentJournal;
+static bool lg_geocluemock_gcmaster_get_default = true;
+static bool lg_geocluemock_gcmaster_create_client = true;
+static bool lg_geocluemock_gcmaster_set_requirements = true;
+static bool lg_geocluemock_gcmaster_create_position = true;
+static bool lg_geocluemock_geoclue_velocity_new = true;
+
+static bool lg_geocluemock_suppress_regular_updates = false;
+static bool lg_geocluemock_suppress_single_update = false;
+static bool lg_geocluemock_suppress_velocity_update = false;
+
+static int lg_position_fields = -1;
+static int lg_velocity_fields = -1;
+static double lg_position_latitude = -1;
 
 // These symbols override the symbols in the actual geoclue library;
 // they are used to mock the backend. ld won't resolve the actualy symbols
@@ -125,8 +138,12 @@ GeoclueMaster *geoclue_master_get_default (void)
 #ifdef TST_GEOCLUE_MOCK_TRACE
     qDebug("=mocked= geoclue_master_get_default");
 #endif
-    GeoclueMaster* master = (GeoclueMaster*)g_object_new (G_TYPE_OBJECT, NULL);
-    return master;
+    if (lg_geocluemock_gcmaster_get_default) {
+        GeoclueMaster* master = (GeoclueMaster*)g_object_new (G_TYPE_OBJECT, NULL);
+        return master;
+    } else {
+        return NULL;
+    }
 }
 
 GeoclueMasterClient *geoclue_master_create_client (GeoclueMaster *master,
@@ -140,8 +157,17 @@ GeoclueMasterClient *geoclue_master_create_client (GeoclueMaster *master,
 #ifdef TST_GEOCLUE_MOCK_TRACE
     qDebug("=mocked= geoclue_master_create_client");
 #endif
-    GeoclueMasterClient* client = (GeoclueMasterClient*)g_object_new (G_TYPE_OBJECT, NULL);
-    return client;
+    if (lg_geocluemock_gcmaster_create_client) {
+        GeoclueMasterClient* client = (GeoclueMasterClient*)g_object_new (G_TYPE_OBJECT, NULL);
+        return client;
+    } else {
+        if (error) {
+            *error = g_error_new ((GQuark)1, // dummy
+                                  2,         // dummy
+                                  "=mock= Failing gcmaster_create_client on purpose.");
+        }
+        return NULL;
+    }
 }
 
 gboolean geoclue_master_client_set_requirements (GeoclueMasterClient   *client,
@@ -161,7 +187,16 @@ gboolean geoclue_master_client_set_requirements (GeoclueMasterClient   *client,
 #ifdef TST_GEOCLUE_MOCK_TRACE
     qDebug("=mocked= geoclue_master_client_set_requirements");
 #endif
-    return true;
+    if (lg_geocluemock_gcmaster_set_requirements) {
+        return true;
+    } else {
+        if (error) {
+            *error = g_error_new ((GQuark)1, // dummy
+                                  2,         // dummy
+                                  "=mock= Failing gcmaster_client set requirements on purpose.");
+        }
+        return false;
+    }
 }
 
 GeocluePosition *geoclue_master_client_create_position (GeoclueMasterClient *client, GError **error)
@@ -172,9 +207,17 @@ GeocluePosition *geoclue_master_client_create_position (GeoclueMasterClient *cli
 #ifdef TST_GEOCLUE_MOCK_TRACE
     qDebug("=mocked= geoclue_master_client_create_position");
 #endif
-    GeocluePosition* position = (GeocluePosition*)g_object_new (G_TYPE_OBJECT, NULL);
-    return position;
-
+    if (lg_geocluemock_gcmaster_create_position) {
+        GeocluePosition* position = (GeocluePosition*)g_object_new (G_TYPE_OBJECT, NULL);
+        return position;
+    } else {
+        if (error) {
+            *error = g_error_new ((GQuark)1, // dummy
+                                  2,         // dummy
+                                  "=mock= Failing gcmaster_client create position on purpose.");
+        }
+        return NULL;
+    }
 }
 
 GeoclueVelocity *geoclue_velocity_new (const char *service,
@@ -186,8 +229,12 @@ GeoclueVelocity *geoclue_velocity_new (const char *service,
 #ifdef TST_GEOCLUE_MOCK_TRACE
     qDebug("=mocked= geoclue_velocity_new");
 #endif
-    GeoclueVelocity* velocity = (GeoclueVelocity*)g_object_new (G_TYPE_OBJECT, NULL);
-    return velocity;
+    if (lg_geocluemock_geoclue_velocity_new) {
+        GeoclueVelocity* velocity = (GeoclueVelocity*)g_object_new (G_TYPE_OBJECT, NULL);
+        return velocity;
+    } else {
+        return NULL;
+    }
 }
 
 void geoclue_position_get_position_async (GeocluePosition         *position,
@@ -239,14 +286,19 @@ void GeoclueMock::start()
         }
     }
     UPDATE_TYPE update = readNextEntry();
-    while (update == SINGLE_UPDATE) {
-        update = readNextEntry(); // skip single entries (just stores values)
-    }
-    if (update == REGULAR_UPDATE ||
-            update == VELOCITY_UPDATE) {
-        m_regular.timerId = startTimer(m_regular.timeout);
-    } else {
-        Q_ASSERT(false); // journal ran out
+
+    while (update != INVALID_UPDATE) {
+        while (update == SINGLE_UPDATE) {
+            update = readNextEntry(); // skip single entries (just stores values)
+        }
+        if (update == REGULAR_UPDATE) {
+            m_regular.timerId = startTimer(m_regular.timeout);
+        } else if (update == VELOCITY_UPDATE) {
+            m_velocity.timerId = startTimer(m_velocity.timeout);
+        } else {
+            Q_ASSERT(false);
+        }
+        update = readNextEntry();
     }
 }
 
@@ -257,8 +309,10 @@ void GeoclueMock::stop()
 #endif
     killTimer(m_single.timerId);
     killTimer(m_regular.timerId);
+    killTimer(m_velocity.timerId);
     m_single.timerId = 0;
     m_regular.timerId = 0;
+    m_velocity.timerId = 0;
     if (m_currentJournalFile.isOpen())
         m_currentJournalFile.close();
     m_positionChangedCallback = 0;
@@ -278,55 +332,54 @@ void GeoclueMock::timerEvent(QTimerEvent *event)
 
     // check which timer
     if (event->timerId() == m_regular.timerId) {
-        Q_ASSERT(m_regular.updateType);
-
-        switch (m_regular.updateType) {
-        case REGULAR_UPDATE:
 #ifdef TST_GEOCLUE_MOCK_TRACE
-            qDebug("=GeoclueMock= regular update.");
+        qDebug("=GeoclueMock= regular update.");
 #endif
-            if (m_positionChangedCallback)
-                (*m_positionChangedCallback)((GeocluePosition*)1,  // dummy
-                                             (GeocluePositionFields)m_regular.fields,
-                                             m_regular.timestamp,
-                                             m_regular.latitude,
-                                             m_regular.longitude,
-                                             m_regular.altitude,
-                                             (GeoclueAccuracy*)1,  // dummy
-                                             (gpointer)m_positionSource);
-            break;
-
-        case VELOCITY_UPDATE:
-#ifdef TST_GEOCLUE_MOCK_TRACE
-            qDebug("=GeoclueMock= velocity update.");
-#endif
-            if (m_velocityChangedCallback)
-                (*m_velocityChangedCallback)((GeoclueVelocity*)1, // dummy
-                                             (GeoclueVelocityFields)m_regular.fields,
-                                             1, // dummy
-                                             m_regular.speed,
-                                             1, // dummy
-                                             1, // dummy
-                                             (gpointer)m_positionSource);
-            break;
-        default:
-            Q_ASSERT(false);
-        }
+        if (m_positionChangedCallback && !lg_geocluemock_suppress_regular_updates)
+            (*m_positionChangedCallback)((GeocluePosition*)1,  // dummy
+                                         lg_position_fields == -1? (GeocluePositionFields)m_regular.fields : (GeocluePositionFields)lg_position_fields,
+                                         m_regular.timestamp,
+                                         lg_position_latitude == -1? m_regular.latitude : lg_position_latitude,
+                                         m_regular.longitude,
+                                         m_regular.altitude,
+                                         (GeoclueAccuracy*)1,  // dummy
+                                         (gpointer)m_positionSource);
         if (m_regular.repeats > 0) {
             m_regular.repeats--;
             return;
         }
+        qDebug("-=-=-=-=-= ran out of regular updates");
         killTimer(m_regular.timerId);
+    } else if (event->timerId() == m_velocity.timerId) {
+#ifdef TST_GEOCLUE_MOCK_TRACE
+        qDebug("=GeoclueMock= velocity update.");
+#endif
+        if (m_velocityChangedCallback && !lg_geocluemock_suppress_velocity_update)
+            (*m_velocityChangedCallback)((GeoclueVelocity*)1, // dummy
+                                         lg_velocity_fields == -1? (GeoclueVelocityFields)m_velocity.fields : (GeoclueVelocityFields)lg_velocity_fields,
+                                         1, // dummy
+                                         m_velocity.speed,
+                                         1, // dummy
+                                         1, // dummy
+                                         (gpointer)m_positionSource);
+
+
+        if (m_velocity.repeats > 0) {
+            m_velocity.repeats--;
+            return;
+        }
+        qDebug("-=-=-=-=-= ran out of velocity updates");
+        killTimer(m_velocity.timerId);
     } else if (event->timerId() == m_single.timerId) {
         Q_ASSERT(m_single.updateType);
 #ifdef TST_GEOCLUE_MOCK_TRACE
         qDebug("=GeoclueMock= single position update.");
 #endif
-        if (m_positionCallback)
+        if (m_positionCallback && !lg_geocluemock_suppress_single_update)
             (*m_positionCallback)((GeocluePosition*)1, // dummy
-                                  (GeocluePositionFields)m_single.fields,
+                                  lg_position_fields == -1? (GeocluePositionFields)m_single.fields : (GeocluePositionFields)lg_position_fields,
                                   m_single.timestamp,
-                                  m_single.latitude,
+                                  lg_position_latitude == -1? m_single.latitude : lg_position_latitude,
                                   m_single.longitude,
                                   m_single.altitude,
                                   (GeoclueAccuracy*)1, // dummy
@@ -344,14 +397,19 @@ void GeoclueMock::timerEvent(QTimerEvent *event)
     }
     // no more repeats
     UPDATE_TYPE update = readNextEntry();
-    while (update == SINGLE_UPDATE) {
-        update = readNextEntry(); // skip single entries
-    }
-    if (update == REGULAR_UPDATE ||
-            update == VELOCITY_UPDATE) {
-        m_regular.timerId = startTimer(m_regular.timeout);
-    } else {
-        Q_ASSERT(false); // journal ran out
+
+    while (update != INVALID_UPDATE) {
+        while (update == SINGLE_UPDATE) {
+            update = readNextEntry(); // skip single entries (just stores values)
+        }
+        if (update == REGULAR_UPDATE) {
+            m_regular.timerId = startTimer(m_regular.timeout);
+        } else if (update == VELOCITY_UPDATE) {
+            m_velocity.timerId = startTimer(m_velocity.timeout);
+        } else {
+            Q_ASSERT(false);
+        }
+        update = readNextEntry();
     }
 }
 
@@ -388,10 +446,10 @@ GeoclueMock::UPDATE_TYPE GeoclueMock::readNextEntry()
         else if (line == "VELOCITY_UPDATE\n") {
             line = m_currentJournalFile.readLine();
             stream.setString(&line);
-            m_regular.updateType = VELOCITY_UPDATE;
+            m_velocity.updateType = VELOCITY_UPDATE;
             parseVelocityUpdate(stream);
             return VELOCITY_UPDATE;
-        }
+        }       
         qCritical("Invalid input file for geoclue mocking.");
         Q_ASSERT(false);
     }
@@ -410,7 +468,7 @@ void GeoclueMock::parseSingleUpdate(QTextStream& stream)
 
 void GeoclueMock::parseVelocityUpdate(QTextStream& stream)
 {
-    stream >> m_regular.repeats >> m_regular.timeout >>  m_regular.fields >> m_regular.speed;
+    stream >> m_velocity.repeats >> m_velocity.timeout >>  m_velocity.fields >> m_velocity.speed;
 }
 
 void GeoclueMock::setPositionChangedCallback(void (*callback)())
@@ -468,4 +526,74 @@ void GeoclueMock::singleUpdate()
 void geocluemock_setjournal(QString journal)
 {
     lg_currentJournal = journal;
+}
+
+void geocluemock_set_gcmaster_get_default(bool value)
+{
+    lg_geocluemock_gcmaster_get_default = value;
+}
+
+void geocluemock_set_gcmaster_create_client(bool value)
+{
+    lg_geocluemock_gcmaster_create_client = value;
+}
+
+void geocluemock_set_gcmaster_set_requirements(bool value)
+{
+    lg_geocluemock_gcmaster_set_requirements = value;
+}
+
+void geocluemock_set_gcmaster_create_position(bool value)
+{
+    lg_geocluemock_gcmaster_create_position = value;
+}
+
+void geocluemock_set_geoclue_velocity_new(bool value)
+{
+    lg_geocluemock_geoclue_velocity_new = value;
+}
+
+void geocluemock_set_suppress_regular_updates(bool value)
+{
+    lg_geocluemock_suppress_regular_updates = value;
+}
+
+void geocluemock_set_suppress_single_update(bool value)
+{
+    lg_geocluemock_suppress_single_update = value;
+}
+
+void geocluemock_set_suppress_velocity_update(bool value)
+{
+    lg_geocluemock_suppress_velocity_update = value;
+}
+
+void geocluemock_set_position_fields(int fields)
+{
+    lg_position_fields = fields;
+}
+
+void geocluemock_unset_position_fields()
+{
+    lg_position_fields = -1;
+}
+
+void geocluemock_set_position_latitude(double latitude)
+{
+    lg_position_latitude = latitude;
+}
+
+void geocluemock_unset_position_latitude()
+{
+    lg_position_latitude = -1;
+}
+
+void geocluemock_set_velocity_fields(int fields)
+{
+    lg_velocity_fields = fields;
+}
+
+void geocluemock_unset_velocity_fields()
+{
+    lg_velocity_fields = -1;
 }

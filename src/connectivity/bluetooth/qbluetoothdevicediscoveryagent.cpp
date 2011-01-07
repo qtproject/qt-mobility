@@ -110,15 +110,13 @@ QTM_BEGIN_NAMESPACE
     Returns true if the agent is currently discovering Bluetooth devices, other returns false.
 */
 
-
-
 /*!
     Constructs a new Bluetooth device discovery agent with parent \a parent.
 */
 QBluetoothDeviceDiscoveryAgent::QBluetoothDeviceDiscoveryAgent(QObject *parent)
-: QObject(parent)
+: QObject(parent), d_ptr(new QBluetoothDeviceDiscoveryAgentPrivate)
 {
-  d = QBluetoothDeviceDiscoveryAgentPrivate::constructPrivateObject(this);
+  d_ptr->q_ptr = this;
 }
 
 /*!
@@ -135,11 +133,13 @@ QBluetoothDeviceDiscoveryAgent::QBluetoothDeviceDiscoveryAgent(QObject *parent)
 */
 QBluetoothDeviceDiscoveryAgent::InquiryType QBluetoothDeviceDiscoveryAgent::inquiryType() const
 {
+    Q_D(const QBluetoothDeviceDiscoveryAgent);
     return d->inquiryType;
 }
 
 void QBluetoothDeviceDiscoveryAgent::setInquiryType(QBluetoothDeviceDiscoveryAgent::InquiryType type)
 {
+    Q_D(QBluetoothDeviceDiscoveryAgent);
     d->inquiryType = type;
 }
 
@@ -148,6 +148,7 @@ void QBluetoothDeviceDiscoveryAgent::setInquiryType(QBluetoothDeviceDiscoveryAge
 */
 QList<QBluetoothDeviceInfo> QBluetoothDeviceDiscoveryAgent::discoveredDevices() const
 {
+    Q_D(const QBluetoothDeviceDiscoveryAgent);
     return d->discoveredDevices;
 }
 
@@ -159,6 +160,7 @@ QList<QBluetoothDeviceInfo> QBluetoothDeviceDiscoveryAgent::discoveredDevices() 
 */
 void QBluetoothDeviceDiscoveryAgent::start()
 {
+    Q_D(QBluetoothDeviceDiscoveryAgent);
     if (!isActive())
         d->start();
 }
@@ -168,12 +170,14 @@ void QBluetoothDeviceDiscoveryAgent::start()
 */
 void QBluetoothDeviceDiscoveryAgent::stop()
 {
+    Q_D(QBluetoothDeviceDiscoveryAgent);
     if (isActive())
         d->stop();
 }
 
 bool QBluetoothDeviceDiscoveryAgent::isActive() const
 {
+    Q_D(const QBluetoothDeviceDiscoveryAgent);
     return d->isActive();
 }
 
@@ -183,6 +187,7 @@ bool QBluetoothDeviceDiscoveryAgent::isActive() const
 */
 QBluetoothDeviceDiscoveryAgent::Error QBluetoothDeviceDiscoveryAgent::error() const
 {
+    // TODO return error codes
     return NoError;
 }
 
@@ -191,6 +196,7 @@ QBluetoothDeviceDiscoveryAgent::Error QBluetoothDeviceDiscoveryAgent::error() co
 */
 QString QBluetoothDeviceDiscoveryAgent::errorString() const
 {
+    // TODO return error codes
     return QString();
 }
 

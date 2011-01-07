@@ -59,6 +59,8 @@ class Q_CONNECTIVITY_EXPORT QLlcpSocket : public QIODevice
     Q_OBJECT
     Q_DECLARE_PRIVATE(QLlcpSocket)
 
+    friend class QLlcpServerPrivate;
+
 public:
     enum Error {
         UnknownSocketError = QAbstractSocket::UnknownSocketError

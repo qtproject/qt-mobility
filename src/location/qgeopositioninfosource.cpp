@@ -50,8 +50,13 @@
 #   include "qgeopositioninfosource_maemo_p.h"
 #elif defined(Q_WS_MAEMO_5)
 #   include "qgeopositioninfosource_maemo5_p.h"
-#elif defined(Q_WS_MEEGO) && (defined(GEOCLUE_MASTER_AVAILABLE))
-#   include "qgeopositioninfosource_geocluemaster_p.h"
+#endif
+
+#if defined (Q_WS_MEEGO)
+#include "qgeopositioninfosource_maemo_p.h"
+#if defined (GEOCLUE_MASTER_AVAILABLE)
+#include "qgeopositioninfosource_geocluemaster_p.h"
+#endif
 #endif
 
 QTM_BEGIN_NAMESPACE
@@ -224,14 +229,29 @@ QGeoPositionInfoSource *QGeoPositionInfoSource::createDefaultSource(QObject *par
         return 0;
     }
     return source;
-#elif (defined(Q_WS_MEEGO)) && (defined(GEOCLUE_MASTER_AVAILABLE))
-    QGeoPositionInfoSourceGeoclueMaster *source = new QGeoPositionInfoSourceGeoclueMaster(parent);
-    int status = source->init();
-    if (status == -1) {
-       delete source;
-        return 0;
+#elif defined(Q_WS_MEEGO)
+    // Use Maemo6 backend if its available, otherwise use Geoclue backend
+    QSettings settings(QLatin1String("Nokia"), QLatin1String("QtLocationPosAndSat"));
+    if (!settings.value("maemo6positioningavailable").isValid()) {
+        QGeoPositionInfoSourceMaemo* maemo6Source = new QGeoPositionInfoSourceMaemo(parent);
+        int status = maemo6Source->init();
+        if (status == -1) {
+            delete maemo6Source;
+            maemo6Source = 0;
+            settings.setValue("maemo6positioningavailable", false);
+        } else {
+            return maemo6Source;
+        }
     }
-    return source;
+#ifdef GEOCLUE_MASTER_AVAILABLE
+    QGeoPositionInfoSourceGeoclueMaster *geoclueSource = new QGeoPositionInfoSourceGeoclueMaster(parent);
+    int status = geoclueSource->init();
+    if (status == -1) {
+       delete geoclueSource;
+       return 0;
+    }
+    return geoclueSource;
+#endif // GEOCLUE_MASTER_AVAILABLE
 #else
     qWarning("no default source");
     Q_UNUSED(parent);
