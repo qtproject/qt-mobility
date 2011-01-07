@@ -55,6 +55,13 @@ GypsyMock::GypsyMock() :
     m_currentJournal = ":/data/gypsymock_basic_sat.journal";
 }
 
+GPtrArray* GypsyMock::satelliteArray()
+{
+    if (m_regular.satellites)
+        return m_regular.satellites;
+    Q_ASSERT(false);
+}
+
 GypsyMock::~GypsyMock()
 {
     TRACE0;

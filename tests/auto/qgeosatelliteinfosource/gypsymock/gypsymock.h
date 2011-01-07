@@ -87,6 +87,7 @@ public:
     void singleUpdate();
 
     void disableUpdates(bool value);
+    GPtrArray* satelliteArray();
 
     enum UPDATE_TYPE {
         INVALID_UPDATE = 0,
