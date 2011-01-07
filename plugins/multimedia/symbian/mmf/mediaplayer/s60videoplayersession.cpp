@@ -292,13 +292,7 @@ bool S60VideoPlayerSession::isAudioAvailable()
 
 void S60VideoPlayerSession::doPlay()
 {
-    //temporary hack for bufferring.. To be removed when register for notification is enabled
-    buffering();
-    
     m_player->Play();
-    
-    //temporary.. To be removed when register for notification is enabled
-    buffered();
 }
 
 void S60VideoPlayerSession::doPauseL()

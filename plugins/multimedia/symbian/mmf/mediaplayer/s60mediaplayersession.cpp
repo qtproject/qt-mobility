@@ -116,7 +116,7 @@ void S60MediaPlayerSession::setMediaStatus(QMediaPlayer::MediaStatus status)
     
     emit mediaStatusChanged(m_mediaStatus);
     
-    if (m_play_requested)
+    if (m_play_requested && m_mediaStatus == QMediaPlayer::LoadedMedia)
         play();
 }
 
@@ -485,6 +485,7 @@ QMediaPlayer::Error S60MediaPlayerSession::fromSymbianErrorToMultimediaError(int
         case KErrMMProxyServer:
         case KErrMMProxyServerNotSupported:
         case KErrMMProxyServerConnect:
+        case KErrCouldNotConnect:
             return QMediaPlayer::NetworkError;
 
         case KErrNotReady:
