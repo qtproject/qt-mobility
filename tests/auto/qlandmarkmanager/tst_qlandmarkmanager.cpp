@@ -5605,7 +5605,7 @@ void tst_QLandmarkManager::filterLandmarksMultipleBox()
     QVERIFY(lms.contains(lm3));
     QVERIFY(lms.contains(lm5));
     QVERIFY(lms.contains(lm6));
-    QCOMPARE(lms,m_manager->landmarks(boxFilter2));
+    QVERIFY(compareLandmarksLists(lms,m_manager->landmarks(boxFilter2)));
 
     intersectionFilter.clear();
     intersectionFilter.append(boxFilter3);
@@ -5615,7 +5615,7 @@ void tst_QLandmarkManager::filterLandmarksMultipleBox()
     QVERIFY(lms.contains(lm5));
     QVERIFY(lms.contains(lm6));
     QVERIFY(lms.contains(lm8));
-    QCOMPARE(lms,m_manager->landmarks(boxFilter3));
+    QVERIFY(compareLandmarksLists(lms,m_manager->landmarks(boxFilter3)));
 
     //try different combinations of union filter
     //try union filter with all 3 box filters
@@ -9434,6 +9434,14 @@ void tst_QLandmarkManager::testSignals()
     QCOMPARE(spyCatChange2.count(),0);
     QCOMPARE(spyDataChanged2.count(), 0);
 #endif
+
+    spyAdd.clear();
+    spyChange.clear();
+    spyRemove.clear();
+    spyCatAdd.clear();
+    spyCatRemove.clear();
+    spyCatChange.clear();
+    spyDataChanged.clear();
 
     //check disconection of signals
     disconnectNotifications();
