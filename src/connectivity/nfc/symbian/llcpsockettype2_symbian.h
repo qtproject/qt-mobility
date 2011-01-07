@@ -49,6 +49,9 @@
 #include <llcpconnorientedtransporter.h>    // MLlcpConnOrientedTransporter
 #include <llcpconnorientedlistener.h>       // MLlcpConnOrientedListener
 #include <llcplinklistener.h>               // MLlcpLinkListener
+#include <qmobilityglobal.h>
+#include "../qllcpsocket_symbian_p.h"
+#include "../qllcpsocket.h"
 
 /*!
  *   FORWARD DECLARATIONS
@@ -57,11 +60,6 @@ class CLlcpConnecterAO;
 class CLlcpSenderAO;
 class CLlcpReceiverAO;
 class CLlcpTimer;
-
-#include <qmobilityglobal.h>
-#include "../qllcpsocket_symbian_p.h"
-#include "../qllcpsocket.h"
-
 /*!
  *  CLASS DECLARATION for CLlcpSocketType2 (ConnectOriented Transportation).
  */
@@ -84,7 +82,7 @@ public:
 
     //for qt signals
     void Error(QtMobility::QLlcpSocket::Error aSocketError);
-    void StateChangedL(QtMobility::QLlcpSocket::State aSocketState);
+    void StateChanged(QtMobility::QLlcpSocket::State aSocketState);
     void ReadyRead();
     void BytesWritten(qint64 aBytes);
 
@@ -98,9 +96,7 @@ private:
     CLlcpSocketType2(MLlcpConnOrientedTransporter* aTransporter = NULL,QtMobility::QLlcpSocketPrivate* aCallback = NULL);
     // Second phase constructor
     void ConstructL();
-    void Cleanup();
     void ConnectToServiceL( const TDesC8& aServiceName);
-    void DisconnectFromServiceL();
     enum TWaitStatus
         {
         ENone,
@@ -152,14 +148,14 @@ public:
     /*!
     * Disonnect with remote peer .
     */
-    void DisconnectL();
+    void Disconnect();
 
     /*!
     * Connect to remote peer as given service uri.
     */
     void ConnectL(const TDesC8& aServiceName);
 
-public: // From CActive
+private: // From CActive
     void RunL();
     void DoCancel();
 
@@ -198,7 +194,7 @@ public:
     */
     TInt Send( const TDesC8& aData );
 
-public: // From CActive
+private: // From CActive
     void RunL();
     void DoCancel();
 
@@ -239,7 +235,7 @@ public:
     */
     TInt StartReceiveDatagram();
 
-public: // From CActive
+private: // From CActive
     void RunL();
     void DoCancel();
 

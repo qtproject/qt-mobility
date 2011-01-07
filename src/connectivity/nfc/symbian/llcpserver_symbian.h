@@ -51,7 +51,6 @@
 
 
 class CLlcpSocketType2;
-class RTest;
 
 class CLlcpServer : public CBase,
                     public MLlcpConnOrientedListener
@@ -61,11 +60,6 @@ public:
     * Creates a new CLlcpServer object.
     */
    static CLlcpServer* NewL(QtMobility::QLlcpServerPrivate&);
-
-   /*!
-    * Creates a new CLlcpServer object.
-    */
-   static CLlcpServer* NewLC(QtMobility::QLlcpServerPrivate&);
 
    /*!
     * Destructor

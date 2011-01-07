@@ -44,7 +44,6 @@
 
 #include <qmobilityglobal.h>
 #include "qllcpserver.h"
-#include <QtCore/QObject>
 #include <QList>
 #include <QPointer>
 
@@ -52,6 +51,7 @@ class CLlcpServer;
 class CLlcpSocketType2;
 class QLlcpSocket;
 
+QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
 
 class QLlcpServerPrivate
@@ -73,7 +73,6 @@ public:
     QLlcpSocket *nextPendingConnection();
     QLlcpServer::Error serverError() const;
 
-
 public:
     void invokeNewConnection();
 
@@ -85,5 +84,6 @@ private:
 
 QTM_END_NAMESPACE
 
+QT_END_HEADER
 
 #endif // QLLCPSERVER_P_H
