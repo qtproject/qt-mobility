@@ -384,7 +384,7 @@ void QDeclarativeContactModel::setFetchHint(QDeclarativeContactFetchHint* fetchH
 }
 
 /*!
-  \qmlproperty QDeclarativeListProperty ContactModel::contacts
+  \qmlproperty list<Contact> ContactModel::contacts
 
   This property holds a list of contacts.
 
@@ -428,7 +428,7 @@ void QDeclarativeContactModel::contacts_clear(QDeclarativeListProperty<QDeclarat
 
 
 /*!
-  \qmlproperty QDeclarativeListProperty ContactModel::sortOrders
+  \qmlproperty list<SortOrder> ContactModel::sortOrders
 
   This property holds a list of sort orders used by the organizer model.
 
@@ -584,7 +584,7 @@ void QDeclarativeContactModel::contactsSaved()
                     //new saved contact
                     QDeclarativeContact* dc = new QDeclarativeContact(c, d->m_manager->detailDefinitions(c.type()) , this);
                     d->m_contactMap.insert(c.localId(), dc);
-                    beginInsertRows(QModelIndex(), d->m_contacts.count(), d->m_contacts.count() + 1);
+                    beginInsertRows(QModelIndex(), d->m_contacts.count(), d->m_contacts.count());
                     d->m_contacts.append(dc);
                     endInsertRows();
                 }
@@ -615,7 +615,7 @@ void QDeclarativeContactModel::removeContacts(const QList<QContactLocalId>& ids)
     req->setManager(d->m_manager);
     req->setContactIds(ids);
 
-    connect(req,SIGNAL(stateChanged(QContactAbstractRequest::State)), this, SLOT(contactRemoved()));
+    connect(req,SIGNAL(stateChanged(QContactAbstractRequest::State)), this, SLOT(contactsRemoved()));
 
     req->start();
 }
