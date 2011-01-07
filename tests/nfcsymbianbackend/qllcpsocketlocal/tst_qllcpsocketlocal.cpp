@@ -71,8 +71,8 @@ private Q_SLOTS:
 
     void negTestCase1();
     void negTestCase2();
-    void negTestCase3();
-    void negTestCase4();
+    //void negTestCase3();
+    //void negTestCase4();
 
     void cleanupTest();
 
@@ -327,16 +327,19 @@ void tst_qllcpsocketlocal::negTestCase2()
 /*!
  Description: bind negative test - invalid port num
 */
+/*
 void tst_qllcpsocketlocal::negTestCase3()
 {
     QLlcpSocket localSocket;
     bool ret = localSocket.bind(65);
     QVERIFY(ret == false);
 }
+*/
 
 /*!
  Description: bind negative test - invalid port num II
 */
+/*
 void tst_qllcpsocketlocal::negTestCase4()
 {
     QLlcpSocket localSocket;
@@ -344,6 +347,7 @@ void tst_qllcpsocketlocal::negTestCase4()
     bool ret = localSocket.bind(reservedPort);
     QVERIFY(ret == false);
 }
+*/
 
 void tst_qllcpsocketlocal::cleanupTest()
 {
