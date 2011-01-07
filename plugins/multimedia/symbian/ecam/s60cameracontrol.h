@@ -170,6 +170,7 @@ private: // Data
     QTimer                      *m_inactivityTimer;
     QCamera::CaptureMode        m_captureMode;
     QCamera::CaptureMode        m_requestedCaptureMode;
+    bool                        m_settingCaptureModeInternally;
     QCamera::Status             m_internalState;
     QCamera::State              m_requestedState;
     int                         m_deviceIndex;

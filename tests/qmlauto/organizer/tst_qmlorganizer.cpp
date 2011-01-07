@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the test suite of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
@@ -39,37 +39,5 @@
 **
 ****************************************************************************/
 
-#include <QDir>
-#include <QFile>
-#include <QDebug>
-
-#include "databasefilewatcher_p.h"
-
-DatabaseFileWatcher::DatabaseFileWatcher(const QString &databaseWatcherPath, QObject *parent)
-    : QObject(parent),
-      m_watcher(0),
-      m_databaseWatcherPath(databaseWatcherPath)
-{
-}
-
-void DatabaseFileWatcher::setEnabled(bool enabled)
-{
-    if (!m_watcher) {
-        m_watcher = new QFileSystemWatcher(this);
-        connect(m_watcher, SIGNAL(fileChanged(QString)),
-           SLOT(databaseChanged(QString)));
-    }
-    if (enabled) {
-        if (QFile::exists(m_databaseWatcherPath)) {
-            if (!m_watcher->files().contains(m_databaseWatcherPath))
-                    m_watcher->addPath(m_databaseWatcherPath);
-        }
-    } else {
-        m_watcher->removePath(m_databaseWatcherPath);
-    }
-}
-
-void DatabaseFileWatcher::databaseChanged(const QString &)
-{
-     emit notifyChange();
-}
+#include <QtQuickTest/quicktest.h>
+QUICK_TEST_MAIN(qmlorganizer)

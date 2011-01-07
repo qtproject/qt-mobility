@@ -49,7 +49,7 @@ S60MediaRecorderControl::S60MediaRecorderControl(QObject *parent) :
 {
 }
 
-S60MediaRecorderControl::S60MediaRecorderControl(S60VideoCaptureSession *session, QObject *parent) :
+S60MediaRecorderControl::S60MediaRecorderControl(S60VideoCaptureSession *session, QObject *parent):
     QMediaRecorderControl(parent),
     m_state(QMediaRecorder::StoppedState) // Default RecorderState
 {
@@ -154,9 +154,8 @@ void S60MediaRecorderControl::applySettings()
 
 void S60MediaRecorderControl::record()
 {
-    if (m_state == QMediaRecorder::RecordingState) {
+    if (m_state == QMediaRecorder::RecordingState)
         return;
-    }
 
     if (m_cameraControl && m_cameraControl->captureMode() != QCamera::CaptureVideo) {
         emit error(QCamera::CameraError, tr("Video capture mode is not selected."));

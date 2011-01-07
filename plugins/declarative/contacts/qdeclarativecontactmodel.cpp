@@ -541,9 +541,6 @@ void QDeclarativeContactModel::requestUpdated()
                     d->m_contactMap.insert(c.localId(), dc);
                 }
             }
-            beginInsertRows(QModelIndex(), d->m_contacts.count(), req->contacts().count());
-            d->m_contacts.append(dcs);
-            endInsertRows();
         }
         emit contactsChanged();
         emit errorChanged();
