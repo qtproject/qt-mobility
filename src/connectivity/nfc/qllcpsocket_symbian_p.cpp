@@ -158,8 +158,11 @@ void QLlcpSocketPrivate::invokeReadyRead()
     Q_Q(QLlcpSocket);
     //If called from within a slot connected to the readyRead() signal,
     //readyRead() will not be reemitted.
+    LOG("m_emittedReadyRead: " << m_emittedReadyRead);
+
     if (!m_emittedReadyRead){
         m_emittedReadyRead = true;
+        LOG("readyRead signal has been emited!");
         emit q->readyRead();
         m_emittedReadyRead = false;
     }

@@ -210,6 +210,7 @@ void tst_qllcpsocketlocal::testCase1()
                3. call waitForBytesWritten successfully
                4. call waitForBytesWritten successfully
 */
+/*
 void tst_qllcpsocketlocal::testCase2()
 {
     // STEP 1:
@@ -243,7 +244,43 @@ void tst_qllcpsocketlocal::testCase2()
 
     QVERIFY(ret == true);
 }
+*/
 
+void tst_qllcpsocketlocal::testCase2()
+{
+    QLlcpSocket *socket = new QLlcpSocket;
+    // STEP 1:
+    QSignalSpy bytesWrittenSpy(socket, SIGNAL(bytesWritten(qint64)));
+    QString message("testcase2 string str1");
+    QByteArray tmpArray(message.toAscii());
+    const char* data =  tmpArray.data();
+    qint64 strSize = message.size();
+    qint64 val = socket->writeDatagram(data,strSize,m_target, m_port);
+    QVERIFY(val != -1);
+
+    // STEP 2:
+    QString message2("testcase2 string str2");
+    QByteArray tmpArray2(message2.toAscii());
+    const char* data2 =  tmpArray2.data();
+    qint64 strSize2 = message2.size();
+    qint64 val2 = socket->writeDatagram(data2,strSize2,m_target, m_port);
+    QVERIFY(val2 != -1);
+
+    // STEP 3:
+    const int Timeout = 2 * 1000;
+    bool ret = socket->waitForBytesWritten(Timeout);
+    QVERIFY(ret == true);
+
+     // STEP 4:
+    ret = socket->waitForBytesWritten(Timeout);
+    QVERIFY(ret == true);
+
+    QString messageBox("handshake 3");
+    QNfcTestUtil::ShowMessage(messageBox);
+
+    delete socket;
+    QVERIFY(ret == true);
+}
 
 /*!
  Description: coverage testcase - targeted for sender doCancel
@@ -307,7 +344,7 @@ void tst_qllcpsocketlocal::negTestCase1()
     QVERIFY(retBool == false);
 
     //Cover QLLCPBind::WaitForReadyRead()
-    retBool = m_socket->waitForReadyRead(Timeout);
+    retBool = localSocket.waitForReadyRead(Timeout);
     QVERIFY(retBool == false);
 }
 
