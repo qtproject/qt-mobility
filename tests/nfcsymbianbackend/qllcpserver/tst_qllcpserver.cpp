@@ -339,14 +339,15 @@ void tst_QLlcpServer::api_coverage()
 */
 void tst_QLlcpServer::negTestCase1()
 {
-    QString message("handshake 4: negTestCase1 test");
-    QNfcTestUtil::ShowMessage(message);
 
     QString uri = TestUri;
     QLlcpServer server;
     QSignalSpy connectionSpy(&server, SIGNAL(newConnection()));
     bool ret = server.listen(uri);
     QVERIFY(ret);
+
+    QString message("handshake 4: negTestCase1 test");
+    QNfcTestUtil::ShowMessage(message);
 
     ret = server.listen(uri);
     QVERIFY(ret == false);
