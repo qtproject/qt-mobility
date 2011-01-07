@@ -222,7 +222,7 @@ void tst_qllcpsocketlocal::testCase2()
     QVERIFY(val != -1);
 
     // STEP 2:
-    QString message2("testcase2 string str1");
+    QString message2("testcase2 string str2");
     QByteArray tmpArray2(message2.toAscii());
     const char* data2 =  tmpArray2.data();
     qint64 strSize2 = message2.size();
