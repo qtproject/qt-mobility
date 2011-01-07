@@ -137,9 +137,11 @@ void QLandmarkCategoryFetchRequest::setLimit(int limit)
 
 /*!
     Returns the index offset for the request.  By default the offset is 0.
-    The offset determines the first index which is retrieved.  For example,
-    if there are 10 categories in the landmark store, setting the offset
-    to 2 will retrieve the 3rd to 10th categories inclusively.  (The order of categories
+    The offset determines the first index which is retrieved, it is generally
+    used in conjunction with limit() to facilitate paging.
+
+    For example, if there are 10 categories in the landmark store, setting the offset
+    to 2 and limit to 5 will retrieve the 3rd to 7th categories inclusively.  (The order of categories
     is specified by the sorting field).
 */
 int QLandmarkCategoryFetchRequest::offset() const
