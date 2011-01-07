@@ -36,10 +36,10 @@
             <arg type="v"/>
         </signal>
         <signal name="TargetDetected">
-            <arg type="o"/>
+            <arg type="s"/>
         </signal>
         <signal name="TargetLost">
-            <arg type="o"/>
+            <arg type="s"/>
         </signal>
         <signal name="TargetDetectionError">
             <arg type="i"/>
