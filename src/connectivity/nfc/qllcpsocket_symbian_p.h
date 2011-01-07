@@ -122,28 +122,31 @@ public:
 
 // state machine part
 public:
-    void changeState(QSharedPointer<QLLCPSocketState>& );
-    QSharedPointer<QLLCPSocketState>& getUnconnectedState() { return m_unconnectedState;}
-    QSharedPointer<QLLCPSocketState>& getConnectedState() { return m_connectedState;}
-    QSharedPointer<QLLCPSocketState>& getConnectingState() { return m_connectingState;}
-    QSharedPointer<QLLCPSocketState>& getBindState() { return m_bindState;}
+    void changeState(QLLCPSocketState*);
+    QLLCPSocketState* getUnconnectedState() { return m_unconnectedState;}
+    QLLCPSocketState* getConnectedState() { return m_connectedState;}
+    QLLCPSocketState* getConnectingState() { return m_connectingState;}
+    QLLCPSocketState* getBindState() { return m_bindState;}
 
 private:
-    CLlcpSocketType1* m_symbianSocketType1;
-    CLlcpSocketType2* m_symbianSocketType2;
+    CLlcpSocketType1* m_symbianSocketType1;  // own
+    CLlcpSocketType2* m_symbianSocketType2; // own
 
 private:
     QLlcpSocket::Error m_error;
-    QSharedPointer<QLLCPSocketState> m_state;
-    QSharedPointer<QLLCPSocketState> m_unconnectedState;
-    QSharedPointer<QLLCPSocketState> m_connectedState;
-    QSharedPointer<QLLCPSocketState> m_connectingState;
-    QSharedPointer<QLLCPSocketState> m_bindState;
+    QLLCPSocketState* m_state;  // not own
+    QLLCPSocketState* m_unconnectedState;  // own
+    QLLCPSocketState* m_connectedState; // own
+    QLLCPSocketState* m_connectingState; // own
+    QLLCPSocketState* m_bindState; // own
 
-    QLlcpSocket *q_ptr;
+    QLlcpSocket *q_ptr; // not own
 
     bool m_emittedReadyRead;
     bool m_emittedBytesWritten;
+
+public:
+    int m_writeDatagramRefCount;
 };
 
 

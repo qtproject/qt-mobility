@@ -1,3 +1,43 @@
+/****************************************************************************
+**
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
+** Contact: Nokia Corporation (qt-info@nokia.com)
+**
+** This file is part of the Qt Mobility Components.
+**
+** $QT_BEGIN_LICENSE:LGPL$
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
+**
+** GNU Lesser General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU Lesser
+** General Public License version 2.1 as published by the Free Software
+** Foundation and appearing in the file LICENSE.LGPL included in the
+** packaging of this file.  Please review the following information to
+** ensure the GNU Lesser General Public License version 2.1 requirements
+** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+**
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
+**
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
 #include <QtCore/QString>
 #include <QtTest/QtTest>
 #include <QtCore/QCoreApplication>
@@ -23,11 +63,10 @@ public:
 private Q_SLOTS:
 
     // ALERT£º Handshake required, do NOT¡¡change the sequence of handshaking testcases.
-    void testCase0();  // Intial handshake
-    void testCase1();   // handshake 1,2
-    void testCase2();   // handshake 3
+    void testCase0();  // Intial handshake - work with  tst_qllcpsocketremote testCase0
+    void testCase1();   // handshake 1,2  - work with  tst_qllcpsocketremote testCase1
+    void testCase2();   // handshake 3   - work with  tst_qllcpsocketremote testCase2
     void testCase3();
-    void testCase4();
     void coverageTest1();
 
     void negTestCase1();
@@ -160,29 +199,47 @@ void tst_qllcpsocketlocal::testCase1()
  Description: waitForBytesWritten test
 
  TestScenario:
-               1. Local peer sends the "testcase1 string" message to the remote peer
-               2. Local peer waits for the bytes written
+               1. Local peer sends the "testcase2 string str1" message to the remote peer
+               2. Local peer sends the "testcase2 string str2" message to the remote peer
+               3. Local peer waits for the bytes written
+               4. call waitForBytesWritten
 
  TestExpectedResults:
-               1. The message is sending to remote peer
-               2. call waitForBytesWritten successfully
+               1. Local peer write datagram successfully firstly
+               2. Local peer write datagram successfully secondly
+               3. call waitForBytesWritten successfully
+               4. call waitForBytesWritten successfully
 */
 void tst_qllcpsocketlocal::testCase2()
 {
     // STEP 1:
     QSignalSpy bytesWrittenSpy(m_socket, SIGNAL(bytesWritten(qint64)));
-    QString message("testcase2 string");
+    QString message("testcase2 string str1");
     QByteArray tmpArray(message.toAscii());
     const char* data =  tmpArray.data();
     qint64 strSize = message.size();
 
-     QLlcpSocket socket(this);
-    m_socket->writeDatagram(data,strSize,m_target, m_port);
-    QVERIFY(bytesWrittenSpy.isEmpty());
+    QLlcpSocket socket(this);
+    qint64 val = m_socket->writeDatagram(data,strSize,m_target, m_port);
+    QVERIFY(val != -1);
+    // QVERIFY(bytesWrittenSpy.isEmpty());
 
     // STEP 2:
+    QString message2("testcase2 string str1");
+    QByteArray tmpArray2(message2.toAscii());
+    const char* data2 =  tmpArray2.data();
+    qint64 strSize2 = message2.size();
+    qint64 val2 = m_socket->writeDatagram(data2,strSize2,m_target, m_port);
+    QVERIFY(val2 != -1);
+
+    // STEP 3:
     const int Timeout = 2 * 1000;
     bool ret = m_socket->waitForBytesWritten(Timeout);
+    QVERIFY(ret == true);
+
+     // STEP 4:
+    ret = m_socket->waitForBytesWritten(Timeout);
+    QVERIFY(ret == true);
 
     QString messageBox("handshake 3");
     QNfcTestUtil::ShowMessage(messageBox);
@@ -190,47 +247,11 @@ void tst_qllcpsocketlocal::testCase2()
     QVERIFY(ret == true);
 }
 
-/*!
- Description:  NFC LLCP connection-less mode socket - queued written buffer
-
- TestScenario:
-                1. Local peer sends the "string1" message to the remote peer
-                2. Local peer sends the "string2" message to the remote peer
-                3. Spy the bytes written signals
-
- TestExpectedResults:
-               1. Local peer write datagram successfully firstly
-               2. Local peer write datagram successfully secondly
-               3. Bytes written signals have been detected twice
-*/
-void tst_qllcpsocketlocal::testCase3()
-{
-    QString message("string1");
-    QString message2("string2");
-
-    QLlcpSocket socket;
-    // STEP 1:
-    QByteArray tmpArray(message.toAscii());
-    const char* data =  tmpArray.data();
-    qint64 strSize = message.size();
-    qint64 val = socket.writeDatagram(data,strSize,m_target, m_port);
-    QVERIFY(val != -1);
-
-     // STEP 2:
-    QByteArray tmpArray2(message2.toAscii());
-    const char* data2 =  tmpArray2.data();
-    qint64 strSize2 = message2.size();
-    qint64 val2 = socket.writeDatagram(data2,strSize2,m_target, m_port);
-    QVERIFY(val2 != -1);
-
-    QSignalSpy bytesWrittenSpy(&socket, SIGNAL(bytesWritten(qint64)));
-    QTRY_VERIFY(bytesWrittenSpy.count() == 2);
-}
 
 /*!
  Description: coverage testcase - targeted for sender doCancel
 */
-void tst_qllcpsocketlocal::testCase4()
+void tst_qllcpsocketlocal::testCase3()
 {
     QLlcpSocket *localSocket= new QLlcpSocket;
     // STEP 1:
@@ -238,7 +259,7 @@ void tst_qllcpsocketlocal::testCase4()
     QByteArray tmpArray(message.toAscii());
     const char* data =  tmpArray.data();
     qint64 strSize = message.size();
-    qint64 val = localSocket->writeDatagram(data,strSize,m_target, m_port);
+    localSocket->writeDatagram(data,strSize,m_target, m_port);
     delete localSocket;
 }
 
@@ -250,6 +271,7 @@ void tst_qllcpsocketlocal::coverageTest1()
     QSignalSpy errorSpy(m_socket, SIGNAL(error(QLlcpSocket::Error)));
     m_socket->connectToService(m_target,"uri");
     QTRY_VERIFY(errorSpy.count() == 1);
+    QVERIFY(m_socket->error() == QLlcpSocket::UnknownSocketError);
 
     m_socket->disconnectFromService();
     QTRY_VERIFY(errorSpy.count() == 2);
@@ -321,8 +343,8 @@ void tst_qllcpsocketlocal::negTestCase3()
 void tst_qllcpsocketlocal::negTestCase4()
 {
     QLlcpSocket localSocket;
-    int invalidPort = -1;
-    bool ret = localSocket.bind(invalidPort);
+    int reservedPort = 15;
+    bool ret = localSocket.bind(reservedPort);
     QVERIFY(ret == false);
 }
 

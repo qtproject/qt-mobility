@@ -2,6 +2,6 @@ TEMPLATE = subdirs
 
 symbian {
 
-    SUBDIRS += qnearfieldmanager qllcpserver qllcpsocketlocal qllcpsocketremote qllcpsockettype2 qnearfieldtagtype1 qnearfieldtagtype2 qnearfieldtagtype3 qnearfieldtagtype4
+    SUBDIRS += qnearfieldmanager qllcpserver qllcpsockettype2 qllcpsocketlocal qllcpsocketremote  qnearfieldtagtype1 qnearfieldtagtype2 qnearfieldtagtype3 qnearfieldtagtype4
     contains(mobility_modules, serviceframework): SUBDIRS += nfctestserviceprovider
 }
