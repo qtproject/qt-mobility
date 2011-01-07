@@ -179,20 +179,19 @@ void tst_qllcpsocketremote::testCase1()
 void tst_qllcpsocketremote::testCase2()
 {
     QLlcpSocket localSocket;
+    quint8 localPort = 38;
     QSignalSpy readyReadSpy(&localSocket, SIGNAL(readyRead()));
-    bool ret = localSocket.bind(m_port);
+    bool ret = localSocket.bind(localPort);
     QVERIFY(ret);
 
     // STEP 1:  bind the local port for current socket
-
     QString expectedMessage1("testcase2 string str1");
     QString expectedMessage2("testcase2 string str2");
 
     QString boxMessage("handshake 3");
     QNfcTestUtil::ShowMessage(boxMessage);
 
-    //QTRY_VERIFY(readyReadSpy.count() == 1);
-    qDebug() << "count:  " << readyReadSpy.count();
+    QTRY_VERIFY(readyReadSpy.count() == 1);
 
     QByteArray datagram;
     if (localSocket.hasPendingDatagrams())
@@ -206,8 +205,7 @@ void tst_qllcpsocketremote::testCase2()
     qDebug() << "receivedMessage1: " << receivedMessage1;
     QVERIFY(expectedMessage1 == receivedMessage1);
 
-    //QTRY_VERIFY(readyReadSpy.count() == 2);
-    qDebug() << "count:  " << readyReadSpy.count();
+    QTRY_VERIFY(readyReadSpy.count() == 2);
 
      QByteArray datagram2;
     if (localSocket.hasPendingDatagrams())
