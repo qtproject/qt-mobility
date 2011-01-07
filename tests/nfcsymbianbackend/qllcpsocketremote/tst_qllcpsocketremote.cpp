@@ -221,7 +221,7 @@ void tst_qllcpsocketremote::testCase2()
     const int Timeout = 10 * 1000;
     ret = localSocket.waitForReadyRead(Timeout);
 
-    QVERIFY(ret);
+    QVERIFY(ret == false);
  }
 
 void tst_qllcpsocketremote::cleanupTest()
