@@ -76,22 +76,11 @@ void maemo6accelerometer::slotFrameAvailable(const QVector<XYZ>&  frame)
 }
 
 bool maemo6accelerometer::doConnect(){
-    if (m_bufferSize==1){
-        QObject::disconnect(m_sensorInterface, SIGNAL(frameAvailable(const QVector<XYZ>& )));
-        if (!(QObject::connect(m_sensorInterface, SIGNAL(dataAvailable(const XYZ&)),
-                               this, SLOT(slotDataAvailable(const XYZ&))))){
-            qWarning() << "Unable to connect "<< sensorName();
-            return false;
-        }
+    if (m_bufferSize==1?
+                QObject::connect(m_sensorInterface, SIGNAL(dataAvailable(const XYZ&)), this, SLOT(slotDataAvailable(const XYZ&))):
+                QObject::connect(m_sensorInterface, SIGNAL(frameAvailable(const QVector<XYZ>& )),this, SLOT(slotFrameAvailable(const QVector<XYZ>& ))))
         return true;
-    }
-    QObject::disconnect(m_sensorInterface, SIGNAL(dataAvailable(const XYZ&)));
-    if (!(QObject::connect(m_sensorInterface,SIGNAL(frameAvailable(const QVector<XYZ>& )),
-                           this, SLOT(slotFrameAvailable(const QVector<XYZ>& )))));{
-        qWarning() << "Unable to connect "<< sensorName();
-        return false;
-    }
-    return true;
+    return false;
 }
 
 

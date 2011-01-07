@@ -83,7 +83,6 @@ void maemo6als::slotDataAvailable(const Unsigned& data)
 bool maemo6als::doConnect(){
     if (!(QObject::connect(m_sensorInterface, SIGNAL(ALSChanged(const Unsigned&)),
                            this, SLOT(slotDataAvailable(const Unsigned&))))){
-        qWarning() << "Unable to connect "<< sensorName();
         return false;
     }
     return true;

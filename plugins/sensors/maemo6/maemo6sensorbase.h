@@ -126,9 +126,7 @@ protected:
 //        int l = sizes.size();
 //        if (l>0){
 //            m_efficientBufferSize = (l==1) ? 1 : sizes.at(1).first;
-//            qDebug()<<"m_efficientBufferSize "<<m_efficientBufferSize;
 //            m_maxBufferSize = sizes.at(l-1).second;
-//            qDebug()<<"m_maxBufferSize "<<m_maxBufferSize;
 //        }
         m_maxBufferSize = 256;  // TODO: remove once the snippet above is taken into use
         sensor()->setProperty(MAX_BUFFER_SIZE, m_maxBufferSize);
@@ -144,6 +142,7 @@ protected:
         if (name=="tapsensor") return;
         setRanges();
     };
+
 
     AbstractSensorChannelInterface* m_sensorInterface;
     int m_bufferSize;
