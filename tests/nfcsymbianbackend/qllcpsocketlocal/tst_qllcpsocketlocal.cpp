@@ -66,7 +66,7 @@ private Q_SLOTS:
     void testCase0();  // Intial handshake - work with  tst_qllcpsocketremote testCase0
     void testCase1();   // handshake 1,2  - work with  tst_qllcpsocketremote testCase1
     void testCase2();   // handshake 3   - work with  tst_qllcpsocketremote testCase2
-    void testCase4();
+    void testCase3();
     void coverageTest1();
 
     void negTestCase1();
@@ -247,49 +247,11 @@ void tst_qllcpsocketlocal::testCase2()
     QVERIFY(ret == true);
 }
 
-/*!
- Description:  NFC LLCP connection-less mode socket - queued written buffer
-
- TestScenario:
-                1. Local peer sends the "string1" message to the remote peer
-                2. Local peer sends the "string2" message to the remote peer
-                3. Spy the bytes written signals
-
- TestExpectedResults:
-               1. Local peer write datagram successfully firstly
-               2. Local peer write datagram successfully secondly
-               3. Bytes written signals have been detected twice
-*/
-/*
-void tst_qllcpsocketlocal::testCase3()
-{
-    QString message("string1");
-    QString message2("string2");
-
-    QLlcpSocket socket;
-    // STEP 1:
-    QByteArray tmpArray(message.toAscii());
-    const char* data =  tmpArray.data();
-    qint64 strSize = message.size();
-    qint64 val = socket.writeDatagram(data,strSize,m_target, m_port);
-    QVERIFY(val != -1);
-
-     // STEP 2:
-    QByteArray tmpArray2(message2.toAscii());
-    const char* data2 =  tmpArray2.data();
-    qint64 strSize2 = message2.size();
-    qint64 val2 = socket.writeDatagram(data2,strSize2,m_target, m_port);
-    QVERIFY(val2 != -1);
-
-    QSignalSpy bytesWrittenSpy(&socket, SIGNAL(bytesWritten(qint64)));
-    QTRY_VERIFY(bytesWrittenSpy.count() == 2);
-}
-*/
 
 /*!
  Description: coverage testcase - targeted for sender doCancel
 */
-void tst_qllcpsocketlocal::testCase4()
+void tst_qllcpsocketlocal::testCase3()
 {
     QLlcpSocket *localSocket= new QLlcpSocket;
     // STEP 1:
@@ -297,7 +259,7 @@ void tst_qllcpsocketlocal::testCase4()
     QByteArray tmpArray(message.toAscii());
     const char* data =  tmpArray.data();
     qint64 strSize = message.size();
-    qint64 val = localSocket->writeDatagram(data,strSize,m_target, m_port);
+    localSocket->writeDatagram(data,strSize,m_target, m_port);
     delete localSocket;
 }
 

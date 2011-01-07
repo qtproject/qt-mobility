@@ -743,10 +743,8 @@ TInt CLlcpReceiverType1::ReceiveDataFromBuf(TDes8& aData)
     if (iReceiveBuf.Size() == 0)
         return 0;
 
-    TInt requiredLength = aData.Length();
-    qDebug() << "length: " << aData.Length() << " Vs maxLength: " << aData.MaxLength();
+    TInt requiredLength =  aData.MaxLength() - aData.Length();
     TInt bufLength =  iReceiveBuf.Length();
-
     TInt readLength = requiredLength < bufLength ? requiredLength : bufLength;
 
     TPtrC8 ptr(iReceiveBuf.Ptr(),readLength);
