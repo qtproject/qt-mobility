@@ -142,7 +142,7 @@ private:
     void Cleanup();   
     
     TInt CreateConnection(TUint8 portNum);
-    TInt CreateConnection(MLlcpConnLessTransporter* aConnection);
+    TInt StartTransportedAndReceive(MLlcpConnLessTransporter* aConnection);
     
 private:
    /*!

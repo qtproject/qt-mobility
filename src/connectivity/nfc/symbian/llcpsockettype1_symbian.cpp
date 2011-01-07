@@ -236,7 +236,7 @@ void CLlcpSocketType1::FrameReceived( MLlcpConnLessTransporter* aConnection )
     BEGIN
     iRemotePort = aConnection->SsapL();
     qDebug() << "FrameReceived " << iRemotePort;
-    CreateConnection(aConnection);
+    StartTransportedAndReceive(aConnection);
     END
     }
 
@@ -314,42 +314,44 @@ TInt CLlcpSocketType1::CreateConnection(TUint8 portNum)
     {
     BEGIN
     TInt error = KErrNone;
-    MLlcpConnLessTransporter* connType1 = NULL;
+    MLlcpConnLessTransporter* llcpConnection = NULL;
     
     if ( iConnection )
         {
         return error;
         }
 
-    TRAP( error, connType1 = iLlcp->CreateConnLessTransporterL( portNum ) );
+    TRAP( error, llcpConnection = iLlcp->CreateConnLessTransporterL( portNum ) );
    
     if ( error == KErrNone)
         {
           iRemotePort = portNum;
           qDebug() << "CreateConnection " << iRemotePort;
-          error = CreateConnection(connType1);
+          if ( !iConnection )
+              {
+              // Creating wrapper for connection.
+              TRAP( error, iConnection = COwnLlcpConnectionWrapper::NewL(llcpConnection ) );
+              }
         }
     END
     return error;        
     }
 
-TInt CLlcpSocketType1::CreateConnection(MLlcpConnLessTransporter* aConnection)
+TInt CLlcpSocketType1::StartTransportedAndReceive(MLlcpConnLessTransporter* aConnection)
     {
     BEGIN
     TInt error = KErrNone;
-    
-    if (NULL == aConnection)
-        return KErrNotFound;
 
      // Only accepting one incoming remote connection
      if ( !iConnection )
          { 
          // Creating wrapper for connection. 
          TRAP( error, iConnection = COwnLlcpConnectionWrapper::NewL(aConnection ) );
-         if ( error == KErrNone )
-             {
-             iConnection->Receive(*this);
-             }
+         }
+
+     if ( error == KErrNone && iConnection != NULL)
+         {
+         iConnection->Receive(*this);
          }
      END
      return error;  

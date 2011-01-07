@@ -218,11 +218,8 @@ void tst_qllcpsocketlocal::testCase2()
     QByteArray tmpArray(message.toAscii());
     const char* data =  tmpArray.data();
     qint64 strSize = message.size();
-
-    QLlcpSocket socket(this);
     qint64 val = m_socket->writeDatagram(data,strSize,m_target, m_port);
     QVERIFY(val != -1);
-    // QVERIFY(bytesWrittenSpy.isEmpty());
 
     // STEP 2:
     QString message2("testcase2 string str1");

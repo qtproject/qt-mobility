@@ -184,8 +184,7 @@ void tst_qllcpsocketremote::testCase2()
     QString boxMessage("handshake 3");
     QNfcTestUtil::ShowMessage(boxMessage);
 
-    qDebug() << "ReadCount: " << readyReadSpy.count();
-    //QTRY_VERIFY(readyReadSpy.count() == 1);
+    QTRY_VERIFY(readyReadSpy.count() == 1);
 
     QByteArray datagram;
     if (m_socket->hasPendingDatagrams())
@@ -199,8 +198,7 @@ void tst_qllcpsocketremote::testCase2()
     qDebug() << "receivedMessage1: " << receivedMessage1;
     QVERIFY(expectedMessage1 == receivedMessage1);
 
-    //QTRY_VERIFY(readyReadSpy.count() == 1);
-    qDebug() << "ReadCount: " << readyReadSpy.count();
+    QTRY_VERIFY(readyReadSpy.count() == 1);
 
      QByteArray datagram2;
     if (m_socket->hasPendingDatagrams())
