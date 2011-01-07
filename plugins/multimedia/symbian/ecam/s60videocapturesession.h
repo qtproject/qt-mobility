@@ -59,6 +59,8 @@
 
 QT_USE_NAMESPACE
 
+class QTimer;
+
 /*
  * VideoSession is the main class handling all video recording related
  * operations. It uses mainly CVideoRecorderUtility to do it's tasks, but if
@@ -72,7 +74,6 @@ class S60VideoCaptureSession : public QObject,
 #endif // S60_DEVVIDEO_RECORDING_SUPPORTED
 {
     Q_OBJECT
-    Q_PROPERTY(qint64 position READ position NOTIFY positionChanged)
     Q_ENUMS(Error)
     Q_ENUMS(EcamErrors)
     Q_ENUMS(TVideoCaptureState)
@@ -138,6 +139,7 @@ public: // Methods
 
     void setError(const TInt error, const QString &description);
     void setCameraHandle(CCameraEngine* cameraHandle);
+    void notifySettingsSet();
 
     qint64 position();
     TVideoCaptureState state() const;
@@ -181,8 +183,8 @@ public: // Methods
     QStringList supportedAudioCaptureCodecs();
 
     // Encoder Settings
-    void videoEncoderSettings(QVideoEncoderSettings &videoSettings) const;
-    void audioEncoderSettings(QAudioEncoderSettings &audioSettings) const;
+    void videoEncoderSettings(QVideoEncoderSettings &videoSettings);
+    void audioEncoderSettings(QAudioEncoderSettings &audioSettings);
 
     // Quality
     void setVideoCaptureQuality(const QtMultimediaKit::EncodingQuality quality,
@@ -219,6 +221,9 @@ private: // Internal
     void initializeVideoCaptureSettings();
     void doInitializeVideoRecorderL();
     void commitVideoEncoderSettings();
+    void queryAudioEncoderSettings();
+    void queryVideoEncoderSettings();
+    void validateRequestedCodecs();
     void resetSession();
 
     void doSetCodecsL(const QString &aCodec, const QString &vCodec);
@@ -235,15 +240,15 @@ private: // Internal
     void doPopulateVideoCodecsDataL();
     void doPopulateVideoCodecsL();
 #ifndef S60_DEVVIDEO_RECORDING_SUPPORTED
-	void doPopulateMaxVideoParameters();
+    void doPopulateMaxVideoParameters();
 #endif // S60_DEVVIDEO_RECORDING_SUPPORTED
-	void doPopulateAudioCodecsL();
+    void doPopulateAudioCodecsL();
 
-	QList<int> doGetSupportedSampleRatesL(const QAudioEncoderSettings &settings,
+    QList<int> doGetSupportedSampleRatesL(const QAudioEncoderSettings &settings,
                                           bool *continuous);
-	QSize maximumResolutionForMimeType(const QString &mimeType) const;
-	qreal maximumFrameRateForMimeType(const QString &mimeType) const;
-	int maximumBitRateForMimeType(const QString &mimeType) const;
+    QSize maximumResolutionForMimeType(const QString &mimeType) const;
+    qreal maximumFrameRateForMimeType(const QString &mimeType) const;
+    int maximumBitRateForMimeType(const QString &mimeType) const;
 
 Q_SIGNALS: // Notification Signals
 
@@ -255,6 +260,7 @@ Q_SIGNALS: // Notification Signals
 private Q_SLOTS: // Internal Slots
 
     void cameraStatusChanged(QCamera::Status);
+    void durationTimerTriggered();
 
 private: // Structs
 
@@ -325,6 +331,8 @@ private: // Data
 
     CCameraEngine               *m_cameraEngine;
     CVideoRecorderUtility       *m_videoRecorder;
+    QTimer                      *m_durationTimer;
+    qint64                      m_position;
     // Symbian ErrorCode
     mutable int                 m_error;
     // This defines whether Camera is in ActiveStatus or not
@@ -343,8 +351,8 @@ private: // Data
     // Requested audioSettings. The may not be active settings before those are
     // committed (with commitVideoEncoderSettings())
     QAudioEncoderSettings       m_audioSettings;
-    // Symbian Video Quality
-    int                         m_videoQuality;
+    // Tells whether settings should be initialized when changing the camera
+    bool                        m_captureSettingsSet;
     // Active container
     QString                     m_container;
     // Requested container, this may be different from m_container if
@@ -357,9 +365,9 @@ private: // Data
     // Maximum ClipSize in Bytes
     int                         m_maxClipSize;
     // List of supported video codec mime types
-    QStringList                 m_videoCodeclist;
+    QStringList                 m_videoCodecList;
     // Hash of supported video codec mime types and corresponding FourCC codes
-    QHash<QString, TFourCC>     m_audioCodeclist;
+    QHash<QString, TFourCC>     m_audioCodecList;
     // Map of video capture controllers information. It is populated during
     // doUpdateVideoCaptureContainersL().
     //

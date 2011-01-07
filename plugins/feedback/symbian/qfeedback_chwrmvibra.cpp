@@ -40,180 +40,23 @@
 ****************************************************************************/
 
 #include <qfeedbackactuator.h>
-#include "qfeedback.h"
+#include "qfeedback_symbian.h"
 #include <QtCore/QVariant>
 #include <QtCore/QtPlugin>
 #include <QtGui/QApplication>
 
-Q_EXPORT_PLUGIN2(feedback_symbian, QFeedbackSymbian)
-
-
-
-#define VIBRA_DEVICE 0
-#define TOUCH_DEVICE 1 //this one is only available if ADVANCED_TACTILE_SUPPORT is defined
-
-
-//TODO: is activeWindow good enough
-//or should we create a widget for that?
-CCoeControl *QFeedbackSymbian::defaultWidget()
-{
-    QWidget *w = QApplication::activeWindow();
-    return w ? w->winId() : 0;
-}
-
-#ifndef NO_TACTILE_SUPPORT
+#ifdef HAS_THEME_EFFECTS
 #include <touchfeedback.h>
-
-static MTouchFeedback *touchInstance()
-{
-    static MTouchFeedback *ret = 0;
-    if (!ret) {
-        QT_TRAP_THROWING(
-            ret = MTouchFeedback::Instance();
-            if (!ret)
-                ret = MTouchFeedback::CreateInstanceL();
-        )
-    }
-    return ret;
-}
-
-static TTouchLogicalFeedback convertToSymbian(QFeedbackEffect::ThemeEffect effect)
-{
-
-    TTouchLogicalFeedback themeFeedbackSymbian = ETouchFeedbackBasic;
-
-    switch (effect) {
-    case QFeedbackEffect::ThemeBasic:
-        themeFeedbackSymbian = ETouchFeedbackBasic;
-        break;
-    case QFeedbackEffect::ThemeSensitive:
-        themeFeedbackSymbian = ETouchFeedbackSensitive;
-        break;
-#ifdef ADVANCED_TACTILE_SUPPORT
-    case QFeedbackEffect::ThemeBasicButton:
-        themeFeedbackSymbian = ETouchFeedbackBasicButton;
-        break;
-    case QFeedbackEffect::ThemeSensitiveButton:
-        themeFeedbackSymbian = ETouchFeedbackSensitiveButton;
-        break;
-    case QFeedbackEffect::ThemeBasicItem:
-        themeFeedbackSymbian = ETouchFeedbackBasic; // Effects changing in 10.1 are mapped to basic.
-        break;
-    case QFeedbackEffect::ThemeSensitiveItem:
-        themeFeedbackSymbian = ETouchFeedbackBasic; // Effects changing in 10.1 are mapped to basic.
-        break;
-    case QFeedbackEffect::ThemeBounceEffect:
-        themeFeedbackSymbian = ETouchFeedbackBasic; // Effects changing in 10.1 are mapped to basic.
-        break;
-    case QFeedbackEffect::ThemePopupOpen:
-        themeFeedbackSymbian = ETouchFeedbackBasic; // Effects changing in 10.1 are mapped to basic.
-        break;
-    case QFeedbackEffect::ThemePopupClose:
-        themeFeedbackSymbian = ETouchFeedbackBasic; // Effects changing in 10.1 are mapped to basic.
-        break;
-    case QFeedbackEffect::ThemeBasicSlider:
-        themeFeedbackSymbian = ETouchFeedbackBasic; // Effects changing in 10.1 are mapped to basic.
-        break;
-    case QFeedbackEffect::ThemeSensitiveSlider:
-        themeFeedbackSymbian = ETouchFeedbackBasic; // Effects changing in 10.1 are mapped to basic.
-        break;
-    case QFeedbackEffect::ThemeStopFlick:
-        themeFeedbackSymbian = ETouchFeedbackBasic; // Effects changing in 10.1 are mapped to basic.
-        break;
-    case QFeedbackEffect::ThemeFlick:
-        themeFeedbackSymbian = ETouchFeedbackBasic; // Effects changing in 10.1 are mapped to basic.
-        break;
-    case QFeedbackEffect::ThemeEditor:
-        themeFeedbackSymbian = ETouchFeedbackBasic; // Effects changing in 10.1 are mapped to basic.
-        break;
-    case QFeedbackEffect::ThemeTextSelection:
-        themeFeedbackSymbian = ETouchFeedbackTextSelection;
-        break;
-    case QFeedbackEffect::ThemeBlankSelection:
-        themeFeedbackSymbian = ETouchFeedbackBlankSelection;
-        break;
-    case QFeedbackEffect::ThemeLineSelection:
-        themeFeedbackSymbian = ETouchFeedbackLineSelection;
-        break;
-    case QFeedbackEffect::ThemeEmptyLineSelection:
-        themeFeedbackSymbian = ETouchFeedbackEmptyLineSelection;
-        break;
-    case QFeedbackEffect::ThemeCheckBox:
-        themeFeedbackSymbian = ETouchFeedbackCheckbox;
-        break;
-    case QFeedbackEffect::ThemeMultipleCheckBox:
-        themeFeedbackSymbian = ETouchFeedbackBasic; // Effects changing in 10.1 are mapped to basic.
-        break;
-    case QFeedbackEffect::ThemeSensitiveKeypad:
-        themeFeedbackSymbian = ETouchFeedbackBasic; // Effects changing in 10.1 are mapped to basic.
-        break;
-    case QFeedbackEffect::ThemeBasicKeypad:
-        themeFeedbackSymbian = ETouchFeedbackBasic; // Effects changing in 10.1 are mapped to basic.
-        break;
-    case QFeedbackEffect::ThemeMultiPointTouchActivate:
-        themeFeedbackSymbian = ETouchFeedbackBasic; // Effects changing in 10.1 are mapped to basic.
-        break;
-    case QFeedbackEffect::ThemeRotateStep:
-        themeFeedbackSymbian = ETouchFeedbackBasic; // Effects changing in 10.1 are mapped to basic.
-        break;
-    case QFeedbackEffect::ThemeItemDrop:
-        themeFeedbackSymbian = ETouchFeedbackBasic; // Effects changing in 10.1 are mapped to basic.
-        break;
-    case QFeedbackEffect::ThemeItemMoveOver:
-        themeFeedbackSymbian = ETouchFeedbackBasic; // Effects changing in 10.1 are mapped to basic.
-        break;
-    case QFeedbackEffect::ThemeItemPick:
-        themeFeedbackSymbian = ETouchFeedbackBasic; // Effects changing in 10.1 are mapped to basic.
-        break;
-    case QFeedbackEffect::ThemeItemScroll:
-        themeFeedbackSymbian = ETouchFeedbackBasic; // Effects changing in 10.1 are mapped to basic.
-        break;
-    case QFeedbackEffect::ThemePopUp:
-        themeFeedbackSymbian = ETouchFeedbackPopUp;
-        break;
-    case QFeedbackEffect::ThemeLongPress:
-        themeFeedbackSymbian = ETouchFeedbackBasic; // Effects changing in 10.1 are mapped to basic.
-        break;
-#endif //ADVANCED_TACTILE_SUPPORT
-    default:
-        break;
-    }
-    return themeFeedbackSymbian;
-}
-
+#ifdef HAS_ADVANCED_TACTILE_SUPPORT
 // This define is for the second parameter of StartFeedback, which needs to be of type
-// TTouchContinuousFeedback in platforms with ADVANCED_TACTILE_SUPPORT
+// TTouchContinuousFeedback in platforms with HAS_ADVANCED_TACTILE_SUPPORT
 #define DEFAULT_CONTINUOUS_EFFECT ETouchContinuousSmooth
+#endif //HAS_ADVANCED_TACTILE_SUPPORT
+#endif // HAS_THEME_EFFECTS
 
-bool QFeedbackSymbian::play(QFeedbackEffect::ThemeEffect effect)
-{
-    TInt err = KErrNone;
-    TRAP(err, touchInstance()->InstantFeedback(convertToSymbian(effect)));
-    return err == KErrNone;
-}
-
-#endif //NO_TACTILE_SUPPORT
-
-QFeedbackInterface::PluginPriority QFeedbackSymbian::pluginPriority()
-{
-    return PluginLowPriority;
-}
-
-QFeedbackSymbian::QFeedbackSymbian() : m_vibra(0), m_vibraActive(true)
-{
-#ifndef NO_TACTILE_SUPPORT
-    //if we don't have advanced tactile support then the MTouchFeedback doesn't really support custom effects
-    if (touchInstance()->TouchFeedbackSupported()) {
-        m_actuators << createFeedbackActuator(this, TOUCH_DEVICE);
-    }
-#endif //NO_TACTILE_SUPPORT
-    m_actuators << createFeedbackActuator(this, VIBRA_DEVICE);
-}
-
-QFeedbackSymbian::~QFeedbackSymbian()
-{
-    delete m_vibra;
-}
+#ifdef USE_CHWRMVIBRA_PLZ
+#include <hwrmvibra.h>
+#endif //USE_CHWRMVIBRA_PLZ
 
 CHWRMVibra *QFeedbackSymbian::vibra()
 {
@@ -223,26 +66,21 @@ CHWRMVibra *QFeedbackSymbian::vibra()
     return m_vibra;
 }
 
-QList<QFeedbackActuator*> QFeedbackSymbian::actuators()
-{
-    return m_actuators;
-}
-
 void QFeedbackSymbian::setActuatorProperty(const QFeedbackActuator &actuator, ActuatorProperty prop, const QVariant &value)
 {
-    switch(prop)
+    switch (prop)
     {
     case Enabled:
-        switch(actuator.id())
+        switch (actuator.id())
         {
         case VIBRA_DEVICE:
             m_vibraActive = value.toBool();
             break;
-#ifdef ADVANCED_TACTILE_SUPPORT
+#ifdef HAS_ADVANCED_TACTILE_SUPPORT
         case TOUCH_DEVICE:
             TRAP_IGNORE(touchInstance()->SetFeedbackEnabledForThisApp(value.toBool()));
             break;
-#endif
+#endif //HAS_ADVANCED_TACTILE_SUPPORT
         default:
             break;
         }
@@ -251,22 +89,24 @@ void QFeedbackSymbian::setActuatorProperty(const QFeedbackActuator &actuator, Ac
 
 QVariant QFeedbackSymbian::actuatorProperty(const QFeedbackActuator &actuator, ActuatorProperty prop)
 {
-    switch(prop)
+    switch (prop)
     {
     case Name:
-        switch(actuator.id())
+        switch (actuator.id())
         {
         case VIBRA_DEVICE:
             return QLatin1String("Vibra");
+#ifdef HAS_ADVANCED_TACTILE_SUPPORT
         case TOUCH_DEVICE:
             return QLatin1String("Touch");
+#endif //HAS_ADVANCED_TACTILE_SUPPORT
         default:
             return QString();
         }
     case State:
         {
             QFeedbackActuator::State ret = QFeedbackActuator::Unknown;
-            switch(actuator.id())
+            switch (actuator.id())
             {
             case VIBRA_DEVICE:
                 {
@@ -282,26 +122,28 @@ QVariant QFeedbackSymbian::actuatorProperty(const QFeedbackActuator &actuator, A
                         return QFeedbackActuator::Unknown;
                     }
                 }
+#ifdef HAS_ADVANCED_TACTILE_SUPPORT
             case TOUCH_DEVICE:
                 //there is no way of getting the state of the device!
+#endif //HAS_ADVANCED_TACTILE_SUPPORT
             default:
                 return QFeedbackActuator::Unknown;
             }
             return ret;
         }
     case Enabled:
-        switch(actuator.id())
+        switch (actuator.id())
         {
         case VIBRA_DEVICE:
             return m_vibraActive;
-#ifdef ADVANCED_TACTILE_SUPPORT
+#ifdef HAS_ADVANCED_TACTILE_SUPPORT
         case TOUCH_DEVICE:
             {
                 bool ret = false;
                 TRAP_IGNORE(ret = touchInstance()->FeedbackEnabledForThisApp());
                 return ret;
             }
-#endif
+#endif //HAS_ADVANCED_TACTILE_SUPPORT
         default:
             return false;
         }
@@ -311,8 +153,21 @@ QVariant QFeedbackSymbian::actuatorProperty(const QFeedbackActuator &actuator, A
 
 }
 
-bool QFeedbackSymbian::isActuatorCapabilitySupported(const QFeedbackActuator &, QFeedbackActuator::Capability)
+bool QFeedbackSymbian::isActuatorCapabilitySupported(const QFeedbackActuator &, QFeedbackActuator::Capability cap)
 {
+    switch(cap)
+    {
+    case QFeedbackActuator::Envelope:
+#ifdef HAS_ENVELOPE_SUPPORT
+        return true;
+#else
+        return false;
+#endif //HAS_ENVELOPE_SUPPORT
+    case QFeedbackActuator::Period:
+        return true;
+    default:
+        break;
+    }
     return false;
 }
 
@@ -323,22 +178,22 @@ void QFeedbackSymbian::updateEffectProperty(const QFeedbackHapticsEffect *effect
         return;
     }
     TInt err = KErrNone;
-    switch(prop)
+    switch (prop)
     {
     case Intensity:
         if (!m_elapsed.contains(effect) || m_elapsed[effect].isPaused())
             break;
 
-        switch(effect->actuator()->id())
+        switch (effect->actuator()->id())
         {
         case VIBRA_DEVICE:
             TRAP(err, vibra()->StartVibraL(effect->duration() - m_elapsed[effect].elapsed(), qRound(100 * effect->intensity())));
             break;
-#ifdef ADVANCED_TACTILE_SUPPORT
+#ifdef HAS_ADVANCED_TACTILE_SUPPORT
         case TOUCH_DEVICE:
             TRAP(err, touchInstance()->ModifyFeedback(defaultWidget(), qRound(100 * effect->intensity())));
             break;
-#endif //ADVANCED_TACTILE_SUPPORT
+#endif //HAS_ADVANCED_TACTILE_SUPPORT
         default:
             break;
         }
@@ -355,9 +210,9 @@ void QFeedbackSymbian::setEffectState(const QFeedbackHapticsEffect *effect, QFee
     if (!effect->actuator()) {
         return;
     }
-    switch(effect->actuator()->id())    {
+    switch (effect->actuator()->id())    {
     case VIBRA_DEVICE:
-        switch(newState)
+        switch (newState)
         {
         case QFeedbackEffect::Stopped:
             if (m_elapsed.contains(effect)) {
@@ -380,9 +235,9 @@ void QFeedbackSymbian::setEffectState(const QFeedbackHapticsEffect *effect, QFee
             break;
         }
         break;
-#ifdef ADVANCED_TACTILE_SUPPORT
+#ifdef HAS_ADVANCED_TACTILE_SUPPORT
     case TOUCH_DEVICE:
-        switch(newState)
+        switch (newState)
         {
         case QFeedbackEffect::Stopped:
             if (m_elapsed.contains(effect)) {
@@ -407,7 +262,7 @@ void QFeedbackSymbian::setEffectState(const QFeedbackHapticsEffect *effect, QFee
             break;
         }
         break;
-#endif //ADVANCED_TACTILE_SUPPORT
+#endif //HAS_ADVANCED_TACTILE_SUPPORT
     default:
         break;
     }
@@ -426,6 +281,6 @@ QFeedbackEffect::State QFeedbackSymbian::effectState(const QFeedbackHapticsEffec
             return QFeedbackEffect::Running;
         // Otherwise, the timer has elapsed or never started, so fall through to Stopped
     }
-    
+
     return QFeedbackEffect::Stopped;
 }

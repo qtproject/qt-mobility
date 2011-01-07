@@ -79,7 +79,7 @@ QGeoTiledMapRouteObjectInfo::QGeoTiledMapRouteObjectInfo(QGeoTiledMapData *mapDa
 
 QGeoTiledMapRouteObjectInfo::~QGeoTiledMapRouteObjectInfo() {}
 
-void QGeoTiledMapRouteObjectInfo::routeChanged(const QGeoRoute &route)
+void QGeoTiledMapRouteObjectInfo::routeChanged(const QGeoRoute &/*route*/)
 {
     //QListIterator<QGeoRouteSegment> segIt(this->route->route().routeSegments());
     //while (segIt.hasNext()) {
@@ -101,7 +101,7 @@ void QGeoTiledMapRouteObjectInfo::routeChanged(const QGeoRoute &route)
     updateData();
 }
 
-void QGeoTiledMapRouteObjectInfo::penChanged(const QPen &pen)
+void QGeoTiledMapRouteObjectInfo::penChanged(const QPen &/*pen*/)
 {
     QPen p = route->pen();
     p.setWidth(p.width() * tiledMapData->zoomFactor());
@@ -109,12 +109,12 @@ void QGeoTiledMapRouteObjectInfo::penChanged(const QPen &pen)
     updateItem();
 }
 
-void QGeoTiledMapRouteObjectInfo::detailLevelChanged(quint32 detailLevel)
+void QGeoTiledMapRouteObjectInfo::detailLevelChanged(quint32 /*detailLevel*/)
 {
     updateData();
 }
 
-void QGeoTiledMapRouteObjectInfo::zoomLevelChanged(qreal zoomLevel)
+void QGeoTiledMapRouteObjectInfo::zoomLevelChanged(qreal /*zoomLevel*/)
 {
     QPen p = route->pen();
     p.setWidth(p.width() * tiledMapData->zoomFactor());
@@ -144,13 +144,13 @@ void QGeoTiledMapRouteObjectInfo::updateData()
         updateVisible();
 }
 
-void QGeoTiledMapRouteObjectInfo::windowSizeChanged(const QSizeF &windowSize)
+void QGeoTiledMapRouteObjectInfo::windowSizeChanged(const QSizeF &/*windowSize*/)
 {
     if (valid())
         updateVisible();
 }
 
-void QGeoTiledMapRouteObjectInfo::centerChanged(const QGeoCoordinate &coordinate)
+void QGeoTiledMapRouteObjectInfo::centerChanged(const QGeoCoordinate &/*coordinate*/)
 {
     if (valid())
         updateVisible();
