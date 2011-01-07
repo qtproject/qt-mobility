@@ -119,7 +119,11 @@ private:
     CObexClient* m_client;
     CObexFileObject* m_object;
 
+    QBluetoothTransferReply::TransferError m_error;
+    QString m_errorStr;
+
     state m_state;
+    qint64 m_fileSize;
 
 };
 
