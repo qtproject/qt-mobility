@@ -136,11 +136,17 @@ void S60VideoPlayerSession::doLoadL(const TDesC &path)
 
 void S60VideoPlayerSession::setPlaybackRate(qreal rate)
 {
+    /* 
+     * setPlaybackRate is not supported in S60 3.1 and 3.2
+     * This flag will be defined for 3.1 and 3.2
+    */
+#ifndef PLAY_RATE_NOT_SUPPORTED
     //setPlayVelocity requires rate in the form of 
     //50 = 0.5x ;100 = 1.x ; 200 = 2.x ; 300 = 3.x
     //so multiplying rate with 100
     TRAPD(err, m_player->SetPlayVelocityL((TInt)(rate*100)));
     setError(err);
+#endif
    
 }
 
