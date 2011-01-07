@@ -198,7 +198,7 @@ void tst_qllcpsocketremote::testCase2()
     qDebug() << "receivedMessage1: " << receivedMessage1;
     QVERIFY(expectedMessage1 == receivedMessage1);
 
-    QTRY_VERIFY(readyReadSpy.count() == 1);
+    QTRY_VERIFY(readyReadSpy.count() == 2);
 
      QByteArray datagram2;
     if (m_socket->hasPendingDatagrams())
