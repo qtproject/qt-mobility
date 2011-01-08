@@ -42,9 +42,6 @@
 #include "qlandmarkdbeventhandler.h"
 #include <qdebug.h>
 
-//Constants
-//const TInt KInitialSemaphoreCount = 0;
-
 CLandmarkDbEventHandler::CLandmarkDbEventHandler() :
     CActive(EPriorityStandard)
 {
@@ -128,7 +125,6 @@ void CLandmarkDbEventHandler::RunL()
 void CLandmarkDbEventHandler::DoCancel()
 {
     // Cancel landmark database notification request
-    // TODO: What if CancelNotifyDatabaseEvent fails?
     iDatabase->CancelNotifyDatabaseEvent();
 }
 

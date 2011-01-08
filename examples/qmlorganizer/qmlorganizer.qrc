@@ -28,5 +28,6 @@
         <file>contents/images/toolbutton.sci</file>
         <file>contents/month.js</file>
         <file>contents/2010-FIFA-WorldCup.ics</file>
+        <file>contents/test.ics</file>
     </qresource>
 </RCC>

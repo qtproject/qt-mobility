@@ -107,14 +107,14 @@ void QGeoTiledMapTextObjectInfo::updateValidity()
     setValid((text->coordinate().isValid() && !text->text().isEmpty()));
 }
 
-void QGeoTiledMapTextObjectInfo::coordinateChanged(const QGeoCoordinate &coordinate)
+void QGeoTiledMapTextObjectInfo::coordinateChanged(const QGeoCoordinate &/*coordinate*/)
 {
     updateValidity();
     if (valid())
         update();
 }
 
-void QGeoTiledMapTextObjectInfo::textChanged(const QString &text)
+void QGeoTiledMapTextObjectInfo::textChanged(const QString &/*text*/)
 {
     updateValidity();
     if (!this->text->text().isEmpty()) {
@@ -126,7 +126,7 @@ void QGeoTiledMapTextObjectInfo::textChanged(const QString &text)
         update();
 }
 
-void QGeoTiledMapTextObjectInfo::fontChanged(const QFont &font)
+void QGeoTiledMapTextObjectInfo::fontChanged(const QFont &/*font*/)
 {
     textItem1->setFont(text->font());
     if (textItem2)
@@ -135,19 +135,19 @@ void QGeoTiledMapTextObjectInfo::fontChanged(const QFont &font)
         update();
 }
 
-void QGeoTiledMapTextObjectInfo::offsetChanged(const QPoint &offset)
+void QGeoTiledMapTextObjectInfo::offsetChanged(const QPoint &/*offset*/)
 {
     if (valid())
         update();
 }
 
-void QGeoTiledMapTextObjectInfo::alignmentChanged(Qt::Alignment alignment)
+void QGeoTiledMapTextObjectInfo::alignmentChanged(Qt::Alignment /*alignment*/)
 {
     if (valid())
         update();
 }
 
-void QGeoTiledMapTextObjectInfo::penChanged(const QPen &pen)
+void QGeoTiledMapTextObjectInfo::penChanged(const QPen &/*pen*/)
 {
     textItem1->setPen(text->pen());
     if (textItem2)
@@ -155,7 +155,7 @@ void QGeoTiledMapTextObjectInfo::penChanged(const QPen &pen)
     updateItem();
 }
 
-void QGeoTiledMapTextObjectInfo::brushChanged(const QBrush &brush)
+void QGeoTiledMapTextObjectInfo::brushChanged(const QBrush &/*brush*/)
 {
     textItem1->setBrush(text->brush());
     if (textItem2)
@@ -163,7 +163,7 @@ void QGeoTiledMapTextObjectInfo::brushChanged(const QBrush &brush)
     updateItem();
 }
 
-void QGeoTiledMapTextObjectInfo::zoomLevelChanged(qreal zoomLevel)
+void QGeoTiledMapTextObjectInfo::zoomLevelChanged(qreal /*zoomLevel*/)
 {
     if (valid())
         update();
