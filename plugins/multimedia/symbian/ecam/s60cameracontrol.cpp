@@ -68,6 +68,7 @@ S60CameraControl::S60CameraControl(S60VideoCaptureSession *videosession,
     m_inactivityTimer(NULL),
     m_captureMode(QCamera::CaptureStillImage),  // Default CaptureMode
     m_requestedCaptureMode(QCamera::CaptureStillImage),
+    m_settingCaptureModeInternally(false),
     m_internalState(QCamera::UnloadedStatus),   // Default Status
     m_requestedState(QCamera::UnloadedState),   // Default State
     m_deviceIndex(KDefaultCameraDevice),
@@ -92,14 +93,12 @@ S60CameraControl::S60CameraControl(S60VideoCaptureSession *videosession,
         m_inactivityTimer->setSingleShot(true);
 
     TRAPD(err, m_cameraEngine = CCameraEngine::NewL(m_deviceIndex, KECamCameraPriority, this));
-    if (err) {
+    if (err)
         m_error = err;
-    }
 
     m_viewfinderEngine = new S60CameraViewfinderEngine(this, m_cameraEngine);
-    if (m_viewfinderEngine == NULL) {
+    if (m_viewfinderEngine == NULL)
         m_error = KErrNoMemory;
-    }
 
     // Connect signals
     connect(m_inactivityTimer, SIGNAL(timeout()), this, SLOT(toStandByStatus()));
@@ -147,12 +146,15 @@ void S60CameraControl::setState(QCamera::State state)
         return;
     }
 
-    if (m_requestedState == state) {
+    if (m_requestedState == state)
         return;
-    }
 
     if (m_inactivityTimer->isActive())
         m_inactivityTimer->stop();
+
+    // Save the target state
+    m_requestedState = state;
+    emit stateChanged(m_requestedState);
 
     switch (state) {
         case QCamera::UnloadedState: // To UnloadedState - Release resources
@@ -180,7 +182,6 @@ void S60CameraControl::setState(QCamera::State state)
                     setError(KErrGeneral, QString("Unexpected camera error."));
                     return;
             }
-            m_requestedState = QCamera::UnloadedState;
             break;
 
         case QCamera::LoadedState: // To LoadedState - Reserve resources OR Stop ViewFinder and Cancel Capture
@@ -209,7 +210,6 @@ void S60CameraControl::setState(QCamera::State state)
                     setError(KErrGeneral, QString("Unexpected camera error."));
                     return;
             }
-            m_requestedState = QCamera::LoadedState;
             break;
 
         case QCamera::ActiveState: // To ActiveState - (Reserve Resources and) Start ViewFinder
@@ -238,15 +238,12 @@ void S60CameraControl::setState(QCamera::State state)
                     setError(KErrGeneral, QString("Unexpected camera error."));
                     return;
             }
-            m_requestedState = QCamera::ActiveState;
             break;
 
         default:
             setError(KErrNotSupported, QString("Requested state is not supported."));
             return;
     }
-
-    emit stateChanged(m_requestedState);
 }
 
 QCamera::State S60CameraControl::state() const
@@ -271,12 +268,21 @@ void S60CameraControl::setCaptureMode(QCamera::CaptureMode mode)
         return;
     }
 
-    // If capturemode change was requested earlier, but was postponed due
-    // to backend being busy, m_changeCaptureModeWhenReady flag is set when
-    // trying to set the capturemode again internally.
-    if (m_requestedCaptureMode == mode && !m_changeCaptureModeWhenReady) {
+    if (m_captureMode == mode)
         return;
+
+    // Setting CaptureMode Internally or Externally (Client)
+    if (!m_settingCaptureModeInternally) {
+        // Save the requested mode
+        m_requestedCaptureMode = mode;
+
+        // CaptureMode change pending (backend busy), wait
+        if (m_changeCaptureModeWhenReady)
+            return;
+    } else {
+        m_changeCaptureModeWhenReady = false; // Reset
     }
+    m_settingCaptureModeInternally = false; // Reset
 
     if (!isCaptureModeSupported(mode)) {
         setError(KErrNotSupported, QString("Requested capture mode is not supported."));
@@ -293,18 +299,20 @@ void S60CameraControl::setCaptureMode(QCamera::CaptureMode mode)
             switch (mode) {
                 case QCamera::CaptureStillImage:
                     m_videoSession->releaseVideoRecording();
-                    m_requestedCaptureMode = QCamera::CaptureStillImage;
                     m_captureMode = QCamera::CaptureStillImage;
-                    if (m_internalState == QCamera::LoadedStatus) {
+                    if (m_internalState == QCamera::LoadedStatus)
                         m_inactivityTimer->start(KInactivityTimerTimeout);
-                    }
                     else if (m_internalState == QCamera::StandbyStatus)
                         loadCamera();
                     break;
                 case QCamera::CaptureVideo:
-                    m_requestedCaptureMode = QCamera::CaptureVideo;
+                    m_imageSession->releaseImageCapture();
                     m_captureMode = QCamera::CaptureVideo;
                     if (m_internalState == QCamera::LoadedStatus) {
+                        // Revet InternalState as we need to wait for the video
+                        // side initialization to complete
+                        m_internalState = QCamera::LoadingStatus;
+                        emit statusChanged(m_internalState);
                         int prepareSuccess = m_videoSession->initializeVideoRecording();
                         setError(prepareSuccess, QString("Loading video capture failed."));
                     } else if (m_internalState == QCamera::StandbyStatus)
@@ -314,7 +322,6 @@ void S60CameraControl::setCaptureMode(QCamera::CaptureMode mode)
             break;
         case QCamera::LoadingStatus:
         case QCamera::StartingStatus:
-            m_requestedCaptureMode = mode;
             m_changeCaptureModeWhenReady = true;
             return;
         case QCamera::ActiveStatus:
@@ -323,15 +330,18 @@ void S60CameraControl::setCaptureMode(QCamera::CaptureMode mode)
             switch (mode) {
                 case QCamera::CaptureStillImage:
                     m_videoSession->releaseVideoRecording();
-                    m_requestedCaptureMode = QCamera::CaptureStillImage;
                     m_captureMode = QCamera::CaptureStillImage;
                     startCamera();
                     break;
                 case QCamera::CaptureVideo:
-                    m_requestedCaptureMode = QCamera::CaptureVideo;
+                    m_imageSession->releaseImageCapture();
                     m_captureMode = QCamera::CaptureVideo;
+                    // Revet InternalState as we need to wait for the video
+                    // side initialization to complete
+                    m_internalState = QCamera::LoadingStatus;
+                    emit statusChanged(m_internalState);
                     int prepareSuccess = m_videoSession->initializeVideoRecording();
-                    setError(prepareSuccess, QString("Loading video capture failed."));
+                    setError(prepareSuccess, QString("Loading video recorder failed."));
                     break;
             }
             break;
@@ -380,6 +390,7 @@ bool S60CameraControl::canChangeProperty(QCameraControl::PropertyChangeType chan
             returnValue = false;
             break;
     }
+
     return returnValue;
 }
 
@@ -403,8 +414,15 @@ void S60CameraControl::setVideoOutput(QObject *output, ViewfinderOutputType type
 
 void S60CameraControl::loadCamera()
 {
-    m_internalState = QCamera::LoadingStatus;
-    emit statusChanged(m_internalState);
+    if (m_internalState < QCamera::LoadingStatus) {
+        m_internalState = QCamera::LoadingStatus;
+        emit statusChanged(m_internalState);
+    } else if (m_internalState == QCamera::LoadedStatus
+        || m_internalState >= QCamera::StartingStatus) {
+        // Nothing to load (already loaded)
+        return;
+    }
+    // Status = Loading or Standby
 
     m_cameraEngine->ReserveAndPowerOn();
 
@@ -413,8 +431,17 @@ void S60CameraControl::loadCamera()
 
 void S60CameraControl::unloadCamera()
 {
-    m_internalState = QCamera::LoadingStatus;
-    emit statusChanged(m_internalState);
+    if (m_internalState > QCamera::LoadingStatus) {
+        m_internalState = QCamera::LoadingStatus;
+        emit statusChanged(m_internalState);
+    } else if (m_internalState < QCamera::LoadingStatus) {
+        // Nothing to unload
+        return;
+    }
+    // Status = Loading
+
+    if (m_inactivityTimer->isActive())
+        m_inactivityTimer->stop();
 
     m_cameraEngine->ReleaseAndPowerOff();
 
@@ -424,10 +451,18 @@ void S60CameraControl::unloadCamera()
 
 void S60CameraControl::startCamera()
 {
-    m_internalState = QCamera::StartingStatus;
-    emit statusChanged(m_internalState);
+    if (m_internalState < QCamera::StartingStatus) {
+        m_internalState = QCamera::StartingStatus;
+        emit statusChanged(m_internalState);
+    } else if (m_internalState > QCamera::StartingStatus) {
+        // Nothing to start (already started)
+        return;
+    }
+    // Status = Starting
 
-    emit cameraReadyChanged(true);
+    if (m_inactivityTimer->isActive())
+        m_inactivityTimer->stop();
+
     if (m_viewfinderEngine)
         m_viewfinderEngine->startViewfinder();
     else
@@ -436,6 +471,8 @@ void S60CameraControl::startCamera()
     m_internalState = QCamera::ActiveStatus;
     emit statusChanged(m_internalState);
 
+    emit cameraReadyChanged(true);
+
 #ifdef Q_CC_NOKIAX86 // Emulator
     MceoCameraReady(); // Signal that we are ready
 #endif
@@ -443,8 +480,14 @@ void S60CameraControl::startCamera()
 
 void S60CameraControl::stopCamera()
 {
-    m_internalState = QCamera::StartingStatus;
-    emit statusChanged(m_internalState);
+    if (m_internalState > QCamera::StartingStatus) {
+        m_internalState = QCamera::StartingStatus;
+        emit statusChanged(m_internalState);
+    } else if (m_internalState < QCamera::StartingStatus) {
+        // Nothing to stop
+        return;
+    }
+    // Status = Starting
 
     // Cancel ongoing operations if any
     m_imageSession->cancelCapture();
@@ -469,23 +512,32 @@ void S60CameraControl::videoStateChanged(const S60VideoCaptureSession::TVideoCap
 
     if (m_rotateCameraWhenReady) {
         if (m_videoCaptureState != S60VideoCaptureSession::ERecording &&
-            m_videoCaptureState != S60VideoCaptureSession::EPaused) {
+            m_videoCaptureState != S60VideoCaptureSession::EPaused)
             resetCameraOrientation();
-        }
     }
 
-    if (state == S60VideoCaptureSession::EInitialized) {
-        // Don't downgrade state
-        if (m_internalState == QCamera::StartingStatus || m_internalState == QCamera::ActiveStatus) {
-            m_internalState = QCamera::ActiveStatus;
-            if (m_internalState == QCamera::StartingStatus)
-                emit statusChanged(m_internalState);
+    // If video recording was stopped, video state reverts back to
+    // Initializing. In that case revert also Camera status to notify that
+    // video initialization needs to be completed.
+    if (state == S60VideoCaptureSession::EInitializing) {
+        if (m_internalState > QCamera::LoadingStatus) {
+            m_internalState = QCamera::LoadingStatus;
+            emit statusChanged(m_internalState);
         }
-        else {
-            if (m_internalState != QCamera::LoadedStatus) {
-                m_internalState = QCamera::LoadedStatus;
-                emit statusChanged(m_internalState);
-            }
+
+    // Handle video initialization completion
+    } else if (state == S60VideoCaptureSession::EInitialized) {
+
+        // Make sure state is not downgraded
+        if (m_internalState == QCamera::LoadedStatus
+            || m_internalState == QCamera::ActiveStatus) {
+            // Do nothing (already in target state)
+        } else if (m_internalState == QCamera::StartingStatus) {
+            m_internalState = QCamera::ActiveStatus;
+            emit statusChanged(m_internalState);
+        } else {
+            m_internalState = QCamera::LoadedStatus;
+            emit statusChanged(m_internalState);
         }
 
         switch (m_requestedState) {
@@ -493,22 +545,22 @@ void S60CameraControl::videoStateChanged(const S60VideoCaptureSession::TVideoCap
                 stopCamera();
                 unloadCamera();
                 if (m_changeCaptureModeWhenReady) {
+                    m_settingCaptureModeInternally = true;
                     setCaptureMode(m_requestedCaptureMode);
-                    m_changeCaptureModeWhenReady = false; // Reset
                 }
                 break;
             case QCamera::LoadedState:
                 stopCamera();
                 if (m_changeCaptureModeWhenReady) {
+                    m_settingCaptureModeInternally = true;
                     setCaptureMode(m_requestedCaptureMode);
-                    m_changeCaptureModeWhenReady = false; // Reset
                 }
                 m_inactivityTimer->start(KInactivityTimerTimeout);
                 break;
             case QCamera::ActiveState:
                 if (m_changeCaptureModeWhenReady) {
+                    m_settingCaptureModeInternally = true;
                     setCaptureMode(m_requestedCaptureMode);
-                    m_changeCaptureModeWhenReady = false; // Reset
                 }
                 startCamera();
                 break;
@@ -517,8 +569,6 @@ void S60CameraControl::videoStateChanged(const S60VideoCaptureSession::TVideoCap
                 setError(KErrGeneral, QString("Unexpected camera error."));
                 return;
         }
-
-        emit statusChanged(m_internalState);
     }
 }
 
@@ -545,6 +595,12 @@ void S60CameraControl::advancedSettingsCreated()
 
 void S60CameraControl::MceoCameraReady()
 {
+    // Rotate camera if requested
+    if (m_rotateCameraWhenReady) {
+        resetCameraOrientation();
+        return;
+    }
+
     if (m_internalState != QCamera::LoadedStatus) {
 
         switch (m_requestedState) {
@@ -556,8 +612,8 @@ void S60CameraControl::MceoCameraReady()
                 unloadCamera();
 
                 if (m_changeCaptureModeWhenReady) {
+                    m_settingCaptureModeInternally = true;
                     setCaptureMode(m_requestedCaptureMode);
-                    m_changeCaptureModeWhenReady = false; // Reset
                 }
                 break;
 
@@ -628,7 +684,7 @@ void S60CameraControl::setError(const TInt error, const QString &description)
     m_error = error;
     QCamera::Error cameraError = fromSymbianErrorToQtMultimediaError(m_error);
 
-    emit this->error(cameraError, description);
+    emit this->error(int(cameraError), description);
 
     // Reset everything, if other than not supported error or resource loss
     if (error != KErrNotSupported && error != KErrHardwareNotAvailable)
@@ -680,8 +736,12 @@ int S60CameraControl::selectedDevice() const
 void S60CameraControl::setSelectedDevice(const int index)
 {
     if (m_deviceIndex != index) {
-        m_deviceIndex = index;
-        resetCamera();
+        if (index >= 0 && index < deviceCount()) {
+            m_deviceIndex = index;
+            resetCamera();
+        } else {
+            setError(KErrNotSupported, QString("Requested camera is not available."));
+        }
     }
 }
 
@@ -767,9 +827,8 @@ void S60CameraControl::resetCamera()
     emit devicesChanged();
 
     m_viewfinderEngine = new S60CameraViewfinderEngine(this, m_cameraEngine);
-    if (m_viewfinderEngine == NULL) {
+    if (m_viewfinderEngine == NULL)
         setError(KErrNoMemory, QString("Viewfinder device creation failed."));
-    }
     connect(m_viewfinderEngine, SIGNAL(error(int, const QString&)), this, SIGNAL(error(int,const QString&)));
 
     setCameraHandles();
@@ -794,9 +853,12 @@ void S60CameraControl::resetCamera()
  */
 void S60CameraControl::resetCameraOrientation()
 {
+    // If camera has not been created, it will be created automatically to correct orientation
+    if (!m_cameraEngine)
+        return;
+
     // Check Image/VideoCapture allow rotation
-    if (!m_cameraEngine ||
-        (!m_cameraEngine->IsCameraReady() && m_internalState != QCamera::UnloadedStatus) ||
+    if ((!m_cameraEngine->IsCameraReady() && m_internalState != QCamera::UnloadedStatus) ||
         m_videoCaptureState == S60VideoCaptureSession::ERecording ||
         m_videoCaptureState == S60VideoCaptureSession::EPaused) {
 
@@ -806,7 +868,8 @@ void S60CameraControl::resetCameraOrientation()
         // Obs! If preview creation is changed to be synchnonously done during
         // the image capture this implementation needs to be changed)
         if (m_videoCaptureState != S60VideoCaptureSession::ERecording &&
-            m_videoCaptureState != S60VideoCaptureSession::EPaused)
+            m_videoCaptureState != S60VideoCaptureSession::EPaused &&
+            m_internalState == QCamera::ActiveStatus)
             connect(m_imageSession, SIGNAL(imageCaptured(const int, const QImage&)),
                 this, SLOT(imageCaptured(const int, const QImage&)));
 

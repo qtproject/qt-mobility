@@ -3656,6 +3656,24 @@ void tst_QOrganizerManager::recurrence()
         QCOMPARE(items.count(), 0);
     }
 
+    //test for unlimited count limit
+    //for bug:MOBILITY-2125
+    cm->removeItems(cm->itemIds());
+    event.setId(QOrganizerItemId());
+    rrule.setLimit(INT_MAX);
+    rrule.setFrequency(QOrganizerRecurrenceRule::Weekly);
+    rrule.setInterval(4);
+    rrule.setDaysOfWeek(QSet<Qt::DayOfWeek>() << Qt::Friday);
+    event.setEndDateTime(QDateTime(QDate(2013, 8, 9), QTime(11, 30, 0)));
+    event.setRecurrenceRule(rrule);
+    QVERIFY(cm->saveItem(&event));
+    {
+        // Fetch all events with occurrences
+        QList<QOrganizerItem> items = cm->items(QDateTime(QDate(2012, 8, 9)),
+                                                QDateTime(QDate(2013, 8, 12), QTime(23,59,59)));
+        QVERIFY(items.count() > 1);
+    }
+
     // second, test date limit.  The results should be the same as the count limit, if the limit date is the 11th.
     cm->removeItems(cm->itemIds()); // empty the calendar to prevent the previous test from interfering this one
     QOrganizerRecurrenceRule rrule2;

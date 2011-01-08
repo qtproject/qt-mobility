@@ -261,7 +261,8 @@ QContactManager* QContactManager::fromUri(const QString& managerUri, QObject* pa
   The default implementation for the platform will be created.
  */
 QContactManager::QContactManager(QObject* parent)
-    : QObject(parent)
+    : QObject(parent),
+    d(new QContactManagerData)
 {
     createEngine(QString(), QMap<QString, QString>());
 }

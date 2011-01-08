@@ -74,7 +74,7 @@ QGeoTiledMapPolylineObjectInfo::QGeoTiledMapPolylineObjectInfo(QGeoTiledMapData 
 
 QGeoTiledMapPolylineObjectInfo::~QGeoTiledMapPolylineObjectInfo() {}
 
-void QGeoTiledMapPolylineObjectInfo::pathChanged(const QList<QGeoCoordinate> &path)
+void QGeoTiledMapPolylineObjectInfo::pathChanged(const QList<QGeoCoordinate> &/*path*/)
 {
     points = createPolygon(polyline->path(), tiledMapData, false);
     if (points.size() >= 2) {
@@ -88,7 +88,7 @@ void QGeoTiledMapPolylineObjectInfo::pathChanged(const QList<QGeoCoordinate> &pa
     updateItem();
 }
 
-void QGeoTiledMapPolylineObjectInfo::zoomLevelChanged(qreal zoomLevel)
+void QGeoTiledMapPolylineObjectInfo::zoomLevelChanged(qreal /*zoomLevel*/)
 {
     QPen p = polyline->pen();
     p.setWidth(p.width() * tiledMapData->zoomFactor());
@@ -96,7 +96,7 @@ void QGeoTiledMapPolylineObjectInfo::zoomLevelChanged(qreal zoomLevel)
     updateItem();
 }
 
-void QGeoTiledMapPolylineObjectInfo::penChanged(const QPen &pen)
+void QGeoTiledMapPolylineObjectInfo::penChanged(const QPen &/*pen*/)
 {
     QPen p = polyline->pen();
     p.setWidth(p.width() * tiledMapData->zoomFactor());

@@ -56,7 +56,7 @@ _LIT( KDoubleSlash, "//");
 //used for url field to identify protocol present or not
 _LIT( KProtocol, ":" );
 //used as default protocol for url field.
-_LIT(KHttp, "http://");
+//_LIT(KHttp, "http://");
 
 /*
  * Landmark Utility To convert qt landmark data class to symbian landmark data classes
