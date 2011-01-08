@@ -92,6 +92,8 @@ class TestSatelliteGypsyEngine : public SatelliteGypsyEngine
 {
 public:
 
+    static bool gypsy_fix_status_available;
+    static void set_gypsy_fix_status_available() {gypsy_fix_status_available = true;}
     static bool gconf_client_get_default_fail;
     static void set_fail_gconf_client_get_default() {gconf_client_get_default_fail = true;}
     static bool gconf_client_get_string_fail;
@@ -259,11 +261,15 @@ public:
             }
             return GYPSY_DEVICE_FIX_STATUS_INVALID;
         }
-        return GYPSY_DEVICE_FIX_STATUS_NONE;
+        if (gypsy_fix_status_available) {
+            return GYPSY_DEVICE_FIX_STATUS_2D;
+            gypsy_fix_status_available = false;
+        } else {
+            return GYPSY_DEVICE_FIX_STATUS_NONE;
+        }
     }
     GPtrArray *eng_gypsy_satellite_get_satellites (GypsySatellite *satellite, GError **error)
-    {
-        TRACE1("===== NOT YET IMPLEMENTED IN MOCK! =====");
+    {  
         if (!satellite) {
             if (error) {
                 *error = g_error_new ((GQuark)1, // dummy
@@ -272,7 +278,7 @@ public:
             }
             return NULL;
         }
-        return (GPtrArray*)1; // todo
+        return m_gypsymock->satelliteArray();
     }
     void eng_gypsy_satellite_free_satellite_array (GPtrArray *satellites)
     {
@@ -312,6 +318,7 @@ public:
     QThread m_thread;
 };
 
+bool TestSatelliteGypsyEngine::gypsy_fix_status_available = false;
 bool TestSatelliteGypsyEngine::gconf_client_get_default_fail = false;
 bool TestSatelliteGypsyEngine::gconf_client_get_string_fail = false;
 bool TestSatelliteGypsyEngine::gypsy_control_get_default_fail = false;
@@ -918,7 +925,6 @@ void TestQGeoSatelliteInfoSource::badUpdates()
 {
     CHECK_SOURCE_VALID;
 
-    // zzz
     // Check that timeout is received if updates are stopped
 
     QSignalSpy spyView(m_source, SIGNAL(satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &)));
@@ -957,6 +963,35 @@ void TestQGeoSatelliteInfoSource::badUpdates()
     QVERIFY(spyView.isEmpty() && spyUse.isEmpty() && spyTimeout.isEmpty());
     mockEngine->disableUpdates(false);
     QTRY_VERIFY_WITH_TIMEOUT(!spyView.isEmpty() && !spyUse.isEmpty() && spyTimeout.isEmpty(), 4000);
+
+    // Stop updates while a updateRequest is active, it should not stop
+    // the request
+    m_source->requestUpdate(1000);
+    m_source->stopUpdates();
+    spyView.clear(); spyUse.clear(); spyTimeout.clear();
+    QTRY_VERIFY_WITH_TIMEOUT(!spyView.isEmpty(), 2100);
+    QVERIFY(spyTimeout.isEmpty());
+    // Wait a bit more to be sure no more updates are received
+    spyView.clear(); spyUse.clear(); spyTimeout.clear();
+    QTest::qWait(2000);
+    QVERIFY(spyView.isEmpty());
+    QVERIFY(spyTimeout.isEmpty());
+
+    // Have requestUpdate timeout when there are active updates.
+    // Timeout should not bother the regular updates.
+    m_source->startUpdates();
+    m_source->requestUpdate(5);
+    QTRY_VERIFY_WITH_TIMEOUT(!spyTimeout.isEmpty(), 15);
+    QVERIFY(spyUse.isEmpty());
+    QTRY_VERIFY_WITH_TIMEOUT(!spyUse.isEmpty(), 2000);
+    m_source->stopUpdates();
+
+    // Test getting fix immediately
+    TestSatelliteGypsyEngine::set_gypsy_fix_status_available();
+    spyView.clear(); spyUse.clear(); spyTimeout.clear();
+    m_source->requestUpdate(200);
+    QTRY_VERIFY_WITH_TIMEOUT(!spyView.isEmpty(), 20);
+    QVERIFY(spyTimeout.isEmpty());
 }
 
 #endif

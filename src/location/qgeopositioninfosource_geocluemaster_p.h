@@ -58,7 +58,7 @@
 #include <geoclue/geoclue-velocity.h>
 #include <QTimer>
 
-// #define Q_LOCATION_GEOCLUE_DEBUG
+//#define Q_LOCATION_GEOCLUE_DEBUG
 
 QTM_BEGIN_NAMESPACE
 
@@ -133,6 +133,7 @@ private:
     double m_lastVelocity;
     bool m_lastPositionFromSatellite;
     QGeoPositionInfo m_lastPosition;
+    PositioningMethods m_methods;
 };
 
 QTM_END_NAMESPACE
