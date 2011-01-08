@@ -46,6 +46,7 @@ PkgConfigBR:
     - gstreamer-plugins-base-0.10
     - gypsy
     - libpulse
+    - libmkcal
     - qttracker
     - qmfclient
     - sensord
