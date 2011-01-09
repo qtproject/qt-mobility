@@ -209,7 +209,12 @@ QVariant QDeclarativeOrganizerItemMetaObject::details(const QString& name)
 {
     if (name.isEmpty()) {
         //return all
-        return QVariant::fromValue(QDeclarativeListProperty<QDeclarativeOrganizerItemDetail>(object(), m_details));
+        return QVariant::fromValue(QDeclarativeListProperty<QDeclarativeOrganizerItemDetail>(object(),
+                                                                                             0,
+                                                                                             detail_append,
+                                                                                             detail_count,
+                                                                                             detail_at,
+                                                                                             detail_clear));
     } else {
         int propId = indexOfProperty(name.toLatin1());
         if (propId <= 0) {
@@ -265,11 +270,12 @@ QString QDeclarativeOrganizerItemMetaObject::itemId() const
 
 void QDeclarativeOrganizerItemMetaObject::detail_append(QDeclarativeListProperty<QDeclarativeOrganizerItemDetail> *p, QDeclarativeOrganizerItemDetail *detail)
 {
-    OrganizerItemDetailNameMap* data = (OrganizerItemDetailNameMap*)(p->data);
-    if (data) {
-        QDeclarativeOrganizerItem* item = qobject_cast<QDeclarativeOrganizerItem*>(p->object);
-        if (item && detail->detail().definitionName() == data->definitionName) {
-            detail->connect(detail, SIGNAL(valueChanged()), item, SIGNAL(valueChanged()));
+    QDeclarativeOrganizerItem* item = qobject_cast<QDeclarativeOrganizerItem*>(p->object);
+    if (item) {
+        OrganizerItemDetailNameMap* data = (OrganizerItemDetailNameMap*)(p->data);
+        if (!data || detail->detail().definitionName() == data->definitionName) {
+            detail->connect(detail, SIGNAL(valueChanged()), SIGNAL(detailChanged()), Qt::UniqueConnection);
+            detail->connect(detail, SIGNAL(detailChanged()), item, SIGNAL(itemChanged()), Qt::UniqueConnection);
             item->d->m_details.append(detail);
         }
     }
@@ -277,13 +283,17 @@ void QDeclarativeOrganizerItemMetaObject::detail_append(QDeclarativeListProperty
 
 int  QDeclarativeOrganizerItemMetaObject::detail_count(QDeclarativeListProperty<QDeclarativeOrganizerItemDetail> *p)
 {
-    OrganizerItemDetailNameMap* data = (OrganizerItemDetailNameMap*)(p->data);
     int count = 0;
     QDeclarativeOrganizerItem* item = qobject_cast<QDeclarativeOrganizerItem*>(p->object);
-    if (item && data) {
-        foreach(QDeclarativeOrganizerItemDetail* detail, item->d->m_details) {
-            if (detail->detail().definitionName() == data->definitionName)
-                count++;
+    if (item) {
+        OrganizerItemDetailNameMap* data = (OrganizerItemDetailNameMap*)(p->data);
+        if (data) {
+            foreach(QDeclarativeOrganizerItemDetail* detail, item->d->m_details) {
+                if (detail->detail().definitionName() == data->definitionName)
+                    count++;
+            }
+        } else {
+            count = item->d->m_details.size();
         }
     }
     return count;
@@ -291,20 +301,24 @@ int  QDeclarativeOrganizerItemMetaObject::detail_count(QDeclarativeListProperty<
 
 QDeclarativeOrganizerItemDetail * QDeclarativeOrganizerItemMetaObject::detail_at(QDeclarativeListProperty<QDeclarativeOrganizerItemDetail> *p, int idx)
 {
-    OrganizerItemDetailNameMap* data = (OrganizerItemDetailNameMap*)(p->data);
     QDeclarativeOrganizerItemDetail* detail = 0;
     QDeclarativeOrganizerItem* item = qobject_cast<QDeclarativeOrganizerItem*>(p->object);
-    if (item && data) {
-        int i = 0;
-        foreach(QDeclarativeOrganizerItemDetail* itemDetail,item->d->m_details) {
-            if (itemDetail->detail().definitionName() == data->definitionName) {
-                if (i == idx) {
-                    detail = itemDetail;
-                    break;
-                } else {
-                    i++;
+    if (item) {
+        OrganizerItemDetailNameMap* data = (OrganizerItemDetailNameMap*)(p->data);
+        if (data) {
+            int i = 0;
+            foreach(QDeclarativeOrganizerItemDetail* itemDetail,item->d->m_details) {
+                if (itemDetail->detail().definitionName() == data->definitionName) {
+                    if (i == idx) {
+                        detail = itemDetail;
+                        break;
+                    } else {
+                        i++;
+                    }
                 }
             }
+        } else if (idx < item->d->m_details.size()) {
+            detail = item->d->m_details.at(idx);
         }
     }
     return detail;
@@ -312,13 +326,17 @@ QDeclarativeOrganizerItemDetail * QDeclarativeOrganizerItemMetaObject::detail_at
 
 void  QDeclarativeOrganizerItemMetaObject::detail_clear(QDeclarativeListProperty<QDeclarativeOrganizerItemDetail> *p)
 {
-    OrganizerItemDetailNameMap* data = (OrganizerItemDetailNameMap*)(p->data);
     QDeclarativeOrganizerItem* item = qobject_cast<QDeclarativeOrganizerItem*>(p->object);
-    if (item && data) {
-        foreach(QDeclarativeOrganizerItemDetail* itemDetail, item->d->m_details) {
-            if (itemDetail->detail().definitionName() == data->definitionName) {
-                item->d->m_details.removeAll(itemDetail);
+    if (item) {
+        OrganizerItemDetailNameMap* data = (OrganizerItemDetailNameMap*)(p->data);
+        if (data) {
+            foreach(QDeclarativeOrganizerItemDetail* itemDetail, item->d->m_details) {
+                if (itemDetail->detail().definitionName() == data->definitionName) {
+                    item->d->m_details.removeAll(itemDetail);
+                }
             }
+        } else {
+            item->d->m_details.clear();
         }
     }
 }

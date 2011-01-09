@@ -127,27 +127,27 @@
         Contact {
             id: myContact
             Name {
-                firstName:"Charles"
-                lastName:"Yin"
+                firstName:"John"
+                lastName:"Gates"
             }
 
             EmailAddress {
-                emailAddress:"charles.yin@example.com"
+                emailAddress:"john@example.com"
             }
             EmailAddress {
                 emailAddress:"mygmailaccount@gmail.com"
             }
 
-            address.street:"53 Brandl St"
-            address.locality: "Eight Mile Plains"
-            address.region: "QLD"
-            address.postcode:"4111"
-            address.country:"Australia"
+            address.street:"53 Mysteet St"
+            address.locality: "My City"
+            address.region: "My Region"
+            address.postcode:"1111"
+            address.country:"My Country"
             address.subTypes:[Address.Postal, Address.Domestic]
             address.postOfficeBox:"1111"
 
             Nickname {
-                nickname:"Charles"
+                nickname:"John"
             }
 
             PhoneNumber {
