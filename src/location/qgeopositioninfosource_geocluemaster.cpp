@@ -123,7 +123,7 @@ QGeoPositionInfoSourceGeoclueMaster::QGeoPositionInfoSourceGeoclueMaster(QObject
     : QGeoPositionInfoSource(parent), m_updateInterval(0), m_preferredResources(GEOCLUE_RESOURCE_ALL),
       m_preferredAccuracy(GEOCLUE_ACCURACY_LEVEL_NONE),
       m_client(0), m_pos(0), m_vel(0), m_lastPositionIsFresh(false), m_lastVelocityIsFresh(false),
-      m_lastVelocity(0), m_lastPositionFromSatellite(false)
+      m_lastVelocity(0), m_lastPositionFromSatellite(false), m_methods(AllPositioningMethods)
 {
     m_requestTimer.setSingleShot(true);
     QObject::connect(&m_requestTimer, SIGNAL(timeout()), this, SLOT(requestUpdateTimeout()));
@@ -277,12 +277,6 @@ int QGeoPositionInfoSourceGeoclueMaster::configurePositionSource()
 {
     GeoclueMaster *master(0);
     GError *error = 0;
-
-    master = geoclue_master_get_default ();
-    if (!master) {
-        qCritical ("QGeoPositionInfoSourceGeoclueMaster error creating GeoclueMaster");
-        return -1;
-    }
     // Free potential previous sources, because new requirements can't be set for the client
     // (creating a position object after changing requirements seems to fail).
     if (m_client) {
@@ -297,6 +291,13 @@ int QGeoPositionInfoSourceGeoclueMaster::configurePositionSource()
         g_object_unref(m_vel);
         m_vel = 0;
     }
+
+    master = geoclue_master_get_default ();
+    if (!master) {
+        qCritical ("QGeoPositionInfoSourceGeoclueMaster error creating GeoclueMaster");
+        return -1;
+    }
+
     m_client = geoclue_master_create_client (master, NULL, &error);
     g_object_unref (master);
 
@@ -355,6 +356,10 @@ void QGeoPositionInfoSourceGeoclueMaster::setUpdateInterval(int msec)
 
 void QGeoPositionInfoSourceGeoclueMaster::setPreferredPositioningMethods(PositioningMethods methods)
 {
+    if (methods == m_methods)
+        return;
+    m_methods = methods;
+
     switch (methods) {
     case SatellitePositioningMethods:
         m_preferredResources = GEOCLUE_RESOURCE_GPS;
@@ -376,19 +381,37 @@ void QGeoPositionInfoSourceGeoclueMaster::setPreferredPositioningMethods(Positio
 #ifdef Q_LOCATION_GEOCLUE_DEBUG
     qDebug() << "QGeoPositionInfoSourceGeoclueMaster requested to set methods to, and set them to: " << methods << m_preferredResources;
 #endif
-    configurePositionSource();
+    m_lastPositionIsFresh = false;
+    m_lastVelocityIsFresh = false;
+    int status = configurePositionSource();
+
     // If updates ongoing, connect to the new objects
-    if (m_updateTimer.isActive() && m_pos) {
-        g_signal_connect (G_OBJECT (m_pos), "position-changed",
-                          G_CALLBACK (position_changed),this);
-        if (m_vel) {
-            g_signal_connect (G_OBJECT (m_vel), "velocity-changed",
-                              G_CALLBACK (velocity_changed),this);
+    if (m_updateTimer.isActive()) {
+        if (status != -1) {
+            g_signal_connect (G_OBJECT (m_pos), "position-changed",
+                              G_CALLBACK (position_changed),this);
+            if (m_vel) {
+                g_signal_connect (G_OBJECT (m_vel), "velocity-changed",
+                                  G_CALLBACK (velocity_changed),this);
+            }
+        } else {
+            // Changing source failed and there was active reques
+            m_updateTimer.stop();
+            emit updateTimeout();
         }
     }
     // If a request ongoing, ask it from new object
-    if (m_requestTimer.isActive() && m_pos)
-        geoclue_position_get_position_async (m_pos, (GeocluePositionCallback)position_callback,this);
+    if (m_requestTimer.isActive()) {
+        if ( status != -1) {
+            geoclue_position_get_position_async (m_pos,
+                                                 (GeocluePositionCallback)position_callback,
+                                                 this);
+        } else {
+            // Changing source failed and there was active reques
+            m_requestTimer.stop();
+            emit updateTimeout();
+        }
+    }
 }
 
 QGeoPositionInfo QGeoPositionInfoSourceGeoclueMaster::lastKnownPosition(bool fromSatellitePositioningMethodsOnly) const
@@ -416,15 +439,19 @@ void QGeoPositionInfoSourceGeoclueMaster::startUpdates()
 #endif
         return;
     }
+    if (!m_pos) {
+        // May happen if source has been changed unsuccesfully
+        emit updateTimeout();
+        return;
+    }
     if (m_updateInterval > 0) {
 #ifdef Q_LOCATION_GEOCLUE_DEBUG
         qDebug() << "QGeoPositionInfoSourceGeoclueMaster startUpdates with interval: " << m_updateInterval;
 #endif
         m_updateTimer.start(m_updateInterval);
     }
-    if (m_pos)
-        g_signal_connect (G_OBJECT (m_pos), "position-changed",
-                          G_CALLBACK (position_changed),this);
+    g_signal_connect (G_OBJECT (m_pos), "position-changed",
+                      G_CALLBACK (position_changed),this);
     if (m_vel) {
         g_signal_connect (G_OBJECT (m_vel), "velocity-changed",
                           G_CALLBACK (velocity_changed),this);
@@ -439,10 +466,11 @@ void QGeoPositionInfoSourceGeoclueMaster::stopUpdates()
 {
     if (m_updateTimer.isActive())
         m_updateTimer.stop();
-    if (m_pos)
+    if (m_pos) {
         g_signal_handlers_disconnect_by_func(G_OBJECT(m_pos), (void*)position_changed, this);
-    if (m_vel)
+    } if (m_vel) {
         g_signal_handlers_disconnect_by_func(G_OBJECT(m_vel), (void*)velocity_changed, this);
+    }
 }
 
 void QGeoPositionInfoSourceGeoclueMaster::requestUpdate(int timeout)

@@ -1074,6 +1074,125 @@ void TestQGeoPositionInfoSource::updateInferno()
     QVERIFY(updateSpy.isEmpty());
     geocluemock_set_suppress_single_update(false);
     geocluemock_set_suppress_regular_updates(false);
+
+    // Test changing interval during active updates works ok
+    m_source->setUpdateInterval(1000);
+    updateSpy.clear(); timeoutSpy.clear();
+    m_source->startUpdates();
+    QTRY_COMPARE_WITH_TIMEOUT_RANGE(updateSpy.count(), 1, 950, 1050);
+    updateSpy.clear();
+    m_source->setUpdateInterval(2000);
+    QTRY_COMPARE_WITH_TIMEOUT_RANGE(updateSpy.count(), 1, 1900, 2100);
+    // Check that unusual
+}
+
+void TestQGeoPositionInfoSource::robustness()
+{
+    // Perform uneducated API calls and make sure it behaves
+    QVERIFY(m_source);
+    QGeoPositionInfo info = m_source->lastKnownPosition(true);
+    QVERIFY(!info.isValid());
+    info = m_source->lastKnownPosition(false);
+    QVERIFY(!info.isValid());
+    m_source->stopUpdates();
+
+    // Have changing source fail and check interface works.
+    geocluemock_set_gcmaster_get_default(false);
+    m_source->setPreferredPositioningMethods(QGeoPositionInfoSource::NonSatellitePositioningMethods);
+    m_source->setUpdateInterval(1000);
+    m_source->startUpdates();
+    m_source->requestUpdate(1000);
+    m_source->stopUpdates();
+    info = m_source->lastKnownPosition(false);
+    QVERIFY(!info.isValid());
+    geocluemock_set_gcmaster_get_default(true);
+    // Check that the source is able to recover
+    m_source->setPreferredPositioningMethods(QGeoPositionInfoSource::SatellitePositioningMethods);
+    QSignalSpy updateSpy(m_source, SIGNAL(positionUpdated(const QGeoPositionInfo&)));
+    QSignalSpy timeoutSpy(m_source, SIGNAL(updateTimeout()));
+    m_source->startUpdates();
+    QTRY_VERIFY_WITH_TIMEOUT(!updateSpy.isEmpty(), 3000);
+    info = updateSpy.takeLast().at(0).value<QGeoPositionInfo>();
+    QVERIFY(info.isValid());
+    QVERIFY(timeoutSpy.isEmpty());
+
+    // Successfully change source during active updates and check updates continue
+    m_source->setPreferredPositioningMethods(QGeoPositionInfoSource::NonSatellitePositioningMethods);
+    updateSpy.clear(); timeoutSpy.clear();
+    QTRY_VERIFY_WITH_TIMEOUT(!updateSpy.isEmpty(), 3000);
+    info = updateSpy.takeLast().at(0).value<QGeoPositionInfo>();
+    QVERIFY(info.isValid());
+    QVERIFY(timeoutSpy.isEmpty());
+    // Change again successfully the source and check that the requestUpdate is delivered
+    m_source->stopUpdates();
+    m_source->requestUpdate(2000);
+    updateSpy.clear(); timeoutSpy.clear();
+    m_source->setPreferredPositioningMethods(QGeoPositionInfoSource::SatellitePositioningMethods);
+    QTRY_VERIFY_WITH_TIMEOUT(!updateSpy.isEmpty(), 3000);
+    info = updateSpy.takeLast().at(0).value<QGeoPositionInfo>();
+    QVERIFY(info.isValid());
+    QVERIFY(timeoutSpy.isEmpty());
+
+    // Change the source unsuccessfully and expect timeout
+    m_source->startUpdates();
+    geocluemock_set_gcmaster_get_default(false);
+    updateSpy.clear(); timeoutSpy.clear();
+    m_source->setPreferredPositioningMethods(QGeoPositionInfoSource::NonSatellitePositioningMethods);
+    QTRY_VERIFY_WITH_TIMEOUT(!timeoutSpy.isEmpty(), 3000);
+    QVERIFY(updateSpy.isEmpty());
+    geocluemock_set_gcmaster_get_default(true);
+
+    // Issue a start to unsuccessfully changed source and expect timeout
+    updateSpy.clear(); timeoutSpy.clear();
+    m_source->requestUpdate(2000);
+    QTRY_VERIFY_WITH_TIMEOUT(!timeoutSpy.isEmpty(), 3000);
+    QVERIFY(updateSpy.isEmpty());
+
+    // Set unknown preferred method and check it has no impact (first set successful method)
+    m_source->setPreferredPositioningMethods(QGeoPositionInfoSource::SatellitePositioningMethods);
+    updateSpy.clear(); timeoutSpy.clear();
+    m_source->startUpdates();
+    QTRY_VERIFY_WITH_TIMEOUT(!updateSpy.isEmpty(), 3000);
+    m_source->setPreferredPositioningMethods((QGeoPositionInfoSource::PositioningMethods)555);
+    updateSpy.clear(); timeoutSpy.clear();
+    QTRY_VERIFY_WITH_TIMEOUT(!updateSpy.isEmpty(), 3000);
+
+    // Successfully change preferred method but without velocity
+    geocluemock_set_geoclue_velocity_new(false);
+    geocluemock_set_suppress_velocity_update(true);
+    m_source->setPreferredPositioningMethods(QGeoPositionInfoSource::NonSatellitePositioningMethods);
+    updateSpy.clear(); timeoutSpy.clear();
+    QTRY_VERIFY_WITH_TIMEOUT(!updateSpy.isEmpty(), 3000);
+    info = updateSpy.takeLast().at(0).value<QGeoPositionInfo>();
+    QVERIFY(info.isValid());
+    QVERIFY(!info.hasAttribute(QGeoPositionInfo::GroundSpeed));
+    geocluemock_set_geoclue_velocity_new(true);
+    geocluemock_set_suppress_velocity_update(false);
+
+    // Unsuccessfully change source during active requestUpdate()
+    m_source->stopUpdates();
+    geocluemock_set_suppress_single_update(true); // Justin Case
+    m_source->requestUpdate(1000);
+    geocluemock_set_gcmaster_get_default(false);
+    updateSpy.clear(); timeoutSpy.clear();
+    m_source->setPreferredPositioningMethods(QGeoPositionInfoSource::NonSatellitePositioningMethods);
+    QTRY_VERIFY_WITH_TIMEOUT(!timeoutSpy.isEmpty(), 3000);
+    QVERIFY(updateSpy.isEmpty());
+    geocluemock_set_gcmaster_get_default(true);
+    geocluemock_set_suppress_single_update(false);
+
+    // Check that setting same positioning method does nothing.
+    // First setup successful and check updates are received
+    m_source->setPreferredPositioningMethods(QGeoPositionInfoSource::NonSatellitePositioningMethods);
+    m_source->startUpdates();
+    updateSpy.clear(); timeoutSpy.clear();
+    QTRY_VERIFY_WITH_TIMEOUT(!updateSpy.isEmpty(), 3000);
+    // then set creation to fail. however should not impact because
+    // methods are the same
+    geocluemock_set_gcmaster_get_default(false);
+    m_source->setPreferredPositioningMethods(QGeoPositionInfoSource::NonSatellitePositioningMethods);
+    updateSpy.clear(); timeoutSpy.clear();
+    QTRY_VERIFY_WITH_TIMEOUT(!updateSpy.isEmpty(), 3000);
 }
 
 #endif // TST_GEOCLUEMOCK_ENABLED

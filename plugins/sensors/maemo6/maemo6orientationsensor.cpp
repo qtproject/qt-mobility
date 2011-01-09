@@ -73,7 +73,6 @@ void maemo6orientationsensor::slotDataAvailable(const Unsigned& data)
 bool maemo6orientationsensor::doConnect(){
     if (!(QObject::connect(m_sensorInterface, SIGNAL(orientationChanged(const Unsigned&)),
                            this, SLOT(slotDataAvailable(const Unsigned&))))){
-        qWarning() << "Unable to connect "<< sensorName();
         return false;
     }
     return true;

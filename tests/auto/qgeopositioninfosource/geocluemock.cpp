@@ -71,6 +71,7 @@ static double lg_position_latitude = -1;
 // force loading of the shim library. For CI system, you will also need to reimplement the main()
 // of the testcase so that it can actually set one of those variables and then restart
 // the application.
+
 gulong g_signal_connect_data      (gpointer  instance,
                                                const gchar *detailed_signal,
                                                GCallback  c_handler,

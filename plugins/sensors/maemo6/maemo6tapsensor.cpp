@@ -97,7 +97,6 @@ void maemo6tapsensor::slotDataAvailable(const Tap& data)
 bool maemo6tapsensor::doConnect(){
     if (!(QObject::connect(m_sensorInterface, SIGNAL(dataAvailable(const Tap&)),
                            this, SLOT(slotDataAvailable(const Tap&))))){
-        qWarning() << "Unable to connect "<< sensorName();
         return false;
     }
     return true;
