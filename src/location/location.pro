@@ -41,7 +41,8 @@ PRIVATE_HEADERS += \
                     qlocationutils_p.h \
                     qnmeapositioninfosource_p.h \
                     qgeoareamonitor_polling_p.h \
-                    projwrapper_p.h
+                    projwrapper_p.h \
+                    qgeocoordinate_p.h
 
 symbian {
     PRIVATE_HEADERS += qgeopositioninfosource_s60_p.h \
