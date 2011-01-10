@@ -78,12 +78,12 @@ void QBluetoothDeviceDiscoveryAgentPrivate::start()
     //bind signals on public interface
     Q_Q(QBluetoothDeviceDiscoveryAgent);
     QObject::connect(m_deviceDiscovery, SIGNAL(deviceDiscoveryComplete(int)), q, SIGNAL(finished()));
-//    QObject::connect(m_deviceDiscovery, SIGNAL(deviceDiscovered(const QBluetoothDeviceInfo&)),
-//        this, SLOT(newDeviceFound(const QBluetoothDeviceInfo&)));
-//    QObject::connect(m_deviceDiscovery, SIGNAL(linkManagerError(QBluetoothDeviceDiscoveryAgent::Error)),
-//        this, SIGNAL(error(QBluetoothDeviceDiscoveryAgent::Error)));
+    QObject::connect(m_deviceDiscovery, SIGNAL(deviceDiscovered(const QBluetoothDeviceInfo&)),
+        q, SLOT(_q_newDeviceFound(const QBluetoothDeviceInfo&)));
+    QObject::connect(m_deviceDiscovery, SIGNAL(linkManagerError(QBluetoothDeviceDiscoveryAgent::Error)),
+        q, SIGNAL(error(QBluetoothDeviceDiscoveryAgent::Error)));
     // startup the device discovery. Discovery results are obtained from signal connected above.
-    TRAPD(errorCode, m_deviceDiscovery->StartDiscoveryL(inquiryTypeToIAC(inquiryType)))
+    TRAPD(errorCode, m_deviceDiscovery->StartDiscoveryL(inquiryTypeToIAC()))
     if (errorCode != KErrNone)
         setError(errorCode,"Discovery failed to start with errorcode");
 
@@ -114,7 +114,7 @@ void QBluetoothDeviceDiscoveryAgentPrivate::setError(int errorCode, QString erro
         emit q->error(QBluetoothDeviceDiscoveryAgent::UnknownError);
 }
 
-void QBluetoothDeviceDiscoveryAgentPrivate::newDeviceFound(const QBluetoothDeviceInfo &device)
+void QBluetoothDeviceDiscoveryAgentPrivate::_q_newDeviceFound(const QBluetoothDeviceInfo &device)
 {
     // add found device to the list of devices
     discoveredDevices.append(device);
@@ -122,11 +122,11 @@ void QBluetoothDeviceDiscoveryAgentPrivate::newDeviceFound(const QBluetoothDevic
     emit q->deviceDiscovered(device);
 }
 
-uint QBluetoothDeviceDiscoveryAgentPrivate::inquiryTypeToIAC(const QBluetoothDeviceDiscoveryAgent::InquiryType type)
+uint QBluetoothDeviceDiscoveryAgentPrivate::inquiryTypeToIAC() const
 {
-    if (type == QBluetoothDeviceDiscoveryAgent::GeneralUnlimitedInquiry)
+    if (inquiryType == QBluetoothDeviceDiscoveryAgent::GeneralUnlimitedInquiry)
         return KGIAC;
-    else if (type == QBluetoothDeviceDiscoveryAgent::LimitedInquiry)
+    else if (inquiryType == QBluetoothDeviceDiscoveryAgent::LimitedInquiry)
         return KLIAC;
 
     ASSERT(0); //enum has changed and not handled

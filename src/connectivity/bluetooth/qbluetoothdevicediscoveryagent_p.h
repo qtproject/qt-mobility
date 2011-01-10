@@ -74,16 +74,21 @@ public:
     bool isActive() const;
 
 #ifdef Q_OS_SYMBIAN
-    uint inquiryTypeToIAC(const QBluetoothDeviceDiscoveryAgent::InquiryType type);
-    void setError(int errorCode, QString errorDescription);
-    void newDeviceFound(const QBluetoothDeviceInfo &device);
+    // private slot
+    void _q_newDeviceFound(const QBluetoothDeviceInfo &device);
 #endif
 
 #ifndef QT_NO_DBUS
     void _q_deviceFound(const QString &address, const QVariantMap &dict);
     void _q_propertyChanged(const QString &name, const QDBusVariant &value);
 #endif
-    
+
+private:
+#ifdef Q_OS_SYMBIAN
+    uint inquiryTypeToIAC() const;
+    void setError(int errorCode, QString errorDescription);
+#endif
+
     QList<QBluetoothDeviceInfo> discoveredDevices;
     QBluetoothDeviceDiscoveryAgent::InquiryType inquiryType;
 
