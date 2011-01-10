@@ -173,6 +173,25 @@ bool QDeclarativeContact::removeDetail(QDeclarativeContactDetail* detail)
 }
 
 /*!
+    \qmlmethod Contact::addDetail(detail)
+
+    Adds the given contact \a detail to the contact, returns true if successful, otherwise returns false.
+    \note: If the \a detail has been added into the same contact before, this operation will be ignored,
+    so if you want to add a \a detail multiple times, the \a detail should be copied before calling this function.
+*/
+bool QDeclarativeContact::addDetail(QDeclarativeContactDetail* detail)
+{
+    if (detail) {
+        if (!d->m_details.contains(detail)) {
+            d->m_details.append(detail);
+            emit detailsChanged();
+        }
+        return true;
+    }
+    return false;
+}
+
+/*!
     \qmlproperty list<ContactDetail> Contact::details
 
     This property holds the list of \l ContactDetail elements that the contact has.
