@@ -70,39 +70,102 @@ QSystemAlignedTimer::QSystemAlignedTimer(QObject *parent)
 }
 
 /*!
-
-*/
-
-bool QSystemAlignedTimer::requestTimer(QTime minTime, QTime maxTime)
+    Destructs the QSystemAlignedTimer
+  */
+QSystemAlignedTimer::~QSystemAlignedTimer()
 {
-    Q_UNUSED(minTime);
-    Q_UNUSED(maxTime);
-    return false;
+
 }
 
 /*!
+  Starts the timer with the preferred interval of \a sec in seconds.
+
+  This is not a guaranteed interval, and the timeout signal may be fired at any time,
+  depending on other clients attached to this timer.
+
+  In the case of 0, it means 'wake me up when someone else is woken up'.
+
+  If you need a window of time in which your timer should fire, use QSystemAlignedTimer::setWindow
+
+  \sa QSystemAlignedTimer::setWindow
+
+  */
+void QSystemAlignedTimer::start(int sec)
+{
+    Q_UNUSED(sec)
+}
+
+/*!
+    Starts the alignedtimer.
+*/
+void QSystemAlignedTimer::start()
+{
+
+}
+
+/*!
+  Set the timeout window with \a timerWindow in seconds, in which the timer should fire.
+  It is recommended to have the window quite big.
+
+  For example if your preferred interval is 120 seconds, and you need the timer to
+  fire within 20 seconds of that interval, use a timerWindow of 20.
 
 */
-bool QSystemAlignedTimer::requestTimer(uint optimalInterval, uint timerWindow)
+void QSystemAlignedTimer::setWindow(uint timerWindow)
 {
-Q_UNUSED(optimalInterval)
-Q_UNUSED(timerWindow)
-    return false;
+    currentTimerWindow = timerWindow;
 }
 
 
 /*!
- Called if the application woke up by itself.
- This method should be called if the application  has woken up by some other
- method than via system heartbeat to prevent unnecessary wakeup signals.
+  Called if the application woke up by itself.
+  This method should be called if the application has woken up by some other
+  method than via system alignedtimer heartbeat to prevent unnecessary wakeup signals.
 
-True if success, false if error
+  True if success, false if error
   */
 bool QSystemAlignedTimer::wokeUp()
 {
     return false;
 }
 
+/*!
+  Stops this timer request.
+  */
+void QSystemAlignedTimer::stop()
+{
+
+}
+
+/*!
+  Set the preferred timeout interval to \a sec in seconds.
+  */
+void QSystemAlignedTimer::setInterval(uint sec)
+{
+    preferredInterval = sec;
+}
+
+/*!
+  Returns the current preferred timer window.
+  */
+uint QSystemAlignedTimer::timerWindow() const
+{
+    return currentTimerWindow;
+}
+
+
+/*!
+  Returns this current timer interval.
+  This will usually differ than what was set with \a setInterval.
+  */
+uint QSystemAlignedTimer::interval() const
+{
+    return preferredInterval;
+}
+
+/*!
+  \internal
+  */
 void QSystemAlignedTimerPrivate::timerEvent(QTimerEvent *)
 {
 

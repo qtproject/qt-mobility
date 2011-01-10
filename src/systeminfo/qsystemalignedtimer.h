@@ -58,23 +58,37 @@ class Q_SYSINFO_EXPORT QSystemAlignedTimer : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(bool wokeUp READ wokeUp CONSTANT)
+    Q_PROPERTY(uint timerWindow READ timerWindow WRITE setWindow)
+    Q_PROPERTY(bool interval READ interval WRITE setInterval)
+
 
 public:
 
     explicit QSystemAlignedTimer(QObject *parent = 0);
+    ~QSystemAlignedTimer();
 
-    Q_INVOKABLE bool requestTimer(QTime minTime, QTime maxTime);
-    Q_INVOKABLE bool requestTimer(uint optimalInterval, uint timerWindow);
+    Q_INVOKABLE bool wokeUp();
 
-    bool wokeUp();
+    void setWindow(uint timerWindow);
+    uint timerWindow() const;
+
+    void setInterval(uint sec);
+    uint interval() const;
+
+public Q_SLOTS:
+    void start(int sec);
+
+    void start();
+    void stop();
 
 Q_SIGNALS:
-    void hearbeat();
+    void timeout();
 
 private:
     QSystemAlignedTimerPrivate *d;
-
+        int id;
+        uint preferredInterval;
+        uint currentTimerWindow;
 };
 
 
