@@ -48,7 +48,7 @@ access points.
 \section1 Namespace
 
 The QtMobility APIs are placed into the \i{QtMobility} namespace. This is done
-to facilitate the future migration of Mobility APIs into Qt. See the
+to facilitate the future migration of QtMobility APIs into Qt. See the
 \l {Quickstart Example}{Quickstart guide} for an example on how the
 namespace impacts on application development.
 
@@ -70,25 +70,25 @@ enables to user to create, edit or delete network configurations.
 
 The Bearer API has been migrated to the Qt 4.7 QtNetwork library. This enables
 connection manager and roaming support for \l QNetworkAccessManager.
-Starting with Qt 4.7 the Mobility version has been deprecated in favor of
-Qt's Bearer API. Furthermore the roaming enabled QNetworkAccessManager cannot be used in connection with Mobility's Bearer API.
+Starting with Qt 4.7 the QtMobility version has been deprecated in favor of
+Qt's Bearer API. Furthermore the roaming enabled QNetworkAccessManager cannot be used in connection with QtMobility's Bearer API.
 
-The porting effort from Mobility Bearer to Qt Bearer is minimal as
+The porting effort from QtMobility Bearer to Qt Bearer is minimal as
 the relevant classes are source compatible. The only exception is the
 removal of the QtMobility namespace. Already deployed applications will continue
 to work but cannot make use of the new features in Qt 4.7 and QNetworkAccessManager.
 
 An application can select the Bearer API to be used via its project file.
 As long as the MOBILITY variable contains the \c bearer string the project
-will link Mobility's bearer library (even if the project links against QtNetwork at the same time).
+will link QtMobility's bearer library (even if the project links against QtNetwork at the same time).
 
 \code
-    MOBILITY+=bearer   #choose Mobility bearer
+    MOBILITY+=bearer   #choose QtMobility bearer
 \endcode
 
-Note that Harmattan based devices do not have Mobility Bearer anymore. Qt Bearer is the only
+Note that Harmattan based devices do not have QtMobility Bearer anymore. Qt Bearer is the only
 option to write Bearer enabled applications. The following Qt project file magic may be used to
-implement applications which utilize Qt 4.7 Bearer and only fall back to Mobility Bearer if the Qt
+implement applications which utilize Qt 4.7 Bearer and only fall back to QtMobility Bearer if the Qt
 version is not available:
 
 \code

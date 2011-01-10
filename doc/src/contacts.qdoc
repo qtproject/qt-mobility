@@ -39,14 +39,14 @@ remote backends.
 \ingroup mobility
 
 The Contacts API enables a client to request contact data from local or
-remote backends. This is part of the Qt Mobility Project.
+remote backends. This is part of the QtMobility Project.
 
 \tableofcontents
 
 \section1 Namespace
 
 The QtMobility APIs are placed into the \i{QtMobility} namespace. This is done
-to facilitate the future migration of Mobility APIs into Qt. See the
+to facilitate the future migration of QtMobility APIs into Qt. See the
 \l {Quickstart Example}{Quickstart guide} for an example on how the
 namespace impacts on application development.
 
@@ -66,7 +66,7 @@ applications.
 \section1 Overview
 
 The QtMobility APIs are placed into the \i{QtMobility} namespace. This is done
-to facilitate the future migration of Mobility APIs into Qt. See the
+to facilitate the future migration of QtMobility APIs into Qt. See the
 \l {Quickstart Example}{Quickstart guide} for an example on how the
 namespace impacts on application development.
 
@@ -267,7 +267,7 @@ For more detailed documentation on the synchronous API, see the \l{Contacts Sync
 
 Clients can perform \l{QContactAction}{actions} on contacts which support
 them.  Actions are things like "Send Email" or "Dial", and can be provided
-from various sources including Qt Plugins or the Qt Mobility Service
+from various sources including Qt Plugins or the QtMobility Service
 Framework. Every action implementation is uniquely identified by a
 combination of its name, the name of the service which provided the
 implementation, and the version of the implementation.  These pieces of data
@@ -311,7 +311,7 @@ Some examples of common usage of the API may be found
 
 \section1 Building and compiling
 
-To build the library, see the Qt Mobility installation instructions.
+To build the library, see the QtMobility installation instructions.
 
 \section1 Reference documentation
 
@@ -322,7 +322,7 @@ To build the library, see the Qt Mobility installation instructions.
 \section2 "Contact Details" Leaf Classes
 
 Several subclasses of \l{QContactDetail} are provided as part of the
-Qt Mobility Project Contacts API.  They are general in design but are intended
+QtMobility Project Contacts API.  They are general in design but are intended
 to fulfill specific use-cases.  Please note that certain backends may
 choose not to support one or more of these subclasses as they appear here;
 they may offer their own which provide similar functionality.
@@ -373,7 +373,7 @@ For more information on this topic, see please see the documentation on
 
 \section2 Synchronization and Serialization
 
-The contacts API is used by another Qt Mobility module: the \l {Versit} {Versit}* module.  It allows
+The contacts API is used by another QtMobility module: the \l {Versit} {Versit}* module.  It allows
 serialization of a QContact into a vCard document, and vice versa.
 
 [*] Versit \reg is a trademark of the Internet Mail Consortium.

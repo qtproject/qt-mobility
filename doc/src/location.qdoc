@@ -53,7 +53,7 @@ and mapping and navigation.
 \section1 Namespace
 
 The QtMobility APIs are placed into the \i{QtMobility} namespace. This is done
-to facilitate the future migration of Mobility APIs into Qt. See the
+to facilitate the future migration of QtMobility APIs into Qt. See the
 \l {Quickstart Example}{Quickstart guide} for an example on how the
 namespace impacts on application development.
 
@@ -435,7 +435,7 @@ other services, the plugins are used to group the functionality per
 service provider.
 
 The plugins are accessed via QGeoServiceProvider, and a Nokia based plugin
-is part of Qt Mobility.  See the section \l{The Nokia plugin} for more details.
+is part of QtMobility.  See the section \l{The Nokia plugin} for more details.
 
 \code
     QGeoMappingManager *mappingManager = 0;
@@ -518,14 +518,14 @@ their personal offline landmarks store.
 
 \section2 The Nokia plugin
 
-Qt Mobility ships with a Maps and Navigation API plugin which accesses
+QtMobility ships with a Maps and Navigation API plugin which accesses
 the relevant Ovi services provided Nokia.  The use of these services
 is governed by the terms and conditions available in the file
 plugins/geoservices/nokia/OVI_SERVICES_TERMS_AND_CONDITIONS.txt.
 
 The Ovi services plugin can be loaded by using the plugin key "nokia".
 
-Note that accepting the terms and conditions only applies those terms and conditions to the use of the Ovi Maps Services plugin and does not limit the use of the other maps and navigation API plugins that may be included with the Qt Mobility package.
+Note that accepting the terms and conditions only applies those terms and conditions to the use of the Ovi Maps Services plugin and does not limit the use of the other maps and navigation API plugins that may be included with the QtMobility package.
 
 \section2 Implementing plugins
 
@@ -555,6 +555,6 @@ If the Mercator projection and the most common tile addressing scheme is used th
 
 For details on the QML support provided for the Location API see the documentation for the \l {Location QML Plugin}.
 
-\note At the time of the Qt Mobility 1.1.0 release the QML support for the Maps and Navigation API is incomplete and likely to be refined and improved in the next patch release.
+\note At the time of the QtMobility 1.1.0 release the QML support for the Maps and Navigation API was incomplete and likely to be refined and improved in the next patch release.
 */
 
