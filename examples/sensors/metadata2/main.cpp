@@ -52,6 +52,9 @@
 
 QTM_USE_NAMESPACE
 
+const char* const MAX_BUFFER_SIZE = "maxBufferSize";
+const char* const EFFICIENT_BUFFER_SIZE = "efficientBufferSize";
+
 
 
 QString checkSensor( QSensor *sensor )
@@ -91,6 +94,24 @@ QString checkSensor( QSensor *sensor )
         outputRanges.append("] ");
     }
 
+    // bufferSizes
+    QVariant maxVariant = sensor->property(MAX_BUFFER_SIZE);
+    int maxSize = maxVariant.isValid()?maxVariant.toInt():1;
+    QVariant efficientVariant = sensor->property(EFFICIENT_BUFFER_SIZE);
+    int efficientSize = efficientVariant.isValid()?efficientVariant.toInt():1;
+    QString bufferSizes("[1");
+    if (efficientSize==1){
+        bufferSizes.append("..");
+    }
+    else{
+        bufferSizes.append("|");
+        for (int i=1; efficientSize*i<maxSize; i++){
+            bufferSizes.append(QString::number(efficientSize*i));
+            bufferSizes.append("|");
+        }
+    }
+    bufferSizes.append(QString::number(maxSize));
+    bufferSizes.append("]");
 
     QString metadata(sen_ident);
     metadata.append(",");
@@ -101,7 +122,11 @@ QString checkSensor( QSensor *sensor )
     metadata.append(outputRanges);
     metadata.append(",");
     metadata.append(datarates);
+    metadata.append(",");
+    metadata.append(bufferSizes);
     metadata.append("\n");
+
+
 
     return metadata;
 }
@@ -119,7 +144,7 @@ int main( int argc, char **argv )
 
     QTextStream out(&file);
 
-    out <<"Identifier,Type,Description,OutputRanges,DataRates"<<endl;
+    out <<"Identifier,Type,Description,OutputRanges,DataRates,BufferSizes"<<endl;
 
     QList<QByteArray> types = QSensor::sensorTypes();
     for (int j=0, l= types.size();j<l; j++ ){

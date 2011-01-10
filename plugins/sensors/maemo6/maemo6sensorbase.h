@@ -62,6 +62,8 @@ protected:
 
     static const char* const ALWAYS_ON;
     static const char* const BUFFER_SIZE;
+    static const char* const MAX_BUFFER_SIZE;
+    static const char* const EFFICIENT_BUFFER_SIZE;
     static const float GRAVITY_EARTH;
     static const float GRAVITY_EARTH_THOUSANDTH;    //for speed
     static const int KErrNotFound;
@@ -118,7 +120,17 @@ protected:
             addDataRate(rateMin, rateMax);
         }
 
-        doConnectAfterCheck();
+        //bufferSizes
+        //TODO: waiting next sensord version
+//        IntegerRangeList sizes = m_sensorInterface->getAvailableBufferSizes();
+//        int l = sizes.size();
+//        if (l>0){
+//            m_efficientBufferSize = (l==1) ? 1 : sizes.at(1).first;
+//            m_maxBufferSize = sizes.at(l-1).second;
+//        }
+        m_maxBufferSize = 256;  // TODO: remove once the snippet above is taken into use
+        sensor()->setProperty(MAX_BUFFER_SIZE, m_maxBufferSize);
+        sensor()->setProperty(EFFICIENT_BUFFER_SIZE, m_efficientBufferSize);
 
         if (name=="alssensor") return;                // SensorFW returns lux values, plugin enumerated values
         if (name=="accelerometersensor") return;      // SensorFW returns milliGs, plugin m/s^2
@@ -131,6 +143,7 @@ protected:
         setRanges();
     };
 
+
     AbstractSensorChannelInterface* m_sensorInterface;
     int m_bufferSize;
     const int bufferSize();
@@ -139,7 +152,7 @@ private:
     static SensorManagerInterface* m_remoteSensorManager;
     int m_prevOutputRange;
     bool doConnectAfterCheck();
-
+    int m_efficientBufferSize, m_maxBufferSize;
 
 };
 

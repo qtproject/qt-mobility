@@ -55,6 +55,8 @@ PkgConfigBR:
     - xrandr
     - xrender
     - xv
+    - QtSparql
+    - QtSparqlTrackerExtensions
 PkgBR:
     - qt-devel-tools
 Configure: none

@@ -50,8 +50,13 @@
 #   include "qgeosatelliteinfosource_maemo_p.h"
 #elif defined(Q_WS_MAEMO_5)
 #   include "qgeosatelliteinfosource_maemo5_p.h"
-#elif (defined(Q_WS_MEEGO)) && (defined(GYPSY_AVAILABLE))
-#   include "qgeosatelliteinfosource_gypsy_p.h"
+#endif
+
+#if defined(Q_WS_MEEGO)
+#include "qgeosatelliteinfosource_maemo_p.h"
+#if defined(GYPSY_AVAILABLE)
+#include "qgeosatelliteinfosource_gypsy_p.h"
+#endif
 #endif
 
 QTM_BEGIN_NAMESPACE
@@ -114,14 +119,29 @@ QGeoSatelliteInfoSource *QGeoSatelliteInfoSource::createDefaultSource(QObject *p
     return source;
 #elif defined(QT_SIMULATOR)
     return new QGeoSatelliteInfoSourceSimulator(parent);
-#elif (defined(Q_WS_MEEGO)) && (defined(GYPSY_AVAILABLE))
-    QGeoSatelliteInfoSourceGypsy *source = new QGeoSatelliteInfoSourceGypsy(parent);
-    int status = source->init();
+#elif defined(Q_WS_MEEGO)
+    // Use Maemo6 backend if available, otherwise use Gypsy backend
+    QSettings settings(QLatin1String("Nokia"), QLatin1String("QtLocationPosAndSat"));
+    if (!settings.value("maemo6satelliteavailable").isValid()) {
+        QGeoSatelliteInfoSourceMaemo *maemoSource = new QGeoSatelliteInfoSourceMaemo(parent);
+        int status = maemoSource->init();
+        if (status == -1) {
+            delete maemoSource;
+            maemoSource = 0;
+            settings.setValue("maemo6satelliteavailable", false);
+        } else {
+            return maemoSource;
+        }
+    }
+#ifdef GYPSY_AVAILABLE
+    QGeoSatelliteInfoSourceGypsy* gypsySource = new QGeoSatelliteInfoSourceGypsy(parent);
+    int status = gypsySource->init();
     if (status == -1) {
-        delete source;
+        delete gypsySource;
         return 0;
     }
-    return source;
+    return gypsySource;
+#endif // GYPSY_AVAILABLE
 #else
     qWarning("QGeoSatellitePositionInfoSource: no default source available.");
     Q_UNUSED(parent);
