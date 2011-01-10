@@ -8,7 +8,8 @@ SUBDIRS += qsysteminfo \
       qsystemdisplayinfo \
       qsystemstorageinfo \
       qsystemnetworkinfo \
-      qsystemscreensaver
+      qsystemscreensaver \
+      qsystemalignedtimer
 
 maemo6: {
       #maemo6 specific autotests
