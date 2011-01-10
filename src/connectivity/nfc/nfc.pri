@@ -54,17 +54,6 @@ simulator {
         nfc/qllcpserver_simulator_p.cpp
 }
 
-symbian {
-    PRIVATE_HEADERS += \
-        nfc/qnearfieldmanager_symbian_p.h \
-        nfc/qllcpsocket_symbian_p.h \
-        nfc/qllcpserver_symbian_p.h
-
-    SOURCES += \
-        nfc/qllcpsocket_symbian_p.cpp \
-        nfc/qllcpserver_symbian_p.cpp
-}
-
 !simulator:!symbian {
     # unsupported platform stub
 
@@ -80,7 +69,7 @@ symbian {
 INCLUDEPATH += $$PWD
     
 symbian { 
-    HEADERS += \
+    PRIVATE_HEADERS += \
         nfc/qnearfieldmanager_symbian_p.h \
         nfc/qnearfieldtagtype1_symbian_p.h \
         nfc/qnearfieldtagtype2_symbian_p.h \
