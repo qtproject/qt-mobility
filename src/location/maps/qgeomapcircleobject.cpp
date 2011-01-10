@@ -74,6 +74,7 @@ QGeoMapCircleObject::QGeoMapCircleObject()
     : d_ptr(new QGeoMapCircleObjectPrivate())
 {
     setUnits(QGeoMapObject::MeterUnit);
+    setTransformType(QGeoMapObject::ExactTransform);
     setGraphicsItem(d_ptr->item);
 }
 
@@ -85,6 +86,7 @@ QGeoMapCircleObject::QGeoMapCircleObject(const QGeoBoundingCircle &circle)
 {
     d_ptr->circle = circle;
     setUnits(QGeoMapObject::MeterUnit);
+    setTransformType(QGeoMapObject::ExactTransform);
     setGraphicsItem(d_ptr->item);
 }
 
@@ -97,6 +99,7 @@ QGeoMapCircleObject::QGeoMapCircleObject(const QGeoCoordinate &center, qreal rad
 {
     d_ptr->circle = QGeoBoundingCircle(center, radius);
     setUnits(QGeoMapObject::MeterUnit);
+    setTransformType(QGeoMapObject::ExactTransform);
     setOrigin(center);
     setGraphicsItem(d_ptr->item);
     d_ptr->item->setPos(0, 0);
@@ -177,6 +180,25 @@ void QGeoMapCircleObject::setBrush(const QBrush &brush)
 QBrush QGeoMapCircleObject::brush() const
 {
     return d_ptr->item->brush();
+}
+
+/*!
+    \property QGeoMapCircleObject::detailLevel
+    \brief This property holds the level of detail to be used to draw this object.
+
+    In particular, for a circle using ExactTransform, this property
+    describes the number of sides that should be used to generate the
+    polygonal approximation.
+*/
+quint32 QGeoMapCircleObject::detailLevel() const
+{
+    return d_ptr->detailLevel;
+}
+
+void QGeoMapCircleObject::setDetailLevel(quint32 detailLevel)
+{
+    d_ptr->detailLevel = detailLevel;
+    emit mapNeedsUpdate();
 }
 
 /*!
@@ -310,7 +332,8 @@ qreal QGeoMapCircleObject::radius() const
 /*******************************************************************************
 *******************************************************************************/
 
-QGeoMapCircleObjectPrivate::QGeoMapCircleObjectPrivate()
+QGeoMapCircleObjectPrivate::QGeoMapCircleObjectPrivate() :
+    detailLevel(120)
 {
     item = new QGraphicsEllipseItem();
     QPen pen = item->pen();

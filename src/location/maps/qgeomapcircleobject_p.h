@@ -58,6 +58,7 @@ public:
 
     QGraphicsEllipseItem *item;
     QGeoBoundingCircle circle;
+    quint32 detailLevel;
 };
 
 QTM_END_NAMESPACE
