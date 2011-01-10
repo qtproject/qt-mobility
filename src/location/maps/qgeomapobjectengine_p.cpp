@@ -41,6 +41,7 @@
 
 #include "qgeomapobjectengine_p.h"
 #include "qgeomaprouteobject.h"
+#include "qgeomapcircleobject.h"
 #include "projwrapper_p.h"
 
 #include <QTransform>
@@ -223,8 +224,10 @@ bool QGeoMapObjectEngine::exactMetersToSeconds(const QGeoCoordinate &origin,
 
         QPolygonF secPoly;
 
-        // TODO: get this off the object
-        const quint32 detail = 100;
+        quint32 detail = 100;
+        QGeoMapCircleObject *circObj = dynamic_cast<QGeoMapCircleObject*>(object);
+        if (circObj)
+            detail = circObj->detailLevel();
 
         const double Pi = 3.14159265358;
         const double twopi = 6.283185307179;
@@ -236,10 +239,20 @@ bool QGeoMapObjectEngine::exactMetersToSeconds(const QGeoCoordinate &origin,
         bool wrap = false;
         double wrapEnd = 0.0;
 
-        const double limit = twopi;
+        // TODO: make the semantics here the same as in normal graphicsview
+        double startAngle = elItem->startAngle();
+        startAngle /= 16.0;
+        startAngle *= twopi;
+        startAngle /= 360.0;
+
+        double stopAngle = elItem->startAngle() + elItem->spanAngle();
+        stopAngle /= 16.0;
+        stopAngle *= twopi;
+        stopAngle /= 360.0;
+
         bool drawToCenter = false;
 
-        for (double theta = 0; theta < limit; theta += dth) {
+        for (double theta = startAngle; theta < stopAngle; theta += dth) {
             const double top = b*sin(theta);
             const double bottom = a*cos(theta);
 
