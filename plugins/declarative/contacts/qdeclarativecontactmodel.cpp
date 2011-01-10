@@ -39,6 +39,7 @@
 **
 ****************************************************************************/
 #include <qcontactdetails.h>
+#include <QtDeclarative/qdeclarativeinfo.h>
 
 #include "qdeclarativecontactmodel_p.h"
 #include "qcontactmanager.h"
@@ -284,7 +285,6 @@ static QString urlToLocalFileName(const QUrl& url)
   */
 void QDeclarativeContactModel::importContacts(const QUrl& url, const QStringList& profiles)
 {
-   //qWarning() << "importing contacts from:" << url;
    d->m_importProfiles = profiles;
 
    //TODO: need to allow download vcard from network
@@ -304,7 +304,6 @@ void QDeclarativeContactModel::importContacts(const QUrl& url, const QStringList
   */
 void QDeclarativeContactModel::exportContacts(const QUrl& url, const QStringList& profiles)
 {
-   //qWarning() << "exporting contacts into:" << url;
 
    QString profile = profiles.isEmpty()? QString() : profiles.at(0);
     //only one profile string supported now
@@ -406,7 +405,7 @@ void QDeclarativeContactModel::contacts_append(QDeclarativeListProperty<QDeclara
 {
     Q_UNUSED(prop);
     Q_UNUSED(contact);
-    qWarning() << "ContactModel: appending contacts is not currently supported";
+    qmlInfo(0) << tr("ContactModel: appending contacts is not currently supported");
 }
 
 int QDeclarativeContactModel::contacts_count(QDeclarativeListProperty<QDeclarativeContact>* prop)
@@ -456,7 +455,7 @@ void QDeclarativeContactModel::startImport(QVersitReader::State state)
 
         if (d->m_manager) {
             if (d->m_manager->saveContacts(&contacts))
-                qWarning() << "contacts imported.";
+                qmlInfo(this) << tr("contacts imported.");
                 update();
         }
     }

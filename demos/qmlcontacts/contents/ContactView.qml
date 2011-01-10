@@ -114,11 +114,15 @@ Item {
                         }
                 }
             }
-            /* Not implemented yet
             MediaButton {
                 text: "Add Phone";
+                onClicked: {
+                        var detail = Qt.createQmlObject(
+                            "import QtMobility.contacts 1.1;" +
+                            "PhoneNumber {number: ''}", contact);
+                        contact.addDetail(detail);
+                    }
             }
-            */
 
             Text {
                 width: normalView.width - 6;
@@ -143,11 +147,15 @@ Item {
                         }
                 }
             }
-            /* Not implemented yet
             MediaButton {
                 text: "Add Email";
+                onClicked: {
+                        var detail = Qt.createQmlObject(
+                            "import QtMobility.contacts 1.1;" +
+                            "EmailAddress {emailAddress: ''}", contact);
+                        contact.addDetail(detail);
+                    }
             }
-            */
         }
     }
 
