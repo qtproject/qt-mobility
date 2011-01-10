@@ -69,7 +69,8 @@ public:
     bool queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder, uint limit, uint offset) const;
     
     bool countMessages(const QMessageFilter &filter);
-	
+    bool moveMessages(const QMessageIdList &messageIds, const QMessageFolderId &toFolderId);
+    
     void setFinished(bool successful);
     
     void messagesFound(const QMessageIdList &ids, bool isFiltered, bool isSorted);

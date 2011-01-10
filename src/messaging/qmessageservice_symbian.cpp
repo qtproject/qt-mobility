@@ -202,6 +202,30 @@ bool QMessageServicePrivate::countMessages(const QMessageFilter &filter)
     return _active;
 }
 
+bool QMessageServicePrivate::moveMessages(const QMessageIdList &messageIds, const QMessageFolderId &toFolderId)
+{
+    bool ret = false;
+    // it'a already verified that messageIds has elements and they are of same type
+    switch (idType(messageIds.at(0))) {
+        case EngineTypeFreestyle: {
+#ifdef FREESTYLEMAILUSED
+            ret = CFSEngine::instance()->moveMessages( *this, messageIds, toFolderId );
+#else
+            // not supported
+            ret = false;
+#endif
+            break;
+        }
+        case EngineTypeMTM: // flow through
+        default: {
+            // not supported
+            ret = false;
+            break;
+        }
+    }
+    return ret;
+}
+
 bool QMessageServicePrivate::retrieve(const QMessageId &messageId, const QMessageContentContainerId &id)
 {
     switch (idType(messageId)) {
@@ -631,6 +655,45 @@ bool QMessageService::show(const QMessageId& id)
 bool QMessageService::exportUpdates(const QMessageAccountId &id)
 {
     return synchronize(id);
+}
+
+bool QMessageService::moveMessages(const QMessageIdList &messageIds, const QMessageFolderId &toFolderId)
+{
+    if (d_ptr->_active) {
+        return false;
+    }
+    
+    if (!toFolderId.isValid()) {
+        d_ptr->_error = QMessageManager::InvalidId;
+        return false;
+    }
+
+    const int count = messageIds.count();
+    if ( count == 0) {
+        return false;
+    }
+
+    // verify that messages are of same type and valid
+    EngineType expectedType = idType(messageIds[0]);
+    for( int i = 1; i < count; ++i ) {
+        if( idType( messageIds[i] ) != expectedType || 
+            !messageIds[i].isValid() ) {
+            // invalid message id or inconsistent type found
+            d_ptr->_error = QMessageManager::InvalidId;
+            return false;
+        }
+    }
+
+    d_ptr->_active = true;
+    d_ptr->_error = QMessageManager::NoError;
+    d_ptr->_state = QMessageService::ActiveState;
+    emit stateChanged(d_ptr->_state);
+
+    bool retVal = d_ptr->moveMessages( messageIds, toFolderId );
+    if (!retVal) {
+        d_ptr->setFinished(retVal);
+    }
+    return retVal;
 }
 
 bool QMessageService::synchronize(const QMessageAccountId &id)
