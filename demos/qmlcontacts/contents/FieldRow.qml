@@ -42,47 +42,51 @@
 import Qt 4.7
 
 Item {
-    id: container
+    property string label
+    property variant value
+    property alias newValue: textEdit.text
 
-    signal clicked
+    signal blur
 
-    property string text
-    width: buttonText.width + 28
-    height: buttonText.height + 14
-
-    BorderImage {
-        id: buttonImage
-        source: "images/toolbutton.sci"
-        width: container.width - 10
-        height: container.height
-    }
-    BorderImage {
-        id: pressed
-        opacity: 0
-        source: "images/toolbutton.sci"
-        width: container.width - 10
-        height: container.height
-    }
-    MouseArea {
-        id: mouseRegion
-        anchors.fill: buttonImage
-        onClicked: { container.clicked(); }
-    }
+    height: childrenRect.height
     Text {
-        id: buttonText
+        id: fieldName
+        width: parent.width * 0.5;
+        height: 20;
+        anchors.margins: 3
+        anchors.left: parent.left
+        text: label
         color: "white"
-        anchors.centerIn: buttonImage
-        font.bold: true
-        font.pixelSize: 15
-        text: container.text
-        style: Text.Raised
-        styleColor: "black"
     }
-    states: [
-        State {
-            name: "Pressed"
-            when: mouseRegion.pressed == true
-            PropertyChanges { target: pressed; opacity: 1 }
+    Rectangle {
+        id: textRect
+        anchors.left: fieldName.right
+        anchors.right: parent.right
+        anchors.rightMargin: 3
+        height: 30;
+        color: "#00000000";
+        border.color: "#00000000";
+        border.width: 0
+        TextInput {
+            id: textEdit
+            anchors.fill: parent
+            anchors.margins: 3
+            text: value.toString();
+            color: activeFocus? "black" : "#ffffaa";
+            onActiveFocusChanged: { if (!activeFocus) { blur(); } }
         }
-    ]
+        states: [
+                State {
+                    name: "focused"
+                    when: textEdit.activeFocus
+                    PropertyChanges {
+                        target: textRect
+                        color: "#aaffffff"
+                        radius: 2
+                        border.width: 1
+                        border.color: "black"
+                    }
+                }
+            ]
+    }
 }
