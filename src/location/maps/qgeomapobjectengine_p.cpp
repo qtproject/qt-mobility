@@ -48,6 +48,9 @@
 #include <QGraphicsScene>
 #include <QGraphicsPolygonItem>
 #include <QGraphicsPathItem>
+#include <QGraphicsEllipseItem>
+
+#include <cmath>
 
 QTM_BEGIN_NAMESPACE
 
@@ -160,6 +163,17 @@ static QGraphicsPolygonItem *polyCopy(const QGraphicsPolygonItem *polyItem)
     return pi;
 }
 
+static QGraphicsPolygonItem *polyCopy(const QGraphicsEllipseItem *elItem)
+{
+    QGraphicsPolygonItem *pi = new QGraphicsPolygonItem;
+    pi->setBrush(elItem->brush());
+    pi->setPen(elItem->pen());
+    pi->setVisible(elItem->isVisible());
+    pi->setOpacity(elItem->opacity());
+    pi->setGraphicsEffect(elItem->graphicsEffect());
+    return pi;
+}
+
 static QGraphicsPathItem *pathCopy(const QGraphicsPathItem *pathItem)
 {
     QGraphicsPathItem *pi = new QGraphicsPathItem;
@@ -189,6 +203,101 @@ bool QGeoMapObjectEngine::exactMetersToSeconds(const QGeoCoordinate &origin,
 
     QTransform east;
     east.translate(-360.0 * 3600.0, 0.0);
+
+    QGraphicsEllipseItem *elItem = dynamic_cast<QGraphicsEllipseItem*>(item);
+    if (elItem) {
+        QRectF rect = elItem->rect();
+
+        const QPointF cen = rect.center();
+
+        ProjCoordinate c(cen.x(), cen.y(), 0.0, localSys);
+        c.convert(wgs84);
+
+        const QGeoCoordinate center = c.toGeoCoordinate();
+
+        const double a = rect.width() / 2.0;
+        const double b = rect.height() / 2.0;
+
+        const double asq = a*a;
+        const double bsq = b*b;
+
+        QPolygonF secPoly;
+
+        // TODO: get this off the object
+        const quint32 detail = 100;
+
+        const double Pi = 3.14159265358;
+        const double twopi = 6.283185307179;
+
+        const double dth = twopi / detail;
+
+        double lastX = 0;
+
+        bool wrap = false;
+        double wrapEnd = 0.0;
+
+        const double limit = twopi;
+        bool drawToCenter = false;
+
+        for (double theta = 0; theta < limit; theta += dth) {
+            const double top = b*sin(theta);
+            const double bottom = a*cos(theta);
+
+            double phi = atan(top / bottom);
+            if (bottom < 0)
+                phi = phi + Pi;
+
+            const double phiDeg = (360.0 * phi) / twopi;
+
+            const double costh = cos(theta);
+            const double sinth = sin(theta);
+
+            const double r = sqrt(asq*costh*costh + bsq*sinth*sinth);
+
+            QGeoCoordinate coord = center.atDistanceAndAzimuth(r, phiDeg);
+
+            double x = coord.longitude() * 3600.0;
+
+            if (wrap && phi > wrapEnd)
+                wrap = false;
+            if (lastX > 0.0 && x < 0.0) {
+                wrapEnd = Pi - phi;
+                wrap = true;
+            }
+
+            if (wrap)
+                x += 360.0 * 3600.0;
+
+            const double y = coord.latitude() * 3600.0;
+
+            secPoly << QPointF(x,y);
+
+            lastX = x;
+        }
+
+        if (drawToCenter)
+            secPoly << QPointF(c.x() * 3600.0, c.y() * 3600);
+
+        latLonExact.remove(object);
+        QGraphicsPolygonItem *pi = polyCopy(elItem);
+        pi->setPolygon(secPoly);
+        latLonExact.insertMulti(object, pi);
+        polys << pi->boundingRect();
+
+        QPolygonF westPoly = secPoly * west;
+        pi = polyCopy(elItem);
+        pi->setPolygon(westPoly);
+        latLonExact.insertMulti(object, pi);
+        polys << pi->boundingRect();
+
+        QPolygonF eastPoly = secPoly * east;
+        pi = polyCopy(elItem);
+        pi->setPolygon(eastPoly);
+        latLonExact.insertMulti(object, pi);
+        polys << pi->boundingRect();
+
+        return true;
+    }
 
     QGraphicsPolygonItem *polyItem = dynamic_cast<QGraphicsPolygonItem*>(item);
     if (polyItem) {
