@@ -57,6 +57,21 @@
 #define SRCDIR ""
 #endif
 
+#ifndef QTRY_VERIFY2
+#define QTRY_VERIFY2(__expr,__msg) \
+    do { \
+        const int __step = 50; \
+        const int __timeout = 5000; \
+        if (!(__expr)) { \
+            QTest::qWait(0); \
+        } \
+        for (int __i = 0; __i < __timeout && !(__expr); __i+=__step) { \
+            QTest::qWait(__step); \
+        } \
+        QVERIFY2(__expr,__msg); \
+    } while(0)
+#endif
+
 Q_DECLARE_METATYPE(QAudioFormat)
 
 class tst_QAudioInput : public QObject
@@ -252,9 +267,8 @@ void tst_QAudioInput::invalidFormat()
     QVERIFY2((audioInput.error() == QAudio::NoError), "error() was not set to QAudio::NoError before start()");
 
     audioInput.start();
-
     // Check that error is raised
-    QVERIFY2((audioInput.error() == QAudio::OpenError),"error() was not set to QAudio::OpenError after start()");
+    QTRY_VERIFY2((audioInput.error() == QAudio::OpenError),"error() was not set to QAudio::OpenError after start()");
 }
 
 void tst_QAudioInput::bufferSize()
@@ -423,9 +437,8 @@ void tst_QAudioInput::pull()
         QVERIFY(wavHeader.write(*audioFiles.at(i)));
 
         audioInput.start(audioFiles.at(i));
-
         // Check that QAudioInput immediately transitions to ActiveState or IdleState
-        QVERIFY2((stateSignal.count() > 0),"didn't emit signals on start()");
+        QTRY_VERIFY2((stateSignal.count() > 0),"didn't emit signals on start()");
         QVERIFY2((audioInput.state() == QAudio::ActiveState || audioInput.state() == QAudio::IdleState),
                 "didn't transition to ActiveState or IdleState after start()");
         QVERIFY2((audioInput.error() == QAudio::NoError), "error state is not equal to QAudio::NoError after start()");
@@ -482,9 +495,8 @@ void tst_QAudioInput::pullSuspendResume()
         QVERIFY(wavHeader.write(*audioFiles.at(i)));
 
         audioInput.start(audioFiles.at(i));
-
         // Check that QAudioInput immediately transitions to ActiveState or IdleState
-        QVERIFY2((stateSignal.count() > 0),"didn't emit signals on start()");
+        QTRY_VERIFY2((stateSignal.count() > 0),"didn't emit signals on start()");
         QVERIFY2((audioInput.state() == QAudio::ActiveState || audioInput.state() == QAudio::IdleState),
                 "didn't transition to ActiveState or IdleState after start()");
         QVERIFY2((audioInput.error() == QAudio::NoError), "error state is not equal to QAudio::NoError after start()");
