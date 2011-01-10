@@ -137,6 +137,7 @@ private slots:
     void changeSource();
     void initGoneBad();
     void updateInferno();
+    void robustness();
 #endif
 
 private:
