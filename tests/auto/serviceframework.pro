@@ -11,7 +11,8 @@ SUBDIRS += servicemetadata \
     qservicecontext \
     qmetaobjectbuilder \
     qservicemanager_ipc \
-    servicedatabase
+    servicedatabase \
+    qremoteserviceregister
     # databasemanager # disabled from auto builds
 
 contains(build_tools,yes) {
