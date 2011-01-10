@@ -187,6 +187,91 @@ static QGraphicsPathItem *pathCopy(const QGraphicsPathItem *pathItem)
     return pi;
 }
 
+static QPolygonF approximateCircle(QGraphicsEllipseItem *elItem,
+                                   QGeoMapObject *object,
+                                   const QGeoCoordinate &center,
+                                   const ProjCoordinate &projCenter)
+{
+    const QRectF rect = elItem->rect();
+
+    const double a = rect.width() / 2.0;
+    const double b = rect.height() / 2.0;
+
+    const double asq = a*a;
+    const double bsq = b*b;
+
+    QPolygonF secPoly;
+
+    quint32 detail = 150;
+    QGeoMapCircleObject *circObj = dynamic_cast<QGeoMapCircleObject*>(object);
+    if (circObj)
+        detail = circObj->detailLevel();
+
+    const double Pi = 3.14159265358;
+    const double twopi = 6.283185307179;
+
+    const double dth = twopi / detail;
+
+    double lastX = 0;
+
+    bool wrap = false;
+    double wrapEnd = 0.0;
+
+    // TODO: make the semantics here the same as in normal graphicsview
+    double startAngle = elItem->startAngle();
+    startAngle /= 16.0;
+    startAngle *= twopi;
+    startAngle /= 360.0;
+
+    double stopAngle = elItem->startAngle() + elItem->spanAngle();
+    stopAngle /= 16.0;
+    stopAngle *= twopi;
+    stopAngle /= 360.0;
+
+    bool drawToCenter = (elItem->spanAngle() != 360 * 16);
+
+    for (double theta = startAngle; theta < stopAngle; theta += dth) {
+        const double top = b*sin(theta);
+        const double bottom = a*cos(theta);
+
+        double phi = atan(top / bottom);
+        if (bottom < 0)
+            phi = phi + Pi;
+
+        const double phiDeg = (360.0 * phi) / twopi;
+
+        const double costh = cos(theta);
+        const double sinth = sin(theta);
+
+        const double r = sqrt(asq*costh*costh + bsq*sinth*sinth);
+
+        QGeoCoordinate coord = center.atDistanceAndAzimuth(r, phiDeg);
+
+        double x = coord.longitude() * 3600.0;
+
+        if (wrap && phi > wrapEnd)
+            wrap = false;
+        if (lastX > 0.0 && x < 0.0) {
+            wrapEnd = Pi - phi;
+            wrap = true;
+        }
+
+        if (wrap)
+            x += 360.0 * 3600.0;
+
+        const double y = coord.latitude() * 3600.0;
+
+        secPoly << QPointF(x,y);
+
+        lastX = x;
+    }
+
+    if (drawToCenter)
+        secPoly << QPointF(projCenter.x() * 3600.0, projCenter.y() * 3600);
+
+    return secPoly;
+}
+
 bool QGeoMapObjectEngine::exactMetersToSeconds(const QGeoCoordinate &origin,
                                               QGeoMapObject *object,
                                               QGraphicsItem *item,
@@ -210,100 +295,25 @@ bool QGeoMapObjectEngine::exactMetersToSeconds(const QGeoCoordinate &origin,
         QRectF rect = elItem->rect();
 
         const QPointF cen = rect.center();
-
         ProjCoordinate c(cen.x(), cen.y(), 0.0, localSys);
         c.convert(wgs84);
-
         const QGeoCoordinate center = c.toGeoCoordinate();
 
-        const double a = rect.width() / 2.0;
-        const double b = rect.height() / 2.0;
-
-        const double asq = a*a;
-        const double bsq = b*b;
-
-        QPolygonF secPoly;
-
-        quint32 detail = 100;
-        QGeoMapCircleObject *circObj = dynamic_cast<QGeoMapCircleObject*>(object);
-        if (circObj)
-            detail = circObj->detailLevel();
-
-        const double Pi = 3.14159265358;
-        const double twopi = 6.283185307179;
-
-        const double dth = twopi / detail;
-
-        double lastX = 0;
-
-        bool wrap = false;
-        double wrapEnd = 0.0;
-
-        // TODO: make the semantics here the same as in normal graphicsview
-        double startAngle = elItem->startAngle();
-        startAngle /= 16.0;
-        startAngle *= twopi;
-        startAngle /= 360.0;
-
-        double stopAngle = elItem->startAngle() + elItem->spanAngle();
-        stopAngle /= 16.0;
-        stopAngle *= twopi;
-        stopAngle /= 360.0;
-
-        bool drawToCenter = false;
-
-        for (double theta = startAngle; theta < stopAngle; theta += dth) {
-            const double top = b*sin(theta);
-            const double bottom = a*cos(theta);
-
-            double phi = atan(top / bottom);
-            if (bottom < 0)
-                phi = phi + Pi;
-
-            const double phiDeg = (360.0 * phi) / twopi;
-
-            const double costh = cos(theta);
-            const double sinth = sin(theta);
-
-            const double r = sqrt(asq*costh*costh + bsq*sinth*sinth);
-
-            QGeoCoordinate coord = center.atDistanceAndAzimuth(r, phiDeg);
-
-            double x = coord.longitude() * 3600.0;
-
-            if (wrap && phi > wrapEnd)
-                wrap = false;
-            if (lastX > 0.0 && x < 0.0) {
-                wrapEnd = Pi - phi;
-                wrap = true;
-            }
-
-            if (wrap)
-                x += 360.0 * 3600.0;
-
-            const double y = coord.latitude() * 3600.0;
-
-            secPoly << QPointF(x,y);
-
-            lastX = x;
-        }
-
-        if (drawToCenter)
-            secPoly << QPointF(c.x() * 3600.0, c.y() * 3600);
+        QPolygonF wgs = approximateCircle(elItem, object, center, c);
 
         latLonExact.remove(object);
         QGraphicsPolygonItem *pi = polyCopy(elItem);
-        pi->setPolygon(secPoly);
+        pi->setPolygon(wgs);
         latLonExact.insertMulti(object, pi);
         polys << pi->boundingRect();
 
-        QPolygonF westPoly = secPoly * west;
+        QPolygonF westPoly = wgs * west;
         pi = polyCopy(elItem);
         pi->setPolygon(westPoly);
         latLonExact.insertMulti(object, pi);
         polys << pi->boundingRect();
 
-        QPolygonF eastPoly = secPoly * east;
+        QPolygonF eastPoly = wgs * east;
         pi = polyCopy(elItem);
         pi->setPolygon(eastPoly);
         latLonExact.insertMulti(object, pi);
