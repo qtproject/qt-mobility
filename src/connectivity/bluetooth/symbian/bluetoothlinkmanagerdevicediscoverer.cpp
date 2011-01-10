@@ -121,8 +121,11 @@ void BluetoothLinkManagerDeviceDiscoverer::StartDiscoveryL(const uint discoveryT
 */
 void BluetoothLinkManagerDeviceDiscoverer::RunL()
 {
-    if (iStatus.Int() != KErrNone)
+    if (iStatus.Int() != KErrNone) {
         emit deviceDiscoveryComplete(iStatus.Int());
+        // it is advised to close host resolver session after it has been used.
+        m_hostResolver.Close();
+    }
     else {
         emit deviceDiscovered(currentDeviceDataToQBluetoothDeviceInfo());
         // get next (possible) discovered device
