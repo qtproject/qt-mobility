@@ -45,6 +45,7 @@
 #include <QString>
 #include <QPolygonF>
 #include <QPointF>
+#include "qgeocoordinate.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -160,6 +161,11 @@ bool ProjCoordinate::convert(const ProjCoordinateSystem &system)
         d->currentSystem = system;
         return true;
     }
+}
+
+QGeoCoordinate ProjCoordinate::toGeoCoordinate() const
+{
+    return QGeoCoordinate(d->y, d->x, d->z);
 }
 
 class ProjPolygonPrivate

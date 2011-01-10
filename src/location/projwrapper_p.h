@@ -63,6 +63,7 @@
 QTM_BEGIN_NAMESPACE
 
 class ProjCoordinate;
+class QGeoCoordinate;
 
 class ProjCoordinateSystemPrivate;
 class ProjCoordinateSystem
@@ -91,6 +92,8 @@ public:
     double x() const;
     double y() const;
     double z() const;
+
+    QGeoCoordinate toGeoCoordinate() const;
 
     bool convert(const ProjCoordinateSystem &system);
 
