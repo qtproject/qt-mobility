@@ -62,8 +62,6 @@ class Q_SYSINFO_EXPORT QSystemAlignedTimer : public QObject
 
 public:
 
-    Q_ENUMS(WaitMode)
-
     explicit QSystemAlignedTimer(QObject *parent = 0);
 
     Q_INVOKABLE bool requestTimer(QTime minTime, QTime maxTime);
