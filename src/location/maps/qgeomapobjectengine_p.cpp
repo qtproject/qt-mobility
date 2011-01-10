@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include "qgeomapobjectengine_p.h"
+#include "qgeomaprouteobject.h"
 #include "projwrapper_p.h"
 
 #include <QTransform>
@@ -94,7 +95,7 @@ QGeoMapObjectEngine::QGeoMapObjectEngine(QGeoMapData *mapData, QGeoMapDataPrivat
     mdp(mapDataP),
     pixelScene(new QGraphicsScene),
     latLonScene(new QGraphicsScene),
-    exactMappingTolerance(8.0)
+    exactMappingTolerance(1.0)
 {
 }
 
@@ -469,6 +470,11 @@ void QGeoMapObjectEngine::exactPixelMap(const QGeoCoordinate &origin,
 
     pixelExact.remove(object);
 
+    double tolerance = exactMappingTolerance;
+    QGeoMapRouteObject *robj = dynamic_cast<QGeoMapRouteObject*>(object);
+    if (robj)
+        tolerance = robj->detailLevel();
+
     foreach (QGraphicsItem *latLonItem, latLonItems) {
         QGraphicsPolygonItem *polyItem = dynamic_cast<QGraphicsPolygonItem*>(latLonItem);
         if (polyItem) {
@@ -504,7 +510,7 @@ void QGeoMapObjectEngine::exactPixelMap(const QGeoCoordinate &origin,
 
                 pixelPoints.append(pixel);
 
-                if (!lastPixelAdded.isNull() && delta < exactMappingTolerance)
+                if (!lastPixelAdded.isNull() && delta < tolerance)
                     tooClose.insert(i);
                 else
                     lastPixelAdded = pixel;

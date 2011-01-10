@@ -55,8 +55,10 @@ public:
     QGeoMapRouteObjectPrivate();
     ~QGeoMapRouteObjectPrivate();
 
-    QPen pen;
+    void regenPath();
+
     QGeoRoute route;
+    QGraphicsPathItem *item;
     quint32 detailLevel;
 };
 
