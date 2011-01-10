@@ -319,6 +319,26 @@ bool QDeclarativeOrganizerItem::removeDetail(QDeclarativeOrganizerItemDetail* de
 }
 
 /*!
+    \qmlmethod bool OrganizerItem::addDetail(detail)
+
+    Adds the given organizer item \a detail to the organizer item, returns true if successful, otherwise returns false.
+
+    \note: If the \a detail has been added into the same organizer item before, this operation will be ignored,
+    so if you want to add a \a detail multiple times, the \a detail should be copied before calling this function.
+*/
+bool QDeclarativeOrganizerItem::addDetail(QDeclarativeOrganizerItemDetail* detail)
+{
+    if (detail) {
+        if (!d->m_details.contains(detail)) {
+            d->m_details.append(detail);
+            emit itemChanged();
+        }
+        return true;
+    }
+    return false;
+}
+
+/*!
     \qmlmethod OrganizerItem::clearDetails()
 
     Removes all details from the organizer item.

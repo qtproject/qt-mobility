@@ -109,7 +109,7 @@ public:
     Q_INVOKABLE QVariant details(const QString& name);
     Q_INVOKABLE void addComment(const QString& comment);
     Q_INVOKABLE bool removeDetail(QDeclarativeOrganizerItemDetail* detail);
-
+    Q_INVOKABLE bool addDetail(QDeclarativeOrganizerItemDetail* detail);
     QString type() const;
     QString displayLabel() const;
     void setDisplayLabel(const QString& label);
