@@ -42,6 +42,8 @@
 
 #include "qsystemalignedtimer.h"
 
+QTM_BEGIN_NAMESPACE
+Q_GLOBAL_STATIC(QSystemAlignedTimerPrivate, alignedTimerPrivate)
 
 /*!
   \class QSystemAlignedTimer
@@ -62,8 +64,8 @@
    \fn QSystemBatteryInfo::QSystemAlignedTimer(QObject *parent)
    Constructs a QSystemAlignedTimer object with the given \a parent.
   */
-QSystemAlignedTimer::QSystemAlignedTimer(QObject *parent) :
-    QObject(parent),d(parent)
+QSystemAlignedTimer::QSystemAlignedTimer(QObject *parent)
+    : QObject(parent),d(alignedTimerPrivate())
 {
 }
 
@@ -71,18 +73,21 @@ QSystemAlignedTimer::QSystemAlignedTimer(QObject *parent) :
 
 */
 
-QTime QSystemAlignedTimer::requestTimer(QTime minTime, QTime maxTime)
+bool QSystemAlignedTimer::requestTimer(QTime minTime, QTime maxTime)
 {
     Q_UNUSED(minTime);
     Q_UNUSED(maxTime);
+    return false;
 }
 
 /*!
 
 */
-QTime QSystemAlignedTimer::requestTimer(ushort optimalInterval, ushort timerWindow)
+bool QSystemAlignedTimer::requestTimer(uint optimalInterval, uint timerWindow)
 {
-
+Q_UNUSED(optimalInterval)
+Q_UNUSED(timerWindow)
+    return false;
 }
 
 
@@ -98,29 +103,12 @@ bool QSystemAlignedTimer::wokeUp()
     return false;
 }
 
-QSystemAlignedTimer::WaitMode QSystemAlignedTimer::waitMode()
-{
-
-}
-
-bool QSystemAlignedTimer::setWaitMode(QSystemAlignedTimer::WaitMode)
-{
-
-}
-
-
-QSystemAlignedTimer::SignalNeed QSystemAlignedTimer::signalNeeded()
-{
-
-}
-
-bool QSystemAlignedTimer::setSignalNeeded(QSystemAlignedTimer::SignalNeed)
-{
-
-}
-
-
 void QSystemAlignedTimerPrivate::timerEvent(QTimerEvent *)
 {
 
 }
+
+
+#include "moc_qsystemalignedtimer.cpp"
+
+QTM_END_NAMESPACE

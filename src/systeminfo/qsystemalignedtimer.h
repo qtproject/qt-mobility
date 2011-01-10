@@ -45,6 +45,7 @@
 
 #include <QObject>
 #include <QTime>
+#include <QTimer>
 #include "qmobilityglobal.h"
 #include "qsystemalignedtimer.h"
 
@@ -53,7 +54,7 @@ QTM_BEGIN_NAMESPACE
 
 class QSystemAlignedTimerPrivate;
 
-class QSystemAlignedTimer : public QTimer
+class Q_SYSINFO_EXPORT QSystemAlignedTimer : public QObject
 {
     Q_OBJECT
 
@@ -84,7 +85,7 @@ class QSystemAlignedTimerPrivate : public QObject
 {
     Q_OBJECT
 public:
-    explicit QSystemAlignedTimerPrivate(QObject *parent = 0){};
+    explicit QSystemAlignedTimerPrivate(QObject *parent = 0){Q_UNUSED(parent)};
 
 private:
     QTimer *alignedTimer;
