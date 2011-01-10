@@ -435,6 +435,11 @@ QGeoCoordinate QGeoCoordinate::atDistanceAndAzimuth(qreal distance, qreal azimut
     double resultLat = qgeocoordinate_radToDeg(resultLatRad);
     double resultLon = qgeocoordinate_radToDeg(resultLonRad);
 
+    if (resultLon > 180.0)
+        resultLon -= 360.0;
+    else if (resultLon < -180.0)
+        resultLon += 360.0;
+
     double resultAlt = d->alt + distanceUp;
     return QGeoCoordinate(resultLat, resultLon, resultAlt);
 }
