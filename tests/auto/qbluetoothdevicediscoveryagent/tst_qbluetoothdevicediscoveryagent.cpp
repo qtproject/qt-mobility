@@ -130,8 +130,6 @@ void tst_QBluetoothDeviceDiscoveryAgent::tst_startStopDeviceDiscoveries()
         QSignalSpy finishedSpy(&discoveryAgent, SIGNAL(finished()));
         QSignalSpy errorSpy(&discoveryAgent, SIGNAL(error(QBluetoothDeviceDiscoveryAgent::Error)));
         QSignalSpy discoveredSpy(&discoveryAgent, SIGNAL(deviceDiscovered(const QBluetoothDeviceInfo&)));
-        connect(&discoveryAgent, SIGNAL(deviceDiscovered(const QBluetoothDeviceInfo&)),
-                this, SLOT(deviceDiscoveryDebug(const QBluetoothDeviceInfo&)));
 
         discoveryAgent.setInquiryType(inquiryType);
         // we should have no errors at this point.
