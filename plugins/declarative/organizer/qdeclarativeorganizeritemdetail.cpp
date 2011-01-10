@@ -39,6 +39,7 @@
 **
 ****************************************************************************/
 
+#include <QtDeclarative/qdeclarativeinfo.h>
 #include <qorganizeritemdetails.h>
 #include "qdeclarativeorganizeritemdetail_p.h"
 
@@ -174,7 +175,7 @@ QString QDeclarativeOrganizerItemDetail::definitionName(QDeclarativeOrganizerIte
     default:
         break;
     }
-    qWarning() << QString("Can't find the detail definition name for detail type '%1'").arg(type);
+    qmlInfo(0) << QString(tr("Can't find the detail definition name for detail type '%1'")).arg(type);
     return QString();
 }
 
@@ -220,7 +221,7 @@ QString QDeclarativeOrganizerItemDetail::detailName(QDeclarativeOrganizerItemDet
     default:
         break;
     }
-    qWarning() << QString("Can't find the detail definition name for detail type '%1'").arg(type);
+    qmlInfo(0) << QString(tr("Can't find the detail definition name for detail type '%1'")).arg(type);
     return QString();
 }
 
@@ -263,7 +264,7 @@ QDeclarativeOrganizerItemDetail::ItemDetailType QDeclarativeOrganizerItemDetail:
         return QDeclarativeOrganizerItemDetail::Timestamp;
     if (definitionName == QOrganizerItemType::DefinitionName)
         return QDeclarativeOrganizerItemDetail::Type;
-    qWarning() << QString("Can't find the detail type for detail name '%1'").arg(definitionName);
+    qmlInfo(0) << QString(tr("Can't find the detail type for detail name '%1'")).arg(definitionName);
     return QDeclarativeOrganizerItemDetail::Customized;
 }
 
@@ -305,7 +306,7 @@ QDeclarativeOrganizerItemDetail::ItemDetailType QDeclarativeOrganizerItemDetail:
         return QDeclarativeOrganizerItemDetail::Timestamp;
     if (detailName == QDeclarativeOrganizerItemType::DetailName)
         return QDeclarativeOrganizerItemDetail::Type;
-    qWarning() << QString("Can't find the detail type for detail name '%1'").arg(detailName);
+    qmlInfo(0) << QString(tr("Can't find the detail type for detail name '%1'")).arg(detailName);
     return QDeclarativeOrganizerItemDetail::Customized;
 }
 
@@ -352,7 +353,7 @@ QString QDeclarativeOrganizerItemDetail::fieldName(QDeclarativeOrganizerItemDeta
     default:
         break;
     }
-    qWarning() << QString("Can't find the field name for detail type '%1' and field type '%2'").arg(detailType).arg(fieldType);
+    qmlInfo(0) << QString(tr("Can't find the field name for detail type '%1' and field type '%2'")).arg(detailType).arg(fieldType);
     return QString();
 }
 
@@ -366,7 +367,7 @@ QString QDeclarativeOrganizerItemComment::fieldNameFromFieldType(int type)
     case QDeclarativeOrganizerItemComment::Comment:
         return QOrganizerItemComment::FieldComment;
     }
-    qWarning() << "invalid field type:" << type;
+    qmlInfo(0) << tr("invalid field type:") << type;
     return QString();
 }
 
@@ -377,7 +378,7 @@ QString QDeclarativeOrganizerItemDescription::fieldNameFromFieldType(int type)
     case QDeclarativeOrganizerItemDescription::Description:
         return QOrganizerItemDescription::FieldDescription;
     }
-    qWarning() << "invalid field type:" << type;
+    qmlInfo(0) << tr("invalid field type:") << type;
     return QString();
 }
 
@@ -388,7 +389,7 @@ QString QDeclarativeOrganizerItemDisplayLabel::fieldNameFromFieldType(int type)
     case QDeclarativeOrganizerItemDisplayLabel::Label:
         return QOrganizerItemDisplayLabel::FieldLabel;
     }
-    qWarning() << "invalid field type:" << type;
+    qmlInfo(0) << tr("invalid field type:") << type;
     return QString();
 }
 
@@ -399,7 +400,7 @@ QString QDeclarativeOrganizerItemGuid::fieldNameFromFieldType(int type)
     case QDeclarativeOrganizerItemGuid::Guid:
         return QOrganizerItemGuid::FieldGuid;
     }
-    qWarning() << "invalid field type:" << type;
+    qmlInfo(0) << tr("invalid field type:") << type;
     return QString();
 }
 
@@ -412,7 +413,7 @@ QString QDeclarativeOrganizerItemParent::fieldNameFromFieldType(int type)
     case QDeclarativeOrganizerItemParent::OriginalDate:
         return QOrganizerItemParent::FieldOriginalDate;
     }
-    qWarning() << "invalid field type:" << type;
+    qmlInfo(0) << tr("invalid field type:") << type;
     return QString();
 }
 
@@ -426,7 +427,7 @@ QString QDeclarativeOrganizerItemLocation::fieldNameFromFieldType(int type)
     case QDeclarativeOrganizerItemLocation::Label:
         return QOrganizerItemLocation::FieldLabel;
     }
-    qWarning() << "invalid field type:" << type;
+    qmlInfo(0) << tr("invalid field type:") << type;
     return QString();
 }
 
@@ -436,7 +437,7 @@ QString QDeclarativeOrganizerItemPriority::fieldNameFromFieldType(int type)
     case QDeclarativeOrganizerItemPriority::Priority:
         return QOrganizerItemPriority::FieldPriority;
     }
-    qWarning() << "invalid field type:" << type;
+    qmlInfo(0) << tr("invalid field type:") << type;
     return QString();
 }
 
@@ -452,7 +453,7 @@ QString QDeclarativeOrganizerItemRecurrence::fieldNameFromFieldType(int type)
     case QDeclarativeOrganizerItemRecurrence::ExceptionDates:
         return QOrganizerItemRecurrence::FieldExceptionDates;
     }
-    qWarning() << "invalid field type:" << type;
+    qmlInfo(0) << tr("invalid field type:") << type;
     return QString();
 }
 
@@ -467,7 +468,7 @@ QString QDeclarativeOrganizerItemReminder::fieldNameFromFieldType(int type)
     case QDeclarativeOrganizerItemReminder::RepetitionDelay:
         return QOrganizerItemReminder::FieldRepetitionDelay;
     }
-    qWarning() << "invalid field type:" << type;
+    qmlInfo(0) << tr("invalid field type:") << type;
     return QString();
 }
 
@@ -478,7 +479,7 @@ QString QDeclarativeOrganizerItemAudibleReminder::fieldNameFromFieldType(int typ
     case QDeclarativeOrganizerItemAudibleReminder::DataUrl:
         return QOrganizerItemAudibleReminder::FieldDataUrl;
     }
-    qWarning() << "invalid field type:" << type;
+    qmlInfo(0) << tr("invalid field type:") << type;
     return QString();
 }
 
@@ -492,7 +493,7 @@ QString QDeclarativeOrganizerItemVisualReminder::fieldNameFromFieldType(int type
     case QDeclarativeOrganizerItemVisualReminder::Message:
         return QOrganizerItemVisualReminder::FieldMessage;
     }
-    qWarning() << "invalid field type:" << type;
+    qmlInfo(0) << tr("invalid field type:") << type;
     return QString();
 }
 
@@ -509,7 +510,7 @@ QString QDeclarativeOrganizerItemEmailReminder::fieldNameFromFieldType(int type)
     case QDeclarativeOrganizerItemEmailReminder::Attachments:
         return QOrganizerItemEmailReminder::FieldAttachments;
     }
-    qWarning() << "invalid field type:" << type;
+    qmlInfo(0) << tr("invalid field type:") << type;
     return QString();
 }
 
@@ -523,7 +524,7 @@ QString QDeclarativeOrganizerItemTimestamp::fieldNameFromFieldType(int type)
     case QDeclarativeOrganizerItemTimestamp::Created:
         return QOrganizerItemTimestamp::FieldCreationTimestamp;
     }
-    qWarning() << "invalid field type:" << type;
+    qmlInfo(0) << tr("invalid field type:") << type;
     return QString();
 }
 
@@ -1089,7 +1090,7 @@ QString QDeclarativeOrganizerEventTime::fieldNameFromFieldType(int type)
     case QDeclarativeOrganizerEventTime::AllDay:
         return QOrganizerEventTime::FieldAllDay;
     }
-    qWarning() << "invalid field type:" << type;
+    qmlInfo(0) << tr("invalid field type:") << type;
     return QString();
 }
 
@@ -1099,7 +1100,7 @@ QString QDeclarativeOrganizerItemType::fieldNameFromFieldType(int type)
     case QDeclarativeOrganizerItemType::ItemType:
         return QOrganizerItemType::FieldType;
     }
-    qWarning() << "invalid field type:" << type;
+    qmlInfo(0) << tr("invalid field type:") << type;
     return QString();
 }
 
@@ -1110,7 +1111,7 @@ QString QDeclarativeOrganizerJournalTime::fieldNameFromFieldType(int type)
     case QDeclarativeOrganizerJournalTime::EntryDateTime:
         return QOrganizerJournalTime::FieldEntryDateTime;
     }
-    qWarning() << "invalid field type:" << type;
+    qmlInfo(0) << tr("invalid field type:") << type;
     return QString();
 }
 
@@ -1125,7 +1126,7 @@ QString QDeclarativeOrganizerTodoProgress::fieldNameFromFieldType(int type)
     case QDeclarativeOrganizerTodoProgress::FinishedDateTime:
         return QOrganizerTodoProgress::FieldFinishedDateTime;
     }
-    qWarning() << "invalid field type:" << type;
+    qmlInfo(0) << tr("invalid field type:") << type;
     return QString();
 }
 
@@ -1139,6 +1140,6 @@ QString QDeclarativeOrganizerTodoTime::fieldNameFromFieldType(int type)
     case QDeclarativeOrganizerTodoTime::DueDateTime:
         return QOrganizerTodoTime::FieldDueDateTime;
     }
-    qWarning() << "invalid field type:" << type;
+    qmlInfo(0) << tr("invalid field type:") << type;
     return QString();
 }

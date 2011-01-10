@@ -40,7 +40,7 @@
 ****************************************************************************/
 
 #include <qorganizeritemdetails.h>
-
+#include <QtDeclarative/qdeclarativeinfo.h>
 #include "qdeclarativeorganizermodel_p.h"
 #include "qorganizermanager.h"
 #include "qversitreader.h"
@@ -867,7 +867,7 @@ void QDeclarativeOrganizerModel::removeItems(const QList<QString>& ids)
 
     foreach (const QString& id, ids) {
         if (id.startsWith(QString("qtorganizer:occurrence"))) {
-            qWarning() << "Can't remove an occurrence item, please modify the parent item's recurrence rule instead!";
+            qmlInfo(this) << tr("Can't remove an occurrence item, please modify the parent item's recurrence rule instead!");
             continue;
         }
         QOrganizerItemId itemId = QOrganizerItemId::fromString(id);
@@ -996,7 +996,7 @@ QDeclarativeListProperty<QDeclarativeOrganizerItem> QDeclarativeOrganizerModel::
 QDeclarativeListProperty<QDeclarativeOrganizerItem> QDeclarativeOrganizerModel::occurrences()
 {
     //TODO:XXX
-    qWarning() << "OrganizerModel: occurrences is not currently supported.";
+    qmlInfo(this) << tr("OrganizerModel: occurrences is not currently supported.");
     return QDeclarativeListProperty<QDeclarativeOrganizerItem>();
 }
 
@@ -1084,7 +1084,7 @@ void QDeclarativeOrganizerModel::item_append(QDeclarativeListProperty<QDeclarati
 {
     Q_UNUSED(p);
     Q_UNUSED(item);
-    qWarning() << "OrganizerModel: appending items is not currently supported";
+    qmlInfo(0) << tr("OrganizerModel: appending items is not currently supported");
 }
 
 int  QDeclarativeOrganizerModel::item_count(QDeclarativeListProperty<QDeclarativeOrganizerItem> *p)
