@@ -218,12 +218,12 @@ void tst_QServiceManager_IPC::checkPublish()
     //- default value
     QRemoteServiceRegister::InstanceType type = uniqueEntry.instantiationType();
     QRemoteServiceRegister::InstanceType type2 = uniqueEntry2.instantiationType();
-    QVERIFY(type == QRemoteServiceRegister::InstanceType::PrivateInstance);
-    QVERIFY(type2 == QRemoteServiceRegister::InstanceType::PrivateInstance);
+    QVERIFY(type == QRemoteServiceRegister::PrivateInstance);
+    QVERIFY(type2 == QRemoteServiceRegister::PrivateInstance);
     //check setting the type
-    uniqueEntry2.setInstantiationType(QRemoteServiceRegister::InstanceType::GlobalInstance);
+    uniqueEntry2.setInstantiationType(QRemoteServiceRegister::GlobalInstance);
     type2 = uniqueEntry2.instantiationType();
-    QVERIFY(type2 == QRemoteServiceRegister::InstanceType::GlobalInstance);
+    QVERIFY(type2 == QRemoteServiceRegister::GlobalInstance);
 }
 
 QTEST_MAIN(tst_QServiceManager_IPC);
