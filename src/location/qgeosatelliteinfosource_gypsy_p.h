@@ -61,7 +61,7 @@
 #include <gconf/gconf-client.h>
 #include <QTimer>
 
-#define Q_LOCATION_GYPSY_DEBUG
+// #define Q_LOCATION_GYPSY_DEBUG
 
 QTM_BEGIN_NAMESPACE
 
