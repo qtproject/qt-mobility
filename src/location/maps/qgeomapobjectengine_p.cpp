@@ -42,6 +42,7 @@
 #include "qgeomapobjectengine_p.h"
 #include "qgeomaprouteobject.h"
 #include "qgeomapcircleobject.h"
+#include "qgeocoordinate_p.h"
 #include "projwrapper_p.h"
 
 #include <QTransform>
@@ -212,11 +213,6 @@ static QPolygonF approximateCircle(QGraphicsEllipseItem *elItem,
 
     const double dth = twopi / detail;
 
-    double lastX = 0;
-
-    bool wrap = false;
-    double wrapEnd = 0.0;
-
     // TODO: make the semantics here the same as in normal graphicsview
     double startAngle = elItem->startAngle();
     startAngle /= 16.0;
@@ -245,25 +241,13 @@ static QPolygonF approximateCircle(QGraphicsEllipseItem *elItem,
 
         const double r = sqrt(asq*costh*costh + bsq*sinth*sinth);
 
-        QGeoCoordinate coord = center.atDistanceAndAzimuth(r, phiDeg);
-
-        double x = coord.longitude() * 3600.0;
-
-        if (wrap && phi > wrapEnd)
-            wrap = false;
-        if (lastX > 0.0 && x < 0.0) {
-            wrapEnd = Pi - phi;
-            wrap = true;
-        }
-
-        if (wrap)
-            x += 360.0 * 3600.0;
-
-        const double y = coord.latitude() * 3600.0;
+        double x, y;
+        QGeoCoordinatePrivate::atDistanceAndAzimuth(center, r, phiDeg,
+                                                    &x, &y);
+        x *= 3600.0;
+        y *= 3600.0;
 
         secPoly << QPointF(x,y);
-
-        lastX = x;
     }
 
     if (drawToCenter)
