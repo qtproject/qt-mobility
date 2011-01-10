@@ -86,22 +86,11 @@ void maemo6magnetometer::slotFrameAvailable(const QVector<MagneticField>&   fram
 }
 
 bool maemo6magnetometer::doConnect(){
-    if (m_bufferSize==1){
-        QObject::disconnect(m_sensorInterface, SIGNAL(frameAvailable(const QVector<MagneticField>& )));
-        if (!(QObject::connect(m_sensorInterface, SIGNAL(dataAvailable(const MagneticField&)),
-                               this, SLOT(slotDataAvailable(const MagneticField&))))){
-            qWarning() << "Unable to connect "<< sensorName();
-            return false;
-        }
+    if (m_bufferSize==1?
+                QObject::connect(m_sensorInterface, SIGNAL(dataAvailable(const MagneticField&)), this, SLOT(slotDataAvailable(const MagneticField&))):
+                QObject::connect(m_sensorInterface, SIGNAL(frameAvailable(const QVector<MagneticField>& )),this, SLOT(slotFrameAvailable(const QVector<MagneticField>& ))))
         return true;
-    }
-    QObject::disconnect(m_sensorInterface, SIGNAL(slotDataAvailable(const MagneticField&)));
-    if (!(QObject::connect(m_sensorInterface,SIGNAL(frameAvailable(const QVector<MagneticField>& )),
-                           this, SLOT(slotFrameAvailable(const QVector<MagneticField>& ))))){
-        qWarning() << "Unable to connect "<< sensorName();
-        return false;
-    }
-    return true;
+    return false;
 }
 
 const QString maemo6magnetometer::sensorName(){

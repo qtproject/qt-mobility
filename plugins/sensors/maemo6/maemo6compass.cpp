@@ -69,7 +69,6 @@ void maemo6compass::slotDataAvailable(const Compass& data)
 bool maemo6compass::doConnect(){
     if (!(QObject::connect(m_sensorInterface, SIGNAL(dataAvailable(const Compass&)),
                            this, SLOT(slotDataAvailable(const Compass&))))){
-        qWarning() << "Unable to connect "<< sensorName();
         return false;
     }
     return true;

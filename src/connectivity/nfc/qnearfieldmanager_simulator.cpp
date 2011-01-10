@@ -41,11 +41,14 @@
 
 #include "qnearfieldmanager_simulator_p.h"
 #include "qnearfieldmanager.h"
+#include "qnearfieldtarget_p.h"
 #include "qnearfieldtagtype1.h"
 #include "qndefmessage.h"
 
 #include <mobilityconnection_p.h>
 #include <QtGui/private/qsimulatordata_p.h>
+
+#include <QtCore/QCoreApplication>
 
 QTM_BEGIN_NAMESPACE
 
@@ -57,13 +60,14 @@ class TagType1 : public QNearFieldTagType1
 {
 public:
     TagType1(const QByteArray &uid, QObject *parent);
-    virtual ~TagType1();
+    ~TagType1();
 
     QByteArray uid() const;
 
     AccessMethods accessMethods() const;
 
-    QByteArray sendCommand(const QByteArray &command);
+    RequestId sendCommand(const QByteArray &command);
+    bool waitForRequestCompleted(const RequestId &id, int msecs = 5000);
 
 private:
     QByteArray m_uid;
@@ -88,27 +92,45 @@ QNearFieldTarget::AccessMethods TagType1::accessMethods() const
     return NdefAccess | TagTypeSpecificAccess;
 }
 
-QByteArray TagType1::sendCommand(const QByteArray &command)
+QNearFieldTarget::RequestId TagType1::sendCommand(const QByteArray &command)
 {
-    if (command.isEmpty())
-        return QByteArray();
-
     quint16 crc = qNfcChecksum(command.constData(), command.length());
+
+    RequestId id(new RequestIdPrivate);
 
     MobilityConnection *connection = MobilityConnection::instance();
     QByteArray response =
         RemoteMetacall<QByteArray>::call(connection->sendSocket(), WaitSync, "nfcSendCommand",
                                          command + char(crc & 0xff) + char(crc >> 8));
 
-    if (response.isEmpty())
-        return QByteArray();
+    if (response.isEmpty()) {
+        QMetaObject::invokeMethod(this, "error", Qt::QueuedConnection,
+                                  Q_ARG(QNearFieldTarget::Error, NoResponseError),
+                                  Q_ARG(QNearFieldTarget::RequestId, id));
+        return id;
+    }
 
     // check crc
-    if (qNfcChecksum(response.constData(), response.length()) != 0)
-        return QByteArray();
+    if (qNfcChecksum(response.constData(), response.length()) != 0) {
+        QMetaObject::invokeMethod(this, "error", Qt::QueuedConnection,
+                                  Q_ARG(QNearFieldTarget::Error, ChecksumMismatchError),
+                                  Q_ARG(QNearFieldTarget::RequestId, id));
+        return id;
+    }
 
     response.chop(2);
-    return response;
+
+    QMetaObject::invokeMethod(this, "handleResponse", Qt::QueuedConnection,
+                              Q_ARG(QNearFieldTarget::RequestId, id), Q_ARG(QByteArray, response));
+
+    return id;
+}
+
+bool TagType1::waitForRequestCompleted(const RequestId &id, int msecs)
+{
+    QCoreApplication::sendPostedEvents(this, QEvent::MetaCall);
+
+    return QNearFieldTagType1::waitForRequestCompleted(id, msecs);
 }
 
 class NfcConnection : public QObject

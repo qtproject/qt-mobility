@@ -57,13 +57,9 @@ void maemo6accelerometer::slotDataAvailable(const XYZ& data)
 {
     // Convert from milli-Gs to meters per second per second
     // Using 1 G = 9.80665 m/s^2
-    qreal ax = -data.x() * GRAVITY_EARTH_THOUSANDTH;
-    qreal ay = -data.y() * GRAVITY_EARTH_THOUSANDTH;
-    qreal az = -data.z() * GRAVITY_EARTH_THOUSANDTH;
-
-    m_reading.setX(ax);
-    m_reading.setY(ay);
-    m_reading.setZ(az);
+    m_reading.setX(-data.x() * GRAVITY_EARTH_THOUSANDTH);
+    m_reading.setY(-data.y() * GRAVITY_EARTH_THOUSANDTH);
+    m_reading.setZ(-data.z() * GRAVITY_EARTH_THOUSANDTH);
     m_reading.setTimestamp(data.XYZData().timestamp_);
     newReadingAvailable();
 }
@@ -76,22 +72,11 @@ void maemo6accelerometer::slotFrameAvailable(const QVector<XYZ>&  frame)
 }
 
 bool maemo6accelerometer::doConnect(){
-    if (m_bufferSize==1){
-        QObject::disconnect(m_sensorInterface, SIGNAL(frameAvailable(const QVector<XYZ>& )));
-        if (!(QObject::connect(m_sensorInterface, SIGNAL(dataAvailable(const XYZ&)),
-                               this, SLOT(slotDataAvailable(const XYZ&))))){
-            qWarning() << "Unable to connect "<< sensorName();
-            return false;
-        }
+    if (m_bufferSize==1?
+                QObject::connect(m_sensorInterface, SIGNAL(dataAvailable(const XYZ&)), this, SLOT(slotDataAvailable(const XYZ&))):
+                QObject::connect(m_sensorInterface, SIGNAL(frameAvailable(const QVector<XYZ>& )),this, SLOT(slotFrameAvailable(const QVector<XYZ>& ))))
         return true;
-    }
-    QObject::disconnect(m_sensorInterface, SIGNAL(dataAvailable(const XYZ&)));
-    if (!(QObject::connect(m_sensorInterface,SIGNAL(frameAvailable(const QVector<XYZ>& )),
-                           this, SLOT(slotFrameAvailable(const QVector<XYZ>& )))));{
-        qWarning() << "Unable to connect "<< sensorName();
-        return false;
-    }
-    return true;
+    return false;
 }
 
 
