@@ -47,6 +47,7 @@ PkgConfigBR:
     - gypsy
     - libpulse
     - libmkcal
+    - libmeegotouch
     - qttracker
     - qmfclient
     - sensord
