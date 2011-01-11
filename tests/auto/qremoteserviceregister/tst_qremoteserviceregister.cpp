@@ -68,7 +68,7 @@ Q_DECLARE_METATYPE(QVariant);
 Q_DECLARE_METATYPE(QList<QString>);
 
 
-class tst_QServiceManager_IPC: public QObject
+class tst_QRemoteServiceRegister: public QObject
 {
     Q_OBJECT
 public:
@@ -97,7 +97,7 @@ bool mySecurityFilterFunction(const void *p)
     return false;
 }
 
-void tst_QServiceManager_IPC::initTestCase()
+void tst_QRemoteServiceRegister::initTestCase()
 {
     qRegisterMetaType<QServiceFilter>("QServiceFilter");
     qRegisterMetaTypeStreamOperators<QServiceFilter>("QServiceFilter");
@@ -153,7 +153,7 @@ void tst_QServiceManager_IPC::initTestCase()
     QVERIFY(valid == true);
 }
 
-void tst_QServiceManager_IPC::cleanupTestCase()
+void tst_QRemoteServiceRegister::cleanupTestCase()
 {
 #ifndef QT_NO_DBUS
     const QString &file = QDir::homePath() + "/.local/share/dbus-1/services/" +
@@ -167,7 +167,7 @@ void tst_QServiceManager_IPC::cleanupTestCase()
     delete serviceRegister;
 }
 
-void tst_QServiceManager_IPC::checkCreateEntryWithEmptyServiceName()
+void tst_QRemoteServiceRegister::checkCreateEntryWithEmptyServiceName()
 {
     QRemoteServiceRegister::Entry emptyservicename = 
                 serviceRegister->createEntry<QRemoteServiceRegisterService>(
@@ -177,7 +177,7 @@ void tst_QServiceManager_IPC::checkCreateEntryWithEmptyServiceName()
     QVERIFY(valid == false);
 }
 
-void tst_QServiceManager_IPC::checkOperators()
+void tst_QRemoteServiceRegister::checkOperators()
 {
     //== operator
     bool equal = (uniqueEntry == uniqueEntry2 ? true : false);
@@ -209,7 +209,7 @@ void tst_QServiceManager_IPC::checkOperators()
 #endif
 }
 
-void tst_QServiceManager_IPC::checkPublish()
+void tst_QRemoteServiceRegister::checkPublish()
 {
     //publish the registered services
     serviceRegister->publishEntries("qt_sfw_example_rsr_unittest");
@@ -226,5 +226,5 @@ void tst_QServiceManager_IPC::checkPublish()
     QVERIFY(type2 == QRemoteServiceRegister::GlobalInstance);
 }
 
-QTEST_MAIN(tst_QServiceManager_IPC);
+QTEST_MAIN(tst_QRemoteServiceRegister);
 #include "tst_qremoteserviceregister.moc"
