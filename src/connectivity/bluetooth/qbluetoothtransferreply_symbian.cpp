@@ -43,8 +43,8 @@
 #include "qbluetoothtransferreply_symbian_p.h"
 #include "utils_symbian_p.h"
 #include "qbluetoothservicediscoveryagent.h"
-#include "QBluetoothServiceInfo.h"
-#include "QBluetoothUuid.h"
+#include "qbluetoothserviceinfo.h"
+#include "qbluetoothuuid.h"
 
 #include <QDebug>
 #include <QFile>
