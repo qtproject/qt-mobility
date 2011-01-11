@@ -176,6 +176,7 @@ void tst_QLlcpServer::newConnection()
         QTRY_VERIFY(!bytesWrittenSpy.isEmpty());
         written += bytesWrittenSpy.first().at(0).value<qint64>();
         }
+    QVERIFY(written == echo.length());
     //Now data has been sent,check the if existing error
     QVERIFY(errorSpy.isEmpty());
 
@@ -267,6 +268,7 @@ void tst_QLlcpServer::newConnection_wait()
         QTRY_VERIFY(!bytesWrittenSpy.isEmpty());
         written += bytesWrittenSpy.first().at(0).value<qint64>();
         }
+    QVERIFY(written == echo.length());
     //Now data has been sent,check the if existing error
     if (!errorSpy.isEmpty())
         {
@@ -320,7 +322,7 @@ void tst_QLlcpServer::api_coverage()
     QByteArray datagram;
     datagram.resize(size);
     qint64 readSize = socket->readDatagram(datagram.data(), datagram.size());
-    QVERIFY(readSize != -1);
+    QVERIFY(readSize == size);
 
     qDebug()<<"Server Uri = " << server.serviceUri();
     QCOMPARE(uri,server.serviceUri());

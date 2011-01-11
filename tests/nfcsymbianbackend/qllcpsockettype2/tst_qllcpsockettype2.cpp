@@ -80,7 +80,6 @@ private Q_SLOTS:
 
     // nagetive testcases
     void negTestCase1();
-    void negTestCase1_data();
     void negTestCase2();
     void negTestCase3();
 
@@ -105,15 +104,12 @@ void tst_qllcpsockettype2::initTestCase()
 
     QNfcTestUtil::ShowMessage(message);
     QTRY_VERIFY(!targetDetectedSpy.isEmpty());
-    if(targetDetectedSpy.count()!=1)
-        {
-        qDebug()<<"!!Several LLCP target found!!";
-        }
+
     m_target = targetDetectedSpy.at(targetDetectedSpy.count() - 1).at(0).value<QNearFieldTarget*>();
-    m_target->uid();
-    m_target->type();
-    QVERIFY(m_target!=NULL);
+    QVERIFY(m_target != NULL);
     QVERIFY(m_target->accessMethods() & QNearFieldTarget::LlcpAccess);
+    QVERIFY(m_target->uid() == QByteArray());
+    QVERIFY(m_target->type() == QNearFieldTarget::AnyTarget);
     qDebug()<<"tst_qllcpsockettype2::initTestCase()   End";
 }
 
@@ -156,14 +152,14 @@ void tst_qllcpsockettype2::echo()
 
     socket.connectToService(m_target, uri);
 
-    // cocoverage add: WaitForBytesWritten will fail when connecting
+    // coverage add: WaitForBytesWritten will fail when connecting
     const int secs = 1 * 1000;
     bool waitRet = socket.waitForBytesWritten(secs);
     QVERIFY( waitRet == false);
 
     QTRY_VERIFY(!connectedSpy.isEmpty());
 
-    // cocoverage add: connect to Service again when already connected will cause fail
+    // coverage add: connect to Service again when already connected will cause fail
     socket.connectToService(m_target, uri);
     QTRY_VERIFY(!errorSpy.isEmpty());
     errorSpy.clear();
@@ -183,7 +179,7 @@ void tst_qllcpsockettype2::echo()
     out << (quint16)(block.size() - sizeof(quint16));
 
     qint64 val = socket.write(block);
-    QVERIFY( val != -1);
+    QVERIFY( val == 0);
 
     QTRY_VERIFY(!bytesWrittenSpy.isEmpty());
     qint64 written = bytesWrittenSpy.first().at(0).value<qint64>();
@@ -195,7 +191,7 @@ void tst_qllcpsockettype2::echo()
         QTRY_VERIFY(!bytesWrittenSpy.isEmpty());
         written += bytesWrittenSpy.first().at(0).value<qint64>();
         }
-
+    QVERIFY(written == echo.length());
     //Get the echoed data from server
     QTRY_VERIFY(!readyReadSpy.isEmpty());
     quint16 blockSize = 0;
@@ -301,7 +297,7 @@ void tst_qllcpsockettype2::echo_wait()
         QTRY_VERIFY(!bytesWrittenSpy.isEmpty());
         written += bytesWrittenSpy.first().at(0).value<qint64>();
         }
-
+    QVERIFY(written == echo.length());
     //Get the echoed data from server
     quint16 blockSize = 0;
     QDataStream in(&socket);
@@ -372,10 +368,11 @@ void tst_qllcpsockettype2::api_coverage()
     QByteArray array;
     array.append(message);
     qint64 ret = socket.writeDatagram(array.constData(),array.size());
-    QVERIFY( ret != -1);
+    QVERIFY( ret == 0);
 
     QTRY_VERIFY(bytesWrittenSpy.count() == 1);
-
+    qint64 w = bytesWrittenSpy.first().at(0).value<qint64>();
+    QVERIFY(w == array.size());
     stateChangedSpy.clear();
     socket.disconnectFromService();
     QVERIFY(stateChangedSpy.count() == 1);
@@ -503,8 +500,8 @@ void tst_qllcpsockettype2::multipleWrite()
     QVERIFY(ret);
     }
 /*!
- Description:  negative test - connect to an invalid service
- TODO: this test can not be realized,since the port num is hardcode at this time
+ Description:  negative test - over sender DoCancel() method
+
 */
 void tst_qllcpsockettype2::negTestCase1()
 {
@@ -528,16 +525,6 @@ void tst_qllcpsockettype2::negTestCase1()
     qint64 ret = socket.writeDatagram(block.constData(), block.size());
     QVERIFY( ret != -1);
     //cover sender DoCancel() method
-}
-
-/*!
- invalid service name pool
-*/
-void tst_qllcpsockettype2::negTestCase1_data()
-{
-    QTest::addColumn<QString>("URI");
-    QString invalidService = "InvalidURI";
-    QTest::newRow("row1") << invalidService;
 }
 
 /*!
