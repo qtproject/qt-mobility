@@ -54,7 +54,7 @@
 
 class MBatteryInfoObserver
     {
-public:    
+public:
     virtual void changedBatteryStatus() = 0;
     virtual void changedChargingState() = 0;
     virtual void changedChargerType() = 0;
@@ -64,11 +64,11 @@ public:
 
 class MBatteryHWRMObserver
     {
-public : 
+public :
     virtual void changedCurrentFlow( int ) = 0;
     };
 
-class CBatteryCommonInfo : public CBase , public MCommonHandleObserver 
+class CBatteryCommonInfo : public CBase , public MCommonHandleObserver
     {
 public:
     CBatteryCommonInfo();
@@ -91,8 +91,8 @@ public : //Get Functions
     TInt Voltage() const;
     TInt RemainingCapacityBars() const;
     TInt BatteryStatus() const;
-    
-protected:  
+
+protected:
     void CommanSignalHandler( const TUid aCategory, const TUint aKey );//from MCommonHandleObserver
 
 private:
@@ -102,22 +102,22 @@ private:
     CPubSubKeyHandler *iCapacityBars;
 
 
-    
+
     TInt iRemainingCapacityBars;
-    
+
     TBool iUsbConnected;
     TBool iPreviousUsbConnected;
-    
+
     TBool iChargingON;
-    
-    TInt iBatteryStatData;  
+
+    TInt iBatteryStatData;
 
     QList<MBatteryInfoObserver *> iObservers;
     };
 #ifdef SYMBIAN_3_PLATFORM
-class CBatteryHWRM : public CBase , public MHWRMBatteryPowerObserver 
+class CBatteryHWRM : public CBase , public MHWRMBatteryPowerObserver
 #else
-class CBatteryHWRM : public CBase 
+class CBatteryHWRM : public CBase
 #endif
     {
 private :

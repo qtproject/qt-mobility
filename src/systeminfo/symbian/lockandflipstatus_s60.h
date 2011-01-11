@@ -74,7 +74,7 @@ protected:  //from CActive
 
 private:
     void startMonitoring();
-    
+
 
 private:
     RProperty m_keylockProperty;

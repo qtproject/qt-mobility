@@ -53,18 +53,18 @@ CBatteryCommonInfo::CBatteryCommonInfo() : iBatteryStatus(NULL), iBatteryChargin
         TInt chargingState = iBatteryChargingStatus->GetValue();
         switch(chargingState)
             {
-            case EChargingStatusCharging: 
+            case EChargingStatusCharging:
             case EChargingStatusAlmostComplete:
             case EChargingStatusChargingContinued: iChargingON = ETrue;
             break ;
             case EChargingStatusNotConnected:
             case EChargingStatusChargingComplete:
-            case EChargingStatusNotCharging: 
+            case EChargingStatusNotCharging:
             default : iChargingON = EFalse;
             break;
             }
 
-        if ( iChargingON ) 
+        if ( iChargingON )
             {
             RUsb usbMan;
             if ( KErrNone == usbMan.Connect() )
@@ -72,8 +72,8 @@ CBatteryCommonInfo::CBatteryCommonInfo() : iBatteryStatus(NULL), iBatteryChargin
                 TUsbDeviceState deviceState (EUsbDeviceStateUndefined );
                 usbMan.GetDeviceState(deviceState);
                 if ( EUsbDeviceStateConfigured == deviceState )
-                    iUsbConnected = ETrue;           
-                }            
+                    iUsbConnected = ETrue;
+                }
             }
         }
     if(iBatteryStatus)
@@ -123,10 +123,10 @@ void CBatteryCommonInfo::ChargerType(bool& aChargerState, bool& aUsbState) const
 
 #ifdef SYMBIAN_3_PLATFORM
 TBool CBatteryCommonInfo::BatteryCapacity(CHWRMPower::TBatteryConsumptionData& aBatteryData) const
-    {   
+    {
     CHWRMPower* hwrmPower = NULL;
     TRAPD( err, hwrmPower = CHWRMPower::NewL() );
-    if( KErrNone == err ) 
+    if( KErrNone == err )
         {
         TRequestStatus aStatus;
         hwrmPower->GetBatteryInfo( aStatus, aBatteryData );
@@ -134,12 +134,12 @@ TBool CBatteryCommonInfo::BatteryCapacity(CHWRMPower::TBatteryConsumptionData& a
         delete hwrmPower;
         return ETrue;
         }
-    return EFalse;    
+    return EFalse;
     }
 #endif
 
-TInt CBatteryCommonInfo::NominalCapacity() const 
-    { 
+TInt CBatteryCommonInfo::NominalCapacity() const
+    {
     #ifdef SYMBIAN_3_PLATFORM
     CHWRMPower::TBatteryConsumptionData batterydata;
     if ( BatteryCapacity(batterydata) )
@@ -147,7 +147,7 @@ TInt CBatteryCommonInfo::NominalCapacity() const
     #endif
     return -1;
     }
-TInt CBatteryCommonInfo::RemainingCapacityPercent() const 
+TInt CBatteryCommonInfo::RemainingCapacityPercent() const
     {
     #ifdef SYMBIAN_3_PLATFORM
     CHWRMPower::TBatteryConsumptionData batterydata;
@@ -156,7 +156,7 @@ TInt CBatteryCommonInfo::RemainingCapacityPercent() const
     #endif
     return -1;
     }
-TInt CBatteryCommonInfo::RemainingCapacity() const 
+TInt CBatteryCommonInfo::RemainingCapacity() const
     {
     #ifdef SYMBIAN_3_PLATFORM
     CHWRMPower::TBatteryConsumptionData batterydata;
@@ -165,7 +165,7 @@ TInt CBatteryCommonInfo::RemainingCapacity() const
     #endif
     return -1;
     }
-TInt CBatteryCommonInfo::Voltage() const 
+TInt CBatteryCommonInfo::Voltage() const
     {
     #ifdef SYMBIAN_3_PLATFORM
     CHWRMPower::TBatteryVoltageData batteryVoltageData;
@@ -183,11 +183,11 @@ TInt CBatteryCommonInfo::Voltage() const
     return -1;
     }
 
-TInt CBatteryCommonInfo::RemainingCapacityBars() const 
-    { 
+TInt CBatteryCommonInfo::RemainingCapacityBars() const
+    {
     return iRemainingCapacityBars;
     }
-TInt CBatteryCommonInfo::BatteryStatus() const 
+TInt CBatteryCommonInfo::BatteryStatus() const
     {
     return iBatteryStatData;
     }
@@ -195,15 +195,15 @@ TInt CBatteryCommonInfo::BatteryStatus() const
 void CBatteryCommonInfo::CommanSignalHandler( const TUid aCategory, const TUint aKey )
     {
     #ifdef SYMBIAN_3_PLATFORM
-    if ( KPSUidHWRMPowerState == aCategory ) 
+    if ( KPSUidHWRMPowerState == aCategory )
         {
-        switch ( aKey ) 
+        switch ( aKey )
             {
             case KHWRMBatteryStatus :
                 if (iBatteryStatus)
                     {
                     iBatteryStatData = iBatteryStatus->GetValue();
-                    foreach (MBatteryInfoObserver *observer, iObservers) 
+                    foreach (MBatteryInfoObserver *observer, iObservers)
                         {
                         observer->changedBatteryStatus();
                         }
@@ -216,13 +216,13 @@ void CBatteryCommonInfo::CommanSignalHandler( const TUid aCategory, const TUint 
                     TInt chargeStatus = iBatteryChargingStatus->GetValue();
                     switch(chargeStatus)
                         {
-                        case EChargingStatusCharging: 
+                        case EChargingStatusCharging:
                         case EChargingStatusAlmostComplete:
                         case EChargingStatusChargingContinued: iChargingON = ETrue;
                         break ;
                         case EChargingStatusNotConnected:
                         case EChargingStatusChargingComplete:
-                        case EChargingStatusNotCharging: 
+                        case EChargingStatusNotCharging:
                         default : iChargingON = EFalse;
                         break;
                         }
@@ -236,9 +236,9 @@ void CBatteryCommonInfo::CommanSignalHandler( const TUid aCategory, const TUint 
                             iUsbConnected = ETrue;
                         else
                             iUsbConnected =  EFalse;
-                        } 
+                        }
 
-                    foreach (MBatteryInfoObserver *observer, iObservers) 
+                    foreach (MBatteryInfoObserver *observer, iObservers)
                         {
                         observer->changedChargingState();
                         observer->changedChargerType();
@@ -249,9 +249,9 @@ void CBatteryCommonInfo::CommanSignalHandler( const TUid aCategory, const TUint 
                 if (iCapacityBars)
                     {
                     iRemainingCapacityBars = iCapacityBars->GetValue();
-                    foreach (MBatteryInfoObserver *observer, iObservers) 
+                    foreach (MBatteryInfoObserver *observer, iObservers)
                         {
-                        observer->changedRemainingCapacityBars();   
+                        observer->changedRemainingCapacityBars();
                         }
                     }
                 break;
@@ -263,10 +263,10 @@ void CBatteryCommonInfo::CommanSignalHandler( const TUid aCategory, const TUint 
 
 CBatteryHWRM::CBatteryHWRM() : iObserver(NULL),iAverageCurrent(-1),iPowerReportingON(EFalse)
     {
-    #ifdef SYMBIAN_3_PLATFORM   
+    #ifdef SYMBIAN_3_PLATFORM
     iHwrmPower = NULL;
     TRAPD(err, iHwrmPower=CHWRMPower::NewL());
-    if ( KErrNone == err ) 
+    if ( KErrNone == err )
         {
         iHwrmPower->SetPowerReportObserver(this);
         }
@@ -294,16 +294,16 @@ CBatteryHWRM::~CBatteryHWRM()
 #ifdef SYMBIAN_3_PLATFORM
 void CBatteryHWRM::PowerMeasurement(TInt aErr, CHWRMPower::TBatteryPowerMeasurementData& aMeasurement)
     {
-    if ( KErrNone == aErr) 
-        { 
-        if ( iAverageCurrent != aMeasurement.iAverageCurrent ) 
+    if ( KErrNone == aErr)
+        {
+        if ( iAverageCurrent != aMeasurement.iAverageCurrent )
             {
             //currentFlowChanged SIGNAL
             iAverageCurrent = aMeasurement.iAverageCurrent;
             iObserver->changedCurrentFlow(iAverageCurrent);
             }
         }
-    else if(iPowerReportingON) 
+    else if(iPowerReportingON)
         StartCurrentFlowMeasurement();
     }
 #endif
@@ -318,7 +318,7 @@ TInt CBatteryHWRM::StartCurrentFlowMeasurement()
     TRequestStatus status;
     iPowerReportingON = ETrue;
     #ifdef SYMBIAN_3_PLATFORM
-    if ( iHwrmPower ) 
+    if ( iHwrmPower )
         {
         iHwrmPower->StartAveragePowerReporting(status, 1);
         User::WaitForRequest(status);
@@ -331,7 +331,7 @@ TInt CBatteryHWRM::StartCurrentFlowMeasurement()
 TInt CBatteryHWRM::StartMeasurementAndSetObserver(MBatteryHWRMObserver* aObserver)
     {
     TInt result = StartCurrentFlowMeasurement ();
-    if ( 0 == result ) 
+    if ( 0 == result )
         iObserver = aObserver;
     return result;
     }

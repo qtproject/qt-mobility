@@ -47,7 +47,7 @@
 
 class MCommonHandleObserver
     {
-public : 
+public :
     virtual void CommanSignalHandler( const TUid aCategory, const TUint aKey ) = 0;
     };
 
@@ -71,7 +71,7 @@ protected:  //from CActive
 
 private:
 
-    
+
     const TInt iKey;
     const TUid iCategory;
     RProperty iProperty;
@@ -80,7 +80,7 @@ private:
 
 
 protected:
-    MCommonHandleObserver & iObserver;    
+    MCommonHandleObserver & iObserver;
     };
 
 

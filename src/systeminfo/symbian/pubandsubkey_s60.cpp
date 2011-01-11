@@ -51,12 +51,12 @@ CPubSubKeyHandler* CPubSubKeyHandler::New( const TUid aCategory, const TUint aKe
 CPubSubKeyHandler::CPubSubKeyHandler(const TUid aCategory, const TUint aKey, MCommonHandleObserver& aObserver) : CActive(EPriorityStandard) , iKey(aKey), iCategory(aCategory), iValue(-1), iObserver(aObserver)
     {
     TInt err = iProperty.Attach(aCategory, aKey);
-    if ( KErrNone == err ) 
-        { 
+    if ( KErrNone == err )
+        {
         iProperty.Get(iValue);
         CActiveScheduler::Add(this);
         StartMonitoring();
-        }   
+        }
     }
 
 CPubSubKeyHandler::~CPubSubKeyHandler()
@@ -72,7 +72,7 @@ void CPubSubKeyHandler::DoCancel()
 
 void CPubSubKeyHandler::RunL()
     {
-    iProperty.Get(iValue);  
+    iProperty.Get(iValue);
     iObserver.CommanSignalHandler(iCategory,iKey);
     StartMonitoring();
     }

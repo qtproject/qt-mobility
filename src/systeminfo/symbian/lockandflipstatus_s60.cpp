@@ -84,7 +84,7 @@ void CKeylockStatus::RunL()
     m_currentStatus = (TAknKeyguardStatus)status;
     foreach (MKeylockStatusObserver *observer, m_observers)
         observer->keylockStatusChanged(m_currentStatus);
-    
+
     startMonitoring();
 }
 
@@ -122,7 +122,7 @@ void CFlipStatus::ConstructL()
                 #endif
                 CleanupStack::PopAndDestroy(repository);
             )
-    if (flipKbType) 
+    if (flipKbType)
         m_filpKeyBoard = 1;
     else
         m_filpKeyBoard = 0;
@@ -154,10 +154,10 @@ void CFlipStatus::RunL()
     int status = EPSHWRMGripStatusUninitialized;
     m_FlipProperty.Get(status);
     m_flipStatus = (EPSHWRMGripStatus)status;
-    
+
     foreach (MFlipStatusObserver *observer, m_observers)
         observer->flipStatusChanged(m_flipStatus , m_filpKeyBoard);
-    
+
     startMonitoring();
 }
 
