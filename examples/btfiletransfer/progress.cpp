@@ -70,12 +70,12 @@ void Progress::setStatus(QString title, QString filename) {
 void Progress::finished(QBluetoothTransferReply *reply){
     if(reply->error() != QBluetoothTransferReply::NoError){
         ui->progressBar->setDisabled(true);
-        ui->statusLabel->setText("Failed: " + reply->errorString());
+        ui->statusLabel->setText(tr("Failed: %1").arg(reply->errorString()));
     }
     else {
-        ui->statusLabel->setText("Transfer complete");
+        ui->statusLabel->setText(tr("Transfer complete"));
     }
-    ui->cancelButton->setText("Dismiss");
+    ui->cancelButton->setText(tr("Dismiss"));
 }
 
 void Progress::uploadProgress(qint64 bytesSent, qint64 bytesTotal)
@@ -86,6 +86,9 @@ void Progress::uploadProgress(qint64 bytesSent, qint64 bytesTotal)
 
     ui->progressBar->setMaximum(bytesTotal);
     ui->progressBar->setValue(bytesSent);
-    if(bytesSent && bytesTotal)
-        ui->statusLabel->setText(QString("Transfering...ETA: %1s").arg(((bytesTotal-bytesSent)/(bytesSent/start.elapsed()))/1000));
+    if (bytesSent && bytesTotal) {
+        ui->statusLabel->setText(tr("Transferring...ETA: %1s")
+                .arg(((bytesTotal-bytesSent)/(bytesSent/start.elapsed()))/1000));
+    }
 }
+

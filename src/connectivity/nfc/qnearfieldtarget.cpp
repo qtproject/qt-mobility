@@ -72,10 +72,6 @@ QTM_BEGIN_NAMESPACE
     stored NDEF message, ndefMessages() and setNdefMessages() functions can be used to get and set
     the NDEF message.
 
-    If the target supports ApduAccess, sendApduCommand() can be used to send a single APDU command
-    to the target and retrieve the response.  sendApduCommands() can be used to send
-    multiple APDU commands to the target and retrieve all of the responses.
-
     If the target supports TagTypeSpecificAccess, sendCommand() can be used to send a single
     proprietary command to the target and retrieve the response.  sendCommands() can be used to
     send multiple proprietary commands to the target and retrieve all of the responses.
@@ -106,8 +102,6 @@ QTM_BEGIN_NAMESPACE
 
     \value NdefAccess               The target supports NDEF records using ndefMessages() and
                                     setNdefMessages().
-    \value ApduAccess               The target supports APDU access using sendApduCommand() and
-                                    sendApduCommands().
     \value TagTypeSpecificAccess    The target supports sending tag type specific commands using
                                     sendCommand() and sendCommands().
     \value LlcpAccess               The target supports peer-to-peer LLCP communication.
@@ -155,7 +149,7 @@ QTM_BEGIN_NAMESPACE
 /*!
     \fn void QNearFieldTarget::ndefMessagesWritten()
 
-    This signal is emitted when NDEF messages have been sucessfully written to the target.
+    This signal is emitted when NDEF messages have been successfully written to the target.
 
     \sa writeNdefMessages()
 */
@@ -169,9 +163,10 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn void QNearFieldTarget::error(QNearFieldTarget::Error error)
+    \fn void QNearFieldTarget::error(QNearFieldTarget::Error error, const QNearFieldTarget::RequestId &id)
 
-    This signal is emitted when an error occurs. The \a error parameter describes the error.
+    This signal is emitted when an error occurs while processing request \a id. The \a error
+    parameter describes the error.
 */
 
 /*!
@@ -306,73 +301,69 @@ bool QNearFieldTarget::hasNdefMessage()
 */
 void QNearFieldTarget::readNdefMessages()
 {
-    emit error(UnsupportedError);
+    emit error(UnsupportedError, RequestId());
 }
 
 /*!
     Writes the NDEF messages in \a messages to the target. The ndefMessagesWritten() signal will be
-    emitted when the write operation completes sucessfully; otherwise the error() signal is
+    emitted when the write operation completes successfully; otherwise the error() signal is
     emitted.
 */
 void QNearFieldTarget::writeNdefMessages(const QList<QNdefMessage> &messages)
 {
     Q_UNUSED(messages);
 
-    emit error(UnsupportedError);
+    emit error(UnsupportedError, RequestId());
 }
 
 /*!
-    Sends the APDU \a command to the near field target. The apduCommandCompleted() signal will be
-    emitted if the command completes sucessfully; otherwise the error() signal will be emitted.
-*/
-void QNearFieldTarget::sendApduCommand(const QByteArray &command)
-{
-    Q_UNUSED(command);
+    Sends \a command to the near field target. Returns a request id which can be used to track the
+    completion status of the request. An invalid request id will be returned if the target does not
+    support sending tag type specific commands.
 
-    emit error(UnsupportedError);
-}
+    The requestCompleted() signal will be emitted on successful completion of the request;
+    otherwise the error() signal will be emitted.
 
-/*!
-    Sends multiple APDU \a commands to the near field target. The apduCommandsCompleted() signal
-    will be emitted if the command completes sucessfully; otherwise the error() signal will be
-    emitted.
-*/
-void QNearFieldTarget::sendApduCommands(const QList<QByteArray> &commands)
-{
-    Q_UNUSED(commands);
+    Once the request completes successfully the response can be retrieved from the
+    requestResponse() function. The response of this request will be a QByteArray.
 
-    emit error(UnsupportedError);
-}
-
-/*!
-    Sends \a command to the near field target. The commandCompleted() signal will be emitted if the
-    command completes sucessfully; otherwise the error() signal will be emitted.
+    \sa requestCompleted(), waitForRequestCompleted()
 */
 QNearFieldTarget::RequestId QNearFieldTarget::sendCommand(const QByteArray &command)
 {
     Q_UNUSED(command);
 
-    emit error(UnsupportedError);
+    emit error(UnsupportedError, RequestId());
 
     return RequestId();
 }
 
 /*!
-    Sends multiple \a commands to the near field target. The commandsCompleted() signal will be
-    emitted if the commands complete sucessfully; otherwise the error() signal will be emitted.
+    Sends multiple \a commands to the near field target. Returns a request id which can be used to
+    track the completion status of the request. An invalid request id will be returned if the
+    target does not support sending tag type specific commands.
+
+    If all commands complete successfully the requestCompleted() signal will be emitted; otherwise
+    the error() signal will be emitted. If a command fails succeeding commands from this call will
+    not be processed.
+
+    Once the request completes the response for successfully completed requests can be retrieved
+    from the requestResponse() function. The response of this request will be a QList<QByteArray>.
+
+    \sa requestCompleted(), waitForRequestCompleted()
 */
 QNearFieldTarget::RequestId QNearFieldTarget::sendCommands(const QList<QByteArray> &commands)
 {
     Q_UNUSED(commands);
 
-    emit error(UnsupportedError);
+    emit error(UnsupportedError, RequestId());
 
     return RequestId();
 }
 
 /*!
     Waits up to \a msecs milliseconds for the request \a id to complete. Returns true if the
-    request completes sucessfully and the requestCompeted() signal is emitted; otherwise returns
+    request completes successfully and the requestCompeted() signal is emitted; otherwise returns
     false.
 */
 bool QNearFieldTarget::waitForRequestCompleted(const RequestId &id, int msecs)
@@ -396,12 +387,13 @@ QVariant QNearFieldTarget::requestResponse(const RequestId &id)
 }
 
 /*!
-    Sets the decoded response for request \a id to \a response.
+    Sets the decoded response for request \a id to \a response. If \a emitRequestCompleted is true
+    the requestCompleted() signal will be emitted for \a id; otherwise no signal will be emitted.
 
     \sa requestResponse()
 */
 void QNearFieldTarget::setResponseForRequest(const QNearFieldTarget::RequestId &id,
-                                             const QVariant &response)
+                                             const QVariant &response, bool emitRequestCompleted)
 {
     Q_D(QNearFieldTarget);
 
@@ -416,7 +408,8 @@ void QNearFieldTarget::setResponseForRequest(const QNearFieldTarget::RequestId &
 
     d->m_decodedResponses.insert(id, response);
 
-    emit requestCompleted(id);
+    if (emitRequestCompleted)
+        emit requestCompleted(id);
 }
 
 /*!

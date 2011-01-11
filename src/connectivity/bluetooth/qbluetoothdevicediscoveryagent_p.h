@@ -44,39 +44,73 @@
 
 #include "qbluetoothdevicediscoveryagent.h"
 
+#include <QVariantMap>
+
+#ifndef QT_NO_DBUS
+class OrgBluezManagerInterface;
+class OrgBluezAdapterInterface;
+class QDBusVariant;
+#endif
+
+#ifdef Q_OS_SYMBIAN
+#include "symbian/bluetoothlinkmanagerdevicediscoverer.h"
+#include <es_sock.h>
+#include <bt_sock.h>
+#endif
+
+QT_BEGIN_HEADER
+
 QTM_BEGIN_NAMESPACE
 
-class QBluetoothDeviceDiscoveryAgentPrivate : public QObject
+class QBluetoothDeviceDiscoveryAgentPrivate
 {
-Q_OBJECT
+    Q_DECLARE_PUBLIC(QBluetoothDeviceDiscoveryAgent)
 public:
-    QBluetoothDeviceDiscoveryAgentPrivate(QObject *parent) : QObject(parent)
-    {
-      connect(this, SIGNAL(deviceDiscovered(const QBluetoothDeviceInfo)), parent, SIGNAL(deviceDiscovered(const QBluetoothDeviceInfo)));
-      connect(this, SIGNAL(finished()), parent, SIGNAL(finished()));
-      connect(this, SIGNAL(error(QBluetoothDeviceDiscoveryAgent::Error)), parent, SIGNAL(error(QBluetoothDeviceDiscoveryAgent::Error)));      
-      inquiryType = QBluetoothDeviceDiscoveryAgent::GeneralUnlimitedInquiry;
-    }
-    virtual ~QBluetoothDeviceDiscoveryAgentPrivate() { };
+    QBluetoothDeviceDiscoveryAgentPrivate();
+    ~QBluetoothDeviceDiscoveryAgentPrivate();
 
-    virtual void start() = 0;
-    virtual void stop() = 0;
-    virtual bool isActive() const = 0;
-    
+    void start();
+    void stop();
+    bool isActive() const;
+
+#ifdef Q_OS_SYMBIAN
+    // private slot
+    void _q_newDeviceFound(const QBluetoothDeviceInfo &device);
+#endif
+
+#ifndef QT_NO_DBUS
+    void _q_deviceFound(const QString &address, const QVariantMap &dict);
+    void _q_propertyChanged(const QString &name, const QDBusVariant &value);
+#endif
+
+private:
+#ifdef Q_OS_SYMBIAN
+    uint inquiryTypeToIAC() const;
+    void setError(int errorCode, QString errorDescription);
+#endif
+
     QList<QBluetoothDeviceInfo> discoveredDevices;
     QBluetoothDeviceDiscoveryAgent::InquiryType inquiryType;
-    QBluetoothDeviceDiscoveryAgent *q;   
-    
-signals:
-    void deviceDiscovered(const QBluetoothDeviceInfo &info);
-    void finished();
-    void error(QBluetoothDeviceDiscoveryAgent::Error error);
 
-public:
-    static QBluetoothDeviceDiscoveryAgentPrivate* constructPrivateObject(QBluetoothDeviceDiscoveryAgent *parent);
+#if !defined(QT_NO_DBUS)
+    OrgBluezManagerInterface *manager;
+    OrgBluezAdapterInterface *adapter;
+#endif
+
+#ifdef Q_OS_SYMBIAN
+    // shared socket servet among RHostResolvers
+    RSocketServ m_socketServer;
+    // active object for device discovery
+    BluetoothLinkManagerDeviceDiscoverer *m_deviceDiscovery;
+
+#endif
+
+    QBluetoothDeviceDiscoveryAgent *q_ptr;
 
 };
 
 QTM_END_NAMESPACE
+
+QT_END_HEADER
 
 #endif

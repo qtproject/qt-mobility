@@ -93,9 +93,17 @@ signals:
     void error(QBluetoothDeviceDiscoveryAgent::Error error);
 
 private:
-    QBluetoothDeviceDiscoveryAgentPrivate *d;
-    
-    friend class QBluetoothDeviceDiscoveryAgentPrivate;
+    Q_DECLARE_PRIVATE(QBluetoothDeviceDiscoveryAgent)
+    QBluetoothDeviceDiscoveryAgentPrivate *d_ptr;
+
+#ifndef QT_NO_DBUS
+    Q_PRIVATE_SLOT(d_func(), void _q_deviceFound(const QString &address, const QVariantMap &dict));
+    Q_PRIVATE_SLOT(d_func(), void _q_propertyChanged(const QString &name, const QDBusVariant &value));
+#endif
+
+#ifdef Q_OS_SYMBIAN
+    Q_PRIVATE_SLOT(d_func(), void _q_newDeviceFound(const QBluetoothDeviceInfo &device))
+#endif // Q_OS_SYMBIAN
 };
 
 QTM_END_NAMESPACE

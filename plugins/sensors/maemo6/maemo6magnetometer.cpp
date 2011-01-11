@@ -49,28 +49,13 @@ const float maemo6magnetometer::NANO = 0.000000001;
 maemo6magnetometer::maemo6magnetometer(QSensor *sensor)
     : maemo6sensorbase(sensor)
 {
-    const QString sensorName = "magnetometersensor";
-    initSensor<MagnetometerSensorChannelInterface>(sensorName, m_initDone);
+    initSensor<MagnetometerSensorChannelInterface>(m_initDone);
     setDescription(QLatin1String("magnetic flux density in teslas (T)"));
     setRanges(NANO);
-
-
-    if (m_sensorInterface){
-        if (!(QObject::connect(m_sensorInterface, SIGNAL(dataAvailable(const MagneticField&)),
-                               this, SLOT(slotDataAvailable(const MagneticField&)))))
-            qWarning() << "Unable to connect "<< sensorName;
-    }
-    else
-        qWarning() << "Unable to initialize "<< sensorName;
-
-
     setReading<QMagnetometerReading>(&m_reading);
-
 }
 
 void maemo6magnetometer::start(){
-
-
     QVariant v = sensor()->property("returnGeoValues");
     if (!(v.isValid())){
         sensor()->setProperty("returnGeoValues", false); //Set to false (the default) to return raw magnetic flux density
@@ -78,21 +63,47 @@ void maemo6magnetometer::start(){
     }
     else m_isGeoMagnetometer =  v.toBool();
 
-
-
     maemo6sensorbase::start();
 }
 
 void maemo6magnetometer::slotDataAvailable(const MagneticField& data)
 {
-
     //nanoTeslas given, divide with 10^9 to get Teslas
     m_reading.setX( NANO * m_isGeoMagnetometer?data.x():data.rx());
     m_reading.setY( NANO * m_isGeoMagnetometer?data.y():data.ry());
     m_reading.setZ( NANO * m_isGeoMagnetometer?data.z():data.rz());
     m_reading.setCalibrationLevel( m_isGeoMagnetometer?((float) data.level()) / 3.0 :1);
-
-
     m_reading.setTimestamp(data.timestamp());
     newReadingAvailable();
+}
+
+
+void maemo6magnetometer::slotFrameAvailable(const QVector<MagneticField>&   frame)
+{
+    for (int i=0, l=frame.size(); i<l; i++){
+        slotDataAvailable(frame.at(i));
+    }
+}
+
+bool maemo6magnetometer::doConnect(){
+    if (m_bufferSize==1){
+        QObject::disconnect(m_sensorInterface, SIGNAL(frameAvailable(const QVector<MagneticField>& )));
+        if (!(QObject::connect(m_sensorInterface, SIGNAL(dataAvailable(const MagneticField&)),
+                               this, SLOT(slotDataAvailable(const MagneticField&))))){
+            qWarning() << "Unable to connect "<< sensorName();
+            return false;
+        }
+        return true;
+    }
+    QObject::disconnect(m_sensorInterface, SIGNAL(slotDataAvailable(const MagneticField&)));
+    if (!(QObject::connect(m_sensorInterface,SIGNAL(frameAvailable(const QVector<MagneticField>& )),
+                           this, SLOT(slotFrameAvailable(const QVector<MagneticField>& ))))){
+        qWarning() << "Unable to connect "<< sensorName();
+        return false;
+    }
+    return true;
+}
+
+const QString maemo6magnetometer::sensorName(){
+    return "magnetometersensor";
 }

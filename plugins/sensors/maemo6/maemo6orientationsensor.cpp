@@ -49,35 +49,37 @@ bool maemo6orientationsensor::m_initDone = false;
 maemo6orientationsensor::maemo6orientationsensor(QSensor *sensor)
     : maemo6sensorbase(sensor)
 {
-    const QString sensorName = "orientationsensor";
-    initSensor<OrientationSensorChannelInterface>(sensorName, m_initDone);
-
-    if (m_sensorInterface){
-        if (!(QObject::connect(m_sensorInterface, SIGNAL(orientationChanged(const Unsigned&)),
-                               this, SLOT(slotDataAvailable(const Unsigned&)))))
-            qWarning() << "Unable to connect "<< sensorName;
-    }
-    else
-        qWarning() << "Unable to initialize "<<sensorName;
-
+    initSensor<OrientationSensorChannelInterface>(m_initDone);
     setReading<QOrientationReading>(&m_reading);
-
-
 }
 
 void maemo6orientationsensor::slotDataAvailable(const Unsigned& data)
 {
     QOrientationReading::Orientation o;
     switch (data.x()) {
-        case PoseData::BottomDown: o = QOrientationReading::TopUp;     break;
-        case PoseData::BottomUp:   o = QOrientationReading::TopDown;   break;
-        case PoseData::LeftUp:     o = QOrientationReading::LeftUp;    break;
-        case PoseData::RightUp:    o = QOrientationReading::RightUp;   break;
-        case PoseData::FaceUp:     o = QOrientationReading::FaceUp;    break;
-        case PoseData::FaceDown:   o = QOrientationReading::FaceDown;  break;
-        default:                   o = QOrientationReading::Undefined;
+    case PoseData::BottomDown: o = QOrientationReading::TopUp;     break;
+    case PoseData::BottomUp:   o = QOrientationReading::TopDown;   break;
+    case PoseData::LeftUp:     o = QOrientationReading::LeftUp;    break;
+    case PoseData::RightUp:    o = QOrientationReading::RightUp;   break;
+    case PoseData::FaceUp:     o = QOrientationReading::FaceUp;    break;
+    case PoseData::FaceDown:   o = QOrientationReading::FaceDown;  break;
+    default:                   o = QOrientationReading::Undefined;
     }
     m_reading.setOrientation(o);
     m_reading.setTimestamp(data.UnsignedData().timestamp_);
     newReadingAvailable();
 }
+
+bool maemo6orientationsensor::doConnect(){
+    if (!(QObject::connect(m_sensorInterface, SIGNAL(orientationChanged(const Unsigned&)),
+                           this, SLOT(slotDataAvailable(const Unsigned&))))){
+        qWarning() << "Unable to connect "<< sensorName();
+        return false;
+    }
+    return true;
+}
+
+const QString maemo6orientationsensor::sensorName(){
+    return "orientationsensor";
+}
+

@@ -57,6 +57,9 @@ class maemo6proximitysensor : public maemo6sensorbase
 public:
     static char const * const id;
     maemo6proximitysensor(QSensor *sensor);
+protected:
+    virtual bool doConnect();
+    virtual const QString sensorName();
 
 private:
     QProximityReading m_reading;

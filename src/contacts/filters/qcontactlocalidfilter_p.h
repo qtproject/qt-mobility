@@ -99,6 +99,16 @@ public:
         return stream;
     }
 
+#ifndef QT_NO_DEBUG_STREAM
+    QDebug& debugStreamOut(QDebug& dbg) const
+    {
+        dbg.nospace() << "QContactLocalIdFilter(";
+        dbg.nospace() << "ids=" << m_ids;
+        dbg.nospace() << ")";
+        return dbg.maybeSpace();
+    }
+#endif
+
     Q_IMPLEMENT_CONTACTFILTER_VIRTUALCTORS(QContactLocalIdFilter, QContactFilter::LocalIdFilter)
 
     QList<QContactLocalId> m_ids;

@@ -206,7 +206,6 @@ void tst_QBluetoothDeviceDiscoveryAgent::tst_deviceDiscovery()
         discoveryAgent.stop();
         QVERIFY(!discoveryAgent.isActive());
         qDebug() << "Scan time left:" << scanTime;
-
         // Expect finished signal with no error
         QVERIFY(finishedSpy.count() == 1);
         QVERIFY(errorSpy.isEmpty());
@@ -214,6 +213,8 @@ void tst_QBluetoothDeviceDiscoveryAgent::tst_deviceDiscovery()
 
         // verify that the list is as big as the signals received.
         QVERIFY(discoveredSpy.count() == discoveryAgent.discoveredDevices().length());
+        // verify that there really was some devices in the array
+        QVERIFY(discoveredSpy.count() > 0);
 
         // All returned QBluetoothDeviceInfo should be valid.
         while (!discoveredSpy.isEmpty()) {

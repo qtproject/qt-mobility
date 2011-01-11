@@ -60,10 +60,8 @@ class QBluetoothServiceInfo;
 class Q_CONNECTIVITY_EXPORT QBluetoothSocket : public QIODevice
 {
     Q_OBJECT    
+    Q_DECLARE_PRIVATE(QBluetoothSocket)
 
-    friend class QBluetoothSocketPrivate;
-    friend class QBluetoothSocketBluezPrivate;
-    friend class QBluetoothSocketSymbianPrivate;
     friend class QRfcommServer;
     friend class QRfcommServerPrivate;
     friend class QL2capServer;
@@ -154,9 +152,19 @@ protected:
     void setSocketState(SocketState state);
     void setSocketError(SocketError error);
 
+    void doDeviceDiscovery(const QBluetoothServiceInfo &service, OpenMode openMode);
+
+private Q_SLOTS:
+    void serviceDiscovered(const QBluetoothServiceInfo &service);
+    void discoveryFinished();
+
+
+protected:
+    QBluetoothSocketPrivate *d_ptr;
+
 private:
-    QBluetoothSocketPrivate *d;
-//    Q_PRIVATE_SLOT(d_func(), void _q_readNotify())
+    Q_PRIVATE_SLOT(d_func(), void _q_readNotify())
+    Q_PRIVATE_SLOT(d_func(), void _q_writeNotify())
 };
 
 #ifndef QT_NO_DEBUG_STREAM

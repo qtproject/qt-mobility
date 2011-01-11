@@ -7,11 +7,11 @@
 ** This file is part of the documentation of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:FDL$
-** Commercial Usage
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Commercial License Agreement provided with the
-** Software or, alternatively, in accordance with the terms contained in a
-** written agreement between you and Nokia.
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Free Documentation License
 ** Alternatively, this file may be used under the terms of the GNU Free
@@ -49,8 +49,7 @@ their official release with Qt Mobility 1.2.
 \section2 NFC
 
 Unfortunately there currently are no functional backends for real hardware. An emulator backend is
-available, however, which is used by both the unit tests and the Qt Simulator backend. The
-Qt Simulator backend requires a build of the Qt Simulator master branch.
+available, however, which is used by both the unit tests and the Qt Simulator backend. Use the \i {master} branch of Qt Simulator at \l {http://qt.gitorious.org/qt-labs/simulator}.
 
 The \l {Qt Mobility Examples#Connectivity}{Connectivity examples} demonstrate how to use NFC
 functionality in your application.
@@ -85,12 +84,6 @@ What is known \bold NOT to work:
     \endlist
 \endlist
 
-\section1 Main Classes
-
-\section2 NFC Classes
-
-\annotatedlist connectivity-nfc
-
 \section2 Bluetooth
 
 The Bluetooth API is under development and subject to change between the tech
@@ -102,7 +95,7 @@ What should work:
 You should be able to discover devices and services, open an Rfcomm socket, or accept
 an Rfcomm connection, and transfer a file to a device using Object Push Protocol.
 
-Classes that shoudl work:
+Classes that should work:
 \list
     \o QBluetoothAddress
     \o QBluetoothDeviceDiscoveryAgent
@@ -110,13 +103,13 @@ Classes that shoudl work:
     \o QBluetoothDeviceInfo
     \o QBluetoothServiceInfo
     \o QBluetoothSocket
-    \o QBluetoothTransferManager::put
+    \o \l {QBluetoothTransferManager::put}
     \o QBluetoothUuid
     \o QBluetoothRfcommServer
     \o QBluetoothRfcommSocket
 \endlist
 
-What is know \bold NOT to work:
+What is known \bold NOT to work:
 \list
     \o Symbian, Windows, Mac
     \o QL2capServer and QL2capSocket
@@ -124,6 +117,14 @@ What is know \bold NOT to work:
     \o QBluetoothLocalDevice power control and state functions
     \o QBluetoothServiceDiscoveryAgent errorString
 \endlist
+
+\section1 Main Classes
+
+\section2 NFC Classes
+
+\annotatedlist connectivity-nfc
+
+\section2 Bluetooth Classes
 
 \annotatedlist connectivity-bluetooth
 
