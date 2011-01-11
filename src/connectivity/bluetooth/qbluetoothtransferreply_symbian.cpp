@@ -55,7 +55,7 @@ QTM_BEGIN_NAMESPACE
 
 QBluetoothTransferReplySymbian::QBluetoothTransferReplySymbian(QIODevice *input, QObject *parent)
 :   QBluetoothTransferReply(parent), CActive(EPriorityStandard), m_source(input),
-    m_running(false), m_finished(false), m_client(NULL),
+    m_running(false), m_finished(false), m_client(NULL), m_object(NULL),
     m_error(QBluetoothTransferReply::NoError), m_errorStr()
 {
     //add this active object to scheduler
@@ -157,7 +157,14 @@ bool QBluetoothTransferReplySymbian::isRunning() const
 
 void QBluetoothTransferReplySymbian::abort()
 {
-    qDebug() << "Abort() is not implemented";
+    m_state = EIdle;
+    m_running = false;
+    // Deleting obexclient is the only way to cancel active requests
+    delete m_client;
+    m_client = NULL;
+
+    delete m_object;
+    m_object = NULL;
 }
 
 QBluetoothTransferReply::TransferError QBluetoothTransferReplySymbian::error() const
@@ -172,6 +179,7 @@ QString QBluetoothTransferReplySymbian::errorString() const
 
 void QBluetoothTransferReplySymbian::DoCancel()
 {
+    m_running = false;
     // Deleting obexclient is the only way to cancel active requests
     if ( m_client ) {
         delete m_client;
@@ -183,6 +191,11 @@ void QBluetoothTransferReplySymbian::DoCancel()
 
 void QBluetoothTransferReplySymbian::RunL()
 {
+    if (iStatus.Int() != KErrNone) {
+        abort();
+        emit finished(this);
+    }
+
     switch ( m_state ) {
         case EConnecting: {
             m_state = ESending;
