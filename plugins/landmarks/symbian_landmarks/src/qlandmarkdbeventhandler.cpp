@@ -74,7 +74,7 @@ void CLandmarkDbEventHandler::InitializeL()
  */
 void CLandmarkDbEventHandler::StartListening()
 {
-    //qDebug() << "starting database event notification";    
+    //qDebug() << "starting database event notification";
     // If there is atleast one observer and no request already pending
     // then request for notification
     if (iObserverList.Count() > 0 && !IsActive()) {

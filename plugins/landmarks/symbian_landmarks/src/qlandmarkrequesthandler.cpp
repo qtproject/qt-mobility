@@ -621,9 +621,7 @@ void CLandmarkRequestData::ConstructL()
 CLandmarkRequestData::~CLandmarkRequestData()
 {
     //qDebug() << "CLandmarkRequestData::~CLandmarkRequestData - start";
-
     iLock.Wait();
-
     TSglQueIter<TWaitThrdData> Iter(iWaitThrds);
     Iter.SetToFirst();
     TWaitThrdData* Ptr;
@@ -643,9 +641,8 @@ CLandmarkRequestData::~CLandmarkRequestData()
     }
 
     Reset();
-
     iLock.Signal();
-    iLock.Close();    
+    iLock.Close();
     //qDebug() << "CLandmarkRequestData::~CLandmarkRequestData - end";
 }
 
