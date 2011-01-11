@@ -591,6 +591,15 @@ void QGeoTiledMapData::paintObjects(QPainter *painter, const QStyleOptionGraphic
     QGeoMapData::paintObjects(painter, option);
 }
 
+/*!
+    \reimp
+*/
+QGeoMapObjectInfo *QGeoTiledMapData::createMapObjectInfo(QGeoMapObject *mapObject)
+{
+    qWarning("QGeoTiledMapData::createMapObjectInfo is obsolete, returning NULL");
+    return 0;
+}
+
 void QGeoTiledMapData::processRequests()
 {
     Q_D(QGeoTiledMapData);

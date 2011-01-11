@@ -93,6 +93,8 @@ protected:
     void paintMap(QPainter *painter, const QStyleOptionGraphicsItem *option);
     void paintObjects(QPainter *painter, const QStyleOptionGraphicsItem *option);
 
+    QGeoMapObjectInfo* createMapObjectInfo(QGeoMapObject *mapObject);
+
 private Q_SLOTS:
     void processRequests();
     void tileFinished();
