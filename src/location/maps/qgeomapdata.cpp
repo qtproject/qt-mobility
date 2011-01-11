@@ -624,6 +624,12 @@ void QGeoMapData::paintProviderNotices(QPainter *painter, const QStyleOptionGrap
     Q_UNUSED(option)
 }
 
+QGeoMapObjectInfo *QGeoMapData::createMapObjectInfo(QGeoMapObject *object)
+{
+    qWarning("QGeoMapData::createMapObjectInfo is obsolete, returning null");
+    return 0;
+}
+
 /*!
     Returns the map overlays associated with this map.
 */

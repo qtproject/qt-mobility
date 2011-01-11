@@ -126,6 +126,8 @@ protected:
     virtual void paintObjects(QPainter *painter, const QStyleOptionGraphicsItem *option);
     virtual void paintProviderNotices(QPainter *painter, const QStyleOptionGraphicsItem *option);
 
+    virtual QGeoMapObjectInfo* createMapObjectInfo(QGeoMapObject *object);
+
     QGeoMapDataPrivate* d_ptr;
 
 Q_SIGNALS:
