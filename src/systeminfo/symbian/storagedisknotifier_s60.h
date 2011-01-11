@@ -52,8 +52,8 @@
 
 class MStorageSpaceNotifyObserver
 {
-public:    
-    virtual void DiskSpaceChanged(const QString &) = 0;    
+public:
+    virtual void DiskSpaceChanged(const QString &) = 0;
 };
 
 class CStorageDiskNotifier : public CBase, public MDiskNotifyHandlerCallback
@@ -61,17 +61,17 @@ class CStorageDiskNotifier : public CBase, public MDiskNotifyHandlerCallback
 public:
     static CStorageDiskNotifier* NewL();
     void AddObserver(MStorageSpaceNotifyObserver *observer);
-    void RemoveObserver(MStorageSpaceNotifyObserver *observer);    
+    void RemoveObserver(MStorageSpaceNotifyObserver *observer);
     ~CStorageDiskNotifier();
-   
+
 private:
     CStorageDiskNotifier();
     void ConstructL();
-    void SubscribeStorageDiskNotificationL();    
+    void SubscribeStorageDiskNotificationL();
     void RegisterDiskSpaceEvents(TInt aDrive);
     // From observer MDiskNotifyHandlerCallback
-    void HandleNotifyDisk(TInt aError, const TDiskEvent& aEvent);    
-    void HandleNotifyDiskSpace(TInt aError, const TDiskSpaceEvent& aEvent);    
+    void HandleNotifyDisk(TInt aError, const TDiskEvent& aEvent);
+    void HandleNotifyDiskSpace(TInt aError, const TDiskSpaceEvent& aEvent);
 
 private:
     RFs                     iFs;
