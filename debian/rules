@@ -1,0 +1,88 @@
+#!/usr/bin/make -f
+
+export DH_VERBOSE=1
+
+include /usr/share/cdbs/1/rules/debhelper.mk
+include /usr/share/cdbs/1/class/makefile.mk
+include /usr/share/cdbs/1/rules/utils.mk
+include /usr/share/cdbs/1/class/autotools.mk
+
+# Find out how many parallel threads to run
+TMP_BUILD_OPTS = $(subst $(comma),$(space),$(DEB_BUILD_OPTIONS))
+ifneq (,$(filter parallel=%,$(TMP_BUILD_OPTS)))
+  NUMJOBS = $(patsubst parallel=%,%,$(filter parallel=%,$(TMP_BUILD_OPTS)))
+  PARALLEL_MAKEFLAGS += -j$(NUMJOBS)
+endif
+
+DEB_MAKE_INVOKE := $(MAKE) $(PARALLEL_MAKEFLAGS) QMAKE_CFLAGS="-g1 -O2"
+DEB_MAKE_INSTALL_TARGET := INSTALL_ROOT=$(DEB_DESTDIR) install
+DEB_DH_INSTALL_SOURCEDIR := debian/tmp
+
+# bearer|contacts|location|messaging|multimedia|publishsubscribe|serviceframework|systeminfo|sensors|gallery|telephony|versit|organizer|feedback
+QTM_MODULES += location
+
+# Add here any variable or target overrides you need.
+DEB_CONFIGURE_NORMAL_ARGS := -maemo6 -prefix /usr -headerdir /usr/include/qt4 \
+		-plugindir /usr/lib/qt4/plugins -modules "$(QTM_MODULES)" \
+		-examples -examplesdir /opt/examples/QtMobility \
+		\
+
+#DEB_CONFIGURE_EXTRA_FLAGS := -debug -silent 
+#DEB_CONFIGURE_EXTRA_FLAGS := -debug  
+
+## DEB_DH_STRIP_ARGS commented out since it created unnecessary files 
+#DEB_DH_STRIP_ARGS := $(addprefix --dbg-package=libqtm-,$(QTM_MODULES))
+
+export QMAKEFEATURES=$(CURDIR)/debian/tests
+export QTM_TEST_INSTALL_FILE=$(CURDIR)/debian/pkg.install
+
+QTM_MAEMO_TESTDIR := debian/tests
+
+#List of auto tests
+QTM_AUTOTESTS_SIMPLE := $(QTM_MAEMO_TESTDIR)/libqtm-location-tests.pri
+
+clean::
+	# Delete all Makefiles
+	find $(CURDIR) -name Makefile \
+	 -print0 | xargs -0 rm -rf
+
+	rm -rf features/mobility.prf
+	rm -rf include
+	rm -rf build
+	rm -rf config.tests/maemo-icd-network-wlan/maemo-icd-network-wlan \
+            config.tests/maemo-icd/maemo-icd \
+	    config.tests/sensord/sensord \
+	    config.tests/gstreamer-photography/gstreamer-photography \
+	    patches 
+	rm -rf debian/libqtm-*-tests.install
+	rm -rf tests/auto/libqtm-*-tests.pri
+	rm -rf tests/auto/qtm-maemo-auto.pro
+
+# Automatically install lintian overrides, stolen from debian-qt-kde.mk
+$(patsubst %,binary-install/%,$(DEB_PACKAGES)) :: binary-install/%:
+	if test -e debian/$(cdbs_curpkg).lintian; then \
+	install -p -D -m644 debian/$(cdbs_curpkg).lintian \
+	debian/$(cdbs_curpkg)/usr/share/lintian/overrides/$(cdbs_curpkg); \
+fi
+
+common-build-arch:: build-maemo-tests
+
+build-maemo-tests:
+	rm -f tests/auto/qtm-maemo-auto.pro
+	rm -f tests/auto/libqtm-location-tests.pri
+	cp debian/tests/qtm-maemo-auto.pro tests/auto/
+	cp debian/tests/libqtm-location-tests.pri tests/auto/
+	qmake -recursive CONFIG+=maemo_tests tests/auto/qtm-maemo-auto.pro
+	$(DEB_MAKE_INVOKE) -C tests/auto
+
+common-install-arch::
+	$(DEB_MAKE_INVOKE) -C tests/auto $(DEB_MAKE_INSTALL_TARGET)
+	rm -f debian/libqtm-sensors-tests.install
+	$(QTM_MAEMO_TESTDIR)/install_tests -d debian -t $(QTM_MAEMO_TESTDIR) \
+                -i $(DEB_DESTDIR) $(QTM_AUTOTESTS_SIMPLE)
+
+PACKAGE_TARGETS := $(foreach pkg,$(DEB_ALL_PACKAGES),binary/$(pkg))
+
+$(PACKAGE_TARGETS)::
+	    [ ! -f debian/$(notdir $@).aegis ] || aegis-deb-add -control debian/$(notdir $@)/DEBIAN/control .. debian/$(notdir $@).aegis=_aegis
+

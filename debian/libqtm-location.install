@@ -1,0 +1,4 @@
+usr/lib/libQtLocation.so.*
+usr/lib/qt4/imports/QtMobility/location/*
+usr/lib/qt4/plugins/geoservices/*
+usr/lib/qt4/plugins/landmarks/*

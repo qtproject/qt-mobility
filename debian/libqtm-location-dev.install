@@ -1,0 +1,3 @@
+../QtLocation.txt usr/lib/pkgconfig/QtLocation.pc
+usr/lib/libQtLocation.so
+usr/include/qt4/QtLocation
