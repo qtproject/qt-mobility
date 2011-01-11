@@ -124,13 +124,7 @@ void QBluetoothDeviceDiscoveryAgentPrivate::_q_newDeviceFound(const QBluetoothDe
 
 uint QBluetoothDeviceDiscoveryAgentPrivate::inquiryTypeToIAC() const
 {
-    if (inquiryType == QBluetoothDeviceDiscoveryAgent::GeneralUnlimitedInquiry)
-        return KGIAC;
-    else if (inquiryType == QBluetoothDeviceDiscoveryAgent::LimitedInquiry)
-        return KLIAC;
-
-    ASSERT(0); //enum has changed and not handled
-    return KGIAC; // to get rid of compiler warning
+    return inquiryType == QBluetoothDeviceDiscoveryAgent::LimitedInquiry ? KLIAC : KGIAC;
 }
 
 QTM_END_NAMESPACE
