@@ -64,7 +64,6 @@ enum TCameraEngineError
  */
 class MAdvancedSettingsObserver
 {
-
 public:
 
     virtual void HandleAdvancedEvent( const TECAMEvent &aEvent ) = 0;
