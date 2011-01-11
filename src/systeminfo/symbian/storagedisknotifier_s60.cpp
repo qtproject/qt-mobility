@@ -45,19 +45,19 @@
 
 
 CStorageDiskNotifier* CStorageDiskNotifier::NewL()
-    {    
+    {
     CStorageDiskNotifier* self = new(ELeave) CStorageDiskNotifier();
     CleanupStack::PushL(self);
     self->ConstructL();
-    CleanupStack::Pop(self);    
+    CleanupStack::Pop(self);
     return self;
     }
 
 void CStorageDiskNotifier::ConstructL()
-    {    
+    {
     User::LeaveIfError(iFs.Connect());
     iStorageDiskNotifyHandler = CDiskNotifyHandler::NewL( *this, iFs );
-    SubscribeStorageDiskNotificationL();     
+    SubscribeStorageDiskNotificationL();
     }
 
 CStorageDiskNotifier::CStorageDiskNotifier()
@@ -65,91 +65,92 @@ CStorageDiskNotifier::CStorageDiskNotifier()
     }
 
 CStorageDiskNotifier::~CStorageDiskNotifier()
-    {        
+    {
     iFs.Close();
-    delete iStorageDiskNotifyHandler;    
+    delete iStorageDiskNotifyHandler;
     }
 
 void CStorageDiskNotifier::AddObserver(MStorageSpaceNotifyObserver *observer)
-{    
-    m_observers.append(observer); 
+{
+    m_observers.append(observer);
 }
 
 void CStorageDiskNotifier::RemoveObserver(MStorageSpaceNotifyObserver *observer)
-{    
-    m_observers.removeOne(observer); 
+{
+    m_observers.removeOne(observer);
 }
 
 void CStorageDiskNotifier::SubscribeStorageDiskNotificationL()
-    {    
+    {
     // Start listening disk events first
     iStorageDiskNotifyHandler->NotifyDisk();
-    
+
     TDriveList driveList;
     TInt count(0);
     User::LeaveIfError(DriveInfo::GetUserVisibleDrives(
-               iFs, driveList, count, KDriveAttInternal | KDriveAttRemovable )); // Get already inserted internal and removable drives    
-    for( TInt i = EDriveA; i <= EDriveZ; i++ )
+               iFs, driveList, count, KDriveAttInternal | KDriveAttRemovable )); // Get already inserted internal and removable drives
+    for ( TInt i = EDriveA; i <= EDriveZ; i++ )
         {
         if (driveList[i])
-            {            
+            {
             RegisterDiskSpaceEvents(i);
             }
-        }    
+        }
     }
 
 void CStorageDiskNotifier::RegisterDiskSpaceEvents(TInt aDrive)
     {
-    TInt64 volSize(0);        
+    TInt64 volSize(0);
     TVolumeInfo volInfo;
 
-    if(iFs.Volume(volInfo, aDrive) == KErrNone){
+    if (iFs.Volume(volInfo, aDrive) == KErrNone)
+        {
         volSize = volInfo.iSize;
-        // get the threshold for the drive 
+        // get the threshold for the drive
         TInt64 normalThreshold = (TInt64) volInfo.iFree;
-        TInt64 lowThreshold = (TInt64)(volSize * 0.4);               
-        TInt64 veryLowThreshold = (TInt64)(volSize * 0.1);        
-        TInt64 criticalThreshold = (TInt64)(volSize * 0.02);       
-                
-        iStorageDiskNotifyHandler->NotifyDiskSpace(normalThreshold, aDrive);          
+        TInt64 lowThreshold = (TInt64)(volSize * 0.4);
+        TInt64 veryLowThreshold = (TInt64)(volSize * 0.1);
+        TInt64 criticalThreshold = (TInt64)(volSize * 0.02);
+
+        iStorageDiskNotifyHandler->NotifyDiskSpace(normalThreshold, aDrive);
         iStorageDiskNotifyHandler->NotifyDiskSpace(lowThreshold, aDrive);
         iStorageDiskNotifyHandler->NotifyDiskSpace(veryLowThreshold, aDrive);
         iStorageDiskNotifyHandler->NotifyDiskSpace(criticalThreshold, aDrive);
-        }    
+        }
     }
 
 void CStorageDiskNotifier::HandleNotifyDiskSpace(TInt /*aError*/, const TDiskSpaceEvent& aEvent)
-    {        
-    TInt drive = aEvent.iDrive;    
+    {
+    TInt drive = aEvent.iDrive;
     TChar volumeChar;
-    QString volume;    
+    QString volume;
     if (iFs.DriveToChar(drive, volumeChar) == KErrNone){
-        volume = QChar(volumeChar).toAscii(); 
+        volume = QChar(volumeChar).toAscii();
         }
     foreach (MStorageSpaceNotifyObserver *observer, m_observers)
-        observer->DiskSpaceChanged(volume);    
+        observer->DiskSpaceChanged(volume);
     }
 
 void CStorageDiskNotifier::HandleNotifyDisk(TInt /*aError*/, const TDiskEvent& aEvent)
-    {       
+    {
     TVolumeInfo volInfo;
-    switch(aEvent.iType)
+    switch (aEvent.iType)
         {
         case EDiskAdded:
-        case EDiskStatusChanged:                                      
+        case EDiskStatusChanged:
              if ( iFs.Volume( volInfo, aEvent.iDrive ) == KErrNone)
-                 {                 
+                 {
                  TRAP_IGNORE( RegisterDiskSpaceEvents(aEvent.iDrive) );
                  }
              else
-                 {                 
-                 iStorageDiskNotifyHandler->CancelNotifyDiskSpace(aEvent.iDrive);                
-                 }  
+                 {
+                 iStorageDiskNotifyHandler->CancelNotifyDiskSpace(aEvent.iDrive);
+                 }
              break;
         case EDiskError:
-        case EDiskRemoved:              
-             iStorageDiskNotifyHandler->CancelNotifyDiskSpace(aEvent.iDrive);             
+        case EDiskRemoved:
+             iStorageDiskNotifyHandler->CancelNotifyDiskSpace(aEvent.iDrive);
              break;
-        }    
+        }
     }
 
