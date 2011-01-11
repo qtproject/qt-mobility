@@ -321,6 +321,50 @@ private slots:
         }
     }
 
+    void testDynamicDefaultsAndGenericHandling()
+    {
+        TestSensor sensor;
+        QByteArray expected;
+        QByteArray actual;
+
+        // The default for this type is null
+        expected = QByteArray();
+        actual = QSensor::defaultSensorForType("random");
+        QCOMPARE(expected, actual);
+
+        // Register a bogus backend
+        QSensorManager::registerBackend("random", "generic.random", 0);
+
+        // The default for this type is the newly-registered backend
+        expected = "generic.random";
+        actual = QSensor::defaultSensorForType("random");
+        QCOMPARE(expected, actual);
+
+        // Register a non-generic bogus backend
+        QSensorManager::registerBackend("random", "not.generic.random", 0);
+
+        // The default for this type is the newly-registered backend
+        expected = "not.generic.random";
+        actual = QSensor::defaultSensorForType("random");
+        QCOMPARE(expected, actual);
+
+        // Unregister a non-generic bogus backend
+        QSensorManager::unregisterBackend("random", "not.generic.random");
+
+        // The default for this type is the generic backend
+        expected = "generic.random";
+        actual = QSensor::defaultSensorForType("random");
+        QCOMPARE(expected, actual);
+
+        // Unregister a bogus backend
+        QSensorManager::unregisterBackend("random", "generic.random");
+
+        // The default for this type is null again
+        expected = QByteArray();
+        actual = QSensor::defaultSensorForType("random");
+        QCOMPARE(expected, actual);
+    }
+
     void testSensorsChangedSignal()
     {
         TestSensor sensor;

@@ -274,6 +274,11 @@ QAccelerometer = n900.accelerometer
 If Sensors.conf specifies an identifier that is not registered then the system will fall back to
 the first registered identifier as the default.
 
+Note that there is special case logic to prevent the generic plugin's backends from becoming the
+default when another backend is registered for the same type. This logic means that a backend
+identifier starting with \c{generic.} will only be the default if no other backends have been
+registered for that type or if it is specified in \c{Sensors.conf}.
+
 */
 
 /*!
