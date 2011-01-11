@@ -103,6 +103,8 @@ bool QBluetoothTransferReplySymbian::start()
     connect(m_discoveryAgent, SIGNAL(serviceDiscovered(QBluetoothServiceInfo)),
             this, SLOT(serviceDiscovered(QBluetoothServiceInfo)));
     connect(m_discoveryAgent, SIGNAL(finished()), this, SLOT(serviceDiscoveryFinished()));
+    // Automatically delete agent when device discovery finishes.
+    connect(m_discoveryAgent, SIGNAL(finished()), this, SLOT(deleteLater()));
 
     m_discoveryAgent->setUuidFilter(QBluetoothUuid(QBluetoothUuid::ObexObjectPush));
     m_discoveryAgent->start();
