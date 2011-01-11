@@ -257,8 +257,8 @@ void CCellNetworkInfo::RunL()
                 observer->networkModeChanged();
             }
             if (m_cellId != m_previouscellId) {
-			          observer->changedCellId(m_cellId);
-			      }
+                observer->changedCellId(m_cellId);
+            }
         }
         m_previousNetworkId = m_networkId;
         m_previousCountryCode = m_countryCode;
