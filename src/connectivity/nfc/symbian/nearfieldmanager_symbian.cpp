@@ -82,12 +82,9 @@ void CNearFieldManager::StartTargetDetectionL(const QList<QNearFieldTarget::Type
         if (!iNfcTagDiscovery)
             {
             iNfcTagDiscovery = CNfcTagDiscovery::NewL( iServer );
+            User::LeaveIfError(iNfcTagDiscovery->AddTagConnectionListener( *this ));
             }
-        else
-            {
-            iNfcTagDiscovery->RemoveTagConnectionListener();
-            }
-        User::LeaveIfError(iNfcTagDiscovery->AddTagConnectionListener( *this ));
+
         if (!iTagSubscription)
             {
             iTagSubscription = CNfcTagSubscription::NewL();
@@ -129,6 +126,9 @@ void CNearFieldManager::StartTargetDetectionL(const QList<QNearFieldTarget::Type
                     iTagSubscription->AddConnectionModeL( TNfcConnectionInfo::ENfcMifareStd );
                     break;
                 case QNearFieldTarget::ProprietaryTag:
+                    //No conterpart in symbian api
+                    break;
+                default:
                     break;
                 }
             }
@@ -147,15 +147,44 @@ void CNearFieldManager::stopTargetDetection()
         {
         iNfcTagDiscovery->RemoveTagConnectionListener();
         iNfcTagDiscovery->RemoveTagSubscription();
-        delete iNfcTagDiscovery;
-        iNfcTagDiscovery = NULL;
+
         if (iTagSubscription)
             {
             delete iTagSubscription;
             iTagSubscription = NULL;
             }
+        delete iNfcTagDiscovery;
+        iNfcTagDiscovery = NULL;
         }
     END
+    }
+
+CNdefRecord::TNdefRecordTnf CNearFieldManager::QTnf2CTnf(const QtMobility::QNdefRecord::TypeNameFormat aQTnf)
+    {
+    CNdefRecord::TNdefRecordTnf ret = CNdefRecord::EEmpty;
+    switch(aQTnf)
+        {
+        case QtMobility::QNdefRecord::Empty:
+            break;
+        case QtMobility::QNdefRecord::NfcRtd:
+            ret = CNdefRecord::ENfcWellKnown;
+            break;
+        case QtMobility::QNdefRecord::Mime:
+            ret = CNdefRecord::EMime;
+            break;
+        case QtMobility::QNdefRecord::Uri:
+            ret = CNdefRecord::EUri;
+            break;
+        case QtMobility::QNdefRecord::ExternalRtd:
+            ret = CNdefRecord::ENfcExternal;
+            break;
+        case QtMobility::QNdefRecord::Unknown:
+            ret = CNdefRecord::EUnknown;
+            break;
+        default:
+            break;
+        }
+    return ret;
     }
 
 /*!
@@ -183,7 +212,7 @@ TInt CNearFieldManager::AddNdefSubscription( const QNdefRecord::TypeNameFormat a
 
         }
     TPtrC8 type(QNFCNdefUtility::QByteArray2TPtrC8(aType));
-    err = iNdefDiscovery->AddNdefSubscription( (CNdefRecord::TNdefRecordTnf)aTnf, type );
+    err = iNdefDiscovery->AddNdefSubscription( QTnf2CTnf(aTnf), type );
     END
     return err;
     }
@@ -198,7 +227,7 @@ void CNearFieldManager::RemoveNdefSubscription( const QNdefRecord::TypeNameForma
     if ( iNdefDiscovery )
         {
         TPtrC8 type(QNFCNdefUtility::QByteArray2TPtrC8(aType));
-        iNdefDiscovery->RemoveNdefSubscription( (CNdefRecord::TNdefRecordTnf)aTnf, type );
+        iNdefDiscovery->RemoveNdefSubscription( QTnf2CTnf(aTnf), type );
         }
     END
     }
@@ -212,11 +241,9 @@ void CNearFieldManager::TagDetected( MNfcTag* aNfcTag )
     if (aNfcTag)
         {
         QNearFieldTarget* tag = TNearFieldTargetFactory::CreateTargetL(aNfcTag, iServer, &iCallback);
-        CleanupQDeletePushL(tag);
         TInt error = KErrNone;
         QT_TRYCATCH_ERROR(error, iCallback.targetFound(tag));
         Q_UNUSED(error);//just skip the error
-        CleanupStack::Pop(tag);
         }
     END
     }
@@ -239,12 +266,14 @@ void CNearFieldManager::TagLost()
 void CNearFieldManager::LlcpRemoteFound()
     {
     BEGIN
-    QNearFieldTarget* tag = TNearFieldTargetFactory::CreateTargetL(NULL, iServer, &iCallback);
-    CleanupQDeletePushL(tag);
     TInt error = KErrNone;
-    QT_TRYCATCH_ERROR(error, iCallback.targetFound(tag) );
-    Q_UNUSED(error);//just skip the error
-    CleanupStack::Pop(tag);
+    QNearFieldTarget* tag = NULL;
+    TRAP(error, tag = TNearFieldTargetFactory::CreateTargetL(NULL, iServer, &iCallback));
+    if (error == KErrNone)
+        {
+        QT_TRYCATCH_ERROR(error, iCallback.targetFound(tag) );
+        Q_UNUSED(error);//just skip the error
+        }
     END
     }
 
@@ -268,10 +297,14 @@ void CNearFieldManager::MessageDetected( CNdefMessage* aMessage )
     BEGIN
     if ( aMessage )
         {
-        QNdefMessage msg = QNFCNdefUtility::CNdefMsg2QNdefMsgL( *aMessage);
         TInt error = KErrNone;
-        QT_TRYCATCH_ERROR(error, iCallback.invokeTargetDetectedHandler(msg));
-        Q_UNUSED(error);//just skip the error
+        QNdefMessage msg;
+        TRAP(error, msg = QNFCNdefUtility::CNdefMsg2QNdefMsgL( *aMessage));
+        if (error == KErrNone)
+            {
+            QT_TRYCATCH_ERROR(error, iCallback.invokeTargetDetectedHandler(msg));
+            Q_UNUSED(error);//just skip the error
+            }
         delete aMessage;
         }
     END
@@ -291,20 +324,11 @@ CNearFieldManager::CNearFieldManager( QtMobility::QNearFieldManagerPrivateImpl& 
 CNearFieldManager* CNearFieldManager::NewL( QtMobility::QNearFieldManagerPrivateImpl& aCallback)
     {
     BEGIN
-    CNearFieldManager* self = NewLC(aCallback);
-    CleanupStack::Pop( self );
-    END
-    return self;
-    }
-
-/*!
-    Create a new instance of this class and push to cleanup stack.
-*/
-CNearFieldManager* CNearFieldManager::NewLC( QtMobility::QNearFieldManagerPrivateImpl& aCallback)
-    {
     CNearFieldManager* self = new (ELeave) CNearFieldManager(aCallback);
     CleanupStack::PushL( self );
     self->ConstructL();
+    CleanupStack::Pop( self );
+    END
     return self;
     }
 

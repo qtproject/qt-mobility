@@ -39,15 +39,15 @@
 **
 ****************************************************************************/
 
-#include "qnearfieldmanager_symbian_p.h"
-#include "qndefmessage.h"
-
-#include "symbian/nearfieldmanager_symbian.h"
-#include "symbian/debug.h"
 #include <qservicefilter.h>
 #include <qservicemanager.h>
 #include <QCoreApplication>
 #include <ndefmessage.h>
+
+#include "qnearfieldmanager_symbian_p.h"
+#include "qndefmessage.h"
+#include "symbian/nearfieldmanager_symbian.h"
+#include "symbian/debug.h"
 #include "symbian/nearfieldutility_symbian.h"
 
 QTM_BEGIN_NAMESPACE
@@ -101,8 +101,8 @@ QNearFieldManagerPrivateImpl::~QNearFieldManagerPrivateImpl()
 {
     BEGIN
     delete m_target;
-    delete m_symbianbackend;
     delete m_serviceRegister;
+    delete m_symbianbackend;
     END
 }
 
@@ -148,8 +148,8 @@ int QNearFieldManagerPrivateImpl::registerTargetDetectedHandler(QObject *object,
     if (!sfManager.findInterfaces(filter).isEmpty())
         {
         // This application has been registered as a content handler (via the xml at install time), start the service
-        chobject = object;
-        chmethod = method;
+        m_chobject = object;
+        m_chmethod = method;
 
         connect(&contentHandlerProxy, SIGNAL(handleMessage(QNdefMessage)),
                     this, SLOT(_q_privateHandleMessageSlot(QNdefMessage)));
@@ -199,6 +199,13 @@ int QNearFieldManagerPrivateImpl::registerTargetDetectedHandler(const QNdefFilte
       QByteArray type = filter.recordAt(i).type;
       if (m_symbianbackend->AddNdefSubscription( tnf, type ) < 0)
           {
+          for (int j = 0; j < i; ++j)//rollback the previous subscriptions
+              {
+              QNdefRecord::TypeNameFormat n = filter.recordAt(j).typeNameFormat;
+              QByteArray t = filter.recordAt(j).type;
+              m_symbianbackend->RemoveNdefSubscription( n, t );
+              }
+          m_freeIds.append(id);//push back the id to freeid list
           END
           return -1;
           }
@@ -285,14 +292,14 @@ void QNearFieldManagerPrivateImpl::targetFound(QNearFieldTarget *target)
 void QNearFieldManagerPrivateImpl::_q_privateHandleMessageSlot(QNdefMessage aMsg)
     {
 
-    chmethod.invoke(chobject, Q_ARG(QNdefMessage, aMsg), Q_ARG(QNearFieldTarget* , NULL));
+    m_chmethod.invoke(m_chobject, Q_ARG(QNdefMessage, aMsg), Q_ARG(QNearFieldTarget* , NULL));
     }
 
 /*!
     Helper function to invoke the filtered TargetDetectedHandler for a found \a target.
 */
 
-void QNearFieldManagerPrivateImpl::invokeTargetDetectedHandler(QNdefMessage msg)
+void QNearFieldManagerPrivateImpl::invokeTargetDetectedHandler(const QNdefMessage msg)
     {
     BEGIN
     for (int i = 0; i < m_registeredHandlers.count(); ++i) {
@@ -355,8 +362,8 @@ void QNearFieldManagerPrivateImpl::targetDisconnected()
     BEGIN
     if (m_target)
         {
-        emit targetLost(m_target);
         QMetaObject::invokeMethod(m_target, "disconnected");
+        emit targetLost(m_target);
         }
     END
     }

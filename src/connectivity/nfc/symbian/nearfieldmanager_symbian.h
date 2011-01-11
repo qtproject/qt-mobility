@@ -72,7 +72,6 @@ class CNearFieldManager : public CBase,
 public:
 
     static CNearFieldManager* NewL( QtMobility::QNearFieldManagerPrivateImpl& aCallback);
-    static CNearFieldManager* NewLC( QtMobility::QNearFieldManagerPrivateImpl& aCallback);
     virtual ~CNearFieldManager();
 
     void StartTargetDetectionL(const QList<QtMobility::QNearFieldTarget::Type> &aTargetTypes);
@@ -101,6 +100,7 @@ private:
 
     CNearFieldManager( QtMobility::QNearFieldManagerPrivateImpl& aCallback);
     void ConstructL();
+    CNdefRecord::TNdefRecordTnf QTnf2CTnf(const QtMobility::QNdefRecord::TypeNameFormat aQTnf);
     //own
     RNfcServer iServer;
     //for Tag discovery

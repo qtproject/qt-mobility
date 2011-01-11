@@ -69,29 +69,6 @@ private:
     CActiveSchedulerWait& iWait; //not own
     };
 
-template <class T>
-class CleanupQDelete
-    {
-public:
-    inline static void PushL(T* aPtr);
-private:
-    static void Delete(TAny *aPtr);
-    };
-template <class T> inline void CleanupQDelete<T>::PushL(T* aRef)
-    {
-    CleanupStack::PushL(TCleanupItem(&Delete,aRef));
-    }
-
-template <class T> void CleanupQDelete<T>::Delete(TAny *aPtr)
-    {
-    delete (static_cast<T*>(aPtr));
-    }
-
-template <class T> inline void CleanupQDeletePushL(T* aRef)
-    {
-    CleanupQDelete<T>::PushL(aRef);
-    }
-
 QTM_BEGIN_NAMESPACE
 class QNdefMessage;
 class QNFCNdefUtility

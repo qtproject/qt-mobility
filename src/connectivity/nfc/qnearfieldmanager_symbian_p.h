@@ -64,9 +64,9 @@ class Proxy : public QObject
     Q_OBJECT
 public:
     Proxy(QObject* parent = 0);
-    
+
 Q_SIGNALS:
-    void handleMessage(const QNdefMessage& message); 
+    void handleMessage(const QNdefMessage& message);
 };
 
 class ContentHandlerInterface : public QObject
@@ -74,7 +74,7 @@ class ContentHandlerInterface : public QObject
     Q_OBJECT
 public:
     ContentHandlerInterface(QObject* parent = 0);
-    
+
 public slots:
     void handleMessage(const QByteArray& message);
 };
@@ -101,7 +101,7 @@ public://call back function by symbian backend implementation
     void targetDisconnected();
 
 public://call back function by symbian backend implementation
-    void invokeTargetDetectedHandler(QNdefMessage msg);
+    void invokeTargetDetectedHandler(const QNdefMessage msg);
 
 
 private slots:
@@ -123,9 +123,9 @@ private:
 
     QPointer<QNearFieldTarget> m_target;
     //For content handler purpose;
-    QObject *chobject;
-    QMetaMethod chmethod;
-    
+    QObject *m_chobject;
+    QMetaMethod m_chmethod;
+
     QRemoteServiceRegister* m_serviceRegister ;
 };
 
