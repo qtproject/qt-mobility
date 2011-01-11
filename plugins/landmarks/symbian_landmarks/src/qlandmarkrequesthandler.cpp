@@ -43,10 +43,12 @@
 #include "qlandmarkmanagerengine_symbian_p.h"
 #include <qlandmarkidfetchrequest.h>
 #include <qlandmarkfetchrequest.h>
-#include <qdebug.h>
+#include <qDebug.h>
+#include <qdatetime.h>
 
 // constant data
 const TUint KOneSecond = 1000;
+//const char* const DATE_FORMAT = "yyyyMMddhhmmsszzz";
 
 TWaitThrdData::TWaitThrdData()
 {
@@ -58,7 +60,7 @@ TWaitThrdData::TWaitThrdData()
 CLandmarkRequestAO::CLandmarkRequestAO(CPosLmOperation *aOperation,
     MLandmarkRequestObserver *aObserver) :
     CActive(EPriorityStandard), iObserver(aObserver), iOperation(aOperation),
-        iIsDestructing(EFalse)
+        iIsDestructing(EFalse), iIsWFFRequestComplete(EFalse)
 {
     CActiveScheduler::Add(this);
 }
@@ -79,6 +81,7 @@ void CLandmarkRequestAO::RunL()
         if (iStatus == KPosLmOperationNotComplete || iStatus == KErrLocked || iStatus
             == KErrAccessDenied) {
             iOperation->NextStep(iStatus, iProgress);
+            //qDebug() << "CLandmarkRequestAO::RunL => SetActive 1";
             SetActive();
         }
         else if (iStatus == KErrNone && IsMultiOperationRequest()) {
@@ -88,10 +91,12 @@ void CLandmarkRequestAO::RunL()
                 iStatus = KRequestPending;
                 if (iOperation) {
                     iOperation->NextStep(iStatus, iProgress);
+                    //qDebug() << "CLandmarkRequestAO::RunL => SetActive 2";
                     SetActive();
                 }
                 else {
                     //qDebug() << "starting multi-operation";
+                    //qDebug() << "CLandmarkRequestAO::RunL => SetActive 3";
                     SetActive();
                     // Only for the Landmark save and Category save. These dont have async operations.
                     // Self completing ative object.
@@ -100,7 +105,7 @@ void CLandmarkRequestAO::RunL()
                 }
             }
             else {
-
+                //qDebug() << "CLandmarkRequestAO::RunL() - WakeupThreads - 1";
                 iIsComplete = ETrue;
                 // All processing is done now. Notify observer.
                 iParent->iErrorId = err;
@@ -113,6 +118,7 @@ void CLandmarkRequestAO::RunL()
         // if request is complete or any error occurred 
         // then complete the request with appropriate error code
         else {
+            //qDebug() << "CLandmarkRequestAO::RunL() - WakeupThreads - 2";
             iIsComplete = ETrue;
             // All processing is done now. Notify observer.
             iParent->iErrorId = iStatus.Int();
@@ -135,9 +141,13 @@ void CLandmarkRequestAO::RunL()
             iStatus = KRequestPending;
             if (iOperation) {
                 iOperation->NextStep(iStatus, iProgress);
+                //qDebug() << "CLandmarkRequestAO::RunL => SetActive 4";
+
                 SetActive();
             }
             else {
+                //qDebug() << "CLandmarkRequestAO::RunL => SetActive 5";
+
                 SetActive();
                 // Only for the Landmark save and Category save. These dont have async operations.
                 // Self completing ative object.
@@ -148,6 +158,8 @@ void CLandmarkRequestAO::RunL()
         // if request is complete or any error occurred 
         // then complete the request with appropriate error code
         else {
+            //qDebug() << "CLandmarkRequestAO::RunL() - WakeupThreads - 3";
+
             iIsComplete = ETrue;
             iParent->iErrorId = iStatus.Int();
             // All processing is done now. Notify observer.
@@ -165,11 +177,12 @@ void CLandmarkRequestAO::RunL()
 TBool CLandmarkRequestAO::WaitForRequestL(TInt aTime, TRequestStatus &aRequest)
 {
     //qDebug() << "WaitForRequestL start";
-    
+
     while (!iIsComplete) {
 
         // if request is cancel from outside.
         if (iCancelRequest) {
+            //qDebug() << "CLandmarkRequestAO::WaitForRequestL - WakeupThreads - 1";
             iParent->iErrorId = KErrCancel;
             // All processing is cancelled now. Notify observer.
             iObserver->HandleCompletionL(iParent);
@@ -179,11 +192,16 @@ TBool CLandmarkRequestAO::WaitForRequestL(TInt aTime, TRequestStatus &aRequest)
         }
         // Wait for the first request.
         if (aTime > 0) {
-            
-            //qDebug() << "wait for aTime = " << aTime;
+
+            //qDebug() << "current time = " << QDateTime::currentDateTime().toString(DATE_FORMAT);
             User::WaitForRequest(iStatus, aRequest);
             //qDebug() << "aRequest = " << aRequest.Int();
-            
+            //qDebug() << "iStatus = " << iStatus.Int();
+
+            if (iStatus == KErrNone) {
+                iIsWFFRequestComplete = ETrue;
+            }
+
             if (aRequest != KRequestPending) {
                 // Timer has expired. return false.
                 return EFalse;
@@ -193,6 +211,8 @@ TBool CLandmarkRequestAO::WaitForRequestL(TInt aTime, TRequestStatus &aRequest)
             //qDebug() << "wait for iStatus";
             User::WaitForRequest(iStatus);
         }
+
+        //qDebug() << "continue execution";
 
         if (iOperation) {
             // if operation is not complete or database is locked 
@@ -209,6 +229,7 @@ TBool CLandmarkRequestAO::WaitForRequestL(TInt aTime, TRequestStatus &aRequest)
             // if request is complete or any error occurred 
             // then complete the request with appropriate error code
             else {
+                //qDebug() << "CLandmarkRequestAO::WaitForRequestL - WakeupThreads - 2";
                 iIsComplete = ETrue;
                 iParent->iErrorId = iStatus.Int();
                 // All processing is done now. Notify observer.
@@ -240,6 +261,8 @@ TBool CLandmarkRequestAO::WaitForRequestL(TInt aTime, TRequestStatus &aRequest)
             // if request is complete or any error occurred 
             // then complete the request with appropriate error code
             else {
+                //qDebug() << "CLandmarkRequestAO::WaitForRequestL - WakeupThreads - 3";
+
                 iIsComplete = ETrue;
                 iParent->iErrorId = iStatus.Int();
                 // All processing is done now. Notify observer.
@@ -256,7 +279,7 @@ TBool CLandmarkRequestAO::WaitForRequestL(TInt aTime, TRequestStatus &aRequest)
 void CLandmarkRequestAO::DoCancel()
 {
     //qDebug() << "DoCancel start";
-    
+
     if (iOperation) {
         //qDebug() << "a operational request is canceled";
 
@@ -269,17 +292,20 @@ void CLandmarkRequestAO::DoCancel()
         if (IsActive())
             memset(&iStatus, 0, sizeof(TRequestStatus));
     }
-    
-    // All processing is cancelled now. Notify observer.
-    iParent->iErrorId = KErrCancel;
-    TRAPD(err,iObserver->HandleCompletionL(iParent);)
-    if (err != KErrNone) {
-        //qDebug() << "DoCancel failed with = " << err;
+
+    if (iIsRequestRunning) {
+        // All processing is cancelled now. Notify observer.
+        iParent->iErrorId = KErrCancel;
+        TRAPD(err,iObserver->HandleCompletionL(iParent);)
+        if (err != KErrNone) {
+            //qDebug() << "DoCancel failed with = " << err;
+        }
+
+        //qDebug() << "CLandmarkRequestAO::DoCancel - WakeupThreads";
+        WakeupThreads(KErrCancel);
+        iIsRequestRunning = EFalse;
     }
-    
-    WakeupThreads(KErrCancel);
-    iIsRequestRunning = EFalse;
-    
+
     //qDebug() << "DoCancel end";
 }
 
@@ -305,11 +331,16 @@ TBool CLandmarkRequestAO::StartRequest(CPosLandmarkSearch *aLandmarkSearch)
     if (aLandmarkSearch)
         iParent->iLandmarkSearch = aLandmarkSearch;
 
+    if (iIsRequestRunning || iCancelRequest || iIsComplete || IsActive())
+        return EFalse;
+
     iCancelRequest = iIsComplete = EFalse;
+    iIsRequestRunning = ETrue;
 
     // Case where owned CPosLmOperation.
     if (iOperation) {
         iOperation->NextStep(iStatus, iProgress);
+        //qDebug() << "CLandmarkRequestAO::StartRequest => SetActive 1";
         SetActive();
     }
     // Case where manually do operation on single item out of a list.
@@ -326,10 +357,13 @@ TBool CLandmarkRequestAO::StartRequest(CPosLandmarkSearch *aLandmarkSearch)
 
             iStatus = KRequestPending;
             if (iOperation) {
+                //qDebug() << "CLandmarkRequestAO::StartRequest => SetActive 2";
                 iOperation->NextStep(iStatus, iProgress);
                 SetActive();
             }
             else {
+                //qDebug() << "CLandmarkRequestAO::StartRequest => SetActive 3";
+
                 SetActive();
                 // Only for the Landmark save and Category save. These dont have async operations.
                 // Self completing ative object.
@@ -340,6 +374,7 @@ TBool CLandmarkRequestAO::StartRequest(CPosLandmarkSearch *aLandmarkSearch)
         // if request is complete or any error occurred 
         // then complete the request with appropriate error code
         else {
+            //qDebug() << "CLandmarkRequestAO::StartRequest -> WakeupThreads";
             iIsComplete = ETrue;
             iParent->iErrorId = iStatus.Int();
             // All processing is done now. Notify observer.
@@ -347,10 +382,7 @@ TBool CLandmarkRequestAO::StartRequest(CPosLandmarkSearch *aLandmarkSearch)
             WakeupThreads(iStatus.Int());
             iIsRequestRunning = EFalse;
         }
-
     }
-
-    iIsRequestRunning = ETrue;
 
     return ETrue;
 }
@@ -383,13 +415,18 @@ TBool CLandmarkRequestAO::WaitForFinished(TInt aTime)
     }
 
     RTimer timer;
+    TInt wffTime = aTime * KOneSecond;
     TRequestStatus timestatus = KErrNone;
     if (aTime > 0) {
         if (timer.CreateLocal() != KErrNone) {
             return EFalse; // ???
         }
-        timer.After(timestatus, aTime * KOneSecond);
+
+        //qDebug() << "starting timer, current time = " << QDateTime::currentDateTime().toString(
+            //DATE_FORMAT);
+        timer.After(timestatus, wffTime);
     }
+
     TBool IsOperationComplete = EFalse;
 
     // Check the Thread ID in the list against current.
@@ -411,20 +448,22 @@ TBool CLandmarkRequestAO::WaitForFinished(TInt aTime)
         Data.iThrdRequest = KRequestPending;
         iParent->iWaitThrds.AddFirst(Data);
 
-        //qDebug() << "Wait for request started";
         if (aTime > 0) {
+            //qDebug() << "aTime >0, Wait for request started";
             User::WaitForRequest(Data.iThrdRequest, timestatus);
             if (timestatus == KRequestPending) {
                 IsOperationComplete = ETrue;
             }
         }
         else {
+            //qDebug() << "Wait for request started";
             IsOperationComplete = ETrue;
             User::WaitForRequest(Data.iThrdRequest);
         }
         //qDebug() << "Out of Wait for request in" << currThrdId;
     }
     if (timestatus == KRequestPending) {
+        //qDebug() << "Cancelling the timer";
         timer.Cancel();
     }
     timer.Close();
@@ -469,30 +508,56 @@ CPosLmOperation * CLandmarkRequestAO::GetOperation()
 
 void CLandmarkRequestAO::WakeupThreads(TInt aCompletion)
 {
-    //qDebug() << "In wakeup threads start, thread id = " << RThread().Id();
+    //qDebug() << "In wakeup threads start";
+
+    if (IsActive() && iIsWFFRequestComplete) {
+        //qDebug() << "Request is still active";
+        iIsRequestRunning = EFalse;
+        Cancel();
+
+        //qDebug() << "iStatus = " << iStatus.Int();
+
+        if (iStatus != KErrNone) {
+
+            iParent->iErrorId = KErrNone;
+            TRAPD(err,iObserver->HandleCompletionL(iParent);)
+            if (err != KErrNone) {
+                //qDebug() << "DoCancel failed with = " << err;
+            }
+
+            //qDebug() << "CLandmarkRequestAO::WakeupThreads - request is active";
+            WakeupThreads(KErrNone);
+            return;
+        }
+    }
+
     TWaitThrdData* Ptr = NULL;
     TSglQueIter<TWaitThrdData> Iter(iParent->iWaitThrds);
 
-    //qDebug() << "iIsRequestRunning = " << iIsRequestRunning << "\tiIsDestructing = " << iIsDestructing;
-    
-    if (!iIsDestructing)
+    //qDebug() << "starting the lock";
+
+    if (!iIsDestructing) {
+
         iParent->iLock.Wait();
 
-    Iter.SetToFirst();
-    while ((Ptr = Iter++) != NULL) {
+        Iter.SetToFirst();
+        while ((Ptr = Iter++) != NULL) {
 
-        RThread waiter;
-        if (waiter.Open(Ptr->iThrdId) == KErrNone) {
-            TRequestStatus* reqptr = &Ptr->iThrdRequest;
-            //qDebug() << "Waking up thread" << Ptr->iThrdId;
-            waiter.RequestComplete(reqptr, aCompletion);
-            waiter.Close();
+            //qDebug() << "cleanup request";
+            RThread waiter;
+            if (waiter.Open(Ptr->iThrdId) == KErrNone) {
+                TRequestStatus* reqptr = &Ptr->iThrdRequest;
+                //qDebug() << "Waking up thread" << Ptr->iThrdId;
+                waiter.RequestComplete(reqptr, aCompletion);
+                waiter.Close();
+            }
 
+            iParent->iWaitThrds.Remove(*Ptr);
         }
 
-        iParent->iWaitThrds.Remove(*Ptr);
+        //qDebug() << "Releasking the lock";
+        iParent->iLock.Signal();
     }
-    iParent->iLock.Signal();
     //qDebug() << "In wakeup threads end ";
 }
 
@@ -515,6 +580,8 @@ TBool CLandmarkRequestAO::IsMultiOperationRequest()
 
 TInt CLandmarkRequestAO::RunError(TInt aError)
 {
+    //qDebug() << "CLandmarkRequestAO::RunError -> WakeupThreads";
+
     iIsComplete = ETrue;
     iParent->iErrorId = aError;
     // All processing is done now. Notify observer.
@@ -555,6 +622,8 @@ void CLandmarkRequestData::ConstructL()
 
 CLandmarkRequestData::~CLandmarkRequestData()
 {
+    //qDebug() << "CLandmarkRequestData::~CLandmarkRequestData - start";
+
     iLock.Wait();
 
     TSglQueIter<TWaitThrdData> Iter(iWaitThrds);
@@ -579,6 +648,8 @@ CLandmarkRequestData::~CLandmarkRequestData()
 
     iLock.Signal();
     iLock.Close();
+    
+    //qDebug() << "CLandmarkRequestData::~CLandmarkRequestData - end";
 }
 
 /**
