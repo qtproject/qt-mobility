@@ -177,7 +177,6 @@ void CLandmarkRequestAO::RunL()
 TBool CLandmarkRequestAO::WaitForRequestL(TInt aTime, TRequestStatus &aRequest)
 {
     //qDebug() << "WaitForRequestL start";
-
     while (!iIsComplete) {
 
         // if request is cancel from outside.
@@ -279,7 +278,6 @@ TBool CLandmarkRequestAO::WaitForRequestL(TInt aTime, TRequestStatus &aRequest)
 void CLandmarkRequestAO::DoCancel()
 {
     //qDebug() << "DoCancel start";
-
     if (iOperation) {
         //qDebug() << "a operational request is canceled";
 
@@ -647,8 +645,7 @@ CLandmarkRequestData::~CLandmarkRequestData()
     Reset();
 
     iLock.Signal();
-    iLock.Close();
-    
+    iLock.Close();    
     //qDebug() << "CLandmarkRequestData::~CLandmarkRequestData - end";
 }
 

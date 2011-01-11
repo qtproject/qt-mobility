@@ -74,8 +74,7 @@ void CLandmarkDbEventHandler::InitializeL()
  */
 void CLandmarkDbEventHandler::StartListening()
 {
-    //qDebug() << "starting database event notification";
-    
+    //qDebug() << "starting database event notification";    
     // If there is atleast one observer and no request already pending
     // then request for notification
     if (iObserverList.Count() > 0 && !IsActive()) {
@@ -144,7 +143,6 @@ void CLandmarkDbEventHandler::DoCancel()
 TInt CLandmarkDbEventHandler::AddObsever(MLandmarkDbEventObserver* aObserverHandle)
 {
     //qDebug() << "Adding Observer - start ";
-
     if (!iIsInitialized) {
         TRAPD(err,InitializeL());
         if (err) {
@@ -170,16 +168,13 @@ TInt CLandmarkDbEventHandler::AddObsever(MLandmarkDbEventObserver* aObserverHand
 TInt CLandmarkDbEventHandler::RemoveObsever(MLandmarkDbEventObserver* aObserverHandle)
 {
     //qDebug() << "Removing Observer - start";
-
     if (!iIsInitialized) {
         TRAPD(err,InitializeL());
         if (err) {
             return err;
         }
     }
-
     //qDebug() << "start the lock";
-    
     // Acquire the lock, this is required as the observers cannot be removed,
     // when the observer list is being used
     iObserverLock.Wait();
@@ -193,16 +188,13 @@ TInt CLandmarkDbEventHandler::RemoveObsever(MLandmarkDbEventObserver* aObserverH
         // if successful, hece this is required
         index = KErrNone;
     }
-
     // release the lock
     //qDebug() << "release the lock";
     iObserverLock.Signal();
-
-    if (iObserverList.Count() <= 0 && IsActive())
+    if (iObserverList.Count() <= 0 && IsActive()){
         Cancel();
-    
+    }
     //qDebug() << "Removing Observer - end, index = " << index;
-
     return index;
 }
 

@@ -2753,7 +2753,6 @@ bool LandmarkManagerEngineSymbianPrivate::removeLandmarkInternalL(const QLandmar
     }
 
     m_DeletedLmIds << landmarkId.localId();
-
     //qDebug() << "Landmark id = " << landmarkId.localId() << "removed successfully.";
 
     *removed = true;
@@ -2859,7 +2858,6 @@ bool LandmarkManagerEngineSymbianPrivate::saveCategoryInternalL(QLandmarkCategor
         category->setCategoryId(savedQtCategoryId);
 
         m_CreatedCatIds << savedQtCategoryId.localId();
-
         //qDebug() << "category " << category->name() << " created successfully " << "cat Id ="
         //            << category->categoryId().localId();
 
@@ -2900,10 +2898,8 @@ bool LandmarkManagerEngineSymbianPrivate::saveCategoryInternalL(QLandmarkCategor
                     User::Leave(err);
                 User::After(KMaxRetryWait);
             }
-
             //qDebug() << "category " << category->name() << " updated successfully " << "cat Id ="
             //                << category->categoryId().localId();
-
             CleanupStack::PopAndDestroy(symbiancat);
 
             m_UpdatedCatIds << categoryId.localId();
@@ -2965,12 +2961,9 @@ bool LandmarkManagerEngineSymbianPrivate::removeCategoryInternalL(
     }
 
     m_DeletedCatIds << categoryId.localId();
-
     //qDebug() << "category id = " << categoryId.localId() << " removed successfully";
-
     *removed = true;
     result = true;
-
     return result;
 }
 
