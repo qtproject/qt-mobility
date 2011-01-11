@@ -160,16 +160,6 @@ void QBluetoothTransferReplySymbian::abort()
     qDebug() << "Abort() is not implemented";
 }
 
-qint64 QBluetoothTransferReplySymbian::readData(char*, qint64)
-{
-    return 0;
-}
-
-qint64 QBluetoothTransferReplySymbian::writeData(const char*, qint64)
-{
-    return 0;
-}
-
 QBluetoothTransferReply::TransferError QBluetoothTransferReplySymbian::error() const
 {
     return m_error;

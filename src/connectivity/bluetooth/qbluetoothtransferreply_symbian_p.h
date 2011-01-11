@@ -96,10 +96,6 @@ public:
     QBluetoothTransferReply::TransferError error() const;
     QString errorString() const;
 
-protected:
-    qint64 readData(char*, qint64);
-    qint64 writeData(const char*, qint64);
-
 private:
     void sendObject(QString filename);
     void disconnect();
