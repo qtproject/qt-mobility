@@ -64,6 +64,9 @@ QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
+class QBluetoothServiceDiscoveryAgent;
+class QBluetoothServiceInfo;
+
 _LIT( KBTSProtocol, "RFCOMM" ); // The Bluetooth transport layer
 
 class QBluetoothTransferReplySymbian : public QBluetoothTransferReply, public CActive
@@ -93,10 +96,6 @@ public:
     QBluetoothTransferReply::TransferError error() const;
     QString errorString() const;
 
-protected:
-    qint64 readData(char*, qint64);
-    qint64 writeData(const char*, qint64);
-
 private:
     void sendObject(QString filename);
     void disconnect();
@@ -107,11 +106,18 @@ private:
 
     static bool copyToTempFile(QIODevice *to, QIODevice *from);
 
+private slots:
+    void startTransfer();
+
+    void serviceDiscovered(const QBluetoothServiceInfo &info);
+    void serviceDiscoveryFinished();
+
 private:
     QIODevice *m_source;
     QTemporaryFile *m_tempfile;
 
     QBluetoothAddress m_address;
+    QBluetoothServiceDiscoveryAgent* m_discoveryAgent;
 
     bool m_running;
     bool m_finished;
@@ -124,6 +130,7 @@ private:
 
     state m_state;
     qint64 m_fileSize;
+    int m_port;
 
 };
 

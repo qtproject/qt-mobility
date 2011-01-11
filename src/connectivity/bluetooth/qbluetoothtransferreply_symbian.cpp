@@ -42,6 +42,9 @@
 
 #include "qbluetoothtransferreply_symbian_p.h"
 #include "utils_symbian_p.h"
+#include "qbluetoothservicediscoveryagent.h"
+#include "qbluetoothserviceinfo.h"
+#include "qbluetoothuuid.h"
 
 #include <QDebug>
 #include <QFile>
@@ -52,7 +55,7 @@ QTM_BEGIN_NAMESPACE
 
 QBluetoothTransferReplySymbian::QBluetoothTransferReplySymbian(QIODevice *input, QObject *parent)
 :   QBluetoothTransferReply(parent), CActive(EPriorityStandard), m_source(input),
-    m_running(false), m_finished(false), m_client(NULL),
+    m_running(false), m_finished(false), m_client(NULL), m_object(NULL),
     m_error(QBluetoothTransferReply::NoError), m_errorStr()
 {
     //add this active object to scheduler
@@ -71,7 +74,6 @@ QBluetoothTransferReplySymbian::~QBluetoothTransferReplySymbian()
 
     delete m_client;
     m_client = NULL;
-
 }
 
 void QBluetoothTransferReplySymbian::setAddress(const QBluetoothAddress &address)
@@ -79,16 +81,45 @@ void QBluetoothTransferReplySymbian::setAddress(const QBluetoothAddress &address
     m_address = address;
 }
 
+void QBluetoothTransferReplySymbian::serviceDiscovered(const QBluetoothServiceInfo &info)
+{
+    m_port = info.serverChannel();
+}
+
+void QBluetoothTransferReplySymbian::serviceDiscoveryFinished()
+{
+    QMetaObject::invokeMethod(this, "startTransfer", Qt::QueuedConnection);
+}
+
 bool QBluetoothTransferReplySymbian::start()
 {
+    if (m_address.isNull())
+        return false;
+
     m_running = true;
 
+    m_discoveryAgent = new QBluetoothServiceDiscoveryAgent(m_address);
+
+    connect(m_discoveryAgent, SIGNAL(serviceDiscovered(QBluetoothServiceInfo)),
+            this, SLOT(serviceDiscovered(QBluetoothServiceInfo)));
+    connect(m_discoveryAgent, SIGNAL(finished()), this, SLOT(serviceDiscoveryFinished()));
+    // Automatically delete agent when device discovery finishes.
+    connect(m_discoveryAgent, SIGNAL(finished()), this, SLOT(deleteLater()));
+
+    m_discoveryAgent->setUuidFilter(QBluetoothUuid(QBluetoothUuid::ObexObjectPush));
+    m_discoveryAgent->start();
+
+    return true;
+}
+
+void QBluetoothTransferReplySymbian::startTransfer()
+{
     TObexBluetoothProtocolInfo protocolInfo;
     TBTDevAddr deviceAddress(m_address.toUInt64());
 
     protocolInfo.iTransport.Copy(KBTSProtocol);
     protocolInfo.iAddr.SetBTAddr(deviceAddress);
-    //protocolInfo.iAddr.SetPort( port ); // TODO: set port if needed
+    protocolInfo.iAddr.SetPort(m_port); // TODO: set port if needed
 
     if ( m_client ) {
         delete m_client;
@@ -99,14 +130,13 @@ bool QBluetoothTransferReplySymbian::start()
     if (err) {
         qDebug() << "Error in" << __FUNCTION__ << err;
         m_error = err == KErrNotFound ? HostNotFoundError: UnknownError;
-        return false;
+        return;
     }
 
+    m_state = EConnecting;
     m_client->Connect( iStatus );
 
-    m_state = EConnecting;
     SetActive();
-    return true;
 }
 
 /*!
@@ -127,17 +157,14 @@ bool QBluetoothTransferReplySymbian::isRunning() const
 
 void QBluetoothTransferReplySymbian::abort()
 {
-    qDebug() << "Abort() is not implemented";
-}
+    m_state = EIdle;
+    m_running = false;
+    // Deleting obexclient is the only way to cancel active requests
+    delete m_client;
+    m_client = NULL;
 
-qint64 QBluetoothTransferReplySymbian::readData(char*, qint64)
-{
-    return 0;
-}
-
-qint64 QBluetoothTransferReplySymbian::writeData(const char*, qint64)
-{
-    return 0;
+    delete m_object;
+    m_object = NULL;
 }
 
 QBluetoothTransferReply::TransferError QBluetoothTransferReplySymbian::error() const
@@ -152,6 +179,7 @@ QString QBluetoothTransferReplySymbian::errorString() const
 
 void QBluetoothTransferReplySymbian::DoCancel()
 {
+    m_running = false;
     // Deleting obexclient is the only way to cancel active requests
     if ( m_client ) {
         delete m_client;
@@ -163,6 +191,11 @@ void QBluetoothTransferReplySymbian::DoCancel()
 
 void QBluetoothTransferReplySymbian::RunL()
 {
+    if (iStatus.Int() != KErrNone) {
+        abort();
+        emit finished(this);
+    }
+
     switch ( m_state ) {
         case EConnecting: {
             m_state = ESending;
@@ -187,7 +220,6 @@ void QBluetoothTransferReplySymbian::RunL()
             break;
         }
         case ESending: {
-            emit uploadProgress(0, m_fileSize);
             m_state = EDisconnecting;
             disconnect();
             break;
@@ -216,11 +248,13 @@ void QBluetoothTransferReplySymbian::sendObject(QString filename)
         TRAPD(error, m_object->InitFromFileL( str ));
         if (!error) {
             m_client->Put( *m_object, iStatus );
+            emit uploadProgress(0, m_fileSize);
             SetActive();
         } else {
             qDebug() << "Error in" << __FUNCTION__ << error;
             m_error = error == KErrNotFound ? FileNotFoundError: UnknownError;
             disconnect();
+            emit finished(this);
         }
     }
 }
