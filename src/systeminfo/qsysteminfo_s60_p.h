@@ -65,11 +65,18 @@
 #include "chargingstatus_s60.h"
 #include "wlaninfo_s60.h"
 #include "storagestatus_s60.h"
+#include "lockandflipstatus_s60.h"
+#include <w32std.h>
+#include "storagedisknotifier_s60.h"
+#include "batterystatus_s60.h"
+#include <ProfileEngineSDKCRKeys.h>
+#include <hwrmvibrasdkcrkeys.h>
 
 QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
+const int KMaxBatteryBars = 7; //Max number of battery bars (7 is fixed for all symbian devices now)
 
 //////// QSystemInfo
 class QSystemInfoPrivate : public QObject
@@ -143,6 +150,8 @@ protected:  //from MTelephonyInfoObserver
     void cellNetworkSignalStrengthChanged();
     void cellNetworkStatusChanged();
 
+    void changedCellId(int);
+
 public slots:
     void wlanNetworkNameChanged();
     void wlanNetworkSignalStrengthChanged();
@@ -169,14 +178,20 @@ public:
     int physicalHeight(int screen);
     int physicalWidth(int screen);
     QSystemDisplayInfo::BacklightState backlightStatus(int screen); //1.2
+
+private:
+    bool getSizeandRotation(int screen,TPixelsTwipsAndRotation& sizeAndRotation);
 };
 
 //////// QSystemStorageInfo
 class QSystemStorageInfoPrivate : public QObject,
-    public MStorageStatusObserver
+    public MStorageStatusObserver,
+    public MStorageSpaceNotifyObserver
 {
     Q_OBJECT
 
+private:
+    QSystemStorageInfo::StorageState CheckDiskSpaceThresholdLimit(const QString &);
 public:
     QSystemStorageInfoPrivate(QObject *parent = 0);
     virtual ~QSystemStorageInfoPrivate();
@@ -190,6 +205,8 @@ public:
 
 protected: // from MStorageStatusObserver
     void storageStatusChanged(bool, const QString &);
+    // from MStorageSpaceNotifyObserver
+    void DiskSpaceChanged(const QString &);
 
 private:
     RFs iFs;
@@ -218,7 +235,9 @@ class QSystemDeviceInfoPrivate : public QObject,
     public MTelephonyInfoObserver,
     public MProEngProfileActivationObserver,
     public MCenRepNotifyHandlerCallback,
-    public MChargingStatusObserver
+    public MChargingStatusObserver,
+    public MKeylockStatusObserver,
+    public MFlipStatusObserver
 {
     Q_OBJECT
 
@@ -286,12 +305,20 @@ protected:
     void networkCodeChanged(){};
     void networkNameChanged(){};
     void networkModeChanged(){};
+    void changedCellId(int){};
 
     void cellNetworkSignalStrengthChanged(){};
     void cellNetworkStatusChanged(){};
 
     //from MChargingStatusObserver
     void chargingStatusChanged();
+
+    //from MKeylockStatusObserver
+    void keylockStatusChanged(TInt aLockType);
+
+    //from MFlipStatusObserver
+    void flipStatusChanged(TInt aFlipType , TInt aFilpKeyBoard );
+
 
 private:
     QSystemDeviceInfo::Profile s60ProfileIdToProfile(TInt profileId) const;
@@ -410,10 +437,43 @@ public:
         return m_mmcStorageStatus;
     }
 
+    CStorageDiskNotifier *storagedisknotifier()
+    {
+        if (!m_storagedisknotifier) {
+            TRAP_IGNORE(m_storagedisknotifier = CStorageDiskNotifier::NewL();)
+        }
+        return m_storagedisknotifier;
+    }
+
+    CKeylockStatus *keylockStatus()
+    {
+        if (!m_keylockStatus) {
+            m_keylockStatus = new CKeylockStatus;
+        }
+        return m_keylockStatus;
+    }
+
+    CFlipStatus *flipStatus()
+    {
+        if (!m_flipStatus) {
+            m_flipStatus = new CFlipStatus;
+            TRAP_IGNORE(m_flipStatus->ConstructL();
+            )
+        }
+        return m_flipStatus;
+    }
+
+    CBatteryCommonInfo *batteryCommonInfo ()
+    {
+        if (!m_batteryCommonInfo) {
+            m_batteryCommonInfo = new CBatteryCommonInfo();
+        }
+        return m_batteryCommonInfo;
+    }
 private:
     DeviceInfo() : m_phoneInfo(NULL), m_subscriberInfo(NULL), m_chargingStatus(NULL),
         m_batteryInfo(NULL), m_cellNetworkInfo(NULL), m_cellNetworkRegistrationInfo(NULL),
-        m_cellSignalStrengthInfo(NULL), m_wlanInfo(NULL), m_mmcStorageStatus(NULL)
+        m_cellSignalStrengthInfo(NULL), m_wlanInfo(NULL), m_mmcStorageStatus(NULL), m_keylockStatus(NULL),m_flipStatus(NULL),m_storagedisknotifier(NULL), m_batteryCommonInfo(NULL)
     {
         m_telephony = CTelephony::NewL();
     };
@@ -430,7 +490,13 @@ private:
         delete m_telephony;
         delete m_wlanInfo;
         delete m_mmcStorageStatus;
+        delete m_keylockStatus;
+        delete m_flipStatus;
+        delete m_storagedisknotifier;
+        delete m_batteryCommonInfo;
     }
+
+    DeviceInfo(const DeviceInfo &);
 
     static DeviceInfo *m_instance;
 
@@ -444,9 +510,13 @@ private:
     CCellSignalStrengthInfo *m_cellSignalStrengthInfo;
     CWlanInfo* m_wlanInfo;
     CMMCStorageStatus* m_mmcStorageStatus;
+    CKeylockStatus *m_keylockStatus;
+    CFlipStatus *m_flipStatus;
+    CStorageDiskNotifier* m_storagedisknotifier;
+    CBatteryCommonInfo* m_batteryCommonInfo;
 };
 
-class QSystemBatteryInfoPrivate : public QObject
+class QSystemBatteryInfoPrivate : public QObject, public MBatteryInfoObserver, public MBatteryHWRMObserver
 {
     Q_OBJECT
 public:
@@ -467,7 +537,7 @@ public:
     int maxBars() const;
     QSystemBatteryInfo::BatteryStatus batteryStatus() const;
     QSystemBatteryInfo::EnergyUnit energyMeasurementUnit() const;
-
+    qint32 startCurrentMeasurement(int rate);
 
 Q_SIGNALS:
     void batteryLevelChanged(qint32 level);
@@ -488,6 +558,15 @@ Q_SIGNALS:
 protected:
     void connectNotify(const char *signal);
     void disconnectNotify(const char *signal);
+    void changedBatteryStatus() ;
+    void changedChargingState() ;
+    void changedChargerType() ;
+    void changedRemainingCapacityBars();
+    void changedCurrentFlow(int);
+
+private :
+    CBatteryHWRM *m_batteryHWRM;
+    QSystemBatteryInfo::ChargerType m_charger, m_previousChagrger;
 };
 
 QTM_END_NAMESPACE
