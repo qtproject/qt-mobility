@@ -316,7 +316,21 @@ private slots:
             QCOMPARE(reading.tapDirection(), QTapReading::Z_Pos);
             reading.setTapDirection(QTapReading::Z_Neg);
             QCOMPARE(reading.tapDirection(), QTapReading::Z_Neg);
-            reading.setTapDirection(static_cast<QTapReading::TapDirection>(1000));
+            // Directions can be ORed together
+            reading.setTapDirection(QTapReading::X_Both);
+            QCOMPARE(reading.tapDirection(), QTapReading::X_Both);
+            reading.setTapDirection(QTapReading::Y_Both);
+            QCOMPARE(reading.tapDirection(), QTapReading::Y_Both);
+            reading.setTapDirection(QTapReading::Z_Both);
+            QCOMPARE(reading.tapDirection(), QTapReading::Z_Both);
+            // You can't set just the Axis
+            reading.setTapDirection(QTapReading::X);
+            QCOMPARE(reading.tapDirection(), QTapReading::Undefined);
+            reading.setTapDirection(QTapReading::Y);
+            QCOMPARE(reading.tapDirection(), QTapReading::Undefined);
+            reading.setTapDirection(QTapReading::Z);
+            QCOMPARE(reading.tapDirection(), QTapReading::Undefined);
+            reading.setTapDirection(static_cast<QTapReading::TapDirection>(0x1000));
             QCOMPARE(reading.tapDirection(), QTapReading::Undefined);
         }
     }
