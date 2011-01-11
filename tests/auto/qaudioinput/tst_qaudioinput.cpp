@@ -589,7 +589,7 @@ void tst_QAudioInput::push()
         QIODevice* feed = audioInput.start();
 
         // Check that QAudioInput immediately transitions to IdleState
-        QVERIFY2((stateSignal.count() == 1),"didn't emit IdleState signal on start()");
+        QTRY_VERIFY2((stateSignal.count() == 1),"didn't emit IdleState signal on start()");
         QVERIFY2((audioInput.state() == QAudio::IdleState),
                 "didn't transition to IdleState after start()");
         QVERIFY2((audioInput.error() == QAudio::NoError), "error state is not equal to QAudio::NoError after start()");
@@ -602,12 +602,12 @@ void tst_QAudioInput::push()
 
         qint64 totalBytesRead = 0;
         bool firstBuffer = true;
-        char buffer[AUDIO_BUFFER];
+        QByteArray buffer(AUDIO_BUFFER, 0);
         qint64 len = (testFormats.at(i).frequency()*testFormats.at(i).channels()*(testFormats.at(i).sampleSize()/8)*2); // 2 seconds
         while (totalBytesRead < len) {
-            if (audioInput.bytesReady() > audioInput.periodSize()) {
-                qint64 bytesRead = feed->read(buffer, audioInput.periodSize());
-                audioFiles.at(i)->write(buffer,bytesRead);
+            if (audioInput.bytesReady() >= audioInput.periodSize()) {
+                qint64 bytesRead = feed->read(buffer.data(), audioInput.periodSize());
+                audioFiles.at(i)->write(buffer.constData(),bytesRead);
                 totalBytesRead+=bytesRead;
                 if (firstBuffer && bytesRead) {
                     // Check for transition to ActiveState when data is provided
@@ -668,7 +668,7 @@ void tst_QAudioInput::pushSuspendResume()
         QIODevice* feed = audioInput.start();
 
         // Check that QAudioInput immediately transitions to IdleState
-        QVERIFY2((stateSignal.count() == 1),"didn't emit IdleState signal on start()");
+        QTRY_VERIFY2((stateSignal.count() == 1),"didn't emit IdleState signal on start()");
         QVERIFY2((audioInput.state() == QAudio::IdleState),
                 "didn't transition to IdleState after start()");
         QVERIFY2((audioInput.error() == QAudio::NoError), "error state is not equal to QAudio::NoError after start()");
@@ -681,12 +681,12 @@ void tst_QAudioInput::pushSuspendResume()
 
         qint64 totalBytesRead = 0;
         bool firstBuffer = true;
-        char buffer[AUDIO_BUFFER];
+        QByteArray buffer(AUDIO_BUFFER, 0);
         qint64 len = (testFormats.at(i).frequency()*testFormats.at(i).channels()*(testFormats.at(i).sampleSize()/8)); // 1 seconds
         while (totalBytesRead < len) {
-            if (audioInput.bytesReady() > audioInput.periodSize()) {
-                qint64 bytesRead = feed->read(buffer, audioInput.periodSize());
-                audioFiles.at(i)->write(buffer,bytesRead);
+            if (audioInput.bytesReady() >= audioInput.periodSize()) {
+                qint64 bytesRead = feed->read(buffer.data(), audioInput.periodSize());
+                audioFiles.at(i)->write(buffer.constData(),bytesRead);
                 totalBytesRead+=bytesRead;
                 if (firstBuffer && bytesRead) {
                     // Check for transition to ActiveState when data is provided
@@ -740,8 +740,8 @@ void tst_QAudioInput::pushSuspendResume()
         firstBuffer = true;
         while (totalBytesRead < len) {
             if (audioInput.bytesReady() >= audioInput.periodSize()) {
-                qint64 bytesRead = feed->read(buffer, audioInput.periodSize());
-                audioFiles.at(i)->write(buffer,bytesRead);
+                qint64 bytesRead = feed->read(buffer.data(), audioInput.periodSize());
+                audioFiles.at(i)->write(buffer.constData(),bytesRead);
                 totalBytesRead+=bytesRead;
             } else
                 QTest::qWait(20);
