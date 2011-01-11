@@ -192,10 +192,10 @@ CCellNetworkInfo::CCellNetworkInfo(CTelephony &telephony) : CTelephonyInfo(telep
     makeRequest();    
 
     m_cellId = m_networkInfoV1.iCellId;
-	m_previouscellId = m_cellId;
+    m_previouscellId = m_cellId;
     m_locationAreaCode = m_networkInfoV1.iLocationAreaCode;
 
-	TBuf<CTelephony::KNetworkIdentitySize> networkId = m_networkInfoV1.iNetworkId;
+    TBuf<CTelephony::KNetworkIdentitySize> networkId = m_networkInfoV1.iNetworkId;
     m_networkId = QString::fromUtf16(networkId.Ptr(), networkId.Length());
     m_previousNetworkId = m_networkId;
 
@@ -256,16 +256,15 @@ void CCellNetworkInfo::RunL()
             if (m_networkMode != m_previousNetworkMode) {
                 observer->networkModeChanged();
             }
-			if (m_cellId != m_previouscellId) {
-			    observer->changedCellId(m_cellId);
-			}
-
+            if (m_cellId != m_previouscellId) {
+			          observer->changedCellId(m_cellId);
+			      }
         }
         m_previousNetworkId = m_networkId;
         m_previousCountryCode = m_countryCode;
         m_previousNetworkName = m_networkName;
         m_previousNetworkMode = m_networkMode;
-		m_previouscellId = m_cellId;
+        m_previouscellId = m_cellId;
         startMonitoring();
     }
 }
