@@ -76,9 +76,9 @@ CBatteryCommonInfo::CBatteryCommonInfo() : iBatteryStatus(NULL), iBatteryChargin
                 }
             }
         }
-    if(iBatteryStatus)
+    if (iBatteryStatus)
         iBatteryStatData = iBatteryStatus->GetValue();
-    if(iCapacityBars)
+    if (iCapacityBars)
         iRemainingCapacityBars = iCapacityBars->GetValue();
     #else
     iRemainingCapacityBars = -1;
@@ -89,18 +89,18 @@ CBatteryCommonInfo::CBatteryCommonInfo() : iBatteryStatus(NULL), iBatteryChargin
 
 CBatteryCommonInfo::~CBatteryCommonInfo()
     {
-    if(iBatteryStatus)
+    if (iBatteryStatus)
         delete iBatteryStatus;
-    if(iBatteryChargingStatus)
+    if (iBatteryChargingStatus)
         delete iBatteryChargingStatus;
-    if(iCapacityBars)
+    if (iCapacityBars)
         delete iCapacityBars;
     iBatteryStatus = iBatteryChargingStatus = iCapacityBars =NULL;
     }
 
 void CBatteryCommonInfo::AddObserver(MBatteryInfoObserver *aObserver)
     {
-    if(aObserver)
+    if (aObserver)
         iObservers.append(aObserver);
     }
 
@@ -126,7 +126,7 @@ TBool CBatteryCommonInfo::BatteryCapacity(CHWRMPower::TBatteryConsumptionData& a
     {
     CHWRMPower* hwrmPower = NULL;
     TRAPD( err, hwrmPower = CHWRMPower::NewL() );
-    if( KErrNone == err )
+    if ( KErrNone == err )
         {
         TRequestStatus aStatus;
         hwrmPower->GetBatteryInfo( aStatus, aBatteryData );
@@ -171,7 +171,7 @@ TInt CBatteryCommonInfo::Voltage() const
     CHWRMPower::TBatteryVoltageData batteryVoltageData;
     CHWRMPower* hwrmPower = NULL;
     TRAPD( err, hwrmPower = CHWRMPower::NewL() );
-    if( KErrNone == err )
+    if ( KErrNone == err )
         {
         TRequestStatus aStatus;
         hwrmPower->GetBatteryVoltageInfo( aStatus, batteryVoltageData );
@@ -211,10 +211,10 @@ void CBatteryCommonInfo::CommanSignalHandler( const TUid aCategory, const TUint 
                 break;
             case KHWRMChargingStatus :
                 //Get Charge Status
-                if(iBatteryChargingStatus)
+                if (iBatteryChargingStatus)
                     {
                     TInt chargeStatus = iBatteryChargingStatus->GetValue();
-                    switch(chargeStatus)
+                    switch (chargeStatus)
                         {
                         case EChargingStatusCharging:
                         case EChargingStatusAlmostComplete:
@@ -303,7 +303,7 @@ void CBatteryHWRM::PowerMeasurement(TInt aErr, CHWRMPower::TBatteryPowerMeasurem
             iObserver->changedCurrentFlow(iAverageCurrent);
             }
         }
-    else if(iPowerReportingON)
+    else if (iPowerReportingON)
         StartCurrentFlowMeasurement();
     }
 #endif
