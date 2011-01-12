@@ -6921,13 +6921,11 @@ void tst_QLandmarkManager::importKml()
 
         //malformed file
         QVERIFY(!m_manager->importLandmarks("data/malformed.kml", QLandmarkManager::Kml));
-        QEXPECT_FAIL("", "MOBLITY-2109: imprecise code returned when imported malformed landmark file", Continue);
         QCOMPARE(m_manager->error(), QLandmarkManager::ParsingError);
 
         importRequest.setFormat(QLandmarkManager::Kml);
         importRequest.setFileName("data/malformed.kml");
         importRequest.start();
-        QEXPECT_FAIL("", "MOBLITY-2109: imprecise error code returned when imported malformed landmark file", Continue);
         QVERIFY(waitForAsync(spy, &importRequest, QLandmarkManager::ParsingError));
 
         errorTestsDone = true;
@@ -7048,13 +7046,11 @@ void tst_QLandmarkManager::importKmz()
 
         //malformed file
         QVERIFY(!m_manager->importLandmarks("data/malformed.kmz", QLandmarkManager::Kmz));
-        QEXPECT_FAIL("", "MOBLITY-2109: imprecise error code returned when imported malformed landmark file", Continue);
         QCOMPARE(m_manager->error(), QLandmarkManager::ParsingError);
 
         importRequest.setFormat(QLandmarkManager::Kmz);
         importRequest.setFileName("data/malformed.kmz");
         importRequest.start();
-        QEXPECT_FAIL("", "MOBLITY-2109: imprecise error code returned when imported malformed landmark file", Continue);
         QVERIFY(waitForAsync(spy, &importRequest, QLandmarkManager::ParsingError)); //does not exist
 
         errorTestsDone = true;
