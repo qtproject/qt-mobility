@@ -3341,13 +3341,15 @@ CPosLmSearchCriteria* LandmarkManagerEngineSymbianPrivate::getSearchCriteriaL(
 
         QStringList keyList = attributeFilter.attributeKeys();
         for (int i = 0; i < keyList.size(); ++i) {
+
             QLandmarkFilter::MatchFlags matchFlags = attributeFilter.matchFlags(keyList.at(i));
             matchFlags = (matchFlags & 3);
+
             if (matchFlags == QLandmarkFilter::MatchEndsWith) {
                 //make sure we don't match with match ends with 0x3 (Match contains is 0x2)
             }
-            else if (opType == QLandmarkAttributeFilter::AndOperation
-                && (attributeFilter.matchFlags(keyList.at(i)) & QLandmarkFilter::MatchContains)) {
+            //if any of the attribute matchflag is set to MatchContains, then return KErrNotSupported
+            else if (attributeFilter.matchFlags(keyList.at(i)) & QLandmarkFilter::MatchContains) {
                 User::Leave(KErrNotSupported);
             }
         }
@@ -3426,19 +3428,6 @@ CPosLmSearchCriteria* LandmarkManagerEngineSymbianPrivate::getSearchCriteriaL(
                 {
                     filterName.Copy(KDefaultTextCriteria);
                     filterName.Append(keyValue.toString().utf16(), keyValue.toString().size());
-                    break;
-                }
-                    //the text could be either QString("*name*") or  QString("* *name*")
-                case QLandmarkFilter::MatchContains:
-                {
-                    filterName.Copy(KDefaultTextCriteria);
-                    filterName.Append(keyValue.toString().utf16(), keyValue.toString().size());
-                    filterName.Append(KDefaultTextCriteria);
-
-                    filterNamecont.Copy(KDefaultSpaceTextSearch);
-                    filterNamecont.Copy(KDefaultTextCriteria);
-                    filterNamecont.Append(keyValue.toString().utf16(), keyValue.toString().size());
-                    filterNamecont.Append(KDefaultTextCriteria);
                     break;
                 }
                 case QLandmarkFilter::MatchFixedString:
