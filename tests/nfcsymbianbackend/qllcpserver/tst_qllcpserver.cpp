@@ -165,7 +165,7 @@ void tst_QLlcpServer::newConnection()
     out << (quint16)(block.size() - sizeof(quint16));
     qint64 val = socket->write(block);
     qDebug("Write() return value = %d", val);
-    QVERIFY(val != -1);
+    QVERIFY(val == 0);
 
     QTRY_VERIFY(!bytesWrittenSpy.isEmpty());
     qint64 written = bytesWrittenSpy.first().at(0).value<qint64>();
@@ -176,7 +176,7 @@ void tst_QLlcpServer::newConnection()
         QTRY_VERIFY(!bytesWrittenSpy.isEmpty());
         written += bytesWrittenSpy.first().at(0).value<qint64>();
         }
-    QVERIFY(written == echo.length());
+    QVERIFY(written == block.size());
     //Now data has been sent,check the if existing error
     QVERIFY(errorSpy.isEmpty());
 
@@ -252,7 +252,7 @@ void tst_QLlcpServer::newConnection_wait()
 
     qint64 val = socket->write(block);
     qDebug("Write() return value = %d", val);
-    QVERIFY(val != -1);
+    QVERIFY(val == 0);
 
     ret = socket->waitForBytesWritten(Timeout);
     QVERIFY(ret);
@@ -268,7 +268,7 @@ void tst_QLlcpServer::newConnection_wait()
         QTRY_VERIFY(!bytesWrittenSpy.isEmpty());
         written += bytesWrittenSpy.first().at(0).value<qint64>();
         }
-    QVERIFY(written == echo.length());
+    QVERIFY(written == block.size());
     //Now data has been sent,check the if existing error
     if (!errorSpy.isEmpty())
         {
