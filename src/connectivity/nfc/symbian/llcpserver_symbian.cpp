@@ -46,10 +46,6 @@
 
 #include "debug.h"
 
-// TODO
-// will obslete with API updated
-const TInt KInterestingSsap = 35;
-
 /*!
     CLlcpServer::NewL()
 */
@@ -146,9 +142,6 @@ TBool CLlcpServer::Listen( const TDesC8& aServiceName)
     BEGIN
     TInt error = KErrNone;
 
-    // TODO
-    // will updated to
-    // iLlcp->StartListeningConnOrientedRequestL( *this, aServiceName );
     iServiceName.Zero();
     if (iServiceName.Create(aServiceName.Size()) < 0)
         {
@@ -157,7 +150,7 @@ TBool CLlcpServer::Listen( const TDesC8& aServiceName)
         }
     iServiceName.Append(aServiceName);
 
-    TRAP(error,iLlcp->StartListeningConnOrientedRequestL( *this, KInterestingSsap ));
+    TRAP(error,iLlcp->StartListeningConnOrientedRequestL( *this, iServiceName ));
 
     error == KErrNone ? iSocketListening = ETrue : iSocketListening = EFalse;
     END
@@ -167,12 +160,9 @@ TBool CLlcpServer::Listen( const TDesC8& aServiceName)
 void CLlcpServer::StopListening( )
     {
     BEGIN
-    // TODO
-    // will updated to
-    //TRAP(error,iLlcp->StopListeningConnOrientedRequest(iServiceName));
     if (iSocketListening)
         {
-        iLlcp->StopListeningConnOrientedRequest( KInterestingSsap );
+        iLlcp->StopListeningConnOrientedRequest( iServiceName );
         iSocketListening = EFalse;
         iLlcpSocketArray.ResetAndDestroy();
         }
