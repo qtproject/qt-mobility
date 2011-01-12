@@ -100,7 +100,7 @@ private:
     QMap<quint16, QByteArray> checkResponse2ServiceBlockList(const QMap<quint16, QList<quint16> > &serviceBlockList, const QByteArray& response);
     #endif
     void handleTagOperationResponse(const RequestId &id, const QByteArray &command, const QByteArray &response);
-    QVariant decodeResponse(const QByteArray &/*command*/, const QByteArray &response) { return response; }
+    QVariant decodeResponse(const QByteArray & command, const QByteArray &response); 
 private:
     QByteArray mIDm;
     friend class QNearFieldTagImpl<QNearFieldTagType3Symbian>;

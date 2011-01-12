@@ -93,7 +93,7 @@ public:
     }
 
     void handleTagOperationResponse(const RequestId &id, const QByteArray &command, const QByteArray &response);
-    QVariant decodeResponse(const QByteArray &/*command*/, const QByteArray &response) { return response; }
+    QVariant decodeResponse(const QByteArray &command, const QByteArray &response);
     friend class QNearFieldTagImpl<QNearFieldTagType4Symbian>;
 };
 

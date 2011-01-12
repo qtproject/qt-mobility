@@ -69,6 +69,11 @@ QByteArray QNearFieldTagType4Symbian::uid() const
     return _uid();
 }
     
+QVariant QNearFieldTagType4Symbian::decodeResponse(const QByteArray &/*command*/, const QByteArray &response)
+{ 
+    return response; 
+}
+
 bool QNearFieldTagType4Symbian::hasNdefMessage()
 {
     return _hasNdefMessage();
