@@ -138,9 +138,12 @@ bool MNearFieldTagAsyncRequest::WaitRequestCompleted(int aMsecs)
     }
 
     iMsecs = aMsecs * 1000;
-    // timer should be started when request is issued.
-    //LOG("Start timer");
-    //iTimer->Start(0, aMsecs, callback);
+    if (iRequestIssued)
+    {
+        // timer should be started when request is issued.
+        LOG("Start timer");
+        iTimer->Start(0, aMsecs, callback);
+    }
     LOG("Start waiter");
     iWait->Start();
     LOG("Waiting completed, "<<result);
