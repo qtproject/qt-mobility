@@ -54,6 +54,17 @@
 #include <QTimer>
 #include <QMapIterator>
 
+#include <fcntl.h>
+#include <sys/ioctl.h>
+#include <linux/input.h>
+
+#define BITS_PER_LONG (sizeof(long) * 8)
+#define NBITS(x) ((((x)-1)/BITS_PER_LONG)+1)
+#define OFF(x)  ((x)%BITS_PER_LONG)
+#define BIT(x)  (1UL<<OFF(x))
+#define LONG(x) ((x)/BITS_PER_LONG)
+#define test_bit(bit, array)    ((array[LONG(bit)] >> OFF(bit)) & 1)
+
 #if !defined(QT_NO_DBUS)
 #include "linux/gconfitem_p.h" // Temporarily here.
 #endif
@@ -1436,6 +1447,29 @@ QString QSystemDeviceInfoPrivate::productName()
 }
 
 #endif
+
+bool QSystemDeviceInfoPrivate::isKeyboardFlippedOpen()
+{
+    bool keyboardFlippedOpen = false;
+    unsigned long bits[NBITS(KEY_MAX)] = {0}; /* switch state bits */
+    int eventFd = open("/dev/input/gpio-keys", O_RDONLY | O_NONBLOCK);
+
+    if (-1 == eventFd) {
+        goto probing_done;
+    }
+
+    if (-1 == ioctl(eventFd, EVIOCGSW(KEY_MAX), bits)) {
+        goto probing_done;
+    }
+
+    keyboardFlippedOpen = (0 == test_bit(SW_KEYPAD_SLIDE, bits));
+
+probing_done:
+    if (eventFd != -1) {
+        close(eventFd);
+    }
+    return keyboardFlippedOpen;
+}
 
 int QSystemDeviceInfoPrivate::messageRingtoneVolume()
 {

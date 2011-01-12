@@ -250,6 +250,7 @@ public:
     QSystemDeviceInfo::PowerState currentPowerState();
     QString model();
     QString productName();
+    bool isKeyboardFlippedOpen();//1.2
 
     int messageRingtoneVolume();//1.2
     int voiceRingtoneVolume();//1.2
