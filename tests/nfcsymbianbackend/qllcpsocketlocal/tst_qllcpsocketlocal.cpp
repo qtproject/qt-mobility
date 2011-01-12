@@ -281,8 +281,8 @@ void tst_qllcpsocketlocal::testCase2()
     QNfcTestUtil::ShowMessage(messageBox);
 
     // STEP 5: 
-    const int Timeout = 1 * 1000; 
-    m_socket->waitForBytesWritten(Timeout);
+    const int Timeout1 = 1 * 1000; 
+    m_socket->waitForBytesWritten(Timeout1);
 
     delete socket;
     QVERIFY(ret == true);
