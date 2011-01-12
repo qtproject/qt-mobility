@@ -62,16 +62,35 @@ QTM_BEGIN_NAMESPACE
     comparable (as they may choose different fixed points for their reference).
 */
 
-// A bit of a hack to call qRegisterMetaType when the library is loaded.
-static int qtimestamp_id = qRegisterMetaType<QtMobility::qtimestamp>("QtMobility::qtimestamp");
-static int qrange_id = qRegisterMetaType<QtMobility::qrange>("QtMobility::qrange");
-static int qrangelist_id = qRegisterMetaType<QtMobility::qrangelist>("QtMobility::qrangelist");
-static int qoutputrangelist_id = qRegisterMetaType<QtMobility::qoutputrangelist>("QtMobility::qoutputrangelist");
+/*!
+    \typedef qrange
+    \relates QSensor
 
-// =====================================================================
+    This type is defined as a QPair.
+
+    \code
+    typedef QPair<int,int> qrange;
+    \endcode
+
+    \sa QPair, qrangelist, QSensor::availableDataRates
+*/
+
+/*!
+    \typedef qrangelist
+    \relates QSensor
+
+    This type is defined as a list of qrange values.
+
+    \code
+    typedef QList<qrange> qrangelist;
+    \endcode
+
+    \sa QList, qrange, QSensor::availableDataRates
+*/
 
 /*!
     \class qoutputrange
+    \relates QSensor
     \brief The qoutputrange class holds the specifics of an output range.
 
     The class is defined as a simple struct.
@@ -99,7 +118,7 @@ static int qoutputrangelist_id = qRegisterMetaType<QtMobility::qoutputrangelist>
     256 possible values to report with. These values are scaled so that they can represent either
     -2G to +2G (with an accuracy value of 0.015G) or -8G to +8G (with an accuracy value of 0.06G).
 
-    \sa QSensor::outputRanges
+    \sa qoutputrangelist, QSensor::outputRanges
 */
 
 /*!
@@ -122,6 +141,25 @@ static int qoutputrangelist_id = qRegisterMetaType<QtMobility::qoutputrangelist>
     The accuracy value represents the resolution of the sensor. It is the smallest change
     the sensor can detect and is expressed using the same units as the minimum and maximum.
 */
+
+/*!
+    \typedef qoutputrangelist
+    \relates QSensor
+
+    This type is defined as a list of qoutputrange values.
+
+    \code
+    typedef QList<qoutputrange> qoutputrangelist;
+    \endcode
+
+    \sa QList, qoutputrange, QSensor::outputRanges
+*/
+
+// A bit of a hack to call qRegisterMetaType when the library is loaded.
+static int qtimestamp_id = qRegisterMetaType<QtMobility::qtimestamp>("QtMobility::qtimestamp");
+static int qrange_id = qRegisterMetaType<QtMobility::qrange>("QtMobility::qrange");
+static int qrangelist_id = qRegisterMetaType<QtMobility::qrangelist>("QtMobility::qrangelist");
+static int qoutputrangelist_id = qRegisterMetaType<QtMobility::qoutputrangelist>("QtMobility::qoutputrangelist");
 
 // =====================================================================
 
@@ -307,7 +345,7 @@ bool QSensor::isActive() const
     See the sensor_explorer example for an example of how to interpret and use
     this information.
 
-    \sa QSensor::dataRate
+    \sa QSensor::dataRate, qrangelist
 */
 
 qrangelist QSensor::availableDataRates() const
@@ -517,13 +555,7 @@ void QSensor::removeFilter(QSensorFilter *filter)
     A sensor may have more than one output range. Typically this is done
     to give a greater measurement range at the cost of lowering accuracy.
 
-    The qoutputrangelist type exists for the benefit of the meta-type system.
-    It is just a typedef.
-    \code
-    typedef qoutputrangelist QList<qoutputrange>;
-    \endcode
-
-    \sa QSensor::outputRange, qoutputrange
+    \sa QSensor::outputRange, qoutputrangelist
 */
 
 qoutputrangelist QSensor::outputRanges() const
