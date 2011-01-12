@@ -58,6 +58,7 @@
 #include <QSize>
 #include <QHash>
 #include <QTimer>
+#include <QVariantMap>
 
 #include "qsysteminfo.h"
 #include "qsystemdeviceinfo.h"

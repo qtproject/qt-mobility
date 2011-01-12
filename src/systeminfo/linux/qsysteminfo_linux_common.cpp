@@ -46,6 +46,7 @@
 #include <QFile>
 #include <QDir>
 #include <QCryptographicHash>
+#include <QVariantMap>
 
 #if !defined(QT_NO_DBUS)
 #include "qhalservice_linux_p.h"

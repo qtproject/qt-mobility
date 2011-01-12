@@ -64,6 +64,7 @@
 #include <QtDBus/QDBusObjectPath>
 #include <QtDBus/QDBusContext>
 #include <QMap>
+#include <QVariantMap>
 
 #ifndef __CONNMAN_DBUS_H
 
@@ -120,7 +121,7 @@ public:
 
     QString requestSession(const QString &bearerName);
     void releaseSession();
-    
+
       // properties
     QString getState();
     QStringList getAvailableTechnologies();
