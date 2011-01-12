@@ -1067,6 +1067,29 @@ int QSystemDisplayInfoPrivate::physicalWidth(int screen)
     return width;
 }
 
+QSystemDisplayInfo::BacklightState QSystemDisplayInfoPrivate::backlightStatus(int screen)
+{
+    Q_UNUSED(screen)
+    QSystemDisplayInfo::BacklightState backlightState = QSystemDisplayInfo::BacklightStateUnknown;
+
+#if !defined(QT_NO_DBUS)
+    QDBusReply<QString> reply = QDBusConnection::systemBus().call(
+                                    QDBusMessage::createMethodCall("com.nokia.mce", "/com/nokia/mce/request",
+                                                                   "com.nokia.mce.request", "get_display_status"));
+    if (reply.isValid()) {
+        QString displayStatus = reply.value();
+        if (displayStatus == "off") {
+            backlightState = QSystemDisplayInfo::BacklightStateOff;
+        } else if (displayStatus == "dimmed") {
+            backlightState = QSystemDisplayInfo::backlightStateDimmed;
+        } else if (displayStatus == "on") {
+            backlightState = QSystemDisplayInfo::backlightStateOn;
+        }
+    }
+#endif
+    return backlightState;
+}
+
 QSystemStorageInfoPrivate::QSystemStorageInfoPrivate(QSystemStorageInfoLinuxCommonPrivate *parent)
         : QSystemStorageInfoLinuxCommonPrivate(parent)
 {

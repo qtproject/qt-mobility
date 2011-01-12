@@ -219,6 +219,7 @@ public:
     int physicalHeight(int screen);
     int physicalWidth(int screen);
     int displayBrightness(int screen);
+    QSystemDisplayInfo::BacklightState backlightStatus(int screen);
 };
 
 class QSystemStorageInfoPrivate : public QSystemStorageInfoLinuxCommonPrivate
