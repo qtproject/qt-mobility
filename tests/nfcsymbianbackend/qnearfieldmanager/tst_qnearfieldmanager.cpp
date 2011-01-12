@@ -207,21 +207,13 @@ void tst_QNearFieldManager::registerTargetDetectedHandler_filter_data()
 
     filter.clear();
     filter.setOrderMatch(true);
-    filter.appendRecord(QNdefRecord::Mime, "image/gif");
-    filter.appendRecord<QNdefNfcTextRecord>(2, 10);
-    filter.appendRecord<QNdefNfcUriRecord>(1, 1);
-    QTest::newRow("Image + Multiple Text + URI") << filter << "Please touch a tag with 'Image + Multiple Text + URI' NDef message";
-
-    filter.clear();
-    filter.setOrderMatch(true);
     filter.appendRecord<QNdefNfcTextRecord>(1, 1);
     filter.appendRecord<QNdefNfcUriRecord>(1, 1);
     QTest::newRow("Text + URI") << filter << "Please touch a tag with 'Text + URI' NDef message";
 
-    //negtive test
     filter.clear();
     filter.appendRecord<QNdefNfcUriRecord>(1, 1);
-    QTest::newRow("URI") << filter << "Please touch a tag without 'URI' NDef message";
+    QTest::newRow("URI") << filter << "Please touch a tag with 'URI' NDef message";
 
 }
 
@@ -266,7 +258,6 @@ void tst_QNearFieldManager::registerTargetDetectedHandler_filter_negtive_data()
     QTest::addColumn<QString>("hint");
     //negtive test
     QNdefFilter filter;
-
 
     QTest::newRow("Empty") << filter << "Please touch a tag without NDef message";
 

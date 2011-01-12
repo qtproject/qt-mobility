@@ -191,7 +191,7 @@ void tst_qllcpsockettype2::echo()
         QTRY_VERIFY(!bytesWrittenSpy.isEmpty());
         written += bytesWrittenSpy.first().at(0).value<qint64>();
         }
-    QVERIFY(written == echo.length());
+    QVERIFY(written == block.size());
     //Get the echoed data from server
     QTRY_VERIFY(!readyReadSpy.isEmpty());
     quint16 blockSize = 0;
@@ -281,7 +281,7 @@ void tst_qllcpsockettype2::echo_wait()
     out << (quint16)(block.size() - sizeof(quint16));
 
     qint64 val = socket.write(block);
-    QVERIFY( val != -1);
+    QVERIFY( val == 0);
 
     ret = socket.waitForBytesWritten(Timeout);
     QVERIFY(ret);
@@ -297,7 +297,7 @@ void tst_qllcpsockettype2::echo_wait()
         QTRY_VERIFY(!bytesWrittenSpy.isEmpty());
         written += bytesWrittenSpy.first().at(0).value<qint64>();
         }
-    QVERIFY(written == echo.length());
+    QVERIFY(written == block.size());
     //Get the echoed data from server
     quint16 blockSize = 0;
     QDataStream in(&socket);
@@ -463,9 +463,9 @@ void tst_qllcpsockettype2::multipleWrite()
     out.device()->seek(0);
     out << (quint16)(block.size() - sizeof(quint16));
     qint64 ret = socket.writeDatagram(block.constData(), block.size()/2);
-    QVERIFY( ret != -1);
+    QVERIFY( ret == 0);
     ret = socket.writeDatagram(block.constData() + block.size()/2, block.size()/2);
-    QVERIFY( ret != -1);
+    QVERIFY( ret == 0);
 
     QTRY_VERIFY(bytesWrittenSpy.count() > 0);
     while (bytesWrittenSpy.count() < 2)
