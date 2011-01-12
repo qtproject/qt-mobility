@@ -125,7 +125,6 @@ public:
 
 public:
      QLLCPSocketState* Instance(QLlcpSocketPrivate* aSocket);
-     void ConnectToServiceComplete();
 
 public: // from base class
     QLlcpSocket::State state() const {return QLlcpSocket::ConnectingState;}
