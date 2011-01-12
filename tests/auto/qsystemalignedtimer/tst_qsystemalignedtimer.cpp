@@ -61,6 +61,14 @@ private slots:
 
     void tst_setInterval();
     void tst_interval();
+
+    void tst_setSingleShot();
+    void tst_isSingleShot() ;
+
+    void tst_singleShot();
+
+    void tst_isRunning();
+    void tst_setRunning();
 };
 
 void tst_QSystemAlignedTimer::initTestCase()
@@ -89,6 +97,31 @@ void tst_QSystemAlignedTimer::tst_setInterval()
 }
 
 void tst_QSystemAlignedTimer::tst_interval()
+{
+
+}
+
+void tst_QSystemAlignedTimer::tst_setSingleShot()
+{
+
+}
+
+void tst_QSystemAlignedTimer::tst_isSingleShot()
+{
+
+}
+
+void tst_QSystemAlignedTimer::tst_singleShot()
+{
+
+}
+
+void tst_QSystemAlignedTimer::tst_isRunning()
+{
+
+}
+
+void tst_QSystemAlignedTimer::tst_setRunning()
 {
 
 }

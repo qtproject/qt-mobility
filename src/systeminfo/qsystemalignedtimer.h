@@ -99,8 +99,8 @@ Q_SIGNALS:
 private:
     QSystemAlignedTimerPrivate *d;
     int id;
-    uint preferredInterval;
-    uint currentTimerWindow;
+    int preferredInterval;
+    int currentTimerWindow;
     bool isTimerRunning;
     bool single;
 };
