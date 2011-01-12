@@ -1430,11 +1430,11 @@ void QSystemDeviceInfoPrivate::keyboardConnected(bool connect)
 bool QSystemDeviceInfoPrivate::keypadLightOn(QSystemDeviceInfo::KeypadType type)
 {
     CHWRMLight::TLightStatus status = CHWRMLight::ELightStatusUnknown;
-	TInt symbianKBType = CHWRMLight::ENoTarget;
-	if ( type == QSystemDeviceInfo::PrimaryKeypad )
-		symbianKBType = CHWRMLight::EPrimaryKeyboard ;
-	else if ( type == QSystemDeviceInfo::SecondaryKeypad )
-		symbianKBType = CHWRMLight::ESecondaryKeyboard ;
+    TInt symbianKBType = CHWRMLight::ENoTarget;
+    if ( type == QSystemDeviceInfo::PrimaryKeypad )
+        symbianKBType = CHWRMLight::EPrimaryKeyboard ;
+    else if ( type == QSystemDeviceInfo::SecondaryKeypad )
+        symbianKBType = CHWRMLight::ESecondaryKeyboard ;
     TRAP_IGNORE(CHWRMLight* iLight = CHWRMLight::NewL();
                 status = iLight->LightStatus(symbianKBType);
                 delete iLight;)
