@@ -63,7 +63,7 @@ Rectangle {
                 onClicked: Qt.quit()
             }
         }
-        Button {id: todayButton; text: "Today";onClicked:calendar.day = new Date();}
+        Button {id: todayButton; text: "Today";onClicked:calendar.currentDate = new Date();}
         Button { id: monthButton; text: "Month"; onClicked: calendar.state="MonthView";}
         Button { id: weekButton; text: "Week";onClicked: calendar.state="WeekView";}
         Button { id: dayButton; text: "Day";onClicked: calendar.state="DayView";}

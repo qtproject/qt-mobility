@@ -302,6 +302,7 @@ private:
 
     bool hasWirelessKeyboardConnected;
 
+    QSystemDeviceInfo::BatteryStatus m_previousBatteryStatus;
 };
 
 //////// QSystemScreenSaver

@@ -41,6 +41,8 @@
 
 
     \section1 Overview
+    The identifying string for this component is \i {"QtMobility.organizer"}.
+    Use this in the QML \i {import} statement.
 
     The Organizer API enables a client to request calendar, schedule and
     personal data from local or remote backends. The QML Organizer Plugin

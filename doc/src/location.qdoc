@@ -558,3 +558,5 @@ For details on the QML support provided for the Location API see the documentati
 \note At the time of the QtMobility 1.1.0 release the QML support for the Maps and Navigation API was incomplete and likely to be refined and improved in the next patch release.
 */
 
+
+

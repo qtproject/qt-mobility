@@ -89,7 +89,9 @@
 
     The QtMobility project APIs are placed into the \i{QtMobility} namespace, with
     the important exception of Multimedia. This is done to facilitate the
-    future migration of QtMobility APIs into Qt.
+    future migration of Mobility APIs into Qt.
+
+    \section2 Quickstart Guide
 
     See the \l {Quickstart Example}{Quickstart guide} for an example on how
     the  namespace impacts on application development.

@@ -74,6 +74,14 @@ public:
     QVariant detail(const QString& name);
     QVariant details(const QString& name);
 
+    /* Templated (type-specific) detail retrieval */
+    template <typename T>
+    T* detail()
+    {
+        QVariant v = detail(T::DetailName);
+         return qobject_cast<T*>(v.value<QDeclarativeOrganizerItemDetail*>());
+    }
+
     QVariant detail(QDeclarativeOrganizerItemDetail::ItemDetailType type);
     QVariant details(QDeclarativeOrganizerItemDetail::ItemDetailType type);
 

@@ -70,8 +70,9 @@ enables to user to create, edit or delete network configurations.
 
 The Bearer API has been migrated to the Qt 4.7 QtNetwork library. This enables
 connection manager and roaming support for \l QNetworkAccessManager.
-Starting with Qt 4.7 the QtMobility version has been deprecated in favor of
-Qt's Bearer API. Furthermore the roaming enabled QNetworkAccessManager cannot be used in connection with QtMobility's Bearer API.
+Starting with Qt 4.7 the Mobility version has been deprecated in favor of
+Qt's Bearer API. Some platforms such as MeeGo are not even supported by the Mobility version.
+Last but not least the roaming enabled QNetworkAccessManager cannot be used in connection with Mobility's Bearer API.
 
 The porting effort from QtMobility Bearer to Qt Bearer is minimal as
 the relevant classes are source compatible. The only exception is the
