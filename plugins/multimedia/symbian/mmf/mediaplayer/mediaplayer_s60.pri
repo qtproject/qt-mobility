@@ -88,3 +88,12 @@ exists($$[QT_INSTALL_HEADERS]/QtGui/private/qwidget_p.h) {
     DEFINES += USE_PRIVATE_QWIDGET_METHODS
     message("Enabling use of private QWidget methods")
 }
+
+contains(S60_VERSION, 3.1) {
+	DEFINES += PLAY_RATE_NOT_SUPPORTED
+	message("S60 version 3.1 does not support setplaybackrate")
+}
+contains(S60_VERSION, 3.2) {
+	DEFINES += PLAY_RATE_NOT_SUPPORTED
+	message("S60 version 3.2 does not support setplaybackrate")
+}

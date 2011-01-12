@@ -90,7 +90,9 @@
     The Qt Mobility project APIs are placed into the \i{QtMobility} namespace, with
     the important exception of Multimedia. This is done to facilitate the
     future migration of Mobility APIs into Qt.
-    
+
+    \section2 Quickstart Guide
+
     See the \l {Quickstart Example}{Quickstart guide} for an example on how
     the  namespace impacts on application development.
 
@@ -101,6 +103,7 @@
         \o \l {Quickstart Example}
         \o \l {Qt Mobility Examples}{List of all examples.}
     \endlist
+
     
     For users on the supported Symbian platforms, shown at the bottom of this
     page, see the instructions at the

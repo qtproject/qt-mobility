@@ -2,9 +2,9 @@ INCLUDEPATH += ../../../src/serviceframework
 INCLUDEPATH += ../../../src/global
 INCLUDEPATH += .
 
-TARGET  = $$qtLibraryTarget(declarative_serviceframework)
 TEMPLATE = lib
 CONFIG += qt plugin
+TARGET  = $$qtLibraryTarget(declarative_serviceframework)
 TARGETPATH = QtMobility/serviceframework
 PLUGIN_TYPE = declarative
 include(../../../common.pri)

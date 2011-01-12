@@ -93,9 +93,8 @@ S60CameraImageCaptureControl::~S60CameraImageCaptureControl()
 
 bool S60CameraImageCaptureControl::isReadyForCapture() const
 {
-    if (m_cameraControl && m_cameraControl->captureMode() != QCamera::CaptureStillImage) {
+    if (m_cameraControl && m_cameraControl->captureMode() != QCamera::CaptureStillImage)
         return false;
-    }
 
     return m_session->isDeviceReady();
 }

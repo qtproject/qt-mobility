@@ -55,6 +55,7 @@
 #include "qversitorganizerexporter.h"
 #endif
 #include <QtGui>
+#include <QDesktopServices>
 #include <qtorganizer.h>
 
 QTM_USE_NAMESPACE
@@ -349,8 +350,13 @@ void CalendarDemo::importItems()
         qWarning() << "No manager selected; cannot import";
         return;
     }
+    QString docPath = QDesktopServices::storageLocation(QDesktopServices::DocumentsLocation);
+    if (docPath.isEmpty())
+        docPath = QDesktopServices::storageLocation(QDesktopServices::HomeLocation);
+    if (docPath.isEmpty())
+        docPath = ".";
     QString fileName = QFileDialog::getOpenFileName(this,
-       tr("Select iCalendar file"), ".", tr("iCalendar files (*.ics)"));
+       tr("Select iCalendar file"), docPath, tr("iCalendar files (*.ics)"));
     QFile file(fileName);
     file.open(QIODevice::ReadOnly);
     if (!file.isReadable()) {
@@ -388,8 +394,14 @@ void CalendarDemo::exportItems()
         qWarning() << "No manager selected; cannot export";
         return;
     }
+    QString docPath = QDesktopServices::storageLocation(QDesktopServices::DocumentsLocation);
+    if (docPath.isEmpty())
+        docPath = QDesktopServices::storageLocation(QDesktopServices::HomeLocation);
+    if (docPath.isEmpty())
+        docPath = ".";
+    docPath.append("/calendar.ics");
     QString fileName = QFileDialog::getSaveFileName(this, tr("Save iCalendar"),
-                                                    "./calendar.ics",
+                                                    docPath,
                                                     tr("iCalendar files (*.ics)"));
     QFile file(fileName);
     file.open(QIODevice::WriteOnly);

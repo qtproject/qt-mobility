@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the examples of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:BSD$
 ** You may use this file under the terms of the BSD license as follows:
@@ -38,47 +38,30 @@
 **
 ****************************************************************************/
 
-#ifndef REMOTESELECTOR_H
-#define REMOTESELECTOR_H
+#include <QtGui/QApplication>
+#include <QtDeclarative/QDeclarativeView>
+#include <QtDeclarative/QDeclarativeEngine>
 
-#include <QtGui/QDialog>
+#include <QDebug>
 
-#include <qbluetoothuuid.h>
-#include <qbluetoothserviceinfo.h>
-#include <qbluetoothservicediscoveryagent.h>
-
-QT_FORWARD_DECLARE_CLASS(QModelIndex)
-QT_FORWARD_DECLARE_CLASS(QListWidgetItem)
-
-QTM_USE_NAMESPACE
-
-namespace Ui {
-    class RemoteSelector;
-}
-
-class RemoteSelector : public QDialog
+int main(int argc, char *argv[])
 {
-    Q_OBJECT
-
-public:
-    explicit RemoteSelector(QWidget *parent = 0);
-    ~RemoteSelector();
-
-    void startDiscovery(const QBluetoothUuid &uuid);
-    QBluetoothServiceInfo service() const;
-
-private:
-    Ui::RemoteSelector *ui;
-
-    QBluetoothServiceDiscoveryAgent *m_discoveryAgent;
-    QBluetoothServiceInfo m_service;
-    QMap<QListWidgetItem *, QBluetoothServiceInfo> m_discoveredServices;
-
-private slots:
-    void serviceDiscovered(const QBluetoothServiceInfo &serviceInfo);
-    void discoveryFinished();
-    void on_remoteDevices_itemActivated(QListWidgetItem *item);
-    void on_fullScanBox_stateChanged(int );
-};
-
-#endif // REMOTESELECTOR_H
+    QApplication application(argc, argv);
+    const QString mainQmlApp = QLatin1String("qrc:/tennis.qml");
+    QDeclarativeView view;
+    view.setSource(QUrl(mainQmlApp));
+    view.setResizeMode(QDeclarativeView::SizeRootObjectToView);
+    // Qt.quit() called in embedded .qml by default only emits
+    // quit() signal, so do this (optionally use Qt.exit()).
+    QObject::connect(view.engine(), SIGNAL(quit()), qApp, SLOT(quit()));
+#if defined(Q_OS_SYMBIAN)
+    view.showFullScreen();
+#elif defined(Q_WS_MAEMO_6)
+    view.setGeometry(QRect(0, 0, 640, 480));
+    view.showFullScreen();
+#else // Q_OS_SYMBIAN
+    view.setGeometry(QRect(100, 100, 640, 360));
+    view.show();
+#endif // Q_OS_SYMBIAN
+    return application.exec();
+}

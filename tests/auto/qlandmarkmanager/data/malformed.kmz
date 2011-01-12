@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://earth.google.com/kml/2.2">
+<Placemark>
+	<name>w0</name>
+	<StyleMap>
+		<Pair>
+			<key>normal</key>
+			<Style>
+				<IconStyle>
+					<Icon>
+						<href>http://maps.google.com/mapfiles/kml/paddle/D.png</href>
+					</Icon>
+					<hotSpot x="0.5" y="0" xunits="fraction" yunits="fraction"/>
+				</IconStyle>
+				<BalloonStyle>
+					<text><![CDATA[<table width ="200"><tr><td colspan="2"><font size="+1"><b><a href="http://maps.google.com/maps?q=taj+mahal&near=india&ie=UTF8&v=2.2&cv=4.3.7284.3916&hl=en&sll=37.062500,-95.677068&sspn=23.875000,57.630033&latlng=27173023,78042099,15875245860649948695&ei=0wTaSKu5BKD4ugOsgqHcBQ&cd=4">$[name]</a></b></font><br/><font color="#808080"></font></td></tr><tr><td>Tajganj<br/>Agra, Agra, Uttar Pradesh, India<br/></td></tr></table><br/><br/>&#160;&#160;$[geDirections]]]></text>
+					<textColor>ff000000</textColor>
+					<displayMode>default</displayMode>
+				</BalloonStyle>
+				<ListStyle>
+					<listItemType>check</listItemType>
+					<ItemIcon>
+						<state>open closed error fetching0 fetching1 fetching2</state>
+						<href>http://maps.google.com/mapfiles/kml/paddle/D-lv.png</href>
+					</ItemIcon>
+					<bgColor>00ffffff</bgColor>
+					<maxSnippetLines>2</maxSnippetLines>
+				</ListStyle>
+			</Style>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<Style>
+				<IconStyle>
+					<scale>1.3</scale>
+					<Icon>
+						<href>http://maps.google.com/mapfiles/kml/paddle/D.png</href>
+					</Icon>
+					<hotSpot x="0.5" y="0" xunits="fraction" yunits="fraction"/>
+				</IconStyle>
+				<BalloonStyle>
+					<text><![CDATA[<table width ="200"><tr><td colspan="2"><font size="+1"><b><a href="http://maps.google.com/maps?q=taj+mahal&near=india&ie=UTF8&v=2.2&cv=4.3.7284.3916&hl=en&sll=37.062500,-95.677068&sspn=23.875000,57.630033&latlng=27173023,78042099,15875245860649948695&ei=0wTaSKu5BKD4ugOsgqHcBQ&cd=4">$[name]</a></b></font><br/><font color="#808080"></font></td></tr><tr><td>Tajganj<br/>Agra, Agra, Uttar Pradesh, India<br/></td></tr></table><br/><br/>&#160;&#160;$[geDirections]]]></text>
+					<textColor>ff000000</textColor>
+					<displayMode>default</displayMode>
+				</BalloonStyle>
+				<ListStyle>
+					<listItemType>check</listItemType>
+					<ItemIcon>
+						<state>open closed error fetching0 fetching1 fetching2</state>
+						<href>http://maps.google.com/mapfiles/kml/paddle/D-lv.png</href>
+					</ItemIcon>
+					<bgColor>00ffffff</bgColor>
+					<maxSnippetLines>2</maxSnippetLines>
+				</ListStyle>
+			</Style>
+		</Pair>
+	</StyleMap>
+        <oint>
+		<coordinates>1.00000,2.00000,3</coordinates>
+	</Point>
+</Placemark>
+<Placemark>
+	<name>w1</name>
+	<StyleMap>
+		<Pair>
+			<key>normal</key>
+			<Style>
+				<IconStyle>
+					<Icon>
+						<href>http://maps.google.com/mapfiles/kml/paddle/D.png</href>
+					</Icon>
+					<hotSpot x="0.5" y="0" xunits="fraction" yunits="fraction"/>
+				</IconStyle>
+				<BalloonStyle>
+					<text><![CDATA[<table width ="200"><tr><td colspan="2"><font size="+1"><b><a href="http://maps.google.com/maps?q=taj+mahal&near=india&ie=UTF8&v=2.2&cv=4.3.7284.3916&hl=en&sll=37.062500,-95.677068&sspn=23.875000,57.630033&latlng=27173023,78042099,15875245860649948695&ei=0wTaSKu5BKD4ugOsgqHcBQ&cd=4">$[name]</a></b></font><br/><font color="#808080"></font></td></tr><tr><td>Tajganj<br/>Agra, Agra, Uttar Pradesh, India<br/></td></tr></table><br/><br/>&#160;&#160;$[geDirections]]]></text>
+					<textColor>ff000000</textColor>
+					<displayMode>default</displayMode>
+				</BalloonStyle>
+				<ListStyle>
+					<listItemType>check</listItemType>
+					<ItemIcon>
+						<state>open closed error fetching0 fetching1 fetching2</state>
+						<href>http://maps.google.com/mapfiles/kml/paddle/D-lv.png</href>
+					</ItemIcon>
+					<bgColor>00ffffff</bgColor>
+					<maxSnippetLines>2</maxSnippetLines>
+				</ListStyle>
+			</Style>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<Style>
+				<IconStyle>
+					<scale>1.3</scale>
+					<Icon>
+						<href>http://maps.google.com/mapfiles/kml/paddle/D.png</href>
+					</Icon>
+					<hotSpot x="0.5" y="0" xunits="fraction" yunits="fraction"/>
+				</IconStyle>
+				<BalloonStyle>
+					<text><![CDATA[<table width ="200"><tr><td colspan="2"><font size="+1"><b><a href="http://maps.google.com/maps?q=taj+mahal&near=india&ie=UTF8&v=2.2&cv=4.3.7284.3916&hl=en&sll=37.062500,-95.677068&sspn=23.875000,57.630033&latlng=27173023,78042099,15875245860649948695&ei=0wTaSKu5BKD4ugOsgqHcBQ&cd=4">$[name]</a></b></font><br/><font color="#808080"></font></td></tr><tr><td>Tajganj<br/>Agra, Agra, Uttar Pradesh, India<br/></td></tr></table><br/><br/>&#160;&#160;$[geDirections]]]></text>
+					<textColor>ff000000</textColor>
+					<displayMode>default</displayMode>
+				</BalloonStyle>
+				<ListStyle>
+					<listItemType>check</listItemType>
+					<ItemIcon>
+						<state>open closed error fetching0 fetching1 fetching2</state>
+						<href>http://maps.google.com/mapfiles/kml/paddle/D-lv.png</href>
+					</ItemIcon>
+					<bgColor>00ffffff</bgColor>
+					<maxSnippetLines>2</maxSnippetLines>
+				</ListStyle>
+			</Style>
+		</Pair>
+	</StyleMap>
+	<Point>
+		<coordinates>2.00000,1.00000,3</coordinates>
+	</Point>
+</Placemark>
+<Placemark>
+	<name>w2</name>
+	<StyleMap>
+		<Pair>
+			<key>normal</key>
+			<Style>
+				<IconStyle>
+					<Icon>
+						<href>http://maps.google.com/mapfiles/kml/paddle/D.png</href>
+					</Icon>
+					<hotSpot x="0.5" y="0" xunits="fraction" yunits="fraction"/>
+				</IconStyle>
+				<BalloonStyle>
+					<text><![CDATA[<table width ="200"><tr><td colspan="2"><font size="+1"><b><a href="http://maps.google.com/maps?q=taj+mahal&near=india&ie=UTF8&v=2.2&cv=4.3.7284.3916&hl=en&sll=37.062500,-95.677068&sspn=23.875000,57.630033&latlng=27173023,78042099,15875245860649948695&ei=0wTaSKu5BKD4ugOsgqHcBQ&cd=4">$[name]</a></b></font><br/><font color="#808080"></font></td></tr><tr><td>Tajganj<br/>Agra, Agra, Uttar Pradesh, India<br/></td></tr></table><br/><br/>&#160;&#160;$[geDirections]]]></text>
+					<textColor>ff000000</textColor>
+					<displayMode>default</displayMode>
+				</BalloonStyle>
+				<ListStyle>
+					<listItemType>check</listItemType>
+					<ItemIcon>
+						<state>open closed error fetching0 fetching1 fetching2</state>
+						<href>http://maps.google.com/mapfiles/kml/paddle/D-lv.png</href>
+					</ItemIcon>
+					<bgColor>00ffffff</bgColor>
+					<maxSnippetLines>2</maxSnippetLines>
+				</ListStyle>
+			</Style>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<Style>
+				<IconStyle>
+					<scale>1.3</scale>
+					<Icon>
+						<href>http://maps.google.com/mapfiles/kml/paddle/D.png</href>
+					</Icon>
+					<hotSpot x="0.5" y="0" xunits="fraction" yunits="fraction"/>
+				</IconStyle>
+				<BalloonStyle>
+					<text><![CDATA[<table width ="200"><tr><td colspan="2"><font size="+1"><b><a href="http://maps.google.com/maps?q=taj+mahal&near=india&ie=UTF8&v=2.2&cv=4.3.7284.3916&hl=en&sll=37.062500,-95.677068&sspn=23.875000,57.630033&latlng=27173023,78042099,15875245860649948695&ei=0wTaSKu5BKD4ugOsgqHcBQ&cd=4">$[name]</a></b></font><br/><font color="#808080"></font></td></tr><tr><td>Tajganj<br/>Agra, Agra, Uttar Pradesh, India<br/></td></tr></table><br/><br/>&#160;&#160;$[geDirections]]]></text>
+					<textColor>ff000000</textColor>
+					<displayMode>default</displayMode>
+				</BalloonStyle>
+				<ListStyle>
+					<listItemType>check</listItemType>
+					<ItemIcon>
+						<state>open closed error fetching0 fetching1 fetching2</state>
+						<href>http://maps.google.com/mapfiles/kml/paddle/D-lv.png</href>
+					</ItemIcon>
+					<bgColor>00ffffff</bgColor>
+					<maxSnippetLines>2</maxSnippetLines>
+				</ListStyle>
+			</Style>
+		</Pair>
+	</StyleMap>
+	<Point>
+		<coordinates>3.00000,2.00000,1</coordinates>
+	</Point>
+</Placemark>
+</kml>
