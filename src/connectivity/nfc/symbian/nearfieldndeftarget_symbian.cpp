@@ -176,12 +176,6 @@ const TDesC8& CNearFieldNdefTarget::Uid() const
     return iNfcTag->Uid();
     }
 
-void CNearFieldNdefTarget::ReadComplete( CNdefRecord* /*aRecord*/, CNdefRecord::TNdefMessagePart /*aPart*/ )
-    {
-    BEGIN
-    END
-    }
-
 void CNearFieldNdefTarget::ReadComplete( CNdefMessage* aMessage )
     {
     BEGIN

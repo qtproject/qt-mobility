@@ -99,7 +99,7 @@ private:
     void ConstructL();
 
 private: // From MNdefHandler
-    void ReadComplete( CNdefRecord* aRecord, CNdefRecord::TNdefMessagePart aPart );    
+    void ReadComplete( CNdefRecord* /*aRecord*/, CNdefRecord::TNdefMessagePart /*aPart*/ ){}
     void ReadComplete( CNdefMessage* aMessage );
     void WriteComplete();
     void HandleError( TInt aError );
