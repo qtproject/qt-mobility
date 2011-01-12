@@ -184,7 +184,7 @@ void tst_QSystemStorageInfo::tst_getPhoneMemory()
     QSystemStorageInfo *sti = new QSystemStorageInfo(this);
     QStringList vols = sti->logicalDrives();
     bool phoneMemory(false);
-    foreach(QString volName, vols) {
+    foreach (QString volName, vols) {
         QSystemStorageInfo::DriveType volType;
         volType = sti->typeForDrive(volName);
         if (volType == QSystemStorageInfo::RamDrive) {
@@ -206,7 +206,7 @@ void tst_QSystemStorageInfo::tst_getMassMemory()
     QSystemStorageInfo *sti = new QSystemStorageInfo(this);
     QStringList vols = sti->logicalDrives();
     bool massMemory(false);
-    foreach(QString volName, vols) {
+    foreach (QString volName, vols) {
         QSystemStorageInfo::DriveType volType;
         volType = sti->typeForDrive(volName);
         if (volType == QSystemStorageInfo::InternalFlashDrive) {
@@ -240,14 +240,14 @@ void tst_QSystemStorageInfo::tst_PhoneMemoryThresholdNotifications()
     QSignalSpy DiskSpaceChangedSpy(sti, SIGNAL(storageStateChanged(const QString &, QSystemStorageInfo::StorageState)));
     QStringList vols = sti->logicalDrives();
     TBool massDriveExist(EFalse);
-    foreach(QString volName, vols){
+    foreach (QString volName, vols){
         QString type;
         QSystemStorageInfo::DriveType volType;
         volType = sti->typeForDrive(volName);
         qDebug() << "Testing volume type : " << volType;
         if (volType == QSystemStorageInfo::RamDrive || volType == QSystemStorageInfo::InternalFlashDrive || volType == QSystemStorageInfo::RemovableDrive ){
             DiskSpaceChangedSpy.clear();    // make sure signals count is zero for each valid drive
-            while(1){
+            while (1){
                 TFileName temp;
                 TChar driveLetter;
                 if (volType == QSystemStorageInfo::RamDrive){
@@ -634,10 +634,6 @@ void tst_QSystemDeviceInfo::tst_keypadLightOn_deviceUnlockedFlipOpen()
                 }
                 else{
                     QVERIFY(false == di.keypadLightOn(QSystemDeviceInfo::SecondaryKeypad));
-                    //if( di.keypadLightOn(QSystemDeviceInfo::SecondaryKeypad))
-                        //qDebug()<<"keypadLightOn for ESecondaryKeyboard is True";
-                    //else
-                        //qDebug()<<"keypadLightOn for ESecondaryKeyboard is False";
                 }
             }
             else{
@@ -782,7 +778,7 @@ void tst_QSystemDeviceInfo::tst_isWirelessKeyboardConnected()
 QString boolToStr(bool val)
 {
     QString result = "False";
-    if(val)
+    if (val)
         result = "True";
     return result;
 }
@@ -936,7 +932,7 @@ void tst_QSystemStorageInfo::tst_uriForDrive()
      qDebug() << "tst_QSystemStorageInfo::tst_uriForDrive---START " ;
      QSystemStorageInfo si;
      QStringList vols = si.logicalDrives();
-     foreach(QString volName, vols) {
+     foreach (QString volName, vols) {
         QString res = si.uriForDrive(volName);
         QVERIFY( res.toInt() != -1 );
         qDebug() << "Drive name:"<<volName;

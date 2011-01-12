@@ -54,7 +54,7 @@
             QTest::qWait(__step); \
         } \
         QVERIFY(__expr); \
-    } while(0)
+    } while (0)
 
 // Will try to wait for the condition while allowing event processing
 #define QTRY_COMPARE(__expr, __expected) \
@@ -68,6 +68,6 @@
             QTest::qWait(__step); \
         } \
         QCOMPARE(__expr, __expected); \
-    } while(0)
+    } while (0)
 
 #endif
