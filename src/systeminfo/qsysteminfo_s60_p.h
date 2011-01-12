@@ -287,7 +287,7 @@ Q_SIGNALS:
     void wirelessKeyboardConnected(bool connected);//1.2
     void keyboardFlipped(bool open);//1.2
     void deviceLocked(bool isLocked); // 1.2
-    void lockStatusChanged(QSystemDeviceInfo::LockTypeFlags); //1.2
+    void lockStatusChanged(QSystemDeviceInfo::LockType); //1.2
 
 protected:
     //From QObject
