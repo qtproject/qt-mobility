@@ -54,6 +54,8 @@ int main(int argc, char *argv[])
     QObject::connect(view.engine(), SIGNAL(quit()), qApp, SLOT(quit()));
 #if defined(Q_OS_SYMBIAN)
     view.showFullScreen();
+#elif defined(Q_WS_MAEMO_6)
+    view.showFullScreen();
 #else // Q_OS_SYMBIAN
     view.setGeometry(QRect(100, 100, 360, 640));
     view.show();

@@ -243,6 +243,7 @@ QBluetoothSocket::QBluetoothSocket(QObject *parent)
 */
 QBluetoothSocket::~QBluetoothSocket()
 {
+    qDebug() << "Socket destroyed";
     delete d_ptr;
     d_ptr = 0;
 }
@@ -466,8 +467,8 @@ void QBluetoothSocket::discoveryFinished()
 {
     Q_D(QBluetoothSocket);
     if(d->discoveryAgent){
-        emit error(QBluetoothSocket::UnknownService);
-        delete d->discoveryAgent;
+        emit error(QBluetoothSocket::ServiceNotFoundError);
+        d->discoveryAgent->deleteLater();
         d->discoveryAgent = 0;
     }
 }
@@ -568,8 +569,20 @@ QDebug operator<<(QDebug debug, QBluetoothSocket::SocketError error)
     case QBluetoothSocket::UnknownSocketError:
         debug << "QBluetoothSocket::UnknownSocketError";
         break;
+    case QBluetoothSocket::ConnectionRefusedError:
+        debug << "QBluetoothSocket::ConnectionRefusedError";
+        break;
+    case QBluetoothSocket::RemoteHostClosedError:
+        debug << "QBluetoothSocket::RemoteHostClosedError";
+        break;
+    case QBluetoothSocket::HostNotFoundError:
+        debug << "QBluetoothSocket::HostNotFoundError";
+        break;
+    case QBluetoothSocket::ServiceNotFoundError:
+        debug << "QBluetoothSocket::ServiceNotFoundError";
+        break;
     default:
-        debug << "QBluetoothSocket::SocketError(" << error << ")";
+        debug << "QBluetoothSocket::SocketError(" << (int)error << ")";
     }
     return debug;
 }
@@ -596,7 +609,7 @@ QDebug operator<<(QDebug debug, QBluetoothSocket::SocketState state)
         debug << "QBluetoothSocket::ListeningState";
         break;
     default:
-        debug << "QBluetoothSocket::SocketState(" << state << ")";
+        debug << "QBluetoothSocket::SocketState(" << (int)state << ")";
     }
     return debug;
 }

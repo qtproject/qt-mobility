@@ -142,5 +142,6 @@ void TennisClient::connected()
 
 void TennisClient::error(QBluetoothSocket::SocketError err)
 {
+    printf("Got err: %d\n", err);
     qDebug() << Q_FUNC_INFO << "error" << err;
 }

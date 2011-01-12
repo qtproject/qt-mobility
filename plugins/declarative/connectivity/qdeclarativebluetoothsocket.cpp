@@ -163,7 +163,7 @@ void QDeclarativeBluetoothSocket::socket_error(QBluetoothSocket::SocketError err
         d->m_error = QLatin1String("Connection Closed by Remote Host");
     else if(err == QBluetoothSocket::HostNotFoundError)
         d->m_error = QLatin1String("Host Not Found");
-    else if(err == QBluetoothSocket::UnknownService)
+    else if(err == QBluetoothSocket::ServiceNotFoundError)
         d->m_error = QLatin1String("Could not find service at remote host");
     else
         d->m_error = QLatin1String("Unkown Error");

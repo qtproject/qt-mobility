@@ -48,6 +48,8 @@ Rectangle {
     property alias minimalDiscovery: myModel.minimalDiscovery
     property alias uuidFilder: myModel.uuidFilter
 
+    anchors.fill: parent
+
     BluetoothDiscoveryModel {
         id: myModel
         minimalDiscovery: true

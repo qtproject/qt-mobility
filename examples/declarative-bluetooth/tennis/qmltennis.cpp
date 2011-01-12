@@ -42,6 +42,8 @@
 #include <QtDeclarative/QDeclarativeView>
 #include <QtDeclarative/QDeclarativeEngine>
 
+#include <QDebug>
+
 int main(int argc, char *argv[])
 {
     QApplication application(argc, argv);
@@ -53,6 +55,9 @@ int main(int argc, char *argv[])
     // quit() signal, so do this (optionally use Qt.exit()).
     QObject::connect(view.engine(), SIGNAL(quit()), qApp, SLOT(quit()));
 #if defined(Q_OS_SYMBIAN)
+    view.showFullScreen();
+#elif defined(Q_WS_MAEMO_6)
+    view.setGeometry(QRect(0, 0, 640, 480));
     view.showFullScreen();
 #else // Q_OS_SYMBIAN
     view.setGeometry(QRect(100, 100, 640, 360));
