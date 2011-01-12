@@ -842,13 +842,11 @@ QString QSystemNetworkInfoLinuxCommonPrivate::macAddress(QSystemNetworkInfo::Net
 {
 #if !defined(QT_NO_CONNMAN)
     if (connmanIsAvailable) {
-        QConnmanTechnologyInterface technology(connmanManager->getPathForTechnology(modeToTechnology(mode)),this);
-        if (technology.isValid()) {
-            foreach (const QString &dev,technology.getDevices()) {
-                QConnmanDeviceInterface devIface(dev);
-                if (devIface.isValid()) {
-                    return devIface.getAddress();
-                }
+        foreach (const QString &servicePath, connmanManager->getServices()) {
+            QConnmanServiceInterface *serviceIface;
+            serviceIface = new QConnmanServiceInterface(servicePath,this);
+            if(serviceIface->getType() == modeToTechnology(mode)) {
+                return QNetworkInterface::interfaceFromName(serviceIface->getInterface()).hardwareAddress();
             }
         }
     }
@@ -1050,19 +1048,14 @@ QNetworkInterface QSystemNetworkInfoLinuxCommonPrivate::interfaceForMode(QSystem
 #if !defined(QT_NO_DBUS)
 #if !defined(QT_NO_CONNMAN)
     if (connmanIsAvailable) {
-        QString techPath = connmanManager->getPathForTechnology(modeToTechnology(mode));
-        if (!techPath.isEmpty()) {
-            QConnmanTechnologyInterface technology(techPath,this);
-            if (technology.isValid()) {
-                foreach (const QString &dev,technology.getDevices()) {
-                    QConnmanDeviceInterface devIface(dev);
-                    if (devIface.isValid()) {
-                        return QNetworkInterface::interfaceFromName(devIface.getInterface());
-                    }
-                }
+        foreach (const QString &servicePath, connmanManager->getServices()) {
+            QConnmanServiceInterface *serviceIface;
+            serviceIface = new QConnmanServiceInterface(servicePath,this);
+            if(serviceIface->getType() == modeToTechnology(mode)) {
+                return QNetworkInterface::interfaceFromName(serviceIface->getInterface());
             }
         }
-    }
+   }
 #else
     switch(mode) {
     case QSystemNetworkInfo::WlanMode:
@@ -1261,12 +1254,12 @@ void QSystemNetworkInfoLinuxCommonPrivate::initConnman()
         connect(tech,SIGNAL(propertyChangedContext(QString,QString,QDBusVariant)),
                 this,SLOT(connmanTechnologyPropertyChangedContext(QString,QString,QDBusVariant)));
 
-        foreach (const QString &devicePath,tech->getDevices()) {
-            QConnmanDeviceInterface *dev;
-            dev = new QConnmanDeviceInterface(devicePath);
-                connect(dev,SIGNAL(propertyChangedContext(QString,QString,QDBusVariant)),
-                        this,SLOT(connmanDevicePropertyChangedContext(QString,QString,QDBusVariant)));
-        }
+//        foreach (const QString &devicePath,tech->getDevices()) {
+//            QConnmanDeviceInterface *dev;
+//            dev = new QConnmanDeviceInterface(devicePath);
+//                connect(dev,SIGNAL(propertyChangedContext(QString,QString,QDBusVariant)),
+//                        this,SLOT(connmanDevicePropertyChangedContext(QString,QString,QDBusVariant)));
+//        }
     }
 }
 
@@ -1599,8 +1592,11 @@ qint32 QSystemNetworkInfoLinuxCommonPrivate::cellId()
 {
 #if !defined(QT_NO_CONNMAN)
     if (ofonoIsAvailable) {
-        QOfonoNetworkRegistrationInterface ofonoNetwork(ofonoManager->currentModem().path(),this);
-        return ofonoNetwork.getCellId();
+        QString modempath = ofonoManager->currentModem().path();
+        if(!modempath.isEmpty()) {
+            QOfonoNetworkRegistrationInterface ofonoNetwork(modempath,this);
+            return ofonoNetwork.getCellId();
+        }
     }
 #endif
     return 0;
@@ -1610,8 +1606,11 @@ int QSystemNetworkInfoLinuxCommonPrivate::locationAreaCode()
 {
 #if !defined(QT_NO_CONNMAN)
     if (ofonoIsAvailable) {
-        QOfonoNetworkRegistrationInterface ofonoNetwork(ofonoManager->currentModem().path(),this);
-        return ofonoNetwork.getLac();
+        QString modempath = ofonoManager->currentModem().path();
+        if(!modempath.isEmpty()) {
+            QOfonoNetworkRegistrationInterface ofonoNetwork(modempath,this);
+            return ofonoNetwork.getLac();
+        }
     }
 #endif
     return 0;
@@ -1621,12 +1620,15 @@ QString QSystemNetworkInfoLinuxCommonPrivate::currentMobileCountryCode()
 {
 #if !defined(QT_NO_CONNMAN)
     if (ofonoIsAvailable) {
-        QOfonoNetworkRegistrationInterface ofonoNetworkOperator(ofonoManager->currentModem().path(),this);
-        foreach (const QDBusObjectPath &opPath, ofonoNetworkOperator.getOperators()) {
-            if (!opPath.path().isEmpty()) {
-                QOfonoNetworkOperatorInterface netop(opPath.path(),this);
-                if (netop.getStatus() == "current")
-                    return netop.getMcc();
+        QString modempath = ofonoManager->currentModem().path();
+        if(!modempath.isEmpty()) {
+            QOfonoNetworkRegistrationInterface ofonoNetworkOperator(modempath,this);
+            foreach (const QDBusObjectPath &opPath, ofonoNetworkOperator.getOperators()) {
+                if (!opPath.path().isEmpty()) {
+                    QOfonoNetworkOperatorInterface netop(opPath.path(),this);
+                    if (netop.getStatus() == "current")
+                        return netop.getMcc();
+                }
             }
         }
     }
@@ -1638,12 +1640,15 @@ QString QSystemNetworkInfoLinuxCommonPrivate::currentMobileNetworkCode()
 {
 #if !defined(QT_NO_CONNMAN)
     if (ofonoIsAvailable) {
-        QOfonoNetworkRegistrationInterface ofonoNetworkOperator(ofonoManager->currentModem().path(),this);
-        foreach (const QDBusObjectPath &opPath, ofonoNetworkOperator.getOperators()) {
-            if (!opPath.path().isEmpty()) {
-                QOfonoNetworkOperatorInterface netop(opPath.path(),this);
-//                if (netop.getStatus() == "current")
+        QString modempath = ofonoManager->currentModem().path();
+        if(!modempath.isEmpty()) {
+            QOfonoNetworkRegistrationInterface ofonoNetworkOperator(modempath,this);
+            foreach (const QDBusObjectPath &opPath, ofonoNetworkOperator.getOperators()) {
+                if (!opPath.path().isEmpty()) {
+                    QOfonoNetworkOperatorInterface netop(opPath.path(),this);
+                    //                if (netop.getStatus() == "current")
                     return netop.getMnc();
+                }
             }
         }
     }

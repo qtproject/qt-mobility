@@ -81,7 +81,7 @@ static bool connmanAvailable()
     QDBusConnection dbusConnection = QDBusConnection::systemBus();
     if (dbusConnection.isConnected()) {
         QDBusConnectionInterface *dbiface = dbusConnection.interface();
-        QDBusReply<bool> reply = dbiface->isServiceRegistered("org.moblin.connman");
+        QDBusReply<bool> reply = dbiface->isServiceRegistered("net.connman");
         if (reply.isValid() && reply.value()) {
             return reply.value();
         }
