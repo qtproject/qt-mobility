@@ -111,7 +111,7 @@ void QSystemAlignedTimer::start()
   fire within 20 seconds of that interval, use a timerWindow of 20.
 
 */
-void QSystemAlignedTimer::setWindow(uint timerWindow)
+void QSystemAlignedTimer::setWindow(int timerWindow)
 {
     currentTimerWindow = timerWindow;
 }
@@ -140,7 +140,7 @@ void QSystemAlignedTimer::stop()
 /*!
   Set the preferred timeout interval to \a sec in seconds.
   */
-void QSystemAlignedTimer::setInterval(uint sec)
+void QSystemAlignedTimer::setInterval(int sec)
 {
     preferredInterval = sec;
 }
@@ -148,7 +148,7 @@ void QSystemAlignedTimer::setInterval(uint sec)
 /*!
   Returns the current preferred timer window.
   */
-uint QSystemAlignedTimer::timerWindow() const
+int QSystemAlignedTimer::timerWindow() const
 {
     return currentTimerWindow;
 }
@@ -158,10 +158,34 @@ uint QSystemAlignedTimer::timerWindow() const
   Returns this current timer interval.
   This will usually differ than what was set with \a setInterval.
   */
-uint QSystemAlignedTimer::interval() const
+int QSystemAlignedTimer::interval() const
 {
     return preferredInterval;
 }
+
+/*!
+  */
+inline void QSystemAlignedTimer::setSingleShot(bool singleShot)
+{
+Q_UNUSED(singleShot);
+}
+
+/*!
+  */
+void QSystemAlignedTimer::singleShot(int msec, QObject *receiver, const char *member)
+{
+    Q_UNUSED(msec);
+    Q_UNUSED(receiver);
+    Q_UNUSED(member);
+}
+
+/*!
+  */
+void QSystemAlignedTimer::setRunning(bool running)
+{
+    Q_UNUSED(running);
+}
+
 
 /*!
   \internal
