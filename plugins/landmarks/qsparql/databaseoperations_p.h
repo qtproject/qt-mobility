@@ -57,6 +57,7 @@
 #include <QRunnable>
 #include <QMap>
 #include <QtSparql/QSparqlConnection>
+#include <qsharedmemory.h>
 
 QTM_USE_NAMESPACE
 
@@ -95,16 +96,7 @@ public:
     unsigned int runId;
 };
 
-class DatabaseOperations : public QObject  {
-    Q_OBJECT
-    signals:
-    void dataChanged();
-    void landmarksAdded(QList<QLandmarkId> ids);
-    void landmarksChanged(QList<QLandmarkId> ids);
-    void landmarksRemoved(QList<QLandmarkId> ids);
-    void categoriesAdded(QList<QLandmarkCategoryId> ids);
-    void categoriesChanged(QList<QLandmarkCategoryId> ids);
-    void categoriesRemoved(QList<QLandmarkCategoryId> ids);
+class DatabaseOperations {
 
     public:
     QString connectionName;
@@ -114,6 +106,9 @@ class DatabaseOperations : public QObject  {
 
     DatabaseOperations();
     ~DatabaseOperations();
+
+    void dataChangedSignallingOnly(bool enabled);
+
     QLandmark retrieveLandmark(const QLandmarkId &landmarkId,
                                QLandmarkManager::Error *error, QString *errorString) const;
 
@@ -139,8 +134,7 @@ class DatabaseOperations : public QObject  {
 
     bool saveLandmarks(QList<QLandmark> * landmark,
                        QMap<int, QLandmarkManager::Error> *errorMap,
-                       QLandmarkManager::Error *error, QString *errorString,
-                       QList<QLandmarkId> *addedIds, QList<QLandmarkId> *changedIds);
+                       QLandmarkManager::Error *error, QString *errorString);
 
     bool removeLandmarkHelper(const QLandmarkId &landmarkId,
                         QLandmarkManager::Error *error,
@@ -152,7 +146,7 @@ class DatabaseOperations : public QObject  {
     bool removeLandmarks(const QList<QLandmarkId> &landmarkIds,
                          QMap<int, QLandmarkManager::Error> *errorMap,
                          QLandmarkManager::Error *error,
-                         QString *errorString, QList<QLandmarkId> *removedIds);
+                         QString *errorString);
 
     QList<QLandmarkCategoryId> categoryIds(const QLandmarkNameSort &nameSort,
                                            int limit, int offet,
@@ -180,9 +174,7 @@ class DatabaseOperations : public QObject  {
 
     bool saveCategories(QList<QLandmarkCategory> * categories,
                         QMap<int, QLandmarkManager::Error> *errorMap,
-                        QLandmarkManager::Error *error, QString *errorString,
-                        QList<QLandmarkCategoryId> *addedIds,
-                        QList<QLandmarkCategoryId> *changedIds);
+                        QLandmarkManager::Error *error, QString *errorString);
 
     bool removeCategoryHelper(const QLandmarkCategoryId &categoryId,
                         QLandmarkManager::Error *error,
@@ -195,7 +187,7 @@ class DatabaseOperations : public QObject  {
     bool removeCategories(const QList<QLandmarkCategoryId> &categoryIds,
                           QMap<int, QLandmarkManager::Error> *errorMap,
                           QLandmarkManager::Error *error,
-                          QString *errorString, QList<QLandmarkCategoryId> *removedIds);
+                          QString *errorString);
 
     bool importLandmarks(QIODevice *device,
                          const QString &format,
@@ -203,8 +195,6 @@ class DatabaseOperations : public QObject  {
                          const QLandmarkCategoryId &categoryId,
                          QLandmarkManager::Error *error,
                          QString *errorString,
-                         QList<QLandmarkId> *addedLandmarkIds,
-                         QList<QLandmarkCategoryId> *addedCategoryIds,
                          QueryRun *queryRun =0,
                          QList<QLandmarkId> *landmarkIds = 0);
 
@@ -221,9 +211,7 @@ class DatabaseOperations : public QObject  {
                             QLandmarkManager::Error *error,
                             QString *errorString,
                             QueryRun *queryRun=0,
-                            QList<QLandmarkId> *landmarkIds = 0,
-                            QList<QLandmarkId> *addedLandmarkIds = 0,
-                            QList<QLandmarkCategoryId> *addedCategoryIds = 0);
+                            QList<QLandmarkId> *landmarkIds = 0);
 
     bool importLandmarksGpx(QIODevice *device,
                             QLandmarkManager::TransferOption option,
@@ -231,8 +219,7 @@ class DatabaseOperations : public QObject  {
                             QLandmarkManager::Error *error,
                             QString *errorString,
                             QueryRun *queryRun =0,
-                            QList<QLandmarkId> *landmarkIds = 0,
-                            QList<QLandmarkId> *addedLandmarkIds = 0);
+                            QList<QLandmarkId> *landmarkIds = 0);
 
     bool exportLandmarksLmx(QIODevice *device,
                             const QList<QLandmarkId> &landmarkIds,
@@ -256,7 +243,11 @@ class DatabaseOperations : public QObject  {
     static const QStringList coreGenericAttributes;
     static const QStringList supportedSearchableAttributes;
     static const QStringList coreCategoryAttributes;
-    static const QStringList coreGenericCategoryAttributes; 
+    static const QStringList coreGenericCategoryAttributes;
+
+    private:
+    QSharedMemory sharedMemory;
+    qint64 m_timeStamp;
 };
 
 #endif

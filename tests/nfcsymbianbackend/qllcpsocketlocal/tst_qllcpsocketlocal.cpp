@@ -62,7 +62,7 @@ public:
     tst_qllcpsocketlocal();
 private Q_SLOTS:
 
-    // ALERT£º Handshake required, do NOT¡¡change the sequence of handshaking testcases.
+    // ALERT: Handshake required, do NOT change the sequence of handshaking testcases.
     void testCase0();  // Intial handshake - work with  tst_qllcpsocketremote testCase0
     void testCase1();   // handshake 1,2  - work with  tst_qllcpsocketremote testCase1
     void testCase2();   // handshake 3   - work with  tst_qllcpsocketremote testCase2
@@ -279,6 +279,10 @@ void tst_qllcpsocketlocal::testCase2()
 
     QString messageBox("handshake 3");
     QNfcTestUtil::ShowMessage(messageBox);
+
+    // STEP 5: 
+    const int Timeout1 = 1 * 1000; 
+    m_socket->waitForBytesWritten(Timeout1);
 
     delete socket;
     QVERIFY(ret == true);

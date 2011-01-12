@@ -366,17 +366,6 @@ void QLLCPUnconnected::DisconnectFromService()
 /*!
     Connection-Oriented Mode
 */
-void QLLCPConnecting::ConnectToServiceComplete()
-{
-    BEGIN
-    m_socket->changeState(m_socket->getConnectedState());
-    m_socket->invokeStateChanged(QLlcpSocket::ConnectedState);
-    END
-}
-
-/*!
-    Connection-Oriented Mode
-*/
 bool QLLCPConnecting::WaitForConnected(int msecs)
 {
     BEGIN

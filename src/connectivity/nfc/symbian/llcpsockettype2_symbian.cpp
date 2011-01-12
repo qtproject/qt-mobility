@@ -43,9 +43,6 @@
 
 #include "debug.h"
 
-// will obslete with API updated
-const TInt KInterestingSsap = 35;//TODO replace this with URI
-
 /*!
     CLlcpSocketType2::ContructL()
 */
@@ -129,7 +126,7 @@ void CLlcpSocketType2::ConnectToServiceL( const TDesC8& aServiceName)
     BEGIN
     if ( !iConnecter && !iTransporter)
         {
-        iTransporter = iLlcp->CreateConnOrientedTransporterL( KInterestingSsap );
+        iTransporter = iLlcp->CreateConnOrientedTransporterL( aServiceName );
         iConnecter = CLlcpConnecterAO::NewL( *iTransporter, *this );
         }
     iConnecter->ConnectL( aServiceName );
