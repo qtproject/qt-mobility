@@ -3719,6 +3719,13 @@ void LandmarkManagerEngineSymbianPrivate::handleSymbianError(TInt errorId,
     Q_ASSERT(error);
     Q_ASSERT(errorString);
 
+    // check for xml parser error code range
+    if (errorId >= -974 && errorId <= -1000) {
+        *error = QLandmarkManager::ParsingError;
+        *errorString = "XML format validation failed";
+        return;
+    }
+
     switch (errorId) {
     case KErrNone:
     {
