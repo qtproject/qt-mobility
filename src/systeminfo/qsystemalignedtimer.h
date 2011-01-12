@@ -58,10 +58,11 @@ class Q_SYSINFO_EXPORT QSystemAlignedTimer : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(uint timerWindow READ timerWindow WRITE setWindow)
-    Q_PROPERTY(bool interval READ interval WRITE setInterval)
+    Q_PROPERTY(int timerWindow READ timerWindow WRITE setWindow NOTIFY windowChanged)
+    Q_PROPERTY(bool interval READ interval WRITE setInterval NOTIFY intervalChanged)
 
-
+    Q_PROPERTY(bool running READ isRunning WRITE setRunning NOTIFY runningChanged)
+    Q_PROPERTY(bool singleShot READ isSingleShot WRITE setSingleShot)
 public:
 
     explicit QSystemAlignedTimer(QObject *parent = 0);
@@ -69,11 +70,19 @@ public:
 
     Q_INVOKABLE bool wokeUp();
 
-    void setWindow(uint timerWindow);
-    uint timerWindow() const;
+    void setWindow(int timerWindow);
+    int timerWindow() const;
 
-    void setInterval(uint sec);
-    uint interval() const;
+    void setInterval(int sec);
+    int interval() const;
+
+    inline void setSingleShot(bool singleShot);
+    inline bool isSingleShot() const { return single; }
+
+    static void singleShot(int msec, QObject *receiver, const char *member);
+
+    bool isRunning() const { return isTimerRunning; }
+    void setRunning(bool running);
 
 public Q_SLOTS:
     void start(int sec);
@@ -83,12 +92,17 @@ public Q_SLOTS:
 
 Q_SIGNALS:
     void timeout();
+    void intervalChanged(int);
+    void windowChanged(int);
+    void runningChanged(bool);
 
 private:
     QSystemAlignedTimerPrivate *d;
-        int id;
-        uint preferredInterval;
-        uint currentTimerWindow;
+    int id;
+    int preferredInterval;
+    int currentTimerWindow;
+    bool isTimerRunning;
+    bool single;
 };
 
 

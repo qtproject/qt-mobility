@@ -54,6 +54,17 @@
 #include <QTimer>
 #include <QMapIterator>
 
+#include <fcntl.h>
+#include <sys/ioctl.h>
+#include <linux/input.h>
+
+#define BITS_PER_LONG (sizeof(long) * 8)
+#define NBITS(x) ((((x)-1)/BITS_PER_LONG)+1)
+#define OFF(x)  ((x)%BITS_PER_LONG)
+#define BIT(x)  (1UL<<OFF(x))
+#define LONG(x) ((x)/BITS_PER_LONG)
+#define test_bit(bit, array)    ((array[LONG(bit)] >> OFF(bit)) & 1)
+
 #if !defined(QT_NO_DBUS)
 #include "linux/gconfitem_p.h" // Temporarily here.
 #endif
@@ -999,8 +1010,31 @@ int QSystemDisplayInfoPrivate::displayBrightness(int screen)
 
 QSystemDisplayInfo::DisplayOrientation QSystemDisplayInfoPrivate::getOrientation(int screen)
 {
+    Q_UNUSED(screen)
     QSystemDisplayInfo::DisplayOrientation orientation = QSystemDisplayInfo::Unknown;
 
+#if !defined(QT_NO_DBUS)
+    QDBusMessage reply = QDBusConnection::systemBus().call(
+                             QDBusMessage::createMethodCall("com.nokia.SensorService", "/org/maemo/contextkit/Screen/TopEdge",
+                                                            "org.maemo.contextkit.Property", "Get"));
+    if (reply.type() != QDBusMessage::ErrorMessage) {
+        QList<QVariant> args;
+        qvariant_cast<QDBusArgument>(reply.arguments().at(0)) >> args;
+        if (args.count() == 0) {
+            return orientation;
+        }
+        QString nativeOrientation = args.at(0).toString();
+        if (nativeOrientation == "top") {
+            orientation = QSystemDisplayInfo::Landscape;
+        } else if (nativeOrientation == "left") {
+            orientation = QSystemDisplayInfo::Portrait;
+        } else if (nativeOrientation == "bottom") {
+            orientation = QSystemDisplayInfo::InvertedLandscape;
+        } else if (nativeOrientation == "right") {
+            orientation = QSystemDisplayInfo::InvertedPortrait;
+        }
+    }
+#endif
     return orientation;
 }
 
@@ -1030,18 +1064,27 @@ int QSystemDisplayInfoPrivate::getDPIHeight(int screen)
     return dpi;
 }
 
-int QSystemDisplayInfoPrivate::physicalHeight(int screen)
+QSystemDisplayInfo::BacklightState QSystemDisplayInfoPrivate::backlightStatus(int screen)
 {
-    int height=0;
+    Q_UNUSED(screen)
+    QSystemDisplayInfo::BacklightState backlightState = QSystemDisplayInfo::BacklightStateUnknown;
 
-    return height;
-}
-
-int QSystemDisplayInfoPrivate::physicalWidth(int screen)
-{
-    int width=0;
-
-    return width;
+#if !defined(QT_NO_DBUS)
+    QDBusReply<QString> reply = QDBusConnection::systemBus().call(
+                                    QDBusMessage::createMethodCall("com.nokia.mce", "/com/nokia/mce/request",
+                                                                   "com.nokia.mce.request", "get_display_status"));
+    if (reply.isValid()) {
+        QString displayStatus = reply.value();
+        if (displayStatus == "off") {
+            backlightState = QSystemDisplayInfo::BacklightStateOff;
+        } else if (displayStatus == "dimmed") {
+            backlightState = QSystemDisplayInfo::backlightStateDimmed;
+        } else if (displayStatus == "on") {
+            backlightState = QSystemDisplayInfo::backlightStateOn;
+        }
+    }
+#endif
+    return backlightState;
 }
 
 QSystemStorageInfoPrivate::QSystemStorageInfoPrivate(QSystemStorageInfoLinuxCommonPrivate *parent)
@@ -1390,6 +1433,29 @@ QString QSystemDeviceInfoPrivate::productName()
 }
 
 #endif
+
+bool QSystemDeviceInfoPrivate::isKeyboardFlippedOpen()
+{
+    bool keyboardFlippedOpen = false;
+    unsigned long bits[NBITS(KEY_MAX)] = {0}; /* switch state bits */
+    int eventFd = open("/dev/input/gpio-keys", O_RDONLY | O_NONBLOCK);
+
+    if (-1 == eventFd) {
+        goto probing_done;
+    }
+
+    if (-1 == ioctl(eventFd, EVIOCGSW(KEY_MAX), bits)) {
+        goto probing_done;
+    }
+
+    keyboardFlippedOpen = (0 == test_bit(SW_KEYPAD_SLIDE, bits));
+
+probing_done:
+    if (eventFd != -1) {
+        close(eventFd);
+    }
+    return keyboardFlippedOpen;
+}
 
 int QSystemDeviceInfoPrivate::messageRingtoneVolume()
 {

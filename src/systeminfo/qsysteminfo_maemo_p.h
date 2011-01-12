@@ -216,9 +216,8 @@ public:
     float contrast(int screen);
     int getDPIWidth(int screen);
     int getDPIHeight(int screen);
-    int physicalHeight(int screen);
-    int physicalWidth(int screen);
     int displayBrightness(int screen);
+    QSystemDisplayInfo::BacklightState backlightStatus(int screen);
 };
 
 class QSystemStorageInfoPrivate : public QSystemStorageInfoLinuxCommonPrivate
@@ -249,6 +248,7 @@ public:
     QSystemDeviceInfo::PowerState currentPowerState();
     QString model();
     QString productName();
+    bool isKeyboardFlippedOpen();//1.2
 
     int messageRingtoneVolume();//1.2
     int voiceRingtoneVolume();//1.2

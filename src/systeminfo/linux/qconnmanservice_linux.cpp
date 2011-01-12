@@ -50,6 +50,7 @@
 #include <QtDBus/QDBusPendingCallWatcher>
 #include <QtDBus/QDBusObjectPath>
 #include <QtDBus/QDBusPendingCall>
+#include <QVariantMap>
 
 #include "qconnmanservice_linux_p.h"
 #include "qsysteminfodbushelper_p.h"

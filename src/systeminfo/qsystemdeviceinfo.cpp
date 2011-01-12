@@ -615,6 +615,7 @@ QSystemDeviceInfo::ActiveProfileDetails::ActiveProfileDetails()
 QSystemDeviceInfo::ActiveProfileDetails::ActiveProfileDetails(const ActiveProfileDetails& other)
 //    : d(other.d)
 {
+    Q_UNUSED(other)
 }
 
 /*!
@@ -623,6 +624,7 @@ QSystemDeviceInfo::ActiveProfileDetails::ActiveProfileDetails(const ActiveProfil
 QSystemDeviceInfo::ActiveProfileDetails &QSystemDeviceInfo::ActiveProfileDetails::operator=(const ActiveProfileDetails& other)
 {
    // d = other.d;
+    Q_UNUSED(other)
     return *this;
 }
 /*!
