@@ -227,8 +227,8 @@ public:
     float contrast(int /*screen*/) {return 0.0;};
     int getDPIWidth(int /*screen*/){return 0;};
     int getDPIHeight(int /*screen*/){return 0;};
-    int physicalHeight(int /*screen*/){return 0;};
-    int physicalWidth(int /*screen*/){return 0;};
+    int physicalHeight(int screen);
+    int physicalWidth(int screen);
     QSystemDisplayInfo::BacklightState backlightStatus(int screen); //1.2
 };
 

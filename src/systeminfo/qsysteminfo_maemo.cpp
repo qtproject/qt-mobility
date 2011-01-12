@@ -1064,20 +1064,6 @@ int QSystemDisplayInfoPrivate::getDPIHeight(int screen)
     return dpi;
 }
 
-int QSystemDisplayInfoPrivate::physicalHeight(int screen)
-{
-    int height=0;
-
-    return height;
-}
-
-int QSystemDisplayInfoPrivate::physicalWidth(int screen)
-{
-    int width=0;
-
-    return width;
-}
-
 QSystemDisplayInfo::BacklightState QSystemDisplayInfoPrivate::backlightStatus(int screen)
 {
     Q_UNUSED(screen)

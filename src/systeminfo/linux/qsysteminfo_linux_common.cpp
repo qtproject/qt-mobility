@@ -94,6 +94,9 @@
 #include <sys/vfs.h>
 #include <sys/inotify.h>
 
+#include <linux/fb.h>
+#include <fcntl.h>
+
 //we cannot include iwlib.h as the platform may not have it installed
 //there we have to go via the kernel's wireless.h
 //#include <iwlib.h>
@@ -1797,6 +1800,48 @@ QSystemDisplayInfo::BacklightState  QSystemDisplayInfoLinuxCommonPrivate::backli
 {
     Q_UNUSED(screen)
     return QSystemDisplayInfo::BacklightStateUnknown;
+}
+
+int QSystemDisplayInfoLinuxCommonPrivate::physicalHeight(int screen)
+{
+    QString frameBufferDevicePath = QString("/dev/fb%1").arg(screen);
+    int height = 0;
+    int fd;
+    struct fb_var_screeninfo vi;
+
+    if (-1 == (fd = open(frameBufferDevicePath.toStdString().c_str(), O_RDONLY | O_NONBLOCK))) {
+        goto out;
+    }
+    if (-1 == ioctl(fd, FBIOGET_VSCREENINFO, &vi)) {
+        goto out;
+    }
+    height = vi.height;
+out:
+    if (fd != -1) {
+        close(fd);
+    }
+    return height;
+}
+
+int QSystemDisplayInfoLinuxCommonPrivate::physicalWidth(int screen)
+{
+    QString frameBufferDevicePath = QString("/dev/fb%1").arg(screen);
+    int width = 0;
+    int fd;
+    struct fb_var_screeninfo vi;
+
+    if (-1 == (fd = open(frameBufferDevicePath.toStdString().c_str(), O_RDONLY | O_NONBLOCK))) {
+        goto out;
+    }
+    if (-1 == ioctl(fd, FBIOGET_VSCREENINFO, &vi)) {
+        goto out;
+    }
+    width = vi.width;
+out:
+    if (fd != -1) {
+        close(fd);
+    }
+    return width;
 }
 
 QSystemStorageInfoLinuxCommonPrivate::QSystemStorageInfoLinuxCommonPrivate(QObject *parent)
