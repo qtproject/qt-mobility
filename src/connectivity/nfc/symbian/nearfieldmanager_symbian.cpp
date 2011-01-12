@@ -84,6 +84,10 @@ void CNearFieldManager::StartTargetDetectionL(const QList<QNearFieldTarget::Type
             iNfcTagDiscovery = CNfcTagDiscovery::NewL( iServer );
             User::LeaveIfError(iNfcTagDiscovery->AddTagConnectionListener( *this ));
             }
+        else
+            {
+            iNfcTagDiscovery->RemoveTagSubscription();
+            }
 
         if (!iTagSubscription)
             {
