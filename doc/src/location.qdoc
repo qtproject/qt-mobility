@@ -297,7 +297,7 @@ For more details see the \l {Landmark Examples} {Landmark Examples} page for:
     \o \l {Exporting landmarks}
 \endlist
 
-\section3 Managers and plugins.
+\section3 Managers and plugins
 Landmark managers are identified by their manager name.  Each manager name corresponds to a specific plugin/backend
 that implements the manager functionality.  The manager name is typically a reverse domain  string such as
 "com.nokia.qt.landmarks.engines.symbian".  Typically a developer does not need to deal with the manager name
@@ -333,8 +333,17 @@ sources.
 
 For convenience, this documentations refers to the manager corresponding to \c com.nokia.qt.landmarks.engines.symbian as the \i {symbian manager},
 the manager corresponding to \c com.nokia.qt.landmarks.engines.sqlite as the \i{sqlite manager}, and the manager corresponding to \c com.nokia.qt.landmarks.engines.sparql
-as the \i {sparql manager}.  (Please note that there are several known issues with the sparql manager that are outlined in
-bug report for QTMOBILITY-744 at http://bugreports.qt.nokia.com)
+as the \i {sparql manager}.
+
+\section3 Variations between platforms/managers
+The behaviour of some parts of the Landmarks API varies between platforms.  A few of the major ones are mentioned below
+
+\list
+\o The symbian manager does not support MatchContains in the name or attribute filters.
+\o The sparql manager as of 1.1.1 does not support the countryCode, county and district fields of QGeoAddress.  These
+fields are ignored when a landmark is saved.
+\endlist
+
 
 \section3 Importing and Exporting Landmarks
 The landmarks API supports import and exporting of landmarks.  The file formats that are supported depends on the particular manager.

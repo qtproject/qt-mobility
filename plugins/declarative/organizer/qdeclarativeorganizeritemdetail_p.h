@@ -43,7 +43,7 @@
 #define QDECLARATIVEORGANIZERITEMDETAIL_H
 
 #include <QtDeclarative>
-
+#include <QtDeclarative/qdeclarativeinfo.h>
 #include <QVariant>
 #include "qorganizeritemdetail.h"
 #include "qorganizeritemdetails.h"
@@ -979,7 +979,7 @@ public:
                 m_detail.setValue(QOrganizerItemType::FieldType, QOrganizerItemType::TypeJournal);
                 break;
             default:
-                qWarning() << "I don't known how to set the customized item type name here!";
+                qmlInfo(this) << tr("I don't known how to set the customized item type name here!");
                 break;
             }
             emit valueChanged();
@@ -1000,7 +1000,7 @@ public:
             return Note;
         else if (typeString == QOrganizerItemType::TypeJournal)
             return Journal;
-        qWarning() << "Unknown organizer item type: " << typeString;
+        qmlInfo(this) << tr("Unknown organizer item type: ") << typeString;
         return Customized;
     }
 
@@ -1097,7 +1097,7 @@ public:
                 m_detail.setValue(QOrganizerTodoProgress::FieldPercentageComplete, percentage);
                 emit valueChanged();
             } else {
-                qWarning() << "Trying to set an invalid percentage value:" << percentage;
+                qmlInfo(this) << tr("Trying to set an invalid percentage value:") << percentage;
             }
         }
     }

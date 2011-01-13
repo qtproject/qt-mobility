@@ -1,0 +1,24 @@
+usr/include/qt4/QtVersit/QVersitContactExporter
+usr/include/qt4/QtVersit/QVersitContactExporterDetailHandler
+usr/include/qt4/QtVersit/QVersitContactExporterDetailHandlerV2
+usr/include/qt4/QtVersit/QVersitContactHandler
+usr/include/qt4/QtVersit/QVersitContactHandlerFactory
+usr/include/qt4/QtVersit/QVersitContactImporter
+usr/include/qt4/QtVersit/QVersitContactImporterPropertyHandler
+usr/include/qt4/QtVersit/QVersitContactImporterPropertyHandlerV2
+usr/include/qt4/QtVersit/QVersitDefaultResourceHandler
+usr/include/qt4/QtVersit/QVersitDocument
+usr/include/qt4/QtVersit/QVersitProperty
+usr/include/qt4/QtVersit/QVersitReader
+usr/include/qt4/QtVersit/QVersitResourceHandler
+usr/include/qt4/QtVersit/QVersitWriter
+usr/include/qt4/QtVersit/qversitcontactexporter.h
+usr/include/qt4/QtVersit/qversitcontacthandler.h
+usr/include/qt4/QtVersit/qversitcontactimporter.h
+usr/include/qt4/QtVersit/qversitdocument.h
+usr/include/qt4/QtVersit/qversitproperty.h
+usr/include/qt4/QtVersit/qversitreader.h
+usr/include/qt4/QtVersit/qversitresourcehandler.h
+usr/include/qt4/QtVersit/qversitwriter.h
+usr/lib/libQtVersit.so
+#usr/lib/QtVersit.pc usr/lib/pkgconfig

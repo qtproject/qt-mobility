@@ -40,7 +40,6 @@
 ****************************************************************************/
 
 #include "qlandmarkfilehandler_lmx_p.h"
-#include "databaseoperations_p.h"
 
 #include <qlandmarkmanagerengine.h>
 #include <qlandmarkcategory.h>

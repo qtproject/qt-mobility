@@ -178,7 +178,7 @@ bool QDeclarativeOrganizerItem::isFloatingTime() const
 }
 
 /*!
-  \qmlproperty bool OrganizerItem::itemStartTime
+  \qmlproperty date OrganizerItem::itemStartTime
 
    This property holds the start date time of the OrganizerItem object.
    For differrent organizer item type, the return value is differrent, too.
@@ -207,7 +207,7 @@ QDateTime QDeclarativeOrganizerItem::itemStartTime() const
 }
 
 /*!
-  \qmlproperty bool OrganizerItem::itemEndTime
+  \qmlproperty date OrganizerItem::itemEndTime
 
    This property holds the end date time of the OrganizerItem object.
    For differrent organizer item type, the return value is differrent, too.
@@ -245,7 +245,7 @@ void QDeclarativeOrganizerItem::setModified()
 }
 
 /*!
-  \qmlmethod QDeclarativeListProperty OrganizerItem::detail(name)
+  \qmlmethod Detail OrganizerItem::detail(name)
 
     This method returns an ItemDetail object which detail name is \a name.
   */
@@ -255,7 +255,7 @@ QVariant QDeclarativeOrganizerItem::detail(const QString& name)
 }
 
 /*!
-    \qmlproperty QDeclarativeListProperty OrganizerItem::details
+    \qmlproperty list<Detail> OrganizerItem::details
 
     This property holds the list of \l ItemDetail elements that the organizer item has.
 */
@@ -265,7 +265,7 @@ QDeclarativeListProperty<QDeclarativeOrganizerItemDetail> QDeclarativeOrganizerI
 }
 
 /*!
-  \qmlmethod QDeclarativeListProperty OrganizerItem::details(name)
+  \qmlmethod list<Detail> OrganizerItem::details(name)
 
     This method returns a list of details which detail name is \a name.
   */
@@ -316,6 +316,26 @@ bool QDeclarativeOrganizerItem::removeDetail(QDeclarativeOrganizerItemDetail* de
     }
     return false;
 
+}
+
+/*!
+    \qmlmethod bool OrganizerItem::addDetail(detail)
+
+    Adds the given organizer item \a detail to the organizer item, returns true if successful, otherwise returns false.
+
+    \note: If the \a detail has been added into the same organizer item before, this operation will be ignored,
+    so if you want to add a \a detail multiple times, the \a detail should be copied before calling this function.
+*/
+bool QDeclarativeOrganizerItem::addDetail(QDeclarativeOrganizerItemDetail* detail)
+{
+    if (detail) {
+        if (!d->m_details.contains(detail)) {
+            d->m_details.append(detail);
+            emit itemChanged();
+        }
+        return true;
+    }
+    return false;
 }
 
 /*!
