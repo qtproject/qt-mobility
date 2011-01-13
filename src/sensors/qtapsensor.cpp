@@ -44,9 +44,9 @@
 
 QTM_BEGIN_NAMESPACE
 
-IMPLEMENT_READING(QTapReading)
+        IMPLEMENT_READING(QTapReading)
 
-/*!
+        /*!
     \class QTapReading
     \ingroup sensors_reading
     \inmodule QtSensors
@@ -64,7 +64,7 @@ IMPLEMENT_READING(QTapReading)
     must be set to false to return individual tap events.
 */
 
-/*!
+        /*!
     \enum QTapReading::TapDirection
 
     The tap direction is indicated using flags. Applications should check for the presence of
@@ -109,14 +109,14 @@ IMPLEMENT_READING(QTapReading)
     \value Z_Both Equivalent to \c{Z_Pos|Z_Neg}. Returned by devices that cannot detect the direction of a tap.
 */
 
-/*!
+        /*!
     \property QTapReading::tapDirection
     \brief the direction of the tap.
 
     \sa {QTapReading Units}
 */
 
-QTapReading::TapDirection QTapReading::tapDirection() const
+        QTapReading::TapDirection QTapReading::tapDirection() const
 {
     return static_cast<QTapReading::TapDirection>(d->tapDirection);
 }
@@ -127,20 +127,23 @@ QTapReading::TapDirection QTapReading::tapDirection() const
 void QTapReading::setTapDirection(QTapReading::TapDirection tapDirection)
 {
     switch (tapDirection) {
-        case X_Pos:
-        case Y_Pos:
-        case Z_Pos:
-        case X_Neg:
-        case Y_Neg:
-        case Z_Neg:
-        case X_Both:
-        case Y_Both:
-        case Z_Both:
-            d->tapDirection = tapDirection;
-            break;
-        default:
-            d->tapDirection = Undefined;
-            break;
+    case X:
+    case Y:
+    case Z:
+    case X_Pos:
+    case Y_Pos:
+    case Z_Pos:
+    case X_Neg:
+    case Y_Neg:
+    case Z_Neg:
+    case X_Both:
+    case Y_Both:
+    case Z_Both:
+        d->tapDirection = tapDirection;
+        break;
+    default:
+        d->tapDirection = Undefined;
+        break;
     }
 }
 
