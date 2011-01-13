@@ -157,6 +157,7 @@ void NearFieldTagCommandsRequest::ProcessTimeout()
             if (iRequestIssued)
             {    
                 iOperator->DoCancelSendCommand();
+                iRequestCancelled = ETrue;
                 iRequestIssued = EFalse;
             }
             LOG("wait timeout");
@@ -178,9 +179,10 @@ TInt NearFieldTagCommandsRequest::HandlePassiveCommand(TInt aError)
         // it may be the select sector packet 2 command for tag type 2
         if ((command.at(1) == 0) && (command.at(2) == 0) && (command.at(3) == 0))
         {
-            result = KErrNone;
+            iResponse->Zero();
             if (KErrTimedOut == aError)
             {
+                result = KErrNone;
                 iResponse->Append(0x0A);
             }
             else

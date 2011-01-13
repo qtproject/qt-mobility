@@ -518,6 +518,7 @@ QNearFieldTarget::RequestId QNearFieldTagImpl<TAGTYPE>::_sendCommand(const QByte
             // issue the request
             LOG("the request will be issued at once");
             mCurrentRequest = rawCommandRequest;
+            
             mPendingRequestList.append(rawCommandRequest);
             rawCommandRequest->IssueRequest();
         }
