@@ -1451,6 +1451,9 @@ void QGalleryTrackerSchema::populateItemArguments(
             arguments->resourceKeys.append(i + arguments->valueOffset );
         arguments->propertyAttributes[i] &= PropertyMask;
     }
+
+    for (int i = 0; i < arguments->fieldNames.count(); ++i)
+        arguments->fieldNames[i].chop(4);
 }
 
 void QGalleryTrackerSchema::populateAggregateArguments(
@@ -1592,6 +1595,9 @@ void QGalleryTrackerSchema::populateAggregateArguments(
             + compositeAttributes
             + aliasAttributes;
     arguments->propertyTypes = identityTypes + aggregateTypes + compositeTypes + aliasTypes;
+
+    for (int i = 0; i < arguments->fieldNames.count(); ++i)
+        arguments->fieldNames[i].chop(4);
 }
 
 QString QGalleryTrackerSchema::serviceForType( const QString &galleryType )

@@ -774,8 +774,8 @@ void tst_QGalleryTrackerSchema::queryResponseFilePropertyNames_data()
             <<  "SELECT DISTINCT ?x nie:url(?x) rdf:type(?x) nfo:fileName(?x) nie:mimeType(?x) "
                 "WHERE {{?x rdf:type nfo:FileDataObject}}"
             << (QStringList() // fieldNames
-                    << QLatin1String("nfo:fileName(?x)")
-                    << QLatin1String("nie:mimeType(?x)"))
+                    << QLatin1String("nfo:fileName")
+                    << QLatin1String("nie:mimeType"))
             << (QStringList() // filteredPropertyNames
                     << QLatin1String("fileName")
                     << QLatin1String("mimeType"))
@@ -794,7 +794,7 @@ void tst_QGalleryTrackerSchema::queryResponseFilePropertyNames_data()
             <<  "SELECT DISTINCT ?x nie:url(?x) rdf:type(?x) nie:mimeType(?x) "
                 "WHERE {{?x rdf:type nfo:FileDataObject}}"
             << (QStringList() // fieldNames
-                    << QLatin1String("nie:mimeType(?x)"))
+                    << QLatin1String("nie:mimeType"))
             << (QStringList() // filteredPropertyNames
                     << QLatin1String("mimeType"))
             << QVector<int>() // aliasColumns
@@ -815,8 +815,8 @@ void tst_QGalleryTrackerSchema::queryResponseFilePropertyNames_data()
                 "WHERE {{?x rdf:type nfo:FileDataObject}} "
                 "ORDER BY ASC(nfo:fileName(?x)) ASC(nie:mimeType(?x))"
             << (QStringList() // fieldNames
-                    << QLatin1String("nfo:fileName(?x)")
-                    << QLatin1String("nie:mimeType(?x)"))
+                    << QLatin1String("nfo:fileName")
+                    << QLatin1String("nie:mimeType"))
             << (QStringList() // filteredPropertyNames
                     << QLatin1String("fileName")
                     << QLatin1String("mimeType"))
@@ -838,8 +838,8 @@ void tst_QGalleryTrackerSchema::queryResponseFilePropertyNames_data()
                 "WHERE {{?x rdf:type nfo:FileDataObject}} "
                 "ORDER BY ASC(nfo:fileName(?x)) DESC(nie:mimeType(?x))"
             << (QStringList() // fieldNames
-                    << QLatin1String("nfo:fileName(?x)")
-                    << QLatin1String("nie:mimeType(?x)"))
+                    << QLatin1String("nfo:fileName")
+                    << QLatin1String("nie:mimeType"))
             << (QStringList() // filteredPropertyNames
                     << QLatin1String("fileName")
                     << QLatin1String("mimeType"))
@@ -861,8 +861,8 @@ void tst_QGalleryTrackerSchema::queryResponseFilePropertyNames_data()
                 "WHERE {{?x rdf:type nfo:FileDataObject}} "
                 "ORDER BY DESC(nfo:fileName(?x)) ASC(nie:mimeType(?x))"
             << (QStringList() // fieldNames
-                    << QLatin1String("nfo:fileName(?x)")
-                    << QLatin1String("nie:mimeType(?x)"))
+                    << QLatin1String("nfo:fileName")
+                    << QLatin1String("nie:mimeType"))
             << (QStringList() // filteredPropertyNames
                     << QLatin1String("fileName")
                     << QLatin1String("mimeType"))
@@ -884,8 +884,8 @@ void tst_QGalleryTrackerSchema::queryResponseFilePropertyNames_data()
                 "WHERE {{?x rdf:type nfo:FileDataObject}} "
                 "ORDER BY DESC(nfo:fileName(?x)) DESC(nie:mimeType(?x))"
             << (QStringList() // fieldNames
-                    << QLatin1String("nfo:fileName(?x)")
-                    << QLatin1String("nie:mimeType(?x)"))
+                    << QLatin1String("nfo:fileName")
+                    << QLatin1String("nie:mimeType"))
             << (QStringList() // filteredPropertyNames
                     << QLatin1String("fileName")
                     << QLatin1String("mimeType"))
@@ -906,7 +906,7 @@ void tst_QGalleryTrackerSchema::queryResponseFilePropertyNames_data()
                 "WHERE {{?x rdf:type nfo:FileDataObject}} "
                 "ORDER BY ASC(nfo:fileName(?x)) ASC(nie:mimeType(?x))"
             << (QStringList() // fieldNames
-                    << QLatin1String("nfo:fileName(?x)"))
+                    << QLatin1String("nfo:fileName"))
             << (QStringList() // filteredPropertyNames
                     << QLatin1String("fileName"))
             << QVector<int>() // aliasColumns
@@ -925,7 +925,7 @@ void tst_QGalleryTrackerSchema::queryResponseFilePropertyNames_data()
                 "WHERE {{?x rdf:type nfo:FileDataObject}} "
                 "ORDER BY ASC(nfo:fileName(?x)) DESC(nie:mimeType(?x))"
             << (QStringList() // fieldNames
-                << QLatin1String("nfo:fileName(?x)"))
+                << QLatin1String("nfo:fileName"))
             << (QStringList() // filteredPropertyNames
                     << QLatin1String("fileName"))
             << QVector<int>() // aliasColumns
@@ -944,7 +944,7 @@ void tst_QGalleryTrackerSchema::queryResponseFilePropertyNames_data()
                 "WHERE {{?x rdf:type nfo:FileDataObject}} "
                 "ORDER BY DESC(nfo:fileName(?x)) ASC(nie:mimeType(?x))"
             << (QStringList() // fieldNames
-                << QLatin1String("nfo:fileName(?x)"))
+                << QLatin1String("nfo:fileName"))
             << (QStringList() // filteredPropertyNames
                     << QLatin1String("fileName"))
             << QVector<int>() // aliasColumns
@@ -963,7 +963,7 @@ void tst_QGalleryTrackerSchema::queryResponseFilePropertyNames_data()
                 "WHERE {{?x rdf:type nfo:FileDataObject}} "
                 "ORDER BY DESC(nfo:fileName(?x)) DESC(nie:mimeType(?x))"
             << (QStringList() // fieldNames
-                << QLatin1String("nfo:fileName(?x)"))
+                << QLatin1String("nfo:fileName"))
             << (QStringList() // filteredPropertyNames
                     << QLatin1String("fileName"))
             << QVector<int>() // aliasColumns
@@ -984,8 +984,8 @@ void tst_QGalleryTrackerSchema::queryResponseFilePropertyNames_data()
                 "WHERE {{?x rdf:type nfo:FileDataObject}} "
                 "ORDER BY ASC(nie:mimeType(?x))"
             << (QStringList() // fieldNames
-                    << QLatin1String("nfo:fileName(?x)")
-                    << QLatin1String("nie:mimeType(?x)"))
+                    << QLatin1String("nfo:fileName")
+                    << QLatin1String("nie:mimeType"))
             << (QStringList() // filteredPropertyNames
                     << QLatin1String("fileName")
                     << QLatin1String("mimeType"))
@@ -1007,8 +1007,8 @@ void tst_QGalleryTrackerSchema::queryResponseFilePropertyNames_data()
                 "WHERE {{?x rdf:type nfo:FileDataObject}} "
                 "ORDER BY ASC(nie:mimeType(?x))"
             << (QStringList() // fieldNames
-                    << QLatin1String("nfo:fileName(?x)")
-                    << QLatin1String("nie:mimeType(?x)"))
+                    << QLatin1String("nfo:fileName")
+                    << QLatin1String("nie:mimeType"))
             << (QStringList() // filteredPropertyNames
                     << QLatin1String("fileName")
                     << QLatin1String("mimeType"))
@@ -1030,8 +1030,8 @@ void tst_QGalleryTrackerSchema::queryResponseFilePropertyNames_data()
                 "WHERE {{?x rdf:type nfo:FileDataObject}} "
                 "ORDER BY DESC(nie:mimeType(?x))"
             << (QStringList() // fieldNames
-                    << QLatin1String("nfo:fileName(?x)")
-                    << QLatin1String("nie:mimeType(?x)"))
+                    << QLatin1String("nfo:fileName")
+                    << QLatin1String("nie:mimeType"))
             << (QStringList() // filteredPropertyNames
                     << QLatin1String("fileName")
                     << QLatin1String("mimeType"))
@@ -1053,8 +1053,8 @@ void tst_QGalleryTrackerSchema::queryResponseFilePropertyNames_data()
                 "WHERE {{?x rdf:type nfo:FileDataObject}} "
                 "ORDER BY DESC(nie:mimeType(?x))"
             << (QStringList() // fieldNames
-                    << QLatin1String("nfo:fileName(?x)")
-                    << QLatin1String("nie:mimeType(?x)"))
+                    << QLatin1String("nfo:fileName")
+                    << QLatin1String("nie:mimeType"))
             << (QStringList() // filteredPropertyNames
                     << QLatin1String("fileName")
                     << QLatin1String("mimeType"))
@@ -1076,8 +1076,8 @@ void tst_QGalleryTrackerSchema::queryResponseFilePropertyNames_data()
                 "WHERE {{?x rdf:type nfo:FileDataObject}} "
                 "ORDER BY ASC(nie:url(?x)) ASC(nie:mimeType(?x))"
             << (QStringList() // fieldNames
-                    << QLatin1String("nfo:fileName(?x)")
-                    << QLatin1String("nie:mimeType(?x)"))
+                    << QLatin1String("nfo:fileName")
+                    << QLatin1String("nie:mimeType"))
             << (QStringList() // filteredPropertyNames
                     << QLatin1String("fileName")
                     << QLatin1String("mimeType"))
@@ -1099,8 +1099,8 @@ void tst_QGalleryTrackerSchema::queryResponseFilePropertyNames_data()
                 "WHERE {{?x rdf:type nfo:FileDataObject}} "
                 "ORDER BY DESC(nie:url(?x)) ASC(nie:mimeType(?x))"
             << (QStringList() // fieldNames
-                    << QLatin1String("nfo:fileName(?x)")
-                    << QLatin1String("nie:mimeType(?x)"))
+                    << QLatin1String("nfo:fileName")
+                    << QLatin1String("nie:mimeType"))
             << (QStringList() // filteredPropertyNames
                     << QLatin1String("fileName")
                     << QLatin1String("mimeType"))
@@ -1122,8 +1122,8 @@ void tst_QGalleryTrackerSchema::queryResponseFilePropertyNames_data()
                 "WHERE {{?x rdf:type nfo:FileDataObject}} "
                 "ORDER BY ASC(nie:url(?x)) DESC(nie:mimeType(?x))"
             << (QStringList() // fieldNames
-                    << QLatin1String("nfo:fileName(?x)")
-                    << QLatin1String("nie:mimeType(?x)"))
+                    << QLatin1String("nfo:fileName")
+                    << QLatin1String("nie:mimeType"))
             << (QStringList() // filteredPropertyNames
                     << QLatin1String("fileName")
                     << QLatin1String("mimeType"))
@@ -1145,8 +1145,8 @@ void tst_QGalleryTrackerSchema::queryResponseFilePropertyNames_data()
                 "WHERE {{?x rdf:type nfo:FileDataObject}} "
                 "ORDER BY DESC(nie:url(?x)) DESC(nie:mimeType(?x))"
             << (QStringList() // fieldNames
-                    << QLatin1String("nfo:fileName(?x)")
-                    << QLatin1String("nie:mimeType(?x)"))
+                    << QLatin1String("nfo:fileName")
+                    << QLatin1String("nie:mimeType"))
             << (QStringList() // filteredPropertyNames
                     << QLatin1String("fileName")
                     << QLatin1String("mimeType"))
@@ -1168,8 +1168,8 @@ void tst_QGalleryTrackerSchema::queryResponseFilePropertyNames_data()
                 "WHERE {{?x rdf:type nfo:FileDataObject}} "
                 "ORDER BY ASC(nie:keyword(?x)) ASC(nie:mimeType(?x))"
             << (QStringList() // fieldNames
-                    << QLatin1String("nfo:fileName(?x)")
-                    << QLatin1String("nie:mimeType(?x)"))
+                    << QLatin1String("nfo:fileName")
+                    << QLatin1String("nie:mimeType"))
             << (QStringList() // filteredPropertyNames
                     << QLatin1String("fileName")
                     << QLatin1String("mimeType"))
@@ -1191,8 +1191,8 @@ void tst_QGalleryTrackerSchema::queryResponseFilePropertyNames_data()
                 "WHERE {{?x rdf:type nfo:FileDataObject}} "
                 "ORDER BY DESC(nie:keyword(?x)) ASC(nie:mimeType(?x))"
             << (QStringList() // fieldNames
-                << QLatin1String("nfo:fileName(?x)")
-                << QLatin1String("nie:mimeType(?x)"))
+                << QLatin1String("nfo:fileName")
+                << QLatin1String("nie:mimeType"))
             << (QStringList() // filteredPropertyNames
                     << QLatin1String("fileName")
                     << QLatin1String("mimeType"))
@@ -1214,8 +1214,8 @@ void tst_QGalleryTrackerSchema::queryResponseFilePropertyNames_data()
                 "WHERE {{?x rdf:type nfo:FileDataObject}} "
                 "ORDER BY ASC(nie:keyword(?x)) DESC(nie:mimeType(?x))"
             << (QStringList() // fieldNames
-                << QLatin1String("nfo:fileName(?x)")
-                << QLatin1String("nie:mimeType(?x)"))
+                << QLatin1String("nfo:fileName")
+                << QLatin1String("nie:mimeType"))
             << (QStringList() // filteredPropertyNames
                     << QLatin1String("fileName")
                     << QLatin1String("mimeType"))
@@ -1237,8 +1237,8 @@ void tst_QGalleryTrackerSchema::queryResponseFilePropertyNames_data()
                 "WHERE {{?x rdf:type nfo:FileDataObject}} "
                 "ORDER BY DESC(nie:keyword(?x)) DESC(nie:mimeType(?x))"
             << (QStringList() // fieldNames
-                    << QLatin1String("nfo:fileName(?x)")
-                    << QLatin1String("nie:mimeType(?x)"))
+                    << QLatin1String("nfo:fileName")
+                    << QLatin1String("nie:mimeType"))
             << (QStringList() // filteredPropertyNames
                     << QLatin1String("fileName")
                     << QLatin1String("mimeType"))
