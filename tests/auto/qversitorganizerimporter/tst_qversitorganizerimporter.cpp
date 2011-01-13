@@ -298,6 +298,8 @@ void tst_QVersitOrganizerImporter::testImportEventProperties_data()
         properties << dtstart;
         QVersitProperty dtend;
         dtend.setName(QLatin1String("DTEND"));
+        // Note: in iCalendar, the end date is exclusive while in Qt Organizer, it is inclusive.
+        // Hence, this is an event that occurs all day on 2 January (not including 3 January)
         dtend.setValue(QLatin1String("20100103"));
         dtend.insertParameter(QLatin1String("VALUE"), QLatin1String("DATE"));
         properties << dtend;
@@ -305,7 +307,7 @@ void tst_QVersitOrganizerImporter::testImportEventProperties_data()
         // The time portion must be valid but is ignored.  This test cheats a bit because it knows
         // the implementation sets it to 00:00:00
         etr.setStartDateTime(QDateTime(QDate(2010, 1, 2), QTime(0, 0, 0)));
-        etr.setEndDateTime(QDateTime(QDate(2010, 1, 3), QTime(0, 0, 0)));
+        etr.setEndDateTime(QDateTime(QDate(2010, 1, 2), QTime(0, 0, 0)));
         etr.setAllDay(true);
         QTest::newRow("all day event") << properties
             << (QList<QOrganizerItemDetail>() << etr);

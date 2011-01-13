@@ -188,7 +188,8 @@ void QVersitOrganizerExporterPrivate::encodeEventTimeRange(
     property = takeProperty(document, QLatin1String("DTEND"), removedProperties);
     property.setName(QLatin1String("DTEND"));
     if (isAllDay) {
-        property.setValue(etr.endDateTime().date().toString(QLatin1String("yyyyMMdd")));
+        // In iCalendar, the end date is exclusive while in Qt Organizer, it is inclusive.
+        property.setValue(etr.endDateTime().date().addDays(1).toString(QLatin1String("yyyyMMdd")));
         property.insertParameter(QLatin1String("VALUE"), QLatin1String("DATE"));
     } else {
         property.setValue(encodeDateTime(etr.endDateTime()));
