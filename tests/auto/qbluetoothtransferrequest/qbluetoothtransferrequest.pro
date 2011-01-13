@@ -1,5 +1,5 @@
-SOURCES += tst_qbluetoothdevicediscoveryagent.cpp
-TARGET=tst_qbluetoothdevicediscoveryagent
+SOURCES += tst_qbluetoothtransferrequest.cpp
+TARGET=tst_qbluetoothtransferrequest
 CONFIG += testcase
 
 QT = core
@@ -11,5 +11,3 @@ include(../../../common.pri)
 
 CONFIG += mobility
 MOBILITY = connectivity
-
-symbian: TARGET.CAPABILITY = ReadDeviceData LocalServices

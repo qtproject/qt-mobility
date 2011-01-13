@@ -43,6 +43,7 @@
 #define UTILS_SYMBIAN_P_H
 
 #include <bttypes.h>
+#include <bt_sock.h>
 
 QT_BEGIN_HEADER
 
@@ -51,6 +52,18 @@ QTM_BEGIN_NAMESPACE
 inline QBluetoothAddress qTBTDevAddrToQBluetoothAddress(const TBTDevAddr &address)
 {
     return QBluetoothAddress(QString(QByteArray((const char *)address.Des().Ptr(), 6).toHex().toUpper()));
+}
+inline quint32 qTPackSymbianDeviceClass(const TInquirySockAddr &address)
+{
+    TUint8 minorClass = address.MinorClassOfDevice();
+    TUint8 majorClass = address.MajorClassOfDevice();
+    TUint16 serviceClass = address.MajorServiceClass();
+    quint32 deviceClass = (0 << 2) | (minorClass << 6 ) | (majorClass <<5) | serviceClass;
+    return deviceClass;
+}
+inline QString s60DescToQString(const TDesC &desc)
+{
+    return QString::fromUtf16(desc.Ptr(), desc.Length());
 }
 
 QTM_END_NAMESPACE

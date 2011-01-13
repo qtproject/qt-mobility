@@ -39,78 +39,80 @@
 **
 ****************************************************************************/
 
-#ifndef QBLUETOOTHDEVICEDISCOVERYAGENT_P_H
-#define QBLUETOOTHDEVICEDISCOVERYAGENT_P_H
+#ifndef BLUETOOTHLINKMANAGERDEVICEDISCOVERER_H
+#define BLUETOOTHLINKMANAGERDEVICEDISCOVERER_H
 
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API. It exists purely as an
+// implementation detail. This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
+#include <qmobilityglobal.h>
+#include <QtCore/QObject>
 #include "qbluetoothdevicediscoveryagent.h"
 
-#include <QVariantMap>
-
-#ifndef QT_NO_DBUS
-class OrgBluezManagerInterface;
-class OrgBluezAdapterInterface;
-class QDBusVariant;
-#endif
-
-#ifdef Q_OS_SYMBIAN
-#include "symbian/bluetoothlinkmanagerdevicediscoverer.h"
 #include <es_sock.h>
+#include <e32base.h>
+#include <btdevice.h>
 #include <bt_sock.h>
-#endif
+#include <btsdp.h>
+
+
 
 QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
-class QBluetoothDeviceDiscoveryAgentPrivate
+class QBluetoothDeviceInfo;
+
+class BluetoothLinkManagerDeviceDiscoverer : public QObject, public CActive
 {
-    Q_DECLARE_PUBLIC(QBluetoothDeviceDiscoveryAgent)
+    Q_OBJECT
 public:
-    QBluetoothDeviceDiscoveryAgentPrivate();
-    ~QBluetoothDeviceDiscoveryAgentPrivate();
 
-    void start();
-    void stop();
-    bool isActive() const;
+//    static CBluetoothDeviceDiscoverer* NewL(RSocketServ& aSocketServ);
+    BluetoothLinkManagerDeviceDiscoverer(RSocketServ& aSocketServ, QObject *parent = 0);
+    ~BluetoothLinkManagerDeviceDiscoverer();
 
-#ifdef Q_OS_SYMBIAN
-    // private slot
-    void _q_newDeviceFound(const QBluetoothDeviceInfo &device);
-#endif
+    void StartDiscoveryL(const uint discoveryType);
+    void Stop();
 
-#ifndef QT_NO_DBUS
-    void _q_deviceFound(const QString &address, const QVariantMap &dict);
-    void _q_propertyChanged(const QString &name, const QDBusVariant &value);
-#endif
+protected: // From CActive
+    void RunL();
+    void DoCancel();
 
 private:
-#ifdef Q_OS_SYMBIAN
-    uint inquiryTypeToIAC() const;
-    void setError(int errorCode, QString errorDescription);
-#endif
+    void setError(int error);
 
-    QList<QBluetoothDeviceInfo> discoveredDevices;
-    QBluetoothDeviceDiscoveryAgent::InquiryType inquiryType;
+private: // private helper functions
 
-#if !defined(QT_NO_DBUS)
-    OrgBluezManagerInterface *manager;
-    OrgBluezAdapterInterface *adapter;
-#endif
+    QBluetoothDeviceInfo currentDeviceDataToQBluetoothDeviceInfo() const;
 
-#ifdef Q_OS_SYMBIAN
-    // shared socket servet among RHostResolvers
-    RSocketServ m_socketServer;
-    // active object for device discovery
-    BluetoothLinkManagerDeviceDiscoverer *m_deviceDiscovery;
+Q_SIGNALS: // SIGNALS
+    void deviceDiscoveryComplete(int aError);
+    void deviceDiscovered(const QBluetoothDeviceInfo &device);
+    void linkManagerError(QBluetoothDeviceDiscoveryAgent::Error error);
 
-#endif
+private:
 
-    QBluetoothDeviceDiscoveryAgent *q_ptr;
+    //  socket server handle
+    RSocketServ &m_socketServer;
 
+    RHostResolver m_hostResolver;
+    TInquirySockAddr m_addr;
+    TNameEntry m_entry;
+
+    TBool m_LIAC;
 };
 
 QTM_END_NAMESPACE
 
 QT_END_HEADER
 
-#endif
+#endif //BLUETOOTHLINKMANAGERDEVICEDISCOVERER_H

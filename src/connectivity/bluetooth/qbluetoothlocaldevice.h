@@ -131,7 +131,7 @@ Q_SIGNALS:
 
 
 private:
-    friend class QBluetoothLocalDevicePrivate;
+    Q_DECLARE_PRIVATE(QBluetoothLocalDevice)
     QBluetoothLocalDevicePrivate *d_ptr;
 };
 
