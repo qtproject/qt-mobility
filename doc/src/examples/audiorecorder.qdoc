@@ -31,8 +31,8 @@
 
 
 
-    This example shows how to create a simple audio recorder using the Qt
-    Mobility Multimedia API. 
+    This example shows how to create a simple audio recorder using the QtMobility
+    Multimedia API.
 
     We can easily setup the capture when we create the objects using a
     QMediaRecorder initialized with a QAudioCaptureSource object.
