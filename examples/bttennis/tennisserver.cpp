@@ -56,7 +56,7 @@ TennisServer::~TennisServer()
     if(stream){
         QByteArray b;
         QDataStream s(&b, QIODevice::WriteOnly);
-        s << QChar('D');
+        s << QString("D");
         clientSocket->write(b);
     }
 
@@ -142,7 +142,8 @@ void TennisServer::moveBall(int x, int y)
     if(stream){
         QByteArray b;
         QDataStream s(&b, QIODevice::WriteOnly);
-        s << QChar('m') << x << y;
+        s << QString("m %1 %2").arg(x).arg(y);
+        //s << QLatin1String("m") << x << y;
         clientSocket->write(b);
     }
 }
@@ -153,7 +154,8 @@ void TennisServer::score(int left, int right)
     if(stream){
         QByteArray b;
         QDataStream s(&b, QIODevice::WriteOnly);
-        s << QChar('s') << left << right;
+        s << QString("s %1 %2").arg(left).arg(right);
+//        s << QChar('s') << left << right;
         clientSocket->write(b);
     }
 }
@@ -163,7 +165,8 @@ void TennisServer::moveLeftPaddle(int y)
     if(stream) {
         QByteArray b;
         QDataStream s(&b, QIODevice::WriteOnly);
-        s << QChar('l') << y;
+        s << QString("l %1").arg(y);
+//        s << QChar('l') << y;
         clientSocket->write(b);
     }
 }
@@ -174,21 +177,22 @@ void TennisServer::readSocket()
         return;
 
     while (clientSocket->bytesAvailable()) {
-        QChar c;
-//        qDebug() << socket->readAll().length();
 
-        *stream >> c;
-        if(c == QChar('r')){
+        QString s;
+        *stream >> s;
+        QStringList args = s.split(QChar(' '));
+        s = args.takeFirst();
+        if(s == "r" && args.count() == 1){
             int y;
-            *stream >> y;
-            emit moveRightPaddle(y);
+
+            emit moveRightPaddle(args.at(0).toInt());
         }
-        else if(c == QChar('D')){
+        else if(s == "D"){
             clientSocket->deleteLater();
             clientSocket = 0;
         }
         else {
-            qDebug() << "Unknown command" << c;
+            qDebug() << "Unknown command" << s[0];
         }
     }
 }
