@@ -1,8 +1,43 @@
+/****************************************************************************
+**
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
+** Contact: Nokia Corporation (qt-info@nokia.com)
+**
+** This file is part of the examples of the Qt Mobility Components.
+**
+** $QT_BEGIN_LICENSE:BSD$
+** You may use this file under the terms of the BSD license as follows:
+**
+** "Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are
+** met:
+**   * Redistributions of source code must retain the above copyright
+**     notice, this list of conditions and the following disclaimer.
+**   * Redistributions in binary form must reproduce the above copyright
+**     notice, this list of conditions and the following disclaimer in
+**     the documentation and/or other materials provided with the
+**     distribution.
+**   * Neither the name of Nokia Corporation and its Subsidiary(-ies) nor
+**     the names of its contributors may be used to endorse or promote
+**     products derived from this software without specific prior written
+**     permission.
+**
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+** "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+** LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+** A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+** OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+** LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+** DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+** THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+** (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
+** $QT_END_LICENSE$
+**
+****************************************************************************/
 #include "mainwindow.h"
-#include "ui_mainwindow.h"
-#include "qlayout.h"
-#include <QList>
-#include <QTime>
 
 int MainWindow::m_doubleCounter = 0;
 int MainWindow::m_singleCounter = 0;
@@ -19,9 +54,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->doubleDirection->setText("");
     ui->singleDirection->setText("");
 
-    QTime now = QTime::currentTime();
-    ui->doubleTime->setText(now.toString());
-    ui->singleTime->setText(now.toString());
+    ui->doubleTime->setText("");
+    ui->singleTime->setText("");
 
     doublesensor = new QTapSensor();
     doublesensor->setProperty("returnDoubleTapEvents", true);
@@ -78,16 +112,22 @@ void MainWindow::doubleHappened(QString direction){
 }
 
 void MainWindow::resize(){
-    QList<QWidget*> children;
-    children.append(ui->doubleDirection);
-    children.append(ui->singleDirection);
-    children.append(ui->doubleCheckBox);
-    children.append(ui->singleCheckBox);
-    children.append(ui->doubleTime);
-    children.append(ui->singleTime);
+    QList<QWidget*> widgets;
+    widgets.append(ui->doubleDirection);
+    widgets.append(ui->singleDirection);
+    widgets.append(ui->doubleCheckBox);
+    widgets.append(ui->singleCheckBox);
+    widgets.append(ui->doubleTime);
+    widgets.append(ui->singleTime);
+    widgets.append(ui->doublePcs);
+    widgets.append(ui->singlePcs);
+    widgets.append(ui->lastDouble);
+    widgets.append(ui->lastSingle);
+    widgets.append(ui->horizontalLayoutWidget);
+    widgets.append(ui->horizontalLayoutWidget_2);
     int gain = 50;
-    for (int i=0,l=children.size();i<l;i++){
-        QWidget* w = children.at(i);
+    for (int i=0,l=widgets.size();i<l;i++){
+        QWidget* w = widgets.at(i);
         int width = w->width();
         int height = w->height();
         w->setFixedHeight(height + gain);
