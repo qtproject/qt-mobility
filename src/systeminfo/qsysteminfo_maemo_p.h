@@ -255,6 +255,8 @@ public:
     int voiceRingtoneVolume();//1.2
     bool vibrationActive();//1.2
 
+    QSystemDeviceInfo::LockTypeFlags lockStatus();//1.2
+
 protected:
 #if !defined(QT_NO_DBUS)
     QHalInterface *halIface;

@@ -1491,6 +1491,40 @@ bool QSystemDeviceInfoPrivate::vibrationActive()
     return false;
 }
 
+QSystemDeviceInfo::LockTypeFlags QSystemDeviceInfoPrivate::lockStatus()
+{
+    QSystemDeviceInfo::LockTypeFlags lockFlags; /* no active locks */
+
+#if !defined(QT_NO_DBUS)
+    /* Check the PIN lock status from devicelock */
+    QDBusMessage lockStateCall = QDBusMessage::createMethodCall("com.nokia.devicelock", "/request",
+                                                                "com.nokia.devicelock", "getState");
+    /* getState argument 0: LockType_t, where 1 = the device lock */
+    lockStateCall << QVariant::fromValue(1);
+
+    QDBusReply<int> deviceLockReply = QDBusConnection::systemBus().call(lockStateCall);
+    if (deviceLockReply.isValid()) {
+        int lockState = deviceLockReply.value();
+        if (lockState != 0) {
+            /* 0 == unlocked, if we get any other state back, we are locked */
+            lockFlags |= QSystemDeviceInfo::PinLocked;
+        }
+    }
+
+    /* Check the touch screen/keypad lock status from MCE */
+    QDBusReply<QString> mceReply = QDBusConnection::systemBus().call(
+                                       QDBusMessage::createMethodCall("com.nokia.mce", "/com/nokia/mce/request",
+                                                                      "com.nokia.mce.request", "get_tklock_mode"));
+    if (mceReply.isValid()) {
+        QString tkLockMode = mceReply.value();
+        if (tkLockMode != "unlocked" && tkLockMode != "silent-unlocked") {
+            lockFlags |= QSystemDeviceInfo::TouchAndKeyboardLocked;
+        }
+    }
+#endif
+    return lockFlags;
+}
+
 //////////////
 ///////
 QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QObject *parent)
