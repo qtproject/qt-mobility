@@ -1494,9 +1494,7 @@ QLandmarkManager::SupportLevel LandmarkManagerEngineSymbianPrivate::filterSuppor
                 }
                 // if any of the attribute matchflag is set to MatchContains & operation type is AndOperation, 
                 // then return KErrNotSupported
-                if ((opType == QLandmarkAttributeFilter::AndOperation)
-                    && attributeFilter.matchFlags(keyList.at(i)) & QLandmarkFilter::MatchContains) {
-                    isSupported = false;
+                if (attributeFilter.matchFlags(keyList.at(i)) & QLandmarkFilter::MatchContains) {
                     break;
                 }
             }
