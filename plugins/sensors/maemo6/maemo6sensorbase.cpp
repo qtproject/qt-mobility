@@ -171,12 +171,6 @@ const int maemo6sensorbase::bufferSize(){
         qWarning()<<"bufferSize cannot be "<<bufferSize<<", MAX value is "<<m_maxBufferSize;
         return m_bufferSize>0?m_bufferSize:1;
     }
-    if (m_efficientBufferSize==1) return bufferSize;
-
-    if (bufferSize%m_efficientBufferSize!=0){
-        qWarning()<<"bufferSize must be multifold of "<<m_efficientBufferSize<<" or 1";
-        return m_bufferSize>0?m_bufferSize:1;
-    }
     return bufferSize;
 }
 

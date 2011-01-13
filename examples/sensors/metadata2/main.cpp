@@ -96,22 +96,11 @@ QString checkSensor( QSensor *sensor )
 
     // bufferSizes
     QVariant maxVariant = sensor->property(MAX_BUFFER_SIZE);
-    int maxSize = maxVariant.isValid()?maxVariant.toInt():1;
+    QString bufferSizes("[1..");
+    bufferSizes.append(QString::number(maxVariant.isValid()?maxVariant.toInt():1));
+    bufferSizes.append("],");
     QVariant efficientVariant = sensor->property(EFFICIENT_BUFFER_SIZE);
-    int efficientSize = efficientVariant.isValid()?efficientVariant.toInt():1;
-    QString bufferSizes("[1");
-    if (efficientSize==1){
-        bufferSizes.append("..");
-    }
-    else{
-        bufferSizes.append("|");
-        for (int i=1; efficientSize*i<maxSize; i++){
-            bufferSizes.append(QString::number(efficientSize*i));
-            bufferSizes.append("|");
-        }
-    }
-    bufferSizes.append(QString::number(maxSize));
-    bufferSizes.append("]");
+    bufferSizes.append(QString::number(efficientVariant.isValid()?efficientVariant.toInt():1));
 
     QString metadata(sen_ident);
     metadata.append(",");
@@ -125,7 +114,6 @@ QString checkSensor( QSensor *sensor )
     metadata.append(",");
     metadata.append(bufferSizes);
     metadata.append("\n");
-
 
 
     return metadata;
@@ -144,7 +132,7 @@ int main( int argc, char **argv )
 
     QTextStream out(&file);
 
-    out <<"Identifier,Type,Description,OutputRanges,DataRates,BufferSizes"<<endl;
+    out <<"Identifier,Type,Description,OutputRanges,DataRates,BufferSizes,EfficientBufferSize"<<endl;
 
     QList<QByteArray> types = QSensor::sensorTypes();
     for (int j=0, l= types.size();j<l; j++ ){
