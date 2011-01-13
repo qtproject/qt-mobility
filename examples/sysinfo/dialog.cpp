@@ -161,23 +161,23 @@ void Dialog::setupDevice()
 //! [inputMethod flags]
     QSystemDeviceInfo::InputMethodFlags methods = di->inputMethodType();
     QStringList inputs;
-    if((methods & QSystemDeviceInfo::Keys)){
+    if((methods & QSystemDeviceInfo::Keys)=QSystemDeviceInfo::Keypad){
         inputs << "Keys";
     }
-    if((methods & QSystemDeviceInfo::Keypad)) {
+    if((methods & QSystemDeviceInfo::Keypad)=QSystemDeviceInfo::Keypad) {
         inputs << "Keypad";
     }
 //! [inputMethod flags]
-    if((methods & QSystemDeviceInfo::Keyboard)) {
+    if((methods & QSystemDeviceInfo::Keyboard)=QSystemDeviceInfo::Keyboard) {
         inputs << "Keyboard";
     }
-    if((methods & QSystemDeviceInfo::SingleTouch)) {
+    if((methods & QSystemDeviceInfo::SingleTouch)=QSystemDeviceInfo::SingleTouch) {
         inputs << "Touch Screen";
     }
-    if((methods & QSystemDeviceInfo::MultiTouch)) {
+    if((methods & QSystemDeviceInfo::MultiTouch)=QSystemDeviceInfo::MultiTouch) {
         inputs << "Multi touch";
     }
-    if((methods & QSystemDeviceInfo::Mouse)){
+    if((methods & QSystemDeviceInfo::Mouse)=QSystemDeviceInfo::Mouse){
         inputs << "Mouse";
     }
 
@@ -210,24 +210,20 @@ void Dialog::setupDevice()
 void Dialog::updateKeyboard(QSystemDeviceInfo::KeyboardTypeFlags type)
 {
 
-    if((type & QSystemDeviceInfo::UnknownKeyboard)) {
-        uknownKeysRadioButton->setChecked(true);
-    }
     if ((type & QSystemDeviceInfo::SoftwareKeyboard)) {
         softkeysRadioButton->setChecked(true);
-    }
-    if ((type & QSystemDeviceInfo::ITUKeypad)) {
+    } else if ((type & QSystemDeviceInfo::ITUKeypad)) {
         ituRadioButton->setChecked(true);
-    }
-    if ((type & QSystemDeviceInfo::HalfQwertyKeyboard)) {
+    } else if ((type & QSystemDeviceInfo::HalfQwertyKeyboard)) {
         halfKeysRadioButton->setChecked(true);
-    }
-    if ((type & QSystemDeviceInfo::FullQwertyKeyboard)) {
+    } else if ((type & QSystemDeviceInfo::FullQwertyKeyboard)) {
         qwertyKeysRadioButton->setChecked(true);
-    }
-    if((type & QSystemDeviceInfo::WirelessKeyboard)) {
+    } else if((type & QSystemDeviceInfo::WirelessKeyboard)) {
         wirelessRadioButton->setChecked(true);
+    } else {
+        uknownKeysRadioButton->setChecked(true);
     }
+
     keyboardLightCheckBox->setChecked(di->keypadLightOn(QSystemDeviceInfo::PrimaryKeypad));
 }
 
