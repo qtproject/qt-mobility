@@ -39,53 +39,40 @@
 **
 ****************************************************************************/
 
-#include <QtCore/qstring.h>
-#include <QtCore/qdebug.h>
+#ifndef QVIDEOSURFACEOUTPUT_P_H
+#define QVIDEOSURFACEOUTPUT_P_H
 
-#include "qt7serviceplugin.h"
-#include "qt7playerservice.h"
+#include <qmediabindableinterface.h>
 
-#include <qmediaserviceprovider.h>
+#include <QtCore/qsharedpointer.h>
 
 QT_BEGIN_NAMESPACE
 
-QStringList QT7ServicePlugin::keys() const
+class QAbstractVideoSurface;
+class QVideoRendererControl;
+
+class QVideoSurfaceOutput : public QObject, public QMediaBindableInterface
 {
-    return QStringList()
-#ifdef QMEDIA_QT7_PLAYER
-        << QLatin1String(Q_MEDIASERVICE_MEDIAPLAYER)
-#endif
-        ;
-}
+    Q_OBJECT
+    Q_INTERFACES(QMediaBindableInterface)
+public:
+    QVideoSurfaceOutput(QObject*parent = 0);
+    ~QVideoSurfaceOutput();
 
-QMediaService* QT7ServicePlugin::create(QString const& key)
-{
-#ifdef QT_DEBUG_QT7
-    qDebug() << "QT7ServicePlugin::create" << key;
-#endif
-#ifdef QMEDIA_QT7_PLAYER
-    if (key == QLatin1String(Q_MEDIASERVICE_MEDIAPLAYER))
-        return new QT7PlayerService;
-#endif
-    qWarning() << "unsupported key:" << key;
+    QMediaObject *mediaObject() const;
 
-    return 0;
-}
+    void setVideoSurface(QAbstractVideoSurface *surface);
 
-void QT7ServicePlugin::release(QMediaService *service)
-{
-    delete service;
-}
+protected:
+    bool setMediaObject(QMediaObject *object);
 
-QMediaServiceProviderHint::Features QT7ServicePlugin::supportedFeatures(
-        const QByteArray &service) const
-{
-    if (service == Q_MEDIASERVICE_MEDIAPLAYER)
-        return QMediaServiceProviderHint::VideoSurface;
-    else
-        return QMediaServiceProviderHint::Features();
-}
-
-Q_EXPORT_PLUGIN2(qtmedia_qt7engine, QT7ServicePlugin);
+private:
+    QWeakPointer<QAbstractVideoSurface> m_surface;
+    QWeakPointer<QVideoRendererControl> m_control;
+    QWeakPointer<QMediaService> m_service;
+    QWeakPointer<QMediaObject> m_object;
+};
 
 QT_END_NAMESPACE
+
+#endif

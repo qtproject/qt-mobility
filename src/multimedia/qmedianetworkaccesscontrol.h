@@ -39,53 +39,36 @@
 **
 ****************************************************************************/
 
-#include <QtCore/qstring.h>
-#include <QtCore/qdebug.h>
 
-#include "qt7serviceplugin.h"
-#include "qt7playerservice.h"
+#ifndef QMEDIANETWORKACCESSCONTROL_H
+#define QMEDIANETWORKACCESSCONTROL_H
 
-#include <qmediaserviceprovider.h>
+#include "qmediacontrol.h"
+
+#include <QtCore/qlist.h>
 
 QT_BEGIN_NAMESPACE
 
-QStringList QT7ServicePlugin::keys() const
+class Q_MULTIMEDIA_EXPORT QMediaNetworkAccessControl : public QMediaControl
 {
-    return QStringList()
-#ifdef QMEDIA_QT7_PLAYER
-        << QLatin1String(Q_MEDIASERVICE_MEDIAPLAYER)
-#endif
-        ;
-}
+    Q_OBJECT
+public:
 
-QMediaService* QT7ServicePlugin::create(QString const& key)
-{
-#ifdef QT_DEBUG_QT7
-    qDebug() << "QT7ServicePlugin::create" << key;
-#endif
-#ifdef QMEDIA_QT7_PLAYER
-    if (key == QLatin1String(Q_MEDIASERVICE_MEDIAPLAYER))
-        return new QT7PlayerService;
-#endif
-    qWarning() << "unsupported key:" << key;
+    virtual ~QMediaNetworkAccessControl();
 
-    return 0;
-}
+    virtual void setConfigurations(const QList<QString> &configurationIds) = 0;
+    virtual QString currentConfiguration() const = 0;
 
-void QT7ServicePlugin::release(QMediaService *service)
-{
-    delete service;
-}
+Q_SIGNALS:
+    void configurationChanged(const QString& configurationId);
 
-QMediaServiceProviderHint::Features QT7ServicePlugin::supportedFeatures(
-        const QByteArray &service) const
-{
-    if (service == Q_MEDIASERVICE_MEDIAPLAYER)
-        return QMediaServiceProviderHint::VideoSurface;
-    else
-        return QMediaServiceProviderHint::Features();
-}
+protected:
+    QMediaNetworkAccessControl(QObject *parent = 0);
+};
 
-Q_EXPORT_PLUGIN2(qtmedia_qt7engine, QT7ServicePlugin);
+#define QMediaNetworkAccessControl_iid "com.nokia.Qt.QMediaNetworkAccessControl/1.0"
+Q_MEDIA_DECLARE_CONTROL(QMediaNetworkAccessControl, QMediaNetworkAccessControl_iid)
 
 QT_END_NAMESPACE
+
+#endif

@@ -38,7 +38,7 @@
 \section1 Namespace
 
 The QtMobility APIs are placed into the \i{QtMobility} namespace. This is done
-to facilitate the future migration of Mobility APIs into Qt. See the
+to facilitate the future migration of QtMobility APIs into Qt. See the
 \l {Quickstart Example}{Quickstart guide} for an example on how the
 namespace impacts on application development.
 
@@ -63,8 +63,8 @@ to \l{QVersitDocument}{QVersitDocuments} using QVersitContactExporter and
 QVersitOrganizerExporter, respectively.
 
 Currently \l{QVersitReader} and \l{QVersitWriter} support
-reading and writing vCard 2.1, vCard 3.0 and iCalendar 2.0 format documents.  
-Please note that the Qt Mobility Organizer API is still under development, so
+reading and writing vCard 2.1, vCard 3.0 and iCalendar 2.0 format documents.
+Please note that the QtMobility Organizer API is still under development, so
 the Qt Versit API classes related to importing and exporting organizer items
 is subject to change.
 
@@ -99,7 +99,7 @@ The main classes for a client interested in importing or exporting vCard and
 iCalendar documents are:
 \list
     \o \l{QVersitProperty}
-    \o \l{QVersitDocument}    
+    \o \l{QVersitDocument}
     \o \l{QVersitReader}
     \o \l{QVersitWriter}
     \o \l{QVersitContactImporter}

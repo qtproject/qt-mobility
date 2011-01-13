@@ -28,7 +28,7 @@
 /*!
     \group qml-contacts
     \title QML Contacts
-    QML Support for the Mobility Project Contacts API.
+    QML Support for the QtMobility Project Contacts API.
 
 */
 
@@ -38,9 +38,9 @@
 
     \title Contacts QML Plugin
 
-    \brief A QML plugin for the Mobility Project Contacts API.
+    \brief A QML plugin for the QtMobility Project Contacts API.
 
-    
+
 
     \section1 Overview
 

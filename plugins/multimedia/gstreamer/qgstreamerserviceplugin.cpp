@@ -130,7 +130,9 @@ QMediaServiceProviderHint::Features QGstreamerServicePlugin::supportedFeatures(
         const QByteArray &service) const
 {
     if (service == Q_MEDIASERVICE_MEDIAPLAYER)
-        return QMediaServiceProviderHint::StreamPlayback;
+        return QMediaServiceProviderHint::StreamPlayback | QMediaServiceProviderHint::VideoSurface;
+    else if (service == Q_MEDIASERVICE_CAMERA)
+        return QMediaServiceProviderHint::VideoSurface;
     else
         return QMediaServiceProviderHint::Features();
 }
