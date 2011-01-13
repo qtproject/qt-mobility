@@ -631,6 +631,20 @@ void QMFService::stateChanged(QMessageService::State state) const
     p->stateChanged(state);
 }
 
+bool QMFService::synchronize(const QMessageAccountId &id)
+{
+    if (isBusy()) {
+        return false;
+    }
+
+    m_active = 0;
+    setError(QMessageManager::NoError);
+    m_active = &m_retrieval;
+    m_retrieval.synchronize(convert(id), 0);
+
+    return true;
+}
+
 #include "moc_qmfservice_maemo6_p.cpp"
 
 QTM_END_NAMESPACE

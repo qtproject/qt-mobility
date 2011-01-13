@@ -76,6 +76,7 @@ public:
     bool show(const QMessageId &id);
     bool exportUpdates(const QMessageAccountId &id);
     QMessageService::State state() const;
+    bool synchronize(const QMessageAccountId &id);
 
 public slots:
     void cancel();
