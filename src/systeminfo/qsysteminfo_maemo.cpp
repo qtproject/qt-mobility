@@ -1457,6 +1457,25 @@ probing_done:
     return keyboardFlippedOpen;
 }
 
+bool QSystemDeviceInfoPrivate::keypadLightOn(QSystemDeviceInfo::KeypadType type)
+{
+    bool lightOn = false;
+
+    if (type != QSystemDeviceInfo::PrimaryKeypad) {
+        return lightOn;
+    }
+
+#if !defined(QT_NO_DBUS)
+    QDBusReply<bool> reply = QDBusConnection::systemBus().call(
+                                 QDBusMessage::createMethodCall("com.nokia.mce", "/com/nokia/mce/request",
+                                                                "com.nokia.mce.request", "get_key_backlight_state"));
+    if (reply.isValid()) {
+        lightOn = reply.value();
+    }
+#endif
+    return lightOn;
+}
+
 int QSystemDeviceInfoPrivate::messageRingtoneVolume()
 {
     return 0;

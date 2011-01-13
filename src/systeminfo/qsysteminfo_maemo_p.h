@@ -249,6 +249,7 @@ public:
     QString model();
     QString productName();
     bool isKeyboardFlippedOpen();//1.2
+    bool keypadLightOn(QSystemDeviceInfo::KeypadType type);//1.2
 
     int messageRingtoneVolume();//1.2
     int voiceRingtoneVolume();//1.2
