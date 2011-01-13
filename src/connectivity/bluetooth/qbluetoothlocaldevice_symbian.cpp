@@ -195,7 +195,19 @@ QBluetoothLocalDevice::HostMode QBluetoothLocalDevicePrivate::hostMode() const
 
 void QBluetoothLocalDevicePrivate::PowerStateChanged(TBTPowerStateValue aState)
 {
-    Q_UNUSED(aState);
+    Q_Q(QBluetoothLocalDevice);
+
+    QBluetoothLocalDevice::HostMode hostMode;
+    switch (aState) {
+        case EBTPowerOn:
+            hostMode = this->hostMode();
+            break;
+        case EBTPowerOff:
+        default:
+            hostMode = QBluetoothLocalDevice::HostPoweredOff;
+            break;
+    }
+    emit q->hostModeStateChanged(hostMode);
 }
 
 void QBluetoothLocalDevicePrivate::VisibilityModeChanged(TBTVisibilityMode aState)
