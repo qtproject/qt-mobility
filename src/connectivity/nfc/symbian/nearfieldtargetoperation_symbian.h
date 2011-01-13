@@ -57,7 +57,7 @@ public:
     virtual bool DoReadNdefMessages(MNearFieldNdefOperationCallback * const aCallback) = 0;
     virtual bool DoSetNdefMessages(const QList<QNdefMessage> &messages, MNearFieldNdefOperationCallback * const aCallback) = 0;
     virtual bool DoHasNdefMessages() = 0;
-    virtual bool DoSendCommand(const QByteArray& command, MNearFieldTagOperationCallback * const aCallback) = 0;
+    virtual bool DoSendCommand(const QByteArray& command, MNearFieldTagOperationCallback * const aCallback, bool deferred = true) = 0;
     
     virtual void DoCancelSendCommand() = 0;
     virtual void DoCancelNdefAccess() = 0;
@@ -71,7 +71,6 @@ public:
     virtual QVariant decodeResponse(const QByteArray& command, const QByteArray& response) = 0;
     virtual void EmitNdefMessageRead(const QNdefMessage &message) = 0;
     virtual void EmitNdefMessagesWritten() = 0;
-    virtual void EmitRequestCompleted(const QNearFieldTarget::RequestId &id) = 0;
     virtual void EmitError(int error, const QNearFieldTarget::RequestId &id) = 0;
     };
 

@@ -44,7 +44,7 @@
 
 QTM_USE_NAMESPACE
 
-NearFieldTagCommandsRequest::NearFieldTagCommandsRequest()
+NearFieldTagCommandsRequest::NearFieldTagCommandsRequest(MNearFieldTargetOperation& aOperator) : MNearFieldTagAsyncRequest(aOperator)
 {
     iCurrentCommand = 0;
     iRequestCancelled = EFalse;
@@ -56,7 +56,7 @@ NearFieldTagCommandsRequest::~NearFieldTagCommandsRequest()
     iRequestCancelled = ETrue;
     if (iRequestIssued)
     {
-        iOperator->DoCancelSendCommand();
+        iOperator.DoCancelSendCommand();
     }
     END
 }
@@ -79,10 +79,22 @@ void NearFieldTagCommandsRequest::IssueRequest()
                 iTimer->Start(iMsecs, iMsecs, callback);
             }
         }
-        iOperator->DoSendCommand(iCommands.at(iCurrentCommand), this);
+        iOperator.DoSendCommand(iCommands.at(iCurrentCommand), this);
         ++iCurrentCommand;
     }
     END
+}
+
+bool NearFieldTagCommandsRequest::IssueRequestNoDefer()
+{
+    BEGIN
+    if (iCommands.count() > 0)
+    {
+        iRequestIssued = iOperator.DoSendCommand(iCommands.at(0), this, false);
+        ++iCurrentCommand;
+    }
+    END
+    return iRequestIssued;
 }
 
 void NearFieldTagCommandsRequest::ProcessResponse(TInt aError)
@@ -96,7 +108,7 @@ void NearFieldTagCommandsRequest::ProcessResponse(TInt aError)
         LOG("result is "<<result);
         LOG("clear the buffer");
         iResponse->Zero();
-        iDecodedResponses.append(iOperator->decodeResponse(iCommands.at(iCurrentCommand - 1), result)); 
+        iDecodedResponses.append(iOperator.decodeResponse(iCommands.at(iCurrentCommand - 1), result)); 
     }
     else
     {
@@ -125,7 +137,7 @@ void NearFieldTagCommandsRequest::ProcessResponse(TInt aError)
 void NearFieldTagCommandsRequest::HandleResponse(TInt aError)
 {
     BEGIN
-    iOperator->HandleResponse(iId, iDecodedResponses, aError);
+    iOperator.HandleResponse(iId, iDecodedResponses, aError);
     END
 }
 
@@ -142,7 +154,7 @@ void NearFieldTagCommandsRequest::ProcessEmitSignal(TInt aError)
     LOG(aError);
     if (aError != KErrNone)
     {
-        iOperator->EmitError(aError, iId);
+        iOperator.EmitError(aError, iId);
     }
     END
 }
@@ -156,7 +168,8 @@ void NearFieldTagCommandsRequest::ProcessTimeout()
         {
             if (iRequestIssued)
             {    
-                iOperator->DoCancelSendCommand();
+                iOperator.DoCancelSendCommand();
+                iRequestCancelled = ETrue;
                 iRequestIssued = EFalse;
             }
             LOG("wait timeout");
@@ -178,9 +191,10 @@ TInt NearFieldTagCommandsRequest::HandlePassiveCommand(TInt aError)
         // it may be the select sector packet 2 command for tag type 2
         if ((command.at(1) == 0) && (command.at(2) == 0) && (command.at(3) == 0))
         {
-            result = KErrNone;
+            iResponse->Zero();
             if (KErrTimedOut == aError)
             {
+                result = KErrNone;
                 iResponse->Append(0x0A);
             }
             else

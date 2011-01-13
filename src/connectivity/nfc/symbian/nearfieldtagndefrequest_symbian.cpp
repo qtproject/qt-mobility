@@ -43,7 +43,7 @@
 #include "nearfieldutility_symbian.h"
 #include "debug.h"
 
-NearFieldTagNdefRequest::NearFieldTagNdefRequest()
+NearFieldTagNdefRequest::NearFieldTagNdefRequest(MNearFieldTargetOperation& aOperator) : MNearFieldTagAsyncRequest(aOperator)
 {
 }
 
@@ -52,7 +52,7 @@ NearFieldTagNdefRequest::~NearFieldTagNdefRequest()
     BEGIN
     if (iRequestIssued)
     {
-        iOperator->DoCancelNdefAccess();
+        iOperator.DoCancelNdefAccess();
     }
     END
 }
@@ -60,29 +60,28 @@ NearFieldTagNdefRequest::~NearFieldTagNdefRequest()
 void NearFieldTagNdefRequest::IssueRequest()
 {
     BEGIN
-    if (iOperator)
+
+    iRequestIssued = ETrue;
+    LOG(iType);
+    switch(iType)
     {
-        iRequestIssued = ETrue;
-        LOG(iType);
-        switch(iType)
+        case EReadRequest: 
         {
-            case EReadRequest: 
-            {
-                iOperator->DoReadNdefMessages(this);
-                break;
-            }
-            case EWriteRequest:
-            {
-                iOperator->DoSetNdefMessages(iMessages, this);
-                break;
-            }
-            default:
-            {
-                iRequestIssued = EFalse;
-                break;
-            }
+            iOperator.DoReadNdefMessages(this);
+            break;
+        }
+        case EWriteRequest:
+        {
+            iOperator.DoSetNdefMessages(iMessages, this);
+            break;
+        }
+        default:
+        {
+            iRequestIssued = EFalse;
+            break;
         }
     }
+
     END
 }
 
@@ -91,6 +90,7 @@ void NearFieldTagNdefRequest::ReadComplete(TInt aError, RPointerArray<CNdefMessa
     BEGIN
     LOG(aError);
     iRequestIssued = EFalse;
+    TRAP_IGNORE(
     if (aMessage != 0)
     {
         for(int i = 0; i < aMessage->Count(); ++i)
@@ -103,6 +103,7 @@ void NearFieldTagNdefRequest::ReadComplete(TInt aError, RPointerArray<CNdefMessa
     {
         iReadMessages.clear();
     }
+    ) // TRAP end
     ProcessResponse(aError);
     END
 }
@@ -121,7 +122,7 @@ void NearFieldTagNdefRequest::ProcessEmitSignal(TInt aError)
     LOG("error code is "<<aError<<" request type is "<<iType);
     if (aError != KErrNone)
     {
-        iOperator->EmitError(aError, QNearFieldTarget::RequestId());
+        iOperator.EmitError(aError, QNearFieldTarget::RequestId());
     }
     else
     {
@@ -133,15 +134,31 @@ void NearFieldTagNdefRequest::ProcessEmitSignal(TInt aError)
             for(int i = 0; i < iReadMessages.count(); ++i)
             {
                 LOG("emit signal ndef message read");
-                iOperator->EmitNdefMessageRead(iReadMessages.at(i));
+                iOperator.EmitNdefMessageRead(iReadMessages.at(i));
             }
         }
         else if (EWriteRequest == iType)
         {
-            iOperator->EmitNdefMessagesWritten();
+            iOperator.EmitNdefMessagesWritten();
         }
     }
     END
+}
+
+void NearFieldTagNdefRequest::ProcessTimeout()
+{
+    if (iWait)
+    {
+        if (iWait->IsStarted())
+        {
+            if (iRequestIssued)
+            {    
+                iOperator.DoCancelNdefAccess();
+                iRequestIssued = EFalse;
+            }
+            ProcessResponse(KErrTimedOut);
+        }
+    }
 }
 
 void NearFieldTagNdefRequest::HandleResponse(TInt /*aError*/)
