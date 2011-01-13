@@ -150,14 +150,16 @@ int QServiceProxy::qt_metacall(QMetaObject::Call c, int id, void **a)
             //invokeRemote() parameter list needs review
             QVariant result = d->endPoint->invokeRemote(metaIndex, args, 
                     returnType==0 ? returnType+1: returnType);
-            if (returnType != 0 && strcmp(method.typeName(),"QVariant")) {
-                QByteArray buffer;
-                QDataStream stream(&buffer, QIODevice::ReadWrite);
-                QMetaType::save(stream, returnType, result.constData());
-                stream.device()->seek(0);
-                QMetaType::load(stream, returnType, a[0]);
-            } else {
-                if (a[0]) *reinterpret_cast< QVariant*>(a[0]) = result;
+            if(result.type() != QVariant::Invalid){
+                if (returnType != 0 && strcmp(method.typeName(),"QVariant")) {
+                    QByteArray buffer;
+                    QDataStream stream(&buffer, QIODevice::ReadWrite);
+                    QMetaType::save(stream, returnType, result.constData());
+                    stream.device()->seek(0);
+                    QMetaType::load(stream, returnType, a[0]);
+                } else {
+                    if (a[0]) *reinterpret_cast< QVariant*>(a[0]) = result;
+                }
             }
         }
         id-=mcount;

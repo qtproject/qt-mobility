@@ -289,7 +289,8 @@ bool QVersitOrganizerImporterPrivate::createStartDateTime(
         QList<QOrganizerItemDetail>* updatedDetails) {
     if (property.value().isEmpty())
         return false;
-    QDateTime newStart = parseDateTime(property);
+    bool hasTime;
+    QDateTime newStart = parseDateTime(property, &hasTime);
     if (!newStart.isValid())
         return false;
     QOrganizerEventTime etr(item->detail<QOrganizerEventTime>());
@@ -309,6 +310,8 @@ bool QVersitOrganizerImporterPrivate::createStartDateTime(
         etr.setEndDateTime(newEnd);
     }
     etr.setStartDateTime(newStart);
+    if (!etr.isAllDay() && !hasTime)
+        etr.setAllDay(true);
     updatedDetails->append(etr);
     return true;
 }
@@ -321,11 +324,14 @@ bool QVersitOrganizerImporterPrivate::createEndDateTime(
         QList<QOrganizerItemDetail>* updatedDetails) {
     if (property.value().isEmpty())
         return false;
-    QDateTime newEnd = parseDateTime(property);
+    bool hasTime;
+    QDateTime newEnd = parseDateTime(property, &hasTime);
     if (!newEnd.isValid())
         return false;
     QOrganizerEventTime etr(item->detail<QOrganizerEventTime>());
     etr.setEndDateTime(newEnd);
+    if (!etr.isAllDay() && !hasTime)
+        etr.setAllDay(true);
     updatedDetails->append(etr);
     mDurationSpecified = false;
     return true;
@@ -365,11 +371,14 @@ bool QVersitOrganizerImporterPrivate::createTodoStartDateTime(
         QList<QOrganizerItemDetail>* updatedDetails) {
     if (property.value().isEmpty())
         return false;
-    QDateTime newStart = parseDateTime(property);
+    bool hasTime;
+    QDateTime newStart = parseDateTime(property, &hasTime);
     if (!newStart.isValid())
         return false;
     QOrganizerTodoTime ttr(item->detail<QOrganizerTodoTime>());
     ttr.setStartDateTime(newStart);
+    if (!ttr.isAllDay() && !hasTime)
+        ttr.setAllDay(true);
     updatedDetails->append(ttr);
     return true;
 }
@@ -382,11 +391,14 @@ bool QVersitOrganizerImporterPrivate::createDueDateTime(
         QList<QOrganizerItemDetail>* updatedDetails) {
     if (property.value().isEmpty())
         return false;
-    QDateTime newEnd = parseDateTime(property);
+    bool hasTime;
+    QDateTime newEnd = parseDateTime(property, &hasTime);
     if (!newEnd.isValid())
         return false;
     QOrganizerTodoTime ttr(item->detail<QOrganizerTodoTime>());
     ttr.setDueDateTime(newEnd);
+    if (!ttr.isAllDay() && !hasTime)
+        ttr.setAllDay(true);
     updatedDetails->append(ttr);
     mDurationSpecified = false;
     return true;
@@ -413,21 +425,38 @@ bool QVersitOrganizerImporterPrivate::createJournalEntryDateTime(
  * UTC time zone, floating time zone, or (if a TZID parameter exists in \a property), as a foreign
  * time zone (returned as a UTC datetime).  Returns an invalid QDateTime if the string cannot be
  * parsed.
+ *
+ * \a hasTime is set to true if the parsed date-time has a time, or false if it is a date only.
+ * (the time portion is set to some valid but arbitrary value).
  */
-QDateTime QVersitOrganizerImporterPrivate::parseDateTime(const QVersitProperty& property) const
+QDateTime QVersitOrganizerImporterPrivate::parseDateTime(const QVersitProperty& property,
+                                                         bool* hasTime) const
 {
-    QDateTime datetime(parseDateTime(property.value()));
-    if (datetime.isValid() && datetime.timeSpec() == Qt::LocalTime) {
-        QMultiHash<QString, QString> params = property.parameters();
-        QString tzid = params.value(QLatin1String("TZID"));
-        if (!tzid.isEmpty()) {
-            if (tzid.at(0) == QLatin1Char('/') && mTimeZoneHandler)
-                datetime = mTimeZoneHandler->convertTimeZoneToUtc(datetime, tzid);
-            else
-                datetime = mTimeZones.convert(datetime, tzid);
+    const QMultiHash<QString, QString> parameters = property.parameters();
+    if (parameters.find(QLatin1String("VALUE"), QLatin1String("DATE")) == parameters.constEnd()) {
+        // try parsing a datetime
+        if (hasTime)
+            *hasTime = true;
+        QDateTime datetime(parseDateTime(property.value()));
+        if (datetime.isValid() && datetime.timeSpec() == Qt::LocalTime) {
+            QMultiHash<QString, QString> params = property.parameters();
+            QString tzid = params.value(QLatin1String("TZID"));
+            if (!tzid.isEmpty()) {
+                if (tzid.at(0) == QLatin1Char('/') && mTimeZoneHandler)
+                    datetime = mTimeZoneHandler->convertTimeZoneToUtc(datetime, tzid);
+                else
+                    datetime = mTimeZones.convert(datetime, tzid);
+            }
         }
+        return datetime;
+    } else {
+        if (hasTime)
+            *hasTime = false;
+        QDateTime retn;
+        retn.setDate(QDate::fromString(property.value(), QLatin1String("yyyyMMdd")));
+        retn.setTime(QTime(0, 0, 0));
+        return retn;
     }
-    return datetime;
 }
 
 /*! Parses \a str as an ISO 8601 datetime in basic format, either in UTC timezone or floating

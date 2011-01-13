@@ -2,6 +2,9 @@ TEMPLATE = app
 TARGET = 
 DEPENDPATH += .
 
+CONFIG += link_pkgconfig
+PKGCONFIG += qmfclient
+
 macx:CONFIG-=app_bundle
 
 QMF_INCLUDEDIR = $$(QMF_INCLUDEDIR)

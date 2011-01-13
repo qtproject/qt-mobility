@@ -107,7 +107,7 @@ Q_EXPORT_PLUGIN2(qsensorsdeclarativemodule, QT_PREPEND_NAMESPACE(QSensorsDeclara
 
     This element is part of the \bold{QtMobility.sensors 1.1} module.
 
-    \sa QAccelerometer, QAccelerometerReading
+    \sa QAccelerometer, QAccelerometerReading, {Sensors QML Limitations}
 */
 
 /*!
@@ -117,7 +117,7 @@ Q_EXPORT_PLUGIN2(qsensorsdeclarativemodule, QT_PREPEND_NAMESPACE(QSensorsDeclara
 
     This element is part of the \bold{QtMobility.sensors 1.1} module.
 
-    \sa QAccelerometer, QAccelerometerReading
+    \sa QAccelerometer, QAccelerometerReading, {Sensors QML Limitations}
 */
 
 /*!
@@ -127,7 +127,7 @@ Q_EXPORT_PLUGIN2(qsensorsdeclarativemodule, QT_PREPEND_NAMESPACE(QSensorsDeclara
 
     This element is part of the \bold{QtMobility.sensors 1.1} module.
 
-    \sa QAmbientLightSensor, QAmbientLightReading
+    \sa QAmbientLightSensor, QAmbientLightReading, {Sensors QML Limitations}
 */
 
 /*!
@@ -137,7 +137,7 @@ Q_EXPORT_PLUGIN2(qsensorsdeclarativemodule, QT_PREPEND_NAMESPACE(QSensorsDeclara
 
     This element is part of the \bold{QtMobility.sensors 1.1} module.
 
-    \sa QAmbientLightSensor, QAmbientLightReading
+    \sa QAmbientLightSensor, QAmbientLightReading, {Sensors QML Limitations}
 */
 
 /*!
@@ -147,7 +147,7 @@ Q_EXPORT_PLUGIN2(qsensorsdeclarativemodule, QT_PREPEND_NAMESPACE(QSensorsDeclara
 
     This element is part of the \bold{QtMobility.sensors 1.1} module.
 
-    \sa QCompass, QCompassReading
+    \sa QCompass, QCompassReading, {Sensors QML Limitations}
 */
 
 /*!
@@ -157,7 +157,7 @@ Q_EXPORT_PLUGIN2(qsensorsdeclarativemodule, QT_PREPEND_NAMESPACE(QSensorsDeclara
 
     This element is part of the \bold{QtMobility.sensors 1.1} module.
 
-    \sa QCompass, QCompassReading
+    \sa QCompass, QCompassReading, {Sensors QML Limitations}
 */
 
 /*!
@@ -167,7 +167,7 @@ Q_EXPORT_PLUGIN2(qsensorsdeclarativemodule, QT_PREPEND_NAMESPACE(QSensorsDeclara
 
     This element is part of the \bold{QtMobility.sensors 1.1} module.
 
-    \sa QMagnetometer, QMagnetometerReading
+    \sa QMagnetometer, QMagnetometerReading, {Sensors QML Limitations}
 */
 
 /*!
@@ -177,7 +177,7 @@ Q_EXPORT_PLUGIN2(qsensorsdeclarativemodule, QT_PREPEND_NAMESPACE(QSensorsDeclara
 
     This element is part of the \bold{QtMobility.sensors 1.1} module.
 
-    \sa QMagnetometer, QMagnetometerReading
+    \sa QMagnetometer, QMagnetometerReading, {Sensors QML Limitations}
 */
 
 /*!
@@ -187,7 +187,7 @@ Q_EXPORT_PLUGIN2(qsensorsdeclarativemodule, QT_PREPEND_NAMESPACE(QSensorsDeclara
 
     This element is part of the \bold{QtMobility.sensors 1.1} module.
 
-    \sa QOrientationSensor, QOrientationReading
+    \sa QOrientationSensor, QOrientationReading, {Sensors QML Limitations}
 */
 
 /*!
@@ -197,7 +197,7 @@ Q_EXPORT_PLUGIN2(qsensorsdeclarativemodule, QT_PREPEND_NAMESPACE(QSensorsDeclara
 
     This element is part of the \bold{QtMobility.sensors 1.1} module.
 
-    \sa QOrientationSensor, QOrientationReading
+    \sa QOrientationSensor, QOrientationReading, {Sensors QML Limitations}
 */
 
 /*!
@@ -207,7 +207,7 @@ Q_EXPORT_PLUGIN2(qsensorsdeclarativemodule, QT_PREPEND_NAMESPACE(QSensorsDeclara
 
     This element is part of the \bold{QtMobility.sensors 1.1} module.
 
-    \sa QProximitySensor, QProximityReading
+    \sa QProximitySensor, QProximityReading, {Sensors QML Limitations}
 */
 
 /*!
@@ -217,7 +217,7 @@ Q_EXPORT_PLUGIN2(qsensorsdeclarativemodule, QT_PREPEND_NAMESPACE(QSensorsDeclara
 
     This element is part of the \bold{QtMobility.sensors 1.1} module.
 
-    \sa QProximitySensor, QProximityReading
+    \sa QProximitySensor, QProximityReading, {Sensors QML Limitations}
 */
 
 /*!
@@ -227,7 +227,7 @@ Q_EXPORT_PLUGIN2(qsensorsdeclarativemodule, QT_PREPEND_NAMESPACE(QSensorsDeclara
 
     This element is part of the \bold{QtMobility.sensors 1.1} module.
 
-    \sa QRotationSensor, QRotationReading
+    \sa QRotationSensor, QRotationReading, {Sensors QML Limitations}
 */
 
 /*!
@@ -237,7 +237,7 @@ Q_EXPORT_PLUGIN2(qsensorsdeclarativemodule, QT_PREPEND_NAMESPACE(QSensorsDeclara
 
     This element is part of the \bold{QtMobility.sensors 1.1} module.
 
-    \sa QRotationSensor, QRotationReading
+    \sa QRotationSensor, QRotationReading, {Sensors QML Limitations}
 */
 
 /*!
@@ -247,7 +247,7 @@ Q_EXPORT_PLUGIN2(qsensorsdeclarativemodule, QT_PREPEND_NAMESPACE(QSensorsDeclara
 
     This element is part of the \bold{QtMobility.sensors 1.1} module.
 
-    \sa QTapSensor, QTapReading
+    \sa QTapSensor, QTapReading, {Sensors QML Limitations}
 */
 
 /*!
@@ -257,6 +257,6 @@ Q_EXPORT_PLUGIN2(qsensorsdeclarativemodule, QT_PREPEND_NAMESPACE(QSensorsDeclara
 
     This element is part of the \bold{QtMobility.sensors 1.1} module.
 
-    \sa QTapSensor, QTapReading
+    \sa QTapSensor, QTapReading, {Sensors QML Limitations}
 */
 

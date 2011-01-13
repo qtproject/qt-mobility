@@ -50,6 +50,7 @@
 #include <QProgressBar>
 #include <QDebug>
 #include <QTimer>
+#include <QDesktopServices>
 
 #include "landmarkbrowser.h"
 #include "landmarkadddialog.cpp"
@@ -185,12 +186,12 @@ void LandmarkBrowser::on_importLandmarks_clicked()
         fileFilterString = tr("Landmark files (*.gpx *.lmx *)");
     #endif
 
-    QString fileName;
-#if defined(Q_WS_MAEMO_6) || defined (Q_WS_MAEMO_5)
-    fileName = QFileDialog::getOpenFileName(this,tr("Import File"),"/home/user",fileFilterString);
-#else
-    fileName = QFileDialog::getOpenFileName(this,tr("Import File"), ".",fileFilterString);
-#endif
+    QString docPath = QDesktopServices::storageLocation(QDesktopServices::DocumentsLocation);
+    if (docPath.isEmpty())
+        docPath = QDesktopServices::storageLocation(QDesktopServices::HomeLocation);
+    if (docPath.isEmpty())
+        docPath = ".";
+    QString fileName = QFileDialog::getOpenFileName(this,tr("Import File"),docPath,fileFilterString);
     if (!fileName.isEmpty()) {
         landmarkImport->setFileName(fileName);
         landmarkImport->start();
@@ -208,12 +209,12 @@ void LandmarkBrowser::on_exportLandmarks_clicked()
         fileFilterString = tr("Landmark files (*.gpx *.lmx *)");
     #endif
 
-    QString fileName;
-#if defined(Q_WS_MAEMO_6) || defined (Q_WS_MAEMO_5)
-    fileName = QFileDialog::getSaveFileName(this,tr("Export File"),"/home/user",fileFilterString);
-#else
-    fileName = QFileDialog::getSaveFileName(this,tr("Export File"),".",fileFilterString);
-#endif
+    QString docPath = QDesktopServices::storageLocation(QDesktopServices::DocumentsLocation);
+    if (docPath.isEmpty())
+        docPath = QDesktopServices::storageLocation(QDesktopServices::HomeLocation);
+    if (docPath.isEmpty())
+        docPath = ".";
+    QString fileName = QFileDialog::getSaveFileName(this,tr("Export File"),docPath,fileFilterString);
 
     if (!fileName.isEmpty()) {
         landmarkExport->setFileName(fileName);

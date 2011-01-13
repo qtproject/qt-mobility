@@ -833,8 +833,8 @@ void QSystemNetworkInfoPrivate::registrationStatusChanged(uchar var1, ushort var
     int newCellId = var3;
     QString newMobileCountryCode;
     QString newMobileNetworkCode;
-    newMobileCountryCode.setNum(var4);
-    newMobileNetworkCode.setNum(var5);
+    newMobileCountryCode.setNum(var5);
+    newMobileNetworkCode.setNum(var4);
 
     if (currentCellNetworkStatus != newCellNetworkStatus) {
         currentCellNetworkStatus = newCellNetworkStatus;
@@ -1474,7 +1474,7 @@ bool QSystemScreenSaverPrivate::screenSaverInhibited()
         displayOn = ("on" == reply.value());
     }
 #endif
-    return (displayOn && isBlankingInhibited && isInhibited);
+    return ((displayOn && isBlankingInhibited) || (displayOn && isInhibited));
 }
 
 QSystemBatteryInfoPrivate::QSystemBatteryInfoPrivate(QSystemBatteryInfoLinuxCommonPrivate *parent)

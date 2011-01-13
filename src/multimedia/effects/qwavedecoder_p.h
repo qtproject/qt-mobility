@@ -88,6 +88,16 @@ private:
     qint64 readData(char *data, qint64 maxlen);
     qint64 writeData(const char *data, qint64 len);
 
+    bool enoughDataAvailable();
+    bool findChunk(const char *chunkId);
+    void discardBytes(qint64 numBytes);
+
+    enum State {
+        InitialState,
+        WaitingForFormatState,
+        WaitingForDataState
+    };
+
     struct chunk
     {
         char        id[4];
@@ -108,22 +118,13 @@ private:
         quint16     blockAlign;
         quint16     bitsPerSample;
     };
-    struct DATAHeader
-    {
-        chunk       descriptor;
-    };
-    struct CombinedHeader
-    {
-        RIFFHeader  riff;
-        WAVEHeader  wave;
-    };
 
     bool haveFormat;
     qint64 dataSize;
     qint64 remaining;
     QAudioFormat format;
     QIODevice *source;
-    CombinedHeader header;
+    State state;
 };
 
 QT_END_NAMESPACE

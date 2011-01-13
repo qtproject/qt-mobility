@@ -265,13 +265,46 @@ private slots:
         QVERIFY(sensor.isActive());
     }
 
-    void testSetBadRate()
+    void testSetBadDataRate()
     {
         TestSensor sensor;
         sensor.connectToBackend();
 
-        QTest::ignoreMessage(QtWarningMsg, "setDataRate: rate 300 is not supported by the sensor. ");
+        QTest::ignoreMessage(QtWarningMsg, "setDataRate: 300 is not supported by the sensor. ");
         sensor.setDataRate(300);
+        QCOMPARE(sensor.dataRate(), 0);
+    }
+
+    void testSetBadDataRateWhenNotConnected()
+    {
+        TestSensor sensor;
+        sensor.setDataRate(300);
+        QCOMPARE(sensor.dataRate(), 300);
+        sensor.setDataRate(350);
+        QTest::ignoreMessage(QtWarningMsg, "setDataRate: 350 is not supported by the sensor. ");
+        sensor.connectToBackend();
+        QCOMPARE(sensor.dataRate(), 0);
+    }
+
+    void testSetBadOutputRange()
+    {
+        TestSensor sensor;
+        sensor.connectToBackend();
+
+        QTest::ignoreMessage(QtWarningMsg, "setOutputRange: 300 is not supported by the sensor. ");
+        sensor.setOutputRange(300);
+        QCOMPARE(sensor.outputRange(), -1);
+    }
+
+    void testSetBadOutputRangeWhenNotConnected()
+    {
+        TestSensor sensor;
+        sensor.setOutputRange(300);
+        QCOMPARE(sensor.outputRange(), 300);
+        sensor.setOutputRange(350);
+        QTest::ignoreMessage(QtWarningMsg, "setOutputRange: 350 is not supported by the sensor. ");
+        sensor.connectToBackend();
+        QCOMPARE(sensor.outputRange(), -1);
     }
 
     void testEnumHandling()
