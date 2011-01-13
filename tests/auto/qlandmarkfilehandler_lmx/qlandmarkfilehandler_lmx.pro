@@ -8,14 +8,14 @@ QT += sql
 
 INCLUDEPATH += ../../../src/location \
                ../../../src/location/landmarks \
-               ../../../plugins/landmarks/sqlite \
+               ../../../plugins/landmarks/common \
                ../
 
 # Input 
 SOURCES += tst_qlandmarkfilehandler_lmx.cpp \
-           ../../../plugins/landmarks/sqlite/qlandmarkfilehandler_lmx.cpp
+           ../../../plugins/landmarks/common/qlandmarkfilehandler_lmx.cpp
 
-HEADERS += ../../../plugins/landmarks/sqlite/qlandmarkfilehandler_lmx_p.h \
+HEADERS += ../../../plugins/landmarks/common/qlandmarkfilehandler_lmx_p.h \
            ../qlandmarkmanagerdataholder.h
 
 RESOURCES += data.qrc

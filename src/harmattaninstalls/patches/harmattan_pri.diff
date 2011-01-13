@@ -1,0 +1,48 @@
+diff --git a/features/platformconfig/harmattan_arm.pri b/features/platformconfig/harmattan_arm.pri
+new file mode 100644
+index 0000000..6f022bf
+--- /dev/null
++++ b/features/platformconfig/harmattan_arm.pri
+@@ -0,0 +1,3 @@
++include(harmattan_common.pri)
++immersion_enabled = yes
++
+diff --git a/features/platformconfig/harmattan_common.pri b/features/platformconfig/harmattan_common.pri
+new file mode 100644
+index 0000000..e9f7336
+--- /dev/null
++++ b/features/platformconfig/harmattan_common.pri
+@@ -0,0 +1,20 @@
++#Harmattan specific options common to both x86 and arm go here
++#A not existing option is interpreted as opt-out/no.
++#for example: bluez_enabled = yes|no
++
++QMAKE_CFLAGS += -g1 -O2
++
++# Specify the config test that needs to be enabled/disabled 
++qmf_enabled = yes
++networkmanager_enabled = no
++corewlan_enabled = no
++maemo-icd_enabled = yes
++maemo-icd-network-wlan_enabled = yes
++maemo5-contacts_enabled = no
++maemo5-calendar_enabled = no
++maemo6-landmarks_enabled = yes
++bluez_enabled = yes
++gstreamer-photography_enabled = yes
++pulseaudio_enabled = yes
++sensord_enabled = yes
++
+diff --git a/features/platformconfig/harmattan_x86.pri b/features/platformconfig/harmattan_x86.pri
+new file mode 100644
+index 0000000..953d244
+--- /dev/null
++++ b/features/platformconfig/harmattan_x86.pri
+@@ -0,0 +1,7 @@
++#Harmattan specific options common to both x86 and arm go here
++#A not existing option is interpreted as opt-out/no.
++#for example: bluez_enabled = yes|no
++
++include(harmattan_common.pri)
++immersion_enabled = no
++

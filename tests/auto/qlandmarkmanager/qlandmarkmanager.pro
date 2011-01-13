@@ -5,10 +5,14 @@ TARGET=tst_qlandmarkmanager
 include (../../../common.pri)
 
 INCLUDEPATH += ../../../src/location \
-                ../../../src/location/landmarks
+                ../../../src/location/landmarks \
+                ../
+
 
 # Input
 SOURCES += tst_qlandmarkmanager.cpp
+
+HEADERS += ../qlandmarkmanagerdataholder.h
 
 !symbian {
     QT += sql

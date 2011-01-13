@@ -44,6 +44,7 @@
 #define QDECLARATIVEORGANIZERITEMRECURRENCERULE_H
 
 #include <QtDeclarative>
+#include <QtDeclarative/qdeclarativeinfo.h>
 #include "qorganizerrecurrencerule.h"
 
 
@@ -123,7 +124,7 @@ public:
             }
         } else {
             // TODO throw an error event
-            qWarning() << "Invalid recurrence rule limit; value ," <<  value << ", did not match one of the types: date, integer or double";
+            qmlInfo(this) << tr("Invalid recurrence rule limit; value ,") <<  value << tr(", did not match one of the types: date, integer or double");
         }
     }
 
