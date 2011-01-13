@@ -5698,7 +5698,7 @@ void tst_QLandmarkManager::filterLandmarksMultipleBox()
     QVERIFY(lms.contains(lm3));
     QVERIFY(lms.contains(lm5));
     QVERIFY(lms.contains(lm6));
-    QCOMPARE(this->compareLandmarksLists(lms,m_manager->landmarks(boxFilter2)));
+    QVERIFY(this->compareLandmarksLists(lms,m_manager->landmarks(boxFilter2)));
 
     unionFilter.clear();
     unionFilter << boxFilter3;
@@ -5708,7 +5708,7 @@ void tst_QLandmarkManager::filterLandmarksMultipleBox()
     QVERIFY(lms.contains(lm5));
     QVERIFY(lms.contains(lm6));
     QVERIFY(lms.contains(lm8));
-    QCOMPARE(this->compareLandmarksLists(lms,m_manager->landmarks(boxFilter3));
+    QVERIFY(this->compareLandmarksLists(lms,m_manager->landmarks(boxFilter3)));
 
     //TODO: test cases with errors
 }
