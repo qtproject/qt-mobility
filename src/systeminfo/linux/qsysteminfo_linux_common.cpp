@@ -2531,7 +2531,7 @@ QString QSystemDeviceInfoLinuxCommonPrivate::manufacturer()
 
 QSystemDeviceInfo::InputMethodFlags QSystemDeviceInfoLinuxCommonPrivate::inputMethodType()
 {
-    QSystemDeviceInfo::InputMethodFlags methods = 0;
+    QSystemDeviceInfo::InputMethodFlags methods ;
     if (halIsAvailable) {
 #if !defined(QT_NO_DBUS) && defined(QT_NO_MEEGO)
         QHalInterface iface2;
@@ -2911,7 +2911,7 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoLinuxCommonPrivate::currentPowerS
  QSystemDeviceInfo::KeyboardTypeFlags QSystemDeviceInfoLinuxCommonPrivate::keyboardTypes()
  {
      QSystemDeviceInfo::InputMethodFlags methods = inputMethodType();
-     QSystemDeviceInfo::KeyboardTypeFlags keyboardFlags = QSystemDeviceInfo::UnknownKeyboard;
+     QSystemDeviceInfo::KeyboardTypeFlags keyboardFlags;
 
      if ((methods & QSystemDeviceInfo::Keyboard)) {
          keyboardFlags = (keyboardFlags | QSystemDeviceInfo::FullQwertyKeyboard);

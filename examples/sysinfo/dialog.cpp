@@ -195,14 +195,12 @@ void Dialog::setupDevice()
 
     QString lockState;
     QSystemDeviceInfo::LockTypeFlags lock = di->lockStatus();
-    if((lock & QSystemDeviceInfo::UnknownLock)){
-        lockState = "Unknown";
-    }
     if((lock & QSystemDeviceInfo::PinLocked)){
         lockState = "Pin/Password Locked";
-    }
-    if((lock & QSystemDeviceInfo::TouchAndKeyboardLocked)){
+    } else if((lock & QSystemDeviceInfo::TouchAndKeyboardLocked)){
         lockState = "Touch and keyboard locked";
+    } else {
+        lockState = "Unknown";
     }
     lockStateLabel->setText(lockState);
 }
