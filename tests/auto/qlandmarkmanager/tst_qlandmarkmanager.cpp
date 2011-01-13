@@ -5698,7 +5698,7 @@ void tst_QLandmarkManager::filterLandmarksMultipleBox()
     QVERIFY(lms.contains(lm3));
     QVERIFY(lms.contains(lm5));
     QVERIFY(lms.contains(lm6));
-    QCOMPARE(lms,m_manager->landmarks(boxFilter2));
+    QVERIFY(this->compareLandmarksLists(lms,m_manager->landmarks(boxFilter2)));
 
     unionFilter.clear();
     unionFilter << boxFilter3;
@@ -5708,7 +5708,7 @@ void tst_QLandmarkManager::filterLandmarksMultipleBox()
     QVERIFY(lms.contains(lm5));
     QVERIFY(lms.contains(lm6));
     QVERIFY(lms.contains(lm8));
-    QCOMPARE(lms,m_manager->landmarks(boxFilter3));
+    QVERIFY(this->compareLandmarksLists(lms,m_manager->landmarks(boxFilter3)));
 
     //TODO: test cases with errors
 }
@@ -6053,6 +6053,19 @@ void tst_QLandmarkManager::filterAttribute() {
     QCOMPARE(lms.at(0), lm1);
     QCOMPARE(lms.at(1), lm2);
 #endif
+    attributeFilter.clearAttributes();
+
+    attributeFilter.setAttribute("city", "adelai", QLandmarkFilter::MatchStartsWith);
+    attributeFilter.setAttribute("description", "The description", QLandmarkFilter::MatchStartsWith);
+    QVERIFY(doFetch(type,attributeFilter, &lms));
+#ifdef Q_OS_SYMBIAN
+    QEXPECT_FAIL("", "MOBILITY-2331: and operation with filter is failing", Continue);
+    QCOMPARE(lms.count(), 1);
+#else
+    QCOMPARE(lms.count(), 1);
+    QCOMPARE(lms.at(0), lm1);
+#endif
+    attributeFilter.clearAttributes();
 
     //try ORing multiple criteria
     attributeFilter.setOperationType(QLandmarkAttributeFilter::OrOperation);
@@ -6571,19 +6584,29 @@ void tst_QLandmarkManager::filterAttribute3()
     attributeFilter.setOperationType(QLandmarkAttributeFilter::OrOperation);
 
     QList<QLandmark> lms;
+#ifdef Q_OS_SYMBIAN
+    QEXPECT_FAIL("", "MOBILITY-2283: symbian does not support MatchContains", Continue);
+    QCOMPARE(m_manager->filterSupportLevel(attributeFilter), QLandmarkManager::NoSupport);
+    QVERIFY(doFetch(type, attributeFilter, &lms,QLandmarkManager::NotSupportedError));
+#else
     QVERIFY(doFetch(type, attributeFilter, &lms));
     QCOMPARE(lms.count(), 4);
     QVERIFY(lms.contains(lm1));
     QVERIFY(lms.contains(lm3));
     QVERIFY(lms.contains(lm4));
     QVERIFY(lms.contains(lm5));
+#endif
 
     attributeFilter.removeAttribute("description");
+#ifdef Q_OS_SYMBIAN
+    QVERIFY(doFetch(type, attributeFilter, &lms, QLandmarkManager::NotSupportedError));
+#else
     QVERIFY(doFetch(type, attributeFilter, &lms));
     QCOMPARE(lms.count(), 3);
     QVERIFY(lms.contains(lm1));
     QVERIFY(lms.contains(lm3));
     QVERIFY(lms.contains(lm5));
+#endif
 
     QLandmarkAttributeFilter attributeFilter2;
     attributeFilter.clearAttributes();
@@ -6921,13 +6944,11 @@ void tst_QLandmarkManager::importKml()
 
         //malformed file
         QVERIFY(!m_manager->importLandmarks("data/malformed.kml", QLandmarkManager::Kml));
-        QEXPECT_FAIL("", "MOBLITY-2109: imprecise code returned when imported malformed landmark file", Continue);
         QCOMPARE(m_manager->error(), QLandmarkManager::ParsingError);
 
         importRequest.setFormat(QLandmarkManager::Kml);
         importRequest.setFileName("data/malformed.kml");
         importRequest.start();
-        QEXPECT_FAIL("", "MOBLITY-2109: imprecise error code returned when imported malformed landmark file", Continue);
         QVERIFY(waitForAsync(spy, &importRequest, QLandmarkManager::ParsingError));
 
         errorTestsDone = true;
@@ -7048,13 +7069,11 @@ void tst_QLandmarkManager::importKmz()
 
         //malformed file
         QVERIFY(!m_manager->importLandmarks("data/malformed.kmz", QLandmarkManager::Kmz));
-        QEXPECT_FAIL("", "MOBLITY-2109: imprecise error code returned when imported malformed landmark file", Continue);
         QCOMPARE(m_manager->error(), QLandmarkManager::ParsingError);
 
         importRequest.setFormat(QLandmarkManager::Kmz);
         importRequest.setFileName("data/malformed.kmz");
         importRequest.start();
-        QEXPECT_FAIL("", "MOBLITY-2109: imprecise error code returned when imported malformed landmark file", Continue);
         QVERIFY(waitForAsync(spy, &importRequest, QLandmarkManager::ParsingError)); //does not exist
 
         errorTestsDone = true;
