@@ -49,9 +49,10 @@ class NearFieldTagCommandRequest : public MNearFieldTagAsyncRequest,
                                    public MNearFieldTagOperationCallback 
     {
 public:
-    NearFieldTagCommandRequest();
+    NearFieldTagCommandRequest(MNearFieldTargetOperation& aOperator);
     ~NearFieldTagCommandRequest();
     void IssueRequest();
+    bool IssueRequestNoDefer();
     void ProcessTimeout()
     {
         if (iWait)
@@ -60,7 +61,7 @@ public:
             {
                 if (iRequestIssued)
                 {    
-                    iOperator->DoCancelSendCommand();
+                    iOperator.DoCancelSendCommand();
                     iRequestIssued = EFalse;
                 }
                 ProcessResponse(HandlePassiveCommand(KErrTimedOut));

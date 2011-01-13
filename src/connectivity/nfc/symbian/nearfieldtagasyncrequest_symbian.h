@@ -62,7 +62,7 @@ public:
         };
 
 public:
-    MNearFieldTagAsyncRequest();
+    MNearFieldTagAsyncRequest(MNearFieldTargetOperation& aOperator);
 
     virtual ~MNearFieldTagAsyncRequest();
     virtual void IssueRequest() = 0;
@@ -93,15 +93,15 @@ public:
 
     virtual bool WaitRequestCompleted(int aMsec);
     virtual int WaitRequestCompletedNoSignal(int aMsec);
-    void SetOperator(MNearFieldTargetOperation * aOperator);
+
     void SetRequestId(QNearFieldTarget::RequestId aId);
-    QNearFieldTarget::RequestId GetRequestId();
+    QNearFieldTarget::RequestId RequestID();
     static TInt TimeoutCallback(TAny * aObj);
 protected:
     // Current async request ID.
     QNearFieldTarget::RequestId iId;
     // Not own.
-    MNearFieldTargetOperation * iOperator;
+    MNearFieldTargetOperation& iOperator;
 
     // Own.
     CActiveSchedulerWait * iWait;

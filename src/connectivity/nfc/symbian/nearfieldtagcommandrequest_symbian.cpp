@@ -42,7 +42,7 @@
 #include "nearfieldutility_symbian.h"
 #include "debug.h"
 
-NearFieldTagCommandRequest::NearFieldTagCommandRequest()
+NearFieldTagCommandRequest::NearFieldTagCommandRequest(MNearFieldTargetOperation& aOperator) : MNearFieldTagAsyncRequest(aOperator)
 {
 }
 
@@ -51,7 +51,7 @@ NearFieldTagCommandRequest::~NearFieldTagCommandRequest()
     BEGIN
     if (iRequestIssued)
     {    
-        iOperator->DoCancelSendCommand();
+        iOperator.DoCancelSendCommand();
     }
     END
 }
@@ -59,22 +59,28 @@ NearFieldTagCommandRequest::~NearFieldTagCommandRequest()
 void NearFieldTagCommandRequest::IssueRequest()
 {
     BEGIN
-    if (iOperator)
+
+    iOperator.DoSendCommand(iCommand, this);
+    iRequestIssued = ETrue;
+    if (iWait)
     {
-        iOperator->DoSendCommand(iCommand, this);
-        iRequestIssued = ETrue;
-        if (iWait)
-        {
-            if (iWait->IsStarted())
-            {    
-                // start timer here
-                LOG("Start timer");
-                TCallBack callback(MNearFieldTagAsyncRequest::TimeoutCallback, this);
-                iTimer->Start(iMsecs, iMsecs, callback);
-            }
+        if (iWait->IsStarted())
+        {    
+            // start timer here
+            LOG("Start timer");
+            TCallBack callback(MNearFieldTagAsyncRequest::TimeoutCallback, this);
+            iTimer->Start(iMsecs, iMsecs, callback);
         }
     }
+
     END
+}
+
+bool NearFieldTagCommandRequest::IssueRequestNoDefer()
+{
+    BEGIN
+    iRequestIssued = iOperator.DoSendCommand(iCommand, this, false);
+    return iRequestIssued;
 }
 
 void NearFieldTagCommandRequest::CommandComplete(TInt aError)
@@ -92,7 +98,7 @@ void NearFieldTagCommandRequest::ProcessEmitSignal(TInt aError)
     LOG(aError);
     if (aError != KErrNone)
     {
-        iOperator->EmitError(aError, iId);
+        iOperator.EmitError(aError, iId);
     }
     END
 }
@@ -103,7 +109,7 @@ void NearFieldTagCommandRequest::HandleResponse(TInt aError)
     LOG(aError);
     if (aError == KErrNone)
     {
-        iOperator->HandleResponse(iId, iCommand, iRequestResponse);
+        iOperator.HandleResponse(iId, iCommand, iRequestResponse);
     }
     END
 }

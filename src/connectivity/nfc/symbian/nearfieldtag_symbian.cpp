@@ -46,7 +46,7 @@
 #include "debug.h"
 /*!
     \class CNearFieldTag
-    \brief The CNearFieldTag class provides ways to access tag type1
+    \brief The CNearFieldTag class provides ways to access tag
 
     \ingroup connectivity-nfc
     \inmodule QtConnectivity
@@ -159,8 +159,9 @@ void CNearFieldTag::DoCancel()
     if (iCallback)
         {
         LOG("call back command complete with KErrCancel");
-        // TODO: Can't leave!
-        QT_TRYCATCH_LEAVING(iCallback->CommandComplete(KErrCancel));
+        TInt err;
+        QT_TRYCATCH_ERROR(err, iCallback->CommandComplete(KErrCancel));
+        Q_UNUSED(err);
         }
     END
     }
@@ -171,7 +172,9 @@ void CNearFieldTag::RunL()
     if (iCallback)
         {
         LOG("call back command complete with error"<<iStatus.Int());
-        QT_TRYCATCH_LEAVING(iCallback->CommandComplete(iStatus.Int()));
+        TInt err;
+        QT_TRYCATCH_ERROR(err, iCallback->CommandComplete(iStatus.Int()));
+        Q_UNUSED(err);
         }
     END
     }

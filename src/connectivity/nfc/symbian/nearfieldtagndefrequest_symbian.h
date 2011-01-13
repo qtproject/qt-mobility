@@ -55,7 +55,7 @@ public:
         ECheckRequest
         };
 public:
-    NearFieldTagNdefRequest();
+    NearFieldTagNdefRequest(MNearFieldTargetOperation& aOperator);
     ~NearFieldTagNdefRequest();
     void IssueRequest();
     void ProcessEmitSignal(TInt aError);

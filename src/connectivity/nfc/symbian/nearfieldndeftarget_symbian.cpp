@@ -117,7 +117,7 @@ CNearFieldTag * CNearFieldNdefTarget::CastToTag()
         LOG("Ndef connection will be closed");
         CloseConnection();
         }
-    BEGIN
+    END
     return iTagConnection ? iTagConnection->CastToTag() : reinterpret_cast<CNearFieldTag *>(0);
     }
 

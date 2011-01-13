@@ -52,9 +52,8 @@ TInt MNearFieldTagAsyncRequest::TimeoutCallback(TAny * aObj)
     return KErrNone;
 }
 
-MNearFieldTagAsyncRequest::MNearFieldTagAsyncRequest()
+MNearFieldTagAsyncRequest::MNearFieldTagAsyncRequest(MNearFieldTargetOperation& aOperator) : iOperator(aOperator)
 {
-    iOperator = 0;
     iWait = 0;
     iTimer = 0;
     iRequestIssued = EFalse;
@@ -84,13 +83,6 @@ MNearFieldTagAsyncRequest::~MNearFieldTagAsyncRequest()
     }
     END
 }
- 
-void MNearFieldTagAsyncRequest::SetOperator(MNearFieldTargetOperation * aOperator)
-{
-    BEGIN
-    iOperator = aOperator;
-    END
-}
 
 void MNearFieldTagAsyncRequest::SetRequestId(QNearFieldTarget::RequestId aId)
 {
@@ -99,7 +91,7 @@ void MNearFieldTagAsyncRequest::SetRequestId(QNearFieldTarget::RequestId aId)
     END
 }
     
-QNearFieldTarget::RequestId MNearFieldTagAsyncRequest::GetRequestId()
+QNearFieldTarget::RequestId MNearFieldTagAsyncRequest::RequestID()
 {
     BEGIN
     END
@@ -206,7 +198,7 @@ void MNearFieldTagAsyncRequest::ProcessResponse(TInt aError)
     BEGIN
     LOG("Error is "<<aError);
 
-    iOperator->IssueNextRequest(iId);
+    iOperator.IssueNextRequest(iId);
     
     HandleResponse(aError);
 
@@ -220,7 +212,7 @@ void MNearFieldTagAsyncRequest::ProcessResponse(TInt aError)
     }
    
     LOG("remove the request from queue"); 
-    iOperator->RemoveRequestFromQueue(iId);
+    iOperator.RemoveRequestFromQueue(iId);
     LOG("delete the request");
     iRequestIssued = EFalse;
     delete this;
