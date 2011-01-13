@@ -120,6 +120,7 @@ Q_SIGNALS:
     void pairingDisplayPinCode(const QBluetoothAddress &address, QString pin);
 
 private:
+    Q_DECLARE_PRIVATE(QBluetoothLocalDevice)
     QBluetoothLocalDevicePrivate *d_ptr;
 };
 
