@@ -14,7 +14,7 @@ SOURCES += tst_qlandmarkmanager.cpp
 
 HEADERS += ../qlandmarkmanagerdataholder.h
 
-!symbian:!maemo6:meego {
+!symbian:!maemo6:!meego {
     QT += sql
 }
 QT += testlib
