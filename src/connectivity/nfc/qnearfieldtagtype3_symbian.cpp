@@ -129,7 +129,7 @@ QNearFieldTarget::RequestId QNearFieldTagType3Symbian::check(const QMap<quint16,
     quint8 numberOfBlocks;
     QByteArray command;
     command.append(0x06); // command code
-    command.append(serviceBlockList2CmdParam(serviceBlockList, numberOfBlocks));
+    command.append(serviceBlockList2CmdParam(serviceBlockList, numberOfBlocks, true));
     if (command.count() > 1)
     {
         return (_sendCommand(command));
@@ -145,7 +145,7 @@ QNearFieldTarget::RequestId QNearFieldTagType3Symbian::update(const QMap<quint16
     quint8 numberOfBlocks;
     QByteArray command;
     command.append(0x08); // command code
-    command.append(serviceBlockList2CmdParam(serviceBlockList, numberOfBlocks));
+    command.append(serviceBlockList2CmdParam(serviceBlockList, numberOfBlocks, false));
     if (command.count() > 1)
     {
         command.append(data);
@@ -181,7 +181,7 @@ const QByteArray& QNearFieldTagType3Symbian::getIDm()
     return mIDm;
 }
 
-QByteArray QNearFieldTagType3Symbian::serviceBlockList2CmdParam(const QMap<quint16, QList<quint16> > &serviceBlockList, quint8& numberOfBlocks)
+QByteArray QNearFieldTagType3Symbian::serviceBlockList2CmdParam(const QMap<quint16, QList<quint16> > &serviceBlockList, quint8& numberOfBlocks, bool isCheckCommand)
 {
     QByteArray command;
     command.append(getIDm());
@@ -213,7 +213,8 @@ QByteArray QNearFieldTagType3Symbian::serviceBlockList2CmdParam(const QMap<quint
         serviceCodeList.append(reinterpret_cast<const char *>(&serviceCode), sizeof(quint16));
         
         numberOfBlocks += serviceBlockList.value(serviceCode).count();
-        if (numberOfBlocks > 12)
+        if ( (isCheckCommand && (numberOfBlocks > 12)) ||
+             (!isCheckCommand && (numberOfBlocks > 8)) )
         {
             // out of range of block number
             return QByteArray();
@@ -236,8 +237,6 @@ QByteArray QNearFieldTagType3Symbian::serviceBlockList2CmdParam(const QMap<quint
                 blockList.append(blkNum);
             }
         }
-
-        serviceCodeList.append(serviceCodeListOrder++);
     }
 
     if (numberOfBlocks < 1)

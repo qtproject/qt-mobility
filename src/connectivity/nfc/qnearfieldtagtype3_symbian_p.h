@@ -93,7 +93,7 @@ public:
     bool waitForRequestCompleted(const RequestId &id, int msecs = 5000);
 private:
     const QByteArray& getIDm();
-    QByteArray serviceBlockList2CmdParam(const QMap<quint16, QList<quint16> > &serviceBlockList, quint8& numberOfBlocks);
+    QByteArray serviceBlockList2CmdParam(const QMap<quint16, QList<quint16> > &serviceBlockList, quint8& numberOfBlocks, bool isCheckCommand);
 
     #if 0
     // TODO: need serviceBlockList as an input parameter, this information can be rebuild from command binary
