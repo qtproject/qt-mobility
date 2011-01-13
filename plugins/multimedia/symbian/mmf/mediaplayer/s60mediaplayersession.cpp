@@ -116,7 +116,7 @@ void S60MediaPlayerSession::setMediaStatus(QMediaPlayer::MediaStatus status)
     
     emit mediaStatusChanged(m_mediaStatus);
     
-    if (m_play_requested)
+    if (m_play_requested && m_mediaStatus == QMediaPlayer::LoadedMedia)
         play();
 }
 
@@ -167,6 +167,8 @@ void S60MediaPlayerSession::play()
     }
     
     m_play_requested = false;
+    setVolume(m_volume);
+    setMuted(m_muted);
     setState(QMediaPlayer::PlayingState);
     startProgressTimer();
     doPlay();
@@ -403,8 +405,6 @@ void S60MediaPlayerSession::loaded()
         setMediaStatus(QMediaPlayer::LoadedMedia);
         TRAPD(err, updateMetaDataEntriesL());
         setError(err);
-        setVolume(m_volume);
-        setMuted(m_muted);
         emit durationChanged(duration());
         emit videoAvailableChanged(isVideoAvailable());
         emit audioAvailableChanged(isAudioAvailable());
@@ -485,6 +485,7 @@ QMediaPlayer::Error S60MediaPlayerSession::fromSymbianErrorToMultimediaError(int
         case KErrMMProxyServer:
         case KErrMMProxyServerNotSupported:
         case KErrMMProxyServerConnect:
+        case KErrCouldNotConnect:
             return QMediaPlayer::NetworkError;
 
         case KErrNotReady:

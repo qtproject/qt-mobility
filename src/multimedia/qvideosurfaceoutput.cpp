@@ -39,53 +39,62 @@
 **
 ****************************************************************************/
 
-#include <QtCore/qstring.h>
-#include <QtCore/qdebug.h>
+#include "qvideosurfaceoutput_p.h"
 
-#include "qt7serviceplugin.h"
-#include "qt7playerservice.h"
+#include <qabstractvideosurface.h>
+#include <qmediaservice.h>
+#include <qvideorenderercontrol.h>
 
-#include <qmediaserviceprovider.h>
 
-QT_BEGIN_NAMESPACE
-
-QStringList QT7ServicePlugin::keys() const
+QVideoSurfaceOutput::QVideoSurfaceOutput(QObject*parent)
+    :  QObject(parent)
 {
-    return QStringList()
-#ifdef QMEDIA_QT7_PLAYER
-        << QLatin1String(Q_MEDIASERVICE_MEDIAPLAYER)
-#endif
-        ;
 }
 
-QMediaService* QT7ServicePlugin::create(QString const& key)
+QVideoSurfaceOutput::~QVideoSurfaceOutput()
 {
-#ifdef QT_DEBUG_QT7
-    qDebug() << "QT7ServicePlugin::create" << key;
-#endif
-#ifdef QMEDIA_QT7_PLAYER
-    if (key == QLatin1String(Q_MEDIASERVICE_MEDIAPLAYER))
-        return new QT7PlayerService;
-#endif
-    qWarning() << "unsupported key:" << key;
-
-    return 0;
+    if (m_control) {
+        m_control.data()->setSurface(0);
+        m_service.data()->releaseControl(m_control.data());
+    }
 }
 
-void QT7ServicePlugin::release(QMediaService *service)
+QMediaObject *QVideoSurfaceOutput::mediaObject() const
 {
-    delete service;
+    return m_object.data();
 }
 
-QMediaServiceProviderHint::Features QT7ServicePlugin::supportedFeatures(
-        const QByteArray &service) const
+void QVideoSurfaceOutput::setVideoSurface(QAbstractVideoSurface *surface)
 {
-    if (service == Q_MEDIASERVICE_MEDIAPLAYER)
-        return QMediaServiceProviderHint::VideoSurface;
-    else
-        return QMediaServiceProviderHint::Features();
+    m_surface = surface;
+
+    if (m_control)
+        m_control.data()->setSurface(surface);
 }
 
-Q_EXPORT_PLUGIN2(qtmedia_qt7engine, QT7ServicePlugin);
+bool QVideoSurfaceOutput::setMediaObject(QMediaObject *object)
+{
+    if (m_control) {
+        m_control.data()->setSurface(0);
+        m_service.data()->releaseControl(m_control.data());
+    }
+    m_control.clear();
+    m_service.clear();
+    m_object.clear();
 
-QT_END_NAMESPACE
+    if (object) {
+        if (QMediaService *service = object->service()) {
+            if (QMediaControl *control = service->requestControl(QVideoRendererControl_iid)) {
+                if ((m_control = qobject_cast<QVideoRendererControl *>(control))) {
+                    m_service = service;
+                    m_object = object;
+                    m_control.data()->setSurface(m_surface.data());
+
+                    return true;
+                }
+                service->releaseControl(control);
+            }
+        }
+    }
+    return false;
+}
