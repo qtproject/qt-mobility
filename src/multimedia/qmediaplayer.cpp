@@ -210,6 +210,8 @@ void QMediaPlayerPrivate::_q_error(int error, const QString &errorString)
 
 void QMediaPlayerPrivate::_q_updateMedia(const QMediaContent &media)
 {
+    Q_Q(QMediaPlayer);
+
     if (!control)
         return;
 
@@ -234,8 +236,14 @@ void QMediaPlayerPrivate::_q_updateMedia(const QMediaContent &media)
 
     state = control->state();
 
-    if (state != currentState)
-        emit q_func()->stateChanged(state);
+    if (state != currentState) {
+        if (state == QMediaPlayer::PlayingState)
+            q->addPropertyWatch("position");
+        else
+            q->removePropertyWatch("position");
+
+        emit q->stateChanged(state);
+    }
 }
 
 void QMediaPlayerPrivate::_q_playlistDestroyed()
@@ -739,10 +747,7 @@ void QMediaPlayer::setVideoOutput(QVideoWidget *output)
     if (d->videoOutput)
         unbind(d->videoOutput);
 
-    d->videoOutput = output;
-
-    if (d->videoOutput)
-        bind(d->videoOutput);
+    d->videoOutput = output && bind(output) ? output : 0;
 }
 
 /*!
@@ -760,10 +765,7 @@ void QMediaPlayer::setVideoOutput(QGraphicsVideoItem *output)
     if (d->videoOutput)
         unbind(d->videoOutput);
 
-    d->videoOutput = output;
-
-    if (d->videoOutput)
-        bind(d->videoOutput);
+    d->videoOutput = output && bind(output) ? output : 0;
 }
 
 /*!

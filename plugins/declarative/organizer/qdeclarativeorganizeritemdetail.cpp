@@ -134,6 +134,52 @@ QString QDeclarativeOrganizerItemDetail::definitionName(QDeclarativeOrganizerIte
 {
     switch (type) {
     case QDeclarativeOrganizerItemDetail::EventTime:
+        return QOrganizerEventTime::DefinitionName;
+    case QDeclarativeOrganizerItemDetail::JournalTime:
+        return QOrganizerJournalTime::DefinitionName;
+    case QDeclarativeOrganizerItemDetail::TodoTime:
+        return QOrganizerTodoTime::DefinitionName;
+    case QDeclarativeOrganizerItemDetail::TodoProgress:
+        return QOrganizerTodoProgress::DefinitionName;
+    case QDeclarativeOrganizerItemDetail::Reminder:
+        return QOrganizerItemReminder::DefinitionName;
+    case QDeclarativeOrganizerItemDetail::AudibleReminder:
+        return QOrganizerItemAudibleReminder::DefinitionName;
+    case QDeclarativeOrganizerItemDetail::VisualReminder:
+        return QOrganizerItemVisualReminder::DefinitionName;
+    case QDeclarativeOrganizerItemDetail::EmailReminder:
+        return QOrganizerItemEmailReminder::DefinitionName;
+    case QDeclarativeOrganizerItemDetail::Comment:
+        return QOrganizerItemComment::DefinitionName;
+    case QDeclarativeOrganizerItemDetail::Description:
+        return QOrganizerItemDescription::DefinitionName;
+    case QDeclarativeOrganizerItemDetail::DisplayLabel:
+        return QOrganizerItemDisplayLabel::DefinitionName;
+    case QDeclarativeOrganizerItemDetail::Guid:
+        return QOrganizerItemGuid::DefinitionName;
+    case QDeclarativeOrganizerItemDetail::Location:
+        return QOrganizerItemLocation::DefinitionName;
+    case QDeclarativeOrganizerItemDetail::Parent:
+        return QOrganizerItemParent::DefinitionName;
+    case QDeclarativeOrganizerItemDetail::Priority:
+        return QOrganizerItemPriority::DefinitionName;
+    case QDeclarativeOrganizerItemDetail::Recurrence:
+        return QOrganizerItemRecurrence::DefinitionName;
+    case QDeclarativeOrganizerItemDetail::Timestamp:
+        return QOrganizerItemTimestamp::DefinitionName;
+    case QDeclarativeOrganizerItemDetail::Type:
+        return QOrganizerItemType::DefinitionName;
+    default:
+        break;
+    }
+    qWarning() << QString("Can't find the detail definition name for detail type '%1'").arg(type);
+    return QString();
+}
+
+QString QDeclarativeOrganizerItemDetail::detailName(QDeclarativeOrganizerItemDetail::ItemDetailType type)
+{
+    switch (type) {
+    case QDeclarativeOrganizerItemDetail::EventTime:
         return QDeclarativeOrganizerEventTime::DetailName;
     case QDeclarativeOrganizerItemDetail::JournalTime:
         return QDeclarativeOrganizerJournalTime::DetailName;
@@ -177,47 +223,90 @@ QString QDeclarativeOrganizerItemDetail::definitionName(QDeclarativeOrganizerIte
 }
 
 
-QDeclarativeOrganizerItemDetail::ItemDetailType QDeclarativeOrganizerItemDetail::detailType(const QString& definitionName)
+QDeclarativeOrganizerItemDetail::ItemDetailType QDeclarativeOrganizerItemDetail::detailTypeByDefinitionName(const QString& definitionName)
 {
-    if (definitionName == QDeclarativeOrganizerEventTime::DetailName)
+    if (definitionName == QOrganizerEventTime::DefinitionName)
         return QDeclarativeOrganizerItemDetail::EventTime;
-    if (definitionName == QDeclarativeOrganizerJournalTime::DetailName)
+    if (definitionName == QOrganizerJournalTime::DefinitionName)
             return QDeclarativeOrganizerItemDetail::JournalTime;
-    if (definitionName == QDeclarativeOrganizerTodoTime::DetailName)
+    if (definitionName == QOrganizerTodoTime::DefinitionName)
         return QDeclarativeOrganizerItemDetail::TodoTime;
-    if (definitionName == QDeclarativeOrganizerTodoProgress::DetailName)
+    if (definitionName == QOrganizerTodoProgress::DefinitionName)
         return QDeclarativeOrganizerItemDetail::TodoProgress;
-    if (definitionName == QDeclarativeOrganizerItemReminder::DetailName)
+    if (definitionName == QOrganizerItemReminder::DefinitionName)
         return QDeclarativeOrganizerItemDetail::Reminder;
-    if (definitionName == QDeclarativeOrganizerItemAudibleReminder::DetailName)
+    if (definitionName == QOrganizerItemAudibleReminder::DefinitionName)
         return QDeclarativeOrganizerItemDetail::AudibleReminder;
-    if (definitionName == QDeclarativeOrganizerItemVisualReminder::DetailName)
+    if (definitionName == QOrganizerItemVisualReminder::DefinitionName)
         return QDeclarativeOrganizerItemDetail::VisualReminder;
-    if (definitionName == QDeclarativeOrganizerItemEmailReminder::DetailName)
+    if (definitionName == QOrganizerItemEmailReminder::DefinitionName)
         return QDeclarativeOrganizerItemDetail::EmailReminder;
-    if (definitionName == QDeclarativeOrganizerItemComment::DetailName)
+    if (definitionName == QOrganizerItemComment::DefinitionName)
         return QDeclarativeOrganizerItemDetail::Comment;
-    if (definitionName == QDeclarativeOrganizerItemDescription::DetailName)
+    if (definitionName == QOrganizerItemDescription::DefinitionName)
         return QDeclarativeOrganizerItemDetail::Description;
-    if (definitionName == QDeclarativeOrganizerItemDisplayLabel::DetailName)
+    if (definitionName == QOrganizerItemDisplayLabel::DefinitionName)
         return QDeclarativeOrganizerItemDetail::DisplayLabel;
-    if (definitionName == QDeclarativeOrganizerItemGuid::DetailName)
+    if (definitionName == QOrganizerItemGuid::DefinitionName)
         return QDeclarativeOrganizerItemDetail::Guid;
-    if (definitionName == QDeclarativeOrganizerItemLocation::DetailName)
+    if (definitionName == QOrganizerItemLocation::DefinitionName)
         return QDeclarativeOrganizerItemDetail::Location;
-    if (definitionName == QDeclarativeOrganizerItemParent::DetailName)
+    if (definitionName == QOrganizerItemParent::DefinitionName)
         return QDeclarativeOrganizerItemDetail::Parent;
-    if (definitionName == QDeclarativeOrganizerItemPriority::DetailName)
+    if (definitionName == QOrganizerItemPriority::DefinitionName)
         return QDeclarativeOrganizerItemDetail::Priority;
-    if (definitionName == QDeclarativeOrganizerItemRecurrence::DetailName)
+    if (definitionName == QOrganizerItemRecurrence::DefinitionName)
         return QDeclarativeOrganizerItemDetail::Recurrence;
-    if (definitionName == QDeclarativeOrganizerItemTimestamp::DetailName)
+    if (definitionName == QOrganizerItemTimestamp::DefinitionName)
         return QDeclarativeOrganizerItemDetail::Timestamp;
-    if (definitionName == QDeclarativeOrganizerItemType::DetailName)
+    if (definitionName == QOrganizerItemType::DefinitionName)
         return QDeclarativeOrganizerItemDetail::Type;
     qWarning() << QString("Can't find the detail type for detail name '%1'").arg(definitionName);
     return QDeclarativeOrganizerItemDetail::Customized;
 }
+
+QDeclarativeOrganizerItemDetail::ItemDetailType QDeclarativeOrganizerItemDetail::detailTypeByDetailName(const QString& detailName)
+{
+    if (detailName == QDeclarativeOrganizerEventTime::DetailName)
+        return QDeclarativeOrganizerItemDetail::EventTime;
+    if (detailName == QDeclarativeOrganizerJournalTime::DetailName)
+            return QDeclarativeOrganizerItemDetail::JournalTime;
+    if (detailName == QDeclarativeOrganizerTodoTime::DetailName)
+        return QDeclarativeOrganizerItemDetail::TodoTime;
+    if (detailName == QDeclarativeOrganizerTodoProgress::DetailName)
+        return QDeclarativeOrganizerItemDetail::TodoProgress;
+    if (detailName == QDeclarativeOrganizerItemReminder::DetailName)
+        return QDeclarativeOrganizerItemDetail::Reminder;
+    if (detailName == QDeclarativeOrganizerItemAudibleReminder::DetailName)
+        return QDeclarativeOrganizerItemDetail::AudibleReminder;
+    if (detailName == QDeclarativeOrganizerItemVisualReminder::DetailName)
+        return QDeclarativeOrganizerItemDetail::VisualReminder;
+    if (detailName == QDeclarativeOrganizerItemEmailReminder::DetailName)
+        return QDeclarativeOrganizerItemDetail::EmailReminder;
+    if (detailName == QDeclarativeOrganizerItemComment::DetailName)
+        return QDeclarativeOrganizerItemDetail::Comment;
+    if (detailName == QDeclarativeOrganizerItemDescription::DetailName)
+        return QDeclarativeOrganizerItemDetail::Description;
+    if (detailName == QDeclarativeOrganizerItemDisplayLabel::DetailName)
+        return QDeclarativeOrganizerItemDetail::DisplayLabel;
+    if (detailName == QDeclarativeOrganizerItemGuid::DetailName)
+        return QDeclarativeOrganizerItemDetail::Guid;
+    if (detailName == QDeclarativeOrganizerItemLocation::DetailName)
+        return QDeclarativeOrganizerItemDetail::Location;
+    if (detailName == QDeclarativeOrganizerItemParent::DetailName)
+        return QDeclarativeOrganizerItemDetail::Parent;
+    if (detailName == QDeclarativeOrganizerItemPriority::DetailName)
+        return QDeclarativeOrganizerItemDetail::Priority;
+    if (detailName == QDeclarativeOrganizerItemRecurrence::DetailName)
+        return QDeclarativeOrganizerItemDetail::Recurrence;
+    if (detailName == QDeclarativeOrganizerItemTimestamp::DetailName)
+        return QDeclarativeOrganizerItemDetail::Timestamp;
+    if (detailName == QDeclarativeOrganizerItemType::DetailName)
+        return QDeclarativeOrganizerItemDetail::Type;
+    qWarning() << QString("Can't find the detail type for detail name '%1'").arg(detailName);
+    return QDeclarativeOrganizerItemDetail::Customized;
+}
+
 
 QString QDeclarativeOrganizerItemDetail::fieldName(QDeclarativeOrganizerItemDetail::ItemDetailType detailType, int fieldType)
 {
@@ -762,9 +851,9 @@ QString QDeclarativeOrganizerItemTimestamp::fieldNameFromFieldType(int type)
  */
 
 /*!
-  \qmlproperty int Parent::parentId
+  \qmlproperty string Parent::parentId
 
-  This property holds the id of the parent recurrent event or todo.
+  This property holds the organizer item id of the parent recurrent event or todo.
   */
 
 /*!

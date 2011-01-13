@@ -484,10 +484,7 @@ void QCamera::setViewfinder(QVideoWidget *viewfinder)
     if (d->viewfinder)
         unbind(d->viewfinder);
 
-    d->viewfinder = viewfinder;
-
-    if (d->viewfinder)
-        bind(d->viewfinder);
+    d->viewfinder = viewfinder && bind(viewfinder) ? viewfinder : 0;
 }
 
 /*!
@@ -502,10 +499,7 @@ void QCamera::setViewfinder(QGraphicsVideoItem *viewfinder)
     if (d->viewfinder)
         unbind(d->viewfinder);
 
-    d->viewfinder = viewfinder;
-
-    if (d->viewfinder)
-        bind(d->viewfinder);
+    d->viewfinder = viewfinder && bind(viewfinder) ? viewfinder : 0;
 }
 
 /*!

@@ -420,6 +420,7 @@ private slots:
     void testSetVideoOutputNoService();
     void testSetVideoOutputNoControl();
     void testSetVideoOutputDestruction();
+    void testPositionPropertyWatch();
 
 private:
     MockProvider *mockProvider;

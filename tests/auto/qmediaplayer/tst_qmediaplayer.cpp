@@ -920,5 +920,34 @@ void tst_QMediaPlayer::testSetVideoOutputDestruction()
     QCOMPARE(service.rendererRef, 0);
 }
 
+void tst_QMediaPlayer::testPositionPropertyWatch()
+{
+    QMediaContent content0(QUrl(QLatin1String("test://audio/song1.mp3")));
+    QMediaContent content1(QUrl(QLatin1String("test://audio/song2.mp3")));
 
+    mockService->setIsValid(true);
+    mockService->setState(QMediaPlayer::StoppedState, QMediaPlayer::NoMedia);
+
+    QMediaPlaylist *playlist = new QMediaPlaylist;
+
+    playlist->addMedia(content0);
+    playlist->addMedia(content1);
+
+    player->setPlaylist(playlist);
+    player->setNotifyInterval(5);
+
+    player->play();
+    QSignalSpy positionSpy(player, SIGNAL(positionChanged(qint64)));
+    playlist->next();
+    QCOMPARE(player->state(), QMediaPlayer::PlayingState);
+    QTest::qWait(50);
+    QVERIFY(positionSpy.count() > 0);
+
+    playlist->next();
+    QCOMPARE(player->state(), QMediaPlayer::StoppedState);
+
+    positionSpy.clear();
+    QTest::qWait(50);
+    QCOMPARE(positionSpy.count(), 0);
+}
 
