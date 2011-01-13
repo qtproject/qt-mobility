@@ -16,7 +16,7 @@ SUBDIRS += \
     qgallerytyperequest
 
 unix: contains(QT_CONFIG, dbus): {
-    maemo6 {
+    maemo6|meego {
         SUBDIRS += \
             qgallerytrackerschema_maemo6
     } else {

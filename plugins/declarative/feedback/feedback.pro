@@ -1,9 +1,9 @@
 INCLUDEPATH += ../../../src/feedback
 INCLUDEPATH += ../../../src/global
 
-TARGET  = $$qtLibraryTarget(declarative_feedback)
 TEMPLATE = lib
 CONFIG += plugin
+TARGET  = $$qtLibraryTarget(declarative_feedback)
 TARGETPATH = QtMobility/feedback
 PLUGIN_TYPE = declarative
 include(../../../common.pri)

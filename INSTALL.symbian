@@ -1,0 +1,80 @@
+Installation steps of Qt Mobility for Symbian (for S60 3.1, 3.2 & 5.0 and Symbian SDKs)
+---------------------------------------------------------------------------------------
+
+The Mobility project information can be found at http://qt.nokia.com/developer/new-qt-apis
+
+Prerequisites
+-------------
+- install latest official Qt 4.7 for Symbian (first you need to have Symbian SDK(s) in place)
+  - Instructions available in Qt documentation: http://doc.qt.nokia.com/4.7-snapshot/install-symbian.html
+
+- ensure your PATH environment variable includes Qt 4.7 for Symbian SDKs bin folder. It's recommended to have it in the beginning of the PATH as the first make command that is found is used.
+
+QtMobility release information
+------------------------------
+Published QtMobility releases are tested with following Qt releases
+QtMobility 1.0.2 Qt 4.6.3
+QtMobility 1.1.0 Qt 4.7.0
+QtMobility 1.1.1 Qt 4.7.1
+
+Installing Qt Mobility for Symbian (for S60 3.1, 3.2 & 5.0 and Symbian SDKs)
+----------------------------------------------------------------------------
+
+- Once you have downloaded the Qt Mobility Symbian package, unzip the package
+
+The Symbian package is identical to the source package, with the following additions:
+
+  INSTALL.symbian
+  qt-mobility-symbian-x.y.z-epoc32-3.1.zip
+  qt-mobility-symbian-x.y.z-epoc32-3.2.zip
+  qt-mobility-symbian-x.y.z-epoc32-5.0.zip
+  qt-mobility-symbian-x.y.z-epoc32-symbian.zip
+  qt-mobility-symbian-x.y.z-s60.sis
+  qt-mobility-symbian-x.y.z-symbian3.sis
+
+  Where x.y.z is the version of the QtMobility release.
+
+- Installing the mobility libraries to your Symbian SDK happens by extracting the
+'qt-mobility-x.y.z-epoc32-<SYMBIAN_SDK>.zip' file to your Symbian SDK.
+  - First copy the zip file to your Symbian SDK next to \epoc32 folder, f.ex to C:\Symbian\9.4\S60_5th_Edition_SDK_v1.0_2
+  - extract the file
+  - Note that you need to repeat this step for all the Symbian SDKs you want to develop with Mobility APIs.
+
+- Enabling Mobility APIs to your device (Symbian 3rd Edition FP1 or newer, in case unsure see http://www.forum.nokia.com/devices/) :
+  - Prerequisite : Qt 4.7 for Symbian is installed. For Symbian Qt 4.7 installation package see: http://labs.qt.nokia.com/2010/10/18/qt-4-7-for-symbian3-developer-version-available/
+  - install the 'qt-mobility-symbian-x.y.z-s60.sis' or 'qt-mobility-symbian-x.y.z-symbian.sis' file to device. You can do this, for example, via bluetooth or through Nokia Ovi Suite (recommended)
+
+- Copy the <QTMOBILITYDIR>/features/mobility.prf.template file to QTDIR/mkspecs/features/mobility.prf
+  - The relevant Qt directory can be obtained by running 'qmake -v' within the build environment.
+
+
+The above steps create a working environment for new projects wanting to use the QtMobility libraries.
+
+Examples:
+
+- build an example with your device connected to Ovi suite, go to examples
+
+* cd examples
+* qmake [example].pro
+* make release-gcce
+* createpackage -i [example]_template.pkg release-gcce <certificate> <private key>
+
+The createpackage command creates a self signed symbian installer package. The -i parameter in createpackage command installs the example to your device connected to Nokia Ovi Suite.
+
+How to sign the packages that can be selfsigned? Easy, use createpackage as demonstrated in the installation instructions.
+What about the ones that require heavier signing? See http://www.forum.nokia.com/testing or http://developer.symbian.org/wiki/index.php/Complete_Guide_To_Symbian_Signed
+
+
+Followup and support for QtMobility
+-----------------------------------
+If you have questions about the examples, about using the APIs or want to provide us input you can do it via the following channels:
+
+The Mobility project information can be found at http://qt.nokia.com/developer/new-qt-apis
+
+QtMobility blogs can be found from: http://labs.qt.nokia.com/category/qtmobility/
+
+QtMobility mailing list: http://lists.trolltech.com/mailman/listinfo/qt-mobility-feedback.
+Qt Mobility discussion forum in http://discussion.forum.nokia.com/forum/forumdisplay.php?f=232
+
+
+Stay tuned for more exciting news on the mobility front!

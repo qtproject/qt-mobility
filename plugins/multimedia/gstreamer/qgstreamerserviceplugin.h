@@ -48,14 +48,20 @@
 QT_USE_NAMESPACE
 
 
-class QGstreamerServicePlugin : public QMediaServiceProviderPlugin, public QMediaServiceSupportedDevicesInterface
+class QGstreamerServicePlugin
+    : public QMediaServiceProviderPlugin
+    , public QMediaServiceSupportedDevicesInterface
+    , public QMediaServiceFeaturesInterface
 {
     Q_OBJECT
     Q_INTERFACES(QMediaServiceSupportedDevicesInterface)
+    Q_INTERFACES(QMediaServiceFeaturesInterface)
 public:
     QStringList keys() const;
     QMediaService* create(QString const& key);
     void release(QMediaService *service);
+
+    QMediaServiceProviderHint::Features supportedFeatures(const QByteArray &service) const;
 
     QList<QByteArray> devices(const QByteArray &service) const;
     QString deviceDescription(const QByteArray &service, const QByteArray &device);

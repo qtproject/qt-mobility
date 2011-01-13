@@ -1,0 +1,8 @@
+This directory makes use of an experimental internal testing tool 'qtest-qml'
+(git@scm.dev.nokia.troll.no:research/qtest-qml.git).The test content have been 
+provided to show what tests are being done to verify Qt Mobility's QML bindings.
+
+To run these tests, the QtQuickTest library needs to be built and installed first, see
+http://scm.dev.nokia.troll.no/projects/research/repos/qtest-qml/blobs/master/README for more details.
+
+The tests included in this and sub-directories are subject to change/removal without notice.
