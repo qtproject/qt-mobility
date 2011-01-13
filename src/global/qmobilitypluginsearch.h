@@ -144,6 +144,23 @@ inline QStringList mobilityPlugins(const QString& plugintype)
             }
         }
     }
+
+    /* Add application path + plugintype */
+    QDir appldir(QCoreApplication::applicationDirPath());
+    if(appldir.cd(plugintype)){
+        if (!processed.contains(appldir.absolutePath())){
+            processed.insert(appldir.absolutePath());
+            QStringList files = appldir.entryList(QDir::Files);
+#if !defined QT_NO_DEBUG
+            if (showDebug)
+                qDebug() << "Looking for " << plugintype << " plugins in" << appldir.path() << files;
+#endif
+            for (int j=0; j < files.count(); j++) {
+                plugins <<  appldir.absoluteFilePath(files.at(j));
+            }
+        }
+    }
+
 #if defined(Q_OS_SYMBIAN)
     rfs.Close();
 #endif

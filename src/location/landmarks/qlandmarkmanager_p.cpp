@@ -158,7 +158,6 @@ void QLandmarkManagerPrivate::loadStaticFactories(QHash<QString, QLandmarkManage
             QString name = f->managerName();
 
 #if !defined QT_NO_DEBUG
-            const bool showDebug = qgetenv("QT_DEBUG_PLUGINS").toInt() > 0;
             if (showDebug)
                 qDebug() << "Static: found an engine plugin with name" << name;
 #endif

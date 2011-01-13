@@ -76,7 +76,7 @@
 #include "qorganizeritemchangeset.h"
 
 #include "qorganizeritemtransform.h"
-#include "qorganizerasynchprocess.h"
+#include "../mkcal/qorganizerasynchmanager.h"
 #include "qorganizercaldbaccess.h"
 
 #include "qorganizerjournal.h"
@@ -129,7 +129,7 @@ public:
     OrganizerItemTransform m_itemTransformer;
 
     // asynchronous request handler instance
-    OrganizerAsynchProcess *m_asynchProcess;
+    OrganizerAsynchManager *m_asynchManager;
 
     // calendar database accessor instance
     OrganizerCalendarDatabaseAccess* m_dbAccess;
