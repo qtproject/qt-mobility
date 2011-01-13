@@ -244,7 +244,7 @@ QByteArray QSensor::identifier() const
 
 void QSensor::setIdentifier(const QByteArray &identifier)
 {
-    if (d->backend) {
+    if (isConnectedToBackend()) {
         qWarning() << "ERROR: Cannot call QSensor::setIdentifier while connected to a backend!";
         return;
     }
@@ -272,11 +272,25 @@ QByteArray QSensor::type() const
 */
 bool QSensor::connectToBackend()
 {
-    if (d->backend)
+    if (isConnectedToBackend())
         return true;
 
     d->backend = QSensorManager::createBackend(this);
-    return (d->backend != 0);
+
+    // Reset the properties to their default values and re-set them now so
+    // that the logic we've put into the setters gets called.
+    if (d->dataRate != 0) {
+        int tmp = d->dataRate;
+        d->dataRate = 0;
+        setDataRate(tmp);
+    }
+    if (d->outputRange != -1) {
+        int tmp = d->outputRange;
+        d->outputRange = -1;
+        setOutputRange(tmp);
+    }
+
+    return isConnectedToBackend();
 }
 
 /*!
@@ -317,7 +331,7 @@ bool QSensor::isBusy() const
 */
 void QSensor::setActive(bool active)
 {
-    if (active == d->active)
+    if (active == isActive())
         return;
 
     if (active)
@@ -386,7 +400,7 @@ int QSensor::dataRate() const
 
 void QSensor::setDataRate(int rate)
 {
-    if (rate == 0) {
+    if (rate == 0 || !isConnectedToBackend()) {
         d->dataRate = rate;
         return;
     }
@@ -399,7 +413,7 @@ void QSensor::setDataRate(int rate)
         }
     }
     if (warn) {
-        qWarning() << "setDataRate: rate" << rate << "is not supported by the sensor.";
+        qWarning() << "setDataRate:" << rate << "is not supported by the sensor.";
     }
 }
 
@@ -436,7 +450,7 @@ void QSensor::setDataRate(int rate)
 */
 bool QSensor::start()
 {
-    if (d->active)
+    if (isActive())
         return true;
     if (!connectToBackend())
         return false;
@@ -446,7 +460,7 @@ bool QSensor::start()
     // Backend will update the flags appropriately
     d->backend->start();
     Q_EMIT activeChanged();
-    return d->active;
+    return isActive();
 }
 
 /*!
@@ -458,7 +472,7 @@ bool QSensor::start()
 */
 void QSensor::stop()
 {
-    if (!d->active || !d->backend)
+    if (!isActive() || !isConnectedToBackend())
         return;
     d->active = false;
     d->backend->stop();
@@ -588,11 +602,18 @@ int QSensor::outputRange() const
 
 void QSensor::setOutputRange(int index)
 {
-    if (index < -1 || index >= d->outputRanges.count()) {
-        qWarning() << "ERROR: Output range" << index << "is not valid";
+    if (index == -1 || !isConnectedToBackend()) {
+        d->outputRange = index;
         return;
     }
-    d->outputRange = index;
+    bool warn = true;
+    if (index >= 0 && index < d->outputRanges.count()) {
+        warn = false;
+        d->outputRange = index;
+    }
+    if (warn) {
+        qWarning() << "setOutputRange:" << index << "is not supported by the sensor.";
+    }
 }
 
 /*!
