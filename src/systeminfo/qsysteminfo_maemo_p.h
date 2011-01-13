@@ -277,6 +277,7 @@ private:
     bool vibratingAlertEnabled;
     bool beepProfile;
     int ringingAlertVolume;
+    int smsAlertVolume;
     QSystemDeviceInfo::BatteryStatus currentBatStatus;
 
     QSystemDeviceInfo::PowerState previousPowerState;

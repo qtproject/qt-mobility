@@ -1350,6 +1350,10 @@ void QSystemDeviceInfoPrivate::setupProfile()
     if (ringingAlertVolumeReply.isValid())
         ringingAlertVolume = ringingAlertVolumeReply.value().toInt();
 
+    QDBusReply<QString> smsAlertVolumeReply = connectionInterface.call("get_value", profileName, "sms.alert.volume");
+    if (smsAlertVolumeReply.isValid())
+        smsAlertVolume = smsAlertVolumeReply.value().toInt();
+
     qDBusRegisterMetaType<ProfileDataValue>();
     qDBusRegisterMetaType<QList<ProfileDataValue> >();
 
@@ -1386,6 +1390,8 @@ void QSystemDeviceInfoPrivate::profileChanged(bool changed, bool active, QString
                 vibratingAlertEnabled = QString::compare(value.val, "On", Qt::CaseInsensitive) == 0;
             else if (value.key == "ringing.alert.volume")
                 ringingAlertVolume = value.val.toInt();
+            else if (value.key == "sms.alert.volume")
+                smsAlertVolume = value.val.toInt();
         }
         if (changed)
             emit currentProfileChanged(currentProfile());
@@ -1478,17 +1484,17 @@ bool QSystemDeviceInfoPrivate::keypadLightOn(QSystemDeviceInfo::KeypadType type)
 
 int QSystemDeviceInfoPrivate::messageRingtoneVolume()
 {
-    return 0;
+    return smsAlertVolume;
 }
 
 int QSystemDeviceInfoPrivate::voiceRingtoneVolume()
 {
-    return 0;
+    return ringingAlertVolume;
 }
 
 bool QSystemDeviceInfoPrivate::vibrationActive()
 {
-    return false;
+    return vibratingAlertEnabled;
 }
 
 QSystemDeviceInfo::LockTypeFlags QSystemDeviceInfoPrivate::lockStatus()
