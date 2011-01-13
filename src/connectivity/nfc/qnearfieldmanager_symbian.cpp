@@ -153,16 +153,16 @@ int QNearFieldManagerPrivateImpl::registerTargetDetectedHandler(QObject *object,
 
         connect(&contentHandlerProxy, SIGNAL(handleMessage(QNdefMessage)),
                     this, SLOT(_q_privateHandleMessageSlot(QNdefMessage)));
-        m_serviceRegister = new QRemoteServiceRegister();
-        QRemoteServiceRegister::Entry entry =
-                m_serviceRegister->createEntry<ContentHandlerInterface>(servicename,
-                                                                     "com.nokia.symbian.NdefMessageHandler",
-                                                                     "1.0");
-        entry.setInstantiationType(QRemoteServiceRegister::PrivateInstance);
-        m_serviceRegister->publishEntries(servicename);
-        //m_serviceRegister->setQuitOnLastInstanceClosed(true);
-        //delete serviceRegister;
-
+        if ( !m_serviceRegister )
+            {
+            m_serviceRegister = new QRemoteServiceRegister();
+            QRemoteServiceRegister::Entry entry =
+                    m_serviceRegister->createEntry<ContentHandlerInterface>(servicename,
+                                                                         "com.nokia.symbian.NdefMessageHandler",
+                                                                         "1.0");
+            entry.setInstantiationType(QRemoteServiceRegister::PrivateInstance);
+            m_serviceRegister->publishEntries(servicename);
+            }
         return 0xffff;
 
     } else {
