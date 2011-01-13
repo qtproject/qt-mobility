@@ -77,6 +77,15 @@ void QT7ServicePlugin::release(QMediaService *service)
     delete service;
 }
 
+QMediaServiceProviderHint::Features QT7ServicePlugin::supportedFeatures(
+        const QByteArray &service) const
+{
+    if (service == Q_MEDIASERVICE_MEDIAPLAYER)
+        return QMediaServiceProviderHint::VideoSurface;
+    else
+        return QMediaServiceProviderHint::Features();
+}
+
 Q_EXPORT_PLUGIN2(qtmedia_qt7engine, QT7ServicePlugin);
 
 QT_END_NAMESPACE
