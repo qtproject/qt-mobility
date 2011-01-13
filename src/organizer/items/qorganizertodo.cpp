@@ -62,7 +62,9 @@ QTM_USE_NAMESPACE
  */
 
 /*!
-  Sets the date time at which the task should be started to \a startDateTime
+  Sets the date time at which the task should be started to \a startDateTime (for recurring tasks,
+  this applies to the first instance).  For all-day tasks, the time part can be set to any valid
+  value.
  */
 void QOrganizerTodo::setStartDateTime(const QDateTime& startDateTime)
 {
@@ -72,7 +74,8 @@ void QOrganizerTodo::setStartDateTime(const QDateTime& startDateTime)
 }
 
 /*!
-  Returns the date time at which the task should be started
+  Returns the date time at which the task should be started (for recurring tasks, this applies to
+  the first instance).  For all-day tasks, the time part is meaningless.
  */
 QDateTime QOrganizerTodo::startDateTime() const
 {
@@ -81,7 +84,9 @@ QDateTime QOrganizerTodo::startDateTime() const
 }
 
 /*!
-  Sets the date time by which the task should be completed to \a dueDateTime
+  Sets the date time by which the task should be completed to \a dueDateTime (for recurring tasks,
+  this applies to the first instance).  For all-day tasks, the time part can be set to any valid
+  value
  */
 void QOrganizerTodo::setDueDateTime(const QDateTime& dueDateTime)
 {
@@ -91,7 +96,8 @@ void QOrganizerTodo::setDueDateTime(const QDateTime& dueDateTime)
 }
 
 /*!
-  Returns the date time by which the task should be completed
+  Returns the date time by which the task should be completed (for recurring tasks, this applies to
+  the first instance).  For all-day tasks, the time part is meaningless.
  */
 QDateTime QOrganizerTodo::dueDateTime() const
 {
