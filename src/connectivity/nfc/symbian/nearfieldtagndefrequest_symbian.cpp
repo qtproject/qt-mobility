@@ -145,6 +145,22 @@ void NearFieldTagNdefRequest::ProcessEmitSignal(TInt aError)
     END
 }
 
+void NearFieldTagNdefRequest::ProcessTimeout()
+{
+    if (iWait)
+    {
+        if (iWait->IsStarted())
+        {
+            if (iRequestIssued)
+            {    
+                iOperator.DoCancelNdefAccess();
+                iRequestIssued = EFalse;
+            }
+            ProcessResponse(KErrTimedOut);
+        }
+    }
+}
+
 void NearFieldTagNdefRequest::HandleResponse(TInt /*aError*/)
 {
     BEGIN

@@ -667,24 +667,50 @@ void QNfcTagTestCommon<TAG>::testRemoveTargetBeforeAsyncRequestComplete(const QS
     Q_ASSERT_X(discription.count() > 2, "testRemoveTargetBeforeAsyncRequestComplete", "list should at least have 2 elements");
     
     touchTarget();
-    QNfcTestUtil::ShowMessage("please remove the tag in 5 seconds");
-    int okCount = 0;
-    int errCount = 0;
+
     QSignalSpy okSpy(target, SIGNAL(requestCompleted(const QNearFieldTarget::RequestId&)));
     QSignalSpy errSpy(target, SIGNAL(error(QNearFieldTarget::Error, const QNearFieldTarget::RequestId&)));
     QSignalSpy ndefMessageReadSpy(target, SIGNAL(ndefMessageRead(QNdefMessage))); 
+
+    QNfcTestUtil::ShowMessage("please remove the tag");
+
+    int errCount = 0;
+
     QList<QNearFieldTarget::RequestId> requests;
     
-    GetSignalCount(responseSet, errCount, okCount); 
-    GetRequestIDs(discription, commandSet, requests, true);
-    
-    QTest::qSleep(5000);
+    for (int i = 0; i < discription.count(); ++i)
+    {
+        qDebug()<<"test "<<discription.at(i)<<endl;
+        // sendCommand
+        if (commandSet.at(i).type() == QVariant::ByteArray)
+        {
+            QByteArray command = commandSet.at(i).toByteArray();
+            QNearFieldTarget::RequestId id = target->sendCommand(command);
+            QVERIFY(!id.isValid());
+        }
+        else // sendCommands
+        {
+            QVariantList lists = commandSet.at(i).toList();
+            QList<QByteArray> commands;
+            for (int j = 0; j < lists.count(); ++j)
+            {
+                commands.append(lists.at(j).toByteArray());
+            }
+            QNearFieldTarget::RequestId id = target->sendCommands(commands);
+            QVERIFY(!id.isValid());
+        }
+
+        if ( 1 == i )
+        {
+            target->readNdefMessages();
+            errCount = 1;
+        }
+    }   
 
     qDebug()<<"signal count check"<<endl;
 
     QTest::qWait(5000);
-    QTRY_VERIFY((errSpy.count() == responseSet.count() + 1) || (errSpy.count() == responseSet.count()));
-    qDebug()<<errSpy.count()<<endl;
+    QTRY_VERIFY((errSpy.count() == errCount) && (okSpy.count() == 0));
     QTRY_VERIFY(ndefMessageReadSpy.isEmpty());
 
     qDebug()<<"delete the target"<<endl;

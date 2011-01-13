@@ -70,16 +70,7 @@ public:
     
     // inline to get fast speed since this function is used internally 
     // to convert async ndef request to sync.
-    virtual void ProcessTimeout()
-    {
-        if (iWait)
-        {
-            if (iWait->IsStarted())
-            {
-                ProcessResponse(KErrTimedOut);
-            }
-        }
-    }
+    virtual void ProcessTimeout() = 0;
     
     virtual void ProcessWaitRequestCompleted(TInt aError);
 

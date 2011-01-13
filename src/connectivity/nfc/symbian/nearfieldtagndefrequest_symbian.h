@@ -59,6 +59,7 @@ public:
     ~NearFieldTagNdefRequest();
     void IssueRequest();
     void ProcessEmitSignal(TInt aError);
+    void ProcessTimeout();
     void HandleResponse(TInt aError);
     void SetNdefRequestType(TNdefRequestType aType) { iType = aType; }
     void SetInputNdefMessages(QList<QNdefMessage> aMessages) { iMessages = aMessages; }

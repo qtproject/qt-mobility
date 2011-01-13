@@ -135,7 +135,7 @@ bool MNearFieldTagAsyncRequest::WaitRequestCompleted(int aMsecs)
         // timer should be started when request is issued.
         LOG("Start timer");
         TCallBack callback(MNearFieldTagAsyncRequest::TimeoutCallback, this);
-        iTimer->Start(0, aMsecs, callback);
+        iTimer->Start(iMsecs, iMsecs, callback);
     }
     LOG("Start waiter");
     iWait->Start();
@@ -183,7 +183,7 @@ int MNearFieldTagAsyncRequest::WaitRequestCompletedNoSignal(int aMsecs)
         // timer should be started when request is issued.
         LOG("Start timer");
         TCallBack callback(MNearFieldTagAsyncRequest::TimeoutCallback, this);
-        iTimer->Start(aMsecs, aMsecs, callback);
+        iTimer->Start(iMsecs, iMsecs, callback);
     }
     LOG("Start waiter");
     iWait->Start();
