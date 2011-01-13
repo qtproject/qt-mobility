@@ -105,6 +105,9 @@ QMFService::QMFService(QMessageService *service, QObject *parent)
 
     connect(&m_retrieval, SIGNAL(activityChanged(QMailServiceAction::Activity)), this, SLOT(retrievalActivityChanged(QMailServiceAction::Activity)));
     connect(&m_retrieval, SIGNAL(statusChanged(QMailServiceAction::Status)), this, SLOT(statusChanged(QMailServiceAction::Status)));
+
+    connect(&m_storage, SIGNAL(activityChanged(QMailServiceAction::Activity)), this, SLOT(storageActivityChanged(QMailServiceAction::Activity)));
+    connect(&m_storage, SIGNAL(statusChanged(QMailServiceAction::Status)), this, SLOT(statusChanged(QMailServiceAction::Status)));
 }
 
 QMFService::~QMFService()
@@ -629,6 +632,27 @@ void QMFService::stateChanged(QMessageService::State state) const
     QMessageServicePrivate *p = QMessageServicePrivate::implementation(*m_service);
     // QMessageServicePrivate emits QMessageService::stateChanged() signal 
     p->stateChanged(state);
+}
+
+void QMFService::storageActivityChanged(QMailServiceAction::Activity a)
+{
+    if ((a == QMailServiceAction::Failed) && (error() == QMessageManager::NoError)) {
+        setError(QMessageManager::RequestIncomplete);
+    }
+
+    stateChanged(convert(a));
+}
+
+bool QMFService::moveMessages(const QMessageIdList &messageIds, const QMessageFolderId &toFolderId)
+{
+    if (isBusy()) {
+        return false;
+    }
+    m_active = 0;
+    setError(QMessageManager::NoError);
+    m_active = &m_storage;
+    m_storage.moveMessages(convert(messageIds), convert(toFolderId));
+    return true;
 }
 
 bool QMFService::synchronize(const QMessageAccountId &id)

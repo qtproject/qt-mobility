@@ -614,6 +614,28 @@ bool QMessageService::exportUpdates(const QMessageAccountId &id)
     return retVal;
 }
 
+bool QMessageService::moveMessages(const QMessageIdList &messageIds, const QMessageFolderId &toFolderId)
+{
+    bool result = false;
+
+    if (!d_ptr->_active) {
+        QMessageIdList qmfIds;
+        foreach(QMessageId id, messageIds) {
+            if (id.isValid() && id.toString().startsWith("QMF_"))
+                qmfIds.append(id);
+        }
+
+        if (qmfIds.count())
+            result = d_ptr->_qmfService->moveMessages(qmfIds, toFolderId);
+        else
+            d_ptr->_error = QMessageManager::InvalidId;
+    }
+    else
+        d_ptr->_error = QMessageManager::Busy;
+
+    return result;
+}
+
 bool QMessageService::synchronize(const QMessageAccountId &id)
 {
     bool result = false;
