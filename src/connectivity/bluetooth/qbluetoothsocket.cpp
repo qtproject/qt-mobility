@@ -404,7 +404,9 @@ void QBluetoothSocket::setSocketState(QBluetoothSocket::SocketState state)
     if(state == ListeningState){
         // TODO: look at this, is this really correct?
         // if we're a listening socket we can't handle connects?
-        d->readNotifier->setEnabled(false);
+        if (d->readNotifier) {
+            d->readNotifier->setEnabled(false);
+        }
     }
 }
 
