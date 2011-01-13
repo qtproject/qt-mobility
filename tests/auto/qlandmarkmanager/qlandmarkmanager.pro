@@ -14,10 +14,14 @@ SOURCES += tst_qlandmarkmanager.cpp
 
 HEADERS += ../qlandmarkmanagerdataholder.h
 
-!symbian {
+!symbian:!maemo6:meego {
     QT += sql
 }
 QT += testlib
+
+maemo6|meego {
+    DEFINES+=SPARQL_BACKEND
+}
 
 RESOURCES += data.qrc
 
