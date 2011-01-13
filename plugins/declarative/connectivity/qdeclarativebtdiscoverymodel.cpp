@@ -216,8 +216,16 @@ QVariant QDeclarativeBluetoothDiscoveryModel::data(const QModelIndex &index, int
 
 void QDeclarativeBluetoothDiscoveryModel::serviceDiscovered(const QBluetoothServiceInfo &service)
 {
-    beginResetModel(); // beginInsertRows(...) doesn't work for full discovery...
     QDeclarativeBluetoothService *bs = new QDeclarativeBluetoothService(service, this);
+
+    for(int i = 0; i < d->m_services.count(); i++) {
+        if(bs->deviceAddress() == d->m_services.at(i)->deviceAddress()){
+            delete bs;
+            return;
+        }
+    }
+
+    beginResetModel(); // beginInsertRows(...) doesn't work for full discovery...
     d->m_services.append(bs);
     endResetModel();
     emit newServiceDiscovered(bs);
