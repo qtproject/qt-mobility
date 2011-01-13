@@ -59,13 +59,13 @@ QTM_USE_NAMESPACE
 QOrganizerItemObserver::QOrganizerItemObserver(QObject* parent) : QObject(parent) {}
 
 /*!
-  \fn itemChanged()
+  \fn void QOrganizerItemObserver::itemChanged()
 
   This signal is emitted when the observed item is changed in the manager.
  */
 
 /*!
-  \fn itemRemoved()
+  \fn void QOrganizerItemObserver::itemRemoved()
 
   This signal is emitted when the observed item is removed from the manager.
  */
