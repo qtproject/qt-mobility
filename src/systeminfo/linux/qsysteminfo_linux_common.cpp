@@ -70,7 +70,7 @@
 #include <mntent.h>
 #include <sys/stat.h>
 
-#if !defined(Q_WS_MAEMO_6) && defined(QT_NO_MEEGO)
+#if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MEEGO)
 #ifdef Q_WS_X11
 #include <QX11Info>
 #include <X11/Xlib.h>
@@ -1716,7 +1716,7 @@ QSystemDisplayInfoLinuxCommonPrivate::~QSystemDisplayInfoLinuxCommonPrivate()
 
 int QSystemDisplayInfoLinuxCommonPrivate::colorDepth(int screen)
 {
-#if !defined(Q_WS_MAEMO_6)  && defined(QT_NO_MEEGO)
+#if !defined(Q_WS_MAEMO_6)  && !defined(Q_WS_MEEGO)
 #ifdef Q_WS_X11
     QDesktopWidget wid;
     return wid.screen(screen)->x11Info().depth();
@@ -2533,7 +2533,7 @@ QSystemDeviceInfo::InputMethodFlags QSystemDeviceInfoLinuxCommonPrivate::inputMe
 {
     QSystemDeviceInfo::InputMethodFlags methods ;
     if (halIsAvailable) {
-#if !defined(QT_NO_DBUS) && defined(QT_NO_MEEGO)
+#if !defined(QT_NO_DBUS) && !defined(Q_WS_MEEGO)
         QHalInterface iface2;
         if (iface2.isValid()) {
             QStringList capList;
@@ -2980,7 +2980,7 @@ QUuid QSystemDeviceInfoLinuxCommonPrivate::uniqueDeviceID()
             return QUuid(id);
         }
     }
-#if !defined(QT_NO_MEEGO)
+#if defined(Q_WS_MEEGO)
     QDBusInterface connectionInterface("org.freedesktop.PolicyKit1",
                                        "/org/freedesktop/PolicyKit1/Authority",
                                        "org.freedesktop.DBus.Peer",

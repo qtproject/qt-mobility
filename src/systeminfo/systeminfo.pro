@@ -110,7 +110,7 @@ unix:!simulator {
                 }
                 contains(CONFIG,meego): { #for now... udisks
                 } else {
-                    DEFINES += QT_NO_UDISKS QT_NO_MEEGO
+                    DEFINES += QT_NO_UDISKS
                     LIBS += -lX11 -lXrandr
                    }
                 contains(connman_enabled, yes): {
@@ -121,7 +121,7 @@ unix:!simulator {
                     DEFINES += QT_NO_CONNMAN
                 }
             } else {
-                DEFINES += QT_NO_NETWORKMANAGER QT_NO_UDISKS QT_NO_CONNMAN QT_NO_MEEGO
+                DEFINES += QT_NO_NETWORKMANAGER QT_NO_UDISKS QT_NO_CONNMAN
                 LIBS += -lX11 -lXrandr
 
             }

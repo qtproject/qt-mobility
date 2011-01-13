@@ -1500,7 +1500,6 @@ bool QSystemDeviceInfoPrivate::vibrationActive()
 QSystemDeviceInfo::LockTypeFlags QSystemDeviceInfoPrivate::lockStatus()
 {
     QSystemDeviceInfo::LockTypeFlags lockFlags; /* no active locks */
-
 #if !defined(QT_NO_DBUS)
     /* Check the PIN lock status from devicelock */
     QDBusMessage lockStateCall = QDBusMessage::createMethodCall("com.nokia.devicelock", "/request",

@@ -764,14 +764,14 @@ QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QSystemScreenSaverLinuxComm
          }
 #endif
      }
-#if defined(QT_NO_DBUS) && defined(Q_WS_X11) && defined(QT_NO_MEEGO)
+#if defined(QT_NO_DBUS) && defined(Q_WS_X11) && !defined(Q_WS_MEEGO)
      changeTimeout(-1);
 #endif
  }
 
  int QSystemScreenSaverPrivate::changeTimeout(int timeout)
  {
-#if defined(Q_WS_X11) && defined(QT_NO_MEEGO)
+#if defined(Q_WS_X11) && !defined(Q_WS_MEEGO)
 
      int ttime;
      int interval;
@@ -818,7 +818,7 @@ Q_UNUSED(timeout)
          }
 #endif
      } else {
-#if defined(Q_WS_X11) && defined(QT_NO_MEEGO)
+#if defined(Q_WS_X11) && !defined(Q_WS_MEEGO)
          changeTimeout(0);
          screenSaverIsInhibited = true;
 #endif
@@ -837,7 +837,7 @@ bool QSystemScreenSaverPrivate::screenSaverInhibited()
         }
     }
 
-#if defined(Q_WS_X11) && defined(QT_NO_MEEGO)
+#if defined(Q_WS_X11) && !defined(Q_WS_MEEGO)
 
     int timeout;
     int interval;
