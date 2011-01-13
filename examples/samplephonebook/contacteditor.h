@@ -75,6 +75,7 @@ private slots:
     void cancelClicked();
     void thumbnailClicked();
     void clearThumbnailClicked();
+    void contactChanged();
 
 private:
     void updateUi(const QContact& contact);

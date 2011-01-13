@@ -201,7 +201,7 @@ void ContactEditor::updateUi(const QContact& contact)
     // thumbnail viewer
     if (defs.contains(QContactThumbnail::DefinitionName)) {
         m_thumbnailBtn->setEnabled(true);
-        QContactThumbnail thumb = curr.detail(QContactThumbnail::DefinitionName);
+        QContactThumbnail thumb = contact.detail(QContactThumbnail::DefinitionName);
         m_thumbnailView->clear();
         m_thumbnail = thumb.thumbnail();
         if (m_thumbnail.isNull()) {
