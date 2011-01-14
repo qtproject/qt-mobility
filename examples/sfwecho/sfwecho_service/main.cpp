@@ -63,11 +63,29 @@ public slots:
     {
         emit broadcastMessage(msg, QDateTime::currentDateTime());
     }
-
 private:
-
 };
 
+class EchoService2 : public EchoService
+{
+    Q_OBJECT
+
+public:
+    EchoService2(QObject* parent = 0)
+        : QObject(parent)
+    {
+    }
+
+Q_SIGNALS:
+    void broadcastMessage(const QString &msg, const QDateTime &timestamp);
+
+public slots:
+    void sendMessage(const QString &msg)
+    {
+        emit broadcastMessage(msg, QDateTime::currentDateTime());
+    }
+private:
+};
 
 void unregisterExampleService()
 {
@@ -110,11 +128,11 @@ int main(int argc, char** argv)
     QRemoteServiceRegister *serviceRegister = new QRemoteServiceRegister();
     //serviceRegister->setSecurityFilter(check);
 
-    QRemoteServiceRegister::Entry shared = serviceRegister->createEntry<EchoService>(
+    QRemoteServiceRegister::Entry shared = serviceRegister->createEntry<EchoService2>(
         "EchoService", "com.nokia.qt.example.sfwecho", "1.1");
     shared.setInstantiationType(QRemoteServiceRegister::GlobalInstance);
 
-    QRemoteServiceRegister::Entry unique = serviceRegister->createEntry<EchoService>(
+    QRemoteServiceRegister::Entry unique = serviceRegister->createEntry<EchoService2>(
         "EchoService", "com.nokia.qt.example.sfwecho", "1.0");
     unique.setInstantiationType(QRemoteServiceRegister::PrivateInstance);
 
