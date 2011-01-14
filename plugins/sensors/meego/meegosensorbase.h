@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef MAEMO6SENSORBASE_H
-#define MAEMO6SENSORBASE_H
+#ifndef MEEGOSENSORBASE_H
+#define MEEGOSENSORBASE_H
 
 #include <qsensorbackend.h>
 #include <sensormanagerinterface.h>
@@ -48,11 +48,11 @@
 
 QTM_USE_NAMESPACE
 
-        class maemo6sensorbase : public QSensorBackend
+        class meegosensorbase : public QSensorBackend
 {
 public:
-    maemo6sensorbase(QSensor *sensor);
-    virtual ~maemo6sensorbase();
+    meegosensorbase(QSensor *sensor);
+    virtual ~meegosensorbase();
 
 
 protected:

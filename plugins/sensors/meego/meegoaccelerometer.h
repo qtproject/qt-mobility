@@ -39,43 +39,35 @@
 **
 ****************************************************************************/
 
-#include "maemo6rotationsensor.h"
+#ifndef MEEGOACCELEROMETER_H
+#define MEEGOACCELEROMETER_H
 
-char const * const maemo6rotationsensor::id("maemo6.rotationsensor");
-bool maemo6rotationsensor::m_initDone = false;
+#include "meegosensorbase.h"
+#include <qaccelerometer.h>
 
-maemo6rotationsensor::maemo6rotationsensor(QSensor *sensor)
-    : maemo6sensorbase(sensor)
+#include <accelerometersensor_i.h>
+#include <datatypes/xyz.h>
+
+QTM_USE_NAMESPACE
+
+class meegoaccelerometer : public meegosensorbase
 {
-    initSensor<RotationSensorChannelInterface>(m_initDone);
-    setReading<QRotationReading>(&m_reading);
-    sensor->setProperty("hasZ", true);
-}
+    Q_OBJECT
 
-void maemo6rotationsensor::slotDataAvailable(const XYZ& data)
-{
-    m_reading.setX(data.x());
-    m_reading.setY(data.y());
-    m_reading.setZ(data.z());
-    m_reading.setTimestamp(data.XYZData().timestamp_);
-    newReadingAvailable();
-}
+public:
+    static char const * const id;
+    meegoaccelerometer(QSensor *sensor);
+protected:
+    virtual bool doConnect();
+    virtual const QString sensorName();
 
-void maemo6rotationsensor::slotFrameAvailable(const QVector<XYZ>&  frame)
-{
-    for (int i=0, l=frame.size(); i<l; i++){
-        slotDataAvailable(frame.at(i));
-    }
-}
+private:
+    QAccelerometerReading m_reading;
+    static bool m_initDone;
 
-bool maemo6rotationsensor::doConnect(){
-    if (m_bufferSize==1?
-                QObject::connect(m_sensorInterface, SIGNAL(dataAvailable(const XYZ&)), this, SLOT(slotDataAvailable(const XYZ&))):
-                QObject::connect(m_sensorInterface, SIGNAL(frameAvailable(const QVector<XYZ>& )),this, SLOT(slotFrameAvailable(const QVector<XYZ>& ))))
-        return true;
-    return false;
-}
+private slots:
+    void slotDataAvailable(const XYZ& data);
+    void slotFrameAvailable(const QVector<XYZ>&);
+};
 
-const QString maemo6rotationsensor::sensorName(){
-    return "rotationsensor";
-}
+#endif
