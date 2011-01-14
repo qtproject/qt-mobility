@@ -101,6 +101,7 @@ private:
 private: // From MNdefHandler
     void ReadComplete( CNdefRecord* /*aRecord*/, CNdefRecord::TNdefMessagePart /*aPart*/ ){}
     void ReadComplete( CNdefMessage* aMessage );
+    void ReadComplete( const RPointerArray<CNdefMessage>& aMessages ){}
     void WriteComplete();
     void HandleError( TInt aError );
     
