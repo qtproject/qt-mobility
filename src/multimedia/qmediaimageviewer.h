@@ -47,6 +47,7 @@
 
 QT_BEGIN_NAMESPACE
 
+class QAbstractVideoSurface;
 class QGraphicsVideoItem;
 class QMediaPlaylist;
 class QVideoWidget;
@@ -92,6 +93,7 @@ public:
 
     void setVideoOutput(QVideoWidget *widget);
     void setVideoOutput(QGraphicsVideoItem *item);
+    void setVideoOutput(QAbstractVideoSurface *surface);
 
     bool bind(QObject *);
     void unbind(QObject *);

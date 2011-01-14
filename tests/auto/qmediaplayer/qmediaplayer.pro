@@ -1,5 +1,7 @@
 TARGET = tst_qmediaplayer
-INCLUDEPATH += ../../../src/multimedia
+INCLUDEPATH += \
+        ../../../src/multimedia \
+        ../../../src/multimedia/video
 CONFIG += testcase
 
 symbian {

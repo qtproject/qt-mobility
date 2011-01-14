@@ -130,10 +130,7 @@ symbian|win32|maemo6|maemo5|mac:!simulator {
             modest-dbus-client-1.0 \
             TpSession \
             TelepathyQt4
-        pkgconfig.path = $$QT_MOBILITY_LIB/pkgconfig
-        pkgconfig.files = QtMessaging.pc
-        INSTALLS += pkgconfig \
-            documentation
+        INSTALLS += documentation
         LIBS += -lgconf-2 \
             -lrtcom-eventlogger \
             -lmodest-dbus-client-1.0 \
@@ -220,10 +217,7 @@ symbian|win32|maemo6|maemo5|mac:!simulator {
             meegotouch \
             qttracker \
             messagingif0
-        pkgconfig.path = $$QT_MOBILITY_LIB/pkgconfig
-        pkgconfig.files = QtMessaging.pc
-        INSTALLS += pkgconfig \
-            documentation
+        INSTALLS += documentation
     }
     symbian { 
         INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE

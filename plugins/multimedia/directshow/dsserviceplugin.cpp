@@ -104,7 +104,7 @@ QMediaServiceProviderHint::Features DSServicePlugin::supportedFeatures(
         const QByteArray &service) const
 {
     if (service == Q_MEDIASERVICE_MEDIAPLAYER)
-        return QMediaServiceProviderHint::StreamPlayback;
+        return QMediaServiceProviderHint::StreamPlayback | QMediaServiceProviderHint::VideoSurface;
     else
         return QMediaServiceProviderHint::Features();
 }

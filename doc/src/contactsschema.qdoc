@@ -40,7 +40,7 @@ The \l{Contacts}{Qt Contacts API} makes use of detail leaf classes
 which provide certain well-known functionality.  In order to develop a backend engine which
 can service clients or provide synchronization to other backends, the schema must be
 known.  The schema provided by the \l{Contacts}{Qt Contacts API} is updated with every
-release of Qt Mobility, so the function which returns the default schema definitions can
+release of QtMobility, so the function which returns the default schema definitions can
 take an integer which identifies the schema version which the engine writer developed against.
 Engine writers should call \l{QContactManagerEngine::schemaDefinitions()}{schemaDefinitions()}
 in their code which generates the manager-specific schema (which is returned to clients when
@@ -73,7 +73,7 @@ The leaf details that form the current version of the default schema are as foll
 \annotatedlist contacts-details
 
 Note that the following leaf details were added to the default schema in version 1.1 of the
-Qt Mobility project:
+QtMobility project:
 \list
   \o QContactFamily
   \o QContactFavorite

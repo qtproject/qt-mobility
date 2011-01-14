@@ -3480,21 +3480,6 @@ void QOrganizerManagerEngineV2::updateItemFetchByIdRequest(QOrganizerItemFetchBy
     }
 }
 
-/*!
-  \fn virtual QSharedPointer<QOrganizerItemObserver> QOrganizerManagerEngineV2::observeItem(QOrganizerItemId itemId) = 0;
-
-  Returns an observer object for the item with id \a itemId.
-
-  \sa QOrganizerItemObserver
- */
-
-/*!
-  Factory function to construct a QOrganizerItemObserver with given \a parent.
- */
-QOrganizerItemObserver* QOrganizerManagerEngineV2::createOrganizerItemObserver(QObject* parent)
-{
-    return new QOrganizerItemObserver(parent);
-}
 
 #include "moc_qorganizermanagerengine.cpp"
 

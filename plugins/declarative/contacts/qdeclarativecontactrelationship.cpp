@@ -38,6 +38,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#include <QtDeclarative/qdeclarativeinfo.h>
 #include "qdeclarativecontactrelationship_p.h"
 #include <QDebug>
 
@@ -146,7 +147,7 @@ void QDeclarativeContactRelationship::setRelationshipType(const QVariant& relati
             break;
         default:
             //unknown type
-            qWarning() << "unknown relationship type:" << relationshipType;
+            qmlInfo(this) << tr("unknown relationship type:") << relationshipType;
             break;
         }
     } else {
