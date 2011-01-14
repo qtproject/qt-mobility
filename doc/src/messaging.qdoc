@@ -46,18 +46,18 @@
 
 \brief The Messaging API enables access to messaging services.
 
-The Qt Messaging API enables access to messaging services to 
-search and sort messages, send messages, retrieve message 
-data, and launch the preferred messaging client on the system 
-to either display an existing message, compose a new message, 
-or respond to an existing message. 
+The Qt Messaging API enables access to messaging services to
+search and sort messages, send messages, retrieve message
+data, and launch the preferred messaging client on the system
+to either display an existing message, compose a new message,
+or respond to an existing message.
 
 \tableofcontents
 
 \section1 Namespace
 
 The QtMobility APIs are placed into the \i{QtMobility} namespace. This is done
-to facilitate the future migration of Mobility APIs into Qt. See the
+to facilitate the future migration of QtMobility APIs into Qt. See the
 \l {Quickstart Example}{Quickstart guide} for an example on how the
 namespace impacts on application development.
 
@@ -85,8 +85,8 @@ the device.
 On Microsoft Windows, MAPI header files are required to be installed,
 we recommend installing Visual Studio Express for this purpose.
 
-On Linux QMF 2010W41 or newer is required to be installed and the QMF_INCLUDEDIR and 
-QMF_LIBDIR environment variables set to the 
+On Linux QMF 2010W41 or newer is required to be installed and the QMF_INCLUDEDIR and
+QMF_LIBDIR environment variables set to the
 messagingframework/src/libraries/qmfclient
 and build/messagingframework/image/lib directories respectively.
 
@@ -202,9 +202,9 @@ showing a message using a native application.
 
 Service actions communciate their operational status by emitting signals.
 
-Functions outside the QMessageService class should not invoke network activity. 
-That is, only QMessageService functions should be responsible for initiating 
-network activity (Note: this is not true for the Windows desktop and mobile 
+Functions outside the QMessageService class should not invoke network activity.
+That is, only QMessageService functions should be responsible for initiating
+network activity (Note: this is not true for the Windows desktop and mobile
 platforms, where network activity can occur outside the client's control).
 
 \section1 Concurrent Access to Messaging Data
@@ -217,7 +217,7 @@ concurrent access, however it does not give any guarantees as to
 performance of messaging data access if accessed concurrently by
 multiple clients.
 
-A single client may access the messaging data from multiple threads, but 
+A single client may access the messaging data from multiple threads, but
 only one thread may access the data concurrently.
 
 \section1 Abstraction of Messaging Data Storage Mechanism
@@ -245,7 +245,7 @@ information from the messages stored by the system.
 
 The \l {serviceactions}{Service Actions} example is a program to demonstrate
 how to compose, send, show, query and retrieve messages, and also react to
-message store events using the Qt Mobility Messaging API.
+message store events using the QtMobility Messaging API.
 
 */
 
