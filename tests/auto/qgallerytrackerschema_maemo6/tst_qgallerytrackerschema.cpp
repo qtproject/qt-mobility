@@ -1325,7 +1325,7 @@ void tst_QGalleryTrackerSchema::queryResponseRootItem_data()
             <<  "SELECT DISTINCT ?x nie:url(?x) rdf:type(?x)  "
                 "WHERE {"
                     "{?x rdf:type nfo:Audio}"
-                    "FILTER(nie:isLogicalPartOf(?x)=<musicAlbum:Greatest%20Hits>)"
+                    "FILTER(nmm:musicAlbum(?x)=<musicAlbum:Greatest%20Hits>)"
                 "}";
 
     QTest::newRow("Album, Direct Audio Descendants")
@@ -1335,7 +1335,7 @@ void tst_QGalleryTrackerSchema::queryResponseRootItem_data()
             <<  "SELECT DISTINCT ?x nie:url(?x) rdf:type(?x)  "
                 "WHERE {"
                     "{?x rdf:type nfo:Audio}"
-                    "FILTER(nie:isLogicalPartOf(?x)=<musicAlbum:Greatest%20Hits>)"
+                    "FILTER(nmm:musicAlbum(?x)=<musicAlbum:Greatest%20Hits>)"
                 "}";
 
     QTest::newRow("Album Artist, All Audio Descendants")

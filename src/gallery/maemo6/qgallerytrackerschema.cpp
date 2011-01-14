@@ -1146,7 +1146,7 @@ QDocumentGallery::Error QGalleryTrackerSchema::buildFilterQuery(
             } else if (itemTypes[index].itemType == QDocumentGallery::Album) {
                 if (m_itemIndex) {
                     if (qt_galleryItemTypeList[m_itemIndex].itemType == QDocumentGallery::Audio) {
-                        QString property = QLatin1String("nie:isLogicalPartOf(?x)");
+                        QString property = QLatin1String("nmm:musicAlbum(?x)");
                         if (!filterStatement.isEmpty())
                             filterStatement += QLatin1String(" && ");
                         filterStatement
