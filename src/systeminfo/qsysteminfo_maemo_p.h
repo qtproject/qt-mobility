@@ -212,7 +212,7 @@ public:
 
     QSystemDisplayInfoPrivate(QSystemDisplayInfoLinuxCommonPrivate *parent = 0);
     virtual ~QSystemDisplayInfoPrivate();
-    QSystemDisplayInfo::DisplayOrientation getOrientation(int screen);
+    QSystemDisplayInfo::DisplayOrientation orientation(int screen);
     float contrast(int screen);
     int getDPIWidth(int screen);
     int getDPIHeight(int screen);

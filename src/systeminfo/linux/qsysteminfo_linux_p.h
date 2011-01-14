@@ -147,7 +147,7 @@ class QSystemDisplayInfoPrivate : public QSystemDisplayInfoLinuxCommonPrivate
     Q_OBJECT
 
 public:
-    QSystemDisplayInfo::DisplayOrientation getOrientation(int screen);
+    QSystemDisplayInfo::DisplayOrientation orientation(int screen);
     float contrast(int screen);
     int getDPIWidth(int screen);
     int getDPIHeight(int screen);

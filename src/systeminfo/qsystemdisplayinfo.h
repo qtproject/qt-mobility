@@ -78,7 +78,7 @@ public:
     static int displayBrightness(int screen);
     static int colorDepth(int screen);
 
-    QSystemDisplayInfo::DisplayOrientation getOrientation(int screen);//1.2
+    QSystemDisplayInfo::DisplayOrientation orientation(int screen);//1.2
     float contrast(int screen);//1.2
     int getDPIWidth(int screen);//1.2
     int getDPIHeight(int screen);//1.2

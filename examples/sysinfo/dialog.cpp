@@ -243,7 +243,7 @@ void Dialog::setupDisplay()
     brightnessLabel->setText(QString::number(di.displayBrightness(0)));
     colorDepthLabel->setText(QString::number(di.colorDepth((0))));
 
-    QSystemDisplayInfo::DisplayOrientation orientation = di.getOrientation(0);
+    QSystemDisplayInfo::DisplayOrientation orientation = di.orientation(0);
     QString orientStr;
     switch(orientation) {
     case QSystemDisplayInfo::Landscape:
