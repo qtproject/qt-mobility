@@ -198,7 +198,6 @@ symbian|win32|maemo6|maemo5|mac:!simulator {
         PKGCONFIG += glib-2.0 \
             dbus-glib-1 \
             gconf-2.0 \
-            libosso \
             TelepathyQt4 \
             qmfclient \
             commhistory \
@@ -210,7 +209,6 @@ symbian|win32|maemo6|maemo5|mac:!simulator {
         QMAKE_PKGCONFIG_REQUIRES = glib-2.0 \
             dbus-glib-1 \
             gconf-2.0 \
-            osso \            
             TelepathyQt4 \
             qmfclient \
             commhistory \
