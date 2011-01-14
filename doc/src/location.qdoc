@@ -323,7 +323,7 @@ The following table shows names of the default managers for each platform and wh
     \o Landmarks are stored in an SQLite database.
 \row
     \o com.nokia.qt.landmarks.engines.qsparql
-    \o Harmattan
+    \o Harmattan,Meego
     \o Landmarks are stored in Tracker using SPARQL queries.
 \endtable
 
