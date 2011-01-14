@@ -49,7 +49,7 @@ SOURCES += \
 symbian {
     contains(S60_VERSION, 3.1) | contains(S60_VERSION, 3.2) {
         DEFINES += DO_NOT_BUILD_BLUETOOTH_SYMBIAN_BACKEND
-        message("S60 3.1 or 3.2 sdk not supported by bluetooth)
+        message("S60 3.1 or 3.2 sdk not supported by bluetooth")
     }
 }
 
@@ -59,18 +59,18 @@ symbian {
         include(symbian/symbian.pri)
 
         PRIVATE_HEADERS += \
-			bluetooth/qbluetoothtransferreply_symbian_p.h
+                        bluetooth/qbluetoothtransferreply_symbian_p.h
 
         SOURCES += \
-			bluetooth/qbluetoothserviceinfo_symbian.cpp\
-			bluetooth/qbluetoothdevicediscoveryagent_symbian.cpp\
+                        bluetooth/qbluetoothserviceinfo_symbian.cpp\
+                        bluetooth/qbluetoothdevicediscoveryagent_symbian.cpp\
             bluetooth/qbluetoothservicediscoveryagent_symbian.cpp\
             bluetooth/qbluetoothsocket_symbian.cpp\
             bluetooth/qrfcommserver_symbian.cpp \
             bluetooth/qbluetoothlocaldevice_symbian.cpp \
-			bluetooth/qbluetoothtransfermanager_symbian.cpp \
+                        bluetooth/qbluetoothtransfermanager_symbian.cpp \
             bluetooth/qbluetoothtransferreply_symbian.cpp \
-        	bluetooth/ql2capserver_symbian.cpp
+                bluetooth/ql2capserver_symbian.cpp
 
         contains(S60_VERSION, 5.0) {
             message("NOTICE - START")

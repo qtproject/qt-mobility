@@ -11,7 +11,6 @@ SourcePrefix: "%{name}-opensource-src-%{version}"
 Patches:
     - no_rpath.patch
     - fix_translations_install_path.patch
-    - enable_pkgconfig_support.patch
     - enable_camerabin_with_meego_target.patch
 Description: |
     Qt Mobility delivers a set of new APIs for mobile device functionality. These
@@ -317,6 +316,15 @@ SubPackages:
           Qt Mobility delivers a set of new APIs for mobile device functionality.
 
           This package contains the System Information QML plugin for QtDeclarative.
+
+    - Name: libdeclarative-connectivity
+      AsWholeName: yes
+      Summary: Qt Mobility Connectivity QML plugin
+      Group: System/Libraries
+      Description: |
+          Qt Mobility delivers a set of new APIs for mobile device functionality.
+
+          This package contains the Connectivity QML plugin for QtDeclarative.
 
     - Name: servicefw
       AsWholeName: yes

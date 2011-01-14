@@ -27,9 +27,9 @@
 
 /*!
     \page all-examples.html
-    \title Qt Mobility Examples
+    \title QtMobility Examples
 
-    Qt Mobility comes with a variety of examples that cover the entire range of the Qt Mobility
+    QtMobility comes with a variety of examples that cover the entire range of the QtMobility
     APIs. Note that some examples require Qt declarative which can by obtain via \l {http://qt.gitorious.org/qt}.
 
     \section2 Bearer Management

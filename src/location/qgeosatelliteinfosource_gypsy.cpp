@@ -234,7 +234,6 @@ int QGeoSatelliteInfoSourceGypsy::init()
     device_name = m_engine->eng_gconf_client_get_string(client, "/apps/geoclue/master/org.freedesktop.Geoclue.GPSDevice", NULL);
     g_object_unref(client);
     QString deviceName(QString::fromAscii(device_name));
-    qDebug() << "QGeoSatelliteInfoSourceGypsy GPS device: " << deviceName;
     if (deviceName.isEmpty() ||
             (deviceName.trimmed().at(0) == '/' && !QFile::exists(deviceName.trimmed()))) {
         qWarning ("QGeoSatelliteInfoSourceGypsy Empty/nonexistent GPS device name detected.");
@@ -245,14 +244,19 @@ int QGeoSatelliteInfoSourceGypsy::init()
     }
     GypsyControl *control = NULL;
     control = m_engine->eng_gypsy_control_get_default();
+    if (!control) {
+        qWarning("QGeoSatelliteInfoSourceGypsy unable to create Gypsy control.");
+        m_engine->eng_g_free(device_name);
+        return -1;
+    }
     // (path is the DBus path)
     path = m_engine->eng_gypsy_control_create (control, device_name, &error);
     m_engine->eng_g_free(device_name);
     g_object_unref(control);
     if (!path) {
-        g_warning ("QGeoSatelliteInfoSourceGypsy error creating client.");
+        qWarning ("QGeoSatelliteInfoSourceGypsy error creating client.");
         if (error) {
-            g_warning ("error message: %s", error->message);
+            qWarning ("error message: %s", error->message);
             g_error_free (error);
         }
         return -1;
@@ -261,9 +265,9 @@ int QGeoSatelliteInfoSourceGypsy::init()
     m_satellite = m_engine->eng_gypsy_satellite_new (path);
     m_engine->eng_g_free(path);
     if (!m_device || !m_satellite) {
-        g_warning ("QGeoSatelliteInfoSourceGypsy error creating satellite device.");
-        g_warning ("Is GPS device set correctly? If not, use gconftool-2 to set it, e.g.: ");
-        g_warning ("gconftool-2 -t string -s /apps/geoclue/master/org.freedesktop.Geoclue.GPSDevice /dev/ttyUSB0");
+        qWarning ("QGeoSatelliteInfoSourceGypsy error creating satellite device.");
+        qWarning ("Is GPS device set correctly? If not, use gconftool-2 to set it, e.g.: ");
+        qWarning ("gconftool-2 -t string -s /apps/geoclue/master/org.freedesktop.Geoclue.GPSDevice /dev/ttyUSB0");
         if (m_device)
             g_object_unref(m_device);
         if (m_satellite)
@@ -272,7 +276,7 @@ int QGeoSatelliteInfoSourceGypsy::init()
     }
     m_engine->eng_gypsy_device_start (m_device, &error);
     if (error) {
-        g_warning ("QGeoSatelliteInfoSourceGypsy error starting device: %s ",
+        qWarning ("QGeoSatelliteInfoSourceGypsy error starting device: %s ",
                    error->message);
         g_error_free(error);
         g_object_unref(m_device);

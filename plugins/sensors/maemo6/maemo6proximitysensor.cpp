@@ -61,7 +61,6 @@ void maemo6proximitysensor::slotDataAvailable(const Unsigned& data)
 bool maemo6proximitysensor::doConnect(){
     if (!(QObject::connect(m_sensorInterface, SIGNAL(dataAvailable(const Unsigned&)),
                            this, SLOT(slotDataAvailable(const Unsigned&))))){
-        qWarning() << "Unable to connect "<< sensorName();
         return false;
     }
     return true;

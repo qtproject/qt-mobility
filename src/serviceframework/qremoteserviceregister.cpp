@@ -167,7 +167,7 @@ const QMetaObject * QRemoteServiceRegister::Entry::metaObject() const
     Sets the QRemoteServiceRegister::InstanceType of the registration entry.
 
     If this is not explicitly called, the default instance \a type for the registration entry 
-    is QRemoteServiceRegister::GlobalInstance.
+    is QRemoteServiceRegister::PrivateInstance.
 */
 void QRemoteServiceRegister::Entry::setInstantiationType(QRemoteServiceRegister::InstanceType type)
 {

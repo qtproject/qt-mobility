@@ -406,6 +406,88 @@ void TestCntRelationship::invalidFirstAndSecondContactGroupRelationship()
     QVERIFY(error != QContactManager::NoError);
 }
 
+/*
+ * Test batch saving/removing group relationship functionality
+ */
+void TestCntRelationship::batchOperationGroupRelationship()
+{
+    //create two groups
+    QContact groupContact1;
+    groupContact1.setType(QContactType::TypeGroup);
+    QContactManager::Error err;
+    m_manager->saveContact(&groupContact1, &err);
+    
+    QContact groupContact2;
+    groupContact2.setType(QContactType::TypeGroup);
+    m_manager->saveContact(&groupContact2, &err);
+
+    //create contacts
+    QContact contact1;
+    contact1.setType(QContactType::TypeContact);
+    m_manager->saveContact(&contact1, &err);
+    
+    QContact contact2;
+    contact2.setType(QContactType::TypeContact);
+    m_manager->saveContact(&contact2, &err);
+
+    QList <QContactRelationship> inputList;
+    QList <QContactRelationship> relationshipList;
+    //create relationships 
+    QContactRelationship relationship;
+    relationship.setRelationshipType(QContactRelationship::HasMember);
+    relationship.setFirst(groupContact1.id());
+    relationship.setSecond(contact1.id());
+    inputList.append(relationship);
+    relationship.setSecond(contact2.id());
+    inputList.append(relationship);
+    QSet<QContactLocalId> affectedContacts;
+    QMap<int,QContactManager::Error> errorMap;
+    
+    QVERIFY(true==m_relationship->saveRelationships(&affectedContacts,&inputList,&errorMap, &err));
+    QVERIFY(err == QContactManager::NoError);
+    QVERIFY(affectedContacts.count() == 3); 
+    relationshipList = m_relationship->relationships(QLatin1String(QContactRelationship::HasMember), groupContact1.id(), QContactRelationship::First, &err);
+    QVERIFY(relationshipList.count()==2);
+    QVERIFY(relationshipList[0].second()==contact1.id() || relationshipList[1].second()==contact1.id());
+    QVERIFY(relationshipList[0].second()==contact2.id() || relationshipList[1].second()==contact2.id());
+    
+    //Remove the relationships
+    QVERIFY(true==m_relationship->removeRelationships(&affectedContacts,relationshipList,&errorMap, &err));
+    QVERIFY(err == QContactManager::NoError);
+    QVERIFY(affectedContacts.count() == 3); 
+    relationshipList = m_relationship->relationships(QLatin1String(QContactRelationship::HasMember), groupContact1.id(), QContactRelationship::First, &err);
+    QVERIFY(relationshipList.count()==0);
+    
+    
+    //Save relationships to two different group
+    inputList.clear();
+    relationship.setRelationshipType(QContactRelationship::HasMember);
+    relationship.setFirst(groupContact1.id());
+    relationship.setSecond(contact1.id());
+    inputList.append(relationship);
+    relationship.setFirst(groupContact2.id());
+    relationship.setSecond(contact2.id());
+    inputList.append(relationship);
+    QVERIFY(true==m_relationship->saveRelationships(&affectedContacts,&inputList,&errorMap,&err));
+    QVERIFY(err == QContactManager::NoError);
+    //QVERIFY(affectedContacts.count() == 4); 
+    relationshipList = m_relationship->relationships(QLatin1String(QContactRelationship::HasMember), groupContact1.id(), QContactRelationship::First, &err);
+    QVERIFY(relationshipList.count()==1);
+    QVERIFY(relationshipList[0].second()==contact1.id()); 
+    relationshipList = m_relationship->relationships(QLatin1String(QContactRelationship::HasMember), groupContact2.id(), QContactRelationship::First, &err);
+    QVERIFY(relationshipList.count()==1);
+    QVERIFY(relationshipList[0].second()==contact2.id()); 
+    
+    //Remove the relationships
+    QVERIFY(true==m_relationship->removeRelationships(&affectedContacts,inputList,&errorMap,&err));
+    QVERIFY(err == QContactManager::NoError);
+    QVERIFY(affectedContacts.count() == 4); 
+    relationshipList = m_relationship->relationships(QLatin1String(QContactRelationship::HasMember), groupContact1.id(), QContactRelationship::First, &err);
+    QVERIFY(relationshipList.count()==0);
+    relationshipList = m_relationship->relationships(QLatin1String(QContactRelationship::HasMember), groupContact2.id(), QContactRelationship::First, &err);
+    QVERIFY(relationshipList.count()==0);
+}
+
 bool TestCntRelationship::validateRelationshipFilter(const QContactRelationship::Role role, const QContactId contactId, const QList<QContactLocalId> expectedContacts)
     {
     QContactRelationshipFilter filter;

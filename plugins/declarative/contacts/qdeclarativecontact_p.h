@@ -110,6 +110,8 @@ public:
     Q_INVOKABLE QDeclarativeListProperty<QDeclarativeContactDetail> details(const QVariant& name);
 
     Q_INVOKABLE bool removeDetail(QDeclarativeContactDetail* detail);
+    Q_INVOKABLE bool addDetail(QDeclarativeContactDetail* detail);
+
     QDeclarativeContactAddress* address();
     QDeclarativeContactAnniversary* anniversary();
     QDeclarativeContactAvatar* avatar();

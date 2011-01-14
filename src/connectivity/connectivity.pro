@@ -25,4 +25,6 @@ simulator {
     qtAddLibrary(QtMobilitySimulator)
 }
 
+CONFIG += middleware
 include(../../features/deploy.pri)
+

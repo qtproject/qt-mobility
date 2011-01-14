@@ -111,15 +111,16 @@ void S60AudioPlayerSession::MaloLoadingComplete()
 
 void S60AudioPlayerSession::doPlay()
 {
-// For some reason loading progress callbalck are not called on emulator
-#ifdef __WINSCW__
-    buffering();
-#endif
-    m_player->Play();
-#ifdef __WINSCW__
-    buffered();
-#endif
-
+    // For some reason loading progress callback are not called on emulator
+    // Same is the case with hardware. Will be fixed as part of QTMOBILITY-782.
+        
+    //#ifdef __WINSCW__
+        buffering();
+    //#endif
+        m_player->Play();
+    //#ifdef __WINSCW__
+        buffered();
+    //#endif
 }
 
 void S60AudioPlayerSession::doPauseL()
@@ -163,6 +164,16 @@ void S60AudioPlayerSession::updateMetaDataEntriesL()
     emit metaDataChanged();
 }
 
+
+void S60AudioPlayerSession::setPlaybackRate(qreal rate)
+{
+    /*set playback rate is not supported so returning 
+    not supported error.*/
+	Q_UNUSED(rate);
+    int err = KErrNotSupported;
+    setError(err);
+}
+
 int S60AudioPlayerSession::doGetBufferStatusL() const
 {
     int progress = 0;
@@ -186,7 +197,8 @@ void S60AudioPlayerSession::MapcInitComplete(TInt aError, const TTimeIntervalMic
     setActiveEndpoint(m_audioEndpoint);
     setError(err);
 #endif //HAS_AUDIOROUTING
-    loaded();
+    if (KErrNone == aError)
+        loaded();
 }
 
 #ifdef S60_DRM_SUPPORTED
@@ -195,8 +207,10 @@ void S60AudioPlayerSession::MdapcPlayComplete(TInt aError)
 void S60AudioPlayerSession::MapcPlayComplete(TInt aError)
 #endif
 {
-    setError(aError);
-    endOfMedia();
+    if (KErrNone == aError)
+        endOfMedia();
+    else
+        setError(aError);
 }
 
 void S60AudioPlayerSession::doSetAudioEndpoint(const QString& audioEndpoint)

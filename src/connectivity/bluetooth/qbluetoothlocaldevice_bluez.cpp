@@ -54,7 +54,9 @@ QTM_BEGIN_NAMESPACE
 
 #define AGENT_PATH "/qt/agent"
 
-class QBluetoothLocalDevicePrivate : public QObject
+class QBluetoothLocalDevicePrivate : public QObject,
+                                     protected QDBusContext
+
 {
     Q_OBJECT
 
@@ -64,7 +66,7 @@ public:
     QBluetoothLocalDevice *q;
     QString agent_path;
     QBluetoothAddress address;
-    QBluetoothLocalDevice::Pairing pairing;
+    QBluetoothLocalDevice::Pairing pairing;       
 
 public Q_SLOTS: // METHODS
     void Authorize(const QDBusObjectPath &in0, const QString &in1);
@@ -78,12 +80,19 @@ public Q_SLOTS: // METHODS
 
     void pairingCompleted(QDBusPendingCallWatcher*);
 
-signals:
-    void pairingFinished(const QBluetoothAddress &address, QBluetoothLocalDevice::Pairing pairing);
-    void pairingDisplayPinCode(const QBluetoothAddress &address, QString pin);
+    void sendPinCode(QString pin);
+    void sendPasskey(quint32 key);
 
+private:
+    QDBusMessage passKeyMsg;
+    QDBusMessage pinCodeMsg;
+
+//signals:
+//    void pairingFinished(const QBluetoothAddress &address, QBluetoothLocalDevice::Pairing pairing);
+//    void pairingDisplayPinCode(const QBluetoothAddress &address, QString pin);
 
 };
+
 
 /*!
     Constructs a QBluetoothLocalDevice.
@@ -109,9 +118,9 @@ QBluetoothLocalDevice::QBluetoothLocalDevice(QObject *parent)
     this->d_ptr->q = this;
     this->d_ptr->agent = 0x0;
 
-    connect(d_ptr, SIGNAL(pairingFinished(const QBluetoothAddress&,QBluetoothLocalDevice::Pairing)), this, SIGNAL(pairingFinished(const QBluetoothAddress&,QBluetoothLocalDevice::Pairing)));
-    connect(this->d_ptr, SIGNAL(pairingDisplayPinCode(const QBluetoothAddress &,QString)),
-            this, SIGNAL(pairingDisplayPinCode(const QBluetoothAddress &,QString)));
+//    connect(d_ptr, SIGNAL(pairingFinished(const QBluetoothAddress&,QBluetoothLocalDevice::Pairing)), this, SIGNAL(pairingFinished(const QBluetoothAddress&,QBluetoothLocalDevice::Pairing)));
+//    connect(this->d_ptr, SIGNAL(pairingDisplayPinCode(const QBluetoothAddress &,QString)),
+//            this, SIGNAL(pairingDisplayPinCode(const QBluetoothAddress &,QString)));
 
     qsrand(QTime::currentTime().msec());
     this->d_ptr->agent_path = AGENT_PATH;
@@ -382,6 +391,16 @@ QBluetoothLocalDevice::Pairing QBluetoothLocalDevice::pairingStatus(const QBluet
 
 }
 
+void QBluetoothLocalDevice::sendPinCode(QString pin)
+{
+    d_ptr->sendPinCode(pin);
+}
+
+void QBluetoothLocalDevice::sendPasskey(quint32 key)
+{
+    d_ptr->sendPasskey(key);
+}
+
 void QBluetoothLocalDevicePrivate::Authorize(const QDBusObjectPath &in0, const QString &in1)
 {
     qDebug() << "Got authorize for" << in0.path() << in1;
@@ -390,6 +409,7 @@ void QBluetoothLocalDevicePrivate::Authorize(const QDBusObjectPath &in0, const Q
 void QBluetoothLocalDevicePrivate::Cancel()
 {
     qDebug() << "Got cancel";
+    emit q->pairingCancelDialog(q->address());
 }
 
 void QBluetoothLocalDevicePrivate::ConfirmModeChange(const QString &in0)
@@ -410,11 +430,15 @@ void QBluetoothLocalDevicePrivate::Release()
 void QBluetoothLocalDevicePrivate::RequestConfirmation(const QDBusObjectPath &in0, uint in1)
 {
     qDebug() << Q_FUNC_INFO << in0.path() << in1;
+    emit q->pairingDisplayConfirmation(address, QString("%1").arg(in1));
+    return;
 }
 
 uint QBluetoothLocalDevicePrivate::RequestPasskey(const QDBusObjectPath &in0)
 {
-    qDebug() << Q_FUNC_INFO << in0.path();
+    setDelayedReply(true);
+    passKeyMsg = message();
+    emit q->pairingRequestPasskey(address);
     return 0;
 }
 
@@ -425,7 +449,7 @@ QString QBluetoothLocalDevicePrivate::RequestPinCode(const QDBusObjectPath &in0)
     QString pin = QString("%1").arg(qrand()&1000000);
     pin = QString("%1").arg(pin, 6, '0');
 
-    emit pairingDisplayPinCode(address, pin);
+    emit q->pairingDisplayPinCode(address, pin);
     return pin;
 }
 
@@ -435,7 +459,7 @@ void QBluetoothLocalDevicePrivate::pairingCompleted(QDBusPendingCallWatcher *wat
 
     if(reply.isError()) {
         qDebug() << Q_FUNC_INFO << "failed to create pairing" << reply.error();
-        emit pairingFinished(address, QBluetoothLocalDevice::Unpaired);
+        emit q->pairingFinished(address, QBluetoothLocalDevice::Unpaired);
         delete watcher;
         return;
     }
@@ -444,7 +468,7 @@ void QBluetoothLocalDevicePrivate::pairingCompleted(QDBusPendingCallWatcher *wat
     findReply.waitForFinished();
     if(findReply.isError()) {
         qDebug() << Q_FUNC_INFO << "failed to find device" << findReply.error();
-        emit pairingFinished(address, QBluetoothLocalDevice::Unpaired);
+        emit q->pairingFinished(address, QBluetoothLocalDevice::Unpaired);
         delete watcher;
         return;
     }
@@ -454,14 +478,26 @@ void QBluetoothLocalDevicePrivate::pairingCompleted(QDBusPendingCallWatcher *wat
 
     if(pairing == QBluetoothLocalDevice::AuthorizedPaired) {
         device.SetProperty(QLatin1String("Trusted"), QDBusVariant(QVariant(true)));
-        emit pairingFinished(address, QBluetoothLocalDevice::AuthorizedPaired);
+        emit q->pairingFinished(address, QBluetoothLocalDevice::AuthorizedPaired);
     }
     else {
         device.SetProperty(QLatin1String("Trusted"), QDBusVariant(QVariant(false)));
-        emit pairingFinished(address, QBluetoothLocalDevice::Paired);
+        emit q->pairingFinished(address, QBluetoothLocalDevice::Paired);
     }
     delete watcher;
 
+}
+
+void QBluetoothLocalDevicePrivate::sendPinCode(QString pin)
+{
+    QDBusMessage reply = pinCodeMsg.createReply(QVariant(pin));
+    connection().send(reply);
+}
+
+void QBluetoothLocalDevicePrivate::sendPasskey(quint32 key)
+{
+    QDBusMessage reply = passKeyMsg.createReply(QVariant(key));
+    connection().send(reply);
 }
 
 #include "qbluetoothlocaldevice_bluez.moc"
