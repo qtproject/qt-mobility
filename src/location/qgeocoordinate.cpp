@@ -433,7 +433,7 @@ QGeoCoordinate QGeoCoordinate::atDistanceAndAzimuth(qreal distance, qreal azimut
         return QGeoCoordinate();
 
     double resultLon, resultLat;
-    QGeoCoordinatePrivate::atDistanceAndAzimuth(*this, azimuth, distance,
+    QGeoCoordinatePrivate::atDistanceAndAzimuth(*this, distance, azimuth,
                                                 &resultLon, &resultLat);
 
     if (resultLon > 180.0)
