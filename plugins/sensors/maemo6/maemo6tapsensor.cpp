@@ -76,9 +76,9 @@ void maemo6tapsensor::slotDataAvailable(const Tap& data)
     // Set tap direction
     QTapReading::TapDirection o;
     switch (data.direction()) {
-    case TapData::X:         o = QTapReading::X;         break;
-    case TapData::Y:         o = QTapReading::Y;         break;
-    case TapData::Z:         o = QTapReading::Z;         break;
+    case TapData::X:         o = QTapReading::X_Both;    break;
+    case TapData::Y:         o = QTapReading::Y_Both;    break;
+    case TapData::Z:         o = QTapReading::Z_Both;    break;
     case TapData::LeftRight: o = QTapReading::X_Pos;     break;
     case TapData::RightLeft: o = QTapReading::X_Neg;     break;
     case TapData::TopBottom: o = QTapReading::Z_Neg;     break;
