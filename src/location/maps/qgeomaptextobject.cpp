@@ -179,6 +179,7 @@ void QGeoMapTextObject::setFont(const QFont &font)
         d_ptr->item->setFont(font);
         d_ptr->doAlignment();
         emit fontChanged(font);
+        emit mapNeedsUpdate();
     }
 }
 
@@ -206,6 +207,7 @@ void QGeoMapTextObject::setPen(const QPen &pen)
         return;
 
     d_ptr->item->setPen(newPen);
+    d_ptr->doAlignment();
     emit penChanged(pen);
     emit mapNeedsUpdate();
 }
@@ -228,6 +230,7 @@ void QGeoMapTextObject::setBrush(const QBrush &brush)
 {
     if (d_ptr->item->brush() != brush) {
         d_ptr->item->setBrush(brush);
+        d_ptr->doAlignment();
         emit brushChanged(brush);
         emit mapNeedsUpdate();
     }
@@ -366,23 +369,26 @@ void QGeoMapTextObjectPrivate::doAlignment()
 {
     Qt::Alignment align = alignment;
     QTransform trans;
+    item->setTransform(trans);
 
-    QPointF center = item->boundingRect().center();
+    QRectF rect = item->boundingRect();
+    QPointF center = rect.center();
 
-    if (align & Qt::AlignTop) {
-        trans.translate(0, -1 * item->boundingRect().top());
-    } else if (align & Qt::AlignBottom) {
-        trans.translate(0, -1 * item->boundingRect().bottom());
-    } else if (align & Qt::AlignVCenter) {
+    if (align & Qt::AlignVCenter) {
         trans.translate(0, -1 * center.y());
+    } else if (align & Qt::AlignTop) {
+        trans.translate(0, -1 * rect.top());
+    } else if (align & Qt::AlignBottom) {
+        trans.translate(0, -1 * rect.bottom());
     }
-    if (align & Qt::AlignLeft) {
-        trans.translate(-1 * item->boundingRect().left(), 0);
-    } else if (align & Qt::AlignRight) {
-        trans.translate(-1 * item->boundingRect().right(), 0);
-    } else if (align & Qt::AlignHCenter) {
+    if (align & Qt::AlignHCenter) {
         trans.translate(-1 * center.x(), 0);
+    } else if (align & Qt::AlignLeft) {
+        trans.translate(-1 * rect.left(), 0);
+    } else if (align & Qt::AlignRight) {
+        trans.translate(-1 * rect.right(), 0);
     }
+
     trans.translate(offset.x(), offset.y());
     item->setTransform(trans);
 

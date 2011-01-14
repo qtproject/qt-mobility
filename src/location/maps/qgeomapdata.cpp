@@ -55,6 +55,7 @@
 #include "qgeomapobject.h"
 #include "qgeomappixmapobject.h"
 #include "qgeomapgroupobject.h"
+#include "qgeomaptextobject.h"
 #include "qgeomappingmanagerengine.h"
 #include "qgeomapoverlay.h"
 
@@ -410,9 +411,21 @@ QList<QGeoMapObject*> QGeoMapData::mapObjectsAtScreenPosition(const QPointF &scr
                     QTransform inv = t.inverted(&ok);
                     if (ok) {
                         QPointF testPt = screenPosition * inv;
-                        if (object->graphicsItem()->shape().contains(testPt)) {
-                            contains = true;
-                            break;
+                        QGraphicsItem *item = object->graphicsItem();
+
+                        // we have to special case text objects here
+                        // in order to maintain their old (1.1) behaviour
+                        QGeoMapTextObject *tobj = qobject_cast<QGeoMapTextObject*>(object);
+                        if (tobj) {
+                            if (item->boundingRect().contains(testPt)) {
+                                contains = true;
+                                break;
+                            }
+                        } else {
+                            if (item->shape().contains(testPt)) {
+                                contains = true;
+                                break;
+                            }
                         }
                     }
                 }
