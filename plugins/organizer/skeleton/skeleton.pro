@@ -1,5 +1,5 @@
 TEMPLATE = lib
-CONFIG += plugin
+CONFIG += plugin testplugin
 TARGET = $$qtLibraryTarget(qtorganizer_skeleton)
 PLUGIN_TYPE=organizer
 
