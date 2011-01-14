@@ -62,12 +62,12 @@ public:
 public:
     CNearFieldTag * CastToTag();
     void SetConnection(MNfcConnection * aTagConnection) { iTagConnection = aTagConnection; }
-    
+
     TInt OpenConnection();
     void CloseConnection();
     TBool IsConnectionOpened();
 
-    TInt RawModeAccess(const TDesC8& aCommand, TDes8& aResponse,const TTimeIntervalMicroSeconds32& aTimeout);
+    TInt RawModeAccess(const TDesC8& aCommand, TDes8& aResponse, TTimeIntervalMicroSeconds32& aTimeout);
 
     MNfcConnection * TagConnection() { return iTagConnection;}
 

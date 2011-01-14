@@ -77,14 +77,14 @@ CNearFieldTag * CNearFieldTag::CastToTag()
     {
     BEGIN
     TInt error = KErrNone;
-    
+
     if (!IsConnectionOpened())
         {
         error = OpenConnection();
         LOG("open connection, error is "<<error);
         }
     END
-    return (error == KErrNone) ? const_cast<CNearFieldTag *>(this) 
+    return (error == KErrNone) ? const_cast<CNearFieldTag *>(this)
                                : reinterpret_cast<CNearFieldTag *>(0);
     }
 
@@ -115,7 +115,7 @@ TBool CNearFieldTag::IsConnectionOpened()
     return result;
     }
 
-TInt CNearFieldTag::RawModeAccess(const TDesC8& aCommand, TDes8& aResponse, const TTimeIntervalMicroSeconds32& aTimeout)
+TInt CNearFieldTag::RawModeAccess(const TDesC8& aCommand, TDes8& aResponse, TTimeIntervalMicroSeconds32& aTimeout)
     {
     BEGIN
     TInt error = KErrInUse;

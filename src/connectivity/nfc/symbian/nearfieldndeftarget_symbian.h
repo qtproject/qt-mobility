@@ -45,7 +45,7 @@
 #include <e32base.h>
 #include <nfcserver.h>
 #include <ndefconnection.h>
-#include <e32cmn.h> 
+#include <e32cmn.h>
 #include <ndefhandler.h>
 
 #include "debug.h"
@@ -84,7 +84,7 @@ public: // New functions
 public:
     CNearFieldTag * CastToTag();
     CNearFieldNdefTarget * CastToNdefTarget();
-    
+
     TInt OpenConnection();
     void CloseConnection();
     TBool IsConnectionOpened();
@@ -101,17 +101,17 @@ private:
 private: // From MNdefHandler
     void ReadComplete( CNdefRecord* /*aRecord*/, CNdefRecord::TNdefMessagePart /*aPart*/ ){}
     void ReadComplete( CNdefMessage* aMessage );
-    void ReadComplete( const RPointerArray<CNdefMessage>& aMessages ){}
+    void ReadComplete( const RPointerArray<CNdefMessage>& /*aMessages*/ ){}
     void WriteComplete();
     void HandleError( TInt aError );
-    
+
 private:
     // own
     CNearFieldTag * iTagConnection;
     CNdefConnection * iNdefConnection;
-    // own 
+    // own
     MNfcTag * iNfcTag;
-    
+
     RNfcServer& iNfcServer;
 
     TOperation iCurrentOperation;
