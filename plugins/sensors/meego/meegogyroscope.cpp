@@ -39,34 +39,45 @@
 **
 ****************************************************************************/
 
-#include "maemo6proximitysensor.h"
+#include "meegogyroscope.h"
 
-char const * const maemo6proximitysensor::id("maemo6.proximity");
-bool maemo6proximitysensor::m_initDone = false;
+char const * const meegogyroscope::id("meego.gyroscope");
+const float meegogyroscope::MILLI = 0.001;
+bool meegogyroscope::m_initDone = false;
 
-maemo6proximitysensor::maemo6proximitysensor(QSensor *sensor)
-    : maemo6sensorbase(sensor)
+meegogyroscope::meegogyroscope(QSensor *sensor)
+    : meegosensorbase(sensor)
 {
-    initSensor<ProximitySensorChannelInterface>(m_initDone);
-    setReading<QProximityReading>(&m_reading);
+//    initSensor<GyroscopeSensorChannelInterface>(m_initDone);
+    setDescription(QLatin1String("angular velocities around x, y, and z axis in degrees per second"));
+    setRanges(MILLI);
+    setReading<QGyroscopeReading>(&m_reading);
 }
 
-void maemo6proximitysensor::slotDataAvailable(const Unsigned& data)
+void meegogyroscope::slotDataAvailable(const XYZ& data)
 {
-    m_reading.setClose(data.x()? true: false);
-    m_reading.setTimestamp(data.UnsignedData().timestamp_);
+    m_reading.setX((qreal)(data.x()*MILLI));
+    m_reading.setY((qreal)(data.y()*MILLI));
+    m_reading.setZ((qreal)(data.z()*MILLI));
+    m_reading.setTimestamp(data.XYZData().timestamp_);
     newReadingAvailable();
 }
 
-bool maemo6proximitysensor::doConnect(){
-    if (!(QObject::connect(m_sensorInterface, SIGNAL(dataAvailable(const Unsigned&)),
-                           this, SLOT(slotDataAvailable(const Unsigned&))))){
-        return false;
+void meegogyroscope::slotFrameAvailable(const QVector<XYZ>&  frame)
+{
+    for (int i=0, l=frame.size(); i<l; i++){
+        slotDataAvailable(frame.at(i));
     }
-    return true;
 }
 
+bool meegogyroscope::doConnect(){
+    if (m_bufferSize==1?
+                QObject::connect(m_sensorInterface, SIGNAL(dataAvailable(const XYZ&)), this, SLOT(slotDataAvailable(const XYZ&))):
+                QObject::connect(m_sensorInterface, SIGNAL(frameAvailable(const QVector<XYZ>& )),this, SLOT(slotFrameAvailable(const QVector<XYZ>& ))))
+        return true;
+    return false;
+}
 
-const QString maemo6proximitysensor::sensorName(){
-    return "proximitysensor";
+const QString meegogyroscope::sensorName(){
+    return "gyroscopesensor";
 }

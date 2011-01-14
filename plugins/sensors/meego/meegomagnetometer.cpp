@@ -39,15 +39,15 @@
 **
 ****************************************************************************/
 
-#include "maemo6magnetometer.h"
+#include "meegomagnetometer.h"
 
-char const * const maemo6magnetometer::id("maemo6.magnetometer");
-bool maemo6magnetometer::m_initDone = false;
-const float maemo6magnetometer::NANO = 0.000000001;
+char const * const meegomagnetometer::id("meego.magnetometer");
+bool meegomagnetometer::m_initDone = false;
+const float meegomagnetometer::NANO = 0.000000001;
 
 
-maemo6magnetometer::maemo6magnetometer(QSensor *sensor)
-    : maemo6sensorbase(sensor)
+meegomagnetometer::meegomagnetometer(QSensor *sensor)
+    : meegosensorbase(sensor)
 {
     initSensor<MagnetometerSensorChannelInterface>(m_initDone);
     setDescription(QLatin1String("magnetic flux density in teslas (T)"));
@@ -55,7 +55,7 @@ maemo6magnetometer::maemo6magnetometer(QSensor *sensor)
     setReading<QMagnetometerReading>(&m_reading);
 }
 
-void maemo6magnetometer::start(){
+void meegomagnetometer::start(){
     QVariant v = sensor()->property("returnGeoValues");
     if (!(v.isValid())){
         sensor()->setProperty("returnGeoValues", false); //Set to false (the default) to return raw magnetic flux density
@@ -63,10 +63,10 @@ void maemo6magnetometer::start(){
     }
     else m_isGeoMagnetometer =  v.toBool();
 
-    maemo6sensorbase::start();
+    meegosensorbase::start();
 }
 
-void maemo6magnetometer::slotDataAvailable(const MagneticField& data)
+void meegomagnetometer::slotDataAvailable(const MagneticField& data)
 {
     //nanoTeslas given, divide with 10^9 to get Teslas
     m_reading.setX( NANO * m_isGeoMagnetometer?data.x():data.rx());
@@ -78,14 +78,14 @@ void maemo6magnetometer::slotDataAvailable(const MagneticField& data)
 }
 
 
-void maemo6magnetometer::slotFrameAvailable(const QVector<MagneticField>&   frame)
+void meegomagnetometer::slotFrameAvailable(const QVector<MagneticField>&   frame)
 {
     for (int i=0, l=frame.size(); i<l; i++){
         slotDataAvailable(frame.at(i));
     }
 }
 
-bool maemo6magnetometer::doConnect(){
+bool meegomagnetometer::doConnect(){
     if (m_bufferSize==1?
                 QObject::connect(m_sensorInterface, SIGNAL(dataAvailable(const MagneticField&)), this, SLOT(slotDataAvailable(const MagneticField&))):
                 QObject::connect(m_sensorInterface, SIGNAL(frameAvailable(const QVector<MagneticField>& )),this, SLOT(slotFrameAvailable(const QVector<MagneticField>& ))))
@@ -93,6 +93,6 @@ bool maemo6magnetometer::doConnect(){
     return false;
 }
 
-const QString maemo6magnetometer::sensorName(){
+const QString meegomagnetometer::sensorName(){
     return "magnetometersensor";
 }

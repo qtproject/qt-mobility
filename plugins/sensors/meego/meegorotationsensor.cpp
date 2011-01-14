@@ -39,38 +39,36 @@
 **
 ****************************************************************************/
 
-#include "maemo6gyroscope.h"
+#include "meegorotationsensor.h"
 
-char const * const maemo6gyroscope::id("maemo6.gyroscope");
-const float maemo6gyroscope::MILLI = 0.001;
-bool maemo6gyroscope::m_initDone = false;
+char const * const meegorotationsensor::id("meego.rotationsensor");
+bool meegorotationsensor::m_initDone = false;
 
-maemo6gyroscope::maemo6gyroscope(QSensor *sensor)
-    : maemo6sensorbase(sensor)
+meegorotationsensor::meegorotationsensor(QSensor *sensor)
+    : meegosensorbase(sensor)
 {
-//    initSensor<GyroscopeSensorChannelInterface>(m_initDone);
-    setDescription(QLatin1String("angular velocities around x, y, and z axis in degrees per second"));
-    setRanges(MILLI);
-    setReading<QGyroscopeReading>(&m_reading);
+    initSensor<RotationSensorChannelInterface>(m_initDone);
+    setReading<QRotationReading>(&m_reading);
+    sensor->setProperty("hasZ", true);
 }
 
-void maemo6gyroscope::slotDataAvailable(const XYZ& data)
+void meegorotationsensor::slotDataAvailable(const XYZ& data)
 {
-    m_reading.setX((qreal)(data.x()*MILLI));
-    m_reading.setY((qreal)(data.y()*MILLI));
-    m_reading.setZ((qreal)(data.z()*MILLI));
+    m_reading.setX(data.x());
+    m_reading.setY(data.y());
+    m_reading.setZ(data.z());
     m_reading.setTimestamp(data.XYZData().timestamp_);
     newReadingAvailable();
 }
 
-void maemo6gyroscope::slotFrameAvailable(const QVector<XYZ>&  frame)
+void meegorotationsensor::slotFrameAvailable(const QVector<XYZ>&  frame)
 {
     for (int i=0, l=frame.size(); i<l; i++){
         slotDataAvailable(frame.at(i));
     }
 }
 
-bool maemo6gyroscope::doConnect(){
+bool meegorotationsensor::doConnect(){
     if (m_bufferSize==1?
                 QObject::connect(m_sensorInterface, SIGNAL(dataAvailable(const XYZ&)), this, SLOT(slotDataAvailable(const XYZ&))):
                 QObject::connect(m_sensorInterface, SIGNAL(frameAvailable(const QVector<XYZ>& )),this, SLOT(slotFrameAvailable(const QVector<XYZ>& ))))
@@ -78,6 +76,6 @@ bool maemo6gyroscope::doConnect(){
     return false;
 }
 
-const QString maemo6gyroscope::sensorName(){
-    return "gyroscopesensor";
+const QString meegorotationsensor::sensorName(){
+    return "rotationsensor";
 }

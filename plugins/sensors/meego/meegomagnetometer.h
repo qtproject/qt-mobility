@@ -39,35 +39,39 @@
 **
 ****************************************************************************/
 
-#ifndef MAEMO6ACCELEROMETER_H
-#define MAEMO6ACCELEROMETER_H
+#ifndef MEEGOMAGNETOMETER_H
+#define MEEGOMAGNETOMETER_H
 
-#include "maemo6sensorbase.h"
-#include <qaccelerometer.h>
+#include "meegosensorbase.h"
+#include <qmagnetometer.h>
 
-#include <accelerometersensor_i.h>
-#include <datatypes/xyz.h>
+#include <magnetometersensor_i.h>
+#include <magneticfield.h>
 
 QTM_USE_NAMESPACE
 
-class maemo6accelerometer : public maemo6sensorbase
+class meegomagnetometer : public meegosensorbase
 {
     Q_OBJECT
 
 public:
     static char const * const id;
-    maemo6accelerometer(QSensor *sensor);
+    meegomagnetometer(QSensor *sensor);
 protected:
     virtual bool doConnect();
+    virtual void start();
     virtual const QString sensorName();
 
 private:
-    QAccelerometerReading m_reading;
+    static const float NANO;
+    QMagnetometerReading m_reading;
     static bool m_initDone;
+    bool m_isGeoMagnetometer;
 
 private slots:
-    void slotDataAvailable(const XYZ& data);
-    void slotFrameAvailable(const QVector<XYZ>&);
+    void slotDataAvailable(const MagneticField& data);
+    void slotFrameAvailable(const QVector<MagneticField>&);
+
 };
 
 #endif
