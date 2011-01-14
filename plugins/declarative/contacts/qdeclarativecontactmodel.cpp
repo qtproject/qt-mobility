@@ -558,7 +558,7 @@ void QDeclarativeContactModel::requestUpdated()
 void QDeclarativeContactModel::saveContact(QDeclarativeContact* dc)
 {
     if (dc) {
-        QContact c = dc->contact();
+        QContact c = d->m_manager->compatibleContact(dc->contact());
         QContactSaveRequest* req = new QContactSaveRequest(this);
         req->setManager(d->m_manager);
         req->setContact(c);
