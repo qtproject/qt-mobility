@@ -139,6 +139,15 @@ void RemoteSelector::serviceDiscovered(const QBluetoothServiceInfo &serviceInfo)
 //        new QListWidgetItem(QString::fromLatin1("%1\t%2\t%3").arg(serviceInfo.device().address().toString(),
 //                                                             serviceInfo.device().name(), serviceInfo.serviceName()));
 
+    QMutableMapIterator<int, QBluetoothServiceInfo> i(m_discoveredServices);
+    while(i.hasNext()){
+        i.next();
+        if(serviceInfo.device().address() == i.value().device().address()){
+            i.setValue(serviceInfo);
+            return;
+        }
+    }
+
     int row = ui->remoteDevices->rowCount();
     ui->remoteDevices->insertRow(row);
     QTableWidgetItem *item = new QTableWidgetItem(serviceInfo.device().address().toString());
