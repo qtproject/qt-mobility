@@ -53,6 +53,7 @@ class QDBusVariant;
 #endif
 
 #ifdef Q_OS_SYMBIAN
+#include "symbian/bluetoothlinkmanagerdevicediscoverer.h"
 #include <es_sock.h>
 #include <bt_sock.h>
 #endif
@@ -62,9 +63,6 @@ QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
 
 class QBluetoothDeviceDiscoveryAgentPrivate
-#ifdef Q_OS_SYMBIAN
-: public CActive
-#endif
 {
     Q_DECLARE_PUBLIC(QBluetoothDeviceDiscoveryAgent)
 public:
@@ -76,30 +74,39 @@ public:
     bool isActive() const;
 
 #ifdef Q_OS_SYMBIAN
-    void RunL();
-    void DoCancel();
-
-    RHostResolver hostResolver;
-    RSocketServ socketServer;
-    TNameEntry entry;
+    // private slot
+    void _q_newDeviceFound(const QBluetoothDeviceInfo &device);
 #endif
 
 #ifndef QT_NO_DBUS
     void _q_deviceFound(const QString &address, const QVariantMap &dict);
     void _q_propertyChanged(const QString &name, const QDBusVariant &value);
 #endif
-    
+
+private:
+#ifdef Q_OS_SYMBIAN
+    uint inquiryTypeToIAC() const;
+    void setError(int errorCode, QString errorDescription);
+#endif
+
     QList<QBluetoothDeviceInfo> discoveredDevices;
     QBluetoothDeviceDiscoveryAgent::InquiryType inquiryType;
-    QBluetoothDeviceDiscoveryAgent *q;   
 
 #if !defined(QT_NO_DBUS)
     OrgBluezManagerInterface *manager;
     OrgBluezAdapterInterface *adapter;
 #endif
 
+#ifdef Q_OS_SYMBIAN
+    // shared socket servet among RHostResolvers
+    RSocketServ m_socketServer;
+    // active object for device discovery
+    BluetoothLinkManagerDeviceDiscoverer *m_deviceDiscovery;
+
+#endif
+
     QBluetoothDeviceDiscoveryAgent *q_ptr;
-    
+
 };
 
 QTM_END_NAMESPACE
