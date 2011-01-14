@@ -59,6 +59,7 @@ class QGeoMapObject;
 class QGeoMapGroupObject;
 class QGeoMapDataPrivate;
 class QGeoMapOverlay;
+class QGeoMapObjectInfo;
 
 class Q_LOCATION_EXPORT QGeoMapData : public QObject
 {
