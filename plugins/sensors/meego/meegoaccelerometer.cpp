@@ -39,42 +39,47 @@
 **
 ****************************************************************************/
 
-#include "maemo6compass.h"
+#include "meegoaccelerometer.h"
 
-char const * const maemo6compass::id("maemo6.compass");
-bool maemo6compass::m_initDone = false;
+char const * const meegoaccelerometer::id("meego.accelerometer");
+bool meegoaccelerometer::m_initDone = false;
 
-maemo6compass::maemo6compass(QSensor *sensor)
-    : maemo6sensorbase(sensor)
+meegoaccelerometer::meegoaccelerometer(QSensor *sensor)
+    : meegosensorbase(sensor)
 {
-    initSensor<CompassSensorChannelInterface>(m_initDone);
-    setReading<QCompassReading>(&m_reading);
+    initSensor<AccelerometerSensorChannelInterface>(m_initDone);
+    setDescription(QLatin1String("x, y, and z axes accelerations in m/s^2"));
+    setRanges(GRAVITY_EARTH_THOUSANDTH);
+    setReading<QAccelerometerReading>(&m_reading);
 }
 
-void maemo6compass::slotDataAvailable(const Compass& data)
+void meegoaccelerometer::slotDataAvailable(const XYZ& data)
 {
-    // The scale for level is [0,3], where 3 is the best
-    // Qt: Measured as a value from 0 to 1 with higher values being better.
-    m_reading.setCalibrationLevel(((float) data.level()) / 3.0);
-
-    // The scale for degrees from sensord is [0,359]
-    // Value can be directly used as azimuth
-    m_reading.setAzimuth(data.degrees());
-
-    m_reading.setTimestamp(data.data().timestamp_);
+    // Convert from milli-Gs to meters per second per second
+    // Using 1 G = 9.80665 m/s^2
+    m_reading.setX(-data.x() * GRAVITY_EARTH_THOUSANDTH);
+    m_reading.setY(-data.y() * GRAVITY_EARTH_THOUSANDTH);
+    m_reading.setZ(-data.z() * GRAVITY_EARTH_THOUSANDTH);
+    m_reading.setTimestamp(data.XYZData().timestamp_);
     newReadingAvailable();
 }
 
-
-bool maemo6compass::doConnect(){
-    if (!(QObject::connect(m_sensorInterface, SIGNAL(dataAvailable(const Compass&)),
-                           this, SLOT(slotDataAvailable(const Compass&))))){
-        return false;
+void meegoaccelerometer::slotFrameAvailable(const QVector<XYZ>&  frame)
+{
+    for (int i=0, l=frame.size(); i<l; i++){
+        slotDataAvailable(frame.at(i));
     }
-    return true;
 }
 
-const QString maemo6compass::sensorName(){
-    return "compasssensor";
+bool meegoaccelerometer::doConnect(){
+    if (m_bufferSize==1?
+                QObject::connect(m_sensorInterface, SIGNAL(dataAvailable(const XYZ&)), this, SLOT(slotDataAvailable(const XYZ&))):
+                QObject::connect(m_sensorInterface, SIGNAL(frameAvailable(const QVector<XYZ>& )),this, SLOT(slotFrameAvailable(const QVector<XYZ>& ))))
+        return true;
+    return false;
 }
 
+
+const QString meegoaccelerometer::sensorName(){
+    return "accelerometersensor";
+}
