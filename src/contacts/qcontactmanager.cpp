@@ -279,11 +279,11 @@ QContactManager::QContactManager(const QString& managerName, const QMap<QString,
     : QObject(parent),
     d(new QContactManagerData)
 {
-    createEngine(managerName, parameters); 
+    createEngine(managerName, parameters);
 }
 
-void QContactManager::createEngine(const QString& managerName, const QMap<QString, QString>& parameters) 
-{ 
+void QContactManager::createEngine(const QString& managerName, const QMap<QString, QString>& parameters)
+{
     d->createEngine(managerName, parameters);
     connect(d->m_engine, SIGNAL(dataChanged()), this, SIGNAL(dataChanged()));
     connect(d->m_engine, SIGNAL(contactsAdded(QList<QContactLocalId>)), this, SIGNAL(contactsAdded(QList<QContactLocalId>)));
@@ -294,9 +294,9 @@ void QContactManager::createEngine(const QString& managerName, const QMap<QStrin
     connect(d->m_engine, SIGNAL(selfContactIdChanged(QContactLocalId,QContactLocalId)), this, SIGNAL(selfContactIdChanged(QContactLocalId,QContactLocalId)));
 
     connect(d->m_engine, SIGNAL(contactsChanged(QList<QContactLocalId>)),
-            this, SLOT(contactsUpdated(QList<QContactLocalId>)));
+            this, SLOT(_q_contactsUpdated(QList<QContactLocalId>)));
     connect(d->m_engine, SIGNAL(contactsRemoved(QList<QContactLocalId>)),
-            this, SLOT(contactsDeleted(QList<QContactLocalId>)));
+            this, SLOT(_q_contactsDeleted(QList<QContactLocalId>)));
 
 
     QContactManagerData::m_aliveEngines.insert(this);
@@ -726,57 +726,6 @@ bool QContactManager::removeContacts(const QList<QContactLocalId>& contactIds, Q
     return retn;
 }
 
-
-/*!
-  Returns an observer object for the contact with id \a contactId.
-
-  The returned object will emit contactChanged and contactRemoved signals until it is deleted (eg.
-  by the pointer falling out of scope).  Note that the QContactObserver in the returned
-  QSharedPointer may or may not be deleted when the client loses its reference to it.  The client
-  is responsible for keeping a reference to the shared pointer as long as it is interested in the
-  observer's signals.  When the client wishes to stop receiving signals, it should both disconnect
-  the signals and delete the shared pointer.
-
-  \sa QContactObserver
- */
-QSharedPointer<QContactObserver> QContactManager::observeContact(QContactLocalId contactId)
-{
-    QContactObserver* observer = new QContactObserver(this);
-    connect(observer, SIGNAL(destroyed(QObject*)), this, SLOT(observerDestroyed(QObject*)));
-    d->m_observerForContact.insert(contactId, observer);
-    return QSharedPointer<QContactObserver>(observer);
-}
-
-// Some private slots for observing contacts
-void QContactManager::observerDestroyed(QObject* object)
-{
-    QContactObserver* observer = reinterpret_cast<QContactObserver*>(object);
-    QContactLocalId key = d->m_observerForContact.key(observer);
-    if (key != 0) {
-        d->m_observerForContact.remove(key, observer);
-    }
-}
-
-void QContactManager::contactsUpdated(const QList<QContactLocalId>& ids)
-{
-    foreach (QContactLocalId id, ids) {
-        QList<QContactObserver*> observers = d->m_observerForContact.values(id);
-        foreach (QContactObserver* observer, observers) {
-            observer->emitContactChanged();
-        }
-    }
-}
-
-void QContactManager::contactsDeleted(const QList<QContactLocalId>& ids)
-{
-    foreach (QContactLocalId id, ids) {
-        QList<QContactObserver*> observers = d->m_observerForContact.values(id);
-        foreach (QContactObserver* observer, observers) {
-            observer->emitContactRemoved();
-        }
-    }
-}
-
 /*!
   Returns a pruned or modified version of the \a original contact which is valid and can be saved in the manager.
   The returned contact might have entire details removed or arbitrarily changed.  The cache of relationships
@@ -1124,6 +1073,7 @@ QString QContactManager::managerUri() const
 {
     return d->m_engine->managerUri();
 }
+
 
 #include "moc_qcontactmanager.cpp"
 
