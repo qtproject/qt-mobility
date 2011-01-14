@@ -4,10 +4,10 @@ PLUGIN_TYPE = sensors
 
 TEMPLATE = lib
 CONFIG += plugin
-TARGET = $$qtLibraryTarget(qtsensors_maemo6)
+TARGET = $$qtLibraryTarget(qtsensors_meego)
 
 include(version.pri)
-include(maemo6.pri)
+include(meego.pri)
 include(../../../common.pri)
 
 QT = core dbus network

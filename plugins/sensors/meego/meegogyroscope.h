@@ -39,34 +39,37 @@
 **
 ****************************************************************************/
 
-#include "maemo6proximitysensor.h"
+#ifndef MEEGOGYROSCOPE_H
+#define MEEGOGYROSCOPE_H
 
-char const * const maemo6proximitysensor::id("maemo6.proximity");
-bool maemo6proximitysensor::m_initDone = false;
+#include "meegosensorbase.h"
+#include <qgyroscope.h>
+#include <datatypes/xyz.h>
+//#include <gyroscopesensor_i.h>
 
-maemo6proximitysensor::maemo6proximitysensor(QSensor *sensor)
-    : maemo6sensorbase(sensor)
+
+QTM_USE_NAMESPACE
+
+class meegogyroscope : public meegosensorbase
 {
-    initSensor<ProximitySensorChannelInterface>(m_initDone);
-    setReading<QProximityReading>(&m_reading);
-}
+    Q_OBJECT
 
-void maemo6proximitysensor::slotDataAvailable(const Unsigned& data)
-{
-    m_reading.setClose(data.x()? true: false);
-    m_reading.setTimestamp(data.UnsignedData().timestamp_);
-    newReadingAvailable();
-}
+public:
+    static char const * const id;
+    meegogyroscope(QSensor *sensor);
+protected:
+    virtual bool doConnect();
+    virtual const QString sensorName();
 
-bool maemo6proximitysensor::doConnect(){
-    if (!(QObject::connect(m_sensorInterface, SIGNAL(dataAvailable(const Unsigned&)),
-                           this, SLOT(slotDataAvailable(const Unsigned&))))){
-        return false;
-    }
-    return true;
-}
+private:
+    QGyroscopeReading m_reading;
+    static bool m_initDone;
+    static const float MILLI;
+private slots:
+    void slotDataAvailable(const XYZ& data);
+    void slotFrameAvailable(const QVector<XYZ>&);
+
+};
 
 
-const QString maemo6proximitysensor::sensorName(){
-    return "proximitysensor";
-}
+#endif // MEEGOGYROSCOPE_H

@@ -38,7 +38,7 @@ and low-level, real-time sensors such as accelerometer data.
 
 \section1 Namespace
 The QtMobility APIs are placed into the \i{QtMobility} namespace. This is done
-to facilitate the future migration of Mobility APIs into Qt. See the
+to facilitate the future migration of QtMobility APIs into Qt. See the
 \l {Quickstart Example}{Quickstart guide} for an example on how the
 namespace impacts on application development.
 
@@ -332,7 +332,7 @@ handle the situation gracefully.
 /*!
 \page qml-sensors.html
 \title Sensors QML Plugin
-\brief A QML plugin for the Mobility Project Sensors API.
+\brief A QML plugin for the QtMobility Project Sensors API.
 
 \section1 Overview
 

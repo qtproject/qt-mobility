@@ -28,7 +28,7 @@
 /*!
     \group qml-organizer
     \title QML Organizer Plugin
-    QML Support for the Mobility Project Organizer API.
+    QML Support for the QtMobility Project Organizer API.
 
 */
 
@@ -37,7 +37,7 @@
 
     \title Organizer QML Plugin
 
-    \brief A QML plugin for the Mobility Project Organizer API.
+    \brief A QML plugin for the QtMobility Project Organizer API.
 
 
     \section1 Overview
@@ -74,7 +74,7 @@
 
     \section2 Organizer Item Details
     Several sub elements of ItemDetail are provided as part of the
-    Qt Mobility Organizer API. They are general in design but are intended
+    QtMobility Organizer API. They are general in design but are intended
     to fulfill specific use-cases. Please note that certain backends may
     choose not to support one or more of these elements as they appear
     here; they may offer their own which provide similar functionality.
@@ -84,8 +84,8 @@
     with particular values for various properties in the organizer item details.
 
     \section2 Organizer Elements
-    \note At the time of the Qt Mobility 1.1 release the QML support for the Organizer API is incomplete and likely to be refined and improved in the next patch release.
-    
+    \note At the time of the QtMobility 1.1 release the QML support for the Organizer API is incomplete and likely to be refined and improved in the next patch release.
+
     \annotatedlist qml-organizer
 */
 

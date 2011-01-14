@@ -39,34 +39,43 @@
 **
 ****************************************************************************/
 
-#ifndef MAEMO6PROXIMITYSENSOR_H
-#define MAEMO6PROXIMITYSENSOR_H
+#include "meegorotationsensor.h"
 
-#include "maemo6sensorbase.h"
-#include <qproximitysensor.h>
+char const * const meegorotationsensor::id("meego.rotationsensor");
+bool meegorotationsensor::m_initDone = false;
 
-#include <proximitysensor_i.h>
-#include <unsigned.h>
-
-QTM_USE_NAMESPACE
-
-class maemo6proximitysensor : public maemo6sensorbase
+meegorotationsensor::meegorotationsensor(QSensor *sensor)
+    : meegosensorbase(sensor)
 {
-    Q_OBJECT
+    initSensor<RotationSensorChannelInterface>(m_initDone);
+    setReading<QRotationReading>(&m_reading);
+    sensor->setProperty("hasZ", true);
+}
 
-public:
-    static char const * const id;
-    maemo6proximitysensor(QSensor *sensor);
-protected:
-    virtual bool doConnect();
-    virtual const QString sensorName();
+void meegorotationsensor::slotDataAvailable(const XYZ& data)
+{
+    m_reading.setX(data.x());
+    m_reading.setY(data.y());
+    m_reading.setZ(data.z());
+    m_reading.setTimestamp(data.XYZData().timestamp_);
+    newReadingAvailable();
+}
 
-private:
-    QProximityReading m_reading;
-    static bool m_initDone;
-   
-private slots:
-    void slotDataAvailable(const Unsigned& data);
-};
+void meegorotationsensor::slotFrameAvailable(const QVector<XYZ>&  frame)
+{
+    for (int i=0, l=frame.size(); i<l; i++){
+        slotDataAvailable(frame.at(i));
+    }
+}
 
-#endif
+bool meegorotationsensor::doConnect(){
+    if (m_bufferSize==1?
+                QObject::connect(m_sensorInterface, SIGNAL(dataAvailable(const XYZ&)), this, SLOT(slotDataAvailable(const XYZ&))):
+                QObject::connect(m_sensorInterface, SIGNAL(frameAvailable(const QVector<XYZ>& )),this, SLOT(slotFrameAvailable(const QVector<XYZ>& ))))
+        return true;
+    return false;
+}
+
+const QString meegorotationsensor::sensorName(){
+    return "rotationsensor";
+}

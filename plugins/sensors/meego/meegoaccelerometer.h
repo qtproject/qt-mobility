@@ -39,33 +39,35 @@
 **
 ****************************************************************************/
 
-#ifndef MAEMO6COMPASS_H
-#define MAEMO6COMPASS_H
+#ifndef MEEGOACCELEROMETER_H
+#define MEEGOACCELEROMETER_H
 
-#include "maemo6sensorbase.h"
-#include <qcompass.h>
+#include "meegosensorbase.h"
+#include <qaccelerometer.h>
 
-#include <compasssensor_i.h>
-#include <compass.h>
+#include <accelerometersensor_i.h>
+#include <datatypes/xyz.h>
 
 QTM_USE_NAMESPACE
 
-class maemo6compass : public maemo6sensorbase
+class meegoaccelerometer : public meegosensorbase
 {
     Q_OBJECT
 
 public:
     static char const * const id;
-    maemo6compass(QSensor *sensor);
+    meegoaccelerometer(QSensor *sensor);
 protected:
     virtual bool doConnect();
     virtual const QString sensorName();
 
 private:
-    QCompassReading m_reading;
+    QAccelerometerReading m_reading;
     static bool m_initDone;
+
 private slots:
-    void slotDataAvailable(const Compass& data);
+    void slotDataAvailable(const XYZ& data);
+    void slotFrameAvailable(const QVector<XYZ>&);
 };
 
 #endif

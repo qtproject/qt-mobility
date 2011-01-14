@@ -39,37 +39,40 @@
 **
 ****************************************************************************/
 
-#ifndef MAEMO6GYROSCOPE_H
-#define MAEMO6GYROSCOPE_H
+#ifndef QVIDEOSURFACEOUTPUT_P_H
+#define QVIDEOSURFACEOUTPUT_P_H
 
-#include "maemo6sensorbase.h"
-#include <qgyroscope.h>
-#include <datatypes/xyz.h>
-//#include <gyroscopesensor_i.h>
+#include <qmediabindableinterface.h>
 
+#include <QtCore/qsharedpointer.h>
 
-QTM_USE_NAMESPACE
+QT_BEGIN_NAMESPACE
 
-class maemo6gyroscope : public maemo6sensorbase
+class QAbstractVideoSurface;
+class QVideoRendererControl;
+
+class QVideoSurfaceOutput : public QObject, public QMediaBindableInterface
 {
     Q_OBJECT
-
+    Q_INTERFACES(QMediaBindableInterface)
 public:
-    static char const * const id;
-    maemo6gyroscope(QSensor *sensor);
+    QVideoSurfaceOutput(QObject*parent = 0);
+    ~QVideoSurfaceOutput();
+
+    QMediaObject *mediaObject() const;
+
+    void setVideoSurface(QAbstractVideoSurface *surface);
+
 protected:
-    virtual bool doConnect();
-    virtual const QString sensorName();
+    bool setMediaObject(QMediaObject *object);
 
 private:
-    QGyroscopeReading m_reading;
-    static bool m_initDone;
-    static const float MILLI;
-private slots:
-    void slotDataAvailable(const XYZ& data);
-    void slotFrameAvailable(const QVector<XYZ>&);
-
+    QWeakPointer<QAbstractVideoSurface> m_surface;
+    QWeakPointer<QVideoRendererControl> m_control;
+    QWeakPointer<QMediaService> m_service;
+    QWeakPointer<QMediaObject> m_object;
 };
 
+QT_END_NAMESPACE
 
-#endif // MAEMO6GYROSCOPE_H
+#endif

@@ -39,45 +39,36 @@
 **
 ****************************************************************************/
 
-#include "maemo6gyroscope.h"
+#ifndef MEEGOROTATION_H
+#define MEEGOROTATION_H
 
-char const * const maemo6gyroscope::id("maemo6.gyroscope");
-const float maemo6gyroscope::MILLI = 0.001;
-bool maemo6gyroscope::m_initDone = false;
+#include "meegosensorbase.h"
+#include <qrotationsensor.h>
 
-maemo6gyroscope::maemo6gyroscope(QSensor *sensor)
-    : maemo6sensorbase(sensor)
+#include <rotationsensor_i.h>
+#include <xyz.h>
+
+QTM_USE_NAMESPACE
+
+class meegorotationsensor : public meegosensorbase
 {
-//    initSensor<GyroscopeSensorChannelInterface>(m_initDone);
-    setDescription(QLatin1String("angular velocities around x, y, and z axis in degrees per second"));
-    setRanges(MILLI);
-    setReading<QGyroscopeReading>(&m_reading);
-}
+    Q_OBJECT
 
-void maemo6gyroscope::slotDataAvailable(const XYZ& data)
-{
-    m_reading.setX((qreal)(data.x()*MILLI));
-    m_reading.setY((qreal)(data.y()*MILLI));
-    m_reading.setZ((qreal)(data.z()*MILLI));
-    m_reading.setTimestamp(data.XYZData().timestamp_);
-    newReadingAvailable();
-}
+public:
+    static char const * const id;
+    meegorotationsensor(QSensor *sensor);
+protected:
+    virtual bool doConnect();
+    virtual const QString sensorName();
 
-void maemo6gyroscope::slotFrameAvailable(const QVector<XYZ>&  frame)
-{
-    for (int i=0, l=frame.size(); i<l; i++){
-        slotDataAvailable(frame.at(i));
-    }
-}
+private:
+    QRotationReading m_reading;
+    static bool m_initDone;
 
-bool maemo6gyroscope::doConnect(){
-    if (m_bufferSize==1?
-                QObject::connect(m_sensorInterface, SIGNAL(dataAvailable(const XYZ&)), this, SLOT(slotDataAvailable(const XYZ&))):
-                QObject::connect(m_sensorInterface, SIGNAL(frameAvailable(const QVector<XYZ>& )),this, SLOT(slotFrameAvailable(const QVector<XYZ>& ))))
-        return true;
-    return false;
-}
+private slots:
+    void slotDataAvailable(const XYZ& data);
+    void slotFrameAvailable(const QVector<XYZ>&);
 
-const QString maemo6gyroscope::sensorName(){
-    return "gyroscopesensor";
-}
+};
+
+#endif

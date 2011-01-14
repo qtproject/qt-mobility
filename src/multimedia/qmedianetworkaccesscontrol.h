@@ -39,43 +39,36 @@
 **
 ****************************************************************************/
 
-#include "maemo6rotationsensor.h"
 
-char const * const maemo6rotationsensor::id("maemo6.rotationsensor");
-bool maemo6rotationsensor::m_initDone = false;
+#ifndef QMEDIANETWORKACCESSCONTROL_H
+#define QMEDIANETWORKACCESSCONTROL_H
 
-maemo6rotationsensor::maemo6rotationsensor(QSensor *sensor)
-    : maemo6sensorbase(sensor)
+#include "qmediacontrol.h"
+
+#include <QtCore/qlist.h>
+
+QT_BEGIN_NAMESPACE
+
+class Q_MULTIMEDIA_EXPORT QMediaNetworkAccessControl : public QMediaControl
 {
-    initSensor<RotationSensorChannelInterface>(m_initDone);
-    setReading<QRotationReading>(&m_reading);
-    sensor->setProperty("hasZ", true);
-}
+    Q_OBJECT
+public:
 
-void maemo6rotationsensor::slotDataAvailable(const XYZ& data)
-{
-    m_reading.setX(data.x());
-    m_reading.setY(data.y());
-    m_reading.setZ(data.z());
-    m_reading.setTimestamp(data.XYZData().timestamp_);
-    newReadingAvailable();
-}
+    virtual ~QMediaNetworkAccessControl();
 
-void maemo6rotationsensor::slotFrameAvailable(const QVector<XYZ>&  frame)
-{
-    for (int i=0, l=frame.size(); i<l; i++){
-        slotDataAvailable(frame.at(i));
-    }
-}
+    virtual void setConfigurations(const QList<QString> &configurationIds) = 0;
+    virtual QString currentConfiguration() const = 0;
 
-bool maemo6rotationsensor::doConnect(){
-    if (m_bufferSize==1?
-                QObject::connect(m_sensorInterface, SIGNAL(dataAvailable(const XYZ&)), this, SLOT(slotDataAvailable(const XYZ&))):
-                QObject::connect(m_sensorInterface, SIGNAL(frameAvailable(const QVector<XYZ>& )),this, SLOT(slotFrameAvailable(const QVector<XYZ>& ))))
-        return true;
-    return false;
-}
+Q_SIGNALS:
+    void configurationChanged(const QString& configurationId);
 
-const QString maemo6rotationsensor::sensorName(){
-    return "rotationsensor";
-}
+protected:
+    QMediaNetworkAccessControl(QObject *parent = 0);
+};
+
+#define QMediaNetworkAccessControl_iid "com.nokia.Qt.QMediaNetworkAccessControl/1.0"
+Q_MEDIA_DECLARE_CONTROL(QMediaNetworkAccessControl, QMediaNetworkAccessControl_iid)
+
+QT_END_NAMESPACE
+
+#endif

@@ -39,56 +39,62 @@
 **
 ****************************************************************************/
 
-#include "maemo6als.h"
+#include "qvideosurfaceoutput_p.h"
 
-char const * const maemo6als::id("maemo6.als");
-bool maemo6als::m_initDone = false;
+#include <qabstractvideosurface.h>
+#include <qmediaservice.h>
+#include <qvideorenderercontrol.h>
 
-maemo6als::maemo6als(QSensor *sensor)
-    : maemo6sensorbase(sensor)
+
+QVideoSurfaceOutput::QVideoSurfaceOutput(QObject*parent)
+    :  QObject(parent)
 {
-    initSensor<ALSSensorChannelInterface>(m_initDone);
-    setReading<QAmbientLightReading>(&m_reading);
-    // metadata
-    setDescription(QLatin1String("ambient light intensity given as 5 pre-defined levels"));
-    addOutputRange(0, 5, 1);
 }
 
-void maemo6als::slotDataAvailable(const Unsigned& data)
+QVideoSurfaceOutput::~QVideoSurfaceOutput()
 {
-    // Convert from integer to fixed levels
-    // TODO: verify levels
-    QAmbientLightReading::LightLevel level;
-    int x = data.x();
-    if (x < 0) {
-        level = QAmbientLightReading::Undefined;
-    } else if (x < 10) {
-        level = QAmbientLightReading::Dark;
-    } else if (x < 50) {
-        level = QAmbientLightReading::Twilight;
-    } else if (x < 100) {
-        level = QAmbientLightReading::Light;
-    } else if (x < 150) {
-        level = QAmbientLightReading::Bright;
-    } else {
-        level = QAmbientLightReading::Sunny;
-    }
-    if (level != m_reading.lightLevel()) {
-        m_reading.setLightLevel(level);
-        m_reading.setTimestamp(data.UnsignedData().timestamp_);
-        newReadingAvailable();
+    if (m_control) {
+        m_control.data()->setSurface(0);
+        m_service.data()->releaseControl(m_control.data());
     }
 }
 
-bool maemo6als::doConnect(){
-    if (!(QObject::connect(m_sensorInterface, SIGNAL(ALSChanged(const Unsigned&)),
-                           this, SLOT(slotDataAvailable(const Unsigned&))))){
-        return false;
-    }
-    return true;
+QMediaObject *QVideoSurfaceOutput::mediaObject() const
+{
+    return m_object.data();
 }
 
+void QVideoSurfaceOutput::setVideoSurface(QAbstractVideoSurface *surface)
+{
+    m_surface = surface;
 
-const QString maemo6als::sensorName(){
-    return "alssensor";
+    if (m_control)
+        m_control.data()->setSurface(surface);
+}
+
+bool QVideoSurfaceOutput::setMediaObject(QMediaObject *object)
+{
+    if (m_control) {
+        m_control.data()->setSurface(0);
+        m_service.data()->releaseControl(m_control.data());
+    }
+    m_control.clear();
+    m_service.clear();
+    m_object.clear();
+
+    if (object) {
+        if (QMediaService *service = object->service()) {
+            if (QMediaControl *control = service->requestControl(QVideoRendererControl_iid)) {
+                if ((m_control = qobject_cast<QVideoRendererControl *>(control))) {
+                    m_service = service;
+                    m_object = object;
+                    m_control.data()->setSurface(m_surface.data());
+
+                    return true;
+                }
+                service->releaseControl(control);
+            }
+        }
+    }
+    return false;
 }

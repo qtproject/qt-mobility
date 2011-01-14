@@ -39,39 +39,45 @@
 **
 ****************************************************************************/
 
-#ifndef MAEMO6MAGNETOMETER_H
-#define MAEMO6MAGNETOMETER_H
+#include "meegogyroscope.h"
 
-#include "maemo6sensorbase.h"
-#include <qmagnetometer.h>
+char const * const meegogyroscope::id("meego.gyroscope");
+const float meegogyroscope::MILLI = 0.001;
+bool meegogyroscope::m_initDone = false;
 
-#include <magnetometersensor_i.h>
-#include <magneticfield.h>
-
-QTM_USE_NAMESPACE
-
-class maemo6magnetometer : public maemo6sensorbase
+meegogyroscope::meegogyroscope(QSensor *sensor)
+    : meegosensorbase(sensor)
 {
-    Q_OBJECT
+//    initSensor<GyroscopeSensorChannelInterface>(m_initDone);
+    setDescription(QLatin1String("angular velocities around x, y, and z axis in degrees per second"));
+    setRanges(MILLI);
+    setReading<QGyroscopeReading>(&m_reading);
+}
 
-public:
-    static char const * const id;
-    maemo6magnetometer(QSensor *sensor);
-protected:
-    virtual bool doConnect();
-    virtual void start();
-    virtual const QString sensorName();
+void meegogyroscope::slotDataAvailable(const XYZ& data)
+{
+    m_reading.setX((qreal)(data.x()*MILLI));
+    m_reading.setY((qreal)(data.y()*MILLI));
+    m_reading.setZ((qreal)(data.z()*MILLI));
+    m_reading.setTimestamp(data.XYZData().timestamp_);
+    newReadingAvailable();
+}
 
-private:
-    static const float NANO;
-    QMagnetometerReading m_reading;
-    static bool m_initDone;
-    bool m_isGeoMagnetometer;
+void meegogyroscope::slotFrameAvailable(const QVector<XYZ>&  frame)
+{
+    for (int i=0, l=frame.size(); i<l; i++){
+        slotDataAvailable(frame.at(i));
+    }
+}
 
-private slots:
-    void slotDataAvailable(const MagneticField& data);
-    void slotFrameAvailable(const QVector<MagneticField>&);
+bool meegogyroscope::doConnect(){
+    if (m_bufferSize==1?
+                QObject::connect(m_sensorInterface, SIGNAL(dataAvailable(const XYZ&)), this, SLOT(slotDataAvailable(const XYZ&))):
+                QObject::connect(m_sensorInterface, SIGNAL(frameAvailable(const QVector<XYZ>& )),this, SLOT(slotFrameAvailable(const QVector<XYZ>& ))))
+        return true;
+    return false;
+}
 
-};
-
-#endif
+const QString meegogyroscope::sensorName(){
+    return "gyroscopesensor";
+}

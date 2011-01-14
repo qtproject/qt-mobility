@@ -3,6 +3,20 @@ headers.path = $$QT_MOBILITY_INCLUDE/$$TARGET
 
 contains(TEMPLATE,.*lib) {
     target.path=$$QT_MOBILITY_LIB
+
+    maemo5|maemo6|meego {
+        CONFIG += create_pc create_prl
+        QMAKE_PKGCONFIG_NAME = lib$$TARGET
+        QMAKE_PKGCONFIG_DESTDIR = pkgconfig
+        QMAKE_PKGCONFIG_LIBDIR = $$target.path
+        QMAKE_PKGCONFIG_INCDIR = $$headers.path
+        QMAKE_PKGCONFIG_CFLAGS = -I$${QT_MOBILITY_INCLUDE}/QtMobility
+        pkgconfig.path = $$QT_MOBILITY_LIB/pkgconfig
+        pkgconfig.files = $$TARGET.pc
+
+        INSTALLS += pkgconfig
+    }
+
     TARGET = $$qtLibraryTarget($${TARGET}$${QT_LIBINFIX})
  
     symbian {

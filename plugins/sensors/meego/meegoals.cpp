@@ -39,53 +39,56 @@
 **
 ****************************************************************************/
 
-#include <QtCore/qstring.h>
-#include <QtCore/qdebug.h>
+#include "meegoals.h"
 
-#include "qt7serviceplugin.h"
-#include "qt7playerservice.h"
+char const * const meegoals::id("meego.als");
+bool meegoals::m_initDone = false;
 
-#include <qmediaserviceprovider.h>
-
-QT_BEGIN_NAMESPACE
-
-QStringList QT7ServicePlugin::keys() const
+meegoals::meegoals(QSensor *sensor)
+    : meegosensorbase(sensor)
 {
-    return QStringList()
-#ifdef QMEDIA_QT7_PLAYER
-        << QLatin1String(Q_MEDIASERVICE_MEDIAPLAYER)
-#endif
-        ;
+    initSensor<ALSSensorChannelInterface>(m_initDone);
+    setReading<QAmbientLightReading>(&m_reading);
+    // metadata
+    setDescription(QLatin1String("ambient light intensity given as 5 pre-defined levels"));
+    addOutputRange(0, 5, 1);
 }
 
-QMediaService* QT7ServicePlugin::create(QString const& key)
+void meegoals::slotDataAvailable(const Unsigned& data)
 {
-#ifdef QT_DEBUG_QT7
-    qDebug() << "QT7ServicePlugin::create" << key;
-#endif
-#ifdef QMEDIA_QT7_PLAYER
-    if (key == QLatin1String(Q_MEDIASERVICE_MEDIAPLAYER))
-        return new QT7PlayerService;
-#endif
-    qWarning() << "unsupported key:" << key;
-
-    return 0;
+    // Convert from integer to fixed levels
+    // TODO: verify levels
+    QAmbientLightReading::LightLevel level;
+    int x = data.x();
+    if (x < 0) {
+        level = QAmbientLightReading::Undefined;
+    } else if (x < 10) {
+        level = QAmbientLightReading::Dark;
+    } else if (x < 50) {
+        level = QAmbientLightReading::Twilight;
+    } else if (x < 100) {
+        level = QAmbientLightReading::Light;
+    } else if (x < 150) {
+        level = QAmbientLightReading::Bright;
+    } else {
+        level = QAmbientLightReading::Sunny;
+    }
+    if (level != m_reading.lightLevel()) {
+        m_reading.setLightLevel(level);
+        m_reading.setTimestamp(data.UnsignedData().timestamp_);
+        newReadingAvailable();
+    }
 }
 
-void QT7ServicePlugin::release(QMediaService *service)
-{
-    delete service;
+bool meegoals::doConnect(){
+    if (!(QObject::connect(m_sensorInterface, SIGNAL(ALSChanged(const Unsigned&)),
+                           this, SLOT(slotDataAvailable(const Unsigned&))))){
+        return false;
+    }
+    return true;
 }
 
-QMediaServiceProviderHint::Features QT7ServicePlugin::supportedFeatures(
-        const QByteArray &service) const
-{
-    if (service == Q_MEDIASERVICE_MEDIAPLAYER)
-        return QMediaServiceProviderHint::VideoSurface;
-    else
-        return QMediaServiceProviderHint::Features();
+
+const QString meegoals::sensorName(){
+    return "alssensor";
 }
-
-Q_EXPORT_PLUGIN2(qtmedia_qt7engine, QT7ServicePlugin);
-
-QT_END_NAMESPACE
