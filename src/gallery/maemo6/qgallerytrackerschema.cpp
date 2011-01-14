@@ -431,9 +431,9 @@ static bool qt_write_function(
     *query += QLatin1String(function)
             + QLatin1String("(")
             + field
-            + QLatin1String(",\"")
+            + QLatin1String(",'")
             + regExp.pattern()
-            + QLatin1String("\")");
+            + QLatin1String("')");
     return true;
 }
 
@@ -448,9 +448,9 @@ static bool qt_write_function(
         *query += QLatin1String(function)
                 + QLatin1String("(")
                 + field
-                + QLatin1String(",\"")
+                + QLatin1String(",'")
                 + value.toString()
-                + QLatin1String("\")");
+                + QLatin1String("')");
         return true;
     } else {
         *error = QDocumentGallery::FilterError;
@@ -1151,9 +1151,9 @@ QDocumentGallery::Error QGalleryTrackerSchema::buildFilterQuery(
                             filterStatement += QLatin1String(" && ");
                         filterStatement
                                 += property
-                                + QLatin1String("=\"")
+                                + QLatin1String("=<")
                                 + itemTypes[index].prefix.strip(rootItemId).toString()
-                                +QLatin1String("\"");
+                                +QLatin1String(">");
                     } else {
                         result = QDocumentGallery::ItemIdError;
                     }
@@ -1168,9 +1168,9 @@ QDocumentGallery::Error QGalleryTrackerSchema::buildFilterQuery(
                             filterStatement += QLatin1String(" && ");
                         filterStatement
                                 += property
-                                + QLatin1String("=\"")
+                                + QLatin1String("=<")
                                 + itemTypes[index].prefix.strip(rootItemId).toString()
-                                +QLatin1String("\"");
+                                +QLatin1String(">");
                     }
                 }
             } else {
@@ -1186,9 +1186,9 @@ QDocumentGallery::Error QGalleryTrackerSchema::buildFilterQuery(
                             filterStatement += QLatin1String(" && ");
                         filterStatement
                                 += property
-                                + QLatin1String("=\"")
+                                + QLatin1String("='")
                                 + aggregateTypes[index].prefix.strip(rootItemId).toString()
-                                + QLatin1String("\"");
+                                + QLatin1String("'");
                     } else if (qt_galleryItemTypeList[m_itemIndex].itemType == QDocumentGallery::Album) {
                         rootItemStatement = QLatin1String("{?track nie:isLogicalPartOf ?x}");
                         property = QLatin1String("nfo:genre(?track)");
@@ -1196,18 +1196,18 @@ QDocumentGallery::Error QGalleryTrackerSchema::buildFilterQuery(
                             filterStatement += QLatin1String(" && ");
                         filterStatement
                                 += property
-                                + QLatin1String("=\"")
+                                + QLatin1String("='")
                                 + aggregateTypes[index].prefix.strip(rootItemId).toString()
-                                + QLatin1String("\"");
+                                + QLatin1String("'");
                     } else if (qt_galleryItemTypeList[m_itemIndex].itemType == QDocumentGallery::Artist) {
                         property = QLatin1String("nfo:genre(?y)");
                         if (!filterStatement.isEmpty())
                             filterStatement += QLatin1String(" && ");
                         filterStatement
                                 += property
-                                + QLatin1String("=\"")
+                                + QLatin1String("='")
                                 + aggregateTypes[index].prefix.strip(rootItemId).toString()
-                                + QLatin1String("\"");
+                                + QLatin1String("'");
                     } else {
                         result = QDocumentGallery::ItemIdError;
                     }

@@ -1325,7 +1325,7 @@ void tst_QGalleryTrackerSchema::queryResponseRootItem_data()
             <<  "SELECT DISTINCT ?x nie:url(?x) rdf:type(?x)  "
                 "WHERE {"
                     "{?x rdf:type nfo:Audio}"
-                    "FILTER(nie:isLogicalPartOf(?x)=\"musicAlbum:Greatest%20Hits\")"
+                    "FILTER(nie:isLogicalPartOf(?x)=<musicAlbum:Greatest%20Hits>)"
                 "}";
 
     QTest::newRow("Album, Direct Audio Descendants")
@@ -1335,7 +1335,7 @@ void tst_QGalleryTrackerSchema::queryResponseRootItem_data()
             <<  "SELECT DISTINCT ?x nie:url(?x) rdf:type(?x)  "
                 "WHERE {"
                     "{?x rdf:type nfo:Audio}"
-                    "FILTER(nie:isLogicalPartOf(?x)=\"musicAlbum:Greatest%20Hits\")"
+                    "FILTER(nie:isLogicalPartOf(?x)=<musicAlbum:Greatest%20Hits>)"
                 "}";
 
     QTest::newRow("Album Artist, All Audio Descendants")
@@ -1427,7 +1427,7 @@ void tst_QGalleryTrackerSchema::queryResponseRootItem_data()
             <<  "SELECT DISTINCT ?x nie:url(?x) rdf:type(?x)  "
                 "WHERE {"
                     "{?x rdf:type nfo:Audio}"
-                    "FILTER(nfo:genre(?x)=\"Rock\")"
+                    "FILTER(nfo:genre(?x)='Rock')"
                 "}";
 
     QTest::newRow("Audio Genre, Direct Audio Descendants")
@@ -1437,7 +1437,7 @@ void tst_QGalleryTrackerSchema::queryResponseRootItem_data()
             <<  "SELECT DISTINCT ?x nie:url(?x) rdf:type(?x)  "
                 "WHERE {"
                     "{?x rdf:type nfo:Audio}"
-                    "FILTER(nfo:genre(?x)=\"Rock\")"
+                    "FILTER(nfo:genre(?x)='Rock')"
                 "}";
 
     QTest::newRow("Audio Genre, All Album Descendants")
@@ -1448,7 +1448,7 @@ void tst_QGalleryTrackerSchema::queryResponseRootItem_data()
                 "WHERE {"
                     "{?x rdf:type nmm:MusicAlbum}"
                     "{?track nie:isLogicalPartOf ?x}"
-                    "FILTER(nfo:genre(?track)=\"Rock\")"
+                    "FILTER(nfo:genre(?track)='Rock')"
                 "}";
 
 
@@ -1460,7 +1460,7 @@ void tst_QGalleryTrackerSchema::queryResponseRootItem_data()
                 "WHERE {"
                     "{?x rdf:type nmm:MusicAlbum}"
                     "{?track nie:isLogicalPartOf ?x}"
-                    "FILTER(nfo:genre(?track)=\"Rock\")"
+                    "FILTER(nfo:genre(?track)='Rock')"
                 "}";
 
 
@@ -1471,7 +1471,7 @@ void tst_QGalleryTrackerSchema::queryResponseRootItem_data()
             <<  "SELECT DISTINCT ?x nie:url(?x) rdf:type(?x)  "
                 "WHERE {"
                     "{?x rdf:type nmm:Photo}"
-                    "FILTER(nie:isLogicalPartOf(?x)=\"photoAlbum:Camping\")"
+                    "FILTER(nie:isLogicalPartOf(?x)=<photoAlbum:Camping>)"
                 "}";
 
     QTest::newRow("Photo Album, Direct Image Descendants")
@@ -1481,7 +1481,7 @@ void tst_QGalleryTrackerSchema::queryResponseRootItem_data()
             <<  "SELECT DISTINCT ?x nie:url(?x) rdf:type(?x)  "
                 "WHERE {"
                     "{?x rdf:type nmm:Photo}"
-                    "FILTER(nie:isLogicalPartOf(?x)=\"photoAlbum:Camping\")"
+                    "FILTER(nie:isLogicalPartOf(?x)=<photoAlbum:Camping>)"
                 "}";
 
     QTest::newRow("No Root Item, All Image Descendants")
@@ -1640,7 +1640,7 @@ void tst_QGalleryTrackerSchema::queryResponseFilter_data()
                 <<  "SELECT DISTINCT ?x nie:url(?x) rdf:type(?x)  "
                     "WHERE {"
                         "{?x rdf:type nfo:FileDataObject}"
-                        "FILTER(fn:starts-with(nfo:fileName(?x),\"file.\"))"
+                        "FILTER(fn:starts-with(nfo:fileName(?x),'file.'))"
                     "}";
     } {
         QGalleryFilter filter = QDocumentGallery::fileName.endsWith(QLatin1String(".ext"));
@@ -1653,7 +1653,7 @@ void tst_QGalleryTrackerSchema::queryResponseFilter_data()
                 <<  "SELECT DISTINCT ?x nie:url(?x) rdf:type(?x)  "
                     "WHERE {"
                         "{?x rdf:type nfo:FileDataObject}"
-                        "FILTER(fn:ends-with(nfo:fileName(?x),\".ext\"))"
+                        "FILTER(fn:ends-with(nfo:fileName(?x),'.ext'))"
                     "}";
     } {
         QGalleryFilter filter = QDocumentGallery::fileName.contains(QLatin1String("ext"));
@@ -1666,7 +1666,7 @@ void tst_QGalleryTrackerSchema::queryResponseFilter_data()
                 <<  "SELECT DISTINCT ?x nie:url(?x) rdf:type(?x)  "
                     "WHERE {"
                         "{?x rdf:type nfo:FileDataObject}"
-                        "FILTER(fn:contains(nfo:fileName(?x),\"ext\"))"
+                        "FILTER(fn:contains(nfo:fileName(?x),'ext'))"
                     "}";
     } {
         QGalleryFilter filter = QDocumentGallery::fileName.wildcard(QLatin1String("file*ext"));
@@ -1679,7 +1679,7 @@ void tst_QGalleryTrackerSchema::queryResponseFilter_data()
                 <<  "SELECT DISTINCT ?x nie:url(?x) rdf:type(?x)  "
                     "WHERE {"
                         "{?x rdf:type nfo:FileDataObject}"
-                        "FILTER(fn:contains(nfo:fileName(?x),\"file*ext\"))"
+                        "FILTER(fn:contains(nfo:fileName(?x),'file*ext'))"
                     "}";
     } {
         QGalleryFilter filter
@@ -1693,7 +1693,7 @@ void tst_QGalleryTrackerSchema::queryResponseFilter_data()
                 <<  "SELECT DISTINCT ?x nie:url(?x) rdf:type(?x)  "
                     "WHERE {"
                         "{?x rdf:type nfo:FileDataObject}"
-                        "FILTER(REGEX(nfo:fileName(?x),\"(file|document).ext\"))"
+                        "FILTER(REGEX(nfo:fileName(?x),'(file|document).ext'))"
                     "}";
     } {
         QGalleryFilter filter
@@ -1707,7 +1707,7 @@ void tst_QGalleryTrackerSchema::queryResponseFilter_data()
                 <<  "SELECT DISTINCT ?x nie:url(?x) rdf:type(?x)  "
                     "WHERE {"
                         "{?x rdf:type nfo:FileDataObject}"
-                        "FILTER(REGEX(nfo:fileName(?x),\"(file|document).ext\"))"
+                        "FILTER(REGEX(nfo:fileName(?x),'(file|document).ext'))"
                     "}";
     } {
         QGalleryFilter filter
