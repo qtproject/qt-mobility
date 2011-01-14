@@ -129,7 +129,13 @@ void QVCard21Writer::encodeVersitProperty(const QVersitProperty& property)
         QVersitDocument embeddedDocument = variant.value<QVersitDocument>();
         encodeVersitDocument(embeddedDocument);
     } else if (variant.type() == QVariant::String || variant.type() == QVariant::StringList) {
-        writeString(renderedValue);
+        // Some devices don't support vCard-style line folding if the property is
+        // quoted-printable-encoded.  Therefore, we use QP soft linebreaks if the property is being
+        // QP-encoded, and normal vCard folding otherwise.
+        if (parameters.contains("ENCODING", QLatin1String("QUOTED-PRINTABLE")))
+            writeStringQp(renderedValue);
+        else
+            writeString(renderedValue);
     } else if (variant.type() == QVariant::ByteArray) {
         // One extra folding before the value and
         // one extra line break after the value are needed in vCard 2.1
