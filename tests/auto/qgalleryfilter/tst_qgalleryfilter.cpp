@@ -51,8 +51,6 @@ Q_DECLARE_METATYPE(QVariant);
 Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QGalleryFilter))
 Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QGalleryFilter::Comparator))
 Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QGalleryMetaDataFilter))
-Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QGalleryProperty))
-Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QGalleryType))
 
 QTM_USE_NAMESPACE
 
@@ -79,9 +77,7 @@ private Q_SLOTS:
     void equality();
     void inequality_data();
     void inequality();
-    void galleryType_data();
     void galleryType();
-    void galleryProperty_data();
     void galleryProperty();
 
 #ifndef QT_NO_DEBUG_STREAM
@@ -1110,68 +1106,50 @@ void tst_QGalleryFilter::debugMessage()
 }
 #endif
 
-
-void tst_QGalleryFilter::galleryType_data()
-{
-    QTest::addColumn<QGalleryType>("type");
-    QTest::addColumn<QString>("name");
-
-    {
-        QGalleryType type = { "Audio", sizeof("Audio") - 1 };
-        QTest::newRow("Audio")
-                << type
-                << "Audio";
-    } {
-        QGalleryType type = { "Video", sizeof("Video") - 1 };
-        QTest::newRow("Video")
-                << type
-                << "Video";
-    }
-}
-
 void tst_QGalleryFilter::galleryType()
 {
-    QFETCH(QGalleryType, type);
-    QFETCH(QString, name);
-
-    QCOMPARE(type.name(), name);
-    QCOMPARE(QString(type), name);
-}
-
-void tst_QGalleryFilter::galleryProperty_data()
-{
-    QTest::addColumn<QGalleryProperty>("property");
-    QTest::addColumn<QString>("name");
-    QTest::addColumn<QString>("ascendingName");
-    QTest::addColumn<QString>("descendingName");
     {
-        QGalleryProperty property = { "title", sizeof("title") - 1 };
-        QTest::newRow("title")
-                << property
-                << "title"
-                << "+title"
-                << "-title";
+        QGalleryType type = { "Audio", sizeof("Audio") - 1 };
+
+        const QString name = QLatin1String("Audio");
+
+        QCOMPARE(type.name(), name);
+        QCOMPARE(QString(type), name);
     } {
-        QGalleryProperty property = { "duration", sizeof("duration") - 1 };
-        QTest::newRow("duration")
-                << property
-                << "duration"
-                << "+duration"
-                << "-duration";
+        QGalleryType type = { "Video", sizeof("Video") - 1 };
+
+        const QString name = QLatin1String("Video");
+
+        QCOMPARE(type.name(), name);
+        QCOMPARE(QString(type), name);
     }
 }
 
 void tst_QGalleryFilter::galleryProperty()
 {
-    QFETCH(QGalleryProperty, property);
-    QFETCH(QString, name);
-    QFETCH(QString, ascendingName);
-    QFETCH(QString, descendingName);
+    {
+        QGalleryProperty property = { "title", sizeof("title") - 1 };
 
-    QCOMPARE(property.name(), name);
-    QCOMPARE(QString(property), name);
-    QCOMPARE(property.ascending(), ascendingName);
-    QCOMPARE(property.descending(), descendingName);
+        const QString name = QLatin1String("title");
+        const QString ascendingName = QLatin1String("+title");
+        const QString descendingName = QLatin1String("-title");
+
+        QCOMPARE(property.name(), name);
+        QCOMPARE(QString(property), name);
+        QCOMPARE(property.ascending(), ascendingName);
+        QCOMPARE(property.descending(), descendingName);
+    } {
+        QGalleryProperty property = { "duration", sizeof("duration") - 1 };
+
+        const QString name = QLatin1String("duration");
+        const QString ascendingName = QLatin1String("+duration");
+        const QString descendingName = QLatin1String("-duration");
+
+        QCOMPARE(property.name(), name);
+        QCOMPARE(QString(property), name);
+        QCOMPARE(property.ascending(), ascendingName);
+        QCOMPARE(property.descending(), descendingName);
+    }
 }
 
 QTEST_MAIN(tst_QGalleryFilter)
