@@ -39,21 +39,21 @@
 **
 ****************************************************************************/
 
-#include "maemo6orientationsensor.h"
+#include "meegoorientationsensor.h"
 
 #include <posedata.h>
 
-char const * const maemo6orientationsensor::id("maemo6.orientationsensor");
-bool maemo6orientationsensor::m_initDone = false;
+char const * const meegoorientationsensor::id("meego.orientationsensor");
+bool meegoorientationsensor::m_initDone = false;
 
-maemo6orientationsensor::maemo6orientationsensor(QSensor *sensor)
-    : maemo6sensorbase(sensor)
+meegoorientationsensor::meegoorientationsensor(QSensor *sensor)
+    : meegosensorbase(sensor)
 {
     initSensor<OrientationSensorChannelInterface>(m_initDone);
     setReading<QOrientationReading>(&m_reading);
 }
 
-void maemo6orientationsensor::slotDataAvailable(const Unsigned& data)
+void meegoorientationsensor::slotDataAvailable(const Unsigned& data)
 {
     QOrientationReading::Orientation o;
     switch (data.x()) {
@@ -70,7 +70,7 @@ void maemo6orientationsensor::slotDataAvailable(const Unsigned& data)
     newReadingAvailable();
 }
 
-bool maemo6orientationsensor::doConnect(){
+bool meegoorientationsensor::doConnect(){
     if (!(QObject::connect(m_sensorInterface, SIGNAL(orientationChanged(const Unsigned&)),
                            this, SLOT(slotDataAvailable(const Unsigned&))))){
         return false;
@@ -78,7 +78,7 @@ bool maemo6orientationsensor::doConnect(){
     return true;
 }
 
-const QString maemo6orientationsensor::sensorName(){
+const QString meegoorientationsensor::sensorName(){
     return "orientationsensor";
 }
 

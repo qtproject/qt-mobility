@@ -209,6 +209,9 @@ void QSensorManager::registerBackend(const QByteArray &type, const QByteArray &i
     if (!d->backendsByType.contains(type)) {
         (void)d->backendsByType[type];
         d->firstIdentifierForType[type] = identifier;
+    } else if (d->firstIdentifierForType[type].startsWith("generic.")) {
+        // Don't let a generic backend be the default when some other backend exists!
+        d->firstIdentifierForType[type] = identifier;
     }
     FactoryForIdentifierMap &factoryByIdentifier = d->backendsByType[type];
     if (factoryByIdentifier.contains(identifier)) {
@@ -245,10 +248,21 @@ void QSensorManager::unregisterBackend(const QByteArray &type, const QByteArray 
 
     (void)factoryByIdentifier.take(identifier); // we don't own this pointer anyway
     if (d->firstIdentifierForType[type] == identifier) {
-        if (factoryByIdentifier.count())
-            d->firstIdentifierForType[type] == factoryByIdentifier.begin().key();
-        else
+        if (factoryByIdentifier.count()) {
+            d->firstIdentifierForType[type] = factoryByIdentifier.begin().key();
+            if (d->firstIdentifierForType[type].startsWith("generic.")) {
+                // Don't let a generic backend be the default when some other backend exists!
+                for (FactoryForIdentifierMap::const_iterator it = factoryByIdentifier.begin()++; it != factoryByIdentifier.end(); it++) {
+                    const QByteArray &identifier(it.key());
+                    if (!identifier.startsWith("generic.")) {
+                        d->firstIdentifierForType[type] = identifier;
+                        break;
+                    }
+                }
+            }
+        } else {
             (void)d->firstIdentifierForType.take(type);
+        }
     }
     if (!factoryByIdentifier.count())
         (void)d->backendsByType.take(type);
@@ -385,6 +399,11 @@ QList<QByteArray> QSensor::sensorsForType(const QByteArray &type)
     This is set in a config file and can be overridden if required.
     If no default is available the system will return the first registered
     sensor for \a type.
+
+    Note that there is special case logic to prevent the generic plugin's backends from becoming the
+    default when another backend is registered for the same type. This logic means that a backend
+    identifier starting with \c{generic.} will only be the default if no other backends have been
+    registered for that type or if it is specified in \c{Sensors.conf}.
 
     \sa {Determining the default sensor for a type}
 */

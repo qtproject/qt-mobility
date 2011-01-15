@@ -274,6 +274,11 @@ QAccelerometer = n900.accelerometer
 If Sensors.conf specifies an identifier that is not registered then the system will fall back to
 the first registered identifier as the default.
 
+Note that there is special case logic to prevent the generic plugin's backends from becoming the
+default when another backend is registered for the same type. This logic means that a backend
+identifier starting with \c{generic.} will only be the default if no other backends have been
+registered for that type or if it is specified in \c{Sensors.conf}.
+
 */
 
 /*!
@@ -335,8 +340,26 @@ The identifying string for this component is \i {"QtMobility.sensors"}.
 Use this in the QML \i {import} statement.
 
 The Sensors QML Plugin registers the C++ Sensors classes directly to the QML environment.
+This causes some limitations due to the use of types that do not work in the QML environment.
+See \l{Sensors QML Limitations}{below} for a list of the known limitations.
 
 See \l Sensors for more information about the Sensors API.
+
+\section1 Sensors QML Limitations
+
+The following limitations affect the Sensors QML bindings for Qt Mobility 1.1 and 1.2.
+
+\list 1
+\o The QSensor::sensorid property cannot be set because QML does not support QByteArray.
+   This means that it is not possible to specify a particular sensor when two or more have
+   been registered with the same type.
+\o The QSensor::availableDataRates property cannot be used because QML does not support \l qrangelist.
+\o The QSensor::outputRanges property cannot be used because QML does not support \l qoutputrangelist.
+\o The QLightSensor::fieldOfView property cannot be used because QML cannot access dynamic properties.
+\o The QMagnetometer::returnGeoValues property cannot be used because QML cannot access dynamic properties.
+\o The QRotationSensor::hasZ property cannot be used because QML cannot access dynamic properties.
+\o The QTapSensor::returnDoubleTapEvents property cannot be used because QML cannot access dynamic properties.
+\endlist
 
 \section1 QML Sensor Elements
 

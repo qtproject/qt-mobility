@@ -55,8 +55,8 @@ IMPLEMENT_READING(QTapReading)
            tap sensor.
 
     \section2 QTapReading Units
-    The tap sensor registers tap events in one of the six directions.
-    There are 3 axes that originate from the phone. They are arranged as follows.
+    The tap sensor registers tap events along the 3 axes that originate from the phone.
+    The axes are arranged as follows.
 
     \image sensors-coordinates2.jpg
 
@@ -67,19 +67,46 @@ IMPLEMENT_READING(QTapReading)
 /*!
     \enum QTapReading::TapDirection
 
-    The tap direction is reported as one of the six directions (X, Y, Z, positive and negative).
-    There are 3 flags that you can use if you only care about the axis in use.
+    The tap direction is indicated using flags. Applications should check for the presence of
+    a particular flag as multiple flags may be set at once.
+
+    The X, Y and Z flags allow an app to check for taps along an axis without caring about the
+    direction.
+
+    \code
+    if (reading->tapDirection()&QTapReading::X) {
+        ...
+    }
+    \endcode
+
+    The *_Pos and *_Neg flags allow checking for taps in a specific direction. Note that some
+    devices cannot determine the direction of a tap and will set both the _Pos and _Neg flag for
+    the detected axis. Previous versions of the API did not allow this. Applications that check
+    for the _Pos and _Neg flags as values should be updated so they can work with all devices.
+
+    \oldcode
+    if (reading->tapDirection() == QTapReading::X_Pos) {
+        ...
+    }
+    \newcode
+    if (reading->tapDirection()&QTapReading::X_Pos) {
+        ...
+    }
+    \endcode
 
     \value Undefined This value means that the direction is unknown.
     \value X     This flag is set if the tap was along the X axis.
     \value Y     This flag is set if the tap was along the Y axis.
     \value Z     This flag is set if the tap was along the Z axis.
-    \value X_Pos This value is returned if the tap was towards the positive X direction.
-    \value Y_Pos This value is returned if the tap was towards the positive Y direction.
-    \value Z_Pos This value is returned if the tap was towards the positive Z direction.
-    \value X_Neg This value is returned if the tap was towards the negative X direction.
-    \value Y_Neg This value is returned if the tap was towards the negative Y direction.
-    \value Z_Neg This value is returned if the tap was towards the negative Z direction.
+    \value X_Pos This flag is set if the tap was towards the positive X direction.
+    \value Y_Pos This flag is set if the tap was towards the positive Y direction.
+    \value Z_Pos This flag is set if the tap was towards the positive Z direction.
+    \value X_Neg This flag is set if the tap was towards the negative X direction.
+    \value Y_Neg This flag is set if the tap was towards the negative Y direction.
+    \value Z_Neg This flag is set if the tap was towards the negative Z direction.
+    \value X_Both Equivalent to \c{X_Pos|X_Neg}. Returned by devices that cannot detect the direction of a tap.
+    \value Y_Both Equivalent to \c{Y_Pos|Y_Neg}. Returned by devices that cannot detect the direction of a tap.
+    \value Z_Both Equivalent to \c{Z_Pos|Z_Neg}. Returned by devices that cannot detect the direction of a tap.
 */
 
 /*!
@@ -100,15 +127,15 @@ QTapReading::TapDirection QTapReading::tapDirection() const
 void QTapReading::setTapDirection(QTapReading::TapDirection tapDirection)
 {
     switch (tapDirection) {
-        case X:
-        case Y:
-        case Z:
         case X_Pos:
         case Y_Pos:
         case Z_Pos:
         case X_Neg:
         case Y_Neg:
         case Z_Neg:
+        case X_Both:
+        case Y_Both:
+        case Z_Both:
             d->tapDirection = tapDirection;
             break;
         default:
