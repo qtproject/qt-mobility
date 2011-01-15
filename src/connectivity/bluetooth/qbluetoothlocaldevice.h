@@ -114,12 +114,24 @@ public:
 
     static QList<QBluetoothHostInfo> allDevices();
 
+public Q_SLOTS:
+    void sendPinCode(QString pin);
+    void sendPasskey(quint32 key);
+
 Q_SIGNALS:    
     void hostModeStateChanged(HostMode state);
     void pairingFinished(const QBluetoothAddress &address, QBluetoothLocalDevice::Pairing pairing);
+    // FIXME should these be a QBluetoothDeviceInfo instead of an address
     void pairingDisplayPinCode(const QBluetoothAddress &address, QString pin);
+    void pairingRequestPinCode(const QBluetoothAddress &address);
+    void pairingRequestPasskey(const QBluetoothAddress &address);
+    void pairingDisplayConfirmation(const QBluetoothAddress &address, QString pin);
+    void pairingCancelDialog(const QBluetoothAddress &address);
+
+
 
 private:
+    Q_DECLARE_PRIVATE(QBluetoothLocalDevice)
     QBluetoothLocalDevicePrivate *d_ptr;
 };
 

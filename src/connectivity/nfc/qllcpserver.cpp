@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -45,6 +45,8 @@
 #include "qllcpserver_simulator_p.h"
 #elif defined(Q_OS_SYMBIAN)
 #include "qllcpserver_symbian_p.h"
+#elif defined(Q_WS_MAEMO_6) || defined(Q_WS_MEEGO)
+#include "qllcpserver_meego_p.h"
 #else
 #include "qllcpserver_p.h"
 #endif
