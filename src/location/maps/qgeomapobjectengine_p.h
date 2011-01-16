@@ -111,6 +111,8 @@ public:
     virtual void updateLatLonTransform(QGeoMapObject *object);
     virtual void updatePixelTransform(QGeoMapObject *object);
 
+    virtual void rebuildScenes();
+
     virtual void invalidateObject(QGeoMapObject *obj);
     virtual void invalidateZoomDependents();
     virtual void invalidatePixelsForViewport();

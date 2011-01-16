@@ -116,6 +116,7 @@ void QGeoMapObjectEngine::addObject(QGeoMapObject *object)
     objectsForLatLonUpdate << object;
     objectsForPixelUpdate << object;
     updateTransforms();
+    rebuildScenes();
 }
 
 void QGeoMapObjectEngine::removeObject(QGeoMapObject *object)
@@ -776,25 +777,34 @@ void QGeoMapObjectEngine::invalidateObject(QGeoMapObject *obj)
 // update the transform tables as necessary
 void QGeoMapObjectEngine::updateTransforms()
 {
+    bool groupUpdated = false;
+
     foreach (QGeoMapObject *obj, objectsForLatLonUpdate) {
         QGeoMapGroupObject *group = qobject_cast<QGeoMapGroupObject*>(obj);
-        if (group)
+        if (group) {
             updateLatLonsForGroup(group);
-        else
+            groupUpdated = true;
+        } else {
             updateLatLonTransform(obj);
+        }
     }
 
     objectsForLatLonUpdate.clear();
 
     foreach (QGeoMapObject *obj, objectsForPixelUpdate) {
         QGeoMapGroupObject *group = qobject_cast<QGeoMapGroupObject*>(obj);
-        if (group)
+        if (group) {
             updatePixelsForGroup(group);
-        else
+            groupUpdated = true;
+        } else {
             updatePixelTransform(obj);
+        }
     }
 
     objectsForPixelUpdate.clear();
+
+    if (groupUpdated)
+        rebuildScenes();
 }
 
 void QGeoMapObjectEngine::updatePixelsForGroup(QGeoMapGroupObject *group)
@@ -818,6 +828,28 @@ void QGeoMapObjectEngine::updateLatLonsForGroup(QGeoMapGroupObject *group)
         else
             updateLatLonTransform(object);
     }
+}
+
+static void addGroupToScene(QGeoMapObjectEngine *eng, QGeoMapGroupObject *group)
+{
+    foreach (QGeoMapObject *object, group->childObjects()) {
+        QGeoMapGroupObject *subGroup = qobject_cast<QGeoMapGroupObject*>(object);
+        if (subGroup) {
+            addGroupToScene(eng, subGroup);
+        } else {
+            foreach (QGraphicsItem *i, eng->latLonItems.keys(object))
+                eng->latLonScene->addItem(i);
+            foreach (QGraphicsItem *i, eng->pixelItems.keys(object))
+                eng->pixelScene->addItem(i);
+        }
+    }
+}
+
+void QGeoMapObjectEngine::rebuildScenes()
+{
+    latLonScene = new QGraphicsScene;
+    pixelScene = new QGraphicsScene;
+    addGroupToScene(this, mdp->containerObject);
 }
 
 /*****************************************************************************
@@ -898,7 +930,7 @@ void QGeoMapObjectEngine::updateLatLonTransform(QGeoMapObject *object)
 
         foreach (QPolygonF poly, polys) {
             QGraphicsItem *item = new QGraphicsPolygonItem(poly);
-            item->setZValue(object->zValue());
+            //item->setZValue(object->zValue());
             item->setVisible(true);
             latLonItems.insert(item, object);
             latLonScene->addItem(item);
@@ -909,7 +941,7 @@ void QGeoMapObjectEngine::updateLatLonTransform(QGeoMapObject *object)
             QGraphicsPolygonItem *pi = dynamic_cast<QGraphicsPolygonItem*>(item);
             Q_ASSERT(pi);
             pi->setPolygon(polys.at(i));
-            pi->setZValue(object->zValue());
+           // pi->setZValue(object->zValue());
         }
     }
 }
@@ -952,7 +984,7 @@ void QGeoMapObjectEngine::updatePixelTransform(QGeoMapObject *object)
         }
         foreach (QPolygonF poly, polys) {
             QGraphicsPolygonItem *item = new QGraphicsPolygonItem(poly);
-            item->setZValue(object->zValue());
+            //item->setZValue(object->zValue());
             item->setVisible(true);
             pixelItems.insert(item, object);
             pixelScene->addItem(item);
@@ -963,7 +995,7 @@ void QGeoMapObjectEngine::updatePixelTransform(QGeoMapObject *object)
             QGraphicsPolygonItem *pi = dynamic_cast<QGraphicsPolygonItem*>(item);
             Q_ASSERT(pi);
             pi->setPolygon(polys.at(i));
-            pi->setZValue(object->zValue());
+            //pi->setZValue(object->zValue());
         }
     }
 }

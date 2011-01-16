@@ -77,7 +77,7 @@ QTM_BEGIN_NAMESPACE
     Constructs a new group object.
 */
 QGeoMapGroupObject::QGeoMapGroupObject()
-    : d_ptr(new QGeoMapGroupObjectPrivate()) {}
+    : d_ptr(new QGeoMapGroupObjectPrivate(this)) {}
 
 /*!
     Destroys this group object.
@@ -162,6 +162,9 @@ void QGeoMapGroupObject::addChildObject(QGeoMapObject *childObject)
     d_ptr->children.insert(i, childObject);
     emit mapNeedsUpdate();
 
+    connect(childObject, SIGNAL(zValueChanged(int)),
+            d_ptr, SLOT(childChangedZValue(int)));
+
     emit childAdded(childObject);
 }
 
@@ -176,6 +179,10 @@ void QGeoMapGroupObject::removeChildObject(QGeoMapObject *childObject)
         return;
 
     if (d_ptr->children.removeAll(childObject) > 0) {
+
+        disconnect(childObject, SIGNAL(zValueChanged(int)),
+                   d_ptr, SLOT(childChangedZValue(int)));
+
         emit childRemoved(childObject);
         childObject->setMapData(0);
     }
@@ -254,14 +261,34 @@ void QGeoMapGroupObject::setMapData(QGeoMapData *mapData)
 /*******************************************************************************
 *******************************************************************************/
 
-QGeoMapGroupObjectPrivate::QGeoMapGroupObjectPrivate() {}
+QGeoMapGroupObjectPrivate::QGeoMapGroupObjectPrivate(QGeoMapGroupObject *p) :
+    QObject(p),
+    q_ptr(p)
+{}
 
 QGeoMapGroupObjectPrivate::~QGeoMapGroupObjectPrivate()
 {
     qDeleteAll(children);
 }
 
+void QGeoMapGroupObjectPrivate::childChangedZValue(int zValue)
+{
+    QGeoMapObject *child = qobject_cast<QGeoMapObject*>(sender());
+    if (!child)
+        return;
+
+    if (children.removeAll(child) > 0) {
+        QList<QGeoMapObject*>::iterator i = qUpperBound(children.begin(),
+                                                        children.end(),
+                                                        child,
+                                                        mapObjectLessThan);
+        children.insert(i, child);
+        emit q_ptr->mapNeedsUpdate();
+    }
+}
+
 #include "moc_qgeomapgroupobject.cpp"
+#include "moc_qgeomapgroupobject_p.cpp"
 
 QTM_END_NAMESPACE
 
