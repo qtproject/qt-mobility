@@ -604,6 +604,7 @@ void QGeoMapData::paintObjects(QPainter *painter, const QStyleOptionGraphicsItem
 
                     QStyleOptionGraphicsItem *style = new QStyleOptionGraphicsItem;
                     it->paint(painter, style);
+                    delete style;
                 }
             } else {
                 foreach (QTransform trans, e->pixelTrans.values(object)) {
@@ -611,6 +612,7 @@ void QGeoMapData::paintObjects(QPainter *painter, const QStyleOptionGraphicsItem
 
                     QStyleOptionGraphicsItem *style = new QStyleOptionGraphicsItem;
                     object->graphicsItem()->paint(painter, style);
+                    delete style;
                 }
             }
             objsDone.insert(object);
@@ -787,6 +789,7 @@ QGeoMapDataPrivate::~QGeoMapDataPrivate()
     if (containerObject)
         delete containerObject;
     qDeleteAll(overlays);
+    delete oe;
 }
 
 void QGeoMapDataPrivate::addObject(QGeoMapObject *object)

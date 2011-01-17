@@ -40,6 +40,24 @@ extern "C" {
 
 #include <QString>
 #include <QFile>
+#include <QList>
+
+class PJLibTracker
+{
+public:
+    ~PJLibTracker();
+
+    QList<QFile*> files;
+};
+
+PJLibTracker::~PJLibTracker()
+{
+    foreach (QFile *f, files)
+        delete f;
+}
+
+static PJLibTracker tracker;
+
 
 void pj_set_finder( const char *(*new_finder)(const char *) )
 {
@@ -54,6 +72,7 @@ FILE *pj_open_lib(char *name, char *mode)
     if (QFile::exists(QString(":/proj_data/%1").arg(name))) {
         QFile *f = new QFile(QString(":/proj_data/%1").arg(name));
         f->open(QIODevice::ReadOnly);
+        tracker.files.append(f);
         return fdopen(f->handle(), "r");
     } else {
         return NULL;

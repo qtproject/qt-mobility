@@ -105,7 +105,23 @@ QGeoMapObjectEngine::QGeoMapObjectEngine(QGeoMapData *mapData, QGeoMapDataPrivat
 }
 
 QGeoMapObjectEngine::~QGeoMapObjectEngine()
-{}
+{
+    delete pixelScene;
+    delete latLonScene;
+
+    latLonTrans.clear();
+    latLonItems.clear();
+    pixelTrans.clear();
+    pixelItems.clear();
+
+    foreach (QGraphicsItem *i, latLonExact.values())
+        delete i;
+    latLonExact.clear();
+
+    foreach (QGraphicsItem *i, pixelExact.values())
+        delete i;
+    pixelExact.clear();
+}
 
 /*****************************************************************************
   Object management
@@ -275,6 +291,10 @@ bool QGeoMapObjectEngine::exactMetersToSeconds(const QGeoCoordinate &origin,
     QTransform east;
     east.translate(-360.0 * 3600.0, 0.0);
 
+    foreach (QGraphicsItem *i, latLonExact.values(object))
+        delete i;
+    latLonExact.remove(object);
+
     QGraphicsEllipseItem *elItem = dynamic_cast<QGraphicsEllipseItem*>(item);
     if (elItem) {
         QRectF rect = elItem->rect();
@@ -286,7 +306,6 @@ bool QGeoMapObjectEngine::exactMetersToSeconds(const QGeoCoordinate &origin,
 
         QPolygonF wgs = approximateCircle(elItem, object, center, c);
 
-        latLonExact.remove(object);
         QGraphicsPolygonItem *pi = polyCopy(elItem);
         pi->setPolygon(wgs);
         latLonExact.insertMulti(object, pi);
@@ -315,7 +334,6 @@ bool QGeoMapObjectEngine::exactMetersToSeconds(const QGeoCoordinate &origin,
         p.convert(wgs84);
         QPolygonF wgs = p.toPolygonF(3600.0);
 
-        latLonExact.remove(object);
         QGraphicsPolygonItem *pi = polyCopy(polyItem);
         pi->setPolygon(wgs);
         latLonExact.insertMulti(object, pi);
@@ -348,9 +366,6 @@ bool QGeoMapObjectEngine::exactMetersToSeconds(const QGeoCoordinate &origin,
 
             path.setElementPositionAt(i, c.x() * 3600.0, c.y() * 3600.0);
         }
-
-        latLonExact.remove(object);
-
 
         QGraphicsPathItem *pi = pathCopy(pathItem);
         pi->setPath(path);
@@ -396,6 +411,10 @@ bool QGeoMapObjectEngine::exactSecondsToSeconds(const QGeoCoordinate &origin,
         toAbs.translate(ox, oy);
     }
 
+    foreach (QGraphicsItem *i, latLonExact.values(object))
+        delete i;
+    latLonExact.remove(object);
+
     QGraphicsPolygonItem *polyItem = dynamic_cast<QGraphicsPolygonItem*>(item);
     if (polyItem) {
         if (polyItem->polygon().isEmpty() || polyItem->polygon().size() < 3)
@@ -404,7 +423,6 @@ bool QGeoMapObjectEngine::exactSecondsToSeconds(const QGeoCoordinate &origin,
         QPolygonF poly = polyItem->polygon() * polyItem->transform();
         poly = poly * toAbs;
 
-        latLonExact.remove(object);
         QGraphicsPolygonItem *pi = polyCopy(polyItem);
         pi->setPolygon(poly);
         latLonExact.insertMulti(object, pi);
@@ -433,7 +451,6 @@ bool QGeoMapObjectEngine::exactSecondsToSeconds(const QGeoCoordinate &origin,
         QPainterPath path = pathItem->path() * pathItem->transform();
         path = path * toAbs;
 
-        latLonExact.remove(object);
         QGraphicsPathItem *pi = pathCopy(pathItem);
         pi->setPath(path);
         latLonExact.insertMulti(object, pi);
@@ -585,6 +602,8 @@ void QGeoMapObjectEngine::exactPixelMap(const QGeoCoordinate &origin,
 {
     QList<QGraphicsItem*> latLonItems = latLonExact.values(object);
 
+    foreach (QGraphicsItem *i, pixelExact.values(object))
+        delete i;
     pixelExact.remove(object);
 
     double tolerance = exactMappingTolerance;
@@ -847,8 +866,17 @@ static void addGroupToScene(QGeoMapObjectEngine *eng, QGeoMapGroupObject *group)
 
 void QGeoMapObjectEngine::rebuildScenes()
 {
+    foreach (QGraphicsItem *i, latLonScene->items())
+        latLonScene->removeItem(i);
+    foreach (QGraphicsItem *i, pixelScene->items())
+        pixelScene->removeItem(i);
+
+    delete latLonScene;
+    delete pixelScene;
+
     latLonScene = new QGraphicsScene;
     pixelScene = new QGraphicsScene;
+
     addGroupToScene(this, mdp->containerObject);
 }
 

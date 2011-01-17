@@ -68,11 +68,19 @@ ProjCoordinateSystemPrivate::ProjCoordinateSystemPrivate(const QString &projStr,
 }
 
 ProjCoordinateSystemPrivate::ProjCoordinateSystemPrivate(const ProjCoordinateSystemPrivate &other) :
-    QSharedData(other), projection(other.projection)
-{}
+    QSharedData(other),
+    latLon(other.latLon)
+{
+    char *str = pj_get_def(other.projection, 0);
+    projection = pj_init_plus(str);
+    Q_ASSERT_X(projection, "pj_init_plus", "invalid projection string");
+    delete str;
+}
 
 ProjCoordinateSystemPrivate::~ProjCoordinateSystemPrivate()
-{}
+{
+    pj_free(projection);
+}
 
 ProjCoordinateSystem::ProjCoordinateSystem(const QString &projection, bool latLon) :
     d(new ProjCoordinateSystemPrivate(projection, latLon))
@@ -118,7 +126,9 @@ ProjCoordinate::ProjCoordinate(const ProjCoordinate &other) :
 }
 
 ProjCoordinate::~ProjCoordinate()
-{}
+{
+    delete d;
+}
 
 double ProjCoordinate::x() const
 {
