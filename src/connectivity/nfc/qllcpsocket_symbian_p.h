@@ -43,18 +43,31 @@
 #define QLLCPSOCKET_P_H
 
 #include <qmobilityglobal.h>
-
 #include "qllcpsocket.h"
 
+#include <QtCore/QObject>
+#include <QSharedPointer>
+
+class CLlcpSocketType1;
+class CLlcpSocketType2;
+
+QT_BEGIN_HEADER
+
 QTM_BEGIN_NAMESPACE
+
+class QLLCPSocketState;
 
 class QLlcpSocketPrivate
 {
     Q_DECLARE_PUBLIC(QLlcpSocket)
 
 public:
-    QLlcpSocketPrivate(QLlcpSocket *q);
 
+    QLlcpSocketPrivate(QLlcpSocket *q);
+    QLlcpSocketPrivate(CLlcpSocketType2* socketType2_symbian);
+    ~QLlcpSocketPrivate();
+
+public: //Implementation of QLlcpSocket API
     void connectToService(QNearFieldTarget *target, const QString &serviceUri);
     void disconnectFromService();
 
@@ -84,11 +97,60 @@ public:
     bool waitForBytesWritten(int msecs);
     bool waitForConnected(int msecs);
     bool waitForDisconnected(int msecs);
+    void attachCallbackHandler(QLlcpSocket *q);
+
+public:
+    CLlcpSocketType1* socketType1Instance();
+    CLlcpSocketType2* socketType2Instance();
+    CLlcpSocketType1* socketType1Handler() {return m_symbianSocketType1;}
+    CLlcpSocketType2* socketType2Handler() {return m_symbianSocketType2;}
+
+    QLlcpSocket* qllcpsocket(CLlcpSocketType2*);
+
+public:
+    enum State {
+        ListeningState = QAbstractSocket::ListeningState,
+    };
+
+public:
+    void invokeReadyRead();
+    void invokeBytesWritten(qint64 bytes) ;
+    void invokeStateChanged(QLlcpSocket::State socketState);
+    void invokeError();
+    void invokeDisconnected();
+    void invokeConnected();
+
+// state machine part
+public:
+    void changeState(QLLCPSocketState*);
+    QLLCPSocketState* getUnconnectedState() { return m_unconnectedState;}
+    QLLCPSocketState* getConnectedState() { return m_connectedState;}
+    QLLCPSocketState* getConnectingState() { return m_connectingState;}
+    QLLCPSocketState* getBindState() { return m_bindState;}
 
 private:
-    QLlcpSocket *q_ptr;
+    CLlcpSocketType1* m_symbianSocketType1;  // own
+    CLlcpSocketType2* m_symbianSocketType2; // own
+
+private:
+    QLlcpSocket::Error m_error;
+    QLLCPSocketState* m_state;  // not own
+    QLLCPSocketState* m_unconnectedState;  // own
+    QLLCPSocketState* m_connectedState; // own
+    QLLCPSocketState* m_connectingState; // own
+    QLLCPSocketState* m_bindState; // own
+
+    QLlcpSocket *q_ptr; // not own
+
+    bool m_emittedReadyRead;
+    bool m_emittedBytesWritten;
+
+public:
+    int m_writeDatagramRefCount;
 };
 
+
 QTM_END_NAMESPACE
+QT_END_HEADER
 
 #endif // QLLCPSOCKET_P_H

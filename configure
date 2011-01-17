@@ -597,6 +597,7 @@ fi
 # It's a lot easier to make qmake do the dependency checking...
 echo "mobility_modules = $MOBILITY_MODULES" >> "$CONFIG_IN"
 echo "contains(mobility_modules,versit): mobility_modules *= contacts" >> "$CONFIG_IN"
+echo "contains(mobility_modules,connectivity): mobility_modules *= serviceframework" >> "$CONFIG_IN"
 echo "maemo5|maemo6:contains(maemo-icd_enabled, no): mobility_modules -= bearer" >> "$CONFIG_IN"
 # Mobility doesn't support Bearer on MeeGo -> Use Qt 4.7 Bearer instead
 echo "meego:contains(mobility_modules, bearer) { " >> "$CONFIG_IN"
@@ -678,9 +679,11 @@ for module in $MOBILITY_MODULES; do
             $relpath/bin/syncheaders $shadowpath/include/QtOrganizer $relpath/src/organizer/details
             ;;
         connectivity)
+            #connectivity implies serviceframework
             $relpath/bin/syncheaders $shadowpath/include/QtConnectivity $relpath/src/connectivity
             $relpath/bin/syncheaders $shadowpath/include/QtConnectivity $relpath/src/connectivity/nfc
             $relpath/bin/syncheaders $shadowpath/include/QtConnectivity $relpath/src/connectivity/bluetooth
+            $relpath/bin/syncheaders $shadowpath/include/QtServiceFramework $relpath/src/serviceframework
             ;;
         *)
             echo "Cannot generate headers for $module"

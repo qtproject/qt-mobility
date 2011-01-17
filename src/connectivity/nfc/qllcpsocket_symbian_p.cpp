@@ -38,147 +38,369 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-
 #include "qllcpsocket_symbian_p.h"
-
+#include "qllcpstate_symbian_p.h"
+#include "symbian/llcpsockettype1_symbian.h"
+#include "symbian/llcpsockettype2_symbian.h"
+#include "symbian/nearfieldutility_symbian.h"
+#include "symbian/debug.h"
 QTM_BEGIN_NAMESPACE
 
+/*!
+    Constructor
+*/
 QLlcpSocketPrivate::QLlcpSocketPrivate(QLlcpSocket *q)
-:   q_ptr(q)
+       : m_symbianSocketType1(NULL),
+         m_symbianSocketType2(NULL),
+         m_error(QLlcpSocket::UnknownSocketError),
+         q_ptr(q),
+         m_emittedReadyRead(false),
+         m_emittedBytesWritten(false),
+         m_writeDatagramRefCount(0)
 {
+    BEGIN
+    m_unconnectedState = new QLLCPUnconnected(this);
+    m_connectingState = new QLLCPConnecting(this);
+    m_connectedState = new QLLCPConnected(this);
+    m_bindState = new QLLCPBind(this);
+
+    m_state = m_unconnectedState;
+    END
+}
+
+
+/*!
+    Destructor
+*/
+QLlcpSocketPrivate::~QLlcpSocketPrivate()
+{
+    BEGIN
+    Q_Q(QLlcpSocket);
+    if (q->isOpen()) {
+        q->close();
+    }
+
+    delete m_unconnectedState;
+    delete m_connectingState;
+    delete m_connectedState;
+    delete m_bindState;
+    delete m_symbianSocketType1;
+    delete m_symbianSocketType2;
+    END
+}
+
+/*!
+    Construct the socket and set as connected state from llcp server side
+*/
+QLlcpSocketPrivate::QLlcpSocketPrivate(CLlcpSocketType2* socketType2_symbian)
+    : m_symbianSocketType1(NULL),
+      m_symbianSocketType2(socketType2_symbian),
+      m_error(QLlcpSocket::UnknownSocketError),
+      m_emittedReadyRead(false),
+      m_emittedBytesWritten(false),
+      m_writeDatagramRefCount(0)
+{
+    BEGIN
+    m_unconnectedState = new QLLCPUnconnected(this);
+    m_connectingState = new QLLCPConnecting(this);
+    m_connectedState = new QLLCPConnected(this);
+    m_bindState = new QLLCPBind(this);
+
+    m_state = m_connectedState;
+
+    END
 }
 
 void QLlcpSocketPrivate::connectToService(QNearFieldTarget *target, const QString &serviceUri)
 {
-    Q_UNUSED(target);
-    Q_UNUSED(serviceUri);
+    BEGIN
+    Q_Q(QLlcpSocket);
+    if (!q->isOpen())
+    {
+       bool ret = q->open(QIODevice::ReadWrite | QIODevice::Unbuffered);
+       if (false == ret)
+           invokeError();
+    }
+    m_state->ConnectToService(target,serviceUri);
+    END
 }
 
 void QLlcpSocketPrivate::disconnectFromService()
 {
+    BEGIN
+    m_state->DisconnectFromService();
+
+    Q_Q(QLlcpSocket);
+    if (q->isOpen())
+    {
+        q->close();
+    }
+    END
 }
 
+void QLlcpSocketPrivate::invokeConnected()
+{
+    BEGIN
+    Q_Q(QLlcpSocket);
+
+    if (m_state->state() == QLlcpSocket::ConnectingState)
+    {
+      changeState(getConnectedState());
+      invokeStateChanged(QLlcpSocket::ConnectedState);
+      emit q->connected();
+    }
+    END
+}
+
+void QLlcpSocketPrivate::invokeReadyRead()
+{
+    BEGIN
+    Q_Q(QLlcpSocket);
+    //If called from within a slot connected to the readyRead() signal,
+    //readyRead() will not be reemitted.
+    LOG("m_emittedReadyRead: " << m_emittedReadyRead);
+
+    if (!m_emittedReadyRead){
+        m_emittedReadyRead = true;
+        LOG("readyRead signal has been emited!");
+        emit q->readyRead();
+        m_emittedReadyRead = false;
+    }
+    END
+}
+
+void QLlcpSocketPrivate::attachCallbackHandler(QLlcpSocket *q)
+{
+    BEGIN
+    q_ptr = q;
+    if (!q->isOpen())
+    {
+       bool ret = q->open(QIODevice::ReadWrite | QIODevice::Unbuffered);
+       if (false == ret)
+          invokeError();
+    }
+    END
+}
+
+qint64 QLlcpSocketPrivate::bytesAvailable() const
+{
+    BEGIN
+    qint64 bytes = 0;
+    if (m_symbianSocketType2 != NULL)
+    {
+        bytes = m_symbianSocketType2->BytesAvailable();
+    }
+    END
+    return bytes;
+}
+
+void QLlcpSocketPrivate::invokeBytesWritten(qint64 bytes)
+{
+    BEGIN
+    Q_Q(QLlcpSocket);
+    if (!m_emittedBytesWritten){
+        m_emittedBytesWritten = true;
+        emit q->bytesWritten(bytes);
+        m_emittedBytesWritten = false;
+    }
+    END
+}
+
+void QLlcpSocketPrivate::invokeStateChanged(QLlcpSocket::State socketState)
+{
+    BEGIN
+    Q_Q(QLlcpSocket);
+    emit q->stateChanged(socketState);
+    END
+}
+
+void QLlcpSocketPrivate::invokeError()
+{
+    BEGIN
+    Q_Q(QLlcpSocket);
+    emit q->error(QLlcpSocket::UnknownSocketError);
+    END
+}
+
+void QLlcpSocketPrivate::invokeDisconnected()
+{
+    BEGIN
+    Q_Q(QLlcpSocket);
+    emit q->disconnected();
+    END
+}
+
+/*!
+    Only used at connectless mode, create type1 socket if necessary.
+*/
 bool QLlcpSocketPrivate::bind(quint8 port)
 {
-    Q_UNUSED(port);
-
-    return false;
+    BEGIN_END
+    return m_state->Bind(port);
 }
 
+/*!
+    Returns true if at least one datagram is waiting to be read;
+    otherwise returns false.
+*/
 bool QLlcpSocketPrivate::hasPendingDatagrams() const
 {
-    return false;
+    BEGIN
+    bool val = false;
+    if (m_symbianSocketType1)
+    {
+        val = m_symbianSocketType1->HasPendingDatagrams();
+    }
+
+    END
+    return val;
 }
 
+/*!
+    Returns the size of the first pending connectionless datagram. If there is
+    no datagram available, this function returns -1.
+*/
 qint64 QLlcpSocketPrivate::pendingDatagramSize() const
 {
-    return -1;
+    BEGIN
+    qint64 val = -1;
+    if (m_symbianSocketType1)
+    {
+        val = m_symbianSocketType1->PendingDatagramSize();
+    }
+
+    END
+    return val;
 }
 
+CLlcpSocketType1* QLlcpSocketPrivate::socketType1Instance()
+{
+    if (NULL == m_symbianSocketType1)
+    {
+        TRAPD(err, m_symbianSocketType1 = CLlcpSocketType1::NewL(*this));
+        if (KErrNone != err) {
+           m_symbianSocketType1 = NULL;
+        }
+    }
+    return m_symbianSocketType1;
+}
+
+CLlcpSocketType2* QLlcpSocketPrivate::socketType2Instance()
+{
+    if (NULL == m_symbianSocketType2)
+    {
+       TRAPD(err, m_symbianSocketType2 = CLlcpSocketType2::NewL(this));
+       if (KErrNone != err) {
+          m_symbianSocketType2 = NULL;
+       }
+    }
+    return m_symbianSocketType2;
+}
+
+/*!
+    Connection-Oriented Style
+*/
 qint64 QLlcpSocketPrivate::writeDatagram(const char *data, qint64 size)
 {
-    Q_UNUSED(data);
-    Q_UNUSED(size);
-
-    return -1;
+    BEGIN
+    qint64 val = -1;
+    val = m_state->WriteDatagram(data,size);
+    END
+    return val;
 }
 
+/*!
+    Connection-Oriented Style
+*/
 qint64 QLlcpSocketPrivate::writeDatagram(const QByteArray &datagram)
 {
-    Q_UNUSED(datagram);
-
-    return -1;
+    BEGIN_END
+    return writeDatagram(datagram.constData(),datagram.size());
 }
 
+/*!
+    Used for Both Connection-Less & Connection-Oriented Style
+    As for Connection-Oriented mode, can not pass in the port & target parameters.
+*/
 qint64 QLlcpSocketPrivate::readDatagram(char *data, qint64 maxSize,
                                         QNearFieldTarget **target, quint8 *port)
 {
-    Q_UNUSED(data);
-    Q_UNUSED(maxSize);
-    Q_UNUSED(target);
-    Q_UNUSED(port);
-
-    return -1;
+    BEGIN
+    qint64 val = m_state->ReadDatagram(data,maxSize,target,port);
+    END
+    return val;
 }
 
 qint64 QLlcpSocketPrivate::writeDatagram(const char *data, qint64 size,
                                          QNearFieldTarget *target, quint8 port)
 {
-    Q_UNUSED(data);
-    Q_UNUSED(size);
-    Q_UNUSED(target);
-    Q_UNUSED(port);
+    BEGIN
+    qint64 val = m_state->WriteDatagram(data,size,target,port);
+    END
 
-    return -1;
+    return val;
 }
 
 qint64 QLlcpSocketPrivate::writeDatagram(const QByteArray &datagram,
                                          QNearFieldTarget *target, quint8 port)
 {
-    Q_UNUSED(datagram);
-    Q_UNUSED(target);
-    Q_UNUSED(port);
-
-    return -1;
+    BEGIN_END
+    return writeDatagram(datagram.constData(),datagram.size(),target,port);
 }
 
 QLlcpSocket::Error QLlcpSocketPrivate::error() const
 {
-    return QLlcpSocket::UnknownSocketError;
+    BEGIN_END
+    return m_error;
 }
 
 QLlcpSocket::State QLlcpSocketPrivate::state() const
 {
-    return QLlcpSocket::UnconnectedState;
+    BEGIN_END
+    return m_state->state();
 }
 
 qint64 QLlcpSocketPrivate::readData(char *data, qint64 maxlen)
 {
-    Q_UNUSED(data);
-    Q_UNUSED(maxlen);
-
-    return -1;
+    BEGIN_END
+    return readDatagram(data,maxlen);
 }
 
 qint64 QLlcpSocketPrivate::writeData(const char *data, qint64 len)
 {
-    Q_UNUSED(data);
-    Q_UNUSED(len);
-
-    return -1;
-}
-
-qint64 QLlcpSocketPrivate::bytesAvailable() const
-{
-    return 0;
+    BEGIN_END
+    return writeDatagram(data,len);
 }
 
 bool QLlcpSocketPrivate::waitForReadyRead(int msecs)
 {
-    Q_UNUSED(msecs);
-
-    return false;
+    BEGIN_END
+    return m_state->WaitForReadyRead(msecs);
 }
 
 bool QLlcpSocketPrivate::waitForBytesWritten(int msecs)
 {
-    Q_UNUSED(msecs);
-
-    return false;
+    BEGIN_END
+    return m_state->WaitForBytesWritten(msecs);
 }
 
 bool QLlcpSocketPrivate::waitForConnected(int msecs)
 {
-    Q_UNUSED(msecs);
-
-    return false;
+    BEGIN_END
+    return m_state->WaitForConnected(msecs);
 }
 
 bool QLlcpSocketPrivate::waitForDisconnected(int msecs)
 {
-    Q_UNUSED(msecs);
-
-    return false;
+    BEGIN_END
+    return m_state->WaitForDisconnected(msecs);
 }
+
+void QLlcpSocketPrivate::changeState(QLLCPSocketState* state)
+{
+    m_state = state;
+    BEGIN_END
+}
+
 
 QTM_END_NAMESPACE
