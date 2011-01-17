@@ -59,7 +59,7 @@ class Q_SYSINFO_EXPORT QSystemAlignedTimer : public QObject
     Q_OBJECT
 
     Q_PROPERTY(int timerWindow READ timerWindow WRITE setWindow NOTIFY windowChanged)
-    Q_PROPERTY(bool interval READ interval WRITE setInterval NOTIFY intervalChanged)
+    Q_PROPERTY(int interval READ interval WRITE setInterval NOTIFY intervalChanged)
 
     Q_PROPERTY(bool running READ isRunning WRITE setRunning NOTIFY runningChanged)
     Q_PROPERTY(bool singleShot READ isSingleShot WRITE setSingleShot)
@@ -73,7 +73,7 @@ public:
     void setWindow(int timerWindow);
     int timerWindow() const;
 
-    void setInterval(int sec);
+    void setInterval(int minTime, int maxTime = 0);
     int interval() const;
 
     inline void setSingleShot(bool singleShot);

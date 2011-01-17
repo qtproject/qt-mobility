@@ -117,6 +117,7 @@ void QSystemAlignedTimer::setWindow(int timerWindow)
 }
 
 
+
 /*!
   Called if the application woke up by itself.
   This method should be called if the application has woken up by some other
@@ -137,12 +138,22 @@ void QSystemAlignedTimer::stop()
 
 }
 
+
 /*!
-  Set the preferred timeout interval to \a sec in seconds.
-  */
-void QSystemAlignedTimer::setInterval(int sec)
+  Set the preferred timeout interval to \a minTime in seconds that must be waited before timeout
+  signal is emitted, and \a maxTime in seconds when the wait must end.
+
+  For example if you preferred wait is 120 seconds, use minTime of 110 and maxTime of 130.
+
+  minTime value of 0 means 'wake me up when someone else is woken'.
+
+  Default value for maxTime is 0. If maxTime is 0, then minTime will be a "preferred" interval.
+ */
+void QSystemAlignedTimer::setInterval(int minTime, int maxTime)
 {
-    preferredInterval = sec;
+    if(minTime != 0 && maxTime == 0) {
+        preferredInterval = minTime;
+    }
 }
 
 /*!
