@@ -11,6 +11,7 @@ QT = core
 qtAddLibrary(QtServiceFramework)
 
 include(nfc/nfc.pri)
+
 !mac:!win32:include(bluetooth/bluetooth.pri)
 
 HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS

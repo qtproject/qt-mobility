@@ -39,20 +39,28 @@
 **
 ****************************************************************************/
 
-#ifndef QNEARFIELDMANAGERIMPL_P_H
-#define QNEARFIELDMANAGERIMPL_P_H
+#include <qservicefilter.h>
+#include <qservicemanager.h>
+#include <QCoreApplication>
 
-#include "qnearfieldmanager_p.h"
+#include "qnearfieldmanagerimpl_p.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QNearFieldManagerPrivateImpl : public QNearFieldManagerPrivate
+
+/*!
+    Constructs a new near field manager private implementation.
+*/
+QNearFieldManagerPrivateImpl::QNearFieldManagerPrivateImpl()
 {
-public:
-  QNearFieldManagerPrivateImpl();
-  ~QNearFieldManagerPrivateImpl();
-};
+}
+
+/*!
+    Destroys the near field manager private implementation.
+*/
+QNearFieldManagerPrivateImpl::~QNearFieldManagerPrivateImpl()
+{
+}
+//#include "moc_qnearfieldmanagerimpl_p.cpp"
 
 QTM_END_NAMESPACE
-
-#endif // QNEARFIELDMANAGERIMPL_P_H
