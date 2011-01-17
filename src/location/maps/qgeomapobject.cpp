@@ -54,18 +54,18 @@ QTM_BEGIN_NAMESPACE
 
 /*!
     \class QGeoMapObject
-    \brief The QGeoMapObject class is graphical item for display in
-    QGraphicsGeoMap instances, that is specified in terms of coordinates and
-    distances.
-
+    \brief The QGeoMapObject class is a graphical item to be displayed on a map.
     \inmodule QtLocation
 
     \ingroup maps-mapping-objects
 
-    QGeoMapObject itself can be used to facilitate the display of any
-    arbitrary QGraphicsItem on a map. To this end, it supports different
-    coordinate systems and the concept of an "origin point" for translation
-    into map coordinates.
+    Any arbitrary QGraphicsItem can be associated with a QGeoMapObject, and to
+    this end it contains support for interpreting the coordinates of the
+    QGraphicsItem in a variety of different ways.
+
+    The QGeoMapObject subclasses are convenience classes that automatically set
+    up particular QGraphicsItem subclasses and coordinate systems, but
+    QGeoMapObject can also be used directly.
 
     For example, the following code creates a QGraphicsEllipseItem and a
     QGeoMapObject to display it. The EllipseItem extends from the origin point,
@@ -84,9 +84,9 @@ QTM_BEGIN_NAMESPACE
     Normally, the GraphicsItem will be transformed into map coordinates using
     a bilinear interpolation. Another option is the ExactTransform, which
     converts the GraphicsItem exactly into map coordinates, but is only available
-    for certain subclasses. Other interpolation methods may be provided in
-    future for greater accuracy near poles and in different map projections,
-    without the limitations of ExactTransform.
+    for certain subclasses of QGraphicsItem. Other interpolation methods may
+    be provided in future for greater accuracy near poles and in different
+    map projections, without the limitations of ExactTransform.
 
     Calling setUnits() or setting the units property will result in the
     default value of transformType being restored. See QGeoMapObject::transformType
@@ -94,7 +94,7 @@ QTM_BEGIN_NAMESPACE
 
     QGeoMapObject instances can also be grouped into heirarchies in order to
     simplify the process of creating compound objects and managing groups of
-    objects.
+    objects (see QGeoMapGroupObject)
 */
 
 /*!
@@ -120,6 +120,8 @@ QTM_BEGIN_NAMESPACE
         A QGeoMapObject used to display text on a map
     \value RouteType
         A QGeoMapObject used to display a route.
+    \value CustomType
+        A QGeoMapObject displaying a custom GraphicsItem.
 */
 
 /*!
@@ -156,6 +158,16 @@ QTM_BEGIN_NAMESPACE
         Individual key points on the object are transformed and the GraphicsItem
         is constructed in direct pixel coordinates. This is only available for
         certain subclasses, depending on the implementation of QGeoMapData used.
+*/
+
+/*!
+    \fn void QGeoMapObject::mapAppearanceChanged()
+
+    This signal is emitted whenever some detail of the QGeoMapObject instance
+    is changed that affects its appearance on the map.
+
+    Subclasses should emit this signal whenever they require repainting on
+    the map surface.
 */
 
 /*!

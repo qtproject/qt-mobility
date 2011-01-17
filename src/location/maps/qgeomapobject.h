@@ -67,9 +67,9 @@ class Q_LOCATION_EXPORT QGeoMapObject : public QObject
     Q_PROPERTY(int zValue READ zValue WRITE setZValue NOTIFY zValueChanged)
     Q_PROPERTY(bool visible READ isVisible WRITE setVisible NOTIFY visibleChanged)
     Q_PROPERTY(bool selected READ isSelected WRITE setSelected NOTIFY selectedChanged)
-    Q_PROPERTY(QGeoCoordinate origin READ origin WRITE setOrigin)
+    Q_PROPERTY(QGeoCoordinate origin READ origin WRITE setOrigin NOTIFY originChanged)
     Q_PROPERTY(CoordinateUnit units READ units WRITE setUnits)
-    Q_PROPERTY(QGraphicsItem* graphicsItem READ graphicsItem WRITE setGraphicsItem)
+    Q_PROPERTY(QGraphicsItem* graphicsItem READ graphicsItem WRITE setGraphicsItem NOTIFY graphicsItemChanged)
     Q_PROPERTY(TransformType transformType READ transformType WRITE setTransformType)
 
 public:

@@ -570,7 +570,12 @@ void QGeoMapData::paintMap(QPainter *painter, const QStyleOptionGraphicsItem *op
 /*!
     Paints the map objects on \a painter, using the options \a option.
 
-    The default implementation does not paint anything.
+    The default implementation makes use of the coordinateToScreenPosition
+    implemented by the subclass to perform object positioning and rendering.
+
+    This implementation should suffice for most common use cases, and supports
+    the full range of coordinate systems and transforms available to a
+    QGeoMapObject.
 */
 void QGeoMapData::paintObjects(QPainter *painter, const QStyleOptionGraphicsItem *option)
 {
