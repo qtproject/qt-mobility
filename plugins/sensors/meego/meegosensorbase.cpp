@@ -79,10 +79,8 @@ void meegosensorbase::start()
             // for testing maximum speed
             //interval = 1;
             //dataRate = 1000;
-            qDebug() << "Setting data rate" << dataRate << "Hz (interval" << interval << "ms) for" << m_sensorInterface->id();
+            qDebug() << "Setting data rate" << dataRate << "Hz (interval" << interval << "ms) for" << sensorName();
             m_sensorInterface->setInterval(interval);
-        } else {
-            qDebug() << "Data rate in don't care mode (interval" << m_sensorInterface->interval() << "ms) for" << m_sensorInterface->id();
         }
 
         // outputRange
@@ -138,8 +136,7 @@ bool meegosensorbase::doConnectAfterCheck(){
     int size = bufferSize();
     if (size == m_bufferSize) return true;
 
-    //TODO: waiting next sensord version
-//    m_sensorInterface->setBufferSize(size);
+    m_sensorInterface->setBufferSize(size);
 
     // if multiple->single or single->multiple or if uninitialized
     if ((m_bufferSize>1 && size==1) || (m_bufferSize==1 && size>1) || m_bufferSize==-1){
@@ -154,7 +151,6 @@ bool meegosensorbase::doConnectAfterCheck(){
     m_bufferSize = size;
     return true;
 }
-
 
 
 const int meegosensorbase::bufferSize(){
@@ -173,5 +169,4 @@ const int meegosensorbase::bufferSize(){
     }
     return bufferSize;
 }
-
 
