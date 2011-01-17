@@ -1162,7 +1162,7 @@ find %{buildroot}%{_libdir}/qtmobility -type f -perm /u+x,g+x,o+x \( -false \
 %config %{_sysconfdir}/xdg/Nokia/Sensors.conf
 %{_libdir}/libQtSensors.so.*
 %{_libdir}/qt4/plugins/sensors/libqtsensors_generic.so
-%{_libdir}/qt4/plugins/sensors/libqtsensors_maemo6.so
+%{_libdir}/qt4/plugins/sensors/libqtsensors_meego.so
 # << files libqtsensors1
 
 %files -n libqtserviceframework1
