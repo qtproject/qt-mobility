@@ -48,7 +48,7 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QLlcpServerPrivate
+class QLlcpServerPrivate 
 {
     Q_DECLARE_PUBLIC(QLlcpServer)
 

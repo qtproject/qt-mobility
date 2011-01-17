@@ -58,7 +58,8 @@ Q_GLOBAL_STATIC(QSocketServerPrivate, getSocketServer)
 QBluetoothSocketPrivate::QBluetoothSocketPrivate()
     : iSocket(0),
     rxDescriptor(0, 0),
-    discoveryAgent(0)
+    discoveryAgent(0),
+      state(QBluetoothSocket::UnconnectedState)
 {
 }
 
