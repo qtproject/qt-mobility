@@ -153,7 +153,7 @@ void QGeoMapTextObject::setText(const QString &text)
         d_ptr->item->setText(text);
         d_ptr->doAlignment();
         emit textChanged(text);
-        emit mapNeedsUpdate();
+        emit mapAppearanceChanged();
     }
 }
 
@@ -179,7 +179,7 @@ void QGeoMapTextObject::setFont(const QFont &font)
         d_ptr->item->setFont(font);
         d_ptr->doAlignment();
         emit fontChanged(font);
-        emit mapNeedsUpdate();
+        emit mapAppearanceChanged();
     }
 }
 
@@ -209,7 +209,7 @@ void QGeoMapTextObject::setPen(const QPen &pen)
     d_ptr->item->setPen(newPen);
     d_ptr->doAlignment();
     emit penChanged(pen);
-    emit mapNeedsUpdate();
+    emit mapAppearanceChanged();
 }
 
 /*!
@@ -232,7 +232,7 @@ void QGeoMapTextObject::setBrush(const QBrush &brush)
         d_ptr->item->setBrush(brush);
         d_ptr->doAlignment();
         emit brushChanged(brush);
-        emit mapNeedsUpdate();
+        emit mapAppearanceChanged();
     }
 }
 
@@ -256,7 +256,7 @@ void QGeoMapTextObject::setOffset(const QPoint &off)
         d_ptr->offset = offset;
         d_ptr->doAlignment();
         emit offsetChanged(off);
-        emit mapNeedsUpdate();
+        emit mapAppearanceChanged();
     }
 }
 
@@ -284,7 +284,7 @@ void QGeoMapTextObject::setAlignment(Qt::Alignment alignment)
         d_ptr->alignment = alignment;
         d_ptr->doAlignment();
         emit alignmentChanged(d_ptr->alignment);
-        emit mapNeedsUpdate();
+        emit mapAppearanceChanged();
     }
 }
 

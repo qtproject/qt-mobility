@@ -161,7 +161,7 @@ void QGeoMapRectangleObject::setBounds(const QGeoBoundingBox &bounds)
     if (d_ptr->bounds.bottomRight() != oldBounds.bottomRight())
         emit bottomRightChanged(d_ptr->bounds.bottomRight());
 
-    emit mapNeedsUpdate();
+    emit mapAppearanceChanged();
 }
 
 /*!
@@ -186,7 +186,7 @@ void QGeoMapRectangleObject::setTopLeft(const QGeoCoordinate &topLeft)
         setOrigin(d_ptr->bounds.center());
         d_ptr->item->setRect(-0.5*d_ptr->bounds.width()*3600.0, -0.5*d_ptr->bounds.height()*3600.0,
                              0.5*d_ptr->bounds.width()*3600.0, 0.5*d_ptr->bounds.height()*3600.0);
-        emit mapNeedsUpdate();
+        emit mapAppearanceChanged();
     }
 }
 
@@ -212,7 +212,7 @@ void QGeoMapRectangleObject::setBottomRight(const QGeoCoordinate &bottomRight)
         setOrigin(d_ptr->bounds.center());
         d_ptr->item->setRect(-0.5*d_ptr->bounds.width()*3600.0, -0.5*d_ptr->bounds.height()*3600.0,
                              0.5*d_ptr->bounds.width()*3600.0, 0.5*d_ptr->bounds.height()*3600.0);
-        emit mapNeedsUpdate();
+        emit mapAppearanceChanged();
     }
 }
 
@@ -241,7 +241,7 @@ void QGeoMapRectangleObject::setPen(const QPen &pen)
 
     d_ptr->item->setPen(newPen);
     emit penChanged(newPen);
-    emit mapNeedsUpdate();
+    emit mapAppearanceChanged();
 }
 
 /*!
@@ -263,7 +263,7 @@ void QGeoMapRectangleObject::setBrush(const QBrush &brush)
     if (d_ptr->item->brush() != brush) {
         d_ptr->item->setBrush(brush);
         emit brushChanged(d_ptr->item->brush());
-        emit mapNeedsUpdate();
+        emit mapAppearanceChanged();
     }
 }
 

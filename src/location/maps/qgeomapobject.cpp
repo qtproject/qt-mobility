@@ -169,15 +169,15 @@ QGeoMapObject::QGeoMapObject(QGeoMapData *mapData)
     setMapData(mapData);
 
     connect(this, SIGNAL(originChanged(QGeoCoordinate)),
-            this, SIGNAL(mapNeedsUpdate()));
+            this, SIGNAL(mapAppearanceChanged()));
     connect(this, SIGNAL(selectedChanged(bool)),
-            this, SIGNAL(mapNeedsUpdate()));
+            this, SIGNAL(mapAppearanceChanged()));
     connect(this, SIGNAL(visibleChanged(bool)),
-            this, SIGNAL(mapNeedsUpdate()));
+            this, SIGNAL(mapAppearanceChanged()));
     connect(this, SIGNAL(zValueChanged(int)),
-            this, SIGNAL(mapNeedsUpdate()));
+            this, SIGNAL(mapAppearanceChanged()));
     connect(this, SIGNAL(graphicsItemChanged(QGraphicsItem*)),
-            this, SIGNAL(mapNeedsUpdate()));
+            this, SIGNAL(mapAppearanceChanged()));
 }
 
 /*!
@@ -194,7 +194,7 @@ QGeoMapObject::~QGeoMapObject()
 */
 void QGeoMapObject::update()
 {
-    emit mapNeedsUpdate();
+    emit mapAppearanceChanged();
 }
 
 /*!
@@ -229,7 +229,7 @@ void QGeoMapObject::setZValue(int zValue)
             QGeoMapObjectEngine *e = d_ptr->mapData->d_ptr->oe;
             e->rebuildScenes();
         }
-        emit mapNeedsUpdate();
+        emit mapAppearanceChanged();
     }
 }
 
@@ -379,7 +379,7 @@ void QGeoMapObject::setMapData(QGeoMapData *mapData)
         return;
 
     if (d_ptr->mapData) {
-        disconnect(this, SIGNAL(mapNeedsUpdate()),
+        disconnect(this, SIGNAL(mapAppearanceChanged()),
                    d_ptr->mapData->d_ptr, SLOT(updateSender()));
     }
 
@@ -387,7 +387,7 @@ void QGeoMapObject::setMapData(QGeoMapData *mapData)
     if (!d_ptr->mapData)
         return;
 
-    connect(this, SIGNAL(mapNeedsUpdate()),
+    connect(this, SIGNAL(mapAppearanceChanged()),
             d_ptr->mapData->d_ptr, SLOT(updateSender()));
 }
 
@@ -441,7 +441,7 @@ QGeoMapObject::TransformType QGeoMapObject::transformType() const
 void QGeoMapObject::setTransformType(const TransformType &type)
 {
     d_ptr->transType = type;
-    emit mapNeedsUpdate();
+    emit mapAppearanceChanged();
 }
 
 /*!
@@ -489,7 +489,7 @@ void QGeoMapObject::setUnits(const CoordinateUnit &unit)
     else
         setTransformType(QGeoMapObject::BilinearTransform);
 
-    emit mapNeedsUpdate();
+    emit mapAppearanceChanged();
 }
 
 /*!

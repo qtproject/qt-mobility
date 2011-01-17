@@ -160,7 +160,7 @@ void QGeoMapGroupObject::addChildObject(QGeoMapObject *childObject)
                                                     childObject,
                                                     mapObjectLessThan);
     d_ptr->children.insert(i, childObject);
-    emit mapNeedsUpdate();
+    emit mapAppearanceChanged();
 
     connect(childObject, SIGNAL(zValueChanged(int)),
             d_ptr, SLOT(childChangedZValue(int)));
@@ -187,7 +187,7 @@ void QGeoMapGroupObject::removeChildObject(QGeoMapObject *childObject)
         childObject->setMapData(0);
     }
 
-    emit mapNeedsUpdate();
+    emit mapAppearanceChanged();
 }
 
 /*!
@@ -213,7 +213,7 @@ void QGeoMapGroupObject::clearChildObjects()
 
     d_ptr->children.clear();
 
-    emit mapNeedsUpdate();
+    emit mapAppearanceChanged();
 }
 
 /*!
@@ -226,7 +226,7 @@ void QGeoMapGroupObject::setVisible(bool visible)
 
     QGeoMapObject::setVisible(visible);
 
-    emit mapNeedsUpdate();
+    emit mapAppearanceChanged();
 }
 
 /*!
@@ -283,7 +283,7 @@ void QGeoMapGroupObjectPrivate::childChangedZValue(int zValue)
                                                         child,
                                                         mapObjectLessThan);
         children.insert(i, child);
-        emit q_ptr->mapNeedsUpdate();
+        emit q_ptr->mapAppearanceChanged();
     }
 }
 

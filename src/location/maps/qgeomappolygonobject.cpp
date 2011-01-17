@@ -109,7 +109,7 @@ void QGeoMapPolygonObject::setPath(const QList<QGeoCoordinate> &path)
         setOrigin(path.at(0));
         d_ptr->genPoly();
         emit pathChanged(emit d_ptr->path);
-        emit mapNeedsUpdate();
+        emit mapAppearanceChanged();
     }
 }
 
@@ -139,7 +139,7 @@ void QGeoMapPolygonObject::setPen(const QPen &pen)
 
     d_ptr->item->setPen(pen);
     emit penChanged(pen);
-    emit mapNeedsUpdate();
+    emit mapAppearanceChanged();
 }
 
 QPen QGeoMapPolygonObject::pen() const

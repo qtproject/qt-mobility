@@ -149,7 +149,7 @@ void QGeoMapPixmapObject::setPixmap(const QPixmap &pixmap)
         d_ptr->item->setPixmap(pixmap);
         d_ptr->item->setScale(1.0);
         emit pixmapChanged(pixmap);
-        emit mapNeedsUpdate();
+        emit mapAppearanceChanged();
     }
 }
 
@@ -182,7 +182,7 @@ void QGeoMapPixmapObject::setOffset(const QPoint &offset)
     if (d_ptr->item->offset() != offset) {
         d_ptr->item->setOffset(offset);
         emit offsetChanged(offset);
-        emit mapNeedsUpdate();
+        emit mapAppearanceChanged();
     }
 }
 
