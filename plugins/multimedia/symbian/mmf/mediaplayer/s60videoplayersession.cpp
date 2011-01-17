@@ -543,3 +543,30 @@ QString S60VideoPlayerSession::qStringFromTAudioOutputPreference(CAudioOutput::T
     return QString("Default");
 }
 #endif //HAS_AUDIOROUTING_IN_VIDEOPLAYER)
+
+
+bool S60VideoPlayerSession::getIsSeekable() const
+{
+    bool seekable = ETrue;
+    int numberOfMetaDataEntries = 0;
+
+    TRAPD(err, numberOfMetaDataEntries = m_player->NumberOfMetaDataEntriesL());
+    if (err)
+        return seekable;
+
+    for (int i = 0; i < numberOfMetaDataEntries; i++) {
+        CMMFMetaDataEntry *entry = NULL;
+        TRAP(err, entry = m_player->MetaDataEntryL(i));
+
+        if (err)
+            return seekable;
+
+        if (!entry->Name().Compare(KSeekable)) {
+            if (!entry->Value().Compare(KFalse))
+                seekable = EFalse;
+            break;
+        }
+    }
+
+    return seekable;
+}
