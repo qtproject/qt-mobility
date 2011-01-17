@@ -66,14 +66,14 @@ public:
     static const QLatin1Constant SubTypeSipVoip;
     static const QLatin1Constant SubTypeImpp;
     static const QLatin1Constant SubTypeVideoShare;
-    static const QLatin1Constant ServiceAim;
-    static const QLatin1Constant ServiceIcq;
-    static const QLatin1Constant ServiceIrc;
-    static const QLatin1Constant ServiceJabber;
-    static const QLatin1Constant ServiceMsn;
-    static const QLatin1Constant ServiceQq;
-    static const QLatin1Constant ServiceSkype;
-    static const QLatin1Constant ServiceYahoo;
+    static const QLatin1Constant ProtocolAim;
+    static const QLatin1Constant ProtocolIcq;
+    static const QLatin1Constant ProtocolIrc;
+    static const QLatin1Constant ProtocolJabber;
+    static const QLatin1Constant ProtocolMsn;
+    static const QLatin1Constant ProtocolQq;
+    static const QLatin1Constant ProtocolSkype;
+    static const QLatin1Constant ProtocolYahoo;
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactOnlineAccount, "OnlineAccount")
     Q_DECLARE_LATIN1_CONSTANT(FieldAccountUri, "AccountUri");

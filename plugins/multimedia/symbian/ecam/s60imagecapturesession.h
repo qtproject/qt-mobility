@@ -74,7 +74,6 @@ class S60ImageCaptureSession;
  */
 class S60ImageCaptureDecoder : public CActive
 {
-
 public: // Static Contructor & Destructor
 
     static S60ImageCaptureDecoder* FileNewL(S60ImageCaptureSession *imageSession = 0,
@@ -124,7 +123,6 @@ private: // Data
  */
 class S60ImageCaptureEncoder : public CActive
 {
-
 public: // Static Contructor & Destructor
 
     static S60ImageCaptureEncoder* NewL(S60ImageCaptureSession *imageSession = 0,
@@ -194,6 +192,7 @@ public: // Methods
     bool isDeviceReady();
     void setCameraHandle(CCameraEngine* camerahandle);
     void setCurrentDevice(TInt deviceindex);
+    void notifySettingsSet();
 
     // Ecam Advanced Settings
     S60CameraSettings* advancedSettings();
@@ -201,6 +200,7 @@ public: // Methods
 
     // Controls
     int prepareImageCapture();
+    void releaseImageCapture();
     int capture(const QString &fileName);
     void cancelCapture();
     void releaseImageBuffer();
@@ -334,6 +334,7 @@ private: // Data
     CCamera::TFormat        m_currentFormat;
     QSize                   m_captureSize;
     int                     m_symbianImageQuality;
+    bool                    m_captureSettingsSet;
     QString                 m_stillCaptureFileName;
     QString                 m_requestedStillCaptureFileName;
     mutable int             m_currentImageId;

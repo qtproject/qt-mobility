@@ -113,7 +113,7 @@ QML_DECLARE_TYPE(QDeclarativeOrganizerItemFilter)
 
 
 //changelog filter
-class QDeclarativeOrganizerItemChangelogFilter : public QDeclarativeOrganizerItemFilter
+class QDeclarativeOrganizerItemChangeLogFilter : public QDeclarativeOrganizerItemFilter
 {
     Q_OBJECT
     Q_PROPERTY(QDateTime since READ since WRITE setSince NOTIFY valueChanged)
@@ -128,7 +128,7 @@ public:
         EventRemoved = QOrganizerItemChangeLogFilter::EventRemoved
     };
 
-    QDeclarativeOrganizerItemChangelogFilter(QObject *parent = 0)
+    QDeclarativeOrganizerItemChangeLogFilter(QObject *parent = 0)
         :QDeclarativeOrganizerItemFilter(parent)
     {
         connect(this, SIGNAL(valueChanged()), SIGNAL(filterChanged()));
@@ -143,7 +143,7 @@ public:
         }
     }
 
-    EventType eventType() const { return static_cast<QDeclarativeOrganizerItemChangelogFilter::EventType>(d.eventType()); }
+    EventType eventType() const { return static_cast<QDeclarativeOrganizerItemChangeLogFilter::EventType>(d.eventType()); }
     void setEventType(EventType type)
     {
         if (type != eventType()) {
@@ -164,7 +164,7 @@ private:
     QOrganizerItemChangeLogFilter d;
 
 };
-QML_DECLARE_TYPE(QDeclarativeOrganizerItemChangelogFilter)
+QML_DECLARE_TYPE(QDeclarativeOrganizerItemChangeLogFilter)
 
 //collection filter
 class QDeclarativeOrganizerItemCollectionFilter : public QDeclarativeOrganizerItemFilter
@@ -247,7 +247,7 @@ public:
 
         QString dfn;
         if (m_field.type() != QVariant::String) {
-           QDeclarativeOrganizerItemDetail::ItemDetailType dt = static_cast<QDeclarativeOrganizerItemDetail::ItemDetailType>(QDeclarativeOrganizerItemDetail::detailType(ddn));
+           QDeclarativeOrganizerItemDetail::ItemDetailType dt = static_cast<QDeclarativeOrganizerItemDetail::ItemDetailType>(QDeclarativeOrganizerItemDetail::detailTypeByDefinitionName(ddn));
            dfn = QDeclarativeOrganizerItemDetail::fieldName(dt, m_field.toInt());
         } else {
             dfn = m_field.toString();
@@ -372,7 +372,7 @@ public:
 
         QString dfn;
         if (m_field.type() != QVariant::String) {
-           QDeclarativeOrganizerItemDetail::ItemDetailType dt = static_cast<QDeclarativeOrganizerItemDetail::ItemDetailType>(QDeclarativeOrganizerItemDetail::detailType(ddn));
+           QDeclarativeOrganizerItemDetail::ItemDetailType dt = static_cast<QDeclarativeOrganizerItemDetail::ItemDetailType>(QDeclarativeOrganizerItemDetail::detailTypeByDefinitionName(ddn));
            dfn = QDeclarativeOrganizerItemDetail::fieldName(dt, m_field.toInt());
         } else {
             dfn = m_field.toString();
@@ -524,8 +524,8 @@ QML_DECLARE_TYPE(QDeclarativeOrganizerItemIdFilter)
 class QDeclarativeOrganizerItemIntersectionFilter : public QDeclarativeOrganizerItemFilter
 {
     Q_OBJECT
-    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeOrganizerItemFilter> subFilters READ subFilters NOTIFY valueChanged)
-    Q_CLASSINFO("DefaultProperty", "subFilters")
+    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeOrganizerItemFilter> filters READ filters NOTIFY valueChanged)
+    Q_CLASSINFO("DefaultProperty", "filters")
 
 public:
     QDeclarativeOrganizerItemIntersectionFilter(QObject *parent = 0)
@@ -545,7 +545,7 @@ public:
         return f;
     }
 
-    QDeclarativeListProperty<QDeclarativeOrganizerItemFilter> subFilters()
+    QDeclarativeListProperty<QDeclarativeOrganizerItemFilter> filters()
     {
         return QDeclarativeListProperty<QDeclarativeOrganizerItemFilter>(this, m_filters);
     }
@@ -563,8 +563,8 @@ QML_DECLARE_TYPE(QDeclarativeOrganizerItemIntersectionFilter)
 class QDeclarativeOrganizerItemUnionFilter : public QDeclarativeOrganizerItemFilter
 {
     Q_OBJECT
-    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeOrganizerItemFilter> subFilters READ subFilters NOTIFY valueChanged)
-    Q_CLASSINFO("DefaultProperty", "subFilters")
+    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeOrganizerItemFilter> filters READ filters NOTIFY valueChanged)
+    Q_CLASSINFO("DefaultProperty", "filters")
 
 public:
     QDeclarativeOrganizerItemUnionFilter(QObject *parent = 0)
@@ -584,7 +584,7 @@ public:
         return f;
     }
 
-    QDeclarativeListProperty<QDeclarativeOrganizerItemFilter> subFilters()
+    QDeclarativeListProperty<QDeclarativeOrganizerItemFilter> filters()
     {
         return QDeclarativeListProperty<QDeclarativeOrganizerItemFilter>(this, m_filters);
     }

@@ -341,6 +341,9 @@ void S60RadioTunerControl::MrpoStateChange(TPlayerState aState, TInt aError)
 			m_apiTunerState = QRadioTuner::ActiveState;
 		}
 	}	
+	else {
+        m_apiTunerState = QRadioTuner::StoppedState;
+    }
 	emit stateChanged(m_apiTunerState);
 }
 

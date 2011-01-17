@@ -30,26 +30,26 @@
 
 \title Quickstart Example
 
-The following steps outline how to make a simple 
-"hello world" like application that uses Qt Mobility.
-It is assumed that Qt Mobility has been
-successfully built and environment variables have been set 
+The following steps outline how to make a simple
+"hello world" like application that uses QtMobility.
+It is assumed that QtMobility has been
+successfully built and environment variables have been set
 as per \l {Installation Guide}.
 
-One can start using Qt Mobility with 3 simple steps.
+One can start using QtMobility with 3 simple steps.
 \list 1
     \o Include the appropriate headers
-    \o Use the QTM_USE_NAMESPACE macro (defined in qmobilityglobal.h but implicitly included from any Qt Mobility header)
-    \o Declare the usage of Qt Mobility
+    \o Use the QTM_USE_NAMESPACE macro (defined in qmobilityglobal.h but implicitly included from any QtMobility header)
+    \o Declare the usage of QtMobility
        and appropriate API(s) in the project(.pro) file
 \endlist
 
 Steps 1 and 2 are shown in the example below:
 \snippet quickstart/main.cpp 0
 
-This example uses the QSystemInfo headers to print out the 
+This example uses the QSystemInfo headers to print out the
 system's current country code.  All the domain APIs are wrapped
-within a Qt Mobility namespace and thus developers 
+within a QtMobility namespace and thus developers
 need to use the QTM_USE_NAMESPACE macro.
 
 In step 3, to specify that our project is using
@@ -57,15 +57,15 @@ System Information we declare in the project file:
 
 \snippet quickstart/quickstart.pro 0
 
-The project file states that the application uses Qt Mobility and that it requires the 
+The project file states that the application uses QtMobility and that it requires the
 System Information API. By adding \c mobility to \c CONFIG qmake finds
 the \c {mobility.prf} file in \c{$QTDIR/mkspecs/features} and includes it when
-processing the current project file. \c{mobility.prf} is generated when running 
+processing the current project file. \c{mobility.prf} is generated when running
 the QtMobility configure script and points qmake to the relevant include and prefix
 paths and ensures that deployment and package dependencies are set. The \c MOBILITY variable itself is part of \c {mobility.prf} and is used to
 determine the QtMobility library the current project should link to (in this example the SystemInfo library).
 
-Each QtMobility API has its corresponding value which has to be added to \c MOBILITY. The subsequent table lists the APIs and the 
+Each QtMobility API has its corresponding value which has to be added to \c MOBILITY. The subsequent table lists the APIs and the
 corresponding values that can be assigned to \c MOBILITY.
 
 \table
@@ -121,14 +121,14 @@ This can be achieved with a line such as the following:
 \endcode
 
 CAPABILITY_A and CAPABILITY_B are place holders for the appropriate Symbian capabilities. A complete list of all Symbian
-capabilities and their availability to application developers can be found in the 
+capabilities and their availability to application developers can be found in the
 \l {http://developer.symbian.org/wiki/index.php/Capabilities_(Symbian_Signed)}{Symbian capability documentation}.
 
-The subsequent table provides an overview of possibily required capabilities for each Mobility library.
+The subsequent table provides an overview of possibily required capabilities for each QtMobility library.
 Note that not all capabilities are always required when using a particular API. The exact list depends
 on which parts of an API is utilized by an application.
 
-\table 
+\table
 \header
     \o Domain
     \o Symbian Capabilities
@@ -173,7 +173,7 @@ on which parts of an API is utilized by an application.
     \o No capabilities at this stage.
 \endtable
 
-The complete list of all Symbian capabilities and how they can be obtained can be found in the \l {http://developer.symbian.org/wiki/index.php/Capabilities_(Symbian_Signed)#Which_capabilities_can_I_access.3F}{Symbian developer documentation}. 
+The complete list of all Symbian capabilities and how they can be obtained can be found in the \l {http://developer.symbian.org/wiki/index.php/Capabilities_(Symbian_Signed)#Which_capabilities_can_I_access.3F}{Symbian developer documentation}.
 
 And we're done.  If you are using the command line simply
 enter:
@@ -200,7 +200,7 @@ To make a release build and SIS package for a device run:
 \endcode
 
 For further details on how to build applications for
-Symbian see \l {http://qt.nokia.com/doc/4.6/symbian-with-qt-introduction.html} 
+Symbian see \l {http://qt.nokia.com/doc/4.6/symbian-with-qt-introduction.html}
 {The Symbian Platform - Introduction to Qt} and \l {http://developer.symbian.org/wiki/index.php/Qt_Quick_Start}
 {Qt Quick Start}
 */

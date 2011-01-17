@@ -33,7 +33,7 @@
 
     This example shows how to create a simple application to list and test
     the configuration for the various audio devices available on the device
-    or machine. This is done using the Qt Mobility Multimedia API.
+    or machine. This is done using the QtMobility Multimedia API.
 
     \image audiodevices.png
 

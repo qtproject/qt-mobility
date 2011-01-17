@@ -28,7 +28,7 @@
 /*!
     \group qml-multimedia
     \title QML Multimedia Plugin
-    QML Support for the Mobility Project Multimedia API.
+    QML Support for the QtMobility Project Multimedia API.
 
 */
 
@@ -37,19 +37,19 @@
 
     \title Multimedia QML Plugin
 
-    \brief A QML plugin for the Mobility Project Multimedia API.
+    \brief A QML plugin for the QtMobility Project Multimedia API.
 
 
     \section1 Overview
 
-    The Multimedia API in the Mobility Project gives developers a simplified way to use audio and video playback. The Multimedia QML Plugin provides a QML friendly interface to these features. 
+    The Multimedia API in the QtMobility Project gives developers a simplified way to use audio and video playback. The Multimedia QML Plugin provides a QML friendly interface to these features.
 
     \section1 Elements
 
     \section2 Audio
 
     The \l {Audio}{audio} element is an easy way to add audio playback to a Qt Quick
-    scene. Mobility provides properties for control, methods (functions) and signals.
+    scene. QtMobility provides properties for control, methods (functions) and signals.
 
     The code extract below shows the creation and use of an audio element.
 
@@ -119,7 +119,7 @@
             \o \l{Audio::errorString}{errorString}
             \o A description of the current error condition.
     \endtable
-            
+
     The set of signals available allow the developer to create custom behavior when the following events occur,
 
     \table 70%
@@ -177,8 +177,8 @@
     In the above sample when the parent of MouseArea is clicked, an area of 800x600 pixels with an id of 'video', the source "video.avi" will play in that area. Notice also that signals for the Keys element have been defined so that a spacebar will toggle the pause button; the left arrow will move the current position in the video to 5 seconds previously; and the right arrow will advance the current position in the video by 5 seconds.
 
     Most of the differences will obviously be about video control and information. There are many properties associated with the \l {Video} element, most of them deal with meta-data, control of the video media and aspects of presentation.
-    
-   
+
+
     \annotatedlist qml-multimedia
 
 */

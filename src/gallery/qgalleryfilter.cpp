@@ -404,7 +404,7 @@ void QGalleryIntersectionFilter::prepend(const QGalleryUnionFilter &filter)
 
 void QGalleryIntersectionFilter::prepend(const QGalleryIntersectionFilter &filter)
 {
-    d->filters += filter.d->filters;
+    d->filters = filter.d->filters + d->filters;
 }
 
 /*!
@@ -691,7 +691,7 @@ void QGalleryUnionFilter::prepend(const QGalleryIntersectionFilter &filter)
 
 void QGalleryUnionFilter::prepend(const QGalleryUnionFilter &filter)
 {
-    d->filters += filter.d->filters;
+    d->filters = filter.d->filters + d->filters;
 }
 
 /*!

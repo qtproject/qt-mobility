@@ -56,7 +56,7 @@
 #include <gypsy/gypsy-device.h>
 #include <gconf/gconf-client.h>
 
-#define TST_GYPSY_MOCK_TRACE 1
+//#define TST_GYPSY_MOCK_TRACE 1
 
 #ifdef TST_GYPSY_MOCK_TRACE
 #define TRACE0 qDebug() << "=GypsyMock=" << __FUNCTION__
@@ -65,9 +65,9 @@
 #define TRACE3(STR1, STR2, STR3) TRACE0 << STR1 << STR2 << STR3;
 #else
 #define TRACE0
-#define TRACE1
-#define TRACE2
-#define TRACE3
+#define TRACE1(STR1)
+#define TRACE2(STR1,STR2)
+#define TRACE3(STR1, STR2, STR3)
 #endif
 
 // ================  Misc functions
@@ -85,6 +85,9 @@ public:
     void disconnectSignal(gpointer callback, gpointer positionSource);
     void setSatellitesChangedCallback(void (*callback)());
     void singleUpdate();
+
+    void disableUpdates(bool value);
+    GPtrArray* satelliteArray();
 
     enum UPDATE_TYPE {
         INVALID_UPDATE = 0,
@@ -120,6 +123,7 @@ private:
     UpdateData m_regular;
     QThread m_thread;
     SatellitesChangedCallback m_satellitesChangedCallback;
+    bool m_disableUpdates;
 };
 
 #endif // GYPSYMOCK_H

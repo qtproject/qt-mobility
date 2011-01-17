@@ -46,12 +46,12 @@
 
 /*!
     \page classes.html
-    \title All Qt Mobility Classes
+    \title All QtMobility Classes
     \ingroup classlists
 
     \brief If you know the name of the class you want, find it here.
 
-    This is a list of all Mobility classes. 
+    This is a list of all QtMobility classes.
 
     \generatelist classes
 
@@ -65,7 +65,7 @@
     \brief If you don't know the name of the class you want, but you
     know what the class should do, you might try looking here.
 
-    Qt Mobility Project classes with brief descriptions:
+    QtMobility Project classes with brief descriptions:
 
     \generatelist annotatedclasses
 */
@@ -78,7 +78,7 @@
     \ingroup classlists
 
     \brief The C++ class inheritance hierarchy for all classes in the
-    Mobility API.
+    QtMobility API.
 
     \generatelist classhierarchy
 */
@@ -87,14 +87,14 @@
 
 /*!
     \page functions.html
-    \title All Functions 
+    \title All Functions
     \ingroup funclists
 
-    \brief All documented Mobility functions listed alphabetically with a
+    \brief All documented QtMobility functions listed alphabetically with a
     link to where each one is declared.
 
     This is the list of all documented member functions and global
-    functions in the Qt Mobility Project API.  Each function has a link to the class or
+    functions in the QtMobility Project API.  Each function has a link to the class or
     header file where it is declared and documented.
 
     \generatelist functionindex

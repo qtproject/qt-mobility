@@ -54,6 +54,36 @@
 #include <windows.h>
 #include <mmsystem.h>
 #include "qaudiodeviceinfo_win32_p.h"
+#include <dshow.h>
+
+#if defined(Q_CC_MINGW)
+
+extern GUID CLSID_AudioInputDeviceCategory;
+
+#ifndef __IErrorLog_INTERFACE_DEFINED__
+#define __IErrorLog_INTERFACE_DEFINED__
+
+DECLARE_INTERFACE_(IErrorLog, IUnknown)
+{
+    STDMETHOD(AddError)(THIS_ LPCOLESTR, EXCEPINFO *) PURE;
+};
+
+#endif /* __IErrorLog_INTERFACE_DEFINED__ */
+
+#ifndef __IPropertyBag_INTERFACE_DEFINED__
+#define __IPropertyBag_INTERFACE_DEFINED__
+
+const GUID IID_IPropertyBag = {0x55272A00, 0x42CB, 0x11CE, {0x81, 0x35, 0x00, 0xAA, 0x00, 0x4B, 0xB8, 0x51}};
+
+DECLARE_INTERFACE_(IPropertyBag, IUnknown)
+{
+    STDMETHOD(Read)(THIS_ LPCOLESTR, VARIANT *, IErrorLog *) PURE;
+    STDMETHOD(Write)(THIS_ LPCOLESTR, VARIANT *) PURE;
+};
+
+#endif /* __IPropertyBag_INTERFACE_DEFINED__ */
+
+#endif//Q_CC_MINGW
 
 QT_BEGIN_NAMESPACE
 
@@ -76,7 +106,8 @@ QT_BEGIN_NAMESPACE
 
 QAudioDeviceInfoInternal::QAudioDeviceInfoInternal(QByteArray dev, QAudio::Mode mode)
 {
-    device = QLatin1String(dev);
+    QDataStream ds(&dev, QIODevice::ReadOnly);
+    ds >> devId >> device;
     this->mode = mode;
 
     updateLists();
@@ -254,54 +285,21 @@ bool QAudioDeviceInfoInternal::testSettings(const QAudioFormat& format) const
 void QAudioDeviceInfoInternal::updateLists()
 {
     // redo all lists based on current settings
-    bool base = false;
     bool match = false;
     DWORD fmt = NULL;
-    QString tmp;
-
-    if(device.compare(QLatin1String("default")) == 0)
-        base = true;
 
     if(mode == QAudio::AudioOutput) {
         WAVEOUTCAPS woc;
-	unsigned long iNumDevs,i;
-	iNumDevs = waveOutGetNumDevs();
-	for(i=0;i<iNumDevs;i++) {
-	    if(waveOutGetDevCaps(i, &woc, sizeof(WAVEOUTCAPS))
-	        == MMSYSERR_NOERROR) {
-                tmp = QString::fromWCharArray(woc.szPname);
-		if(tmp.compare(device) == 0) {
-		    match = true;
-		    fmt = woc.dwFormats;
-		    break;
-		}
-		if(base) {
-		    match = true;
-		    fmt = woc.dwFormats;
-		    break;
-		}
-	    }
-	}
+        if (waveOutGetDevCaps(devId, &woc, sizeof(WAVEOUTCAPS)) == MMSYSERR_NOERROR) {
+            match = true;
+            fmt = woc.dwFormats;
+        }
     } else {
         WAVEINCAPS woc;
-	unsigned long iNumDevs,i;
-	iNumDevs = waveInGetNumDevs();
-	for(i=0;i<iNumDevs;i++) {
-	    if(waveInGetDevCaps(i, &woc, sizeof(WAVEINCAPS))
-	        == MMSYSERR_NOERROR) {
-                tmp = QString::fromWCharArray(woc.szPname);
-		if(tmp.compare(device) == 0) {
-		    match = true;
-		    fmt = woc.dwFormats;
-		    break;
-		}
-		if(base) {
-		    match = true;
-		    fmt = woc.dwFormats;
-		    break;
-		}
-	    }
-	}
+        if (waveInGetDevCaps(devId, &woc, sizeof(WAVEINCAPS)) == MMSYSERR_NOERROR) {
+            match = true;
+            fmt = woc.dwFormats;
+        }
     }
     sizez.clear();
     freqz.clear();
@@ -397,43 +395,76 @@ QList<QByteArray> QAudioDeviceInfoInternal::availableDevices(QAudio::Mode mode)
     Q_UNUSED(mode)
 
     QList<QByteArray> devices;
+    //enumerate device fullnames through directshow api
+    CoInitialize(NULL);
+    ICreateDevEnum *pDevEnum = NULL;
+    IEnumMoniker *pEnum = NULL;
+    // Create the System device enumerator
+    HRESULT hr = CoCreateInstance(CLSID_SystemDeviceEnum, NULL,
+                 CLSCTX_INPROC_SERVER, IID_ICreateDevEnum,
+                 reinterpret_cast<void **>(&pDevEnum));
 
-    if(mode == QAudio::AudioOutput) {
-        WAVEOUTCAPS woc;
-	unsigned long iNumDevs,i;
-	iNumDevs = waveOutGetNumDevs();
-	for(i=0;i<iNumDevs;i++) {
-	    if(waveOutGetDevCaps(i, &woc, sizeof(WAVEOUTCAPS))
-	        == MMSYSERR_NOERROR) {
-                devices.append(QString::fromUtf16((const unsigned short*)woc.szPname).toLocal8Bit().constData());
-	    }
-	}
-    } else {
-        WAVEINCAPS woc;
-	unsigned long iNumDevs,i;
-	iNumDevs = waveInGetNumDevs();
-	for(i=0;i<iNumDevs;i++) {
-	    if(waveInGetDevCaps(i, &woc, sizeof(WAVEINCAPS))
-	        == MMSYSERR_NOERROR) {
-                devices.append(QString::fromUtf16((const unsigned short*)woc.szPname).toLocal8Bit().constData());
-	    }
-	}
+    unsigned long iNumDevs = mode == QAudio::AudioOutput ? waveOutGetNumDevs() : waveInGetNumDevs();
+    if (SUCCEEDED(hr)) {
+        // Create the enumerator for the video capture category
+        hr = pDevEnum->CreateClassEnumerator(
+             mode == QAudio::AudioOutput ? CLSID_AudioRendererCategory : CLSID_AudioInputDeviceCategory,
+             &pEnum, 0);
+        pEnum->Reset();
+        // go through and find all video capture devices
+        IMoniker *pMoniker = NULL;
+        while (pEnum->Next(1, &pMoniker, NULL) == S_OK) {
+            IPropertyBag *pPropBag;
+            hr = pMoniker->BindToStorage(0,0,IID_IPropertyBag,
+                 reinterpret_cast<void **>(&pPropBag));
+            if (FAILED(hr)) {
+                pMoniker->Release();
+                continue; // skip this one
+            }
+            // Find if it is a wave device
+            VARIANT var;
+            VariantInit(&var);
+            hr = pPropBag->Read(mode == QAudio::AudioOutput ? L"WaveOutID" : L"WaveInID", &var, 0);
+            if (SUCCEEDED(hr)) {
+                LONG waveID = var.lVal;
+                if (waveID >= 0 && waveID < LONG(iNumDevs)) {
+                    VariantClear(&var);
+                    // Find the description
+                    hr = pPropBag->Read(L"FriendlyName", &var, 0);
+                    if (SUCCEEDED(hr)) {
+                        QByteArray  device;
+                        QDataStream ds(&device, QIODevice::WriteOnly);
+                        ds << quint32(waveID) << QString::fromWCharArray(var.bstrVal);
+                        devices.append(device);
+                    }
+                }
+            }
 
+            pPropBag->Release();
+            pMoniker->Release();
+        }
     }
-    if(devices.count() > 0)
-        devices.append("default");
+    CoUninitialize();
 
     return devices;
 }
 
 QByteArray QAudioDeviceInfoInternal::defaultOutputDevice()
 {
-    return QByteArray("default");
+    QList<QByteArray> list = availableDevices(QAudio::AudioOutput);
+    if (list.size() > 0)
+        return list.at(0);
+    else
+        return QByteArray();
 }
 
 QByteArray QAudioDeviceInfoInternal::defaultInputDevice()
 {
-    return QByteArray("default");
+    QList<QByteArray> list = availableDevices(QAudio::AudioInput);
+    if (list.size() > 0)
+        return list.at(0);
+    else
+        return QByteArray();
 }
 
 QT_END_NAMESPACE

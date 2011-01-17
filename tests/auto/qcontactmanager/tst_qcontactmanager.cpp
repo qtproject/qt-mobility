@@ -621,11 +621,17 @@ void tst_QContactManager::ctors()
     QContactManager cm3(defaultStore, QMap<QString, QString>());
     QContactManager cm4(cm.managerUri()); // should fail
 
+    QContactManager cm9b(0); // QObject* ctor, should be same as cm2 etc
+    QContactManager cm9c(&parent); // same as cm2 etc.
+
     QScopedPointer<QContactManager> cm5(QContactManager::fromUri(QContactManager::buildUri(defaultStore, QMap<QString, QString>())));
     QScopedPointer<QContactManager> cm6(QContactManager::fromUri(cm.managerUri())); // uri is not a name; should fail.
     QScopedPointer<QContactManager> cm9(QContactManager::fromUri(QString(), &parent));
 
     QVERIFY(cm9->parent() == &parent);
+    QVERIFY(cm9b.parent() == 0);
+    QVERIFY(cm9c.parent() == &parent);
+
 
     /* OLD TEST WAS THIS: */
     //QCOMPARE(cm.managerUri(), cm2.managerUri());
@@ -639,6 +645,8 @@ void tst_QContactManager::ctors()
     QCOMPARE(cm.managerName(), cm5->managerName());
     QCOMPARE(cm.managerName(), cm6->managerName());
     QCOMPARE(cm.managerName(), cm9->managerName());
+    QCOMPARE(cm.managerName(), cm9b.managerName());
+    QCOMPARE(cm.managerName(), cm9c.managerName());
 
     QVERIFY(cm.managerUri() != cm4.managerUri()); // don't pass a uri to the ctor
 
