@@ -50,7 +50,7 @@ int main(int, char**)
 		TRequestStatus iStatus;	
 		_LIT8(KData,"cmd");
 		TBufC8<8> str(KData);
-		TBuf<16> resp;
+		TBuf8<16> resp;
 		TTimeIntervalMicroSeconds32 aTimeout;
 		
 		iTagConnection->RawModeAccess(iStatus, str, resp, aTimeout);
