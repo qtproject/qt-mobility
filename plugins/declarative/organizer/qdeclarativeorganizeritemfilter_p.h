@@ -247,7 +247,7 @@ public:
 
         QString dfn;
         if (m_field.type() != QVariant::String) {
-           QDeclarativeOrganizerItemDetail::ItemDetailType dt = static_cast<QDeclarativeOrganizerItemDetail::ItemDetailType>(QDeclarativeOrganizerItemDetail::detailType(ddn));
+           QDeclarativeOrganizerItemDetail::ItemDetailType dt = static_cast<QDeclarativeOrganizerItemDetail::ItemDetailType>(QDeclarativeOrganizerItemDetail::detailTypeByDefinitionName(ddn));
            dfn = QDeclarativeOrganizerItemDetail::fieldName(dt, m_field.toInt());
         } else {
             dfn = m_field.toString();
@@ -372,7 +372,7 @@ public:
 
         QString dfn;
         if (m_field.type() != QVariant::String) {
-           QDeclarativeOrganizerItemDetail::ItemDetailType dt = static_cast<QDeclarativeOrganizerItemDetail::ItemDetailType>(QDeclarativeOrganizerItemDetail::detailType(ddn));
+           QDeclarativeOrganizerItemDetail::ItemDetailType dt = static_cast<QDeclarativeOrganizerItemDetail::ItemDetailType>(QDeclarativeOrganizerItemDetail::detailTypeByDefinitionName(ddn));
            dfn = QDeclarativeOrganizerItemDetail::fieldName(dt, m_field.toInt());
         } else {
             dfn = m_field.toString();

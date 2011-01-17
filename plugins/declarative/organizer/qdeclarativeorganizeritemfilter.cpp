@@ -118,9 +118,9 @@
   \qmlproperty variant DetailFilter::detail
 
   This property holds the detail type of which details will be matched to.
-  The property value could be either the enumeration value of ItemDetail::ItemDetailType
+  The property value could be either the enumeration value of Detail::type
   or detail names.
-  \sa ItemDetail::type
+  \sa Detail::type
   */
 
 /*!
@@ -187,9 +187,9 @@
   \qmlproperty variant DetailRangeFilter::detail
 
   This property holds the detail type of which details will be matched to.
-  The property value could be either the enumeration value of ItemDetail::ItemDetailType
+  The property value could be either the enumeration value of Detail::type
   or detail names.
-  \sa ItemDetail::type
+  \sa Detail::type
   \sa DetailFilter::detail
 
   */

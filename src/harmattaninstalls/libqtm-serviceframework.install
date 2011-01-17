@@ -1,0 +1,6 @@
+usr/bin/servicefw
+usr/lib/libQtServiceFramework.so.1.1.1
+usr/lib/libQtServiceFramework.so.1.1
+usr/lib/libQtServiceFramework.so.1
+usr/lib/qt4/imports/QtMobility/serviceframework/libdeclarative_serviceframework.so
+usr/lib/qt4/imports/QtMobility/serviceframework/qmldir

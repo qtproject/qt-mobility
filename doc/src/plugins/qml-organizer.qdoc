@@ -83,6 +83,12 @@
     The Organizer QML plugin supplies filters to search for organizer items
     with particular values for various properties in the organizer item details.
 
+    \section2 Times in Organizer
+    All time type properties in QML Organizer such as OrganizerItem.itemEndTime etc
+    are returned in local time. But when assign new values to these properties, the
+    time specs remain the same while saving these values into backend organizer engines.
+    \sa \l {OrganizerItem::isFloatingTime}.
+ 
     \section2 Organizer Elements
     \note At the time of the Qt Mobility 1.1 release the QML support for the Organizer API is incomplete and likely to be refined and improved in the next patch release.
     

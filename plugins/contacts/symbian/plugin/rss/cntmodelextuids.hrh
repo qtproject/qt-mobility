@@ -69,11 +69,19 @@
  */
 #define KUidContactFieldIMPPValue        	0x200100E4
 
+#ifdef FF_ICE
+/**
+ * Phonebook custom Field value.
+ * Emergency field type.
+ */
+#define KUidContactFieldEmergencyContactValue     0x200100E5
+#endif // FF_ICE
+
 /**
  * Phonebook custom Field value.
  * Video ringtone field type.
  */
-#define KUidContactFieldVideoRingToneValue	0x200100E5
+#define KUidContactFieldVideoRingToneValue	0x200100E6
 
 /**
  * Phonebook custom Field value.

@@ -39,6 +39,7 @@
 **
 ****************************************************************************/
 #include <qcontactdetails.h>
+#include <QtDeclarative/qdeclarativeinfo.h>
 
 #include "qdeclarativecontactmodel_p.h"
 #include "qcontactmanager.h"
@@ -284,7 +285,6 @@ static QString urlToLocalFileName(const QUrl& url)
   */
 void QDeclarativeContactModel::importContacts(const QUrl& url, const QStringList& profiles)
 {
-   //qWarning() << "importing contacts from:" << url;
    d->m_importProfiles = profiles;
 
    //TODO: need to allow download vcard from network
@@ -304,7 +304,6 @@ void QDeclarativeContactModel::importContacts(const QUrl& url, const QStringList
   */
 void QDeclarativeContactModel::exportContacts(const QUrl& url, const QStringList& profiles)
 {
-   //qWarning() << "exporting contacts into:" << url;
 
    QString profile = profiles.isEmpty()? QString() : profiles.at(0);
     //only one profile string supported now
@@ -384,7 +383,7 @@ void QDeclarativeContactModel::setFetchHint(QDeclarativeContactFetchHint* fetchH
 }
 
 /*!
-  \qmlproperty QDeclarativeListProperty ContactModel::contacts
+  \qmlproperty list<Contact> ContactModel::contacts
 
   This property holds a list of contacts.
 
@@ -406,7 +405,7 @@ void QDeclarativeContactModel::contacts_append(QDeclarativeListProperty<QDeclara
 {
     Q_UNUSED(prop);
     Q_UNUSED(contact);
-    qWarning() << "ContactModel: appending contacts is not currently supported";
+    qmlInfo(0) << tr("ContactModel: appending contacts is not currently supported");
 }
 
 int QDeclarativeContactModel::contacts_count(QDeclarativeListProperty<QDeclarativeContact>* prop)
@@ -428,7 +427,7 @@ void QDeclarativeContactModel::contacts_clear(QDeclarativeListProperty<QDeclarat
 
 
 /*!
-  \qmlproperty QDeclarativeListProperty ContactModel::sortOrders
+  \qmlproperty list<SortOrder> ContactModel::sortOrders
 
   This property holds a list of sort orders used by the organizer model.
 
@@ -456,7 +455,7 @@ void QDeclarativeContactModel::startImport(QVersitReader::State state)
 
         if (d->m_manager) {
             if (d->m_manager->saveContacts(&contacts))
-                qWarning() << "contacts imported.";
+                qmlInfo(this) << tr("contacts imported.");
                 update();
         }
     }
@@ -584,7 +583,7 @@ void QDeclarativeContactModel::contactsSaved()
                     //new saved contact
                     QDeclarativeContact* dc = new QDeclarativeContact(c, d->m_manager->detailDefinitions(c.type()) , this);
                     d->m_contactMap.insert(c.localId(), dc);
-                    beginInsertRows(QModelIndex(), d->m_contacts.count(), d->m_contacts.count() + 1);
+                    beginInsertRows(QModelIndex(), d->m_contacts.count(), d->m_contacts.count());
                     d->m_contacts.append(dc);
                     endInsertRows();
                 }
@@ -615,7 +614,7 @@ void QDeclarativeContactModel::removeContacts(const QList<QContactLocalId>& ids)
     req->setManager(d->m_manager);
     req->setContactIds(ids);
 
-    connect(req,SIGNAL(stateChanged(QContactAbstractRequest::State)), this, SLOT(contactRemoved()));
+    connect(req,SIGNAL(stateChanged(QContactAbstractRequest::State)), this, SLOT(contactsRemoved()));
 
     req->start();
 }

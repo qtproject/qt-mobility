@@ -93,8 +93,11 @@ Rectangle
                         Repeater {
                             focus: true
                             model:calendar.organizer.itemIds(new Date(calendar.year,
-                                                                                                            calendar.month,
-                                                                                                            index - calendar.weekDay + calendar.day))
+                                                                      calendar.month,
+                                                                      index - calendar.weekDay + calendar.day),
+                                                             new Date(calendar.year,
+                                                                      calendar.month,
+                                                                      index - calendar.weekDay + calendar.day + 1))
 
                             Text {
                                 clip: true

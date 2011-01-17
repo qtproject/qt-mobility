@@ -40,7 +40,7 @@
 ****************************************************************************/
 
 #include <qorganizeritemdetails.h>
-
+#include <QtDeclarative/qdeclarativeinfo.h>
 #include "qdeclarativeorganizermodel_p.h"
 #include "qorganizermanager.h"
 #include "qversitreader.h"
@@ -119,12 +119,18 @@ public:
     Whether the model is automatically updated when the store or \l organizer item changes, can be
     controlled with \l OrganizerModel::autoUpdate property.
 
-    There are two ways of accessing the organizer item data: via model by using views and delegates,
+    There are two ways of accessing the organizer item data: via the model by using views and delegates,
     or alternatively via \l items list property. Of the two, the model access is preferred.
     Direct list access (i.e. non-model) is not guaranteed to be in order set by \l sortOrder.
 
-    At the moment the model roles provided by OrganizerModel are display and \c item.
+    At the moment the model roles provided by OrganizerModel are \c display and \c item.
     Through the \c item role can access any data provided by the OrganizerItem element.
+
+
+    \note Both the \c startPeriod and \c endPeriod are set by default to the current time (when the OrganizerModel was created). 
+     In most cases, both (or at least one) of the startPeriod and endPeriod should be set; otherwise, the OrganizerModel will contain 
+     zero items because the \c startPeriod and \c endPeriod are the same value. For example, if only \c endPeriod is provided, 
+     the OrganizerModel will contain all items from now (the time of the OrganizerModel's creation) to the \c endPeriod time.
 
     \sa OrganizerItem, {QOrganizerManager}
 */
@@ -138,12 +144,12 @@ QDeclarativeOrganizerModel::QDeclarativeOrganizerModel(QObject *parent) :
     roleNames.insert(OrganizerItemRole, "item");
     setRoleNames(roleNames);
 
-    connect(this, SIGNAL(managerChanged()), SLOT(update()));
-    connect(this, SIGNAL(filterChanged()), SLOT(update()));
-    connect(this, SIGNAL(fetchHintChanged()), SLOT(update()));
-    connect(this, SIGNAL(sortOrdersChanged()), SLOT(update()));
-    connect(this, SIGNAL(startPeriodChanged()), SLOT(update()));
-    connect(this, SIGNAL(endPeriodChanged()), SLOT(update()));
+    connect(this, SIGNAL(managerChanged()), SLOT(doUpdate()));
+    connect(this, SIGNAL(filterChanged()), SLOT(doUpdate()));
+    connect(this, SIGNAL(fetchHintChanged()), SLOT(doUpdate()));
+    connect(this, SIGNAL(sortOrdersChanged()), SLOT(doUpdate()));
+    connect(this, SIGNAL(startPeriodChanged()), SLOT(doUpdate()));
+    connect(this, SIGNAL(endPeriodChanged()), SLOT(doUpdate()));
 
     //import vcard
     connect(&d->m_reader, SIGNAL(stateChanged(QVersitReader::State)), this, SLOT(startImport(QVersitReader::State)));
@@ -154,6 +160,22 @@ QDeclarativeOrganizerModel::QDeclarativeOrganizerModel(QObject *parent) :
 
   This property holds the manager name or manager uri of the organizer backend engine.
   The manager uri format: qtorganizer:<managerid>:<key>=<value>&<key>=<value>.
+
+  For example, memory organizer engine has an optional id parameter, if user want to
+  share the same memory engine with multiple OrganizerModel instances, the manager property
+  should declared like this:
+  \code
+    model : OrganizerModel {
+       manager:"qtorganizer:memory:id=organizer1
+    }
+  \endcode
+
+  instead of just the manager name:
+  \code
+    model : OrganizerModel {
+       manager:"memory"
+    }
+  \endcode
 
   \sa QOrganizerManager::fromUri()
   */
@@ -225,6 +247,12 @@ void QDeclarativeOrganizerModel::update()
     QMetaObject::invokeMethod(this, "fetchAgain", Qt::QueuedConnection);
 }
 
+void QDeclarativeOrganizerModel::doUpdate()
+{
+    if (d->m_autoUpdate)
+        update();
+}
+
 /*!
   \qmlmethod OrganizerModel::cancelUpdate()
 
@@ -245,6 +273,7 @@ void QDeclarativeOrganizerModel::cancelUpdate()
   \qmlproperty date OrganizerModel::startPeriod
 
   This property holds the start date and time period used by the organizer model to fetch organizer items.
+  The default value is the datetime of OrganizerModel creation.
   */
 QDateTime QDeclarativeOrganizerModel::startPeriod() const
 {
@@ -262,6 +291,7 @@ void QDeclarativeOrganizerModel::setStartPeriod(const QDateTime& start)
   \qmlproperty date OrganizerModel::endPeriod
 
   This property holds the end date and time period used by the organizer model to fetch organizer items.
+  The default value is the datetime of OrganizerModel creation.
   */
 QDateTime QDeclarativeOrganizerModel::endPeriod() const
 {
@@ -464,7 +494,7 @@ QString QDeclarativeOrganizerModel::error() const
 }
 
 /*!
-  \qmlproperty QDeclarativeListProperty OrganizerModel::sortOrders
+  \qmlproperty list<SortOrder> OrganizerModel::sortOrders
 
   This property holds a list of sort orders used by the organizer model.
 
@@ -568,7 +598,8 @@ int QDeclarativeOrganizerModel::itemIndex(const QDeclarativeOrganizerItem* item)
 
 void QDeclarativeOrganizerModel::clearItems()
 {
-    qDeleteAll(d->m_items);
+    foreach (QDeclarativeOrganizerItem* di, d->m_items)
+        di->deleteLater();
     d->m_items.clear();
     d->m_itemMap.clear();
 }
@@ -608,25 +639,16 @@ void QDeclarativeOrganizerModel::fetchItems(const QList<QString>& itemIds)
 
 /*!
   \qmlmethod bool OrganizerModel::containsItems(date start, date end)
-  Returns true if there is at least one OrganizerItem between the given date range,
-  otherwise returns false.  The second parameter \a end is optional.
-
+  Returns true if there is at least one OrganizerItem between the given date range.
+  Both the \a start and  \a end parameters are optional, if no \a end parameter, returns true
+  if there are item(s) after \a start, if neither start nor end date time provided, returns true if
+  items in the current model is not empty, otherwise return false.
   \since organizer 1.1.1
+  \sa itemIds()
   */
 bool QDeclarativeOrganizerModel::containsItems(QDateTime start, QDateTime end)
 {
-    //TODO: quick search this
-    end = end.isNull()? start.addDays(1):end;
-    foreach (const QDeclarativeOrganizerItem* item, d->m_items) {
-
-        if  ( (item->itemStartTime() >= start && item->itemStartTime() <= end)
-                ||
-              (item->itemEndTime() >= start && item->itemEndTime() <= end)
-                ||
-              (item->itemEndTime() > end && item->itemStartTime() < start))
-            return true;
-    }
-    return false;
+    return !itemIds(start, end).isEmpty();
 }
 
 /*!
@@ -646,24 +668,38 @@ QDeclarativeOrganizerItem* QDeclarativeOrganizerModel::item(const QString& id)
 /*!
   \qmlmethod list<string> OrganizerModel::itemIds(date start, date end)
   Returns the list of organizer item ids between the given date range \a start and \a end,
-  the \a end parameter is optional.
+  Both the \a start and  \a end parameters are optional, if no \a end parameter, returns all
+  item ids from \a start, if neither start nor end date time provided, returns all item ids in the
+  current model.
 
   \since organizer 1.1.1
+  \sa containsItems()
   */
 QStringList QDeclarativeOrganizerModel::itemIds(QDateTime start, QDateTime end)
 {
     //TODO: quick search this
     QStringList ids;
-    end = end.isNull()? start.addDays(1):end;
-    foreach (QDeclarativeOrganizerItem* item, d->m_items) {
-        if ( (item->itemStartTime() >= start && item->itemEndTime() <= end)
-             ||
-             (item->itemEndTime() >= start && item->itemEndTime() <= end)
-             ||
-             (item->itemEndTime() > end && item->itemStartTime() < start))
+    if (!end.isNull()){
+        // both start date and end date are valid
+        foreach (QDeclarativeOrganizerItem* item, d->m_items) {
+            if ( (item->itemStartTime() >= start && item->itemStartTime() <= end)
+                 ||
+                 (item->itemEndTime() >= start && item->itemEndTime() <= end)
+                 ||
+                 (item->itemEndTime() > end && item->itemStartTime() < start))
+                ids << item->itemId();
+        }
+    }else if (!start.isNull()){
+        // only a valid start date is valid
+            foreach (QDeclarativeOrganizerItem* item, d->m_items) {
+                if (item->itemStartTime() >= start)
+                        ids << item->itemId();
+            }
+    }else{
+        // neither start nor end date is valid
+        foreach (QDeclarativeOrganizerItem* item, d->m_items)
             ids << item->itemId();
     }
-
     return ids;
 }
 
@@ -748,7 +784,8 @@ void QDeclarativeOrganizerModel::requestUpdated()
                 addSorted(di);
             }
         }
-        emit itemsChanged();
+
+        emit modelChanged();
         emit errorChanged();
     }
 }
@@ -789,13 +826,14 @@ void QDeclarativeOrganizerModel::itemsSaved()
                     //new saved item
                     di = createItem(item);
                     d->m_itemMap.insert(itemId, di);
-                    beginInsertRows(QModelIndex(), d->m_items.count(), d->m_items.count() + 1);
+                    beginInsertRows(QModelIndex(), d->m_items.count(), d->m_items.count());
                     d->m_items.append(di);
                     endInsertRows();
                 }
                 addSorted(di);
             }
         }
+
         req->deleteLater();
         emit errorChanged();
     }
@@ -829,7 +867,7 @@ void QDeclarativeOrganizerModel::removeItems(const QList<QString>& ids)
 
     foreach (const QString& id, ids) {
         if (id.startsWith(QString("qtorganizer:occurrence"))) {
-            qWarning() << "Can't remove an occurrence item, please modify the parent item's recurrence rule instead!";
+            qmlInfo(this) << tr("Can't remove an occurrence item, please modify the parent item's recurrence rule instead!");
             continue;
         }
         QOrganizerItemId itemId = QOrganizerItemId::fromString(id);
@@ -904,7 +942,7 @@ void QDeclarativeOrganizerModel::removeItemsFromModel(const QList<QString>& ids)
     }
     emit errorChanged();
     if (emitSignal)
-        emit itemsChanged();
+        emit modelChanged();
 }
 
 void QDeclarativeOrganizerModel::itemsRemoved(const QList<QOrganizerItemId>& ids)
@@ -936,7 +974,7 @@ QVariant QDeclarativeOrganizerModel::data(const QModelIndex &index, int role) co
 }
 
 /*!
-  \qmlproperty QDeclarativeListProperty OrganizerModel::items
+  \qmlproperty list<OrganizerItem> OrganizerModel::items
 
   This property holds a list of organizer items in the organizer model.
 
@@ -948,21 +986,22 @@ QDeclarativeListProperty<QDeclarativeOrganizerItem> QDeclarativeOrganizerModel::
 }
 
 /*!
-  \qmlproperty QDeclarativeListProperty OrganizerModel::occurrences
+  \qmlproperty list<OrganizerItem> OrganizerModel::occurrences
 
   This property holds a list of event or todo occurrence items in the organizer model.
+  \note This property is not currently supported yet.
 
   \sa Event, Todo, EventOccurrence, TodoOccurrence
   */
 QDeclarativeListProperty<QDeclarativeOrganizerItem> QDeclarativeOrganizerModel::occurrences()
 {
     //TODO:XXX
-    qWarning() << "OrganizerModel: occurrences is not currently supported.";
+    qmlInfo(this) << tr("OrganizerModel: occurrences is not currently supported.");
     return QDeclarativeListProperty<QDeclarativeOrganizerItem>();
 }
 
 /*!
-  \qmlproperty QDeclarativeListProperty OrganizerModel::events
+  \qmlproperty list<OrganizerItem> OrganizerModel::events
 
   This property holds a list of events in the organizer model.
 
@@ -975,7 +1014,7 @@ QDeclarativeListProperty<QDeclarativeOrganizerItem> QDeclarativeOrganizerModel::
 }
 
 /*!
-  \qmlproperty QDeclarativeListProperty OrganizerModel::eventOccurrences
+  \qmlproperty list<OrganizerItem> OrganizerModel::eventOccurrences
 
   This property holds a list of event occurrences in the organizer model.
 
@@ -988,7 +1027,7 @@ QDeclarativeListProperty<QDeclarativeOrganizerItem> QDeclarativeOrganizerModel::
 }
 
 /*!
-  \qmlproperty QDeclarativeListProperty OrganizerModel::todos
+  \qmlproperty list<OrganizerItem> OrganizerModel::todos
 
   This property holds a list of todos in the organizer model.
 
@@ -1001,7 +1040,7 @@ QDeclarativeListProperty<QDeclarativeOrganizerItem> QDeclarativeOrganizerModel::
 }
 
 /*!
-  \qmlproperty QDeclarativeListProperty OrganizerModel::todoOccurrences
+  \qmlproperty list<OrganizerItem> OrganizerModel::todoOccurrences
 
   This property holds a list of todo occurrences in the organizer model.
 
@@ -1014,7 +1053,7 @@ QDeclarativeListProperty<QDeclarativeOrganizerItem> QDeclarativeOrganizerModel::
 }
 
 /*!
-  \qmlproperty QDeclarativeListProperty OrganizerModel::journals
+  \qmlproperty list<OrganizerItem> OrganizerModel::journals
 
   This property holds a list of journal items in the organizer model.
 
@@ -1028,7 +1067,7 @@ QDeclarativeListProperty<QDeclarativeOrganizerItem> QDeclarativeOrganizerModel::
 
 
 /*!
-  \qmlproperty QDeclarativeListProperty OrganizerModel::notes
+  \qmlproperty list<OrganizerItem> OrganizerModel::notes
 
   This property holds a list of note items in the organizer model.
 
@@ -1045,7 +1084,7 @@ void QDeclarativeOrganizerModel::item_append(QDeclarativeListProperty<QDeclarati
 {
     Q_UNUSED(p);
     Q_UNUSED(item);
-    qWarning() << "OrganizerModel: appending items is not currently supported";
+    qmlInfo(0) << tr("OrganizerModel: appending items is not currently supported");
 }
 
 int  QDeclarativeOrganizerModel::item_count(QDeclarativeListProperty<QDeclarativeOrganizerItem> *p)
@@ -1109,7 +1148,7 @@ void  QDeclarativeOrganizerModel::item_clear(QDeclarativeListProperty<QDeclarati
         } else {
             model->d->m_items.clear();
         }
-        emit model->itemsChanged();
+        emit model->modelChanged();
     }
 }
 

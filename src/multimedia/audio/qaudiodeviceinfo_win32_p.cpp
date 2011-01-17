@@ -56,6 +56,35 @@
 #include "qaudiodeviceinfo_win32_p.h"
 #include <dshow.h>
 
+#if defined(Q_CC_MINGW)
+
+extern GUID CLSID_AudioInputDeviceCategory;
+
+#ifndef __IErrorLog_INTERFACE_DEFINED__
+#define __IErrorLog_INTERFACE_DEFINED__
+
+DECLARE_INTERFACE_(IErrorLog, IUnknown)
+{
+    STDMETHOD(AddError)(THIS_ LPCOLESTR, EXCEPINFO *) PURE;
+};
+
+#endif /* __IErrorLog_INTERFACE_DEFINED__ */
+
+#ifndef __IPropertyBag_INTERFACE_DEFINED__
+#define __IPropertyBag_INTERFACE_DEFINED__
+
+const GUID IID_IPropertyBag = {0x55272A00, 0x42CB, 0x11CE, {0x81, 0x35, 0x00, 0xAA, 0x00, 0x4B, 0xB8, 0x51}};
+
+DECLARE_INTERFACE_(IPropertyBag, IUnknown)
+{
+    STDMETHOD(Read)(THIS_ LPCOLESTR, VARIANT *, IErrorLog *) PURE;
+    STDMETHOD(Write)(THIS_ LPCOLESTR, VARIANT *) PURE;
+};
+
+#endif /* __IPropertyBag_INTERFACE_DEFINED__ */
+
+#endif//Q_CC_MINGW
+
 QT_BEGIN_NAMESPACE
 
 // For mingw toolchain mmsystem.h only defines half the defines, so add if needed.
@@ -403,11 +432,9 @@ QList<QByteArray> QAudioDeviceInfoInternal::availableDevices(QAudio::Mode mode)
                     // Find the description
                     hr = pPropBag->Read(L"FriendlyName", &var, 0);
                     if (SUCCEEDED(hr)) {
-                        WCHAR str[120];
-                        StringCchCopyW(str, sizeof(str) / sizeof(str[0]), var.bstrVal);
                         QByteArray  device;
                         QDataStream ds(&device, QIODevice::WriteOnly);
-                        ds << quint32(waveID) << QString::fromUtf16(reinterpret_cast<unsigned short *>(str));
+                        ds << quint32(waveID) << QString::fromWCharArray(var.bstrVal);
                         devices.append(device);
                     }
                 }

@@ -85,7 +85,7 @@ Rectangle  {
                        color:  {
                                   if (Month.isToday(startDay,   index - startWeekday +1))
                                       return "lightsteelblue";
-                                  else if (calendar.organizer.containsItems(Month.dateOfThisDay(startDay,   index - startWeekday +1)))
+                                  else if (calendar.organizer.containsItems(Month.dateOfThisDay(startDay,   index - startWeekday +1), Month.dateOfThisDay(startDay,   index - startWeekday +2)))
                                       return "yellow";
                                   else
                                       return Month.getColorOfDay(startDay,   index - startWeekday +1);

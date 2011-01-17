@@ -61,10 +61,8 @@
 
     The \l ContactModel element is used to perform the requests on a contacts store.
     As an example consider the follow QML code which has a \l ContactModel element
-    containing a filter and a list of sort orders. The filter is made up of an intersection of
-    the contact address detail's \l {Address::country} is "Australia" AND an union
-    of (\l {Birthday::birthday} is between '1970-01-01' and '1984-12-31' OR this contact is a lady
-    ({Gender::gender} is Gender.Male).
+    containing a filter and a list of sort orders. The contacts will be restricted 
+    to those living in Australia who are either male or born between 1970 and 1984.
     
     The list of contacts in this ContactModel will firstly sort on the contacts' organization name
     and then sort on the contacts' first name.
@@ -76,18 +74,6 @@
 
         model: ContactModel {
 
-            sortOrders: [
-               SortOrder {
-                  detail:ContactDetail.Organization
-                  field:Organization.Name
-                  direction:Qt.AscendingOrder
-               },
-               SortOrder {
-                  detail:ContactDetail.Name
-                  field:Name.FirstName
-                  direction:Qt.AscendingOrder
-               }
-            ]
             filter: IntersectionFilter {
                 DetailFilter {
                     detail:ContactDetail.Address
@@ -108,13 +94,26 @@
                     }
                 }
             }
+            sortOrders: [
+               SortOrder {
+                  detail:ContactDetail.Organization
+                  field:Organization.Name
+                  direction:Qt.AscendingOrder
+               },
+               SortOrder {
+                  detail:ContactDetail.Name
+                  field:Name.FirstName
+                  direction:Qt.AscendingOrder
+               }
+            ]
         }
     \endcode
 
     \section2 Contact element
 
-    The \l {Contact} element represents a single contact instance from a the contacts store. All contact details organized as group properties.
-    The following snippet shows how you can construct a Contact object in QML:
+    The \l {Contact} element represents a single contact instance from a the contacts store. 
+    All contact details are organized as group properties. The following snippet shows how 
+    you can construct a Contact object in QML:
     \code
 
     Rectangle {
@@ -127,27 +126,27 @@
         Contact {
             id: myContact
             Name {
-                firstName:"Charles"
-                lastName:"Yin"
+                firstName:"John"
+                lastName:"Gates"
             }
 
             EmailAddress {
-                emailAddress:"charles.yin@example.com"
+                emailAddress:"john@example.com"
             }
             EmailAddress {
                 emailAddress:"mygmailaccount@gmail.com"
             }
 
-            address.street:"53 Brandl St"
-            address.locality: "Eight Mile Plains"
-            address.region: "QLD"
-            address.postcode:"4111"
-            address.country:"Australia"
+            address.street:"53 Mysteet St"
+            address.locality: "My City"
+            address.region: "My Region"
+            address.postcode:"1111"
+            address.country:"My Country"
             address.subTypes:[Address.Postal, Address.Domestic]
             address.postOfficeBox:"1111"
 
             Nickname {
-                nickname:"Charles"
+                nickname:"John"
             }
 
             PhoneNumber {

@@ -188,22 +188,33 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerEventTime::FieldAllDay, "AllDay");
 
 /*!
     \fn QOrganizerEventTime::startDateTime() const
-    Returns the event timerange's start date and time as QDateTime.
+    Returns the event time's start date and time as QDateTime.
+    For all-day events, the time part is meaningless.
+    \sa QOrganizerEvent::startDateTime
  */
 
 /*!
     \fn QOrganizerEventTime::setStartDateTime(const QDateTime& startDateTime)
-    Sets the event timerange's start date and time to \a startDateTime.
+    Sets the event time's start date and time to \a startDateTime.
+    For all-day events, the time part can be set to any valid value.
+    \sa QOrganizerEvent::setStartDateTime
  */
 
 /*!
     \fn QOrganizerEventTime::endDateTime() const
-    Returns the event timerange's due date and time as QDateTime.
+    Returns the event time's due date and time as QDateTime.
+    For all-day events, the time part is meaningless, and the date is to be interpreted as the
+    inclusive end date.
+
+    \sa QOrganizerEvent::endDateTime
  */
 
 /*!
     \fn QOrganizerEventTime::setEndDateTime(const QDateTime& dueDateTime)
-    Sets the event timerange's due date and time to \a dueDateTime.
+    Sets the event time's due date and time to \a dueDateTime.
+    For all-day events, the time part can be set to any valid value, and the date is to be
+    interpreted as the inclusive end date.
+    \sa QOrganizerEvent::setEndDateTime
  */
 
 /*!
@@ -1242,28 +1253,32 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerTodoTime::FieldAllDay, "AllDay");
 
 /*!
     \fn QOrganizerTodoTime::startDateTime() const
-    Returns the todo timerange's start date and time as QDateTime.
+    Returns the todo time's start date and time as QDateTime.
+    For all-day tasks, the time part is meaningless.
  */
 
 /*!
     \fn QOrganizerTodoTime::setStartDateTime(const QDateTime& startDateTime)
-    Sets the todo timerange's start date and time to \a startDateTime.
+    Sets the todo time's start date and time to \a startDateTime.
+    For all-day tasks, the time part can be set to any valid value.
  */
 
 /*!
     \fn QOrganizerTodoTime::dueDateTime() const
-    Returns the todo timerange's due date and time as QDateTime.
+    Returns the todo time's due date and time as QDateTime.
+    For all-day tasks, the time part is meaningless.
  */
 
 /*!
     \fn QOrganizerTodoTime::setDueDateTime(const QDateTime& dueDateTime)
-    Sets the todo timerange's due date and time to \a dueDateTime.
+    Sets the todo time's due date and time to \a dueDateTime.
+    For all-day tasks, the time part can be set to any valid value.
  */
 
 /*!
     \fn QOrganizerTodoTime::setAllDay(bool isAllDay)
     Sets the all-day status of the todo to \a isAllDay.
-    If the event is an all-day todo, no time is considered to be
+    If the tasks is an all-day todo, no time is considered to be
     specified for the todo, even if the start date time set
     for the todo has a time component.
  */
