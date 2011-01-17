@@ -3192,7 +3192,7 @@ void QOrganizerManagerEngine::updateCollectionSaveRequest(QOrganizerCollectionSa
 
   The additional features of a V2 engine compared to the original QOrganizerManagerEngine are:
   \list
-  \o The items function which takes a \code{maxCount} parameter
+  \o The items function which takes a \i{maxCount} parameter
   \o The result of the items functions must be sorted by date according to the sort order defined by
      \l itemLessThan
   \o The corresponding changes to QOrganizerItemFetchRequest
@@ -3480,21 +3480,6 @@ void QOrganizerManagerEngineV2::updateItemFetchByIdRequest(QOrganizerItemFetchBy
     }
 }
 
-/*!
-  \fn virtual QSharedPointer<QOrganizerItemObserver> observeItem(QOrganizerItemId itemId) = 0;
-
-  Returns an observer object for the item with id \a itemId.
-
-  \sa QOrganizerItemObserver
- */
-
-/*!
-  Factory function to construct a QOrganizerItemObserver with given \a parent.
- */
-QOrganizerItemObserver* QOrganizerManagerEngineV2::createOrganizerItemObserver(QObject* parent)
-{
-    return new QOrganizerItemObserver(parent);
-}
 
 #include "moc_qorganizermanagerengine.cpp"
 

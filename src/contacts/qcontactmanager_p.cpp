@@ -304,7 +304,47 @@ void QContactManagerData::loadFactories()
     }
 }
 
-// trampoline for private classes
+// Observer stuff
+
+void QContactManagerData::registerObserver(QContactObserver* observer)
+{
+    m_observerForContact.insert(observer->contactLocalId(), observer);
+}
+
+void QContactManagerData::unregisterObserver(QContactObserver* observer)
+{
+    QContactLocalId key = m_observerForContact.key(observer);
+    if (key != 0) {
+        m_observerForContact.remove(key, observer);
+    }
+}
+
+void QContactManagerData::_q_contactsUpdated(const QList<QContactLocalId>& ids)
+{
+    foreach (QContactLocalId id, ids) {
+        QList<QContactObserver*> observers = m_observerForContact.values(id);
+        foreach (QContactObserver* observer, observers) {
+            QMetaObject::invokeMethod(observer, "contactChanged");
+        }
+    }
+}
+
+void QContactManagerData::_q_contactsDeleted(const QList<QContactLocalId>& ids)
+{
+    foreach (QContactLocalId id, ids) {
+        QList<QContactObserver*> observers = m_observerForContact.values(id);
+        foreach (QContactObserver* observer, observers) {
+            QMetaObject::invokeMethod(observer, "contactRemoved");
+        }
+    }
+}
+
+// trampolines for private classes
+QContactManagerData* QContactManagerData::get(const QContactManager* manager)
+{
+    return manager->d;
+}
+
 QContactManagerEngineV2* QContactManagerData::engine(const QContactManager* manager)
 {
     if (manager)

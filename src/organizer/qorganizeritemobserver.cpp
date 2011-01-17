@@ -40,6 +40,17 @@
 ****************************************************************************/
 
 #include "qorganizeritemobserver.h"
+#include "qorganizeritemid.h"
+#include "qorganizermanager_p.h"
+
+QTM_BEGIN_NAMESPACE
+class QOrganizerItemObserverPrivate
+{
+    public:
+        QOrganizerItemId m_id;
+        QOrganizerManagerData* m_managerPrivate;
+};
+QTM_END_NAMESPACE
 
 QTM_USE_NAMESPACE
 
@@ -50,13 +61,36 @@ QTM_USE_NAMESPACE
   \inmodule QtOrganizer
 
   \ingroup organizer-main
-
-  This class is created by calling QOrganizerManager::observeItem(QOrganizerItemId).
-
-  \sa QOrganizerManager::observeItem
  */
 
-QOrganizerItemObserver::QOrganizerItemObserver(QObject* parent) : QObject(parent) {}
+/*!
+  Constructs a QOrganizerItemObserver to observe the item in \a manager with the given \a itemId.
+ */
+QOrganizerItemObserver::QOrganizerItemObserver(QOrganizerManager* manager,
+                                               const QOrganizerItemId& itemId,
+                                               QObject* parent)
+    : QObject(parent),
+      d(new QOrganizerItemObserverPrivate)
+{
+    d->m_id = itemId;
+    d->m_managerPrivate = QOrganizerManagerData::get(manager);
+    d->m_managerPrivate->registerObserver(this);
+}
+
+/*!
+  Destroys this observer.
+ */
+QOrganizerItemObserver::~QOrganizerItemObserver()
+{
+    delete d;
+}
+
+/*!
+  Returns the id of the item that this object observes.
+ */
+QOrganizerItemId QOrganizerItemObserver::itemId() const {
+    return d->m_id;
+}
 
 /*!
   \fn void QOrganizerItemObserver::itemChanged()
@@ -69,21 +103,5 @@ QOrganizerItemObserver::QOrganizerItemObserver(QObject* parent) : QObject(parent
 
   This signal is emitted when the observed item is removed from the manager.
  */
-
-/*!
-  This function causes the itemChanged() signal to be emitted.
- */
-void QOrganizerItemObserver::emitItemChanged()
-{
-    emit itemChanged();
-}
-
-/*!
-  This function causes the itemRemoved() signal to be emitted.
- */
-void QOrganizerItemObserver::emitItemRemoved()
-{
-    emit itemRemoved();
-}
 
 #include "moc_qorganizeritemobserver.cpp"
