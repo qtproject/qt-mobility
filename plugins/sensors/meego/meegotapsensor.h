@@ -39,33 +39,35 @@
 **
 ****************************************************************************/
 
-#ifndef MAEMO6ALS_H
-#define MAEMO6ALS_H
+#ifndef MEEGOTAPSENSOR_H
+#define MEEGOTAPSENSOR_H
 
-#include "maemo6sensorbase.h"
-#include <qambientlightsensor.h>
+#include "meegosensorbase.h"
+#include <qtapsensor.h>
 
-#include <alssensor_i.h>
-#include <unsigned.h>
+#include <tapsensor_i.h>
+#include <tap.h>
 
 QTM_USE_NAMESPACE
 
-class maemo6als : public maemo6sensorbase
+class meegotapsensor : public meegosensorbase
 {
     Q_OBJECT
 
 public:
     static char const * const id;
-    maemo6als(QSensor *sensor);
+    meegotapsensor(QSensor *sensor);
 protected:
     virtual bool doConnect();
+    virtual void start();
     virtual const QString sensorName();
 
 private:
-    QAmbientLightReading m_reading;
+    QTapReading m_reading;
     static bool m_initDone;
+    bool m_isDoubleTapSensor;
 private slots:
-    void slotDataAvailable(const Unsigned& data);
+    void slotDataAvailable(const Tap&);
 };
 
 #endif

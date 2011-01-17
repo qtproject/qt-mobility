@@ -39,37 +39,36 @@
 **
 ****************************************************************************/
 
-#ifndef MAEMO6GYROSCOPE_H
-#define MAEMO6GYROSCOPE_H
+#ifndef MEEGOROTATION_H
+#define MEEGOROTATION_H
 
-#include "maemo6sensorbase.h"
-#include <qgyroscope.h>
-#include <datatypes/xyz.h>
-//#include <gyroscopesensor_i.h>
+#include "meegosensorbase.h"
+#include <qrotationsensor.h>
 
+#include <rotationsensor_i.h>
+#include <xyz.h>
 
 QTM_USE_NAMESPACE
 
-class maemo6gyroscope : public maemo6sensorbase
+class meegorotationsensor : public meegosensorbase
 {
     Q_OBJECT
 
 public:
     static char const * const id;
-    maemo6gyroscope(QSensor *sensor);
+    meegorotationsensor(QSensor *sensor);
 protected:
     virtual bool doConnect();
     virtual const QString sensorName();
 
 private:
-    QGyroscopeReading m_reading;
+    QRotationReading m_reading;
     static bool m_initDone;
-    static const float MILLI;
+
 private slots:
     void slotDataAvailable(const XYZ& data);
     void slotFrameAvailable(const QVector<XYZ>&);
 
 };
 
-
-#endif // MAEMO6GYROSCOPE_H
+#endif

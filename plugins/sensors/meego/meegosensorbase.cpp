@@ -39,28 +39,28 @@
 **
 ****************************************************************************/
 
-#include "maemo6sensorbase.h"
+#include "meegosensorbase.h"
 
 
-SensorManagerInterface* maemo6sensorbase::m_remoteSensorManager = 0;
+SensorManagerInterface* meegosensorbase::m_remoteSensorManager = 0;
 
 
-const float maemo6sensorbase::GRAVITY_EARTH = 9.80665;
-const float maemo6sensorbase::GRAVITY_EARTH_THOUSANDTH = 0.00980665;
-const int maemo6sensorbase::KErrNotFound=-1;
-const char* const maemo6sensorbase::ALWAYS_ON = "alwaysOn";
-const char* const maemo6sensorbase::BUFFER_SIZE = "bufferSize";
-const char* const maemo6sensorbase::MAX_BUFFER_SIZE = "maxBufferSize";
-const char* const maemo6sensorbase::EFFICIENT_BUFFER_SIZE = "efficientBufferSize";
+const float meegosensorbase::GRAVITY_EARTH = 9.80665;
+const float meegosensorbase::GRAVITY_EARTH_THOUSANDTH = 0.00980665;
+const int meegosensorbase::KErrNotFound=-1;
+const char* const meegosensorbase::ALWAYS_ON = "alwaysOn";
+const char* const meegosensorbase::BUFFER_SIZE = "bufferSize";
+const char* const meegosensorbase::MAX_BUFFER_SIZE = "maxBufferSize";
+const char* const meegosensorbase::EFFICIENT_BUFFER_SIZE = "efficientBufferSize";
 
-maemo6sensorbase::maemo6sensorbase(QSensor *sensor)
+meegosensorbase::meegosensorbase(QSensor *sensor)
     : QSensorBackend(sensor), m_sensorInterface(0), m_bufferSize(-1), m_prevOutputRange(-1), m_efficientBufferSize(1), m_maxBufferSize(1)
 {
     if (!m_remoteSensorManager)
         m_remoteSensorManager = &SensorManagerInterface::instance();    
 }
 
-maemo6sensorbase::~maemo6sensorbase()
+meegosensorbase::~meegosensorbase()
 {
     if (m_sensorInterface) {
         stop();
@@ -69,7 +69,7 @@ maemo6sensorbase::~maemo6sensorbase()
     }
 }
 
-void maemo6sensorbase::start()
+void meegosensorbase::start()
 {
     if (m_sensorInterface) {
         // dataRate
@@ -111,12 +111,12 @@ void maemo6sensorbase::start()
     sensorStopped();
 }
 
-void maemo6sensorbase::stop()
+void meegosensorbase::stop()
 {
     if (m_sensorInterface) m_sensorInterface->stop();
 }
 
-void maemo6sensorbase::setRanges(qreal correctionFactor){
+void meegosensorbase::setRanges(qreal correctionFactor){
     if (!m_sensorInterface) return;
 
     QList<DataRange> ranges = m_sensorInterface->getAvailableDataRanges();
@@ -131,7 +131,7 @@ void maemo6sensorbase::setRanges(qreal correctionFactor){
 }
 
 
-bool maemo6sensorbase::doConnectAfterCheck(){
+bool meegosensorbase::doConnectAfterCheck(){
     if (!m_sensorInterface) return false;
 
     // buffer size
@@ -157,7 +157,7 @@ bool maemo6sensorbase::doConnectAfterCheck(){
 
 
 
-const int maemo6sensorbase::bufferSize(){
+const int meegosensorbase::bufferSize(){
     QVariant bufferVariant = sensor()->property(BUFFER_SIZE);
     int bufferSize = bufferVariant.isValid()?bufferVariant.toInt():1;
     if (bufferSize==1) return 1;
@@ -169,12 +169,6 @@ const int maemo6sensorbase::bufferSize(){
     }
     if (bufferSize>m_maxBufferSize){
         qWarning()<<"bufferSize cannot be "<<bufferSize<<", MAX value is "<<m_maxBufferSize;
-        return m_bufferSize>0?m_bufferSize:1;
-    }
-    if (m_efficientBufferSize==1) return bufferSize;
-
-    if (bufferSize%m_efficientBufferSize!=0){
-        qWarning()<<"bufferSize must be multifold of "<<m_efficientBufferSize<<" or 1";
         return m_bufferSize>0?m_bufferSize:1;
     }
     return bufferSize;
