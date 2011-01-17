@@ -39,20 +39,21 @@
 **
 ****************************************************************************/
 
-#ifndef QNEARFIELDMANAGERIMPL_P_H
-#define QNEARFIELDMANAGERIMPL_P_H
+#include <e32def.h>
+#include <e32cmn.h>
+#include <nfctag.h>
+#include <nfcconnection.h>
 
-#include "qnearfieldmanager_p.h"
-
-QTM_BEGIN_NAMESPACE
-
-class QNearFieldManagerPrivateImpl : public QNearFieldManagerPrivate
+int main(int, char**)
 {
-public:
-  QNearFieldManagerPrivateImpl();
-  ~QNearFieldManagerPrivateImpl();
-};
+		MNfcConnection * iTagConnection;
+		TRequestStatus iStatus;	
+		_LIT8(KData,"cmd");
+		TBufC8<8> str(KData);
+		TBuf8<16> resp;
+		TTimeIntervalMicroSeconds32 aTimeout;
+		
+		iTagConnection->RawModeAccess(iStatus, str, resp, aTimeout);
+    return 0;
+}
 
-QTM_END_NAMESPACE
-
-#endif // QNEARFIELDMANAGERIMPL_P_H

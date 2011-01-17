@@ -54,6 +54,7 @@ class QLlcpServerPrivate
 
 public:
     QLlcpServerPrivate(QLlcpServer *q);
+    ~QLlcpServerPrivate();
 
     bool listen(const QString &serviceUri);
     bool isListening() const;

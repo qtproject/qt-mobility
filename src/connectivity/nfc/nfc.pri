@@ -113,8 +113,23 @@ simulator {
 }
 
 INCLUDEPATH += $$PWD
+
+contains(nfc_enabled, no ):symbian { 	
+    # unsupported platform stub
     
-symbian { 
+    PRIVATE_HEADERS += \
+        nfc/qllcpsocket_p.h \
+        nfc/qllcpserver_p.h \
+        nfc/qnearfieldmanagerimpl_p.h
+
+    SOURCES += \
+        nfc/qllcpsocket_p.cpp \
+        nfc/qllcpserver_p.cpp \
+        nfc/qnearfieldmanagerimpl_p.cpp
+}
+
+    
+contains(nfc_enabled, yes ):symbian { 	
     PRIVATE_HEADERS += \
         nfc/qnearfieldmanager_symbian_p.h \
         nfc/qnearfieldtagtype1_symbian_p.h \
