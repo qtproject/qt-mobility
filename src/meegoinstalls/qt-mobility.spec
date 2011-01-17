@@ -410,6 +410,7 @@ Qt Mobility delivers a set of new APIs for mobile device functionality.
 
 This package contains the Connectivity QML plugin for QtDeclarative.
 
+
 %package -n servicefw
 Summary:    Qt Mobility Service Framework tool
 Group:      Development/Tools
@@ -581,6 +582,9 @@ find %{buildroot}%{_libdir}/qtmobility -type f -perm /u+x,g+x,o+x \( -false \
 %post -n libqtversitorganizer1 -p /sbin/ldconfig
 
 %postun -n libqtversitorganizer1 -p /sbin/ldconfig
+
+
+
 
 
 
