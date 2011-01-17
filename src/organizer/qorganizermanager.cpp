@@ -285,6 +285,12 @@ void QOrganizerManager::createEngine(const QString& managerName, const QMap<QStr
     connect(d->m_engine, SIGNAL(collectionsAdded(QList<QOrganizerCollectionId>)), this, SIGNAL(collectionsAdded(QList<QOrganizerCollectionId>)));
     connect(d->m_engine, SIGNAL(collectionsChanged(QList<QOrganizerCollectionId>)), this, SIGNAL(collectionsChanged(QList<QOrganizerCollectionId>)));
     connect(d->m_engine, SIGNAL(collectionsRemoved(QList<QOrganizerCollectionId>)), this, SIGNAL(collectionsRemoved(QList<QOrganizerCollectionId>)));
+
+    connect(d->m_engine, SIGNAL(itemsChanged(QList<QOrganizerItemId>)),
+            this, SLOT(_q_itemsUpdated(QList<QOrganizerItemId>)));
+    connect(d->m_engine, SIGNAL(itemsRemoved(QList<QOrganizerItemId>)),
+            this, SLOT(_q_itemsDeleted(QList<QOrganizerItemId>)));
+
 }
 
 /*!
@@ -686,23 +692,6 @@ bool QOrganizerManager::removeItems(const QList<QOrganizerItemId>& organizeritem
 }
 
 /*!
-  Returns an observer object for the item with id \a itemId.
-
-  The returned object will emit itemChanged and itemRemoved signals until it is deleted (eg.
-  by the pointer falling out of scope).  Note that the QOrganizerItemObserver in the returned
-  QSharedPointer may or may not be deleted when the client loses its reference to it.  The client
-  is responsible for keeping a reference to the shared pointer as long as it is interested in the
-  observer's signals.  When the client wishes to stop receiving signals, it should both disconnect
-  the signals and delete the shared pointer.
-
-  \sa QOrganizerItemObserver
- */
-QSharedPointer<QOrganizerItemObserver> QOrganizerManager::observeItem(const QOrganizerItemId& itemId)
-{
-    return d->m_engine->observeItem(itemId);
-}
-
-/*!
   Returns the id of the default collection managed by this manager
  */
 QOrganizerCollection QOrganizerManager::defaultCollection() const
@@ -936,7 +925,7 @@ QString QOrganizerManager::managerUri() const
 QList<QOrganizerItemId> QOrganizerManager::extractIds(const QList<QOrganizerItem>& items)
 {
     QList<QOrganizerItemId> ids;
-#if QT_VERSION > 0x040700    
+#if QT_VERSION > 0x040700
     ids.reserve(items.count());
 #endif
 
