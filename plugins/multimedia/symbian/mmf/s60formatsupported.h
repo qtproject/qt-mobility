@@ -58,7 +58,7 @@ public:
 
 private:
 
-    CMMFFormatSelectionParameters* m_playformatparam;    
+    CMMFFormatSelectionParameters* m_playformatparam;
     CMMFControllerPluginSelectionParameters* m_controllerparam;
     QStringList m_supportedplaymime;
 };

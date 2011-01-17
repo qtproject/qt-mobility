@@ -55,7 +55,7 @@ S60FormatSupported::~S60FormatSupported()
     }
 }
 
-QStringList	S60FormatSupported::supportedPlayMimeTypesL()
+QStringList S60FormatSupported::supportedPlayMimeTypesL()
 {
 
     RArray<TUid> mediaIds; //search for both audio and video
