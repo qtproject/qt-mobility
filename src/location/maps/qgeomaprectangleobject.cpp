@@ -316,7 +316,6 @@ QGeoMapRectangleObjectPrivate::QGeoMapRectangleObjectPrivate() :
 
 QGeoMapRectangleObjectPrivate::~QGeoMapRectangleObjectPrivate()
 {
-    delete item;
 }
 
 #include "moc_qgeomaprectangleobject.cpp"

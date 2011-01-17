@@ -545,6 +545,8 @@ QGeoMapObjectPrivate::QGeoMapObjectPrivate()
 
 QGeoMapObjectPrivate::~QGeoMapObjectPrivate()
 {
+    if (graphicsItem)
+        delete graphicsItem;
 }
 
 /*******************************************************************************

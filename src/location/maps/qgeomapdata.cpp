@@ -804,9 +804,10 @@ void QGeoMapDataPrivate::removeObject(QGeoMapObject *object)
 
 void QGeoMapDataPrivate::clearObjects()
 {
-    foreach (QGeoMapObject *obj, containerObject->childObjects())
+    foreach (QGeoMapObject *obj, containerObject->childObjects()) {
         removeObject(obj);
-    containerObject->clearChildObjects();
+        delete obj;
+    }
 }
 
 void QGeoMapDataPrivate::emitUpdateMapDisplay(const QRectF &target)

@@ -343,7 +343,6 @@ QGeoMapCircleObjectPrivate::QGeoMapCircleObjectPrivate() :
 
 QGeoMapCircleObjectPrivate::~QGeoMapCircleObjectPrivate()
 {
-    delete item;
 }
 
 #include "moc_qgeomapcircleobject.cpp"

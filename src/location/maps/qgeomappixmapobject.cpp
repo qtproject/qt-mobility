@@ -223,7 +223,6 @@ QGeoMapPixmapObjectPrivate::QGeoMapPixmapObjectPrivate()
 
 QGeoMapPixmapObjectPrivate::~QGeoMapPixmapObjectPrivate()
 {
-    delete item;
 }
 
 #include "moc_qgeomappixmapobject.cpp"
