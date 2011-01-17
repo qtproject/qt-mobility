@@ -140,11 +140,8 @@ int main( int argc, char **argv )
 
         const QByteArray type = types.at(j);
         QList<QByteArray> ids = QSensor::sensorsForType(type);
-        
-
-        QByteArray defaultSensor = QSensor::defaultSensorForType(type);
-        
-        for( int i = 0, ll=ids.size(); i < ll; ++i )
+        QByteArray defaultSensor = QSensor::defaultSensorForType(type);        
+        for( int i = 0, ll=ids.size(); i < ll; ++i)
         {
             QSensor sensor(type);
             QByteArray id = ids.at(i);
