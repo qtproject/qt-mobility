@@ -1149,7 +1149,6 @@ find %{buildroot}%{_libdir}/qtmobility -type f -perm /u+x,g+x,o+x \( -false \
 %defattr(-,root,root,-)
 # >> files libqtorganizer1
 %{_libdir}/libQtOrganizer.so.*
-%{_libdir}/qt4/plugins/organizer/libqtorganizer_skeleton.so
 # << files libqtorganizer1
 
 %files -n libqtpublishsubscribe1
