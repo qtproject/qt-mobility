@@ -1395,17 +1395,16 @@ QSystemNetworkInfo::NetworkMode QSystemNetworkInfoLinuxCommonPrivate::ofonoTechT
         return QSystemNetworkInfo::GsmMode;
     }
     if (ofonoTech == "edge"){
-        return QSystemNetworkInfo::GsmMode;
+        return QSystemNetworkInfo::EdgeMode;
     }
     if (ofonoTech == "umts"){
         return QSystemNetworkInfo::WcdmaMode;
     }
     if (ofonoTech == "hspa"){
-        // handle this?
-         return QSystemNetworkInfo::WcdmaMode;
+         return QSystemNetworkInfo::HspaMode;
     }
     if (ofonoTech == "lte"){
-        return QSystemNetworkInfo::WimaxMode;
+        return QSystemNetworkInfo::LteMode;
     }
     return QSystemNetworkInfo::GsmMode; //its ofono, default to gsm
 }
