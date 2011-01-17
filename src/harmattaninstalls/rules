@@ -1,7 +1,9 @@
 #!/usr/bin/make -f
 
 #export DH_VERBOSE=1
-#MOBILITY_ENABLE_STATIC_CONFIG
+# set MOBILITY_ENABLE_STATIC_CONFIG to 0 to disable using staticconfig in configure
+MOBILITY_ENABLE_STATIC_CONFIG=1
+
 
 include /usr/share/cdbs/1/rules/debhelper.mk
 include /usr/share/cdbs/1/class/makefile.mk
@@ -40,7 +42,7 @@ DEB_CONFIGURE_NORMAL_ARGS := -maemo6  -prefix /usr -headerdir /usr/include/qt4 \
 		-examples -examplesdir /usr/lib/qtmobilty/examples \
 		-demos -demosdir /usr/lib/qtmobilty/demos \
 		-silent -release
-ifdef (MOBILITY_ENABLE_STATIC_CONFIG) 
+ifeq ($(MOBILITY_ENABLE_STATIC_CONFIG),1)
     TARGET_BUILD=0
     ifeq ($(DEB_HOST_ARCH),arm)
 	TARGET_BUILD=1
