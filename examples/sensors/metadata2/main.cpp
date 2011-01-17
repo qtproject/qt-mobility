@@ -57,7 +57,7 @@ const char* const EFFICIENT_BUFFER_SIZE = "efficientBufferSize";
 
 
 
-QString checkSensor( QSensor *sensor )
+QString checkSensor( QSensor *sensor, bool isDefault)
 {
     qrangelist sen_datarates = sensor->availableDataRates();
     QString sen_desc('"');
@@ -103,6 +103,7 @@ QString checkSensor( QSensor *sensor )
     bufferSizes.append(QString::number(efficientVariant.isValid()?efficientVariant.toInt():1));
 
     QString metadata(sen_ident);
+    if (isDefault) metadata.append("- default");
     metadata.append(",");
     metadata.append(sen_type);
     metadata.append(",");
@@ -139,17 +140,21 @@ int main( int argc, char **argv )
 
         const QByteArray type = types.at(j);
         QList<QByteArray> ids = QSensor::sensorsForType(type);
+        
 
+        QByteArray defaultSensor = QSensor::defaultSensorForType(type);
+        
         for( int i = 0, ll=ids.size(); i < ll; ++i )
         {
             QSensor sensor(type);
-            sensor.setIdentifier(ids.at(i));
+            QByteArray id = ids.at(i);
+            sensor.setIdentifier(id);
             if( ! sensor.connectToBackend() )
             {
-                qDebug() << "connectToBackend failed" << ids.at(i) <<endl;
+                qDebug() << "connectToBackend failed" << id <<endl;
                 result = false;
             } else {
-                out << checkSensor(&sensor);
+                out << checkSensor(&sensor, id==defaultSensor);
             }
         }
     }
