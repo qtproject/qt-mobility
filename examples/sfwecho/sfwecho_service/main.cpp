@@ -72,7 +72,7 @@ class EchoService2 : public EchoService
 
 public:
     EchoService2(QObject* parent = 0)
-        : QObject(parent)
+        : EchoService(parent)
     {
     }
 
