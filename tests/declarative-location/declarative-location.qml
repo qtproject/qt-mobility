@@ -45,7 +45,7 @@ import QtMobility.location 1.1
 Rectangle {
     id: page
     width: 350
-    height: 350
+    height: 400
     color: "olive"
     
     Text {
@@ -71,12 +71,17 @@ Rectangle {
         Text {text: "latitude: "   + positionSource.position.coordinate.latitude}
         Text {text: "longitude: "   + positionSource.position.coordinate.longitude}
         Text {text: "altitude: "   + positionSource.position.coordinate.altitude}
+	Text {text: "horizontalAccuracy: "   + positionSource.position.horizontalAccuracy}
+	Text {text: "verticalAccuracy: "   + positionSource.position.verticalAccuracy}
         Text {text: "speed: " + positionSource.position.speed}
         Text {text: "timestamp: "  + positionSource.position.timestamp}
         Text {text: "altitudeValid: "  + positionSource.position.altitudeValid}
         Text {text: "longitudeValid: "  + positionSource.position.longitudeValid}
         Text {text: "latitudeValid: "  + positionSource.position.latitudeValid}
         Text {text: "speedValid: "     + positionSource.position.speedValid}
+        Text {text: "horizontalAccuracyValid: "  + positionSource.position.horizontalAccuracyValid}
+	Text {text: "verticalAccuracyValid: "  + positionSource.position.verticalAccuracyValid}
+	
     }
 
     function printableMethod(method) {
