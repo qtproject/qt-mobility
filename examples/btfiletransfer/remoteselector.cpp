@@ -75,6 +75,7 @@ RemoteSelector::RemoteSelector(QWidget *parent)
     ui->remoteDevices->setColumnWidth(4, 100);
 
     connect(m_localDevice, SIGNAL(pairingDisplayPinCode(const QBluetoothAddress &,QString)), this, SLOT(displayPin(const QBluetoothAddress &, QString)));
+    connect(m_localDevice, SIGNAL(pairingDisplayConfirmation(QBluetoothAddress,QString)), this, SLOT(displayConfirmation(QBluetoothAddress,QString)));
     connect(m_localDevice, SIGNAL(pairingFinished(QBluetoothAddress,QBluetoothLocalDevice::Pairing)), this, SLOT(pairingFinished(QBluetoothAddress,QBluetoothLocalDevice::Pairing)));
 
     ui->busyWidget->setMovie(new QMovie(":/icons/busy.gif"));
@@ -240,10 +241,43 @@ void RemoteSelector::on_stopButton_clicked()
     m_discoveryAgent->stop();
 }
 
+QString RemoteSelector::addressToName(const QBluetoothAddress &address)
+{
+    QMapIterator<int, QBluetoothServiceInfo> i(m_discoveredServices);
+    while(i.hasNext()){
+        i.next();
+        if(i.value().device().address() == address)
+            return i.value().device().name();
+    }
+    return address.toString();
+}
+
 void RemoteSelector::displayPin(const QBluetoothAddress &address, QString pin)
 {
-    m_pindisplay = new pinDisplay(QString("Enter pairing pin on: %1").arg(address.toString()), pin, this);
+    if(m_pindisplay)
+        m_pindisplay->deleteLater();
+    m_pindisplay = new pinDisplay(QString("Enter pairing pin on: %1").arg(addressToName(address)), pin, this);
     m_pindisplay->show();
+}
+
+void RemoteSelector::displayConfirmation(const QBluetoothAddress &address, QString pin)
+{
+    if(m_pindisplay)
+        m_pindisplay->deleteLater();
+    m_pindisplay = new pinDisplay(QString("Confirm this pin is the same"), pin, this);
+    connect(m_pindisplay, SIGNAL(accepted()), this, SLOT(displayConfAccepted()));
+    connect(m_pindisplay, SIGNAL(rejected()), this, SLOT(displayConfReject()));
+    m_pindisplay->setOkCancel();
+    m_pindisplay->show();    
+}
+
+void RemoteSelector::displayConfAccepted()
+{
+    m_localDevice->pairingConfirmation(true);
+}
+void RemoteSelector::displayConfReject()
+{
+    m_localDevice->pairingConfirmation(false);
 }
 
 void RemoteSelector::on_remoteDevices_currentCellChanged(int currentRow, int currentColumn, int previousRow, int previousColumn)
@@ -321,6 +355,7 @@ void RemoteSelector::on_remoteDevices_itemChanged(QTableWidgetItem* item)
 
     if(item->checkState() == Qt::Unchecked && column == 3){
         m_localDevice->requestPairing(m_service.device().address(), QBluetoothLocalDevice::Unpaired);
+        return; // don't continue and start movie
     }
     else if(item->checkState() == Qt::Checked && column == 3 ||
             item->checkState() == Qt::Unchecked && column == 4){

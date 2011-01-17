@@ -237,6 +237,40 @@ void QVersitDocumentWriter::writeString(const QString &value)
 }
 
 /*!
+  Writes \a value to the device.
+
+  This function tracks how many characters have been written to the line and wraps the line
+  according to RFC2045 (a Quoted-Printable soft line break is an EQUALS-CR-LF sequence)
+  */
+void QVersitDocumentWriter::writeStringQp(const QString &value)
+{
+    int spaceRemaining = MAX_LINE_LENGTH - mCurrentLineLength - 1;
+                                             // minus 1 for the equals required at the end
+    int charsWritten = 0;
+    QString softBreak(QLatin1String("=\r\n"));
+    while (spaceRemaining < value.length() - charsWritten) {
+        // Write the first "spaceRemaining" characters
+        if (value[charsWritten + spaceRemaining - 2] == QLatin1Char('=')) {
+            spaceRemaining -= 2;
+        } else if (value[charsWritten + spaceRemaining - 1] == QLatin1Char('=')) {
+            spaceRemaining -= 1;
+        }
+        QStringRef line(&value, charsWritten, spaceRemaining);
+
+        charsWritten += spaceRemaining;
+        if (mDevice->write(mEncoder->fromUnicode(line.constData(), line.length())) < 0
+               || mDevice->write(mEncoder->fromUnicode(softBreak)) < 0)
+            mSuccessful = false;
+        spaceRemaining = MAX_LINE_LENGTH - 1; // minus 1 for the equals required at the end
+        mCurrentLineLength = 0;
+    }
+
+    if (mDevice->write(mEncoder->fromUnicode(value.mid(charsWritten))) < 0)
+        mSuccessful = false;
+    mCurrentLineLength += value.length() - charsWritten;
+}
+
+/*!
   Writes a CRLF to the device.  By using this function, rather than writeString("\\r\\n"), you will
   allow the writer to know where a line starts, for folding purposes.
   */

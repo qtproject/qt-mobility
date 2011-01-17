@@ -314,12 +314,9 @@ QBluetoothLocalDevice::Pairing QBluetoothLocalDevice::pairingStatus(const QBluet
     return Unpaired;
 }
 
-void QBluetoothLocalDevice::sendPasskey(quint32 key)
+void QBluetoothLocalDevice::pairingConfirmation(bool confirmation)
 {
-}
 
-void QBluetoothLocalDevice::sendPinCode(QString pin)
-{
 }
 
 QTM_END_NAMESPACE
