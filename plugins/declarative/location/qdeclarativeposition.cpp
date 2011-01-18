@@ -73,7 +73,8 @@ QTM_BEGIN_NAMESPACE
 
 QDeclarativePosition::QDeclarativePosition(QObject* parent)
         : QObject(parent), m_latitudeValid(false), m_longitudeValid(false),
-        m_altitudeValid(false), m_speedValid(false)
+          m_altitudeValid(false), m_speed(-1), m_speedValid(false), m_horizontalAccuracyValid(false),
+          m_verticalAccuracyValid(false), m_horizontalAccuracy(-1), m_verticalAccuracy(-1)
 {
 }
 
@@ -227,6 +228,88 @@ double QDeclarativePosition::speed() const
 }
 
 /*!
+    \qmlproperty qreal Position::horizontalAccuracy
+
+    This property holds the horizontal accuracy of the coordinate (in meters).
+
+    \sa horizontalAccuracyValid, coordinate
+*/
+
+void QDeclarativePosition::setHorizontalAccuracy(qreal horizontalAccuracy)
+{
+    if (horizontalAccuracy == m_horizontalAccuracy)
+        return;
+    m_horizontalAccuracy = horizontalAccuracy;
+    if (!m_horizontalAccuracyValid) {
+        m_horizontalAccuracyValid = true;
+        emit horizontalAccuracyValidChanged();
+    }
+    emit horizontalAccuracyChanged();
+}
+
+qreal QDeclarativePosition::horizontalAccuracy() const
+{
+    return m_horizontalAccuracy;
+}
+
+/*!
+    \qmlproperty bool Position::horizontalAccuracyValid
+
+    This property is true if \l horizontalAccuracy has been set
+    (to indicate whether that data has been received or not, as every update
+    does not necessarily contain all data).
+
+    \sa horizontalAccuracy
+
+*/
+
+bool QDeclarativePosition::isHorizontalAccuracyValid() const
+{
+    return m_horizontalAccuracyValid;
+}
+
+/*!
+    \qmlproperty qreal Position::verticalAccuracy
+
+    This property holds the vertical accuracy of the coordinate (in meters).
+
+    \sa verticalAccuracyValid, coordinate
+*/
+
+void QDeclarativePosition::setVerticalAccuracy(qreal verticalAccuracy)
+{
+    if (verticalAccuracy == m_verticalAccuracy)
+        return;
+    m_verticalAccuracy = verticalAccuracy;
+    if (!m_verticalAccuracyValid) {
+        m_verticalAccuracyValid = true;
+        emit verticalAccuracyValidChanged();
+    }
+    emit verticalAccuracyChanged();
+}
+
+qreal QDeclarativePosition::verticalAccuracy() const
+{
+    return m_verticalAccuracy;
+}
+
+/*!
+    \qmlproperty bool Position::verticalAccuracyValid
+
+    This property is true if \l verticalAccuracy has been set
+    (to indicate whether that data has been received or not, as every update
+    does not necessarily contain all data).
+
+    \sa verticalAccuracy
+
+*/
+
+bool QDeclarativePosition::isVerticalAccuracyValid() const
+{
+    return m_verticalAccuracyValid;
+}
+
+/*!
     \qmlproperty date Position::timestamp
 
     This property holds the timestamp when this position
@@ -245,6 +328,35 @@ void QDeclarativePosition::setTimestamp(const QDateTime& timestamp)
 QDateTime QDeclarativePosition::timestamp() const
 {
     return m_timestamp;
+}
+
+void QDeclarativePosition::invalidate()
+{
+    // Invalidate all data
+    if (m_latitudeValid) {
+        m_latitudeValid = false;
+        emit latitudeValidChanged();
+    }
+    if (m_longitudeValid) {
+        m_longitudeValid = false;
+        emit longitudeValidChanged();
+    }
+    if (m_altitudeValid) {
+        m_altitudeValid = false;
+        emit altitudeValidChanged();
+    }
+     if (m_speedValid) {
+         m_speedValid = false;
+         emit speedValidChanged();
+     }
+     if (m_horizontalAccuracyValid) {
+         m_horizontalAccuracyValid = false;
+         emit horizontalAccuracyValidChanged();
+     }
+     if (m_verticalAccuracyValid) {
+         m_verticalAccuracyValid = false;
+         emit verticalAccuracyValidChanged();
+     }
 }
 
 #include "moc_qdeclarativeposition_p.cpp"
