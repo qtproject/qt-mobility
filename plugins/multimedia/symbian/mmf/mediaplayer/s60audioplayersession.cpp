@@ -135,6 +135,12 @@ void S60AudioPlayerSession::doStop()
 
 void S60AudioPlayerSession::doClose()
 {
+#ifdef HAS_AUDIOROUTING
+    if (m_audioOutput) {
+        m_audioOutput->UnregisterObserver(*this);
+        delete m_audioOutput;
+    }
+#endif
     m_player->Close();
 }
 

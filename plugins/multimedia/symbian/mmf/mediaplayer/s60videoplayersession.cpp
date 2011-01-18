@@ -322,7 +322,19 @@ void S60VideoPlayerSession::doStop()
 
 void S60VideoPlayerSession::doClose()
 {
+#ifdef HAS_AUDIOROUTING_IN_VIDEOPLAYER
+    if (m_audioOutput) {
+        m_audioOutput->UnregisterObserver(*this);
+        delete m_audioOutput;
+        m_audioOutput = NULL;
+    }
+#endif
+
     m_player->Close();
+
+// close will remove the window handle in media clint video.
+// So mark it in pending changes.
+    m_pendingChanges |= WindowHandle;
 }
 
 qint64 S60VideoPlayerSession::doGetPositionL() const
