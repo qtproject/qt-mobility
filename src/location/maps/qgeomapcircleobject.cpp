@@ -186,6 +186,8 @@ QBrush QGeoMapCircleObject::brush() const
     \property QGeoMapCircleObject::detailLevel
     \brief This property holds the level of detail to be used to draw this object.
 
+    \since 1.2
+
     In particular, for a circle using ExactTransform, this property
     describes the number of sides that should be used to generate the
     polygonal approximation.

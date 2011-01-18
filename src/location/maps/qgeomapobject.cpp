@@ -127,6 +127,8 @@ QTM_BEGIN_NAMESPACE
 /*!
     \enum QGeoMapObject::CoordinateUnit
 
+    \since 1.2
+
     Describes the units of measurement used for a map object's
     graphics item.
 
@@ -147,6 +149,8 @@ QTM_BEGIN_NAMESPACE
 /*!
     \enum QGeoMapObject::TransformType
 
+    \since 1.2
+
     Describes the type of transformation applied to change this object's
     coordinate system into screen coordinates.
 
@@ -162,6 +166,8 @@ QTM_BEGIN_NAMESPACE
 
 /*!
     \fn void QGeoMapObject::mapAppearanceChanged()
+
+    \since 1.2
 
     This signal is emitted whenever some detail of the QGeoMapObject instance
     is changed that affects its appearance on the map.
@@ -417,6 +423,8 @@ QGeoMapData* QGeoMapObject::mapData() const
     \property QGeoMapObject::graphicsItem
     \brief This property holds the GraphicsItem that will be drawn on the map.
 
+    \since 1.2
+
     The GraphicsItem's coordinates are in the units specified by the
     QGeoMapObject::units property.
 
@@ -443,6 +451,8 @@ void QGeoMapObject::setGraphicsItem(QGraphicsItem *item)
     \property QGeoMapObject::transformType
     \brief This property holds the transformation type used to draw the object.
 
+    \since 1.2
+
     \sa QGeoMapObject::TransformType
 */
 QGeoMapObject::TransformType QGeoMapObject::transformType() const
@@ -459,6 +469,8 @@ void QGeoMapObject::setTransformType(const TransformType &type)
 /*!
     \property QGeoMapObject::origin
     \brief This property holds the origin of the object's coordinate system.
+
+    \since 1.2
 
     How the origin coordinate is used depends on the selected coordinate
     system, see QGeoMapObject::TransformType for more details.
@@ -480,6 +492,8 @@ void QGeoMapObject::setOrigin(const QGeoCoordinate &origin)
 /*!
     \property QGeoMapObject::units
     \brief This property holds the units of measurement for the object.
+
+    \since 1.2
 
     Note that setting this property will reset the transformType property to
     the default for the units given. For PixelUnit, this is ExactTransform,
