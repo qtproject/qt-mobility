@@ -28,7 +28,7 @@
 /*!
     \group qml-gallery
     \title QML Document Gallery
-    QML Support for the Mobility Project Document Gallery API.
+    QML Support for the QtMobility Project Document Gallery API.
 
 */
 
@@ -43,7 +43,7 @@
 
     \title Gallery QML Plugin
 
-    \brief A QML plugin for the Mobility Document Gallery API.
+    \brief A QML plugin for the QtMobility Document Gallery API.
 
 
     \section1 Overview
@@ -85,7 +85,7 @@
     number) item property \l {DocumentGalleryItem::progress}{progress}.
 
 
-    
+
     \section2 Query Requests
 
     The \l DocumentGalleryModel element is used to perform the requests on a

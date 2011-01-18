@@ -369,19 +369,18 @@ void CalendarDemo::importItems()
         qWarning() << "Read failed, " << reader.error();
     }
     QVersitOrganizerImporter importer;
+    QList<QOrganizerItem> allItems;
     foreach (const QVersitDocument& document, reader.results()) {
         if (!importer.importDocument(document)) {
             qWarning() << "Import failed, " << importer.errorMap();
             continue;
         }
         QList<QOrganizerItem> items = importer.items();
-        QList<QOrganizerItem>::iterator it = items.begin();
-        while (it != items.end()) {
-            *it = m_manager->compatibleItem(*it);
-            it++;
+        foreach (const QOrganizerItem& item, items) {
+            allItems.append(m_manager->compatibleItem(item));
         }
-        m_manager->saveItems(&items);
     }
+    m_manager->saveItems(&allItems);
     m_monthPage->refresh();
     m_dayPage->refresh();
 #endif

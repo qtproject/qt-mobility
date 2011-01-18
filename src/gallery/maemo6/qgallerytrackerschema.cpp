@@ -400,26 +400,62 @@ static bool qt_writeCondition(
     return qt_writeConditionHelper( error, query, filter.filters(), properties, composites, "||" );
 }
 
-static void qt_write_comparison(
-        const QLatin1String &field, const QString &value, const char *op, QString *query)
+static bool qt_write_comparison(
+        QDocumentGallery::Error *error,
+        const QLatin1String &field,
+        const QVariant &value,
+        const char *op,
+        QString *query)
 {
-    *query += QLatin1String("(")
-            + field
-            + QLatin1String(op)
-            + QLatin1String("'")
-            + value
-            + QLatin1String("')");
+    if (value.canConvert(QVariant::String)) {
+        *query += QLatin1String("(")
+                + field
+                + QLatin1String(op)
+                + QLatin1String("'")
+                + value.toString()
+                + QLatin1String("')");
+        return true;
+    } else {
+        *error = QDocumentGallery::FilterError;
+        return false;
+    }
 }
 
-static void qt_write_function(
-        const char *function, const QString &field, const QString &value, QString *query)
+static bool qt_write_function(
+        QDocumentGallery::Error *,
+        const char *function,
+        const QString &field,
+        const QRegExp &regExp,
+        QString *query)
 {
     *query += QLatin1String(function)
             + QLatin1String("(")
             + field
-            + QLatin1String(",\"")
-            + value
-            + QLatin1String("\")");
+            + QLatin1String(",'")
+            + regExp.pattern()
+            + QLatin1String("')");
+    return true;
+}
+
+static bool qt_write_function(
+        QDocumentGallery::Error *error,
+        const char *function,
+        const QString &field,
+        const QVariant &value,
+        QString *query)
+{
+    if (value.canConvert(QVariant::String)) {
+        *query += QLatin1String(function)
+                + QLatin1String("(")
+                + field
+                + QLatin1String(",'")
+                + value.toString()
+                + QLatin1String("')");
+        return true;
+    } else {
+        *error = QDocumentGallery::FilterError;
+        return false;
+    }
 }
 
 static bool qt_writeCondition(
@@ -437,41 +473,33 @@ static bool qt_writeCondition(
     int index;
 
     if ((index = properties.indexOfProperty(propertyName)) != -1) {
+        const QVariant value = filter.value();
+
         switch (filter.comparator()) {
         case QGalleryFilter::Equals:
-            qt_write_comparison(properties[index].field, filter.value().toString(), "=", query);
-            break;
+            return value.type() != QVariant::RegExp
+                    ? qt_write_comparison(error, properties[index].field, value, "=", query)
+                    : qt_write_function(error, "REGEX", properties[index].field, value.toRegExp(), query);
         case QGalleryFilter::LessThan:
-            qt_write_comparison(properties[index].field, filter.value().toString(), "<", query);
-            break;
+            return qt_write_comparison(error, properties[index].field, value, "<", query);
         case QGalleryFilter::GreaterThan:
-            qt_write_comparison(properties[index].field, filter.value().toString(), ">", query);
-            break;
+            return qt_write_comparison(error, properties[index].field, value, ">", query);
         case QGalleryFilter::LessThanEquals:
-            qt_write_comparison(properties[index].field, filter.value().toString(), "<=", query);
-            break;
+            return qt_write_comparison(error, properties[index].field, value, "<=", query);
         case QGalleryFilter::GreaterThanEquals:
-            qt_write_comparison(properties[index].field, filter.value().toString(), ">=", query);
-            break;
+            return qt_write_comparison(error, properties[index].field, value, ">=", query);
         case QGalleryFilter::Contains:
-            qt_write_function(
-                    "fn:contains", properties[index].field, filter.value().toString(), query);
-            break;
+            return  qt_write_function(error, "fn:contains", properties[index].field, value, query);
         case QGalleryFilter::StartsWith:
-            qt_write_function(
-                    "fn:starts-with", properties[index].field, filter.value().toString(), query);
-            break;
+            return qt_write_function(error, "fn:starts-with", properties[index].field, value, query);
         case QGalleryFilter::EndsWith:
-            qt_write_function(
-                    "fn:ends-with", properties[index].field, filter.value().toString(), query);
-            break;
+            return qt_write_function(error, "fn:ends-with", properties[index].field, value, query);
         case QGalleryFilter::Wildcard:
-            qt_write_function(
-                    "fn:contains", properties[index].field, "*", query);
-            break;
+            return qt_write_function(error, "fn:contains", properties[index].field, value, query);
         case QGalleryFilter::RegExp:
-            qt_write_function("REGEX", properties[index].field, filter.value().toString(), query);
-            break;
+            return value.type() != QVariant::RegExp
+                    ? qt_write_function(error, "REGEX", properties[index].field, value, query)
+                    : qt_write_function(error, "REGEX", properties[index].field, value.toRegExp(), query);
         default:
             *error = QDocumentGallery::FilterError;
 
@@ -1118,14 +1146,14 @@ QDocumentGallery::Error QGalleryTrackerSchema::buildFilterQuery(
             } else if (itemTypes[index].itemType == QDocumentGallery::Album) {
                 if (m_itemIndex) {
                     if (qt_galleryItemTypeList[m_itemIndex].itemType == QDocumentGallery::Audio) {
-                        QString property = QLatin1String("nie:isLogicalPartOf(?x)");
+                        QString property = QLatin1String("nmm:musicAlbum(?x)");
                         if (!filterStatement.isEmpty())
                             filterStatement += QLatin1String(" && ");
                         filterStatement
                                 += property
-                                + QLatin1String("=\"")
+                                + QLatin1String("=<")
                                 + itemTypes[index].prefix.strip(rootItemId).toString()
-                                +QLatin1String("\"");
+                                +QLatin1String(">");
                     } else {
                         result = QDocumentGallery::ItemIdError;
                     }
@@ -1140,9 +1168,9 @@ QDocumentGallery::Error QGalleryTrackerSchema::buildFilterQuery(
                             filterStatement += QLatin1String(" && ");
                         filterStatement
                                 += property
-                                + QLatin1String("=\"")
+                                + QLatin1String("=<")
                                 + itemTypes[index].prefix.strip(rootItemId).toString()
-                                +QLatin1String("\"");
+                                +QLatin1String(">");
                     }
                 }
             } else {
@@ -1158,9 +1186,9 @@ QDocumentGallery::Error QGalleryTrackerSchema::buildFilterQuery(
                             filterStatement += QLatin1String(" && ");
                         filterStatement
                                 += property
-                                + QLatin1String("=\"")
+                                + QLatin1String("='")
                                 + aggregateTypes[index].prefix.strip(rootItemId).toString()
-                                + QLatin1String("\"");
+                                + QLatin1String("'");
                     } else if (qt_galleryItemTypeList[m_itemIndex].itemType == QDocumentGallery::Album) {
                         rootItemStatement = QLatin1String("{?track nie:isLogicalPartOf ?x}");
                         property = QLatin1String("nfo:genre(?track)");
@@ -1168,18 +1196,18 @@ QDocumentGallery::Error QGalleryTrackerSchema::buildFilterQuery(
                             filterStatement += QLatin1String(" && ");
                         filterStatement
                                 += property
-                                + QLatin1String("=\"")
+                                + QLatin1String("='")
                                 + aggregateTypes[index].prefix.strip(rootItemId).toString()
-                                + QLatin1String("\"");
+                                + QLatin1String("'");
                     } else if (qt_galleryItemTypeList[m_itemIndex].itemType == QDocumentGallery::Artist) {
                         property = QLatin1String("nfo:genre(?y)");
                         if (!filterStatement.isEmpty())
                             filterStatement += QLatin1String(" && ");
                         filterStatement
                                 += property
-                                + QLatin1String("=\"")
+                                + QLatin1String("='")
                                 + aggregateTypes[index].prefix.strip(rootItemId).toString()
-                                + QLatin1String("\"");
+                                + QLatin1String("'");
                     } else {
                         result = QDocumentGallery::ItemIdError;
                     }
@@ -1423,6 +1451,9 @@ void QGalleryTrackerSchema::populateItemArguments(
             arguments->resourceKeys.append(i + arguments->valueOffset );
         arguments->propertyAttributes[i] &= PropertyMask;
     }
+
+    for (int i = 0; i < arguments->fieldNames.count(); ++i)
+        arguments->fieldNames[i].chop(4);
 }
 
 void QGalleryTrackerSchema::populateAggregateArguments(
@@ -1564,6 +1595,9 @@ void QGalleryTrackerSchema::populateAggregateArguments(
             + compositeAttributes
             + aliasAttributes;
     arguments->propertyTypes = identityTypes + aggregateTypes + compositeTypes + aliasTypes;
+
+    for (int i = 0; i < arguments->fieldNames.count(); ++i)
+        arguments->fieldNames[i].chop(4);
 }
 
 QString QGalleryTrackerSchema::serviceForType( const QString &galleryType )

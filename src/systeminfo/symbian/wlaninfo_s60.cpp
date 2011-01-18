@@ -107,9 +107,9 @@ void CWlanInfo::checkWlanInfo()
 
     TWlanSsid ssid;
     err = m_wlanMgmtClient->GetConnectionSsid(ssid);
-    ssid.ZeroTerminate();
-    if (err == KErrNone && m_wlanSsid != (char*)ssid.Ptr()) {
-        m_wlanSsid = (char*)ssid.Ptr();
+
+    if (err == KErrNone && m_wlanSsid != QString::fromAscii((char*)ssid.Ptr(), ssid.Length())) {
+        m_wlanSsid = QString::fromAscii((char*)ssid.Ptr(), ssid.Length());
         emit wlanNetworkNameChanged();
     }
 

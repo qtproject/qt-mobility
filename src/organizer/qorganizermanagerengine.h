@@ -208,11 +208,6 @@ public:
 
     static void updateItemFetchByIdRequest(QOrganizerItemFetchByIdRequest* req, const QList<QOrganizerItem>& result, QOrganizerManager::Error error, const QMap<int, QOrganizerManager::Error>& errorMap, QOrganizerAbstractRequest::State);
 
-    virtual QSharedPointer<QOrganizerItemObserver> observeItem(const QOrganizerItemId& itemId) = 0;
-
-protected:
-    static QOrganizerItemObserver* createOrganizerItemObserver(QObject* parent = 0);
-
 
     // TODO async function
 };

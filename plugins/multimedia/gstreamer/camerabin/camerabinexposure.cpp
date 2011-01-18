@@ -66,13 +66,12 @@ QCameraExposure::ExposureMode CameraBinExposure::exposureMode() const
     case GST_PHOTOGRAPHY_SCENE_MODE_PORTRAIT: return QCameraExposure::ExposurePortrait;
     case GST_PHOTOGRAPHY_SCENE_MODE_SPORT: return QCameraExposure::ExposureSports;
     case GST_PHOTOGRAPHY_SCENE_MODE_NIGHT: return QCameraExposure::ExposureNight;
+    case GST_PHOTOGRAPHY_SCENE_MODE_MANUAL: return QCameraExposure::ExposureManual;
     case GST_PHOTOGRAPHY_SCENE_MODE_CLOSEUP:    //no direct mapping available so mapping to auto mode
     case GST_PHOTOGRAPHY_SCENE_MODE_LANDSCAPE:  //no direct mapping available so mapping to auto mode
     case GST_PHOTOGRAPHY_SCENE_MODE_AUTO:
-        return QCameraExposure::ExposureAuto;
-    case GST_PHOTOGRAPHY_SCENE_MODE_MANUAL:
     default:
-         return QCameraExposure::ExposureManual;
+         return QCameraExposure::ExposureAuto;
     }
 }
 

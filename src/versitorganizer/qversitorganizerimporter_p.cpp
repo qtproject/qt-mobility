@@ -329,9 +329,15 @@ bool QVersitOrganizerImporterPrivate::createEndDateTime(
     if (!newEnd.isValid())
         return false;
     QOrganizerEventTime etr(item->detail<QOrganizerEventTime>());
-    etr.setEndDateTime(newEnd);
     if (!etr.isAllDay() && !hasTime)
         etr.setAllDay(true);
+
+    // In iCalendar, the end date is exclusive while in Qt Organizer, it is inclusive.
+    if (etr.isAllDay())
+        etr.setEndDateTime(newEnd.addDays(-1));
+    else
+        etr.setEndDateTime(newEnd);
+
     updatedDetails->append(etr);
     mDurationSpecified = false;
     return true;

@@ -1,0 +1,12 @@
+usr/include/qt4/QtFeedback/QFeedbackActuator
+usr/include/qt4/QtFeedback/QFeedbackEffect
+usr/include/qt4/QtFeedback/QFeedbackFileEffect
+usr/include/qt4/QtFeedback/QFeedbackFileInterface
+usr/include/qt4/QtFeedback/QFeedbackHapticsEffect
+usr/include/qt4/QtFeedback/QFeedbackHapticsInterface
+usr/include/qt4/QtFeedback/QFeedbackInterface
+usr/include/qt4/QtFeedback/QFeedbackThemeInterface
+usr/include/qt4/QtFeedback/qfeedbackactuator.h
+usr/include/qt4/QtFeedback/qfeedbackeffect.h
+usr/include/qt4/QtFeedback/qfeedbackplugininterfaces.h
+usr/lib/libQtFeedback.so

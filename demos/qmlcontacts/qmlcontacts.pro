@@ -12,6 +12,9 @@ SOURCES = \
 
 OTHER_FILES += \
     contacts.qml \
+    contents/ContactView.qml \
+    contents/ContactListView.qml \
+    contents/FieldRow.qml \
     contents/ToolBar.qml \
     contents/TitleBar.qml \
     contents/ScrollBar.qml \

@@ -28,7 +28,7 @@
 /*!
     \group qml-feedback
     \title QML Feedback Plugin
-    QML Support for the Mobility Project Feedback API.
+    QML Support for the QtMobility Project Feedback API.
 
 */
 
@@ -38,9 +38,9 @@
 
     \title Feedback QML Plugin
 
-    \brief A QML plugin for the Mobility Project Feedback API.
+    \brief A QML plugin for the QtMobility Project Feedback API.
 
-    
+
 
     \section1 Overview
 
@@ -51,7 +51,7 @@
     The Feedback API allows application developers to implement feedback and programmatic vibration in their applications.
     Use this in the QML \i {import} statement.
 
-    \note At the time of the Qt Mobility 1.1 release the QML support for the Feedback API is incomplete and likely to be refined
+    \note At the time of the QtMobility 1.1 release the QML support for the Feedback API is incomplete and likely to be refined
           and improved in the next patch release.
 
 

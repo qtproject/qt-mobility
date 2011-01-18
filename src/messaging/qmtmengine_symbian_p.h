@@ -81,7 +81,10 @@ class CAsynchronousMTMOperation;
 
 struct MessageEvent
 {
+    int sessionEvent;
+    TUid msgType;
     QMessageStorePrivate::NotificationType notificationType;
+    TMsvId folderId;
     TMsvId messageId;
     QMessageManager::NotificationFilterIdSet matchingFilters;
     bool unfiltered;
@@ -169,7 +172,9 @@ public:
                                         const QMessageFilter& filter);
     void unregisterNotificationFilter(QMessageManager::NotificationFilterId notificationFilterId);
 
-    void notification(TMsvSessionEvent aEvent, TUid aMsgType, TMsvId aFolderId, TMsvId aMessageId);
+    bool handleMessageSendingNotifications(TMsvSessionEvent aEvent, TUid aMsgType, TMsvId aFolderId,
+                                           TMsvId aMessageId, TUint sendingState);
+    void notification(TMsvSessionEvent aEvent, TUid aMsgType, TMsvId aFolderId, TMsvId aMessageId, CMsvEntry* pEntry);
     void filterAndOrderMessagesReady(bool success, int operationId, QMessageIdList ids, int numberOfHandledFilters,
                                      bool resultSetOrdered);
     
@@ -223,12 +228,10 @@ private:
     
     bool removeMessageL(const QMessageId &id, QMessageManager::RemovalOption option);
     void copyMessageL(TMsvId aMessageId, TMsvId aFolder);
-    QMessage messageL(const QMessageId& id) const;
-    QMessage smsMessageL(CMsvEntry& receivedEntry, long int messageId) const;
-    QMessage mmsMessageL(CMsvEntry& receivedEntry, long int messageId) const;
-    QMessage emailMessageL(CMsvEntry& receivedEntry, long int messageId) const;
-    QMessage pop3MessageL(CMsvEntry& receivedEntry, long int messageId) const;
-    QMessage imap4MessageL(CMsvEntry& receivedEntry, long int messageId) const;
+    QMessage messageL(const QMessageId& id, bool onlyBasicHeaderFields = false) const;
+    QMessage smsMessageL(CMsvEntry& receivedEntry, long int messageId, bool onlyBasicHeaderFields = false) const;
+    QMessage mmsMessageL(CMsvEntry& receivedEntry, long int messageId, bool onlyBasicHeaderFields = false) const;
+    QMessage emailMessageL(CMsvEntry& receivedEntry, long int messageId, bool onlyBasicHeaderFields = false) const;
     bool composeSMSL(const QMessage &message);
     bool composeMMSL(const QMessage &message);
     bool composeEmailL(const QMessage &message);
@@ -309,12 +312,14 @@ private:
     
     QMessageManager::NotificationFilterId _filterId;
     QMap<QMessageManager::NotificationFilterId, QMessageFilter> _filters;
+    bool iBasicFieldsAreEnoughForFiltering;
     
     mutable QHash<QString, QMessageAccount> iAccounts;
     mutable QMessageAccountId idefaultEmailAccountId;
     
     int                 iDeliveryTriesCounter;
     QList<MessageEvent> iUndeliveredMessageEvents;
+    QList<MessageEvent> iPendingMessageEvents;
     RTimer              iTimer; // Timer used for delaying delivering of received
                                 // messages until messages are ready to be read
     QMap<TMsvId, TMsvSessionEvent>  iMessagesInPreparation;
