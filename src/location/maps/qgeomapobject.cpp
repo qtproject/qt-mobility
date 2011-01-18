@@ -405,6 +405,10 @@ QGeoMapData* QGeoMapObject::mapData() const
     To offset the coordinates of the GraphicsItem (for items that can only
     be constructed about their parent position), use the QGraphicsItem::setTransform
     method with a QTransform containing the desired translation.
+
+    Note that setting this property will cause the QGeoMapObject to take
+    ownership of the GraphicsItem. Before taking ownership of the new item,
+    it will first relinquish ownership of its predecessor (if any).
 */
 QGraphicsItem * const QGeoMapObject::graphicsItem() const
 {
