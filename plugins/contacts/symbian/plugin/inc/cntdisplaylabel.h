@@ -58,7 +58,7 @@ QTM_USE_NAMESPACE
 class CRepository;
 class CntDisplayLabel;
 
-#ifdef SYMBIAN_BACKEND_USE_SQLITE
+#ifdef SYMBIAN_BACKEND_USE_CNTMODEL_V2
 #include <centralrepository.h>
 
 // CONSTANTS
@@ -116,7 +116,7 @@ public:
     QList<QPair<QLatin1String, QLatin1String> > contactFilterDetails() const;
     QList<QPair<QLatin1String, QLatin1String> > groupFilterDetails() const;
     
-#ifdef SYMBIAN_BACKEND_USE_SQLITE
+#ifdef SYMBIAN_BACKEND_USE_CNTMODEL_V2
     void updateNameOrdering();
 #endif
 
@@ -132,7 +132,7 @@ private:
 private:
     QList<QList<QPair<QLatin1String, QLatin1String> > > m_contactDisplayLabelDetails;
     QList<QList<QPair<QLatin1String, QLatin1String> > > m_groupDisplayLabelDetails;
-#ifdef SYMBIAN_BACKEND_USE_SQLITE
+#ifdef SYMBIAN_BACKEND_USE_CNTMODEL_V2
     CntCenrep* m_settings;
     int m_nameOrder;
 #endif
