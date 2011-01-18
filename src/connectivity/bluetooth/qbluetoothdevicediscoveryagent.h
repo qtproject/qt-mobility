@@ -60,6 +60,8 @@ class Q_CONNECTIVITY_EXPORT QBluetoothDeviceDiscoveryAgent : public QObject
     Q_PROPERTY(QBluetoothDeviceDiscoveryAgent::InquiryType inquiryType READ inquiryType WRITE setInquiryType)
 
 public:
+    // FIXME: add more errors
+    // FIXME: add bluez error handling
     enum Error {
         NoError,
         Canceled,
@@ -101,6 +103,9 @@ private:
     Q_PRIVATE_SLOT(d_func(), void _q_propertyChanged(const QString &name, const QDBusVariant &value));
 #endif
 
+#ifdef Q_OS_SYMBIAN
+    Q_PRIVATE_SLOT(d_func(), void _q_newDeviceFound(const QBluetoothDeviceInfo &device))
+#endif // Q_OS_SYMBIAN
 };
 
 QTM_END_NAMESPACE
