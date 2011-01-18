@@ -130,10 +130,11 @@ protected:
         sensor()->setProperty(MAX_BUFFER_SIZE, m_maxBufferSize);
         sensor()->setProperty(EFFICIENT_BUFFER_SIZE, m_efficientBufferSize);
 
-        if (name=="alssensor") return;                // SensorFW returns lux values, plugin enumerated values
+        if (sensor()->type()=="QAmbientLightSensor")    return; // SensorFW returns lux values, plugin enumerated values
         if (name=="accelerometersensor") return;      // SensorFW returns milliGs, plugin m/s^2
         if (name=="magnetometersensor") return;       // SensorFW returns nanoTeslas, plugin Teslas
         if (name=="gyroscopesensor") return;          // SensorFW returns DSPs, plugin milliDSPs
+
 
         setDescription(m_sensorInterface->property("description").toString());
 
