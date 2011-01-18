@@ -79,6 +79,7 @@ public:
     inline void setSingleShot(bool singleShot);
     inline bool isSingleShot() const { return single; }
 
+
     static void singleShot(int msec, QObject *receiver, const char *member);
 
     bool isRunning() const { return isTimerRunning; }

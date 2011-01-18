@@ -51,9 +51,10 @@ Q_GLOBAL_STATIC(QSystemAlignedTimerPrivate, alignedTimerPrivate)
   \inmodule QtSystemInfo
   \brief The QSystemAlignedTimer class provides a service for applications to synchronize their activity.
 
-  Applications that must do periodic activity - after being in sleep mode a certain period - do
-  that at the same time. For example send network "alive" messages at the same time (i.e. turn the
-  wireless radio on at the same time).
+  QSystemAlignedTimer is a fuzzy timer that allows applications that must do periodic activity like
+  after being in sleep mode a certain period, to syncronize their activities in the same window of time.
+
+  For example send network "alive" messages at the same time (i.e. turn the wireless radio on at the same time).
 
   The service is not only for network-aware applications, it is for use by any applications
   that need to periodic wake-ups.
@@ -140,7 +141,7 @@ void QSystemAlignedTimer::stop()
 
 
 /*!
-  Set the preferred timeout interval to \a minTime in seconds that must be waited before timeout
+  Set the timeout interval to \a minTime in seconds that must be waited before timeout
   signal is emitted, and \a maxTime in seconds when the wait must end.
 
   For example if you preferred wait is 120 seconds, use minTime of 110 and maxTime of 130.
@@ -194,7 +195,7 @@ void QSystemAlignedTimer::singleShot(int msec, QObject *receiver, const char *me
   */
 void QSystemAlignedTimer::setRunning(bool running)
 {
-    Q_UNUSED(running);
+    isTimerRunning = running;
 }
 
 
