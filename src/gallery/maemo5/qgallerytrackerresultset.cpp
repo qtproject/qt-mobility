@@ -43,7 +43,6 @@
 
 #include "qgallerytrackermetadataedit_p.h"
 
-#include <QtCore/qtconcurrentrun.h>
 #include <QtCore/qdatetime.h>
 #include <QtDBus/qdbusreply.h>
 
@@ -54,6 +53,55 @@
 Q_DECLARE_METATYPE(QVector<QStringList>)
 
 QTM_BEGIN_NAMESPACE
+
+class QGalleryTrackerResultSetParser
+{
+public:
+    QGalleryTrackerResultSetParser(
+            QVector<QVariant> &values,
+            const QVector<QGalleryTrackerValueColumn *> &valueColumns,
+            int valueOffset,
+            int tableWidth)
+        : values(values)
+        , valueColumns(valueColumns)
+        , valueOffset(valueOffset)
+        , tableWidth(tableWidth)
+    {
+    }
+
+    QVector<QVariant> &values;
+    const QVector<QGalleryTrackerValueColumn *> &valueColumns;
+    const int valueOffset;
+    const int tableWidth;
+};
+
+const QDBusArgument &operator >>(
+        const QDBusArgument &argument, QGalleryTrackerResultSetParser &parser)
+{
+    QString string;
+    const QVariant variant;
+
+    argument.beginArray();
+    while (!argument.atEnd()) {
+        argument.beginArray();
+
+        int i = 0;
+        for (; !argument.atEnd() && i < parser.valueOffset; ++i) {
+            argument >> string;
+            parser.values.append(QVariant(string));
+        }
+        for (; !argument.atEnd() && i < parser.tableWidth; ++i) {
+            argument >> string;
+            parser.values.append(parser.valueColumns.at(i - parser.valueOffset)->toVariant(string));
+        }
+        for (; i < parser.tableWidth; ++i)
+            parser.values.append(variant);
+        argument.endArray();
+    }
+    argument.endArray();
+
+    return argument;
+}
 
 void QGalleryTrackerResultSetPrivate::update()
 {
@@ -135,64 +183,47 @@ void QGalleryTrackerResultSetPrivate::queryFinished(const QDBusPendingCall &call
 
         q_func()->QGalleryAbstractResponse::cancel();
     } else {
-        const int limit = queryLimit < 1 ? 1023 : queryLimit - iCache.count;
-        const bool reset = flags & Reset;
+        parserLimit = queryLimit < 1 ? 1023 : queryLimit - iCache.count;
+        parserReset = flags & Reset;
+        queryReply = call.reply().arguments().at(0).value<QDBusArgument>();
 
         flags &= ~Reset;
 
-        parseWatcher.setFuture(QtConcurrent::run(
-                this, &QGalleryTrackerResultSetPrivate::parseRows, call, limit, reset));
+        parserThread.start(QThread::LowPriority);
 
         emit q_func()->progressChanged(progressMaximum - 1, progressMaximum);
     }
 }
 
-bool QGalleryTrackerResultSetPrivate::parseRows(
-        const QDBusPendingCall &call, int limit, bool reset)
+void QGalleryTrackerResultSetPrivate::run()
 {
-    QDBusReply<QVector<QStringList> > reply(call);
-
-    typedef QVector<QStringList>::const_iterator iterator;
-
-    const QVector<QStringList> resultSet = reply.value();
-
-    QVector<QVariant> &values = iCache.values;
-
-    if (reset) {
-        values.clear();
+    if (parserReset) {
+        iCache.values.clear();
         iCache.count = 0;
     }
 
-    iCache.count += resultSet.count();
+    const int previousCount = iCache.count;
 
-    values.reserve(iCache.count * tableWidth);
+    QGalleryTrackerResultSetParser parser(iCache.values, valueColumns, valueOffset, tableWidth);
 
-    for (iterator it = resultSet.begin(), end = resultSet.end(); it != end; ++it) {
-        for (int i = 0, count = qMin(valueOffset, it->count()); i < count; ++i)
-            values.append(it->at(i));
+    queryReply >> parser;
 
-        for (int i = valueOffset, count = qMin(tableWidth, it->count()); i < count; ++i)
-            values.append(valueColumns.at(i - valueOffset)->toVariant(it->at(i)));
+    iCache.count += iCache.values.count() / tableWidth;
 
-        // The rows should all have a count equal to tableWidth, but check just in case.
-        for (int i = qMin(tableWidth, it->count()); i < tableWidth; ++i)
-            values.append(QVariant());
-    }
-
-    if (resultSet.count() <= limit) {
-        if (!values.isEmpty() && !sortCriteria.isEmpty()) {
+    if (previousCount - iCache.count <= parserLimit) {
+        if (!iCache.values.isEmpty() && !sortCriteria.isEmpty()) {
             correctRows(
-                    row_iterator(values.begin(), tableWidth),
-                    row_iterator(values.end(), tableWidth),
+                    row_iterator(iCache.values.begin(), tableWidth),
+                    row_iterator(iCache.values.end(), tableWidth),
                     sortCriteria.constBegin(),
                     sortCriteria.constEnd());
         }
 
         synchronize();
 
-        return true;
+        parserReset = true;
     } else {
-        return false;
+        parserReset = false;
     }
 }
 
@@ -519,7 +550,9 @@ void QGalleryTrackerResultSetPrivate::_q_parseFinished()
 {
     processSyncEvents();
 
-    if (parseWatcher.result()) {
+    queryReply = QDBusArgument();
+
+    if (parserReset) {
         Q_ASSERT(rCache.offset == rCache.count);
         Q_ASSERT(iCache.cutoff == iCache.count);
 
@@ -585,7 +618,7 @@ QGalleryTrackerResultSet::QGalleryTrackerResultSet(
 {
     Q_D(QGalleryTrackerResultSet);
 
-    connect(&d->parseWatcher, SIGNAL(finished()), this, SLOT(_q_parseFinished()));
+    connect(&d->parserThread, SIGNAL(finished()), this, SLOT(_q_parseFinished()));
 
     d_func()->query();
 }
@@ -597,7 +630,7 @@ QGalleryTrackerResultSet::QGalleryTrackerResultSet(
 {
     Q_D(QGalleryTrackerResultSet);
 
-    connect(&d->parseWatcher, SIGNAL(finished()), this, SLOT(_q_parseFinished()));
+    connect(&d->parserThread, SIGNAL(finished()), this, SLOT(_q_parseFinished()));
 
     d_func()->query();
 }
@@ -610,7 +643,7 @@ QGalleryTrackerResultSet::~QGalleryTrackerResultSet()
     for (iterator it = d->edits.begin(), end = d->edits.end(); it != end; ++it)
         (*it)->commit();
 
-    d->parseWatcher.waitForFinished();
+    d->parserThread.wait();
 }
 
 QStringList QGalleryTrackerResultSet::propertyNames() const
@@ -776,7 +809,7 @@ bool QGalleryTrackerResultSet::waitForFinished(int msecs)
                 return true;
         } else if (d->flags & QGalleryTrackerResultSetPrivate::Active) {
             if (d->waitForSyncFinish(msecs)) {
-                d->parseWatcher.waitForFinished();
+                d->parserThread.wait();
 
                 d->_q_parseFinished();
 

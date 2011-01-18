@@ -77,7 +77,7 @@ wince* {
     LIBS += -lgpsapi
 }
 
-maemo6 {
+maemo6|meego {
     CONFIG += qdbus link_pkgconfig
     SOURCES += qgeopositioninfosource_maemo.cpp \
                 qgeosatelliteinfosource_maemo.cpp \
@@ -87,13 +87,6 @@ maemo6 {
                 qgeosatelliteinfosource_maemo_p.h \
                 dbuscomm_maemo_p.h \
                 dbusserver_maemo_p.h
-    CONFIG += create_pc create_prl
-    QMAKE_PKGCONFIG_NAME = libQtLocation
-    QMAKE_PKGCONFIG_DESCRIPTION = libQtLocation library
-    QMAKE_PKGCONFIG_INCDIR = $${QT_MOBILITY_INCLUDE}/QtLocation
-    QMAKE_PKGCONFIG_CFLAGS += -I$${QT_MOBILITY_INCLUDE}/QtMobility
-    pkgconfig.path = $$QT_MOBILITY_LIB/pkgconfig
-    pkgconfig.files = QtLocation.pc
 }
 
 maemo5 {
@@ -107,12 +100,38 @@ maemo5 {
                qgeopositioninfosource_maemo5_p.h \
                qgeosatelliteinfosource_maemo5_p.h
     PKGCONFIG += glib-2.0  gconf-2.0
-    CONFIG += create_pc create_prl
     LIBS += -llocation
     QMAKE_PKGCONFIG_REQUIRES = glib-2.0 gconf-2.0
-    pkgconfig.path = $$QT_MOBILITY_LIB/pkgconfig
-    pkgconfig.files = QtLocation.pc
 }
+
+meego {
+    contains (geoclue-master_enabled, yes) {
+        message("Building location with GeoClue master support.")
+        SOURCES += qgeopositioninfosource_geocluemaster.cpp
+        PRIVATE_HEADERS += qgeopositioninfosource_geocluemaster_p.h
+        DEFINES += GEOCLUE_MASTER_AVAILABLE=1
+        PKGCONFIG += geoclue
+        QMAKE_PKGCONFIG_REQUIRES += geoclue
+    } else {
+        message("Building location without GeoClue master support.")
+    }
+    contains (gypsy_enabled, yes) {
+        message("Building location with Gypsy support.")
+        SOURCES += qgeosatelliteinfosource_gypsy.cpp
+        PRIVATE_HEADERS += qgeosatelliteinfosource_gypsy_p.h
+        DEFINES += GYPSY_AVAILABLE=1
+        PKGCONFIG += gypsy
+        QMAKE_PKGCONFIG_REQUIRES += gypsy
+    } else {
+        message("Building location without Gypsy support.")
+    }
+    if (contains(gypsy_enabled, yes) || contains (geoclue-master_enabled, yes)) {
+        CONFIG += qdbus link_pkgconfig
+        PKGCONFIG += gconf-2.0 glib-2.0
+        QMAKE_PKGCONFIG_REQUIRES += glib-2.0 gconf-2.0
+    }
+}
+
 HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
 
 SOURCES += \

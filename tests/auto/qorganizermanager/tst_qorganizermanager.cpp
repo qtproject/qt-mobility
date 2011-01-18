@@ -181,6 +181,7 @@ private slots:
     void recurrence();
     void idComparison();
     void emptyItemManipulation();
+    void partialSave();
 
     /* Tests that take no data */
     void itemValidation();
@@ -222,6 +223,7 @@ private slots:
     void recurrence_data() {addManagers();}
     void idComparison_data() {addManagers();}
     void emptyItemManipulation_data() {addManagers();}
+    void partialSave_data() {addManagers();}
 };
 
 class BasicItemLocalId : public QOrganizerItemEngineId
@@ -2493,12 +2495,17 @@ void tst_QOrganizerManager::signalEmission()
     QVERIFY(arg.count() == 1);
     QCOMPARE(QOrganizerItemId(arg.at(0)), cid);
 
+    QScopedPointer<QOrganizerItemObserver> todo1Observer(new QOrganizerItemObserver(m1.data(), cid));
+    QScopedPointer<QSignalSpy> spyObserverModified1(new QSignalSpy(todo1Observer.data(), SIGNAL(itemChanged())));
+    QScopedPointer<QSignalSpy> spyObserverRemoved1(new QSignalSpy(todo1Observer.data(), SIGNAL(itemRemoved())));
+
     // verify save modified emits signal changed
     nc.setLabel("label me that");
     QVERIFY(todo.saveDetail(&nc));
     QVERIFY(m1->saveItem(&todo));
     modSigCount += 1;
     QTRY_COMPARE(spyModified.count(), modSigCount);
+    QTRY_COMPARE(spyObserverModified1->count(), 1);
     args = spyModified.takeFirst();
     modSigCount -= 1;
     arg = args.first().value<QList<QOrganizerItemId> >();
@@ -2509,6 +2516,7 @@ void tst_QOrganizerManager::signalEmission()
     QVERIFY(m1->removeItem(todo.id()));
     remSigCount += 1;
     QTRY_COMPARE(spyRemoved.count(), remSigCount);
+    QTRY_COMPARE(spyObserverRemoved1->count(), 1);
     args = spyRemoved.takeFirst();
     remSigCount -= 1;
     arg = args.first().value<QList<QOrganizerItemId> >();
@@ -2529,6 +2537,15 @@ void tst_QOrganizerManager::signalEmission()
     QTRY_COMPARE(spyModified.count(), modSigCount);
     QTRY_COMPARE(spyAdded.count(), addSigCount);
 
+    spyObserverModified1->clear();
+    spyObserverRemoved1->clear();
+    QScopedPointer<QOrganizerItemObserver> todo2Observer(new QOrganizerItemObserver(m1.data(), todo2.id()));
+    QScopedPointer<QOrganizerItemObserver> todo3Observer(new QOrganizerItemObserver(m1.data(), todo3.id()));
+    QScopedPointer<QSignalSpy> spyObserverModified2(new QSignalSpy(todo2Observer.data(), SIGNAL(itemChanged())));
+    QScopedPointer<QSignalSpy> spyObserverModified3(new QSignalSpy(todo3Observer.data(), SIGNAL(itemChanged())));
+    QScopedPointer<QSignalSpy> spyObserverRemoved2(new QSignalSpy(todo2Observer.data(), SIGNAL(itemRemoved())));
+    QScopedPointer<QSignalSpy> spyObserverRemoved3(new QSignalSpy(todo3Observer.data(), SIGNAL(itemRemoved())));
+
     // verify multiple modifies works as advertised
     nc2.setLabel("M.");
     QVERIFY(todo2.saveDetail(&nc2));
@@ -2543,6 +2560,9 @@ void tst_QOrganizerManager::signalEmission()
     QVERIFY(m1->saveItem(&todo3));
     modSigCount += 1;
     QTRY_COMPARE(spyModified.count(), modSigCount);
+    QTRY_COMPARE(spyObserverModified2->count(), 2);
+    QTRY_COMPARE(spyObserverModified3->count(), 1);
+    QCOMPARE(spyObserverModified1->count(), 0);
 
     // verify multiple removes works as advertised
     m1->removeItem(todo3.id());
@@ -2550,6 +2570,9 @@ void tst_QOrganizerManager::signalEmission()
     m1->removeItem(todo2.id());
     remSigCount += 1;
     QTRY_COMPARE(spyRemoved.count(), remSigCount);
+    QTRY_COMPARE(spyObserverRemoved2->count(), 1);
+    QTRY_COMPARE(spyObserverRemoved3->count(), 1);
+    QCOMPARE(spyObserverRemoved1->count(), 0);
 
     QVERIFY(!m1->removeItem(todo.id())); // not saved.
 
@@ -2577,6 +2600,16 @@ void tst_QOrganizerManager::signalEmission()
 
     QTRY_WAIT( while(spyAdded.size() > 0) {sigids += spyAdded.takeFirst().at(0).value<QList<QOrganizerItemId> >(); }, sigids.contains(todo.id()) && sigids.contains(todo2.id()) && sigids.contains(todo3.id()));
     QTRY_COMPARE(spyModified.count(), 0);
+
+    todo1Observer.reset(new QOrganizerItemObserver(m1.data(), todo.id()));
+    todo2Observer.reset(new QOrganizerItemObserver(m1.data(), todo2.id()));
+    todo3Observer.reset(new QOrganizerItemObserver(m1.data(), todo3.id()));
+    spyObserverModified1.reset(new QSignalSpy(todo1Observer.data(), SIGNAL(itemChanged())));
+    spyObserverModified2.reset(new QSignalSpy(todo2Observer.data(), SIGNAL(itemChanged())));
+    spyObserverModified3.reset(new QSignalSpy(todo3Observer.data(), SIGNAL(itemChanged())));
+    spyObserverRemoved1.reset(new QSignalSpy(todo1Observer.data(), SIGNAL(itemRemoved())));
+    spyObserverRemoved2.reset(new QSignalSpy(todo2Observer.data(), SIGNAL(itemRemoved())));
+    spyObserverRemoved3.reset(new QSignalSpy(todo3Observer.data(), SIGNAL(itemRemoved())));
     QTRY_COMPARE(spyRemoved.count(), 0);
 
     /* Batch modifies */
@@ -2594,6 +2627,9 @@ void tst_QOrganizerManager::signalEmission()
 
     sigids.clear();
     QTRY_WAIT( while(spyModified.size() > 0) {sigids += spyModified.takeFirst().at(0).value<QList<QOrganizerItemId> >(); }, sigids.contains(todo.id()) && sigids.contains(todo2.id()) && sigids.contains(todo3.id()));
+    QTRY_COMPARE(spyObserverModified1->count(), 1);
+    QTRY_COMPARE(spyObserverModified2->count(), 1);
+    QTRY_COMPARE(spyObserverModified3->count(), 1);
 
     /* Batch removes */
     batchRemove << todo.id() << todo2.id() << todo3.id();
@@ -2602,6 +2638,9 @@ void tst_QOrganizerManager::signalEmission()
 
     sigids.clear();
     QTRY_WAIT( while(spyRemoved.size() > 0) {sigids += spyRemoved.takeFirst().at(0).value<QList<QOrganizerItemId> >(); }, sigids.contains(todo.id()) && sigids.contains(todo2.id()) && sigids.contains(todo3.id()));
+    QTRY_COMPARE(spyObserverRemoved1->count(), 1);
+    QTRY_COMPARE(spyObserverRemoved2->count(), 1);
+    QTRY_COMPARE(spyObserverRemoved3->count(), 1);
 
     QTRY_COMPARE(spyAdded.count(), 0);
     QTRY_COMPARE(spyModified.count(), 0);
@@ -3617,6 +3656,24 @@ void tst_QOrganizerManager::recurrence()
         QCOMPARE(items.count(), 0);
     }
 
+    //test for unlimited count limit
+    //for bug:MOBILITY-2125
+    cm->removeItems(cm->itemIds());
+    event.setId(QOrganizerItemId());
+    rrule.setLimit(INT_MAX);
+    rrule.setFrequency(QOrganizerRecurrenceRule::Weekly);
+    rrule.setInterval(4);
+    rrule.setDaysOfWeek(QSet<Qt::DayOfWeek>() << Qt::Friday);
+    event.setEndDateTime(QDateTime(QDate(2013, 8, 9), QTime(11, 30, 0)));
+    event.setRecurrenceRule(rrule);
+    QVERIFY(cm->saveItem(&event));
+    {
+        // Fetch all events with occurrences
+        QList<QOrganizerItem> items = cm->items(QDateTime(QDate(2012, 8, 9)),
+                                                QDateTime(QDate(2013, 8, 12), QTime(23,59,59)));
+        QVERIFY(items.count() > 1);
+    }
+
     // second, test date limit.  The results should be the same as the count limit, if the limit date is the 11th.
     cm->removeItems(cm->itemIds()); // empty the calendar to prevent the previous test from interfering this one
     QOrganizerRecurrenceRule rrule2;
@@ -3848,6 +3905,116 @@ void tst_QOrganizerManager::emptyItemManipulation()
     QVERIFY(!cm->removeItem(invalidId)); // null id
     invalidId = makeItemId(50);
     QVERIFY(!cm->removeItem(invalidId)); // id from different manager
+}
+
+void tst_QOrganizerManager::partialSave()
+{
+    QFETCH(QString, uri);
+    QScopedPointer<QOrganizerManager> cm(QOrganizerManager::fromUri(uri));
+
+    QList<QOrganizerItem> items;
+    QOrganizerEvent event = QOrganizerEvent();
+    event.setDisplayLabel("One");
+    event.setStartDateTime(QDateTime(QDate(2010, 12, 25), QTime(1, 0, 0)));
+    event.setEndDateTime(QDateTime(QDate(2010, 12, 25), QTime(1, 30, 0)));
+    event.setDescription("One description");
+    items.append(event);
+
+    event = QOrganizerEvent();
+    event.setDisplayLabel("Two");
+    event.setStartDateTime(QDateTime(QDate(2010, 12, 25), QTime(2, 0, 0)));
+    event.setEndDateTime(QDateTime(QDate(2010, 12, 25), QTime(2, 30, 0)));
+    event.setDescription("Two description");
+    items.append(event);
+
+    event = QOrganizerEvent();
+    event.setDisplayLabel("Three");
+    event.setStartDateTime(QDateTime(QDate(2010, 12, 25), QTime(3, 0, 0)));
+    event.setEndDateTime(QDateTime(QDate(2010, 12, 25), QTime(3, 30, 0)));
+    items.append(event);
+
+    event = QOrganizerEvent();
+    event.setDisplayLabel("Four");
+    event.setStartDateTime(QDateTime(QDate(2010, 12, 25), QTime(4, 0, 0)));
+    event.setEndDateTime(QDateTime(QDate(2010, 12, 25), QTime(4, 30, 0)));
+    items.append(event);
+
+    // First save these items
+    QVERIFY(cm->saveItems(&items));
+    QList<QOrganizerItem> originalItems = items;
+
+    items[0].setDescription("One changed description");
+
+    // 0) empty mask == full save
+    QVERIFY(cm->saveItems(&items, QStringList()));
+
+    // That should have updated everything
+    QOrganizerItem a = cm->item(originalItems[0].id());
+    QVERIFY(a.description() == "One changed description");
+
+    // 1) Change the description for b, mask it out
+    items[1].setDescription("Two changed description");
+    QVERIFY(cm->saveItems(&items, QStringList(QOrganizerEventTime::DefinitionName)));
+    QVERIFY(cm->errorMap().isEmpty());
+
+    QOrganizerItem b = cm->item(originalItems[1].id());
+    QCOMPARE(b.description(), QString("Two description"));
+
+    // 2) save a modified detail in the mask
+    items[1].setDescription("Two changed description");
+
+    QVERIFY(cm->saveItems(&items, QStringList(QOrganizerItemDescription::DefinitionName)));
+    QVERIFY(cm->errorMap().isEmpty());
+    b = cm->item(originalItems[1].id());
+    QCOMPARE(b.description(), QString("Two changed description"));
+
+    // 3) Remove a description
+    QOrganizerItemDescription desc = items[1].detail<QOrganizerItemDescription>();
+    QVERIFY(items[1].removeDetail(&desc));
+    // Mask it out, so it shouldn't work.
+    QVERIFY(cm->saveItems(&items, QStringList(QOrganizerEventTime::DefinitionName)));
+    QVERIFY(cm->errorMap().isEmpty());
+    b = cm->item(originalItems[1].id());
+    QCOMPARE(b.details<QOrganizerItemDescription>().count(), 1);
+    // Now include it in the mask
+    QVERIFY(cm->saveItems(&items, QStringList(QOrganizerItemDescription::DefinitionName)));
+    QVERIFY(cm->errorMap().isEmpty());
+    b = cm->item(originalItems[1].id());
+    QCOMPARE(b.details<QOrganizerItemDescription>().count(), 0);
+
+    // 4 - New item, no details in the mask
+    QOrganizerItem newItem = originalItems[3];
+    newItem.setId(QOrganizerItemId());
+
+    items.append(newItem); // this is items[4]
+    QVERIFY(cm->saveItems(&items, QStringList(QOrganizerItemTag::DefinitionName)));
+    QVERIFY(cm->errorMap().isEmpty());
+    QVERIFY(!items[4].id().isNull()); // Saved
+    b = cm->item(items[4].id());
+    QCOMPARE(b.details<QOrganizerItemDisplayLabel>().count(), 0); // not saved
+    QCOMPARE(b.details<QOrganizerEventTime>().count(), 0); // not saved
+
+    // 5 - New item, some details in the mask
+    newItem = originalItems[2];
+    newItem.setId(QOrganizerItemId());
+    items.append(newItem); // this is items[5]
+    QVERIFY(cm->saveItems(&items, QStringList(QOrganizerItemDisplayLabel::DefinitionName)));
+    QVERIFY(cm->errorMap().isEmpty());
+    QVERIFY(!items[5].id().isNull()); // Saved
+    b = cm->item(items[5].id());
+    QCOMPARE(b.details<QOrganizerItemDisplayLabel>().count(), 1);
+    QCOMPARE(b.details<QOrganizerEventTime>().count(), 0); // not saved
+
+    // 6 Have a non existing item in the middle followed by a save error
+    cm->removeItem(items[4].id());
+    QOrganizerItemDetail badDetail("BadDetail");
+    badDetail.setValue("BadField", "BadValue");
+    items[5].saveDetail(&badDetail);
+    QVERIFY(!cm->saveItems(&items, QStringList("BadDetail")));
+    QMap<int, QOrganizerManager::Error> errorMap = cm->errorMap();
+    QCOMPARE(errorMap.count(), 2);
+    QCOMPARE(errorMap[4], QOrganizerManager::DoesNotExistError);
+    QCOMPARE(errorMap[5], QOrganizerManager::InvalidDetailError);
 }
 
 void tst_QOrganizerManager::dateRange()

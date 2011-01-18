@@ -57,7 +57,6 @@
 #include "qorganizeritemsortorder.h"
 #include "qorganizeritemfetchhint.h"
 #include "qorganizeritemfilter.h"
-#include "qorganizeritemobserver.h"
 
 #include "qorganizercollection.h"
 #include "qorganizercollectionid.h"
@@ -65,6 +64,7 @@
 QTM_BEGIN_NAMESPACE
 
 class QOrganizerManagerData;
+
 class Q_ORGANIZER_EXPORT QOrganizerManager : public QObject
 {
     Q_OBJECT
@@ -106,7 +106,8 @@ public:
         LimitReachedError,
         InvalidItemTypeError,
         InvalidCollectionError,
-        InvalidOccurrenceError
+        InvalidOccurrenceError,
+        TimeoutError
     };
 
     /* Error reporting */
@@ -128,10 +129,9 @@ public:
 
     bool saveItem(QOrganizerItem* item);
     bool saveItems(QList<QOrganizerItem>* items);
+    bool saveItems(QList<QOrganizerItem>* items, const QStringList& definitionMask);
     bool removeItem(const QOrganizerItemId& itemId);
     bool removeItems(const QList<QOrganizerItemId>& itemIds);
-
-    QSharedPointer<QOrganizerItemObserver> observeItem(const QOrganizerItemId& itemId);
 
     /* Collections - every item belongs to one or more collections */
     QOrganizerCollection defaultCollection() const;
@@ -178,6 +178,10 @@ private:
     friend class QOrganizerManagerData;
     void createEngine(const QString& managerName, const QMap<QString, QString>& parameters);
     Q_DISABLE_COPY(QOrganizerManager)
+
+    Q_PRIVATE_SLOT(d, void _q_itemsUpdated(const QList<QOrganizerItemId>& ids));
+    Q_PRIVATE_SLOT(d, void _q_itemsDeleted(const QList<QOrganizerItemId>& ids));
+
     // private data pointer
     QOrganizerManagerData* d;
 };

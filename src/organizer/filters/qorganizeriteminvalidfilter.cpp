@@ -78,6 +78,14 @@ public:
         return stream;
     }
 
+#ifndef QT_NO_DEBUG_STREAM
+    QDebug& debugStreamOut(QDebug& dbg) const
+    {
+        dbg.nospace() << "QOrganizerItemInvalidFilter()";
+        return dbg.maybeSpace() ;
+    }
+#endif
+
     /* There is no way this can be called - d is never detached */
     QOrganizerItemFilterPrivate* clone() const
     {

@@ -559,6 +559,7 @@ if [ -z "$PLATFORM_CONFIG" ]; then
     compileTest NetworkManager networkmanager
     compileTest "CoreWLAN (MacOS 10.6)" corewlan
     compileTest Immersion immersion
+    compileTest "MeegoTouch Feedback" meegotouchfeedback
     compileTest "Maemo ICD" maemo-icd
     compileTest "Maemo ICD WLAN" maemo-icd-network-wlan
     compileTest "Maemo5 contacts dependencies" maemo5-contacts
@@ -578,8 +579,12 @@ if [ -z "$PLATFORM_CONFIG" ]; then
 
     if [ "$LINUX_TARGET" = meego ]; then
         compileTest connman connman
+        compileTest "Location GeoClue master provider" geoclue-master
+        compileTest "Location Gypsy provider" gypsy
+    else
+        echo "geoclue-master_enabled = no" >> "$CONFIG_IN"
+        echo "gypsy_enabled = no" >> "$CONFIG_IN"
     fi
-
 else
     echo "Skipping configure tests"
     echo "Loading ... features/platformconfig/$PLATFORM_CONFIG.pri"
@@ -594,6 +599,13 @@ fi
 echo "mobility_modules = $MOBILITY_MODULES" >> "$CONFIG_IN"
 echo "contains(mobility_modules,versit): mobility_modules *= contacts" >> "$CONFIG_IN"
 echo "maemo5|maemo6:contains(maemo-icd_enabled, no): mobility_modules -= bearer" >> "$CONFIG_IN"
+# Mobility doesn't support Bearer on MeeGo -> Use Qt 4.7 Bearer instead
+echo "meego:contains(mobility_modules, bearer) { " >> "$CONFIG_IN"
+#echo "    message(Bearer module not supported on MeeGo)" >> "$CONFIG_IN"
+echo "    mobility_modules -= bearer" >> "$CONFIG_IN"
+echo "}" >> "$CONFIG_IN"
+
+echo "isEmpty(mobility_modules):error(No module selected. Aborting...)" >> "$CONFIG_IN"
 
 # If libicd-network-wlan-dev.h is not present, use own copy.
 # At time of writing, libicd-network-wlan-dev is not released for maemo5.

@@ -46,6 +46,7 @@
 #include <QTest>
 #include <QObject>
 
+
 QTM_BEGIN_NAMESPACE
 class QGeoSatelliteInfoSource;
 QTM_END_NAMESPACE
@@ -106,6 +107,14 @@ private slots:
     void removeSlotForRequestTimeout();
     void removeSlotForSatellitesInUseUpdated();
     void removeSlotForSatellitesInViewUpdated();
+
+#ifdef TST_GYPSYMOCK_ENABLED
+    // Cases only ran with mock backend
+    void updateValues();
+    void initGoneBad();
+    void badUpdates();
+#endif
+
 
 private:
     QGeoSatelliteInfoSource *m_source;

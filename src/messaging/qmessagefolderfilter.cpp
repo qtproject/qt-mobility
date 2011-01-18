@@ -40,6 +40,9 @@
 ****************************************************************************/
 #include "qmessagefolderfilter.h"
 #include "qmessagefolderfilter_p.h"
+#include "messagingutil_p.h"
+#include "qmessagefolder.h"
+#include "qmessagemanager.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -207,6 +210,14 @@ bool QMessageFolderFilter::operator!=(const QMessageFolderFilter& other) const
 */
 
 /*!
+    \fn QMessageFolderFilter::byName(const QString &pattern, QMessageDataComparator::LikeComparator cmp)
+
+    Returns a filter matching folders whose display name matches \a value, according to \a cmp.
+
+    \sa QMessageFolder::name()
+*/
+
+/*!
     \fn QMessageFolderFilter::byName(const QString &value, QMessageDataComparator::EqualityComparator cmp)
   
     Returns a filter matching folders whose display name matches \a value, according to \a cmp.
@@ -220,6 +231,14 @@ bool QMessageFolderFilter::operator!=(const QMessageFolderFilter& other) const
     Returns a filter matching folders whose display name matches the substring \a value, according to \a cmp.
 
     \sa QMessageFolder::name()
+*/
+
+/*!
+    \fn QMessageFolderFilter::byPath(const QString &pattern, QMessageDataComparator::LikeComparator cmp)
+
+    Returns a filter matching folders whose path matches \a value, according to \a cmp.
+
+    \sa QMessageFolder::path()
 */
 
 /*!
@@ -285,5 +304,30 @@ bool QMessageFolderFilter::operator!=(const QMessageFolderFilter& other) const
 
     \sa QMessageFolder::id()
 */
+
+QMessageFolderFilter QMessageFolderFilter::byName(const QString &pattern, QMessageDataComparator::LikeComparator cmp)
+{
+    QMessageFolderIdList ids;
+    foreach(QMessageFolderId const& id, QMessageManager().queryFolders()) {
+        if (MessagingUtil::globMatch(pattern, QMessageFolder(id).name())) {
+            ids.push_back(id);
+        }
+    }
+
+    return QMessageFolderFilter::byId(ids);
+}
+
+QMessageFolderFilter QMessageFolderFilter::byPath(const QString &pattern, QMessageDataComparator::LikeComparator cmp)
+{
+    QMessageFolderIdList ids;
+    foreach(QMessageFolderId const& id, QMessageManager().queryFolders()) {
+        if (MessagingUtil::globMatch(pattern, QMessageFolder(id).path())) {
+            ids.push_back(id);
+        }
+    }
+
+    return QMessageFolderFilter::byId(ids);
+}
+
 
 QTM_END_NAMESPACE

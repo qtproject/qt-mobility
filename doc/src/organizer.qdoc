@@ -39,7 +39,7 @@ from local or remote backends.
 \ingroup mobility
 
 The Organizer API enables a client to request calendar, schedule and personal
-data from local or remote backends. This is part of the Qt Mobility Project.
+data from local or remote backends. This is part of the QtMobility Project.
 
 \tableofcontents
 
@@ -47,7 +47,7 @@ data from local or remote backends. This is part of the Qt Mobility Project.
 \section1 Namespace
 
 The QtMobility APIs are placed into the \i{QtMobility} namespace. This is done
-to facilitate the future migration of Mobility APIs into Qt. See the
+to facilitate the future migration of QtMobility APIs into Qt. See the
 \l {Quickstart Example}{Quickstart guide} for an example on how the
 namespace impacts on application development.
 
@@ -288,7 +288,7 @@ example, if you intend to implement a manager backend) please see
 \section2 QOrganizerItemDetail Leaf Classes
 
 Several subclasses of \l{QOrganizerItemDetail} are provided as part of the
-Qt Mobility Organizer API.  They are general in design but are intended
+QtMobility Organizer API.  They are general in design but are intended
 to fulfill specific use-cases.  Please note that certain backends may
 choose not to support one or more of these subclasses as they appear here;
 they may offer their own which provide similar functionality.
@@ -334,7 +334,7 @@ For more information on this topic, see please see the documentation on
 
 \section2 Synchronization and Serialization
 
-The organizer API is used by another Qt Mobility module: the
+The organizer API is used by another QtMobility module: the
 \l {Versit} {Versit}* module.  It allows
 serialization of a QOrganizerItem into an iCalendar document, and vice versa.
 
@@ -347,10 +347,10 @@ The following sample applications show examples of API usage:
     \o \l{CalendarDemo}{Example Calendar Application}
 \endlist
 
-\section1 QML support
+\section1 QML Elements
 
 For details on the QML support provided for the Organizer API see the documentation for the \l {Organizer QML Plugin}.
 
-\note At the time of the Qt Mobility 1.1 release the QML support for the Organizer API is incomplete and likely to be refined and improved in the next patch release.
+\note At the time of the QtMobility 1.1 release the QML support for the Organizer API is incomplete and likely to be refined and improved in the next patch release.
 
 */

@@ -39,14 +39,14 @@ user in response to their actions (for example, touching an onscreen button), an
 control the vibration of the device (when a vibrator is used) or the piezo feedback
 from the screen.
 
-This is part of the Qt Mobility Project.
+This is part of the QtMobility Project.
 
 \tableofcontents
 
 \section1 Namespace
 
 The QtMobility APIs are placed into the \i{QtMobility} namespace. This is done
-to facilitate the future migration of Mobility APIs into Qt. See the
+to facilitate the future migration of QtMobility APIs into Qt. See the
 \l {Quickstart Example}{Quickstart guide} for an example on how the
 namespace impacts on application development.
 
@@ -76,7 +76,7 @@ check what formats are supported by the system by calling QFeedbackFileEffect::s
 For the vast majority of use cases, the QFeedbackEffect, QFeedbackHapticsEffect
 and QFeedbackFileEffect classes are the only classes which developers will use
 in their programs.  There are some special cases, however, where they may wish
-to implement their own feedback plugin.  The Qt Mobility Feedback API allows
+to implement their own feedback plugin.  The QtMobility Feedback API allows
 third party developers to implement QFeedbackInterface in a plugin which may be
 loaded by the plugin loading mechanism to play feedback effects.
 
@@ -168,11 +168,12 @@ application.
     \o \l{hapticsplayer}{Haptics Player}
 \endlist
 
-\section1 QML support
+\section1 QML Elements
 
 For details on the QML support provided for the Feedback API see the documentation for the \l {Feedback QML Plugin}.
 
-\note At the time of the Qt Mobility 1.1 release the QML support for the Feedback API is incomplete and likely to be refined and improved in the next patch release.
+\note At the time of the QtMobility 1.1 release the QML support for the Feedback API is incomplete and likely to be refined and improved in the next patch release.
 
 
 */
+

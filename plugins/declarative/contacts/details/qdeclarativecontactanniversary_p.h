@@ -98,7 +98,7 @@ public:
         default:
             break;
         }
-        //qWarning()
+        qmlInfo(0) << tr("Unknown field type.");
         return QString();
     }
     void setOriginalDate(const QDate& v)

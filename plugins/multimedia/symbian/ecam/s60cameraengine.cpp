@@ -149,9 +149,8 @@ void CCameraEngine::SetViewfinderObserver(MCameraViewfinderObserver* aViewfinder
 
 void CCameraEngine::ReserveAndPowerOn()
 {
-    if (!iCamera || iEngineState > EEngineNotReady) {
+    if (!iCamera || iEngineState > EEngineNotReady)
         iObserver->MceoHandleError(EErrReserve, KErrNotReady);
-    }
 
     iCamera->Reserve();
 }
@@ -170,27 +169,23 @@ void CCameraEngine::ReleaseAndPowerOff()
 
 void CCameraEngine::StartViewFinderL(TSize& aSize)
 {
-    if (iEngineState < EEngineIdle) {
+    if (iEngineState < EEngineIdle)
         User::Leave(KErrNotReady);
-    }
 
-    if (0 == (iCameraInfo.iOptionsSupported & TCameraInfo::EViewFinderBitmapsSupported)) {
+    if (0 == (iCameraInfo.iOptionsSupported & TCameraInfo::EViewFinderBitmapsSupported))
         User::Leave(KErrNotSupported);
-    }
 
     if (!iCamera->ViewFinderActive()) {
-        if (iCameraIndex != 0) {
+        if (iCameraIndex != 0)
             iCamera->SetViewFinderMirrorL(true);
-        }
         iCamera->StartViewFinderBitmapsL(aSize);
     }
 }
 
 void CCameraEngine::StopViewFinder()
 {
-    if (iCamera && iCamera->ViewFinderActive()) {
+    if (iCamera && iCamera->ViewFinderActive())
         iCamera->StopViewFinder();
-    }
 }
 
 void CCameraEngine::StartDirectViewFinderL(RWsSession& aSession,
@@ -198,18 +193,16 @@ void CCameraEngine::StartDirectViewFinderL(RWsSession& aSession,
                             RWindowBase& aWindow,
                             TRect& aSize)
 {
-    if (iEngineState < EEngineIdle) {
+    if (iEngineState < EEngineIdle)
         User::Leave(KErrNotReady);
-    }
 
-    if (0 == (iCameraInfo.iOptionsSupported & TCameraInfo::EViewFinderDirectSupported)) {
+    if (0 == (iCameraInfo.iOptionsSupported & TCameraInfo::EViewFinderDirectSupported))
         User::Leave(KErrNotSupported);
-    }
 
     if (!iCamera->ViewFinderActive()) {
-        if (iCameraIndex != 0) {
+
+        if (iCameraIndex != 0)
             iCamera->SetViewFinderMirrorL(true);
-        }
         iCamera->StartViewFinderDirectL(aSession, aScreenDevice, aWindow, aSize);
     }
 }
@@ -285,7 +278,6 @@ void CCameraEngine::HandleEvent(const TECAMEvent &aEvent)
     if (iImageCaptureObserver)
         iImageCaptureObserver->MceoHandleOtherEvent(aEvent);
 #endif // !Q_CC_NOKIAX86
-
 }
 
 void CCameraEngine::ReserveComplete(TInt aError)
@@ -423,7 +415,6 @@ void CCameraEngine::ReleaseImageBuffer()
  */
 void CCameraEngine::ImageBufferReady(MCameraBuffer &aCameraBuffer, TInt aError)
 {
-
     // Use the buffer that is available
     if (!iImageBuffer1) {
         iLatestImageBufferIndex = 0;
@@ -625,9 +616,8 @@ TBool CCameraEngine::IsAutoFocusSupported() const
  */
 void CCameraEngine::StartFocusL()
 {
-    if (iEngineState != EEngineIdle) {
+    if (iEngineState != EEngineIdle)
         return;
-    }
 
 #ifndef Q_CC_NOKIAX86  // Not Emulator
 #ifdef S60_CAM_AUTOFOCUS_SUPPORT // S60 3.1
@@ -686,9 +676,8 @@ void CCameraEngine::SetFocusRange(TInt aFocusRange)
 #ifdef S60_CAM_AUTOFOCUS_SUPPORT
     if (iAutoFocus) {
         TRAPD(focusErr, iAutoFocus->SetFocusRangeL((CCamAutoFocus::TAutoFocusRange)aFocusRange));
-        if (focusErr) {
+        if (focusErr)
             iObserver->MceoHandleError(EErrAutoFocusRange, focusErr);
-        }
     }
 #endif // S60_CAM_AUTOFOCUS_SUPPORT
 

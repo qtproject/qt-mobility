@@ -47,16 +47,7 @@ bool maemo6rotationsensor::m_initDone = false;
 maemo6rotationsensor::maemo6rotationsensor(QSensor *sensor)
     : maemo6sensorbase(sensor)
 {
-    const QString sensorName = "rotationsensor";
-    initSensor<RotationSensorChannelInterface>(sensorName, m_initDone);
-
-    if (m_sensorInterface){
-        if (!(QObject::connect(m_sensorInterface, SIGNAL(dataAvailable(const XYZ&)),
-                               this, SLOT(slotDataAvailable(const XYZ&)))))
-            qWarning() << "Unable to connect "<< sensorName;
-    }
-    else
-        qWarning() << "Unable to initialize "<<sensorName;
+    initSensor<RotationSensorChannelInterface>(m_initDone);
     setReading<QRotationReading>(&m_reading);
     sensor->setProperty("hasZ", true);
 }
@@ -68,4 +59,23 @@ void maemo6rotationsensor::slotDataAvailable(const XYZ& data)
     m_reading.setZ(data.z());
     m_reading.setTimestamp(data.XYZData().timestamp_);
     newReadingAvailable();
+}
+
+void maemo6rotationsensor::slotFrameAvailable(const QVector<XYZ>&  frame)
+{
+    for (int i=0, l=frame.size(); i<l; i++){
+        slotDataAvailable(frame.at(i));
+    }
+}
+
+bool maemo6rotationsensor::doConnect(){
+    if (m_bufferSize==1?
+                QObject::connect(m_sensorInterface, SIGNAL(dataAvailable(const XYZ&)), this, SLOT(slotDataAvailable(const XYZ&))):
+                QObject::connect(m_sensorInterface, SIGNAL(frameAvailable(const QVector<XYZ>& )),this, SLOT(slotFrameAvailable(const QVector<XYZ>& ))))
+        return true;
+    return false;
+}
+
+const QString maemo6rotationsensor::sensorName(){
+    return "rotationsensor";
 }

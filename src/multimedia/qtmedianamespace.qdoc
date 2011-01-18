@@ -34,8 +34,8 @@
 
     QtMultimediaKit is a module containing the low level, low latency,
     Multimedia APIs which were introduced in Qt 4.6 and also includes the
-    high level QtMultimedia APIs which were introduced in Qt Mobility 1.0.
-    
+    high level QtMultimedia APIs which were introduced in QtMobility 1.0.
+
 */
 
 /*!

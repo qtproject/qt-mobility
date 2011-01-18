@@ -69,8 +69,6 @@ public:
             QGalleryTrackerResultSetArguments *arguments,
             const QGalleryDBusInterfacePointer &metaDataInterface,
             bool autoUpdate,
-            int cursorPosition,
-            int minimumPagedItems,
             QObject *parent = 0);
     ~QGalleryTrackerEditableResultSet();
 

@@ -285,6 +285,12 @@ void QOrganizerManager::createEngine(const QString& managerName, const QMap<QStr
     connect(d->m_engine, SIGNAL(collectionsAdded(QList<QOrganizerCollectionId>)), this, SIGNAL(collectionsAdded(QList<QOrganizerCollectionId>)));
     connect(d->m_engine, SIGNAL(collectionsChanged(QList<QOrganizerCollectionId>)), this, SIGNAL(collectionsChanged(QList<QOrganizerCollectionId>)));
     connect(d->m_engine, SIGNAL(collectionsRemoved(QList<QOrganizerCollectionId>)), this, SIGNAL(collectionsRemoved(QList<QOrganizerCollectionId>)));
+
+    connect(d->m_engine, SIGNAL(itemsChanged(QList<QOrganizerItemId>)),
+            this, SLOT(_q_itemsUpdated(QList<QOrganizerItemId>)));
+    connect(d->m_engine, SIGNAL(itemsRemoved(QList<QOrganizerItemId>)),
+            this, SLOT(_q_itemsDeleted(QList<QOrganizerItemId>)));
+
 }
 
 /*!
@@ -332,6 +338,7 @@ QOrganizerManager::~QOrganizerManager()
   \value InvalidItemTypeError The most recent operation failed because the item given was of an invalid type for the operation
   \value InvalidCollectionError The most recent operation failed because the collection is invalid
   \value InvalidOccurrenceError The most recent operation failed because it was an attempt to save an occurrence without a correct InstanceOrigin detail
+  \value TimeoutError The most recent operation failed because it took longer than expected.  It may be possible to try again.
  */
 
 /*! Return the error code of the most recent operation */
@@ -589,8 +596,8 @@ bool QOrganizerManager::removeItem(const QOrganizerItemId& itemId)
 /*!
   Adds the list of organizer items given by \a items list to the database.
   Each item in the list will be saved in the collection whose
-  id is reported by calling item->collectionId() if the specified collection exists,
-  or if no collectionId is specified in the item, or the collectionId is the default
+  id is reported by calling item->collectionId() if the specified collection exists.
+  If no collectionId is specified in the item, or if the collectionId is the default
   collection id, it will be saved in the collection in which the item is currently
   saved (if it is not a new item) or in the default collection (if it is a new item).
   As such, an item may be moved between collections with this save operation.
@@ -601,8 +608,7 @@ bool QOrganizerManager::removeItem(const QOrganizerItemId& itemId)
   if all organizer items were saved successfully.
 
   For each newly saved organizer item that was successful, the id of the organizer item
-  in the \a items list will be updated with the new value.  If a failure occurs
-  when saving a new item, the id will be cleared.
+  in the \a items list will be updated with the new value.
 
   \sa QOrganizerManager::saveItem()
  */
@@ -616,6 +622,41 @@ bool QOrganizerManager::saveItems(QList<QOrganizerItem>* items)
 
     d->m_error = QOrganizerManager::NoError;
     return d->m_engine->saveItems(items, &d->m_errorMap, &d->m_error);
+}
+
+/*!
+  Adds the list of organizer items given by \a items list to the database.
+  Each item in the list will be saved in the collection whose
+  id is reported by calling item->collectionId() if the specified collection exists.
+  If no collectionId is specified in the item, or if the collectionId is the default
+  collection id, it will be saved in the collection in which the item is currently
+  saved (if it is not a new item) or in the default collection (if it is a new item).
+  As such, an item may be moved between collections with this save operation.
+  Returns true if the organizer items were saved successfully, otherwise false.
+
+  This function accepts a \a definitionMask, which specifies which details of
+  the items should be updated.  Details with definition names not included in
+  the definitionMask will not be updated or added.
+
+  Calling \l errorMap() will return the per-input errors for the latest batch function.
+  The \l QOrganizerManager::error() function will only return \c QOrganizerManager::NoError
+  if all organizer items were saved successfully.
+
+  For each newly saved organizer item that was successful, the id of the organizer item
+  in the \a items list will be updated with the new value.
+
+  \sa QOrganizerManager::saveItem()
+ */
+bool QOrganizerManager::saveItems(QList<QOrganizerItem>* items, const QStringList& definitionMask)
+{
+    d->m_errorMap.clear();
+    if (!items) {
+        d->m_error = QOrganizerManager::BadArgumentError;
+        return false;
+    }
+
+    d->m_error = QOrganizerManager::NoError;
+    return d->m_engine->saveItems(items, definitionMask, &d->m_errorMap, &d->m_error);
 }
 
 /*!
@@ -648,23 +689,6 @@ bool QOrganizerManager::removeItems(const QList<QOrganizerItemId>& organizeritem
 
     d->m_error = QOrganizerManager::NoError;
     return d->m_engine->removeItems(organizeritemIds, &d->m_errorMap, &d->m_error);
-}
-
-/*!
-  Returns an observer object for the item with id \a itemId.
-
-  The returned object will emit itemChanged and itemRemoved signals until it is deleted (eg.
-  by the pointer falling out of scope).  Note that the QOrganizerItemObserver in the returned
-  QSharedPointer may or may not be deleted when the client loses its reference to it.  The client
-  is responsible for keeping a reference to the shared pointer as long as it is interested in the
-  observer's signals.  When the client wishes to stop receiving signals, it should both disconnect
-  the signals and delete the shared pointer.
-
-  \sa QOrganizerItemObserver
- */
-QSharedPointer<QOrganizerItemObserver> QOrganizerManager::observeItem(const QOrganizerItemId& itemId)
-{
-    return d->m_engine->observeItem(itemId);
 }
 
 /*!
@@ -901,7 +925,7 @@ QString QOrganizerManager::managerUri() const
 QList<QOrganizerItemId> QOrganizerManager::extractIds(const QList<QOrganizerItem>& items)
 {
     QList<QOrganizerItemId> ids;
-#if QT_VERSION > 0x040700    
+#if QT_VERSION > 0x040700
     ids.reserve(items.count());
 #endif
 

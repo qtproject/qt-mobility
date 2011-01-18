@@ -22,14 +22,14 @@ HEADERS += qorganizermaemo5_p.h \
     qorganizermaemo5ids_p.h \
     qorganizerrecurrencetransform.h \
     qorganizeritemtransform.h \
-    qorganizerasynchprocess.h \
+    ../mkcal/qorganizerasynchmanager.h \
     qorganizercaldbaccess.h \
     qorganizerdbcache.h \
     qorganizerdbcachewrappers.h
 SOURCES += qorganizermaemo5.cpp \
     qorganizerrecurrencetransform.cpp \
     qorganizeritemtransform.cpp \
-    qorganizerasynchprocess.cpp \
+    ../mkcal/qorganizerasynchmanager.cpp \
     qorganizercaldbaccess.cpp \
     qorganizerdbcache.cpp \
     qorganizerdbcachewrappers.cpp

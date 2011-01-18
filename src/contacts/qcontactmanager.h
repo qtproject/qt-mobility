@@ -58,7 +58,6 @@
 #include "qcontactsortorder.h"
 #include "qcontactfetchhint.h"
 #include "qcontacttype.h"
-#include "qcontactobserver.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -103,7 +102,6 @@ public:
     static bool parseUri(const QString& uri, QString* managerName, QMap<QString, QString>* params);
     static QString buildUri(const QString& managerName, const QMap<QString, QString>& params, int implementationVersion = -1);
 
-    /* The values of the Error enum are still to be decided! */
     enum Error {
         NoError = 0,
         DoesNotExistError,
@@ -119,7 +117,8 @@ public:
         UnspecifiedError,
         VersionMismatchError,
         LimitReachedError,
-        InvalidContactTypeError
+        InvalidContactTypeError,
+        TimeoutError
     };
 
     /* Error reporting */
@@ -142,8 +141,6 @@ public:
     bool saveContacts(QList<QContact>* contacts, QMap<int, QContactManager::Error>* errorMap = 0); // batch API - save.
     bool saveContacts(QList<QContact>* contacts, const QStringList& definitionMask, QMap<int, QContactManager::Error>* errorMap = 0); // Partial save
     bool removeContacts(const QList<QContactLocalId>& contactIds, QMap<int, QContactManager::Error>* errorMap = 0); // batch API - remove.
-
-    QSharedPointer<QContactObserver> observeContact(QContactLocalId contactId);
 
     /* Return a pruned or modified contact which is valid and can be saved in the manager */
     QContact compatibleContact(const QContact& original);
@@ -202,8 +199,13 @@ Q_SIGNALS:
 
 private:
     friend class QContactManagerData;
-    void createEngine(const QString& managerName, const QMap<QString, QString>& parameters); 
+    void createEngine(const QString& managerName, const QMap<QString, QString>& parameters);
+
     Q_DISABLE_COPY(QContactManager)
+
+    Q_PRIVATE_SLOT(d, void _q_contactsUpdated(const QList<QContactLocalId>& ids));
+    Q_PRIVATE_SLOT(d, void _q_contactsDeleted(const QList<QContactLocalId>& ids));
+
     // private data pointer
     QContactManagerData* d;
 };

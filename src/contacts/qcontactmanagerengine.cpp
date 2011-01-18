@@ -1009,6 +1009,7 @@ QMap<QString, QMap<QString, QContactDetailDefinition> > QContactManagerEngine::s
     f.setDataType(QVariant::String);
     fields.insert(QContactOnlineAccount::FieldAccountUri, f);
     fields.insert(QContactOnlineAccount::FieldServiceProvider, f);
+    fields.insert(QContactOnlineAccount::FieldProtocol, f);
     f.setDataType(QVariant::StringList);
     f.setAllowableValues(contexts);
     fields.insert(QContactDetail::FieldContext, f);
@@ -2922,49 +2923,6 @@ void QContactManagerEngineV2::updateContactFetchByIdRequest(QContactFetchByIdReq
         if (emitState && ireq)
             emit ireq.data()->stateChanged(newState);
     }
-}
-
-/*!
-  \class QContactManagerEngineV3
-  \brief The QContactManagerEngineV3 class provides the interface for
-  implementations of the contact manager backend functionality.
-  \inmodule QtContacts
-
-  \ingroup contacts-backends
-
-  Instances of this class are usually provided by a
-  \l QContactManagerEngineFactory, which is loaded from a plugin.
-
-  The default implementation of this interface provides a basic
-  level of functionality for some functions so that specific engines
-  can simply implement the functionality that is supported by
-  the specific contacts engine that is being adapted.
-
-  More information on writing a contacts engine plugin is available in
-  the \l{Qt Contacts Manager Engines} documentation.
-
-  Engines that support the QContactManagerEngine or QContactManagerEngineV2
-  interface but not the QContactManagerEngineV2 interface will be wrapped
-  by the QContactManager by a class that emulates the extra functionality of
-  the QContactManagerEngineV3 interface.
-
-  \sa QContactManagerEngine, QContactManager, QContactManagerEngineFactory
- */
-
-/*!
-  \fn virtual QSharedPointer<QContactObserver> observeContact(QContactLocalId contactId) = 0;
-
-  Returns an observer object for the contact with id \a contactId.
-
-  \sa QContactObserver
- */
-
-/*!
-  Factory function to construct a QContactObserver with given \a parent.
- */
-QContactObserver* QContactManagerEngineV3::createContactObserver(QObject* parent)
-{
-    return new QContactObserver(parent);
 }
 
 #include "moc_qcontactmanagerengine.cpp"

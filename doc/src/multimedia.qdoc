@@ -28,7 +28,7 @@
 
 /*!
     \group multimedia
-    \title Mobility Multimedia
+    \title QtMobility Multimedia
     APIs to play and record media, and manage a collection of media content.
 */
 
@@ -36,7 +36,7 @@
 
 \page multimedia.html
 \title Multimedia
-\brief Provides a set of APIs to play and record media, and manage a 
+\brief Provides a set of APIs to play and record media, and manage a
 collection of media content.
 \ingroup mobility
 
@@ -48,12 +48,12 @@ QtMultimediaKit module. This API is planned to replace Phonon at a later stage.
 
 \section1 No Special Namespace
 
-Unlike the other APIs in Qt Mobility, the Multimedia API is \i not in the
+Unlike the other APIs in QtMobility, the Multimedia API is \i not in the
 \i QtMobility namespace.
 
 \section1 Overview
 
-This API delivers an easy to use interface to multimedia functions. The 
+This API delivers an easy to use interface to multimedia functions. The
 developer can use the API to display an image, or a video, record sound or play a
 multimedia stream.
 
@@ -160,7 +160,7 @@ To manipulate the playlist there are the usual management functions (which are i
 Continuing with the example discussed for an Audio recorder/player, we can use this to show how to play video files with little change to the code.
 
 Moving from audio to video requires few changes in the sample code. To play a
-video playlist the code can be changed to include another new Mobility
+video playlist the code can be changed to include another new QtMobility
 Project class: \l{QVideoWidget}. This class enables control of a video
 resource with signals and slots for the control of brightness, contrast,
 hue, saturation and full screen mode.
@@ -413,7 +413,7 @@ QVideoWidget classes.
 
 \annotatedlist multimedia-serv
 
-\section2 QML multimedia elements
+\section2 QML Elements
 \list
 \o \l {SoundEffect}{SoundEffect: Low Latency Sound Effects}
 \o \l {Audio}{Audio: Music playback}

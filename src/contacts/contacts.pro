@@ -55,7 +55,6 @@ PRIVATE_HEADERS += \
     qcontactid_p.h \
     qcontactmanager_p.h \
     qcontactmanagerenginev2wrapper_p.h \
-    qcontactmanagerenginev3wrapper_p.h \
     qcontactrelationship_p.h \
     qcontactsortorder_p.h
 
@@ -79,7 +78,6 @@ SOURCES += \
     qcontactmanagerengine.cpp \
     qcontactmanagerenginefactory.cpp \
     qcontactmanagerenginev2wrapper_p.cpp \
-    qcontactmanagerenginev3wrapper_p.cpp \
     qcontactobserver.cpp \
     qcontactrelationship.cpp \
     qcontactsortorder.cpp
@@ -96,14 +94,6 @@ maemo6|meego {
     isEmpty(CONTACTS_DEFAULT_ENGINE): CONTACTS_DEFAULT_ENGINE=tracker
 }
 
-maemo5|maemo6 {
-    CONFIG += create_pc create_prl
-    QMAKE_PKGCONFIG_DESCRIPTION = Qt Mobility - Contacts API
-    pkgconfig.path = $$QT_MOBILITY_LIB/pkgconfig
-    pkgconfig.files = QtContacts.pc
-
-    INSTALLS += pkgconfig
-}
 
 wince* {
     isEmpty(CONTACTS_DEFAULT_ENGINE): CONTACTS_DEFAULT_ENGINE=wince

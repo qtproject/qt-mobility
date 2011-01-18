@@ -88,8 +88,14 @@ static QGeoBoundingBox variantListToBoundingBox(const QVariantList & list) {
 
 void QGeoTiledMapDataNokia::copyrightReplyFinished(QNetworkReply * reply)
 {
+    if (reply->error() != QNetworkReply::NoError)
+        return;
+
     JSONParser jp(reply->readAll());
     QVariant root = jp.parse();
+
+    if (!root.isValid())
+        return;
 
     copyrights.clear();
 

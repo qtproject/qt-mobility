@@ -217,6 +217,21 @@ QDataStream& operator>>(QDataStream& in, QOrganizerItemFilter& filter)
 }
 #endif
 
+#ifndef QT_NO_DEBUG_STREAM
+/*!
+  Outputs \a filter to the debug stream \a dbg
+ */
+QDebug operator<<(QDebug dbg, const QOrganizerItemFilter& filter)
+{
+    dbg.nospace() << "QOrganizerItemFilter(";
+    if (filter.d_ptr)
+        filter.d_ptr->debugStreamOut(dbg);
+    else
+        dbg.nospace() << "(null)";
+    dbg.nospace() << ")";
+    return dbg.maybeSpace();
+}
+#endif
 
 /*!
   \internal

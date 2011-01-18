@@ -171,7 +171,7 @@ private:
             const QVersitProperty& property,
             QOrganizerItem* item,
             QList<QOrganizerItemDetail>* updatedDetails);
-    QDateTime parseDateTime(const QVersitProperty& property) const;
+    QDateTime parseDateTime(const QVersitProperty& property, bool* hasTime = 0) const;
     QDateTime parseDateTime(QString str) const;
 
     bool createRecurrenceRule(

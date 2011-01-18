@@ -43,6 +43,11 @@
 #define TESTQGEOPOSITIONINFOSOURCE_P_H
 
 #include <qmobilityglobal.h>
+#ifdef TST_GEOCLUEMOCK_ENABLED
+#include "geocluemock.h"
+#include <QThread>
+#endif
+
 #include <QTest>
 #include <QObject>
 
@@ -126,11 +131,24 @@ private slots:
     void removeSlotForRequestTimeout();
     void removeSlotForPositionUpdated();
 
+#ifdef TST_GEOCLUEMOCK_ENABLED
+    // Test cases only ran against mock backend
+    void updateValues();
+    void changeSource();
+    void initGoneBad();
+    void updateInferno();
+    void robustness();
+#endif
+
 private:
+#ifdef TST_GEOCLUEMOCK_ENABLED
+    GeoclueMock* m_geoclueMock;
+    QThread m_threadGeoclueMock;
+    void initGeoclueMock();
+#endif
     QGeoPositionInfoSource *m_source;
     bool m_testingDefaultSource;
     bool m_testSlot2Called;
 };
-
 
 #endif

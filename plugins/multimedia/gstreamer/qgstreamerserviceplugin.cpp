@@ -126,6 +126,17 @@ void QGstreamerServicePlugin::release(QMediaService *service)
     delete service;
 }
 
+QMediaServiceProviderHint::Features QGstreamerServicePlugin::supportedFeatures(
+        const QByteArray &service) const
+{
+    if (service == Q_MEDIASERVICE_MEDIAPLAYER)
+        return QMediaServiceProviderHint::StreamPlayback | QMediaServiceProviderHint::VideoSurface;
+    else if (service == Q_MEDIASERVICE_CAMERA)
+        return QMediaServiceProviderHint::VideoSurface;
+    else
+        return QMediaServiceProviderHint::Features();
+}
+
 QList<QByteArray> QGstreamerServicePlugin::devices(const QByteArray &service) const
 {
     if (service == Q_MEDIASERVICE_CAMERA) {
@@ -168,6 +179,12 @@ void QGstreamerServicePlugin::updateDevices() const
 #ifdef Q_WS_MAEMO_5
     m_cameraDevices << "/dev/video0" << "/dev/video1";
     m_cameraDescriptions << tr("Main Camera") << tr("Front Camera");
+    return;
+#endif
+
+#ifdef Q_WS_MAEMO_6
+    m_cameraDevices << "primary" << "secondary";
+    m_cameraDescriptions << tr("Main camera") << tr("Front camera");
     return;
 #endif
 

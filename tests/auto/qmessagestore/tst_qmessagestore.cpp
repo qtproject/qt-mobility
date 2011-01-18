@@ -160,6 +160,8 @@ private slots:
     void testFolder_data();
     void testFolder();
 
+    void testRemoveAccount();
+
     void testMessage_data();
     void testMessage();
 
@@ -388,6 +390,7 @@ void tst_QMessageStore::testMessage_data()
     QTest::addColumn<QString>("to");
     QTest::addColumn<QString>("from");
     QTest::addColumn<QString>("cc");
+    QTest::addColumn<QString>("bcc");
     QTest::addColumn<QString>("date");
     QTest::addColumn<QString>("subject");
     QTest::addColumn<QByteArray>("messageType");
@@ -411,6 +414,7 @@ void tst_QMessageStore::testMessage_data()
     QTest::newRow("1")
         << "alice@example.com"
         << "bob@example.com"
+        << ""
         << ""
         << "1999-12-31T23:59:59Z"
         << "Last message..."
@@ -441,9 +445,14 @@ void tst_QMessageStore::testMessage_data()
         << "byId";
 
     QTest::newRow("2")
+#ifdef Q_OS_SYMBIAN
+        << "alice@example.com, robert@example.com"
+#else
         << "alice@example.com"
+#endif
         << "bob@example.com"
         << "charlie@example.com, donald@example.com"
+        << "jim@example.com, john@example.com"
         << "1999-12-31T23:59:59Z"
         << "Last HTML message..."
         << QByteArray("text")
@@ -475,6 +484,7 @@ void tst_QMessageStore::testMessage_data()
     QTest::newRow("3")
         << "alice@example.com"
         << "bob@example.com"
+        << ""
         << ""
         << "1999-12-31T23:59:59Z"
         << "Last message..."
@@ -508,6 +518,7 @@ void tst_QMessageStore::testMessage_data()
         << "alice@example.com"
         << "bob@example.com"
         << ""
+        << ""
         << "1999-12-31T23:59:59Z"
         << "Last HTML message..."
         << QByteArray("multipart")
@@ -535,6 +546,23 @@ void tst_QMessageStore::testMessage_data()
         << ( QList<int>() << 512 << 4096 )
         << customData
         << "byFilter";
+}
+
+void tst_QMessageStore::testRemoveAccount()
+{
+    QVERIFY(QMessageManager().queryAccounts(QMessageAccountFilter::byName("Mr. Temp")).empty());
+
+    Support::Parameters p;
+    p.insert("name", "Mr. Temp");
+    p.insert("fromAddress", "anaddress@example.com");
+    QMessageAccountId id(Support::addAccount(p));
+    QVERIFY(id.isValid());
+
+    QVERIFY(!QMessageManager().queryAccounts(QMessageAccountFilter::byName("Mr. Temp")).empty());
+    QVERIFY(QMessageManager().removeAccount(id));
+
+    QTest::qWait(4000);
+    QVERIFY(QMessageManager().queryAccounts(QMessageAccountFilter::byName("Mr. Temp")).empty());
 }
 
 void tst_QMessageStore::testMessage()
@@ -617,6 +645,7 @@ void tst_QMessageStore::testMessage()
     QFETCH(QString, to);
     QFETCH(QString, from);
     QFETCH(QString, cc);
+    QFETCH(QString, bcc);
     QFETCH(QString, date);
     QFETCH(QString, subject);
     QFETCH(QByteArray, messageType);
@@ -637,6 +666,7 @@ void tst_QMessageStore::testMessage()
     p.insert("to", to);
     p.insert("from", from);
     p.insert("cc", cc);
+    p.insert("bcc", bcc);
     p.insert("date", date);
     p.insert("subject", subject);
     p.insert("mimeType", bodyType + '/' + bodySubType);
@@ -700,12 +730,24 @@ void tst_QMessageStore::testMessage()
     QCOMPARE(message.id(), messageId);
     QCOMPARE(message.isModified(), false);
 
+#ifdef Q_OS_SYMBIAN
+    QList<QMessageAddress> toAddresses;
+    foreach (const QString &element, to.split(",", QString::SkipEmptyParts)) {
+        QMessageAddress addr;
+        addr.setType(QMessageAddress::Email);
+        addr.setAddressee(element.trimmed());
+        toAddresses.append(addr);
+    }
+
+    QCOMPARE(message.to(), toAddresses);
+#else
     QMessageAddress toAddress;
     toAddress.setType(QMessageAddress::Email);
     toAddress.setAddressee(to);
     QVERIFY(!message.to().isEmpty());
     QCOMPARE(message.to().first(), toAddress);
     QCOMPARE(message.to().first().addressee(), to);
+#endif
 
 #ifndef FREESTYLEMAILUSED
     // Symbian FreeStyle backend can not set sender address
@@ -728,6 +770,18 @@ void tst_QMessageStore::testMessage()
     }
 
     QCOMPARE(message.cc(), ccAddresses);
+
+#ifdef Q_OS_SYMBIAN
+    QList<QMessageAddress> bccAddresses;
+    foreach (const QString &element, bcc.split(",", QString::SkipEmptyParts)) {
+        QMessageAddress addr;
+        addr.setType(QMessageAddress::Email);
+        addr.setAddressee(element.trimmed());
+        bccAddresses.append(addr);
+    }
+
+    QCOMPARE(message.bcc(), bccAddresses);
+#endif
 
 #ifndef FREESTYLEMAILUSED
     // Symbian FreeStyle backend can not set message date
@@ -888,6 +942,12 @@ void tst_QMessageStore::testMessage()
     QCOMPARE(updated.date(), dt);
 #endif
 
+#ifdef Q_OS_SYMBIAN
+    QCOMPARE(updated.to(), toAddresses);
+    QCOMPARE(updated.cc(), ccAddresses);
+    QCOMPARE(updated.bcc(), bccAddresses);
+#endif
+
     bodyId = updated.bodyId();
     QCOMPARE(bodyId.isValid(), true);
     QCOMPARE(bodyId != QMessageContentContainerId(), true);
@@ -963,7 +1023,7 @@ void tst_QMessageStore::testMessage()
 #if !defined(Q_OS_SYMBIAN) || defined(FREESTYLEMAILUSED)
     QCOMPARE(removeCatcher.removed.count(), 1);
     QCOMPARE(removeCatcher.removed.first().first, messageId);
-#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)|| defined(FREESTYLEMAILUSED)
+#if defined(Q_WS_MAEMO_5) || defined(FREESTYLEMAILUSED)
     QCOMPARE(removeCatcher.removed.first().second.count(), 2);
     QCOMPARE(removeCatcher.removed.first().second, QSet<QMessageManager::NotificationFilterId>() << filter2->id << filter3->id);
 #else

@@ -93,6 +93,7 @@ contains(build_unit_tests, yes) {
         contains(TEMPLATE,.*lib) {
             DESTDIR = $$OUTPUT_DIR/lib
             symbian:defFilePath=../s60installs
+            symbian:DEF_FILE=../s60installs
             VERSION = 1.2.0
         } else {
             DESTDIR = $$OUTPUT_DIR/bin
@@ -139,6 +140,9 @@ maemo6|meego {
 }
 maemo5 {
     DEFINES+= Q_WS_MAEMO_5
+}
+meego {
+    DEFINES+= Q_WS_MEEGO
 }
 
 wince* {

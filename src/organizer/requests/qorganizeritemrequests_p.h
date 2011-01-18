@@ -82,6 +82,18 @@ public:
         return QOrganizerAbstractRequest::ItemSaveRequest;
     }
 
+#ifndef QT_NO_DEBUG_STREAM
+    QDebug& debugStreamOut(QDebug& dbg) const
+    {
+        dbg.nospace() << "QOrganizerItemSaveRequest(\n"
+                      << "* items=" << m_organizeritems << ",\n"
+                      << "* definitionMask=" << m_definitionMask << ",\n"
+                      << "* errorMap=" << m_errors;
+        dbg.nospace() << "\n)";
+        return dbg.maybeSpace();
+    }
+#endif
+
     QList<QOrganizerItem> m_organizeritems;
     QMap<int, QOrganizerManager::Error> m_errors;
     QStringList m_definitionMask;
@@ -104,6 +116,22 @@ public:
     {
         return QOrganizerAbstractRequest::ItemFetchRequest;
     }
+
+#ifndef QT_NO_DEBUG_STREAM
+    QDebug& debugStreamOut(QDebug& dbg) const
+    {
+        dbg.nospace() << "QOrganizerItemFetchRequest(\n"
+                      << "* items=" << m_organizeritems << ",\n"
+                      << "* filter=" << m_filter << ",\n"
+                      << "* sorting=" << m_sorting << ",\n"
+                      << "* startDate=" << m_startDate << ",\n"
+                      << "* endDate=" << m_endDate << ",\n"
+                      << "* fetchHint=" << m_fetchHint << ",\n"
+                      << "* maxCount=" << m_maxCount;
+        dbg.nospace() << "\n)";
+        return dbg.maybeSpace();
+    }
+#endif
 
     QOrganizerItemFilter m_filter;
     QList<QOrganizerItemSortOrder> m_sorting;
@@ -134,6 +162,21 @@ public:
         return QOrganizerAbstractRequest::ItemFetchForExportRequest;
     }
 
+#ifndef QT_NO_DEBUG_STREAM
+    QDebug& debugStreamOut(QDebug& dbg) const
+    {
+        dbg.nospace() << "QOrganizerItemFetchForExportRequest(\n"
+                      << "* items=" << m_organizeritems << ",\n"
+                      << "* filter=" << m_filter << ",\n"
+                      << "* sorting=" << m_sorting << ",\n"
+                      << "* startDate=" << m_startDate << ",\n"
+                      << "* endDate=" << m_endDate << ",\n"
+                      << "* fetchHint=" << m_fetchHint;
+        dbg.nospace() << "\n)";
+        return dbg.maybeSpace();
+    }
+#endif
+
     QOrganizerItemFilter m_filter;
     QList<QOrganizerItemSortOrder> m_sorting;
     QOrganizerItemFetchHint m_fetchHint;
@@ -161,6 +204,19 @@ public:
         return QOrganizerAbstractRequest::ItemFetchByIdRequest;
     }
 
+#ifndef QT_NO_DEBUG_STREAM
+    QDebug& debugStreamOut(QDebug& dbg) const
+    {
+        dbg.nospace() << "QOrganizerItemFetchByIdRequest(\n"
+                      << "* items=" << m_items << ",\n"
+                      << "* ids=" << m_ids << ",\n"
+                      << "* fetchHint=" << m_fetchHint << ",\n"
+                      << "* errorMap=" << m_errors;
+        dbg.nospace() << "\n)";
+        return dbg.maybeSpace();
+    }
+#endif
+
     QList<QOrganizerItemId> m_ids;
     QOrganizerItemFetchHint m_fetchHint;
 
@@ -185,6 +241,21 @@ public:
     {
         return QOrganizerAbstractRequest::ItemOccurrenceFetchRequest;
     }
+
+#ifndef QT_NO_DEBUG_STREAM
+    QDebug& debugStreamOut(QDebug& dbg) const
+    {
+        dbg.nospace() << "QOrganizerItemOccurrenceFetchRequest(\n"
+                      << "* itemOccurrences=" << m_organizeritems << ",\n"
+                      << "* parentItem=" << m_generator << ",\n"
+                      << "* startDate=" << m_startDate << ",\n"
+                      << "* endDate=" << m_endDate << ",\n"
+                      << "* fetchHint=" << m_fetchHint << ",\n"
+                      << "* maxOccurrences=" << m_maxOccurrences;
+        dbg.nospace() << "\n)";
+        return dbg.maybeSpace();
+    }
+#endif
 
     QOrganizerItem m_generator;
     QDateTime m_startDate;
@@ -212,6 +283,17 @@ public:
         return QOrganizerAbstractRequest::ItemRemoveRequest;
     }
 
+#ifndef QT_NO_DEBUG_STREAM
+    QDebug& debugStreamOut(QDebug& dbg) const
+    {
+        dbg.nospace() << "QOrganizerItemRemoveRequest("
+                      << "itemIds=" << m_organizeritemIds << ","
+                      << "errorMap=" << m_errors;
+        dbg.nospace() << "\n)";
+        return dbg.maybeSpace();
+    }
+#endif
+
     QList<QOrganizerItemId> m_organizeritemIds;
     QMap<int, QOrganizerManager::Error> m_errors;
 };
@@ -232,6 +314,20 @@ public:
     {
         return QOrganizerAbstractRequest::ItemIdFetchRequest;
     }
+
+#ifndef QT_NO_DEBUG_STREAM
+    QDebug& debugStreamOut(QDebug& dbg) const
+    {
+        dbg.nospace() << "QOrganizerItemIdFetchRequest(\n"
+                      << "* itemIds=" << m_ids << ",\n"
+                      << "* filter=" << m_filter << ",\n"
+                      << "* sorting=" << m_sorting << ",\n"
+                      << "* startDate=" << m_startDate << ",\n"
+                      << "* endDate=" << m_endDate;
+        dbg.nospace() << "\n)";
+        return dbg.maybeSpace();
+    }
+#endif
 
     QOrganizerItemFilter m_filter;
     QList<QOrganizerItemSortOrder> m_sorting;
@@ -260,10 +356,22 @@ public:
         return QOrganizerAbstractRequest::DetailDefinitionFetchRequest;
     }
 
+#ifndef QT_NO_DEBUG_STREAM
+    QDebug& debugStreamOut(QDebug& dbg) const
+    {
+        dbg.nospace() << "QOrganizerItemDetailDefinitionFetchRequest(\n"
+                      << "* definitionNames=" << m_names << ",\n"
+                      << "* definitions=" << m_definitions << ",\n"
+                      << "* itemType=" << m_organizeritemType << ",\n"
+                      << "* errorMap=" << m_errors;
+        dbg.nospace() << "\n)";
+        return dbg.maybeSpace();
+    }
+#endif
+
     QString m_organizeritemType;
     QStringList m_names;
     QMap<QString, QOrganizerItemDetailDefinition> m_definitions;
-    QOrganizerCollectionId m_collectionId;
     QMap<int, QOrganizerManager::Error> m_errors;
 };
 
@@ -285,9 +393,19 @@ public:
         return QOrganizerAbstractRequest::DetailDefinitionSaveRequest;
     }
 
+#ifndef QT_NO_DEBUG_STREAM
+    QDebug& debugStreamOut(QDebug& dbg) const
+    {
+        dbg.nospace() << "QOrganizerItemDetailDefinitionSaveRequest(\n"
+                      << "* definitions=" << m_definitions << ",\n"
+                      << "* itemType=" << m_organizeritemType << ",\n"
+                      << "* errorMap=" << m_errors;
+        dbg.nospace() << "\n)";
+        return dbg.maybeSpace();
+    }
+#endif
     QString m_organizeritemType;
     QList<QOrganizerItemDetailDefinition> m_definitions;
-    QOrganizerCollectionId m_collectionId;
     QMap<int, QOrganizerManager::Error> m_errors;
 };
 
@@ -309,9 +427,20 @@ public:
         return QOrganizerAbstractRequest::DetailDefinitionRemoveRequest;
     }
 
+#ifndef QT_NO_DEBUG_STREAM
+    QDebug& debugStreamOut(QDebug& dbg) const
+    {
+        dbg.nospace() << "QOrganizerItemDetailDefinitionRemoveRequest(\n"
+                      << "* definitionNames=" << m_names << ",\n"
+                      << "* itemType=" << m_organizeritemType << ",\n"
+                      << "* errorMap=" << m_errors;
+        dbg.nospace() << "\n)";
+        return dbg.maybeSpace();
+    }
+#endif
+
     QString m_organizeritemType;
     QStringList m_names;
-    QOrganizerCollectionId m_collectionId;
     QMap<int, QOrganizerManager::Error> m_errors;
 };
 
@@ -331,6 +460,16 @@ public:
     {
         return QOrganizerAbstractRequest::CollectionFetchRequest;
     }
+
+#ifndef QT_NO_DEBUG_STREAM
+    QDebug& debugStreamOut(QDebug& dbg) const
+    {
+        dbg.nospace() << "QOrganizerCollectionFetchRequest("
+                      << "collections=" << m_collections;
+        dbg.nospace() << ")";
+        return dbg.maybeSpace();
+    }
+#endif
 
     QList<QOrganizerCollection> m_collections;
 };
@@ -352,6 +491,17 @@ public:
         return QOrganizerAbstractRequest::CollectionRemoveRequest;
     }
 
+#ifndef QT_NO_DEBUG_STREAM
+    QDebug& debugStreamOut(QDebug& dbg) const
+    {
+        dbg.nospace() << "QOrganizerCollectionRemoveRequest("
+                      << "collectionIds=" << m_collectionIds << ","
+                      << "errorMap=" << m_errors;
+        dbg.nospace() << ")";
+        return dbg.maybeSpace();
+    }
+#endif
+
     QList<QOrganizerCollectionId> m_collectionIds;
     QMap<int, QOrganizerManager::Error> m_errors;
 };
@@ -372,6 +522,17 @@ public:
     {
         return QOrganizerAbstractRequest::CollectionSaveRequest;
     }
+
+#ifndef QT_NO_DEBUG_STREAM
+    QDebug& debugStreamOut(QDebug& dbg) const
+    {
+        dbg.nospace() << "QOrganizerCollectionSaveRequest("
+                      << "collections=" << m_collections << ","
+                      << "errorMap=" << m_errors;
+        dbg.nospace() << ")";
+        return dbg.maybeSpace();
+    }
+#endif
 
     QList<QOrganizerCollection> m_collections;
     QMap<int, QOrganizerManager::Error> m_errors;

@@ -47,6 +47,8 @@
 #include "maemo6proximitysensor.h"
 #include "maemo6rotationsensor.h"
 #include "maemo6tapsensor.h"
+#include "maemo6gyroscope.h"
+
 #include <qsensorplugin.h>
 #include <qsensorbackend.h>
 #include <qsensormanager.h>
@@ -67,6 +69,7 @@ public:
         QSensorManager::registerBackend(QProximitySensor::type, maemo6proximitysensor::id, this);
         QSensorManager::registerBackend(QRotationSensor::type, maemo6rotationsensor::id, this);
         QSensorManager::registerBackend(QTapSensor::type, maemo6tapsensor::id, this);
+        QSensorManager::registerBackend(QGyroscope::type, maemo6gyroscope::id, this);
         qDebug() << "Loaded the Maemo 6 sensor plugin";
     }
 
@@ -88,7 +91,8 @@ public:
             return new maemo6rotationsensor(sensor);
         else if (sensor->identifier() == maemo6tapsensor::id)
             return new maemo6tapsensor(sensor);
-
+        else if (sensor->identifier() == maemo6gyroscope::id)
+            return new maemo6gyroscope(sensor);
         return 0;
     }
 };

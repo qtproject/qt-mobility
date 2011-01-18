@@ -100,6 +100,15 @@ void DSServicePlugin::release(QMediaService *service)
     delete service;
 }
 
+QMediaServiceProviderHint::Features DSServicePlugin::supportedFeatures(
+        const QByteArray &service) const
+{
+    if (service == Q_MEDIASERVICE_MEDIAPLAYER)
+        return QMediaServiceProviderHint::StreamPlayback | QMediaServiceProviderHint::VideoSurface;
+    else
+        return QMediaServiceProviderHint::Features();
+}
+
 QList<QByteArray> DSServicePlugin::devices(const QByteArray &service) const
 {
 #ifdef QMEDIA_DIRECTSHOW_CAMERA

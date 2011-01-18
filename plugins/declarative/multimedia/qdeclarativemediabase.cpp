@@ -43,6 +43,7 @@
 
 #include <QtCore/qcoreevent.h>
 #include <QtCore/qurl.h>
+#include <QtDeclarative/qdeclarativeinfo.h>
 
 #include <qmediaplayercontrol.h>
 #include <qmediaservice.h>
@@ -149,6 +150,11 @@ private:
 
 void QDeclarativeMediaBase::_q_statusChanged()
 {
+    if (m_playerControl->mediaStatus() == QMediaPlayer::EndOfMedia && m_runningCount != 0) {
+        m_runningCount -= 1;
+        m_playerControl->play();
+    }
+
     const QMediaPlayer::MediaStatus oldStatus = m_status;
     const bool wasPlaying = m_playing;
     const bool wasPaused = m_paused;
@@ -165,14 +171,8 @@ void QDeclarativeMediaBase::_q_statusChanged()
     else if (state == QMediaPlayer::PlayingState)
         m_paused = false;
 
-    if (m_status != oldStatus) {
-        if (m_status == QMediaPlayer::EndOfMedia && m_runningCount != 0) {
-            m_playerControl->play();
-            return;
-        } else {
-            emit statusChanged();
-        }
-    }
+    if (m_status != oldStatus)
+        emit statusChanged();
 
     switch (state) {
     case QMediaPlayer::StoppedState:
@@ -234,6 +234,7 @@ QDeclarativeMediaBase::QDeclarativeMediaBase()
     , m_playbackRate(1.0)
     , m_mediaService(0)
     , m_playerControl(0)
+    , m_qmlObject(0)
     , m_mediaObject(0)
     , m_mediaProvider(0)
     , m_metaDataControl(0)
@@ -261,6 +262,8 @@ void QDeclarativeMediaBase::shutdown()
 
 void QDeclarativeMediaBase::setObject(QObject *object)
 {
+    m_qmlObject = object;
+
     if ((m_mediaProvider = QMediaServiceProvider::defaultServiceProvider()) != 0) {
         if ((m_mediaService = m_mediaProvider->requestService(Q_MEDIASERVICE_MEDIAPLAYER)) != 0) {
             m_playerControl = qobject_cast<QMediaPlayerControl *>(
@@ -351,7 +354,7 @@ void QDeclarativeMediaBase::setSource(const QUrl &url)
 
     m_source = url;
     m_loaded = false;
-    if (m_complete && m_autoLoad) {
+    if (m_complete && (m_autoLoad || url.isEmpty())) {
         if (m_error != QMediaPlayer::ServiceMissingError && m_error != QMediaPlayer::NoError) {
             m_error = QMediaPlayer::NoError;
             m_errorString = QString();
@@ -471,7 +474,7 @@ int QDeclarativeMediaBase::position() const
 
 void QDeclarativeMediaBase::setPosition(int position)
 {
-    if (m_position == position)
+    if (this->position() == position)
         return;
 
     m_position = position;
@@ -489,7 +492,7 @@ qreal QDeclarativeMediaBase::volume() const
 void QDeclarativeMediaBase::setVolume(qreal volume)
 {
     if (volume < 0 || volume > 1) {
-        qWarning("Audio: volume should be between 0.0 and 1.0");
+        qmlInfo(m_qmlObject) << m_qmlObject->tr("volume should be between 0.0 and 1.0");
         return;
     }
 

@@ -1180,34 +1180,34 @@ void tst_QVersitContactExporter::testEncodeOnlineAccount()
     document = mExporter->documents().first();
     QCOMPARE(countProperties(document), 0);
 
-    // Test service providers Jabber, AIM, ICQ, MSN, Yahoo, Skype
+    // Test protocols Jabber, AIM, ICQ, MSN, Yahoo, Skype
     contact.clearDetails();
     onlineAccount = QContactOnlineAccount();
-    onlineAccount.setServiceProvider(QContactOnlineAccount::ServiceJabber);
+    onlineAccount.setProtocol(QContactOnlineAccount::ProtocolJabber);
     onlineAccount.setAccountUri("a");
     contact.saveDetail(&onlineAccount);
     onlineAccount = QContactOnlineAccount();
-    onlineAccount.setServiceProvider(QContactOnlineAccount::ServiceAim);
+    onlineAccount.setProtocol(QContactOnlineAccount::ProtocolAim);
     onlineAccount.setAccountUri("b");
     contact.saveDetail(&onlineAccount);
     onlineAccount = QContactOnlineAccount();
-    onlineAccount.setServiceProvider(QContactOnlineAccount::ServiceIcq);
+    onlineAccount.setProtocol(QContactOnlineAccount::ProtocolIcq);
     onlineAccount.setAccountUri("c");
     contact.saveDetail(&onlineAccount);
     onlineAccount = QContactOnlineAccount();
-    onlineAccount.setServiceProvider(QContactOnlineAccount::ServiceMsn);
+    onlineAccount.setProtocol(QContactOnlineAccount::ProtocolMsn);
     onlineAccount.setAccountUri("d");
     contact.saveDetail(&onlineAccount);
     onlineAccount = QContactOnlineAccount();
-    onlineAccount.setServiceProvider(QContactOnlineAccount::ServiceQq);
+    onlineAccount.setProtocol(QContactOnlineAccount::ProtocolQq);
     onlineAccount.setAccountUri("e");
     contact.saveDetail(&onlineAccount);
     onlineAccount = QContactOnlineAccount();
-    onlineAccount.setServiceProvider(QContactOnlineAccount::ServiceYahoo);
+    onlineAccount.setProtocol(QContactOnlineAccount::ProtocolYahoo);
     onlineAccount.setAccountUri("f");
     contact.saveDetail(&onlineAccount);
     onlineAccount = QContactOnlineAccount();
-    onlineAccount.setServiceProvider(QContactOnlineAccount::ServiceSkype);
+    onlineAccount.setProtocol(QContactOnlineAccount::ProtocolSkype);
     onlineAccount.setAccountUri("g");
     contact.saveDetail(&onlineAccount);
 

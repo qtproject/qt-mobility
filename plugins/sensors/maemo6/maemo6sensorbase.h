@@ -56,28 +56,40 @@ public:
 
 
 protected:
+    virtual bool doConnect()=0;
     virtual void start();
     virtual void stop();
-    AbstractSensorChannelInterface* m_sensorInterface;
 
+    static const char* const ALWAYS_ON;
+    static const char* const BUFFER_SIZE;
+    static const char* const MAX_BUFFER_SIZE;
+    static const char* const EFFICIENT_BUFFER_SIZE;
     static const float GRAVITY_EARTH;
     static const float GRAVITY_EARTH_THOUSANDTH;    //for speed
+    static const int KErrNotFound;
 
     void setRanges(qreal correctionFactor=1);
+    virtual const QString sensorName()=0;
 
     template<typename T>
-    void initSensor(QString sensorName, bool &initDone)
+    void initSensor(bool &initDone)
     {
 
+        const QString name = sensorName();
+
         if (!initDone) {
-            m_remoteSensorManager->loadPlugin(sensorName);
-            m_remoteSensorManager->registerSensorInterface<T>(sensorName);
+            if (!m_remoteSensorManager->loadPlugin(name)){
+                sensorError(KErrNotFound);
+                return;
+            }
+            m_remoteSensorManager->registerSensorInterface<T>(name);
         }
-        m_sensorInterface = T::controlInterface(sensorName);
+        m_sensorInterface = T::controlInterface(name);
         if (!m_sensorInterface) {
-            m_sensorInterface = const_cast<T*>(T::listenInterface(sensorName));
+            m_sensorInterface = const_cast<T*>(T::listenInterface(name));
         }
         if (!m_sensorInterface) {
+            sensorError(KErrNotFound);
             return;
         }
 
@@ -108,19 +120,40 @@ protected:
             addDataRate(rateMin, rateMax);
         }
 
-        if (sensorName=="alssensor") return;                // SensorFW returns lux values, plugin enumerated values
-        if (sensorName=="accelerometersensor") return;      // SensorFW returns milliGs, plugin m/s^2
-        if (sensorName=="magnetometersensor") return;       // SensorFW returns nanoTeslas, plugin Teslas
+        //bufferSizes
+        //TODO: waiting next sensord version
+//        IntegerRangeList sizes = m_sensorInterface->getAvailableBufferSizes();
+//        int l = sizes.size();
+//        if (l>0){
+//            m_efficientBufferSize = (l==1) ? 1 : sizes.at(1).first;
+//            m_maxBufferSize = sizes.at(l-1).second;
+//        }
+        m_maxBufferSize = 256;  // TODO: remove once the snippet above is taken into use
+        sensor()->setProperty(MAX_BUFFER_SIZE, m_maxBufferSize);
+        sensor()->setProperty(EFFICIENT_BUFFER_SIZE, m_efficientBufferSize);
+
+        if (name=="alssensor") return;                // SensorFW returns lux values, plugin enumerated values
+        if (name=="accelerometersensor") return;      // SensorFW returns milliGs, plugin m/s^2
+        if (name=="magnetometersensor") return;       // SensorFW returns nanoTeslas, plugin Teslas
+        if (name=="gyroscopesensor") return;          // SensorFW returns DSPs, plugin milliDSPs
 
         setDescription(m_sensorInterface->property("description").toString());
 
-        if (sensorName=="tapsensor") return;
+        if (name=="tapsensor") return;
         setRanges();
     };
+
+
+    AbstractSensorChannelInterface* m_sensorInterface;
+    int m_bufferSize;
+    const int bufferSize();
 
 private:
     static SensorManagerInterface* m_remoteSensorManager;
     int m_prevOutputRange;
+    bool doConnectAfterCheck();
+    int m_efficientBufferSize, m_maxBufferSize;
+
 };
 
 #endif

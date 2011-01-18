@@ -48,8 +48,12 @@
 #include <qrotationsensor.h>
 #include <qtapsensor.h>
 #include <QFile>
+#include <QDebug>
 
 QTM_USE_NAMESPACE
+
+const char* const MAX_BUFFER_SIZE = "maxBufferSize";
+const char* const EFFICIENT_BUFFER_SIZE = "efficientBufferSize";
 
 
 
@@ -68,12 +72,12 @@ QString checkSensor( QSensor *sensor )
 
     for( int i = 0; i < sen_datarates.size(); ++i )
     {
-       datarates.append("[");
-       QString num;
-       datarates.append(num.setNum(sen_datarates[i].first));
-       datarates.append("..");
-       datarates.append(num.setNum(sen_datarates[i].second));
-       datarates.append("] ");
+        datarates.append("[");
+        QString num;
+        datarates.append(num.setNum(sen_datarates[i].first));
+        datarates.append("..");
+        datarates.append(num.setNum(sen_datarates[i].second));
+        datarates.append("] ");
     }
 
 
@@ -90,6 +94,24 @@ QString checkSensor( QSensor *sensor )
         outputRanges.append("] ");
     }
 
+    // bufferSizes
+    QVariant maxVariant = sensor->property(MAX_BUFFER_SIZE);
+    int maxSize = maxVariant.isValid()?maxVariant.toInt():1;
+    QVariant efficientVariant = sensor->property(EFFICIENT_BUFFER_SIZE);
+    int efficientSize = efficientVariant.isValid()?efficientVariant.toInt():1;
+    QString bufferSizes("[1");
+    if (efficientSize==1){
+        bufferSizes.append("..");
+    }
+    else{
+        bufferSizes.append("|");
+        for (int i=1; efficientSize*i<maxSize; i++){
+            bufferSizes.append(QString::number(efficientSize*i));
+            bufferSizes.append("|");
+        }
+    }
+    bufferSizes.append(QString::number(maxSize));
+    bufferSizes.append("]");
 
     QString metadata(sen_ident);
     metadata.append(",");
@@ -100,7 +122,11 @@ QString checkSensor( QSensor *sensor )
     metadata.append(outputRanges);
     metadata.append(",");
     metadata.append(datarates);
+    metadata.append(",");
+    metadata.append(bufferSizes);
     metadata.append("\n");
+
+
 
     return metadata;
 }
@@ -108,12 +134,8 @@ QString checkSensor( QSensor *sensor )
 int main( int argc, char **argv )
 {
     QCoreApplication app(argc, argv);
-
     QStringList args = app.arguments();
     QString fileName = args.size()>1?args.at(1):"metadata.csv";
-    QTextStream out2(stdout);
-    out2<<fileName;
-
     QFile file(fileName);
 
     bool result = true;
@@ -122,35 +144,25 @@ int main( int argc, char **argv )
 
     QTextStream out(&file);
 
+    out <<"Identifier,Type,Description,OutputRanges,DataRates,BufferSizes"<<endl;
 
-//    QTextStream out(stdout);
+    QList<QByteArray> types = QSensor::sensorTypes();
+    for (int j=0, l= types.size();j<l; j++ ){
 
-    QSensor *sensors[8];
-    sensors[0] = new QAccelerometer;
-    sensors[1] = new QAmbientLightSensor;
-    sensors[2] = new QCompass;
-    sensors[3] = new QMagnetometer;
-    sensors[4] = new QOrientationSensor;
-    sensors[5] = new QProximitySensor;
-    sensors[6] = new QRotationSensor;
-    sensors[7] = new QTapSensor;
+        const QByteArray type = types.at(j);
+        QList<QByteArray> ids = QSensor::sensorsForType(type);
 
-
-    out <<"Identifier,Type,Description,OutputRanges,DataRates"<<endl;
-
-    for( int i = 0; i < 8; ++i )
-    {
-        if( ! sensors[i] )
+        for( int i = 0, ll=ids.size(); i < ll; ++i )
         {
-            out << "sensor number " << i << " unavailable" << endl;
-            continue;
-        }
-        if( ! sensors[i]->connectToBackend() )
-        {
-            out << "connectToBackend failed" << endl;
-            result = false;
-        } else {
-            out << checkSensor(sensors[i] );
+            QSensor sensor(type);
+            sensor.setIdentifier(ids.at(i));
+            if( ! sensor.connectToBackend() )
+            {
+                qDebug() << "connectToBackend failed" << ids.at(i) <<endl;
+                result = false;
+            } else {
+                out << checkSensor(&sensor);
+            }
         }
     }
 
