@@ -373,17 +373,21 @@ void S60MediaPlayerSession::setPosition(qint64 pos)
 {
     if (position() == pos)
         return;
-    
-    if (state() == QMediaPlayer::PlayingState) 
+
+    QMediaPlayer::State originalState = state();
+
+    if (originalState == QMediaPlayer::PlayingState) 
         pause();
 
     TRAPD(err, doSetPositionL(pos * 1000));
     setError(err);
-    if (err ==  KErrNotSupported) {
+
+    if (err == KErrNotSupported) {
         m_seekable = false;
         emit seekableChanged(m_seekable);
     }
-    if (state() == QMediaPlayer::PausedState)
+
+    if (originalState == QMediaPlayer::PlayingState)
         play();
 
     emit positionChanged(position());
