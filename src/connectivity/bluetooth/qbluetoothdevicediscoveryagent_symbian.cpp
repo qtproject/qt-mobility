@@ -49,7 +49,8 @@
 QTM_BEGIN_NAMESPACE
 
 QBluetoothDeviceDiscoveryAgentPrivate::QBluetoothDeviceDiscoveryAgentPrivate()
-    : m_deviceDiscovery(0)
+    : inquiryType(QBluetoothDeviceDiscoveryAgent::GeneralUnlimitedInquiry)
+    , m_deviceDiscovery(0)
 {
     TInt result;
     /* connect to socker server */
