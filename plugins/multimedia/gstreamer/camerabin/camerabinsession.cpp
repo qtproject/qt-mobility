@@ -203,15 +203,22 @@ GstPhotography *CameraBinSession::photography()
 {
     if (GST_IS_PHOTOGRAPHY(m_pipeline)) {
         return GST_PHOTOGRAPHY(m_pipeline);
-    } else if (m_videoSrc && GST_IS_PHOTOGRAPHY(m_videoSrc)) {
-        return GST_PHOTOGRAPHY(m_videoSrc);
-    } else {
-        GstElement *src = 0;
-        g_object_get(m_pipeline, VIDEO_SOURCE_PROPERTY, &src, NULL);
-
-        if (src && GST_IS_PHOTOGRAPHY(src))
-            return GST_PHOTOGRAPHY(src);
     }
+
+    if (!m_videoSrc) {
+        m_videoSrc = buildVideoSrc();
+
+        if (m_videoSrc)
+            g_object_set(m_pipeline, VIDEO_SOURCE_PROPERTY, m_videoSrc, NULL);
+        else
+            g_object_get(m_pipeline, VIDEO_SOURCE_PROPERTY, &m_videoSrc, NULL);
+
+        updateVideoSourceCaps();
+        m_videoInputHasChanged = false;
+    }
+
+    if (m_videoSrc && GST_IS_PHOTOGRAPHY(m_videoSrc))
+        return GST_PHOTOGRAPHY(m_videoSrc);
 
     return 0;
 }
