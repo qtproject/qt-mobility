@@ -131,13 +131,13 @@ int QSystemDisplayInfo::colorDepth(int screenNumber)
 }
 
 /*!
-    Returns the orientation of the \a screen.
+    Returns the orientation of the UI QDesktopWidget for \a screen.
 
     \sa QDesktopWidget::screenCount()
 */
-QSystemDisplayInfo::DisplayOrientation QSystemDisplayInfo::getOrientation(int screen)
+QSystemDisplayInfo::DisplayOrientation QSystemDisplayInfo::orientation(int screen)
 {
-    return displayInfoPrivate()->getOrientation(screen);
+    return displayInfoPrivate()->orientation(screen);
 }
 
 

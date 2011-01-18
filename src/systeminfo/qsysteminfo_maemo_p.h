@@ -212,13 +212,12 @@ public:
 
     QSystemDisplayInfoPrivate(QSystemDisplayInfoLinuxCommonPrivate *parent = 0);
     virtual ~QSystemDisplayInfoPrivate();
-    QSystemDisplayInfo::DisplayOrientation getOrientation(int screen);
+    QSystemDisplayInfo::DisplayOrientation orientation(int screen);
     float contrast(int screen);
     int getDPIWidth(int screen);
     int getDPIHeight(int screen);
-    int physicalHeight(int screen);
-    int physicalWidth(int screen);
     int displayBrightness(int screen);
+    QSystemDisplayInfo::BacklightState backlightStatus(int screen);
 };
 
 class QSystemStorageInfoPrivate : public QSystemStorageInfoLinuxCommonPrivate
@@ -249,6 +248,14 @@ public:
     QSystemDeviceInfo::PowerState currentPowerState();
     QString model();
     QString productName();
+    bool isKeyboardFlippedOpen();//1.2
+    bool keypadLightOn(QSystemDeviceInfo::KeypadType type);//1.2
+
+    int messageRingtoneVolume();//1.2
+    int voiceRingtoneVolume();//1.2
+    bool vibrationActive();//1.2
+
+    QSystemDeviceInfo::LockTypeFlags lockStatus();//1.2
 
 protected:
 #if !defined(QT_NO_DBUS)
@@ -270,6 +277,7 @@ private:
     bool vibratingAlertEnabled;
     bool beepProfile;
     int ringingAlertVolume;
+    int smsAlertVolume;
     QSystemDeviceInfo::BatteryStatus currentBatStatus;
 
     QSystemDeviceInfo::PowerState previousPowerState;

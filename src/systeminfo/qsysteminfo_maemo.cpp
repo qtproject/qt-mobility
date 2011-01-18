@@ -54,6 +54,17 @@
 #include <QTimer>
 #include <QMapIterator>
 
+#include <fcntl.h>
+#include <sys/ioctl.h>
+#include <linux/input.h>
+
+#define BITS_PER_LONG (sizeof(long) * 8)
+#define NBITS(x) ((((x)-1)/BITS_PER_LONG)+1)
+#define OFF(x)  ((x)%BITS_PER_LONG)
+#define BIT(x)  (1UL<<OFF(x))
+#define LONG(x) ((x)/BITS_PER_LONG)
+#define test_bit(bit, array)    ((array[LONG(bit)] >> OFF(bit)) & 1)
+
 #if !defined(QT_NO_DBUS)
 #include "linux/gconfitem_p.h" // Temporarily here.
 #endif
@@ -999,8 +1010,31 @@ int QSystemDisplayInfoPrivate::displayBrightness(int screen)
 
 QSystemDisplayInfo::DisplayOrientation QSystemDisplayInfoPrivate::getOrientation(int screen)
 {
+    Q_UNUSED(screen)
     QSystemDisplayInfo::DisplayOrientation orientation = QSystemDisplayInfo::Unknown;
 
+#if !defined(QT_NO_DBUS)
+    QDBusMessage reply = QDBusConnection::systemBus().call(
+                             QDBusMessage::createMethodCall("com.nokia.SensorService", "/org/maemo/contextkit/Screen/TopEdge",
+                                                            "org.maemo.contextkit.Property", "Get"));
+    if (reply.type() != QDBusMessage::ErrorMessage) {
+        QList<QVariant> args;
+        qvariant_cast<QDBusArgument>(reply.arguments().at(0)) >> args;
+        if (args.count() == 0) {
+            return orientation;
+        }
+        QString nativeOrientation = args.at(0).toString();
+        if (nativeOrientation == "top") {
+            orientation = QSystemDisplayInfo::Landscape;
+        } else if (nativeOrientation == "left") {
+            orientation = QSystemDisplayInfo::Portrait;
+        } else if (nativeOrientation == "bottom") {
+            orientation = QSystemDisplayInfo::InvertedLandscape;
+        } else if (nativeOrientation == "right") {
+            orientation = QSystemDisplayInfo::InvertedPortrait;
+        }
+    }
+#endif
     return orientation;
 }
 
@@ -1030,18 +1064,27 @@ int QSystemDisplayInfoPrivate::getDPIHeight(int screen)
     return dpi;
 }
 
-int QSystemDisplayInfoPrivate::physicalHeight(int screen)
+QSystemDisplayInfo::BacklightState QSystemDisplayInfoPrivate::backlightStatus(int screen)
 {
-    int height=0;
+    Q_UNUSED(screen)
+    QSystemDisplayInfo::BacklightState backlightState = QSystemDisplayInfo::BacklightStateUnknown;
 
-    return height;
-}
-
-int QSystemDisplayInfoPrivate::physicalWidth(int screen)
-{
-    int width=0;
-
-    return width;
+#if !defined(QT_NO_DBUS)
+    QDBusReply<QString> reply = QDBusConnection::systemBus().call(
+                                    QDBusMessage::createMethodCall("com.nokia.mce", "/com/nokia/mce/request",
+                                                                   "com.nokia.mce.request", "get_display_status"));
+    if (reply.isValid()) {
+        QString displayStatus = reply.value();
+        if (displayStatus == "off") {
+            backlightState = QSystemDisplayInfo::BacklightStateOff;
+        } else if (displayStatus == "dimmed") {
+            backlightState = QSystemDisplayInfo::backlightStateDimmed;
+        } else if (displayStatus == "on") {
+            backlightState = QSystemDisplayInfo::backlightStateOn;
+        }
+    }
+#endif
+    return backlightState;
 }
 
 QSystemStorageInfoPrivate::QSystemStorageInfoPrivate(QSystemStorageInfoLinuxCommonPrivate *parent)
@@ -1307,6 +1350,10 @@ void QSystemDeviceInfoPrivate::setupProfile()
     if (ringingAlertVolumeReply.isValid())
         ringingAlertVolume = ringingAlertVolumeReply.value().toInt();
 
+    QDBusReply<QString> smsAlertVolumeReply = connectionInterface.call("get_value", profileName, "sms.alert.volume");
+    if (smsAlertVolumeReply.isValid())
+        smsAlertVolume = smsAlertVolumeReply.value().toInt();
+
     qDBusRegisterMetaType<ProfileDataValue>();
     qDBusRegisterMetaType<QList<ProfileDataValue> >();
 
@@ -1343,6 +1390,8 @@ void QSystemDeviceInfoPrivate::profileChanged(bool changed, bool active, QString
                 vibratingAlertEnabled = QString::compare(value.val, "On", Qt::CaseInsensitive) == 0;
             else if (value.key == "ringing.alert.volume")
                 ringingAlertVolume = value.val.toInt();
+            else if (value.key == "sms.alert.volume")
+                smsAlertVolume = value.val.toInt();
         }
         if (changed)
             emit currentProfileChanged(currentProfile());
@@ -1390,6 +1439,96 @@ QString QSystemDeviceInfoPrivate::productName()
 }
 
 #endif
+
+bool QSystemDeviceInfoPrivate::isKeyboardFlippedOpen()
+{
+    bool keyboardFlippedOpen = false;
+    unsigned long bits[NBITS(KEY_MAX)] = {0}; /* switch state bits */
+    int eventFd = open("/dev/input/gpio-keys", O_RDONLY | O_NONBLOCK);
+
+    if (-1 == eventFd) {
+        goto probing_done;
+    }
+
+    if (-1 == ioctl(eventFd, EVIOCGSW(KEY_MAX), bits)) {
+        goto probing_done;
+    }
+
+    keyboardFlippedOpen = (0 == test_bit(SW_KEYPAD_SLIDE, bits));
+
+probing_done:
+    if (eventFd != -1) {
+        close(eventFd);
+    }
+    return keyboardFlippedOpen;
+}
+
+bool QSystemDeviceInfoPrivate::keypadLightOn(QSystemDeviceInfo::KeypadType type)
+{
+    bool lightOn = false;
+
+    if (type != QSystemDeviceInfo::PrimaryKeypad) {
+        return lightOn;
+    }
+
+#if !defined(QT_NO_DBUS)
+    QDBusReply<bool> reply = QDBusConnection::systemBus().call(
+                                 QDBusMessage::createMethodCall("com.nokia.mce", "/com/nokia/mce/request",
+                                                                "com.nokia.mce.request", "get_key_backlight_state"));
+    if (reply.isValid()) {
+        lightOn = reply.value();
+    }
+#endif
+    return lightOn;
+}
+
+int QSystemDeviceInfoPrivate::messageRingtoneVolume()
+{
+    return smsAlertVolume;
+}
+
+int QSystemDeviceInfoPrivate::voiceRingtoneVolume()
+{
+    return ringingAlertVolume;
+}
+
+bool QSystemDeviceInfoPrivate::vibrationActive()
+{
+    return vibratingAlertEnabled;
+}
+
+QSystemDeviceInfo::LockTypeFlags QSystemDeviceInfoPrivate::lockStatus()
+{
+    QSystemDeviceInfo::LockTypeFlags lockFlags; /* no active locks */
+#if !defined(QT_NO_DBUS)
+    /* Check the PIN lock status from devicelock */
+    QDBusMessage lockStateCall = QDBusMessage::createMethodCall("com.nokia.devicelock", "/request",
+                                                                "com.nokia.devicelock", "getState");
+    /* getState argument 0: LockType_t, where 1 = the device lock */
+    lockStateCall << QVariant::fromValue(1);
+
+    QDBusReply<int> deviceLockReply = QDBusConnection::systemBus().call(lockStateCall);
+    if (deviceLockReply.isValid()) {
+        int lockState = deviceLockReply.value();
+        if (lockState != 0) {
+            /* 0 == unlocked, if we get any other state back, we are locked */
+            lockFlags |= QSystemDeviceInfo::PinLocked;
+        }
+    }
+
+    /* Check the touch screen/keypad lock status from MCE */
+    QDBusReply<QString> mceReply = QDBusConnection::systemBus().call(
+                                       QDBusMessage::createMethodCall("com.nokia.mce", "/com/nokia/mce/request",
+                                                                      "com.nokia.mce.request", "get_tklock_mode"));
+    if (mceReply.isValid()) {
+        QString tkLockMode = mceReply.value();
+        if (tkLockMode != "unlocked" && tkLockMode != "silent-unlocked") {
+            lockFlags |= QSystemDeviceInfo::TouchAndKeyboardLocked;
+        }
+    }
+#endif
+    return lockFlags;
+}
 
 //////////////
 ///////

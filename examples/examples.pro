@@ -158,3 +158,5 @@ sources.path = $$QT_MOBILITY_EXAMPLES
 
 INSTALLS += sources
 
+SUBDIRS += \
+    qsystemalignedtimer

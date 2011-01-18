@@ -13,7 +13,8 @@ PUBLIC_HEADERS +=   qsysteminfo.h \
     qsystemnetworkinfo.h \
     qsystemscreensaver.h \
     qsystemstorageinfo.h  \
-    qsystembatteryinfo.h
+    qsystembatteryinfo.h \
+    qsystemalignedtimer.h
 
 SOURCES += qsystemgeneralinfo.cpp \
     qsystemdeviceinfo.cpp \
@@ -21,7 +22,8 @@ SOURCES += qsystemgeneralinfo.cpp \
     qsystemnetworkinfo.cpp \
     qsystemscreensaver.cpp \
     qsystemstorageinfo.cpp \
-    qsystembatteryinfo.cpp
+    qsystembatteryinfo.cpp \
+    qsystemalignedtimer.cpp
 
 PRIVATE_HEADERS += qsysteminfocommon_p.h
 
@@ -32,8 +34,8 @@ win32:!simulator {
     contains(CONFIG,release) {
        CONFIG-=console
     }
-    SOURCES += qsysteminfo_win.cpp 
-    HEADERS += qsysteminfo_win_p.h 
+    SOURCES += qsysteminfo_win.cpp
+    HEADERS += qsysteminfo_win_p.h
 
     win32-msvc*: {
         SOURCES += windows/qwmihelper_win.cpp
@@ -90,6 +92,7 @@ unix:!simulator {
 
                 SOURCES += linux/qdevicekitservice_linux.cpp
                 HEADERS += linux/qdevicekitservice_linux_p.h
+                HEADERS += linux/qsysteminfo_dbus_p.h
 
         # udev should not be enabled on maemo5 and maemo6
         contains(udev_enabled, yes): {
@@ -107,7 +110,7 @@ unix:!simulator {
                 }
                 contains(CONFIG,meego): { #for now... udisks
                 } else {
-                    DEFINES += QT_NO_UDISKS QT_NO_MEEGO
+                    DEFINES += QT_NO_UDISKS
                     LIBS += -lX11 -lXrandr
                    }
                 contains(connman_enabled, yes): {
@@ -118,12 +121,12 @@ unix:!simulator {
                     DEFINES += QT_NO_CONNMAN
                 }
             } else {
-                DEFINES += QT_NO_NETWORKMANAGER QT_NO_UDISKS QT_NO_CONNMAN QT_NO_MEEGO
+                DEFINES += QT_NO_NETWORKMANAGER QT_NO_UDISKS QT_NO_CONNMAN
                 LIBS += -lX11 -lXrandr
 
             }
         }
-        
+
     maemo5|maemo6: {
             #Qt GConf wrapper added here until a proper place is found for it.
             CONFIG += link_pkgconfig
@@ -156,9 +159,9 @@ unix:!simulator {
                      } else {
                          contains(QMAKE_MAC_SDK, "/Developer/SDKs/MacOSX10.6.sdk") {
                              SDK6="yes"
-                     }     
+                     }
                  }
-            
+
                 !isEmpty(SDK6) {
                         LIBS += -framework CoreWLAN  -framework CoreLocation
                         DEFINES += MAC_SDK_10_6
@@ -173,10 +176,13 @@ unix:!simulator {
     symbian:{
         contains(S60_VERSION, 3.1){
             DEFINES += SYMBIAN_3_1
-        }        
+        }
+        contains(S60_VERSION, 5.1) | contains(S60_VERSION, 5.2){
+            DEFINES += SYMBIAN_3_PLATFORM
+        }
 
         contains(hb_symbian_enabled,yes) {
-            ## for symbian ^4 
+            ## for symbian ^4
             CONFIG += qt hb
             DEFINES += HB_SUPPORTED
             message("s60_HbKeymap enabled")
@@ -185,27 +191,35 @@ unix:!simulator {
             LIBS += -lptiengine \
         }
 
-        INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE        
+        INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
         DEPENDPATH += symbian
-        
+
         SOURCES += qsysteminfo_s60.cpp \
             telephonyinfo_s60.cpp \
             chargingstatus_s60.cpp \
             wlaninfo_s60.cpp \
-            storagestatus_s60.cpp
+            storagestatus_s60.cpp \
+        lockandflipstatus_s60.cpp \
+        storagedisknotifier_s60.cpp \
+        pubandsubkey_s60.cpp \
+        batterystatus_s60.cpp
 
         HEADERS += qsysteminfo_s60_p.h \
             telephonyinfo_s60.h \
             chargingstatus_s60.h \
             wlaninfo_s60.h \
-            storagestatus_s60.h
+            storagestatus_s60.h \
+        lockandflipstatus_s60.h \
+        storagedisknotifier_s60.h \
+        pubandsubkey_s60.h \
+        batterystatus_s60.h
 
         LIBS += -lprofileengine \
             -letel3rdparty \
             -lsysutil \
             -lcentralrepository \
             -lcenrepnotifhandler \
-            -lefsrv \            
+            -lefsrv \
             -lfeatdiscovery \
             -lhwrmvibraclient \
             -lavkon \    #Used by AknLayoutUtils::PenEnabled(). Try to remove this dependency.
@@ -216,7 +230,16 @@ unix:!simulator {
             -lbluetooth \
             -lgdi \
             -lecom \
-            -lplatformenv
+            -lplatformenv \
+            -lhwrmlightclient \
+        -lhwrmfmtxclient \
+        -ldisknotifyhandler \
+        -lusbman
+
+        contains(S60_VERSION, 5.1) | contains(S60_VERSION, 5.2) {
+            LIBS += -lhwrmpowerclient
+        }
+
 
         contains(hb_symbian_enabled,yes) {
                 CONFIG += qt hb

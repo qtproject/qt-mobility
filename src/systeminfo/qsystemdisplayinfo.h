@@ -66,24 +66,24 @@ public:
         Portrait,
         InvertedLandscape,
         InvertedPortrait
-    };
+    }; //1.2
 
     enum BacklightState {
         BacklightStateUnknown = -1,
         BacklightStateOff,
         backlightStateDimmed,
         backlightStateOn
-    };
+    };//1.2
 
     static int displayBrightness(int screen);
     static int colorDepth(int screen);
 
-    QSystemDisplayInfo::DisplayOrientation getOrientation(int screen);
-    float contrast(int screen);
-    int getDPIWidth(int screen);
-    int getDPIHeight(int screen);
-    int physicalHeight(int screen);
-    int physicalWidth(int screen);
+    QSystemDisplayInfo::DisplayOrientation orientation(int screen);//1.2
+    float contrast(int screen);//1.2
+    int getDPIWidth(int screen);//1.2
+    int getDPIHeight(int screen);//1.2
+    int physicalHeight(int screen);//1.2
+    int physicalWidth(int screen);//1.2
 
     QSystemDisplayInfo::BacklightState backlightStatus(int screen); //1.2
 

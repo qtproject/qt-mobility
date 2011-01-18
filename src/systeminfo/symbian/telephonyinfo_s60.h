@@ -61,6 +61,7 @@ public:
 
     virtual void cellNetworkSignalStrengthChanged() = 0;
     virtual void cellNetworkStatusChanged() = 0;
+    virtual void changedCellId(int) = 0;
 };
 
 class CTelephonyInfo : public CActive
@@ -173,6 +174,7 @@ private:
     CTelephony::TNetworkInfoV1 m_networkInfoV1;
 
     int m_cellId;
+    int m_previouscellId;
     int m_locationAreaCode;
 
     QString m_networkId;

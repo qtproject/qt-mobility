@@ -404,7 +404,7 @@ QSystemDisplayInfoPrivate::~QSystemDisplayInfoPrivate()
 {
 }
 
-QSystemDisplayInfo::DisplayOrientation QSystemDisplayInfoPrivate::getOrientation(int screen)
+QSystemDisplayInfo::DisplayOrientation QSystemDisplayInfoPrivate::orientation(int screen)
 {
     QSystemDisplayInfo::DisplayOrientation orientation = QSystemDisplayInfo::Unknown;
 #if defined(Q_WS_X11)
@@ -717,11 +717,28 @@ QString QSystemDeviceInfoPrivate::productName()
     return QString();
 }
 
+
+int QSystemDeviceInfoPrivate::messageRingtoneVolume()
+{
+    return 0;
+}
+
+int QSystemDeviceInfoPrivate::voiceRingtoneVolume()
+{
+    return 0;
+}
+
+bool QSystemDeviceInfoPrivate::vibrationActive()
+{
+    return false;
+}
+
 QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QSystemScreenSaverLinuxCommonPrivate *parent)
          : QSystemScreenSaverLinuxCommonPrivate(parent), currentPid(0)
  {
      kdeIsRunning = false;
      gnomeIsRunning = false;
+     meegoIsRunning = false;
      whichWMRunning();
  }
 
@@ -747,14 +764,14 @@ QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QSystemScreenSaverLinuxComm
          }
 #endif
      }
-#if defined(QT_NO_DBUS) && defined(Q_WS_X11) && defined(QT_NO_MEEGO)
+#if defined(QT_NO_DBUS) && defined(Q_WS_X11) && !defined(Q_WS_MEEGO)
      changeTimeout(-1);
 #endif
  }
 
  int QSystemScreenSaverPrivate::changeTimeout(int timeout)
  {
-#if defined(Q_WS_X11) && defined(QT_NO_MEEGO)
+#if defined(Q_WS_X11) && !defined(Q_WS_MEEGO)
 
      int ttime;
      int interval;
@@ -775,7 +792,7 @@ Q_UNUSED(timeout)
 
  bool QSystemScreenSaverPrivate::setScreenSaverInhibit()
  {
-     if(kdeIsRunning || gnomeIsRunning) {
+     if(kdeIsRunning || gnomeIsRunning || meegoIsRunning) {
 #if !defined(QT_NO_DBUS)
          const pid_t pid = getppid();
          QDBusConnection dbusConnection = QDBusConnection::sessionBus();
@@ -801,7 +818,7 @@ Q_UNUSED(timeout)
          }
 #endif
      } else {
-#ifdef Q_WS_X11
+#if defined(Q_WS_X11) && !defined(Q_WS_MEEGO)
          changeTimeout(0);
          screenSaverIsInhibited = true;
 #endif
@@ -812,7 +829,7 @@ Q_UNUSED(timeout)
 
 bool QSystemScreenSaverPrivate::screenSaverInhibited()
 {
-    if(kdeIsRunning || gnomeIsRunning) {
+    if(kdeIsRunning || gnomeIsRunning || meegoIsRunning) {
         if(currentPid != 0) {
             return true;
         } else {
@@ -820,7 +837,7 @@ bool QSystemScreenSaverPrivate::screenSaverInhibited()
         }
     }
 
-#if defined(Q_WS_X11) && defined(QT_NO_MEEGO)
+#if defined(Q_WS_X11) && !defined(Q_WS_MEEGO)
 
     int timeout;
     int interval;
@@ -849,6 +866,10 @@ void QSystemScreenSaverPrivate::whichWMRunning()
         kdeIsRunning = true;
         return;
     }
+    if(QFileInfo("/etc/meego-release").exists()) {
+        meegoIsRunning = true;
+        return;
+    }
     connectionInterface = new QDBusInterface(QLatin1String("org.gnome.SessionManager"),
                                              QLatin1String("/org/gnome/SessionManager"),
                                              QLatin1String("org.gnome.SessionManager"),
@@ -874,7 +895,7 @@ bool QSystemScreenSaverPrivate::isScreenLockEnabled()
         if(kdeScreenSaveConfig.status() == QSettings::NoError) {
             return kdeScreenSaveConfig.value(QLatin1String("Lock")).toBool();
         }
-    } else if(gnomeIsRunning) {
+    } else if(meegoIsRunning || gnomeIsRunning) {
 
     }
 
@@ -883,7 +904,7 @@ bool QSystemScreenSaverPrivate::isScreenLockEnabled()
 
 bool QSystemScreenSaverPrivate::isScreenSaverActive()
 {
-    if(kdeIsRunning || gnomeIsRunning) {
+    if(kdeIsRunning || gnomeIsRunning || meegoIsRunning) {
 #if !defined(QT_NO_DBUS)
         const pid_t pid = getppid();
         QDBusConnection dbusConnection = QDBusConnection::sessionBus();
