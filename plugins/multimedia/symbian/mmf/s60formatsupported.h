@@ -39,31 +39,27 @@
 **
 ****************************************************************************/
 
+#ifndef S60FORMATSUPPORTED_H_
+#define S60FORMATSUPPORTED_H_
 
-#ifndef S60SERVICEPLUGIN_H
-#define S60SERVICEPLUGIN_H
+#include <mmf/common/mmfcontrollerpluginresolver.h>
+#include <mmf/server/mmfdatasourcesink.hrh>
+#include <qstringlist.h>
+#include <badesca.h>
+#include <qstring.h>
 
-#include <QtCore/qobject.h>
-#include <qmediaservice.h>
-#include <qmediaserviceproviderplugin.h>
-#include "s60formatsupported.h"
-
-QT_USE_NAMESPACE
-
-class S60MediaServicePlugin : public QMediaServiceProviderPlugin,public QMediaServiceSupportedFormatsInterface
+class S60FormatSupported
 {
-    Q_OBJECT
-    Q_INTERFACES(QMediaServiceSupportedFormatsInterface)
 public:
+    S60FormatSupported();
+    ~S60FormatSupported();
 
-    QStringList keys() const;
-    QMediaService* create(QString const& key);
-    void release(QMediaService *service);
+    QStringList supportedPlayMimeTypesL();
 
-    QtMultimediaKit::SupportEstimate hasSupport(const QString &mimeType, const QStringList& codecs) const;
-    QStringList supportedMimeTypes() const;
 private:
-    mutable QStringList m_supportedmimetypes;
-};
 
-#endif // S60SERVICEPLUGIN_H
+    CMMFFormatSelectionParameters* m_playformatparam;
+    CMMFControllerPluginSelectionParameters* m_controllerparam;
+    QStringList m_supportedplaymime;
+};
+#endif /* S60FORMATSUPPORTED_H_ */

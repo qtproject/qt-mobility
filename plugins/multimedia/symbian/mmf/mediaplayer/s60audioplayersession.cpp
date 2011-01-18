@@ -288,3 +288,9 @@ QString S60AudioPlayerSession::qStringFromTAudioOutputPreference(CAudioOutput::T
     return QString("Default");
 }
 #endif
+
+bool S60AudioPlayerSession::getIsSeekable() const
+{
+    return ETrue;
+}
+
