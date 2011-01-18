@@ -554,8 +554,6 @@ bool QSystemDeviceInfo::isKeyboardFlippedOpen()
 }
 
 /*!
-  \property QSystemDeviceInfo::keypadLightOn
-  \brief Keypad light on.
 
   Returns true if the key pad, indicated by \a type, light is on, otherwise false;
   */

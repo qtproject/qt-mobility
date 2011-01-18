@@ -61,7 +61,7 @@ class Q_SYSINFO_EXPORT QSystemAlignedTimer : public QObject
     Q_PROPERTY(int timerWindow READ timerWindow WRITE setWindow NOTIFY windowChanged)
     Q_PROPERTY(int interval READ interval WRITE setInterval NOTIFY intervalChanged)
 
-    Q_PROPERTY(bool running READ isRunning WRITE setRunning NOTIFY runningChanged)
+    Q_PROPERTY(bool running READ isRunning WRITE setRunning CONSTANT)
     Q_PROPERTY(bool singleShot READ isSingleShot WRITE setSingleShot)
 public:
 
@@ -77,10 +77,10 @@ public:
     int interval() const;
 
     inline void setSingleShot(bool singleShot);
-    inline bool isSingleShot() const { return single; }
+    inline bool isSingleShot() const;
 
 
-    static void singleShot(int msec, QObject *receiver, const char *member);
+    Q_INVOKABLE static void singleShot(int msec, QObject *receiver, const char *member);
 
     bool isRunning() const { return isTimerRunning; }
     void setRunning(bool running);
@@ -93,9 +93,8 @@ public Q_SLOTS:
 
 Q_SIGNALS:
     void timeout();
-    void intervalChanged(int);
-    void windowChanged(int);
-    void runningChanged(bool);
+    void intervalChanged(int newInterval);
+    void windowChanged(int newWindow);
 
 private:
     QSystemAlignedTimerPrivate *d;

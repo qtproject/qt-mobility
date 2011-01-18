@@ -62,7 +62,27 @@ Q_GLOBAL_STATIC(QSystemAlignedTimerPrivate, alignedTimerPrivate)
 */
 
 /*!
-   \fn QSystemBatteryInfo::QSystemAlignedTimer(QObject *parent)
+  \fn void QSystemAlignedTimer::timeout()
+
+  This signal is emitted when the timer times out.
+ */
+
+/*!
+  \fn void QSystemAlignedTimer::intervalChanged(int newInterval)
+
+  This signal is emitted when timer interval has changed.
+  \a newInterval is the new timer interval.
+ */
+
+/*!
+  \fn void QSystemAlignedTimer::windowChanged(int newWindow)
+
+  This signal is emitted when the timer window has changed.
+  \a newWindow is the new timer window.
+ */
+
+
+/*!
    Constructs a QSystemAlignedTimer object with the given \a parent.
   */
 QSystemAlignedTimer::QSystemAlignedTimer(QObject *parent)
@@ -87,8 +107,6 @@ QSystemAlignedTimer::~QSystemAlignedTimer()
   In the case of 0, it means 'wake me up when someone else is woken up'.
 
   If you need a window of time in which your timer should fire, use QSystemAlignedTimer::setWindow
-
-  \sa QSystemAlignedTimer::setWindow
 
   */
 void QSystemAlignedTimer::start(int sec)
@@ -141,6 +159,7 @@ void QSystemAlignedTimer::stop()
 
 
 /*!
+
   Set the timeout interval to \a minTime in seconds that must be waited before timeout
   signal is emitted, and \a maxTime in seconds when the wait must end.
 
@@ -158,6 +177,10 @@ void QSystemAlignedTimer::setInterval(int minTime, int maxTime)
 }
 
 /*!
+  \property QSystemAlignedTimer::timerWindow
+  \brief The timers's window.
+
+
   Returns the current preferred timer window.
   */
 int QSystemAlignedTimer::timerWindow() const
@@ -167,8 +190,10 @@ int QSystemAlignedTimer::timerWindow() const
 
 
 /*!
+  \property QSystemAlignedTimer::interval
+  \brief The timers's interval.
+
   Returns this current timer interval.
-  This will usually differ than what was set with \a setInterval.
   */
 int QSystemAlignedTimer::interval() const
 {
@@ -176,22 +201,44 @@ int QSystemAlignedTimer::interval() const
 }
 
 /*!
+  Sets this timer to be a single shot \a singleShot is true, otherwise false.
   */
 inline void QSystemAlignedTimer::setSingleShot(bool singleShot)
 {
-Q_UNUSED(singleShot);
+    Q_UNUSED(singleShot);
 }
 
 /*!
+
+  This static function calls a slot after a given time interval.
+  \a sec is the time interval in seconds.
+  The receiver is the \a receiver object and the \a member is the slot.
   */
-void QSystemAlignedTimer::singleShot(int msec, QObject *receiver, const char *member)
+void QSystemAlignedTimer::singleShot(int sec, QObject *receiver, const char *member)
 {
-    Q_UNUSED(msec);
+    Q_UNUSED(sec);
     Q_UNUSED(receiver);
     Q_UNUSED(member);
 }
+/*!
+  \property QSystemAlignedTimer::singleShot
+  \brief Whether the timer is single shot.
+*/
 
 /*!
+  Returns true if this timer is a single shot, otherwise false.
+  */
+bool QSystemAlignedTimer::isSingleShot() const
+{
+    return single;
+}
+
+
+/*!
+  \property QSystemAlignedTimer::running
+  \brief Start the timer as single shot.
+
+   Sets the timer if \a running is true, otherwise stops it.
   */
 void QSystemAlignedTimer::setRunning(bool running)
 {

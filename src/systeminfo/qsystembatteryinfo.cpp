@@ -158,6 +158,13 @@ This signal is emitted when the charger type has changed, such as when a phone g
  */
 
 /*!
+  \fn void QSystemBatteryInfo::batteryStatusChanged(QSystemBatteryInfo::BatteryStatus batteryStatus)
+
+  This signal is emitted when battery status has changed.
+  \a batteryStatus is the new status.
+ */
+
+/*!
    \fn QSystemBatteryInfo::QSystemBatteryInfo(QObject *parent)
    Constructs a QSystemBatteryInfo object with the given \a parent.
   */
