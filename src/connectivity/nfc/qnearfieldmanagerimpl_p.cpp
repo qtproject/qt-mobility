@@ -39,8 +39,6 @@
 **
 ****************************************************************************/
 
-#include <qservicefilter.h>
-#include <qservicemanager.h>
 #include <QCoreApplication>
 
 #include "qnearfieldmanagerimpl_p.h"
