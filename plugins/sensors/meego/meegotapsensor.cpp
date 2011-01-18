@@ -39,20 +39,20 @@
 **
 ****************************************************************************/
 
-#include "maemo6tapsensor.h"
+#include "meegotapsensor.h"
 
-char const * const maemo6tapsensor::id("maemo6.tapsensor");
-bool maemo6tapsensor::m_initDone = false;
+char const * const meegotapsensor::id("meego.tapsensor");
+bool meegotapsensor::m_initDone = false;
 
-maemo6tapsensor::maemo6tapsensor(QSensor *sensor)
-    : maemo6sensorbase(sensor)
+meegotapsensor::meegotapsensor(QSensor *sensor)
+    : meegosensorbase(sensor)
 {
     initSensor<TapSensorChannelInterface>(m_initDone);
     setReading<QTapReading>(&m_reading);
 }
 
 
-void maemo6tapsensor::start(){
+void meegotapsensor::start(){
     QVariant v = sensor()->property("returnDoubleTapEvents");
     if (!(v.isValid())){
         sensor()->setProperty("returnDoubleTapEvents", true); //by default doubles
@@ -60,13 +60,13 @@ void maemo6tapsensor::start(){
     }
     else m_isDoubleTapSensor =  v.toBool();
 
-    maemo6sensorbase::start();
+    meegosensorbase::start();
     // Set tap type (single/double)
     m_reading.setDoubleTap(m_isDoubleTapSensor);
 }
 
 
-void maemo6tapsensor::slotDataAvailable(const Tap& data)
+void meegotapsensor::slotDataAvailable(const Tap& data)
 {
     if (data.type() == TapData::DoubleTap){
         if (!m_isDoubleTapSensor) return;
@@ -76,9 +76,9 @@ void maemo6tapsensor::slotDataAvailable(const Tap& data)
     // Set tap direction
     QTapReading::TapDirection o;
     switch (data.direction()) {
-    case TapData::X:         o = QTapReading::X;         break;
-    case TapData::Y:         o = QTapReading::Y;         break;
-    case TapData::Z:         o = QTapReading::Z;         break;
+    case TapData::X:         o = QTapReading::X_Both;    break;
+    case TapData::Y:         o = QTapReading::Y_Both;    break;
+    case TapData::Z:         o = QTapReading::Z_Both;    break;
     case TapData::LeftRight: o = QTapReading::X_Pos;     break;
     case TapData::RightLeft: o = QTapReading::X_Neg;     break;
     case TapData::TopBottom: o = QTapReading::Z_Neg;     break;
@@ -94,7 +94,7 @@ void maemo6tapsensor::slotDataAvailable(const Tap& data)
 }
 
 
-bool maemo6tapsensor::doConnect(){
+bool meegotapsensor::doConnect(){
     if (!(QObject::connect(m_sensorInterface, SIGNAL(dataAvailable(const Tap&)),
                            this, SLOT(slotDataAvailable(const Tap&))))){
         return false;
@@ -103,6 +103,6 @@ bool maemo6tapsensor::doConnect(){
 }
 
 
-const QString maemo6tapsensor::sensorName(){
+const QString meegotapsensor::sensorName(){
     return "tapsensor";
 }

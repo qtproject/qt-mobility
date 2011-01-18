@@ -39,34 +39,34 @@
 **
 ****************************************************************************/
 
-#ifndef MAEMO6ORIENTATIONSENSOR_H
-#define MAEMO6ORIENTATIONSENSOR_H
+#ifndef MEEGOPROXIMITYSENSOR_H
+#define MEEGOPROXIMITYSENSOR_H
 
-#include "maemo6sensorbase.h"
-#include <qorientationsensor.h>
+#include "meegosensorbase.h"
+#include <qproximitysensor.h>
 
-#include <orientationsensor_i.h>
+#include <proximitysensor_i.h>
 #include <unsigned.h>
 
 QTM_USE_NAMESPACE
 
-class maemo6orientationsensor : public maemo6sensorbase
+class meegoproximitysensor : public meegosensorbase
 {
     Q_OBJECT
 
 public:
     static char const * const id;
-    maemo6orientationsensor(QSensor *sensor);
+    meegoproximitysensor(QSensor *sensor);
 protected:
     virtual bool doConnect();
     virtual const QString sensorName();
 
 private:
-    QOrientationReading m_reading;
+    QProximityReading m_reading;
     static bool m_initDone;
-
+   
 private slots:
-    void slotDataAvailable(const Unsigned& orientation);
+    void slotDataAvailable(const Unsigned& data);
 };
 
 #endif
