@@ -1,0 +1,15 @@
+usr/include/qt4/QtSystemInfo/QSystemDeviceInfo
+usr/include/qt4/QtSystemInfo/QSystemDisplayInfo
+usr/include/qt4/QtSystemInfo/QSystemInfo
+usr/include/qt4/QtSystemInfo/QSystemNetworkInfo
+usr/include/qt4/QtSystemInfo/QSystemScreenSaver
+usr/include/qt4/QtSystemInfo/QSystemStorageInfo
+usr/include/qt4/QtSystemInfo/qsystemdeviceinfo.h
+usr/include/qt4/QtSystemInfo/qsystemdisplayinfo.h
+usr/include/qt4/QtSystemInfo/qsystemgeneralinfo.h
+usr/include/qt4/QtSystemInfo/qsysteminfo.h
+usr/include/qt4/QtSystemInfo/qsystemnetworkinfo.h
+usr/include/qt4/QtSystemInfo/qsystemscreensaver.h
+usr/include/qt4/QtSystemInfo/qsystemstorageinfo.h
+usr/lib/libQtSystemInfo.so
+#usr/lib/QtSystemInfo.pc usr/lib/pkgconfig/

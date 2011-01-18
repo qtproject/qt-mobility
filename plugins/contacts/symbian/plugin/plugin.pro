@@ -134,8 +134,9 @@ symbian: {
 
     contains(DEFINES, SYMBIAN_BACKEND_USE_SQLITE) {
         cntmodelResourceFile = \
-            "START RESOURCE ../../rss/cntmodel.rss" \
+            "START RESOURCE ../../rss/customisedcntmodel.rss" \
             "TARGETPATH $${CONTACTS_RESOURCE_DIR}" \
+            "LANGUAGE_IDS" \
             "END"
         MMP_RULES += cntmodelResourceFile
     }

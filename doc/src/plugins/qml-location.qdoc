@@ -28,7 +28,7 @@
 /*!
     \group qml-location
     \title QML Location Plugin
-    QML Support for the Mobility Project Location API.
+    QML Support for the QtMobility Project Location API.
 
 */
 
@@ -37,12 +37,12 @@
 
     \title Location QML Plugin
 
-    \brief A QML plugin for the Mobility Project Location API.
+    \brief A QML plugin for the QtMobility Project Location API.
 
 
     \section1 Overview
 
-    The Location API gives users of the Qt Mobility Project the capability to write applications that understand a geographical location and movement of the position coordinates. Backend services can be called by the API to detect landmarks and display appropriate information. The QML Location Plugin delivers these capabilities in an easy to use form.
+    The Location API gives users of the QtMobility Project the capability to write applications that understand a geographical location and movement of the position coordinates. Backend services can be called by the API to detect landmarks and display appropriate information. The QML Location Plugin delivers these capabilities in an easy to use form.
 
     \section1 Positioning
 
@@ -84,7 +84,7 @@
     Various map objects can be added to the map.  These map objects are
     specified in terms of coordinates and metres.
 
-    \note At the time of the Qt Mobility 1.1 release the QML support for
+    \note At the time of the QtMobility 1.1 release the QML support for
     the Maps and Navigation API is incomplete and likely to be refined and
     improved in the next patch release.
 

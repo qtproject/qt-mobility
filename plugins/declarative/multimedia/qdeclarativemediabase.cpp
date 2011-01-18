@@ -150,6 +150,11 @@ private:
 
 void QDeclarativeMediaBase::_q_statusChanged()
 {
+    if (m_playerControl->mediaStatus() == QMediaPlayer::EndOfMedia && m_runningCount != 0) {
+        m_runningCount -= 1;
+        m_playerControl->play();
+    }
+
     const QMediaPlayer::MediaStatus oldStatus = m_status;
     const bool wasPlaying = m_playing;
     const bool wasPaused = m_paused;
@@ -166,14 +171,8 @@ void QDeclarativeMediaBase::_q_statusChanged()
     else if (state == QMediaPlayer::PlayingState)
         m_paused = false;
 
-    if (m_status != oldStatus) {
-        if (m_status == QMediaPlayer::EndOfMedia && m_runningCount != 0) {
-            m_playerControl->play();
-            return;
-        } else {
-            emit statusChanged();
-        }
-    }
+    if (m_status != oldStatus)
+        emit statusChanged();
 
     switch (state) {
     case QMediaPlayer::StoppedState:
@@ -355,7 +354,7 @@ void QDeclarativeMediaBase::setSource(const QUrl &url)
 
     m_source = url;
     m_loaded = false;
-    if (m_complete && m_autoLoad) {
+    if (m_complete && (m_autoLoad || url.isEmpty())) {
         if (m_error != QMediaPlayer::ServiceMissingError && m_error != QMediaPlayer::NoError) {
             m_error = QMediaPlayer::NoError;
             m_errorString = QString();

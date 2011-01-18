@@ -331,6 +331,7 @@ private:
     CCenRepNotifyHandler *m_bluetoothNotifyHandler;
 
     bool hasWirelessKeyboardConnected;
+
     QSystemDeviceInfo::BatteryStatus m_previousBatteryStatus;
 };
 

@@ -38,6 +38,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#include <QtDeclarative/qdeclarativeinfo.h>
 #include "qdeclarativecontactrelationshipmodel_p.h"
 #include "qcontactmanager.h"
 #include "qcontactrequests.h"
@@ -253,7 +254,7 @@ void QDeclarativeContactRelationshipModel::setAutoUpdate(bool autoUpdate)
 }
 
 /*!
-  \qmlproperty QDeclarativeListProperty RelationshipModel::relationships
+  \qmlproperty list<Relationship> RelationshipModel::relationships
 
   This property holds a list of relationships.
 
@@ -419,7 +420,7 @@ void QDeclarativeContactRelationshipModel::relationshipsRemoved()
                     endRemoveRows();
                 } else {
                     //impossible?
-                    qWarning() << "this relationship '" << row << "' was already removed!";
+                    qmlInfo(this) << tr("this relationship '") << row << tr("' was already removed!");
                 }
             }
         }
