@@ -50,7 +50,6 @@
 #include "meegogyroscope.h"
 #include "meegolightsensor.h"
 
-#include <qlightsensor.h>
 #include <qsensorplugin.h>
 #include <qsensorbackend.h>
 #include <qsensormanager.h>
@@ -66,25 +65,25 @@ public:
     {
         // if no default - no support either, uses Sensors.conf
         const char* const MEEGO = "meego";
-        if (QString(QSensor::defaultSensorForType("QAccelerometer")).startsWith(MEEGO))
+//        if (QString(QSensor::defaultSensorForType("QAccelerometer")).startsWith(MEEGO))
             QSensorManager::registerBackend(QAccelerometer::type, meegoaccelerometer::id, this);
-        if (QSensor::defaultSensorForType("QAmbientLightSensor").startsWith(MEEGO))
+//        if (QSensor::defaultSensorForType("QAmbientLightSensor").startsWith(MEEGO))
             QSensorManager::registerBackend(QAmbientLightSensor::type, meegoals::id, this);
-        if (QSensor::defaultSensorForType("QCompass").startsWith(MEEGO))
+//        if (QSensor::defaultSensorForType("QCompass").startsWith(MEEGO))
             QSensorManager::registerBackend(QCompass::type, meegocompass::id, this);
-        if (QSensor::defaultSensorForType("QMagnetometer").startsWith(MEEGO))
+//        if (QSensor::defaultSensorForType("QMagnetometer").startsWith(MEEGO))
             QSensorManager::registerBackend(QMagnetometer::type, meegomagnetometer::id, this);
-        if (QSensor::defaultSensorForType("QOrientationSensor").startsWith(MEEGO))
+//        if (QSensor::defaultSensorForType("QOrientationSensor").startsWith(MEEGO))
             QSensorManager::registerBackend(QOrientationSensor::type, meegoorientationsensor::id, this);
-        if (QSensor::defaultSensorForType("QProximitySensor").startsWith(MEEGO))
+//        if (QSensor::defaultSensorForType("QProximitySensor").startsWith(MEEGO))
             QSensorManager::registerBackend(QProximitySensor::type, meegoproximitysensor::id, this);
-        if (QSensor::defaultSensorForType("QRotationSensor").startsWith(MEEGO))
+//        if (QSensor::defaultSensorForType("QRotationSensor").startsWith(MEEGO))
             QSensorManager::registerBackend(QRotationSensor::type, meegorotationsensor::id, this);
-        if (QSensor::defaultSensorForType("QTapSensor").startsWith(MEEGO))
+//        if (QSensor::defaultSensorForType("QTapSensor").startsWith(MEEGO))
             QSensorManager::registerBackend(QTapSensor::type, meegotapsensor::id, this);
-        if (QSensor::defaultSensorForType("QGyroscope").startsWith(MEEGO))
+//        if (QSensor::defaultSensorForType("QGyroscope").startsWith(MEEGO))
             QSensorManager::registerBackend(QGyroscope::type, meegogyroscope::id, this);
-        if (QSensor::defaultSensorForType("QLightSensor").startsWith(MEEGO))
+//        if (QSensor::defaultSensorForType("QLightSensor").startsWith(MEEGO))
             QSensorManager::registerBackend(QLightSensor::type, meegolightsensor::id, this);
         qDebug() << "Loaded the MeeGo sensor plugin";
     }
