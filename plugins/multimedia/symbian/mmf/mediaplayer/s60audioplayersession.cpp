@@ -139,6 +139,7 @@ void S60AudioPlayerSession::doClose()
     if (m_audioOutput) {
         m_audioOutput->UnregisterObserver(*this);
         delete m_audioOutput;
+        m_audioOutput = NULL;
     }
 #endif
     m_player->Close();
