@@ -60,7 +60,7 @@ private slots:
 	void executeCntTransformAddress();
 	void executeCntTransformUrl();
 	void executeCntTransformBithday();
-#ifdef SYMBIAN_BACKEND_USE_SQLITE
+#ifdef SYMBIAN_BACKEND_USE_CNTMODEL_V2
 	void executeCntTransformOnlineAccount();
 	void executeCntTransformPresence();	
 #endif
@@ -92,7 +92,7 @@ private:
                                   TPtrC16 postOfficeBoxField, QString postOfficeBoxDetail);
     void validateCntTransformUrlL(TPtrC16 field, QString detail);
     void validateCntTransformBirthdayL(TTime field, QDate detail);
-#ifdef SYMBIAN_BACKEND_USE_SQLITE
+#ifdef SYMBIAN_BACKEND_USE_CNTMODEL_V2
     void validateCntTransformOnlineAccountL(
         TPtrC16 sipField, QString sipDetail,
         TPtrC16 providerField, QString providerDetail);

@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#ifdef SYMBIAN_BACKEND_USE_SQLITE
+#ifdef SYMBIAN_BACKEND_USE_CNTMODEL_V2
 
 #include "cnttransformfavorite.h"
 

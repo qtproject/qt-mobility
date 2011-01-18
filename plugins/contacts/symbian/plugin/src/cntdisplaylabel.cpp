@@ -48,7 +48,7 @@
 
 CntDisplayLabel::CntDisplayLabel()
 {
-#ifdef SYMBIAN_BACKEND_USE_SQLITE
+#ifdef SYMBIAN_BACKEND_USE_CNTMODEL_V2
     m_settings = new CntCenrep(KCntNameOrdering, *this);
     m_nameOrder = m_settings->getValue();
 #endif
@@ -60,7 +60,7 @@ CntDisplayLabel::CntDisplayLabel()
  */
 CntDisplayLabel::~CntDisplayLabel()
 {
-#ifdef SYMBIAN_BACKEND_USE_SQLITE
+#ifdef SYMBIAN_BACKEND_USE_CNTMODEL_V2
     delete m_settings;
 #endif
 }
@@ -86,7 +86,7 @@ void CntDisplayLabel::setDisplayLabelDetails()
     QLatin1String firstLatin(QContactName::FieldFirstName);
     QLatin1String secondLatin(QContactName::FieldLastName);
     
-#ifdef SYMBIAN_BACKEND_USE_SQLITE    
+#ifdef SYMBIAN_BACKEND_USE_CNTMODEL_V2    
     if (m_nameOrder == CntOrderLastFirst || m_nameOrder == CntOrderLastCommaFirst) {
         firstLatin = QLatin1String(QContactName::FieldLastName);
         secondLatin = QLatin1String(QContactName::FieldFirstName);
@@ -114,7 +114,7 @@ QString CntDisplayLabel::synthesizedDisplayLabel(const QContact& contact, QConta
     QString displayLabel;
     *error = QContactManager::NoError;
     
-#ifdef SYMBIAN_BACKEND_USE_SQLITE
+#ifdef SYMBIAN_BACKEND_USE_CNTMODEL_V2
     int value = m_settings->getValue();
     if (value != -1 && value != m_nameOrder) {
         m_nameOrder = value;
@@ -169,7 +169,7 @@ QString CntDisplayLabel::generateDisplayLabel( const QContact &contact, const QL
                 
                 if(!label.isEmpty())
                 {
-#ifdef SYMBIAN_BACKEND_USE_SQLITE
+#ifdef SYMBIAN_BACKEND_USE_CNTMODEL_V2
                     // Inlcude a comma if needed in the display label
                     if (m_nameOrder == CntOrderLastCommaFirst)
                         displayLabel.append(comma());
@@ -219,7 +219,7 @@ QString CntDisplayLabel::comma() const
     return ",";
 }
 
-#ifdef SYMBIAN_BACKEND_USE_SQLITE
+#ifdef SYMBIAN_BACKEND_USE_CNTMODEL_V2
 
 void CntDisplayLabel::updateNameOrdering()
 {

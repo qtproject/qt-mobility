@@ -62,7 +62,7 @@ QTM_USE_NAMESPACE
 // Constants
 
 class CntSymbianDatabase : public QObject, public MContactDbObserver
-#ifdef SYMBIAN_BACKEND_USE_SQLITE  
+#ifdef SYMBIAN_BACKEND_USE_CNTMODEL_V2  
 , public MContactDbObserverV2
 #endif
 {
@@ -81,7 +81,7 @@ public:
     // From MContactDbObserver
     void HandleDatabaseEventL(TContactDbObserverEvent aEvent);
 
-#ifdef SYMBIAN_BACKEND_USE_SQLITE    
+#ifdef SYMBIAN_BACKEND_USE_CNTMODEL_V2    
     // From MContactDbObserverV2
     void HandleDatabaseEventV2L(TContactDbObserverEventV2 aEvent);
 #endif    
@@ -93,7 +93,7 @@ private:
     QSet<QContactLocalId> groupMembersL(QContactLocalId groupId);
 
 private:
-#ifndef SYMBIAN_BACKEND_USE_SQLITE
+#ifndef SYMBIAN_BACKEND_USE_CNTMODEL_V2
     CContactChangeNotifier* m_contactChangeNotifier;
 #endif
     QContactManagerEngine *m_engine;
