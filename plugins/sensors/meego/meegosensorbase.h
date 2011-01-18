@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef MAEMO6SENSORBASE_H
-#define MAEMO6SENSORBASE_H
+#ifndef MEEGOSENSORBASE_H
+#define MEEGOSENSORBASE_H
 
 #include <qsensorbackend.h>
 #include <sensormanagerinterface.h>
@@ -48,11 +48,11 @@
 
 QTM_USE_NAMESPACE
 
-        class maemo6sensorbase : public QSensorBackend
+class meegosensorbase : public QSensorBackend
 {
 public:
-    maemo6sensorbase(QSensor *sensor);
-    virtual ~maemo6sensorbase();
+    meegosensorbase(QSensor *sensor);
+    virtual ~meegosensorbase();
 
 
 protected:
@@ -121,14 +121,12 @@ protected:
         }
 
         //bufferSizes
-        //TODO: waiting next sensord version
-//        IntegerRangeList sizes = m_sensorInterface->getAvailableBufferSizes();
-//        int l = sizes.size();
-//        if (l>0){
-//            m_efficientBufferSize = (l==1) ? 1 : sizes.at(1).first;
-//            m_maxBufferSize = sizes.at(l-1).second;
-//        }
-        m_maxBufferSize = 256;  // TODO: remove once the snippet above is taken into use
+        IntegerRangeList sizes = m_sensorInterface->getAvailableBufferSizes();
+        int l = sizes.size();
+        if (l>0){
+            m_efficientBufferSize = (l==1) ? 1 : sizes.at(1).first;
+            m_maxBufferSize = sizes.at(l-1).second;
+        }
         sensor()->setProperty(MAX_BUFFER_SIZE, m_maxBufferSize);
         sensor()->setProperty(EFFICIENT_BUFFER_SIZE, m_efficientBufferSize);
 

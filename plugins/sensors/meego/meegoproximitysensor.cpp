@@ -39,34 +39,34 @@
 **
 ****************************************************************************/
 
-#ifndef MAEMO6PROXIMITYSENSOR_H
-#define MAEMO6PROXIMITYSENSOR_H
+#include "meegoproximitysensor.h"
 
-#include "maemo6sensorbase.h"
-#include <qproximitysensor.h>
+char const * const meegoproximitysensor::id("meego.proximity");
+bool meegoproximitysensor::m_initDone = false;
 
-#include <proximitysensor_i.h>
-#include <unsigned.h>
-
-QTM_USE_NAMESPACE
-
-class maemo6proximitysensor : public maemo6sensorbase
+meegoproximitysensor::meegoproximitysensor(QSensor *sensor)
+    : meegosensorbase(sensor)
 {
-    Q_OBJECT
+    initSensor<ProximitySensorChannelInterface>(m_initDone);
+    setReading<QProximityReading>(&m_reading);
+}
 
-public:
-    static char const * const id;
-    maemo6proximitysensor(QSensor *sensor);
-protected:
-    virtual bool doConnect();
-    virtual const QString sensorName();
+void meegoproximitysensor::slotDataAvailable(const Unsigned& data)
+{
+    m_reading.setClose(data.x()? true: false);
+    m_reading.setTimestamp(data.UnsignedData().timestamp_);
+    newReadingAvailable();
+}
 
-private:
-    QProximityReading m_reading;
-    static bool m_initDone;
-   
-private slots:
-    void slotDataAvailable(const Unsigned& data);
-};
+bool meegoproximitysensor::doConnect(){
+    if (!(QObject::connect(m_sensorInterface, SIGNAL(dataAvailable(const Unsigned&)),
+                           this, SLOT(slotDataAvailable(const Unsigned&))))){
+        return false;
+    }
+    return true;
+}
 
-#endif
+
+const QString meegoproximitysensor::sensorName(){
+    return "proximitysensor";
+}

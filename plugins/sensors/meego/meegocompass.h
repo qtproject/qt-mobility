@@ -39,10 +39,10 @@
 **
 ****************************************************************************/
 
-#ifndef MAEMO6COMPASS_H
-#define MAEMO6COMPASS_H
+#ifndef MEEGOCOMPASS_H
+#define MEEGOCOMPASS_H
 
-#include "maemo6sensorbase.h"
+#include "meegosensorbase.h"
 #include <qcompass.h>
 
 #include <compasssensor_i.h>
@@ -50,13 +50,13 @@
 
 QTM_USE_NAMESPACE
 
-class maemo6compass : public maemo6sensorbase
+class meegocompass : public meegosensorbase
 {
     Q_OBJECT
 
 public:
     static char const * const id;
-    maemo6compass(QSensor *sensor);
+    meegocompass(QSensor *sensor);
 protected:
     virtual bool doConnect();
     virtual const QString sensorName();
