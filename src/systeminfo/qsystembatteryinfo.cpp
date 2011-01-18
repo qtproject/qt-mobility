@@ -62,7 +62,7 @@ QSystemBatteryInfoPrivate *getSystemBatteryInfoPrivate() { return d; }
     \enum QSystemBatteryInfo::BatteryStatus
     This enum describes the status of the main battery.
 
-    \value BatteryStatus           Battery level undetermined.
+    \value BatteryUnknown          Battery level undetermined.
     \value BatteryEmpty            Battery level reported as 0, system will shutdown.
     \value BatteryCritical         Battery level is critical 3% or less.
     \value BatteryVeryLow          Battery level is very low, 10% or less.
@@ -96,6 +96,7 @@ QSystemBatteryInfoPrivate *getSystemBatteryInfoPrivate() { return d; }
       \enum QSystemBatteryInfo::EnergyUnit
       This enum describes the energy unit used by the system.
 
+      \value UnitUnknown            Energy unit unknown.
       \value UnitmAh                Energy described in milli Amp hours (mAh)
       \value UnitmWh                Energy described in milli watt hours (mWh)
 */
@@ -177,6 +178,8 @@ QSystemBatteryInfo::~QSystemBatteryInfo()
 }
 
 /*!
+  \property QSystemBatteryInfo::chargerType
+  \brief The charger type.
     Returns the currently used charger type.
   */
 QSystemBatteryInfo::ChargerType QSystemBatteryInfo::chargerType() const
@@ -185,6 +188,8 @@ QSystemBatteryInfo::ChargerType QSystemBatteryInfo::chargerType() const
 }
 
 /*!
+  \property QSystemBatteryInfo::chargingState
+  \brief The charging state.
     Returns the charging state.
   */
 QSystemBatteryInfo::ChargingState QSystemBatteryInfo::chargingState() const

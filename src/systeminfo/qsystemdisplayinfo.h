@@ -71,8 +71,8 @@ public:
     enum BacklightState {
         BacklightStateUnknown = -1,
         BacklightStateOff,
-        backlightStateDimmed,
-        backlightStateOn
+        BacklightStateDimmed,
+        BacklightStateOn
     };//1.2
 
     static int displayBrightness(int screen);

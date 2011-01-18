@@ -164,6 +164,7 @@ QSystemDeviceInfoPrivate *getSystemDeviceInfoPrivate() { return deviceInfoPrivat
             \value HalfQwertyKeyboard          Half qwerty keboard like on Nokia E55.
             \value FullQwertyKeyboard          Standard qwerty type keyboard.
             \value WirelessKeyboard            Bluetooth or other wireless keyboard.
+            \value FlipKeyboard                Keybord or keypad the slides or flips out.
         */
 /*!
           \enum QSystemDeviceInfo::KeypadType
@@ -178,7 +179,6 @@ QSystemDeviceInfoPrivate *getSystemDeviceInfoPrivate() { return deviceInfoPrivat
           This enum describes the type of lock.
 
           \value UnknownLock                    Lock type is unknown, or error.
-          \value SimLocked                      SIM is locked.
           \value PinLocked                      Device is PIN or password locked.
           \value TouchAndKeyboardLocked         Touch and/or keyboard is locked.
           */
@@ -202,14 +202,14 @@ QSystemDeviceInfoPrivate *getSystemDeviceInfoPrivate() { return deviceInfoPrivat
 */
 
 /*!
-    \fn void QSystemDeviceInfo::lockChanged(QSystemDeviceInfo::LockTypeFlags type, bool on)
+    \fn void QSystemDeviceInfo::lockStatusChanged(QSystemDeviceInfo::LockTypeFlags type)
 
-     This signal is emitted whenever the lock state changes, with LockType \a type, and \a on, locked or unlocked.
+     This signal is emitted whenever the lock state changes, with LockType \a type.
 */
 /*!
     \fn void QSystemDeviceInfo::deviceLocked(bool isLocked)
 
-     This signal is emitted whenever the device lock state changes, indicated by \a on, locked or unlocked.
+     This signal is emitted whenever the device lock state changes, indicated by \a isLocked is true otherwise unlocked.
 */
 
 /*!

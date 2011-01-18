@@ -84,9 +84,11 @@ QSystemStorageInfoPrivate *getSystemStorageInfoPrivate() { return storageInfoPri
 */
 
 /*!
-     \fn void QSystemStorageInfo::logicalDriveChanged(bool ,const QString &)
+     \fn void QSystemStorageInfo::logicalDriveChanged(bool added,const QString &vol)
 
      This signal gets emitted when new storage has been added or removed from the system.
+     \a added is true when a new drive is found, otherwise false when removed.
+     \a vol is the volume's name.
 */
 
 /*!
