@@ -51,6 +51,7 @@
 #include <coecntrl.h>
 #include <coemain.h>    // For CCoeEnv
 #include <w32std.h>
+#include <mmf/common/mmferrors.h>
 #include <mmf/common/mmfcontrollerframeworkbase.h>
 
 const QString DefaultAudioEndpoint = QLatin1String("Default");
@@ -349,7 +350,7 @@ void S60VideoPlayerSession::MvpuoOpenComplete(TInt aError)
 void S60VideoPlayerSession::MvpuoPrepareComplete(TInt aError)
 {
     TInt error = aError;
-    if (KErrNone == error) {
+    if (KErrNone == error || KErrMMPartialPlayback == error) {
         TSize originalSize;
         TRAP(error, m_player->VideoFrameSizeL(originalSize));
         if (KErrNone == error) {
