@@ -43,6 +43,7 @@
 #include "qgeoboundingbox.h"
 #include "qgeomapdata.h"
 #include "qgeomapobject.h"
+#include "qgeocoordinate.h"
 
 QTM_BEGIN_NAMESPACE
 
