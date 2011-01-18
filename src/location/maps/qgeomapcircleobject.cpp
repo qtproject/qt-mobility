@@ -143,7 +143,7 @@ void QGeoMapCircleObject::setPen(const QPen &pen)
 
     d_ptr->item->setPen(newPen);
     emit penChanged(newPen);
-    emit mapAppearanceChanged();
+    update();
 }
 
 QPen QGeoMapCircleObject::pen() const
@@ -172,7 +172,7 @@ void QGeoMapCircleObject::setBrush(const QBrush &brush)
 {
     if (d_ptr->item->brush() != brush) {
         d_ptr->item->setBrush(brush);
-        emit mapAppearanceChanged();
+        update();
         emit brushChanged(brush);
     }
 }
@@ -200,7 +200,7 @@ quint32 QGeoMapCircleObject::detailLevel() const
 void QGeoMapCircleObject::setDetailLevel(quint32 detailLevel)
 {
     d_ptr->detailLevel = detailLevel;
-    emit mapAppearanceChanged();
+    update();
 }
 
 /*!
@@ -247,6 +247,8 @@ void QGeoMapCircleObject::setCircle(const QGeoBoundingCircle &circle)
 
     if (oldCircle.radius() != d_ptr->circle.radius())
         emit radiusChanged(d_ptr->circle.radius());
+
+    update();
 }
 
 /*!
@@ -286,7 +288,7 @@ void QGeoMapCircleObject::setRadius(qreal radius)
         d_ptr->circle.setRadius(radius);
         d_ptr->item->setRect(-1*radius, -1*radius, 2*radius, 2*radius);
         emit radiusChanged(radius);
-        emit mapAppearanceChanged();
+        update();
     }
 }
 

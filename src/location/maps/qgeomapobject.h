@@ -143,7 +143,6 @@ Q_SIGNALS:
     void selectedChanged(bool selected);
     void originChanged(QGeoCoordinate origin);
     void graphicsItemChanged(QGraphicsItem *item);
-    void mapAppearanceChanged();
 
 private:
     QGeoMapObjectPrivate *d_ptr;

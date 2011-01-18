@@ -857,10 +857,9 @@ QPolygonF QGeoMapDataPrivate::polyToScreen(const QPolygonF &poly)
     return r;
 }
 
-// ensures the sender is up to date on the map
-void QGeoMapDataPrivate::updateSender()
+void QGeoMapDataPrivate::update(QObject *object)
 {
-    QGeoMapObject *obj = qobject_cast<QGeoMapObject*>(sender());
+    QGeoMapObject *obj = qobject_cast<QGeoMapObject*>(object);
     if (obj) {
         QGeoMapGroupObject *group = qobject_cast<QGeoMapGroupObject*>(obj);
         if (group) {
@@ -873,6 +872,12 @@ void QGeoMapDataPrivate::updateSender()
     } else {
         emit q_ptr->updateMapDisplay();
     }
+}
+
+// ensures the sender is up to date on the map
+void QGeoMapDataPrivate::updateSender()
+{
+    update(sender());
 }
 
 #include "moc_qgeomapdata.cpp"

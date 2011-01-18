@@ -108,7 +108,7 @@ void QGeoMapPolylineObject::setPath(const QList<QGeoCoordinate> &path)
         setOrigin(path.at(0));
         d_ptr->genPath();
         emit pathChanged(d_ptr->path);
-        emit mapAppearanceChanged();
+        update();
     }
 }
 
@@ -136,7 +136,7 @@ void QGeoMapPolylineObject::setPen(const QPen &pen)
 
     d_ptr->item->setPen(pen);
     emit penChanged(pen);
-    emit mapAppearanceChanged();
+    update();
 }
 
 QPen QGeoMapPolylineObject::pen() const

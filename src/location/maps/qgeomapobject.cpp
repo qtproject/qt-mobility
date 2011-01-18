@@ -165,18 +165,6 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn void QGeoMapObject::mapAppearanceChanged()
-
-    \since 1.2
-
-    This signal is emitted whenever some detail of the QGeoMapObject instance
-    is changed that affects its appearance on the map.
-
-    Subclasses should emit this signal whenever they require repainting on
-    the map surface.
-*/
-
-/*!
     Constructs a new map object associated with \a mapData.
 
     The object will be in pixel coordinates, with exact transform.
@@ -185,17 +173,6 @@ QGeoMapObject::QGeoMapObject(QGeoMapData *mapData)
     : d_ptr(new QGeoMapObjectPrivate())
 {
     setMapData(mapData);
-
-    connect(this, SIGNAL(originChanged(QGeoCoordinate)),
-            this, SIGNAL(mapAppearanceChanged()));
-    connect(this, SIGNAL(selectedChanged(bool)),
-            this, SIGNAL(mapAppearanceChanged()));
-    connect(this, SIGNAL(visibleChanged(bool)),
-            this, SIGNAL(mapAppearanceChanged()));
-    connect(this, SIGNAL(zValueChanged(int)),
-            this, SIGNAL(mapAppearanceChanged()));
-    connect(this, SIGNAL(graphicsItemChanged(QGraphicsItem*)),
-            this, SIGNAL(mapAppearanceChanged()));
 }
 
 /*!
@@ -212,7 +189,10 @@ QGeoMapObject::~QGeoMapObject()
 */
 void QGeoMapObject::update()
 {
-    emit mapAppearanceChanged();
+    if (!d_ptr->mapData || !d_ptr->mapData->d_ptr)
+        return;
+
+    d_ptr->mapData->d_ptr->update(this);
 }
 
 /*!
@@ -247,7 +227,7 @@ void QGeoMapObject::setZValue(int zValue)
             QGeoMapObjectEngine *e = d_ptr->mapData->d_ptr->oe;
             e->rebuildScenes();
         }
-        emit mapAppearanceChanged();
+        update();
     }
 }
 
@@ -270,6 +250,7 @@ void QGeoMapObject::setVisible(bool visible)
         if (d_ptr->graphicsItem)
             d_ptr->graphicsItem->setVisible(visible);
         emit visibleChanged(d_ptr->isVisible);
+        update();
     }
 }
 
@@ -287,6 +268,7 @@ void QGeoMapObject::setSelected(bool selected)
     if (d_ptr->isSelected != selected) {
         d_ptr->isSelected = selected;
         emit selectedChanged(d_ptr->isSelected);
+        update();
     }
 }
 
@@ -396,17 +378,9 @@ void QGeoMapObject::setMapData(QGeoMapData *mapData)
     if (d_ptr->mapData == mapData)
         return;
 
-    if (d_ptr->mapData) {
-        disconnect(this, SIGNAL(mapAppearanceChanged()),
-                   d_ptr->mapData->d_ptr, SLOT(updateSender()));
-    }
-
     d_ptr->mapData = mapData;
     if (!d_ptr->mapData)
         return;
-
-    connect(this, SIGNAL(mapAppearanceChanged()),
-            d_ptr->mapData->d_ptr, SLOT(updateSender()));
 }
 
 /*!
@@ -445,6 +419,7 @@ void QGeoMapObject::setGraphicsItem(QGraphicsItem *item)
     d_ptr->graphicsItem = item;
     item->setZValue(this->zValue());
     emit graphicsItemChanged(item);
+    update();
 }
 
 /*!
@@ -463,7 +438,7 @@ QGeoMapObject::TransformType QGeoMapObject::transformType() const
 void QGeoMapObject::setTransformType(const TransformType &type)
 {
     d_ptr->transType = type;
-    emit mapAppearanceChanged();
+    update();
 }
 
 /*!
@@ -487,6 +462,7 @@ void QGeoMapObject::setOrigin(const QGeoCoordinate &origin)
 
     d_ptr->origin = origin;
     emit originChanged(origin);
+    update();
 }
 
 /*!
@@ -515,7 +491,7 @@ void QGeoMapObject::setUnits(const CoordinateUnit &unit)
     else
         setTransformType(QGeoMapObject::BilinearTransform);
 
-    emit mapAppearanceChanged();
+    update();
 }
 
 /*!

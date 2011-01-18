@@ -128,7 +128,7 @@ void QGeoMapRouteObject::setRoute(const QGeoRoute &route)
     d_ptr->route = route;
     d_ptr->regenPath();
     emit routeChanged(d_ptr->route);
-    emit mapAppearanceChanged();
+    update();
     //}
 }
 
@@ -156,7 +156,7 @@ void QGeoMapRouteObject::setPen(const QPen &pen)
 
     d_ptr->item->setPen(newPen);
     emit penChanged(newPen);
-    emit mapAppearanceChanged();
+    update();
 }
 
 /*!
@@ -184,7 +184,7 @@ void QGeoMapRouteObject::setDetailLevel(quint32 detailLevel)
     if (d_ptr->detailLevel != detailLevel) {
         d_ptr->detailLevel = detailLevel;
         emit detailLevelChanged(d_ptr->detailLevel);
-        emit mapAppearanceChanged();
+        update();
     }
 }
 
