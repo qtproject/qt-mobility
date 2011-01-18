@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef MEEGOALS_H
-#define MEEGOALS_H
+#ifndef MEEGOLIGHTSENSOR_H
+#define MEEGOLIGHTSENSOR_H
 
 #include "meegosensorbase.h"
 #include <qlightsensor.h>
