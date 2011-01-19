@@ -130,15 +130,16 @@ static inline int paddle_boost(int force){
 
 void Controller::ballCollision(Board::Edge pos)
 {
-    if(pos == Board::Top || pos == Board::Bottom && !col_y) {
+
+    if((pos == Board::Top || pos == Board::Bottom) && !col_y) {
         speed_y *= -1;
-        col_y = 3;
+        col_y = 10;
     }
 
     if(pos == Board::Left && !col_x) {
         speed_x *= -1;
         speed_y += paddle_boost(leftPaddleForce);
-        col_x = 3;
+        col_x = 10;
 
         if(leftPowerUp > 75 && speed_x < 8*FRAME_RATE){
             speed_x *= 2;
@@ -148,7 +149,7 @@ void Controller::ballCollision(Board::Edge pos)
     else if(pos == Board::Right && !col_x) {
         speed_x *= -1;
         speed_y += paddle_boost(rightPaddleForce);
-        col_x = 3;
+        col_x = 10;
 
         if(rightPowerUp > 75 && speed_x > -8*FRAME_RATE){
             speed_x *= 2;

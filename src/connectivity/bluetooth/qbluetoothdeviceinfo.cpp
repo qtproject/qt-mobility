@@ -245,7 +245,7 @@ QTM_BEGIN_NAMESPACE
 */
 
 QBluetoothDeviceInfoPrivate::QBluetoothDeviceInfoPrivate()
-: valid(false)
+: valid(false), cached(false)
 {
 }
 
@@ -286,6 +286,7 @@ QBluetoothDeviceInfo::QBluetoothDeviceInfo(const QBluetoothAddress &address, con
     d->serviceUuidsCompleteness = DataUnavailable;
 
     d->valid = true;
+    d->cached = false;
 }
 
 /*!
@@ -328,8 +329,41 @@ QBluetoothDeviceInfo &QBluetoothDeviceInfo::operator=(const QBluetoothDeviceInfo
     d->majorDeviceClass = other.d_func()->majorDeviceClass;
     d->serviceClasses = other.d_func()->serviceClasses;
     d->valid = other.d_func()->valid;
+    d->cached = other.d_func()->cached;
+    d->serviceUuidsCompleteness = other.d_func()->serviceUuidsCompleteness;
+    d->serviceUuids = other.d_func()->serviceUuids;
 
     return *this;
+}
+
+/*!
+  Returns true if the two QBluetoothDeviceInfo objects are identical
+  */
+bool QBluetoothDeviceInfo::operator==(const QBluetoothDeviceInfo &other) const
+{
+    Q_D(const QBluetoothDeviceInfo);
+
+    if(d->cached != other.d_func()->cached)
+        return false;
+    if(d->valid != other.d_func()->valid)
+        return false;
+    if(d->majorDeviceClass != other.d_func()->majorDeviceClass)
+        return false;
+    if(d->minorDeviceClass != other.d_func()->minorDeviceClass)
+        return false;
+    if(d->serviceClasses != other.d_func()->serviceClasses)
+        return false;
+    if(d->name != other.d_func()->name)
+        return false;
+    if(d->address != other.d_func()->address)
+        return false;
+    if(d->serviceUuidsCompleteness != other.d_func()->serviceUuidsCompleteness)
+        return false;
+    if(d->serviceUuids != other.d_func()->serviceUuids)
+        return false;
+
+    return true;
+
 }
 
 /*!
@@ -440,6 +474,26 @@ QByteArray QBluetoothDeviceInfo::manufacturerSpecificData(bool *available) const
 {
     Q_UNUSED(available);
     return QByteArray();
+}
+
+/*!
+    Returns true if the QBluetoothDeviceInfo object is created from cached data
+*/
+bool QBluetoothDeviceInfo::isCached() const
+{
+    Q_D(const QBluetoothDeviceInfo);
+
+    return d->cached;
+}
+
+/*!
+  Used by the system to set the cached flag is the QBluetoothDeviceInfo is created from cached data
+  */
+void QBluetoothDeviceInfo::setCached(bool cached)
+{
+    Q_D(QBluetoothDeviceInfo);
+
+    d->cached = cached;
 }
 
 QTM_END_NAMESPACE

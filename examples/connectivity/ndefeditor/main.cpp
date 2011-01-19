@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -38,47 +38,15 @@
 **
 ****************************************************************************/
 
-#ifndef REMOTESELECTOR_H
-#define REMOTESELECTOR_H
 
-#include <QtGui/QDialog>
+#include <QtGui/QApplication>
+#include "mainwindow.h"
 
-#include <qbluetoothuuid.h>
-#include <qbluetoothserviceinfo.h>
-#include <qbluetoothservicediscoveryagent.h>
-
-QT_FORWARD_DECLARE_CLASS(QModelIndex)
-QT_FORWARD_DECLARE_CLASS(QListWidgetItem)
-
-QTM_USE_NAMESPACE
-
-namespace Ui {
-    class RemoteSelector;
-}
-
-class RemoteSelector : public QDialog
+int main(int argc, char *argv[])
 {
-    Q_OBJECT
+    QApplication a(argc, argv);
+    MainWindow w;
+    w.show();
 
-public:
-    explicit RemoteSelector(QWidget *parent = 0);
-    ~RemoteSelector();
-
-    void startDiscovery(const QBluetoothUuid &uuid);
-    QBluetoothServiceInfo service() const;
-
-private:
-    Ui::RemoteSelector *ui;
-
-    QBluetoothServiceDiscoveryAgent *m_discoveryAgent;
-    QBluetoothServiceInfo m_service;
-    QMap<QListWidgetItem *, QBluetoothServiceInfo> m_discoveredServices;
-
-private slots:
-    void serviceDiscovered(const QBluetoothServiceInfo &serviceInfo);
-    void discoveryFinished();
-    void on_remoteDevices_itemActivated(QListWidgetItem *item);
-    void on_fullScanBox_stateChanged(int );
-};
-
-#endif // REMOTESELECTOR_H
+    return a.exec();
+}
