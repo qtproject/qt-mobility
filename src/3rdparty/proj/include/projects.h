@@ -40,11 +40,6 @@
 #  endif
 #endif
 
-/* standard inclusions */
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
-
 #ifdef __cplusplus
 #define C_NAMESPACE extern "C"
 #define C_NAMESPACE_VAR extern "C"
@@ -53,6 +48,11 @@ extern "C" {
 #define C_NAMESPACE extern
 #define C_NAMESPACE_VAR
 #endif
+
+/* standard inclusions */
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
 
 #ifndef NULL
 #  define NULL	0

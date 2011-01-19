@@ -34,12 +34,10 @@ LIBPROJ_ID[] = "$Id: PJ_sterea.c 1504 2009-01-06 02:11:57Z warmerdam $";
 #define PJ_LIB__
 #include <projects.h>
 
-PROJ_HEAD(sterea, "Oblique Stereographic Alternative")
-        "\n\tAzimuthal, Sph&Ell";
+PROJ_HEAD(sterea, "Oblique Stereographic Alternative") "\n\tAzimuthal, Sph&Ell";
+
 # define DEL_TOL	1.e-14
 # define MAX_ITER	10
-
-extern double cos(double __x);
 
 FORWARD(e_forward); /* ellipsoid */
         double cosphi, sinphi, coslam, k;
