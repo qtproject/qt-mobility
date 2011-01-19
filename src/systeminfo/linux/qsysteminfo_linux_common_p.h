@@ -102,6 +102,8 @@ public:
 
     QString version(QSystemInfo::Version,  const QString &/*parameter*/ = QString());
     QString currentCountryCode() const;
+
+    bool fmTransmitterAvailable();
     virtual bool hasFeatureSupported(QSystemInfo::Feature feature);
     bool hasSysFeature(const QString &featureStr);
 

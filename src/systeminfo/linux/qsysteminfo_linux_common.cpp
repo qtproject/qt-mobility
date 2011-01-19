@@ -93,6 +93,7 @@
 #include <sys/vfs.h>
 #include <sys/inotify.h>
 
+#include <linux/videodev2.h>
 #include <linux/fb.h>
 #include <fcntl.h>
 
@@ -227,6 +228,41 @@ QString QSystemInfoLinuxCommonPrivate::currentLanguage() const
         lang = langCached;
     }
     return lang;
+}
+
+bool QSystemInfoLinuxCommonPrivate::fmTransmitterAvailable()
+{
+    static const char *devices[] = {"/dev/radio",
+                                    "/dev/radio0",
+                                    0};
+    bool available = false;
+    int fd;
+    struct v4l2_capability capability;
+    const char *device;
+    size_t i=0;
+
+    while ((device = devices[i++]) && !available) {
+        memset(&capability, 0, sizeof(struct v4l2_capability));
+
+        if (-1 == (fd = open(device, O_RDWR))) {
+            goto next_device;
+        }
+
+        if (-1 == ioctl(fd, VIDIOC_QUERYCAP, &capability)) {
+            goto next_device;
+        }
+
+        if ((capability.capabilities & (V4L2_CAP_RADIO | V4L2_CAP_MODULATOR)) ==
+                                       (V4L2_CAP_RADIO | V4L2_CAP_MODULATOR)) {
+            available = true;
+        }
+
+next_device:
+        if (fd != -1) {
+            close(fd), fd = -1;
+        }
+    }
+    return available;
 }
 
 bool QSystemInfoLinuxCommonPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
@@ -424,6 +460,7 @@ bool QSystemInfoLinuxCommonPrivate::hasFeatureSupported(QSystemInfo::Feature fea
 
          break;
      case QSystemInfo::FmTransmitterFeature:
+         featureSupported = fmTransmitterAvailable();
          break;
      default:
          featureSupported = false;
