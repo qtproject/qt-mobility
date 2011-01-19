@@ -32,39 +32,39 @@ LIBPROJ_ID[] = "$Id: PJ_sterea.c 1504 2009-01-06 02:11:57Z warmerdam $";
 	void *en;
 
 #define PJ_LIB__
-#include	<projects.h>
+#include <projects.h>
 
 PROJ_HEAD(sterea, "Oblique Stereographic Alternative")
-	"\n\tAzimuthal, Sph&Ell";
+        "\n\tAzimuthal, Sph&Ell";
 # define DEL_TOL	1.e-14
 # define MAX_ITER	10
 
 extern double cos(double __x);
 
 FORWARD(e_forward); /* ellipsoid */
-	double cosc, sinc, cosl, k;
+        double cosphi, sinphi, coslam, k;
 
 	lp = pj_gauss(lp, P->en);
-	sinc = sin(lp.phi);
-	cosc = cos(lp.phi);
-	cosl = cos(lp.lam);
-	k = P->k0 * P->R2 / (1. + P->sinc0 * sinc + P->cosc0 * cosc * cosl);
-	xy.x = k * cosc * sin(lp.lam);
-	xy.y = k * (P->cosc0 * sinc - P->sinc0 * cosc * cosl);
+        sinphi = sin(lp.phi);
+        cosphi = cos(lp.phi);
+        coslam = cos(lp.lam);
+        k = P->k0 * P->R2 / (1. + P->sinc0 * sinphi + P->cosc0 * cosphi * coslam);
+        xy.x = k * cosphi * sin(lp.lam);
+        xy.y = k * (P->cosc0 * sinphi - P->sinc0 * cosphi * coslam);
 	return (xy);
 }
 INVERSE(e_inverse); /* ellipsoid */
-	double rho, c, sinc, cosc;
+        double rho, c, sincc, coscc;
 
 	xy.x /= P->k0;
 	xy.y /= P->k0;
 	if((rho = hypot(xy.x, xy.y))) {
 		c = 2. * atan2(rho, P->R2);
-		sinc = sin(c);
-		cosc = cos(c);
-		lp.phi = asin(cosc * P->sinc0 + xy.y * sinc * P->cosc0 / rho);
-		lp.lam = atan2(xy.x * sinc, rho * P->cosc0 * cosc -
-			xy.y * P->sinc0 * sinc);
+                sincc = sin(c);
+                coscc = cos(c);
+                lp.phi = asin(coscc * P->sinc0 + xy.y * sincc * P->cosc0 / rho);
+                lp.lam = atan2(xy.x * sincc, rho * P->cosc0 * coscc -
+                        xy.y * P->sinc0 * sincc);
 	} else {
 		lp.phi = P->phic0;
 		lp.lam = 0.;
