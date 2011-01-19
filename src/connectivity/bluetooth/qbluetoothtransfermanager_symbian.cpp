@@ -41,6 +41,8 @@
 
 #include "qbluetoothtransfermanager.h"
 #include "qbluetoothtransferrequest.h"
+#include "qbluetoothtransferreply.h"
+#include "qbluetoothtransferreply_symbian_p.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -51,10 +53,15 @@ QTM_BEGIN_NAMESPACE
 QBluetoothTransferReply *QBluetoothTransferManager::put(const QBluetoothTransferRequest &request,
                                                         QIODevice *data)
 {
-    Q_UNUSED(request);
-    Q_UNUSED(data);
+    QBluetoothTransferReplySymbian *reply = new QBluetoothTransferReplySymbian(data);
 
-    return 0;
+    reply->setAddress(request.address());
+
+    connect(reply, SIGNAL(finished(QBluetoothTransferReply*)), this, SIGNAL(finished(QBluetoothTransferReply*)));
+
+    reply->start();
+
+    return reply;
 }
 
 QTM_END_NAMESPACE

@@ -498,6 +498,8 @@ QBluetoothServiceInfo::Sequence QBluetoothServiceInfo::protocolDescriptor(QBluet
 
     foreach (const QVariant &v, attribute(QBluetoothServiceInfo::ProtocolDescriptorList).value<QBluetoothServiceInfo::Sequence>()) {
         QBluetoothServiceInfo::Sequence parameters = v.value<QBluetoothServiceInfo::Sequence>();
+        if(parameters.empty())
+            continue;
         if (parameters.at(0).userType() == qMetaTypeId<QBluetoothUuid>()) {
             if (parameters.at(0).value<QBluetoothUuid>() == protocol)
                 return parameters;
