@@ -53,8 +53,8 @@
 #include <QTimer>
 #include <QLabel>
 
-#include <QNetworkSession>
-#include <QNetworkConfigurationManager>
+#include <qnetworksession.h>
+#include <qnetworkconfigmanager.h>
 
 MainWindow::MainWindow(QWidget * parent)
     : QMainWindow(parent)
