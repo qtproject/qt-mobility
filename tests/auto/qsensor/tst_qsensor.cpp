@@ -102,6 +102,11 @@ private slots:
 #endif
     }
 
+    void testRecursiveLoadPlugins()
+    {
+        // The logic for the test is in test_sensorplugin.cpp (which warns and aborts if the test fails)
+        (void)QSensor::sensorTypes();
+    }
 
     void testTypeRegistered()
     {
