@@ -3,22 +3,6 @@ QT += network
 TARGET = MapsNavigator
 TEMPLATE = app
 
-INCLUDEPATH += ../../src/location \
-               ../../src/location/maps
-
-SOURCES += main.cpp\
-           mainwindow.cpp \
-           markerlist.cpp \
-           searchwidget.cpp \
-           mapswidget.cpp \
-           directionswidget.cpp \
-
-HEADERS  += mainwindow.h \
-            markerlist.h \
-            searchwidget.h \
-            mapswidget.h \
-            directionswidget.h \
-
 RESOURCES += mapsnavigator.qrc
 
 include(../examples.pri)
