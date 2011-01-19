@@ -24,3 +24,10 @@ symbian: {
                         ReadDeviceData \
                         WriteDeviceData
 }
+
+HEADERS += \
+    mapswidget.h
+
+SOURCES += \
+    mapswidget.cpp \
+    main.cpp

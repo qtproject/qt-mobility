@@ -80,6 +80,7 @@ class GeoMap : public QGraphicsGeoMap
 
 public:
     GeoMap(QGeoMappingManager *manager, MapsWidget *mapsWidget);
+    ~GeoMap();
 
 private:
     MapsWidget *m_mapsWidget;
