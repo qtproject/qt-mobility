@@ -57,6 +57,7 @@
 #include <QtDBus/QDBusInterface>
 #include <QtDBus/QDBusMessage>
 #include <QtDBus/QDBusReply>
+#include <QVariantMap>
 
 
 #define	UDISKS_SERVICE     "org.freedesktop.UDisks"
