@@ -48,6 +48,8 @@
 
 class MapBox;
 
+QTM_USE_NAMESPACE
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
