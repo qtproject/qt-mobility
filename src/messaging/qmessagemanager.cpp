@@ -529,11 +529,6 @@ bool QMessageManager::updateMessage(QMessage *m)
     return store->updateMessage(m);
 }
 
-bool QMessageManager::moveMessageToFolder(QMessage *m, const QMessageFolderId &folderId)
-{
-    return store->moveMessageToFolder(m, folderId);
-}
-
 /*!
     \fn QMessageManager::message(const QMessageId& id) const
     

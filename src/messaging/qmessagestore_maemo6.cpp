@@ -40,7 +40,6 @@
 ****************************************************************************/
 #include "qmessagestore.h"
 #include "qmessagestore_p.h"
-#include "qmessage_p.h"
 #include "qmfstore_maemo6_p.h"
 #include "qmessagefolderid_p.h"
 #include "telepathyengine_maemo6_p.h"
@@ -421,34 +420,6 @@ bool QMessageStore::addMessage(QMessage *m)
         } else if (account.messageTypes() & QMessage::Email) {
             retVal = QMFStore::instance()->addMessage(*m, d_ptr->error);
 	}
-    }
-
-    return retVal;
-}
-
-bool QMessageStore::moveMessageToFolder(QMessage *m, const QMessageFolderId &folderId)
-{
-    bool retVal = false;
-
-    d_ptr->error = QMessageManager::NoError;
-
-    if (m->type() == QMessage::Sms && folderId.isValid()
-        && (folderId.toString() == FOLDER_ID_TRASH || folderId.toString() == FOLDER_ID_DRAFTS)) {
-        QMessagePrivate::setParentFolderId(*m, folderId);
-        retVal = StorageEngine::instance()->updateMessage(*m);
-    } else if (m->type() == QMessage::InstantMessage) {
-        d_ptr->error = QMessageManager::NotYetImplemented;
-        retVal = false; //TODO:
-        qWarning() << "QMessageManager::update not yet implemented for Instant Message";
-    } else if (m->type() == QMessage::Mms) {
-        d_ptr->error = QMessageManager::NotYetImplemented;
-        retVal = false; //TODO:
-        qWarning() << "QMessageManager::update not yet implemented for Instant MMS";
-    } else if (m->type() == QMessage::Email) {
-        QMessagePrivate::setParentFolderId(*m, folderId);
-        retVal = QMFStore::instance()->updateMessage(*m, d_ptr->error);
-    } else {
-        d_ptr->error = QMessageManager::ConstraintFailure;
     }
 
     return retVal;
