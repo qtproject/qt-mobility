@@ -48,7 +48,7 @@
 #include "bluez/adapter_p.h"
 #include "bluez/device_p.h"
 
-//#define QTM_DEVICEDISCOVERY_DEBUG
+#define QTM_DEVICEDISCOVERY_DEBUG
 
 QTM_BEGIN_NAMESPACE
 
