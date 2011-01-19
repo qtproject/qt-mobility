@@ -2208,7 +2208,7 @@ void tst_QContactManager::signalEmission()
     QVERIFY(arg.count() == 1);
     QCOMPARE(QContactLocalId(arg.at(0)), cid);
 
-    QSharedPointer<QContactObserver> c1Observer = m1->observeContact(cid);
+    QScopedPointer<QContactObserver> c1Observer(new QContactObserver(m1.data(), cid));
     QScopedPointer<QSignalSpy> spyCOM1(new QSignalSpy(c1Observer.data(), SIGNAL(contactChanged())));
     QScopedPointer<QSignalSpy> spyCOR1(new QSignalSpy(c1Observer.data(), SIGNAL(contactRemoved())));
 
@@ -2256,8 +2256,8 @@ void tst_QContactManager::signalEmission()
 
     spyCOM1->clear();
     spyCOR1->clear();
-    QSharedPointer<QContactObserver> c2Observer = m1->observeContact(c2.localId());
-    QSharedPointer<QContactObserver> c3Observer = m1->observeContact(c3.localId());
+    QScopedPointer<QContactObserver> c2Observer(new QContactObserver(m1.data(), c2.localId()));
+    QScopedPointer<QContactObserver> c3Observer(new QContactObserver(m1.data(), c3.localId()));
     QScopedPointer<QSignalSpy> spyCOM2(new QSignalSpy(c2Observer.data(), SIGNAL(contactChanged())));
     QScopedPointer<QSignalSpy> spyCOM3(new QSignalSpy(c3Observer.data(), SIGNAL(contactChanged())));
     QScopedPointer<QSignalSpy> spyCOR2(new QSignalSpy(c2Observer.data(), SIGNAL(contactRemoved())));
@@ -2314,9 +2314,9 @@ void tst_QContactManager::signalEmission()
     QTRY_WAIT( while(spyCA.size() > 0) {sigids += spyCA.takeFirst().at(0).value<QList<QContactLocalId> >(); }, sigids.contains(c.localId()) && sigids.contains(c2.localId()) && sigids.contains(c3.localId()));
     QTRY_COMPARE(spyCM.count(), 0);
 
-    c1Observer = m1->observeContact(c.localId());
-    c2Observer = m1->observeContact(c2.localId());
-    c3Observer = m1->observeContact(c3.localId());
+    c1Observer.reset(new QContactObserver(m1.data(), c.localId()));
+    c2Observer.reset(new QContactObserver(m1.data(), c2.localId()));
+    c3Observer.reset(new QContactObserver(m1.data(), c3.localId()));
     spyCOM1.reset(new QSignalSpy(c1Observer.data(), SIGNAL(contactChanged())));
     spyCOM2.reset(new QSignalSpy(c2Observer.data(), SIGNAL(contactChanged())));
     spyCOM3.reset(new QSignalSpy(c3Observer.data(), SIGNAL(contactChanged())));

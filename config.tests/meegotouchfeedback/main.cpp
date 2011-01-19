@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,54 +39,19 @@
 **
 ****************************************************************************/
 
-
-#ifndef QCONTACTINVALIDBACKEND_P_H
-#define QCONTACTINVALIDBACKEND_P_H
-
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
-
-#include "qorganizermanager.h"
-#include "qorganizermanager_p.h"
-
-#include <QMap>
 #include <QString>
+#include <QObject>
 
-QTM_BEGIN_NAMESPACE
+#include <meegotouch/MComponentData>
+#include <meegotouch/MFeedbackPlayer>
 
-class QOrganizerItemInvalidEngine : public QOrganizerManagerEngineV2
+int main(int, char**)
 {
-public:
-    QOrganizerItemInvalidEngine();
-    QString managerName() const;
-
-    /*! \reimp */
-    int managerVersion() const {return 0;}
-
-    /*! \reimp */
-    virtual QString synthesizedDisplayLabel(const QOrganizerItem&, QOrganizerManager::Error* error) const
-    {
-        *error =  QOrganizerManager::NotSupportedError;
-        return QString();
-    }
-
-    /*! \reimp */
-    virtual QOrganizerItem compatibleItem(const QOrganizerItem&, QOrganizerManager::Error* error) const
-    {
-        *error =  QOrganizerManager::NotSupportedError;
-        return QOrganizerItem();
-    }
-};
-
-QTM_END_NAMESPACE
-
-#endif
-
+    QString themeString = "example";
+    MComponentData *componentData = MComponentData::instance();
+    MFeedbackPlayer *feedbackPlayer = componentData->feedbackPlayer();
+    if (!feedbackPlayer)
+        return -1;
+    feedbackPlayer->play(themeString);
+    return 0;
+}
