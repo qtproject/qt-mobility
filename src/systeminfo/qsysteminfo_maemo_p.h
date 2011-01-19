@@ -212,13 +212,11 @@ public:
 
     QSystemDisplayInfoPrivate(QSystemDisplayInfoLinuxCommonPrivate *parent = 0);
     virtual ~QSystemDisplayInfoPrivate();
-    QSystemDisplayInfo::DisplayOrientation getOrientation(int screen);
     float contrast(int screen);
     int getDPIWidth(int screen);
     int getDPIHeight(int screen);
-    int physicalHeight(int screen);
-    int physicalWidth(int screen);
     int displayBrightness(int screen);
+    QSystemDisplayInfo::BacklightState backlightStatus(int screen);
 };
 
 class QSystemStorageInfoPrivate : public QSystemStorageInfoLinuxCommonPrivate
@@ -249,8 +247,19 @@ public:
     QSystemDeviceInfo::PowerState currentPowerState();
     QString model();
     QString productName();
+    bool isKeyboardFlippedOpen();//1.2
+    bool keypadLightOn(QSystemDeviceInfo::KeypadType type);//1.2
+
+    int messageRingtoneVolume();//1.2
+    int voiceRingtoneVolume();//1.2
+    bool vibrationActive();//1.2
+
+    QSystemDeviceInfo::LockTypeFlags lockStatus();//1.2
 
 protected:
+    void connectNotify(const char *signal);
+    void disconnectNotify(const char *signal);
+
 #if !defined(QT_NO_DBUS)
     QHalInterface *halIface;
     QHalDeviceInterface *halIfaceDevice;
@@ -262,6 +271,8 @@ private Q_SLOTS:
     void bluezPropertyChanged(const QString&, QDBusVariant);
     void deviceModeChanged(QString newMode);
     void profileChanged(bool changed, bool active, QString profile, QList<ProfileDataValue> values);
+    void deviceStateChanged(int device, int state);
+    void touchAndKeyboardStateChanged(const QString& state);
 
 private:
     bool flightMode;
@@ -270,6 +281,7 @@ private:
     bool vibratingAlertEnabled;
     bool beepProfile;
     int ringingAlertVolume;
+    int smsAlertVolume;
     QSystemDeviceInfo::BatteryStatus currentBatStatus;
 
     QSystemDeviceInfo::PowerState previousPowerState;
