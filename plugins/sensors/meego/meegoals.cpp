@@ -39,13 +39,13 @@
 **
 ****************************************************************************/
 
-#include "maemo6als.h"
+#include "meegoals.h"
 
-char const * const maemo6als::id("maemo6.als");
-bool maemo6als::m_initDone = false;
+char const * const meegoals::id("meego.als");
+bool meegoals::m_initDone = false;
 
-maemo6als::maemo6als(QSensor *sensor)
-    : maemo6sensorbase(sensor)
+meegoals::meegoals(QSensor *sensor)
+    : meegosensorbase(sensor)
 {
     initSensor<ALSSensorChannelInterface>(m_initDone);
     setReading<QAmbientLightReading>(&m_reading);
@@ -54,7 +54,7 @@ maemo6als::maemo6als(QSensor *sensor)
     addOutputRange(0, 5, 1);
 }
 
-void maemo6als::slotDataAvailable(const Unsigned& data)
+void meegoals::slotDataAvailable(const Unsigned& data)
 {
     // Convert from integer to fixed levels
     // TODO: verify levels
@@ -80,7 +80,7 @@ void maemo6als::slotDataAvailable(const Unsigned& data)
     }
 }
 
-bool maemo6als::doConnect(){
+bool meegoals::doConnect(){
     if (!(QObject::connect(m_sensorInterface, SIGNAL(ALSChanged(const Unsigned&)),
                            this, SLOT(slotDataAvailable(const Unsigned&))))){
         return false;
@@ -89,6 +89,6 @@ bool maemo6als::doConnect(){
 }
 
 
-const QString maemo6als::sensorName(){
+const QString meegoals::sensorName(){
     return "alssensor";
 }
