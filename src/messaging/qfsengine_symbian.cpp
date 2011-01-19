@@ -81,8 +81,51 @@ using namespace SymbianHelpers;
 Q_GLOBAL_STATIC(CFSEngine, applicationThreadFsEngine);
 Q_GLOBAL_STATIC(QThreadStorage<CFSEngine *>, fsEngineThreadStorage)
 
+/**
+ * Generic error mapper. Maps Symbian error code to QMessageManager::Error.
+ */
+static QMessageManager::Error symbianToMessageManagerError( TInt aError )
+{
+    QMessageManager::Error error = QMessageManager::RequestIncomplete;
+    switch( aError ) {
+        case KErrNone: {
+            error = QMessageManager::NoError;
+            break;
+        }
+        case KErrArgument: {
+            error = QMessageManager::InvalidId;
+            break;
+        }
+        case KErrNotFound:
+        case KErrCouldNotConnect: {
+            error = QMessageManager::ContentInaccessible;
+            break;
+        }
+        case KErrNoMemory: {
+            error = QMessageManager::WorkingMemoryOverflow;
+            break;
+        }
+        case KErrNotSupported: {
+            error = QMessageManager::NotYetImplemented;
+            break;
+        }
+        case KErrServerBusy: 
+        case KErrInUse: {
+            error = QMessageManager::Busy;
+            break;
+        }
+        default: {
+            break;
+        }
+    }
+    return error;
+}
+
 CFSEngine::CFSEngine()
- : m_messageQueryActive(false), m_cleanedup(false)
+ : m_messageQueryActive(false), 
+   m_cleanedup(false), 
+   m_mailboxMoveRequestId(0),
+   m_messageStorePrivateSingleton(0)
 {
     if (QCoreApplication::instance() && QCoreApplication::instance()->thread() == QThread::currentThread()) {
         // Make sure that application/main thread specific FsEngine will be cleaned up
@@ -133,7 +176,8 @@ void CFSEngine::cleanupFSBackend()
         delete operation;
     }
     m_fetchOperations.clear();
-
+    m_moveRequests.clear();
+    
     foreach (MEmailMailbox* value, m_mailboxes) {
         value->Release();
     }
@@ -144,6 +188,11 @@ void CFSEngine::cleanupFSBackend()
         m_clientApi = NULL;
     }
 
+    foreach (EMailSyncRequest* req, m_syncRequests) {
+        delete req;
+    }
+    m_syncRequests.clear();
+    
     if (m_factory) {
         delete m_factory;
         m_factory = NULL;
@@ -210,6 +259,11 @@ void CFSEngine::orderMessages(QMessageIdList& messageIds, const QMessageSortOrde
     for (int i=0; i < messages.count(); i++) {
         messageIds.append(messages[i].id());
     }
+}
+
+void CFSEngine::setMessageStorePrivateSingleton(QMessageStorePrivate* privateStore)
+{
+    m_messageStorePrivateSingleton = privateStore;
 }
 
 QMessageAccountIdList CFSEngine::queryAccounts(const QMessageAccountFilter &filter, const QMessageAccountSortOrder &sortOrder, uint limit, uint offset) const
@@ -298,6 +352,18 @@ QMessageAccountId CFSEngine::defaultAccount(QMessage::Type type) const
     return QMessageAccountId();
 }
 
+int CFSEngine::removeAccount(const QMessageAccountId &id)
+{
+    TRAP_IGNORE(updateEmailAccountsL());
+    TMailboxId mailboxId = fsMailboxIdFromQMessageAccountId(id);
+#ifdef FREESTYLEMAILBOXOBSERVERUSED
+    TRAPD(err, m_clientApi->RemoveMailboxL(mailboxId, this, KUndefinedRequestId) );
+#else
+    TRAPD(err, m_clientApi->RemoveMailboxL(mailboxId);
+#endif
+    return err;
+}
+
 QMessageAccountIdList CFSEngine::accountsByType(QMessage::Type type) const
 {
     QMessageAccountIdList accountIds = QMessageAccountIdList();
@@ -357,6 +423,8 @@ void CFSEngine::setPluginObserversL()
         m_mailboxes.insert(mailbox->MailboxId().iId, mailbox);
     }
     mailboxes.Close();
+    
+    m_clientApi->RegisterObserverL(*this);
 }
 
 void CFSEngine::NewMessageEventL(const TMailboxId& aMailbox, const REmailMessageIdArray aNewMessages, const TFolderId& aParentFolderId)
@@ -380,6 +448,24 @@ void CFSEngine::MessageDeletedEventL(const TMailboxId& aMailbox, const REmailMes
     }
 }
 
+void CFSEngine::EmailClientApiEventL(const TEmailClientApiEvent aEvent, const TMailboxId& aId)
+{
+    if(!m_messageStorePrivateSingleton)
+        return;
+    
+    TRAP_IGNORE(updateEmailAccountsL());
+    switch (aEvent) {
+    case EMailboxRemoved: {
+        QMessageAccountId accountId = qMessageAccountIdFromFsMailboxId(aId);
+        m_messageStorePrivateSingleton->accountRemoved(accountId);
+        }
+        break;
+    case EMailboxCreated:
+    default:
+        break;
+    }
+}
+
 void CFSEngine::notificationL(const TMailboxId& aMailbox, const TMessageId& aMessageId, 
                               const TFolderId& aParentFolderId, QMessageStorePrivate::NotificationType aNotificationType)
 {
@@ -399,6 +485,12 @@ void CFSEngine::notificationL(const TMailboxId& aMailbox, const TMessageId& aMes
 
     bool messageRetrieved = false;
     MEmailMailbox* mailbox = m_clientApi->MailboxL(aMailbox);
+
+    // Some older versions of Email client API will return NULL instead of 
+    // leaving with KErrNotFound if mailbox is not found.
+    if( !mailbox )
+        return;
+    
     CleanupReleasePushL(*mailbox);
     for ( ; it != end; ++it) {
         const QMessageFilter &filter(it.value());
@@ -440,6 +532,22 @@ void CFSEngine::notificationL(const TMailboxId& aMailbox, const TMessageId& aMes
 }
 
 #endif
+
+void CFSEngine::EmailRequestCompleteL( TInt aResult, TUint aRequestId )
+{
+#ifdef FREESTYLEMAILBOXOBSERVERUSED
+    if (m_messageStorePrivateSingleton && (aRequestId == KUndefinedRequestId) ) {
+        m_messageStorePrivateSingleton->removeAccountComplete(aResult);
+    }
+#endif
+    // notify completion to observer
+    EMailMoveRequest request = m_moveRequests.value( aRequestId );
+    if( !request.isNull() ) {
+        request.m_observer->_error = symbianToMessageManagerError( aResult );
+        request.m_observer->setFinished( aResult == KErrNone );
+        m_moveRequests.remove( aRequestId );
+    }
+}
 
 MEmailMessage* CFSEngine::createFSMessageL(const QMessage &message, const MEmailMailbox* mailbox)
 {
@@ -979,27 +1087,104 @@ bool CFSEngine::retrieveHeader(QMessageServicePrivate& privateService, const QMe
     return false;
 }
 
-bool CFSEngine::exportUpdates(const QMessageAccountId &id)
+void CFSEngine::synchronizeL(QMessageServicePrivate &observer, const QMessageAccountId &id)
 {
-    TRAPD(err, exportUpdatesL(id));
-    if (err != KErrNone) {
-        return false;
-    } else {
-        return true;
+    TMailboxId mailboxId = fsMailboxIdFromQMessageAccountId(id);
+    
+    foreach (EMailSyncRequest* request, m_syncRequests) {
+        if (request->m_mailboxId == mailboxId) {
+            User::Leave(KErrAlreadyExists);
+        }
     }
+    
+    EMailSyncRequest* req = new (ELeave) EMailSyncRequest(observer, m_syncRequests, mailboxId);
+    req->m_active = true;
+    m_syncRequests.append(req);
+    
+    MEmailMailbox* mailbox = m_mailboxes.value(mailboxId.iId);
+    if (!mailbox) {
+        // Mailbox was not found in the cache
+        mailbox = m_clientApi->MailboxL(mailboxId);
+        m_mailboxes.insert(mailboxId.iId, mailbox);
+        
+        if (!mailbox) {
+            User::Leave(KErrNotFound);
+		}
+    }
+    
+    // Mailbox cannot be released since it would cause email client API
+    // side to crash when it tries to callback to the observer given to plugin.
+    // Mailbox will be released when the mailbox cache is cleaned.
+    mailbox->SynchroniseL(*req);
 }
 
-void CFSEngine::exportUpdatesL(const QMessageAccountId &id)
+bool CFSEngine::synchronize(QMessageServicePrivate &observer, const QMessageAccountId &id)
 {
-    TMailboxId mailboxId(fsMailboxIdFromQMessageAccountId(id));
-    MEmailMailbox* mailbox = m_clientApi->MailboxL(mailboxId);
-    mailbox->SynchroniseL(*this);
-    mailbox->Release();
+    TRAPD(err, synchronizeL(observer, id));
+    return (err == KErrNone);
 }
 
-void CFSEngine::MailboxSynchronisedL(TInt aResult)
+bool CFSEngine::moveMessages(QMessageServicePrivate& observer, const QMessageIdList &messageIds, 
+    const QMessageFolderId &toFolderId)
 {
-    Q_UNUSED(aResult);
+    // message count already checked in QMessageService::moveMessages
+    TMessageId fsFirstMessageId = fsMessageIdFromQMessageId(messageIds[0]);
+    TMailboxId mailboxId = fsFirstMessageId.iFolderId.iMailboxId;
+   
+    // Check that To folder belongs to same mailbox as message.
+    TFolderId fsToFolderId = fsFolderIdFromQMessageFolderId(toFolderId);
+    if (!(mailboxId == fsToFolderId.iMailboxId)) {
+        observer._error = QMessageManager::InvalidId;
+        return false;
+    }
+    
+    REmailMessageIdArray fsMessageIdArray;
+    int count = messageIds.count();
+    for (int i = 0; i < count; i++) {
+        TMessageId fsMessageId = fsMessageIdFromQMessageId(messageIds[i]);
+        // Check that messages are within the same mailbox.
+        if (!(mailboxId == fsMessageId.iFolderId.iMailboxId)) {
+            fsMessageIdArray.Close();
+            observer._error = QMessageManager::InvalidId;
+            return false; 
+        }
+        // Let's populate native mail array.
+        int error = fsMessageIdArray.Append(fsMessageId);
+        if (error != KErrNone) {
+            fsMessageIdArray.Close();
+            observer._error = QMessageManager::WorkingMemoryOverflow;
+            return false;
+        }
+    }
+    
+    TRAPD( err, moveMessagesL(observer, fsMessageIdArray, fsToFolderId) );
+    fsMessageIdArray.Close();
+    if (err != KErrNone)
+        {
+        observer._error = symbianToMessageManagerError(err);
+        return false;
+        }
+    return true;
+}
+
+void CFSEngine::moveMessagesL(QMessageServicePrivate &observer, 
+    const REmailMessageIdArray &messages, const TFolderId &toFolder)
+{
+    // use cached mailbox instances if available
+    TMailboxId mailboxId = toFolder.iMailboxId;
+    MEmailMailbox* mailbox = m_mailboxes.value(mailboxId.iId);
+    if (!mailbox) {
+        mailbox = m_clientApi->MailboxL(mailboxId.iId);    
+        if (mailbox) {
+            m_mailboxes.insert(mailboxId.iId, mailbox);
+        } else {
+            User::Leave(KErrNotFound);
+        }
+    }
+    
+    m_mailboxMoveRequestId++;
+    mailbox->MoveMessagesL( messages, toFolder, this, m_mailboxMoveRequestId);
+    m_moveRequests.insert(m_mailboxMoveRequestId, EMailMoveRequest( &observer, mailboxId ));
 }
 
 bool CFSEngine::removeMessages(const QMessageFilter& /*filter*/, QMessageManager::RemovalOption /*option*/)
@@ -1436,6 +1621,31 @@ void CFSEngine::cancel(QMessageServicePrivate& privateService)
     CFSContentFetchOperation* op = m_fetchOperations.value(&privateService);
     if (op) {
         delete op;
+    }
+    
+    foreach (EMailSyncRequest* req, m_syncRequests) {
+        if (&req->m_observer == &privateService) {
+            req->m_active = false;
+            MEmailMailbox* mailbox = m_mailboxes.value(req->m_mailboxId.iId);
+            if (mailbox) {
+                mailbox->CancelSynchronise();
+            }
+        }
+    }
+    
+    // cancel move requests
+    QMap<uint, EMailMoveRequest>::iterator i( m_moveRequests.begin() );
+    while( i != m_moveRequests.end() ) {
+        EMailMoveRequest req( i.value() );
+        if( req.m_observer == &privateService ) {
+            MEmailMailbox* mailbox = m_mailboxes.value(req.m_mailbox.iId);
+            if( mailbox ) {
+                TRAP_IGNORE( mailbox->CancelMoveL( i.key() ) );
+            }
+            i = m_moveRequests.erase( i );
+        } else {
+            i++;
+        }
     }
 }
 
@@ -2774,6 +2984,18 @@ void CFSEngine::contentFetched(void* service, bool success)
         }
         delete op;
     }
+}
+
+void EMailSyncRequest::MailboxSynchronisedL(TInt aResult)
+{
+    m_requestList.removeOne(this);
+
+    if (m_active) {
+        bool result = (aResult == KErrNone);
+        m_observer.setFinished(result);
+    }
+    
+    delete this;
 }
 
 CFSContentFetchOperation::CFSContentFetchOperation(CFSEngine& parentEngine, QMessageServicePrivate& service,
