@@ -39,22 +39,13 @@
 **
 ****************************************************************************/
 
-#ifndef UTILS_SYMBIAN_P_H
-#define UTILS_SYMBIAN_P_H
+#ifndef NEARFIELDTAGOPERATIONCALLBACK_H
+#define NEARFIELDTAGOPERATIONCALLBACK_H
 
-#include <bttypes.h>
-
-QT_BEGIN_HEADER
-
-QTM_BEGIN_NAMESPACE
-
-inline QBluetoothAddress qTBTDevAddrToQBluetoothAddress(const TBTDevAddr &address)
-{
-    return QBluetoothAddress(QString(QByteArray((const char *)address.Des().Ptr(), 6).toHex().toUpper()));
-}
-
-QTM_END_NAMESPACE
-
-QT_END_HEADER
+class MNearFieldTagOperationCallback
+    {
+public:
+    virtual void CommandComplete(TInt aError) = 0;
+    };
 
 #endif
