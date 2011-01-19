@@ -1078,9 +1078,9 @@ QSystemDisplayInfo::BacklightState QSystemDisplayInfoPrivate::backlightStatus(in
         if (displayStatus == "off") {
             backlightState = QSystemDisplayInfo::BacklightStateOff;
         } else if (displayStatus == "dimmed") {
-            backlightState = QSystemDisplayInfo::backlightStateDimmed;
+            backlightState = QSystemDisplayInfo::BacklightStateDimmed;
         } else if (displayStatus == "on") {
-            backlightState = QSystemDisplayInfo::backlightStateOn;
+            backlightState = QSystemDisplayInfo::BacklightStateOn;
         }
     }
 #endif
