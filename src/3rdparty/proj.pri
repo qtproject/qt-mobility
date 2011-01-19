@@ -143,6 +143,7 @@ SOURCES += $$PWD/proj/PJ_aeqd.c \
 
 unix {
   DEFINES += MUTEX_pthread
+  LIBS += -lm
 }
 
 win32 {

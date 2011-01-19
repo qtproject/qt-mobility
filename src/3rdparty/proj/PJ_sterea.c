@@ -40,13 +40,11 @@ PROJ_HEAD(sterea, "Oblique Stereographic Alternative") "\n\tAzimuthal, Sph&Ell";
 # define MAX_ITER	10
 
 FORWARD(e_forward); /* ellipsoid */
-        double cosphi, sinphi, coslam, k;
-
 	lp = pj_gauss(lp, P->en);
-        sinphi = sin(lp.phi);
-        cosphi = cos(lp.phi);
-        coslam = cos(lp.lam);
-        k = P->k0 * P->R2 / (1. + P->sinc0 * sinphi + P->cosc0 * cosphi * coslam);
+        double sinphi = sin(lp.phi);
+        double cosphi = cos(lp.phi);
+        double coslam = cos(lp.lam);
+        double k = P->k0 * P->R2 / (1. + P->sinc0 * sinphi + P->cosc0 * cosphi * coslam);
         xy.x = k * cosphi * sin(lp.lam);
         xy.y = k * (P->cosc0 * sinphi - P->sinc0 * cosphi * coslam);
 	return (xy);
