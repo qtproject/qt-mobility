@@ -145,6 +145,10 @@ unix {
   DEFINES += MUTEX_pthread
 }
 
+symbian {
+  LIBS += -llibpthread -llibm
+}
+
 win32 {
   DEFINES += MUTEX_win32
 }
