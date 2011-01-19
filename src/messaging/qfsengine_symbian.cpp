@@ -766,9 +766,6 @@ bool CFSEngine::updateMessage(QMessage* message)
 
 void CFSEngine::updateMessageL(QMessage* message)
 {
-    // Remove updated message from the cache
-    MessageCache::instance()->remove(message->id().toString());
-
     TMailboxId mailboxId(fsMailboxIdFromQMessageAccountId(message->parentAccountId()));
     MEmailMailbox* mailbox = m_clientApi->MailboxL(mailboxId);
     CleanupReleasePushL(*mailbox);
@@ -938,6 +935,9 @@ void CFSEngine::updateMessageL(QMessage* message)
     fsMessage->SaveChangesL();
     CleanupStack::PopAndDestroy(fsMessage);
     CleanupStack::PopAndDestroy(mailbox);
+
+    // Remove updated message from the cache
+    MessageCache::instance()->remove(message->id().toString());
 }
 
 bool CFSEngine::removeMessage(const QMessageId &id, QMessageManager::RemovalOption option)
