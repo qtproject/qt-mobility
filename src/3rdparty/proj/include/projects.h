@@ -41,9 +41,9 @@
 #endif
 
 /* standard inclusions */
-#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 
 #ifdef __cplusplus
 #define C_NAMESPACE extern "C"

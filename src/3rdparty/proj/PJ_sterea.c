@@ -39,6 +39,8 @@ PROJ_HEAD(sterea, "Oblique Stereographic Alternative")
 # define DEL_TOL	1.e-14
 # define MAX_ITER	10
 
+extern double cos(double __x);
+
 FORWARD(e_forward); /* ellipsoid */
 	double cosc, sinc, cosl, k;
 
