@@ -37,10 +37,6 @@ PJ_CVSID("$Id: pj_transform.c 1504 2009-01-06 02:11:57Z warmerdam $");
 #include <proj_api.h>
 #endif
 
-#ifdef _WIN32
-#  define MUTEX_win32
-#endif
-
 #if !defined(MUTEX_stub) && !defined(MUTEX_pthread) && !defined(MUTEX_win32)
 #  define MUTEX_stub
 #endif
