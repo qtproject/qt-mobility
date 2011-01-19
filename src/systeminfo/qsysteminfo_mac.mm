@@ -1639,9 +1639,9 @@ QSystemDisplayInfo::BacklightState  QSystemDisplayInfoPrivate::backlightStatus(i
     if(bright == 0) {
         return QSystemDisplayInfo::BacklightStateOff;
     } else if(bright > 1 && bright < 99) {
-        return QSystemDisplayInfo::backlightStateDimmed;
+        return QSystemDisplayInfo::BacklightStateDimmed;
        } else {
-        return QSystemDisplayInfo::backlightStateOn;
+        return QSystemDisplayInfo::BacklightStateOn;
     }
     return QSystemDisplayInfo::BacklightStateUnknown;
 }
