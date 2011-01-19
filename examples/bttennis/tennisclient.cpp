@@ -48,7 +48,7 @@
 #include <QtCore/QStringList>
 
 TennisClient::TennisClient(QObject *parent)
-:   QObject(parent), socket(0), stream(0)
+:   QObject(parent), socket(0), stream(0), elapsed(new QTime)
 {
 }
 
@@ -124,11 +124,14 @@ void TennisClient::readSocket()
 //! [moveRightPaddle]
 void TennisClient::moveRightPaddle(int y)
 {
-    if(stream) {
+    int msec = elapsed->elapsed();
+
+    if(stream && msec > 50) {
         QByteArray b;
         QDataStream s(&b, QIODevice::WriteOnly);
         s << QString("r %1").arg(y);
         socket->write(b);
+        elapsed->restart();
     }
 }
 //! [moveRightPaddle]

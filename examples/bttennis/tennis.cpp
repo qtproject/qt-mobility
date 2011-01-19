@@ -244,7 +244,7 @@ void Tennis::clientConnected(const QString &name)
 
 void Tennis::clientDisconnected()
 {
-    board->setStatus("Disconnect", 100, 15);
+    board->setStatus("Disconnect", 100, 25);
     controller->start();
     server->startServer();
     isClient = false;    
@@ -265,7 +265,7 @@ void Tennis::serverConnected(const QString &name)
 
 void Tennis::serverDisconnected()
 {
-    board->setStatus("Disconnected", 100, 15);
+    board->setStatus("Disconnected", 100, 25);
     isConnected = false;
     discoveryFinished();
 }
@@ -283,14 +283,14 @@ void Tennis::serviceDiscovered(const QBluetoothServiceInfo &serviceInfo)
 void Tennis::discoveryFinished()
 {
     if(!isConnected)
-        board->setStatus("Waiting", 100, 10);
+        board->setStatus("Waiting", 100, 25);
         QTimer::singleShot(60000, this, SLOT(startDiscovery()));
 }
 
 void Tennis::startDiscovery()
 {
     if(!isConnected) {
-        board->setStatus("Scanning", 100, 10);
+        board->setStatus("Scanning", 100, 25);
         if(quickDiscovery)
             m_discoveryAgent->start(QBluetoothServiceDiscoveryAgent::MinimalDiscovery);
         else
