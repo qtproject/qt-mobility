@@ -41,6 +41,8 @@
 #include "geocodingtab.h"
 #include "placepresenter.h"
 
+#include <QComboBox>
+#include <QGroupBox>
 #include <QTreeWidget>
 #include <QLineEdit>
 #include <QString>
@@ -53,15 +55,35 @@
 
 #include <qgeoaddress.h>
 
-GeoCodingInputDialog::GeoCodingInputDialog(QString &obloc, QGeoAddress &address, QWidget *parent)
-        : QDialog(parent), m_oblocStr(obloc), m_address(address)
+GeoCodingInputDialog::GeoCodingInputDialog(QString &obloc, QGeoAddress &address, GeocodingType &type,QWidget *parent)
+    : QDialog(parent)
+    , m_oblocStr(obloc)
+    , m_address(address)
+    , m_type(type)
 {
     setWindowTitle(tr("Geocoding Parameters"));
-    QLabel *obloclbl = new QLabel(tr("OneBox-Search:"));
-    m_obloc = new QLineEdit(m_oblocStr);
-    m_obloc->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
 
-    QLabel *addressSearchlbl = new QLabel(tr("Search by address (Leave OneBox empty):"));
+    m_gbOneBox = new QGroupBox(tr("One-Box Search"));
+
+    m_gbOneBox->setCheckable(true);
+    m_gbOneBox->setChecked(true);
+
+    m_obloc = new QLineEdit(m_oblocStr);
+    m_oneBoxType = new QComboBox(this);
+    m_oneBoxType->addItem(tr("Geocoding search"), GeocodingOneBox);
+    m_oneBoxType->addItem(tr("Landmark search"), GeocodingLandmark);
+
+    QVBoxLayout *vboxOneBox = new QVBoxLayout;
+    vboxOneBox->addWidget(m_obloc);
+    vboxOneBox->addWidget(m_oneBoxType);
+    vboxOneBox->addStretch(1);
+    m_gbOneBox->setLayout(vboxOneBox);
+
+    m_gbAddress = new QGroupBox(tr("Address Search"));
+
+    m_gbAddress->setCheckable(true);
+    m_gbAddress->setChecked(false);
+
     QLabel *countrylbl = new QLabel(tr("Country:"));
     m_country = new QLineEdit(address.country());
     m_country->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
@@ -78,18 +100,9 @@ GeoCodingInputDialog::GeoCodingInputDialog(QString &obloc, QGeoAddress &address,
     m_street = new QLineEdit(address.street());
     m_street->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
-    QHBoxLayout *firstrow = new QHBoxLayout;
-    firstrow->setSpacing(2);
-    firstrow->setContentsMargins(2, 1, 2, 1);
-    firstrow->addWidget(m_obloc);
-
-    QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, Qt::Horizontal);
-    connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
-    connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
-
     QGridLayout *gridLayout = new QGridLayout ;
     gridLayout->setSizeConstraint(QLayout::SetMinimumSize);
-    gridLayout->setSpacing(2);
+    gridLayout->setSpacing(4);
     gridLayout->setContentsMargins(2, 1, 2, 1);
 #if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
     gridLayout->addWidget(streetlbl, 1, 0);
@@ -118,17 +131,42 @@ GeoCodingInputDialog::GeoCodingInputDialog(QString &obloc, QGeoAddress &address,
     gridLayout->addWidget(m_state, 6, 0);
     gridLayout->addWidget(m_country, 6, 1);
 #endif
+
+    m_gbAddress->setLayout(gridLayout);
+
+    QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, Qt::Horizontal);
+    connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
+    connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
+
     QVBoxLayout *mainLayout = new QVBoxLayout;
     mainLayout->setSizeConstraint(QLayout::SetFixedSize);
-    mainLayout->setSpacing(2);
-    mainLayout->setContentsMargins(2, 1, 2, 1);
-    mainLayout->addWidget(obloclbl);
-    mainLayout->addLayout(firstrow);
-    mainLayout->addWidget(addressSearchlbl);
-    mainLayout->addLayout(gridLayout);
+    mainLayout->setSpacing(6);
+
+    mainLayout->addWidget(m_gbOneBox);
+    mainLayout->addWidget(m_gbAddress);
     mainLayout->addWidget(buttonBox);
+
     setLayout(mainLayout);
 
+    switch (m_type) {
+    case GeocodingOneBox: {
+        oneBoxSearchToogled(true);
+        break;
+    }
+    case GeocodingLandmark: {
+        oneBoxSearchToogled(true);
+        const int index = m_oneBoxType->findData(GeocodingLandmark);
+        m_oneBoxType->setCurrentIndex(index);
+        break;
+    }
+    case GeoCodingStructured: {
+        addressSeachToogled(true);
+        break;
+    }
+    }
+
+    connect(m_gbOneBox, SIGNAL(toggled(bool)), this, SLOT(oneBoxSearchToogled(bool)));
+    connect(m_gbAddress, SIGNAL(toggled(bool)), this, SLOT(addressSeachToogled(bool)));
 }
 
 void GeoCodingInputDialog::accept()
@@ -141,16 +179,39 @@ void GeoCodingInputDialog::accept()
     m_address.setPostcode(m_zip->text());
     m_address.setStreet(m_street->text());
 
+    if (m_gbAddress->isChecked()) {
+        m_type = GeoCodingStructured;
+    } 
+    else {
+        m_type = static_cast<GeocodingType>(m_oneBoxType->itemData(m_oneBoxType->currentIndex()).toInt());
+    }
+
     QDialog::accept();
 }
 
+void GeoCodingInputDialog::oneBoxSearchToogled(bool on)
+{
+    m_gbOneBox->setChecked(on);
+    m_gbAddress->setChecked(! on);
+}
 
-GeocodingTab::GeocodingTab(QWidget *parent) :
-        QWidget(parent),
-        m_searchManager(NULL)
+void GeoCodingInputDialog::addressSeachToogled(bool on)
+{
+    m_gbOneBox->setChecked(! on);
+    m_gbAddress->setChecked(on);
+}
+
+GeocodingTab::GeocodingTab(QWidget *parent)
+    : QWidget(parent)
+    , m_searchManager(NULL)
+    , m_type(GeoCodingInputDialog::GeocodingOneBox)
 {
 
     m_oblocStr = "Deutschland, München";
+
+    m_address.setStreet("Invalidenstrasse");
+    m_address.setCountry("DEU");
+    m_address.setPostcode("10115");
 
     m_requestBtn = new QPushButton(tr("Search By Address"));
     m_requestBtn->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
@@ -201,17 +262,26 @@ void GeocodingTab::initialize(QGeoSearchManager *searchManager)
 void GeocodingTab::on_btnRequest_clicked()
 {
     if (m_searchManager) {
-        GeoCodingInputDialog dlg(m_oblocStr, m_address, this);
+        GeoCodingInputDialog dlg(m_oblocStr, m_address, m_type,this);
+        
         if (dlg.exec() == QDialog::Accepted) {
             m_resultTree->clear();
             QTreeWidgetItem* top = new QTreeWidgetItem(m_resultTree);
             top->setText(0, tr("Geocode"));
             top->setText(1, tr("Requesting data"));
 
-            if (!m_oblocStr.isEmpty()) {
+            switch (m_type) {
+            case GeoCodingInputDialog::GeocodingOneBox:
                 m_searchManager->search(m_oblocStr, QGeoSearchManager::SearchGeocode);
-            } else {
+                break;
+            case GeoCodingInputDialog::GeocodingLandmark:
+                m_searchManager->search(m_oblocStr, QGeoSearchManager::SearchLandmarks);
+                break;
+            case GeoCodingInputDialog::GeoCodingStructured:
                 m_searchManager->geocode(m_address);
+                break;
+            default:
+                break;
             }
         }
     } else {

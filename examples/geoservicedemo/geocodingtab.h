@@ -49,6 +49,8 @@
 class QTreeWidget;
 class QLineEdit;
 class QPushButton;
+class QComboBox;
+class QGroupBox;
 
 QTM_USE_NAMESPACE
 
@@ -56,18 +58,32 @@ class GeoCodingInputDialog: public QDialog
 {
     Q_OBJECT
 public:
-    GeoCodingInputDialog(QString &obloc, QGeoAddress &address, QWidget *parent = 0);
+    enum GeocodingType {
+        GeocodingOneBox,
+        GeocodingLandmark,
+        GeoCodingStructured
+    };
+
+    GeoCodingInputDialog(QString &obloc, QGeoAddress &address, GeocodingType &type,QWidget *parent = 0);
+
 private slots:
     void accept();
+    void oneBoxSearchToogled(bool on);
+    void addressSeachToogled(bool on);
+
 private:
     QString &m_oblocStr;
     QGeoAddress &m_address;
+    GeocodingType &m_type;
     QLineEdit *m_obloc;
+    QComboBox *m_oneBoxType;
     QLineEdit *m_country;
     QLineEdit *m_state;
     QLineEdit *m_city;
     QLineEdit *m_zip;
     QLineEdit *m_street;
+    QGroupBox *m_gbOneBox;
+    QGroupBox *m_gbAddress;
 };
 
 class GeocodingTab: public QWidget
@@ -90,7 +106,9 @@ private:
     QGeoSearchManager *m_searchManager;
     QString m_oblocStr;
     QGeoAddress m_address;
+    GeoCodingInputDialog::GeocodingType m_type;
     QTreeWidget *m_resultTree;
     QPushButton *m_requestBtn;
 };
-#endif /* ROUTETAB_H_ */
+
+#endif // GEOCODINGTAB_H_

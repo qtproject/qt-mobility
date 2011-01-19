@@ -42,27 +42,32 @@
 #define MAPWIDGET_H
 
 #include <qgraphicsgeomap.h>
-#include <qgeomapcircleobject.h>
-#include <qgeomappingmanager.h>
-#include <qgeocoordinate.h>
 
-#include <QGraphicsSceneMouseEvent>
 #include <QTime>
+#include <QPen>
+
+class QGraphicsSceneMouseEvent;
+class QPinchGesture;
+
+QTM_BEGIN_NAMESPACE
+
+    class QGeoCoordinate;
+    class QGeoMappingManager;
+    class QGeoMapCircleObject;
+
+QTM_END_NAMESPACE
 
 QTM_USE_NAMESPACE
 
-class MapWidget : public QGraphicsGeoMap
+class GeoMap : public QGraphicsGeoMap
 {
     Q_OBJECT
 public:
-    MapWidget(QGeoMappingManager *manager);
-    ~MapWidget();
-
-public slots:
-    void setMouseClickCoordQuery(bool state);
+    GeoMap(QGeoMappingManager * manager);
+    ~GeoMap();
 
 signals:
-    void coordQueryResult(const QGeoCoordinate &coord);
+    void contextMenu(QGraphicsSceneContextMenuEvent * event, QGeoMapObject * clickedMapObject);
 
 private slots:
     void kineticTimerEvent();
@@ -70,18 +75,19 @@ private slots:
     void hoveredMapObjectDestroyed();
 
 protected:
-    void mousePressEvent(QGraphicsSceneMouseEvent* event);
-    void mouseReleaseEvent(QGraphicsSceneMouseEvent* event);
-    void hoverMoveEvent(QGraphicsSceneHoverEvent* event);
-    void hoverLeaveEvent(QGraphicsSceneHoverEvent* event);
-    void mouseMoveEvent(QGraphicsSceneMouseEvent* event);
-    void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event);
-    void keyPressEvent(QKeyEvent *event);
-    void keyReleaseEvent(QKeyEvent* event);
-    void wheelEvent(QGraphicsSceneWheelEvent* event);
+    void mousePressEvent(QGraphicsSceneMouseEvent * event);
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent * event);
+    void hoverMoveEvent(QGraphicsSceneHoverEvent * event);
+    void hoverLeaveEvent(QGraphicsSceneHoverEvent * event);
+    void mouseMoveEvent(QGraphicsSceneMouseEvent * event);
+    void mouseDoubleClickEvent(QGraphicsSceneMouseEvent * event);
+    void keyPressEvent(QKeyEvent * event);
+    void keyReleaseEvent(QKeyEvent * event);
+    void wheelEvent(QGraphicsSceneWheelEvent * event);
+    void contextMenuEvent(QGraphicsSceneContextMenuEvent * event);
+    bool sceneEvent(QEvent *event);
 
 private:
-    bool coordQueryState;
     bool panActive;
     bool panDecellerate;
 
@@ -91,7 +97,7 @@ private:
     // current kinetic panning speed, in pixel/msec
     QPointF kineticPanSpeed;
     QPoint panDir;
-    QTimer *kineticTimer;
+    QTimer * kineticTimer;
     QTime lastMoveTime;
 
     // An entry in the mouse history. first=speed, second=time
@@ -99,14 +105,17 @@ private:
     // A history of the last (currently 5) mouse move events is stored in order to smooth out movement detection for kinetic panning
     QList<MouseHistoryEntry> mouseHistory;
 
-    void panFloatWrapper(const QPointF& delta);
-    void applyPan(const Qt::KeyboardModifiers& modifiers);
+    void panFloatWrapper(const QPointF & delta);
+    void applyPan(const Qt::KeyboardModifiers & modifiers);
 
-    QGeoMapObject* m_lastHoveredMapObject;
+    QGeoMapObject * m_lastHoveredMapObject;
     QPen m_lastHoveredMapObjectPen;
 
 public:
-    QGeoMapCircleObject *lastCircle;
+    QGeoMapCircleObject * lastCircle;
+
+private:
+    void handlePinchGesture(QPinchGesture * pinchGesture);
 };
 
 #endif // MAPWIDGET_H

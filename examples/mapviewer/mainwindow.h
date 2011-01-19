@@ -41,119 +41,27 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <qgeomappingmanager.h>
-#include <qgeoroutingmanager.h>
-#include <qgeosearchmanager.h>
-#include <qgeosearchreply.h>
-#include <qgeoserviceprovider.h>
-#include <qgeomappixmapobject.h>
-
-#include <QMainWindow>
-#include <QGraphicsView>
-#include <QGraphicsSceneMouseEvent>
-#include <QMenu>
-#include <QPixmap>
-#include <QList>
+#include <QtGui/QMainWindow>
 #include <QTime>
+
 #include <qnetworksession.h>
 
-class QSlider;
-class QRadioButton;
-class QLineEdit;
-class QPushButton;
-class QToolButton;
-class QResizeEvent;
-class QShowEvent;
-
-QTM_USE_NAMESPACE
-class MapWidget;
+class MapBox;
 
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
-    Q_PROPERTY(bool controlsVisible READ controlsVisible WRITE setControlsVisible)
+private:
+    MapBox * m_box;
+    QNetworkSession * m_session;
 
 public:
-    MainWindow(QWidget *parent = 0);
+    MainWindow(QWidget * parent = 0);
     ~MainWindow();
 
-    void setControlsVisible(bool visible);
-    bool controlsVisible();
-
-protected:
-    void resizeEvent(QResizeEvent* event);
-    void showEvent(QShowEvent *);
-
-private:
-    void setupUi();
-    void setProvider(QString providerId);
-    void createMenus();
-    void createPixmapIcon();
-
 private slots:
-    void demo1(bool checked);
-    void demo2(bool checked);
-    void demo3(bool checked);
-    void drawRect(bool checked);
-    void drawPixmap(bool checked);
-    void drawPolyline(bool checked);
-    void drawPolygon(bool checked);
-    void drawCircle(bool checked);
-    void drawText(bool checked);
-    void calcRoute(bool checked);
-    void customContextMenuRequest(const QPoint&);
-    void routeFinished();
-    void removePixmaps();
-    void removeMapObject();
-    void selectObjects();
-
-    void searchClicked();
-    void searchReplyFinished();
-    void resultsError(QGeoSearchReply::Error errorCode, QString errorString);
-
-    void sliderValueChanged(int zoomLevel);
-    void mapZoomLevelChanged(qreal zoomLevel);
-    void mapTypeToggled(int type);
-    void mapTypeChanged(QGraphicsGeoMap::MapType type);
-    void setCoordsClicked();
-    void updateCoords(const QGeoCoordinate &coords);
-    void sceneSelectionChanged();
-
     void networkSessionOpened();
-    void error(QNetworkSession::SessionError error);
-
-private:
-    QGeoServiceProvider *m_serviceProvider;
-    QGeoMappingManager *m_mapManager;
-    QGeoRoutingManager *m_routingManager;
-    QGeoSearchManager *m_searchManager;
-
-    MapWidget *m_mapWidget;
-    QGraphicsPathItem* m_fullScreenButton;
-    QMenu* m_popupMenu;
-    QMenu* m_popupMenuMapObject;
-    QPixmap m_markerIcon;
-    QPoint m_markerOffset;
-    QPoint m_lastClicked;
-    QGeoMapObject* m_lastClickedMapObject;
-    QList<QGeoMapPixmapObject*> m_markerObjects;
-
-    QGraphicsView* m_qgv;
-    QSlider* m_slider;
-    QList<QAction*> m_mapControlActions;
-    QList<QGraphicsGeoMap::MapType> m_mapControlTypes;
-    QLineEdit *m_latitudeEdit;
-    QLineEdit *m_longitudeEdit;
-    QAction *m_captureCoordsAction;
-    QDialog *m_coordControlDialog;
-    QPushButton *m_setCoordsButton;
-    QLineEdit *m_searchEdit;
-    QPushButton *m_searchButton;
-
-    QLayout *m_layout;
-    bool m_controlsVisible;
-
-    QNetworkSession *m_session;
+    void networkSessionError(QNetworkSession::SessionError error);
 };
 
 #endif // MAINWINDOW_H
