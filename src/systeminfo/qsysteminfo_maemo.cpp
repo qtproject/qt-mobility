@@ -1079,6 +1079,26 @@ QSystemDeviceInfoPrivate::~QSystemDeviceInfoPrivate()
 {
 }
 
+void QSystemDeviceInfoPrivate::connectNotify(const char *signal)
+{
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(lockStatusChanged(QSystemDeviceInfo::LockTypeFlags))))) {
+        QDBusConnection::systemBus().connect("com.nokia.mce", "/com/nokia/mce/signal", "com.nokia.mce.signal", "tklock_mode_ind",
+                                             this, SLOT(touchAndKeyboardStateChanged(const QString&)));
+        QDBusConnection::systemBus().connect("com.nokia.devicelock", "/request", "com.nokia.devicelock", "stateChanged",
+                                             this, SLOT(deviceStateChanged(int,int)));
+    }
+}
+
+void QSystemDeviceInfoPrivate::disconnectNotify(const char *signal)
+{
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(lockStatusChanged(QSystemDeviceInfo::LockTypeFlags))))) {
+        QDBusConnection::systemBus().disconnect("com.nokia.mce", "/com/nokia/mce/signal", "com.nokia.mce.signal", "tklock_mode_ind",
+                                                this, SLOT(touchAndKeyboardStateChanged(const QString&)));
+        QDBusConnection::systemBus().disconnect("com.nokia.devicelock", "/request", "com.nokia.devicelock", "stateChanged",
+                                                this, SLOT(deviceStateChanged(int,int)));
+    }
+}
+
 #if !defined(QT_NO_DBUS)
 void QSystemDeviceInfoPrivate::halChanged(int,QVariantList map)
 {
@@ -1497,6 +1517,24 @@ QSystemDeviceInfo::LockTypeFlags QSystemDeviceInfoPrivate::lockStatus()
     }
 #endif
     return lockFlags;
+}
+
+void QSystemDeviceInfoPrivate::deviceStateChanged(int device, int state)
+{
+    QSystemDeviceInfo::LockTypeFlags lockFlags;
+    if (device == 1 && state != 0) {
+        lockFlags |= QSystemDeviceInfo::PinLocked;
+    }
+    emit lockStatusChanged(lockFlags);
+}
+
+void QSystemDeviceInfoPrivate::touchAndKeyboardStateChanged(const QString& state)
+{
+    QSystemDeviceInfo::LockTypeFlags lockFlags;
+    if (state != "unlocked" && state != "silent-unlocked") {
+        lockFlags |= QSystemDeviceInfo::TouchAndKeyboardLocked;
+    }
+    emit lockStatusChanged(lockFlags);
 }
 
 //////////////

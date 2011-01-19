@@ -257,6 +257,9 @@ public:
     QSystemDeviceInfo::LockTypeFlags lockStatus();//1.2
 
 protected:
+    void connectNotify(const char *signal);
+    void disconnectNotify(const char *signal);
+
 #if !defined(QT_NO_DBUS)
     QHalInterface *halIface;
     QHalDeviceInterface *halIfaceDevice;
@@ -268,6 +271,8 @@ private Q_SLOTS:
     void bluezPropertyChanged(const QString&, QDBusVariant);
     void deviceModeChanged(QString newMode);
     void profileChanged(bool changed, bool active, QString profile, QList<ProfileDataValue> values);
+    void deviceStateChanged(int device, int state);
+    void touchAndKeyboardStateChanged(const QString& state);
 
 private:
     bool flightMode;
