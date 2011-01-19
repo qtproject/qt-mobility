@@ -43,7 +43,8 @@
 
 #include <QtGui/QMainWindow>
 #include <QTime>
-#include <QNetworkSession>
+
+#include <qnetworksession.h>
 
 class MapBox;
 
