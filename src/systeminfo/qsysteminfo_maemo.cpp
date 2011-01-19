@@ -1008,37 +1008,6 @@ int QSystemDisplayInfoPrivate::displayBrightness(int screen)
     return -1;
 }
 
-QSystemDisplayInfo::DisplayOrientation QSystemDisplayInfoPrivate::getOrientation(int screen)
-{
-    Q_UNUSED(screen)
-    QSystemDisplayInfo::DisplayOrientation orientation = QSystemDisplayInfo::Unknown;
-
-#if !defined(QT_NO_DBUS)
-    QDBusMessage reply = QDBusConnection::systemBus().call(
-                             QDBusMessage::createMethodCall("com.nokia.SensorService", "/org/maemo/contextkit/Screen/TopEdge",
-                                                            "org.maemo.contextkit.Property", "Get"));
-    if (reply.type() != QDBusMessage::ErrorMessage) {
-        QList<QVariant> args;
-        qvariant_cast<QDBusArgument>(reply.arguments().at(0)) >> args;
-        if (args.count() == 0) {
-            return orientation;
-        }
-        QString nativeOrientation = args.at(0).toString();
-        if (nativeOrientation == "top") {
-            orientation = QSystemDisplayInfo::Landscape;
-        } else if (nativeOrientation == "left") {
-            orientation = QSystemDisplayInfo::Portrait;
-        } else if (nativeOrientation == "bottom") {
-            orientation = QSystemDisplayInfo::InvertedLandscape;
-        } else if (nativeOrientation == "right") {
-            orientation = QSystemDisplayInfo::InvertedPortrait;
-        }
-    }
-#endif
-    return orientation;
-}
-
-
 float QSystemDisplayInfoPrivate::contrast(int screen)
 {
     Q_UNUSED(screen);

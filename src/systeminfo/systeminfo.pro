@@ -76,10 +76,11 @@ unix:!simulator {
             DEFINES += BLKID_SUPPORTED
             LIBS += -lblkid
         }
+
+        LIBS +=  -lX11 -lXrandr
     }
 
     !maemo5:!maemo6:linux-*: {
-            LIBS +=  -lX11 -lXrandr
             SOURCES += linux/qsysteminfo_linux.cpp
             HEADERS += linux/qsysteminfo_linux_p.h
             contains(QT_CONFIG,dbus): {

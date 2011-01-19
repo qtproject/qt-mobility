@@ -223,8 +223,7 @@ public:
     int displayBrightness(int screen);
     int colorDepth(int screen);
 
-
-    QSystemDisplayInfo::DisplayOrientation getOrientation(int /*screen*/) {return QSystemDisplayInfo::Unknown;};
+    QSystemDisplayInfo::DisplayOrientation orientation(int screen);
     float contrast(int /*screen*/) {return 0.0;};
     int getDPIWidth(int /*screen*/){return 0;};
     int getDPIHeight(int /*screen*/){return 0;};

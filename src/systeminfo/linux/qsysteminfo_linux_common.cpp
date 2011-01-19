@@ -70,12 +70,10 @@
 #include <mntent.h>
 #include <sys/stat.h>
 
-#if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MEEGO)
 #ifdef Q_WS_X11
 #include <QX11Info>
 #include <X11/Xlib.h>
 #include <X11/extensions/Xrandr.h>
-#endif
 #endif
 
 #if defined(BLKID_SUPPORTED)
@@ -1805,6 +1803,40 @@ QSystemDisplayInfo::BacklightState  QSystemDisplayInfoLinuxCommonPrivate::backli
 {
     Q_UNUSED(screen)
     return QSystemDisplayInfo::BacklightStateUnknown;
+}
+
+QSystemDisplayInfo::DisplayOrientation QSystemDisplayInfoLinuxCommonPrivate::orientation(int screen)
+{
+    QSystemDisplayInfo::DisplayOrientation orientation = QSystemDisplayInfo::Unknown;
+#if defined(Q_WS_X11)
+    XRRScreenConfiguration *sc;
+    Rotation cur_rotation;
+    sc = XRRGetScreenInfo(QX11Info::display(), RootWindow(QX11Info::display(), screen));
+    if (!sc) {
+        return orientation;
+    }
+    XRRConfigRotations(sc, &cur_rotation);
+
+    if(screen < 16 && screen > -1) {
+        switch(cur_rotation) {
+        case RR_Rotate_0:
+            orientation = QSystemDisplayInfo::Landscape;
+            break;
+        case RR_Rotate_90:
+            orientation = QSystemDisplayInfo::Portrait;
+            break;
+        case RR_Rotate_180:
+            orientation = QSystemDisplayInfo::InvertedLandscape;
+            break;
+        case RR_Rotate_270:
+            orientation = QSystemDisplayInfo::InvertedPortrait;
+            break;
+        };
+    }
+#else
+Q_UNUSED(screen)
+#endif
+    return orientation;
 }
 
 int QSystemDisplayInfoLinuxCommonPrivate::physicalHeight(int screen)
