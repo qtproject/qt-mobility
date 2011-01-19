@@ -48,8 +48,6 @@ int main(int argc, char * argv[])
 {
     QApplication a(argc, argv);
 
-    qDebug("MapViewer version: %s", GIT_VERSION);
-
     //QString urlEnv = QProcessEnvironment::systemEnvironment().value("http_proxy");
     QString urlEnv = qgetenv("http_proxy");
     if (!urlEnv.isEmpty()) {
