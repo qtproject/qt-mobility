@@ -515,6 +515,7 @@ void QSensor::addFilter(QSensorFilter *filter)
         qWarning() << "addFilter: passed a null filter!";
         return;
     }
+    filter->setSensor(this);
     d->filters << filter;
 }
 

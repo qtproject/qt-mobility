@@ -161,6 +161,7 @@ static void initPlugin(QObject *o)
 static void loadPlugins()
 {
     QSensorManagerPrivate *d = sensorManagerPrivate();
+    d->pluginsLoaded = true;
 
     SENSORLOG() << "initializing static plugins";
     Q_FOREACH (CreatePluginFunc func, d->staticRegistrations) {
@@ -174,8 +175,6 @@ static void loadPlugins()
             initPlugin(plugin);
         }
     }
-
-    d->pluginsLoaded = true;
 
     if (d->sensorsChanged) {
         // Notify the app that the available sensor list has changed.
