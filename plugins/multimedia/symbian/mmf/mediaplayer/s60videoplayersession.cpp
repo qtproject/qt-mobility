@@ -285,8 +285,15 @@ bool S60VideoPlayerSession::isVideoAvailable()
 #ifdef PRE_S60_50_PLATFORM
     return true; // this is not supported in pre 5th platforms
 #else
+    if ( mediaStatus() == QMediaPlayer::LoadingMedia
+        || mediaStatus() == QMediaPlayer::UnknownMediaStatus
+        || mediaStatus() == QMediaPlayer::NoMedia
+        || (mediaStatus() == QMediaPlayer::StalledMedia && state() == QMediaPlayer::StoppedState)
+        || mediaStatus() == QMediaPlayer::InvalidMedia)
+        return false;
+
     if (m_player) {
-        bool videoAvailable = true;
+        bool videoAvailable = false;
         TRAPD(err, videoAvailable = m_player->VideoEnabledL());
         setError(err);
         return videoAvailable;
@@ -294,6 +301,7 @@ bool S60VideoPlayerSession::isVideoAvailable()
         return false;
     }
 #endif
+
 }
 
 bool S60VideoPlayerSession::isAudioAvailable()
