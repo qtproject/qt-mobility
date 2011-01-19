@@ -97,7 +97,7 @@ public:
     virtual QPointF coordinateToScreenPosition(double lon, double lat) const;
     QPolygonF latLonViewport();
 
-    void update(QObject *obj);
+    virtual void update(QObject *obj);
 
 public slots:
     void updateSender();
