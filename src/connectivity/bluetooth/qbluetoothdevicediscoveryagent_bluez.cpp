@@ -74,8 +74,13 @@ void QBluetoothDeviceDiscoveryAgentPrivate::start()
 {
     QDBusPendingReply<QDBusObjectPath> reply = manager->DefaultAdapter();
     reply.waitForFinished();
-    if (reply.isError())
+    if (reply.isError()) {
+        errorString = reply.error().message();
+        lastError = QBluetoothDeviceDiscoveryAgent::IOFailure;
+        Q_Q(QBluetoothDeviceDiscoveryAgent);
+        emit q->error(lastError);
         return;
+    }
 
     adapter = new OrgBluezAdapterInterface(QLatin1String("org.bluez"), reply.value().path(),
                                            QDBusConnection::systemBus());
@@ -88,8 +93,13 @@ void QBluetoothDeviceDiscoveryAgentPrivate::start()
 
     QDBusPendingReply<QVariantMap> propertiesReply = adapter->GetProperties();
     propertiesReply.waitForFinished();
-    if(propertiesReply.isError())
+    if(propertiesReply.isError()) {
+        errorString = propertiesReply.error().message();
+        lastError = QBluetoothDeviceDiscoveryAgent::IOFailure;
+        Q_Q(QBluetoothDeviceDiscoveryAgent);
+        emit q->error(lastError);
         return;
+    }
 
 #ifdef QTM_DEVICEDISCOVERY_DEBUG
     qDebug() << "Looking up cached devices";
@@ -123,6 +133,10 @@ void QBluetoothDeviceDiscoveryAgentPrivate::start()
     if (discoveryReply.isError()) {
         delete adapter;
         adapter = 0;
+        errorString = discoveryReply.error().message();
+        lastError = QBluetoothDeviceDiscoveryAgent::IOFailure;
+        Q_Q(QBluetoothDeviceDiscoveryAgent);
+        emit q->error(lastError);
         return;
     }
 }
@@ -136,6 +150,8 @@ void QBluetoothDeviceDiscoveryAgentPrivate::stop()
         adapter->StopDiscovery();
         adapter->deleteLater();
         adapter = 0;
+        Q_Q(QBluetoothDeviceDiscoveryAgent);
+        emit q->error(QBluetoothDeviceDiscoveryAgent::Canceled);
     }
 }
 

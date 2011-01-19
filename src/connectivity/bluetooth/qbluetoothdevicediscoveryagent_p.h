@@ -92,6 +92,9 @@ private:
     QList<QBluetoothDeviceInfo> discoveredDevices;
     QBluetoothDeviceDiscoveryAgent::InquiryType inquiryType;
 
+    QBluetoothDeviceDiscoveryAgent::Error lastError;
+    QString errorString;
+
 #if !defined(QT_NO_DBUS)
     OrgBluezManagerInterface *manager;
     OrgBluezAdapterInterface *adapter;

@@ -187,8 +187,9 @@ bool QBluetoothDeviceDiscoveryAgent::isActive() const
 */
 QBluetoothDeviceDiscoveryAgent::Error QBluetoothDeviceDiscoveryAgent::error() const
 {
-    // TODO return error codes
-    return NoError;
+    Q_D(const QBluetoothDeviceDiscoveryAgent);
+
+    return d_ptr->lastError;
 }
 
 /*!
@@ -196,8 +197,8 @@ QBluetoothDeviceDiscoveryAgent::Error QBluetoothDeviceDiscoveryAgent::error() co
 */
 QString QBluetoothDeviceDiscoveryAgent::errorString() const
 {
-    // TODO return error codes
-    return QString();
+    Q_D(const QBluetoothDeviceDiscoveryAgent);
+    return d_ptr->errorString;
 }
 
 #include "moc_qbluetoothdevicediscoveryagent.cpp"

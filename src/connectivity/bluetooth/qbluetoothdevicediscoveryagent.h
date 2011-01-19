@@ -65,6 +65,8 @@ public:
     enum Error {
         NoError,
         Canceled,
+        IOFailure,
+        PoweredOff,
         UnknownError = 100
     };
 
