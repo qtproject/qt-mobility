@@ -1,5 +1,5 @@
 
-HEADERS += \
+PUBLIC_HEADERS += \
     bluetooth/qbluetoothaddress.h\
     bluetooth/qbluetoothuuid.h\
     bluetooth/qbluetoothdeviceinfo.h\
