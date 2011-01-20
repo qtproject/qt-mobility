@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include "mapswidget.h"
+#include "marker.h"
 
 #include <QGeoCoordinate>
 #include <QGraphicsSceneMouseEvent>
@@ -96,7 +97,8 @@ void GeoMap::wheelEvent(QGraphicsSceneWheelEvent *event)
 MapsWidget::MapsWidget(QWidget *parent) :
     QWidget(parent),
     geoMap(0),
-    graphicsView(0)
+    graphicsView(0),
+    m_markerManager(0)
 {
 }
 
@@ -107,6 +109,8 @@ MapsWidget::~MapsWidget()
 void MapsWidget::initialize(QGeoMappingManager *manager)
 {
     geoMap = new GeoMap(manager, this);
+    if (m_markerManager)
+        m_markerManager->setMap(geoMap);
 
     QGraphicsScene *sc = new QGraphicsScene;
     sc->addItem(geoMap);
@@ -131,4 +135,16 @@ void MapsWidget::resizeEvent(QResizeEvent *event)
         graphicsView->resize(event->size());
         geoMap->resize(event->size());
     }
+}
+
+MarkerManager *MapsWidget::markerManager() const
+{
+    return m_markerManager;
+}
+
+void MapsWidget::setMarkerManager(MarkerManager *markerManager)
+{
+    m_markerManager = markerManager;
+    if (geoMap)
+        m_markerManager->setMap(geoMap);
 }

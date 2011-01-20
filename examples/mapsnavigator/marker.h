@@ -39,60 +39,67 @@
 **
 ****************************************************************************/
 
-#ifndef MAPSWIDGET_H
-#define MAPSWIDGET_H
+#ifndef MARKER_H
+#define MARKER_H
 
+#include <QGeoMapPixmapObject>
+#include <QGeoSearchManager>
 #include <QGraphicsGeoMap>
-#include <QGraphicsView>
-#include <QGraphicsScene>
-#include <QGeoMappingManager>
-#include <QWidget>
+#include <QGeoCoordinate>
+#include <QSignalMapper>
+#include <QGeoSearchReply>
 
 using namespace QtMobility;
 
-class MapsWidget;
-class MarkerManager;
-
-class GeoMap : public QGraphicsGeoMap
+class Marker : public QGeoMapPixmapObject
 {
     Q_OBJECT
-
 public:
-    GeoMap(QGeoMappingManager *manager, MapsWidget *mapsWidget);
-    ~GeoMap();
+    enum MarkerType {
+        MyLocationMarker,
+        SearchMarker,
+        WaypointMarker,
+        StartMarker,
+        EndMarker,
+        PathMarker
+    };
+
+    explicit Marker(MarkerType type);
+
+    inline MarkerType markerType() const { return m_type; }
+    void setMarkerType(MarkerType type);
 
 private:
-    MapsWidget *m_mapsWidget;
-
-    bool panActive;
-
-    void mousePressEvent(QGraphicsSceneMouseEvent *event);
-    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
-    void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
-    void wheelEvent(QGraphicsSceneWheelEvent *event);
+    MarkerType m_type;
 };
 
-class MapsWidget : public QWidget
+class MarkerManager : public QObject
 {
     Q_OBJECT
-
 public:
-    MapsWidget(QWidget *parent = 0);
-    ~MapsWidget();
-
-    void setMarkerManager(MarkerManager *markerManager);
-    MarkerManager *markerManager() const;
+    explicit MarkerManager(QGeoSearchManager *sm, QObject *parent=0);
+    ~MarkerManager();
 
 public slots:
-    void initialize(QGeoMappingManager *manager);
+    void setMap(QGraphicsGeoMap *map);
+    void setMyLocation(QGeoCoordinate coord);
+    void search(QString query);
+    void removeSearchMarkers();
+
+signals:
+    void searchError(QGeoSearchReply::Error error, QString errorString);
+    void searchFinished();
 
 private:
-    void resizeEvent(QResizeEvent *event);
+    Marker *m_myLocation;
+    QList<Marker*> searchMarkers;
 
-private:
-    GeoMap *geoMap;
-    QGraphicsView *graphicsView;
-    MarkerManager *m_markerManager;
+    QGraphicsGeoMap *m_map;
+    QGeoSearchManager *m_searchManager;
+    QSignalMapper sigMap;
+
+private slots:
+    void replyFinished(QObject *reply);
 };
 
-#endif // MAPSWIDGET_H
+#endif // MARKER_H

@@ -26,8 +26,10 @@ symbian: {
 }
 
 HEADERS += \
-    mapswidget.h
+    mapswidget.h \
+    marker.h
 
 SOURCES += \
     mapswidget.cpp \
-    main.cpp
+    main.cpp \
+    marker.cpp
