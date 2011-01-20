@@ -93,7 +93,7 @@ CLlcpSocketType1::~CLlcpSocketType1()
     BEGIN
     // Destroy connection
     Cleanup();
-    
+
     if ( iLlcp )
         {
         iLlcp->StopListeningConnLessRequest(iLocalPort);
@@ -110,7 +110,7 @@ CLlcpSocketType1::~CLlcpSocketType1()
     Cancel the Receive/Transfer and destroy the local/remote connection.
 */
 void CLlcpSocketType1::Cleanup()
-    {  
+    {
     BEGIN
     // Deleting connection
     if ( iConnection )
@@ -119,7 +119,7 @@ void CLlcpSocketType1::Cleanup()
         iConnection->ReceiveCancel();
         delete iConnection;
         iConnection = NULL;
-        } 
+        }
     END
     }
 
@@ -140,11 +140,11 @@ TBool CLlcpSocketType1::Bind(TUint8 aPortNum)
             iLocalPort = aPortNum;
             bindOK = ETrue;
             }
-        }   
+        }
     END
     return bindOK;
     }
- 
+
 /*!
     Sends the datagram at aData  to the service that this socket is connected to.
     Returns the number of bytes sent on success; otherwise return -1;
@@ -158,12 +158,12 @@ TInt CLlcpSocketType1::StartWriteDatagram(const TDesC8& aData,TUint8 aPortNum)
         {
         return val;
         }
-    
+
     if (KErrNone == CreateConnection(aPortNum))
         {
         TInt error = KErrNone;
         QT_TRYCATCH_ERROR(error , iConnection->TransferL(*this, aData));
-        
+
         if (KErrNone == error)
             {
             iCallback.m_writeDatagramRefCount++;
@@ -171,7 +171,7 @@ TInt CLlcpSocketType1::StartWriteDatagram(const TDesC8& aData,TUint8 aPortNum)
             }
         }
     END
-    return val; 
+    return val;
     }
 
 
@@ -211,7 +211,7 @@ TBool CLlcpSocketType1::HasPendingDatagrams() const
     if (NULL != iConnection)
         {
         val = iConnection->HasPendingDatagrams();
-        } 
+        }
     END
     return val;
     }
@@ -223,7 +223,7 @@ TInt64 CLlcpSocketType1::PendingDatagramSize() const
     if (NULL != iConnection)
         {
         val = iConnection->PendingDatagramSize();
-        } 
+        }
     END
     return val;
     }
@@ -244,7 +244,7 @@ void CLlcpSocketType1::FrameReceived( MLlcpConnLessTransporter* aConnection )
     Call back from MLlcpReadWriteCb
 */
 void CLlcpSocketType1::ReceiveComplete(TInt aError)
-    {  
+    {
     BEGIN
     TInt err = KErrNone;
     if (KErrNone == aError)
@@ -302,7 +302,7 @@ void CLlcpSocketType1::StopWaitNow(TWaitStatus aWaitStatus)
             delete iTimer;
             iTimer = NULL;
             }
-        }   
+        }
     END
     }
 
@@ -315,14 +315,14 @@ TInt CLlcpSocketType1::CreateConnection(TUint8 portNum)
     BEGIN
     TInt error = KErrNone;
     MLlcpConnLessTransporter* llcpConnection = NULL;
-    
+
     if ( iConnection )
         {
         return error;
         }
 
     TRAP( error, llcpConnection = iLlcp->CreateConnLessTransporterL( portNum ) );
-   
+
     if ( error == KErrNone)
         {
           iRemotePort = portNum;
@@ -330,7 +330,7 @@ TInt CLlcpSocketType1::CreateConnection(TUint8 portNum)
           error = StartTransportAndReceive(llcpConnection);
         }
     END
-    return error;        
+    return error;
     }
 
 TInt CLlcpSocketType1::StartTransportAndReceive(MLlcpConnLessTransporter* aConnection)
@@ -340,8 +340,8 @@ TInt CLlcpSocketType1::StartTransportAndReceive(MLlcpConnLessTransporter* aConne
 
      // Only accepting one incoming remote connection
      if ( !iConnection )
-         { 
-         // Creating wrapper for connection. 
+         {
+         // Creating wrapper for connection.
          TRAP( error, iConnection = COwnLlcpConnectionWrapper::NewL(aConnection ) );
          }
 
@@ -350,7 +350,7 @@ TInt CLlcpSocketType1::StartTransportAndReceive(MLlcpConnLessTransporter* aConne
          error = iConnection->Receive(*this);
          }
      END
-     return error;  
+     return error;
     }
 
 
@@ -405,7 +405,7 @@ TBool CLlcpSocketType1::WaitForOperationReady(TWaitStatus aWaitStatus,TInt aMill
     return ret;
     }
 
-  
+
 /*!
     Construct the wrapper for connectionLess transport.
 */
@@ -415,7 +415,7 @@ COwnLlcpConnectionWrapper* COwnLlcpConnectionWrapper::NewL( MLlcpConnLessTranspo
     CleanupStack::Pop( self );
     return self;
     }
-   
+
 /*!
     Construct the new wrapper for connectionLess transport.
 */
@@ -426,7 +426,7 @@ COwnLlcpConnectionWrapper* COwnLlcpConnectionWrapper::NewLC(MLlcpConnLessTranspo
     self->ConstructL();
     return self;
     }
-   
+
 /*!
     Constructor
 */
@@ -434,7 +434,7 @@ COwnLlcpConnectionWrapper::COwnLlcpConnectionWrapper(  MLlcpConnLessTransporter*
     :  iConnection( aConnection )
     {
     }
-    
+
 /*!
     ConstructL
 */
@@ -445,7 +445,7 @@ void COwnLlcpConnectionWrapper::ConstructL()
      // Create the receiver AO
     iReceiverAO = CLlcpReceiverType1::NewL(iConnection);
     }
-    
+
 /*!
     Destroy the new wrapper for connectionLess transport.
 */
@@ -454,18 +454,18 @@ COwnLlcpConnectionWrapper::~COwnLlcpConnectionWrapper()
     BEGIN
     iSendBufArray.ResetAndDestroy();
     iSendBufArray.Close();
-    
+
     if ( iConnection )
         {
         delete iConnection;
         iConnection = NULL;
         }
-    
+
     delete iSenderAO;
     delete iReceiverAO;
     END
     }
-  
+
 /*!
     Send data from queued buffer
 */
@@ -475,7 +475,7 @@ bool COwnLlcpConnectionWrapper::TransferQueued(MLlcpReadWriteCb& aLlcpSendCb)
     bool ret = false;
     if (iSendBufArray.Count() == 0 || iSenderAO->IsActive())
         return ret;
-    
+
     HBufC8* bufRef = iSendBufArray[0];
     if (NULL == bufRef)
         return ret;
@@ -488,7 +488,7 @@ bool COwnLlcpConnectionWrapper::TransferQueued(MLlcpReadWriteCb& aLlcpSendCb)
     iSendBufArray.Remove( 0 );
     delete bufRef;
     bufRef = NULL;
-    
+
     END
     return ret;
     }
@@ -497,7 +497,7 @@ bool COwnLlcpConnectionWrapper::TransferQueued(MLlcpReadWriteCb& aLlcpSendCb)
     Send data from local peer to remote peer via connectionLess transport
 */
 TInt COwnLlcpConnectionWrapper::TransferL(MLlcpReadWriteCb& aLlcpSendCb, const TDesC8& aData )
-    {  
+    {
     BEGIN
     TInt error = KErrNone;
     // Pass message into transmiter AO
@@ -553,7 +553,7 @@ bool COwnLlcpConnectionWrapper::HasQueuedWrittenDatagram() const
     bool hasData = iSendBufArray.Count() > 0 ? true : false;
     return hasData;
     }
-   
+
 TInt64 COwnLlcpConnectionWrapper::PendingDatagramSize() const
     {
     return iReceiverAO->PendingDatagramSize();
@@ -592,7 +592,7 @@ void COwnLlcpConnectionWrapper::ReceiveCancel()
 /*!
     Constructor
 */
-CLlcpSenderType1::CLlcpSenderType1(MLlcpConnLessTransporter* aConnection) 
+CLlcpSenderType1::CLlcpSenderType1(MLlcpConnLessTransporter* aConnection)
                        : CActive(CActive::EPriorityStandard), iConnection(aConnection)
     {
     }
@@ -672,7 +672,7 @@ void CLlcpSenderType1::DoCancel(void)
 /*!
     Constructor
 */
-CLlcpReceiverType1::CLlcpReceiverType1(MLlcpConnLessTransporter* aConnection) 
+CLlcpReceiverType1::CLlcpReceiverType1(MLlcpConnLessTransporter* aConnection)
                        : CActive(CActive::EPriorityStandard), iConnection(aConnection)
     {
     }
@@ -689,13 +689,13 @@ CLlcpReceiverType1* CLlcpReceiverType1::NewL(MLlcpConnLessTransporter* aConnecti
 
 
 /*!
-    Set active for the receiver AO 
+    Set active for the receiver AO
     Receive complete callback function "cb" registed
 */
 TInt CLlcpReceiverType1::Receive(MLlcpReadWriteCb& cb)
     {
     BEGIN
-    TInt error = KErrNone;
+    TInt error = KErrNotReady;
     TInt length = 0;
     length = iConnection->SupportedDataLength();
     iReceiveBuf.Zero();
@@ -713,7 +713,7 @@ TInt CLlcpReceiverType1::Receive(MLlcpReadWriteCb& cb)
     END
     return error;
     }
-    
+
 void CLlcpReceiverType1::RunL(void)
     {
     BEGIN
@@ -722,7 +722,7 @@ void CLlcpReceiverType1::RunL(void)
     if (error == KErrNone && iReceiveObserver)
        {
        iReceiveObserver->ReceiveComplete(error);
-       }          
+       }
     END
     }
 
@@ -758,7 +758,7 @@ bool CLlcpReceiverType1::HasPendingDatagrams() const
     {
     return iReceiveBuf.Size() > 0 ? true : false;
     }
-   
+
 TInt64 CLlcpReceiverType1::PendingDatagramSize() const
     {
     return iReceiveBuf.Size();
