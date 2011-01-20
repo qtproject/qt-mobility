@@ -65,12 +65,16 @@
 #include "chargingstatus_s60.h"
 #include "wlaninfo_s60.h"
 #include "storagestatus_s60.h"
-#include "lockandflipstatus_s60.h"
 #include <w32std.h>
-#include "storagedisknotifier_s60.h"
 #include "batterystatus_s60.h"
+#include "networkinfo_s60.h"
 #include <ProfileEngineSDKCRKeys.h>
 #include <hwrmvibrasdkcrkeys.h>
+
+#ifdef SYMBIAN_3_PLATFORM
+#include "lockandflipstatus_s60.h"
+#include "storagedisknotifier_s60.h"
+#endif
 
 QT_BEGIN_HEADER
 
@@ -104,7 +108,7 @@ private:
 };
 
 //////// QSystemNetworkInfo
-class QSystemNetworkInfoPrivate : public QObject, public MTelephonyInfoObserver
+class QSystemNetworkInfoPrivate : public QObject, public MTelephonyInfoObserver, public MNetworkInfoObserver
 {
     Q_OBJECT
 
@@ -151,6 +155,8 @@ protected:  //from MTelephonyInfoObserver
     void cellNetworkStatusChanged();
 
     void changedCellId(int);
+    virtual void changedNetworkStatus() ;
+    virtual void changedNetworkMode() ;
 
 public slots:
     void wlanNetworkNameChanged();
@@ -186,7 +192,9 @@ private:
 //////// QSystemStorageInfo
 class QSystemStorageInfoPrivate : public QObject,
     public MStorageStatusObserver,
+#ifdef SYMBIAN_3_PLATFORM
     public MStorageSpaceNotifyObserver
+#endif
 {
     Q_OBJECT
 
@@ -205,8 +213,10 @@ public:
 
 protected: // from MStorageStatusObserver
     void storageStatusChanged(bool, const QString &);
+#ifdef SYMBIAN_3_PLATFORM
     // from MStorageSpaceNotifyObserver
     void DiskSpaceChanged(const QString &);
+#endif
 
 private:
     RFs iFs;
@@ -236,8 +246,10 @@ class QSystemDeviceInfoPrivate : public QObject,
     public MProEngProfileActivationObserver,
     public MCenRepNotifyHandlerCallback,
     public MChargingStatusObserver,
+#ifdef SYMBIAN_3_PLATFORM
     public MKeylockStatusObserver,
     public MFlipStatusObserver
+#endif
 {
     Q_OBJECT
 
@@ -313,13 +325,13 @@ protected:
     //from MChargingStatusObserver
     void chargingStatusChanged();
 
+#ifdef SYMBIAN_3_PLATFORM
     //from MKeylockStatusObserver
     void keylockStatusChanged(TInt aLockType);
 
     //from MFlipStatusObserver
     void flipStatusChanged(TInt aFlipType , TInt aFilpKeyBoard );
-
-
+#endif
 private:
     QSystemDeviceInfo::Profile s60ProfileIdToProfile(TInt profileId) const;
 
@@ -438,6 +450,7 @@ public:
         return m_mmcStorageStatus;
     }
 
+#ifdef SYMBIAN_3_PLATFORM
     CStorageDiskNotifier *storagedisknotifier()
     {
         if (!m_storagedisknotifier) {
@@ -463,6 +476,7 @@ public:
         }
         return m_flipStatus;
     }
+#endif
 
     CBatteryCommonInfo *batteryCommonInfo ()
     {
@@ -471,10 +485,22 @@ public:
         }
         return m_batteryCommonInfo;
     }
+
+    CNetworkInfo* networkInfo ()
+    {
+        if (!m_networkInfo) {
+           m_networkInfo = new  CNetworkInfo();
+        }
+        return m_networkInfo;
+    }
+
 private:
     DeviceInfo() : m_phoneInfo(NULL), m_subscriberInfo(NULL), m_chargingStatus(NULL),
         m_batteryInfo(NULL), m_cellNetworkInfo(NULL), m_cellNetworkRegistrationInfo(NULL),
-        m_cellSignalStrengthInfo(NULL), m_wlanInfo(NULL), m_mmcStorageStatus(NULL), m_keylockStatus(NULL),m_flipStatus(NULL),m_storagedisknotifier(NULL), m_batteryCommonInfo(NULL)
+        m_cellSignalStrengthInfo(NULL), m_wlanInfo(NULL), m_mmcStorageStatus(NULL), m_batteryCommonInfo(NULL), m_networkInfo(NULL),
+#ifdef SYMBIAN_3_PLATFORM
+        m_keylockStatus(NULL),m_flipStatus(NULL),m_storagedisknotifier(NULL)
+#endif
     {
         m_telephony = CTelephony::NewL();
     };
@@ -491,10 +517,13 @@ private:
         delete m_telephony;
         delete m_wlanInfo;
         delete m_mmcStorageStatus;
+        delete m_batteryCommonInfo;
+        delete m_networkInfo;
+#ifdef SYMBIAN_3_PLATFORM
         delete m_keylockStatus;
         delete m_flipStatus;
         delete m_storagedisknotifier;
-        delete m_batteryCommonInfo;
+#endif
     }
 
     DeviceInfo(const DeviceInfo &);
@@ -511,10 +540,13 @@ private:
     CCellSignalStrengthInfo *m_cellSignalStrengthInfo;
     CWlanInfo* m_wlanInfo;
     CMMCStorageStatus* m_mmcStorageStatus;
+    CBatteryCommonInfo* m_batteryCommonInfo;
+    CNetworkInfo* m_networkInfo;
+#ifdef SYMBIAN_3_PLATFORM
     CKeylockStatus *m_keylockStatus;
     CFlipStatus *m_flipStatus;
     CStorageDiskNotifier* m_storagedisknotifier;
-    CBatteryCommonInfo* m_batteryCommonInfo;
+#endif
 };
 
 class QSystemBatteryInfoPrivate : public QObject, public MBatteryInfoObserver, public MBatteryHWRMObserver

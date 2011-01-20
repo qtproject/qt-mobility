@@ -74,12 +74,16 @@
 #include <startupdomainpskeys.h>
 #include <hwrmlight.h>
 #include <hwrmfmtx.h>
+#ifdef SYMBIAN_3_PLATFORM
 #include <avkondomainpskeys.h>
 #include <hwrmdomainpskeys.h>
 #include <AvkonInternalCRKeys.h>
 #include <AknFepInternalPSKeys.h>
+#endif
 #include <e32debug.h>
 #include <QCryptographicHash>
+#include <etel.h>
+#include <etelmm.h>
 
 const TUint32 KAknKeyboardType = 0x0000000B;
 const float KMMPerTwip  = 0.0177f; //Milimeter Per Twip
@@ -406,6 +410,7 @@ QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate(QObject *parent)
     DeviceInfo::instance()->cellSignalStrenghtInfo()->addObserver(this);
     DeviceInfo::instance()->cellNetworkInfo()->addObserver(this);
     DeviceInfo::instance()->cellNetworkRegistrationInfo()->addObserver(this);
+    DeviceInfo::instance()->networkInfo()->addObserver(this);
     connect(DeviceInfo::instance()->wlanInfo(), SIGNAL(wlanNetworkNameChanged()),
         this, SLOT(wlanNetworkNameChanged()));
     connect(DeviceInfo::instance()->wlanInfo(), SIGNAL(wlanNetworkSignalStrengthChanged()),
@@ -419,56 +424,32 @@ QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate()
     DeviceInfo::instance()->cellSignalStrenghtInfo()->removeObserver(this);
     DeviceInfo::instance()->cellNetworkInfo()->removeObserver(this);
     DeviceInfo::instance()->cellNetworkRegistrationInfo()->removeObserver(this);
+    DeviceInfo::instance()->networkInfo()->removeObserver(this);
 }
 
 QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSystemNetworkInfo::NetworkMode mode)
 {
-    switch (mode) {
-        case QSystemNetworkInfo::GsmMode:
-        case QSystemNetworkInfo::CdmaMode:
-        case QSystemNetworkInfo::WcdmaMode:
-        {
-            CTelephony::TRegistrationStatus networkStatus = DeviceInfo::instance()
-                ->cellNetworkRegistrationInfo()->cellNetworkStatus();
-
-            CTelephony::TNetworkMode networkMode = DeviceInfo::instance()->cellNetworkInfo()->networkMode();
-            if (networkMode == CTelephony::ENetworkModeGsm && mode != QSystemNetworkInfo::GsmMode)
-                return QSystemNetworkInfo::NoNetworkAvailable;
-
-            if ((networkMode == CTelephony::ENetworkModeCdma95 || networkMode == CTelephony::ENetworkModeCdma2000) &&
-                mode != QSystemNetworkInfo::CdmaMode)
-                return QSystemNetworkInfo::NoNetworkAvailable;
-
-            if (networkMode == CTelephony::ENetworkModeWcdma && mode != QSystemNetworkInfo::WcdmaMode)
-                return QSystemNetworkInfo::NoNetworkAvailable;
-
-            switch (networkStatus) {
-                case CTelephony::ERegistrationUnknown: return QSystemNetworkInfo::UndefinedStatus;
-                case CTelephony::ENotRegisteredNoService: return QSystemNetworkInfo::NoNetworkAvailable;
-                case CTelephony::ENotRegisteredEmergencyOnly: return QSystemNetworkInfo::EmergencyOnly;
-                case CTelephony::ENotRegisteredSearching: return QSystemNetworkInfo::Searching;
-                case CTelephony::ERegisteredBusy: return QSystemNetworkInfo::Busy;
-                case CTelephony::ERegisteredOnHomeNetwork: return QSystemNetworkInfo::HomeNetwork;
-                case CTelephony::ERegistrationDenied: return QSystemNetworkInfo::Denied;
-                case CTelephony::ERegisteredRoaming: return QSystemNetworkInfo::Roaming;
-                default:
-                    break;
-            };
-        }
-        case QSystemNetworkInfo::WlanMode:
-        {
-            if (DeviceInfo::instance()->wlanInfo()->wlanNetworkConnectionStatus())
-                return QSystemNetworkInfo::Connected;
-            else
-                return QSystemNetworkInfo::NoNetworkAvailable;
-        }
-        case QSystemNetworkInfo::EthernetMode:
-        case QSystemNetworkInfo::BluetoothMode:
-        case QSystemNetworkInfo::WimaxMode:
-        default:
-            break;
-    };
-    return QSystemNetworkInfo::UndefinedStatus;
+    qDebug()<<"File-"<<__FILE__<<" : Line-"<<__LINE__<<"  :: Inside QSystemNetworkInfoPrivate::networkStatus -> Param mode = "<<mode;
+    QSystemNetworkInfo::NetworkStatus networkStatus = QSystemNetworkInfo::UndefinedStatus;
+    RMobilePhone::TMobilePhoneRegistrationStatus nStatus = RMobilePhone::ERegistrationUnknown;
+    QSystemNetworkInfo::NetworkMode currMode =currentMode();
+    if (currMode == mode)
+    {
+        qDebug("NetworkStatus for Current Mode");
+        nStatus = DeviceInfo::instance()->networkInfo()->GetStatus();
+    }
+    switch (nStatus) {
+    case RMobilePhone::ENotRegisteredNoService : networkStatus = QSystemNetworkInfo::NoNetworkAvailable; break;
+    case RMobilePhone::ENotRegisteredEmergencyOnly : networkStatus = QSystemNetworkInfo::EmergencyOnly; break;
+    case RMobilePhone::ENotRegisteredSearching : networkStatus = QSystemNetworkInfo::Searching; break;
+    case RMobilePhone::ERegisteredBusy : networkStatus = QSystemNetworkInfo::Busy; break;
+    case RMobilePhone::ERegisteredOnHomeNetwork : networkStatus = QSystemNetworkInfo::HomeNetwork; break;
+    case RMobilePhone::ERegistrationDenied : networkStatus = QSystemNetworkInfo::Denied; break;
+    case RMobilePhone::ERegisteredRoaming : networkStatus = QSystemNetworkInfo::Roaming; break;
+    case RMobilePhone::ERegistrationUnknown : break;
+    }
+    qDebug()<<"File-"<<__FILE__<<" : Line-"<<__LINE__<<"  :: Returning From QSystemNetworkInfoPrivate::networkStatus -> "<<networkStatus;
+    return networkStatus;
 }
 
 int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::NetworkMode mode)
@@ -641,6 +622,17 @@ void QSystemNetworkInfoPrivate::networkModeChanged()
     emit networkModeChanged(currentMode());
 }
 
+void QSystemNetworkInfoPrivate::changedNetworkMode()
+{
+    emit networkModeChanged(currentMode());
+}
+
+void QSystemNetworkInfoPrivate::changedNetworkStatus()
+{
+    QSystemNetworkInfo::NetworkMode mode = currentMode();
+    emit networkStatusChanged(mode, networkStatus(mode));
+}
+
 void QSystemNetworkInfoPrivate::changedCellId(int cellIdTel)
 {
     emit cellIdChanged(cellIdTel);
@@ -685,17 +677,26 @@ void QSystemNetworkInfoPrivate::wlanNetworkStatusChanged()
 
 QSystemNetworkInfo::NetworkMode QSystemNetworkInfoPrivate::currentMode()
 {
-    QSystemNetworkInfo::NetworkMode mode = QSystemNetworkInfo::UnknownMode;
-    CTelephony::TNetworkMode networkMode = DeviceInfo::instance()->cellNetworkInfo()->networkMode();
-    switch (networkMode) {
-        case CTelephony::ENetworkModeGsm: mode = QSystemNetworkInfo::GsmMode; break;
-        case CTelephony::ENetworkModeCdma95:
-        case CTelephony::ENetworkModeCdma2000: mode = QSystemNetworkInfo::CdmaMode; break;
-        case CTelephony::ENetworkModeWcdma: mode = QSystemNetworkInfo::WcdmaMode; break;
-        default:
+    qDebug()<<"INSIDE QSystemNetworkInfoPrivate::currentMode";
+    QSystemNetworkInfo::NetworkMode networkMode = QSystemNetworkInfo::UnknownMode;
+    RMobilePhone::TMobilePhoneNetworkMode nMode = RMobilePhone::ENetworkModeUnknown;
+    nMode = DeviceInfo::instance()->networkInfo()->GetMode();
+    if (nMode != RMobilePhone::ENetworkModeUnknown) {
+        switch (nMode) {
+            case RMobilePhone::ENetworkModeGsm : networkMode = QSystemNetworkInfo::GsmMode;
             break;
+            case RMobilePhone::ENetworkModeAmps :
+            case RMobilePhone::ENetworkModeCdma95 :
+            case RMobilePhone::ENetworkModeCdma2000 : networkMode = QSystemNetworkInfo::CdmaMode;
+            break;
+            case RMobilePhone::ENetworkModeWcdma :
+            case RMobilePhone::ENetworkModeTdcdma : networkMode = QSystemNetworkInfo::WcdmaMode;
+            break;
+            default : break;
+        }
     }
-    return mode;
+    qDebug()<<"RETURNING QSystemNetworkInfoPrivate::currentMode : "<<networkMode;
+    return networkMode;
 }
 
 QSystemDisplayInfoPrivate::QSystemDisplayInfoPrivate(QObject *parent)
@@ -759,7 +760,7 @@ int QSystemDisplayInfoPrivate::colorDepth(int screen)
 
 QSystemDisplayInfo::DisplayOrientation QSystemDisplayInfoPrivate::orientation(int screen)
 {
-    QSystemDisplayInfo::DisplayOrientation orientation = QSystemDisplayInfo::Unknown;
+    QSystemDisplayInfo::DisplayOrientation orientationStatus = QSystemDisplayInfo::Unknown;
     TPixelsTwipsAndRotation sizeAndRotation;
     if (screen < 16 && screen > -1) {
     bool err = getSizeandRotation(screen, sizeAndRotation);
@@ -769,22 +770,22 @@ QSystemDisplayInfo::DisplayOrientation QSystemDisplayInfoPrivate::orientation(in
             switch (currentRotation) {
             case 0:
             case 360:
-                orientation = QSystemDisplayInfo::Landscape;
+                orientationStatus = QSystemDisplayInfo::Landscape;
                 break;
             case 90:
-                orientation = QSystemDisplayInfo::Portrait;
+                orientationStatus = QSystemDisplayInfo::Portrait;
                 break;
             case 180:
-                orientation = QSystemDisplayInfo::InvertedLandscape;
+                orientationStatus = QSystemDisplayInfo::InvertedLandscape;
                 break;
             case 270:
-                orientation = QSystemDisplayInfo::InvertedPortrait;
+                orientationStatus = QSystemDisplayInfo::InvertedPortrait;
                 break;
             };
-        orientation = QSystemDisplayInfo::Unknown;
+        orientationStatus = QSystemDisplayInfo::Unknown;
         }
     }
-    return orientation;
+    return orientationStatus;
 }
 
 
@@ -868,8 +869,38 @@ int QSystemDisplayInfoPrivate::physicalWidth(int screen)
 
 QSystemDisplayInfo::BacklightState  QSystemDisplayInfoPrivate::backlightStatus(int screen)
 {
-    Q_UNUSED(screen)
-    return QSystemDisplayInfo::BacklightStateUnknown;
+    QSystemDisplayInfo::BacklightState backlightState = QSystemDisplayInfo::BacklightStateUnknown;
+    CHWRMLight::TLightStatus status = CHWRMLight::ELightStatusUnknown;
+    //screen "0" is mapped to Primary Display and other screens are mapped to Secondary Display
+    if (screen == 0)
+    {
+        TRAP_IGNORE(CHWRMLight* iLight = CHWRMLight::NewL();
+            status = iLight->LightStatus(CHWRMLight::EPrimaryDisplay);
+            delete iLight;)
+    }
+    else
+    {
+        TRAP_IGNORE(CHWRMLight* iLight = CHWRMLight::NewL();
+            status = iLight->LightStatus(CHWRMLight::ESecondaryDisplay);
+            qDebug(("Status in case of Secondary display is  %d"),status);
+            delete iLight;)
+    }
+
+    switch(status){
+    case 0:
+        backlightState = QSystemDisplayInfo::BacklightStateUnknown;
+        break;
+    case 1:
+        backlightState = QSystemDisplayInfo::BacklightStateOn;
+        break;
+    case 2:
+        backlightState = QSystemDisplayInfo::BacklightStateOff;
+        break;
+    default:
+        break;
+    }
+
+    return backlightState;
 }
 
 QSystemStorageInfoPrivate::QSystemStorageInfoPrivate(QObject *parent)
@@ -878,20 +909,24 @@ QSystemStorageInfoPrivate::QSystemStorageInfoPrivate(QObject *parent)
     iFs.Connect();
     DeviceInfo::instance()->mmcStorageStatus()->addObserver(this);
 
+#ifdef SYMBIAN_3_PLATFORM
     CStorageDiskNotifier* storageNotifier = DeviceInfo::instance()->storagedisknotifier();
     if (storageNotifier != NULL){
         storageNotifier->AddObserver(this);
         }
+#endif
 }
 
 QSystemStorageInfoPrivate::~QSystemStorageInfoPrivate()
 {
     iFs.Close();
     DeviceInfo::instance()->mmcStorageStatus()->removeObserver(this);
+#ifdef SYMBIAN_3_PLATFORM
     CStorageDiskNotifier* storageNotifier = DeviceInfo::instance()->storagedisknotifier();
     if (storageNotifier != NULL){
         storageNotifier->RemoveObserver(this);
         }
+#endif
 }
 
 qlonglong QSystemStorageInfoPrivate::totalDiskSpace(const QString &driveVolume)
@@ -997,11 +1032,13 @@ void QSystemStorageInfoPrivate::storageStatusChanged(bool added, const QString &
     emit logicalDriveChanged(added, aDriveVolume);
 };
 
+#ifdef SYMBIAN_3_PLATFORM
 void QSystemStorageInfoPrivate::DiskSpaceChanged(const QString &aDriveVolume)
 {
     QSystemStorageInfo::StorageState state = CheckDiskSpaceThresholdLimit(aDriveVolume);
     emit storageStateChanged(aDriveVolume, state);
 }
+#endif
 
 QString QSystemStorageInfoPrivate::uriForDrive(const QString &driveVolume)
 {
@@ -1071,17 +1108,20 @@ QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QObject *parent)
     DeviceInfo::instance()->batteryInfo()->addObserver(this);
     DeviceInfo::instance()->chargingStatus()->addObserver(this);
     m_previousBatteryStatus = QSystemDeviceInfo::NoBatteryLevel;
+#ifdef SYMBIAN_3_PLATFORM
     DeviceInfo::instance()->keylockStatus()->addObserver(this);
     DeviceInfo::instance()->flipStatus()->addObserver(this);
+#endif
 }
 
 QSystemDeviceInfoPrivate::~QSystemDeviceInfoPrivate()
 {
     DeviceInfo::instance()->chargingStatus()->removeObserver(this);
     DeviceInfo::instance()->batteryInfo()->removeObserver(this);
+#ifdef SYMBIAN_3_PLATFORM
     DeviceInfo::instance()->keylockStatus()->removeObserver(this);
     DeviceInfo::instance()->flipStatus()->removeObserver(this);
-
+#endif
     if (m_proEngNotifyHandler) {
         m_proEngNotifyHandler->CancelProfileActivationNotifications();
         delete m_proEngNotifyHandler;
@@ -1357,6 +1397,7 @@ QSystemDeviceInfo::KeyboardTypeFlags QSystemDeviceInfoPrivate::keyboardTypes()
     QSystemDeviceInfo::InputMethodFlags methods = inputMethodType();
     QSystemDeviceInfo::KeyboardTypeFlags keyboardFlags = QSystemDeviceInfo::UnknownKeyboard;
 
+#ifdef SYMBIAN_3_PLATFORM
     TInt kbType = 0;
     if (methods & QSystemDeviceInfo::Keyboard ) {
     TRAP_IGNORE(
@@ -1387,7 +1428,7 @@ QSystemDeviceInfo::KeyboardTypeFlags QSystemDeviceInfoPrivate::keyboardTypes()
         }
         kbType=0;
         if ( (methods & QSystemDeviceInfo::SingleTouch) || (methods & QSystemDeviceInfo::MultiTouch) ) {
-            #ifdef SYMBIAN_3_PLATFORM
+            //TBD:In 5.0 KAknFepVirtualKeyboardType is not defined
             if ( KErrNone == RProperty::Get(KPSUidAknFep, KAknFepVirtualKeyboardType, kbType) ) {
                 if ( 0 !=  kbType) {
                     if ( keyboardFlags == QSystemDeviceInfo::UnknownKeyboard)
@@ -1396,7 +1437,6 @@ QSystemDeviceInfo::KeyboardTypeFlags QSystemDeviceInfoPrivate::keyboardTypes()
                         keyboardFlags |= QSystemDeviceInfo::SoftwareKeyboard;
                     }
                 }
-            #endif
             }
         if (isWirelessKeyboardConnected()) {
             if ( keyboardFlags == QSystemDeviceInfo::UnknownKeyboard)
@@ -1404,7 +1444,7 @@ QSystemDeviceInfo::KeyboardTypeFlags QSystemDeviceInfoPrivate::keyboardTypes()
             else
                 keyboardFlags |= QSystemDeviceInfo::WirelessKeyboard;
     }
-
+#endif
     return keyboardFlags;
 }
 
@@ -1415,9 +1455,12 @@ bool QSystemDeviceInfoPrivate::isWirelessKeyboardConnected()
 
 bool QSystemDeviceInfoPrivate::isKeyboardFlippedOpen()
 {
+#ifdef SYMBIAN_3_PLATFORM
     // It is functional only for the Grip open devices
     return ( (DeviceInfo::instance()->flipStatus()->getFlipStatus()) && (DeviceInfo::instance()->flipStatus()->getKeyboardStatus())  );
-
+#else
+    return false;
+#endif
 }
 
 void QSystemDeviceInfoPrivate::keyboardConnected(bool connect)
@@ -1464,6 +1507,8 @@ QUuid QSystemDeviceInfoPrivate::uniqueDeviceID()
 QSystemDeviceInfo::LockTypeFlags QSystemDeviceInfoPrivate::lockStatus()
 {
     QSystemDeviceInfo::LockTypeFlags status = QSystemDeviceInfo::UnknownLock;
+
+#ifdef SYMBIAN_3_PLATFORM
     int value = DeviceInfo::instance()->keylockStatus()->getLockStatus();
     switch ( value ){
              /*case EKeyguardNotActive:
@@ -1479,9 +1524,11 @@ QSystemDeviceInfo::LockTypeFlags QSystemDeviceInfoPrivate::lockStatus()
                 status = QSystemDeviceInfo::UnknownLock;
                 break;
              }
+#endif
     return status;
 }
 
+#ifdef SYMBIAN_3_PLATFORM
 void QSystemDeviceInfoPrivate::keylockStatusChanged(TInt aLockType)
 {
     if (aLockType == EKeyguardLocked){
@@ -1499,6 +1546,7 @@ void QSystemDeviceInfoPrivate::flipStatusChanged(TInt aFlipType , TInt aFilpKeyB
 {
     emit keyboardFlipped((aFlipType ==  EPSHWRMGripOpen) && (aFilpKeyBoard == 1));
 }
+#endif
 
 int QSystemDeviceInfoPrivate::messageRingtoneVolume()
 {
