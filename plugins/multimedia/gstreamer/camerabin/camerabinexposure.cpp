@@ -49,8 +49,6 @@ CameraBinExposure::CameraBinExposure(CameraBinSession *session)
     :QCameraExposureControl(session),
      m_session(session)
 {
-    GstPhotoCaps caps = gst_photography_get_capabilities(m_session->photography());
-    qDebug() << "Camera caps:" << caps;
 }
 
 CameraBinExposure::~CameraBinExposure()
