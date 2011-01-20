@@ -19,6 +19,7 @@ SOURCES +=  \
 			orientationsym.cpp \
 			rotationsensorsym.cpp \
 			tapsensorsym.cpp \
+                        lightsensorsym.cpp \
 			main.cpp \
 			
 HEADERS += \
@@ -32,6 +33,7 @@ HEADERS += \
 			orientationsym.h \
 			rotationsensorsym.h \
 			tapsensorsym.h \
+                        lightsensorsym.h \
            
 QT=core
 CONFIG+=mobility
