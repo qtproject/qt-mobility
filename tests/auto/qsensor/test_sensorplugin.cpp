@@ -56,6 +56,18 @@ class TestSensorPlugin : public QObject, public QSensorPluginInterface, public Q
 public:
     void registerSensors()
     {
+        static bool recursive = false;
+        if (recursive) {
+            qWarning() << "Recursively called TestSensorPlugin::registerSensors!";
+            abort();
+        }
+        recursive = true;
+
+        // This is bad code. It caused a crash due to recursively calling
+        // loadPlugins() in qsensormanager.cpp (because loadPlugins() did
+        // not set the pluginsLoaded flag soon enough).
+        (void)QSensor::defaultSensorForType(TestSensor::type);
+
         QSensorManager::registerBackend(TestSensor::type, testsensorimpl::id, this);
         QSensorManager::registerBackend(TestSensor::type, "test sensor 2", this);
         QSensorManager::registerBackend(QAccelerometer::type, dummyaccelerometer::id, this);

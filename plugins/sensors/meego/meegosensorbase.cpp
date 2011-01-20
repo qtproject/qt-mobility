@@ -79,7 +79,7 @@ void meegosensorbase::start()
             // for testing maximum speed
             //interval = 1;
             //dataRate = 1000;
-            qDebug() << "Setting data rate" << dataRate << "Hz (interval" << interval << "ms) for" << sensorName();
+            qDebug() << "Setting data rate" << dataRate << "Hz (interval" << interval << "ms) for" << sensor()->identifier();
             m_sensorInterface->setInterval(interval);
         }
 
