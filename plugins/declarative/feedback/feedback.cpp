@@ -46,6 +46,7 @@
 #include "qdeclarativefileeffect.h"
 #include "qdeclarativethemeeffect.h"
 #include "qdeclarativefeedback.h"
+#include "qdeclarativefeedbackactuator.h"
 
 /*!
     \qmlclass Feedback
@@ -285,7 +286,7 @@
 */
 
 /*!
-    \property Actuator::id
+    \property Actuator::actuatorId
     This property hold the id of the feedback actuator.
 */
 
@@ -395,7 +396,7 @@ public:
     {
         Q_ASSERT(QLatin1String(uri) == QLatin1String("QtMobility.feedback"));
         qmlRegisterUncreatableType<QDeclarativeFeedback>("QtMobility.feedback", 1, 1, "Feedback", "Feedback is a namespace"); // It's not really
-        qmlRegisterType<QFeedbackActuator>("QtMobility.feedback", 1, 1, "Actuator");
+        qmlRegisterType<QDeclarativeFeedbackActuator>("QtMobility.feedback", 1, 1, "Actuator");
         qmlRegisterType<QDeclarativeFileEffect>("QtMobility.feedback", 1, 1, "FileEffect");
         qmlRegisterType<QDeclarativeHapticsEffect>("QtMobility.feedback", 1, 1, "HapticsEffect");
         qmlRegisterType<QDeclarativeThemeEffect>("QtMobility.feedback", 1, 1, "ThemeEffect");
