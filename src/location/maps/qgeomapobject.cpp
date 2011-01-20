@@ -42,6 +42,7 @@
 #include "qgeomapobject.h"
 #include "qgeomapobject_p.h"
 #include "qgeomapobjectengine_p.h"
+#include "qgeomapobjectinfo.h"
 #include "qgeomapdata.h"
 #include "qgeomapdata_p.h"
 #include "qgeoboundingbox.h"
@@ -391,6 +392,12 @@ void QGeoMapObject::setMapData(QGeoMapData *mapData)
 QGeoMapData* QGeoMapObject::mapData() const
 {
     return d_ptr->mapData;
+}
+
+QGeoMapObjectInfo *QGeoMapObject::info() const
+{
+    qWarning("QGeoMapObject::info() is deprecated, returning null");
+    return NULL;
 }
 
 /*!
