@@ -78,6 +78,10 @@ public:
     QMap<quint16, QVariant> attributes;
 
 #ifdef Q_OS_SYMBIAN
+private:
+    void setRegisteredAttributeL(quint16 attributeId, const QVariant &value) const;
+
+public:
     mutable RSdp sdpSession;
     mutable RSdpDatabase sdpDatabase;
     mutable TSdpServRecordHandle serviceRecord;
