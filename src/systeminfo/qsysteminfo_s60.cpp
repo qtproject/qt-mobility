@@ -886,7 +886,7 @@ QSystemDisplayInfo::BacklightState  QSystemDisplayInfoPrivate::backlightStatus(i
             delete iLight;)
     }
 
-    switch(status){
+    switch (status){
     case 0:
         backlightState = QSystemDisplayInfo::BacklightStateUnknown;
         break;
