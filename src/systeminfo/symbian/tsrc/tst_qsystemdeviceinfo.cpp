@@ -137,6 +137,9 @@ private slots:
     void tst_isWirelessKeyboardConnected();
     void tst_vibrationVolumeSettings();
     void tst_uniqueDeviceID();
+    void tst_backlightStatus_keypadLocked();
+    void tst_backlightStatus_keypadUnLocked();
+
 };
 /*tst_QSystemDeviceInfo::tst_QSystemDeviceInfo()
 {
@@ -645,6 +648,66 @@ void tst_QSystemDeviceInfo::tst_keypadLightOn_deviceUnlockedFlipOpen()
         qDebug() << "Error in setting the property for Device unlocked";
         }
     qDebug() << "tst_QSystemDeviceInfo::tst_keypadLightOn_deviceUnlockedFlipOpen---END" ;
+}
+
+//Testing backlightStatus() when keypadLocked
+void tst_QSystemDeviceInfo::tst_backlightStatus_keypadLocked()
+{
+    qDebug() << "tst_QSystemDeviceInfo::tst_backlightStatus_keypadLocked---START" ;
+    QSystemDisplayInfo di;
+    int screen = 0;
+    TInt err = RProperty::Set(KPSUidAvkonDomain, KAknKeyguardStatus, EKeyguardLocked);
+    WaitActive(1000000);
+    if ( err == KErrNone ){
+        TRAP_IGNORE(
+            CHWRMLight* iLight = CHWRMLight::NewL();
+            TInt supported = iLight->SupportedTargets();
+            qDebug()<<"Support : "<<supported;
+            if (supported & CHWRMLight::EPrimaryDisplay ){
+                //Testing for Primary display(screen number equal to "zero")
+                QVERIFY( QSystemDisplayInfo::BacklightStateOff  == di.backlightStatus(screen));
+            }
+            if (supported & CHWRMLight::ESecondaryDisplay ){
+                //Testing for Secondary display(screen no otherthan "zero")
+                screen = 5;
+                QVERIFY( QSystemDisplayInfo::BacklightStateOff  == di.backlightStatus(screen));
+            }
+        )
+    }
+    else {
+        qDebug() << "Error in setting the property";
+    }
+    qDebug() << "tst_QSystemDeviceInfo::tst_backlightStatus_keypadLocked---END" ;
+}
+
+//Testing backlightStatus() when device is unlocked
+void tst_QSystemDeviceInfo::tst_backlightStatus_keypadUnLocked()
+{
+    qDebug() << "tst_QSystemDeviceInfo::tst_backlightStatus_keypadUnLocked---START" ;
+    QSystemDisplayInfo di;
+    int screen = 0;
+    TInt err = RProperty::Set(KPSUidAvkonDomain, KAknKeyguardStatus, EKeyguardNotActive);
+    WaitActive(1000000);
+    if ( err == KErrNone ){
+        TRAP_IGNORE(
+            CHWRMLight* iLight = CHWRMLight::NewL();
+            TInt supported = iLight->SupportedTargets();
+            qDebug()<<"Support : "<<supported;
+            if (supported & CHWRMLight::EPrimaryDisplay ){
+                //Testing for Primary display(screen number equal to "zero")
+                QVERIFY( QSystemDisplayInfo::BacklightStateOn   == di.backlightStatus(screen));
+            }
+            if (supported & CHWRMLight::ESecondaryDisplay ){
+                //Testing for Secondary display(screen no otherthan "zero")
+                screen = 5;
+                QVERIFY( QSystemDisplayInfo::BacklightStateOn   == di.backlightStatus(screen));
+            }
+        )
+    }
+    else {
+        qDebug() << "Error in setting the property";
+    }
+    qDebug() << "tst_QSystemDeviceInfo::tst_backlightStatus_keypadUnLocked---END" ;
 }
 
 /*QString tst_QSystemDeviceInfo::profileToString(QSystemDeviceInfo::Profile profile)
