@@ -223,7 +223,7 @@ static QPolygonF approximateCircle(QGraphicsEllipseItem *elItem,
     quint32 detail = 150;
     QGeoMapCircleObject *circObj = dynamic_cast<QGeoMapCircleObject*>(object);
     if (circObj)
-        detail = circObj->detailLevel();
+        detail = circObj->pointCount();
 
     const double Pi = 3.14159265358;
     const double twopi = 6.283185307179;
