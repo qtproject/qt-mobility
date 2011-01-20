@@ -43,8 +43,8 @@
 #include <hwrmpowerstatesdkpskeys.h>
 #ifdef SYMBIAN_3_PLATFORM
 #include <hwrmpower.h>
-#endif
 #include <usbman.h>
+#endif
 #include <e32debug.h>
 #include <QList>
 //#include <QtDebug>
