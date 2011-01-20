@@ -429,13 +429,11 @@ QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate()
 
 QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSystemNetworkInfo::NetworkMode mode)
 {
-    qDebug()<<"File-"<<__FILE__<<" : Line-"<<__LINE__<<"  :: Inside QSystemNetworkInfoPrivate::networkStatus -> Param mode = "<<mode;
     QSystemNetworkInfo::NetworkStatus networkStatus = QSystemNetworkInfo::UndefinedStatus;
     RMobilePhone::TMobilePhoneRegistrationStatus nStatus = RMobilePhone::ERegistrationUnknown;
     QSystemNetworkInfo::NetworkMode currMode =currentMode();
     if (currMode == mode)
     {
-        qDebug("NetworkStatus for Current Mode");
         nStatus = DeviceInfo::instance()->networkInfo()->GetStatus();
     }
     switch (nStatus) {
@@ -448,7 +446,6 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSyst
     case RMobilePhone::ERegisteredRoaming : networkStatus = QSystemNetworkInfo::Roaming; break;
     case RMobilePhone::ERegistrationUnknown : break;
     }
-    qDebug()<<"File-"<<__FILE__<<" : Line-"<<__LINE__<<"  :: Returning From QSystemNetworkInfoPrivate::networkStatus -> "<<networkStatus;
     return networkStatus;
 }
 
@@ -677,7 +674,6 @@ void QSystemNetworkInfoPrivate::wlanNetworkStatusChanged()
 
 QSystemNetworkInfo::NetworkMode QSystemNetworkInfoPrivate::currentMode()
 {
-    qDebug()<<"INSIDE QSystemNetworkInfoPrivate::currentMode";
     QSystemNetworkInfo::NetworkMode networkMode = QSystemNetworkInfo::UnknownMode;
     RMobilePhone::TMobilePhoneNetworkMode nMode = RMobilePhone::ENetworkModeUnknown;
     nMode = DeviceInfo::instance()->networkInfo()->GetMode();
@@ -695,7 +691,6 @@ QSystemNetworkInfo::NetworkMode QSystemNetworkInfoPrivate::currentMode()
             default : break;
         }
     }
-    qDebug()<<"RETURNING QSystemNetworkInfoPrivate::currentMode : "<<networkMode;
     return networkMode;
 }
 
@@ -882,7 +877,6 @@ QSystemDisplayInfo::BacklightState  QSystemDisplayInfoPrivate::backlightStatus(i
     {
         TRAP_IGNORE(CHWRMLight* iLight = CHWRMLight::NewL();
             status = iLight->LightStatus(CHWRMLight::ESecondaryDisplay);
-            qDebug(("Status in case of Secondary display is  %d"),status);
             delete iLight;)
     }
 
