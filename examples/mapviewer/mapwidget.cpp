@@ -38,19 +38,9 @@
 **
 ****************************************************************************/
 
-#include "geomap.h"
-
-#include <qgeomapcircleobject.h>
-#include <qgeomappingmanager.h>
-#include <qgeocoordinate.h>
+#include "mapwidget.h"
 
 #include <QTimer>
-#include <QMenu>
-#include <QGraphicsScene>
-#include <QGraphicsSceneMouseEvent>
-#include <QPinchGesture>
-#include <QGestureEvent>
-
 #include <cmath>
 
 QTM_USE_NAMESPACE
@@ -76,8 +66,9 @@ static const int kineticPanningResolution = 30; // temporal resolution. Smaller 
 static const int holdTimeThreshold = 100; // maximum time between last mouse move and mouse release for kinetic panning to kick in
 #endif
 
-GeoMap::GeoMap(QGeoMappingManager * manager) :
+MapWidget::MapWidget(QGeoMappingManager *manager) :
         QGraphicsGeoMap(manager),
+        coordQueryState(false),
         panActive(false),
         kineticTimer(new QTimer),
         m_lastHoveredMapObject(0),
@@ -89,17 +80,26 @@ GeoMap::GeoMap(QGeoMappingManager * manager) :
     kineticTimer->setInterval(kineticPanningResolution);
 
     setAcceptHoverEvents(true);
-    grabGesture(Qt::PinchGesture);
 }
 
-GeoMap::~GeoMap() {}
+MapWidget::~MapWidget() {}
 
-void GeoMap::mousePressEvent(QGraphicsSceneMouseEvent * event)
+void MapWidget::setMouseClickCoordQuery(bool state)
+{
+    coordQueryState = state;
+}
+
+void MapWidget::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
     setFocus();
     if (event->button() == Qt::LeftButton) {
         if (event->modifiers() & Qt::ControlModifier) {
         } else {
+            if (coordQueryState) {
+                emit coordQueryResult(screenPositionToCoordinate(event->lastPos()));
+                return;
+            }
+
             panActive = true;
 
             // When pressing, stop the timer and stop all current kinetic panning
@@ -113,7 +113,7 @@ void GeoMap::mousePressEvent(QGraphicsSceneMouseEvent * event)
     event->accept();
 }
 
-void GeoMap::mouseReleaseEvent(QGraphicsSceneMouseEvent * event)
+void MapWidget::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 {
     if (event->button() == Qt::LeftButton) {
         if (panActive) {
@@ -147,11 +147,11 @@ void GeoMap::mouseReleaseEvent(QGraphicsSceneMouseEvent * event)
     event->accept();
 }
 
-void GeoMap::hoverMoveEvent(QGraphicsSceneHoverEvent * event)
+void MapWidget::hoverMoveEvent(QGraphicsSceneHoverEvent* event)
 {
-    QGeoMapObject * objectAtCursor = 0;
+    QGeoMapObject* objectAtCursor = 0;
     if (event) {
-        QList<QGeoMapObject *> objectsAtCursor = mapObjectsAtScreenPosition(event->scenePos());
+        QList<QGeoMapObject*> objectsAtCursor = mapObjectsAtScreenPosition(event->scenePos());
         if (!objectsAtCursor.isEmpty())
             objectAtCursor = objectsAtCursor.last();
     }
@@ -179,17 +179,17 @@ void GeoMap::hoverMoveEvent(QGraphicsSceneHoverEvent * event)
     }
 }
 
-void GeoMap::hoveredMapObjectDestroyed()
+void MapWidget::hoveredMapObjectDestroyed()
 {
     m_lastHoveredMapObject = 0;
 }
-void GeoMap::hoverLeaveEvent(QGraphicsSceneHoverEvent * event)
+void MapWidget::hoverLeaveEvent(QGraphicsSceneHoverEvent* event)
 {
     hoverMoveEvent(0);
 }
 
 
-void GeoMap::mouseMoveEvent(QGraphicsSceneMouseEvent * event)
+void MapWidget::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 {
     if (event->modifiers() & Qt::ControlModifier) {
         if (lastCircle)
@@ -218,7 +218,7 @@ void GeoMap::mouseMoveEvent(QGraphicsSceneMouseEvent * event)
     event->accept();
 }
 
-void GeoMap::kineticTimerEvent()
+void MapWidget::kineticTimerEvent()
 {
     QTime currentTime = QTime::currentTime();
     int deltaTime = lastMoveTime.msecsTo(currentTime);
@@ -238,7 +238,7 @@ void GeoMap::kineticTimerEvent()
 }
 
 // Wraps the pan(int, int) method to achieve floating point accuracy, which is needed to scroll smoothly.
-void GeoMap::panFloatWrapper(const QPointF & delta)
+void MapWidget::panFloatWrapper(const QPointF& delta)
 {
     // Add to previously stored panning distance
     remainingPan += delta;
@@ -254,7 +254,7 @@ void GeoMap::panFloatWrapper(const QPointF & delta)
 
 }
 
-void GeoMap::mouseDoubleClickEvent(QGraphicsSceneMouseEvent * event)
+void MapWidget::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 {
     setFocus();
 
@@ -265,7 +265,7 @@ void GeoMap::mouseDoubleClickEvent(QGraphicsSceneMouseEvent * event)
     event->accept();
 }
 
-void GeoMap::keyPressEvent(QKeyEvent * event)
+void MapWidget::keyPressEvent(QKeyEvent *event)
 {
     switch (event->key()) {
         case Qt::Key_Minus:
@@ -331,7 +331,7 @@ void GeoMap::keyPressEvent(QKeyEvent * event)
     event->accept();
 }
 
-void GeoMap::keyReleaseEvent(QKeyEvent * event)
+void MapWidget::keyReleaseEvent(QKeyEvent* event)
 {
     event->accept();
 
@@ -350,9 +350,7 @@ void GeoMap::keyReleaseEvent(QKeyEvent * event)
             break;
 
         case Qt::Key_Shift:
-            if (panDir.manhattanLength() == 0)
-                return;
-
+            if (panDir.manhattanLength() == 0) return;
             break;
 
         default:
@@ -362,8 +360,8 @@ void GeoMap::keyReleaseEvent(QKeyEvent * event)
     applyPan(event->modifiers());
 }
 
-// Evaluates the panDir field and sets kineticPanSpeed accordingly. Used in GeoMap::keyPressEvent and GeoMap::keyReleaseEvent
-void GeoMap::applyPan(const Qt::KeyboardModifiers & modifiers)
+// Evaluates the panDir field and sets kineticPanSpeed accordingly. Used in MapWidget::keyPressEvent and MapWidget::keyReleaseEvent
+void MapWidget::applyPan(const Qt::KeyboardModifiers& modifiers)
 {
     Q_ASSERT(panDir.manhattanLength() <= 2);
 
@@ -384,89 +382,20 @@ void GeoMap::applyPan(const Qt::KeyboardModifiers & modifiers)
     }
 }
 
-void GeoMap::wheelEvent(QGraphicsSceneWheelEvent * event)
+void MapWidget::wheelEvent(QGraphicsSceneWheelEvent* event)
 {
-    QPointF mousePos = event->pos();
-    QGeoCoordinate mouseGeo = screenPositionToCoordinate(mousePos);
-
-    if (event->delta() > 0) {
-        //zoom in
+    qreal panx = event->pos().x() - size().width() / 2.0;
+    qreal pany = event->pos().y() - size().height() / 2.0;
+    pan(panx, pany);
+    if (event->delta() > 0) { //zoom in
         if (zoomLevel() < maximumZoomLevel()) {
             setZoomLevel(zoomLevel() + 1);
         }
-    }
-    else {
-        //zoom out
+    } else { //zoom out
         if (zoomLevel() > minimumZoomLevel()) {
             setZoomLevel(zoomLevel() - 1);
         }
     }
-
-    QPointF panOffset = coordinateToScreenPosition(mouseGeo) - mousePos;
-    panFloatWrapper(panOffset);
-
+    pan(-panx, -pany);
     event->accept();
-}
-
-void GeoMap::contextMenuEvent(QGraphicsSceneContextMenuEvent * event)
-{
-    QList<QGeoMapObject *> objectsAtCursor = mapObjectsAtScreenPosition(event->scenePos());
-
-    QGeoMapObject * clickedMapObject = 0;
-
-    if (!objectsAtCursor.isEmpty())
-        clickedMapObject = objectsAtCursor.last();
-
-    emit contextMenu(event, clickedMapObject); // TODO: problems arise if a signal attached to this is not a direct call
-}
-
-bool GeoMap::sceneEvent(QEvent *event)
-{
-    if (event->type() == QEvent::Gesture) {
-        QGestureEvent * gestureEvent = static_cast<QGestureEvent *>(event);
-
-        event->accept();
-        foreach (QGesture * gesture, gestureEvent->gestures()) {
-            switch (gesture->gestureType()) {
-            case Qt::PinchGesture:
-                handlePinchGesture(qobject_cast<QPinchGesture *>(gesture));
-                return true;
-
-            default:
-                break;
-            }
-        }
-
-        event->ignore();
-    }
-
-    return QGraphicsGeoMap::sceneEvent(event);
-}
-
-void GeoMap::handlePinchGesture(QPinchGesture * gesture)
-{
-    /*QPinchGesture::ChangeFlags changeFlags = gesture->changeFlags();
-    if (changeFlags & QPinchGesture::RotationAngleChanged) {
-        qreal value = gesture->property("rotationAngle").toReal();
-        qreal lastValue = gesture->property("lastRotationAngle").toReal();
-        rotationAngle += value - lastValue;
-    }
-    if (changeFlags & QPinchGesture::ScaleFactorChanged) {
-        qreal value = gesture->scaleFactor();
-
-        currentStepScaleFactor = value;
-    }
-    if (gesture->state() == Qt::GestureFinished) {
-        scaleFactor *= currentStepScaleFactor;
-        currentStepScaleFactor = 1;
-    }
-    update();*/
-
-    if (gesture->state() == Qt::GestureFinished) {
-        if (gesture->totalChangeFlags() & QPinchGesture::ScaleFactorChanged) {
-            panFloatWrapper(rect().center() - gesture->lastCenterPoint());
-            setZoomLevel(zoomLevel() + log(gesture->totalScaleFactor()) / log(2.0));
-            panFloatWrapper(gesture->centerPoint() - rect().center());
-        }
-    }
 }
