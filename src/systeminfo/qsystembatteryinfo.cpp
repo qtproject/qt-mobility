@@ -100,6 +100,14 @@ QSystemBatteryInfoPrivate *getSystemBatteryInfoPrivate() { return d; }
       \value UnitmAh                Energy described in milli Amp hours (mAh)
       \value UnitmWh                Energy described in milli watt hours (mWh)
 */
+/*!
+  \fn void QSystemBatteryInfo::batteryStatusChanged(QSystemBatteryInfo::BatteryStatus batteryStatus)
+
+  This signal is emitted when battery status has changed.
+  \a batteryStatus is the new battery status.
+
+  \sa QSystemBatteryInfo::ChargingState
+ */
 
 /*!
   \fn void QSystemBatteryInfo::chargingStateChanged(QSystemBatteryInfo::ChargingState chargingState)
@@ -155,13 +163,6 @@ This signal is emitted when the charger type has changed, such as when a phone g
 
   This signal is emitted when battery level has changed.
   \a level is the new level.
- */
-
-/*!
-  \fn void QSystemBatteryInfo::batteryStatusChanged(QSystemBatteryInfo::BatteryStatus batteryStatus)
-
-  This signal is emitted when battery status has changed.
-  \a batteryStatus is the new status.
  */
 
 /*!

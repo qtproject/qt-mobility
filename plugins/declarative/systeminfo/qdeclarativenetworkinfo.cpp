@@ -57,7 +57,7 @@ Q_GLOBAL_STATIC(QSystemNetworkInfo, netInfo)
     This element is part of the \bold{QtMobility.systeminfo 1.1} module.
     It is a convience class to make QML usage easier.
 
-    Note: To use notification signals, you need to use the start* slots.
+    Note: To use notification signals, you need to set the monitor* properties to true.
 
     To use this in a mode other than the default mode given by currentMode, set the mode with
     \a useMode.
@@ -71,10 +71,8 @@ Q_GLOBAL_STATIC(QSystemNetworkInfo, netInfo)
         NetworkInfo {
             id: wlaninfo
             useMode: NetworkInfo.WlanMode;
-        }
-        Component.onCompleted: {
-            wlaninfo.startNameChanged();
-            wlaninfo.startSignalStrengthChanged();
+            monitorNameChanges: true
+            monitorSignalStrengthChanges: true
         }
         Text {
             id: signame
@@ -136,14 +134,14 @@ QDeclarativeNetworkInfo::~QDeclarativeNetworkInfo()
 }
 
 /*!
-    \qmlproperty enumeration NetworkInfo::useMode
+    \qmlproperty enumeration NetworkInfo::useThisMode
 
     Sets this NetworkInfo to use QSystemNetworkInfo::NetworkModes. Does not set the mode of the underlaying system.
 
     If not set, the default is whatever defaultMode is.
 */
 
-void QDeclarativeNetworkInfo::useMode(QSystemNetworkInfo::NetworkMode mode)
+void QDeclarativeNetworkInfo::useThisMode(QSystemNetworkInfo::NetworkMode mode)
 {
     m_mode = mode;
 }
@@ -198,72 +196,165 @@ QNetworkInterface QDeclarativeNetworkInfo::interfaceForMode()
     return QSystemNetworkInfo::interfaceForMode(m_mode);
 }
 
-
-
 /*!
-    \qmlmethod NetworkInfo::startStatusChanged()
-   This function is needed to start statusChanged notification
+    \qmlmethod NetworkInfo::startBatteryStatusChanged(bool on)
+   This function starts the startBatteryStatusChanged notification
 
 */
-void QDeclarativeNetworkInfo::startStatusChanged()
+void QDeclarativeNetworkInfo::startStatusChanged(bool on)
 {
-    connect(netInfo(),SIGNAL(networkStatusChanged(QSystemNetworkInfo::NetworkMode,QSystemNetworkInfo::NetworkStatus)),
-            this,SLOT(networkStatusChanged(QSystemNetworkInfo::NetworkMode,QSystemNetworkInfo::NetworkStatus)),Qt::UniqueConnection);
+    monitoringStatusChanges = on;
+    if(on) {
+        connect(netInfo(),SIGNAL(networkStatusChanged(QSystemNetworkInfo::NetworkMode,QSystemNetworkInfo::NetworkStatus)),
+                this,SLOT(networkStatusChanged(QSystemNetworkInfo::NetworkMode,QSystemNetworkInfo::NetworkStatus)),Qt::UniqueConnection);
+    } else {
+        disconnect(netInfo(),SIGNAL(networkStatusChanged(QSystemNetworkInfo::NetworkMode,QSystemNetworkInfo::NetworkStatus)),
+                this,SLOT(networkStatusChanged(QSystemNetworkInfo::NetworkMode,QSystemNetworkInfo::NetworkStatus)));
+    }
 }
 
 /*!
-    \qmlmethod NetworkInfo::signalStrengthChanged()
-   This function is needed to start signalStrengthChanged notification.
+    \qmlproperty bool NetworkInfo::monitorStatusChanges
+    \brief Use the statusChanged signal.
+  */
+bool QDeclarativeNetworkInfo::monitorStatusChanges()
+{
+    return monitoringStatusChanges;
+}
+
+
+/*!
+    \qmlmethod NetworkInfo::signalStrengthChanged(bool on)
+   This function starts the signalStrengthChanged notification.
 
 */
-void QDeclarativeNetworkInfo::startSignalStrengthChanged()
+void QDeclarativeNetworkInfo::startSignalStrengthChanged(bool on)
 {
-    connect(netInfo(),SIGNAL(networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode,int)),
-            this,SLOT(networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode,int)),Qt::UniqueConnection);
+    monitoringSignalStrengthChanges = on;
+    if(monitoringSignalStrengthChanges) {
+        connect(netInfo(),SIGNAL(networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode,int)),
+                this,SLOT(networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode,int)),Qt::UniqueConnection);
+    } else {
+        disconnect(netInfo(),SIGNAL(networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode,int)),
+                   this,SLOT(networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode,int)));
+    }
 }
 
 /*!
-    \qmlmethod NetworkInfo::startStatusChanged()
-   This function is needed to start statusChanged notification.
+    \qmlproperty bool NetworkInfo::monitorSignalStrengthChanges
+    \brief Use the monitorSignalStrengthChanges signal.
+  */
+bool QDeclarativeNetworkInfo::monitorSignalStrengthChanges()
+{
+    return monitoringSignalStrengthChanges;
+}
+
+
+/*!
+    \qmlmethod NetworkInfo::startStatusChanged(bool on)
+   This function starts the statusChanged notification.
 
 */
-void QDeclarativeNetworkInfo::startNameChanged()
+void QDeclarativeNetworkInfo::startNameChanged(bool on)
 {
+    monitoringNameChanges = on;
+    if(on) {
     connect(netInfo(),SIGNAL(networkNameChanged(QSystemNetworkInfo::NetworkMode,QString)),
             this,SLOT(networkNameChanged(QSystemNetworkInfo::NetworkMode,QString)),Qt::UniqueConnection);
+} else {
+        disconnect(netInfo(),SIGNAL(networkNameChanged(QSystemNetworkInfo::NetworkMode,QString)),
+                this,SLOT(networkNameChanged(QSystemNetworkInfo::NetworkMode,QString)));
+    }
 }
 
 /*!
-    \qmlmethod NetworkInfo::modeChanged()
-   This function is needed to start modeChanged notification.
+    \qmlproperty bool NetworkInfo::monitorNameChanges
+    \brief Use the monitorNameChanges signal.
+  */
+bool QDeclarativeNetworkInfo::monitorNameChanges()
+{
+    return monitoringNameChanges;
+}
+
+
+/*!
+    \qmlmethod NetworkInfo::modeChanged(bool on)
+   This function starts the modeChanged notification.
 
 */
-void QDeclarativeNetworkInfo::startModeChanged()
+void QDeclarativeNetworkInfo::startModeChanged(bool on)
 {
+    monitoringModeChanges = on;
+    if(on) {
     connect(netInfo(),SIGNAL(networkModeChanged(QSystemNetworkInfo::NetworkMode)),
             this,SLOT(networkModeChanged(QSystemNetworkInfo::NetworkMode)),Qt::UniqueConnection);
+} else {
+        disconnect(netInfo(),SIGNAL(networkModeChanged(QSystemNetworkInfo::NetworkMode)),
+                this,SLOT(networkModeChanged(QSystemNetworkInfo::NetworkMode)));
+    }
 }
 
 /*!
-    \qmlmethod NetworkInfo::currentMobileCountryCodeChanged()
-   This function is needed to start currentMobileCountryCodeChanged notification.
+    \qmlproperty bool NetworkInfo::monitorModeChanges
+    \brief Use the monitorModeChanges signal.
+  */
+bool QDeclarativeNetworkInfo::monitorModeChanges()
+{
+    return monitoringModeChanges;
+}
+
+
+/*!
+    \qmlmethod NetworkInfo::currentMobileCountryCodeChanged(bool on)
+   This function starts the currentMobileCountryCodeChanged notification.
 
 */
-void QDeclarativeNetworkInfo::startCurrentMobileCountryCodeChanged()
+void QDeclarativeNetworkInfo::startCurrentMobileCountryCodeChanged(bool on)
 {
-    connect(netInfo(),SIGNAL(currentMobileCountryCodeChanged(QString)),
-            this,SIGNAL(currentMobileCountryCodeChanged(QString)),Qt::UniqueConnection);
+    monitoringCurrentMobileCountryCodeChanges = on;
+    if(on) {
+        connect(netInfo(),SIGNAL(currentMobileCountryCodeChanged(QString)),
+                this,SIGNAL(currentMobileCountryCodeChanged(QString)),Qt::UniqueConnection);
+    } else {
+        disconnect(netInfo(),SIGNAL(currentMobileCountryCodeChanged(QString)),
+                   this,SIGNAL(currentMobileCountryCodeChanged(QString)));
+    }
 }
 
 /*!
-    \qmlmethod NetworkInfo::currentMobileNetworkCodeChanged()
-   This function is needed to start currentMobileNetworkCodeChanged notification.
+    \qmlproperty bool NetworkInfo::monitoringCurrentMobileCountryCodeChanges
+    \brief Use the monitoringCurrentMobileCountryCodeChanges signal.
+  */
+bool QDeclarativeNetworkInfo::monitorCurrentMobileCountryCodeChanges()
+{
+    return monitoringCurrentMobileCountryCodeChanges;
+}
+
+
+/*!
+    \qmlmethod NetworkInfo::currentMobileNetworkCodeChanged(bool on)
+   This function starts the currentMobileNetworkCodeChanged notification.
 
 */
-void QDeclarativeNetworkInfo::startCurrentMobileNetworkCodeChanged()
+void QDeclarativeNetworkInfo::startCurrentMobileNetworkCodeChanged(bool on)
 {
-    connect(netInfo(),SIGNAL(currentMobileNetworkCodeChanged(QString)),
-            this,SIGNAL(currentMobileNetworkCodeChanged(QString)),Qt::UniqueConnection);
+    monitoringCurrentMobileNetworkCodeChanges = on;
+    if (on) {
+        connect(netInfo(),SIGNAL(currentMobileNetworkCodeChanged(QString)),
+                this,SIGNAL(currentMobileNetworkCodeChanged(QString)),Qt::UniqueConnection);
+    } else {
+        disconnect(netInfo(),SIGNAL(currentMobileNetworkCodeChanged(QString)),
+                   this,SIGNAL(currentMobileNetworkCodeChanged(QString)));
+    }
+}
+
+/*!
+    \qmlproperty bool NetworkInfo::monitorCurrentMobileNetworkCodeChanges
+    \brief Use the monitorCurrentMobileNetworkCodeChanges signal.
+  */
+bool QDeclarativeNetworkInfo::monitorCurrentMobileNetworkCodeChanges()
+{
+    return monitoringCurrentMobileNetworkCodeChanges;
 }
 
 /*!
@@ -407,11 +498,11 @@ QList<QSystemNetworkInfo::NetworkMode> QDeclarativeNetworkInfo::availableModes()
 }
 
 /*!
-    \qmlmethod NetworkInfo::mode()
+    \qmlmethod NetworkInfo::useMode()
     This function returns the mode set by useMode(QSystemNetworkInfo::NetworkMode mode);
 
 */
-QSystemNetworkInfo::NetworkMode QDeclarativeNetworkInfo::mode()
+QSystemNetworkInfo::NetworkMode QDeclarativeNetworkInfo::useMode()
 {
     return m_mode;
 }
