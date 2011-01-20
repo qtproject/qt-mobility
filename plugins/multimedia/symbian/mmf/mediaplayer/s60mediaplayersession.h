@@ -50,6 +50,10 @@
 #include <QRect>
 #include "s60mediaplayerservice.h"
 
+
+_LIT( KSeekable, "Seekable" );
+_LIT( KFalse, "0");
+
 QT_BEGIN_NAMESPACE
 class QMediaTimeRange;
 QT_END_NAMESPACE
@@ -94,6 +98,7 @@ public:
     void setState(QMediaPlayer::State state);
     void setAudioEndpoint(const QString& audioEndpoint);
     virtual void setPlaybackRate(qreal rate) = 0;
+    virtual bool getIsSeekable() const { return ETrue; }
     
 protected:    
     virtual void doLoadL(const TDesC &path) = 0;

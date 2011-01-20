@@ -959,18 +959,6 @@ RESOURCE ARRAY r_cntui_new_field_defns
       category=EContactCategoryOther;
       fieldName=STRING_r_cntui_new_field_defns16;
       }
-#ifdef FF_ICE
-    ,FIELD   // Emergency Contact Indicator
-      {
-      fieldStorageType = KStorageTypeText; // text type to store the order of emergency contacts
-      contactFieldType = KUidContactFieldEmergencyContactValue;
-      vCardMapping = KIntContactFieldVCardMapUnknown;
-      category = EContactCategoryNone; // To be set to some other val ?
-      fieldName = "Emergency Contact"; // debugging purposes, no need to localize       
-      // NOTE: Emergency Contact is filterable    
-      flags=KIntFieldFlagFilterable3; 
-      }
-#endif // FF_ICE      
     };
  }
 

@@ -38,14 +38,67 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef QDECLARATIVEFEEDBACKACTUATOR_H
+#define QDECLARATIVEFEEDBACKACTUATOR_H
 
-#include <QString>
-#include <QObject>
+#include <QtDeclarative/qdeclarative.h>
+#include "qfeedbackactuator.h"
 
-#include <meegotouch/MFeedback>
+QTM_USE_NAMESPACE
 
-int main(int, char**)
+class QDeclarativeFeedbackActuator : public QObject
 {
-    MFeedback::play(MFeedback::Press);
-    return 0;
-}
+    Q_OBJECT
+    Q_PROPERTY(int actuatorId READ actuatorId)
+    Q_PROPERTY(QString name READ name)
+    Q_PROPERTY(QFeedbackActuator::State state READ state)
+    Q_PROPERTY(bool valid READ isValid)
+    Q_PROPERTY(bool enabled READ isEnabled WRITE setEnabled NOTIFY enabledChanged)
+public:
+    QDeclarativeFeedbackActuator(QObject *parent = 0)
+        :QObject(parent)
+    {
+        actuator = new QFeedbackActuator(this);
+        connect(actuator, SIGNAL(enabledChanged()), this, SIGNAL(enabledChanged()));
+    }
+
+    int actuatorId() const
+    {
+        return actuator->id();
+    }
+    bool isValid() const
+    {
+        return actuator->isValid();
+    }
+
+    QString name() const
+    {
+        return actuator->name();
+    }
+    QFeedbackActuator::State state() const
+    {
+        return actuator->state();
+    }
+
+    Q_INVOKABLE bool isCapabilitySupported(QFeedbackActuator::Capability capbility) const
+    {
+        return actuator->isCapabilitySupported(capbility);
+    }
+
+    bool isEnabled() const
+    {
+        return actuator->isEnabled();
+    }
+    void setEnabled(bool v)
+    {
+        actuator->setEnabled(v);
+    }
+
+signals:
+    void enabledChanged();
+
+private:
+    QFeedbackActuator* actuator;
+};
+
+#endif

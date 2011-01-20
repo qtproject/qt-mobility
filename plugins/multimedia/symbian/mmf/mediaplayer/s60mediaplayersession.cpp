@@ -101,9 +101,6 @@ bool S60MediaPlayerSession::isMuted() const
 
 bool S60MediaPlayerSession::isSeekable() const
 {
-    // Currently, there is no API in mmf to check whether a clip is seekable or not.
-    //Hence, m_seekable is true by default, and, once setPosition() fails, m_seekable is set to false, also client will be notified.
-    //TODO: When mmf API is available to check whether a clip is seekable or not, this function will call that API instead of this (dirty) book-keeping.
     return m_seekable;
 }
 
@@ -144,7 +141,6 @@ void S60MediaPlayerSession::load(QUrl url)
     setMediaStatus(QMediaPlayer::LoadingMedia);
     startStalledTimer();
     m_stream = (url.scheme() == "file")?false:true;
-    m_seekable = true;
     TRAPD(err,
         if(m_stream)
             doLoadUrlL(QString2TPtrC(url.toString()));
@@ -409,6 +405,8 @@ void S60MediaPlayerSession::loaded()
         emit videoAvailableChanged(isVideoAvailable());
         emit audioAvailableChanged(isAudioAvailable());
         emit mediaChanged();
+
+        m_seekable = getIsSeekable();
     }
 }
 
