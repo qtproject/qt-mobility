@@ -138,6 +138,11 @@ void MarkerManager::removeSearchMarkers()
     }
 }
 
+QGeoCoordinate MarkerManager::myLocation() const
+{
+    return m_myLocation->coordinate();
+}
+
 void MarkerManager::replyFinished(QObject *obj)
 {
     QGeoSearchReply *reply = dynamic_cast<QGeoSearchReply*>(obj);

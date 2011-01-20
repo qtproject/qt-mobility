@@ -129,6 +129,19 @@ void MapsWidget::initialize(QGeoMappingManager *manager)
     geoMap->setZoomLevel(15);
 }
 
+void MapsWidget::setMyLocation(QGeoCoordinate location, bool center)
+{
+    if (m_markerManager)
+        m_markerManager->setMyLocation(location);
+    if (geoMap && center)
+        geoMap->setCenter(location);
+}
+
+QGraphicsGeoMap *MapsWidget::map() const
+{
+    return geoMap;
+}
+
 void MapsWidget::resizeEvent(QResizeEvent *event)
 {
     if (graphicsView && geoMap) {

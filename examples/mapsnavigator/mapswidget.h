@@ -83,6 +83,10 @@ public:
     void setMarkerManager(MarkerManager *markerManager);
     MarkerManager *markerManager() const;
 
+    QGraphicsGeoMap *map() const;
+
+    void setMyLocation(QGeoCoordinate location, bool center=true);
+
 public slots:
     void initialize(QGeoMappingManager *manager);
 

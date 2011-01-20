@@ -39,69 +39,35 @@
 **
 ****************************************************************************/
 
-#ifndef MARKER_H
-#define MARKER_H
+#ifndef MAINWINDOW_H
+#define MAINWINDOW_H
 
-#include <QGeoMapPixmapObject>
-#include <QGeoSearchManager>
-#include <QGraphicsGeoMap>
-#include <QGeoCoordinate>
-#include <QSignalMapper>
-#include <QGeoSearchReply>
+#include <QMainWindow>
+#include <QGeoServiceProvider>
+
+#include "mapswidget.h"
+#include "marker.h"
+#include "searchdialog.h"
 
 using namespace QtMobility;
 
-class Marker : public QGeoMapPixmapObject
+class MainWindow : public QMainWindow
 {
-    Q_OBJECT
 public:
-    enum MarkerType {
-        MyLocationMarker,
-        SearchMarker,
-        WaypointMarker,
-        StartMarker,
-        EndMarker,
-        PathMarker
-    };
-
-    explicit Marker(MarkerType type);
-
-    inline MarkerType markerType() const { return m_type; }
-    void setMarkerType(MarkerType type);
-
-private:
-    MarkerType m_type;
-};
-
-class MarkerManager : public QObject
-{
-    Q_OBJECT
-public:
-    explicit MarkerManager(QGeoSearchManager *sm, QObject *parent=0);
-    ~MarkerManager();
-
-    QGeoCoordinate myLocation() const;
+    MainWindow();
+    ~MainWindow();
 
 public slots:
-    void setMap(QGraphicsGeoMap *map);
-    void setMyLocation(QGeoCoordinate coord);
-    void search(QString query);
-    void removeSearchMarkers();
-
-signals:
-    void searchError(QGeoSearchReply::Error error, QString errorString);
-    void searchFinished();
-
-private:
-    Marker *m_myLocation;
-    QList<Marker*> searchMarkers;
-
-    QGraphicsGeoMap *m_map;
-    QGeoSearchManager *m_searchManager;
-    QSignalMapper sigMap;
+    void initialize();
 
 private slots:
-    void replyFinished(QObject *reply);
+    void showSearchDialog();
+    void goToMyLocation();
+
+private:
+    QGeoServiceProvider *serviceProvider;
+    MapsWidget *mapsWidget;
+    MarkerManager *markerManager;
 };
 
-#endif // MARKER_H
+#endif // MAINWINDOW_H
