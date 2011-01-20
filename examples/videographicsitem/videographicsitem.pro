@@ -9,7 +9,7 @@ MOBILITY = multimedia
 
 QMAKE_RPATHDIR += $$DESTDIR
 
-contains(QT_CONFIG, opengl): QT += opengl
+!symbian:contains(QT_CONFIG, opengl): QT += opengl
 
 HEADERS   += videoplayer.h \
              videoitem.h

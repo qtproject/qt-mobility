@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the QtCore module of the Qt Toolkit.
+** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
@@ -39,61 +39,27 @@
 **
 ****************************************************************************/
 
+#ifndef S60FORMATSUPPORTED_H_
+#define S60FORMATSUPPORTED_H_
 
-#ifndef CNTMODELEXTUIDS_HRH
-#define CNTMODELEXTUIDS_HRH
+#include <mmf/common/mmfcontrollerpluginresolver.h>
+#include <mmf/server/mmfdatasourcesink.hrh>
+#include <qstringlist.h>
+#include <badesca.h>
+#include <qstring.h>
 
-//  CONSTANTS
+class S60FormatSupported
+{
+public:
+    S60FormatSupported();
+    ~S60FormatSupported();
 
-/**
- * Storage type for thumbnail fields.
- * Currently filename link is the default.
- */
-#define KPbkThumbnailFieldStorageType KStorageTypeStore
+    QStringList supportedPlayMimeTypesL();
 
-/**
- * Phonebook custom Field value.
- * Locationing privacy field type.
- */
-#define KPbkUidContactFieldLocationPrivValue    0x101F4FF2
+private:
 
-/**
- * Phonebook custom Field value.
- * Top Contact field type.
- */
-#define KUidContactFieldTopContactValue 	0x200100E3
-
-/**
- * Phonebook custom Field value.
- * IMPP field type.
- */
-#define KUidContactFieldIMPPValue        	0x200100E4
-
-/**
- * Phonebook custom Field value.
- * Video ringtone field type.
- */
-#define KUidContactFieldVideoRingToneValue	0x200100E6
-
-/**
- * Phonebook custom Field value.
- * Gender field type.
- */
-#define KUidContactFieldGenderValue		0x200100E7
-
-/**
- * Phonebook custom Field value.
- * Anniversary event field type.
- */
-#define KUidContactFieldAnniversaryEventValue     0x200100E8
-
-// !! In case this is undefined on earlier platforms
-#ifndef KUidContactFieldGEOValue
-#define KUidContactFieldGEOValue                0x10274DB2
-// This is to let cntmodelextuids.h know it should also declare the const TUid version
-#define Q_HAD_TO_DECLARE_GEO_VALUE  1
-#endif
-
-#endif // CNTMODELEXTUIDS_HRH
-
-// End of File
+    CMMFFormatSelectionParameters* m_playformatparam;
+    CMMFControllerPluginSelectionParameters* m_controllerparam;
+    QStringList m_supportedplaymime;
+};
+#endif /* S60FORMATSUPPORTED_H_ */
