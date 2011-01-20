@@ -366,3 +366,99 @@ void QDeclarativeDeviceInfo::startLockStatusChanged(bool on)
                 this,SIGNAL(lockStatusChanged(QSystemDeviceInfo::LockTypeFlags)));
     }
 }
+
+/*!
+  \qmlproperty QString DeviceInfo::imei
+
+     Returns the International Mobile Equipment Identity (IMEI), or a null QString in the case of none.
+  */
+
+/*!
+  \qmlproperty QString DeviceInfo::imsi
+ Returns the International Mobile Subscriber Identity (IMSI), or a null QString in the case of none
+  */
+
+/*!
+  \qmlproperty QString DeviceInfo::manufacturer
+    Returns the name of the manufacturer of this device. In the case of desktops, the name of the vendor
+    of the motherboard.
+  */
+/*!
+  \qmlproperty QString DeviceInfo::model
+    Returns the model information of the device. In the case of desktops where no
+    model information is present, the CPU architect, such as i686, and machine type, such as Server,
+    Desktop or Laptop.
+  */
+/*!
+  \qmlproperty QString DeviceInfo::productName
+    Returns the product name of the device. In the case where no product information is available, an empty string will be returned.
+
+  */
+/*!
+  \qmlproperty int DeviceInfo::batteryLevel
+   Returns the battery charge level as percentage 1 - 100 scale.
+  */
+/*!
+  \qmlproperty InputMethodFlags DeviceInfo::inputMethodType
+Returns the QSystemDeviceInfo::InputMethodFlags InputMethodType that the system uses.
+  */
+/*!
+  \qmlproperty BatteryStatus DeviceInfo::batteryStatus
+  Returns the battery charge status.
+  */
+/*!
+  \qmlproperty bool DeviceInfo::isDeviceLocked
+
+  Returns true if the device is locked, otherwise false.
+  */
+/*!
+  \qmlproperty SimStatus DeviceInfo::simStatus
+  Returns the QSystemDeviceInfo::simStatus status of SIM card.
+  */
+/*!
+  \qmlproperty Profile DeviceInfo::currentProfile
+  Gets the current QSystemDeviceInfo::currentProfile device profile.
+  */
+/*!
+  \qmlproperty PowerState DeviceInfo::currentPowerState
+
+  Gets the current QSystemDeviceInfo::currentPowerState state.
+  */
+/*!
+  \qmlproperty bool DeviceInfo::currentBluetoothPowerState
+Gets the current bluetooth power state.
+  */
+/*!
+  \qmlproperty KeyboardTypeFlags DeviceInfo::keyboardTypes
+  Returns the type of keyboards found.
+  */
+/*!
+  \qmlproperty bool DeviceInfo::isWirelessKeyboardConnected
+  Returns true if a wireless keyboard is connected, otherwise false;
+  */
+/*!
+  \qmlproperty bool DeviceInfo::isKeyboardFlippedOpen
+  Returns true if the flip keyboard is open, otherwise false;
+  */
+/*!
+  \qmlproperty QUuid DeviceInfo::uniqueDeviceID
+  Returns a unique identifier for the machine.
+
+  Depending on security enforcement on platform, this may return a non unique number, or 0.
+
+  */
+
+/*!
+  \qmlproperty LockTypeFlags DeviceInfo::lockStatus
+  Returns the QSystemDeviceInfo::LockTypeFlags type of lock state the device might be in.
+  The LockType must be currently active not just enabled.
+  */
+/*!
+  \qmlmethod ActiveProfileDetails DeviceInfo::getActiveProfileDetails
+  Returns a QSystemDeviceInfo::ActiveProfileDetails for the currently active profile.
+  */
+
+/*!
+  \qmlmethod bool DeviceInfo::keypadLightOn(QSystemDeviceInfo::KeypadType type)
+  Returns true if the key pad, indicated by \a type, light is on, otherwise false;
+  */
