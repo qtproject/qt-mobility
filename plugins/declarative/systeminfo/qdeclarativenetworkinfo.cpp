@@ -187,7 +187,7 @@ QString QDeclarativeNetworkInfo::networkName()
 }
 
 /*!
-    \qmlmethod NetworkInfo::interfaceForMode()
+    \qmlmethod QNetworkInterface NetworkInfo::interfaceForMode()
    Returns the QNetworkInterface for this NetworkInfo.
 
 */
@@ -197,7 +197,6 @@ QNetworkInterface QDeclarativeNetworkInfo::interfaceForMode()
 }
 
 /*!
-    \qmlmethod NetworkInfo::startBatteryStatusChanged(bool on)
    This function starts the startBatteryStatusChanged notification
 
 */
@@ -224,7 +223,6 @@ bool QDeclarativeNetworkInfo::monitorStatusChanges()
 
 
 /*!
-    \qmlmethod NetworkInfo::signalStrengthChanged(bool on)
    This function starts the signalStrengthChanged notification.
 
 */
@@ -251,7 +249,6 @@ bool QDeclarativeNetworkInfo::monitorSignalStrengthChanges()
 
 
 /*!
-    \qmlmethod NetworkInfo::startStatusChanged(bool on)
    This function starts the statusChanged notification.
 
 */
@@ -278,7 +275,6 @@ bool QDeclarativeNetworkInfo::monitorNameChanges()
 
 
 /*!
-    \qmlmethod NetworkInfo::modeChanged(bool on)
    This function starts the modeChanged notification.
 
 */
@@ -305,7 +301,7 @@ bool QDeclarativeNetworkInfo::monitorModeChanges()
 
 
 /*!
-    \qmlmethod NetworkInfo::currentMobileCountryCodeChanged(bool on)
+
    This function starts the currentMobileCountryCodeChanged notification.
 
 */
@@ -332,7 +328,6 @@ bool QDeclarativeNetworkInfo::monitorCurrentMobileCountryCodeChanges()
 
 
 /*!
-    \qmlmethod NetworkInfo::currentMobileNetworkCodeChanged(bool on)
    This function starts the currentMobileNetworkCodeChanged notification.
 
 */
@@ -498,7 +493,7 @@ QList<QSystemNetworkInfo::NetworkMode> QDeclarativeNetworkInfo::availableModes()
 }
 
 /*!
-    \qmlmethod NetworkInfo::useMode()
+    \qmlmethod NetworkMode NetworkInfo::useMode()
     This function returns the mode set by useMode(QSystemNetworkInfo::NetworkMode mode);
 
 */

@@ -206,7 +206,7 @@ public:
 
     };
 
-    ActiveProfileDetails getActiveProfileDetails();//1.2
+    Q_INVOKABLE ActiveProfileDetails getActiveProfileDetails();//1.2
 
 Q_SIGNALS:
     void batteryLevelChanged(int level);
