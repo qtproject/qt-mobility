@@ -824,7 +824,8 @@ QMap<QString, QContactDetailDefinition> CntSymbianEngine::detailDefinitions(cons
     *error = QContactManager::NoError;
 
     // First get the default definitions
-    QMap<QString, QMap<QString, QContactDetailDefinition> > schemaDefinitions = QContactManagerEngine::schemaDefinitions();
+	int schemaVersion = 2;
+    QMap<QString, QMap<QString, QContactDetailDefinition> > schemaDefinitions = QContactManagerEngine::schemaDefinitions(schemaVersion);
 
     // And then ask contact transformer to do the modifications required
     QMap<QString, QContactDetailDefinition> schemaForType = schemaDefinitions.value(contactType);
