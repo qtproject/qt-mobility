@@ -54,7 +54,7 @@
 #include <QLabel>
 
 #include <qnetworksession.h>
-#include <qnetworkconfigurationmanager.h>
+#include <qnetworkconfigmanager.h>
 
 MainWindow::MainWindow(QWidget * parent)
     : QMainWindow(parent)
