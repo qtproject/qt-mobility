@@ -48,6 +48,12 @@
 
 class MapBox;
 
+#include <qmobilityglobal.h>
+
+QTM_BEGIN_NAMESPACE
+
+QTM_END_NAMESPACE
+
 QTM_USE_NAMESPACE
 
 class MainWindow : public QMainWindow
