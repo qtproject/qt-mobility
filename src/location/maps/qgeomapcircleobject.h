@@ -62,7 +62,7 @@ public:
     Q_PROPERTY(qreal radius READ radius WRITE setRadius NOTIFY radiusChanged)
     Q_PROPERTY(QPen pen READ pen WRITE setPen NOTIFY penChanged)
     Q_PROPERTY(QBrush brush READ brush WRITE setBrush NOTIFY brushChanged)
-    Q_PROPERTY(quint32 detailLevel READ detailLevel WRITE setDetailLevel)
+    Q_PROPERTY(quint32 pointCount READ pointCount WRITE setPointCount)
 
     QGeoMapCircleObject();
     QGeoMapCircleObject(const QGeoBoundingCircle &circle);
@@ -88,8 +88,8 @@ public:
     QBrush brush() const;
     void setBrush(const QBrush &brush);
 
-    quint32 detailLevel() const;
-    void setDetailLevel(quint32 detailLevel);
+    quint32 pointCount() const;
+    void setPointCount(quint32 pointCount);
 
 Q_SIGNALS:
     void centerChanged(const QGeoCoordinate &center);

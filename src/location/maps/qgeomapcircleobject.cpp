@@ -183,23 +183,23 @@ QBrush QGeoMapCircleObject::brush() const
 }
 
 /*!
-    \property QGeoMapCircleObject::detailLevel
-    \brief This property holds the level of detail to be used to draw this object.
+    \property QGeoMapCircleObject::pointCount
+    \brief This property holds the number of vertices used in an approximate polygon.
 
     \since 1.2
 
-    In particular, for a circle using ExactTransform, this property
-    describes the number of sides that should be used to generate the
-    polygonal approximation.
+    For a circle using ExactTransform, this property describes the number
+    of sides that should be used to generate a polygonal approximation which
+    is then transformed vertex-by-vertex into screen coordinates.
 */
-quint32 QGeoMapCircleObject::detailLevel() const
+quint32 QGeoMapCircleObject::pointCount() const
 {
-    return d_ptr->detailLevel;
+    return d_ptr->pointCount;
 }
 
-void QGeoMapCircleObject::setDetailLevel(quint32 detailLevel)
+void QGeoMapCircleObject::setPointCount(quint32 pointCount)
 {
-    d_ptr->detailLevel = detailLevel;
+    d_ptr->pointCount = pointCount;
     update();
 }
 
