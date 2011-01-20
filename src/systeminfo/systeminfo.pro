@@ -200,21 +200,25 @@ unix:!simulator {
             chargingstatus_s60.cpp \
             wlaninfo_s60.cpp \
             storagestatus_s60.cpp \
-        lockandflipstatus_s60.cpp \
-        storagedisknotifier_s60.cpp \
-        pubandsubkey_s60.cpp \
-        batterystatus_s60.cpp
+            pubandsubkey_s60.cpp \
+            batterystatus_s60.cpp \
+            networkinfo_s60.cpp
 
         HEADERS += qsysteminfo_s60_p.h \
             telephonyinfo_s60.h \
             chargingstatus_s60.h \
             wlaninfo_s60.h \
             storagestatus_s60.h \
-        lockandflipstatus_s60.h \
-        storagedisknotifier_s60.h \
-        pubandsubkey_s60.h \
-        batterystatus_s60.h
+            pubandsubkey_s60.h \
+            batterystatus_s60.h \
+            networkinfo_s60.h
 
+            contains(S60_VERSION, 5.1) | contains(S60_VERSION, 5.2){
+                        SOURCES += lockandflipstatus_s60.cpp \
+                                   storagedisknotifier_s60.cpp
+                        HEADERS += lockandflipstatus_s60.h \
+                                   storagedisknotifier_s60.h
+            }
         LIBS += -lprofileengine \
             -letel3rdparty \
             -lsysutil \
@@ -233,9 +237,11 @@ unix:!simulator {
             -lecom \
             -lplatformenv \
             -lhwrmlightclient \
-        -lhwrmfmtxclient \
-        -ldisknotifyhandler \
-        -lusbman
+            -lhwrmfmtxclient \
+            -ldisknotifyhandler \
+            -lusbman \
+            -letel \
+            -letelmm
 
         contains(S60_VERSION, 5.1) | contains(S60_VERSION, 5.2) {
             LIBS += -lhwrmpowerclient
