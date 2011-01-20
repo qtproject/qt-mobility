@@ -62,7 +62,7 @@ QBluetoothServiceInfoPrivate::~QBluetoothServiceInfoPrivate()
         sdpSession.Close();
 }
 
-static void convert(MSdpElementBuilder *list, const QList<QVariant> &vList)
+static void convertL(MSdpElementBuilder *list, const QList<QVariant> &vList)
 {
     list->StartListL();
 
@@ -116,9 +116,9 @@ static void convert(MSdpElementBuilder *list, const QList<QVariant> &vList)
                 }
                 }
             } else if (v.userType() == qMetaTypeId<QBluetoothServiceInfo::Sequence>()) {
-                convert(list->BuildDESL(), v.value<QBluetoothServiceInfo::Sequence>());
+                convertL(list->BuildDESL(), v.value<QBluetoothServiceInfo::Sequence>());
             } else if (v.userType() == qMetaTypeId<QBluetoothServiceInfo::Alternative>()) {
-                convert(list->BuildDEAL(), v.value<QBluetoothServiceInfo::Alternative>());
+                convertL(list->BuildDEAL(), v.value<QBluetoothServiceInfo::Alternative>());
             }
             break;
         default:
@@ -131,38 +131,56 @@ static void convert(MSdpElementBuilder *list, const QList<QVariant> &vList)
 
 void QBluetoothServiceInfoPrivate::setRegisteredAttribute(quint16 attributeId, const QVariant &value) const
 {
+    TRAPD(err, setRegisteredAttributeL(attributeId, value));
+    if (err != KErrNone) {
+        qWarning("Could not set attributes SDP session (error %d).", err);
+    }
+}
+
+void QBluetoothServiceInfoPrivate::setRegisteredAttributeL(quint16 attributeId, const QVariant &value) const
+{
     CSdpAttrValue *sdpValue = 0;
 
     switch (value.type()) {
     case QMetaType::Void:
         sdpValue = CSdpAttrValueNil::NewNilL();
+        CleanupStack::PushL(sdpValue);
         break;
     case QMetaType::UChar:
         sdpValue = CSdpAttrValueUint::NewUintL(TSdpIntBuf<unsigned char>(value.toUInt()));
+        CleanupStack::PushL(sdpValue);
         break;
     case QMetaType::UShort:
         sdpValue = CSdpAttrValueUint::NewUintL(TSdpIntBuf<unsigned short>(value.toUInt()));
+        CleanupStack::PushL(sdpValue);
         break;
     case QMetaType::UInt:
         sdpValue = CSdpAttrValueUint::NewUintL(TSdpIntBuf<uint>(value.toUInt()));
+        CleanupStack::PushL(sdpValue);
         break;
     case QMetaType::Char:
         sdpValue = CSdpAttrValueInt::NewIntL(TSdpIntBuf<char>(value.toInt()));
+        CleanupStack::PushL(sdpValue);
         break;
     case QMetaType::Short:
         sdpValue = CSdpAttrValueInt::NewIntL(TSdpIntBuf<short>(value.toInt()));
+        CleanupStack::PushL(sdpValue);
         break;
     case QMetaType::Int:
         sdpValue = CSdpAttrValueInt::NewIntL(TSdpIntBuf<int>(value.toInt()));
+        CleanupStack::PushL(sdpValue);
         break;
     case QMetaType::QString:
         sdpValue = CSdpAttrValueString::NewStringL(TPtrC8(reinterpret_cast<const quint8*>(value.toString().toLocal8Bit().constData())));
+        CleanupStack::PushL(sdpValue);
         break;
     case QMetaType::Bool:
         sdpValue = CSdpAttrValueBoolean::NewBoolL(value.toBool());
+        CleanupStack::PushL(sdpValue);
         break;
     case QMetaType::QUrl:
         sdpValue = CSdpAttrValueURL::NewURLL(TPtrC8(reinterpret_cast<const quint8*>(value.toUrl().toString().toLocal8Bit().constData())));
+        CleanupStack::PushL(sdpValue);
         break;
     case QVariant::UserType:
         if (value.userType() == qMetaTypeId<QBluetoothUuid>()) {
@@ -170,25 +188,32 @@ void QBluetoothServiceInfoPrivate::setRegisteredAttribute(quint16 attributeId, c
             switch (uuid.minimumSize()) {
             case 2:
                 sdpValue = CSdpAttrValueUUID::NewUUIDL(uuid.toUInt16());
+                CleanupStack::PushL(sdpValue);
                 break;
             case 4:
                 sdpValue = CSdpAttrValueUUID::NewUUIDL(uuid.toUInt32());
+                CleanupStack::PushL(sdpValue);
                 break;
             case 16: {
                 quint128 uuid128 = uuid.toUInt128();
                 quint32 *data = reinterpret_cast<quint32 *>(uuid128.data);
                 sdpValue = CSdpAttrValueUUID::NewUUIDL(TUUID(data[0], data[1], data[2], data[3]));
+                CleanupStack::PushL(sdpValue);
                 break;
             }
             }
         } else if (value.userType() == qMetaTypeId<QBluetoothServiceInfo::Sequence>()) {
             CSdpAttrValueDES *sequence = CSdpAttrValueDES::NewDESL(0);
-            convert(sequence, value.value<QBluetoothServiceInfo::Sequence>());
-            sdpValue = sequence;
+            CleanupStack::PushL(sequence);
+            convertL(sequence, value.value<QBluetoothServiceInfo::Sequence>());
+            sdpDatabase.UpdateAttributeL(serviceRecord, attributeId, *sequence);
+            CleanupStack::PopAndDestroy(sequence);
         } else if (value.userType() == qMetaTypeId<QBluetoothServiceInfo::Alternative>()) {
             CSdpAttrValueDEA *alternative = CSdpAttrValueDEA::NewDEAL(0);
-            convert(alternative, value.value<QBluetoothServiceInfo::Alternative>());
-            sdpValue = alternative;
+            CleanupStack::PushL(alternative);
+            convertL(alternative, value.value<QBluetoothServiceInfo::Alternative>());
+            sdpDatabase.UpdateAttributeL(serviceRecord, attributeId, *alternative);
+            CleanupStack::PopAndDestroy(alternative);
         }
         break;
     default:
@@ -197,13 +222,16 @@ void QBluetoothServiceInfoPrivate::setRegisteredAttribute(quint16 attributeId, c
 
     if (sdpValue) {
         sdpDatabase.UpdateAttributeL(serviceRecord, attributeId, *sdpValue);
-        delete sdpValue;
+        CleanupStack::PopAndDestroy(sdpValue);
     }
 }
 
 void QBluetoothServiceInfoPrivate::removeRegisteredAttribute(quint16 attributeId) const
 {
-    sdpDatabase.DeleteAttributeL(serviceRecord, attributeId);
+    TRAPD(err, sdpDatabase.DeleteAttributeL(serviceRecord, attributeId));
+    if (err != KErrNone) {
+        qWarning("Could not remove registered attribute (error %d).", error);
+    }
 }
 
 bool QBluetoothServiceInfoPrivate::ensureSdpConnection() const
@@ -231,17 +259,22 @@ bool QBluetoothServiceInfo::isRegistered() const
 {
     Q_D(const QBluetoothServiceInfo);
 
-    return d->sdpDatabase.SubSessionHandle() != 0;
+    return d->serviceRecord != 0;
 }
 
 bool QBluetoothServiceInfo::registerService() const
 {
     Q_D(const QBluetoothServiceInfo);
 
+    if (d->serviceRecord != 0)
+        return false;
+
     if (!d->ensureSdpConnection())
         return false;
 
-    d->sdpDatabase.CreateServiceRecordL(0, d->serviceRecord);
+    TRAPD(err, d->sdpDatabase.CreateServiceRecordL(0, d->serviceRecord));
+    if (err != KErrNone)
+        return false;
 
     foreach (quint16 id, d->attributes.keys())
         d->setRegisteredAttribute(id, d->attributes[id]);
@@ -256,8 +289,11 @@ bool QBluetoothServiceInfo::unregisterService() const
     if (!d->ensureSdpConnection())
         return false;
 
-    d->sdpDatabase.DeleteRecordL(d->serviceRecord);
+    TRAPD(err, d->sdpDatabase.DeleteRecordL(d->serviceRecord));
+    if (err != KErrNone)
+        return false;
 
+    d->serviceRecord = 0;
     return true;
 }
 
