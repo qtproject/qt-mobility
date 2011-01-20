@@ -2,7 +2,6 @@ TEMPLATE = subdirs
 
 include(../../staticconfig.pri)
 
-SUBDIRS+=qmalgorithms
 contains(mobility_modules,bearer):          SUBDIRS+=bearer.pro
 contains(mobility_modules,contacts):        SUBDIRS+=contacts.pro
 contains(mobility_modules,feedback):        SUBDIRS+=feedback.pro
