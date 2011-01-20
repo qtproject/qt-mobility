@@ -54,6 +54,7 @@
 #include <qsensorbackend.h>
 #include <qsensormanager.h>
 #include <QDebug>
+#include <QSettings>
 
 class meegoSensorPlugin : public QObject, public QSensorPluginInterface, public QSensorBackendFactory
 {
@@ -64,26 +65,27 @@ public:
     void registerSensors()
     {
         // if no default - no support either, uses Sensors.conf
-        const char* const MEEGO = "meego";
-//        if (QString(QSensor::defaultSensorForType("QAccelerometer")).startsWith(MEEGO))
+        QSettings settings(QSettings::SystemScope, QLatin1String("Nokia"), QLatin1String("Sensors"));
+        settings.beginGroup(QLatin1String("Default"));
+        if (settings.value(QAccelerometer::type).toByteArray() == meegoaccelerometer::id)
             QSensorManager::registerBackend(QAccelerometer::type, meegoaccelerometer::id, this);
-//        if (QSensor::defaultSensorForType("QAmbientLightSensor").startsWith(MEEGO))
+        if (settings.value(QAmbientLightSensor::type).toByteArray() == meegoals::id)
             QSensorManager::registerBackend(QAmbientLightSensor::type, meegoals::id, this);
-//        if (QSensor::defaultSensorForType("QCompass").startsWith(MEEGO))
+        if (settings.value(QCompass::type).toByteArray() == meegocompass::id)
             QSensorManager::registerBackend(QCompass::type, meegocompass::id, this);
-//        if (QSensor::defaultSensorForType("QMagnetometer").startsWith(MEEGO))
+        if (settings.value(QMagnetometer::type).toByteArray() == meegomagnetometer::id)
             QSensorManager::registerBackend(QMagnetometer::type, meegomagnetometer::id, this);
-//        if (QSensor::defaultSensorForType("QOrientationSensor").startsWith(MEEGO))
+        if (settings.value(QOrientationSensor::type).toByteArray() == meegoorientationsensor::id)
             QSensorManager::registerBackend(QOrientationSensor::type, meegoorientationsensor::id, this);
-//        if (QSensor::defaultSensorForType("QProximitySensor").startsWith(MEEGO))
+        if (settings.value(QProximitySensor::type).toByteArray() == meegoproximitysensor::id)
             QSensorManager::registerBackend(QProximitySensor::type, meegoproximitysensor::id, this);
-//        if (QSensor::defaultSensorForType("QRotationSensor").startsWith(MEEGO))
+        if (settings.value(QRotationSensor::type).toByteArray() == meegorotationsensor::id)
             QSensorManager::registerBackend(QRotationSensor::type, meegorotationsensor::id, this);
-//        if (QSensor::defaultSensorForType("QTapSensor").startsWith(MEEGO))
+        if (settings.value(QTapSensor::type).toByteArray() == meegotapsensor::id)
             QSensorManager::registerBackend(QTapSensor::type, meegotapsensor::id, this);
-//        if (QSensor::defaultSensorForType("QGyroscope").startsWith(MEEGO))
+        if (settings.value(QGyroscope::type).toByteArray() == meegogyroscope::id)
             QSensorManager::registerBackend(QGyroscope::type, meegogyroscope::id, this);
-//        if (QSensor::defaultSensorForType("QLightSensor").startsWith(MEEGO))
+        if (settings.value(QLightSensor::type).toByteArray() == meegolightsensor::id)
             QSensorManager::registerBackend(QLightSensor::type, meegolightsensor::id, this);
         qDebug() << "Loaded the MeeGo sensor plugin";
     }
