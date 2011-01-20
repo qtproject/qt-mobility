@@ -999,9 +999,7 @@ find %{buildroot}%{_libdir}/qtmobility -type f -perm /u+x,g+x,o+x \( -false \
 %{_includedir}/QtSensors/QTapFilter
 %{_includedir}/QtSensors/QTapReading
 %{_includedir}/QtSensors/QTapSensor
-%{_includedir}/QtSensors/qtimestamp
 %{_includedir}/QtServiceFramework/*.h
-%{_includedir}/QtServiceFramework/Entry
 %{_includedir}/QtServiceFramework/QAbstractSecuritySession
 %{_includedir}/QtServiceFramework/QRemoteServiceRegister
 %{_includedir}/QtServiceFramework/QService
