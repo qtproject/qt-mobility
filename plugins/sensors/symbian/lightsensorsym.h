@@ -51,7 +51,7 @@
 #include "sensorbackendsym.h"
 
 // Sensor client headers
-// Ambient lux data Sensor specific header
+// Light data Sensor specific header
 #include <sensrvluxsensor.h>
 
 QTM_USE_NAMESPACE
@@ -60,7 +60,7 @@ class CLightSensorSym: public CSensorBackendSym
     {
 public:
     /**
-     * Factory function, this is used to create the ambient lux data object
+     * Factory function, this is used to create the Light data object
      * @return CLightSensorSym if successful, leaves on failure
      */
     static CLightSensorSym* NewL(QSensor *sensor);
@@ -71,8 +71,6 @@ public:
      */
     ~CLightSensorSym();
 
-    //void start();
-
 private:
     /**
      * Default constructor
@@ -81,7 +79,7 @@ private:
 
     /*
      * RecvData is used to retrieve the sensor reading from sensor server
-     * It is implemented here to handle ambient lux sensor specific
+     * It is implemented here to handle Light sensor specific
      * reading data and provides conversion and utility code
      */
     void RecvData(CSensrvChannel &aChannel);
@@ -94,7 +92,7 @@ private:
 
 public:
     /**
-     * Holds the id of the ambient lux data sensor
+     * Holds the id of the Light data sensor
      */
     static char const * const id;
 

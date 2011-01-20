@@ -44,14 +44,13 @@
 #include <sensrvgeneralproperties.h>
 
 /**
- * set the id of the ambient lux data sensor
+ * set the id of the Light data sensor
  */
 char const * const CLightSensorSym::id("sym.light");
 
-	
 
 /**
- * Factory function, this is used to create the ambient lux data object
+ * Factory function, this is used to create the Light data object
  * @return CLightSensorSym if successful, leaves on failure
  */
 CLightSensorSym* CLightSensorSym::NewL(QSensor *sensor)
@@ -80,18 +79,11 @@ CLightSensorSym::CLightSensorSym(QSensor *sensor):CSensorBackendSym(sensor)
         {
         setReading<QLightReading>(&iReading);
         iBackendData.iSensorType = KSensrvChannelTypeIdAmbientLightLuxData;
-        //Disable property listening
-        //SetListening(ETrue, EFalse);
         }
 
-/*void CLightSensorSym::start()
-{
-    CSensorBackendSym::start();
-}
-*/
 /*
  * RecvData is used to retrieve the sensor reading from sensor server
- * It is implemented here to handle ambient lux data sensor specific
+ * It is implemented here to handle Light data sensor specific
  * reading data and provides conversion and utility code
  */
 void CLightSensorSym::RecvData(CSensrvChannel &aChannel)
@@ -109,7 +101,7 @@ void CLightSensorSym::RecvData(CSensrvChannel &aChannel)
     iBackendData.iReadingLock.Wait();
     // Set the timestamp
     iReading.setTimestamp(iData.iTimeStamp.Int64());
-    // Set the luxdata
+    // Set the light data
     iReading.setLux(lightValue);
     // Release the lock
     iBackendData.iReadingLock.Signal();
