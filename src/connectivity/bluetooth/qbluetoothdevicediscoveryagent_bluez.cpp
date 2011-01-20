@@ -53,7 +53,7 @@
 QTM_BEGIN_NAMESPACE
 
 QBluetoothDeviceDiscoveryAgentPrivate::QBluetoothDeviceDiscoveryAgentPrivate()
-:   adapter(0)
+    :   adapter(0), lastError(QBluetoothDeviceDiscoveryAgent::NoError)
 {
     manager = new OrgBluezManagerInterface(QLatin1String("org.bluez"), QLatin1String("/"),
                                            QDBusConnection::systemBus());
@@ -76,6 +76,9 @@ void QBluetoothDeviceDiscoveryAgentPrivate::start()
     reply.waitForFinished();
     if (reply.isError()) {
         errorString = reply.error().message();
+#ifdef QTM_DEVICEDISCOVERY_DEBUG
+        qDebug() << Q_FUNC_INFO << "ERROR: " << errorString;
+#endif
         lastError = QBluetoothDeviceDiscoveryAgent::IOFailure;
         Q_Q(QBluetoothDeviceDiscoveryAgent);
         emit q->error(lastError);
@@ -94,6 +97,9 @@ void QBluetoothDeviceDiscoveryAgentPrivate::start()
     QDBusPendingReply<QVariantMap> propertiesReply = adapter->GetProperties();
     propertiesReply.waitForFinished();
     if(propertiesReply.isError()) {
+#ifdef QTM_DEVICEDISCOVERY_DEBUG
+        qDebug() << Q_FUNC_INFO << "ERROR: " << errorString;
+#endif
         errorString = propertiesReply.error().message();
         lastError = QBluetoothDeviceDiscoveryAgent::IOFailure;
         Q_Q(QBluetoothDeviceDiscoveryAgent);
@@ -137,6 +143,9 @@ void QBluetoothDeviceDiscoveryAgentPrivate::start()
         lastError = QBluetoothDeviceDiscoveryAgent::IOFailure;
         Q_Q(QBluetoothDeviceDiscoveryAgent);
         emit q->error(lastError);
+#ifdef QTM_DEVICEDISCOVERY_DEBUG
+        qDebug() << Q_FUNC_INFO << "ERROR: " << errorString;
+#endif
         return;
     }
 }

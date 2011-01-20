@@ -62,6 +62,7 @@ DeviceDiscoveryDialog::DeviceDiscoveryDialog(QWidget *parent)
 
     connect(ui->list, SIGNAL(itemActivated(QListWidgetItem*)),
             this, SLOT(itemActivated(QListWidgetItem*)));
+
 }
 
 DeviceDiscoveryDialog::~DeviceDiscoveryDialog()
@@ -113,4 +114,3 @@ void DeviceDiscoveryDialog::itemActivated(QListWidgetItem *item)
     ServiceDiscoveryDialog d(name, address);
     d.exec();
 }
-

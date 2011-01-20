@@ -73,6 +73,11 @@ void QBluetoothDeviceDiscoveryAgentPrivate::start()
     }
     // clear list of found devices
     discoveredDevices.clear();
+
+    // clear prior error messages
+    lastError = QBluetoothDeviceDiscoveryAgent::NoError;
+    errorString.clear();
+
     // create new active object for querying devices
     m_deviceDiscovery = new BluetoothLinkManagerDeviceDiscoverer(m_socketServer);
     //bind signals on public interface

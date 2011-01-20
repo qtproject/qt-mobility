@@ -12,7 +12,7 @@ contains(mobility_modules,gallery): SUBDIRS += gallery
 contains(mobility_modules,feedback): SUBDIRS += feedback
 contains(mobility_modules,contacts):contains(mobility_modules,versit) SUBDIRS += contacts
 contains(mobility_modules,location): SUBDIRS += location
-!win32:!mac:contains(mobility_modules,connectivity): SUBDIRS += connectivity
+!win32:!mac:!contains(S60_VERSION, 3.1):!contains(S60_VERSION, 3.2):contains(mobility_modules,connectivity): SUBDIRS += connectivity
 contains(qmf_enabled, yes)|wince*|win32|symbian|maemo5|maemo6 {
     contains(mobility_modules,messaging) {
         !win32-g++:SUBDIRS += messaging
