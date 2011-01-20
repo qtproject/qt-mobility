@@ -53,6 +53,8 @@
 #include "rotationsensorsym.h"
 #include "tapsensorsym.h"
 
+#include "lightsensorsym.h"
+
 // QT Utility headers
 #include <QDebug>
 
@@ -72,6 +74,9 @@ public:
         QSensorManager::registerBackend(QAccelerometer::type, CAccelerometerSensorSym::id, this);
         QSensorManager::registerBackend(QRotationSensor::type, CRotationSensorSym::id, this);
         QSensorManager::registerBackend(QTapSensor::type, CTapSensorSym::id, this);
+        //Added by Saravanan
+        QSensorManager::registerBackend(QLightSensor::type, CLightSensorSym::id, this);
+        
         }
 
     QSensorBackend *createBackend(QSensor *sensor)
@@ -123,6 +128,16 @@ public:
             CTapSensorSym *self = NULL;
             TRAPD(err,self = CTapSensorSym::NewL(sensor));
             return self;
+            }
+        //Added by Saravanan
+        if (sensor->identifier() == CLightSensorSym::id)
+            {
+            CLightSensorSym *self = NULL;
+            TRAPD(err,self = CLightSensorSym::NewL(sensor));
+            if(self)
+                return self;
+            else
+                return 0;
             }
         return 0;
         }
