@@ -105,11 +105,13 @@ simulator {
 
     PRIVATE_HEADERS += \
         nfc/qllcpsocket_p.h \
-        nfc/qllcpserver_p.h
+        nfc/qllcpserver_p.h \
+        nfc/qnearfieldmanagerimpl_p.h
 
     SOURCES += \
         nfc/qllcpsocket_p.cpp \
-        nfc/qllcpserver_p.cpp
+        nfc/qllcpserver_p.cpp \
+        nfc/qnearfieldmanagerimpl_p.cpp
 }
 
 INCLUDEPATH += $$PWD
