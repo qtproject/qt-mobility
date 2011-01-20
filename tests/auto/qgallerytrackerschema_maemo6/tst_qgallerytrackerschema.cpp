@@ -279,17 +279,21 @@ void tst_QGalleryTrackerSchema::supportedPropertyNames_data()
     QTest::addColumn<QStringList>("propertyNames");
 
     QTest::newRow("File") << QString::fromLatin1("File") << (QStringList()
-             << QLatin1String("mimeType")
+             << QLatin1String("author")
              << QLatin1String("fileName")
+             << QLatin1String("filePath")
              << QLatin1String("fileSize")
+             << QLatin1String("comments")
              << QLatin1String("copyright")
-             << QLatin1String("lastModified")
-             << QLatin1String("lastAccessed")
              << QLatin1String("description")
+             << QLatin1String("keywords")
+             << QLatin1String("language")
+             << QLatin1String("lastAccessed")
+             << QLatin1String("lastModified")
+             << QLatin1String("mimeType")
+             << QLatin1String("rating")
              << QLatin1String("subject")
              << QLatin1String("title")
-             << QLatin1String("keywords")
-             << QLatin1String("filePath")
              << QLatin1String("url")
             );
 
@@ -363,15 +367,15 @@ void tst_QGalleryTrackerSchema::propertyAttributes_data()
     QTest::newRow("Audio.albumTitle")
             << QString::fromLatin1("Audio")
             << QString::fromLatin1("albumTitle")
-            << (QGalleryProperty::CanRead | QGalleryProperty::CanWrite | QGalleryProperty::CanFilter | QGalleryProperty::CanSort);
+            << (QGalleryProperty::CanRead | QGalleryProperty::CanFilter | QGalleryProperty::CanSort);
     QTest::newRow("Album.title")
             << QString::fromLatin1("Album")
             << QString::fromLatin1("albumTitle")
-            << (QGalleryProperty::CanRead | QGalleryProperty::CanFilter | QGalleryProperty::CanSort);
+            << (QGalleryProperty::CanRead | QGalleryProperty::CanWrite | QGalleryProperty::CanFilter | QGalleryProperty::CanSort);
     QTest::newRow("Album.albumTitle")
             << QString::fromLatin1("Album")
             << QString::fromLatin1("albumTitle")
-            << (QGalleryProperty::CanRead | QGalleryProperty::CanFilter | QGalleryProperty::CanSort);
+            << (QGalleryProperty::CanRead | QGalleryProperty::CanWrite | QGalleryProperty::CanFilter | QGalleryProperty::CanSort);
     QTest::newRow("Album.duration")
             << QString::fromLatin1("Album")
             << QString::fromLatin1("duration")
