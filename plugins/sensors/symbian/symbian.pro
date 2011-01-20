@@ -19,7 +19,6 @@ SOURCES +=  \
 			orientationsym.cpp \
 			rotationsensorsym.cpp \
 			tapsensorsym.cpp \
-                        lightsensorsym.cpp \
 			main.cpp \
 			
 HEADERS += \
@@ -33,8 +32,13 @@ HEADERS += \
 			orientationsym.h \
 			rotationsensorsym.h \
 			tapsensorsym.h \
-                        lightsensorsym.h \
            
+equals(sensors_symbian_light_enabled,yes) {
+    HEADERS += lightsensorsym.h
+    SOURCES += lightsensorsym.cpp
+    DEFINES += ENABLE_LIGHT_SENSOR
+}
+
 QT=core
 CONFIG+=mobility
 MOBILITY+=sensors
