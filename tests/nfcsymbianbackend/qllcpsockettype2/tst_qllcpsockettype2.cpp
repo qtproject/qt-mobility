@@ -56,6 +56,7 @@ Q_DECLARE_METATYPE(QLlcpSocket::State)
 Q_DECLARE_METATYPE(QLlcpSocket::Error)
 
 QString TestUri("urn:nfc:xsn:nokia:symbiantest");
+const int MsgBoxTimeOutTime = 3*1000;
 class tst_qllcpsockettype2 : public QObject
 {
     Q_OBJECT
@@ -102,7 +103,8 @@ void tst_qllcpsockettype2::initTestCase()
     QSignalSpy targetDetectedSpy(&nfcManager, SIGNAL(targetDetected(QNearFieldTarget*)));
     nfcManager.startTargetDetection(QNearFieldTarget::AnyTarget);
 
-    QNfcTestUtil::ShowMessage(message);
+//    QNfcTestUtil::ShowMessage(message);
+    QNfcTestUtil::ShowAutoMsg(message, &targetDetectedSpy, 1);
     QTRY_VERIFY(!targetDetectedSpy.isEmpty());
 
     m_target = targetDetectedSpy.at(targetDetectedSpy.count() - 1).at(0).value<QNearFieldTarget*>();
@@ -141,8 +143,8 @@ void tst_qllcpsockettype2::echo()
     QFETCH(QString, echo);
 
     QString message("handshake 1");
-    QNfcTestUtil::ShowMessage(message);
-
+//    QNfcTestUtil::ShowMessage(message);
+    QNfcTestUtil::ShowAutoMsg(message, MsgBoxTimeOutTime);
     QLlcpSocket socket(this);
     QSignalSpy connectedSpy(&socket, SIGNAL(connected()));
     QSignalSpy errorSpy(&socket, SIGNAL(error(QLlcpSocket::Error)));
@@ -251,8 +253,8 @@ void tst_qllcpsockettype2::echo_wait()
     QFETCH(QString, echo);
 
     QString message("handshake 2");
-    QNfcTestUtil::ShowMessage(message);
-
+//    QNfcTestUtil::ShowMessage(message);
+    QNfcTestUtil::ShowAutoMsg(message, MsgBoxTimeOutTime);
     QLlcpSocket socket(this);
     const int Timeout = 10 * 1000;
 
@@ -347,7 +349,8 @@ void tst_qllcpsockettype2::api_coverage()
 {
 
     QString message("handshake 3: api_coverage test");
-    QNfcTestUtil::ShowMessage(message);
+//    QNfcTestUtil::ShowMessage(message);
+    QNfcTestUtil::ShowAutoMsg(message, MsgBoxTimeOutTime);
 
     QLlcpSocket socket(this);
     QCOMPARE(socket.state(), QLlcpSocket::UnconnectedState);
@@ -395,7 +398,8 @@ void tst_qllcpsockettype2::api_coverage()
 void tst_qllcpsockettype2::connectTest()
 {
     QString message("handshake 4");
-    QNfcTestUtil::ShowMessage(message);
+//    QNfcTestUtil::ShowMessage(message);
+    QNfcTestUtil::ShowAutoMsg(message, MsgBoxTimeOutTime);
 
     QLlcpSocket socket(this);
     QCOMPARE(socket.state(), QLlcpSocket::UnconnectedState);
@@ -446,7 +450,9 @@ void tst_qllcpsockettype2::connectTest()
 void tst_qllcpsockettype2::multipleWrite()
     {
     QString message("handshake 5: multipleWrite");
-    QNfcTestUtil::ShowMessage(message);
+//    QNfcTestUtil::ShowMessage(message);
+    QNfcTestUtil::ShowAutoMsg(message, MsgBoxTimeOutTime);
+
     QLlcpSocket socket(this);
 
     QSignalSpy connectedSpy(&socket, SIGNAL(connected()));
@@ -506,7 +512,9 @@ void tst_qllcpsockettype2::multipleWrite()
 void tst_qllcpsockettype2::negTestCase1()
 {
     QString message("handshake 5: negTestCase1");
-    QNfcTestUtil::ShowMessage(message);
+//    QNfcTestUtil::ShowMessage(message);
+    QNfcTestUtil::ShowAutoMsg(message, MsgBoxTimeOutTime);
+
     QLlcpSocket socket(this);
 
     QSignalSpy connectedSpy(&socket, SIGNAL(connected()));

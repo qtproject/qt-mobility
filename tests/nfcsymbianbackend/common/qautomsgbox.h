@@ -38,40 +38,70 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QNFCTESTUTIL_H
-#define QNFCTESTUTIL_H
-#include <QMessageBox>
-#include "qautomsgbox.h"
 
-class QNfcTestUtil : public QObject
+#ifndef QAUTOMSGBOX_H
+#define QAUTOMSGBOX_H
+
+#include <QMessageBox>
+#include <QTimer>
+#include <QtTest/QtTest>
+#include <QSignalSpy>
+#include <QCloseEvent>
+
+class QAutoMsgBox : public QMessageBox
 {
     Q_OBJECT
+
 public:
-    static void ShowMessage(const QString& message)
+    explicit QAutoMsgBox(QWidget *parent = 0);
+    ~QAutoMsgBox();
+    /*!
+     * Call this method when you want to make the dialog dismissed
+     * when the signalspy's count is equal to the \a count
+    */
+    void setSignalSpy(QSignalSpy* spy, int count)
     {
-        QMessageBox b(QMessageBox::Information, QObject::tr("NFC symbian backend test"),
-        message, QMessageBox::Ok);
-        b.exec();
+        if (spy == 0)
+            return;
+        m_spy = spy;
+        m_signalCount = count;
+        if (m_timer)
+            delete m_timer;
+        m_timer = new QTimer;
+        m_timer->setInterval(50);
+        connect(m_timer, SIGNAL(timeout()), this, SLOT(timeOutFired()));
+        m_timer->start();
     }
-    static void ShowAutoMsg(const QString& message, QSignalSpy* spy, int count)
+    /*!
+     * Call this method when you want to make the dialog dismissed
+     * after /a timeout(ms) period
+    */
+    void setDismissTimeOut(int timeout)
     {
-        QAutoMsgBox w;
-        w.addButton(QMessageBox::Ok);
-        w.setIcon(QMessageBox::Information);
-        w.setText(message);
-        w.setSignalSpy(spy, count);
+        QTimer::singleShot(timeout, this, SLOT(singleShotSlot()));
+    }
+private slots:
+    void timeOutFired()
+    {
+        if(m_spy->count() == m_signalCount)
+        {
+            QApplication::postEvent(this, new QCloseEvent);
+            m_timer->stop();
+            delete m_timer;
+            m_timer = 0;
+        }
+    }
+    void singleShotSlot()
+    {
+        QApplication::postEvent(this, new QCloseEvent);
+    }
 
-        w.exec();
-    }
-    static void ShowAutoMsg(const QString& message, int mseconds)
-    {
-        QAutoMsgBox w;
-        w.addButton(QMessageBox::Ok);
-        w.setIcon(QMessageBox::Information);
-        w.setText(message);
-        w.setDismissTimeOut(mseconds);
+private:
+    bool event(QEvent *e);
+    QTimer *m_timer;
 
-        w.exec();
-    }
+    QSignalSpy *m_spy;//not own
+    int m_signalCount;
 };
-#endif
+
+#endif // QAUTOMSGBOX_H

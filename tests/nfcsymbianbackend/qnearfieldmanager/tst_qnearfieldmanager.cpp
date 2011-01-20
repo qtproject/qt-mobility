@@ -239,7 +239,7 @@ void tst_QNearFieldManager::registerTargetDetectedHandler_filter()
 
     QVERIFY(id != -1);
 
-    QNfcTestUtil::ShowMessage(hint);
+    QNfcTestUtil::ShowAutoMsg(hint, &messageSpy, 1);
 
     QTRY_VERIFY(!messageSpy.isEmpty());
 
