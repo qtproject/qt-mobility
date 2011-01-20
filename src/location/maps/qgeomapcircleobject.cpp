@@ -337,7 +337,7 @@ qreal QGeoMapCircleObject::radius() const
 *******************************************************************************/
 
 QGeoMapCircleObjectPrivate::QGeoMapCircleObjectPrivate() :
-    detailLevel(120)
+    pointCount(120)
 {
     item = new QGraphicsEllipseItem();
     QPen pen = item->pen();
