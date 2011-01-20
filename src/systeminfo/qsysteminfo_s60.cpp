@@ -1738,11 +1738,6 @@ void QSystemBatteryInfoPrivate::disconnectNotify(const char *signal)
     }
 }
 
-int QSystemBatteryInfoPrivate::startCurrentMeasurement(int rate)
-{
- return 0;
-}
-
 QSystemBatteryInfo::EnergyUnit QSystemBatteryInfoPrivate::energyMeasurementUnit() const
 {
     return QSystemBatteryInfo::UnitmAh;
