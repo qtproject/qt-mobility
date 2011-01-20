@@ -14,9 +14,7 @@ License:    LGPLv2.1 with exception or GPLv3
 URL:        http://qt.gitorious.org/qt-mobility
 Source0:    http://get.qt.nokia.com/qt/add-ons/%{name}-opensource-src-%{version}.tar.gz
 Source100:  qt-mobility.yaml
-Patch0:     no_rpath.patch
-Patch1:     fix_translations_install_path.patch
-Patch2:     enable_camerabin_with_meego_target.patch
+Patch0:     fix_translations_install_path.patch
 Requires:   libqtconnectivity1 = %{version}
 Requires:   libqtcontacts1 = %{version}
 Requires:   libqtfeedback1 = %{version}
@@ -438,12 +436,8 @@ This package contains Qt Mobility translations.
 %prep
 %setup -q -n %{name}-opensource-src-%{version}
 
-# no_rpath.patch
-%patch0 -p1
 # fix_translations_install_path.patch
-%patch1 -p1
-# enable_camerabin_with_meego_target.patch
-%patch2 -p1
+%patch0 -p1
 # >> setup
 # << setup
 
