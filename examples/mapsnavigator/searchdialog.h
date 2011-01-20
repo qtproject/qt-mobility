@@ -43,6 +43,7 @@
 #define SEARCHDIALOG_H
 
 #include <QDialog>
+#include <QLineEdit>
 
 class SearchDialog : public QDialog
 {
@@ -51,6 +52,9 @@ public:
     ~SearchDialog();
 
     QString searchTerms() const;
+
+private:
+    QLineEdit *searchTermEdit;
 };
 
 #endif // SEARCHDIALOG_H

@@ -40,3 +40,17 @@
 ****************************************************************************/
 
 #include "searchdialog.h"
+
+SearchDialog::SearchDialog(QWidget *parent) :
+    QDialog(parent)
+{
+}
+
+SearchDialog::~SearchDialog()
+{
+}
+
+QString SearchDialog::searchTerms() const
+{
+    return searchTermEdit->text();
+}
