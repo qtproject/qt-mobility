@@ -115,6 +115,7 @@ void MapsWidget::initialize(QGeoMappingManager *manager)
     QGraphicsScene *sc = new QGraphicsScene;
     sc->addItem(geoMap);
 
+    geoMap->setPos(0, 0);
     geoMap->resize(this->size());
 
     graphicsView = new QGraphicsView(sc, this);
@@ -124,6 +125,7 @@ void MapsWidget::initialize(QGeoMappingManager *manager)
     graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     graphicsView->resize(this->size());
+    graphicsView->centerOn(geoMap);
 
     geoMap->setCenter(QGeoCoordinate(-27.5796, 153.1));
     geoMap->setZoomLevel(15);
@@ -147,6 +149,16 @@ void MapsWidget::resizeEvent(QResizeEvent *event)
     if (graphicsView && geoMap) {
         graphicsView->resize(event->size());
         geoMap->resize(event->size());
+        graphicsView->centerOn(geoMap);
+    }
+}
+
+void MapsWidget::showEvent(QShowEvent *event)
+{
+    if (graphicsView && geoMap) {
+        graphicsView->resize(size());
+        geoMap->resize(size());
+        graphicsView->centerOn(geoMap);
     }
 }
 

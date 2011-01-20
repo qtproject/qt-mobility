@@ -53,6 +53,7 @@ using namespace QtMobility;
 
 class MainWindow : public QMainWindow
 {
+    Q_OBJECT
 public:
     MainWindow();
     ~MainWindow();
@@ -63,6 +64,7 @@ public slots:
 private slots:
     void showSearchDialog();
     void goToMyLocation();
+    void showErrorMessage(QGeoSearchReply::Error err, QString msg);
 
 private:
     QGeoServiceProvider *serviceProvider;

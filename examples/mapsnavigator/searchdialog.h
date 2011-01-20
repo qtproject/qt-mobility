@@ -47,6 +47,7 @@
 
 class SearchDialog : public QDialog
 {
+    Q_OBJECT
 public:
     SearchDialog(QWidget *parent=0);
     ~SearchDialog();

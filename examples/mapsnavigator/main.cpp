@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "mapswidget.h"
+#include "mainwindow.h"
 
 #include <QApplication>
 #include <QGeoServiceProvider>
@@ -50,13 +50,9 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
-    MapsWidget w;
-    w.show();
-
-    QList<QString> providers = QGeoServiceProvider::availableServiceProviders();
-    QGeoServiceProvider *serviceProvider = new QGeoServiceProvider(providers[0]);
-
-    w.initialize(serviceProvider->mappingManager());
+    MainWindow mw;
+    mw.resize(200,200);
+    mw.show();
 
     return a.exec();
 }

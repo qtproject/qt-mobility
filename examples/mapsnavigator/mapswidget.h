@@ -92,6 +92,7 @@ public slots:
 
 private:
     void resizeEvent(QResizeEvent *event);
+    void showEvent(QShowEvent *event);
 
 private:
     GeoMap *geoMap;

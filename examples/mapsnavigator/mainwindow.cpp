@@ -46,12 +46,14 @@
 #include <QMenu>
 #include <QMessageBox>
 #include <QAction>
+#include <QVBoxLayout>
 
 MainWindow::MainWindow() :
     serviceProvider(0),
     markerManager(0)
 {
-    mapsWidget = new MapsWidget(this);
+    mapsWidget = new MapsWidget;
+    setCentralWidget(mapsWidget);
 
     QMenuBar *mbar = new QMenuBar(this);
     mbar->addAction("My Location", this, SLOT(goToMyLocation()));
@@ -61,11 +63,14 @@ MainWindow::MainWindow() :
 
     searchMenu->addAction("For address or name", this, SLOT(showSearchDialog()));
 
-    this->setMenuBar(mbar);
+    setMenuBar(mbar);
+
+    initialize();
 }
 
 MainWindow::~MainWindow()
 {
+    delete mapsWidget;
     if (serviceProvider)
         delete serviceProvider;
     if (markerManager)
@@ -120,4 +125,9 @@ void MainWindow::showSearchDialog()
             markerManager->search(sd.searchTerms());
         }
     }
+}
+
+void MainWindow::showErrorMessage(QGeoSearchReply::Error err, QString msg)
+{
+    QMessageBox::critical(this, tr("Error"), msg);
 }

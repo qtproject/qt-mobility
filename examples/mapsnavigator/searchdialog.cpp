@@ -41,9 +41,28 @@
 
 #include "searchdialog.h"
 
+#include <QFormLayout>
+#include <QDialogButtonBox>
+#include <QVBoxLayout>
+
 SearchDialog::SearchDialog(QWidget *parent) :
     QDialog(parent)
 {
+    QFormLayout *lay = new QFormLayout;
+    QVBoxLayout *vbox = new QVBoxLayout;
+
+    searchTermEdit = new QLineEdit;
+    lay->addRow("Search for", searchTermEdit);
+
+    QDialogButtonBox *bb = new QDialogButtonBox(QDialogButtonBox::Ok |
+                                                QDialogButtonBox::Cancel,
+                                                Qt::Horizontal);
+    connect(bb, SIGNAL(accepted()), this, SLOT(accept()));
+    connect(bb, SIGNAL(rejected()), this, SLOT(reject()));
+
+    vbox->addLayout(lay);
+    vbox->addWidget(bb);
+    this->setLayout(vbox);
 }
 
 SearchDialog::~SearchDialog()
