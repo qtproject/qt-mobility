@@ -336,26 +336,30 @@ Q_SIGNALS:
     void deviceLocked(bool isLocked); // 1.2
     void lockStatusChanged(QSystemDeviceInfo::LockTypeFlags); //1.2
 
-
 protected:
     bool btPowered;
 
 #if !defined(QT_NO_DBUS)
-    void setupBluetooth();
 
-//#if defined(QT_NO_CONNMAN)
     QHalInterface *halIface;
     QHalDeviceInterface *halIfaceDevice;
-//#else
     QUDisksInterface *udisksIface;
-//#endif
     bool hasWirelessKeyboardConnected;
+    bool connectedBtPower;
+    bool connectedWirelessKeyboard;
+    void connectBtPowered(const QString &str);
+    void connectBtKeyboard(const QString &str);
+
+    void connectNotify(const char *signal);
+    void disconnectNotify(const char *signal);
+
 private Q_SLOTS:
     virtual void halChanged(int,QVariantList);
     void bluezPropertyChanged(const QString&, QDBusVariant);
     virtual void upowerChanged();
     virtual void upowerDeviceChanged();
 #endif
+
 private:
     QSystemDeviceInfo::BatteryStatus currentBatStatus;
     void initBatteryStatus();

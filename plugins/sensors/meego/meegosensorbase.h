@@ -48,7 +48,7 @@
 
 QTM_USE_NAMESPACE
 
-class meegosensorbase : public QSensorBackend
+        class meegosensorbase : public QSensorBackend
 {
 public:
     meegosensorbase(QSensor *sensor);
@@ -115,25 +115,30 @@ protected:
 
             intervalMin = intervalMin<1 ? 10: intervalMin;     // do not divide with 0
             qreal rateMax = 1/intervalMin * 1000;
-
-            //            qreal rateMax = (intervalMin<1) ? rateMin : 1/intervalMin * 1000; // TODO: replace the two lines above with this one once sensord does provide interval>0
             addDataRate(rateMin, rateMax);
         }
 
         //bufferSizes
         IntegerRangeList sizes = m_sensorInterface->getAvailableBufferSizes();
         int l = sizes.size();
-        if (l>0){
-            m_efficientBufferSize = (l==1) ? 1 : sizes.at(1).first;
-            m_maxBufferSize = sizes.at(l-1).second;
+        for (int i=0; i<l; i++){
+            int second = sizes.at(i).second;
+            m_maxBufferSize = second>m_bufferSize? second:m_maxBufferSize;
         }
+        m_maxBufferSize = m_maxBufferSize<0?1:m_maxBufferSize;
+        //TODO: replace when the efficient size is available from SensorFW with a direct call
+        if (l>0) m_efficientBufferSize = (l==1) ? 1 : sizes.at(1).first;
+        m_efficientBufferSize = m_efficientBufferSize<0?1:m_efficientBufferSize>m_maxBufferSize?m_maxBufferSize:m_efficientBufferSize;
+
+
         sensor()->setProperty(MAX_BUFFER_SIZE, m_maxBufferSize);
         sensor()->setProperty(EFFICIENT_BUFFER_SIZE, m_efficientBufferSize);
 
-        if (name=="alssensor") return;                // SensorFW returns lux values, plugin enumerated values
+        if (sensor()->type()=="QAmbientLightSensor")    return; // SensorFW returns lux values, plugin enumerated values
         if (name=="accelerometersensor") return;      // SensorFW returns milliGs, plugin m/s^2
         if (name=="magnetometersensor") return;       // SensorFW returns nanoTeslas, plugin Teslas
         if (name=="gyroscopesensor") return;          // SensorFW returns DSPs, plugin milliDSPs
+
 
         setDescription(m_sensorInterface->property("description").toString());
 
