@@ -2502,7 +2502,8 @@ void QSystemDeviceInfoLinuxCommonPrivate::disconnectNotify(const char */*signal*
 #if !defined(QT_NO_DBUS)
 void QSystemDeviceInfoLinuxCommonPrivate::halChanged(int,QVariantList map)
 {
-    for(int i=0; i < map.count(); i++) {
+    for(int i=0; i < map.count(); i
+        ++) {
        if (map.at(i).toString() == "battery.charge_level.percentage") {
             const int level = batteryLevel();
             emit batteryLevelChanged(level);

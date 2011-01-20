@@ -350,14 +350,15 @@ protected:
     void connectBtPowered(const QString &str);
     void connectBtKeyboard(const QString &str);
 
+    void connectNotify(const char *signal);
+    void disconnectNotify(const char *signal);
+
 private Q_SLOTS:
     virtual void halChanged(int,QVariantList);
     void bluezPropertyChanged(const QString&, QDBusVariant);
     virtual void upowerChanged();
     virtual void upowerDeviceChanged();
 #endif
-    void connectNotify(const char *signal);
-    void disconnectNotify(const char *signal);
 
 private:
     QSystemDeviceInfo::BatteryStatus currentBatStatus;

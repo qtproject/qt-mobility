@@ -1066,9 +1066,9 @@ QSystemStorageInfoPrivate::~QSystemStorageInfoPrivate()
 }
 
 QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QSystemDeviceInfoLinuxCommonPrivate *parent)
-        : QSystemDeviceInfoLinuxCommonPrivate(parent)
+        : QSystemDeviceInfoLinuxCommonPrivate(parent), flightMode(0)
 {
-    flightMode = false;
+
  #if !defined(QT_NO_DBUS)
     previousPowerState = QSystemDeviceInfo::UnknownPower;
     setupProfile();
@@ -1103,6 +1103,7 @@ void QSystemDeviceInfoPrivate::connectNotify(const char *signal)
             qDebug() << "unable to connect to profile_changed";
         }
     }
+    QSystemDeviceInfoLinuxCommonPrivate::connectNotify(signal);
 }
 
 void QSystemDeviceInfoPrivate::disconnectNotify(const char *signal)
@@ -1125,6 +1126,7 @@ void QSystemDeviceInfoPrivate::disconnectNotify(const char *signal)
                                "profile_changed",
                                this, SLOT(profileChanged(bool, bool, QString, QList<ProfileDataValue>)));
     }
+    QSystemDeviceInfoLinuxCommonPrivate::disconnectNotify(signal);
 }
 
 #if !defined(QT_NO_DBUS)

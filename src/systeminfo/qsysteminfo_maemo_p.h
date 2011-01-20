@@ -257,8 +257,6 @@ public:
     QSystemDeviceInfo::LockTypeFlags lockStatus();//1.2
 
 protected:
-    void connectNotify(const char *signal);
-    void disconnectNotify(const char *signal);
 
 #if !defined(QT_NO_DBUS)
     QHalInterface *halIface;
@@ -275,6 +273,9 @@ private Q_SLOTS:
     void touchAndKeyboardStateChanged(const QString& state);
 
 private:
+    void connectNotify(const char *signal);
+    void disconnectNotify(const char *signal);
+
     bool flightMode;
     QString profileName;
     bool silentProfile;
