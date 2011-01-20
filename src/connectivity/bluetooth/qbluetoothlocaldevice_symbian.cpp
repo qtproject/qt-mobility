@@ -44,6 +44,7 @@
 #include <btengsettings.h>
 #include <bttypes.h>
 #include <bt_subscribe.h>
+#include "bluetoothsymbianpairingadapter.h"
 
 #include <QtCore/QString>
 
@@ -207,16 +208,30 @@ QList<QBluetoothHostInfo> QBluetoothLocalDevice::allDevices()
 
 void QBluetoothLocalDevice::requestPairing(const QBluetoothAddress &address, Pairing pairing)
 {
-    Q_UNUSED(address);
-    Q_UNUSED(pairing);
+    // pass this pointer so that adapter gets delete when this object is deleted. Not optimal though.
+    BluetoothSymbianPairingAdapter *pairingAdapter = new BluetoothSymbianPairingAdapter(address,this);
+    connect(pairingAdapter, SIGNAL(pairingFinished(const QBluetoothAddress&,QBluetoothLocalDevice::Pairing)),
+        this, SIGNAL(pairingFinished(const QBluetoothAddress&,QBluetoothLocalDevice::Pairing)));
+
+    switch (pairing) {
+    case Unpaired:
+        // this is async method
+        pairingAdapter->removePairing();
+        break;
+    case Paired:
+    case AuthorizedPaired:
+        // this is async method
+        pairingAdapter->startPairing(pairing);
+        break;
+    default:
+        ASSERT(0);
+        break;
+    }
 }
 QBluetoothLocalDevice::Pairing QBluetoothLocalDevice::pairingStatus(const QBluetoothAddress &address) const
 {
-    Q_UNUSED(address);
-
-    return Unpaired;
+    QScopedPointer<BluetoothSymbianPairingAdapter> pairingAdapter (new BluetoothSymbianPairingAdapter(address));
+    return pairingAdapter->pairingStatus();
 }
-
-
 
 QTM_END_NAMESPACE

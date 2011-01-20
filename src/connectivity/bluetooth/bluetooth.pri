@@ -76,10 +76,20 @@ symbian {
             message("NOTICE - START")
             message("Bluetooth backend needs SDK plugin from Forum Nokia for 5.0 SDK")
             message("NOTICE - END")
-            LIBS *= -lesock -lbluetooth -lsdpagent -lsdpdatabase -lestlib -lirobex -lbtengsettings
+            LIBS *= -lirobex
         } else {
-            LIBS *= -lesock -lbluetooth -lsdpagent -lsdpdatabase -lestlib -lobex -lbtengsettings
+            LIBS *= -lobex
         }
+        LIBS *= -lesock \
+                -lbluetooth \
+                -lsdpagent \
+                -lsdpdatabase \
+                -lestlib \
+                -lbtengdevman \
+                -lbtengsettings \
+                -lbtmanclient \
+                -lbtengconnman \
+                -lbtdevice
     }
 } else:contains(QT_CONFIG, dbus) {
     QT *= dbus
