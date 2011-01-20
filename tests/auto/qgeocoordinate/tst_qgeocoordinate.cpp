@@ -557,7 +557,6 @@ private slots:
             << qreal(0.0)
             << SOUTH_POLE;
     }
-*/
 
     void atDistanceAndAzimuth()
     {
@@ -597,6 +596,7 @@ private slots:
             << qreal(180.0)
             << SOUTH_POLE;
     }
+*/
 
     void degreesToString()
     {
