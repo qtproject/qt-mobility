@@ -44,6 +44,7 @@
 
 #include <QGraphicsGeoMap>
 #include <QGraphicsView>
+#include <QGraphicsScene>
 #include <QGeoMappingManager>
 #include <QWidget>
 
@@ -61,6 +62,13 @@ public:
 
 private:
     MapsWidget *m_mapsWidget;
+
+    bool panActive;
+
+    void mousePressEvent(QGraphicsSceneMouseEvent *event);
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
+    void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
+    void wheelEvent(QGraphicsSceneWheelEvent *event);
 };
 
 class MapsWidget : public QWidget
@@ -73,6 +81,9 @@ public:
 
 public slots:
     void initialize(QGeoMappingManager *manager);
+
+private:
+    void resizeEvent(QResizeEvent *event);
 
 private:
     GeoMap *geoMap;

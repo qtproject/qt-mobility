@@ -1006,4 +1006,35 @@ void MarkerManager::reverseReplyFinished(QObject *obj)
     \example tutorials/mapsnavigator/part5
     \title Part 5 - Kinetic panning and tuning for mobile
 
+    \code
+class MapsWidget : public QWidget
+{
+    ...
+private:
+    void resizeEvent(QResizeEvent *event);
+    ...
+};
+
+void MapsWidget::initialize(QGeoMappingManager *manager)
+{
+    ...
+    geoMap->resize(this->size());
+
+    graphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
+    graphicsView->resize(this->size());
+    
+    ...
+}
+
+void MapsWidget::resizeEvent(QResizeEvent *event)
+{
+    if (graphicsView && geoMap) {
+        graphicsView->resize(event->size());
+        geoMap->resize(event->size());
+    }
+}
+    \endcode
+
 */

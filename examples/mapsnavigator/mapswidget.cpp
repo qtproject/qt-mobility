@@ -42,6 +42,8 @@
 #include "mapswidget.h"
 
 #include <QGeoCoordinate>
+#include <QGraphicsSceneMouseEvent>
+#include <QGraphicsSceneWheelEvent>
 
 GeoMap::GeoMap(QGeoMappingManager *manager, MapsWidget *mapsWidget) :
     QGraphicsGeoMap(manager), m_mapsWidget(mapsWidget)
@@ -52,8 +54,49 @@ GeoMap::~GeoMap()
 {
 }
 
+void GeoMap::mousePressEvent(QGraphicsSceneMouseEvent *event)
+{
+    panActive = true;
+    event->accept();
+}
+
+void GeoMap::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+{
+    panActive = false;
+    event->accept();
+}
+
+void GeoMap::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+{
+    if (panActive) {
+        QPointF delta = event->lastPos() - event->pos();
+        pan(delta.x(), delta.y());
+    }
+    event->accept();
+}
+
+void GeoMap::wheelEvent(QGraphicsSceneWheelEvent *event)
+{
+    qreal panx = event->pos().x() - size().width() / 2.0;
+    qreal pany = event->pos().y() - size().height() / 2.0;
+    pan(panx, pany);
+    if (event->delta() > 0) {   // zoom in
+        if (zoomLevel() < maximumZoomLevel()) {
+            setZoomLevel(zoomLevel() + 1);
+        }
+    } else {                    // zoom out
+        if (zoomLevel() > minimumZoomLevel()) {
+            setZoomLevel(zoomLevel() - 1);
+        }
+    }
+    pan(-panx, -pany);
+    event->accept();
+}
+
 MapsWidget::MapsWidget(QWidget *parent) :
-    QWidget(parent)
+    QWidget(parent),
+    geoMap(0),
+    graphicsView(0)
 {
 }
 
@@ -68,12 +111,24 @@ void MapsWidget::initialize(QGeoMappingManager *manager)
     QGraphicsScene *sc = new QGraphicsScene;
     sc->addItem(geoMap);
 
-    geoMap->resize(320, 240);
+    geoMap->resize(this->size());
 
     graphicsView = new QGraphicsView(sc, this);
     graphicsView->setVisible(true);
     graphicsView->setInteractive(true);
+    graphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
+    graphicsView->resize(this->size());
 
     geoMap->setCenter(QGeoCoordinate(-27.5796, 153.1));
     geoMap->setZoomLevel(15);
+}
+
+void MapsWidget::resizeEvent(QResizeEvent *event)
+{
+    if (graphicsView && geoMap) {
+        graphicsView->resize(event->size());
+        geoMap->resize(event->size());
+    }
 }
