@@ -44,7 +44,7 @@
 #include <QtGui>
 #include <qvideosurfaceformat.h>
 
-#ifndef QT_NO_OPENGL
+#if !defined(QT_NO_OPENGL) && !defined(Q_OS_SYMBIAN)
 # include <QtOpenGL/QGLWidget>
 #endif
 
@@ -64,7 +64,7 @@ VideoPlayer::VideoPlayer(QWidget *parent, Qt::WindowFlags flags)
     QGraphicsScene *scene = new QGraphicsScene(this);
     QGraphicsView *graphicsView = new QGraphicsView(scene);
 
-#ifndef QT_NO_OPENGL
+#if !defined(QT_NO_OPENGL) && !defined(Q_OS_SYMBIAN)
     graphicsView->setViewport(new QGLWidget);
 #endif
 

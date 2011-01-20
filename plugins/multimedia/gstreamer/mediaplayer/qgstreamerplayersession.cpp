@@ -102,10 +102,15 @@ QGstreamerPlayerSession::QGstreamerPlayerSession(QObject *parent)
         m_usePlaybin2 = true;
 
         //GST_PLAY_FLAG_NATIVE_VIDEO omits configuration of ffmpegcolorspace and videoscale,
-        //since those elements are included in the video output bin.
+        //since those elements are included in the video output bin when necessary.
+#ifdef Q_WS_MAEMO_6
+        int flags = GST_PLAY_FLAG_VIDEO | GST_PLAY_FLAG_AUDIO |
+                    GST_PLAY_FLAG_NATIVE_VIDEO | GST_PLAY_FLAG_NATIVE_AUDIO;
+#else
         int flags = 0;
         g_object_get(G_OBJECT(m_playbin), "flags", &flags, NULL);
         flags |= GST_PLAY_FLAG_NATIVE_VIDEO;
+#endif
         g_object_set(G_OBJECT(m_playbin), "flags", flags, NULL);
     } else {
         m_usePlaybin2 = false;
