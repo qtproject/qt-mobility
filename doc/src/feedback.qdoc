@@ -97,7 +97,10 @@ various QFeedbackEffects.
 
 \section1 Usage
 
-\note On Symbian vibration feature needs to be enabled in user profile for the API to work.
+\note On Symbian, vibration feature needs to be enabled in user profile for the API to work.
+\note On Maemo5, periodic vibration does not support attack or fade.
+
+\section2 Theme Effects
 
 The most common use of the API is to play system theme effects for user
 interface interaction notifications (e.g., button clicks, etc).  These types
@@ -111,10 +114,66 @@ interactions and notifications, to allow an application to maintain greater
 consistency with the platform user experience.
 \snippet ../../doc/src/snippets/qtfeedbackdocsample/qtfeedbackdocsample.cpp Play the system theme bounce effect
 
+\section3 Custom Effects
+
 The next most common use of the API is to define a custom effect which can be
 used to notify the user of application-specific events or to increase the
-immersiveness of an application.  A custom haptic effect may be defined in the
-following manner:
+immersiveness of an application.  A custom effect may be either periodic or
+non-periodic.
+
+The following diagram shows the graph of intensity over time of a non-periodic
+effect which was started at time \c t and ended at time \c q, with an
+\l{QFeedbackHapticsEffect::intensity()}{intensity} of \c{I}, an
+\l{QFeedbackHapticsEffect::attackIntensity()}{attack intensity} of \c{AI}, a
+\l{QFeedbackHapticsEffect::fadeIntensity()}{fade intensity} of \c{FI}, an
+\l{QFeedbackHapticsEffect::attackTime()}{attack time} of \c{AT}, and a
+\l{QFeedbackHapticsEffect::fadeTime()}{fade time} of \c{FT}, with a total
+\l{QFeedbackEffect::duration()}{duration} of \c{Duration} milliseconds:
+\code
+   Intensity
+        ^
+      I_|
+        |        .--------------.
+        |       /                \
+     AI_|      /                  \
+        |     (                    \
+        |     |                     \
+     FI_|     |                      )
+        |     |                      |
+        |     |                      |
+        +-----t----------------------q----->  Time (msec)
+              <AT>              <-FT->
+              <-------Duration------->
+\endcode
+
+The following diagram shows the graph of intensity over time of a periodic
+effect which was started at time \c t and ended at time \c q, with an
+\l{QFeedbackHapticsEffect::intensity()}{intensity} of \c{I}, an
+\l{QFeedbackHapticsEffect::attackIntensity()}{attack intensity} of \c{AI}, a
+\l{QFeedbackHapticsEffect::fadeIntensity()}{fade intensity} of \c{FI}, an
+\l{QFeedbackHapticsEffect::attackTime()}{attack time} of \c{AT}, and a
+\l{QFeedbackHapticsEffect::fadeTime()}{fade time} of \c{FT}, with a
+\l{QFeedbackHapticsEffect::period()}{period} of \c{Period} milliseconds and a total
+\l{QFeedbackEffect::duration()}{duration} of \c{Duration} milliseconds:
+\code
+   Intensity
+        ^
+      I_|
+        |        .-------.        .-------.        .-----+
+        |       /         \      /         \      /      |
+     AI_|      /           \    /           \    /       |
+        |     (             \  (             \  (        |
+        |     |              \ |              \ |        |
+     FI_|     |               \|               \|        |
+        |     |                '                '        |
+        |     |                                          |
+        +-----t------------------------------------------q----->  Time (msec)
+              <AT>       <-FT->
+              <-----Period---->
+              <------------------Duration---------------->
+\endcode
+
+A custom haptic effect may be defined in the following manner:
 \snippet ../../doc/src/snippets/qtfeedbackdocsample/qtfeedbackdocsample.cpp Define a custom haptic effect
 Note that no periodicity was defined for the effect, although that can be done
 by calling QFeedbackHapticEffect::setPeriod() if required.

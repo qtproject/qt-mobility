@@ -83,8 +83,7 @@
 
     \list
         \o \c {HapticButton}: Implementation of a button. It
-            inherits QWidget and sends signals for button clicks. It can
-            also be a toggle button.
+            inherits QWidget and sends signals for button clicks.
         \o \c {Dialog}: A QDialog subclass that displays the four
             \c{HapticButton}s mentioned above,
             connects them to its slots, and implements the functionality to
@@ -126,8 +125,7 @@
     \snippet examples/hapticsquare/hapticsquare.cpp 1
 
     The \c m_ocean is a periodic effect, i.e., it repeats after
-    \l{QFeedbackHapticsEffect::}{period()} milliseconds. To stop a periodic
-    effect, you must call \l{QFeedbackEffect::}{stop()}.  Note that the
+    \l{QFeedbackHapticsEffect::}{period()} milliseconds.  Note that the
     \l{QFeedbackHapticsEffect::}{duration()} must be greater than the period
     in order for the periodicity of the effect to be discernable.
 
@@ -164,6 +162,8 @@
     simple example which illustrates some simple uses of the API.
     Also, the example will not work correctly on platforms which do not have a
     QFeedbackHapticInterface (haptic effect provider) plugin loaded.  On such
-    platforms, clicking the buttons will have no effect.
+    platforms, clicking the buttons will have no effect.  On Maemo5, periodic
+    effects do not support attack or fade, and so the ocean effect is not
+    smooth.
 */
 
