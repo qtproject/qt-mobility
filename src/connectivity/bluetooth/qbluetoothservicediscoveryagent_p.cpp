@@ -42,18 +42,6 @@
 #include "qbluetoothservicediscoveryagent.h"
 #include "qbluetoothservicediscoveryagent_p.h"
 
-#include "bluez/manager_p.h"
-#include "bluez/adapter_p.h"
-#include "bluez/device_p.h"
-
-#include <QtDBus/QDBusPendingCallWatcher>
-
-//#define QTM_SERVICEDISCOVERY_DEBUG
-
-#ifdef QTM_SERVICEDISCOVERY_DEBUG
-#include <QtCore/QDebug>
-#endif
-
 QTM_BEGIN_NAMESPACE
 
 QBluetoothServiceDiscoveryAgentPrivate::QBluetoothServiceDiscoveryAgentPrivate(const QBluetoothAddress &address)

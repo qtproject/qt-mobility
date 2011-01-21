@@ -115,7 +115,7 @@ symbian {
         bluetooth/qbluetoothservicediscoveryagent_p.cpp \
         bluetooth/qbluetoothsocket_p.cpp \
         bluetooth/ql2capserver_p.cpp \
-        bluetooth/qrfcommserver_p.cpp \
+        bluetooth/qrfcommserver_p.cpp
 
 }
 
