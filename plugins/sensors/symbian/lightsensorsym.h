@@ -39,36 +39,66 @@
 **
 ****************************************************************************/
 
-#ifndef MEEGOTAPSENSOR_H
-#define MEEGOTAPSENSOR_H
 
-#include "meegosensorbase.h"
-#include <qtapsensor.h>
+#ifndef LIGHTSENSORSYM_H
+#define LIGHTSENSORSYM_H
 
-#include <tapsensor_i.h>
-#include <tap.h>
+// QT Mobility Sensor API headers
+#include <qsensorbackend.h>
+#include <qlightsensor.h>
+
+// Internal Headers
+#include "sensorbackendsym.h"
+
+// Sensor client headers
+// Light data Sensor specific header
+#include <sensrvluxsensor.h>
 
 QTM_USE_NAMESPACE
 
-class meegotapsensor : public meegosensorbase
-{
-    Q_OBJECT
-
+class CLightSensorSym: public CSensorBackendSym
+    {
 public:
-    static char const * const id;
-    meegotapsensor(QSensor *sensor);
-protected:
-    virtual bool doConnect();
-    virtual void start();
-    virtual const QString sensorName();
+    /**
+     * Factory function, this is used to create the Light data object
+     * @return CLightSensorSym if successful, leaves on failure
+     */
+    static CLightSensorSym* NewL(QSensor *sensor);
+
+    /**
+     * Destructor
+     * Closes the backend resources
+     */
+    ~CLightSensorSym();
 
 private:
-    QTapReading m_reading;
-    static bool m_initDone;
-    bool m_isDoubleTapSensor;
-    bool m_isOnceStarted;
-private slots:
-    void slotDataAvailable(const Tap&);
-};
+    /**
+     * Default constructor
+     */
+    CLightSensorSym(QSensor *sensor);
 
-#endif
+    /*
+     * RecvData is used to retrieve the sensor reading from sensor server
+     * It is implemented here to handle Light sensor specific
+     * reading data and provides conversion and utility code
+     */
+    void RecvData(CSensrvChannel &aChannel);
+
+    /**
+     * Second phase constructor
+     * Initialize the backend resources
+     */
+    void ConstructL();
+
+public:
+    /**
+     * Holds the id of the Light data sensor
+     */
+    static char const * const id;
+
+private:
+    QLightReading iReading;
+    TSensrvAmbientLightLuxData iData;
+    };
+
+#endif // LIGHTSENSORSYM_H

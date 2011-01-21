@@ -45,7 +45,7 @@ char const * const meegotapsensor::id("meego.tapsensor");
 bool meegotapsensor::m_initDone = false;
 
 meegotapsensor::meegotapsensor(QSensor *sensor)
-    : meegosensorbase(sensor)
+    : meegosensorbase(sensor), m_isOnceStarted(false)
 {
     initSensor<TapSensorChannelInterface>(m_initDone);
     setReading<QTapReading>(&m_reading);
@@ -54,15 +54,21 @@ meegotapsensor::meegotapsensor(QSensor *sensor)
 
 void meegotapsensor::start(){
     QVariant v = sensor()->property("returnDoubleTapEvents");
+    bool isDoubleTapSensor = m_isDoubleTapSensor;
     if (!(v.isValid())){
         sensor()->setProperty("returnDoubleTapEvents", true); //by default doubles
-        m_isDoubleTapSensor=true;
+        m_isDoubleTapSensor = true;
     }
-    else m_isDoubleTapSensor =  v.toBool();
+    else m_isDoubleTapSensor = v.toBool();
+
+    if (!m_isOnceStarted || (m_isOnceStarted && isDoubleTapSensor != m_isDoubleTapSensor))
+        ((TapSensorChannelInterface*)m_sensorInterface)->
+                setTapType(m_isDoubleTapSensor?TapSensorChannelInterface::Double:TapSensorChannelInterface::Single);
 
     meegosensorbase::start();
     // Set tap type (single/double)
     m_reading.setDoubleTap(m_isDoubleTapSensor);
+    m_isOnceStarted = true;
 }
 
 
