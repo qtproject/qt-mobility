@@ -657,7 +657,7 @@ void tst_QSystemDeviceInfo::tst_backlightStatus_keypadLocked()
     QSystemDisplayInfo di;
     int screen = 0;
     TInt err = RProperty::Set(KPSUidAvkonDomain, KAknKeyguardStatus, EKeyguardLocked);
-    WaitActive(1000000);
+    WaitActive(5000000); //For SMP
     if ( err == KErrNone ){
         TRAP_IGNORE(
             CHWRMLight* iLight = CHWRMLight::NewL();
@@ -687,7 +687,7 @@ void tst_QSystemDeviceInfo::tst_backlightStatus_keypadUnLocked()
     QSystemDisplayInfo di;
     int screen = 0;
     TInt err = RProperty::Set(KPSUidAvkonDomain, KAknKeyguardStatus, EKeyguardNotActive);
-    WaitActive(1000000);
+    WaitActive(5000000);//For SMP
     if ( err == KErrNone ){
         TRAP_IGNORE(
             CHWRMLight* iLight = CHWRMLight::NewL();
