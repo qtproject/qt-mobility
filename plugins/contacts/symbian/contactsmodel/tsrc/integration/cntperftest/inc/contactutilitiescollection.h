@@ -43,7 +43,7 @@
 #include <cntdb.h>
 #include <cntitem.h>
 #include <cntviewbase.h>
-#include <testexecutestepbase.h>
+#include <test/testexecutestepbase.h>
 
 // Constant Literals
 

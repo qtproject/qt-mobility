@@ -25,7 +25,7 @@
 */
 #ifndef __COMPACTRECOVER_STEP_H__
 #define __COMPACTRECOVER_STEP_H__
-#include <testexecutestepbase.h>
+#include <test/testexecutestepbase.h>
 #include "performancefunctionalitybase.h"
 
 class CCompactAndRecoverStep : public CPerformanceFunctionalityBase

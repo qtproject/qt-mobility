@@ -20,7 +20,7 @@
 
 #if (!defined __TESTUPDATEFIELDSSTEP_H__)
 #define __TESTUPDATEFIELDSSTEP_H__
-#include <testexecutestepbase.h>
+#include <test/testexecutestepbase.h>
 
 _LIT(KTestUpdateFieldsStep,"TestUpdateFieldsStep");
 

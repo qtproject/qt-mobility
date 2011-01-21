@@ -26,7 +26,7 @@
 #ifndef __CNT_BASE_STEP_H__
 #define __CNT_BASE_STEP_H__
 
-#include <testexecutestepbase.h>
+#include <test/testexecutestepbase.h>
 #include <cntdb.h>
 #include <cntitem.h>
 #include "cntperfserver.h"

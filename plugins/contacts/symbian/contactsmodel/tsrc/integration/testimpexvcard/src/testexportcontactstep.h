@@ -20,7 +20,7 @@
 
 #if (!defined __TESTEXPORTCONTACT_H__)
 #define __TESTEXPORTCONTACT_H__
-#include <testexecutestepbase.h>
+#include <test/testexecutestepbase.h>
 #include "testexportcontactstep.h"
 #include "testimpexvcardsuitedefs.h"
 

@@ -32,7 +32,7 @@
 #include <vcard.h>
 #include <cntitem.h>
 #include <cntfldst.h>
-#include <testexecutestepbase.h>
+#include <test/testexecutestepbase.h>
 
 // User includes
 #include "cntvcardutils.h"
