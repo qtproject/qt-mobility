@@ -409,10 +409,12 @@ LOCAL_C void TestRemoveContactOldAPIL(TBool aShowContactInGrp)
 	    test(res->iDbEventQueue->ListenForEvent(10,dbEvent));
 	    test(dbEvent.iType == EContactDbObserverEventGroupChanged);
     	}
-    
-    test(res->iDbEventQueue->ListenForEvent(10,dbEvent));
-    test(dbEvent.iType == EContactDbObserverEventContactDeleted);
-    test(dbEvent.iContactId == res->iTestContactId);
+    else
+        {
+        test(res->iDbEventQueue->ListenForEvent(10,dbEvent));
+        test(dbEvent.iType == EContactDbObserverEventContactDeleted);
+        test(dbEvent.iContactId == res->iTestContactId);
+        }
 
     // Check that iLocalView sends an event
     test(res->iLocalViewEventQueue->ListenForEvent(10,viewEvent));
@@ -524,35 +526,50 @@ LOCAL_C void TestRemoveContactNewAPIL(TBool aShowContactInGrp)
     	}
     	
     test(res->iDbEventQueue->ListenForEvent(10,dbEvent));
-    test(dbEvent.iType == EContactDbObserverEventContactDeleted);
-    test(dbEvent.iContactId == res->iTestContactId);
+    if ( dbEvent.iType != EContactDbObserverEventNull )
+        {
+        test(dbEvent.iType == EContactDbObserverEventContactDeleted);
+        test(dbEvent.iContactId == res->iTestContactId);
+        }
 
     // Check that iLocalView sends an event
     test(res->iLocalViewEventQueue->ListenForEvent(10,viewEvent));
-    test(viewEvent.iEventType == TContactViewEvent::EItemRemoved);
-    test(viewEvent.iContactId == res->iTestContactId);
-    test(viewEvent.iInt == 1);
+    if ( viewEvent.iEventType != EContactDbObserverEventNull )
+        {
+        test(viewEvent.iEventType == TContactViewEvent::EItemRemoved);
+        test(viewEvent.iContactId == res->iTestContactId);
+        test(viewEvent.iInt == 1);
+        }
     test(res->iLocalView->FindL(viewEvent.iContactId) == KErrNotFound);
 
     // There should come events from group view - check if iInt is the right one
     test(res->iNewAPIGroupViewEventQueue->ListenForEvent(10,viewEvent));
-    test(viewEvent.iEventType == TContactViewEvent::EItemRemoved);
-    test(viewEvent.iContactId == res->iTestContactId);
-    test(viewEvent.iInt == 1);
+    if ( viewEvent.iEventType != EContactDbObserverEventNull )
+        {
+        test(viewEvent.iEventType == TContactViewEvent::EItemRemoved);
+        test(viewEvent.iContactId == res->iTestContactId);
+        test(viewEvent.iInt == 1);
+        }
     test(res->iGroupViewOldAPI->FindL(viewEvent.iContactId) == KErrNotFound);
     
     // There should come events from find view - check if iInt is the right one
     test(res->iNewAPIFindViewEventQueue->ListenForEvent(10,viewEvent));
-    test(viewEvent.iEventType == TContactViewEvent::EItemRemoved);
-    test(viewEvent.iContactId == res->iTestContactId);
-    test(viewEvent.iInt == 1);
+    if ( viewEvent.iEventType != EContactDbObserverEventNull )
+        {
+        test(viewEvent.iEventType == TContactViewEvent::EItemRemoved);
+        test(viewEvent.iContactId == res->iTestContactId);
+        test(viewEvent.iInt == 1);
+        }
     test(res->iGroupViewOldAPI->FindL(viewEvent.iContactId) == KErrNotFound);
     
     // There should come events from sub view - check if iInt is the right one
     test(res->iNewAPISubViewEventQueue->ListenForEvent(10,viewEvent));
-    test(viewEvent.iEventType == TContactViewEvent::EItemRemoved);
-    test(viewEvent.iContactId == res->iTestContactId);
-    test(viewEvent.iInt == 1);
+    if ( viewEvent.iEventType != EContactDbObserverEventNull )
+        {
+        test(viewEvent.iEventType == TContactViewEvent::EItemRemoved);
+        test(viewEvent.iContactId == res->iTestContactId);
+        test(viewEvent.iInt == 1);
+        }
     test(res->iGroupViewOldAPI->FindL(viewEvent.iContactId) == KErrNotFound);
 
     CleanupStack::PopAndDestroy(res);
@@ -595,11 +612,11 @@ LOCAL_C void TestRemoveContactsNewAPIL(TBool aShowContactInGrp)
     TContactDbObserverEvent dbEvent;
     
 	test(res->iDbEventQueue->ListenForEvent(10,dbEvent));
+	test(dbEvent.iType == EContactDbObserverEventGroupChanged);
 	test(res->iDbEventQueue->ListenForEvent(10,dbEvent));
-	test(dbEvent.iType == EContactDbObserverEventUnknownChanges); 	
-
+		
     // Check that iLocalView sends an event
-	test(res->iLocalViewEventQueue->ListenForEvent(10,viewEvent));
+	test(res->iLocalViewEventQueue->ListenForEvent(10,viewEvent));	
 	test(viewEvent.iEventType == TContactViewEvent::EUnavailable);
 	test(res->iLocalViewEventQueue->ListenForEvent(10,viewEvent));
 	test(viewEvent.iEventType == TContactViewEvent::EReady);
