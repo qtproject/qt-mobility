@@ -40,7 +40,6 @@
 
 #include "mainwindow.h"
 #include "mapbox.h"
-#include "program_options.h"
 
 #include <qgeocoordinate.h>
 #include <qgraphicsgeomap.h>
@@ -56,8 +55,9 @@
 #include <qnetworksession.h>
 #include <qnetworkconfigmanager.h>
 
-MainWindow::MainWindow(QWidget * parent)
-    : QMainWindow(parent)
+MainWindow::MainWindow(const QVariantHash &programOptions, QWidget *parent)
+    : QMainWindow(parent),
+    m_programOptions(programOptions)
 {
     // Set Internet Access Point
     QNetworkConfigurationManager manager;
@@ -74,10 +74,10 @@ MainWindow::MainWindow(QWidget * parent)
 
     bool open_session = true;
 
-    if (program_options().contains("session"))
-        open_session = program_options()["session"].toBool();
-    else if (program_options().contains("nosession"))
-        open_session = !program_options()["nosession"].toBool();
+    if (m_programOptions.contains("session"))
+        open_session = m_programOptions["session"].toBool();
+    else if (m_programOptions.contains("nosession"))
+        open_session = !m_programOptions["nosession"].toBool();
 
     if (open_session) {
         m_session = new QNetworkSession(cfg, this);
@@ -108,14 +108,14 @@ void MainWindow::networkSessionOpened()
 {
     QString provider = "nokia";
 
-    if (program_options().contains("plugin"))
-        provider = program_options()["plugin"].toString();
-    else if (program_options().contains("provider"))
-        provider = program_options()["provider"].toString();
-    else if (program_options().contains("online"))
-        provider = program_options()["online"].toBool() ? "nokia" : "nokia_mos";
-    else if (program_options().contains("offline"))
-        provider = program_options()["offline"].toBool() ? "nokia_mos" : "nokia";
+    if (m_programOptions.contains("plugin"))
+        provider = m_programOptions["plugin"].toString();
+    else if (m_programOptions.contains("provider"))
+        provider = m_programOptions["provider"].toString();
+    else if (m_programOptions.contains("online"))
+        provider = m_programOptions["online"].toBool() ? "nokia" : "nokia_mos";
+    else if (m_programOptions.contains("offline"))
+        provider = m_programOptions["offline"].toBool() ? "nokia_mos" : "nokia";
 
     if (provider == "online")
         provider = "nokia";
@@ -123,6 +123,19 @@ void MainWindow::networkSessionOpened()
         provider = "nokia_mos";
 
     m_box = new MapBox(this);
+
+    if (m_programOptions.contains("mode")) {
+        QString modeString = m_programOptions["mode"].toString().toLower();
+        if ((modeString == "noconnectivity") || (modeString == "none"))
+            m_box->setConnectivityMode(QGraphicsGeoMap::NoConnectivity);
+        else if (modeString == "offline")
+            m_box->setConnectivityMode(QGraphicsGeoMap::OfflineMode);
+        else if (modeString == "online")
+            m_box->setConnectivityMode(QGraphicsGeoMap::OnlineMode);
+        else if (modeString == "hybrid")
+            m_box->setConnectivityMode(QGraphicsGeoMap::HybridMode);
+    }
+
     m_box->setProvider(provider);
 
     setCentralWidget(m_box);

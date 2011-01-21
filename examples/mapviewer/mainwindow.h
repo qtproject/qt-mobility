@@ -43,6 +43,7 @@
 
 #include <QtGui/QMainWindow>
 #include <QTime>
+#include <QVariant>
 
 #include <qnetworksession.h>
 
@@ -60,11 +61,12 @@ class MainWindow : public QMainWindow
 {
     Q_OBJECT
 private:
+    QVariantHash m_programOptions;
     MapBox * m_box;
     QNetworkSession * m_session;
 
 public:
-    MainWindow(QWidget * parent = 0);
+    MainWindow(const QVariantHash &programOptions, QWidget * parent = 0);
     ~MainWindow();
 
 private slots:

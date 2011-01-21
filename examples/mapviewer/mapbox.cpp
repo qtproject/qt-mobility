@@ -40,7 +40,6 @@
 
 #include "mapbox.h"
 #include "geomap.h"
-#include "program_options.h"
 
 #include <qgeoserviceprovider.h>
 #include <qgeomappingmanager.h>
@@ -75,6 +74,7 @@ MapBox::MapBox(QWidget * parent) :
     m_mapWidget(0),
     m_serviceProvider(0),
     m_mapManager(0),
+    m_connectivityMode(QGraphicsGeoMap::HybridMode),
     m_popupMenu(0),
     m_popupMenuMapObject(0),
     m_displayMode(DisplayNone),
@@ -253,22 +253,7 @@ void MapBox::createMapWidget()
 
     m_mapWidget = new GeoMap(m_mapManager);
 
-    QGraphicsGeoMap::ConnectivityMode mode = QGraphicsGeoMap::HybridMode;
-
-    if (program_options().contains("mode")) {
-        QString modeString = program_options()["mode"].toString().toLower();
-        if ((modeString == "noconnectivity") || (modeString == "none"))
-            mode = QGraphicsGeoMap::NoConnectivity;
-        else if (modeString == "offline")
-            mode = QGraphicsGeoMap::OfflineMode;
-        else if (modeString == "online")
-            mode = QGraphicsGeoMap::OnlineMode;
-        else if (modeString == "hybrid")
-            mode = QGraphicsGeoMap::HybridMode;
-    }
-
-    m_mapWidget->setConnectivityMode(mode);
-
+    m_mapWidget->setConnectivityMode(m_connectivityMode);
     m_mapWidget->setCenter(QGeoCoordinate(52.5, 13.0));
     m_mapWidget->setZoomLevel(5);
 
@@ -278,6 +263,13 @@ void MapBox::createMapWidget()
             this, SLOT(mapContextMenu(QGraphicsSceneContextMenuEvent *, QGeoMapObject *)));
 
     createOptionsDialog();
+}
+
+void MapBox::setConnectivityMode(QGraphicsGeoMap::ConnectivityMode mode)
+{
+    m_connectivityMode = mode;
+    if (m_mapWidget)
+        m_mapWidget->setConnectivityMode(m_connectivityMode);
 }
 
 void MapBox::createOptionsDialog()

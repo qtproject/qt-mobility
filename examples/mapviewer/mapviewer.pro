@@ -8,13 +8,11 @@ SOURCES += main.cpp \
            mainwindow.cpp \
            mapbox.cpp \
            geomap.cpp \
-           mapbox_menuhandlers.cpp \
-           program_options.cpp
+           mapbox_menuhandlers.cpp
 
 HEADERS += mainwindow.h \
            mapbox.h \
-    geomap.h \
-    program_options.h
+    geomap.h 
 
 include(../examples.pri)
 
