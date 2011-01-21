@@ -18,8 +18,8 @@ SOURCES = \
 
 maemo*: {
     FORMS += audiorecorder_small.ui
-}else:symbian:contains(S60_VERSION, 3.2) {
-    DEFINES += SYMBIAN_S60_32
+}else:symbian:contains(S60_VERSION, 3.2)|contains(S60_VERSION, 3.1){
+    DEFINES += SYMBIAN_S60_3X
     FORMS += audiorecorder_small.ui
 }else {
     FORMS += audiorecorder.ui
