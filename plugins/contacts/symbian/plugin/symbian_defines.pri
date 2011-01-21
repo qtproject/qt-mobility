@@ -11,4 +11,9 @@ symbian: {
     } else {
         message("S^3 PS2 or older platform")
     }
+
+    contains(S60_VERSION, 5.0) {
+	      DEFINES += SYMBIAN_USE_SMALL_THUMBNAILS
+    } 
+
 }
