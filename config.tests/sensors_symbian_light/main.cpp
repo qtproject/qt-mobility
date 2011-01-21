@@ -39,36 +39,10 @@
 **
 ****************************************************************************/
 
-#ifndef MEEGOTAPSENSOR_H
-#define MEEGOTAPSENSOR_H
+#include <sensrvluxsensor.h>
 
-#include "meegosensorbase.h"
-#include <qtapsensor.h>
-
-#include <tapsensor_i.h>
-#include <tap.h>
-
-QTM_USE_NAMESPACE
-
-class meegotapsensor : public meegosensorbase
+int main(int, char**)
 {
-    Q_OBJECT
+    return 0;
+}
 
-public:
-    static char const * const id;
-    meegotapsensor(QSensor *sensor);
-protected:
-    virtual bool doConnect();
-    virtual void start();
-    virtual const QString sensorName();
-
-private:
-    QTapReading m_reading;
-    static bool m_initDone;
-    bool m_isDoubleTapSensor;
-    bool m_isOnceStarted;
-private slots:
-    void slotDataAvailable(const Tap&);
-};
-
-#endif
