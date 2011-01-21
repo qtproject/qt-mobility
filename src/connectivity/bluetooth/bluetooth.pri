@@ -50,6 +50,14 @@ symbian {
     contains(S60_VERSION, 3.1) | contains(S60_VERSION, 3.2) {
         DEFINES += DO_NOT_BUILD_BLUETOOTH_SYMBIAN_BACKEND
         message("S60 3.1 or 3.2 sdk not supported by bluetooth")
+        SOURCES += \
+            bluetooth/qbluetoothdevicediscoveryagent_p.cpp \
+            bluetooth/qbluetoothlocaldevice_p.cpp \
+            bluetooth/qbluetoothserviceinfo_p.cpp \
+            bluetooth/qbluetoothservicediscoveryagent_p.cpp \
+            bluetooth/qbluetoothsocket_p.cpp \
+            bluetooth/ql2capserver_p.cpp \
+            bluetooth/qrfcommserver_p.cpp
     }
 }
 
@@ -99,6 +107,16 @@ symbian {
         bluetooth/qbluetoothtransferreply_bluez.cpp \
         bluetooth/qbluetoothtransfermanager_bluez.cpp \
         bluetooth/ql2capserver_bluez.cpp
+} else {
+    SOURCES += \
+        bluetooth/qbluetoothdevicediscoveryagent_p.cpp \
+        bluetooth/qbluetoothlocaldevice_p.cpp \
+        bluetooth/qbluetoothserviceinfo_p.cpp \
+        bluetooth/qbluetoothservicediscoveryagent_p.cpp \
+        bluetooth/qbluetoothsocket_p.cpp \
+        bluetooth/ql2capserver_p.cpp \
+        bluetooth/qrfcommserver_p.cpp \
+
 }
 
 INCLUDEPATH += $$PWD

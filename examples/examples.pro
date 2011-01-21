@@ -145,7 +145,7 @@ contains(mobility_modules, feedback) {
 }
 
 # Connectivity
-contains(mobility_modules,connectivity):!contains(S60_VERSION, 3.1):!contains(S60_VERSION, 3.2) {
+contains(mobility_modules,connectivity) {
     SUBDIRS += connectivity
 }
 

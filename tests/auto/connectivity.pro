@@ -4,7 +4,7 @@ requires(contains(mobility_modules,connectivity))
 
 TEMPLATE = subdirs
 
-!contains(S60_VERSION, 3.1):!contains(S60_VERSION, 3.2):SUBDIRS += \
+SUBDIRS += \
         qndefrecord \
         qndefmessage \
         qnearfieldtagtype1 \
@@ -23,7 +23,7 @@ TEMPLATE = subdirs
 #        qbluetoothtransferrequest
 
 #enable autotests on symbian
-!contains(S60_VERSION, 3.1):!contains(S60_VERSION, 3.2):symbian:SUBDIRS += \
+symbian:SUBDIRS += \
         qbluetoothaddress\
         qbluetoothuuid\
         qbluetoothdeviceinfo\
