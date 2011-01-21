@@ -829,7 +829,7 @@ void Dialog::updateProfile()
         };
         profileLabel->setText(profilestring);
 
-        QSystemDeviceInfo::ActiveProfileDetails pDetails = di->getActiveProfileDetails();
+        QSystemDeviceInfo::ProfileDetails pDetails = di->activeProfileDetails();
         messageRingtonVolumeLcdNumber->display(pDetails.messageRingtoneVolume());
         voiceRingtoneVolumeLcdNumber->display(pDetails.voiceRingtoneVolume());
         vibrationActiveRadioButton->setChecked(pDetails.vibrationActive());

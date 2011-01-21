@@ -88,7 +88,7 @@ private slots:
     void tst_keypadLightOn();
     void tst_uniqueID();
     void tst_lockStatus();
-    void tst_getActiveProfileDetails();
+    void tst_activeProfileDetails();
 
 };
 /*
@@ -310,10 +310,10 @@ void tst_QSystemDeviceInfo::tst_lockStatus()
     }
 }
 
-void tst_QSystemDeviceInfo::tst_getActiveProfileDetails()
+void tst_QSystemDeviceInfo::tst_activeProfileDetails()
 {
     QSystemDeviceInfo di;
-    QSystemDeviceInfo::ActiveProfileDetails details = di.getActiveProfileDetails();
+    QSystemDeviceInfo::ProfileDetails details = di.activeProfileDetails();
     int vol = details.messageRingtoneVolume();
     int vol2 = details.voiceRingtoneVolume();
     bool vib = details.vibrationActive();

@@ -185,17 +185,17 @@ public:
     bool isWirelessKeyboardConnected(); //1.2
     bool isKeyboardFlippedOpen();//1.2
 
-    Q_INVOKABLE bool keypadLightOn(QSystemDeviceInfo::KeypadType type); //1.2
+    Q_INVOKABLE bool keypadLightOn(QSystemDeviceInfo::KeypadType type); //1.2`
     QUuid uniqueDeviceID(); //1.2
     QSystemDeviceInfo::LockTypeFlags lockStatus(); //1.2
 
-    class  Q_SYSINFO_EXPORT ActiveProfileDetails  {
+    class  Q_SYSINFO_EXPORT ProfileDetails  {
     public:
-        ActiveProfileDetails();
-        ActiveProfileDetails(const ActiveProfileDetails &);
-        ActiveProfileDetails &operator=(const ActiveProfileDetails &);
+        ProfileDetails();
+        ProfileDetails(const ProfileDetails &);
+        ProfileDetails &operator=(const ProfileDetails &);
 
-        ~ActiveProfileDetails();
+        ~ProfileDetails();
 
         int messageRingtoneVolume() const;
         int voiceRingtoneVolume() const;
@@ -206,7 +206,7 @@ public:
 
     };
 
-    Q_INVOKABLE ActiveProfileDetails getActiveProfileDetails();//1.2
+    Q_INVOKABLE ProfileDetails activeProfileDetails();//1.2
 
 Q_SIGNALS:
     void batteryLevelChanged(int level);
@@ -223,7 +223,7 @@ Q_SIGNALS:
 
 private:
     QSystemDeviceInfoPrivate *d;
-    QSystemDeviceInfo::ActiveProfileDetails activeProfileDetails;
+    QSystemDeviceInfo::ProfileDetails currentProfileDetails;
 
 protected:
     void connectNotify(const char *signal);

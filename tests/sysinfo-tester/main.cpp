@@ -191,7 +191,7 @@ static void test_systemdeviceinfo(void)
   X(deviceinfo.simStatus());
   X(deviceinfo.lockStatus());
   X(deviceinfo.uniqueDeviceID());
-//  X(deviceinfo.getActiveProfileDetails());
+//  X(deviceinfo.activeProfileDetails());
 }
 
 /* ------------------------------------------------------------------------- *

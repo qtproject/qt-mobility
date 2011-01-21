@@ -454,8 +454,8 @@ Gets the current bluetooth power state.
   The LockType must be currently active not just enabled.
   */
 /*!
-  \qmlmethod ActiveProfileDetails DeviceInfo::getActiveProfileDetails
-  Returns a QSystemDeviceInfo::ActiveProfileDetails for the currently active profile.
+  \qmlmethod ProfileDetails DeviceInfo::activeProfileDetails
+  Returns a QSystemDeviceInfo::ProfileDetails for the currently active profile.
   */
 
 /*!
