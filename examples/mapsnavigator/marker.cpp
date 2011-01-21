@@ -41,6 +41,8 @@
 
 #include "marker.h"
 #include <QPixmap>
+#include <QLandmark>
+#include <QGeoBoundingCircle>
 
 Marker::Marker(MarkerType type) :
     QGeoMapPixmapObject()
@@ -89,11 +91,36 @@ void Marker::setMarkerType(MarkerType type)
     setPixmap(QPixmap(filename).scaledToWidth(scale, Qt::SmoothTransformation));
 }
 
+void Marker::setAddress(QGeoAddress addr)
+{
+    if (m_address != addr) {
+        m_address = addr;
+        emit addressChanged(m_address);
+    }
+}
+
+void Marker::setName(QString name)
+{
+    if (m_name != name) {
+        m_name = name;
+        emit nameChanged(m_name);
+    }
+}
+
+void Marker::setMoveable(bool moveable)
+{
+    if (m_moveable != moveable) {
+        m_moveable = moveable;
+        emit moveableChanged(m_moveable);
+    }
+}
+
 MarkerManager::MarkerManager(QGeoSearchManager *searchManager, QObject *parent) :
     QObject(parent),
     m_searchManager(searchManager)
 {
     m_myLocation = new Marker(Marker::MyLocationMarker);
+    m_myLocation->setName("Me");
 }
 
 MarkerManager::~MarkerManager()
@@ -113,9 +140,19 @@ void MarkerManager::setMyLocation(QGeoCoordinate coord)
     m_myLocation->setCoordinate(coord);
 }
 
-void MarkerManager::search(QString query)
+void MarkerManager::search(QString query, qreal radius)
 {
-    QGeoSearchReply *reply = m_searchManager->search(query);
+    QGeoSearchReply *reply;
+    if (radius > 0) {
+        QGeoBoundingCircle boundingCircle(m_myLocation->coordinate(), radius);
+        reply = m_searchManager->search(query,
+                                        QGeoSearchManager::SearchAll,
+                                        -1, 0,
+                                        boundingCircle);
+    } else {
+        reply = m_searchManager->search(query);
+    }
+
     if (reply->isFinished()) {
         replyFinished(reply);
     } else {
@@ -152,6 +189,17 @@ void MarkerManager::replyFinished(QObject *obj)
     foreach (QGeoPlace place, reply->places()) {
         Marker *m = new Marker(Marker::SearchMarker);
         m->setCoordinate(place.coordinate());
+
+        if (place.isLandmark()) {
+            QLandmark lm(place);
+            m->setName(lm.name());
+        } else {
+            m->setName(QString("%1, %2").arg(place.address().street())
+                                        .arg(place.address().city()));
+        }
+        m->setAddress(place.address());
+        m->setMoveable(false);
+
         searchMarkers.append(m);
 
         if (m_map) {

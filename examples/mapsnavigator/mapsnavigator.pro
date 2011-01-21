@@ -29,11 +29,13 @@ HEADERS += \
     mapswidget.h \
     marker.h \
     mainwindow.h \
-    searchdialog.h
+    searchdialog.h \
+    markerdialog.h
 
 SOURCES += \
     mapswidget.cpp \
     main.cpp \
     marker.cpp \
     mainwindow.cpp \
-    searchdialog.cpp
+    searchdialog.cpp \
+    markerdialog.cpp

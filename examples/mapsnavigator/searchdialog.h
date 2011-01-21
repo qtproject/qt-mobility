@@ -44,6 +44,7 @@
 
 #include <QDialog>
 #include <QLineEdit>
+#include <QComboBox>
 
 class SearchDialog : public QDialog
 {
@@ -53,9 +54,11 @@ public:
     ~SearchDialog();
 
     QString searchTerms() const;
+    qreal radius() const;
 
 private:
     QLineEdit *searchTermEdit;
+    QComboBox *whereCombo;
 };
 
 #endif // SEARCHDIALOG_H

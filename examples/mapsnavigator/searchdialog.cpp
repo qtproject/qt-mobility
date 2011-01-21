@@ -48,11 +48,19 @@
 SearchDialog::SearchDialog(QWidget *parent) :
     QDialog(parent)
 {
-    QFormLayout *lay = new QFormLayout;
+    QFormLayout *formLayout = new QFormLayout;
     QVBoxLayout *vbox = new QVBoxLayout;
 
     searchTermEdit = new QLineEdit;
-    lay->addRow("Search for", searchTermEdit);
+    formLayout->addRow("Search for", searchTermEdit);
+
+    whereCombo = new QComboBox;
+    whereCombo->addItem(tr("Nearby (<10km)"), 10000);
+    whereCombo->addItem(tr("Within 30 mins drive of me (<25km)"), 25000);
+    whereCombo->addItem(tr("Within 100km of me"), 100000);
+    whereCombo->addItem(tr("Anywhere in the world"), -1);
+    whereCombo->setCurrentIndex(1);
+    formLayout->addRow(tr("Where"), whereCombo);
 
     QDialogButtonBox *bb = new QDialogButtonBox(QDialogButtonBox::Ok |
                                                 QDialogButtonBox::Cancel,
@@ -60,9 +68,14 @@ SearchDialog::SearchDialog(QWidget *parent) :
     connect(bb, SIGNAL(accepted()), this, SLOT(accept()));
     connect(bb, SIGNAL(rejected()), this, SLOT(reject()));
 
-    vbox->addLayout(lay);
+    vbox->addLayout(formLayout);
     vbox->addWidget(bb);
-    this->setLayout(vbox);
+    setLayout(vbox);
+}
+
+qreal SearchDialog::radius() const
+{
+    return whereCombo->userData(whereCombo->currentIndex());
 }
 
 SearchDialog::~SearchDialog()

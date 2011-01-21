@@ -58,12 +58,33 @@ GeoMap::~GeoMap()
 void GeoMap::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     panActive = true;
+
+    markerPressed = false;
+    QList<QGeoMapObject*> objects = mapObjectsAtScreenPosition(event->pos());
+    if (objects.size() > 0) {
+        pressed = objects.first();
+        markerPressed = true;
+    }
+
     event->accept();
 }
 
 void GeoMap::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     panActive = false;
+
+    if (markerPressed) {
+        // check if we're still over the object
+        QList<QGeoMapObject*> objects = mapObjectsAtScreenPosition(event->pos());
+        if (objects.contains(pressed)) {
+            Marker *m = dynamic_cast<Marker*>(pressed);
+            if (m)
+                emit clicked(m);
+        }
+
+        markerPressed = false;
+    }
+
     event->accept();
 }
 
@@ -111,6 +132,9 @@ void MapsWidget::initialize(QGeoMappingManager *manager)
     geoMap = new GeoMap(manager, this);
     if (m_markerManager)
         m_markerManager->setMap(geoMap);
+
+    connect(geoMap, SIGNAL(clicked(Marker*)),
+            this, SIGNAL(markerClicked(Marker*)));
 
     QGraphicsScene *sc = new QGraphicsScene;
     sc->addItem(geoMap);

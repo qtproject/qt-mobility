@@ -112,6 +112,8 @@ void MainWindow::initialize()
 
     connect(markerManager, SIGNAL(searchError(QGeoSearchReply::Error,QString)),
             this, SLOT(showErrorMessage(QGeoSearchReply::Error,QString)));
+    connect(mapsWidget, SIGNAL(markerClicked(Marker*)),
+            this, SLOT(on_markerClicked(Marker*)));
 
     mapsWidget->setMyLocation(QGeoCoordinate(-27.5796, 153.1));
 }
@@ -130,4 +132,12 @@ void MainWindow::showSearchDialog()
 void MainWindow::showErrorMessage(QGeoSearchReply::Error err, QString msg)
 {
     QMessageBox::critical(this, tr("Error"), msg);
+}
+
+void MainWindow::on_markerClicked(Marker *marker)
+{
+    MarkerDialog md(marker);
+    if (md.exec() == QDialog::Accepted) {
+        md.updateMarker();
+    }
 }

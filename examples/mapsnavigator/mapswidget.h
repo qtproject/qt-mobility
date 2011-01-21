@@ -52,6 +52,7 @@ using namespace QtMobility;
 
 class MapsWidget;
 class MarkerManager;
+class Marker;
 
 class GeoMap : public QGraphicsGeoMap
 {
@@ -65,11 +66,16 @@ private:
     MapsWidget *m_mapsWidget;
 
     bool panActive;
+    bool markerPressed;
+    QGeoMapObject *pressed;
 
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
     void wheelEvent(QGraphicsSceneWheelEvent *event);
+
+signals:
+    void clicked(Marker *marker);
 };
 
 class MapsWidget : public QWidget
@@ -90,11 +96,13 @@ public:
 public slots:
     void initialize(QGeoMappingManager *manager);
 
+signals:
+    void markerClicked(Marker *marker);
+
 private:
     void resizeEvent(QResizeEvent *event);
     void showEvent(QShowEvent *event);
 
-private:
     GeoMap *geoMap;
     QGraphicsView *graphicsView;
     MarkerManager *m_markerManager;

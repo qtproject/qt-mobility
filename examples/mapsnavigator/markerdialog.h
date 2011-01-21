@@ -39,39 +39,38 @@
 **
 ****************************************************************************/
 
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#ifndef MARKERDIALOG_H
+#define MARKERDIALOG_H
 
-#include <QMainWindow>
-#include <QGeoServiceProvider>
+#include <QDialog>
+#include <QLineEdit>
+#include <QLabel>
+#include <QDoubleSpinBox>
+#include <QGeoAddress>
 
-#include "mapswidget.h"
 #include "marker.h"
-#include "searchdialog.h"
-#include "markerdialog.h"
 
 using namespace QtMobility;
 
-class MainWindow : public QMainWindow
+class MarkerDialog : public QDialog
 {
-    Q_OBJECT
 public:
-    MainWindow();
-    ~MainWindow();
+    MarkerDialog(Marker *marker);
+    ~MarkerDialog();
 
 public slots:
-    void initialize();
+    void updateMarker();
 
 private slots:
-    void showSearchDialog();
-    void goToMyLocation();
-    void showErrorMessage(QGeoSearchReply::Error err, QString msg);
-    void on_markerClicked(Marker *marker);
+    void setAddressLabel(QGeoAddress address);
 
 private:
-    QGeoServiceProvider *serviceProvider;
-    MapsWidget *mapsWidget;
-    MarkerManager *markerManager;
+    QLineEdit *nameEdit;
+    QLabel *addressLabel;
+    QDoubleSpinBox *lonSpin;
+    QDoubleSpinBox *latSpin;
+
+    Marker *m_marker;
 };
 
-#endif // MAINWINDOW_H
+#endif // MARKERDIALOG_H
