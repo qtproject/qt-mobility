@@ -68,7 +68,6 @@ HapticSquare::HapticSquare()
 //! [2]
     m_btnRumble = new HapticButton(tr("Rumble!"));
     m_btnOcean = new HapticButton(tr("Ocean"));
-    m_btnOcean->setCheckable(true);
     m_btnButtonClick = new HapticButton(tr("Click"));
     m_btnNegativeEffect = new HapticButton(tr("Oops!"));
     QGridLayout *topLayout = new QGridLayout(this);
