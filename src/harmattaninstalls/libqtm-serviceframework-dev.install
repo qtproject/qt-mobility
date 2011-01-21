@@ -1,7 +1,6 @@
 usr/bin/icheck
 usr/bin/servicedbgen
 usr/bin/servicexmlgen
-usr/include/qt4/QtServiceFramework/Entry
 usr/include/qt4/QtServiceFramework/QAbstractSecuritySession
 usr/include/qt4/QtServiceFramework/QRemoteServiceRegister
 usr/include/qt4/QtServiceFramework/QService

@@ -116,7 +116,7 @@ void CntTransformContact::initializeCntTransformContactData()
     m_transformContactData.insert(Ringtone, new CntTransformRingtone);
     m_transformContactData.insert(Avatar, new CntTransformAvatar);
 
-#ifdef SYMBIAN_BACKEND_USE_SQLITE
+#ifdef SYMBIAN_BACKEND_USE_CNTMODEL_V2
 	// variated transform classes
     m_transformContactData.insert(Anniversary, new CntTransformAnniversary);
 
@@ -237,7 +237,7 @@ void CntTransformContact::transformPostSaveDetailsL(
         detailTimestamp = 0;
     }
     
-#ifdef SYMBIAN_BACKEND_USE_SQLITE    
+#ifdef SYMBIAN_BACKEND_USE_CNTMODEL_V2    
     // In 10.1 onwards, copies of contact images are created after a contact
 	// is saved. The path of the image field is updated and needs to be updated
 	// in the QContact avatar detail
