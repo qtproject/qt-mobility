@@ -26,4 +26,5 @@ SUBDIRS +=\
     show_light\
     show_gyroscope
 
-SUBDIRS += test_manual
+# does not compile
+#SUBDIRS += test_manual
