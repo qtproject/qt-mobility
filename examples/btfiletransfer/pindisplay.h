@@ -55,7 +55,9 @@ public:
     explicit pinDisplay(QString title, QString pin, QWidget *parent = 0);
     ~pinDisplay();
 
-private slots:
+    void setOkCancel();
+
+private Q_SLOTS:
     void on_buttonBox_accepted();
 
 private:

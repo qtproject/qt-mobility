@@ -50,15 +50,13 @@
 #include <QEvent>
 #include <QResizeEvent>
 
-#include "remoteselector.h"
 #include "tennisserver.h"
 #include "tennisclient.h"
 
 #include <qbluetooth.h>
 #include <qbluetoothdeviceinfo.h>
 #include <qbluetoothsocket.h>
-
-
+#include <qbluetoothservicediscoveryagent.h>
 
 Tennis::Tennis(QWidget *parent)
 : QDialog(parent), ui(new Ui_Tennis), board(new Board), controller(new Controller), socket(0),
@@ -77,6 +75,9 @@ Tennis::Tennis(QWidget *parent)
 
     ui->pongView->setScene(board->getScene());    
 
+    connect(ui->pongView, SIGNAL(mouseMove(int)), this, SLOT(mouseMove(int)));
+    ui->pongView->setMouseTracking(false);
+
     connect(board, SIGNAL(ballCollision(Board::Edge)), controller, SLOT(ballCollision(Board::Edge)));
     connect(board, SIGNAL(scored(Board::Edge)), controller, SLOT(scored(Board::Edge)));
     connect(controller, SIGNAL(moveBall(int,int)), board, SLOT(setBall(int,int)));
@@ -87,6 +88,7 @@ Tennis::Tennis(QWidget *parent)
     setFocusPolicy(Qt::WheelFocus);
 
     paddle_pos = (Board::Height-12)/2-Board::Paddle/2;
+    endPaddlePos = paddle_pos;
 
     emit moveLeftPaddle(paddle_pos);
     board->setRightPaddle(paddle_pos);
@@ -146,6 +148,13 @@ Tennis::Tennis(QWidget *parent)
         startDiscovery();
     }
 
+    setEnabled(true);
+
+    paddleAnimation = new QPropertyAnimation(this, "paddlePos", this);
+    paddleAnimation->setEasingCurve(QEasingCurve::InOutQuad);
+
+    ui->pongView->installEventFilter(this);
+
 }
 
 Tennis::~Tennis()
@@ -172,28 +181,55 @@ void Tennis::wheelEvent(QWheelEvent *event)
     }
 }
 
-void Tennis::moveUp()
+void Tennis::moveUp(int px)
 {
-    paddle_pos -= 10;
-    if(paddle_pos <= 0)
-        paddle_pos = 0;
-    if(isClient)
-        emit moveRightPaddle(paddle_pos);
-    else
-        emit moveLeftPaddle(paddle_pos);
+    endPaddlePos -= px;
+    if(endPaddlePos <= 0)
+        endPaddlePos = 0;
+    move(endPaddlePos);
+}
+
+void Tennis::moveDown(int px)
+{
+    endPaddlePos += px;
+    if(endPaddlePos > Board::Height-Board::Paddle-24)
+        endPaddlePos = Board::Height-Board::Paddle-24;
+    move(endPaddlePos);
 
 }
 
-void Tennis::moveDown()
+void Tennis::move(int px)
 {
-    paddle_pos += 10;
-    if(paddle_pos > Board::Height-Board::Paddle-24)
-        paddle_pos = Board::Height-Board::Paddle-24;
+    int distance = abs(paddle_pos - endPaddlePos);
+
+    paddleAnimation->stop();
+    paddleAnimation->setStartValue(paddle_pos);
+    paddleAnimation->setEndValue(px);
+    paddleAnimation->setDuration((1000*distance)/350);
+    paddleAnimation->start();
+}
+
+void Tennis::setPaddlePos(int p)
+{
+    paddle_pos = p;
     if(isClient)
         emit moveRightPaddle(paddle_pos);
     else
         emit moveLeftPaddle(paddle_pos);
+}
 
+
+void Tennis::mouseMove(int pos)
+{
+    pos-=12+Board::Paddle/2;
+    if(pos <= 0)
+        pos = 0;
+    else if(pos > Board::Height-Board::Paddle-24)
+        pos = Board::Height-Board::Paddle-24;
+
+
+    endPaddlePos = pos;
+    move(pos);
 }
 
 void Tennis::clientConnected(const QString &name)
@@ -208,7 +244,7 @@ void Tennis::clientConnected(const QString &name)
 
 void Tennis::clientDisconnected()
 {
-    board->setStatus("Disconnect", 100, 15);
+    board->setStatus("Disconnect", 100, 25);
     controller->start();
     server->startServer();
     isClient = false;    
@@ -218,6 +254,9 @@ void Tennis::clientDisconnected()
 
 void Tennis::serverConnected(const QString &name)
 {
+    // TODO find out why name is null
+    // XXX FIXME
+    qDebug() << "Why is name blank?";
     board->setStatus("Server for " + name, 100, 0);
     m_discoveryAgent->stop();
     isConnected = true;
@@ -226,7 +265,7 @@ void Tennis::serverConnected(const QString &name)
 
 void Tennis::serverDisconnected()
 {
-    board->setStatus("Disconnected", 100, 15);
+    board->setStatus("Disconnected", 100, 25);
     isConnected = false;
     discoveryFinished();
 }
@@ -244,14 +283,14 @@ void Tennis::serviceDiscovered(const QBluetoothServiceInfo &serviceInfo)
 void Tennis::discoveryFinished()
 {
     if(!isConnected)
-        board->setStatus("Waiting", 100, 10);
+        board->setStatus("Waiting", 100, 25);
         QTimer::singleShot(60000, this, SLOT(startDiscovery()));
 }
 
 void Tennis::startDiscovery()
 {
     if(!isConnected) {
-        board->setStatus("Scanning", 100, 10);
+        board->setStatus("Scanning", 100, 25);
         if(quickDiscovery)
             m_discoveryAgent->start(QBluetoothServiceDiscoveryAgent::MinimalDiscovery);
         else

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -111,10 +111,17 @@ QNdefMessage QNdefMessage::fromByteArray(const QByteArray &message)
         if (messageBegin && seenMessageBegin) {
             qWarning("Got message begin but already parsed some records");
             return QNdefMessage();
+        } else if (!messageBegin && !seenMessageBegin) {
+            qWarning("Haven't got message begin yet");
+            return QNdefMessage();
+        } else if (messageBegin && !seenMessageBegin) {
+            seenMessageBegin = true;
         }
         if (messageEnd && seenMessageEnd) {
             qWarning("Got message end but already parsed final record");
             return QNdefMessage();
+        } else if (messageEnd && !seenMessageEnd) {
+            seenMessageEnd = true;
         }
         if (cf && (typeNameFormat != 0x06) && !partialChunk.isEmpty()) {
             qWarning("partial chunk not empty or typeNameFormat not 0x06 as expected");
@@ -186,8 +193,16 @@ QNdefMessage QNdefMessage::fromByteArray(const QByteArray &message)
         if (!cf)
             result.append(record);
 
+        if (!cf && seenMessageEnd)
+            break;
+
         // move to start of next record
         ++i;
+    }
+
+    if (!seenMessageBegin && !seenMessageEnd) {
+        qWarning("Malformed NDEF Message, missing begin or end.");
+        return QNdefMessage();
     }
 
     return result;

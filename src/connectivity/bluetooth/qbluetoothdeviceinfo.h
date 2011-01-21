@@ -204,8 +204,12 @@ public:
     ~QBluetoothDeviceInfo();
 
     bool isValid() const;
+    bool isCached() const;
+
+    void setCached(bool cached);
 
     QBluetoothDeviceInfo &operator=(const QBluetoothDeviceInfo &other);
+    bool operator==(const QBluetoothDeviceInfo &other) const;
 
     QBluetoothAddress address() const;
     QString name() const;
