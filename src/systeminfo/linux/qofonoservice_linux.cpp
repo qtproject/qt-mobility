@@ -50,6 +50,7 @@
 #include <QtDBus/QDBusPendingCallWatcher>
 #include <QtDBus/QDBusObjectPath>
 #include <QtDBus/QDBusPendingCall>
+#include <QVariantMap>
 
 #include "qofonoservice_linux_p.h"
 
