@@ -1,0 +1,10 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<node name="/com/nokia/nfc/0/nfc0/target_DE_AD_BE_EF">
+    <interface name="com.nokia.nfc.Device">
+        <method name="Services">
+            <arg type="a{sv}" direction="out"/>
+            <annotation name="com.trolltech.QtDBus.QtTypeName.Out0" value="QVariantMap"/>
+        </method>
+    </interface>
+</node>
+

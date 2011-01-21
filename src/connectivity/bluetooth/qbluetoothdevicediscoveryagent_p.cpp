@@ -39,22 +39,49 @@
 **
 ****************************************************************************/
 
-#ifndef UTILS_SYMBIAN_P_H
-#define UTILS_SYMBIAN_P_H
+#include "qbluetoothdevicediscoveryagent.h"
+#include "qbluetoothdevicediscoveryagent_p.h"
+#include "qbluetoothaddress.h"
+#include "qbluetoothuuid.h"
 
-#include <bttypes.h>
-
-QT_BEGIN_HEADER
+#define QTM_DEVICEDISCOVERY_DEBUG
 
 QTM_BEGIN_NAMESPACE
 
-inline QBluetoothAddress qTBTDevAddrToQBluetoothAddress(const TBTDevAddr &address)
+QBluetoothDeviceDiscoveryAgentPrivate::QBluetoothDeviceDiscoveryAgentPrivate()
+
 {
-    return QBluetoothAddress(QString(QByteArray((const char *)address.Des().Ptr(), 6).toHex().toUpper()));
+}
+
+QBluetoothDeviceDiscoveryAgentPrivate::~QBluetoothDeviceDiscoveryAgentPrivate()
+{
+}
+
+bool QBluetoothDeviceDiscoveryAgentPrivate::isActive() const
+{
+    return false;
+}
+
+void QBluetoothDeviceDiscoveryAgentPrivate::start()
+{
+}
+
+void QBluetoothDeviceDiscoveryAgentPrivate::stop()
+{
+}
+
+void QBluetoothDeviceDiscoveryAgentPrivate::_q_deviceFound(const QString &address,
+                                                           const QVariantMap &dict)
+{
+    Q_UNUSED(address);
+    Q_UNUSED(dict);
+}
+
+void QBluetoothDeviceDiscoveryAgentPrivate::_q_propertyChanged(const QString &name,
+                                                               const QDBusVariant &value)
+{    
+    Q_UNUSED(name);
+    Q_UNUSED(value);
 }
 
 QTM_END_NAMESPACE
-
-QT_END_HEADER
-
-#endif

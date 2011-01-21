@@ -88,7 +88,7 @@ void QBluetoothTransferReply::abort()
 */
 
 /*!
-    \fn void QBluetoothTransferReply::finished()
+    \fn void QBluetoothTransferReply::finished(QBluetoothTransferReply *)
 
     This signal is emitted when the transfer is complete.
 */
@@ -125,7 +125,7 @@ QVariant QBluetoothTransferReply::attribute(QBluetoothTransferRequest::Attribute
 }
 
 /*!
-   \fn void QBluetoothTransferReply::isFinished()
+   \fn bool QBluetoothTransferReply::isFinished() const
 
     Returns true if this reply has finished; otherwise returns false.
 */
@@ -135,7 +135,7 @@ QVariant QBluetoothTransferReply::attribute(QBluetoothTransferRequest::Attribute
 //}
 
 /*!
-   \fn void QBluetoothTransferReply::isRunning()
+   \fn bool QBluetoothTransferReply::isRunning() const
 
     Returns true if this reply is running; otherwise returns false.
 */
@@ -161,7 +161,7 @@ QBluetoothTransferManager::Operation QBluetoothTransferReply::operation() const
     return m_operation;
 }
 
-/*!
+/*
     Returns a copy of the QBluetoothTransferRequest object used to create this
     QBluetoothTransferReply.
 */

@@ -48,6 +48,10 @@ QLlcpServerPrivate::QLlcpServerPrivate(QLlcpServer *q)
 {
 }
 
+QLlcpServerPrivate::~QLlcpServerPrivate()
+{  
+}
+
 bool QLlcpServerPrivate::listen(const QString &serviceUri)
 {
     Q_UNUSED(serviceUri);

@@ -43,8 +43,11 @@
 #include <QDialog>
 
 #include <QResizeEvent>
+#include <QMoveEvent>
+#include <QPropertyAnimation>
 #include <qbluetoothserviceinfo.h>
 #include <qbluetoothsocket.h>
+#include <qbluetoothdevicediscoveryagent.h>
 
 #include "board.h"
 #include "controller.h"
@@ -66,10 +69,14 @@ class TennisClient;
 class Tennis : public QDialog
 {
     Q_OBJECT
+    Q_PROPERTY(int paddlePos READ paddlePos WRITE setPaddlePos);
 
 public:
     Tennis(QWidget *parent = 0);
     ~Tennis();
+
+    int paddlePos() { return paddle_pos; }
+    void setPaddlePos(int p);
 
 signals:
     void moveLeftPaddle(int y);
@@ -92,10 +99,14 @@ private slots:
 
     void startDiscovery();
 
+    void mouseMove(int delta);
+
 private:
 
-    void moveUp();
-    void moveDown();
+    void moveUp(int px = 10);
+    void moveDown(int px = 10);
+
+    void move(int px);
 
     Ui_Tennis *ui;
 
@@ -103,6 +114,7 @@ private:
     Controller *controller;
 
     int paddle_pos;
+    int endPaddlePos;
 
     bool isClient;
     bool isConnected;
@@ -111,6 +123,8 @@ private:
     QBluetoothSocket *socket;
     TennisServer *server;
     TennisClient *client;
+
+    QPropertyAnimation *paddleAnimation;
 
     QBluetoothServiceDiscoveryAgent *m_discoveryAgent;
 
