@@ -109,9 +109,10 @@ QSystemAlignedTimer::~QSystemAlignedTimer()
   If you need a window of time in which your timer should fire, use QSystemAlignedTimer::setWindow
 
   */
-void QSystemAlignedTimer::start(int sec)
+void QSystemAlignedTimer::start(int minimumTime, int maximumTime)
 {
-    Q_UNUSED(sec)
+    Q_UNUSED(minimumTime)
+    Q_UNUSED(maximumTime)
 }
 
 /*!
@@ -122,31 +123,15 @@ void QSystemAlignedTimer::start()
 
 }
 
-/*!
-  Set the timeout window with \a timerWindow in seconds, in which the timer should fire.
-  It is recommended to have the window quite big.
-
-  For example if your preferred interval is 120 seconds, and you need the timer to
-  fire within 20 seconds of that interval, use a timerWindow of 20.
-
-*/
-void QSystemAlignedTimer::setWindow(int timerWindow)
-{
-    currentTimerWindow = timerWindow;
-}
-
-
 
 /*!
   Called if the application woke up by itself.
   This method should be called if the application has woken up by some other
   method than via system alignedtimer heartbeat to prevent unnecessary wakeup signals.
 
-  True if success, false if error
   */
-bool QSystemAlignedTimer::wokeUp()
+void QSystemAlignedTimer::wokeUp()
 {
-    return false;
 }
 
 /*!
@@ -159,45 +144,54 @@ void QSystemAlignedTimer::stop()
 
 
 /*!
+  Set the timeout minimum interval to \a seconds in seconds that must be waited before timeout
+  signal is emitted.
 
-  Set the timeout interval to \a minTime in seconds that must be waited before timeout
-  signal is emitted, and \a maxTime in seconds when the wait must end.
+   Time in milliseconds that MUST be waited before timeout.
+   Value 0 means 'wake me up when someboy else is woken'.
+   It  is recommended that the first wait (if possible) uses minimum value of 0 to
+   "jump to the train"
 
-  For example if you preferred wait is 120 seconds, use minTime of 110 and maxTime of 130.
-
-  minTime value of 0 means 'wake me up when someone else is woken'.
-
-  Default value for maxTime is 0. If maxTime is 0, then minTime will be a "preferred" interval.
  */
-void QSystemAlignedTimer::setInterval(int minTime, int maxTime)
+void QSystemAlignedTimer::setMinimumInterval(int seconds) const
 {
-    if(minTime != 0 && maxTime == 0) {
-        preferredInterval = minTime;
-    }
+    Q_UNUSED(seconds)
 }
 
 /*!
-  \property QSystemAlignedTimer::timerWindow
-  \brief The timers's window.
+  \property QSystemAlignedTimer::minimumInterval
+  \brief The timers's minimumInterval.
 
-
-  Returns the current preferred timer window.
+  Returns this current timer minimum interval.
   */
-int QSystemAlignedTimer::timerWindow() const
+int QSystemAlignedTimer::minimumInterval() const
 {
-    return currentTimerWindow;
+    return 0;
 }
 
+/*!
+  Set the timeout maximum interval to \a seconds the wait must end.
+
+   Time in milliseconds when the wait MUST end. It is wise to have maxtime-mintime
+   quite big so all users of this service get synced.
+   For example if you preferred wait is 120 seconds, use minval 110 and maxval 130.
+   Default value for maxTime is 0. If maxTime is 0, then minTime will be a "preferred" interval.
+ */
+void QSystemAlignedTimer::setMaximumInterval(int seconds) const
+{
+    Q_UNUSED(seconds)
+
+}
 
 /*!
-  \property QSystemAlignedTimer::interval
-  \brief The timers's interval.
+  \property QSystemAlignedTimer::maximumInterval
+  \brief The timers's maximumInterval.
 
-  Returns this current timer interval.
+  Returns this current timer maximum interval.
   */
-int QSystemAlignedTimer::interval() const
+int QSystemAlignedTimer::maximumInterval() const
 {
-    return preferredInterval;
+    return 0;
 }
 
 /*!
@@ -214,9 +208,10 @@ inline void QSystemAlignedTimer::setSingleShot(bool singleShot)
   \a sec is the time interval in seconds.
   The receiver is the \a receiver object and the \a member is the slot.
   */
-void QSystemAlignedTimer::singleShot(int sec, QObject *receiver, const char *member)
+void QSystemAlignedTimer::singleShot(int minimumTime, int maximumTime, QObject *receiver, const char *member)
 {
-    Q_UNUSED(sec);
+    Q_UNUSED(minimumTime);
+    Q_UNUSED(maximumTime);
     Q_UNUSED(receiver);
     Q_UNUSED(member);
 }
@@ -230,20 +225,25 @@ void QSystemAlignedTimer::singleShot(int sec, QObject *receiver, const char *mem
   */
 bool QSystemAlignedTimer::isSingleShot() const
 {
-    return single;
+    return d->single;
 }
 
-
 /*!
-  \property QSystemAlignedTimer::running
-  \brief Start the timer as single shot.
-
    Sets the timer if \a running is true, otherwise stops it.
   */
 void QSystemAlignedTimer::setRunning(bool running)
 {
-    isTimerRunning = running;
+    d->isTimerRunning = running;
 }
+/*
+\property QSystemAlignedTimer::running
+Start the timer as single shot.
+*/
+ bool QSystemAlignedTimer::running() const
+ {
+     return d->isTimerRunning;
+ }
+
 
 
 /*!

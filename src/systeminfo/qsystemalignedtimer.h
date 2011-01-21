@@ -58,51 +58,56 @@ class Q_SYSINFO_EXPORT QSystemAlignedTimer : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(int timerWindow READ timerWindow WRITE setWindow NOTIFY windowChanged)
-    Q_PROPERTY(int interval READ interval WRITE setInterval NOTIFY intervalChanged)
+    Q_PROPERTY(int minimumInterval READ minimumInterval WRITE setMinimumInterval CONSTANT)
+    Q_PROPERTY(int maximumInterval READ maximumInterval WRITE setMaximumInterval CONSTANT)
 
-    Q_PROPERTY(bool running READ isRunning WRITE setRunning CONSTANT)
-    Q_PROPERTY(bool singleShot READ isSingleShot WRITE setSingleShot)
+    Q_PROPERTY(bool running READ running WRITE setRunning CONSTANT)
+    Q_PROPERTY(bool singleShot READ isSingleShot WRITE setSingleShot CONSTANT)
 public:
 
     explicit QSystemAlignedTimer(QObject *parent = 0);
     ~QSystemAlignedTimer();
 
-    Q_INVOKABLE bool wokeUp();
+    Q_INVOKABLE void wokeUp();  // This should be called when the application wakes up via other
+    // means than QSystemAlignedTimer timeout.
+    // Other applications that are in their wakeup window
+    // may be woken up.  Single-shot timer is stopped.
 
-    void setWindow(int timerWindow);
-    int timerWindow() const;
+    /*
+     *
+     * @param minimumInterval   Time in milliseconds that MUST be waited before timeout.
+     *                  Value 0 means 'wake me up when someboy else is woken'.
+     *                  It  is recommended that the first wait (if possible) uses minvalue as 0 to "jump to the train"
+     * @param maximumInterval   Time in milliseconds when the wait MUST end. It is wise to have maxtime-mintime
+     *                  quite big so all users of this service get synced.
+     *                  For example if you preferred wait is 120 seconds, use minval 110 and maxval 130.
+     */
+    int minimumInterval() const;
+    void setMinimumInterval(int seconds) const;
 
-    void setInterval(int minTime, int maxTime = 0);
-    int interval() const;
+    int maximumInterval() const;
+    void setMaximumInterval(int seconds) const;
 
-    inline void setSingleShot(bool singleShot);
-    inline bool isSingleShot() const;
+    void setSingleShot(bool singleShot);
+    bool isSingleShot() const;
 
+    Q_INVOKABLE static void singleShot(int minimumTime, int maximumTime, QObject *receiver, const char *member);
 
-    Q_INVOKABLE static void singleShot(int msec, QObject *receiver, const char *member);
-
-    bool isRunning() const { return isTimerRunning; }
+    bool running() const;
     void setRunning(bool running);
+    // running is a QML standard way of doing something like this, so let's use this
 
 public Q_SLOTS:
-    void start(int sec);
+    void start(int minimumTime, int maximumTime);  // See setInterval
 
     void start();
     void stop();
 
 Q_SIGNALS:
     void timeout();
-    void intervalChanged(int newInterval);
-    void windowChanged(int newWindow);
 
 private:
     QSystemAlignedTimerPrivate *d;
-    int id;
-    int preferredInterval;
-    int currentTimerWindow;
-    bool isTimerRunning;
-    bool single;
 };
 
 
@@ -112,6 +117,10 @@ class QSystemAlignedTimerPrivate : public QObject
     Q_OBJECT
 public:
     explicit QSystemAlignedTimerPrivate(QObject *parent = 0){Q_UNUSED(parent)};
+
+    int id;
+    bool isTimerRunning;
+    bool single;
 
 private:
     QTimer *alignedTimer;
