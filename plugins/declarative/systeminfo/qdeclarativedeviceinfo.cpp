@@ -368,6 +368,38 @@ void QDeclarativeDeviceInfo::startLockStatusChanged(bool on)
 }
 
 /*!
+  \qmlproperty int DeviceInfo::messageRingtoneVolume()
+
+    Returns the active profile's message ringtone volume. From 0 to 100.
+  */
+int QDeclarativeDeviceInfo::messageRingtoneVolume()
+{
+    return deviceInfo()->activeProfileDetails().messageRingtoneVolume();
+}
+
+/*!
+  \qmlproperty int DeviceInfo::voiceRingtoneVolume()
+
+    Returns the active profile's voice ringtone volume. From 0 to 100.
+
+  */
+int QDeclarativeDeviceInfo::voiceRingtoneVolume()
+{
+    return deviceInfo()->activeProfileDetails().voiceRingtoneVolume();
+}
+
+/*!
+  \qmlproperty bool DeviceInfo::vibrationActive()
+
+    Returns the whether the active profile's vibration is active.
+
+  */
+bool QDeclarativeDeviceInfo::vibrationActive()
+{
+    return deviceInfo()->activeProfileDetails().vibrationActive();
+}
+
+/*!
   \qmlproperty QString DeviceInfo::imei
 
      Returns the International Mobile Equipment Identity (IMEI), or a null QString in the case of none.
@@ -453,10 +485,7 @@ Gets the current bluetooth power state.
   Returns the QSystemDeviceInfo::LockTypeFlags type of lock state the device might be in.
   The LockType must be currently active not just enabled.
   */
-/*!
-  \qmlmethod ProfileDetails DeviceInfo::activeProfileDetails
-  Returns a QSystemDeviceInfo::ProfileDetails for the currently active profile.
-  */
+
 
 /*!
   \qmlmethod bool DeviceInfo::keypadLightOn(QSystemDeviceInfo::KeypadType type)
