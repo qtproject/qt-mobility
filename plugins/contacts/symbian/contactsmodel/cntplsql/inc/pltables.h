@@ -39,10 +39,6 @@
 
 #include <sqldb.h>
 #include <e32hashtab.h>
-#include <QList>
-#include <QStringList>
-
-class CPcsKeyMap;
 
 
 /**
@@ -148,7 +144,6 @@ private:
 	void GetTypeFlagFields(TInt aTypeFlags, TUid& aType, TUint& aAttributes, TUint& aHintFields);
 	TInt GenerateTypeFlags(TUid aType, TUint aAttributes, TUint aHintFields);
 	TUint NumDigits(TInt aNum);
-	void SetImagesDirL();
 	
 private:
 	CLplContactProperties& iProperties;
@@ -327,127 +322,6 @@ private:
 	};
 
 
-/**
-The CPplPredictiveSearchTableBase is a base class for keymap-specific predictive
-search tables that contain numeric representation of the fields that are checked
-in predictive search.
-*/
-NONSHARABLE_CLASS(CPplPredictiveSearchTableBase) : public CPplTableBase
-	{
-public:
-	virtual ~CPplPredictiveSearchTableBase();
-
-public: // From CPplTableBase
-	void CreateInDbL(CContactItem& aItem);
-	void UpdateL(const CContactItem& aItem);
-	void DeleteL(const CContactItem& aItem, TBool& aLowDiskErrorOccurred);
-	virtual void CreateTableL() = 0;
-
-public: // New pure virtual functions
-	virtual QList<QChar> FillAllTables() const = 0;
-
-private: // New pure virtual functions
-	virtual HBufC* TableNameL(const QChar aCh) const = 0;
-	virtual TBool IsValidChar(const QChar aChar) const = 0;
-
-	virtual void FillKeyboardSpecificFieldsL(RSqlStatement& aSqlStatement,
-											 QStringList aTokens) = 0;
-
-private: // New virtual functions
-	/**
-	 * Obtain the table-specific fields from the contact data.
-	 *
-	 * aItem Contact's data
-	 * aRequiredFieldsExist OUT: true if contact contains the information
-	 *	that's mandatory for it to be stored into predictive search tables.
-	 * returns: list of table specific fields that could be mapped using the keymap.
-	 *  Note: even if list is empty, aRequiredFieldsExists can be true. E.g. in
-	 *  case of QWERTY table, all mail addresses begin by characters that are not
-	 *  recognized by the keymap.
-	 */
-	virtual QStringList
-		GetTableSpecificFields(const CContactItem& aItem,
-							   bool& aRequiredFieldsExist) const;
-
-public:
-	const CPcsKeyMap* KeyMap() const;
-
-	// Return next table's name, ownership is transferred
-	HBufC* GetNextTableNameL(QList<QChar>& aTables) const;
-
-protected:
-	void ConstructL();
-	CPplPredictiveSearchTableBase(RSqlDatabase& aDatabase,
-								  TInt aMaxTokens,
-								  TInt aMaxTokenLength);
-
-	QList<QChar> DetermineTables(QStringList aTokens) const;
-
-	// aFirstName ownership is not transferred
-	// aLastName ownership is not transferred
-	QStringList GetTokens(QStringList aNonTokenizedFields,
-						  HBufC* aFirstName,
-						  HBufC* aLastName) const;
-
-private:
-	void WriteToDbL(const CContactItem& aItem);
-
-	// aFirstNameAsNbr OUT: Pointer to first name converted to numbers,
-	//				  		pushed to cleanupstack. Ownership is transferred.
-	// aLastNameAsNbr OUT: Pointer to last name converted to numbers,
-	//				       pushed to cleanupstack. Ownership is transferred.
-	// aFirstName OUT: Pointer to the first N characters of first name,
-	//			  	   pushed to cleanupstack. Ownership is transferred.
-	// aLastName OUT: Pointer to the first N characters of last name,
-	//			  	  pushed to cleanupstack. Ownership is transferred.
-	void GetFieldsLC(const CContactItem& aItem,
-					 HBufC** aFirstNameAsNbr,
-					 HBufC** aLastNameAsNbr,
-					 HBufC** aFirstName,
-					 HBufC** aLastName) const;
-
-	// aString ownership is not transferred
-	void AddTokens(HBufC* aString, QStringList& aTokens) const;
-
-	void GetNextToken(QStringList& aSource, QStringList& aDestination) const;
-	void DeleteFromAllTablesL(TContactItemId aContactId,
-							  TBool& aLowDiskErrorOccurred) const;
-
-protected:
-	// Owned
-	CCntSqlStatement* iInsertStmnt;
-	// Owned
-	CCntSqlStatement* iDeleteStmnt;
-	// Owned
-	CPcsKeyMap*		  iKeyMap;
-
-	RSqlDatabase&	  iDatabase;
-
-	// Max amount of tokens that can be stored into predictive search table
-	const TInt		  iMaxTokens;
-
-	// Max length of a single token that can be stored into predictive search table
-	const TInt		  iMaxTokenLength;
-	};
-
-
-NONSHARABLE_CLASS(CPplPresenceTable) : public CPplTableBase
-    {
-public:
-    static CPplPresenceTable* NewL(RSqlDatabase& aDatabase);
-    static CPplPresenceTable* NewLC(RSqlDatabase& aDatabase);
-    ~CPplPresenceTable();
-private:
-    void ConstructL();
-    CPplPresenceTable(RSqlDatabase& aDatabase);
-public: // From CPplTableBase
-    void CreateTableL();
-    void CreateInDbL(CContactItem& aItem);
-    void UpdateL(const CContactItem& aItem);
-    void DeleteL(const CContactItem& aItem, TBool& aLowDiskErrorOccurred);
-private:
-    RSqlDatabase&  iDatabase;
-    };
 /**
 This class holds a set of contact database preferences and is used in conjunction
 with the CPplPreferencesPersistor class.

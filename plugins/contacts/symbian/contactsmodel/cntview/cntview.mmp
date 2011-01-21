@@ -23,20 +23,20 @@ CAPABILITY   All -TCB
 UID 0x1000008D 0x101F3D54
 VENDORID 0x70000001
 
-SOURCEPATH	.
+SOURCEPATH    .
 
 userinclude     ../cntview	
 userinclude	../inc ../src
 
 APP_LAYER_SYSTEMINCLUDE_SYMBIAN
 
-source		../cntview/ConcView.cpp
-source		../cntview/FilteredView.cpp
-source		../cntview/Range.cpp
-source		../cntview/SubView.cpp
-source		../cntview/findview.cpp
-source		../cntview/Groupview.cpp
-source		../src/CNTSTD.CPP
+source        ../cntview/ConcView.cpp
+source        ../cntview/FilteredView.cpp
+source        ../cntview/Range.cpp
+source        ../cntview/SubView.cpp
+source        ../cntview/findview.cpp
+source        ../cntview/Groupview.cpp
+source        ../src/CNTSTD.CPP
 
 library euser.lib cntmodel.lib bafl.lib 
 #ifdef EABI
@@ -44,3 +44,5 @@ library ecom.lib
 #endif
 
 deffile cntview.def
+
+SMPSAFE

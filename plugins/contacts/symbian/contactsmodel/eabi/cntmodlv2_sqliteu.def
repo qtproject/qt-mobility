@@ -705,3 +705,12 @@ EXPORTS
 	_ZN16CContactDatabase19AddContactsToGroupLER6RArrayIlEl @ 704 NONAME
 	_ZN16CContactDatabase24RemoveContactsFromGroupLER6RArrayIlEl @ 705 NONAME
 	_ZN16CContactDatabase17DeleteContactsV2LERK15CContactIdArray @ 706 NONAME
+	_ZTI14CImageRescaler @ 707 NONAME
+	_ZTV14CImageRescaler @ 708 NONAME
+	_ZN23TCntImageRescaleUtility12DeleteImageLERK12CContactItem @ 709 NONAME
+	_ZN23TCntImageRescaleUtility15ImageDirectoryLEv @ 710 NONAME
+	_ZN23TCntImageRescaleUtility16StoreImageFieldLERK12CContactItem4TBufILi256EE @ 711 NONAME
+	_ZN23TCntImageRescaleUtility16UpdateImageNameLERK12CContactItem @ 712 NONAME
+	_ZN23TCntImageRescaleUtility21CreateImageDirectoryLEv @ 713 NONAME
+	_ZN23TCntImageRescaleUtility21DeleteImageDirectoryLEv @ 714 NONAME
+

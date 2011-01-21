@@ -15,38 +15,37 @@
 *
 */
 
-
 /**
  @file
  @internalTechnology
  @released 
 */
 
-#include "ccntstatemachine.h"
-#include "ccntrequest.h"
-#include "ccntdbmanager.h"
-#include "ccntbackuprestoreagent.h"
+#include "CCntStateMachine.h"
+#include "CCntRequest.h"
+#include "CCntDbManager.h"
+#include "CCntBackupRestoreAgent.h"
 #include "persistencelayer.h"
-#include "cntspeeddials.h"
-#include <cntfldst.h> 		// for ccontacttextfield
-#include <cntfield.h> 		// for ccontacttextfield
-#include "cntstd.h"   		// for panic codes
+#include "CntSpeedDials.h"
+#include <cntfldst.h>         // for ccontacttextfield
+#include <cntfield.h>         // for ccontacttextfield
+#include "CNTSTD.H"           // for Panic codes
 #include "ccntipccodes.h"
 
 // Event related headers
-#include <cntdbobs.h> 	    // for ccontactdbobserver
-#include "ccntserver.h"     // for kcntnullconnectionid.
-#include "ccnteventqueue.h" // for kmaxnumberofeventsineventqueue, kcnteventgranularity
-#include "ccntlogger.h"  
+#include <cntdbobs.h>         // for ccontactdbobserver
+#include "CCntServer.h"     // for KCntNullConnectionId.
+#include "CCntEventQueue.h" // for KMaxNumberOfEventsInEventQueue, KCntEventGranularity
+#include "CCntLogger.h"  
 
 // Require SQL header for leave code checking
 #include <sqldb.h>
-	
+    
 /** 
 CState - Base state destructor, default implementataion
 */
 CState::~CState() 
-	{}
+    {}
 
 /**
  CState constructor. 
@@ -58,10 +57,10 @@ CState::~CState()
  @param aStateMachine The statemachine object that is used for state transitions
  @param aPersistenceLayer The persistence layer that allows provides database access
  
-*/	
-CState::CState(CCntStateMachine& aStateMachine, CPersistenceLayer&	aPersistenceLayer)
+*/    
+CState::CState(CCntStateMachine& aStateMachine, CPersistenceLayer&    aPersistenceLayer)
 :iStateMachine(aStateMachine), iPersistenceLayer(aPersistenceLayer)
-	{}
+    {}
 
 /**
  TransactionStartLC is called from many derived states. The session that started the
@@ -74,11 +73,12 @@ CState::CState(CCntStateMachine& aStateMachine, CPersistenceLayer&	aPersistenceL
  @param aSessionId The unique ID of session that is moving the state machine into a transaction state.
 */
 void CState::TransactionStartLC(TUint aSessionId)
-	{
-	iCurrentTransactionSessionId = aSessionId;
-	iPersistenceLayer.TransactionManager().StartTransactionL();
-	CleanupStack::PushL(TCleanupItem(CState::CleanupTransactionRollback, this));
-	}
+    {
+    iCurrentTransactionSessionId = aSessionId;
+    iPersistenceLayer.FactoryL().GetCollectorL().Reset();
+    iPersistenceLayer.TransactionManager().StartTransactionL();
+    CleanupStack::PushL(TCleanupItem(CState::CleanupTransactionRollback, this));
+    }
 
 /** 
  Rollback a transaction after an leave has occured.
@@ -87,33 +87,33 @@ void CState::TransactionStartLC(TUint aSessionId)
  @param aState The state in which the leave occured
 */
 void CState::CleanupTransactionRollback(TAny* aState)
-  	{
-  	TRAP_IGNORE(static_cast<CState*>(aState)->RollbackTransAndRecoverL(EFalse));
-  	}
+    {
+    TRAP_IGNORE(static_cast<CState*>(aState)->RollbackTransAndRecoverL(EFalse));
+    }
 
 /**
  Commit the current transaction.
 */
 void CState::TransactionCommitLP()
-	{
-	iPersistenceLayer.TransactionManager().CommitCurrentTransactionL(iCurrentTransactionSessionId);
-	iCurrentTransactionSessionId = 0;
-	CleanupStack::Pop(); // CleanupTransactionRollback
-	}
+    {
+    iPersistenceLayer.TransactionManager().CommitCurrentTransactionL(iCurrentTransactionSessionId);
+    iCurrentTransactionSessionId = 0;
+    CleanupStack::Pop(); // CleanupTransactionRollback
+    }
 
 /**
  Clean up the transaction after a leave occurs. 
 */
 void CState::RollbackTransAndRecoverL(const TBool aNotification)
-	{
-  	// Some operation has left before a commit could be called.
-  	iPersistenceLayer.TransactionManager().RollbackCurrentTransactionL(iCurrentTransactionSessionId);
-	iCurrentTransactionSessionId = 0;
-	
-	iPersistenceLayer.ContactsFileL().CloseTablesL(!aNotification);
-	iPersistenceLayer.ContactsFileL().OpenTablesL(!aNotification);
-	iStateMachine.SetCurrentStateL(iStateMachine.StateWritable());			
-	}
+    {
+    // Some operation has left before a commit could be called.
+    iPersistenceLayer.TransactionManager().RollbackCurrentTransactionL(iCurrentTransactionSessionId);
+    iCurrentTransactionSessionId = 0;
+    
+    iPersistenceLayer.ContactsFileL().CloseTablesL(!aNotification);
+    iPersistenceLayer.ContactsFileL().OpenTablesL(!aNotification);
+    iStateMachine.SetCurrentStateL(iStateMachine.StateWritable());
+    }
 
 /* Note: The following methods implement default 
    AcceptRequestL behaviour for all states derived 
@@ -128,10 +128,10 @@ void CState::RollbackTransAndRecoverL(const TBool aNotification)
  @return TAccept EProcessed - finished processing request
 */ 
 TAccept CState::AcceptRequestL(CReqAsyncOpen* aRequest)
-	{
-	aRequest->Complete();
-	return EProcessed;
-	}
+    {
+    aRequest->Complete();
+    return EProcessed;
+    }
 
 /**
  Default behaviour is to defer the request
@@ -142,9 +142,9 @@ TAccept CState::AcceptRequestL(CReqAsyncOpen* aRequest)
  @see CState::DeferRequest 
 */
 TAccept CState::AcceptRequestL(CReqUpdateCnt* aRequest)
-	{
-	return DeferRequest(aRequest);
-	}
+    {
+    return DeferRequest(aRequest);
+    }
 
 /**
  Default behaviour is to defer the request
@@ -155,14 +155,14 @@ TAccept CState::AcceptRequestL(CReqUpdateCnt* aRequest)
  @see CState::DeferRequest 
 */
 TAccept CState::AcceptRequestL(CReqCommitCnt* aRequest)
-	{
-	return DeferRequest(aRequest);
-	}
-	
+    {
+    return DeferRequest(aRequest);
+    }
+    
 
 /** 
- Default behaviour is to allow read access on the database	
- Open is the same as read but with locking - does not change the database	
+ Default behaviour is to allow read access on the database    
+ Open is the same as read but with locking - does not change the database    
 
  @param aRequest Open contact item request object
  @return EProcessed if the request is completed or one of the values returned by 
@@ -170,20 +170,20 @@ TAccept CState::AcceptRequestL(CReqCommitCnt* aRequest)
  @see CState::DeferRequest 
 */
 TAccept CState::AcceptRequestL(CReqOpenCnt* aRequest)
-	{
-	if (iStateMachine.TransactionLockL().LockLX(aRequest->SessionId(), aRequest->CntItemId()) == KErrInUse)
-		{
-		// The contact item has been locked by another session
-		aRequest->SetTimeOutError(KErrInUse);
-		return DeferRequest(aRequest);
-		}
+    {
+    if (iStateMachine.TransactionLockL().LockLX(aRequest->SessionId(), aRequest->CntItemId()) == KErrInUse)
+        {
+        // The contact item has been locked by another session
+        aRequest->SetTimeOutError(KErrInUse);
+        return DeferRequest(aRequest);
+        }
 
-	CContactItem* cntItem = iPersistenceLayer.PersistenceBroker().ReadLC(aRequest->CntItemId(), aRequest->ItemViewDef(), EPlAllInfo, aRequest->SessionId(), ETrue);
-	aRequest->CompleteL(*cntItem);
-	CleanupStack::PopAndDestroy(cntItem); 
-	CleanupStack::Pop(); // we do not destroy it since that would trigger the leave mechanism and unlock the record
-	return EProcessed;
-	}
+    CContactItem* cntItem = iPersistenceLayer.PersistenceBroker().ReadLC(aRequest->CntItemId(), aRequest->ItemViewDef(), EPlAllInfo, aRequest->SessionId(), ETrue);
+    aRequest->CompleteL(*cntItem);
+    CleanupStack::PopAndDestroy(cntItem); 
+    CleanupStack::Pop(); // we do not destroy it since that would trigger the leave mechanism and unlock the record
+    return EProcessed;
+    }
 
 /**
  Default behaviour is to allow read access on the database.
@@ -193,12 +193,12 @@ TAccept CState::AcceptRequestL(CReqOpenCnt* aRequest)
  @return TAccept EProcessed - finished processing request
 */ 
 TAccept CState::AcceptRequestL(CReqReadCnt* aRequest)
-	{
-	CContactItem* cntItem = iPersistenceLayer.PersistenceBroker().ReadLC(aRequest->CntItemId(), aRequest->ItemViewDef(), EPlAllInfo, aRequest->SessionId());
-	aRequest->CompleteL(*cntItem);
-	CleanupStack::PopAndDestroy(cntItem);
-	return EProcessed;		
-	}		
+    {
+    CContactItem* cntItem = iPersistenceLayer.PersistenceBroker().ReadLC(aRequest->CntItemId(), aRequest->ItemViewDef(), EPlAllInfo, aRequest->SessionId());
+    aRequest->CompleteL(*cntItem);
+    CleanupStack::PopAndDestroy(cntItem);
+    return EProcessed;
+    }
 
 /**
  Default behaviour is to defer the request
@@ -209,10 +209,10 @@ TAccept CState::AcceptRequestL(CReqReadCnt* aRequest)
  @see CState::DeferRequest 
 */
 TAccept CState::AcceptRequestL(CReqDeleteCnt* aRequest)
-	{
-	return DeferRequest(aRequest);	
-	}
-	
+    {
+    return DeferRequest(aRequest);
+    }
+    
 /**
  Default behaviour is to close the contact item by removing the locking 
  The lock was added during from an Open Contact Request
@@ -223,18 +223,18 @@ TAccept CState::AcceptRequestL(CReqDeleteCnt* aRequest)
  @return TAccept EProcessed - finished processing request
 */  
 TAccept CState::AcceptRequestL(CReqCloseCnt* aRequest)
-	{
-	if (aRequest->CntItemId() > KNullContactId)
-		{
-		aRequest->Complete(iStateMachine.TransactionLockL().UnLockL(aRequest->SessionId(), aRequest->CntItemId()));	
-		}
-	else
-		{
-		iStateMachine.TransactionLockL().UnlockLastLockedContactL(aRequest->SessionId());
-		aRequest->Complete(KErrNone);
-		}
-	return EProcessed;		
-	}
+    {
+    if (aRequest->CntItemId() > KNullContactId)
+        {
+        aRequest->Complete(iStateMachine.TransactionLockL().UnLockL(aRequest->SessionId(), aRequest->CntItemId()));    
+        }
+    else
+        {
+        iStateMachine.TransactionLockL().UnlockLastLockedContactL(aRequest->SessionId());
+        aRequest->Complete(KErrNone);
+        }
+    return EProcessed;
+    }
 
 /**
  Default behaviour is to always allow a session to unlock any contact 
@@ -244,11 +244,11 @@ TAccept CState::AcceptRequestL(CReqCloseCnt* aRequest)
  @return TAccept EProcessed - finished processing request
 */  
 TAccept CState::AcceptRequestL(CReqInternalSessionUnlock* aRequest)
-	{
-	iStateMachine.TransactionLockL().UnLockAllL(aRequest->SessionId());
-	aRequest->Complete(KErrNone);
-	return EProcessed;		
-	}
+    {
+    iStateMachine.TransactionLockL().UnLockAllL(aRequest->SessionId());
+    aRequest->Complete(KErrNone);
+    return EProcessed;
+    }
 
 /**
  Default behaviour is to defer the request
@@ -259,9 +259,9 @@ TAccept CState::AcceptRequestL(CReqInternalSessionUnlock* aRequest)
  @see CState::DeferRequest 
 */
 TAccept CState::AcceptRequestL(CReqCreateCnt* aRequest)
-	{
-	return DeferRequest(aRequest);	
-	}
+    {
+    return DeferRequest(aRequest);
+    }
 
 /**
  The default behaviour for Cancelling an Asyncronous Open database command
@@ -271,10 +271,10 @@ TAccept CState::AcceptRequestL(CReqCreateCnt* aRequest)
  @return TAccept EProcessed - finished processing request
 */ 
 TAccept CState::AcceptRequestL(CReqCancelAsyncOpen* aRequest)
-	{
-	aRequest->Complete();
-	return EProcessed;	
-	}
+    {
+    aRequest->Complete();
+    return EProcessed;
+    }
 
 
 /**
@@ -286,9 +286,9 @@ TAccept CState::AcceptRequestL(CReqCancelAsyncOpen* aRequest)
  @see CState::DeferRequest 
 */
 TAccept CState::AcceptRequestL(CReqCloseTables* aRequest)
-  	{
- 	return DeferRequest(aRequest);	
-  	}
+    {
+    return DeferRequest(aRequest);
+    }
 
 /**
  Default behaviour is to defer the request
@@ -299,9 +299,9 @@ TAccept CState::AcceptRequestL(CReqCloseTables* aRequest)
  @see CState::DeferRequest 
 */
 TAccept CState::AcceptRequestL(CReqReOpen* aRequest)
-	{
-	return DeferRequest(aRequest);	
-	}
+    {
+    return DeferRequest(aRequest);
+    }
 
 /**
  Default behaviour is to defer the request
@@ -312,9 +312,9 @@ TAccept CState::AcceptRequestL(CReqReOpen* aRequest)
  @see CState::DeferRequest 
 */
 TAccept CState::AcceptRequestL(CReqDbBeginTrans* aRequest)
-	{
-	return DeferRequest(aRequest);	
-	}
+    {
+    return DeferRequest(aRequest);
+    }
 
 /**
  Default behaviour is to defer the request
@@ -325,9 +325,9 @@ TAccept CState::AcceptRequestL(CReqDbBeginTrans* aRequest)
  @see CState::DeferRequest 
 */
 TAccept CState::AcceptRequestL(CReqDbCommitTrans* aRequest)
-	{
-	return DeferRequest(aRequest);	
-	}
+    {
+    return DeferRequest(aRequest);
+    }
 
 /**
  Default behaviour is to defer the request
@@ -338,9 +338,9 @@ TAccept CState::AcceptRequestL(CReqDbCommitTrans* aRequest)
  @see CState::DeferRequest 
  */
 TAccept CState::AcceptRequestL(CReqDbRollbackTrans* aRequest)
-	{
-	return DeferRequest(aRequest);	
-	}
+    {
+    return DeferRequest(aRequest);
+    }
 
 /**
  Default behaviour is to defer the request
@@ -351,9 +351,9 @@ TAccept CState::AcceptRequestL(CReqDbRollbackTrans* aRequest)
  @see CState::DeferRequest 
 */
 TAccept CState::AcceptRequestL(CReqBackupRestoreBegin* aRequest)
-	{
-	return DeferRequest(aRequest);	
-	}
+    {
+    return DeferRequest(aRequest);
+    }
 
 /**
  Default behaviour is to complete the request
@@ -362,12 +362,12 @@ TAccept CState::AcceptRequestL(CReqBackupRestoreBegin* aRequest)
  @return TAccept EProcessed - finished processing request
 */
 TAccept CState::AcceptRequestL(CReqBackupRestoreEnd* aRequest)
-   	{
-  	// In most cases no backup/restore will be in progress so by default
-  	// complete this request.
-  	aRequest->Complete();
-  	return EProcessed;
-  	}
+    {
+    // In most cases no backup/restore will be in progress so by default
+    // complete this request.
+    aRequest->Complete();
+    return EProcessed;
+    }
   
 /**
  Default behaviour is set an internal low disk flag to true
@@ -376,11 +376,11 @@ TAccept CState::AcceptRequestL(CReqBackupRestoreEnd* aRequest)
  @return TAccept EProcessed - finished processing request
 */  
 TAccept CState::AcceptRequestL(CReqDiskSpaceLow* aRequest)
-  	{
-  	iStateMachine.SetLowDisk(ETrue);
-  	aRequest->Complete();
-  	return EProcessed;
-  	}
+    {
+    iStateMachine.SetLowDisk(ETrue);
+    aRequest->Complete();
+    return EProcessed;
+    }
 
 /**
  Default behaviour is to set an internal low disk flag to false
@@ -389,11 +389,11 @@ TAccept CState::AcceptRequestL(CReqDiskSpaceLow* aRequest)
  @return TAccept EProcessed - finished processing request
 */
 TAccept CState::AcceptRequestL(CReqDiskSpaceNormal* aRequest)
-  	{
-  	iStateMachine.SetLowDisk(EFalse);
-  	aRequest->Complete();
-  	return EProcessed;
-  	}
+    {
+    iStateMachine.SetLowDisk(EFalse);
+    aRequest->Complete();
+    return EProcessed;
+    }
 
 /**
  Default behaviour is set an internal async activity flag to true
@@ -402,11 +402,11 @@ TAccept CState::AcceptRequestL(CReqDiskSpaceNormal* aRequest)
  @return TAccept EProcessed - finished processing request
 */  
 TAccept CState::AcceptRequestL(CReqAsyncActivity* aRequest)
-  	{
-  	iStateMachine.SetAsyncActivity(ETrue);
-  	aRequest->Complete();
-  	return EProcessed;
-  	}
+    {
+    iStateMachine.SetAsyncActivity(ETrue);
+    aRequest->Complete();
+    return EProcessed;
+    }
 
 /**
  Default behaviour is to set an internal async activity flag to false
@@ -415,11 +415,11 @@ TAccept CState::AcceptRequestL(CReqAsyncActivity* aRequest)
  @return TAccept EProcessed - finished processing request
 */
 TAccept CState::AcceptRequestL(CReqNoAsyncActivity* aRequest)
-  	{
-  	iStateMachine.SetAsyncActivity(EFalse);
-  	aRequest->Complete();
-  	return EProcessed;
-  	}
+    {
+    iStateMachine.SetAsyncActivity(EFalse);
+    aRequest->Complete();
+    return EProcessed;
+    }
 
 /**
  Default behaviour is to defer the request
@@ -430,9 +430,9 @@ TAccept CState::AcceptRequestL(CReqNoAsyncActivity* aRequest)
  @see CState::DeferRequest 
 */
 TAccept CState::AcceptRequestL(CReqSetSpeedDial* aRequest)
-	{
-	return DeferRequest(aRequest);	
-	}
+    {
+    return DeferRequest(aRequest);    
+    }
 
 /**
  Default behaviour is to defer the request
@@ -443,15 +443,15 @@ TAccept CState::AcceptRequestL(CReqSetSpeedDial* aRequest)
  @see CState::DeferRequest 
 */
 TAccept CState::AcceptRequestL(CReqSetOwnCard* aRequest)
-	{
-	return DeferRequest(aRequest);	
-	}
+    {
+    return DeferRequest(aRequest);    
+    }
 
 
 /**
  Don't do anything with the event here. Simply propagate the event to the dbmanager
  Any state that wishes to handle the event implements it's own overwritten 
- HandleDatabaseEventV2L method. The only state
+ HandleDatabaseEventL method. The only state
  that actually implements this is the Transaction State.
  
  @param aEvent Database event generated in the Persistence Layer
@@ -476,12 +476,12 @@ void CState::HandleDatabaseEventV2L(TContactDbObserverEventV2 aEvent)
  @see CState::DeferRequest 
 */
 TAccept CState::DeferWithTimeOutError(CCntRequest* aRequest)
-	{
-	// use the time out error code specified with the current state
-	aRequest->SetTimeOutError(TimeOutErrorCode());
+    {
+    // use the time out error code specified with the current state
+    aRequest->SetTimeOutError(TimeOutErrorCode());
 
     return DeferRequest(aRequest);
-	}
+    }
 
 /**
  Determines if an un-processed request should be completed with timeout error or if it 
@@ -492,29 +492,29 @@ TAccept CState::DeferWithTimeOutError(CCntRequest* aRequest)
                      next opportunity.
          EProcessed - if the request's timer has expired and is completed with timeout 
                       error.
-*/	
+*/    
 TAccept CState::DeferRequest(CCntRequest* aRequest)
     {
-	// request still cannot be processed, check if the timer on the request
-	// has expired yet
-	if (aRequest->TimeOut() <= 0)
+    // request still cannot be processed, check if the timer on the request
+    // has expired yet
+    if (aRequest->TimeOut() <= 0)
         {
         // timer expired, request should be completed with timeout error
-    	aRequest->Complete(aRequest->TimeOutError());
-    	return EProcessed;
+        aRequest->Complete(aRequest->TimeOutError());
+        return EProcessed;
         }
 
     // timer still valid, as request cannot be processed now, signal to re-try again later
-    return EDeferred;	
+    return EDeferred;
     }
 
 /** 
  Returns the default timeout - KErrNotReady
 */
-TInt CState::TimeOutErrorCode()  	
-	{
-	return KErrNotReady;
-	}
+TInt CState::TimeOutErrorCode()
+    {
+    return KErrNotReady;
+    }
 
 
 /** 
@@ -522,10 +522,10 @@ TInt CState::TimeOutErrorCode()
  @see CState constructor
 */
 CStateClosed* CStateClosed::NewL(CCntStateMachine& aStateMachine, CPersistenceLayer& aPersistenceLayer)
-	{
-	CStateClosed* stateClosed = new (ELeave) CStateClosed(aStateMachine, aPersistenceLayer);
-	return stateClosed;
-	}
+    {
+    CStateClosed* stateClosed = new (ELeave) CStateClosed(aStateMachine, aPersistenceLayer);
+    return stateClosed;
+    }
 
 /** 
  CStateClosed Class constructor
@@ -533,7 +533,7 @@ CStateClosed* CStateClosed::NewL(CCntStateMachine& aStateMachine, CPersistenceLa
 */
 CStateClosed::CStateClosed(CCntStateMachine& aStateMachine, CPersistenceLayer& aPersistenceLayer)
 :CState(aStateMachine, aPersistenceLayer)
-	{}
+    {}
 
 /** 
  CStateClosed Class destructor
@@ -551,13 +551,13 @@ CStateClosed::~CStateClosed() {}
  
  @param aRequest Open database request object
  @return TAccept EProcessed if finished processing request
- 		 	     EDeferred if the request was not processed 
-*/		
+                 EDeferred if the request was not processed 
+*/        
 TAccept CStateClosed::AcceptRequestL(CReqAsyncOpen* aRequest)
-	{
-	iStateMachine.SetCurrentStateL(iStateMachine.StateOpening());
-	return iStateMachine.CurrentState().AcceptRequestL(aRequest);
-	}
+    {
+    iStateMachine.SetCurrentStateL(iStateMachine.StateOpening());
+    return iStateMachine.CurrentState().AcceptRequestL(aRequest);
+    }
 
 /**
  We can only process re-open tables requests in the CStateTablesClosed
@@ -572,9 +572,9 @@ TAccept CStateClosed::AcceptRequestL(CReqAsyncOpen* aRequest)
 */
 
 TAccept CStateClosed::AcceptRequestL(CReqReOpen* aRequest)
-	{
-	return DeferWithTimeOutError(aRequest);
-	}
+    {
+    return DeferWithTimeOutError(aRequest);
+    }
 
 
 /** 
@@ -587,9 +587,9 @@ TAccept CStateClosed::AcceptRequestL(CReqReOpen* aRequest)
  @see CState::DeferWithTimeOutError
 */
 TAccept CStateClosed::AcceptRequestL(CReqReadCnt* aRequest)
-	{
-	return DeferWithTimeOutError(aRequest);
-	}
+    {
+    return DeferWithTimeOutError(aRequest);
+    }
 
 /**
  Defer Update requests with the default error for CStateClosed.
@@ -602,9 +602,9 @@ TAccept CStateClosed::AcceptRequestL(CReqReadCnt* aRequest)
  @see CState::DeferWithTimeOutError
 */ 
 TAccept CStateClosed::AcceptRequestL(CReqUpdateCnt* aRequest)
-	{
-	return DeferWithTimeOutError(aRequest);
-	}
+    {
+    return DeferWithTimeOutError(aRequest);
+    }
 
 /** 
  Defer Commit requests
@@ -617,9 +617,9 @@ TAccept CStateClosed::AcceptRequestL(CReqUpdateCnt* aRequest)
  @see CState::DeferWithTimeOutError
 */
 TAccept CStateClosed::AcceptRequestL(CReqCommitCnt* aRequest)
-	{
-	return DeferWithTimeOutError(aRequest);
-	}
+    {
+    return DeferWithTimeOutError(aRequest);
+    }
 
 /** 
  Defer Delete requests
@@ -632,9 +632,9 @@ TAccept CStateClosed::AcceptRequestL(CReqCommitCnt* aRequest)
  @see CState::DeferWithTimeOutError
 */
 TAccept CStateClosed::AcceptRequestL(CReqDeleteCnt* aRequest)
-	{
-	return DeferWithTimeOutError(aRequest);
-	}
+    {
+    return DeferWithTimeOutError(aRequest);
+    }
 
 /** 
  Defer Create requests
@@ -647,15 +647,15 @@ TAccept CStateClosed::AcceptRequestL(CReqDeleteCnt* aRequest)
  @see CState::DeferWithTimeOutError
 */
 TAccept CStateClosed::AcceptRequestL(CReqCreateCnt* aRequest)
-	{
-	return DeferWithTimeOutError(aRequest);
-	}
+    {
+    return DeferWithTimeOutError(aRequest);
+    }
 
 /** 
  Defer Open requests
  The default error for CStateClosed has been taken from the original 
  contacts model
- The default behaviour of the parent class CStateis to process an open request, the Closed State	
+ The default behaviour of the parent class CStateis to process an open request, the Closed State    
  defers this request
 
  @param aRequest Commit contact item request object  
@@ -664,24 +664,24 @@ TAccept CStateClosed::AcceptRequestL(CReqCreateCnt* aRequest)
  @see CState::DeferWithTimeOutError
 */
 TAccept CStateClosed::AcceptRequestL(CReqOpenCnt* aRequest)
-	{
-	return DeferWithTimeOutError(aRequest);
-	}
+    {
+    return DeferWithTimeOutError(aRequest);
+    }
 
 /**
  Defer the Close tables request
  The tables are closed but so is the file. 
  To close the tables the file must be open
- 	
+     
  @param aRequest Close database tables request object  
  @return EDeferred if the request is not processed, EProcessed if the request is
          completed with timeout error.
  @see CState::DeferWithTimeOutError
 */
 TAccept CStateClosed::AcceptRequestL(CReqCloseTables* aRequest)
-  	{
-  	return DeferWithTimeOutError(aRequest);
-  	}
+    {
+    return DeferWithTimeOutError(aRequest);
+    }
   
 /**
  Defer begin transaction requests  
@@ -694,9 +694,9 @@ TAccept CStateClosed::AcceptRequestL(CReqCloseTables* aRequest)
  @see CState::DeferWithTimeOutError
 */
 TAccept CStateClosed::AcceptRequestL(CReqDbBeginTrans* aRequest)
-	{
-	return DeferWithTimeOutError(aRequest);
-	}
+    {
+    return DeferWithTimeOutError(aRequest);
+    }
 
 /**
  Defer commit transaction requests  
@@ -709,9 +709,9 @@ TAccept CStateClosed::AcceptRequestL(CReqDbBeginTrans* aRequest)
  @see CState::DeferWithTimeOutError
 */
 TAccept CStateClosed::AcceptRequestL(CReqDbCommitTrans* aRequest)
-	{
-	return DeferWithTimeOutError(aRequest);
-	}
+    {
+    return DeferWithTimeOutError(aRequest);
+    }
 
 /**
  Defer rollback transaction requests  
@@ -724,9 +724,9 @@ TAccept CStateClosed::AcceptRequestL(CReqDbCommitTrans* aRequest)
  @see CState::DeferWithTimeOutError
 */
 TAccept CStateClosed::AcceptRequestL(CReqDbRollbackTrans*  aRequest)
-	{
-	return DeferWithTimeOutError(aRequest);
-	}
+    {
+    return DeferWithTimeOutError(aRequest);
+    }
 
 /**
  Defer set speed dial requests  
@@ -739,9 +739,9 @@ TAccept CStateClosed::AcceptRequestL(CReqDbRollbackTrans*  aRequest)
  @see CState::DeferWithTimeOutError
 */
 TAccept CStateClosed::AcceptRequestL(CReqSetSpeedDial* aRequest)
-	{
-	return DeferWithTimeOutError(aRequest);
-	}
+    {
+    return DeferWithTimeOutError(aRequest);
+    }
 
 /**
  Defer set own card requests  
@@ -752,11 +752,11 @@ TAccept CStateClosed::AcceptRequestL(CReqSetSpeedDial* aRequest)
  @return EDeferred if the request is not processed, EProcessed if the request is
          completed with timeout error.
  @see CState::DeferWithTimeOutError
-*/	
+*/    
 TAccept CStateClosed::AcceptRequestL(CReqSetOwnCard* aRequest)
-	{
-	return DeferWithTimeOutError(aRequest);
-	}
+    {
+    return DeferWithTimeOutError(aRequest);
+    }
 
 
 /**
@@ -764,42 +764,42 @@ TAccept CStateClosed::AcceptRequestL(CReqSetOwnCard* aRequest)
 
  @param aRequest backup/restore begin notification request object  
  @return TAccept EProcessed
-*/	
+*/    
 TAccept CStateClosed::AcceptRequestL(CReqBackupRestoreBegin* aRequest)
-  	{
-  	// Backup/restore can take place from this state without doing anything so
-  	// simply complete request.
-  	aRequest->Complete();
-  	return EProcessed;
-  	}
+    {
+    // Backup/restore can take place from this state without doing anything so
+    // simply complete request.
+    aRequest->Complete();
+    return EProcessed;
+    }
 
 
 /** 
  CStateTablesClosed Class NewL factory constructor
  @see CState constructor
-*/  	
+*/      
 CStateTablesClosed* CStateTablesClosed::NewL(CCntStateMachine& aStateMachine, CPersistenceLayer& aPersistenceLayer)
-  	{
-  	CStateTablesClosed* stateTablesClosed = new (ELeave) CStateTablesClosed(aStateMachine, aPersistenceLayer);
-  	return stateTablesClosed;
-  	}
+    {
+    CStateTablesClosed* stateTablesClosed = new (ELeave) CStateTablesClosed(aStateMachine, aPersistenceLayer);
+    return stateTablesClosed;
+    }
   
 /** 
  CStateTablesClosed Class destructor
  @see CState Destructor
-*/  	
+*/      
 CStateTablesClosed::~CStateTablesClosed()
-  	{
-  	}
+    {
+    }
   
 /** 
  CStateTablesClosed Class constructor
  @see CState constructor
-*/  	
+*/      
 CStateTablesClosed::CStateTablesClosed(CCntStateMachine& aStateMachine, CPersistenceLayer& aPersistenceLayer) 
   :CStateClosed(aStateMachine, aPersistenceLayer)
-  	{
-  	}
+    {
+    }
   
   
 /**
@@ -810,14 +810,14 @@ CStateTablesClosed::CStateTablesClosed(CCntStateMachine& aStateMachine, CPersist
   @return TAccept EProcessed - the request was processed 
 */
 TAccept CStateTablesClosed::AcceptRequestL(CReqReOpen* aRequest)
-  	{
-  	iPersistenceLayer.ContactsFileL().OpenTablesL(ETrue);
-  	// We can only ever come into this state from the writable state
-  	// as the database must have been opened
-  	iStateMachine.SetCurrentStateL(iStateMachine.StateWritable());
-  	aRequest->Complete();
-  	return EProcessed;		
-  	}
+    {
+    iPersistenceLayer.ContactsFileL().OpenTablesL(ETrue);
+    // We can only ever come into this state from the writable state
+    // as the database must have been opened
+    iStateMachine.SetCurrentStateL(iStateMachine.StateWritable());
+    aRequest->Complete();
+    return EProcessed;
+    }
   
 /**
   Accept Open database requests  
@@ -826,29 +826,29 @@ TAccept CStateTablesClosed::AcceptRequestL(CReqReOpen* aRequest)
     
   @param aRequest async open request object  
   @return TAccept EProcessed if finished processing request
-*/	
+*/
 TAccept CStateTablesClosed::AcceptRequestL(CReqAsyncOpen* aRequest)
-  	{	
-  	iPersistenceLayer.ContactsFileL().OpenTablesL(ETrue);
-  	// We can only ever come into this state from the writable state
-  	// as the database must have been opened
-  	iStateMachine.SetCurrentStateL(iStateMachine.StateWritable());
-  	aRequest->Complete();
-  	return EProcessed;
-  	}
+    {
+    iPersistenceLayer.ContactsFileL().OpenTablesL(ETrue);
+    // We can only ever come into this state from the writable state
+    // as the database must have been opened
+    iStateMachine.SetCurrentStateL(iStateMachine.StateWritable());
+    aRequest->Complete();
+    return EProcessed;
+    }
 
 /** 
  CStateOpening Class NewL factory constructor
  @see CState constructor
 */ 
 CStateOpening* CStateOpening::NewL(CCntStateMachine& aStateMachine, CPersistenceLayer& aPersistenceLayer)
-	{
-	CStateOpening* stateOpening = new (ELeave) CStateOpening(aStateMachine, aPersistenceLayer);
-	CleanupStack::PushL(stateOpening);
-	stateOpening->ConstructL();
-	CleanupStack::Pop(stateOpening);
-	return stateOpening;
-	}
+    {
+    CStateOpening* stateOpening = new (ELeave) CStateOpening(aStateMachine, aPersistenceLayer);
+    CleanupStack::PushL(stateOpening);
+    stateOpening->ConstructL();
+    CleanupStack::Pop(stateOpening);
+    return stateOpening;
+    }
 
 /** 
  CStateOpening ConstructL, gets and holds an instance of the persisitnce layer contact file interface
@@ -856,29 +856,29 @@ CStateOpening* CStateOpening::NewL(CCntStateMachine& aStateMachine, CPersistence
  @see CState constructor
 */
 void CStateOpening::ConstructL()
-	{
-	iCntFile = &(iPersistenceLayer.ContactsFileL());
-	iActive = CActiveLoop::NewL();
-	}
+    {
+    iCntFile = &(iPersistenceLayer.ContactsFileL());
+    iActive = CActiveLoop::NewL();
+    }
 /** 
  CStateOpening constructor
  @see CState constructor
 */
 CStateOpening::CStateOpening(CCntStateMachine& aStateMachine, CPersistenceLayer& aPersistenceLayer)
 :CState(aStateMachine, aPersistenceLayer)
-	{
-	}
+    {
+    }
 
 /** 
  CStateOpening Class destructor
  @see CState destructor
-*/	
+*/    
 CStateOpening::~CStateOpening()
-	{
-	delete iActive;
-	delete iFileName;
-	iOpenReqsStore.ResetAndDestroy();
-	}
+    {
+    delete iActive;
+    delete iFileName;
+    iOpenReqsStore.ResetAndDestroy();
+    }
 
 /**
  Accept Open database requests  
@@ -889,10 +889,10 @@ CStateOpening::~CStateOpening()
  @see CStateOpening::OpenDatabaseFileL
 */
 TAccept CStateOpening::AcceptRequestL(CReqAsyncOpen* aRequest)
-	{
-	SetFileNameL(aRequest->FileName()); 
-	return OpenDatabaseFileL(aRequest);	
-	}
+    {
+    SetFileNameL(aRequest->FileName()); 
+    return OpenDatabaseFileL(aRequest);
+    }
 
 /**
  Private member function that starts the database opening process.  
@@ -903,25 +903,25 @@ TAccept CStateOpening::AcceptRequestL(CReqAsyncOpen* aRequest)
          been transferred
 */
 TAccept CStateOpening::OpenDatabaseFileL(CCntRequest* aRequest, TBool aNotify)
-	{
-	// Add this request to the store where it will be completed on completion of 
-	// the open operaion
-	//
-	// Note that after the request is successfully transferred to the Request 
-	// Store, no leave can occur until the caller is notified that ownership
-	// of the request has been transferred.
-	iOpenReqsStore.AppendL(aRequest);
+    {
+    // Add this request to the store where it will be completed on completion of 
+    // the open operaion
+    //
+    // Note that after the request is successfully transferred to the Request 
+    // Store, no leave can occur until the caller is notified that ownership
+    // of the request has been transferred.
+    iOpenReqsStore.AppendL(aRequest);
 
-	iNotify = aNotify;
+    iNotify = aNotify;
 
-	// If we are not already processing an open request, start opening the file.
-	if (!iActive->IsActive())
-		{
-		InitialStep();
-		}
+    // If we are not already processing an open request, start opening the file.
+    if (!iActive->IsActive())
+        {
+        InitialStep();
+        }
 
-	return EOwnershipPassed;
-	}
+    return EOwnershipPassed;
+    }
 
 /**
  Accept the Reopen tables request as the tables are being opened anyway
@@ -931,10 +931,10 @@ TAccept CStateOpening::OpenDatabaseFileL(CCntRequest* aRequest, TBool aNotify)
  @see CStateOpening::OpenDatabaseFileL
 */
 TAccept CStateOpening::AcceptRequestL(CReqReOpen* aRequest)
-	{
-	// Open the database and notify (ETrue) all session of the recovery 
-	return OpenDatabaseFileL(aRequest, ETrue);	
-	}
+    {
+    // Open the database and notify (ETrue) all session of the recovery 
+    return OpenDatabaseFileL(aRequest, ETrue);
+    }
 
 /** 
  Explicit cancel of an asyncronous Open Database request
@@ -943,31 +943,31 @@ TAccept CStateOpening::AcceptRequestL(CReqReOpen* aRequest)
  @return TAccept EProcessed 
 */
 TAccept CStateOpening::AcceptRequestL(CReqCancelAsyncOpen* aRequest)
-	{
-	TInt max = iOpenReqsStore.Count();
-	for (TInt ii = 0; ii < max; ++ii)
-		{
-		if (aRequest->SessionId() == iOpenReqsStore[ii]->SessionId())
-			{
-			// If we only have one concurrent open request, cancel the open
-			// operation
-			if (max == 1)
-				{
-				iCntFile->Close();	
-				iActive->Cancel();
-				iStateMachine.SetCurrentStateL(iStateMachine.StateClosed());
-				}
-			
-			iOpenReqsStore[ii]->Complete(KErrCancel);
-			aRequest->Complete();
-			delete iOpenReqsStore[ii];
-			iOpenReqsStore.Remove(ii);
-			return EProcessed;			
-			}
-		}
-	aRequest->Complete(KErrNotFound);
-	return EProcessed;		
-	}
+    {
+    TInt max = iOpenReqsStore.Count();
+    for (TInt ii = 0; ii < max; ++ii)
+        {
+        if (aRequest->SessionId() == iOpenReqsStore[ii]->SessionId())
+            {
+            // If we only have one concurrent open request, cancel the open
+            // operation
+            if (max == 1)
+                {
+                iCntFile->Close();
+                iActive->Cancel();
+                iStateMachine.SetCurrentStateL(iStateMachine.StateClosed());
+                }
+            
+            iOpenReqsStore[ii]->Complete(KErrCancel);
+            aRequest->Complete();
+            delete iOpenReqsStore[ii];
+            iOpenReqsStore.Remove(ii);
+            return EProcessed;
+            }
+        }
+    aRequest->Complete(KErrNotFound);
+    return EProcessed;
+    }
 
 /**
  Start Opening the database using the CActiveLoop class. Opening a file
@@ -976,7 +976,7 @@ TAccept CStateOpening::AcceptRequestL(CReqCancelAsyncOpen* aRequest)
 */
 void CStateOpening::InitialStep()
 	{
-	iActive->Register(*this, ETrue);
+	iActive->Register( *this );
 	}
 
 /** 
@@ -1036,28 +1036,28 @@ TBool CStateOpening::DoStepL()
  @param aError The error code used to complete the request.
  */
 void CStateOpening::DoCompletion(TInt aError)
-	{
-	TInt max = iOpenReqsStore.Count();
-	for (TInt ii = 0; ii < max; ++ii)
-		{
-		iOpenReqsStore[ii]->Complete(aError);
-		}
-	iOpenReqsStore.ResetAndDestroy();
-	}
+    {
+    TInt max = iOpenReqsStore.Count();
+    for (TInt ii = 0; ii < max; ++ii)
+        {
+        iOpenReqsStore[ii]->Complete(aError);
+        }
+    iOpenReqsStore.ResetAndDestroy();
+    }
 
 /**
- Completes all open requests with an error code	
+ Completes all open requests with an error code    
 
  @param aError The error code used to complete the request. 
 */ 
 void CStateOpening::DoError(TInt aError)
-	{
-	
-	DEBUG_PRINT2(__VERBOSE_DEBUG__,_L("[CNTMODEL] ------------- Database Open Error %d -------------"), aError);
+    {
 
-	DoCompletion(aError);
-	TRAP_IGNORE(iStateMachine.SetCurrentStateL(iStateMachine.StateClosed() ) );
-	}
+    DEBUG_PRINT2(__VERBOSE_DEBUG__,_L("[CNTMODEL] ------------- Database Open Error %d -------------"), aError);
+
+    DoCompletion(aError);
+    TRAP_IGNORE(iStateMachine.SetCurrentStateL(iStateMachine.StateClosed() ) );
+    }
 
 /**
  Sets the name of the file that is being opened. The name is held by
@@ -1067,12 +1067,12 @@ void CStateOpening::DoError(TInt aError)
  @param aFileName The name of the file that is being opened
 */ 
 void CStateOpening::SetFileNameL(const TDes& aFileName)
-	{
-	HBufC* tmpFileName  = HBufC::NewL(aFileName.Length());
-	*tmpFileName = aFileName;
-	delete iFileName;
-	iFileName = tmpFileName;
-	}
+    {
+    HBufC* tmpFileName  = HBufC::NewL(aFileName.Length());
+    *tmpFileName = aFileName;
+    delete iFileName;
+    iFileName = tmpFileName;
+    }
 
 /**
  Once a Backup or Restore has completed we can re-open the database.
@@ -1082,9 +1082,9 @@ void CStateOpening::SetFileNameL(const TDes& aFileName)
  @see CStateOpening::OpenDatabaseFileL
 */ 
 TAccept CStateOpening::AcceptRequestL(CReqBackupRestoreEnd* aRequest) 
-	{
-	return OpenDatabaseFileL(aRequest);
-	}
+    {
+    return OpenDatabaseFileL(aRequest);
+    }
 
 /** 
  Overridden read-only operations from base class: can't read from the database
@@ -1096,29 +1096,29 @@ TAccept CStateOpening::AcceptRequestL(CReqBackupRestoreEnd* aRequest)
  @see CState::DeferRequest 
 */
 TAccept CStateOpening::AcceptRequestL(CReqReadCnt* aRequest)
-	{
-	return DeferRequest(aRequest); // Uses the requests default timeout error
-	}
+    {
+    return DeferRequest(aRequest); // Uses the requests default timeout error
+    }
 
-// @see CStateOpening::AcceptRequestL(CReqReadCnt* )	
+// @see CStateOpening::AcceptRequestL(CReqReadCnt* )
 TAccept CStateOpening::AcceptRequestL(CReqOpenCnt* aRequest)
-	{
-	return DeferRequest(aRequest);
-	}
+    {
+    return DeferRequest(aRequest);
+    }
 
 
 
-///////////////////// CStateWritable Class implementation //////////////////////
+// CStateWritable Class implementation //
 
 /** 
  CStateWritable Class NewL factory constructor
  @see CState constructor
 */ 
 CStateWritable* CStateWritable::NewL(CCntStateMachine& aStateMachine, CPersistenceLayer& aPersistenceLayer)
-	{
-	CStateWritable* stateWritable = new (ELeave) CStateWritable(aStateMachine, aPersistenceLayer);
-	return stateWritable;
-	}
+    {
+    CStateWritable* stateWritable = new (ELeave) CStateWritable(aStateMachine, aPersistenceLayer);
+    return stateWritable;
+    }
 
 /** 
  CStateWritable Class constructor
@@ -1126,66 +1126,65 @@ CStateWritable* CStateWritable::NewL(CCntStateMachine& aStateMachine, CPersisten
 */ 
 CStateWritable::CStateWritable(CCntStateMachine& aStateMachine, CPersistenceLayer& aPersistenceLayer)
 :CState(aStateMachine, aPersistenceLayer)
-	{
-	}
+    {
+    }
 
 /** 
  CStateWritable Class destructor
  @see CState destructor
 */ 
 CStateWritable::~CStateWritable()
-	{
-	}
+    {
+    }
 
 
 // Derived AcceptRequestL methods - Vistor Pattern
-	
+
 /**
  Update a contact item in the database
 
  @param aRequest Update contact item request object  
  @return TAccept EProcessed if finished processing request or one of the 
          values returned by DeferWithTimeOutError
- @see CState::DeferWithTimeOutError 		 	     
-*/ 	
-TAccept CStateWritable::AcceptRequestL(CReqUpdateCnt* aRequest)
-	{
-  	if (iStateMachine.LowDisk())
-  		{
-  		aRequest->Complete(KErrDiskFull);
-  		return EProcessed;
-  		}
-  	// Check if the contact has been locked 
-  	if (iStateMachine.TransactionLockL().IsLocked(aRequest->Item().Id()))
-  		{
-  		// If the request can not be procesed after the timeout period, it should 
-  		// complete with KErrInUse to assure binary compatibility with the original model
-		return DeferWithTimeOutError(aRequest);
-  		}
-  
-  	TRAPD(updateErr,
-  		{
-		TransactionStartLC(aRequest->SessionId());
-		
-		iPersistenceLayer.PersistenceBroker().SetConnectionId(aRequest->SessionId());
-		iPersistenceLayer.PersistenceBroker().UpdateL(aRequest->Item(), aRequest->SessionId());
-	
-		TransactionCommitLP();
-  		});
-	if (updateErr == KSqlErrGeneral)
-		{
-		// Write operation failed, probably due to view read activity
-		return DeferWithTimeOutError(aRequest);
-		}
-	else if (updateErr != KErrNone)
-		{
-		// Unknown error, propagate the leave to the client
-		User::Leave(updateErr);
-		}
+ @see CState::DeferWithTimeOutError
+*/
+TAccept CStateWritable::AcceptRequestL( CReqUpdateCnt* aRequest )
+    {
+    if ( iStateMachine.LowDisk( ) )
+        {
+        aRequest->Complete( KErrDiskFull );
+        return EProcessed;
+        }
+    // Check if the contact has been locked 
+    if (iStateMachine.TransactionLockL( ).IsLocked( aRequest->Item( ).Id( ) ) )
+        {
+        // If the request can not be procesed after the timeout period, it should 
+        // complete with KErrInUse to assure binary compatibility with the original model
+        return DeferWithTimeOutError( aRequest );
+        }
 
-	aRequest->Complete();
-	return EProcessed;		
-	}		
+    TRAPD( updateErr,  // codescanner::trapcleanup:TransactionStartLC and TransactionCommitLP were used in couples.
+        {
+        TransactionStartLC(aRequest->SessionId());
+        iPersistenceLayer.PersistenceBroker( ).SetConnectionId( aRequest->SessionId( ) );
+        iPersistenceLayer.PersistenceBroker( ).UpdateL( aRequest->Item( ), aRequest->SessionId( ) );
+        TransactionCommitLP( );
+        });
+
+    if ( updateErr == KSqlErrGeneral )
+        {
+        // Write operation failed, probably due to view read activity
+        return DeferWithTimeOutError( aRequest );
+        }
+    else if ( updateErr != KErrNone )
+        {
+        // Unknown error, propagate the leave to the client
+        User::Leave( updateErr );
+        }
+
+    aRequest->Complete( );
+    return EProcessed;
+    }
 
 /**
  Commit an opened contact item to the database  
@@ -1195,45 +1194,45 @@ TAccept CStateWritable::AcceptRequestL(CReqUpdateCnt* aRequest)
  @param aRequest Commit contact item request object  
  @return TAccept EProcessed if finished processing request or one of the 
          values returned by DeferWithTimeOutError
- @see CState::DeferWithTimeOutError 		 	     
+ @see CState::DeferWithTimeOutError
 */
-TAccept CStateWritable::AcceptRequestL(CReqCommitCnt* aRequest)
-	{
-  	if (iStateMachine.LowDisk())
-  		{
-  		aRequest->Complete(KErrDiskFull);
-  		return EProcessed;
-  		}
+TAccept CStateWritable::AcceptRequestL( CReqCommitCnt* aRequest )
+    {
+    if ( iStateMachine.LowDisk( ) )
+        {
+        aRequest->Complete( KErrDiskFull );
+        return EProcessed;
+        }
 
-	// Check if the contact has been locked by this session
-  	if (iStateMachine.TransactionLockL().IsLocked(aRequest->SessionId(), aRequest->Item().Id()))
-  		{
-  		// If the request can not be procesed after the timeout period, it should 
-  		// complete with KErrInUse to assure binary compatibility with the original model
-		return DeferWithTimeOutError(aRequest);
-  		}
-	
-  	TRAPD(commitErr,
-  		{
-		TransactionStartLC(aRequest->SessionId());
-	    iPersistenceLayer.PersistenceBroker().SetConnectionId(aRequest->SessionId());
-	    iPersistenceLayer.PersistenceBroker().UpdateL(aRequest->Item(), aRequest->SessionId());
-		User::LeaveIfError(iStateMachine.TransactionLockL().UnLockL(aRequest->SessionId(), aRequest->Item().Id()));
-		TransactionCommitLP();
-		});
-  	if (commitErr == KSqlErrGeneral)
-  		{
-  		// Can't commit contact, probably due to idle sorter activity
-  		return DeferWithTimeOutError(aRequest);
-  		}
-  	else
-  		{
-  		User::LeaveIfError(commitErr);
-  		}
-  	
-	aRequest->Complete();
-	return EProcessed;		
-	}
+    // Check if the contact has been locked by this session
+    if ( iStateMachine.TransactionLockL( ).IsLocked( aRequest->SessionId( ), aRequest->Item( ).Id( ) ) )
+        {
+        // If the request can not be procesed after the timeout period, it should 
+        // complete with KErrInUse to assure binary compatibility with the original model
+        return DeferWithTimeOutError( aRequest );
+        }
+    
+    TRAPD( commitErr,  // codescanner::trapcleanup:TransactionStartLC and TransactionCommitLP were used in couples.
+        {
+        TransactionStartLC(aRequest->SessionId());
+        iPersistenceLayer.PersistenceBroker( ).SetConnectionId( aRequest->SessionId( ) );
+        iPersistenceLayer.PersistenceBroker( ).UpdateL(aRequest->Item( ), aRequest->SessionId( ) );
+        User::LeaveIfError(iStateMachine.TransactionLockL( ).UnLockL(aRequest->SessionId( ), aRequest->Item( ).Id( ) ) );
+        TransactionCommitLP();
+        });
+    if ( commitErr == KSqlErrGeneral )
+        {
+        // Can't commit contact, probably due to idle sorter activity
+        return DeferWithTimeOutError( aRequest );
+        }
+    else
+        {
+        User::LeaveIfError( commitErr );
+        }
+    
+    aRequest->Complete( );
+    return EProcessed;
+    }
 
 
 /**
@@ -1313,53 +1312,52 @@ TAccept CStateWritable::AcceptRequestL(CReqDeleteCnt* aRequest)
  @param aRequest Create contact item request object  
  @return TAccept EProcessed 
 */
-TAccept CStateWritable::AcceptRequestL(CReqCreateCnt* aRequest)
-	{
-  	if (iStateMachine.LowDisk())
-  		{
-  		aRequest->Complete(KErrDiskFull);
-  		return EProcessed;
-  		}
-	
-  	TContactItemId cntID(KNullContactId);
-  	TRAPD(createErr,
-  		{
-	  	TransactionStartLC(aRequest->SessionId());
-	    
-		iPersistenceLayer.PersistenceBroker().SetConnectionId(aRequest->SessionId());
-	    cntID = iPersistenceLayer.PersistenceBroker().CreateL(aRequest->Item(), aRequest->SessionId());
-		
-	    TransactionCommitLP();
-  		});
-	if (createErr == KSqlErrGeneral)
-		{
-		// Write operation failed, probably due to view read activity
-		return DeferWithTimeOutError(aRequest);
-		}
-	else if (createErr != KErrNone)
-		{
-		// Unknown error, propagate the leave to the client
-		User::Leave(createErr);
-		}
-	
-	aRequest->Complete(cntID);
-	return EProcessed;		
-	}		
+TAccept CStateWritable::AcceptRequestL( CReqCreateCnt* aRequest )
+    {
+    if ( iStateMachine.LowDisk( ) )
+        {
+        aRequest->Complete( KErrDiskFull );
+        return EProcessed;
+        }
+    
+    TContactItemId cntID(KNullContactId);
+    TRAPD( createErr,  // codescanner::trapcleanup:TransactionStartLC and TransactionCommitLP were used in couples.
+        {
+        TransactionStartLC(aRequest->SessionId());
+        
+        iPersistenceLayer.PersistenceBroker( ).SetConnectionId( aRequest->SessionId( ) );
+        cntID = iPersistenceLayer.PersistenceBroker( ).CreateL( aRequest->Item( ), aRequest->SessionId( ) );
+        TransactionCommitLP();
+        });
+    if ( createErr == KSqlErrGeneral )
+        {
+        // Write operation failed, probably due to view read activity
+        return DeferWithTimeOutError( aRequest );
+        }
+    else if ( createErr != KErrNone )
+        {
+        // Unknown error, propagate the leave to the client
+        User::Leave( createErr );
+        }
+    
+    aRequest->Complete( cntID );
+    return EProcessed;
+    }
 
 /**
  Change the current state of the model to CStateTablesClosed. 
- The database is unavailable.		
+ The database is unavailable.        
   
  @param aRequest Close database tables request object  
  @return TAccept EProcessed if finished processing request
 */   
 TAccept CStateWritable::AcceptRequestL(CReqCloseTables* aRequest)
-  	{
-  	iPersistenceLayer.ContactsFileL().CloseTablesL(ETrue);	
-  	iStateMachine.SetCurrentStateL(iStateMachine.StateTablesClosed());
-  	aRequest->Complete();
-  	return EProcessed;		
-  	}
+    {
+    iPersistenceLayer.ContactsFileL().CloseTablesL(ETrue);
+    iStateMachine.SetCurrentStateL(iStateMachine.StateTablesClosed());
+    aRequest->Complete();
+    return EProcessed;
+    }
 
 
 /** 
@@ -1369,36 +1367,36 @@ TAccept CStateWritable::AcceptRequestL(CReqCloseTables* aRequest)
  @return TAccept EProcessed if finished processing request
 */ 
 TAccept CStateWritable::AcceptRequestL(CReqCancelAsyncOpen* aRequest)
-	{
-	aRequest->Complete();
-	return EProcessed;		
-	}
+    {
+    aRequest->Complete();
+    return EProcessed;
+    }
 
 
 /**
- Start a database transaction by moving to a transaction state		
+ Start a database transaction by moving to a transaction state        
  
  @param aRequest Begin transaction request object  
  @return TAccept EProcessed if finished processing request
- 		 	     EDeferred if the request was not processed 
+                   EDeferred if the request was not processed 
 */ 
 TAccept CStateWritable::AcceptRequestL(CReqDbBeginTrans* aRequest)
-	{
-  	// In the current implementation there are no operations allowed under the
-  	// low disk condition that will reduce the size of the database: this is in
-  	// line with Contacts Model 1 behaviour.  Later, when we allow operations
-  	// that reduce the size of the database, this check should be removed and
-  	// allow the transition to CStateTransaction.
-  	if (iStateMachine.LowDisk())
-  		{
-  		aRequest->Complete(KErrDiskFull);
-  		return EProcessed;
-  		}	
-	
-	iStateMachine.SetCurrentStateL(iStateMachine.StateTransaction());
-	return iStateMachine.CurrentState().AcceptRequestL(aRequest);
-	}
-		
+    {
+    // In the current implementation there are no operations allowed under the
+    // low disk condition that will reduce the size of the database: this is in
+    // line with Contacts Model 1 behaviour.  Later, when we allow operations
+    // that reduce the size of the database, this check should be removed and
+    // allow the transition to CStateTransaction.
+    if (iStateMachine.LowDisk())
+        {
+        aRequest->Complete(KErrDiskFull);
+        return EProcessed;
+        }
+    
+    iStateMachine.SetCurrentStateL(iStateMachine.StateTransaction());
+    return iStateMachine.CurrentState().AcceptRequestL(aRequest);
+    }
+
 /**
  Start a database backup/restore by moving to CStateBackupRestore state.  If any
  contact items are locked or there is any asynchronous activity using the
@@ -1409,163 +1407,163 @@ TAccept CStateWritable::AcceptRequestL(CReqDbBeginTrans* aRequest)
  @return TAccept EProcessed if finished processing request
 */ 
 TAccept CStateWritable::AcceptRequestL(CReqBackupRestoreBegin* aRequest)
-	{
-	if (!iStateMachine.TransactionLockL().AnyLocked() &&
-		!iStateMachine.AsyncActivity())
-		{
-		// First reset collection, since it construct views based on table 
-		// Reset will fail if called after closing tables 
-		iPersistenceLayer.FactoryL().GetCollectorL().Reset(); 
-		// Close the file to allow the backup/restore to take place.	
-		iPersistenceLayer.ContactsFileL().Close();
-		}
-	iStateMachine.SetCurrentStateL(iStateMachine.StateBackupRestore());
-	aRequest->Complete();
-	return EProcessed;
-	}
+    {
+    if (!iStateMachine.TransactionLockL().AnyLocked() &&
+        !iStateMachine.AsyncActivity())
+        {
+        // First reset collection, since it construct views based on table 
+        // Reset will fail if called after closing tables 
+        iPersistenceLayer.FactoryL().GetCollectorL().Reset(); 
+        // Close the file to allow the backup/restore to take place.    
+        iPersistenceLayer.ContactsFileL().Close();
+        }
+    iStateMachine.SetCurrentStateL(iStateMachine.StateBackupRestore());
+    aRequest->Complete();
+    return EProcessed;
+    }
 
 
 /**
- Reset the speed dials		
+ Reset the speed dials        
 
  @param aRequest Reset speed dials request object  
  @return TAccept EProcessed if finished processing request
- 		 	     EDeferred if the request was not processed 
+                   EDeferred if the request was not processed 
 */ 
 TAccept CStateWritable::AcceptRequestL(CReqSetSpeedDial* aRequest)
-	{
-	if (iStateMachine.LowDisk())
-  		{
-  		aRequest->Complete(KErrDiskFull);
-  		return EProcessed;
-  		}
-	
-	TContactItemId contactId = aRequest->TheContactId();
-	if(contactId == 0)
-		{
-		User::Leave(KErrArgument);
-		}
+    {
+    if (iStateMachine.LowDisk())
+        {
+        aRequest->Complete(KErrDiskFull);
+        return EProcessed;
+        }
+    
+    TContactItemId contactId = aRequest->TheContactId();
+    if(contactId == 0)
+        {
+        User::Leave(KErrArgument);
+        }
 
-	// Obtain the contact ID currently associated with the speed dial index.
-	// The phone number is not being used at the moment
-	TSpeedDialPhoneNumber phoneNumberFromSpeedDialTable;
-	TContactItemId OldContactId = aRequest->SpeedDialTable().SpeedDialContactItem(aRequest->SpeedDialIndex(), phoneNumberFromSpeedDialTable);
-	
-	// We should not be able to remove a speed dial from an open item, even if
-	// it has been opened by the same session: use the IsLocked() method which
-	// ignores session ID.
-    TBool isLocked = iStateMachine.TransactionLockL().IsLocked(OldContactId);		
-				
-	// This code resets an entry from the speed dial table, as required when calling either 
-	// CContactDatabase::ResetServerSpeedDialsL() (contactId is KNullContactId) or 
-	// CContactDatabase::RemoveSpeedDialFieldL()  (contactId must be equal to the OldContactId)
-	// If the field index is -1, it indicates that the speed dial entry corresponding 
-	// to the speed dial index passed in the request should be reset.	
-	TBool doResetOldContactItem = ETrue;
-	TBool doResetSpeedDialEntry = aRequest->TheFieldIndex() == -1;			
-	
-	if (doResetSpeedDialEntry)
-		{		
-		if (contactId == KNullContactId || contactId == OldContactId)
-		    {
-		    if (isLocked)
-		        {
-		        User::Leave(KErrInUse);
-		        }			    
-		        
-		    aRequest->IniFileManager().SetSpeedDialIdForPositionL(aRequest->SpeedDialIndex(), KNullContactId, KNullDesC(), aRequest->SessionId(), EFalse);				    
-		    }
-		else
-		    {
-		    doResetOldContactItem = EFalse;
-		    }
-		}
+    // Obtain the contact ID currently associated with the speed dial index.
+    // The phone number is not being used at the moment
+    TSpeedDialPhoneNumber phoneNumberFromSpeedDialTable;
+    TContactItemId OldContactId = aRequest->SpeedDialTable().SpeedDialContactItem(aRequest->SpeedDialIndex(), phoneNumberFromSpeedDialTable);
+    
+    // We should not be able to remove a speed dial from an open item, even if
+    // it has been opened by the same session: use the IsLocked() method which
+    // ignores session ID.
+    TBool isLocked = iStateMachine.TransactionLockL().IsLocked(OldContactId);        
+                
+    // This code resets an entry from the speed dial table, as required when calling either 
+    // CContactDatabase::ResetServerSpeedDialsL() (contactId is KNullContactId) or 
+    // CContactDatabase::RemoveSpeedDialFieldL()  (contactId must be equal to the OldContactId)
+    // If the field index is -1, it indicates that the speed dial entry corresponding 
+    // to the speed dial index passed in the request should be reset.    
+    TBool doResetOldContactItem = ETrue;
+    TBool doResetSpeedDialEntry = aRequest->TheFieldIndex() == -1;            
+    
+    if (doResetSpeedDialEntry)
+        {
+        if (contactId == KNullContactId || contactId == OldContactId)
+            {
+            if (isLocked)
+                {
+                User::Leave(KErrInUse);
+                }
+                
+            aRequest->IniFileManager().SetSpeedDialIdForPositionL(aRequest->SpeedDialIndex(), KNullContactId, KNullDesC(), aRequest->SessionId(), EFalse);                    
+            }
+        else
+            {
+            doResetOldContactItem = EFalse;
+            }
+        }
 
-	//Everything, i.e. removal of the old speed dial reference and 
-	//the setting of the new takes place during the same transaction
-	//i.e. start transaction here
-	TransactionStartLC(aRequest->SessionId());
-		{
-		// Check if there is already a contact associated with this speed dial
-		// index.
-		if (OldContactId != KErrNotFound && doResetOldContactItem)
-			{
-			// Fetch the item from the ID, remember to pop it
-			CContactItem* cntItem = iPersistenceLayer.PersistenceBroker().ReadLC(OldContactId, aRequest->ItemViewDef(), EPlAllInfo, aRequest->SessionId());	
-			// Remove speed dial attributes from the contact item field.
-			TUid fieldTypeUid = CCntServerSpeedDialManager::SpeedDialFieldUidFromSpeedDialPosition(aRequest->SpeedDialIndex());
-			TInt fieldIdFound = cntItem->CardFields().Find(fieldTypeUid);
-			if (fieldIdFound != KErrNotFound)
-				{		
-				cntItem->CardFields()[fieldIdFound].RemoveFieldType(fieldTypeUid);
-				cntItem->CardFields()[fieldIdFound].SetSpeedDial(EFalse);
-				}
-			// Update changes to the contact item in the database.
-			iPersistenceLayer.PersistenceBroker().SetConnectionId(aRequest->SessionId());
-			iPersistenceLayer.PersistenceBroker().UpdateL(*cntItem, aRequest->SessionId(), ETrue);
-			CleanupStack::PopAndDestroy(cntItem);
-			}
-		
-		if (!doResetSpeedDialEntry)
-			{
-			// Fetch the contact item containing the phone number to be used as
-			// a speed dial.
-			CContactItem* cntItem = iPersistenceLayer.PersistenceBroker().ReadLC(contactId, aRequest->ItemViewDef(), EPlAllInfo, aRequest->SessionId());	
-			if (cntItem->CardFields().Count() < 1)
-				{
-				User::Leave(KErrUnknown);		
-				}	
-			// Get the field containing the number to be associated with the
-			// speed dial.
-			CContactItemField& speeddialField = cntItem->CardFields()[aRequest->TheFieldIndex()];
-			// Add speed dial attributes to the contact item field.
-			TUid fieldTypeUid = CCntServerSpeedDialManager::SpeedDialFieldUidFromSpeedDialPosition(aRequest->SpeedDialIndex());
-			if (!speeddialField.ContentType().ContainsFieldType(fieldTypeUid))
-				{
-				speeddialField.AddFieldTypeL(fieldTypeUid);
-				}
-			speeddialField.SetUserAddedField(ETrue);
-			speeddialField.SetSpeedDial(ETrue);
-			// Get the phone number from the field.
-			if (speeddialField.StorageType() != KStorageTypeText)
-				{
-				User::Leave(KErrArgument);		
-				}	
-			// Truncate it if its length is > KSpeedDialPhoneLength
-			TInt numLen = Min(speeddialField.TextStorage()->Text().Length(), KSpeedDialPhoneLength);
-			TPtrC phoneNumber(speeddialField.TextStorage()->Text().Mid(0, numLen));
-			// Update changes to the contact item in the database.
-			iPersistenceLayer.PersistenceBroker().SetConnectionId(aRequest->SessionId());
-			// Update the speed dial table.
-			aRequest->IniFileManager().SetSpeedDialIdForPositionL(aRequest->SpeedDialIndex(), contactId, phoneNumber, aRequest->SessionId(), EFalse);
-			iPersistenceLayer.PersistenceBroker().UpdateL(*cntItem, aRequest->SessionId(), ETrue);
-			// Unlock the item.
-			User::LeaveIfError(iStateMachine.TransactionLockL().UnLockL(aRequest->SessionId(), contactId));
-			CleanupStack::PopAndDestroy(cntItem);
-			}
-		}
-	TransactionCommitLP();
-	aRequest->Complete();
-	return EProcessed;		
-	}
+    //Everything, i.e. removal of the old speed dial reference and 
+    //the setting of the new takes place during the same transaction
+    //i.e. start transaction here
+    TransactionStartLC(aRequest->SessionId());
+        {
+        // Check if there is already a contact associated with this speed dial
+        // index.
+        if (OldContactId != KErrNotFound && doResetOldContactItem)
+            {
+            // Fetch the item from the ID, remember to pop it
+            CContactItem* cntItem = iPersistenceLayer.PersistenceBroker().ReadLC(OldContactId, aRequest->ItemViewDef(), EPlAllInfo, aRequest->SessionId());    
+            // Remove speed dial attributes from the contact item field.
+            TUid fieldTypeUid = CCntServerSpeedDialManager::SpeedDialFieldUidFromSpeedDialPosition(aRequest->SpeedDialIndex());
+            TInt fieldIdFound = cntItem->CardFields().Find(fieldTypeUid);
+            if (fieldIdFound != KErrNotFound)
+                {
+                cntItem->CardFields()[fieldIdFound].RemoveFieldType(fieldTypeUid);
+                cntItem->CardFields()[fieldIdFound].SetSpeedDial(EFalse);
+                }
+            // Update changes to the contact item in the database.
+            iPersistenceLayer.PersistenceBroker().SetConnectionId(aRequest->SessionId());
+            iPersistenceLayer.PersistenceBroker().UpdateL(*cntItem, aRequest->SessionId(), ETrue);
+            CleanupStack::PopAndDestroy(cntItem);
+            }
+        
+        if (!doResetSpeedDialEntry)
+            {
+            // Fetch the contact item containing the phone number to be used as
+            // a speed dial.
+            CContactItem* cntItem = iPersistenceLayer.PersistenceBroker().ReadLC(contactId, aRequest->ItemViewDef(), EPlAllInfo, aRequest->SessionId());    
+            if (cntItem->CardFields().Count() < 1)
+                {
+                User::Leave(KErrUnknown);
+                }
+            // Get the field containing the number to be associated with the
+            // speed dial.
+            CContactItemField& speeddialField = cntItem->CardFields()[aRequest->TheFieldIndex()];
+            // Add speed dial attributes to the contact item field.
+            TUid fieldTypeUid = CCntServerSpeedDialManager::SpeedDialFieldUidFromSpeedDialPosition(aRequest->SpeedDialIndex());
+            if (!speeddialField.ContentType().ContainsFieldType(fieldTypeUid))
+                {
+                speeddialField.AddFieldTypeL(fieldTypeUid);
+                }
+            speeddialField.SetUserAddedField(ETrue);
+            speeddialField.SetSpeedDial(ETrue);
+            // Get the phone number from the field.
+            if (speeddialField.StorageType() != KStorageTypeText)
+                {
+                User::Leave(KErrArgument);
+                }
+            // Truncate it if its length is > KSpeedDialPhoneLength
+            TInt numLen = Min(speeddialField.TextStorage()->Text().Length(), KSpeedDialPhoneLength);
+            TPtrC phoneNumber(speeddialField.TextStorage()->Text().Mid(0, numLen));
+            // Update changes to the contact item in the database.
+            iPersistenceLayer.PersistenceBroker().SetConnectionId(aRequest->SessionId());
+            // Update the speed dial table.
+            aRequest->IniFileManager().SetSpeedDialIdForPositionL(aRequest->SpeedDialIndex(), contactId, phoneNumber, aRequest->SessionId(), EFalse);
+            iPersistenceLayer.PersistenceBroker().UpdateL(*cntItem, aRequest->SessionId(), ETrue);
+            // Unlock the item.
+            User::LeaveIfError(iStateMachine.TransactionLockL().UnLockL(aRequest->SessionId(), contactId));
+            CleanupStack::PopAndDestroy(cntItem);
+            }
+        }
+    TransactionCommitLP();
+    aRequest->Complete();
+    return EProcessed;
+    }
 
 
 /**
- Set own card data	
+ Set own card data    
 
  @param aRequest Set own card request object  
  @return TAccept EProcessed if finished processing request
- 		 	     EDeferred if the request was not processed 
-*/ 		
+                   EDeferred if the request was not processed 
+*/         
 TAccept CStateWritable::AcceptRequestL(CReqSetOwnCard* aRequest)
-	{
-	if (iStateMachine.LowDisk())
-  		{
-  		aRequest->Complete(KErrDiskFull);
-  		return EProcessed;
-  		}
+    {
+    if (iStateMachine.LowDisk())
+        {
+        aRequest->Complete(KErrDiskFull);
+        return EProcessed;
+        }
 
-	TUid aContactType = aRequest->Item().Type();
+    TUid aContactType = aRequest->Item().Type();
 
 	// this should leave with kerrnotsupported if the type doesn't match!!!!
 	if (aContactType==KUidContactGroup || aContactType==KUidContactTemplate || aContactType==KUidContactCardTemplate)
@@ -1615,26 +1613,26 @@ TAccept CStateWritable::AcceptRequestL(CReqSetOwnCard* aRequest)
  @return The most common the timeout error code -KErrInUse- used in the writable state
 */ 
 TInt CStateWritable::TimeOutErrorCode()
-	{
-	return KErrInUse;		
-	}
+    {
+    return KErrInUse;
+    }
 
 
 
-///////////////////// CStateTransaction Implementation/////////////////
+// CStateTransaction Implementation//
 /** 
  CStateTransaction Class NewL factory constructor
  Create a transaction state
  @see CState constructor
 */ 
 CStateTransaction* CStateTransaction::NewL(CCntStateMachine& aStateMachine, CPersistenceLayer& aPersistenceLayer)
-	{
-	CStateTransaction* stateTransaction = new (ELeave) CStateTransaction(aStateMachine, aPersistenceLayer);
-	CleanupStack::PushL(stateTransaction);
-	stateTransaction->ConstructL();
-	CleanupStack::Pop(stateTransaction);
-	return stateTransaction;
-	}
+    {
+    CStateTransaction* stateTransaction = new (ELeave) CStateTransaction(aStateMachine, aPersistenceLayer);
+    CleanupStack::PushL(stateTransaction);
+    stateTransaction->ConstructL();
+    CleanupStack::Pop(stateTransaction);
+    return stateTransaction;
+    }
 
 /**
  Instantiate the CTransctionTimer object. The transaction state contains a timer
@@ -1646,10 +1644,10 @@ CStateTransaction* CStateTransaction::NewL(CCntStateMachine& aStateMachine, CPer
  responsibility of the CTransactionTimer.
 */
 void CStateTransaction::ConstructL()
-	{
-	// Pass the transaction state that will timeout.
-	iTimeOut = CTransactionTimer::NewL(*this); 
-	}
+    {
+    // Pass the transaction state that will timeout.
+    iTimeOut = CTransactionTimer::NewL(*this); 
+    }
 
 /** 
  CStateTransaction Class constructor
@@ -1657,20 +1655,20 @@ void CStateTransaction::ConstructL()
 */ 
 CStateTransaction::CStateTransaction(CCntStateMachine& aStateMachine, CPersistenceLayer& aPersistenceLayer)
 : CState(aStateMachine, aPersistenceLayer), iEventQ(KCntEventGranularity)
-	{
-	}
+    {
+    }
 
 /** 
  CStateTransaction Class constructor
  @see CState constructor
 */ 
 CStateTransaction::~CStateTransaction()
-	{
-	delete iTimeOut;
-	iEventQ.Close();
-	}
-	
-/**	
+    {
+    delete iTimeOut;
+    iEventQ.Close();
+    }
+    
+/**    
  Cancel the transaction - will result in a database rollback
  implemented in the base CState class
  This overwritten CancelTransaction is only ever called when the transaction
@@ -1678,20 +1676,20 @@ CStateTransaction::~CStateTransaction()
  state class or persistence layer method leaves
 */
 void CStateTransaction::CancelTransactionL()
-  	{
-  	CState::RollbackTransAndRecoverL(EFalse); 
-  	iSessionId = 0; // Allow another session enter a transaction state.
-  	}
+    {
+    CState::RollbackTransAndRecoverL(EFalse); 
+    iSessionId = 0; // Allow another session enter a transaction state.
+    }
 
-/**	
+/**    
  Get the CStateTransaction default timeout error code.
  
  @return TInt ErrLocked
 */
 TInt CStateTransaction::TimeOutErrorCode()
-	{
-	return KErrLocked;	
-	}
+    {
+    return KErrLocked;
+    }
 
 
 /**
@@ -1705,34 +1703,35 @@ TInt CStateTransaction::TimeOutErrorCode()
  @see CState::DeferRequest 
 */ 
 TAccept CStateTransaction::AcceptRequestL(CReqDbBeginTrans* aRequest)
-	{
-	
-	#if defined(__PROFILE_DEBUG__)
-		RDebug::Print(_L("[CNTMODEL] MTD: CStateTransaction::AcceptRequestL"));
-	#endif 
-	
-	// Only one session can ever be in a transaction state
-	if (iSessionId == 0)
-		{
-		iSessionId = aRequest->SessionId();
-		iPersistenceLayer.TransactionManager().StartTransactionL();
-		iTimeOut->Start();
-		aRequest->Complete();
-		// Reset the event queue - although it is also reset when a transaction
-		// is committed or explicitly rolled back, it will now be reset if a rollback occured 
-		// because of a leave. Resetting the queue after commit/explicit rollback free's memory.
-		iEventQ.Reset(); 
-		return EProcessed;	
-		}
-	// This session has already started a transaction 	
-	if (iSessionId == aRequest->SessionId())
-		{
-		aRequest->Complete();
-		return EProcessed;	
-		}
-	// Another session has started a transaction
-	return DeferRequest(aRequest); 
-	}
+    {
+    
+#if defined(__PROFILE_DEBUG__)
+        RDebug::Print(_L("[CNTMODEL] MTD: CStateTransaction::AcceptRequestL"));
+#endif 
+    
+    // Only one session can ever be in a transaction state
+    if (iSessionId == 0)
+        {
+        iSessionId = aRequest->SessionId();
+        iPersistenceLayer.FactoryL().GetCollectorL().Reset();
+        iPersistenceLayer.TransactionManager().StartTransactionL();
+        iTimeOut->Start();
+        aRequest->Complete();
+        // Reset the event queue - although it is also reset when a transaction
+        // is committed or explicitly rolled back, it will now be reset if a rollback occured 
+        // because of a leave. Resetting the queue after commit/explicit rollback free's memory.
+        iEventQ.Reset(); 
+        return EProcessed;
+        }
+    // This session has already started a transaction     
+    if (iSessionId == aRequest->SessionId())
+        {
+        aRequest->Complete();
+        return EProcessed;
+        }
+    // Another session has started a transaction
+    return DeferRequest(aRequest); 
+    }
 
 
 /**
@@ -1746,41 +1745,41 @@ TAccept CStateTransaction::AcceptRequestL(CReqDbBeginTrans* aRequest)
  @leave KErrLocked if a different session had started the transaction
 */
 TAccept CStateTransaction::AcceptRequestL(CReqDbCommitTrans* aRequest)
-	{
- 	if (iSessionId == aRequest->SessionId())
- 		{
-		TRAPD(commitErr, iPersistenceLayer.TransactionManager().CommitCurrentTransactionL(aRequest->SessionId()));
-		if (commitErr == KSqlErrGeneral)
-			{
-			// Operation has probably been blocked due to read lock by view idle sorter.
-			return DeferWithTimeOutError(aRequest);
-			}
-		else
-			{
-			User::LeaveIfError(commitErr);
-			}
-		
-		iTimeOut->Stop(); // Transaction completed - shouldn't timeout
+    {
+     if (iSessionId == aRequest->SessionId())
+         {
+        TRAPD(commitErr, iPersistenceLayer.TransactionManager().CommitCurrentTransactionL(aRequest->SessionId()));
+        if (commitErr == KSqlErrGeneral)
+            {
+            // Operation has probably been blocked due to read lock by view idle sorter.
+            return DeferWithTimeOutError(aRequest);
+            }
+        else
+            {
+            User::LeaveIfError(commitErr);
+            }
+        
+        iTimeOut->Stop(); // Transaction completed - shouldn't timeout
 
-		// The database had been updated. All session should now be notified
-		// of events.
-		PropagateDatabaseEventsL();
-		
-		iStateMachine.SetCurrentStateL(iStateMachine.StateWritable());				
+        // The database had been updated. All session should now be notified
+        // of events.
+        PropagateDatabaseEventsL();
+        
+        iStateMachine.SetCurrentStateL(iStateMachine.StateWritable());
 
-		iSessionId = 0;
-		// Only complete the request after the last leaving method. If 
-		// a leave occurs after the request (message) has been completed, then the method 
-		// CCntSession::ServiceError will try to complete the message a second time
-		// causing a panic. 
-		aRequest->Complete();
- 		}
- 	else
-		{
-		StrayRequestL(aRequest); // Only the current session should be able to
-		}						 // send a commit transaction request
-	return EProcessed;		
-	}
+        iSessionId = 0;
+        // Only complete the request after the last leaving method. If 
+        // a leave occurs after the request (message) has been completed, then the method 
+        // CCntSession::ServiceError will try to complete the message a second time
+        // causing a panic. 
+        aRequest->Complete();
+         }
+     else
+        {
+        StrayRequestL(aRequest); // Only the current session should be able to
+        }// send a commit transaction request
+    return EProcessed;
+    }
 
 
 
@@ -1795,15 +1794,15 @@ TAccept CStateTransaction::AcceptRequestL(CReqDbCommitTrans* aRequest)
  @leave KErrLocked if a different session had started the transaction
 */
 TAccept CStateTransaction::AcceptRequestL(CReqDbRollbackTrans* aRequest)
-	{
- 	if (iSessionId == aRequest->SessionId())
- 		{
-		iEventQ.Reset(); // Empty the event queue - no operations have been committed
-						 // so sessions should never be notified of the event
+    {
+     if (iSessionId == aRequest->SessionId())
+         {
+        iEventQ.Reset(); // Empty the event queue - no operations have been committed
+                         // so sessions should never be notified of the event
 
- 		iCurrentTransactionSessionId = aRequest->SessionId();
-		CState::RollbackTransAndRecoverL(ETrue);
-		iSessionId = 0;
+         iCurrentTransactionSessionId = aRequest->SessionId();
+        CState::RollbackTransAndRecoverL(ETrue);
+        iSessionId = 0;
 
 		// Transaction completed - shouldn't timeout
 		iTimeOut->Stop(); 
@@ -1817,14 +1816,14 @@ TAccept CStateTransaction::AcceptRequestL(CReqDbRollbackTrans* aRequest)
 	    event.iAdditionalContactIds = NULL;		
 		iStateMachine.DbManager().HandleDatabaseEventV2L(event);
 
-		aRequest->Complete();
- 		}
- 	else
-		{
-		StrayRequestL(aRequest); // Only the current session should be able
-		}						 // to rollback a transaction
-	return EProcessed;
-	}
+        aRequest->Complete();
+        }
+    else
+        {
+        StrayRequestL(aRequest); // Only the current session should be able
+        }                         // to rollback a transaction
+    return EProcessed;
+    }
 
 
 /** 
@@ -1835,9 +1834,9 @@ TAccept CStateTransaction::AcceptRequestL(CReqDbRollbackTrans* aRequest)
  @leave KErrLocked A different session had started the transaction
 */ 
 void CStateTransaction::StrayRequestL(CCntRequest* /* aRequest */)
-	{
-	User::Leave(KErrLocked);	
-	}
+    {
+    User::Leave(KErrLocked);
+    }
 
 
 /**
@@ -1845,42 +1844,42 @@ void CStateTransaction::StrayRequestL(CCntRequest* /* aRequest */)
  
  @param aRequest The request that will contain the created contact item 
  @return TAccept EProcessed if finished processing request
- 		 	     EDeferred if the request was not processed 
+                   EDeferred if the request was not processed 
 */
 TAccept CStateTransaction::AcceptRequestL(CReqCreateCnt* aRequest)
-	{
-	#if defined(__PROFILE_DEBUG__)
-		RDebug::Print(_L("[CNTMODEL] MTD: CStateTransaction::AcceptRequestL"));
-	#endif 	
-	
-  	if (iStateMachine.LowDisk())
-  		{
-  		aRequest->Complete(KErrDiskFull);
-  		return EProcessed;
-  		}
-	
- 	if (iSessionId == aRequest->SessionId())
- 		{
- 		TContactItemId itemId(KNullContactId);
- 		TRAPD(createErr, itemId = iPersistenceLayer.PersistenceBroker().CreateL(aRequest->Item(),  aRequest->SessionId()));
- 		if (createErr == KSqlErrGeneral)
- 			{
- 			// Can't create contact item, probably due to view idle sorter activity
- 			return DeferWithTimeOutError(aRequest);
- 			}
- 		else
- 			{
- 			User::LeaveIfError(createErr);
- 			}
- 		
-		aRequest->Complete(itemId);
-		iTimeOut->Reset(); // restart the timeout as the client session is still alive
-		return EProcessed;
-		}
- 	
- 	// The session that is trying to perform this operation has not started the transaction
- 	return DeferWithTimeOutError(aRequest);
-	}
+    {
+#if defined(__PROFILE_DEBUG__)
+        RDebug::Print(_L("[CNTMODEL] MTD: CStateTransaction::AcceptRequestL"));
+#endif
+    
+    if (iStateMachine.LowDisk())
+        {
+        aRequest->Complete(KErrDiskFull);
+        return EProcessed;
+        }
+    
+    if (iSessionId == aRequest->SessionId())
+        {
+        TContactItemId itemId(KNullContactId);
+        TRAPD(createErr, itemId = iPersistenceLayer.PersistenceBroker().CreateL(aRequest->Item(),  aRequest->SessionId()));
+        if (createErr == KSqlErrGeneral)
+            {
+            // Can't create contact item, probably due to view idle sorter activity
+            return DeferWithTimeOutError(aRequest);
+            }
+        else
+            {
+            User::LeaveIfError(createErr);
+            }
+        
+        aRequest->Complete(itemId);
+        iTimeOut->Reset(); // restart the timeout as the client session is still alive
+        return EProcessed;
+        }
+    
+    // The session that is trying to perform this operation has not started the transaction
+    return DeferWithTimeOutError(aRequest);
+    }
 
 /**
  Read a contact item - always allow read operation from any session 
@@ -1888,16 +1887,16 @@ TAccept CStateTransaction::AcceptRequestL(CReqCreateCnt* aRequest)
  
  @param aRequest The request that will contain the contact item read from the database
  @return TAccept EProcessed if finished processing request
- 		 	     EDeferred if the request was not processed 
+                   EDeferred if the request was not processed 
 */ 
 TAccept CStateTransaction::AcceptRequestL(CReqReadCnt* aRequest)
-	{
-	iTimeOut->Reset(); // Reset the timeout, the client is still alive
-	return CState::AcceptRequestL(aRequest);
-	}
-	
+    {
+    iTimeOut->Reset(); // Reset the timeout, the client is still alive
+    return CState::AcceptRequestL(aRequest);
+    }
+    
 /**
- Update a contact item from a the session that started the transaction	
+ Update a contact item from a the session that started the transaction    
  
  @param aRequest The request that contain the contact item that is to be updated in the database
  @return TAccept EProcessed if finished processing request, or one of the values returned
@@ -1905,50 +1904,50 @@ TAccept CStateTransaction::AcceptRequestL(CReqReadCnt* aRequest)
  @see CState::DeferRequest 
 */ 
 TAccept CStateTransaction::AcceptRequestL(CReqUpdateCnt* aRequest)
-	{
-  	if (iStateMachine.LowDisk())
-  		{
-  		aRequest->Complete(KErrDiskFull);
-  		return EProcessed;
-  		}
+    {
+    if (iStateMachine.LowDisk())
+        {
+        aRequest->Complete(KErrDiskFull);
+        return EProcessed;
+        }
 
-	// Check if the contact has been locked by any session - including this session
-	// This is for reasons of compatibility with the original model only
-  	if (iStateMachine.TransactionLockL().IsLocked(aRequest->Item().Id()) == EFalse)
-  		{
-  		 if (iSessionId == aRequest->SessionId())
-	 		{
-	 		TRAPD(updateErr, iPersistenceLayer.PersistenceBroker().UpdateL(aRequest->Item(), aRequest->SessionId()));
-			if (updateErr == KSqlErrGeneral)
-				{
-				// Can't update item, probably due to idle sorter activity
-				return DeferWithTimeOutError(aRequest);
-				}
-			else
-				{
-				User::LeaveIfError(updateErr);
-				}
-			
-			aRequest->Complete();
-			iTimeOut->Reset(); 
-			
-			return EProcessed;
-			}
-	 	else
-	 		{
-	 		// The session that is trying to perform this operation has not started the transaction
-	 		return DeferWithTimeOutError(aRequest);
-	 		}
-  		}
-  	else
-  		{
-  		// If the request can not be procesed after the timeout period, it should 
-  		// complete with KErrInUse as the contact is locked
-  		aRequest->SetTimeOutError(KErrInUse);  		
-  		}
-	return DeferRequest(aRequest);	
-	}
-	
+    // Check if the contact has been locked by any session - including this session
+    // This is for reasons of compatibility with the original model only
+    if (iStateMachine.TransactionLockL().IsLocked(aRequest->Item().Id()) == EFalse)
+        {
+         if (iSessionId == aRequest->SessionId())
+             {
+             TRAPD(updateErr, iPersistenceLayer.PersistenceBroker().UpdateL(aRequest->Item(), aRequest->SessionId()));
+            if (updateErr == KSqlErrGeneral)
+                {
+                // Can't update item, probably due to idle sorter activity
+                return DeferWithTimeOutError(aRequest);
+                }
+            else
+                {
+                User::LeaveIfError(updateErr);
+                }
+            
+            aRequest->Complete();
+            iTimeOut->Reset(); 
+            
+            return EProcessed;
+            }
+         else
+             {
+             // The session that is trying to perform this operation has not started the transaction
+             return DeferWithTimeOutError(aRequest);
+             }
+          }
+    else
+        {
+        // If the request can not be procesed after the timeout period, it should 
+        // complete with KErrInUse as the contact is locked
+        aRequest->SetTimeOutError(KErrInUse);
+        }
+    return DeferRequest(aRequest);
+    }
+    
 /**
  Delete a contact item if the delete request is from the same session that started the transaction
  
@@ -2017,23 +2016,23 @@ TAccept CStateTransaction::AcceptRequestL(CReqDeleteCnt* aRequest)
 			aRequest->Complete();
 			iTimeOut->Reset(); 
 
-			return EProcessed;	
-	 		}
-	 	else
-	 		{
-	 		// The session that is trying to perform this operation has not started the transaction
-	 		return DeferWithTimeOutError(aRequest);
-	 		}
-  		}
-  	else
-  		{
-  		// If the request can not be procesed after the timeout period, it should 
-  		// complete with KErrInUse as the contact is locked
-  		aRequest->SetTimeOutError(KErrInUse);  		
-  		}
+            return EProcessed;    
+            }
+        else
+            {
+            // The session that is trying to perform this operation has not started the transaction
+            return DeferWithTimeOutError(aRequest);
+            }
+        }
+    else
+        {
+        // If the request can not be procesed after the timeout period, it should 
+        // complete with KErrInUse as the contact is locked
+        aRequest->SetTimeOutError(KErrInUse);
+        }
 
-	return DeferRequest(aRequest);	
-	}
+    return DeferRequest(aRequest);
+    }
 
 
 /**
@@ -2042,66 +2041,66 @@ TAccept CStateTransaction::AcceptRequestL(CReqDeleteCnt* aRequest)
  
  @param aRequest The request that contain the contact item that is to be written to the database
  @return TAccept EProcessed if finished processing request
- 		 	     EDeferred if the request was not processed 
+                   EDeferred if the request was not processed 
 */ 
 TAccept CStateTransaction::AcceptRequestL(CReqCommitCnt* aRequest)
-	{
-	if (iStateMachine.LowDisk())
-		{
-		aRequest->Complete(KErrDiskFull);
-		return EProcessed;
-		}
+    {
+    if (iStateMachine.LowDisk())
+        {
+        aRequest->Complete(KErrDiskFull);
+        return EProcessed;
+        }
 
- 	if (iSessionId == aRequest->SessionId())
- 		{
- 		User::LeaveIfError(iStateMachine.TransactionLockL().UnLockL(aRequest->SessionId(), aRequest->Item().Id()));
- 		TRAPD(updateErr, iPersistenceLayer.PersistenceBroker().UpdateL(aRequest->Item(), aRequest->SessionId()));
- 		if (updateErr == KSqlErrGeneral)
- 			{
- 			// Can't update contact, probably due to idle sorter activity
- 			return DeferWithTimeOutError(aRequest);
- 			}
- 		else
- 			{
- 			User::LeaveIfError(updateErr);
- 			}
- 		
-		aRequest->Complete();
-		iTimeOut->Reset(); 
-		
-		return EProcessed;	
-		}
- 	else
- 		{
- 		// The session that is trying to perform this operation has not started the transaction
- 		return DeferWithTimeOutError(aRequest);
- 		}
-	}
+    if (iSessionId == aRequest->SessionId())
+        {
+        User::LeaveIfError(iStateMachine.TransactionLockL().UnLockL(aRequest->SessionId(), aRequest->Item().Id()));
+        TRAPD(updateErr, iPersistenceLayer.PersistenceBroker().UpdateL(aRequest->Item(), aRequest->SessionId()));
+        if (updateErr == KSqlErrGeneral)
+            {
+            // Can't update contact, probably due to idle sorter activity
+            return DeferWithTimeOutError(aRequest);
+            }
+        else
+            {
+            User::LeaveIfError(updateErr);
+            }
+        
+        aRequest->Complete();
+        iTimeOut->Reset(); 
+        
+        return EProcessed;
+        }
+    else
+        {
+        // The session that is trying to perform this operation has not started the transaction
+        return DeferWithTimeOutError(aRequest);
+        }
+    }
 
 /**
  Open (read and lock) the contact item, returning the opened contact item.
  The contact item is also locked
  
  @param aRequest The request that will contain the contact item that is to be opened (read and locked) 
- 				 in the database
+                  in the database
  @return TAccept EProcessed if finished processing request
- 		 	     EDeferred if the request was not processed 
+                   EDeferred if the request was not processed 
 */ 
 TAccept CStateTransaction::AcceptRequestL(CReqOpenCnt* aRequest)
-	{
- 	if (iSessionId == aRequest->SessionId())
- 		{
- 		// As a valid operation has been performed by the session, it is still 
- 		// alive so the timeout for the transaction state must be reset.
-		iTimeOut->Reset(); 
-		return CState::AcceptRequestL(aRequest);
- 		}
-  	else
- 		{
- 		// The session that is trying to perform this operation has not started the transaction
- 		return DeferWithTimeOutError(aRequest);	
- 		}
-	}
+    {
+    if (iSessionId == aRequest->SessionId())
+        {
+        // As a valid operation has been performed by the session, it is still 
+        // alive so the timeout for the transaction state must be reset.
+        iTimeOut->Reset(); 
+        return CState::AcceptRequestL(aRequest);
+         }
+    else
+        {
+        // The session that is trying to perform this operation has not started the transaction
+        return DeferWithTimeOutError(aRequest);    
+        }
+    }
 
 /**
  Close (unlock) the locked contact without commiting the contact item to the database 
@@ -2113,18 +2112,18 @@ TAccept CStateTransaction::AcceptRequestL(CReqOpenCnt* aRequest)
  @see CState::AcceptRequest(CReqCloseCnt*)
 */ 
 TAccept CStateTransaction::AcceptRequestL(CReqCloseCnt* aRequest)
-	{
- 	if (iSessionId == aRequest->SessionId())
- 		{
-		iTimeOut->Reset(); 
-		return CState::AcceptRequestL(aRequest);
-		}
- 	else
- 		{
- 		// The session that is trying to perform this operation has not started the transaction
- 		return DeferWithTimeOutError(aRequest);
- 		}
-	}
+    {
+    if (iSessionId == aRequest->SessionId())
+        {
+        iTimeOut->Reset(); 
+        return CState::AcceptRequestL(aRequest);
+        }
+    else
+        {
+        // The session that is trying to perform this operation has not started the transaction
+        return DeferWithTimeOutError(aRequest);
+        }
+    }
 
 /**
  Hanlde a database event while in the transaction state.
@@ -2140,22 +2139,22 @@ void CStateTransaction::HandleDatabaseEventV2L(TContactDbObserverEventV2 aEvent)
 	
 	DEBUG_PRINT1(__VERBOSE_DEBUG__,_L("[CNTMODEL] Database Event in Transaction"));
 
-	// Do not add a rollback event to the queue. This event will be propagated as 
-	// part of the transaction rollback.
-	if (aEvent.iType == EContactDbObserverEventRollback)
-		{
-		return;
-		}
-	if (iEventQ.Count() <= KMaxNumberOfEventsInEventQueue)
-		{
-		
-		DEBUG_PRINT1(__VERBOSE_DEBUG__,_L("[CNTMODEL] Database Event Added To Q in Transaction"));
-	
-		iEventQ.AppendL(aEvent);	
-		} 
-	// else - do nothing as a EContactDbObserverEventUnknownChanges will be propagated
-	// to all observers	
-	}
+    // Do not add a rollback event to the queue. This event will be propagated as 
+    // part of the transaction rollback.
+    if (aEvent.iType == EContactDbObserverEventRollback)
+        {
+        return;
+        }
+    if (iEventQ.Count() <= KMaxNumberOfEventsInEventQueue)
+        {
+        
+        DEBUG_PRINT1(__VERBOSE_DEBUG__,_L("[CNTMODEL] Database Event Added To Q in Transaction"));
+    
+        iEventQ.AppendL(aEvent);
+        } 
+    // else - do nothing as a EContactDbObserverEventUnknownChanges will be propagated
+    // to all observers    
+    }
 
 
 /** 
@@ -2198,7 +2197,7 @@ void CStateTransaction::PropagateDatabaseEventsL()
 
 
 
-////////////////// CTransactionTimer Implementation //////////////////////
+// CTransactionTimer Implementation //
 
 /** 
  CTransactionTimer Class NewL factory constructor
@@ -2209,35 +2208,35 @@ void CStateTransaction::PropagateDatabaseEventsL()
  unexpectedly. It is derived from CTimer and times out after sixty seconds.
 */ 
 CTransactionTimer* CTransactionTimer::NewL(CStateTransaction& aTransState)
-	{
-	CTransactionTimer* self = new (ELeave) CTransactionTimer(aTransState);
-	CleanupStack::PushL(self);
-	self->ConstructL();
-	CleanupStack::Pop(self);
-	return self;
-	}
-	
+    {
+    CTransactionTimer* self = new (ELeave) CTransactionTimer(aTransState);
+    CleanupStack::PushL(self);
+    self->ConstructL();
+    CleanupStack::Pop(self);
+    return self;
+    }
+    
 /** 
  CTransactionTimer Class destructor
-*/	
+*/    
 CTransactionTimer::~CTransactionTimer()
-	{
-	CTimer::Cancel();
-	}
-	
+    {
+    CTimer::Cancel();
+    }
+    
 /**
  CTransactionTimer constructor
-*/	
+*/    
 CTransactionTimer::CTransactionTimer(CStateTransaction& aTransState) 
-				 : CTimer(CActive::EPriorityIdle), iTransState(aTransState)
-	{
-	}
+                 : CTimer(CActive::EPriorityIdle), iTransState(aTransState)
+    {
+    }
 
 void CTransactionTimer::ConstructL()
-	{
-	CTimer::ConstructL();
-	CActiveScheduler::Add(this);
-	}
+    {
+    CTimer::ConstructL();
+    CActiveScheduler::Add(this);
+    }
 
 
 /** 
@@ -2245,29 +2244,29 @@ void CTransactionTimer::ConstructL()
  The client may have died - clean up the state machine by rolling back
 */ 
 void CTransactionTimer::RunL()
-	{
-	iTransState.CancelTransactionL();
-	CTimer::Cancel();
-	}
+    {
+    iTransState.CancelTransactionL();
+    CTimer::Cancel();
+    }
 
 /**
  Start the timer. This is done when a the state machine moves 
  into the transaction state.
 */
 void CTransactionTimer::Start()
-	{ // wait for 60 seconds
-	CTimer::Cancel();
-	CTimer::After(KSixtySeconds);
-	}
+    { // wait for 60 seconds
+    CTimer::Cancel();
+    CTimer::After(KSixtySeconds);
+    }
 
 /**
  Stop the timer. This is done when a the state machine moves 
  out of the transaction state.
 */
 void CTransactionTimer::Stop()
-	{
-	CTimer::Cancel();
-	}
+    {
+    CTimer::Cancel();
+    }
 
 /**
  When a valid operation is performed within the transaction state
@@ -2275,27 +2274,27 @@ void CTransactionTimer::Stop()
  performed within sixty seconds, the transaction should timeout.
 */
 void CTransactionTimer::Reset()
-	{
-	CTimer::Cancel();
-	CTimer::After(KSixtySeconds);
-	}
-	
-////////////////// CTransactionLock Class Implementation ////////////////////////
+    {
+    CTimer::Cancel();
+    CTimer::After(KSixtySeconds);
+    }
+    
+// CTransactionLock Class Implementation //
 /** 
  CTransactionLock Class NewL factory constructor
  The CTransactionLock class locks contacts allowing only the locking session to
  modify the contact item in the database.
 */
 CTransactionLock* CTransactionLock::NewL(CCntStateMachine& aStateMachine)
-	{
-	CTransactionLock* self = new (ELeave) CTransactionLock(aStateMachine);
-	return self;
-	}
-	
-// TLockData constructor	
+    {
+    CTransactionLock* self = new (ELeave) CTransactionLock(aStateMachine);
+    return self;
+    }
+    
+// TLockData constructor    
 CTransactionLock::TLockData::TLockData(TContactItemId aCntId, const TUint aSessionId):iCntItemId(aCntId), iSessionId(aSessionId)
-	{}
-	
+    {}
+    
 // --------- Locking Methods -----------
 /** 
  Locks a contact item by adding its ID to an array of locked contact items IDs.
@@ -2307,70 +2306,70 @@ CTransactionLock::TLockData::TLockData(TContactItemId aCntId, const TUint aSessi
  @param aSessionId The Session which is locking the contact Item
  aContact The contact item to add to the database.
  @return KErrNone if locking was successful.
-		KErrInUse if the contact item was locked by another session 
+        KErrInUse if the contact item was locked by another session 
 */
 
 TInt CTransactionLock::LockLX(const TUint aSessionId, const TContactItemId aCntId)
-	{
-	
-	DEBUG_PRINT2(__VERBOSE_DEBUG__,_L("[CNTMODEL] *   Lock item %d"), aCntId);
-	
-	if (IsLocked(aCntId))
-		{
-		return KErrInUse; // A session can only lock a cnt item once.	
-		}
-		
-	TLockData lockData(aCntId, aSessionId);
-	
-	iLockedIds.InsertInSignedKeyOrderL(lockData);
-	
-	CleanupStack::PushL(TCleanupItem(CTransactionLock::CleanupUnlockRecord, this));
-		
-	return KErrNone;	
-	}
+    {
+    
+    DEBUG_PRINT2(__VERBOSE_DEBUG__,_L("[CNTMODEL] *   Lock item %d"), aCntId);
+    
+    if (IsLocked(aCntId))
+        {
+        return KErrInUse; // A session can only lock a cnt item once.    
+        }
+        
+    TLockData lockData(aCntId, aSessionId);
+    
+    iLockedIds.InsertInSignedKeyOrderL(lockData);
+    
+    CleanupStack::PushL(TCleanupItem(CTransactionLock::CleanupUnlockRecord, this));
+        
+    return KErrNone;
+    }
 
-	
+    
 /**
  Unlocks the last locked contact item after a leave
  
  @param aTransLock The CTransactionLock object from which the last locked contact item
- 				  ID must be removed (unlocked).
+                   ID must be removed (unlocked).
 */
 void CTransactionLock::CleanupUnlockRecord(TAny* aTransLock)
-	{
-	TRAP_IGNORE(static_cast<CTransactionLock*>(aTransLock)->UnlockLastLockedContactL() );
-	}	
-	
+    {
+    TRAP_IGNORE(static_cast<CTransactionLock*>(aTransLock)->UnlockLastLockedContactL() );
+    }
+    
 /** 
  UnLocks a contact item by removing its ID to an array of locked contact items IDs.
  
  @param aCntId The ID of contact item to be unlocked
  @param aSessionId The Session which is unlocking the contact Item
  @return KErrNone if locking was successful.
- 		 KErrAccessDenied if the contact item was not successfuly locked  
-*/	
+          KErrAccessDenied if the contact item was not successfuly locked  
+*/    
 TInt CTransactionLock::UnLockL(const TUint aSessionId, const TContactItemId aCntId)
-	{
-	
-	DEBUG_PRINT2(__VERBOSE_DEBUG__,_L("[CNTMODEL] * UnLock item %d"), aCntId);
-	
-	TLockData lockData(aCntId, aSessionId);
-	TInt index = iLockedIds.FindInSignedKeyOrder(lockData);
-	if (index < 0)
-		return KErrAccessDenied;
-	
-	if (index > iLockedIds.Count())
-		{
-		return KErrAccessDenied;	
-		}
-	
-	if (iLockedIds[index].iSessionId == aSessionId)
-		{
-		iLockedIds.Remove(index);
-		ProcessLockedContactsL(); // Process any requests in the Store
-		}
-	return KErrNone;	
-	}
+    {
+    
+    DEBUG_PRINT2(__VERBOSE_DEBUG__,_L("[CNTMODEL] * UnLock item %d"), aCntId);
+    
+    TLockData lockData(aCntId, aSessionId);
+    TInt index = iLockedIds.FindInSignedKeyOrder(lockData);
+    if (index < 0)
+        return KErrAccessDenied;
+    
+    if (index > iLockedIds.Count())
+        {
+        return KErrAccessDenied;
+        }
+    
+    if (iLockedIds[index].iSessionId == aSessionId)
+        {
+        iLockedIds.Remove(index);
+        ProcessLockedContactsL(); // Process any requests in the Store
+        }
+    return KErrNone;
+    }
 
 /**
  Process any requests in the Store - Another session
@@ -2380,12 +2379,12 @@ TInt CTransactionLock::UnLockL(const TUint aSessionId, const TContactItemId aCnt
  to be performed by another session.
 */
 void CTransactionLock::ProcessLockedContactsL()
-	{
-	if(iStateMachine.ReqStoreL().IsEmpty() == EFalse)
-		{
-		iStateMachine.ReqStoreL().ActivateRequestsL();	
-		}		
-	}
+    {
+    if(iStateMachine.ReqStoreL().IsEmpty() == EFalse)
+        {
+        iStateMachine.ReqStoreL().ActivateRequestsL();
+        }
+    }
 
 /**
  Unlocks all the locked contacts for a given sessionid, the request 
@@ -2394,48 +2393,48 @@ void CTransactionLock::ProcessLockedContactsL()
  @param aSessionId The session that is being closed.
 */ 
 void CTransactionLock::UnLockAllL(const TUint aSessionId)
-	{
-	TInt ii	= iLockedIds.Count();
-	while(ii) 
-		{
-		--ii;		
-		if (iLockedIds[ii].iSessionId == aSessionId)
-			{
-			iLockedIds.Remove(ii);
-			}
-		}
-	ProcessLockedContactsL(); // Process any requests in the Store
-	}
-	
+    {
+    TInt ii = iLockedIds.Count();
+    while(ii) 
+        {
+        --ii;
+        if (iLockedIds[ii].iSessionId == aSessionId)
+            {
+            iLockedIds.Remove(ii);
+            }
+        }
+    ProcessLockedContactsL(); // Process any requests in the Store
+    }
+    
 /** 
- Unlock the last locked contact after an leave has occured	
+ Unlock the last locked contact after an leave has occured    
  
  @param aSessionId The ID of the session that performed the operation in which 
- 				   the leave occured.
+                    the leave occured.
 */
-void CTransactionLock::UnlockLastLockedContactL(TUint aSessionId)	
-	{
-	if (aSessionId == nsState::KNoSessionId)
-		{
-		// Remove the last Locked Contact regardless of session
-		iLockedIds.Remove(iLockedIds.Count() - 1);
-		ProcessLockedContactsL(); // Process any requests in the Store
-		return;
-		}
-	
-	TInt ii	= iLockedIds.Count();
-	while(ii) 
-		{
-		--ii;		
-		if (iLockedIds[ii].iSessionId == aSessionId)
-			{
-			iLockedIds.Remove(ii);
-			ProcessLockedContactsL(); // Process any requests in the Store
-			return; // Finished
-			}
-		}
-	}
-	
+void CTransactionLock::UnlockLastLockedContactL(TUint aSessionId)    
+    {
+    if (aSessionId == nsState::KNoSessionId)
+        {
+        // Remove the last Locked Contact regardless of session
+        iLockedIds.Remove(iLockedIds.Count() - 1);
+        ProcessLockedContactsL(); // Process any requests in the Store
+        return;
+        }
+    
+    TInt ii = iLockedIds.Count();
+    while(ii) 
+        {
+        --ii;
+        if (iLockedIds[ii].iSessionId == aSessionId)
+            {
+            iLockedIds.Remove(ii);
+            ProcessLockedContactsL(); // Process any requests in the Store
+            return; // Finished
+            }
+        }
+    }
+    
 /** 
 Checks if a contact item is locked by another session.
 
@@ -2443,26 +2442,26 @@ Checks if a contact item is locked by another session.
 @param aSessionId The Session which is checking for a lock
 
 @return True if the contact has been locked.
-		False if the contact has not been locked by another session.
+        False if the contact has not been locked by another session.
 */
 TBool CTransactionLock::IsLocked(const TUint aSessionId, const TContactItemId aCntId) const
-	{
-	TInt ii	= iLockedIds.Count();
-	
-	while(ii) 
-		{
-		--ii;		
-		if (iLockedIds[ii].iCntItemId == aCntId)
-			{
-			if (iLockedIds[ii].iSessionId != aSessionId)
-				{
-				return ETrue;	// locked by another session	
-				}
-			return EFalse; // has not been locked by another session	
-			}
-		}
-	return EFalse; // has not been locked by any session
-	}
+    {
+    TInt ii = iLockedIds.Count();
+    
+    while(ii) 
+        {
+        --ii;
+        if (iLockedIds[ii].iCntItemId == aCntId)
+            {
+            if (iLockedIds[ii].iSessionId != aSessionId)
+                {
+                return ETrue;    // locked by another session    
+                }
+            return EFalse; // has not been locked by another session    
+            }
+        }
+    return EFalse; // has not been locked by any session
+    }
 
 /**
  Checks if a contact item is locked by this or another session (any session).
@@ -2470,83 +2469,83 @@ TBool CTransactionLock::IsLocked(const TUint aSessionId, const TContactItemId aC
 
  @param aCntId The ID of contact item to be checked
  @return True if the contact has been locked.
-		False if the contact has not been locked.
+        False if the contact has not been locked.
 */
 TBool CTransactionLock::IsLocked(const TContactItemId aCntId)const
-	{
-	TInt ii = iLockedIds.Count();
-	
-	while(ii) 
-		{
-		--ii;		
-		if (iLockedIds[ii].iCntItemId == aCntId)
-			{
-			return ETrue;	// locked 
-			}
-		}
-	return EFalse;
-	}
+    {
+    TInt ii = iLockedIds.Count();
+    
+    while(ii) 
+        {
+        --ii;
+        if (iLockedIds[ii].iCntItemId == aCntId)
+            {
+            return ETrue;    // locked 
+            }
+        }
+    return EFalse;
+    }
 
 /**
  Determines if any contacts items are locked by this or another session (any
  session).
  @return True if there is a locked contact.
-		False if there is no locked contact.
+        False if there is no locked contact.
 */
 TBool CTransactionLock::AnyLocked() const
-	{
-	return iLockedIds.Count() != 0;
-	}
+    {
+    return iLockedIds.Count() != 0;
+    }
 
 /** CStateBackupRestore
-	While in this state neither read nor write operations are allowed.  The
-	CStateClosed parent class AcceptRequestL() handles all read and write
-	requests.
-	
-	Methods completes the request with KErrLocked via a call to TimeOutErrorCode() 
-	from the parent CStateClosed class.
+    While in this state neither read nor write operations are allowed.  The
+    CStateClosed parent class AcceptRequestL() handles all read and write
+    requests.
+    
+    Methods completes the request with KErrLocked via a call to TimeOutErrorCode() 
+    from the parent CStateClosed class.
 */
 CStateBackupRestore* CStateBackupRestore::NewL(CCntStateMachine& aStateMachine, CPersistenceLayer& aPersistenceLayer)
-	{
-	CStateBackupRestore* stateBUR = new (ELeave) CStateBackupRestore(aStateMachine, aPersistenceLayer);
-	return stateBUR;
-	}
-	
-	
+    {
+    CStateBackupRestore* stateBUR = new (ELeave) CStateBackupRestore(aStateMachine, aPersistenceLayer);
+    return stateBUR;
+    }
+    
+    
 CStateBackupRestore::~CStateBackupRestore()
-	{
-	}
+    {
+    }
 
 
 CStateBackupRestore::CStateBackupRestore(CCntStateMachine& aStateMachine, CPersistenceLayer& aPersistenceLayer)
 :CStateClosed(aStateMachine, aPersistenceLayer)
-	{
-	}
+    {
+    }
 
 
 // Default AsyncOpen requests behaviour to the base implementation
 TAccept CStateBackupRestore::AcceptRequestL(CReqAsyncOpen* aRequest)
-	{
-	return CState::AcceptRequestL(aRequest);
-	}
+    {
+    return CState::AcceptRequestL(aRequest);
+    }
 
 
 TAccept CStateBackupRestore::AcceptRequestL(CReqBackupRestoreBegin* aRequest)
-  	{
-  	// A backup/restore is already in progress so don't defer this request -
-  	// simply complete it.
-	aRequest->Complete();
-  	return EProcessed;
-  	}	
+    {
+    // A backup/restore is already in progress so don't defer this request -
+    // simply complete it.
+    aRequest->Complete();
+    return EProcessed;
+    }
 
 
 TAccept CStateBackupRestore::AcceptRequestL(CReqBackupRestoreEnd* aRequest)
-	{
-	// Once Backup/Restore completes we can re-open the database.  Re-accept
-	// request in CStateOpening.	
-	iStateMachine.SetCurrentStateL(iStateMachine.StateOpening());  
-	return iStateMachine.CurrentState().AcceptRequestL(aRequest);
- 	}
+    {
+    // Once Backup/Restore completes we can re-open the database.  Re-accept
+    // request in CStateOpening.    
+    iStateMachine.SetCurrentStateL(iStateMachine.StateOpening());  
+    return iStateMachine.CurrentState().AcceptRequestL(aRequest);
+    }
 
 
 /**
@@ -2557,49 +2556,49 @@ TAccept CStateBackupRestore::AcceptRequestL(CReqBackupRestoreEnd* aRequest)
  @return TAccept EProcessed - finished processing request
 */  
 TAccept CStateBackupRestore::AcceptRequestL(CReqNoAsyncActivity* aRequest)
-  	{
-  	if (iStateMachine.AsyncActivity())
-  		{
-  		iStateMachine.SetAsyncActivity(EFalse);
-		// Close the file to allow the backup/restore to take place.	
-		iPersistenceLayer.ContactsFileL().Close();
-		}
-  	aRequest->Complete();
-  	return EProcessed;
-  	}
+    {
+    if (iStateMachine.AsyncActivity())
+        {
+        iStateMachine.SetAsyncActivity(EFalse);
+        // Close the file to allow the backup/restore to take place.    
+        iPersistenceLayer.ContactsFileL().Close();
+        }
+    aRequest->Complete();
+    return EProcessed;
+    }
 
 /** 
  Returns the default error code - KErrLocked - for the backup restore state 
 */
-TInt CStateBackupRestore::TimeOutErrorCode()  	
-	{
-	return KErrLocked;
-	}
+TInt CStateBackupRestore::TimeOutErrorCode()
+    {
+    return KErrLocked;
+    }
 
 
-// ======================================		
-// CCntStateMachine Class implementation	
+// ======================================        
+// CCntStateMachine Class implementation    
 // The main purpose of the CState object 
 // is to define the state transition table
-	
+    
 CCntStateMachine::~CCntStateMachine()
-	{
-	iStateArray.ResetAndDestroy();
-	delete iReqStore;
-	delete iTransLock;
-	}
-	
+    {
+    iStateArray.ResetAndDestroy();
+    delete iReqStore;
+    delete iTransLock;
+    }
+    
 CCntStateMachine* CCntStateMachine::NewL(CPersistenceLayer& aPersistenceLayer, CCntDbManager& aDbManager)
-	{
-	CCntStateMachine* stateMachine = new (ELeave) CCntStateMachine(aDbManager);
-	CleanupStack::PushL(stateMachine);
-	stateMachine->ConstructL(aPersistenceLayer);
-	CleanupStack::Pop(stateMachine);
-	return stateMachine;
-	}
-	
+    {
+    CCntStateMachine* stateMachine = new (ELeave) CCntStateMachine(aDbManager);
+    CleanupStack::PushL(stateMachine);
+    stateMachine->ConstructL(aPersistenceLayer);
+    CleanupStack::Pop(stateMachine);
+    return stateMachine;
+    }
+    
 /** 
- Create and add all states to the state machine array	
+ Create and add all states to the state machine array    
  
  @param aPersistenceLayer. The persistence layer that wraps up access to the database.
 */
@@ -2626,29 +2625,29 @@ void CCntStateMachine::ConstructL(CPersistenceLayer& aPersistenceLayer)
     }
 
 /**
- Get the current active state		
+ Get the current active state        
  
  @return The current active state
 */ 
 CState& CCntStateMachine::CurrentState()
-	{
-	return *iState;
-	}
-	
+    {
+    return *iState;
+    }
+    
 /** 
- Get the transaction lock	
+ Get the transaction lock    
  
  @return The Transaction Lock object
 */
 CTransactionLock& CCntStateMachine::TransactionLockL()
-	{
-	if (!iTransLock)
-		{
-		iTransLock = CTransactionLock::NewL(*this);			
-		}
+    {
+    if (!iTransLock)
+        {
+        iTransLock = CTransactionLock::NewL(*this);
+        }
 
-	return *iTransLock;
-	}
+    return *iTransLock;
+    }
 
 /** 
  Get the Database Manager
@@ -2656,9 +2655,9 @@ CTransactionLock& CCntStateMachine::TransactionLockL()
  @return the Contact Database Manager object
 */
 CCntDbManager& CCntStateMachine::DbManager()
-	{
-	return iDbManager;
-	}
+    {
+    return iDbManager;
+    }
 
 /**
  StateMachine constructor
@@ -2666,13 +2665,13 @@ CCntDbManager& CCntStateMachine::DbManager()
  @param aDbManager The Database Manager.
 */
 CCntStateMachine::CCntStateMachine(CCntDbManager& aDbManager)
-	:
-  	iDbManager(aDbManager),
-  	iLowDisk(EFalse),
-  	iAsyncActivity(EFalse)
-	{
-	// Nothing to do.
-	}
+    :
+    iDbManager(aDbManager),
+    iLowDisk(EFalse),
+    iAsyncActivity(EFalse)
+    {
+    // Nothing to do.
+    }
 
 /**
  Used for debugging the transition between state. 
@@ -2683,70 +2682,70 @@ CCntStateMachine::CCntStateMachine(CCntDbManager& aDbManager)
 */ 
 #ifdef __STATE_MACHINE_DEBUG__
 const TDesC& CCntStateMachine::StateName(CState& aState)
-	{
-	_LIT(KStateClosedName,   	"EStateClosed");
-	_LIT(KStateTablesClosed, 	"EStateTablesClosed");
-	_LIT(KStateWritableName, 	"EStateWritable");
-	_LIT(KStateOpeningName,  	"EStateOpening");
-	_LIT(KStateTransactionName, "EStateTransaction");
-	_LIT(KStateBackupRestoreName, "EStateBackupRestore");
-	_LIT(KStateUnknownName,  	"Unknown State");
+    {
+    _LIT(KStateClosedName,       "EStateClosed");
+    _LIT(KStateTablesClosed,     "EStateTablesClosed");
+    _LIT(KStateWritableName,     "EStateWritable");
+    _LIT(KStateOpeningName,      "EStateOpening");
+    _LIT(KStateTransactionName,  "EStateTransaction");
+    _LIT(KStateBackupRestoreName, "EStateBackupRestore");
+    _LIT(KStateUnknownName,      "Unknown State");
 
-	if (&aState == &StateClosed())
-		{
-		return KStateClosedName();
-		}
-		
-	if (&aState == &StateTablesClosed())
-		{
-		return KStateTablesClosed();	
-		}
-		
-	if (&aState == &StateWritable())
-		{
-		return KStateWritableName();
-		}
+    if (&aState == &StateClosed())
+        {
+        return KStateClosedName();
+        }
+        
+    if (&aState == &StateTablesClosed())
+        {
+        return KStateTablesClosed();
+        }
+        
+    if (&aState == &StateWritable())
+        {
+        return KStateWritableName();
+        }
 
-	if (&aState == &StateOpening())
-		{
-		return KStateOpeningName();
-		}
+    if (&aState == &StateOpening())
+        {
+        return KStateOpeningName();
+        }
 
-	if (&aState == &StateTransaction())
-		{
-		return KStateTransactionName();
-		}
+    if (&aState == &StateTransaction())
+        {
+        return KStateTransactionName();
+        }
 
-	if (&aState == &StateBackupRestore())
-		{
-		return KStateBackupRestoreName();
-		}
+    if (&aState == &StateBackupRestore())
+        {
+        return KStateBackupRestoreName();
+        }
 
-	return KStateUnknownName();
-	}
+    return KStateUnknownName();
+    }
 #endif
 
 /** 
- Set the active state in the state machine	
+ Set the active state in the state machine    
  
  @param aState The state which is becoming active
 */
 void CCntStateMachine::SetCurrentStateL(CState& aState)
-	{
-	
+    {
+    
 #ifdef __STATE_MACHINE_DEBUG__
-	RDebug::Print(_L("[CNTMODEL] STA: %S --> %S\r\n"),	&CCntStateMachine::StateName(*iState), &CCntStateMachine::StateName(aState));
+    RDebug::Print(_L("[CNTMODEL] STA: %S --> %S\r\n"),    &CCntStateMachine::StateName(*iState), &CCntStateMachine::StateName(aState));
 #endif
 
-	iState = &aState;
-	// Process any requests in the Store on each state change
-	// The state may have changed to one where queued requests 
-	// can now be processed.
-	if(ReqStoreL().IsEmpty() == EFalse)
-		{
-		iReqStore->ActivateRequestsL();	
-		}
-	}
+    iState = &aState;
+    // Process any requests in the Store on each state change
+    // The state may have changed to one where queued requests 
+    // can now be processed.
+    if(ReqStoreL().IsEmpty() == EFalse)
+        {
+        iReqStore->ActivateRequestsL();
+        }
+    }
 
 /** 
  This is the interface to the state machine (used by the session class). 
@@ -2767,9 +2766,9 @@ void CCntStateMachine::SetCurrentStateL(CState& aState)
 */ 
 void CCntStateMachine::ProcessRequestL(CCntRequest* aRequest)
     {
-	// Obtained ownership of the request object.  It is the responsibility
-	// of this function to ensure the request is properly disposed after being 
-	// processed unless leave occurs.
+    // Obtained ownership of the request object.  It is the responsibility
+    // of this function to ensure the request is properly disposed after being 
+    // processed unless leave occurs.
     TAccept result = aRequest->VisitStateL(*iState);
 
     switch(result)
@@ -2786,8 +2785,8 @@ void CCntStateMachine::ProcessRequestL(CCntRequest* aRequest)
             break;
 
         case EProcessed:
-			// The request has been processed by the visited state - nothing more
-			// to do, except to destroy the request now
+            // The request has been processed by the visited state - nothing more
+            // to do, except to destroy the request now
             delete aRequest;
             break;
 
@@ -2824,13 +2823,13 @@ void CCntStateMachine::HandleDatabaseEventV2L(TContactDbObserverEventV2 aEvent)
  a state change or unlock operation. 
  The store takes a reference to the CCntStateMachine in order to ProcessRequestL
  
- @return The Request Store  	
+ @return The Request Store      
 */ 
 CRequestStore& CCntStateMachine::ReqStoreL()
-	{
-	if (!iReqStore)
-		{
-		iReqStore = CRequestStore::NewL(*this);	
-		}
-	return *iReqStore;	
-	}	
+    {
+    if (!iReqStore)
+        {
+        iReqStore = CRequestStore::NewL(*this);
+        }
+    return *iReqStore;
+    }    

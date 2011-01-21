@@ -16,7 +16,7 @@
 */
 
 
-target          	DBSQLDumper.EXE
+TARGET          	dbsqldumper.exe
 targettype      	EXE
 CAPABILITY   ReadUserData WriteUserData
 UID			0x1000097a
@@ -28,11 +28,11 @@ APP_LAYER_SYSTEMINCLUDE_SYMBIAN
 userinclude			../src ../../src ../../cntplsql/inc
 source 				dbsqldumper.CPP
 
-library         	EUSER.LIB  
-library				EFSRV.LIB 
-library				estor.lib 
-library				BAFL.LIB
-library				sqldb.lib
-library         	PIMTestClient.lib
+LIBRARY         	euser.lib  
+LIBRARY			efsrv.lib 
+LIBRARY			estor.lib 
+LIBRARY			bafl.lib
+LIBRARY			sqldb.lib
+LIBRARY         	pimtestclient.lib
 
 SMPSAFE

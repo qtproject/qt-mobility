@@ -57,7 +57,6 @@ const TInt KCntFileManagerIpcCodes[] =
 	ECntFetchTemplateIds,
 	ECntFetchGroupIdLists,
 	ECntSearchResultList,
-	ECntPredictiveSearchList,
 	ECntFilesSize,
 	ECntGetDefinitionsForExistingView
 	};
@@ -396,35 +395,6 @@ void CCntFileManagerMsgHandler::FetchGroupIdListsL(const RMessage2& aMessage)
 		}
 	}
 	
-void CCntFileManagerMsgHandler::FetchPredictiveSearchResultsL(const RMessage2& aMessage)
-    {
-    const TInt KSqlQueryMaxLen = aMessage.GetDesLengthL(1); 
-    HBufC* searchPattern = HBufC::NewLC(KSqlQueryMaxLen);
-    TPtr searchPatternPtr(searchPattern->Des());
-    aMessage.ReadL(1, searchPatternPtr);
-    
-    CheckForManagerL();
-    CBufSeg* buffer = iManager->GetPersistenceLayer().ContactProperties().DetailsListPredictiveL(searchPattern->Des());
-    if (aMessage.GetDesMaxLength(0) >= buffer->Size())
-        {
-        TInt offset = 0;
-        while (offset < buffer->Size())
-            {
-            TPtr8 ptr = buffer->Ptr(offset);
-            aMessage.WriteL(0, ptr, offset);
-            offset += ptr.Size();
-            }
-        aMessage.Complete(KErrNone);
-        }
-    else
-        {
-        aMessage.Complete(buffer->Size());
-        }
-
-    delete buffer;
-    CleanupStack::PopAndDestroy( searchPattern ); 
-    }
-
 void CCntFileManagerMsgHandler::FetchSearchResultsL(const RMessage2& aMessage)
     {
     const TInt KSqlQueryMaxLen = aMessage.GetDesLengthL(1); 

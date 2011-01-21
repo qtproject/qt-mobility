@@ -184,12 +184,7 @@ CBufSeg* CLplContactProperties::DetailsListL(const TDesC& aSearchQuery) const
     {
     return iContactItemManager->DetailsListL(aSearchQuery);
     }   
-
-
-CBufSeg* CLplContactProperties::DetailsListPredictiveL(const TDesC& aSearchPattern) const
-    {
-    return iContactItemManager->DetailsListPredictiveL(aSearchPattern);
-    }   
+ 
 
 TInt64 CLplContactProperties::MachineIdL() const
     {
@@ -426,7 +421,7 @@ void CSystemTemplateManager::RecreateSystemTemplateL()
 		RDebug::Print(_L("[CNTMODEL] MTD: CSystemTemplateManager::RecreateSystemTemplateL"));
 	#endif 
 	
-    _LIT(KCntSystemTemplate,"z:\\resource\\cntmodel\\cntmodel.rsc");
+	_LIT(KCntSystemTemplate,"z:\\resource\\cntmodel\\customisedcntmodel.rsc");
 
 	CContactTemplate* systemTemplate = SystemTemplateFromResourceL(KCntSystemTemplate);
 	CleanupStack::PushL(systemTemplate);
