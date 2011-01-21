@@ -46,7 +46,7 @@
     experience.  There are many elements to an immersive experience, including
     a consistent and beautiful graphical user interface design, unobtrusive yet
     informative sound design, and intuitive program flow.  Another important
-    aspect of immersive applications in tactile feedback and haptic effects.
+    aspect of immersive applications is tactile feedback and haptic effects.
 
     The \l{Feedback}{QtMobility Feedback API} allows application developers to
     include tactile feedback into their application via a simple to use and
