@@ -65,6 +65,10 @@ class QDeclarativeDeviceInfo : public QSystemDeviceInfo
     Q_PROPERTY(bool monitorDeviceLocks READ monitorDeviceLocks WRITE startDeviceLocked CONSTANT)
     Q_PROPERTY(bool monitorLockStatusChanges READ monitorLockStatusChanges WRITE startLockStatusChanged CONSTANT)
 
+    Q_PROPERTY(int messageRingtoneVolume READ messageRingtoneVolume CONSTANT)
+    Q_PROPERTY(int voiceRingtoneVolume READ voiceRingtoneVolume CONSTANT)
+    Q_PROPERTY(bool vibrationActive READ vibrationActive CONSTANT)
+
 public:
     explicit QDeclarativeDeviceInfo(QObject *parent = 0);
 
@@ -96,7 +100,12 @@ public:
     bool monitorLockStatusChanges();
     void startLockStatusChanged(bool on);
 
+    int messageRingtoneVolume();
+    int voiceRingtoneVolume();
+    bool vibrationActive();
+
  protected:
+
     bool monitoringBatteryLevel;
     bool monitoringBatteryStatus;
     bool monitoringPowerState;
@@ -107,6 +116,9 @@ public:
     bool monitoringKeyboardFlipped;
     bool monitoringDeviceLocked;
     bool monitoringLockStatusChanged;
+
+    QSystemDeviceInfo::ProfileDetails currentProfileDetails;
+
 };
 
 QT_END_NAMESPACE

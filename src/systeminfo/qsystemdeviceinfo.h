@@ -201,9 +201,7 @@ public:
         int voiceRingtoneVolume() const;
         bool vibrationActive() const;
     private:
-       //  QExplicitlySharedDataPointer<QSystemDeviceInfoPrivate> d;
          friend class QSystemDeviceInfo;
-
     };
 
     Q_INVOKABLE ProfileDetails activeProfileDetails();//1.2
