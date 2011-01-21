@@ -50,11 +50,12 @@
 #include <qrotationsensor.h>
 #include <qmagnetometer.h>
 #include <qcompass.h>
+#include <qlightsensor.h>
 #include "sensorslotclass.h"
 
 QTM_USE_NAMESPACE
 
-        static QOrientationReading::Orientation o2;
+static QOrientationReading::Orientation o2;
 static QOrientationSensor orientationSensor;
 static QAccelerometer accelerometer;
 static QRotationSensor rotationSensor;
@@ -64,6 +65,8 @@ static QMagnetometer magnetometer;
 static QMagnetometerReading* maggeReading;
 static QCompass compass;
 static QCompassReading* compassReading;
+static QLightSensor lightSensor;
+static QLightReading* lightReading;
 
 
 static QString dataRateString;
@@ -113,6 +116,9 @@ SensorSlotClass::SensorSlotClass()
     }
     compass.start();
 
+    connect(&lightSensor,SIGNAL(readingChanged()),this,SLOT(slotLuxData()));
+    lightSensor.start();
+
     m_x=0; m_y=0; m_z=0;
 }
 
@@ -132,6 +138,8 @@ SensorSlotClass::~SensorSlotClass(){
     disconnect(&accelerometer);
     accelerometer.stop();
 
+    disconnect(&lightSensor);
+    lightSensor.stop();
 }
 
 
@@ -180,6 +188,12 @@ void SensorSlotClass::slotCompassData(){
     checkRange(&compass, (qreal)compassReading->azimuth());
 
     checkRate(&compass, m_compassTimestamp);
+}
+
+void SensorSlotClass::slotLuxData()
+{
+    lightReading = lightSensor.reading();
+    checkRange(&lightSensor, lightReading->lux());
 }
 
 
@@ -767,11 +781,20 @@ void test_manual::testOrientation()
         }
     }
 
+    isYes = 0;
+    qDebug()<<"Do you have a Lux meter to measure the light intensity(luminance)?";
+    isYes = tests::confirm();
+    if(isYes)
+        {
+        qDebug()<<"Check the data on the Lux meter and that of the device without varying the intensity:";
+        qDebug()<<"Lux value = "<<lightReading->lux();
+        tests::pressAnyKey();
+        QTest::qWait(100);
+        }
 
 
     QVERIFY2(tmp.size()<2, tmp.toLatin1().data());
 }
-
 
 void test_manual::testDataRate(){
     QVERIFY2(dataRateString.size()==0, dataRateString.toLatin1().data());
