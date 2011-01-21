@@ -191,9 +191,9 @@ private:
 
 //////// QSystemStorageInfo
 class QSystemStorageInfoPrivate : public QObject,
-    public MStorageStatusObserver,
+    public MStorageStatusObserver
 #ifdef SYMBIAN_3_PLATFORM
-    public MStorageSpaceNotifyObserver
+    ,public MStorageSpaceNotifyObserver
 #endif
 {
     Q_OBJECT
@@ -245,9 +245,9 @@ class QSystemDeviceInfoPrivate : public QObject,
     public MTelephonyInfoObserver,
     public MProEngProfileActivationObserver,
     public MCenRepNotifyHandlerCallback,
-    public MChargingStatusObserver,
+    public MChargingStatusObserver
 #ifdef SYMBIAN_3_PLATFORM
-    public MKeylockStatusObserver,
+    ,public MKeylockStatusObserver,
     public MFlipStatusObserver
 #endif
 {
@@ -497,9 +497,9 @@ public:
 private:
     DeviceInfo() : m_phoneInfo(NULL), m_subscriberInfo(NULL), m_chargingStatus(NULL),
         m_batteryInfo(NULL), m_cellNetworkInfo(NULL), m_cellNetworkRegistrationInfo(NULL),
-        m_cellSignalStrengthInfo(NULL), m_wlanInfo(NULL), m_mmcStorageStatus(NULL), m_batteryCommonInfo(NULL), m_networkInfo(NULL),
+        m_cellSignalStrengthInfo(NULL), m_wlanInfo(NULL), m_mmcStorageStatus(NULL), m_batteryCommonInfo(NULL), m_networkInfo(NULL)
 #ifdef SYMBIAN_3_PLATFORM
-        m_keylockStatus(NULL),m_flipStatus(NULL),m_storagedisknotifier(NULL)
+        ,m_keylockStatus(NULL),m_flipStatus(NULL),m_storagedisknotifier(NULL)
 #endif
     {
         m_telephony = CTelephony::NewL();
