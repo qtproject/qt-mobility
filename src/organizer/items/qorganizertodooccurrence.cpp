@@ -60,7 +60,8 @@ QTM_USE_NAMESPACE
  */
 
 /*!
-  Sets the date time at which the task should be started to \a startDateTime
+  Sets the date time at which the task should be started to \a startDateTime.  For all-day tasks,
+  the time part can be set to any valid value.
  */
 void QOrganizerTodoOccurrence::setStartDateTime(const QDateTime& startDateTime)
 {
@@ -70,7 +71,8 @@ void QOrganizerTodoOccurrence::setStartDateTime(const QDateTime& startDateTime)
 }
 
 /*!
-  Returns the date time at which the task should be started
+  Returns the date time at which the task should be started.  For all-day tasks, the time part is
+  meaningless.
  */
 QDateTime QOrganizerTodoOccurrence::startDateTime() const
 {
@@ -79,7 +81,8 @@ QDateTime QOrganizerTodoOccurrence::startDateTime() const
 }
 
 /*!
-  Sets the date time by which the task should be completed to \a dueDateTime
+  Sets the date time by which the task should be completed to \a dueDateTime.  For all-day tasks,
+  the time part can be set to any valid value.
  */
 void QOrganizerTodoOccurrence::setDueDateTime(const QDateTime& dueDateTime)
 {
@@ -89,7 +92,8 @@ void QOrganizerTodoOccurrence::setDueDateTime(const QDateTime& dueDateTime)
 }
 
 /*!
-  Returns the date time by which the task should be completed
+  Returns the date time by which the task should be completed.  For all-day tasks, the time part is
+  meaningless.
  */
 QDateTime QOrganizerTodoOccurrence::dueDateTime() const
 {

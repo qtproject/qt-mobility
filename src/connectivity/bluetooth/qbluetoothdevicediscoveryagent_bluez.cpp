@@ -42,10 +42,13 @@
 #include "qbluetoothdevicediscoveryagent.h"
 #include "qbluetoothdevicediscoveryagent_p.h"
 #include "qbluetoothaddress.h"
+#include "qbluetoothuuid.h"
 
 #include "bluez/manager_p.h"
 #include "bluez/adapter_p.h"
 #include "bluez/device_p.h"
+
+//#define QTM_DEVICEDISCOVERY_DEBUG
 
 QTM_BEGIN_NAMESPACE
 
@@ -88,6 +91,10 @@ void QBluetoothDeviceDiscoveryAgentPrivate::start()
     if(propertiesReply.isError())
         return;
 
+#ifdef QTM_DEVICEDISCOVERY_DEBUG
+    qDebug() << "Looking up cached devices";
+#endif
+
     QVariant p = propertiesReply.value()["Devices"];
     QDBusArgument d = p.value<QDBusArgument>();
     QStringList l; d >> l;
@@ -101,12 +108,16 @@ void QBluetoothDeviceDiscoveryAgentPrivate::start()
             continue;
         QVariantMap v = deviceReply.value();
         QString address = v.value("Address").toString();
-//        qDebug() << "Already know: " << address;
-//        qDebug() << "Address: " << address << v.value("UUIDs").toStringList();
+        v.insert(QLatin1String("Cached"), QVariant(true));
+#ifdef QTM_DEVICEDISCOVERY_DEBUG
+        qDebug() << "Cached Address: " << address << "Num UUIDs:" << v.value("UUIDs").toStringList().count();
+#endif
         _q_deviceFound(address, v);
     }
 
-//    qDebug() << p << d.currentSignature() << d.currentType() << l;
+#ifdef QTM_DEVICEDISCOVERY_DEBUG
+    qDebug() << "Starting discovery...";
+#endif
 
     QDBusPendingReply<> discoveryReply = adapter->StartDiscovery();
     if (discoveryReply.isError()) {
@@ -119,6 +130,9 @@ void QBluetoothDeviceDiscoveryAgentPrivate::start()
 void QBluetoothDeviceDiscoveryAgentPrivate::stop()
 {
     if (adapter) {
+#ifdef QTM_DEVICEDISCOVERY_DEBUG
+        qDebug() << Q_FUNC_INFO;
+#endif
         adapter->StopDiscovery();
         adapter->deleteLater();
         adapter = 0;
@@ -130,13 +144,31 @@ void QBluetoothDeviceDiscoveryAgentPrivate::_q_deviceFound(const QString &addres
 {
     const QBluetoothAddress btAddress(address);
     const QString btName = dict.value(QLatin1String("Name")).toString();
-    quint32 btClass = dict.value(QLatin1String("Class")).toUInt();
-//    qDebug() << "Discovered: " << address << btName << btClass << discoveredDevices.count();
+    quint32 btClass = dict.value(QLatin1String("Class")).toUInt();    
+
+#ifdef QTM_DEVICEDISCOVERY_DEBUG
+    qDebug() << "Discovered: " << address << btName << "Num UUIDs" << dict.value(QLatin1String("UUIDs")).toStringList().count() << "total device" << discoveredDevices.count() << "cached" << dict.value(QLatin1String("Cached")).toBool();
+#endif
 
     QBluetoothDeviceInfo device(btAddress, btName, btClass);    
+    QList<QBluetoothUuid> uuids;
+    foreach (QString u, dict.value(QLatin1String("UUIDs")).toStringList()) {
+        uuids.append(QBluetoothUuid(u));
+    }
+    device.setServiceUuids(uuids, QBluetoothDeviceInfo::DataIncomplete);
+    device.setCached(dict.value("Cached").toBool());
     for(int i = 0; i < discoveredDevices.size(); i++){
         if(discoveredDevices[i].address() == device.address()) {
-            return;
+            if(discoveredDevices[i] == device)
+                return;
+            discoveredDevices.replace(i, device);
+            Q_Q(QBluetoothDeviceDiscoveryAgent);
+#ifdef QTM_DEVICEDISCOVERY_DEBUG
+            qDebug() << "Updated: " << address;
+#endif
+
+            emit q->deviceDiscovered(device);
+            return; // this works if the list doesn't contain duplicates. Don't let it.
         }
     }
     discoveredDevices.append(device);
@@ -147,6 +179,9 @@ void QBluetoothDeviceDiscoveryAgentPrivate::_q_deviceFound(const QString &addres
 void QBluetoothDeviceDiscoveryAgentPrivate::_q_propertyChanged(const QString &name,
                                                                const QDBusVariant &value)
 {    
+#ifdef QTM_DEVICEDISCOVERY_DEBUG
+    qDebug() << Q_FUNC_INFO << name << value.variant();
+#endif
     if (name == QLatin1String("Discovering") && !value.variant().toBool()) {
         Q_Q(QBluetoothDeviceDiscoveryAgent);
         adapter->deleteLater();

@@ -50,176 +50,209 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QBluetoothLocalDevicePrivate
+class QBluetoothLocalDevicePrivate: public MBTEngSettingsObserver
 {
+    Q_DECLARE_PUBLIC(QBluetoothLocalDevice)
+public:
+    QBluetoothLocalDevicePrivate();
     ~QBluetoothLocalDevicePrivate();
+
+    static QString name();
+    static QBluetoothAddress address();
+
+    void powerOn();
+    void setHostMode(QBluetoothLocalDevice::HostMode mode);
+    QBluetoothLocalDevice::HostMode hostMode() const;
+
+    void requestPairing(const QBluetoothAddress &address, QBluetoothLocalDevice::Pairing pairing);
+    QBluetoothLocalDevice::Pairing pairingStatus(const QBluetoothAddress &address) const;
+
+    void pairingConfirmation(bool confirmation);
+private:
+    //From MBTEngSettingsObserver
+    void PowerStateChanged(TBTPowerStateValue aState);
+    void VisibilityModeChanged(TBTVisibilityMode aState);
+
 public:
     CBTEngSettings *m_settings;
+
+protected:
+    QBluetoothLocalDevice *q_ptr;
 };
+
+QBluetoothLocalDevicePrivate::QBluetoothLocalDevicePrivate()
+:m_settings(NULL)
+{
+    TRAPD(err, m_settings = CBTEngSettings::NewL(this));
+    if (err != KErrNone)
+        m_settings = NULL;
+}
 
 QBluetoothLocalDevicePrivate::~QBluetoothLocalDevicePrivate()
 {
     delete m_settings;
 }
 
-
-/*!
-    Constructs a QBluetoothLocalDevice.
-*/
-QBluetoothLocalDevice::QBluetoothLocalDevice(QObject *parent)
-:   QObject(parent)
+QString QBluetoothLocalDevicePrivate::name()
 {
-    this->d_ptr = new QBluetoothLocalDevicePrivate;
     CBTEngSettings *settings = NULL;
     TRAPD(err, settings = CBTEngSettings::NewL());
-    if (!err) {
-        this->d_ptr->m_settings = settings;
-    }
-}
-
-QBluetoothLocalDevice::QBluetoothLocalDevice(const QBluetoothAddress &address, QObject *parent)
-: QObject(parent)
-{
-    this->d_ptr = new QBluetoothLocalDevicePrivate;
-    CBTEngSettings *settings = NULL;
-    TRAPD(err, settings = CBTEngSettings::NewL());
-    if (!err) {
-        TBuf<20> bluetoothAddress;
-        TPckgBuf<TBTDevAddr> addressPackage;
-
-        RProperty::Get(KUidSystemCategory, KPropertyKeyBluetoothGetLocalDeviceAddress, addressPackage);
-
-        addressPackage().GetReadable(bluetoothAddress, KNullDesC, _L(":"), KNullDesC);
-
-        if (address == QBluetoothAddress(s60DescToQString(bluetoothAddress)))
-            this->d_ptr->m_settings = settings;
-    }
-}
-
-QString QBluetoothLocalDevice::name() const
-{
-    if (!d_ptr)
+    if (err != KErrNone)
         return QString();
     QString name = QString();
-    TBuf<256> localName;
-    TInt errorCode = this->d_ptr->m_settings->GetLocalName(localName);
-    if (errorCode == KErrNone) {
-        name = s60DescToQString(localName);
+    HBufC *localName = NULL;
+    TRAPD(error, localName = HBufC::NewL(256));
+    if (error != KErrNone) {
+        delete settings;
+        return QString();
     }
+    TPtr localPtr = localName->Des();
+    TInt errorCode = settings->GetLocalName(localPtr);
+    if (errorCode == KErrNone) {
+        name = s60DescToQString(localPtr);
+    }
+    delete localName;
+    delete settings;
     return name;
 }
 
-QBluetoothAddress QBluetoothLocalDevice::address() const
+QBluetoothAddress QBluetoothLocalDevicePrivate::address()
 {
     TBuf<20> bluetoothAddress;
     TPckgBuf<TBTDevAddr> addressPackage;
 
-    RProperty::Get(KUidSystemCategory, KPropertyKeyBluetoothGetLocalDeviceAddress, addressPackage);
+    TInt error = RProperty::Get(KUidSystemCategory, KPropertyKeyBluetoothGetLocalDeviceAddress, addressPackage);
+
+    if (error != KErrNone)
+        return QBluetoothAddress();
 
     addressPackage().GetReadable(bluetoothAddress, KNullDesC, _L(":"), KNullDesC);
 
     return QBluetoothAddress(s60DescToQString(bluetoothAddress));
 }
 
-void QBluetoothLocalDevice::powerOn()
+void QBluetoothLocalDevicePrivate::powerOn()
 {
-    if (!d_ptr)
+    if (!m_settings)
         return;
     TBTPowerStateValue powerState;
-    this->d_ptr->m_settings->GetPowerState(powerState);
-    if (powerState == EBTPowerOff)
-        this->d_ptr->m_settings->SetPowerState(EBTPowerOn);
+    TInt error = m_settings->GetPowerState(powerState);
+    if (error == KErrNone && powerState == EBTPowerOff)
+        m_settings->SetPowerState(EBTPowerOn);
 }
 
-void QBluetoothLocalDevice::setHostMode(QBluetoothLocalDevice::HostMode mode)
+void QBluetoothLocalDevicePrivate::setHostMode(QBluetoothLocalDevice::HostMode mode)
 {
-    if (!d_ptr)
+    if (!m_settings)
         return;
     switch (mode) {
-        case HostPoweredOff:
-            this->d_ptr->m_settings->SetPowerState(EBTPowerOff);
+        case QBluetoothLocalDevice::HostPoweredOff:
+            m_settings->SetPowerState(EBTPowerOff);
             break;
-        case HostConnectable: {
+        case QBluetoothLocalDevice::HostConnectable: {
             TBTPowerStateValue powerState;
-            this->d_ptr->m_settings->GetPowerState(powerState);
-            if (powerState == EBTPowerOff)
-                this->d_ptr->m_settings->SetPowerState(EBTPowerOn);
-
-            this->d_ptr->m_settings->SetVisibilityMode(EBTVisibilityModeHidden);
+            TInt error = m_settings->GetPowerState(powerState);
+            if (error == KErrNone) {
+                if (powerState == EBTPowerOff)
+                    m_settings->SetPowerState(EBTPowerOn);
+                m_settings->SetVisibilityMode(EBTVisibilityModeHidden);
+            }
             break;
         }
-        case HostDiscoverable: {
+        case QBluetoothLocalDevice::HostDiscoverable: {
             TBTPowerStateValue powerState;
-            this->d_ptr->m_settings->GetPowerState(powerState);
-            if (powerState == EBTPowerOff)
-                this->d_ptr->m_settings->SetPowerState(EBTPowerOn);
-
-            this->d_ptr->m_settings->SetVisibilityMode(EBTVisibilityModeGeneral);
+            TInt error = m_settings->GetPowerState(powerState);
+            if (error == KErrNone) {
+                if (powerState == EBTPowerOff)
+                    m_settings->SetPowerState(EBTPowerOn);
+                m_settings->SetVisibilityMode(EBTVisibilityModeGeneral);
+            }
             break;
         }
     }
 }
 
-QBluetoothLocalDevice::HostMode QBluetoothLocalDevice::hostMode() const
+
+QBluetoothLocalDevice::HostMode QBluetoothLocalDevicePrivate::hostMode() const
 {
-    if (!d_ptr)
-        return HostPoweredOff;
+    if (m_settings)
+        return QBluetoothLocalDevice::HostPoweredOff;
 
     TBTVisibilityMode visibilityMode;
-    this->d_ptr->m_settings->GetVisibilityMode(visibilityMode);
+    TInt error = m_settings->GetVisibilityMode(visibilityMode);
+
+    if (error != KErrNone)
+        return QBluetoothLocalDevice::HostPoweredOff;
 
     switch (visibilityMode) {
         case EBTVisibilityModeHidden:
-            return HostConnectable;
+            return QBluetoothLocalDevice::HostConnectable;
         case EBTVisibilityModeGeneral:
-            return HostDiscoverable;
         case EBTVisibilityModeTemporary:
-            return HostPoweredOff;
+            return QBluetoothLocalDevice::HostDiscoverable;
         default:
             // default value, also includes these new values from Symbian^3 onwards
             // case EBTVisibilityModeNoScans:
             // case EBTVisibilityModeInquiryScanOnly:
-        return HostPoweredOff;
+            return QBluetoothLocalDevice::HostPoweredOff;
     }
 }
 
-QList<QBluetoothHostInfo> QBluetoothLocalDevice::allDevices()
+void QBluetoothLocalDevicePrivate::PowerStateChanged(TBTPowerStateValue aState)
 {
-    QList<QBluetoothHostInfo> localDevices;
-    QBluetoothHostInfo hostInfo;
-    CBTEngSettings *settings = NULL;
-    TRAPD(err, settings = CBTEngSettings::NewL());
-    if (!err) {
-        TBuf<256> localName;
-        settings->GetLocalName(localName);
-        hostInfo.setName(s60DescToQString(localName));
-        delete settings;
+    Q_Q(QBluetoothLocalDevice);
+
+    QBluetoothLocalDevice::HostMode hostMode;
+    switch (aState) {
+        case EBTPowerOn:
+            hostMode = this->hostMode();
+            break;
+        case EBTPowerOff:
+        default:
+            hostMode = QBluetoothLocalDevice::HostPoweredOff;
+            break;
     }
-
-    TBuf<20> bluetoothAddress;
-    TPckgBuf<TBTDevAddr> addressPackage;
-    RProperty::Get(KUidSystemCategory, KPropertyKeyBluetoothGetLocalDeviceAddress, addressPackage);
-    addressPackage().GetReadable(bluetoothAddress, KNullDesC, _L(":"), KNullDesC);
-    hostInfo.setAddress(QBluetoothAddress(s60DescToQString(bluetoothAddress)));
-
-    localDevices.append(hostInfo);
-    return localDevices;
+    emit q->hostModeStateChanged(hostMode);
 }
 
-void QBluetoothLocalDevice::requestPairing(const QBluetoothAddress &address, Pairing pairing)
+void QBluetoothLocalDevicePrivate::VisibilityModeChanged(TBTVisibilityMode aState)
 {
-    // pass this pointer so that adapter gets delete when this object is deleted. Not optimal though.
-    BluetoothSymbianPairingAdapter *pairingAdapter = new BluetoothSymbianPairingAdapter(address,this);
-    connect(pairingAdapter, SIGNAL(pairingFinished(const QBluetoothAddress&,QBluetoothLocalDevice::Pairing)),
-        this, SIGNAL(pairingFinished(const QBluetoothAddress&,QBluetoothLocalDevice::Pairing)));
+    Q_Q(QBluetoothLocalDevice);
+
+    QBluetoothLocalDevice::HostMode hostMode;
+    switch (aState) {
+        case EBTVisibilityModeHidden:
+            hostMode = QBluetoothLocalDevice::HostConnectable;
+            break;
+        case EBTVisibilityModeGeneral:
+        case EBTVisibilityModeTemporary:
+            hostMode = QBluetoothLocalDevice::HostDiscoverable;
+            break;
+        default:
+            // default value, also includes these new values from Symbian^3 onwards
+            // case EBTVisibilityModeNoScans:
+            // case EBTVisibilityModeInquiryScanOnly:
+            hostMode = QBluetoothLocalDevice::HostPoweredOff;
+            break;
+    }
+    emit q->hostModeStateChanged(hostMode);
+}
+
+void QBluetoothLocalDevicePrivate::requestPairing(const QBluetoothAddress &address, QBluetoothLocalDevice::Pairing pairing)
+{
+    Q_Q(QBluetoothLocalDevice);
+    // pass q pointer so that adapter gets deleted when q object is deleted. Not optimal though.
+    BluetoothSymbianPairingAdapter *pairingAdapter = new BluetoothSymbianPairingAdapter(address,q);
+    QObject::connect(pairingAdapter, SIGNAL(pairingFinished(const QBluetoothAddress&,QBluetoothLocalDevice::Pairing)),
+        q, SIGNAL(pairingFinished(const QBluetoothAddress&,QBluetoothLocalDevice::Pairing)));
 
     switch (pairing) {
-    case Unpaired:
+    case QBluetoothLocalDevice::Unpaired:
         // this is async method
         pairingAdapter->removePairing();
         break;
-    case Paired:
-    case AuthorizedPaired:
+    case QBluetoothLocalDevice::Paired:
+    case QBluetoothLocalDevice::AuthorizedPaired:
         // this is async method
         pairingAdapter->startPairing(pairing);
         break;
@@ -228,10 +261,106 @@ void QBluetoothLocalDevice::requestPairing(const QBluetoothAddress &address, Pai
         break;
     }
 }
-QBluetoothLocalDevice::Pairing QBluetoothLocalDevice::pairingStatus(const QBluetoothAddress &address) const
+
+QBluetoothLocalDevice::Pairing QBluetoothLocalDevicePrivate::pairingStatus(const QBluetoothAddress &address) const
 {
     QScopedPointer<BluetoothSymbianPairingAdapter> pairingAdapter (new BluetoothSymbianPairingAdapter(address));
     return pairingAdapter->pairingStatus();
 }
 
+void QBluetoothLocalDevicePrivate::pairingConfirmation(bool confirmation)
+{
+}
+
+/*!
+    Constructs a QBluetoothLocalDevice.
+*/
+QBluetoothLocalDevice::QBluetoothLocalDevice(QObject *parent)
+:   QObject(parent)
+{
+    this->d_ptr = new QBluetoothLocalDevicePrivate;
+    if (this->d_ptr->m_settings == NULL) {
+        delete this->d_ptr;
+        this->d_ptr = NULL;
+    }
+}
+
+QBluetoothLocalDevice::QBluetoothLocalDevice(const QBluetoothAddress &address, QObject *parent)
+: QObject(parent)
+{
+    this->d_ptr = new QBluetoothLocalDevicePrivate;
+    if (this->d_ptr->m_settings == NULL || address != this->d_ptr->address()) {
+        delete this->d_ptr;
+        this->d_ptr = NULL;
+    }
+}
+
+QString QBluetoothLocalDevice::name() const
+{
+    if (!d_ptr)
+        return QString();
+    return d_ptr->name();
+}
+
+QBluetoothAddress QBluetoothLocalDevice::address() const
+{
+    if (!d_ptr)
+        return QBluetoothAddress();
+    return d_ptr->address();
+}
+
+void QBluetoothLocalDevice::powerOn()
+{
+    if (!d_ptr)
+        return;
+    d_ptr->powerOn();
+}
+
+void QBluetoothLocalDevice::setHostMode(QBluetoothLocalDevice::HostMode mode)
+{
+    if (!d_ptr)
+        return;
+    d_ptr->setHostMode(mode);
+}
+
+QBluetoothLocalDevice::HostMode QBluetoothLocalDevice::hostMode() const
+{
+    if (!d_ptr)
+        return HostPoweredOff;
+    return d_ptr->hostMode();
+}
+
+QList<QBluetoothHostInfo> QBluetoothLocalDevice::allDevices()
+{
+    QList<QBluetoothHostInfo> localDevices;
+    QBluetoothHostInfo hostInfo;
+    hostInfo.setName(QBluetoothLocalDevicePrivate::name());
+    hostInfo.setAddress(QBluetoothLocalDevicePrivate::address());
+    localDevices.append(hostInfo);
+    return localDevices;
+}
+
+void QBluetoothLocalDevice::requestPairing(const QBluetoothAddress &address, Pairing pairing)
+{
+    if (!d_ptr)
+        return;
+
+    return d_ptr->requestPairing(address, pairing);
+}
+
+QBluetoothLocalDevice::Pairing QBluetoothLocalDevice::pairingStatus(const QBluetoothAddress &address) const
+{
+    if (!d_ptr)
+        return QBluetoothLocalDevice::Unpaired;
+
+    return d_ptr->pairingStatus(address);
+}
+
+void QBluetoothLocalDevice::pairingConfirmation(bool confirmation)
+{
+    if (!d_ptr)
+        return;
+
+    return d_ptr->pairingConfirmation(confirmation);
+}
 QTM_END_NAMESPACE

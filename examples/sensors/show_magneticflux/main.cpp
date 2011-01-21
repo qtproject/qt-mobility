@@ -88,8 +88,14 @@ int main(int argc, char **argv)
     if (rate_place != -1)
         rate_val = args.at(rate_place + 1).toInt();
 
+
+
     QMagnetometer geosensor;
     geosensor.connectToBackend();
+
+    int buffer_place = args.indexOf("-b");
+    int bufferSize = buffer_place!=-1? args.at(buffer_place + 1).toInt():1;
+    geosensor.setProperty("bufferSize",bufferSize);
 
     if (rate_val > 0) {
         geosensor.setDataRate(rate_val);
@@ -97,7 +103,6 @@ int main(int argc, char **argv)
     MagGeoFilter geofilter;
     geosensor.setProperty("returnGeoValues", true);
     geosensor.addFilter(&geofilter);
-    qDebug() << geosensor.availableDataRates().size();
     geosensor.start();
     if (!geosensor.isActive()) {
         qWarning("Magnetometersensor (geo) didn't start!");

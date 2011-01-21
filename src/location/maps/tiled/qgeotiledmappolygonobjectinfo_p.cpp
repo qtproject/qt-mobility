@@ -77,7 +77,7 @@ QGeoTiledMapPolygonObjectInfo::QGeoTiledMapPolygonObjectInfo(QGeoTiledMapData *m
 
 QGeoTiledMapPolygonObjectInfo::~QGeoTiledMapPolygonObjectInfo() {}
 
-void QGeoTiledMapPolygonObjectInfo::pathChanged(const QList<QGeoCoordinate> &path)
+void QGeoTiledMapPolygonObjectInfo::pathChanged(const QList<QGeoCoordinate> &/*path*/)
 {
     points = createPolygon(polygon->path(), tiledMapData, true);
     if (points.size() >= 3) {
@@ -89,13 +89,13 @@ void QGeoTiledMapPolygonObjectInfo::pathChanged(const QList<QGeoCoordinate> &pat
     updateItem();
 }
 
-void QGeoTiledMapPolygonObjectInfo::penChanged(const QPen &pen)
+void QGeoTiledMapPolygonObjectInfo::penChanged(const QPen &/*pen*/)
 {
     polygonItem->setPen(polygon->pen());
     updateItem();
 }
 
-void QGeoTiledMapPolygonObjectInfo::brushChanged(const QBrush &brush)
+void QGeoTiledMapPolygonObjectInfo::brushChanged(const QBrush &/*brush*/)
 {
     polygonItem->setBrush(polygon->brush());
     updateItem();

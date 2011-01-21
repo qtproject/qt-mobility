@@ -45,6 +45,8 @@
 #include <QtCore/QDataStream>
 #include <QtCore/QByteArray>
 
+#include <QtCore/QStringList>
+
 TennisClient::TennisClient(QObject *parent)
 :   QObject(parent), socket(0), stream(0)
 {
@@ -96,29 +98,24 @@ void TennisClient::readSocket()
         return;
 
     while (socket->bytesAvailable()) {
-        QChar c;
-        QChar eol;
+        QString s;
 
-//        qDebug() << socket->readAll().length();
+        *stream >> s;
 
-        *stream >> c;
-        if(c == QChar('m')) {
-            int x, y;
-            *stream >> x >> y;
-            emit moveBall(x, y);
+        QStringList args = s.split(QChar(' '));
+        s = args.takeFirst();
+
+        if(s == "m" && args.count() == 2) {
+            emit moveBall(args.at(0).toInt(), args.at(1).toInt());
         }
-        else if(c == QChar('s')){
-            int left, right;
-            *stream >> left >> right;
-            emit score(left, right);
+        else if(s == "s" && args.count() == 2){
+            emit score(args.at(0).toInt(), args.at(1).toInt());
         }
-        else if(c == QChar('l')){
-            int y;
-            *stream >> y;
-            emit moveLeftPaddle(y);
+        else if(s == "l" && args.count() == 1){
+            emit moveLeftPaddle(args.at(0).toInt());
         }
         else {
-            qDebug() << "Unknown command" << c;
+            qDebug() << "Unknown command" << s;
         }
     }
 }
@@ -130,7 +127,7 @@ void TennisClient::moveRightPaddle(int y)
     if(stream) {
         QByteArray b;
         QDataStream s(&b, QIODevice::WriteOnly);
-        s << QChar('r') << y;
+        s << QString("r %1").arg(y);
         socket->write(b);
     }
 }
@@ -145,5 +142,6 @@ void TennisClient::connected()
 
 void TennisClient::error(QBluetoothSocket::SocketError err)
 {
+    printf("Got err: %d\n", err);
     qDebug() << Q_FUNC_INFO << "error" << err;
 }
