@@ -44,6 +44,7 @@
 #include <QtTest/QtTest>
 #include <QtCore/qdebug.h>
 #include <QtCore/qbuffer.h>
+#include <QtNetwork/qnetworkconfiguration.h>
 
 #include <qabstractvideosurface.h>
 #include <qmediaplayer.h>
@@ -235,29 +236,31 @@ public:
     MockNetworkAccessControl() {}
     ~MockNetworkAccessControl() {}
 
-    void setConfigurations(const QList<QString> &configurationIds)
+    void setConfigurations(const QList<QNetworkConfiguration> &configurations)
     {
-        _configIds = configurationIds;
+        _configurations = configurations;
+        _current = QNetworkConfiguration();
     }
 
-    QString currentConfiguration() const
+    QNetworkConfiguration currentConfiguration() const
     {
-        return _currentId;
+        return _current;
     }
 
 private:
-    void setCurrentConfiguration(QString id)
+    void setCurrentConfiguration(QNetworkConfiguration configuration)
     {
-        if (_configIds.contains(id))
-           emit configurationChanged(_currentId = id);
+        if (_configurations.contains(configuration))
+           emit configurationChanged(_current = configuration);
        else
-           emit configurationChanged(_currentId = QString());
+           emit configurationChanged(_current = QNetworkConfiguration());
     }
 
-    QList<QString> _configIds;
-    QString _currentId;
+    QList<QNetworkConfiguration> _configurations;
+    QNetworkConfiguration _current;
 };
 
+Q_DECLARE_METATYPE(QNetworkConfiguration)
 
 class MockPlayerService : public QMediaService
 {
@@ -335,7 +338,7 @@ public:
     void setError(QMediaPlayer::Error error) { mockControl->_error = error; emit mockControl->error(mockControl->_error, mockControl->_errorString); }
     void setErrorString(QString errorString) { mockControl->_errorString = errorString; emit mockControl->error(mockControl->_error, mockControl->_errorString); }
 
-    void selectCurrentConfiguration(QString configId) { mockNetworkControl->setCurrentConfiguration(configId); }
+    void selectCurrentConfiguration(QNetworkConfiguration config) { mockNetworkControl->setCurrentConfiguration(config); }
 
     void reset()
     {
@@ -355,8 +358,8 @@ public:
         mockControl->_isValid = false;
         mockControl->_errorString = QString();
 
-        mockNetworkControl->_currentId = QString();
-        mockNetworkControl->_configIds = QList<QString>();
+        mockNetworkControl->_current = QNetworkConfiguration();
+        mockNetworkControl->_configurations = QList<QNetworkConfiguration>();
     }
 
     MockPlayerControl *mockControl;
