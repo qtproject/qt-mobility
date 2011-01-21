@@ -280,6 +280,7 @@ void tst_QGalleryTrackerSchema::supportedPropertyNames_data()
 
     QTest::newRow("File") << QString::fromLatin1("File") << (QStringList()
              << QLatin1String("author")
+             << QLatin1String("fileExtension")
              << QLatin1String("fileName")
              << QLatin1String("filePath")
              << QLatin1String("fileSize")
@@ -291,6 +292,7 @@ void tst_QGalleryTrackerSchema::supportedPropertyNames_data()
              << QLatin1String("lastAccessed")
              << QLatin1String("lastModified")
              << QLatin1String("mimeType")
+             << QLatin1String("path")
              << QLatin1String("rating")
              << QLatin1String("subject")
              << QLatin1String("title")
@@ -1673,7 +1675,133 @@ void tst_QGalleryTrackerSchema::queryResponseFilter_data()
                 <<  "SELECT ?x nie:url(?x) rdf:type(?x)  "
                     "WHERE {"
                         "{?x rdf:type nfo:FileDataObject}"
-                        "FILTER(( nie:url(?x) ='file:///path/to/file.ext'))"
+                        "FILTER((nie:url(?x)='file:///path/to/file.ext'))"
+                    "} "
+                    "GROUP BY ?x";
+    } {
+        QGalleryFilter filter = QDocumentGallery::filePath > QLatin1String("/path/to/file.ext");
+
+        QTest::newRow("File.filePath > /path/to/file.ext")
+                << "File"
+                << QString()
+                << QGalleryQueryRequest::AllDescendants
+                << filter
+                <<  "SELECT ?x nie:url(?x) rdf:type(?x)  "
+                    "WHERE {"
+                        "{?x rdf:type nfo:FileDataObject}"
+                        "FILTER((nie:url(?x)>'file:///path/to/file.ext'))"
+                    "} "
+                    "GROUP BY ?x";
+    } {
+        QGalleryFilter filter = QDocumentGallery::filePath >= QLatin1String("/path/to/file.ext");
+
+        QTest::newRow("File.filePath >= /path/to/file.ext")
+                << "File"
+                << QString()
+                << QGalleryQueryRequest::AllDescendants
+                << filter
+                <<  "SELECT ?x nie:url(?x) rdf:type(?x)  "
+                    "WHERE {"
+                        "{?x rdf:type nfo:FileDataObject}"
+                        "FILTER((nie:url(?x)>='file:///path/to/file.ext'))"
+                    "} "
+                    "GROUP BY ?x";
+    } {
+        QGalleryFilter filter = QDocumentGallery::filePath < QLatin1String("/path/to/file.ext");
+
+        QTest::newRow("File.filePath < /path/to/file.ext")
+                << "File"
+                << QString()
+                << QGalleryQueryRequest::AllDescendants
+                << filter
+                <<  "SELECT ?x nie:url(?x) rdf:type(?x)  "
+                    "WHERE {"
+                        "{?x rdf:type nfo:FileDataObject}"
+                        "FILTER((nie:url(?x)<'file:///path/to/file.ext'))"
+                    "} "
+                    "GROUP BY ?x";
+    } {
+        QGalleryFilter filter = QDocumentGallery::filePath <= QLatin1String("/path/to/file.ext");
+
+        QTest::newRow("File.filePath <= /path/to/file.ext")
+                << "File"
+                << QString()
+                << QGalleryQueryRequest::AllDescendants
+                << filter
+                <<  "SELECT ?x nie:url(?x) rdf:type(?x)  "
+                    "WHERE {"
+                        "{?x rdf:type nfo:FileDataObject}"
+                        "FILTER((nie:url(?x)<='file:///path/to/file.ext'))"
+                    "} "
+                    "GROUP BY ?x";
+    } {
+        QGalleryFilter filter = QDocumentGallery::path.startsWith(QLatin1String("/path/"));
+
+        QTest::newRow("File.path.startsWith(/path/)")
+                << "File"
+                << QString()
+                << QGalleryQueryRequest::AllDescendants
+                << filter
+                <<  "SELECT ?x nie:url(?x) rdf:type(?x)  "
+                    "WHERE {"
+                        "{?x rdf:type nfo:FileDataObject}"
+                        "FILTER(fn:starts-with(nie:url(nfo:belongsToContainer(?x)),'file:///path/'))"
+                    "} "
+                    "GROUP BY ?x";
+    } {
+        QGalleryFilter filter = QDocumentGallery::path.endsWith(QLatin1String("/to"));
+
+        QTest::newRow("File.path.endsWith(/to)")
+                << "File"
+                << QString()
+                << QGalleryQueryRequest::AllDescendants
+                << filter
+                <<  "SELECT ?x nie:url(?x) rdf:type(?x)  "
+                    "WHERE {"
+                        "{?x rdf:type nfo:FileDataObject}"
+                        "FILTER(fn:ends-with(nie:url(nfo:belongsToContainer(?x)),'/to'))"
+                    "} "
+                    "GROUP BY ?x";
+    } {
+        QGalleryFilter filter = QDocumentGallery::path.contains(QLatin1String("path"));
+
+        QTest::newRow("File.path.contains(path)")
+                << "File"
+                << QString()
+                << QGalleryQueryRequest::AllDescendants
+                << filter
+                <<  "SELECT ?x nie:url(?x) rdf:type(?x)  "
+                    "WHERE {"
+                        "{?x rdf:type nfo:FileDataObject}"
+                        "FILTER(fn:contains(nie:url(nfo:belongsToContainer(?x)),'path'))"
+                    "} "
+                    "GROUP BY ?x";
+    } {
+        QGalleryFilter filter = QDocumentGallery::path.wildcard(QLatin1String("/*/to"));
+
+        QTest::newRow("File.path.wildcard(/*/to)")
+                << "File"
+                << QString()
+                << QGalleryQueryRequest::AllDescendants
+                << filter
+                <<  "SELECT ?x nie:url(?x) rdf:type(?x)  "
+                    "WHERE {"
+                        "{?x rdf:type nfo:FileDataObject}"
+                        "FILTER(fn:contains(nie:url(nfo:belongsToContainer(?x)),'file:///*/to'))"
+                    "} "
+                    "GROUP BY ?x";
+    } {
+        QGalleryFilter filter = QDocumentGallery::fileExtension == QLatin1String("ext");
+
+        QTest::newRow("File.fileExtension == ext")
+                << "File"
+                << QString()
+                << QGalleryQueryRequest::AllDescendants
+                << filter
+                <<  "SELECT ?x nie:url(?x) rdf:type(?x)  "
+                    "WHERE {"
+                        "{?x rdf:type nfo:FileDataObject}"
+                        "FILTER(fn:ends-with(nfo:fileName(?x),'.ext'))"
                     "} "
                     "GROUP BY ?x";
     } {
@@ -2377,6 +2505,43 @@ void tst_QGalleryTrackerSchema::queryResponseCompositeColumn_data()
                     << QLatin1String("file:///path/to/file.ext")
                     << QLatin1String("Files"))
             << QVariant(QLatin1String("/path/to/file.ext"));
+
+    QTest::newRow("File.path")
+            << QString::fromLatin1("Image")
+            << QString::fromLatin1("path")
+            << (QVector<QVariant>()
+                    << QLatin1String("uuid:ff172362-d959-99e0-a792-0ddafdd2c559")
+                    << QLatin1String("file:///path/to/file.ext")
+                    << QLatin1String("Files"))
+            << QVariant(QLatin1String("/path/to"));
+
+    QTest::newRow("File.path (empty fileName)")
+            << QString::fromLatin1("Image")
+            << QString::fromLatin1("path")
+            << (QVector<QVariant>()
+                    << QLatin1String("uuid:ff172362-d959-99e0-a792-0ddafdd2c559")
+                    << QLatin1String("file:///path/to/")
+                    << QLatin1String("Files"))
+            << QVariant(QLatin1String("/path/to"));
+
+    QTest::newRow("File.fileExtension")
+            << QString::fromLatin1("Image")
+            << QString::fromLatin1("fileExtension")
+            << (QVector<QVariant>()
+                    << QLatin1String("uuid:ff172362-d959-99e0-a792-0ddafdd2c559")
+                    << QLatin1String("file:///path/to/file.ext")
+                    << QLatin1String("Files"))
+            << QVariant(QLatin1String("ext"));
+
+
+    QTest::newRow("File.fileExtension (no extension)")
+            << QString::fromLatin1("Image")
+            << QString::fromLatin1("fileExtension")
+            << (QVector<QVariant>()
+                    << QLatin1String("uuid:ff172362-d959-99e0-a792-0ddafdd2c559")
+                    << QLatin1String("file:///path/to")
+                    << QLatin1String("Files"))
+            << QVariant();
 }
 
 void tst_QGalleryTrackerSchema::queryResponseCompositeColumn()
@@ -2457,36 +2622,57 @@ void tst_QGalleryTrackerSchema::prepareInvalidQueryResponse_data()
             << QStringList()
             << QDocumentGallery::ItemIdError;
 
-    QTest::newRow("File.filePath > /path")
+    QTest::newRow("File.filePath.regExp(/path)")
             << QString()
             << QGalleryQueryRequest::AllDescendants
             << "File"
-            << QGalleryFilter(QDocumentGallery::filePath > QLatin1String("/path"))
+            << QGalleryFilter(QDocumentGallery::filePath.regExp(QLatin1String("/path")))
             << QStringList()
             << QStringList()
             << QDocumentGallery::FilterError;
 
-    QTest::newRow("File.filePath > /path (within union)")
+    QTest::newRow("File.filePath.regExp(/path) (within union)")
             << QString()
             << QGalleryQueryRequest::AllDescendants
             << "File"
             << QGalleryFilter(QGalleryUnionFilter(
-                    QDocumentGallery::filePath > QLatin1String("/path")))
+                    QDocumentGallery::filePath.regExp(QLatin1String("/path"))))
             << QStringList()
             << QStringList()
             << QDocumentGallery::FilterError;
 
-    QTest::newRow("File.filePath > /path (within intersection)")
+    QTest::newRow("File.filePath.regExp(/path) (within intersection)")
             << QString()
             << QGalleryQueryRequest::AllDescendants
             << "File"
             << QGalleryFilter(QGalleryIntersectionFilter(
-                    QDocumentGallery::filePath > QLatin1String("/path")))
+                    QDocumentGallery::filePath.regExp(QLatin1String("/path"))))
             << QStringList()
             << QStringList()
             << QDocumentGallery::FilterError;
 
-    QTest::newRow("File.fileName ? /path")
+    QTest::newRow("File.filePath ? /path")
+            << QString()
+            << QGalleryQueryRequest::AllDescendants
+            << "File"
+            << QGalleryFilter(QGalleryMetaDataFilter(
+                    QLatin1String("filePath"),
+                    QLatin1String("file.ext"),
+                    QGalleryFilter::Comparator(1200)))
+            << QStringList()
+            << QStringList()
+            << QDocumentGallery::FilterError;
+
+    QTest::newRow("File.filePath == QPoint(12, 44)")
+            << QString()
+            << QGalleryQueryRequest::AllDescendants
+            << "File"
+            << QGalleryFilter(QDocumentGallery::filePath == QPoint(12, 44))
+            << QStringList()
+            << QStringList()
+            << QDocumentGallery::FilterError;
+
+    QTest::newRow("File.fileName ? file.ext")
             << QString()
             << QGalleryQueryRequest::AllDescendants
             << "File"
@@ -2503,6 +2689,24 @@ void tst_QGalleryTrackerSchema::prepareInvalidQueryResponse_data()
             << QGalleryQueryRequest::AllDescendants
             << "File"
             << QGalleryFilter(QDocumentGallery::fileName == QPoint(12, 44))
+            << QStringList()
+            << QStringList()
+            << QDocumentGallery::FilterError;
+
+    QTest::newRow("File.fileExtension > ext")
+            << QString()
+            << QGalleryQueryRequest::AllDescendants
+            << "File"
+            << QGalleryFilter(QDocumentGallery::fileExtension > QLatin1String("ext"))
+            << QStringList()
+            << QStringList()
+            << QDocumentGallery::FilterError;
+
+    QTest::newRow("File.fileExtension == 13")
+            << QString()
+            << QGalleryQueryRequest::AllDescendants
+            << "File"
+            << QGalleryFilter(QDocumentGallery::fileExtension == 13)
             << QStringList()
             << QStringList()
             << QDocumentGallery::FilterError;

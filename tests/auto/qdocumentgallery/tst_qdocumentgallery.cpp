@@ -91,6 +91,7 @@ void tst_QDocumentGallery::itemTypeProperties_data()
             << QDocumentGallery::comments
             << QDocumentGallery::copyright
             << QDocumentGallery::description
+            << QDocumentGallery::fileExtension
             << QDocumentGallery::fileName
             << QDocumentGallery::filePath
             << QDocumentGallery::fileSize
@@ -99,6 +100,7 @@ void tst_QDocumentGallery::itemTypeProperties_data()
             << QDocumentGallery::lastAccessed
             << QDocumentGallery::lastModified
             << QDocumentGallery::mimeType
+            << QDocumentGallery::path
             << QDocumentGallery::rating
             << QDocumentGallery::subject
             << QDocumentGallery::title

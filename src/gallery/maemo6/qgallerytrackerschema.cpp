@@ -537,19 +537,102 @@ static bool qt_writeCondition(
     }
 }
 
+static QString qt_encodedFilePathUrl(const QString &filePath)
+{
+    QString encodedUrl = QUrl::fromLocalFile(filePath).toEncoded();
+    encodedUrl.replace(QLatin1Char('\''), QLatin1String("\\\'"));
+    return encodedUrl;
+}
+
+static QString qt_encodedFilePathFragment(const QString &fragment)
+{
+    QString encodedFragment = QUrl(fragment).toEncoded();
+    encodedFragment.replace(QLatin1Char('\''), QLatin1String("\\\'"));
+    return encodedFragment;
+}
+
+static bool qt_writeFilePathUrlCondition(
+        QDocumentGallery::Error *error,
+        QString *query,
+        const QLatin1String &property,
+        const QGalleryMetaDataFilter &filter)
+{
+    const QVariant value = filter.value();
+
+    if (value.type() != QVariant::String) {
+        *error = QDocumentGallery::FilterError;
+        return false;
+    } else {
+        const QString &filePath = value.toString();
+
+        switch (filter.comparator()) {
+        case QGalleryFilter::Equals:
+            return qt_write_comparison(
+                    error, property, qt_encodedFilePathUrl(filePath), "=", query);
+        case QGalleryFilter::LessThan:
+            return qt_write_comparison(
+                    error, property, qt_encodedFilePathUrl(filePath), "<", query);
+        case QGalleryFilter::GreaterThan:
+            return qt_write_comparison(
+                    error, property, qt_encodedFilePathUrl(filePath), ">", query);
+        case QGalleryFilter::LessThanEquals:
+            return qt_write_comparison(
+                    error, property, qt_encodedFilePathUrl(filePath), "<=", query);
+        case QGalleryFilter::GreaterThanEquals:
+            return qt_write_comparison(
+                    error, property, qt_encodedFilePathUrl(filePath), ">=", query);
+        case QGalleryFilter::Contains:
+            return  qt_write_function(
+                    error, "fn:contains", property, qt_encodedFilePathFragment(filePath), query);
+        case QGalleryFilter::StartsWith:
+            return qt_write_function(
+                    error, "fn:starts-with", property, qt_encodedFilePathUrl(filePath), query);
+        case QGalleryFilter::EndsWith:
+            return qt_write_function(
+                    error, "fn:ends-with", property, qt_encodedFilePathFragment(filePath), query);
+        case QGalleryFilter::Wildcard:
+            return qt_write_function(
+                    error, "fn:contains", property, qt_encodedFilePathUrl(filePath), query);
+        case QGalleryFilter::RegExp:    // Unsupported.
+        default:
+            *error = QDocumentGallery::FilterError;
+            return false;
+        }
+    }
+}
+
 static bool qt_writeFilePathCondition(
         QDocumentGallery::Error *error,
         QString *query,
         const QGalleryCompositeProperty &,
         const QGalleryMetaDataFilter &filter)
 {
-    if (filter.comparator() != QGalleryFilter::Equals) {
+    return qt_writeFilePathUrlCondition(error, query, QLatin1String("nie:url(?x)"), filter);
+}
+
+static bool qt_writePathCondition(
+        QDocumentGallery::Error *error,
+        QString *query,
+        const QGalleryCompositeProperty &,
+        const QGalleryMetaDataFilter &filter)
+{
+    return qt_writeFilePathUrlCondition(
+            error, query, QLatin1String("nie:url(nfo:belongsToContainer(?x))"), filter);
+}
+
+static bool qt_writeFileExtensionCondition(
+        QDocumentGallery::Error *error,
+        QString *query,
+        const QGalleryCompositeProperty &,
+        const QGalleryMetaDataFilter &filter)
+{
+    if (filter.comparator() != QGalleryFilter::Equals || filter.value().type() != QVariant::String) {
         *error = QDocumentGallery::FilterError;
         return false;
     } else {
-        QString encodedValue(QUrl::fromLocalFile(filter.value().toString()).toEncoded());
-        encodedValue.replace(QLatin1Char('\''), QLatin1String("\\\'"));
-        *query += QLatin1String("( nie:url(?x) ='") + encodedValue + QLatin1String("')");
+        *query += QLatin1String("fn:ends-with(nfo:fileName(?x),'.")
+                + filter.value().toString()
+                + QLatin1String("')");
         return true;
     }
 }
@@ -591,7 +674,9 @@ static bool qt_writeFilePathCondition(
     QT_GALLERY_ITEM_PROPERTY("lastModified" , "nfo:fileLastModified(?x)" , DateTime, CanRead | CanSort | CanFilter)
 
 #define QT_GALLERY_NFO_FILEDATAOBJECT_COMPOSITE_PROPERTIES \
-    QT_GALLERY_COMPOSITE_PROPERTY_NO_DEPENDENCIES("filePath", String, QGalleryTrackerFilePathColumn::create, qt_writeFilePathCondition)
+    QT_GALLERY_COMPOSITE_PROPERTY_NO_DEPENDENCIES("fileExtension", String, QGalleryTrackerFileExtensionColumn::create, qt_writeFileExtensionCondition), \
+    QT_GALLERY_COMPOSITE_PROPERTY_NO_DEPENDENCIES("filePath"     , String, QGalleryTrackerFilePathColumn::create     , qt_writeFilePathCondition), \
+    QT_GALLERY_COMPOSITE_PROPERTY_NO_DEPENDENCIES("path"         , String, QGalleryTrackerPathColumn::create         , qt_writePathCondition)
 
 //nfo:Media : nfo:FileDataObject
 //  nfo:equipment, nfo:genre, nfo:averageBitrate, nfo:bitrateType, nfo:encodedBy, nfo:codec,
