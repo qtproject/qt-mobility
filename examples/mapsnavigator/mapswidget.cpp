@@ -45,6 +45,8 @@
 #include <QGeoCoordinate>
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsSceneWheelEvent>
+#include <QPropertyAnimation>
+#include <QTimer>
 
 GeoMap::GeoMap(QGeoMappingManager *manager, MapsWidget *mapsWidget) :
     QGraphicsGeoMap(manager), m_mapsWidget(mapsWidget)
@@ -115,6 +117,67 @@ void GeoMap::wheelEvent(QGraphicsSceneWheelEvent *event)
     event->accept();
 }
 
+StatusBarItem::StatusBarItem() :
+    m_offset(0)
+{
+    setPen(QPen(QBrush(), 0));
+    setBrush(QBrush(QColor(0,0,0,120)));
+
+    ti = new QGraphicsSimpleTextItem(this);
+    ti->setBrush(QBrush(Qt::white));
+
+    setText("nothing");
+}
+
+StatusBarItem::~StatusBarItem()
+{
+}
+
+void StatusBarItem::setText(QString text)
+{
+    ti->setText(text);
+    QRectF rect = ti->boundingRect();
+    QPointF delta = this->rect().center() - rect.center();
+    ti->setPos(delta.x(), delta.y());
+}
+
+void StatusBarItem::setRect(qreal x, qreal y, qreal w, qreal h)
+{
+    QGraphicsRectItem::setRect(x, y + m_offset, w, h);
+    setText(ti->text());
+}
+
+void StatusBarItem::setOffset(int offset)
+{
+    this->setY(this->y() - m_offset + offset);
+    m_offset = offset;
+}
+
+void StatusBarItem::showText(QString text, quint32 timeout)
+{
+    setText(text);
+    show();
+    QTimer::singleShot(timeout, this, SLOT(hide()));
+}
+
+void StatusBarItem::show()
+{
+    QPropertyAnimation *anim = new QPropertyAnimation(this, "offset");
+    anim->setStartValue(0);
+    anim->setEndValue(-1 * rect().height());
+    anim->setDuration(500);
+    anim->start(QAbstractAnimation::DeleteWhenStopped);
+}
+
+void StatusBarItem::hide()
+{
+    QPropertyAnimation *anim = new QPropertyAnimation(this, "offset");
+    anim->setStartValue(m_offset);
+    anim->setEndValue(0);
+    anim->setDuration(500);
+    anim->start(QAbstractAnimation::DeleteWhenStopped);
+}
+
 MapsWidget::MapsWidget(QWidget *parent) :
     QWidget(parent),
     geoMap(0),
@@ -148,6 +211,9 @@ void MapsWidget::initialize(QGeoMappingManager *manager)
     graphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
+    m_statusBar = new StatusBarItem;
+    sc->addItem(m_statusBar);
+
     graphicsView->resize(this->size());
     graphicsView->centerOn(geoMap);
 
@@ -174,6 +240,8 @@ void MapsWidget::resizeEvent(QResizeEvent *event)
         graphicsView->resize(event->size());
         geoMap->resize(event->size());
         graphicsView->centerOn(geoMap);
+
+        m_statusBar->setRect(0, height(), width(), 20);
     }
 }
 
@@ -183,6 +251,8 @@ void MapsWidget::showEvent(QShowEvent *event)
         graphicsView->resize(size());
         geoMap->resize(size());
         graphicsView->centerOn(geoMap);
+
+        m_statusBar->setRect(0, height(), width(), 20);
     }
 }
 
@@ -196,4 +266,5 @@ void MapsWidget::setMarkerManager(MarkerManager *markerManager)
     m_markerManager = markerManager;
     if (geoMap)
         m_markerManager->setMap(geoMap);
+    markerManager->setStatusBar(m_statusBar);
 }

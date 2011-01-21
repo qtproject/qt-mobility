@@ -47,12 +47,15 @@
 #include <QGraphicsScene>
 #include <QGeoMappingManager>
 #include <QWidget>
+#include <QGraphicsRectItem>
+#include <QGraphicsSimpleTextItem>
 
 using namespace QtMobility;
 
 class MapsWidget;
 class MarkerManager;
 class Marker;
+class StatusBarItem;
 
 class GeoMap : public QGraphicsGeoMap
 {
@@ -90,6 +93,7 @@ public:
     MarkerManager *markerManager() const;
 
     QGraphicsGeoMap *map() const;
+    inline StatusBarItem *statusBar() const { return m_statusBar; }
 
     void setMyLocation(QGeoCoordinate location, bool center=true);
 
@@ -106,6 +110,33 @@ private:
     GeoMap *geoMap;
     QGraphicsView *graphicsView;
     MarkerManager *m_markerManager;
+    StatusBarItem *m_statusBar;
+};
+
+class StatusBarItem : public QObject, public QGraphicsRectItem
+{
+    Q_OBJECT
+    Q_PROPERTY(int offset READ offset WRITE setOffset)
+
+public:
+    StatusBarItem();
+    ~StatusBarItem();
+
+    inline int offset() const { return m_offset; }
+    void setRect(qreal x, qreal y, qreal w, qreal h);
+
+public slots:
+    void setText(QString text);
+
+    void showText(QString text, quint32 timeout=3000);
+    void show();
+    void hide();
+
+    void setOffset(int offset);
+
+private:
+    int m_offset;
+    QGraphicsSimpleTextItem *ti;
 };
 
 #endif // MAPSWIDGET_H

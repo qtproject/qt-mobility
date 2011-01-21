@@ -889,7 +889,7 @@ void MarkerManager::myLocationChanged(QGeoCoordinate location)
         revSigMap.setMapping(reply, reply);
         connect(reply, SIGNAL(finished()),
                 &revSigMap, SLOT(map()));
-        connect(&sigMap, SIGNAL(mapped(QObject*)),
+        connect(&revSigMap, SIGNAL(mapped(QObject*)),
                 this, SLOT(reverseReplyFinished(QObject*)));
     }
 }

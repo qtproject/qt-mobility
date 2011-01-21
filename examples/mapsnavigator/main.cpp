@@ -45,10 +45,20 @@
 #include <QGeoServiceProvider>
 #include <QList>
 #include <QString>
+#include <QUrl>
+#include <QProcessEnvironment>
+#include <QNetworkProxyFactory>
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
+
+    QUrl url("http://172.16.42.133:8080", QUrl::TolerantMode);
+    QNetworkProxy proxy;
+    proxy.setType(QNetworkProxy::HttpProxy);
+    proxy.setHostName(url.host());
+    proxy.setPort(url.port(8080));
+    QNetworkProxy::setApplicationProxy(proxy);
 
     MainWindow mw;
     mw.resize(200,200);

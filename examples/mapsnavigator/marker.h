@@ -52,6 +52,8 @@
 
 using namespace QtMobility;
 
+class StatusBarItem;
+
 class Marker : public QGeoMapPixmapObject
 {
     Q_OBJECT
@@ -108,6 +110,7 @@ public:
 
 public slots:
     void setMap(QGraphicsGeoMap *map);
+    inline void setStatusBar(StatusBarItem *bar) { m_status = bar; }
     void setMyLocation(QGeoCoordinate coord);
     void search(QString query, qreal radius=-1);
     void removeSearchMarkers();
@@ -120,12 +123,22 @@ private:
     Marker *m_myLocation;
     QList<Marker*> searchMarkers;
 
+    // a reverse geocode request is currently running
+    bool revGeocodeRunning;
+    // a request is currently running, and my location has changed
+    // since it started (ie, the request is stale)
+    bool myLocHasMoved;
+
     QGraphicsGeoMap *m_map;
+    StatusBarItem *m_status;
     QGeoSearchManager *m_searchManager;
     QSignalMapper sigMap;
+    QSignalMapper revSigMap;
 
 private slots:
     void replyFinished(QObject *reply);
+    void myLocationChanged(QGeoCoordinate location);
+    void reverseReplyFinished(QObject *reply);
 };
 
 #endif // MARKER_H

@@ -75,7 +75,8 @@ SearchDialog::SearchDialog(QWidget *parent) :
 
 qreal SearchDialog::radius() const
 {
-    return whereCombo->userData(whereCombo->currentIndex());
+    const int i = whereCombo->currentIndex();
+    return whereCombo->itemData(i).toReal();
 }
 
 SearchDialog::~SearchDialog()

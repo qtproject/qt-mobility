@@ -54,6 +54,7 @@ using namespace QtMobility;
 
 class MarkerDialog : public QDialog
 {
+    Q_OBJECT
 public:
     MarkerDialog(Marker *marker);
     ~MarkerDialog();

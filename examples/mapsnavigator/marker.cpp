@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include "marker.h"
+#include "mapswidget.h"
 #include <QPixmap>
 #include <QLandmark>
 #include <QGeoBoundingCircle>
@@ -117,10 +118,17 @@ void Marker::setMoveable(bool moveable)
 
 MarkerManager::MarkerManager(QGeoSearchManager *searchManager, QObject *parent) :
     QObject(parent),
-    m_searchManager(searchManager)
+    m_searchManager(searchManager),
+    m_status(0),
+    revGeocodeRunning(false),
+    myLocHasMoved(false)
 {
     m_myLocation = new Marker(Marker::MyLocationMarker);
     m_myLocation->setName("Me");
+
+    // hook the coordinateChanged() signal for reverse geocoding
+    connect(m_myLocation, SIGNAL(coordinateChanged(QGeoCoordinate)),
+            this, SLOT(myLocationChanged(QGeoCoordinate)));
 }
 
 MarkerManager::~MarkerManager()
@@ -132,6 +140,7 @@ MarkerManager::~MarkerManager()
 
 void MarkerManager::setMap(QGraphicsGeoMap *map)
 {
+    m_map = map;
     map->addMapObject(m_myLocation);
 }
 
@@ -144,13 +153,19 @@ void MarkerManager::search(QString query, qreal radius)
 {
     QGeoSearchReply *reply;
     if (radius > 0) {
-        QGeoBoundingCircle boundingCircle(m_myLocation->coordinate(), radius);
+        QGeoBoundingCircle *boundingCircle = new QGeoBoundingCircle(
+                    m_myLocation->coordinate(), radius);
         reply = m_searchManager->search(query,
                                         QGeoSearchManager::SearchAll,
                                         -1, 0,
                                         boundingCircle);
     } else {
         reply = m_searchManager->search(query);
+    }
+
+    if (m_status) {
+        m_status->setText("Searching...");
+        m_status->show();
     }
 
     if (reply->isFinished()) {
@@ -178,6 +193,46 @@ void MarkerManager::removeSearchMarkers()
 QGeoCoordinate MarkerManager::myLocation() const
 {
     return m_myLocation->coordinate();
+}
+
+void MarkerManager::myLocationChanged(QGeoCoordinate location)
+{
+    if (revGeocodeRunning) {
+        myLocHasMoved = true;
+    } else {
+        QGeoSearchReply *reply = m_searchManager->reverseGeocode(location);
+        myLocHasMoved = false;
+
+        if (reply->isFinished()) {
+            revGeocodeRunning = false;
+            reverseReplyFinished(reply);
+        } else {
+            revGeocodeRunning = true;
+
+            revSigMap.setMapping(reply, reply);
+            connect(reply, SIGNAL(finished()),
+                    &revSigMap, SLOT(map()));
+            connect(&revSigMap, SIGNAL(mapped(QObject*)),
+                    this, SLOT(reverseReplyFinished(QObject*)));
+        }
+    }
+}
+
+void MarkerManager::reverseReplyFinished(QObject *obj)
+{
+    QGeoSearchReply *reply = dynamic_cast<QGeoSearchReply*>(obj);
+    Q_ASSERT(reply != NULL);
+
+    if (reply->places().size() > 0) {
+        QGeoPlace place = reply->places().first();
+        m_myLocation->setAddress(place.address());
+    }
+
+    revGeocodeRunning = false;
+    if (myLocHasMoved)
+        myLocationChanged(m_myLocation->coordinate());
+
+    reply->deleteLater();
 }
 
 void MarkerManager::replyFinished(QObject *obj)
@@ -213,4 +268,7 @@ void MarkerManager::replyFinished(QObject *obj)
     reply->deleteLater();
 
     emit searchFinished();
+
+    if (m_status)
+        m_status->hide();
 }

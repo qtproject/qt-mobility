@@ -124,7 +124,7 @@ void MainWindow::showSearchDialog()
     if (sd.exec() == QDialog::Accepted) {
         if (markerManager) {
             markerManager->removeSearchMarkers();
-            markerManager->search(sd.searchTerms());
+            markerManager->search(sd.searchTerms(), sd.radius());
         }
     }
 }
@@ -132,6 +132,7 @@ void MainWindow::showSearchDialog()
 void MainWindow::showErrorMessage(QGeoSearchReply::Error err, QString msg)
 {
     QMessageBox::critical(this, tr("Error"), msg);
+    mapsWidget->statusBar()->hide();
 }
 
 void MainWindow::on_markerClicked(Marker *marker)
