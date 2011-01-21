@@ -237,14 +237,14 @@ unix:!simulator {
             -lecom \
             -lplatformenv \
             -lhwrmlightclient \
-            -lhwrmfmtxclient \
-            -ldisknotifyhandler \
-            -lusbman \
-            -letel \
-            -letelmm
+            -letel 
 
         contains(S60_VERSION, 5.1) | contains(S60_VERSION, 5.2) {
-            LIBS += -lhwrmpowerclient
+            LIBS += -lhwrmpowerclient \
+            -ldisknotifyhandler \
+            -lhwrmfmtxclient \
+            -lusbman \
+            -letelmm 
         }
 
 

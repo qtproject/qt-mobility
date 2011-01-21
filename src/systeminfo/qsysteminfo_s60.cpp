@@ -73,8 +73,8 @@
 #define RD_STARTUP_CHANGE
 #include <startupdomainpskeys.h>
 #include <hwrmlight.h>
-#include <hwrmfmtx.h>
 #ifdef SYMBIAN_3_PLATFORM
+#include <hwrmfmtx.h>
 #include <avkondomainpskeys.h>
 #include <hwrmdomainpskeys.h>
 #include <AvkonInternalCRKeys.h>
@@ -382,12 +382,14 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
         }
         case QSystemInfo::FmTransmitterFeature:
         {
+#ifdef SYMBIAN_3_PLATFORM
             TRAPD(err,
                 //Leaves with KErrNotSupported if device doesn't support FmTransmitter feature.
                 CHWRMFmTx *fmTX = CHWRMFmTx::NewL();
                 delete fmTX;
-            )
+               )
             return err == KErrNone;
+#endif
         }
 
         case QSystemInfo::FmradioFeature:   //Not available in public SDK
@@ -430,6 +432,7 @@ QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate()
 QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSystemNetworkInfo::NetworkMode mode)
 {
     QSystemNetworkInfo::NetworkStatus networkStatus = QSystemNetworkInfo::UndefinedStatus;
+#ifdef SYMBIAN_3_PLATFORM
     RMobilePhone::TMobilePhoneRegistrationStatus nStatus = RMobilePhone::ERegistrationUnknown;
     QSystemNetworkInfo::NetworkMode currMode =currentMode();
     if (currMode == mode)
@@ -446,6 +449,7 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSyst
     case RMobilePhone::ERegisteredRoaming : networkStatus = QSystemNetworkInfo::Roaming; break;
     case RMobilePhone::ERegistrationUnknown : break;
     }
+#endif
     return networkStatus;
 }
 
@@ -685,8 +689,10 @@ QSystemNetworkInfo::NetworkMode QSystemNetworkInfoPrivate::currentMode()
             case RMobilePhone::ENetworkModeCdma95 :
             case RMobilePhone::ENetworkModeCdma2000 : networkMode = QSystemNetworkInfo::CdmaMode;
             break;
-            case RMobilePhone::ENetworkModeWcdma :
-            case RMobilePhone::ENetworkModeTdcdma : networkMode = QSystemNetworkInfo::WcdmaMode;
+#ifdef SYMBIAN_3_PLATFORM
+            case RMobilePhone::ENetworkModeTdcdma :
+#endif
+            case RMobilePhone::ENetworkModeWcdma : networkMode = QSystemNetworkInfo::WcdmaMode;
             break;
             default : break;
         }

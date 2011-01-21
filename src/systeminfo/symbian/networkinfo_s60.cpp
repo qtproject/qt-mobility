@@ -84,6 +84,7 @@ void CNetworkBase::RemoveObserver()
 
 CNetworkMode::CNetworkMode()
     {
+#ifdef SYMBIAN_3_PLATFORM
     if (iConstructed)
         {
         TInt err = iMobilePhone.GetCurrentMode( iNetworkMode );
@@ -96,6 +97,7 @@ CNetworkMode::CNetworkMode()
         else
             iConstructed = EFalse;
         }
+#endif
     }
 CNetworkMode::~CNetworkMode()
     {
@@ -104,7 +106,9 @@ CNetworkMode::~CNetworkMode()
 
 void CNetworkMode::DoCancel()
     {
+#ifdef SYMBIAN_3_PLATFORM
     iMobilePhone.CancelAsyncRequest(EMobilePhoneNotifyModeChange);
+#endif
     }
 
 void CNetworkMode::RunL()
@@ -116,8 +120,10 @@ void CNetworkMode::RunL()
 
 void CNetworkMode::StartMonitoring()
     {
+#ifdef SYMBIAN_3_PLATFORM
     iMobilePhone.NotifyModeChange ( iStatus,iNetworkMode);
     SetActive();
+#endif
     }
 
 RMobilePhone::TMobilePhoneNetworkMode CNetworkMode::GetMode() const
@@ -126,8 +132,10 @@ RMobilePhone::TMobilePhoneNetworkMode CNetworkMode::GetMode() const
     }
 
 CNetworkStatus :: CNetworkStatus()
-    {
-    if (iConstructed)
+   {
+
+#ifdef SYMBIAN_3_PLATFORM
+      if (iConstructed)
         {
         TInt err = iMobilePhone.GetMultimodeCaps( iCapsPhone );
         if (!err)
@@ -141,6 +149,7 @@ CNetworkStatus :: CNetworkStatus()
         else
             iConstructed = EFalse;
         }
+#endif
     }
 CNetworkStatus::~CNetworkStatus()
     {
@@ -149,7 +158,9 @@ CNetworkStatus::~CNetworkStatus()
 
 void CNetworkStatus::DoCancel()
     {
+#ifdef SYMBIAN_3_PLATFORM
     iMobilePhone.CancelAsyncRequest(EMobilePhoneNotifyNetworkRegistrationStatusChange);
+#endif
     }
 
 void CNetworkStatus::RunL()
@@ -162,19 +173,23 @@ void CNetworkStatus::RunL()
 
 void CNetworkStatus::StartMonitoring()
     {
+#ifdef SYMBIAN_3_PLATFORM
     iMobilePhone.NotifyNetworkRegistrationStatusChange ( iStatus,iNetStatus);
     SetActive();
+#endif
     }
 
 TUint32 CNetworkStatus::GetCapability () const
     {
     return iCapsPhone;
     }
+
+#ifdef SYMBIAN_3_PLATFORM
 RMobilePhone::TMobilePhoneRegistrationStatus CNetworkStatus::GetStatus () const
     {
     return iNetStatus;
     }
-
+#endif
 CNetworkInfo::CNetworkInfo()
     {
     iNetStat.Add(this);
@@ -190,11 +205,12 @@ TUint32 CNetworkInfo::GetCapability () const
     return iNetStat.GetCapability();
     }
 
+#ifdef SYMBIAN_3_PLATFORM
 RMobilePhone::TMobilePhoneRegistrationStatus CNetworkInfo::GetStatus () const
     {
     return iNetStat.GetStatus();
     }
-
+#endif
 void CNetworkInfo::addObserver(MNetworkInfoObserver *aObserver)
 {
     iObservers.append(aObserver);
