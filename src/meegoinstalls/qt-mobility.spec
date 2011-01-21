@@ -42,6 +42,8 @@ BuildRequires:  pkgconfig(gstreamer-plugins-bad-free-0.10)
 BuildRequires:  pkgconfig(gstreamer-plugins-base-0.10)
 BuildRequires:  pkgconfig(gypsy)
 BuildRequires:  pkgconfig(libpulse)
+BuildRequires:  pkgconfig(libmkcal)
+BuildRequires:  pkgconfig(meegotouch)
 BuildRequires:  pkgconfig(qttracker)
 BuildRequires:  pkgconfig(qmfclient)
 BuildRequires:  pkgconfig(sensord)
@@ -1102,6 +1104,7 @@ find %{buildroot}%{_libdir}/qtmobility -type f -perm /u+x,g+x,o+x \( -false \
 %defattr(-,root,root,-)
 # >> files libqtfeedback1
 %{_libdir}/libQtFeedback.so.*
+%{_libdir}/qt4/plugins/feedback/libqtfeedback_meegotouch.so
 %{_libdir}/qt4/plugins/feedback/libqtfeedback_mmk.so
 # << files libqtfeedback1
 
@@ -1139,7 +1142,7 @@ find %{buildroot}%{_libdir}/qtmobility -type f -perm /u+x,g+x,o+x \( -false \
 %defattr(-,root,root,-)
 # >> files libqtorganizer1
 %{_libdir}/libQtOrganizer.so.*
-%{_libdir}/qt4/plugins/organizer/libqtorganizer_skeleton.so
+%{_libdir}/qt4/plugins/organizer/libqtorganizer_mkcal.so
 # << files libqtorganizer1
 
 %files -n libqtpublishsubscribe1
