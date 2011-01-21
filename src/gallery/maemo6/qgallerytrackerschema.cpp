@@ -819,8 +819,25 @@ static const QGalleryItemProperty qt_galleryAlbumPropertyList[] =
 
 static const QGalleryItemProperty qt_galleryArtistPropertyList[] =
 {
-    QT_GALLERY_ITEM_PROPERTY("artist"    , "nmm:artistName(?x)", String, CanRead | CanWrite | CanFilter | CanSort),
-    QT_GALLERY_ITEM_PROPERTY("title"     , "nmm:artistName(?x)", String, CanRead | CanWrite | CanFilter | CanSort)
+    QT_GALLERY_ITEM_PROPERTY("artist"    , "nmm:artistName(?x)"   , String, CanRead | CanWrite | CanFilter | CanSort),
+    QT_GALLERY_ITEM_PROPERTY("duration"  , "SUM(nfo:duration(?y))", Int   , CanRead | CanFilter | CanSort),
+    QT_GALLERY_ITEM_PROPERTY("title"     , "nmm:artistName(?x)"   , String, CanRead | CanWrite | CanFilter | CanSort),
+    QT_GALLERY_ITEM_PROPERTY("trackCount", "COUNT(?y)"            , Int   , CanRead | CanFilter | CanSort)
+};
+
+/////////
+// AlbumArtist
+/////////
+
+//nmm:Artist : nie:InformationElement
+//  nmm:artistName
+
+static const QGalleryItemProperty qt_galleryAlbumArtistPropertyList[] =
+{
+    QT_GALLERY_ITEM_PROPERTY("artist"    , "nmm:artistName(?x)"          , String, CanRead | CanWrite | CanFilter | CanSort),
+    QT_GALLERY_ITEM_PROPERTY("duration"  , "SUM(nmm:albumDuration(?y))"  , Int   , CanRead | CanFilter | CanSort),
+    QT_GALLERY_ITEM_PROPERTY("title"     , "nmm:artistName(?x)"          , String, CanRead | CanWrite | CanFilter | CanSort),
+    QT_GALLERY_ITEM_PROPERTY("trackCount", "SUM(nmm:albumTrackCount(?y))", Int   , CanRead | CanFilter | CanSort)
 };
 
 /////////////
@@ -853,7 +870,7 @@ static const QGalleryItemType qt_galleryItemTypeList[] =
     QT_GALLERY_ITEM_TYPE(Playlist  , nmm, Playlist      , playlist  , Playlist),
     QT_GALLERY_ITEM_TYPE(Text      , nfo, TextDocument  , text      , Text),
     QT_GALLERY_ITEM_TYPE_NO_COMPOSITE_FILTERED(Artist     , nmm, Artist, nmm:MusicPiece, nmm:performer  , artist     , Artist),
-    QT_GALLERY_ITEM_TYPE_NO_COMPOSITE_FILTERED(AlbumArtist, nmm, Artist, nmm:MusicAlbum, nmm:albumArtist, albumArtist, Artist),
+    QT_GALLERY_ITEM_TYPE_NO_COMPOSITE_FILTERED(AlbumArtist, nmm, Artist, nmm:MusicAlbum, nmm:albumArtist, albumArtist, AlbumArtist),
     QT_GALLERY_ITEM_TYPE_NO_COMPOSITE(Album     , nmm, MusicAlbum    , album     , Album),
     QT_GALLERY_ITEM_TYPE_NO_COMPOSITE(PhotoAlbum, nmm, ImageList     , photoAlbum, PhotoAlbum)
 };
@@ -1521,12 +1538,13 @@ void QGalleryTrackerSchema::populateItemArguments(
     arguments->compositeOffset = arguments->valueOffset + valueNames.count();
     arguments->queryInterface = dbus->metaDataInterface();
     arguments->sparql
-            = QLatin1String("SELECT DISTINCT ?x nie:url(?x) rdf:type(?x) ")
+            = QLatin1String("SELECT ?x nie:url(?x) rdf:type(?x) ")
             + arguments->fieldNames.join(QLatin1String(" "))
             + QLatin1String(" WHERE {")
             + qt_galleryItemTypeList[m_itemIndex].typeFragment
             + query
             + QLatin1String("}")
+            + QLatin1String(" GROUP BY ?x")
             + qt_writeSorting(sortPropertyNames, itemProperties);
 
     if (offset > 0)
