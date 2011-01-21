@@ -18,7 +18,7 @@
 // t_viewcontactid.mmp
 //
 
-target          t_viewcontactid.exe
+TARGET          t_viewcontactid.exe
 targettype      EXE
 CAPABILITY   ReadUserData WriteUserData
 UID		0
@@ -28,4 +28,4 @@ APP_LAYER_SYSTEMINCLUDE_SYMBIAN
 source          T_viewcontactid.cpp
 source          CContactViewEventQueue.cpp
 source          t_utils2.cpp
-library         euser.lib efsrv.lib cntmodel.lib pimtestclient.lib
+LIBRARY         euser.lib efsrv.lib cntmodel.lib pimtestclient.lib

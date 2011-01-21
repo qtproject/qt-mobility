@@ -30,6 +30,6 @@ APP_LAYER_SYSTEMINCLUDE_SYMBIAN
 
 SOURCE			T_CntPBAPSupport.cpp
 
-library         euser.lib  cntmodel.lib efsrv.lib estor.lib vcard.lib versit.lib
+LIBRARY         euser.lib  cntmodel.lib efsrv.lib estor.lib vcard.lib versit.lib
 
 SMPSAFE

@@ -16,7 +16,7 @@
 */
 
 
-TARGET          T_RequestStoreTest.exe
+TARGET          t_requeststoretest.exe
 TARGETTYPE      EXE
 CAPABILITY      ReadUserData WriteUserData
 VENDORID        0x70000001
@@ -29,9 +29,9 @@ SOURCEPATH      .
 SOURCE          t_requeststoretest.cpp
 
 //Parts of contacts model
-LIBRARY         EUSER.LIB 
+LIBRARY         euser.lib 
 LIBRARY         efsrv.lib 
-LIBRARY         NbCntTestLib.LIB 
-LIBRARY         CntModel.lib
+LIBRARY         nbcnttestlib.lib 
+LIBRARY         cntmodel.lib
 
 SMPSAFE

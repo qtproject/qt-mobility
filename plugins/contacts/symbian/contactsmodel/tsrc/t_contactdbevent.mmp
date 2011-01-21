@@ -16,7 +16,7 @@
 */
 
 
-target          t_contactdbevent.EXE
+target          t_contactdbevent.exe
 targettype      EXE
 CAPABILITY   ReadUserData WriteUserData
 UID		0
@@ -24,7 +24,7 @@ VENDORID 0x70000001
 
 APP_LAYER_SYSTEMINCLUDE_SYMBIAN
 
-library         EUSER.LIB  cntmodel.LIB CNTVIEW.LIB EFSRV.LIB PIMTestClient.lib
+LIBRARY         euser.lib  cntmodel.lib cntview.lib efsrv.lib pimtestclient.lib
 
 SOURCEPATH .
 SOURCE t_contactdbevent.cpp

@@ -16,7 +16,7 @@
 */
 
 
-target          t_packager.exe
+TARGET          t_packager.exe
 targettype      EXE
 CAPABILITY   	ReadUserData WriteUserData
 UID				0x1000097a
@@ -33,6 +33,6 @@ source			T_Packager.cpp
 SOURCEPATH		..
 source			T_CntTestImplementor.cpp
 
-library         euser.lib cntpldbms.lib pimtestclient.lib
-library         cntmodel.lib nbcnttestlib.lib efsrv.lib 
-library         bafl.lib
+LIBRARY         euser.lib cntpldbms.lib pimtestclient.lib
+LIBRARY         cntmodel.lib nbcnttestlib.lib efsrv.lib 
+LIBRARY         bafl.lib

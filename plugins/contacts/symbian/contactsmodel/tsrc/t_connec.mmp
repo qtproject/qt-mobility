@@ -16,7 +16,7 @@
 */
 
 
-target          t_connec.exe
+TARGET          t_connec.exe
 targettype      EXE
 CAPABILITY   ReadUserData WriteUserData WriteDeviceData
 UID              0x1000007a
@@ -29,6 +29,6 @@ userinclude ../inc
 
 source          t_connec.cpp
 
-library         euser.lib  cntmodel.lib cnttutil.lib
+LIBRARY         euser.lib  cntmodel.lib cnttutil.lib
 
 SMPSAFE

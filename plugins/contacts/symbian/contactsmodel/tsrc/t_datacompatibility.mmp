@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2003-2009 Nokia Corporation and/or its subsidiary(-ies).
+* Copyright (c) 2003-2011 Nokia Corporation and/or its subsidiary(-ies).
 * All rights reserved.
 * This component and the accompanying materials are made available
 * under the terms of "Eclipse Public License v1.0"
@@ -16,12 +16,14 @@
 */
 
 
+
 TARGET          t_datacompatibility.exe
 TARGETTYPE      EXE
 CAPABILITY   ReadUserData WriteUserData
 
 SOURCEPATH		../tsrc
 
+APP_LAYER_SYSTEMINCLUDE_SYMBIAN 
 systeminclude /epoc32/include 
 userinclude ../inc 
 
@@ -29,6 +31,6 @@ SOURCE          T_datacompatibility.cpp
 
 LIBRARY			euser.lib efsrv.lib cntmodel.lib
 
-LIBRARY 	pimtestclient.lib
+LIBRARY 	pimtestclient.lib 
 
 VENDORID 0x70000001

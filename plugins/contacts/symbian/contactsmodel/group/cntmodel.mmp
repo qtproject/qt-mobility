@@ -19,7 +19,7 @@
 
 #include "cntmodel.mmh"
 
-target          cntmodel.dll
+TARGET          cntmodel.dll
 targettype      DLL
 
 APP_LAYER_SYSTEMINCLUDE_SYMBIAN
@@ -47,6 +47,7 @@ source		ccntpackager.cpp
 source		ccntnotificationmonitor.cpp
 source		rcntmodel.cpp
 source		cntimagerescaler.cpp
+source		cntimagerescaleutility.cpp
 
 //Parts of original contacts model
 SOURCEPATH	../src
@@ -86,7 +87,7 @@ library         estor.lib
 library         bafl.lib 
 library         ecom.lib
 library         conarc.lib //for CContactTextField::EncodeL CCnaConverterList
-library         versit.lib 
+library		versit.lib 
 library         efsrv.lib 
 library         centralrepository.lib
 LIBRARY         platformenv.lib

@@ -20,7 +20,7 @@
 #include <platform_paths.hrh>
 #include "cntmodel.mmh"
 
-target          cntplsql.dll
+TARGET          cntplsql.dll
 targettype      DLL
 CAPABILITY		All -TCB
 UID				0x1027976B
@@ -30,34 +30,13 @@ VENDORID 		0x70000001
 
 APP_LAYER_SYSTEMINCLUDE
 
-
-
-// These two SYSTEMINCLUDES are needed as QT headers are used
-SYSTEMINCLUDE		/epoc32/include/mw/QtCore
-SYSTEMINCLUDE		/epoc32/include/stdapis/stlportv5
-
-// Orbit
-SYSTEMINCLUDE		/epoc32/include/mw/hb/hbcore
-SYSTEMINCLUDE		/epoc32/include/mw/hb/hbinput
-
 userinclude ../src //for cntstd.h 
 userinclude ../cntsrv/inc //for persistencelayer.h 
+userinclude ../cntmodel/inc // for cntimagerescaleutility.h
 APP_LAYER_SYSTEMINCLUDE_SYMBIAN
 
 userinclude 	../cntplsql/inc
 userinclude 	../inc			//for ccontactprivate.h, cntdbconsts_internal.h
-
-// Qt Macros
-MACRO		UNICODE
-MACRO		QT_KEYPAD_NAVIGATION
-MACRO		QT_SOFTKEYS_ENABLED
-MACRO		HB_EFFECTS
-MACRO		QT_NO_DEBUG
-MACRO		QT_SVG_LIB
-MACRO		QT_GUI_LIB
-MACRO		QT_NETWORK_LIB
-MACRO		QT_CORE_LIB
-MACRO		QT_WARNING_FILE_OUTPUT
 
 SOURCEPATH	../cntplsql/src
 source		cntsqlprovider.cpp 
@@ -66,11 +45,6 @@ source		cntpersistenceutility.cpp
 source		cpplcontacttable.cpp
 source		cpplgroupstable.cpp
 source		cpplcommaddrtable.cpp
-source		cpplpredictivesearchtable.cpp
-source		c12keypredictivesearchtable.cpp
-source		cqwertypredictivesearchtable.cpp
-source		cpredictivesearchsettingstable.cpp
-source		cpredictivesearchsynchronizer.cpp
 
 source 		pplcontactitemmanager.cpp
 source		rpplicccontactstore.cpp
@@ -89,15 +63,10 @@ source		clplgenericproxy.cpp
 source      cntpplviewmanager.cpp
 source      cntpplviewsession.cpp
 
-source		cpcskeymap.cpp
-source		c12keykeymap.cpp
-source		cqwertykeymap.cpp
-source		ckoreankeymap.cpp
+
 //source		cntmetadataoperation.cpp
-source		cpplpresencetable.cpp
-source    	cntsqlsearch.cpp
-source 		cntsqlkoreanitut.cpp
-source		cntsqlsearchbase.cpp
+
+source    cntsqldbstructure.cpp
 
 LIBRARY         euser.lib 
 LIBRARY         efsrv.lib 
@@ -106,8 +75,7 @@ LIBRARY         ecom.lib
 LIBRARY         bafl.lib
 LIBRARY         cntmodel.lib
 LIBRARY			sqldb.lib
-LIBRARY			HbCore.lib
-LIBRARY			qtcore.lib
+
 LIBRARY     	libstdcppv5.lib
 LIBRARY     	libc.lib
 LIBRARY     	libm.lib
