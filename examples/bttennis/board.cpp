@@ -47,40 +47,48 @@
 #include <QFontMetrics>
 #include <QPropertyAnimation>
 
+const QColor fg = Qt::white;
+const QColor bg = Qt::black;
+
 Board::Board(QObject *parent) :
     QObject(parent)
 {
     scene = new QGraphicsScene(QRect(0, 0, 640, 360), this);
 
     scene->setItemIndexMethod(QGraphicsScene::NoIndex);
+    scene->setBackgroundBrush(QBrush(bg));
 
-    ball = scene->addRect(-6, -6, 12, 12, QPen(Qt::SolidLine), QBrush(Qt::black));
+    ball = scene->addRect(-6, -6, 12, 12, QPen(Qt::SolidLine), QBrush(fg));
     ball->setPos(Width/2-6, Height/2-6);
 
-    topWall = scene->addRect(0, 0, Width, 12, QPen(Qt::SolidLine), QBrush(Qt::black));
-    bottomWall = scene->addRect(0, Height-12, Width, 12, QPen(Qt::SolidLine), QBrush(Qt::black));
+    topWall = scene->addRect(0, 0, Width, 12, QPen(Qt::SolidLine), QBrush(fg));
+    bottomWall = scene->addRect(0, Height-12, Width, 12, QPen(Qt::SolidLine), QBrush(fg));
 
-    leftPaddle = scene->addRect(0, 12, 12, Paddle, QPen(Qt::SolidLine), QBrush(Qt::black));
-    rightPaddle = scene->addRect(Width-12, 12, 12, Paddle, QPen(Qt::SolidLine), QBrush(Qt::black));
+    leftPaddle = scene->addRect(0, 12, 12, Paddle, QPen(Qt::SolidLine), QBrush(fg));
+    rightPaddle = scene->addRect(Width-12, 12, 12, Paddle, QPen(Qt::SolidLine), QBrush(fg));
 
     QPen p;
     p.setWidth(2);
     p.setStyle(Qt::DotLine);
+    p.setBrush(QBrush(fg));
     scene->addLine(Width/2, 0, Width/2, Height, p);
 
     QFont f;
     f.setStyleHint(QFont::OldEnglish);
     f.setPixelSize(50);
-    f.setBold(true);   
+    f.setBold(true);       
     leftScore = scene->addText(QString("0"), f);
+    leftScore->setDefaultTextColor(fg);
 //    leftScore->setPos(120, 50);
 
     rightScore = scene->addText(QString("0"), f);
 //    rightScore->setPos(Width-140, 50);
+    rightScore->setDefaultTextColor(fg);
     setScore(0, 0);
 
     f.setPixelSize(25);
     status = scene->addText(QString(), f);
+    status->setDefaultTextColor(fg);
 
     ball->setCacheMode(QGraphicsItem::DeviceCoordinateCache);
     leftPaddle->setCacheMode(QGraphicsItem::DeviceCoordinateCache);

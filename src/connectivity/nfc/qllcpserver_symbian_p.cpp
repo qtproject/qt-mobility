@@ -40,53 +40,123 @@
 ****************************************************************************/
 
 #include "qllcpserver_symbian_p.h"
+#include "symbian/llcpserver_symbian.h"
+#include "symbian/llcpsockettype2_symbian.h"
+#include "symbian/nearfieldutility_symbian.h"
 
+#include "symbian/debug.h"
 QTM_BEGIN_NAMESPACE
 
 QLlcpServerPrivate::QLlcpServerPrivate(QLlcpServer *q)
-:   q_ptr(q)
+    :q_ptr(q)
 {
+    BEGIN
+    QT_TRAP_THROWING(m_symbianbackend = CLlcpServer::NewL(*this));
+    END
+}
+QLlcpServerPrivate::~QLlcpServerPrivate()
+{
+    BEGIN
+    close();
+    delete m_symbianbackend;
+    END
 }
 
 bool QLlcpServerPrivate::listen(const QString &serviceUri)
 {
-    Q_UNUSED(serviceUri);
+    BEGIN
+    LOG(serviceUri);
+    HBufC8* uri = NULL;
+    TRAPD(err, uri = QNFCNdefUtility::QString2HBufC8L(serviceUri));
+    if(err != KErrNone)
+        {
+        return false;
+        }
+    bool ret =  m_symbianbackend->Listen(*uri);
 
-    return false;
+    delete uri;
+    END
+    return ret;
 }
 
 bool QLlcpServerPrivate::isListening() const
 {
-    return false;
+    BEGIN
+    END
+    return m_symbianbackend->isListening();
 }
 
+/*!
+    Stops listening for incoming connections.
+*/
 void QLlcpServerPrivate::close()
 {
+    BEGIN
+    m_symbianbackend->StopListening();
+    qDeleteAll(m_pendingConnections);
+    m_pendingConnections.clear();
+    END
 }
 
 QString QLlcpServerPrivate::serviceUri() const
 {
-    return QString();
+    BEGIN
+    const TDesC8& uri= m_symbianbackend->serviceUri();
+
+    QString ret = QNFCNdefUtility::TDesC82QStringL(uri);
+    LOG("QLlcpServerPrivate::serviceUri() ret="<<ret);
+    END
+    return ret;
+
 }
 
 quint8 QLlcpServerPrivate::serverPort() const
 {
+    BEGIN
+    END
     return 0;
 }
 
 bool QLlcpServerPrivate::hasPendingConnections() const
 {
-    return false;
+    BEGIN
+    END
+    return m_symbianbackend->hasPendingConnections();
+}
+
+void QLlcpServerPrivate::invokeNewConnection()
+{
+    BEGIN
+    Q_Q(QLlcpServer);
+    emit q->newConnection();
+    END
 }
 
 QLlcpSocket *QLlcpServerPrivate::nextPendingConnection()
 {
-    return 0;
+    BEGIN
+    QLlcpSocket* qSocket  = NULL;
+    CLlcpSocketType2* socket_symbian = m_symbianbackend->nextPendingConnection();
+    if (socket_symbian)
+    {
+        QLlcpSocketPrivate *qSocket_p = new QLlcpSocketPrivate(socket_symbian);
+        qSocket = new QLlcpSocket(qSocket_p,NULL);
+        qSocket_p->attachCallbackHandler(qSocket);
+        socket_symbian->AttachCallbackHandler(qSocket_p);
+        QPointer<QLlcpSocket> p(qSocket);
+        m_pendingConnections.append(p);
+    }
+    END
+    return qSocket;
 }
 
 QLlcpServer::Error QLlcpServerPrivate::serverError() const
 {
+    BEGIN
+    END
     return QLlcpServer::UnknownSocketError;
 }
 
 QTM_END_NAMESPACE
+//EOF
+

@@ -98,6 +98,8 @@ QTM_BEGIN_NAMESPACE
 */
 QBluetoothLocalDevice::~QBluetoothLocalDevice()
 {
+    delete d_ptr;
+    d_ptr = 0;
 }
 
 /*!
