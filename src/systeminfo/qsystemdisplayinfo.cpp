@@ -67,8 +67,8 @@ QSystemDisplayInfoPrivate *getSystemDisplayInfoPrivate() { return displayInfoPri
   \enum QSystemDisplayInfo::BacklightState
   This enum describes the state of the Backlight.
 
-  \value BacklightStateUnknown          Error, no, or unknown Backlight state.
-  \value BacklightOff              Backlight is turned off.
+  \value BacklightStateUnknown     Error, no, or unknown Backlight state.
+  \value BacklightStateOff         Backlight is turned off.
   \value BacklightStateDimmed      Backlight has been dimmed.
   \value BacklightStateOn          Backlight is on.
   */
@@ -131,13 +131,13 @@ int QSystemDisplayInfo::colorDepth(int screenNumber)
 }
 
 /*!
-    Returns the orientation of the \a screen.
+    Returns the orientation of the UI QDesktopWidget for \a screen.
 
     \sa QDesktopWidget::screenCount()
 */
-QSystemDisplayInfo::DisplayOrientation QSystemDisplayInfo::getOrientation(int screen)
+QSystemDisplayInfo::DisplayOrientation QSystemDisplayInfo::orientation(int screen)
 {
-    return displayInfoPrivate()->getOrientation(screen);
+    return displayInfoPrivate()->orientation(screen);
 }
 
 
