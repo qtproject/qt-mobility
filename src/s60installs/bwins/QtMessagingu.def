@@ -356,4 +356,7 @@ EXPORTS
 	??_EQMessageFolderId@QtMobility@@QAE@I@Z @ 355 NONAME ; QtMobility::QMessageFolderId::~QMessageFolderId(unsigned int)
 	?byRecipients@QMessageFilter@QtMobility@@SA?AV12@ABVQString@@W4LikeComparator@QMessageDataComparator@2@@Z @ 356 NONAME ; class QtMobility::QMessageFilter QtMobility::QMessageFilter::byRecipients(class QString const &, enum QtMobility::QMessageDataComparator::LikeComparator)
 	?removeAccount@QMessageManager@QtMobility@@QAE_NABVQMessageAccountId@2@@Z @ 357 NONAME ; bool QtMobility::QMessageManager::removeAccount(class QtMobility::QMessageAccountId const &)
+	?accountRemoved@QMessageManager@QtMobility@@IAEXABVQMessageAccountId@2@@Z @ 358 NONAME ; void QtMobility::QMessageManager::accountRemoved(class QtMobility::QMessageAccountId const &)
+	?moveMessages@QMessageService@QtMobility@@QAE_NABV?$QList@VQMessageId@QtMobility@@@@ABVQMessageFolderId@2@@Z @ 359 NONAME ; bool QtMobility::QMessageService::moveMessages(class QList<class QtMobility::QMessageId> const &, class QtMobility::QMessageFolderId const &)
+	?synchronize@QMessageService@QtMobility@@QAE_NABVQMessageAccountId@2@@Z @ 360 NONAME ; bool QtMobility::QMessageService::synchronize(class QtMobility::QMessageAccountId const &)
 
