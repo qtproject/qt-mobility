@@ -89,7 +89,7 @@ symbian {
             LIBS *= -lesock -lbluetooth -lsdpagent -lsdpdatabase -lestlib -lobex -lbtengsettings
         }
     }
-} else:contains(QT_CONFIG, dbus) {
+} else:contains(bluez_enabled, yes):contains(QT_CONFIG, dbus) {
     QT *= dbus
 
     include(bluez/bluez.pri)
@@ -108,6 +108,8 @@ symbian {
         bluetooth/qbluetoothtransfermanager_bluez.cpp \
         bluetooth/ql2capserver_bluez.cpp
 } else {
+    message("Unsupported bluetooth platform, will not build a working QBluetooth library")
+    message("Either no Qt dBus found, no bluez headers, or not symbian")
     SOURCES += \
         bluetooth/qbluetoothdevicediscoveryagent_p.cpp \
         bluetooth/qbluetoothlocaldevice_p.cpp \
