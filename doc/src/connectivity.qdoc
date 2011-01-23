@@ -28,10 +28,10 @@
 /*!
 \page connectivity-api.html
 \title Connectivity API (technology preview)
-\brief The connectivity API facilitates communication with local devices.
+\brief The Connectivity API facilitates communication with local devices.
 \ingroup mobility
 
-\warning This API should be considered in a technology preview state. It is under development and
+\warning This API is a technology preview. It is under development and
 subject to change.
 
 The Connectivity API provides a set of APIs for communicating with local devices.
@@ -54,7 +54,7 @@ available, however, which is used by both the unit tests and the Qt Simulator ba
 The \l {QtMobility Examples#Connectivity}{Connectivity examples} demonstrate how to use NFC
 functionality in your application.
 
-What should work:
+\section3 What should work for NFC
 \list
     \o NDEF record and message parsing
     \o NDEF record and message creation
@@ -71,7 +71,7 @@ What should work:
     \endlist
 \endlist
 
-What is known \bold NOT to work:
+\section3 What is known \bold NOT to work for NFC
 \list
     \o Backends for real hardware i.e. Symbian, MeeGo
     \o LLCP Sockets
@@ -90,7 +90,7 @@ The Bluetooth API is under development and subject to change between the tech
 preview and its official release with QtMobility 1.2. For the technology
 preview the only functional backend is bluez.
 
-What should work:
+\section3 What should work for Bluetooth
 
 You should be able to discover devices and services, open an Rfcomm socket, or accept
 an Rfcomm connection, and transfer a file to a device using Object Push Protocol.
@@ -103,13 +103,13 @@ Classes that should work:
     \o QBluetoothDeviceInfo
     \o QBluetoothServiceInfo
     \o QBluetoothSocket
-    \o \l {QBluetoothTransferManager::put}
+    \o \l {QBluetoothTransferManager::put()}
     \o QBluetoothUuid
     \o QBluetoothRfcommServer
     \o QBluetoothRfcommSocket
 \endlist
 
-What is known \bold NOT to work:
+\section3 What is known \bold NOT to work for Bluetooth
 \list
     \o Symbian, Windows, Mac
     \o QL2capServer and QL2capSocket
