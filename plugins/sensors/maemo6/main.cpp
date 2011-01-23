@@ -59,14 +59,14 @@ class maemo6SensorPlugin : public QObject, public QSensorPluginInterface, public
 public:
     void registerSensors()
     {
-        QSensorManager::registerBackend(QAccelerometer::type, maemo6accelerometer::id, this);
-        QSensorManager::registerBackend(QAmbientLightSensor::type, maemo6als::id, this);
-        QSensorManager::registerBackend(QCompass::type, maemo6compass::id, this);
-        QSensorManager::registerBackend(QMagnetometer::type, maemo6magnetometer::id, this);
-        QSensorManager::registerBackend(QOrientationSensor::type, maemo6orientationsensor::id, this);
-        QSensorManager::registerBackend(QProximitySensor::type, maemo6proximitysensor::id, this);
-        QSensorManager::registerBackend(QRotationSensor::type, maemo6rotationsensor::id, this);
-        QSensorManager::registerBackend(QTapSensor::type, maemo6tapsensor::id, this);
+        // if no default - no support either, uses Sensors.conf
+        QSettings settings(QSettings::SystemScope, QLatin1String("Nokia"), QLatin1String("Sensors"));
+        settings.beginGroup(QLatin1String("Default"));
+        QStringList keys = settings.allKeys();
+        for (int i=0,l=keys.size(); i<l; i++){
+            QString type = keys.at(i);
+            QSensorManager::registerBackend(type.toAscii(),settings.value(type).toByteArray(), this);
+        }
         qDebug() << "Loaded the Maemo 6 sensor plugin";
     }
 
