@@ -74,11 +74,6 @@ void meegotapsensor::start(){
 
 void meegotapsensor::slotDataAvailable(const Tap& data)
 {
-    if (data.type() == TapData::DoubleTap){
-        if (!m_isDoubleTapSensor) return;
-    }
-    else if (m_isDoubleTapSensor) return;
-
     // Set tap direction
     QTapReading::TapDirection o;
     switch (data.direction()) {
@@ -93,7 +88,6 @@ void meegotapsensor::slotDataAvailable(const Tap& data)
     case TapData::BackFace:  o = QTapReading::Y_Neg;     break;
     default:                 o = QTapReading::Undefined;
     }
-
     m_reading.setTapDirection(o);
     m_reading.setTimestamp(data.tapData().timestamp_);
     newReadingAvailable();

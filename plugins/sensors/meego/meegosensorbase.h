@@ -126,10 +126,9 @@ protected:
             m_maxBufferSize = second>m_bufferSize? second:m_maxBufferSize;
         }
         m_maxBufferSize = m_maxBufferSize<0?1:m_maxBufferSize;
-        //TODO: replace when the efficient size is available from SensorFW with a direct call
-        if (l>0) m_efficientBufferSize = (l==1) ? 1 : sizes.at(1).first;
-        m_efficientBufferSize = m_efficientBufferSize<0?1:m_efficientBufferSize>m_maxBufferSize?m_maxBufferSize:m_efficientBufferSize;
-
+        //SensorFW guarantees to provide the most efficient size first
+        //TODO: remove from comments
+//         m_efficientBufferSize  = m_sensorInterface->hwBuffering()? (l>0?sizes.at(0).first:1) : 1;
 
         sensor()->setProperty(MAX_BUFFER_SIZE, m_maxBufferSize);
         sensor()->setProperty(EFFICIENT_BUFFER_SIZE, m_efficientBufferSize);
