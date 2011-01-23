@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -46,6 +46,8 @@
 #include "qnearfieldmanager_simulator_p.h"
 #elif defined(Q_OS_SYMBIAN)
 #include "qnearfieldmanager_symbian_p.h"
+#elif defined(Q_WS_MAEMO_6) || defined (Q_WS_MEEGO)
+#include "qnearfieldmanager_meego_p.h"
 #else
 #include "qnearfieldmanagerimpl_p.h"
 #endif
@@ -332,6 +334,26 @@ bool QNearFieldManager::unregisterTargetDetectedHandler(int handlerId)
     Q_D(QNearFieldManager);
 
     return d->unregisterTargetDetectedHandler(handlerId);
+}
+
+void QNearFieldManager::setTargetAccessModes(TargetAccessModes accessModes)
+{
+    Q_D(QNearFieldManager);
+
+    TargetAccessModes removedModes = ~accessModes & d->m_requestedModes;
+    if (removedModes)
+        d->releaseAccess(removedModes);
+
+    TargetAccessModes newModes = accessModes & ~d->m_requestedModes;
+    if (newModes)
+        d->requestAccess(newModes);
+}
+
+QNearFieldManager::TargetAccessModes QNearFieldManager::targetAccessModes() const
+{
+    Q_D(const QNearFieldManager);
+
+    return d->m_requestedModes;
 }
 
 #include "moc_qnearfieldmanager.cpp"

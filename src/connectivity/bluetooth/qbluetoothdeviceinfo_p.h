@@ -58,6 +58,7 @@ public:
     QBluetoothDeviceInfoPrivate();
 
     bool valid;
+    bool cached;
 
     QBluetoothAddress address;
     QString name;

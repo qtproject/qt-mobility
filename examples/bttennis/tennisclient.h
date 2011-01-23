@@ -45,6 +45,7 @@
 #include <qbluetoothsocket.h>
 
 #include <QtCore/QObject>
+#include <QtCore/QTime>
 
 QTM_BEGIN_NAMESPACE
 class QBluetoothSocket;
@@ -86,6 +87,7 @@ private:
     QBluetoothSocket *socket;
     QDataStream *stream;
     QBluetoothServiceInfo serviceInfo;
+    QTime *elapsed;
 };
 //! [declaration]
 
