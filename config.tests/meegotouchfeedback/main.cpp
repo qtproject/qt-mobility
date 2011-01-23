@@ -42,16 +42,10 @@
 #include <QString>
 #include <QObject>
 
-#include <meegotouch/MComponentData>
-#include <meegotouch/MFeedbackPlayer>
+#include <meegotouch/MFeedback>
 
 int main(int, char**)
 {
-    QString themeString = "example";
-    MComponentData *componentData = MComponentData::instance();
-    MFeedbackPlayer *feedbackPlayer = componentData->feedbackPlayer();
-    if (!feedbackPlayer)
-        return -1;
-    feedbackPlayer->play(themeString);
+    MFeedback::play(MFeedback::Press);
     return 0;
 }

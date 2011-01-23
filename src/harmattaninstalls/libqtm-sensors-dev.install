@@ -41,5 +41,4 @@ usr/include/qt4/QtSensors/qsensorbackend.h
 usr/include/qt4/QtSensors/qsensormanager.h
 usr/include/qt4/QtSensors/qsensorplugin.h
 usr/include/qt4/QtSensors/qtapsensor.h
-usr/include/qt4/QtSensors/qtimestamp
 usr/lib/libQtSensors.so

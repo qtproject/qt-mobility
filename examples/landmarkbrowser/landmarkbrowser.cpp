@@ -61,9 +61,10 @@ QTM_USE_NAMESPACE
 LandmarkBrowser::LandmarkBrowser(QWidget *parent, Qt::WindowFlags flags)
     :currentLandmarkOffset(0),
      currentCategoryOffset(0),
-     limit(20), filterDialog(0), progress(0), manager(0),
-     landmarkFetch(0), landmarkExport(0), landmarkRemove(0),
-     landmarkSave(0), categoryFetch(0)
+     limit(20), filterDialog(0), 
+     landmarkFetch(0), landmarkImport(0), landmarkExport(0), landmarkRemove(0),
+     landmarkSave(0), categoryFetch(0), categoryRemove(0),progress(0),
+     manager(0)
 
 
 {
@@ -151,28 +152,44 @@ LandmarkBrowser::LandmarkBrowser(QWidget *parent, Qt::WindowFlags flags)
 
 LandmarkBrowser::~LandmarkBrowser()
 {
-    delete filterDialog;
-     filterDialog =0;
+    if (filterDialog)
+        delete filterDialog;
+    filterDialog =0;
 
-    delete landmarkFetch;
+    if (landmarkFetch)
+        delete landmarkFetch;
     landmarkFetch =0;
-    delete landmarkImport;
+
+    if (landmarkImport)
+        delete landmarkImport;
     landmarkImport =0;
-    delete landmarkExport;
+
+    if (landmarkExport)
+        delete landmarkExport;
     landmarkExport =0;
-    delete landmarkRemove;
+
+    if (landmarkRemove)
+        delete landmarkRemove;
     landmarkRemove =0;
-    delete landmarkSave;
+
+    if (landmarkSave)
+        delete landmarkSave;
     landmarkSave =0;
-    delete categoryFetch;
+
+    if (categoryFetch)
+        delete categoryFetch;
     categoryFetch = 0;
-    delete categoryRemove;
+
+    if (categoryRemove)
+        delete categoryRemove;
     categoryRemove =0;
 
-    delete progress;
+    if (progress)
+        delete progress;
     progress =0;
 
-    delete manager;
+    if (manager)
+        delete manager;
     manager=0;
 }
 

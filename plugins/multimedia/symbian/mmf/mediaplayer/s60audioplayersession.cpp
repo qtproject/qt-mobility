@@ -135,6 +135,13 @@ void S60AudioPlayerSession::doStop()
 
 void S60AudioPlayerSession::doClose()
 {
+#ifdef HAS_AUDIOROUTING
+    if (m_audioOutput) {
+        m_audioOutput->UnregisterObserver(*this);
+        delete m_audioOutput;
+        m_audioOutput = NULL;
+    }
+#endif
     m_player->Close();
 }
 
@@ -288,3 +295,9 @@ QString S60AudioPlayerSession::qStringFromTAudioOutputPreference(CAudioOutput::T
     return QString("Default");
 }
 #endif
+
+bool S60AudioPlayerSession::getIsSeekable() const
+{
+    return ETrue;
+}
+

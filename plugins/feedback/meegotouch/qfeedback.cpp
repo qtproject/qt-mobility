@@ -44,8 +44,7 @@
 #include <QtCore/QCoreApplication>
 #include <QtCore/QtPlugin>
 
-#include <meegotouch/MComponentData>
-#include <meegotouch/MFeedbackPlayer>
+#include <meegotouch/MFeedback>
 
 Q_EXPORT_PLUGIN2(feedback_meegotouch, QFeedbackMeegoTouch)
 
@@ -102,7 +101,7 @@ static QString convertToMeegoTouch(QFeedbackEffect::ThemeEffect effect)
     case QFeedbackEffect::ThemePositiveTacticon:
     case QFeedbackEffect::ThemeNeutralTacticon:
     case QFeedbackEffect::ThemeNegativeTacticon:
-        return MFeedbackPlayer::Press;
+        return MFeedback::Press;
     default:
         return QString();
     }
@@ -112,27 +111,15 @@ QFeedbackMeegoTouch::QFeedbackMeegoTouch(QObject *parent) :
     QObject(parent),
     QFeedbackThemeInterface()
 {
-    if (MComponentData::instance() != 0) {
-        componentData = MComponentData::instance();
-    } else {
-        QByteArray argv0;
-        if (!QCoreApplication::arguments().isEmpty())
-            argv0 = QCoreApplication::arguments().first().toLocal8Bit();
-
-        int argc = 1;
-        char *argv[] = { argv0.data() };
-        componentData = new MComponentData(argc, argv);
-    }
 }
 
 bool QFeedbackMeegoTouch::play(QFeedbackEffect::ThemeEffect effect)
 {
     const QString &feedbackString = convertToMeegoTouch(effect);
-    MFeedbackPlayer *feedbackPlayer = componentData->feedbackPlayer();
-    if (feedbackString.isEmpty() || !feedbackPlayer)
+    if (feedbackString.isEmpty())
         return false;
 
-    feedbackPlayer->play(feedbackString);
+    MFeedback::play(feedbackString);
     return true;
 }
 

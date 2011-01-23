@@ -66,6 +66,7 @@ private:
     QTapReading m_reading;
     static bool m_initDone;
     bool m_isDoubleTapSensor;
+    bool m_isOnceStarted;
 private slots:
     void slotDataAvailable(const Tap&);
 };

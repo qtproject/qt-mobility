@@ -333,6 +333,7 @@ int QSoundEffectPrivate::volume() const
 void QSoundEffectPrivate::setVolume(int volume)
 {
     m_volume = volume;
+    emit volumeChanged();
 }
 
 bool QSoundEffectPrivate::isMuted() const
@@ -343,6 +344,7 @@ bool QSoundEffectPrivate::isMuted() const
 void QSoundEffectPrivate::setMuted(bool muted)
 {
     m_muted = muted;
+    emit mutedChanged();
 }
 
 bool QSoundEffectPrivate::isLoaded() const
