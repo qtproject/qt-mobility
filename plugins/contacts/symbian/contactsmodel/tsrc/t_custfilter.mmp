@@ -16,7 +16,7 @@
 */
 
 
-target          t_custfilter.exe
+TARGET          t_custfilter.exe
 targettype      EXE
 CAPABILITY   ReadUserData WriteUserData
 UID				0x1000097a
@@ -28,6 +28,6 @@ userinclude ../inc
 
 source          T_CustFilter.cpp t_utils2.cpp
 
-library         euser.lib  cntmodel.lib cntview.lib efsrv.lib cnttutil.lib pimtestclient.lib
+LIBRARY         euser.lib  cntmodel.lib cntview.lib efsrv.lib cnttutil.lib pimtestclient.lib
 
 SMPSAFE

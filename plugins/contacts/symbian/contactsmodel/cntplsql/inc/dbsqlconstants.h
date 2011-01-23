@@ -22,56 +22,24 @@
 
 
 const TInt KInitialValue = -1;
-const TInt KNumOfTables = 16;
+const TInt KNumOfTables = 4;
 const TInt KNumColInPrefTable = 6;
 const TInt KNumColInContactTable = 17;
 const TInt KNumColInGroupTable = 3;
 const TInt KNumColInCommTable = 6;
-const TInt KNumColInPredSearchTable = 7;
-const TInt KNumColInPresenceTable = 5;
-// TODO: qwerty-mail tables are not yet added here
 
 // tables in the contact database 
 _LIT(KSqlContactTableName, "contact");
 _LIT(KSqlContactGroupTableName, "groups");
 _LIT(KSqlContactPrefTableName, "preferences");
 _LIT(KSqlContactCommAddrTableName, "comm_addr");
-_LIT(KSqlContactPredSearchTable0, "predictivesearch0");
-_LIT(KSqlContactPredSearchTable1, "predictivesearch1");
-_LIT(KSqlContactPredSearchTable2, "predictivesearch2");
-_LIT(KSqlContactPredSearchTable3, "predictivesearch3");
-_LIT(KSqlContactPredSearchTable4, "predictivesearch4");
-_LIT(KSqlContactPredSearchTable5, "predictivesearch5");
-_LIT(KSqlContactPredSearchTable6, "predictivesearch6");
-_LIT(KSqlContactPredSearchTable7, "predictivesearch7");
-_LIT(KSqlContactPredSearchTable8, "predictivesearch8");
-_LIT(KSqlContactPredSearchTable9, "predictivesearch9");
-_LIT(KSqlContactPredSearchTable10, "predictivesearch10");
-_LIT(KSqlContactPredSearchTable11, "predictivesearch11");
-_LIT(KSqlContactPresenceTableName, "presence");
-// There are also up to 63 qwerty-mail tables (qm0..qm63).
-// In practice the amount of qwerty-mail tables is around 45.
-
 
 enum TDatabaseTables
 	{
 	EContactPrefTableName,
 	EContactTableName,
 	EContactGroupTableName,
-	EContactCommAddressTableName,
-	KContactPredSearchTable0Name,
-	KContactPredSearchTable1Name,
-	KContactPredSearchTable2Name,
-	KContactPredSearchTable3Name,
-	KContactPredSearchTable4Name,
-	KContactPredSearchTable5Name,
-	KContactPredSearchTable6Name,
-	KContactPredSearchTable7Name,
-	KContactPredSearchTable8Name,
-	KContactPredSearchTable9Name,
-	KContactPredSearchTable10Name,
-	KContactPredSearchTable11Name
-	// TODO: qwerty-mail tables are not yet added here
+	EContactCommAddressTableName
 	};
 
 // columns for contact table
@@ -119,7 +87,10 @@ _LIT(KContactBinaryFieldsParam, ":binary_fields");
 //end parameters for contact table
 
 // create statements
-_LIT(KContactCreateStmnt, "CREATE TABLE contact (contact_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, template_id INTEGER, type_flags INTEGER, access_count INTEGER, creation_date , last_modified , guid_string VARCHAR(255) NULL, first_name VARCHAR(255) NOT NULL DEFAULT \"\", last_name VARCHAR(255) NOT NULL DEFAULT \"\", company_name VARCHAR(255) NOT NULL DEFAULT \"\", firstname_prn VARCHAR(255) NULL, lastname_prn VARCHAR(255) NULL, companyname_prn VARCHAR(255) NULL, favorite_index INTEGER NULL, text_fields_header BLOB, binary_fields_header BLOB, text_fields TEXT, binary_fields BLOB); CREATE INDEX contact_guid_string_idx  ON contact (guid_string);");
+// New Column should be added after the old columns. If the column has "Not NULL" constraint
+// then Default Value should be provide. 
+// New Column should be added to CCntSqlDbStructure::InitializeContactsTableInfoL() also 
+_LIT(KContactCreateStmnt, "CREATE TABLE contact (contact_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, template_id INTEGER, type_flags INTEGER, access_count INTEGER, creation_date , last_modified , guid_string VARCHAR(255) NULL, first_name VARCHAR(255) NOT NULL DEFAULT \"\", last_name VARCHAR(255) NOT NULL DEFAULT \"\", company_name VARCHAR(255) NOT NULL DEFAULT \"\", firstname_prn VARCHAR(255) NULL, lastname_prn VARCHAR(255) NULL, companyname_prn VARCHAR(255) NULL, text_fields_header BLOB, binary_fields_header BLOB, text_fields TEXT, binary_fields BLOB, favorite_index INTEGER NULL); CREATE INDEX contact_guid_string_idx  ON contact (guid_string);");
 // end contact table
 
 // comm-address table
@@ -138,6 +109,9 @@ _LIT(KCommAddrExtraValueParam, ":extra_value");
 _LIT(KCommAddrContactIdParam, ":contact_id");
 _LIT(KCommAddrExtraTypeInfoParam, ":extra_type_info");
 // create statements
+// New Column should be added after the old columns. If the column has "Not NULL" constraint
+// then Default Value should be provide. 
+// New Column should be added to CCntSqlDbStructure::InitializeCommAddrTableInfoL() also 
 _LIT(KCommAddrCreateStmnt, "CREATE TABLE comm_addr (comm_addr_id  INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, type INTEGER NOT NULL, value CHAR(255) NOT NULL, extra_value CHAR(255), contact_id INTEGER NOT NULL, extra_type_info INTEGER, FOREIGN KEY (contact_id) REFERENCES contact(contact_id)); CREATE INDEX comm_addr_val_idx  ON comm_addr (value); CREATE INDEX comm_addr_contact_id_idx  ON comm_addr (contact_id);");
 // end comm_address table
 
@@ -151,6 +125,9 @@ _LIT(KGroupIdParam, ":group_id");
 _LIT(KGroupContactGroupIdParam, ":contact_group_id");
 _LIT(KGroupContactGroupMemberIdParam, ":contact_group_member_id");
 // create statements
+// New Column should be added after the old columns. If the column has "Not NULL" constraint
+// then Default Value should be provide. 
+// New Column should be added to CCntSqlDbStructure::InitializeGroupsTableInfoL() also 
 _LIT(KGroupsCreateStmnt, "CREATE TABLE groups (group_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, contact_group_id INTEGER NOT NULL, contact_group_member_id INTEGER NOT NULL, FOREIGN KEY (contact_group_id) REFERENCES contact(contact_id), FOREIGN KEY (contact_group_member_id) REFERENCES contact(contact_id) ); CREATE INDEX contact_group_id_idx ON groups (contact_group_id); CREATE INDEX contact_group_member_id_idx ON groups (contact_group_member_id);");
 // end groups table
 
@@ -176,242 +153,6 @@ _LIT(KPrefferredTemplateIdParam,":preferred_cardtemplate_id");
 // create statements
 _LIT(KPreferencesCreateStmnt,  "CREATE TABLE preferences (preference_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, data_schema_version INTEGER NOT NULL, preferred_cardtemplate_id INTEGER, machine_id , creation_date , preferred_sortorder BLOB); ");
 // end preferences table
-
-// predictive search table
-// columns
-_LIT(KPredSearchContactId, "contact_id");
-_LIT(KPredSearchNameAsNumber, "nbr");
-_LIT(KPredSearchNameAsNumber2, "nbr2");
-_LIT(KPredSearchNameAsNumber3, "nbr3");
-_LIT(KPredSearchNameAsNumber4, "nbr4");
-_LIT(KPredSearchFirstName, "first_name");
-_LIT(KPredSearchLastName, "last_name");
-
-// parameters
-_LIT(KPredSearchContactIdParam, ":contact_id");
-_LIT(KPredSearchNameAsNumberParam, ":nbr");
-_LIT(KPredSearchNameAsNumber2Param, ":nbr2");
-_LIT(KPredSearchNameAsNumber3Param, ":nbr3");
-_LIT(KPredSearchNameAsNumber4Param, ":nbr4");
-_LIT(KPredSearchFirstNameParam, ":first_name");
-_LIT(KPredSearchLastNameParam, ":last_name");
-
-// create statements
-_LIT(KPredSearchCreateTable0Stmnt,
-"CREATE TABLE predictivesearch0 (contact_id INTEGER PRIMARY KEY,\
- nbr BIGINT NULL, nbr2 BIGINT NULL, nbr3 BIGINT NULL, nbr4 BIGINT NULL,\
- first_name CHAR(16) NULL, last_name CHAR(16) NULL);");
-_LIT(KPredSearchCreateTable1Stmnt,
-"CREATE TABLE predictivesearch1 (contact_id INTEGER PRIMARY KEY,\
- nbr BIGINT NULL, nbr2 BIGINT NULL, nbr3 BIGINT NULL, nbr4 BIGINT NULL,\
- first_name CHAR(16) NULL, last_name CHAR(16) NULL);");
-_LIT(KPredSearchCreateTable2Stmnt,
-"CREATE TABLE predictivesearch2 (contact_id INTEGER PRIMARY KEY,\
- nbr BIGINT NULL, nbr2 BIGINT NULL, nbr3 BIGINT NULL, nbr4 BIGINT NULL,\
- first_name CHAR(16) NULL, last_name CHAR(16) NULL);");
-_LIT(KPredSearchCreateTable3Stmnt,
-"CREATE TABLE predictivesearch3 (contact_id INTEGER PRIMARY KEY,\
- nbr BIGINT NULL, nbr2 BIGINT NULL, nbr3 BIGINT NULL, nbr4 BIGINT NULL,\
- first_name CHAR(16) NULL, last_name CHAR(16) NULL);");
-_LIT(KPredSearchCreateTable4Stmnt,
-"CREATE TABLE predictivesearch4 (contact_id INTEGER PRIMARY KEY,\
- nbr BIGINT NULL, nbr2 BIGINT NULL, nbr3 BIGINT NULL, nbr4 BIGINT NULL,\
- first_name CHAR(16) NULL, last_name CHAR(16) NULL);");
-_LIT(KPredSearchCreateTable5Stmnt,
-"CREATE TABLE predictivesearch5 (contact_id INTEGER PRIMARY KEY,\
- nbr BIGINT NULL, nbr2 BIGINT NULL, nbr3 BIGINT NULL, nbr4 BIGINT NULL,\
- first_name CHAR(16) NULL, last_name CHAR(16) NULL);");
-_LIT(KPredSearchCreateTable6Stmnt,
-"CREATE TABLE predictivesearch6 (contact_id INTEGER PRIMARY KEY,\
- nbr BIGINT NULL, nbr2 BIGINT NULL, nbr3 BIGINT NULL, nbr4 BIGINT NULL,\
- first_name CHAR(16) NULL, last_name CHAR(16) NULL);");
-_LIT(KPredSearchCreateTable7Stmnt,
-"CREATE TABLE predictivesearch7 (contact_id INTEGER PRIMARY KEY,\
- nbr BIGINT NULL, nbr2 BIGINT NULL, nbr3 BIGINT NULL, nbr4 BIGINT NULL,\
- first_name CHAR(16) NULL, last_name CHAR(16) NULL);");
-_LIT(KPredSearchCreateTable8Stmnt,
-"CREATE TABLE predictivesearch8 (contact_id INTEGER PRIMARY KEY,\
- nbr BIGINT NULL, nbr2 BIGINT NULL, nbr3 BIGINT NULL, nbr4 BIGINT NULL,\
- first_name CHAR(16) NULL, last_name CHAR(16) NULL);");
-_LIT(KPredSearchCreateTable9Stmnt,
-"CREATE TABLE predictivesearch9 (contact_id INTEGER PRIMARY KEY,\
- nbr BIGINT NULL, nbr2 BIGINT NULL, nbr3 BIGINT NULL, nbr4 BIGINT NULL,\
- first_name CHAR(16) NULL, last_name CHAR(16) NULL);");
-_LIT(KPredSearchCreateTable10Stmnt,
-"CREATE TABLE predictivesearch10 (contact_id INTEGER PRIMARY KEY,\
- nbr BIGINT NULL, nbr2 BIGINT NULL, nbr3 BIGINT NULL, nbr4 BIGINT NULL,\
- first_name CHAR(16) NULL, last_name CHAR(16) NULL);");
-_LIT(KPredSearchCreateTable11Stmnt,
-"CREATE TABLE predictivesearch11 (contact_id INTEGER PRIMARY KEY,\
- nbr BIGINT NULL, nbr2 BIGINT NULL, nbr3 BIGINT NULL, nbr4 BIGINT NULL,\
- first_name CHAR(16) NULL, last_name CHAR(16) NULL);");
-
-
-// create table indexes
-_LIT(KPredSearchCreateNbrIndexTable0, "CREATE INDEX index0_nbr on predictivesearch0 (nbr);");
-_LIT(KPredSearchCreateNbr2IndexTable0, "CREATE INDEX index0_nbr2 on predictivesearch0 (nbr2);");
-_LIT(KPredSearchCreateNbr3IndexTable0, "CREATE INDEX index0_nbr3 on predictivesearch0 (nbr3);");
-_LIT(KPredSearchCreateNbr4IndexTable0, "CREATE INDEX index0_nbr4 on predictivesearch0 (nbr4);");
-
-_LIT(KPredSearchCreateNbrIndexTable1, "CREATE INDEX index1_nbr on predictivesearch1 (nbr);");
-_LIT(KPredSearchCreateNbr2IndexTable1, "CREATE INDEX index1_nbr2 on predictivesearch1 (nbr2);");
-_LIT(KPredSearchCreateNbr3IndexTable1, "CREATE INDEX index1_nbr3 on predictivesearch1 (nbr3);");
-_LIT(KPredSearchCreateNbr4IndexTable1, "CREATE INDEX index1_nbr4 on predictivesearch1 (nbr4);");
-
-_LIT(KPredSearchCreateNbrIndexTable2, "CREATE INDEX index2_nbr on predictivesearch2 (nbr);");
-_LIT(KPredSearchCreateNbr2IndexTable2, "CREATE INDEX index2_nbr2 on predictivesearch2 (nbr2);");
-_LIT(KPredSearchCreateNbr3IndexTable2, "CREATE INDEX index2_nbr3 on predictivesearch2 (nbr3);");
-_LIT(KPredSearchCreateNbr4IndexTable2, "CREATE INDEX index2_nbr4 on predictivesearch2 (nbr4);");
-
-_LIT(KPredSearchCreateNbrIndexTable3, "CREATE INDEX index3_nbr on predictivesearch3 (nbr);");
-_LIT(KPredSearchCreateNbr2IndexTable3, "CREATE INDEX index3_nbr2 on predictivesearch3 (nbr2);");
-_LIT(KPredSearchCreateNbr3IndexTable3, "CREATE INDEX index3_nbr3 on predictivesearch3 (nbr3);");
-_LIT(KPredSearchCreateNbr4IndexTable3, "CREATE INDEX index3_nbr4 on predictivesearch3 (nbr4);");
-
-_LIT(KPredSearchCreateNbrIndexTable4, "CREATE INDEX index4_nbr on predictivesearch4 (nbr);");
-_LIT(KPredSearchCreateNbr2IndexTable4, "CREATE INDEX index4_nbr2 on predictivesearch4 (nbr2);");
-_LIT(KPredSearchCreateNbr3IndexTable4, "CREATE INDEX index4_nbr3 on predictivesearch4 (nbr3);");
-_LIT(KPredSearchCreateNbr4IndexTable4, "CREATE INDEX index4_nbr4 on predictivesearch4 (nbr4);");
-
-_LIT(KPredSearchCreateNbrIndexTable5, "CREATE INDEX index5_nbr on predictivesearch5 (nbr);");
-_LIT(KPredSearchCreateNbr2IndexTable5, "CREATE INDEX index5_nbr2 on predictivesearch5 (nbr2);");
-_LIT(KPredSearchCreateNbr3IndexTable5, "CREATE INDEX index5_nbr3 on predictivesearch5 (nbr3);");
-_LIT(KPredSearchCreateNbr4IndexTable5, "CREATE INDEX index5_nbr4 on predictivesearch5 (nbr4);");
-
-_LIT(KPredSearchCreateNbrIndexTable6, "CREATE INDEX index6_nbr on predictivesearch6 (nbr);");
-_LIT(KPredSearchCreateNbr2IndexTable6, "CREATE INDEX index6_nbr2 on predictivesearch6 (nbr2);");
-_LIT(KPredSearchCreateNbr3IndexTable6, "CREATE INDEX index6_nbr3 on predictivesearch6 (nbr3);");
-_LIT(KPredSearchCreateNbr4IndexTable6, "CREATE INDEX index6_nbr4 on predictivesearch6 (nbr4);");
-
-_LIT(KPredSearchCreateNbrIndexTable7, "CREATE INDEX index7_nbr on predictivesearch7 (nbr);");
-_LIT(KPredSearchCreateNbr2IndexTable7, "CREATE INDEX index7_nbr2 on predictivesearch7 (nbr2);");
-_LIT(KPredSearchCreateNbr3IndexTable7, "CREATE INDEX index7_nbr3 on predictivesearch7 (nbr3);");
-_LIT(KPredSearchCreateNbr4IndexTable7, "CREATE INDEX index7_nbr4 on predictivesearch7 (nbr4);");
-
-_LIT(KPredSearchCreateNbrIndexTable8, "CREATE INDEX index8_nbr on predictivesearch8 (nbr);");
-_LIT(KPredSearchCreateNbr2IndexTable8, "CREATE INDEX index8_nbr2 on predictivesearch8 (nbr2);");
-_LIT(KPredSearchCreateNbr3IndexTable8, "CREATE INDEX index8_nbr3 on predictivesearch8 (nbr3);");
-_LIT(KPredSearchCreateNbr4IndexTable8, "CREATE INDEX index8_nbr4 on predictivesearch8 (nbr4);");
-
-_LIT(KPredSearchCreateNbrIndexTable9, "CREATE INDEX index9_nbr on predictivesearch9 (nbr);");
-_LIT(KPredSearchCreateNbr2IndexTable9, "CREATE INDEX index9_nbr2 on predictivesearch9 (nbr2);");
-_LIT(KPredSearchCreateNbr3IndexTable9, "CREATE INDEX index9_nbr3 on predictivesearch9 (nbr3);");
-_LIT(KPredSearchCreateNbr4IndexTable9, "CREATE INDEX index9_nbr4 on predictivesearch9 (nbr4);");
-
-_LIT(KPredSearchCreateNbrIndexTable10, "CREATE INDEX index10_nbr on predictivesearch10 (nbr);");
-_LIT(KPredSearchCreateNbr2IndexTable10, "CREATE INDEX index10_nbr2 on predictivesearch10 (nbr2);");
-_LIT(KPredSearchCreateNbr3IndexTable10, "CREATE INDEX index10_nbr3 on predictivesearch10 (nbr3);");
-_LIT(KPredSearchCreateNbr4IndexTable10, "CREATE INDEX index10_nbr4 on predictivesearch10 (nbr4);");
-
-_LIT(KPredSearchCreateNbrIndexTable11, "CREATE INDEX index11_nbr on predictivesearch11 (nbr);");
-_LIT(KPredSearchCreateNbr2IndexTable11, "CREATE INDEX index11_nbr2 on predictivesearch11 (nbr2);");
-_LIT(KPredSearchCreateNbr3IndexTable11, "CREATE INDEX index11_nbr3 on predictivesearch11 (nbr3);");
-_LIT(KPredSearchCreateNbr4IndexTable11, "CREATE INDEX index11_nbr4 on predictivesearch11 (nbr4);");
-
-// create table indexes for readable names for ordering results alphabetically
-_LIT(KPredSearchCreateFNIndexInTable0,
-"CREATE INDEX index_last_name0 on predictivesearch0 (last_name);");
-_LIT(KPredSearchCreateLNIndexInTable0,
-"CREATE INDEX index_first_name0 on predictivesearch0 (first_name);");
-
-_LIT(KPredSearchCreateFNIndexInTable1,
-"CREATE INDEX index_last_name1 on predictivesearch1 (last_name);");
-_LIT(KPredSearchCreateLNIndexInTable1,
-"CREATE INDEX index_first_name1 on predictivesearch1 (first_name);");
-
-_LIT(KPredSearchCreateFNIndexInTable2,
-"CREATE INDEX index_last_name2 on predictivesearch2 (last_name);");
-_LIT(KPredSearchCreateLNIndexInTable2,
-"CREATE INDEX index_first_name2 on predictivesearch2 (first_name);");
-
-_LIT(KPredSearchCreateFNIndexInTable3,
-"CREATE INDEX index_last_name3 on predictivesearch3 (last_name);");
-_LIT(KPredSearchCreateLNIndexInTable3,
-"CREATE INDEX index_first_name3 on predictivesearch3 (first_name);");
-
-_LIT(KPredSearchCreateFNIndexInTable4,
-"CREATE INDEX index_last_name4 on predictivesearch4 (last_name);");
-_LIT(KPredSearchCreateLNIndexInTable4,
-"CREATE INDEX index_first_name4 on predictivesearch4 (first_name);");
-
-_LIT(KPredSearchCreateFNIndexInTable5,
-"CREATE INDEX index_last_name5 on predictivesearch5 (last_name);");
-_LIT(KPredSearchCreateLNIndexInTable5,
-"CREATE INDEX index_first_name5 on predictivesearch5 (first_name);");
-
-_LIT(KPredSearchCreateFNIndexInTable6,
-"CREATE INDEX index_last_name6 on predictivesearch6 (last_name);");
-_LIT(KPredSearchCreateLNIndexInTable6,
-"CREATE INDEX index_first_name6 on predictivesearch6 (first_name);");
-
-_LIT(KPredSearchCreateFNIndexInTable7,
-"CREATE INDEX index_last_name7 on predictivesearch7 (last_name);");
-_LIT(KPredSearchCreateLNIndexInTable7,
-"CREATE INDEX index_first_name7 on predictivesearch7 (first_name);");
-
-_LIT(KPredSearchCreateFNIndexInTable8,
-"CREATE INDEX index_last_name8 on predictivesearch8 (last_name);");
-_LIT(KPredSearchCreateLNIndexInTable8,
-"CREATE INDEX index_first_name8 on predictivesearch8 (first_name);");
-
-_LIT(KPredSearchCreateFNIndexInTable9,
-"CREATE INDEX index_last_name9 on predictivesearch9 (last_name);");
-_LIT(KPredSearchCreateLNIndexInTable9,
-"CREATE INDEX index_first_name9 on predictivesearch9 (first_name);");
-
-_LIT(KPredSearchCreateFNIndexInTable10,
-"CREATE INDEX index_last_name10 on predictivesearch10 (last_name);");
-_LIT(KPredSearchCreateLNIndexInTable10,
-"CREATE INDEX index_first_name10 on predictivesearch10 (first_name);");
-
-_LIT(KPredSearchCreateFNIndexInTable11,
-"CREATE INDEX index_last_name11 on predictivesearch11 (last_name);");
-_LIT(KPredSearchCreateLNIndexInTable11,
-"CREATE INDEX index_first_name11 on predictivesearch11 (first_name);");
-
-
-
-_LIT(KPresenceContactId, "contact_id");
-_LIT(KPresenceAccountUri, "account_uri");
-_LIT(KPresenceServiceName, "service_name");
-_LIT(KPresenceStatus, "status");
-_LIT(KPresenceStatusMsg, "status_message");
-_LIT(KPresenceContactIdParam, ":contact_id");
-_LIT(KPresenceAccountUriParam, ":account_uri");
-_LIT(KPresenceServiceNameParam, ":service_name");
-_LIT(KPresenceStatusParam, ":status");
-_LIT(KPresenceStatusMsgParam, ":status_message");
-_LIT(KPresenceCreateStmnt,
-"CREATE TABLE presence (contact_id INTEGER NOT NULL,\
-account_uri VARCHAR(255),service_name VARCHAR(255),\
-status INTEGER, status_msg VARCHAR(255),\
-CONSTRAINT contactid_fk FOREIGN KEY (contact_id) REFERENCES contact(contact_id) ON DELETE CASCADE);");
-
-
-// Predictive search for qwerty mail tables
-// columns
-_LIT(KPredSearchQwertyMailContactId, "contact_id");
-_LIT(KPredSearchQwertyMailNameAsNumber, "n");
-_LIT(KPredSearchQwertyMailNameAsNumber2, "n2");
-_LIT(KPredSearchQwertyMailNameAsNumber3, "n3");
-_LIT(KPredSearchQwertyMailNameAsNumber4, "n4");
-_LIT(KPredSearchQwertyMailNameAsNumber5, "n5");
-_LIT(KPredSearchQwertyMailNameAsNumber6, "n6");
-_LIT(KPredSearchQwertyMailNameAsNumber7, "n7");
-_LIT(KPredSearchQwertyMailFirstName, "first_name");
-_LIT(KPredSearchQwertyMailLastName, "last_name");
-
-// parameters
-_LIT(KPredSearchQwertyMailContactIdParam, ":contact_id");
-_LIT(KPredSearchQwertyMailNameAsNumberParam, ":n");
-_LIT(KPredSearchQwertyMailNameAsNumberParam2, ":n2");
-_LIT(KPredSearchQwertyMailNameAsNumberParam3, ":n3");
-_LIT(KPredSearchQwertyMailNameAsNumberParam4, ":n4");
-_LIT(KPredSearchQwertyMailNameAsNumberParam5, ":n5");
-_LIT(KPredSearchQwertyMailNameAsNumberParam6, ":n6");
-_LIT(KPredSearchQwertyMailNameAsNumberParam7, ":n7");
-_LIT(KPredSearchQwertyMailFirstNameParam, ":first_name");
-_LIT(KPredSearchQwertyMailLastNameParam, ":last_name");
 
 
 // Condition strings for searching id
@@ -533,5 +274,20 @@ enum TFastAccessField
 	};
 
 const TInt KFirstIndex = 0;
+
+// For Database compatability . Used in cntsqldbstructure
+_LIT(KInteger, "INTEGER");
+_LIT(KVarchar255,"VARCHAR(255)");
+_LIT(KChar255,"CHAR(255)");
+_LIT(KBlob,"BLOB");
+_LIT(KText,"TEXT");
+_LIT(KDefault, "DEFAULT \"\"");
+_LIT(KNotNull, "NOT NULL");
+_LIT(KNull, "NULL");
+_LIT(KAutoIncrement, "PRIMARY KEY AUTOINCREMENT");
+_LIT(KPragmaName, "Name");
+_LIT(KPragmaType, "Type");
+_LIT(KPragmaStmnt, "PRAGMA table_info(%S);");
+_LIT(KContactTableAddColumn,"ALTER TABLE %S ADD COLUMN %S %S %S %S");
 
 #endif // #ifndef DBSQLCONSTANTS_H

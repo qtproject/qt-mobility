@@ -16,7 +16,7 @@
 */
 
 
-target          t_asyncopen.exe
+TARGET          t_asyncopen.exe
 targettype      EXE
 CAPABILITY   	ReadUserData WriteUserData
 UID		0x10210CB7
@@ -30,8 +30,8 @@ userinclude ../NbCntTestLib
 source		T_CAsyncTest.cpp 
 source		T_CAsyncTestMain.cpp
 
-library         euser.lib 
-library			cntmodel.lib
-library         nbcnttestlib.lib
+LIBRARY         euser.lib 
+LIBRARY			cntmodel.lib
+LIBRARY         nbcnttestlib.lib
 
 SMPSAFE

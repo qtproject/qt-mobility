@@ -25,7 +25,7 @@
 */
 #ifndef __CONCURRENT_LISTENER_STEP_H__
 #define __CONCURRENT_LISTENER_STEP_H__
-#include <testexecutestepbase.h>
+#include <test/testexecutestepbase.h>
 #include "performancefunctionalitybase.h"
 
 class CConcurrentListenerStep : public CPerformanceFunctionalityBase

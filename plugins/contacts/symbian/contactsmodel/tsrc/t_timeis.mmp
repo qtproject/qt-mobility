@@ -16,7 +16,7 @@
 */
 
 
-target          t_timeis.exe
+TARGET          t_timeis.exe
 targettype      EXE
 CAPABILITY   ReadUserData WriteUserData
 UID		0x1000007a
@@ -29,6 +29,6 @@ userinclude ../inc .
 
 source          T_TimeIS.CPP
 
-library         euser.lib  efsrv.lib estor.lib cntmodel.lib vcard.lib versit.lib pimtestclient.lib
+LIBRARY         euser.lib  efsrv.lib estor.lib cntmodel.lib vcard.lib versit.lib pimtestclient.lib
 
 SMPSAFE

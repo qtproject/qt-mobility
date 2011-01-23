@@ -291,17 +291,18 @@ void CRemoteViewTestResources::CreateTestGroupsL()
 	static_cast<CContactGroup*> (group01)->SetGroupLabelL(_L("EA"));
 	iDb->CommitContactL(*group01);
 
-	// Should receive events as add for E F H 
-	// (none for G as add, then remove) 
-	// Similarly for H, the add and rename (ie remove + add ) is shrunk to a single add.
-	iViewEventQueue->ListenForEvent(2,event);
-	CheckEvent(event, TContactViewEvent::EItemAdded, 4, group5->Id());
-	iViewEventQueue->ListenForEvent(2,event);
-	CheckEvent(event, TContactViewEvent::EItemAdded, 5, group8->Id());
-	iViewEventQueue->ListenForEvent(2,event);
-	CheckEvent(event, TContactViewEvent::EItemAdded, 6, group6->Id());
-	iViewEventQueue->ListenForEvent(2,event);
-	CheckEvent(event, TContactViewEvent::EGroupChanged, 0, group8->Id());
+
+	// Should receive events for operations above, order is not important 
+	// Should receive events as add for E F EA(H) - In the order E EA(H) F 
+	// (none for G as add, then remove)
+    iViewEventQueue->ListenForEvent( 2, event );
+    CheckEvent( event, TContactViewEvent::EItemAdded, 4, group5->Id() );
+    iViewEventQueue->ListenForEvent( 2, event );
+    CheckEvent( event, TContactViewEvent::EItemAdded, 5, group8->Id() );
+    iViewEventQueue->ListenForEvent( 2, event );
+    CheckEvent( event, TContactViewEvent::EItemAdded, 6, group6->Id() );
+    iViewEventQueue->ListenForEvent( 2, event );
+    CheckEvent( event, TContactViewEvent::EGroupChanged, 0, group8->Id() );
 
 	// Cleanup
 	delete group01;

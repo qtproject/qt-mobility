@@ -16,7 +16,7 @@
 */
 
 
-target          t_cntmatch.exe
+TARGET          t_cntmatch.exe
 targettype      EXE
 CAPABILITY   ReadUserData WriteUserData
 UID		0x1000007b
@@ -29,6 +29,6 @@ userinclude ../inc
 
 source          T_CntMatch.cpp
 
-library         euser.lib bafl.lib efsrv.lib cntmodel.lib cnttutil.lib
+LIBRARY         euser.lib bafl.lib efsrv.lib cntmodel.lib cnttutil.lib
 
 SMPSAFE

@@ -17,7 +17,7 @@
 // T_FilteredViewEvents.mmp
 //
 
-target          t_contactviewevents.exe
+TARGET          t_contactviewevents.exe
 targettype      EXE
 CAPABILITY   ReadUserData WriteUserData
 UID		0
@@ -28,6 +28,6 @@ userinclude		..
 source          T_ContactViewEvents.cpp
 source          CContactViewEventQueue.cpp
 source          CContactDbEventQueue.cpp
-library         euser.lib cntmodel.lib cntview.lib bafl.lib
+LIBRARY         euser.lib cntmodel.lib cntview.lib bafl.lib
 
 SMPSAFE

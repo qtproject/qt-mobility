@@ -26,7 +26,7 @@
 
 #ifndef __PERFORMANCEFUNCTIONALITY_BASE__
 #define __PERFORMANCEFUNCTIONALITY_BASE__
-#include <testexecutestepbase.h>
+#include <test/testexecutestepbase.h>
 #include <cntdb.h>
 #include <cntitem.h>
 #include "rcntlist.h"

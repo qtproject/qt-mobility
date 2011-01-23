@@ -17,7 +17,7 @@
 // T_FilteredViewUpdate.mmp
 //
 
-target          t_filteredviewupdate.exe
+TARGET          t_filteredviewupdate.exe
 targettype      EXE
 CAPABILITY   ReadUserData WriteUserData
 UID		0
@@ -26,6 +26,6 @@ SOURCEPATH	.
 APP_LAYER_SYSTEMINCLUDE_SYMBIAN
 source          t_filteredviewupdate.cpp
 source          CContactViewEventQueue.cpp
-library         euser.lib cntmodel.lib cntview.lib
+LIBRARY         euser.lib cntmodel.lib cntview.lib
 
 SMPSAFE

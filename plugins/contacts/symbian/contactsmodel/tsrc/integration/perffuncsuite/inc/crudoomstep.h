@@ -25,7 +25,7 @@
 */
 #if (!defined __CCRUDOOM_STEP_H__)
 #define __CCRUDOOM_STEP_H__
-#include <testexecutestepbase.h>
+#include <test/testexecutestepbase.h>
 #include <cntviewbase.h>
 #include "performancefunctionalitybase.h"
 

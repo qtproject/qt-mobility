@@ -16,7 +16,7 @@
 */
 
 
-target          t_groupviewmodifiedcontact.exe
+TARGET          t_groupviewmodifiedcontact.exe
 targettype      EXE
 CAPABILITY   ReadUserData WriteUserData
 UID		0x1000097a
@@ -30,6 +30,6 @@ userinclude ../inc
 source          t_groupviewmodifiedContact.cpp
 source		t_utils2.cpp
 
-library         euser.lib  cntmodel.lib cntview.lib efsrv.lib pimtestclient.lib
+LIBRARY         euser.lib  cntmodel.lib cntview.lib efsrv.lib pimtestclient.lib
 
 SMPSAFE

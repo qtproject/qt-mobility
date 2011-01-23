@@ -32,6 +32,6 @@ USERINCLUDE       ../inc ../..
 
 APP_LAYER_SYSTEMINCLUDE_SYMBIAN
 
-library         euser.lib  cntmodel.lib cntview.lib efsrv.lib pimtestclient.lib
+LIBRARY         euser.lib  cntmodel.lib cntview.lib efsrv.lib pimtestclient.lib
 
 SMPSAFE

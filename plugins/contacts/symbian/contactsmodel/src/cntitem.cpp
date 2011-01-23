@@ -290,18 +290,6 @@ TInt CContactItemFieldSet::MatchTemplateField(const CContentType& aContentType,T
 					}				
 				}
 
-			// Check if the incoming contact item has a vCard property mapping
-			// that is also present in the current template field's Field Types.
-			// This covers the (unusual) case where a template field is defined
-			// to have a vCard property mapping which is also the same as one of
-			// field types (which contains property parameter mappings).
-			for(TInt fieldTypeIdx=0; fieldTypeIdx < fieldContentType.FieldTypeCount(); ++fieldTypeIdx)
-				{
-				if(fieldContentType.FieldType(fieldTypeIdx) == aContentType.Mapping())
-					{
-					++hits;
-					}
-				}
 			
 			misses+=fieldContentType.FieldTypeCount()-hits;
 			score+=10*hits-5*misses;

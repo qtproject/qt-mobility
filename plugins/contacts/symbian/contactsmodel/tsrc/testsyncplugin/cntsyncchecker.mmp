@@ -16,7 +16,7 @@
 */
 
 
-target          cntsyncchecker.dll
+TARGET          cntsyncchecker.dll
 targettype      DLL
 CAPABILITY   All -TCB
 UID              0x1000008D 0x10000000
@@ -32,8 +32,8 @@ SOURCE		cntsyncdata.cpp
 SOURCE		cntsyncphonedata.cpp
 SOURCE		cntphonecontact.cpp
 
-library         euser.lib
-library         centralrepository.lib cntmodel.lib
+LIBRARY         euser.lib
+LIBRARY         centralrepository.lib cntmodel.lib
 
 #if defined(WINS)
 deffile	 ../../bwins/CNTSYNCCHECKER.DEF

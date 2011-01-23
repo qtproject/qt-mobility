@@ -20,7 +20,7 @@
 
 #if (!defined __TESTIMPORTCONTACTMERGEMODE_H__)
 #define __TESTIMPORTCONTACTMERGEMODE_H__
-#include <testexecutestepbase.h>
+#include <test/testexecutestepbase.h>
 #include "testimportcontactmergemodestep.h"
 #include "testimpexvcardsuitedefs.h"
 

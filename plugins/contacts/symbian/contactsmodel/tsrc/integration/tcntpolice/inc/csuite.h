@@ -25,8 +25,8 @@
 #include <e32svr.h>
 #include <f32file.h>
 #include <e32test.h>
-#include <testexecutestepbase.h>
-#include <testexecuteserverbase.h>
+#include <test/testexecutestepbase.h>
+#include <test/testexecuteserverbase.h>
 
 //The two ways to get thru
 #define API_RetValue_ServerPanic			0

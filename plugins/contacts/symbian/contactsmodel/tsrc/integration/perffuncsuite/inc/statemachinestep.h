@@ -27,7 +27,7 @@
 #ifndef __STATEMACHINE_STEP_H__
 #define __STATEMACHINE_STEP_H__
 
-#include <testexecutestepbase.h>
+#include <test/testexecutestepbase.h>
 #include "performancefunctionalitybase.h"
 
 

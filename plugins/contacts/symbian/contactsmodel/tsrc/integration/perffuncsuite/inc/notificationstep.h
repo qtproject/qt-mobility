@@ -25,7 +25,7 @@
 */
 #ifndef __NOTIFICATION_STEP_H__
 #define __NOTIFICATION_STEP_H__
-#include <testexecutestepbase.h>
+#include <test/testexecutestepbase.h>
 #include "performancefunctionalitybase.h"
 
 class CNotificationStep : public CPerformanceFunctionalityBase

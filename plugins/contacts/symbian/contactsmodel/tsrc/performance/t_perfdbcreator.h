@@ -29,7 +29,7 @@
 #include <cntitem.h>
 #include <cntfldst.h>
 #include <cntviewbase.h>
-#include <ecom.h>
+#include <ecom/ecom.h>
 
 
 

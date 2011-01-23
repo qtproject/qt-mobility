@@ -15,6 +15,7 @@
 *
 */
 #include "cntimagerescaler.h"
+#include "cntimagerescaleutility.h"
 #include "cntdbconsts_internal.h"
 
 #include <bitmaptransforms.h>
@@ -64,46 +65,14 @@ void CImageRescaler::ConstructL()
     
     iWait = new( ELeave ) CActiveSchedulerWait();
     
-    SetImagesDirL();
+    iImagesDirPath.Zero();
+    TRAP_IGNORE( iImagesDirPath = TCntImageRescaleUtility::ImageDirectoryL() );
     
-    CActiveScheduler::Add( this );
+    CActiveScheduler::Add( this );    
     }
 
-/**
-Find the images folder. If it exists set the path in a local variable
-*/
-void CImageRescaler::SetImagesDirL()
-    {
-    TInt drive;
-    
-#ifdef __WINS__
-    TInt err = DriveInfo::GetDefaultDrive(DriveInfo::EDefaultPhoneMemory, drive);
-#else
-    TInt err = DriveInfo::GetDefaultDrive(DriveInfo::EDefaultMassStorage, drive);
-#endif
-    
-    // Do not leave with this error. The phone does not have to have this support
-    if (err == KErrNotSupported)
-        {
-        return;
-        }
-    else
-        {
-        User::LeaveIfError(err);
-        }
-    
-    // Get the root path in this drive to create
-    // to create the images directory
-    iImagesDirPath = TPath();
-    User::LeaveIfError(PathInfo::GetRootPath(iImagesDirPath, drive));
-    iImagesDirPath.Append(KImagesFolder);
-    
-    // Check if images directory exists
-    if (!BaflUtils::FolderExists(iFs, iImagesDirPath))
-        {
-        iImagesDirPath.Zero();
-        }
-    }
+
+
 CImageRescaler::~CImageRescaler()
     {
     Cancel();
@@ -132,37 +101,25 @@ void CImageRescaler::ProcessImageFieldL(CContactItem& aItem)
         {
         return;
         }
-    
+    CContactItemFieldSet& fieldSet = aItem.CardFields();
     // Check if there is any image field before
-    TInt index = aItem.CardFields().Find(KUidContactFieldCodImage, KUidContactFieldVCardMapUnknown);
+    TInt index = fieldSet.Find(KUidContactFieldCodImage, KUidContactFieldVCardMapUnknown);
     
-    // Update the image path field if found
-    if (index != KErrNotFound)
+    // Update the image path field if found and the private image does not exists
+    if (index != KErrNotFound )
         {
         // Get a copy of fields set
-        CContactItemFieldSet& fieldSet = aItem.CardFields();
-        
         // Image path field from list of contact fields
-        CContactItemField& field = fieldSet[index];
-        TPtrC oldImagePath = field.TextStorage()->Text();
+        CContactItemField& imageField = fieldSet[index];
+        TPtrC oldImagePath = imageField.TextStorage()->Text();
         
         // Do not resize if old image is stored in private folder
-        if (oldImagePath.Find(iImagesDirPath) == KErrNotFound)
+        if (oldImagePath.Length() && oldImagePath.Find(iImagesDirPath) == KErrNotFound)
             {
             // Resize image if needed
             TPath newImagePath;
             newImagePath = ResizeAndCopyImage(oldImagePath, aItem);
-            if (newImagePath.Length())
-                {
-                // Replace old image field
-                fieldSet.Remove(index);
-                
-                CContactItemField* newField = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldCodImage);
-                newField->SetMapping(KUidContactFieldVCardMapUnknown);
-                newField->TextStorage()->SetTextL(newImagePath);
-                fieldSet.AddL(*newField); // Ownership taken
-                CleanupStack::Pop(newField);
-                }
+            TCntImageRescaleUtility::StoreImageFieldL( aItem, newImagePath );
             }
         }
     }

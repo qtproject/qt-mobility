@@ -20,7 +20,7 @@
 
 #if (!defined __TESTADDFIELDSSTEP_H__)
 #define __TESTADDFIELDSSTEP_H__
-#include <testexecutestepbase.h>
+#include <test/testexecutestepbase.h>
 
 class CTestAddFieldsStep : public CTestStep
 	{

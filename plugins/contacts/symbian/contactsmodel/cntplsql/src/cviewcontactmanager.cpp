@@ -362,9 +362,8 @@ CViewContactManager::TReadState CViewContactManager::ReadInViewContactsL(RPointe
 			}
 		else if(iViewPreferences & (EUnSortedAtBeginning | EUnSortedAtEnd))
 			{
-			// It's an unsortable contact, just append its lightweight object
-			// to unsortable view contacts list.
-			contact->ChangeToLightweightObject();
+			// It's an unsortable contact,
+			// just append it to unsortable view contacts list.
 			iUnsortedViewContacts->AppendL(contact);
 			CleanupStack::Pop(contact);
 			}
@@ -386,35 +385,40 @@ Check if the contact type uid matchs the view preferences.
 @return ETrue if the uid match or reverse.
 */
 TBool CViewContactManager::ContactCorrectType(TUid aContactTypeUid, TContactViewPreferences aTypeToInclude)
-	{
-	TBool correctType(EFalse);
-	if (aContactTypeUid==KUidContactCard || aContactTypeUid==KUidContactOwnCard)
-		{
-		// Ignore Unsorted Contacts flags & White Space flag
-		// catch non- contact views
-		// Should be EContactsOnly, EContactAndGroups & EICCEntriesAndContacts
-		if (0 == ((aTypeToInclude & ~(ESingleWhiteSpaceIsEmptyField | EIgnoreUnSorted | EUnSortedAtBeginning | EUnSortedAtEnd))
-				& (EGroupsOnly | EICCEntriesOnly))) // Ignore 'UnSorted' flags, exclude Groups Only & ICC Only 
-			{
-			correctType = ETrue;
-			}
-		}
-	else if (aContactTypeUid == KUidContactGroup)
-		{
-		if (aTypeToInclude & (EGroupsOnly | EContactAndGroups))
-			{
-			correctType = ETrue;
-			}
-		}
-	else if (aContactTypeUid == KUidContactICCEntry)
-		{
-		if (aTypeToInclude & (EICCEntriesOnly | EICCEntriesAndContacts))
-			{
-			correctType = ETrue;
-			}
-		}
-	return correctType;
-	}
+    {
+    TBool correctType = EFalse;
+
+    if (aContactTypeUid == KUidContactCard)
+        {
+        if (!(aTypeToInclude & (EGroupsOnly | EICCEntriesOnly)))
+            {
+            correctType = ETrue;
+            }
+        }
+    else if (aContactTypeUid == KUidContactOwnCard)
+        {
+        if (!(aTypeToInclude & (EGroupsOnly | EICCEntriesOnly | EContactCardsOnly)))
+            {
+            correctType = ETrue;
+            }
+        }
+    else if (aContactTypeUid == KUidContactGroup)
+        {
+        if (aTypeToInclude & (EGroupsOnly | EContactAndGroups))
+            {
+            correctType = ETrue;
+            }
+        }
+    else if (aContactTypeUid == KUidContactICCEntry)
+        {
+        if (aTypeToInclude & (EICCEntriesOnly | EICCEntriesAndContacts))
+            {
+            correctType = ETrue;
+            }
+        }
+
+    return correctType;
+    }
 
 
 /** 
@@ -521,13 +525,11 @@ RPointerArray<CViewContact>* CViewContactManager::MergeL(RPointerArray<CViewCont
 		if(diff > 0)
 			{
 			resultContacts->AppendL(firstRightContact);
-			firstRightContact->ChangeToLightweightObject();
 			++indexRight;
 			}
 		else
 			{		
 			resultContacts->AppendL(firstLeftContact);
-			firstLeftContact->ChangeToLightweightObject();
 			++indexLeft;
 			if(diff == 0)
 			    {
@@ -547,10 +549,6 @@ RPointerArray<CViewContact>* CViewContactManager::MergeL(RPointerArray<CViewCont
 	while(indexRight < aRightContacts.Count())
 		{
 		CViewContact* firstRightContact = static_cast<CViewContact*>(aRightContacts[indexRight]);
-		
-		//change all the fullfil view objects to lightweight into the merged list.
-		firstRightContact->ChangeToLightweightObject();
-		
 		resultContacts->AppendL(firstRightContact);
 		++indexRight;
 		}
@@ -651,8 +649,6 @@ TInt CViewContactManager::InsertViewContactL(const CViewContact* aNewContact, TB
 
     User::LeaveIfError(error);
     
-    //Make the view contact object to be lightweighted before insert to iViewContacts.
-    const_cast<CViewContact*>(aNewContact)->ChangeToLightweightObject();
 	iViewContacts->InsertL(aNewContact, position);
 
 	return position;
@@ -819,8 +815,6 @@ Get all fields content of a view contact and separate them with charaters in aSe
 */
 HBufC* CViewContactManager::AllFieldsLC(TInt aIndex, const TDesC& aSeparator) const
     {
-	TBool ifWasFullObject = EFalse;
-	
 	CViewContact& viewContact = ViewContactAtL(aIndex); 
 	if(viewContact.IsLightweightObject())
 		{
@@ -833,19 +827,10 @@ HBufC* CViewContactManager::AllFieldsLC(TInt aIndex, const TDesC& aSeparator) co
 		CleanupStack::PushL(contact);    
 		viewContact.CopyL(*contact);
 		CleanupStack::PopAndDestroy(contact);
-		
-		ifWasFullObject = ETrue;
 		}
 
 	HBufC* buf = FieldsWithSeparatorLC(viewContact,aSeparator);
-	
-	if(ifWasFullObject)
-		{
-		//loadFullContent is set in ViewContactAtL if the viewContact was a lightweight object and
-		//loaded to be full content object in that function. So we need to change it to lightweight
-		//in order to save more memory.
-		viewContact.ChangeToLightweightObject();
-		}
+
     return buf;	
     }
 
@@ -891,7 +876,6 @@ TInt CViewContactManager::InsertL(const TContactItemId aContactId, TContactViewP
 			{
 			// unsortable contacts go at the end or beginning
 			// we want this to be stable (e.g. when ICC becomes unlocked)
-			contact->ChangeToLightweightObject();
 			iUnsortedViewContacts->AppendL(contact);
             index = iUnsortedViewContacts->Count() - 1; 
             			

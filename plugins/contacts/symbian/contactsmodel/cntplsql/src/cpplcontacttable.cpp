@@ -20,6 +20,7 @@
 #include "dbsqlconstants.h"
 #include "cntpersistenceutility.h"
 #include "cntdbconsts_internal.h"
+#include "cntimagerescaleutility.h"
 
 #include <cntdef.h>
 #include <pathinfo.h>
@@ -206,46 +207,9 @@ void CPplContactTable::ConstructL()
 	iFieldMap.InsertL(KUidContactFieldCompanyNamePronunciationValue, KContactCompanyNamePrnParam() );
 
 	CleanupStack::PopAndDestroy(2, whereIdClause); //whereIdClause, typeFlagsParameter
-	
-	SetImagesDirL();
-	
+
 	}
 
-/**
-Find the images folder exists. If it exists set the path in a local variable
-*/
-void CPplContactTable::SetImagesDirL()
-    {    
-    TInt drive;
-    
-#ifdef __WINS__
-    TInt err = DriveInfo::GetDefaultDrive(DriveInfo::EDefaultPhoneMemory, drive);
-#else
-    TInt err = DriveInfo::GetDefaultDrive(DriveInfo::EDefaultMassStorage, drive);
-#endif
-    
-    // Do not leave with this error. The phone does not have to have this support
-    if (err == KErrNotSupported)
-        {
-        return;
-        }
-    else
-        {
-        User::LeaveIfError(err);
-        }
-    
-    // Get the root path in this drive to create
-    // to create the images directory
-    iImagesDirPath = TPath();
-    User::LeaveIfError(PathInfo::GetRootPath(iImagesDirPath, drive));
-    iImagesDirPath.Append(KImagesFolder);
-    
-    // Check if images directory exists
-    if (!BaflUtils::FolderExists(iFs, iImagesDirPath))
-        {
-        iImagesDirPath.Zero();
-        }
-    }
 
 /**
 Destructor
@@ -517,39 +481,9 @@ void CPplContactTable::WriteContactItemL(const CContactItem& aItem, TCntSqlState
 		}
 
 	// Rename the image file to contain the guid
-	if (aType == EInsert && iImagesDirPath.Length())
+	if (aType == EInsert)
 	    {
-        CContactItemFieldSet& fieldSet = aItem.CardFields();
-        
-        // Find the image field
-        TInt index = fieldSet.Find(KUidContactFieldCodImage, KUidContactFieldVCardMapUnknown);
-        if (index != KErrNotFound)
-            {
-            // Image path field from list of contact fields
-            CContactItemField& field = fieldSet[index];
-            TPtrC oldImagePath = field.TextStorage()->Text();
-            
-            // Append the guid in the filename if it resides in the images folder
-            if (oldImagePath.Find(iImagesDirPath) != KErrNotFound)
-                {
-                // Image file type
-                TParse p;
-                p.Set(oldImagePath, NULL, NULL);
-                
-                // Generate the image path
-                // Format <path>guid_timestamp_filename.ext
-                TPath newImagePath;
-                newImagePath.Append(iImagesDirPath);
-                newImagePath.Append(const_cast<CContactItem&>(aItem).Guid());
-                newImagePath.Append(p.NameAndExt());
-                
-                TInt err = BaflUtils::RenameFile(iFs, oldImagePath, newImagePath); // Rename the file
-                if (err == KErrNone)
-                    {
-                    field.TextStorage()->SetTextL(newImagePath);
-                    }
-                }
-            }
+        TRAP_IGNORE(TCntImageRescaleUtility::UpdateImageNameL( aItem ));
 		}
 	
 	// bind other values to statement
@@ -737,7 +671,7 @@ CContactItem* CPplContactTable::DeleteLC(TContactItemId  aItemId, TBool& aLowDis
 	
     // Create a view def to filter the image field only
     CContactItemViewDef* imageViewDef = CContactItemViewDef::NewLC(CContactItemViewDef::EIncludeFields,CContactItemViewDef::EMaskHiddenFields);
-    imageViewDef->AddL(KUidContactFieldCodImage);
+    imageViewDef->AddL( KUidContactFieldCodImage );
     
     // System template is needed unless we are creating a template.
     const CContactTemplate* sysTemplate = &iProperties.SystemTemplateL();
@@ -764,27 +698,8 @@ CContactItem* CPplContactTable::DeleteLC(TContactItemId  aItemId, TBool& aLowDis
 			{
 			User::LeaveIfError(err);
 			}
-		
 		// Remove contact image from file system
-		if (iImagesDirPath.Length())
-		    {
-		    CContactItemFieldSet& fieldSet = item->CardFields();
-		    
-		    // Find the image field
-		    TInt index = fieldSet.Find(KUidContactFieldCodImage, KUidContactFieldVCardMapUnknown);
-		    if (index != KErrNotFound)
-		        {
-		        // Image path field from list of contact fields
-		        CContactItemField& field = fieldSet[index];
-		        TPtrC imagePath = field.TextStorage()->Text();
-		        
-		        // Remove image file if it is stored in private folder
-		        if (imagePath.Find(iImagesDirPath) != KErrNotFound)
-		            {
-		            TInt err = BaflUtils::DeleteFile(iFs, imagePath); // Error value not necessary
-		            }
-		        }
-		    }
+		TCntImageRescaleUtility::DeleteImageL( *item );
 		}
 	else // Not deletable because of access count > 0.
 		{

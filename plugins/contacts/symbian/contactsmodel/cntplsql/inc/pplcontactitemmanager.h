@@ -35,13 +35,6 @@
 
 class CPplTableBase;
 class CPplPreferencesPersistor;
-class CPplPredictiveSearchTableBase;
-class C12keyPredictiveSearchTable;
-class CQwertyPredictiveSearchTable;
-class CPredictiveSearchSettingsTable;
-class CPredictiveSearchSynchronizer;
-class CPcsKeyMap;
-
 
 /**
 The CPplContactItemManager implements the MLplPersistenceBroker.
@@ -77,15 +70,13 @@ public:
 	CPplPreferencesPersistor& PreferencesPersitor();
 	CContactIdArray* GroupIdListL();	
     CBufSeg* DetailsListL (const TDesC& aSearchQuery) const;
-    CBufSeg* DetailsListPredictiveL(const TDesC& aSearchPattern) const;
     
     CContactIdArray& CardTemplateIdsL();
     TContactItemId OwnCardIdL();
     void SetOwnCardIdL(TContactItemId aId, TBool aPersist = ETrue);
     TInt CardTemplatePrefIdL() const;
     void SetCardTemplatePrefIdL(TInt aCardTemplatePrefId);
-	void SynchronizePredSearchTableL();
-	void RecreatePredSearchTablesL();
+    void MakeDatabaseCompatibleL();
 
 private:
 	CPplContactItemManager(RSqlDatabase& aDatabase,
@@ -102,25 +93,16 @@ private:
 	void DeleteInLowDiskConditionL(CPplTableBase* aTable, CContactItem* aContactItem);
 
 private:
-	RSqlDatabase&				  iDatabase; // CPplContactItemManager does not own the RSqlDatabase object
-	MLplTransactionManager& 	  iTransactionManager;
-	TUint						  iSessionId;
-	CCntSqlStatement* 			  iSelectStatement;
-	CLplContactProperties&  	  iContactProperties;
-	CPplTableBase* 				  iContactTable;
-	CPplTableBase* 				  iGroupTable;	
-	CPplTableBase* 			      iCommAddrTable;
-	C12keyPredictiveSearchTable*  iPredSearch12keyTable;
-	CQwertyPredictiveSearchTable* iPredSearchQwertyTable;
-	CPredictiveSearchSettingsTable* iPredSearchSettingsTable;
-	CPplTableBase*                iPresenceTable;
-	CPplPreferencesPersistor*     iPreferencePersistor;
-	RPplIccContactStore&          iIccContactStore;
-	//RColumboSession             iColSession;
-	CPredictiveSearchSynchronizer* iPredictiveSearchSynchronizer; // Owned
-
-	// For unit testing
-	friend class UT_CPplPredictiveSearchTable;
+	RSqlDatabase&				iDatabase;				// CPplContactItemManager does not own the RSqlDatabase object
+	MLplTransactionManager& 	iTransactionManager;
+	TUint						iSessionId;
+	CCntSqlStatement* 			iSelectStatement;
+	CLplContactProperties&  	iContactProperties;
+	CPplTableBase* 				iContactTable;
+	CPplTableBase* 				iGroupTable;	
+	CPplTableBase* 				iCommAddrTable;
+	CPplPreferencesPersistor*	iPreferencePersistor;
+	RPplIccContactStore&        iIccContactStore; 
 };
 
 #endif // __PPLCONTACTITEMMANAGER_H__

@@ -76,6 +76,9 @@ public: // MLplContactsFile interface.
 	inline TBool IsTransactionActive() const;
 
 	void NotifyObserver() const;
+	
+    void AddSqlDBObserverL( MLplSqlDatabaseObserver& aSqlDatabaseObserver );
+    void RemoveSqlDBObserverL( MLplSqlDatabaseObserver& aSqlDatabaseObserver );
 
 private: // General methods used to implement all interfaces.
 	CPplContactsFile(CLplContactProperties& aProps, MContactDbObserverV2* aObserver);
@@ -85,9 +88,7 @@ private: // General methods used to implement all interfaces.
 
 	void GetPhysicalPathL(TDes& aPhysicalFileName, const TDesC& aSecuredFileName);
 	void GetPhysicalFileNameL(TDes& aPhysicalFileName, const TDesC& aSecuredFileName);
-	void DeleteImagesDirL();
-	void CreateImagesDirL();
-	void CreateImagesBackupRegistrationFileL(const TPath& aDir);
+
 
 	inline void LocalFsL();
 
@@ -106,6 +107,9 @@ private: // Member variables used by several interfaces.
 	
 	RPplIccContactStore iIccContactStore; //owned
 	HBufC8* iConfigureStr;
+	
+	// The array of observers which are monitoring RSqlDatabase.
+    RPointerArray<MLplSqlDatabaseObserver> iSqlDatabaseObservers;
 	};
 
 
@@ -182,6 +186,7 @@ public:
 	void FindAsyncInitL(const TDesC& aText,CContactItemFieldDef* aFieldDef);
 	void FindAsyncTextDefInitL(const CDesCArray& aWords,CContactTextDef* aTextDef);
 	CContactIdArray* FindAsyncL(TBool& aMoreToGo, TUint aSessionId);
+	void Reset();
 
 	TBool UsesIdentityFieldsOnly(TInt aFindFlags);
 	void ConstructBitwiseFlagsFromTextDef(TInt& aFindFlags,TInt& aIdentityColumnsCount,const CContactTextDef* aTextDef);
@@ -198,7 +203,7 @@ private:
 	TBool PerformIdFindIterationL(CContactIdArray *aIdsFound, RSqlStatement aStatement);
 	TBool FindL(CContactIdArray *aIdsFound, const TDesC& aText,const CContactItemFieldDef *aFieldDef, RSqlStatement aStatement, TUint aSessionId);
 	CContactIdArray* FilterDatabaseL(CCntFilter& aFilter);
-	void Reset();
+
 	TInt MaximumSizeOfIdentitySearchSyntax();
 	TInt ApproximateSizeOfSearchString();
 	void doAppendFieldsToSearchString(HBufC* aOrderFields) const;
@@ -237,6 +242,9 @@ private:
 	RSqlStatement			selectEmailStatement;
 	RSqlStatement			selectSIPStatement;
 	RSqlStatement			selectIdFromIdentityStatement;
+	
+	//The flag for RSqlstatements
+    TBool iRSqlstatementsWorking;
 	};
 
 // Forward class reference.

@@ -22,7 +22,7 @@
 #define __PREPARE_DATA_TEST_STEP_H__
 
 // System Includes
-#include <testexecutestepbase.h>
+#include <test/testexecutestepbase.h>
 #include <cntdb.h>
 #include <cntitem.h>
 #include <cntviewbase.h>

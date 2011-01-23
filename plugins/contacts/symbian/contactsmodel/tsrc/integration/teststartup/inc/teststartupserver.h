@@ -21,12 +21,12 @@
 #ifndef __TESTSTARTUPSERVER_H__
 #define __TESTSTARTUPSERVER_H__
 
-#include <testexecutestepbase.h>
+#include <test/testexecutestepbase.h>
 #include <e32base.h>
 #include <cntviewbase.h>
 #include <cntviewstore.h>
 #include <centralrepository.h>
-#include <testexecuteserverbase.h>
+#include <test/testexecuteserverbase.h>
 
 #include <cntdb.h>
 #include <cntitem.h>

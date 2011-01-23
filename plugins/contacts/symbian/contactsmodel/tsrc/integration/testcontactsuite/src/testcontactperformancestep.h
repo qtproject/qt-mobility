@@ -20,7 +20,7 @@
 
 #if (!defined __TESTCONTACTPERFORMANCESTEP_H__)
 #define __TESTCONTACTPERFORMANCESTEP_H__
-#include <testexecutestepbase.h>
+#include <test/testexecutestepbase.h>
 class CTestContactPerformanceStep : public CTestStep
 	{
 public:
