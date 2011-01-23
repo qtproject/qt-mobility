@@ -51,41 +51,58 @@ QTM_USE_NAMESPACE
 class QDeclarativeBatteryInfo : public QSystemBatteryInfo
 {
     Q_OBJECT
+
+    Q_PROPERTY(bool monitorBatteryStatusChanges READ monitorBatteryStatusChanges WRITE startBatteryStatusChanged CONSTANT)
+    Q_PROPERTY(bool monitorChargingStateChanges READ monitorChargingStateChanges WRITE startChargingStateChanged CONSTANT)
+    Q_PROPERTY(bool monitorChargerTypeChanges READ monitorChargerTypeChanges WRITE startChargerTypeChanged CONSTANT)
+    Q_PROPERTY(bool monitorNominalCapacityChanges READ monitorNominalCapacityChanges WRITE startNominalCapacityChanged CONSTANT)
+    Q_PROPERTY(bool monitorRemainingCapacityPercentChanges READ monitorRemainingCapacityPercentChanges WRITE startRemainingCapacityPercentChanged CONSTANT)
+    Q_PROPERTY(bool monitorRemainingCapacityChanges READ monitorRemainingCapacityChanges WRITE startRemainingCapacityChanged CONSTANT)
+    Q_PROPERTY(bool monitorCurrentFlowChanges READ monitorCurrentFlowChanges WRITE startCurrentFlowChanged CONSTANT)
+    Q_PROPERTY(bool monitorRemainingCapacityBarsChanges READ monitorRemainingCapacityBarsChanges WRITE startRemainingCapacityBarsChanged CONSTANT)
+    Q_PROPERTY(bool monitorRemainingChargingTimeChanges READ monitorRemainingChargingTimeChanges WRITE startRemainingChargingTimeChanged CONSTANT)
+
 public:
     explicit QDeclarativeBatteryInfo(QObject *parent = 0);
 
-Q_SIGNALS:
-//    void batteryLevelChanged(int level);
-//    void batteryStatusChanged(QSystemBatteryInfo::BatteryStatus batteryStatus);
 
-//    void chargingStateChanged(QSystemBatteryInfo::ChargingState chargingState);
-//    void chargerTypeChanged(QSystemBatteryInfo::ChargerType chargerType);
+    void startBatteryStatusChanged(bool on);
+    bool monitorBatteryStatusChanges();
 
-//    void nominalCapacityChanged(int);
-//    void remainingCapacityPercentChanged(int);
-//    void remainingCapacityChanged(int);
+    void startChargingStateChanged(bool on);
+    bool monitorChargingStateChanges();
 
-//    void currentFlowChanged(int);
-//    void remainingCapacityBarsChanged(int);
-//    void remainingChargingTimeChanged(int);
-//    void voltageChanged(int);
+    void startChargerTypeChanged(bool on);
+    bool monitorChargerTypeChanges();
 
-public slots:
-    void startBatteryStatusChanged();
+    void startNominalCapacityChanged(bool on);
+    bool monitorNominalCapacityChanges();
 
-    void startChargingStateChanged();
-    void startChargerTypeChanged();
+    void startRemainingCapacityPercentChanged(bool on);
+    bool monitorRemainingCapacityPercentChanges();
 
-    void startNominalCapacityChanged();
-    void startRemainingCapacityPercentChanged();
-    void startRemainingCapacityChanged();
+    void startRemainingCapacityChanged(bool on);
+    bool monitorRemainingCapacityChanges();
 
-    void startCurrentFlowChanged();
-    void startRemainingCapacityBarsChanged();
-    void startRemainingChargingTimeChanged();
-    void startVoltageChanged();
-    void startConnections();
+    void startCurrentFlowChanged(bool on);
+    bool monitorCurrentFlowChanges();
 
+    void startRemainingCapacityBarsChanged(bool on);
+    bool monitorRemainingCapacityBarsChanges();
+
+    void startRemainingChargingTimeChanged(bool on);
+    bool monitorRemainingChargingTimeChanges();
+
+protected:
+    bool monitoringBatteryStatusChanges;
+    bool monitoringChargingStateChanges;
+    bool monitoringChargerTypeChanges;
+    bool monitoringNominalCapacityChanges;
+    bool monitoringRemainingCapacityPercentChanges;
+    bool monitoringRemainingCapacityChanges;
+    bool monitoringCurrentFlowChanges;
+    bool monitoringRemainingCapacityBarsChanges;
+    bool monitoringRemainingChargingTimeChanges;
 };
 
 #endif // QDECLARATIVEBATTERYINFO_P_H
