@@ -97,7 +97,7 @@ static const symbol_t Feature_lut[] =
   SYM(QSystemInfo::LocationFeature),
   SYM(QSystemInfo::VideoOutFeature),
   SYM(QSystemInfo::HapticsFeature),
- SYM(QSystemInfo::FmTransmitterFeature),
+  SYM(QSystemInfo::FmTransmitterFeature),
   {0,0}
 };
 
@@ -182,14 +182,16 @@ static void test_systemdeviceinfo(void)
   X(deviceinfo.imsi());
   X(deviceinfo.inputMethodType());
   X(deviceinfo.isDeviceLocked());
-  X(deviceinfo.isKeyboardFlipOpen());
+  X(deviceinfo.isKeyboardFlippedOpen());
   X(deviceinfo.isWirelessKeyboardConnected());
-  X(deviceinfo.keyboardType());
+  X(deviceinfo.keyboardTypes());
   X(deviceinfo.manufacturer());
   X(deviceinfo.model());
   X(deviceinfo.productName());
   X(deviceinfo.simStatus());
   X(deviceinfo.lockStatus());
+  X(deviceinfo.uniqueDeviceID());
+//  X(deviceinfo.activeProfileDetails());
 }
 
 /* ------------------------------------------------------------------------- *
@@ -208,8 +210,8 @@ static void test_systemdisplayinfo(void)
     qDebug() << "  displayinfo.colorDepth() ->" << depth;
     int value = displayinfo.displayBrightness(display);
     qDebug() << "  displayinfo.displayBrightness() ->" << value;
-    QSystemDisplayInfo::DisplayOrientation orientation = displayinfo.getOrientation(display);
-    qDebug() << "  displayinfo.getOrientation() ->" << orientation;
+    QSystemDisplayInfo::DisplayOrientation orientation = displayinfo.orientation(display);
+    qDebug() << "  displayinfo.orientation() ->" << orientation;
     float contrast = displayinfo.contrast(display);
     qDebug() << "  displayinfo.getContrast() ->" << contrast;
     int dpiWidth = displayinfo.getDPIWidth(display);
@@ -324,7 +326,7 @@ static void test_systemnetworkinfo(void)
     qDebug() << "  networkinfo.networkStatus() ->" << status;
 
     QString network = networkinfo.networkName(mode);
-    qDebug() << "  networkinfo.netwoerkName() ->" << network;
+    qDebug() << "  networkinfo.networkName() ->" << network;
 
     int sigstr = networkinfo.networkSignalStrength(mode);
     qDebug() << "  networkinfo.networkSignalStrength() ->" << sigstr;
