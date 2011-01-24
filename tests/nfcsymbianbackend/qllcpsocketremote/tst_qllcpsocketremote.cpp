@@ -189,7 +189,7 @@ void tst_qllcpsocketremote::testCase2()
     QString expectedMessage2("testcase2 string str2");
 
     QString boxMessage("handshake 3");
-    QNfcTestUtil::ShowMessage(boxMessage);
+    QNfcTestUtil::ShowAutoMsg(boxMessage,&readyReadSpy);
 
     QTRY_VERIFY(readyReadSpy.count() == 1);
 
