@@ -570,6 +570,7 @@ if [ -z "$PLATFORM_CONFIG" ]; then
     compileTest "Blkid" blkid
     compileTest "Pulse Audio" pulseaudio
     compileTest "udev" udev
+    compileTest "Symbian NFC" nfc
 
     if [ "$LINUX_TARGET" = maemo6 ] || [ "$LINUX_TARGET" = meego ]; then
         compileTest sensord sensord

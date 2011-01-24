@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -43,10 +43,10 @@
 #ifndef QNEARFIELDTAGMIFARE_H
 #define QNEARFIELDTAGMIFARE_H
 
-#include "QNearFieldTarget.h"
-#include "nearfieldndeftarget_symbian.h"
-#include "nearfieldtag_symbian.h"
-#include "nearfieldtagimpl_symbian.h"
+#include "qnearfieldtarget.h"
+#include "symbian/nearfieldndeftarget_symbian.h"
+#include "symbian/nearfieldtag_symbian.h"
+#include "symbian/nearfieldtagimpl_symbian.h"
 
 QT_BEGIN_HEADER
 
