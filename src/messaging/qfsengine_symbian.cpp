@@ -84,6 +84,7 @@ Q_GLOBAL_STATIC(QThreadStorage<CFSEngine *>, fsEngineThreadStorage)
 /**
  * Generic error mapper. Maps Symbian error code to QMessageManager::Error.
  */
+#ifdef FREESTYLEMAILMAPI12USED
 static QMessageManager::Error symbianToMessageManagerError( TInt aError )
 {
     QMessageManager::Error error = QMessageManager::RequestIncomplete;
@@ -120,12 +121,15 @@ static QMessageManager::Error symbianToMessageManagerError( TInt aError )
     }
     return error;
 }
+#endif
 
 CFSEngine::CFSEngine()
  : m_messageQueryActive(false), 
-   m_cleanedup(false), 
-   m_mailboxMoveRequestId(0),
-   m_messageStorePrivateSingleton(0)
+   m_cleanedup(false)
+#ifdef FREESTYLEMAILMAPI12USED
+   ,m_mailboxMoveRequestId(0)
+   ,m_messageStorePrivateSingleton(0)
+#endif
 {
     if (QCoreApplication::instance() && QCoreApplication::instance()->thread() == QThread::currentThread()) {
         // Make sure that application/main thread specific FsEngine will be cleaned up
@@ -145,11 +149,10 @@ CFSEngine::CFSEngine()
     
     Q_UNUSED(err);
     m_clientApi = static_cast<MEmailClientApi*>(m_ifPtr);
-#ifdef FREESTYLEMAILBOXOBSERVERUSED
+
     if (QCoreApplication::instance() && QCoreApplication::instance()->thread() == QThread::currentThread()) {
         TRAP_IGNORE(setPluginObserversL());
     }
-#endif
 }
 
 CFSEngine::~CFSEngine()
@@ -176,8 +179,11 @@ void CFSEngine::cleanupFSBackend()
         delete operation;
     }
     m_fetchOperations.clear();
+
+#ifdef FREESTYLEMAILMAPI12USED
     m_moveRequests.clear();
-    
+#endif
+
     foreach (MEmailMailbox* value, m_mailboxes) {
         value->Release();
     }
@@ -188,10 +194,12 @@ void CFSEngine::cleanupFSBackend()
         m_clientApi = NULL;
     }
 
+#ifdef FREESTYLEMAILMAPI12USED
     foreach (EMailSyncRequest* req, m_syncRequests) {
         delete req;
     }
     m_syncRequests.clear();
+#endif
     
     if (m_factory) {
         delete m_factory;
@@ -261,10 +269,12 @@ void CFSEngine::orderMessages(QMessageIdList& messageIds, const QMessageSortOrde
     }
 }
 
+#ifdef FREESTYLEMAILMAPI12USED
 void CFSEngine::setMessageStorePrivateSingleton(QMessageStorePrivate* privateStore)
 {
     m_messageStorePrivateSingleton = privateStore;
 }
+#endif
 
 QMessageAccountIdList CFSEngine::queryAccounts(const QMessageAccountFilter &filter, const QMessageAccountSortOrder &sortOrder, uint limit, uint offset) const
 {
@@ -352,17 +362,15 @@ QMessageAccountId CFSEngine::defaultAccount(QMessage::Type type) const
     return QMessageAccountId();
 }
 
+#ifdef FREESTYLEMAILMAPI12USED
 int CFSEngine::removeAccount(const QMessageAccountId &id)
 {
     TRAP_IGNORE(updateEmailAccountsL());
     TMailboxId mailboxId = fsMailboxIdFromQMessageAccountId(id);
-#ifdef FREESTYLEMAILBOXOBSERVERUSED
     TRAPD(err, m_clientApi->RemoveMailboxL(mailboxId, this, KUndefinedRequestId) );
-#else
-    TRAPD(err, m_clientApi->RemoveMailboxL(mailboxId);
-#endif
     return err;
 }
+#endif
 
 QMessageAccountIdList CFSEngine::accountsByType(QMessage::Type type) const
 {
@@ -412,7 +420,6 @@ void CFSEngine::updateEmailAccountsL() const
     }   
 }
 
-#ifdef FREESTYLEMAILBOXOBSERVERUSED
 void CFSEngine::setPluginObserversL()
 {
     RMailboxPtrArray mailboxes;
@@ -423,8 +430,10 @@ void CFSEngine::setPluginObserversL()
         m_mailboxes.insert(mailbox->MailboxId().iId, mailbox);
     }
     mailboxes.Close();
-    
+
+#ifdef FREESTYLEMAILMAPI12USED
     m_clientApi->RegisterObserverL(*this);
+#endif
 }
 
 void CFSEngine::NewMessageEventL(const TMailboxId& aMailbox, const REmailMessageIdArray aNewMessages, const TFolderId& aParentFolderId)
@@ -448,6 +457,7 @@ void CFSEngine::MessageDeletedEventL(const TMailboxId& aMailbox, const REmailMes
     }
 }
 
+#ifdef FREESTYLEMAILMAPI12USED
 void CFSEngine::EmailClientApiEventL(const TEmailClientApiEvent aEvent, const TMailboxId& aId)
 {
     if(!m_messageStorePrivateSingleton)
@@ -465,6 +475,7 @@ void CFSEngine::EmailClientApiEventL(const TEmailClientApiEvent aEvent, const TM
         break;
     }
 }
+#endif
 
 void CFSEngine::notificationL(const TMailboxId& aMailbox, const TMessageId& aMessageId, 
                               const TFolderId& aParentFolderId, QMessageStorePrivate::NotificationType aNotificationType)
@@ -531,15 +542,14 @@ void CFSEngine::notificationL(const TMailboxId& aMailbox, const TMessageId& aMes
     CleanupStack::PopAndDestroy(mailbox);
 }
 
-#endif
-
+#ifdef FREESTYLEMAILMAPI12USED
 void CFSEngine::EmailRequestCompleteL( TInt aResult, TUint aRequestId )
 {
-#ifdef FREESTYLEMAILBOXOBSERVERUSED
     if (m_messageStorePrivateSingleton && (aRequestId == KUndefinedRequestId) ) {
         m_messageStorePrivateSingleton->removeAccountComplete(aResult);
+        return;
     }
-#endif
+
     // notify completion to observer
     EMailMoveRequest request = m_moveRequests.value( aRequestId );
     if( !request.isNull() ) {
@@ -548,6 +558,7 @@ void CFSEngine::EmailRequestCompleteL( TInt aResult, TUint aRequestId )
         m_moveRequests.remove( aRequestId );
     }
 }
+#endif
 
 MEmailMessage* CFSEngine::createFSMessageL(const QMessage &message, const MEmailMailbox* mailbox)
 {
@@ -1047,6 +1058,7 @@ bool CFSEngine::retrieveHeader(QMessageServicePrivate& privateService, const QMe
     return false;
 }
 
+#ifdef FREESTYLEMAILMAPI12USED
 void CFSEngine::synchronizeL(QMessageServicePrivate &observer, const QMessageAccountId &id)
 {
     TMailboxId mailboxId = fsMailboxIdFromQMessageAccountId(id);
@@ -1069,7 +1081,7 @@ void CFSEngine::synchronizeL(QMessageServicePrivate &observer, const QMessageAcc
         
         if (!mailbox) {
             User::Leave(KErrNotFound);
-		}
+        }
     }
     
     // Mailbox cannot be released since it would cause email client API
@@ -1146,6 +1158,39 @@ void CFSEngine::moveMessagesL(QMessageServicePrivate &observer,
     mailbox->MoveMessagesL( messages, toFolder, this, m_mailboxMoveRequestId);
     m_moveRequests.insert(m_mailboxMoveRequestId, EMailMoveRequest( &observer, mailboxId ));
 }
+#else
+bool CFSEngine::synchronize(QMessageServicePrivate &observer, const QMessageAccountId &id)
+{
+    TRAPD(err, synchronizeL(observer, id));
+    if (err != KErrNone) {
+        return false;
+    } else {
+        return true;
+    }
+}
+
+void CFSEngine::synchronizeL(QMessageServicePrivate &observer, const QMessageAccountId &id)
+{
+    Q_UNUSED(observer);
+    
+    TMailboxId mailboxId(fsMailboxIdFromQMessageAccountId(id));
+    MEmailMailbox* mailbox = m_clientApi->MailboxL(mailboxId);
+    
+    // Some older versions of Email client API will return NULL instead of 
+    // leaving with KErrNotFound if mailbox is not found.
+    if (!mailbox) {
+        User::Leave(KErrNotFound);
+    }
+    
+    mailbox->SynchroniseL(*this);
+    mailbox->Release();
+}
+
+void CFSEngine::MailboxSynchronisedL(TInt aResult)
+{
+    Q_UNUSED(aResult);
+}
+#endif
 
 bool CFSEngine::removeMessages(const QMessageFilter& /*filter*/, QMessageManager::RemovalOption /*option*/)
 {
@@ -1583,6 +1628,7 @@ void CFSEngine::cancel(QMessageServicePrivate& privateService)
         delete op;
     }
     
+#ifdef FREESTYLEMAILMAPI12USED
     foreach (EMailSyncRequest* req, m_syncRequests) {
         if (&req->m_observer == &privateService) {
             req->m_active = false;
@@ -1607,6 +1653,7 @@ void CFSEngine::cancel(QMessageServicePrivate& privateService)
             i++;
         }
     }
+#endif
 }
 
 void CFSEngine::applyOffsetAndLimitToMsgIds(QMessageIdList& idList, int offset, int limit) const
@@ -2948,6 +2995,7 @@ void CFSEngine::contentFetched(void* service, bool success)
     }
 }
 
+#ifdef FREESTYLEMAILMAPI12USED
 void EMailSyncRequest::MailboxSynchronisedL(TInt aResult)
 {
     m_requestList.removeOne(this);
@@ -2959,6 +3007,7 @@ void EMailSyncRequest::MailboxSynchronisedL(TInt aResult)
     
     delete this;
 }
+#endif
 
 CFSContentFetchOperation::CFSContentFetchOperation(CFSEngine& parentEngine, QMessageServicePrivate& service,
                                                    MEmailMessageContent* content, MEmailMessage* message)
