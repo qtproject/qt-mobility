@@ -478,13 +478,6 @@ Gets the current bluetooth power state.
   \qmlproperty bool DeviceInfo::isKeyboardFlippedOpen
   Returns true if the flip keyboard is open, otherwise false;
   */
-/*!
-  \qmlproperty QUuid DeviceInfo::uniqueDeviceID
-  Returns a unique identifier for the machine.
-
-  Depending on security enforcement on platform, this may return a non unique number, or 0.
-
-  */
 
 /*!
   \qmlproperty LockTypeFlags DeviceInfo::lockStatus

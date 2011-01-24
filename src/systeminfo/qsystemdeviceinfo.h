@@ -77,8 +77,6 @@ class  Q_SYSINFO_EXPORT QSystemDeviceInfo : public QObject
     Q_PROPERTY(QSystemDeviceInfo::LockTypeFlags lockStatus READ lockStatus NOTIFY lockStatusChanged)
 //    Q_PROPERTY(QSystemDeviceInfo::PowerState currentPowerState READ currentPowerState NOTIFY powerStateChanged)
 
-    Q_PROPERTY(QUuid uniqueDeviceID READ uniqueDeviceID CONSTANT)
-
     Q_ENUMS(BatteryStatus)
     Q_ENUMS(PowerState)
     Q_FLAGS(InputMethod InputMethodFlags)
