@@ -69,6 +69,8 @@ class QDeclarativeDeviceInfo : public QSystemDeviceInfo
     Q_PROPERTY(int voiceRingtoneVolume READ voiceRingtoneVolume CONSTANT)
     Q_PROPERTY(bool vibrationActive READ vibrationActive CONSTANT)
 
+    Q_PROPERTY(QString uniqueID READ uniqueID CONSTANT)
+
 public:
     explicit QDeclarativeDeviceInfo(QObject *parent = 0);
 
@@ -103,6 +105,9 @@ public:
     int messageRingtoneVolume();
     int voiceRingtoneVolume();
     bool vibrationActive();
+
+    QString uniqueID();
+
 
  protected:
 

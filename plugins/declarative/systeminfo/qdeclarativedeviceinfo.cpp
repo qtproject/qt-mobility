@@ -399,6 +399,12 @@ bool QDeclarativeDeviceInfo::vibrationActive()
     return deviceInfo()->activeProfileDetails().vibrationActive();
 }
 
+
+QString QDeclarativeDeviceInfo::uniqueID()
+{
+    return deviceInfo()->uniqueDeviceID().toString();
+}
+
 /*!
   \qmlproperty QString DeviceInfo::imei
 
@@ -490,4 +496,13 @@ Gets the current bluetooth power state.
 /*!
   \qmlmethod bool DeviceInfo::keypadLightOn(QSystemDeviceInfo::KeypadType type)
   Returns true if the key pad, indicated by \a type, light is on, otherwise false;
+  */
+
+/*!
+  \qmlproperty string DeviceInfo::uniqueID
+
+  Returns a unique identifier for the machine.
+
+  Depending on security enforcement on platform, this may return a non unique number, or 0.
+
   */
