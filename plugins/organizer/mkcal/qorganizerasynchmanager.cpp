@@ -41,8 +41,6 @@
 
 #include "qorganizerasynchmanager.h"
 #include "qtorganizer.h"
-#include "mkcalengine.h"
-#include "mkcalid.h"
 
 QTM_USE_NAMESPACE
 
@@ -137,7 +135,8 @@ void AsyncWorker::processRequest(QOrganizerAbstractRequest* req)
     QOrganizerAbstractRequest::State state = req->state();
 
     //if the request is in inactive state, start the request (this could happen due to thread scheduling)
-    if (state == QOrganizerAbstractRequest::InactiveState) {
+    if (state == QOrganizerAbstractRequest::InactiveState ||
+        state == QOrganizerAbstractRequest::FinishedState) {
         QOrganizerManagerEngine::updateRequestState(req, QOrganizerAbstractRequest::ActiveState);
     } else if (state != QOrganizerAbstractRequest::ActiveState) {
         return;

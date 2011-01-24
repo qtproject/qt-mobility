@@ -2495,7 +2495,7 @@ void tst_QOrganizerManager::signalEmission()
     QVERIFY(arg.count() == 1);
     QCOMPARE(QOrganizerItemId(arg.at(0)), cid);
 
-    QSharedPointer<QOrganizerItemObserver> todo1Observer = m1->observeItem(cid);
+    QScopedPointer<QOrganizerItemObserver> todo1Observer(new QOrganizerItemObserver(m1.data(), cid));
     QScopedPointer<QSignalSpy> spyObserverModified1(new QSignalSpy(todo1Observer.data(), SIGNAL(itemChanged())));
     QScopedPointer<QSignalSpy> spyObserverRemoved1(new QSignalSpy(todo1Observer.data(), SIGNAL(itemRemoved())));
 
@@ -2539,8 +2539,8 @@ void tst_QOrganizerManager::signalEmission()
 
     spyObserverModified1->clear();
     spyObserverRemoved1->clear();
-    QSharedPointer<QOrganizerItemObserver> todo2Observer = m1->observeItem(todo2.id());
-    QSharedPointer<QOrganizerItemObserver> todo3Observer = m1->observeItem(todo3.id());
+    QScopedPointer<QOrganizerItemObserver> todo2Observer(new QOrganizerItemObserver(m1.data(), todo2.id()));
+    QScopedPointer<QOrganizerItemObserver> todo3Observer(new QOrganizerItemObserver(m1.data(), todo3.id()));
     QScopedPointer<QSignalSpy> spyObserverModified2(new QSignalSpy(todo2Observer.data(), SIGNAL(itemChanged())));
     QScopedPointer<QSignalSpy> spyObserverModified3(new QSignalSpy(todo3Observer.data(), SIGNAL(itemChanged())));
     QScopedPointer<QSignalSpy> spyObserverRemoved2(new QSignalSpy(todo2Observer.data(), SIGNAL(itemRemoved())));
@@ -2601,9 +2601,9 @@ void tst_QOrganizerManager::signalEmission()
     QTRY_WAIT( while(spyAdded.size() > 0) {sigids += spyAdded.takeFirst().at(0).value<QList<QOrganizerItemId> >(); }, sigids.contains(todo.id()) && sigids.contains(todo2.id()) && sigids.contains(todo3.id()));
     QTRY_COMPARE(spyModified.count(), 0);
 
-    todo1Observer = m1->observeItem(todo.id());
-    todo2Observer = m1->observeItem(todo2.id());
-    todo3Observer = m1->observeItem(todo3.id());
+    todo1Observer.reset(new QOrganizerItemObserver(m1.data(), todo.id()));
+    todo2Observer.reset(new QOrganizerItemObserver(m1.data(), todo2.id()));
+    todo3Observer.reset(new QOrganizerItemObserver(m1.data(), todo3.id()));
     spyObserverModified1.reset(new QSignalSpy(todo1Observer.data(), SIGNAL(itemChanged())));
     spyObserverModified2.reset(new QSignalSpy(todo2Observer.data(), SIGNAL(itemChanged())));
     spyObserverModified3.reset(new QSignalSpy(todo3Observer.data(), SIGNAL(itemChanged())));
@@ -3654,6 +3654,24 @@ void tst_QOrganizerManager::recurrence()
         // Fetch events on a day where the recurrence is no longer valid
         items = cm->items(QDateTime(QDate(2012, 8, 12), QTime(0,0,0)), QDateTime(QDate(2012, 8, 12), QTime(23,59,59)));
         QCOMPARE(items.count(), 0);
+    }
+
+    //test for unlimited count limit
+    //for bug:MOBILITY-2125
+    cm->removeItems(cm->itemIds());
+    event.setId(QOrganizerItemId());
+    rrule.setLimit(INT_MAX);
+    rrule.setFrequency(QOrganizerRecurrenceRule::Weekly);
+    rrule.setInterval(4);
+    rrule.setDaysOfWeek(QSet<Qt::DayOfWeek>() << Qt::Friday);
+    event.setEndDateTime(QDateTime(QDate(2013, 8, 9), QTime(11, 30, 0)));
+    event.setRecurrenceRule(rrule);
+    QVERIFY(cm->saveItem(&event));
+    {
+        // Fetch all events with occurrences
+        QList<QOrganizerItem> items = cm->items(QDateTime(QDate(2012, 8, 9)),
+                                                QDateTime(QDate(2013, 8, 12), QTime(23,59,59)));
+        QVERIFY(items.count() > 1);
     }
 
     // second, test date limit.  The results should be the same as the count limit, if the limit date is the 11th.

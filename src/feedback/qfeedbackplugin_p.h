@@ -70,7 +70,7 @@ QTM_BEGIN_NAMESPACE
 class QDummyBackend : QObject, public QFeedbackHapticsInterface
 {
 public:
-    QDummyBackend() : QObject(qApp) { }
+    QDummyBackend() : QObject(qApp) { pluginPriority(); }
 
     QList<QFeedbackActuator*> actuators() { return QList<QFeedbackActuator*>(); }
 
@@ -82,7 +82,6 @@ public:
     void setEffectState(const QFeedbackHapticsEffect *, QFeedbackEffect::State) { }
     QFeedbackEffect::State effectState(const QFeedbackHapticsEffect *) { return QFeedbackEffect::Stopped; }
 
-    virtual bool play(QFeedbackEffect::ThemeEffect effect) { Q_UNUSED(effect); return false; }
     virtual PluginPriority pluginPriority() { return PluginLowPriority; }
 };
 

@@ -273,13 +273,15 @@ void QDeclarativePositionSource::start()
 void QDeclarativePositionSource::update()
 {
     if (m_positionSource) {
-        // Use default timeout value
-        m_positionSource->requestUpdate();
         if (!m_active) {
             m_active = true;
             m_singleUpdate = true;
             emit activeChanged();
         }
+        // Use default timeout value. Set active before calling the
+        // update request because on some platforms there may
+        // be results immediately.
+        m_positionSource->requestUpdate();
     }
 }
 
@@ -373,7 +375,15 @@ void QDeclarativePositionSource::positionUpdateReceived(const QGeoPositionInfo& 
         if (update.hasAttribute(QGeoPositionInfo::GroundSpeed)) {
             m_position.setSpeed(update.attribute(QGeoPositionInfo::GroundSpeed));
         }
+        if (update.hasAttribute(QGeoPositionInfo::HorizontalAccuracy)) {
+            m_position.setHorizontalAccuracy(update.attribute(QGeoPositionInfo::HorizontalAccuracy));
+        }
+        if (update.hasAttribute(QGeoPositionInfo::VerticalAccuracy)) {
+            m_position.setVerticalAccuracy(update.attribute(QGeoPositionInfo::VerticalAccuracy));
+        }
         emit positionChanged();
+    } else {
+        m_position.invalidate();
     }
     if (m_singleUpdate && m_active) {
         m_active = false;

@@ -88,6 +88,9 @@ static QGeoBoundingBox variantListToBoundingBox(const QVariantList & list) {
 
 void QGeoTiledMapDataNokia::copyrightReplyFinished(QNetworkReply * reply)
 {
+    if (reply->error() != QNetworkReply::NoError)
+        return;
+
     JSONParser jp(reply->readAll());
     QVariant root = jp.parse();
 
@@ -182,11 +185,9 @@ QString QGeoTiledMapDataNokia::getViewCopyright()
 /*!
  \reimp
  */
-void QGeoTiledMapDataNokia::paint(QPainter *painter, const QStyleOptionGraphicsItem *option)
+void QGeoTiledMapDataNokia::paintProviderNotices(QPainter *painter, const QStyleOptionGraphicsItem *option)
 {
-    QGeoTiledMapData::paint(painter, option);
-
-    QRect viewport = painter->viewport();
+    QRect viewport = painter->combinedTransform().inverted().mapRect(painter->viewport());
 
     painter->drawPixmap(
         viewport.bottomLeft()+QPoint(5,-5-watermark.height()),

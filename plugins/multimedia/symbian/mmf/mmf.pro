@@ -25,9 +25,11 @@ INCLUDEPATH += . \
     $${SOURCE_DIR}
 
 
-HEADERS += s60mediaserviceplugin.h
+HEADERS += s60mediaserviceplugin.h \
+    s60formatsupported.h
 
-SOURCES += s60mediaserviceplugin.cpp
+SOURCES += s60mediaserviceplugin.cpp \
+    s60formatsupported.cpp
 
 contains(S60_VERSION, 3.2)|contains(S60_VERSION, 3.1) {
     DEFINES += PRE_S60_50_PLATFORM

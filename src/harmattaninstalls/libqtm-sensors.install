@@ -1,0 +1,9 @@
+etc/xdg/Nokia/Sensors.conf
+usr/lib/libQtSensors.so.1.2.0
+usr/lib/libQtSensors.so.1.2
+usr/lib/libQtSensors.so.1
+usr/lib/qt4/imports/QtMobility/sensors/libdeclarative_sensors.so
+usr/lib/qt4/imports/QtMobility/sensors/qmldir
+usr/lib/qt4/plugins/sensors/libqtsensors_generic.so
+usr/lib/qt4/plugins/sensors/libqtsensors_grueplugin.so
+usr/lib/qt4/plugins/sensors/libqtsensors_meego.so

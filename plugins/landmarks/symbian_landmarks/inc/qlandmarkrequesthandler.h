@@ -182,6 +182,7 @@ private:
     TBool iIsComplete;
     TBool iIsRequestRunning;
     TBool iIsDestructing;
+    TBool iIsWFFRequestComplete;
 };
 
 /**

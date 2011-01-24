@@ -28,7 +28,7 @@
 /*!
     \group qml-messaging
     \title QML Messaging
-    QML Support for the Mobility Project Messaging API.
+    QML Support for the QtMobility Project Messaging API.
 
 */
 
@@ -38,9 +38,9 @@
 
     \title Messaging QML Plugin
 
-    \brief A QML plugin for the Mobility Project Messaging API.
+    \brief A QML plugin for the QtMobility Project Messaging API.
 
-    
+
 
     \section1 Overview
 
@@ -94,7 +94,7 @@
     the message \l {MessageModel::sortBy}{Size} less than 1024 AND a union
     of (\l {MessageModel::sortBy}{Sender} is "martin" AND \l {MessageModel::sortBy}{Subject}
     does not include "re:") OR \l {MessageModel::sortBy}{Sender} includes "don".
-    
+
     Notice the use of the property \l {MessageFilter::value}{value} which
     contains the tested value. The \l {MessageModel} sets the
     \l {MessageModel::sortBy}{sortBy}
@@ -103,7 +103,7 @@
 
     \code
         import QtMobility.messaging 1.1
-        
+
         model: MessageModel {
             sortBy: MessageModel.Timestamp
             sortOrder: MessageModel.DescendingOrder
@@ -137,7 +137,7 @@
         }
     \endcode
 
-    
+
 
     \section2 The MessageModel Element
 
@@ -150,7 +150,7 @@
     a meaningful list of message items.
 
     \code
-    
+
         model: MessageModel {
             sortBy: MessageModel.Timestamp
             sortOrder: MessageModel.DescendingOrder
@@ -171,7 +171,7 @@
                 anchors.top: subjText.bottom; anchors.topMargin: 3
             }
         }
-            
+
     \endcode
 
     The code displays a list of messages showing the \i {sender} and

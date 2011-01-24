@@ -783,16 +783,6 @@ void CntSimStorePrivate::removeL(int index)
 
 void CntSimStorePrivate::updateStoreInfoL()
 {
-#ifdef SYMBIANSIM_BACKEND_PHONEBOOKINFOV1
-    TRequestStatus status;
-    RMobilePhoneBookStore::TMobilePhoneBookInfoV1 info;
-    RMobilePhoneBookStore::TMobilePhoneBookInfoV1Pckg infoPckg(info);
-    m_etelStore.GetInfo(status, infoPckg);
-    User::WaitForRequest(status);
-    User::LeaveIfError(status.Int());
-    m_storeInfo.m_totalEntries = info.iTotalEntries;
-    m_storeInfo.m_usedEntries  = info.iUsedEntries;
-#else
     // Get info
     TRequestStatus status;
     if (m_storeInfo.m_storeName == KParameterValueSimStoreNameOn) {
@@ -817,7 +807,6 @@ void CntSimStorePrivate::updateStoreInfoL()
         m_storeInfo.m_totalEntries = info.iTotalEntries;
         m_storeInfo.m_usedEntries  = info.iUsedEntries;
     }
-#endif
 
 #ifdef SYMBIANSIM_BACKEND_TEST_EXTRADETAILS
     // Check if store supports the extra details

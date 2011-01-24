@@ -90,6 +90,7 @@ public:
     // From S60MediaPlayerAudioEndpointSelector
     QString activeEndpoint() const;
     QString defaultEndpoint() const;
+    void setPlaybackRate(qreal rate);
 public Q_SLOTS:
     void setActiveEndpoint(const QString& name);
 
@@ -108,7 +109,7 @@ protected:
     int doGetBufferStatusL() const;
     qint64 doGetDurationL() const;
     void doSetAudioEndpoint(const QString& audioEndpoint);
-    
+    bool getIsSeekable() const;
 private:
 #ifdef S60_DRM_SUPPORTED    
     // From MMdaAudioPlayerCallback

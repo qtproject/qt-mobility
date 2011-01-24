@@ -82,7 +82,7 @@ public:
     // From MVideoLoadingObserver
     void MvloLoadingStarted();
     void MvloLoadingComplete();
-
+    void setPlaybackRate(qreal rate);
 #ifdef HAS_AUDIOROUTING_IN_VIDEOPLAYER
     // From MAudioOutputObserver
     void DefaultAudioOutputChanged(CAudioOutput& aAudioOutput,
@@ -111,6 +111,7 @@ protected:
     int doGetBufferStatusL() const;
     qint64 doGetDurationL() const;
     void doSetAudioEndpoint(const QString& audioEndpoint);
+    bool getIsSeekable() const;
 
 private slots:
     void windowHandleChanged();

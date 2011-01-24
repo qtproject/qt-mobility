@@ -541,8 +541,20 @@ int QAudioOutputPrivate::bytesFree() const
 
     if(deviceState != QAudio::ActiveState && deviceState != QAudio::IdleState)
         return 0;
+
     int frames = snd_pcm_avail_update(handle);
-    if((int)frames > (int)buffer_frames)
+    if (frames == -EPIPE) {
+        // Try and handle buffer underrun
+        int err = snd_pcm_recover(handle, frames, 0);
+        if (err < 0)
+            return 0;
+        else
+            frames = snd_pcm_avail_update(handle);
+    } else if (frames < 0) {
+        return 0;
+    }
+
+    if ((int)frames > (int)buffer_frames)
         frames = buffer_frames;
 
     return snd_pcm_frames_to_bytes(handle, frames);

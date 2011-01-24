@@ -41,12 +41,13 @@
 #ifndef VIDEOPLAYER_H
 #define VIDEOPLAYER_H
 
+#include <qmediaplayer.h>
+
 #include <QtGui/QMovie>
 #include <QtGui/QWidget>
 
 QT_BEGIN_NAMESPACE
 class QAbstractButton;
-class QAbstractVideoSurface;
 class QSlider;
 QT_END_NAMESPACE
 
@@ -62,15 +63,13 @@ public slots:
     void play();
 
 private slots:
-    void movieStateChanged(QMovie::MovieState state);
-    void frameChanged(int frame);
-    void setPosition(int frame);
+    void mediaStateChanged(QMediaPlayer::State state);
+    void positionChanged(qint64 position);
+    void durationChanged(qint64 duration);
+    void setPosition(int position);
 
 private:
-    bool presentImage(const QImage &image);
-
-    QMovie movie;
-    QAbstractVideoSurface *surface;
+    QMediaPlayer mediaPlayer;
     QAbstractButton *playButton;
     QSlider *positionSlider;
 };

@@ -102,6 +102,11 @@ private slots:
 #endif
     }
 
+    void testRecursiveLoadPlugins()
+    {
+        // The logic for the test is in test_sensorplugin.cpp (which warns and aborts if the test fails)
+        (void)QSensor::sensorTypes();
+    }
 
     void testTypeRegistered()
     {
@@ -265,13 +270,46 @@ private slots:
         QVERIFY(sensor.isActive());
     }
 
-    void testSetBadRate()
+    void testSetBadDataRate()
     {
         TestSensor sensor;
         sensor.connectToBackend();
 
-        QTest::ignoreMessage(QtWarningMsg, "setDataRate: rate 300 is not supported by the sensor. ");
+        QTest::ignoreMessage(QtWarningMsg, "setDataRate: 300 is not supported by the sensor. ");
         sensor.setDataRate(300);
+        QCOMPARE(sensor.dataRate(), 0);
+    }
+
+    void testSetBadDataRateWhenNotConnected()
+    {
+        TestSensor sensor;
+        sensor.setDataRate(300);
+        QCOMPARE(sensor.dataRate(), 300);
+        sensor.setDataRate(350);
+        QTest::ignoreMessage(QtWarningMsg, "setDataRate: 350 is not supported by the sensor. ");
+        sensor.connectToBackend();
+        QCOMPARE(sensor.dataRate(), 0);
+    }
+
+    void testSetBadOutputRange()
+    {
+        TestSensor sensor;
+        sensor.connectToBackend();
+
+        QTest::ignoreMessage(QtWarningMsg, "setOutputRange: 300 is not supported by the sensor. ");
+        sensor.setOutputRange(300);
+        QCOMPARE(sensor.outputRange(), -1);
+    }
+
+    void testSetBadOutputRangeWhenNotConnected()
+    {
+        TestSensor sensor;
+        sensor.setOutputRange(300);
+        QCOMPARE(sensor.outputRange(), 300);
+        sensor.setOutputRange(350);
+        QTest::ignoreMessage(QtWarningMsg, "setOutputRange: 350 is not supported by the sensor. ");
+        sensor.connectToBackend();
+        QCOMPARE(sensor.outputRange(), -1);
     }
 
     void testEnumHandling()
@@ -316,9 +354,67 @@ private slots:
             QCOMPARE(reading.tapDirection(), QTapReading::Z_Pos);
             reading.setTapDirection(QTapReading::Z_Neg);
             QCOMPARE(reading.tapDirection(), QTapReading::Z_Neg);
-            reading.setTapDirection(static_cast<QTapReading::TapDirection>(1000));
+            // Directions can be ORed together
+            reading.setTapDirection(QTapReading::X_Both);
+            QCOMPARE(reading.tapDirection(), QTapReading::X_Both);
+            reading.setTapDirection(QTapReading::Y_Both);
+            QCOMPARE(reading.tapDirection(), QTapReading::Y_Both);
+            reading.setTapDirection(QTapReading::Z_Both);
+            QCOMPARE(reading.tapDirection(), QTapReading::Z_Both);
+            // You can't set just the Axis
+            reading.setTapDirection(QTapReading::X);
+            QCOMPARE(reading.tapDirection(), QTapReading::Undefined);
+            reading.setTapDirection(QTapReading::Y);
+            QCOMPARE(reading.tapDirection(), QTapReading::Undefined);
+            reading.setTapDirection(QTapReading::Z);
+            QCOMPARE(reading.tapDirection(), QTapReading::Undefined);
+            reading.setTapDirection(static_cast<QTapReading::TapDirection>(0x1000));
             QCOMPARE(reading.tapDirection(), QTapReading::Undefined);
         }
+    }
+
+    void testDynamicDefaultsAndGenericHandling()
+    {
+        TestSensor sensor;
+        QByteArray expected;
+        QByteArray actual;
+
+        // The default for this type is null
+        expected = QByteArray();
+        actual = QSensor::defaultSensorForType("random");
+        QCOMPARE(expected, actual);
+
+        // Register a bogus backend
+        QSensorManager::registerBackend("random", "generic.random", 0);
+
+        // The default for this type is the newly-registered backend
+        expected = "generic.random";
+        actual = QSensor::defaultSensorForType("random");
+        QCOMPARE(expected, actual);
+
+        // Register a non-generic bogus backend
+        QSensorManager::registerBackend("random", "not.generic.random", 0);
+
+        // The default for this type is the newly-registered backend
+        expected = "not.generic.random";
+        actual = QSensor::defaultSensorForType("random");
+        QCOMPARE(expected, actual);
+
+        // Unregister a non-generic bogus backend
+        QSensorManager::unregisterBackend("random", "not.generic.random");
+
+        // The default for this type is the generic backend
+        expected = "generic.random";
+        actual = QSensor::defaultSensorForType("random");
+        QCOMPARE(expected, actual);
+
+        // Unregister a bogus backend
+        QSensorManager::unregisterBackend("random", "generic.random");
+
+        // The default for this type is null again
+        expected = QByteArray();
+        actual = QSensor::defaultSensorForType("random");
+        QCOMPARE(expected, actual);
     }
 
     void testSensorsChangedSignal()

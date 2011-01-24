@@ -86,7 +86,11 @@ void tst_QVCard21Writer::testEncodeVersitProperty()
     buffer.open(QIODevice::WriteOnly);
 
     mWriter->encodeVersitProperty(property);
-    QCOMPARE(encodedProperty, expectedResult);
+    if (encodedProperty != expectedResult) {
+        qDebug() << "Encoded: " << encodedProperty;
+        qDebug() << "Expected: " << expectedResult;
+        QVERIFY(false);
+    }
 }
 
 void tst_QVCard21Writer::testEncodeVersitProperty_data()
@@ -176,13 +180,30 @@ END:VCARD\r\n\
 
     // Characters other than ASCII:
     // Note: KATAKANA_NOKIA is defined as: QString::fromUtf8("\xe3\x83\x8e\xe3\x82\xad\xe3\x82\xa2")
-    // The expected behaviour is to convert to UTF8, then encode with quoted-printable
-    expectedResult = "ORG;CHARSET=UTF-8;ENCODING=QUOTED-PRINTABLE:=E3=83=8E=E3=82=AD=E3=82=A2\r\n";
-
+    // The expected behaviour is to convert to UTF8, then encode with quoted-printable.
+    // Because the result overflows one line, it should be split onto two lines using a
+    // quoted-printable soft line break (EQUALS-CR-LF).  (Note: Versit soft line breaks
+    // (CR-LF-SPACE) are not supported by the native Symbian vCard importers).
+    expectedResult = "ORG;CHARSET=UTF-8;ENCODING=QUOTED-PRINTABLE:=E3=83=8E=E3=82=AD=E3=82=A2=E3=\r\n"
+                     "=83=8E=E3=82=AD=E3=82=A2\r\n";
     property = QVersitProperty();
     property.setName(QLatin1String("ORG"));
-    property.setValue(KATAKANA_NOKIA);
-    QTest::newRow("non-ASCII") << property << expectedResult << codec;
+    property.setValue(KATAKANA_NOKIA + KATAKANA_NOKIA);
+    QTest::newRow("non-ASCII 1") << property << expectedResult << codec;
+
+    expectedResult = "ORG;CHARSET=UTF-8;ENCODING=QUOTED-PRINTABLE:a=E3=83=8E=E3=82=AD=E3=82=A2=E3=\r\n"
+                     "=83=8E=E3=82=AD=E3=82=A2\r\n";
+    property = QVersitProperty();
+    property.setName(QLatin1String("ORG"));
+    property.setValue("a" + KATAKANA_NOKIA + KATAKANA_NOKIA);
+    QTest::newRow("non-ASCII 2") << property << expectedResult << codec;
+
+    expectedResult = "ORG;CHARSET=UTF-8;ENCODING=QUOTED-PRINTABLE:aa=E3=83=8E=E3=82=AD=E3=82=A2=\r\n"
+                     "=E3=83=8E=E3=82=AD=E3=82=A2\r\n";
+    property = QVersitProperty();
+    property.setName(QLatin1String("ORG"));
+    property.setValue("aa" + KATAKANA_NOKIA + KATAKANA_NOKIA);
+    QTest::newRow("non-ASCII 3") << property << expectedResult << codec;
 
     // In Shift-JIS codec.
     QTextCodec* jisCodec = QTextCodec::codecForName("Shift-JIS");

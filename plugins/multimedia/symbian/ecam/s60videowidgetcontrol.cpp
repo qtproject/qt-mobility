@@ -49,7 +49,6 @@
 #include <coecntrl.h>   // CCoeControl
 #include <w32std.h>
 
-
 S60ViewFinderWidget::S60ViewFinderWidget(QWidget *parent):
     QLabel(parent),
     m_isDirect(false) // Bitmap as default
@@ -192,12 +191,17 @@ QWidget *S60VideoWidgetControl::videoWidget()
 
 WId S60VideoWidgetControl::windowId()
 {
-    if (m_widget->internalWinId()) {
-        // Returns NativeWindow WindowID or NULL
-        m_windowId = m_widget->internalWinId();
-    } else {
-        m_windowId = m_widget->effectiveWinId();
+    WId m_windowId = 0;
+    if (m_widget) {
+        if (m_widget->internalWinId()) {
+            // Returns NativeWindow WindowID (if widget is native window) or NULL
+            m_windowId = m_widget->internalWinId();
+        } else if (m_widget->parentWidget() && m_widget->effectiveWinId()) {
+            // (While not reparenting) returns the native parent's Native WindowID
+            m_windowId = m_widget->effectiveWinId();
+        }
     }
+
     return m_windowId;
 }
 
@@ -208,9 +212,8 @@ Qt::AspectRatioMode S60VideoWidgetControl::aspectRatioMode() const
 
 void S60VideoWidgetControl::setAspectRatioMode(Qt::AspectRatioMode ratio)
 {
-    if (m_aspectRatioMode == ratio) {
+    if (m_aspectRatioMode == ratio)
         return;
-    }
     m_aspectRatioMode = ratio;
 
     if (!m_isViewFinderDirect) {

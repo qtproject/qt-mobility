@@ -44,14 +44,14 @@ This section describes the functionality of the Connectivity module that is expe
 technology preview and the functionality that is known not to work.
 
 The APIs are under development and subject to change between the technology preview release and
-their official release with Qt Mobility 1.2.
+their official release with QtMobility 1.2.
 
 \section2 NFC
 
 Unfortunately there currently are no functional backends for real hardware. An emulator backend is
 available, however, which is used by both the unit tests and the Qt Simulator backend. Use the \i {master} branch of Qt Simulator at \l {http://qt.gitorious.org/qt-labs/simulator}.
 
-The \l {Qt Mobility Examples#Connectivity}{Connectivity examples} demonstrate how to use NFC
+The \l {QtMobility Examples#Connectivity}{Connectivity examples} demonstrate how to use NFC
 functionality in your application.
 
 What should work:
@@ -87,7 +87,7 @@ What is known \bold NOT to work:
 \section2 Bluetooth
 
 The Bluetooth API is under development and subject to change between the tech
-preview and its official release with Qt Mobility 1.2. For the technology
+preview and its official release with QtMobility 1.2. For the technology
 preview the only functional backend is bluez.
 
 What should work:

@@ -260,6 +260,7 @@ bool QGraphicsVideoItem::setMediaObject(QMediaObject *object)
         }
     }
 
+    d->mediaObject = 0;
     return false;
 }
 
@@ -367,13 +368,22 @@ void QGraphicsVideoItem::paint(
 
 QVariant QGraphicsVideoItem::itemChange(GraphicsItemChange change, const QVariant &value)
 {
-    if (change == ItemScenePositionHasChanged) {
+    Q_D(QGraphicsVideoItem);
+
+    switch (change) {
+    case ItemScenePositionHasChanged:
         update(boundingRect());
-    } else {
-        return QGraphicsItem::itemChange(change, value);
+        break;
+    case ItemVisibleChange:
+        //move overlay out of the screen if video item becomes invisible
+        if (d->windowControl != 0 && !value.toBool())
+            d->windowControl->setDisplayRect(QRect(-1,-1,1,1));
+        break;
+    default:
+        break;
     }
 
-    return value;
+    return QGraphicsItem::itemChange(change, value);
 }
 
 void QGraphicsVideoItem::timerEvent(QTimerEvent *event)

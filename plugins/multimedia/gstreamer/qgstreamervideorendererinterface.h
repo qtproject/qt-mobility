@@ -57,10 +57,6 @@ public:
     //(winId is known,
     virtual bool isReady() const { return true; }
 
-    //video renderer can declare it's confident it can play
-    //video frames  without colorspace converter inserted before.
-    virtual bool isColorSpaceElementRequired() const { return true; }
-
     //video renderer may handle video sink specific gstreamer messages.
     virtual void handleBusMessage(GstMessage*) {};
     virtual void handleSyncMessage(GstMessage*) {};
