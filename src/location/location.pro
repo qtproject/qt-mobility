@@ -25,7 +25,8 @@ PUBLIC_HEADERS += \
                     qgeopositioninfosource.h \
                     qgeosatelliteinfo.h \
                     qgeosatelliteinfosource.h \
-                    qnmeapositioninfosource.h
+                    qnmeapositioninfosource.h \
+                    qgeopositioninfosourcefactory.h
 
 PRIVATE_HEADERS += \
                     qgeoaddress_p.h \
@@ -149,7 +150,7 @@ SOURCES += \
             qlocationutils.cpp \
             qnmeapositioninfosource.cpp \
             qgeoareamonitor_polling.cpp \
-    qgeopositioninfosourcefactory.cpp
+            qgeopositioninfosourcefactory.cpp
 
 symbian {
     TARGET.CAPABILITY = ALL -TCB
