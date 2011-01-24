@@ -71,8 +71,8 @@ QTM_BEGIN_NAMESPACE
     Various map objects can be added to the map.  These map objects are 
     specified in terms of coordinates and metres.
 
-    MapObjects can be directly added to the Map element, it will consider them
-    as children. The various objects that can be added include:
+    MapObjects can be directly added to the Map element and it will display them
+    automatically. The various objects that can be added include:
 
     \list
     \o MapRectangle
@@ -86,6 +86,9 @@ QTM_BEGIN_NAMESPACE
     \endlist
 
     Of the above list, MapObjectView is a special case and not a MapObject as such.
+    Here is a small example to illustrate this:
+
+   \snippet doc/src/snippets/declarative/declarative-map.qml Basic MapObjects and View on Map
 
     The Map element is part of the \bold{QtMobility.location 1.1} module.
 */
@@ -703,6 +706,7 @@ void QDeclarativeGraphicsGeoMap::internalConnectivityModeChanged(QGraphicsGeoMap
     Adds the given MapOject to the Map. If the object already
     is on the Map, it will not be added again.
 
+    Note: MapObjectViews can not be added with this method.
 */
 
 void QDeclarativeGraphicsGeoMap::addMapObject(QDeclarativeGeoMapObject *object)
@@ -714,7 +718,7 @@ void QDeclarativeGraphicsGeoMap::addMapObject(QDeclarativeGeoMapObject *object)
 }
 
 /*!
-    \qmlmethod Map::addMapObject(MapObject)
+    \qmlmethod Map::removeMapObject(MapObject)
 
     Removes the given MapObject from the Map. If the MapObject does not
     exist, function does nothing.
