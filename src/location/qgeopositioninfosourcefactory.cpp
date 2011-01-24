@@ -57,6 +57,21 @@ QTM_BEGIN_NAMESPACE
   The other functions must be overridden by all plugins, other than
   sourcePriority() which defaults to returning 0. Higher values of
   priority will be preferred to lower ones.
+
+  \section1 Default plugins
+
+  Normally, the platform default position source will always overrule any
+  plugin-based position source during a call to createDefaultSource().
+  However, a limited measure is available where needed to change this behaviour,
+  using a system-wide configuration file.
+
+  The configuration file is in the system's default QSettings format, under
+  \c Nokia/QtLocationPosAndSat (for example, on most Linux variants this is
+  \c /etc/xdg/Nokia/QtLocationPosAndSat.conf). To set a default plugin source,
+  set the value \c position.plugin.operator.whitelist to a string of the format
+  \c "name,filename,hash,size" where \a name is the same as returned by the
+  plugin's \c sourceName() function, \a size is the size of the shared library
+  and \a hash is the library's SHA1 hash in hex format.
   */
 
 /*!
