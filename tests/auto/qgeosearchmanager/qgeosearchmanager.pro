@@ -8,11 +8,11 @@ INCLUDEPATH += ../../../src/location \
                ../../../src/location/maps \
                ../../../src/location/landmarks
 
-HEADERS += ../qlocationtestutils_p.h \
+HEADERS += ../qgeocoordinate/qlocationtestutils_p.h \
     tst_qgeosearchmanager.h
 
 SOURCES += tst_qgeosearchmanager.cpp \
-           ../qlocationtestutils.cpp
+           ../qgeocoordinate/qlocationtestutils.cpp
 
 CONFIG += mobility
 MOBILITY = location
