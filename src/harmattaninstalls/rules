@@ -39,8 +39,8 @@ QTM_MODULES += versit
 # Add here any variable or target overrides you need.
 DEB_CONFIGURE_NORMAL_ARGS := -maemo6  -prefix /usr -headerdir /usr/include/qt4 \
 		-plugindir /usr/lib/qt4/plugins -modules "$(QTM_MODULES)" \
-		-examples -examplesdir /usr/lib/qtmobilty/examples \
-		-demos -demosdir /usr/lib/qtmobilty/demos \
+		-examples -examplesdir /usr/lib/qtmobility/examples \
+		-demos -demosdir /usr/lib/qtmobility/demos \
 		-silent -release
 ifeq ($(MOBILITY_ENABLE_STATIC_CONFIG),1)
     TARGET_BUILD=0

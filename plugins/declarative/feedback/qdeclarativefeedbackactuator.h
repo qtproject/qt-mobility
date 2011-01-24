@@ -38,31 +38,67 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef QDECLARATIVEFEEDBACKACTUATOR_H
+#define QDECLARATIVEFEEDBACKACTUATOR_H
 
-#include "hapticbutton.h"
-#include <QPainter>
+#include <QtDeclarative/qdeclarative.h>
+#include "qfeedbackactuator.h"
 
-HapticButton::HapticButton(const QString &label) :
-    QWidget(0), m_label(label)
+QTM_USE_NAMESPACE
+
+class QDeclarativeFeedbackActuator : public QObject
 {
-    setMinimumSize(100, 100);
-}
+    Q_OBJECT
+    Q_PROPERTY(int actuatorId READ actuatorId)
+    Q_PROPERTY(QString name READ name)
+    Q_PROPERTY(QFeedbackActuator::State state READ state)
+    Q_PROPERTY(bool valid READ isValid)
+    Q_PROPERTY(bool enabled READ isEnabled WRITE setEnabled NOTIFY enabledChanged)
+public:
+    QDeclarativeFeedbackActuator(QObject *parent = 0)
+        :QObject(parent)
+    {
+        actuator = new QFeedbackActuator(this);
+        connect(actuator, SIGNAL(enabledChanged()), this, SIGNAL(enabledChanged()));
+    }
 
-void HapticButton::setLabel(const QString& label)
-{
-    m_label = label;
-}
+    int actuatorId() const
+    {
+        return actuator->id();
+    }
+    bool isValid() const
+    {
+        return actuator->isValid();
+    }
 
-void HapticButton::mousePressEvent(QMouseEvent *)
-{
-    emit clicked();
-}
+    QString name() const
+    {
+        return actuator->name();
+    }
+    QFeedbackActuator::State state() const
+    {
+        return actuator->state();
+    }
 
-void HapticButton::paintEvent(QPaintEvent *)
-{
-    QPainter paint(this);
+    Q_INVOKABLE bool isCapabilitySupported(QFeedbackActuator::Capability capbility) const
+    {
+        return actuator->isCapabilitySupported(capbility);
+    }
 
-    QRect r(1, 1, width()-2, height()-2);
-    paint.drawRoundedRect(r, 10, 10);
-    paint.drawText(r, Qt::AlignCenter, m_label);
-}
+    bool isEnabled() const
+    {
+        return actuator->isEnabled();
+    }
+    void setEnabled(bool v)
+    {
+        actuator->setEnabled(v);
+    }
+
+signals:
+    void enabledChanged();
+
+private:
+    QFeedbackActuator* actuator;
+};
+
+#endif
