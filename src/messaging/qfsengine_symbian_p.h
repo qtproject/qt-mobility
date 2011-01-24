@@ -68,10 +68,10 @@
 #include <memailmessagesearch.h>
 #include <memailfolder.h>
 #include <mmailboxsyncobserver.h>
-#include <memailrequestobserver.h>
 #ifdef FREESTYLEMAILBOXOBSERVERUSED
 #include <mmailboxcontentobserver.h>
 #include <memailclientapiobserver.h>
+#include <memailrequestobserver.h>
 #endif
 
 using namespace EmailInterface;
@@ -152,7 +152,7 @@ public:
 #ifdef FREESTYLEMAILBOXOBSERVERUSED
 class CFSEngine : public QObject, public MMailboxContentObserver, public MEmailClientApiObserver, public MEmailRequestObserver
 #else
-class CFSEngine : public QObject, public MEmailRequestObserver
+class CFSEngine : public QObject
 #endif
 {
     Q_OBJECT
