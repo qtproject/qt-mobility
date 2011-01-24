@@ -54,7 +54,7 @@
 #include <qgeopositioninfo.h>
 
 #include "testqgeopositioninfosource_p.h"
-#include "qlocationtestutils_p.h"
+#include "../qgeocoordinate/qlocationtestutils_p.h"
 
 #ifdef TST_GEOCLUEMOCK_ENABLED
 #include <geoclue/geoclue-master.h>

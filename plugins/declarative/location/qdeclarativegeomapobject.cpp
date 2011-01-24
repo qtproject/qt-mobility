@@ -41,9 +41,12 @@
 
 #include "qdeclarativegeomapobject_p.h"
 #include "qdeclarativegeomapmousearea_p.h"
+#include <qdeclarativelandmark_p.h>
 
 #include <QDeclarativeParserStatus>
-#include <QDebug>
+#include <QAbstractItemModel>
+#include <QDeclarativeContext>
+#include <QGeoMapData>
 
 QTM_BEGIN_NAMESPACE
 
@@ -181,6 +184,192 @@ void QDeclarativeGeoMapObject::setVisible(bool visible)
 bool QDeclarativeGeoMapObject::isVisible() const
 {
     return visible_;
+}
+
+/*!
+    \qmlclass MapObjectView
+
+    \brief The MapObjectView is used to populate Map from a model.
+    \inherits QDeclarativeItem
+
+    \ingroup qml-location-maps
+
+    The MapObjectView is used to populate Map with MapObjects from a model.
+    The MapObjectView element only makes sense when contained in a Map object,
+    meaning that it has no standalone presentation.
+
+    Note: For model data, currently only LandmarkModel is supported. Using other types
+    of models results in undefined behavior.
+
+    The MapObjectView element is part of the \bold{QtMobility.location 1.2} module.
+*/
+
+QDeclarativeGeoMapObjectView::QDeclarativeGeoMapObjectView(QDeclarativeItem *parent)
+    : QObject(parent), componentCompleted_(false), delegate_(0), model_(0), mapData_(0)
+{
+}
+
+QDeclarativeGeoMapObjectView::~QDeclarativeGeoMapObjectView()
+{
+    if (!mapObjects_.isEmpty()) {
+        for (int i = 0; i < mapObjects_.size(); ++i) {
+            mapData_->removeMapObject(mapObjects_.at(i)->mapObject());
+        }
+        // Model owns the data, do not delete the pointers.
+        mapObjects_.clear();
+    }
+}
+
+void QDeclarativeGeoMapObjectView::componentComplete()
+{
+    componentCompleted_ = true;
+}
+
+QVariant QDeclarativeGeoMapObjectView::model() const
+{
+    return modelVariant_;
+}
+
+/*!
+    \qmlproperty Component MapObjectView::model
+
+    This property holds the model that provides data for
+    populating data with delegates.
+
+    Note: Currently only LandmarkModel is supported. Using other
+    models results in undefined behavior.
+
+*/
+
+void QDeclarativeGeoMapObjectView::setModel(const QVariant &model)
+{
+    if (!model.isValid() || model == modelVariant_)
+        return;
+    QObject *object = qvariant_cast<QObject*>(model);
+    QAbstractItemModel* itemModel;
+    if (!object || !(itemModel = qobject_cast<QAbstractItemModel*>(object))) {
+        return;
+    }
+    modelVariant_ = model;
+    model_ = itemModel;
+    // At the moment maps only works with landmark model. Because of this tight
+    // restriction, connecting to model resets is adequate. This must be changed
+    // if and when the model support is leveraged.
+    QObject::connect(model_, SIGNAL(modelReset()), this, SLOT(modelReset()));
+    emit modelChanged();
+}
+
+void QDeclarativeGeoMapObjectView::modelReset()
+{
+    repopulate();
+}
+
+QDeclarativeComponent* QDeclarativeGeoMapObjectView::delegate() const
+{
+    return delegate_;
+}
+
+/*!
+    \qmlproperty Component MapObjectView::delegate
+
+    This property holds the delegate which defines how each item in the
+    model should be displayed. The Component must contain exactly one
+    MapObject -derived element as the root element.
+
+*/
+
+void QDeclarativeGeoMapObjectView::setDelegate(QDeclarativeComponent *delegate)
+{
+    if (!delegate)
+        return;
+    delegate_ = delegate;
+    if (componentCompleted_)
+        repopulate();
+    emit delegateChanged();
+}
+
+void QDeclarativeGeoMapObjectView::setMapData(QGeoMapData *data)
+{
+    if (!data || mapData_) // changing mapData_ on the fly not supported
+        return;
+    mapData_ = data;
+}
+
+// Removes and repopulates all items.
+void QDeclarativeGeoMapObjectView::repopulate()
+{
+    if (!componentCompleted_ || !mapData_ || !delegate_ || !model_)
+        return;
+    if (!mapObjects_.isEmpty()) {
+        for (int i = 0; i < mapObjects_.size(); ++i) {
+            mapData_->removeMapObject(mapObjects_.at(i)->mapObject());
+        }
+        // Model owns the data, do not delete the pointers.
+        mapObjects_.clear();
+    }
+    // Iterate model data and instantiate delegates.
+    // We could use more specialized landmark model calls here too,
+    // but hopefully the support will be leveraged to a general model
+    // level.
+    QDeclarativeGeoMapObject* mapObject;
+    for (int i = 0; i < model_->rowCount(); ++i) {
+         mapObject = createItem(i);
+         if (!mapObject)
+             break;
+         mapObjects_.append(mapObject);
+         mapData_->addMapObject(mapObject->mapObject());
+    }
+}
+
+// Currently item creation is tightly bound to landmark model. Some day
+// this may be leveraged to any user defined model or e.g. XML model.
+QDeclarativeGeoMapObject* QDeclarativeGeoMapObjectView::createItem(int modelRow)
+{
+    if (!delegate_ || !model_)
+        return NULL;
+    QModelIndex index = model_->index(modelRow, 0); // column 0
+    if (!index.isValid()) {
+        qWarning() << "QDeclarativeGeoMapObject Index is not valid: " << modelRow;
+        return NULL;
+    }
+    QHashIterator<int, QByteArray> iterator(model_->roleNames());
+    QDeclarativeContext *itemContext = new QDeclarativeContext(qmlContext(this));
+    while (iterator.hasNext()) {
+        iterator.next();
+
+        QVariant modelData = model_->data(index, iterator.key());
+        if (!modelData.isValid())
+            continue;
+        // This call would fail for <QObject*> Need to be figured out why
+        // if the model support is leveraged.
+        QObject *data_ptr = modelData.value<QDeclarativeLandmark*>();
+        if (!data_ptr)
+            continue;
+        itemContext->setContextProperty(QLatin1String(iterator.value().data()), data_ptr);
+        // To avoid name collisions (delegate has same named attribute as model's role)
+        // one can add here that the data is accessible also e.g. via 'model'.
+        // In case of landmarks, two of the following are then equivalent:
+        // latitude : landmark.coordinate.latitude
+        // latitude : model.landmark.coordinate.latitude
+        // itemContext->setContextProperty(QLatin1String("model."), data_ptr);
+        // At the time being, it is however uncertain how to make it from a
+        // QtMobility project (QDeclarativeVisualDataModel not available).
+        // This however needs to be figured out if model support is generalized.
+    }
+    QObject* obj = delegate_->create(itemContext);
+    if (!obj) {
+        qWarning() << "QDeclarativeGeoMapObject map object creation failed.";
+        delete itemContext;
+        return NULL;
+    }
+    QDeclarativeGeoMapObject *declMapObj =  qobject_cast<QDeclarativeGeoMapObject*>(obj);
+    if (!declMapObj) {
+        qWarning() << "QDeclarativeGeoMapObject map object delegate is of unsupported type.";
+        delete itemContext;
+        return NULL;
+    }
+    delete itemContext;
+    return declMapObj;
 }
 
 #include "moc_qdeclarativegeomapobject_p.cpp"
