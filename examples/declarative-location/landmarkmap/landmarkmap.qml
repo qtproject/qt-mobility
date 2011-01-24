@@ -60,16 +60,34 @@ Item {
         topLeft: map.toCoordinate(Qt.point(0,0))
         bottomRight: map.toCoordinate(Qt.point(page.width, page.height))
     }
+    
+     LandmarkProximityFilter {
+         id: proximityFilter
+         center: myPositionSource.position.coordinate
+	 //center: Coordinate {latitude: -27; longitude: 153}
+         radius: 500000
+     }
+       
     LandmarkModel {
-        id: landmarkModel
+        id: landmarkModelAll
         autoUpdate: true
-        onModelChanged: {
-            console.log("Landmark model changed, landmark count: " + count)
-            pinpointViewContainer.opacity = 1.0
-        }
         filter: boxFilter
         limit: 50
+        onModelChanged: {
+            console.log("All landmark model changed, landmark count: " + count)
+        }
     }
+    
+    LandmarkModel {
+        id: landmarkModelNear
+        autoUpdate: true
+        filter: proximityFilter
+        limit: 50
+        onModelChanged: {
+            console.log("Near landmark model changed, landmark count: " + count)
+        }
+    }
+    
     Component {
         id: landmarkListDelegate
         Item {
@@ -87,32 +105,6 @@ Item {
                 color: "white"; font.bold: true; style: Text.Raised; styleColor: "black"
                 anchors.top:  latField.bottom
                 id: lonField; text: "    Lon: " + landmark.coordinate.longitude
-            }
-        }
-    }
-
-    Component {
-        id: landmarkMapDelegate
-        Item {
-            width: 50; height: 20
-            x: map.toScreenPosition(landmark.coordinate).x
-            y: map.toScreenPosition(landmark.coordinate).y
-            Image {
-                id: landmarkIcon
-                source: "landmarkmapmobile/images/landmarkstar.png"
-                MouseArea{
-                    anchors.fill: parent
-                    onClicked: {
-                        console.log("Landmark clicked, setting visible: " + landmark.name)
-                        landmarkNameText.visible = true
-                    }
-                }
-            }
-            Text {
-                id: landmarkNameText
-                anchors.top: landmarkIcon.bottom
-                text:  landmark.name
-                visible: false
             }
         }
     }
@@ -158,17 +150,16 @@ Item {
             onPressed : {
                 mouseDown = true
                 // While panning, its better not to actively udpate the model
-                // as it results in poor performance. Instead set opacity to make
-                // it more obvious that the landmark positions are not valid.
-                landmarkModel.autoUpdate = false
-                pinpointViewContainer.opacity = 0.3
+                // as it results in poor performance.
+                landmarkModelAll.autoUpdate = false
+                landmarkModelNear.autoUpdate = false
                 lastX = mouse.x
                 lastY = mouse.y
             }
             onReleased : {
                 mouseDown = false
-                //pinpointViewContainer.opacity = 1.0
-		landmarkModel.autoUpdate = true
+		landmarkModelAll.autoUpdate = true
+		landmarkModelNear.autoUpdate = true
                 landmarkModel.update()
                 lastX = -1
                 lastY = -1
@@ -193,7 +184,7 @@ Item {
 
         ListView {
             id: landmarkListView;
-            model: landmarkModel;
+            model: landmarkModelAll;
             delegate: landmarkListDelegate;
             width: parent.width - 20;
             height: parent.height -20;
@@ -223,8 +214,53 @@ Item {
             size.width: parent.width
             size.height: parent.height
             zoomLevel: 1
+            
+            MapObjectView {
+	        id: allLandmarks
+		model: landmarkModelAll
+		delegate: Component {
+		    MapImage {
+	                source:  "landmarkmapmobile/images/landmarkstar.png"
+		        coordinate: Coordinate {
+	                    latitude: landmark.coordinate.latitude
+		            longitude: landmark.coordinate.longitude
+	                }
+	            }
+	        }
+	    }
+	    
+	    MapObjectView {
+	        id: landmarksNearMe
+		model: landmarkModelNear
+		delegate: Component {
+		    MapGroup {
+		        MapCircle {
+	                    color: "red"
+	                    radius: 1000
+		            center: Coordinate {
+	                        latitude: landmark.coordinate.latitude
+		                longitude: landmark.coordinate.longitude
+	                    }
+	                }
+	                
+	                /*
+	                MapText {
+	                    color: "Blue"
+	                    font.pointSize:10
+	                    text: landmark.name
+		            coordinate: Coordinate {
+	                        latitude: landmark.coordinate.latitude
+		                longitude: landmark.coordinate.longitude
+	                    }
+	                }
+	                */
+	            }
+		}
+	    }
+	    
             center: Coordinate {latitude: -27; longitude: 153}
             //center: myPositionSource.position.coordinate
+	    
             onZoomLevelChanged: {
                 console.log("Zoom changed")
                 updateFilters();
@@ -244,21 +280,11 @@ Item {
             }
         } // map
 
-
-        Item {
-            id: pinpointViewContainer
-            x: parent.x
-            Repeater {
-                id: landmarkPinpointView
-                model: landmarkModel
-                delegate: landmarkMapDelegate
-            }
-        }
         Mobile.Floater {
             id : dataFloater
             latitude: myPositionSource.position.coordinate.latitude
             longitude:  myPositionSource.position.coordinate.longitude
-            landmarks: landmarkModel.count
+            landmarks: landmarkModelAll.count
             categories: landmarkCategoryModel.count
         }
     } // dataArea
@@ -318,8 +344,8 @@ Item {
             myPositionSource.start()
         }
         onButton2Clicked: {
-            console.log("Clicked, setting import file to get landmarks, count was: " + landmarkModel.count);
-            landmarkModel.importFile = "mylm.lmx"
+            console.log("Clicked, setting import file to get landmarks, count was: " + landmarkModelAll.count);
+            landmarkModelAll.importFile = "mylm.lmx"
         }
         onButton3Clicked: {
             console.log("Clicked, setting map center to follow (rebind map center to myPosition");
@@ -334,13 +360,11 @@ Item {
             PropertyChanges { target: map; x: -dataArea.width }
             PropertyChanges { target: map; x: -dataArea.width }
             PropertyChanges { target: sliderContainer; x: -dataArea.width}
-            PropertyChanges { target: pinpointViewContainer; x: -dataArea.width - 20;}
             PropertyChanges { target: landmarkCategoryListView; x: 0 }
         }, State {
             name: "LandmarkView"
             PropertyChanges { target: map; x: -dataArea.width }
             PropertyChanges { target: sliderContainer; x: -dataArea.width}
-            PropertyChanges { target: pinpointViewContainer; x: -dataArea.width - 20;}
             PropertyChanges { target: landmarkListView; x: 0 }
         }, State {
             name:  "Following"

@@ -286,8 +286,6 @@ QDeclarativeCoordinate* QDeclarativeLandmarkProximityFilter::center() const
 void QDeclarativeLandmarkProximityFilter::setCenter(QDeclarativeCoordinate* coordinate)
 {
     m_coordinate = coordinate;
-    QObject::connect(m_coordinate, SIGNAL(latitudeChanged(double)), this, SIGNAL(filterContentChanged()));
-    QObject::connect(m_coordinate, SIGNAL(longitudeChanged(double)), this, SIGNAL(filterContentChanged()));
     emit centerChanged();
     emit filterContentChanged();
 }

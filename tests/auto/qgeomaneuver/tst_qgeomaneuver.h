@@ -49,7 +49,7 @@
 #include <QMetaType>
 #include <QSignalSpy>
 
-#include "../qlocationtestutils_p.h"
+#include "../qgeocoordinate/qlocationtestutils_p.h"
 #include <qgeomaneuver.h>
 #include <qgeocoordinate.h>
 

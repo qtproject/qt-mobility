@@ -41,15 +41,65 @@
 #include <QtGui/QApplication>
 #include "mainwindow.h"
 
-int main(int argc, char *argv[])
+#include <QUrl>
+#include <QVariant>
+#include <QNetworkProxyFactory>
+
+int main(int argc, char * argv[])
 {
     QApplication a(argc, argv);
-    MainWindow w;
+
+    //QString urlEnv = QProcessEnvironment::systemEnvironment().value("http_proxy");
+    QString urlEnv = qgetenv("http_proxy");
+    if (!urlEnv.isEmpty()) {
+        QUrl url = QUrl(urlEnv, QUrl::TolerantMode);
+        QNetworkProxy proxy;
+        proxy.setType(QNetworkProxy::HttpProxy);
+        proxy.setHostName(url.host());
+        proxy.setPort(url.port(8080));
+        QNetworkProxy::setApplicationProxy(proxy);
+    } else
+        QNetworkProxyFactory::setUseSystemConfiguration(true);
+
+    QVariantHash parameters;
+
+    QStringList args = QApplication::arguments();
+
+    while (!args.isEmpty()) {
+        QString word = args.takeFirst();
+        if (word[0] == QChar('-')) {
+            word.remove(0, 1);
+            if (args.isEmpty() || args.first()[0] == QChar('-')) {
+                parameters[word] = true;
+            }
+            else {
+                QString value = args.takeFirst();
+                if (value == "true" || value == "on" || value == "enabled") {
+                    parameters[word] = true;
+                }
+                else if (value == "false" || value == "off" || value == "disabled") {
+                    parameters[word] = false;
+                }
+                else {
+                    bool ok = false;
+                    double realValue = value.toDouble(&ok);
+                    if (ok) {
+                        parameters[word] = realValue;
+                    }
+                    else {
+                        parameters[word] = value;
+                    }
+                }
+            }
+        }
+    }
+
+    MainWindow w(parameters);
 #if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE_WM) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
-    w.setControlsVisible(false);
     w.showMaximized();
 #else
     w.show();
 #endif
+
     return a.exec();
 }
