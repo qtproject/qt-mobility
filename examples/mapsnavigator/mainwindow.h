@@ -43,7 +43,8 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QGeoServiceProvider>
+
+#include "qgeoserviceprovider.h"
 
 #include "mapswidget.h"
 #include "marker.h"

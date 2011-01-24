@@ -42,13 +42,14 @@
 #ifndef MAPSWIDGET_H
 #define MAPSWIDGET_H
 
-#include <QGraphicsGeoMap>
 #include <QGraphicsView>
 #include <QGraphicsScene>
-#include <QGeoMappingManager>
 #include <QWidget>
 #include <QGraphicsRectItem>
 #include <QGraphicsSimpleTextItem>
+
+#include "qgraphicsgeomap.h"
+#include "qgeomappingmanager.h"
 
 using namespace QtMobility;
 

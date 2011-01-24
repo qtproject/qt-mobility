@@ -41,9 +41,11 @@
 
 #include "marker.h"
 #include "mapswidget.h"
+
 #include <QPixmap>
-#include <QLandmark>
-#include <QGeoBoundingCircle>
+
+#include "qlandmark.h"
+#include "qgeoboundingcircle.h"
 
 Marker::Marker(MarkerType type) :
     QGeoMapPixmapObject()

@@ -42,12 +42,13 @@
 #include "mainwindow.h"
 
 #include <QApplication>
-#include <QGeoServiceProvider>
 #include <QList>
 #include <QString>
 #include <QUrl>
 #include <QProcessEnvironment>
 #include <QNetworkProxyFactory>
+
+#include "qgeoserviceprovider.h"
 
 int main(int argc, char *argv[])
 {

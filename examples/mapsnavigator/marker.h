@@ -42,13 +42,14 @@
 #ifndef MARKER_H
 #define MARKER_H
 
-#include <QGeoMapPixmapObject>
-#include <QGeoSearchManager>
-#include <QGraphicsGeoMap>
-#include <QGeoCoordinate>
 #include <QSignalMapper>
-#include <QGeoSearchReply>
-#include <QGeoAddress>
+
+#include "qgeomappixmapobject.h"
+#include "qgeosearchmanager.h"
+#include "qgeocoordinate.h"
+#include "qgraphicsgeomap.h"
+#include "qgeoaddress.h"
+#include "qgeosearchreply.h"
 
 using namespace QtMobility;
 

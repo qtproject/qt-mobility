@@ -46,7 +46,8 @@
 #include <QLineEdit>
 #include <QLabel>
 #include <QDoubleSpinBox>
-#include <QGeoAddress>
+
+#include "qgeoaddress.h"
 
 #include "marker.h"
 

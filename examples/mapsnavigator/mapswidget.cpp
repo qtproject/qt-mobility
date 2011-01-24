@@ -42,11 +42,12 @@
 #include "mapswidget.h"
 #include "marker.h"
 
-#include <QGeoCoordinate>
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsSceneWheelEvent>
 #include <QPropertyAnimation>
 #include <QTimer>
+
+#include "qgeocoordinate.h"
 
 GeoMap::GeoMap(QGeoMappingManager *manager, MapsWidget *mapsWidget) :
     QGraphicsGeoMap(manager), m_mapsWidget(mapsWidget)

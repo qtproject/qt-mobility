@@ -7,6 +7,11 @@ RESOURCES += mapsnavigator.qrc
 
 include(../examples.pri)
 
+INCLUDEPATH += ../../src/location \
+               ../../src/location/maps \
+               ../../src/location/maps/tiled \
+               ../../src/location/landmarks
+
 CONFIG += mobility
 MOBILITY = location
 equals(QT_MAJOR_VERSION, 4):lessThan(QT_MINOR_VERSION, 7){
