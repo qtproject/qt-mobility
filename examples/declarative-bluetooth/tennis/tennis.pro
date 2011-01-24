@@ -12,3 +12,6 @@ symbian {
 
 RESOURCES += \
     tennis.qrc
+
+OTHER_FILES += \
+    sensor.qml
