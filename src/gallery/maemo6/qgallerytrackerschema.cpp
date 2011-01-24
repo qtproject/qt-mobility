@@ -1119,19 +1119,21 @@ QDocumentGallery::Error QGalleryTrackerSchema::prepareQueryResponse(
         int offset,
         int limit) const
 {
-    QString query;
-
-    QDocumentGallery::Error error = buildFilterQuery(&query, scope, rootItemId, filter);
-
-    if (error != QDocumentGallery::NoError) {
-        return error;
-    } else if (m_itemIndex >= 0) {
-        populateItemArguments(
-                arguments, dbus, query, propertyNames, sortPropertyNames, offset, limit);
-
-        return QDocumentGallery::NoError;
-    } else {
+    if (m_itemIndex < 0) {
         return QDocumentGallery::ItemTypeError;
+    } else {
+        QString query;
+
+        QDocumentGallery::Error error = buildFilterQuery(&query, scope, rootItemId, filter);
+
+        if (error != QDocumentGallery::NoError) {
+            return error;
+        } else {
+            populateItemArguments(
+                    arguments, dbus, query, propertyNames, sortPropertyNames, offset, limit);
+
+            return QDocumentGallery::NoError;
+        }
     }
 }
 
@@ -1179,148 +1181,101 @@ QDocumentGallery::Error QGalleryTrackerSchema::buildFilterQuery(
     QString rootItemStatement;
     QString filterStatement;
 
-    if (m_itemIndex != -1 && itemTypes[m_itemIndex].filterFragment)
-        filterStatement = QLatin1String(itemTypes[m_itemIndex].filterFragment);
-
     if (!rootItemId.isEmpty()) {
-        int index;
-        if ((index = itemTypes.indexOfItemId(rootItemId)) != -1) {
+        const int index = itemTypes.indexOfItemId(rootItemId);
+        if (index != -1) {
             if (itemTypes[index].itemType == QDocumentGallery::Artist) {
-                if (m_itemIndex >= 0) {
-                    QString property;
-                    if (qt_galleryItemTypeList[m_itemIndex].itemType == QDocumentGallery::Album) {
-                        rootItemStatement = QLatin1String("{?track nie:isLogicalPartOf ?x}");
-                        property = QLatin1String("nmm:performer(?track)");
-                    } else if (qt_galleryItemTypeList[m_itemIndex].itemType == QDocumentGallery::Audio) {
-                        property = QLatin1String("nmm:performer(?x)");
-                    }
-                    if (!property.isEmpty()) {
-                        if (!filterStatement.isEmpty())
-                            filterStatement += QLatin1String(" && ");
-                        filterStatement
-                            += property
-                            + QLatin1String("=<")
-                            + itemTypes[index].prefix.strip(rootItemId).toString()
-                            + QLatin1String(">");
-                    } else {
-                        result = QDocumentGallery::ItemIdError;
-                    }
-                }
-            } else if (itemTypes[index].itemType == QDocumentGallery::AlbumArtist) {
-                QString property;
-                if (m_itemIndex >= 0) {
-                    if (qt_galleryItemTypeList[m_itemIndex].itemType == QDocumentGallery::Audio)
-                        property = QLatin1String("nmm:albumArtist(nmm:musicAlbum(?x))");
-                    else if (qt_galleryItemTypeList[m_itemIndex].itemType == QDocumentGallery::Album)
-                        property = QLatin1String("nmm:albumArtist(?x)");
-                }
-                if (!property.isEmpty()) {
-                    if (!filterStatement.isEmpty())
-                        filterStatement += QLatin1String(" && ");
+                if (qt_galleryItemTypeList[m_itemIndex].itemType == QDocumentGallery::Album) {
+                    rootItemStatement = QLatin1String("{?track nie:isLogicalPartOf ?x}");
                     filterStatement
-                        += property
-                        + QLatin1String("=<")
+                        = QLatin1String("nmm:performer(?track)=<")
+                        + itemTypes[index].prefix.strip(rootItemId).toString()
+                        + QLatin1String(">");
+                } else if (qt_galleryItemTypeList[m_itemIndex].itemType == QDocumentGallery::Audio) {
+                    filterStatement
+                        = QLatin1String("nmm:performer(?x)=<")
                         + itemTypes[index].prefix.strip(rootItemId).toString()
                         + QLatin1String(">");
                 } else {
-                    return QDocumentGallery::ItemIdError;
+                    result = QDocumentGallery::ItemIdError;
+                }
+            } else if (itemTypes[index].itemType == QDocumentGallery::AlbumArtist) {
+                if (qt_galleryItemTypeList[m_itemIndex].itemType == QDocumentGallery::Audio) {
+                    filterStatement
+                        = QLatin1String("nmm:albumArtist(nmm:musicAlbum(?x))=<")
+                        + itemTypes[index].prefix.strip(rootItemId).toString()
+                        + QLatin1String(">");
+                } else if (qt_galleryItemTypeList[m_itemIndex].itemType == QDocumentGallery::Album) {
+                    filterStatement
+                        = QLatin1String("nmm:albumArtist(?x)=<")
+                        + itemTypes[index].prefix.strip(rootItemId).toString()
+                        + QLatin1String(">");
+                } else {
+                    result = QDocumentGallery::ItemIdError;
                 }
             } else if (itemTypes[index].itemType == QDocumentGallery::Folder) {
-                if (m_itemIndex >= 0) {
-                    const QString rootUrn = itemTypes[index].prefix.strip(rootItemId).toString();
-                    QString property;
-                    if (qt_galleryItemTypeList[m_itemIndex].updateMask & FileMask) {
-                        if (scope == QGalleryQueryRequest::DirectDescendants) {
-                            property = QLatin1String("nfo:belongsToContainer(?x)");
-                            if (!filterStatement.isEmpty())
-                                filterStatement += QLatin1String(" && ");
-                            filterStatement
-                                    += property
-                                    + QLatin1String("=<")
-                                    + rootUrn
-                                    + QLatin1String(">");
-                        } else {
-                            if (!filterStatement.isEmpty())
-                                filterStatement += QLatin1String(" && ");
-                            filterStatement
-                                    += QLatin1String("nie:url(?x) > fn:concat(nie:url(<")
-                                    + rootUrn
-                                    + QLatin1String(">),'/') && ")
-                                    + QLatin1String("nie:url(?x) < fn:concat(nie:url(<")
-                                    + rootUrn
-                                    + QLatin1String(">),'0')");
-                        }
+                const QString rootUrn = itemTypes[index].prefix.strip(rootItemId).toString();
+                if (qt_galleryItemTypeList[m_itemIndex].updateMask & FileMask) {
+                    if (scope == QGalleryQueryRequest::DirectDescendants) {
+                        filterStatement
+                                = QLatin1String("nfo:belongsToContainer(?x)=<")
+                                + rootUrn
+                                + QLatin1String(">");
                     } else {
-                        result = QDocumentGallery::ItemIdError;
+                        filterStatement
+                                = QLatin1String("nie:url(?x) > fn:concat(nie:url(<")
+                                + rootUrn
+                                + QLatin1String(">),'/') && ")
+                                + QLatin1String("nie:url(?x) < fn:concat(nie:url(<")
+                                + rootUrn
+                                + QLatin1String(">),'0')");
                     }
-                }
-                else {
+                } else {
                     result = QDocumentGallery::ItemIdError;
                 }
             } else if (itemTypes[index].itemType == QDocumentGallery::Album) {
-                if (m_itemIndex) {
-                    if (qt_galleryItemTypeList[m_itemIndex].itemType == QDocumentGallery::Audio) {
-                        QString property = QLatin1String("nmm:musicAlbum(?x)");
-                        if (!filterStatement.isEmpty())
-                            filterStatement += QLatin1String(" && ");
-                        filterStatement
-                                += property
-                                + QLatin1String("=<")
-                                + itemTypes[index].prefix.strip(rootItemId).toString()
-                                +QLatin1String(">");
-                    } else {
-                        result = QDocumentGallery::ItemIdError;
-                    }
+                if (qt_galleryItemTypeList[m_itemIndex].itemType == QDocumentGallery::Audio) {
+                    filterStatement
+                            = QLatin1String("nmm:musicAlbum(?x)=<")
+                            + itemTypes[index].prefix.strip(rootItemId).toString()
+                            + QLatin1String(">");
                 } else {
                     result = QDocumentGallery::ItemIdError;
                 }
             } else if (itemTypes[index].itemType == QDocumentGallery::PhotoAlbum) {
-                if (m_itemIndex) {
-                    if (qt_galleryItemTypeList[m_itemIndex].itemType == QDocumentGallery::Image) {
-                        QString property = QLatin1String("nie:isLogicalPartOf(?x)");
-                        if (!filterStatement.isEmpty())
-                            filterStatement += QLatin1String(" && ");
-                        filterStatement
-                                += property
-                                + QLatin1String("=<")
-                                + itemTypes[index].prefix.strip(rootItemId).toString()
-                                +QLatin1String(">");
-                    }
+                if (qt_galleryItemTypeList[m_itemIndex].itemType == QDocumentGallery::Image) {
+                    filterStatement
+                            = QLatin1String("nie:isLogicalPartOf(?x)=<")
+                            + itemTypes[index].prefix.strip(rootItemId).toString()
+                            + QLatin1String(">");
+                } else {
+                    result = QDocumentGallery::ItemIdError;
                 }
             } else if (itemTypes[index].itemType == QDocumentGallery::AudioGenre) {
-                if (m_itemIndex >= 0) {
-                    QString property;
-                    if (qt_galleryItemTypeList[m_itemIndex].itemType == QDocumentGallery::Audio) {
-                        property = QLatin1String("nfo:genre(?x)");
-                        if (!filterStatement.isEmpty())
-                            filterStatement += QLatin1String(" && ");
-                        filterStatement
-                                += property
-                                + QLatin1String("='")
-                                + itemTypes[index].prefix.strip(rootItemId).toString()
-                                + QLatin1String("'");
-                    } else if (qt_galleryItemTypeList[m_itemIndex].itemType == QDocumentGallery::Album) {
-                        rootItemStatement = QLatin1String("{?track nie:isLogicalPartOf ?x}");
-                        property = QLatin1String("nfo:genre(?track)");
-                        if (!filterStatement.isEmpty())
-                            filterStatement += QLatin1String(" && ");
-                        filterStatement
-                                += property
-                                + QLatin1String("='")
-                                + itemTypes[index].prefix.strip(rootItemId).toString()
-                                + QLatin1String("'");
-                    } else if (qt_galleryItemTypeList[m_itemIndex].itemType == QDocumentGallery::Artist) {
-                        property = QLatin1String("nfo:genre(?y)");
-                        if (!filterStatement.isEmpty())
-                            filterStatement += QLatin1String(" && ");
-                        filterStatement
-                                += property
-                                + QLatin1String("='")
-                                + itemTypes[index].prefix.strip(rootItemId).toString()
-                                + QLatin1String("'");
-                    } else {
-                        result = QDocumentGallery::ItemIdError;
-                    }
+                if (qt_galleryItemTypeList[m_itemIndex].itemType == QDocumentGallery::Audio) {
+                    filterStatement
+                            = QLatin1String("nfo:genre(?x)='")
+                            + itemTypes[index].prefix.strip(rootItemId).toString()
+                            + QLatin1String("'");
+                } else if (qt_galleryItemTypeList[m_itemIndex].itemType == QDocumentGallery::Album) {
+                    rootItemStatement = QLatin1String("{?track nie:isLogicalPartOf ?x}");
+                    filterStatement
+                            = QLatin1String("nfo:genre(?track)='")
+                            + itemTypes[index].prefix.strip(rootItemId).toString()
+                            + QLatin1String("'");
+                } else if (qt_galleryItemTypeList[m_itemIndex].itemType == QDocumentGallery::Artist) {
+                    filterStatement
+                            = QLatin1String("nfo:genre(?y)='")
+                            + itemTypes[index].prefix.strip(rootItemId).toString()
+                            + QLatin1String("'");
+                } else if (qt_galleryItemTypeList[m_itemIndex].itemType == QDocumentGallery::AlbumArtist) {
+                    rootItemStatement = QLatin1String("{?track nie:isLogicalPartOf ?y}");
+                    filterStatement
+                            = QLatin1String("nfo:genre(?track)='")
+                            + itemTypes[index].prefix.strip(rootItemId).toString()
+                            + QLatin1String("'");
+                } else {
+                    result = QDocumentGallery::ItemIdError;
                 }
             } else {
                 result = QDocumentGallery::ItemIdError;
@@ -1330,19 +1285,26 @@ QDocumentGallery::Error QGalleryTrackerSchema::buildFilterQuery(
         }
     }
 
+    if (itemTypes[m_itemIndex].filterFragment) {
+        if (!filterStatement.isEmpty()) {
+            filterStatement
+                    = QLatin1String(itemTypes[m_itemIndex].filterFragment)
+                    + QLatin1String(" && ")
+                    + filterStatement;
+        } else {
+            filterStatement = QLatin1String(itemTypes[m_itemIndex].filterFragment);
+        }
+    }
+
     if (filter.isValid()) {
         if (!filterStatement.isEmpty())
             filterStatement += QLatin1String(" && ");
-        if (m_itemIndex != -1) {
-            qt_writeCondition(
-                    &result,
-                    &filterStatement,
-                    filter,
-                    itemTypes[m_itemIndex].itemProperties,
-                    itemTypes[m_itemIndex].compositeProperties);
-        } else {
-            result = QDocumentGallery::ItemTypeError;
-        }
+        qt_writeCondition(
+                &result,
+                &filterStatement,
+                filter,
+                itemTypes[m_itemIndex].itemProperties,
+                itemTypes[m_itemIndex].compositeProperties);
     }
     if (result == QDocumentGallery::NoError) {
         *query = rootItemStatement + (filterStatement.isEmpty()

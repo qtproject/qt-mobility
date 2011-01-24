@@ -1495,7 +1495,6 @@ void tst_QGalleryTrackerSchema::queryResponseRootItem_data()
                 "} "
                 "GROUP BY ?x";
 
-
     QTest::newRow("Audio Genre, Direct Album Descendants")
             << QString::fromLatin1("Album")
             << QString::fromLatin1("audioGenre::Rock")
@@ -1508,6 +1507,55 @@ void tst_QGalleryTrackerSchema::queryResponseRootItem_data()
                 "} "
                 "GROUP BY ?x";
 
+    QTest::newRow("Audio Genre, All Artist Descendants")
+            << QString::fromLatin1("Artist")
+            << QString::fromLatin1("audioGenre::Rock")
+            << QGalleryQueryRequest::AllDescendants
+            <<  "SELECT ?x "
+                "WHERE {"
+                    "{?x rdf:type nmm:Artist}"
+                    "{?y rdf:type nmm:MusicPiece}"
+                    "FILTER(nmm:performer(?y)=?x && nfo:genre(?y)='Rock')"
+                "} "
+                "GROUP BY ?x";
+
+    QTest::newRow("Audio Genre, Direct Artist Descendants")
+            << QString::fromLatin1("Artist")
+            << QString::fromLatin1("audioGenre::Rock")
+            << QGalleryQueryRequest::DirectDescendants
+            <<  "SELECT ?x "
+                "WHERE {"
+                    "{?x rdf:type nmm:Artist}"
+                    "{?y rdf:type nmm:MusicPiece}"
+                    "FILTER(nmm:performer(?y)=?x && nfo:genre(?y)='Rock')"
+                "} "
+                "GROUP BY ?x";
+
+    QTest::newRow("Audio Genre, All AlbumArtist Descendants")
+            << QString::fromLatin1("AlbumArtist")
+            << QString::fromLatin1("audioGenre::Rock")
+            << QGalleryQueryRequest::AllDescendants
+            <<  "SELECT ?x "
+                "WHERE {"
+                    "{?x rdf:type nmm:Artist}"
+                    "{?y rdf:type nmm:MusicAlbum}"
+                    "{?track nie:isLogicalPartOf ?y}"
+                    "FILTER(nmm:albumArtist(?y)=?x && nfo:genre(?track)='Rock')"
+                "} "
+                "GROUP BY ?x";
+
+    QTest::newRow("Audio Genre, Direct AlbumArtist Descendants")
+            << QString::fromLatin1("AlbumArtist")
+            << QString::fromLatin1("audioGenre::Rock")
+            << QGalleryQueryRequest::DirectDescendants
+            <<  "SELECT ?x "
+                "WHERE {"
+                    "{?x rdf:type nmm:Artist}"
+                    "{?y rdf:type nmm:MusicAlbum}"
+                    "{?track nie:isLogicalPartOf ?y}"
+                    "FILTER(nmm:albumArtist(?y)=?x && nfo:genre(?track)='Rock')"
+                "} "
+                "GROUP BY ?x";
 
     QTest::newRow("Photo Album, All Image Descendants")
             << QString::fromLatin1("Image")
@@ -2703,6 +2751,70 @@ void tst_QGalleryTrackerSchema::prepareInvalidQueryResponse_data()
             << QStringList()
             << QStringList()
             << QDocumentGallery::FilterError;
+
+    QTest::newRow("File, File Descendants")
+            << "file::uuid:ff172362-d959-99e0-a792-0ddafdd2c559"
+            << QGalleryQueryRequest::AllDescendants
+            << "File"
+            << QGalleryFilter()
+            << QStringList()
+            << QStringList()
+            << QDocumentGallery::ItemIdError;
+
+
+    QTest::newRow("Folder, All Descendants")
+            << "folder::uuid:ff172362-d959-99e0-a792-0ddafdd2c559"
+            << QGalleryQueryRequest::AllDescendants
+            << "Album"
+            << QGalleryFilter()
+            << QStringList()
+            << QStringList()
+            << QDocumentGallery::ItemIdError;
+
+    QTest::newRow("Album, Image Descendants")
+            << "album::musicAlbum:Greatest%20Hits"
+            << QGalleryQueryRequest::AllDescendants
+            << "Image"
+            << QGalleryFilter()
+            << QStringList()
+            << QStringList()
+            << QDocumentGallery::ItemIdError;
+
+    QTest::newRow("Album Artist, Image Descendants")
+            << "albumArtist::artist:Self%20Titled"
+            << QGalleryQueryRequest::AllDescendants
+            << "Image"
+            << QGalleryFilter()
+            << QStringList()
+            << QStringList()
+            << QDocumentGallery::ItemIdError;
+
+    QTest::newRow("Album Artist, Image Descendants")
+            << "artist::artist:Self%20Titled"
+            << QGalleryQueryRequest::AllDescendants
+            << "Image"
+            << QGalleryFilter()
+            << QStringList()
+            << QStringList()
+            << QDocumentGallery::ItemIdError;
+
+    QTest::newRow("Album Artist, Image Descendants")
+            << "audioGenre::Rock"
+            << QGalleryQueryRequest::AllDescendants
+            << "Image"
+            << QGalleryFilter()
+            << QStringList()
+            << QStringList()
+            << QDocumentGallery::ItemIdError;
+
+    QTest::newRow("PhotoAlbum, Audio Descendants")
+            << "photoAlbum::photoAlbum:Camping"
+            << QGalleryQueryRequest::AllDescendants
+            << "Audio"
+            << QGalleryFilter()
+            << QStringList()
+            << QStringList()
+            << QDocumentGallery::ItemIdError;
 }
 
 void tst_QGalleryTrackerSchema::prepareInvalidQueryResponse()
