@@ -332,7 +332,7 @@ QGeoPositionInfoSource *QGeoPositionInfoSource::createDefaultSource(QObject *par
 #ifdef GEOCLUE_MASTER_AVAILABLE
     QGeoPositionInfoSourceGeoclueMaster *geoclueSource = new QGeoPositionInfoSourceGeoclueMaster(parent);
     int status = geoclueSource->init();
-    if (status > 0)
+    if (status >= 0)
        return geoclueSource;
     delete geoclueSource;
 #endif // GEOCLUE_MASTER_AVAILABLE

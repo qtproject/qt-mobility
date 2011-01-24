@@ -226,7 +226,7 @@ QGeoSatelliteInfoSource *QGeoSatelliteInfoSource::createDefaultSource(QObject *p
 #ifdef GYPSY_AVAILABLE
     QGeoSatelliteInfoSourceGypsy* gypsySource = new QGeoSatelliteInfoSourceGypsy(parent);
     int status = gypsySource->init();
-    if (status > 0)
+    if (status >= 0)
         return gypsySource;
     delete gypsySource;
 #endif // GYPSY_AVAILABLE
