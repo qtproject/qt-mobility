@@ -109,7 +109,7 @@ QDeclarativeGeoMapTextObject::~QDeclarativeGeoMapTextObject()
 
 void QDeclarativeGeoMapTextObject::setCoordinate(QDeclarativeCoordinate *coordinate)
 {
-    if (!coordinate)
+    if (!coordinate || coordinate == coordinate_)
         return;
 
     coordinate_ = coordinate;

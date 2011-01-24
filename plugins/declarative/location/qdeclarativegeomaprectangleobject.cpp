@@ -98,7 +98,7 @@ QDeclarativeGeoMapRectangleObject::~QDeclarativeGeoMapRectangleObject()
 
 void QDeclarativeGeoMapRectangleObject::setTopLeft(QDeclarativeCoordinate *topLeft)
 {
-    if (!topLeft)
+    if (!topLeft || topLeft == topLeft_)
         return;
 
     topLeft_ = topLeft;
@@ -151,7 +151,7 @@ void QDeclarativeGeoMapRectangleObject::topLeftAltitudeChanged(double /*altitude
 
 void QDeclarativeGeoMapRectangleObject::setBottomRight(QDeclarativeCoordinate *bottomRight)
 {
-    if (!bottomRight)
+    if (!bottomRight || bottomRight == bottomRight_)
         return;
 
     bottomRight_ = bottomRight;

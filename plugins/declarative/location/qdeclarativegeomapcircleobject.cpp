@@ -98,7 +98,7 @@ QDeclarativeGeoMapCircleObject::~QDeclarativeGeoMapCircleObject()
 
 void QDeclarativeGeoMapCircleObject::setCenter(QDeclarativeCoordinate *center)
 {
-    if (!center)
+    if (!center || center == center_)
         return;
     center_ = center;
     connect(center_,
