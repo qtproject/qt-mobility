@@ -42,6 +42,8 @@
 #include "qgeopositioninfosourcefactory.h"
 #include <QPluginLoader>
 #include <QStringList>
+#include <QCryptographicHash>
+#include <QSettings>
 #include "qmobilitypluginsearch.h"
 
 #if defined(Q_OS_SYMBIAN)
@@ -108,20 +110,80 @@ void QGeoSatelliteInfoSourcePrivate::loadDynamicPlugins(QHash<QString, QGeoPosit
     paths << mobilityPlugins(QLatin1String("position"));
 
     QPluginLoader qpl;
+    QString blockName;
+
+    QSettings settings(QSettings::SystemScope, QLatin1String("Nokia"), QLatin1String("QtLocationPosAndSat"));
+    QVariant value = settings.value("position.plugin.operator.whitelist");
+    if (value.isValid()) {
+        QStringList parts = value.toString().split(",");
+        if (parts.size() == 4) {
+            QFile file(parts.at(1));
+            file.open(QIODevice::ReadOnly);
+
+            QCryptographicHash hash(QCryptographicHash::Sha1);
+            while (!file.atEnd()) {
+                QByteArray data = file.read(4096);
+                hash.addData(data);
+            }
+            file.close();
+
+            QByteArray hexHash = hash.result().toHex();
+
+            bool loadIt = true;
+            if (QString::number(file.size()) != parts.at(3)) {
+                qCritical("Position info plugin: bad plugin size for %s",
+                          qPrintable(parts.at(1)));
+                qWarning("Will fall back to platform default");
+                loadIt = false;
+            }
+
+            if (hexHash != parts.at(2).toLatin1()) {
+                qCritical("Position info plugin: bad plugin hash for %s",
+                          qPrintable(parts.at(1)));
+                qWarning("Will fall back to platform default");
+                loadIt = false;
+            }
+
+            if (loadIt) {
+                qpl.setFileName(parts.at(1));
+                QGeoPositionInfoSourceFactory *f =
+                        qobject_cast<QGeoPositionInfoSourceFactory*>(qpl.instance());
+
+                if (f) {
+                    QString name = f->sourceName();
+                    if (name == parts.at(0)) {
+                        plugins.insert(name, f);
+                    } else {
+                        qCritical("Position info plugin: bad plugin name for %s",
+                                  qPrintable(parts.at(1)));
+                        qWarning("Will fall back to platform default");
+                    }
+                }
+            }
+
+            // still set blockName to ensure the plugin doesn't load
+            blockName = parts.at(1);
+        } else {
+            qWarning("Position plugin whitelist: invalid format -- should be key,filename,hash,size");
+        }
+    }
+
     for (int i = 0; i < paths.count(); ++i) {
-        qpl.setFileName(paths.at(i));
+        if (paths.at(i) != blockName) {
+            qpl.setFileName(paths.at(i));
 
-        QGeoPositionInfoSourceFactory *f =
-                qobject_cast<QGeoPositionInfoSourceFactory*>(qpl.instance());
-        if (f) {
-            QString name = f->sourceName();
+            QGeoPositionInfoSourceFactory *f =
+                    qobject_cast<QGeoPositionInfoSourceFactory*>(qpl.instance());
+            if (f) {
+                QString name = f->sourceName();
 
-#if !defined QT_NO_DEBUG
-            const bool showDebug = qgetenv("QT_DEBUG_PLUGINS").toInt() > 0;
-            if (showDebug)
-                qDebug("Dynamic: found a service provider plugin with name %s", qPrintable(name));
-#endif
-            plugins.insertMulti(name, f);
+    #if !defined QT_NO_DEBUG
+                const bool showDebug = qgetenv("QT_DEBUG_PLUGINS").toInt() > 0;
+                if (showDebug)
+                    qDebug("Dynamic: found a service provider plugin with name %s", qPrintable(name));
+    #endif
+                plugins.insertMulti(name, f);
+            }
         }
     }
 }
@@ -192,6 +254,17 @@ QGeoSatelliteInfoSource::QGeoSatelliteInfoSource(QObject *parent)
 */
 QGeoSatelliteInfoSource *QGeoSatelliteInfoSource::createDefaultSource(QObject *parent)
 {
+    QSettings settings(QSettings::SystemScope, QLatin1String("Nokia"), QLatin1String("QtLocationPosAndSat"));
+    QVariant value = settings.value("position.plugin.operator.whitelist");
+    if (value.isValid()) {
+        QStringList parts = value.toString().split(",");
+        if (parts.size() == 4) {
+            QGeoSatelliteInfoSource *source = createSource(parts.at(0), parent);
+            if (source)
+                return source;
+        }
+    }
+
 #if defined(Q_OS_SYMBIAN)
     CQGeoSatelliteInfoSourceS60 *ret = NULL;
     TRAPD(error, ret = CQGeoSatelliteInfoSourceS60::NewL(parent));
