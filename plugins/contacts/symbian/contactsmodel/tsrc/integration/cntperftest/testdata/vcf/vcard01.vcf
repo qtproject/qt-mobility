@@ -8,9 +8,9 @@ TEL;WORK;CHARSET=UTF-8:456745766
 TEL;HOME;CHARSET=UTF-8:5678957656
 TEL;CELL;CHARSET=UTF-8:56765767
 TEL;FAX;WORK;CHARSET=UTF-8:23453245
-EMAIL:emailfield1@wipro.com
-EMAIL:Emailfield2@wipro.com
-EMAIL:Emailfield3@wipro.com
+EMAIL:emailfield1@symbianfoundation.test
+EMAIL:Emailfield2@symbianfoundation.test
+EMAIL:Emailfield3@symbianfoundation.test
 END:VCARD
 BEGIN:VCARD
 VERSION:2.1
@@ -24,9 +24,9 @@ TEL;HOME:5678957656
 TEL;CELL:56765767
 TEL;FAX;WORK:23453245
 EMAIL;CHARSET=UTF-8;INTERNET:india
-EMAIL;CHARSET=UTF-8;INTERNET:emailfield2@wipro.com
-EMAIL;CHARSET=UTF-8;INTERNET:emailfield2@wipro.com
-ORG:Symbian;
+EMAIL;CHARSET=UTF-8;INTERNET:emailfield2@symbianfoundation.test
+EMAIL;CHARSET=UTF-8;INTERNET:emailfield2@symbianfoundation.test
+ORG:SymbianFoundation;
 END:VCARD
 BEGIN:VCARD
 VERSION:2.1
@@ -57,7 +57,7 @@ VERSION:2.1
 REV:20070313T101650Z
 UID:b6676ce5db0d9296-00e1093f3f5eb34d-21
 N:Ahaptmz;Zjlwhw;;;
-ORG:S.G.Software;
+ORG:SymbianFoundation1;
 EMAIL;INTERNET;HOME;ENCODING=QUOTED-PRINTABLE:Zjlwhw.Ahaptmz=40email-address.com
 NOTE:The quick brown fox jumps over the smelly dog The quick brown
   dog jumps over the smelly cat
@@ -67,8 +67,8 @@ VERSION:2.1
 REV:20070313T101650Z
 UID:b6676ce5db0d9296-00e1093f3f615792-42
 N:Aumgte;Drihah;;;
-ORG:S.G.Software;
-TEL;HOME;VOICE;CELL:+44 (0)181 555 1234
+ORG:SymbianFoundation1;
+TEL;HOME;VOICE;CELL:+44 (0)207 946 0234
 EMAIL;INTERNET;HOME;ENCODING=QUOTED-PRINTABLE:Drihah.Aumgte=40email-address.com
 URL;HOME:http://www.some-web-address.co.uk
 NOTE:The quick brown fox jumps over the smelly dog The quick brown
@@ -79,8 +79,8 @@ VERSION:2.1
 REV:20070313T101650Z
 UID:b6676ce5db0d9296-00e1093f3f5f14f5-24
 N:Bcspwc;Aumsxwc;;;
-ADR;HOME;ENCODING=QUOTED-PRINTABLE:;;167a=20Hanover=20RoadWillesden=20GreenLONDONNW10=203DN;;;;
-TEL;HOME;VOICE;CELL:+44 (0)181 555 1234
+ADR;HOME;ENCODING=QUOTED-PRINTABLE:;;167a=20Example=20RoadTest=20NameCITYZZ10=203DN;;;;
+TEL;HOME;VOICE;CELL:+44 (0)207 946 0234
 EMAIL;INTERNET;HOME;ENCODING=QUOTED-PRINTABLE:Aumsxwc.Bcspwc=40email-address.com
 URL;HOME:http://www.some-web-address.co.uk
 NOTE:The quick brown fox jumps over the smelly dog The quick brown
@@ -91,9 +91,9 @@ VERSION:2.1
 REV:20070313T101650Z
 UID:b6676ce5db0d9296-00e1093f3f626902-50
 N:Bczeei;Aesyveo;;;
-ADR;HOME;ENCODING=QUOTED-PRINTABLE:;;167a=20Hanover=20RoadWillesden=20GreenLONDONNW10=203DN;;;;
-ORG:S.G.Software;
-TEL;HOME;VOICE;CELL:+44 (0)181 555 1234
+ADR;HOME;ENCODING=QUOTED-PRINTABLE:;;167a=20Example=20RoadTest=20NameCITYZZ10=203DN;;;;
+ORG:SymbianFoundation1;
+TEL;HOME;VOICE;CELL:+44 (0)207 946 0234
 EMAIL;INTERNET;HOME;ENCODING=QUOTED-PRINTABLE:Aesyveo.Bczeei=40email-address.com
 URL;HOME:http://www.some-web-address.co.uk
 NOTE:The quick brown fox jumps over the smelly dog The quick brown
@@ -104,9 +104,9 @@ VERSION:2.1
 REV:20070313T101650Z
 UID:b6676ce5db0d9296-00e1093f3f5f6315-27
 N:Bfaryy;Yvwiuy;;;
-ADR;HOME;ENCODING=QUOTED-PRINTABLE:;;167a=20Hanover=20RoadWillesden=20GreenLONDONNW10=203DN;;;;
-ORG:S.G.Software;
-TEL;HOME;VOICE;CELL:+44 (0)181 555 1234
+ADR;HOME;ENCODING=QUOTED-PRINTABLE:;;167a=20Example=20RoadTest=20NameCITYZZ10=203DN;;;;
+ORG:SymbianFoundation1;
+TEL;HOME;VOICE;CELL:+44 (0)207 946 0234
 EMAIL;INTERNET;HOME;ENCODING=QUOTED-PRINTABLE:Yvwiuy.Bfaryy=40email-address.com
 URL;HOME:http://www.some-web-address.co.uk
 NOTE:The quick brown fox jumps over the smelly dog The quick brown
@@ -117,8 +117,8 @@ VERSION:2.1
 REV:20070313T101650Z
 UID:b6676ce5db0d9296-00e1093f3f61b93a-45
 N:Biylby;Qwadsz;;;
-ADR;HOME;ENCODING=QUOTED-PRINTABLE:;;167a=20Hanover=20RoadWillesden=20GreenLONDONNW10=203DN;;;;
-ORG:S.G.Software;
+ADR;HOME;ENCODING=QUOTED-PRINTABLE:;;167a=20Example=20RoadTest=20NameCITYZZ10=203DN;;;;
+ORG:SymbianFoundation1;
 EMAIL;INTERNET;HOME;ENCODING=QUOTED-PRINTABLE:Qwadsz.Biylby=40email-address.com
 NOTE:The quick brown fox jumps over the smelly dog The quick brown
   dog jumps over the smelly cat
@@ -138,8 +138,8 @@ VERSION:2.1
 REV:20070313T101650Z
 UID:b6676ce5db0d9296-00e1093f3f60bb52-37
 N:Cdjgdj;Ikbdufcelmlsrn;;;
-ADR;HOME;ENCODING=QUOTED-PRINTABLE:;;167a=20Hanover=20RoadWillesden=20GreenLONDONNW10=203DN;;;;
-ORG:S.G.Software;
+ADR;HOME;ENCODING=QUOTED-PRINTABLE:;;167a=20Example=20RoadTest=20NameCITYZZ10=203DN;;;;
+ORG:SymbianFoundation1;
 EMAIL;INTERNET;HOME;ENCODING=QUOTED-PRINTABLE:Ikbdufcelmlsrn.Cdjgdj=40email-address.com
 URL;HOME:http://www.some-web-address.co.uk
 NOTE:The quick brown fox jumps over the smelly dog The quick brown
@@ -150,8 +150,8 @@ VERSION:2.1
 REV:20070313T101650Z
 UID:b6676ce5db0d9296-00e1093f3f5e3e1d-17
 N:Cewiecea;Posavfpn;;;
-ADR;HOME;ENCODING=QUOTED-PRINTABLE:;;167a=20Hanover=20RoadWillesden=20GreenLONDONNW10=203DN;;;;
-ORG:S.G.Software;
+ADR;HOME;ENCODING=QUOTED-PRINTABLE:;;167a=20Example=20RoadTest=20NameCITYZZ10=203DN;;;;
+ORG:SymbianFoundation1;
 EMAIL;INTERNET;HOME;ENCODING=QUOTED-PRINTABLE:Posavfpn.Cewiecea=40email-address.com
 URL;HOME:http://www.some-web-address.co.uk
 NOTE:The quick brown fox jumps over the smelly dog The quick brown
@@ -162,7 +162,7 @@ VERSION:2.1
 REV:20070313T101650Z
 UID:b6676ce5db0d9296-00e1093f3f5dc8ed-13
 N:Dlgpkpcw;Zfvukj;;;
-TEL;HOME;VOICE;CELL:+44 (0)181 555 1234
+TEL;HOME;VOICE;CELL:+44 (0)207 946 0234
 NOTE:The quick brown fox jumps over the smelly dog The quick brown
   dog jumps over the smelly cat
 END:VCARD
@@ -171,8 +171,8 @@ VERSION:2.1
 REV:20070313T101650Z
 UID:b6676ce5db0d9296-00e1093f3f5cd258-5
 N:Ffzecj;Uprbjr;;;
-ADR;HOME;ENCODING=QUOTED-PRINTABLE:;;167a=20Hanover=20RoadWillesden=20GreenLONDONNW10=203DN;;;;
-TEL;HOME;VOICE;CELL:+44 (0)181 555 1234
+ADR;HOME;ENCODING=QUOTED-PRINTABLE:;;167a=20Example=20RoadTest=20NameCITYZZ10=203DN;;;;
+TEL;HOME;VOICE;CELL:+44 (0)207 946 0234
 EMAIL;INTERNET;HOME;ENCODING=QUOTED-PRINTABLE:Uprbjr.Ffzecj=40email-address.com
 END:VCARD
 BEGIN:VCARD
@@ -180,9 +180,9 @@ VERSION:2.1
 REV:20070313T101650Z
 UID:b6676ce5db0d9296-00e1093f3f5f4f8d-26
 N:Gbzwil;Waiccie;;;
-ADR;HOME;ENCODING=QUOTED-PRINTABLE:;;167a=20Hanover=20RoadWillesden=20GreenLONDONNW10=203DN;;;;
-ORG:S.G.Software;
-TEL;HOME;VOICE;CELL:+44 (0)181 555 1234
+ADR;HOME;ENCODING=QUOTED-PRINTABLE:;;167a=20Example=20RoadTest=20NameCITYZZ10=203DN;;;;
+ORG:SymbianFoundation1;
+TEL;HOME;VOICE;CELL:+44 (0)207 946 0234
 EMAIL;INTERNET;HOME;ENCODING=QUOTED-PRINTABLE:Waiccie.Gbzwil=40email-address.com
 URL;HOME:http://www.some-web-address.co.uk
 NOTE:The quick brown fox jumps over the smelly dog The quick brown
@@ -193,9 +193,9 @@ VERSION:2.1
 REV:20070313T101650Z
 UID:b6676ce5db0d9296-00e1093f3f5e51a5-18
 N:Glpdbz;Bwlerm;;;
-ADR;HOME;ENCODING=QUOTED-PRINTABLE:;;167a=20Hanover=20RoadWillesden=20GreenLONDONNW10=203DN;;;;
-ORG:S.G.Software;
-TEL;HOME;VOICE;CELL:+44 (0)181 555 1234
+ADR;HOME;ENCODING=QUOTED-PRINTABLE:;;167a=20Example=20RoadTest=20NameCITYZZ10=203DN;;;;
+ORG:SymbianFoundation1;
+TEL;HOME;VOICE;CELL:+44 (0)207 946 0234
 EMAIL;INTERNET;HOME;ENCODING=QUOTED-PRINTABLE:Bwlerm.Glpdbz=40email-address.com
 NOTE:The quick brown fox jumps over the smelly dog The quick brown
   dog jumps over the smelly cat
@@ -205,9 +205,9 @@ VERSION:2.1
 REV:20070313T101650Z
 UID:b6676ce5db0d9296-00e1093f3f5d6e98-10
 N:Grrkpswy;Aitlolna;;;
-ADR;HOME;ENCODING=QUOTED-PRINTABLE:;;167a=20Hanover=20RoadWillesden=20GreenLONDONNW10=203DN;;;;
-ORG:S.G.Software;
-TEL;HOME;VOICE;CELL:+44 (0)181 555 1234
+ADR;HOME;ENCODING=QUOTED-PRINTABLE:;;167a=20Example=20RoadTest=20NameCITYZZ10=203DN;;;;
+ORG:SymbianFoundation1;
+TEL;HOME;VOICE;CELL:+44 (0)207 946 0234
 EMAIL;INTERNET;HOME;ENCODING=QUOTED-PRINTABLE:Aitlolna.Grrkpswy=40email-address.com
 NOTE:The quick brown fox jumps over the smelly dog The quick brown
   dog jumps over the smelly cat
@@ -217,7 +217,7 @@ VERSION:2.1
 REV:20070313T101650Z
 UID:b6676ce5db0d9296-00e1093f3f617ea2-43
 N:Hblotw;Honpmek;;;
-ADR;HOME;ENCODING=QUOTED-PRINTABLE:;;167a=20Hanover=20RoadWillesden=20GreenLONDONNW10=203DN;;;;
+ADR;HOME;ENCODING=QUOTED-PRINTABLE:;;167a=20Example=20RoadTest=20NameCITYZZ10=203DN;;;;
 EMAIL;INTERNET;HOME;ENCODING=QUOTED-PRINTABLE:Honpmek.Hblotw=40email-address.com
 NOTE:The quick brown fox jumps over the smelly dog The quick brown
   dog jumps over the smelly cat
@@ -227,9 +227,9 @@ VERSION:2.1
 REV:20070313T101650Z
 UID:b6676ce5db0d9296-00e1093f3f5d0cf0-7
 N:Htimmjjj;Qvlwwxs;;;
-ADR;HOME;ENCODING=QUOTED-PRINTABLE:;;167a=20Hanover=20RoadWillesden=20GreenLONDONNW10=203DN;;;;
-ORG:S.G.Software;
-TEL;HOME;VOICE;CELL:+44 (0)181 555 1234
+ADR;HOME;ENCODING=QUOTED-PRINTABLE:;;167a=20Example=20RoadTest=20NameCITYZZ10=203DN;;;;
+ORG:SymbianFoundation1;
+TEL;HOME;VOICE;CELL:+44 (0)207 946 0234
 EMAIL;INTERNET;HOME;ENCODING=QUOTED-PRINTABLE:Qvlwwxs.Htimmjjj=40email-address.com
 URL;HOME:http://www.some-web-address.co.uk
 NOTE:The quick brown fox jumps over the smelly dog The quick brown
@@ -240,9 +240,9 @@ VERSION:2.1
 REV:20070313T101650Z
 UID:b6676ce5db0d9296-00e1093f3f5c70b0-2
 N:Ikcbkpv;Pkgzsvr;;;
-ADR;HOME;ENCODING=QUOTED-PRINTABLE:;;167a=20Hanover=20RoadWillesden=20GreenLONDONNW10=203DN;;;;
-ORG:S.G.Software;
-TEL;HOME;VOICE;CELL:+44 (0)181 555 1234
+ADR;HOME;ENCODING=QUOTED-PRINTABLE:;;167a=20Example=20RoadTest=20NameCITYZZ10=203DN;;;;
+ORG:SymbianFoundation1;
+TEL;HOME;VOICE;CELL:+44 (0)207 946 0234
 URL;HOME:http://www.some-web-address.co.uk
 NOTE:The quick brown fox jumps over the smelly dog The quick brown
   dog jumps over the smelly cat
@@ -252,9 +252,9 @@ VERSION:2.1
 REV:20070313T101650Z
 UID:b6676ce5db0d9296-00e1093f3f5f8a25-28
 N:Jfivrp;Etmqnh;;;
-ADR;HOME;ENCODING=QUOTED-PRINTABLE:;;167a=20Hanover=20RoadWillesden=20GreenLONDONNW10=203DN;;;;
-ORG:S.G.Software;
-TEL;HOME;VOICE;CELL:+44 (0)181 555 1234
+ADR;HOME;ENCODING=QUOTED-PRINTABLE:;;167a=20Example=20RoadTest=20NameCITYZZ10=203DN;;;;
+ORG:SymbianFoundation1;
+TEL;HOME;VOICE;CELL:+44 (0)207 946 0234
 EMAIL;INTERNET;HOME;ENCODING=QUOTED-PRINTABLE:Etmqnh.Jfivrp=40email-address.com
 NOTE:The quick brown fox jumps over the smelly dog The quick brown
   dog jumps over the smelly cat
@@ -264,9 +264,9 @@ VERSION:2.1
 REV:20070313T101650Z
 UID:b6676ce5db0d9296-00e1093f3f5cab48-4
 N:Joqhccr;Ydkqet;;;
-ADR;HOME;ENCODING=QUOTED-PRINTABLE:;;167a=20Hanover=20RoadWillesden=20GreenLONDONNW10=203DN;;;;
-ORG:S.G.Software;
-TEL;HOME;VOICE;CELL:+44 (0)181 555 1234
+ADR;HOME;ENCODING=QUOTED-PRINTABLE:;;167a=20Example=20RoadTest=20NameCITYZZ10=203DN;;;;
+ORG:SymbianFoundation1;
+TEL;HOME;VOICE;CELL:+44 (0)207 946 0234
 EMAIL;INTERNET;HOME;ENCODING=QUOTED-PRINTABLE:Ydkqet.Joqhccr=40email-address.com
 URL;HOME:http://www.some-web-address.co.uk
 END:VCARD
@@ -275,9 +275,9 @@ VERSION:2.1
 REV:20070313T101650Z
 UID:b6676ce5db0d9296-00e1093f3f5d7acd-11
 N:Jpccnho;Vovfoe;;;
-ADR;HOME;ENCODING=QUOTED-PRINTABLE:;;167a=20Hanover=20RoadWillesden=20GreenLONDONNW10=203DN;;;;
-ORG:S.G.Software;
-TEL;HOME;VOICE;CELL:+44 (0)181 555 1234
+ADR;HOME;ENCODING=QUOTED-PRINTABLE:;;167a=20Example=20RoadTest=20NameCITYZZ10=203DN;;;;
+ORG:SymbianFoundation1;
+TEL;HOME;VOICE;CELL:+44 (0)207 946 0234
 EMAIL;INTERNET;HOME;ENCODING=QUOTED-PRINTABLE:Vovfoe.Jpccnho=40email-address.com
 URL;HOME:http://www.some-web-address.co.uk
 NOTE:The quick brown fox jumps over the smelly dog The quick brown
@@ -298,8 +298,8 @@ VERSION:2.1
 REV:20070313T101650Z
 UID:b6676ce5db0d9296-00e1093f3f621ae2-48
 N:Kodkflczfp;Xyqgrpxt;;;
-ORG:S.G.Software;
-TEL;HOME;VOICE;CELL:+44 (0)181 555 1234
+ORG:SymbianFoundation1;
+TEL;HOME;VOICE;CELL:+44 (0)207 946 0234
 URL;HOME:http://www.some-web-address.co.uk
 END:VCARD
 BEGIN:VCARD
@@ -307,8 +307,8 @@ VERSION:2.1
 REV:20070313T101650Z
 UID:b6676ce5db0d9296-00e1093f3f5c2290-1
 N:Lamygs;Geynhpp;;;
-ADR;HOME;ENCODING=QUOTED-PRINTABLE:;;167a=20Hanover=20RoadWillesden=20GreenLONDONNW10=203DN;;;;
-TEL;HOME;VOICE;CELL:+44 (0)181 555 1234
+ADR;HOME;ENCODING=QUOTED-PRINTABLE:;;167a=20Example=20RoadTest=20NameCITYZZ10=203DN;;;;
+TEL;HOME;VOICE;CELL:+44 (0)207 946 0234
 EMAIL;INTERNET;HOME;ENCODING=QUOTED-PRINTABLE:Geynhpp.Lamygs=40email-address.com
 URL;HOME:http://www.some-web-address.co.uk
 NOTE:The quick brown fox jumps over the smelly dog The quick brown
@@ -319,7 +319,7 @@ VERSION:2.1
 REV:20070313T101650Z
 UID:b6676ce5db0d9296-00e1093f3f611cfa-40
 N:Lgdkreo;Tzfvnn;;;
-ORG:S.G.Software;
+ORG:SymbianFoundation1;
 EMAIL;INTERNET;HOME;ENCODING=QUOTED-PRINTABLE:Tzfvnn.Lgdkreo=40email-address.com
 NOTE:The quick brown fox jumps over the smelly dog The quick brown
   dog jumps over the smelly cat
@@ -329,7 +329,7 @@ VERSION:2.1
 REV:20070313T101650Z
 UID:b6676ce5db0d9296-00e1093f3f5ec6d5-22
 N:Mkjakc;Stwzim;;;
-ADR;HOME;ENCODING=QUOTED-PRINTABLE:;;167a=20Hanover=20RoadWillesden=20GreenLONDONNW10=203DN;;;;
+ADR;HOME;ENCODING=QUOTED-PRINTABLE:;;167a=20Example=20RoadTest=20NameCITYZZ10=203DN;;;;
 EMAIL;INTERNET;HOME;ENCODING=QUOTED-PRINTABLE:Stwzim.Mkjakc=40email-address.com
 URL;HOME:http://www.some-web-address.co.uk
 NOTE:The quick brown fox jumps over the smelly dog The quick brown
@@ -340,8 +340,8 @@ VERSION:2.1
 REV:20070313T101650Z
 UID:b6676ce5db0d9296-00e1093f3f60a7ca-36
 N:Mymjhq;Wtwyzaih;;;
-ADR;HOME;ENCODING=QUOTED-PRINTABLE:;;167a=20Hanover=20RoadWillesden=20GreenLONDONNW10=203DN;;;;
-ORG:S.G.Software;
+ADR;HOME;ENCODING=QUOTED-PRINTABLE:;;167a=20Example=20RoadTest=20NameCITYZZ10=203DN;;;;
+ORG:SymbianFoundation1;
 URL;HOME:http://www.some-web-address.co.uk
 END:VCARD
 BEGIN:VCARD
@@ -349,8 +349,8 @@ VERSION:2.1
 REV:20070313T101650Z
 UID:b6676ce5db0d9296-00e1093f3f5da1dd-12
 N:Ntkcri;Wkluxd;;;
-ADR;HOME;ENCODING=QUOTED-PRINTABLE:;;167a=20Hanover=20RoadWillesden=20GreenLONDONNW10=203DN;;;;
-TEL;HOME;VOICE;CELL:+44 (0)181 555 1234
+ADR;HOME;ENCODING=QUOTED-PRINTABLE:;;167a=20Example=20RoadTest=20NameCITYZZ10=203DN;;;;
+TEL;HOME;VOICE;CELL:+44 (0)207 946 0234
 EMAIL;INTERNET;HOME;ENCODING=QUOTED-PRINTABLE:Wkluxd.Ntkcri=40email-address.com
 URL;HOME:http://www.some-web-address.co.uk
 NOTE:The quick brown fox jumps over the smelly dog The quick brown
@@ -361,8 +361,8 @@ VERSION:2.1
 REV:20070313T101650Z
 UID:b6676ce5db0d9296-00e1093f3f5e170d-16
 N:Obdhrub;Gdahea;;;
-ADR;HOME;ENCODING=QUOTED-PRINTABLE:;;167a=20Hanover=20RoadWillesden=20GreenLONDONNW10=203DN;;;;
-ORG:S.G.Software;
+ADR;HOME;ENCODING=QUOTED-PRINTABLE:;;167a=20Example=20RoadTest=20NameCITYZZ10=203DN;;;;
+ORG:SymbianFoundation1;
 EMAIL;INTERNET;HOME;ENCODING=QUOTED-PRINTABLE:Gdahea.Obdhrub=40email-address.com
 URL;HOME:http://www.some-web-address.co.uk
 NOTE:The quick brown fox jumps over the smelly dog The quick brown
@@ -373,9 +373,9 @@ VERSION:2.1
 REV:20070313T101650Z
 UID:b6676ce5db0d9296-00e1093f3f5fdd27-30
 N:Opscua;Xlofrfy;;;
-ADR;HOME;ENCODING=QUOTED-PRINTABLE:;;167a=20Hanover=20RoadWillesden=20GreenLONDONNW10=203DN;;;;
-ORG:S.G.Software;
-TEL;HOME;VOICE;CELL:+44 (0)181 555 1234
+ADR;HOME;ENCODING=QUOTED-PRINTABLE:;;167a=20Example=20RoadTest=20NameCITYZZ10=203DN;;;;
+ORG:SymbianFoundation1;
+TEL;HOME;VOICE;CELL:+44 (0)207 946 0234
 EMAIL;INTERNET;HOME;ENCODING=QUOTED-PRINTABLE:Xlofrfy.Opscua=40email-address.com
 URL;HOME:http://www.some-web-address.co.uk
 NOTE:The quick brown fox jumps over the smelly dog The quick brown
@@ -386,9 +386,9 @@ VERSION:2.1
 REV:20070313T101650Z
 UID:b6676ce5db0d9296-00e1093f3f60f5ea-39
 N:Padptu;Kbpscwgrcawc;;;
-ADR;HOME;ENCODING=QUOTED-PRINTABLE:;;167a=20Hanover=20RoadWillesden=20GreenLONDONNW10=203DN;;;;
-ORG:S.G.Software;
-TEL;HOME;VOICE;CELL:+44 (0)181 555 1234
+ADR;HOME;ENCODING=QUOTED-PRINTABLE:;;167a=20Example=20RoadTest=20NameCITYZZ10=203DN;;;;
+ORG:SymbianFoundation1;
+TEL;HOME;VOICE;CELL:+44 (0)207 946 0234
 EMAIL;INTERNET;HOME;ENCODING=QUOTED-PRINTABLE:Kbpscwgrcawc.Padptu=40email-address.com
 END:VCARD
 BEGIN:VCARD
@@ -396,8 +396,8 @@ VERSION:2.1
 REV:20070313T101650Z
 UID:b6676ce5db0d9296-00e1093f3f5d4788-9
 N:Pmfzbecmc;Gfoswrrn;;;
-ORG:S.G.Software;
-TEL;HOME;VOICE;CELL:+44 (0)181 555 1234
+ORG:SymbianFoundation1;
+TEL;HOME;VOICE;CELL:+44 (0)207 946 0234
 URL;HOME:http://www.some-web-address.co.uk
 NOTE:The quick brown fox jumps over the smelly dog The quick brown
   dog jumps over the smelly cat
@@ -407,8 +407,8 @@ VERSION:2.1
 REV:20070313T101650Z
 UID:b6676ce5db0d9296-00e1093f3f5eede5-23
 N:Pzqbkb;Hhxbzr;;;
-ADR;HOME;ENCODING=QUOTED-PRINTABLE:;;167a=20Hanover=20RoadWillesden=20GreenLONDONNW10=203DN;;;;
-TEL;HOME;VOICE;CELL:+44 (0)181 555 1234
+ADR;HOME;ENCODING=QUOTED-PRINTABLE:;;167a=20Example=20RoadTest=20NameCITYZZ10=203DN;;;;
+TEL;HOME;VOICE;CELL:+44 (0)207 946 0234
 EMAIL;INTERNET;HOME;ENCODING=QUOTED-PRINTABLE:Hhxbzr.Pzqbkb=40email-address.com
 URL;HOME:http://www.some-web-address.co.uk
 NOTE:The quick brown fox jumps over the smelly dog The quick brown
@@ -419,8 +419,8 @@ VERSION:2.1
 REV:20070313T101650Z
 UID:b6676ce5db0d9296-00e1093f3f6017bf-32
 N:Qcpowagke;Gyqwjmg;;;
-ADR;HOME;ENCODING=QUOTED-PRINTABLE:;;167a=20Hanover=20RoadWillesden=20GreenLONDONNW10=203DN;;;;
-TEL;HOME;VOICE;CELL:+44 (0)181 555 1234
+ADR;HOME;ENCODING=QUOTED-PRINTABLE:;;167a=20Example=20RoadTest=20NameCITYZZ10=203DN;;;;
+TEL;HOME;VOICE;CELL:+44 (0)207 946 0234
 EMAIL;INTERNET;HOME;ENCODING=QUOTED-PRINTABLE:Gyqwjmg.Qcpowagke=40email-address.com
 URL;HOME:http://www.some-web-address.co.uk
 END:VCARD
@@ -429,9 +429,9 @@ VERSION:2.1
 REV:20070313T101650Z
 UID:b6676ce5db0d9296-00e1093f3f607967-35
 N:Qilazctq;Atowwut;;;
-ADR;HOME;ENCODING=QUOTED-PRINTABLE:;;167a=20Hanover=20RoadWillesden=20GreenLONDONNW10=203DN;;;;
-ORG:S.G.Software;
-TEL;HOME;VOICE;CELL:+44 (0)181 555 1234
+ADR;HOME;ENCODING=QUOTED-PRINTABLE:;;167a=20Example=20RoadTest=20NameCITYZZ10=203DN;;;;
+ORG:SymbianFoundation1;
+TEL;HOME;VOICE;CELL:+44 (0)207 946 0234
 EMAIL;INTERNET;HOME;ENCODING=QUOTED-PRINTABLE:Atowwut.Qilazctq=40email-address.com
 NOTE:The quick brown fox jumps over the smelly dog The quick brown
   dog jumps over the smelly cat
@@ -441,8 +441,8 @@ VERSION:2.1
 REV:20070313T101650Z
 UID:b6676ce5db0d9296-00e1093f3f5e9fc5-20
 N:Qnegkm;Ymocap;;;
-ADR;HOME;ENCODING=QUOTED-PRINTABLE:;;167a=20Hanover=20RoadWillesden=20GreenLONDONNW10=203DN;;;;
-ORG:S.G.Software;
+ADR;HOME;ENCODING=QUOTED-PRINTABLE:;;167a=20Example=20RoadTest=20NameCITYZZ10=203DN;;;;
+ORG:SymbianFoundation1;
 NOTE:The quick brown fox jumps over the smelly dog The quick brown
   dog jumps over the smelly cat
 END:VCARD
@@ -451,8 +451,8 @@ VERSION:2.1
 REV:20070313T101650Z
 UID:b6676ce5db0d9296-00e1093f3f613082-41
 N:Qqecyw;Puijqb;;;
-ADR;HOME;ENCODING=QUOTED-PRINTABLE:;;167a=20Hanover=20RoadWillesden=20GreenLONDONNW10=203DN;;;;
-ORG:S.G.Software;
+ADR;HOME;ENCODING=QUOTED-PRINTABLE:;;167a=20Example=20RoadTest=20NameCITYZZ10=203DN;;;;
+ORG:SymbianFoundation1;
 NOTE:The quick brown fox jumps over the smelly dog The quick brown
   dog jumps over the smelly cat
 END:VCARD
@@ -461,9 +461,9 @@ VERSION:2.1
 REV:20070313T101650Z
 UID:b6676ce5db0d9296-00e1093f3f602b47-33
 N:Qwwcfz;Komdij;;;
-ADR;HOME;ENCODING=QUOTED-PRINTABLE:;;167a=20Hanover=20RoadWillesden=20GreenLONDONNW10=203DN;;;;
-ORG:S.G.Software;
-TEL;HOME;VOICE;CELL:+44 (0)181 555 1234
+ADR;HOME;ENCODING=QUOTED-PRINTABLE:;;167a=20Example=20RoadTest=20NameCITYZZ10=203DN;;;;
+ORG:SymbianFoundation1;
+TEL;HOME;VOICE;CELL:+44 (0)207 946 0234
 URL;HOME:http://www.some-web-address.co.uk
 NOTE:The quick brown fox jumps over the smelly dog The quick brown
   dog jumps over the smelly cat
@@ -473,8 +473,8 @@ VERSION:2.1
 REV:20070313T101650Z
 UID:b6676ce5db0d9296-00e1093f3f6241f2-49
 N:Qziexu;Wqrgudeg;;;
-ADR;HOME;ENCODING=QUOTED-PRINTABLE:;;167a=20Hanover=20RoadWillesden=20GreenLONDONNW10=203DN;;;;
-TEL;HOME;VOICE;CELL:+44 (0)181 555 1234
+ADR;HOME;ENCODING=QUOTED-PRINTABLE:;;167a=20Example=20RoadTest=20NameCITYZZ10=203DN;;;;
+TEL;HOME;VOICE;CELL:+44 (0)207 946 0234
 EMAIL;INTERNET;HOME;ENCODING=QUOTED-PRINTABLE:Wqrgudeg.Qziexu=40email-address.com
 END:VCARD
 BEGIN:VCARD
@@ -482,7 +482,7 @@ VERSION:2.1
 REV:20070313T101650Z
 UID:b6676ce5db0d9296-00e1093f3f5fb135-29
 N:Sboricu;Dvmtys;;;
-ORG:S.G.Software;
+ORG:SymbianFoundation1;
 EMAIL;INTERNET;HOME;ENCODING=QUOTED-PRINTABLE:Dvmtys.Sboricu=40email-address.com
 NOTE:The quick brown fox jumps over the smelly dog The quick brown
   dog jumps over the smelly cat
@@ -492,8 +492,8 @@ VERSION:2.1
 REV:20070313T101650Z
 UID:b6676ce5db0d9296-00e1093f3f5e78b5-19
 N:Tiviku;Yacqkk;;;
-ORG:S.G.Software;
-TEL;HOME;VOICE;CELL:+44 (0)181 555 1234
+ORG:SymbianFoundation1;
+TEL;HOME;VOICE;CELL:+44 (0)207 946 0234
 URL;HOME:http://www.some-web-address.co.uk
 NOTE:The quick brown fox jumps over the smelly dog The quick brown
   dog jumps over the smelly cat
@@ -503,8 +503,8 @@ VERSION:2.1
 REV:20070313T101650Z
 UID:b6676ce5db0d9296-00e1093f3f62075a-47
 N:Tsewadvt;Dietnfo;;;
-ADR;HOME;ENCODING=QUOTED-PRINTABLE:;;167a=20Hanover=20RoadWillesden=20GreenLONDONNW10=203DN;;;;
-ORG:S.G.Software;
+ADR;HOME;ENCODING=QUOTED-PRINTABLE:;;167a=20Example=20RoadTest=20NameCITYZZ10=203DN;;;;
+ORG:SymbianFoundation1;
 EMAIL;INTERNET;HOME;ENCODING=QUOTED-PRINTABLE:Dietnfo.Tsewadvt=40email-address.com
 NOTE:The quick brown fox jumps over the smelly dog The quick brown
   dog jumps over the smelly cat
@@ -514,8 +514,8 @@ VERSION:2.1
 REV:20070313T101650Z
 UID:b6676ce5db0d9296-00e1093f3f5ff0af-31
 N:Utahjx;Mbffnf;;;
-ADR;HOME;ENCODING=QUOTED-PRINTABLE:;;167a=20Hanover=20RoadWillesden=20GreenLONDONNW10=203DN;;;;
-ORG:S.G.Software;
+ADR;HOME;ENCODING=QUOTED-PRINTABLE:;;167a=20Example=20RoadTest=20NameCITYZZ10=203DN;;;;
+ORG:SymbianFoundation1;
 EMAIL;INTERNET;HOME;ENCODING=QUOTED-PRINTABLE:Mbffnf.Utahjx=40email-address.com
 URL;HOME:http://www.some-web-address.co.uk
 NOTE:The quick brown fox jumps over the smelly dog The quick brown
@@ -526,8 +526,8 @@ VERSION:2.1
 REV:20070313T101650Z
 UID:b6676ce5db0d9296-00e1093f3f5ce5e0-6
 N:Vcsqcrncxk;Kmrashs;;;
-ADR;HOME;ENCODING=QUOTED-PRINTABLE:;;167a=20Hanover=20RoadWillesden=20GreenLONDONNW10=203DN;;;;
-ORG:S.G.Software;
+ADR;HOME;ENCODING=QUOTED-PRINTABLE:;;167a=20Example=20RoadTest=20NameCITYZZ10=203DN;;;;
+ORG:SymbianFoundation1;
 EMAIL;INTERNET;HOME;ENCODING=QUOTED-PRINTABLE:Kmrashs.Vcsqcrncxk=40email-address.com
 URL;HOME:http://www.some-web-address.co.uk
 NOTE:The quick brown fox jumps over the smelly dog The quick brown
@@ -538,9 +538,9 @@ VERSION:2.1
 REV:20070313T101650Z
 UID:b6676ce5db0d9296-00e1093f3f5ddc75-14
 N:Wbfwbq;Vcdytk;;;
-ADR;HOME;ENCODING=QUOTED-PRINTABLE:;;167a=20Hanover=20RoadWillesden=20GreenLONDONNW10=203DN;;;;
-ORG:S.G.Software;
-TEL;HOME;VOICE;CELL:+44 (0)181 555 1234
+ADR;HOME;ENCODING=QUOTED-PRINTABLE:;;167a=20Example=20RoadTest=20NameCITYZZ10=203DN;;;;
+ORG:SymbianFoundation1;
+TEL;HOME;VOICE;CELL:+44 (0)207 946 0234
 EMAIL;INTERNET;HOME;ENCODING=QUOTED-PRINTABLE:Vcdytk.Wbfwbq=40email-address.com
 NOTE:The quick brown fox jumps over the smelly dog The quick brown
   dog jumps over the smelly cat
@@ -550,9 +550,9 @@ VERSION:2.1
 REV:20070313T101650Z
 UID:b6676ce5db0d9296-00e1093f3f5d3400-8
 N:Wcvdrm;Xipsie;;;
-ADR;HOME;ENCODING=QUOTED-PRINTABLE:;;167a=20Hanover=20RoadWillesden=20GreenLONDONNW10=203DN;;;;
-ORG:S.G.Software;
-TEL;HOME;VOICE;CELL:+44 (0)181 555 1234
+ADR;HOME;ENCODING=QUOTED-PRINTABLE:;;167a=20Example=20RoadTest=20NameCITYZZ10=203DN;;;;
+ORG:SymbianFoundation1;
+TEL;HOME;VOICE;CELL:+44 (0)207 946 0234
 EMAIL;INTERNET;HOME;ENCODING=QUOTED-PRINTABLE:Xipsie.Wcvdrm=40email-address.com
 URL;HOME:http://www.some-web-address.co.uk
 NOTE:The quick brown fox jumps over the smelly dog The quick brown
@@ -563,8 +563,8 @@ VERSION:2.1
 REV:20070313T101650Z
 UID:b6676ce5db0d9296-00e1093f3f5c97c0-3
 N:Xicepyb;Hofhgg;;;
-ADR;HOME;ENCODING=QUOTED-PRINTABLE:;;167a=20Hanover=20RoadWillesden=20GreenLONDONNW10=203DN;;;;
-ORG:S.G.Software;
+ADR;HOME;ENCODING=QUOTED-PRINTABLE:;;167a=20Example=20RoadTest=20NameCITYZZ10=203DN;;;;
+ORG:SymbianFoundation1;
 EMAIL;INTERNET;HOME;ENCODING=QUOTED-PRINTABLE:Hofhgg.Xicepyb=40email-address.com
 URL;HOME:http://www.some-web-address.co.uk
 END:VCARD
@@ -573,9 +573,9 @@ VERSION:2.1
 REV:20070313T101650Z
 UID:b6676ce5db0d9296-00e1093f3f5f287d-25
 N:Ynsgkncpuapb;Kcqeeo;;;
-ADR;HOME;ENCODING=QUOTED-PRINTABLE:;;167a=20Hanover=20RoadWillesden=20GreenLONDONNW10=203DN;;;;
-ORG:S.G.Software;
-TEL;HOME;VOICE;CELL:+44 (0)181 555 1234
+ADR;HOME;ENCODING=QUOTED-PRINTABLE:;;167a=20Example=20RoadTest=20NameCITYZZ10=203DN;;;;
+ORG:SymbianFoundation1;
+TEL;HOME;VOICE;CELL:+44 (0)207 946 0234
 EMAIL;INTERNET;HOME;ENCODING=QUOTED-PRINTABLE:Kcqeeo.Ynsgkncpuapb=40email-address.com
 URL;HOME:http://www.some-web-address.co.uk
 END:VCARD
@@ -584,9 +584,9 @@ VERSION:2.1
 REV:20070313T101650Z
 UID:b6676ce5db0d9296-00e1093f3f605257-34
 N:Yvvhhic;Yslzdkrij;;;
-ADR;HOME;ENCODING=QUOTED-PRINTABLE:;;167a=20Hanover=20RoadWillesden=20GreenLONDONNW10=203DN;;;;
-ORG:S.G.Software;
-TEL;HOME;VOICE;CELL:+44 (0)181 555 1234
+ADR;HOME;ENCODING=QUOTED-PRINTABLE:;;167a=20Example=20RoadTest=20NameCITYZZ10=203DN;;;;
+ORG:SymbianFoundation1;
+TEL;HOME;VOICE;CELL:+44 (0)207 946 0234
 EMAIL;INTERNET;HOME;ENCODING=QUOTED-PRINTABLE:Yslzdkrij.Yvvhhic=40email-address.com
 URL;HOME:http://www.some-web-address.co.uk
 NOTE:The quick brown fox jumps over the smelly dog The quick brown
@@ -597,8 +597,8 @@ VERSION:2.1
 REV:20070313T101650Z
 UID:b6676ce5db0d9296-00e1093f3f61e04a-46
 N:Zgphwk;Ahwpoe;;;
-ADR;HOME;ENCODING=QUOTED-PRINTABLE:;;167a=20Hanover=20RoadWillesden=20GreenLONDONNW10=203DN;;;;
-TEL;HOME;VOICE;CELL:+44 (0)181 555 1234
+ADR;HOME;ENCODING=QUOTED-PRINTABLE:;;167a=20Example=20RoadTest=20NameCITYZZ10=203DN;;;;
+TEL;HOME;VOICE;CELL:+44 (0)207 946 0234
 EMAIL;INTERNET;HOME;ENCODING=QUOTED-PRINTABLE:Ahwpoe.Zgphwk=40email-address.com
 NOTE:The quick brown fox jumps over the smelly dog The quick brown
   dog jumps over the smelly cat
@@ -608,8 +608,8 @@ VERSION:2.1
 REV:20070313T101650Z
 UID:b6676ce5db0d9296-00e1093f3f5e0385-15
 N:Zlnqbu;Mvwyte;;;
-ADR;HOME;ENCODING=QUOTED-PRINTABLE:;;167a=20Hanover=20RoadWillesden=20GreenLONDONNW10=203DN;;;;
-ORG:S.G.Software;
+ADR;HOME;ENCODING=QUOTED-PRINTABLE:;;167a=20Example=20RoadTest=20NameCITYZZ10=203DN;;;;
+ORG:SymbianFoundation1;
 EMAIL;INTERNET;HOME;ENCODING=QUOTED-PRINTABLE:Mvwyte.Zlnqbu=40email-address.com
 URL;HOME:http://www.some-web-address.co.uk
 END:VCARD
