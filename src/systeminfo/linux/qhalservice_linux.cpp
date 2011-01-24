@@ -54,8 +54,6 @@
 
 QTM_BEGIN_NAMESPACE
 
-static QDBusConnection dbusConnection = QDBusConnection::systemBus();
-
 class QHalInterfacePrivate
 {
 public:
@@ -70,7 +68,7 @@ QHalInterface::QHalInterface(QObject *parent)
     d->connectionInterface = new QDBusInterface(QLatin1String(HAL_DBUS_SERVICE),
                                                 QLatin1String(HAL_DBUS_MANAGER_PATH),
                                                 QLatin1String(HAL_DBUS_MANAGER_INTERFACE),
-                                                dbusConnection);
+                                                QDBusConnection::systemBus());
     if (!d->connectionInterface->isValid()) {
         d->valid = false;
         return;
@@ -92,7 +90,7 @@ void QHalInterface::connectNotify(const char *signal)
        QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
                                                           deviceAdded(QString))))) {
 
-      if (dbusConnection.connect(QLatin1String(HAL_DBUS_SERVICE),
+      if (QDBusConnection::systemBus().connect(QLatin1String(HAL_DBUS_SERVICE),
                                HAL_DBUS_MANAGER_PATH,
                                QLatin1String(HAL_DBUS_MANAGER_INTERFACE),
                                QLatin1String("DeviceAdded"),
@@ -102,7 +100,7 @@ void QHalInterface::connectNotify(const char *signal)
    if (QLatin1String(signal) ==
        QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
                                                           deviceRemoved(QString))))) {
-      if (dbusConnection.connect(QLatin1String(HAL_DBUS_SERVICE),
+      if (QDBusConnection::systemBus().connect(QLatin1String(HAL_DBUS_SERVICE),
                                HAL_DBUS_MANAGER_PATH,
                                QLatin1String(HAL_DBUS_MANAGER_INTERFACE),
                                QLatin1String("DeviceRemoved"),
@@ -178,7 +176,7 @@ QHalDeviceInterface::QHalDeviceInterface(const QString &devicePathName, QObject 
     d->connectionInterface = new QDBusInterface(QLatin1String(HAL_DBUS_SERVICE),
                                                 d->path,
                                                 QLatin1String(HAL_DEVICE_INTERFACE),
-                                                dbusConnection);
+                                                QDBusConnection::systemBus());
     if (!d->connectionInterface->isValid()) {
         d->valid = false;
         return;
@@ -204,7 +202,7 @@ bool QHalDeviceInterface::setConnections()
         return false;
     bool allOk = false;
 
-    if (dbusConnection.connect(QLatin1String(HAL_DBUS_SERVICE),
+    if (QDBusConnection::systemBus().connect(QLatin1String(HAL_DBUS_SERVICE),
                                d->path,
                                QLatin1String(HAL_DEVICE_INTERFACE),
                                QLatin1String("PropertyModified"),
@@ -302,7 +300,7 @@ QHalDeviceLaptopPanelInterface::QHalDeviceLaptopPanelInterface(const QString &de
     d->connectionInterface = new QDBusInterface(QLatin1String(HAL_DBUS_SERVICE),
                                                 d->path,
                                                 QLatin1String(HAL_DEVICES_LAPTOPPANEL_INTERFACE),
-                                                dbusConnection);
+                                                QDBusConnection::systemBus());
     if (!d->connectionInterface->isValid()) {
         d->valid = false;
         return;
@@ -357,7 +355,7 @@ QHalDeviceKillSwitchInterface::QHalDeviceKillSwitchInterface(const QString &devi
     d->connectionInterface = new QDBusInterface(QLatin1String(HAL_DBUS_SERVICE),
                                                 d->path,
                                                 QLatin1String(HAL_DEVICE_KILLSWITCH_INTERFACE),
-                                                dbusConnection);
+                                                QDBusConnection::systemBus());
     if (!d->connectionInterface->isValid()) {
         d->valid = false;
         return;

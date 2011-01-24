@@ -160,12 +160,11 @@ bool uPowerIsAvailable;
 
 static bool btHasPower() {
 #if !defined(QT_NO_DBUS)
-     QDBusConnection dbusConnection = QDBusConnection::systemBus();
      QDBusInterface *connectionInterface;
      connectionInterface = new QDBusInterface("org.bluez",
                                               "/",
                                               "org.bluez.Manager",
-                                              dbusConnection);
+                                              QDBusConnection::systemBus());
      if (connectionInterface->isValid()) {
          QDBusReply<  QDBusObjectPath > reply = connectionInterface->call("DefaultAdapter");
          if (reply.isValid()) {
@@ -173,7 +172,7 @@ static bool btHasPower() {
              adapterInterface = new QDBusInterface("org.bluez",
                                                    reply.value().path(),
                                                    "org.bluez.Adapter",
-                                                   dbusConnection);
+                                                   QDBusConnection::systemBus());
              if (adapterInterface->isValid()) {
                  QDBusReply<QVariantMap > reply =  adapterInterface->call(QLatin1String("GetProperties"));
                  QVariant var;
@@ -2463,14 +2462,13 @@ void QSystemDeviceInfoLinuxCommonPrivate::connectNotify(const char *signal)
             || QLatin1String(signal)
             == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(wirelessKeyboardConnected(bool))))) {
 
-        QDBusConnection dbusConnection = QDBusConnection::systemBus();
         QDBusInterface *connectionInterface;
         connectionInterface = new QDBusInterface("org.bluez",
                                                  "/",
                                                  "org.bluez.Manager",
-                                                 dbusConnection, this);
+                                                 QDBusConnection::systemBus(), this);
         if (connectionInterface->isValid()) {
-            if (!dbusConnection.connect("org.bluez",
+            if (!QDBusConnection::systemBus().connect("org.bluez",
                                         "/",
                                         "org.bluez.Manager",
                                         "PropertyChanged",
@@ -2905,12 +2903,11 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoLinuxCommonPrivate::currentPowerS
  void QSystemDeviceInfoLinuxCommonPrivate::connectBtPowered(const QString &str)
  {
      if(connectedBtPower) {
-         QDBusConnection dbusConnection = QDBusConnection::systemBus();
          QDBusInterface *connectionInterface;
          connectionInterface = new QDBusInterface("org.bluez",
                                                   "/",
                                                   "org.bluez.Manager",
-                                                  dbusConnection, this);
+                                                  QDBusConnection::systemBus(), this);
          if (connectionInterface->isValid()) {
 
              QDBusReply<  QDBusObjectPath > reply = connectionInterface->call("DefaultAdapter");
@@ -2918,7 +2915,7 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoLinuxCommonPrivate::currentPowerS
              if (reply.isValid() && !reply.value().path().isEmpty()
                      && (reply.value().path() == str || str.isEmpty())) {
 
-                 if (!dbusConnection.connect("org.bluez",
+                 if (!QDBusConnection::systemBus().connect("org.bluez",
                                              reply.value().path(),
                                              "org.bluez.Adapter",
                                              "PropertyChanged",
@@ -2935,12 +2932,11 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoLinuxCommonPrivate::currentPowerS
      if(!connectedWirelessKeyboard)
          return;
 
-     QDBusConnection dbusConnection = QDBusConnection::systemBus();
      QDBusInterface *connectionInterface;
      connectionInterface = new QDBusInterface("org.bluez",
                                               "/",
                                               "org.bluez.Manager",
-                                              dbusConnection, this);
+                                              QDBusConnection::systemBus(), this);
      if (connectionInterface->isValid()) {
          QDBusReply<  QDBusObjectPath > reply = connectionInterface->call("DefaultAdapter");
 
@@ -2949,7 +2945,7 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoLinuxCommonPrivate::currentPowerS
              adapterInterface = new QDBusInterface("org.bluez",
                                                    reply.value().path(),
                                                    "org.bluez.Adapter",
-                                                   dbusConnection, this);
+                                                   QDBusConnection::systemBus(), this);
              if (adapterInterface->isValid()) {
 
                  QDBusReply<QVariantMap > reply2 =  adapterInterface->call(QLatin1String("GetProperties"));
@@ -2959,7 +2955,7 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoLinuxCommonPrivate::currentPowerS
                  if (map.contains(property)) {
                      QList<QDBusObjectPath> devicesList = qdbus_cast<QList<QDBusObjectPath> >(map.value(property));
                      foreach (const QDBusObjectPath &device, devicesList) {
-                         if (!dbusConnection.connect("org.bluez",
+                         if (!QDBusConnection::systemBus().connect("org.bluez",
                                                      device.path(),
                                                      "org.bluez.Device",
                                                      "PropertyChanged",
@@ -2970,11 +2966,11 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoLinuxCommonPrivate::currentPowerS
                      QDBusInterface *devadapterInterface = new QDBusInterface("org.bluez",
                                                                               reply.value().path(),
                                                                               "org.bluez.Input",
-                                                                              dbusConnection, this);
+                                                                              QDBusConnection::systemBus(), this);
 
                      if (devadapterInterface->isValid() && !reply.value().path().isEmpty()
                              && (str == reply.value().path() || str.isEmpty())) {
-                         if (!dbusConnection.connect("org.bluez",
+                         if (!QDBusConnection::systemBus().connect("org.bluez",
                                                      reply.value().path(),
                                                      "org.bluez.Input",
                                                      "PropertyChanged",
@@ -2994,12 +2990,11 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoLinuxCommonPrivate::currentPowerS
 
  bool QSystemDeviceInfoLinuxCommonPrivate::currentBluetoothPowerState()
  {
-     QDBusConnection dbusConnection = QDBusConnection::systemBus();
      QDBusInterface *connectionInterface;
      connectionInterface = new QDBusInterface("org.bluez",
                                               "/",
                                               "org.bluez.Manager",
-                                              dbusConnection, this);
+                                              QDBusConnection::systemBus(), this);
      if (connectionInterface->isValid()) {
 
          QDBusReply<  QDBusObjectPath > reply = connectionInterface->call("DefaultAdapter");
@@ -3008,7 +3003,7 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoLinuxCommonPrivate::currentPowerS
              adapterInterface = new QDBusInterface("org.bluez",
                                                    reply.value().path(),
                                                    "org.bluez.Adapter",
-                                                   dbusConnection, this);
+                                                   QDBusConnection::systemBus(), this);
              if (adapterInterface->isValid()) {
                  QDBusReply<QVariantMap > reply =  adapterInterface->call(QLatin1String("GetProperties"));
                  QVariant var;
@@ -3045,12 +3040,11 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoLinuxCommonPrivate::currentPowerS
  bool QSystemDeviceInfoLinuxCommonPrivate::isWirelessKeyboardConnected()
  {
 #if !defined(QT_NO_DBUS)
-     QDBusConnection dbusConnection = QDBusConnection::systemBus();
      QDBusInterface *connectionInterface;
      connectionInterface = new QDBusInterface("org.bluez",
                                               "/",
                                               "org.bluez.Manager",
-                                              dbusConnection, this);
+                                              QDBusConnection::systemBus(), this);
      if (connectionInterface->isValid()) {
 
          QDBusReply<  QDBusObjectPath > reply = connectionInterface->call("DefaultAdapter");
@@ -3059,7 +3053,7 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoLinuxCommonPrivate::currentPowerS
              adapterInterface = new QDBusInterface("org.bluez",
                                                    reply.value().path(),
                                                    "org.bluez.Adapter",
-                                                   dbusConnection, this);
+                                                   QDBusConnection::systemBus(), this);
              if (adapterInterface->isValid() && !reply.value().path().isEmpty()) {
                  QDBusReply<QVariantMap > reply =  adapterInterface->call(QLatin1String("GetProperties"));
                  QVariant var;
@@ -3073,7 +3067,7 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoLinuxCommonPrivate::currentPowerS
 //                         QDBusInterface *devadapterInterface = new QDBusInterface("org.bluez",
 //                                                                                  device.path(),
 //                                                                                  "org.bluez.Device",
-//                                                                                  dbusConnection);
+//                                                                                  QDBusConnection::systemBus());
                          map = reply.value();
                          dproperty = "Class";
 

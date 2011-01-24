@@ -45,9 +45,8 @@
 static bool halAvailable()
 {
 #if !defined(QT_NO_DBUS)
-    QDBusConnection dbusConnection = QDBusConnection::systemBus();
-    if (dbusConnection.isConnected()) {
-        QDBusReply<bool> reply = dbusConnection.interface()->isServiceRegistered("org.freedesktop.Hal");
+    if (QDBusConnection::systemBus().isConnected()) {
+        QDBusReply<bool> reply = QDBusConnection::systemBus().interface()->isServiceRegistered("org.freedesktop.Hal");
         if (reply.isValid() && reply.value()) {
             return reply.value();
         }
@@ -60,9 +59,8 @@ static bool halAvailable()
 static bool udisksAvailable()
 {
 #if !defined(QT_NO_DBUS)
-    QDBusConnection dbusConnection = QDBusConnection::systemBus();
-    if (dbusConnection.isConnected()) {
-        QDBusReply<bool> reply = dbusConnection.interface()->isServiceRegistered("org.freedesktop.UDisks");
+    if (QDBusConnection::systemBus().isConnected()) {
+        QDBusReply<bool> reply = QDBusConnection::systemBus().interface()->isServiceRegistered("org.freedesktop.UDisks");
         if (reply.isValid() && reply.value()) {
             return reply.value();
         }
@@ -76,9 +74,8 @@ static bool udisksAvailable()
 static bool connmanAvailable()
 {
 #if !defined(QT_NO_DBUS)
-    QDBusConnection dbusConnection = QDBusConnection::systemBus();
-    if (dbusConnection.isConnected()) {
-        QDBusReply<bool> reply = dbusConnection.interface()->isServiceRegistered("net.connman");
+    if (QDBusConnection::systemBus().isConnected()) {
+        QDBusReply<bool> reply = QDBusConnection::systemBus().interface()->isServiceRegistered("net.connman");
         if (reply.isValid() && reply.value()) {
             return reply.value();
         }
@@ -90,9 +87,8 @@ static bool connmanAvailable()
 static bool ofonoAvailable()
 {
 #if !defined(QT_NO_DBUS)
-    QDBusConnection dbusConnection = QDBusConnection::systemBus();
-    if (dbusConnection.isConnected()) {
-        QDBusReply<bool> reply = dbusConnection.interface()->isServiceRegistered("org.ofono");
+    if (QDBusConnection::systemBus().isConnected()) {
+        QDBusReply<bool> reply = QDBusConnection::systemBus().interface()->isServiceRegistered("org.ofono");
         if (reply.isValid() && reply.value()) {
             return reply.value();
         }
@@ -106,9 +102,8 @@ static bool ofonoAvailable()
 static bool uPowerAvailable()
 {
 #if !defined(QT_NO_DBUS)
-    QDBusConnection dbusConnection = QDBusConnection::systemBus();
-    if (dbusConnection.isConnected()) {
-        QDBusReply<bool> reply = dbusConnection.interface()->isServiceRegistered("org.freedesktop.UPower");
+    if (QDBusConnection::systemBus().isConnected()) {
+        QDBusReply<bool> reply = QDBusConnection::systemBus().interface()->isServiceRegistered("org.freedesktop.UPower");
         if (reply.isValid() && reply.value()) {
             return reply.value();
         }

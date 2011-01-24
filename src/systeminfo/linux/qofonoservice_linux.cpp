@@ -73,9 +73,6 @@ const QDBusArgument & operator >> (const QDBusArgument &argument,QOfonoPropertie
     return argument;
 }
 
-static QDBusConnection dbusConnection = QDBusConnection::systemBus();
-
-
 QOfonoManagerInterface::QOfonoManagerInterface( QObject *parent)
         : QDBusAbstractInterface(QLatin1String(OFONO_SERVICE),
                                  QLatin1String(OFONO_MANAGER_PATH),
@@ -134,7 +131,7 @@ if (QLatin1String(signal) == SIGNAL(propertyChanged(QString,QDBusVariant))) {
         QOfonoDBusHelper *helper;
         helper = new QOfonoDBusHelper(this);
 
-        dbusConnection.connect(QLatin1String(OFONO_SERVICE),
+        QDBusConnection::systemBus().connect(QLatin1String(OFONO_SERVICE),
                                QLatin1String(OFONO_MANAGER_PATH),
                                QLatin1String(OFONO_MANAGER_INTERFACE),
                                QLatin1String("PropertyChanged"),
@@ -284,7 +281,7 @@ void QOfonoModemInterface::connectNotify(const char *signal)
             QOfonoDBusHelper *helper;
             helper = new QOfonoDBusHelper(this);
 
-            dbusConnection.connect(QLatin1String(OFONO_SERVICE),
+            QDBusConnection::systemBus().connect(QLatin1String(OFONO_SERVICE),
                                    this->path(),
                                    QLatin1String(OFONO_MODEM_INTERFACE),
                                    QLatin1String("PropertyChanged"),
@@ -418,7 +415,7 @@ if (QLatin1String(signal) == SIGNAL(propertyChanged(QString,QDBusVariant))) {
         QOfonoDBusHelper *helper;
         helper = new QOfonoDBusHelper(this);
 
-        dbusConnection.connect(QLatin1String(OFONO_SERVICE),
+        QDBusConnection::systemBus().connect(QLatin1String(OFONO_SERVICE),
                                this->path(),
                                QLatin1String(OFONO_NETWORK_REGISTRATION_INTERFACE),
                                QLatin1String("PropertyChanged"),
@@ -516,7 +513,7 @@ if (QLatin1String(signal) == SIGNAL(propertyChanged(QString,QDBusVariant))) {
         QOfonoDBusHelper *helper;
         helper = new QOfonoDBusHelper(this);
 
-        dbusConnection.connect(QLatin1String(OFONO_SERVICE),
+        QDBusConnection::systemBus().connect(QLatin1String(OFONO_SERVICE),
                                this->path(),
                                QLatin1String(OFONO_NETWORK_OPERATOR_INTERFACE),
                                QLatin1String("PropertyChanged"),
@@ -625,7 +622,7 @@ if (QLatin1String(signal) == SIGNAL(propertyChanged(QString,QDBusVariant))) {
         QOfonoDBusHelper *helper;
         helper = new QOfonoDBusHelper(this);
 
-        dbusConnection.connect(QLatin1String(OFONO_SERVICE),
+        QDBusConnection::systemBus().connect(QLatin1String(OFONO_SERVICE),
                                this->path(),
                                QLatin1String(OFONO_SIM_MANAGER_INTERFACE),
                                QLatin1String("PropertyChanged"),
@@ -714,7 +711,7 @@ if (QLatin1String(signal) == SIGNAL(propertyChanged(QString,QDBusVariant))) {
         QOfonoDBusHelper *helper;
         helper = new QOfonoDBusHelper(this);
 
-        dbusConnection.connect(QLatin1String(OFONO_SERVICE),
+        QDBusConnection::systemBus().connect(QLatin1String(OFONO_SERVICE),
                                this->path(),
                                QLatin1String(OFONO_DATA_CONNECTION_MANAGER_INTERFACE),
                                QLatin1String("PropertyChanged"),
@@ -833,7 +830,7 @@ if (QLatin1String(signal) == SIGNAL(propertyChanged(QString,QDBusVariant))) {
         QOfonoDBusHelper *helper;
         helper = new QOfonoDBusHelper(this);
 
-        dbusConnection.connect(QLatin1String(OFONO_SERVICE),
+        QDBusConnection::systemBus().connect(QLatin1String(OFONO_SERVICE),
                                this->path(),
                                QLatin1String(OFONO_DATA_CONTEXT_INTERFACE),
                                QLatin1String("PropertyChanged"),
@@ -915,7 +912,7 @@ void QOfonoSmsInterface::connectNotify(const char *signal)
         QOfonoDBusHelper *helper;
         helper = new QOfonoDBusHelper(this);
 
-        dbusConnection.connect(QLatin1String(OFONO_SERVICE),
+        QDBusConnection::systemBus().connect(QLatin1String(OFONO_SERVICE),
                                this->path(),
                                QLatin1String(OFONO_SMS_MANAGER_INTERFACE),
                                QLatin1String("PropertyChanged"),

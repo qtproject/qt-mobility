@@ -1276,12 +1276,11 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoPrivate::currentPowerState()
 #if !defined(QT_NO_DBUS)
  void QSystemDeviceInfoPrivate::setupBluetooth()
  {
-     QDBusConnection dbusConnection = QDBusConnection::systemBus();
      QDBusInterface *connectionInterface;
      connectionInterface = new QDBusInterface("org.bluez",
                                               "/",
                                               "org.bluez.Manager",
-                                              dbusConnection, this);
+                                              QDBusConnection::systemBus(), this);
      if (connectionInterface->isValid()) {
 
          QDBusReply<  QDBusObjectPath > reply = connectionInterface->call("DefaultAdapter");
@@ -1290,9 +1289,9 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoPrivate::currentPowerState()
              adapterInterface = new QDBusInterface("org.bluez",
                                                    reply.value().path(),
                                                    "org.bluez.Adapter",
-                                                   dbusConnection, this);
+                                                   QDBusConnection::systemBus(), this);
              if (adapterInterface->isValid()) {
-                 if (!dbusConnection.connect("org.bluez",
+                 if (!QDBusConnection::systemBus().connect("org.bluez",
                                            reply.value().path(),
                                             "org.bluez.Adapter",
                                             "PropertyChanged",
