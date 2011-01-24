@@ -64,7 +64,7 @@ QTM_BEGIN_NAMESPACE
 */
 
 QDeclarativeGeoMapCircleObject::QDeclarativeGeoMapCircleObject(QDeclarativeItem *parent)
-    : QDeclarativeGeoMapObject(parent)
+    : QDeclarativeGeoMapObject(parent), circle_(0), center_(0)
 {
     circle_ = new QGeoMapCircleObject();
     setMapObject(circle_);
@@ -73,22 +73,6 @@ QDeclarativeGeoMapCircleObject::QDeclarativeGeoMapCircleObject(QDeclarativeItem 
             SIGNAL(radiusChanged(qreal)),
             this,
             SIGNAL(radiusChanged(qreal)));
-
-    connect(&center_,
-            SIGNAL(latitudeChanged(double)),
-            this,
-            SLOT(centerLatitudeChanged(double)));
-
-    connect(&center_,
-            SIGNAL(longitudeChanged(double)),
-            this,
-            SLOT(centerLongitudeChanged(double)));
-
-    connect(&center_,
-            SIGNAL(altitudeChanged(double)),
-            this,
-            SLOT(centerAltitudeChanged(double)));
-
     connect(&border_,
             SIGNAL(colorChanged(QColor)),
             this,
@@ -112,35 +96,46 @@ QDeclarativeGeoMapCircleObject::~QDeclarativeGeoMapCircleObject()
     The default value is an invalid coordinate.
 */
 
-void QDeclarativeGeoMapCircleObject::setCenter(const QDeclarativeCoordinate *center)
+void QDeclarativeGeoMapCircleObject::setCenter(QDeclarativeCoordinate *center)
 {
-    if (center_.coordinate() == center->coordinate())
+    if (!center)
         return;
+    center_ = center;
+    connect(center_,
+            SIGNAL(latitudeChanged(double)),
+            this,
+            SLOT(centerLatitudeChanged(double)));
+    connect(center_,
+            SIGNAL(longitudeChanged(double)),
+            this,
+            SLOT(centerLongitudeChanged(double)));
+    connect(center_,
+            SIGNAL(altitudeChanged(double)),
+            this,
+            SLOT(centerAltitudeChanged(double)));
 
-    center_.setCoordinate(center->coordinate());
     circle_->setCenter(center->coordinate());
-
-    emit centerChanged(&center_);
+    emit centerChanged(center_);
 }
 
 QDeclarativeCoordinate* QDeclarativeGeoMapCircleObject::center()
 {
-    return &center_;
+    return center_;
 }
 
 void QDeclarativeGeoMapCircleObject::centerLatitudeChanged(double /*latitude*/)
 {
-    circle_->setCenter(center_.coordinate());
+    circle_->setCenter(center_->coordinate());
 }
 
 void QDeclarativeGeoMapCircleObject::centerLongitudeChanged(double /*longitude*/)
 {
-    circle_->setCenter(center_.coordinate());
+    circle_->setCenter(center_->coordinate());
 }
 
 void QDeclarativeGeoMapCircleObject::centerAltitudeChanged(double /*altitude*/)
 {
-    circle_->setCenter(center_.coordinate());
+    circle_->setCenter(center_->coordinate());
 }
 
 void QDeclarativeGeoMapCircleObject::setRadius(qreal radius)

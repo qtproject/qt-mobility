@@ -43,6 +43,7 @@
 
 #include "qdeclarativecoordinate_p.h"
 #include "qdeclarativegeoserviceprovider_p.h"
+#include "qdeclarativelandmark_p.h"
 
 #include <qgeoserviceprovider.h>
 #include <qgeomappingmanager.h>
@@ -50,6 +51,8 @@
 #include <qgeomapobject.h>
 
 #include <QGraphicsSceneMouseEvent>
+#include <QDeclarativeContext>
+#include <QModelIndex>
 
 QTM_BEGIN_NAMESPACE
 
@@ -68,6 +71,21 @@ QTM_BEGIN_NAMESPACE
     Various map objects can be added to the map.  These map objects are 
     specified in terms of coordinates and metres.
 
+    MapObjects can be directly added to the Map element, it will consider them
+    as children. The various objects that can be added include:
+
+    \list
+    \o MapRectangle
+    \o MapCircle
+    \o MapText
+    \o MapImage
+    \o MapPolygon
+    \o MapPolyline
+    \o MapGroup
+    \o MapObjectView
+    \endlist
+
+    Of the above list, MapObjectView is a special case and not a MapObject as such.
 
     The Map element is part of the \bold{QtMobility.location 1.1} module.
 */
@@ -78,7 +96,8 @@ QDeclarativeGraphicsGeoMap::QDeclarativeGraphicsGeoMap(QDeclarativeItem *parent)
     mappingManager_(0),
     mapData_(0),
     mapType_(NoMap),
-    connectivityMode_(NoConnectivity)
+    connectivityMode_(NoConnectivity),
+    componentCompleted_(false)
 {
     setFlag(QGraphicsItem::ItemHasNoContents, false);
 
@@ -109,13 +128,52 @@ QDeclarativeGraphicsGeoMap::QDeclarativeGraphicsGeoMap(QDeclarativeItem *parent)
 
 QDeclarativeGraphicsGeoMap::~QDeclarativeGraphicsGeoMap()
 {
-    qDeleteAll(objects_);
+    qDeleteAll(objectMap_.values());
+    qDeleteAll(mapViews_);
 
     if (mapData_)
         delete mapData_;
 
     if (serviceProvider_)
         delete serviceProvider_;
+}
+
+// todo: mixture of mapviews and mapobjects does not preserve the order (z).
+// to be addressed when merged with other changes
+void QDeclarativeGraphicsGeoMap::componentComplete()
+{
+    componentCompleted_ = true;
+    QDeclarativeItem::componentComplete();
+    if (!mapData_)
+        return;
+
+    QObjectList kids = children();
+    for (int i = 0; i < kids.size(); ++i) {
+        // dispatch items appropriately
+        QDeclarativeGeoMapObjectView* mapView = qobject_cast<QDeclarativeGeoMapObjectView*>(kids.at(i));
+        if (mapView) {
+            mapViews_.append(mapView);
+            continue;
+        }
+        QDeclarativeGeoMapObject *mapObject = qobject_cast<QDeclarativeGeoMapObject*>(kids.at(i));
+        if (mapObject) {
+            mapObjects_.append(mapObject);
+            objectMap_.insert(mapObject->mapObject(), mapObject);
+            mapData_->addMapObject(mapObject->mapObject());
+        }
+    }
+    setupMapViews();
+}
+
+void QDeclarativeGraphicsGeoMap::setupMapViews()
+{
+    if (mapViews_.isEmpty())
+        return;
+    for (int i = 0; i < mapViews_.size(); ++i) {
+        QDeclarativeGeoMapObjectView *mapView = mapViews_.at(i);
+        mapView->setMapData(mapData_);
+        mapView->repopulate();
+    }
 }
 
 void QDeclarativeGraphicsGeoMap::paint(QPainter *painter,
@@ -182,9 +240,16 @@ void QDeclarativeGraphicsGeoMap::setPlugin(QDeclarativeGeoServiceProvider *plugi
     mapData_->setMapType(QGraphicsGeoMap::MapType(mapType_));
     mapData_->setConnectivityMode(QGraphicsGeoMap::ConnectivityMode(connectivityMode_));
 
-    for (int i = 0; i < objects_.size(); ++i)
-        mapData_->addMapObject(objects_.at(i)->mapObject());
-
+    // todo this needs to be addressed when figuring out the overall issue of
+    // layering (z) between view objects and simple objects;
+    // values() of hash is not in same order as user put them.
+    // furthermore also objectviews must be setup here - plugin may be
+    // set later than at componentComplete()
+    if (componentCompleted_) {
+        for (int i = 0; i < mapObjects_.size(); ++i)
+            mapData_->addMapObject(mapObjects_.at(i)->mapObject());
+        setupMapViews();
+    }
     // setup signals
 
     connect(mapData_,
@@ -442,63 +507,6 @@ QDeclarativeGraphicsGeoMap::ConnectivityMode QDeclarativeGraphicsGeoMap::connect
 }
 
 /*!
-    \qmlproperty list<QGeoMapObject> Map::objects
-    \default
-
-    This property holds the list of objects associated with this map.
-
-    The various objects that can be added include:
-    \list
-    \o MapRectangle
-    \o MapCircle
-    \o MapText
-    \o MapImage
-    \o MapPolygon
-    \o MapPolyline
-    \o MapGroup
-    \endlist
-*/
-QDeclarativeListProperty<QDeclarativeGeoMapObject> QDeclarativeGraphicsGeoMap::objects()
-{
-    return QDeclarativeListProperty<QDeclarativeGeoMapObject>(this,
-            0,
-            object_append,
-            object_count,
-            object_at,
-            object_clear);
-}
-
-void QDeclarativeGraphicsGeoMap::object_append(QDeclarativeListProperty<QDeclarativeGeoMapObject> *prop, QDeclarativeGeoMapObject *mapObject)
-{
-    QDeclarativeGraphicsGeoMap *map = static_cast<QDeclarativeGraphicsGeoMap*>(prop->object);
-
-    if (map->mapData_)
-        map->mapData_->addMapObject(mapObject->mapObject());
-    map->objects_.append(mapObject);
-    map->objectMap_.insert(mapObject->mapObject(), mapObject);
-}
-
-int QDeclarativeGraphicsGeoMap::object_count(QDeclarativeListProperty<QDeclarativeGeoMapObject> *prop)
-{
-    return static_cast<QDeclarativeGraphicsGeoMap*>(prop->object)->objects_.size();
-}
-
-QDeclarativeGeoMapObject *QDeclarativeGraphicsGeoMap::object_at(QDeclarativeListProperty<QDeclarativeGeoMapObject> *prop, int index)
-{
-    return static_cast<QDeclarativeGraphicsGeoMap*>(prop->object)->objects_.at(index);
-}
-
-void QDeclarativeGraphicsGeoMap::object_clear(QDeclarativeListProperty<QDeclarativeGeoMapObject> *prop)
-{
-    QDeclarativeGraphicsGeoMap *map = static_cast<QDeclarativeGraphicsGeoMap*>(prop->object);
-
-    if (map->mapData_)
-        map->mapData_->clearMapObjects();
-    map->objects_.clear();
-    map->objectMap_.clear();
-}
-
-/*!
     \qmlmethod Map::toCoordinate(QPointF screenPosition)
 
     Returns the coordinate which corresponds to the screen position 
@@ -672,7 +680,6 @@ void QDeclarativeGraphicsGeoMap::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         if (mapObject)
             mapObject->moveEvent(mouseEvent);
     }
-
 }
 
 void QDeclarativeGraphicsGeoMap::internalCenterChanged(const QGeoCoordinate &coordinate)
@@ -690,7 +697,38 @@ void QDeclarativeGraphicsGeoMap::internalConnectivityModeChanged(QGraphicsGeoMap
     emit connectivityModeChanged(QDeclarativeGraphicsGeoMap::ConnectivityMode(connectivityMode));
 }
 
+/*!
+    \qmlmethod Map::addMapObject(MapObject)
+
+    Adds the given MapOject to the Map. If the object already
+    is on the Map, it will not be added again.
+
+*/
+
+void QDeclarativeGraphicsGeoMap::addMapObject(QDeclarativeGeoMapObject *object)
+{
+    if (!mapData_ || !object || objectMap_.contains(object->mapObject()))
+        return;
+    objectMap_.insert(object->mapObject(), object);
+    mapData_->addMapObject(object->mapObject());
+}
+
+/*!
+    \qmlmethod Map::addMapObject(MapObject)
+
+    Removes the given MapObject from the Map. If the MapObject does not
+    exist, function does nothing.
+
+*/
+
+void QDeclarativeGraphicsGeoMap::removeMapObject(QDeclarativeGeoMapObject *object)
+{
+    if (!mapData_ || !object || !objectMap_.contains(object->mapObject()))
+        return;
+    objectMap_.remove(object->mapObject());
+    mapData_->removeMapObject(object->mapObject());
+}
+
 #include "moc_qdeclarativegraphicsgeomap_p.cpp"
 
 QTM_END_NAMESPACE
-

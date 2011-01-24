@@ -87,19 +87,6 @@ QDeclarativeGeoMapPixmapObject::QDeclarativeGeoMapPixmapObject(QDeclarativeItem 
             SIGNAL(offsetChanged(QPoint)),
             this,
             SIGNAL(offsetChanged(QPoint)));
-
-    connect(&coordinate_,
-            SIGNAL(latitudeChanged(double)),
-            this,
-            SLOT(coordinateLatitudeChanged(double)));
-    connect(&coordinate_,
-            SIGNAL(longitudeChanged(double)),
-            this,
-            SLOT(coordinateLongitudeChanged(double)));
-    connect(&coordinate_,
-            SIGNAL(altitudeChanged(double)),
-            this,
-            SLOT(coordinateAltitudeChanged(double)));
 }
 
 QDeclarativeGeoMapPixmapObject::~QDeclarativeGeoMapPixmapObject()
@@ -113,35 +100,47 @@ QDeclarativeGeoMapPixmapObject::~QDeclarativeGeoMapPixmapObject()
     This property holds the coordinate at which to anchor the image.
 */
 
-void QDeclarativeGeoMapPixmapObject::setCoordinate(const QDeclarativeCoordinate *coordinate)
+void QDeclarativeGeoMapPixmapObject::setCoordinate(QDeclarativeCoordinate *coordinate)
 {
-    if (coordinate_.coordinate() == coordinate->coordinate())
+    if (!coordinate)
         return;
+    coordinate_ = coordinate;
 
-    coordinate_.setCoordinate(coordinate->coordinate());
+    connect(coordinate_,
+            SIGNAL(latitudeChanged(double)),
+            this,
+            SLOT(coordinateLatitudeChanged(double)));
+    connect(coordinate_,
+            SIGNAL(longitudeChanged(double)),
+            this,
+            SLOT(coordinateLongitudeChanged(double)));
+    connect(coordinate_,
+            SIGNAL(altitudeChanged(double)),
+            this,
+            SLOT(coordinateAltitudeChanged(double)));
+
     pixmap_->setCoordinate(coordinate->coordinate());
-
-    emit coordinateChanged(&coordinate_);
+    emit coordinateChanged(coordinate_);
 }
 
 QDeclarativeCoordinate* QDeclarativeGeoMapPixmapObject::coordinate()
 {
-    return &coordinate_;
+    return coordinate_;
 }
 
 void QDeclarativeGeoMapPixmapObject::coordinateLatitudeChanged(double /*latitude*/)
 {
-    pixmap_->setCoordinate(coordinate_.coordinate());
+    pixmap_->setCoordinate(coordinate_->coordinate());
 }
 
 void QDeclarativeGeoMapPixmapObject::coordinateLongitudeChanged(double /*longitude*/)
 {
-    pixmap_->setCoordinate(coordinate_.coordinate());
+    pixmap_->setCoordinate(coordinate_->coordinate());
 }
 
 void QDeclarativeGeoMapPixmapObject::coordinateAltitudeChanged(double /*altitude*/)
 {
-    pixmap_->setCoordinate(coordinate_.coordinate());
+    pixmap_->setCoordinate(coordinate_->coordinate());
 }
 
 /*!
@@ -320,6 +319,7 @@ void QDeclarativeGeoMapPixmapObject::finished()
 
 void QDeclarativeGeoMapPixmapObject::error(QNetworkReply::NetworkError error)
 {
+    Q_UNUSED(error)
     reply_->deleteLater();
     reply_ = 0;
 
