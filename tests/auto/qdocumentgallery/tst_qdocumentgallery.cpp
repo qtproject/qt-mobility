@@ -188,9 +188,6 @@ void tst_QDocumentGallery::itemTypeProperties_data()
             << QDocumentGallery::albumTitle
             << QDocumentGallery::artist
             << QDocumentGallery::duration
-#if !defined(Q_WS_MAEMO_6)
-            << QDocumentGallery::rating
-#endif
             << QDocumentGallery::title
             << QDocumentGallery::trackCount
 #endif
