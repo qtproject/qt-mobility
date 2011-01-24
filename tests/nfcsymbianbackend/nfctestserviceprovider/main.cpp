@@ -59,9 +59,16 @@ signals:
 public slots:
         void handleMessage(const QNdefMessage& msg, QNearFieldTarget* target)
         {
-         w->setWindowTitle( "nfc test service provider" );
-         w->showMaximized();
+         QMessageBox b(QMessageBox::Information, QObject::tr("NFC symbian backend test"),
+               "nfc test service provider", QMessageBox::Ok);
+               b.exec();
          qInstallMsgHandler(MyOutputHandler);
+         QByteArray byteArray = msg.toByteArray();
+         qDebug()<< "the count of record in the message: " << byteArray.count();
+         for (TInt i=0; i<byteArray.count(); i++)
+             {
+             qDebug()<< (quint8)byteArray[i] << " ";
+             }
          qDebug() << " MyContentHandler handleMessage was called." << endl; 
          qInstallMsgHandler(0);
         }
@@ -108,6 +115,8 @@ int main(int argc, char *argv[])
     QApplication app(argc, argv);
     
     w = new nfctestserviceprovider();
+    w->setWindowTitle( "nfc test service provider" );
+    w->showMaximized();
     
     qInstallMsgHandler(MyOutputHandler);
     
