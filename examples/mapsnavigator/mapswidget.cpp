@@ -150,10 +150,10 @@ StatusBarItem::StatusBarItem() :
     setPen(QPen(QBrush(), 0));
     setBrush(QBrush(QColor(0,0,0,120)));
 
-    ti = new QGraphicsSimpleTextItem(this);
-    ti->setBrush(QBrush(Qt::white));
+    textItem = new QGraphicsSimpleTextItem(this);
+    textItem->setBrush(QBrush(Qt::white));
 
-    setText("nothing");
+    setText("");
 }
 
 StatusBarItem::~StatusBarItem()
@@ -162,16 +162,16 @@ StatusBarItem::~StatusBarItem()
 
 void StatusBarItem::setText(QString text)
 {
-    ti->setText(text);
-    QRectF rect = ti->boundingRect();
+    textItem->setText(text);
+    QRectF rect = textItem->boundingRect();
     QPointF delta = this->rect().center() - rect.center();
-    ti->setPos(delta.x(), delta.y());
+    textItem->setPos(delta.x(), delta.y());
 }
 
 void StatusBarItem::setRect(qreal x, qreal y, qreal w, qreal h)
 {
     QGraphicsRectItem::setRect(x, y + m_offset, w, h);
-    setText(ti->text());
+    setText(textItem->text());
 }
 
 void StatusBarItem::setOffset(int offset)

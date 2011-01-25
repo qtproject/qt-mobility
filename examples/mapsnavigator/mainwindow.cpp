@@ -123,7 +123,9 @@ void MainWindow::initialize()
 
     if (positionSource)
         delete positionSource;
+
     positionSource = QGeoPositionInfoSource::createDefaultSource(this);
+
     if (!positionSource) {
         mapsWidget->statusBar()->showText("Could not open GPS", 5000);
         mapsWidget->setMyLocation(QGeoCoordinate(-27.5796, 153.1));

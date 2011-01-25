@@ -149,7 +149,7 @@ public slots:
 
 private:
     int m_offset;
-    QGraphicsSimpleTextItem *ti;
+    QGraphicsSimpleTextItem *textItem;
 };
 
 #endif // MAPSWIDGET_H
