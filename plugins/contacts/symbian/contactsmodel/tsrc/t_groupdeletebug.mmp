@@ -17,7 +17,7 @@
 // T_GroupDeleteBug.mmp
 //
 
-target          t_groupdeletebug.exe
+TARGET          t_groupdeletebug.exe
 targettype      EXE
 CAPABILITY   ReadUserData WriteUserData
 UID		0
@@ -28,6 +28,6 @@ userinclude		..
 source          T_GroupDeleteBug.cpp
 source          CContactViewEventQueue.cpp
 source          CContactDbEventQueue.cpp
-library         euser.lib cntmodel.lib cntview.lib
+LIBRARY         euser.lib cntmodel.lib cntview.lib
 
 SMPSAFE

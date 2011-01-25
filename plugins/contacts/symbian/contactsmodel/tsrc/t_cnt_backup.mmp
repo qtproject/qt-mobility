@@ -14,20 +14,20 @@
 * Description: 
 *
 */
+TARGET        t_cnt_backup.exe
+TARGETTYPE    EXE
 
-
-target		t_cnt_backup.exe
-targettype	EXE
 UID		0x10281846
 CAPABILITY	ReadUserData WriteUserData ReadDeviceData WriteDeviceData AllFiles
 VENDORID	0x70000001
 
 SOURCEPATH	../tsrc
 
-APP_LAYER_SYSTEMINCLUDE_SYMBIAN 
-userinclude ../inc 
+APP_LAYER_SYSTEMINCLUDE_SYMBIAN
+SYSTEMINCLUDE /epoc32/include/app-services/private
+USERINCLUDE ../inc 
 
-source		t_cnt_backup.cpp
+SOURCE        t_cnt_backup.cpp
 
 LIBRARY		cntmodel.lib euser.lib edbms.lib efsrv.lib bafl.lib sbeclient.lib
 LIBRARY     pimtestclient.lib

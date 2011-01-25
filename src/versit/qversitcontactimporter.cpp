@@ -51,10 +51,11 @@ QTM_USE_NAMESPACE
 /*!
   \deprecated
   \class QVersitContactImporterPropertyHandler
-  \brief The QVersitContactImporterPropertyHandler class is an interface for clients wishing to
-  implement custom import behaviour for vCard properties
+  \brief The QVersitContactImporterPropertyHandler class is the legacy interface for specifying
+  custom import behaviour for vCard properties.
 
-  This interface is replaced by QVersitContactImporterPropertyHandlerV2.
+  This interface is replaced by QVersitContactImporterPropertyHandlerV2.  For general information on
+  extending Qt Versit, see the document on \l{Versit Plugins}.
 
   \sa QVersitContactImporter
  */
@@ -95,12 +96,13 @@ QTM_USE_NAMESPACE
 
 /*!
   \class QVersitContactImporterPropertyHandlerV2
-  \brief The QVersitContactImporterPropertyHandlerV2 class is an interface for clients wishing to
-  implement custom import behaviour for vCard properties.
+  \brief The QVersitContactImporterPropertyHandlerV2 class is an interface for specifying
+  custom import behaviour for vCard properties.
   \ingroup versit-extension
   \inmodule QtVersit
 
-  This interface supercedes QVersitContactImporterPropertyHandler.
+  This interface supercedes QVersitContactImporterPropertyHandler.  For general information on
+  extending Qt Versit, see the document on \l{Versit Plugins}.
 
   \sa QVersitContactImporter
  */

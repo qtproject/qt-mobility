@@ -28,7 +28,8 @@
 
 class CContactItem;
 class CContactDatabase;
-
+class RTest;
+class CContactTemplate;
 //
 // CLog.
 //

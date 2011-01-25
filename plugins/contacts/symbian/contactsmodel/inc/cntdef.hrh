@@ -197,6 +197,7 @@
 
 #define KUidContactFieldFavouriteValue      	0x10274DB3
 #define KIntContactFieldVCardMapFavourite   	0x10274DB4
+#define KIntContactFieldPrivateImage            0x10274DB5
 
 
 /** @internalComponent */

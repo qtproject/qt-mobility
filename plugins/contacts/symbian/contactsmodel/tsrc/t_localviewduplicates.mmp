@@ -17,7 +17,7 @@
 // T_LocalViewDuplicates.mmp
 //
 
-target          t_localviewduplicates.exe
+TARGET          t_localviewduplicates.exe
 targettype      EXE
 CAPABILITY   ReadUserData WriteUserData
 UID		0
@@ -26,6 +26,6 @@ SOURCEPATH	.
 APP_LAYER_SYSTEMINCLUDE_SYMBIAN
 source          T_LocalViewDuplicates.cpp
 source          CContactViewEventQueue.cpp
-library         euser.lib cntmodel.lib
+LIBRARY         euser.lib cntmodel.lib
 
 SMPSAFE

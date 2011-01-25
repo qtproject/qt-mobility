@@ -2964,7 +2964,7 @@ Made by ChrisD 30th January 2002
 
 Fix for defect TUR-53DBD3 "13 phone (w) fields in a contact"
 An extension makefile has been added to contacts model to generate the resource file header 
-(CNTMODEL.RSG) without creating the compiled resource file (CNTMODEL.RSC). 
+(cntmodel.rsg) without creating the compiled resource file (CNTMODEL.RSC). 
 	
 CONTACUI and the contacts model testcode have been modified to create the template they 
 require as part of their build process.
@@ -4006,7 +4006,7 @@ Not binary, source or data compatible with 023 (see 3 and 8 below)
 From Steve
 1) Added methods to edit the template entry which is now stored in the database.  This
 is created along with the database.  To make this localisable, the template contents
-are stroed in a new resource file - CNTMODEL.RSS.
+are stroed in a new resource file - cntmodel.rss.
 
 2) The resource file itself is private and will not be kept BC but a new resource header -
 CNTTEM.RH is released in INCG.xxx

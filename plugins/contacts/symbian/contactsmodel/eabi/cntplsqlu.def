@@ -18,4 +18,6 @@ EXPORTS
 	_ZTV20CContactSynchroniser @ 17 NONAME
 	_ZTV20MContactSynchroniser @ 18 NONAME
 	KContactsModelSqliteDbCacheSize @ 19 NONAME DATA 4
-	
+	_ZTI20CCntSqlDbTableColumn @ 20 NONAME
+	_ZTV20CCntSqlDbTableColumn @ 21 NONAME
+

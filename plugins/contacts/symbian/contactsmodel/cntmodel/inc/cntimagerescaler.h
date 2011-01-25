@@ -67,7 +67,6 @@ class CImageRescaler : public CActive
     private:
         CImageRescaler();
         void ConstructL();
-        void SetImagesDirL();
         TPath ResizeAndCopyImage(const TDesC& aSourceFile, const CContactItem& aItem);
         TBool IsImageToLarge(const TDesC& aSourceFile) const;
         void ResizeImageL(const TDesC& aSourceFile, const TDesC& aDestFile);

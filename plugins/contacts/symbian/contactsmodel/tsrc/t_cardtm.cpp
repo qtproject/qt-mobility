@@ -987,7 +987,8 @@ LOCAL_C void TestModifyCardAttribs()
 			fieldSet[counter].TextStorage()->SetTextL(KTestData);
 		}		
 	// add the new contact to the db
-	TContactItemId newItemID = CntTest->Db()->AddNewContactL(*newContactItem);  
+	TContactItemId newItemID = CntTest->Db()->AddNewContactL(*newContactItem); 
+	
     //
 	CntTest->CloseDatabase();
 	CntTest->OpenDatabaseL();
@@ -1013,7 +1014,8 @@ LOCAL_C void TestModifyCardAttribs()
 			}
 		}
 	CntTest->Db()->CommitContactL(*newContactItem2);  // commit the changes		
-	CleanupStack::PopAndDestroy(2); // newContactItem2 openlx
+	CleanupStack::PopAndDestroy(); // newContactItem2
+	CleanupStack::Pop();//lock(OpenContactLX(newItemID))
 
 	CntTest->CloseDatabase();
 	CntTest->OpenDatabaseL();
@@ -1055,8 +1057,11 @@ LOCAL_C void TestModifyCardAttribs()
 				}
 			}
 		}
-	CntTest->Db()->CloseContactL(newContactItem3->Id());  
-	CleanupStack::PopAndDestroy(4); // newContactItem2 openlx
+	CntTest->Db()->CloseContactL(newContactItem3->Id());
+	CleanupStack::PopAndDestroy(); //newContactItem3	
+	
+	CleanupStack::PopAndDestroy(2); // newContactItem, tempTemplate
+	CleanupStack::Pop();//tempTemplate lock	(OpenContactLX(templateId))
 	}
 
 

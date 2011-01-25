@@ -17,7 +17,7 @@
 // T_GroupViewPanic.mmp
 //
 
-target          t_groupviewpanic.exe
+TARGET          t_groupviewpanic.exe
 targettype      EXE
 CAPABILITY   ReadUserData WriteUserData
 UID		0
@@ -26,6 +26,6 @@ SOURCEPATH	.
 APP_LAYER_SYSTEMINCLUDE_SYMBIAN
 source          t_groupviewpanic.cpp
 source          CContactViewEventQueue.cpp
-library         euser.lib cntmodel.lib
+LIBRARY         euser.lib cntmodel.lib
 
 SMPSAFE

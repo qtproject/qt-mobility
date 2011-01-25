@@ -20,7 +20,7 @@
 
 #if (!defined __TESTIMPEXVCARD_SERVER_H__)
 #define __TESTIMPEXVCARD_SERVER_H__
-#include <testexecuteserverbase.h>
+#include <test/testexecuteserverbase.h>
 
 // Literal constants for INI file field-names
 _LIT(KIniFieldName, 			"fieldname");

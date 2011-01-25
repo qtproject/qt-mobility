@@ -16,7 +16,7 @@
 */
 
 
-target          t_nomach.exe
+TARGET          t_nomach.exe
 targettype      EXE
 CAPABILITY   ReadUserData WriteUserData
 UID		0x1000007a
@@ -29,5 +29,5 @@ userinclude ../inc
 
 source          T_NOMACH.CPP
 
-library         euser.lib  cntmodel.lib	cnttutil.lib efsrv.lib pimtestclient.lib
+LIBRARY         euser.lib  cntmodel.lib	cnttutil.lib efsrv.lib pimtestclient.lib
 

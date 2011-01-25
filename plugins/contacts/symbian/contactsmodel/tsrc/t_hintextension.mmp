@@ -16,7 +16,7 @@
 */
 
 
-target          t_hintextension.exe
+TARGET          t_hintextension.exe
 targettype      EXE
 CAPABILITY   ReadUserData WriteUserData
 UID              0x10000a7a
@@ -29,4 +29,4 @@ userinclude ../inc
 
 source          t_HintExtension.cpp
 
-library	euser.lib edbms.lib efsrv.lib cntmodel.lib cntview.lib pimtestclient.lib
+LIBRARY	euser.lib edbms.lib efsrv.lib cntmodel.lib cntview.lib pimtestclient.lib

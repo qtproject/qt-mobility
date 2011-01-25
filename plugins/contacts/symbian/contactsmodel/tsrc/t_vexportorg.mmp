@@ -17,7 +17,7 @@
 // T_VExportORG.mmp
 //
 
-target          t_vexportorg.exe
+TARGET          t_vexportorg.exe
 targettype      EXE
 CAPABILITY   ReadUserData WriteUserData
 UID		0
@@ -27,6 +27,6 @@ source          T_VExportORG.cpp
 APP_LAYER_SYSTEMINCLUDE_SYMBIAN
 userinclude	..
 
-library         euser.lib  estor.lib cntmodel.lib cnttutil.lib efsrv.lib 
+LIBRARY         euser.lib  estor.lib cntmodel.lib cnttutil.lib efsrv.lib 
 
 SMPSAFE

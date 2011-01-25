@@ -16,7 +16,7 @@
 */
 
 
-target          t_agent.exe
+TARGET          t_agent.exe
 targettype      EXE
 CAPABILITY   ReadUserData WriteUserData
 
@@ -28,6 +28,6 @@ APP_LAYER_SYSTEMINCLUDE_SYMBIAN
 userinclude     ./  ../inc
 source          t_agent.cpp
 
-library         euser.lib efsrv.lib cntmodel.lib estor.lib cnttutil.lib bafl.lib pimtestclient.lib
+LIBRARY         euser.lib efsrv.lib cntmodel.lib estor.lib cnttutil.lib bafl.lib pimtestclient.lib
 
 SMPSAFE

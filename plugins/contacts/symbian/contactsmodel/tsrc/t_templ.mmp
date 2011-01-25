@@ -16,7 +16,7 @@
 */
 
 
-target          t_templ.exe
+TARGET          t_templ.exe
 targettype      EXE
 CAPABILITY   ReadUserData WriteUserData
 UID		0x1000007a
@@ -29,6 +29,6 @@ userinclude ../inc
 
 source          T_TEMPL.CPP
 
-library         euser.lib cntmodel.lib	bafl.lib	cnttutil.lib
+LIBRARY         euser.lib cntmodel.lib	bafl.lib	cnttutil.lib
 
 SMPSAFE

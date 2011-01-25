@@ -673,7 +673,6 @@ inline const TUint CCntRequest::SessionId()
 	return iSessionId;
 	}
 
-
 inline const TInt CCntRequest::TimeOut()
     { 
     return iTimeOut;

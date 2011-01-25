@@ -23,7 +23,10 @@ TEMPLATE = subdirs
 BLD_INF_RULES.prj_mmpfiles = "./groupsql/cntmodel.mmp"\
                              "./group/cntview.mmp"\
                              "./group/template.mmp"\
-                             "./groupsql/cntsrv.mmp"
+                             "./groupsql/cntsrv.mmp"\
+                             "./cntmatchlog/group/cntmatchlog.mmp"\
+                             "./cntvcard/cntvcard.mmp"\
+                             "./cntphone/cntphone.mmp"
 
 # Exports
 deploy.path = /
@@ -31,6 +34,8 @@ deploy.path = /
 # IBY files
 iby.path = epoc32/rom/include
 iby.sources = cntmodel.iby
+
+
 
 #
 # The CI system currently builds against latest stable Qt,
@@ -44,6 +49,11 @@ iby.sources += cntplsql.iby
 }
 
 for(iby, iby.sources):BLD_INF_RULES.prj_exports += "groupsql/$$iby $$deploy.path$$iby.path/$$iby"
+
+# IBY files
+matchlogiby.path = epoc32/rom/include
+matchlogiby.sources = cntmatchlog.iby 
+for(iby, matchlogiby.sources):BLD_INF_RULES.prj_exports += "cntmatchlog/group/$$iby $$deploy.path$$matchlogiby.path/$$iby"
 
 # Seems we currently need to export headers to both epoc32\include and the proper app directory
 # (until the build environment gets cleaned up to not have any contactsmodel headers by default)

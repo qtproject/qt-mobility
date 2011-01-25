@@ -63,10 +63,12 @@ QTM_USE_NAMESPACE
 
 /*!
   \class QVersitOrganizerImporterPropertyHandler
-  \brief The QVersitOrganizerImporterPropertyHandler class is an interface for clients wishing to
-  implement custom import behaviour for vCard properties.
+  \brief The QVersitOrganizerImporterPropertyHandler class is an interface for specifying
+  custom import behaviour for vCard properties.
   \ingroup versit-extension
   \inmodule QtVersit
+
+  For general information on extending Qt Versit, see the document on \l{Versit Plugins}.
 
   \sa QVersitOrganizerImporter
  */

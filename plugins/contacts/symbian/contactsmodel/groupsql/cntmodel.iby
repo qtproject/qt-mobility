@@ -23,22 +23,24 @@ REM Contact Model
 #include <versit.iby>
 #include <conarc.iby>
 #include <charconv.iby>
-#include <BackupRestoreNotification.iby>
+#include <backuprestorenotification.iby>
 #include <cntplsql.iby>
 REM Log Engine contact matching plug-in implementation
 #include <cntmatchlog.iby>
 
 REM Configurable heap size for contact server.
 #ifndef CONTACT_SERVER_MAX_HEAPSIZE
-#define CONTACT_SERVER_MAX_HEAPSIZE  0x100000
+#define CONTACT_SERVER_MAX_HEAPSIZE  0x200000
 #endif
 
+#ifndef FF_QT_IN_UDA
 file=ABI_DIR/BUILD_DIR/cntsrv.exe		System/Programs/cntsrv.exe       heapmax=CONTACT_SERVER_MAX_HEAPSIZE
 file=ABI_DIR/BUILD_DIR/cntmodel.dll		System/Libs/cntmodel.dll
 file=ABI_DIR/BUILD_DIR/cntview.dll		System/Libs/cntview.dll
 
 ECOM_PLUGIN(cntvcard.dll,102035f8.rsc)
 ECOM_PLUGIN(cntphone.dll,102035fb.rsc)
+#endif // FF_QT_IN_UDA
 
 
 #endif

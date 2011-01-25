@@ -17,7 +17,7 @@
 // T_LocalViewRemove.mmp
 //
 
-target          t_localviewremove.exe
+TARGET          t_localviewremove.exe
 targettype      EXE
 CAPABILITY   ReadUserData WriteUserData
 UID		0
@@ -28,6 +28,6 @@ userinclude		.
 source          T_LocalViewRemove.cpp
 source          CContactViewEventQueue.cpp
 source          CContactDbEventQueue.cpp
-library         euser.lib cntmodel.lib
+LIBRARY         euser.lib cntmodel.lib
 
 SMPSAFE
