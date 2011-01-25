@@ -45,6 +45,7 @@
 #include <QList>
 #include <QString>
 #include <QUrl>
+#include <QSettings>
 #include <QProcessEnvironment>
 #include <QNetworkProxyFactory>
 
@@ -54,12 +55,20 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
-    QUrl url("http://172.16.42.133:8080", QUrl::TolerantMode);
-    QNetworkProxy proxy;
-    proxy.setType(QNetworkProxy::HttpProxy);
-    proxy.setHostName(url.host());
-    proxy.setPort(url.port(8080));
-    QNetworkProxy::setApplicationProxy(proxy);
+    QApplication::setOrganizationName("Nokia");
+    QApplication::setApplicationName("MapsNavigatorExample");
+
+    QSettings settings;
+
+    QVariant value = settings.value("http.proxy");
+    if (value.isValid()) {
+        QUrl url(value.toString(), QUrl::TolerantMode);
+        QNetworkProxy proxy;
+        proxy.setType(QNetworkProxy::HttpProxy);
+        proxy.setHostName(url.host());
+        proxy.setPort(url.port(8080));
+        QNetworkProxy::setApplicationProxy(proxy);
+    }
 
     MainWindow mw;
     mw.resize(200,200);
