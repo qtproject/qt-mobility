@@ -1247,7 +1247,20 @@ void MainWindow::initialize()
 }
     \endcode
     
-    Here we make use of the StatusBarItem
+    Here we make use of the StatusBarItem to display a message when
+    we are able or unable to open the QGeoPositionInfoSource.
+    
+    And then in the slot \a updateMyPosition, we use this to set the
+    myLocation marker.
+    
+    \code
+void MainWindow::updateMyPosition(QGeoPositionInfo info)
+{
+    if (mapsWidget) {
+        mapsWidget->setMyLocation(info.coordinate());
+    }
+}
+    \endcode
 
 */
 
