@@ -16,7 +16,7 @@
 */
 
 
-target           t_groups.exe
+TARGET           t_groups.exe
 targettype       EXE
 CAPABILITY   	 ReadUserData WriteUserData
 UID              0x1000007a
@@ -30,8 +30,8 @@ userinclude ../inc
 source           T_GROUPS.CPP 
 source           CntClient.CPP
 
-library			 euser.lib  
-library			 cntmodel.lib      
-library			 cnttutil.lib 
+LIBRARY			 euser.lib  
+LIBRARY			 cntmodel.lib      
+LIBRARY			 cnttutil.lib 
 
 SMPSAFE

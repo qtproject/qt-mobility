@@ -16,7 +16,7 @@
 */
 
 
-target          t_bench.exe
+TARGET          t_bench.exe
 targettype      EXE
 CAPABILITY   ReadUserData WriteUserData
 UID		0x1000097a
@@ -30,4 +30,4 @@ userinclude ../inc
 source          t_bench.cpp
 source		t_utils2.cpp
 
-library         euser.lib  cntmodel.lib	efsrv.lib cnttutil.lib pimtestclient.lib
+LIBRARY         euser.lib  cntmodel.lib	efsrv.lib cnttutil.lib pimtestclient.lib

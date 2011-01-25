@@ -19,7 +19,7 @@
 target          T_CntImageRescaler.exe
 targettype      EXE
 CAPABILITY	    All -TCB
-
+MACRO			UNIT_TEST
 EPOCHEAPSIZE    4096 0x800000
 
 APP_LAYER_SYSTEMINCLUDE_SYMBIAN
@@ -36,6 +36,7 @@ source		    t_upscalerhelper.cpp
 
 sourcepath	    ../../../cntmodel/src
 source		    cntimagerescaler.cpp
+source		    cntimagerescaleutility.cpp
 
 library         efsrv.lib
 library         euser.lib
@@ -45,4 +46,6 @@ LIBRARY         hal.lib
 LIBRARY         fbscli.lib
 library         bafl.lib
 LIBRARY         platformenv.lib
+LIBRARY			cntmodel.lib
+LIBRARY			charconv.lib
 

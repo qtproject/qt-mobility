@@ -20,7 +20,7 @@
 
 #if (!defined __TESTCONTACT_SERVER_H__)
 #define __TESTCONTACT_SERVER_H__
-#include <testexecuteserverbase.h>
+#include <test/testexecuteserverbase.h>
 #include <cntitem.h>
 #include <cntfield.h>
 

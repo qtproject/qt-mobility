@@ -48,3 +48,4 @@ enum EContactFieldCategory
 #define KIntFieldFlagFilterable4	0x100
 
 #endif //__CNTDEF_INTERNAL_HRH__
+

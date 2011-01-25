@@ -17,7 +17,7 @@
 // T_ViewObserversBug.mmp
 //
 
-target          t_viewobserversbug.exe
+TARGET          t_viewobserversbug.exe
 targettype      EXE
 CAPABILITY   ReadUserData WriteUserData
 UID		0
@@ -26,6 +26,6 @@ SOURCEPATH	.
 APP_LAYER_SYSTEMINCLUDE_SYMBIAN
 source          T_ViewObserversBug.cpp
 source          CContactViewEventQueue.cpp
-library         euser.lib cntmodel.lib
+LIBRARY         euser.lib cntmodel.lib
 
 SMPSAFE

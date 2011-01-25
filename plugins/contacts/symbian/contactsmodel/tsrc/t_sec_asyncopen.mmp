@@ -16,7 +16,7 @@
 */
 
 
-target          t_sec_asyncopen.exe
+TARGET          t_sec_asyncopen.exe
 targettype      EXE
 CAPABILITY   ReadUserData WriteUserData
 UID		0x1000097a
@@ -30,5 +30,5 @@ userinclude ../inc
 source          T_Sec_AsyncOpen.cpp 
 
 
-library         euser.lib  cntmodel.lib 
+LIBRARY         euser.lib  cntmodel.lib 
 LIBRARY         pimtestclient.lib

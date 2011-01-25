@@ -86,66 +86,75 @@ static void CopyFileL(const TDesC& aSource, const TDesC& aDest)
 /**
 	Main test procedure.
 */
-static void DoTestsL(TInt aEntryCount)
-	{
+static void DoTestsL( TInt aEntryCount )
+    {
     // Performance Test Initial Sync
-	CAddBench* addTest = CAddBench::NewLC(test);
-	addTest->DoSyncL(aEntryCount, KVCardLoc);
-	CleanupStack::PopAndDestroy(addTest);
-	User::After(10000000);
+    CAddBench* addTest = CAddBench::NewLC( test );
+    addTest->DoSyncL( aEntryCount, KVCardLoc );
+    CleanupStack::PopAndDestroy( addTest );
+    User::After( 10000000 );
 
-	CopyFileL(KContactsDBFileNameC, KContactsDBSaveFileNameC);
-	
-	// Performance Test Startup
-	CStartUp* startupTest = CStartUp::NewLC(test);
-	CopyFileL(KContactsDBSaveFileNameC, KContactsDBFileNameC);
-	// contacts view creation
-	TInt ms20FromView(0);
-	startupTest->DoTestL(KDbFileName, CStartUp::ERemoteContactsView, ms20FromView);
-	TInt microSecsToGet20ItemsFromView(ms20FromView);
-	// 'groups only' view creaton
-	startupTest->DoTestL(KDbFileName, CStartUp::ERemoteGroupsView, ms20FromView);
-	CleanupStack::PopAndDestroy(startupTest);
+    CopyFileL( KContactsDBFileNameC, KContactsDBSaveFileNameC );
 
-	User::After(1000000);
+    // Performance Test Startup
+    CStartUp* startupTest = CStartUp::NewLC( test );
+    CopyFileL( KContactsDBSaveFileNameC, KContactsDBFileNameC );
+    // contacts view creation
+    User::After( 1000000 );
+    TInt ms20FromView( 0 );
+    startupTest->DoTestL( KDbFileName, CStartUp::ERemoteContactsView,
+        ms20FromView );
+    TInt microSecsToGet20ItemsFromView( ms20FromView );
+    // 'groups only' view creaton
+    startupTest->DoTestL( KDbFileName, CStartUp::ERemoteGroupsView,
+        ms20FromView );
+    CleanupStack::PopAndDestroy( startupTest );
 
-	// Performance Test Bulk Delete
-	_LIT(KBulkDeleteTitle, "\nBeginning Bulk Delete testing...\n");
-	_LIT(KBulkDeleteNote, "[Figures include (fetch 20 items in view) * (num items deleted / transaction size).]\n\n");
-	test.Printf(KBulkDeleteTitle);
-	test.Printf(KBulkDeleteNote);
-	CDeleteMany* deleteMany = NULL;
-	// Delete 1 contact
-	CopyFileL(KContactsDBSaveFileNameC, KContactsDBFileNameC);
-	deleteMany = CDeleteMany::NewLC(test);
-	deleteMany->DelDataL(K1Contact, aEntryCount, microSecsToGet20ItemsFromView);
-	CleanupStack::PopAndDestroy(deleteMany);
-	deleteMany = NULL;
-	// Delete 20 contacts
-	CopyFileL(KContactsDBSaveFileNameC, KContactsDBFileNameC);
-	deleteMany = CDeleteMany::NewLC(test);
-	deleteMany->DelDataL(K20Contacts, aEntryCount, microSecsToGet20ItemsFromView);
-	CleanupStack::PopAndDestroy(deleteMany);
-	deleteMany = NULL;
-	// Delete 1000 contacts
-	CopyFileL(KContactsDBSaveFileNameC, KContactsDBFileNameC);
-	deleteMany = CDeleteMany::NewLC(test);
-	deleteMany->DelDataL(K1000Contacts, aEntryCount, microSecsToGet20ItemsFromView);
-	CleanupStack::PopAndDestroy(deleteMany);
-	deleteMany = NULL;
-
-	// Performance Test Resort View
-	CopyFileL(KContactsDBSaveFileNameC, KContactsDBFileNameC);
-	CViewResort* resortTest = CViewResort::NewLC(test);
-	resortTest->DoTestL(KDbFileName);
-	CleanupStack::PopAndDestroy(resortTest);
-
-	// Performance Test Match Phone Number and Update 1 Contact
-	CopyFileL(KContactsDBSaveFileNameC, KContactsDBFileNameC);
-	CCrudOperations* findAndUpdateTest = CCrudOperations::NewLC(test);
-	findAndUpdateTest->DoTestsL(microSecsToGet20ItemsFromView);
-	CleanupStack::PopAndDestroy(findAndUpdateTest);
-	}
+    User::After( 1000000 );
+    // Performance Test Bulk Delete
+    _LIT(KBulkDeleteTitle, "\nBeginning Bulk Delete testing...\n");
+    _LIT(KBulkDeleteNote, "[Figures include (fetch 20 items in view) * (num items deleted / transaction size).]\n\n");
+    test.Printf( KBulkDeleteTitle );
+    test.Printf( KBulkDeleteNote );
+    CDeleteMany* deleteMany = NULL;
+    User::After( 1000000 );
+    // Delete 1 contact
+    CopyFileL( KContactsDBSaveFileNameC, KContactsDBFileNameC );
+    deleteMany = CDeleteMany::NewLC( test );
+    deleteMany->DelDataL( K1Contact, aEntryCount,
+        microSecsToGet20ItemsFromView );
+    CleanupStack::PopAndDestroy( deleteMany );
+    deleteMany = NULL;
+    User::After( 1000000 );
+    // Delete 20 contacts
+    CopyFileL( KContactsDBSaveFileNameC, KContactsDBFileNameC );
+    deleteMany = CDeleteMany::NewLC( test );
+    deleteMany->DelDataL( K20Contacts, aEntryCount,
+        microSecsToGet20ItemsFromView );
+    CleanupStack::PopAndDestroy( deleteMany );
+    deleteMany = NULL;
+    User::After( 1000000 );
+    // Delete 1000 contacts
+    CopyFileL( KContactsDBSaveFileNameC, KContactsDBFileNameC );
+    deleteMany = CDeleteMany::NewLC( test );
+    deleteMany->DelDataL( K1000Contacts, aEntryCount,
+        microSecsToGet20ItemsFromView );
+    CleanupStack::PopAndDestroy( deleteMany );
+    deleteMany = NULL;
+    User::After( 1000000 );
+    // Performance Test Resort View
+    CopyFileL( KContactsDBSaveFileNameC, KContactsDBFileNameC );
+    CViewResort* resortTest = CViewResort::NewLC( test );
+    resortTest->DoTestL( KDbFileName );
+    CleanupStack::PopAndDestroy( resortTest );
+    User::After( 1000000 );
+    // Performance Test Match Phone Number and Update 1 Contact
+    CopyFileL( KContactsDBSaveFileNameC, KContactsDBFileNameC );
+    CCrudOperations* findAndUpdateTest = CCrudOperations::NewLC( test );
+    findAndUpdateTest->DoTestsL( microSecsToGet20ItemsFromView );
+    CleanupStack::PopAndDestroy( findAndUpdateTest );
+    User::After( 1000000 );
+    }
 
 LOCAL_C void CleanupFilesL()
 	{

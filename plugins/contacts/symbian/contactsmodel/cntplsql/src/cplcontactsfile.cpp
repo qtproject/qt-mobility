@@ -27,6 +27,7 @@
 #include "cntfilesearch.h"
 #include "persistencelayer.h"
 #include "cntdbconsts_internal.h"
+#include "cntimagerescaleutility.h"
 
 #include <pathinfo.h>
 #include <driveinfo.h>
@@ -81,7 +82,7 @@ void CPplContactsFile::ConstructL()
 	{
     // Do this first since the contacts table created by the
     // iItemManager will need to know if the directory exists.
-    CreateImagesDirL();
+   TCntImageRescaleUtility::CreateImageDirectoryL();
     
 	iItemManager = CPplContactItemManager::NewL(iDatabase, *this, iContactProperties, iIccContactStore);
 	iContactProperties.SetContactItemManagerL(*iItemManager);
@@ -117,6 +118,7 @@ CPplContactsFile::~CPplContactsFile()
   	Close();
 	delete iItemManager;
 	delete iConfigureStr;
+	iSqlDatabaseObservers.Reset();
 	}
 
 
@@ -192,157 +194,13 @@ void CPplContactsFile::OpenL(const TDesC& aFileName, TBool aNotify)
 	iDatabase.Close();
 	iDatabase.OpenL(fileName, iConfigureStr);
 
-    iItemManager->SynchronizePredSearchTableL();
-	
-	iFileIsOpen = ETrue;
+    iFileIsOpen = ETrue;
+    
+    //check compatibility
+    iItemManager->MakeDatabaseCompatibleL();
+        
 	GenerateNotificationEventL(aNotify);	
 	}
-
-/**
-Delete and create the images folder. This removes all the files in
-this folder.
-*/
-void CPplContactsFile::DeleteImagesDirL()
-    {
-    LocalFsL();
-    TInt drive;
-    
-#ifdef __WINS__
-    TInt err = DriveInfo::GetDefaultDrive(DriveInfo::EDefaultPhoneMemory, drive);
-#else
-    TInt err = DriveInfo::GetDefaultDrive(DriveInfo::EDefaultMassStorage, drive);
-#endif
-    
-    // Do not leave with this error. The phone does not have to have this support
-    if (err == KErrNotSupported)
-        {
-        return;
-        }
-    else
-        {
-        User::LeaveIfError(err);
-        }
-    
-    // Get the root path in this drive to create
-    // to create the images directory
-    TPath dir;
-    User::LeaveIfError(PathInfo::GetRootPath(dir, drive));
-    dir.Append(KImagesFolder);
-    
-    CFileMan* fileMan = CFileMan::NewL(iLocalFs);
-    err = fileMan->RmDir(dir); // err not used
-    delete fileMan;
-    }
-
-
-/**
-Create a public hidded internal folder to store contact thumbnail images
-*/
-void CPplContactsFile::CreateImagesDirL()
-    {
-    LocalFsL();
-    TInt drive;
-    
-#ifdef __WINS__
-    TInt err = DriveInfo::GetDefaultDrive(DriveInfo::EDefaultPhoneMemory, drive);
-#else
-    TInt err = DriveInfo::GetDefaultDrive(DriveInfo::EDefaultMassStorage, drive);
-#endif
-    
-    // Do not leave with this error. The phone does not have to have this support
-    if (err == KErrNotSupported)
-        {
-        return;
-        }
-    else
-        {
-        User::LeaveIfError(err);
-        }
-    
-    // Get the root path in this drive to create
-    // to create the images directory
-    TPath dir;
-    User::LeaveIfError(PathInfo::GetRootPath(dir, drive));
-    dir.Append(KImagesFolder);
-    
-    // Ensure images directory exists
-    if (!BaflUtils::FolderExists(iLocalFs, dir))
-        {
-        BaflUtils::EnsurePathExistsL(iLocalFs, dir);
-        User::LeaveIfError(iLocalFs.SetAtt(dir, KEntryAttHidden, KEntryAttNormal));
-        
-        CreateImagesBackupRegistrationFileL(dir);
-        }
-    }
-
-/**
-Create a backup registration file used to inform the backup and restore
-utility to backup the internal folder and all its images.
-*/
-void CPplContactsFile::CreateImagesBackupRegistrationFileL(const TPath& aDir)
-    {
-    LocalFsL();
-    
-    _LIT8(KXmlFilePart1, "<?xml version=\"1.0\" standalone=\"yes\"?>\r\n"
-        "<backup_registration>\r\n"
-        "    <public_backup delete_before_restore=\"yes\">\r\n"
-        "        <include_directory name=\"");
-    _LIT8(KXmlFilePart2, "\"/>\r\n"
-        "    </public_backup>\r\n"
-        "</backup_registration>\r\n");
-    
-    TPath privatePath;
-    User::LeaveIfError(iLocalFs.PrivatePath(privatePath));
-    User::LeaveIfError(iLocalFs.SetSessionPath(privatePath));
-
-    // If the path does not exist create it.
-    TInt err = iLocalFs.MkDirAll(privatePath);
-    if (err != KErrAlreadyExists && err != KErrNone)
-        {
-        User::Leave(err);
-        }
-
-    _LIT(KImagesBackupFolderName, "backup_registration_images.xml");
-    
-    // Remove previous backup registration file. The drive path may have
-    // changed so this file needs to be regenerated all the time
-    BaflUtils::DeleteFile(iLocalFs, KImagesBackupFolderName()); // Error value not necessary
-
-    const TInt newFileNameLength = KImagesBackupFolderName().Length();
-   
-    HBufC* newFileName = HBufC::NewLC(newFileNameLength);
-    
-    TPtr newFileNamePtr(newFileName->Des());
-    newFileNamePtr.Append(KImagesBackupFolderName);
-
-    // Create registration file.
-    RFile file;
-    CleanupClosePushL(file);
-
-    // File should not exist since it was deleted
-    User::LeaveIfError(file.Create(iLocalFs, *newFileName, EFileWrite));
-        
-    HBufC* nameAndExt = NULL;
-    nameAndExt = HBufC::NewLC(aDir.Length());
-    nameAndExt->Des().Append(aDir);
-
-    // Convert foldername and extension to UTF8 before writing to file.
-    HBufC8* folderName = HBufC8::NewLC(aDir.Length());
-    TPtr8 pFolderName(folderName->Des());
-    
-    User::LeaveIfError(CnvUtfConverter::ConvertFromUnicodeToUtf8(pFolderName,
-        *nameAndExt));
-
-    // Write data into file.
-    User::LeaveIfError(file.Write(KXmlFilePart1()));
-    User::LeaveIfError(file.Write(pFolderName));
-    User::LeaveIfError(file.Write(KXmlFilePart2()));
-    User::LeaveIfError(file.Flush());
-
-    User::LeaveIfError(iLocalFs.SetSessionPath(aDir));
-    CleanupStack::PopAndDestroy(4, newFileName); // folderName, nameAndExt, file, newFileName
-    }
-
 /**
 Utility method used to generate EContactDbObserverEventTablesOpened event
 */
@@ -470,8 +328,8 @@ EXPORT_C void CPplContactsFile::CreateL(const TDesC& aFileName, TPlCreateMode aM
   	iItemManager->CreateTablesL();
   	
   	// If the folder exists recreate it since the database is new
-  	DeleteImagesDirL();
-  	CreateImagesDirL();
+  	TRAP_IGNORE(TCntImageRescaleUtility::DeleteImageDirectoryL());
+  	TCntImageRescaleUtility::CreateImageDirectoryL();
   	
   	iContactProperties.SystemTemplateManager().RecreateSystemTemplateL();
 
@@ -490,8 +348,8 @@ void CPplContactsFile::DeleteL(const TDesC& aFileName)
 	GetPhysicalFileNameL(fileName, aFileName);	
 	
 	User::LeaveIfError(iLocalFs.Delete(fileName));
-	
-	DeleteImagesDirL();
+
+	TCntImageRescaleUtility::DeleteImageDirectoryL();
     
 	iFileIsOpen = EFalse;
 	}
@@ -512,6 +370,12 @@ Close the database.
 */
 void CPplContactsFile::Close(TBool aNotify)
 	{	 		
+	// Close the resource which depends on iDatabase before it will be closed.
+    for (TInt i = 0; i < iSqlDatabaseObservers.Count(); i++ )
+        {
+        iSqlDatabaseObservers[i]->OnCloseL();
+        }
+
   	iDatabase.Close(); 
   	iFileIsOpen = EFalse;
   
@@ -607,4 +471,37 @@ TBool CPplContactsFile::DatabaseExistsL(const TDesC& aFileName)
 	LocalFsL();
 	return BaflUtils::FileExists(iLocalFs, fileName);
 	}
+
+
+/**
+ * Add an observer for monitoring RSqlDatabase.
+ * 
+ * @param  aSqlDatabaseObserver The observer for monitoring RSqlDatabase.
+ * 
+ * @return None 
+ */
+void CPplContactsFile::AddSqlDBObserverL(
+    MLplSqlDatabaseObserver& aSqlDatabaseObserver )
+    {
+    iSqlDatabaseObservers.AppendL( &aSqlDatabaseObserver );
+    }
+
+
+/**
+ * Remove an RSqlDatabase observer.
+ * 
+ * @param  aSqlDatabaseObserver The observer is to be removed.
+ * 
+ * @return None
+ */
+void CPplContactsFile::RemoveSqlDBObserverL(
+    MLplSqlDatabaseObserver& aSqlDatabaseObserver )
+    {
+    TInt id = iSqlDatabaseObservers.Find( &aSqlDatabaseObserver );
+    if ( id != KErrNotFound )
+        {
+        iSqlDatabaseObservers.Remove( id );
+        }
+    }
+
 

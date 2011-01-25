@@ -965,7 +965,6 @@ const TUid KUidContactFieldFavourite={KUidContactFieldFavouriteValue};
 */
 const TUid KUidContactFieldVCardMapFavourite={KIntContactFieldVCardMapFavourite};
 
-
 /** Name of the TYPE property parameter, for which the values are work, home etc. 
 @publishedAll
 @released

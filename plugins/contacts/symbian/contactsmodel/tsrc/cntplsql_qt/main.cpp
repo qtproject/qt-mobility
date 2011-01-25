@@ -14,10 +14,8 @@
 * Description: Retrieves the character map for each of the numeric keys.
 */
 
+#include "testrunner.h"
 #include "ut_cntsqlsearch.h"
-#include "ut_cntsqlfactory.h"
-#include "ut_cntsqlkoreanitut.h"
-#include "ut_cntsqlsearchbase.h"
 
 #include <QtTest/QtTest>
 
@@ -32,30 +30,12 @@ int main(int argc, char *argv[])
             
     QApplication app(argc, argv);
     
-    QString resultFileName = "c:/ut_sqlSearch.xml";
-    QStringList args_sqlSearch( "UT_CntSqlSearch");
-    args_sqlSearch << "-o" << resultFileName;
+    TestRunner testRunner("ut_symbian");
+    
     UT_CntSqlSearch ut_sqlSearch;
-    QTest::qExec(&ut_sqlSearch, args_sqlSearch);
+    testRunner.runTests(ut_sqlSearch);
     
-    resultFileName = QString("c:/ut_sqlsearchbase.xml");
-    QStringList args_sqlsearchbase( "UT_CntSqlSearchBase");
-    args_sqlsearchbase << "-o" << resultFileName;
-    UT_CntSqlSearchBase ut_sqlsearchbase;
-    QTest::qExec(&ut_sqlsearchbase, args_sqlsearchbase);
-    
-    resultFileName = QString("c:/ut_sqlkoreanitut.xml");
-    QStringList args_sqlkoreanitut( "UT_CntSqlKoreanItuT");
-    args_sqlkoreanitut << "-o" << resultFileName;
-    UT_CntSqlKoreanItuT ut_sqlkoreanitut;
-    QTest::qExec(&ut_sqlkoreanitut, args_sqlkoreanitut);
-    
-    resultFileName = "c:/ut_sqlfactory.xml";
-    QStringList args_sqlfactory( "UT_CntSqlSearch");
-    args_sqlfactory << "-o" << resultFileName;
-    UT_CntSqlFactory ut_sqlfactory;
-    QTest::qExec(&ut_sqlfactory, args_sqlfactory);
-    
+    testRunner.printResults();
 
     /*if (promptOnExit) {
         printf("Press any key...\n");

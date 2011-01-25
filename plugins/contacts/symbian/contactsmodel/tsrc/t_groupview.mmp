@@ -16,7 +16,7 @@
 */
 
 
-target          t_groupview.exe
+TARGET          t_groupview.exe
 targettype      EXE
 CAPABILITY   	ReadUserData WriteUserData
 UID				0x1000097a
@@ -31,10 +31,10 @@ source          t_groupview.cpp
 source			t_utils2.cpp
 source			CContactDbEventQueue.cpp
 
-library         euser.lib  
-library			cntmodel.lib 
-library			cntview.lib 
-library			efsrv.lib 
-library			pimtestclient.lib
+LIBRARY         euser.lib  
+LIBRARY			cntmodel.lib 
+LIBRARY			cntview.lib 
+LIBRARY			efsrv.lib 
+LIBRARY			pimtestclient.lib
 
 SMPSAFE

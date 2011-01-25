@@ -140,7 +140,6 @@ TInt CCntRequest::TimeOutError()const
 	return iTimeOutError;
 	}
 
-
 /** 
   Does not complete a RMessage - Internal Request do not contain a RMessage
   as they don't originate from the client.  Do nothing.
@@ -840,8 +839,6 @@ TAccept CReqReadCnt::VisitStateL(CState& aState)
 	{
 	return aState.AcceptRequestL(this);
 	}
-	
-	
 	
 /** 
  CReqDeleteCnt constructor

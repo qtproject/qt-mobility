@@ -16,7 +16,7 @@
 */
 
 
-target          t_filterviewspeed.exe
+TARGET          t_filterviewspeed.exe
 targettype      EXE
 CAPABILITY   ReadUserData WriteUserData
 UID		0x1000007a
@@ -30,6 +30,6 @@ userinclude ../inc
 source          T_FilterViewSpeed.cpp
 source          t_utils2.cpp
 
-library         euser.lib efsrv.lib cntmodel.lib cntview.lib pimtestclient.lib
+LIBRARY         euser.lib efsrv.lib cntmodel.lib cntview.lib pimtestclient.lib
 
 SMPSAFE

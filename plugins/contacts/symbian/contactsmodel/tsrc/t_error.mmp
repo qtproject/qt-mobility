@@ -16,7 +16,7 @@
 */
 
 
-target          t_error.exe
+TARGET          t_error.exe
 targettype      EXE
 CAPABILITY   ReadUserData WriteUserData
 UID		0x1000007a
@@ -29,8 +29,8 @@ userinclude ../inc
 
 source          T_ERROR.CPP CContactDbEventQueue.cpp
 
-library         euser.lib  efsrv.lib  cntmodel.lib	edbms.lib
-library         estor.lib	cnttutil.lib	bafl.lib
+LIBRARY         euser.lib  efsrv.lib  cntmodel.lib	edbms.lib
+LIBRARY         estor.lib	cnttutil.lib	bafl.lib
 LIBRARY		pimtestclient.lib
 
 SMPSAFE

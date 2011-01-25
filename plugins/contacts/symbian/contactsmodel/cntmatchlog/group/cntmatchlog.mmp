@@ -31,7 +31,7 @@ SOURCE				CntMatchLog.cpp
 USERINCLUDE			../inc
 APP_LAYER_SYSTEMINCLUDE_SYMBIAN
 
-START RESOURCE		../src/2000862D.rss
+START RESOURCE		../src/2000862d.rss
 	TARGET 				cntmatchlog.rsc
 END
 

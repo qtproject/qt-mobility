@@ -72,14 +72,6 @@ void CDbStructure::Init()
 	//columns in comm-address table
 	iColumnsIndex.Append(KInitialValue);
 	iNumColumns.Append(KNumColInCommTable);
-	
-	//columns in predictive search tables
-	const TInt KAmountOfPredictiveSearchTables = 10;
-	for (TInt i = 0; i < KAmountOfPredictiveSearchTables; ++i)
-		{
-		iColumnsIndex.Append(KInitialValue);
-		iNumColumns.Append(KNumColInPredSearchTable);
-		}
 	}
 		
 /**
@@ -127,32 +119,6 @@ const TDesC& CDbStructure::TableName(TInt aTableIndex)
 			{
 			return KSqlContactCommAddrTableName;		
 			}
-
-		case KContactPredSearchTable0Name:
-			return KSqlContactPredSearchTable0;
-		case KContactPredSearchTable1Name:
-			return KSqlContactPredSearchTable1;
-		case KContactPredSearchTable2Name:
-			return KSqlContactPredSearchTable2;
-		case KContactPredSearchTable3Name:
-			return KSqlContactPredSearchTable3;
-		case KContactPredSearchTable4Name:
-			return KSqlContactPredSearchTable4;
-		case KContactPredSearchTable5Name:
-			return KSqlContactPredSearchTable5;
-		case KContactPredSearchTable6Name:
-			return KSqlContactPredSearchTable6;
-		case KContactPredSearchTable7Name:
-			return KSqlContactPredSearchTable7;
-		case KContactPredSearchTable8Name:
-			return KSqlContactPredSearchTable8;
-		case KContactPredSearchTable9Name:
-			return KSqlContactPredSearchTable9;
-		case KContactPredSearchTable10Name:
-			return KSqlContactPredSearchTable10;
-		case KContactPredSearchTable11Name:
-			return KSqlContactPredSearchTable11;
-
 		default:
 			{
 			return KNullText;
@@ -340,36 +306,6 @@ const TDesC& CDbStructure::Column(TInt aTableIndex, TInt aColumnIndex)
                     {
                     return KCommAddrExtraTypeInfo;
                     }
-				}
-			break;
-		case KContactPredSearchTable0Name: //columns in predictive search tables
-		case KContactPredSearchTable1Name:
-		case KContactPredSearchTable2Name:
-		case KContactPredSearchTable3Name:
-		case KContactPredSearchTable4Name:
-		case KContactPredSearchTable5Name:
-		case KContactPredSearchTable6Name:
-		case KContactPredSearchTable7Name:
-		case KContactPredSearchTable8Name:
-		case KContactPredSearchTable9Name:
-		case KContactPredSearchTable10Name:
-		case KContactPredSearchTable11Name:
-			switch(aColumnIndex)
-				{
-				case 0:
-					return KPredSearchContactId;
-				case 1:
-					return KPredSearchNameAsNumber;
-				case 2:
-					return KPredSearchNameAsNumber2;
-				case 3:
-					return KPredSearchNameAsNumber3;
-				case 4:
-					return KPredSearchNameAsNumber4;
-				case 5:
-					return KPredSearchFirstName;
-				case 6:
-					return KPredSearchLastName;
 				}
 			break;
 		}

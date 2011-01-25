@@ -432,10 +432,6 @@ TInt CViewSubSessionBase::ContactAtLengthL(const RMessage2& aMessage)
 	delete iContact;
 	iContact=NULL;
 	iContact = CViewContact::NewL(contact);
-
-	//Always keep server side local view in memory saving mode, so we
-	//change the view contact object stored in iView into lightweight object
-	const_cast<CViewContact&>(contact).ChangeToLightweightObject();
 	
 	const TInt externalizedSize=iContact->ExternalizedSize();
 	TPckgBuf<TInt> pckg(externalizedSize);
@@ -874,7 +870,7 @@ void CViewSubSession::GetSortOrderL(const RMessage2& aMessage) const
 CNamedViewSubSession* CNamedViewSubSession::NewL(CViewManager& aViewManager,const RMessage2& aMessage)
 	{
 	CNamedViewSubSession* self=new(ELeave) CNamedViewSubSession(aViewManager);
-	CleanupStack::PushL(self);
+	CleanupClosePushL(*self); // CObject: Close will call the destructor.
 	self->ConstructL(aMessage);
 	CleanupStack::Pop(); // self.
 	return self;

@@ -16,7 +16,7 @@
 */
 
 
-target          t_viewsoom.exe
+TARGET          t_viewsoom.exe
 targettype      EXE
 CAPABILITY   ReadUserData WriteUserData
 UID		0x1000097a
@@ -31,6 +31,6 @@ source          t_viewsoom.cpp
 source		t_utils2.cpp
 source		CContactDbEventQueue.cpp
 
-library         euser.lib  cntmodel.lib cntview.lib efsrv.lib bafl.lib pimtestclient.lib
+LIBRARY         euser.lib  cntmodel.lib cntview.lib efsrv.lib bafl.lib pimtestclient.lib
 
 SMPSAFE

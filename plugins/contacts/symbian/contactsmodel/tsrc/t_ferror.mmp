@@ -16,7 +16,7 @@
 */
 
 
-target          t_ferror.exe
+TARGET          t_ferror.exe
 targettype      EXE
 CAPABILITY   ReadUserData WriteUserData
 UID		0x1000007a
@@ -29,6 +29,6 @@ userinclude ../inc
 
 source          T_FERROR.CPP
 
-library         euser.lib  efsrv.lib  cntmodel.lib	cnttutil.lib
+LIBRARY         euser.lib  efsrv.lib  cntmodel.lib	cnttutil.lib
 
 SMPSAFE
