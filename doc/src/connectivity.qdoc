@@ -72,17 +72,16 @@ functionality in your application.
 \endlist
 
 \section3 What is known \bold NOT to work for NFC
-\list
-    \o Backends for real hardware i.e. Symbian, MeeGo
-    \o LLCP Sockets
-    \o Other common tag technologies
-    \list
-        \o NFC Tag Type 2
-        \o NFC Tag Type 3
-        \o NFC Tag Type 4
-        \o Mifare
-    \endlist
-\endlist
+
+\table 60%
+    \row \o Backends for real hardware i.e. Symbian, MeeGo
+    \row \o LLCP Sockets
+    \row \o Other common tag technologies
+    \row \o NFC Tag Type 2
+    \row \o NFC Tag Type 3
+    \row \o NFC Tag Type 4
+    \row \o Mifare
+\endtable
 
 \section2 Bluetooth
 
@@ -105,18 +104,50 @@ Classes that should work:
     \o QBluetoothSocket
     \o \l {QBluetoothTransferManager::put()}
     \o QBluetoothUuid
-    \o QBluetoothRfcommServer
-    \o QBluetoothRfcommSocket
+    \o QRfcommServer
+    \o QRfcommSocket
 \endlist
 
 \section3 What is known \bold NOT to work for Bluetooth
-\list
-    \o Symbian, Windows, Mac
-    \o QL2capServer and QL2capSocket
-    \o QBluetoothLocalDevice Pairing functions
-    \o QBluetoothLocalDevice power control and state functions
-    \o QBluetoothServiceDiscoveryAgent errorString
-\endlist
+
+\table 60%
+    \row \o Symbian, Windows, Mac
+    \row \o QL2capServer and QL2capSocket
+    \row \o QBluetoothLocalDevice Pairing functions
+    \row \o QBluetoothLocalDevice power control and state functions
+    \row \o QBluetoothServiceDiscoveryAgent errorString
+\endtable
+
+\section1 Examples
+
+Some interesting examples for the API exist.
+
+\table 80%
+    \header
+        \o Example
+        \o Description
+    \row
+        \o \l{annotatedurl}{NFC Annotated URL}
+        \o Displays information from an NFC tag.
+    \row
+        \o \l{btchat}{Bluetooth Chat}
+        \o A chat server and client using bluetooth.
+    \row
+        \o \l{bttennis}{Bluetooth Tennis}
+        \o The classic game of \l {http://en.wikipedia.org/wiki/Pong}{Pong}.
+    \row
+        \o \l {btfiletransfer}{Bluetooth File Transfer}
+        \o Transfer files between Bluetooth devices.
+    \row
+        \o \l{btscanner}{Bluetooth Scanner}
+        \o Scan for Bluetooth devices.
+    \row
+        \o \l{tennis}{QML Bluetooth Tennis}
+        \o The tennis game using a QML interface to the Bluetooth API.
+    \row
+        \o \l {scanner}{QML Bluetooth Scanner}
+        \o A QML implementation of the Bluetooth device scanner.
+\endtable
 
 \section1 Main Classes
 
