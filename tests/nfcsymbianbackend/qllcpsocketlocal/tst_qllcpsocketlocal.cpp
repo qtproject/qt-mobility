@@ -106,8 +106,9 @@ void tst_qllcpsocketlocal::testCase0()
     QSignalSpy targetDetectedSpy(m_nfcManager, SIGNAL(targetDetected(QNearFieldTarget*)));
     m_nfcManager->startTargetDetection(QNearFieldTarget::AnyTarget);
 
-    QString message("Local Wait touch");
-    QNfcTestUtil::ShowMessage(message);
+    QString message("Please touch a NFC device with llcp client enabled");
+
+    QNfcTestUtil::ShowAutoMsg(message, &targetDetectedSpy, 1);
     QTRY_VERIFY(!targetDetectedSpy.isEmpty());
 
     m_target = targetDetectedSpy.at(targetDetectedSpy.count() - 1).at(0).value<QNearFieldTarget *>();
@@ -156,7 +157,7 @@ void tst_qllcpsocketlocal::testCase1()
     QCOMPARE(m_socket->state(), QLlcpSocket::BoundState);
 
     QString messageBox("handshake 1");
-    QNfcTestUtil::ShowMessage(messageBox);
+    QNfcTestUtil::ShowAutoMsg(messageBox);
 
     // STEP 3: Local peer sends the  message to the remote peer
     QSignalSpy errorSpy(m_socket, SIGNAL(error(QLlcpSocket::Error)));
@@ -173,7 +174,7 @@ void tst_qllcpsocketlocal::testCase1()
     QCOMPARE(writtenSize, strSize);
 
     QString messageBox2("handshake 2");
-    QNfcTestUtil::ShowMessage(messageBox2);
+    QNfcTestUtil::ShowAutoMsg(messageBox2, &readyReadSpy);
 
     // STEP 4: Receive data from remote peer
     QTRY_VERIFY(!readyReadSpy.isEmpty());
@@ -194,57 +195,6 @@ void tst_qllcpsocketlocal::testCase1()
     // make sure the no error signal emitted
     QVERIFY(errorSpy.isEmpty());
 }
-
-/*!
- Description: waitForBytesWritten test
-
- TestScenario:
-               1. Local peer sends the "testcase2 string str1" message to the remote peer
-               2. Local peer sends the "testcase2 string str2" message to the remote peer
-               3. Local peer waits for the bytes written
-               4. call waitForBytesWritten
-
- TestExpectedResults:
-               1. Local peer write datagram successfully firstly
-               2. Local peer write datagram successfully secondly
-               3. call waitForBytesWritten successfully
-               4. call waitForBytesWritten successfully
-*/
-/*
-void tst_qllcpsocketlocal::testCase2()
-{
-    // STEP 1:
-    QSignalSpy bytesWrittenSpy(m_socket, SIGNAL(bytesWritten(qint64)));
-    QString message("testcase2 string str1");
-    QByteArray tmpArray(message.toAscii());
-    const char* data =  tmpArray.data();
-    qint64 strSize = message.size();
-    qint64 val = m_socket->writeDatagram(data,strSize,m_target, m_port);
-    QVERIFY(val != -1);
-
-    // STEP 2:
-    QString message2("testcase2 string str2");
-    QByteArray tmpArray2(message2.toAscii());
-    const char* data2 =  tmpArray2.data();
-    qint64 strSize2 = message2.size();
-    qint64 val2 = m_socket->writeDatagram(data2,strSize2,m_target, m_port);
-    QVERIFY(val2 != -1);
-
-    // STEP 3:
-    const int Timeout = 2 * 1000;
-    bool ret = m_socket->waitForBytesWritten(Timeout);
-    QVERIFY(ret == true);
-
-     // STEP 4:
-    ret = m_socket->waitForBytesWritten(Timeout);
-    QVERIFY(ret == true);
-
-    QString messageBox("handshake 3");
-    QNfcTestUtil::ShowMessage(messageBox);
-
-    QVERIFY(ret == true);
-}
-*/
 
 void tst_qllcpsocketlocal::testCase2()
 {
@@ -278,10 +228,10 @@ void tst_qllcpsocketlocal::testCase2()
     QVERIFY(ret == true);
 
     QString messageBox("handshake 3");
-    QNfcTestUtil::ShowMessage(messageBox);
+    QNfcTestUtil::ShowAutoMsg(messageBox);
 
-    // STEP 5: 
-    const int Timeout1 = 1 * 1000; 
+    // STEP 5: Try to cover waitForBytesWritten() in bound mode
+    const int Timeout1 = 1 * 1000;
     m_socket->waitForBytesWritten(Timeout1);
 
     delete socket;

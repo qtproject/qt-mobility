@@ -9,7 +9,7 @@
         <version>1.0</version>
         <description>nfc service provider</description>
         <capabilities></capabilities>
-        <customproperty key="datatype">urn:nfc:ext:R</customproperty>
+        <customproperty key="datatype">urn:nfc:ext:R||abc</customproperty>
     </interface>
 </service>
 </SFW>

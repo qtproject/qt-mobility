@@ -38,43 +38,25 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QNFCTESTUTIL_H
-#define QNFCTESTUTIL_H
-#include <QMessageBox>
+
 #include "qautomsgbox.h"
 
-const int MsgBoxTimeOutTime = 3*1000;
-class QNfcTestUtil : public QObject
+QAutoMsgBox::QAutoMsgBox(QWidget *parent) :
+    QMessageBox(parent),m_timer(0),m_spy(0),m_signalCount(0)
 {
-    Q_OBJECT
-public:
-    static void ShowMessage(const QString& message)
-    {
-        QMessageBox b(QMessageBox::Information, QObject::tr("NFC symbian backend test"),
-        message, QMessageBox::Ok);
-        b.exec();
-    }
-    static void ShowAutoMsg(const QString& message, QSignalSpy* spy, int count = 1)
-    {
-        QAutoMsgBox w;
-        w.addButton(QMessageBox::Ok);
-        w.setIcon(QMessageBox::Information);
-        w.setText(message);
-        w.setWindowTitle(QObject::tr("NFC symbian backend test"));
-        w.setSignalSpy(spy, count);
 
-        w.exec();
-    }
-    static void ShowAutoMsg(const QString& message, int mseconds = MsgBoxTimeOutTime)
-    {
-        QAutoMsgBox w;
-        w.addButton(QMessageBox::Ok);
-        w.setIcon(QMessageBox::Information);
-        w.setText(message);
-        w.setWindowTitle(QObject::tr("NFC symbian backend test"));
-        w.setDismissTimeOut(mseconds);
+}
 
-        w.exec();
-    }
-};
-#endif
+QAutoMsgBox::~QAutoMsgBox()
+{
+    delete m_timer;
+}
+bool QAutoMsgBox::event(QEvent *e)
+{
+    if (e->type() == QEvent::Close)
+        {
+        this->close();
+        return true;
+        }
+    return false;
+}

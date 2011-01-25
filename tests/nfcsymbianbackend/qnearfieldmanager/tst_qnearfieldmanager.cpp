@@ -113,7 +113,8 @@ void tst_QNearFieldManager::targetDetected()
     QSignalSpy targetLostSpy(&nfcManager, SIGNAL(targetLost(QNearFieldTarget*)));
 
     nfcManager.startTargetDetection(type);
-    QNfcTestUtil::ShowMessage(hint);
+
+    QNfcTestUtil::ShowAutoMsg(hint, &targetDetectedSpy, 1);
     QTRY_VERIFY(!targetDetectedSpy.isEmpty());
 
     QNearFieldTarget *target = targetDetectedSpy.at(targetDetectedSpy.count()-1).at(0).value<QNearFieldTarget *>();
@@ -127,8 +128,7 @@ void tst_QNearFieldManager::targetDetected()
         QCOMPARE(target->type(), type);
     }
 
-    QNfcTestUtil::ShowMessage("please remove the target");
-
+    QNfcTestUtil::ShowAutoMsg("please remove the target", &disconnectedSpy, 1);
     QTRY_VERIFY(!targetLostSpy.isEmpty());
 
     QNearFieldTarget *lostTarget = targetLostSpy.first().at(0).value<QNearFieldTarget *>();
@@ -239,7 +239,7 @@ void tst_QNearFieldManager::registerTargetDetectedHandler_filter()
 
     QVERIFY(id != -1);
 
-    QNfcTestUtil::ShowMessage(hint);
+    QNfcTestUtil::ShowAutoMsg(hint, &messageSpy, 1);
 
     QTRY_VERIFY(!messageSpy.isEmpty());
 
@@ -248,6 +248,24 @@ void tst_QNearFieldManager::registerTargetDetectedHandler_filter()
     QNearFieldTarget *target = messageSpy.first().at(1).value<QNearFieldTarget *>();
 
     QVERIFY(target == NULL);//symbain backend always return NULL target
+    QCOMPARE(filter.recordCount(), message.count());
+    for (int i = 0; i < filter.recordCount(); ++i)
+        {
+        if (filter.orderMatch())
+            {
+            QCOMPARE(filter.recordAt(i).typeNameFormat, message.at(i).typeNameFormat());
+            }
+        else
+            {
+            bool matched = false;
+            for (int j = 0; j < filter.recordCount(); ++j)
+                {
+                if (message.at(i).typeNameFormat() == filter.recordAt(i).typeNameFormat)
+                    matched = true;
+                }
+            QVERIFY(matched);
+            }
+        }
 
     QVERIFY(manager.unregisterTargetDetectedHandler(id));
 }
@@ -289,7 +307,7 @@ void tst_QNearFieldManager::registerTargetDetectedHandler_filter_negtive()
 
     QVERIFY(id != -1);
 
-    QNfcTestUtil::ShowMessage(hint);
+    QNfcTestUtil::ShowAutoMsg(hint);
 
     QTRY_VERIFY(messageSpy.isEmpty());
     QVERIFY(manager.unregisterTargetDetectedHandler(id));

@@ -124,7 +124,8 @@ void tst_QLlcpServer::newConnection()
     QVERIFY(ret);
     qDebug() << "Listen() return ok";
 
-    QNfcTestUtil::ShowMessage(hint);
+//    QNfcTestUtil::ShowMessage(hint);
+    QNfcTestUtil::ShowAutoMsg(hint, &connectionSpy, 1);
 
     QTRY_VERIFY(!connectionSpy.isEmpty());
     qDebug() << "try to call nextPendingConnection()";
@@ -210,7 +211,8 @@ void tst_QLlcpServer::newConnection_wait()
     QVERIFY(ret);
     qDebug() << "Listen() return ok";
     QSignalSpy connectionSpy(&server, SIGNAL(newConnection()));
-    QNfcTestUtil::ShowMessage(hint);
+//    QNfcTestUtil::ShowMessage(hint);
+    QNfcTestUtil::ShowAutoMsg(hint, &connectionSpy, 1);
 
     QTRY_VERIFY(!connectionSpy.isEmpty());
     qDebug() << "try to call nextPendingConnection()";
@@ -305,8 +307,8 @@ void tst_QLlcpServer::api_coverage()
     QVERIFY(ret);
 
     QString message("handshake 3: api_coverage test");
-    QNfcTestUtil::ShowMessage(message);
-
+//    QNfcTestUtil::ShowMessage(message);
+    QNfcTestUtil::ShowAutoMsg(message, &connectionSpy, 1);
     QTRY_VERIFY(!connectionSpy.isEmpty());
 
     bool hasPending = server.hasPendingConnections();
@@ -349,7 +351,8 @@ void tst_QLlcpServer::negTestCase1()
     QVERIFY(ret);
 
     QString message("handshake 4: negTestCase1 test");
-    QNfcTestUtil::ShowMessage(message);
+//    QNfcTestUtil::ShowMessage(message);
+    QNfcTestUtil::ShowAutoMsg(message, &connectionSpy, 1);
 
     ret = server.listen(uri);
     QVERIFY(ret == false);
