@@ -437,7 +437,7 @@ QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate()
 
 QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSystemNetworkInfo::NetworkMode mode)
 {
-    switch(mode) {
+    switch (mode) {
         case QSystemNetworkInfo::GsmMode:
         case QSystemNetworkInfo::CdmaMode:
         case QSystemNetworkInfo::WcdmaMode:
@@ -461,7 +461,7 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSyst
             if (networkMode == CTelephony::ENetworkModeWcdma && mode != QSystemNetworkInfo::WcdmaMode)
                 return QSystemNetworkInfo::NoNetworkAvailable;
 
-            switch(networkStatus) {
+            switch (networkStatus) {
                 case CTelephony::ERegistrationUnknown: return QSystemNetworkInfo::UndefinedStatus;
                 case CTelephony::ENotRegisteredNoService: return QSystemNetworkInfo::NoNetworkAvailable;
                 case CTelephony::ENotRegisteredEmergencyOnly: return QSystemNetworkInfo::EmergencyOnly;
