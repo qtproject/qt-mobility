@@ -52,10 +52,12 @@ QTM_USE_NAMESPACE
 /*!
   \deprecated
   \class QVersitContactExporterDetailHandler
-  \brief The QVersitContactExporterDetailHandler class is an interface for clients wishing to
-  implement custom export behaviour for certain contact details.
+  \brief The QVersitContactExporterDetailHandler class is the legacy interface for clients wishing
+  to implement custom export behaviour for certain contact details.
 
-  This interface is replaced by QVersitContactExporterDetailHandlerV2.
+  This interface is replaced by QVersitContactExporterDetailHandlerV2.  For general information on
+  extending Qt Versit, see the document on \l{Versit Plugins}.
+
 
   \sa QVersitContactExporter
  */
@@ -91,12 +93,14 @@ QTM_USE_NAMESPACE
 
 /*!
   \class QVersitContactExporterDetailHandlerV2
-  \brief The QVersitContactExporterDetailHandlerV2 class is an interface for clients wishing to
-  implement custom export behaviour for certain contact details.
+  \brief The QVersitContactExporterDetailHandlerV2 class is an interface for specifying custom
+  export behaviour for certain contact details.
   \ingroup versit-extension
   \inmodule QtVersit
 
-  This interface supercedes QVersitContactImporterPropertyHandler.
+  This interface supercedes QVersitContactExporterDetailHandler.  For general information on
+  extending Qt Versit, see the document on \l{Versit Plugins}.
+
 
   \sa QVersitContactExporter
  */
