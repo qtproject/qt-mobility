@@ -72,6 +72,8 @@ bool QBluetoothDeviceDiscoveryAgentPrivate::isActive() const
 
 void QBluetoothDeviceDiscoveryAgentPrivate::start()
 {
+    discoveredDevices.clear();
+
     QDBusPendingReply<QDBusObjectPath> reply = manager->DefaultAdapter();
     reply.waitForFinished();
     if (reply.isError()) {
@@ -184,8 +186,12 @@ void QBluetoothDeviceDiscoveryAgentPrivate::_q_deviceFound(const QString &addres
     device.setCached(dict.value("Cached").toBool());
     for(int i = 0; i < discoveredDevices.size(); i++){
         if(discoveredDevices[i].address() == device.address()) {
-            if(discoveredDevices[i] == device)
+            if(discoveredDevices[i] == device) {
+#ifdef QTM_DEVICEDISCOVERY_DEBUG
+                  qDebug() << "Duplicate: " << address;
+#endif
                 return;
+            }
             discoveredDevices.replace(i, device);
             Q_Q(QBluetoothDeviceDiscoveryAgent);
 #ifdef QTM_DEVICEDISCOVERY_DEBUG
@@ -196,6 +202,9 @@ void QBluetoothDeviceDiscoveryAgentPrivate::_q_deviceFound(const QString &addres
             return; // this works if the list doesn't contain duplicates. Don't let it.
         }
     }
+#ifdef QTM_DEVICEDISCOVERY_DEBUG
+    qDebug() << "Emit: " << address;
+#endif
     discoveredDevices.append(device);
     Q_Q(QBluetoothDeviceDiscoveryAgent);
     emit q->deviceDiscovered(device);

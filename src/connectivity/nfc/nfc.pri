@@ -1,5 +1,4 @@
 CONFIG += mobility
-MOBILITY = serviceframework
 
 HEADERS += \
     nfc/qnearfieldmanager.h \
@@ -116,7 +115,7 @@ simulator {
 
 INCLUDEPATH += $$PWD
 
-contains(nfc_enabled, no ):symbian { 	
+contains(nfc_enabled,no):symbian {
     # unsupported platform stub
     
     PRIVATE_HEADERS += \
@@ -131,7 +130,11 @@ contains(nfc_enabled, no ):symbian {
 }
 
     
-contains(nfc_enabled, yes ):symbian { 	
+contains(nfc_enabled, yes):symbian {
+    MOBILITY = serviceframework
+    INCLUDEPATH += $$SOURCE_DIR/src/serviceframework
+    qtAddLibrary(QtServiceFramework)
+
     PRIVATE_HEADERS += \
         nfc/qnearfieldmanager_symbian_p.h \
         nfc/qnearfieldtagtype1_symbian_p.h \
@@ -187,7 +190,5 @@ contains(nfc_enabled, yes ):symbian {
 
     INCLUDEPATH += $${EPOCROOT}epoc32/include/mw
 
-    TARGET.CAPABILITY = ALL -TCB
-
     LIBS += -lnfc -lndef -lndefaccess -lnfcdiscoveryservice -lllcp -lnfctagextension
-    }
+}

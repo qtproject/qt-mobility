@@ -69,7 +69,7 @@ void QBluetoothDeviceDiscoveryAgentPrivate::start()
 void QBluetoothDeviceDiscoveryAgentPrivate::stop()
 {
 }
-
+#ifndef QT_NO_DBUS
 void QBluetoothDeviceDiscoveryAgentPrivate::_q_deviceFound(const QString &address,
                                                            const QVariantMap &dict)
 {
@@ -83,5 +83,6 @@ void QBluetoothDeviceDiscoveryAgentPrivate::_q_propertyChanged(const QString &na
     Q_UNUSED(name);
     Q_UNUSED(value);
 }
+#endif
 
 QTM_END_NAMESPACE

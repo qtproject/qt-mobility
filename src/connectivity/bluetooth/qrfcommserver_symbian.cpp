@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -43,7 +43,7 @@
 #include "qrfcommserver_p.h"
 #include "qbluetoothsocket.h"
 #include "qbluetoothsocket_p.h"
-#include "utils_symbian_p.h"
+#include "symbian/utils_symbian_p.h"
 
 #include <QTimer>
 #include <QCoreApplication>

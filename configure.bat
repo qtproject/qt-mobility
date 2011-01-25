@@ -578,7 +578,7 @@ call :compileTest CHWRMHaptics chwrmhaptics
 call :compileTest MDS mds
 call :compileTest MDS_25 mds_25
 call :compileTest MDS_25_92MCL mds_25_92mcl
-call :compileTest NFC nfc
+call :compileTest Symbian_NFC nfc
 goto noTests
 
 :windowsTests
