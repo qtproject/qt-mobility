@@ -46,7 +46,7 @@ QT_BEGIN_NAMESPACE
 /*!
     \class QMediaNetworkAccessControl
     \preliminary
-    \brief The QMediaNetworkAccessControl is used to allow the setting of the Network Access Point for media related activities.
+    \brief The QMediaNetworkAccessControl class allows the setting of the Network Access Point for media related activities.
     \ingroup multimedia
 
     The functionality provided by this control allows the
@@ -70,7 +70,7 @@ QMediaNetworkAccessControl::~QMediaNetworkAccessControl()
 }
 
 /*!
-    \fn void QMediaNetworkAccessControl::setConfigurations(const QList<QNetworkConfiguration> &configuration);
+    \fn void QMediaNetworkAccessControl::setConfigurations(const QList<QNetworkConfiguration> &configurations);
 
     \a configurations contains a list of network configurations to be used for network access.
 
@@ -88,7 +88,7 @@ QMediaNetworkAccessControl::~QMediaNetworkAccessControl()
 
 
 /*!
-    \fn QNetworkAccessControl::configurationChanged(const QString &configuration)
+    \fn QMediaNetworkAccessControl::configurationChanged(const QNetworkConfiguration &configuration)
     This signal is emitted when the current active network configuration changes
     to \a configuration.
 */
