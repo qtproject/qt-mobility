@@ -1,10 +1,10 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the QtMobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
@@ -38,11 +38,13 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include <mmailboxcontentobserver.h>
-#include <memailclientapiobserver.h>
-#include <memailrequestobserver.h>
 
-int main(int, char**)
-{
-    return 0;
-}
+/*!
+    \example btscanner
+    \title Bluetooth Scanner Example
+
+    An example of how to locate Bluetooth devices.
+
+    \image btscanner-example.png
+
+*/
