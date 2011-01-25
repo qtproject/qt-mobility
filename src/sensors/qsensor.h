@@ -129,6 +129,7 @@ public:
     // Filters modify the reading
     void addFilter(QSensorFilter *filter);
     void removeFilter(QSensorFilter *filter);
+    QList<QSensorFilter*> filters() const;
 
     // The readings are exposed via this object
     QSensorReading *reading() const;
