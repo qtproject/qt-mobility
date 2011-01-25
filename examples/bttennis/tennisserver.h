@@ -46,6 +46,8 @@
 #include <QtCore/QObject>
 #include <QtCore/QList>
 #include <QtCore/QDataStream>
+#include <QtCore/QTime>
+#include <QtCore/QTimer>
 
 QTM_BEGIN_NAMESPACE
 class QL2capServer;
@@ -76,17 +78,23 @@ signals:
     void moveRightPaddle(int y);
     void clientDisconnected(const QString &name);
     void clientConnected(const QString &name);
+    void lag(int ms);
 
 private slots:
     void clientConnected();
     void clientDisconnected();
     void readSocket();
+    void sendEcho();
 
 private:
     QL2capServer *l2capServer;
     QBluetoothServiceInfo serviceInfo;
     QBluetoothSocket *clientSocket;
     QDataStream *stream;
+    QTime elapsed;
+    QTime ballElapsed;
+    QTimer lagTimer;
+    int lagReplyTimeout;
 };
 //! [declaration]
 

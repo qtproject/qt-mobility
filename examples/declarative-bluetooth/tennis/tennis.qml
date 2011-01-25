@@ -79,7 +79,8 @@ Rectangle {
        BluetoothService {
             id: btservice
 
-            deviceAddress: "00:21:86:E8:0F:8D"
+            //deviceAddress: "00:21:86:E8:0F:8D"
+            deviceAddress: "00:1A:9F:92:9E:5A"
             serviceUuid: "e8e10f95-1a70-4b27-9ccf-02010264e9c9"
        }
 
@@ -96,9 +97,20 @@ Rectangle {
                else if(args[0] == "l"){
                    leftPaddle.y = Number(args[1])+topBumper.height;
                }
-               else if(args[0] = "s"){
+               else if(args[0] == "s"){
                    scoreLeft.text = args[1];
                    scoreRight.text = args[2];
+               }
+               else if(args[0] == "e"){ // echo packet, check for RTT
+                   socket.sendStringData(s);
+               }
+               else if(args[0] == "E"){
+                   var d = new Date();
+
+                   var lag = d.getTime() - args[1];
+                   if(lag > 250){
+                       statusText.text = "LAG! " + lag + "ms";
+                   }
                }
            }
 
@@ -106,9 +118,17 @@ Rectangle {
            service: btservice
 
            onStateChanged: console.log("New socket state " + state);
-           onErrorChanged: { console.log("Error: " + error); reconnect.start(); }
+           onErrorChanged: { statusText.text = error; reconnect.start(); }
            onServiceChanged: console.log("New service");
-           onConnectedChanged: console.log("Connected changed");
+           onConnectedChanged: {
+               if(connected) {
+                    statusText.text = "Connected";
+               }
+               else {
+                   statusText.text = "Unconnected " + error;
+       }
+           }
+           //onConnectedChanged: console.log("Connected changed");
            onDataAvailable: parse(socket.stringData);
        }
 
@@ -116,6 +136,21 @@ Rectangle {
            id: reconnect
            interval: 15000
            onTriggered: socket.connected = true;
+       }
+
+       Timer {
+           id: lagTimer
+
+           function sendEcho() {
+               var s = "E " + new Date().getTime();
+               socket.sendStringData(s);
+//               console.log(s);
+           }
+
+           interval: 1000
+           repeat: true
+           running: socket.connected
+           onTriggered: sendEcho();
        }
 
 
@@ -243,6 +278,19 @@ Rectangle {
         Repeater {
             model: page.height / 8
             Rectangle { color: fg; x: page.width/2; y: index * 8; width: 2; height: 5 }
+        }
+
+
+        Text {
+            id: statusText
+            font.family: "Old English"
+            font.pixelSize: 25; font.bold: true
+            text:  ""
+            color:  fg
+            y: page.height-height-25
+            x: 24
+
+            onTextChanged: NumberAnimation { target: statusText; property: "opacity"; easing.type: Easing.InOutSine; from: 1; to: 0; duration: 2000 }
         }
 
         transform: Scale { xScale: bounds.width/page.width; yScale: bounds.height/page.height }

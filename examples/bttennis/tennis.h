@@ -101,6 +101,8 @@ private slots:
 
     void mouseMove(int delta);
 
+    void lagReport(int ms);
+
 private:
 
     void moveUp(int px = 10);
