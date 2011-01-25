@@ -67,6 +67,7 @@ public:
     }
 
     bool pluginsLoaded;
+    void loadPlugins();
 
     QList<CreatePluginFunc> staticRegistrations;
 
@@ -158,9 +159,10 @@ static void initPlugin(QObject *o)
         d->changeListeners << changes;
 }
 
-static void loadPlugins()
+void QSensorManagerPrivate::loadPlugins()
 {
-    QSensorManagerPrivate *d = sensorManagerPrivate();
+    QSensorManagerPrivate *d = this;
+    if (d->pluginsLoaded) return;
     d->pluginsLoaded = true;
 
     SENSORLOG() << "initializing static plugins";
@@ -288,8 +290,7 @@ QSensorBackend *QSensorManager::createBackend(QSensor *sensor)
     Q_ASSERT(sensor);
 
     QSensorManagerPrivate *d = sensorManagerPrivate();
-    if (!d->pluginsLoaded)
-        loadPlugins();
+    d->loadPlugins();
 
     SENSORLOG() << "QSensorManager::createBackend" << "type" << sensor->type() << "identifier" << sensor->identifier();
 
@@ -349,8 +350,7 @@ QSensorBackend *QSensorManager::createBackend(QSensor *sensor)
 bool QSensorManager::isBackendRegistered(const QByteArray &type, const QByteArray &identifier)
 {
     QSensorManagerPrivate *d = sensorManagerPrivate();
-    if (!d->pluginsLoaded)
-        loadPlugins();
+    d->loadPlugins();
 
     if (!d->backendsByType.contains(type))
         return false;
@@ -370,8 +370,7 @@ bool QSensorManager::isBackendRegistered(const QByteArray &type, const QByteArra
 QList<QByteArray> QSensor::sensorTypes()
 {
     QSensorManagerPrivate *d = sensorManagerPrivate();
-    if (!d->pluginsLoaded)
-        loadPlugins();
+    d->loadPlugins();
 
     return d->backendsByType.keys();
 }
@@ -383,8 +382,7 @@ QList<QByteArray> QSensor::sensorTypes()
 QList<QByteArray> QSensor::sensorsForType(const QByteArray &type)
 {
     QSensorManagerPrivate *d = sensorManagerPrivate();
-    if (!d->pluginsLoaded)
-        loadPlugins();
+    d->loadPlugins();
 
     // no sensors of that type exist
     if (!d->backendsByType.contains(type))
@@ -409,8 +407,7 @@ QList<QByteArray> QSensor::sensorsForType(const QByteArray &type)
 QByteArray QSensor::defaultSensorForType(const QByteArray &type)
 {
     QSensorManagerPrivate *d = sensorManagerPrivate();
-    if (!d->pluginsLoaded)
-        loadPlugins();
+    d->loadPlugins();
 
     // no sensors of that type exist
     if (!d->backendsByType.contains(type))
