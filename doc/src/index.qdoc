@@ -44,11 +44,6 @@
 
     \tableofcontents
 
-    Although we anticipate that the new APIs will be of most advantage to those
-    developers embarked on mobile application development, in many cases they may
-    be equally relevant for other development usage including, in some cases,
-    desktop application development.
-
 
     \section1 Overview
 
@@ -84,7 +79,7 @@
     irrespective of whether the platform is mobile or not. This means that
     there is the possibility of easy transfer of user experience from PC to
     phone or vice versa.
-    
+
     \section1 Namespace
 
     The Qt Mobility project APIs are placed into the \i{QtMobility} namespace, with
@@ -104,7 +99,7 @@
         \o \l {Qt Mobility Examples}{List of all examples.}
     \endlist
 
-    
+
     For users on the supported Symbian platforms, shown at the bottom of this
     page, see the instructions at the
     \l{http://library.forum.nokia.com/topic/Qt_for_Symbian_Developers_Library/GUID-7E53D0F7-72CB-41C4-8807-FE7A772B0DB4.html}{Qt For Symbian Developer's Library}
@@ -113,13 +108,13 @@
     See \l {Release Notes of the QtMobility Project release}{Release Notes}.
 
     For an overview of Platform Compatibility see \l {Platform Compatibility}.
-    
+
     \section1 The Qt Mobility APIs
-    
+
     \section2 Service Framework
 
     A platform independent method of finding Services. A 'service' is an
-    independent component that allows a client to perform a well-defined 
+    independent component that allows a client to perform a well-defined
     operation.
 
     The services are implemented as plugins installed on the device and can
@@ -130,16 +125,16 @@
     Since this is an abstraction layer then the app does not need to be
     concerned with the underlying protocol, where the servers are, the
     hardware peculiarities with networking and other low level details.
-    
+
     For more details see the \l {Qt Service Framework} {Service Framework API overview}.
 
     \section2 Messaging
 
-    A common interface for handling SMS, MMS, MIME Email and TNEF Email 
-    messages. Enables access to messaging services to search and sort 
-    messages, notify of changes to messages stored, send messages 
-    with or without attachments, retrieve message data, and launch the 
-    preferred messaging client to either display an existing message, 
+    A common interface for handling SMS, MMS, MIME Email and TNEF Email
+    messages. Enables access to messaging services to search and sort
+    messages, notify of changes to messages stored, send messages
+    with or without attachments, retrieve message data, and launch the
+    preferred messaging client to either display an existing message,
     or compose a message.
 
     For more details see the \l {Messaging} {Messaging API overview}.
@@ -155,7 +150,7 @@
 
     Some platforms can have a set of grouped access points perhaps based on a
     common purpose. Bearer Management allows comparison and prioritization
-    of the access and use of these points. 
+    of the access and use of these points.
 
     The aim of Bearer Management is to reduce the need for the developer to be
     concerned about trying to locate the best connection from a list of
@@ -179,7 +174,7 @@
     application enumerates available connections, shows counters, and allows
     the user to connect or disconnect
         \endlist
-    
+
     For more details, see the \l {Bearer management} {Bearer Management API overview}.
 
     \section2 Publish and Subscribe
@@ -194,7 +189,7 @@
 
     At this stage the API is intended to act as a common communications
     method between applications, whether local or remote.
-    
+
     For more details, see the \l {Publish and Subscribe} {Publish and Subscribe API overview}.
 
     \section2 Contacts
@@ -207,14 +202,14 @@
 
     \section2 Location
 
-    The location API is composed of 3 components. Location positioning, 
-    landmarks, and mapping and navigation.  The location positioning API provides an easy to 
+    The location API is composed of 3 components. Location positioning,
+    landmarks, and mapping and navigation.  The location positioning API provides an easy to
     use interface that encapsulates basic geographical information obtained
     from satellite or other sources about the user, including latitude and
-    longitude, bearing, speed and altitude.  The Landmarks API allows storage and 
+    longitude, bearing, speed and altitude.  The Landmarks API allows storage and
     retrieval of points of interests while the Maps and Navigation API provides
     mapping, geocoding and routing functionality.
-    
+
     For more details, see the \l {Location} {Location API overview}.
 
     \section2 Multimedia
@@ -224,14 +219,14 @@
     would find on a music and video player, combined with an FM radio.
 
     For more details see the \l {Multimedia} {Multimedia API overview}.
-    
+
     \section2 System Information
 
     An API to discover system related information and capabilities. Information
     available will cover software version numbers, hardware features,
     network connection types and status, display, data storage devices,
     device information and the screensaver.
-    
+
     For more details see the \l {System Information} {System Information API overview}.
 
     \section2 Sensors
@@ -269,7 +264,7 @@
     is part of the Multimedia API.
 
     For more details, see the \l {Multimedia} {Multimedia API overview}.
-    
+
     \section2 Landmarks
 
     The Landmarks portion of the Location API facilitates the creation,
@@ -286,7 +281,7 @@
     of documents, or to discover documents with desired meta-data.
 
     For more details, see the \l {Document Gallery}{Document Gallery overview}.
-    
+
     \section2 Feedback
 
     The Feedback API enables a client to control the vibration of the device
@@ -294,7 +289,7 @@
 
     For more details, see the \l {Feedback}{Feedback API Overview}.
 
-    \section1 The QtMobility Namespace 
+    \section1 The QtMobility Namespace
 
     The QtMobility APIs are placed into the QtMobility namespace. This is
     done to facilitate the future migration of Mobility APIs into Qt. See
@@ -607,7 +602,7 @@
 
     \raw HTML
 
-    
+
 
     \endraw
 
