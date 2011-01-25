@@ -98,28 +98,15 @@ QDeclarativeGraphicsGeoMap::QDeclarativeGraphicsGeoMap(QDeclarativeItem *parent)
     serviceProvider_(0),
     mappingManager_(0),
     mapData_(0),
+    center_(0),
+    initialCoordinate(0),
     mapType_(NoMap),
     connectivityMode_(NoConnectivity),
     componentCompleted_(false)
 {
     setFlag(QGraphicsItem::ItemHasNoContents, false);
 
-    center_ = new QDeclarativeCoordinate(this);
-
-    connect(center_,
-            SIGNAL(latitudeChanged(double)),
-            this,
-            SLOT(centerLatitudeChanged(double)));
-    connect(center_,
-            SIGNAL(longitudeChanged(double)),
-            this,
-            SLOT(centerLongitudeChanged(double)));
-    connect(center_,
-            SIGNAL(altitudeChanged(double)),
-            this,
-            SLOT(centerAltitudeChanged(double)));
-
-    center_->setCoordinate(QGeoCoordinate(-27.0, 153.0));
+    initialCoordinate = new QGeoCoordinate(-27.0, 153.0);
     zoomLevel_ = 8;
     size_ = QSizeF(100.0, 100.0);
     setAcceptsHoverEvents(true);
@@ -139,6 +126,9 @@ QDeclarativeGraphicsGeoMap::~QDeclarativeGraphicsGeoMap()
 
     if (serviceProvider_)
         delete serviceProvider_;
+
+    if (initialCoordinate)
+        delete initialCoordinate;
 }
 
 // todo: mixture of mapviews and mapobjects does not preserve the order (z).
@@ -239,7 +229,12 @@ void QDeclarativeGraphicsGeoMap::setPlugin(QDeclarativeGeoServiceProvider *plugi
     // setters
     mapData_->setWindowSize(size_);
     mapData_->setZoomLevel(zoomLevel_);
-    mapData_->setCenter(center_->coordinate());
+
+    if (center_)
+        mapData_->setCenter(center_->coordinate());
+    else
+        mapData_->setCenter(*initialCoordinate);
+
     mapData_->setMapType(QGraphicsGeoMap::MapType(mapType_));
     mapData_->setConnectivityMode(QGraphicsGeoMap::ConnectivityMode(connectivityMode_));
 
@@ -396,18 +391,29 @@ qreal QDeclarativeGraphicsGeoMap::zoomLevel() const
 
     The default value is an arbitrary valid coordinate.
 */
-void QDeclarativeGraphicsGeoMap::setCenter(const QDeclarativeCoordinate *center)
+void QDeclarativeGraphicsGeoMap::setCenter(QDeclarativeCoordinate *center)
 {
+    if (!center || center_ == center)
+        return;
+    center_ = center;
+
+    connect(center_,
+            SIGNAL(latitudeChanged(double)),
+            this,
+            SLOT(centerLatitudeChanged(double)));
+    connect(center_,
+            SIGNAL(longitudeChanged(double)),
+            this,
+            SLOT(centerLongitudeChanged(double)));
+    connect(center_,
+            SIGNAL(altitudeChanged(double)),
+            this,
+            SLOT(centerAltitudeChanged(double)));
+
     if (mapData_) {
         mapData_->setCenter(center->coordinate());
-    } else {
-        if (center_->coordinate() == center->coordinate())
-            return;
-
-        center_->setCoordinate(center->coordinate());
-
-        emit declarativeCenterChanged(center_);
     }
+    emit declarativeCenterChanged(center_);
 }
 
 QDeclarativeCoordinate* QDeclarativeGraphicsGeoMap::center()

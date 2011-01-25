@@ -49,6 +49,7 @@
 
 QTM_BEGIN_NAMESPACE
 
+class QGeoCoordinate;
 class QGeoMapObject;
 class QGeoMapData;
 class QGeoServiceProvider;
@@ -116,7 +117,7 @@ public:
     void setZoomLevel(qreal zoomLevel);
     qreal zoomLevel() const;
 
-    void setCenter(const QDeclarativeCoordinate *center);
+    void setCenter(QDeclarativeCoordinate *center);
     QDeclarativeCoordinate* center();
 
     void setMapType(MapType mapType);
@@ -177,6 +178,7 @@ private:
 
     qreal zoomLevel_;
     QDeclarativeCoordinate* center_;
+    QGeoCoordinate *initialCoordinate;
     QDeclarativeGraphicsGeoMap::MapType mapType_;
     QDeclarativeGraphicsGeoMap::ConnectivityMode connectivityMode_;
     QSizeF size_;
