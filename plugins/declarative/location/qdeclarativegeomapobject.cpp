@@ -41,12 +41,12 @@
 
 #include "qdeclarativegeomapobject_p.h"
 #include "qdeclarativegeomapmousearea_p.h"
-#include <qdeclarativelandmark_p.h>
+#include "qdeclarativelandmark_p.h"
+#include "qgeomapdata.h"
 
 #include <QDeclarativeParserStatus>
 #include <QAbstractItemModel>
 #include <QDeclarativeContext>
-#include <QGeoMapData>
 
 QTM_BEGIN_NAMESPACE
 
