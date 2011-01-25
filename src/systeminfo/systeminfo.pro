@@ -219,6 +219,7 @@ unix:!simulator {
                         HEADERS += lockandflipstatus_s60.h \
                                    storagedisknotifier_s60.h
             }
+
         LIBS += -lprofileengine \
             -letel3rdparty \
             -lsysutil \
@@ -237,15 +238,20 @@ unix:!simulator {
             -lecom \
             -lplatformenv \
             -lhwrmlightclient \
-            -letel 
+            -letel
 
         contains(S60_VERSION, 5.1) | contains(S60_VERSION, 5.2) {
             LIBS += -lhwrmpowerclient \
             -ldisknotifyhandler \
             -lhwrmfmtxclient \
-            -lusbman \
-            -letelmm 
+            -lusbman
         }
+
+        contains(symbiancntsim_enabled,yes){
+            LIBS += -letelmm
+            DEFINES += ETELMM_SUPPORTED
+            message("ETELMM enabled")
+            }
 
 
         contains(hb_symbian_enabled,yes) {

@@ -83,7 +83,9 @@
 #include <e32debug.h>
 #include <QCryptographicHash>
 #include <etel.h>
+#ifdef ETELMM_SUPPORTED
 #include <etelmm.h>
+#endif
 
 const TUint32 KAknKeyboardType = 0x0000000B;
 const float KMMPerTwip  = 0.0177f; //Milimeter Per Twip
@@ -412,7 +414,9 @@ QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate(QObject *parent)
     DeviceInfo::instance()->cellSignalStrenghtInfo()->addObserver(this);
     DeviceInfo::instance()->cellNetworkInfo()->addObserver(this);
     DeviceInfo::instance()->cellNetworkRegistrationInfo()->addObserver(this);
+#ifdef ETELMM_SUPPORTED
     DeviceInfo::instance()->networkInfo()->addObserver(this);
+#endif
     connect(DeviceInfo::instance()->wlanInfo(), SIGNAL(wlanNetworkNameChanged()),
         this, SLOT(wlanNetworkNameChanged()));
     connect(DeviceInfo::instance()->wlanInfo(), SIGNAL(wlanNetworkSignalStrengthChanged()),
@@ -426,31 +430,85 @@ QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate()
     DeviceInfo::instance()->cellSignalStrenghtInfo()->removeObserver(this);
     DeviceInfo::instance()->cellNetworkInfo()->removeObserver(this);
     DeviceInfo::instance()->cellNetworkRegistrationInfo()->removeObserver(this);
+#ifdef ETELMM_SUPPORTED
     DeviceInfo::instance()->networkInfo()->removeObserver(this);
+#endif
 }
 
 QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSystemNetworkInfo::NetworkMode mode)
 {
-    QSystemNetworkInfo::NetworkStatus networkStatus = QSystemNetworkInfo::UndefinedStatus;
-#ifdef SYMBIAN_3_PLATFORM
-    RMobilePhone::TMobilePhoneRegistrationStatus nStatus = RMobilePhone::ERegistrationUnknown;
-    QSystemNetworkInfo::NetworkMode currMode =currentMode();
-    if (currMode == mode)
-    {
-        nStatus = DeviceInfo::instance()->networkInfo()->GetStatus();
-    }
-    switch (nStatus) {
-    case RMobilePhone::ENotRegisteredNoService : networkStatus = QSystemNetworkInfo::NoNetworkAvailable; break;
-    case RMobilePhone::ENotRegisteredEmergencyOnly : networkStatus = QSystemNetworkInfo::EmergencyOnly; break;
-    case RMobilePhone::ENotRegisteredSearching : networkStatus = QSystemNetworkInfo::Searching; break;
-    case RMobilePhone::ERegisteredBusy : networkStatus = QSystemNetworkInfo::Busy; break;
-    case RMobilePhone::ERegisteredOnHomeNetwork : networkStatus = QSystemNetworkInfo::HomeNetwork; break;
-    case RMobilePhone::ERegistrationDenied : networkStatus = QSystemNetworkInfo::Denied; break;
-    case RMobilePhone::ERegisteredRoaming : networkStatus = QSystemNetworkInfo::Roaming; break;
-    case RMobilePhone::ERegistrationUnknown : break;
-    }
-#endif
-    return networkStatus;
+    switch(mode) {
+        case QSystemNetworkInfo::GsmMode:
+        case QSystemNetworkInfo::CdmaMode:
+        case QSystemNetworkInfo::WcdmaMode:
+        case QSystemNetworkInfo::GprsMode:
+        case QSystemNetworkInfo::EdgeMode:
+        case QSystemNetworkInfo::HspaMode:
+        case QSystemNetworkInfo::LteMode:
+        {
+        #ifndef ETELMM_SUPPORTED
+            CTelephony::TRegistrationStatus networkStatus = DeviceInfo::instance()
+                ->cellNetworkRegistrationInfo()->cellNetworkStatus();
+
+            CTelephony::TNetworkMode networkMode = DeviceInfo::instance()->cellNetworkInfo()->networkMode();
+            if (networkMode == CTelephony::ENetworkModeGsm && mode != QSystemNetworkInfo::GsmMode)
+                return QSystemNetworkInfo::NoNetworkAvailable;
+
+            if ((networkMode == CTelephony::ENetworkModeCdma95 || networkMode == CTelephony::ENetworkModeCdma2000) &&
+                mode != QSystemNetworkInfo::CdmaMode)
+                return QSystemNetworkInfo::NoNetworkAvailable;
+
+            if (networkMode == CTelephony::ENetworkModeWcdma && mode != QSystemNetworkInfo::WcdmaMode)
+                return QSystemNetworkInfo::NoNetworkAvailable;
+
+            switch(networkStatus) {
+                case CTelephony::ERegistrationUnknown: return QSystemNetworkInfo::UndefinedStatus;
+                case CTelephony::ENotRegisteredNoService: return QSystemNetworkInfo::NoNetworkAvailable;
+                case CTelephony::ENotRegisteredEmergencyOnly: return QSystemNetworkInfo::EmergencyOnly;
+                case CTelephony::ENotRegisteredSearching: return QSystemNetworkInfo::Searching;
+                case CTelephony::ERegisteredBusy: return QSystemNetworkInfo::Busy;
+                case CTelephony::ERegisteredOnHomeNetwork: return QSystemNetworkInfo::HomeNetwork;
+                case CTelephony::ERegistrationDenied: return QSystemNetworkInfo::Denied;
+                case CTelephony::ERegisteredRoaming: return QSystemNetworkInfo::Roaming;
+                default:
+                    break;
+
+            };
+        #else
+           RMobilePhone::TMobilePhoneRegistrationStatus nStatus = RMobilePhone::ERegistrationUnknown;
+           QSystemNetworkInfo::NetworkMode currMode =currentMode();
+           if (currMode == mode)
+            {
+                nStatus = DeviceInfo::instance()->networkInfo()->GetStatus();
+            }
+           switch (nStatus) {
+           case RMobilePhone::ENotRegisteredNoService : return QSystemNetworkInfo::NoNetworkAvailable;
+           case RMobilePhone::ENotRegisteredEmergencyOnly : return QSystemNetworkInfo::EmergencyOnly;
+           case RMobilePhone::ENotRegisteredSearching : return QSystemNetworkInfo::Searching;
+           case RMobilePhone::ERegisteredBusy : return QSystemNetworkInfo::Busy;
+           case RMobilePhone::ERegisteredOnHomeNetwork : return QSystemNetworkInfo::HomeNetwork;
+           case RMobilePhone::ERegistrationDenied : return QSystemNetworkInfo::Denied;
+           case RMobilePhone::ERegisteredRoaming : return QSystemNetworkInfo::Roaming;
+           case RMobilePhone::ERegistrationUnknown : break;
+           default:
+             break;
+           }
+        #endif
+        }
+        case QSystemNetworkInfo::WlanMode:
+        {
+            if (DeviceInfo::instance()->wlanInfo()->wlanNetworkConnectionStatus())
+                return QSystemNetworkInfo::Connected;
+            else
+                return QSystemNetworkInfo::NoNetworkAvailable;
+        }
+        case QSystemNetworkInfo::EthernetMode:
+        case QSystemNetworkInfo::BluetoothMode:
+        case QSystemNetworkInfo::WimaxMode:
+        default:
+            break;
+    };
+    return QSystemNetworkInfo::UndefinedStatus;
 }
 
 int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::NetworkMode mode)
@@ -623,6 +681,7 @@ void QSystemNetworkInfoPrivate::networkModeChanged()
     emit networkModeChanged(currentMode());
 }
 
+#ifdef ETELMM_SUPPORTED
 void QSystemNetworkInfoPrivate::changedNetworkMode()
 {
     emit networkModeChanged(currentMode());
@@ -633,6 +692,7 @@ void QSystemNetworkInfoPrivate::changedNetworkStatus()
     QSystemNetworkInfo::NetworkMode mode = currentMode();
     emit networkStatusChanged(mode, networkStatus(mode));
 }
+#endif
 
 void QSystemNetworkInfoPrivate::changedCellId(int cellIdTel)
 {
@@ -678,26 +738,38 @@ void QSystemNetworkInfoPrivate::wlanNetworkStatusChanged()
 
 QSystemNetworkInfo::NetworkMode QSystemNetworkInfoPrivate::currentMode()
 {
-    QSystemNetworkInfo::NetworkMode networkMode = QSystemNetworkInfo::UnknownMode;
+    QSystemNetworkInfo::NetworkMode mode = QSystemNetworkInfo::UnknownMode;
+#ifndef ETELMM_SUPPORTED
+    CTelephony::TNetworkMode networkMode = DeviceInfo::instance()->cellNetworkInfo()->networkMode();
+    switch (networkMode) {
+        case CTelephony::ENetworkModeGsm: mode = QSystemNetworkInfo::GsmMode; break;
+        case CTelephony::ENetworkModeCdma95:
+        case CTelephony::ENetworkModeCdma2000: mode = QSystemNetworkInfo::CdmaMode; break;
+        case CTelephony::ENetworkModeWcdma: mode = QSystemNetworkInfo::WcdmaMode; break;
+        default:
+            break;
+    }
+#else
     RMobilePhone::TMobilePhoneNetworkMode nMode = RMobilePhone::ENetworkModeUnknown;
     nMode = DeviceInfo::instance()->networkInfo()->GetMode();
     if (nMode != RMobilePhone::ENetworkModeUnknown) {
         switch (nMode) {
-            case RMobilePhone::ENetworkModeGsm : networkMode = QSystemNetworkInfo::GsmMode;
+            case RMobilePhone::ENetworkModeGsm : mode = QSystemNetworkInfo::GsmMode;
             break;
             case RMobilePhone::ENetworkModeAmps :
             case RMobilePhone::ENetworkModeCdma95 :
-            case RMobilePhone::ENetworkModeCdma2000 : networkMode = QSystemNetworkInfo::CdmaMode;
+            case RMobilePhone::ENetworkModeCdma2000 : mode = QSystemNetworkInfo::CdmaMode;
             break;
-#ifdef SYMBIAN_3_PLATFORM
+        #ifdef SYMBIAN_3_PLATFORM
             case RMobilePhone::ENetworkModeTdcdma :
-#endif
-            case RMobilePhone::ENetworkModeWcdma : networkMode = QSystemNetworkInfo::WcdmaMode;
+        #endif
+            case RMobilePhone::ENetworkModeWcdma : mode = QSystemNetworkInfo::WcdmaMode;
             break;
             default : break;
         }
     }
-    return networkMode;
+#endif
+    return mode;
 }
 
 QSystemDisplayInfoPrivate::QSystemDisplayInfoPrivate(QObject *parent)
@@ -1486,7 +1558,10 @@ bool QSystemDeviceInfoPrivate::keypadLightOn(QSystemDeviceInfo::KeypadType type)
 
 QUuid QSystemDeviceInfoPrivate::uniqueDeviceID()
 {
-    TInt driveNum = RFs::GetSystemDrive();
+    TInt driveNum = 25; //3.1 doesnot have support for systemDrive, defaulting to Z:
+ #ifndef SYMBIAN_3_1
+    driveNum = RFs::GetSystemDrive();
+ #endif
     TVolumeInfo volumeInfo;
     RFs rfs;
     if (rfs.Connect()!= KErrNone)
