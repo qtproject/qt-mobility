@@ -50,7 +50,6 @@
 class QGraphicsScene;
 class QGraphicsView;
 class StatsWidget;
-class QNetworkSession;
 
 QTM_BEGIN_NAMESPACE
     class QGeoCoordinate;
