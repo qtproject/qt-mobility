@@ -1713,9 +1713,4 @@ EXPORTS
 	_ZN10QtMobility13QGeoMapObject8setUnitsERKNS0_14CoordinateUnitE @ 1712 NONAME
 	_ZN10QtMobility13QGeoMapObject9setOriginERKNS_14QGeoCoordinateE @ 1713 NONAME
 	_ZN10QtMobility18QGeoMapGroupObject10setVisibleEb @ 1714 NONAME
-	_ZN10QtMobility19QGeoMapCircleObject14setDetailLevelEj @ 1715 NONAME
-	_ZNK10QtMobility13QGeoMapObject12graphicsItemEv @ 1716 NONAME
-	_ZNK10QtMobility13QGeoMapObject13transformTypeEv @ 1717 NONAME
-	_ZNK10QtMobility13QGeoMapObject5unitsEv @ 1718 NONAME
-	_ZNK10QtMobility13QGeoMapObject6originEv @ 1719 NONAME
 

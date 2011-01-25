@@ -1648,11 +1648,4 @@ EXPORTS
 	?setVisible@QGeoMapGroupObject@QtMobility@@QAEX_N@Z @ 1647 NONAME ; void QtMobility::QGeoMapGroupObject::setVisible(bool)
 	?graphicsItemChanged@QGeoMapObject@QtMobility@@IAEXPAVQGraphicsItem@@@Z @ 1648 NONAME ; void QtMobility::QGeoMapObject::graphicsItemChanged(class QGraphicsItem *)
 	?setOrigin@QGeoMapObject@QtMobility@@QAEXABVQGeoCoordinate@2@@Z @ 1649 NONAME ; void QtMobility::QGeoMapObject::setOrigin(class QtMobility::QGeoCoordinate const &)
-	?setDetailLevel@QGeoMapCircleObject@QtMobility@@QAEXI@Z @ 1650 NONAME ; void QtMobility::QGeoMapCircleObject::setDetailLevel(unsigned int)
-	?update@QGeoMapObject@QtMobility@@QAEXXZ @ 1651 NONAME ; void QtMobility::QGeoMapObject::update(void)
-	?setGraphicsItem@QGeoMapObject@QtMobility@@QAEXPAVQGraphicsItem@@@Z @ 1652 NONAME ; void QtMobility::QGeoMapObject::setGraphicsItem(class QGraphicsItem *)
-	?setTransformType@QGeoMapObject@QtMobility@@QAEXABW4TransformType@12@@Z @ 1653 NONAME ; void QtMobility::QGeoMapObject::setTransformType(enum QtMobility::QGeoMapObject::TransformType const &)
-	?units@QGeoMapObject@QtMobility@@QBE?AW4CoordinateUnit@12@XZ @ 1654 NONAME ; enum QtMobility::QGeoMapObject::CoordinateUnit QtMobility::QGeoMapObject::units(void) const
-	?transformType@QGeoMapObject@QtMobility@@QBE?AW4TransformType@12@XZ @ 1655 NONAME ; enum QtMobility::QGeoMapObject::TransformType QtMobility::QGeoMapObject::transformType(void) const
-	?origin@QGeoMapObject@QtMobility@@QBE?AVQGeoCoordinate@2@XZ @ 1656 NONAME ; class QtMobility::QGeoCoordinate QtMobility::QGeoMapObject::origin(void) const
 
