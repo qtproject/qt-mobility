@@ -9,9 +9,7 @@ Sources:
     - http://get.qt.nokia.com/qt/add-ons/%{name}-opensource-src-%{version}.tar.gz
 SourcePrefix: "%{name}-opensource-src-%{version}"
 Patches:
-    - no_rpath.patch
     - fix_translations_install_path.patch
-    - enable_camerabin_with_meego_target.patch
 Description: |
     Qt Mobility delivers a set of new APIs for mobile device functionality. These
     APIs allow the developer to use these features with ease from one framework and
@@ -45,6 +43,8 @@ PkgConfigBR:
     - gstreamer-plugins-base-0.10
     - gypsy
     - libpulse
+    - libmkcal
+    - meegotouch
     - qttracker
     - qmfclient
     - sensord

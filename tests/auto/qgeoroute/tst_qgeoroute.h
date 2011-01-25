@@ -48,7 +48,7 @@
 #include <QMetaType>
 #include <QSignalSpy>
 
-#include "../qlocationtestutils_p.h"
+#include "../qgeocoordinate/qlocationtestutils_p.h"
 #include <qgeoroute.h>
 #include <qgeoboundingbox.h>
 #include <qgeocoordinate.h>

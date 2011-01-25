@@ -39,23 +39,40 @@
 **
 ****************************************************************************/
 
-#include <QtGui/QApplication>
 #include "mainwindow.h"
 
+#include <QApplication>
+#include <QList>
+#include <QString>
+#include <QUrl>
+#include <QSettings>
+#include <QProcessEnvironment>
 #include <QNetworkProxyFactory>
+
+#include "qgeoserviceprovider.h"
 
 int main(int argc, char *argv[])
 {
-    QApplication app(argc, argv);
+    QApplication a(argc, argv);
 
-    QNetworkProxyFactory::setUseSystemConfiguration(true);
+    QApplication::setOrganizationName("Nokia");
+    QApplication::setApplicationName("MapsNavigatorExample");
 
-    MainWindow window;
+    QSettings settings;
 
-#if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE_WM) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
-    window.showMaximized();
-#else
-    window.show();
-#endif
-    return app.exec();
+    QVariant value = settings.value("http.proxy");
+    if (value.isValid()) {
+        QUrl url(value.toString(), QUrl::TolerantMode);
+        QNetworkProxy proxy;
+        proxy.setType(QNetworkProxy::HttpProxy);
+        proxy.setHostName(url.host());
+        proxy.setPort(url.port(8080));
+        QNetworkProxy::setApplicationProxy(proxy);
+    }
+
+    MainWindow mw;
+    mw.resize(200,200);
+    mw.show();
+
+    return a.exec();
 }

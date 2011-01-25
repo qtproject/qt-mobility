@@ -69,6 +69,7 @@ private slots:
     void slotRotationData();
     void slotMagnetometerData();
     void slotCompassData();
+    void slotLuxData();
 
 private:
     void checkDiff(qreal diff, qreal resolution, QString msg);

@@ -43,10 +43,17 @@
 
 #include <QtGui/QMainWindow>
 #include <QTime>
+#include <QVariant>
 
 #include <qnetworksession.h>
 
 class MapBox;
+
+#include <qmobilityglobal.h>
+
+QTM_BEGIN_NAMESPACE
+
+QTM_END_NAMESPACE
 
 QTM_USE_NAMESPACE
 
@@ -54,11 +61,12 @@ class MainWindow : public QMainWindow
 {
     Q_OBJECT
 private:
+    QVariantHash m_programOptions;
     MapBox * m_box;
     QNetworkSession * m_session;
 
 public:
-    MainWindow(QWidget * parent = 0);
+    MainWindow(const QVariantHash &programOptions, QWidget * parent = 0);
     ~MainWindow();
 
 private slots:

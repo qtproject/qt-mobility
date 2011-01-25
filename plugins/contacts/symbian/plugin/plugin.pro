@@ -132,7 +132,7 @@ symbian: {
     target.path = /sys/bin
     INSTALLS += target
 
-    contains(DEFINES, SYMBIAN_BACKEND_USE_SQLITE) {
+    contains(DEFINES, SYMBIAN_BACKEND_USE_CNTMODEL_V2) {
         cntmodelResourceFile = \
             "START RESOURCE ../../rss/customisedcntmodel.rss" \
             "TARGETPATH $${CONTACTS_RESOURCE_DIR}" \

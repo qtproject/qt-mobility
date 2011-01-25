@@ -140,7 +140,19 @@ QMediaResource::~QMediaResource()
 */
 bool QMediaResource::operator ==(const QMediaResource &other) const
 {
-    return values == other.values;
+    // Compare requests directly as QNetworkRequests are "custom types".
+    foreach (int key, values.keys()) {
+        switch (key) {
+        case Request:
+            if (request() != other.request())
+                return false;
+        break;
+        default:
+            if (values.value(key) != other.values.value(key))
+                return false;
+        }
+    }
+    return true;
 }
 
 /*!
@@ -150,7 +162,7 @@ bool QMediaResource::operator ==(const QMediaResource &other) const
 */
 bool QMediaResource::operator !=(const QMediaResource &other) const
 {
-    return values != other.values;
+    return !(*this == other);
 }
 
 /*!

@@ -54,37 +54,25 @@
 #include <qsensorbackend.h>
 #include <qsensormanager.h>
 #include <QDebug>
+#include <QSettings>
 
 class meegoSensorPlugin : public QObject, public QSensorPluginInterface, public QSensorBackendFactory
 {
     Q_OBJECT
     Q_INTERFACES(QtMobility::QSensorPluginInterface)
+    
 public:
-
+            
     void registerSensors()
     {
         // if no default - no support either, uses Sensors.conf
-        const char* const MEEGO = "meego";
-//        if (QString(QSensor::defaultSensorForType("QAccelerometer")).startsWith(MEEGO))
-            QSensorManager::registerBackend(QAccelerometer::type, meegoaccelerometer::id, this);
-//        if (QSensor::defaultSensorForType("QAmbientLightSensor").startsWith(MEEGO))
-            QSensorManager::registerBackend(QAmbientLightSensor::type, meegoals::id, this);
-//        if (QSensor::defaultSensorForType("QCompass").startsWith(MEEGO))
-            QSensorManager::registerBackend(QCompass::type, meegocompass::id, this);
-//        if (QSensor::defaultSensorForType("QMagnetometer").startsWith(MEEGO))
-            QSensorManager::registerBackend(QMagnetometer::type, meegomagnetometer::id, this);
-//        if (QSensor::defaultSensorForType("QOrientationSensor").startsWith(MEEGO))
-            QSensorManager::registerBackend(QOrientationSensor::type, meegoorientationsensor::id, this);
-//        if (QSensor::defaultSensorForType("QProximitySensor").startsWith(MEEGO))
-            QSensorManager::registerBackend(QProximitySensor::type, meegoproximitysensor::id, this);
-//        if (QSensor::defaultSensorForType("QRotationSensor").startsWith(MEEGO))
-            QSensorManager::registerBackend(QRotationSensor::type, meegorotationsensor::id, this);
-//        if (QSensor::defaultSensorForType("QTapSensor").startsWith(MEEGO))
-            QSensorManager::registerBackend(QTapSensor::type, meegotapsensor::id, this);
-//        if (QSensor::defaultSensorForType("QGyroscope").startsWith(MEEGO))
-            QSensorManager::registerBackend(QGyroscope::type, meegogyroscope::id, this);
-//        if (QSensor::defaultSensorForType("QLightSensor").startsWith(MEEGO))
-            QSensorManager::registerBackend(QLightSensor::type, meegolightsensor::id, this);
+        QSettings settings(QSettings::SystemScope, QLatin1String("Nokia"), QLatin1String("Sensors"));
+        settings.beginGroup(QLatin1String("Default"));
+        QStringList keys = settings.allKeys();
+        for (int i=0,l=keys.size(); i<l; i++){
+            QString type = keys.at(i);
+            QSensorManager::registerBackend(type.toAscii(), settings.value(type).toByteArray(), this);
+        }
         qDebug() << "Loaded the MeeGo sensor plugin";
     }
 
@@ -93,23 +81,23 @@ public:
     {
         if (sensor->identifier() == meegoaccelerometer::id)
             return new meegoaccelerometer(sensor);
-        else if (sensor->identifier() == meegoals::id)
+        if (sensor->identifier() == meegoals::id)
             return new meegoals(sensor);
-        else if (sensor->identifier() == meegocompass::id)
+        if (sensor->identifier() == meegocompass::id)
             return new meegocompass(sensor);
-        else if (sensor->identifier() == meegomagnetometer::id)
+        if (sensor->identifier() == meegomagnetometer::id)
             return new meegomagnetometer(sensor);
-        else if (sensor->identifier() == meegoorientationsensor::id)
+        if (sensor->identifier() == meegoorientationsensor::id)
             return new meegoorientationsensor(sensor);
-        else if (sensor->identifier() == meegoproximitysensor::id)
+        if (sensor->identifier() == meegoproximitysensor::id)
             return new meegoproximitysensor(sensor);
-        else if (sensor->identifier() == meegorotationsensor::id)
+        if (sensor->identifier() == meegorotationsensor::id)
             return new meegorotationsensor(sensor);
-        else if (sensor->identifier() == meegotapsensor::id)
+        if (sensor->identifier() == meegotapsensor::id)
             return new meegotapsensor(sensor);
-        else if (sensor->identifier() == meegogyroscope::id)
+        if (sensor->identifier() == meegogyroscope::id)
             return new meegogyroscope(sensor);
-        else if (sensor->identifier() == meegolightsensor::id)
+        if (sensor->identifier() == meegolightsensor::id)
             return new meegolightsensor(sensor);
         return 0;
     }

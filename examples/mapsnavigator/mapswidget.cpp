@@ -40,196 +40,89 @@
 ****************************************************************************/
 
 #include "mapswidget.h"
+#include "marker.h"
 
+#include <QGraphicsSceneMouseEvent>
+#include <QGraphicsSceneWheelEvent>
+#include <QPropertyAnimation>
+#include <QParallelAnimationGroup>
 #include <QTimer>
-#include <QTime>
-#include <cmath>
 
-//TODO: get rid of debug when finalized
-#include <QDebug>
+#include "qgeocoordinate.h"
 
-// TODO: Some of these could be exposed in a GUI and should probably be put elsewhere in that case (and made non-const)
-#if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE_WM) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
-// Devices
-static const bool enableKineticPanning = true;
-static const qreal kineticPanningHalflife = 200.0; // time until kinetic panning speed slows down to 50%, in msec
-static const qreal panSpeedNormal = 0.3; // keyboard panning speed without modifiers, in pixels/msec
-static const qreal panSpeedFast = 1.0; // keyboard panning speed with shift, in pixels/msec
-static const qreal kineticPanSpeedThreshold = 0.02; // minimum panning speed, in pixels/msec
-static const int kineticPanningResolution = 75; // temporal resolution. Smaller values take more CPU but improve visual quality
-static const int holdTimeThreshold = 200; // maximum time between last mouse move and mouse release for kinetic panning to kick in
-#else
-// Desktop
-static const bool enableKineticPanning = true;
-static const qreal kineticPanningHalflife = 300.0; // time until kinetic panning speed slows down to 50%, in msec
-static const qreal panSpeedNormal = 0.3; // keyboard panning speed without modifiers, in pixels/msec
-static const qreal panSpeedFast = 1.0; // keyboard panning speed with shift, in pixels/msec
-static const qreal kineticPanSpeedThreshold = 0.005; // minimum panning speed, in pixels/msec
-static const int kineticPanningResolution = 30; // temporal resolution. Smaller values take more CPU but improve visual quality
-static const int holdTimeThreshold = 100; // maximum time between last mouse move and mouse release for kinetic panning to kick in
-#endif
-
-GeoMap::GeoMap(QGeoMappingManager *manager, MapsWidget *mapsWidget)
-    : QGraphicsGeoMap(manager),
-      m_mapsWidget(mapsWidget),
-      panActive(false),
-      objectPressed(false),
-      kineticTimer(new QTimer),
-      objectHeld(false)
+GeoMap::GeoMap(QGeoMappingManager *manager, MapsWidget *mapsWidget) :
+    QGraphicsGeoMap(manager), m_mapsWidget(mapsWidget)
 {
-    // connect timer for hold event
-    timer = new QTimer();
-    timer->setInterval(1000);
-    connect(timer, SIGNAL(timeout()), timer, SLOT(stop()));
-
-    for (int i = 0; i < 5; ++i) mouseHistory.append(MouseHistoryEntry());
-
-    connect(kineticTimer, SIGNAL(timeout()), this, SLOT(kineticTimerEvent()));
-    kineticTimer->setInterval(kineticPanningResolution);
 }
 
 GeoMap::~GeoMap()
 {
-    delete timer;
-    delete kineticTimer;
 }
 
-void GeoMap::setObjectHeld(bool held) {
-    objectHeld = held;
-}
-
-void GeoMap::kineticTimerEvent()
+double GeoMap::centerLatitude() const
 {
-    QTime currentTime = QTime::currentTime();
-    int deltaTime = lastMoveTime.msecsTo(currentTime);
-    lastMoveTime = currentTime;
-
-    if (panDecellerate)
-        kineticPanSpeed *= pow(qreal(0.5), qreal(deltaTime / kineticPanningHalflife));
-
-    QPointF scaledSpeed = kineticPanSpeed * deltaTime;
-
-    if (kineticPanSpeed.manhattanLength() < kineticPanSpeedThreshold) {
-        // Kinetic panning is almost halted -> stop it.
-        kineticTimer->stop();
-        return;
-    }
-    panFloatWrapper(scaledSpeed);
+    return center().latitude();
 }
 
-void GeoMap::mousePressEvent(QGraphicsSceneMouseEvent* event)
+double GeoMap::centerLongitude() const
+{
+    return center().longitude();
+}
+
+void GeoMap::setCenterLatitude(double lat)
+{
+    QGeoCoordinate c = center();
+    c.setLatitude(lat);
+    setCenter(c);
+}
+
+void GeoMap::setCenterLongitude(double lon)
+{
+    QGeoCoordinate c = center();
+    c.setLongitude(lon);
+    setCenter(c);
+}
+
+void GeoMap::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     panActive = true;
-    timer->disconnect(m_mapsWidget);
 
-    QList<QGeoMapObject*> markers = mapObjectsAtScreenPosition(event->pos());
-    objectPressed = false;
-    for (int i=0; i<markers.size(); i++) {
-        if (markers.at(i)->isVisible()) {
-            objectPressed = true;
-            m_mapsWidget->setMouseMarker(markers.at(i));
-            break;
-        }
+    markerPressed = false;
+    QList<QGeoMapObject*> objects = mapObjectsAtScreenPosition(event->pos());
+    if (objects.size() > 0) {
+        pressed = objects.first();
+        markerPressed = true;
     }
-
-    // sets timer for  map or map-object hold event
-    if (!objectPressed)
-        connect(timer, SIGNAL(timeout()), m_mapsWidget, SLOT(setMarker()));
-    else
-        connect(timer, SIGNAL(timeout()), m_mapsWidget, SLOT(moveMarker()));
-
-    m_mapsWidget->setMarkerLocation(screenPositionToCoordinate(event->pos()));
-    timer->start();
-
-    panActive = true;
-
-    // When pressing, stop the timer and stop all current kinetic panning
-    kineticTimer->stop();
-    kineticPanSpeed = QPointF();
-
-    lastMoveTime = QTime::currentTime();
 
     event->accept();
 }
 
-void GeoMap::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
+void GeoMap::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
-    timer->stop();
-    if (objectPressed) {
-        emit m_mapsWidget->markerReleased();
-        objectPressed = false;
-        objectHeld = false;
-    }
-    if (panActive) {
-        panActive = false;
+    panActive = false;
 
-        if (!enableKineticPanning || lastMoveTime.msecsTo(QTime::currentTime()) > holdTimeThreshold) {
-            return;
+    if (markerPressed) {
+        // check if we're still over the object
+        QList<QGeoMapObject*> objects = mapObjectsAtScreenPosition(event->pos());
+        if (objects.contains(pressed)) {
+            Marker *m = dynamic_cast<Marker*>(pressed);
+            if (m)
+                emit clicked(m);
         }
 
-        kineticPanSpeed = QPointF();
-        int entries_considered = 0;
-
-        QTime currentTime = QTime::currentTime();
-        foreach (MouseHistoryEntry entry, mouseHistory) {
-            // first=speed, second=time
-            int deltaTime = entry.second.msecsTo(currentTime);
-            if (deltaTime < holdTimeThreshold) {
-                kineticPanSpeed += entry.first;
-                entries_considered++;
-            }
-        }
-        if (entries_considered > 0) kineticPanSpeed /= entries_considered;
-        lastMoveTime = currentTime;
-
-        // When releasing the mouse button/finger while moving, start the kinetic panning timer
-        kineticTimer->start();
-        panDecellerate = true;
+        markerPressed = false;
     }
+
     event->accept();
 }
 
-void GeoMap::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
+void GeoMap::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
-    timer->stop();
     if (panActive) {
-        if (objectPressed && objectHeld) {
-            QGeoCoordinate last = screenPositionToCoordinate(event->lastPos());
-            QGeoCoordinate curr = screenPositionToCoordinate(event->pos());
-            emit m_mapsWidget->moveMarker(last, curr);
-        } else {
-            // Calculate time delta
-            QTime currentTime = QTime::currentTime();
-            int deltaTime = lastMoveTime.msecsTo(currentTime);
-            lastMoveTime = currentTime;
-
-            // Calculate position delta
-            QPointF delta = event->lastPos() - event->pos();
-
-            // Calculate and set speed
-            if (deltaTime > 0) {
-                kineticPanSpeed = delta / deltaTime;
-
-                mouseHistory.push_back(MouseHistoryEntry(kineticPanSpeed, currentTime));
-                mouseHistory.pop_front();
-            }
-
-            // Pan map
-            panFloatWrapper(delta);
-
-            if (objectPressed) {
-                emit m_mapsWidget->mapMoved();
-                objectPressed = false;
-            }
-        }
-        event->accept();
+        QPointF delta = event->lastPos() - event->pos();
+        pan(delta.x(), delta.y());
+        emit panned();
     }
-}
-
-void GeoMap::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
-{
-    setCenter(screenPositionToCoordinate(event->pos()));
-    setZoomLevel(zoomLevel() + 1);
     event->accept();
 }
 
@@ -238,11 +131,11 @@ void GeoMap::wheelEvent(QGraphicsSceneWheelEvent *event)
     qreal panx = event->pos().x() - size().width() / 2.0;
     qreal pany = event->pos().y() - size().height() / 2.0;
     pan(panx, pany);
-    if (event->delta() > 0) { //zoom in
+    if (event->delta() > 0) {   // zoom in
         if (zoomLevel() < maximumZoomLevel()) {
             setZoomLevel(zoomLevel() + 1);
         }
-    } else { //zoom out
+    } else {                    // zoom out
         if (zoomLevel() > minimumZoomLevel()) {
             setZoomLevel(zoomLevel() - 1);
         }
@@ -251,141 +144,72 @@ void GeoMap::wheelEvent(QGraphicsSceneWheelEvent *event)
     event->accept();
 }
 
-void GeoMap::panFloatWrapper(const QPointF& delta)
+StatusBarItem::StatusBarItem() :
+    m_offset(0)
 {
-    // Add to previously stored panning distance
-    remainingPan += delta;
+    setPen(QPen(QBrush(), 0));
+    setBrush(QBrush(QColor(0,0,0,120)));
 
-    // Convert to integers
-    QPoint move = remainingPan.toPoint();
+    textItem = new QGraphicsSimpleTextItem(this);
+    textItem->setBrush(QBrush(Qt::white));
 
-    // Commit mouse movement
-    pan(move.x(), move.y());
-
-    // Store committed mouse movement
-    remainingPan -= move;
+    setText("");
 }
 
-void GeoMap::keyPressEvent(QKeyEvent *event)
+StatusBarItem::~StatusBarItem()
 {
-    switch (event->key()) {
-    case Qt::Key_Minus:
-#ifdef Q_OS_SYMBIAN
-    case Qt::Key_VolumeDown:
-#endif
-        if (zoomLevel() > minimumZoomLevel()) {
-            setZoomLevel(zoomLevel() - 1);
-        }
-        break;
-
-    case Qt::Key_Plus:
-#ifdef Q_OS_SYMBIAN
-    case Qt::Key_VolumeUp:
-#endif
-        if (zoomLevel() < maximumZoomLevel()) {
-            setZoomLevel(zoomLevel() + 1);
-        }
-        break;
-
-    case Qt::Key_T:
-        if (mapType() == QGraphicsGeoMap::StreetMap)
-            setMapType(QGraphicsGeoMap::SatelliteMapDay);
-        else if (mapType() == QGraphicsGeoMap::SatelliteMapDay)
-            setMapType(QGraphicsGeoMap::StreetMap);
-        break;
-
-    case Qt::Key_Shift:
-        // If there's no current movement, we don't need to handle shift.
-        if (panDir.manhattanLength() == 0) break;
-    case Qt::Key_Left:
-    case Qt::Key_Right:
-    case Qt::Key_Up:
-    case Qt::Key_Down:
-        if (!event->isAutoRepeat()) {
-            switch (event->key()) {
-            case Qt::Key_Left:
-                panDir.setX(-1);
-                break;
-
-            case Qt::Key_Right:
-                panDir.setX(1);
-                break;
-
-            case Qt::Key_Up:
-                panDir.setY(-1);
-                break;
-
-            case Qt::Key_Down:
-                panDir.setY(1);
-                break;
-            }
-
-            lastMoveTime = QTime::currentTime();
-            kineticTimer->start();
-            panDecellerate = false;
-
-            applyPan(event->modifiers());
-        }
-        break;
-    }
-
-    event->accept();
 }
 
-void GeoMap::keyReleaseEvent(QKeyEvent* event)
+void StatusBarItem::setText(QString text)
 {
-    event->accept();
-
-    // Qt seems to have auto-repeated release events too...
-    if (event->isAutoRepeat()) return;
-
-    switch (event->key()) {
-    case Qt::Key_Left:
-    case Qt::Key_Right:
-        panDir.setX(0);
-        break;
-
-    case Qt::Key_Up:
-    case Qt::Key_Down:
-        panDir.setY(0);
-        break;
-
-    case Qt::Key_Shift:
-        if (panDir.manhattanLength() == 0) return;
-        break;
-
-    default:
-        return;
-    }
-
-    applyPan(event->modifiers());
+    textItem->setText(text);
+    QRectF rect = textItem->boundingRect();
+    QPointF delta = this->rect().center() - rect.center();
+    textItem->setPos(delta.x(), delta.y());
 }
 
-void GeoMap::applyPan(const Qt::KeyboardModifiers& modifiers)
+void StatusBarItem::setRect(qreal x, qreal y, qreal w, qreal h)
 {
-    Q_ASSERT(panDir.manhattanLength() <= 2);
-
-    if (panDir.manhattanLength() == 0) {
-        // If no more direction keys are held down, decellerate
-        panDecellerate = true;
-    } else {
-        // Otherwise, set new direction
-        qreal panspeed = (modifiers & Qt::ShiftModifier) ? panSpeedFast : panSpeedNormal;
-
-        if (panDir.manhattanLength() == 2) {
-            // If 2 keys are held down, adjust speed to achieve the same speed in all 8 possible directions
-            panspeed *= sqrt(0.5);
-        }
-
-        // Finally set the current panning speed
-        kineticPanSpeed = QPointF(panDir) * panspeed;
-    }
+    QGraphicsRectItem::setRect(x, y + m_offset, w, h);
+    setText(textItem->text());
 }
 
+void StatusBarItem::setOffset(int offset)
+{
+    this->setY(this->y() - m_offset + offset);
+    m_offset = offset;
+}
 
+void StatusBarItem::showText(QString text, quint32 timeout)
+{
+    setText(text);
+    show();
+    QTimer::singleShot(timeout, this, SLOT(hide()));
+}
 
-MapsWidget::MapsWidget(QWidget *parent)
-    : QWidget(parent), waypointSelect(false)
+void StatusBarItem::show()
+{
+    QPropertyAnimation *anim = new QPropertyAnimation(this, "offset");
+    anim->setStartValue(0);
+    anim->setEndValue(-1 * rect().height());
+    anim->setDuration(500);
+    anim->start(QAbstractAnimation::DeleteWhenStopped);
+}
+
+void StatusBarItem::hide()
+{
+    QPropertyAnimation *anim = new QPropertyAnimation(this, "offset");
+    anim->setStartValue(m_offset);
+    anim->setEndValue(0);
+    anim->setDuration(500);
+    anim->start(QAbstractAnimation::DeleteWhenStopped);
+}
+
+MapsWidget::MapsWidget(QWidget *parent) :
+    QWidget(parent),
+    geoMap(0),
+    graphicsView(0),
+    m_markerManager(0)
 {
 }
 
@@ -393,145 +217,102 @@ MapsWidget::~MapsWidget()
 {
 }
 
-void MapsWidget::initialize(QGeoMappingManager *mappingManager)
+void MapsWidget::initialize(QGeoMappingManager *manager)
 {
-    //TODO: GPS my location
-    myLocation = QGeoCoordinate(-27.5796, 153.1);
-    markerLocation = myLocation;
+    geoMap = new GeoMap(manager, this);
+    if (m_markerManager)
+        m_markerManager->setMap(geoMap);
 
-    m_mappingManager = mappingManager;
+    connect(geoMap, SIGNAL(clicked(Marker*)),
+            this, SIGNAL(markerClicked(Marker*)));
+    connect(geoMap, SIGNAL(panned()),
+            this, SIGNAL(mapPanned()));
 
-    if (m_mappingManager) {
-        //TODO: map zooming
+    QGraphicsScene *sc = new QGraphicsScene;
+    sc->addItem(geoMap);
 
-        // setup map and graphics view
-        geomap = new GeoMap(m_mappingManager, this);
-        QGraphicsScene* scene = new QGraphicsScene(this);
-        scene->addItem(geomap);
+    geoMap->setPos(0, 0);
+    geoMap->resize(this->size());
 
-        view = new QGraphicsView(scene, this);
-        view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-        view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-        view->setVisible(true);
-        view->setInteractive(true);
+    graphicsView = new QGraphicsView(sc, this);
+    graphicsView->setVisible(true);
+    graphicsView->setInteractive(true);
+    graphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-        geomap->resize(300, 480);
-        geomap->setCenter(myLocation);
-        geomap->setZoomLevel(15);
+    m_statusBar = new StatusBarItem;
+    sc->addItem(m_statusBar);
+    resizeEvent(0);
 
-        QHBoxLayout *widgetLayout = new QHBoxLayout;
-        widgetLayout->addWidget(view);
-        setLayout(widgetLayout);
+    graphicsView->resize(this->size());
+    graphicsView->centerOn(geoMap);
 
-        // add my location marker
-        MarkerObject *myMarker = new MarkerObject(MarkerObject::MyLocation);
-        myMarker->setCoordinate(myLocation);
-        myMarker->setIconPath(":/icons/mylocation.png");
-        createMarker(myMarker);
-        myLocationMarker = myMarker;
+    geoMap->setCenter(QGeoCoordinate(-27.5796, 153.1));
+    geoMap->setZoomLevel(15);
+}
 
-    } else {
-        // TODO: errors
+void MapsWidget::setMyLocation(QGeoCoordinate location, bool center)
+{
+    if (m_markerManager)
+        m_markerManager->setMyLocation(location);
+    if (geoMap && center)
+        geoMap->setCenter(location);
+}
+
+QGraphicsGeoMap *MapsWidget::map() const
+{
+    return geoMap;
+}
+
+void MapsWidget::resizeEvent(QResizeEvent *event)
+{
+    if (graphicsView && geoMap) {
+        graphicsView->resize(size());
+        geoMap->resize(size());
+        graphicsView->centerOn(geoMap);
+
+        m_statusBar->setRect(0, height(), width(), 20);
     }
 }
 
-MarkerObject* MapsWidget::getMyLocation()
+void MapsWidget::animatedPanTo(QGeoCoordinate center)
 {
-    return myLocationMarker;
-}
-
-void MapsWidget::setMapType(QString type)
-{
-    if (type == tr("Street"))
-        geomap->setMapType(QGraphicsGeoMap::StreetMap);
-    else if (type == tr("Satellite"))
-        geomap->setMapType(QGraphicsGeoMap::SatelliteMapDay);
-    else if (type == tr("Satellite - Night"))
-        geomap->setMapType(QGraphicsGeoMap::SatelliteMapNight);
-    else if (type == tr("Terrain"))
-        geomap->setMapType(QGraphicsGeoMap::TerrainMap);
-}
-
-bool MapsWidget::getWaypointSelect()
-{
-    return waypointSelect;
-}
-
-void MapsWidget::centerOnMyLocation()
-{
-    geomap->setCenter(myLocation);
-}
-
-void MapsWidget::centerOnMarker(MarkerObject *marker)
-{
-    geomap->setCenter(marker->coordinate());
-}
-
-void MapsWidget::createMarker(MarkerObject *marker)
-{
-    emit addMarker(marker);
-    geomap->addMapObject(marker);
-}
-
-void MapsWidget::deleteMarker(MarkerObject *marker)
-{
-    emit removeMarker(marker);
-    geomap->removeMapObject(marker);
-    delete marker;
-}
-
-void MapsWidget::moveMarker()
-{
-    if (m_marker->markerType() == MarkerObject::Search) {
-        m_marker->expandIcon(markerLocation);
-        geomap->setObjectHeld(true);
-    }
-}
-
-void MapsWidget::setMarker()
-{
-    if (waypointSelect) {
-        waypointSelect = false;
-        m_marker->setCoordinate(markerLocation);
-        emit waypointSelected();
+    if (!geoMap)
         return;
+
+    QPropertyAnimation *latAnim = new QPropertyAnimation(geoMap, "centerLatitude");
+    latAnim->setEndValue(center.latitude());
+    latAnim->setDuration(200);
+    QPropertyAnimation *lonAnim = new QPropertyAnimation(geoMap, "centerLongitude");
+    lonAnim->setEndValue(center.longitude());
+    lonAnim->setDuration(200);
+
+    QParallelAnimationGroup *group = new QParallelAnimationGroup;
+    group->addAnimation(latAnim);
+    group->addAnimation(lonAnim);
+    group->start(QAbstractAnimation::DeleteWhenStopped);
+}
+
+void MapsWidget::showEvent(QShowEvent *event)
+{
+    if (graphicsView && geoMap) {
+        graphicsView->resize(size());
+        geoMap->resize(size());
+        graphicsView->centerOn(geoMap);
+
+        m_statusBar->setRect(0, height(), width(), 20);
     }
-
-    setMarkerCoordinate(markerLocation);
 }
 
-MarkerObject* MapsWidget::setMarkerCoordinate(const QGeoCoordinate& coord)
+MarkerManager *MapsWidget::markerManager() const
 {
-    MarkerObject *marker = new MarkerObject(MarkerObject::Search);
-    marker->setIconPath(":/icons/searchmarker.png");
-    marker->setCoordinate(coord);
-    createMarker(marker);
-    return marker;
+    return m_markerManager;
 }
 
-MarkerObject* MapsWidget::setMarkerAddress(const QString& address)
+void MapsWidget::setMarkerManager(MarkerManager *markerManager)
 {
-    MarkerObject *marker = new MarkerObject(MarkerObject::Search);
-    marker->setIconPath(":/icons/searchmarker.png");
-    marker->setMarkerState(MarkerObject::Address);
-    marker->setName(address);
-    createMarker(marker);
-    return marker;
-}
-
-void MapsWidget::setMarkerLocation(const QGeoCoordinate& coord)
-{
-    markerLocation = coord;
-}
-
-void MapsWidget::setMouseMarker(QGeoMapObject *marker)
-{
-    m_marker = qobject_cast<MarkerObject*>(marker);
-    emit markerPressed(m_marker);
-}
-
-void MapsWidget::beginWaypointSelect(MarkerObject *marker)
-{
-    m_marker = marker;
-    waypointSelect = true;
+    m_markerManager = markerManager;
+    if (geoMap)
+        m_markerManager->setMap(geoMap);
+    markerManager->setStatusBar(m_statusBar);
 }

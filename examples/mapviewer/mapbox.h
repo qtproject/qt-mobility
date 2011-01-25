@@ -46,6 +46,8 @@
 #include <QWidget>
 #include <QMap>
 
+#include <qgraphicsgeomap.h>
+
 class GeoMap;
 
 class QGraphicsView;
@@ -99,6 +101,8 @@ public:
     void setDisplayMode(DisplayMode mode);
     DisplayMode displayMode();
 
+    void setConnectivityMode(QGraphicsGeoMap::ConnectivityMode mode);
+
 private:
     QGraphicsView * m_qgv;
     QGraphicsScene * m_scene;
@@ -111,6 +115,8 @@ private:
     QPixmap m_markerIcon;
     QPoint m_markerOffset;
     QList<QGeoMapPixmapObject *> m_markerObjects;
+
+    QGraphicsGeoMap::ConnectivityMode m_connectivityMode;
 
     QMenu * m_popupMenu;
     QMenu * m_popupMenuMapObject;
