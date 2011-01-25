@@ -1083,18 +1083,15 @@ void QMediaPlayer::setVideoOutput(QAbstractVideoSurface *surface)
 /*!
     \enum QMediaPlayer::Flag
 
-    \value LowLatency
-            The player is expected to be used with simple audio formats,
+    \value LowLatency       The player is expected to be used with simple audio formats,
             but playback should start without significant delay.
             Such playback service can be used for beeps, ringtones, etc.
 
-    \value StreamPlayback
-            The player is expected to play QIODevice based streams.
+    \value StreamPlayback   The player is expected to play QIODevice based streams.
             If passed to QMediaPlayer constructor, the service supporting
             streams playback will be chosen.
 
-    \value VideoSurface
-            The player is expected to be able to render to a
+    \value VideoSurface     The player is expected to be able to render to a
             QAbstractVideoSurface \l {setVideoOutput()}{output}.
 */
 

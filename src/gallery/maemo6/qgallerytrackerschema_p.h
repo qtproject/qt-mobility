@@ -79,8 +79,7 @@ public:
 
     static QGalleryTrackerSchema fromItemId(const QString &itemId);
 
-    bool isItemType() const { return m_itemIndex >= 0; }
-    bool isAggregateType() const { return m_aggregateIndex >= 0; }
+    bool isValid() const { return m_itemIndex >= 0; }
 
     QString itemType() const;
 
@@ -112,8 +111,7 @@ public:
             QGalleryDBusInterfaceFactory *dbus) const;
 
 private:
-    QGalleryTrackerSchema(int itemIndex, int aggregateIndex)
-        : m_itemIndex(itemIndex), m_aggregateIndex(aggregateIndex) {}
+    QGalleryTrackerSchema(int itemIndex) : m_itemIndex(itemIndex) {}
 
     QDocumentGallery::Error buildFilterQuery(
             QString *query,
@@ -129,17 +127,8 @@ private:
             const QStringList &sortPropertyNames,
             int offset,
             int limit) const;
-    void populateAggregateArguments(
-            QGalleryTrackerResultSetArguments *arguments,
-            QGalleryDBusInterfaceFactory *dbus,
-            const QString &query,
-            const QStringList &propertyNames,
-            const QStringList &sortPropertyNames,
-            int offset,
-            int limit) const;
 
     const int m_itemIndex;
-    const int m_aggregateIndex;
 };
 
 QTM_END_NAMESPACE

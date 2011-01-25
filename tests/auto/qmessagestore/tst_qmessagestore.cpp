@@ -550,19 +550,19 @@ void tst_QMessageStore::testMessage_data()
 
 void tst_QMessageStore::testRemoveAccount()
 {
-    QVERIFY(QMessageManager().queryAccounts(QMessageAccountFilter::byName("Mr. Temp")).empty());
+    QVERIFY(manager->queryAccounts(QMessageAccountFilter::byName("Mr. Temp")).empty());
 
     Support::Parameters p;
     p.insert("name", "Mr. Temp");
     p.insert("fromAddress", "anaddress@example.com");
     QMessageAccountId id(Support::addAccount(p));
     QVERIFY(id.isValid());
+    QTest::qWait(200); // Updating EmailClientApi mailbox cache is asynchronous operation so wait is needed.
+    
+    QVERIFY(!manager->queryAccounts(QMessageAccountFilter::byName("Mr. Temp")).empty());
+    QVERIFY(manager->removeAccount(id)); // This is synchronous function
 
-    QVERIFY(!QMessageManager().queryAccounts(QMessageAccountFilter::byName("Mr. Temp")).empty());
-    QVERIFY(QMessageManager().removeAccount(id));
-
-    QTest::qWait(4000);
-    QVERIFY(QMessageManager().queryAccounts(QMessageAccountFilter::byName("Mr. Temp")).empty());
+    QVERIFY(manager->queryAccounts(QMessageAccountFilter::byName("Mr. Temp")).empty());
 }
 
 void tst_QMessageStore::testMessage()
