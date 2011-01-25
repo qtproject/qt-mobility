@@ -183,7 +183,6 @@ void tst_QGalleryTrackerSchema::fromItemId_data()
     QTest::addColumn<QString>("itemId");
     QTest::addColumn<QString>("itemType");
     QTest::addColumn<bool>("isValid");
-    QTest::addColumn<bool>("isAggregateType");
 
     QTest::newRow("File")
             << QString::fromLatin1("file::/path/to/file.ext")
