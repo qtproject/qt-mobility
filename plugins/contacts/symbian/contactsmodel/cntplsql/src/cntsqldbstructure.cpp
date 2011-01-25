@@ -318,7 +318,7 @@ CCntSqlDbStructure* CCntSqlDbStructure::NewL( RSqlDatabase& aDbInstance)
     return new ( ELeave ) CCntSqlDbStructure( aDbInstance );
     }
 /*
- * Initilizes the table with table and columns
+ * Initialises the table with table and columns
  */
 void CCntSqlDbStructure::InitializeL()
 	{
@@ -334,7 +334,7 @@ void CCntSqlDbStructure::InitializeL()
 
 
 /*
- * Initilizes the contacts table column information.
+ * Initialises the contacts table column information.
  */
 void CCntSqlDbStructure::InitializeContactsTableInfoL()
 	{
@@ -366,7 +366,7 @@ void CCntSqlDbStructure::InitializeContactsTableInfoL()
 	}
 
 /*
- * Initilizes the Groups table column information.
+ * Initialises the Groups table column information.
  */
 void CCntSqlDbStructure::InitializeGroupsTableInfoL()
 	{
@@ -381,7 +381,7 @@ void CCntSqlDbStructure::InitializeGroupsTableInfoL()
 	}
 
 /*
- * Initilizes the comm_addr table column information.
+ * Initialises the comm_addr table column information.
  */
 void CCntSqlDbStructure::InitializeCommAddrTableInfoL()
 	{
@@ -414,7 +414,7 @@ CCntSqlDbStructure::~CCntSqlDbStructure()
  */
 void CCntSqlDbStructure::MakeDatabaseCompatibleL()
 	{
-	// Initilize the table and column info
+	// Initialise the table and column info
 	InitializeL();
 	TInt count = iTables.Count();
 	for( TInt i = 0; i < count; i++ )

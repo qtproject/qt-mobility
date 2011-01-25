@@ -275,7 +275,7 @@ enum TFastAccessField
 
 const TInt KFirstIndex = 0;
 
-// For Database compatability . Used in cntsqldbstructure
+// For Database compatibility. Used in cntsqldbstructure
 _LIT(KInteger, "INTEGER");
 _LIT(KVarchar255,"VARCHAR(255)");
 _LIT(KChar255,"CHAR(255)");

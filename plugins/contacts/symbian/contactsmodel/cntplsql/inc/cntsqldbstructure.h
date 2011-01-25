@@ -15,7 +15,7 @@
 * All the tables and their column information is stored in the source code. 
 * While checking compatibility, this information is compared with the tables and columns in the database.
 * This class is used for checking if the database contains all the columns. If not, then
-* it may be needed to add those columns (To maintain compatibility accross releases)
+* it may be needed to add those columns (To maintain compatibility across releases)
 * 
 */
 
@@ -69,7 +69,7 @@ class CCntSqlDbTableColumn:public CBase
     TBool NotNullValue() const ;
     
     /*
-    * Any addition infomation such as default value etc
+    * Any addition information such as default value etc
     */
     const TDesC& AdditionalInfo() const;
     
