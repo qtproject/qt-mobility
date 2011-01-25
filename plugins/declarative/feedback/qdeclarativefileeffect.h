@@ -43,58 +43,72 @@
 #define QDECLARATIVEFILEEFFECT_H
 
 #include <QtDeclarative/qdeclarative.h>
-#include <qfeedbackeffect.h>
+#include "qdeclarativefeedbackeffect.h"
 
 QTM_USE_NAMESPACE
 
-class QDeclarativeFileEffect : public QFeedbackFileEffect
+class QDeclarativeFileEffect : public QDeclarativeFeedbackEffect
 {
     Q_OBJECT
-    Q_PROPERTY(bool running READ isRunning WRITE setRunning NOTIFY runningChanged)
-    Q_PROPERTY(bool paused READ isPaused WRITE setPaused NOTIFY pausedChanged)
+    Q_PROPERTY(bool loaded READ isLoaded WRITE setLoaded NOTIFY loadedChanged)
+    Q_PROPERTY(QUrl source READ source WRITE setSource NOTIFY sourceChanged)
+    Q_PROPERTY(QStringList supportedMimeTypes READ supportedMimeTypes)
 public:
-    QDeclarativeFileEffect(QObject *parent = 0) : QFeedbackFileEffect(parent), running_(false), paused_(false) {
-        QObject::connect(this, SIGNAL(stateChanged()), this, SLOT(updateState()));
+    explicit QDeclarativeFileEffect(QObject *parent = 0) : QDeclarativeFeedbackEffect(parent){
+        d = new QFeedbackFileEffect(this);
+        setFeedbackEffect(d);
+    }
+    bool isLoaded() const
+    {
+        return d->isLoaded();
+    }
+    void setLoaded(bool v)
+    {
+        if (v != d->isLoaded()) {
+            d->setLoaded(v);
+            emit loadedChanged();
+        }
     }
 
-    bool isRunning() const { return running_; }
-    bool isPaused() const { return paused_; }
-    void setRunning(bool running) {
-        State currentState = state();
-        if (currentState != Running && running) {
-            start();
-        } else if (currentState != Stopped && !running) {
-            stop();
+    QUrl source() const
+    {
+        return d->source();
+    }
+    void setSource(const QUrl & url)
+    {
+        if (url != d->source()) {
+            d->setSource(url);
+            emit sourceChanged();
         }
     }
-    void setPaused(bool paused) {
-        State currentState = state();
-        if (currentState == Paused && !paused) {
-            start();
-        } else if (currentState == Running && paused) {
-            pause();
-        }
+
+    Q_INVOKABLE QStringList supportedMimeTypes()
+    {
+        return d->supportedMimeTypes();
     }
+
 
 signals:
-    void runningChanged();
-    void pausedChanged();
+    void loadedChanged();
+    void sourceChanged();
 public slots:
-    void updateState() {
-        bool running = state() == Running;
-        bool paused = state() == Paused;
-        if (running != running_) {
-            running_ = running;
-            emit runningChanged();
-        }
-        if (paused != paused_) {
-            paused_ = paused;
-            emit pausedChanged();
+    void load()
+    {
+        if (!isLoaded()) {
+            d->load();
+            emit loadedChanged();
         }
     }
+    void unload()
+    {
+        if (isLoaded()) {
+            d->unload();
+            emit loadedChanged();
+        }
+    }
+
 private:
-    bool running_;
-    bool paused_;
+    QFeedbackFileEffect* d;
 };
 
 QML_DECLARE_TYPE(QDeclarativeFileEffect);

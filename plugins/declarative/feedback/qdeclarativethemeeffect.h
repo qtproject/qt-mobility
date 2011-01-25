@@ -120,7 +120,9 @@ public:
         return m_effect;
     }
 
-    Q_INVOKABLE void play() {
+public slots:
+    void play()
+    {
         QFeedbackEffect::playThemeEffect(static_cast<QFeedbackEffect::ThemeEffect>(m_effect));
     }
 

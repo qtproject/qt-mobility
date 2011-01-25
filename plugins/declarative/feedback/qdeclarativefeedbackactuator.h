@@ -55,50 +55,61 @@ class QDeclarativeFeedbackActuator : public QObject
     Q_PROPERTY(bool valid READ isValid)
     Q_PROPERTY(bool enabled READ isEnabled WRITE setEnabled NOTIFY enabledChanged)
 public:
-    QDeclarativeFeedbackActuator(QObject *parent = 0)
+    explicit QDeclarativeFeedbackActuator(QObject *parent = 0)
         :QObject(parent)
     {
-        actuator = new QFeedbackActuator(this);
-        connect(actuator, SIGNAL(enabledChanged()), this, SIGNAL(enabledChanged()));
+        d = new QFeedbackActuator(this);
+        connect(d, SIGNAL(enabledChanged()), this, SIGNAL(enabledChanged()));
     }
 
+    explicit QDeclarativeFeedbackActuator(QObject *parent, QFeedbackActuator* actuator)
+        :QObject(parent)
+    {
+        d = actuator;
+        connect(d, SIGNAL(enabledChanged()), this, SIGNAL(enabledChanged()));
+    }
+
+    QFeedbackActuator* feedbackActuator() const
+    {
+        return d;
+    }
     int actuatorId() const
     {
-        return actuator->id();
+        return d->id();
     }
     bool isValid() const
     {
-        return actuator->isValid();
+        return d->isValid();
     }
 
     QString name() const
     {
-        return actuator->name();
+        return d->name();
     }
     QFeedbackActuator::State state() const
     {
-        return actuator->state();
+        return d->state();
     }
 
     Q_INVOKABLE bool isCapabilitySupported(QFeedbackActuator::Capability capbility) const
     {
-        return actuator->isCapabilitySupported(capbility);
+        return d->isCapabilitySupported(capbility);
     }
 
     bool isEnabled() const
     {
-        return actuator->isEnabled();
+        return d->isEnabled();
     }
     void setEnabled(bool v)
     {
-        actuator->setEnabled(v);
+        d->setEnabled(v);
     }
 
 signals:
     void enabledChanged();
 
 private:
-    QFeedbackActuator* actuator;
+    QFeedbackActuator* d;
 };
 
 #endif
