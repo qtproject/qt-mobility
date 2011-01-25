@@ -51,7 +51,7 @@
 #include <qgeosatelliteinfo.h>
 
 #include "testqgeosatelliteinfosource_p.h"
-#include "qlocationtestutils_p.h"
+#include "../qgeocoordinate/qlocationtestutils_p.h"
 #ifdef TST_GYPSYMOCK_ENABLED
 #include "qgeosatelliteinfosource_gypsy_p.h"
 #include <QProcessEnvironment>

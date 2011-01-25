@@ -3,8 +3,8 @@ QT += network
 TARGET = GeoServiceDemo
 TEMPLATE = app
 
-INCLUDEPATH += ../../src/location \
-               ../../src/location/maps
+INCLUDEPATH += ../../../src/location \
+               ../../../src/location/maps
 
 SOURCES += main.cpp\
         routepresenter.cpp \
@@ -27,13 +27,13 @@ HEADERS  += routepresenter.h \
 
 RESOURCES += geoservicedemo.qrc
 
-include(../examples.pri)
+include(../../../examples/examples.pri)
 
 CONFIG += mobility
 MOBILITY = location 
 equals(QT_MAJOR_VERSION, 4):lessThan(QT_MINOR_VERSION, 7){
     MOBILITY += bearer
-    INCLUDEPATH += ../../src/bearer
+    INCLUDEPATH += ../../../src/bearer
 } else {
     # use Bearer Management classes in QtNetwork module
 }

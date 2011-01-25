@@ -7,7 +7,7 @@ QT += testlib declarative
 CONFIG += mobility
 
 INCLUDEPATH += ../../../src/global
-SOURCES += tst_qdeclarativeapitest.cpp
+SOURCES += tst_qdeclarativemap.cpp
 
 contains(mobility_modules,location) {
     MOBILITY += location

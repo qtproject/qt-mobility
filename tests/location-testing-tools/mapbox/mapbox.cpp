@@ -63,8 +63,8 @@
 #include <QPushButton>
 #include <QTimer>
 
-#include <QNetworkSession>
-#include <QNetworkConfigurationManager>
+#include <qnetworksession.h>
+#include <qnetworkconfigmanager.h>
 
 #include <QProcessEnvironment>
 #include <QtNetwork/QNetworkProxyFactory>
@@ -75,8 +75,8 @@
 
 #include <cmath>
 
-#include "../../src/location/maps/qgraphicsgeomap_p.h"
-#include "../../plugins/geoservices/nokia/qgeomappingmanagerengine_nokia.h"
+#include "../../../src/location/maps/qgraphicsgeomap_p.h"
+#include "../../../plugins/geoservices/nokia/qgeomappingmanagerengine_nokia.h"
 #include <qgeomapdata.h>
 
 QNetworkSession * MapBox::m_session = 0;
