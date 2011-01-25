@@ -63,8 +63,8 @@
 #include <QPushButton>
 #include <QTimer>
 
-#include <QNetworkSession>
-#include <QNetworkConfigurationManager>
+#include <qnetworksession.h>
+#include <qnetworkconfigmanager.h>
 
 #include <QProcessEnvironment>
 #include <QtNetwork/QNetworkProxyFactory>

@@ -45,7 +45,7 @@
 #include <qmobilityglobal.h>
 
 #include <QWidget>
-#include <QNetworkSession>
+#include <qnetworksession.h>
 
 class QGraphicsScene;
 class QGraphicsView;
