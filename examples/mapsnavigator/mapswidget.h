@@ -50,6 +50,7 @@
 
 #include "qgraphicsgeomap.h"
 #include "qgeomappingmanager.h"
+#include "qgeocoordinate.h"
 
 using namespace QtMobility;
 
@@ -62,9 +63,17 @@ class GeoMap : public QGraphicsGeoMap
 {
     Q_OBJECT
 
+    Q_PROPERTY(double centerLatitude READ centerLatitude WRITE setCenterLatitude)
+    Q_PROPERTY(double centerLongitude READ centerLongitude WRITE setCenterLongitude)
+
 public:
     GeoMap(QGeoMappingManager *manager, MapsWidget *mapsWidget);
     ~GeoMap();
+
+    double centerLatitude() const;
+    void setCenterLatitude(double lat);
+    double centerLongitude() const;
+    void setCenterLongitude(double lon);
 
 private:
     MapsWidget *m_mapsWidget;
@@ -80,6 +89,7 @@ private:
 
 signals:
     void clicked(Marker *marker);
+    void panned();
 };
 
 class MapsWidget : public QWidget
@@ -96,6 +106,7 @@ public:
     QGraphicsGeoMap *map() const;
     inline StatusBarItem *statusBar() const { return m_statusBar; }
 
+    void animatedPanTo(QGeoCoordinate center);
     void setMyLocation(QGeoCoordinate location, bool center=true);
 
 public slots:
@@ -103,6 +114,7 @@ public slots:
 
 signals:
     void markerClicked(Marker *marker);
+    void mapPanned();
 
 private:
     void resizeEvent(QResizeEvent *event);

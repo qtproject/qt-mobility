@@ -50,7 +50,10 @@
 
 MainWindow::MainWindow() :
     serviceProvider(0),
-    markerManager(0)
+    markerManager(0),
+    positionSource(0),
+    tracking(true),
+    firstUpdate(true)
 {
     mapsWidget = new MapsWidget;
     setCentralWidget(mapsWidget);
@@ -79,7 +82,8 @@ MainWindow::~MainWindow()
 
 void MainWindow::goToMyLocation()
 {
-    mapsWidget->map()->setCenter(markerManager->myLocation());
+    mapsWidget->animatedPanTo(markerManager->myLocation());
+    tracking = true;
 }
 
 void MainWindow::initialize()
@@ -114,8 +118,40 @@ void MainWindow::initialize()
             this, SLOT(showErrorMessage(QGeoSearchReply::Error,QString)));
     connect(mapsWidget, SIGNAL(markerClicked(Marker*)),
             this, SLOT(on_markerClicked(Marker*)));
+    connect(mapsWidget, SIGNAL(mapPanned()),
+            this, SLOT(disableTracking()));
 
-    mapsWidget->setMyLocation(QGeoCoordinate(-27.5796, 153.1));
+    if (positionSource)
+        delete positionSource;
+    positionSource = QGeoPositionInfoSource::createDefaultSource(this);
+    if (!positionSource) {
+        mapsWidget->statusBar()->showText("Could not open GPS", 5000);
+        mapsWidget->setMyLocation(QGeoCoordinate(-27.5796, 153.1));
+    } else {
+        positionSource->setUpdateInterval(1000);
+        connect(positionSource, SIGNAL(positionUpdated(QGeoPositionInfo)),
+                this, SLOT(updateMyPosition(QGeoPositionInfo)));
+        positionSource->startUpdates();
+        mapsWidget->statusBar()->showText("Opening GPS...");
+    }
+}
+
+void MainWindow::disableTracking()
+{
+    tracking = false;
+}
+
+void MainWindow::updateMyPosition(QGeoPositionInfo info)
+{
+    if (mapsWidget) {
+        mapsWidget->setMyLocation(info.coordinate(), false);
+        if (tracking)
+            mapsWidget->animatedPanTo(info.coordinate());
+    }
+    if (firstUpdate) {
+        mapsWidget->statusBar()->showText("Receiving from GPS");
+        firstUpdate = false;
+    }
 }
 
 void MainWindow::showSearchDialog()

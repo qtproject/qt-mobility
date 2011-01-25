@@ -45,6 +45,7 @@
 #include <QMainWindow>
 
 #include "qgeoserviceprovider.h"
+#include "qgeopositioninfosource.h"
 
 #include "mapswidget.h"
 #include "marker.h"
@@ -66,6 +67,8 @@ public slots:
 private slots:
     void showSearchDialog();
     void goToMyLocation();
+    void updateMyPosition(QGeoPositionInfo info);
+    void disableTracking();
     void showErrorMessage(QGeoSearchReply::Error err, QString msg);
     void on_markerClicked(Marker *marker);
 
@@ -73,6 +76,10 @@ private:
     QGeoServiceProvider *serviceProvider;
     MapsWidget *mapsWidget;
     MarkerManager *markerManager;
+    QGeoPositionInfoSource *positionSource;
+
+    bool tracking;
+    bool firstUpdate;
 };
 
 #endif // MAINWINDOW_H

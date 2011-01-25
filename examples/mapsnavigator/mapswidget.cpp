@@ -45,6 +45,7 @@
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsSceneWheelEvent>
 #include <QPropertyAnimation>
+#include <QParallelAnimationGroup>
 #include <QTimer>
 
 #include "qgeocoordinate.h"
@@ -56,6 +57,30 @@ GeoMap::GeoMap(QGeoMappingManager *manager, MapsWidget *mapsWidget) :
 
 GeoMap::~GeoMap()
 {
+}
+
+double GeoMap::centerLatitude() const
+{
+    return center().latitude();
+}
+
+double GeoMap::centerLongitude() const
+{
+    return center().longitude();
+}
+
+void GeoMap::setCenterLatitude(double lat)
+{
+    QGeoCoordinate c = center();
+    c.setLatitude(lat);
+    setCenter(c);
+}
+
+void GeoMap::setCenterLongitude(double lon)
+{
+    QGeoCoordinate c = center();
+    c.setLongitude(lon);
+    setCenter(c);
 }
 
 void GeoMap::mousePressEvent(QGraphicsSceneMouseEvent *event)
@@ -96,6 +121,7 @@ void GeoMap::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     if (panActive) {
         QPointF delta = event->lastPos() - event->pos();
         pan(delta.x(), delta.y());
+        emit panned();
     }
     event->accept();
 }
@@ -199,6 +225,8 @@ void MapsWidget::initialize(QGeoMappingManager *manager)
 
     connect(geoMap, SIGNAL(clicked(Marker*)),
             this, SIGNAL(markerClicked(Marker*)));
+    connect(geoMap, SIGNAL(panned()),
+            this, SIGNAL(mapPanned()));
 
     QGraphicsScene *sc = new QGraphicsScene;
     sc->addItem(geoMap);
@@ -214,6 +242,7 @@ void MapsWidget::initialize(QGeoMappingManager *manager)
 
     m_statusBar = new StatusBarItem;
     sc->addItem(m_statusBar);
+    resizeEvent(0);
 
     graphicsView->resize(this->size());
     graphicsView->centerOn(geoMap);
@@ -238,12 +267,30 @@ QGraphicsGeoMap *MapsWidget::map() const
 void MapsWidget::resizeEvent(QResizeEvent *event)
 {
     if (graphicsView && geoMap) {
-        graphicsView->resize(event->size());
-        geoMap->resize(event->size());
+        graphicsView->resize(size());
+        geoMap->resize(size());
         graphicsView->centerOn(geoMap);
 
         m_statusBar->setRect(0, height(), width(), 20);
     }
+}
+
+void MapsWidget::animatedPanTo(QGeoCoordinate center)
+{
+    if (!geoMap)
+        return;
+
+    QPropertyAnimation *latAnim = new QPropertyAnimation(geoMap, "centerLatitude");
+    latAnim->setEndValue(center.latitude());
+    latAnim->setDuration(200);
+    QPropertyAnimation *lonAnim = new QPropertyAnimation(geoMap, "centerLongitude");
+    lonAnim->setEndValue(center.longitude());
+    lonAnim->setDuration(200);
+
+    QParallelAnimationGroup *group = new QParallelAnimationGroup;
+    group->addAnimation(latAnim);
+    group->addAnimation(lonAnim);
+    group->start(QAbstractAnimation::DeleteWhenStopped);
 }
 
 void MapsWidget::showEvent(QShowEvent *event)

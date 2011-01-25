@@ -990,6 +990,9 @@ void MarkerManager::reverseReplyFinished(QObject *obj)
     \example tutorials/mapsnavigator/part3
     \title Part 3 - Listening to satellites
 
+    Another useful part of the Location API is the ability to receive updates
+    of the user's present geographic location from methods such as GPS or
+    network positioning.
 
 */
 
