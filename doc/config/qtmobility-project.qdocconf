@@ -1,5 +1,3 @@
-# Fields marked with ### should be completed or verified to be correct.
-
 include(compat.qdocconf)
 include(macros.qdocconf)
 include(qt-cpp-ignore.qdocconf)
