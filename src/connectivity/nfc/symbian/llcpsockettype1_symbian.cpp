@@ -719,7 +719,7 @@ void CLlcpReceiverType1::RunL(void)
     BEGIN
     TInt error = iStatus.Int();
      // Call back functions of notifying the llcp receiver completed.
-    if (error == KErrNone && iReceiveObserver)
+    if (iReceiveObserver)
        {
        iReceiveObserver->ReceiveComplete(error);
        }
