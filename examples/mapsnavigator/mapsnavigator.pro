@@ -3,25 +3,14 @@ QT += network
 TARGET = MapsNavigator
 TEMPLATE = app
 
-INCLUDEPATH += ../../src/location \
-               ../../src/location/maps
-
-SOURCES += main.cpp\
-           mainwindow.cpp \
-           markerlist.cpp \
-           searchwidget.cpp \
-           mapswidget.cpp \
-           directionswidget.cpp \
-
-HEADERS  += mainwindow.h \
-            markerlist.h \
-            searchwidget.h \
-            mapswidget.h \
-            directionswidget.h \
-
 RESOURCES += mapsnavigator.qrc
 
 include(../examples.pri)
+
+INCLUDEPATH += ../../src/location \
+               ../../src/location/maps \
+               ../../src/location/maps/tiled \
+               ../../src/location/landmarks
 
 CONFIG += mobility
 MOBILITY = location
@@ -40,3 +29,18 @@ symbian: {
                         ReadDeviceData \
                         WriteDeviceData
 }
+
+HEADERS += \
+    mapswidget.h \
+    marker.h \
+    mainwindow.h \
+    searchdialog.h \
+    markerdialog.h
+
+SOURCES += \
+    mapswidget.cpp \
+    main.cpp \
+    marker.cpp \
+    mainwindow.cpp \
+    searchdialog.cpp \
+    markerdialog.cpp

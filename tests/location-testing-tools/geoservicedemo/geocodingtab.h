@@ -38,18 +38,77 @@
 **
 ****************************************************************************/
 
-#include <QtGui/QApplication>
-#include "mainwindow.h"
+#ifndef GEOCODINGTAB_H_
+#define GEOCODINGTAB_H_
 
-int main(int argc, char *argv[])
+#include <QWidget>
+#include <QDialog>
+
+#include <qgeosearchmanager.h>
+
+class QTreeWidget;
+class QLineEdit;
+class QPushButton;
+class QComboBox;
+class QGroupBox;
+
+QTM_USE_NAMESPACE
+
+class GeoCodingInputDialog: public QDialog
 {
-    QApplication a(argc, argv);
-    MainWindow w;
-#if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE_WM) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
-    w.setControlsVisible(false);
-    w.showMaximized();
-#else
-    w.show();
-#endif
-    return a.exec();
-}
+    Q_OBJECT
+public:
+    enum GeocodingType {
+        GeocodingOneBox,
+        GeocodingLandmark,
+        GeoCodingStructured
+    };
+
+    GeoCodingInputDialog(QString &obloc, QGeoAddress &address, GeocodingType &type,QWidget *parent = 0);
+
+private slots:
+    void accept();
+    void oneBoxSearchToogled(bool on);
+    void addressSeachToogled(bool on);
+
+private:
+    QString &m_oblocStr;
+    QGeoAddress &m_address;
+    GeocodingType &m_type;
+    QLineEdit *m_obloc;
+    QComboBox *m_oneBoxType;
+    QLineEdit *m_country;
+    QLineEdit *m_state;
+    QLineEdit *m_city;
+    QLineEdit *m_zip;
+    QLineEdit *m_street;
+    QGroupBox *m_gbOneBox;
+    QGroupBox *m_gbAddress;
+};
+
+class GeocodingTab: public QWidget
+{
+    Q_OBJECT
+
+public:
+    GeocodingTab(QWidget *parent = 0);
+    ~GeocodingTab();
+
+public slots:
+    void initialize(QGeoSearchManager *searchManager);
+
+private slots:
+    void on_btnRequest_clicked();
+    void replyFinished(QGeoSearchReply* reply);
+    void resultsError(QGeoSearchReply* reply, QGeoSearchReply::Error errorCode, QString errorString);
+
+private:
+    QGeoSearchManager *m_searchManager;
+    QString m_oblocStr;
+    QGeoAddress m_address;
+    GeoCodingInputDialog::GeocodingType m_type;
+    QTreeWidget *m_resultTree;
+    QPushButton *m_requestBtn;
+};
+
+#endif // GEOCODINGTAB_H_
