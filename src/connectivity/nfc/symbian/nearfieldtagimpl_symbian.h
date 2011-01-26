@@ -47,7 +47,6 @@
 #include "nearfieldtag_symbian.h"
 #include "nearfieldndeftarget_symbian.h"
 #include "nearfieldutility_symbian.h"
-#include "nearfieldndeftarget_symbian.h"
 #include "nearfieldtagasyncrequest_symbian.h"
 #include "nearfieldtargetoperation_symbian.h"
 

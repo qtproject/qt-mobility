@@ -48,7 +48,7 @@
 
 QTM_USE_NAMESPACE
 
-class MNearFieldTargetOperation;
+class QNearFieldTagImplCommon;
 
 class MNearFieldTagAsyncRequest
     {
@@ -67,11 +67,11 @@ public:
     virtual ~MNearFieldTagAsyncRequest();
     virtual void IssueRequest() = 0;
     virtual void ProcessResponse(TInt aError);
-    
-    // inline to get fast speed since this function is used internally 
+
+    // inline to get fast speed since this function is used internally
     // to convert async ndef request to sync.
     virtual void ProcessTimeout() = 0;
-    
+
     virtual void ProcessWaitRequestCompleted(TInt aError);
 
     // emit signal defined in QNearFieldTarget
@@ -92,18 +92,18 @@ protected:
     // Current async request ID.
     QNearFieldTarget::RequestId iId;
     // Not own.
-    MNearFieldTargetOperation& iOperator;
+    QNearFieldTagImplCommon& iOperator;
 
     // Own.
     CActiveSchedulerWait * iWait;
     // Own.
     CPeriodic * iTimer;
     TBool iRequestIssued;
-    
+
     int iMsecs;
     bool iSendSignal;
     volatile int * iRequestResult;
-    
+
     volatile bool * iCurrentRequestResult;
     };
 
