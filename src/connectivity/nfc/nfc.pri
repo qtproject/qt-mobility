@@ -158,7 +158,6 @@ contains(nfc_enabled, yes):symbian {
         nfc/symbian/nearfieldtagasyncrequest_symbian.h \
         nfc/symbian/nearfieldtagndefoperationcallback_symbian.h \
         nfc/symbian/nearfieldtagoperationcallback_symbian.h \
-        nfc/symbian/nearfieldtargetoperation_symbian.h \
         nfc/symbian/nearfieldtagndefrequest_symbian.h \
         nfc/symbian/nearfieldtagcommandrequest_symbian.h \
         nfc/symbian/nearfieldtagcommandsrequest_symbian.h \
