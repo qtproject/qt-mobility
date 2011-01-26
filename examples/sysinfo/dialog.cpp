@@ -161,23 +161,23 @@ void Dialog::setupDevice()
 //! [inputMethod flags]
     QSystemDeviceInfo::InputMethodFlags methods = di->inputMethodType();
     QStringList inputs;
-    if((methods & QSystemDeviceInfo::Keys)){
+    if((methods & QSystemDeviceInfo::Keys)=QSystemDeviceInfo::Keypad){
         inputs << "Keys";
     }
-    if((methods & QSystemDeviceInfo::Keypad)) {
+    if((methods & QSystemDeviceInfo::Keypad)=QSystemDeviceInfo::Keypad) {
         inputs << "Keypad";
     }
 //! [inputMethod flags]
-    if((methods & QSystemDeviceInfo::Keyboard)) {
+    if((methods & QSystemDeviceInfo::Keyboard)=QSystemDeviceInfo::Keyboard) {
         inputs << "Keyboard";
     }
-    if((methods & QSystemDeviceInfo::SingleTouch)) {
+    if((methods & QSystemDeviceInfo::SingleTouch)=QSystemDeviceInfo::SingleTouch) {
         inputs << "Touch Screen";
     }
-    if((methods & QSystemDeviceInfo::MultiTouch)) {
+    if((methods & QSystemDeviceInfo::MultiTouch)=QSystemDeviceInfo::MultiTouch) {
         inputs << "Multi touch";
     }
-    if((methods & QSystemDeviceInfo::Mouse)){
+    if((methods & QSystemDeviceInfo::Mouse)=QSystemDeviceInfo::Mouse){
         inputs << "Mouse";
     }
 
@@ -186,8 +186,43 @@ void Dialog::setupDevice()
     bluetoothPowerLabel->setText((di->currentBluetoothPowerState() ? "On" : "Off"));
     connect(di,SIGNAL(bluetoothStateChanged(bool)), this,SLOT(bluetoothChanged(bool)));
 
-    hostIdLabel->setText(di->hostId());
+    uniqueIDLabel->setText(di->uniqueDeviceID());
 
+    updateKeyboard(di->keyboardTypes());
+
+    keyboardFlipRadioButton->setChecked(di->isKeyboardFlippedOpen());
+    wirelessKeyboardConnectedRadioButton->setChecked(di->isWirelessKeyboardConnected());
+
+    QString lockState;
+    QSystemDeviceInfo::LockTypeFlags lock = di->lockStatus();
+    if((lock & QSystemDeviceInfo::PinLocked)){
+        lockState = "Pin/Password Locked";
+    } else if((lock & QSystemDeviceInfo::TouchAndKeyboardLocked)){
+        lockState = "Touch and keyboard locked";
+    } else {
+        lockState = "Unknown";
+    }
+    lockStateLabel->setText(lockState);
+}
+
+void Dialog::updateKeyboard(QSystemDeviceInfo::KeyboardTypeFlags type)
+{
+
+    if ((type & QSystemDeviceInfo::SoftwareKeyboard)) {
+        softkeysRadioButton->setChecked(true);
+    } else if ((type & QSystemDeviceInfo::ITUKeypad)) {
+        ituRadioButton->setChecked(true);
+    } else if ((type & QSystemDeviceInfo::HalfQwertyKeyboard)) {
+        halfKeysRadioButton->setChecked(true);
+    } else if ((type & QSystemDeviceInfo::FullQwertyKeyboard)) {
+        qwertyKeysRadioButton->setChecked(true);
+    } else if((type & QSystemDeviceInfo::WirelessKeyboard)) {
+        wirelessRadioButton->setChecked(true);
+    } else {
+        uknownKeysRadioButton->setChecked(true);
+    }
+
+    keyboardLightCheckBox->setChecked(di->keypadLightOn(QSystemDeviceInfo::PrimaryKeypad));
 }
 
 void Dialog::updateDeviceLockedState()
@@ -208,7 +243,7 @@ void Dialog::setupDisplay()
     brightnessLabel->setText(QString::number(di.displayBrightness(0)));
     colorDepthLabel->setText(QString::number(di.colorDepth((0))));
 
-    QSystemDisplayInfo::DisplayOrientation orientation = di.getOrientation(0);
+    QSystemDisplayInfo::DisplayOrientation orientation = di.orientation(0);
     QString orientStr;
     switch(orientation) {
     case QSystemDisplayInfo::Landscape:
@@ -263,7 +298,6 @@ void Dialog::updateStorage()
         if(volType == QSystemStorageInfo::InternalDrive) {
             type =  "Internal";
         }
-
         if(volType == QSystemStorageInfo::RemovableDrive) {
             type = "Removable";
         }
@@ -273,11 +307,18 @@ void Dialog::updateStorage()
         if(volType == QSystemStorageInfo::RemoteDrive) {
             type =  "Network";
         }
+        if(volType == QSystemStorageInfo::InternalFlashDrive) {
+            type =  "Flash";
+        }
+        if(volType == QSystemStorageInfo::RamDrive) {
+            type =  "Ram";
+        }
         QStringList items;
         items << volName;
         items << type;
         items << QString::number(sti->totalDiskSpace(volName));
         items << QString::number(sti->availableDiskSpace(volName));
+        items << sti->uriForDrive(volName);
         QTreeWidgetItem *item = new QTreeWidgetItem(items);
         storageTreeWidget->addTopLevelItem(item);
     }
@@ -441,6 +482,9 @@ void Dialog::getFeature(int index)
         break;
     case 13:
         feature = QSystemInfo::HapticsFeature;
+        break;
+    case 14:
+        feature = QSystemInfo::FmTransmitterFeature;
         break;
     };
 //! [feature test]
@@ -784,6 +828,11 @@ void Dialog::updateProfile()
             }
         };
         profileLabel->setText(profilestring);
+
+        QSystemDeviceInfo::ProfileDetails pDetails = di->activeProfileDetails();
+        messageRingtonVolumeLcdNumber->display(pDetails.messageRingtoneVolume());
+        voiceRingtoneVolumeLcdNumber->display(pDetails.voiceRingtoneVolume());
+        vibrationActiveRadioButton->setChecked(pDetails.vibrationActive());
     }
 }
 
@@ -852,15 +901,10 @@ void Dialog::setupBattery()
     connect(bi,SIGNAL(chargerTypeChanged(QSystemBatteryInfo::ChargerType)),
             this,SLOT(chargerTypeChanged(QSystemBatteryInfo::ChargerType)));
 
-    connect(startMeasurementPushButton,SIGNAL(clicked()),
-            this,SLOT(startCurrentPushed()));
-
     connect(bi,SIGNAL(nominalCapacityChanged(int)),
             NominalCaplcdNumber,SLOT(display(int)));
     connect(bi,SIGNAL(remainingCapacityChanged(int)),
             remainCaplcdNumber,SLOT(display(int)));
-    connect(bi,SIGNAL(voltageChanged(int)),
-            voltagelcdNumber,SLOT(display(int)));
     connect(bi,SIGNAL(currentFlowChanged(int)),
             currentFLowlcdNumber,SLOT(display(int)));
     connect(bi,SIGNAL(remainingCapacityBarsChanged(int)),
@@ -930,7 +974,4 @@ void Dialog::chargerTypeChanged(QSystemBatteryInfo::ChargerType chargerType)
     currentChargerType = chargerType;
 }
 
-void Dialog::startCurrentPushed()
-{
-    bi->startCurrentMeasurement(currentMeasurementSpinBox->value());
-}
+

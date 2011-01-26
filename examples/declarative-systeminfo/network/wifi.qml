@@ -73,13 +73,10 @@ Rectangle {
             onStatusChanged : {
                 img = getImage(newStatus)
             }
-        }
-
-        Component.onCompleted: {
-            wlaninfo.startNameChanged();
-            wlaninfo.startSignalStrengthChanged();
-            wlaninfo.startStatusChanged();
-            wlaninfo.startModeChanged();
+            monitorNameChanges: true;
+            monitorSignalStrengthChanges: true
+            monitorStatusChanges: true
+            monitorModeChanges: true
         }
 
         Image {
@@ -151,13 +148,10 @@ Rectangle {
             onStatusChanged : {
                 img = getImage(newStatus)
             }
-        }
-
-        Component.onCompleted: {
-            ethinfo.startNameChanged();
-            ethinfo.startSignalStrengthChanged();
-            ethinfo.startStatusChanged();
-            ethinfo.startModeChanged();
+            monitorNameChanges: true;
+            monitorSignalStrengthChanges: true
+            monitorStatusChanges: true
+            monitorModeChanges: true
         }
 
         Image {

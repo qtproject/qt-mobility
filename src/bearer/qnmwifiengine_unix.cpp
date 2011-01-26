@@ -121,7 +121,7 @@ QList<QNetworkConfigurationPrivate *> QNmWifiEngine::getConfigurations(bool *ok)
     if(!updated) {
         foundConfigurations.clear();
         if(knownSsids.isEmpty())
-            updateKnownSsids(); 
+            updateKnownSsids();
 
         scanForAccessPoints();
         updateActiveConnectionsPaths();
@@ -208,7 +208,7 @@ void QNmWifiEngine::knownConnections()
                 configurationInterface[cpPriv->id] = cpPriv->serviceInterface.name();
                 cpPriv->bearer = bearerName(cpPriv->id);
             }
-        } 
+        }
     }
 }
 
@@ -331,9 +331,8 @@ void QNmWifiEngine::requestUpdate()
 
 QNmWifiEngine *QNmWifiEngine::instance()
 {
-    QDBusConnection dbusConnection = QDBusConnection::systemBus();
-    if (dbusConnection.isConnected()) {
-        QDBusConnectionInterface *dbiface = dbusConnection.interface();
+    if (QDBusConnection::systemBus().isConnected()) {
+        QDBusConnectionInterface *dbiface = QDBusConnection::systemBus().interface();
         QDBusReply<bool> reply = dbiface->isServiceRegistered("org.freedesktop.NetworkManager");
         if (reply.isValid() && reply.value())
             return nmWifiEngine();
@@ -634,7 +633,7 @@ QNetworkConfiguration::StateFlags QNmWifiEngine::getStateForId(const QString &id
                     devWiredIface.reset(new QNetworkManagerInterfaceDeviceWired(ifaceDevice->connectionInterface()->path()));
                     if(!devWiredIface->carrier())
                         return QNetworkConfiguration::Defined;
-                } 
+                }
             } else if(ifaceDevice->deviceType() == DEVICE_TYPE_802_11_WIRELESS) {
 
             }
@@ -657,7 +656,7 @@ QNetworkConfiguration::StateFlags QNmWifiEngine::getStateForId(const QString &id
                             break;
                         }
                     }
-                }   
+                }
                 if(ok)
                     return getStateFlag(NM_DEVICE_STATE_DISCONNECTED);
                 else
