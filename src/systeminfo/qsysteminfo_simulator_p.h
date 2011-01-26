@@ -163,7 +163,7 @@ public:
     int colorDepth(int screen = 0) const { Q_UNUSED(screen); return data.colorDepth; }
 
 // commented out in qsystemdisplayinfo.h
-//    QSystemDisplayInfo::DisplayOrientation getOrientation(int screen) const { Q_ASSERT(false); return QSystemDisplayInfo::Unknown; }
+//    QSystemDisplayInfo::DisplayOrientation orientation(int screen) const { Q_ASSERT(false); return QSystemDisplayInfo::Unknown; }
 //    float contrast(int screen) const { Q_ASSERT(false); return -1; }
 //    int getDPIWidth(int screen) const { Q_ASSERT(false); return -1; }
 //    int getDPIHeight(int screen) const { Q_ASSERT(false); return -1; }
