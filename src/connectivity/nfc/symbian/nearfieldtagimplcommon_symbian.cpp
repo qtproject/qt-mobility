@@ -181,6 +181,10 @@ bool QNearFieldTagImplCommon::DoSendCommand(const QByteArray& command, MNearFiel
             mResponse.Zero();
             error = tag->RawModeAccess(cmd, mResponse, mTimeout);
         }
+        else
+        {
+            error = KErrGeneral;
+        }
     }
     else
     {
