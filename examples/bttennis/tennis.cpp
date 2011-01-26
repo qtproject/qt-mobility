@@ -101,6 +101,7 @@ Tennis::Tennis(QWidget *parent)
     connect(server, SIGNAL(clientConnected(QString)), this, SLOT(serverConnected(QString)));
     connect(server, SIGNAL(clientDisconnected(QString)), this, SLOT(serverDisconnected()));
     connect(server, SIGNAL(moveRightPaddle(int)), board, SLOT(setRightPaddle(int)));
+    connect(server, SIGNAL(lag(int)), this, SLOT(lagReport(int)));
 
     connect(server, SIGNAL(clientConnected(QString)), controller, SLOT(refresh()));
 
@@ -114,6 +115,7 @@ Tennis::Tennis(QWidget *parent)
     connect(client, SIGNAL(disconnected()), this, SLOT(clientDisconnected()));
     connect(this, SIGNAL(moveRightPaddle(int)), client, SLOT(moveRightPaddle(int)));
     connect(client, SIGNAL(score(int,int)), board, SLOT(setScore(int,int)));
+    connect(client, SIGNAL(lag(int)), this, SLOT(lagReport(int)));
 
     connect(this, SIGNAL(moveLeftPaddle(int)), controller, SLOT(moveLeftPaddle(int)));
     connect(this, SIGNAL(moveRightPaddle(int)), controller, SLOT(moveRightPaddle(int)));
@@ -140,7 +142,8 @@ Tennis::Tennis(QWidget *parent)
         service.setDevice(device);
         client->startClient(service);
         board->setStatus("Connecting", 100, 25);
-        QTimer::singleShot(5000, this, SLOT(startDiscovery()));
+//        board->setStatus("Waiting", 100, 25);
+        QTimer::singleShot(15000, this, SLOT(startDiscovery()));
     }
     else {
 
@@ -254,9 +257,6 @@ void Tennis::clientDisconnected()
 
 void Tennis::serverConnected(const QString &name)
 {
-    // TODO find out why name is null
-    // XXX FIXME
-    qDebug() << "Why is name blank?";
     board->setStatus("Server for " + name, 100, 0);
     m_discoveryAgent->stop();
     isConnected = true;
@@ -311,4 +311,11 @@ void Tennis::resizeEvent(QResizeEvent *re)
         ui->pongView->scale(x, y);
     }
     ui->pongView->resize(re->size());
+}
+
+void Tennis::lagReport(int ms)
+{
+    if(ms > 250){
+        board->setStatus(QString("Caution Lag %1ms").arg(ms), 100, 0);
+    }
 }
