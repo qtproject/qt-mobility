@@ -97,8 +97,8 @@ void tst_qllcpsocketremote::testCase0()
     QSignalSpy targetDetectedSpy(m_nfcManager, SIGNAL(targetDetected(QNearFieldTarget*)));
     m_nfcManager->startTargetDetection(QNearFieldTarget::AnyTarget);
 
-    QString message("Remote wait touch");
-    QNfcTestUtil::ShowMessage(message);
+    QString message("Please touch a NFC device with llcp client enabled");
+    QNfcTestUtil::ShowAutoMsg(message, &targetDetectedSpy);
     QTRY_VERIFY(!targetDetectedSpy.isEmpty());
 
     m_target = targetDetectedSpy.at(targetDetectedSpy.count() - 1).at(0).value<QNearFieldTarget *>();
@@ -130,7 +130,7 @@ void tst_qllcpsocketremote::testCase1()
     QVERIFY(ret);
 
     QString message("handshake 1");
-    QNfcTestUtil::ShowMessage(message);
+    QNfcTestUtil::ShowAutoMsg(message, &readyReadSpy);
 
     QTRY_VERIFY(readyReadSpy.count() == 1);
     QVERIFY(ret);
@@ -157,7 +157,7 @@ void tst_qllcpsocketremote::testCase1()
     QVERIFY(writtenSize > 0);
 
     QString message2("handshake 2");
-    QNfcTestUtil::ShowMessage(message2);
+    QNfcTestUtil::ShowAutoMsg(message2, 1 * 1000);
 
     // make sure the no error signal emitted
     QCOMPARE(errorSpy.count(), 0);
