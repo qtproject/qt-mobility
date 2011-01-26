@@ -156,9 +156,6 @@ void tst_qllcpsocketremote::testCase1()
     qint64 writtenSize  = arguments.at(0).value<qint64>();
     QVERIFY(writtenSize > 0);
 
-    QString message2("handshake 2");
-    QNfcTestUtil::ShowAutoMsg(message2, 1 * 1000);
-
     // make sure the no error signal emitted
     QCOMPARE(errorSpy.count(), 0);
 }
