@@ -43,6 +43,7 @@
 
 #include "nearfieldtagasyncrequest_symbian.h"
 #include "nearfieldtagoperationcallback_symbian.h"
+#include <QVariantList>
 
 class NearFieldTagCommandsRequest : public MNearFieldTagAsyncRequest,
                                     public MNearFieldTagOperationCallback

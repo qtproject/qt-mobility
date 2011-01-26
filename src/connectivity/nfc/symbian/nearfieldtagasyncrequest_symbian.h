@@ -44,7 +44,6 @@
 
 #include <qnearfieldtarget.h>
 #include <e32base.h>
-#include "nearfieldtargetoperation_symbian.h"
 
 QTM_USE_NAMESPACE
 
@@ -62,7 +61,7 @@ public:
         };
 
 public:
-    MNearFieldTagAsyncRequest(MNearFieldTargetOperation& aOperator);
+    MNearFieldTagAsyncRequest(QNearFieldTagImplCommon& aOperator);
 
     virtual ~MNearFieldTagAsyncRequest();
     virtual void IssueRequest() = 0;

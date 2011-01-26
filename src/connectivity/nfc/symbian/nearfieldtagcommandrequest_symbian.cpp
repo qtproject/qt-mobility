@@ -40,9 +40,10 @@
 ****************************************************************************/
 #include "nearfieldtagcommandrequest_symbian.h"
 #include "nearfieldutility_symbian.h"
+#include "nearfieldtagimplcommon_symbian.h"
 #include "debug.h"
 
-NearFieldTagCommandRequest::NearFieldTagCommandRequest(MNearFieldTargetOperation& aOperator) : MNearFieldTagAsyncRequest(aOperator)
+NearFieldTagCommandRequest::NearFieldTagCommandRequest(QNearFieldTagImplCommon& aOperator) : MNearFieldTagAsyncRequest(aOperator)
 {
 }
 
@@ -50,7 +51,7 @@ NearFieldTagCommandRequest::~NearFieldTagCommandRequest()
 {
     BEGIN
     if (iRequestIssued)
-    {    
+    {
         iOperator.DoCancelSendCommand();
     }
     END
@@ -65,7 +66,7 @@ void NearFieldTagCommandRequest::IssueRequest()
     if (iWait)
     {
         if (iWait->IsStarted())
-        {    
+        {
             // start timer here
             LOG("Start timer");
             TCallBack callback(MNearFieldTagAsyncRequest::TimeoutCallback, this);
@@ -101,6 +102,22 @@ void NearFieldTagCommandRequest::ProcessEmitSignal(TInt aError)
         iOperator.EmitError(aError, iId);
     }
     END
+}
+
+void NearFieldTagCommandRequest::ProcessTimeout()
+{
+    if (iWait)
+    {
+        if (iWait->IsStarted())
+        {
+            if (iRequestIssued)
+            {
+                iOperator.DoCancelSendCommand();
+                iRequestIssued = EFalse;
+            }
+            ProcessResponse(HandlePassiveCommand(KErrTimedOut));
+        }
+    }
 }
 
 void NearFieldTagCommandRequest::HandleResponse(TInt aError)

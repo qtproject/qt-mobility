@@ -162,7 +162,8 @@ contains(nfc_enabled, yes):symbian {
         nfc/symbian/nearfieldtagndefrequest_symbian.h \
         nfc/symbian/nearfieldtagcommandrequest_symbian.h \
         nfc/symbian/nearfieldtagcommandsrequest_symbian.h \
-        nfc/symbian/debug.h
+        nfc/symbian/debug.h \
+        nfc/symbian/nearfieldtagimplcommon_symbian.h
 
     SOURCES += \
         nfc/qnearfieldmanager_symbian.cpp \
@@ -186,7 +187,8 @@ contains(nfc_enabled, yes):symbian {
         nfc/symbian/nearfieldtagasyncrequest_symbian.cpp \
         nfc/symbian/nearfieldtagndefrequest_symbian.cpp \
         nfc/symbian/nearfieldtagcommandrequest_symbian.cpp \
-        nfc/symbian/nearfieldtagcommandsrequest_symbian.cpp 
+        nfc/symbian/nearfieldtagcommandsrequest_symbian.cpp \
+        nfc/symbian/nearfieldtagimplcommon_symbian.cpp
 
     INCLUDEPATH += $${EPOCROOT}epoc32/include/mw
 
