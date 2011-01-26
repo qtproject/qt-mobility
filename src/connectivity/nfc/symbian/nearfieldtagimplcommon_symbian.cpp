@@ -168,7 +168,7 @@ bool QNearFieldTagImplCommon::DoHasNdefMessages()
 bool QNearFieldTagImplCommon::DoSendCommand(const QByteArray& command, MNearFieldTagOperationCallback * const aCallback, bool deferred)
 {
     BEGIN
-    int error = (mResponse.Length() == 0) ? KErrGeneral : KErrNone;
+    int error = (mResponse.MaxLength() == 0) ? KErrGeneral : KErrNone;
 
     if ((KErrNone == error) && (command.count() > 0))
     {
