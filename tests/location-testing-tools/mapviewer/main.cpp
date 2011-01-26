@@ -38,59 +38,68 @@
 **
 ****************************************************************************/
 
-#ifndef GEOCODINGTAB_H_
-#define GEOCODINGTAB_H_
+#include <QtGui/QApplication>
+#include "mainwindow.h"
 
-#include <QWidget>
-#include <QDialog>
+#include <QUrl>
+#include <QVariant>
+#include <QNetworkProxyFactory>
 
-#include <qgeosearchmanager.h>
-
-class QTreeWidget;
-class QLineEdit;
-class QPushButton;
-
-QTM_USE_NAMESPACE
-
-class GeoCodingInputDialog: public QDialog
+int main(int argc, char * argv[])
 {
-    Q_OBJECT
-public:
-    GeoCodingInputDialog(QString &obloc, QGeoAddress &address, QWidget *parent = 0);
-private slots:
-    void accept();
-private:
-    QString &m_oblocStr;
-    QGeoAddress &m_address;
-    QLineEdit *m_obloc;
-    QLineEdit *m_country;
-    QLineEdit *m_state;
-    QLineEdit *m_city;
-    QLineEdit *m_zip;
-    QLineEdit *m_street;
-};
+    QApplication a(argc, argv);
 
-class GeocodingTab: public QWidget
-{
-    Q_OBJECT
+    //QString urlEnv = QProcessEnvironment::systemEnvironment().value("http_proxy");
+    QString urlEnv = qgetenv("http_proxy");
+    if (!urlEnv.isEmpty()) {
+        QUrl url = QUrl(urlEnv, QUrl::TolerantMode);
+        QNetworkProxy proxy;
+        proxy.setType(QNetworkProxy::HttpProxy);
+        proxy.setHostName(url.host());
+        proxy.setPort(url.port(8080));
+        QNetworkProxy::setApplicationProxy(proxy);
+    } else
+        QNetworkProxyFactory::setUseSystemConfiguration(true);
 
-public:
-    GeocodingTab(QWidget *parent = 0);
-    ~GeocodingTab();
+    QVariantHash parameters;
 
-public slots:
-    void initialize(QGeoSearchManager *searchManager);
+    QStringList args = QApplication::arguments();
 
-private slots:
-    void on_btnRequest_clicked();
-    void replyFinished(QGeoSearchReply* reply);
-    void resultsError(QGeoSearchReply* reply, QGeoSearchReply::Error errorCode, QString errorString);
+    while (!args.isEmpty()) {
+        QString word = args.takeFirst();
+        if (word[0] == QChar('-')) {
+            word.remove(0, 1);
+            if (args.isEmpty() || args.first()[0] == QChar('-')) {
+                parameters[word] = true;
+            }
+            else {
+                QString value = args.takeFirst();
+                if (value == "true" || value == "on" || value == "enabled") {
+                    parameters[word] = true;
+                }
+                else if (value == "false" || value == "off" || value == "disabled") {
+                    parameters[word] = false;
+                }
+                else {
+                    bool ok = false;
+                    double realValue = value.toDouble(&ok);
+                    if (ok) {
+                        parameters[word] = realValue;
+                    }
+                    else {
+                        parameters[word] = value;
+                    }
+                }
+            }
+        }
+    }
 
-private:
-    QGeoSearchManager *m_searchManager;
-    QString m_oblocStr;
-    QGeoAddress m_address;
-    QTreeWidget *m_resultTree;
-    QPushButton *m_requestBtn;
-};
-#endif /* ROUTETAB_H_ */
+    MainWindow w(parameters);
+#if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE_WM) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+    w.showMaximized();
+#else
+    w.show();
+#endif
+
+    return a.exec();
+}
