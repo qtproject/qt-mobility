@@ -647,16 +647,16 @@ static bool qt_writeFileExtensionCondition(
 //  nie:generator, nie:relatedTo, nie:legal, nie:informationElementDate, nie:plainTextContent,
 //  nie:language, nie:mimeType, nie:subject, nie:title
 #define QT_GALLERY_NIE_INFORMATIONELEMENT_PROPERTIES \
-    QT_GALLERY_ITEM_PROPERTY("author"     , "dc:creator(?x)"     , String    , CanRead | CanWrite | CanSort | CanFilter), \
-    QT_GALLERY_ITEM_PROPERTY("comments"   , "nie:comment(?x)"    , String    , CanRead | CanWrite | CanSort | CanFilter), \
-    QT_GALLERY_ITEM_PROPERTY("copyright"  , "nie:copyright(?x)"  , String    , CanRead | CanWrite | CanSort | CanFilter), \
-    QT_GALLERY_ITEM_PROPERTY("description", "nie:description(?x)", String    , CanRead | CanWrite | CanSort | CanFilter), \
-    QT_GALLERY_ITEM_PROPERTY("keywords"   , "nie:keyword(?x)"    , StringList, CanRead | CanWrite | CanSort | CanFilter), \
-    QT_GALLERY_ITEM_PROPERTY("language"   , "nie:language(?x)"   , String    , CanRead | CanWrite | CanSort | CanFilter), \
-    QT_GALLERY_ITEM_PROPERTY("mimeType"   , "nie:mimeType(?x)"   , String    , CanRead | CanSort | CanFilter | IsResource), \
-    QT_GALLERY_ITEM_PROPERTY("rating"     , "nao:rating(?x)"     , Double    , CanRead | CanWrite | CanSort | CanFilter), \
-    QT_GALLERY_ITEM_PROPERTY("subject"    , "nie:subject(?x)"    , String    , CanRead | CanWrite | CanSort | CanFilter), \
-    QT_GALLERY_ITEM_PROPERTY("title"      , "nie:title(?x)"      , String    , CanRead | CanWrite | CanSort | CanFilter)
+    QT_GALLERY_ITEM_PROPERTY("author"     , "dc:creator(?x)"       , String    , CanRead | CanWrite | CanSort | CanFilter), \
+    QT_GALLERY_ITEM_PROPERTY("comments"   , "nie:comment(?x)"      , String    , CanRead | CanWrite | CanSort | CanFilter), \
+    QT_GALLERY_ITEM_PROPERTY("copyright"  , "nie:copyright(?x)"    , String    , CanRead | CanWrite | CanSort | CanFilter), \
+    QT_GALLERY_ITEM_PROPERTY("description", "nie:description(?x)"  , String    , CanRead | CanWrite | CanSort | CanFilter), \
+    QT_GALLERY_ITEM_PROPERTY("keywords"   , "nie:keyword(?x)"      , StringList, CanRead | CanWrite | CanSort | CanFilter), \
+    QT_GALLERY_ITEM_PROPERTY("language"   , "nie:language(?x)"     , String    , CanRead | CanWrite | CanSort | CanFilter), \
+    QT_GALLERY_ITEM_PROPERTY("mimeType"   , "nie:mimeType(?x)"     , String    , CanRead | CanSort | CanFilter | IsResource), \
+    QT_GALLERY_ITEM_PROPERTY("rating"     , "nao:numericRating(?x)", Double    , CanRead | CanWrite | CanSort | CanFilter), \
+    QT_GALLERY_ITEM_PROPERTY("subject"    , "nie:subject(?x)"      , String    , CanRead | CanWrite | CanSort | CanFilter), \
+    QT_GALLERY_ITEM_PROPERTY("title"      , "nie:title(?x)"        , String    , CanRead | CanWrite | CanSort | CanFilter)
 
 //nfo:FileDataObject : nie:DataObject, nie:InformationElement
 //  nfo:fileLastModified, nfo:fileOwner, nfo:hasHash, nfo:fileUrl, nfo:fileName, nfo:permissions,
