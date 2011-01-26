@@ -61,7 +61,8 @@ Board::Board(QObject *parent) :
     ball = scene->addRect(-6, -6, 12, 12, QPen(Qt::SolidLine), QBrush(fg));
     ball->setPos(Width/2-6, Height/2-6);
 
-    topWall = scene->addRect(0, 0, Width, 12, QPen(Qt::SolidLine), QBrush(fg));
+    // why is y -1...otherwise we have a gap...
+    topWall = scene->addRect(0, -1, Width, 12, QPen(Qt::SolidLine), QBrush(fg));
     bottomWall = scene->addRect(0, Height-12, Width, 12, QPen(Qt::SolidLine), QBrush(fg));
 
     leftPaddle = scene->addRect(0, 12, 12, Paddle, QPen(Qt::SolidLine), QBrush(fg));

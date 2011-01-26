@@ -328,6 +328,7 @@ QString QBluetoothSocketPrivate::peerName() const
 
         convertAddress(addr.l2_bdaddr.b, bdaddr);
     } else {
+        qWarning("peerName() called on socket of known type");
         return QString();
     }
 
@@ -446,14 +447,14 @@ void QBluetoothSocketPrivate::close()
     connectWriteNotifier = 0;
 }
 
-bool QBluetoothSocketPrivate::setSocketDescriptor(int socketDescriptor, QBluetoothSocket::SocketType socketType,
+bool QBluetoothSocketPrivate::setSocketDescriptor(int socketDescriptor, QBluetoothSocket::SocketType socketType_,
                                            QBluetoothSocket::SocketState socketState, QBluetoothSocket::OpenMode openMode)
 {
     Q_Q(QBluetoothSocket);
     delete readNotifier;
     readNotifier = 0;
 
-    socketType = socketType;
+    socketType = socketType_;
     socket = socketDescriptor;
 
     // ensure that O_NONBLOCK is set on new connections.
