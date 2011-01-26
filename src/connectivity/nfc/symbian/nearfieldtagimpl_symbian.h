@@ -95,7 +95,7 @@ public:
 template<typename TAGTYPE>
 QNearFieldTagImpl<TAGTYPE>::QNearFieldTagImpl(CNearFieldNdefTarget *tag) : QNearFieldTagImplCommon(tag)
 {
-    TRAPD(error, mResponse.CreateL(TagConstValue<TAGTYPE>::MaxResponseSize));
+    TRAP_IGNORE(mResponse.CreateL(TagConstValue<TAGTYPE>::MaxResponseSize));
     mTimeout = TagConstValue<TAGTYPE>::Timeout;
 }
 
@@ -124,6 +124,39 @@ QVariant QNearFieldTagImpl<TAGTYPE>::decodeResponse(const QByteArray& command, c
     TAGTYPE * tag = static_cast<TAGTYPE *>(this);
     END
     return tag->decodeResponse(command, response);
+}
+
+template<typename TAGTYPE>
+void QNearFieldTagImpl<TAGTYPE>::EmitNdefMessageRead(const QNdefMessage &message)
+{
+    BEGIN
+    TAGTYPE * tag = static_cast<TAGTYPE *>(this);
+    int err;
+    QT_TRYCATCH_ERROR(err, emit tag->ndefMessageRead(message));
+    Q_UNUSED(err);
+    END
+}
+
+template<typename TAGTYPE>
+void QNearFieldTagImpl<TAGTYPE>::EmitNdefMessagesWritten()
+{
+    BEGIN
+    TAGTYPE * tag = static_cast<TAGTYPE *>(this);
+    int err;
+    QT_TRYCATCH_ERROR(err, emit tag->ndefMessagesWritten());
+    Q_UNUSED(err);
+    END
+}
+
+template<typename TAGTYPE>
+void QNearFieldTagImpl<TAGTYPE>::EmitError(int error, const QNearFieldTarget::RequestId &id)
+{
+    BEGIN
+    TAGTYPE * tag = static_cast<TAGTYPE *>(this);
+    int err;
+    QT_TRYCATCH_ERROR(err, emit tag->error(SymbianError2QtError(error), id));
+    Q_UNUSED(err);
+    END
 }
 
 QTM_END_NAMESPACE
