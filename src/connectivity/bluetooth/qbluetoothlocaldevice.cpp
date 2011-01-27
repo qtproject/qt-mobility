@@ -40,9 +40,9 @@
 ****************************************************************************/
 
 #include "qbluetoothlocaldevice.h"
-#ifdef Q_OS_SYMBIAN
+#ifdef QTM_SYMBIAN_BLUETOOTH
 #include "qbluetoothlocaldevice_p.h"
-#endif //Q_OS_SYMBIAN
+#endif //QTM_SYMBIAN_BLUETOOTH
 #include "qbluetoothaddress.h"
 
 #include <QtCore/QString>

@@ -44,10 +44,10 @@
 
 #include <qmobilityglobal.h>
 
-#ifdef Q_OS_SYMBIAN
+#ifdef QTM_SYMBIAN_BLUETOOTH
 #include <es_sock.h>
 #include <bt_sock.h>
-#endif
+#endif //QTM_SYMBIAN_BLUETOOTH
 
 #ifndef QT_NO_DBUS
 QT_FORWARD_DECLARE_CLASS(QSocketNotifier)
@@ -67,9 +67,9 @@ class QBluetoothSocketPrivate;
 class QL2capServer;
 
 class QL2capServerPrivate
-#ifdef Q_OS_SYMBIAN
+#ifdef QTM_SYMBIAN_BLUETOOTH
 : public MBluetoothSocketNotifier
-#endif
+#endif //QTM_SYMBIAN_BLUETOOTH
 
 {
     Q_DECLARE_PUBLIC(QL2capServer)
@@ -82,7 +82,7 @@ public:
     void _q_newConnection();
 #endif
 
-#ifdef Q_OS_SYMBIAN
+#ifdef QTM_SYMBIAN_BLUETOOTH
     /* MBluetoothSocketNotifier virtual functions */
     void HandleAcceptCompleteL(TInt aErr);
     void HandleActivateBasebandEventNotifierCompleteL(TInt aErr, TBTBasebandEventNotification &aEventNotification);
@@ -91,7 +91,7 @@ public:
     void HandleReceiveCompleteL(TInt aErr);
     void HandleSendCompleteL(TInt aErr);
     void HandleShutdownCompleteL(TInt aErr);
-#endif
+#endif //QTM_SYMBIAN_BLUETOOTH
 
 public:
     QBluetoothSocket *socket;
@@ -99,11 +99,11 @@ public:
 
     int maxPendingConnections;
 
-#ifdef Q_OS_SYMBIAN
+#ifdef QTM_SYMBIAN_BLUETOOTH
     QBluetoothSocket *pendingSocket;
     mutable QList<QBluetoothSocket *> activeSockets;
     QBluetoothSocketPrivate *ds;
-#endif
+#endif //QTM_SYMBIAN_BLUETOOTH
 
 protected:
     QL2capServer *q_ptr;
