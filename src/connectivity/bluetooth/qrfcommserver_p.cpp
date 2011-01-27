@@ -53,8 +53,35 @@ QRfcommServerPrivate::~QRfcommServerPrivate()
 {
 }
 
+#ifndef QT_NO_DBUS
 void QRfcommServerPrivate::_q_newConnection()
 {
 }
+#endif
+
+#ifdef Q_OS_SYMBIAN
+void QRfcommServerPrivate::HandleAcceptCompleteL(TInt aErr)
+{
+}
+void QRfcommServerPrivate::HandleActivateBasebandEventNotifierCompleteL(TInt aErr, TBTBasebandEventNotification &aEventNotification)
+{
+}
+void QRfcommServerPrivate::HandleConnectCompleteL(TInt aErr)
+{
+}
+void QRfcommServerPrivate::HandleIoctlCompleteL(TInt aErr)
+{
+}
+void QRfcommServerPrivate::HandleReceiveCompleteL(TInt aErr)
+{
+}
+void QRfcommServerPrivate::HandleSendCompleteL(TInt aErr)
+{
+}
+void QRfcommServerPrivate::HandleShutdownCompleteL(TInt aErr)
+{
+}
+#endif
+
 
 QTM_END_NAMESPACE
