@@ -58,7 +58,7 @@ symbian {
             bluetooth/qbluetoothsocket_p.cpp \
             bluetooth/ql2capserver_p.cpp \
             bluetooth/qrfcommserver_p.cpp \
-            bluetooth/qbluetoothtransfermanage_p.cpp
+            bluetooth/qbluetoothtransfermanager_p.cpp
     }
 }
 
