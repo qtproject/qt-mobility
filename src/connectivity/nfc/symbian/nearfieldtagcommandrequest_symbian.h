@@ -46,28 +46,14 @@
 #include "nearfieldtagoperationcallback_symbian.h"
 
 class NearFieldTagCommandRequest : public MNearFieldTagAsyncRequest,
-                                   public MNearFieldTagOperationCallback 
+                                   public MNearFieldTagOperationCallback
     {
 public:
-    NearFieldTagCommandRequest(MNearFieldTargetOperation& aOperator);
+    NearFieldTagCommandRequest(QNearFieldTagImplCommon& aOperator);
     ~NearFieldTagCommandRequest();
     void IssueRequest();
     bool IssueRequestNoDefer();
-    void ProcessTimeout()
-    {
-        if (iWait)
-        {
-            if (iWait->IsStarted())
-            {
-                if (iRequestIssued)
-                {    
-                    iOperator.DoCancelSendCommand();
-                    iRequestIssued = EFalse;
-                }
-                ProcessResponse(HandlePassiveCommand(KErrTimedOut));
-            }
-        }
-    }
+    void ProcessTimeout();
     void ProcessEmitSignal(TInt aError);
     void HandleResponse(TInt aError);
     void SetInputCommand(QByteArray aCommand) { iCommand = aCommand; }
@@ -81,6 +67,6 @@ private:
     // Not own
     RBuf8 * iResponse;
     QByteArray iRequestResponse;
-    }; 
+    };
 
 #endif

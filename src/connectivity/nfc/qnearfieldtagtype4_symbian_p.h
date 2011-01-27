@@ -61,11 +61,12 @@ class QNearFieldTagType4Symbian : public QNearFieldTagType4, private QNearFieldT
 public:
 
     explicit QNearFieldTagType4Symbian(CNearFieldNdefTarget *tag, QObject *parent = 0);
-    
+
     ~QNearFieldTagType4Symbian();
 
     virtual QByteArray uid() const;
     Type type() const { return NfcTagType4; }
+    quint8 version();
 
     bool hasNdefMessage();
     void readNdefMessages();
@@ -73,10 +74,10 @@ public:
 
     RequestId sendCommand(const QByteArray &command);
     RequestId sendCommands(const QList<QByteArray> &commands);
-    
+
     RequestId select(const QByteArray &name);
     RequestId select(quint16 fileIdentifier);
-    
+
     RequestId read(quint16 length = 0, quint16 startOffset = 0);
     RequestId write(const QByteArray &data, quint16 startOffset = 0);
     bool isProcessingCommand() const { return _isProcessingRequest(); }

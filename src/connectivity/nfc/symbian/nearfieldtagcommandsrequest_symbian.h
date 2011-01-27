@@ -43,12 +43,13 @@
 
 #include "nearfieldtagasyncrequest_symbian.h"
 #include "nearfieldtagoperationcallback_symbian.h"
+#include <QVariantList>
 
 class NearFieldTagCommandsRequest : public MNearFieldTagAsyncRequest,
                                     public MNearFieldTagOperationCallback
     {
 public:
-    NearFieldTagCommandsRequest(MNearFieldTargetOperation& aOperator);
+    NearFieldTagCommandsRequest(QNearFieldTagImplCommon& aOperator);
     ~NearFieldTagCommandsRequest();
     void IssueRequest();
     bool IssueRequestNoDefer();
@@ -62,7 +63,7 @@ public:
 private:
     void CommandComplete(TInt aError);
     TInt HandlePassiveCommand(TInt aError);
-    
+
     QList<QByteArray> iCommands;
     QVariantList iDecodedResponses;
     // Not own
