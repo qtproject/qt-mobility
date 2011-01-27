@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -318,6 +318,47 @@ void tst_QNdefMessage::tst_parse_data()
             << data << QNdefMessage(recordList)
             << (QVariantList() << QUrl(QLatin1String("tel:+1234567890")));
     }
+
+    // Truncated message
+    {
+        QByteArray type("U");
+        QByteArray id("Test ID");
+        QByteArray payload;
+        payload.append(char(0x00));
+        payload.append("http://qt.nokia.com/");
+        QByteArray data;
+        data.append(char(0xc9));   // MB=1, ME=1, IL=1
+
+        QTest::newRow("truncated 1") << data << QNdefMessage() << QVariantList();
+
+        data.append(char(type.length()));   // TYPE LENGTH
+        QTest::newRow("truncated 2") << data << QNdefMessage() << QVariantList();
+
+        data.append(char((payload.length() >> 24) & 0xff)); // PAYLOAD LENGTH 3
+        QTest::newRow("truncated 3") << data << QNdefMessage() << QVariantList();
+
+        data.append(char((payload.length() >> 16) & 0xff)); // PAYLOAD LENGTH 2
+        QTest::newRow("truncated 4") << data << QNdefMessage() << QVariantList();
+
+        data.append(char((payload.length() >> 8) & 0xff));  // PAYLOAD LENGTH 1
+        QTest::newRow("truncated 5") << data << QNdefMessage() << QVariantList();
+
+        data.append(char((payload.length() >> 0) & 0xff));  // PAYLOAD LENGTH 0
+        QTest::newRow("truncated 6") << data << QNdefMessage() << QVariantList();
+
+        data.append(char(id.length())); // ID LENGTH
+        QTest::newRow("truncated 7") << data << QNdefMessage() << QVariantList();
+
+        data.append(type);
+        QTest::newRow("truncated 8") << data << QNdefMessage() << QVariantList();
+
+        data.append(id);
+        QTest::newRow("truncated 9") << data << QNdefMessage() << QVariantList();
+
+        payload.chop(1);
+        data.append(payload);
+        QTest::newRow("truncated 10") << data << QNdefMessage() << QVariantList();
+    }
 }
 
 void tst_QNdefMessage::tst_parse()
@@ -325,6 +366,9 @@ void tst_QNdefMessage::tst_parse()
     QFETCH(QByteArray, data);
     QFETCH(QNdefMessage, message);
     QFETCH(QVariantList, expectedData);
+
+    if (QByteArray(QTest::currentDataTag()).startsWith("truncated "))
+        QTest::ignoreMessage(QtWarningMsg, "Unexpected end of message");
 
     QNdefMessage parsedMessage = QNdefMessage::fromByteArray(data);
 
