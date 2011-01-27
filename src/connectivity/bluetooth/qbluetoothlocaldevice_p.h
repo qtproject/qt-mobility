@@ -39,71 +39,60 @@
 **
 ****************************************************************************/
 
-#ifndef BLUETOOTHSYMBIANPAIRINGADAPTER_H
-#define BLUETOOTHSYMBIANPAIRINGADAPTER_H
-
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API. It exists purely as an
-// implementation detail. This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
+#ifndef QBLUETOOTHLOCALDEVICE_P_H
+#define QBLUETOOTHLOCALDEVICE_P_H
 
 #include <qmobilityglobal.h>
-#include <QtCore/QObject>
 
-#include <e32base.h>
-#include <btdevice.h>
-#include <bt_sock.h>
-#include <btengconnman.h>
 #include "qbluetoothlocaldevice.h"
+
+#include <btengsettings.h>
 
 QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
 class QBluetoothAddress;
+class QBluetoothLocalDevice;
 
-class BluetoothSymbianPairingAdapter : public QObject, public MBTEngConnObserver
+class QBluetoothLocalDevicePrivate: public MBTEngSettingsObserver
 {
-    Q_OBJECT
+    Q_DECLARE_PUBLIC(QBluetoothLocalDevice)
 public:
+    QBluetoothLocalDevicePrivate();
+    ~QBluetoothLocalDevicePrivate();
 
-    BluetoothSymbianPairingAdapter(const QBluetoothAddress &address, QObject *parent = 0);
-    ~BluetoothSymbianPairingAdapter();
+    static QString name();
+    static QBluetoothAddress address();
 
-    void startPairing(QBluetoothLocalDevice::Pairing pairing);
+    void powerOn();
+    void powerOff();
+    void setHostMode(QBluetoothLocalDevice::HostMode mode);
+    QBluetoothLocalDevice::HostMode hostMode() const;
 
-    int errorCode() const;
-    QString pairingErrorString() const;
+    void requestPairing(const QBluetoothAddress &address, QBluetoothLocalDevice::Pairing pairing);
+    QBluetoothLocalDevice::Pairing pairingStatus(const QBluetoothAddress &address) const;
 
-public: //from MBTEngConnObserver
-    virtual void ConnectComplete( TBTDevAddr& aAddr, TInt aErr,
-                                       RBTDevAddrArray* aConflicts = NULL );
-    virtual void DisconnectComplete( TBTDevAddr& aAddr, TInt aErr );
+    void pairingConfirmation(bool confirmation);
+    //slot exposed for the public api.
+    void _q_pairingFinished(const QBluetoothAddress &address, QBluetoothLocalDevice::Pairing pairing);
 
-    virtual void PairingComplete( TBTDevAddr& aAddr, TInt aErr );
-
-Q_SIGNALS: // SIGNALS
-    void pairingFinished(const QBluetoothAddress &address, QBluetoothLocalDevice::Pairing pairing);
-    void pairingDisplayPinCode(const QBluetoothAddress &address, QString pin);
-    void pairingError(int errorCode);
 private:
+    //From MBTEngSettingsObserver
+    void PowerStateChanged(TBTPowerStateValue aState);
+    void VisibilityModeChanged(TBTVisibilityMode aState);
 
-    //  socket server handle
-    CBTEngConnMan *m_pairingEngine;
-    const QBluetoothAddress &m_address;
-    bool m_pairingOngoing;
-    int m_errorCode;
-    QString m_pairingErrorString;
+private:
+    CBTEngSettings *m_settings;
+    bool m_settingVisibility;
+
+protected:
+    QBluetoothLocalDevice *q_ptr;
+
 };
 
 QTM_END_NAMESPACE
 
 QT_END_HEADER
 
-#endif //BLUETOOTHSYMBIANPAIRINGADAPTER_H
+#endif // QBLUETOOTHLOCALDEVICE_P_H

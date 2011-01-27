@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef BLUETOOTHSYMBIANPAIRINGADAPTER_H
-#define BLUETOOTHSYMBIANPAIRINGADAPTER_H
+#ifndef BLUETOOTHSYMBIANREGISTRYADAPTER_H
+#define BLUETOOTHSYMBIANREGISTRYADAPTER_H
 
 //
 //  W A R N I N G
@@ -59,45 +59,51 @@
 #include <e32base.h>
 #include <btdevice.h>
 #include <bt_sock.h>
-#include <btengconnman.h>
+#include <btengdevman.h>
 #include "qbluetoothlocaldevice.h"
 
 QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
+class QBluetoothDeviceInfo;
 class QBluetoothAddress;
 
-class BluetoothSymbianPairingAdapter : public QObject, public MBTEngConnObserver
+class BluetoothSymbianRegistryAdapter : public QObject, public MBTEngDevManObserver
 {
     Q_OBJECT
 public:
 
-    BluetoothSymbianPairingAdapter(const QBluetoothAddress &address, QObject *parent = 0);
-    ~BluetoothSymbianPairingAdapter();
+    BluetoothSymbianRegistryAdapter(const QBluetoothAddress &address, QObject *parent = 0);
+    ~BluetoothSymbianRegistryAdapter();
 
-    void startPairing(QBluetoothLocalDevice::Pairing pairing);
-
+    void removePairing();
+    QBluetoothLocalDevice::Pairing pairingStatus() const;
     int errorCode() const;
     QString pairingErrorString() const;
 
-public: //from MBTEngConnObserver
-    virtual void ConnectComplete( TBTDevAddr& aAddr, TInt aErr,
-                                       RBTDevAddrArray* aConflicts = NULL );
-    virtual void DisconnectComplete( TBTDevAddr& aAddr, TInt aErr );
+public: //from MBTEngDevManObserver
+    virtual void HandleDevManComplete( TInt aErr );
+    virtual void HandleGetDevicesComplete( TInt aErr,CBTDeviceArray* aDeviceArray );
 
-    virtual void PairingComplete( TBTDevAddr& aAddr, TInt aErr );
+private:
+    QBluetoothLocalDevice::Pairing remoteDevicePairingStatus();
+    CBTDeviceArray* createDeviceArrayL() const;
+
+public Q_SLOTS:
+    void setRemoteDevicePairingStatusFromRegistry();
 
 Q_SIGNALS: // SIGNALS
-    void pairingFinished(const QBluetoothAddress &address, QBluetoothLocalDevice::Pairing pairing);
-    void pairingDisplayPinCode(const QBluetoothAddress &address, QString pin);
-    void pairingError(int errorCode);
+    void operationFinished(const QBluetoothAddress &address);
+    void registryHandlingError(int errorCode);
+    void pairingStatusChanged(const QBluetoothAddress &address, QBluetoothLocalDevice::Pairing pairing);
 private:
 
-    //  socket server handle
-    CBTEngConnMan *m_pairingEngine;
+    // Symbian registry hander
+    CBTEngDevMan *m_bluetoothDeviceManager;
     const QBluetoothAddress &m_address;
-    bool m_pairingOngoing;
+    QBluetoothLocalDevice::Pairing m_pairingStatus;
+
     int m_errorCode;
     QString m_pairingErrorString;
 };
@@ -106,4 +112,4 @@ QTM_END_NAMESPACE
 
 QT_END_HEADER
 
-#endif //BLUETOOTHSYMBIANPAIRINGADAPTER_H
+#endif //BLUETOOTHSYMBIANREGISTRYADAPTER_H

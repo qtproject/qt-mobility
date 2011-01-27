@@ -49,7 +49,6 @@
 QTM_USE_NAMESPACE
 
 Q_DECLARE_METATYPE(QBluetoothLocalDevice::Pairing)
-Q_DECLARE_METATYPE(QBluetoothLocalDevice::HostMode)
 
 #define WAIT_FOR_CONDITION(a,e)            \
     for (int _i = 0; _i < 5000; _i += 1) {  \
@@ -68,6 +67,7 @@ private slots:
     void initTestCase();
 
     void tst_powerOn();
+    void tst_powerOff();
     void tst_hostModes();
     void tst_hostModes_data();
     void tst_address();
@@ -83,8 +83,11 @@ private slots:
 tst_QBluetoothLocalDevice::tst_QBluetoothLocalDevice()
 {
     qRegisterMetaType<QBluetoothLocalDevice::Pairing>("QBluetoothLocalDevice::Pairing");
-    qRegisterMetaType<QBluetoothLocalDevice::HostMode>("QBluetoothLocalDevice::HostMode");
     qRegisterMetaType<QBluetoothAddress>("QBluetoothAddress");
+    // start with host powered off
+    QBluetoothLocalDevice *device = new QBluetoothLocalDevice();
+    device->setHostMode(QBluetoothLocalDevice::HostPoweredOff);
+    delete device;
 }
 
 tst_QBluetoothLocalDevice::~tst_QBluetoothLocalDevice()
@@ -94,7 +97,30 @@ tst_QBluetoothLocalDevice::~tst_QBluetoothLocalDevice()
 void tst_QBluetoothLocalDevice::initTestCase()
 {
     qRegisterMetaType<QBluetoothLocalDevice::Pairing>("QBluetoothLocalDevice::Pairing");
-    qRegisterMetaType<QBluetoothLocalDevice::HostMode>("QBluetoothLocalDevice::HostMode");
+}
+
+void tst_QBluetoothLocalDevice::tst_hostModes_data()
+{
+    QTest::addColumn<QBluetoothLocalDevice::HostMode>("hostModeExpected");
+
+    QTest::newRow("HostDiscoverable") << QBluetoothLocalDevice::HostDiscoverable;
+    QTest::newRow("HostPoweredOff") << QBluetoothLocalDevice::HostPoweredOff;
+    QTest::newRow("HostConnectable") << QBluetoothLocalDevice::HostConnectable;
+    QTest::newRow("HostPoweredOff") << QBluetoothLocalDevice::HostPoweredOff;
+    QTest::newRow("HostDiscoverable") << QBluetoothLocalDevice::HostDiscoverable;
+
+}
+void tst_QBluetoothLocalDevice::tst_pairDevice_data()
+{
+    QTest::addColumn<QBluetoothAddress>("deviceAddress");
+    QTest::addColumn<QBluetoothLocalDevice::Pairing>("pairingExpected");
+
+    QTest::newRow("UnPaired Device: DUMMY") << QBluetoothAddress("11:00:00:00:00:00") << QBluetoothLocalDevice::Unpaired;
+    //QTest::newRow("UnPaired Device: DUMMY") << QBluetoothAddress("11:00:00:00:00:00") << QBluetoothLocalDevice::Paired;
+#ifdef Q_OS_SYMBIAN
+    //QTest::newRow("UNPAIR Device: BH-604") << QBluetoothAddress("00:0d:3c:b0:77:1c") << QBluetoothLocalDevice::Unpaired;
+    QTest::newRow("PAIR Device: BH-604") << QBluetoothAddress("00:0d:3c:b0:77:1c") << QBluetoothLocalDevice::Paired;
+#endif // Q_OS_SYMBIAN
 }
 
 void tst_QBluetoothLocalDevice::tst_pairingStatus_data()
@@ -107,38 +133,44 @@ void tst_QBluetoothLocalDevice::tst_pairingStatus_data()
     QTest::newRow("Paired Device: BH-604") << QBluetoothAddress("00:0d:3c:b0:77:1c") << QBluetoothLocalDevice::Paired;
 #endif // Q_OS_SYMBIAN
 }
-void tst_QBluetoothLocalDevice::tst_hostModes_data()
-{
-    QTest::addColumn<QBluetoothLocalDevice::HostMode>("hostModeExpected");
 
-    QTest::newRow("HostPoweredOff") << QBluetoothLocalDevice::HostPoweredOff;
-    QTest::newRow("HostDiscoverable") << QBluetoothLocalDevice::HostDiscoverable;
-    QTest::newRow("HostConnectable") << QBluetoothLocalDevice::HostConnectable;
-}
-void tst_QBluetoothLocalDevice::tst_pairDevice_data()
-{
-    QTest::addColumn<QBluetoothAddress>("deviceAddress");
-    QTest::addColumn<QBluetoothLocalDevice::Pairing>("pairingExpected");
-
-    QTest::newRow("UnPaired Device: DUMMY") << QBluetoothAddress("11:00:00:00:00:00") << QBluetoothLocalDevice::Unpaired;
-//  QTest::newRow("UnPaired Device: DUMMY") << QBluetoothAddress("11:00:00:00:00:00") << QBluetoothLocalDevice::Paired;
-//#ifdef 0 //Q_OS_SYMBIAN
-//    QTest::newRow("UNPAIR Device: BH-604") << QBluetoothAddress("00:0d:3c:b0:77:1c") << QBluetoothLocalDevice::Unpaired;
-//    QTest::newRow("PAIR Device: BH-604") << QBluetoothAddress("00:0d:3c:b0:77:1c") << QBluetoothLocalDevice::Paired;
-//#endif // Q_OS_SYMBIAN
-}
 void tst_QBluetoothLocalDevice::tst_powerOn()
 {
+    {
     QBluetoothLocalDevice localDevice;
+
     QSignalSpy hostModeSpy(&localDevice, SIGNAL(hostModeStateChanged(QBluetoothLocalDevice::HostMode)));
     // there should be no changes yet
     QVERIFY(hostModeSpy.isEmpty());
 
     localDevice.powerOn();
+    // async, wait for it
+    WAIT_FOR_CONDITION(hostModeSpy.count(),1);
     QVERIFY(hostModeSpy.count() > 0);
+    qDebug()<< "Current Host Mode after spyEvent="<<localDevice.hostMode();
     // we should not be powered off
     QVERIFY(localDevice.hostMode() == QBluetoothLocalDevice::HostConnectable
          || localDevice.hostMode() == QBluetoothLocalDevice::HostDiscoverable);
+    }
+
+}
+void tst_QBluetoothLocalDevice::tst_powerOff()
+{
+    {
+    QBluetoothLocalDevice localDevice;
+    localDevice.powerOn();
+    }
+    QBluetoothLocalDevice localDevice;
+    QSignalSpy hostModeSpy(&localDevice, SIGNAL(hostModeStateChanged(QBluetoothLocalDevice::HostMode)));
+    // there should be no changes yet
+    QVERIFY(hostModeSpy.isEmpty());
+
+    localDevice.setHostMode(QBluetoothLocalDevice::HostPoweredOff);
+    // async, wait for it
+    WAIT_FOR_CONDITION(hostModeSpy.count(),1);
+    QVERIFY(hostModeSpy.count() > 0);
+    // we should not be powered off
+    QVERIFY(localDevice.hostMode() == QBluetoothLocalDevice::HostPoweredOff);
 
 }
 
@@ -150,17 +182,13 @@ void tst_QBluetoothLocalDevice::tst_hostModes()
     QSignalSpy hostModeSpy(&localDevice, SIGNAL(hostModeStateChanged(QBluetoothLocalDevice::HostMode)));
     // there should be no changes yet
     QVERIFY(hostModeSpy.isEmpty());
-    // power on
-    localDevice.powerOn();
-    // we should not be powered off
-    QVERIFY(localDevice.hostMode() == QBluetoothLocalDevice::HostConnectable
-         || localDevice.hostMode() == QBluetoothLocalDevice::HostDiscoverable);
-    QVERIFY(hostModeSpy.count() > 0);
 
-    // check Host Mode
     localDevice.setHostMode(hostModeExpected);
+    if (hostModeExpected != localDevice.hostMode()) {
+        WAIT_FOR_CONDITION(hostModeSpy.count(),1);
+        QVERIFY(hostModeSpy.count() > 0);
+    }
     QCOMPARE(hostModeExpected, localDevice.hostMode());
-    QVERIFY(hostModeSpy.count() > 0);
 }
 
 void tst_QBluetoothLocalDevice::tst_address()
@@ -175,9 +203,8 @@ void tst_QBluetoothLocalDevice::tst_isValid()
 }
 void tst_QBluetoothLocalDevice::tst_allDevices()
 {
-    QBluetoothLocalDevice localDevice;
     // we should have one local bluetooth device
-    QVERIFY(localDevice.allDevices().count() == 1);
+    QVERIFY(QBluetoothLocalDevice::allDevices().count() == 1);
 }
 void tst_QBluetoothLocalDevice::tst_construction()
 {
@@ -189,14 +216,6 @@ void tst_QBluetoothLocalDevice::tst_construction()
     QVERIFY(anotherDevice.address().toUInt64() != 0);
 
 }
-void tst_QBluetoothLocalDevice::tst_pairingStatus()
-{
-    QFETCH(QBluetoothAddress, deviceAddress);
-    QFETCH(QBluetoothLocalDevice::Pairing, pairingExpected);
-
-    QBluetoothLocalDevice localDevice;
-    QCOMPARE(pairingExpected, localDevice.pairingStatus(deviceAddress));
-}
 
 void tst_QBluetoothLocalDevice::tst_pairDevice()
 {
@@ -204,6 +223,9 @@ void tst_QBluetoothLocalDevice::tst_pairDevice()
     QFETCH(QBluetoothLocalDevice::Pairing, pairingExpected);
 
     QBluetoothLocalDevice localDevice;
+    //powerOn if not already
+    localDevice.powerOn();
+
     QSignalSpy pairingSpy(&localDevice, SIGNAL(pairingFinished(const QBluetoothAddress &,QBluetoothLocalDevice::Pairing)) );
     // there should be no signals yet
     QVERIFY(pairingSpy.isEmpty());
@@ -214,6 +236,15 @@ void tst_QBluetoothLocalDevice::tst_pairDevice()
     QVERIFY(pairingSpy.count() > 0);
     QCOMPARE(pairingExpected, localDevice.pairingStatus(deviceAddress));
 
+}
+
+void tst_QBluetoothLocalDevice::tst_pairingStatus()
+{
+    QFETCH(QBluetoothAddress, deviceAddress);
+    QFETCH(QBluetoothLocalDevice::Pairing, pairingExpected);
+
+    QBluetoothLocalDevice localDevice;
+    QCOMPARE(pairingExpected, localDevice.pairingStatus(deviceAddress));
 }
 QTEST_MAIN(tst_QBluetoothLocalDevice)
 

@@ -40,6 +40,9 @@
 ****************************************************************************/
 
 #include "qbluetoothlocaldevice.h"
+#ifdef Q_OS_SYMBIAN
+#include "qbluetoothlocaldevice_p.h"
+#endif //Q_OS_SYMBIAN
 #include "qbluetoothaddress.h"
 
 #include <QtCore/QString>
@@ -99,7 +102,6 @@ QTM_BEGIN_NAMESPACE
 QBluetoothLocalDevice::~QBluetoothLocalDevice()
 {
     delete d_ptr;
-    d_ptr = 0;
 }
 
 /*!

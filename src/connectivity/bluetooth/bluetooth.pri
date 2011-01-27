@@ -59,7 +59,8 @@ symbian {
         include(symbian/symbian.pri)
 
         PRIVATE_HEADERS += \
-            bluetooth/qbluetoothtransferreply_symbian_p.h
+            bluetooth/qbluetoothtransferreply_symbian_p.h \
+            bluetooth/qbluetoothlocaldevice_p.h
 
         SOURCES += \
             bluetooth/qbluetoothserviceinfo_symbian.cpp\

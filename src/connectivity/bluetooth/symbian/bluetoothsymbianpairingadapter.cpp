@@ -46,7 +46,6 @@
 #include "qbluetoothlocaldevice.h"
 #include <qstring.h>
 #include <btdevice.h>
-
 #include "utils_symbian_p.h"
 
 QTM_BEGIN_NAMESPACE
@@ -56,7 +55,7 @@ QTM_BEGIN_NAMESPACE
     \brief The BluetoothSymbianPairingAdapter is an adapter class for bluetooth pairing functinality.
 
     The BluetoothSymbianPairingAdapter is constructed to use for a one QBluetoothAddress.
-    It uses Following Symbian classes CBTEngConnMan and CBTEngDevMan.
+    It uses following Symbian class CBTEngConnMan for native operations.
 
     \ingroup connectivity-bluetooth
     \inmodule QtConnectivity
@@ -66,26 +65,19 @@ QTM_BEGIN_NAMESPACE
 BluetoothSymbianPairingAdapter::BluetoothSymbianPairingAdapter(const QBluetoothAddress &address, QObject *parent)
     : QObject(parent)
     , m_pairingEngine(0)
-    , m_bluetoothDeviceManager(0)
     , m_address(address)
-    , m_pairingStatus(QBluetoothLocalDevice::Unpaired)
     , m_pairingOngoing(false)
-    , m_removeOngoing(false)
+    , m_errorCode(0)
+    , m_pairingErrorString()
 {
-    TRAP(m_errorCode,
-        m_pairingEngine = CBTEngConnMan::NewL(this);
-        m_bluetoothDeviceManager = CBTEngDevMan::NewL(this);
-        )
-    if (m_errorCode == KErrNone)
-        setRemoteDevicePairingStatusFromRegistry();
-    else {
+    TRAP(m_errorCode, m_pairingEngine = CBTEngConnMan::NewL(this))
+
+    if (m_errorCode != KErrNone)
         emit pairingError(m_errorCode);
-    }
 }
 BluetoothSymbianPairingAdapter::~BluetoothSymbianPairingAdapter()
 {
     delete m_pairingEngine;
-    delete m_bluetoothDeviceManager;
 }
 
 int BluetoothSymbianPairingAdapter::errorCode() const
@@ -98,109 +90,21 @@ QString BluetoothSymbianPairingAdapter::pairingErrorString() const
     return m_pairingErrorString;
 }
 
-QBluetoothLocalDevice::Pairing BluetoothSymbianPairingAdapter::remoteDevicePairingStatus()
-{
-    QBluetoothLocalDevice::Pairing returnValue = QBluetoothLocalDevice::Unpaired;
-    // if the address provided is not valid
-    if (m_address.isNull()) {
-        m_pairingStatus = QBluetoothLocalDevice::Unpaired;
-        emit pairingError(KErrArgument);
-        return returnValue;
-    }
-    int errorCode = 0;
-    // use Symbian registry to get a current pairing status of a device
-    // do not pass observer for this method -> use sync version of GetDevices()
-    CBTEngDevMan *btDeviceManager = NULL;
-    TRAPD(deviceManagerCreationErr, btDeviceManager = CBTEngDevMan::NewL(NULL));
-    if (deviceManagerCreationErr != KErrNone) {
-        emit pairingError(deviceManagerCreationErr);
-        return returnValue;
-    }
-    CleanupStack::PushL(btDeviceManager);
-
-    // Spesify search criteria
-    TBTRegistrySearch lSearchCriteria;
-    TBTDevAddr btAddress(m_address.toUInt64());
-    lSearchCriteria.FindAddress(btAddress);
-
-    CBTDeviceArray *listOfDevices = NULL;
-    TRAPD(arrayCreationErr,listOfDevices = createDeviceArrayL());
-    if (arrayCreationErr !=KErrNone) {
-        emit pairingError(arrayCreationErr);
-        // cleanup manager before returning
-        CleanupStack::Pop(btDeviceManager);
-        delete btDeviceManager;
-        return returnValue;
-    }
-
-    CleanupStack::PushL(listOfDevices);
-    m_errorCode = btDeviceManager->GetDevices(lSearchCriteria,listOfDevices);
-    if (errorCode != KErrNone) {
-        emit pairingError(errorCode);
-        return returnValue;
-    }
-    if ( listOfDevices->Count() == 1) {
-        CBTDevice *device= listOfDevices->At(0);
-        bool isValidDevicePaired = device->IsValidPaired();
-        bool isDevicePaired = device->IsPaired();
-        //TODO Check wheter check is correct?
-        if (isValidDevicePaired || isDevicePaired)
-            returnValue = QBluetoothLocalDevice::Paired;
-        else if (!isValidDevicePaired && !isDevicePaired)
-            returnValue = QBluetoothLocalDevice::Unpaired;
-
-    } else {
-        returnValue = QBluetoothLocalDevice::Unpaired;
-    }
-    //cleanup
-    CleanupStack::Pop(listOfDevices);
-    listOfDevices->ResetAndDestroy();
-    delete listOfDevices;
-    CleanupStack::Pop(btDeviceManager);
-    delete btDeviceManager;
-    return returnValue;
-}
-CBTDeviceArray* BluetoothSymbianPairingAdapter::createDeviceArrayL()
-{
-    return q_check_ptr(new CBTDeviceArray(10));
-}
-
-void BluetoothSymbianPairingAdapter::setRemoteDevicePairingStatusFromRegistry()
-{
-    m_pairingStatus = remoteDevicePairingStatus();
-}
-
 void BluetoothSymbianPairingAdapter::startPairing(QBluetoothLocalDevice::Pairing pairing)
 {
     TBTDevAddr btAddress(m_address.toUInt64());
-
     // start async pairing process
     m_pairingOngoing = true;
-    int error = m_pairingEngine->PairDevice(btAddress);
+    int error = KErrBadHandle;
+
+    if (m_pairingEngine) {
+        error =KErrNone;
+        error = m_pairingEngine->PairDevice(btAddress);
+    }
+
     if (error != KErrNone) {
         PairingComplete(btAddress, error);
     }
-}
-void BluetoothSymbianPairingAdapter::removePairing()
-{
-    // setup current values
-    int errorCode = 0;
-    m_removeOngoing = true;
-
-    // Spesify search criteria
-    TBTRegistrySearch searchCriteria;
-    TBTDevAddr btAddress(m_address.toUInt64());
-    searchCriteria.FindAddress(btAddress);
-    errorCode = m_bluetoothDeviceManager->DeleteDevices(searchCriteria);
-    // if there is error then manually call callback for error routines
-    if (errorCode != KErrNone)
-        HandleDevManComplete(errorCode);
-
-}
-
-QBluetoothLocalDevice::Pairing BluetoothSymbianPairingAdapter::pairingStatus() const
-{
-    return m_pairingStatus;
 }
 
 void BluetoothSymbianPairingAdapter::ConnectComplete( TBTDevAddr& aAddr, TInt aErr,
@@ -223,9 +127,8 @@ void BluetoothSymbianPairingAdapter::PairingComplete( TBTDevAddr& aAddr, TInt aE
     m_pairingOngoing = false;
     switch (aErr) {
         case KErrNone:
-            // TODO: optimization
-            setRemoteDevicePairingStatusFromRegistry();
-            emit pairingFinished(qTBTDevAddrToQBluetoothAddress(aAddr),m_pairingStatus);
+            // TODO: Paired or authorizedpaired, not known at this stage.
+            emit pairingFinished(qTBTDevAddrToQBluetoothAddress(aAddr),QBluetoothLocalDevice::Paired);
             break;
         case KErrRemoteDeviceIndicatedNoBonding:
             m_pairingErrorString.append("Dedicated bonding attempt failure when the remote device responds with No-Bonding");
@@ -237,22 +140,6 @@ void BluetoothSymbianPairingAdapter::PairingComplete( TBTDevAddr& aAddr, TInt aE
     if (aErr != KErrNone)
         emit pairingError(aErr);
 
-}
-void BluetoothSymbianPairingAdapter::HandleDevManComplete( TInt aErr )
-{
-    if (aErr != KErrNone)
-        emit pairingError(aErr);
-
-    if (m_removeOngoing) {
-        m_removeOngoing = false;
-        m_pairingStatus = QBluetoothLocalDevice::Unpaired;
-        emit pairingFinished(m_address,m_pairingStatus);
-    }
-}
-void BluetoothSymbianPairingAdapter::HandleGetDevicesComplete( TInt aErr,CBTDeviceArray* aDeviceArray )
-{
-    Q_UNUSED(aErr);
-    Q_UNUSED(aDeviceArray);
 }
 
 #include "moc_bluetoothsymbianpairingadapter.cpp"
