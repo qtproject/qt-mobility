@@ -579,6 +579,8 @@ call :compileTest MDS mds
 call :compileTest MDS_25 mds_25
 call :compileTest MDS_25_92MCL mds_25_92mcl
 call :compileTest Symbian_NFC nfc
+call :compileTest BTEngineConnectionManager_Symbian btengconnman_symbian
+call :compileTest BTEngineDeviceManager_Symbian btengdevman_symbian
 goto noTests
 
 :windowsTests
