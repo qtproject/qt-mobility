@@ -125,10 +125,11 @@ void QSystemAlignedTimer::start()
 
 
 /*!
-  Called if the application woke up by itself.
-  This method should be called if the application has woken up by some other
-  method than via system alignedtimer heartbeat to prevent unnecessary wakeup signals.
+     This should be called when the application wakes up via other means than QSystemAlignedTimer timeout.
 
+    Other applications that are in their wakeup window may be woken up. Single-shot timer is stopped,
+    and reoccuring timer interval will get reset.
+    Symbian does not support this wokeUp call for reoccuring timers and will simply ignore it.
   */
 void QSystemAlignedTimer::wokeUp()
 {
@@ -147,7 +148,7 @@ void QSystemAlignedTimer::stop()
   Set the timeout minimum interval to \a seconds in seconds that must be waited before timeout
   signal is emitted.
 
-   Time in milliseconds that MUST be waited before timeout.
+   Time in seconds that MUST be waited before timeout.
    Value 0 means 'wake me up when someboy else is woken'.
    It  is recommended that the first wait (if possible) uses minimum value of 0 to
    "jump to the train"
@@ -172,7 +173,7 @@ int QSystemAlignedTimer::minimumInterval() const
 /*!
   Set the timeout maximum interval to \a seconds the wait must end.
 
-   Time in milliseconds when the wait MUST end. It is wise to have maxtime-mintime
+   Time in seconds when the wait MUST end. It is wise to have maxtime-mintime
    quite big so all users of this service get synced.
    For example if you preferred wait is 120 seconds, use minval 110 and maxval 130.
    Default value for maxTime is 0. If maxTime is 0, then minTime will be a "preferred" interval.
@@ -227,22 +228,6 @@ bool QSystemAlignedTimer::isSingleShot() const
 {
     return d->single;
 }
-
-/*!
-   Sets the timer if \a running is true, otherwise stops it.
-  */
-void QSystemAlignedTimer::setRunning(bool running)
-{
-    d->isTimerRunning = running;
-}
-/*
-\property QSystemAlignedTimer::running
-Start the timer as single shot.
-*/
- bool QSystemAlignedTimer::running() const
- {
-     return d->isTimerRunning;
- }
 
 
 

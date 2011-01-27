@@ -40,81 +40,30 @@
 ****************************************************************************/
 
 
-#ifndef QSYSTEMALIGNEDTIMER_H
-#define QSYSTEMALIGNEDTIMER_H
+#ifndef QDECLARATIVEALIGNEDTIMER_P_H
+#define QDECLARATIVEALIGNEDTIMER_P_H
 
 #include <QObject>
-#include <QTime>
-#include <QTimer>
-#include "qmobilityglobal.h"
 #include "qsystemalignedtimer.h"
 
 QT_BEGIN_HEADER
-QTM_BEGIN_NAMESPACE
+QTM_USE_NAMESPACE
 
-class QSystemAlignedTimerPrivate;
-
-class Q_SYSINFO_EXPORT QSystemAlignedTimer : public QObject
+class QDeclarativeAlignedTImer : public QSystemAlignedTimer
 {
     Q_OBJECT
+    Q_PROPERTY(bool running READ running WRITE setRunning)
 
-    Q_PROPERTY(int minimumInterval READ minimumInterval WRITE setMinimumInterval)
-    Q_PROPERTY(int maximumInterval READ maximumInterval WRITE setMaximumInterval)
-
-    Q_PROPERTY(bool singleShot READ isSingleShot WRITE setSingleShot)
 public:
+    explicit QDeclarativeAlignedTImer(QObject *parent = 0);
+    bool running() const;
+    void setRunning(bool running);
 
-    explicit QSystemAlignedTimer(QObject *parent = 0);
-    ~QSystemAlignedTimer();
+signals:
 
-    Q_INVOKABLE void wokeUp();
+public slots:
 
-    int minimumInterval() const;
-    void setMinimumInterval(int seconds) const;
-
-    int maximumInterval() const;
-    void setMaximumInterval(int seconds) const;
-
-    void setSingleShot(bool singleShot);
-    bool isSingleShot() const;
-
-    Q_INVOKABLE static void singleShot(int minimumTime, int maximumTime, QObject *receiver, const char *member);
-
-
-public Q_SLOTS:
-    void start(int minimumTime, int maximumTime);
-
-    void start();
-    void stop();
-
-Q_SIGNALS:
-    void timeout();
-
-private:
-    QSystemAlignedTimerPrivate *d;
 };
-
-// FIXME how to know if this fails on some platforms where it is not supported, i.e. windows or symbian
-// before mobility 1.2
-
-class QSystemAlignedTimerPrivate : public QObject
-{
-    Q_OBJECT
-public:
-    explicit QSystemAlignedTimerPrivate(QObject *parent = 0){Q_UNUSED(parent)};
-
-    int id;
-    bool isTimerRunning;
-    bool single;
-
-private:
-    QTimer *alignedTimer;
-     void timerEvent(QTimerEvent *);
-};
-
-
-QTM_END_NAMESPACE
-
+QT_END_NAMESPACE
 QT_END_HEADER
-
-#endif // QSYSTEMALIGNEDTIMER_H
+#endif // QDECLARATIVEALIGNEDTIMER_P_H
