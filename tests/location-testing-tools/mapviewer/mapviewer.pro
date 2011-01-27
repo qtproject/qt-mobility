@@ -1,32 +1,38 @@
 QT += xml network svg
 TARGET = MapViewer
-TEMPLATE = app 
-INCLUDEPATH += ../../src/global \
-               ../../src/location \
-               ../../src/location/maps
+TEMPLATE = app
+INCLUDEPATH += ../../../src/global \
+               ../../../src/location \
+               ../../../src/location/maps
 SOURCES += main.cpp \
-           mapwidget.cpp \
-           mainwindow.cpp
-           
-HEADERS += mapwidget.h \
-           mainwindow.h
+           mainwindow.cpp \
+           mapbox.cpp \
+           geomap.cpp \
+           mapbox_menuhandlers.cpp
 
-include(../examples.pri)
+HEADERS += mainwindow.h \
+           mapbox.h \
+    geomap.h 
+
+include(../../../examples/examples.pri)
 
 CONFIG += mobility
 MOBILITY = location
 equals(QT_MAJOR_VERSION, 4):lessThan(QT_MINOR_VERSION, 7){
     MOBILITY += bearer
-    INCLUDEPATH += ../../src/bearer
+    INCLUDEPATH += ../../../src/bearer
 } else {
     # use Bearer Management classes in QtNetwork module
 }
 
-symbian: { 
+symbian: {
     TARGET.CAPABILITY = Location \
                         NetworkServices \
                         ReadUserData \
                         WriteUserData \
                         ReadDeviceData \
                         WriteDeviceData
+
+    TARGET.EPOCHEAPSIZE = 1048576 67108864
+    TARGET.EPOCSTACKSIZE = 0xA000
 }

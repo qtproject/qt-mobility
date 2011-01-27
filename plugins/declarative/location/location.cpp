@@ -107,6 +107,7 @@ public:
         qmlRegisterType<QDeclarativeGeoMapObjectBorder>();
         qmlRegisterType<QGeoMapObject>(uri, 1, 1, "QGeoMapObject");
         qmlRegisterType<QDeclarativeGeoMapObject>(uri, 1, 1, "MapObject");
+        qmlRegisterType<QDeclarativeGeoMapObjectView>(uri, 1, 1, "MapObjectView");
         qmlRegisterType<QDeclarativeGeoMapGroupObject>(uri, 1, 1, "MapGroup");
         qmlRegisterType<QDeclarativeGeoMapCircleObject>(uri, 1, 1, "MapCircle");
         qmlRegisterType<QDeclarativeGeoMapPolygonObject>(uri, 1, 1, "MapPolygon");

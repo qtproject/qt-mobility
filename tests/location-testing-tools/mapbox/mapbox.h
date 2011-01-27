@@ -45,12 +45,11 @@
 #include <qmobilityglobal.h>
 
 #include <QWidget>
-#include <QNetworkSession>
+#include <qnetworksession.h>
 
 class QGraphicsScene;
 class QGraphicsView;
 class StatsWidget;
-class QNetworkSession;
 
 QTM_BEGIN_NAMESPACE
     class QGeoCoordinate;

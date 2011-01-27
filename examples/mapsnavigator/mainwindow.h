@@ -39,48 +39,47 @@
 **
 ****************************************************************************/
 
-#ifndef MAINWINDOW_H_
-#define MAINWINDOW_H_
-
-#include "directionswidget.h"
-#include "mapswidget.h"
-#include "markerlist.h"
-#include "searchwidget.h"
+#ifndef MAINWINDOW_H
+#define MAINWINDOW_H
 
 #include <QMainWindow>
 
-#include <qnetworksession.h>
-#include <qgeoserviceprovider.h>
+#include "qgeoserviceprovider.h"
+#include "qgeopositioninfosource.h"
 
-QTM_USE_NAMESPACE
+#include "mapswidget.h"
+#include "marker.h"
+#include "searchdialog.h"
+#include "markerdialog.h"
 
-class MainWindow: public QMainWindow
+using namespace QtMobility;
+
+class MainWindow : public QMainWindow
 {
     Q_OBJECT
-
 public:
-    MainWindow(QWidget *parent = 0);
+    MainWindow();
     ~MainWindow();
 
 public slots:
-    void setProvider();
-    void networkSessionOpened();
-    void error(QNetworkSession::SessionError error);
+    void initialize();
 
 private slots:
-    void showSearchDialog(MarkerObject *marker);
-    void addSearchMarker(const QGeoCoordinate &coord);
-    void addSearchMarker(const QString &address);
-    void selectWaypointMarker(MarkerObject *marker);
+    void showSearchDialog();
+    void goToMyLocation();
+    void updateMyPosition(QGeoPositionInfo info);
+    void disableTracking();
+    void showErrorMessage(QGeoSearchReply::Error err, QString msg);
+    void on_markerClicked(Marker *marker);
 
 private:
-    QNetworkSession *m_session;
-    QGeoServiceProvider *m_serviceProvider;
+    QGeoServiceProvider *serviceProvider;
+    MapsWidget *mapsWidget;
+    MarkerManager *markerManager;
+    QGeoPositionInfoSource *positionSource;
 
-    MarkerList *m_markers;
-    MapsWidget *m_mapsWidget;
-    SearchWidget *m_searchWidget;
-    DirectionsWidget *m_directionsWidget;
+    bool tracking;
+    bool firstUpdate;
 };
 
-#endif /* MAINWINDOW_H_ */
+#endif // MAINWINDOW_H

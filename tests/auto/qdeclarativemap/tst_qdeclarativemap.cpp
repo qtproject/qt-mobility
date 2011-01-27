@@ -115,13 +115,13 @@
 
 QTM_USE_NAMESPACE
 
-class tst_QDeclarativeApiTest : public QObject
+class tst_QDeclarativeMap : public QObject
 {
     Q_OBJECT
 
 public:
-    tst_QDeclarativeApiTest() {}
-    virtual ~tst_QDeclarativeApiTest() {}
+    tst_QDeclarativeMap() {}
+    virtual ~tst_QDeclarativeMap() {}
 
 public slots:
     void initTestCase();
@@ -157,7 +157,7 @@ Q_DECLARE_METATYPE(QDeclarativeGeoMapTextObject::VerticalAlignment);
 Q_DECLARE_METATYPE(QDeclarativeGeoMapPixmapObject::Status);
 #endif
 
-void tst_QDeclarativeApiTest::initTestCase()
+void tst_QDeclarativeMap::initTestCase()
 {
 #ifdef API_TEST_DECLARATIVE_LOCATION
     // const keyword in signal parms is a pain
@@ -166,11 +166,11 @@ void tst_QDeclarativeApiTest::initTestCase()
     qRegisterMetaType<QDeclarativeGeoMapTextObject::VerticalAlignment>("VerticalAlignment");
 #endif
 }
-void tst_QDeclarativeApiTest::cleanupTestCase() {}
-void tst_QDeclarativeApiTest::init() {}
-void tst_QDeclarativeApiTest::clean() {}
+void tst_QDeclarativeMap::cleanupTestCase() {}
+void tst_QDeclarativeMap::init() {}
+void tst_QDeclarativeMap::clean() {}
 
-void tst_QDeclarativeApiTest::basicApiTest()
+void tst_QDeclarativeMap::basicApiTest()
 {
     QFETCH(QString, componentString);
     QFETCH(PropertyMap, expectedProperties);
@@ -190,7 +190,11 @@ void tst_QDeclarativeApiTest::basicApiTest()
         QVERIFY(meta_prop.isReadable());
         // Verify that the property is expected, otherwise testcase is outdated.
         if (checkPropertiesAreCovered) {
-            QVERIFY(expectedProperties.contains(meta_prop.name()));
+            if (!expectedProperties.contains(meta_prop.name())) {
+                qDebug() << "Missing property found: " << meta_prop.name();
+                QVERIFY(expectedProperties.contains(meta_prop.name()));
+            }
+
         } else if (!expectedProperties.contains(meta_prop.name())) {
             continue;
         }
@@ -286,7 +290,7 @@ static bool customPtrCompFn(QVariant one, QVariant theOther)
 }
 
 
-void tst_QDeclarativeApiTest::basicApiTest_data()
+void tst_QDeclarativeMap::basicApiTest_data()
 {
     QTest::addColumn<QString>("componentString");
     QTest::addColumn<PropertyMap>("expectedProperties");
@@ -330,8 +334,6 @@ void tst_QDeclarativeApiTest::basicApiTest_data()
     mapDefaultPropertyMap.insert("center", center);
     PropertyValues plugin = {QVariant::fromValue((QDeclarativeGeoServiceProvider*)(0)), QVariant(), &customPodCompFn<QDeclarativeGeoServiceProvider*>};
     mapDefaultPropertyMap.insert("plugin", plugin);
-    PropertyValues objects = {QVariant(), QVariant(), 0}; // todo, what is the best way to test declarative list
-    mapDefaultPropertyMap.insert("objects", objects);
     QTest::newRow("Map") << "import Qt 4.7 \n import QtMobility.location 1.1 \n Map {}" << mapDefaultPropertyMap << true;
 
     // Map 2 - test separately because setting plugin provider changes the expected values
@@ -342,13 +344,14 @@ void tst_QDeclarativeApiTest::basicApiTest_data()
     mapNokiaPluginPropertyMap.insert("plugin", nokiaPlugin);
     QTest::newRow("Map (existing plugin)") << "import Qt 4.7 \n import QtMobility.location 1.1 \n Map {}" << mapNokiaPluginPropertyMap << false;
 
-    // Map 3 - must not crash even if there is no plugin
+    // Map 3 - must not crash even if there is no plugin TODO
     PropertyMap mapNonexistentPluginPropertyMap;
     QDeclarativeGeoServiceProvider* geoNonexistentServiceProvider = new QDeclarativeGeoServiceProvider(this);
     geoNonexistentServiceProvider->setName("non_existent_plugin");
     PropertyValues nonexistentPlugin = {QVariant::fromValue((QDeclarativeGeoServiceProvider*)(0)), QVariant::fromValue(geoServiceProvider), &customPodCompFn<QDeclarativeGeoServiceProvider*>};
     mapNonexistentPluginPropertyMap.insert("plugin", nonexistentPlugin);
-    QTest::newRow("Map (nonexisting plugin)") << "import Qt 4.7 \n import QtMobility.location 1.1 \n Map {}" << mapNokiaPluginPropertyMap << false;
+    //QTest::newRow("Map (nonexisting plugin)") << "import Qt 4.7 \n import QtMobility.location 1.1 \n Map {}" << mapNokiaPluginPropertyMap << false;
+    QTest::newRow("Map (nonexisting plugin)") << "import Qt 4.7 \n import QtMobility.location 1.1 \n Map {}" << mapNonexistentPluginPropertyMap << false;
 
     // MapCircle
     PropertyMap mapCircleDefaultPropertyMap;
@@ -359,6 +362,8 @@ void tst_QDeclarativeApiTest::basicApiTest_data()
     mapCircleDefaultPropertyMap.insert("color", mapCircleColor);
     PropertyValues mapCircleBorder = {QVariant(), QVariant(), 0};
     mapCircleDefaultPropertyMap.insert("border", mapCircleBorder);
+    PropertyValues mapCircleRadius = {double(-1.0), double(2.0), 0}; //zzz
+    mapCircleDefaultPropertyMap.insert("radius", mapCircleRadius);
     QTest::newRow("MapCircle") << "import Qt 4.7 \n import QtMobility.location 1.1 \n MapCircle {}" << mapCircleDefaultPropertyMap << true;
 
     // MapText
@@ -367,6 +372,12 @@ void tst_QDeclarativeApiTest::basicApiTest_data()
     mapTextDefaultPropertyMap.insert("coordinate", mapTextCoordinate);
     PropertyValues mapTextColor = {QColor(), QColor(1,2,3), 0};
     mapTextDefaultPropertyMap.insert("color", mapTextColor);
+    PropertyValues mapTextText = {"", "newText", 0};
+    mapTextDefaultPropertyMap.insert("text", mapTextText);
+    PropertyValues mapTextFont = {QFont(), QFont("helvetica", 8, 2, false), 0};
+    mapTextDefaultPropertyMap.insert("font", mapTextFont);
+    PropertyValues mapTextOffset = {QPoint(0,0), QPoint(1,1), 0};
+    mapTextDefaultPropertyMap.insert("offset", mapTextOffset);
     PropertyValues mapTextHorizontalAlignment = {QVariant::fromValue(QDeclarativeGeoMapTextObject::AlignHCenter), QVariant::fromValue(QDeclarativeGeoMapTextObject::AlignLeft), &customPodCompFn<QtMobility::QDeclarativeGeoMapTextObject::HorizontalAlignment>};
     mapTextDefaultPropertyMap.insert("horizontalAlignment", mapTextHorizontalAlignment);
     PropertyValues mapTextVerticalAlignment = {QVariant::fromValue(QDeclarativeGeoMapTextObject::AlignVCenter), QVariant::fromValue(QDeclarativeGeoMapTextObject::AlignBottom), &customPodCompFn<QtMobility::QDeclarativeGeoMapTextObject::VerticalAlignment>};
@@ -391,6 +402,8 @@ void tst_QDeclarativeApiTest::basicApiTest_data()
     mapImageDefaultPropertyMap.insert("coordinate", mapImageCoordinate);
     PropertyValues mapImageSource = {QUrl(), QUrl("some_url"), 0};
     mapImageDefaultPropertyMap.insert("source", mapImageSource);
+    PropertyValues mapImageOffset = {QPoint(0,0), QPoint(1,1), 0};
+    mapImageDefaultPropertyMap.insert("offset", mapImageOffset);
     // Error below is due to nonexistent image url
     PropertyValues mapImageStatus = {QVariant::fromValue(QDeclarativeGeoMapPixmapObject::Error), QVariant(), &customPodCompFn<QtMobility::QDeclarativeGeoMapPixmapObject::Status>};
     mapImageDefaultPropertyMap.insert("status", mapImageStatus);
@@ -409,6 +422,14 @@ void tst_QDeclarativeApiTest::basicApiTest_data()
     PropertyValues mapPolygonBorder = {QVariant(), QVariant(), 0};
     mapPolylineDefaultPropertyMap.insert("border", mapPolygonBorder);
     QTest::newRow("MapPolygon") << "import Qt 4.7 \n import QtMobility.location 1.1 \n MapPolygon {}" << mapPolygonDefaultPropertyMap << false;
+
+    // MapObjectView
+    PropertyMap mapObjectViewMap;
+    PropertyValues mapDelegate = {QVariant(), QVariant(), 0};
+    mapObjectViewMap.insert("delegate", mapDelegate);
+    PropertyValues mapModel = {QVariant(), QVariant(), 0};
+    mapObjectViewMap.insert("model", mapModel);
+    QTest::newRow("PluginParameter") << "import Qt 4.7 \n import QtMobility.location 1.1 \n MapObjectView {}" << mapObjectViewMap << true;
 
     // MapGroup TODO
 
@@ -434,13 +455,12 @@ void tst_QDeclarativeApiTest::basicApiTest_data()
     reverseGeocodeModelMap.insert("coordinate", reverseGeocodeModel);
     QTest::newRow("GeoCodemodel") << "import Qt 4.7 \n import QtMobility.location 1.1 \n ReverseGeocodeModel {}" << reverseGeocodeModelMap << true;
 #endif // API_TEST_DECLARATIVE_LOCATION
-
 }
 
 /*
     Helper function to create components from given string.
 */
-QObject* tst_QDeclarativeApiTest::createComponent(const QString& componentString)
+QObject* tst_QDeclarativeMap::createComponent(const QString& componentString)
 {
     QDeclarativeComponent component(&m_engine);
     component.setData(componentString.toLatin1(), QUrl::fromLocalFile(""));
@@ -449,5 +469,5 @@ QObject* tst_QDeclarativeApiTest::createComponent(const QString& componentString
     return source_obj;
 }
 
-QTEST_MAIN(tst_QDeclarativeApiTest)
-#include "tst_qdeclarativeapitest.moc"
+QTEST_MAIN(tst_QDeclarativeMap)
+#include "tst_qdeclarativemap.moc"

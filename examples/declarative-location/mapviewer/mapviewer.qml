@@ -63,11 +63,15 @@ Item {
         objects: [
             MapCircle {
                 center : Coordinate {
+                    //latitude: 0
+                    //longitude: 0
                                     latitude : -27
                                     longitude : 179
                                     }
-                radius : 1000.0
+                radius : 1000000.0
+		color: "red"
                 MapMouseArea {
+		    anchors.fill: parent
                     onEntered : { console.log('entered circle') }
                     onExited : { console.log('exited circle') }
                     onPositionChanged : { console.log('moved in circle') }
