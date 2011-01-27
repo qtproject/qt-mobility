@@ -115,13 +115,13 @@
 
 QTM_USE_NAMESPACE
 
-class tst_QDeclarativeApiTest : public QObject
+class tst_QDeclarativeMap : public QObject
 {
     Q_OBJECT
 
 public:
-    tst_QDeclarativeApiTest() {}
-    virtual ~tst_QDeclarativeApiTest() {}
+    tst_QDeclarativeMap() {}
+    virtual ~tst_QDeclarativeMap() {}
 
 public slots:
     void initTestCase();
@@ -157,7 +157,7 @@ Q_DECLARE_METATYPE(QDeclarativeGeoMapTextObject::VerticalAlignment);
 Q_DECLARE_METATYPE(QDeclarativeGeoMapPixmapObject::Status);
 #endif
 
-void tst_QDeclarativeApiTest::initTestCase()
+void tst_QDeclarativeMap::initTestCase()
 {
 #ifdef API_TEST_DECLARATIVE_LOCATION
     // const keyword in signal parms is a pain
@@ -166,11 +166,11 @@ void tst_QDeclarativeApiTest::initTestCase()
     qRegisterMetaType<QDeclarativeGeoMapTextObject::VerticalAlignment>("VerticalAlignment");
 #endif
 }
-void tst_QDeclarativeApiTest::cleanupTestCase() {}
-void tst_QDeclarativeApiTest::init() {}
-void tst_QDeclarativeApiTest::clean() {}
+void tst_QDeclarativeMap::cleanupTestCase() {}
+void tst_QDeclarativeMap::init() {}
+void tst_QDeclarativeMap::clean() {}
 
-void tst_QDeclarativeApiTest::basicApiTest()
+void tst_QDeclarativeMap::basicApiTest()
 {
     QFETCH(QString, componentString);
     QFETCH(PropertyMap, expectedProperties);
@@ -290,7 +290,7 @@ static bool customPtrCompFn(QVariant one, QVariant theOther)
 }
 
 
-void tst_QDeclarativeApiTest::basicApiTest_data()
+void tst_QDeclarativeMap::basicApiTest_data()
 {
     QTest::addColumn<QString>("componentString");
     QTest::addColumn<PropertyMap>("expectedProperties");
@@ -460,7 +460,7 @@ void tst_QDeclarativeApiTest::basicApiTest_data()
 /*
     Helper function to create components from given string.
 */
-QObject* tst_QDeclarativeApiTest::createComponent(const QString& componentString)
+QObject* tst_QDeclarativeMap::createComponent(const QString& componentString)
 {
     QDeclarativeComponent component(&m_engine);
     component.setData(componentString.toLatin1(), QUrl::fromLocalFile(""));
@@ -469,5 +469,5 @@ QObject* tst_QDeclarativeApiTest::createComponent(const QString& componentString
     return source_obj;
 }
 
-QTEST_MAIN(tst_QDeclarativeApiTest)
+QTEST_MAIN(tst_QDeclarativeMap)
 #include "tst_qdeclarativemap.moc"
