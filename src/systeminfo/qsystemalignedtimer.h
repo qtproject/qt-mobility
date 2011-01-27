@@ -58,8 +58,8 @@ class Q_SYSINFO_EXPORT QSystemAlignedTimer : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(int minimumInterval READ minimumInterval WRITE setMinimumInterval CONSTANT)
-    Q_PROPERTY(int maximumInterval READ maximumInterval WRITE setMaximumInterval CONSTANT)
+    Q_PROPERTY(int minimumInterval READ minimumInterval WRITE setMinimumInterval)
+    Q_PROPERTY(int maximumInterval READ maximumInterval WRITE setMaximumInterval)
 
     Q_PROPERTY(bool running READ running WRITE setRunning CONSTANT)
     Q_PROPERTY(bool singleShot READ isSingleShot WRITE setSingleShot CONSTANT)

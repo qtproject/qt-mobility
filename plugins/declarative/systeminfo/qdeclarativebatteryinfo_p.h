@@ -52,15 +52,15 @@ class QDeclarativeBatteryInfo : public QSystemBatteryInfo
 {
     Q_OBJECT
 
-    Q_PROPERTY(bool monitorBatteryStatusChanges READ monitorBatteryStatusChanges WRITE startBatteryStatusChanged CONSTANT)
-    Q_PROPERTY(bool monitorChargingStateChanges READ monitorChargingStateChanges WRITE startChargingStateChanged CONSTANT)
-    Q_PROPERTY(bool monitorChargerTypeChanges READ monitorChargerTypeChanges WRITE startChargerTypeChanged CONSTANT)
-    Q_PROPERTY(bool monitorNominalCapacityChanges READ monitorNominalCapacityChanges WRITE startNominalCapacityChanged CONSTANT)
-    Q_PROPERTY(bool monitorRemainingCapacityPercentChanges READ monitorRemainingCapacityPercentChanges WRITE startRemainingCapacityPercentChanged CONSTANT)
-    Q_PROPERTY(bool monitorRemainingCapacityChanges READ monitorRemainingCapacityChanges WRITE startRemainingCapacityChanged CONSTANT)
-    Q_PROPERTY(bool monitorCurrentFlowChanges READ monitorCurrentFlowChanges WRITE startCurrentFlowChanged CONSTANT)
-    Q_PROPERTY(bool monitorRemainingCapacityBarsChanges READ monitorRemainingCapacityBarsChanges WRITE startRemainingCapacityBarsChanged CONSTANT)
-    Q_PROPERTY(bool monitorRemainingChargingTimeChanges READ monitorRemainingChargingTimeChanges WRITE startRemainingChargingTimeChanged CONSTANT)
+    Q_PROPERTY(bool monitorBatteryStatusChanges READ monitorBatteryStatusChanges WRITE startBatteryStatusChanged)
+    Q_PROPERTY(bool monitorChargingStateChanges READ monitorChargingStateChanges WRITE startChargingStateChanged)
+    Q_PROPERTY(bool monitorChargerTypeChanges READ monitorChargerTypeChanges WRITE startChargerTypeChanged)
+    Q_PROPERTY(bool monitorNominalCapacityChanges READ monitorNominalCapacityChanges WRITE startNominalCapacityChanged)
+    Q_PROPERTY(bool monitorRemainingCapacityPercentChanges READ monitorRemainingCapacityPercentChanges WRITE startRemainingCapacityPercentChanged)
+    Q_PROPERTY(bool monitorRemainingCapacityChanges READ monitorRemainingCapacityChanges WRITE startRemainingCapacityChanged)
+    Q_PROPERTY(bool monitorCurrentFlowChanges READ monitorCurrentFlowChanges WRITE startCurrentFlowChanged)
+    Q_PROPERTY(bool monitorRemainingCapacityBarsChanges READ monitorRemainingCapacityBarsChanges WRITE startRemainingCapacityBarsChanged)
+    Q_PROPERTY(bool monitorRemainingChargingTimeChanges READ monitorRemainingChargingTimeChanges WRITE startRemainingChargingTimeChanged)
 
 public:
     explicit QDeclarativeBatteryInfo(QObject *parent = 0);

@@ -54,13 +54,13 @@ QTM_USE_NAMESPACE
 class QDeclarativeDeviceInfo : public QSystemDeviceInfo
 {
     Q_OBJECT
-    Q_PROPERTY(bool monitorBatteryLevelChanges READ monitorBatteryLevelChanges WRITE startBatteryLevelChanged CONSTANT)
-    Q_PROPERTY(bool monitorBatteryStatusChanges READ monitorBatteryStatusChanges WRITE startBatteryStatusChanged CONSTANT)
-    Q_PROPERTY(bool monitorPowerStateChanges READ monitorPowerStateChanges WRITE startPowerStateChanged CONSTANT)
-    Q_PROPERTY(bool monitorCurrentProfileChanges READ monitorCurrentProfileChanges WRITE startCurrentProfileChanged CONSTANT)
-    Q_PROPERTY(bool monitorBluetoothStateChanges READ monitorBluetoothStateChanges WRITE startBluetoothStateChanged CONSTANT)
+    Q_PROPERTY(bool monitorBatteryLevelChanges READ monitorBatteryLevelChanges WRITE startBatteryLevelChanged)
+    Q_PROPERTY(bool monitorBatteryStatusChanges READ monitorBatteryStatusChanges WRITE startBatteryStatusChanged)
+    Q_PROPERTY(bool monitorPowerStateChanges READ monitorPowerStateChanges WRITE startPowerStateChanged)
+    Q_PROPERTY(bool monitorCurrentProfileChanges READ monitorCurrentProfileChanges WRITE startCurrentProfileChanged)
+    Q_PROPERTY(bool monitorBluetoothStateChanges READ monitorBluetoothStateChanges WRITE startBluetoothStateChanged)
 
-    Q_PROPERTY(bool monitorWirelessKeyboardConnects READ monitorWirelessKeyboardConnects WRITE startWirelessKeyboardConnected CONSTANT)
+    Q_PROPERTY(bool monitorWirelessKeyboardConnects READ monitorWirelessKeyboardConnects WRITE startWirelessKeyboardConnected)
     Q_PROPERTY(bool monitorKeyboardFlips READ monitorKeyboardFlips WRITE startKeyboardFlipped CONSTANT)
     Q_PROPERTY(bool monitorDeviceLocks READ monitorDeviceLocks WRITE startDeviceLocked CONSTANT)
     Q_PROPERTY(bool monitorLockStatusChanges READ monitorLockStatusChanges WRITE startLockStatusChanged CONSTANT)
