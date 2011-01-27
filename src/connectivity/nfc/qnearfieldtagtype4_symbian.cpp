@@ -147,7 +147,7 @@ bool QNearFieldTagType4Symbian::hasNdefMessage()
         return false;
     }
 
-    if (requestResponse(id1).toByteArray().right(2) == resp)
+    if (requestResponse(id1).toByteArray().right(2) != resp)
     {
         LOG("select CC response is "<<requestResponse(id1).toByteArray().right(2));
         END
@@ -163,7 +163,7 @@ bool QNearFieldTagType4Symbian::hasNdefMessage()
     }
 
     QByteArray ccContent = requestResponse(id2).toByteArray();
-    if (ccContent.right(2) == resp)
+    if (ccContent.right(2) != resp)
     {
         LOG("read CC response is "<<ccContent.right(2));
         END
@@ -201,7 +201,7 @@ bool QNearFieldTagType4Symbian::hasNdefMessage()
             return false;
         }
     QByteArray ndefTLV = requestResponse(id3).toByteArray();
-    if (ndefTLV.right(2) == resp)
+    if (ndefTLV.right(2) != resp)
     {
         LOG("select NDEF response is "<<ndefTLV.right(2));
         END
@@ -216,7 +216,7 @@ bool QNearFieldTagType4Symbian::hasNdefMessage()
             return false;
         }
     QByteArray ndefContent = requestResponse(id4).toByteArray();
-    if (ndefContent.right(2) == resp)
+    if (ndefContent.right(2) != resp)
     {
         LOG("read NDEF response is "<<ndefContent.right(2));
         END

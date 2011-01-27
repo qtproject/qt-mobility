@@ -503,7 +503,7 @@ bool QNearFieldTagImplCommon::_waitForRequestCompletedNoSignal(const QNearFieldT
     MNearFieldTagAsyncRequest * request = mPendingRequestList.at(index);
     LOG("get the request from pending request list");
     END
-    return request->WaitRequestCompletedNoSignal(msecs);
+    return (KErrNone == request->WaitRequestCompletedNoSignal(msecs));
 }
 
 void QNearFieldTagImplCommon::DoCancelSendCommand()
