@@ -52,6 +52,46 @@ QL2capServerPrivate::QL2capServerPrivate()
 QL2capServerPrivate::~QL2capServerPrivate()
 {
 }
+
+void QL2capServer::close()
+{
+}
+
+bool QL2capServer::listen(const QBluetoothAddress &address, quint16 port)
+{
+    Q_UNUSED(address);
+    Q_UNUSED(port);
+
+    return false;
+}
+
+void QL2capServer::setMaxPendingConnections(int numConnections)
+{
+    Q_UNUSED(numConnections);
+}
+
+bool QL2capServer::hasPendingConnections() const
+{
+    return false;
+}
+
+QBluetoothSocket *QL2capServer::nextPendingConnection()
+{
+    return 0;
+}
+
+QBluetoothAddress QL2capServer::serverAddress() const
+{
+    return QBluetoothAddress();
+}
+
+quint16 QL2capServer::serverPort() const
+{
+    return 0;
+}
+
+
+
 #ifndef QT_NO_DBUS
 void QL2capServerPrivate::_q_newConnection()
 {

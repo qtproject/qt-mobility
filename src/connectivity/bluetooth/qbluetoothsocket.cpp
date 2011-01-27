@@ -478,7 +478,6 @@ void QBluetoothSocket::abort()
     Q_D(QBluetoothSocket);
     d->abort();
     setSocketState(QBluetoothSocket::UnconnectedState);
-    emit disconnected();
 }
 
 void QBluetoothSocket::disconnectFromService()
@@ -486,7 +485,6 @@ void QBluetoothSocket::disconnectFromService()
     // TODO: is this all we need to do?
     Q_D(QBluetoothSocket);
     d->close();
-    emit disconnected();
 }
 
 QString QBluetoothSocket::localName() const
@@ -580,6 +578,9 @@ QDebug operator<<(QDebug debug, QBluetoothSocket::SocketError error)
         break;
     case QBluetoothSocket::ServiceNotFoundError:
         debug << "QBluetoothSocket::ServiceNotFoundError";
+        break;
+    case QBluetoothSocket::NetworkError:
+        debug << "QBluetoothSocket::NetworkError";
         break;
     default:
         debug << "QBluetoothSocket::SocketError(" << (int)error << ")";

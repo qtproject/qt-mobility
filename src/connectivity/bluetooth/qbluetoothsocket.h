@@ -89,7 +89,8 @@ public:
         ConnectionRefusedError = QAbstractSocket::ConnectionRefusedError,        
         RemoteHostClosedError = QAbstractSocket::RemoteHostClosedError,
         HostNotFoundError = QAbstractSocket::HostNotFoundError,
-        ServiceNotFoundError = QAbstractSocket::SocketAddressNotAvailableError
+        ServiceNotFoundError = QAbstractSocket::SocketAddressNotAvailableError,
+        NetworkError = QAbstractSocket::NetworkError
     };
 
     QBluetoothSocket(SocketType socketType, QObject *parent = 0);   // create socket of type socketType

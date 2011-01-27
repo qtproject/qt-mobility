@@ -48,7 +48,7 @@
 
 #include <QtDBus/QDBusPendingCallWatcher>
 
-//#define QTM_SERVICEDISCOVERY_DEBUG
+#define QTM_SERVICEDISCOVERY_DEBUG
 
 #ifdef QTM_SERVICEDISCOVERY_DEBUG
 #include <QtCore/QDebug>
@@ -144,6 +144,10 @@ bool QBluetoothServiceDiscoveryAgentPrivate::quickDiscovery(const QBluetoothAddr
         return false;
     }
 
+#ifdef QTM_SERVICEDISCOVERY_DEBUG
+    qDebug() << "Quick discovery on" << address.toString();
+#endif
+
     bool foundDevice = true;
 
     if(!uuidFilter.isEmpty()) {
@@ -152,6 +156,9 @@ bool QBluetoothServiceDiscoveryAgentPrivate::quickDiscovery(const QBluetoothAddr
             foreach (const QString s, device_uuids){
                 if(QBluetoothUuid(s) == uuid){
                     foundDevice = true;
+#ifdef QTM_SERVICEDISCOVERY_DEBUG
+                    qDebug() << "*** FOUND SERVICE ON " << address.toString() << "***";
+#endif
                     goto done;
                 }
             }
