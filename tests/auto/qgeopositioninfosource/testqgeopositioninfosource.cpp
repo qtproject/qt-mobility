@@ -271,11 +271,11 @@ void TestQGeoPositionInfoSource::setPreferredPositioningMethods_data()
     << int(QGeoPositionInfoSource::SatellitePositioningMethods)
     << int(QGeoPositionInfoSource::SatellitePositioningMethods)
     << int(QGeoPositionInfoSource::SatellitePositioningMethods);
-    QTest::newRow("Sat supported, Non-Sat prefered")
+    QTest::newRow("Sat supported, Non-Sat preferred")
     << int(QGeoPositionInfoSource::SatellitePositioningMethods)
     << int(QGeoPositionInfoSource::NonSatellitePositioningMethods)
     << int(QGeoPositionInfoSource::SatellitePositioningMethods);
-    QTest::newRow("Sat supported, All prefered")
+    QTest::newRow("Sat supported, All preferred")
     << int(QGeoPositionInfoSource::SatellitePositioningMethods)
     << int(QGeoPositionInfoSource::AllPositioningMethods)
     << int(QGeoPositionInfoSource::SatellitePositioningMethods);
@@ -284,11 +284,11 @@ void TestQGeoPositionInfoSource::setPreferredPositioningMethods_data()
     << int(QGeoPositionInfoSource::NonSatellitePositioningMethods)
     << int(QGeoPositionInfoSource::SatellitePositioningMethods)
     << int(QGeoPositionInfoSource::NonSatellitePositioningMethods);
-    QTest::newRow("Non-Sat supported, Non-Sat prefered")
+    QTest::newRow("Non-Sat supported, Non-Sat preferred")
     << int(QGeoPositionInfoSource::NonSatellitePositioningMethods)
     << int(QGeoPositionInfoSource::NonSatellitePositioningMethods)
     << int(QGeoPositionInfoSource::NonSatellitePositioningMethods);
-    QTest::newRow("Non-Sat supported, All prefered")
+    QTest::newRow("Non-Sat supported, All preferred")
     << int(QGeoPositionInfoSource::NonSatellitePositioningMethods)
     << int(QGeoPositionInfoSource::AllPositioningMethods)
     << int(QGeoPositionInfoSource::NonSatellitePositioningMethods);
@@ -297,11 +297,11 @@ void TestQGeoPositionInfoSource::setPreferredPositioningMethods_data()
     << int(QGeoPositionInfoSource::AllPositioningMethods)
     << int(QGeoPositionInfoSource::SatellitePositioningMethods)
     << int(QGeoPositionInfoSource::SatellitePositioningMethods);
-    QTest::newRow("All supported, Non-Sat prefered")
+    QTest::newRow("All supported, Non-Sat preferred")
     << int(QGeoPositionInfoSource::AllPositioningMethods)
     << int(QGeoPositionInfoSource::NonSatellitePositioningMethods)
     << int(QGeoPositionInfoSource::NonSatellitePositioningMethods);
-    QTest::newRow("All supported, All prefered")
+    QTest::newRow("All supported, All preferred")
     << int(QGeoPositionInfoSource::AllPositioningMethods)
     << int(QGeoPositionInfoSource::AllPositioningMethods)
     << int(QGeoPositionInfoSource::AllPositioningMethods);
