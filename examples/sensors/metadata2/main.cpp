@@ -57,7 +57,7 @@ const char* const EFFICIENT_BUFFER_SIZE = "efficientBufferSize";
 
 
 
-QString checkSensor( QSensor *sensor )
+QString checkSensor( QSensor *sensor, bool isDefault)
 {
     qrangelist sen_datarates = sensor->availableDataRates();
     QString sen_desc('"');
@@ -96,24 +96,14 @@ QString checkSensor( QSensor *sensor )
 
     // bufferSizes
     QVariant maxVariant = sensor->property(MAX_BUFFER_SIZE);
-    int maxSize = maxVariant.isValid()?maxVariant.toInt():1;
+    QString bufferSizes("[1..");
+    bufferSizes.append(QString::number(maxVariant.isValid()?maxVariant.toInt():1));
+    bufferSizes.append("],");
     QVariant efficientVariant = sensor->property(EFFICIENT_BUFFER_SIZE);
-    int efficientSize = efficientVariant.isValid()?efficientVariant.toInt():1;
-    QString bufferSizes("[1");
-    if (efficientSize==1){
-        bufferSizes.append("..");
-    }
-    else{
-        bufferSizes.append("|");
-        for (int i=1; efficientSize*i<maxSize; i++){
-            bufferSizes.append(QString::number(efficientSize*i));
-            bufferSizes.append("|");
-        }
-    }
-    bufferSizes.append(QString::number(maxSize));
-    bufferSizes.append("]");
+    bufferSizes.append(QString::number(efficientVariant.isValid()?efficientVariant.toInt():1));
 
     QString metadata(sen_ident);
+    if (isDefault) metadata.append("- default");
     metadata.append(",");
     metadata.append(sen_type);
     metadata.append(",");
@@ -125,7 +115,6 @@ QString checkSensor( QSensor *sensor )
     metadata.append(",");
     metadata.append(bufferSizes);
     metadata.append("\n");
-
 
 
     return metadata;
@@ -144,24 +133,25 @@ int main( int argc, char **argv )
 
     QTextStream out(&file);
 
-    out <<"Identifier,Type,Description,OutputRanges,DataRates,BufferSizes"<<endl;
+    out <<"Identifier,Type,Description,OutputRanges,DataRates,BufferSizes,EfficientBufferSize"<<endl;
 
     QList<QByteArray> types = QSensor::sensorTypes();
     for (int j=0, l= types.size();j<l; j++ ){
 
         const QByteArray type = types.at(j);
         QList<QByteArray> ids = QSensor::sensorsForType(type);
-
-        for( int i = 0, ll=ids.size(); i < ll; ++i )
+        QByteArray defaultSensor = QSensor::defaultSensorForType(type);        
+        for( int i = 0, ll=ids.size(); i < ll; ++i)
         {
             QSensor sensor(type);
-            sensor.setIdentifier(ids.at(i));
+            QByteArray id = ids.at(i);
+            sensor.setIdentifier(id);
             if( ! sensor.connectToBackend() )
             {
-                qDebug() << "connectToBackend failed" << ids.at(i) <<endl;
+                qDebug() << "connectToBackend failed" << id <<endl;
                 result = false;
             } else {
-                out << checkSensor(&sensor);
+                out << checkSensor(&sensor, id==defaultSensor);
             }
         }
     }

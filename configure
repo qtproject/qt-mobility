@@ -559,6 +559,7 @@ if [ -z "$PLATFORM_CONFIG" ]; then
     compileTest NetworkManager networkmanager
     compileTest "CoreWLAN (MacOS 10.6)" corewlan
     compileTest Immersion immersion
+    compileTest "MeegoTouch Feedback" meegotouchfeedback
     compileTest "Maemo ICD" maemo-icd
     compileTest "Maemo ICD WLAN" maemo-icd-network-wlan
     compileTest "Maemo5 contacts dependencies" maemo5-contacts
@@ -569,6 +570,7 @@ if [ -z "$PLATFORM_CONFIG" ]; then
     compileTest "Blkid" blkid
     compileTest "Pulse Audio" pulseaudio
     compileTest "udev" udev
+    compileTest "Symbian NFC" nfc
 
     if [ "$LINUX_TARGET" = maemo6 ] || [ "$LINUX_TARGET" = meego ]; then
         compileTest sensord sensord

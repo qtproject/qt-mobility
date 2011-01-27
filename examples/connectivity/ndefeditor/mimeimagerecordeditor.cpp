@@ -98,8 +98,8 @@ void MimeImageRecordEditor::setRecord(const QNdefRecord &record)
     QImageReader reader(&buffer);
 
     ui->mimeImageType->setText(imageFormatToMimeType(reader.format()));
-
-    ui->mimeImageImage->setPixmap(QPixmap::fromImageReader(&reader));
+ 
+    ui->mimeImageImage->setPixmap(QPixmap::fromImage(reader.read()));
     ui->mimeImageFile->clear();
 }
 

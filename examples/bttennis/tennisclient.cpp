@@ -48,8 +48,10 @@
 #include <QtCore/QStringList>
 
 TennisClient::TennisClient(QObject *parent)
-:   QObject(parent), socket(0), stream(0)
+:   QObject(parent), socket(0), stream(0), elapsed(new QTime), lagTimeout(0)
 {
+    lagTimer.setInterval(1000);
+    connect(&lagTimer, SIGNAL(timeout()), this, SLOT(sendEcho()));
 }
 
 TennisClient::~TennisClient()
@@ -74,15 +76,20 @@ void TennisClient::startClient(const QBluetoothServiceInfo &remoteService)
     connect(socket, SIGNAL(readyRead()), this, SLOT(readSocket()));
     connect(socket, SIGNAL(connected()), this, SLOT(connected()));
     connect(socket, SIGNAL(disconnected()), this, SIGNAL(disconnected()));
+    connect(socket, SIGNAL(disconnected()), this, SLOT(socketDisconnected()));
     connect(socket, SIGNAL(error(QBluetoothSocket::SocketError)), this, SLOT(error(QBluetoothSocket::SocketError)));
 
-    stream = new QDataStream(socket);
+    lagTimer.start();
 }
 //! [startClient]
 
 //! [stopClient]
 void TennisClient::stopClient()
 {
+    qDebug() << Q_FUNC_INFO << "closing client!";
+
+    lagTimer.stop();
+
     delete stream;
     stream = 0;
 
@@ -91,6 +98,13 @@ void TennisClient::stopClient()
 }
 //! [stopClient]
 
+//! [socketDisconnected]
+void TennisClient::socketDisconnected()
+{
+    stopClient();
+}
+//! [socketDisconnected]
+
 //! [readSocket]
 void TennisClient::readSocket()
 {
@@ -98,12 +112,12 @@ void TennisClient::readSocket()
         return;
 
     while (socket->bytesAvailable()) {
-        QString s;
+        QString str;
 
-        *stream >> s;
+        *stream >> str;
 
-        QStringList args = s.split(QChar(' '));
-        s = args.takeFirst();
+        QStringList args = str.split(QChar(' '));
+        QString s = args.takeFirst();
 
         if(s == "m" && args.count() == 2) {
             emit moveBall(args.at(0).toInt(), args.at(1).toInt());
@@ -113,6 +127,20 @@ void TennisClient::readSocket()
         }
         else if(s == "l" && args.count() == 1){
             emit moveLeftPaddle(args.at(0).toInt());
+        }
+        else if(s == "e"){ // echo
+            QByteArray b;
+            QDataStream s(&b, QIODevice::WriteOnly);
+            s << str;
+            socket->write(b);
+        }
+        else if(s == "E"){
+            lagTimeout = 0;
+            QTime then = QTime::fromString(args.at(0), "hh:mm:ss.zzz");
+            if(then.isValid()) {
+                emit lag(then.msecsTo(QTime::currentTime()));
+//                qDebug() << "RTT: " << then.msecsTo(QTime::currentTime()) << "ms";
+            }
         }
         else {
             qDebug() << "Unknown command" << s;
@@ -124,11 +152,14 @@ void TennisClient::readSocket()
 //! [moveRightPaddle]
 void TennisClient::moveRightPaddle(int y)
 {
-    if(stream) {
+    int msec = elapsed->elapsed();
+
+    if(stream && msec > 50) {
         QByteArray b;
         QDataStream s(&b, QIODevice::WriteOnly);
         s << QString("r %1").arg(y);
         socket->write(b);
+        elapsed->restart();
     }
 }
 //! [moveRightPaddle]
@@ -136,6 +167,7 @@ void TennisClient::moveRightPaddle(int y)
 //! [connected]
 void TennisClient::connected()
 {
+    stream = new QDataStream(socket);
     emit connected(socket->peerName());
 }
 //! [connected]
@@ -144,4 +176,21 @@ void TennisClient::error(QBluetoothSocket::SocketError err)
 {
     printf("Got err: %d\n", err);
     qDebug() << Q_FUNC_INFO << "error" << err;
+    emit disconnected();
+}
+
+void TennisClient::sendEcho()
+{
+    if(lagTimeout) {
+        lagTimeout--;
+        return;
+    }
+
+    if(stream) {
+        QByteArray b;
+        QDataStream s(&b, QIODevice::WriteOnly);
+        s << QString("E %1").arg(QTime::currentTime().toString("hh:mm:ss.zzz"));
+        socket->write(b);
+        lagTimeout = 10;
+    }
 }

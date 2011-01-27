@@ -237,7 +237,6 @@ void QSoundEffect::setVolume(qreal volume)
         return;
 
     d->setVolume(iVolume);
-    emit volumeChanged();
 }
 
 bool QSoundEffect::isMuted() const
@@ -251,7 +250,6 @@ void QSoundEffect::setMuted(bool muted)
         return;
 
     d->setMuted(muted);
-    emit mutedChanged();
 }
 
 bool QSoundEffect::isLoaded() const

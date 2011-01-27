@@ -53,7 +53,7 @@ Rectangle {
     BluetoothDiscoveryModel {
         id: myModel
         minimalDiscovery: true
-        onDiscoveryChanged: busy.running = !busy.running
+        onDiscoveryChanged: busy.running = discovery;
 //        onNewServiceDiscovered: console.log("Found new service " + service.deviceAddress + " " + service.deviceName + " " + service.serviceName);
 //        uuidFilter: "e8e10f95-1a70-4b27-9ccf-02010264e9c9"
    }

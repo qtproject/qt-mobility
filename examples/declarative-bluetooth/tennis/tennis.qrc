@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/">
         <file>tennis.qml</file>
+        <file>sensor.qml</file>
     </qresource>
 </RCC>

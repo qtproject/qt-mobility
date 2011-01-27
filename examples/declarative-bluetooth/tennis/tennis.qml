@@ -41,20 +41,21 @@
 import Qt 4.7
 import QtMobility.connectivity 1.2
 
-
 Rectangle {
     id: bounds
 
     property BluetoothService currentService
     property alias minimalDiscovery: myModel.minimalDiscovery
     property alias uuidFilder: myModel.uuidFilter
+    property color fg: "white"
+    property color bg: "black"
 
     Rectangle {
         id: page
 
         width: 640
         height: 360
-        color: "white"
+        color: bg
         focus:  true
 
         // client side
@@ -78,7 +79,8 @@ Rectangle {
        BluetoothService {
             id: btservice
 
-            deviceAddress: "00:21:86:E8:0F:8D"
+            //deviceAddress: "00:21:86:E8:0F:8D"
+            deviceAddress: "00:1A:9F:92:9E:5A"
             serviceUuid: "e8e10f95-1a70-4b27-9ccf-02010264e9c9"
        }
 
@@ -95,9 +97,20 @@ Rectangle {
                else if(args[0] == "l"){
                    leftPaddle.y = Number(args[1])+topBumper.height;
                }
-               else if(args[0] = "s"){
+               else if(args[0] == "s"){
                    scoreLeft.text = args[1];
                    scoreRight.text = args[2];
+               }
+               else if(args[0] == "e"){ // echo packet, check for RTT
+                   socket.sendStringData(s);
+               }
+               else if(args[0] == "E"){
+                   var d = new Date();
+
+                   var lag = d.getTime() - args[1];
+                   if(lag > 250){
+                       statusText.text = "LAG! " + lag + "ms";
+                   }
                }
            }
 
@@ -105,9 +118,17 @@ Rectangle {
            service: btservice
 
            onStateChanged: console.log("New socket state " + state);
-           onErrorChanged: { console.log("Error: " + error); reconnect.start(); }
+           onErrorChanged: { statusText.text = error; reconnect.start(); }
            onServiceChanged: console.log("New service");
-           onConnectedChanged: console.log("Connected changed");
+           onConnectedChanged: {
+               if(connected) {
+                    statusText.text = "Connected";
+               }
+               else {
+                   statusText.text = "Unconnected " + error;
+       }
+           }
+           //onConnectedChanged: console.log("Connected changed");
            onDataAvailable: parse(socket.stringData);
        }
 
@@ -115,6 +136,21 @@ Rectangle {
            id: reconnect
            interval: 15000
            onTriggered: socket.connected = true;
+       }
+
+       Timer {
+           id: lagTimer
+
+           function sendEcho() {
+               var s = "E " + new Date().getTime();
+               socket.sendStringData(s);
+//               console.log(s);
+           }
+
+           interval: 1000
+           repeat: true
+           running: socket.connected
+           onTriggered: sendEcho();
        }
 
 
@@ -149,6 +185,20 @@ Rectangle {
            }
        }
 
+       Loader {
+           id: deviceSensor
+           source: "sensor.qml"
+       }
+
+       Connections {
+           target: deviceSensor.item
+           onReadingChanged: {
+                if (x >= 20 && x <= 70)
+                    rightPaddle.y = ((x - 20) / 50 * page.height) - rightPaddle.height / 2;
+           }
+       }
+
+
        MouseArea {
            anchors.fill: parent
            enabled:  true
@@ -170,17 +220,17 @@ Rectangle {
             id: ball
 
             x: page.width/2-width/2; width: 12; height: 12; z: 1
-            color: "black"
+            color: fg
         }
 
         Rectangle {
             id: leftPaddle
-            color: "black"
+            color: fg
             x: 0; width: 12; height: 50; y: page.height/2-height/2;
         }
         Rectangle {
             id: rightPaddle
-            color: "black"
+            color: fg
             x: page.width - 12; width: 12; height: 50
             y: page.height/2-height/2
             Behavior on y { SpringAnimation{ damping: 0.2; spring: 4.5; velocity: 300 } }
@@ -196,13 +246,13 @@ Rectangle {
         }
         Rectangle {
             id: topBumper
-            color: "black"
+            color: fg
             x: 0; y: 0
             height: 12; width: page.width
         }
         Rectangle {
             id: bottomBumer
-            color: "black"
+            color: fg
             x: 0; y: page.height-height
             height: 12; width: page.width
         }
@@ -210,6 +260,7 @@ Rectangle {
             id: scoreLeft
             font.family: "Old English"
             font.pixelSize: 50; font.bold: true
+            color: fg
             text:  "0"
             y: 50
             x: page.width/4-paintedWidth/2
@@ -218,6 +269,7 @@ Rectangle {
             id: scoreRight
             font: scoreLeft.font
             text:  "0"
+            color: fg
             y: 50
             x: 3*page.width/4-paintedWidth/2
         }
@@ -225,7 +277,20 @@ Rectangle {
         // The rest, to make it look realistic, if neither ever scores...
         Repeater {
             model: page.height / 8
-            Rectangle { color: "Black"; x: page.width/2; y: index * 8; width: 2; height: 5 }
+            Rectangle { color: fg; x: page.width/2; y: index * 8; width: 2; height: 5 }
+        }
+
+
+        Text {
+            id: statusText
+            font.family: "Old English"
+            font.pixelSize: 25; font.bold: true
+            text:  ""
+            color:  fg
+            y: page.height-height-25
+            x: 24
+
+            onTextChanged: NumberAnimation { target: statusText; property: "opacity"; easing.type: Easing.InOutSine; from: 1; to: 0; duration: 2000 }
         }
 
         transform: Scale { xScale: bounds.width/page.width; yScale: bounds.height/page.height }

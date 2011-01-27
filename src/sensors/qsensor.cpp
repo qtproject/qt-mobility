@@ -62,16 +62,35 @@ QTM_BEGIN_NAMESPACE
     comparable (as they may choose different fixed points for their reference).
 */
 
-// A bit of a hack to call qRegisterMetaType when the library is loaded.
-static int qtimestamp_id = qRegisterMetaType<QtMobility::qtimestamp>("QtMobility::qtimestamp");
-static int qrange_id = qRegisterMetaType<QtMobility::qrange>("QtMobility::qrange");
-static int qrangelist_id = qRegisterMetaType<QtMobility::qrangelist>("QtMobility::qrangelist");
-static int qoutputrangelist_id = qRegisterMetaType<QtMobility::qoutputrangelist>("QtMobility::qoutputrangelist");
+/*!
+    \typedef qrange
+    \relates QSensor
 
-// =====================================================================
+    This type is defined as a QPair.
+
+    \code
+    typedef QPair<int,int> qrange;
+    \endcode
+
+    \sa QPair, qrangelist, QSensor::availableDataRates
+*/
+
+/*!
+    \typedef qrangelist
+    \relates QSensor
+
+    This type is defined as a list of qrange values.
+
+    \code
+    typedef QList<qrange> qrangelist;
+    \endcode
+
+    \sa QList, qrange, QSensor::availableDataRates
+*/
 
 /*!
     \class qoutputrange
+    \relates QSensor
     \brief The qoutputrange class holds the specifics of an output range.
 
     The class is defined as a simple struct.
@@ -99,7 +118,7 @@ static int qoutputrangelist_id = qRegisterMetaType<QtMobility::qoutputrangelist>
     256 possible values to report with. These values are scaled so that they can represent either
     -2G to +2G (with an accuracy value of 0.015G) or -8G to +8G (with an accuracy value of 0.06G).
 
-    \sa QSensor::outputRanges
+    \sa qoutputrangelist, QSensor::outputRanges
 */
 
 /*!
@@ -122,6 +141,25 @@ static int qoutputrangelist_id = qRegisterMetaType<QtMobility::qoutputrangelist>
     The accuracy value represents the resolution of the sensor. It is the smallest change
     the sensor can detect and is expressed using the same units as the minimum and maximum.
 */
+
+/*!
+    \typedef qoutputrangelist
+    \relates QSensor
+
+    This type is defined as a list of qoutputrange values.
+
+    \code
+    typedef QList<qoutputrange> qoutputrangelist;
+    \endcode
+
+    \sa QList, qoutputrange, QSensor::outputRanges
+*/
+
+// A bit of a hack to call qRegisterMetaType when the library is loaded.
+static int qtimestamp_id = qRegisterMetaType<QtMobility::qtimestamp>("QtMobility::qtimestamp");
+static int qrange_id = qRegisterMetaType<QtMobility::qrange>("QtMobility::qrange");
+static int qrangelist_id = qRegisterMetaType<QtMobility::qrangelist>("QtMobility::qrangelist");
+static int qoutputrangelist_id = qRegisterMetaType<QtMobility::qoutputrangelist>("QtMobility::qoutputrangelist");
 
 // =====================================================================
 
@@ -206,7 +244,7 @@ QByteArray QSensor::identifier() const
 
 void QSensor::setIdentifier(const QByteArray &identifier)
 {
-    if (d->backend) {
+    if (isConnectedToBackend()) {
         qWarning() << "ERROR: Cannot call QSensor::setIdentifier while connected to a backend!";
         return;
     }
@@ -234,11 +272,25 @@ QByteArray QSensor::type() const
 */
 bool QSensor::connectToBackend()
 {
-    if (d->backend)
+    if (isConnectedToBackend())
         return true;
 
     d->backend = QSensorManager::createBackend(this);
-    return (d->backend != 0);
+
+    // Reset the properties to their default values and re-set them now so
+    // that the logic we've put into the setters gets called.
+    if (d->dataRate != 0) {
+        int tmp = d->dataRate;
+        d->dataRate = 0;
+        setDataRate(tmp);
+    }
+    if (d->outputRange != -1) {
+        int tmp = d->outputRange;
+        d->outputRange = -1;
+        setOutputRange(tmp);
+    }
+
+    return isConnectedToBackend();
 }
 
 /*!
@@ -279,7 +331,7 @@ bool QSensor::isBusy() const
 */
 void QSensor::setActive(bool active)
 {
-    if (active == d->active)
+    if (active == isActive())
         return;
 
     if (active)
@@ -307,7 +359,7 @@ bool QSensor::isActive() const
     See the sensor_explorer example for an example of how to interpret and use
     this information.
 
-    \sa QSensor::dataRate
+    \sa QSensor::dataRate, qrangelist
 */
 
 qrangelist QSensor::availableDataRates() const
@@ -348,7 +400,7 @@ int QSensor::dataRate() const
 
 void QSensor::setDataRate(int rate)
 {
-    if (rate == 0) {
+    if (rate == 0 || !isConnectedToBackend()) {
         d->dataRate = rate;
         return;
     }
@@ -361,7 +413,7 @@ void QSensor::setDataRate(int rate)
         }
     }
     if (warn) {
-        qWarning() << "setDataRate: rate" << rate << "is not supported by the sensor.";
+        qWarning() << "setDataRate:" << rate << "is not supported by the sensor.";
     }
 }
 
@@ -398,7 +450,7 @@ void QSensor::setDataRate(int rate)
 */
 bool QSensor::start()
 {
-    if (d->active)
+    if (isActive())
         return true;
     if (!connectToBackend())
         return false;
@@ -408,7 +460,7 @@ bool QSensor::start()
     // Backend will update the flags appropriately
     d->backend->start();
     Q_EMIT activeChanged();
-    return d->active;
+    return isActive();
 }
 
 /*!
@@ -420,7 +472,7 @@ bool QSensor::start()
 */
 void QSensor::stop()
 {
-    if (!d->active || !d->backend)
+    if (!isActive() || !isConnectedToBackend())
         return;
     d->active = false;
     d->backend->stop();
@@ -463,6 +515,7 @@ void QSensor::addFilter(QSensorFilter *filter)
         qWarning() << "addFilter: passed a null filter!";
         return;
     }
+    filter->setSensor(this);
     d->filters << filter;
 }
 
@@ -517,13 +570,7 @@ void QSensor::removeFilter(QSensorFilter *filter)
     A sensor may have more than one output range. Typically this is done
     to give a greater measurement range at the cost of lowering accuracy.
 
-    The qoutputrangelist type exists for the benefit of the meta-type system.
-    It is just a typedef.
-    \code
-    typedef qoutputrangelist QList<qoutputrange>;
-    \endcode
-
-    \sa QSensor::outputRange, qoutputrange
+    \sa QSensor::outputRange, qoutputrangelist
 */
 
 qoutputrangelist QSensor::outputRanges() const
@@ -556,11 +603,18 @@ int QSensor::outputRange() const
 
 void QSensor::setOutputRange(int index)
 {
-    if (index < -1 || index >= d->outputRanges.count()) {
-        qWarning() << "ERROR: Output range" << index << "is not valid";
+    if (index == -1 || !isConnectedToBackend()) {
+        d->outputRange = index;
         return;
     }
-    d->outputRange = index;
+    bool warn = true;
+    if (index >= 0 && index < d->outputRanges.count()) {
+        warn = false;
+        d->outputRange = index;
+    }
+    if (warn) {
+        qWarning() << "setOutputRange:" << index << "is not supported by the sensor.";
+    }
 }
 
 /*!

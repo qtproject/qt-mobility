@@ -560,6 +560,7 @@ call :compileTest SymbianContactModel symbiancntmodel
 call :compileTest SymbianContactModelv2 symbiancntmodelv2
 call :compileTest S60_Sensor_API sensors_s60_31
 call :compileTest Symbian_Sensor_Framework sensors_symbian
+call :compileTest Sensor_Framework_Light sensors_symbian_light
 call :compileTest Symbian_Hb hb_symbian
 call :compileTest Audiorouting_s60 audiorouting_s60
 call :compileTest Tunerlibrary_for_3.1 tunerlib_s60
@@ -577,7 +578,7 @@ call :compileTest CHWRMHaptics chwrmhaptics
 call :compileTest MDS mds
 call :compileTest MDS_25 mds_25
 call :compileTest MDS_25_92MCL mds_25_92mcl
-call :compileTest NFC nfc
+call :compileTest Symbian_NFC nfc
 call :compileTest BTEngineConnectionManager_Symbian btengconnman_symbian
 call :compileTest BTEngineDeviceManager_Symbian btengdevman_symbian
 goto noTests

@@ -53,7 +53,7 @@
 QTM_BEGIN_NAMESPACE
 
 QBluetoothDeviceDiscoveryAgentPrivate::QBluetoothDeviceDiscoveryAgentPrivate()
-:   adapter(0)
+    :   adapter(0), lastError(QBluetoothDeviceDiscoveryAgent::NoError)
 {
     manager = new OrgBluezManagerInterface(QLatin1String("org.bluez"), QLatin1String("/"),
                                            QDBusConnection::systemBus());
@@ -72,10 +72,20 @@ bool QBluetoothDeviceDiscoveryAgentPrivate::isActive() const
 
 void QBluetoothDeviceDiscoveryAgentPrivate::start()
 {
+    discoveredDevices.clear();
+
     QDBusPendingReply<QDBusObjectPath> reply = manager->DefaultAdapter();
     reply.waitForFinished();
-    if (reply.isError())
+    if (reply.isError()) {
+        errorString = reply.error().message();
+#ifdef QTM_DEVICEDISCOVERY_DEBUG
+        qDebug() << Q_FUNC_INFO << "ERROR: " << errorString;
+#endif
+        lastError = QBluetoothDeviceDiscoveryAgent::IOFailure;
+        Q_Q(QBluetoothDeviceDiscoveryAgent);
+        emit q->error(lastError);
         return;
+    }
 
     adapter = new OrgBluezAdapterInterface(QLatin1String("org.bluez"), reply.value().path(),
                                            QDBusConnection::systemBus());
@@ -88,8 +98,16 @@ void QBluetoothDeviceDiscoveryAgentPrivate::start()
 
     QDBusPendingReply<QVariantMap> propertiesReply = adapter->GetProperties();
     propertiesReply.waitForFinished();
-    if(propertiesReply.isError())
+    if(propertiesReply.isError()) {
+#ifdef QTM_DEVICEDISCOVERY_DEBUG
+        qDebug() << Q_FUNC_INFO << "ERROR: " << errorString;
+#endif
+        errorString = propertiesReply.error().message();
+        lastError = QBluetoothDeviceDiscoveryAgent::IOFailure;
+        Q_Q(QBluetoothDeviceDiscoveryAgent);
+        emit q->error(lastError);
         return;
+    }
 
 #ifdef QTM_DEVICEDISCOVERY_DEBUG
     qDebug() << "Looking up cached devices";
@@ -123,6 +141,13 @@ void QBluetoothDeviceDiscoveryAgentPrivate::start()
     if (discoveryReply.isError()) {
         delete adapter;
         adapter = 0;
+        errorString = discoveryReply.error().message();
+        lastError = QBluetoothDeviceDiscoveryAgent::IOFailure;
+        Q_Q(QBluetoothDeviceDiscoveryAgent);
+        emit q->error(lastError);
+#ifdef QTM_DEVICEDISCOVERY_DEBUG
+        qDebug() << Q_FUNC_INFO << "ERROR: " << errorString;
+#endif
         return;
     }
 }
@@ -136,6 +161,8 @@ void QBluetoothDeviceDiscoveryAgentPrivate::stop()
         adapter->StopDiscovery();
         adapter->deleteLater();
         adapter = 0;
+        Q_Q(QBluetoothDeviceDiscoveryAgent);
+        emit q->error(QBluetoothDeviceDiscoveryAgent::Canceled);
     }
 }
 
@@ -147,10 +174,16 @@ void QBluetoothDeviceDiscoveryAgentPrivate::_q_deviceFound(const QString &addres
     quint32 btClass = dict.value(QLatin1String("Class")).toUInt();    
 
 #ifdef QTM_DEVICEDISCOVERY_DEBUG
-    qDebug() << "Discovered: " << address << btName << "Num UUIDs" << dict.value(QLatin1String("UUIDs")).toStringList().count() << "total device" << discoveredDevices.count() << "cached" << dict.value(QLatin1String("Cached")).toBool();
+    qDebug() << "Discovered: " << address << btName
+             << "Num UUIDs" << dict.value(QLatin1String("UUIDs")).toStringList().count()
+             << "total device" << discoveredDevices.count() << "cached"
+             << dict.value(QLatin1String("Cached")).toBool()
+             << "RSSI" << dict.value(QLatin1String("RSSI")).toInt();
 #endif
 
-    QBluetoothDeviceInfo device(btAddress, btName, btClass);    
+    QBluetoothDeviceInfo device(btAddress, btName, btClass);
+    if(dict.value(QLatin1String("RSSI")).isValid())
+        device.setRssi(dict.value(QLatin1String("RSSI")).toInt());
     QList<QBluetoothUuid> uuids;
     foreach (QString u, dict.value(QLatin1String("UUIDs")).toStringList()) {
         uuids.append(QBluetoothUuid(u));
@@ -159,8 +192,12 @@ void QBluetoothDeviceDiscoveryAgentPrivate::_q_deviceFound(const QString &addres
     device.setCached(dict.value("Cached").toBool());
     for(int i = 0; i < discoveredDevices.size(); i++){
         if(discoveredDevices[i].address() == device.address()) {
-            if(discoveredDevices[i] == device)
+            if(discoveredDevices[i] == device) {
+#ifdef QTM_DEVICEDISCOVERY_DEBUG
+                  qDebug() << "Duplicate: " << address;
+#endif
                 return;
+            }
             discoveredDevices.replace(i, device);
             Q_Q(QBluetoothDeviceDiscoveryAgent);
 #ifdef QTM_DEVICEDISCOVERY_DEBUG
@@ -171,6 +208,9 @@ void QBluetoothDeviceDiscoveryAgentPrivate::_q_deviceFound(const QString &addres
             return; // this works if the list doesn't contain duplicates. Don't let it.
         }
     }
+#ifdef QTM_DEVICEDISCOVERY_DEBUG
+    qDebug() << "Emit: " << address;
+#endif
     discoveredDevices.append(device);
     Q_Q(QBluetoothDeviceDiscoveryAgent);
     emit q->deviceDiscovered(device);

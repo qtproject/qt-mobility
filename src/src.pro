@@ -68,10 +68,12 @@ landmarks.subdir=landmarks
 landmarks.target=sub-landmarks
 landmarks.depends=location
 
-# Connectivity (nfc)  depends on Service Framework
-connectivity.subdir=connectivity
-connectivity.target=sub-connectivity
-connectivity.depends=serviceframework
+symbian {
+# Connectivity (nfc) depends on Service Framework on Symbian
+    connectivity.subdir=connectivity
+    connectivity.target=sub-connectivity
+    connectivity.depends=serviceframework
+}
 
 symbian {
     SUBDIRS += s60installs

@@ -47,8 +47,12 @@
 #include <QDebug>
 
 TennisServer::TennisServer(QObject *parent)
-:   QObject(parent), l2capServer(0), stream(0), clientSocket(0)
-{
+:   QObject(parent), l2capServer(0), stream(0), clientSocket(0), lagReplyTimeout(0)
+{    
+    elapsed.start();
+    ballElapsed.start();
+    lagTimer.setInterval(1000);
+    connect(&lagTimer, SIGNAL(timeout()), this, SLOT(sendEcho()));
 }
 
 TennisServer::~TennisServer()
@@ -120,6 +124,7 @@ void TennisServer::startServer()
 //! [stopServer]
 void TennisServer::stopServer()
 {
+    qDebug() <<Q_FUNC_INFO;
     // Unregister service
     serviceInfo.unregisterService();
 
@@ -139,12 +144,15 @@ void TennisServer::stopServer()
 //! [moveBall]
 void TennisServer::moveBall(int x, int y)
 {
-    if(stream){
+    int msec = ballElapsed.elapsed();
+
+    if(stream && msec > 30){
         QByteArray b;
         QDataStream s(&b, QIODevice::WriteOnly);
         s << QString("m %1 %2").arg(x).arg(y);
         //s << QLatin1String("m") << x << y;
         clientSocket->write(b);
+        ballElapsed.restart();
     }
 }
 //! [moveBall]
@@ -162,12 +170,16 @@ void TennisServer::score(int left, int right)
 
 void TennisServer::moveLeftPaddle(int y)
 {
-    if(stream) {
+
+    int msec = elapsed.elapsed();
+
+    if(stream && msec > 50) {
         QByteArray b;
         QDataStream s(&b, QIODevice::WriteOnly);
         s << QString("l %1").arg(y);
 //        s << QChar('l') << y;
         clientSocket->write(b);
+        elapsed.restart();
     }
 }
 
@@ -178,16 +190,32 @@ void TennisServer::readSocket()
 
     while (clientSocket->bytesAvailable()) {
 
-        QString s;
-        *stream >> s;
-        QStringList args = s.split(QChar(' '));
-        s = args.takeFirst();
+        QString str;
+        *stream >> str;
+        QStringList args = str.split(QChar(' '));
+        QString s = args.takeFirst();
+
         if(s == "r" && args.count() == 1){
             int y;
 
             emit moveRightPaddle(args.at(0).toInt());
         }
+        else if(s == "e" && args.count() == 1){
+            lagReplyTimeout = 0;
+            QTime then = QTime::fromString(args.at(0), "hh:mm:ss.zzz");
+            if(then.isValid()) {
+                emit lag(then.msecsTo(QTime::currentTime()));
+//                qDebug() << "RTT: " << then.msecsTo(QTime::currentTime()) << "ms";
+            }
+        }
+        else if(s == "E"){
+            QByteArray b;
+            QDataStream st(&b, QIODevice::WriteOnly);
+            st << str;
+            clientSocket->write(b);
+        }
         else if(s == "D"){
+            qDebug() << Q_FUNC_INFO << "closing!";
             clientSocket->deleteLater();
             clientSocket = 0;
         }
@@ -200,29 +228,63 @@ void TennisServer::readSocket()
 //! [clientConnected]
 void TennisServer::clientConnected()
 {
+    qDebug() << Q_FUNC_INFO << "connect";
+
     QBluetoothSocket *socket = l2capServer->nextPendingConnection();
     if (!socket)
         return;
 
     if(clientSocket){
+        qDebug() << Q_FUNC_INFO << "Closing socket!";
         delete socket;
         return;
     }
 
     connect(socket, SIGNAL(readyRead()), this, SLOT(readSocket()));
     connect(socket, SIGNAL(disconnected()), this, SLOT(clientDisconnected()));
+    connect(socket, SIGNAL(error(QBluetoothSocket::SocketError)), this, SLOT(socketError(QBluetoothSocket::SocketError)));
 
     stream = new QDataStream(socket);
 
-    clientSocket = socket;
+    clientSocket = socket;    
 
-    emit clientConnected(socket->peerName());
+    qDebug() << Q_FUNC_INFO << "started";
+
+    emit clientConnected(clientSocket->peerName());
+    lagTimer.start();
 }
 //! [clientConnected]
+
+void TennisServer::socketError(QBluetoothSocket::SocketError err)
+{
+    qDebug() << Q_FUNC_INFO << err;
+}
+
+//! [sendEcho]
+void TennisServer::sendEcho()
+{
+    if(lagReplyTimeout) {
+        lagReplyTimeout--;
+        return;
+    }
+
+    if(stream) {
+        QByteArray b;
+        QDataStream s(&b, QIODevice::WriteOnly);
+        s << QString("e %1").arg(QTime::currentTime().toString("hh:mm:ss.zzz"));
+        clientSocket->write(b);
+        lagReplyTimeout = 10;
+    }
+}
+//! [sendEcho]
 
 //! [clientDisconnected]
 void TennisServer::clientDisconnected()
 {
+    qDebug() << Q_FUNC_INFO << "client closing!";
+
+    lagTimer.stop();
+    lagReplyTimeout = 0;
     QBluetoothSocket *socket = qobject_cast<QBluetoothSocket *>(sender());
     if (!socket)
         return;

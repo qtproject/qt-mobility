@@ -31,3 +31,6 @@ FORMS = \
 symbian {
     TARGET.CAPABILITY = LocalServices UserEnvironment ReadUserData WriteUserData NetworkServices
 }
+
+RESOURCES += \
+    tennis.qrc

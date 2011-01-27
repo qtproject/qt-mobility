@@ -63,6 +63,8 @@ public:
     QBluetoothAddress address;
     QString name;
 
+    qint16 rssi;
+
     QBluetoothDeviceInfo::ServiceClasses serviceClasses;
     QBluetoothDeviceInfo::MajorDeviceClass majorDeviceClass;
     quint8 minorDeviceClass;

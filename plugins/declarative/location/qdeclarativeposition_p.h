@@ -68,6 +68,10 @@ class QDeclarativePosition : public QObject
     Q_PROPERTY(QDateTime timestamp READ timestamp NOTIFY timestampChanged)
     Q_PROPERTY(double speed READ speed NOTIFY speedChanged)
     Q_PROPERTY(bool speedValid READ isSpeedValid NOTIFY speedValidChanged)
+    Q_PROPERTY(qreal horizontalAccuracy READ horizontalAccuracy WRITE setHorizontalAccuracy NOTIFY horizontalAccuracyChanged)
+    Q_PROPERTY(qreal verticalAccuracy READ verticalAccuracy WRITE setVerticalAccuracy NOTIFY verticalAccuracyChanged)
+    Q_PROPERTY(bool horizontalAccuracyValid READ isHorizontalAccuracyValid NOTIFY horizontalAccuracyValidChanged)
+    Q_PROPERTY(bool verticalAccuracyValid READ isVerticalAccuracyValid NOTIFY verticalAccuracyValidChanged)
 
 public:
 
@@ -84,8 +88,16 @@ public:
     bool isSpeedValid() const;
     void setCoordinate(QDeclarativeCoordinate* coordinate);
     QDeclarativeCoordinate* coordinate();
+    bool isHorizontalAccuracyValid() const;
+    qreal horizontalAccuracy() const;
+    void setHorizontalAccuracy(qreal horizontalAccuracy);
+    bool isVerticalAccuracyValid() const;
+    qreal verticalAccuracy() const;
+    void setVerticalAccuracy(qreal verticalAccuracy);
+
     // C++
     void setCoordinate(QGeoCoordinate coordinate);
+    void invalidate();
 
 Q_SIGNALS:
     void latitudeValidChanged();
@@ -95,6 +107,10 @@ Q_SIGNALS:
     void speedChanged();
     void speedValidChanged();
     void coordinateChanged();
+    void horizontalAccuracyChanged();
+    void horizontalAccuracyValidChanged();
+    void verticalAccuracyChanged();
+    void verticalAccuracyValidChanged();
 
 private:
     bool m_latitudeValid;
@@ -103,6 +119,10 @@ private:
     QDateTime m_timestamp;
     double m_speed;
     bool m_speedValid;
+    bool m_horizontalAccuracyValid;
+    bool m_verticalAccuracyValid;
+    qreal m_horizontalAccuracy;
+    qreal m_verticalAccuracy;
     QDeclarativeCoordinate m_coordinate;
 };
 

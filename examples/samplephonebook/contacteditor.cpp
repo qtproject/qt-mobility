@@ -50,6 +50,7 @@ ContactEditor::ContactEditor(QWidget *parent)
 {
     m_manager = 0;
     m_contactId = QContactLocalId(0);
+    m_observer = 0;
 
     m_nameEdit = new QLineEdit(this);
     m_phoneEdit = new QLineEdit(this);
@@ -131,6 +132,7 @@ ContactEditor::ContactEditor(QWidget *parent)
 
 ContactEditor::~ContactEditor()
 {
+    delete m_observer;
 }
 
 void ContactEditor::setCurrentContact(QContactManager* manager, QContactLocalId currentId)
@@ -159,8 +161,9 @@ void ContactEditor::setCurrentContact(QContactManager* manager, QContactLocalId 
         contact = manager->contact(m_contactId);
 
     // Set an observer on the contact to watch it for changes from another process
-    m_observer = manager->observeContact(m_contactId);
-    connect(m_observer.data(), SIGNAL(contactChanged()), this, SLOT(contactChanged()));
+    delete m_observer;
+    m_observer = new QContactObserver(manager, m_contactId);
+    connect(m_observer, SIGNAL(contactChanged()), this, SLOT(contactChanged()));
 
     updateUi(contact);
 }
@@ -274,7 +277,7 @@ void ContactEditor::thumbnailClicked()
 void ContactEditor::saveClicked()
 {
     // Stop observing the contact
-    if (!m_observer.isNull()) {
+    if (m_observer) {
         m_observer->disconnect();
     }
 

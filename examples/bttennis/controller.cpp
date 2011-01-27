@@ -130,7 +130,8 @@ static inline int paddle_boost(int force){
 
 void Controller::ballCollision(Board::Edge pos)
 {
-    if(pos == Board::Top || pos == Board::Bottom && !col_y) {
+
+    if((pos == Board::Top || pos == Board::Bottom) && !col_y) {
         speed_y *= -1;
         col_y = 10;
     }

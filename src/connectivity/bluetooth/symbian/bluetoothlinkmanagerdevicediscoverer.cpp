@@ -166,6 +166,9 @@ QBluetoothDeviceInfo BluetoothLinkManagerDeviceDiscoverer::currentDeviceDataToQB
     qDebug()<< "Discovered device: name="<< deviceName <<", address=" << bluetoothAddress.toString() <<", class=" << deviceClass;
     return deviceInfo;
 }
+
+const static TInt KErrRemoteDeviceIndicatedNoBonding = KLinkManagerErrBase-4; /*!< Dedicated bonding attempt failure when the remote device responds with No-Bonding */
+
 void BluetoothLinkManagerDeviceDiscoverer::setError(int errorCode)
 {
     QString errorDescription;

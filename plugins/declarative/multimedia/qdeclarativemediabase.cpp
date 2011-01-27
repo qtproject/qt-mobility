@@ -354,7 +354,7 @@ void QDeclarativeMediaBase::setSource(const QUrl &url)
 
     m_source = url;
     m_loaded = false;
-    if (m_complete && m_autoLoad) {
+    if (m_complete && (m_autoLoad || url.isEmpty())) {
         if (m_error != QMediaPlayer::ServiceMissingError && m_error != QMediaPlayer::NoError) {
             m_error = QMediaPlayer::NoError;
             m_errorString = QString();

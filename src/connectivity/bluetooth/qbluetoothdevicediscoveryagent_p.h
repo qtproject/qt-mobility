@@ -52,7 +52,7 @@ class OrgBluezAdapterInterface;
 class QDBusVariant;
 #endif
 
-#ifdef Q_OS_SYMBIAN
+#ifdef QTM_SYMBIAN_BLUETOOTH
 #include "symbian/bluetoothlinkmanagerdevicediscoverer.h"
 #include <es_sock.h>
 #include <bt_sock.h>
@@ -73,7 +73,7 @@ public:
     void stop();
     bool isActive() const;
 
-#ifdef Q_OS_SYMBIAN
+#ifdef QTM_SYMBIAN_BLUETOOTH
     // private slot
     void _q_newDeviceFound(const QBluetoothDeviceInfo &device);
 #endif
@@ -84,7 +84,7 @@ public:
 #endif
 
 private:
-#ifdef Q_OS_SYMBIAN
+#ifdef QTM_SYMBIAN_BLUETOOTH
     uint inquiryTypeToIAC() const;
     void setError(int errorCode, QString errorDescription);
 #endif
@@ -92,12 +92,15 @@ private:
     QList<QBluetoothDeviceInfo> discoveredDevices;
     QBluetoothDeviceDiscoveryAgent::InquiryType inquiryType;
 
+    QBluetoothDeviceDiscoveryAgent::Error lastError;
+    QString errorString;
+
 #if !defined(QT_NO_DBUS)
     OrgBluezManagerInterface *manager;
     OrgBluezAdapterInterface *adapter;
 #endif
 
-#ifdef Q_OS_SYMBIAN
+#ifdef QTM_SYMBIAN_BLUETOOTH
     // shared socket servet among RHostResolvers
     RSocketServ m_socketServer;
     // active object for device discovery

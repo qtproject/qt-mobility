@@ -8,15 +8,13 @@ DEFINES += QT_BUILD_CONNECTIVITY_LIB QT_MAKEDLL
 
 QT = core
 
-qtAddLibrary(QtServiceFramework)
-
 include(nfc/nfc.pri)
 
 !mac:!win32:include(bluetooth/bluetooth.pri)
 
 HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
 
-symbian: {
+symbian {
     load(data_caging_paths)
     TARGET.EPOCALLOWDLLDATA = 1
     TARGET.UID3=0x2002BFD1
@@ -35,4 +33,3 @@ simulator {
 CONFIG += middleware
 CONFIG += middleware
 include(../../features/deploy.pri)
-

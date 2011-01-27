@@ -215,7 +215,7 @@ bool CntRelationship::saveRelationships(QSet<QContactLocalId> *affectedContactId
 
     *error = QContactManager::NoError;
 
-#ifdef SYMBIAN_BACKEND_USE_SQLITE
+#ifdef SYMBIAN_BACKEND_USE_CNTMODEL_V2
     TInt symbianError = KErrNone;
     QString relationshipType;
 
@@ -298,7 +298,7 @@ bool CntRelationship::removeRelationships(QSet<QContactLocalId> *affectedContact
 
     *error = QContactManager::NoError;
 
-#ifdef SYMBIAN_BACKEND_USE_SQLITE
+#ifdef SYMBIAN_BACKEND_USE_CNTMODEL_V2
     TInt symbianError = KErrNone;
     QString relationshipType;
 
@@ -395,7 +395,7 @@ bool CntRelationship::validateRelationship(const QContactRelationship &relations
     return abstractRelationship->validateRelationship(relationship, error);
 }
 
-#ifdef SYMBIAN_BACKEND_USE_SQLITE
+#ifdef SYMBIAN_BACKEND_USE_CNTMODEL_V2
 /*
  *  Validates the relationships. If all valid relationships are of the same type,
  *  the type will be passed back in relationshipType. Otherwise it will be empty.
