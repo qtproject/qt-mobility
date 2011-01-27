@@ -44,6 +44,7 @@
 #include <QFile>
 #include <QDir>
 #include <QSocketNotifier>
+#include <QProcess>
 
 #if !defined(QT_NO_DBUS)
 #include <qhalservice_linux_p.h>
