@@ -42,14 +42,17 @@
 #include "qbluetoothlocaldevice_p.h"
 
 #include "qbluetoothlocaldevice.h"
+#include <QtCore/QString>
 #include "symbian/utils_symbian_p.h"
-//#include <btengsettings.h>
 #include <bttypes.h>
 #include <bt_subscribe.h>
-
+#ifdef USING_BTENGCONNMAN
 #include "bluetoothsymbianpairingadapter.h"
+#endif //USING_BTENGCONNMAN
+#ifdef USING_BTENGDEVMAN
 #include "bluetoothsymbianregistryadapter.h"
-#include <QtCore/QString>
+#endif //USING_BTENGDEVMAN
+
 
 QTM_BEGIN_NAMESPACE
 
@@ -244,6 +247,8 @@ void QBluetoothLocalDevicePrivate::VisibilityModeChanged(TBTVisibilityMode aStat
 
 void QBluetoothLocalDevicePrivate::requestPairing(const QBluetoothAddress &address, QBluetoothLocalDevice::Pairing pairing)
 {
+//#ifdef USING_BTENGCONNMAN
+#ifdef USING_BTENGDEVMAN
     Q_Q(QBluetoothLocalDevice);
 
     BluetoothSymbianRegistryAdapter *registryAdapter = new BluetoothSymbianRegistryAdapter(address,q);
@@ -277,12 +282,16 @@ void QBluetoothLocalDevicePrivate::requestPairing(const QBluetoothAddress &addre
         ASSERT(0);
         break;
     }
+#endif //USING_BTENGDEVMAN
+//#endif USING_BTENGCONNMAN
 }
 
 QBluetoothLocalDevice::Pairing QBluetoothLocalDevicePrivate::pairingStatus(const QBluetoothAddress &address) const
 {
+#ifdef USING_BTENGDEVMAN
     QScopedPointer<BluetoothSymbianRegistryAdapter> registryAdapter (new BluetoothSymbianRegistryAdapter(address));
     return registryAdapter->pairingStatus();
+#endif //USING_BTENGDEVMAN
 }
 
 void QBluetoothLocalDevicePrivate::pairingConfirmation(bool confirmation)

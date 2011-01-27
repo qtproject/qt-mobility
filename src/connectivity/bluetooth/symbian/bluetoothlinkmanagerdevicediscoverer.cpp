@@ -167,8 +167,6 @@ QBluetoothDeviceInfo BluetoothLinkManagerDeviceDiscoverer::currentDeviceDataToQB
     return deviceInfo;
 }
 
-const static TInt KErrRemoteDeviceIndicatedNoBonding = KLinkManagerErrBase-4; /*!< Dedicated bonding attempt failure when the remote device responds with No-Bonding */
-
 void BluetoothLinkManagerDeviceDiscoverer::setError(int errorCode)
 {
     QString errorDescription;

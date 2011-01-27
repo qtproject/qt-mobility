@@ -45,7 +45,6 @@
 #include <qmobilityglobal.h>
 
 #include "qbluetoothlocaldevice.h"
-
 #include <btengsettings.h>
 
 QT_BEGIN_HEADER
@@ -53,7 +52,6 @@ QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
 
 class QBluetoothAddress;
-class QBluetoothLocalDevice;
 
 class QBluetoothLocalDevicePrivate: public MBTEngSettingsObserver
 {

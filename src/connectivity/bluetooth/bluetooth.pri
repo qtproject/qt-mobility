@@ -96,10 +96,8 @@ symbian {
                 -lsdpagent \
                 -lsdpdatabase \
                 -lestlib \
-                -lbtengdevman \
                 -lbtengsettings \
                 -lbtmanclient \
-                -lbtengconnman \
                 -lbtdevice
     }
 } else:contains(bluez_enabled, yes):contains(QT_CONFIG, dbus) {
