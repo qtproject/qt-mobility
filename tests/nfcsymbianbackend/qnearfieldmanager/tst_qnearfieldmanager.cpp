@@ -215,6 +215,11 @@ void tst_QNearFieldManager::registerTargetDetectedHandler_filter_data()
     filter.appendRecord<QNdefNfcUriRecord>(1, 1);
     QTest::newRow("URI") << filter << "Please touch a tag with 'URI' NDef message";
 
+    filter.clear();
+    filter.setOrderMatch(true);
+    filter.appendRecord<QNdefNfcUriRecord>(1, 1);
+    QTest::newRow("URI") << filter << "Please touch a tag with only one 'URI' NDef record";
+
 }
 
 /*!
@@ -249,19 +254,24 @@ void tst_QNearFieldManager::registerTargetDetectedHandler_filter()
 
     QVERIFY(target == NULL);//symbain backend always return NULL target
     QCOMPARE(filter.recordCount(), message.count());
+    qDebug()<<"message.count()="<<message.count();
     for (int i = 0; i < filter.recordCount(); ++i)
         {
         if (filter.orderMatch())
             {
             QCOMPARE(filter.recordAt(i).typeNameFormat, message.at(i).typeNameFormat());
+            QCOMPARE(filter.recordAt(i).type, message.at(i).type());
             }
         else
             {
             bool matched = false;
             for (int j = 0; j < filter.recordCount(); ++j)
                 {
-                if (message.at(i).typeNameFormat() == filter.recordAt(i).typeNameFormat)
+                if (message.at(i).typeNameFormat() == filter.recordAt(i).typeNameFormat && message.at(i).type() == filter.recordAt(i).type)
+                    {
                     matched = true;
+                    break;
+                    }
                 }
             QVERIFY(matched);
             }
