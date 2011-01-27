@@ -45,6 +45,7 @@
 #include <qmobilityglobal.h>
 
 #include "qbluetoothlocaldevice.h"
+#include <e32base.h>
 #include <btengsettings.h>
 
 QT_BEGIN_HEADER
