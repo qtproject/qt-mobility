@@ -345,9 +345,10 @@ void QBluetoothServiceDiscoveryAgentPrivate::_q_deviceDiscovered(const QBluetoot
         discoveredDevices.prepend(info);
     }
     else {
-        if(!quickDiscovery(info.address(), info)){
-//            qDebug() << "Must do full discovery on" << info.address().toString();
-            // look for duplicates, and cached entries
+        quickDiscovery(info.address(), info);
+//      qDebug() << "Must do full discovery on" << info.address().toString();
+        // look for duplicates, and cached entries
+        if(info.rssi()) {
             for(int i = 0; i < discoveredDevices.count(); i++){
                 if(discoveredDevices.at(i).address() == info.address()){
                     discoveredDevices.removeAt(i);

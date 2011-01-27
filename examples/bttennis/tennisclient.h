@@ -86,6 +86,7 @@ private slots:
     void readSocket();
     void connected();
     void sendEcho();
+    void socketDisconnected();
 
 private:
     QBluetoothSocket *socket;

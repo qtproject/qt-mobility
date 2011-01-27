@@ -48,7 +48,7 @@
 
 #include <QtDBus/QDBusPendingCallWatcher>
 
-#define QTM_SERVICEDISCOVERY_DEBUG
+//#define QTM_SERVICEDISCOVERY_DEBUG
 
 #ifdef QTM_SERVICEDISCOVERY_DEBUG
 #include <QtCore/QDebug>
@@ -139,6 +139,11 @@ bool QBluetoothServiceDiscoveryAgentPrivate::quickDiscovery(const QBluetoothAddr
         return false;
     QVariantMap v = deviceReply.value();
     QStringList device_uuids = v.value("UUIDs").toStringList();    
+
+//    if(address == QBluetoothAddress("D8:54:3A:7E:53:E1")){
+//        qDebug() << "*********** UID from phone" << device_uuids;
+//        return false;
+//    }
 
     if(device_uuids.empty() && !uuidFilter.isEmpty()){
         return false;

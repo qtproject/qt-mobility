@@ -229,7 +229,7 @@ void QBluetoothSocketPrivate::abort()
     delete connectWriteNotifier;
     connectWriteNotifier = 0;
     Q_Q(QBluetoothSocket);
-    emit q->disconnect();
+    emit q->disconnected();
 }
 
 QString QBluetoothSocketPrivate::localName() const
@@ -448,7 +448,7 @@ void QBluetoothSocketPrivate::close()
     delete connectWriteNotifier;
     connectWriteNotifier = 0;
     Q_Q(QBluetoothSocket);
-    emit q->disconnect();
+    emit q->disconnected();
 }
 
 bool QBluetoothSocketPrivate::setSocketDescriptor(int socketDescriptor, QBluetoothSocket::SocketType socketType_,

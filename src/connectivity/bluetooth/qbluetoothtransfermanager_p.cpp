@@ -39,42 +39,20 @@
 **
 ****************************************************************************/
 
-#ifndef QBLUETOOTHDEVICEINFO_P_H
-#define QBLUETOOTHDEVICEINFO_P_H
-
-#include "qbluetoothdeviceinfo.h"
-#include "qbluetoothaddress.h"
-#include "qbluetoothuuid.h"
-
-#include <QString>
-
-QT_BEGIN_HEADER
+#include "qbluetoothtransfermanager.h"
+#include "qbluetoothtransferrequest.h"
+#include "qbluetoothtransferreply.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QBluetoothDeviceInfoPrivate
+/*!
+    Sends the contents of \a data to the remote device \a request and returns a new
+    QBluetoothTransferReply, that can be used to track the request's progress.
+*/
+QBluetoothTransferReply *QBluetoothTransferManager::put(const QBluetoothTransferRequest &request,
+                                                        QIODevice *data)
 {
-public:
-    QBluetoothDeviceInfoPrivate();
-
-    bool valid;
-    bool cached;
-
-    QBluetoothAddress address;
-    QString name;
-
-    qint16 rssi;
-
-    QBluetoothDeviceInfo::ServiceClasses serviceClasses;
-    QBluetoothDeviceInfo::MajorDeviceClass majorDeviceClass;
-    quint8 minorDeviceClass;
-
-    QBluetoothDeviceInfo::DataCompleteness serviceUuidsCompleteness;
-    QList<QBluetoothUuid> serviceUuids;
-};
+    return 0;
+}
 
 QTM_END_NAMESPACE
-
-QT_END_HEADER
-
-#endif

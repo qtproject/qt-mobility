@@ -43,10 +43,15 @@
 
 #include <QObject>
 #include <QGraphicsScene>
+#include <QGraphicsPixmapItem>
+#include <QPixmap>
+#include <QPropertyAnimation>
 
 class Board : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(int connectRotation READ connectRotation WRITE setConnectRotation)
+    Q_PROPERTY(qreal connectOpacity READ connectOpacity WRITE setConnectOpacity)
 public:
     explicit Board(QObject *parent = 0);
 
@@ -63,9 +68,21 @@ public:
         Paddle = 50
     };
 
+
     QGraphicsScene *getScene() {
         return scene;
     }
+
+    int connectRotation(){
+        return connectIcon->rotation();
+    }
+
+    qreal connectOpacity(){
+        return connectIcon->opacity();
+    }
+
+    void setConnectRotation(int rot);
+    void setConnectOpacity(qreal op);
 
 signals:
     void ballCollision(Board::Edge pos);
@@ -81,6 +98,9 @@ public slots:
 
     void sceneChanged(const QList<QRectF> &region);
 
+    void animateConnect(bool start = true);
+    void fadeConnect(bool out = true);
+
 private:
     QGraphicsScene *scene;
     QGraphicsRectItem *ball;
@@ -93,6 +113,10 @@ private:
     QGraphicsTextItem *rightScore;
 
     QGraphicsTextItem *status;
+
+    QPixmap icon;
+    QGraphicsPixmapItem *connectIcon;
+    QPropertyAnimation *connectAnimation;
 
     void checkBall();
 };
