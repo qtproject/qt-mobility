@@ -56,12 +56,13 @@ QTM_BEGIN_NAMESPACE
 Q_GLOBAL_STATIC(QSocketServerPrivate, getSocketServer)
 
 QBluetoothSocketPrivate::QBluetoothSocketPrivate()
-    : iSocket(0),
-    rxDescriptor(0, 0),
-    discoveryAgent(0),
-    state(QBluetoothSocket::UnconnectedState),
-    readNotifier(0),
-    connectWriteNotifier(0)
+    : state(QBluetoothSocket::UnconnectedState)
+    , readNotifier(0)
+    , connectWriteNotifier(0)
+    , discoveryAgent(0)
+    , iSocket(0)
+    , rxDescriptor(0, 0)
+
 {
 }
 

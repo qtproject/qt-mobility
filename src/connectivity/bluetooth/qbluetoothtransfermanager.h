@@ -76,7 +76,7 @@ signals:
     void finished(QBluetoothTransferReply *reply);
 
 private:
-    Q_DECLARE_PRIVATE(QBluetoothTranferManager);
+    Q_DECLARE_PRIVATE(QBluetoothTranferManager)
 };
 
 QTM_END_NAMESPACE
