@@ -177,47 +177,45 @@ EXPORTS
 	_ZN10QtMobility18QSystemStorageInfo11uriForDriveERK7QString @ 176 NONAME
 	_ZN10QtMobility18QSystemStorageInfo15getStorageStateERK7QString @ 177 NONAME
 	_ZN10QtMobility18QSystemStorageInfo19storageStateChangedERK7QStringNS0_12StorageStateE @ 178 NONAME
-	_ZN10QtMobility19QSystemAlignedTimer10setRunningEb @ 179 NONAME
-	_ZN10QtMobility19QSystemAlignedTimer10singleShotEiP7QObjectPKc @ 180 NONAME
-	_ZN10QtMobility19QSystemAlignedTimer11qt_metacallEN11QMetaObject4CallEiPPv @ 181 NONAME
-	_ZN10QtMobility19QSystemAlignedTimer11qt_metacastEPKc @ 182 NONAME
-	_ZN10QtMobility19QSystemAlignedTimer11setIntervalEii @ 183 NONAME
-	_ZN10QtMobility19QSystemAlignedTimer13windowChangedEi @ 184 NONAME
-	_ZN10QtMobility19QSystemAlignedTimer15intervalChangedEi @ 185 NONAME
-	_ZN10QtMobility19QSystemAlignedTimer16staticMetaObjectE @ 186 NONAME DATA 16
-	_ZN10QtMobility19QSystemAlignedTimer19getStaticMetaObjectEv @ 187 NONAME
-	_ZN10QtMobility19QSystemAlignedTimer4stopEv @ 188 NONAME
-	_ZN10QtMobility19QSystemAlignedTimer5startEi @ 189 NONAME
-	_ZN10QtMobility19QSystemAlignedTimer5startEv @ 190 NONAME
-	_ZN10QtMobility19QSystemAlignedTimer6wokeUpEv @ 191 NONAME
-	_ZN10QtMobility19QSystemAlignedTimer7timeoutEv @ 192 NONAME
-	_ZN10QtMobility19QSystemAlignedTimer9setWindowEi @ 193 NONAME
-	_ZN10QtMobility19QSystemAlignedTimerC1EP7QObject @ 194 NONAME
-	_ZN10QtMobility19QSystemAlignedTimerC2EP7QObject @ 195 NONAME
-	_ZN10QtMobility19QSystemAlignedTimerD0Ev @ 196 NONAME
-	_ZN10QtMobility19QSystemAlignedTimerD1Ev @ 197 NONAME
-	_ZN10QtMobility19QSystemAlignedTimerD2Ev @ 198 NONAME
-	_ZNK10QtMobility17QSystemDeviceInfo14ProfileDetails15vibrationActiveEv @ 199 NONAME
-	_ZNK10QtMobility17QSystemDeviceInfo14ProfileDetails19voiceRingtoneVolumeEv @ 200 NONAME
-	_ZNK10QtMobility17QSystemDeviceInfo14ProfileDetails21messageRingtoneVolumeEv @ 201 NONAME
-	_ZNK10QtMobility18QSystemBatteryInfo10metaObjectEv @ 202 NONAME
-	_ZNK10QtMobility18QSystemBatteryInfo11chargerTypeEv @ 203 NONAME
-	_ZNK10QtMobility18QSystemBatteryInfo11currentFlowEv @ 204 NONAME
-	_ZNK10QtMobility18QSystemBatteryInfo13batteryStatusEv @ 205 NONAME
-	_ZNK10QtMobility18QSystemBatteryInfo13chargingStateEv @ 206 NONAME
-	_ZNK10QtMobility18QSystemBatteryInfo15nominalCapacityEv @ 207 NONAME
-	_ZNK10QtMobility18QSystemBatteryInfo17remainingCapacityEv @ 208 NONAME
-	_ZNK10QtMobility18QSystemBatteryInfo21energyMeasurementUnitEv @ 209 NONAME
-	_ZNK10QtMobility18QSystemBatteryInfo21remainingCapacityBarsEv @ 210 NONAME
-	_ZNK10QtMobility18QSystemBatteryInfo21remainingChargingTimeEv @ 211 NONAME
-	_ZNK10QtMobility18QSystemBatteryInfo24remainingCapacityPercentEv @ 212 NONAME
-	_ZNK10QtMobility18QSystemBatteryInfo7maxBarsEv @ 213 NONAME
-	_ZNK10QtMobility18QSystemBatteryInfo7voltageEv @ 214 NONAME
-	_ZNK10QtMobility19QSystemAlignedTimer10metaObjectEv @ 215 NONAME
-	_ZNK10QtMobility19QSystemAlignedTimer11timerWindowEv @ 216 NONAME
-	_ZNK10QtMobility19QSystemAlignedTimer8intervalEv @ 217 NONAME
-	_ZTIN10QtMobility18QSystemBatteryInfoE @ 218 NONAME ; #<TI>#
-	_ZTIN10QtMobility19QSystemAlignedTimerE @ 219 NONAME ; #<TI>#
-	_ZTVN10QtMobility18QSystemBatteryInfoE @ 220 NONAME ; #<VT>#
-	_ZTVN10QtMobility19QSystemAlignedTimerE @ 221 NONAME ; #<VT>#
+	_ZN10QtMobility19QSystemAlignedTimer10singleShotEiiP7QObjectPKc @ 179 NONAME
+	_ZN10QtMobility19QSystemAlignedTimer11qt_metacallEN11QMetaObject4CallEiPPv @ 180 NONAME
+	_ZN10QtMobility19QSystemAlignedTimer11qt_metacastEPKc @ 181 NONAME
+	_ZN10QtMobility19QSystemAlignedTimer16staticMetaObjectE @ 182 NONAME DATA 16
+	_ZN10QtMobility19QSystemAlignedTimer19getStaticMetaObjectEv @ 183 NONAME
+	_ZN10QtMobility19QSystemAlignedTimer4stopEv @ 184 NONAME
+	_ZN10QtMobility19QSystemAlignedTimer5startEii @ 185 NONAME
+	_ZN10QtMobility19QSystemAlignedTimer5startEv @ 186 NONAME
+	_ZN10QtMobility19QSystemAlignedTimer6wokeUpEv @ 187 NONAME
+	_ZN10QtMobility19QSystemAlignedTimer7timeoutEv @ 188 NONAME
+	_ZN10QtMobility19QSystemAlignedTimerC1EP7QObject @ 189 NONAME
+	_ZN10QtMobility19QSystemAlignedTimerC2EP7QObject @ 190 NONAME
+	_ZN10QtMobility19QSystemAlignedTimerD0Ev @ 191 NONAME
+	_ZN10QtMobility19QSystemAlignedTimerD1Ev @ 192 NONAME
+	_ZN10QtMobility19QSystemAlignedTimerD2Ev @ 193 NONAME
+	_ZNK10QtMobility17QSystemDeviceInfo14ProfileDetails15vibrationActiveEv @ 194 NONAME
+	_ZNK10QtMobility17QSystemDeviceInfo14ProfileDetails19voiceRingtoneVolumeEv @ 195 NONAME
+	_ZNK10QtMobility17QSystemDeviceInfo14ProfileDetails21messageRingtoneVolumeEv @ 196 NONAME
+	_ZNK10QtMobility18QSystemBatteryInfo10metaObjectEv @ 197 NONAME
+	_ZNK10QtMobility18QSystemBatteryInfo11chargerTypeEv @ 198 NONAME
+	_ZNK10QtMobility18QSystemBatteryInfo11currentFlowEv @ 199 NONAME
+	_ZNK10QtMobility18QSystemBatteryInfo13batteryStatusEv @ 200 NONAME
+	_ZNK10QtMobility18QSystemBatteryInfo13chargingStateEv @ 201 NONAME
+	_ZNK10QtMobility18QSystemBatteryInfo15nominalCapacityEv @ 202 NONAME
+	_ZNK10QtMobility18QSystemBatteryInfo17remainingCapacityEv @ 203 NONAME
+	_ZNK10QtMobility18QSystemBatteryInfo21energyMeasurementUnitEv @ 204 NONAME
+	_ZNK10QtMobility18QSystemBatteryInfo21remainingCapacityBarsEv @ 205 NONAME
+	_ZNK10QtMobility18QSystemBatteryInfo21remainingChargingTimeEv @ 206 NONAME
+	_ZNK10QtMobility18QSystemBatteryInfo24remainingCapacityPercentEv @ 207 NONAME
+	_ZNK10QtMobility18QSystemBatteryInfo7maxBarsEv @ 208 NONAME
+	_ZNK10QtMobility18QSystemBatteryInfo7voltageEv @ 209 NONAME
+	_ZNK10QtMobility19QSystemAlignedTimer10metaObjectEv @ 210 NONAME
+	_ZNK10QtMobility19QSystemAlignedTimer12isSingleShotEv @ 211 NONAME
+	_ZNK10QtMobility19QSystemAlignedTimer15maximumIntervalEv @ 212 NONAME
+	_ZNK10QtMobility19QSystemAlignedTimer15minimumIntervalEv @ 213 NONAME
+	_ZNK10QtMobility19QSystemAlignedTimer18setMaximumIntervalEi @ 214 NONAME
+	_ZNK10QtMobility19QSystemAlignedTimer18setMinimumIntervalEi @ 215 NONAME
+	_ZTIN10QtMobility18QSystemBatteryInfoE @ 216 NONAME ; #<TI>#
+	_ZTIN10QtMobility19QSystemAlignedTimerE @ 217 NONAME ; #<TI>#
+	_ZTVN10QtMobility18QSystemBatteryInfoE @ 218 NONAME ; #<VT>#
+	_ZTVN10QtMobility19QSystemAlignedTimerE @ 219 NONAME ; #<VT>#
 

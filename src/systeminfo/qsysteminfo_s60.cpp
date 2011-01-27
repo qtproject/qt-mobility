@@ -681,7 +681,6 @@ void QSystemNetworkInfoPrivate::networkModeChanged()
     emit networkModeChanged(currentMode());
 }
 
-#ifdef ETELMM_SUPPORTED
 void QSystemNetworkInfoPrivate::changedNetworkMode()
 {
     emit networkModeChanged(currentMode());
@@ -692,7 +691,6 @@ void QSystemNetworkInfoPrivate::changedNetworkStatus()
     QSystemNetworkInfo::NetworkMode mode = currentMode();
     emit networkStatusChanged(mode, networkStatus(mode));
 }
-#endif
 
 void QSystemNetworkInfoPrivate::changedCellId(int cellIdTel)
 {
