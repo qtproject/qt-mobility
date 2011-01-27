@@ -141,6 +141,8 @@ SOURCES += $$PWD/proj/PJ_aeqd.c \
         $$PWD/proj/pj_mutex.c \
         $$PWD/proj/pj_initcache.c
 
+DEFINES += DISABLE_CVSID
+
 unix {
   DEFINES += MUTEX_pthread
 }
