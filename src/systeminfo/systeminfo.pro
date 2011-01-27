@@ -178,10 +178,14 @@ unix:!simulator {
         contains(S60_VERSION, 3.1){
             DEFINES += SYMBIAN_3_1
         }
-         contains(S60_VERSION, 3.1)|contains(S60_VERSION, 3.2)|contains(S60_VERSION, 5.0 | contains(S60_VERSION, 5.2){
+         contains(S60_VERSION, 3.1)|contains(S60_VERSION, 3.2)|contains(S60_VERSION, 5.0) | contains(S60_VERSION, 5.2){
         } else {
          DEFINES += SYMBIAN_3_PLATFORM
             # s60 is not symbian^3
+          SOURCES += lockandflipstatus_s60.cpp \
+                     storagedisknotifier_s60.cpp
+          HEADERS += lockandflipstatus_s60.h \
+                     storagedisknotifier_s60.h
         }
 
         contains(hb_symbian_enabled,yes) {
@@ -214,13 +218,6 @@ unix:!simulator {
             pubandsubkey_s60.h \
             batterystatus_s60.h \
             networkinfo_s60.h
-
-            contains(S60_VERSION, 5.1) | contains(S60_VERSION, 5.2){
-                        SOURCES += lockandflipstatus_s60.cpp \
-                                   storagedisknotifier_s60.cpp
-                        HEADERS += lockandflipstatus_s60.h \
-                                   storagedisknotifier_s60.h
-            }
 
         LIBS += -lprofileengine \
             -letel3rdparty \
