@@ -52,9 +52,10 @@ QL2capServerPrivate::QL2capServerPrivate()
 QL2capServerPrivate::~QL2capServerPrivate()
 {
 }
-
+#ifndef QT_NO_DBUS
 void QL2capServerPrivate::_q_newConnection()
 {
 }
+#endif
 
 QTM_END_NAMESPACE
