@@ -38,78 +38,38 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QDECLARATIVEFEEDBACKACTUATOR_H
-#define QDECLARATIVEFEEDBACKACTUATOR_H
+
+#ifndef QDECLARATIVEFILEEFFECT_P_H
+#define QDECLARATIVEFILEEFFECT_P_H
 
 #include <QtDeclarative/qdeclarative.h>
-#include "qfeedbackactuator.h"
+#include "qdeclarativefeedbackeffect_p.h"
 
 QTM_USE_NAMESPACE
 
-class QDeclarativeFeedbackActuator : public QObject
+class QDeclarativeFileEffect : public QDeclarativeFeedbackEffect
 {
     Q_OBJECT
-    Q_PROPERTY(int actuatorId READ actuatorId)
-    Q_PROPERTY(QString name READ name)
-    Q_PROPERTY(QFeedbackActuator::State state READ state)
-    Q_PROPERTY(bool valid READ isValid)
-    Q_PROPERTY(bool enabled READ isEnabled WRITE setEnabled NOTIFY enabledChanged)
+    Q_PROPERTY(bool loaded READ isLoaded WRITE setLoaded NOTIFY loadedChanged)
+    Q_PROPERTY(QUrl source READ source WRITE setSource NOTIFY sourceChanged)
+    Q_PROPERTY(QStringList supportedMimeTypes READ supportedMimeTypes)
 public:
-    explicit QDeclarativeFeedbackActuator(QObject *parent = 0)
-        :QObject(parent)
-    {
-        d = new QFeedbackActuator(this);
-        connect(d, SIGNAL(enabledChanged()), this, SIGNAL(enabledChanged()));
-    }
-
-    explicit QDeclarativeFeedbackActuator(QObject *parent, QFeedbackActuator* actuator)
-        :QObject(parent)
-    {
-        d = actuator;
-        connect(d, SIGNAL(enabledChanged()), this, SIGNAL(enabledChanged()));
-    }
-
-    QFeedbackActuator* feedbackActuator() const
-    {
-        return d;
-    }
-    int actuatorId() const
-    {
-        return d->id();
-    }
-    bool isValid() const
-    {
-        return d->isValid();
-    }
-
-    QString name() const
-    {
-        return d->name();
-    }
-    QFeedbackActuator::State state() const
-    {
-        return d->state();
-    }
-
-    Q_INVOKABLE bool isCapabilitySupported(QFeedbackActuator::Capability capbility) const
-    {
-        return d->isCapabilitySupported(capbility);
-    }
-
-    bool isEnabled() const
-    {
-        return d->isEnabled();
-    }
-    void setEnabled(bool v)
-    {
-        d->setEnabled(v);
-    }
-
+    explicit QDeclarativeFileEffect(QObject *parent = 0);
+    bool isLoaded() const;
+    void setLoaded(bool v);
+    QUrl source() const;
+    void setSource(const QUrl & url);
+    QStringList supportedMimeTypes();
 signals:
-    void enabledChanged();
-
+    void loadedChanged();
+    void sourceChanged();
+public slots:
+    void load();
+    void unload();
 private:
-    QFeedbackActuator* d;
+    QFeedbackFileEffect* d;
 };
 
-#endif
+QML_DECLARE_TYPE(QDeclarativeFileEffect);
+
+#endif // QDECLARATIVEFILEEFFECT_P_H

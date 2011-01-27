@@ -39,78 +39,35 @@
 **
 ****************************************************************************/
 
-#ifndef QDECLARATIVEFILEEFFECT_H
-#define QDECLARATIVEFILEEFFECT_H
-
+#include <QtDeclarative/qdeclarativeextensionplugin.h>
 #include <QtDeclarative/qdeclarative.h>
-#include "qdeclarativefeedbackeffect.h"
+
+#include "qdeclarativehapticseffect_p.h"
+#include "qdeclarativefileeffect_p.h"
+#include "qdeclarativethemeeffect_p.h"
+#include "qdeclarativefeedbackeffect_p.h"
+#include "qdeclarativefeedbackactuator_p.h"
+
+QT_USE_NAMESPACE
 
 QTM_USE_NAMESPACE
-
-class QDeclarativeFileEffect : public QDeclarativeFeedbackEffect
+class QDeclarativeFeedbackPlugin : public QDeclarativeExtensionPlugin
 {
     Q_OBJECT
-    Q_PROPERTY(bool loaded READ isLoaded WRITE setLoaded NOTIFY loadedChanged)
-    Q_PROPERTY(QUrl source READ source WRITE setSource NOTIFY sourceChanged)
-    Q_PROPERTY(QStringList supportedMimeTypes READ supportedMimeTypes)
 public:
-    explicit QDeclarativeFileEffect(QObject *parent = 0) : QDeclarativeFeedbackEffect(parent){
-        d = new QFeedbackFileEffect(this);
-        setFeedbackEffect(d);
-    }
-    bool isLoaded() const
+    virtual void registerTypes(const char *uri)
     {
-        return d->isLoaded();
+        Q_ASSERT(QLatin1String(uri) == QLatin1String("QtMobility.feedback"));
+        qmlRegisterUncreatableType<QDeclarativeFeedbackEffect>("QtMobility.feedback", 1, 1, "Feedback", "this is the feedback namespace");
+        qmlRegisterUncreatableType<QDeclarativeFeedbackEffect>("QtMobility.feedback", 1, 1, "FeedbackEffect", "this is the base feedback effect class");
+        qmlRegisterType<QDeclarativeFeedbackActuator>("QtMobility.feedback", 1, 1, "Actuator");
+        qmlRegisterType<QDeclarativeFileEffect>("QtMobility.feedback", 1, 1, "FileEffect");
+        qmlRegisterType<QDeclarativeHapticsEffect>("QtMobility.feedback", 1, 1, "HapticsEffect");
+        qmlRegisterType<QDeclarativeThemeEffect>("QtMobility.feedback", 1, 1, "ThemeEffect");
     }
-    void setLoaded(bool v)
-    {
-        if (v != d->isLoaded()) {
-            d->setLoaded(v);
-            emit loadedChanged();
-        }
-    }
-
-    QUrl source() const
-    {
-        return d->source();
-    }
-    void setSource(const QUrl & url)
-    {
-        if (url != d->source()) {
-            d->setSource(url);
-            emit sourceChanged();
-        }
-    }
-
-    Q_INVOKABLE QStringList supportedMimeTypes()
-    {
-        return d->supportedMimeTypes();
-    }
-
-
-signals:
-    void loadedChanged();
-    void sourceChanged();
-public slots:
-    void load()
-    {
-        if (!isLoaded()) {
-            d->load();
-            emit loadedChanged();
-        }
-    }
-    void unload()
-    {
-        if (isLoaded()) {
-            d->unload();
-            emit loadedChanged();
-        }
-    }
-
-private:
-    QFeedbackFileEffect* d;
 };
 
-QML_DECLARE_TYPE(QDeclarativeFileEffect);
+#include "plugin.moc"
 
-#endif // QDECLARATIVEFILEEFFECT_H
+Q_EXPORT_PLUGIN2(declarative_feedback, QDeclarativeFeedbackPlugin);
+

@@ -38,12 +38,11 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QDECLARATIVETHEMEEFFECT_H
-#define QDECLARATIVETHEMEEFFECT_H
+#ifndef QDECLARATIVETHEMEEFFECT_P_H
+#define QDECLARATIVETHEMEEFFECT_P_H
 
 #include <QtDeclarative/qdeclarative.h>
 #include <qfeedbackeffect.h>
-#include "qdeclarativefeedback.h"
 
 QTM_USE_NAMESPACE
 
@@ -97,42 +96,18 @@ public:
         ThemeUser = QFeedbackEffect::ThemeUser
     };
 
-    QDeclarativeThemeEffect(QObject *parent = 0)
-        : QObject(parent),
-        m_effect(Basic)
-    {
-    }
-
-    bool effectSupported() {
-        return QFeedbackEffect::supportsThemeEffect();
-    }
-
-    void setEffect(ThemeEffect effect)
-    {
-        if (m_effect != effect) {
-            m_effect = effect;
-            emit effectChanged();
-        }
-    }
-
-    ThemeEffect effect() const
-    {
-        return m_effect;
-    }
-
+    QDeclarativeThemeEffect(QObject *parent = 0);
+    bool effectSupported();
+    void setEffect(ThemeEffect effect);
+    ThemeEffect effect() const;
 public slots:
-    void play()
-    {
-        QFeedbackEffect::playThemeEffect(static_cast<QFeedbackEffect::ThemeEffect>(m_effect));
-    }
-
+    void play();
 signals:
     void effectChanged();
-
 public:
     ThemeEffect m_effect;
 };
 
 QML_DECLARE_TYPE(QDeclarativeThemeEffect);
 
-#endif // QDECLARATIVETHEMEEFFECT_H
+#endif // QDECLARATIVETHEMEEFFECT_P_H
