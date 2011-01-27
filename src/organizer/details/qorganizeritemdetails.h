@@ -45,8 +45,6 @@
 // this file includes all of the leaf detail classes
 // provided by the Qt Organizer API.
 
-#include "qorganizereventattendee.h"
-#include "qorganizereventrsvp.h"
 #include "qorganizereventtime.h"
 #include "qorganizeritemattachment.h"
 #include "qorganizeritemcomment.h"
