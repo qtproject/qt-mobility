@@ -8,13 +8,13 @@ include (../../../common.pri)
 
 INCLUDEPATH += ../../../src/location
 
-HEADERS += ../qlocationtestutils_p.h \
-           ../testqgeopositioninfosource_p.h \
+HEADERS += ../qgeocoordinate/qlocationtestutils_p.h \
+           ../qgeopositioninfosource/testqgeopositioninfosource_p.h \
            qnmeapositioninfosourceproxyfactory.h \
            tst_qnmeapositioninfosource.h
 
-SOURCES += ../qlocationtestutils.cpp \
-           ../testqgeopositioninfosource.cpp \
+SOURCES += ../qgeocoordinate/qlocationtestutils.cpp \
+           ../qgeopositioninfosource/testqgeopositioninfosource.cpp \
            qnmeapositioninfosourceproxyfactory.cpp \
            tst_qnmeapositioninfosource.cpp \
            tst_qnmeapositioninfosource_realtime_generic.cpp

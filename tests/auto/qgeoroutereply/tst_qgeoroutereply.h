@@ -53,7 +53,7 @@
 #include <qgeoroutereply.h>
 #include <qgeoroute.h>
 
-#include "../qlocationtestutils_p.h"
+#include "../qgeocoordinate/qlocationtestutils_p.h"
 
 QTM_USE_NAMESPACE
 class SubRouteReply :public QGeoRouteReply

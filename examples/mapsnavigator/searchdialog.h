@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,42 +39,26 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZERITEMATTACHMENT_H
-#define QORGANIZERITEMATTACHMENT_H
+#ifndef SEARCHDIALOG_H
+#define SEARCHDIALOG_H
 
-#include <QString>
+#include <QDialog>
+#include <QLineEdit>
+#include <QComboBox>
 
-#include "qtorganizerglobal.h"
-#include "qorganizeritemdetail.h"
-#include "qorganizeritemfilter.h"
-
-QTM_BEGIN_NAMESPACE
-
-/* Leaf class */
-class Q_ORGANIZER_EXPORT QOrganizerItemAttachment : public QOrganizerItemDetail
+class SearchDialog : public QDialog
 {
+    Q_OBJECT
 public:
-#ifdef Q_QDOC
-    static const QLatin1Constant DefinitionName;
-    static const QLatin1Constant FieldDescription;
-    static const QLatin1Constant FieldAttachmentData;
-    static const QLatin1Constant FieldAttachmentMimeType;
-#else
-    Q_DECLARE_CUSTOM_ORGANIZER_DETAIL(QOrganizerItemAttachment, "Attachment")
-    Q_DECLARE_LATIN1_CONSTANT(FieldDescription, "Description");
-    Q_DECLARE_LATIN1_CONSTANT(FieldAttachmentData, "AttachmentData");
-    Q_DECLARE_LATIN1_CONSTANT(FieldAttachmentMimeType, "AttachmentMimeType");
-#endif
+    SearchDialog(QWidget *parent=0);
+    ~SearchDialog();
 
-    void setDescription(const QString& description) {setValue(FieldDescription, description);}
-    QString description() const {return value(FieldDescription);}
+    QString searchTerms() const;
+    qreal radius() const;
 
-    void setAttachment(const QByteArray& data, const QString& mimeType);
-    QByteArray attachmentData() const;
-    QString attachmentMimeType() const;
+private:
+    QLineEdit *searchTermEdit;
+    QComboBox *whereCombo;
 };
 
-QTM_END_NAMESPACE
-
-#endif
-
+#endif // SEARCHDIALOG_H
