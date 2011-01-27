@@ -122,7 +122,7 @@ public:
     CNetworkStatus();
     ~CNetworkStatus();
     TUint32 GetCapability () const;
-#ifdef SYMBIAN_3_PLATFORM
+#ifdef ETELMM_SUPPORTED
     RMobilePhone::TMobilePhoneRegistrationStatus GetStatus() const;
 #endif
     void Add(MNetworkObserver *aObserver) { AddObserver(aObserver);} ;
@@ -135,7 +135,7 @@ private : //From CNetworkBase
 
 
 private:
-#ifdef SYMBIAN_3_PLATFORM
+#ifdef ETELMM_SUPPORTED
     RMobilePhone::TMobilePhoneRegistrationStatus iNetStatus;
 #endif
     TUint32 iCapsPhone;
@@ -172,7 +172,7 @@ public :
         void addObserver(MNetworkInfoObserver *aObserver);
         void removeObserver(MNetworkInfoObserver *aObserver);
         RMobilePhone::TMobilePhoneNetworkMode GetMode() const;
-#ifdef SYMBIAN_3_PLATFORM
+#ifdef ETELMM_SUPPORTED
         RMobilePhone::TMobilePhoneRegistrationStatus GetStatus() const;
 #endif
        TUint32 GetCapability () const;
