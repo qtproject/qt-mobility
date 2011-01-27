@@ -85,4 +85,12 @@ void QBluetoothDeviceDiscoveryAgentPrivate::_q_propertyChanged(const QString &na
 }
 #endif
 
+#ifdef QTM_SYMBIAN_BLUETOOTH
+void _q_newDeviceFound(const QBluetoothDeviceInfo &device)
+{
+
+}
+#endif
+
+
 QTM_END_NAMESPACE

@@ -55,7 +55,7 @@ QTM_BEGIN_NAMESPACE
 class QBluetoothAddress;
 class QBluetoothSocket;
 
-#ifdef Q_OS_SYMBIAN
+#ifdef QTM_SYMBIAN_BLUETOOTH
 class QBluetoothSocketSymbianPrivate;
 #endif
 

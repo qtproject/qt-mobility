@@ -59,7 +59,7 @@ void QRfcommServerPrivate::_q_newConnection()
 }
 #endif
 
-#ifdef Q_OS_SYMBIAN
+#ifdef QTM_SYMBIAN_BLUETOOTH
 void QRfcommServerPrivate::HandleAcceptCompleteL(TInt aErr)
 {
 }

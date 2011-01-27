@@ -49,7 +49,7 @@
 #include <QMap>
 #include <QVariant>
 
-#ifdef Q_OS_SYMBIAN
+#ifdef QTM_SYMBIAN_BLUETOOTH
 #include <btsdp.h>
 #endif
 
@@ -77,7 +77,7 @@ public:
     QBluetoothDeviceInfo deviceInfo;
     QMap<quint16, QVariant> attributes;
 
-#ifdef Q_OS_SYMBIAN
+#ifdef QTM_SYMBIAN_BLUETOOTH
     mutable RSdp sdpSession;
     mutable RSdpDatabase sdpDatabase;
     mutable TSdpServRecordHandle serviceRecord;

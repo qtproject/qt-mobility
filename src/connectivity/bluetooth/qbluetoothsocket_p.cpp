@@ -45,7 +45,7 @@
 QTM_BEGIN_NAMESPACE
 
 QBluetoothSocketPrivate::QBluetoothSocketPrivate()
-#ifdef Q_OS_SYMBIAN
+#ifdef QTM_SYMBIAN_BLUETOOTH
 : rxDescriptor(0, 0)
 #endif
 {

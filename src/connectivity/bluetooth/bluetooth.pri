@@ -63,6 +63,7 @@ symbian {
 
 symbian {
     !contains(DEFINES, DO_NOT_BUILD_BLUETOOTH_SYMBIAN_BACKEND) {
+        DEFINES += QTM_SYMBIAN_BLUETOOTH
         INCLUDEPATH += $$MW_LAYER_SYSTEMINCLUDE
         include(symbian/symbian.pri)
 
