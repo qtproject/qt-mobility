@@ -201,7 +201,7 @@ void tst_QNdefMessage::tst_parse_data()
         recordList.append(record);
         QTest::newRow("nfc-rtd text") << data << QNdefMessage(recordList)
                                       << (QVariantList() << QLatin1String("Test String")
-                                                         << QLocale(QLatin1String("en")));
+                                                         << QLatin1String("en"));
     }
 
     // NFC-RTD Text
@@ -232,7 +232,7 @@ void tst_QNdefMessage::tst_parse_data()
             << data << QNdefMessage(recordList)
             << (QVariantList() << QString::fromUtf8("\343\203\206\343\202\271\343\203\210\346\226"
                                                     "\207\345\255\227\345\210\227")
-                               << QLocale(QLatin1String("ja")));
+                               << QLatin1String("ja"));
     }
 
     // NFC-RTD URI
@@ -399,7 +399,7 @@ void tst_QNdefMessage::tst_parse()
 
             if (expectedData.count() == 2) {
                 QCOMPARE(parsedTextRecord.text(), expectedData.at(0).toString());
-                QCOMPARE(parsedTextRecord.locale(), expectedData.at(1).toLocale());
+                QCOMPARE(parsedTextRecord.locale(), expectedData.at(1).toString());
             }
         } else if (record.isRecordType<QNdefNfcUriRecord>()) {
             QNdefNfcUriRecord uriRecord(record);
