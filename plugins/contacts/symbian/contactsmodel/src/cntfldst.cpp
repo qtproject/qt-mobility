@@ -549,10 +549,10 @@ void CContactAgentField::ExternalizeL(RWriteStream& aStream) const
 EXPORT_C void CContactAgentField::SetAgentId(TContactItemId aId)
 /** 
 * Sets the agent ID field data.
-* @param aId The agent ID. Must be > 0 otherwise it won't be set.
+* @param aId The agent ID. Must be > 0 or KNullContactId otherwise it won't be set.
 */
     {
-    if (aId > 0)
+    if (aId > 0 || aId == KNullContactId)
         {
         iAgentId = aId;
         }

@@ -528,6 +528,12 @@ void CPplContactTable::WriteContactItemL(const CContactItem& aItem, TCntSqlState
 	    const CContactItemField& field = aItem.CardFields()[indexFavField];
 	    if (field.StorageType() == KStorageTypeContactItemId)
 	        {
+	        if (aItem.Type() == KUidContactTemplate)
+	            {
+	            //save invalid contact id in this field for the system template contact
+	            field.AgentStorage()->SetAgentId(KNullContactId);
+	            }
+
 	        User::LeaveIfError(stmnt.BindInt(
 	            User::LeaveIfError(stmnt.ParameterIndex(KContactFavoriteIndexParam() ) ),
 	                field.AgentStorage()->Value() ) );
