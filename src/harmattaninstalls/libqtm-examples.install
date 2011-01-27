@@ -33,7 +33,6 @@ usr/lib/qtmobilty/examples/show_proximity
 usr/lib/qtmobilty/examples/places.gpx
 usr/lib/qtmobilty/examples/show_compass
 usr/lib/qtmobilty/examples/audiooutput
-usr/lib/qtmobilty/examples/GeoServiceDemo
 usr/lib/qtmobilty/examples/sfwecho_client
 usr/lib/qtmobilty/examples/qml_storageinfo
 usr/lib/qtmobilty/examples/metadata2
@@ -55,7 +54,6 @@ usr/lib/qtmobilty/examples/sfwecho_service
 usr/lib/qtmobilty/examples/qml_landmarkmap
 usr/lib/qtmobilty/examples/sensor_explorer
 usr/lib/qtmobilty/examples/qml_camera
-usr/lib/qtmobilty/examples/MapViewer
 usr/lib/qtmobilty/examples/mapviewer.qml
 usr/lib/qtmobilty/examples/flickr.qml
 usr/lib/qtmobilty/examples/calendardemo
@@ -72,6 +70,7 @@ usr/lib/qtmobilty/examples/show_magneticflux
 usr/lib/qtmobilty/examples/dialer_service
 usr/lib/qtmobilty/examples/logfilepositionsource
 usr/lib/qtmobilty/examples/qsysinfo
+usr/lib/qtmobilty/examples/MapsNavigator
 usr/lib/qtmobilty/examples/content-sfw-dialer/DialScreen.qml
 usr/lib/qtmobilty/examples/content-sfw-dialer/DialerList.qml
 usr/lib/qtmobilty/examples/content-sfw-dialer/DialButton.qml
