@@ -84,7 +84,7 @@ void CNetworkBase::RemoveObserver()
 
 CNetworkMode::CNetworkMode()
     {
-#ifdef SYMBIAN_3_PLATFORM
+#ifdef ETELMM_SUPPORTED
     if (iConstructed)
         {
         TInt err = iMobilePhone.GetCurrentMode( iNetworkMode );
@@ -106,7 +106,7 @@ CNetworkMode::~CNetworkMode()
 
 void CNetworkMode::DoCancel()
     {
-#ifdef SYMBIAN_3_PLATFORM
+#ifdef ETELMM_SUPPORTED
     iMobilePhone.CancelAsyncRequest(EMobilePhoneNotifyModeChange);
 #endif
     }
@@ -120,7 +120,7 @@ void CNetworkMode::RunL()
 
 void CNetworkMode::StartMonitoring()
     {
-#ifdef SYMBIAN_3_PLATFORM
+#ifdef ETELMM_SUPPORTED
     iMobilePhone.NotifyModeChange ( iStatus,iNetworkMode);
     SetActive();
 #endif
@@ -134,7 +134,7 @@ RMobilePhone::TMobilePhoneNetworkMode CNetworkMode::GetMode() const
 CNetworkStatus :: CNetworkStatus()
    {
 
-#ifdef SYMBIAN_3_PLATFORM
+#ifdef ETELMM_SUPPORTED
       if (iConstructed)
         {
         TInt err = iMobilePhone.GetMultimodeCaps( iCapsPhone );
@@ -158,7 +158,7 @@ CNetworkStatus::~CNetworkStatus()
 
 void CNetworkStatus::DoCancel()
     {
-#ifdef SYMBIAN_3_PLATFORM
+#ifdef ETELMM_SUPPORTED
     iMobilePhone.CancelAsyncRequest(EMobilePhoneNotifyNetworkRegistrationStatusChange);
 #endif
     }
@@ -173,7 +173,7 @@ void CNetworkStatus::RunL()
 
 void CNetworkStatus::StartMonitoring()
     {
-#ifdef SYMBIAN_3_PLATFORM
+#ifdef ETELMM_SUPPORTED
     iMobilePhone.NotifyNetworkRegistrationStatusChange ( iStatus,iNetStatus);
     SetActive();
 #endif
@@ -184,7 +184,7 @@ TUint32 CNetworkStatus::GetCapability () const
     return iCapsPhone;
     }
 
-#ifdef SYMBIAN_3_PLATFORM
+#ifdef ETELMM_SUPPORTED
 RMobilePhone::TMobilePhoneRegistrationStatus CNetworkStatus::GetStatus () const
     {
     return iNetStatus;
@@ -205,7 +205,7 @@ TUint32 CNetworkInfo::GetCapability () const
     return iNetStat.GetCapability();
     }
 
-#ifdef SYMBIAN_3_PLATFORM
+#ifdef ETELMM_SUPPORTED
 RMobilePhone::TMobilePhoneRegistrationStatus CNetworkInfo::GetStatus () const
     {
     return iNetStat.GetStatus();
