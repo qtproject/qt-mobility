@@ -900,7 +900,6 @@ find %{buildroot}%{_libdir}/qtmobility -type f -perm /u+x,g+x,o+x \( -false \
 %{_includedir}/QtOrganizer/QOrganizerEventOccurrence
 %{_includedir}/QtOrganizer/QOrganizerEventTime
 %{_includedir}/QtOrganizer/QOrganizerItem
-%{_includedir}/QtOrganizer/QOrganizerItemAttachment
 %{_includedir}/QtOrganizer/QOrganizerItemAudibleReminder
 %{_includedir}/QtOrganizer/QOrganizerItemChangeLogFilter
 %{_includedir}/QtOrganizer/QOrganizerItemChangeSet
