@@ -38,79 +38,78 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-
-#ifndef QDECLARATIVEFILEEFFECT_H
-#define QDECLARATIVEFILEEFFECT_H
+#ifndef QDECLARATIVEFEEDBACKACTUATOR_H
+#define QDECLARATIVEFEEDBACKACTUATOR_H
 
 #include <QtDeclarative/qdeclarative.h>
-#include "qdeclarativefeedbackeffect.h"
+#include "qfeedbackactuator.h"
 
 QTM_USE_NAMESPACE
 
-class QDeclarativeFileEffect : public QDeclarativeFeedbackEffect
+class QDeclarativeFeedbackActuator : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(bool loaded READ isLoaded WRITE setLoaded NOTIFY loadedChanged)
-    Q_PROPERTY(QUrl source READ source WRITE setSource NOTIFY sourceChanged)
-    Q_PROPERTY(QStringList supportedMimeTypes READ supportedMimeTypes)
+    Q_PROPERTY(int actuatorId READ actuatorId)
+    Q_PROPERTY(QString name READ name)
+    Q_PROPERTY(QFeedbackActuator::State state READ state)
+    Q_PROPERTY(bool valid READ isValid)
+    Q_PROPERTY(bool enabled READ isEnabled WRITE setEnabled NOTIFY enabledChanged)
 public:
-    explicit QDeclarativeFileEffect(QObject *parent = 0) : QDeclarativeFeedbackEffect(parent){
-        d = new QFeedbackFileEffect(this);
-        setFeedbackEffect(d);
-    }
-    bool isLoaded() const
+    explicit QDeclarativeFeedbackActuator(QObject *parent = 0)
+        :QObject(parent)
     {
-        return d->isLoaded();
-    }
-    void setLoaded(bool v)
-    {
-        if (v != d->isLoaded()) {
-            d->setLoaded(v);
-            emit loadedChanged();
-        }
+        d = new QFeedbackActuator(this);
+        connect(d, SIGNAL(enabledChanged()), this, SIGNAL(enabledChanged()));
     }
 
-    QUrl source() const
+    explicit QDeclarativeFeedbackActuator(QObject *parent, QFeedbackActuator* actuator)
+        :QObject(parent)
     {
-        return d->source();
-    }
-    void setSource(const QUrl & url)
-    {
-        if (url != d->source()) {
-            d->setSource(url);
-            emit sourceChanged();
-        }
+        d = actuator;
+        connect(d, SIGNAL(enabledChanged()), this, SIGNAL(enabledChanged()));
     }
 
-    Q_INVOKABLE QStringList supportedMimeTypes()
+    QFeedbackActuator* feedbackActuator() const
     {
-        return d->supportedMimeTypes();
+        return d;
+    }
+    int actuatorId() const
+    {
+        return d->id();
+    }
+    bool isValid() const
+    {
+        return d->isValid();
     }
 
+    QString name() const
+    {
+        return d->name();
+    }
+    QFeedbackActuator::State state() const
+    {
+        return d->state();
+    }
+
+    Q_INVOKABLE bool isCapabilitySupported(QFeedbackActuator::Capability capbility) const
+    {
+        return d->isCapabilitySupported(capbility);
+    }
+
+    bool isEnabled() const
+    {
+        return d->isEnabled();
+    }
+    void setEnabled(bool v)
+    {
+        d->setEnabled(v);
+    }
 
 signals:
-    void loadedChanged();
-    void sourceChanged();
-public slots:
-    void load()
-    {
-        if (!isLoaded()) {
-            d->load();
-            emit loadedChanged();
-        }
-    }
-    void unload()
-    {
-        if (isLoaded()) {
-            d->unload();
-            emit loadedChanged();
-        }
-    }
+    void enabledChanged();
 
 private:
-    QFeedbackFileEffect* d;
+    QFeedbackActuator* d;
 };
 
-QML_DECLARE_TYPE(QDeclarativeFileEffect);
-
-#endif // QDECLARATIVEFILEEFFECT_H
+#endif

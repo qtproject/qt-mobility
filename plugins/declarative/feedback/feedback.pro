@@ -13,7 +13,9 @@ QT += declarative
 HEADERS += qdeclarativehapticseffect.h \
     qdeclarativefileeffect.h \
     qdeclarativethemeeffect.h \
-    qdeclarativefeedback.h
+    qdeclarativefeedback.h \
+    qdeclarativefeedbackactuator.h \
+    qdeclarativefeedbackeffect.h
 SOURCES += feedback.cpp
 
 CONFIG += mobility

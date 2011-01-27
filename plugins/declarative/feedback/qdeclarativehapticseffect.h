@@ -42,87 +42,184 @@
 #define QDECLARATIVEHAPTICSEFFECT_H
 
 #include <QtDeclarative/qdeclarative.h>
-#include <qfeedbackeffect.h>
-#include <qfeedbackactuator.h>
+#include "qdeclarativefeedbackeffect.h"
+#include "qdeclarativefeedbackactuator.h"
 
 QTM_USE_NAMESPACE
 
-class QDeclarativeHapticsEffect : public QFeedbackHapticsEffect
+class QDeclarativeHapticsEffect : public QDeclarativeFeedbackEffect
 {
     Q_OBJECT
-    Q_PROPERTY(QDeclarativeListProperty<QFeedbackActuator> actuators READ actuators NOTIFY actuatorsChanged)
-    Q_PROPERTY(bool running READ isRunning WRITE setRunning NOTIFY runningChanged)
-    Q_PROPERTY(bool paused READ isPaused WRITE setPaused NOTIFY pausedChanged)
+    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeFeedbackActuator> availableActuators READ availableActuators)
+    Q_PROPERTY(qreal intensity READ intensity WRITE setIntensity NOTIFY intensityChanged)
+    Q_PROPERTY(int attackTime READ attackTime WRITE setAttackTime NOTIFY attackTimeChanged)
+    Q_PROPERTY(qreal attackIntensity READ attackIntensity WRITE setAttackIntensity NOTIFY attackIntensityChanged)
+    Q_PROPERTY(int fadeTime READ fadeTime WRITE setFadeTime NOTIFY fadeTimeChanged)
+    Q_PROPERTY(qreal fadeIntensity READ fadeIntensity WRITE setFadeIntensity NOTIFY fadeIntensityChanged)
+    Q_PROPERTY(int period READ period WRITE setPeriod NOTIFY periodChanged)
+    Q_PROPERTY(QDeclarativeFeedbackActuator* actuator READ actuator WRITE setActuator NOTIFY actuatorChanged)
 
 public:
-    QDeclarativeHapticsEffect(QObject *parent = 0) : QFeedbackHapticsEffect(parent), running_(false), paused_(false) {
-        actuators_ = QFeedbackActuator::actuators();
-        QObject::connect(this, SIGNAL(stateChanged()), this, SLOT(updateState()));
-    }
 
-    bool isRunning() const { return running_; }
-    bool isPaused() const { return paused_; }
-    void setRunning(bool running) {
-        State currentState = state();
-        if (currentState != Running && running) {
-            start();
-        } else if (currentState != Stopped && !running) {
-            stop();
-        }
-    }
-
-    void setPaused(bool paused) {
-        State currentState = state();
-        if (currentState == Paused && !paused) {
-            start();
-        } else if (currentState == Running && paused) {
-            pause();
-        }
-    }
-
-    QDeclarativeListProperty<QFeedbackActuator> actuators() {
-        return QDeclarativeListProperty<QFeedbackActuator>(this,
-                0,
-                actuator_append,
-                actuator_count,
-                actuator_at,
-                0);
-    }
-    static void actuator_append(QDeclarativeListProperty<QFeedbackActuator> *prop, QFeedbackActuator *actuator)
+    explicit QDeclarativeHapticsEffect(QObject *parent = 0) : QDeclarativeFeedbackEffect(parent), actuator_(0)
     {
-        static_cast<QDeclarativeHapticsEffect*>(prop->object)->actuators_.append(actuator);
-        emit static_cast<QDeclarativeHapticsEffect*>(prop->object)->actuatorsChanged();
+        d = new QFeedbackHapticsEffect(this);
+        setFeedbackEffect(d);
+
+        QFeedbackActuator* fa = d->actuator();
+
+        QList<QFeedbackActuator*> actuators = QFeedbackActuator::actuators();
+        foreach (QFeedbackActuator* actuator, actuators) {
+            QDeclarativeFeedbackActuator* dfa;
+            dfa = new QDeclarativeFeedbackActuator(this, actuator);
+            if (fa && *fa == *actuator) {
+                actuator_ = dfa;
+            }
+            actuators_.push_back(dfa);
+        }
     }
-    static int actuator_count(QDeclarativeListProperty<QFeedbackActuator> *prop)
+
+    void setDuration(int msecs)
+    {
+        if (msecs != d->duration()) {
+            d->setDuration(msecs);
+            emit durationChanged();
+        }
+    }
+
+    int duration() const
+    {
+        return d->duration();
+    }
+
+    void setIntensity(qreal intensity)
+    {
+        if (qFuzzyCompare(intensity, d->intensity())) {
+            d->setIntensity(intensity);
+            emit intensityChanged();
+        }
+    }
+
+    qreal intensity() const
+    {
+        return d->intensity();
+    }
+
+    //the envelope
+    void setAttackTime(int msecs)
+    {
+        if (msecs != d->attackTime()) {
+            d->setAttackTime(msecs);
+            emit attackTimeChanged();
+        }
+    }
+
+    int attackTime() const
+    {
+        return d->attackTime();
+    }
+
+    void setAttackIntensity(qreal intensity)
+    {
+        if (qFuzzyCompare(intensity, d->attackIntensity())) {
+            d->setAttackIntensity(intensity);
+            emit intensityChanged();
+        }
+    }
+
+    qreal attackIntensity() const
+    {
+        return d->attackIntensity();
+    }
+
+    void setFadeTime(int msecs)
+    {
+        if (msecs != d->fadeTime()) {
+            d->setFadeTime(msecs);
+            emit fadeTimeChanged();
+        }
+    }
+
+    int fadeTime() const
+    {
+        return d->fadeTime();
+    }
+
+    void setFadeIntensity(qreal intensity)
+    {
+        if (qFuzzyCompare(intensity, d->fadeIntensity())) {
+            d->setFadeIntensity(intensity);
+            emit fadeIntensityChanged();
+        }
+    }
+
+    qreal fadeIntensity() const
+    {
+        return d->fadeIntensity();
+    }
+
+    void setPeriod(int msecs)
+    {
+        if (msecs != d->period()) {
+            d->setPeriod(msecs);
+            emit periodChanged();
+        }
+    }
+
+    int period() const
+    {
+        return d->period();
+    }
+
+    void setActuator(QDeclarativeFeedbackActuator *actuator)
+    {
+        if (actuator != actuator_) {
+            if (!actuator
+             || !actuator_
+             || !(*(actuator->feedbackActuator()) == *(actuator_->feedbackActuator()))) {
+                actuator_ = actuator;
+                d->setActuator(actuator_->feedbackActuator());
+                emit actuatorChanged();
+            }
+        }
+    }
+
+    QDeclarativeFeedbackActuator* actuator() const
+    {
+        return actuator_;
+    }
+
+    QDeclarativeListProperty<QDeclarativeFeedbackActuator> availableActuators() {
+        return QDeclarativeListProperty<QDeclarativeFeedbackActuator>(this,
+                                                                      0,
+                                                                      0 /*appending actuators are not allowed*/,
+                                                                      actuator_count,
+                                                                      actuator_at,
+                                                                      0 /*removing actuators are not allowed*/);
+    }
+
+    static int actuator_count(QDeclarativeListProperty<QDeclarativeFeedbackActuator> *prop)
     {
         return static_cast<QDeclarativeHapticsEffect*>(prop->object)->actuators_.size();
     }
-    static QFeedbackActuator *actuator_at(QDeclarativeListProperty<QFeedbackActuator> *prop, int index)
+    static QDeclarativeFeedbackActuator *actuator_at(QDeclarativeListProperty<QDeclarativeFeedbackActuator> *prop, int index)
     {
         return static_cast<QDeclarativeHapticsEffect*>(prop->object)->actuators_.at(index);
     }
 
 signals:
-    void runningChanged();
-    void pausedChanged();
-    void actuatorsChanged();
+    void intensityChanged();
+    void attackTimeChanged();
+    void attackIntensityChanged();
+    void fadeTimeChanged();
+    void fadeIntensityChanged();
+    void periodChanged();
+    void actuatorChanged();
 public slots:
-    void updateState() {
-        bool running = state() == Running;
-        bool paused = state() == Paused;
-        if (running != running_) {
-            running_ = running;
-            emit runningChanged();
-        }
-        if (paused != paused_) {
-            paused_ = paused;
-            emit pausedChanged();
-        }
-    }
-public:
-    bool running_;
-    bool paused_;
-    QList<QFeedbackActuator*> actuators_;
+private:
+    QFeedbackHapticsEffect* d;
+    QList<QDeclarativeFeedbackActuator*> actuators_;
+    QDeclarativeFeedbackActuator* actuator_;
 };
 
 QML_DECLARE_TYPE(QDeclarativeHapticsEffect);

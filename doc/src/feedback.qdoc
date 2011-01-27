@@ -34,12 +34,12 @@
 
 \ingroup mobility
 
-The Feedback API enables a client to provide feedback (both tactile and audio) to the
-user in response to their actions (for example, touching an onscreen button), and to
-control the vibration of the device (when a vibrator is used) or the piezo feedback
-from the screen.
+The Feedback API enables a client to control and provide tactile and audio feedback
+to the user. The feedback is in response to user actions. For example, touching an
+onscreen button. Control of the feedback involves control of the vibration of
+the device, when a vibrator is used, or the piezo feedback from the screen.
 
-This is part of the Qt Mobility Project.
+This is part of the QtMobility Project.
 
 \tableofcontents
 
@@ -76,7 +76,7 @@ check what formats are supported by the system by calling QFeedbackFileEffect::s
 For the vast majority of use cases, the QFeedbackEffect, QFeedbackHapticsEffect
 and QFeedbackFileEffect classes are the only classes which developers will use
 in their programs.  There are some special cases, however, where they may wish
-to implement their own feedback plugin.  The Qt Mobility Feedback API allows
+to implement their own feedback plugin.  The QtMobility Feedback API allows
 third party developers to implement QFeedbackInterface in a plugin which may be
 loaded by the plugin loading mechanism to play feedback effects.
 
@@ -93,15 +93,21 @@ by a plugin to provide effects to clients are:
 
 Generally, the device platform will provide an implementation of each of the
 three different interfaces, which will be the default plugins used for the
-various QFeedbackEffects.
+various \l {QFeedbackEffect}s.
 
-\section1 Usage
+\section2 Platform Issues
 
-\note On Symbian vibration feature needs to be enabled in user profile for the API to work.
+\note On Symbian, vibration feature needs to be enabled in the user profile for the API to work.
+
+\note On Maemo5, periodic vibration does not support attack or fade.
+
+\section1 Using Effects
+
+\section2 Theme Effects
 
 The most common use of the API is to play system theme effects for user
-interface interaction notifications (e.g., button clicks, etc).  These types
-of system theme effects can be played instantaneously, but cannot be paused or
+interface interaction notifications, for example, button clicks.  These
+system theme effects can be played instantaneously, but cannot be paused or
 stopped.  They are played via the static QFeedbackEffect::playThemeEffect()
 function:
 \snippet ../../doc/src/snippets/qtfeedbackdocsample/qtfeedbackdocsample.cpp Play the system theme button click effect
@@ -111,13 +117,69 @@ interactions and notifications, to allow an application to maintain greater
 consistency with the platform user experience.
 \snippet ../../doc/src/snippets/qtfeedbackdocsample/qtfeedbackdocsample.cpp Play the system theme bounce effect
 
+\section2 Custom Effects
+
 The next most common use of the API is to define a custom effect which can be
 used to notify the user of application-specific events or to increase the
-immersiveness of an application.  A custom haptic effect may be defined in the
-following manner:
+immersiveness of an application.  A custom effect may be either periodic or
+non-periodic.
+
+The following diagram shows the graph of intensity over time of a non-periodic
+effect which was started at time \c t and ended at time \c q, with an
+\l{QFeedbackHapticsEffect::intensity()}{intensity} of \c{I}, an
+\l{QFeedbackHapticsEffect::attackIntensity()}{attack intensity} of \c{AI}, a
+\l{QFeedbackHapticsEffect::fadeIntensity()}{fade intensity} of \c{FI}, an
+\l{QFeedbackHapticsEffect::attackTime()}{attack time} of \c{AT}, and a
+\l{QFeedbackHapticsEffect::fadeTime()}{fade time} of \c{FT}, with a total
+\l{QFeedbackEffect::duration()}{duration} of \c{Duration} milliseconds:
+\code
+   Intensity
+        ^
+      I_|
+        |        .--------------.
+        |       /                \
+     AI_|      /                  \
+        |     (                    \
+        |     |                     \
+     FI_|     |                      )
+        |     |                      |
+        |     |                      |
+        +-----t----------------------q----->  Time (msec)
+              <AT>              <-FT->
+              <-------Duration------->
+\endcode
+
+The following diagram shows the graph of intensity over time of a periodic
+effect which was started at time \c t and ended at time \c q, with an
+\l{QFeedbackHapticsEffect::intensity()}{intensity} of \c{I}, an
+\l{QFeedbackHapticsEffect::attackIntensity()}{attack intensity} of \c{AI}, a
+\l{QFeedbackHapticsEffect::fadeIntensity()}{fade intensity} of \c{FI}, an
+\l{QFeedbackHapticsEffect::attackTime()}{attack time} of \c{AT}, and a
+\l{QFeedbackHapticsEffect::fadeTime()}{fade time} of \c{FT}, with a
+\l{QFeedbackHapticsEffect::period()}{period} of \c{Period} milliseconds and a total
+\l{QFeedbackEffect::duration()}{duration} of \c{Duration} milliseconds:
+\code
+   Intensity
+        ^
+      I_|
+        |        .-------.        .-------.        .-----+
+        |       /         \      /         \      /      |
+     AI_|      /           \    /           \    /       |
+        |     (             \  (             \  (        |
+        |     |              \ |              \ |        |
+     FI_|     |               \|               \|        |
+        |     |                '                '        |
+        |     |                                          |
+        +-----t------------------------------------------q----->  Time (msec)
+              <AT>       <-FT->
+              <-----Period---->
+              <------------------Duration---------------->
+\endcode
+
+A custom haptic effect may be defined in the following manner:
 \snippet ../../doc/src/snippets/qtfeedbackdocsample/qtfeedbackdocsample.cpp Define a custom haptic effect
-Note that no periodicity was defined for the effect, although that can be done
-by calling QFeedbackHapticEffect::setPeriod() if required.
+\note No periodicity was defined for the effect, although that can be done
+by calling QFeedbackHapticsEffect::setPeriod() if required.
 
 Once the effect has been defined, it may be played via the API offered in the
 QFeedbackEffect base class:
