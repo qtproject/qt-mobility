@@ -296,17 +296,6 @@ void QNfcTagTestCommon<TAG>::testNdefAccess()
 template<typename TAG>
 void QNfcTagTestCommon<TAG>::_testNdefAccess()
 {
-    QVERIFY(target->hasNdefMessage());
-
-    target->readNdefMessages();
-    QSignalSpy ndefMessageReadSpy(target, SIGNAL(ndefMessageRead(QNdefMessage)));
-    QSignalSpy ndefMessageWriteSpy(target, SIGNAL(ndefMessagesWritten()));
-
-    QTRY_VERIFY(!ndefMessageReadSpy.isEmpty());
-    const QNdefMessage& ndefMessage(ndefMessageReadSpy.first().at(0).value<QNdefMessage>());
-    QVERIFY(ndefMessage.count()>0);
-
-    ndefMessageReadSpy.clear();
 
     QNdefMessage message;
 
@@ -328,6 +317,9 @@ void QNfcTagTestCommon<TAG>::_testNdefAccess()
     QList<QNdefMessage> messages;
     messages.append(message);
 
+    QSignalSpy ndefMessageReadSpy(target, SIGNAL(ndefMessageRead(QNdefMessage)));
+    QSignalSpy ndefMessageWriteSpy(target, SIGNAL(ndefMessagesWritten()));
+
     target->writeNdefMessages(messages);
     QTRY_VERIFY(!ndefMessageWriteSpy.isEmpty());
 
@@ -336,6 +328,7 @@ void QNfcTagTestCommon<TAG>::_testNdefAccess()
 
     const QNdefMessage& ndefMessage_new(ndefMessageReadSpy.first().at(0).value<QNdefMessage>());
     QVERIFY(messages.at(0) == ndefMessage_new);
+    qDebug()<<target->hasNdefMessage();
 }
 
 template<typename TAG>

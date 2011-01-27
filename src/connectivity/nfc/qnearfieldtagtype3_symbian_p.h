@@ -96,17 +96,15 @@ private:
     const QByteArray& getIDm();
     QByteArray serviceBlockList2CmdParam(const QMap<quint16, QList<quint16> > &serviceBlockList, quint8& numberOfBlocks, bool isCheckCommand);
 
-    #if 0
-    // TODO: need serviceBlockList as an input parameter, this information can be rebuild from command binary
     QMap<quint16, QByteArray> checkResponse2ServiceBlockList(const QMap<quint16, QList<quint16> > &serviceBlockList, const QByteArray& response);
-    #endif
+
     void handleTagOperationResponse(const RequestId &id, const QByteArray &command, const QByteArray &response);
-    QVariant decodeResponse(const QByteArray & command, const QByteArray &response); 
+    QVariant decodeResponse(const QByteArray & command, const QByteArray &response);
 private:
     QByteArray mIDm;
     friend class QNearFieldTagImpl<QNearFieldTagType3Symbian>;
 };
-    
+
 QTM_END_NAMESPACE
 QT_END_HEADER
 #endif // QNEARFIELDTAGTYPE3SYMBIAN_H

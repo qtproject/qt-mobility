@@ -112,35 +112,19 @@ bool QNearFieldTagImplCommon::DoHasNdefMessages()
     {
         readNdefRequest->SetRequestId(requestId);
         readNdefRequest->SetNdefRequestType(NearFieldTagNdefRequest::EReadRequest);
-        int index = mPendingRequestList.indexOf(mCurrentRequest);
 
         if (!_isProcessingRequest())
         {
             // issue the request
             LOG("the request will be issued at once");
             mCurrentRequest = readNdefRequest;
-            if ((index < 0) || (index == mPendingRequestList.count() - 1))
-            {
-                // no next request
-                mPendingRequestList.append(readNdefRequest);
-            }
-            else
-            {
-                mPendingRequestList.insert(index+1, readNdefRequest);
-            }
+
+            mPendingRequestList.append(readNdefRequest);
             readNdefRequest->IssueRequest();
         }
         else
         {
-            if ((index < 0) || (index == mPendingRequestList.count() - 1))
-            {
-                // no next request
-                mPendingRequestList.append(readNdefRequest);
-            }
-            else
-            {
-                mPendingRequestList.insert(index+1, readNdefRequest);
-            }
+            mPendingRequestList.append(readNdefRequest);
         }
 
         readNdefRequest->WaitRequestCompletedNoSignal(5000);
@@ -496,7 +480,7 @@ bool QNearFieldTagImplCommon::_waitForRequestCompleted(const QNearFieldTarget::R
 }
 
 
-int QNearFieldTagImplCommon::_waitForRequestCompletedNoSignal(const QNearFieldTarget::RequestId &id, int msecs)
+bool QNearFieldTagImplCommon::_waitForRequestCompletedNoSignal(const QNearFieldTarget::RequestId &id, int msecs)
 {
     BEGIN
     int index = -1;
