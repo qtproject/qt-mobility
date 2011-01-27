@@ -646,6 +646,7 @@ void QGeoMapData::paintProviderNotices(QPainter *painter, const QStyleOptionGrap
 
 QGeoMapObjectInfo *QGeoMapData::createMapObjectInfo(QGeoMapObject *object)
 {
+    Q_UNUSED(object);
     qWarning("QGeoMapData::createMapObjectInfo is obsolete, returning null");
     return 0;
 }
@@ -774,14 +775,14 @@ void QGeoMapData::setBlockPropertyChangeSignals(bool block)
 
 QGeoMapDataPrivate::QGeoMapDataPrivate(QGeoMapData *parent, QGeoMappingManagerEngine *engine)
     : QObject(0),
-      q_ptr(parent),
       engine(engine),
       containerObject(0),
       zoomLevel(-1.0),
-      windowSize(0, 0),
       shiftSinceLastInval(0, 0),
+      windowSize(0, 0),
       blockPropertyChangeSignals(false),
-      oe(new QGeoMapObjectEngine(parent, this))
+      oe(new QGeoMapObjectEngine(parent, this)),
+      q_ptr(parent)
 {}
 
 QGeoMapDataPrivate::~QGeoMapDataPrivate()

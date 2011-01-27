@@ -129,7 +129,7 @@ public:
     CoordinateUnit units() const;
     void setUnits(const CoordinateUnit &unit);
 
-    QGraphicsItem * const graphicsItem() const;
+    QGraphicsItem *graphicsItem() const;
     void setGraphicsItem(QGraphicsItem *item);
 
     TransformType transformType() const;

@@ -48,7 +48,10 @@
 QTM_BEGIN_NAMESPACE
 
 QGeoMapObjectInfo::QGeoMapObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject)
-{}
+{
+    Q_UNUSED(mapData)
+    Q_UNUSED(mapObject)
+}
 
 QGeoMapObjectInfo::~QGeoMapObjectInfo()
 {}
@@ -72,6 +75,7 @@ QGeoBoundingBox QGeoMapObjectInfo::boundingBox() const
 
 bool QGeoMapObjectInfo::contains(const QGeoCoordinate &coordinate) const
 {
+    Q_UNUSED(coordinate);
     deprecatedWarning();
     return false;
 }

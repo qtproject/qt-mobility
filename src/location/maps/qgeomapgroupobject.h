@@ -79,8 +79,6 @@ private:
     QGeoMapGroupObjectPrivate *d_ptr;
     Q_DECLARE_PRIVATE(QGeoMapGroupObject)
     Q_DISABLE_COPY(QGeoMapGroupObject)
-
-    friend class QGeoMapGroupObjectPrivate;
 };
 
 QTM_END_NAMESPACE

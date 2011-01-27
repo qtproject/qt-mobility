@@ -588,7 +588,6 @@ void QGeoTiledMapData::paintMap(QPainter *painter, const QStyleOptionGraphicsIte
 */
 void QGeoTiledMapData::paintObjects(QPainter *painter, const QStyleOptionGraphicsItem *option)
 {
-    Q_D(QGeoTiledMapData);
     QGeoMapData::paintObjects(painter, option);
 }
 
@@ -597,6 +596,7 @@ void QGeoTiledMapData::paintObjects(QPainter *painter, const QStyleOptionGraphic
 */
 QGeoMapObjectInfo *QGeoTiledMapData::createMapObjectInfo(QGeoMapObject *mapObject)
 {
+    Q_UNUSED(mapObject);
     qWarning("QGeoTiledMapData::createMapObjectInfo is obsolete, returning NULL");
     return 0;
 }
@@ -767,18 +767,11 @@ void QGeoTiledMapData::tileError(QGeoTiledMapReply::Error error, QString errorSt
     qWarning() << errorString;
 }
 
-static bool zComparator(const QGraphicsItem *a, const QGraphicsItem *b)
-{
-    return a->zValue() < b->zValue();
-}
-
 /*!
     \reimp
 */
 QList<QGeoMapObject*> QGeoTiledMapData::mapObjectsAtScreenPosition(const QPointF &screenPosition) const
 {
-    Q_D(const QGeoTiledMapData);
-
     return QGeoMapData::mapObjectsAtScreenPosition(screenPosition);
 }
 
@@ -787,8 +780,6 @@ QList<QGeoMapObject*> QGeoTiledMapData::mapObjectsAtScreenPosition(const QPointF
 */
 QList<QGeoMapObject*> QGeoTiledMapData::mapObjectsInScreenRect(const QRectF &screenRect) const
 {
-    Q_D(const QGeoTiledMapData);
-
     return QGeoMapData::mapObjectsInScreenRect(screenRect);
 }
 
@@ -847,9 +838,9 @@ void QGeoTiledMapData::triggerUpdateMapDisplay(const QRectF &target)
 
 QGeoTiledMapDataPrivate::QGeoTiledMapDataPrivate(QGeoTiledMapData *parent, QGeoMappingManagerEngine *engine)
     : QGeoMapDataPrivate(parent, engine),
-      scene(0),
       spherical("+proj=latlon +ellps=sphere"),
-      wgs84("+proj=latlon +ellps=WGS84")
+      wgs84("+proj=latlon +ellps=WGS84"),
+      scene(0)
 {
 }
 

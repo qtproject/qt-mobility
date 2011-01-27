@@ -98,9 +98,9 @@ QTM_BEGIN_NAMESPACE
 QGeoMapObjectEngine::QGeoMapObjectEngine(QGeoMapData *mapData, QGeoMapDataPrivate *mapDataP) :
     md(mapData),
     mdp(mapDataP),
-    pixelScene(new QGraphicsScene),
+    exactMappingTolerance(1.0),
     latLonScene(new QGraphicsScene),
-    exactMappingTolerance(1.0)
+    pixelScene(new QGraphicsScene)
 {
 }
 
@@ -567,6 +567,8 @@ void QGeoMapObjectEngine::bilinearSecondsToScreen(const QGeoCoordinate &origin,
                                                  QGeoMapObject *object,
                                                  QList<QPolygonF> &polys)
 {
+    Q_UNUSED(origin)
+
     QList<QTransform> latLons = latLonTrans.values(object);
 
     // compute the transform by linearising from the lat/lon space
@@ -600,6 +602,8 @@ void QGeoMapObjectEngine::exactPixelMap(const QGeoCoordinate &origin,
                                        QGeoMapObject *object,
                                        QList<QPolygonF> &polys)
 {
+    Q_UNUSED(origin)
+
     QList<QGraphicsItem*> latLonItems = latLonExact.values(object);
 
     foreach (QGraphicsItem *i, pixelExact.values(object))

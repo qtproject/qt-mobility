@@ -417,7 +417,7 @@ QGeoMapObjectInfo *QGeoMapObject::info() const
     ownership of the GraphicsItem. Before taking ownership of the new item,
     it will first relinquish ownership of its predecessor (if any).
 */
-QGraphicsItem * const QGeoMapObject::graphicsItem() const
+QGraphicsItem *QGeoMapObject::graphicsItem() const
 {
     return d_ptr->graphicsItem;
 }
@@ -539,9 +539,9 @@ QGeoMapObjectPrivate::QGeoMapObjectPrivate()
     : zValue(0),
       isVisible(true),
       isSelected(false),
-      mapData(0),
       units(QGeoMapObject::PixelUnit),
       transType(QGeoMapObject::ExactTransform),
+      mapData(0),
       graphicsItem(0) {}
 
 QGeoMapObjectPrivate::~QGeoMapObjectPrivate()

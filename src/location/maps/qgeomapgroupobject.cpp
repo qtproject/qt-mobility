@@ -273,6 +273,7 @@ QGeoMapGroupObjectPrivate::~QGeoMapGroupObjectPrivate()
 
 void QGeoMapGroupObjectPrivate::childChangedZValue(int zValue)
 {
+    Q_UNUSED(zValue);
     QGeoMapObject *child = qobject_cast<QGeoMapObject*>(sender());
     if (!child)
         return;
