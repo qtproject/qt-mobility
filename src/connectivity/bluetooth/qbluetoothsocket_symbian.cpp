@@ -353,7 +353,7 @@ void QBluetoothSocketPrivate::_q_writeNotify()
 bool QBluetoothSocketPrivate::setSocketDescriptor(int socketDescriptor, QBluetoothSocket::SocketType socketType,
     QBluetoothSocket::SocketState socketState, QBluetoothSocket::OpenMode openMode)
 {
-  return false;
+    return false;
 }
 
 void QBluetoothSocketPrivate::_q_startReceive()
