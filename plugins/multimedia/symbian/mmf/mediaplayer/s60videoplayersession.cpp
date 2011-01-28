@@ -146,9 +146,12 @@ void S60VideoPlayerSession::setPlaybackRate(qreal rate)
     //50 = 0.5x ;100 = 1.x ; 200 = 2.x ; 300 = 3.x
     //so multiplying rate with 100
     TRAPD(err, m_player->SetPlayVelocityL((TInt)(rate*100)));
-    setError(err);
+    if (KErrNone == err)
+        emit playbackRateChanged(rate);
+    else
+        setError(err);
 #endif
-   
+
 }
 
 void S60VideoPlayerSession::doLoadUrlL(const TDesC &path)
@@ -295,6 +298,13 @@ bool S60VideoPlayerSession::isVideoAvailable()
 
 bool S60VideoPlayerSession::isAudioAvailable()
 {
+    if ( mediaStatus() == QMediaPlayer::LoadingMedia
+        || mediaStatus() == QMediaPlayer::UnknownMediaStatus
+        || mediaStatus() == QMediaPlayer::NoMedia
+        || (mediaStatus() == QMediaPlayer::StalledMedia && state() == QMediaPlayer::StoppedState)
+        || mediaStatus() == QMediaPlayer::InvalidMedia)
+         return false;
+
     if (m_player) {
         bool audioAvailable = false;
         TRAPD(err, audioAvailable = m_player->AudioEnabledL());
