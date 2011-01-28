@@ -55,6 +55,7 @@
 #include "s60videorenderer.h"
 #endif
 #include "s60mediaplayeraudioendpointselector.h"
+#include "s60medianetworkaccesscontrol.h"
 #include "s60mediastreamcontrol.h"
 
 #include <qmediaplaylistnavigator.h>
@@ -68,12 +69,14 @@ S60MediaPlayerService::S60MediaPlayerService(QObject *parent)
     , m_metaData(NULL)
     , m_audioEndpointSelector(NULL)
     , m_streamControl(NULL)
+    , m_networkAccessControl(NULL)
     , m_videoOutput(NULL)
 {
     m_control = new S60MediaPlayerControl(*this, this);
     m_metaData = new S60MediaMetaDataProvider(m_control, this);
     m_audioEndpointSelector = new S60MediaPlayerAudioEndpointSelector(m_control, this);
     m_streamControl = new S60MediaStreamControl(m_control, this);
+    m_networkAccessControl =  new S60MediaNetworkAccessControl(this);
 }
 
 S60MediaPlayerService::~S60MediaPlayerService()
@@ -84,6 +87,9 @@ QMediaControl *S60MediaPlayerService::requestControl(const char *name)
 {
     if (qstrcmp(name, QMediaPlayerControl_iid) == 0)
         return m_control;
+
+    if (qstrcmp(name, QMediaNetworkAccessControl_iid) == 0)
+        return m_networkAccessControl;
 
     if (qstrcmp(name, QMetaDataReaderControl_iid) == 0)
         return m_metaData;
@@ -166,7 +172,7 @@ S60MediaPlayerSession* S60MediaPlayerService::PlayerSession()
 S60MediaPlayerSession* S60MediaPlayerService::VideoPlayerSession()
 {
     if (!m_videoPlayerSession) {
-        m_videoPlayerSession = new S60VideoPlayerSession(this);
+        m_videoPlayerSession = new S60VideoPlayerSession(this, m_networkAccessControl);
 
         connect(m_videoPlayerSession, SIGNAL(positionChanged(qint64)),
                 m_control, SIGNAL(positionChanged(qint64)));
@@ -194,6 +200,8 @@ S60MediaPlayerSession* S60MediaPlayerService::VideoPlayerSession()
                 m_audioEndpointSelector, SIGNAL(activeEndpointChanged(const QString&)));
         connect(m_videoPlayerSession, SIGNAL(mediaChanged()),
                 m_streamControl, SLOT(handleStreamsChanged()));
+        connect(m_videoPlayerSession, SIGNAL(accessPointChanged(int)),
+                m_networkAccessControl, SLOT(accessPointChanged(int)));
     }
 
     m_videoPlayerSession->setVolume(m_control->mediaControlSettings().volume());

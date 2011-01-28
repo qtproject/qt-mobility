@@ -80,7 +80,7 @@ QT_USE_NAMESPACE
 #define WAIT_LONG_FOR_CONDITION(a,e)        \
     for (int _i = 0; _i < 1800; _i += 1) {  \
         if ((a) == (e)) break;              \
-        QTest::qWait(100);}
+        QTest::qWait(10);}
 
 #define WAIT_LONG_FOR_CONDITION1(a)        \
     for (int _i = 0; _i < 1800; _i += 1) {  \
@@ -93,7 +93,9 @@ tst_QMediaPlayer_xa::tst_QMediaPlayer_xa(): m_player(NULL), m_widget(NULL), m_wi
     videoOnlyContent        = new QMediaContent(QUrl("file:///C:/data/testfiles/test_video.3gp"));
     audioVideoContent       = new QMediaContent(QUrl("file:///C:/data/testfiles/test.3gp"));
     audioVideoAltContent    = new QMediaContent(QUrl("file:///C:/data/testfiles/test_alt.3gp"));
-    streamingContent        = new QMediaContent(QUrl("rtsp://10.48.2.51/Copyright_Free_Test_Content/Clips/Video/3GP/176x144/h263/h263_176x144_15fps_384kbps_AAC-LC_128kbps_mono_44.1kHz.3gp"));
+    //streamingContent        = new QMediaContent(QUrl("rtsp://10.48.2.51/Copyright_Free_Test_Content/Clips/Video/3GP/176x144/h263/h263_176x144_15fps_384kbps_AAC-LC_128kbps_mono_44.1kHz.3gp"));
+    streamingContent3gp     = new QMediaContent(QUrl("http://www.mobileplayground.co.uk/video/Crazy Frog.3gp"));
+    audioStreamingContent   = new QMediaContent(QUrl("http://myopusradio.com:8000/easy"));
     mediaContent            = audioVideoContent;
 }
 
@@ -161,6 +163,7 @@ void tst_QMediaPlayer_xa::init()
 void tst_QMediaPlayer_xa::cleanup()
 {
 }
+
 
 void tst_QMediaPlayer_xa::testMedia()
 {
@@ -868,7 +871,7 @@ void tst_QMediaPlayer_xa::testBufferStatus()
     updateLog("*****testBufferStatus");
     resetPlayer();
     QSignalSpy spy(m_player, SIGNAL(bufferStatusChanged(int)));
-      setStreamingContent();
+  //    setStreamingContent();
     WAIT_FOR_CONDITION(m_player->mediaStatus(), QMediaPlayer::LoadedMedia);
     QCOMPARE(m_player->mediaStatus(), QMediaPlayer::LoadedMedia);
     m_player->play();
@@ -1116,6 +1119,280 @@ void tst_QMediaPlayer_xa::testWindowControl_FullScreen()
 
     updateLog("*****testWindowControl_FullScreen: PASSED");
 }
+
+
+//adding access-point testcase
+
+
+void tst_QMediaPlayer_xa::testSetconfigurationsAP()
+{
+    updateLog("*****testSetconfigurationsAP");
+    resetPlayer();
+
+    //Passing only valid Accesspoint in QList
+    QList<QNetworkConfiguration> configs;
+    accesspointlist = manager.allConfigurations();
+    for (int i=0; i<=accesspointlist.size()-1;i++)
+    qDebug()<<"accesspointlist"<< accesspointlist.at(i).name();
+    configs<<accesspointlist.at(8);
+    QSignalSpy spy(m_player, SIGNAL(networkConfigurationChanged(const QNetworkConfiguration&)));
+    m_player->setNetworkConfigurations(configs);
+    setStreamingContent3gp();
+    m_player->play();
+    QTest::qWait(100000);
+    WAIT_LONG_FOR_CONDITION(m_player->state(), QMediaPlayer::PlayingState);
+    WAIT_FOR_CONDITION(m_player->mediaStatus(), QMediaPlayer::BufferedMedia);
+    m_player->stop();
+    QCOMPARE(m_player->state(), QMediaPlayer::StoppedState);
+    QCOMPARE((m_player->currentNetworkConfiguration().name()), accesspointlist.at(8).name());
+    updateLog("*****testSetconfigurationsAP: PASSED");
+
+}
+
+
+void tst_QMediaPlayer_xa::testSetAccesspoint()
+{
+    updateLog("*****testSetAccesspoint");
+    resetPlayer();
+    QList<QNetworkConfiguration> configs;
+    accesspointlist = manager.allConfigurations();
+    configs<<accesspointlist.at(0);
+    configs<<accesspointlist.at(3);
+    configs<<accesspointlist.at(10);
+    configs<<accesspointlist.at(8);
+    //Passing only valid Accesspoint in QList
+    QSignalSpy spy(m_player, SIGNAL(networkConfigurationChanged(const QNetworkConfiguration&)));
+    m_player->setNetworkConfigurations(configs);
+
+    setStreamingContent3gp();
+    QTest::qWait(200000);
+    m_player->play();
+    QTest::qWait(10000);
+    WAIT_LONG_FOR_CONDITION(m_player->state(), QMediaPlayer::PlayingState);
+    WAIT_FOR_CONDITION(m_player->mediaStatus(), QMediaPlayer::BufferedMedia);
+    m_player->stop();
+    QCOMPARE(m_player->state(), QMediaPlayer::StoppedState);
+    QCOMPARE((m_player->currentNetworkConfiguration().name()), accesspointlist.at(8).name());
+
+    updateLog("*****testSetAccesspoint: PASSED");
+}
+
+
+void tst_QMediaPlayer_xa::testGetAccesspoint()
+{
+    updateLog("*****testGetAccesspoint");
+    resetPlayer();
+    //getting information about the current configured accesspoint without setting any configrations
+    QNetworkConfiguration getaccespoint;
+    getaccespoint = m_player->currentNetworkConfiguration();
+    QCOMPARE(getaccespoint.name(),QString(""));
+    updateLog("*****testGetAccesspoint:  ");
+}
+
+
+void tst_QMediaPlayer_xa::testDiffmediacontentAP()
+{
+    updateLog("*****streaming Different mediacontent files via AP");
+    resetPlayer();
+    QList<QNetworkConfiguration> configs;
+    accesspointlist = manager.allConfigurations();
+    configs<<accesspointlist.at(8);
+    QSignalSpy spy(m_player, SIGNAL(networkConfigurationChanged(const QNetworkConfiguration&)));
+    m_player->setNetworkConfigurations(configs);
+    //first mediacontent file
+    setAudioStreamingContent();
+    WAIT_FOR_CONDITION(m_player->mediaStatus(), QMediaPlayer::LoadedMedia);
+    QCOMPARE(m_player->mediaStatus(), QMediaPlayer::LoadedMedia);
+    m_player->play();
+    QTest::qWait(30000);
+    QCOMPARE(m_player->state(), QMediaPlayer::PlayingState);
+    WAIT_FOR_CONDITION(m_player->mediaStatus(), QMediaPlayer::EndOfMedia);
+    m_player->stop();
+    QCOMPARE(m_player->state(), QMediaPlayer::StoppedState);
+
+    //second mediacontent file
+    setStreamingContent3gp();
+    WAIT_FOR_CONDITION(m_player->mediaStatus(), QMediaPlayer::LoadedMedia);
+    QCOMPARE(m_player->mediaStatus(), QMediaPlayer::LoadedMedia);
+    m_player->play();
+    QTest::qWait(20000);
+    QCOMPARE(m_player->state(), QMediaPlayer::PlayingState);
+    WAIT_FOR_CONDITION(m_player->mediaStatus(), QMediaPlayer::EndOfMedia);
+    m_player->stop();
+    QCOMPARE(m_player->state(), QMediaPlayer::StoppedState);
+
+    QCOMPARE((m_player->currentNetworkConfiguration().name()), accesspointlist.at(8).name());
+    QNetworkConfiguration getaccespoint;
+    getaccespoint = m_player->currentNetworkConfiguration();
+    QCOMPARE(getaccespoint.name(), QString("MMMW"));
+
+    updateLog("*****testDiffmediacontentAP: PASSED");
+}
+
+
+void tst_QMediaPlayer_xa::testInvalidaddressAP()
+{
+    updateLog("*****testInvalidaddressAP");
+    resetPlayer();
+    //setting all invalid accesspoint
+    QList<QNetworkConfiguration> configs;
+    accesspointlist = manager.allConfigurations();
+    configs<<accesspointlist.at(0);
+    configs<<accesspointlist.at(2);
+    configs<<accesspointlist.at(3);
+    QSignalSpy spy(m_player, SIGNAL(networkConfigurationChanged(const QNetworkConfiguration&)));
+    m_player->setNetworkConfigurations(configs);
+    QNetworkConfiguration getaccespoint;
+    getaccespoint = m_player->currentNetworkConfiguration();
+    QCOMPARE(getaccespoint.name(), QString(""));
+
+    updateLog("*****testInvalidaddressAP: PASSED");
+}
+
+
+
+void tst_QMediaPlayer_xa::testMultipleAccesspoints()
+{
+    updateLog("*****testMultipleAccesspoints");
+    resetPlayer();
+    QList<QNetworkConfiguration> configs;
+    accesspointlist = manager.allConfigurations();
+    configs<<accesspointlist.at(8);
+    QSignalSpy spy(m_player, SIGNAL(networkConfigurationChanged(const QNetworkConfiguration&)));
+    m_player->setNetworkConfigurations(configs);
+    setStreamingContent3gp();
+    WAIT_FOR_CONDITION(m_player->mediaStatus(), QMediaPlayer::LoadedMedia);
+    QCOMPARE(m_player->mediaStatus(), QMediaPlayer::LoadedMedia);
+    m_player->play();
+    WAIT_LONG_FOR_CONDITION(m_player->state(), QMediaPlayer::PlayingState);
+    WAIT_FOR_CONDITION(m_player->mediaStatus(), QMediaPlayer::BufferedMedia);
+    QTest::qWait(20000);
+    m_player->stop();
+    QCOMPARE(m_player->state(), QMediaPlayer::StoppedState);
+    QCOMPARE((m_player->currentNetworkConfiguration().name()), accesspointlist.at(8).name());
+    //Second configuration list
+    QList<QNetworkConfiguration> secconfigs;
+    secaccesspoint = manager.allConfigurations();
+    secconfigs<<secaccesspoint.at(5);
+    QSignalSpy spy1(m_player, SIGNAL(networkConfigurationChanged(const QNetworkConfiguration&)));
+    m_player->setNetworkConfigurations(secconfigs);
+    setStreamingContent3gp();
+    // setAudioStreamingContent();
+    QTest::qWait(30000);
+    WAIT_FOR_CONDITION(m_player->mediaStatus(), QMediaPlayer::LoadedMedia);
+    QCOMPARE(m_player->mediaStatus(), QMediaPlayer::LoadedMedia);
+    m_player->play();
+    WAIT_LONG_FOR_CONDITION(m_player->state(), QMediaPlayer::PlayingState);
+    WAIT_FOR_CONDITION(m_player->mediaStatus(), QMediaPlayer::BufferedMedia);
+    QTest::qWait(10000);
+    updateLog("*****testSetAccesspoint: PASSED");
+    QCOMPARE((m_player->currentNetworkConfiguration().name()), accesspointlist.at(5).name());
+    QNetworkConfiguration getaccespoint;
+    getaccespoint = m_player->currentNetworkConfiguration();
+    QCOMPARE(getaccespoint.name(), QString("Mobile Office"));
+
+    updateLog("*****testMultipleAccesspoints: PASSED");
+}
+
+
+void tst_QMediaPlayer_xa::testReconnectAPWhilestreaming()
+{
+    updateLog("*****testReconnectAPWhilestreaming");
+    resetPlayer();
+    QList<QNetworkConfiguration> configs;
+    accesspointlist = manager.allConfigurations();
+    configs<<accesspointlist.at(15);
+    configs<<accesspointlist.at(12);
+    configs<<accesspointlist.at(0);
+    configs<<accesspointlist.at(8);
+    QSignalSpy spy(m_player, SIGNAL(networkConfigurationChanged(const QNetworkConfiguration&)));
+    m_player->setNetworkConfigurations(configs);
+    setAudioStreamingContent();
+    m_player->play();
+    QTest::qWait(200000);
+    configs<<accesspointlist.at(5);
+    m_player->setNetworkConfigurations(configs);
+    m_player->play();
+    QTest::qWait(20000);
+    WAIT_FOR_CONDITION(m_player->mediaStatus(), QMediaPlayer::LoadedMedia);
+    WAIT_FOR_CONDITION(m_player->mediaStatus(), QMediaPlayer::EndOfMedia);
+    QCOMPARE((m_player->currentNetworkConfiguration().name()), accesspointlist.at(8).name());
+    QNetworkConfiguration getaccespoint;
+    getaccespoint = m_player->currentNetworkConfiguration();
+    QCOMPARE(getaccespoint.name(), QString("MMMW"));
+    updateLog("*****testReconnectAPWhilestreaming: PASSED");
+}
+
+
+void tst_QMediaPlayer_xa::teststreampausestream()
+{
+    updateLog("*****teststreampausestream");
+    resetPlayer();
+    QList<QNetworkConfiguration> configs;
+    accesspointlist = manager.allConfigurations();
+    configs<<accesspointlist.at(8);
+    QSignalSpy spy(m_player, SIGNAL(networkConfigurationChanged(const QNetworkConfiguration&)));
+    m_player->setNetworkConfigurations(configs);
+    setStreamingContent3gp();
+    WAIT_FOR_CONDITION(m_player->mediaStatus(), QMediaPlayer::LoadedMedia);
+    m_player->play();
+    WAIT_LONG_FOR_CONDITION(m_player->state(), QMediaPlayer::PlayingState);
+    WAIT_FOR_CONDITION(m_player->mediaStatus(), QMediaPlayer::BufferedMedia);
+    QTest::qWait(10000);
+    m_player->pause();
+    WAIT_LONG_FOR_CONDITION(m_player->state(), QMediaPlayer::PausedState);
+
+    //Setting up the accesspoint when the player is in paused state
+    QList<QNetworkConfiguration> secconfigs;
+    secaccesspoint = manager.allConfigurations();
+    secconfigs<<secaccesspoint.at(5);
+    m_player->setNetworkConfigurations(secconfigs);
+    m_player->play();
+    QTest::qWait(20000);
+    WAIT_FOR_CONDITION(m_player->mediaStatus(), QMediaPlayer::BufferedMedia);
+    QCOMPARE((m_player->currentNetworkConfiguration()).name(), accesspointlist.at(8).name());
+    m_player->stop();
+    WAIT_LONG_FOR_CONDITION(m_player->state(), QMediaPlayer::StoppedState);
+    setStreamingContent3gp();
+    WAIT_FOR_CONDITION(m_player->mediaStatus(), QMediaPlayer::LoadedMedia);
+    QCOMPARE(m_player->mediaStatus(), QMediaPlayer::LoadedMedia);
+    m_player->play();
+    QTest::qWait(20000);
+    WAIT_FOR_CONDITION(m_player->mediaStatus(), QMediaPlayer::BufferedMedia);
+    m_player->stop();
+    WAIT_LONG_FOR_CONDITION(m_player->state(), QMediaPlayer::StoppedState);
+    QCOMPARE((m_player->currentNetworkConfiguration().name()), accesspointlist.at(5).name());
+
+    updateLog("*****teststreampausestream: PASSED");
+}
+
+
+
+void tst_QMediaPlayer_xa::testStressAccessPoint()
+{
+    updateLog("*****testStressAccessPoint");
+    resetPlayer();
+    for (int i=0; i<=50; i++) {
+        QList<QNetworkConfiguration> configs;
+        accesspointlist = manager.allConfigurations();
+        configs<<accesspointlist.at(8);
+        QSignalSpy spy(m_player, SIGNAL(networkConfigurationChanged(const QNetworkConfiguration&)));
+        m_player->setNetworkConfigurations(configs);
+        setStreamingContent3gp();
+        m_player->play();
+        QTest::qWait(20000);
+        WAIT_LONG_FOR_CONDITION(m_player->state(), QMediaPlayer::PlayingState);
+        WAIT_FOR_CONDITION(m_player->mediaStatus(), QMediaPlayer::BufferedMedia);
+        m_player->stop();
+        QCOMPARE(m_player->state(), QMediaPlayer::StoppedState);
+        QCOMPARE((m_player->currentNetworkConfiguration().name()), accesspointlist.at(8).name());
+        resetPlayer();
+    }
+
+    updateLog("*****testStressAccessPoint: PASSED");
+}
+
+
 
 void tst_QMediaPlayer_xa::updateLog(QString log, bool delFile)
 {

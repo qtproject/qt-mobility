@@ -27,71 +27,54 @@
 **
 ** If you have questions regarding the use of this file, please contact
 ** Nokia at qt-info@nokia.com.
-**
-**
-**
-**
-**
-**
-**
-**
 ** $QT_END_LICENSE$
-**
-****************************************************************************/
+*/
 
-#ifndef S60VIDEOPLAYERSERVICE_H
-#define S60VIDEOPLAYERSERVICE_H
+#ifndef S60MEDIANETWORKACCESSCONTROL_H_
+#define S60MEDIANETWORKACCESSCONTROL_H_
+
 
 #include <QtCore/qobject.h>
-#include <qmediaservice.h>
-
-#include "ms60mediaplayerresolver.h"
-#include "s60mediaplayeraudioendpointselector.h"
+#include <QtCore/qlist.h>
+#include <QtCore/qstring.h>
+#include <QMetaObject.h>
+#include <QtNetwork/qnetworkconfiguration.h>
+#include <CommDbConnPref.h>
+#include <CommDb.h>
+#include <mmf/common/mmfcontrollerframeworkbase.h>
+#include <qmedianetworkaccesscontrol.h>
+#include "s60mediaplayercontrol.h"
 
 QT_BEGIN_NAMESPACE
-class QMediaMetaData;
 class QMediaPlayerControl;
-class QMediaPlaylist;
+class QMediaNetworkAccessControl;
+class QNetworkConfiguration;
 QT_END_NAMESPACE
 
-QT_USE_NAMESPACE
-
-class S60VideoPlayerSession;
-class S60AudioPlayerSession;
-class S60MediaPlayerControl;
-class S60MediaMetaDataProvider;
-class S60MediaStreamControl;
-class S60MediaRecognizer;
-
-class QMediaPlaylistNavigator;
-class S60MediaNetworkAccessControl;
-
-class S60MediaPlayerService : public QMediaService, public MS60MediaPlayerResolver
+class S60MediaNetworkAccessControl : public QMediaNetworkAccessControl
 {
     Q_OBJECT
 
 public:
 
-    S60MediaPlayerService(QObject *parent = 0);
-    ~S60MediaPlayerService();
+    S60MediaNetworkAccessControl(QObject *parent = 0);
+    ~S60MediaNetworkAccessControl();
 
-    QMediaControl *requestControl(const char *name);
-    void releaseControl(QMediaControl *control);
+    virtual void setConfigurations(const QList<QNetworkConfiguration> &configurations);
+    virtual QNetworkConfiguration currentConfiguration() const;
+    int accessPointId();
+    TBool isLastAccessPoint();
+    void resetIndex();
 
-protected: // From MS60MediaPlayerResolver
-    S60MediaPlayerSession* PlayerSession();
-    S60MediaPlayerSession* VideoPlayerSession();
-    S60MediaPlayerSession* AudioPlayerSession();
+public Q_SLOTS:
+    void accessPointChanged(int);
 
 private:
-    S60MediaPlayerControl *m_control;
-    S60VideoPlayerSession *m_videoPlayerSession;
-    S60AudioPlayerSession *m_audioPlayerSession;
-    S60MediaMetaDataProvider *m_metaData;
-    S60MediaPlayerAudioEndpointSelector *m_audioEndpointSelector;
-    S60MediaStreamControl *m_streamControl;
-    S60MediaNetworkAccessControl *m_networkAccessControl;
-    QMediaControl *m_videoOutput;
+    void retriveAccesspointIDL(const QList<QNetworkConfiguration> &);
+    QList<int> m_IapIdList;
+    QList<QNetworkConfiguration> m_NetworkObjectList;
+    QNetworkConfiguration m_NetworkObject;
+    int m_iapId;
+    int m_currentIndex;
 };
-
-#endif
+#endif /* S60MEDIANETWORKACCESSCONTROL_H_ */
