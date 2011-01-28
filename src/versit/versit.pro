@@ -9,12 +9,14 @@ DEFINES += QT_BUILD_VERSIT_LIB QT_MAKEDLL QT_ASCII_CAST_WARNINGS
 
 qtAddLibrary(QtContacts)
 
-# Contacts Includepath
-INCLUDEPATH += . \
+# Note, these need to go at the front of INCLUDEPATH, in case there
+# are QtContacts headers already installed on the system
+INCLUDEPATH =  . \
                ../contacts \
                ../contacts/requests \
                ../contacts/filters \
-               ../contacts/details
+               ../contacts/details \
+               $$INCLUDEPATH
 
 # Input
 PUBLIC_HEADERS +=  \
