@@ -309,6 +309,7 @@ void QBluetoothLocalDevicePrivate::_q_pairingFinished(const QBluetoothAddress &a
 QBluetoothLocalDevice::QBluetoothLocalDevice(QObject *parent)
 :   QObject(parent), d_ptr(new QBluetoothLocalDevicePrivate())
 {
+    d_ptr->q_ptr = this;
     qRegisterMetaType<QBluetoothLocalDevice::HostMode>("QBluetoothLocalDevice::HostMode");
     if (this->d_ptr->m_settings == NULL) {
         delete this->d_ptr;
@@ -319,6 +320,7 @@ QBluetoothLocalDevice::QBluetoothLocalDevice(QObject *parent)
 QBluetoothLocalDevice::QBluetoothLocalDevice(const QBluetoothAddress &address, QObject *parent)
 : QObject(parent), d_ptr(new QBluetoothLocalDevicePrivate())
 {
+    d_ptr->q_ptr = this;
     qRegisterMetaType<QBluetoothLocalDevice::HostMode>("QBluetoothLocalDevice::HostMode");
     if (this->d_ptr->m_settings == NULL || address != this->d_ptr->address()) {
         delete this->d_ptr;
