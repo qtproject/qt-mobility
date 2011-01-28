@@ -887,7 +887,9 @@ void Dialog::bluetoothChanged(bool b)
 void Dialog::setupBattery()
 {
     delete bi;
+    //! [batterystatus1]
     bi = new QSystemBatteryInfo(this);
+    //! [batterystatus1]
 
     connect(bi,SIGNAL(remainingCapacityPercentChanged(int)),
             this,SLOT(updateBatteryStatus(int)));
@@ -912,10 +914,11 @@ void Dialog::setupBattery()
     connect(bi,SIGNAL(remainingChargingTimeChanged(int)),
             chargeTimelcdNumber,SLOT(display(int)));
 
+    //! [batterystatus2]
     chargerTypeChanged(bi->chargerType());
 
-
     currentBatStat = bi->batteryStatus();
+    //! [batterystatus2]
 
     chargingStateChanged(bi->chargingState());
 

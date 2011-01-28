@@ -188,7 +188,10 @@ QDeclarativeCoordinate* QDeclarativeLandmarkBoxFilter::topLeft() const
 
 void QDeclarativeLandmarkBoxFilter::setTopLeft(QDeclarativeCoordinate* coordinate)
 {
+    if (m_topLeft == coordinate)
+        return;
     m_topLeft = coordinate;
+
     if (m_topLeft && m_bottomRight)
         m_filter.setBoundingBox(QGeoBoundingBox(m_topLeft->coordinate(), m_bottomRight->coordinate()));
     emit topLeftChanged();
@@ -207,7 +210,10 @@ QDeclarativeCoordinate* QDeclarativeLandmarkBoxFilter::bottomRight() const
 
 void QDeclarativeLandmarkBoxFilter::setBottomRight(QDeclarativeCoordinate* coordinate)
 {
-    m_bottomRight = coordinate;
+    if (m_bottomRight == coordinate)
+         return;
+     m_bottomRight = coordinate;
+
     if (m_topLeft && m_bottomRight)
         m_filter.setBoundingBox(QGeoBoundingBox(m_topLeft->coordinate(), m_bottomRight->coordinate()));
     emit bottomRightChanged();
@@ -285,9 +291,14 @@ QDeclarativeCoordinate* QDeclarativeLandmarkProximityFilter::center() const
 
 void QDeclarativeLandmarkProximityFilter::setCenter(QDeclarativeCoordinate* coordinate)
 {
+    if (m_coordinate == coordinate)
+        return;
     m_coordinate = coordinate;
-    QObject::connect(m_coordinate, SIGNAL(latitudeChanged(double)), this, SIGNAL(filterContentChanged()));
-    QObject::connect(m_coordinate, SIGNAL(longitudeChanged(double)), this, SIGNAL(filterContentChanged()));
+
+    if (m_coordinate) {
+        QObject::connect(m_coordinate, SIGNAL(latitudeChanged(double)), this, SIGNAL(filterContentChanged()));
+        QObject::connect(m_coordinate, SIGNAL(longitudeChanged(double)), this, SIGNAL(filterContentChanged()));
+    }
     emit centerChanged();
     emit filterContentChanged();
 }

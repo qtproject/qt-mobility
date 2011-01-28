@@ -58,15 +58,12 @@ SUBDIRS += qgeoserviceproviderplugins \
             qgeoserviceprovider 
 }
 
-#IGNORED_UNTIL_INTEGRATED_PROPERLY += \
-#    qdeclarativeapitests
-
-
 !symbian:SUBDIRS +=qlandmarkmanagerplugins
 
 contains(QT_CONFIG, declarative) {
     SUBDIRS += qdeclarativeposition
     SUBDIRS += qdeclarativelandmark
+    SUBDIRS += qdeclarativemap
 }
 wince* {
     SUBDIRS += qgeoinfosources_wince

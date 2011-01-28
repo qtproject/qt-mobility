@@ -57,6 +57,7 @@ class QDeclarativeGeoMapGroupObject : public QDeclarativeGeoMapObject
     Q_OBJECT
 
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeGeoMapObject> objects READ objects)
+    Q_CLASSINFO("DefaultProperty", "objects")
 
 public:
     QDeclarativeGeoMapGroupObject(QDeclarativeItem *parent = 0);
