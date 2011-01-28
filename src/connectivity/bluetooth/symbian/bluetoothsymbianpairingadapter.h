@@ -39,83 +39,71 @@
 **
 ****************************************************************************/
 
-#ifndef QL2CAPSERVER_P_H
-#define QL2CAPSERVER_P_H
+#ifndef BLUETOOTHSYMBIANPAIRINGADAPTER_H
+#define BLUETOOTHSYMBIANPAIRINGADAPTER_H
+
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API. It exists purely as an
+// implementation detail. This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
 #include <qmobilityglobal.h>
+#include <QtCore/QObject>
 
-#ifdef QTM_SYMBIAN_BLUETOOTH
-#include <es_sock.h>
+#include <e32base.h>
+#include <btdevice.h>
 #include <bt_sock.h>
-#endif //QTM_SYMBIAN_BLUETOOTH
-
-#ifndef QT_NO_DBUS
-QT_FORWARD_DECLARE_CLASS(QSocketNotifier)
-#endif
+#include <btengconnman.h>
+#include "qbluetoothlocaldevice.h"
 
 QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
 class QBluetoothAddress;
-class QBluetoothSocket;
 
-#ifdef QTM_SYMBIAN_BLUETOOTH
-class QBluetoothSocketPrivate;
-#endif
-
-class QL2capServer;
-
-class QL2capServerPrivate
-#ifdef QTM_SYMBIAN_BLUETOOTH
-: public MBluetoothSocketNotifier
-#endif //QTM_SYMBIAN_BLUETOOTH
-
+class BluetoothSymbianPairingAdapter : public QObject, public MBTEngConnObserver
 {
-    Q_DECLARE_PUBLIC(QL2capServer)
-
+    Q_OBJECT
 public:
-    QL2capServerPrivate();
-    ~QL2capServerPrivate();
 
-#ifndef QT_NO_DBUS
-    void _q_newConnection();
-#endif
+    BluetoothSymbianPairingAdapter(const QBluetoothAddress &address, QObject *parent = 0);
+    ~BluetoothSymbianPairingAdapter();
 
-#ifdef QTM_SYMBIAN_BLUETOOTH
-    /* MBluetoothSocketNotifier virtual functions */
-    void HandleAcceptCompleteL(TInt aErr);
-    void HandleActivateBasebandEventNotifierCompleteL(TInt aErr, TBTBasebandEventNotification &aEventNotification);
-    void HandleConnectCompleteL(TInt aErr);
-    void HandleIoctlCompleteL(TInt aErr);
-    void HandleReceiveCompleteL(TInt aErr);
-    void HandleSendCompleteL(TInt aErr);
-    void HandleShutdownCompleteL(TInt aErr);
-#endif //QTM_SYMBIAN_BLUETOOTH
+    void startPairing(QBluetoothLocalDevice::Pairing pairing);
 
-public:
-    QBluetoothSocket *socket;
-    bool pending;
+    int errorCode() const;
+    QString pairingErrorString() const;
 
-    int maxPendingConnections;
+public: //from MBTEngConnObserver
+    virtual void ConnectComplete( TBTDevAddr& aAddr, TInt aErr,
+                                       RBTDevAddrArray* aConflicts = NULL );
+    virtual void DisconnectComplete( TBTDevAddr& aAddr, TInt aErr );
 
-#ifdef QTM_SYMBIAN_BLUETOOTH
-    QBluetoothSocket *pendingSocket;
-    mutable QList<QBluetoothSocket *> activeSockets;
-    QBluetoothSocketPrivate *ds;
-#endif //QTM_SYMBIAN_BLUETOOTH
+    virtual void PairingComplete( TBTDevAddr& aAddr, TInt aErr );
 
-protected:
-    QL2capServer *q_ptr;
-
+Q_SIGNALS: // SIGNALS
+    void pairingFinished(const QBluetoothAddress &address, QBluetoothLocalDevice::Pairing pairing);
+    void pairingDisplayPinCode(const QBluetoothAddress &address, QString pin);
+    void pairingError(int errorCode);
 private:
-#ifndef QT_NO_DBUS
-    QSocketNotifier *socketNotifier;
-#endif
+
+    //  socket server handle
+    CBTEngConnMan *m_pairingEngine;
+    const QBluetoothAddress &m_address;
+    bool m_pairingOngoing;
+    int m_errorCode;
+    QString m_pairingErrorString;
 };
 
 QTM_END_NAMESPACE
 
 QT_END_HEADER
 
-#endif
+#endif //BLUETOOTHSYMBIANPAIRINGADAPTER_H

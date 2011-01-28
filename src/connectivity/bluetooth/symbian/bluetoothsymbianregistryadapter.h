@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef BLUETOOTHLINKMANAGERDEVICEDISCOVERER_H
-#define BLUETOOTHLINKMANAGERDEVICEDISCOVERER_H
+#ifndef BLUETOOTHSYMBIANREGISTRYADAPTER_H
+#define BLUETOOTHSYMBIANREGISTRYADAPTER_H
 
 //
 //  W A R N I N G
@@ -55,62 +55,61 @@
 
 #include <qmobilityglobal.h>
 #include <QtCore/QObject>
-#include "qbluetoothdevicediscoveryagent.h"
 
-#include <es_sock.h>
 #include <e32base.h>
 #include <btdevice.h>
 #include <bt_sock.h>
-#include <btsdp.h>
-
-
+#include <btengdevman.h>
+#include "qbluetoothlocaldevice.h"
 
 QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
 class QBluetoothDeviceInfo;
+class QBluetoothAddress;
 
-class BluetoothLinkManagerDeviceDiscoverer : public QObject, public CActive
+class BluetoothSymbianRegistryAdapter : public QObject, public MBTEngDevManObserver
 {
     Q_OBJECT
 public:
 
-    BluetoothLinkManagerDeviceDiscoverer(RSocketServ& aSocketServ, QObject *parent = 0);
-    ~BluetoothLinkManagerDeviceDiscoverer();
+    BluetoothSymbianRegistryAdapter(const QBluetoothAddress &address, QObject *parent = 0);
+    ~BluetoothSymbianRegistryAdapter();
 
-    bool startDiscovery(const uint discoveryType);
+    void removePairing();
+    QBluetoothLocalDevice::Pairing pairingStatus() const;
+    int errorCode() const;
+    QString pairingErrorString() const;
 
-protected: // From CActive
-    void RunL();
-    void DoCancel();
+public: //from MBTEngDevManObserver
+    virtual void HandleDevManComplete( TInt aErr );
+    virtual void HandleGetDevicesComplete( TInt aErr,CBTDeviceArray* aDeviceArray );
 
 private:
-    void setError(int error);
+    QBluetoothLocalDevice::Pairing remoteDevicePairingStatus();
+    CBTDeviceArray* createDeviceArrayL() const;
 
-private: // private helper functions
-
-    QBluetoothDeviceInfo currentDeviceDataToQBluetoothDeviceInfo() const;
+public Q_SLOTS:
+    void setRemoteDevicePairingStatusFromRegistry();
 
 Q_SIGNALS: // SIGNALS
-    void deviceDiscoveryComplete(int aError);
-    void deviceDiscovered(const QBluetoothDeviceInfo &device);
-    void linkManagerError(QBluetoothDeviceDiscoveryAgent::Error error);
-
+    void operationFinished(const QBluetoothAddress &address);
+    void registryHandlingError(int errorCode);
+    void pairingStatusChanged(const QBluetoothAddress &address, QBluetoothLocalDevice::Pairing pairing);
 private:
 
-    //  socket server handle
-    RSocketServ &m_socketServer;
+    // Symbian registry hander
+    CBTEngDevMan *m_bluetoothDeviceManager;
+    const QBluetoothAddress &m_address;
+    QBluetoothLocalDevice::Pairing m_pairingStatus;
 
-    RHostResolver m_hostResolver;
-    TInquirySockAddr m_addr;
-    TNameEntry m_entry;
-
-    TBool m_LIAC;
+    int m_errorCode;
+    QString m_pairingErrorString;
 };
 
 QTM_END_NAMESPACE
 
 QT_END_HEADER
 
-#endif //BLUETOOTHLINKMANAGERDEVICEDISCOVERER_H
+#endif //BLUETOOTHSYMBIANREGISTRYADAPTER_H

@@ -78,6 +78,10 @@ public:
     QMap<quint16, QVariant> attributes;
 
 #ifdef QTM_SYMBIAN_BLUETOOTH
+private:
+    void setRegisteredAttributeL(quint16 attributeId, const QVariant &value) const;
+
+public:
     mutable RSdp sdpSession;
     mutable RSdpDatabase sdpDatabase;
     mutable TSdpServRecordHandle serviceRecord;

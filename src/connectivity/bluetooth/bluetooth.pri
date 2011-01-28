@@ -1,5 +1,5 @@
 
-HEADERS += \
+PUBLIC_HEADERS += \
     bluetooth/qbluetoothaddress.h\
     bluetooth/qbluetoothuuid.h\
     bluetooth/qbluetoothdeviceinfo.h\
@@ -69,27 +69,36 @@ symbian {
         include(symbian/symbian.pri)
 
         PRIVATE_HEADERS += \
-                        bluetooth/qbluetoothtransferreply_symbian_p.h
+            bluetooth/qbluetoothtransferreply_symbian_p.h \
+            bluetooth/qbluetoothlocaldevice_p.h
 
         SOURCES += \
-                        bluetooth/qbluetoothserviceinfo_symbian.cpp\
-                        bluetooth/qbluetoothdevicediscoveryagent_symbian.cpp\
+            bluetooth/qbluetoothserviceinfo_symbian.cpp\
+            bluetooth/qbluetoothdevicediscoveryagent_symbian.cpp\
             bluetooth/qbluetoothservicediscoveryagent_symbian.cpp\
             bluetooth/qbluetoothsocket_symbian.cpp\
             bluetooth/qrfcommserver_symbian.cpp \
             bluetooth/qbluetoothlocaldevice_symbian.cpp \
-                        bluetooth/qbluetoothtransfermanager_symbian.cpp \
+            bluetooth/qbluetoothtransfermanager_symbian.cpp \
             bluetooth/qbluetoothtransferreply_symbian.cpp \
-                bluetooth/ql2capserver_symbian.cpp
+            bluetooth/ql2capserver_symbian.cpp
 
         contains(S60_VERSION, 5.0) {
             message("NOTICE - START")
             message("Bluetooth backend needs SDK plugin from Forum Nokia for 5.0 SDK")
             message("NOTICE - END")
-            LIBS *= -lesock -lbluetooth -lsdpagent -lsdpdatabase -lestlib -lirobex -lbtengsettings
+            LIBS *= -lirobex
         } else {
-            LIBS *= -lesock -lbluetooth -lsdpagent -lsdpdatabase -lestlib -lobex -lbtengsettings
+            LIBS *= -lobex
         }
+        LIBS *= -lesock \
+                -lbluetooth \
+                -lsdpagent \
+                -lsdpdatabase \
+                -lestlib \
+                -lbtengsettings \
+                -lbtmanclient \
+                -lbtdevice
     }
 } else:contains(bluez_enabled, yes):contains(QT_CONFIG, dbus) {
     QT *= dbus
