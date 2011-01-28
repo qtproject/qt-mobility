@@ -67,7 +67,6 @@ unix:!simulator {
     QT += gui
     PRIVATE_HEADERS += linux/qsysteminfo_dbus_p.h
 
-
         contains(build_unit_tests, yes):contains(test_use_sim, yes) {
             SOURCES += qsysteminfo_simulator.cpp qsysteminfodata_simulator.cpp
             HEADERS += qsysteminfo_simulator_p.h qsysteminfodata_simulator_p.h
