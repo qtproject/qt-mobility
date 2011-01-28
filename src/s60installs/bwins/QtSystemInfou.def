@@ -216,4 +216,6 @@ EXPORTS
 	?wokeUp@QSystemAlignedTimer@QtMobility@@QAEXXZ @ 215 NONAME ; void QtMobility::QSystemAlignedTimer::wokeUp(void)
 	?staticMetaObject@QSystemAlignedTimer@QtMobility@@2UQMetaObject@@B @ 216 NONAME ; struct QMetaObject const QtMobility::QSystemAlignedTimer::staticMetaObject
 	?staticMetaObject@QSystemBatteryInfo@QtMobility@@2UQMetaObject@@B @ 217 NONAME ; struct QMetaObject const QtMobility::QSystemBatteryInfo::staticMetaObject
+	?error@QSystemAlignedTimer@QtMobility@@IAEXW4AlignedTimerError@12@@Z @ 218 NONAME ; void QtMobility::QSystemAlignedTimer::error(enum QtMobility::QSystemAlignedTimer::AlignedTimerError)
+	?lastError@QSystemAlignedTimer@QtMobility@@QBE?AW4AlignedTimerError@12@XZ @ 219 NONAME ; enum QtMobility::QSystemAlignedTimer::AlignedTimerError QtMobility::QSystemAlignedTimer::lastError(void) const
 

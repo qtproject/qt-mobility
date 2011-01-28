@@ -67,6 +67,13 @@ public:
     explicit QSystemAlignedTimer(QObject *parent = 0);
     ~QSystemAlignedTimer();
 
+    enum AlignedTimerError {
+      NoError=0,
+      AlignedTimerNotSupported,
+      InvalidArgument,
+      TimerFailed
+    };
+
     Q_INVOKABLE void wokeUp();
 
     int minimumInterval() const;
@@ -79,7 +86,7 @@ public:
     bool isSingleShot() const;
 
     Q_INVOKABLE static void singleShot(int minimumTime, int maximumTime, QObject *receiver, const char *member);
-
+    AlignedTimerError lastError() const;
 
 public Q_SLOTS:
     void start(int minimumTime, int maximumTime);
@@ -89,6 +96,7 @@ public Q_SLOTS:
 
 Q_SIGNALS:
     void timeout();
+    void error(QSystemAlignedTimer::AlignedTimerError error);
 
 private:
     QSystemAlignedTimerPrivate *d;
@@ -101,15 +109,16 @@ class QSystemAlignedTimerPrivate : public QObject
 {
     Q_OBJECT
 public:
-    explicit QSystemAlignedTimerPrivate(QObject *parent = 0){Q_UNUSED(parent)};
-
+    explicit QSystemAlignedTimerPrivate(QObject *parent = 0);
     int id;
     bool isTimerRunning;
     bool single;
+    QSystemAlignedTimer::AlignedTimerError lastTimerError;
 
 private:
     QTimer *alignedTimer;
      void timerEvent(QTimerEvent *);
+
 };
 
 
