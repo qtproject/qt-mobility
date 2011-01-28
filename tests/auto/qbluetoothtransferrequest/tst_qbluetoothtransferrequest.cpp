@@ -46,6 +46,7 @@
 
 #include <qbluetoothtransferrequest.h>
 #include <qbluetoothaddress.h>
+#include <qbluetoothlocaldevice.h>
 
 QTM_USE_NAMESPACE
 
@@ -81,6 +82,10 @@ tst_QBluetoothTransferRequest::~tst_QBluetoothTransferRequest()
 void tst_QBluetoothTransferRequest::initTestCase()
 {
     qRegisterMetaType<QBluetoothAddress>("QBluetoothAddress");
+    // start Bluetooth if not started
+    QBluetoothLocalDevice *device = new QBluetoothLocalDevice();
+    device->powerOn();
+    delete device;
 }
 
 void tst_QBluetoothTransferRequest::tst_construction_data()

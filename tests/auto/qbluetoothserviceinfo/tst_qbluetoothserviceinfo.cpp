@@ -46,6 +46,7 @@
 #include <qbluetoothdeviceinfo.h>
 #include <qbluetoothserviceinfo.h>
 #include <qbluetoothaddress.h>
+#include <qbluetoothlocaldevice.h>
 
 QTM_USE_NAMESPACE
 
@@ -74,6 +75,10 @@ tst_QBluetoothServiceInfo::~tst_QBluetoothServiceInfo()
 
 void tst_QBluetoothServiceInfo::initTestCase()
 {
+    // start Bluetooth if not started
+    QBluetoothLocalDevice *device = new QBluetoothLocalDevice();
+    device->powerOn();
+    delete device;
 }
 
 void tst_QBluetoothServiceInfo::tst_construction()
