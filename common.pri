@@ -185,13 +185,34 @@ symbian {
     #DEFINES += SYMBIAN_EMULATOR_SUPPORTS_PERPROCESS_WSD
 }
 
-# Add the output dirs to the link path too
+# Add the output dirs to the front of the link path.
+# They must be at the front in case some previous Mobility version is already
+# installed on the system.
 mac:contains(QT_CONFIG,qt_framework) {
     #add framework option
     ##contains(TEMPLATE, app)|contains(CONFIG,plugin):LIBS+=-F$$OUTPUT_DIR/lib
-    LIBS+=-F$$OUTPUT_DIR/lib
+    LIBS = -F$$OUTPUT_DIR/lib $$LIBS
 }
-LIBS += -L$$OUTPUT_DIR/lib
+else:maemo6 {
+    # We must avoid the usage of Qt's prl files, because it forces -L/usr/lib
+    # to the front of the link line, which may break if there is already some
+    # mobility installed under /usr/lib.
+    #
+    # In theory, this problem may occur on any platform, but we only turn off
+    # the usage of prl files for Harmattan to reduce the risk of unanticipated
+    # side effects for other platforms.
+    CONFIG -= link_prl
+
+    # Furthermore, /usr/lib is _also_ forced to the front of the link line in
+    # qt.prf (which sets QMAKE_LIBDIR), so we fix that by loading it early and
+    # undoing it.
+    load(qt)
+    LIBS = -L$$OUTPUT_DIR -L$$QMAKE_LIBDIR $$LIBS
+    QMAKE_LIBDIR =
+}
+else {
+    LIBS = -L$$OUTPUT_DIR/lib $$LIBS
+}
 
 linux*-g++*:QMAKE_LFLAGS += $$QMAKE_LFLAGS_NOUNDEF
 
