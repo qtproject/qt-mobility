@@ -83,7 +83,7 @@ bool QL2capServer::listen(const QBluetoothAddress &address, quint16 port)
 
     TL2CAPSockAddr addr;
     if (port == 0)
-        addr.SetPort(KRfcommPassiveAutoBind);
+        addr.SetPort(KL2CAPPassiveAutoBind);
     else
         addr.SetPort(port);
 
