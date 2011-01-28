@@ -58,11 +58,6 @@ SUBDIRS += qgeoserviceproviderplugins \
             qgeoserviceprovider 
 }
 
-!symbian{
-SUBDIRS += qgeoserviceproviderplugins \
-            qgeoserviceprovider 
-}
-
 #IGNORED_UNTIL_INTEGRATED_PROPERLY += \
 #    qdeclarativeapitests
 

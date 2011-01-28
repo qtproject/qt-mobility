@@ -68,6 +68,8 @@ void geocluemock_set_suppress_velocity_update(bool value);
 
 void geocluemock_set_position_fields(int fields);
 void geocluemock_unset_position_fields();
+void geocluemock_set_velocity_fields(int fields);
+void geocluemock_unset_velocity_fields();
 
 void geocluemock_set_position_latitude(double latitude);
 void geocluemock_unset_position_latitude();

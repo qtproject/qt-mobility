@@ -147,7 +147,7 @@ struct QSystemDeviceInfoData
 
     QSystemDeviceInfo::KeyboardTypeFlags keyboardTypes;
     QSystemDeviceInfo::KeypadType keypadType;
-    QSystemDeviceInfo::LockType lockType;
+    QSystemDeviceInfo::LockTypeFlags lockType;
     QSystemDeviceInfo::BatteryStatus batStatus;
 
     int batteryLevel;

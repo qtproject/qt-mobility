@@ -1,0 +1,25 @@
+<aegis>
+    <request>
+        <credential name="TrackerReadAccess" />
+        <credential name="TrackerWriteAccess" />
+        <for path="/opt/examples/QtMobility/samplephonebook" />
+        <for path="/opt/examples/QtMobility/qmlcontacts" />
+    </request>
+    <request>
+        <credential name="Location" />
+	<credential name="TrackerReadAccess" />
+	<credential name="TrackerWriteAccess" />
+        <for path="/opt/examples/QtMobility/landmarkbrowser" />
+        <for path="/opt/examples/QtMobility/qml_landmarkmap" />
+        <for path="/opt/examples/QtMobility/qml_location_flickr" />
+        <for path="/opt/examples/QtMobility/qml_mapviewer" />
+    </request>
+    <request>
+        <credential name="Cellular" />
+        <credential name="TrackerReadAccess" />
+        <for path="/opt/examples/QtMobility/serviceactions" />
+        <for path="/opt/examples/QtMobility/writemessage" />
+        <for path="/opt/examples/QtMobility/querymessages" />
+        <for path="/opt/examples/QtMobility/keepintouch" />
+    </request>
+</aegis>

@@ -109,7 +109,7 @@ protected:
     int doGetBufferStatusL() const;
     qint64 doGetDurationL() const;
     void doSetAudioEndpoint(const QString& audioEndpoint);
-    
+    bool getIsSeekable() const;
 private:
 #ifdef S60_DRM_SUPPORTED    
     // From MMdaAudioPlayerCallback

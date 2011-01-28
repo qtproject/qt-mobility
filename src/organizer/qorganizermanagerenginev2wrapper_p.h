@@ -71,8 +71,6 @@ public:
     QOrganizerManagerEngineV2Wrapper(QOrganizerManagerEngine* wrappee);
     ~QOrganizerManagerEngineV2Wrapper();
 
-    QSharedPointer<QOrganizerItemObserver> observeItem(const QOrganizerItemId& itemId);
-
     /* Extra functions */
     static void setEngineOfRequest(QOrganizerAbstractRequest* request, QOrganizerManagerEngine* engine);
 
@@ -240,16 +238,10 @@ public:
     }
 
 private Q_SLOTS:
-    void itemsUpdated(const QList<QOrganizerItemId>& ids);
-    void itemsDeleted(const QList<QOrganizerItemId>& ids);
-    void observerDestroyed(QObject* object);
-
-private Q_SLOTS:
     void requestStateChanged(QOrganizerAbstractRequest::State state);
 
 private:
     QHash<QOrganizerAbstractRequest*, RequestController*> m_controllerForRequest;
-    QMultiHash<QOrganizerItemId, QOrganizerItemObserver*> m_observerForItem;
     QOrganizerManagerEngine* m_engine;
 };
 

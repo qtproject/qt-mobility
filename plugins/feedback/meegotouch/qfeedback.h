@@ -45,8 +45,6 @@
 #include <qmobilityglobal.h>
 #include <qfeedbackplugininterfaces.h>
 
-class MComponentData;
-
 QT_BEGIN_HEADER
 QTM_USE_NAMESPACE
 
@@ -58,9 +56,6 @@ public:
 
     virtual bool play(QFeedbackEffect::ThemeEffect);
     virtual QFeedbackInterface::PluginPriority pluginPriority();
-
-private:
-    MComponentData *componentData;
 };
 
 QT_END_HEADER

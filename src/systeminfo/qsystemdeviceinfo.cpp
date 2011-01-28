@@ -59,11 +59,11 @@ QSystemDeviceInfoPrivate *getSystemDeviceInfoPrivate() { return deviceInfoPrivat
         */
 
 /*!
-        \class QSystemDeviceInfo::ActiveProfileDetails
+        \class QSystemDeviceInfo::ProfileDetails
         \ingroup systeminfo
         \inmodule QtSystemInfo
 
-        \brief The ActiveProfileDetails class provides access to
+        \brief The ProfileDetails class provides access to
          details of the currently active phone profile.
 
   */
@@ -164,6 +164,7 @@ QSystemDeviceInfoPrivate *getSystemDeviceInfoPrivate() { return deviceInfoPrivat
             \value HalfQwertyKeyboard          Half qwerty keboard like on Nokia E55.
             \value FullQwertyKeyboard          Standard qwerty type keyboard.
             \value WirelessKeyboard            Bluetooth or other wireless keyboard.
+            \value FlipKeyboard                Keybord or keypad the slides or flips out.
         */
 /*!
           \enum QSystemDeviceInfo::KeypadType
@@ -178,7 +179,6 @@ QSystemDeviceInfoPrivate *getSystemDeviceInfoPrivate() { return deviceInfoPrivat
           This enum describes the type of lock.
 
           \value UnknownLock                    Lock type is unknown, or error.
-          \value SimLocked                      SIM is locked.
           \value PinLocked                      Device is PIN or password locked.
           \value TouchAndKeyboardLocked         Touch and/or keyboard is locked.
           */
@@ -202,14 +202,14 @@ QSystemDeviceInfoPrivate *getSystemDeviceInfoPrivate() { return deviceInfoPrivat
 */
 
 /*!
-    \fn void QSystemDeviceInfo::lockChanged(QSystemDeviceInfo::LockTypeFlags type, bool on)
+    \fn void QSystemDeviceInfo::lockStatusChanged(QSystemDeviceInfo::LockTypeFlags type)
 
-     This signal is emitted whenever the lock state changes, with LockType \a type, and \a on, locked or unlocked.
+     This signal is emitted whenever the lock state changes, with LockType \a type.
 */
 /*!
     \fn void QSystemDeviceInfo::deviceLocked(bool isLocked)
 
-     This signal is emitted whenever the device lock state changes, indicated by \a on, locked or unlocked.
+     This signal is emitted whenever the device lock state changes, indicated by \a isLocked is true otherwise unlocked.
 */
 
 /*!
@@ -578,8 +578,6 @@ bool QSystemDeviceInfo::isKeyboardFlippedOpen()
 }
 
 /*!
-  \property QSystemDeviceInfo::keypadLightOn
-  \brief Keypad light on.
 
   Returns true if the key pad, indicated by \a type, light is on, otherwise false;
   */
@@ -616,43 +614,45 @@ QSystemDeviceInfo::LockTypeFlags QSystemDeviceInfo::lockStatus()
 }
 
 /*!
-  Returns a QSystemDeviceInfo::ActiveProfileDetails for the currently active profile.
+  Returns a QSystemDeviceInfo::ProfileDetails for the currently active profile.
   */
-QSystemDeviceInfo::ActiveProfileDetails QSystemDeviceInfo::getActiveProfileDetails()
+QSystemDeviceInfo::ProfileDetails QSystemDeviceInfo::activeProfileDetails()
 {
-  //  QSystemDeviceInfo::ActiveProfileDetails activeProfileDetails;
-    return activeProfileDetails;
+  //  QSystemDeviceInfo::ProfileDetails activeProfileDetails;
+    return currentProfileDetails;
 }
 
 
 /*!
-    Constructs a null ActiveProfileDetails.
+    Constructs a null ProfileDetails.
 */
-QSystemDeviceInfo::ActiveProfileDetails::ActiveProfileDetails()
+QSystemDeviceInfo::ProfileDetails::ProfileDetails()
 {
   //   d = new QSystemDeviceInfoPrivate;
 }
 
 /*!
-    Constructs the ActiveProfileDetails that is a copy of \a other.
+    Constructs the ProfileDetails that is a copy of \a other.
 */
-QSystemDeviceInfo::ActiveProfileDetails::ActiveProfileDetails(const ActiveProfileDetails& other)
+QSystemDeviceInfo::ProfileDetails::ProfileDetails(const ProfileDetails& other)
 //    : d(other.d)
 {
+    Q_UNUSED(other)
 }
 
 /*!
-    Assigns \a other to this ActiveProfileDetails and returns a reference to it.
+    Assigns \a other to this ProfileDetails and returns a reference to it.
 */
-QSystemDeviceInfo::ActiveProfileDetails &QSystemDeviceInfo::ActiveProfileDetails::operator=(const ActiveProfileDetails& other)
+QSystemDeviceInfo::ProfileDetails &QSystemDeviceInfo::ProfileDetails::operator=(const ProfileDetails& other)
 {
    // d = other.d;
+    Q_UNUSED(other)
     return *this;
 }
 /*!
-    Destroys the ActiveProfileDetails.
+    Destroys the ProfileDetails.
 */
-QSystemDeviceInfo::ActiveProfileDetails::~ActiveProfileDetails()
+QSystemDeviceInfo::ProfileDetails::~ProfileDetails()
 {
 
 }
@@ -660,7 +660,7 @@ QSystemDeviceInfo::ActiveProfileDetails::~ActiveProfileDetails()
 /*!
     Returns the active profile's message ringtone volume. From 0 to 100.
   */
-int QSystemDeviceInfo::ActiveProfileDetails::messageRingtoneVolume() const
+int QSystemDeviceInfo::ProfileDetails::messageRingtoneVolume() const
 {
     return deviceInfoPrivate()->messageRingtoneVolume();
 }
@@ -669,7 +669,7 @@ int QSystemDeviceInfo::ActiveProfileDetails::messageRingtoneVolume() const
     Returns the active profile's voice ringtone volume. From 0 to 100.
 
   */
-int QSystemDeviceInfo::ActiveProfileDetails::voiceRingtoneVolume() const
+int QSystemDeviceInfo::ProfileDetails::voiceRingtoneVolume() const
 {
     return deviceInfoPrivate()->messageRingtoneVolume();
 }
@@ -678,7 +678,7 @@ int QSystemDeviceInfo::ActiveProfileDetails::voiceRingtoneVolume() const
     Returns the whether the active profile's vibration is active.
 
   */
-bool QSystemDeviceInfo::ActiveProfileDetails::vibrationActive() const
+bool QSystemDeviceInfo::ProfileDetails::vibrationActive() const
 {
     return deviceInfoPrivate()->messageRingtoneVolume();
 }

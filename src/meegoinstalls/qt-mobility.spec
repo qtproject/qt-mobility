@@ -14,10 +14,7 @@ License:    LGPLv2.1 with exception or GPLv3
 URL:        http://qt.gitorious.org/qt-mobility
 Source0:    http://get.qt.nokia.com/qt/add-ons/%{name}-opensource-src-%{version}.tar.gz
 Source100:  qt-mobility.yaml
-Patch0:     no_rpath.patch
-Patch1:     fix_translations_install_path.patch
-Patch2:     enable_pkgconfig_support.patch
-Patch3:     enable_camerabin_with_meego_target.patch
+Patch0:     fix_translations_install_path.patch
 Requires:   libqtconnectivity1 = %{version}
 Requires:   libqtcontacts1 = %{version}
 Requires:   libqtfeedback1 = %{version}
@@ -45,6 +42,8 @@ BuildRequires:  pkgconfig(gstreamer-plugins-bad-free-0.10)
 BuildRequires:  pkgconfig(gstreamer-plugins-base-0.10)
 BuildRequires:  pkgconfig(gypsy)
 BuildRequires:  pkgconfig(libpulse)
+BuildRequires:  pkgconfig(libmkcal)
+BuildRequires:  pkgconfig(meegotouch)
 BuildRequires:  pkgconfig(qttracker)
 BuildRequires:  pkgconfig(qmfclient)
 BuildRequires:  pkgconfig(sensord)
@@ -439,14 +438,8 @@ This package contains Qt Mobility translations.
 %prep
 %setup -q -n %{name}-opensource-src-%{version}
 
-# no_rpath.patch
-%patch0 -p1
 # fix_translations_install_path.patch
-%patch1 -p1
-# enable_pkgconfig_support.patch
-%patch2 -p1
-# enable_camerabin_with_meego_target.patch
-%patch3 -p1
+%patch0 -p1
 # >> setup
 # << setup
 
@@ -893,6 +886,7 @@ find %{buildroot}%{_libdir}/qtmobility -type f -perm /u+x,g+x,o+x \( -false \
 %{_includedir}/QtMultimediaKit/QVideoWidget
 %{_includedir}/QtMultimediaKit/QVideoWidgetControl
 %{_includedir}/QtMultimediaKit/QVideoWindowControl
+%{_includedir}/QtMultimediaKit/QMediaNetworkAccessControl
 %{_includedir}/QtOrganizer/*.h
 %{_includedir}/QtOrganizer/QOrganizerAbstractRequest
 %{_includedir}/QtOrganizer/QOrganizerCollection
@@ -1007,9 +1001,7 @@ find %{buildroot}%{_libdir}/qtmobility -type f -perm /u+x,g+x,o+x \( -false \
 %{_includedir}/QtSensors/QTapFilter
 %{_includedir}/QtSensors/QTapReading
 %{_includedir}/QtSensors/QTapSensor
-%{_includedir}/QtSensors/qtimestamp
 %{_includedir}/QtServiceFramework/*.h
-%{_includedir}/QtServiceFramework/Entry
 %{_includedir}/QtServiceFramework/QAbstractSecuritySession
 %{_includedir}/QtServiceFramework/QRemoteServiceRegister
 %{_includedir}/QtServiceFramework/QService
@@ -1077,8 +1069,18 @@ find %{buildroot}%{_libdir}/qtmobility -type f -perm /u+x,g+x,o+x \( -false \
 %{_libdir}/libQtVersit.so
 %{_libdir}/libQtVersitOrganizer.prl
 %{_libdir}/libQtVersitOrganizer.so
+%{_libdir}/pkgconfig/QtConnectivity.pc
 %{_libdir}/pkgconfig/QtContacts.pc
+%{_libdir}/pkgconfig/QtFeedback.pc
+%{_libdir}/pkgconfig/QtGallery.pc
 %{_libdir}/pkgconfig/QtLocation.pc
+%{_libdir}/pkgconfig/QtMessaging.pc
+%{_libdir}/pkgconfig/QtMultimediaKit.pc
+%{_libdir}/pkgconfig/QtOrganizer.pc
+%{_libdir}/pkgconfig/QtPublishSubscribe.pc
+%{_libdir}/pkgconfig/QtSensors.pc
+%{_libdir}/pkgconfig/QtServiceFramework.pc
+%{_libdir}/pkgconfig/QtSystemInfo.pc
 %{_libdir}/pkgconfig/QtVersit.pc
 %{_libdir}/pkgconfig/QtVersitOrganizer.pc
 %{_datadir}/qt4/mkspecs/features/mobility.prf
@@ -1102,6 +1104,7 @@ find %{buildroot}%{_libdir}/qtmobility -type f -perm /u+x,g+x,o+x \( -false \
 %defattr(-,root,root,-)
 # >> files libqtfeedback1
 %{_libdir}/libQtFeedback.so.*
+%{_libdir}/qt4/plugins/feedback/libqtfeedback_meegotouch.so
 %{_libdir}/qt4/plugins/feedback/libqtfeedback_mmk.so
 # << files libqtfeedback1
 
@@ -1139,7 +1142,7 @@ find %{buildroot}%{_libdir}/qtmobility -type f -perm /u+x,g+x,o+x \( -false \
 %defattr(-,root,root,-)
 # >> files libqtorganizer1
 %{_libdir}/libQtOrganizer.so.*
-%{_libdir}/qt4/plugins/organizer/libqtorganizer_skeleton.so
+%{_libdir}/qt4/plugins/organizer/libqtorganizer_mkcal.so
 # << files libqtorganizer1
 
 %files -n libqtpublishsubscribe1
@@ -1154,7 +1157,7 @@ find %{buildroot}%{_libdir}/qtmobility -type f -perm /u+x,g+x,o+x \( -false \
 %config %{_sysconfdir}/xdg/Nokia/Sensors.conf
 %{_libdir}/libQtSensors.so.*
 %{_libdir}/qt4/plugins/sensors/libqtsensors_generic.so
-%{_libdir}/qt4/plugins/sensors/libqtsensors_maemo6.so
+%{_libdir}/qt4/plugins/sensors/libqtsensors_meego.so
 # << files libqtsensors1
 
 %files -n libqtserviceframework1

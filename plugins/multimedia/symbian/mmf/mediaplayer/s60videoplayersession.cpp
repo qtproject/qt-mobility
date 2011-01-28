@@ -51,6 +51,7 @@
 #include <coecntrl.h>
 #include <coemain.h>    // For CCoeEnv
 #include <w32std.h>
+#include <mmf/common/mmferrors.h>
 #include <mmf/common/mmfcontrollerframeworkbase.h>
 
 const QString DefaultAudioEndpoint = QLatin1String("Default");
@@ -306,13 +307,7 @@ bool S60VideoPlayerSession::isAudioAvailable()
 
 void S60VideoPlayerSession::doPlay()
 {
-    //temporary hack for bufferring.. To be removed when register for notification is enabled
-    buffering();
-    
     m_player->Play();
-    
-    //temporary.. To be removed when register for notification is enabled
-    buffered();
 }
 
 void S60VideoPlayerSession::doPauseL()
@@ -327,7 +322,19 @@ void S60VideoPlayerSession::doStop()
 
 void S60VideoPlayerSession::doClose()
 {
+#ifdef HAS_AUDIOROUTING_IN_VIDEOPLAYER
+    if (m_audioOutput) {
+        m_audioOutput->UnregisterObserver(*this);
+        delete m_audioOutput;
+        m_audioOutput = NULL;
+    }
+#endif
+
     m_player->Close();
+
+// close will remove the window handle in media clint video.
+// So mark it in pending changes.
+    m_pendingChanges |= WindowHandle;
 }
 
 qint64 S60VideoPlayerSession::doGetPositionL() const
@@ -355,7 +362,7 @@ void S60VideoPlayerSession::MvpuoOpenComplete(TInt aError)
 void S60VideoPlayerSession::MvpuoPrepareComplete(TInt aError)
 {
     TInt error = aError;
-    if (KErrNone == error) {
+    if (KErrNone == error || KErrMMPartialPlayback == error) {
         TSize originalSize;
         TRAP(error, m_player->VideoFrameSizeL(originalSize));
         if (KErrNone == error) {
@@ -549,3 +556,30 @@ QString S60VideoPlayerSession::qStringFromTAudioOutputPreference(CAudioOutput::T
     return QString("Default");
 }
 #endif //HAS_AUDIOROUTING_IN_VIDEOPLAYER)
+
+
+bool S60VideoPlayerSession::getIsSeekable() const
+{
+    bool seekable = ETrue;
+    int numberOfMetaDataEntries = 0;
+
+    TRAPD(err, numberOfMetaDataEntries = m_player->NumberOfMetaDataEntriesL());
+    if (err)
+        return seekable;
+
+    for (int i = 0; i < numberOfMetaDataEntries; i++) {
+        CMMFMetaDataEntry *entry = NULL;
+        TRAP(err, entry = m_player->MetaDataEntryL(i));
+
+        if (err)
+            return seekable;
+
+        if (!entry->Name().Compare(KSeekable)) {
+            if (!entry->Value().Compare(KFalse))
+                seekable = EFalse;
+            break;
+        }
+    }
+
+    return seekable;
+}

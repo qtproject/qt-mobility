@@ -1513,7 +1513,7 @@ int QSystemDisplayInfoPrivate::colorDepth(int screen)
     return (int)bitsPerPixel;
 }
 
-QSystemDisplayInfo::DisplayOrientation QSystemDisplayInfoPrivate::getOrientation(int screen)
+QSystemDisplayInfo::DisplayOrientation QSystemDisplayInfoPrivate::orientation(int screen)
 {
     QSystemDisplayInfo::DisplayOrientation orientation = QSystemDisplayInfo::Unknown;
 
@@ -1639,9 +1639,9 @@ QSystemDisplayInfo::BacklightState  QSystemDisplayInfoPrivate::backlightStatus(i
     if(bright == 0) {
         return QSystemDisplayInfo::BacklightStateOff;
     } else if(bright > 1 && bright < 99) {
-        return QSystemDisplayInfo::backlightStateDimmed;
+        return QSystemDisplayInfo::BacklightStateDimmed;
        } else {
-        return QSystemDisplayInfo::backlightStateOn;
+        return QSystemDisplayInfo::BacklightStateOn;
     }
     return QSystemDisplayInfo::BacklightStateUnknown;
 }

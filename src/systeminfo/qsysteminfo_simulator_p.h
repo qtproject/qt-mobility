@@ -164,7 +164,7 @@ public:
     int displayBrightness(int screen = 0) const { Q_UNUSED(screen); return data.displayBrightness; }
     int colorDepth(int screen = 0) const { Q_UNUSED(screen); return data.colorDepth; }
 
-    QSystemDisplayInfo::DisplayOrientation getOrientation(int screen) const { Q_UNUSED(screen); return data.orientation; }
+    QSystemDisplayInfo::DisplayOrientation orientation(int screen) const { Q_UNUSED(screen); return data.orientation; }
     float contrast(int screen) const { Q_UNUSED(screen); return data.contrast;}
     int getDPIHeight(int screen) const { Q_UNUSED(screen); return data.dpiHeight; }
     int getDPIWidth(int screen) const { Q_UNUSED(screen); return data.dpiWidth; }
@@ -221,7 +221,7 @@ public:
     bool keypadLightOn(QSystemDeviceInfo::KeypadType type)const { Q_UNUSED(type);return data.keypadLight; }
     bool backLightOn()const { return data.backLight; }
     QUuid uniqueDeviceID(){ return data.uniqueDeviceId; }
-    QSystemDeviceInfo::LockType lockStatus()const { return data.lockType; }
+    QSystemDeviceInfo::LockTypeFlags lockStatus()const { return data.lockType; }
 
     QSystemDeviceInfo::BatteryStatus batteryStatus() const;
 
@@ -255,7 +255,7 @@ public:
     void setKeypadLightOn(bool v);
     void setBackLightOn(bool v);
     void setUniqueDeviceId(const QUuid &v);
-    void setTypeOfLock(QSystemDeviceInfo::LockType v);
+    void setTypeOfLock(QSystemDeviceInfo::LockTypeFlags v);
 
     void setMessageRingtoneVolume(int v);
     void setVoiceRingtoneVolume(int v);
@@ -274,7 +274,7 @@ Q_SIGNALS:
     void wirelessKeyboardConnected(bool connected);
     void keyboardFlipped(bool open);
     void deviceLocked(bool isLocked);
-    void lockStatusChanged(QSystemDeviceInfo::LockType);
+    void lockStatusChanged(QSystemDeviceInfo::LockTypeFlags);
 
 private:
     QSystemDeviceInfoData data;

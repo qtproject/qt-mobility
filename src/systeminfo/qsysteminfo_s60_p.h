@@ -65,11 +65,22 @@
 #include "chargingstatus_s60.h"
 #include "wlaninfo_s60.h"
 #include "storagestatus_s60.h"
+#include <w32std.h>
+#include "batterystatus_s60.h"
+#include "networkinfo_s60.h"
+#include <ProfileEngineSDKCRKeys.h>
+#include <hwrmvibrasdkcrkeys.h>
+
+#ifdef SYMBIAN_3_PLATFORM
+#include "lockandflipstatus_s60.h"
+#include "storagedisknotifier_s60.h"
+#endif
 
 QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
+const int KMaxBatteryBars = 7; //Max number of battery bars (7 is fixed for all symbian devices now)
 
 //////// QSystemInfo
 class QSystemInfoPrivate : public QObject
@@ -97,7 +108,7 @@ private:
 };
 
 //////// QSystemNetworkInfo
-class QSystemNetworkInfoPrivate : public QObject, public MTelephonyInfoObserver
+class QSystemNetworkInfoPrivate : public QObject, public MTelephonyInfoObserver, public MNetworkInfoObserver
 {
     Q_OBJECT
 
@@ -143,6 +154,10 @@ protected:  //from MTelephonyInfoObserver
     void cellNetworkSignalStrengthChanged();
     void cellNetworkStatusChanged();
 
+    void changedCellId(int);
+    virtual void changedNetworkStatus() ;
+    virtual void changedNetworkMode() ;
+
 public slots:
     void wlanNetworkNameChanged();
     void wlanNetworkSignalStrengthChanged();
@@ -162,21 +177,29 @@ public:
     static int displayBrightness(int screen);
     static int colorDepth(int screen);
 
-    QSystemDisplayInfo::DisplayOrientation getOrientation(int screen);
+    QSystemDisplayInfo::DisplayOrientation orientation(int screen);
     float contrast(int screen);
     int getDPIWidth(int screen);
     int getDPIHeight(int screen);
     int physicalHeight(int screen);
     int physicalWidth(int screen);
     QSystemDisplayInfo::BacklightState backlightStatus(int screen); //1.2
+
+private:
+    bool getSizeandRotation(int screen,TPixelsTwipsAndRotation& sizeAndRotation);
 };
 
 //////// QSystemStorageInfo
 class QSystemStorageInfoPrivate : public QObject,
     public MStorageStatusObserver
+#ifdef SYMBIAN_3_PLATFORM
+    ,public MStorageSpaceNotifyObserver
+#endif
 {
     Q_OBJECT
 
+private:
+    QSystemStorageInfo::StorageState CheckDiskSpaceThresholdLimit(const QString &);
 public:
     QSystemStorageInfoPrivate(QObject *parent = 0);
     virtual ~QSystemStorageInfoPrivate();
@@ -190,6 +213,10 @@ public:
 
 protected: // from MStorageStatusObserver
     void storageStatusChanged(bool, const QString &);
+#ifdef SYMBIAN_3_PLATFORM
+    // from MStorageSpaceNotifyObserver
+    void DiskSpaceChanged(const QString &);
+#endif
 
 private:
     RFs iFs;
@@ -219,6 +246,10 @@ class QSystemDeviceInfoPrivate : public QObject,
     public MProEngProfileActivationObserver,
     public MCenRepNotifyHandlerCallback,
     public MChargingStatusObserver
+#ifdef SYMBIAN_3_PLATFORM
+    ,public MKeylockStatusObserver,
+    public MFlipStatusObserver
+#endif
 {
     Q_OBJECT
 
@@ -286,6 +317,7 @@ protected:
     void networkCodeChanged(){};
     void networkNameChanged(){};
     void networkModeChanged(){};
+    void changedCellId(int){};
 
     void cellNetworkSignalStrengthChanged(){};
     void cellNetworkStatusChanged(){};
@@ -293,6 +325,13 @@ protected:
     //from MChargingStatusObserver
     void chargingStatusChanged();
 
+#ifdef SYMBIAN_3_PLATFORM
+    //from MKeylockStatusObserver
+    void keylockStatusChanged(TInt aLockType);
+
+    //from MFlipStatusObserver
+    void flipStatusChanged(TInt aFlipType , TInt aFilpKeyBoard );
+#endif
 private:
     QSystemDeviceInfo::Profile s60ProfileIdToProfile(TInt profileId) const;
 
@@ -304,6 +343,7 @@ private:
     CCenRepNotifyHandler *m_bluetoothNotifyHandler;
 
     bool hasWirelessKeyboardConnected;
+
     QSystemDeviceInfo::BatteryStatus m_previousBatteryStatus;
 };
 
@@ -410,10 +450,57 @@ public:
         return m_mmcStorageStatus;
     }
 
+#ifdef SYMBIAN_3_PLATFORM
+    CStorageDiskNotifier *storagedisknotifier()
+    {
+        if (!m_storagedisknotifier) {
+            TRAP_IGNORE(m_storagedisknotifier = CStorageDiskNotifier::NewL();)
+        }
+        return m_storagedisknotifier;
+    }
+
+    CKeylockStatus *keylockStatus()
+    {
+        if (!m_keylockStatus) {
+            m_keylockStatus = new CKeylockStatus;
+        }
+        return m_keylockStatus;
+    }
+
+    CFlipStatus *flipStatus()
+    {
+        if (!m_flipStatus) {
+            m_flipStatus = new CFlipStatus;
+            TRAP_IGNORE(m_flipStatus->ConstructL();
+            )
+        }
+        return m_flipStatus;
+    }
+#endif
+
+    CBatteryCommonInfo *batteryCommonInfo ()
+    {
+        if (!m_batteryCommonInfo) {
+            m_batteryCommonInfo = new CBatteryCommonInfo();
+        }
+        return m_batteryCommonInfo;
+    }
+
+    CNetworkInfo* networkInfo ()
+    {
+        if (!m_networkInfo) {
+           m_networkInfo = new  CNetworkInfo();
+        }
+        return m_networkInfo;
+    }
+
 private:
     DeviceInfo() : m_phoneInfo(NULL), m_subscriberInfo(NULL), m_chargingStatus(NULL),
         m_batteryInfo(NULL), m_cellNetworkInfo(NULL), m_cellNetworkRegistrationInfo(NULL),
-        m_cellSignalStrengthInfo(NULL), m_wlanInfo(NULL), m_mmcStorageStatus(NULL)
+        m_cellSignalStrengthInfo(NULL), m_wlanInfo(NULL), m_mmcStorageStatus(NULL), m_batteryCommonInfo(NULL), m_networkInfo(NULL)
+#ifdef SYMBIAN_3_PLATFORM
+        ,m_keylockStatus(NULL),m_flipStatus(NULL),m_storagedisknotifier(NULL)
+#endif
     {
         m_telephony = CTelephony::NewL();
     };
@@ -430,7 +517,16 @@ private:
         delete m_telephony;
         delete m_wlanInfo;
         delete m_mmcStorageStatus;
+        delete m_batteryCommonInfo;
+        delete m_networkInfo;
+#ifdef SYMBIAN_3_PLATFORM
+        delete m_keylockStatus;
+        delete m_flipStatus;
+        delete m_storagedisknotifier;
+#endif
     }
+
+    DeviceInfo(const DeviceInfo &);
 
     static DeviceInfo *m_instance;
 
@@ -444,9 +540,16 @@ private:
     CCellSignalStrengthInfo *m_cellSignalStrengthInfo;
     CWlanInfo* m_wlanInfo;
     CMMCStorageStatus* m_mmcStorageStatus;
+    CBatteryCommonInfo* m_batteryCommonInfo;
+    CNetworkInfo* m_networkInfo;
+#ifdef SYMBIAN_3_PLATFORM
+    CKeylockStatus *m_keylockStatus;
+    CFlipStatus *m_flipStatus;
+    CStorageDiskNotifier* m_storagedisknotifier;
+#endif
 };
 
-class QSystemBatteryInfoPrivate : public QObject
+class QSystemBatteryInfoPrivate : public QObject, public MBatteryInfoObserver, public MBatteryHWRMObserver
 {
     Q_OBJECT
 public:
@@ -468,7 +571,6 @@ public:
     QSystemBatteryInfo::BatteryStatus batteryStatus() const;
     QSystemBatteryInfo::EnergyUnit energyMeasurementUnit() const;
 
-
 Q_SIGNALS:
     void batteryLevelChanged(qint32 level);
     void batteryStatusChanged(QSystemBatteryInfo::BatteryStatus batteryStatus);
@@ -488,6 +590,15 @@ Q_SIGNALS:
 protected:
     void connectNotify(const char *signal);
     void disconnectNotify(const char *signal);
+    void changedBatteryStatus() ;
+    void changedChargingState() ;
+    void changedChargerType() ;
+    void changedRemainingCapacityBars();
+    void changedCurrentFlow(int);
+
+private :
+    CBatteryHWRM *m_batteryHWRM;
+    QSystemBatteryInfo::ChargerType m_charger, m_previousChagrger;
 };
 
 QTM_END_NAMESPACE

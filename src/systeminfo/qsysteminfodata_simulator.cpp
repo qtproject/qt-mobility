@@ -107,7 +107,7 @@ QDataStream &operator>>(QDataStream &in, QSystemDeviceInfoData &s)
 
     s.keyboardTypes = static_cast<QSystemDeviceInfo::KeyboardType>(keyboardTypes);
     s.keypadType = static_cast<QSystemDeviceInfo::KeypadType>(keypadType);
-    s.lockType = static_cast<QSystemDeviceInfo::LockType>(lockType);
+    s.lockType = static_cast<QSystemDeviceInfo::LockTypeFlags>(lockType);
     s.batStatus = static_cast<QSystemDeviceInfo::BatteryStatus>(batStatus);
 
     in >> s.uniqueDeviceId;

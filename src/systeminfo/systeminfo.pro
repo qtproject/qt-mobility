@@ -13,7 +13,8 @@ PUBLIC_HEADERS +=   qsysteminfo.h \
     qsystemnetworkinfo.h \
     qsystemscreensaver.h \
     qsystemstorageinfo.h  \
-    qsystembatteryinfo.h
+    qsystembatteryinfo.h \
+    qsystemalignedtimer.h
 
 SOURCES += qsystemgeneralinfo.cpp \
     qsystemdeviceinfo.cpp \
@@ -21,7 +22,8 @@ SOURCES += qsystemgeneralinfo.cpp \
     qsystemnetworkinfo.cpp \
     qsystemscreensaver.cpp \
     qsystemstorageinfo.cpp \
-    qsystembatteryinfo.cpp
+    qsystembatteryinfo.cpp \
+    qsystemalignedtimer.cpp
 
 PRIVATE_HEADERS += qsysteminfocommon_p.h
 
@@ -81,7 +83,11 @@ unix:!simulator {
             DEFINES += BLKID_SUPPORTED
             LIBS += -lblkid
         }
-            LIBS +=  -lX11 -lXrandr
+
+        LIBS +=  -lX11 -lXrandr
+    }
+
+    !maemo5:!maemo6:linux-*: {
             SOURCES += linux/qsysteminfo_linux.cpp
             HEADERS += linux/qsysteminfo_linux_p.h
             contains(QT_CONFIG,dbus): {
@@ -112,7 +118,7 @@ unix:!simulator {
                 }
                 contains(CONFIG,meego): { #for now... udisks
                 } else {
-                    DEFINES += QT_NO_UDISKS QT_NO_MEEGO
+                    DEFINES += QT_NO_UDISKS
                     LIBS += -lX11 -lXrandr
                    }
                 contains(connman_enabled, yes): {
@@ -123,7 +129,7 @@ unix:!simulator {
                     DEFINES += QT_NO_CONNMAN
                 }
             } else {
-                DEFINES += QT_NO_NETWORKMANAGER QT_NO_UDISKS QT_NO_CONNMAN QT_NO_MEEGO
+                DEFINES += QT_NO_NETWORKMANAGER QT_NO_UDISKS QT_NO_CONNMAN
                 LIBS += -lX11 -lXrandr
 
             }
@@ -149,6 +155,11 @@ unix:!simulator {
     }
 
     mac: {
+        contains(build_unit_tests, yes):contains(test_use_sim, yes) {
+            SOURCES += qsysteminfo_simulator.cpp qsysteminfodata_simulator.cpp
+            HEADERS += qsysteminfo_simulator_p.h qsysteminfodata_simulator_p.h
+            DEFINES += TESTR QT_SIMULATOR
+        } else {
         SOURCES += qsysteminfo_mac.mm
         HEADERS += qsysteminfo_mac_p.h
         LIBS += -framework SystemConfiguration -framework CoreFoundation \
@@ -172,13 +183,22 @@ unix:!simulator {
            } else {
                CONFIG += no_keywords
            }
-
+    }
     TEMPLATE = lib
     }
 
     symbian:{
         contains(S60_VERSION, 3.1){
             DEFINES += SYMBIAN_3_1
+        }
+         contains(S60_VERSION, 3.1)|contains(S60_VERSION, 3.2)|contains(S60_VERSION, 5.0) | contains(S60_VERSION, 5.2){
+        } else {
+         DEFINES += SYMBIAN_3_PLATFORM
+            # s60 is not symbian^3
+          SOURCES += lockandflipstatus_s60.cpp \
+                     storagedisknotifier_s60.cpp
+          HEADERS += lockandflipstatus_s60.h \
+                     storagedisknotifier_s60.h
         }
 
         contains(hb_symbian_enabled,yes) {
@@ -198,13 +218,19 @@ unix:!simulator {
             telephonyinfo_s60.cpp \
             chargingstatus_s60.cpp \
             wlaninfo_s60.cpp \
-            storagestatus_s60.cpp
+            storagestatus_s60.cpp \
+            pubandsubkey_s60.cpp \
+            batterystatus_s60.cpp \
+            networkinfo_s60.cpp
 
         HEADERS += qsysteminfo_s60_p.h \
             telephonyinfo_s60.h \
             chargingstatus_s60.h \
             wlaninfo_s60.h \
-            storagestatus_s60.h
+            storagestatus_s60.h \
+            pubandsubkey_s60.h \
+            batterystatus_s60.h \
+            networkinfo_s60.h
 
         LIBS += -lprofileengine \
             -letel3rdparty \
@@ -222,7 +248,23 @@ unix:!simulator {
             -lbluetooth \
             -lgdi \
             -lecom \
-            -lplatformenv
+            -lplatformenv \
+            -lhwrmlightclient \
+            -letel
+
+        contains(S60_VERSION, 5.1) | contains(S60_VERSION, 5.2) {
+            LIBS += -lhwrmpowerclient \
+            -ldisknotifyhandler \
+            -lhwrmfmtxclient \
+            -lusbman
+        }
+
+        contains(symbiancntsim_enabled,yes){
+            LIBS += -letelmm
+            DEFINES += ETELMM_SUPPORTED
+            message("ETELMM enabled")
+            }
+
 
         contains(hb_symbian_enabled,yes) {
                 CONFIG += qt hb

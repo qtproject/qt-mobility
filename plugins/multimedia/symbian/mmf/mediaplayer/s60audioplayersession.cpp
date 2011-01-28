@@ -135,6 +135,13 @@ void S60AudioPlayerSession::doStop()
 
 void S60AudioPlayerSession::doClose()
 {
+#ifdef HAS_AUDIOROUTING
+    if (m_audioOutput) {
+        m_audioOutput->UnregisterObserver(*this);
+        delete m_audioOutput;
+        m_audioOutput = NULL;
+    }
+#endif
     m_player->Close();
 }
 
@@ -197,7 +204,8 @@ void S60AudioPlayerSession::MapcInitComplete(TInt aError, const TTimeIntervalMic
     setActiveEndpoint(m_audioEndpoint);
     setError(err);
 #endif //HAS_AUDIOROUTING
-    loaded();
+    if (KErrNone == aError)
+        loaded();
 }
 
 #ifdef S60_DRM_SUPPORTED
@@ -206,8 +214,10 @@ void S60AudioPlayerSession::MdapcPlayComplete(TInt aError)
 void S60AudioPlayerSession::MapcPlayComplete(TInt aError)
 #endif
 {
-    setError(aError);
-    endOfMedia();
+    if (KErrNone == aError)
+        endOfMedia();
+    else
+        setError(aError);
 }
 
 void S60AudioPlayerSession::doSetAudioEndpoint(const QString& audioEndpoint)
@@ -285,3 +295,9 @@ QString S60AudioPlayerSession::qStringFromTAudioOutputPreference(CAudioOutput::T
     return QString("Default");
 }
 #endif
+
+bool S60AudioPlayerSession::getIsSeekable() const
+{
+    return ETrue;
+}
+

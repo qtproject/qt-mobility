@@ -616,7 +616,7 @@ void QSystemDeviceInfoPrivate::setInitialData()
     setDeviceLocked(false);
     setKeyboardTypes(QSystemDeviceInfo::SoftwareKeyboard);
     setKeypadType(QSystemDeviceInfo::SecondaryKeypad);
-    setTypeOfLock(QSystemDeviceInfo::DeviceUnlocked);
+    setTypeOfLock(QSystemDeviceInfo::UnknownLock);
     setMessageRingtoneVolume(55);
     setVoiceRingtoneVolume(45);
     setVibrationActive(true);
@@ -779,7 +779,7 @@ void QSystemDeviceInfoPrivate::setUniqueDeviceId(const QUuid &v)
     }
 }
 
-void QSystemDeviceInfoPrivate::setTypeOfLock(QSystemDeviceInfo::LockType v)
+void QSystemDeviceInfoPrivate::setTypeOfLock(QSystemDeviceInfo::LockTypeFlags v)
 {
     bool lockTypeChanged = false;
     bool deviceLockChanged = false;
@@ -788,7 +788,7 @@ void QSystemDeviceInfoPrivate::setTypeOfLock(QSystemDeviceInfo::LockType v)
         lockTypeChanged = true;
         emit lockStatusChanged(v);
     }
-    if (v == QSystemDeviceInfo::DeviceUnlocked) {
+    if (v == QSystemDeviceInfo::UnknownLock) {
         setDeviceLocked(false);
     }
 }

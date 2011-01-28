@@ -40,6 +40,17 @@
 ****************************************************************************/
 
 #include "qcontactobserver.h"
+#include "qcontactid.h"
+#include "qcontactmanager_p.h"
+
+QTM_BEGIN_NAMESPACE
+class QContactObserverPrivate
+{
+    public:
+        QContactLocalId m_localId;
+        QContactManagerData* m_managerPrivate;
+};
+QTM_END_NAMESPACE
 
 QTM_USE_NAMESPACE
 
@@ -50,13 +61,37 @@ QTM_USE_NAMESPACE
   \inmodule QtContacts
 
   \ingroup contacts-main
-
-  This class is created by calling QContactManager::observeContact(QContactLocalId).
-
-  \sa QContactManager::observeContact
  */
 
-QContactObserver::QContactObserver(QObject* parent) : QObject(parent) {}
+/*!
+  Constructs a QContactObserver to observe the contact in \a manager with the given \a localId.
+ */
+QContactObserver::QContactObserver(QContactManager* manager,
+                                   QContactLocalId localId,
+                                   QObject* parent)
+    : QObject(parent),
+      d(new QContactObserverPrivate)
+{
+    d->m_localId = localId;
+    d->m_managerPrivate = QContactManagerData::get(manager);
+    d->m_managerPrivate->registerObserver(this);
+}
+
+/*!
+  Destroys this observer.
+ */
+QContactObserver::~QContactObserver()
+{
+    d->m_managerPrivate->unregisterObserver(this);
+    delete d;
+}
+
+/*!
+  Returns the local id of the contact that this object observes.
+ */
+QContactLocalId QContactObserver::contactLocalId() const {
+    return d->m_localId;
+}
 
 /*!
   \fn contactChanged()
@@ -69,21 +104,5 @@ QContactObserver::QContactObserver(QObject* parent) : QObject(parent) {}
 
   This signal is emitted when the observed contact is removed from the manager.
  */
-
-/*!
-  This function causes the contactChanged() signal to be emitted.
- */
-void QContactObserver::emitContactChanged()
-{
-    emit contactChanged();
-}
-
-/*!
-  This function causes the contactRemoved() signal to be emitted.
- */
-void QContactObserver::emitContactRemoved()
-{
-    emit contactRemoved();
-}
 
 #include "moc_qcontactobserver.cpp"

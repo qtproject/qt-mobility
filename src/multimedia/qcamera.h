@@ -60,6 +60,7 @@
 
 QT_BEGIN_NAMESPACE
 
+class QAbstractVideoSurface;
 class QVideoWidget;
 class QGraphicsVideoItem;
 
@@ -157,6 +158,7 @@ public:
 
     void setViewfinder(QVideoWidget *viewfinder);
     void setViewfinder(QGraphicsVideoItem *viewfinder);
+    void setViewfinder(QAbstractVideoSurface *surface);
 
     Error error() const;
     QString errorString() const;

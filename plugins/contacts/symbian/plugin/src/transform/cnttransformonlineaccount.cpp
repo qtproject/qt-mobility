@@ -38,7 +38,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifdef SYMBIAN_BACKEND_USE_SQLITE
+#ifdef SYMBIAN_BACKEND_USE_CNTMODEL_V2
 
 #include "cnttransformonlineaccount.h"
 #include "cntmodelextuids.h"
@@ -315,6 +315,6 @@ void CntTransformOnlineAccount::reset()
     m_detailCounter = 0;
 }
 
-#endif // SYMBIAN_BACKEND_USE_SQLITE
+#endif // SYMBIAN_BACKEND_USE_CNTMODEL_V2
 
 // End of file

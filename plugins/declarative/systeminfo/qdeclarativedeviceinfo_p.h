@@ -54,30 +54,76 @@ QTM_USE_NAMESPACE
 class QDeclarativeDeviceInfo : public QSystemDeviceInfo
 {
     Q_OBJECT
+    Q_PROPERTY(bool monitorBatteryLevelChanges READ monitorBatteryLevelChanges WRITE startBatteryLevelChanged)
+    Q_PROPERTY(bool monitorBatteryStatusChanges READ monitorBatteryStatusChanges WRITE startBatteryStatusChanged)
+    Q_PROPERTY(bool monitorPowerStateChanges READ monitorPowerStateChanges WRITE startPowerStateChanged)
+    Q_PROPERTY(bool monitorCurrentProfileChanges READ monitorCurrentProfileChanges WRITE startCurrentProfileChanged)
+    Q_PROPERTY(bool monitorBluetoothStateChanges READ monitorBluetoothStateChanges WRITE startBluetoothStateChanged)
+
+    Q_PROPERTY(bool monitorWirelessKeyboardConnects READ monitorWirelessKeyboardConnects WRITE startWirelessKeyboardConnected)
+    Q_PROPERTY(bool monitorKeyboardFlips READ monitorKeyboardFlips WRITE startKeyboardFlipped CONSTANT)
+    Q_PROPERTY(bool monitorDeviceLocks READ monitorDeviceLocks WRITE startDeviceLocked CONSTANT)
+    Q_PROPERTY(bool monitorLockStatusChanges READ monitorLockStatusChanges WRITE startLockStatusChanged CONSTANT)
+
+    Q_PROPERTY(int messageRingtoneVolume READ messageRingtoneVolume CONSTANT)
+    Q_PROPERTY(int voiceRingtoneVolume READ voiceRingtoneVolume CONSTANT)
+    Q_PROPERTY(bool vibrationActive READ vibrationActive CONSTANT)
+
+    Q_PROPERTY(QString uniqueID READ uniqueID CONSTANT)
+
 public:
     explicit QDeclarativeDeviceInfo(QObject *parent = 0);
 
+    bool monitorBatteryLevelChanges();
+    void startBatteryLevelChanged(bool on);
 
-public slots:
-    void startBatteryLevelChanged();
-    void startBatteryStatusChanged();
-    void startPowerStateChanged();
-    void startCurrentProfileChanged();
-    void startBluetoothStateChanged();
+    bool monitorBatteryStatusChanges();
+    void startBatteryStatusChanged(bool on);
 
-Q_SIGNALS:
-    void batteryLevelChanged(int level);
-    void batteryStatusChanged(QSystemDeviceInfo::BatteryStatus batteryStatus);
-    void powerStateChanged(QSystemDeviceInfo::PowerState powerState);
-    void currentProfileChanged(QSystemDeviceInfo::Profile currentProfile);
-    void bluetoothStateChanged(bool on);
+    bool monitorPowerStateChanges();
+    void startPowerStateChanged(bool on);
 
-private slots:
-    void declarativeBatteryLevelChanged(int level);
-    void declarativeBatteryStatusChanged(QSystemDeviceInfo::BatteryStatus batteryStatus);
-    void declarativePowerStateChanged(QSystemDeviceInfo::PowerState powerState);
-    void declarativeCurrentProfileChanged(QSystemDeviceInfo::Profile currentProfile);
-    void declarativeBluetoothStateChanged(bool on);
+    bool monitorCurrentProfileChanges();
+    void startCurrentProfileChanged(bool on);
+
+    bool monitorBluetoothStateChanges();
+    void startBluetoothStateChanged(bool on);
+
+
+    bool monitorWirelessKeyboardConnects();
+    void startWirelessKeyboardConnected(bool on);
+
+    bool monitorKeyboardFlips();
+    void startKeyboardFlipped(bool on);
+
+    bool monitorDeviceLocks();
+    void startDeviceLocked(bool on);
+
+    bool monitorLockStatusChanges();
+    void startLockStatusChanged(bool on);
+
+    int messageRingtoneVolume();
+    int voiceRingtoneVolume();
+    bool vibrationActive();
+
+    QString uniqueID();
+
+
+ protected:
+
+    bool monitoringBatteryLevel;
+    bool monitoringBatteryStatus;
+    bool monitoringPowerState;
+    bool monitoringCurrentProfile;
+    bool monitorBluetoothState;
+
+    bool monitoringWirelessKeyboard;
+    bool monitoringKeyboardFlipped;
+    bool monitoringDeviceLocked;
+    bool monitoringLockStatusChanged;
+
+    QSystemDeviceInfo::ProfileDetails currentProfileDetails;
+
 };
 
 QT_END_NAMESPACE

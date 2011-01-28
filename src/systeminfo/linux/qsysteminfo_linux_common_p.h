@@ -57,6 +57,7 @@
 #include <QSize>
 #include <QHash>
 #include <QTimer>
+#include <QVariantMap>
 
 #include "qsysteminfo.h"
 #include "qsystemdeviceinfo.h"
@@ -100,6 +101,8 @@ public:
 
     QString version(QSystemInfo::Version,  const QString &/*parameter*/ = QString());
     QString currentCountryCode() const;
+
+    bool fmTransmitterAvailable();
     virtual bool hasFeatureSupported(QSystemInfo::Feature feature);
     bool hasSysFeature(const QString &featureStr);
 
@@ -221,13 +224,12 @@ public:
     int displayBrightness(int screen);
     int colorDepth(int screen);
 
-
-    QSystemDisplayInfo::DisplayOrientation getOrientation(int /*screen*/) {return QSystemDisplayInfo::Unknown;};
+    QSystemDisplayInfo::DisplayOrientation orientation(int screen);
     float contrast(int /*screen*/) {return 0.0;};
     int getDPIWidth(int /*screen*/){return 0;};
     int getDPIHeight(int /*screen*/){return 0;};
-    int physicalHeight(int /*screen*/){return 0;};
-    int physicalWidth(int /*screen*/){return 0;};
+    int physicalHeight(int screen);
+    int physicalWidth(int screen);
     QSystemDisplayInfo::BacklightState backlightStatus(int screen); //1.2
 };
 
@@ -333,26 +335,30 @@ Q_SIGNALS:
     void deviceLocked(bool isLocked); // 1.2
     void lockStatusChanged(QSystemDeviceInfo::LockTypeFlags); //1.2
 
-
 protected:
     bool btPowered;
 
 #if !defined(QT_NO_DBUS)
-    void setupBluetooth();
 
-//#if defined(QT_NO_CONNMAN)
     QHalInterface *halIface;
     QHalDeviceInterface *halIfaceDevice;
-//#else
     QUDisksInterface *udisksIface;
-//#endif
     bool hasWirelessKeyboardConnected;
+    bool connectedBtPower;
+    bool connectedWirelessKeyboard;
+    void connectBtPowered(const QString &str);
+    void connectBtKeyboard(const QString &str);
+
+    void connectNotify(const char *signal);
+    void disconnectNotify(const char *signal);
+
 private Q_SLOTS:
     virtual void halChanged(int,QVariantList);
     void bluezPropertyChanged(const QString&, QDBusVariant);
     virtual void upowerChanged();
     virtual void upowerDeviceChanged();
 #endif
+
 private:
     QSystemDeviceInfo::BatteryStatus currentBatStatus;
     void initBatteryStatus();

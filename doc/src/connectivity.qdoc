@@ -28,10 +28,10 @@
 /*!
 \page connectivity-api.html
 \title Connectivity API (technology preview)
-\brief The connectivity API facilitates communication with local devices.
+\brief The Connectivity API facilitates communication with local devices.
 \ingroup mobility
 
-\warning This API should be considered in a technology preview state. It is under development and
+\warning This API is a technology preview. It is under development and
 subject to change.
 
 The Connectivity API provides a set of APIs for communicating with local devices.
@@ -44,17 +44,17 @@ This section describes the functionality of the Connectivity module that is expe
 technology preview and the functionality that is known not to work.
 
 The APIs are under development and subject to change between the technology preview release and
-their official release with Qt Mobility 1.2.
+their official release with QtMobility 1.2.
 
 \section2 NFC
 
 Unfortunately there currently are no functional backends for real hardware. An emulator backend is
 available, however, which is used by both the unit tests and the Qt Simulator backend. Use the \i {master} branch of Qt Simulator at \l {http://qt.gitorious.org/qt-labs/simulator}.
 
-The \l {Qt Mobility Examples#Connectivity}{Connectivity examples} demonstrate how to use NFC
+The \l {QtMobility Examples#Connectivity}{Connectivity examples} demonstrate how to use NFC
 functionality in your application.
 
-What should work:
+\section3 What should work for NFC
 \list
     \o NDEF record and message parsing
     \o NDEF record and message creation
@@ -71,26 +71,25 @@ What should work:
     \endlist
 \endlist
 
-What is known \bold NOT to work:
-\list
-    \o Backends for real hardware i.e. Symbian, MeeGo
-    \o LLCP Sockets
-    \o Other common tag technologies
-    \list
-        \o NFC Tag Type 2
-        \o NFC Tag Type 3
-        \o NFC Tag Type 4
-        \o Mifare
-    \endlist
-\endlist
+\section3 What is known \bold NOT to work for NFC
+
+\table 60%
+    \row \o Backends for real hardware i.e. Symbian, MeeGo
+    \row \o LLCP Sockets
+    \row \o Other common tag technologies
+    \row \o NFC Tag Type 2
+    \row \o NFC Tag Type 3
+    \row \o NFC Tag Type 4
+    \row \o Mifare
+\endtable
 
 \section2 Bluetooth
 
 The Bluetooth API is under development and subject to change between the tech
-preview and its official release with Qt Mobility 1.2. For the technology
+preview and its official release with QtMobility 1.2. For the technology
 preview the only functional backend is bluez.
 
-What should work:
+\section3 What should work for Bluetooth
 
 You should be able to discover devices and services, open an Rfcomm socket, or accept
 an Rfcomm connection, and transfer a file to a device using Object Push Protocol.
@@ -103,20 +102,52 @@ Classes that should work:
     \o QBluetoothDeviceInfo
     \o QBluetoothServiceInfo
     \o QBluetoothSocket
-    \o \l {QBluetoothTransferManager::put}
+    \o \l {QBluetoothTransferManager::put()}
     \o QBluetoothUuid
-    \o QBluetoothRfcommServer
-    \o QBluetoothRfcommSocket
+    \o QRfcommServer
+    \o QRfcommSocket
 \endlist
 
-What is known \bold NOT to work:
-\list
-    \o Symbian, Windows, Mac
-    \o QL2capServer and QL2capSocket
-    \o QBluetoothLocalDevice Pairing functions
-    \o QBluetoothLocalDevice power control and state functions
-    \o QBluetoothServiceDiscoveryAgent errorString
-\endlist
+\section3 What is known \bold NOT to work for Bluetooth
+
+\table 60%
+    \row \o Symbian, Windows, Mac
+    \row \o QL2capServer and QL2capSocket
+    \row \o QBluetoothLocalDevice Pairing functions
+    \row \o QBluetoothLocalDevice power control and state functions
+    \row \o QBluetoothServiceDiscoveryAgent errorString
+\endtable
+
+\section1 Examples
+
+Some interesting examples for the API exist.
+
+\table 80%
+    \header
+        \o Example
+        \o Description
+    \row
+        \o \l{annotatedurl}{NFC Annotated URL}
+        \o Displays information from an NFC tag.
+    \row
+        \o \l{btchat}{Bluetooth Chat}
+        \o A chat server and client using bluetooth.
+    \row
+        \o \l{bttennis}{Bluetooth Tennis}
+        \o The classic game of \l {http://en.wikipedia.org/wiki/Pong}{Pong}.
+    \row
+        \o \l {btfiletransfer}{Bluetooth File Transfer}
+        \o Transfer files between Bluetooth devices.
+    \row
+        \o \l{btscanner}{Bluetooth Scanner}
+        \o Scan for Bluetooth devices.
+    \row
+        \o \l{tennis}{QML Bluetooth Tennis}
+        \o The tennis game using a QML interface to the Bluetooth API.
+    \row
+        \o \l {scanner}{QML Bluetooth Scanner}
+        \o A QML implementation of the Bluetooth device scanner.
+\endtable
 
 \section1 Main Classes
 

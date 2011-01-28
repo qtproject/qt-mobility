@@ -60,7 +60,7 @@ public:
 
 private Q_SLOTS:
     void playRumble();
-    void playOcean(bool toggleState);
+    void playOcean();
     void playButtonClick();
     void playNegativeEffect();
 

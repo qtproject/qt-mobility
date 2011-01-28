@@ -89,7 +89,7 @@ private slots:
     void tst_uniqueID();
     void tst_lockStatus();
 
-    void tst_getActiveProfileDetails();
+    void tst_activeProfileDetails();
 
 };
 /*
@@ -308,10 +308,10 @@ void tst_QDeclarativeDeviceInfo::tst_lockStatus()
     }
 }
 
-void tst_QDeclarativeDeviceInfo::tst_getActiveProfileDetails()
+void tst_QDeclarativeDeviceInfo::tst_activeProfileDetails()
 {
     QDeclarativeDeviceInfo di;
-    QSystemDeviceInfo::ActiveProfileDetails details = di.getActiveProfileDetails();
+    QSystemDeviceInfo::ProfileDetails details = di.activeProfileDetails();
     int vol = details.messageRingtoneVolume();
     int vol2 = details.voiceRingtoneVolume();
     bool vib = details.vibrationActive();

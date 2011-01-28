@@ -95,6 +95,10 @@ sub processFile
                 # Skip preprocessor-related items
                 next if ( $1 =~ /#/ );
 
+                # Skip any class not starting with capital Q (e.g. nested classes)
+                # they require parent class to be included
+                next if ( substr( $1, 0, 1) ne "Q");
+
                 my $outfile = "$outdir/$1";
 
                 print "Create header $outfile\n";

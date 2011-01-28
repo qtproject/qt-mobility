@@ -88,6 +88,10 @@ QSystemNetworkInfoPrivate *getSystemNetworkInfoPrivate() { return netInfoPrivate
             \value EthernetMode            Wired Local Area network.
             \value BluetoothMode           Bluetooth network.
             \value WimaxMode               Wimax network.
+            \value GprsMode                Gprs network
+            \value EdgeMode                Edge network.
+            \value HspaMode                Hspa network.
+            \value LteMode                 Lte network.
           */
 
 
@@ -124,10 +128,16 @@ QSystemNetworkInfoPrivate *getSystemNetworkInfoPrivate() { return netInfoPrivate
         */
 
         /*!
-          \fn void QSystemNetworkInfo::networkModeChanged(QSystemNetworkInfo::NetworkMode mode)
+          \fn void QSystemNetworkInfo::cellIdChanged(int cellId)
 
-          This signal is emitted whenever the network mode changes, specified by \a mode.
+          This signal is emitted whenever the network cell changes, specified by \a cellId.
         */
+
+/*!
+  \fn void QSystemNetworkInfo::networkModeChanged(QSystemNetworkInfo::NetworkMode mode)
+
+  This signal is emitted whenever the network mode changes, specified by \a mode.
+*/
 
 /*!
     Constructs a QSystemNetworkInfo with the given \a parent.
