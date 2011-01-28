@@ -173,19 +173,8 @@ QTM_BEGIN_NAMESPACE
     \value UncategorizedImagingDevice   An uncategorized imaging device.
     \value ImageDisplay                 A device capable of displaying images.
     \value ImageCamera                  A camera.
-    \value ImageCamera2                 A camera.
     \value ImageScanner                 An image scanner.
-    \value ImageScanner2                An image scanner.
-    \value ImageScanner3                An image scanner.
-    \value ImageScanner4                An image scanner.
     \value ImagePrinter                 A printer.
-    \value ImagePrinter2                A printer.
-    \value ImagePrinter3                A printer.
-    \value ImagePrinter4                A printer.
-    \value ImagePrinter5                A printer.
-    \value ImagePrinter6                A printer.
-    \value ImagePrinter7                A printer.
-    \value ImagePrinter8                A printer.
 */
 
 /*!
@@ -213,6 +202,22 @@ QTM_BEGIN_NAMESPACE
     \value ToyController        A controller.
     \value ToyGame              A game.
 */
+
+/*!
+    \enum QBluetoothDeviceInfo::MinorHealthClass
+
+    This enum describes the minor device classes for health devices.
+
+    \value UncategorizedHealthDevice    An uncategorized health device.
+    \value HealthBloodPressureMonitor   A blood pressure monitor.
+    \value HealthThermometer            A Thermometer.
+    \value HealthWeightScale            A scale.
+    \value HealthGlucoseMeter           A glucose meter.
+    \value HealthPulseOximeter          A blood oxygen saturation meter.
+    \value HealthDataDisplay            A data display.
+    \value HealthStepCounter            A pedometer.
+*/
+
 
 /*!
     \enum QBluetoothDeviceInfo::ServiceClass

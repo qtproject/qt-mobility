@@ -81,7 +81,12 @@ QTM_BEGIN_NAMESPACE
     \value LimitedInquiry           A limited inquiry. Only discovers devices that are in limited
                                     inquiry mode. Not all platforms support limited inquiry. If
                                     limited inquiry is requested on a platform that does not
-                                    support it general unlimited inquiry we be used instead.
+                                    support it general unlimited inquiry we be used instead. Setting
+                                    LimitedInquiry is useful for 2 games that wish to find each other
+                                    quickly.  The phone scans for devices in LimitedInquiry and
+                                    Service Discovery is only done on one or two devices speeding up the
+                                    service scan.  After the game has connected the device returns to
+                                    GeneralUnilimitedInquiry
 */
 
 /*!

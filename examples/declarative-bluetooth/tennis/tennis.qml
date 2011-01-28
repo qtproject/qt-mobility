@@ -194,7 +194,6 @@ Rectangle {
        MouseArea {
            anchors.fill: parent
            enabled:  true
-           hoverEnabled: true
 
            onMousePositionChanged: {
                var y = mouseY-rightPaddle.height/2;

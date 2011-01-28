@@ -107,6 +107,10 @@ _IceTransSocketUNIXConnect: Cannot connect to non-local host saisd        Socket
 
     \value UnknownSocketError       An unknown error has occurred.
     \value ConnectionRefusedError   Connection refused or device not available.
+    \value RemoteHostClosedError    The remote host closed the socket
+    \value HostNotFoundError        Could not find the remote host
+    \value ServiceNotFoundError     Could not find the service UUID on remote host
+    \value NetworkError             Attempt to read or write from socket returned an error
 */
 
 /*!

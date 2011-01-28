@@ -75,15 +75,6 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \enum QBluetoothLocalDevice::PowerState
-
-    This enum describes the power state of the local Bluetooth device.
-
-    \value PowerOn  The device is powered on.
-    \value PowerOff The device is powered off.
-*/
-
-/*!
     \enum QBluetoothLocalDevice::HostMode
 
     This enum describes the most of the local Bluetooth device.
@@ -91,9 +82,9 @@ QTM_BEGIN_NAMESPACE
     \value HostPoweredOff       Powers the device down
     \value HostConnectable      Remote Bluetooth devices can connect to the local Bluetooth device
                                 if they have previously been paired with it or otherwise know its
-                                address.
+                                address. This powers up the device if it was powered off.
     \value HostDiscoverable     Remote Bluetooth devices can discover the presence of the local
-                                Bluetooth device.
+                                Bluetooth device.  The device will also be connectable, and powered on.
 */
 
 /*!
@@ -138,15 +129,15 @@ bool QBluetoothLocalDevice::isValid() const
 */
 
 /*!
-    \fn QBluetoothLocalDevice QBluetoothLocalDevice::defaultDevice()
-
-    Returns the default local Bluetooth device.
-*/
-
-/*!
     \fn QList<QBluetoothLocalDevice> QBluetoothLocalDevice::allDevices()
 
     Returns a list of all available local Bluetooth devices.
+*/
+
+/*!
+  \fn void QBluetoothLocalDevice::powerOn()
+
+  Powers the device on returning it to the hostMode() state is was in when powered down
 */
 
 #include "moc_qbluetoothlocaldevice.cpp"
