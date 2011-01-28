@@ -118,8 +118,8 @@ void tst_QBluetoothLocalDevice::tst_pairDevice_data()
     QTest::newRow("UnPaired Device: DUMMY") << QBluetoothAddress("11:00:00:00:00:00") << QBluetoothLocalDevice::Unpaired;
     //QTest::newRow("UnPaired Device: DUMMY") << QBluetoothAddress("11:00:00:00:00:00") << QBluetoothLocalDevice::Paired;
 #ifdef Q_OS_SYMBIAN
-    //QTest::newRow("UNPAIR Device: BH-604") << QBluetoothAddress("00:0d:3c:b0:77:1c") << QBluetoothLocalDevice::Unpaired;
-    QTest::newRow("PAIR Device: BH-604") << QBluetoothAddress("00:0d:3c:b0:77:1c") << QBluetoothLocalDevice::Paired;
+    QTest::newRow("UNPAIR Device: BH-604") << QBluetoothAddress("00:0d:3c:b0:77:1c") << QBluetoothLocalDevice::Unpaired;
+    QTest::newRow("PAIR Device: TESTMACHINE") << QBluetoothAddress("00:09:DD:50:93:DD") << QBluetoothLocalDevice::Paired;
 #endif // Q_OS_SYMBIAN
 }
 
@@ -130,7 +130,7 @@ void tst_QBluetoothLocalDevice::tst_pairingStatus_data()
 
     QTest::newRow("UnPaired Device: DUMMY") << QBluetoothAddress("11:00:00:00:00:00") << QBluetoothLocalDevice::Unpaired;
 #ifdef Q_OS_SYMBIAN
-    QTest::newRow("Paired Device: BH-604") << QBluetoothAddress("00:0d:3c:b0:77:1c") << QBluetoothLocalDevice::Paired;
+    QTest::newRow("Paired Device: TESTMACHINE") << QBluetoothAddress("00:09:DD:50:93:DD") << QBluetoothLocalDevice::Paired;
 #endif // Q_OS_SYMBIAN
 }
 
@@ -147,10 +147,10 @@ void tst_QBluetoothLocalDevice::tst_powerOn()
     // async, wait for it
     WAIT_FOR_CONDITION(hostModeSpy.count(),1);
     QVERIFY(hostModeSpy.count() > 0);
-    qDebug()<< "Current Host Mode after spyEvent="<<localDevice.hostMode();
+    QBluetoothLocalDevice::HostMode hostMode= localDevice.hostMode();
     // we should not be powered off
-    QVERIFY(localDevice.hostMode() == QBluetoothLocalDevice::HostConnectable
-         || localDevice.hostMode() == QBluetoothLocalDevice::HostDiscoverable);
+    QVERIFY(hostMode == QBluetoothLocalDevice::HostConnectable
+         || hostMode == QBluetoothLocalDevice::HostDiscoverable);
     }
 
 }
