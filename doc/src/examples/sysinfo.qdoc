@@ -49,8 +49,14 @@
 
     Device information, starting with the battery level
 
-    \snippet ../../examples/sysinfo/dialog.cpp  createdi
+    \snippet ../../examples/sysinfo/dialog.cpp  batterystatus1
+
     \dots
+
+    \snippet ../../examples/sysinfo/dialog.cpp  batterystatus2
+
+    The battery status is an enum, \l {QSystemBatteryInfo::BatteryStatus}, that indicates
+    various battery levels and their significance, e.g., QSystemBatteryInfo::BatteryVeryLow.
 
     The manufacturer id and the product name
 
