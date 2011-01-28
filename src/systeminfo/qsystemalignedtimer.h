@@ -88,6 +88,10 @@ public:
     Q_INVOKABLE static void singleShot(int minimumTime, int maximumTime, QObject *receiver, const char *member);
     AlignedTimerError lastError() const;
 
+#ifdef TESTR
+    QSystemAlignedTimerPrivate *priv;
+#endif
+
 public Q_SLOTS:
     void start(int minimumTime, int maximumTime);
 

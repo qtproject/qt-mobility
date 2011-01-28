@@ -412,6 +412,7 @@ public:
     QSystemDeviceInfoPrivate *deviceInfoPrivate();
     QSystemStorageInfoPrivate *storageInfoPrivate();
     QSystemBatteryInfoPrivate *batteryInfoPrivate();
+    QSystemDeviceInfoPrivate *alignedTImerPrivate();
 };
 #endif
 
