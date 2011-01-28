@@ -48,8 +48,11 @@ int main(int argc, char *argv[])
 
     Chat d;
     QObject::connect(&d, SIGNAL(accepted()), &app, SLOT(quit()));
+#ifdef Q_OS_SYMBIAN
+    d.showFullScreen();
+#else
     d.show();
-
+#endif
     app.exec();
 
     return 0;
