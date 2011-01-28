@@ -1,4 +1,3 @@
-
 /****************************************************************************
 **
 ** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
@@ -40,27 +39,27 @@
 **
 ****************************************************************************/
 
-#ifndef QDECLARATIVEFEEDBACK_H
-#define QDECLARATIVEFEEDBACK_H
+#ifndef QDECLARATIVEFEEDBACKEFFECT_P_H
+#define QDECLARATIVEFEEDBACKEFFECT_P_H
 
 #include <QtDeclarative/qdeclarative.h>
 #include <qfeedbackeffect.h>
 
 QTM_USE_NAMESPACE
 
-// This is a wrapper namespace, to rewrite enum values
-// (well, it was. probably not needed any more)
-class QDeclarativeFeedback: public QObject
+class QDeclarativeFeedbackEffect : public QObject
 {
     Q_OBJECT
-
+    Q_PROPERTY(bool running READ isRunning WRITE setRunning NOTIFY runningChanged)
+    Q_PROPERTY(bool paused READ isPaused WRITE setPaused NOTIFY pausedChanged)
+    Q_PROPERTY(int duration READ duration WRITE setDuration NOTIFY durationChanged)
+    Q_PROPERTY(State state READ state WRITE setState NOTIFY stateChanged)
+    Q_PROPERTY(ErrorType error READ error NOTIFY errorChanged)
     Q_ENUMS(Duration)
     Q_ENUMS(State)
     Q_ENUMS(ErrorType)
 
 public:
-
-    // These don't need rewriting, they're already nice
     enum Duration {
         Infinite = QFeedbackEffect::Infinite
     };
@@ -77,13 +76,37 @@ public:
         DeviceBusy = QFeedbackEffect::DeviceBusy
     };
 
-    QDeclarativeFeedback(QObject* parent) : QObject(parent)
-    {
+    QDeclarativeFeedbackEffect(QObject *parent = 0);
+    void setFeedbackEffect(QFeedbackEffect* effect);
+    QFeedbackEffect* feedbackEffect();
 
-    }
+    bool isRunning() const;
+    bool isPaused() const;
+    void setRunning(bool running);
+    void setPaused(bool paused);
+    virtual State state() const;
+    virtual int duration() const;
+    virtual void setState(State newState);
+    virtual void setDuration(int newDuration);
+    ErrorType error() const;
+
+signals:
+    void runningChanged();
+    void pausedChanged();
+    void durationChanged();
+    void stateChanged();
+    void errorChanged();
+public slots:
+    void updateState();
+private slots:
+    void _error(QFeedbackEffect::ErrorType err);
+private:
+    bool m_running;
+    bool m_paused;
+    QFeedbackEffect* m_effect;
+    ErrorType m_error;
 };
 
-QML_DECLARE_TYPE(QDeclarativeFeedback);
+QML_DECLARE_TYPE(QDeclarativeFeedbackEffect);
 
-
-#endif // QDECLARATIVEFEEDBACK_H
+#endif // QDECLARATIVEFEEDBACKEFFECT_P_H
