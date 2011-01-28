@@ -222,6 +222,8 @@ private:
     RBuf8 iSendBuf0;
     RBuf8 iSendBuf1;
     TSendBuffer iCurrentBuffer;
+    TPtrC8 iCurrentSendPtr;
+    TInt iCurrentPos;
 };
 class CLlcpReceiverAO : public CActive
 {
