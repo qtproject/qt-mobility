@@ -287,6 +287,7 @@ QBluetoothDeviceInfo::QBluetoothDeviceInfo(const QBluetoothAddress &address, con
 
     d->valid = true;
     d->cached = false;
+    d->rssi = 0;
 }
 
 /*!
@@ -315,6 +316,24 @@ bool QBluetoothDeviceInfo::isValid() const
 
     return d->valid;
 }
+/*!
+  Returns the signal strength when the device was last scanned
+  */
+qint16 QBluetoothDeviceInfo::rssi() const
+{
+    Q_D(const QBluetoothDeviceInfo);
+
+    return d->rssi;
+}
+
+/*!
+  Set the signal strength value, used internally
+  */
+void QBluetoothDeviceInfo::setRssi(qint16 signal)
+{
+    Q_D(QBluetoothDeviceInfo);
+    d->rssi = signal;
+}
 
 /*!
     Makes a copy of the \a other and assigns it to this QBluetoothDeviceInfo object.
@@ -332,6 +351,7 @@ QBluetoothDeviceInfo &QBluetoothDeviceInfo::operator=(const QBluetoothDeviceInfo
     d->cached = other.d_func()->cached;
     d->serviceUuidsCompleteness = other.d_func()->serviceUuidsCompleteness;
     d->serviceUuids = other.d_func()->serviceUuids;
+    d->rssi = other.d_func()->rssi;
 
     return *this;
 }
@@ -358,6 +378,8 @@ bool QBluetoothDeviceInfo::operator==(const QBluetoothDeviceInfo &other) const
     if(d->address != other.d_func()->address)
         return false;
     if(d->serviceUuidsCompleteness != other.d_func()->serviceUuidsCompleteness)
+        return false;
+    if(d->serviceUuids.count() != other.d_func()->serviceUuids.count())
         return false;
     if(d->serviceUuids != other.d_func()->serviceUuids)
         return false;

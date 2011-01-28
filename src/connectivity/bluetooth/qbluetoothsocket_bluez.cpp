@@ -228,6 +228,8 @@ void QBluetoothSocketPrivate::abort()
     readNotifier = 0;
     delete connectWriteNotifier;
     connectWriteNotifier = 0;
+    Q_Q(QBluetoothSocket);
+    emit q->disconnected();
 }
 
 QString QBluetoothSocketPrivate::localName() const
@@ -418,7 +420,7 @@ qint64 QBluetoothSocketPrivate::writeData(const char *data, qint64 maxSize)
 {
     Q_Q(QBluetoothSocket);
     if (::write(socket, data, maxSize) != maxSize) {
-        socketError = QBluetoothSocket::UnknownSocketError;
+        socketError = QBluetoothSocket::NetworkError;
         emit q->error(socketError);
     }
 
@@ -445,6 +447,8 @@ void QBluetoothSocketPrivate::close()
     readNotifier = 0;
     delete connectWriteNotifier;
     connectWriteNotifier = 0;
+    Q_Q(QBluetoothSocket);
+    emit q->disconnected();
 }
 
 bool QBluetoothSocketPrivate::setSocketDescriptor(int socketDescriptor, QBluetoothSocket::SocketType socketType_,

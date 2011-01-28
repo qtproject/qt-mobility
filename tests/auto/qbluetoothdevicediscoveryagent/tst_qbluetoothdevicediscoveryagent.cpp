@@ -124,6 +124,7 @@ void tst_QBluetoothDeviceDiscoveryAgent::tst_startStopDeviceDiscoveries()
         QBluetoothDeviceDiscoveryAgent discoveryAgent;
 
         QVERIFY(discoveryAgent.error() == discoveryAgent.NoError);
+        QVERIFY(discoveryAgent.errorString().isEmpty());
         QVERIFY(!discoveryAgent.isActive());
         QVERIFY(discoveryAgent.discoveredDevices().isEmpty());
 
@@ -165,6 +166,7 @@ void tst_QBluetoothDeviceDiscoveryAgent::tst_startStopDeviceDiscoveries()
         // Expect finished signal with no error
         QVERIFY(finishedSpy.count() == 0);
         QVERIFY(discoveryAgent.error() == discoveryAgent.NoError);
+        QVERIFY(discoveryAgent.errorString().isEmpty());
 
     }
 }
@@ -176,7 +178,7 @@ void tst_QBluetoothDeviceDiscoveryAgent::tst_deviceDiscovery()
 
         QBluetoothDeviceDiscoveryAgent discoveryAgent;
         QVERIFY(discoveryAgent.error() == discoveryAgent.NoError);
-
+        QVERIFY(discoveryAgent.errorString().isEmpty());
         QVERIFY(!discoveryAgent.isActive());
 
         QVERIFY(discoveryAgent.discoveredDevices().isEmpty());
@@ -208,6 +210,7 @@ void tst_QBluetoothDeviceDiscoveryAgent::tst_deviceDiscovery()
         QVERIFY(finishedSpy.count() == 1);
         QVERIFY(errorSpy.isEmpty());
         QVERIFY(discoveryAgent.error() == discoveryAgent.NoError);
+        QVERIFY(discoveryAgent.errorString().isEmpty());
 
         // verify that the list is as big as the signals received.
         QVERIFY(discoveredSpy.count() == discoveryAgent.discoveredDevices().length());

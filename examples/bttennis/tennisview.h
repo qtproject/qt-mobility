@@ -9,8 +9,10 @@ class TennisView : public QGraphicsView
 public:
     explicit TennisView(QWidget *parent = 0);
 
+    void scale(qreal sx, qreal sy);
+
 signals:
-    void mouseMove(int delta);
+    void mouseMove(int x, int y);
 
 public slots:
 
@@ -20,6 +22,7 @@ protected:
 
 private:
     int last_y;
+    qreal scale_x, scale_y;
 
 };
 

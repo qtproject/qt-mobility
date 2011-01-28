@@ -48,7 +48,7 @@
 #include "bluez/adapter_p.h"
 #include "bluez/device_p.h"
 
-#define QTM_DEVICEDISCOVERY_DEBUG
+//#define QTM_DEVICEDISCOVERY_DEBUG
 
 QTM_BEGIN_NAMESPACE
 
@@ -174,10 +174,16 @@ void QBluetoothDeviceDiscoveryAgentPrivate::_q_deviceFound(const QString &addres
     quint32 btClass = dict.value(QLatin1String("Class")).toUInt();    
 
 #ifdef QTM_DEVICEDISCOVERY_DEBUG
-    qDebug() << "Discovered: " << address << btName << "Num UUIDs" << dict.value(QLatin1String("UUIDs")).toStringList().count() << "total device" << discoveredDevices.count() << "cached" << dict.value(QLatin1String("Cached")).toBool();
+    qDebug() << "Discovered: " << address << btName
+             << "Num UUIDs" << dict.value(QLatin1String("UUIDs")).toStringList().count()
+             << "total device" << discoveredDevices.count() << "cached"
+             << dict.value(QLatin1String("Cached")).toBool()
+             << "RSSI" << dict.value(QLatin1String("RSSI")).toInt();
 #endif
 
-    QBluetoothDeviceInfo device(btAddress, btName, btClass);    
+    QBluetoothDeviceInfo device(btAddress, btName, btClass);
+    if(dict.value(QLatin1String("RSSI")).isValid())
+        device.setRssi(dict.value(QLatin1String("RSSI")).toInt());
     QList<QBluetoothUuid> uuids;
     foreach (QString u, dict.value(QLatin1String("UUIDs")).toStringList()) {
         uuids.append(QBluetoothUuid(u));

@@ -76,9 +76,8 @@ void TennisClient::startClient(const QBluetoothServiceInfo &remoteService)
     connect(socket, SIGNAL(readyRead()), this, SLOT(readSocket()));
     connect(socket, SIGNAL(connected()), this, SLOT(connected()));
     connect(socket, SIGNAL(disconnected()), this, SIGNAL(disconnected()));
+    connect(socket, SIGNAL(disconnected()), this, SLOT(socketDisconnected()));
     connect(socket, SIGNAL(error(QBluetoothSocket::SocketError)), this, SLOT(error(QBluetoothSocket::SocketError)));
-
-    stream = new QDataStream(socket);
 
     lagTimer.start();
 }
@@ -87,6 +86,8 @@ void TennisClient::startClient(const QBluetoothServiceInfo &remoteService)
 //! [stopClient]
 void TennisClient::stopClient()
 {
+    qDebug() << Q_FUNC_INFO << "closing client!";
+
     lagTimer.stop();
 
     delete stream;
@@ -96,6 +97,13 @@ void TennisClient::stopClient()
     socket = 0;
 }
 //! [stopClient]
+
+//! [socketDisconnected]
+void TennisClient::socketDisconnected()
+{
+    stopClient();
+}
+//! [socketDisconnected]
 
 //! [readSocket]
 void TennisClient::readSocket()
@@ -131,7 +139,7 @@ void TennisClient::readSocket()
             QTime then = QTime::fromString(args.at(0), "hh:mm:ss.zzz");
             if(then.isValid()) {
                 emit lag(then.msecsTo(QTime::currentTime()));
-                qDebug() << "RTT: " << then.msecsTo(QTime::currentTime()) << "ms";
+//                qDebug() << "RTT: " << then.msecsTo(QTime::currentTime()) << "ms";
             }
         }
         else {
@@ -159,6 +167,7 @@ void TennisClient::moveRightPaddle(int y)
 //! [connected]
 void TennisClient::connected()
 {
+    stream = new QDataStream(socket);
     emit connected(socket->peerName());
 }
 //! [connected]
@@ -167,6 +176,7 @@ void TennisClient::error(QBluetoothSocket::SocketError err)
 {
     printf("Got err: %d\n", err);
     qDebug() << Q_FUNC_INFO << "error" << err;
+    emit disconnected();
 }
 
 void TennisClient::sendEcho()

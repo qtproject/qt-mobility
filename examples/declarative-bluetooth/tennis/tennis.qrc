@@ -3,4 +3,7 @@
         <file>tennis.qml</file>
         <file>sensor.qml</file>
     </qresource>
+    <qresource prefix="/icons">
+        <file>connect.png</file>
+    </qresource>
 </RCC>

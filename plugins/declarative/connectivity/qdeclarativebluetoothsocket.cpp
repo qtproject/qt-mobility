@@ -87,7 +87,6 @@ QDeclarativeBluetoothSocket::~QDeclarativeBluetoothSocket()
 
 void QDeclarativeBluetoothSocket::componentComplete()
 {
-    qDebug() << Q_FUNC_INFO << "componentComplete";
     d->m_componentCompleted = true;
 
     if(d->m_connected && d->m_service)
@@ -229,8 +228,6 @@ void QDeclarativeBluetoothSocket::setListening(bool listen)
         qWarning() << "Can not put socket into listening state without an assigned service";
         return;
     }
-
-    qDebug() << "setListen" << listen;
 
     if(d->m_service->serviceProtocol() == "l2cap") {
         d->m_l2cap = new QL2capServer();

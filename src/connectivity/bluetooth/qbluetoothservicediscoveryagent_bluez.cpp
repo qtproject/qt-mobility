@@ -140,9 +140,18 @@ bool QBluetoothServiceDiscoveryAgentPrivate::quickDiscovery(const QBluetoothAddr
     QVariantMap v = deviceReply.value();
     QStringList device_uuids = v.value("UUIDs").toStringList();    
 
+//    if(address == QBluetoothAddress("D8:54:3A:7E:53:E1")){
+//        qDebug() << "*********** UID from phone" << device_uuids;
+//        return false;
+//    }
+
     if(device_uuids.empty() && !uuidFilter.isEmpty()){
         return false;
     }
+
+#ifdef QTM_SERVICEDISCOVERY_DEBUG
+    qDebug() << "Quick discovery on" << address.toString();
+#endif
 
     bool foundDevice = true;
 
@@ -152,6 +161,9 @@ bool QBluetoothServiceDiscoveryAgentPrivate::quickDiscovery(const QBluetoothAddr
             foreach (const QString s, device_uuids){
                 if(QBluetoothUuid(s) == uuid){
                     foundDevice = true;
+#ifdef QTM_SERVICEDISCOVERY_DEBUG
+                    qDebug() << "*** FOUND SERVICE ON " << address.toString() << "***";
+#endif
                     goto done;
                 }
             }

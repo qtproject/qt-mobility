@@ -42,6 +42,7 @@
 #define TENNISSERVER_H
 
 #include <qbluetoothserviceinfo.h>
+#include <qbluetoothsocket.h>
 
 #include <QtCore/QObject>
 #include <QtCore/QList>
@@ -85,6 +86,7 @@ private slots:
     void clientDisconnected();
     void readSocket();
     void sendEcho();
+    void socketError(QBluetoothSocket::SocketError err);
 
 private:
     QL2capServer *l2capServer;

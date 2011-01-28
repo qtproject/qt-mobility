@@ -59,7 +59,12 @@ QBluetoothLocalDevice::QBluetoothLocalDevice(const QBluetoothAddress &address, Q
 : QObject(parent)
 {
 }
-/*
+
+QString QBluetoothLocalDevice::name() const
+{
+    return QString();
+}
+
 QBluetoothAddress QBluetoothLocalDevice::address() const
 {
     return QBluetoothAddress();
@@ -96,7 +101,7 @@ QBluetoothLocalDevice::Pairing QBluetoothLocalDevice::pairingStatus(const QBluet
     Q_UNUSED(address);
     return Unpaired;
 }
-*/
+
 void QBluetoothLocalDevice::pairingConfirmation(bool confirmation)
 {
     Q_UNUSED(confirmation);

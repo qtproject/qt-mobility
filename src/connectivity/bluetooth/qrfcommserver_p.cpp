@@ -53,8 +53,72 @@ QRfcommServerPrivate::~QRfcommServerPrivate()
 {
 }
 
+void QRfcommServer::close()
+{
+}
+
+bool QRfcommServer::listen(const QBluetoothAddress &address, quint16 port)
+{
+    Q_UNUSED(address);
+    Q_UNUSED(port);
+}
+
+void QRfcommServer::setMaxPendingConnections(int numConnections)
+{
+    Q_UNUSED(numConnections);
+}
+
+bool QRfcommServer::hasPendingConnections() const
+{
+    return false;
+}
+
+QBluetoothSocket *QRfcommServer::nextPendingConnection()
+{
+    return 0;
+}
+
+QBluetoothAddress QRfcommServer::serverAddress() const
+{
+    return QBluetoothAddress();
+}
+
+quint16 QRfcommServer::serverPort() const
+{
+    return 0;
+}
+
+
+#ifndef QT_NO_DBUS
 void QRfcommServerPrivate::_q_newConnection()
 {
 }
+#endif
+
+
+#ifdef QTM_SYMBIAN_BLUETOOTH
+void QRfcommServerPrivate::HandleAcceptCompleteL(TInt aErr)
+{
+}
+void QRfcommServerPrivate::HandleActivateBasebandEventNotifierCompleteL(TInt aErr, TBTBasebandEventNotification &aEventNotification)
+{
+}
+void QRfcommServerPrivate::HandleConnectCompleteL(TInt aErr)
+{
+}
+void QRfcommServerPrivate::HandleIoctlCompleteL(TInt aErr)
+{
+}
+void QRfcommServerPrivate::HandleReceiveCompleteL(TInt aErr)
+{
+}
+void QRfcommServerPrivate::HandleSendCompleteL(TInt aErr)
+{
+}
+void QRfcommServerPrivate::HandleShutdownCompleteL(TInt aErr)
+{
+}
+#endif
+
 
 QTM_END_NAMESPACE
