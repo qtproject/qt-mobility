@@ -13,12 +13,14 @@ INCLUDEPATH += ../../../src/connectivity/nfc
 INCLUDEPATH += ../common
 HEADERS += ../common/qnfctagtestcommon.h \
            ../common/qdummyslot.h \
-           ../common/qautomsgbox.h
+           ../common/qautomsgbox.h \
+           ../common/qnfctagutil.h
 
 SOURCES += tst_qnearfieldtagtype3.cpp \
-           ../common/qnfctagtestcommon.cpp \
            ../common/qdummyslot.cpp \
-           ../common/qautomsgbox.cpp
+           ../common/qautomsgbox.cpp \
+           ../common/qnfctagutil.cpp
+
 
 symbian:TARGET.CAPABILITY = ALL -TCB
 

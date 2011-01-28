@@ -121,7 +121,7 @@ QNearFieldTarget::RequestId QNearFieldTagType2Symbian::selectSector(quint8 secto
 
     RequestId id = sendCommand(command);
 
-    if (_waitForRequestCompletedNoSignal(id, 1) != KErrNone)
+    if (!_waitForRequestCompletedNoSignal(id, 1))
     {
         END
         return QNearFieldTarget::RequestId();
