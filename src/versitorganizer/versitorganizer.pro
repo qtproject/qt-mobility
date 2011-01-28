@@ -10,13 +10,16 @@ DEFINES += QT_BUILD_VERSIT_ORGANIZER_LIB QT_MAKEDLL QT_ASCII_CAST_WARNINGS
 qtAddLibrary(QtVersit)
 qtAddLibrary(QtOrganizer)
 
-INCLUDEPATH += . \
+# Note, these need to go at the front of INCLUDEPATH, in case there
+# are QtVersit/QtOrganizer headers already installed on the system
+INCLUDEPATH =  . \
                ../versit \
                ../organizer \
                ../organizer/requests \
                ../organizer/filters \
                ../organizer/details \
-               ../organizer/items
+               ../organizer/items \
+               $$INCLUDEPATH
 
 # Input
 PUBLIC_HEADERS +=  \
