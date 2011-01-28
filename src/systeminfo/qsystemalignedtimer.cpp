@@ -44,6 +44,9 @@
 
 QTM_BEGIN_NAMESPACE
 Q_GLOBAL_STATIC(QSystemAlignedTimerPrivate, alignedTimerPrivate)
+#ifdef QT_SIMULATOR
+QSystemDeviceInfoPrivate *getSystemAlignedTimerPrivate() { return alignedTimerPrivate(); }
+#endif
 
 /*!
   \class QSystemAlignedTimer
@@ -68,20 +71,25 @@ Q_GLOBAL_STATIC(QSystemAlignedTimerPrivate, alignedTimerPrivate)
  */
 
 /*!
-  \fn void QSystemAlignedTimer::intervalChanged(int newInterval)
+    \enum QSystemAlignedTimer::AlignedTimerError
+    This enum describes the last known AlignedTimerError
 
-  This signal is emitted when timer interval has changed.
-  \a newInterval is the new timer interval.
- */
+    \value NoError                        No error.
+    \value AlignedTimerNotSupported       The aligned timer is not support on this platform
+    \value InvalidArgument                Interval arguments are invalid.
+    \value TimerFailed                    General timer failure.
+
+  */
 
 /*!
-  \fn void QSystemAlignedTimer::windowChanged(int newWindow)
+    \enum QSystemAlignedTimer::AlignedTimerError
+    This enum describes the last known AlignedTimerError
 
-  This signal is emitted when the timer window has changed.
-  \a newWindow is the new timer window.
- */
+    \value AlignedTimerNotSupported       The aligned timer is not support on this platform
+    \value InvalidArgument                Interval arguments are invalid.
+    \value TimerFailed                    General timer failure.
 
-
+  */
 /*!
    Constructs a QSystemAlignedTimer object with the given \a parent.
   */
@@ -229,7 +237,23 @@ bool QSystemAlignedTimer::isSingleShot() const
     return d->single;
 }
 
+/*!
+  Returns the last AlignedTimerError.
 
+  */
+QSystemAlignedTimer::AlignedTimerError QSystemAlignedTimer::lastError() const
+{
+    return d->lastTimerError;
+}
+
+/*!
+   Constructs a QSystemAlignedTimerPrivate object with the given \a parent.
+  */
+QSystemAlignedTimerPrivate::QSystemAlignedTimerPrivate(QObject *parent)
+ : QObject(parent), id(0), isTimerRunning(0), single(0)
+{
+    lastTimerError = QSystemAlignedTimer::AlignedTimerNotSupported;
+}
 
 /*!
   \internal
@@ -238,6 +262,7 @@ void QSystemAlignedTimerPrivate::timerEvent(QTimerEvent *)
 {
 
 }
+
 
 
 #include "moc_qsystemalignedtimer.cpp"
