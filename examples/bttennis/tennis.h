@@ -99,7 +99,7 @@ private slots:
 
     void startDiscovery();
 
-    void mouseMove(int delta);
+    void mouseMove(int x, int y);
 
     void lagReport(int ms);
 

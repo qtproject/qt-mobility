@@ -76,12 +76,10 @@ class BluetoothLinkManagerDeviceDiscoverer : public QObject, public CActive
     Q_OBJECT
 public:
 
-//    static CBluetoothDeviceDiscoverer* NewL(RSocketServ& aSocketServ);
     BluetoothLinkManagerDeviceDiscoverer(RSocketServ& aSocketServ, QObject *parent = 0);
     ~BluetoothLinkManagerDeviceDiscoverer();
 
-    void StartDiscoveryL(const uint discoveryType);
-    void Stop();
+    bool startDiscovery(const uint discoveryType);
 
 protected: // From CActive
     void RunL();

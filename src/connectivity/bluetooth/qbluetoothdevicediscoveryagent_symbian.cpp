@@ -49,7 +49,8 @@
 QTM_BEGIN_NAMESPACE
 
 QBluetoothDeviceDiscoveryAgentPrivate::QBluetoothDeviceDiscoveryAgentPrivate()
-    : m_deviceDiscovery(0)
+    : inquiryType(QBluetoothDeviceDiscoveryAgent::GeneralUnlimitedInquiry)
+    , m_deviceDiscovery(0)
 {
     TInt result;
     /* connect to socker server */
@@ -61,7 +62,7 @@ QBluetoothDeviceDiscoveryAgentPrivate::QBluetoothDeviceDiscoveryAgentPrivate()
 QBluetoothDeviceDiscoveryAgentPrivate::~QBluetoothDeviceDiscoveryAgentPrivate()
 {
     delete m_deviceDiscovery;
-    m_deviceDiscovery = NULL;
+    m_socketServer.Close();
 }
 
 void QBluetoothDeviceDiscoveryAgentPrivate::start()
@@ -73,25 +74,22 @@ void QBluetoothDeviceDiscoveryAgentPrivate::start()
     }
     // clear list of found devices
     discoveredDevices.clear();
-
-    // clear prior error messages
-    lastError = QBluetoothDeviceDiscoveryAgent::NoError;
-    errorString.clear();
-
-    // create new active object for querying devices
-    m_deviceDiscovery = new BluetoothLinkManagerDeviceDiscoverer(m_socketServer);
-    //bind signals on public interface
-    Q_Q(QBluetoothDeviceDiscoveryAgent);
-    QObject::connect(m_deviceDiscovery, SIGNAL(deviceDiscoveryComplete(int)), q, SIGNAL(finished()));
-    QObject::connect(m_deviceDiscovery, SIGNAL(deviceDiscovered(const QBluetoothDeviceInfo&)),
-        q, SLOT(_q_newDeviceFound(const QBluetoothDeviceInfo&)));
-    QObject::connect(m_deviceDiscovery, SIGNAL(linkManagerError(QBluetoothDeviceDiscoveryAgent::Error)),
-        q, SIGNAL(error(QBluetoothDeviceDiscoveryAgent::Error)));
-    // startup the device discovery. Discovery results are obtained from signal connected above.
-    TRAPD(errorCode, m_deviceDiscovery->StartDiscoveryL(inquiryTypeToIAC()))
-    if (errorCode != KErrNone)
-        setError(errorCode,"Discovery failed to start with errorcode");
-
+    if (m_socketServer.Handle() != NULL) {
+        // create new active object for querying devices
+        m_deviceDiscovery = new BluetoothLinkManagerDeviceDiscoverer(m_socketServer);
+        //bind signals on public interface
+        Q_Q(QBluetoothDeviceDiscoveryAgent);
+        QObject::connect(m_deviceDiscovery, SIGNAL(deviceDiscoveryComplete(int)), q, SIGNAL(finished()));
+        QObject::connect(m_deviceDiscovery, SIGNAL(deviceDiscovered(const QBluetoothDeviceInfo&)),
+            q, SLOT(_q_newDeviceFound(const QBluetoothDeviceInfo&)));
+        QObject::connect(m_deviceDiscovery, SIGNAL(linkManagerError(QBluetoothDeviceDiscoveryAgent::Error)),
+            q, SIGNAL(error(QBluetoothDeviceDiscoveryAgent::Error)));
+        // startup the device discovery. Discovery results are obtained from signal connected above.
+        if (!m_deviceDiscovery->startDiscovery(inquiryTypeToIAC()))
+            setError(KErrNotReady,"Discovery is still active");
+    } else {
+        setError(KErrBadHandle,QString("RSocketServ.Connect() failed with error"));
+    }
 }
 
 void QBluetoothDeviceDiscoveryAgentPrivate::stop()

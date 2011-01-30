@@ -58,7 +58,7 @@ TextRecordEditor::~TextRecordEditor()
 void TextRecordEditor::setRecord(const QNdefNfcTextRecord &textRecord)
 {
     ui->text->setText(textRecord.text());
-    ui->locale->setText(textRecord.locale().name());
+    ui->locale->setText(textRecord.locale());
 
     if (textRecord.encoding() == QNdefNfcTextRecord::Utf8)
         ui->encoding->setCurrentIndex(0);
@@ -75,7 +75,7 @@ QNdefNfcTextRecord TextRecordEditor::record() const
     else if (ui->encoding->currentIndex() == 1)
         record.setEncoding(QNdefNfcTextRecord::Utf16);
 
-    record.setLocale(QLocale(ui->locale->text()));
+    record.setLocale(ui->locale->text());
 
     record.setText(ui->text->text());
 

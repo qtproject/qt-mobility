@@ -154,7 +154,7 @@ QNearFieldTarget::RequestId QNearFieldTagType1Symbian::readIdentification()
     command.append(char(0x00));     // Address (unused)
     command.append(char(0x00));     // Data (unused)
     command.append(uid().left(4));  // 4 bytes of UID
-    // Hardware will append CRC bytes. The CRC value appended 
+    // Hardware will append CRC bytes. The CRC value appended
     // to the command will be ignored.
     command.append(char(0x00)); // CRC1
     command.append(char(0x00)); // CRC2
@@ -173,7 +173,7 @@ QNearFieldTarget::RequestId QNearFieldTagType1Symbian::readAll()
     command.append(char(0x00));
     command.append(char(0x00));
     command.append(uid().left(4)); // UID
-    // Hardware will append CRC bytes. The CRC value appended 
+    // Hardware will append CRC bytes. The CRC value appended
     // to the command will be ignored.
     command.append(char(0x00)); // CRC1
     command.append(char(0x00)); // CRC2
@@ -197,7 +197,7 @@ QNearFieldTarget::RequestId QNearFieldTagType1Symbian::readByte(quint8 address)
     command.append(char(0x00));     // Data (unused)
     command.append(uid().left(4));  // 4 bytes of UID
 
-    // Hardware will append CRC bytes. The CRC value appended 
+    // Hardware will append CRC bytes. The CRC value appended
     // to the command will be ignored.
     command.append(char(0x00)); // CRC1
     command.append(char(0x00)); // CRC2
@@ -226,7 +226,7 @@ QNearFieldTarget::RequestId QNearFieldTagType1Symbian::writeByte(quint8 address,
     command.append(char(data));     // Data
     command.append(uid().left(4));  // 4 bytes of UID
 
-    // Hardware will append CRC bytes. The CRC value appended 
+    // Hardware will append CRC bytes. The CRC value appended
     // to the command will be ignored.
     command.append(char(0x00)); // CRC1
     command.append(char(0x00)); // CRC2
@@ -248,8 +248,8 @@ QNearFieldTarget::RequestId QNearFieldTagType1Symbian::readSegment(quint8 segmen
     command.append(char(segmentAddress << 4));  // Segment address
     command.append(QByteArray(8, char(0x00)));  // Data (unused)
     command.append(uid().left(4));              // 4 bytes of UIDD
-    
-    // Hardware will append CRC bytes. The CRC value appended 
+
+    // Hardware will append CRC bytes. The CRC value appended
     // to the command will be ignored.
     command.append(char(0x00)); // CRC1
     command.append(char(0x00)); // CRC2
@@ -269,7 +269,7 @@ QNearFieldTarget::RequestId QNearFieldTagType1Symbian::readBlock(quint8 blockAdd
     command.append(QByteArray(8, char(0x00)));  // Data (unused)
     command.append(uid().left(4));              // 4 bytes of UID
 
-    // Hardware will append CRC bytes. The CRC value appended 
+    // Hardware will append CRC bytes. The CRC value appended
     // to the command will be ignored.
     command.append(char(0x00)); // CRC1
     command.append(char(0x00)); // CRC2
@@ -291,26 +291,19 @@ QNearFieldTarget::RequestId QNearFieldTagType1Symbian::writeBlock(quint8 blockAd
 
     if (mode == EraseAndWrite)
         command.append(char(0x54));     // WRITE-E8
-    else 
+    else
         command.append(char(0x1b));     // WRITE-NE8
 
     command.append(char(blockAddress)); // Block address
     command.append(data);               // Data
     command.append(uid().left(4));      // 4 bytes of UID
 
-    // Hardware will append CRC bytes. The CRC value appended 
+    // Hardware will append CRC bytes. The CRC value appended
     // to the command will be ignored.
     command.append(char(0x00)); // CRC1
     command.append(char(0x00)); // CRC2
     END
     return sendCommand(command);
-}
-    
-bool QNearFieldTagType1Symbian::hasNdefMessage()
-{
-    BEGIN
-    END
-    return _hasNdefMessage();
 }
 
 void QNearFieldTagType1Symbian::readNdefMessages()

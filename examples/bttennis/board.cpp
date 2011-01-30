@@ -95,6 +95,21 @@ Board::Board(QObject *parent) :
     leftPaddle->setCacheMode(QGraphicsItem::DeviceCoordinateCache);
     rightPaddle->setCacheMode(QGraphicsItem::DeviceCoordinateCache);
 
+    icon.load(QString(":/icons/connect.png"));
+    icon = icon.scaled(100, 100, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+    qDebug() << "icon" << icon.isNull();
+    connectIcon = scene->addPixmap(icon);
+    connectIcon->setPos(440,200);
+    connectIcon->setAcceptTouchEvents(true);
+    connectIcon->setTransformOriginPoint(50,50);
+    connectIcon->setTransformationMode(Qt::SmoothTransformation);
+
+    connectAnimation = new QPropertyAnimation(this, "connectRotation");
+    connectAnimation->setDuration(1000);
+    connectAnimation->setLoopCount(-1);
+    connectAnimation->setStartValue(0);
+    connectAnimation->setEndValue(360);
+
 //    connect(scene, SIGNAL(changed(QList<QRectF>)), this, SLOT(sceneChanged(QList<QRectF>)));
 
 }
@@ -176,3 +191,50 @@ void Board::setStatus(QString text, int opacity_start, int opacity_end)
     a->start(QAbstractAnimation::DeleteWhenStopped);
 }
 
+void Board::setConnectRotation(int rot)
+{
+    connectIcon->setRotation(rot);
+//    QTransform t;
+//    t.rotate(rot);
+//    connectIcon->setPixmap(icon.scaled(100, 100).transformed(t, Qt::SmoothTransformation));
+}
+
+void Board::setConnectOpacity(qreal op)
+{
+    connectIcon->setOpacity(op);
+}
+
+void Board::animateConnect(bool start)
+{
+    if (start) {
+        connectAnimation->start();
+    }
+    else {
+        connectAnimation->stop();
+        QPropertyAnimation *a = new QPropertyAnimation(this, "connectRotation");
+//        qDebug() << "currentTime" << connectAnimation->currentLoopTime() << "rotation" << connectAnimation->currentValue();
+        a->setDuration(connectAnimation->currentLoopTime()/2);
+        a->setStartValue(connectAnimation->currentValue().toInt( ));
+        a->setEndValue(0);
+//        a->setDirection(QAbstractAnimation::Backward);
+        a->start(QAbstractAnimation::DeleteWhenStopped);
+    }
+}
+
+
+void Board::fadeConnect(bool out)
+{
+    qreal start = 100.0;
+    qreal end = 0.0;
+
+    if(!out) {
+        start = 0.0;
+        end = 100.0;
+    }
+
+    QPropertyAnimation *a = new QPropertyAnimation(this, "connectOpacity");
+    a->setDuration(2000);
+    a->setStartValue(start);
+    a->setEndValue(end);
+    a->start(QAbstractAnimation::DeleteWhenStopped);
+}

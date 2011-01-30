@@ -1,6 +1,6 @@
 CONFIG += mobility
 
-HEADERS += \
+PUBLIC_HEADERS += \
     nfc/qnearfieldmanager.h \
     nfc/qnearfieldtarget.h \
     nfc/qndefrecord.h \

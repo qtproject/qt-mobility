@@ -97,7 +97,7 @@ QNdefMessage QNdefMessage::fromByteArray(const QByteArray &message)
     QNdefRecord record;
 
     QByteArray::const_iterator i = message.begin();
-    while (i != message.end()) {
+    while (i < message.constEnd()) {
         quint8 flags = *i;
 
         bool messageBegin = flags & 0x80;
@@ -128,6 +128,15 @@ QNdefMessage QNdefMessage::fromByteArray(const QByteArray &message)
             return QNdefMessage();
         }
 
+        int headerLength = 1;
+        headerLength += (sr) ? 1 : 4;
+        headerLength += (il) ? 1 : 0;
+
+        if (i + headerLength >= message.constEnd()) {
+            qWarning("Unexpected end of message");
+            return QNdefMessage();
+        }
+
         quint8 typeLength = *(++i);
 
         if ((typeNameFormat == 0x06) && (typeLength != 0)) {
@@ -150,6 +159,12 @@ QNdefMessage QNdefMessage::fromByteArray(const QByteArray &message)
             idLength = *(++i);
         else
             idLength = 0;
+
+        int contentLength = typeLength + payloadLength + idLength;
+        if (i + contentLength >= message.constEnd()) {
+            qWarning("Unexpected end of message");
+            return QNdefMessage();
+        }
 
         if ((typeNameFormat == 0x06) && (idLength != 0)) {
             qWarning("Invalid chunked data, IL != 0");

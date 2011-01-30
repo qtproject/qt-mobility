@@ -78,7 +78,7 @@ QNearFieldTarget::RequestId QNearFieldTagType2Symbian::readBlock(quint8 blockAdd
     QByteArray command;
     command.append(char(0x30));         // READ
     command.append(char(blockAddress)); // Block address
-    // Hardware will append CRC bytes. The CRC value appended 
+    // Hardware will append CRC bytes. The CRC value appended
     // to the command will be ignored.
     command.append(char(0x00)); // CRC1
     command.append(char(0x00)); // CRC2
@@ -98,7 +98,7 @@ QNearFieldTarget::RequestId QNearFieldTagType2Symbian::writeBlock(quint8 blockAd
     command.append(char(blockAddress)); // Block address
     command.append(data);               // Data
 
-    // Hardware will append CRC bytes. The CRC value appended 
+    // Hardware will append CRC bytes. The CRC value appended
     // to the command will be ignored.
     command.append(char(0x00)); // CRC1
     command.append(char(0x00)); // CRC2
@@ -114,20 +114,20 @@ QNearFieldTarget::RequestId QNearFieldTagType2Symbian::selectSector(quint8 secto
     command.append(char(0xc2));     // SECTOR SELECT (Command Packet 1)
     command.append(char(0xff));
 
-    // Hardware will append CRC bytes. The CRC value appended 
+    // Hardware will append CRC bytes. The CRC value appended
     // to the command will be ignored.
     command.append(char(0x00)); // CRC1
     command.append(char(0x00)); // CRC2
 
     RequestId id = sendCommand(command);
 
-    if (_waitForRequestCompletedNoSignal(id, 1) != KErrNone)
+    if (!_waitForRequestCompletedNoSignal(id, 1))
     {
         END
         return QNearFieldTarget::RequestId();
     }
     else
-    { 
+    {
         command.clear();
         command.append(char(sector));               // Sector number
         command.append(QByteArray(3, char(0x00)));  // RFU
@@ -150,13 +150,6 @@ QNearFieldTarget::RequestId QNearFieldTagType2Symbian::sendCommands(const QList<
     BEGIN
     END
     return _sendCommands(commands);
-}
-
-bool QNearFieldTagType2Symbian::hasNdefMessage()
-{
-    BEGIN
-    END
-    return _hasNdefMessage();
 }
 
 void QNearFieldTagType2Symbian::readNdefMessages()

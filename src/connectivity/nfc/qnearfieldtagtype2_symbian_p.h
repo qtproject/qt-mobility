@@ -58,7 +58,7 @@ public:
     explicit QNearFieldTagType2Symbian(CNearFieldNdefTarget * tag, QObject *parent = 0);
 
     ~QNearFieldTagType2Symbian();
-    
+
     QByteArray uid() const;
 
     RequestId readBlock(quint8 blockAddress);
@@ -69,7 +69,6 @@ public:
     RequestId sendCommands(const QList<QByteArray> &commands);
     bool isProcessingCommand() const { return _isProcessingRequest(); }
 
-    bool hasNdefMessage();
     void readNdefMessages();
     void writeNdefMessages(const QList<QNdefMessage> &messages);
 
@@ -82,7 +81,7 @@ public:
     {
         return _accessMethods();
     }
-    
+
     void handleTagOperationResponse(const RequestId &id, const QByteArray &command, const QByteArray &response);
     QVariant decodeResponse(const QByteArray &command, const QByteArray &response);
 

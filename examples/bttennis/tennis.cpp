@@ -75,7 +75,7 @@ Tennis::Tennis(QWidget *parent)
 
     ui->pongView->setScene(board->getScene());    
 
-    connect(ui->pongView, SIGNAL(mouseMove(int)), this, SLOT(mouseMove(int)));
+    connect(ui->pongView, SIGNAL(mouseMove(int, int)), this, SLOT(mouseMove(int, int)));
     ui->pongView->setMouseTracking(false);
 
     connect(board, SIGNAL(ballCollision(Board::Edge)), controller, SLOT(ballCollision(Board::Edge)));
@@ -143,12 +143,13 @@ Tennis::Tennis(QWidget *parent)
         client->startClient(service);
         board->setStatus("Connecting", 100, 25);
 //        board->setStatus("Waiting", 100, 25);
-        QTimer::singleShot(15000, this, SLOT(startDiscovery()));
+//        QTimer::singleShot(15000, this, SLOT(startDiscovery()));
     }
     else {
 
     //    m_discoveryAgent->start(); // do minimal scan first
-        startDiscovery();
+//        startDiscovery();
+        board->setStatus("Waiting", 100, 25);
     }
 
     setEnabled(true);
@@ -222,17 +223,29 @@ void Tennis::setPaddlePos(int p)
 }
 
 
-void Tennis::mouseMove(int pos)
+void Tennis::mouseMove(int x, int y)
 {
-    pos-=12+Board::Paddle/2;
-    if(pos <= 0)
-        pos = 0;
-    else if(pos > Board::Height-Board::Paddle-24)
-        pos = Board::Height-Board::Paddle-24;
+    if(isConnected == false){
+        // look for clicks in the bt connect icon
+        if(x > 440 && x < 540 && y > 200 && y < 300) {
+            if(m_discoveryAgent->isActive()) {
+                m_discoveryAgent->stop();
+                board->animateConnect(false);
+            }
+            else {
+                startDiscovery();
+            }
+        }
 
+    }
+    y-=12+Board::Paddle/2;
+    if(y <= 0)
+        y = 0;
+    else if(y > Board::Height-Board::Paddle-24)
+        y = Board::Height-Board::Paddle-24;
 
-    endPaddlePos = pos;
-    move(pos);
+    endPaddlePos = y;
+    move(y);
 }
 
 void Tennis::clientConnected(const QString &name)
@@ -242,6 +255,8 @@ void Tennis::clientConnected(const QString &name)
     server->stopServer();
     isClient = true;
     isConnected = true;
+    board->animateConnect(false);
+    board->fadeConnect(true);
     emit moveRightPaddle(paddle_pos);
 }
 
@@ -260,20 +275,22 @@ void Tennis::serverConnected(const QString &name)
     board->setStatus("Server for " + name, 100, 0);
     m_discoveryAgent->stop();
     isConnected = true;
+    board->animateConnect(false);
+    board->fadeConnect(true);
     emit moveLeftPaddle(paddle_pos);
 }
 
 void Tennis::serverDisconnected()
 {
     board->setStatus("Disconnected", 100, 25);
-    isConnected = false;
+    isConnected = false;    
     discoveryFinished();
 }
 
 void Tennis::serviceDiscovered(const QBluetoothServiceInfo &serviceInfo)
 {
     qDebug() << "***** Discovered! " << serviceInfo.device().name() << serviceInfo.serviceName() << serviceInfo.serviceUuid();
-    qDebug() << "Found one!";
+    qDebug() << "Found one!" << serviceInfo.protocolServiceMultiplexer();
     m_discoveryAgent->stop();
     client->startClient(serviceInfo);
     QSettings settings("QtDF", "bttennis");
@@ -282,23 +299,33 @@ void Tennis::serviceDiscovered(const QBluetoothServiceInfo &serviceInfo)
 
 void Tennis::discoveryFinished()
 {
-    if(!isConnected)
-        board->setStatus("Waiting", 100, 25);
-        QTimer::singleShot(60000, this, SLOT(startDiscovery()));
+    if(!m_discoveryAgent->isActive()) {
+        if(!isConnected) {
+            board->setStatus("Waiting", 100, 25);
+    //        QTimer::singleShot(60000, this, SLOT(startDiscovery()));
+            board->animateConnect(false);
+            board->fadeConnect(false);
+       }
+    }
 }
 
 void Tennis::startDiscovery()
 {
     if(!isConnected) {
         board->setStatus("Scanning", 100, 25);
-        if(quickDiscovery)
-            m_discoveryAgent->start(QBluetoothServiceDiscoveryAgent::MinimalDiscovery);
-        else
-            m_discoveryAgent->start(QBluetoothServiceDiscoveryAgent::FullDiscovery);
-        quickDiscovery = !quickDiscovery;
+        board->fadeConnect(false);
+        board->animateConnect(true);
+        m_discoveryAgent->start(QBluetoothServiceDiscoveryAgent::MinimalDiscovery);
+//        if(quickDiscovery)
+//            m_discoveryAgent->start(QBluetoothServiceDiscoveryAgent::MinimalDiscovery);
+//        else
+//            m_discoveryAgent->start(QBluetoothServiceDiscoveryAgent::FullDiscovery);
+//        quickDiscovery = !quickDiscovery;
     }
     else {
         board->setStatus("", 0, 0);
+        board->animateConnect(false);
+        board->fadeConnect(true);
     }
 }
 

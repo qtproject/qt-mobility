@@ -58,7 +58,7 @@ class QNearFieldTagType1Symbian : public QNearFieldTagType1, private QNearFieldT
 public:
 
     explicit QNearFieldTagType1Symbian(CNearFieldNdefTarget *tag, QObject *parent = 0);
-    
+
     ~QNearFieldTagType1Symbian();
 
     virtual QByteArray uid() const;
@@ -77,7 +77,6 @@ public:
     RequestId writeBlock(quint8 blockAddress, const QByteArray &data,
                          WriteMode mode = EraseAndWrite);
 
-    bool hasNdefMessage();
     void readNdefMessages();
     void writeNdefMessages(const QList<QNdefMessage> &messages);
 
@@ -95,7 +94,7 @@ public:
     {
         return _accessMethods();
     }
-    
+
     void handleTagOperationResponse(const RequestId &id, const QByteArray &command, const QByteArray &response);
     QVariant decodeResponse(const QByteArray &command, const QByteArray &response);
     friend class QNearFieldTagImpl<QNearFieldTagType1Symbian>;

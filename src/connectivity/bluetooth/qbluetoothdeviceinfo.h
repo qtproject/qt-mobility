@@ -218,6 +218,9 @@ public:
     MajorDeviceClass majorDeviceClass() const;
     quint8 minorDeviceClass() const;
 
+    qint16 rssi() const;
+    void setRssi(qint16 signal);
+
 //    bool matchesMinorClass(MinorComputerClass minor) const;
 //    bool matchesMinorClass(MinorPhoneClass minor) const;
 //    bool matchesMinorClass(MinorNetworkClass minor) const;

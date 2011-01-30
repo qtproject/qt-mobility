@@ -20,11 +20,16 @@ symbian {
     TARGET.UID3=0x2002BFD1
     TARGET.CAPABILITY = All -TCB
 }
+symbian: {
+    QtConnectivityDeployment.sources = QtConnectivity.dll
+    QtConnectivityDeployment.path = /sys/bin
+    DEPLOYMENT += QtConnectivityDeployment
+}
 
 simulator {
     INCLUDEPATH += ../mobilitysimulator
     qtAddLibrary(QtMobilitySimulator)
 }
-
+CONFIG += middleware
 CONFIG += middleware
 include(../../features/deploy.pri)

@@ -272,9 +272,9 @@ void QBluetoothTransferReplySymbian::disconnect()
 bool QBluetoothTransferReplySymbian::copyToTempFile(QIODevice *to, QIODevice *from)
 {
     char *block = new char[4096];
-    int size;
 
-    while ((size = from->read(block, 4096))) {
+    while (!from->atEnd()) {
+        int size = from->read(block, 4096);
         if (size != to->write(block, size)) {
             return false;
         }

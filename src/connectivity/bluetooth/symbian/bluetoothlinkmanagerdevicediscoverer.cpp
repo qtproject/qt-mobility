@@ -79,11 +79,11 @@ BluetoothLinkManagerDeviceDiscoverer::BluetoothLinkManagerDeviceDiscoverer(RSock
     /* find Bluetooth protocol */
     TProtocolDesc protocol;
     result = m_socketServer.FindProtocol(KBTLinkManagerTxt(),protocol);
-    if (result != KErrNone) {
-        setError(result);
+    if (result == KErrNone) {
+        /* Create and initialise an RHostResolver */
+        result = m_hostResolver.Open(m_socketServer, protocol.iAddrFamily, protocol.iProtocol);
     }
-    /* Create and initialise an RHostResolver */
-    result = m_hostResolver.Open(m_socketServer, protocol.iAddrFamily, protocol.iProtocol);
+    // check possible error
     if (result != KErrNone) {
         setError(result);
     }
@@ -100,38 +100,40 @@ BluetoothLinkManagerDeviceDiscoverer::~BluetoothLinkManagerDeviceDiscoverer()
 }
 /*!
     Starts up device discovery. When devices are discovered signal deviceDiscovered is emitted.
-    After signal deviceDiscoveryComplete() is emitted new discovery request can be made
-    Leaves with KErrNotReady if discovery is ongoing and new discovery is started
-
+    After signal deviceDiscoveryComplete() is emitted new discovery request can be made.
+    Returns false if discovery is ongoing and new discovery is started.
 */
-void BluetoothLinkManagerDeviceDiscoverer::StartDiscoveryL(const uint discoveryType)
+bool BluetoothLinkManagerDeviceDiscoverer::startDiscovery(const uint discoveryType)
 {
+    bool returnValue = false;
     if (!IsActive()) {
+        returnValue = true;
         m_addr.SetIAC( discoveryType );
-        m_addr.SetAction(KHostResInquiry | KHostResName | KHostResIgnoreCache);
+        //TODO: add KHostResEir  action for Symbian^3 devices.
+        m_addr.SetAction( KHostResInquiry | KHostResName | KHostResIgnoreCache);
         m_hostResolver.GetByAddress(m_addr, m_entry, iStatus);
         SetActive();
     }
-    else {
-        User::Leave(KErrNotReady);
-    }
+    return returnValue;
 }
 /*!
   Informs that our request has been prosessed and the data is available to be used.
 */
 void BluetoothLinkManagerDeviceDiscoverer::RunL()
 {
-    if (iStatus.Int() != KErrNone) {
+    if (iStatus.Int() == KErrHostResNoMoreResults) {
         emit deviceDiscoveryComplete(iStatus.Int());
-        // it is advised to close host resolver session after it has been used.
         m_hostResolver.Close();
-    }
-    else {
-        emit deviceDiscovered(currentDeviceDataToQBluetoothDeviceInfo());
+    } else if (iStatus.Int() != KErrNone) {
+        setError(iStatus.Int());
+        m_hostResolver.Close();
+    } else {
         // get next (possible) discovered device
         m_hostResolver.Next(m_entry, iStatus);
         // set this AO active ie running
         SetActive();
+        // finally inform that we have found a new device
+        emit deviceDiscovered(currentDeviceDataToQBluetoothDeviceInfo());
     }
 }
 /*!
@@ -141,13 +143,6 @@ void BluetoothLinkManagerDeviceDiscoverer::DoCancel()
 {
     m_hostResolver.Cancel();
 }
-/*!
-  Stops the discovery. Signal deviceDiscoveryComplete(int) with KErrCancel might be emitted.
-*/
-void BluetoothLinkManagerDeviceDiscoverer::Stop()
-{
-    Cancel();
-}
 
 /*!
     Transforms Symbian device name, address and service classes to QBluetootDeviceInfo.
@@ -155,6 +150,7 @@ void BluetoothLinkManagerDeviceDiscoverer::Stop()
 QBluetoothDeviceInfo BluetoothLinkManagerDeviceDiscoverer::currentDeviceDataToQBluetoothDeviceInfo() const
 {
     // extract device information from results and map them to QBluetoothDeviceInfo
+    //TODO: use TBluetoothNameRecordWrapper in Symbian^3 for name and service classes.
     // device name
     THostName symbianDeviceName = m_entry().iName;
     QString deviceName = QString::fromUtf16(symbianDeviceName.Ptr(), symbianDeviceName.Length()).toUpper();
@@ -170,8 +166,6 @@ QBluetoothDeviceInfo BluetoothLinkManagerDeviceDiscoverer::currentDeviceDataToQB
     qDebug()<< "Discovered device: name="<< deviceName <<", address=" << bluetoothAddress.toString() <<", class=" << deviceClass;
     return deviceInfo;
 }
-
-const static TInt KErrRemoteDeviceIndicatedNoBonding = KLinkManagerErrBase-4; /*!< Dedicated bonding attempt failure when the remote device responds with No-Bonding */
 
 void BluetoothLinkManagerDeviceDiscoverer::setError(int errorCode)
 {
@@ -189,12 +183,10 @@ void BluetoothLinkManagerDeviceDiscoverer::setError(int errorCode)
         case KErrPendingPhysicalLink:
             errorDescription.append("Physical link connection already pending when trying to connect the physical link");
             break;
-        case KErrRemoteDeviceIndicatedNoBonding:
-            errorDescription.append("Dedicated bonding attempt failure when the remote device responds with No-Bonding");
-            break;
         case KErrNotReady:
             errorDescription.append("KErrNotReady");
         default:
+            errorDescription.append("Symbian errorCode =") + errorCode;
             break;
     }
     if (errorCode == KErrCancel)

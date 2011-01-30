@@ -99,7 +99,7 @@ protected:
     QNearFieldTarget::RequestId _sendCommand(const QByteArray &command);
     QNearFieldTarget::RequestId _sendCommands(const QList<QByteArray> &command);
     bool _waitForRequestCompleted(const QNearFieldTarget::RequestId &id, int msecs = 5000);
-    int _waitForRequestCompletedNoSignal(const QNearFieldTarget::RequestId &id, int msecs = 5000);
+    bool _waitForRequestCompletedNoSignal(const QNearFieldTarget::RequestId &id, int msecs = 5000);
 
     QByteArray _uid() const;
 

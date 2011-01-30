@@ -64,25 +64,23 @@ Rectangle {
             id: myModel
 
             function connect(s){
-                console.log("Found new service " + s.deviceAddress + " " + s.deviceName + " " + s.serviceName);
                 socket.setService(s);
                 socket.setConnected(true);
             }
 
             discovery: false
-            minimalDiscovery: false
-            onDiscoveryChanged: console.log("Discovery done")
-            onNewServiceDiscovered: connect(service);
+            minimalDiscovery: true
+            //onDiscoveryChanged: console.log("Discovery: " + discovery)
+            onNewServiceDiscovered: { connect(service); discovery = false; }
             uuidFilter: "e8e10f95-1a70-4b27-9ccf-02010264e9c9"
        }
 
-       BluetoothService {
-            id: btservice
+//       BluetoothService {
+//            id: btservice
 
-            //deviceAddress: "00:21:86:E8:0F:8D"
-            deviceAddress: "00:1A:9F:92:9E:5A"
-            serviceUuid: "e8e10f95-1a70-4b27-9ccf-02010264e9c9"
-       }
+//            deviceAddress: "00:1A:9F:92:9E:5A"
+//            serviceUuid: "e8e10f95-1a70-4b27-9ccf-02010264e9c9"
+//       }
 
        BluetoothSocket {
            id: socket
@@ -115,12 +113,13 @@ Rectangle {
            }
 
            connected: true
-           service: btservice
+//           service: btservice
 
            onStateChanged: console.log("New socket state " + state);
-           onErrorChanged: { statusText.text = error; reconnect.start(); }
+           onErrorChanged: { statusText.text = error; }
            onServiceChanged: console.log("New service");
            onConnectedChanged: {
+               console.log("Connected: " + connected);
                if(connected) {
                     statusText.text = "Connected";
                }
@@ -133,18 +132,11 @@ Rectangle {
        }
 
        Timer {
-           id: reconnect
-           interval: 15000
-           onTriggered: socket.connected = true;
-       }
-
-       Timer {
            id: lagTimer
 
            function sendEcho() {
                var s = "E " + new Date().getTime();
                socket.sendStringData(s);
-//               console.log(s);
            }
 
            interval: 1000
@@ -214,6 +206,80 @@ Rectangle {
            }
        }
 
+       Image {
+           id: connectButton
+
+           property bool enabled: true
+           property int roRotation
+
+           source: "icons/connect.png"
+           width: 100
+           height: 100
+           x: 440
+           y: 220
+           smooth: true
+           opacity: 1.0
+
+           NumberAnimation {
+               id: connectRotation
+
+               target:  connectButton
+               property: "rotation"
+               from: 0
+               to: 360
+               loops: -1
+               duration: 1000
+               running: myModel.discovery
+
+               onRunningChanged: if(!running) { connectStop.running = true; }
+
+           }
+
+           NumberAnimation {
+               id: connectStop
+
+               target: connectButton
+               property: "rotation"
+               loops: 1
+               from: connectButton.roRotation
+               to: 0
+               duration: 1000*connectButton.roRotation/360
+               running: false
+           }
+
+           onRotationChanged: if(!connectStop.running) roRotation = rotation;
+
+           MouseArea {
+               anchors.fill: connectButton
+               enabled: connectButton.state != "disabled"
+               hoverEnabled: true
+               onClicked: {
+                   myModel.discovery = !myModel.discovery;
+//                   connectStop.running = true;
+               }
+           }
+
+           states: [
+               State {
+                   name: "disabled"
+//                   when: socket.state == "Connected"
+                   when: socket.connected
+                   PropertyChanges { target: connectButton; opacity: 0.0; }
+               }
+           ]
+
+           transitions: [
+               Transition {
+                   from: "*"
+                   to: "disabled"
+                   reversible: true
+                   NumberAnimation { target: connectButton; property: "opacity"; duration: 750 }
+               }
+           ]
+
+       }
+
+
 
         // Make a ball to bounce
         Rectangle {
@@ -230,6 +296,9 @@ Rectangle {
         }
         Rectangle {
             id: rightPaddle
+
+            property bool rateLimit: false
+
             color: fg
             x: page.width - 12; width: 12; height: 50
             y: page.height/2-height/2
@@ -239,10 +308,17 @@ Rectangle {
                     y = topBumper.height;
                 if(y > page.height-bottomBumer.height-height)
                     y = page.height-bottomBumer.height-height;
-                if(socket.state == "Connected") {
+                if(socket.state == "Connected" && !rateLimit) {
                     socket.sendStringData("r " + Math.round(rightPaddle.y-topBumper.height));
+                    rateLimit = true;
                 }
             }
+            Timer {
+                interval: 30
+                running: rightPaddle.rateLimit
+                onTriggered: rightPaddle.rateLimit = false;
+            }
+
         }
         Rectangle {
             id: topBumper
