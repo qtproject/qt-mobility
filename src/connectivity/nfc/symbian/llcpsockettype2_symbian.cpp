@@ -680,6 +680,8 @@ CLlcpSenderAO::~CLlcpSenderAO()
     Cancel();
     iSendBuf0.Close();
     iSendBuf1.Close();
+    //todo
+    iCurrentSendBuf.Close();
     END
     }
 /*!
@@ -689,18 +691,42 @@ TInt CLlcpSenderAO::Send( const TDesC8& aData )
     {
     BEGIN
     TInt error = KErrNone;
+    if (aData.Length() == 0)
+        {
+        END
+        return KErrArgument;
+        }
+    TInt supportedDataLength = iConnection.SupportedDataLength();
+    if (supportedDataLength <= 0)
+        {
+        END
+        return KErrNotReady;
+        }
     if ( !IsActive() )
         {
         // Copying data to internal buffer.
         iSendBuf0.Zero();
+        iCurrentPos = 0;
         error = iSendBuf0.ReAlloc( aData.Length() );
 
         if ( error == KErrNone )
           {
           iSendBuf0.Append( aData );
 
+          if (iSendBuf0.Length() > supportedDataLength)
+              {
+              iCurrentSendPtr.Set(iSendBuf0.Ptr(), supportedDataLength);
+              }
+          else
+              {
+              iCurrentSendPtr.Set(iSendBuf0.Ptr(), iSendBuf0.Length());
+              }
           // Sending data
-          iConnection.Transmit( iStatus, iSendBuf0 );
+          //TODO defect in NFC server
+          iCurrentSendBuf.Close();
+          iCurrentSendBuf.Create(iCurrentSendPtr);
+          iConnection.Transmit( iStatus, iCurrentSendBuf );
+//          iConnection.Transmit( iStatus, iCurrentSendPtr );
           SetActive();
           iCurrentBuffer = EBuffer0;
           }
@@ -728,39 +754,109 @@ TInt CLlcpSenderAO::Send( const TDesC8& aData )
     return error;
     }
 
+void CLlcpSenderAO::SendRestDataAndSwitchBuffer(RBuf8& aWorkingBuffer, RBuf8& aNextBuffer)
+    {
+    BEGIN
+    TInt supportedDataLength = iConnection.SupportedDataLength();
+    if (iCurrentPos == aWorkingBuffer.Length())
+        {
+        LOG("Current working buffer write finished");
+
+        aWorkingBuffer.Zero();
+        if(aNextBuffer.Length() > 0)
+            {
+
+            if (&aNextBuffer == &iSendBuf0)
+                {
+                iCurrentBuffer = EBuffer0;
+                LOG("Start switch to buffer 0");
+                }
+            else
+                {
+                iCurrentBuffer = EBuffer1;
+                LOG("Start switch to buffer 1");
+                }
+
+            iCurrentPos = 0;
+
+            if (supportedDataLength > 0)
+                {
+                if (aNextBuffer.Length() > supportedDataLength)
+                    {
+                    iCurrentSendPtr.Set(aNextBuffer.Ptr(), supportedDataLength);
+                    }
+                else
+                    {
+                    iCurrentSendPtr.Set(aNextBuffer.Ptr(), aNextBuffer.Length());
+                    }
+                //TODO
+                iCurrentSendBuf.Close();
+                iCurrentSendBuf.Create(iCurrentSendPtr);
+                iConnection.Transmit( iStatus, iCurrentSendBuf );
+//              iConnection.Transmit( iStatus, iCurrentSendPtr );
+                SetActive();
+                }
+            else
+                {
+                LOG("SupportedDataLength is invalid, value="<<supportedDataLength);
+                iSendBuf0.Zero();
+                iSendBuf1.Zero();
+                iCurrentBuffer = EBuffer0;
+                iSocket.Error(QtMobility::QLlcpSocket::UnknownSocketError);
+                }
+            }
+        }
+    else //means current working buffer still have data need to be sent
+        {
+        LOG("Current working buffer still has data need to be sent");
+        if (supportedDataLength > 0)
+            {
+            if (aWorkingBuffer.Length() - iCurrentPos > supportedDataLength)
+                {
+                iCurrentSendPtr.Set(aWorkingBuffer.Ptr() + iCurrentPos, supportedDataLength);
+                }
+            else
+                {
+                iCurrentSendPtr.Set(aWorkingBuffer.Ptr() + iCurrentPos, aWorkingBuffer.Length() - iCurrentPos);
+                }
+            // Sending data
+            //TODO
+            iCurrentSendBuf.Close();
+            iCurrentSendBuf.Create(iCurrentSendPtr);
+            iConnection.Transmit( iStatus, iCurrentSendBuf );
+
+//                    iConnection.Transmit( iStatus, iCurrentSendPtr );
+            SetActive();
+            }
+        else
+            {
+            LOG("SupportedDataLength is invalid, value="<<supportedDataLength);
+            iSendBuf0.Zero();
+            iSendBuf1.Zero();
+            iCurrentBuffer = EBuffer0;
+            iSocket.Error(QtMobility::QLlcpSocket::UnknownSocketError);
+            }
+        }
+    END
+    }
 void CLlcpSenderAO::RunL()
     {
     BEGIN
     TInt error = iStatus.Int();
     if ( error == KErrNone )
         {
+        //emit BytesWritten signal
+        iSocket.BytesWritten(iCurrentSendPtr.Length());
+        iCurrentPos += iCurrentSendPtr.Length();
         if (iCurrentBuffer == EBuffer0)
             {
-            LOG("Buffer0 write finished");
-            iSocket.BytesWritten(iSendBuf0.Length());
-            iSendBuf0.Zero();
-            if(iSendBuf1.Length() > 0)
-                {
-                LOG("Start send buffer1 after buffer0 write finished");
-                iCurrentBuffer = EBuffer1;
-                iConnection.Transmit( iStatus, iSendBuf1 );
-                SetActive();
-                }
-            }
-        else //buffer1
+            SendRestDataAndSwitchBuffer(iSendBuf0, iSendBuf1);
+            }//if (iCurrentBuffer == EBuffer0)
+        else //current working buffer is buffer1
             {
-            LOG("Buffer1 write finished");
-            iSocket.BytesWritten(iSendBuf1.Length());
-            iSendBuf1.Zero();
-            if(iSendBuf0.Length() > 0)
-                {
-                LOG("Start send buffer0 after buffer1 write finished");
-                iCurrentBuffer = EBuffer0;
-                iConnection.Transmit( iStatus, iSendBuf0 );
-                SetActive();
-                }
+            SendRestDataAndSwitchBuffer(iSendBuf1, iSendBuf0);
             }
-        }
+        }//if ( error == KErrNone )
     else
         {
         LOG("iStatus.Int() = "<<error);

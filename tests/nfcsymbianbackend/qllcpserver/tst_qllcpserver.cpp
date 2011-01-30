@@ -124,7 +124,6 @@ void tst_QLlcpServer::newConnection()
     QVERIFY(ret);
     qDebug() << "Listen() return ok";
 
-//    QNfcTestUtil::ShowMessage(hint);
     QNfcTestUtil::ShowAutoMsg(hint, &connectionSpy, 1);
 
     QTRY_VERIFY(!connectionSpy.isEmpty());
@@ -171,7 +170,7 @@ void tst_QLlcpServer::newConnection()
     QTRY_VERIFY(!bytesWrittenSpy.isEmpty());
     qint64 written = bytesWrittenSpy.first().at(0).value<qint64>();
     qDebug()<<"Server::bytesWritten signal return value = " << written;
-    while (written < echo.length())
+    while (written < block.size())
         {
         QSignalSpy bytesWrittenSpy(socket, SIGNAL(bytesWritten(qint64)));
         QTRY_VERIFY(!bytesWrittenSpy.isEmpty());
@@ -211,7 +210,7 @@ void tst_QLlcpServer::newConnection_wait()
     QVERIFY(ret);
     qDebug() << "Listen() return ok";
     QSignalSpy connectionSpy(&server, SIGNAL(newConnection()));
-//    QNfcTestUtil::ShowMessage(hint);
+
     QNfcTestUtil::ShowAutoMsg(hint, &connectionSpy, 1);
 
     QTRY_VERIFY(!connectionSpy.isEmpty());
@@ -262,7 +261,7 @@ void tst_QLlcpServer::newConnection_wait()
     QTRY_VERIFY(!bytesWrittenSpy.isEmpty());
     qint64 written = bytesWrittenSpy.first().at(0).value<qint64>();
 
-    while (written < echo.length())
+    while (written < block.size())
         {
         QSignalSpy bytesWrittenSpy(socket, SIGNAL(bytesWritten(qint64)));
         bool ret = socket->waitForBytesWritten(Timeout);
@@ -307,7 +306,7 @@ void tst_QLlcpServer::api_coverage()
     QVERIFY(ret);
 
     QString message("handshake 3: api_coverage test");
-//    QNfcTestUtil::ShowMessage(message);
+
     QNfcTestUtil::ShowAutoMsg(message, &connectionSpy, 1);
     QTRY_VERIFY(!connectionSpy.isEmpty());
 
@@ -351,7 +350,7 @@ void tst_QLlcpServer::negTestCase1()
     QVERIFY(ret);
 
     QString message("handshake 4: negTestCase1 test");
-//    QNfcTestUtil::ShowMessage(message);
+
     QNfcTestUtil::ShowAutoMsg(message, &connectionSpy, 1);
 
     ret = server.listen(uri);

@@ -84,6 +84,8 @@ private Q_SLOTS:
     void negTestCase2();
     void negTestCase3();
 
+    void sendEmptyData();
+
  private:
     QNearFieldTarget *m_target; // not own
 };
@@ -103,7 +105,6 @@ void tst_qllcpsockettype2::initTestCase()
     QSignalSpy targetDetectedSpy(&nfcManager, SIGNAL(targetDetected(QNearFieldTarget*)));
     nfcManager.startTargetDetection(QNearFieldTarget::AnyTarget);
 
-//    QNfcTestUtil::ShowMessage(message);
     QNfcTestUtil::ShowAutoMsg(message, &targetDetectedSpy, 1);
     QTRY_VERIFY(!targetDetectedSpy.isEmpty());
 
@@ -143,7 +144,7 @@ void tst_qllcpsockettype2::echo()
     QFETCH(QString, echo);
 
     QString message("handshake 1");
-//    QNfcTestUtil::ShowMessage(message);
+
     QNfcTestUtil::ShowAutoMsg(message);
     QLlcpSocket socket(this);
     QSignalSpy connectedSpy(&socket, SIGNAL(connected()));
@@ -187,13 +188,17 @@ void tst_qllcpsockettype2::echo()
     qint64 written = bytesWrittenSpy.first().at(0).value<qint64>();
 
     qDebug()<<"bytesWritten signal return value = "<<written;
-    while (written < echo.length())
+    while (written < block.size())
         {
         QSignalSpy bytesWrittenSpy(&socket, SIGNAL(bytesWritten(qint64)));
         QTRY_VERIFY(!bytesWrittenSpy.isEmpty());
-        written += bytesWrittenSpy.first().at(0).value<qint64>();
+        qint64 w = bytesWrittenSpy.first().at(0).value<qint64>();
+        qDebug()<<"got bytesWritten signal = "<<w;
+        written += w;
         }
-    QVERIFY(written == block.size());
+    qDebug()<<"Overall bytesWritten = "<<written;
+    qDebug()<<"Overall block size = "<<block.size();
+    QTRY_VERIFY(written == block.size());
     //Get the echoed data from server
     QTRY_VERIFY(!readyReadSpy.isEmpty());
     quint16 blockSize = 0;
@@ -228,6 +233,10 @@ void tst_qllcpsockettype2::echo_data()
     QTest::addColumn<QString>("echo");
     QTest::newRow("0") << TestUri
             << "echo";
+    QString longStr4k;
+    for (int i = 0; i < 4000; i++)
+        longStr4k.append((char)(i%26 + 'a'));
+    QTest::newRow("1") << TestUri << longStr4k;
 }
 
 /*!
@@ -291,7 +300,7 @@ void tst_qllcpsockettype2::echo_wait()
     QTRY_VERIFY(!bytesWrittenSpy.isEmpty());
     qint64 written = bytesWrittenSpy.first().at(0).value<qint64>();
 
-    while (written < echo.length())
+    while (written < block.size())
         {
         QSignalSpy bytesWrittenSpy(&socket, SIGNAL(bytesWritten(qint64)));
         ret = socket.waitForBytesWritten(Timeout);
@@ -333,6 +342,10 @@ void tst_qllcpsockettype2::echo_wait_data()
     QTest::addColumn<QString>("echo");
     QTest::newRow("0") << TestUri
             << "echo";
+    QString longStr4k;
+    for (int i = 0; i < 4000; i++)
+        longStr4k.append((char)(i%26 + 'a'));
+    QTest::newRow("1") << TestUri << longStr4k;
 }
 
 
@@ -584,6 +597,64 @@ void tst_qllcpsockettype2::negTestCase3()
 
 }
 
+void tst_qllcpsockettype2::sendEmptyData()
+    {
+
+    QString message("send Empty Data");
+
+    QNfcTestUtil::ShowAutoMsg(message);
+    QLlcpSocket socket(this);
+    QSignalSpy connectedSpy(&socket, SIGNAL(connected()));
+    QSignalSpy errorSpy(&socket, SIGNAL(error(QLlcpSocket::Error)));
+    QSignalSpy readyReadSpy(&socket, SIGNAL(readyRead()));
+
+    QSignalSpy bytesWrittenSpy(&socket, SIGNAL(bytesWritten(qint64)));
+
+    socket.connectToService(m_target, TestUri);
+
+    QTRY_VERIFY(!connectedSpy.isEmpty());
+
+    //Send data to server
+    QByteArray block;
+
+    qDebug("Client-- write data length = %d", block.length());
+
+    qint64 val = socket.write(block);
+    QVERIFY(val == -1);
+
+    socket.disconnectFromService();
+
+    //Now data has been sent,check the if existing error
+    QVERIFY(errorSpy.isEmpty());
+    }
+class ReadyReadSlot : public QObject
+{
+    Q_OBJECT
+public:
+    ReadyReadSlot(QLlcpSocket& s): m_socket(s),m_signalCount(0)
+        {
+        connect(&m_socket,SIGNAL(readyRead()),this,SLOT(gotReadyRead()));
+        }
+private slots:
+    void gotReadyRead()
+        {
+        m_signalCount++;
+        qDebug()<<"Got ReadyRead() signal number = "<<m_signalCount;
+        const int Timeout = 3 * 1000;
+        bool ret = m_socket.waitForReadyRead(Timeout);
+        if (!ret)
+            {
+            qDebug()<<"WaitForReadyRead() in slot of ReadyRead signal return false";
+            }
+        else
+            {
+            qDebug()<<"WaitForReadyRead() in slot of ReadyRead signal return true";
+            }
+        }
+private:
+    QLlcpSocket& m_socket;
+    int m_signalCount;
+};
 QTEST_MAIN(tst_qllcpsockettype2);
 
 #include "tst_qllcpsockettype2.moc"
