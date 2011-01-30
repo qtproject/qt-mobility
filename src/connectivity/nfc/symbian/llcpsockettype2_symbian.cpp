@@ -691,9 +691,15 @@ TInt CLlcpSenderAO::Send( const TDesC8& aData )
     {
     BEGIN
     TInt error = KErrNone;
+    if (aData.Length() == 0)
+        {
+        END
+        return KErrArgument;
+        }
     TInt supportedDataLength = iConnection.SupportedDataLength();
     if (supportedDataLength <= 0)
         {
+        END
         return KErrNotReady;
         }
     if ( !IsActive() )

@@ -84,6 +84,8 @@ private Q_SLOTS:
     void negTestCase2();
     void negTestCase3();
 
+    void sendEmptyData();
+
  private:
     QNearFieldTarget *m_target; // not own
 };
@@ -340,6 +342,10 @@ void tst_qllcpsockettype2::echo_wait_data()
     QTest::addColumn<QString>("echo");
     QTest::newRow("0") << TestUri
             << "echo";
+    QString longStr4k;
+    for (int i = 0; i < 4000; i++)
+        longStr4k.append((char)(i%26 + 'a'));
+    QTest::newRow("1") << TestUri << longStr4k;
 }
 
 
@@ -590,6 +596,37 @@ void tst_qllcpsockettype2::negTestCase3()
     QVERIFY(size == -1);
 
 }
+
+void tst_qllcpsockettype2::sendEmptyData()
+    {
+
+    QString message("send Empty Data");
+
+    QNfcTestUtil::ShowAutoMsg(message);
+    QLlcpSocket socket(this);
+    QSignalSpy connectedSpy(&socket, SIGNAL(connected()));
+    QSignalSpy errorSpy(&socket, SIGNAL(error(QLlcpSocket::Error)));
+    QSignalSpy readyReadSpy(&socket, SIGNAL(readyRead()));
+
+    QSignalSpy bytesWrittenSpy(&socket, SIGNAL(bytesWritten(qint64)));
+
+    socket.connectToService(m_target, TestUri);
+
+    QTRY_VERIFY(!connectedSpy.isEmpty());
+
+    //Send data to server
+    QByteArray block;
+
+    qDebug("Client-- write data length = %d", block.length());
+
+    qint64 val = socket.write(block);
+    QVERIFY(val == -1);
+
+    socket.disconnectFromService();
+
+    //Now data has been sent,check the if existing error
+    QVERIFY(errorSpy.isEmpty());
+    }
 class ReadyReadSlot : public QObject
 {
     Q_OBJECT
