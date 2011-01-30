@@ -680,6 +680,8 @@ CLlcpSenderAO::~CLlcpSenderAO()
     Cancel();
     iSendBuf0.Close();
     iSendBuf1.Close();
+    //todo
+    iCurrentSendBuf.Close();
     END
     }
 /*!
@@ -714,7 +716,11 @@ TInt CLlcpSenderAO::Send( const TDesC8& aData )
               iCurrentSendPtr.Set(iSendBuf0.Ptr(), iSendBuf0.Length());
               }
           // Sending data
-          iConnection.Transmit( iStatus, iCurrentSendPtr );
+          //TODO defect in NFC server
+          iCurrentSendBuf.Close();
+          iCurrentSendBuf.Create(iCurrentSendPtr);
+          iConnection.Transmit( iStatus, iCurrentSendBuf );
+//          iConnection.Transmit( iStatus, iCurrentSendPtr );
           SetActive();
           iCurrentBuffer = EBuffer0;
           }
@@ -742,6 +748,91 @@ TInt CLlcpSenderAO::Send( const TDesC8& aData )
     return error;
     }
 
+void CLlcpSenderAO::SendRestDataAndSwitchBuffer(RBuf8& aWorkingBuffer, RBuf8& aNextBuffer)
+    {
+    BEGIN
+    TInt supportedDataLength = iConnection.SupportedDataLength();
+    if (iCurrentPos == aWorkingBuffer.Length())
+        {
+        LOG("Current working buffer write finished");
+
+        aWorkingBuffer.Zero();
+        if(aNextBuffer.Length() > 0)
+            {
+
+            if (&aNextBuffer == &iSendBuf0)
+                {
+                iCurrentBuffer = EBuffer0;
+                LOG("Start switch to buffer 0");
+                }
+            else
+                {
+                iCurrentBuffer = EBuffer1;
+                LOG("Start switch to buffer 1");
+                }
+
+            iCurrentPos = 0;
+
+            if (supportedDataLength > 0)
+                {
+                if (aNextBuffer.Length() > supportedDataLength)
+                    {
+                    iCurrentSendPtr.Set(aNextBuffer.Ptr(), supportedDataLength);
+                    }
+                else
+                    {
+                    iCurrentSendPtr.Set(aNextBuffer.Ptr(), aNextBuffer.Length());
+                    }
+                //TODO
+                iCurrentSendBuf.Close();
+                iCurrentSendBuf.Create(iCurrentSendPtr);
+                iConnection.Transmit( iStatus, iCurrentSendBuf );
+//              iConnection.Transmit( iStatus, iCurrentSendPtr );
+                SetActive();
+                }
+            else
+                {
+                LOG("SupportedDataLength is invalid, value="<<supportedDataLength);
+                iSendBuf0.Zero();
+                iSendBuf1.Zero();
+                iCurrentBuffer = EBuffer0;
+                iSocket.Error(QtMobility::QLlcpSocket::UnknownSocketError);
+                }
+            }
+        }
+    else //means current working buffer still have data need to be sent
+        {
+        LOG("Current working buffer still has data need to be sent");
+        if (supportedDataLength > 0)
+            {
+            if (aWorkingBuffer.Length() - iCurrentPos > supportedDataLength)
+                {
+                iCurrentSendPtr.Set(aWorkingBuffer.Ptr() + iCurrentPos, supportedDataLength);
+                }
+            else
+                {
+                iCurrentSendPtr.Set(aWorkingBuffer.Ptr() + iCurrentPos, aWorkingBuffer.Length() - iCurrentPos);
+                }
+            // Sending data
+            //TODO
+            iCurrentSendBuf.Close();
+            iCurrentSendBuf.Create(iCurrentSendPtr);
+            iConnection.Transmit( iStatus, iCurrentSendBuf );
+
+//                    iConnection.Transmit( iStatus, iCurrentSendPtr );
+            SetActive();
+            }
+        else
+            {
+            LOG("SupportedDataLength is invalid, value="<<supportedDataLength);
+            iSendBuf0.Zero();
+            iSendBuf1.Zero();
+            iCurrentBuffer = EBuffer0;
+            iSocket.Error(QtMobility::QLlcpSocket::UnknownSocketError);
+            }
+        }
+    END
+    }
 void CLlcpSenderAO::RunL()
     {
     BEGIN
@@ -751,137 +842,13 @@ void CLlcpSenderAO::RunL()
         //emit BytesWritten signal
         iSocket.BytesWritten(iCurrentSendPtr.Length());
         iCurrentPos += iCurrentSendPtr.Length();
-        TInt supportedDataLength = iConnection.SupportedDataLength();
         if (iCurrentBuffer == EBuffer0)
             {
-
-            if (iCurrentPos == iSendBuf0.Length())
-                {
-                LOG("Buffer0 write finished");
-                iSendBuf0.Zero();
-                if(iSendBuf1.Length() > 0)
-                    {
-                    LOG("Start send buffer1 after buffer0 write finished");
-                    iCurrentBuffer = EBuffer1;
-
-                    iCurrentPos = 0;
-
-                    if (supportedDataLength > 0)
-                        {
-                        if (iSendBuf1.Length() > supportedDataLength)
-                            {
-                            iCurrentSendPtr.Set(iSendBuf1.Ptr(), supportedDataLength);
-                            }
-                        else
-                            {
-                            iCurrentSendPtr.Set(iSendBuf1.Ptr(), iSendBuf1.Length());
-                            }
-
-                        iConnection.Transmit( iStatus, iCurrentSendPtr );
-                        SetActive();
-                        }
-                    else
-                        {
-                        LOG("SupportedDataLength is invalid, value="<<supportedDataLength);
-                        iSendBuf0.Zero();
-                        iSendBuf1.Zero();
-                        iCurrentBuffer = EBuffer0;
-                        iSocket.Error(QtMobility::QLlcpSocket::UnknownSocketError);
-                        }
-                    }
-                }
-            else //means buffer0 still have data need to be sent
-                {
-                LOG("buffer0 still have data need to be sent");
-                if (supportedDataLength > 0)
-                    {
-                    if (iSendBuf0.Length() - iCurrentPos > supportedDataLength)
-                        {
-                        iCurrentSendPtr.Set(iSendBuf0.Ptr() + iCurrentPos, supportedDataLength);
-                        }
-                    else
-                        {
-                        iCurrentSendPtr.Set(iSendBuf0.Ptr() + iCurrentPos, iSendBuf0.Length() - iCurrentPos);
-                        }
-                    // Sending data
-                    iConnection.Transmit( iStatus, iCurrentSendPtr );
-                    SetActive();
-                    }
-                else
-                    {
-                    LOG("SupportedDataLength is invalid, value="<<supportedDataLength);
-                    iSendBuf0.Zero();
-                    iSendBuf1.Zero();
-                    iCurrentBuffer = EBuffer0;
-                    iSocket.Error(QtMobility::QLlcpSocket::UnknownSocketError);
-                    }
-                }
-
+            SendRestDataAndSwitchBuffer(iSendBuf0, iSendBuf1);
             }//if (iCurrentBuffer == EBuffer0)
         else //current working buffer is buffer1
             {
-            if (iCurrentPos == iSendBuf1.Length())
-                {
-                LOG("Buffer1 write finished");
-                //clear buffer1
-                iSendBuf1.Zero();
-                //check if any data in buffer0
-                if(iSendBuf0.Length() > 0)
-                    {
-                    LOG("Start send buffer0 after buffer1 write finished");
-                    iCurrentBuffer = EBuffer0;
-                    iCurrentPos = 0;
-
-                    if (supportedDataLength > 0)
-                        {
-                        if (iSendBuf0.Length() > supportedDataLength)
-                            {
-                            iCurrentSendPtr.Set(iSendBuf0.Ptr(), supportedDataLength);
-                            }
-                        else
-                            {
-                            iCurrentSendPtr.Set(iSendBuf0.Ptr(), iSendBuf0.Length());
-                            }
-
-                        iConnection.Transmit( iStatus, iCurrentSendPtr );
-                        SetActive();
-                        }
-                    else
-                        {
-                        LOG("SupportedDataLength is invalid, value="<<supportedDataLength);
-                        iSendBuf0.Zero();
-                        iSendBuf1.Zero();
-                        iCurrentBuffer = EBuffer0;
-                        iSocket.Error(QtMobility::QLlcpSocket::UnknownSocketError);
-                        }
-                    }
-                }
-            else //means buffer1 still have data need to be sent
-                {
-                LOG("buffer1 still have data need to be sent");
-                if (supportedDataLength > 0)
-                    {
-                    if (iSendBuf1.Length() - iCurrentPos > supportedDataLength)
-                        {
-                        iCurrentSendPtr.Set(iSendBuf1.Ptr() + iCurrentPos, supportedDataLength);
-                        }
-                    else
-                        {
-                        iCurrentSendPtr.Set(iSendBuf1.Ptr() + iCurrentPos, iSendBuf1.Length() - iCurrentPos);
-                        }
-                    // Sending data
-                    iConnection.Transmit( iStatus, iCurrentSendPtr );
-                    SetActive();
-                    }
-                else
-                    {
-                    LOG("SupportedDataLength is invalid, value="<<supportedDataLength);
-                    iSendBuf0.Zero();
-                    iSendBuf1.Zero();
-                    iCurrentBuffer = EBuffer0;
-                    iSocket.Error(QtMobility::QLlcpSocket::UnknownSocketError);
-                    }
-                }
+            SendRestDataAndSwitchBuffer(iSendBuf1, iSendBuf0);
             }
         }//if ( error == KErrNone )
     else

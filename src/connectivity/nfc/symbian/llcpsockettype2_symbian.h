@@ -203,6 +203,8 @@ private:
     CLlcpSenderAO( MLlcpConnOrientedTransporter& aConnection, CLlcpSocketType2& aSocket );
     // Second phase constructor
     void ConstructL();
+private:
+    void SendRestDataAndSwitchBuffer(RBuf8& aWorkingBuffer, RBuf8& aNextBuffer);
 
 private:
     /*!
@@ -224,6 +226,7 @@ private:
     TSendBuffer iCurrentBuffer;
     TPtrC8 iCurrentSendPtr;
     TInt iCurrentPos;
+    RBuf8 iCurrentSendBuf;
 };
 class CLlcpReceiverAO : public CActive
 {

@@ -186,13 +186,17 @@ void tst_qllcpsockettype2::echo()
     qint64 written = bytesWrittenSpy.first().at(0).value<qint64>();
 
     qDebug()<<"bytesWritten signal return value = "<<written;
-    while (written < echo.length())
+    while (written < block.size())
         {
         QSignalSpy bytesWrittenSpy(&socket, SIGNAL(bytesWritten(qint64)));
         QTRY_VERIFY(!bytesWrittenSpy.isEmpty());
-        written += bytesWrittenSpy.first().at(0).value<qint64>();
+        qint64 w = bytesWrittenSpy.first().at(0).value<qint64>();
+        qDebug()<<"got bytesWritten signal = "<<w;
+        written += w;
         }
-    QVERIFY(written == block.size());
+    qDebug()<<"Overall bytesWritten = "<<written;
+    qDebug()<<"Overall block size = "<<block.size();
+    QTRY_VERIFY(written == block.size());
     //Get the echoed data from server
     QTRY_VERIFY(!readyReadSpy.isEmpty());
     quint16 blockSize = 0;
@@ -294,7 +298,7 @@ void tst_qllcpsockettype2::echo_wait()
     QTRY_VERIFY(!bytesWrittenSpy.isEmpty());
     qint64 written = bytesWrittenSpy.first().at(0).value<qint64>();
 
-    while (written < echo.length())
+    while (written < block.size())
         {
         QSignalSpy bytesWrittenSpy(&socket, SIGNAL(bytesWritten(qint64)));
         ret = socket.waitForBytesWritten(Timeout);
@@ -594,11 +598,11 @@ public:
         {
         connect(&m_socket,SIGNAL(readyRead()),this,SLOT(gotReadyRead()));
         }
-slots:
+private slots:
     void gotReadyRead()
         {
         m_signalCount++;
-        qDebug()<<"Got ReadyRead() signal number = "<<m_singnalCount;
+        qDebug()<<"Got ReadyRead() signal number = "<<m_signalCount;
         const int Timeout = 3 * 1000;
         bool ret = m_socket.waitForReadyRead(Timeout);
         if (!ret)

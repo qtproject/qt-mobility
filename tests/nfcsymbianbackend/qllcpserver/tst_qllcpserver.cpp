@@ -171,7 +171,7 @@ void tst_QLlcpServer::newConnection()
     QTRY_VERIFY(!bytesWrittenSpy.isEmpty());
     qint64 written = bytesWrittenSpy.first().at(0).value<qint64>();
     qDebug()<<"Server::bytesWritten signal return value = " << written;
-    while (written < echo.length())
+    while (written < block.size())
         {
         QSignalSpy bytesWrittenSpy(socket, SIGNAL(bytesWritten(qint64)));
         QTRY_VERIFY(!bytesWrittenSpy.isEmpty());
@@ -262,7 +262,7 @@ void tst_QLlcpServer::newConnection_wait()
     QTRY_VERIFY(!bytesWrittenSpy.isEmpty());
     qint64 written = bytesWrittenSpy.first().at(0).value<qint64>();
 
-    while (written < echo.length())
+    while (written < block.size())
         {
         QSignalSpy bytesWrittenSpy(socket, SIGNAL(bytesWritten(qint64)));
         bool ret = socket->waitForBytesWritten(Timeout);
