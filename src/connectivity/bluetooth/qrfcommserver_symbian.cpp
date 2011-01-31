@@ -141,10 +141,7 @@ QBluetoothAddress QRfcommServer::serverAddress() const
     if (d->socket->state() == QBluetoothSocket::UnconnectedState)
         return QBluetoothAddress();
 
-    TBTSockAddr address;
-    d->ds->iSocket->LocalName(address);
-
-    return qTBTDevAddrToQBluetoothAddress(address.BTAddr());
+    return d->ds->localAddress();
 }
 
 quint16 QRfcommServer::serverPort() const
