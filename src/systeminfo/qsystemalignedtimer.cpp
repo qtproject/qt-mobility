@@ -59,7 +59,7 @@ QSystemDeviceInfoPrivate *getSystemAlignedTimerPrivate() { return alignedTimerPr
   \brief The QSystemAlignedTimer class provides a service for applications to synchronize their activity.
 
   QSystemAlignedTimer is a fuzzy timer that allows applications that must do periodic activity like
-  after being in sleep mode a certain period, to syncronize their activities in the same window of time.
+  after being in sleep mode a certain period, to synchronize their activities in the same window of time.
 
   For example send network "alive" messages at the same time (i.e. turn the wireless radio on at the same time).
 
