@@ -305,14 +305,14 @@ void S60RadioTunerControl::searchForward()
 {
 	m_fmTunerUtility->StationSeek(true);
 	m_scanning = true;
-	emit searchingChanged(true);
+	emit searchingChanged(m_scanning);
 }
 
 void S60RadioTunerControl::searchBackward()
 {
 	m_fmTunerUtility->StationSeek(false);
 	m_scanning = true;
-	emit searchingChanged(true);
+	emit searchingChanged(m_scanning);
 }
 
 bool S60RadioTunerControl::isValid() const
@@ -499,8 +499,12 @@ void S60RadioTunerControl::MrftoStationSeekComplete(TInt aError, TInt aFrequency
 	if (aError == KErrNone) {
 		m_radioError = QRadioTuner::NoError;
 		m_currentFreq = aFrequency;
+		emit searchingChanged(m_scanning);
 	} else {
 		m_radioError = QRadioTuner::OpenError;
+		emit searchingChanged(m_scanning);
+		m_errorString = QString("Scanning Error");
+		emit error(m_radioError);
 	}
 }
 
