@@ -53,6 +53,7 @@ MainWindow::MainWindow() :
     serviceProvider(0),
     markerManager(0),
     positionSource(0),
+    lastNavigator(0),
     tracking(true),
     firstUpdate(true)
 {
@@ -172,10 +173,15 @@ void MainWindow::showNavigateDialog()
 
             req.setTravelModes(nd.travelMode());
 
+            if (lastNavigator)
+                lastNavigator->deleteLater();
+
             Navigator *nvg = new Navigator(serviceProvider->routingManager(),
                                            serviceProvider->searchManager(),
                                            mapsWidget, nd.destinationAddress(),
                                            req);
+
+            lastNavigator = nvg;
 
             connect(nvg, SIGNAL(searchError(QGeoSearchReply::Error,QString)),
                     this, SLOT(showErrorMessage(QGeoSearchReply::Error,QString)));
