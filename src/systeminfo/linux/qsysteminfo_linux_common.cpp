@@ -3712,6 +3712,9 @@ void QSystemBatteryInfoLinuxCommonPrivate::getBatteryStats()
     }
 #endif
 
+    if(cType == QSystemBatteryInfo::UnknownCharger && !batteryIsPresent) {
+        cType = QSystemBatteryInfo::WallCharger;
+    }
     curChargeType = cType;
     currentVoltage = cVoltage;
     curChargeState = cState;
