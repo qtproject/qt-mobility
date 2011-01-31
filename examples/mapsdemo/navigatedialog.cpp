@@ -39,51 +39,57 @@
 **
 ****************************************************************************/
 
-#include "searchdialog.h"
+#include "navigatedialog.h"
 
 #include <QFormLayout>
 #include <QDialogButtonBox>
 #include <QVBoxLayout>
+#include <QMetaObject>
 
-SearchDialog::SearchDialog(QWidget *parent) :
+Q_DECLARE_METATYPE(QGeoRouteRequest::TravelMode)
+
+NavigateDialog::NavigateDialog(QWidget *parent) :
     QDialog(parent)
 {
     QFormLayout *formLayout = new QFormLayout;
     QVBoxLayout *vbox = new QVBoxLayout;
 
-    searchTermEdit = new QLineEdit;
-    formLayout->addRow("Search for", searchTermEdit);
+    addressEdit = new QLineEdit;
+    formLayout->addRow("Address", addressEdit);
 
-    whereCombo = new QComboBox;
-    whereCombo->addItem(tr("Nearby (<10km)"), 10000);
-    whereCombo->addItem(tr("Within 30 mins drive of me (<25km)"), 25000);
-    whereCombo->addItem(tr("Within 100km of me"), 100000);
-    whereCombo->addItem(tr("Anywhere in the world"), -1);
-    whereCombo->setCurrentIndex(1);
-    formLayout->addRow(tr("Where"), whereCombo);
+    modeCombo = new QComboBox;
+    modeCombo->addItem("Car", qVariantFromValue(QGeoRouteRequest::CarTravel));
+    modeCombo->addItem("Pedestrian", qVariantFromValue(QGeoRouteRequest::PedestrianTravel));
+    modeCombo->addItem("Bicycle", qVariantFromValue(QGeoRouteRequest::BicycleTravel));
+    modeCombo->addItem("Public Transit", qVariantFromValue(QGeoRouteRequest::PublicTransitTravel));
+    formLayout->addRow("Mode", modeCombo);
 
-    QDialogButtonBox *bb = new QDialogButtonBox(QDialogButtonBox::Ok |
-                                                QDialogButtonBox::Cancel,
-                                                Qt::Horizontal);
+    QDialogButtonBox *bb = new QDialogButtonBox;
+    bb->addButton(QDialogButtonBox::Ok);
+    bb->addButton(QDialogButtonBox::Cancel);
     connect(bb, SIGNAL(accepted()), this, SLOT(accept()));
     connect(bb, SIGNAL(rejected()), this, SLOT(reject()));
 
     vbox->addLayout(formLayout);
     vbox->addWidget(bb);
+
     setLayout(vbox);
+    setWindowTitle("Directions to address");
 }
 
-qreal SearchDialog::radius() const
-{
-    const int i = whereCombo->currentIndex();
-    return whereCombo->itemData(i).toReal();
-}
-
-SearchDialog::~SearchDialog()
+NavigateDialog::~NavigateDialog()
 {
 }
 
-QString SearchDialog::searchTerms() const
+QString NavigateDialog::destinationAddress() const
 {
-    return searchTermEdit->text();
+    return addressEdit->text();
+}
+
+QGeoRouteRequest::TravelModes NavigateDialog::travelMode() const
+{
+    QVariant v = modeCombo->itemData(modeCombo->currentIndex());
+    QGeoRouteRequest::TravelModes mode;
+    mode |= qVariantValue<QGeoRouteRequest::TravelMode>(v);
+    return mode;
 }

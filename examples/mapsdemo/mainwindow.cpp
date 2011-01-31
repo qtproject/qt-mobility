@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include "mainwindow.h"
+#include "navigator.h"
 
 #include <QCoreApplication>
 #include <QMenuBar>
@@ -66,9 +67,15 @@ MainWindow::MainWindow() :
 
     searchMenu->addAction("For address or name", this, SLOT(showSearchDialog()));
 
+    QMenu *navigateMenu = new QMenu("Directions");
+    mbar->addMenu(navigateMenu);
+
+    navigateMenu->addAction("From here to address", this, SLOT(showNavigateDialog()));
+
     setMenuBar(mbar);
 
     initialize();
+    setWindowTitle("Maps Demo");
 }
 
 MainWindow::~MainWindow()
@@ -156,6 +163,36 @@ void MainWindow::updateMyPosition(QGeoPositionInfo info)
     }
 }
 
+void MainWindow::showNavigateDialog()
+{
+    NavigateDialog nd;
+    if (nd.exec() == QDialog::Accepted) {
+        if (markerManager) {
+            QGeoRouteRequest req;
+
+            req.setTravelModes(nd.travelMode());
+
+            Navigator *nvg = new Navigator(serviceProvider->routingManager(),
+                                           serviceProvider->searchManager(),
+                                           mapsWidget, nd.destinationAddress(),
+                                           req);
+
+            connect(nvg, SIGNAL(searchError(QGeoSearchReply::Error,QString)),
+                    this, SLOT(showErrorMessage(QGeoSearchReply::Error,QString)));
+            connect(nvg, SIGNAL(routingError(QGeoRouteReply::Error,QString)),
+                    this, SLOT(showErrorMessage(QGeoRouteReply::Error,QString)));
+
+            mapsWidget->statusBar()->setText("Routing...");
+            mapsWidget->statusBar()->show();
+
+            nvg->start();
+
+            connect(nvg, SIGNAL(finished()),
+                    mapsWidget->statusBar(), SLOT(hide()));
+        }
+    }
+}
+
 void MainWindow::showSearchDialog()
 {
     SearchDialog sd;
@@ -168,6 +205,12 @@ void MainWindow::showSearchDialog()
 }
 
 void MainWindow::showErrorMessage(QGeoSearchReply::Error err, QString msg)
+{
+    QMessageBox::critical(this, tr("Error"), msg);
+    mapsWidget->statusBar()->hide();
+}
+
+void MainWindow::showErrorMessage(QGeoRouteReply::Error err, QString msg)
 {
     QMessageBox::critical(this, tr("Error"), msg);
     mapsWidget->statusBar()->hide();
