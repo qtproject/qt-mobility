@@ -75,6 +75,7 @@ MainWindow::MainWindow() :
     setMenuBar(mbar);
 
     initialize();
+    setWindowTitle("Maps Demo");
 }
 
 MainWindow::~MainWindow()

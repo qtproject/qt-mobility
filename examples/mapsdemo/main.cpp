@@ -56,7 +56,7 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
 
     QApplication::setOrganizationName("Nokia");
-    QApplication::setApplicationName("MapsNavigatorExample");
+    QApplication::setApplicationName("MapsDemo");
 
     QSettings settings;
 
