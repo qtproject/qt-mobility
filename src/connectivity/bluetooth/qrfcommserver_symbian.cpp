@@ -43,6 +43,7 @@
 #include "qrfcommserver_p.h"
 #include "qbluetoothsocket.h"
 #include "qbluetoothsocket_p.h"
+#include "qbluetoothlocaldevice.h"
 #include "symbian/utils_symbian_p.h"
 
 #include <QTimer>
@@ -53,7 +54,7 @@
 QTM_BEGIN_NAMESPACE
 
 QRfcommServerPrivate::QRfcommServerPrivate()
-: pendingSocket(0), maxPendingConnections(1)
+: pendingSocket(0), maxPendingConnections(1), securityFlags(QBluetooth::NoSecurity)
 {
     socket = new QBluetoothSocket(QBluetoothSocket::RfcommSocket);    
     ds = socket->d_ptr;
@@ -91,6 +92,20 @@ bool QRfcommServer::listen(const QBluetoothAddress &address, quint16 port)
         addr.SetPort(port);
 
     TBTServiceSecurity security;
+    switch (d->securityFlags) {
+        case QBluetooth::Authentication:
+            security.SetAuthentication(ETrue);
+            break;
+        case QBluetooth::Authorization:
+            security.SetAuthorisation(ETrue);
+            break;
+        case QBluetooth::Encryption:
+            security.SetEncryption(ETrue);
+            break;
+        case QBluetooth::NoSecurity:
+        default:
+            break;
+    }
     addr.SetSecurity(security);
     d->ds->iSocket->Bind(addr);
     d->socket->setSocketState(QBluetoothSocket::BoundState);
