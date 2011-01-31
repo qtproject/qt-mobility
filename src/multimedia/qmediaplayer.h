@@ -47,6 +47,8 @@
 #include "qmediaobject.h"
 #include "qmediacontent.h"
 
+#include <QtNetwork/qnetworkconfiguration.h>
+
 QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
@@ -151,7 +153,7 @@ public:
     Error error() const;
     QString errorString() const;
 
-    QString currentNetworkConfigurationId() const;
+    QNetworkConfiguration currentNetworkConfiguration() const;
 
 public Q_SLOTS:
     void play();
@@ -167,7 +169,7 @@ public Q_SLOTS:
     void setMedia(const QMediaContent &media, QIODevice *stream = 0);
     void setPlaylist(QMediaPlaylist *playlist);
 
-    void setNetworkConfigurations(const QList<QString> &configurationIds);
+    void setNetworkConfigurations(const QList<QNetworkConfiguration> &configurations);
 
 Q_SIGNALS:
     void mediaChanged(const QMediaContent &media);
@@ -190,7 +192,7 @@ Q_SIGNALS:
 
     void error(QMediaPlayer::Error error);
 
-    void networkConfigurationChanged(const QString &configurationId);
+    void networkConfigurationChanged(const QNetworkConfiguration &configuration);
 public:
     virtual bool bind(QObject *);
     virtual void unbind(QObject *);

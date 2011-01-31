@@ -324,8 +324,8 @@ QMediaPlayer::QMediaPlayer(QObject *parent, QMediaPlayer::Flags flags, QMediaSer
                 addPropertyWatch("bufferStatus");
         }
         if (d->networkAccessControl != 0) {
-            connect(d->networkAccessControl, SIGNAL(configurationChanged(QString)),
-            this, SIGNAL(networkConfigurationChanged(QString)));
+            connect(d->networkAccessControl, SIGNAL(configurationChanged(QNetworkConfiguration)),
+            this, SIGNAL(networkConfigurationChanged(QNetworkConfiguration)));
         }
     }
 }
@@ -418,20 +418,18 @@ void QMediaPlayer::setPlaylist(QMediaPlaylist *playlist)
 }
 
 /*!
-    Sets the network access point via it's Id for remote media playback.
-    \a configurationIds contains, in ascending preferential order, a list of
-    configiuration Id's that can be used for network access.
+    Sets the network access points for remote media playback.
+    \a configurations contains, in ascending preferential order, a list of
+    configuration  that can be used for network access.
 
     This will invalidate the choice of previous configurations.
-    Note: For Qt 4.7 and above the id's can be extracted from QNetworkConfiguration::identifier()
-    \sa QMediaplayer networkConfigurationChanged()
 */
-void QMediaPlayer::setNetworkConfigurations(const QList<QString> &configurationIds)
+void QMediaPlayer::setNetworkConfigurations(const QList<QNetworkConfiguration> &configurations)
 {
     Q_D(QMediaPlayer);
 
     if (d->networkAccessControl)
-        d->networkAccessControl->setConfigurations(configurationIds);
+        d->networkAccessControl->setConfigurations(configurations);
 }
 
 QMediaPlayer::State QMediaPlayer::state() const
@@ -554,20 +552,19 @@ QString QMediaPlayer::errorString() const
 }
 
 /*!
-    Returns the current network access point id in use.
-    An empty string indicates
-    that this feature is not available or that none of the
-    current supplied id's are in use.
-    Note: for Qt 4.7 and above the id is equivalent to QNetworkConfiguration::identifier()
+    Returns the current network access point  in use.
+    If a default contructed QNetworkConfiguration is returned
+    this feature is not available or that none of the
+    current supplied configurations are in use.
 */
-QString QMediaPlayer::currentNetworkConfigurationId() const
+QNetworkConfiguration QMediaPlayer::currentNetworkConfiguration() const
 {
     Q_D(const QMediaPlayer);
 
     if (d->networkAccessControl)
         return d_func()->networkAccessControl->currentConfiguration();
 
-    return QString();
+    return QNetworkConfiguration();
 }
 
 //public Q_SLOTS:
@@ -1078,27 +1075,23 @@ void QMediaPlayer::setVideoOutput(QAbstractVideoSurface *surface)
 */
 
 /*!
-   \fn void QMediaPlayer::networkConfigurationChanged(const QString &configurationId)
+   \fn void QMediaPlayer::networkConfigurationChanged(const QNetworkConfiguration &configuration)
 
-    Signal that the active in use network access point Id has been changed to \a configurationId and all subsequent network access will this use \a configurationId.
-    note: For Qt 4.7 and above a \v configurationId is equivalent to QNetworkConfiguration::identifier()
+    Signal that the active in use network access point  has been changed to \a configuration and all subsequent network access will use this \a configuration.
 */
 
 /*!
     \enum QMediaPlayer::Flag
 
-    \value LowLatency
-            The player is expected to be used with simple audio formats,
+    \value LowLatency       The player is expected to be used with simple audio formats,
             but playback should start without significant delay.
             Such playback service can be used for beeps, ringtones, etc.
 
-    \value StreamPlayback
-            The player is expected to play QIODevice based streams.
+    \value StreamPlayback   The player is expected to play QIODevice based streams.
             If passed to QMediaPlayer constructor, the service supporting
             streams playback will be chosen.
 
-    \value VideoSurface
-            The player is expected to be able to render to a
+    \value VideoSurface     The player is expected to be able to render to a
             QAbstractVideoSurface \l {setVideoOutput()}{output}.
 */
 
