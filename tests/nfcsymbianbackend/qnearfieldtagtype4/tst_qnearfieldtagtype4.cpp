@@ -676,6 +676,11 @@ void tst_qnearfieldtagtype4::testRawAccessAndNdefAccess(const QList<QNdefMessage
     message.append(textRecord);
 
     QByteArray newNdefMessageContent = message.toByteArray();
+    quint16 ndefMessageContentLen = newNdefMessageContent.count();
+    temp = ndefMessageContentLen & 0x00FF;
+    newNdefMessageContent.push_front((char)temp);
+    temp = (ndefMessageContentLen >> 8) & 0x00FF;
+    newNdefMessageContent.push_front((char)temp);
 
     // ndef file is selected
     QNearFieldTarget::RequestId id6 = tester.target->write(newNdefMessageContent, 0);
@@ -690,7 +695,8 @@ void tst_qnearfieldtagtype4::testRawAccessAndNdefAccess(const QList<QNdefMessage
     QTRY_COMPARE(ndefMessageReadSpy.count(), ndefReadCount);
 
     const QNdefMessage& ndefMessage_new(ndefMessageReadSpy.first().at(0).value<QNdefMessage>());
-    QCOMPARE(newNdefMessageContent, ndefMessage_new.toByteArray());
+
+    QCOMPARE(newNdefMessageContent.right(newNdefMessageContent.count() - 2), ndefMessage_new.toByteArray());
     QCOMPARE(errSpy.count(), errCount);
 }
 
