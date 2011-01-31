@@ -348,7 +348,7 @@ QGeoCoordinate QGeoTiledMapData::center() const
 /*!
     \reimp
 */
-void QGeoTiledMapData::setZoomLevel(qreal zoomLevel)
+void QGeoTiledMapData::setZoomLevel(qreal zoomLevelf)
 {
     Q_D(QGeoTiledMapData);
 
@@ -361,6 +361,7 @@ void QGeoTiledMapData::setZoomLevel(qreal zoomLevel)
     }
 
     qreal oldZoomLevel = d->zoomLevel;
+    int zoomLevel = qRound(zoomLevelf);
 
     QGeoMapData::setZoomLevel(zoomLevel);
 
