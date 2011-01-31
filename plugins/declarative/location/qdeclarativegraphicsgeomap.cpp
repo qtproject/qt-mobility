@@ -53,9 +53,8 @@
 
 #include <QGraphicsSceneMouseEvent>
 #include <QDeclarativeContext>
+#include <QtDeclarative/qdeclarativeinfo.h>
 #include <QModelIndex>
-
-#include <QDebug>
 
 QTM_BEGIN_NAMESPACE
 
@@ -140,8 +139,10 @@ void QDeclarativeGraphicsGeoMap::componentComplete()
 {
     componentCompleted_ = true;
     QDeclarativeItem::componentComplete();
-    if (!mapData_)
+    if (!mapData_) {
+        qmlInfo(this) << tr("Plugin is not set for Map, Map cannot be populated.");
         return;
+    }
 
     QObjectList kids = children();
     for (int i = 0; i < kids.size(); ++i) {
@@ -206,8 +207,10 @@ void QDeclarativeGraphicsGeoMap::geometryChanged(const QRectF &newGeometry,
 
 void QDeclarativeGraphicsGeoMap::setPlugin(QDeclarativeGeoServiceProvider *plugin)
 {
-    if (plugin_)
+    if (plugin_) {
+        qmlInfo(this) << tr("Plugin is a write-once property, and cannot be set again.");
         return;
+    }
 
     plugin_ = plugin;
 
@@ -589,6 +592,8 @@ void QDeclarativeGraphicsGeoMap::pan(int dx, int dy)
     if (mapData_) {
         mapData_->pan(dx, dy);
         update();
+    } else {
+        qmlInfo(this) << tr("Map plugin is not set, cannot pan.");
     }
 }
 
@@ -627,8 +632,10 @@ QDeclarativeGeoMapMouseEvent* QDeclarativeGraphicsGeoMap::createMapMouseEvent(QG
 
 void QDeclarativeGraphicsGeoMap::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-    if (!mapData_)
+    if (!mapData_) {
+        qmlInfo(this) << tr("Map plugin is not set, mouse event cannot be processed.");
         return;
+    }
 
     qWarning() << "map press";
 
@@ -658,16 +665,17 @@ void QDeclarativeGraphicsGeoMap::mousePressEvent(QGraphicsSceneMouseEvent *event
 
 void QDeclarativeGraphicsGeoMap::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
-    qWarning() << "map release";
-
     QDeclarativeGeoMapMouseEvent *mouseEvent = createMapMouseEvent(event);
 
     if (activeMouseArea_)
         activeMouseArea_->releaseEvent(mouseEvent);
     activeMouseArea_ = 0;
     /*
-    if (!mapData_)
+
+    if (!mapData_) {
+        qmlInfo(this) << tr("Map plugin is not set, mouse event cannot be processed.");
         return;
+    }
 
     QList<QGeoMapObject*> objects = mapData_->mapObjectsAtScreenPosition(event->pos());
 
@@ -691,7 +699,10 @@ void QDeclarativeGraphicsGeoMap::mouseReleaseEvent(QGraphicsSceneMouseEvent *eve
 
 void QDeclarativeGraphicsGeoMap::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 {
-    qWarning() << "map double click";
+    if (!mapData_) {
+        qmlInfo(this) << tr("Map plugin is not set, mouse event cannot be processed.");
+        return;
+    }
 
     QList<QGeoMapObject*> objects = mapData_->mapObjectsAtScreenPosition(event->pos());
 
@@ -877,6 +888,8 @@ void QDeclarativeGraphicsGeoMap::internalConnectivityModeChanged(QGraphicsGeoMap
 
 void QDeclarativeGraphicsGeoMap::addMapObject(QDeclarativeGeoMapObject *object)
 {
+    if (!mapData_)
+        qmlInfo(this) << tr("Map plugin is not set, map object cannot be added.");
     if (!mapData_ || !object || objectMap_.contains(object->mapObject()))
         return;
     objectMap_.insert(object->mapObject(), object);
@@ -893,6 +906,8 @@ void QDeclarativeGraphicsGeoMap::addMapObject(QDeclarativeGeoMapObject *object)
 
 void QDeclarativeGraphicsGeoMap::removeMapObject(QDeclarativeGeoMapObject *object)
 {
+    if (!mapData_)
+        qmlInfo(this) << tr("Map plugin is not set, map object cannot be removed.");
     if (!mapData_ || !object || !objectMap_.contains(object->mapObject()))
         return;
     objectMap_.remove(object->mapObject());
