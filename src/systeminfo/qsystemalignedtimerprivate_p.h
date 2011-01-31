@@ -40,73 +40,34 @@
 ****************************************************************************/
 
 
-#ifndef QSYSTEMALIGNEDTIMER_H
-#define QSYSTEMALIGNEDTIMER_H
+#ifndef QSYSTEMALIGNEDTIMERPRIVATE_P_H
+#define QSYSTEMALIGNEDTIMERPRIVATE_P_H
 
 #include <QObject>
-#include <QTime>
-#include <QTimer>
-#include "qmobilityglobal.h"
-
-#include "qsystemalignedtimerprivate_p.h"
+#include "qsystemalignedtimer.h"
 
 QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
 
-class Q_SYSINFO_EXPORT QSystemAlignedTimer : public QObject
+class QSystemAlignedTimerPrivate : public QObject
 {
     Q_OBJECT
-
-    Q_PROPERTY(int minimumInterval READ minimumInterval WRITE setMinimumInterval)
-    Q_PROPERTY(int maximumInterval READ maximumInterval WRITE setMaximumInterval)
-
-    Q_PROPERTY(bool singleShot READ isSingleShot WRITE setSingleShot)
 public:
+    explicit QSystemAlignedTimerPrivate(QObject *parent = 0);
 
-    explicit QSystemAlignedTimer(QObject *parent = 0);
-    ~QSystemAlignedTimer();
+    int id;
+    bool isTimerRunning;
+    bool single;
 
-    enum AlignedTimerError {
-      NoError=0,
-      AlignedTimerNotSupported,
-      InvalidArgument,
-      TimerFailed
-    };
-
-    Q_INVOKABLE void wokeUp();
-
-    int minimumInterval() const;
-    void setMinimumInterval(int seconds) const;
-
-    int maximumInterval() const;
-    void setMaximumInterval(int seconds) const;
-
-    void setSingleShot(bool singleShot);
-    bool isSingleShot() const;
-
-    Q_INVOKABLE static void singleShot(int minimumTime, int maximumTime, QObject *receiver, const char *member);
-    AlignedTimerError lastError() const;
-
-public Q_SLOTS:
-    void start(int minimumTime, int maximumTime);
-
-    void start();
-    void stop();
-
-Q_SIGNALS:
-    void timeout();
-    void error(QSystemAlignedTimer::AlignedTimerError error);
 
 private:
-    QSystemAlignedTimerPrivate *d;
-    QSystemAlignedTimer::AlignedTimerError lastTimerError;
-};
+    QTimer *alignedTimer;
+     void timerEvent(QTimerEvent *);
 
-// FIXME how to know if this fails on some platforms where it is not supported, i.e. windows or symbian
-// before mobility 1.2
+};
 
 QTM_END_NAMESPACE
 
 QT_END_HEADER
 
-#endif // QSYSTEMALIGNEDTIMER_H
+#endif // QSYSTEMALIGNEDTIMERPRIVATE_P_H
