@@ -4,20 +4,19 @@ include(qt-cpp-ignore.qdocconf)
 include(qt-defines.qdocconf)
 include(qtmobility-cpp-ignore.qdocconf)
 
-indexes = qt.index
+indexes         = ../src/qt.index
 
-language                = Cpp
+language        = Cpp
 
-sourceencoding = UTF-8
-outputencoding = UTF-8
+sourceencoding  = UTF-8
+outputencoding  = UTF-8
 naturallanguage = en_US
 
-project                 = QtMobility
-description             = Qt Mobility Project Library Reference Documentation
-versionsym              =
-version                 = Mobility 1.2
-url                     = http://qt.nokia.com/doc/qtmobility-1.2
-online                  = true
+project         = Qt Mobility
+description     = Qt Mobility Project Library Reference Documentation
+versionsym      =
+version         = 1.2
+url             = http://qt.nokia.com/doc/qtmobility-1.2
 
 sources.fileextensions = "*.cpp *.qdoc *.mm *.qml"
 examples.fileextensions = "*.cpp *.h *.js *.xq *.svg *.xml *.ui *.qhp *.qhcp *.qml"
