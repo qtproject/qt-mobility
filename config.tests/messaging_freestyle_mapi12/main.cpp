@@ -39,6 +39,7 @@
 **
 ****************************************************************************/
 #include <mmailboxcontentobserver.h>
+#include <memailrequestobserver.h>
 
 int main(int, char**)
 {
