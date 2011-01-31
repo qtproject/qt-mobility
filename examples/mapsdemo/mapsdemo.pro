@@ -1,6 +1,6 @@
 QT += network
 
-TARGET = MapsDemo
+TARGET = mapsdemo
 TEMPLATE = app
 
 RESOURCES += mapsdemo.qrc
