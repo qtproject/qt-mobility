@@ -68,10 +68,9 @@ Item {
                                     latitude : -27
                                     longitude : 179
                                     }
-                radius : 1000000.0
-		color: "red"
+                color : "red"
+                radius : 1000.0
                 MapMouseArea {
-		    anchors.fill: parent
                     onEntered : { console.log('entered circle') }
                     onExited : { console.log('exited circle') }
                     onPositionChanged : { console.log('moved in circle') }
