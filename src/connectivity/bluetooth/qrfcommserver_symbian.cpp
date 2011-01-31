@@ -83,9 +83,11 @@ bool QRfcommServer::listen(const QBluetoothAddress &address, quint16 port)
     Q_D(QRfcommServer);
 
     TRfcommSockAddr addr;
-// TODO: isValid() is missing...
-//    if (address.isValid())
-//        addr.SetBTAddr(TBTDevAddr(address.toUInt64()));
+    if (!address.isNull())
+        addr.SetBTAddr(TBTDevAddr(address.toUInt64()));
+    else
+        addr.SetBTAddr(TBTDevAddr(Q_UINT64_C(0)));
+
     if (port == 0)
         addr.SetPort(KRfcommPassiveAutoBind);
     else
