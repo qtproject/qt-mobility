@@ -400,6 +400,17 @@ Qt Mobility delivers a set of new APIs for mobile device functionality.
 This package contains the System Information QML plugin for QtDeclarative.
 
 
+%package -n libdeclarative-connectivity
+Summary:    Qt Mobility Connectivity QML plugin
+Group:      System/Libraries
+Requires:   %{name} = %{version}-%{release}
+
+%description -n libdeclarative-connectivity
+Qt Mobility delivers a set of new APIs for mobile device functionality.
+
+This package contains the Connectivity QML plugin for QtDeclarative.
+
+
 %package -n servicefw
 Summary:    Qt Mobility Service Framework tool
 Group:      Development/Tools
@@ -567,6 +578,9 @@ find %{buildroot}%{_libdir}/qtmobility -type f -perm /u+x,g+x,o+x \( -false \
 %post -n libqtversitorganizer1 -p /sbin/ldconfig
 
 %postun -n libqtversitorganizer1 -p /sbin/ldconfig
+
+
+
 
 
 
@@ -1259,6 +1273,13 @@ find %{buildroot}%{_libdir}/qtmobility -type f -perm /u+x,g+x,o+x \( -false \
 %{_libdir}/qt4/imports/QtMobility/systeminfo/libdeclarative_systeminfo.so
 %{_libdir}/qt4/imports/QtMobility/systeminfo/qmldir
 # << files libdeclarative-systeminfo
+
+%files -n libdeclarative-connectivity
+%defattr(-,root,root,-)
+# >> files libdeclarative-connectivity
+%{_libdir}/qt4/imports/QtMobility/connectivity/libdeclarative_connectivity.so
+%{_libdir}/qt4/imports/QtMobility/connectivity/qmldir
+# << files libdeclarative-connectivity
 
 %files -n servicefw
 %defattr(-,root,root,-)

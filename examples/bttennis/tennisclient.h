@@ -45,6 +45,8 @@
 #include <qbluetoothsocket.h>
 
 #include <QtCore/QObject>
+#include <QtCore/QTime>
+#include <QtCore/QTimer>
 
 QTM_BEGIN_NAMESPACE
 class QBluetoothSocket;
@@ -78,14 +80,21 @@ signals:
     void connected(const QString &name);
     void disconnected();
 
+    void lag(int ms);
+
 private slots:
     void readSocket();
     void connected();
+    void sendEcho();
+    void socketDisconnected();
 
 private:
     QBluetoothSocket *socket;
     QDataStream *stream;
     QBluetoothServiceInfo serviceInfo;
+    QTime *elapsed;
+    QTimer lagTimer;
+    int lagTimeout;
 };
 //! [declaration]
 

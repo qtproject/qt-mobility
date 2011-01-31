@@ -42,10 +42,13 @@
 #define TENNISSERVER_H
 
 #include <qbluetoothserviceinfo.h>
+#include <qbluetoothsocket.h>
 
 #include <QtCore/QObject>
 #include <QtCore/QList>
 #include <QtCore/QDataStream>
+#include <QtCore/QTime>
+#include <QtCore/QTimer>
 
 QTM_BEGIN_NAMESPACE
 class QL2capServer;
@@ -76,17 +79,24 @@ signals:
     void moveRightPaddle(int y);
     void clientDisconnected(const QString &name);
     void clientConnected(const QString &name);
+    void lag(int ms);
 
 private slots:
     void clientConnected();
     void clientDisconnected();
     void readSocket();
+    void sendEcho();
+    void socketError(QBluetoothSocket::SocketError err);
 
 private:
     QL2capServer *l2capServer;
     QBluetoothServiceInfo serviceInfo;
     QBluetoothSocket *clientSocket;
     QDataStream *stream;
+    QTime elapsed;
+    QTime ballElapsed;
+    QTimer lagTimer;
+    int lagReplyTimeout;
 };
 //! [declaration]
 
