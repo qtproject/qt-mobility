@@ -75,6 +75,8 @@ public:
     QGeoMapGroupObject* containerObject;
 
     qreal zoomLevel;
+    qreal bearing;
+    qreal tilt;
     QGeoCoordinate center;
     QSizeF windowSize;
     QGraphicsGeoMap::MapType mapType;

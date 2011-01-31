@@ -267,6 +267,90 @@ void QGeoMappingManagerEngine::setMaximumZoomLevel(qreal maximumZoom)
 }
 
 /*!
+    Return whether map bearing is supported by this engine.
+*/
+bool QGeoMappingManagerEngine::supportsMapBearing() const
+{
+    Q_D(const QGeoMappingManagerEngine);
+    return d->supportsMapBearing;
+}
+
+/*!
+    Return whether tilting is supported by this engine.
+*/
+bool QGeoMappingManagerEngine::supportsTilting() const
+{
+    Q_D(const QGeoMappingManagerEngine);
+    return d->supportsTilting;
+}
+
+/*!
+    Returns minimum tilt supported by this engine.
+*/
+qreal QGeoMappingManagerEngine::minimumTilt() const
+{
+    Q_D(const QGeoMappingManagerEngine);
+    return d->minimumTilt;
+}
+
+/*!
+    Returns maximum tilt supported by this engine.
+*/
+qreal QGeoMappingManagerEngine::maximumTilt() const
+{
+    Q_D(const QGeoMappingManagerEngine);
+    return d->maximumTilt;
+}
+
+/*!
+    Sets the minimum tilt supported by this engine to \a minimumTilt.
+
+    Subclasses of QGeoMappingManagerEngine should use this function to ensure
+    minimumTilt() provides accurate information.
+*/
+void QGeoMappingManagerEngine::setMinimumTilt(qreal minimumTilt)
+{
+    Q_D(QGeoMappingManagerEngine);
+    d->minimumTilt = minimumTilt;
+}
+
+/*!
+    Sets the maximum tilt supported by this engine to \a maximumTilt.
+
+    Subclasses of QGeoMappingManagerEngine should use this function to ensure
+    maximumTilt() provides accurate information.
+*/
+void QGeoMappingManagerEngine::setMaximumTilt(qreal maximumTilt)
+{
+    Q_D(QGeoMappingManagerEngine);
+    d->maximumTilt = maximumTilt;
+}
+
+/*!
+    Sets whether map bearing is supported by this engine.
+
+    Subclasses of QGeoMappingManagerEngine should use this function to ensure
+    supportsMapBearing() provides accurate information.
+*/
+void QGeoMappingManagerEngine::setSupportsMapBearing(bool supportsMapBearing)
+{
+    Q_D(QGeoMappingManagerEngine);
+    d->supportsMapBearing = supportsMapBearing;
+}
+
+/*!
+    Sets whether tilting is supported by this engine to \a supportsTilting.
+
+    Subclasses of QGeoMappingManagerEngine should use this function to ensure
+    supportsTilting() provides accurate information.
+*/
+void QGeoMappingManagerEngine::setSupportsTilting(bool supportsTilting)
+{
+    Q_D(QGeoMappingManagerEngine);
+    d->supportsTilting = supportsTilting;
+}
+
+/*!
     Sets the locale to be used by the this manager to \a locale.
 
     If this mapping manager supports returning map labels
@@ -292,7 +376,12 @@ QLocale QGeoMappingManagerEngine::locale() const
 *******************************************************************************/
 
 QGeoMappingManagerEnginePrivate::QGeoMappingManagerEnginePrivate()
-    : managerVersion(-1) {}
+    : managerVersion(-1),
+      supportsMapBearing(false),
+      supportsTilting(false),
+      minimumTilt(0),
+      maximumTilt(0)
+ {}
 
 QGeoMappingManagerEnginePrivate::~QGeoMappingManagerEnginePrivate() {}
 

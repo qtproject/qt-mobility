@@ -79,6 +79,12 @@ public:
     qreal minimumZoomLevel() const;
     qreal maximumZoomLevel() const;
 
+    bool supportsMapBearing() const;
+
+    bool supportsTilting() const;
+    qreal minimumTilt() const;
+    qreal maximumTilt() const;
+
     void setLocale(const QLocale &locale);
     QLocale locale() const;
 
@@ -90,6 +96,12 @@ protected:
 
     void setMinimumZoomLevel(qreal minimumZoom);
     void setMaximumZoomLevel(qreal maximumZoom);
+
+    void setMaximumTilt(qreal maximumTilt);
+    void setMinimumTilt(qreal minimumTilt);
+
+    void setSupportsMapBearing(bool supportsMapBearing);
+    void setSupportsTilting(bool supportsTilting);
 
     QGeoMappingManagerEnginePrivate* d_ptr;
 

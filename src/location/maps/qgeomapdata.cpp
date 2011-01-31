@@ -204,6 +204,99 @@ qreal QGeoMapData::zoomLevel() const
 }
 
 /*!
+    Returns whether map bearing is supported by this engine.
+*/
+bool QGeoMapData::supportsMapBearing()
+{
+    return d_ptr->engine->supportsMapBearing();
+}
+
+/*!
+    Sets the bearing of the map to \a bearing.
+*/
+void QGeoMapData::setBearing(qreal bearing)
+{
+    if (!supportsMapBearing() || d_ptr->bearing == bearing)
+        return;
+
+    d_ptr->bearing = bearing;
+
+    if (!d_ptr->blockPropertyChangeSignals)
+        emit bearingChanged(d_ptr->bearing);
+}
+
+/*!
+    \property QGeoMapData::bearing
+
+    Returns the current bearing of the map.
+*/
+qreal QGeoMapData::bearing() const
+{
+    return d_ptr->bearing;
+}
+
+/*!
+    Returns whether map tilting is supported by this engine.
+*/
+bool QGeoMapData::supportsTilting()
+{
+    return d_ptr->engine->supportsTilting();
+}
+
+/*!
+    Returns minimum tilt supported by this engine.
+*/
+qreal QGeoMapData::minimumTilt()
+{
+    return d_ptr->engine->minimumTilt();
+}
+
+/*!
+    Returns maximum tilt supported by this engine.
+*/
+qreal QGeoMapData::maximumTilt()
+{
+    return d_ptr->engine->maximumTilt();
+}
+
+/*!
+    \property QGeoMapData::tilt
+
+    Sets the tilt of the map to \a tilt.
+
+    If \a tilt is less than minimumTilt() then minimumTilt()
+    will be used, and if \a tilt is  larger than
+    maximumTilt() then maximumTilt() will be used.
+*/
+void QGeoMapData::setTilt(qreal tilt)
+{
+    if (!d_ptr->engine->supportsTilting())
+        return;
+
+    tilt = qMin(tilt, d_ptr->engine->maximumTilt());
+    tilt = qMax(tilt, d_ptr->engine->minimumTilt());
+
+    if (d_ptr->tilt == tilt)
+        return;
+
+    d_ptr->tilt = tilt;
+
+    if (!d_ptr->blockPropertyChangeSignals)
+        emit tiltChanged(d_ptr->tilt);
+}
+
+/*!
+    \property QGeoMapData::tilt
+
+    Returns the current tilt of the map.
+
+*/
+qreal QGeoMapData::tilt() const
+{
+    return d_ptr->tilt;
+}
+
+/*!
     Pans the map view \a dx pixels in the x direction and \a dy pixels
     in the y direction.
 
@@ -634,6 +727,8 @@ QGeoMapDataPrivate::QGeoMapDataPrivate(QGeoMapData *parent, QGeoMappingManagerEn
     : engine(engine),
       containerObject(0),
       zoomLevel(-1.0),
+      bearing(-1.0),
+      tilt(-1.0),
       blockPropertyChangeSignals(false),
       q_ptr(parent) {}
 
