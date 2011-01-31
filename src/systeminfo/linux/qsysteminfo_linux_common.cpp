@@ -2991,6 +2991,7 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoLinuxCommonPrivate::currentPowerS
 
  bool QSystemDeviceInfoLinuxCommonPrivate::currentBluetoothPowerState()
  {
+     bool powered = false;
      QDBusInterface *connectionInterface;
      connectionInterface = new QDBusInterface("org.bluez",
                                               "/",
@@ -3009,17 +3010,18 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoLinuxCommonPrivate::currentPowerS
                  QDBusReply<QVariantMap > reply =  adapterInterface->call(QLatin1String("GetProperties"));
                  QVariant var;
                  QVariantMap map = reply.value();
-               //  qDebug() << Q_FUNC_INFO << map;
                  QString property = "Powered";
                  if (map.contains(property)) {
-                     btPowered = map.value(property).toBool();
+                     powered =  map.value(property).toBool();
                  }
-             }
+             } else {
+                  powered = false;
+              }
          } else {
-             btPowered = false;
+             powered = false;
          }
      }
-     return btPowered;
+     return btPowered = powered;
  }
 
 

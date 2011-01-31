@@ -42,8 +42,12 @@
 
 #include "qsystemalignedtimer.h"
 
+#include "qsystemalignedtimerprivate_p.h"
+
 QTM_BEGIN_NAMESPACE
+
 Q_GLOBAL_STATIC(QSystemAlignedTimerPrivate, alignedTimerPrivate)
+
 #ifdef QT_SIMULATOR
 QSystemAlignedTimerPrivate *getSystemAlignedTimerPrivate() { return alignedTimerPrivate(); }
 #endif
@@ -243,24 +247,7 @@ bool QSystemAlignedTimer::isSingleShot() const
   */
 QSystemAlignedTimer::AlignedTimerError QSystemAlignedTimer::lastError() const
 {
-    return d->lastTimerError;
-}
-
-/*!
-   Constructs a QSystemAlignedTimerPrivate object with the given \a parent.
-  */
-QSystemAlignedTimerPrivate::QSystemAlignedTimerPrivate(QObject *parent)
- : QObject(parent), id(0), isTimerRunning(0), single(0)
-{
-    lastTimerError = QSystemAlignedTimer::AlignedTimerNotSupported;
-}
-
-/*!
-  \internal
-  */
-void QSystemAlignedTimerPrivate::timerEvent(QTimerEvent *)
-{
-
+    return lastTimerError;
 }
 
 

@@ -23,9 +23,10 @@ SOURCES += qsystemgeneralinfo.cpp \
     qsystemscreensaver.cpp \
     qsystemstorageinfo.cpp \
     qsystembatteryinfo.cpp \
-    qsystemalignedtimer.cpp
+    qsystemalignedtimer.cpp \
+    qsystemalignedtimerprivate.cpp
 
-PRIVATE_HEADERS += qsysteminfocommon_p.h
+PRIVATE_HEADERS += qsysteminfocommon_p.h qsystemalignedtimerprivate_p.h
 
 DEFINES += QT_MAKEDLL
 
@@ -295,7 +296,7 @@ simulator {
     qtAddLibrary(QtMobilitySimulator)
 }
 
-HEADERS += $$PUBLIC_HEADERS
+HEADERS += $$PUBLIC_HEADERS \
+    qsystemalignedtimerprivate_p.h
 CONFIG += middleware
 include (../../features/deploy.pri)
-
