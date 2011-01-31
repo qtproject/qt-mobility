@@ -101,7 +101,7 @@ void MainWindow::initialize()
 
     QList<QString> providers = QGeoServiceProvider::availableServiceProviders();
     if (providers.size() < 1) {
-        QMessageBox::information(this, tr("Maps Navigator"),
+        QMessageBox::information(this, tr("Maps Demo"),
                                  tr("No service providers are available"));
         QCoreApplication::quit();
         return;
@@ -109,7 +109,7 @@ void MainWindow::initialize()
 
     serviceProvider = new QGeoServiceProvider(providers[0]);
     if (serviceProvider->error() != QGeoServiceProvider::NoError) {
-        QMessageBox::information(this, tr("Maps Navigator"),
+        QMessageBox::information(this, tr("Maps Demo"),
                                  tr("Error loading geoservice plugin: %1").arg(providers[0]));
         QCoreApplication::quit();
         return;

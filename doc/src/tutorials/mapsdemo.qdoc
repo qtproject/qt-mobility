@@ -561,7 +561,7 @@ void MapsWidget::setMarkerManager(MarkerManager *markerManager)
 
     We won't cover building the GUI in too much detail (that being the
     subject of other tutorials), but the complete code is in the finished
-    MapsNavigator example in the QtMobility distribution.
+    MapsDemo example in the QtMobility distribution.
 
     Our GUI consists of a QMainWindow containing our MapsWidget and a QMenuBar.
     On the QMenuBar is an option for zooming to the current "My Location", and
@@ -585,7 +585,7 @@ void MainWindow::initialize()
 
     QList<QString> providers = QGeoServiceProvider::availableServiceProviders();
     if (providers.size() < 1) {
-        QMessageBox::information(this, tr("Maps Navigator"),
+        QMessageBox::information(this, tr("Maps Demo"),
                                  tr("No service providers are available"));
         QCoreApplication::quit();
         return;
@@ -593,7 +593,7 @@ void MainWindow::initialize()
 
     serviceProvider = new QGeoServiceProvider(providers[0]);
     if (serviceProvider->error() != QGeoServiceProvider::NoError) {
-        QMessageBox::information(this, tr("Maps Navigator"),
+        QMessageBox::information(this, tr("Maps Demo"),
                                  tr("Error loading geoservice plugin: %1").arg(providers[0]));
         QCoreApplication::quit();
         return;
@@ -991,7 +991,7 @@ void MarkerManager::reverseReplyFinished(QGeoSearchReply *reply)
 
     Another useful part of the Location API is the ability to receive updates
     of the user's present geographic location from methods such as GPS or
-    network positioning. We're going to add support to our MapsNavigator for
+    network positioning. We're going to add support to our MapsDemo for
     using these methods to update the "my location" marker we've already
     added in parts 1 and 2 of this tutorial.
     
