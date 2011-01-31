@@ -1,9 +1,9 @@
 QT += network
 
-TARGET = MapsNavigator
+TARGET = MapsDemo
 TEMPLATE = app
 
-RESOURCES += mapsnavigator.qrc
+RESOURCES += mapsdemo.qrc
 
 include(../examples.pri)
 
@@ -35,7 +35,9 @@ HEADERS += \
     marker.h \
     mainwindow.h \
     searchdialog.h \
-    markerdialog.h
+    markerdialog.h \
+    navigatedialog.h \
+    navigator.h
 
 SOURCES += \
     mapswidget.cpp \
@@ -43,4 +45,6 @@ SOURCES += \
     marker.cpp \
     mainwindow.cpp \
     searchdialog.cpp \
-    markerdialog.cpp
+    markerdialog.cpp \
+    navigatedialog.cpp \
+    navigator.cpp

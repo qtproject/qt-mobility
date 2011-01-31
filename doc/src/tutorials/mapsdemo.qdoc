@@ -26,8 +26,8 @@
 ****************************************************************************/
 
 /*!
-    \page tutorials-mapsnavigator.html
-    \title Maps Navigator Tutorial
+    \page tutorials-mapsdemo.html
+    \title Maps Demo Tutorial
 
     \brief An introduction to the Location API, showing how to develop a simple
            map search and navigation application.
@@ -42,24 +42,24 @@
 
     We will be developing the map search and navigation application shown below:
 
-    \image mapsnavigator-finished.png
+    \image mapsdemo-finished.png
 
     Tutorial contents:
 
     \list 1
-    \o \l{tutorials/mapsnavigator/part1}{The Map Widget}
-    \o \l{tutorials/mapsnavigator/part2}{Searching for locations}
-    \o \l{tutorials/mapsnavigator/part3}{Listening to satellites}
-    \o \l{tutorials/mapsnavigator/part4}{Stopping for directions}
-    \o \l{tutorials/mapsnavigator/part5}{Kinetic panning and tuning for mobile}
+    \o \l{tutorials/mapsdemo/part1}{The Map Widget}
+    \o \l{tutorials/mapsdemo/part2}{Searching for locations}
+    \o \l{tutorials/mapsdemo/part3}{Listening to satellites}
+    \o \l{tutorials/mapsdemo/part4}{Stopping for directions}
+    \o \l{tutorials/mapsdemo/part5}{Kinetic panning and tuning for mobile}
     \endlist
 
     Some more text goes here.
 */
 
 /*!
-    \page tutorials-mapsnavigator-part1.html
-    \example tutorials/mapsnavigator/part1
+    \page tutorials-mapsdemo-part1.html
+    \example tutorials/mapsdemo/part1
     \title Part 1 - The Map Widget
 
     To begin with, we will start defining the map widget, which is the central part of
@@ -168,7 +168,7 @@ int main(int argc, char *argv[])
     a street map of Eight Mile Plains, in Queensland, Australia, rendered by your
     platform's default geo service provider.
 
-    \image mapsnavigator-verybasic.png
+    \image mapsdemo-verybasic.png
 
     \section2 Pan & zoom
 
@@ -339,7 +339,7 @@ void Marker::setMarkerType(MarkerType type)
 }
     \endcode
 
-    The icon PNG images can be found in the \c examples/mapsnavigator/icons
+    The icon PNG images can be found in the \c examples/mapsdemo/icons
     directory in the QtMobility distribution. All we have to do to have this
     working is simply add the PNG icons to a \c .qrc file and add it to the
     project.
@@ -367,8 +367,8 @@ geoMap->addMapObject(me);
 */
 
 /*!
-    \page tutorials-mapsnavigator-part2.html
-    \example tutorials/mapsnavigator/part2
+    \page tutorials-mapsdemo-part2.html
+    \example tutorials/mapsdemo/part2
     \title Part 2 - Searching for locations
 
     Now that we have a basic map widget, we want to add the capability
@@ -409,10 +409,11 @@ private:
 
     QGraphicsGeoMap *m_map;
     QGeoSearchManager *m_searchManager;
-    QSignalMapper sigMap;
+    
+    QSet<QGeoSearchReply*> forwardReplies;
 
 private slots:
-    void replyFinished(QObject *reply);
+    void replyFinished(QGeoSearchReply *reply);
 };
     \endcode
 
@@ -452,23 +453,28 @@ void MarkerManager::setMyLocation(QGeoCoordinate coord)
     the search results are available. It can also be constructed already
     finished, and we need to check for this first before connecting the signals.
 
-    Since we'd like to have one general slot that handles both the pre-finished
-    and the signal case, we give the slot a QObject* parameter and make use of
-    QSignalMapper:
+    We make use of the searchManager's version of the \a finished() signal, as
+    it gives out the necessary QGeoSearchReply* parameter so that we can have
+    one slot to handle both the case where the reply is constructed already
+    finished, and the case where the signal fires later.
 
     \code
+MarkerManager::MarkerManager(QGeoSearchManager *searchManager, QObject *parent) :
+    ...
+{
+    ...
+    connect(m_searchManager, SIGNAL(finished(QGeoSearchReply*)),
+            this, SLOT(replyFinished(QGeoSearchReply*)));
+}
+
 void MarkerManager::search(QString query)
 {
     QGeoSearchReply *reply = m_searchManager->search(query);
+    
+    forwardReplies.insert(reply);
     if (reply->isFinished()) {
         replyFinished(reply);
     } else {
-        sigMap.setMapping(reply, reply);
-        connect(reply, SIGNAL(finished()),
-                &sigMap, SLOT(map()));
-        connect(&sigMap, SIGNAL(mapped(QObject*)),
-                this, SLOT(replyFinished(QObject*)));
-
         connect(reply, SIGNAL(error(QGeoSearchReply::Error,QString)),
                 this, SIGNAL(searchError(QGeoSearchReply::Error,QString)));
     }
@@ -480,10 +486,10 @@ void MarkerManager::search(QString query)
     them for their coordinates.
 
     \code
-void MarkerManager::replyFinished(QObject *obj)
+void MarkerManager::replyFinished(QGeoSearchReply *reply)
 {
-    QGeoSearchReply *reply = dynamic_cast<QGeoSearchReply*>(obj);
-    Q_ASSERT(reply != NULL);
+    if (!forwardReplies.contains(reply))
+        return;
 
     // generate the markers and add them to the map
     foreach (QGeoPlace place, reply->places()) {
@@ -499,6 +505,7 @@ void MarkerManager::replyFinished(QObject *obj)
         }
     }
 
+    forwardReplies.remove(reply);
     reply->deleteLater();
 
     emit searchFinished();
@@ -550,11 +557,11 @@ void MapsWidget::setMarkerManager(MarkerManager *markerManager)
     Next we'll build a GUI around our map widget and add a search dialog to
     make use of the code we just wrote. Our finished GUI looks like this:
 
-    \image mapsnavigator-searchgui.png
+    \image mapsdemo-searchgui.png
 
     We won't cover building the GUI in too much detail (that being the
     subject of other tutorials), but the complete code is in the finished
-    MapsNavigator example in the QtMobility distribution.
+    MapsDemo example in the QtMobility distribution.
 
     Our GUI consists of a QMainWindow containing our MapsWidget and a QMenuBar.
     On the QMenuBar is an option for zooming to the current "My Location", and
@@ -578,7 +585,7 @@ void MainWindow::initialize()
 
     QList<QString> providers = QGeoServiceProvider::availableServiceProviders();
     if (providers.size() < 1) {
-        QMessageBox::information(this, tr("Maps Navigator"),
+        QMessageBox::information(this, tr("Maps Demo"),
                                  tr("No service providers are available"));
         QCoreApplication::quit();
         return;
@@ -586,7 +593,7 @@ void MainWindow::initialize()
 
     serviceProvider = new QGeoServiceProvider(providers[0]);
     if (serviceProvider->error() != QGeoServiceProvider::NoError) {
-        QMessageBox::information(this, tr("Maps Navigator"),
+        QMessageBox::information(this, tr("Maps Demo"),
                                  tr("Error loading geoservice plugin: %1").arg(providers[0]));
         QCoreApplication::quit();
         return;
@@ -670,7 +677,7 @@ private:
     And add code to MarkerManager to set them from search results:
 
     \code
-void MarkerManager::replyFinished(QObject *obj)
+void MarkerManager::replyFinished(QGeoSearchReply *reply)
 {
     ...
     foreach (QGeoPlace place, reply->places()) {
@@ -869,6 +876,8 @@ MarkerManager::MarkerManager(QGeoSearchManager *searchManager, QObject *parent) 
     m_myLocation = new Marker(Marker::MyLocationMarker);
     m_myLocation->setName("Me");
 
+    ...
+    
     // hook the coordinateChanged() signal for reverse geocoding
     connect(m_myLocation, SIGNAL(coordinateChanged(QGeoCoordinate)),
             this, SLOT(myLocationChanged(QGeoCoordinate)));
@@ -883,27 +892,16 @@ MarkerManager::MarkerManager(QGeoSearchManager *searchManager, QObject *parent) 
 void MarkerManager::myLocationChanged(QGeoCoordinate location)
 {
     QGeoSearchReply *reply = m_searchManager->reverseGeocode(location);
-    if (reply->isFinished()) {
+    
+    reverseReplies.insert(reply);
+    if (reply->isFinished())
         reverseReplyFinished(reply);
-    } else {
-        revSigMap.setMapping(reply, reply);
-        connect(reply, SIGNAL(finished()),
-                &revSigMap, SLOT(map()));
-        connect(&revSigMap, SIGNAL(mapped(QObject*)),
-                this, SLOT(reverseReplyFinished(QObject*)));
-    }
 }
-    \endcode
 
-    As before, we use a QSignalMapper and a slot taking a QObject* parameter
-    to handle the replies, but this time we only extract the first result and
-    set the address of the myLocation marker:
-
-    \code
-void MarkerManager::reverseReplyFinished(QObject *obj)
+void MarkerManager::reverseReplyFinished(QGeoSearchReply *reply)
 {
-    QGeoSearchReply *reply = dynamic_cast<QGeoSearchReply*>(obj);
-    Q_ASSERT(reply != NULL);
+    if (!reverseReplies.contains(reply))
+        return;
 
     if (reply->places().size() > 0) {
         QGeoPlace place = reply->places().first();
@@ -939,30 +937,31 @@ void MarkerManager::myLocationChanged(QGeoCoordinate location)
         myLocHasMoved = true;
     } else {
         QGeoSearchReply *reply = m_searchManager->reverseGeocode(location);
+        reverseReplies.insert(reply);
+	
         myLocHasMoved = false;
-
+	
         if (reply->isFinished()) {
             revGeocodeRunning = false;
             reverseReplyFinished(reply);
         } else {
             revGeocodeRunning = true;
-
-            // <mapping and slots as before>
         }
     }
 }
 
-void MarkerManager::reverseReplyFinished(QObject *obj)
+void MarkerManager::reverseReplyFinished(QGeoSearchReply *reply)
 {
-    QGeoSearchReply *reply = dynamic_cast<QGeoSearchReply*>(obj);
-    Q_ASSERT(reply != NULL);
+    if (!reverseReplies.contains(reply))
+        return;
 
-    // <set address as before>
+    // set address, as before
 
     revGeocodeRunning = false;
     if (myLocHasMoved)
         myLocationChanged(m_myLocation->coordinate());
 
+    reverseReplies.remove(reply);
     reply->deleteLater();
 }
     \endcode
@@ -986,13 +985,13 @@ void MarkerManager::reverseReplyFinished(QObject *obj)
 */
 
 /*!
-    \page tutorials-mapsnavigator-part3.html
-    \example tutorials/mapsnavigator/part3
+    \page tutorials-mapsdemo-part3.html
+    \example tutorials/mapsdemo/part3
     \title Part 3 - Listening to satellites
 
     Another useful part of the Location API is the ability to receive updates
     of the user's present geographic location from methods such as GPS or
-    network positioning. We're going to add support to our MapsNavigator for
+    network positioning. We're going to add support to our MapsDemo for
     using these methods to update the "my location" marker we've already
     added in parts 1 and 2 of this tutorial.
     
@@ -1457,16 +1456,16 @@ void MainWindow::updateMyPosition(QGeoPositionInfo info)
 */
 
 /*!
-    \page tutorials-mapsnavigator-part4.html
-    \example tutorials/mapsnavigator/part4
+    \page tutorials-mapsdemo-part4.html
+    \example tutorials/mapsdemo/part4
     \title Part 4 - Stopping for directions
 
 
 */
 
 /*!
-    \page tutorials-mapsnavigator-part5.html
-    \example tutorials/mapsnavigator/part5
+    \page tutorials-mapsdemo-part5.html
+    \example tutorials/mapsdemo/part5
     \title Part 5 - Kinetic panning and tuning for mobile
 
 

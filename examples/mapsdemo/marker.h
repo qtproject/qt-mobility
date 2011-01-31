@@ -133,13 +133,14 @@ private:
     QGraphicsGeoMap *m_map;
     StatusBarItem *m_status;
     QGeoSearchManager *m_searchManager;
-    QSignalMapper sigMap;
-    QSignalMapper revSigMap;
+
+    QSet<QGeoSearchReply*> forwardReplies;
+    QSet<QGeoSearchReply*> reverseReplies;
 
 private slots:
-    void replyFinished(QObject *reply);
+    void replyFinished(QGeoSearchReply *reply);
     void myLocationChanged(QGeoCoordinate location);
-    void reverseReplyFinished(QObject *reply);
+    void reverseReplyFinished(QGeoSearchReply *reply);
 };
 
 #endif // MARKER_H
