@@ -80,7 +80,7 @@ class QNearFieldTagImpl : public QNearFieldTagImplCommon
 {
 public: // From MNearFieldTargetOperation
 
-    void HandleResponse(const QNearFieldTarget::RequestId &id, const QByteArray &command, const QByteArray &response);
+    void HandleResponse(const QNearFieldTarget::RequestId &id, const QByteArray &command, const QByteArray &response, bool emitRequestCompleted);
     void HandleResponse(const QNearFieldTarget::RequestId &id, const QVariantList& response, int error);
     QVariant decodeResponse(const QByteArray& command, const QByteArray& response);
 
@@ -100,11 +100,11 @@ QNearFieldTagImpl<TAGTYPE>::QNearFieldTagImpl(CNearFieldNdefTarget *tag) : QNear
 }
 
 template<typename TAGTYPE>
-void QNearFieldTagImpl<TAGTYPE>::HandleResponse(const QNearFieldTarget::RequestId &id, const QByteArray &command, const QByteArray &response)
+void QNearFieldTagImpl<TAGTYPE>::HandleResponse(const QNearFieldTarget::RequestId &id, const QByteArray &command, const QByteArray &response, bool emitRequestCompleted)
 {
     BEGIN
     TAGTYPE * tag = static_cast<TAGTYPE *>(this);
-    tag->handleTagOperationResponse(id, command, response);
+    tag->handleTagOperationResponse(id, command, response, emitRequestCompleted);
     END
 }
 

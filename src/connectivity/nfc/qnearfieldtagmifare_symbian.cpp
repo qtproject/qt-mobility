@@ -85,11 +85,11 @@ QNearFieldTarget::RequestId QNearFieldTagMifareSymbian::sendCommands(const QList
     return _sendCommands(commands);
 }
 
-void QNearFieldTagMifareSymbian::handleTagOperationResponse(const RequestId &id, const QByteArray &command, const QByteArray &response)
+void QNearFieldTagMifareSymbian::handleTagOperationResponse(const RequestId &id, const QByteArray &command, const QByteArray &response, bool emitRequestCompleted)
 {
     Q_UNUSED(command);
     QVariant decodedResponse = decodeResponse(command, response);
-    setResponseForRequest(id, decodedResponse);
+    setResponseForRequest(id, decodedResponse, emitRequestCompleted);
 }
 
 bool QNearFieldTagMifareSymbian::waitForRequestCompleted(const RequestId &id, int msecs)

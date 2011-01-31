@@ -126,7 +126,7 @@ void NearFieldTagCommandRequest::HandleResponse(TInt aError)
     LOG(aError);
     if (aError == KErrNone)
     {
-        iOperator.HandleResponse(iId, iCommand, iRequestResponse);
+        iOperator.HandleResponse(iId, iCommand, iRequestResponse, iSendSignal);
     }
     END
 }

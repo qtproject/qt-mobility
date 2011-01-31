@@ -60,7 +60,7 @@ class QNearFieldTagMifareSymbian : public QNearFieldTarget, private QNearFieldTa
 
 public:
     explicit QNearFieldTagMifareSymbian(CNearFieldNdefTarget *tag, QObject *parent = 0);
-    
+
     ~QNearFieldTagMifareSymbian();
 
     QByteArray uid() const;
@@ -86,11 +86,11 @@ public:
     bool isProcessingCommand() const { return _isProcessingRequest(); }
     bool waitForRequestCompleted(const RequestId &id, int msecs = 5000);
 
-    void handleTagOperationResponse(const RequestId &id, const QByteArray &command, const QByteArray &response);
+    void handleTagOperationResponse(const RequestId &id, const QByteArray &command, const QByteArray &response, bool emitRequestCompleted);
     QVariant decodeResponse(const QByteArray &/*command*/, const QByteArray &response) { return response; }
 signals:
     void disconnected();
-    
+
     friend class QNearFieldTagImpl<QNearFieldTagMifareSymbian>;
 };
 

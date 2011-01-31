@@ -347,7 +347,7 @@ bool QNearFieldTagType1Symbian::waitForRequestCompleted(const RequestId &id, int
     return _waitForRequestCompleted(id, msecs);
 }
 
-void QNearFieldTagType1Symbian::handleTagOperationResponse(const RequestId &id, const QByteArray &command, const QByteArray &response)
+void QNearFieldTagType1Symbian::handleTagOperationResponse(const RequestId &id, const QByteArray &command, const QByteArray &response, bool emitRequestCompleted)
 {
     BEGIN
     QVariant decodedResponse;
@@ -360,7 +360,7 @@ void QNearFieldTagType1Symbian::handleTagOperationResponse(const RequestId &id, 
         decodedResponse = response;
     }
 
-    setResponseForRequest(id, decodedResponse);
+    setResponseForRequest(id, decodedResponse, emitRequestCompleted);
     END
 }
 

@@ -73,7 +73,7 @@ public:
     virtual void EmitNdefMessageRead(const QNdefMessage &message) = 0;
     virtual void EmitNdefMessagesWritten() = 0;
     virtual void EmitError(int error, const QNearFieldTarget::RequestId &id) = 0;
-    virtual void HandleResponse(const QNearFieldTarget::RequestId &id, const QByteArray &command, const QByteArray &response) = 0;
+    virtual void HandleResponse(const QNearFieldTarget::RequestId &id, const QByteArray &command, const QByteArray &response, bool emitRequestCompleted) = 0;
     virtual void HandleResponse(const QNearFieldTarget::RequestId &id, const QVariantList& response, int error) = 0;
     virtual QVariant decodeResponse(const QByteArray& command, const QByteArray& response) = 0;
 

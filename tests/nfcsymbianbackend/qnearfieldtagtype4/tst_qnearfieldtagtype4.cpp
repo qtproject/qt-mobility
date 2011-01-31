@@ -557,12 +557,13 @@ void tst_qnearfieldtagtype4::testRawAccessAndNdefAccess(const QList<QNdefMessage
 
     int okCount = 0;
     int errCount = 0;
-    //int ndefReadCount = 0;
+    int ndefReadCount = 0;
     int ndefWriteCount = 0;
 
     // write ndef first
     tester.target->writeNdefMessages(messages);
-    QTRY_COMPARE(ndefMessageWriteSpy.count(), ++ndefWriteCount);
+    ++ndefWriteCount;
+    QTRY_COMPARE(ndefMessageWriteSpy.count(), ndefWriteCount);
 
     // has Ndef message check
     QVERIFY(tester.target->hasNdefMessage());
@@ -583,20 +584,23 @@ void tst_qnearfieldtagtype4::testRawAccessAndNdefAccess(const QList<QNdefMessage
     command.append(char(0x00));
     QNearFieldTarget::RequestId id = tester.target->select(command);
     QVERIFY(tester.target->waitForRequestCompleted(id));
-    QCOMPARE(okSpy.count(), ++okCount);
+    ++okCount;
+    QCOMPARE(okSpy.count(), okCount);
     QCOMPARE(tester.target->requestResponse(id).toByteArray().right(2), resp);
 
 
     qDebug()<<"select CC";
     QNearFieldTarget::RequestId id1 = tester.target->select(0xe103);
     QVERIFY(tester.target->waitForRequestCompleted(id1));
-    QCOMPARE(okSpy.count(), ++okCount);
+    ++okCount;
+    QCOMPARE(okSpy.count(), okCount);
     QCOMPARE(tester.target->requestResponse(id1).toByteArray().right(2), resp);
 
     qDebug()<<"read CC";
     QNearFieldTarget::RequestId id2 = tester.target->read(0x000F,0x0000);
     QVERIFY(tester.target->waitForRequestCompleted(id2));
-    QCOMPARE(okSpy.count(), ++okCount);
+    ++okCount;
+    QCOMPARE(okSpy.count(), okCount);
     QByteArray ccContent = tester.target->requestResponse(id2).toByteArray();
     QCOMPARE(ccContent.right(2), resp);
     QCOMPARE(ccContent.count(), int(17));
@@ -624,13 +628,15 @@ void tst_qnearfieldtagtype4::testRawAccessAndNdefAccess(const QList<QNdefMessage
     qDebug()<<"select NDEF";
     QNearFieldTarget::RequestId id3 = tester.target->select(ndefFileId);
     QVERIFY(tester.target->waitForRequestCompleted(id3));
-    QCOMPARE(okSpy.count(), ++okCount);
+    ++okCount;
+    QCOMPARE(okSpy.count(), okCount);
     QCOMPARE(tester.target->requestResponse(id3).toByteArray().right(2), resp);
 
     qDebug()<<"read NDEF message length";
     QNearFieldTarget::RequestId id4 = tester.target->read(0x0002, 0x0000);
     QVERIFY(tester.target->waitForRequestCompleted(id4));
-    QCOMPARE(okSpy.count(), ++okCount);
+    ++okCount;
+    QCOMPARE(okSpy.count(), okCount);
     QByteArray ndefLenResult = tester.target->requestResponse(id4).toByteArray();
     QCOMPARE(ndefLenResult.right(2), resp);
 
@@ -648,22 +654,15 @@ void tst_qnearfieldtagtype4::testRawAccessAndNdefAccess(const QList<QNdefMessage
 
 
     qDebug()<<"read NDEF message";
-    QNearFieldTarget::RequestId id5 = tester.target->read(nLen, 0x0000);
+    QNearFieldTarget::RequestId id5 = tester.target->read(nLen + 2, 0x0000);
     QVERIFY(tester.target->waitForRequestCompleted(id5));
-    QCOMPARE(okSpy.count(), ++okCount);
+    ++okCount;
+    QCOMPARE(okSpy.count(), okCount);
     QByteArray ndefContent = tester.target->requestResponse(id5).toByteArray();
     QCOMPARE(ndefContent.right(2), resp);
 
-    quint16 realNdefLen = 0;
-    temp = ndefContent.at(0);
-    realNdefLen |= temp;
-    realNdefLen <<= 8;
-    temp = ndefContent.at(1);
-    realNdefLen |= temp;
 
-    qDebug()<<"realNdefLen is "<<realNdefLen;
-
-    QByteArray ndefMessageContent = ndefContent.mid(2, realNdefLen);
+    QByteArray ndefMessageContent = ndefContent.mid(2, nLen);
     QByteArray inputNdefMessageContent = messages.at(0).toByteArray();
     QCOMPARE(ndefMessageContent, inputNdefMessageContent);
 
@@ -681,12 +680,14 @@ void tst_qnearfieldtagtype4::testRawAccessAndNdefAccess(const QList<QNdefMessage
     // ndef file is selected
     QNearFieldTarget::RequestId id6 = tester.target->write(newNdefMessageContent, 0);
     QVERIFY(tester.target->waitForRequestCompleted(id6));
-    QCOMPARE(okSpy.count(), ++okCount);
+    ++okCount;
+    QCOMPARE(okSpy.count(), okCount);
     QCOMPARE(tester.target->requestResponse(id6).toByteArray().right(2), resp);
 
     // read ndef with ndef access
     tester.target->readNdefMessages();
-    QTRY_VERIFY(!ndefMessageReadSpy.isEmpty());
+    ++ndefReadCount;
+    QTRY_COMPARE(ndefMessageReadSpy.count(), ndefReadCount);
 
     const QNdefMessage& ndefMessage_new(ndefMessageReadSpy.first().at(0).value<QNdefMessage>());
     QCOMPARE(newNdefMessageContent, ndefMessage_new.toByteArray());
@@ -695,6 +696,7 @@ void tst_qnearfieldtagtype4::testRawAccessAndNdefAccess(const QList<QNdefMessage
 
 void tst_qnearfieldtagtype4::testRawAndNdefAccess()
 {
+    tester.touchTarget();
     QNdefMessage message;
     QNdefNfcUriRecord uriRecord;
     uriRecord.setUri(QUrl("http://qt.nokia.com"));
@@ -704,6 +706,7 @@ void tst_qnearfieldtagtype4::testRawAndNdefAccess()
     messages.append(message);
 
     testRawAccessAndNdefAccess(messages);
+    tester.removeTarget();
 }
 
 QTEST_MAIN(tst_qnearfieldtagtype4);

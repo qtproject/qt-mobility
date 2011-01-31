@@ -82,7 +82,7 @@ public:
         return _accessMethods();
     }
 
-    void handleTagOperationResponse(const RequestId &id, const QByteArray &command, const QByteArray &response);
+    void handleTagOperationResponse(const RequestId &id, const QByteArray &command, const QByteArray &response, bool emitRequestCompleted);
     QVariant decodeResponse(const QByteArray &command, const QByteArray &response);
 
     bool waitForRequestCompleted(const RequestId &id, int msecs = 5000);

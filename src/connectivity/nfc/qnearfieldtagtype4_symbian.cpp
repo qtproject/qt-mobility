@@ -363,12 +363,12 @@ QNearFieldTarget::RequestId QNearFieldTagType4Symbian::selectCC()
     return select(0xe103);
 }
 
-void QNearFieldTagType4Symbian::handleTagOperationResponse(const RequestId &id, const QByteArray &command, const QByteArray &response)
+void QNearFieldTagType4Symbian::handleTagOperationResponse(const RequestId &id, const QByteArray &command, const QByteArray &response, bool emitRequestCompleted)
 {
     BEGIN
     Q_UNUSED(command);
     QVariant decodedResponse = decodeResponse(command, response);
-    setResponseForRequest(id, decodedResponse);
+    setResponseForRequest(id, decodedResponse, emitRequestCompleted);
     END
 }
 

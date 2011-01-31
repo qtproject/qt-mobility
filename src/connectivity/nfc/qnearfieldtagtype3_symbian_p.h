@@ -98,7 +98,7 @@ private:
 
     QMap<quint16, QByteArray> checkResponse2ServiceBlockList(const QMap<quint16, QList<quint16> > &serviceBlockList, const QByteArray& response);
 
-    void handleTagOperationResponse(const RequestId &id, const QByteArray &command, const QByteArray &response);
+    void handleTagOperationResponse(const RequestId &id, const QByteArray &command, const QByteArray &response, bool emitRequestCompleted);
     QVariant decodeResponse(const QByteArray & command, const QByteArray &response);
 private:
     QByteArray mIDm;

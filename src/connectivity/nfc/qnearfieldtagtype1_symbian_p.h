@@ -95,7 +95,7 @@ public:
         return _accessMethods();
     }
 
-    void handleTagOperationResponse(const RequestId &id, const QByteArray &command, const QByteArray &response);
+    void handleTagOperationResponse(const RequestId &id, const QByteArray &command, const QByteArray &response, bool emitRequestCompleted);
     QVariant decodeResponse(const QByteArray &command, const QByteArray &response);
     friend class QNearFieldTagImpl<QNearFieldTagType1Symbian>;
 };

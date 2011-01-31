@@ -303,11 +303,11 @@ QMap<quint16, QByteArray> QNearFieldTagType3Symbian::checkResponse2ServiceBlockL
 }
 
 
-void QNearFieldTagType3Symbian::handleTagOperationResponse(const RequestId &id, const QByteArray &command, const QByteArray &response)
+void QNearFieldTagType3Symbian::handleTagOperationResponse(const RequestId &id, const QByteArray &command, const QByteArray &response, bool emitRequestCompleted)
 {
     Q_UNUSED(command);
     QVariant decodedResponse = decodeResponse(command, response);
-    setResponseForRequest(id, decodedResponse);
+    setResponseForRequest(id, decodedResponse, emitRequestCompleted);
 }
 
 bool QNearFieldTagType3Symbian::waitForRequestCompleted(const RequestId &id, int msecs)

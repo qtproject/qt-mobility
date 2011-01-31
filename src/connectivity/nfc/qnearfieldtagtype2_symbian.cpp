@@ -173,12 +173,12 @@ QByteArray QNearFieldTagType2Symbian::uid() const
     return _uid();
 }
 
-void QNearFieldTagType2Symbian::handleTagOperationResponse(const RequestId &id, const QByteArray &command, const QByteArray &response)
+void QNearFieldTagType2Symbian::handleTagOperationResponse(const RequestId &id, const QByteArray &command, const QByteArray &response, bool emitRequestCompleted)
 {
     BEGIN
     Q_UNUSED(command);
     QVariant decodedResponse = decodeResponse(command, response);
-    setResponseForRequest(id, decodedResponse);
+    setResponseForRequest(id, decodedResponse, emitRequestCompleted);
     END
 }
 
