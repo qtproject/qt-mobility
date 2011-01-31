@@ -57,7 +57,7 @@
 #include "qvideowidget.h"
 
 #ifndef QT_NO_OPENGL
-#include <QtOpenGL/QGLWidget>
+#include <QGLWidget>
 #endif
 
 #include "qpaintervideosurface_p.h"

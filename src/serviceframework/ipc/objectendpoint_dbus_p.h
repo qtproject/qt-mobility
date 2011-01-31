@@ -48,7 +48,7 @@
 #include "qservice.h"
 #include <QPointer>
 #include <QHash>
-#include <QtDBus/QtDBus>
+#include <QtDBus>
 #include "qservicemetaobject_dbus_p.h"
 
 QTM_BEGIN_NAMESPACE
