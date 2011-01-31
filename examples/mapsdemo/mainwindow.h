@@ -53,6 +53,7 @@
 #include "searchdialog.h"
 #include "markerdialog.h"
 #include "navigatedialog.h"
+#include "navigator.h"
 
 using namespace QtMobility;
 
@@ -81,6 +82,7 @@ private:
     MapsWidget *mapsWidget;
     MarkerManager *markerManager;
     QGeoPositionInfoSource *positionSource;
+    Navigator *lastNavigator;
 
     bool tracking;
     bool firstUpdate;

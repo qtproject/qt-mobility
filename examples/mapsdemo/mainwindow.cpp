@@ -53,6 +53,7 @@ MainWindow::MainWindow() :
     serviceProvider(0),
     markerManager(0),
     positionSource(0),
+    lastNavigator(0),
     tracking(true),
     firstUpdate(true)
 {
@@ -100,7 +101,7 @@ void MainWindow::initialize()
 
     QList<QString> providers = QGeoServiceProvider::availableServiceProviders();
     if (providers.size() < 1) {
-        QMessageBox::information(this, tr("Maps Navigator"),
+        QMessageBox::information(this, tr("Maps Demo"),
                                  tr("No service providers are available"));
         QCoreApplication::quit();
         return;
@@ -108,7 +109,7 @@ void MainWindow::initialize()
 
     serviceProvider = new QGeoServiceProvider(providers[0]);
     if (serviceProvider->error() != QGeoServiceProvider::NoError) {
-        QMessageBox::information(this, tr("Maps Navigator"),
+        QMessageBox::information(this, tr("Maps Demo"),
                                  tr("Error loading geoservice plugin: %1").arg(providers[0]));
         QCoreApplication::quit();
         return;
@@ -172,10 +173,15 @@ void MainWindow::showNavigateDialog()
 
             req.setTravelModes(nd.travelMode());
 
+            if (lastNavigator)
+                lastNavigator->deleteLater();
+
             Navigator *nvg = new Navigator(serviceProvider->routingManager(),
                                            serviceProvider->searchManager(),
                                            mapsWidget, nd.destinationAddress(),
                                            req);
+
+            lastNavigator = nvg;
 
             connect(nvg, SIGNAL(searchError(QGeoSearchReply::Error,QString)),
                     this, SLOT(showErrorMessage(QGeoSearchReply::Error,QString)));

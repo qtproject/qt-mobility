@@ -48,6 +48,7 @@
 #include <qgeoroutereply.h>
 #include <qgeoroutereply.h>
 #include <qgeosearchreply.h>
+#include <qgeomaprouteobject.h>
 
 using namespace QtMobility;
 
@@ -62,7 +63,8 @@ public:
               const QGeoRouteRequest &requestTemplate);
     ~Navigator();
 
-    void start(bool deleteWhenDone=true);
+    void start();
+    QGeoRoute route() const;
 
 signals:
     void finished();
@@ -83,6 +85,9 @@ private:
 
     QGeoSearchReply *addressReply;
     QGeoRouteReply *routeReply;
+
+    QGeoMapRouteObject *routeObject;
+    QGeoRoute firstRoute;
 
     bool deleteWhenDone;
 };

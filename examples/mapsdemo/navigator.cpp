@@ -43,25 +43,28 @@
 #include "mapswidget.h"
 #include "marker.h"
 
-#include <qgeomaprouteobject.h>
-
 Navigator::Navigator(QGeoRoutingManager *routingManager,
                      QGeoSearchManager *searchManager,
                      MapsWidget *mapsWidget, const QString &address,
                      const QGeoRouteRequest &requestTemplate) :
+    address(address),
+    request(requestTemplate),
     routingManager(routingManager),
     searchManager(searchManager),
     mapsWidget(mapsWidget),
-    address(address),
-    request(requestTemplate)
+    routeObject(0)
 {
 }
 
 Navigator::~Navigator()
 {
+    if (routeObject) {
+        mapsWidget->map()->removeMapObject(routeObject);
+        delete routeObject;
+    }
 }
 
-void Navigator::start(bool deleteWhenDone)
+void Navigator::start()
 {
     this->deleteWhenDone = deleteWhenDone;
 
@@ -77,17 +80,15 @@ void Navigator::start(bool deleteWhenDone)
                 this, SIGNAL(searchError(QGeoSearchReply::Error,QString)));
         connect(addressReply, SIGNAL(finished()),
                 this, SLOT(on_addressSearchFinished()));
-
-        if (deleteWhenDone)
-            connect(addressReply, SIGNAL(error(QGeoSearchReply::Error)),
-                    this, SLOT(deleteLater()));
     }
 }
 
 void Navigator::on_addressSearchFinished()
 {
-    if (addressReply->places().size() <= 0)
+    if (addressReply->places().size() <= 0) {
+        addressReply->deleteLater();
         return;
+    }
 
     QGeoPlace place = addressReply->places().at(0);
 
@@ -103,30 +104,33 @@ void Navigator::on_addressSearchFinished()
                 this, SIGNAL(routingError(QGeoRouteReply::Error,QString)));
         connect(routeReply, SIGNAL(finished()),
                 this, SLOT(on_routingFinished()));
-
-        if (deleteWhenDone)
-            connect(routeReply, SIGNAL(error(QGeoRouteReply::Error)),
-                    this, SLOT(deleteLater()));
     }
+
+    addressReply->deleteLater();
+}
+
+QGeoRoute Navigator::route() const
+{
+    return firstRoute;
 }
 
 void Navigator::on_routingFinished()
 {
     if (routeReply->routes().size() <= 0) {
         emit routingError(QGeoRouteReply::NoError, "No valid routes returned");
-        deleteLater();
+        routeReply->deleteLater();
         return;
     }
 
     QGeoRoute route = routeReply->routes().at(0);
+    firstRoute = route;
 
-    QGeoMapRouteObject *obj = new QGeoMapRouteObject;
-    obj->setRoute(route);
-    obj->setPen(QPen(Qt::blue, 2.0));
+    routeObject = new QGeoMapRouteObject;
+    routeObject->setRoute(route);
+    routeObject->setPen(QPen(Qt::blue, 2.0));
 
-    mapsWidget->map()->addMapObject(obj);
+    mapsWidget->map()->addMapObject(routeObject);
 
     emit finished();
-
-    deleteLater();
+    routeReply->deleteLater();
 }
