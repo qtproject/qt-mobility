@@ -54,7 +54,7 @@ S60RadioTunerControl::S60RadioTunerControl(QObject *parent)
     , m_audioInitializationComplete(false)
     , m_muted(false)
     , m_isStereo(true)
-    , m_vol(100)
+    , m_vol(50)
     , m_signal(0)
     , m_radioError(QRadioTuner::NoError)
     , m_scanning(false)
@@ -63,6 +63,7 @@ S60RadioTunerControl::S60RadioTunerControl(QObject *parent)
     , m_stereoMode(QRadioTuner::Auto)
     , m_apiTunerState(QRadioTuner::StoppedState)
     , m_maxVolume(100)
+    , m_volChangeRequired(false)
 {   
     initRadio();
 }
@@ -209,12 +210,23 @@ int S60RadioTunerControl::volume() const
 
 void S60RadioTunerControl::setVolume(int volume)
 {
-	if (m_playerUtility) {
-		m_vol = volume;
-		volume *= m_volMultiplier;
-		m_playerUtility->SetVolume(volume);
-		emit volumeChanged(m_vol);
-	}
+    int boundVolume = qBound(0, volume, 100);
+
+    if (m_vol == boundVolume )
+        return;
+
+    if (!m_muted && 
+            m_playerUtility) {
+        m_vol = boundVolume;
+        // Don't set volume until State is in Active State.
+		if (state() == QRadioTuner::ActiveState ) {
+		    m_playerUtility->SetVolume(m_vol*m_volMultiplier);
+		    		    
+		} else {
+		    m_volChangeRequired = TRUE;
+		    emit volumeChanged(boundVolume);
+		}
+     }
 }
 
 bool S60RadioTunerControl::isMuted() const
@@ -339,6 +351,10 @@ void S60RadioTunerControl::MrpoStateChange(TPlayerState aState, TInt aError)
 			m_apiTunerState = QRadioTuner::ActiveState;
 		} else if (aState == ERadioPlayerPlaying) {
 			m_apiTunerState = QRadioTuner::ActiveState;
+		    //Apply pending volume changes.
+            if(m_volChangeRequired){
+                setVolume(m_vol);
+                }
 		}
 	}	
 	else {
@@ -349,8 +365,14 @@ void S60RadioTunerControl::MrpoStateChange(TPlayerState aState, TInt aError)
 
 void S60RadioTunerControl::MrpoVolumeChange(TInt aVolume)
 {
-	m_vol = aVolume;
-    emit volumeChanged(m_vol);
+	m_vol = (aVolume/m_volMultiplier);
+	if(!m_volChangeRequired) {
+	    emit volumeChanged(m_vol);
+	    
+	} else {
+	    m_volChangeRequired = false;
+	}
+	    
 }
 
 void S60RadioTunerControl::MrpoMuteChange(TBool aMute)

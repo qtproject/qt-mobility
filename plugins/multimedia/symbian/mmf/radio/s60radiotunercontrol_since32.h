@@ -271,6 +271,7 @@ private:
     bool m_isStereo;
     bool m_available;
     int  m_vol;
+    bool m_volChangeRequired;
     mutable int m_signal;
     bool m_scanning;
     QRadioTuner::Band m_currentBand;
