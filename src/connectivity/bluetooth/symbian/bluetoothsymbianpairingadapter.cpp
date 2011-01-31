@@ -50,6 +50,8 @@
 
 QTM_BEGIN_NAMESPACE
 
+/*Dedicated bonding attempt failure when the remote device responds with No-Bonding */
+const static TInt BTKErrRemoteDeviceIndicatedNoBonding = KLinkManagerErrBase-4;
 /*!
     \class BluetoothSymbianPairingAdapter
     \brief The BluetoothSymbianPairingAdapter is an adapter class for bluetooth pairing functinality.
@@ -125,12 +127,13 @@ void BluetoothSymbianPairingAdapter::PairingComplete( TBTDevAddr& aAddr, TInt aE
 {
     m_pairingErrorString = QString();
     m_pairingOngoing = false;
+
     switch (aErr) {
         case KErrNone:
             // TODO: Paired or authorizedpaired, not known at this stage.
             emit pairingFinished(qTBTDevAddrToQBluetoothAddress(aAddr),QBluetoothLocalDevice::Paired);
             break;
-        case KErrRemoteDeviceIndicatedNoBonding:
+        case BTKErrRemoteDeviceIndicatedNoBonding:
             m_pairingErrorString.append("Dedicated bonding attempt failure when the remote device responds with No-Bonding");
             break;
         default:
