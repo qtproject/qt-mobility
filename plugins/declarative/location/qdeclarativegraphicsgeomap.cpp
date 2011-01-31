@@ -637,8 +637,6 @@ void QDeclarativeGraphicsGeoMap::mousePressEvent(QGraphicsSceneMouseEvent *event
         return;
     }
 
-    qWarning() << "map press";
-
     QList<QGeoMapObject*> objects = mapData_->mapObjectsAtScreenPosition(event->pos());
 
     QDeclarativeGeoMapMouseEvent *mouseEvent = createMapMouseEvent(event);
@@ -733,8 +731,6 @@ void QDeclarativeGraphicsGeoMap::mouseDoubleClickEvent(QGraphicsSceneMouseEvent 
 
 void QDeclarativeGraphicsGeoMap::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
-    qWarning() << "map move";
-
     // TODO send even to grabber
 
     /*
@@ -792,11 +788,6 @@ void QDeclarativeGraphicsGeoMap::hoverEnterEvent(QGraphicsSceneHoverEvent *event
 
 void QDeclarativeGraphicsGeoMap::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
 {
-    if (!mapData_)
-        return;
-
-    qWarning() << "map hover move";
-
     if (!mapData_)
         return;
 
