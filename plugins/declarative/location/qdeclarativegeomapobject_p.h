@@ -43,12 +43,15 @@
 #define QDECLARATIVEGEOMAPOBJECT_H
 
 #include "qgeomapobject.h"
-#include "qdeclarativegeomapmousearea_p.h"
+#include "qdeclarativegeomapmouseevent_p.h"
 
 #include <QtDeclarative/qdeclarativeitem.h>
 class QAbstractItemModel;
 
 QTM_BEGIN_NAMESPACE
+
+class QDeclarativeGraphicsGeoMap;
+class QDeclarativeGeoMapMouseArea;
 
 class QDeclarativeGeoMapObject : public QDeclarativeItem
 {
@@ -62,13 +65,15 @@ public:
 
     virtual void componentComplete();
 
+    virtual void setMap(QDeclarativeGraphicsGeoMap *map);
+    QDeclarativeGraphicsGeoMap* map() const;
+
     void setMapObject(QGeoMapObject *object);
     QGeoMapObject* mapObject();
 
     void setVisible(bool visible);
     bool isVisible() const;
 
-    virtual void clickEvent(QDeclarativeGeoMapMouseEvent *event);
     virtual void doubleClickEvent(QDeclarativeGeoMapMouseEvent *event);
     virtual void pressEvent(QDeclarativeGeoMapMouseEvent *event);
     virtual void releaseEvent(QDeclarativeGeoMapMouseEvent *event);
@@ -85,6 +90,7 @@ private Q_SLOTS:
 private:
     QGeoMapObject *object_;
     bool visible_;
+    QDeclarativeGraphicsGeoMap* map_;
     QList<QDeclarativeGeoMapMouseArea*> mouseAreas_;
 };
 
