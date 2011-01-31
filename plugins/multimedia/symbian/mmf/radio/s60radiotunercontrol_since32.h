@@ -43,6 +43,7 @@
 #define S60RADIOTUNERCONTROL_H
 
 #include <QtCore/qobject.h>
+#include <QtCore/qtimer.h>
 #include <qradiotunercontrol.h>
 #include <qradiotuner.h>
 
@@ -273,6 +274,7 @@ private:
     int  m_vol;
     bool m_volChangeRequired;
     mutable int m_signal;
+    int m_previousSignal;
     bool m_scanning;
     QRadioTuner::Band m_currentBand;
     qint64 m_currentFreq;
@@ -281,6 +283,9 @@ private:
     QRadioTuner::StereoMode m_stereoMode;
     QString m_errorString;
     QRadioTuner::State m_apiTunerState;
+    QTimer *m_signalStrengthTimer;
+protected slots:
+    void changeSignalStrength();
 };
 
 #endif

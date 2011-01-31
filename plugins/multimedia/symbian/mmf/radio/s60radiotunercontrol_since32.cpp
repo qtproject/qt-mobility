@@ -63,9 +63,17 @@ S60RadioTunerControl::S60RadioTunerControl(QObject *parent)
     , m_stereoMode(QRadioTuner::Auto)
     , m_apiTunerState(QRadioTuner::StoppedState)
     , m_maxVolume(100)
+    , m_previousSignal(0)
     , m_volChangeRequired(false)
+    , m_signalStrengthTimer(new QTimer(this))
 {   
-    initRadio();
+    bool retValue = initRadio();
+    if(!retValue) {
+        m_errorString = QString(tr("Initialize Error."));
+        emit error(QRadioTuner::ResourceError);
+    } else {
+        connect(m_signalStrengthTimer, SIGNAL(timeout()), this, SLOT(changeSignalStrength()));
+    }  
 }
 
 S60RadioTunerControl::~S60RadioTunerControl()
@@ -105,6 +113,16 @@ bool S60RadioTunerControl::isBandSupported(QRadioTuner::Band b) const
 		return false;
 }
 
+void S60RadioTunerControl::changeSignalStrength()
+    {
+    
+    int currentSignal = signalStrength();
+    if(currentSignal != m_previousSignal)
+        {
+        m_previousSignal = currentSignal;
+        emit signalStrengthChanged(currentSignal);
+        }
+    }
 void S60RadioTunerControl::setBand(QRadioTuner::Band b)
 {
     QRadioTuner::Band tempBand = b; 
@@ -322,6 +340,7 @@ void S60RadioTunerControl::start()
 		m_apiTunerState = QRadioTuner::ActiveState;
 		emit stateChanged(m_apiTunerState);
 	}
+	m_signalStrengthTimer->start(3000);
 		
 }
 
@@ -332,6 +351,7 @@ void S60RadioTunerControl::stop()
 		m_apiTunerState = QRadioTuner::StoppedState;
 		emit stateChanged(m_apiTunerState);
     }
+	m_signalStrengthTimer->stop();
 }
 
 QRadioTuner::Error S60RadioTunerControl::error() const
