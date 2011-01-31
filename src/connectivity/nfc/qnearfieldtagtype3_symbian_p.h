@@ -95,6 +95,7 @@ public:
 private:
     const QByteArray& getIDm();
     QByteArray serviceBlockList2CmdParam(const QMap<quint16, QList<quint16> > &serviceBlockList, quint8& numberOfBlocks, bool isCheckCommand);
+    QMap<quint16, QList<quint16> > Cmd2ServiceBlockList(const QByteArray& cmd);
 
     QMap<quint16, QByteArray> checkResponse2ServiceBlockList(const QMap<quint16, QList<quint16> > &serviceBlockList, const QByteArray& response);
 
@@ -106,6 +107,8 @@ private:
 };
 
 QTM_END_NAMESPACE
+typedef QMap<quint16,QByteArray> checkResponseType;
+Q_DECLARE_METATYPE(checkResponseType)
 QT_END_HEADER
 #endif // QNEARFIELDTAGTYPE3SYMBIAN_H
 
