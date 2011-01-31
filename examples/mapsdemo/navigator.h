@@ -39,40 +39,57 @@
 **
 ****************************************************************************/
 
-#include "mainwindow.h"
+#ifndef NAVIGATOR_H
+#define NAVIGATOR_H
 
-#include <QApplication>
-#include <QList>
-#include <QString>
-#include <QUrl>
-#include <QSettings>
-#include <QProcessEnvironment>
-#include <QNetworkProxyFactory>
+#include <qgeoroutingmanager.h>
+#include <qgeosearchmanager.h>
 
-#include "qgeoserviceprovider.h"
+#include <qgeoroutereply.h>
+#include <qgeoroutereply.h>
+#include <qgeosearchreply.h>
+#include <qgeomaprouteobject.h>
 
-int main(int argc, char *argv[])
+using namespace QtMobility;
+
+class MapsWidget;
+
+class Navigator : public QObject
 {
-    QApplication a(argc, argv);
+    Q_OBJECT
+public:
+    Navigator(QGeoRoutingManager *routingManager, QGeoSearchManager *searchManager,
+              MapsWidget *mapsWidget, const QString &address,
+              const QGeoRouteRequest &requestTemplate);
+    ~Navigator();
 
-    QApplication::setOrganizationName("Nokia");
-    QApplication::setApplicationName("MapsNavigatorExample");
+    void start();
+    QGeoRoute route() const;
 
-    QSettings settings;
+signals:
+    void finished();
+    void searchError(QGeoSearchReply::Error error, QString errorString);
+    void routingError(QGeoRouteReply::Error error, QString errorString);
 
-    QVariant value = settings.value("http.proxy");
-    if (value.isValid()) {
-        QUrl url(value.toString(), QUrl::TolerantMode);
-        QNetworkProxy proxy;
-        proxy.setType(QNetworkProxy::HttpProxy);
-        proxy.setHostName(url.host());
-        proxy.setPort(url.port(8080));
-        QNetworkProxy::setApplicationProxy(proxy);
-    }
+private slots:
+    void on_addressSearchFinished();
+    void on_routingFinished();
 
-    MainWindow mw;
-    mw.resize(200,200);
-    mw.show();
+private:
+    QString address;
+    QGeoRouteRequest request;
 
-    return a.exec();
-}
+    QGeoRoutingManager *routingManager;
+    QGeoSearchManager *searchManager;
+    MapsWidget *mapsWidget;
+
+    QGeoSearchReply *addressReply;
+    QGeoRouteReply *routeReply;
+
+    QGeoMapRouteObject *routeObject;
+    QGeoRoute firstRoute;
+
+    bool deleteWhenDone;
+};
+
+#endif // NAVIGATOR_H

@@ -39,47 +39,31 @@
 **
 ****************************************************************************/
 
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#ifndef NAVIGATEDIALOG_H
+#define NAVIGATEDIALOG_H
 
-#include <QMainWindow>
+#include <QDialog>
+#include <QLineEdit>
+#include <QComboBox>
 
-#include "qgeoserviceprovider.h"
-#include "qgeopositioninfosource.h"
-
-#include "mapswidget.h"
-#include "marker.h"
-#include "searchdialog.h"
-#include "markerdialog.h"
+#include "qgeorouterequest.h"
+#include "qgeocoordinate.h"
 
 using namespace QtMobility;
 
-class MainWindow : public QMainWindow
+class NavigateDialog : public QDialog
 {
     Q_OBJECT
 public:
-    MainWindow();
-    ~MainWindow();
+    NavigateDialog(QWidget *parent=0);
+    ~NavigateDialog();
 
-public slots:
-    void initialize();
-
-private slots:
-    void showSearchDialog();
-    void goToMyLocation();
-    void updateMyPosition(QGeoPositionInfo info);
-    void disableTracking();
-    void showErrorMessage(QGeoSearchReply::Error err, QString msg);
-    void on_markerClicked(Marker *marker);
+    QString destinationAddress() const;
+    QGeoRouteRequest::TravelModes travelMode() const;
 
 private:
-    QGeoServiceProvider *serviceProvider;
-    MapsWidget *mapsWidget;
-    MarkerManager *markerManager;
-    QGeoPositionInfoSource *positionSource;
-
-    bool tracking;
-    bool firstUpdate;
+    QLineEdit *addressEdit;
+    QComboBox *modeCombo;
 };
 
-#endif // MAINWINDOW_H
+#endif // NAVIGATEDIALOG_H
