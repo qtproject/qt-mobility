@@ -35,7 +35,8 @@ HEADERS += \
     marker.h \
     mainwindow.h \
     searchdialog.h \
-    markerdialog.h
+    markerdialog.h \
+    navigatedialog.h
 
 SOURCES += \
     mapswidget.cpp \
@@ -43,4 +44,5 @@ SOURCES += \
     marker.cpp \
     mainwindow.cpp \
     searchdialog.cpp \
-    markerdialog.cpp
+    markerdialog.cpp \
+    navigatedialog.cpp

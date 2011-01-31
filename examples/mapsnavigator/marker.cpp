@@ -131,6 +131,11 @@ MarkerManager::MarkerManager(QGeoSearchManager *searchManager, QObject *parent) 
     // hook the coordinateChanged() signal for reverse geocoding
     connect(m_myLocation, SIGNAL(coordinateChanged(QGeoCoordinate)),
             this, SLOT(myLocationChanged(QGeoCoordinate)));
+
+    connect(m_searchManager, SIGNAL(finished(QGeoSearchReply*)),
+            this, SLOT(replyFinished(QGeoSearchReply*)));
+    connect(m_searchManager, SIGNAL(finished(QGeoSearchReply*)),
+            this, SLOT(reverseReplyFinished(QGeoSearchReply*)));
 }
 
 MarkerManager::~MarkerManager()
@@ -165,6 +170,8 @@ void MarkerManager::search(QString query, qreal radius)
         reply = m_searchManager->search(query);
     }
 
+    forwardReplies.insert(reply);
+
     if (m_status) {
         m_status->setText("Searching...");
         m_status->show();
@@ -173,12 +180,6 @@ void MarkerManager::search(QString query, qreal radius)
     if (reply->isFinished()) {
         replyFinished(reply);
     } else {
-        sigMap.setMapping(reply, reply);
-        connect(reply, SIGNAL(finished()),
-                &sigMap, SLOT(map()));
-        connect(&sigMap, SIGNAL(mapped(QObject*)),
-                this, SLOT(replyFinished(QObject*)));
-
         connect(reply, SIGNAL(error(QGeoSearchReply::Error,QString)),
                 this, SIGNAL(searchError(QGeoSearchReply::Error,QString)));
     }
@@ -203,6 +204,7 @@ void MarkerManager::myLocationChanged(QGeoCoordinate location)
         myLocHasMoved = true;
     } else {
         QGeoSearchReply *reply = m_searchManager->reverseGeocode(location);
+        reverseReplies.insert(reply);
         myLocHasMoved = false;
 
         if (reply->isFinished()) {
@@ -210,20 +212,14 @@ void MarkerManager::myLocationChanged(QGeoCoordinate location)
             reverseReplyFinished(reply);
         } else {
             revGeocodeRunning = true;
-
-            revSigMap.setMapping(reply, reply);
-            connect(reply, SIGNAL(finished()),
-                    &revSigMap, SLOT(map()));
-            connect(&revSigMap, SIGNAL(mapped(QObject*)),
-                    this, SLOT(reverseReplyFinished(QObject*)));
         }
     }
 }
 
-void MarkerManager::reverseReplyFinished(QObject *obj)
+void MarkerManager::reverseReplyFinished(QGeoSearchReply *reply)
 {
-    QGeoSearchReply *reply = dynamic_cast<QGeoSearchReply*>(obj);
-    Q_ASSERT(reply != NULL);
+    if (!reverseReplies.contains(reply))
+        return;
 
     if (reply->places().size() > 0) {
         QGeoPlace place = reply->places().first();
@@ -234,13 +230,14 @@ void MarkerManager::reverseReplyFinished(QObject *obj)
     if (myLocHasMoved)
         myLocationChanged(m_myLocation->coordinate());
 
+    reverseReplies.remove(reply);
     reply->deleteLater();
 }
 
-void MarkerManager::replyFinished(QObject *obj)
+void MarkerManager::replyFinished(QGeoSearchReply *reply)
 {
-    QGeoSearchReply *reply = dynamic_cast<QGeoSearchReply*>(obj);
-    Q_ASSERT(reply != NULL);
+    if (!forwardReplies.contains(reply))
+        return;
 
     // generate the markers and add them to the map
     foreach (QGeoPlace place, reply->places()) {
@@ -267,6 +264,7 @@ void MarkerManager::replyFinished(QObject *obj)
         }
     }
 
+    forwardReplies.remove(reply);
     reply->deleteLater();
 
     emit searchFinished();
