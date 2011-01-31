@@ -284,6 +284,10 @@ private:
     QString m_errorString;
     QRadioTuner::State m_apiTunerState;
     QTimer *m_signalStrengthTimer;
+    
+Q_SIGNALS:
+     void error(QRadioTuner::Error) const;
+     
 protected slots:
     void changeSignalStrength();
 };

@@ -424,12 +424,20 @@ void S60RadioTunerControl::MrftoRequestTunerControlComplete(TInt aError)
 
 	} else if (aError == KFmRadioErrAntennaNotConnected) {
 		m_radioError = QRadioTuner::OpenError;
+		m_errorString = QString(tr("Antenna Not Connected"));
+		emit error(m_radioError);
 	} else if (aError == KErrAlreadyExists){
 		m_radioError = QRadioTuner::ResourceError;
+		m_errorString = QString(tr("Resource Error."));
+		emit error(m_radioError);
 	} else if (aError == KFmRadioErrFrequencyOutOfBandRange) {
 		m_radioError = QRadioTuner::OutOfRangeError;
+		m_errorString = QString(tr("Frequency out of band range"));
+		emit error(m_radioError);
 	}else{
 		m_radioError = QRadioTuner::OpenError;
+		m_errorString = QString(tr("Unknown Error."));
+		emit error(m_radioError);
 	}
 
 }
@@ -438,8 +446,12 @@ void S60RadioTunerControl::MrftoSetFrequencyRangeComplete(TInt aError)
 {
 	if (aError == KFmRadioErrFrequencyOutOfBandRange || KFmRadioErrFrequencyNotValid) {
 		m_radioError = QRadioTuner::OutOfRangeError;
+		m_errorString = QString(tr("Frequency Out of Band Range or Frequency Not Valid"));
+		emit error(m_radioError);
 	} else if (aError == KFmRadioErrHardwareFaulty || KFmRadioErrOfflineMode) {
 		m_radioError = QRadioTuner::OpenError;
+		m_errorString = QString(tr("Hardware failure or RadioInOfflineMode"));
+		emit error(m_radioError);
 	}
 }
 
@@ -449,8 +461,12 @@ void S60RadioTunerControl::MrftoSetFrequencyComplete(TInt aError)
 		m_radioError = QRadioTuner::NoError;
 	} else if (aError == KFmRadioErrFrequencyOutOfBandRange || KFmRadioErrFrequencyNotValid) {
 		m_radioError = QRadioTuner::OutOfRangeError;
+		m_errorString = QString(tr("Frequency Out of range or not Valid."));
+		emit error(m_radioError);
 	} else if (aError == KFmRadioErrHardwareFaulty || KFmRadioErrOfflineMode) {
 		m_radioError = QRadioTuner::OpenError;
+		m_errorString = QString("Hardware failure or Radio In Offline Mode");
+		emit error(m_radioError);
 	}
 }
 
