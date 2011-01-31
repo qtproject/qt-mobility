@@ -57,8 +57,19 @@ isEmpty(QT_LIBINFIX):symbian {
         qtmobilitydeployment.pkg_prerules += "$${LITERAL_HASH}{\"QtMobility\"},(0x2002AC89),$${pkg_version},TYPE=SA,RU,NR"
     }
 
-    contains(mobility_modules, messaging): qtmobilitydeployment.sources += \
+    contains(mobility_modules, messaging) {
+        qtmobilitydeployment.sources += \
         $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtMessaging.dll
+
+        contains(QT_CONFIG, declarative): {
+            qtmobilitydeployment.sources += \
+            $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/declarative_messaging.dll
+            pluginstubs += \
+            "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\declarative\\messaging\\qmakepluginstubs\\declarative_messaging.qtplugin\"  - \"!:\\resource\\qt\\imports\\QtMobility\\messaging\\declarative_messaging.qtplugin\""
+            qmldirs += \
+            "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\declarative\\messaging\\qmldir\"  - \"!:\\resource\\qt\\imports\\QtMobility\\messaging\\qmldir\""
+        }
+    }
     
     contains(mobility_modules, serviceframework) { 
         qtmobilitydeployment.sources += \
