@@ -46,11 +46,13 @@
 
 #include "qgeoserviceprovider.h"
 #include "qgeopositioninfosource.h"
+#include "qgeoroutereply.h"
 
 #include "mapswidget.h"
 #include "marker.h"
 #include "searchdialog.h"
 #include "markerdialog.h"
+#include "navigatedialog.h"
 
 using namespace QtMobility;
 
@@ -66,10 +68,12 @@ public slots:
 
 private slots:
     void showSearchDialog();
+    void showNavigateDialog();
     void goToMyLocation();
     void updateMyPosition(QGeoPositionInfo info);
     void disableTracking();
     void showErrorMessage(QGeoSearchReply::Error err, QString msg);
+    void showErrorMessage(QGeoRouteReply::Error err, QString msg);
     void on_markerClicked(Marker *marker);
 
 private:

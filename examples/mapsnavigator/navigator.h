@@ -39,31 +39,52 @@
 **
 ****************************************************************************/
 
-#ifndef NAVIGATEDIALOG_H
-#define NAVIGATEDIALOG_H
+#ifndef NAVIGATOR_H
+#define NAVIGATOR_H
 
-#include <QDialog>
-#include <QLineEdit>
-#include <QComboBox>
+#include <qgeoroutingmanager.h>
+#include <qgeosearchmanager.h>
 
-#include "qgeorouterequest.h"
-#include "qgeocoordinate.h"
+#include <qgeoroutereply.h>
+#include <qgeoroutereply.h>
+#include <qgeosearchreply.h>
 
 using namespace QtMobility;
 
-class NavigateDialog : public QDialog
+class MapsWidget;
+
+class Navigator : public QObject
 {
     Q_OBJECT
 public:
-    NavigateDialog(QWidget *parent=0);
-    ~NavigateDialog();
+    Navigator(QGeoRoutingManager *routingManager, QGeoSearchManager *searchManager,
+              MapsWidget *mapsWidget, const QString &address,
+              const QGeoRouteRequest &requestTemplate);
+    ~Navigator();
 
-    QString destinationAddress() const;
-    QGeoRouteRequest::TravelModes travelMode() const;
+    void start(bool deleteWhenDone=true);
+
+signals:
+    void finished();
+    void searchError(QGeoSearchReply::Error error, QString errorString);
+    void routingError(QGeoRouteReply::Error error, QString errorString);
+
+private slots:
+    void on_addressSearchFinished();
+    void on_routingFinished();
 
 private:
-    QLineEdit *addressEdit;
-    QComboBox *modeCombo;
+    QString address;
+    QGeoRouteRequest request;
+
+    QGeoRoutingManager *routingManager;
+    QGeoSearchManager *searchManager;
+    MapsWidget *mapsWidget;
+
+    QGeoSearchReply *addressReply;
+    QGeoRouteReply *routeReply;
+
+    bool deleteWhenDone;
 };
 
-#endif // NAVIGATEDIALOG_H
+#endif // NAVIGATOR_H

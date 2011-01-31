@@ -71,6 +71,7 @@ SearchDialog::SearchDialog(QWidget *parent) :
     vbox->addLayout(formLayout);
     vbox->addWidget(bb);
     setLayout(vbox);
+    setWindowTitle("Search for location");
 }
 
 qreal SearchDialog::radius() const
