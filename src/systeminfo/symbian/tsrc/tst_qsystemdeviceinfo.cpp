@@ -1270,7 +1270,7 @@ void tst_QSystemBatteryInfo::tst_ConnectAndDisconnectNotify()
 
 void tst_QSystemBatteryInfo::updateCurrentFlow(int aValue)
 {
-    qDebug()<<"Recieved Signal for updateCurrentFlow "<<aValue;
+    qDebug()<<"received Signal for updateCurrentFlow "<<aValue;
 }
 
 void tst_QSystemBatteryInfo::tst_currentFlow()
