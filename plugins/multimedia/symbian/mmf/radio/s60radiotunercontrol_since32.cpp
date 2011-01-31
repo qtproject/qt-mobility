@@ -333,12 +333,8 @@ void S60RadioTunerControl::start()
 {
 	if (!m_tunerControl) {
 		m_fmTunerUtility->RequestTunerControl();
-		m_apiTunerState = QRadioTuner::ActiveState;
-		emit stateChanged(m_apiTunerState);
 	} else {
 		m_playerUtility->Play();
-		m_apiTunerState = QRadioTuner::ActiveState;
-		emit stateChanged(m_apiTunerState);
 	}
 	m_signalStrengthTimer->start(3000);
 		
@@ -348,8 +344,6 @@ void S60RadioTunerControl::stop()
 {
 	if (m_playerUtility) {
 		m_playerUtility->Stop();
-		m_apiTunerState = QRadioTuner::StoppedState;
-		emit stateChanged(m_apiTunerState);
     }
 	m_signalStrengthTimer->stop();
 }
@@ -368,7 +362,7 @@ void S60RadioTunerControl::MrpoStateChange(TPlayerState aState, TInt aError)
 	if (aError == KErrNone){
 		m_radioError = QRadioTuner::NoError;
 		if (aState == ERadioPlayerIdle) {
-			m_apiTunerState = QRadioTuner::ActiveState;
+			m_apiTunerState = QRadioTuner::StoppedState;
 		} else if (aState == ERadioPlayerPlaying) {
 			m_apiTunerState = QRadioTuner::ActiveState;
 		    //Apply pending volume changes.
