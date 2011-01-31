@@ -106,9 +106,11 @@ bool S60RadioTunerControl::isBandSupported(QRadioTuner::Band b) const
 	else if(b == QRadioTuner::LW)
 		return false;
 	else if(b == QRadioTuner::AM)
-		return true;
+		return false;
 	else if(b == QRadioTuner::SW)
 		return false;
+	else if(b == QRadioTuner::FM2)
+	    return false;
 	else
 		return false;
 }
@@ -125,11 +127,38 @@ void S60RadioTunerControl::changeSignalStrength()
     }
 void S60RadioTunerControl::setBand(QRadioTuner::Band b)
 {
-    QRadioTuner::Band tempBand = b; 
-    if (tempBand != m_currentBand) {
-        m_currentBand = b;  
-        emit bandChanged(m_currentBand);
-    }   
+    QRadioTuner::Band tempBand = b;
+    if(tempBand != m_currentBand ) {
+        if (isBandSupported(tempBand)){
+            m_currentBand = b;  
+            emit bandChanged(m_currentBand);
+        }
+        else {
+            switch(tempBand)
+                {
+                case QRadioTuner::FM :
+                    m_errorString = QString(tr("Band FM not Supported"));
+                    break;
+                case QRadioTuner::AM :
+                    m_errorString = QString(tr("Band AM not Supported"));
+                    break;
+                case QRadioTuner::SW :
+                    m_errorString = QString(tr("Band SW not Supported"));
+                    break;
+                case QRadioTuner::LW :
+                    m_errorString = QString(tr("Band LW not Supported"));
+                    break;
+                case QRadioTuner::FM2 :
+                    m_errorString = QString(tr("Band FM2 not Supported"));
+                    break;
+                default :
+                    m_errorString = QString("Band %1 not Supported").arg(tempBand);
+                    break;
+                }
+            emit error(QRadioTuner::OutOfRangeError);
+        }
+    }
+    
 }
 
 int S60RadioTunerControl::frequency() const
