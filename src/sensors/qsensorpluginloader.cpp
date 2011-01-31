@@ -91,10 +91,6 @@ void QSensorPluginLoader::load()
             }
 
             continue;
-        } else {
-            qWarning() << "QSensorPluginLoader: Failed to load plugin";
-            qWarning() << "Plugin:" << plugins.at(i);
-            qWarning() << "Error:" << loader->errorString();
         }
         delete o;
         loader->unload();

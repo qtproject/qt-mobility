@@ -40,8 +40,8 @@
 ****************************************************************************/
 
 #include "qnmeapositioninfosourceproxyfactory.h"
-#include "../testqgeopositioninfosource_p.h"
-#include "../qlocationtestutils_p.h"
+#include "../qgeopositioninfosource/testqgeopositioninfosource_p.h"
+#include "../qgeocoordinate/qlocationtestutils_p.h"
 
 #include <qnmeapositioninfosource.h>
 

@@ -157,6 +157,8 @@ QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const 
     bool useHelpers(false);
     QMessageIdList messageIds;
 
+    d_ptr->error = QMessageManager::NoError;
+
     QMessageFilter handledFilter = filter;
     MessagingHelper::handleNestedFiltersFromMessageFilter(handledFilter);
 
@@ -174,9 +176,7 @@ QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const 
     if (useHelpers) {
 	MessagingHelper::orderMessages(messageIds, sortOrder);        
 	MessagingHelper::applyOffsetAndLimitToMessageIdList(messageIds, limit, offset);    
-    }
-
-    d_ptr->error = QMessageManager::NoError;
+    }    
 
     return messageIds;
 }
@@ -185,6 +185,8 @@ QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const 
 {
     bool useHelpers(false);
     QMessageIdList messageIds;
+
+    d_ptr->error = QMessageManager::NoError;
 
     QMessageFilter handledFilter = filter;
     MessagingHelper::handleNestedFiltersFromMessageFilter(handledFilter);
@@ -203,9 +205,7 @@ QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const 
     if (useHelpers) {
 	MessagingHelper::orderMessages(messageIds, sortOrder);
 	MessagingHelper::applyOffsetAndLimitToMessageIdList(messageIds, limit, offset);
-    }
-
-    d_ptr->error = QMessageManager::NoError;
+    }    
 
     return messageIds;
 }
@@ -214,6 +214,9 @@ QMessageFolderIdList QMessageStore::queryFolders(const QMessageFolderFilter &fil
 {
     QMessageFolderIdList folderIds;
     QMessageFolderFilter handledFilter = filter;
+
+    d_ptr->error = QMessageManager::NoError;
+
     MessagingHelper::handleNestedFiltersFromFolderFilter(handledFilter);
 
     folderIds = QMFStore::instance()->queryFolders(handledFilter, sortOrder, limit, offset, d_ptr->error);
@@ -224,9 +227,7 @@ QMessageFolderIdList QMessageStore::queryFolders(const QMessageFolderFilter &fil
     // we have to sort the list after concatenation
     MessagingHelper::orderFolders(folderIds, sortOrder);
 
-    MessagingHelper::applyOffsetAndLimitToFolderIdList(folderIds, limit, offset);
-    
-    d_ptr->error = QMessageManager::NoError;
+    MessagingHelper::applyOffsetAndLimitToFolderIdList(folderIds, limit, offset);        
 
     return folderIds;
 }
@@ -238,6 +239,8 @@ QMessageAccountIdList QMessageStore::queryAccounts(const QMessageAccountFilter &
 
     bool isFiltered = true;
     bool isSorted = true;
+
+    d_ptr->error = QMessageManager::NoError;
 
     accountIds = TelepathyEngine::instance()->queryAccounts(filter, sortOrder, limit, offset, isFiltered, isSorted);
 
@@ -254,8 +257,6 @@ QMessageAccountIdList QMessageStore::queryAccounts(const QMessageAccountFilter &
     }
 
     MessagingHelper::applyOffsetAndLimitToAccountIdList(accountIds, limit, offset);
-
-    d_ptr->error = QMessageManager::NoError;
 
     return accountIds;
 }
@@ -338,9 +339,16 @@ bool QMessageStore::removeMessages(const QMessageFilter& filter, QMessageManager
 
 bool QMessageStore::removeAccount(const QMessageAccountId &id)
 {
+    bool result = false;
     d_ptr->error = QMessageManager::NoError;
 
-    return QMFStore::instance()->removeAccount(id, d_ptr->error);
+    if (id.isValid() && id.toString().startsWith("QMF_")) {
+        qDebug() << __PRETTY_FUNCTION__ << "Removing QMF accountId " << id.toString();
+        result = QMFStore::instance()->removeAccount(id, d_ptr->error);
+    } else
+        d_ptr->error = QMessageManager::NotYetImplemented;
+
+    return result;
 }
 
 

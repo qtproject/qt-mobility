@@ -67,6 +67,7 @@ public:
     }
 
     bool pluginsLoaded;
+    void loadPlugins();
 
     QList<CreatePluginFunc> staticRegistrations;
 
@@ -120,7 +121,7 @@ Q_GLOBAL_STATIC(QSensorManagerPrivate, sensorManagerPrivate)
 // The unit test needs to change the behaviour of the library. It does this
 // through an exported but undocumented function.
 static void initPlugin(QObject *plugin);
-static bool settings_use_user_scope = false;
+static QSettings::Scope settings_scope = QSettings::SystemScope;
 static bool load_external_plugins = true;
 Q_SENSORS_EXPORT void sensors_unit_test_hook(int index)
 {
@@ -129,7 +130,7 @@ Q_SENSORS_EXPORT void sensors_unit_test_hook(int index)
     switch (index) {
     case 0:
         Q_ASSERT(d->pluginsLoaded == false);
-        settings_use_user_scope = true;
+        settings_scope = QSettings::UserScope;
         load_external_plugins = false;
         break;
     case 1:
@@ -158,9 +159,10 @@ static void initPlugin(QObject *o)
         d->changeListeners << changes;
 }
 
-static void loadPlugins()
+void QSensorManagerPrivate::loadPlugins()
 {
-    QSensorManagerPrivate *d = sensorManagerPrivate();
+    QSensorManagerPrivate *d = this;
+    if (d->pluginsLoaded) return;
     d->pluginsLoaded = true;
 
     SENSORLOG() << "initializing static plugins";
@@ -204,6 +206,9 @@ static void loadPlugins()
 */
 void QSensorManager::registerBackend(const QByteArray &type, const QByteArray &identifier, QSensorBackendFactory *factory)
 {
+    Q_ASSERT(type.count());
+    Q_ASSERT(identifier.count());
+    Q_ASSERT(factory);
     QSensorManagerPrivate *d = sensorManagerPrivate();
     if (!d->backendsByType.contains(type)) {
         (void)d->backendsByType[type];
@@ -288,8 +293,7 @@ QSensorBackend *QSensorManager::createBackend(QSensor *sensor)
     Q_ASSERT(sensor);
 
     QSensorManagerPrivate *d = sensorManagerPrivate();
-    if (!d->pluginsLoaded)
-        loadPlugins();
+    d->loadPlugins();
 
     SENSORLOG() << "QSensorManager::createBackend" << "type" << sensor->type() << "identifier" << sensor->identifier();
 
@@ -349,8 +353,7 @@ QSensorBackend *QSensorManager::createBackend(QSensor *sensor)
 bool QSensorManager::isBackendRegistered(const QByteArray &type, const QByteArray &identifier)
 {
     QSensorManagerPrivate *d = sensorManagerPrivate();
-    if (!d->pluginsLoaded)
-        loadPlugins();
+    d->loadPlugins();
 
     if (!d->backendsByType.contains(type))
         return false;
@@ -370,8 +373,7 @@ bool QSensorManager::isBackendRegistered(const QByteArray &type, const QByteArra
 QList<QByteArray> QSensor::sensorTypes()
 {
     QSensorManagerPrivate *d = sensorManagerPrivate();
-    if (!d->pluginsLoaded)
-        loadPlugins();
+    d->loadPlugins();
 
     return d->backendsByType.keys();
 }
@@ -383,8 +385,7 @@ QList<QByteArray> QSensor::sensorTypes()
 QList<QByteArray> QSensor::sensorsForType(const QByteArray &type)
 {
     QSensorManagerPrivate *d = sensorManagerPrivate();
-    if (!d->pluginsLoaded)
-        loadPlugins();
+    d->loadPlugins();
 
     // no sensors of that type exist
     if (!d->backendsByType.contains(type))
@@ -409,16 +410,14 @@ QList<QByteArray> QSensor::sensorsForType(const QByteArray &type)
 QByteArray QSensor::defaultSensorForType(const QByteArray &type)
 {
     QSensorManagerPrivate *d = sensorManagerPrivate();
-    if (!d->pluginsLoaded)
-        loadPlugins();
+    d->loadPlugins();
 
     // no sensors of that type exist
     if (!d->backendsByType.contains(type))
         return QByteArray();
 
     // The unit test needs to modify Sensors.conf but it can't access the system directory
-    QSettings::Scope scope = settings_use_user_scope ? QSettings::UserScope : QSettings::SystemScope;
-    QSettings settings(scope, QLatin1String("Nokia"), QLatin1String("Sensors"));
+    QSettings settings(settings_scope, QLatin1String("Nokia"), QLatin1String("Sensors"));
     QVariant value = settings.value(QString(QLatin1String("Default/%1")).arg(QString::fromLatin1(type)));
     if (!value.isNull()) {
         QByteArray defaultIdentifier = value.toByteArray();

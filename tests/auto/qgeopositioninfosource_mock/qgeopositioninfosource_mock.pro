@@ -9,11 +9,11 @@ INCLUDEPATH += ../qgeopositioninfosource
 DEPENDPATH += ../../../buid/Debug/bin
 
 # Input 
-HEADERS += ../qlocationtestutils_p.h \
-           ../testqgeopositioninfosource_p.h
+HEADERS += ../qgeocoordinate/qlocationtestutils_p.h \
+           ../qgeopositioninfosource/testqgeopositioninfosource_p.h
 
-SOURCES += ../qlocationtestutils.cpp \
-           ../testqgeopositioninfosource.cpp \
+SOURCES += ../qgeocoordinate/qlocationtestutils.cpp \
+           ../qgeopositioninfosource/testqgeopositioninfosource.cpp \
            ../qgeopositioninfosource/tst_qgeopositioninfosource.cpp
 
 # With geoclue mock the underlying layers. For this purpose do not

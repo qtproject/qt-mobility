@@ -71,7 +71,7 @@ Q_OBJECT
 public:
     QGeoTiledMapDataNokia(QGeoMappingManagerEngineNokia *engine);
     virtual ~QGeoTiledMapDataNokia();
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option);
+    void paintProviderNotices(QPainter *painter, const QStyleOptionGraphicsItem *option);
 
     QString getViewCopyright();
 
