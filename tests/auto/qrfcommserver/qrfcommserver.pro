@@ -11,4 +11,4 @@ include(../../../common.pri)
 
 CONFIG += mobility
 MOBILITY = connectivity
-symbian: TARGET.CAPABILITY =  LocalServices
+symbian: TARGET.CAPABILITY =  LocalServices NetworkControl
