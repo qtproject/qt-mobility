@@ -1,9 +1,9 @@
 QT += network
 
-TARGET = MapsNavigator
+TARGET = MapsDemo
 TEMPLATE = app
 
-RESOURCES += mapsnavigator.qrc
+RESOURCES += mapsdemo.qrc
 
 include(../examples.pri)
 
