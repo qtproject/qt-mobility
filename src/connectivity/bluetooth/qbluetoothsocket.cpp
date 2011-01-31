@@ -416,6 +416,10 @@ void QBluetoothSocket::setSocketState(QBluetoothSocket::SocketState state)
     }
 }
 
+/*!
+    Returns true if you can read atleast one line from the device
+ */
+
 bool QBluetoothSocket::canReadLine() const
 {
     Q_D(const QBluetoothSocket);
@@ -423,7 +427,7 @@ bool QBluetoothSocket::canReadLine() const
 }
 
 /*!
-    Sets the type of error that last occurred to \a error.
+    Sets the type of error that last occurred to \a error_.
 */
 void QBluetoothSocket::setSocketError(QBluetoothSocket::SocketError error_)
 {
@@ -431,6 +435,12 @@ void QBluetoothSocket::setSocketError(QBluetoothSocket::SocketError error_)
     d->socketError = error_;
     emit error(error_);
 }
+
+/*!
+  Start device discovery for \a service and open the socket with \a openMode.  If the socket
+  is created with a service uuid device address we must use service discovery to find the
+  port number to connect to.
+*/
 
 void QBluetoothSocket::doDeviceDiscovery(const QBluetoothServiceInfo &service, OpenMode openMode)
 {
@@ -551,12 +561,24 @@ void QBluetoothSocket::close()
     setSocketState(UnconnectedState);
 }
 
+/*!
+  Set the socket to use \a socketDescriptor with a type of \a socketType
+  which is in state \a socketState and mode \a openMode.
+
+  Returns true on success
+*/
+
+
 bool QBluetoothSocket::setSocketDescriptor(int socketDescriptor, SocketType socketType,
                                            SocketState socketState, OpenMode openMode)
 {
     Q_D(QBluetoothSocket);
     return d->setSocketDescriptor(socketDescriptor, socketType, socketState, openMode);
 }
+
+/*!
+  Returns the platform specific socket descriptor, if available
+*/
 
 int QBluetoothSocket::socketDescriptor() const
 {

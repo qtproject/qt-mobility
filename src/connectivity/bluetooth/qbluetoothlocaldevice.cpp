@@ -75,6 +75,17 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
+  \enum QBluetoothLocalDevice::Error
+
+  This enum describes errors that maybe returned
+
+  \value NoError        No known error
+  \value PairingError   Error in pairing
+  \value UnknownError   Unknown error
+
+*/
+
+/*!
     \enum QBluetoothLocalDevice::HostMode
 
     This enum describes the most of the local Bluetooth device.
@@ -139,6 +150,61 @@ bool QBluetoothLocalDevice::isValid() const
 
   Powers the device on returning it to the hostMode() state is was in when powered down
 */
+
+/*!
+  \fn QBluetoothLocalDevice::QBluetoothLocalDevice(QObject *parent)
+    Constructs a QBluetoothLocalDevice with \a parent.
+*/
+
+/*!
+  \fn QBluetoothLocalDevice::hostModeStateChanged(QBluetoothLocalDevice::HostMode state)
+  The \a state of the host has transitioned to a different HostMode
+*/
+
+
+/*!
+  \fn QBluetoothLocalDevice::pairingDisplayConfirmation(const QBluetoothAddress &address, QString pin)
+  Signal by some platforms to display a pairing confirmation dialog for \a address.  The user
+  is asked to confirm the \a pin is the same on both devices.  QBluetoothLocalDevice::pairingConfirmation(bool)
+  must be called to indicate if the user accepts or rejects the displayed pin.
+*/
+
+/*!
+  \fn QBluetoothLocalDevice::pairingConfirmation(bool accept)
+  To be called after getting a pairingDisplayConfirmation().  The \a accept parameter either
+  accepts the pairing or rejects it.
+*/
+
+/*!
+  \fn QBluetoothLocalDevice::pairingDisplayPinCode(const QBluetoothAddress &address, QString pin)
+  Signal by some platforms to display the \a pin to the user for \a address.  The pin is automatically
+  generated, and does not need to be confirmed.
+*/
+
+/*!
+  \fn QBluetoothLocalDevice::requestPairing(const QBluetoothAddress &address, Pairing pairing)
+  Set the \a pairing status with \a address.  The results are returned via
+  the signal pairingFinished().  Caution: creating a pairing may take minutes, and can require
+  the user to acknowledge dialogs.
+*/
+
+/*!
+    \fn QBluetoothLocalDevice::pairingFinished(const QBluetoothAddress &address, QBluetoothLocalDevice::Pairing pairing)
+  Pairing has completed with \a address. Current pairing status is in \a pairing.
+*/
+
+/*!
+  \fn QBluetoothLocalDevice::error(QBluetoothLocalDevice::Error error)
+  Signal emited for pairing if there's an exceptional \a error
+*/
+
+
+/*!
+  \fn QBluetoothLocalDevice::QBluetoothLocalDevice(const QBluetoothAddress &address, QObject *parent = 0)
+
+  Construct new QBluetoothLocalDevice for \a address.
+*/
+
 
 #include "moc_qbluetoothlocaldevice.cpp"
 

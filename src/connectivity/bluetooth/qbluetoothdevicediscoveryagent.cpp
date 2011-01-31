@@ -68,7 +68,9 @@ QTM_BEGIN_NAMESPACE
 
     \value NoError          No error has occurred.
     \value Canceled         Device discovery was canceled by a call to stop().
-    \value UnknownError     An unknown error has occurred.
+    \value PoweredOff       Bluetooth adaptor is powered off, power it on before doing discovery.
+    \value IOFailure        Writing or reading from device resulted in an error.
+    \value UnknownError     An unknown error has occurred.    
 */
 
 /*!
