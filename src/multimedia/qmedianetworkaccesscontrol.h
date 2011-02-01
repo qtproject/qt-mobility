@@ -46,6 +46,7 @@
 #include "qmediacontrol.h"
 
 #include <QtCore/qlist.h>
+#include <QtNetwork/qnetworkconfiguration.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -56,11 +57,11 @@ public:
 
     virtual ~QMediaNetworkAccessControl();
 
-    virtual void setConfigurations(const QList<QString> &configurationIds) = 0;
-    virtual QString currentConfiguration() const = 0;
+    virtual void setConfigurations(const QList<QNetworkConfiguration> &configuration) = 0;
+    virtual QNetworkConfiguration currentConfiguration() const = 0;
 
 Q_SIGNALS:
-    void configurationChanged(const QString& configurationId);
+    void configurationChanged(const QNetworkConfiguration& configuration);
 
 protected:
     QMediaNetworkAccessControl(QObject *parent = 0);
