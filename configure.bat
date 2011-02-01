@@ -568,6 +568,7 @@ call :compileTest RadioUtility_for_post_3.1 radioutility_s60
 call :compileTest OpenMaxAl_support openmaxal_symbian
 call :compileTest Surfaces_s60 surfaces_s60
 call :compileTest Symbian_Messaging_Freestyle messaging_freestyle
+call :compileTest Symbian_Messaging_Freestyle_MAPI12 messaging_freestyle_mapi12
 call :compileTest callinformation_symbian callinformation_symbian
 call :compileTest IMMERSION immersion
 call :compileTest Symbian_CamAutoFocus_31 symbian_camera_camautofocus

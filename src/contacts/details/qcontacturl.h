@@ -43,6 +43,7 @@
 #define QCONTACTURL_H
 
 #include <QString>
+#include <QUrl>
 
 #include "qtcontactsglobal.h"
 #include "qcontactdetail.h"

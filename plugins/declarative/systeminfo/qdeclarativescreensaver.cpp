@@ -125,12 +125,6 @@ bool QDeclarativeScreenSaver::setScreenSaverInhibit()
     return screenSaverDelay;
 }
 
-/*!
-  \property QSystemScreenSaver::screenSaverInhibited
-  \brief Screensaver inhibited.
-
-   Returns true if the screensaver is inhibited, otherwise false.
-*/
 
 bool  QDeclarativeScreenSaver::screenSaverInhibited()
 {
