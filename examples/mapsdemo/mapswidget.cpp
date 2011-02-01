@@ -51,7 +51,7 @@
 #include "qgeocoordinate.h"
 
 GeoMap::GeoMap(QGeoMappingManager *manager, MapsWidget *mapsWidget) :
-    QGraphicsGeoMap(manager), m_mapsWidget(mapsWidget)
+    QGraphicsGeoMap(manager), mapsWidget(mapsWidget)
 {
 }
 
@@ -225,14 +225,24 @@ void ZoomButtonItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     event->accept();
 }
 
-StatusBarItem::StatusBarItem() :
-    m_offset(0)
+
+class StatusBarItemPrivate
 {
+public:
+    int offset;
+    QGraphicsSimpleTextItem *textItem;
+};
+
+StatusBarItem::StatusBarItem() :
+    d(new StatusBarItemPrivate)
+{
+    d->offset = 0;
+
     setPen(QPen(QBrush(), 0));
     setBrush(QBrush(QColor(0,0,0,120)));
 
-    textItem = new QGraphicsSimpleTextItem(this);
-    textItem->setBrush(QBrush(Qt::white));
+    d->textItem = new QGraphicsSimpleTextItem(this);
+    d->textItem->setBrush(QBrush(Qt::white));
 
     setText("");
 }
@@ -243,22 +253,27 @@ StatusBarItem::~StatusBarItem()
 
 void StatusBarItem::setText(QString text)
 {
-    textItem->setText(text);
-    QRectF rect = textItem->boundingRect();
+    d->textItem->setText(text);
+    QRectF rect = d->textItem->boundingRect();
     QPointF delta = this->rect().center() - rect.center();
-    textItem->setPos(delta.x(), delta.y());
+    d->textItem->setPos(delta.x(), delta.y());
+}
+
+int StatusBarItem::offset() const
+{
+    return d->offset;
 }
 
 void StatusBarItem::setRect(qreal x, qreal y, qreal w, qreal h)
 {
-    QGraphicsRectItem::setRect(x, y + m_offset, w, h);
-    setText(textItem->text());
+    QGraphicsRectItem::setRect(x, y + d->offset, w, h);
+    setText(d->textItem->text());
 }
 
 void StatusBarItem::setOffset(int offset)
 {
-    this->setY(this->y() - m_offset + offset);
-    m_offset = offset;
+    this->setY(this->y() - d->offset + offset);
+    d->offset = offset;
 }
 
 void StatusBarItem::showText(QString text, quint32 timeout)
@@ -280,18 +295,31 @@ void StatusBarItem::show()
 void StatusBarItem::hide()
 {
     QPropertyAnimation *anim = new QPropertyAnimation(this, "offset");
-    anim->setStartValue(m_offset);
+    anim->setStartValue(d->offset);
     anim->setEndValue(0);
     anim->setDuration(500);
     anim->start(QAbstractAnimation::DeleteWhenStopped);
 }
 
+
+
+class MapsWidgetPrivate
+{
+public:
+    GeoMap *map;
+    QGraphicsView *view;
+    MarkerManager *markerManager;
+    StatusBarItem *statusBarItem;
+    ZoomButtonItem *zoomButtonItem;
+};
+
 MapsWidget::MapsWidget(QWidget *parent) :
     QWidget(parent),
-    geoMap(0),
-    graphicsView(0),
-    m_markerManager(0)
+    d(new MapsWidgetPrivate)
 {
+    d->map = 0;
+    d->view = 0;
+    d->markerManager = 0;
 }
 
 MapsWidget::~MapsWidget()
@@ -300,78 +328,83 @@ MapsWidget::~MapsWidget()
 
 void MapsWidget::initialize(QGeoMappingManager *manager)
 {
-    geoMap = new GeoMap(manager, this);
-    if (m_markerManager)
-        m_markerManager->setMap(geoMap);
+    d->map = new GeoMap(manager, this);
+    if (d->markerManager)
+        d->markerManager->setMap(d->map);
 
-    connect(geoMap, SIGNAL(clicked(Marker*)),
+    connect(d->map, SIGNAL(clicked(Marker*)),
             this, SIGNAL(markerClicked(Marker*)));
-    connect(geoMap, SIGNAL(panned()),
+    connect(d->map, SIGNAL(panned()),
             this, SIGNAL(mapPanned()));
 
     QGraphicsScene *sc = new QGraphicsScene;
-    sc->addItem(geoMap);
+    sc->addItem(d->map);
 
-    geoMap->setPos(0, 0);
-    geoMap->resize(this->size());
+    d->map->setPos(0, 0);
+    d->map->resize(this->size());
 
-    graphicsView = new QGraphicsView(sc, this);
-    graphicsView->setVisible(true);
-    graphicsView->setInteractive(true);
-    graphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    d->view = new QGraphicsView(sc, this);
+    d->view->setVisible(true);
+    d->view->setInteractive(true);
+    d->view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    d->view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-    m_statusBar = new StatusBarItem;
-    sc->addItem(m_statusBar);
+    d->statusBarItem = new StatusBarItem;
+    sc->addItem(d->statusBarItem);
 
-    zoomButtonItem = new ZoomButtonItem(geoMap);
-    sc->addItem(zoomButtonItem);
+    d->zoomButtonItem = new ZoomButtonItem(d->map);
+    sc->addItem(d->zoomButtonItem);
 
     resizeEvent(0);
 
-    graphicsView->resize(this->size());
-    graphicsView->centerOn(geoMap);
+    d->view->resize(this->size());
+    d->view->centerOn(d->map);
 
-    geoMap->setCenter(QGeoCoordinate(-27.5796, 153.1));
-    geoMap->setZoomLevel(15);
+    d->map->setCenter(QGeoCoordinate(-27.5796, 153.1));
+    d->map->setZoomLevel(15);
 }
 
 void MapsWidget::setMyLocation(QGeoCoordinate location, bool center)
 {
-    if (m_markerManager)
-        m_markerManager->setMyLocation(location);
-    if (geoMap && center)
-        geoMap->setCenter(location);
+    if (d->markerManager)
+        d->markerManager->setMyLocation(location);
+    if (d->map && center)
+        d->map->setCenter(location);
 }
 
 QGraphicsGeoMap *MapsWidget::map() const
 {
-    return geoMap;
+    return d->map;
+}
+
+StatusBarItem *MapsWidget::statusBar() const
+{
+    return d->statusBarItem;
 }
 
 void MapsWidget::resizeEvent(QResizeEvent *event)
 {
     Q_UNUSED(event)
 
-    if (graphicsView && geoMap) {
-        graphicsView->resize(size());
-        geoMap->resize(size());
-        graphicsView->centerOn(geoMap);
+    if (d->view && d->map) {
+        d->view->resize(size());
+        d->map->resize(size());
+        d->view->centerOn(d->map);
 
-        m_statusBar->setRect(0, height(), width(), 20);
-        zoomButtonItem->setRect(width()-30, height()/2.0 - 35, 25, 70);
+        d->statusBarItem->setRect(0, height(), width(), 20);
+        d->zoomButtonItem->setRect(width()-30, height()/2.0 - 35, 25, 70);
     }
 }
 
 void MapsWidget::animatedPanTo(QGeoCoordinate center)
 {
-    if (!geoMap)
+    if (!d->map)
         return;
 
-    QPropertyAnimation *latAnim = new QPropertyAnimation(geoMap, "centerLatitude");
+    QPropertyAnimation *latAnim = new QPropertyAnimation(d->map, "centerLatitude");
     latAnim->setEndValue(center.latitude());
     latAnim->setDuration(200);
-    QPropertyAnimation *lonAnim = new QPropertyAnimation(geoMap, "centerLongitude");
+    QPropertyAnimation *lonAnim = new QPropertyAnimation(d->map, "centerLongitude");
     lonAnim->setEndValue(center.longitude());
     lonAnim->setDuration(200);
 
@@ -383,24 +416,18 @@ void MapsWidget::animatedPanTo(QGeoCoordinate center)
 
 void MapsWidget::showEvent(QShowEvent *event)
 {
-    if (graphicsView && geoMap) {
-        graphicsView->resize(size());
-        geoMap->resize(size());
-        graphicsView->centerOn(geoMap);
-
-        m_statusBar->setRect(0, height(), width(), 20);
-    }
+    resizeEvent(0);
 }
 
 MarkerManager *MapsWidget::markerManager() const
 {
-    return m_markerManager;
+    return d->markerManager;
 }
 
 void MapsWidget::setMarkerManager(MarkerManager *markerManager)
 {
-    m_markerManager = markerManager;
-    if (geoMap)
-        m_markerManager->setMap(geoMap);
-    markerManager->setStatusBar(m_statusBar);
+    d->markerManager = markerManager;
+    if (d->map)
+        d->markerManager->setMap(d->map);
+    d->markerManager->setStatusBar(d->statusBarItem);
 }
