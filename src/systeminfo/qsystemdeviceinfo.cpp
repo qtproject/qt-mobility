@@ -300,30 +300,6 @@ void QSystemDeviceInfo::connectNotify(const char *signal)
         connect(d,SIGNAL(lockStatusChanged(QSystemDeviceInfo::LockTypeFlags)),
                 this,SIGNAL(lockStatusChanged(QSystemDeviceInfo::LockTypeFlags)),Qt::UniqueConnection);
     }
-
-    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
-            wirelessKeyboardConnected(bool))))) {
-        connect(d,SIGNAL(wirelessKeyboardConnected(bool)),
-                this,SIGNAL(wirelessKeyboardConnected(bool)),Qt::UniqueConnection);
-    }
-
-    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
-            keyboardFlip(bool))))) {
-        connect(d,SIGNAL(keyboardFlip(bool)),
-                this,SIGNAL(keyboardFlip(bool)),Qt::UniqueConnection);
-    }
-
-    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
-            deviceLocked(bool))))) {
-        connect(d,SIGNAL(deviceLocked(bool)),
-                this,SIGNAL(deviceLocked(bool)),Qt::UniqueConnection);
-    }
-
-    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
-            lockChanged(QSystemDeviceInfo::LockType, bool))))) {
-        connect(d,SIGNAL(lockChanged(QSystemDeviceInfo::LockType, bool)),
-                this,SIGNAL(lockChanged(QSystemDeviceInfo::LockType, bool)),Qt::UniqueConnection);
-    }
 }
 
 /*!
