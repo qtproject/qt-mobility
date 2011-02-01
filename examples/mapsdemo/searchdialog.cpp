@@ -39,47 +39,52 @@
 **
 ****************************************************************************/
 
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
-
-#include <QMainWindow>
-
-#include "qgeoserviceprovider.h"
-#include "qgeopositioninfosource.h"
-
-#include "mapswidget.h"
-#include "marker.h"
 #include "searchdialog.h"
-#include "markerdialog.h"
 
-using namespace QtMobility;
+#include <QFormLayout>
+#include <QDialogButtonBox>
+#include <QVBoxLayout>
 
-class MainWindow : public QMainWindow
+SearchDialog::SearchDialog(QWidget *parent) :
+    QDialog(parent)
 {
-    Q_OBJECT
-public:
-    MainWindow();
-    ~MainWindow();
+    QFormLayout *formLayout = new QFormLayout;
+    QVBoxLayout *vbox = new QVBoxLayout;
 
-public slots:
-    void initialize();
+    searchTermEdit = new QLineEdit;
+    formLayout->addRow("Search for", searchTermEdit);
 
-private slots:
-    void showSearchDialog();
-    void goToMyLocation();
-    void updateMyPosition(QGeoPositionInfo info);
-    void disableTracking();
-    void showErrorMessage(QGeoSearchReply::Error err, QString msg);
-    void on_markerClicked(Marker *marker);
+    whereCombo = new QComboBox;
+    whereCombo->addItem(tr("Nearby (<10km)"), 10000);
+    whereCombo->addItem(tr("Within 30 mins drive of me (<25km)"), 25000);
+    whereCombo->addItem(tr("Within 100km of me"), 100000);
+    whereCombo->addItem(tr("Anywhere in the world"), -1);
+    whereCombo->setCurrentIndex(1);
+    formLayout->addRow(tr("Where"), whereCombo);
 
-private:
-    QGeoServiceProvider *serviceProvider;
-    MapsWidget *mapsWidget;
-    MarkerManager *markerManager;
-    QGeoPositionInfoSource *positionSource;
+    QDialogButtonBox *bb = new QDialogButtonBox(QDialogButtonBox::Ok |
+                                                QDialogButtonBox::Cancel,
+                                                Qt::Horizontal);
+    connect(bb, SIGNAL(accepted()), this, SLOT(accept()));
+    connect(bb, SIGNAL(rejected()), this, SLOT(reject()));
 
-    bool tracking;
-    bool firstUpdate;
-};
+    vbox->addLayout(formLayout);
+    vbox->addWidget(bb);
+    setLayout(vbox);
+    setWindowTitle("Search for location");
+}
 
-#endif // MAINWINDOW_H
+qreal SearchDialog::radius() const
+{
+    const int i = whereCombo->currentIndex();
+    return whereCombo->itemData(i).toReal();
+}
+
+SearchDialog::~SearchDialog()
+{
+}
+
+QString SearchDialog::searchTerms() const
+{
+    return searchTermEdit->text();
+}
