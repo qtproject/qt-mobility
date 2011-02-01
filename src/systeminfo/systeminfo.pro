@@ -109,6 +109,7 @@ unix:!simulator {
             HEADERS += qsystemalignedtimer_meego_p.h
             PKGCONFIG += libiphb
             DEFINES += ALIGNEDTIMER_MEEGO
+            LIBS += -liphb
         } else {
             SOURCES += qsystemalignedtimer_stub.cpp
             HEADERS += qsystemalignedtimer_stub_p.h
