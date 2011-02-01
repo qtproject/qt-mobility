@@ -90,6 +90,7 @@ public:
     CPhoneInfo(CTelephony &telephony);
 
 protected:
+    void RunL();
     void DoCancel();
 
 public:
@@ -142,7 +143,7 @@ private:
 
     CTelephony::TBatteryInfoV1 m_batteryInfoV1;
     CTelephony::TBatteryInfoV1Pckg m_batteryInfoV1Pckg;
-    
+
     int m_batteryLevel;
     int m_previousBatteryLevel;
 };
@@ -159,7 +160,7 @@ protected:
 
 public:
     int cellId() const;
-	int locationAreaCode() const;
+    int locationAreaCode() const;
 
     QString countryCode() const;
     QString networkCode() const;
@@ -180,10 +181,10 @@ private:
 
     QString m_countryCode;
     QString m_previousCountryCode;
-    
+
     QString m_networkName;
     QString m_previousNetworkName;
-    
+
     CTelephony::TNetworkMode m_networkMode;
     CTelephony::TNetworkMode m_previousNetworkMode;
 
