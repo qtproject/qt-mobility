@@ -39,40 +39,31 @@
 **
 ****************************************************************************/
 
-#include "mainwindow.h"
+#ifndef NAVIGATEDIALOG_H
+#define NAVIGATEDIALOG_H
 
-#include <QApplication>
-#include <QList>
-#include <QString>
-#include <QUrl>
-#include <QSettings>
-#include <QProcessEnvironment>
-#include <QNetworkProxyFactory>
+#include <QDialog>
+#include <QLineEdit>
+#include <QComboBox>
 
-#include "qgeoserviceprovider.h"
+#include "qgeorouterequest.h"
+#include "qgeocoordinate.h"
 
-int main(int argc, char *argv[])
+using namespace QtMobility;
+
+class NavigateDialog : public QDialog
 {
-    QApplication a(argc, argv);
+    Q_OBJECT
+public:
+    NavigateDialog(QWidget *parent=0);
+    ~NavigateDialog();
 
-    QApplication::setOrganizationName("Nokia");
-    QApplication::setApplicationName("MapsNavigatorExample");
+    QString destinationAddress() const;
+    QGeoRouteRequest::TravelModes travelMode() const;
 
-    QSettings settings;
+private:
+    QLineEdit *addressEdit;
+    QComboBox *modeCombo;
+};
 
-    QVariant value = settings.value("http.proxy");
-    if (value.isValid()) {
-        QUrl url(value.toString(), QUrl::TolerantMode);
-        QNetworkProxy proxy;
-        proxy.setType(QNetworkProxy::HttpProxy);
-        proxy.setHostName(url.host());
-        proxy.setPort(url.port(8080));
-        QNetworkProxy::setApplicationProxy(proxy);
-    }
-
-    MainWindow mw;
-    mw.resize(200,200);
-    mw.show();
-
-    return a.exec();
-}
+#endif // NAVIGATEDIALOG_H
