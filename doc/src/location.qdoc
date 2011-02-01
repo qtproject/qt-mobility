@@ -237,7 +237,7 @@ Here are the key methods in the class implementation:
     \printuntil /^\}/
 
 
-The example includes a \c ClientApplication class that requests updates
+The \l {Log File Position Source Example}{example} includes a \c ClientApplication class that requests updates
 from the \c LogFilePositionSource class. Run the example to see the data
 that is received by \c ClientApplication.
 
@@ -303,7 +303,7 @@ that implements the manager functionality.  The manager name is typically a reve
 "com.nokia.qt.landmarks.engines.symbian".  Typically a developer does not need to deal with the manager name
 as the default manager will be used when instantiating a QLandmarkManager without construction parameters.
 
-To implment your own plugin, you need to subclass QLandmarkManagerEngine and provide the implmementations
+To implement your own plugin, you need to subclass QLandmarkManagerEngine and provide the implmementations
 for the virtual functions, and then create a QLandmarkMangerEngineFactory subclass that will instantiate
 your particular engine implementation.
 
@@ -340,8 +340,8 @@ The behaviour of some parts of the Landmarks API varies between platforms.  A fe
 
 \list
 \o The symbian manager does not support MatchContains in the name or attribute filters.
-\o The sparql manager as of 1.1.1 does not support the countryCode, county and district fields of QGeoAddress.  These
-fields are ignored when a landmark is saved.
+\o The sparql manager as of 1.1.1 does not support the countryCode, county and district
+fields of QGeoAddress.  These fields are ignored when a landmark is saved.
 \endlist
 
 
@@ -518,7 +518,7 @@ search for places.
 
 The free-text search will attempt to geocode text that looks like an
 address while simultaneously searching any landmark databases that the
-service pro.
+service provides.
 It is even possibly to add additional QLandmarkManager instances to
 the soures of data, so that users can search online databases alongside
 their personal offline landmarks store.
@@ -529,7 +529,7 @@ their personal offline landmarks store.
 
 QtMobility ships with a Maps and Navigation API plugin which accesses
 the relevant Ovi services provided Nokia.  The use of these services
-is governed by the terms and conditions available in the file
+is governed by the terms and conditions available inedi.ntcn the file
 plugins/geoservices/nokia/OVI_SERVICES_TERMS_AND_CONDITIONS.txt.
 
 The Ovi services plugin can be loaded by using the plugin key "nokia".
