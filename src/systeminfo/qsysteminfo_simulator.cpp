@@ -1159,12 +1159,6 @@ void QSystemBatteryInfoPrivate::setMaxBars(int v)
     }
 }
 
-int QSystemBatteryInfoPrivate::startCurrentMeasurement(int rate)
-{
-    Q_UNUSED(rate);
-    return 0;
-}
-
 //QSystemBatteryInfo::EnergyUnit QSystemBatteryInfoPrivate::energyMeasurementUnit()
 //{
 //    if (data.energyMeasurementUnit != v) {

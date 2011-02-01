@@ -358,8 +358,6 @@ public:
     int voltage() const { return data.voltage; }
     int remainingChargingTime() const { return data.remainingChargingTime; }
     int currentFlow() const { return data.currentFlow; }
-    int startCurrentMeasurement(int rate);
-
     int cumulativeCurrentFlow() const { return data.cumulativeCurrentFlow; }
     int remainingCapacityBars() const{ return data.remainingCapacityBars; }
     int maxBars() const { return data.maxBars; }
@@ -415,6 +413,7 @@ public:
     QSystemDeviceInfoPrivate *alignedTImerPrivate();
 };
 #endif
+=======
 
 QTM_END_NAMESPACE
 QT_END_HEADER
