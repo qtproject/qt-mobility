@@ -413,7 +413,6 @@ public:
     QSystemDeviceInfoPrivate *alignedTImerPrivate();
 };
 #endif
-=======
 
 QTM_END_NAMESPACE
 QT_END_HEADER
