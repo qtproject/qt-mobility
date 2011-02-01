@@ -19,6 +19,7 @@ version         = 1.2
 url             = http://qt.nokia.com/doc/qtmobility-1.2
 
 sources.fileextensions = "*.cpp *.qdoc *.mm *.qml"
+headers.fileextensions  = "*.ch *.h *.h++ *.hh *.hpp *.hxx"
 examples.fileextensions = "*.cpp *.h *.js *.xq *.svg *.xml *.ui *.qhp *.qhcp *.qml"
 examples.imageextensions = "*.png *.jpeg *.jpg *.gif *.mng"
 
