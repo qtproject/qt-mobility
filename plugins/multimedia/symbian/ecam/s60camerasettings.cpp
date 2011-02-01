@@ -422,7 +422,7 @@ void S60CameraSettings::HandleAdvancedEvent(const TECAMEvent& aEvent)
             }
         } else if (aEvent.iEventType == KUidECamEventCameraSettingFocusMode) {
             if (aEvent.iErrorCode == KErrNotSupported)
-                if (m_cameraEngine && m_cameraEngine->currentCameraIndex() != 0)
+                if (m_cameraEngine && m_cameraEngine->CurrentCameraIndex() != 0)
                     emit error(QCamera::NotSupportedFeatureError, QString("Focusing is not supported with this camera."));
                 else
                     emit error(QCamera::NotSupportedFeatureError, QString("Requested focus mode is not supported."));

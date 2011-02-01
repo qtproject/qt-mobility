@@ -158,7 +158,7 @@ void CCameraEngine::ReserveAndPowerOn()
 void CCameraEngine::ReleaseAndPowerOff()
 {
     if (iEngineState >= EEngineIdle) {
-        cancelCapture();
+        CancelCapture();
         StopViewFinder();
         FocusCancel();
         iCamera->PowerOff();
@@ -244,7 +244,7 @@ void CCameraEngine::CaptureL()
     iEngineState = EEngineCapturing;
 }
 
-void CCameraEngine::cancelCapture()
+void CCameraEngine::CancelCapture()
 {
     if (iEngineState == EEngineCapturing) {
         iCamera->CancelCaptureImage();
@@ -590,7 +590,7 @@ TBool CCameraEngine::IsDirectViewFinderSupported() const
         return false;
 }
 
-TCameraInfo *CCameraEngine::cameraInfo()
+TCameraInfo *CCameraEngine::CameraInfo()
 {
     return &iCameraInfo;
 }

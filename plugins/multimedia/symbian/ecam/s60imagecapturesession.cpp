@@ -393,7 +393,7 @@ void S60ImageCaptureSession::resetSession()
         m_advancedSettings = NULL;
 #ifndef S60_31_PLATFORM // Post S60 3.1 Platform
         // Adv. settings may not be supported for other than the Primary Camera
-        if (m_cameraEngine->currentCameraIndex() == 0)
+        if (m_cameraEngine->CurrentCameraIndex() == 0)
             setError(err, QString("Unexpected camera error."));
 #endif // !S60_31_PLATFORM
     }
@@ -607,7 +607,7 @@ void S60ImageCaptureSession::cancelCapture()
         return;
 
     if (m_cameraEngine)
-        m_cameraEngine->cancelCapture();
+        m_cameraEngine->CancelCapture();
 
     m_icState = EImageCapturePrepared;
 }
@@ -894,7 +894,7 @@ void S60ImageCaptureSession::releaseImageBuffer()
 bool S60ImageCaptureSession::queryCurrentCameraInfo()
 {
     if (m_cameraEngine) {
-        m_cameraInfo = m_cameraEngine->cameraInfo();
+        m_cameraInfo = m_cameraEngine->CameraInfo();
         return true;
     }
 

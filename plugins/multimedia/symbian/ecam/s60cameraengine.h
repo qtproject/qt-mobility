@@ -108,7 +108,7 @@ public:
     /**
      * Returns the index of the currently active camera device
      */
-    TInt currentCameraIndex() const { return iCameraIndex; }
+    TInt CurrentCameraIndex() const { return iCameraIndex; }
 
     /**
      * Returns the current state (TCameraEngineState)
@@ -135,7 +135,7 @@ public:
     /**
      * Returns camera info
      */
-    TCameraInfo *cameraInfo();
+    TCameraInfo *CameraInfo();
 
     /**
      * Captures an image. When complete, observer will receive
@@ -149,7 +149,7 @@ public:
     /**
      * Cancels ongoing image capture
      */
-    void cancelCapture();
+    void CancelCapture();
 
     /**
      * Reserves and powers on the camera. When complete,

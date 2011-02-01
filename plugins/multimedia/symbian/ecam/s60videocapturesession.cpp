@@ -316,8 +316,8 @@ QList<QSize> S60VideoCaptureSession::supportedVideoResolutions(bool *continuous)
     QList<QSize> resolutions;
 
     // Secondary Camera
-    if (m_cameraEngine->currentCameraIndex() != 0) {
-        TCameraInfo *info = m_cameraEngine->cameraInfo();
+    if (m_cameraEngine->CurrentCameraIndex() != 0) {
+        TCameraInfo *info = m_cameraEngine->CameraInfo();
         if (info) {
             TInt videoResolutionCount = info->iNumVideoFrameSizesSupported;
             CCamera *camera = m_cameraEngine->Camera();
@@ -367,8 +367,8 @@ QList<QSize> S60VideoCaptureSession::supportedVideoResolutions(const QVideoEncod
     QList<QSize> supportedFrameSizes;
 
     // Secondary Camera
-    if (m_cameraEngine->currentCameraIndex() != 0) {
-        TCameraInfo *info = m_cameraEngine->cameraInfo();
+    if (m_cameraEngine->CurrentCameraIndex() != 0) {
+        TCameraInfo *info = m_cameraEngine->CameraInfo();
         if (info) {
             TInt videoResolutionCount = info->iNumVideoFrameSizesSupported;
             CCamera *camera = m_cameraEngine->Camera();
@@ -1053,7 +1053,7 @@ void S60VideoCaptureSession::setVideoCaptureQuality(const QtMultimediaKit::Encod
                 m_videoSettings.setFrameRate(15);
                 m_videoSettings.setBitRate(384000);
             } else if (quality == QtMultimediaKit::VeryHighQuality) {
-                if (m_cameraEngine && m_cameraEngine->currentCameraIndex() == 0)
+                if (m_cameraEngine && m_cameraEngine->CurrentCameraIndex() == 0)
                     m_videoSettings.setResolution(QSize(640,480)); // Primary camera
                 else
                     m_videoSettings.setResolution(QSize(352,288)); // Other cameras
@@ -1101,7 +1101,7 @@ void S60VideoCaptureSession::setVideoCaptureQuality(const QtMultimediaKit::Encod
                 m_videoSettings.setResolution(QSize(352,288));
                 m_videoSettings.setBitRate(384000);
             } else if (quality == QtMultimediaKit::VeryHighQuality) {
-                if (m_cameraEngine && m_cameraEngine->currentCameraIndex() == 0)
+                if (m_cameraEngine && m_cameraEngine->CurrentCameraIndex() == 0)
                     m_videoSettings.setResolution(QSize(640,480)); // Primary camera
                 else
                     m_videoSettings.setResolution(QSize(352,288)); // Other cameras
@@ -1126,7 +1126,7 @@ void S60VideoCaptureSession::setVideoCaptureQuality(const QtMultimediaKit::Encod
                 m_videoSettings.setResolution(QSize(352,288));
                 m_videoSettings.setFrameRate(15);
             } else if (quality == QtMultimediaKit::VeryHighQuality) {
-                if (m_cameraEngine && m_cameraEngine->currentCameraIndex() == 0)
+                if (m_cameraEngine && m_cameraEngine->CurrentCameraIndex() == 0)
                     m_videoSettings.setResolution(QSize(640,480)); // Primary camera
                 else
                     m_videoSettings.setResolution(QSize(352,288)); // Other cameras
@@ -1181,7 +1181,7 @@ void S60VideoCaptureSession::setVideoCaptureQuality(const QtMultimediaKit::Encod
             } else if (quality == QtMultimediaKit::HighQuality) {
                 m_videoSettings.setResolution(QSize(352,288));
             } else if (quality == QtMultimediaKit::VeryHighQuality) {
-                if (m_cameraEngine && m_cameraEngine->currentCameraIndex() == 0)
+                if (m_cameraEngine && m_cameraEngine->CurrentCameraIndex() == 0)
                     m_videoSettings.setResolution(QSize(640,480)); // Primary camera
                 else
                     m_videoSettings.setResolution(QSize(352,288)); // Other cameras
@@ -1744,8 +1744,8 @@ void S60VideoCaptureSession::doSetVideoResolution(const QSize &resolution)
     TSize size((TInt)resolution.width(), (TInt)resolution.height());
 
     // Make sure resolution is not too big if main camera is not used
-    if (m_cameraEngine->currentCameraIndex() != 0) {
-        TCameraInfo *info = m_cameraEngine->cameraInfo();
+    if (m_cameraEngine->CurrentCameraIndex() != 0) {
+        TCameraInfo *info = m_cameraEngine->CameraInfo();
         if (info) {
             TInt videoResolutionCount = info->iNumVideoFrameSizesSupported;
             TSize maxCameraVideoResolution = TSize(0,0);
@@ -1902,12 +1902,12 @@ void S60VideoCaptureSession::initializeVideoCaptureSettings()
 
             // BitRate
 #ifdef SYMBIAN_3_PLATFORM
-            if (m_cameraEngine->currentCameraIndex() == 0)
+            if (m_cameraEngine->CurrentCameraIndex() == 0)
                 bitRate = KBiR_H264_PLID_42801F    // 14Mbps
             else
                 bitRate = KBiR_H264_PLID_428016    // 4Mbps
 #else // Other platforms
-            if (m_cameraEngine->currentCameraIndex() == 0)
+            if (m_cameraEngine->CurrentCameraIndex() == 0)
                 bitRate = KBiR_MPEG4_PLID_4        // 2/4Mbps
             else
                 bitRate = KBiR_MPEG4_PLID_3        // 384kbps
@@ -1915,7 +1915,7 @@ void S60VideoCaptureSession::initializeVideoCaptureSettings()
 
         } else {
 #ifdef SYMBIAN_3_PLATFORM
-            if (m_cameraEngine->currentCameraIndex() == 0) {
+            if (m_cameraEngine->CurrentCameraIndex() == 0) {
                 // Primary camera
                 resolution = KResH264_PLID_42801F;  // 1280x720
                 frameRate = KFrR_H264_PLID_42801F;  // 30fps
@@ -1927,7 +1927,7 @@ void S60VideoCaptureSession::initializeVideoCaptureSettings()
                 bitRate = KBiR_H264_PLID_428016;    // 4Mbps
             }
 #else // Other platforms
-            if (m_cameraEngine->currentCameraIndex() == 0) {
+            if (m_cameraEngine->CurrentCameraIndex() == 0) {
                 // Primary camera
                 resolution = KResMPEG4_PLID_4;      // 640x480
                 frameRate = KFrR_MPEG4_PLID_4;      // 15/30fps
