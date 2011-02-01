@@ -50,11 +50,7 @@ S60AudioEncoderControl::S60AudioEncoderControl(QObject *parent) :
 S60AudioEncoderControl::S60AudioEncoderControl(S60VideoCaptureSession *session, QObject *parent) :
     QAudioEncoderControl(parent)
 {
-    if (session)
-        m_session = session;
-    else
-        Q_ASSERT(true);
-    // From now on it's safe to assume session exists
+    m_session = session;
 }
 
 S60AudioEncoderControl::~S60AudioEncoderControl()

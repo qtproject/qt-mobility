@@ -55,12 +55,7 @@ S60VideoDeviceControl::S60VideoDeviceControl(S60CameraControl *control, QObject 
     QVideoDeviceControl(parent),
     m_selectedDevice(KDefaultCameraDevice)
 {
-    if (control)
-        m_control = control;
-    else
-        Q_ASSERT(true);
-    // From now on it's safe to assume control exists
-
+    m_control = control;
     connect(m_control, SIGNAL(devicesChanged()), this, SIGNAL(devicesChanged()));
 }
 

@@ -50,11 +50,7 @@ S60VideoEncoderControl::S60VideoEncoderControl(QObject *parent) :
 S60VideoEncoderControl::S60VideoEncoderControl(S60VideoCaptureSession *session, QObject *parent) :
     QVideoEncoderControl(parent)
 {
-    if (session)
-        m_session = session;
-    else
-        Q_ASSERT(true);
-    // From now on it is safe to assume session exists
+    m_session = session;
 }
 
 S60VideoEncoderControl::~S60VideoEncoderControl()

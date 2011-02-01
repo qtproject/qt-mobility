@@ -54,7 +54,9 @@
 #include <coecntrl.h>   // CCoeControl
 #include <w32std.h>
 
-S60CameraViewfinderEngine::S60CameraViewfinderEngine(QObject *parent, CCameraEngine *engine) :
+S60CameraViewfinderEngine::S60CameraViewfinderEngine(S60CameraControl *control,
+                                                     CCameraEngine *engine,
+                                                     QObject *parent):
     QObject(parent),
     m_cameraEngine(engine),
     m_cameraControl(NULL),
@@ -73,17 +75,7 @@ S60CameraViewfinderEngine::S60CameraViewfinderEngine(QObject *parent, CCameraEng
     m_uiLandscape(true),
     m_vfErrorsSignalled(0)
 {
-    if (parent) {
-        // Check parent is of proper type (S60CameraControl)
-        if (qstrcmp(parent->metaObject()->className(), "S60CameraControl") == 0)
-            m_cameraControl = qobject_cast<S60CameraControl*>(parent);
-        else {
-            Q_ASSERT(true);
-        }
-    }
-    else
-        Q_ASSERT(true);
-    // From now on it is safe to assume camera control exists
+    m_cameraControl = control;
 
     // Check whether platform supports DirectScreen ViewFinder
     if (m_cameraEngine) {

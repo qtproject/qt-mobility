@@ -77,16 +77,8 @@ S60CameraControl::S60CameraControl(S60VideoCaptureSession *videosession,
     m_rotateCameraWhenReady(false),
     m_videoCaptureState(S60VideoCaptureSession::ENotInitialized)
 {
-    if (videosession)
-        m_videoSession = videosession;
-    else
-        Q_ASSERT(true);
-
-    if (imagesession)
-        m_imageSession = imagesession;
-    else
-        Q_ASSERT(true);
-    // From now on it's safe to assume ImageSession and VideoSession exist
+    m_videoSession = videosession;
+    m_imageSession = imagesession;
 
     m_inactivityTimer = new QTimer;
     if (m_inactivityTimer)

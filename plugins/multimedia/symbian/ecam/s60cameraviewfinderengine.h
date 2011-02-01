@@ -68,8 +68,10 @@ class S60CameraViewfinderEngine : public QObject, public MCameraViewfinderObserv
 
 public: // Constructor & Destructor
 
-    S60CameraViewfinderEngine(QObject *parent, CCameraEngine *engine);
-    virtual ~S60CameraViewfinderEngine();
+    S60CameraViewfinderEngine(S60CameraControl *control,
+                              CCameraEngine *engine,
+                              QObject *parent = 0);
+    ~S60CameraViewfinderEngine();
 
 public: // Methods
 

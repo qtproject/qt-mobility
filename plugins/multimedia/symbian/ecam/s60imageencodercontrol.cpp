@@ -52,11 +52,7 @@ S60ImageEncoderControl::S60ImageEncoderControl(QObject *parent) :
 S60ImageEncoderControl::S60ImageEncoderControl(S60ImageCaptureSession *session, QObject *parent) :
     QImageEncoderControl(parent)
 {
-    if (session)
-        m_session = session;
-    else
-        Q_ASSERT(true);
-    // From now on it is safe to assume session is valid
+    m_session = session;
 }
 
 S60ImageEncoderControl::~S60ImageEncoderControl()

@@ -53,7 +53,9 @@ S60CameraLocksControl::S60CameraLocksControl(QObject *parent) :
 {
 }
 
-S60CameraLocksControl::S60CameraLocksControl(S60ImageCaptureSession *session, QObject *parent) :
+S60CameraLocksControl::S60CameraLocksControl(S60CameraService *service,
+                                             S60ImageCaptureSession *session,
+                                             QObject *parent) :
     QCameraLocksControl(parent),
     m_session(NULL),
     m_service(NULL),
@@ -63,20 +65,9 @@ S60CameraLocksControl::S60CameraLocksControl(S60ImageCaptureSession *session, QO
     m_exposureStatus(QCamera::Unlocked),
     m_whiteBalanceStatus(QCamera::Unlocked)
 {
-    if (session)
-        m_session = session;
-    else
-        Q_ASSERT(true);
-    // From now on it is safe to assume session exists
-
-    if (qstrcmp(parent->metaObject()->className(), "S60CameraService") == 0) {
-        m_service = qobject_cast<S60CameraService*>(parent);
-    } else {
-        m_session->setError(KErrGeneral, QString("Unexpected camera error."));
-    }
-
-    if (m_service)
-        m_focusControl = qobject_cast<S60CameraFocusControl *>(m_service->requestControl(QCameraFocusControl_iid));
+    m_session = session;
+    m_service = service;
+    m_focusControl = qobject_cast<S60CameraFocusControl *>(m_service->requestControl(QCameraFocusControl_iid));
 
     connect(m_session, SIGNAL(advancedSettingChanged()), this, SLOT(resetAdvancedSetting()));
     m_advancedSettings = m_session->advancedSettings();

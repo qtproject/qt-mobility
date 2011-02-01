@@ -118,6 +118,9 @@ S60VideoWidgetControl::S60VideoWidgetControl(QObject *parent):
     m_fullScreen(false),
     m_isViewFinderDirect(false) // Default is Bitmap ViewFinder
 {
+    if (!m_widget)
+        return;
+
     m_widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     // Request QEvents

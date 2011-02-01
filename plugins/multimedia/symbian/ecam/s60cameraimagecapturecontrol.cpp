@@ -51,25 +51,15 @@ S60CameraImageCaptureControl::S60CameraImageCaptureControl(QObject *parent) :
 {
 }
 
-S60CameraImageCaptureControl::S60CameraImageCaptureControl(S60ImageCaptureSession *session, QObject *parent) :
+S60CameraImageCaptureControl::S60CameraImageCaptureControl(S60CameraService *service,
+                                                           S60ImageCaptureSession *session,
+                                                           QObject *parent) :
     QCameraImageCaptureControl(parent),
     m_driveMode(QCameraImageCapture::SingleImageCapture) // Default DriveMode
 {
-    if (session)
-        m_session = session;
-    else
-        Q_ASSERT(true);
-    // From now on it is safe to assume session exists
-
-    if (qstrcmp(parent->metaObject()->className(), "S60CameraService") == 0) {
-        m_service = qobject_cast<S60CameraService*>(parent);
-    } else {
-        Q_ASSERT(true);
-    }
-
-    if (m_service)
-            m_cameraControl =
-                qobject_cast<S60CameraControl *>(m_service->requestControl(QCameraControl_iid));
+    m_session = session;
+    m_service = service;
+    m_cameraControl = qobject_cast<S60CameraControl *>(m_service->requestControl(QCameraControl_iid));
 
     if (!m_cameraControl)
         m_session->setError(KErrGeneral, QString("Unexpected camera error."));

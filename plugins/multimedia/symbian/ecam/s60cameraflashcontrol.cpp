@@ -57,11 +57,7 @@ S60CameraFlashControl::S60CameraFlashControl(S60ImageCaptureSession *session, QO
     m_advancedSettings(NULL),
     m_flashMode(QCameraExposure::FlashOff)
 {
-    if (session)
-        m_session = session;
-    else
-        Q_ASSERT(true);
-    // From now on it is safe to assume session exists
+    m_session = session;
 
     connect(m_session, SIGNAL(advancedSettingChanged()), this, SLOT(resetAdvancedSetting()));
     m_advancedSettings = m_session->advancedSettings();
