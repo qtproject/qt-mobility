@@ -115,6 +115,9 @@ protected:
     Q_CONTACTS_EXPORT friend QDataStream& operator<<(QDataStream& out, const QContactFilter& filter);
     Q_CONTACTS_EXPORT friend QDataStream& operator>>(QDataStream& in, QContactFilter& filter);
 #endif
+#ifndef QT_NO_DEBUG_STREAM
+    Q_CONTACTS_EXPORT friend QDebug operator<<(QDebug dbg, const QContactFilter& filter);
+#endif
     QSharedDataPointer<QContactFilterPrivate> d_ptr;
 };
 

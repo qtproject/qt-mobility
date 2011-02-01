@@ -96,7 +96,7 @@ QT_BEGIN_NAMESPACE
 */
 
 /*!
-    \qmlproperty int SoundEffect::volume
+    \qmlproperty qreal SoundEffect::volume
 
     This property holds the volume of the playback, from 0.0 (silent) to 1.0 (maximum volume).
 */
@@ -237,7 +237,6 @@ void QSoundEffect::setVolume(qreal volume)
         return;
 
     d->setVolume(iVolume);
-    emit volumeChanged();
 }
 
 bool QSoundEffect::isMuted() const
@@ -251,7 +250,6 @@ void QSoundEffect::setMuted(bool muted)
         return;
 
     d->setMuted(muted);
-    emit mutedChanged();
 }
 
 bool QSoundEffect::isLoaded() const

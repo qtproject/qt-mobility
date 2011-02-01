@@ -51,6 +51,7 @@
 #include <coecntrl.h>
 #include <coemain.h>    // For CCoeEnv
 #include <w32std.h>
+#include <mmf/common/mmferrors.h>
 #include <mmf/common/mmfcontrollerframeworkbase.h>
 
 const QString DefaultAudioEndpoint = QLatin1String("Default");
@@ -79,6 +80,7 @@ S60VideoPlayerSession::S60VideoPlayerSession(QMediaService *service)
         0,
         EMdaPriorityPreferenceNone
         ));
+    m_player->RegisterForVideoLoadingNotification(*this);
 #else
     RWindow *window = 0;
     QRect rect;
@@ -131,6 +133,22 @@ void S60VideoPlayerSession::doLoadL(const TDesC &path)
     m_audioOutput = NULL;
 #endif
     m_player->OpenFileL(path);
+}
+
+void S60VideoPlayerSession::setPlaybackRate(qreal rate)
+{
+    /* 
+     * setPlaybackRate is not supported in S60 3.1 and 3.2
+     * This flag will be defined for 3.1 and 3.2
+    */
+#ifndef PLAY_RATE_NOT_SUPPORTED
+    //setPlayVelocity requires rate in the form of 
+    //50 = 0.5x ;100 = 1.x ; 200 = 2.x ; 300 = 3.x
+    //so multiplying rate with 100
+    TRAPD(err, m_player->SetPlayVelocityL((TInt)(rate*100)));
+    setError(err);
+#endif
+   
 }
 
 void S60VideoPlayerSession::doLoadUrlL(const TDesC &path)
@@ -304,7 +322,19 @@ void S60VideoPlayerSession::doStop()
 
 void S60VideoPlayerSession::doClose()
 {
+#ifdef HAS_AUDIOROUTING_IN_VIDEOPLAYER
+    if (m_audioOutput) {
+        m_audioOutput->UnregisterObserver(*this);
+        delete m_audioOutput;
+        m_audioOutput = NULL;
+    }
+#endif
+
     m_player->Close();
+
+// close will remove the window handle in media clint video.
+// So mark it in pending changes.
+    m_pendingChanges |= WindowHandle;
 }
 
 qint64 S60VideoPlayerSession::doGetPositionL() const
@@ -332,7 +362,7 @@ void S60VideoPlayerSession::MvpuoOpenComplete(TInt aError)
 void S60VideoPlayerSession::MvpuoPrepareComplete(TInt aError)
 {
     TInt error = aError;
-    if (KErrNone == error) {
+    if (KErrNone == error || KErrMMPartialPlayback == error) {
         TSize originalSize;
         TRAP(error, m_player->VideoFrameSizeL(originalSize));
         if (KErrNone == error) {
@@ -526,3 +556,30 @@ QString S60VideoPlayerSession::qStringFromTAudioOutputPreference(CAudioOutput::T
     return QString("Default");
 }
 #endif //HAS_AUDIOROUTING_IN_VIDEOPLAYER)
+
+
+bool S60VideoPlayerSession::getIsSeekable() const
+{
+    bool seekable = ETrue;
+    int numberOfMetaDataEntries = 0;
+
+    TRAPD(err, numberOfMetaDataEntries = m_player->NumberOfMetaDataEntriesL());
+    if (err)
+        return seekable;
+
+    for (int i = 0; i < numberOfMetaDataEntries; i++) {
+        CMMFMetaDataEntry *entry = NULL;
+        TRAP(err, entry = m_player->MetaDataEntryL(i));
+
+        if (err)
+            return seekable;
+
+        if (!entry->Name().Compare(KSeekable)) {
+            if (!entry->Value().Compare(KFalse))
+                seekable = EFalse;
+            break;
+        }
+    }
+
+    return seekable;
+}

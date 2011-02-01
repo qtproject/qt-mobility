@@ -41,6 +41,16 @@
 
 #include "gstvideoconnector.h"
 
+/* signals */
+enum
+{
+  SIGNAL_RESEND_NEW_SEGMENT,
+  SIGNAL_CONNECTION_FAILED,
+  LAST_SIGNAL
+};
+static guint gst_video_connector_signals[LAST_SIGNAL] = { 0 };
+
+
 GST_DEBUG_CATEGORY_STATIC (video_connector_debug);
 #define GST_CAT_DEFAULT video_connector_debug
 
@@ -72,6 +82,8 @@ static GstStateChangeReturn gst_video_connector_change_state (GstElement *
 static gboolean gst_video_connector_handle_sink_event (GstPad * pad,
                                                        GstEvent * event);
 static gboolean gst_video_connector_new_buffer_probe(GstObject *pad, GstBuffer *buffer, guint * object);
+static void gst_video_connector_resend_new_segment(GstElement * element);
+static gboolean gst_video_connector_setcaps (GstPad  *pad, GstCaps *caps);
 
 static void
 gst_video_connector_base_init (gpointer g_class)
@@ -98,6 +110,19 @@ gst_video_connector_class_init (GstVideoConnectorClass * klass)
 
     gobject_class->dispose = gst_video_connector_dispose;
     gstelement_class->change_state = gst_video_connector_change_state;
+    klass->resend_new_segment = gst_video_connector_resend_new_segment;
+
+    gst_video_connector_signals[SIGNAL_RESEND_NEW_SEGMENT] =
+            g_signal_new ("resend-new-segment", G_TYPE_FROM_CLASS (klass),
+                          G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
+                          G_STRUCT_OFFSET (GstVideoConnectorClass, resend_new_segment), NULL, NULL,
+                          g_cclosure_marshal_VOID__VOID, G_TYPE_NONE, 0);
+
+    gst_video_connector_signals[SIGNAL_CONNECTION_FAILED] =
+            g_signal_new ("connection-failed", G_TYPE_FROM_CLASS (klass),
+                          G_SIGNAL_RUN_LAST,
+                          0, NULL, NULL,
+                          g_cclosure_marshal_VOID__VOID, G_TYPE_NONE, 0);
 }
 
 static void
@@ -113,6 +138,8 @@ gst_video_connector_init (GstVideoConnector *element,
                                GST_DEBUG_FUNCPTR (gst_video_connector_handle_sink_event));
     gst_pad_set_bufferalloc_function(element->sinkpad,
                                      GST_DEBUG_FUNCPTR (gst_video_connector_buffer_alloc));
+    gst_pad_set_setcaps_function(element->sinkpad,
+                               GST_DEBUG_FUNCPTR (gst_video_connector_setcaps));
 
     gst_element_add_pad (GST_ELEMENT (element), element->sinkpad);
 
@@ -149,7 +176,6 @@ gst_video_connector_dispose (GObject * object)
     G_OBJECT_CLASS (parent_class)->dispose (object);
 }
 
-
 static GstFlowReturn
 gst_video_connector_buffer_alloc (GstPad * pad, guint64 offset, guint size,
                                   GstCaps * caps, GstBuffer ** buf)
@@ -168,6 +194,35 @@ gst_video_connector_buffer_alloc (GstPad * pad, guint64 offset, guint size,
     GST_DEBUG_OBJECT (element, "buffer alloc finished: %s", gst_flow_get_name (res));
 
     return res;
+}
+
+static gboolean
+gst_video_connector_setcaps (GstPad  *pad, GstCaps *caps)
+{
+    GstVideoConnector *element;
+    element = GST_VIDEO_CONNECTOR (GST_PAD_PARENT (pad));
+
+    /* forward-negotiate */
+    gboolean res = gst_pad_set_caps(element->srcpad, caps);
+
+    GST_DEBUG_OBJECT(element, "gst_video_connector_setcaps %s %i", gst_caps_to_string(caps), res);
+
+    if (!res) {
+        //if set_caps failed, emit "connection-failed" signal
+        //so colorspace transformation elemnt can be inserted
+        GST_INFO_OBJECT(element, "gst_video_connector_setcaps failed, emit connection-failed signal");
+        g_signal_emit(G_OBJECT(element), gst_video_connector_signals[SIGNAL_CONNECTION_FAILED], 0);
+
+        return gst_pad_set_caps(element->srcpad, caps);
+    }
+
+    return TRUE;
+}
+
+static void
+gst_video_connector_resend_new_segment(GstElement * element)
+{
+    GST_VIDEO_CONNECTOR(element)->relinked = TRUE;
 }
 
 
@@ -194,6 +249,7 @@ gst_video_connector_chain (GstPad * pad, GstBuffer * buf)
     GstVideoConnector *element;
 
     element = GST_VIDEO_CONNECTOR (gst_pad_get_parent (pad));
+    gboolean failedSigtnalEmited = FALSE;
 
     do {
         /*
@@ -207,7 +263,7 @@ gst_video_connector_chain (GstPad * pad, GstBuffer * buf)
 
             gint64 pos = element->segment.last_stop;
 
-            if (GST_BUFFER_TIMESTAMP_IS_VALID(element->latest_buffer)) {
+            if (element->latest_buffer && GST_BUFFER_TIMESTAMP_IS_VALID(element->latest_buffer)) {
                 pos = GST_BUFFER_TIMESTAMP (element->latest_buffer);
             }
 
@@ -244,6 +300,14 @@ gst_video_connector_chain (GstPad * pad, GstBuffer * buf)
         res = gst_pad_push (element->srcpad, buf);
         GST_LOG_OBJECT (element, "Pushed buffer: %s", gst_flow_get_name (res));
 
+        //if gst_pad_push failed give the service another chance,
+        //it may still work with the colorspace element added
+        if (!failedSigtnalEmited && res == GST_FLOW_NOT_NEGOTIATED) {
+            failedSigtnalEmited = TRUE;
+            GST_INFO_OBJECT(element, "gst_pad_push failed, emit connection-failed signal");
+            g_signal_emit(G_OBJECT(element), gst_video_connector_signals[SIGNAL_CONNECTION_FAILED], 0);
+        }
+
     } while (element->relinked);
 
 
@@ -252,7 +316,11 @@ gst_video_connector_chain (GstPad * pad, GstBuffer * buf)
         element->latest_buffer = NULL;
     }
 
+    //don't save the last video buffer on maemo6 because of buffers shortage
+    //with omapxvsink
+#ifndef Q_WS_MAEMO_6
     element->latest_buffer = gst_buffer_ref(buf);
+#endif
 
     gst_buffer_unref(buf);
     gst_object_unref (element);
@@ -298,7 +366,7 @@ gst_video_connector_handle_sink_event (GstPad * pad, GstEvent * event)
         gst_event_parse_new_segment_full (event, &update, &rate, &arate, &format,
                                           &start, &stop, &time);
 
-        GST_DEBUG_OBJECT (element,
+        GST_LOG_OBJECT (element,
                           "NEWSEGMENT update %d, rate %lf, applied rate %lf, "
                           "format %d, " "%" G_GINT64_FORMAT " -- %" G_GINT64_FORMAT ", time %"
                           G_GINT64_FORMAT, update, rate, arate, format, start, stop, time);

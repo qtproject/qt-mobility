@@ -124,6 +124,21 @@ public:
         return stream;
     }
 
+#ifndef QT_NO_DEBUG_STREAM
+    QDebug& debugStreamOut(QDebug& dbg) const
+    {
+        dbg.nospace() << "QOrganizerItemDetailRangeFilter(";
+        dbg.nospace() << "detailDefinitionName=" << m_defId << ","
+                      << "detailFieldName=" << m_fieldId << ","
+                      << "minValue=" << m_minValue << ","
+                      << "maxValue=" << m_maxValue << ","
+                      << "matchFlags=" << static_cast<quint32>(m_flags) << ","
+                      << "rangeFlags=" << static_cast<quint32>(m_rangeflags);
+        dbg.nospace() << ")";
+        return dbg.maybeSpace();
+    }
+#endif
+
     Q_IMPLEMENT_ORGANIZERITEMFILTER_VIRTUALCTORS(QOrganizerItemDetailRangeFilter, QOrganizerItemFilter::OrganizerItemDetailRangeFilter)
 
     QString m_defId;

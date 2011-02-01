@@ -43,6 +43,7 @@
 
 #include <qgalleryfilter.h>
 #include <qgalleryproperty.h>
+#include <qgallerytype.h>
 
 #include <QtTest/QtTest>
 
@@ -76,6 +77,8 @@ private Q_SLOTS:
     void equality();
     void inequality_data();
     void inequality();
+    void galleryType();
+    void galleryProperty();
 
 #ifndef QT_NO_DEBUG_STREAM
     void debugMessage_data();
@@ -262,6 +265,19 @@ void tst_QGalleryFilter::unionFilter()
     QCOMPARE(filters.at(1).type(), QGalleryFilter::Intersection);
     QCOMPARE(filters.at(2).type(), QGalleryFilter::MetaData);
     QCOMPARE(filters.at(3).type(), QGalleryFilter::MetaData);
+
+    unionFilter.prepend(intersectionFilter || metaDataFilter);
+    QCOMPARE(unionFilter.isEmpty(), false);
+    QCOMPARE(unionFilter.filterCount(), 6);
+
+    filters = unionFilter.filters();
+    QCOMPARE(filters.count(), 6);
+    QCOMPARE(filters.at(0).type(), QGalleryFilter::Intersection);
+    QCOMPARE(filters.at(1).type(), QGalleryFilter::MetaData);
+    QCOMPARE(filters.at(2).type(), QGalleryFilter::MetaData);
+    QCOMPARE(filters.at(3).type(), QGalleryFilter::Intersection);
+    QCOMPARE(filters.at(4).type(), QGalleryFilter::MetaData);
+    QCOMPARE(filters.at(5).type(), QGalleryFilter::MetaData);
 }
 
 void tst_QGalleryFilter::intersectionFilter()
@@ -373,6 +389,19 @@ void tst_QGalleryFilter::intersectionFilter()
     QCOMPARE(filters.at(1).type(), QGalleryFilter::Union);
     QCOMPARE(filters.at(2).type(), QGalleryFilter::MetaData);
     QCOMPARE(filters.at(3).type(), QGalleryFilter::MetaData);
+
+    intersectionFilter.prepend(unionFilter && metaDataFilter);
+    QCOMPARE(intersectionFilter.isEmpty(), false);
+    QCOMPARE(intersectionFilter.filterCount(), 6);
+
+    filters = intersectionFilter.filters();
+    QCOMPARE(filters.count(), 6);
+    QCOMPARE(filters.at(0).type(), QGalleryFilter::Union);
+    QCOMPARE(filters.at(1).type(), QGalleryFilter::MetaData);
+    QCOMPARE(filters.at(2).type(), QGalleryFilter::MetaData);
+    QCOMPARE(filters.at(3).type(), QGalleryFilter::Union);
+    QCOMPARE(filters.at(4).type(), QGalleryFilter::MetaData);
+    QCOMPARE(filters.at(5).type(), QGalleryFilter::MetaData);
 }
 
 void tst_QGalleryFilter::assignment()
@@ -1076,6 +1105,52 @@ void tst_QGalleryFilter::debugMessage()
     qDebug() << filter;
 }
 #endif
+
+void tst_QGalleryFilter::galleryType()
+{
+    {
+        QGalleryType type = { "Audio", sizeof("Audio") - 1 };
+
+        const QString name = QLatin1String("Audio");
+
+        QCOMPARE(type.name(), name);
+        QCOMPARE(QString(type), name);
+    } {
+        QGalleryType type = { "Video", sizeof("Video") - 1 };
+
+        const QString name = QLatin1String("Video");
+
+        QCOMPARE(type.name(), name);
+        QCOMPARE(QString(type), name);
+    }
+}
+
+void tst_QGalleryFilter::galleryProperty()
+{
+    {
+        QGalleryProperty property = { "title", sizeof("title") - 1 };
+
+        const QString name = QLatin1String("title");
+        const QString ascendingName = QLatin1String("+title");
+        const QString descendingName = QLatin1String("-title");
+
+        QCOMPARE(property.name(), name);
+        QCOMPARE(QString(property), name);
+        QCOMPARE(property.ascending(), ascendingName);
+        QCOMPARE(property.descending(), descendingName);
+    } {
+        QGalleryProperty property = { "duration", sizeof("duration") - 1 };
+
+        const QString name = QLatin1String("duration");
+        const QString ascendingName = QLatin1String("+duration");
+        const QString descendingName = QLatin1String("-duration");
+
+        QCOMPARE(property.name(), name);
+        QCOMPARE(QString(property), name);
+        QCOMPARE(property.ascending(), ascendingName);
+        QCOMPARE(property.descending(), descendingName);
+    }
+}
 
 QTEST_MAIN(tst_QGalleryFilter)
 

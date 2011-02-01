@@ -91,14 +91,14 @@ void QGeoTiledMapRectangleObjectInfo::updateValidity()
     setValid((rectangle->topLeft().isValid() && rectangle->bottomRight().isValid()));
 }
 
-void QGeoTiledMapRectangleObjectInfo::topLeftChanged(const QGeoCoordinate &topLeft)
+void QGeoTiledMapRectangleObjectInfo::topLeftChanged(const QGeoCoordinate &/*topLeft*/)
 {
     updateValidity();
     if (valid())
         update();
 }
 
-void QGeoTiledMapRectangleObjectInfo::bottomRightChanged(const QGeoCoordinate &bottomRight)
+void QGeoTiledMapRectangleObjectInfo::bottomRightChanged(const QGeoCoordinate &/*bottomRight*/)
 {
     updateValidity();
     if (valid())

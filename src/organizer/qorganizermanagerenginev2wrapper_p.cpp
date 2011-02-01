@@ -44,6 +44,7 @@
 #include "qorganizeritemsaverequest.h"
 #include "qorganizeritemidfilter.h"
 #include "qorganizeritem_p.h"
+#include "qmalgorithms.h"
 
 QOrganizerManagerEngineV2Wrapper::QOrganizerManagerEngineV2Wrapper(QOrganizerManagerEngine *wrappee)
     : m_engine(wrappee)
@@ -63,11 +64,6 @@ QOrganizerManagerEngineV2Wrapper::QOrganizerManagerEngineV2Wrapper(QOrganizerMan
             this, SIGNAL(collectionsChanged(QList<QOrganizerCollectionId>)));
     connect(wrappee, SIGNAL(collectionsRemoved(QList<QOrganizerCollectionId>)),
             this, SIGNAL(collectionsRemoved(QList<QOrganizerCollectionId>)));
-
-    connect(wrappee, SIGNAL(itemsChanged(QList<QOrganizerItemId>)),
-            this, SLOT(itemsUpdated(QList<QOrganizerItemId>)));
-    connect(wrappee, SIGNAL(itemsRemoved(QList<QOrganizerItemId>)),
-            this, SLOT(itemsDeleted(QList<QOrganizerItemId>)));
 }
 
 QOrganizerManagerEngineV2Wrapper::~QOrganizerManagerEngineV2Wrapper()
@@ -108,8 +104,8 @@ QList<QOrganizerItem> QOrganizerManagerEngineV2Wrapper::items(
 {
     QList<QOrganizerItem> list = m_engine->items(
             startDate, endDate, filter, QList<QOrganizerItemSortOrder>(), fetchHint, error);
-    // TODO: optimize this by using the quick select algorithm
-    qSort(list.begin(), list.end(), itemLessThan);
+    qPartialSort(list.begin(), list.end(), list.begin(), list.begin()+maxCount,
+            QOrganizerManagerEngine::itemLessThan);
     return list.mid(0, maxCount);
 }
 
@@ -211,45 +207,6 @@ bool QOrganizerManagerEngineV2Wrapper::waitForRequestFinished(QOrganizerAbstract
 
 }
 
-QSharedPointer<QOrganizerItemObserver> QOrganizerManagerEngineV2Wrapper::observeItem(
-        const QOrganizerItemId& itemId)
-{
-    QOrganizerItemObserver* observer = createOrganizerItemObserver(this);
-    connect(observer, SIGNAL(destroyed(QObject*)),
-            this, SLOT(observerDestroyed(QObject*)));
-    m_observerForItem.insert(itemId, observer);
-    return QSharedPointer<QOrganizerItemObserver>(observer);
-}
-
-void QOrganizerManagerEngineV2Wrapper::observerDestroyed(QObject* object)
-{
-    QOrganizerItemObserver* observer = reinterpret_cast<QOrganizerItemObserver*>(object);
-    QOrganizerItemId key = m_observerForItem.key(observer);
-    if (!key.isNull()) {
-        m_observerForItem.remove(key, observer);
-    }
-}
-
-void QOrganizerManagerEngineV2Wrapper::itemsUpdated(const QList<QOrganizerItemId>& ids)
-{
-    foreach (const QOrganizerItemId& id, ids) {
-        QList<QOrganizerItemObserver*> observers = m_observerForItem.values(id);
-        foreach (QOrganizerItemObserver* observer, observers) {
-            observer->emitItemChanged();
-        }
-    }
-}
-
-void QOrganizerManagerEngineV2Wrapper::itemsDeleted(const QList<QOrganizerItemId>& ids)
-{
-    foreach (const QOrganizerItemId& id, ids) {
-        QList<QOrganizerItemObserver*> observers = m_observerForItem.values(id);
-        foreach (QOrganizerItemObserver* observer, observers) {
-            observer->emitItemRemoved();
-        }
-    }
-}
-
 /* A static helper to twiddle with \a request's privates, setting its engine to \a engine. */
 void QOrganizerManagerEngineV2Wrapper::setEngineOfRequest(QOrganizerAbstractRequest* request,
                                                           QOrganizerManagerEngine* engine)
@@ -336,12 +293,16 @@ void ItemFetchRequestController::handleFinishedSubRequest(QOrganizerAbstractRequ
     QOrganizerManager::Error error = subRequest->error();
 
     QOrganizerItemFetchRequest* request(static_cast<QOrganizerItemFetchRequest*>(m_request.data()));
+    int maxCount = request->maxCount();
+    if (maxCount < 0)
+        maxCount = items.size();
 
     // Sort and limit the number of items
-    // TODO: optimize this with the quick select algorithm if maxCount is set
-    if (subRequest->sorting().isEmpty()) // sort by date if no sort order is given
-        qSort(items.begin(), items.end(), QOrganizerManagerEngine::itemLessThan);
-    int maxCount = request->maxCount();
+    if (subRequest->sorting().isEmpty()) { // sort by date if no sort order is given
+        qPartialSort(items.begin(), items.end(), items.begin(), items.begin()+maxCount,
+                QOrganizerManagerEngine::itemLessThan);
+    }
+
     if (maxCount >= 0)
         items = items.mid(0, maxCount);
 

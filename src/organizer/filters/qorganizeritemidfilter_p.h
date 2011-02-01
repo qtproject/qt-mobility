@@ -59,7 +59,6 @@
 
 #include <QString>
 #include <QVariant>
-#include <QDebug>
 
 QTM_BEGIN_NAMESPACE
 
@@ -100,6 +99,16 @@ public:
         }
         return stream;
     }
+
+#ifndef QT_NO_DEBUG_STREAM
+    QDebug& debugStreamOut(QDebug& dbg) const
+    {
+        dbg.nospace() << "QOrganizerItemIdFilter(";
+        dbg.nospace() << "ids=" << m_ids;
+        dbg.nospace() << ")";
+        return dbg.maybeSpace();
+    }
+#endif
 
     Q_IMPLEMENT_ORGANIZERITEMFILTER_VIRTUALCTORS(QOrganizerItemIdFilter, QOrganizerItemFilter::IdFilter)
 

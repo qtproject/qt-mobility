@@ -58,15 +58,18 @@ class Q_SENSORS_EXPORT QTapReading : public QSensorReading
 public:
     enum TapDirection {
         Undefined = 0,
-        X     = 0x0001,
-        Y     = 0x0002,
-        Z     = 0x0004,
-        X_Pos = 0x0011,
-        Y_Pos = 0x0022,
-        Z_Pos = 0x0044,
-        X_Neg = 0x0101,
-        Y_Neg = 0x0202,
-        Z_Neg = 0x0404
+        X      = 0x0001,
+        Y      = 0x0002,
+        Z      = 0x0004,
+        X_Pos  = 0x0011,
+        Y_Pos  = 0x0022,
+        Z_Pos  = 0x0044,
+        X_Neg  = 0x0101,
+        Y_Neg  = 0x0202,
+        Z_Neg  = 0x0404,
+        X_Both = 0x0111,
+        Y_Both = 0x0222,
+        Z_Both = 0x0444
     };
 
     TapDirection tapDirection() const;

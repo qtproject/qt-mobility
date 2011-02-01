@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#ifdef SYMBIAN_BACKEND_USE_SQLITE
+#ifdef SYMBIAN_BACKEND_USE_CNTMODEL_V2
 
 #ifndef TRANSFORMPRESENCE_H
 #define TRANSFORMPRESENCE_H
@@ -73,4 +73,4 @@ private:
 
 #endif // TRANSFORMPRESENCE_H
 
-#endif // SYMBIAN_BACKEND_USE_SQLITE
+#endif // SYMBIAN_BACKEND_USE_CNTMODEL_V2

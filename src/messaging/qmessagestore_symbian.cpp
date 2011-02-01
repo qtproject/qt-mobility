@@ -70,6 +70,9 @@ void QMessageStorePrivate::initialize(QMessageStore *store)
 {
     q_ptr = store;
     _mtmEngine = CMTMEngine::instance();
+#ifdef FREESTYLEMAILMAPI12USED
+    CFSEngine::instance()->setMessageStorePrivateSingleton(this);
+#endif
 }
 
 QMessageIdList QMessageStorePrivate::queryMessages(const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset) const
@@ -292,8 +295,47 @@ bool QMessageStorePrivate::removeMessages(const QMessageFilter &filter, QMessage
 
 bool QMessageStorePrivate::removeAccount(const QMessageAccountId &id)
 {
-#warning TODO: implementation
-    return false;
+    switch (idType(id)) {
+#ifdef FREESTYLEMAILMAPI12USED
+    case EngineTypeFreestyle: {
+        int err = CFSEngine::instance()->removeAccount(id);
+        if(!err)
+            err = loop.exec(QEventLoop::ExcludeUserInputEvents);
+        
+        switch (err) {
+        case KErrNone:
+            _error = QMessageManager::NoError;
+            break;
+        case KErrNotFound:
+            _error = QMessageManager::InvalidId;
+            break;
+        case KErrNoMemory:
+            _error = QMessageManager::WorkingMemoryOverflow;
+            break;
+        default:
+            _error = QMessageManager::FrameworkFault;
+            break;
+        }
+        break;
+    }
+#endif
+    case EngineTypeMTM:
+    default:
+        _error = QMessageManager::NotYetImplemented;
+        break;
+    }
+    
+    return (_error == QMessageManager::NoError);
+}
+
+void QMessageStorePrivate::removeAccountComplete(int error)
+{
+    loop.exit(error);
+}
+
+void QMessageStorePrivate::accountRemoved(const QMessageAccountId &id)
+{
+    emit q_ptr->accountRemoved(id);
 }
 
 QMessage QMessageStorePrivate::message(const QMessageId& id) const
@@ -386,7 +428,11 @@ QMessageStore* QMessageStore::instance()
 
 QMessageManager::Error QMessageStore::error() const
 {
+#ifdef FREESTYLEMAILMAPI12USED
+    return d_ptr->_error;
+#else
     return QMessageManager::NoError;
+#endif
 }
 
 QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset) const

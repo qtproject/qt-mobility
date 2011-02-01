@@ -2,9 +2,9 @@ INCLUDEPATH += ../../../src/systeminfo
 DEPENDPATH += ../../../src/systeminfo
 INCLUDEPATH += ../../../src/global
 
-TARGET  = $$qtLibraryTarget(declarative_systeminfo)
 TEMPLATE = lib
 CONFIG += plugin
+TARGET  = $$qtLibraryTarget(declarative_systeminfo)
 TARGETPATH = QtMobility/systeminfo
 PLUGIN_TYPE = declarative
 include(../../../common.pri)
@@ -16,14 +16,16 @@ SOURCES += systeminfo.cpp \
     qdeclarativescreensaver.cpp \
     qdeclarativedeviceinfo.cpp \
     qdeclarativegeneralinfo.cpp \
-    qdeclarativebatteryinfo.cpp
+    qdeclarativebatteryinfo.cpp \
+    qdeclarativealignedtimer.cpp
 
 HEADERS += \
     qdeclarativenetworkinfo_p.h \
     qdeclarativescreensaver_p.h \
     qdeclarativedeviceinfo_p.h \
     qdeclarativegeneralinfo_p.h \
-    qdeclarativebatteryinfo_p.h
+    qdeclarativebatteryinfo_p.h \
+    qdeclarativealignedtimer_p.h
 
 CONFIG += mobility
 MOBILITY += systeminfo

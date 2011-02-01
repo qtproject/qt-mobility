@@ -1,0 +1,12 @@
+usr/lib/libQtFeedback.so.1.2.0
+usr/lib/libQtFeedback.so.1.2
+usr/lib/libQtFeedback.so.1
+usr/lib/qt4/imports/QtMobility/feedback/libdeclarative_feedback.so
+usr/lib/qt4/imports/QtMobility/feedback/qmldir
+
+# commented since the immersion is dependent on the platform, so using the wildcard
+#usr/lib/qt4/plugins/feedback/libqtfeedback_immersion.so
+#usr/lib/qt4/plugins/feedback/libqtfeedback_meegotouch.so
+#usr/lib/qt4/plugins/feedback/libqtfeedback_mmk.so
+
+usr/lib/qt4/plugins/feedback/libqtfeedback_*.so

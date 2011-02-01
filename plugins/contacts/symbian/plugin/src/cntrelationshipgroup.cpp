@@ -114,13 +114,14 @@ bool CntRelationshipGroup::removeRelationshipL(QSet<QContactLocalId> *affectedCo
     return true;
 }
 
-#ifdef SYMBIAN_BACKEND_USE_SQLITE
+#ifdef SYMBIAN_BACKEND_USE_CNTMODEL_V2
 /*!
  * Save many relationships
  * 
  * \a affectedContactIds will include the affected contact ids 
- * \a relationship to be saved
- * \a error t
+ * \a relationships to be saved
+ * \a error the error code
+ * \a return true if relationships was attempted to be saved, false otherwise
  */
 bool CntRelationshipGroup::saveRelationshipsL(QSet<QContactLocalId> *affectedContactIds, QList<QContactRelationship> *relationships, QContactManager::Error* error)
 {
@@ -129,21 +130,38 @@ bool CntRelationshipGroup::saveRelationshipsL(QSet<QContactLocalId> *affectedCon
     if (relationships->count() == 0) {
         return true;
     }
-
+    bool success = true;
     QContactLocalId groupId = relationships->at(0).first().localId();
     affectedContactIds->insert(groupId);
     
     foreach (QContactRelationship relationship, *relationships) {
+        if (relationship.first().localId()!= groupId) {
+            success = false;
+            break;
+        }
         affectedContactIds->insert(relationship.second().localId());
         idList.AppendL(TContactItemId(relationship.second().localId()));
     }
 
-    database()->AddContactsToGroupL(idList, TContactItemId(groupId));
-
     *error = QContactManager::NoError;
-    return true;
+    if (!success) {
+        affectedContactIds->clear();
+    }
+    else {
+        database()->AddContactsToGroupL(idList, TContactItemId(groupId));
+    }
+    idList.Close();  
+    return success;
 }
 
+/*!
+ * Delete many relationships
+ * 
+ * \a affectedContactIds will include the affected contact ids 
+ * \a relationships to be deleted
+ * \a error the error code in case of error, NoError otherwise
+ * \a return true if the deleting was attempted to be handled, false otherwise
+ */
 bool CntRelationshipGroup::removeRelationshipsL(QSet<QContactLocalId> *affectedContactIds, const QList<QContactRelationship> &relationships, QContactManager::Error* error)
 {
     RArray<TContactItemId> idList;
@@ -151,19 +169,28 @@ bool CntRelationshipGroup::removeRelationshipsL(QSet<QContactLocalId> *affectedC
     if (relationships.count() == 0) {
         return true;
     }
-
+    bool success = true;
     QContactLocalId groupId = relationships.at(0).first().localId();
     affectedContactIds->insert(groupId);
 
     foreach (QContactRelationship relationship, relationships) {
+        if (relationship.first().localId()!= groupId) {
+                    success = false;
+                    break;
+                }
         affectedContactIds->insert(relationship.second().localId());
         idList.AppendL(TContactItemId(relationship.second().localId()));
     }
 
-    database()->RemoveContactsFromGroupL(idList, TContactItemId(groupId));
-
     *error = QContactManager::NoError;
-    return true;
+    if (!success) {
+        affectedContactIds->clear();
+    }
+    else {
+        database()->RemoveContactsFromGroupL(idList, TContactItemId(groupId));
+    }
+    idList.Close();
+    return success;
 }
 #endif
 

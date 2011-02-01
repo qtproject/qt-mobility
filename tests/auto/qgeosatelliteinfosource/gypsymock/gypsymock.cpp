@@ -47,11 +47,19 @@
 
 GypsyMock::GypsyMock() :
     m_satelliteSource(0),
-    m_satellitesChangedCallback(0)
+    m_satellitesChangedCallback(0),
+    m_disableUpdates(false)
 {
     TRACE0;
     m_regular.satellites = 0;
     m_currentJournal = ":/data/gypsymock_basic_sat.journal";
+}
+
+GPtrArray* GypsyMock::satelliteArray()
+{
+    if (m_regular.satellites)
+        return m_regular.satellites;
+    Q_ASSERT(false);
 }
 
 GypsyMock::~GypsyMock()
@@ -61,6 +69,12 @@ GypsyMock::~GypsyMock()
         // fixme, needs to be analyzed why freeing here causes crash
         //gypsy_satellite_free_satellite_array(m_regular.satellites);
     }
+}
+
+void GypsyMock::disableUpdates(bool value)
+{
+    TRACE0;
+    m_disableUpdates = value;
 }
 
 void GypsyMock::start()
@@ -102,9 +116,11 @@ void GypsyMock::timerEvent(QTimerEvent *event)
         return;
     }
     if (event->timerId() == m_regular.timerId) {
-        (*m_satellitesChangedCallback)((GypsySatellite*)1,  // dummy
-                                       m_regular.satellites,
-                                       m_satelliteSource);
+        if (!m_disableUpdates) {
+            (*m_satellitesChangedCallback)((GypsySatellite*)1,  // dummy
+                                           m_regular.satellites,
+                                           m_satelliteSource);
+        }
         if (m_regular.repeats > 0) {
             m_regular.repeats--;
             return;

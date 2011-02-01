@@ -71,6 +71,7 @@ QAudioInputPrivate::QAudioInputPrivate(const QByteArray &device)
     pullMode = true;
     resuming = false;
     finished = false;
+    waveBlockOffset = 0;
 }
 
 QAudioInputPrivate::~QAudioInputPrivate()
@@ -280,24 +281,11 @@ bool QAudioInputPrivate::open()
     wfx.nBlockAlign = (wfx.wBitsPerSample >> 3) * wfx.nChannels;
     wfx.nAvgBytesPerSec = wfx.nBlockAlign * wfx.nSamplesPerSec;
 
-    UINT_PTR devId = WAVE_MAPPER;
+    QDataStream ds(&m_device, QIODevice::ReadOnly);
+    quint32 deviceId;
+    ds >> deviceId;
 
-    WAVEINCAPS wic;
-    unsigned long iNumDevs,ii;
-    iNumDevs = waveInGetNumDevs();
-    for(ii=0;ii<iNumDevs;ii++) {
-        if(waveInGetDevCaps(ii, &wic, sizeof(WAVEINCAPS))
-	    == MMSYSERR_NOERROR) {
-	    QString tmp;
-            tmp = QString::fromWCharArray(wic.szPname);
-	    if(tmp.compare(QLatin1String(m_device)) == 0) {
-	        devId = ii;
-		break;
-	    }
-	}
-    }
-
-    if(waveInOpen(&hWaveIn, devId, &wfx,
+    if (waveInOpen(&hWaveIn, UINT_PTR(deviceId), &wfx,
                 (DWORD_PTR)&waveInProc,
                 (DWORD_PTR) this,
                 CALLBACK_FUNCTION) != MMSYSERR_NOERROR) {
@@ -308,6 +296,7 @@ bool QAudioInputPrivate::open()
         return false;
     }
     waveBlocks = allocateBlocks(period_size, buffer_size/period_size);
+    waveBlockOffset = 0;
 
     if(waveBlocks == 0) {
         errorState = QAudio::OpenError;
@@ -320,8 +309,6 @@ bool QAudioInputPrivate::open()
     mutex.lock();
     waveFreeBlockCount = buffer_size/period_size;
     mutex.unlock();
-
-    waveCurrentBlock = 0;
 
     for(int i=0; i<buffer_size/period_size; i++) {
         result = waveInAddBuffer(hWaveIn, &waveBlocks[i], sizeof(WAVEHDR));
@@ -392,8 +379,8 @@ qint64 QAudioInputPrivate::read(char* data, qint64 len)
         // Read in some audio data
         if(waveBlocks[header].dwBytesRecorded > 0 && waveBlocks[header].dwFlags & WHDR_DONE) {
             if(pullMode) {
-                l = audioSource->write(waveBlocks[header].lpData,
-                        waveBlocks[header].dwBytesRecorded);
+                l = audioSource->write(waveBlocks[header].lpData + waveBlockOffset,
+                        waveBlocks[header].dwBytesRecorded - waveBlockOffset);
 #ifdef DEBUG_AUDIO
                 qDebug()<<"IN: "<<waveBlocks[header].dwBytesRecorded<<", OUT: "<<l;
 #endif
@@ -408,7 +395,7 @@ qint64 QAudioInputPrivate::read(char* data, qint64 len)
                     errorState = QAudio::IOError;
 
                 } else {
-                    totalTimeValue += waveBlocks[header].dwBytesRecorded;
+                    totalTimeValue += l;
                     errorState = QAudio::NoError;
                     if (deviceState != QAudio::ActiveState) {
                         deviceState = QAudio::ActiveState;
@@ -417,16 +404,16 @@ qint64 QAudioInputPrivate::read(char* data, qint64 len)
 		    resuming = false;
                 }
             } else {
-                l = qMin<qint64>(len, waveBlocks[header].dwBytesRecorded);
+                l = qMin<qint64>(len, waveBlocks[header].dwBytesRecorded - waveBlockOffset);
                 // push mode
-                memcpy(p, waveBlocks[header].lpData, l);
+                memcpy(p, waveBlocks[header].lpData + waveBlockOffset, l);
 
                 len -= l;
 
 #ifdef DEBUG_AUDIO
                 qDebug()<<"IN: "<<waveBlocks[header].dwBytesRecorded<<", OUT: "<<l;
 #endif
-                totalTimeValue += waveBlocks[header].dwBytesRecorded;
+                totalTimeValue += l;
                 errorState = QAudio::NoError;
                 if (deviceState != QAudio::ActiveState) {
                     deviceState = QAudio::ActiveState;
@@ -439,51 +426,58 @@ qint64 QAudioInputPrivate::read(char* data, qint64 len)
             break;
         }
 
-        waveInUnprepareHeader(hWaveIn,&waveBlocks[header], sizeof(WAVEHDR));
+        if (l < waveBlocks[header].dwBytesRecorded - waveBlockOffset) {
+            waveBlockOffset += l;
+            done = true;
+        } else {
+            waveBlockOffset = 0;
 
-        mutex.lock();
-        waveFreeBlockCount++;
-        mutex.unlock();
+            waveInUnprepareHeader(hWaveIn,&waveBlocks[header], sizeof(WAVEHDR));
 
-        waveBlocks[header].dwBytesRecorded=0;
-        waveBlocks[header].dwFlags = 0L;
-        result = waveInPrepareHeader(hWaveIn,&waveBlocks[header], sizeof(WAVEHDR));
-        if(result != MMSYSERR_NOERROR) {
+            mutex.lock();
+            waveFreeBlockCount++;
+            mutex.unlock();
+
+            waveBlocks[header].dwBytesRecorded=0;
+            waveBlocks[header].dwFlags = 0L;
             result = waveInPrepareHeader(hWaveIn,&waveBlocks[header], sizeof(WAVEHDR));
-            qWarning("QAudioInput: failed to prepare block %d,err=%d",header,result);
-            errorState = QAudio::IOError;
+            if(result != MMSYSERR_NOERROR) {
+                result = waveInPrepareHeader(hWaveIn,&waveBlocks[header], sizeof(WAVEHDR));
+                qWarning("QAudioInput: failed to prepare block %d,err=%d",header,result);
+                errorState = QAudio::IOError;
+
+                mutex.lock();
+                waveFreeBlockCount--;
+                mutex.unlock();
+
+                return 0;
+            }
+            result = waveInAddBuffer(hWaveIn, &waveBlocks[header], sizeof(WAVEHDR));
+            if(result != MMSYSERR_NOERROR) {
+                qWarning("QAudioInput: failed to setup block %d,err=%d",header,result);
+                errorState = QAudio::IOError;
+
+                mutex.lock();
+                waveFreeBlockCount--;
+                mutex.unlock();
+
+                return 0;
+            }
+            header++;
+            if(header >= buffer_size/period_size)
+                header = 0;
+            p+=l;
 
             mutex.lock();
-            waveFreeBlockCount--;
+            if(!pullMode) {
+                if(len < period_size || waveFreeBlockCount == buffer_size/period_size)
+                    done = true;
+            } else {
+                if(waveFreeBlockCount == buffer_size/period_size)
+                    done = true;
+            }
             mutex.unlock();
-
-            return 0;
         }
-        result = waveInAddBuffer(hWaveIn, &waveBlocks[header], sizeof(WAVEHDR));
-        if(result != MMSYSERR_NOERROR) {
-            qWarning("QAudioInput: failed to setup block %d,err=%d",header,result);
-            errorState = QAudio::IOError;
-
-            mutex.lock();
-            waveFreeBlockCount--;
-            mutex.unlock();
-
-            return 0;
-        }
-        header++;
-        if(header >= buffer_size/period_size)
-            header = 0;
-        p+=l;
-
-        mutex.lock();
-        if(!pullMode) {
-            if(len < period_size || waveFreeBlockCount == buffer_size/period_size)
-	        done = true;
-	} else {
-	    if(waveFreeBlockCount == buffer_size/period_size)
-	        done = true;
-	}
-        mutex.unlock();
 
 	written+=l;
     }
@@ -512,9 +506,9 @@ void QAudioInputPrivate::resume()
         waveFreeBlockCount = buffer_size/period_size;
         mutex.unlock();
 
-        waveCurrentBlock = 0;
         header = 0;
 	resuming = true;
+        waveBlockOffset = 0;
         waveInStart(hWaveIn);
         QTimer::singleShot(20,this,SLOT(feedback()));
         emit stateChanged(deviceState);

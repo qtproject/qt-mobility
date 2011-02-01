@@ -93,6 +93,7 @@ contains(build_unit_tests, yes) {
         contains(TEMPLATE,.*lib) {
             DESTDIR = $$OUTPUT_DIR/lib
             symbian:defFilePath=../s60installs
+            symbian:DEF_FILE=../s60installs
             VERSION = 1.2.0
         } else {
             DESTDIR = $$OUTPUT_DIR/bin
@@ -184,13 +185,16 @@ symbian {
     #DEFINES += SYMBIAN_EMULATOR_SUPPORTS_PERPROCESS_WSD
 }
 
-# Add the output dirs to the link path too
+# Add the output dirs to the front of the link path.
+# They must be at the front in case some previous Mobility version is already
+# installed on the system.
+# Note that we must use QMAKE_LIBDIR/QMAKE_FRAMEWORKPATH for this, and not
+# LIBS, because Qt will prepend the Qt library path to LIBS elsewhere.
 mac:contains(QT_CONFIG,qt_framework) {
     #add framework option
-    ##contains(TEMPLATE, app)|contains(CONFIG,plugin):LIBS+=-F$$OUTPUT_DIR/lib
-    LIBS+=-F$$OUTPUT_DIR/lib
+    QMAKE_FRAMEWORKPATH = $$OUTPUT_DIR/lib
 }
-LIBS += -L$$OUTPUT_DIR/lib
+QMAKE_LIBDIR = $$OUTPUT_DIR/lib
 
 linux*-g++*:QMAKE_LFLAGS += $$QMAKE_LFLAGS_NOUNDEF
 

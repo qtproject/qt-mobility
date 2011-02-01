@@ -58,7 +58,7 @@
 #include <geoclue/geoclue-velocity.h>
 #include <QTimer>
 
-#define Q_LOCATION_GEOCLUE_DEBUG
+//#define Q_LOCATION_GEOCLUE_DEBUG
 
 QTM_BEGIN_NAMESPACE
 
@@ -85,9 +85,19 @@ public:
     int init();
 
     void singleUpdateFailed();
-    void singleUpdateSucceeded(QGeoPositionInfo info);
+    void singleUpdateSucceeded(GeocluePositionFields fields,
+                               int                   timestamp,
+                               double                latitude,
+                               double                longitude,
+                               double                altitude,
+                               GeoclueAccuracy      *accuracy);
     void regularUpdateFailed();
-    void regularUpdateSucceeded(QGeoPositionInfo info);
+    void regularUpdateSucceeded(GeocluePositionFields fields,
+                                int                   timestamp,
+                                double                latitude,
+                                double                longitude,
+                                double                altitude,
+                                GeoclueAccuracy      *accuracy);
     void velocityUpdateFailed();
     void velocityUpdateSucceeded(double speed);
 
@@ -101,11 +111,18 @@ private slots:
     void startUpdatesTimeout();
 
 private:
+    bool tryGPS();
     int configurePositionSource();
-
+    QGeoPositionInfo geoclueToPositionInfo(GeocluePositionFields fields,
+                                           int                   timestamp,
+                                           double                latitude,
+                                           double                longitude,
+                                           double                altitude,
+                                           GeoclueAccuracy*      accuracy);
 private:
     int m_updateInterval;
     GeoclueResourceFlags m_preferredResources;
+    GeoclueAccuracyLevel m_preferredAccuracy;
     GeoclueMasterClient *m_client;
     GeocluePosition *m_pos;
     GeoclueVelocity* m_vel;
@@ -114,7 +131,9 @@ private:
     bool m_lastPositionIsFresh;
     bool m_lastVelocityIsFresh;
     double m_lastVelocity;
+    bool m_lastPositionFromSatellite;
     QGeoPositionInfo m_lastPosition;
+    PositioningMethods m_methods;
 };
 
 QTM_END_NAMESPACE

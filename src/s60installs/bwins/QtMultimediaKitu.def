@@ -1602,4 +1602,23 @@ EXPORTS
 	?playingChanged@QSoundEffect@@IAEXXZ @ 1601 NONAME ; void QSoundEffect::playingChanged(void)
 	?isPlaying@QSoundEffect@@QBE_NXZ @ 1602 NONAME ; bool QSoundEffect::isPlaying(void) const
 	?statusChanged@QSoundEffect@@IAEXXZ @ 1603 NONAME ; void QSoundEffect::statusChanged(void)
+	?qt_metacall@QMediaNetworkAccessControl@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 1604 NONAME ; int QMediaNetworkAccessControl::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?getStaticMetaObject@QMediaNetworkAccessControl@@SAABUQMetaObject@@XZ @ 1605 NONAME ; struct QMetaObject const & QMediaNetworkAccessControl::getStaticMetaObject(void)
+	?tr@QMediaNetworkAccessControl@@SA?AVQString@@PBD0H@Z @ 1606 NONAME ; class QString QMediaNetworkAccessControl::tr(char const *, char const *, int)
+	?setViewfinder@QCamera@@QAEXPAVQAbstractVideoSurface@@@Z @ 1607 NONAME ; void QCamera::setViewfinder(class QAbstractVideoSurface *)
+	?trUtf8@QMediaNetworkAccessControl@@SA?AVQString@@PBD0@Z @ 1608 NONAME ; class QString QMediaNetworkAccessControl::trUtf8(char const *, char const *)
+	?metaObject@QMediaNetworkAccessControl@@UBEPBUQMetaObject@@XZ @ 1609 NONAME ; struct QMetaObject const * QMediaNetworkAccessControl::metaObject(void) const
+	?staticMetaObject@QMediaNetworkAccessControl@@2UQMetaObject@@B @ 1610 NONAME ; struct QMetaObject const QMediaNetworkAccessControl::staticMetaObject
+	?setNetworkConfigurations@QMediaPlayer@@QAEXABV?$QList@VQNetworkConfiguration@@@@@Z @ 1611 NONAME ; void QMediaPlayer::setNetworkConfigurations(class QList<class QNetworkConfiguration> const &)
+	?setVideoOutput@QMediaPlayer@@QAEXPAVQAbstractVideoSurface@@@Z @ 1612 NONAME ; void QMediaPlayer::setVideoOutput(class QAbstractVideoSurface *)
+	?networkConfigurationChanged@QMediaPlayer@@IAEXABVQNetworkConfiguration@@@Z @ 1613 NONAME ; void QMediaPlayer::networkConfigurationChanged(class QNetworkConfiguration const &)
+	??_EQMediaNetworkAccessControl@@UAE@I@Z @ 1614 NONAME ; QMediaNetworkAccessControl::~QMediaNetworkAccessControl(unsigned int)
+	??0QMediaNetworkAccessControl@@IAE@PAVQObject@@@Z @ 1615 NONAME ; QMediaNetworkAccessControl::QMediaNetworkAccessControl(class QObject *)
+	?trUtf8@QMediaNetworkAccessControl@@SA?AVQString@@PBD0H@Z @ 1616 NONAME ; class QString QMediaNetworkAccessControl::trUtf8(char const *, char const *, int)
+	?currentNetworkConfiguration@QMediaPlayer@@QBE?AVQNetworkConfiguration@@XZ @ 1617 NONAME ; class QNetworkConfiguration QMediaPlayer::currentNetworkConfiguration(void) const
+	??1QMediaNetworkAccessControl@@UAE@XZ @ 1618 NONAME ; QMediaNetworkAccessControl::~QMediaNetworkAccessControl(void)
+	?setVideoOutput@QMediaImageViewer@@QAEXPAVQAbstractVideoSurface@@@Z @ 1619 NONAME ; void QMediaImageViewer::setVideoOutput(class QAbstractVideoSurface *)
+	?configurationChanged@QMediaNetworkAccessControl@@IAEXABVQNetworkConfiguration@@@Z @ 1620 NONAME ; void QMediaNetworkAccessControl::configurationChanged(class QNetworkConfiguration const &)
+	?tr@QMediaNetworkAccessControl@@SA?AVQString@@PBD0@Z @ 1621 NONAME ; class QString QMediaNetworkAccessControl::tr(char const *, char const *)
+	?qt_metacast@QMediaNetworkAccessControl@@UAEPAXPBD@Z @ 1622 NONAME ; void * QMediaNetworkAccessControl::qt_metacast(char const *)
 

@@ -130,10 +130,7 @@ symbian|win32|maemo6|maemo5|mac:!simulator {
             modest-dbus-client-1.0 \
             TpSession \
             TelepathyQt4
-        pkgconfig.path = $$QT_MOBILITY_LIB/pkgconfig
-        pkgconfig.files = QtMessaging.pc
-        INSTALLS += pkgconfig \
-            documentation
+        INSTALLS += documentation
         LIBS += -lgconf-2 \
             -lrtcom-eventlogger \
             -lmodest-dbus-client-1.0 \
@@ -201,7 +198,6 @@ symbian|win32|maemo6|maemo5|mac:!simulator {
         PKGCONFIG += glib-2.0 \
             dbus-glib-1 \
             gconf-2.0 \
-            libosso \
             TelepathyQt4 \
             qmfclient \
             commhistory \
@@ -213,24 +209,23 @@ symbian|win32|maemo6|maemo5|mac:!simulator {
         QMAKE_PKGCONFIG_REQUIRES = glib-2.0 \
             dbus-glib-1 \
             gconf-2.0 \
-            osso \            
             TelepathyQt4 \
             qmfclient \
             commhistory \
             meegotouch \
             qttracker \
             messagingif0
-        pkgconfig.path = $$QT_MOBILITY_LIB/pkgconfig
-        pkgconfig.files = QtMessaging.pc
-        INSTALLS += pkgconfig \
-            documentation
+        INSTALLS += documentation
     }
     symbian { 
         INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
 	contains(messaging_freestyle_enabled, yes) {
    	CONFIG += FREESTYLEMAIL
 	DEFINES += FREESTYLEMAILUSED
-	DEFINES += FREESTYLEMAILBOXOBSERVERUSED
+	}
+	contains(messaging_freestyle_mapi12_enabled, yes) {
+	CONFIG += FREESTYLEMAILMAPI12
+	DEFINES += FREESTYLEMAILMAPI12USED
 	}
 	contains(messaging_ncnlist_enabled, no) {
 	DEFINES += NCNLISTREMOVED

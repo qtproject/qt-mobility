@@ -1,5 +1,5 @@
 <repository uidValue="0x87654321">
-<keyRange firstInt="0x1" lastInt = "0xffff" type="int" backup="true" ref="MyFeature/MyNumbers">
+<keyRange firstInt="0x1" lastInt = "0x00ff" type="int" backup="true" ref="MyFeature/MyNumbers">
     <desc>Numbers for my feature</desc>
     <access type="rw" capabilities="AlwaysPass"/>
 </keyRange>

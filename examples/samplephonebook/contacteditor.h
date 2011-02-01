@@ -73,14 +73,14 @@ public slots:
 private slots:
     void saveClicked();
     void cancelClicked();
-    void avatarClicked();
-    void clearAvatarClicked();
+    void thumbnailClicked();
+    void clearThumbnailClicked();
     void contactChanged();
 
 private:
     void updateUi(const QContact& contact);
     QString nameField();
-    void setAvatarPixmap(const QPixmap& pixmap);
+    void setThumbnailPixmap(const QPixmap& pixmap);
 
 #ifdef Q_OS_SYMBIAN
     QAction* m_saveBtn;
@@ -94,16 +94,16 @@ private:
     QLineEdit *m_phoneEdit;
     QLineEdit *m_emailEdit;
     QLineEdit *m_addrEdit;
-    QPushButton *m_avatarBtn;
-    QPushButton *m_clearAvatarBtn;
-    QLabel *m_avatarView;
+    QPushButton *m_thumbnailBtn;
+    QPushButton *m_clearThumbnailBtn;
+    QLabel *m_thumbnailView;
 
     // data
     QContactManager *m_manager;
     QContactLocalId m_contactId;
-    QString m_newAvatarPath;
+    QString m_newThumbnailPath;
     QImage m_thumbnail;
-    QSharedPointer<QContactObserver> m_observer;
+    QContactObserver* m_observer;
 };
 
 #endif // CONTACTEDITOR_H

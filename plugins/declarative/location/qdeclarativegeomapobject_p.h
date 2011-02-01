@@ -43,11 +43,15 @@
 #define QDECLARATIVEGEOMAPOBJECT_H
 
 #include "qgeomapobject.h"
-#include "qdeclarativegeomapmousearea_p.h"
+#include "qdeclarativegeomapmouseevent_p.h"
 
 #include <QtDeclarative/qdeclarativeitem.h>
+class QAbstractItemModel;
 
 QTM_BEGIN_NAMESPACE
+
+class QDeclarativeGraphicsGeoMap;
+class QDeclarativeGeoMapMouseArea;
 
 class QDeclarativeGeoMapObject : public QDeclarativeItem
 {
@@ -61,13 +65,15 @@ public:
 
     virtual void componentComplete();
 
+    virtual void setMap(QDeclarativeGraphicsGeoMap *map);
+    QDeclarativeGraphicsGeoMap* map() const;
+
     void setMapObject(QGeoMapObject *object);
     QGeoMapObject* mapObject();
 
     void setVisible(bool visible);
     bool isVisible() const;
 
-    virtual void clickEvent(QDeclarativeGeoMapMouseEvent *event);
     virtual void doubleClickEvent(QDeclarativeGeoMapMouseEvent *event);
     virtual void pressEvent(QDeclarativeGeoMapMouseEvent *event);
     virtual void releaseEvent(QDeclarativeGeoMapMouseEvent *event);
@@ -84,11 +90,54 @@ private Q_SLOTS:
 private:
     QGeoMapObject *object_;
     bool visible_;
+    QDeclarativeGraphicsGeoMap* map_;
     QList<QDeclarativeGeoMapMouseArea*> mouseAreas_;
 };
 
-QTM_END_NAMESPACE
 
+class QDeclarativeGeoMapObjectView : public QObject, public QDeclarativeParserStatus
+{
+    Q_OBJECT
+    Q_PROPERTY(QVariant model READ model WRITE setModel NOTIFY modelChanged)
+    Q_PROPERTY(QDeclarativeComponent* delegate READ delegate WRITE setDelegate NOTIFY delegateChanged)
+
+public:
+    QDeclarativeGeoMapObjectView(QDeclarativeItem *parent = 0);
+    ~QDeclarativeGeoMapObjectView();
+
+    QVariant model() const;
+    void setModel(const QVariant &);
+
+    QDeclarativeComponent *delegate() const;
+    void setDelegate(QDeclarativeComponent*);
+
+    void setMapData(QGeoMapData *);
+    void repopulate();
+
+    QDeclarativeGeoMapObject* createItem(int modelRow);
+
+    // From QDeclarativeParserStatus
+    virtual void componentComplete();
+    void classBegin() {}
+
+Q_SIGNALS:
+    void modelChanged();
+    void delegateChanged();
+
+private Q_SLOTS:
+    void modelReset();
+
+private:
+    bool componentCompleted_;
+    QList<QDeclarativeGeoMapObject*> mapObjects_;
+    QDeclarativeComponent *delegate_;
+    QVariant modelVariant_;
+    QAbstractItemModel* model_;
+    QGeoMapData *mapData_;
+};
+
+QTM_END_NAMESPACE
 QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeGeoMapObject));
+QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeGeoMapObjectView));
 
 #endif

@@ -108,7 +108,7 @@ void QGeoTiledMapCircleObjectInfo::updateValidity()
     setValid((circle->center().isValid() && (circle->radius() >= 0.0)));
 }
 
-void QGeoTiledMapCircleObjectInfo::centerChanged(const QGeoCoordinate &center)
+void QGeoTiledMapCircleObjectInfo::centerChanged(const QGeoCoordinate &/*center*/)
 {
     updateValidity();
     if (valid())
@@ -116,7 +116,7 @@ void QGeoTiledMapCircleObjectInfo::centerChanged(const QGeoCoordinate &center)
 
 }
 
-void QGeoTiledMapCircleObjectInfo::radiusChanged(qreal radius)
+void QGeoTiledMapCircleObjectInfo::radiusChanged(qreal /*radius*/)
 {
     updateValidity();
     if (valid())

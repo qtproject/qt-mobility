@@ -9,10 +9,12 @@ DEPENDPATH += ../../../src/connectivity/nfc
 
 HEADERS += \
     qnearfieldmanager_emulator_p.h \
+    qnearfieldtarget_emulator_p.h \
     targetemulator_p.h
 
 SOURCES += \
     qnearfieldmanager_emulator.cpp \
+    qnearfieldtarget_emulator.cpp \
     targetemulator.cpp
 
 

@@ -27,10 +27,10 @@
 
 /*!
     \page tutorials.html
-     \title Qt Mobility Tutorials
-     
+     \title QtMobility Tutorials
+
      \section2 Location
      \list
-     \o \l{Maps Navigator Tutorial}{Maps Navigator}
+     \o \l{Maps Demo Tutorial}{Maps Demo}
      \endlist
 */

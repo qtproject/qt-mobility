@@ -92,4 +92,24 @@ void S60MediaServicePlugin::release(QMediaService *service)
     delete service;
 }
 
+QtMultimediaKit::SupportEstimate S60MediaServicePlugin::hasSupport(const QString &mimeType, const QStringList& codecs) const
+{
+    Q_UNUSED(mimeType);
+    Q_UNUSED(codecs);
+    return QtMultimediaKit::PreferredService;
+}
+
+QStringList S60MediaServicePlugin::supportedMimeTypes() const
+{
+    if (m_supportedmimetypes.isEmpty()) {
+        TInt err;
+        S60FormatSupported* formats = new (ELeave) S60FormatSupported();
+        if (formats) {
+            TRAP(err, m_supportedmimetypes = formats->supportedPlayMimeTypesL());
+            delete formats;
+        }
+    }
+    return m_supportedmimetypes;
+}
+
 Q_EXPORT_PLUGIN2(qtmultimediakit_mmfengine, S60MediaServicePlugin);

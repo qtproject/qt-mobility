@@ -151,7 +151,7 @@ void TestCntTransformContactData::executeCntTransformBithday()
     QVERIFY(err == 0);
 }
 
-#ifdef SYMBIAN_BACKEND_USE_SQLITE
+#ifdef SYMBIAN_BACKEND_USE_CNTMODEL_V2
 
 void TestCntTransformContactData::executeCntTransformOnlineAccount()
 {
@@ -175,7 +175,7 @@ void TestCntTransformContactData::executeCntTransformPresence()
     QVERIFY(err == 0);
 }
 
-#endif // SYMBIAN_BACKEND_USE_SQLITE
+#endif // SYMBIAN_BACKEND_USE_CNTMODEL_V2
 
 void TestCntTransformContactData::executeCntTransformOrganisation()
 {
@@ -1070,7 +1070,7 @@ void TestCntTransformContactData::validateCntTransformBirthdayL(TTime field, QDa
     delete transformBirthday;
 }
 
-#ifdef SYMBIAN_BACKEND_USE_SQLITE
+#ifdef SYMBIAN_BACKEND_USE_CNTMODEL_V2
 
 void TestCntTransformContactData::validateCntTransformOnlineAccountL(
     TPtrC16 sipField, QString sipDetail,
@@ -1311,7 +1311,7 @@ void TestCntTransformContactData::validateCntTransformPresenceL(TPtrC16 presence
      
     delete transformPresence;
     }
-#endif // SYMBIAN_BACKEND_USE_SQLITE
+#endif // SYMBIAN_BACKEND_USE_CNTMODEL_V2
 
 void TestCntTransformContactData::validateCntTransformOrganisationL(TPtrC16 companyField, QString companyDetail,
                                 TPtrC16 departmentField, QStringList departmentDetail,

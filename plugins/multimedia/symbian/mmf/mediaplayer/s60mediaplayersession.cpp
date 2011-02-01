@@ -101,9 +101,6 @@ bool S60MediaPlayerSession::isMuted() const
 
 bool S60MediaPlayerSession::isSeekable() const
 {
-    // Currently, there is no API in mmf to check whether a clip is seekable or not.
-    //Hence, m_seekable is true by default, and, once setPosition() fails, m_seekable is set to false, also client will be notified.
-    //TODO: When mmf API is available to check whether a clip is seekable or not, this function will call that API instead of this (dirty) book-keeping.
     return m_seekable;
 }
 
@@ -116,7 +113,7 @@ void S60MediaPlayerSession::setMediaStatus(QMediaPlayer::MediaStatus status)
     
     emit mediaStatusChanged(m_mediaStatus);
     
-    if (m_play_requested)
+    if (m_play_requested && m_mediaStatus == QMediaPlayer::LoadedMedia)
         play();
 }
 
@@ -144,7 +141,6 @@ void S60MediaPlayerSession::load(QUrl url)
     setMediaStatus(QMediaPlayer::LoadingMedia);
     startStalledTimer();
     m_stream = (url.scheme() == "file")?false:true;
-    m_seekable = true;
     TRAPD(err,
         if(m_stream)
             doLoadUrlL(QString2TPtrC(url.toString()));
@@ -167,6 +163,8 @@ void S60MediaPlayerSession::play()
     }
     
     m_play_requested = false;
+    setVolume(m_volume);
+    setMuted(m_muted);
     setState(QMediaPlayer::PlayingState);
     startProgressTimer();
     doPlay();
@@ -375,17 +373,21 @@ void S60MediaPlayerSession::setPosition(qint64 pos)
 {
     if (position() == pos)
         return;
-    
-    if (state() == QMediaPlayer::PlayingState) 
+
+    QMediaPlayer::State originalState = state();
+
+    if (originalState == QMediaPlayer::PlayingState) 
         pause();
 
     TRAPD(err, doSetPositionL(pos * 1000));
     setError(err);
-    if (err ==  KErrNotSupported) {
+
+    if (err == KErrNotSupported) {
         m_seekable = false;
         emit seekableChanged(m_seekable);
     }
-    if (state() == QMediaPlayer::PausedState)
+
+    if (originalState == QMediaPlayer::PlayingState)
         play();
 
     emit positionChanged(position());
@@ -403,19 +405,23 @@ void S60MediaPlayerSession::loaded()
         setMediaStatus(QMediaPlayer::LoadedMedia);
         TRAPD(err, updateMetaDataEntriesL());
         setError(err);
-        setVolume(m_volume);
-        setMuted(m_muted);
         emit durationChanged(duration());
         emit videoAvailableChanged(isVideoAvailable());
         emit audioAvailableChanged(isAudioAvailable());
         emit mediaChanged();
+
+        m_seekable = getIsSeekable();
     }
 }
 
 void S60MediaPlayerSession::endOfMedia()
 {
+    m_state = QMediaPlayer::StoppedState;
     setMediaStatus(QMediaPlayer::EndOfMedia);
-    setState(QMediaPlayer::StoppedState);
+    //there is a chance that user might have called play from EOF callback
+    //if we are already in playing state, do not send state change callback
+    if(m_state == QMediaPlayer::StoppedState)
+        emit stateChanged(QMediaPlayer::StoppedState);
     emit positionChanged(0);
 }
 
@@ -481,6 +487,7 @@ QMediaPlayer::Error S60MediaPlayerSession::fromSymbianErrorToMultimediaError(int
         case KErrMMProxyServer:
         case KErrMMProxyServerNotSupported:
         case KErrMMProxyServerConnect:
+        case KErrCouldNotConnect:
             return QMediaPlayer::NetworkError;
 
         case KErrNotReady:

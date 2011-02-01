@@ -57,14 +57,18 @@ class QDeclarativeGeoMapGroupObject : public QDeclarativeGeoMapObject
     Q_OBJECT
 
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeGeoMapObject> objects READ objects)
+    Q_CLASSINFO("DefaultProperty", "objects")
 
 public:
     QDeclarativeGeoMapGroupObject(QDeclarativeItem *parent = 0);
     ~QDeclarativeGeoMapGroupObject();
 
+    virtual void componentComplete();
+
+    virtual void setMap(QDeclarativeGraphicsGeoMap *map);
+
     QDeclarativeListProperty<QDeclarativeGeoMapObject> objects();
 
-    virtual void clickEvent(QDeclarativeGeoMapMouseEvent *event);
     virtual void doubleClickEvent(QDeclarativeGeoMapMouseEvent *event);
     virtual void pressEvent(QDeclarativeGeoMapMouseEvent *event);
     virtual void releaseEvent(QDeclarativeGeoMapMouseEvent *event);

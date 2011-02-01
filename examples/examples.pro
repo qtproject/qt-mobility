@@ -36,15 +36,11 @@ contains(mobility_modules,location) {
     equals(QT_MAJOR_VERSION, 4):lessThan(QT_MINOR_VERSION, 7) {
         contains(mobility_modules,bearer) {
     	    SUBDIRS +=  flickrdemo \
-                        geoservicedemo \
-                        mapsnavigator \
-                        mapviewer
+                        mapsdemo
         }
     } else {
         SUBDIRS +=  flickrdemo \
-                    geoservicedemo \
-                    mapsnavigator \
-                    mapviewer
+                    mapsdemo
     }
 
     contains(QT_CONFIG, declarative) {
@@ -151,10 +147,12 @@ contains(mobility_modules,connectivity) {
 
 # Connectivity
 contains(mobility_modules,connectivity) {
-    !win32:SUBDIRS += btscanner btchat
+    !win32:SUBDIRS += btscanner btchat btfiletransfer bttennis
 }
 
 sources.path = $$QT_MOBILITY_EXAMPLES
 
 INSTALLS += sources
 
+SUBDIRS += \
+    qsystemalignedtimer

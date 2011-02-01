@@ -61,6 +61,7 @@ QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeScreenSaver));
 QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QSystemStorageInfo));
 QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeNetworkInfo));
 QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeBatteryInfo));
+QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QSystemAlignedTimer));
 
 class QSystemInfoDeclarativeModule : public QDeclarativeExtensionPlugin
 {
@@ -77,6 +78,7 @@ public:
         qmlRegisterType<QDeclarativeScreenSaver>(uri, 1, 1, "ScreenSaver");
         qmlRegisterType<QSystemStorageInfo>(uri, 1, 1, "StorageInfo");
         qmlRegisterType<QDeclarativeBatteryInfo>(uri, 1, 1, "BatteryInfo");
+        qmlRegisterType<QSystemAlignedTimer>(uri, 1, 1, "AlignedTimer");
     }
 };
 

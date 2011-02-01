@@ -559,6 +559,7 @@ call :compileTest SymbianContactModel symbiancntmodel
 call :compileTest SymbianContactModelv2 symbiancntmodelv2
 call :compileTest S60_Sensor_API sensors_s60_31
 call :compileTest Symbian_Sensor_Framework sensors_symbian
+call :compileTest Sensor_Framework_Light sensors_symbian_light
 call :compileTest Symbian_Hb hb_symbian
 call :compileTest Audiorouting_s60 audiorouting_s60
 call :compileTest Tunerlibrary_for_3.1 tunerlib_s60
@@ -566,12 +567,14 @@ call :compileTest RadioUtility_for_post_3.1 radioutility_s60
 call :compileTest OpenMaxAl_support openmaxal_symbian
 call :compileTest Surfaces_s60 surfaces_s60
 call :compileTest Symbian_Messaging_Freestyle messaging_freestyle
+call :compileTest Symbian_Messaging_Freestyle_MAPI12 messaging_freestyle_mapi12
 call :compileTest callinformation_symbian callinformation_symbian
 call :compileTest IMMERSION immersion
 call :compileTest Symbian_CamAutoFocus_31 symbian_camera_camautofocus
 call :compileTest Symbian_ECamAdvancedSettings_Post31 symbian_camera_ecamadvsettings
 call :compileTest Symbian_DevVideoRecord symbian_camera_devvideorecord
 call :compileTest AdvancedTouchFeedback advancedtouchfeedback
+call :compileTest CHWRMHaptics chwrmhaptics
 call :compileTest MDS mds
 call :compileTest MDS_25 mds_25
 call :compileTest MDS_25_92MCL mds_25_92mcl

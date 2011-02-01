@@ -64,6 +64,7 @@
 #include "qdeclarativegeomaptextobject_p.h"
 
 #include "qdeclarativegeomapmousearea_p.h"
+#include "qdeclarativegeomapmouseevent_p.h"
 
 #include "qdeclarativegeocodemodel_p.h"
 #include "qdeclarativereversegeocodemodel_p.h"
@@ -107,6 +108,7 @@ public:
         qmlRegisterType<QDeclarativeGeoMapObjectBorder>();
         qmlRegisterType<QGeoMapObject>(uri, 1, 1, "QGeoMapObject");
         qmlRegisterType<QDeclarativeGeoMapObject>(uri, 1, 1, "MapObject");
+        qmlRegisterType<QDeclarativeGeoMapObjectView>(uri, 1, 1, "MapObjectView");
         qmlRegisterType<QDeclarativeGeoMapGroupObject>(uri, 1, 1, "MapGroup");
         qmlRegisterType<QDeclarativeGeoMapCircleObject>(uri, 1, 1, "MapCircle");
         qmlRegisterType<QDeclarativeGeoMapPolygonObject>(uri, 1, 1, "MapPolygon");
@@ -116,6 +118,7 @@ public:
         qmlRegisterType<QDeclarativeGeoMapPixmapObject>(uri, 1, 1, "MapImage");
 
         qmlRegisterType<QDeclarativeGeoMapMouseArea>(uri, 1, 1, "MapMouseArea");
+        qmlRegisterType<QDeclarativeGeoMapMouseEvent>(uri, 1, 1, "MapMouseEvent");
 
         qmlRegisterType<QDeclarativeGeocodeModel>(uri, 1, 1, "GeocodeModel");
         qmlRegisterType<QDeclarativeReverseGeocodeModel>(uri, 1, 1, "ReverseGeocodeModel");

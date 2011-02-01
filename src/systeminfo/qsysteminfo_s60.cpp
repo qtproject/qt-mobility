@@ -72,6 +72,23 @@
 #include <aknkeylock.h>
 #define RD_STARTUP_CHANGE
 #include <startupdomainpskeys.h>
+#include <hwrmlight.h>
+#ifdef SYMBIAN_3_PLATFORM
+#include <hwrmfmtx.h>
+#include <avkondomainpskeys.h>
+#include <hwrmdomainpskeys.h>
+#include <AvkonInternalCRKeys.h>
+#include <AknFepInternalPSKeys.h>
+#endif
+#include <e32debug.h>
+#include <QCryptographicHash>
+#include <etel.h>
+#ifdef ETELMM_SUPPORTED
+#include <etelmm.h>
+#endif
+
+const TUint32 KAknKeyboardType = 0x0000000B;
+const float KMMPerTwip  = 0.0177f; //Milimeter Per Twip
 
 QTM_BEGIN_NAMESPACE
 
@@ -94,7 +111,7 @@ QStringList QSystemInfoPrivate::availableLanguages() const
 {
     QStringList languages;
     QList<HbInputLanguage> hblanguages = HbKeymapFactory::availableLanguages();
-    foreach(HbInputLanguage lang, hblanguages) {
+    foreach (HbInputLanguage lang, hblanguages) {
         QString language = QLocaleToISO639_1(lang.language());
         if (!language.isEmpty()) {
             languages << language;
@@ -128,7 +145,7 @@ QStringList QSystemInfoPrivate::availableLanguages() const
 
 QString QSystemInfoPrivate::QLocaleToISO639_1(QLocale::Language language) const
 {
-       switch(language) {
+       switch (language) {
        case QLocale::English: return "en";
        case QLocale::Lithuanian: return "lt";
        case QLocale::Malay: return "ms";
@@ -365,10 +382,22 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
             }
             return false;
         }
+        case QSystemInfo::FmTransmitterFeature:
+        {
+#ifdef SYMBIAN_3_PLATFORM
+            TRAPD(err,
+                //Leaves with KErrNotSupported if device doesn't support FmTransmitter feature.
+                CHWRMFmTx *fmTX = CHWRMFmTx::NewL();
+                delete fmTX;
+               )
+            return err == KErrNone;
+#endif
+        }
+
         case QSystemInfo::FmradioFeature:   //Not available in public SDK
         case QSystemInfo::LedFeature:
         case QSystemInfo::VideoOutFeature:  //Accessory monitor available from S60 5.x onwards
-        case QSystemInfo::FmTransmitterFeature:
+
 
         default:
             return false;
@@ -385,6 +414,9 @@ QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate(QObject *parent)
     DeviceInfo::instance()->cellSignalStrenghtInfo()->addObserver(this);
     DeviceInfo::instance()->cellNetworkInfo()->addObserver(this);
     DeviceInfo::instance()->cellNetworkRegistrationInfo()->addObserver(this);
+#ifdef ETELMM_SUPPORTED
+    DeviceInfo::instance()->networkInfo()->addObserver(this);
+#endif
     connect(DeviceInfo::instance()->wlanInfo(), SIGNAL(wlanNetworkNameChanged()),
         this, SLOT(wlanNetworkNameChanged()));
     connect(DeviceInfo::instance()->wlanInfo(), SIGNAL(wlanNetworkSignalStrengthChanged()),
@@ -398,15 +430,23 @@ QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate()
     DeviceInfo::instance()->cellSignalStrenghtInfo()->removeObserver(this);
     DeviceInfo::instance()->cellNetworkInfo()->removeObserver(this);
     DeviceInfo::instance()->cellNetworkRegistrationInfo()->removeObserver(this);
+#ifdef ETELMM_SUPPORTED
+    DeviceInfo::instance()->networkInfo()->removeObserver(this);
+#endif
 }
 
 QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSystemNetworkInfo::NetworkMode mode)
 {
-    switch(mode) {
+    switch (mode) {
         case QSystemNetworkInfo::GsmMode:
         case QSystemNetworkInfo::CdmaMode:
         case QSystemNetworkInfo::WcdmaMode:
+        case QSystemNetworkInfo::GprsMode:
+        case QSystemNetworkInfo::EdgeMode:
+        case QSystemNetworkInfo::HspaMode:
+        case QSystemNetworkInfo::LteMode:
         {
+        #ifndef ETELMM_SUPPORTED
             CTelephony::TRegistrationStatus networkStatus = DeviceInfo::instance()
                 ->cellNetworkRegistrationInfo()->cellNetworkStatus();
 
@@ -421,7 +461,7 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSyst
             if (networkMode == CTelephony::ENetworkModeWcdma && mode != QSystemNetworkInfo::WcdmaMode)
                 return QSystemNetworkInfo::NoNetworkAvailable;
 
-            switch(networkStatus) {
+            switch (networkStatus) {
                 case CTelephony::ERegistrationUnknown: return QSystemNetworkInfo::UndefinedStatus;
                 case CTelephony::ENotRegisteredNoService: return QSystemNetworkInfo::NoNetworkAvailable;
                 case CTelephony::ENotRegisteredEmergencyOnly: return QSystemNetworkInfo::EmergencyOnly;
@@ -432,7 +472,28 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSyst
                 case CTelephony::ERegisteredRoaming: return QSystemNetworkInfo::Roaming;
                 default:
                     break;
+
             };
+        #else
+           RMobilePhone::TMobilePhoneRegistrationStatus nStatus = RMobilePhone::ERegistrationUnknown;
+           QSystemNetworkInfo::NetworkMode currMode =currentMode();
+           if (currMode == mode)
+            {
+                nStatus = DeviceInfo::instance()->networkInfo()->GetStatus();
+            }
+           switch (nStatus) {
+           case RMobilePhone::ENotRegisteredNoService : return QSystemNetworkInfo::NoNetworkAvailable;
+           case RMobilePhone::ENotRegisteredEmergencyOnly : return QSystemNetworkInfo::EmergencyOnly;
+           case RMobilePhone::ENotRegisteredSearching : return QSystemNetworkInfo::Searching;
+           case RMobilePhone::ERegisteredBusy : return QSystemNetworkInfo::Busy;
+           case RMobilePhone::ERegisteredOnHomeNetwork : return QSystemNetworkInfo::HomeNetwork;
+           case RMobilePhone::ERegistrationDenied : return QSystemNetworkInfo::Denied;
+           case RMobilePhone::ERegisteredRoaming : return QSystemNetworkInfo::Roaming;
+           case RMobilePhone::ERegistrationUnknown : break;
+           default:
+             break;
+           }
+        #endif
         }
         case QSystemNetworkInfo::WlanMode:
         {
@@ -452,7 +513,7 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSyst
 
 int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::NetworkMode mode)
 {
-    switch(mode) {
+    switch (mode) {
         case QSystemNetworkInfo::GsmMode:
         case QSystemNetworkInfo::CdmaMode:
         case QSystemNetworkInfo::WcdmaMode:
@@ -524,7 +585,7 @@ QString QSystemNetworkInfoPrivate::homeMobileNetworkCode()
 QString QSystemNetworkInfoPrivate::networkName(QSystemNetworkInfo::NetworkMode mode)
 {
     QString name;
-    switch(mode) {
+    switch (mode) {
         case QSystemNetworkInfo::GsmMode:
         case QSystemNetworkInfo::CdmaMode:
         case QSystemNetworkInfo::WcdmaMode:
@@ -557,7 +618,7 @@ QString QSystemNetworkInfoPrivate::macAddress(QSystemNetworkInfo::NetworkMode mo
 {
     QString address;
 
-    switch(mode) {
+    switch (mode) {
         case QSystemNetworkInfo::WlanMode:
         {
             const TUid KPSUidWlan = {0x101f8ec5};
@@ -620,6 +681,22 @@ void QSystemNetworkInfoPrivate::networkModeChanged()
     emit networkModeChanged(currentMode());
 }
 
+void QSystemNetworkInfoPrivate::changedNetworkMode()
+{
+    emit networkModeChanged(currentMode());
+}
+
+void QSystemNetworkInfoPrivate::changedNetworkStatus()
+{
+    QSystemNetworkInfo::NetworkMode mode = currentMode();
+    emit networkStatusChanged(mode, networkStatus(mode));
+}
+
+void QSystemNetworkInfoPrivate::changedCellId(int cellIdTel)
+{
+    emit cellIdChanged(cellIdTel);
+}
+
 void QSystemNetworkInfoPrivate::cellNetworkSignalStrengthChanged()
 {
     emit networkSignalStrengthChanged(currentMode(),
@@ -660,6 +737,7 @@ void QSystemNetworkInfoPrivate::wlanNetworkStatusChanged()
 QSystemNetworkInfo::NetworkMode QSystemNetworkInfoPrivate::currentMode()
 {
     QSystemNetworkInfo::NetworkMode mode = QSystemNetworkInfo::UnknownMode;
+#ifndef ETELMM_SUPPORTED
     CTelephony::TNetworkMode networkMode = DeviceInfo::instance()->cellNetworkInfo()->networkMode();
     switch (networkMode) {
         case CTelephony::ENetworkModeGsm: mode = QSystemNetworkInfo::GsmMode; break;
@@ -669,6 +747,26 @@ QSystemNetworkInfo::NetworkMode QSystemNetworkInfoPrivate::currentMode()
         default:
             break;
     }
+#else
+    RMobilePhone::TMobilePhoneNetworkMode nMode = RMobilePhone::ENetworkModeUnknown;
+    nMode = DeviceInfo::instance()->networkInfo()->GetMode();
+    if (nMode != RMobilePhone::ENetworkModeUnknown) {
+        switch (nMode) {
+            case RMobilePhone::ENetworkModeGsm : mode = QSystemNetworkInfo::GsmMode;
+            break;
+            case RMobilePhone::ENetworkModeAmps :
+            case RMobilePhone::ENetworkModeCdma95 :
+            case RMobilePhone::ENetworkModeCdma2000 : mode = QSystemNetworkInfo::CdmaMode;
+            break;
+        #ifdef SYMBIAN_3_PLATFORM
+            case RMobilePhone::ENetworkModeTdcdma :
+        #endif
+            case RMobilePhone::ENetworkModeWcdma : mode = QSystemNetworkInfo::WcdmaMode;
+            break;
+            default : break;
+        }
+    }
+#endif
     return mode;
 }
 
@@ -679,6 +777,23 @@ QSystemDisplayInfoPrivate::QSystemDisplayInfoPrivate(QObject *parent)
 
 QSystemDisplayInfoPrivate::~QSystemDisplayInfoPrivate()
 {
+}
+
+bool QSystemDisplayInfoPrivate::getSizeandRotation(int screen, TPixelsTwipsAndRotation& sizeAndRotation)
+{
+    CWsScreenDevice *wsScreenDevice = NULL;
+    TInt err = KErrNone;
+    TRAP_IGNORE(
+        RWsSession ws;
+        User::LeaveIfError(ws.Connect());
+        CleanupClosePushL(ws);
+        wsScreenDevice = new (ELeave)CWsScreenDevice(ws);
+        CleanupStack::PushL(wsScreenDevice);
+        User::LeaveIfError(err = wsScreenDevice->Construct(screen));
+        wsScreenDevice->GetScreenModeSizeAndRotation(screen,sizeAndRotation);
+        CleanupStack::PopAndDestroy(2, &ws);
+        )
+    return (wsScreenDevice != NULL && err == KErrNone);
 }
 
 int QSystemDisplayInfoPrivate::displayBrightness(int /*screen*/)
@@ -714,29 +829,34 @@ int QSystemDisplayInfoPrivate::colorDepth(int screen)
 }
 
 
-QSystemDisplayInfo::DisplayOrientation QSystemDisplayInfoPrivate::getOrientation(int screen)
+QSystemDisplayInfo::DisplayOrientation QSystemDisplayInfoPrivate::orientation(int screen)
 {
-    QSystemDisplayInfo::DisplayOrientation orientation = QSystemDisplayInfo::Unknown;
-
-    if(screen < 16 && screen > -1) {
-        int rotation = 0;
-        switch(rotation) {
-        case 0:
-        case 360:
-            orientation = QSystemDisplayInfo::Landscape;
-            break;
-        case 90:
-            orientation = QSystemDisplayInfo::Portrait;
-            break;
-        case 180:
-            orientation = QSystemDisplayInfo::InvertedLandscape;
-            break;
-        case 270:
-            orientation = QSystemDisplayInfo::InvertedPortrait;
-            break;
-        };
+    QSystemDisplayInfo::DisplayOrientation orientationStatus = QSystemDisplayInfo::Unknown;
+    TPixelsTwipsAndRotation sizeAndRotation;
+    if (screen < 16 && screen > -1) {
+    bool err = getSizeandRotation(screen, sizeAndRotation);
+    if ( err )
+        {
+            CFbsBitGc::TGraphicsOrientation currentRotation = sizeAndRotation.iRotation;
+            switch (currentRotation) {
+            case 0:
+            case 360:
+                orientationStatus = QSystemDisplayInfo::Landscape;
+                break;
+            case 90:
+                orientationStatus = QSystemDisplayInfo::Portrait;
+                break;
+            case 180:
+                orientationStatus = QSystemDisplayInfo::InvertedLandscape;
+                break;
+            case 270:
+                orientationStatus = QSystemDisplayInfo::InvertedPortrait;
+                break;
+            };
+        orientationStatus = QSystemDisplayInfo::Unknown;
+        }
     }
-    return orientation;
+    return orientationStatus;
 }
 
 
@@ -749,18 +869,38 @@ float QSystemDisplayInfoPrivate::contrast(int screen)
 
 int QSystemDisplayInfoPrivate::getDPIWidth(int screen)
 {
-    int dpi=0;
-    if(screen < 16 && screen > -1) {
-
+    int dpi = 0;
+    TPixelsTwipsAndRotation sizeAndRotation;
+    if (screen < 16 && screen > -1) {
+    bool err = getSizeandRotation(screen, sizeAndRotation);
+    if ( err )
+        {
+            int widthInPixels = sizeAndRotation.iPixelSize.iWidth;
+            int widthInTwips = sizeAndRotation.iTwipsSize.iWidth;
+            if (widthInPixels > 0 && widthInTwips > 0){
+                int twipsPerPixelWidth =  widthInTwips/widthInPixels;
+                dpi = KTwipsPerInch / twipsPerPixelWidth;
+                }
         }
+    }
     return dpi;
 }
 
 int QSystemDisplayInfoPrivate::getDPIHeight(int screen)
 {
     int dpi=0;
-    if(screen < 16 && screen > -1) {
-
+    TPixelsTwipsAndRotation sizeAndRotation;
+    if (screen < 16 && screen > -1) {
+    bool err = getSizeandRotation(screen, sizeAndRotation);
+    if ( err )
+        {
+            int heightInPixels = sizeAndRotation.iPixelSize.iHeight;
+            int heightInTwips = sizeAndRotation.iTwipsSize.iHeight;
+            if (heightInPixels > 0 && heightInTwips > 0){
+                int twipsPerPixelHeight =  heightInTwips/heightInPixels;
+                dpi = KTwipsPerInch / twipsPerPixelHeight;
+            }
+        }
     }
     return dpi;
 }
@@ -768,22 +908,69 @@ int QSystemDisplayInfoPrivate::getDPIHeight(int screen)
 
 int QSystemDisplayInfoPrivate::physicalHeight(int screen)
 {
-    int height=0;
-
+    // Physical Height is in MiliMeter
+    int height = 0;
+    TPixelsTwipsAndRotation sizeAndRotation;
+    if (screen < 16 && screen > -1) {
+    bool err = getSizeandRotation(screen, sizeAndRotation);
+    if ( err )
+        {
+        int heightInTwips = sizeAndRotation.iTwipsSize.iHeight;
+        height = heightInTwips * KMMPerTwip;
+        }
+    }
     return height;
 }
 
 int QSystemDisplayInfoPrivate::physicalWidth(int screen)
 {
+    // Physical Width is in MiliMeter
     int width=0;
-
+    TPixelsTwipsAndRotation sizeAndRotation;
+    if (screen < 16 && screen > -1) {
+    bool err = getSizeandRotation(screen, sizeAndRotation);
+    if ( err )
+        {
+        int widthInTwips = sizeAndRotation.iTwipsSize.iWidth;
+        width = widthInTwips * KMMPerTwip;
+        }
+    }
     return width;
 }
 
 QSystemDisplayInfo::BacklightState  QSystemDisplayInfoPrivate::backlightStatus(int screen)
 {
-    Q_UNUSED(screen)
-    return QSystemDisplayInfo::BacklightStateUnknown;
+    QSystemDisplayInfo::BacklightState backlightState = QSystemDisplayInfo::BacklightStateUnknown;
+    CHWRMLight::TLightStatus status = CHWRMLight::ELightStatusUnknown;
+    //screen "0" is mapped to Primary Display and other screens are mapped to Secondary Display
+    if (screen == 0)
+    {
+        TRAP_IGNORE(CHWRMLight* iLight = CHWRMLight::NewL();
+            status = iLight->LightStatus(CHWRMLight::EPrimaryDisplay);
+            delete iLight;)
+    }
+    else
+    {
+        TRAP_IGNORE(CHWRMLight* iLight = CHWRMLight::NewL();
+            status = iLight->LightStatus(CHWRMLight::ESecondaryDisplay);
+            delete iLight;)
+    }
+
+    switch (status){
+    case 0:
+        backlightState = QSystemDisplayInfo::BacklightStateUnknown;
+        break;
+    case 1:
+        backlightState = QSystemDisplayInfo::BacklightStateOn;
+        break;
+    case 2:
+        backlightState = QSystemDisplayInfo::BacklightStateOff;
+        break;
+    default:
+        break;
+    }
+
+    return backlightState;
 }
 
 QSystemStorageInfoPrivate::QSystemStorageInfoPrivate(QObject *parent)
@@ -791,12 +978,25 @@ QSystemStorageInfoPrivate::QSystemStorageInfoPrivate(QObject *parent)
 {
     iFs.Connect();
     DeviceInfo::instance()->mmcStorageStatus()->addObserver(this);
+
+#ifdef SYMBIAN_3_PLATFORM
+    CStorageDiskNotifier* storageNotifier = DeviceInfo::instance()->storagedisknotifier();
+    if (storageNotifier != NULL){
+        storageNotifier->AddObserver(this);
+        }
+#endif
 }
 
 QSystemStorageInfoPrivate::~QSystemStorageInfoPrivate()
 {
     iFs.Close();
     DeviceInfo::instance()->mmcStorageStatus()->removeObserver(this);
+#ifdef SYMBIAN_3_PLATFORM
+    CStorageDiskNotifier* storageNotifier = DeviceInfo::instance()->storagedisknotifier();
+    if (storageNotifier != NULL){
+        storageNotifier->RemoveObserver(this);
+        }
+#endif
 }
 
 qlonglong QSystemStorageInfoPrivate::totalDiskSpace(const QString &driveVolume)
@@ -884,7 +1084,12 @@ QSystemStorageInfo::DriveType QSystemStorageInfoPrivate::typeForDrive(const QStr
     }
 
     if (driveInfo.iDriveAtt & KDriveAttInternal) {
-        return QSystemStorageInfo::InternalDrive;
+        if (driveInfo.iType == EMediaHardDisk)
+            return QSystemStorageInfo::InternalFlashDrive;
+        else if (driveInfo.iType == EMediaNANDFlash)
+            return QSystemStorageInfo::RamDrive;
+        else
+            return QSystemStorageInfo::InternalDrive;
     } else if (driveInfo.iDriveAtt & KDriveAttRemovable) {
         return QSystemStorageInfo::RemovableDrive;
     }
@@ -897,15 +1102,73 @@ void QSystemStorageInfoPrivate::storageStatusChanged(bool added, const QString &
     emit logicalDriveChanged(added, aDriveVolume);
 };
 
+#ifdef SYMBIAN_3_PLATFORM
+void QSystemStorageInfoPrivate::DiskSpaceChanged(const QString &aDriveVolume)
+{
+    QSystemStorageInfo::StorageState state = CheckDiskSpaceThresholdLimit(aDriveVolume);
+    emit storageStateChanged(aDriveVolume, state);
+}
+#endif
+
 QString QSystemStorageInfoPrivate::uriForDrive(const QString &driveVolume)
 {
-    return QString();
+    if (driveVolume.size() != 1) {
+        return (QString::null);
+    }
+
+    TInt drive;
+    if (RFs::CharToDrive(TChar(driveVolume[0].toAscii()), drive) != KErrNone) {
+        return (QString::null);
+    }
+
+    TVolumeInfo volumeInfo;
+    if (iFs.Volume(volumeInfo, drive) != KErrNone) {
+        return (QString::null);
+    }
+    return (QString::number(volumeInfo.iUniqueID));
 }
 
-QSystemStorageInfo::StorageState QSystemStorageInfoPrivate::getStorageState(const QString &driveVolume)
+QSystemStorageInfo::StorageState QSystemStorageInfoPrivate::getStorageState(const QString &Volume)
 {
+   return CheckDiskSpaceThresholdLimit(Volume);
+}
+
+QSystemStorageInfo::StorageState QSystemStorageInfoPrivate::CheckDiskSpaceThresholdLimit(const QString &aDriveVolume)
+{
+    TInt64 freeSpace(0);
+    TInt64 volSize(0);
+    TVolumeInfo volInfo;
+    TInt drive(0);
     QSystemStorageInfo::StorageState state = QSystemStorageInfo::UnknownStorageState;
-   return state;
+
+    if (RFs::CharToDrive(TChar(aDriveVolume[0].toAscii()), drive) == KErrNone){
+        if (iFs.Volume( volInfo, drive) == KErrNone){
+            freeSpace = volInfo.iFree;
+            volSize = volInfo.iSize;
+            }
+        }
+    else{
+        return state;
+        }
+
+    // calculate the threshold limits for notification
+    TInt64 lowLimit = (TInt64)(volSize * 0.4);
+    TInt64 veryLowLimit = (TInt64)(volSize * 0.1);
+    TInt64 criticalLimit = (TInt64)(volSize * 0.02);
+
+    if (freeSpace >= lowLimit){
+        state = QSystemStorageInfo::NormalStorageState;
+        }
+    else if (freeSpace < lowLimit && freeSpace >= veryLowLimit){
+        state = QSystemStorageInfo::LowStorageState;
+        }
+    else if (freeSpace < veryLowLimit && freeSpace >= criticalLimit){
+        state = QSystemStorageInfo::VeryLowStorageState;
+        }
+    else if (freeSpace < criticalLimit){
+        state = QSystemStorageInfo::CriticalStorageState;
+        }
+    return state;
 }
 
 QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QObject *parent)
@@ -914,19 +1177,27 @@ QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QObject *parent)
 {
     DeviceInfo::instance()->batteryInfo()->addObserver(this);
     DeviceInfo::instance()->chargingStatus()->addObserver(this);
+    m_previousBatteryStatus = QSystemDeviceInfo::NoBatteryLevel;
+#ifdef SYMBIAN_3_PLATFORM
+    DeviceInfo::instance()->keylockStatus()->addObserver(this);
+    DeviceInfo::instance()->flipStatus()->addObserver(this);
+#endif
 }
 
 QSystemDeviceInfoPrivate::~QSystemDeviceInfoPrivate()
 {
     DeviceInfo::instance()->chargingStatus()->removeObserver(this);
     DeviceInfo::instance()->batteryInfo()->removeObserver(this);
-
+#ifdef SYMBIAN_3_PLATFORM
+    DeviceInfo::instance()->keylockStatus()->removeObserver(this);
+    DeviceInfo::instance()->flipStatus()->removeObserver(this);
+#endif
     if (m_proEngNotifyHandler) {
         m_proEngNotifyHandler->CancelProfileActivationNotifications();
         delete m_proEngNotifyHandler;
     }
 
-    if(m_profileEngine) {
+    if (m_profileEngine) {
         m_profileEngine->Release();
     }
 
@@ -1106,14 +1377,23 @@ int QSystemDeviceInfoPrivate::batteryLevel() const
 QSystemDeviceInfo::BatteryStatus QSystemDeviceInfoPrivate::batteryStatus()
 {
     int batteryLevel = DeviceInfo::instance()->batteryInfo()->batteryLevel();
-    if(batteryLevel < 4) {
-        return QSystemDeviceInfo::BatteryCritical;
-    }   else if (batteryLevel < 11) {
-        return QSystemDeviceInfo::BatteryVeryLow;
-    }  else if (batteryLevel < 41) {
-        return QSystemDeviceInfo::BatteryLow;
-    }   else if (batteryLevel > 40) {
-        return QSystemDeviceInfo::BatteryNormal;
+    QSystemDeviceInfo::PowerState currentpwrstate = currentPowerState();
+    if (batteryLevel < 15 ) {
+        if ( (currentpwrstate == QSystemDeviceInfo::WallPowerChargingBattery) || (currentpwrstate == QSystemDeviceInfo::WallPower) ) {
+                return QSystemDeviceInfo::BatteryLow;
+        }   else  {
+                return QSystemDeviceInfo::BatteryVeryLow;
+        }
+    }   else if (batteryLevel < 29) {
+            return QSystemDeviceInfo::BatteryLow;
+    }   else if (batteryLevel < 43) {
+            if ( (currentpwrstate == QSystemDeviceInfo::WallPowerChargingBattery) || (currentpwrstate == QSystemDeviceInfo::WallPower) ){
+                return QSystemDeviceInfo::BatteryNormal;
+            }  else {
+                return QSystemDeviceInfo::BatteryLow;
+            }
+    }   else if (batteryLevel > 42) {
+            return QSystemDeviceInfo::BatteryNormal;
     }
 
     return QSystemDeviceInfo::NoBatteryLevel;
@@ -1158,20 +1438,11 @@ void QSystemDeviceInfoPrivate::batteryLevelChanged()
 {
     emit batteryLevelChanged(batteryLevel());
 
-    int batteryLevel = DeviceInfo::instance()->batteryInfo()->batteryLevel();
-    QSystemDeviceInfo::BatteryStatus status(batteryStatus());
-
-    if(batteryLevel < 4 && status != QSystemDeviceInfo::BatteryCritical) {
-        emit batteryStatusChanged(QSystemDeviceInfo::BatteryCritical);
-    } else if (batteryLevel < 11 && status != QSystemDeviceInfo::BatteryVeryLow) {
-        emit batteryStatusChanged(QSystemDeviceInfo::BatteryVeryLow);
-    } else if (batteryLevel < 41 && status != QSystemDeviceInfo::BatteryLow) {
-        emit batteryStatusChanged(QSystemDeviceInfo::BatteryLow);
-    } else if (batteryLevel > 40 && status != QSystemDeviceInfo::BatteryNormal) {
-        emit batteryStatusChanged(QSystemDeviceInfo::BatteryNormal);
-    } else {
-        emit batteryStatusChanged(QSystemDeviceInfo::NoBatteryLevel);
+    QSystemDeviceInfo::BatteryStatus currentstatus(batteryStatus());
+    if (currentstatus != m_previousBatteryStatus) {
+        emit batteryStatusChanged(currentstatus);
     }
+    m_previousBatteryStatus = currentstatus;
 }
 
 void QSystemDeviceInfoPrivate::chargingStatusChanged()
@@ -1191,18 +1462,59 @@ bool QSystemDeviceInfoPrivate::currentBluetoothPowerState()
     return btPowerState == EBTPowerOn;
 }
 
-QSystemDeviceInfo::KeyboardTypeFlags QSystemDeviceInfoPrivate::keyboardType()
+QSystemDeviceInfo::KeyboardTypeFlags QSystemDeviceInfoPrivate::keyboardTypes()
 {
     QSystemDeviceInfo::InputMethodFlags methods = inputMethodType();
     QSystemDeviceInfo::KeyboardTypeFlags keyboardFlags = QSystemDeviceInfo::UnknownKeyboard;
 
-    if((methods & QSystemDeviceInfo::Keyboard)) {
-        keyboardFlags = (keyboardFlags | QSystemDeviceInfo::FullQwertyKeyboard);
-  }
-    if(isWirelessKeyboardConnected()) {
-        keyboardFlags = (keyboardFlags | QSystemDeviceInfo::WirelessKeyboard);
+#ifdef SYMBIAN_3_PLATFORM
+    TInt kbType = 0;
+    if (methods & QSystemDeviceInfo::Keyboard ) {
+    TRAP_IGNORE(
+            CRepository* repository = CRepository::NewLC( KCRUidAvkon ) ;
+            User::LeaveIfError(repository->Get( KAknKeyboardType, kbType));
+            CleanupStack::PopAndDestroy(repository);
+        )
+    switch (kbType){
+        case 1: keyboardFlags = QSystemDeviceInfo::ITUKeypad;
+            break;
+        case 2:
+        case 3:
+        case 4:
+        case 6: keyboardFlags = QSystemDeviceInfo::FullQwertyKeyboard;
+                break;
+        case 5: keyboardFlags = QSystemDeviceInfo::HalfQwertyKeyboard;
+                break;
+        default:
+                break;
+                }
+        bool filpKbStatus = DeviceInfo::instance()->flipStatus()->getKeyboardStatus();
+        if ( filpKbStatus ) {
+             if ( keyboardFlags == QSystemDeviceInfo::UnknownKeyboard)
+                keyboardFlags = QSystemDeviceInfo::FlipKeyboard;
+             else
+                keyboardFlags |= QSystemDeviceInfo::FlipKeyboard;
+             }
+        }
+        kbType=0;
+        if ( (methods & QSystemDeviceInfo::SingleTouch) || (methods & QSystemDeviceInfo::MultiTouch) ) {
+            //TBD:In 5.0 KAknFepVirtualKeyboardType is not defined
+            if ( KErrNone == RProperty::Get(KPSUidAknFep, KAknFepVirtualKeyboardType, kbType) ) {
+                if ( 0 !=  kbType) {
+                    if ( keyboardFlags == QSystemDeviceInfo::UnknownKeyboard)
+                        keyboardFlags = QSystemDeviceInfo::SoftwareKeyboard;
+                    else
+                        keyboardFlags |= QSystemDeviceInfo::SoftwareKeyboard;
+                    }
+                }
+            }
+        if (isWirelessKeyboardConnected()) {
+            if ( keyboardFlags == QSystemDeviceInfo::UnknownKeyboard)
+                keyboardFlags = QSystemDeviceInfo::WirelessKeyboard;
+            else
+                keyboardFlags |= QSystemDeviceInfo::WirelessKeyboard;
     }
-
+#endif
     return keyboardFlags;
 }
 
@@ -1211,33 +1523,133 @@ bool QSystemDeviceInfoPrivate::isWirelessKeyboardConnected()
     return false;
 }
 
-bool QSystemDeviceInfoPrivate::isKeyboardFlipOpen()
+bool QSystemDeviceInfoPrivate::isKeyboardFlippedOpen()
 {
+#ifdef SYMBIAN_3_PLATFORM
+    // It is functional only for the Grip open devices
+    return ( (DeviceInfo::instance()->flipStatus()->getFlipStatus()) && (DeviceInfo::instance()->flipStatus()->getKeyboardStatus())  );
+#else
     return false;
+#endif
 }
 
 void QSystemDeviceInfoPrivate::keyboardConnected(bool connect)
 {
-    if(connect != hasWirelessKeyboardConnected)
+    if (connect != hasWirelessKeyboardConnected)
         hasWirelessKeyboardConnected = connect;
     Q_EMIT wirelessKeyboardConnected(connect);
 }
 
-bool QSystemDeviceInfoPrivate::keypadLightOn(QSystemDeviceInfo::keypadType type)
+bool QSystemDeviceInfoPrivate::keypadLightOn(QSystemDeviceInfo::KeypadType type)
 {
-    return false;
+    CHWRMLight::TLightStatus status = CHWRMLight::ELightStatusUnknown;
+    TInt symbianKBType = CHWRMLight::ENoTarget;
+    if ( type == QSystemDeviceInfo::PrimaryKeypad )
+        symbianKBType = CHWRMLight::EPrimaryKeyboard ;
+    else if ( type == QSystemDeviceInfo::SecondaryKeypad )
+        symbianKBType = CHWRMLight::ESecondaryKeyboard ;
+    TRAP_IGNORE(CHWRMLight* iLight = CHWRMLight::NewL();
+                status = iLight->LightStatus(symbianKBType);
+                delete iLight;)
+    return (status == CHWRMLight::ELightOn);
 }
 
-QUuid QSystemDeviceInfoPrivate::hostId()
+QUuid QSystemDeviceInfoPrivate::uniqueDeviceID()
 {
-    return 0;//gethostid();
+    TInt driveNum = 25; //3.1 doesnot have support for systemDrive, defaulting to Z:
+ #ifndef SYMBIAN_3_1
+    driveNum = RFs::GetSystemDrive();
+ #endif
+    TVolumeInfo volumeInfo;
+    RFs rfs;
+    if (rfs.Connect()!= KErrNone)
+        return 0;
+    if (rfs.Volume(volumeInfo, driveNum) != KErrNone)
+        return 0;
+
+    QString volInfo(QString::number(volumeInfo.iUniqueID));
+    QByteArray bytes = imei().toLocal8Bit();
+    QByteArray romDriveUID = volInfo.toLocal8Bit();
+    QCryptographicHash hash(QCryptographicHash::Sha1);
+    hash.addData(bytes);
+    hash.addData(romDriveUID);
+    rfs.Close();
+    return QUuid(QString(hash.result().toHex()));
 }
 
-QSystemDeviceInfo::LockType QSystemDeviceInfoPrivate::lockStatus()
+QSystemDeviceInfo::LockTypeFlags QSystemDeviceInfoPrivate::lockStatus()
 {
-    return QSystemDeviceInfo::UnknownLock;
+    QSystemDeviceInfo::LockTypeFlags status = QSystemDeviceInfo::UnknownLock;
+
+#ifdef SYMBIAN_3_PLATFORM
+    int value = DeviceInfo::instance()->keylockStatus()->getLockStatus();
+    switch ( value ){
+             /*case EKeyguardNotActive:
+                status = QSystemDeviceInfo::DeviceUnlocked;
+                break;*/
+             case EKeyguardLocked:
+                status = QSystemDeviceInfo::TouchAndKeyboardLocked;
+                break;
+             case EKeyguardAutolockEmulation:
+                status = QSystemDeviceInfo::PinLocked;
+                break;
+             default:
+                status = QSystemDeviceInfo::UnknownLock;
+                break;
+             }
+#endif
+    return status;
 }
 
+#ifdef SYMBIAN_3_PLATFORM
+void QSystemDeviceInfoPrivate::keylockStatusChanged(TInt aLockType)
+{
+    if (aLockType == EKeyguardLocked){
+        emit lockStatusChanged(QSystemDeviceInfo::TouchAndKeyboardLocked );
+        }
+    else if (aLockType == EKeyguardAutolockEmulation){
+        emit lockStatusChanged(QSystemDeviceInfo::PinLocked );
+        }
+    else {
+        emit lockStatusChanged(QSystemDeviceInfo::UnknownLock );
+        }
+}
+
+void QSystemDeviceInfoPrivate::flipStatusChanged(TInt aFlipType , TInt aFilpKeyBoard)
+{
+    emit keyboardFlipped((aFlipType ==  EPSHWRMGripOpen) && (aFilpKeyBoard == 1));
+}
+#endif
+
+int QSystemDeviceInfoPrivate::messageRingtoneVolume()
+{
+    return voiceRingtoneVolume();
+}
+
+int QSystemDeviceInfoPrivate::voiceRingtoneVolume()
+{
+    TInt ringingVolume = 0;
+    TRAP_IGNORE(
+      CRepository* repository = CRepository::NewLC( KCRUidProfileEngine );
+      User::LeaveIfError( repository->Get( KProEngActiveRingingVolume, ringingVolume ) );
+      CleanupStack::PopAndDestroy(repository);
+    )
+    if (ringingVolume > 0)
+        ringingVolume = 100*(ringingVolume-1)/9;// caliberating value 1 - 10 to scale of 0 - 100
+    return ringingVolume;
+}
+
+bool QSystemDeviceInfoPrivate::vibrationActive()
+{
+    TInt vibrationState = 0;
+    TRAP_IGNORE(
+      CRepository* repository = CRepository::NewLC( KCRUidVibraCtrl );
+      User::LeaveIfError( repository->Get( KVibraCtrlProfileVibraEnabled, vibrationState ) );
+      CleanupStack::PopAndDestroy(repository);
+    )
+    bool vibrationStateFlag = vibrationState;
+    return vibrationStateFlag;
+}
 DeviceInfo *DeviceInfo::m_instance = NULL;
 
 QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QObject *parent)
@@ -1272,47 +1684,79 @@ void QSystemScreenSaverPrivate::resetInactivityTime()
 }
 
 QSystemBatteryInfoPrivate::QSystemBatteryInfoPrivate(QObject *parent)
-: QObject(parent)
+: QObject(parent) , m_batteryHWRM(NULL)
 {
-
+    m_batteryHWRM = CBatteryHWRM::New();
+    bool chargestate,usbstate;
+    DeviceInfo::instance()->batteryCommonInfo()->ChargerType(chargestate,usbstate);
+    if (chargestate) {
+        if (usbstate)
+            m_charger = QSystemBatteryInfo::USBCharger;
+        else
+            m_charger = QSystemBatteryInfo::WallCharger;
+    } else
+        m_charger = QSystemBatteryInfo::NoCharger;
+    m_previousChagrger = m_charger ;
+    DeviceInfo::instance()->batteryCommonInfo()->AddObserver(this);
 }
 
 QSystemBatteryInfoPrivate::~QSystemBatteryInfoPrivate()
 {
-
+    DeviceInfo::instance()->batteryCommonInfo()->RemoveObserver(this);
+    if (m_batteryHWRM)
+    {
+        delete(m_batteryHWRM);
+        m_batteryHWRM = NULL;
+    }
 }
 
 
 QSystemBatteryInfo::ChargerType QSystemBatteryInfoPrivate::chargerType() const
 {
-    return QSystemBatteryInfo::UnknownCharger;
+    bool chargestate,usbstate;
+    DeviceInfo::instance()->batteryCommonInfo()->ChargerType(chargestate,usbstate);
+    QSystemBatteryInfo::ChargerType result = QSystemBatteryInfo::UnknownCharger;
+    if (chargestate) {
+        if (usbstate)
+            result = QSystemBatteryInfo::USBCharger;
+        else
+            result = QSystemBatteryInfo::WallCharger;
+    } else
+        result = QSystemBatteryInfo::NoCharger;
+    return result;
 }
 
 QSystemBatteryInfo::ChargingState QSystemBatteryInfoPrivate::chargingState() const
 {
-    return QSystemBatteryInfo::NotCharging;
+    bool batteryChargingState = DeviceInfo::instance()->batteryCommonInfo()->ChargingState();
+    QSystemBatteryInfo::ChargingState result = QSystemBatteryInfo::ChargingError;
+    if (batteryChargingState)
+        result = QSystemBatteryInfo::Charging;
+    else
+        result = QSystemBatteryInfo::NotCharging;
+    return result;
 }
 
 
 int QSystemBatteryInfoPrivate::nominalCapacity() const
 {
-    return 0;
+    return DeviceInfo::instance()->batteryCommonInfo()->NominalCapacity();
 }
 
 int QSystemBatteryInfoPrivate::remainingCapacityPercent() const
 {
-    return 0;
+    return DeviceInfo::instance()->batteryCommonInfo()->RemainingCapacityPercent();
 }
 
 int QSystemBatteryInfoPrivate::remainingCapacity() const
 {
-    return 0;
+    return DeviceInfo::instance()->batteryCommonInfo()->RemainingCapacity();
 }
 
 
 int QSystemBatteryInfoPrivate::voltage() const
 {
-    return 0;
+    return DeviceInfo::instance()->batteryCommonInfo()->Voltage();
 }
 
 int QSystemBatteryInfoPrivate::remainingChargingTime() const
@@ -1322,22 +1766,43 @@ int QSystemBatteryInfoPrivate::remainingChargingTime() const
 
 int QSystemBatteryInfoPrivate::currentFlow() const
 {
-    return 0;
+    if ( m_batteryHWRM )
+        return m_batteryHWRM->GetAvergaeCurrent( );
+    else
+        return -1;
 }
 
 int QSystemBatteryInfoPrivate::remainingCapacityBars() const
 {
-    return 0;
+    return DeviceInfo::instance()->batteryCommonInfo()->RemainingCapacityBars();
 }
 
 int QSystemBatteryInfoPrivate::maxBars() const
 {
-    return 0;
+    return KMaxBatteryBars ;
 }
 
 QSystemBatteryInfo::BatteryStatus QSystemBatteryInfoPrivate::batteryStatus() const
 {
-   return QSystemBatteryInfo::BatteryUnknown;
+    QString logString;
+    int batteryStatusVal = DeviceInfo::instance()->batteryCommonInfo()->BatteryStatus();
+    QSystemBatteryInfo::BatteryStatus result = QSystemBatteryInfo::BatteryUnknown;
+    switch (batteryStatusVal) {
+                case EBatteryStatusOk : result = QSystemBatteryInfo:: BatteryOk ;
+                        logString = "EBatteryStatusOk";
+                        break;
+                case EBatteryStatusLow : result = QSystemBatteryInfo::BatteryLow ;
+                        logString = "EBatteryStatusLow";
+                        break;
+                case EBatteryStatusEmpty : result = QSystemBatteryInfo::BatteryEmpty ;
+                        logString = "EBatteryStatusEmpty";
+                        break;
+                case EBatteryStatusUnknown :
+                default : result = QSystemBatteryInfo::BatteryUnknown;
+                        logString = "EBatteryStatusUnknown";
+                        break;
+    }
+    return result;
 }
 
 void QSystemBatteryInfoPrivate::connectNotify(const char *signal)
@@ -1368,6 +1833,9 @@ void QSystemBatteryInfoPrivate::connectNotify(const char *signal)
 
     if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
             currentFlowChanged(int))))) {
+            if ( m_batteryHWRM ) {
+                m_batteryHWRM->StartMeasurementAndSetObserver( this);
+            }
     }
 
     if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
@@ -1376,27 +1844,57 @@ void QSystemBatteryInfoPrivate::connectNotify(const char *signal)
     if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
             remainingChargingTimeChanged(int))))) {
     }
-    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
-            voltageChanged(int))))) {
-    }
-
-
 }
 
 void QSystemBatteryInfoPrivate::disconnectNotify(const char *signal)
 {
-
-}
-
-int QSystemBatteryInfoPrivate::startCurrentMeasurement(int rate)
-{
- return 0;
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+                batteryStatusChanged(QSystemBatteryInfo::BatteryStatus))))) {
+    }
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            currentFlowChanged(int))))) {
+            if ( m_batteryHWRM ) {
+                m_batteryHWRM->StopCurrentFlowMeasurement( );
+            }
+    }
 }
 
 QSystemBatteryInfo::EnergyUnit QSystemBatteryInfoPrivate::energyMeasurementUnit() const
 {
-    return QSystemBatteryInfo::UnitUnknown;
+    return QSystemBatteryInfo::UnitmAh;
 
+}
+
+void QSystemBatteryInfoPrivate::changedBatteryStatus() {
+    emit batteryStatusChanged(batteryStatus());
+}
+
+void QSystemBatteryInfoPrivate::changedChargingState() {
+    emit chargingStateChanged(chargingState());
+}
+
+void QSystemBatteryInfoPrivate::changedChargerType() {
+    bool chargestate,usbstate;
+    DeviceInfo::instance()->batteryCommonInfo()->ChargerType(chargestate,usbstate);
+    if (chargestate) {
+        if (usbstate)
+            m_charger = QSystemBatteryInfo::USBCharger;
+        else
+            m_charger = QSystemBatteryInfo::WallCharger;
+    } else
+        m_charger = QSystemBatteryInfo::NoCharger;
+    if (m_previousChagrger != m_charger ) {
+        emit chargerTypeChanged(m_charger);
+        m_previousChagrger = m_charger ;
+    }
+}
+
+void QSystemBatteryInfoPrivate::changedRemainingCapacityBars() {
+    emit remainingCapacityBarsChanged(remainingCapacityBars());
+}
+
+void QSystemBatteryInfoPrivate::changedCurrentFlow(int value)  {
+    emit currentFlowChanged(value);
 }
 
 #include "moc_qsysteminfo_s60_p.cpp"

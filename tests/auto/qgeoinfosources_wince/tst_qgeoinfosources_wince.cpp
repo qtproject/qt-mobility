@@ -51,7 +51,7 @@
 #include <qgeosatelliteinfosource.h>
 #include <qgeosatelliteinfo.h>
 
-#include "../qlocationtestutils_p.h"
+#include "../qgeocoordinate/qlocationtestutils_p.h"
 
 QTM_USE_NAMESPACE
 Q_DECLARE_METATYPE(QGeoPositionInfo)

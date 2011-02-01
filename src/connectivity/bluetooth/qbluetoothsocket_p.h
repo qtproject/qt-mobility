@@ -46,6 +46,11 @@
 
 #include <QtGlobal>
 
+#ifdef Q_OS_SYMBIAN
+#include <es_sock.h>
+#include <bt_sock.h>
+#endif
+
 #ifndef QBLUETOOTHDEVICE_BUFFERSIZE
 #define QBLUETOOTHDEVICE_BUFFERSIZE Q_INT64_C(16384)
 #endif
@@ -55,6 +60,8 @@ QT_FORWARD_DECLARE_CLASS(QSocketNotifier)
 QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
+
+class QBluetoothServiceDiscoveryAgent;
 
 // This is QIODevice's read buffer, optimised for read(), isEmpty() and getChar()
 class QBluetoothPrivateLinearBuffer
@@ -181,24 +188,73 @@ private:
     size_t capacity;
 };
 
+class QSocketServerPrivate
+{
+public:
+    QSocketServerPrivate();
+    ~QSocketServerPrivate();
+
+#ifdef Q_OS_SYMBIAN
+    RSocketServ socketServer;
+#endif
+};
+
 
 
 class QBluetoothSocket;
+class QBluetoothServiceDiscoveryAgent;
 
-class QBluetoothSocketPrivate : public QObject
+class QBluetoothSocketPrivate
+#ifdef Q_OS_SYMBIAN
+: public MBluetoothSocketNotifier
+#endif
 {
-    Q_OBJECT
-
+    Q_DECLARE_PUBLIC(QBluetoothSocket)
 public:
 
-    QBluetoothSocketPrivate(QBluetoothSocket *parent);
-    virtual ~QBluetoothSocketPrivate();
+    QBluetoothSocketPrivate();
+    ~QBluetoothSocketPrivate();
 
-    virtual void connectToService(const QBluetoothAddress &address, quint16 port, QIODevice::OpenMode openMode);
+    void connectToService(const QBluetoothAddress &address, quint16 port, QIODevice::OpenMode openMode);
 
-    virtual bool ensureNativeSocket(QBluetoothSocket::SocketType type);
+    bool ensureNativeSocket(QBluetoothSocket::SocketType type);
 
-    static QBluetoothSocketPrivate *constructPrivate(QBluetoothSocket *parent);
+    QString localName() const;
+    QBluetoothAddress localAddress() const;
+    quint16 localPort() const;
+
+    QString peerName() const;
+    QBluetoothAddress peerAddress() const;
+    quint16 peerPort() const;
+    //QBluetoothServiceInfo peerService() const;
+
+    void abort();
+    void close();
+
+    //qint64 readBufferSize() const;
+    //void setReadBufferSize(qint64 size);
+
+    qint64 writeData(const char *data, qint64 maxSize);
+    qint64 readData(char *data, qint64 maxSize);
+
+    bool setSocketDescriptor(int socketDescriptor, QBluetoothSocket::SocketType socketType,
+                             QBluetoothSocket::SocketState socketState = QBluetoothSocket::ConnectedState,
+                             QBluetoothSocket::OpenMode openMode = QBluetoothSocket::ReadWrite);
+    int socketDescriptor() const;
+
+#ifdef Q_OS_SYMBIAN
+    void startReceive();
+    void ensureBlankNativeSocket();
+
+    /* MBluetoothSocketNotifier virtual functions */
+    void HandleActivateBasebandEventNotifierCompleteL(TInt aErr, TBTBasebandEventNotification &aEventNotification);
+    void HandleAcceptCompleteL(TInt aErr);
+    void HandleConnectCompleteL(TInt aErr);
+    void HandleIoctlCompleteL(TInt aErr);
+    void HandleReceiveCompleteL(TInt aErr);
+    void HandleSendCompleteL(TInt aErr);
+    void HandleShutdownCompleteL(TInt aErr);
+#endif
     
 public:
     QBluetoothPrivateLinearBuffer buffer;
@@ -206,32 +262,60 @@ public:
     QBluetoothSocket::SocketType socketType;
     QBluetoothSocket::SocketState state;
     QBluetoothSocket::SocketError socketError;
-    QString localName;
-    QString peerName;
     QSocketNotifier *readNotifier;
     QSocketNotifier *connectWriteNotifier;
+    bool connecting;
+
+    QBluetoothServiceDiscoveryAgent *discoveryAgent;
+    QBluetoothSocket::OpenMode openMode;
 
 
 //    QByteArray rxBuffer;
 //    qint64 rxOffset;
     QByteArray txBuffer;
-
-    QBluetoothSocket *q;
-
     QString errorString;
 
-Q_SIGNALS:
-    void readyRead();
-    void connected();
-    void disconnected();
-    void error(QBluetoothSocket::SocketError error);
-    void stateChanged(QBluetoothSocket::SocketState state);
+#ifdef Q_OS_SYMBIAN
+    CBluetoothSocket *iSocket;
 
-public Q_SLOTS:
+    TPtr8 rxDescriptor;
+    TSockXfrLength rxLength;
+#endif
+
+    // private slots
     void _q_readNotify();
+    void _q_writeNotify();
+    void _q_serviceDiscovered(const QBluetoothServiceInfo &service);
+    void _q_discoveryFinished();
 
+protected:
+    QBluetoothSocket *q_ptr;
+
+private:
+    mutable QString m_localName;
+    mutable QString m_peerName;
 };
 
+
+static inline void convertAddress(quint64 from, quint8 (&to)[6])
+{
+    to[0] = (from >> 0) & 0xff;
+    to[1] = (from >> 8) & 0xff;
+    to[2] = (from >> 16) & 0xff;
+    to[3] = (from >> 24) & 0xff;
+    to[4] = (from >> 32) & 0xff;
+    to[5] = (from >> 40) & 0xff;
+}
+
+static inline void convertAddress(quint8 (&from)[6], quint64 &to)
+{
+    to = (quint64(from[0]) << 0) |
+         (quint64(from[1]) << 8) |
+         (quint64(from[2]) << 16) |
+         (quint64(from[3]) << 24) |
+         (quint64(from[4]) << 32) |
+         (quint64(from[5]) << 40);
+}
 
 QTM_END_NAMESPACE
 

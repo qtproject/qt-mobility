@@ -80,6 +80,10 @@ Q_ORGANIZER_EXPORT QDataStream& operator<<(QDataStream& out, const QOrganizerIte
 Q_ORGANIZER_EXPORT QDataStream& operator>>(QDataStream& in, QOrganizerItemDetailFieldDefinition& definition);
 #endif
 
+#ifndef QT_NO_DEBUG_STREAM
+Q_ORGANIZER_EXPORT QDebug operator<<(QDebug dbg, const QOrganizerItemDetailFieldDefinition& definition);
+#endif
+
 QTM_END_NAMESPACE
 
 Q_DECLARE_TYPEINFO(QTM_PREPEND_NAMESPACE(QOrganizerItemDetailFieldDefinition), Q_MOVABLE_TYPE);
