@@ -12,4 +12,4 @@ usr/include/qt4/QtSystemInfo/qsystemnetworkinfo.h
 usr/include/qt4/QtSystemInfo/qsystemscreensaver.h
 usr/include/qt4/QtSystemInfo/qsystemstorageinfo.h
 usr/lib/libQtSystemInfo.so
-#usr/lib/QtSystemInfo.pc usr/lib/pkgconfig/
+usr/lib/QtSystemInfo.pc usr/lib/pkgconfig/

@@ -10,4 +10,4 @@ usr/include/qt4/QtVersitOrganizer/qversitorganizerhandler.h
 usr/include/qt4/QtVersitOrganizer/qversitorganizerimporter.h
 usr/include/qt4/QtVersitOrganizer/qversittimezonehandler.h
 usr/lib/libQtVersitOrganizer.so
-#usr/lib/QtVersitOrganizer.pc usr/lib/pkgconfig/
+usr/lib/QtVersitOrganizer.pc usr/lib/pkgconfig/

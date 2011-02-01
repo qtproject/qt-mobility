@@ -135,4 +135,4 @@ usr/include/qt4/QtContacts/qcontacturl.h
 usr/include/qt4/QtContacts/qtcontacts.h
 usr/include/qt4/QtContacts/qtcontactsglobal.h
 usr/lib/libQtContacts.so
-#usr/lib/QtContacts.pc usr/lib/pkgconfig/
+usr/lib/QtContacts.pc usr/lib/pkgconfig/
