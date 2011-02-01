@@ -121,6 +121,12 @@ private slots:
     void supportedMapTypes_data();
     void supportedMapTypes();
     void viewport();
+    void bearing_data();
+    void bearing();
+    void maximumTilt();
+    void minimumTilt();
+    void tilting_data();
+    void tilting();
 private:
     QGeoServiceProvider* m_serviceProvider;
     QGraphicsGeoMap* m_map;
@@ -747,6 +753,122 @@ void tst_GeoServicesGeoMapPlugin::minimumZoomLevel()
     QCOMPARE(spy1.count(), 0);
     QCOMPARE(spy2.count(), 0);
     QCOMPARE(spy3.count(), 0);
+}
+
+// public qreal maximumTilt() const
+void tst_GeoServicesGeoMapPlugin::maximumTilt()
+{
+    QSignalSpy spy0(m_map, SIGNAL( centerChanged(QGeoCoordinate const&)));
+    QSignalSpy spy1(m_map, SIGNAL(connectivityModeChanged( QGraphicsGeoMap::ConnectivityMode)));
+    QSignalSpy spy2(m_map, SIGNAL(mapTypeChanged( QGraphicsGeoMap::MapType)));
+    QSignalSpy spy3(m_map, SIGNAL(zoomLevelChanged(qreal)));
+    QSignalSpy spy4(m_map, SIGNAL(bearingChanged(qreal)));
+    QSignalSpy spy5(m_map, SIGNAL(tiltChanged(qreal)));
+
+    QCOMPARE(m_map->maximumTilt(), qreal(90.0));
+
+    QCOMPARE(spy0.count(), 0);
+    QCOMPARE(spy1.count(), 0);
+    QCOMPARE(spy2.count(), 0);
+    QCOMPARE(spy3.count(), 0);
+    QCOMPARE(spy4.count(), 0);
+    QCOMPARE(spy5.count(), 0);
+}
+
+// public qreal minimumTilt() const
+void tst_GeoServicesGeoMapPlugin::minimumTilt()
+{
+    QSignalSpy spy0(m_map, SIGNAL( centerChanged(QGeoCoordinate const&)));
+    QSignalSpy spy1(m_map, SIGNAL(connectivityModeChanged( QGraphicsGeoMap::ConnectivityMode)));
+    QSignalSpy spy2(m_map, SIGNAL(mapTypeChanged( QGraphicsGeoMap::MapType)));
+    QSignalSpy spy3(m_map, SIGNAL(zoomLevelChanged(qreal)));
+    QSignalSpy spy4(m_map, SIGNAL(bearingChanged(qreal)));
+    QSignalSpy spy5(m_map, SIGNAL(tiltChanged(qreal)));
+
+    QCOMPARE(m_map->minimumTilt(), qreal(0.0));
+
+    QCOMPARE(spy0.count(), 0);
+    QCOMPARE(spy1.count(), 0);
+    QCOMPARE(spy2.count(), 0);
+    QCOMPARE(spy3.count(), 0);
+    QCOMPARE(spy4.count(), 0);
+    QCOMPARE(spy5.count(), 0);
+}
+
+void tst_GeoServicesGeoMapPlugin::bearing_data()
+{
+    QTest::addColumn<qreal>("bearing");
+    QTest::addColumn<int>("signalcount");
+    QTest::addColumn<qreal>("expectedBearing");
+    QTest::newRow("null") << qreal(0.0) << 1 << qreal(0.0);
+    QTest::newRow("bearing 45") << qreal(45.0) << 1 << qreal(45.0);
+    QTest::newRow("bearing 180") << qreal(180.0) << 1 << qreal(180.0);
+    QTest::newRow("bearing 360") << qreal(360.0) << 1 << qreal(360.0);
+    QTest::newRow("bearing 540") << qreal(540.0) << 1 << qreal(540.0);
+}
+
+// public void setBearing(qreal bearing)
+// public qreal bearing() const
+void tst_GeoServicesGeoMapPlugin::bearing()
+{
+    QFETCH(qreal, bearing);
+    QFETCH(int, signalcount);
+    QFETCH(qreal, expectedBearing);
+
+    QSignalSpy spy0(m_map, SIGNAL( centerChanged(QGeoCoordinate const&)));
+    QSignalSpy spy1(m_map, SIGNAL(connectivityModeChanged( QGraphicsGeoMap::ConnectivityMode)));
+    QSignalSpy spy2(m_map, SIGNAL(mapTypeChanged( QGraphicsGeoMap::MapType)));
+    QSignalSpy spy3(m_map, SIGNAL(zoomLevelChanged(qreal)));
+    QSignalSpy spy4(m_map, SIGNAL(bearingChanged(qreal)));
+    QSignalSpy spy5(m_map, SIGNAL(tiltChanged(qreal)));
+
+    m_map->setBearing(bearing);
+
+    QCOMPARE(spy0.count(), 0);
+    QCOMPARE(spy1.count(), 0);
+    QCOMPARE(spy2.count(), 0);
+    QCOMPARE(spy3.count(), 0);
+    QCOMPARE(spy4.count(), signalcount);
+    QCOMPARE(spy5.count(), 0);
+    QCOMPARE(m_map->bearing(), expectedBearing);
+}
+
+void tst_GeoServicesGeoMapPlugin::tilting_data()
+{
+    QTest::addColumn<qreal>("tilt");
+    QTest::addColumn<int>("signalcount");
+    QTest::addColumn<qreal>("expectedTilt");
+    QTest::newRow("null") << qreal(0.0) << 1 << qreal(0.0);
+    QTest::newRow("under minimum") << qreal(-1.0) << 0 << qreal(0.0);
+    QTest::newRow("valid") << qreal(45.0) << 1 << qreal(45.0);
+    QTest::newRow("valid maximum") << qreal(90.0) << 1 << qreal(90.0);
+    QTest::newRow("over maximum") << qreal(180.0) << 0 << qreal(90.0);
+}
+
+// public void setTilting(qreal tilt)
+// public qreal tilting() const
+void tst_GeoServicesGeoMapPlugin::tilting()
+{
+    QFETCH(qreal, tilt);
+    QFETCH(int, signalcount);
+    QFETCH(qreal, expectedTilt);
+
+    QSignalSpy spy0(m_map, SIGNAL( centerChanged(QGeoCoordinate const&)));
+    QSignalSpy spy1(m_map, SIGNAL(connectivityModeChanged( QGraphicsGeoMap::ConnectivityMode)));
+    QSignalSpy spy2(m_map, SIGNAL(mapTypeChanged( QGraphicsGeoMap::MapType)));
+    QSignalSpy spy3(m_map, SIGNAL(zoomLevelChanged(qreal)));
+    QSignalSpy spy4(m_map, SIGNAL(bearingChanged(qreal)));
+    QSignalSpy spy5(m_map, SIGNAL(tiltChanged(qreal)));
+
+    m_map->setTilt(tilt);
+
+    QCOMPARE(spy0.count(), 0);
+    QCOMPARE(spy1.count(), 0);
+    QCOMPARE(spy2.count(), 0);
+    QCOMPARE(spy3.count(), 0);
+    QCOMPARE(spy4.count(), 0);
+    QCOMPARE(spy5.count(), signalcount);
+    QCOMPARE(m_map->tilt(), expectedTilt);
 }
 
 QTEST_MAIN( tst_GeoServicesGeoMapPlugin)
