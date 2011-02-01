@@ -1008,6 +1008,7 @@ find %{buildroot}%{_libdir}/qtmobility -type f -perm /u+x,g+x,o+x \( -false \
 %{_includedir}/QtServiceFramework/QServiceManager
 %{_includedir}/QtServiceFramework/QServicePluginInterface
 %{_includedir}/QtSystemInfo/*.h
+%{_includedir}/QtSystemInfo/QSystemAlignedTimer
 %{_includedir}/QtSystemInfo/QSystemBatteryInfo
 %{_includedir}/QtSystemInfo/QSystemDeviceInfo
 %{_includedir}/QtSystemInfo/QSystemDisplayInfo
