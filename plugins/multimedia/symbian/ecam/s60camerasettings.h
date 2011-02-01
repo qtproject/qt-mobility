@@ -130,6 +130,7 @@ Q_SIGNALS: // Notifications
     void apertureRangeChanged();
     void shutterSpeedChanged();
     void isoSensitivityChanged();
+    void evChanged();
 
     // For QCameraLocksControl
     void exposureStatusChanged(QCamera::LockStatus, QCamera::LockChangeReason);

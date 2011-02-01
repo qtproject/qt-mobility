@@ -457,6 +457,9 @@ void S60CameraSettings::HandleAdvancedEvent(const TECAMEvent& aEvent)
     else if (aEvent.iEventType == KUidECamEventCameraSettingShutterSpeed)
         emit shutterSpeedChanged();
 
+    else if (aEvent.iEventType == KUidECamEventCameraSettingExposureCompensationStep)
+        emit evChanged();
+
     else if (aEvent.iEventType == KUidECamEventFlashReady)
         emit flashReady(true);
 
@@ -796,10 +799,12 @@ void S60CameraSettings::setManualShutterSpeed(TInt speed)
 void S60CameraSettings::setExposureCompensation(qreal ev)
 {
 #ifdef POST_31_PLATFORM
-    if (m_advancedSettings)
-        m_advancedSettings->SetExposureCompensation(ev);
-    else
+    if (m_advancedSettings) {
+        TInt evStep = ev * KSymbianFineResolutionFactor;
+        m_advancedSettings->SetExposureCompensationStep(evStep);
+    } else {
         emit error(QCamera::CameraError, QString("Unexpected camera error."));
+    }
 #else // S60 3.1 Platform
     Q_UNUSED(ev);
     emit error(QCamera::NotSupportedFeatureError, QString("Setting exposure compensation is not supported."));
@@ -809,10 +814,15 @@ void S60CameraSettings::setExposureCompensation(qreal ev)
 qreal S60CameraSettings::exposureCompensation()
 {
 #ifdef POST_31_PLATFORM
-    if (m_advancedSettings)
-        return m_advancedSettings->ExposureCompensation();
-    else
+    if (m_advancedSettings) {
+        TInt evStepSymbian = 0;
+        m_advancedSettings->GetExposureCompensationStep(evStepSymbian);
+        qreal evStep = evStepSymbian;
+        evStep /= KSymbianFineResolutionFactor;
+        return evStep;
+    } else {
         emit error(QCamera::CameraError, QString("Unexpected camera error."));
+    }
     return 0;
 #else // S60 3.1 Platform
     return 0;

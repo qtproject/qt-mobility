@@ -68,6 +68,7 @@ S60CameraExposureControl::S60CameraExposureControl(S60ImageCaptureSession *sessi
         connect(m_advancedSettings, SIGNAL(apertureRangeChanged()), this, SLOT(apertureRangeChanged()));
         connect(m_advancedSettings, SIGNAL(shutterSpeedChanged()), this, SLOT(shutterSpeedChanged()));
         connect(m_advancedSettings, SIGNAL(isoSensitivityChanged()), this, SLOT(isoSensitivityChanged()));
+        connect(m_advancedSettings, SIGNAL(evChanged()), this, SLOT(evChanged()));
     }
 }
 
@@ -84,6 +85,7 @@ void S60CameraExposureControl::resetAdvancedSetting()
         connect(m_advancedSettings, SIGNAL(apertureRangeChanged()), this, SLOT(apertureRangeChanged()));
         connect(m_advancedSettings, SIGNAL(shutterSpeedChanged()), this, SLOT(shutterSpeedChanged()));
         connect(m_advancedSettings, SIGNAL(isoSensitivityChanged()), this, SLOT(isoSensitivityChanged()));
+        connect(m_advancedSettings, SIGNAL(evChanged()), this, SLOT(evChanged()));
     }
 }
 
@@ -105,6 +107,11 @@ void S60CameraExposureControl::shutterSpeedChanged()
 void S60CameraExposureControl::isoSensitivityChanged()
 {
     emit exposureParameterChanged(QCameraExposureControl::ISO);
+}
+
+void S60CameraExposureControl::evChanged()
+{
+    emit exposureParameterChanged(QCameraExposureControl::ExposureCompensation);
 }
 
 QCameraExposure::ExposureMode S60CameraExposureControl::exposureMode() const
