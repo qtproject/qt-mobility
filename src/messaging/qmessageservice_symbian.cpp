@@ -208,7 +208,7 @@ bool QMessageServicePrivate::moveMessages(const QMessageIdList &messageIds, cons
     // it'a already verified that messageIds has elements and they are of same type
     switch (idType(messageIds.at(0))) {
         case EngineTypeFreestyle: {
-#ifdef FREESTYLEMAILUSED
+#ifdef FREESTYLEMAILMAPI12USED
             ret = CFSEngine::instance()->moveMessages( *this, messageIds, toFolderId );
 #else
             // not supported
@@ -336,7 +336,7 @@ bool QMessageServicePrivate::synchronize(const QMessageAccountId &id)
     case EngineTypeMTM:
     default:
         return CMTMEngine::instance()->exportUpdates(*this, id);
-    } 
+    }
 }
 
 void QMessageServicePrivate::setFinished(bool successful)
