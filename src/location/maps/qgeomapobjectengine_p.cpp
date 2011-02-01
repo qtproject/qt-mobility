@@ -102,6 +102,7 @@ QGeoMapObjectEngine::QGeoMapObjectEngine(QGeoMapData *mapData, QGeoMapDataPrivat
     latLonScene(new QGraphicsScene),
     pixelScene(new QGraphicsScene)
 {
+    pixelScene->setItemIndexMethod(QGraphicsScene::NoIndex);
 }
 
 QGeoMapObjectEngine::~QGeoMapObjectEngine()
@@ -177,7 +178,6 @@ static QGraphicsPolygonItem *polyCopy(const QGraphicsPolygonItem *polyItem)
     pi->setVisible(polyItem->isVisible());
     pi->setFillRule(polyItem->fillRule());
     pi->setOpacity(polyItem->opacity());
-    pi->setPolygon(polyItem->polygon());
     pi->setGraphicsEffect(polyItem->graphicsEffect());
     return pi;
 }
@@ -201,7 +201,6 @@ static QGraphicsPathItem *pathCopy(const QGraphicsPathItem *pathItem)
     pi->setVisible(pathItem->isVisible());
     pi->setOpacity(pathItem->opacity());
     pi->setGraphicsEffect(pathItem->graphicsEffect());
-    pi->setPath(pathItem->path());
     return pi;
 }
 
@@ -880,6 +879,7 @@ void QGeoMapObjectEngine::rebuildScenes()
 
     latLonScene = new QGraphicsScene;
     pixelScene = new QGraphicsScene;
+    pixelScene->setItemIndexMethod(QGraphicsScene::NoIndex);
 
     addGroupToScene(this, mdp->containerObject);
 }

@@ -169,10 +169,10 @@ QPointF QGeoTiledMapData::coordinateToScreenPosition(const QGeoCoordinate &coord
 {
     Q_D(const QGeoTiledMapData);
 
-    ProjCoordinate c(coordwgs.longitude(), coordwgs.latitude(), 0.0, d->wgs84);
-    c.convert(d->spherical);
+    //ProjCoordinate c(coordwgs.longitude(), coordwgs.latitude(), 0.0, d->wgs84);
+    //c.convert(d->spherical);
 
-    return d->coordinateToScreenPosition(c.x(), c.y());
+    return d->coordinateToScreenPosition(coordwgs.longitude(), coordwgs.latitude());
 }
 
 /*!
@@ -189,9 +189,9 @@ QGeoCoordinate QGeoTiledMapData::screenPositionToCoordinate(const QPointF &scree
 
     const QGeoCoordinate insph = worldReferencePositionToCoordinate(worldRef);
 
-    ProjCoordinate c(insph.longitude(), insph.latitude(), 0.0, d->spherical);
-    c.convert(d->wgs84);
-    return QGeoCoordinate(c.y(), c.x(), c.z());
+    //ProjCoordinate c(insph.longitude(), insph.latitude(), 0.0, d->spherical);
+    //c.convert(d->wgs84);
+    return insph;
 }
 
 // this belongs to QGeoTiledMapDataPrivate in order to avoid
