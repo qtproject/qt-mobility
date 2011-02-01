@@ -66,10 +66,10 @@ public:
     ~QDeclarativeGeoMapRectangleObject();
 
     QDeclarativeCoordinate* topLeft();
-    void setTopLeft(const QDeclarativeCoordinate *center);
+    void setTopLeft(QDeclarativeCoordinate *center);
 
     QDeclarativeCoordinate* bottomRight();
-    void setBottomRight(const QDeclarativeCoordinate *center);
+    void setBottomRight(QDeclarativeCoordinate *center);
 
     QColor color() const;
     void setColor(const QColor &color);
@@ -95,8 +95,8 @@ private Q_SLOTS:
 
 private:
     QGeoMapRectangleObject* rectangle_;
-    QDeclarativeCoordinate topLeft_;
-    QDeclarativeCoordinate bottomRight_;
+    QDeclarativeCoordinate *topLeft_;
+    QDeclarativeCoordinate *bottomRight_;
     QColor color_;
     QDeclarativeGeoMapObjectBorder border_;
 };

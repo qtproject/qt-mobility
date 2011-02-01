@@ -172,6 +172,9 @@ int QRfcommServer::maxPendingConnections() const
 */
 void QRfcommServer::setSecurityFlags(QBluetooth::SecurityFlags security)
 {
+    Q_D(QRfcommServer);
+
+    d->securityFlags = security;
 }
 
 /*!
@@ -179,7 +182,9 @@ void QRfcommServer::setSecurityFlags(QBluetooth::SecurityFlags security)
 */
 QBluetooth::SecurityFlags QRfcommServer::securityFlags() const
 {
-    return QBluetooth::NoSecurity;
+    Q_D(const QRfcommServer);
+
+    return d->securityFlags;
 }
 
 #include "moc_qrfcommserver.cpp"

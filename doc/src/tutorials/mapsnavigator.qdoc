@@ -80,6 +80,7 @@ class GeoMap : public QGraphicsGeoMap
 
 public:
     GeoMap(QGeoMappingManager *manager, MapsWidget *mapsWidget);
+    ~GeoMap();
 
 private:
     MapsWidget *m_mapsWidget;
@@ -888,7 +889,7 @@ void MarkerManager::myLocationChanged(QGeoCoordinate location)
         revSigMap.setMapping(reply, reply);
         connect(reply, SIGNAL(finished()),
                 &revSigMap, SLOT(map()));
-        connect(&sigMap, SIGNAL(mapped(QObject*)),
+        connect(&revSigMap, SIGNAL(mapped(QObject*)),
                 this, SLOT(reverseReplyFinished(QObject*)));
     }
 }
@@ -989,6 +990,469 @@ void MarkerManager::reverseReplyFinished(QObject *obj)
     \example tutorials/mapsnavigator/part3
     \title Part 3 - Listening to satellites
 
+    Another useful part of the Location API is the ability to receive updates
+    of the user's present geographic location from methods such as GPS or
+    network positioning. We're going to add support to our MapsNavigator for
+    using these methods to update the "my location" marker we've already
+    added in parts 1 and 2 of this tutorial.
+    
+    But first we need an attractive way to present status messages to the user
+    while they are busy looking at the map. We're going to do this using an
+    animated translucent rectangle at the bottom of the display.
+    
+    \section2 Animated status bar
+    
+    First, set up the map to resize automatically:
+    
+    \code
+class MapsWidget : public QWidget
+{
+    ...
+private:
+    void resizeEvent(QResizeEvent *event);
+    void showEvent(QShowEvent *event);
+};
+
+void MapsWidget::resizeEvent(QResizeEvent *event)
+{
+    if (graphicsView && geoMap) {
+        graphicsView->resize(size());
+        geoMap->resize(size());
+        graphicsView->centerOn(geoMap);
+    }
+}
+
+void MapsWidget::showEvent(QShowEvent *event)
+{
+    if (graphicsView && geoMap) {
+        graphicsView->resize(size());
+        geoMap->resize(size());
+        graphicsView->centerOn(geoMap);
+    }
+}
+    \endcode
+    
+    And now we add our new StatusBarItem class:
+    
+    \code
+class StatusBarItem : public QObject, public QGraphicsRectItem
+{
+    Q_OBJECT
+    Q_PROPERTY(int offset READ offset WRITE setOffset)
+
+public:
+    StatusBarItem();
+    ~StatusBarItem();
+
+    inline int offset() const { return m_offset; }
+    void setRect(qreal x, qreal y, qreal w, qreal h);
+
+public slots:
+    void setText(QString text);
+
+    void showText(QString text, quint32 timeout=3000);
+    void show();
+    void hide();
+
+    void setOffset(int offset);
+
+private:
+    int m_offset;
+    QGraphicsSimpleTextItem *textItem;
+};
+    \endcode
+    
+    Note that the order of base classes here is very important: QObject
+    and then QGraphicsRectItem. Re-ordering the base classes will cause
+    the code not to compile, as QGraphicsRectItem does not have a
+    meta-object (for more details consult the documentation in Qt).
+    
+    The \a offset property here is added so that when we come to animating
+    our status bar, we can handle the case where the bar is sliding in
+    and the window is being resized simultaneously. If we simply animated
+    the \a y property of the GraphicsItem instead we would have difficulty
+    handling this case.
+    
+    Now add a pointer to one of these in MapsWidget:
+    
+    \code
+class MapsWidget : public QWidget
+{
+    ...
+private:
+    StatusBarItem *m_statusBar;
+};
+    \endcode
+    
+    And we're ready for the implementation. The constructor is not terribly
+    exciting, but sets the defaults for everything:
+    
+    \code
+StatusBarItem::StatusBarItem() :
+    m_offset(0)
+{
+    setPen(QPen(QBrush(), 0));
+    setBrush(QBrush(QColor(0,0,0,120)));
+
+    textItem = new QGraphicsSimpleTextItem(this);
+    textItem->setBrush(QBrush(Qt::white));
+
+    setText("");
+}
+    \endcode
+    
+    The \a setText function, however, is more interesting;
+    
+    \code
+void StatusBarItem::setText(QString text)
+{
+    textItem->setText(text);
+    QRectF rect = textItem->boundingRect();
+    QPointF delta = this->rect().center() - rect.center();
+    textItem->setPos(delta.x(), delta.y());
+}
+    \endcode
+    
+    This re-centers the \a textItem inside its parent (the StatusBarItem)
+    every time the text changes.
+    
+    Also, the \a setRect method is used to update the size and position of
+    the status bar:
+    
+    \code
+void StatusBarItem::setRect(qreal x, qreal y, qreal w, qreal h)
+{
+    QGraphicsRectItem::setRect(x, y + m_offset, w, h);
+    setText(textItem->text());
+}
+    \endcode
+    
+    Here we see the use of the \a offset property for the first time. The
+    idea is to call \a setRect to specify a rectangle that is below
+    the bottom of the visible area in the QGraphicsView. Then \a offset
+    is used to bump the status bar up into the visible area when needed.
+    
+    Whenever we change the offset we should re-calculate our own \a y
+    value using the rect and the offset together:
+    
+    \code
+void StatusBarItem::setOffset(int offset)
+{
+    this->setY(this->y() - m_offset + offset);
+    m_offset = offset;
+}
+    \endcode
+   
+    And now finally, the animations:
+    
+    \code
+void StatusBarItem::show()
+{
+    QPropertyAnimation *anim = new QPropertyAnimation(this, "offset");
+    anim->setStartValue(0);
+    anim->setEndValue(-1 * rect().height());
+    anim->setDuration(500);
+    anim->start(QAbstractAnimation::DeleteWhenStopped);
+}
+
+void StatusBarItem::hide()
+{
+    QPropertyAnimation *anim = new QPropertyAnimation(this, "offset");
+    anim->setStartValue(m_offset);
+    anim->setEndValue(0);
+    anim->setDuration(500);
+    anim->start(QAbstractAnimation::DeleteWhenStopped);
+}
+    \endcode
+    
+    You can see here that we simply use QPropertyAnimations on the \a offset
+    property we just defined. This produces a nice linear slide in and out
+    whenever \a show() or \a hide() are called.
+    
+    Lastly, one convenience method:
+    
+    \code
+void StatusBarItem::showText(QString text, quint32 timeout)
+{
+    setText(text);
+    show();
+    QTimer::singleShot(timeout, this, SLOT(hide()));
+}
+    \endcode
+    
+    This lets us more easily display a status message when we only want it
+    to appear and disappear soon afterwards.
+    
+    Then we have only to add this into our MapsWidget:
+    
+    \code
+void MapsWidget::initialize(QGeoMappingManager *manager)
+{
+    QGraphicsScene *sc;
+    ...
+    m_statusBar = new StatusBarItem;
+    sc->addItem(m_statusBar);
+}
+
+void MapsWidget::resizeEvent(QResizeEvent *event)
+{
+    if (graphicsView && geoMap) {
+        ...
+        m_statusBar->setRect(0, height(), width(), 20);
+    }
+}
+
+// and similarly in MapsWidget::showEvent()
+    \endcode
+
+    \section2 Getting GPS data
+    
+    Now we move on to the focus of this section: GPS data and how to get it.
+    The QGeoPositionInfoSource class gives a convenient interface to
+    receive position updates. We're going to add one to our MainWindow:
+    
+    \code
+class MainWindow : public QMainWindow
+{
+private:
+    QGeoPositionInfoSource *positionSource;
+    
+private slots:
+    // slot to receive updates
+    void updateMyPosition(QGeoPositionInfo info);
+};
+    \endcode
+    
+    And in \a initialize() we'll set it up. We're just using whatever the
+    default position source for the platform happens to be, at an update
+    interval of 1000ms, which is plenty for a basic maps application. Once
+    set up, we call the source's \a startUpdates() method to begin receiving
+    position updates.
+    
+    \code
+void MainWindow::initialize()
+{
+    ...
+    if (positionSource)
+        delete positionSource;
+
+    positionSource = QGeoPositionInfoSource::createDefaultSource(this);
+
+    if (!positionSource) {
+        mapsWidget->statusBar()->showText("Could not open GPS", 5000);
+        mapsWidget->setMyLocation(QGeoCoordinate(-27.5796, 153.1));
+    } else {
+        positionSource->setUpdateInterval(1000);
+        connect(positionSource, SIGNAL(positionUpdated(QGeoPositionInfo)),
+                this, SLOT(updateMyPosition(QGeoPositionInfo)));
+        positionSource->startUpdates();
+        mapsWidget->statusBar()->showText("Opening GPS...");
+    }
+}
+    \endcode
+    
+    Here we also make use of the StatusBarItem to display a message when
+    we are able or unable to open the QGeoPositionInfoSource.
+    
+    And then in the slot \a updateMyPosition, we use this to set the
+    myLocation marker.
+    
+    \code
+void MainWindow::updateMyPosition(QGeoPositionInfo info)
+{
+    if (mapsWidget) {
+        mapsWidget->setMyLocation(info.coordinate());
+    }
+}
+    \endcode
+    
+    So, running the code as is, we have a moving marker for "My Location"
+    that follows our actual GPS or network-sourced location. If you start
+    driving your car with this app running however, you'll quickly notice
+    the fact that the viewport does not pan to follow you as you leave
+    the map area.
+    
+    We could simply add a call to \a setCenter() on the map object in the
+    \a updateMyPosition slot, but in the interests of prettiness, we are
+    going to make a nice smoothly animated transition instead.
+    
+    \section2 Following and animated panning
+    
+    First, add a new boolean member variable to MainWindow, called
+    \a tracking, to keep track of whether the viewport is currently
+    following the My Location marker:
+    
+    \code
+class MainWindow : public QMainWindow
+{
+private:
+    bool tracking;
+    ...
+};
+    \endcode
+    
+    Our intended design is that initially, the viewport will be in tracking
+    mode. It will continue this way until the view is manually panned by
+    the user, at which point tracking will stop. Then, if the user clicks
+    the "My Location" menu option to re-center the map, we resume tracking
+    once again.
+    
+    So we will need a way to notify the MainWindow that the user has panned
+    the view. Add a new signal \a mapPanned() to MapsWidget, and a
+    corresponding signal \a panned() to GeoMap, as we did for \a clicked().
+    
+    \code
+class MapsWidget : public QWidget
+{
+signals:
+    void mapPanned();
+    ...
+};
+
+class GeoMap : public QGraphicsGeoMap
+{
+signals:
+    void panned();
+    ...
+};
+
+void MapsWidget::initialize(QGeoMappingManager *manager)
+{
+    ...
+    connect(geoMap, SIGNAL(panned()),
+            this, SIGNAL(mapPanned()));
+    ...
+}
+    \endcode
+    
+    And now we simply emit it when a user pan takes place:
+    
+    \code
+void GeoMap::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+{
+    if (panActive) {
+        ...
+        emit panned();
+    }
+    ...
+}
+    \endcode
+    
+    Back up in MainWindow, we create a slot \a disableTracking and hook up the
+    new signal to it:
+    
+    \code
+class MainWindow : public QMainWindow
+{
+    ...
+private slots:
+    ...
+    void disableTracking();
+    ...
+};
+
+void MainWindow::initialize()
+{
+    ...
+    connect(mapsWidget, SIGNAL(mapPanned()),
+            this, SLOT(disableTracking()));
+    ...
+}
+    \endcode
+    
+    And finally in the slot itself we simply set the flag we created earlier:
+    
+    \code
+void MainWindow::disableTracking()
+{
+    tracking = false;
+}
+    \endcode
+    
+    Next we want animated panning to be available. Add a new method on
+    MapsWidget:
+    
+    \code
+class MapsWidget : public QWidget
+{
+public:
+    ...
+    void animatedPanTo(QGeoCoordinate center);
+    ...
+};
+    \endcode
+    
+    To do animations in Qt, it's always easiest if we can make use of a
+    QPropertyAnimation, and to do this you need a Q_PROPERTY to act upon.
+    We'll use two animations in parallel, one moving latitude and one moving
+    longitude, so we need two Q_PROPERTIES:
+    
+    \code
+class GeoMap : public QGraphicsGeoMap
+{
+    Q_OBJECT
+
+    Q_PROPERTY(double centerLatitude READ centerLatitude WRITE setCenterLatitude)
+    Q_PROPERTY(double centerLongitude READ centerLongitude WRITE setCenterLongitude)
+
+public:
+    ...
+    double centerLatitude() const;
+    void setCenterLatitude(double lat);
+    double centerLongitude() const;
+    void setCenterLongitude(double lon);
+    ...
+};
+    \endcode
+    
+    These functions simply adjust the corresponding value on \a center() and
+    then call \a setCenter() with the new \a QGeoCoordinate.
+    
+    Now we can implement our \a animatedPanTo() method:
+    
+    \code
+void MapsWidget::animatedPanTo(QGeoCoordinate center)
+{
+    if (!geoMap)
+        return;
+
+    QPropertyAnimation *latAnim = new QPropertyAnimation(geoMap, "centerLatitude");
+    latAnim->setEndValue(center.latitude());
+    latAnim->setDuration(200);
+    QPropertyAnimation *lonAnim = new QPropertyAnimation(geoMap, "centerLongitude");
+    lonAnim->setEndValue(center.longitude());
+    lonAnim->setDuration(200);
+
+    QParallelAnimationGroup *group = new QParallelAnimationGroup;
+    group->addAnimation(latAnim);
+    group->addAnimation(lonAnim);
+    group->start(QAbstractAnimation::DeleteWhenStopped);
+}
+    \endcode
+    
+    To bring it all together, we make the last few changes in MainWindow:
+    
+    \code
+void MainWindow::goToMyLocation()
+{
+    mapsWidget->animatedPanTo(markerManager->myLocation());
+    tracking = true;
+}
+
+void MainWindow::updateMyPosition(QGeoPositionInfo info)
+{
+    if (mapsWidget) {
+        mapsWidget->setMyLocation(info.coordinate(), false);
+        if (tracking)
+            mapsWidget->animatedPanTo(info.coordinate());
+    }
+}
+    \endcode
+    
+    And now we have the simple location tracking functionality we set out to
+    implement.
+    
+    blah blah blah part4 navigation blah.
 
 */
 
@@ -1004,5 +1468,7 @@ void MarkerManager::reverseReplyFinished(QObject *obj)
     \page tutorials-mapsnavigator-part5.html
     \example tutorials/mapsnavigator/part5
     \title Part 5 - Kinetic panning and tuning for mobile
+
+
 
 */

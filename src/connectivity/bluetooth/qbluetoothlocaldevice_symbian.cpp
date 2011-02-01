@@ -303,9 +303,7 @@ void QBluetoothLocalDevicePrivate::_q_pairingFinished(const QBluetoothAddress &a
     Q_Q(QBluetoothLocalDevice);
     emit q->pairingFinished(address, pairing);
 }
-/*!
-    Constructs a QBluetoothLocalDevice.
-*/
+
 QBluetoothLocalDevice::QBluetoothLocalDevice(QObject *parent)
 :   QObject(parent), d_ptr(new QBluetoothLocalDevicePrivate())
 {

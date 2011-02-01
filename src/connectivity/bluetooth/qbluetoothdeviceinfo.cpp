@@ -70,6 +70,7 @@ QTM_BEGIN_NAMESPACE
     \value ImagingDevice        An imaging device such as a display, printer, scanner or camera.
     \value WearableDevice       A wearable device such as a watch or pager.
     \value ToyDevice            A toy.
+    \value HealthDevice         A health reated device such as heart rate, or temperature.
     \value UncategorizedDevice  A device that does not fit into any of the other device classes.
 */
 
@@ -332,7 +333,7 @@ qint16 QBluetoothDeviceInfo::rssi() const
 }
 
 /*!
-  Set the signal strength value, used internally
+  Set the \a signal strength value, used internally.
   */
 void QBluetoothDeviceInfo::setRssi(qint16 signal)
 {
@@ -362,7 +363,7 @@ QBluetoothDeviceInfo &QBluetoothDeviceInfo::operator=(const QBluetoothDeviceInfo
 }
 
 /*!
-  Returns true if the two QBluetoothDeviceInfo objects are identical
+  Returns true if the \a other QBluetoothDeviceInfo object and this are identical
   */
 bool QBluetoothDeviceInfo::operator==(const QBluetoothDeviceInfo &other) const
 {
@@ -514,7 +515,8 @@ bool QBluetoothDeviceInfo::isCached() const
 }
 
 /*!
-  Used by the system to set the cached flag is the QBluetoothDeviceInfo is created from cached data
+  Used by the system to set the \a cached flag if the QBluetoothDeviceInfo is created from cached data. Cached information
+  may not be as accurate as data read from a live device.
   */
 void QBluetoothDeviceInfo::setCached(bool cached)
 {

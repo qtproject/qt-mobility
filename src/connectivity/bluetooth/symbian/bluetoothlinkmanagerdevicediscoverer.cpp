@@ -163,6 +163,10 @@ QBluetoothDeviceInfo BluetoothLinkManagerDeviceDiscoverer::currentDeviceDataToQB
     quint32 deviceClass = qTPackSymbianDeviceClass(m_addr);
 
     QBluetoothDeviceInfo deviceInfo(bluetoothAddress, deviceName, deviceClass);
+    if (m_addr.Rssi())
+        deviceInfo.setRssi(m_addr.Rssi());
+    else
+        deviceInfo.setRssi(1);
     qDebug()<< "Discovered device: name="<< deviceName <<", address=" << bluetoothAddress.toString() <<", class=" << deviceClass;
     return deviceInfo;
 }

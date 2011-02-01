@@ -91,10 +91,6 @@ private:
 
 };
 
-
-/*!
-    Constructs a QBluetoothLocalDevice.
-*/
 QBluetoothLocalDevice::QBluetoothLocalDevice(QObject *parent)
 :   QObject(parent)
 {

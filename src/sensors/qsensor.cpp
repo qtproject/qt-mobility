@@ -535,6 +535,16 @@ void QSensor::removeFilter(QSensorFilter *filter)
 }
 
 /*!
+    Returns the filters currently attached to the sensor.
+
+    \sa QSensorFilter
+*/
+QList<QSensorFilter*> QSensor::filters() const
+{
+    return d->filters;
+}
+
+/*!
     \fn QSensor::d_func() const
     \internal
 */

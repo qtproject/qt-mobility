@@ -41,245 +41,142 @@
 
 #include "mainwindow.h"
 
-#include <QApplication>
-#include <QTabWidget>
-#include <QAction>
+#include <QCoreApplication>
 #include <QMenuBar>
-#include <QVBoxLayout>
-#include <QTimer>
+#include <QMenu>
 #include <QMessageBox>
-#include <QNetworkProxyFactory>
-#include <QProcessEnvironment>
-#include <QSignalMapper>
-#include <QUrl>
-#include <qnetworkconfigmanager.h>
+#include <QAction>
+#include <QVBoxLayout>
 
-MainWindow::MainWindow(QWidget *parent)
-        : QMainWindow(parent), m_serviceProvider(0)
+MainWindow::MainWindow() :
+    serviceProvider(0),
+    markerManager(0),
+    positionSource(0),
+    tracking(true),
+    firstUpdate(true)
 {
-    setWindowTitle(tr("Maps Navigator"));
+    mapsWidget = new MapsWidget;
+    setCentralWidget(mapsWidget);
 
-    m_markers = new MarkerList();
-    m_mapsWidget = new MapsWidget();
-    m_searchWidget = new SearchWidget();
-    m_directionsWidget = new DirectionsWidget();
+    QMenuBar *mbar = new QMenuBar(this);
+    mbar->addAction("My Location", this, SLOT(goToMyLocation()));
 
-    connect(m_mapsWidget, SIGNAL(addMarker(MarkerObject*)),
-            m_markers, SLOT(addMarker(MarkerObject*)));
+    QMenu *searchMenu = new QMenu("Search");
+    mbar->addMenu(searchMenu);
 
-    connect(m_mapsWidget, SIGNAL(removeMarker(MarkerObject*)),
-            m_markers, SLOT(removeMarker(MarkerObject*)));
+    searchMenu->addAction("For address or name", this, SLOT(showSearchDialog()));
 
-    connect(m_mapsWidget, SIGNAL(markerPressed(MarkerObject*)),
-            m_markers, SLOT(markerPressed(MarkerObject*)));
+    setMenuBar(mbar);
 
-    connect(m_mapsWidget, SIGNAL(markerReleased()),
-            m_markers, SLOT(markerReleased()));
-
-    connect(m_mapsWidget, SIGNAL(moveMarker(QGeoCoordinate,QGeoCoordinate)),
-            m_markers, SLOT(moveMarker(QGeoCoordinate,QGeoCoordinate)));
-
-    connect(m_mapsWidget, SIGNAL(mapMoved()), m_markers, SLOT(mapMoved()));
-
-    connect(m_markers, SIGNAL(showMarkerInfo(MarkerObject*)),
-            this, SLOT(showSearchDialog(MarkerObject*)));
-
-    connect(m_searchWidget, SIGNAL(centerOnMarker(MarkerObject*)),
-            m_mapsWidget, SLOT(centerOnMarker(MarkerObject*)));
-
-    connect(m_searchWidget, SIGNAL(deleteMarker(MarkerObject*)),
-            m_mapsWidget, SLOT(deleteMarker(MarkerObject*)));
-
-    connect(m_searchWidget, SIGNAL(addMarker(QGeoCoordinate)),
-            this, SLOT(addSearchMarker(QGeoCoordinate)));
-
-    connect(m_searchWidget, SIGNAL(addMarker(QString)),
-            this, SLOT(addSearchMarker(QString)));
-
-    connect(m_directionsWidget, SIGNAL(selectWaypoint(MarkerObject*)),
-            this, SLOT(selectWaypointMarker(MarkerObject*)));
-
-    connect(m_mapsWidget, SIGNAL(waypointSelected()),
-            m_directionsWidget, SLOT(waypointSelected()));
-
-    connect(m_searchWidget, SIGNAL(setWaypoint(MarkerObject*)),
-            m_directionsWidget, SLOT(setWaypoint(MarkerObject*)));
-
-    // Setup menus
-    QAction *myLocationAction = new QAction(tr("My Location"), this);
-    connect(myLocationAction, SIGNAL(triggered()), m_mapsWidget, SLOT(centerOnMyLocation()));
-
-    QAction *directionsAction = new QAction(tr("Directions"), this);
-    connect(directionsAction, SIGNAL(triggered()), m_directionsWidget, SLOT(showDirectionsDialog()));
-
-    QAction *exitAction = new QAction(tr("Exit"), this);
-    connect(exitAction, SIGNAL(triggered()), this, SLOT(close()));
-
-    QMenu *searchMenu = new QMenu(tr("Search"), this);
-    QAction *geocodeAction = new QAction(tr("By Address"), this);
-    QAction *revgeocodeAction = new QAction(tr("By Coordinate"), this);
-    searchMenu->addAction(geocodeAction);
-    searchMenu->addAction(revgeocodeAction);
-    connect(geocodeAction, SIGNAL(triggered()), m_searchWidget, SLOT(showGeocodeDialog()));
-    connect(revgeocodeAction, SIGNAL(triggered()), m_searchWidget, SLOT(showRevGeocodeDialog()));
-
-    QSignalMapper *mapper = new QSignalMapper(this);
-    QMenu* mapTypeMenu = new QMenu(tr("Map Type"), this);
-
-    // TODO: actually look at available map types
-    QStringList mapTypes;
-    mapTypes << tr("Street") << tr("Satellite")
-             << tr("Satellite - Night") << tr("Terrain");
-
-    foreach (QString type, mapTypes) {
-        QAction *mapTypeAction = new QAction(type, this);
-        mapTypeMenu->addAction(mapTypeAction);
-        mapper->setMapping(mapTypeAction, type);
-        connect(mapTypeAction, SIGNAL(triggered()),
-                mapper, SLOT(map()));
-    }
-    connect(mapper, SIGNAL(mapped(QString)),
-            m_mapsWidget, SLOT(setMapType(QString)));
-
-    menuBar()->addAction(myLocationAction);
-    menuBar()->addAction(directionsAction);
-    menuBar()->addMenu(searchMenu);
-    menuBar()->addMenu(mapTypeMenu);
-    menuBar()->addAction(exitAction);
-
-    // Set Internet Access Point
-    QNetworkConfigurationManager manager;
-    const bool canStartIAP = (manager.capabilities()
-                              & QNetworkConfigurationManager::CanStartAndStopInterfaces);
-
-    // Is there default access point, use it
-    QNetworkConfiguration cfg = manager.defaultConfiguration();
-    if (!cfg.isValid() || (!canStartIAP && cfg.state() != QNetworkConfiguration::Active)) {
-        QMessageBox::information(this, tr("Geo Service Demo"),
-                                 tr("Available Access Points not found."));
-        return;
-    }
-
-    m_session = new QNetworkSession(cfg, this);
-    connect(m_session, SIGNAL(opened()), this, SLOT(networkSessionOpened()));
-    connect(m_session, SIGNAL(error(QNetworkSession::SessionError)),
-            this, SLOT(error(QNetworkSession::SessionError)));
-
-    m_session->open();
-    resize(300, 480);
-
-    setCentralWidget(m_mapsWidget);
+    initialize();
 }
 
 MainWindow::~MainWindow()
 {
-    delete m_serviceProvider;
+    delete mapsWidget;
+    if (serviceProvider)
+        delete serviceProvider;
+    if (markerManager)
+        delete markerManager;
 }
 
-void MainWindow::networkSessionOpened()
+void MainWindow::goToMyLocation()
 {
-    QString urlEnv = QProcessEnvironment::systemEnvironment().value("http_proxy");
-    if (!urlEnv.isEmpty()) {
-        qDebug("got proxy from env: %s", qPrintable(urlEnv));
-        QUrl url = QUrl(urlEnv, QUrl::TolerantMode);
-        QNetworkProxy proxy;
-        proxy.setType(QNetworkProxy::HttpProxy);
-        proxy.setHostName(url.host());
-        proxy.setPort(url.port(8080));
-        QNetworkProxy::setApplicationProxy(proxy);
-    } else
-        QNetworkProxyFactory::setUseSystemConfiguration(true);
-
-    QTimer::singleShot(0, this, SLOT(setProvider()));
+    mapsWidget->animatedPanTo(markerManager->myLocation());
+    tracking = true;
 }
 
-void MainWindow::error(QNetworkSession::SessionError error)
+void MainWindow::initialize()
 {
-    if (error == QNetworkSession::UnknownSessionError) {
-        if (m_session->state() == QNetworkSession::Connecting) {
-            QMessageBox msgBox(qobject_cast<QWidget *>(parent()));
-            msgBox.setText("This application requires network access to function.");
-            msgBox.setInformativeText("Press Cancel to quit the application.");
-            msgBox.setIcon(QMessageBox::Information);
-            msgBox.setStandardButtons(QMessageBox::Retry | QMessageBox::Cancel);
-            msgBox.setDefaultButton(QMessageBox::Retry);
-            int ret = msgBox.exec();
-            if (ret == QMessageBox::Retry) {
-                QTimer::singleShot(0, m_session, SLOT(open()));
-            } else if (ret == QMessageBox::Cancel) {
-                close();
-            }
-        }
-    } else if (error == QNetworkSession::SessionAbortedError) {
-        QMessageBox msgBox(qobject_cast<QWidget *>(parent()));
-        msgBox.setText("Out of range of network.");
-        msgBox.setInformativeText("Move back into range and press Retry, or press Cancel to quit the application.");
-        msgBox.setIcon(QMessageBox::Warning);
-        msgBox.setStandardButtons(QMessageBox::Retry | QMessageBox::Cancel);
-        msgBox.setDefaultButton(QMessageBox::Retry);
-        int ret = msgBox.exec();
-        if (ret == QMessageBox::Retry) {
-            QTimer::singleShot(0, m_session, SLOT(open()));
-        } else if (ret == QMessageBox::Cancel) {
-            close();
-        }
-    }
-}
+    if (serviceProvider)
+        delete serviceProvider;
 
-void MainWindow::setProvider()
-{
-    if (m_serviceProvider)
-        delete m_serviceProvider;
-
-    // Check for geo service providers
     QList<QString> providers = QGeoServiceProvider::availableServiceProviders();
     if (providers.size() < 1) {
         QMessageBox::information(this, tr("Maps Navigator"),
                                  tr("No service providers are available"));
-        QTimer::singleShot(0, qApp, SLOT(quit()));
+        QCoreApplication::quit();
         return;
     }
 
-    // Grab first provider and check for errors
-    // TODO: allow provider selection at startup
-    m_serviceProvider = new QGeoServiceProvider(providers[0]);
-    if (m_serviceProvider->error() != QGeoServiceProvider::NoError) {
-        QMessageBox::information(this, tr("Geo Service Demo"),
+    serviceProvider = new QGeoServiceProvider(providers[0]);
+    if (serviceProvider->error() != QGeoServiceProvider::NoError) {
+        QMessageBox::information(this, tr("Maps Navigator"),
                                  tr("Error loading geoservice plugin: %1").arg(providers[0]));
-        QTimer::singleShot(0, qApp, SLOT(quit()));
+        QCoreApplication::quit();
         return;
     }
 
-    // Initialize the provider managers
-    m_markers->initialize(m_serviceProvider->searchManager());
-    m_mapsWidget->initialize(m_serviceProvider->mappingManager());
-    m_searchWidget->initialize(m_serviceProvider->searchManager(), m_mapsWidget->getMyLocation());
-    m_directionsWidget->initialize(m_serviceProvider->routingManager(),
-                                   m_serviceProvider->searchManager(),
-                                   m_mapsWidget);
+    mapsWidget->initialize(serviceProvider->mappingManager());
+
+    if (markerManager)
+        delete markerManager;
+    markerManager = new MarkerManager(serviceProvider->searchManager());
+    mapsWidget->setMarkerManager(markerManager);
+
+    connect(markerManager, SIGNAL(searchError(QGeoSearchReply::Error,QString)),
+            this, SLOT(showErrorMessage(QGeoSearchReply::Error,QString)));
+    connect(mapsWidget, SIGNAL(markerClicked(Marker*)),
+            this, SLOT(on_markerClicked(Marker*)));
+    connect(mapsWidget, SIGNAL(mapPanned()),
+            this, SLOT(disableTracking()));
+
+    if (positionSource)
+        delete positionSource;
+
+    positionSource = QGeoPositionInfoSource::createDefaultSource(this);
+
+    if (!positionSource) {
+        mapsWidget->statusBar()->showText("Could not open GPS", 5000);
+        mapsWidget->setMyLocation(QGeoCoordinate(-27.5796, 153.1));
+    } else {
+        positionSource->setUpdateInterval(1000);
+        connect(positionSource, SIGNAL(positionUpdated(QGeoPositionInfo)),
+                this, SLOT(updateMyPosition(QGeoPositionInfo)));
+        positionSource->startUpdates();
+        mapsWidget->statusBar()->showText("Opening GPS...");
+    }
 }
 
-void MainWindow::showSearchDialog(MarkerObject *marker)
+void MainWindow::disableTracking()
 {
-    m_searchWidget->setupWidget(marker);
-    m_searchWidget->exec();
+    tracking = false;
 }
 
-void MainWindow::addSearchMarker(const QGeoCoordinate& coord)
+void MainWindow::updateMyPosition(QGeoPositionInfo info)
 {
-    MarkerObject *marker = m_mapsWidget->setMarkerCoordinate(coord);
-    marker->setCenter(true);
-    showSearchDialog(marker);
+    if (mapsWidget) {
+        mapsWidget->setMyLocation(info.coordinate(), false);
+        if (tracking)
+            mapsWidget->animatedPanTo(info.coordinate());
+    }
+    if (firstUpdate) {
+        mapsWidget->statusBar()->showText("Receiving from GPS");
+        firstUpdate = false;
+    }
 }
 
-void MainWindow::addSearchMarker(const QString& address)
+void MainWindow::showSearchDialog()
 {
-    MarkerObject *marker = m_mapsWidget->setMarkerAddress(address);
-    marker->setCenter(true);
-    showSearchDialog(marker);
+    SearchDialog sd;
+    if (sd.exec() == QDialog::Accepted) {
+        if (markerManager) {
+            markerManager->removeSearchMarkers();
+            markerManager->search(sd.searchTerms(), sd.radius());
+        }
+    }
 }
 
-void MainWindow::selectWaypointMarker(MarkerObject *marker)
+void MainWindow::showErrorMessage(QGeoSearchReply::Error err, QString msg)
 {
-    m_mapsWidget->beginWaypointSelect(marker);
+    QMessageBox::critical(this, tr("Error"), msg);
+    mapsWidget->statusBar()->hide();
+}
+
+void MainWindow::on_markerClicked(Marker *marker)
+{
+    MarkerDialog md(marker);
+    if (md.exec() == QDialog::Accepted) {
+        md.updateMarker();
+    }
 }

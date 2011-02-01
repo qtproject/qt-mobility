@@ -67,36 +67,10 @@ QTM_BEGIN_NAMESPACE
 */
 
 QDeclarativeGeoMapRectangleObject::QDeclarativeGeoMapRectangleObject(QDeclarativeItem *parent)
-    : QDeclarativeGeoMapObject(parent)
+    : QDeclarativeGeoMapObject(parent), rectangle_(0), topLeft_(0), bottomRight_(0)
 {
     rectangle_ = new QGeoMapRectangleObject();
     setMapObject(rectangle_);
-
-    connect(&topLeft_,
-            SIGNAL(latitudeChanged(double)),
-            this,
-            SLOT(topLeftLatitudeChanged(double)));
-    connect(&topLeft_,
-            SIGNAL(longitudeChanged(double)),
-            this,
-            SLOT(topLeftLongitudeChanged(double)));
-    connect(&topLeft_,
-            SIGNAL(altitudeChanged(double)),
-            this,
-            SLOT(topLeftAltitudeChanged(double)));
-
-    connect(&bottomRight_,
-            SIGNAL(latitudeChanged(double)),
-            this,
-            SLOT(bottomRightLatitudeChanged(double)));
-    connect(&bottomRight_,
-            SIGNAL(longitudeChanged(double)),
-            this,
-            SLOT(bottomRightLongitudeChanged(double)));
-    connect(&bottomRight_,
-            SIGNAL(altitudeChanged(double)),
-            this,
-            SLOT(bottomRightAltitudeChanged(double)));
 
     connect(&border_,
             SIGNAL(colorChanged(QColor)),
@@ -122,35 +96,48 @@ QDeclarativeGeoMapRectangleObject::~QDeclarativeGeoMapRectangleObject()
     The default value is an invalid coordinate.
 */
 
-void QDeclarativeGeoMapRectangleObject::setTopLeft(const QDeclarativeCoordinate *topLeft)
+void QDeclarativeGeoMapRectangleObject::setTopLeft(QDeclarativeCoordinate *topLeft)
 {
-    if (topLeft_.coordinate() == topLeft->coordinate())
+    if (!topLeft || topLeft == topLeft_)
         return;
 
-    topLeft_.setCoordinate(topLeft->coordinate());
-    rectangle_->setTopLeft(topLeft->coordinate());
+    topLeft_ = topLeft;
 
-    emit topLeftChanged(&topLeft_);
+    connect(topLeft_,
+            SIGNAL(latitudeChanged(double)),
+            this,
+            SLOT(topLeftLatitudeChanged(double)));
+    connect(topLeft_,
+            SIGNAL(longitudeChanged(double)),
+            this,
+            SLOT(topLeftLongitudeChanged(double)));
+    connect(topLeft_,
+            SIGNAL(altitudeChanged(double)),
+            this,
+            SLOT(topLeftAltitudeChanged(double)));
+
+    rectangle_->setTopLeft(topLeft->coordinate());
+    emit topLeftChanged(topLeft_);
 }
 
 QDeclarativeCoordinate* QDeclarativeGeoMapRectangleObject::topLeft()
 {
-    return &topLeft_;
+    return topLeft_;
 }
 
 void QDeclarativeGeoMapRectangleObject::topLeftLatitudeChanged(double /*latitude*/)
 {
-    rectangle_->setTopLeft(topLeft_.coordinate());
+    rectangle_->setTopLeft(topLeft_->coordinate());
 }
 
 void QDeclarativeGeoMapRectangleObject::topLeftLongitudeChanged(double /*longitude*/)
 {
-    rectangle_->setTopLeft(topLeft_.coordinate());
+    rectangle_->setTopLeft(topLeft_->coordinate());
 }
 
 void QDeclarativeGeoMapRectangleObject::topLeftAltitudeChanged(double /*altitude*/)
 {
-    rectangle_->setTopLeft(topLeft_.coordinate());
+    rectangle_->setTopLeft(topLeft_->coordinate());
 }
 
 /*!
@@ -162,35 +149,48 @@ void QDeclarativeGeoMapRectangleObject::topLeftAltitudeChanged(double /*altitude
     The default value is an invalid coordinate.
 */
 
-void QDeclarativeGeoMapRectangleObject::setBottomRight(const QDeclarativeCoordinate *bottomRight)
+void QDeclarativeGeoMapRectangleObject::setBottomRight(QDeclarativeCoordinate *bottomRight)
 {
-    if (bottomRight_.coordinate() == bottomRight->coordinate())
+    if (!bottomRight || bottomRight == bottomRight_)
         return;
 
-    bottomRight_.setCoordinate(bottomRight->coordinate());
+    bottomRight_ = bottomRight;
+    connect(bottomRight_,
+            SIGNAL(latitudeChanged(double)),
+            this,
+            SLOT(bottomRightLatitudeChanged(double)));
+    connect(bottomRight_,
+            SIGNAL(longitudeChanged(double)),
+            this,
+            SLOT(bottomRightLongitudeChanged(double)));
+    connect(bottomRight_,
+            SIGNAL(altitudeChanged(double)),
+            this,
+            SLOT(bottomRightAltitudeChanged(double)));
+
     rectangle_->setBottomRight(bottomRight->coordinate());
 
-    emit bottomRightChanged(&bottomRight_);
+    emit bottomRightChanged(bottomRight_);
 }
 
 QDeclarativeCoordinate* QDeclarativeGeoMapRectangleObject::bottomRight()
 {
-    return &bottomRight_;
+    return bottomRight_;
 }
 
 void QDeclarativeGeoMapRectangleObject::bottomRightLatitudeChanged(double /*latitude*/)
 {
-    rectangle_->setBottomRight(bottomRight_.coordinate());
+    rectangle_->setBottomRight(bottomRight_->coordinate());
 }
 
 void QDeclarativeGeoMapRectangleObject::bottomRightLongitudeChanged(double /*longitude*/)
 {
-    rectangle_->setBottomRight(bottomRight_.coordinate());
+    rectangle_->setBottomRight(bottomRight_->coordinate());
 }
 
 void QDeclarativeGeoMapRectangleObject::bottomRightAltitudeChanged(double /*altitude*/)
 {
-    rectangle_->setBottomRight(bottomRight_.coordinate());
+    rectangle_->setBottomRight(bottomRight_->coordinate());
 }
 
 /*!
