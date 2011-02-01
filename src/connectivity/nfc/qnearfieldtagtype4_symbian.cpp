@@ -47,15 +47,6 @@
 
 QTM_BEGIN_NAMESPACE
 
-static void output(const QByteArray& cmd)
-{
-    BEGIN
-    for (int i = 0; i < cmd.count(); ++i)
-    {
-        LOG(int(cmd.at(i)));
-    }
-    END
-}
 QNearFieldTagType4Symbian::QNearFieldTagType4Symbian(CNearFieldNdefTarget *tag, QObject *parent)
                                 : QNearFieldTagType4(parent), QNearFieldTagImpl(tag)
 {
@@ -89,7 +80,7 @@ quint8 QNearFieldTagType4Symbian::version()
             QNearFieldTarget::RequestId id1 = selectCC();
             if (_waitForRequestCompletedNoSignal(id1))
             {
-                if (requestResponse(id1).toByteArray().right(2) == resp)
+                if (requestResponse(id1).toBool())
                 {
                     // response is ok
                     // read cc
@@ -112,9 +103,30 @@ quint8 QNearFieldTagType4Symbian::version()
     return result;
 }
 
-QVariant QNearFieldTagType4Symbian::decodeResponse(const QByteArray &/*command*/, const QByteArray &response)
+QVariant QNearFieldTagType4Symbian::decodeResponse(const QByteArray &command, const QByteArray &response)
 {
-    return response;
+    BEGIN
+    QVariant result;
+
+    if ((command.count() > 2) && (0x00 == command.at(0)))
+    {
+        if ( (0xA4 == command.at(1)) || (0xD6 == command.at(1)) )
+        {
+            if (response.count() >= 2)
+            {
+                LOG("select or write command");
+                QByteArray resp = response.right(2);
+                result = ((resp.at(0) == 0x90) && (resp.at(1) == 0x00));
+            }
+        }
+        else
+        {
+            LOG("read command");
+            result = response;
+        }
+    }
+    END
+    return result;
 }
 
 bool QNearFieldTagType4Symbian::hasNdefMessage()
@@ -132,9 +144,9 @@ bool QNearFieldTagType4Symbian::hasNdefMessage()
         return false;
     }
 
-    if (requestResponse(id).toByteArray().right(2) != resp)
+    if (!requestResponse(id).toBool())
     {
-        LOG("select NDEF application response is "<<requestResponse(id).toByteArray().right(2));
+        LOG("select NDEF application response is not ok");
         END
         return false;
     }
@@ -147,9 +159,9 @@ bool QNearFieldTagType4Symbian::hasNdefMessage()
         return false;
     }
 
-    if (requestResponse(id1).toByteArray().right(2) != resp)
+    if (!requestResponse(id1).toBool())
     {
-        LOG("select CC response is "<<requestResponse(id1).toByteArray().right(2));
+        LOG("select CC response is not ok");
         END
         return false;
     }
@@ -200,10 +212,8 @@ bool QNearFieldTagType4Symbian::hasNdefMessage()
             END
             return false;
         }
-    QByteArray ndefTLV = requestResponse(id3).toByteArray();
-    if (ndefTLV.right(2) != resp)
+    if (!requestResponse(id3).toBool())
     {
-        LOG("select NDEF response is "<<ndefTLV.right(2));
         END
         return false;
     }
@@ -288,7 +298,6 @@ QNearFieldTarget::RequestId QNearFieldTagType4Symbian::select(quint16 fileIdenti
     command.append(reinterpret_cast<const char*>(&temp),
                    sizeof(quint16));
 
-    output(command);
     END
     return _sendCommand(command);
 }
@@ -307,7 +316,6 @@ QNearFieldTarget::RequestId QNearFieldTagType4Symbian::read(quint16 length, quin
                    sizeof(quint16)); // Le*/
     command.append((quint8)length);
 
-    output(command);
     END
     return _sendCommand(command);
 }
@@ -335,7 +343,6 @@ QNearFieldTarget::RequestId QNearFieldTagType4Symbian::write(const QByteArray &d
     }
 
     command.append(data);
-    output(command);
     END
     return _sendCommand(command);
 }
