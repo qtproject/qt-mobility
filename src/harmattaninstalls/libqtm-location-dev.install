@@ -147,4 +147,4 @@ usr/include/qt4/QtLocation/qlandmarksortorder.h
 usr/include/qt4/QtLocation/qlandmarkunionfilter.h
 usr/include/qt4/QtLocation/qnmeapositioninfosource.h
 usr/lib/libQtLocation.so
-#usr/lib/QtLocation.pc usr/lib/pkgconfig/
+usr/lib/QtLocation.pc usr/lib/pkgconfig/
