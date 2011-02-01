@@ -134,6 +134,9 @@ public:
     Q_INVOKABLE QDeclarativeCoordinate* toCoordinate(QPointF screenPosition) const;
     Q_INVOKABLE QPointF toScreenPosition(QDeclarativeCoordinate* coordinate) const;
 
+    void setActiveMouseArea(QDeclarativeGeoMapMouseArea *area);
+    QDeclarativeGeoMapMouseArea* activeMouseArea() const;
+
 public Q_SLOTS:
     void pan(int dx, int dy);
 
@@ -144,6 +147,9 @@ protected:
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
     void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event);
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
+    void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
+    void hoverMoveEvent(QGraphicsSceneHoverEvent *event);
+    void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
 
 Q_SIGNALS:
     void pluginChanged(QDeclarativeGeoServiceProvider *plugin);
@@ -170,6 +176,7 @@ private:
 
     QDeclarativeGeoMapObject* createItem(int modelIndex);
     QDeclarativeGeoMapMouseEvent* createMapMouseEvent(QGraphicsSceneMouseEvent *event);
+    QDeclarativeGeoMapMouseEvent* createMapMouseEvent(QGraphicsSceneHoverEvent *event);
 
     QDeclarativeGeoServiceProvider* plugin_;
     QGeoServiceProvider* serviceProvider_;
@@ -188,6 +195,9 @@ private:
 
     bool componentCompleted_;
     QList<QDeclarativeGeoMapObjectView*> mapViews_;
+    QDeclarativeGeoMapMouseArea* activeMouseArea_;
+    QList<QDeclarativeGeoMapMouseArea*> mouseAreas_;
+
     Q_DISABLE_COPY(QDeclarativeGraphicsGeoMap)
 };
 

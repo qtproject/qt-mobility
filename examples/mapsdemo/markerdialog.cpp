@@ -88,6 +88,7 @@ MarkerDialog::MarkerDialog(Marker *marker) :
     vbox->addLayout(fm);
     vbox->addWidget(bb);
     setLayout(vbox);
+    setWindowTitle("Edit marker");
 }
 
 void MarkerDialog::updateMarker()

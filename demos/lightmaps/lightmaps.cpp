@@ -220,18 +220,13 @@ private slots:
             if (!img.load(reply, 0))
                 img = QImage();
 
-        for (int i = 0; i < m_pendingReplies.size(); ++i) {
-            if (m_pendingReplies.at(i) == reply) {
-                m_pendingReplies.removeAt(i);
-                break;
-            }
-        }
+        m_pendingReplies.removeAll(reply);
 
         reply->deleteLater();
         m_tilePixmaps[tp] = QPixmap::fromImage(img);
         if (img.isNull())
-            m_tilePixmaps[tp] = m_emptyTile;emit
-        updated(tileRect(tp));
+            m_tilePixmaps[tp] = m_emptyTile;
+        emit updated(tileRect(tp));
 
         // purge unused spaces
         QRect bound = m_tilesRect.adjusted(-2, -2, 2, 2);
@@ -329,7 +324,9 @@ public:
         }
 
         m_session = new QNetworkSession(cfg1, this);
+
         m_connectivityHelper = new ConnectivityHelper(m_session, this);
+        m_session->open();
         connect(m_session, SIGNAL(opened()), this, SLOT(networkSessionOpened()));
         connect(m_connectivityHelper, SIGNAL(networkingCancelled()), qApp, SLOT(quit()));
 
