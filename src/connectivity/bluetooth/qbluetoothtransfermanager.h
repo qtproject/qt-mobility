@@ -55,6 +55,7 @@ QTM_BEGIN_NAMESPACE
 
 class QBluetoothTransferReply;
 class QBluetoothTransferRequest;
+class QBluetoothTranferManagerPrivate;
 
 class Q_CONNECTIVITY_EXPORT QBluetoothTransferManager : public QObject
 {
@@ -73,6 +74,9 @@ public:
 
 signals:
     void finished(QBluetoothTransferReply *reply);
+
+private:
+    Q_DECLARE_PRIVATE(QBluetoothTranferManager)
 };
 
 QTM_END_NAMESPACE
