@@ -544,6 +544,12 @@ int S60ImageCaptureSession::prepareImageCapture()
         if (captureSize.iWidth != m_captureSize.width() || captureSize.iHeight != m_captureSize.height())
             m_captureSize = QSize(captureSize.iWidth, captureSize.iHeight);
 
+#ifdef ECAM_PREVIEW_API
+        // Subscribe previews
+        MCameraPreviewObserver *observer = this;
+        m_cameraEngine->EnablePreviewProvider(observer);
+#endif // ECAM_PREVIEW_API
+
         return symbianError;
     }
 
@@ -554,6 +560,11 @@ void S60ImageCaptureSession::releaseImageCapture()
 {
     // Make sure ImageCapture is prepared the next time it is being activated
     m_icState = EImageCaptureNotPrepared;
+
+#ifdef ECAM_PREVIEW_API
+    // Cancel preview subscription
+    m_cameraEngine->DisablePreviewProvider();
+#endif // ECAM_PREVIEW_API
 }
 
 int S60ImageCaptureSession::capture(const QString &fileName)
@@ -705,6 +716,7 @@ void S60ImageCaptureSession::MceoCapturedBitmapReady(CFbsBitmap* aBitmap)
 
     if(aBitmap)
     {
+#ifndef ECAM_PREVIEW_API
         if (m_previewDecodingOngoing) {
             m_previewInWaitLoop = true;
             CActiveScheduler::Start(); // Wait for the completion of the previous Preview generation
@@ -715,6 +727,11 @@ void S60ImageCaptureSession::MceoCapturedBitmapReady(CFbsBitmap* aBitmap)
             delete m_imageDecoder;
             m_imageDecoder = NULL;
         }
+        if (m_previewBitmap) {
+            delete m_previewBitmap;
+            m_previewBitmap = NULL;
+        }
+#endif // ECAM_CAMERA_API
         if (m_imageEncoder) {
             delete m_imageEncoder;
             m_imageEncoder = NULL;
@@ -723,10 +740,6 @@ void S60ImageCaptureSession::MceoCapturedBitmapReady(CFbsBitmap* aBitmap)
             m_fileSystemAccess->Close();
             delete m_fileSystemAccess;
             m_fileSystemAccess = NULL;
-        }
-        if (m_previewBitmap) {
-            delete m_previewBitmap;
-            m_previewBitmap = NULL;
         }
 
         TInt saveError = KErrNone;
@@ -790,6 +803,7 @@ void S60ImageCaptureSession::saveImageL(TDesC8 *aData, TFileName &aPath)
         setError(KErrGeneral, QString("Captured image data is not available."), true);
 
     if (aPath.Size() > 0) {
+#ifndef ECAM_PREVIEW_API
         if (m_previewDecodingOngoing) {
             m_previewInWaitLoop = true;
             CActiveScheduler::Start(); // Wait for the completion of the previous Preview generation
@@ -800,20 +814,22 @@ void S60ImageCaptureSession::saveImageL(TDesC8 *aData, TFileName &aPath)
             delete m_imageDecoder;
             m_imageDecoder = NULL;
         }
+        if (m_previewBitmap) {
+            delete m_previewBitmap;
+            m_previewBitmap = NULL;
+        }
+#endif // ECAM_PREVIEW_API
         if (m_fileSystemAccess) {
             m_fileSystemAccess->Close();
             delete m_fileSystemAccess;
             m_fileSystemAccess = NULL;
-        }
-        if (m_previewBitmap) {
-            delete m_previewBitmap;
-            m_previewBitmap = NULL;
         }
 
         RFs *fileSystemAccess = new (ELeave) RFs;
         User::LeaveIfError(fileSystemAccess->Connect());
         CleanupClosePushL(*fileSystemAccess);
 
+#ifndef ECAM_PREVIEW_API
         // Generate Thumbnail to be used as Preview
         S60ImageCaptureDecoder *imageDecoder = S60ImageCaptureDecoder::DataNewL(this, fileSystemAccess, aData);
         CleanupStack::PushL(imageDecoder);
@@ -842,6 +858,7 @@ void S60ImageCaptureSession::saveImageL(TDesC8 *aData, TFileName &aPath)
         // Jpeg conversion completes in RunL
         m_previewDecodingOngoing = true;
         imageDecoder->decode(previewBitmap);
+#endif // ECAM_PREVIEW_API
 
         RFile file;
         TInt fileWriteErr = KErrNone;
@@ -855,6 +872,9 @@ void S60ImageCaptureSession::saveImageL(TDesC8 *aData, TFileName &aPath)
             User::Leave(fileWriteErr);
 
         CleanupStack::PopAndDestroy(&file);
+#ifdef ECAM_PREVIEW_API
+        CleanupStack::PopAndDestroy(fileSystemAccess);
+#else // !ECAM_PREVIEW_API
         // Delete when Image is decoded
         CleanupStack::Pop(previewBitmap);
         CleanupStack::Pop(imageDecoder);
@@ -864,13 +884,17 @@ void S60ImageCaptureSession::saveImageL(TDesC8 *aData, TFileName &aPath)
         m_previewBitmap = previewBitmap;
         m_imageDecoder = imageDecoder;
         m_fileSystemAccess = fileSystemAccess;
+#endif // ECAM_PREVIEW_API
 
         emit imageSaved(m_currentImageId, m_stillCaptureFileName);
 
         // Inform that we can continue taking more pictures
         emit readyForCaptureChanged(true);
 
-        // ImageBuffer gets released in RunL
+        // For custom preview generation, image buffer gets released in RunL()
+#ifdef ECAM_PREVIEW_API
+        releaseImageBuffer();
+#endif // ECAM_PREVIEW_API
 
     } else {
         setError(KErrPathNotFound, QString("Invalid path given."), true);
@@ -1818,6 +1842,7 @@ void S60ImageCaptureSession::handleImageEncoded(int error)
         m_imageEncoder = NULL;
     }
 
+#ifndef ECAM_PREVIEW_API
     // Start preview generation
     TInt previewError = KErrNone;
     TFileName fileName = convertImagePath();
@@ -1853,6 +1878,7 @@ void S60ImageCaptureSession::handleImageEncoded(int error)
 
     // Jpeg decoding completes in handleImageDecoded()
     m_imageDecoder->decode(m_previewBitmap);
+#endif // ECAM_PREVIEW_API
 
     // Buffer can be released since Preview is created from file
     releaseImageBuffer();
@@ -1860,6 +1886,17 @@ void S60ImageCaptureSession::handleImageEncoded(int error)
     // Inform that we can continue taking more pictures
     emit readyForCaptureChanged(true);
 }
+
+#ifdef ECAM_PREVIEW_API
+void S60ImageCaptureSession::MceoPreviewReady(CFbsBitmap& aPreview)
+{
+    QPixmap previewPixmap = QPixmap::fromSymbianCFbsBitmap(&aPreview);
+    QImage preview = previewPixmap.toImage();
+
+    // Notify preview availability
+    emit imageCaptured(m_currentImageId, preview);
+}
+#endif // ECAM_PREVIEW_API
 
 // End of file
 

@@ -41,8 +41,12 @@
 
 #include "s60cameraengine.h"
 #include "s60cameraengineobserver.h"
+#include "s60cameraconstants.h"
 
 #include <fbs.h> // CFbsBitmap
+#ifdef ECAM_PREVIEW_API
+    #include <platform/ecam/camerasnapshot.h>
+#endif // ECAM_PREVIEW_API
 
 CCameraEngine::CCameraEngine()
 {
@@ -59,6 +63,7 @@ CCameraEngine::CCameraEngine(TInt aCameraHandle,
     iCameraIndex(aCameraHandle),
     iPriority(aPriority),
     iEngineState(EEngineNotReady),
+    iCaptureResolution(TSize(0,0)),
     iNew2LImplementation(false),
     iLatestImageBufferIndex(1) // Thus we start from index 0
 {
@@ -232,6 +237,7 @@ void CCameraEngine::PrepareL(TSize& aCaptureSize, CCamera::TFormat aFormat)
     }
 
     iCamera->EnumerateCaptureSizes(aCaptureSize, selected, aFormat);
+    iCaptureResolution = aCaptureSize;
     iCamera->PrepareImageCaptureL(aFormat, selected);
 }
 
@@ -269,6 +275,13 @@ void CCameraEngine::HandleEvent(const TECAMEvent &aEvent)
         iObserver->MceoHandleError(EErrReserve, KErrHardwareNotAvailable);
         return;
     }
+
+#ifdef ECAM_PREVIEW_API
+    if (aEvent.iEventType == KUidECamEventCameraSnapshot) {
+        HandlePreview();
+        return;
+    }
+#endif // ECAM_PREVIEW_API
 
 #if !defined(Q_CC_NOKIAX86) // Not Emulator
     // Other events; Exposure, Zoom, etc. (See ecamadvancedsettings.h)
@@ -318,6 +331,60 @@ void CCameraEngine::PowerOnComplete(TInt aError)
     iEngineState = EEngineIdle;
     iObserver->MceoCameraReady();
 }
+
+#ifdef ECAM_PREVIEW_API
+/**
+ * This method creates the CCameraPreview object and requests the previews to
+ * be provided during the image or video capture
+ */
+void CCameraEngine::EnablePreviewProvider(MCameraPreviewObserver *aPreviewObserver)
+{
+    // Delete old one if exists
+    if (iCameraSnapshot)
+        delete iCameraSnapshot;
+
+    iPreviewObserver = aPreviewObserver;
+
+    TInt error = KErrNone;
+
+    if (iCamera) {
+        TRAP(error, iCameraSnapshot = CCamera::CCameraSnapshot::NewL(*iCamera));
+        if (error) {
+            if (iObserver)
+                iObserver->MceoHandleError(EErrPreview, error);
+            return;
+        }
+
+        TRAP(error, iCameraSnapshot->PrepareSnapshotL(KDefaultFormatPreview, SelectPreviewResolution(), EFalse));
+        if (error) {
+            if (iObserver)
+                iObserver->MceoHandleError(EErrPreview, error);
+            return;
+        }
+
+        iCameraSnapshot->StartSnapshot();
+    } else {
+        if (iObserver)
+            iObserver->MceoHandleError(EErrPreview, KErrNotReady);
+    }
+}
+
+/**
+ * This method disables and destroys the CCameraPreview object. Thus previews
+ * will not be provided during the image or video capture.
+ */
+void CCameraEngine::DisablePreviewProvider()
+{
+    if (!iCameraSnapshot)
+        return;
+
+    iCameraSnapshot->StopSnapshot();
+
+    delete iCameraSnapshot;
+
+    iPreviewObserver = NULL;
+}
+#endif // ECAM_PREVIEW_API
 
 /*
  * MCameraObserver2:
@@ -547,6 +614,52 @@ void CCameraEngine::HandleImageReady(const TInt aError, const bool isBitmap)
             iImageCaptureObserver->MceoHandleError(EErrImageReady, aError);
     }
 }
+
+#ifdef ECAM_PREVIEW_API
+void CCameraEngine::HandlePreview()
+{
+    if (!iCameraSnapshot) {
+        if (iObserver)
+            iObserver->MceoHandleError(EErrPreview, KErrGeneral);
+        return;
+    }
+
+    RArray<TInt> previewIndices;
+    CleanupClosePushL(previewIndices);
+
+    MCameraBuffer &newPreview = iCameraSnapshot->SnapshotDataL(previewIndices);
+
+    for (TInt i = 0; i < previewIndices.Count(); ++i)
+        iPreviewObserver->MceoPreviewReady(newPreview.BitmapL(0));
+
+    CleanupStack::PopAndDestroy(); // RArray<TInt> previewIndices
+}
+
+TSize CCameraEngine::SelectPreviewResolution()
+{
+    TSize currentResolution(iCaptureResolution);
+
+    TSize previewResolution(0, 0);
+    if (currentResolution == TSize(4000,2248) ||
+        currentResolution == TSize(3264,1832) ||
+        currentResolution == TSize(2592,1456) ||
+        currentResolution == TSize(1920,1080) ||
+        currentResolution == TSize(1280,720)) {
+        previewResolution = KDefaultSizePreview_Wide;
+    } else if (currentResolution == TSize(352,288) ||
+        currentResolution == TSize(176,144)) {
+        previewResolution = KDefaultSizePreview_CIF;
+    } else if (currentResolution == TSize(720,576)) {
+        previewResolution = KDefaultSizePreview_PAL;
+    } else if (currentResolution == TSize(720,480)) {
+        previewResolution = KDefaultSizePreview_NTSC;
+    } else {
+        previewResolution = KDefaultSizePreview_Normal;
+    }
+
+    return previewResolution;
+}
+#endif // ECAM_PREVIEW_API
 
 //=============================================================================
 // S60 3.1 - AutoFocus support (Other platforms, see S60CameraSettings class)

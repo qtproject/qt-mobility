@@ -56,6 +56,12 @@
 #define KDefaultFocusMode               QCameraFocus::AutoFocus
 
 #define KDefaultViewfinderSize          QSize(320,240)
+#define KDefaultSizePreview_Normal      TSize(640,480)
+#define KDefaultSizePreview_Wide        TSize(640,360)
+#define KDefaultSizePreview_CIF         TSize(352,288)
+#define KDefaultSizePreview_PAL         TSize(640,512)
+#define KDefaultSizePreview_NTSC        TSize(640,426)
+#define KDefaultFormatPreview           CCamera::EFormatFbsBitmapColor16MU
 #define KViewfinderFrameRate            30
 #define KMaxVFErrorsSignalled           3
 
