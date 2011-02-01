@@ -112,7 +112,7 @@ bool QNearFieldTagType3Symbian::hasNdefMessage()
 
     if (_waitForRequestCompletedNoSignal(id))
     {
-        QMap<quint16, QByteArray> result = checkResponse2ServiceBlockList(serviceBlockList, requestResponse(id).toByteArray());
+        QMap<quint16, QByteArray> result = requestResponse(id).value<QMap<quint16, QByteArray> >();
         if (result.contains(serviceCode))
         {
             const QByteArray& lens = result.value(serviceCode);
