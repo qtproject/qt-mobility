@@ -980,7 +980,7 @@ void MarkerManager::reverseReplyFinished(QGeoSearchReply *reply)
     In part 3, we will add support for using platform positioning methods such
     as GPS, and in part 4 we will add the ability to fetch directions to a given
     destination. Finally, in part 5 we will add kinetic scrolling and cover a
-    number of points about means for achieving better performance on mobile
+    number of points about means for achieving a better user experience on mobile
     platforms.
 */
 
@@ -1460,6 +1460,19 @@ void MainWindow::updateMyPosition(QGeoPositionInfo info)
     \example tutorials/mapsdemo/part4
     \title Part 4 - Stopping for directions
 
+    To complete our tour of the Maps API, we're going to add some very basic
+    support for finding transport routes across a map. There is much more
+    functionality available in the routing and navigation API than we are
+    going to use, though some backend plugins may place restrictions on its
+    use to develop, for example, voice-aided navigation applications (such
+    as the Nokia Ovi maps plugin).
+    
+    \image mapsdemo-routing.png
+    
+    We are going to add support for a simple dialog that can be used to search
+    for a destination point and display a line on the map giving the route from
+    the current GPS "My Location" (which we implemented in part 3) to that
+    destination.
 
 */
 

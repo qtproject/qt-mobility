@@ -76,8 +76,6 @@ Navigator::~Navigator()
 
 void Navigator::start()
 {
-    this->deleteWhenDone = deleteWhenDone;
-
     QList<QGeoCoordinate> waypoints = request.waypoints();
     waypoints.append(mapsWidget->markerManager()->myLocation());
     request.setWaypoints(waypoints);
