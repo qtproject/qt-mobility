@@ -127,9 +127,6 @@ public:
     int maxBars() const;
     QSystemBatteryInfo::BatteryStatus batteryStatus() const;
     QSystemBatteryInfo::EnergyUnit energyMeasurementUnit() const;
-#ifdef TESTR
-    QSystemBatteryInfoPrivate *priv;
-#endif
 
 Q_SIGNALS:
     void batteryStatusChanged(QSystemBatteryInfo::BatteryStatus batteryStatus);

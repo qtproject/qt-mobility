@@ -406,6 +406,7 @@ class Q_SYSINFO_EXPORT SystemInfoConnection : public QObject
     Q_OBJECT
 public:
     SystemInfoConnection(QObject *parent = 0);
+    QSystemInfoPrivate *systeminfoPrivate();
     QSystemNetworkInfoPrivate *networkInfoPrivate();
     QSystemDeviceInfoPrivate *deviceInfoPrivate();
     QSystemStorageInfoPrivate *storageInfoPrivate();
@@ -413,6 +414,7 @@ public:
     QSystemDeviceInfoPrivate *alignedTImerPrivate();
 };
 #endif
+
 
 QTM_END_NAMESPACE
 QT_END_HEADER

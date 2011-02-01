@@ -151,9 +151,6 @@ QSystemInfo::QSystemInfo(QObject *parent)
 {
     qRegisterMetaType<QSystemInfo::Version>("QSystemInfo::Version");
     qRegisterMetaType<QSystemInfo::Feature>("QSystemInfo::Feature");
-#ifdef TESTR
-    priv = sysinfoPrivate();
-#endif
 }
 
 /*!

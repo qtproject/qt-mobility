@@ -186,9 +186,6 @@ public:
     Q_INVOKABLE bool keypadLightOn(QSystemDeviceInfo::KeypadType type); //1.2`
     QUuid uniqueDeviceID(); //1.2
     QSystemDeviceInfo::LockTypeFlags lockStatus(); //1.2
-#ifdef TESTR
-    QSystemDeviceInfoPrivate *priv;
-#endif
 
     class  Q_SYSINFO_EXPORT ProfileDetails  {
     public:

@@ -112,9 +112,6 @@ public:
     Q_INVOKABLE static QString networkName(QSystemNetworkInfo::NetworkMode mode);
     Q_INVOKABLE QNetworkInterface interfaceForMode(QSystemNetworkInfo::NetworkMode mode);
 
-#ifdef TESTR
-    QSystemNetworkInfoPrivate *priv;
-#endif
 
 Q_SIGNALS:
    void networkStatusChanged(QSystemNetworkInfo::NetworkMode, QSystemNetworkInfo::NetworkStatus);

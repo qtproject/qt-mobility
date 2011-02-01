@@ -85,9 +85,10 @@ class ChangeLanguageThread : public QThread
 public:
     void run()
     {
-        QSystemInfo si;
-        QSystemInfoPrivate *s = si.priv;
-        s->setCurrentLanguage(lang);
+        SystemInfoConnection si;
+        QSystemInfoPrivate *d = si.systeminfoPrivate();
+        d->setCurrentLanguage(lang);
+
     }
      QString lang;
 };
@@ -153,7 +154,9 @@ void tst_QSystemInfo::tst_currentLanguage()
 {
     QSystemInfo si;
 #ifdef TESTR
-    si.priv->setInitialData();
+    SystemInfoConnection sic;
+    QSystemInfoPrivate *d = sic.systeminfoPrivate();
+    d->setInitialData();
 #endif
     QVERIFY(!si.currentLanguage().isEmpty());
     QCOMPARE(si.currentLanguage().length(), 2);
@@ -165,7 +168,9 @@ void tst_QSystemInfo::tst_availableLanguages()
 {
     QSystemInfo si;
 #ifdef TESTR
-    si.priv->setInitialData();
+    SystemInfoConnection sic;
+    QSystemInfoPrivate *d = sic.systeminfoPrivate();
+    d->setInitialData();
 #endif
     QVERIFY(!si.availableLanguages().isEmpty());
     QStringList available = si.availableLanguages();
@@ -193,7 +198,9 @@ void tst_QSystemInfo::tst_versions()
         QFETCH(QString, parameter);
         QSystemInfo si;
 #ifdef TESTR
-        si.priv->setInitialData();
+        SystemInfoConnection sic;
+        QSystemInfoPrivate *d = sic.systeminfoPrivate();
+        d->setInitialData();
 #endif
         QString vers = si.version(version, parameter);
         QVERIFY(!vers.isEmpty()
@@ -205,7 +212,9 @@ void tst_QSystemInfo::tst_countryCode()
 {
     QSystemInfo si;
 #ifdef TESTR
-    si.priv->setInitialData();
+    SystemInfoConnection sic;
+    QSystemInfoPrivate *d = sic.systeminfoPrivate();
+    d->setInitialData();
 #endif
     QVERIFY(!si.currentCountryCode().isEmpty());
     QCOMPARE(si.currentCountryCode().length(),2);
@@ -237,7 +246,9 @@ void tst_QSystemInfo::tst_hasFeatures()
         QFETCH(QSystemInfo::Feature, feature);
         QSystemInfo si;
 #ifdef TESTR
-        si.priv->setInitialData();
+        SystemInfoConnection sic;
+        QSystemInfoPrivate *d = sic.systeminfoPrivate();
+        d->setInitialData();
 #endif
         QVERIFY(si.hasFeatureSupported(feature) == false
                 || si.hasFeatureSupported(feature) == true);
@@ -280,3 +291,4 @@ void tst_QSystemInfo::slotCurrentLanguageChanged(const QString &lang)
 
 QTEST_MAIN(tst_QSystemInfo)
 #include "tst_qsysteminfo.moc"
+

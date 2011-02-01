@@ -90,9 +90,6 @@ public:
 
     Q_INVOKABLE QString uriForDrive(const QString &driveVolume);//1.2
     Q_INVOKABLE QSystemStorageInfo::StorageState getStorageState(const QString &volume);//1.2
-#ifdef TESTR
-    QSystemStorageInfoPrivate *priv;
-#endif
 
 Q_SIGNALS:
     void logicalDriveChanged(bool added,const QString &vol);

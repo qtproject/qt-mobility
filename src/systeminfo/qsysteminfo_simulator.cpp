@@ -74,6 +74,11 @@ SystemInfoConnection::SystemInfoConnection(QObject *parent)
 {
 }
 
+QSystemInfoPrivate *SystemInfoConnection::systeminfoPrivate()
+{
+    return getSystemInfoPrivate();
+}
+
 QSystemNetworkInfoPrivate *SystemInfoConnection::networkInfoPrivate()
 {
     return getSystemNetworkInfoPrivate();
