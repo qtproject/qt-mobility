@@ -48,6 +48,9 @@ QTM_BEGIN_NAMESPACE
 
 class QNearFieldManagerPrivateImpl : public QNearFieldManagerPrivate
 {
+public:
+  QNearFieldManagerPrivateImpl();
+  ~QNearFieldManagerPrivateImpl();
 };
 
 QTM_END_NAMESPACE

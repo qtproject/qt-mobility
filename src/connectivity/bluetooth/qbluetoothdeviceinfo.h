@@ -204,8 +204,12 @@ public:
     ~QBluetoothDeviceInfo();
 
     bool isValid() const;
+    bool isCached() const;
+
+    void setCached(bool cached);
 
     QBluetoothDeviceInfo &operator=(const QBluetoothDeviceInfo &other);
+    bool operator==(const QBluetoothDeviceInfo &other) const;
 
     QBluetoothAddress address() const;
     QString name() const;
@@ -213,6 +217,9 @@ public:
     ServiceClasses serviceClasses() const;
     MajorDeviceClass majorDeviceClass() const;
     quint8 minorDeviceClass() const;
+
+    qint16 rssi() const;
+    void setRssi(qint16 signal);
 
 //    bool matchesMinorClass(MinorComputerClass minor) const;
 //    bool matchesMinorClass(MinorPhoneClass minor) const;

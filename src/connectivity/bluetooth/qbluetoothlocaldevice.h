@@ -78,10 +78,13 @@ private:
 
 };
 
+
 class Q_CONNECTIVITY_EXPORT QBluetoothLocalDevice : public QObject
 {
     Q_OBJECT
-
+    Q_ENUMS(Pairing)
+    Q_ENUMS(HostMode)
+    Q_ENUMS(Error)
 public:
     enum Pairing {
         Unpaired,
@@ -95,6 +98,11 @@ public:
         HostDiscoverable
     };
 
+    enum Error {
+            NoError,
+            PairingError,
+            UnknownError = 100
+    };
     QBluetoothLocalDevice(QObject *parent = 0);
     QBluetoothLocalDevice(const QBluetoothAddress &address, QObject *parent = 0);
     virtual ~QBluetoothLocalDevice();
@@ -114,16 +122,28 @@ public:
 
     static QList<QBluetoothHostInfo> allDevices();
 
-Q_SIGNALS:    
-    void hostModeStateChanged(HostMode state);
+public Q_SLOTS:
+    void pairingConfirmation(bool confirmation);
+
+Q_SIGNALS:
+    void hostModeStateChanged(QBluetoothLocalDevice::HostMode state);
     void pairingFinished(const QBluetoothAddress &address, QBluetoothLocalDevice::Pairing pairing);
+
     void pairingDisplayPinCode(const QBluetoothAddress &address, QString pin);
+    void pairingDisplayConfirmation(const QBluetoothAddress &address, QString pin);
+    void error(QBluetoothLocalDevice::Error error);
 
 private:
+    Q_DECLARE_PRIVATE(QBluetoothLocalDevice)
     QBluetoothLocalDevicePrivate *d_ptr;
+#ifdef QTM_SYMBIAN_BLUETOOTH
+    Q_PRIVATE_SLOT(d_func(), void _q_pairingFinished(const QBluetoothAddress &, QBluetoothLocalDevice::Pairing))
+#endif //QTM_SYMBIAN_BLUETOOTH
 };
 
 QTM_END_NAMESPACE
+
+Q_DECLARE_METATYPE(QtMobility::QBluetoothLocalDevice::HostMode)
 
 QT_END_HEADER
 
