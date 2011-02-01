@@ -64,12 +64,6 @@
     \dots
     \snippet ../../examples/sysinfo/dialog.cpp  productName
 
-    And there are signals that can be used to update progress bars and other
-    indicators. An example is when the battery level changes, the batteryLevelChanged() signal is emitted
-
-    \snippet ../../examples/sysinfo/dialog.cpp  sig batteryLevelChanged
-
-
     Other information is stored as bitwise flags. The following code shows
     the input methods being determined using flags.
 
