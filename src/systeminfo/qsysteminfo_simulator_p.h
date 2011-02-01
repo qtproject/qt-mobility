@@ -105,11 +105,12 @@ private:
 };
 QSystemInfoPrivate *getSystemInfoPrivate();
 
-class QSystemNetworkInfoPrivate : public QObject
+class  QSystemNetworkInfoPrivate : public QObject
 {
     Q_OBJECT
 public:
     explicit QSystemNetworkInfoPrivate(QObject *parent = 0);
+    virtual ~QSystemNetworkInfoPrivate();
 
     int cellId() const { return data.cellId; }
     int locationAreaCode() const { return data.locationAreaCode; }
@@ -147,13 +148,14 @@ signals:
     void currentMobileNetworkCodeChanged(const QString &) const;
     void networkNameChanged(QSystemNetworkInfo::NetworkMode, const QString &) const;
     void networkModeChanged(QSystemNetworkInfo::NetworkMode) const;
+    void cellIdChanged(int);
 
 private:
     QSystemNetworkInfoData data;
 };
 QSystemNetworkInfoPrivate *getSystemNetworkInfoPrivate();
 
-class QSystemDisplayInfoPrivate : public QObject
+class  QSystemDisplayInfoPrivate : public QObject
 {
     Q_OBJECT
 public:
@@ -162,16 +164,25 @@ public:
     int displayBrightness(int screen = 0) const { Q_UNUSED(screen); return data.displayBrightness; }
     int colorDepth(int screen = 0) const { Q_UNUSED(screen); return data.colorDepth; }
 
-// commented out in qsystemdisplayinfo.h
-//    QSystemDisplayInfo::DisplayOrientation orientation(int screen) const { Q_ASSERT(false); return QSystemDisplayInfo::Unknown; }
-//    float contrast(int screen) const { Q_ASSERT(false); return -1; }
-//    int getDPIWidth(int screen) const { Q_ASSERT(false); return -1; }
-//    int getDPIHeight(int screen) const { Q_ASSERT(false); return -1; }
-//    int physicalHeight(int screen) const { Q_ASSERT(false); return -1; }
-//    int physicalWidth(int screen) const { Q_ASSERT(false); return -1; }
+    QSystemDisplayInfo::DisplayOrientation orientation(int screen) const { Q_UNUSED(screen); return data.orientation; }
+    float contrast(int screen) const { Q_UNUSED(screen); return data.contrast;}
+    int getDPIHeight(int screen) const { Q_UNUSED(screen); return data.dpiHeight; }
+    int getDPIWidth(int screen) const { Q_UNUSED(screen); return data.dpiWidth; }
+    int physicalHeight(int screen) const { Q_UNUSED(screen); return data.physicalHeight; }
+    int physicalWidth(int screen) const { Q_UNUSED(screen); return data.physicalWidth; }
+
+    QSystemDisplayInfo::BacklightState backlightStatus(int screen) { Q_UNUSED(screen); return data.backlightStatus; }
 
     void setDisplayBrightness(int brightness);
     void setColorDepth(int depth);
+
+    void setOrientation(QSystemDisplayInfo::DisplayOrientation v);
+    void setContrast(float v);
+    void setDPIHeight(int v);
+    void setDPIWidth(int v) ;
+    void setPhysicalHeight(int v);
+    void setPhysicalWidth(int v);
+    void setBacklightStatus(QSystemDisplayInfo::BacklightState v);
 
     void setInitialData();
 
@@ -180,7 +191,7 @@ private:
 };
 QSystemDisplayInfoPrivate *getSystemDisplayInfoPrivate();
 
-class QSystemDeviceInfoPrivate : public QObject
+class  QSystemDeviceInfoPrivate : public QObject
 {
     Q_OBJECT
 public:
@@ -200,9 +211,24 @@ public:
     int batteryLevel() const { return data.batteryLevel; }
     bool isDeviceLocked() const { return data.deviceLocked; }
 
-    bool currentBluetoothPowerState() const { Q_ASSERT(false); return false; }
+    bool currentBluetoothPowerState() const { return data.currentBluetoothPower;}
+
+    QSystemDeviceInfo::KeyboardTypeFlags keyboardTypes()const { return data.keyboardTypes; }
+    QSystemDeviceInfo::KeypadType keypadType()const { return data.keypadType; }
+    bool isWirelessKeyboardConnected()const { return data.wirelessConnected; }
+    bool isKeyboardFlippedOpen()const { return data.keyboardFlipped; }
+
+    bool keypadLightOn(QSystemDeviceInfo::KeypadType type)const { Q_UNUSED(type);return data.keypadLight; }
+    bool backLightOn()const { return data.backLight; }
+    QUuid uniqueDeviceID(){ return data.uniqueDeviceId; }
+    QSystemDeviceInfo::LockTypeFlags lockStatus()const { return data.lockType; }
 
     QSystemDeviceInfo::BatteryStatus batteryStatus() const;
+
+
+    int messageRingtoneVolume() const { return data.messageRingtoneVolume; }
+    int voiceRingtoneVolume() const { return data.voiceRingtoneVolume; }
+    bool vibrationActive() const { return data.vibrationActive; }
 
     void setCurrentProfile(QSystemDeviceInfo::Profile v);
     void setCurrentPowerState(QSystemDeviceInfo::PowerState v);
@@ -218,21 +244,45 @@ public:
     void setBatteryLevel(int v);
     void setDeviceLocked(bool v);
 
+    void setBluetoothPower(bool v);
+
+    void setKeyboardTypes(QSystemDeviceInfo::KeyboardTypeFlags v);
+    void setKeypadType(QSystemDeviceInfo::KeypadType v);
+
+    void setWirelessKeyboardConnected(bool v);
+    void setKeyboardFlippedOpen(bool v);
+
+    void setKeypadLightOn(bool v);
+    void setBackLightOn(bool v);
+    void setUniqueDeviceId(const QUuid &v);
+    void setTypeOfLock(QSystemDeviceInfo::LockTypeFlags v);
+
+    void setMessageRingtoneVolume(int v);
+    void setVoiceRingtoneVolume(int v);
+    void setVibrationActive(bool b);
+
     void setInitialData();
 
-signals:
+Q_SIGNALS:
+
     void batteryLevelChanged(int) const;
     void batteryStatusChanged(QSystemDeviceInfo::BatteryStatus) const;
     void powerStateChanged(QSystemDeviceInfo::PowerState) const;
     void currentProfileChanged(QSystemDeviceInfo::Profile) const;
     void bluetoothStateChanged(bool) const;
 
+    void wirelessKeyboardConnected(bool connected);
+    void keyboardFlipped(bool open);
+    void deviceLocked(bool isLocked);
+    void lockStatusChanged(QSystemDeviceInfo::LockTypeFlags);
+
 private:
     QSystemDeviceInfoData data;
+    QSystemDeviceInfo::BatteryStatus oldstatus;
 };
 QSystemDeviceInfoPrivate *getSystemDeviceInfoPrivate();
 
-class QSystemStorageInfoPrivate : public QObject
+class  QSystemStorageInfoPrivate : public QObject
 {
     Q_OBJECT
 public:
@@ -243,26 +293,34 @@ public:
     qint64 totalDiskSpace(const QString &name) const;
     qint64 availableDiskSpace(const QString &name) const;
 
+    QString uriForDrive(const QString &driveVolume) const;
+    QSystemStorageInfo::StorageState getStorageState(const QString &driveVolume) const;
+
     bool addDrive(const QString &name);
     bool addDrive(const QString &name, QSystemStorageInfo::DriveType type,
-                  qint64 totalSpace, qint64 availableSpace);
+                  qint64 totalSpace, qint64 availableSpace,
+                  const QString &uri);
     bool removeDrive(const QString &name);
     bool setName(const QString &oldname, const QString &newname);
     bool setType(const QString &name, QSystemStorageInfo::DriveType type);
     bool setTotalSpace(const QString &name, qint64 space);
     bool setAvailableSpace(const QString &name, qint64 space);
 
+    bool setUriForDrive(const QString &name, const QString &v);
+    bool setStorageState(const QString &name, QSystemStorageInfo::StorageState v);
+
     void setInitialData();
 
-signals:
-    void logicalDrivesChanged(bool added);
+Q_SIGNALS:
+    void logicalDriveChanged(bool added,const QString &vol) const;
+    void storageStateChanged(const QString &vol,QSystemStorageInfo::StorageState state) const;
 
 private:
     QSystemStorageInfoData data;
 };
 QSystemStorageInfoPrivate *getSystemStorageInfoPrivate();
 
-class QSystemScreenSaverPrivate : public QObject
+class  QSystemScreenSaverPrivate : public QObject
 {
     Q_OBJECT
 
@@ -277,6 +335,71 @@ public:
 private:
     bool didInhibit;
 };
+
+
+class  QSystemBatteryInfoPrivate : public QObject
+{
+    Q_OBJECT
+
+public:
+    explicit QSystemBatteryInfoPrivate(QObject *parent = 0);
+    ~QSystemBatteryInfoPrivate();
+
+
+    QSystemBatteryInfo::BatteryStatus batteryStatus() const { return data.batteryStatus; }
+    QSystemBatteryInfo::ChargerType chargerType() const{ return data.chargerType; }
+    QSystemBatteryInfo::ChargingState chargingState() const{ return data.chargingState; }
+
+
+    int nominalCapacity() const { return data.nominalCapacity; }
+    int remainingCapacityPercent() const { return data.remainingCapacityPercent; }
+    int remainingCapacity() const { return data.remainingCapacity; }
+
+    int voltage() const { return data.voltage; }
+    int remainingChargingTime() const { return data.remainingChargingTime; }
+    int currentFlow() const { return data.currentFlow; }
+    int cumulativeCurrentFlow() const { return data.cumulativeCurrentFlow; }
+    int remainingCapacityBars() const{ return data.remainingCapacityBars; }
+    int maxBars() const { return data.maxBars; }
+    QSystemBatteryInfo::EnergyUnit energyMeasurementUnit(){ return data.energyMeasurementUnit; }
+
+
+    void setBatteryStatus(QSystemBatteryInfo::BatteryStatus v);
+    void setChargerType(QSystemBatteryInfo::ChargerType v);
+    void setChargingState(QSystemBatteryInfo::ChargingState v);
+
+
+    void  setNominalCapacity(int v);
+    void  setRemainingCapacityPercent(int v);
+    void  setRemainingCapacity(int v);
+
+    void  setVoltage(int v);
+    void  setRemainingChargingTime(int v);
+    void  setCurrentFlow(int v);
+    void  setRemainingCapacityBars(int v);
+    void  setMaxBars(int v);
+
+    void setInitialData();
+Q_SIGNALS:
+//    void batteryLevelChanged(int level);
+    void batteryStatusChanged(QSystemBatteryInfo::BatteryStatus batteryStatus);
+
+    void chargingStateChanged(QSystemBatteryInfo::ChargingState chargingState);
+    void chargerTypeChanged(QSystemBatteryInfo::ChargerType chargerType);
+
+    void nominalCapacityChanged(int);
+    void remainingCapacityPercentChanged(int);
+    void remainingCapacityChanged(int);
+
+    void currentFlowChanged(int);
+    void remainingCapacityBarsChanged(int);
+    void remainingChargingTimeChanged(int);
+
+private:
+    QSystemBatteryInfoData data;
+};
+QSystemBatteryInfoPrivate *getSystemBatteryInfoPrivate();
+
 
 QTM_END_NAMESPACE
 QT_END_HEADER
