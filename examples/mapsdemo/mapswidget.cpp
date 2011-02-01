@@ -144,6 +144,87 @@ void GeoMap::wheelEvent(QGraphicsSceneWheelEvent *event)
     event->accept();
 }
 
+ZoomButtonItem::ZoomButtonItem(GeoMap *map) :
+    pressedOverTopHalf(false),
+    pressedOverBottomHalf(false),
+    map(map)
+{
+    setPen(QPen(QBrush(), 0));
+    setBrush(QBrush(QColor(0,0,0,150)));
+
+    plusText = new QGraphicsSimpleTextItem(this);
+    plusText->setText("+");
+    plusText->setBrush(QBrush(Qt::white));
+
+    minusText = new QGraphicsSimpleTextItem(this);
+    minusText->setText("-");
+    minusText->setBrush(QBrush(Qt::white));
+}
+
+void ZoomButtonItem::setRect(qreal x, qreal y, qreal w, qreal h)
+{
+    QGraphicsRectItem::setRect(x, y, w, h);
+
+    QFont f;
+    f.setFixedPitch(true);
+    f.setPixelSize(h/3.0);
+    plusText->setFont(f);
+    minusText->setFont(f);
+
+    QRectF plusBound = plusText->boundingRect();
+    QPointF plusCenter(x+w/2.0, y+h/4.0);
+    QPointF plusDelta = plusCenter - plusBound.center();
+    plusText->setPos(plusDelta);
+
+    QRectF minusBound = minusText->boundingRect();
+    QPointF minusCenter(x+w/2.0, y+3.0*h/4.0);
+    QPointF minusDelta = minusCenter - minusBound.center();
+    minusText->setPos(minusDelta);
+}
+
+void ZoomButtonItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
+{
+    const QPointF pos = event->pos();
+    if (!pressedOverTopHalf && !pressedOverBottomHalf) {
+        if (isTopHalf(pos)) {
+            pressedOverTopHalf = true;
+        } else if (isBottomHalf(pos)) {
+            pressedOverBottomHalf = true;
+        }
+    }
+    event->accept();
+}
+
+bool ZoomButtonItem::isTopHalf(const QPointF &point)
+{
+    return QRectF(rect().x(), rect().y(),
+                  rect().width(), rect().height()/2).contains(point);
+}
+
+bool ZoomButtonItem::isBottomHalf(const QPointF &point)
+{
+    return QRectF(rect().x(), rect().y() + rect().height()/2,
+                  rect().width(), rect().height()/2).contains(point);
+}
+
+void ZoomButtonItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+{
+    const QPointF pos = event->pos();
+    if (isTopHalf(pos) && pressedOverTopHalf) {
+        map->setZoomLevel(map->zoomLevel() + 1.0);
+    } else if (isBottomHalf(pos) && pressedOverBottomHalf) {
+        map->setZoomLevel(map->zoomLevel() - 1.0);
+    }
+    pressedOverBottomHalf = false;
+    pressedOverTopHalf = false;
+    event->accept();
+}
+
+void ZoomButtonItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+{
+    event->accept();
+}
+
 StatusBarItem::StatusBarItem() :
     m_offset(0)
 {
@@ -242,6 +323,10 @@ void MapsWidget::initialize(QGeoMappingManager *manager)
 
     m_statusBar = new StatusBarItem;
     sc->addItem(m_statusBar);
+
+    zoomButtonItem = new ZoomButtonItem(geoMap);
+    sc->addItem(zoomButtonItem);
+
     resizeEvent(0);
 
     graphicsView->resize(this->size());
@@ -266,12 +351,15 @@ QGraphicsGeoMap *MapsWidget::map() const
 
 void MapsWidget::resizeEvent(QResizeEvent *event)
 {
+    Q_UNUSED(event)
+
     if (graphicsView && geoMap) {
         graphicsView->resize(size());
         geoMap->resize(size());
         graphicsView->centerOn(geoMap);
 
         m_statusBar->setRect(0, height(), width(), 20);
+        zoomButtonItem->setRect(width()-30, height()/2.0 - 35, 25, 70);
     }
 }
 

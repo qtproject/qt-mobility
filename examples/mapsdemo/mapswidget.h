@@ -58,6 +58,7 @@ class MapsWidget;
 class MarkerManager;
 class Marker;
 class StatusBarItem;
+class ZoomButtonItem;
 
 class GeoMap : public QGraphicsGeoMap
 {
@@ -124,6 +125,7 @@ private:
     QGraphicsView *graphicsView;
     MarkerManager *m_markerManager;
     StatusBarItem *m_statusBar;
+    ZoomButtonItem *zoomButtonItem;
 };
 
 class StatusBarItem : public QObject, public QGraphicsRectItem
@@ -150,6 +152,31 @@ public slots:
 private:
     int m_offset;
     QGraphicsSimpleTextItem *textItem;
+};
+
+class ZoomButtonItem : public QGraphicsRectItem
+{
+public:
+    ZoomButtonItem(GeoMap *map);
+
+    void setRect(qreal x, qreal y, qreal w, qreal h);
+
+private:
+    GeoMap *map;
+
+    QGraphicsSimpleTextItem *plusText;
+    QGraphicsSimpleTextItem *minusText;
+
+    bool pressedOverTopHalf;
+    bool pressedOverBottomHalf;
+
+    bool isTopHalf(const QPointF &point);
+    bool isBottomHalf(const QPointF &point);
+
+protected:
+    void mousePressEvent(QGraphicsSceneMouseEvent *event);
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
+    void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
 };
 
 #endif // MAPSWIDGET_H
