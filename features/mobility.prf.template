@@ -18,6 +18,11 @@ QMAKE_RPATHDIR+=$${MOBILITY_LIB}
 contains(MOBILITY, versit) {
     MOBILITY += contacts
 }
+# connectivity depends on serviceframework
+contains(MOBILITY, connectivity) {
+    MOBILITY += serviceframework
+}
+
 
 simulator: qtAddLibrary(QtMobilitySimulator)
 
