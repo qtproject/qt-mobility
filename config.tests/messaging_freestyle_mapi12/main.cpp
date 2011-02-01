@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -38,48 +38,10 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#include <mmailboxcontentobserver.h>
+#include <memailrequestobserver.h>
 
-#ifndef QCONTACTURL_H
-#define QCONTACTURL_H
-
-#include <QString>
-#include <QUrl>
-
-#include "qtcontactsglobal.h"
-#include "qcontactdetail.h"
-#include "qcontact.h"
-
-QTM_BEGIN_NAMESPACE
-
-/* Leaf class */
-class Q_CONTACTS_EXPORT QContactUrl : public QContactDetail
+int main(int, char**)
 {
-public:
-#ifdef Q_QDOC
-    static const QLatin1Constant DefinitionName;
-    static const QLatin1Constant FieldUrl;
-    static const QLatin1Constant FieldSubType;
-    static const QLatin1Constant SubTypeHomePage;
-    static const QLatin1Constant SubTypeBlog;
-    static const QLatin1Constant SubTypeFavourite;
-#else
-    Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactUrl, "Url")
-    Q_DECLARE_LATIN1_CONSTANT(FieldUrl, "Url");
-    Q_DECLARE_LATIN1_CONSTANT(FieldSubType, "SubType");
-    Q_DECLARE_LATIN1_CONSTANT(SubTypeHomePage, "HomePage");
-    Q_DECLARE_LATIN1_CONSTANT(SubTypeBlog, "Blog");
-    Q_DECLARE_LATIN1_CONSTANT(SubTypeFavourite, "Favourite");
-#endif
-
-    void setUrl(const QString& url) {setValue(FieldUrl, url);}
-    void setUrl(const QUrl& url) {setValue(FieldUrl, url.toString());}
-    QString url() const {return value(FieldUrl);}
-
-    void setSubType(const QString& subType) {setValue(FieldSubType, subType);}
-    QString subType() const {return value(FieldSubType);}
-};
-
-QTM_END_NAMESPACE
-
-#endif
-
+    return 0;
+}

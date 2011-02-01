@@ -230,7 +230,8 @@ void tst_QDeclarativeBatteryInfo::tst_chargerType()
     QSystemBatteryInfo::ChargerType cType = bi.chargerType();
     if (bi.batteryStatus() == QSystemBatteryInfo::BatteryUnknown) {
      QVERIFY(cType == QSystemBatteryInfo::NoCharger
-             || cType == QSystemBatteryInfo::UnknownCharger);
+             || cType == QSystemBatteryInfo::UnknownCharger
+             ||  cType == QSystemBatteryInfo::WallCharger);
     } else {
         if(bi.chargingState() == QSystemBatteryInfo::Charging) {
             QVERIFY(cType == QSystemBatteryInfo::WallCharger
