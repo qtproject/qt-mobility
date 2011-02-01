@@ -177,6 +177,27 @@ public:
     static QGalleryTrackerCompositeColumn *create(const QVector<int> &columns);
 };
 
+class QGalleryTrackerPathColumn : public QGalleryTrackerCompositeColumn
+{
+public:
+    QVariant value(QVector<QVariant>::const_iterator row) const;
+
+    static QGalleryTrackerCompositeColumn *create(const QVector<int> &columns);
+};
+
+class QGalleryTrackerFileExtensionColumn : public QGalleryTrackerCompositeColumn
+{
+public:
+    QGalleryTrackerFileExtensionColumn(int column) : m_column(column) {}
+
+    QVariant value(QVector<QVariant>::const_iterator row) const;
+
+    static QGalleryTrackerCompositeColumn *create(const QVector<int> &);
+
+private:
+    const int m_column;
+};
+
 QTM_END_NAMESPACE
 
 #endif

@@ -9,6 +9,8 @@ contains(mobility_modules,bearer) {
     symbian:SUBDIRS += bearerex
 }
 
+contains(mobility_modules,location) SUBDIRS += location-testing-tools
+
 contains(mobility_modules,systeminfo): SUBDIRS += sysinfo-tester
 
 linux*:!linux-armcc:contains(mobility_modules,connectivity): SUBDIRS += btclient

@@ -70,6 +70,7 @@ QTM_BEGIN_NAMESPACE
     \value ImagingDevice        An imaging device such as a display, printer, scanner or camera.
     \value WearableDevice       A wearable device such as a watch or pager.
     \value ToyDevice            A toy.
+    \value HealthDevice         A health reated device such as heart rate, or temperature.
     \value UncategorizedDevice  A device that does not fit into any of the other device classes.
 */
 
@@ -173,19 +174,8 @@ QTM_BEGIN_NAMESPACE
     \value UncategorizedImagingDevice   An uncategorized imaging device.
     \value ImageDisplay                 A device capable of displaying images.
     \value ImageCamera                  A camera.
-    \value ImageCamera2                 A camera.
     \value ImageScanner                 An image scanner.
-    \value ImageScanner2                An image scanner.
-    \value ImageScanner3                An image scanner.
-    \value ImageScanner4                An image scanner.
     \value ImagePrinter                 A printer.
-    \value ImagePrinter2                A printer.
-    \value ImagePrinter3                A printer.
-    \value ImagePrinter4                A printer.
-    \value ImagePrinter5                A printer.
-    \value ImagePrinter6                A printer.
-    \value ImagePrinter7                A printer.
-    \value ImagePrinter8                A printer.
 */
 
 /*!
@@ -213,6 +203,22 @@ QTM_BEGIN_NAMESPACE
     \value ToyController        A controller.
     \value ToyGame              A game.
 */
+
+/*!
+    \enum QBluetoothDeviceInfo::MinorHealthClass
+
+    This enum describes the minor device classes for health devices.
+
+    \value UncategorizedHealthDevice    An uncategorized health device.
+    \value HealthBloodPressureMonitor   A blood pressure monitor.
+    \value HealthThermometer            A Thermometer.
+    \value HealthWeightScale            A scale.
+    \value HealthGlucoseMeter           A glucose meter.
+    \value HealthPulseOximeter          A blood oxygen saturation meter.
+    \value HealthDataDisplay            A data display.
+    \value HealthStepCounter            A pedometer.
+*/
+
 
 /*!
     \enum QBluetoothDeviceInfo::ServiceClass
@@ -327,7 +333,7 @@ qint16 QBluetoothDeviceInfo::rssi() const
 }
 
 /*!
-  Set the signal strength value, used internally
+  Set the \a signal strength value, used internally.
   */
 void QBluetoothDeviceInfo::setRssi(qint16 signal)
 {
@@ -357,7 +363,7 @@ QBluetoothDeviceInfo &QBluetoothDeviceInfo::operator=(const QBluetoothDeviceInfo
 }
 
 /*!
-  Returns true if the two QBluetoothDeviceInfo objects are identical
+  Returns true if the \a other QBluetoothDeviceInfo object and this are identical
   */
 bool QBluetoothDeviceInfo::operator==(const QBluetoothDeviceInfo &other) const
 {
@@ -509,7 +515,8 @@ bool QBluetoothDeviceInfo::isCached() const
 }
 
 /*!
-  Used by the system to set the cached flag is the QBluetoothDeviceInfo is created from cached data
+  Used by the system to set the \a cached flag if the QBluetoothDeviceInfo is created from cached data. Cached information
+  may not be as accurate as data read from a live device.
   */
 void QBluetoothDeviceInfo::setCached(bool cached)
 {

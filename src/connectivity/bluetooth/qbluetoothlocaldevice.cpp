@@ -75,12 +75,14 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \enum QBluetoothLocalDevice::PowerState
+  \enum QBluetoothLocalDevice::Error
 
-    This enum describes the power state of the local Bluetooth device.
+  This enum describes errors that maybe returned
 
-    \value PowerOn  The device is powered on.
-    \value PowerOff The device is powered off.
+  \value NoError        No known error
+  \value PairingError   Error in pairing
+  \value UnknownError   Unknown error
+
 */
 
 /*!
@@ -91,9 +93,9 @@ QTM_BEGIN_NAMESPACE
     \value HostPoweredOff       Powers the device down
     \value HostConnectable      Remote Bluetooth devices can connect to the local Bluetooth device
                                 if they have previously been paired with it or otherwise know its
-                                address.
+                                address. This powers up the device if it was powered off.
     \value HostDiscoverable     Remote Bluetooth devices can discover the presence of the local
-                                Bluetooth device.
+                                Bluetooth device.  The device will also be connectable, and powered on.
 */
 
 /*!
@@ -138,16 +140,71 @@ bool QBluetoothLocalDevice::isValid() const
 */
 
 /*!
-    \fn QBluetoothLocalDevice QBluetoothLocalDevice::defaultDevice()
-
-    Returns the default local Bluetooth device.
-*/
-
-/*!
     \fn QList<QBluetoothLocalDevice> QBluetoothLocalDevice::allDevices()
 
     Returns a list of all available local Bluetooth devices.
 */
+
+/*!
+  \fn void QBluetoothLocalDevice::powerOn()
+
+  Powers the device on returning it to the hostMode() state is was in when powered down
+*/
+
+/*!
+  \fn QBluetoothLocalDevice::QBluetoothLocalDevice(QObject *parent)
+    Constructs a QBluetoothLocalDevice with \a parent.
+*/
+
+/*!
+  \fn QBluetoothLocalDevice::hostModeStateChanged(QBluetoothLocalDevice::HostMode state)
+  The \a state of the host has transitioned to a different HostMode
+*/
+
+
+/*!
+  \fn QBluetoothLocalDevice::pairingDisplayConfirmation(const QBluetoothAddress &address, QString pin)
+  Signal by some platforms to display a pairing confirmation dialog for \a address.  The user
+  is asked to confirm the \a pin is the same on both devices.  QBluetoothLocalDevice::pairingConfirmation(bool)
+  must be called to indicate if the user accepts or rejects the displayed pin.
+*/
+
+/*!
+  \fn QBluetoothLocalDevice::pairingConfirmation(bool accept)
+  To be called after getting a pairingDisplayConfirmation().  The \a accept parameter either
+  accepts the pairing or rejects it.
+*/
+
+/*!
+  \fn QBluetoothLocalDevice::pairingDisplayPinCode(const QBluetoothAddress &address, QString pin)
+  Signal by some platforms to display the \a pin to the user for \a address.  The pin is automatically
+  generated, and does not need to be confirmed.
+*/
+
+/*!
+  \fn QBluetoothLocalDevice::requestPairing(const QBluetoothAddress &address, Pairing pairing)
+  Set the \a pairing status with \a address.  The results are returned via
+  the signal pairingFinished().  Caution: creating a pairing may take minutes, and can require
+  the user to acknowledge dialogs.
+*/
+
+/*!
+    \fn QBluetoothLocalDevice::pairingFinished(const QBluetoothAddress &address, QBluetoothLocalDevice::Pairing pairing)
+  Pairing has completed with \a address. Current pairing status is in \a pairing.
+*/
+
+/*!
+  \fn QBluetoothLocalDevice::error(QBluetoothLocalDevice::Error error)
+  Signal emited for pairing if there's an exceptional \a error
+*/
+
+
+/*!
+  \fn QBluetoothLocalDevice::QBluetoothLocalDevice(const QBluetoothAddress &address, QObject *parent = 0)
+
+  Construct new QBluetoothLocalDevice for \a address.
+*/
+
 
 #include "moc_qbluetoothlocaldevice.cpp"
 

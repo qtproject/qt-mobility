@@ -130,6 +130,12 @@ QBluetoothServiceDiscoveryAgent::QBluetoothServiceDiscoveryAgent(const QBluetoot
     d_ptr->q_ptr = this;
 }
 
+/*!
+
+  Destructor for QBluetoothServiceDiscoveryAgent
+
+*/
+
 QBluetoothServiceDiscoveryAgent::~QBluetoothServiceDiscoveryAgent()
 {
     delete d_ptr;
