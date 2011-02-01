@@ -41,7 +41,6 @@
 #ifndef QSYSTEMINFO_MAEMO_P_H
 #define QSYSTEMINFO_MAEMO_P_H
 
-
 //
 //  W A R N I N G
 //  -------------

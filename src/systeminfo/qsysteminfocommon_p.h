@@ -69,4 +69,10 @@
 
 #endif // QT_SIMULATOR
 
+#if defined(ALIGNEDTIMER_MEEGO)
+#include "qsystemalignedtimer_meego_p.h"
+#else
+#include "qsystemalignedtimer_stub_p.h"
+#endif // ALIGNEDTIMER_MEEGO
+
 #endif // QSYSTEMINFOCOMMON_H
