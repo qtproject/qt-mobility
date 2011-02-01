@@ -224,7 +224,7 @@ private: // Internal
     void queryAudioEncoderSettings();
     void queryVideoEncoderSettings();
     void validateRequestedCodecs();
-    void resetSession();
+    void resetSession(bool errorHandling = false);
 
     void doSetCodecsL(const QString &aCodec, const QString &vCodec);
     void doSetVideoResolution(const QSize &resolution);

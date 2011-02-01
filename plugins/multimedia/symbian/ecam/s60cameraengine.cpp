@@ -121,9 +121,13 @@ void CCameraEngine::ConstructL()
     // Construct CCamera object for S60 3.1 (NewL)
     iNew2LImplementation = false;
     TRAP(err, iCamera = CCamera::NewL(*this, iCameraIndex));
+    if (err)
+        User::Leave(err);
 #else // For S60 3.2 onwards - use this constructor (New2L)
     iNew2LImplementation = true;
     TRAP(err, iCamera = CCamera::New2L(*this, iCameraIndex, iPriority));
+    if (err)
+        User::Leave(err);
 #endif // S60_31_PLATFORM
 
 #ifdef S60_CAM_AUTOFOCUS_SUPPORT

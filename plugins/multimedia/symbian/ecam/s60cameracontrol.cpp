@@ -85,12 +85,21 @@ S60CameraControl::S60CameraControl(S60VideoCaptureSession *videosession,
         m_inactivityTimer->setSingleShot(true);
 
     TRAPD(err, m_cameraEngine = CCameraEngine::NewL(m_deviceIndex, KECamCameraPriority, this));
-    if (err)
+    if (err) {
         m_error = err;
+        if (err == KErrPermissionDenied)
+            qWarning("Failed to create camera. Possibly missing capabilities.");
+        else
+            qWarning("Failed to create camera.");
+        return;
+    }
 
-    m_viewfinderEngine = new S60CameraViewfinderEngine(this, m_cameraEngine);
-    if (m_viewfinderEngine == NULL)
+    m_viewfinderEngine = new S60CameraViewfinderEngine(this, m_cameraEngine, this);
+    if (m_viewfinderEngine == NULL) {
         m_error = KErrNoMemory;
+        qWarning("Failed to create viewfinder engine.");
+        return;
+    }
 
     // Connect signals
     connect(m_inactivityTimer, SIGNAL(timeout()), this, SLOT(toStandByStatus()));
@@ -680,7 +689,7 @@ void S60CameraControl::setError(const TInt error, const QString &description)
 
     // Reset everything, if other than not supported error or resource loss
     if (error != KErrNotSupported && error != KErrHardwareNotAvailable)
-        resetCamera();
+        resetCamera(true); // Try to recover from error
     else
         m_error = KErrNone; // Reset error
 }
@@ -781,7 +790,7 @@ QString S60CameraControl::description(const int index)
     return cameraDesc;
 }
 
-void S60CameraControl::resetCamera()
+void S60CameraControl::resetCamera(bool errorHandling)
 {
     if (m_inactivityTimer->isActive())
         m_inactivityTimer->stop();
@@ -811,14 +820,25 @@ void S60CameraControl::resetCamera()
     TRAPD(err, m_cameraEngine = CCameraEngine::NewL(m_deviceIndex, 0, this));
     if (err) {
         m_cameraEngine = NULL;
-        setError(err, QString("Camera device creation failed."));
+        if (errorHandling) {
+            qWarning("Failed to recover from error.");
+            if (err == KErrPermissionDenied)
+                emit error(int(QCamera::ServiceMissingError), QString("Recovering from error failed. Possibly missing capabilities."));
+            else
+                emit error(int(QCamera::CameraError), QString("Recovering from error failed."));
+        } else {
+            if (err == KErrPermissionDenied)
+                setError(err, QString("Camera device creation failed. Possibly missing capabilities."));
+            else
+                setError(err, QString("Camera device creation failed."));
+        }
         return;
     }
 
     // Notify list of available camera devices has been updated
     emit devicesChanged();
 
-    m_viewfinderEngine = new S60CameraViewfinderEngine(this, m_cameraEngine);
+    m_viewfinderEngine = new S60CameraViewfinderEngine(this, m_cameraEngine, this);
     if (m_viewfinderEngine == NULL)
         setError(KErrNoMemory, QString("Viewfinder device creation failed."));
     connect(m_viewfinderEngine, SIGNAL(error(int, const QString&)), this, SIGNAL(error(int,const QString&)));

@@ -160,7 +160,7 @@ void S60VideoCaptureSession::setError(const TInt error, const QString &descripti
 
     // Reset only of other than "not supported" error
     if (m_error != KErrNotSupported)
-        resetSession();
+        resetSession(true);
     else
         m_error = KErrNone; // Reset error
 }
@@ -281,7 +281,7 @@ void S60VideoCaptureSession::doInitializeVideoRecorderL()
     }
 }
 
-void S60VideoCaptureSession::resetSession()
+void S60VideoCaptureSession::resetSession(bool errorHandling)
 {
     if (m_videoRecorder) {
         delete m_videoRecorder;
@@ -306,7 +306,14 @@ void S60VideoCaptureSession::resetSession()
     m_commitSettingsWhenReady = false;
 
     TRAPD(err, m_videoRecorder = CVideoRecorderUtility::NewL(*this));
-    setError(err, QString("Failure in creation of video recorder device."));
+    if (err) {
+        qWarning("Failed to create video recorder.");
+        if (errorHandling)
+            emit error(QMediaRecorder::ResourceError, QString("Failed to recover from video error."));
+        else
+            setError(err, QString("Failure in creation of video recorder device."));
+        return;
+    }
 
     updateVideoCaptureContainers();
 }

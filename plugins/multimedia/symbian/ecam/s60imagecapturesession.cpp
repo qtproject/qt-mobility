@@ -372,7 +372,7 @@ void S60ImageCaptureSession::notifySettingsSet()
     m_captureSettingsSet = true;
 }
 
-void S60ImageCaptureSession::resetSession()
+void S60ImageCaptureSession::resetSession(bool errorHandling)
 {
     // Delete old AdvancedSettings
     deleteAdvancedSettings();
@@ -396,10 +396,14 @@ void S60ImageCaptureSession::resetSession()
         if (m_cameraEngine->CurrentCameraIndex() == 0)
             setError(err, QString("Unexpected camera error."));
 #endif // !S60_31_PLATFORM
-    }
-    else if (err != KErrNone) { // Other errors
+    } else if (err != KErrNone) { // Other errors
         m_advancedSettings = NULL;
-        setError(err, QString("Unexpected camera error."));
+        qWarning("Failed to create camera settings handler.");
+        if (errorHandling)
+            emit cameraError(QCamera::ServiceMissingError, QString("Failed to recover from error."));
+        else
+            setError(err, QString("Unexpected camera error."));
+        return;
     }
 
     if (m_advancedSettings) {
@@ -438,11 +442,11 @@ void S60ImageCaptureSession::setError(const TInt error,
     if (captureError) {
         emit this->captureError(m_currentImageId, cameraError, description);
         if (cameraError != QCameraImageCapture::NotSupportedFeatureError)
-            resetSession();
+            resetSession(true);
     } else {
         emit this->cameraError(cameraError, description);
         if (cameraError != QCamera::NotSupportedFeatureError)
-            resetSession();
+            resetSession(true);
     }
 }
 

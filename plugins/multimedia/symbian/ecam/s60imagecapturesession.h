@@ -284,7 +284,7 @@ private: // Internal
     QCameraImageCapture::Error fromSymbianErrorToQtMultimediaError(int aError);
 
     void initializeImageCaptureSettings();
-    void resetSession();
+    void resetSession(bool errorHandling = false);
 
     CCamera::TFormat selectFormatForCodec(const QString &codec);
     CCamera::TFormat defaultImageFormat();
