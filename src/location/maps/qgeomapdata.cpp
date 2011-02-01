@@ -160,6 +160,7 @@ void QGeoMapData::setWindowSize(const QSizeF &size)
     if (d_ptr->windowSize == size)
         return;
 
+    d_ptr->oe->invalidatePixelsForViewport();
     d_ptr->windowSize = size;
     d_ptr->oe->invalidatePixelsForViewport();
 
@@ -196,8 +197,10 @@ void QGeoMapData::setZoomLevel(qreal zoomLevel)
     if (d_ptr->zoomLevel == zoomLevel)
         return;
 
+    d_ptr->oe->invalidatePixelsForViewport();
     d_ptr->zoomLevel = zoomLevel;
     d_ptr->oe->invalidateZoomDependents();
+    d_ptr->oe->invalidatePixelsForViewport();
 
     if (!d_ptr->blockPropertyChangeSignals)
         emit zoomLevelChanged(d_ptr->zoomLevel);
