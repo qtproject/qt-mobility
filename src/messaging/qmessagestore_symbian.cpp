@@ -70,7 +70,7 @@ void QMessageStorePrivate::initialize(QMessageStore *store)
 {
     q_ptr = store;
     _mtmEngine = CMTMEngine::instance();
-#ifdef FREESTYLEMAILUSED
+#ifdef FREESTYLEMAILMAPI12USED
     CFSEngine::instance()->setMessageStorePrivateSingleton(this);
 #endif
 }
@@ -296,7 +296,7 @@ bool QMessageStorePrivate::removeMessages(const QMessageFilter &filter, QMessage
 bool QMessageStorePrivate::removeAccount(const QMessageAccountId &id)
 {
     switch (idType(id)) {
-#ifdef FREESTYLEMAILUSED
+#ifdef FREESTYLEMAILMAPI12USED
     case EngineTypeFreestyle: {
         int err = CFSEngine::instance()->removeAccount(id);
         if(!err)
@@ -428,7 +428,11 @@ QMessageStore* QMessageStore::instance()
 
 QMessageManager::Error QMessageStore::error() const
 {
+#ifdef FREESTYLEMAILMAPI12USED
     return d_ptr->_error;
+#else
+    return QMessageManager::NoError;
+#endif
 }
 
 QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset) const

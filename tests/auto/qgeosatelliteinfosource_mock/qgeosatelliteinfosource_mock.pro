@@ -7,11 +7,11 @@ include (../../../common.pri)
 INCLUDEPATH += ../../../src/location
 
 SOURCES += ../qgeosatelliteinfosource/test/tst_qgeosatelliteinfosource.cpp \
-        ../testqgeosatelliteinfosource.cpp \
-        ../qlocationtestutils.cpp \
+        ../qgeosatelliteinfosource/testqgeosatelliteinfosource.cpp \
+        ../qgeocoordinate/qlocationtestutils.cpp \
 
-HEADERS += ../testqgeosatelliteinfosource_p.h \
-        ../qlocationtestutils_p.h \
+HEADERS += ../qgeosatelliteinfosource/testqgeosatelliteinfosource_p.h \
+        ../qgeocoordinate/qlocationtestutils_p.h \
 
 CONFIG += mobility
 MOBILITY = location
