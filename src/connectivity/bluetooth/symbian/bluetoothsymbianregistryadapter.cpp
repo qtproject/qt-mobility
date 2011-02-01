@@ -130,7 +130,7 @@ QBluetoothLocalDevice::Pairing BluetoothSymbianRegistryAdapter::remoteDevicePair
         CBTDevice *device= listOfDevices->At(0);
         bool isValidDevicePaired = device->IsValidPaired();
         bool isDevicePaired = device->IsPaired();
-        //TODO Check wheter check is correct?
+        //TODO Check whether check is correct?
         if (isValidDevicePaired || isDevicePaired)
             returnValue = QBluetoothLocalDevice::Paired;
         else if (!isValidDevicePaired && !isDevicePaired)
