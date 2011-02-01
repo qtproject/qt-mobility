@@ -130,9 +130,6 @@ void BluetoothSymbianPairingAdapter::PairingComplete( TBTDevAddr& aAddr, TInt aE
             // TODO: Paired or authorizedpaired, not known at this stage.
             emit pairingFinished(qTBTDevAddrToQBluetoothAddress(aAddr),QBluetoothLocalDevice::Paired);
             break;
-        case KErrRemoteDeviceIndicatedNoBonding:
-            m_pairingErrorString.append("Dedicated bonding attempt failure when the remote device responds with No-Bonding");
-            break;
         default:
             m_pairingErrorString.append("Symbian pairing error=") + aErr;
         break;

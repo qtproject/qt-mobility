@@ -200,6 +200,12 @@ contains(build_demos, yes):SUBDIRS+=demos
         qtmheadersgallery.files = $${QT_MOBILITY_BUILD_TREE}/include/QtGallery/*
         INSTALLS += qtmheadersgallery
     }
+
+    contains(mobility_modules,connectivity) {
+        qtmheaderconnectivity.path = $${QT_MOBILITY_INCLUDE}/QtConnectivity
+        qtmheaderconnectivity.files = $${QT_MOBILITY_BUILD_TREE}/include/QtConnectivity/*
+        INSTALLS += qtmheaderconnectivity
+    }
 } else {
     #absolute path does not work and 
     #include <QtMyLibrary/class.h> style does not work either
@@ -229,7 +235,8 @@ contains(build_demos, yes):SUBDIRS+=demos
                        include/QtSystemInfo/* \
                        include/QtSensors/* \
                        include/QtFeedback/* \
-                       include/QtGallery/*
+                       include/QtGallery/* \
+                       include/QtConnectivity/*
 
     contains(mobility_modules,contacts|versit|organizer) {
         for(api, qtmAppHeaders) {
@@ -249,7 +256,7 @@ contains(build_demos, yes):SUBDIRS+=demos
         }
     }
 
-    contains(mobility_modules,serviceframework|location|bearer|publishsubscribe|systeminfo|multimedia|messaging|feedback|sensors|gallery) {
+    contains(mobility_modules,serviceframework|location|bearer|publishsubscribe|systeminfo|multimedia|messaging|feedback|sensors|gallery|connectivity) {
         for(api, qtmMwHeaders) {
             INCLUDEFILES=$$files($$api);
 

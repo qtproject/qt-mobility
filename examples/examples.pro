@@ -36,15 +36,11 @@ contains(mobility_modules,location) {
     equals(QT_MAJOR_VERSION, 4):lessThan(QT_MINOR_VERSION, 7) {
         contains(mobility_modules,bearer) {
     	    SUBDIRS +=  flickrdemo \
-                        geoservicedemo \
-                        mapsnavigator \
-                        mapviewer
+                        mapsnavigator
         }
     } else {
         SUBDIRS +=  flickrdemo \
-                    geoservicedemo \
-                    mapsnavigator \
-                    mapviewer
+                    mapsnavigator
     }
 
     contains(QT_CONFIG, declarative) {

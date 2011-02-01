@@ -8,10 +8,10 @@ INCLUDEPATH += ../../../src/location \
                 ../../../src/location/maps
 
 # Input
-HEADERS += ../qlocationtestutils_p.h \
+HEADERS += ../qgeocoordinate/qlocationtestutils_p.h \
            tst_qgeorouterequest.h
 SOURCES += tst_qgeorouterequest.cpp \
-           ../qlocationtestutils.cpp
+           ../qgeocoordinate/qlocationtestutils.cpp
 
 CONFIG += mobility
 MOBILITY = location

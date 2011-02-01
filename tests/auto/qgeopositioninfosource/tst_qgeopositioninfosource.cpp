@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "../testqgeopositioninfosource_p.h"
+#include "testqgeopositioninfosource_p.h"
 
 int main(int argc, char *argv[])
 {
