@@ -69,9 +69,9 @@
 
 // IMAGE SETTINGS
 
-#define KDefaultImagePath               QString("c:\\Data\\Images")
-#define KDefaultImageFileName           QString("image.jpg")
-#define KDefaultImageCodec              QString("image/jpeg")
+#define KDefaultImagePath               QLatin1String("c:\\Data\\Images")
+#define KDefaultImageFileName           QLatin1String("image.jpg")
+#define KDefaultImageCodec              QLatin1String("image/jpeg")
 #define KDefaultImageFormatPrimaryCam   CCamera::EFormatExif
 #ifdef SYMBIAN_3_PLATFORM
 #define KDefaultImageFormatSecondaryCam CCamera::EFormatExif
@@ -106,9 +106,9 @@
 _LIT(KDummyVideoFile, "c:\\data\\temp");
 
 // Default container MIME type
-#define KMimeTypeDefaultContainer   QString("video/mp4")
-#define KDefaultVideoPath           QString("c:\\Data\\Videos")
-#define KDefaultVideoFileName       QString("video.mp4")
+#define KMimeTypeDefaultContainer   QLatin1String("video/mp4")
+#define KDefaultVideoPath           QLatin1String("c:\\Data\\Videos")
+#define KDefaultVideoFileName       QLatin1String("video.mp4")
 #define KDurationChangedInterval    1000 // 1 second
 
 // ==============
@@ -116,7 +116,7 @@ _LIT(KDummyVideoFile, "c:\\data\\temp");
 // ==============
 
 // Default audio codec MIME type
-#define KMimeTypeDefaultAudioCodec  QString("audio/aac")
+#define KMimeTypeDefaultAudioCodec  QLatin1String("audio/aac")
 
 // Default audio settings for video recording
 #define KDefaultChannelCount  -1 // Not Supported on Symbian
@@ -130,10 +130,10 @@ _LIT(KDummyVideoFile, "c:\\data\\temp");
 // Default video codec MIME type
 #ifdef SYMBIAN_3_PLATFORM
     // H.264: BaselineProfile Level 3.1, Max resolution: 1280x720
-    #define KMimeTypeDefaultVideoCodec QString("video/H264; profile-level-id=42801F")
+    #define KMimeTypeDefaultVideoCodec QLatin1String("video/H264; profile-level-id=42801F")
 #else
     // MPEG-4: Simple Profile, Level 4, Max resolution: 640x480
-    #define KMimeTypeDefaultVideoCodec QString("video/mp4v-es; profile-level-id=4")
+    #define KMimeTypeDefaultVideoCodec QLatin1String("video/mp4v-es; profile-level-id=4")
 #endif
 
 // Maximum resolutions for encoder MIME Types
