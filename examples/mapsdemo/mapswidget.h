@@ -68,7 +68,7 @@ class GeoMap : public QGraphicsGeoMap
     Q_PROPERTY(double centerLongitude READ centerLongitude WRITE setCenterLongitude)
 
 public:
-    GeoMap(QGeoMappingManager *manager, MapsWidget *mapsWidget);
+    explicit GeoMap(QGeoMappingManager *manager, MapsWidget *mapsWidget);
     ~GeoMap();
 
     double centerLatitude() const;
@@ -77,7 +77,7 @@ public:
     void setCenterLongitude(double lon);
 
 private:
-    MapsWidget *m_mapsWidget;
+    MapsWidget *mapsWidget;
 
     bool panActive;
     bool markerPressed;
@@ -93,19 +93,20 @@ signals:
     void panned();
 };
 
+class MapsWidgetPrivate;
 class MapsWidget : public QWidget
 {
     Q_OBJECT
 
 public:
-    MapsWidget(QWidget *parent = 0);
+    explicit MapsWidget(QWidget *parent = 0);
     ~MapsWidget();
 
     void setMarkerManager(MarkerManager *markerManager);
     MarkerManager *markerManager() const;
 
     QGraphicsGeoMap *map() const;
-    inline StatusBarItem *statusBar() const { return m_statusBar; }
+    StatusBarItem *statusBar() const;
 
     void animatedPanTo(QGeoCoordinate center);
     void setMyLocation(QGeoCoordinate location, bool center=true);
@@ -118,26 +119,24 @@ signals:
     void mapPanned();
 
 private:
+    MapsWidgetPrivate *d;
+
     void resizeEvent(QResizeEvent *event);
     void showEvent(QShowEvent *event);
-
-    GeoMap *geoMap;
-    QGraphicsView *graphicsView;
-    MarkerManager *m_markerManager;
-    StatusBarItem *m_statusBar;
-    ZoomButtonItem *zoomButtonItem;
 };
 
+
+class StatusBarItemPrivate;
 class StatusBarItem : public QObject, public QGraphicsRectItem
 {
     Q_OBJECT
     Q_PROPERTY(int offset READ offset WRITE setOffset)
 
 public:
-    StatusBarItem();
+    explicit StatusBarItem();
     ~StatusBarItem();
 
-    inline int offset() const { return m_offset; }
+    int offset() const;
     void setRect(qreal x, qreal y, qreal w, qreal h);
 
 public slots:
@@ -150,14 +149,13 @@ public slots:
     void setOffset(int offset);
 
 private:
-    int m_offset;
-    QGraphicsSimpleTextItem *textItem;
+    StatusBarItemPrivate *d;
 };
 
 class ZoomButtonItem : public QGraphicsRectItem
 {
 public:
-    ZoomButtonItem(GeoMap *map);
+    explicit ZoomButtonItem(GeoMap *map);
 
     void setRect(qreal x, qreal y, qreal w, qreal h);
 

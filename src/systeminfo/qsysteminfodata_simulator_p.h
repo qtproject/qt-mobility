@@ -107,6 +107,15 @@ struct QSystemDisplayInfoData
 {
     int displayBrightness;
     int colorDepth;
+
+    QSystemDisplayInfo::DisplayOrientation orientation;
+    float contrast;
+    int dpiHeight;
+    int dpiWidth;
+    int physicalHeight;
+    int physicalWidth;
+    QSystemDisplayInfo::BacklightState backlightStatus;
+
 };
 
 struct QSystemStorageInfoData
@@ -116,6 +125,8 @@ struct QSystemStorageInfoData
         QSystemStorageInfo::DriveType type;
         qint64 totalSpace;
         qint64 availableSpace;
+        QString uri;
+        QSystemStorageInfo::StorageState state;
     };
 
     QHash<QString, DriveInfo> drives;
@@ -134,13 +145,50 @@ struct QSystemDeviceInfoData
     QSystemDeviceInfo::Profile currentProfile;
     QSystemDeviceInfo::PowerState currentPowerState;
 
+    QSystemDeviceInfo::KeyboardTypeFlags keyboardTypes;
+    QSystemDeviceInfo::KeypadType keypadType;
+    QSystemDeviceInfo::LockTypeFlags lockType;
+    QSystemDeviceInfo::BatteryStatus batStatus;
+
     int batteryLevel;
     bool deviceLocked;
+    bool currentBluetoothPower;
+
+    bool wirelessConnected;
+    bool keyboardFlipped;
+    bool backLight;
+    bool keypadLight;
+    QUuid uniqueDeviceId;
+
+    int messageRingtoneVolume;
+    int voiceRingtoneVolume;
+    bool vibrationActive;
+
 };
 
 struct QSystemScreenSaverData
 {
     unsigned screenSaverInhibited;
+};
+
+struct QSystemBatteryInfoData
+{
+    QSystemBatteryInfo::BatteryStatus batteryStatus;
+    QSystemBatteryInfo::ChargingState chargingState;
+    QSystemBatteryInfo::ChargerType chargerType;
+    QSystemBatteryInfo::EnergyUnit energyMeasurementUnit;
+
+    int nominalCapacity;
+    int remainingCapacityPercent;
+    int remainingCapacity;
+
+    int voltage;
+    int remainingChargingTime;
+
+    int currentFlow;
+    int cumulativeCurrentFlow;
+    int remainingCapacityBars;
+    int maxBars;
 };
 
 QTM_END_NAMESPACE
@@ -152,6 +200,7 @@ Q_DECLARE_METATYPE(QtMobility::QSystemDisplayInfoData)
 Q_DECLARE_METATYPE(QtMobility::QSystemStorageInfoData)
 Q_DECLARE_METATYPE(QtMobility::QSystemDeviceInfoData)
 Q_DECLARE_METATYPE(QtMobility::QSystemScreenSaverData)
+Q_DECLARE_METATYPE(QtMobility::QSystemBatteryInfoData)
 
 QT_END_HEADER
 
