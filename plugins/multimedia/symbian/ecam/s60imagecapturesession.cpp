@@ -1815,7 +1815,7 @@ void S60ImageCaptureSession::handleImageDecoded(int error)
         m_previewBitmap = NULL;
     }
 
-    emit imageCaptured(m_currentImageId, preview);
+    QT_TRYCATCH_LEAVING( emit imageCaptured(m_currentImageId, preview) );
 
     // Release image resources (if not already done)
     releaseImageBuffer();
@@ -1837,9 +1837,9 @@ void S60ImageCaptureSession::handleImageEncoded(int error)
         }
         setError(error, QString("Saving captured image to file failed."));
         return;
+    } else {
+        QT_TRYCATCH_LEAVING( emit imageSaved(m_currentImageId, m_stillCaptureFileName) );
     }
-    else
-        emit imageSaved(m_currentImageId, m_stillCaptureFileName);
 
     if (m_imageEncoder) {
         delete m_imageEncoder;
@@ -1888,7 +1888,7 @@ void S60ImageCaptureSession::handleImageEncoded(int error)
     releaseImageBuffer();
 
     // Inform that we can continue taking more pictures
-    emit readyForCaptureChanged(true);
+    QT_TRYCATCH_LEAVING( emit readyForCaptureChanged(true) );
 }
 
 #ifdef ECAM_PREVIEW_API
