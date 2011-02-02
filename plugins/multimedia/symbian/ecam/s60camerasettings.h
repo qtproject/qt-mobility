@@ -70,6 +70,7 @@ public: // Methods
     QCameraFocus::FocusMode focusMode();
     void setFocusMode(QCameraFocus::FocusMode mode);
     QCameraFocus::FocusModes supportedFocusModes();
+    void startFocusing();
     void cancelFocusing();
 
     // Zoom
@@ -170,6 +171,7 @@ private: // Data
 #endif // S60_31_PLATFORM
     CCameraEngine                       *m_cameraEngine;
     QList<qreal>                        m_supportedDigitalZoomFactors;
+    bool                                m_continuousFocusing;
 };
 
 #endif // S60CAMERASETTINGS_H

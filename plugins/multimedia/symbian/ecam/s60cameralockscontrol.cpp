@@ -189,10 +189,11 @@ void S60CameraLocksControl::focusStatusChanged(QCamera::LockStatus status,
 void S60CameraLocksControl::startFocusing()
 {
 #ifndef S60_CAM_AUTOFOCUS_SUPPORT // S60 3.2 or later
-    // Focusing is triggered by setting the focus mode set to FocusControl to be active
+    // Focusing is triggered on Symbian by setting the FocusType corresponding
+    // to the FocusMode set to FocusControl
     if (m_focusControl) {
         if (m_advancedSettings) {
-            m_advancedSettings->setFocusMode(m_focusControl->focusMode());
+            m_advancedSettings->startFocusing();
             m_focusStatus = QCamera::Searching;
             emit lockStatusChanged(QCamera::LockFocus, QCamera::Searching, QCamera::UserRequest);
         }

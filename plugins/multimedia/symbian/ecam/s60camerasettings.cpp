@@ -61,7 +61,8 @@ S60CameraSettings::S60CameraSettings(QObject *parent, CCameraEngine *engine) :
     m_advancedSettings(NULL),
     m_imageProcessingSettings(NULL),
 #endif // S60_31_PLATFORM
-    m_cameraEngine(engine)
+    m_cameraEngine(engine),
+    m_continuousFocusing(false)
 {
 }
 
@@ -170,26 +171,32 @@ void S60CameraSettings::setFocusMode(QCameraFocus::FocusMode mode)
         switch (mode) {
             case QCameraFocus::ManualFocus: // Manual focus mode
                 m_advancedSettings->SetFocusMode(CCamera::CCameraAdvancedSettings::EFocusModeManual);
+                m_continuousFocusing = false;
                 break;
-            case QCameraFocus::AutoFocus: // One-shot autofocus mode
+            case QCameraFocus::AutoFocus: // Single-shot AutoFocus mode
                 m_advancedSettings->SetFocusMode(CCamera::CCameraAdvancedSettings::EFocusModeAuto);
-                m_advancedSettings->SetAutoFocusType(CCamera::CCameraAdvancedSettings::EAutoFocusTypeSingle);
+                m_advancedSettings->SetFocusRange(CCamera::CCameraAdvancedSettings::EFocusRangeAuto);
+                m_continuousFocusing = false;
                 break;
             case QCameraFocus::HyperfocalFocus:
-                m_advancedSettings->SetFocusMode(CCamera::CCameraAdvancedSettings::EFocusModeManual);
+                m_advancedSettings->SetFocusMode(CCamera::CCameraAdvancedSettings::EFocusModeAuto);
                 m_advancedSettings->SetFocusRange(CCamera::CCameraAdvancedSettings::EFocusRangeHyperfocal);
+                m_continuousFocusing = false;
                 break;
             case QCameraFocus::InfinityFocus:
-                m_advancedSettings->SetFocusMode(CCamera::CCameraAdvancedSettings::EFocusModeManual);
+                m_advancedSettings->SetFocusMode(CCamera::CCameraAdvancedSettings::EFocusModeAuto);
                 m_advancedSettings->SetFocusRange(CCamera::CCameraAdvancedSettings::EFocusRangeInfinite);
+                m_continuousFocusing = false;
                 break;
             case QCameraFocus::ContinuousFocus:
                 m_advancedSettings->SetFocusMode(CCamera::CCameraAdvancedSettings::EFocusModeAuto);
-                m_advancedSettings->SetAutoFocusType(CCamera::CCameraAdvancedSettings::EAutoFocusTypeContinuous);
+                m_advancedSettings->SetFocusRange(CCamera::CCameraAdvancedSettings::EFocusRangeAuto);
+                m_continuousFocusing = true;
                 break;
             case QCameraFocus::MacroFocus:
-                m_advancedSettings->SetFocusMode(CCamera::CCameraAdvancedSettings::EFocusModeManual);
+                m_advancedSettings->SetFocusMode(CCamera::CCameraAdvancedSettings::EFocusModeAuto);
                 m_advancedSettings->SetFocusRange(CCamera::CCameraAdvancedSettings::EFocusRangeMacro);
+                m_continuousFocusing = false;
                 break;
 
             default:
@@ -202,6 +209,21 @@ void S60CameraSettings::setFocusMode(QCameraFocus::FocusMode mode)
 #else // S60 3.1
     Q_UNUSED(mode);
     emit error(QCamera::NotSupportedFeatureError, QString("Settings focus mode is not supported."));
+#endif // POST_31_PLATFORM
+}
+
+void S60CameraSettings::startFocusing()
+{
+#ifdef POST_31_PLATFORM
+    // Setting AutoFocusType triggers the focusing on Symbian
+    if (m_advancedSettings) {
+        if (m_continuousFocusing)
+            m_advancedSettings->SetAutoFocusType(CCamera::CCameraAdvancedSettings::EAutoFocusTypeContinuous);
+        else
+            m_advancedSettings->SetAutoFocusType(CCamera::CCameraAdvancedSettings::EAutoFocusTypeSingle);
+    } else {
+        emit error(QCamera::CameraError, QString("Unable to focus."));
+    }
 #endif // POST_31_PLATFORM
 }
 
@@ -225,24 +247,33 @@ QCameraFocus::FocusMode S60CameraSettings::focusMode()
         CCamera::CCameraAdvancedSettings::TAutoFocusType autoType = m_advancedSettings->AutoFocusType();
 
         switch (mode) {
-            case CCamera::CCameraAdvancedSettings::EFocusModeManual:
-                if (range == CCamera::CCameraAdvancedSettings::EFocusRangeMacro)
-                    return QCameraFocus::MacroFocus;
-                else if (range == CCamera::CCameraAdvancedSettings::EFocusRangeHyperfocal)
-                    return QCameraFocus::HyperfocalFocus;
-                else if (range == CCamera::CCameraAdvancedSettings::EFocusRangeInfinite)
-                    return QCameraFocus::InfinityFocus;
-                else
-                    return QCameraFocus::ManualFocus;
+        case CCamera::CCameraAdvancedSettings::EFocusModeManual:
+        case CCamera::CCameraAdvancedSettings::EFocusModeFixed:
+            return QCameraFocus::ManualFocus;
 
-            case CCamera::CCameraAdvancedSettings::EFocusModeAuto:
-                if (autoType == CCamera::CCameraAdvancedSettings::EAutoFocusTypeContinuous)
-                    return QCameraFocus::ContinuousFocus;
-                else
+        case CCamera::CCameraAdvancedSettings::EFocusModeAuto:
+            if (autoType == CCamera::CCameraAdvancedSettings::EAutoFocusTypeContinuous) {
+                return QCameraFocus::ContinuousFocus;
+            } else {
+                // Single-shot focusing
+                switch (range) {
+                case CCamera::CCameraAdvancedSettings::EFocusRangeMacro:
+                case CCamera::CCameraAdvancedSettings::EFocusRangeSuperMacro:
+                    return QCameraFocus::MacroFocus;
+                case CCamera::CCameraAdvancedSettings::EFocusRangeHyperfocal:
+                    return QCameraFocus::HyperfocalFocus;
+                case CCamera::CCameraAdvancedSettings::EFocusRangeInfinite:
+                    return QCameraFocus::InfinityFocus;
+                case CCamera::CCameraAdvancedSettings::EFocusRangeAuto:
+                case CCamera::CCameraAdvancedSettings::EFocusRangeNormal:
                     return QCameraFocus::AutoFocus;
 
-            default:
-                return QCameraFocus::AutoFocus;; // Return automatic focusing
+                default:
+                    return QCameraFocus::AutoFocus;
+                }
+            }
+        default:
+            return QCameraFocus::AutoFocus; // Return automatic focusing
         }
     }
     else
@@ -265,17 +296,19 @@ QCameraFocus::FocusModes S60CameraSettings::supportedFocusModes()
         autoFocusTypes = m_advancedSettings->SupportedAutoFocusTypes();
         supportedRanges = m_advancedSettings->SupportedFocusRanges();
 
-        if (supportedModes == 0)
+        if (supportedModes == 0 || autoFocusTypes == 0 || supportedRanges == 0)
             return modes;
 
+        // EFocusModeAuto is the only supported on Symbian
         if (supportedModes & CCamera::CCameraAdvancedSettings::EFocusModeAuto) {
+            // Check supported types (Single-shot Auto vs. Continuous)
             if (autoFocusTypes & CCamera::CCameraAdvancedSettings::EAutoFocusTypeSingle)
                 modes |= QCameraFocus::AutoFocus;
             if (autoFocusTypes & CCamera::CCameraAdvancedSettings::EAutoFocusTypeContinuous)
                 modes |= QCameraFocus::ContinuousFocus;
-        }
 
-        if (supportedModes & CCamera::CCameraAdvancedSettings::EFocusModeManual) {
+            // Check supported ranges (Note! Some are actually fixed focuses
+            // even though the mode is Auto on Symbian)
             if (supportedRanges & CCamera::CCameraAdvancedSettings::EFocusRangeMacro)
                 modes |= QCameraFocus::MacroFocus;
             if (supportedRanges & CCamera::CCameraAdvancedSettings::EFocusRangeHyperfocal)
@@ -386,7 +419,10 @@ void S60CameraSettings::HandleAdvancedEvent(const TECAMEvent& aEvent)
                 emit error(QCamera::NotSupportedFeatureError, QString("Requested setting is not supported."));
                 return;
             case KErrECamNotOptimalFocus:
-                emit focusStatusChanged(QCamera::Unlocked, QCamera::LockFailed);
+                if (m_continuousFocusing)
+                    emit focusStatusChanged(QCamera::Searching, QCamera::LockTemporaryLost);
+                else
+                    emit focusStatusChanged(QCamera::Unlocked, QCamera::LockFailed);
                 return;
         }
 
@@ -466,11 +502,9 @@ void S60CameraSettings::HandleAdvancedEvent(const TECAMEvent& aEvent)
     else if (aEvent.iEventType == KUidECamEventFlashNotReady)
         emit flashReady(false);
 
-    else if (aEvent.iEventType.iUid == KUidECamEventCameraSettingsOptimalFocusUidValue) {
+    else if (aEvent.iEventType.iUid == KUidECamEventCameraSettingsOptimalFocusUidValue)
         emit focusStatusChanged(QCamera::Locked, QCamera::LockAcquired);
 
-    } else if (aEvent.iEventType == KUidECamEventCameraSettingFocusMode)
-        emit focusStatusChanged(QCamera::Searching, QCamera::UserRequest);
 #else // S60 3.1 Platform
     Q_UNUSED(aEvent);
 #endif // POST_31_PLATFORM

@@ -82,11 +82,15 @@ QCameraFocus::FocusMode S60CameraFocusControl::focusMode() const
 
 void S60CameraFocusControl::setFocusMode(QCameraFocus::FocusMode mode)
 {
-    if (isFocusModeSupported(mode))
-        // Focus mode is set only internally. Fosugin is triggered byt setting
-        // this requested focus mode active by calling searchAndLock in LocksControl.
+    if (isFocusModeSupported(mode)) {
+        // FocusMode and FocusRange are set. Focusing is triggered by setting
+        // the corresponding FocusType active by calling searchAndLock in LocksControl.
         m_focusMode = mode;
-    else {
+        if (m_advancedSettings)
+            m_advancedSettings->setFocusMode(m_focusMode);
+        else
+            m_session->setError(KErrGeneral, QString("Unable to set focus mode before camera is started."));
+    } else {
         m_session->setError(KErrNotSupported, QString("Requested focus mode is not supported."));
     }
 }
