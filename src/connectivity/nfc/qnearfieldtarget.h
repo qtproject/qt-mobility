@@ -166,6 +166,7 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(QNearFieldTarget::AccessMethods)
 QTM_END_NAMESPACE
 
 Q_DECLARE_METATYPE(QtMobility::QNearFieldTarget::RequestId)
+Q_DECLARE_METATYPE(QtMobility::QNearFieldTarget::Error)
 
 QT_END_HEADER
 

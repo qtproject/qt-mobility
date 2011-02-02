@@ -23,5 +23,5 @@ include(../../../common.pri)
 CONFIG += mobility
 MOBILITY = connectivity
 
-DEFINES += SRCDIR=\\\"$$PWD\\\"
+DEFINES += SRCDIR=\\\"$$PWD/../nfcdata\\\"
 
