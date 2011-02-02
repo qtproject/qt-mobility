@@ -59,6 +59,9 @@ QTM_BEGIN_NAMESPACE
   The service is not only for network-aware applications, it is for use by any applications
   that need to periodic wake-ups.
 
+  The recommended use case is when app uses single-shot timer only: set mintime 0 for the first call
+  'to jump to the train' and mintime > 0 after 1st wakeup.
+
 */
 
 /*!
@@ -133,8 +136,9 @@ void QSystemAlignedTimer::start()
 /*!
      This should be called when the application wakes up via other means than QSystemAlignedTimer timeout.
 
-    Other applications that are in their wakeup window may be woken up. Single-shot timer is stopped,
-    and reoccuring timer interval will get reset.
+    Other applications that are in their wakeup window *may* be woken up. Single-shot timer is canceled,
+    and reoccuring timer interval will restart.
+
     Symbian does not support this wokeUp call for reoccuring timers and will simply ignore it.
   */
 void QSystemAlignedTimer::wokeUp()
@@ -157,8 +161,10 @@ void QSystemAlignedTimer::stop()
 
    Time in seconds that MUST be waited before timeout.
    Value 0 means 'wake me up when someboy else is woken'.
-   It  is recommended that the first wait (if possible) uses minimum value of 0 to
-   "jump to the train"
+
+   mintime value 0 should be used with special care, as it may cause too frequent wakeups.
+   It is recommended that the first wait (if possible) uses minimum value of 0 to
+   "jump to the train" and minimum value > 0 after 1st wakeup
 
  */
 void QSystemAlignedTimer::setMinimumInterval(int seconds)
