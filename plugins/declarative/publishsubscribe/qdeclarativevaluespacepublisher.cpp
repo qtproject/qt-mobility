@@ -45,52 +45,57 @@
 #include <QDeclarativeInfo>
 
 /*!
-  \qmlclass ValueSpacePublisher QDeclarativeValueSpacePublisher
+    \qmlclass ValueSpacePublisher QDeclarativeValueSpacePublisher
 
-  \brief The ValueSpacePublisher element represents a path in the value space
-   where keys can be published.
+    \brief The ValueSpacePublisher element represents a path in the value space
+           where keys can be published.
 
-  If the key names to be published are alphanumeric, they may be accessed
-  through dynamic properties by setting the \a keys list.
+    ValueSpacePublishers are constructed with a set \a path which cannot be
+    changed. If you need to publish within multiple different paths, you will
+    need multiple ValueSpacePublishers.
 
-  Example:
-  \code
-  ValueSpacePublisher {
-    id: battery
-    path: "/power/battery"
-    keys: ["charge", "charging"]
-  }
+    For the keys within the path chosen, if the key names to be published
+    are alphanumeric, they may be accessed through dynamic properties by
+    setting the \a keys list.
 
-  MouseArea {
-    onClicked: {
-      battery.charge = 50
-      battery.charging = true
+    Example:
+    \code
+    ValueSpacePublisher {
+        id: battery
+        path: "/power/battery"
+        keys: ["charge", "charging"]
     }
-  }
-  \endcode
 
-  Alternatively, for key names that can't be mapped to properties, or for
-  key names shadowed by existing properties (like "value" or "path"), you
-  can also access the \a value property of the Publisher itself.
-
-  \code
-  ValueSpacePublisher {
-    id: nonalpha
-    path: "/something/with a space/value"
-  }
-
-  MouseArea {
-    onClicked: {
-      nonalpha.value = "example"
+    MouseArea {
+        onClicked: {
+            battery.charge = 50
+            battery.charging = true
+        }
     }
-  }
-  \endcode
+    \endcode
 
-  \ingroup qml-publishsubscribe
+    Alternatively, for key names that can't be mapped to properties, or for
+    key names shadowed by existing properties (like "value" or "path"), you
+    can also access the \a value property of the Publisher itself.
 
-  \sa QValueSpacePublisher
-  The ValueSpacePublisher element is part of the \bold{QtMobility.publishsubscribe 1.2} module.
-  */
+    \code
+    ValueSpacePublisher {
+        id: nonalpha
+        path: "/something/with a space/value"
+    }
+
+    MouseArea {
+        onClicked: {
+            nonalpha.value = "example"
+        }
+    }
+    \endcode
+
+    \ingroup qml-publishsubscribe
+
+    \sa QValueSpacePublisher
+    The ValueSpacePublisher element is part of the \bold{QtMobility.publishsubscribe 1.2} module.
+*/
 
 QDeclarativeValueSpacePublisher::QDeclarativeValueSpacePublisher(QObject *parent)
     : QObject(parent),
