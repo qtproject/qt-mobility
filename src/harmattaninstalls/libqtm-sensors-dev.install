@@ -7,6 +7,12 @@ usr/include/qt4/QtSensors/QAmbientLightSensor
 usr/include/qt4/QtSensors/QCompass
 usr/include/qt4/QtSensors/QCompassFilter
 usr/include/qt4/QtSensors/QCompassReading
+usr/include/qt4/QtSensors/QGyroscope
+usr/include/qt4/QtSensors/QGyroscopeFilter
+usr/include/qt4/QtSensors/QGyroscopeReading
+usr/include/qt4/QtSensors/QLightFilter
+usr/include/qt4/QtSensors/QLightReading
+usr/include/qt4/QtSensors/QLightSensor
 usr/include/qt4/QtSensors/QMagnetometer
 usr/include/qt4/QtSensors/QMagnetometerFilter
 usr/include/qt4/QtSensors/QMagnetometerReading
@@ -22,6 +28,7 @@ usr/include/qt4/QtSensors/QRotationSensor
 usr/include/qt4/QtSensors/QSensor
 usr/include/qt4/QtSensors/QSensorBackend
 usr/include/qt4/QtSensors/QSensorBackendFactory
+usr/include/qt4/QtSensors/QSensorChangesInterface
 usr/include/qt4/QtSensors/QSensorFilter
 usr/include/qt4/QtSensors/QSensorManager
 usr/include/qt4/QtSensors/QSensorPluginInterface
@@ -32,6 +39,8 @@ usr/include/qt4/QtSensors/QTapSensor
 usr/include/qt4/QtSensors/qaccelerometer.h
 usr/include/qt4/QtSensors/qambientlightsensor.h
 usr/include/qt4/QtSensors/qcompass.h
+usr/include/qt4/QtSensors/qgyroscope.h
+usr/include/qt4/QtSensors/qlightsensor.h
 usr/include/qt4/QtSensors/qmagnetometer.h
 usr/include/qt4/QtSensors/qorientationsensor.h
 usr/include/qt4/QtSensors/qproximitysensor.h
@@ -42,3 +51,4 @@ usr/include/qt4/QtSensors/qsensormanager.h
 usr/include/qt4/QtSensors/qsensorplugin.h
 usr/include/qt4/QtSensors/qtapsensor.h
 usr/lib/libQtSensors.so
+usr/lib/pkgconfig/QtSensors.pc

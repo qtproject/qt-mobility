@@ -44,6 +44,7 @@ usr/include/qt4/QtContacts/QContactManagerEngineV2
 usr/include/qt4/QtContacts/QContactName
 usr/include/qt4/QtContacts/QContactNickname
 usr/include/qt4/QtContacts/QContactNote
+usr/include/qt4/QtContacts/QContactObserver
 usr/include/qt4/QtContacts/QContactOnlineAccount
 usr/include/qt4/QtContacts/QContactOrganization
 usr/include/qt4/QtContacts/QContactPhoneNumber
@@ -111,6 +112,7 @@ usr/include/qt4/QtContacts/qcontactmanagerenginefactory.h
 usr/include/qt4/QtContacts/qcontactname.h
 usr/include/qt4/QtContacts/qcontactnickname.h
 usr/include/qt4/QtContacts/qcontactnote.h
+usr/include/qt4/QtContacts/qcontactobserver.h
 usr/include/qt4/QtContacts/qcontactonlineaccount.h
 usr/include/qt4/QtContacts/qcontactorganization.h
 usr/include/qt4/QtContacts/qcontactphonenumber.h
@@ -135,4 +137,4 @@ usr/include/qt4/QtContacts/qcontacturl.h
 usr/include/qt4/QtContacts/qtcontacts.h
 usr/include/qt4/QtContacts/qtcontactsglobal.h
 usr/lib/libQtContacts.so
-#usr/lib/QtContacts.pc usr/lib/pkgconfig/
+usr/lib/pkgconfig/QtContacts.pc
