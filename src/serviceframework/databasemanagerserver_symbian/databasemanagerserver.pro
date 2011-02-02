@@ -14,6 +14,7 @@ include(../../../common.pri)
 
 
 DEPENDPATH += ../
+INCLUDEPATH += ../
 
 HEADERS +=  servicemetadata_p.h \
             servicedatabase_p.h \

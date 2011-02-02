@@ -147,8 +147,9 @@ contains(mobility_modules,connectivity) {
 }
 
 # Connectivity
-contains(mobility_modules,connectivity) {
-    !win32:SUBDIRS += btscanner btchat btfiletransfer bttennis
+contains(mobility_modules,connectivity):!win32 {
+    SUBDIRS += btscanner btchat btfiletransfer bttennis
+    contains(QT_CONFIG, declarative):SUBDIRS += declarative-bluetooth
 }
 
 sources.path = $$QT_MOBILITY_EXAMPLES
