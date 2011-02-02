@@ -49,8 +49,8 @@ QTM_BEGIN_NAMESPACE
 
 QDeclarativeGeoMapMouseArea::QDeclarativeGeoMapMouseArea(QDeclarativeItem *parent)
     : QDeclarativeItem(parent),
-      enabled_(true),
-      hoverEnabled_(true) {}
+      enabled_(true) {}
+      //hoverEnabled_(true) {}
 
 QDeclarativeGeoMapMouseArea::~QDeclarativeGeoMapMouseArea()
 {
@@ -76,25 +76,25 @@ qreal QDeclarativeGeoMapMouseArea::mouseY() const
     return mouseY_;
 }
 
-bool QDeclarativeGeoMapMouseArea::hovered() const
-{
-    return hovered_;
-}
+//bool QDeclarativeGeoMapMouseArea::hovered() const
+//{
+//    return hovered_;
+//}
 
-void QDeclarativeGeoMapMouseArea::setHovered(bool hovered)
-{
-    if (hovered_ == hovered)
-        return;
+//void QDeclarativeGeoMapMouseArea::setHovered(bool hovered)
+//{
+//    if (hovered_ == hovered)
+//        return;
 
-    hovered_ = hovered;
+//    hovered_ = hovered;
 
-    emit hoveredChanged(hovered_);
+//    emit hoveredChanged(hovered_);
 
-    if (hovered_)
-        emit entered();
-    else
-        emit exited();
-}
+//    if (hovered_)
+//        emit entered();
+//    else
+//        emit exited();
+//}
 
 bool QDeclarativeGeoMapMouseArea::pressed() const
 {
@@ -106,7 +106,7 @@ bool QDeclarativeGeoMapMouseArea::setPressed(bool pressed, QDeclarativeGeoMapMou
     if (pressed_ == pressed)
         return false;
 
-    bool isClick = pressed_ && !pressed && hovered_;
+    bool isClick = pressed_ && !pressed;// && hovered_;
 
     pressed_ = pressed;
 
@@ -160,20 +160,20 @@ Qt::MouseButtons QDeclarativeGeoMapMouseArea::acceptedButtons() const
     return acceptedButtons_;
 }
 
-bool QDeclarativeGeoMapMouseArea::hoverEnabled() const
-{
-    return hoverEnabled_;
-}
+//bool QDeclarativeGeoMapMouseArea::hoverEnabled() const
+//{
+//    return hoverEnabled_;
+//}
 
-void QDeclarativeGeoMapMouseArea::setHoverEnabled(bool hoverEnabled)
-{
-    if (hoverEnabled == hoverEnabled_)
-        return;
+//void QDeclarativeGeoMapMouseArea::setHoverEnabled(bool hoverEnabled)
+//{
+//    if (hoverEnabled == hoverEnabled_)
+//        return;
 
-    hoverEnabled_ = hoverEnabled;
-    emit hoverEnabledChanged(hoverEnabled_);
-    // TODO update hovered property
-}
+//    hoverEnabled_ = hoverEnabled;
+//    emit hoverEnabledChanged(hoverEnabled_);
+//    // TODO update hovered property
+//}
 
 
 
@@ -209,7 +209,7 @@ void QDeclarativeGeoMapMouseArea::pressEvent(QDeclarativeGeoMapMouseEvent *event
 
     longPress_ = false;
     // TODO save event
-    setHovered(true);
+    //setHovered(true);
     // TODO setup long press timer
     event->setAccepted(setPressed(true, event));
 
@@ -229,33 +229,33 @@ void QDeclarativeGeoMapMouseArea::releaseEvent(QDeclarativeGeoMapMouseEvent *eve
     doubleClick_ = false;
 }
 
-void QDeclarativeGeoMapMouseArea::enterEvent()
-{
-    if (!enabled_ || !hoverEnabled())
-        return;
+//void QDeclarativeGeoMapMouseArea::enterEvent()
+//{
+//    if (!enabled_ || !hoverEnabled())
+//        return;
 
-    setHovered(true);
+//    setHovered(true);
 
-    emit entered();
-}
+//    emit entered();
+//}
 
-void QDeclarativeGeoMapMouseArea::exitEvent()
-{
-    if (!enabled_ || !hoverEnabled())
-        return;
+//void QDeclarativeGeoMapMouseArea::exitEvent()
+//{
+//    if (!enabled_ || !hoverEnabled())
+//        return;
 
-    setHovered(false);
+//    setHovered(false);
 
-    emit exited();
-}
+//    emit exited();
+//}
 
-void QDeclarativeGeoMapMouseArea::moveEvent(QDeclarativeGeoMapMouseEvent *event)
-{
-    if (!enabled_)
-        return;
+//void QDeclarativeGeoMapMouseArea::moveEvent(QDeclarativeGeoMapMouseEvent *event)
+//{
+//    if (!enabled_)
+//        return;
 
-    emit positionChanged(event);
-}
+//    emit positionChanged(event);
+//}
 
 #include "moc_qdeclarativegeomapmousearea_p.cpp"
 
