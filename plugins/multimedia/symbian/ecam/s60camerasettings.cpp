@@ -775,13 +775,15 @@ bool S60CameraSettings::isExposureLocked()
     return false;
 }
 
-TInt S60CameraSettings::shutterSpeed()
+qreal S60CameraSettings::shutterSpeed()
 {
 #ifdef POST_31_PLATFORM
-    if (m_advancedSettings)
-        return m_advancedSettings->ShutterSpeed();
-    else
+    if (m_advancedSettings) {
+        qreal shutterSpeed = qreal(m_advancedSettings->ShutterSpeed()) / 1000000.0;
+        return shutterSpeed; // In seconds
+    } else {
         emit error(QCamera::CameraError, QString("Unexpected camera error."));
+    }
     return 0;
 #else // S60 3.1 Platform
     return 0;
@@ -803,8 +805,8 @@ QList<qreal> S60CameraSettings::supportedShutterSpeeds()
                 emit error(QCamera::CameraError, QString("Failure while querying supported shutter speeds."));
         else {
             for (int i = 0; i < supportedSpeeds.Count(); i++) {
-                qreal q = supportedSpeeds[i];
-                speeds.append(q);
+                qreal q = qreal(supportedSpeeds[i]) / 1000000.0;
+                speeds.append(q); // In seconds
             }
         }
         supportedSpeeds.Close();
@@ -817,13 +819,15 @@ QList<qreal> S60CameraSettings::supportedShutterSpeeds()
 #endif // POST_31_PLATFORM
 }
 
-void S60CameraSettings::setManualShutterSpeed(TInt speed)
+void S60CameraSettings::setManualShutterSpeed(qreal speed)
 {
 #ifdef POST_31_PLATFORM
-    if (m_advancedSettings)
-        m_advancedSettings->SetShutterSpeed(speed);
-    else
+    if (m_advancedSettings) {
+        TInt shutterSpeed = speed * 1000000; // From seconds to microseconds
+        m_advancedSettings->SetShutterSpeed(shutterSpeed);
+    } else {
         emit error(QCamera::CameraError, QString("Unexpected camera error."));
+    }
 #else // S60 3.1
     emit error(QCamera::NotSupportedFeatureError, QString("Setting manual shutter speed is not supported."));
     Q_UNUSED(speed);

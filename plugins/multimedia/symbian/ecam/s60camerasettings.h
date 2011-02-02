@@ -105,8 +105,8 @@ public: // Methods
     QList<qreal> supportedApertures();
 
     // Shutter Speed
-    TInt shutterSpeed();
-    void setManualShutterSpeed(TInt speed);
+    qreal shutterSpeed();
+    void setManualShutterSpeed(qreal speed);
     QList<qreal> supportedShutterSpeeds();
 
     // ExposureCompensation

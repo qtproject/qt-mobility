@@ -326,7 +326,7 @@ bool S60CameraExposureControl::setExposureParameter(ExposureParameter parameter,
                 return false;
             }
             else
-                return setManualIsoSensitivity(value.toFloat());
+                return setManualShutterSpeed(value.toFloat());
 
         case QCameraExposureControl::ExposureCompensation:
             if (useDefaultValue) {
