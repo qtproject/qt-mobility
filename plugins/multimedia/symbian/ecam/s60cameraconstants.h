@@ -71,7 +71,7 @@
 
 #define KDefaultImagePath               QString("c:\\Data\\Images")
 #define KDefaultImageFileName           QString("image.jpg")
-#define KDefaultImageCodec              QString("image/jpg")
+#define KDefaultImageCodec              QString("image/jpeg")
 #define KDefaultImageFormatPrimaryCam   CCamera::EFormatExif
 #ifdef SYMBIAN_3_PLATFORM
 #define KDefaultImageFormatSecondaryCam CCamera::EFormatExif

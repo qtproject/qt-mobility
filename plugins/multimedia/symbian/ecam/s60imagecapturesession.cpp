@@ -276,7 +276,7 @@ S60ImageCaptureSession::S60ImageCaptureSession(QObject *parent) :
     m_previewInWaitLoop(false)
 {
     // Define supported image codecs
-    m_supportedImageCodecs << "image/jpg";
+    m_supportedImageCodecs << "image/jpeg";
 
     initializeImageCaptureSettings();
 
@@ -506,7 +506,7 @@ CCamera::TFormat S60ImageCaptureSession::selectFormatForCodec(const QString &cod
 {
     CCamera::TFormat format = CCamera::EFormatMonochrome;
 
-    if (codec == "image/jpg") {
+    if (codec == "image/jpg" || codec == "image/jpeg") {
         // Primary Camera
         if (m_activeDeviceIndex == 0)
             format = KDefaultImageFormatPrimaryCam;
@@ -1075,7 +1075,8 @@ QString S60ImageCaptureSession::imageCaptureCodec()
 void S60ImageCaptureSession::setImageCaptureCodec(const QString &codecName)
 {
     if (!codecName.isEmpty()) {
-        if (supportedImageCaptureCodecs().contains(codecName, Qt::CaseInsensitive)) {
+        if (supportedImageCaptureCodecs().contains(codecName, Qt::CaseInsensitive) ||
+            codecName == "image/jpg") {
             m_currentCodec = codecName;
             m_currentFormat = selectFormatForCodec(m_currentCodec);
         } else {
