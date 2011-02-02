@@ -1800,6 +1800,82 @@ void MainWindow::showNavigateDialog()
     \example tutorials/mapsdemo/part5
     \title Part 5 - Tuning for mobile and kinetic panning
 
+    So far in this tutorial we've been mainly aiming at desktop use
+    of the application. If you attempted to build it as is for
+    a mobile platform you would quite quickly notice a number of
+    issues that prevent it from being really usable, and we will
+    now address these one by one.
 
+    \section2 Network connection management
+    
+    Most mobile platforms have multiple network connections, which
+    are not connected all the time, and change regularly in
+    operation. Qt provides the Bearer API for managing these
+    and the events that occur with them.
+    
+    At present when our application starts it simply assumes that
+    a network link is available and that a mapping plugin will
+    load. This could quite easily not be the case, so we will use
+    the Bearer API to verify the state of the network and ensure
+    that it is running before we call \a initialize().
+    
+    First up, we need a QNetworkConfigurationManager in order to 
+    get at the default configuration of our environment:
+    
+    \code
+class MainWindow : public QMainWindow
+{
+    ...
+private:
+    QNetworkConfigurationManager *netConfigManager;
+};
+    \endcode
+    
+    We create it in the constructor of \a MainWindow. As mentioned
+    in the documentation for QNetworkConfigurationManager, we should
+    make a call to \a updateConfigurations() before actually making
+    use of the instance. So we'll also need a slot to be called
+    when this completes (we name this \a openNetworkSession()).
+    
+    \code
+MainWindow::MainWindow() :
+    ...
+{
+    ...
+    netConfigManager = new QNetworkConfigurationManager;
+    connect(netConfigManager, SIGNAL(updateCompleted()),
+            this, SLOT(openNetworkSession()));
+    netConfigManager->updateConfigurations();
+}
+    \endcode
+    
+    And in the slot itself we use the \a defaultConfiguration() method
+    as the parameter to construct a new QNetworkSession to represent
+    our default connection to the network.
+    
+    We first check to see if this session is open, and if so, call
+    initialize() right away. Otherwise, we hook up an appropriate
+    signal and wait for the network to be available.
+    
+    \code
+void MainWindow::openNetworkSession()
+{
+    session = new QNetworkSession(netConfigManager->defaultConfiguration());
+    if (session->isOpen()) {
+        initialize();
+    } else {
+        connect(session, SIGNAL(opened()),
+                this, SLOT(initialize()));
+        session->open();
+    }
+}
+    \endcode
+    
+    So now our \a initialize() method will be called once a network
+    connection is available.
+    
+    \section2 Zoom buttons and panning keys
+    
+    
 
 */
