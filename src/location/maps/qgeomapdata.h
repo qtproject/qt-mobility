@@ -73,7 +73,7 @@ class Q_LOCATION_EXPORT QGeoMapData : public QObject
     Q_PROPERTY(qreal maximumTilt READ maximumTilt CONSTANT)
     Q_PROPERTY(bool supportsTilting READ supportsTilting CONSTANT)
     Q_PROPERTY(qreal bearing READ bearing WRITE setBearing NOTIFY bearingChanged)
-    Q_PROPERTY(bool supportsMapBearing READ supportsMapBearing CONSTANT)
+    Q_PROPERTY(bool supportsBearing READ supportsBearing CONSTANT)
 
 public:
     QGeoMapData(QGeoMappingManagerEngine *engine);
@@ -87,15 +87,15 @@ public:
     virtual void setZoomLevel(qreal zoomLevel);
     virtual qreal zoomLevel() const;
 
-    bool supportsMapBearing();
+    bool supportsBearing() const;
     void setBearing(qreal bearing);
     qreal bearing() const;
 
-    bool supportsTilting();
+    bool supportsTilting() const;
     void setTilt(qreal tilt);
     qreal tilt() const;
-    qreal minimumTilt();
-    qreal maximumTilt();
+    qreal minimumTilt() const;
+    qreal maximumTilt() const;
 
     virtual void pan(int dx, int dy);
 

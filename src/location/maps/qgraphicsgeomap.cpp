@@ -285,14 +285,14 @@ qreal QGraphicsGeoMap::zoomLevel() const
     return -1;
 }
 /*!
-    \property QGraphicsGeoMap::supportsMapBearing
-    \brief This property holds whether map bearing is supported by the
+    \property QGraphicsGeoMap::supportsBearing
+    \brief This property holds whether bearing is supported by the
     QGeoMappingManager associated with this widget.
 */
-bool QGraphicsGeoMap::supportsMapBearing()
+bool QGraphicsGeoMap::supportsBearing() const
 {
     if (d_ptr->mapData)
-        return d_ptr->mapData->supportsMapBearing();
+        return d_ptr->mapData->supportsBearing();
 
     return false;
 }
@@ -300,6 +300,9 @@ bool QGraphicsGeoMap::supportsMapBearing()
 /*!
     \property QGraphicsGeoMap::bearing
     \brief This property holds the bearing of the map.
+
+    Value in degrees where 0 is equivalent to 90 degrees between view and earth's
+    surface i.e. looking straight down to earth.
 */
 void QGraphicsGeoMap::setBearing(qreal bearing)
 {
@@ -312,7 +315,7 @@ qreal QGraphicsGeoMap::bearing() const
     if (d_ptr->mapData)
         return d_ptr->mapData->bearing();
 
-    return -1;
+    return 0;
 }
 
 /*!
@@ -320,7 +323,7 @@ qreal QGraphicsGeoMap::bearing() const
     \brief This property holds whether tilting is supported by the
     QGeoMappingManager associated with this widget.
 */
-bool QGraphicsGeoMap::supportsTilting()
+bool QGraphicsGeoMap::supportsTilting() const
 {
     if (d_ptr->mapData)
         return d_ptr->mapData->supportsTilting();
@@ -332,31 +335,40 @@ bool QGraphicsGeoMap::supportsTilting()
     \property QGraphicsGeoMap::minimumTilt
     \brief This property holds the minimum tilt supported by the
     QGeoMappingManager associated with this widget.
+
+    Value in degrees where 0 is equivalent to 90 degrees between view and earth's
+    surface i.e. looking straight down to earth.
 */
-qreal QGraphicsGeoMap::minimumTilt()
+qreal QGraphicsGeoMap::minimumTilt() const
 {
     if (d_ptr->mapData)
         return d_ptr->mapData->minimumTilt();
 
-    return -1;
+    return 0;
 }
 
 /*!
     \property QGraphicsGeoMap::maximumTilt
     \brief This property holds the maximum tilt supported by the
     QGeoMappingManager associated with this widget.
+
+    Value in degrees where 0 is equivalent to 90 degrees between view and earth's
+    surface i.e. looking straight down to earth.
 */
-qreal QGraphicsGeoMap::maximumTilt()
+qreal QGraphicsGeoMap::maximumTilt() const
 {
     if (d_ptr->mapData)
         return d_ptr->mapData->maximumTilt();
 
-    return -1;
+    return 0;
 }
 
 /*!
     \property QGraphicsGeoMap::tilt
     \brief This property holds the tilt of the map.
+
+    Value in degrees where 0 is equivalent to 90 degrees between view and earth's
+    surface i.e. looking straight down to earth.
 
     If \a tilt is less than minimumTilt() then minimumTilt()
     will be used, and if \a tilt is  larger than
@@ -373,7 +385,7 @@ qreal QGraphicsGeoMap::tilt() const
     if (d_ptr->mapData)
         return d_ptr->mapData->tilt();
 
-    return -1;
+    return 0;
 }
 
 /*!
@@ -713,6 +725,22 @@ QGeoCoordinate QGraphicsGeoMap::screenPositionToCoordinate(QPointF screenPositio
     This signal is emitted when the zoom level of the map changes.
 
     The new value is \a zoomLevel.
+*/
+
+/*!
+\fn void QGraphicsGeoMap::bearingChanged(qreal bearing)
+
+    This signal is emitted when the bearing of the map changes.
+
+    The new value is \a bearing.
+*/
+
+/*!
+\fn void QGraphicsGeoMap::tiltChanged(qreal tilt)
+
+    This signal is emitted when the tilt of the map changes.
+
+    The new value is \a tilt.
 */
 
 /*!

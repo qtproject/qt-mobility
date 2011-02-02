@@ -79,7 +79,7 @@ public:
     qreal minimumZoomLevel() const;
     qreal maximumZoomLevel() const;
 
-    bool supportsMapBearing() const;
+    bool supportsBearing() const;
 
     bool supportsTilting() const;
     qreal minimumTilt() const;
@@ -100,7 +100,7 @@ protected:
     void setMaximumTilt(qreal maximumTilt);
     void setMinimumTilt(qreal minimumTilt);
 
-    void setSupportsMapBearing(bool supportsMapBearing);
+    void setSupportsBearing(bool supportsBearing);
     void setSupportsTilting(bool supportsTilting);
 
     QGeoMappingManagerEnginePrivate* d_ptr;

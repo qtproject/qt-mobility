@@ -72,7 +72,7 @@ class Q_LOCATION_EXPORT QGraphicsGeoMap : public QGraphicsWidget
     Q_PROPERTY(qreal tilt READ tilt WRITE setTilt NOTIFY tiltChanged)
     Q_PROPERTY(bool supportsTilting READ supportsTilting CONSTANT)
     Q_PROPERTY(qreal bearing READ bearing WRITE setBearing NOTIFY bearingChanged)
-    Q_PROPERTY(bool supportsMapBearing READ supportsMapBearing CONSTANT)
+    Q_PROPERTY(bool supportsBearing READ supportsBearing CONSTANT)
 
 public:
     enum MapType {
@@ -102,15 +102,15 @@ public:
     void setZoomLevel(qreal zoomLevel);
     qreal zoomLevel() const;
 
-    bool supportsMapBearing();
+    bool supportsBearing() const;
     void setBearing(qreal bearing);
     qreal bearing() const;
 
-    bool supportsTilting();
+    bool supportsTilting() const;
     void setTilt(qreal tilt);
     qreal tilt() const;
-    qreal minimumTilt();
-    qreal maximumTilt();
+    qreal minimumTilt() const;
+    qreal maximumTilt() const;
 
     void setCenter(const QGeoCoordinate &center);
     QGeoCoordinate center() const;

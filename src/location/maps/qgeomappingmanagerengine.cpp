@@ -267,12 +267,12 @@ void QGeoMappingManagerEngine::setMaximumZoomLevel(qreal maximumZoom)
 }
 
 /*!
-    Return whether map bearing is supported by this engine.
+    Return whether bearing is supported by this engine.
 */
-bool QGeoMappingManagerEngine::supportsMapBearing() const
+bool QGeoMappingManagerEngine::supportsBearing() const
 {
     Q_D(const QGeoMappingManagerEngine);
-    return d->supportsMapBearing;
+    return d->supportsBearing;
 }
 
 /*!
@@ -286,6 +286,9 @@ bool QGeoMappingManagerEngine::supportsTilting() const
 
 /*!
     Returns minimum tilt supported by this engine.
+
+    Value in degrees where 0 is equivalent to 90 degrees between view and earth's
+    surface i.e. looking straight down to earth.
 */
 qreal QGeoMappingManagerEngine::minimumTilt() const
 {
@@ -295,6 +298,9 @@ qreal QGeoMappingManagerEngine::minimumTilt() const
 
 /*!
     Returns maximum tilt supported by this engine.
+
+    Value in degrees where 0 is equivalent to 90 degrees between view and earth's
+    surface i.e. looking straight down to earth.
 */
 qreal QGeoMappingManagerEngine::maximumTilt() const
 {
@@ -305,8 +311,12 @@ qreal QGeoMappingManagerEngine::maximumTilt() const
 /*!
     Sets the minimum tilt supported by this engine to \a minimumTilt.
 
+    Value in degrees where 0 is equivalent to 90 degrees between view and earth's
+    surface i.e. looking straight down to earth.
+
     Subclasses of QGeoMappingManagerEngine should use this function to ensure
-    minimumTilt() provides accurate information.
+    minimumTilt() provides accurate information. If no minimum value is set
+    by the subclass the value of 0 is used.
 */
 void QGeoMappingManagerEngine::setMinimumTilt(qreal minimumTilt)
 {
@@ -317,8 +327,12 @@ void QGeoMappingManagerEngine::setMinimumTilt(qreal minimumTilt)
 /*!
     Sets the maximum tilt supported by this engine to \a maximumTilt.
 
+    Value in degrees where 0 is equivalent to 90 degrees between view and earth's
+    surface i.e. looking straight down to earth.
+
     Subclasses of QGeoMappingManagerEngine should use this function to ensure
-    maximumTilt() provides accurate information.
+    maximumTilt() provides accurate information. If no maximum value is set
+    by the subclass the value of 0 is used.
 */
 void QGeoMappingManagerEngine::setMaximumTilt(qreal maximumTilt)
 {
@@ -327,22 +341,26 @@ void QGeoMappingManagerEngine::setMaximumTilt(qreal maximumTilt)
 }
 
 /*!
-    Sets whether map bearing is supported by this engine.
+    Sets whether bearing is supported by this engine to \a supportsBearing.
 
     Subclasses of QGeoMappingManagerEngine should use this function to ensure
-    supportsMapBearing() provides accurate information.
+    supportsBearing() provides accurate information. If no value is set
+    by the subclass then bearing support is disabled and supportsBearing set
+    to false.
 */
-void QGeoMappingManagerEngine::setSupportsMapBearing(bool supportsMapBearing)
+void QGeoMappingManagerEngine::setSupportsBearing(bool supportsBearing)
 {
     Q_D(QGeoMappingManagerEngine);
-    d->supportsMapBearing = supportsMapBearing;
+    d->supportsBearing = supportsBearing;
 }
 
 /*!
     Sets whether tilting is supported by this engine to \a supportsTilting.
 
     Subclasses of QGeoMappingManagerEngine should use this function to ensure
-    supportsTilting() provides accurate information.
+    supportsTilting() provides accurate information. If no value is set
+    by the subclass then tilting support is disabled and supportsTilting set
+    to false.
 */
 void QGeoMappingManagerEngine::setSupportsTilting(bool supportsTilting)
 {
@@ -377,7 +395,7 @@ QLocale QGeoMappingManagerEngine::locale() const
 
 QGeoMappingManagerEnginePrivate::QGeoMappingManagerEnginePrivate()
     : managerVersion(-1),
-      supportsMapBearing(false),
+      supportsBearing(false),
       supportsTilting(false),
       minimumTilt(0),
       maximumTilt(0)

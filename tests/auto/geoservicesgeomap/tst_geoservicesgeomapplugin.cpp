@@ -800,11 +800,12 @@ void tst_GeoServicesGeoMapPlugin::bearing_data()
     QTest::addColumn<qreal>("bearing");
     QTest::addColumn<int>("signalcount");
     QTest::addColumn<qreal>("expectedBearing");
+    QTest::newRow("under minimum") << qreal(-1.0) << 0 << qreal(0.0);
+    QTest::newRow("valid 45") << qreal(45.0) << 1 << qreal(45.0);
     QTest::newRow("null") << qreal(0.0) << 1 << qreal(0.0);
-    QTest::newRow("bearing 45") << qreal(45.0) << 1 << qreal(45.0);
-    QTest::newRow("bearing 180") << qreal(180.0) << 1 << qreal(180.0);
-    QTest::newRow("bearing 360") << qreal(360.0) << 1 << qreal(360.0);
-    QTest::newRow("bearing 540") << qreal(540.0) << 1 << qreal(540.0);
+    QTest::newRow("maximum") << qreal(360.0) << 1 << qreal(360.0);
+    QTest::newRow("valid 180") << qreal(180.0) << 1 << qreal(180.0);
+    QTest::newRow("over maximum") << qreal(540.0) << 1 << qreal(360.0);
 }
 
 // public void setBearing(qreal bearing)
@@ -838,9 +839,9 @@ void tst_GeoServicesGeoMapPlugin::tilting_data()
     QTest::addColumn<qreal>("tilt");
     QTest::addColumn<int>("signalcount");
     QTest::addColumn<qreal>("expectedTilt");
+    QTest::newRow("valid") << qreal(45.0) << 1 << qreal(45.0);
     QTest::newRow("null") << qreal(0.0) << 1 << qreal(0.0);
     QTest::newRow("under minimum") << qreal(-1.0) << 0 << qreal(0.0);
-    QTest::newRow("valid") << qreal(45.0) << 1 << qreal(45.0);
     QTest::newRow("valid maximum") << qreal(90.0) << 1 << qreal(90.0);
     QTest::newRow("over maximum") << qreal(180.0) << 0 << qreal(90.0);
 }
