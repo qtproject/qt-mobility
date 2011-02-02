@@ -733,7 +733,7 @@ void S60VideoCaptureSession::commitVideoEncoderSettings()
             return;
         }
 
-        TRAPD(err, doSetCodecsL(m_audioSettings.codec(), m_videoSettings.codec()));
+        TRAPD(err, doSetCodecsL());
         if (err) {
             setError(err, QString("Failed to set audio or video codec."));
             m_audioSettings.setCodec(KMimeTypeDefaultAudioCodec);
@@ -1689,8 +1689,13 @@ QString S60VideoCaptureSession::videoCaptureCodecDescription(const QString &code
     return codecDescription;
 }
 
-void S60VideoCaptureSession::doSetCodecsL(const QString &aCodec, const QString &vCodec)
+void S60VideoCaptureSession::doSetCodecsL()
 {
+    // Determine Profile and Level for the video codec if needed
+    // (MimeType/Profile-level-id contains "profile" if profile/level info is available)
+    if (!m_videoSettings.codec().contains(QString("profile"), Qt::CaseInsensitive))
+        m_videoSettings.setCodec(determineProfileAndLevel());
+
     if (m_videoRecorder) {
         TPtrC16 str(reinterpret_cast<const TUint16*>(m_videoSettings.codec().utf16()));
         HBufC8* videoCodec(NULL);
@@ -1711,6 +1716,63 @@ void S60VideoCaptureSession::doSetCodecsL(const QString &aCodec, const QString &
     }
     else
         setError(KErrNotReady, QString("Unexpected camera error."));
+}
+
+QString S60VideoCaptureSession::determineProfileAndLevel()
+{
+    QString determinedMimeType = m_videoSettings.codec();
+
+    // H.263
+    if (determinedMimeType.contains(QString("video/H263-2000"), Qt::CaseInsensitive)) {
+        if ((m_videoSettings.resolution().width() * m_videoSettings.resolution().height()) > (176*144)) {
+            if (m_videoSettings.frameRate() > 15.0)
+                determinedMimeType.append("; profile=0; level=20");
+            else
+                determinedMimeType.append("; profile=0; level=40");
+        } else {
+            if (m_videoSettings.bitRate() > 64000)
+                determinedMimeType.append("; profile=0; level=45");
+            else
+                determinedMimeType.append("; profile=0; level=10");
+        }
+
+    // MPEG-4
+    } else if (determinedMimeType.contains(QString("video/mp4v-es"), Qt::CaseInsensitive)) {
+        if ((m_videoSettings.resolution().width() * m_videoSettings.resolution().height()) > (720*480)) {
+            determinedMimeType.append("; profile-level-id=6");
+        } else if ((m_videoSettings.resolution().width() * m_videoSettings.resolution().height()) > (640*480)) {
+            determinedMimeType.append("; profile-level-id=5");
+        } else if ((m_videoSettings.resolution().width() * m_videoSettings.resolution().height()) > (352*288)) {
+            determinedMimeType.append("; profile-level-id=4");
+        } else if ((m_videoSettings.resolution().width() * m_videoSettings.resolution().height()) > (176*144)) {
+            if (m_videoSettings.frameRate() > 15.0)
+                determinedMimeType.append("; profile-level-id=3");
+            else
+                determinedMimeType.append("; profile-level-id=2");
+        } else {
+            if (m_videoSettings.bitRate() > 64000)
+                determinedMimeType.append("; profile-level-id=9");
+            else
+                determinedMimeType.append("; profile-level-id=1");
+        }
+
+    // H.264
+    } else if (determinedMimeType.contains(QString("video/H264"), Qt::CaseInsensitive)) {
+        if ((m_videoSettings.resolution().width() * m_videoSettings.resolution().height()) > (640*480)) {
+            determinedMimeType.append("; profile-level-id=42801F");
+        } else if ((m_videoSettings.resolution().width() * m_videoSettings.resolution().height()) > (352*288)) {
+            determinedMimeType.append("; profile-level-id=42801E");
+        } else if ((m_videoSettings.resolution().width() * m_videoSettings.resolution().height()) > (176*144)) {
+            if (m_videoSettings.frameRate() > 15.0)
+                determinedMimeType.append("; profile-level-id=428015");
+            else
+                determinedMimeType.append("; profile-level-id=42800C");
+        } else {
+            determinedMimeType.append("; profile-level-id=42900B");
+        }
+    }
+
+    return determinedMimeType;
 }
 
 void S60VideoCaptureSession::setBitrate(const int bitrate)
