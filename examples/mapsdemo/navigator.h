@@ -39,40 +39,60 @@
 **
 ****************************************************************************/
 
-#ifndef MARKERDIALOG_H
-#define MARKERDIALOG_H
+#ifndef NAVIGATOR_H
+#define NAVIGATOR_H
 
-#include <QDialog>
-#include <QLineEdit>
-#include <QLabel>
-#include <QDoubleSpinBox>
+#include <qgeoroutingmanager.h>
+#include <qgeosearchmanager.h>
 
-#include "qgeoaddress.h"
+#include <qgeoroutereply.h>
+#include <qgeoroutereply.h>
+#include <qgeosearchreply.h>
+#include <qgeomaprouteobject.h>
 
 #include "marker.h"
 
 using namespace QtMobility;
 
-class MarkerDialog : public QDialog
+class MapsWidget;
+
+class Navigator : public QObject
 {
     Q_OBJECT
 public:
-    MarkerDialog(Marker *marker);
-    ~MarkerDialog();
+    Navigator(QGeoRoutingManager *routingManager, QGeoSearchManager *searchManager,
+              MapsWidget *mapsWidget, const QString &address,
+              const QGeoRouteRequest &requestTemplate);
+    ~Navigator();
 
-public slots:
-    void updateMarker();
+    void start();
+    QGeoRoute route() const;
+
+signals:
+    void finished();
+    void searchError(QGeoSearchReply::Error error, QString errorString);
+    void routingError(QGeoRouteReply::Error error, QString errorString);
 
 private slots:
-    void setAddressLabel(QGeoAddress address);
+    void on_addressSearchFinished();
+    void on_routingFinished();
 
 private:
-    QLineEdit *nameEdit;
-    QLabel *addressLabel;
-    QDoubleSpinBox *lonSpin;
-    QDoubleSpinBox *latSpin;
+    QString address;
+    QGeoRouteRequest request;
 
-    Marker *m_marker;
+    QGeoRoutingManager *routingManager;
+    QGeoSearchManager *searchManager;
+    MapsWidget *mapsWidget;
+
+    QGeoSearchReply *addressReply;
+    QGeoRouteReply *routeReply;
+
+    QGeoMapRouteObject *routeObject;
+    Marker *endMarker;
+    Marker *startMarker;
+
+    QGeoRoute firstRoute;
 };
 
-#endif // MARKERDIALOG_H
+#endif // NAVIGATOR_H

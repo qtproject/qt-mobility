@@ -36,11 +36,11 @@ contains(mobility_modules,location) {
     equals(QT_MAJOR_VERSION, 4):lessThan(QT_MINOR_VERSION, 7) {
         contains(mobility_modules,bearer) {
     	    SUBDIRS +=  flickrdemo \
-                        mapsnavigator
+                        mapsdemo
         }
     } else {
         SUBDIRS +=  flickrdemo \
-                    mapsnavigator
+                    mapsdemo
     }
 
     contains(QT_CONFIG, declarative) {
@@ -69,7 +69,8 @@ contains(mobility_modules,publishsubscribe) {
 contains(mobility_modules,systeminfo) {
  SUBDIRS += sysinfo
    contains(QT_CONFIG, declarative) {
-        SUBDIRS += declarative-systeminfo
+        SUBDIRS += declarative-systeminfo \
+                   qsystemalignedtimer
    }
 }
 
@@ -154,6 +155,3 @@ contains(mobility_modules,connectivity):!win32 {
 sources.path = $$QT_MOBILITY_EXAMPLES
 
 INSTALLS += sources
-
-SUBDIRS += \
-    qsystemalignedtimer
