@@ -72,7 +72,7 @@ private:
     QDoubleSpinBox *lonSpin;
     QDoubleSpinBox *latSpin;
 
-    Marker *m_marker;
+    Marker *marker;
 };
 
 #endif // MARKERDIALOG_H
