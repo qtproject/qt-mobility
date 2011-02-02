@@ -16,5 +16,7 @@ maemo6-landmarks_enabled = yes
 bluez_enabled = yes
 gstreamer-photography_enabled = yes
 pulseaudio_enabled = yes
+udev_enabled = yes
 sensord_enabled = yes
-
+geoclue-master_enabled = no
+gypsy_enabled = no
