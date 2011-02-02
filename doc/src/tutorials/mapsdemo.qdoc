@@ -384,6 +384,8 @@ geoMap->addMapObject(me);
 
     Next, we'll add a basic GUI around the map widget, and the ability
     to search for locations like addresses.
+    
+    Continue to \l{tutorials/mapsdemo/part2}{Part 2 - Searching for locations}
 */
 
 /*!
@@ -1020,6 +1022,8 @@ void MarkerManager::reverseReplyFinished(QGeoSearchReply *reply)
     destination. Finally, in part 5 we will add kinetic scrolling and cover a
     number of points about means for achieving a better user experience on mobile
     platforms.
+    
+    Continue to \l{tutorials/mapsdemo/part3}{Part 3 - Listening to satellites}
 */
 
 /*!
@@ -1499,7 +1503,7 @@ void MainWindow::updateMyPosition(QGeoPositionInfo info)
     And now we have the simple location tracking functionality we set out to
     implement.
     
-    blah blah blah part4 navigation blah.
+    Continue to \l{tutorials/mapsdemo/part4}{Part 4 - Stopping for Directions}
 
 */
 
@@ -1787,12 +1791,14 @@ void MainWindow::showNavigateDialog()
     In the final part of this tutorial, we will optimise the maps
     demo so far for mobile platforms in order to deploy it to a
     phone.
+    
+    Continue to \l{tutorials/mapsdemo/part5}{Part 5 - Tuning for mobile and kinetic panning}
 */
 
 /*!
     \page tutorials-mapsdemo-part5.html
     \example tutorials/mapsdemo/part5
-    \title Part 5 - Kinetic panning and tuning for mobile
+    \title Part 5 - Tuning for mobile and kinetic panning
 
 
 
