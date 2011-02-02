@@ -941,7 +941,7 @@ EXPORTS
 	_ZN10QtMobility16QContactObserverD0Ev @ 940 NONAME
 	_ZN10QtMobility16QContactObserverD1Ev @ 941 NONAME
 	_ZN10QtMobility16QContactObserverD2Ev @ 942 NONAME
-	_ZN10QtMobility17QContactFetchHint11setMaxCountEi @ 943 NONAME
+	_ZN10QtMobility17QContactFetchHint15setMaxCountHintEi @ 943 NONAME
 	_ZN10QtMobility21QContactOnlineAccount10ProtocolQqE @ 944 NONAME DATA 3
 	_ZN10QtMobility21QContactOnlineAccount11ProtocolAimE @ 945 NONAME DATA 4
 	_ZN10QtMobility21QContactOnlineAccount11ProtocolIcqE @ 946 NONAME DATA 4
@@ -963,7 +963,7 @@ EXPORTS
 	_ZN10QtMobilitylsE6QDebugRKNS_29QContactDetailFieldDefinitionE @ 962 NONAME
 	_ZNK10QtMobility16QContactObserver10metaObjectEv @ 963 NONAME
 	_ZNK10QtMobility16QContactObserver14contactLocalIdEv @ 964 NONAME
-	_ZNK10QtMobility17QContactFetchHint8maxCountEv @ 965 NONAME
+	_ZNK10QtMobility17QContactFetchHint12maxCountHintEv @ 965 NONAME
 	_ZNK10QtMobility8QContact4tagsEv @ 966 NONAME
 	_ZTIN10QtMobility16QContactObserverE @ 967 NONAME
 	_ZTVN10QtMobility16QContactObserverE @ 968 NONAME

@@ -195,8 +195,8 @@ QList<QContact> CntSymbianEngine::contacts(const QContactFilter& filter, const Q
     QList<QContact> contacts;
     QList<QContactLocalId> contactIds = this->contactIds(filter, sortOrders, error);
     
-    if (fh.maxCount() > 0) {
-        contactIds = contactIds.mid(0, fh.maxCount());
+    if (fh.maxCountHint() > 0) {
+        contactIds = contactIds.mid(0, fh.maxCountHint());
     }
     
     if (*error == QContactManager::NoError ) {
