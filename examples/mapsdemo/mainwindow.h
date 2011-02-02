@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,44 +39,53 @@
 **
 ****************************************************************************/
 
-#ifndef QSYSTEMINFOCOMMON_H
-#define QSYSTEMINFOCOMMON_H
+#ifndef MAINWINDOW_H
+#define MAINWINDOW_H
 
-#include "qmobilityglobal.h"
+#include <QMainWindow>
 
-#if defined(QT_SIMULATOR) || defined(SIMULATOR_APPLICATION)
-#define SIMULATOR
-#include "qsysteminfo_simulator_p.h"
-#else
+#include "qgeoserviceprovider.h"
+#include "qgeopositioninfosource.h"
+#include "qgeoroutereply.h"
 
-#ifndef TESTR
-#ifdef Q_OS_LINUX
-#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
-#include "qsysteminfo_maemo_p.h"
-#else
-#include "linux/qsysteminfo_linux_p.h"
-#endif //Q_WS_MAEMO_5 & Q_WS_MAEMO_6
-#endif //Q_OS_LINUX
+#include "mapswidget.h"
+#include "marker.h"
+#include "searchdialog.h"
+#include "markerdialog.h"
+#include "navigatedialog.h"
+#include "navigator.h"
 
-#ifdef Q_OS_WIN
-#include "qsysteminfo_win_p.h"
-#endif
-#ifdef Q_OS_MAC
-#include "qsysteminfo_mac_p.h"
-#endif
-#ifdef Q_OS_SYMBIAN
-#include "qsysteminfo_s60_p.h"
-#endif
-#else
-#include "qsysteminfo_simulator_p.h"
-#endif
+using namespace QtMobility;
 
-#endif // QT_SIMULATOR
+class MainWindow : public QMainWindow
+{
+    Q_OBJECT
+public:
+    MainWindow();
+    ~MainWindow();
 
-#if defined(ALIGNEDTIMER_MEEGO)
-#include "qsystemalignedtimer_meego_p.h"
-#else
-#include "qsystemalignedtimer_stub_p.h"
-#endif // ALIGNEDTIMER_MEEGO
+public slots:
+    void initialize();
 
-#endif // QSYSTEMINFOCOMMON_H
+private slots:
+    void showSearchDialog();
+    void showNavigateDialog();
+    void goToMyLocation();
+    void updateMyPosition(QGeoPositionInfo info);
+    void disableTracking();
+    void showErrorMessage(QGeoSearchReply::Error err, QString msg);
+    void showErrorMessage(QGeoRouteReply::Error err, QString msg);
+    void on_markerClicked(Marker *marker);
+
+private:
+    QGeoServiceProvider *serviceProvider;
+    MapsWidget *mapsWidget;
+    MarkerManager *markerManager;
+    QGeoPositionInfoSource *positionSource;
+    Navigator *lastNavigator;
+
+    bool tracking;
+    bool firstUpdate;
+};
+
+#endif // MAINWINDOW_H

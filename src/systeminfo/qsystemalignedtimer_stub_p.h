@@ -39,47 +39,51 @@
 **
 ****************************************************************************/
 
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#ifndef QSYSTEMALIGNEDTIMER_STUB_P_H
+#define QSYSTEMALIGNEDTIMER_STUB_P_H
 
-#include <QMainWindow>
+#include "qsystemalignedtimer.h"
 
-#include "qgeoserviceprovider.h"
-#include "qgeopositioninfosource.h"
+#include <QObject>
 
-#include "mapswidget.h"
-#include "marker.h"
-#include "searchdialog.h"
-#include "markerdialog.h"
+QT_BEGIN_HEADER
+QTM_BEGIN_NAMESPACE
 
-using namespace QtMobility;
-
-class MainWindow : public QMainWindow
+class QSystemAlignedTimerPrivate : public QObject
 {
     Q_OBJECT
+
 public:
-    MainWindow();
-    ~MainWindow();
+    explicit QSystemAlignedTimerPrivate(QObject *parent = 0);
+    ~QSystemAlignedTimerPrivate();
 
-public slots:
-    void initialize();
+public:
+    void wokeUp();
 
-private slots:
-    void showSearchDialog();
-    void goToMyLocation();
-    void updateMyPosition(QGeoPositionInfo info);
-    void disableTracking();
-    void showErrorMessage(QGeoSearchReply::Error err, QString msg);
-    void on_markerClicked(Marker *marker);
+    int minimumInterval() const;
+    void setMinimumInterval(int seconds);
 
-private:
-    QGeoServiceProvider *serviceProvider;
-    MapsWidget *mapsWidget;
-    MarkerManager *markerManager;
-    QGeoPositionInfoSource *positionSource;
+    int maximumInterval() const;
+    void setMaximumInterval(int seconds);
 
-    bool tracking;
-    bool firstUpdate;
+    bool isSingleShot() const;
+    void setSingleShot(bool singleShot);
+
+    static void singleShot(int minimumTime, int maximumTime, QObject *receiver, const char *member);
+    QSystemAlignedTimer::AlignedTimerError lastError() const;
+
+Q_SIGNALS:
+    void timeout();
+    void error(QSystemAlignedTimer::AlignedTimerError error);
+
+public Q_SLOTS:
+    void start(int minimumTime, int maximumTime);
+    void start();
+    void stop();
 };
 
-#endif // MAINWINDOW_H
+QTM_END_NAMESPACE
+
+QT_END_HEADER
+
+#endif // QSYSTEMALIGNEDTIMER_STUB_P_H

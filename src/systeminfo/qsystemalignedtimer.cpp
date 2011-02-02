@@ -41,8 +41,7 @@
 
 
 #include "qsystemalignedtimer.h"
-
-#include "qsystemalignedtimerprivate_p.h"
+#include "qsysteminfocommon_p.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -98,8 +97,11 @@ QSystemAlignedTimerPrivate *getSystemAlignedTimerPrivate() { return alignedTimer
    Constructs a QSystemAlignedTimer object with the given \a parent.
   */
 QSystemAlignedTimer::QSystemAlignedTimer(QObject *parent)
-    : QObject(parent),d(alignedTimerPrivate())
+    : QObject(parent)
 {
+    d = new QSystemAlignedTimerPrivate(parent);
+    connect(d, SIGNAL(timeout()), this, SIGNAL(timeout()));
+    connect(d, SIGNAL(error(QSystemAlignedTimer::AlignedTimerError)), this, SIGNAL(error(QSystemAlignedTimer::AlignedTimerError)));
 }
 
 /*!
@@ -107,7 +109,7 @@ QSystemAlignedTimer::QSystemAlignedTimer(QObject *parent)
   */
 QSystemAlignedTimer::~QSystemAlignedTimer()
 {
-
+    delete d, d = 0;
 }
 
 /*!
@@ -123,8 +125,7 @@ QSystemAlignedTimer::~QSystemAlignedTimer()
   */
 void QSystemAlignedTimer::start(int minimumTime, int maximumTime)
 {
-    Q_UNUSED(minimumTime)
-    Q_UNUSED(maximumTime)
+    d->start(minimumTime, maximumTime);
 }
 
 /*!
@@ -132,9 +133,8 @@ void QSystemAlignedTimer::start(int minimumTime, int maximumTime)
 */
 void QSystemAlignedTimer::start()
 {
-
+    d->start();
 }
-
 
 /*!
      This should be called when the application wakes up via other means than QSystemAlignedTimer timeout.
@@ -145,6 +145,7 @@ void QSystemAlignedTimer::start()
   */
 void QSystemAlignedTimer::wokeUp()
 {
+    d->wokeUp();
 }
 
 /*!
@@ -152,7 +153,7 @@ void QSystemAlignedTimer::wokeUp()
   */
 void QSystemAlignedTimer::stop()
 {
-
+    d->stop();
 }
 
 
@@ -166,9 +167,9 @@ void QSystemAlignedTimer::stop()
    "jump to the train"
 
  */
-void QSystemAlignedTimer::setMinimumInterval(int seconds) const
+void QSystemAlignedTimer::setMinimumInterval(int seconds)
 {
-    Q_UNUSED(seconds)
+    d->setMinimumInterval(seconds);
 }
 
 /*!
@@ -179,7 +180,7 @@ void QSystemAlignedTimer::setMinimumInterval(int seconds) const
   */
 int QSystemAlignedTimer::minimumInterval() const
 {
-    return 0;
+    return d->minimumInterval();
 }
 
 /*!
@@ -190,10 +191,9 @@ int QSystemAlignedTimer::minimumInterval() const
    For example if you preferred wait is 120 seconds, use minval 110 and maxval 130.
    Default value for maxTime is 0. If maxTime is 0, then minTime will be a "preferred" interval.
  */
-void QSystemAlignedTimer::setMaximumInterval(int seconds) const
+void QSystemAlignedTimer::setMaximumInterval(int seconds)
 {
-    Q_UNUSED(seconds)
-
+    d->setMaximumInterval(seconds);
 }
 
 /*!
@@ -204,7 +204,7 @@ void QSystemAlignedTimer::setMaximumInterval(int seconds) const
   */
 int QSystemAlignedTimer::maximumInterval() const
 {
-    return 0;
+    return d->maximumInterval();
 }
 
 /*!
@@ -212,7 +212,7 @@ int QSystemAlignedTimer::maximumInterval() const
   */
 inline void QSystemAlignedTimer::setSingleShot(bool singleShot)
 {
-    Q_UNUSED(singleShot);
+    d->setSingleShot(singleShot);
 }
 
 /*!
@@ -223,11 +223,9 @@ inline void QSystemAlignedTimer::setSingleShot(bool singleShot)
   */
 void QSystemAlignedTimer::singleShot(int minimumTime, int maximumTime, QObject *receiver, const char *member)
 {
-    Q_UNUSED(minimumTime);
-    Q_UNUSED(maximumTime);
-    Q_UNUSED(receiver);
-    Q_UNUSED(member);
+    QSystemAlignedTimerPrivate::singleShot(minimumTime, maximumTime, receiver, member);
 }
+
 /*!
   \property QSystemAlignedTimer::singleShot
   \brief Whether the timer is single shot.
@@ -238,7 +236,7 @@ void QSystemAlignedTimer::singleShot(int minimumTime, int maximumTime, QObject *
   */
 bool QSystemAlignedTimer::isSingleShot() const
 {
-    return d->single;
+    return d->isSingleShot();
 }
 
 /*!
@@ -247,10 +245,8 @@ bool QSystemAlignedTimer::isSingleShot() const
   */
 QSystemAlignedTimer::AlignedTimerError QSystemAlignedTimer::lastError() const
 {
-    return lastTimerError;
+    return d->lastError();
 }
-
-
 
 #include "moc_qsystemalignedtimer.cpp"
 

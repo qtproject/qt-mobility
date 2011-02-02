@@ -39,35 +39,31 @@
 **
 ****************************************************************************/
 
+#ifndef NAVIGATEDIALOG_H
+#define NAVIGATEDIALOG_H
 
-#ifndef QSYSTEMALIGNEDTIMERPRIVATE_P_H
-#define QSYSTEMALIGNEDTIMERPRIVATE_P_H
+#include <QDialog>
+#include <QLineEdit>
+#include <QComboBox>
 
-#include <QObject>
-#include "qsystemalignedtimer.h"
+#include "qgeorouterequest.h"
+#include "qgeocoordinate.h"
 
-QT_BEGIN_HEADER
-QTM_BEGIN_NAMESPACE
+using namespace QtMobility;
 
-class QSystemAlignedTimerPrivate : public QObject
+class NavigateDialog : public QDialog
 {
     Q_OBJECT
 public:
-    explicit QSystemAlignedTimerPrivate(QObject *parent = 0);
+    NavigateDialog(QWidget *parent=0);
+    ~NavigateDialog();
 
-    int id;
-    bool isTimerRunning;
-    bool single;
-
+    QString destinationAddress() const;
+    QGeoRouteRequest::TravelModes travelMode() const;
 
 private:
-    QTimer *alignedTimer;
-     void timerEvent(QTimerEvent *);
-
+    QLineEdit *addressEdit;
+    QComboBox *modeCombo;
 };
 
-QTM_END_NAMESPACE
-
-QT_END_HEADER
-
-#endif // QSYSTEMALIGNEDTIMERPRIVATE_P_H
+#endif // NAVIGATEDIALOG_H

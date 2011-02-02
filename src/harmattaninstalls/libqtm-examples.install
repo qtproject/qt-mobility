@@ -70,7 +70,7 @@ usr/lib/qtmobilty/examples/show_magneticflux
 usr/lib/qtmobilty/examples/dialer_service
 usr/lib/qtmobilty/examples/logfilepositionsource
 usr/lib/qtmobilty/examples/qsysinfo
-usr/lib/qtmobilty/examples/MapsNavigator
+usr/lib/qtmobilty/examples/mapsdemo
 usr/lib/qtmobilty/examples/content-sfw-dialer/DialScreen.qml
 usr/lib/qtmobilty/examples/content-sfw-dialer/DialerList.qml
 usr/lib/qtmobilty/examples/content-sfw-dialer/DialButton.qml

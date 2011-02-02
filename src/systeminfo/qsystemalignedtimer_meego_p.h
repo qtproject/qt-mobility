@@ -39,40 +39,69 @@
 **
 ****************************************************************************/
 
-#include "mainwindow.h"
+#ifndef QSYSTEMALIGNEDTIMER_MEEGO_P_H
+#define QSYSTEMALIGNEDTIMER_MEEGO_P_H
 
-#include <QApplication>
-#include <QList>
-#include <QString>
-#include <QUrl>
-#include <QSettings>
-#include <QProcessEnvironment>
-#include <QNetworkProxyFactory>
+#include "qsystemalignedtimer.h"
 
-#include "qgeoserviceprovider.h"
+#include <QObject>
+#include <QSocketNotifier>
 
-int main(int argc, char *argv[])
-{
-    QApplication a(argc, argv);
-
-    QApplication::setOrganizationName("Nokia");
-    QApplication::setApplicationName("MapsNavigatorExample");
-
-    QSettings settings;
-
-    QVariant value = settings.value("http.proxy");
-    if (value.isValid()) {
-        QUrl url(value.toString(), QUrl::TolerantMode);
-        QNetworkProxy proxy;
-        proxy.setType(QNetworkProxy::HttpProxy);
-        proxy.setHostName(url.host());
-        proxy.setPort(url.port(8080));
-        QNetworkProxy::setApplicationProxy(proxy);
-    }
-
-    MainWindow mw;
-    mw.resize(200,200);
-    mw.show();
-
-    return a.exec();
+extern "C" {
+#include <iphbd/libiphb.h>
 }
+
+QT_BEGIN_HEADER
+QTM_BEGIN_NAMESPACE
+
+class QSystemAlignedTimerPrivate : public QObject
+{
+    Q_OBJECT
+
+public:
+    explicit QSystemAlignedTimerPrivate(QObject *parent = 0);
+    ~QSystemAlignedTimerPrivate();
+
+public:
+    void wokeUp();
+
+    int minimumInterval() const;
+    void setMinimumInterval(int seconds);
+
+    int maximumInterval() const;
+    void setMaximumInterval(int seconds);
+
+    bool isSingleShot() const;
+    void setSingleShot(bool singleShot);
+
+    static void singleShot(int minimumTime, int maximumTime, QObject *receiver, const char *member);
+    QSystemAlignedTimer::AlignedTimerError lastError() const;
+
+Q_SIGNALS:
+    void timeout();
+    void error(QSystemAlignedTimer::AlignedTimerError error);
+
+private:
+    QSystemAlignedTimer::AlignedTimerError m_lastError;
+    int m_minimumInterval, m_maximumInterval;
+    bool m_running, m_singleShot;
+    iphb_t m_iphbdHandler;
+    QSocketNotifier *m_notifier;
+    QObject *m_singleShotReceiver;
+    const char *m_singleShotMember;
+
+public Q_SLOTS:
+    void start(int minimumTime, int maximumTime);
+    void start();
+    void stop();
+    
+private Q_SLOTS:
+    void heartbeatReceived(int sock);
+    void singleShot();
+};
+
+QTM_END_NAMESPACE
+
+QT_END_HEADER
+
+#endif // QSYSTEMALIGNEDTIMER_MEEGO_P_H

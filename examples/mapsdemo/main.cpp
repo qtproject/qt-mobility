@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,44 +39,40 @@
 **
 ****************************************************************************/
 
-#ifndef QSYSTEMINFOCOMMON_H
-#define QSYSTEMINFOCOMMON_H
+#include "mainwindow.h"
 
-#include "qmobilityglobal.h"
+#include <QApplication>
+#include <QList>
+#include <QString>
+#include <QUrl>
+#include <QSettings>
+#include <QProcessEnvironment>
+#include <QNetworkProxyFactory>
 
-#if defined(QT_SIMULATOR) || defined(SIMULATOR_APPLICATION)
-#define SIMULATOR
-#include "qsysteminfo_simulator_p.h"
-#else
+#include "qgeoserviceprovider.h"
 
-#ifndef TESTR
-#ifdef Q_OS_LINUX
-#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
-#include "qsysteminfo_maemo_p.h"
-#else
-#include "linux/qsysteminfo_linux_p.h"
-#endif //Q_WS_MAEMO_5 & Q_WS_MAEMO_6
-#endif //Q_OS_LINUX
+int main(int argc, char *argv[])
+{
+    QApplication a(argc, argv);
 
-#ifdef Q_OS_WIN
-#include "qsysteminfo_win_p.h"
-#endif
-#ifdef Q_OS_MAC
-#include "qsysteminfo_mac_p.h"
-#endif
-#ifdef Q_OS_SYMBIAN
-#include "qsysteminfo_s60_p.h"
-#endif
-#else
-#include "qsysteminfo_simulator_p.h"
-#endif
+    QApplication::setOrganizationName("Nokia");
+    QApplication::setApplicationName("MapsDemo");
 
-#endif // QT_SIMULATOR
+    QSettings settings;
 
-#if defined(ALIGNEDTIMER_MEEGO)
-#include "qsystemalignedtimer_meego_p.h"
-#else
-#include "qsystemalignedtimer_stub_p.h"
-#endif // ALIGNEDTIMER_MEEGO
+    QVariant value = settings.value("http.proxy");
+    if (value.isValid()) {
+        QUrl url(value.toString(), QUrl::TolerantMode);
+        QNetworkProxy proxy;
+        proxy.setType(QNetworkProxy::HttpProxy);
+        proxy.setHostName(url.host());
+        proxy.setPort(url.port(8080));
+        QNetworkProxy::setApplicationProxy(proxy);
+    }
 
-#endif // QSYSTEMINFOCOMMON_H
+    MainWindow mw;
+    mw.resize(200,200);
+    mw.show();
+
+    return a.exec();
+}

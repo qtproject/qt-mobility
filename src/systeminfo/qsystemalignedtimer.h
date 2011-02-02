@@ -48,10 +48,10 @@
 #include <QTimer>
 #include "qmobilityglobal.h"
 
-#include "qsystemalignedtimerprivate_p.h"
-
 QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
+
+class QSystemAlignedTimerPrivate;
 
 class Q_SYSINFO_EXPORT QSystemAlignedTimer : public QObject
 {
@@ -76,10 +76,10 @@ public:
     Q_INVOKABLE void wokeUp();
 
     int minimumInterval() const;
-    void setMinimumInterval(int seconds) const;
+    void setMinimumInterval(int seconds);
 
     int maximumInterval() const;
-    void setMaximumInterval(int seconds) const;
+    void setMaximumInterval(int seconds);
 
     void setSingleShot(bool singleShot);
     bool isSingleShot() const;

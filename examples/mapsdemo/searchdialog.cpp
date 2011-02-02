@@ -39,29 +39,52 @@
 **
 ****************************************************************************/
 
+#include "searchdialog.h"
 
-#include "qsystemalignedtimer.h"
-#include "qsystemalignedtimerprivate_p.h"
+#include <QFormLayout>
+#include <QDialogButtonBox>
+#include <QVBoxLayout>
 
-QTM_BEGIN_NAMESPACE
+SearchDialog::SearchDialog(QWidget *parent) :
+    QDialog(parent)
+{
+    QFormLayout *formLayout = new QFormLayout;
+    QVBoxLayout *vbox = new QVBoxLayout;
 
+    searchTermEdit = new QLineEdit;
+    formLayout->addRow("Search for", searchTermEdit);
 
-/*!
-   Constructs a QSystemAlignedTimerPrivate object with the given \a parent.
-  */
-QSystemAlignedTimerPrivate::QSystemAlignedTimerPrivate(QObject *parent)
- : QObject(parent), id(0), isTimerRunning(0), single(0)
+    whereCombo = new QComboBox;
+    whereCombo->addItem(tr("Nearby (<10km)"), 10000);
+    whereCombo->addItem(tr("Within 30 mins drive of me (<25km)"), 25000);
+    whereCombo->addItem(tr("Within 100km of me"), 100000);
+    whereCombo->addItem(tr("Anywhere in the world"), -1);
+    whereCombo->setCurrentIndex(1);
+    formLayout->addRow(tr("Where"), whereCombo);
+
+    QDialogButtonBox *bb = new QDialogButtonBox(QDialogButtonBox::Ok |
+                                                QDialogButtonBox::Cancel,
+                                                Qt::Horizontal);
+    connect(bb, SIGNAL(accepted()), this, SLOT(accept()));
+    connect(bb, SIGNAL(rejected()), this, SLOT(reject()));
+
+    vbox->addLayout(formLayout);
+    vbox->addWidget(bb);
+    setLayout(vbox);
+    setWindowTitle("Search for location");
+}
+
+qreal SearchDialog::radius() const
+{
+    const int i = whereCombo->currentIndex();
+    return whereCombo->itemData(i).toReal();
+}
+
+SearchDialog::~SearchDialog()
 {
 }
 
-/*!
-  \internal
-  */
-void QSystemAlignedTimerPrivate::timerEvent(QTimerEvent *)
+QString SearchDialog::searchTerms() const
 {
-
+    return searchTermEdit->text();
 }
-
-#include "moc_qsystemalignedtimerprivate_p.cpp"
-
-QTM_END_NAMESPACE
