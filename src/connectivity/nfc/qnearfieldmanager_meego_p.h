@@ -91,7 +91,7 @@ public:
     QNearFieldManagerPrivateImpl();
     ~QNearFieldManagerPrivateImpl();
 
-    void startTargetDetection(const QList<QNearFieldTarget::Type> &targetTypes);
+    bool startTargetDetection(const QList<QNearFieldTarget::Type> &targetTypes);
     void stopTargetDetection();
 
     QNearFieldTarget *targetForPath(const QString &path);
