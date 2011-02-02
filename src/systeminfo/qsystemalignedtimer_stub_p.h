@@ -39,29 +39,51 @@
 **
 ****************************************************************************/
 
+#ifndef QSYSTEMALIGNEDTIMER_STUB_P_H
+#define QSYSTEMALIGNEDTIMER_STUB_P_H
 
 #include "qsystemalignedtimer.h"
-#include "qsystemalignedtimerprivate_p.h"
 
+#include <QObject>
+
+QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
 
-
-/*!
-   Constructs a QSystemAlignedTimerPrivate object with the given \a parent.
-  */
-QSystemAlignedTimerPrivate::QSystemAlignedTimerPrivate(QObject *parent)
- : QObject(parent), id(0), isTimerRunning(0), single(0)
+class QSystemAlignedTimerPrivate : public QObject
 {
-}
+    Q_OBJECT
 
-/*!
-  \internal
-  */
-void QSystemAlignedTimerPrivate::timerEvent(QTimerEvent *)
-{
+public:
+    explicit QSystemAlignedTimerPrivate(QObject *parent = 0);
+    ~QSystemAlignedTimerPrivate();
 
-}
+public:
+    void wokeUp();
 
-#include "moc_qsystemalignedtimerprivate_p.cpp"
+    int minimumInterval() const;
+    void setMinimumInterval(int seconds);
+
+    int maximumInterval() const;
+    void setMaximumInterval(int seconds);
+
+    bool isSingleShot() const;
+    void setSingleShot(bool singleShot);
+
+    static void singleShot(int minimumTime, int maximumTime, QObject *receiver, const char *member);
+    QSystemAlignedTimer::AlignedTimerError lastError() const;
+
+Q_SIGNALS:
+    void timeout();
+    void error(QSystemAlignedTimer::AlignedTimerError error);
+
+public Q_SLOTS:
+    void start(int minimumTime, int maximumTime);
+    void start();
+    void stop();
+};
 
 QTM_END_NAMESPACE
+
+QT_END_HEADER
+
+#endif // QSYSTEMALIGNEDTIMER_STUB_P_H
