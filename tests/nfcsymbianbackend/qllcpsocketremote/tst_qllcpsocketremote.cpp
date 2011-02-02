@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -38,6 +38,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
 #include <QtCore/QString>
 #include <QtTest/QtTest>
 #include <QtCore/QCoreApplication>
@@ -62,8 +63,8 @@ public:
 
 private Q_SLOTS:
 
-    // ALERT£º Handshake required, do NOT¡¡change the sequence of handshaking testcases.
-    void testCase0();  // Intial handshake - work with  tst_qllcpsocketlocal testCase0
+    // ALERT: Handshake required, do NOT change the sequence of handshaking testcases.
+    void testCase0();   // Initial handshake - work with  tst_qllcpsocketlocal testCase0
     void testCase1();   // handshake 1,2  - work with  tst_qllcpsocketlocal testCase1
     void testCase2();   // handshake 3   - work with  tst_qllcpsocketlocal testCase2
 
