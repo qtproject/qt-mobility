@@ -255,7 +255,6 @@ bool QSystemInfo::hasFeatureSupported(QSystemInfo::Feature feature)
 }
 
 
-
 #include "moc_qsystemgeneralinfo.cpp"
 
 QTM_END_NAMESPACE

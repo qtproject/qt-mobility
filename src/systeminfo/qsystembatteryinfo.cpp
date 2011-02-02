@@ -52,7 +52,6 @@ Q_GLOBAL_STATIC(QSystemBatteryInfoPrivate, batteryInfoPrivate)
 QSystemBatteryInfoPrivate *getSystemBatteryInfoPrivate() { return batteryInfoPrivate(); }
 #endif
 
-
 /*!
        \class QSystemBatteryInfo
        \ingroup systeminfo

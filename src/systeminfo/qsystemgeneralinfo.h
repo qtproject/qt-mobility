@@ -96,7 +96,7 @@ public:
         VideoOutFeature,
         HapticsFeature,
         FmTransmitterFeature
-    };
+   };
 
     bool hasFeatureSupported(QSystemInfo::Feature feature);
 

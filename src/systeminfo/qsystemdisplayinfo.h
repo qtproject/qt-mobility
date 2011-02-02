@@ -86,6 +86,7 @@ public:
     int physicalWidth(int screen);//1.2
 
     QSystemDisplayInfo::BacklightState backlightStatus(int screen); //1.2
+
 };
 
 
