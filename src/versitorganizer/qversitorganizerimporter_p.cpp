@@ -606,9 +606,9 @@ void QVersitOrganizerImporterPrivate::parseRecurFragment(const QString& key, con
     } else if (key == QLatin1String("BYMONTH")) {
         QSet<QOrganizerRecurrenceRule::Month> months;
         QStringList monthParts = value.split(QLatin1Char(','));
-        foreach (const QString& monthParts, monthParts) {
+        foreach (const QString& monthPart, monthParts) {
             bool ok;
-            int month = monthParts.toInt(&ok);
+            int month = monthPart.toInt(&ok);
             if (ok && month >= 1 && month <= 12) {
                 months << (QOrganizerRecurrenceRule::Month)month;
             }
