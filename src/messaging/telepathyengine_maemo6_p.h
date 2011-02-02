@@ -118,7 +118,7 @@ class SendRequest : public QObject
 {
     Q_OBJECT
 public:
-    SendRequest(const QMessage &message, QMessageService *parent);
+    SendRequest(const QMessage &message, QMessageService *service);
     ~SendRequest();
 
     QStringList to() const;
@@ -128,12 +128,14 @@ public:
 
 public slots:
     void finished(Tp::PendingOperation *operation, bool processLater = false);
+    void onServiceDestroyed(QObject*);
 
 private slots:
     friend class QTimer;
     void down();
 
 private:
+    QMessageService *_service;
     QMessage _message;
     int _pendingRequestCount;
     int _failCount;

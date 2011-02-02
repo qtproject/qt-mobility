@@ -357,12 +357,16 @@ QMessageManager::Error TelepathyEngine ::error()
 
 #define TELEPATHY_ENGINE_STORE_MESSAGE
 
-SendRequest::SendRequest(const QMessage &message, QMessageService *parent)
-    : QObject(parent)
+SendRequest::SendRequest(const QMessage &message, QMessageService *service)
+    : /*QObject(parent)
+    ,*/
+      _service(service)
     , _message(message)
     , _pendingRequestCount(message.to().count())
     , _failCount(0)
 {
+    if (_service)
+        connect(_service, SIGNAL(destroyed(QObject*)), SLOT(onServiceDestroyed(QObject*)));
 #ifdef TELEPATHY_ENGINE_STORE_MESSAGE
     QMessagePrivate::setStandardFolder(_message, QMessage::DraftsFolder);
     if (!QMessageManager().addMessage(&_message)) {
@@ -415,23 +419,30 @@ void SendRequest::finished(Tp::PendingOperation *operation, bool processLater)
     }
 }
 
+void SendRequest::onServiceDestroyed(QObject*)
+{
+    qDebug() << __PRETTY_FUNCTION__ ;
+    _service = 0;
+}
+
 void SendRequest::down()
 {
     if (--_pendingRequestCount == 0) {
-	QMessageService *service = qobject_cast<QMessageService *>(parent());
-	if (service) {
-	    QMessageServicePrivate *privateService = QMessageServicePrivate::implementation(*service);
-	    bool success = (_failCount == 0);
+        bool success = (_failCount == 0);
 #ifdef TELEPATHY_ENGINE_STORE_MESSAGE
-	    if (success) {
-		QMessagePrivate::setStandardFolder(_message, QMessage::SentFolder);
-		if (!_message.id().isValid() || !QMessageManager().updateMessage(&_message)) {
-		    qWarning() << "SendRequest::down() : cannot update message";
-		}
-	    }
+        if (success) {
+            QMessagePrivate::setStandardFolder(_message, QMessage::SentFolder);
+            if (!_message.id().isValid() || !QMessageManager().updateMessage(&_message)) {
+                qWarning() << "SendRequest::down() : cannot update message";
+            }
+        }
 #endif
+        //QMessageService *service = qobject_cast<QMessageService *>(parent());
+        if (_service) {
+            QMessageServicePrivate *privateService = QMessageServicePrivate::implementation(*_service);
 	    privateService->setFinished(success);
 	}
+
 	deleteLater();
     }
 }
