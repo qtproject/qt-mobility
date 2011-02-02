@@ -83,19 +83,23 @@ public:
     ~GeoMap();
 
 private:
-    MapsWidget *m_mapsWidget;
+    MapsWidget *mapsWidget;
 };
 
 GeoMap::GeoMap(QGeoMappingManager *manager, MapsWidget *mapsWidget) :
-    QGraphicsGeoMap(manager), m_mapsWidget(mapsWidget)
+    QGraphicsGeoMap(manager), mapsWidget(mapsWidget)
 {
 }
     \endcode
 
     And next we define a QWidget subclass, MapsWidget, which handles the creation of
-    QGraphicsView and QGraphicsScene to put the GeoMap into:
+    QGraphicsView and QGraphicsScene to put the GeoMap into. We make use of the Pimpl
+    idiom on this class, since (as we will see) it will grow later to have a large
+    complement of private data members, and some of these have naming conflicts with
+    public methods.
 
     \code
+class MapsWidgetPrivate;
 class MapsWidget : public QWidget
 {
     Q_OBJECT
@@ -108,29 +112,35 @@ public slots:
     void initialize(QGeoMappingManager *manager);
 
 private:
-    GeoMap *geoMap;
-    QGraphicsView *graphicsView;
+    MapsWidgetPrivate *d;
 };
     \endcode
 
     We perform the creation of the QGraphicsScene and GeoMap in the initialize() method:
 
     \code
+class MapsWidgetPrivate
+{
+public:
+    GeoMap *map;
+    QGraphicsView *view;
+};
+
 void MapsWidget::initialize(QGeoMappingManager *manager)
 {
-    geoMap = new GeoMap(manager, this);
+    d->map = new GeoMap(manager, this);
 
     QGraphicsScene *sc = new QGraphicsScene;
-    sc->addItem(geoMap);
+    sc->addItem(d->map);
 
-    geoMap->resize(300, 480);
+    d->map->resize(300, 480);
 
-    graphicsView = new QGraphicsView(sc, this);
-    graphicsView->setVisible(true);
-    graphicsView->setInteractive(true);
+    d->view = new QGraphicsView(sc, this);
+    d->view->setVisible(true);
+    d->view->setInteractive(true);
 
-    geoMap->setCenter(QGeoCoordinate(-27.5796, 153.1));
-    geoMap->setZoomLevel(15);
+    d->map->setCenter(QGeoCoordinate(-27.5796, 153.1));
+    d->map->setZoomLevel(15);
 }
     \endcode
 
@@ -251,7 +261,7 @@ void GeoMap::wheelEvent(QGraphicsSceneWheelEvent *event)
     the functionality necessary to achieve this, and we'll use a subclass of it
     in similar vein to our GeoMap, above.
 
-    For our application, we need to deal with 6 different kinds of icons:
+    For our application, we want to deal with 6 different kinds of icons:
     \list
     \o A "my location" icon
     \o "Search" icons for search results
@@ -260,8 +270,12 @@ void GeoMap::wheelEvent(QGraphicsSceneWheelEvent *event)
     \o End points for directions
     \o "Path" markers for individual steps in the direction route
     \endlist
+    
+    Once again we make use of the Pimpl idiom to separate the private data
+    members from the interface:
 
     \code
+class MarkerPrivate;
 class Marker : public QGeoMapPixmapObject
 {
     Q_OBJECT
@@ -281,7 +295,7 @@ public:
     void setMarkerType(MarkerType type);
 
 private:
-    MarkerType m_type;
+    MarkerPrivate *d;
 
 };
     \endcode
@@ -291,6 +305,12 @@ private:
     statement to map MarkerTypes to QPixmaps.
 
     \code
+class MarkerPrivate
+{
+public:
+    Marker::MarkerType type;
+};
+
 Marker::Marker(MarkerType type) :
     QGeoMapPixmapObject()
 {
@@ -303,9 +323,9 @@ void Marker::setMarkerType(MarkerType type)
     QPoint offset;
     int scale;
 
-    m_type = type;
+    d->type = type;
 
-    switch (m_type) {
+    switch (d->type) {
     case MyLocationMarker:
         filename = ":/icons/mylocation.png";
         break;
@@ -326,7 +346,7 @@ void Marker::setMarkerType(MarkerType type)
         break;
     }
 
-    if (m_type == MyLocationMarker) {
+    if (d->type == MyLocationMarker) {
         offset = QPoint(-13,-13);
         scale = 25;
     } else {
@@ -364,6 +384,8 @@ geoMap->addMapObject(me);
 
     Next, we'll add a basic GUI around the map widget, and the ability
     to search for locations like addresses.
+    
+    Continue to \l{tutorials/mapsdemo/part2}{Part 2 - Searching for locations}
 */
 
 /*!
@@ -386,6 +408,7 @@ geoMap->addMapObject(me);
     To do this, we introduce a new class, MarkerManager:
 
     \code
+class MarkerManagerPrivate;
 class MarkerManager : public QObject
 {
     Q_OBJECT
@@ -404,13 +427,7 @@ signals:
     void searchFinished();
 
 private:
-    Marker *m_myLocation;
-    QList<Marker*> searchMarkers;
-
-    QGraphicsGeoMap *m_map;
-    QGeoSearchManager *m_searchManager;
-    
-    QSet<QGeoSearchReply*> forwardReplies;
+    MarkerManagerPrivate *d;
 
 private slots:
     void replyFinished(QGeoSearchReply *reply);
@@ -421,30 +438,45 @@ private slots:
     result markers. Implementing the My Location portion is nothing new:
 
     \code
+class MarkerManagerPrivate
+{
+public:
+    Marker *myLocation;
+    QList<Marker*> searchMarkers;
+
+    QGraphicsGeoMap *map;
+    QGeoSearchManager *searchManager;
+
+    QSet<QGeoSearchReply*> forwardReplies;
+};
+
 MarkerManager::MarkerManager(QGeoSearchManager *searchManager, QObject *parent) :
     QObject(parent),
-    m_searchManager(searchManager)
+    d(new MarkerManagerPrivate)
 {
-    m_myLocation = new Marker(Marker::MyLocationMarker);
+    d->myLocation = new Marker(Marker::MyLocationMarker);
+    d->searchManager = searchManager;
 }
 
 MarkerManager::~MarkerManager()
 {
-    m_map->removeMapObject(m_myLocation);
-    delete m_myLocation;
+    if (d->map)
+        d->map->removeMapObject(m_myLocation);
+    delete d->myLocation;
     ...
 }
 
 void MarkerManager::setMap(QGraphicsGeoMap *map)
 {
     ...
-    map->addMapObject(m_myLocation);
+    d->map = map;
+    d->map->addMapObject(d->myLocation);
     ...
 }
 
 void MarkerManager::setMyLocation(QGeoCoordinate coord)
 {
-    m_myLocation->setCoordinate(coord);
+    d->myLocation->setCoordinate(coord);
 }
     \endcode
 
@@ -463,15 +495,15 @@ MarkerManager::MarkerManager(QGeoSearchManager *searchManager, QObject *parent) 
     ...
 {
     ...
-    connect(m_searchManager, SIGNAL(finished(QGeoSearchReply*)),
+    connect(d->searchManager, SIGNAL(finished(QGeoSearchReply*)),
             this, SLOT(replyFinished(QGeoSearchReply*)));
 }
 
 void MarkerManager::search(QString query)
 {
-    QGeoSearchReply *reply = m_searchManager->search(query);
+    QGeoSearchReply *reply = d->searchManager->search(query);
     
-    forwardReplies.insert(reply);
+    d->forwardReplies.insert(reply);
     if (reply->isFinished()) {
         replyFinished(reply);
     } else {
@@ -488,24 +520,24 @@ void MarkerManager::search(QString query)
     \code
 void MarkerManager::replyFinished(QGeoSearchReply *reply)
 {
-    if (!forwardReplies.contains(reply))
+    if (!d->forwardReplies.contains(reply))
         return;
 
     // generate the markers and add them to the map
     foreach (QGeoPlace place, reply->places()) {
         Marker *m = new Marker(Marker::SearchMarker);
         m->setCoordinate(place.coordinate());
-        searchMarkers.append(m);
+        d->searchMarkers.append(m);
 
-        if (m_map) {
-            m_map->addMapObject(m);
+        if (d->map) {
+            d->map->addMapObject(m);
             // also zoom out until marker is visible
-            while (!m_map->viewport().contains(place.coordinate()))
-                m_map->setZoomLevel(m_map->zoomLevel()-1);
+            while (!d->map->viewport().contains(place.coordinate()))
+                d->map->setZoomLevel(d->map->zoomLevel()-1);
         }
     }
 
-    forwardReplies.remove(reply);
+    d->forwardReplies.remove(reply);
     reply->deleteLater();
 
     emit searchFinished();
@@ -524,8 +556,12 @@ public:
     MarkerManager *markerManager() const;
 
     ...
-private:
-    MarkerManager *m_markerManager;
+};
+
+class MapsWidgetPrivate
+{
+public:
+    MarkerManager *markerManager;
     ...
 };
     \endcode
@@ -535,17 +571,17 @@ private:
     \code
 void MapsWidget::initialize(QGeoMappingManager *manager)
 {
-    geoMap = new GeoMap(manager, this);
-    if (m_markerManager)
-        m_markerManager->setMap(geoMap);
+    d->map = new GeoMap(manager, this);
+    if (d->markerManager)
+        d->markerManager->setMap(d->map);
     ...
 }
 
 void MapsWidget::setMarkerManager(MarkerManager *markerManager)
 {
-    m_markerManager = markerManager;
-    if (geoMap)
-        markerManager->setMap(geoMap);
+    d->markerManager = markerManager;
+    if (d->map)
+        d->markerManager->setMap(d->map);
 }
     \endcode
 
@@ -657,20 +693,24 @@ class Marker : public QGeoMapPixmapObject
 {
     ....
 public:
-    inline QString name() const { return m_name; }
-    inline void setName(QString name) { m_name = name; }
+    QString name() const;
+    void setName(QString name);
 
-    inline QGeoAddress address() const { return m_address; }
-    inline void setAddress(QGeoAddress addr) { m_address = addr; }
+    QGeoAddress address() const;
+    void setAddress(QGeoAddress addr);
 
-    inline bool moveable() const { return m_moveable; }
-    inline void setMoveable(bool moveable) { m_moveable = moveable; }
-
-private:
+    bool moveable() const;
+    void setMoveable(bool moveable);
     ...
-    QString m_name;
-    bool m_moveable;
-    QGeoAddress m_address;
+};
+
+class MarkerPrivate
+{
+public:
+    ...
+    QString name;
+    bool moveable;
+    QGeoAddress address;
 };
     \endcode
 
@@ -776,7 +816,7 @@ signals:
 void MapsWidget::initialize(QGeoMappingManager *manager)
 {
     ...
-    connect(geoMap, SIGNAL(clicked(Marker*)),
+    connect(d->map, SIGNAL(clicked(Marker*)),
             this, SIGNAL(markerClicked(Marker*)));
 }
     \endcode
@@ -790,7 +830,7 @@ void MapsWidget::initialize(QGeoMappingManager *manager)
     MainWindow:
 
     \code
-void MainWindow::on_markerClicked(Marker *marker)
+void MainWindow::showMarkerDialog(Marker *marker)
 {
     MarkerDialog md(marker);
     if (md.exec() == QDialog::Accepted) {
@@ -822,12 +862,12 @@ void MarkerManager::search(QString query, qreal radius)
     QGeoSearchReply *reply;
     if (radius > 0) {
         QGeoBoundingCircle boundingCircle(m_myLocation->coordinate(), radius);
-        reply = m_searchManager->search(query,
-                                        QGeoSearchManager::SearchAll,
-                                        -1, 0,
-                                        boundingCircle);
+        reply = d->searchManager->search(query,
+                                         QGeoSearchManager::SearchAll,
+                                         -1, 0,
+                                         boundingCircle);
     } else {
-        reply = m_searchManager->search(query);
+        reply = d->searchManager->search(query);
     }
 
     if (reply->isFinished()) {
@@ -871,15 +911,16 @@ formLayout->addRow(tr("Where"), whereCombo);
     \code
 MarkerManager::MarkerManager(QGeoSearchManager *searchManager, QObject *parent) :
     QObject(parent),
-    m_searchManager(searchManager)
+    d(new MarkerManagerPrivate)
 {
-    m_myLocation = new Marker(Marker::MyLocationMarker);
-    m_myLocation->setName("Me");
+    d->searchManager = searchManager;
+    d->myLocation = new Marker(Marker::MyLocationMarker);
+    d->myLocation->setName("Me");
 
     ...
     
     // hook the coordinateChanged() signal for reverse geocoding
-    connect(m_myLocation, SIGNAL(coordinateChanged(QGeoCoordinate)),
+    connect(d->myLocation, SIGNAL(coordinateChanged(QGeoCoordinate)),
             this, SLOT(myLocationChanged(QGeoCoordinate)));
 }
     \endcode
@@ -891,21 +932,21 @@ MarkerManager::MarkerManager(QGeoSearchManager *searchManager, QObject *parent) 
     \code
 void MarkerManager::myLocationChanged(QGeoCoordinate location)
 {
-    QGeoSearchReply *reply = m_searchManager->reverseGeocode(location);
+    QGeoSearchReply *reply = d->searchManager->reverseGeocode(location);
     
-    reverseReplies.insert(reply);
+    d->reverseReplies.insert(reply);
     if (reply->isFinished())
         reverseReplyFinished(reply);
 }
 
 void MarkerManager::reverseReplyFinished(QGeoSearchReply *reply)
 {
-    if (!reverseReplies.contains(reply))
+    if (!d->reverseReplies.contains(reply))
         return;
 
     if (reply->places().size() > 0) {
         QGeoPlace place = reply->places().first();
-        m_myLocation->setAddress(place.address());
+        d->myLocation->setAddress(place.address());
     }
 
     reply->deleteLater();
@@ -919,10 +960,9 @@ void MarkerManager::reverseReplyFinished(QGeoSearchReply *reply)
     on two boolean flags:
 
     \code
-class MarkerManager : public QObject
+class MarkerManagerPrivate
 {
-    ...
-private:
+public:
     ...
     // a reverse geocode request is currently running
     bool revGeocodeRunning;
@@ -933,35 +973,35 @@ private:
 
 void MarkerManager::myLocationChanged(QGeoCoordinate location)
 {
-    if (revGeocodeRunning) {
-        myLocHasMoved = true;
+    if (d->revGeocodeRunning) {
+        d->myLocHasMoved = true;
     } else {
-        QGeoSearchReply *reply = m_searchManager->reverseGeocode(location);
-        reverseReplies.insert(reply);
+        QGeoSearchReply *reply = d->searchManager->reverseGeocode(location);
+        d->reverseReplies.insert(reply);
 	
-        myLocHasMoved = false;
+        d->myLocHasMoved = false;
 	
         if (reply->isFinished()) {
-            revGeocodeRunning = false;
+            d->revGeocodeRunning = false;
             reverseReplyFinished(reply);
         } else {
-            revGeocodeRunning = true;
+            d->revGeocodeRunning = true;
         }
     }
 }
 
 void MarkerManager::reverseReplyFinished(QGeoSearchReply *reply)
 {
-    if (!reverseReplies.contains(reply))
+    if (!d->reverseReplies.contains(reply))
         return;
 
     // set address, as before
 
-    revGeocodeRunning = false;
-    if (myLocHasMoved)
-        myLocationChanged(m_myLocation->coordinate());
+    d->revGeocodeRunning = false;
+    if (d->myLocHasMoved)
+        myLocationChanged(d->myLocation->coordinate());
 
-    reverseReplies.remove(reply);
+    d->reverseReplies.remove(reply);
     reply->deleteLater();
 }
     \endcode
@@ -982,6 +1022,8 @@ void MarkerManager::reverseReplyFinished(QGeoSearchReply *reply)
     destination. Finally, in part 5 we will add kinetic scrolling and cover a
     number of points about means for achieving a better user experience on mobile
     platforms.
+    
+    Continue to \l{tutorials/mapsdemo/part3}{Part 3 - Listening to satellites}
 */
 
 /*!
@@ -1014,19 +1056,19 @@ private:
 
 void MapsWidget::resizeEvent(QResizeEvent *event)
 {
-    if (graphicsView && geoMap) {
-        graphicsView->resize(size());
-        geoMap->resize(size());
-        graphicsView->centerOn(geoMap);
+    if (d->view && d->map) {
+        d->view->resize(size());
+        d->map->resize(size());
+        d->view->centerOn(d->map);
     }
 }
 
 void MapsWidget::showEvent(QShowEvent *event)
 {
-    if (graphicsView && geoMap) {
-        graphicsView->resize(size());
-        geoMap->resize(size());
-        graphicsView->centerOn(geoMap);
+    if (d->view && d->map) {
+        d->view->resize(size());
+        d->map->resize(size());
+        d->view->centerOn(d->map);
     }
 }
     \endcode
@@ -1034,6 +1076,7 @@ void MapsWidget::showEvent(QShowEvent *event)
     And now we add our new StatusBarItem class:
     
     \code
+class StatusBarItemPrivate;
 class StatusBarItem : public QObject, public QGraphicsRectItem
 {
     Q_OBJECT
@@ -1043,7 +1086,7 @@ public:
     StatusBarItem();
     ~StatusBarItem();
 
-    inline int offset() const { return m_offset; }
+    int offset() const;
     void setRect(qreal x, qreal y, qreal w, qreal h);
 
 public slots:
@@ -1056,8 +1099,7 @@ public slots:
     void setOffset(int offset);
 
 private:
-    int m_offset;
-    QGraphicsSimpleTextItem *textItem;
+    StatusBarItemPrivate *d;
 };
     \endcode
     
@@ -1072,14 +1114,15 @@ private:
     the \a y property of the GraphicsItem instead we would have difficulty
     handling this case.
     
-    Now add a pointer to one of these in MapsWidget:
+    Now add a pointer to one of these in MapsWidgetPrivate (and matching
+    accessor methods):
     
     \code
-class MapsWidget : public QWidget
+class MapsWidgetPrivate
 {
+public:
     ...
-private:
-    StatusBarItem *m_statusBar;
+    StatusBarItem *statusBarItem;
 };
     \endcode
     
@@ -1087,14 +1130,23 @@ private:
     exciting, but sets the defaults for everything:
     
     \code
-StatusBarItem::StatusBarItem() :
-    m_offset(0)
+class StatusBarItemPrivate
 {
+public:
+    int offset;
+    QGraphicsSimpleTextItem *textItem;
+};
+
+StatusBarItem::StatusBarItem() :
+    d(new StatusBarItemPrivate)
+{
+    d->offset = 0;
+
     setPen(QPen(QBrush(), 0));
     setBrush(QBrush(QColor(0,0,0,120)));
 
-    textItem = new QGraphicsSimpleTextItem(this);
-    textItem->setBrush(QBrush(Qt::white));
+    d->textItem = new QGraphicsSimpleTextItem(this);
+    d->textItem->setBrush(QBrush(Qt::white));
 
     setText("");
 }
@@ -1105,10 +1157,10 @@ StatusBarItem::StatusBarItem() :
     \code
 void StatusBarItem::setText(QString text)
 {
-    textItem->setText(text);
-    QRectF rect = textItem->boundingRect();
+    d->textItem->setText(text);
+    QRectF rect = d->textItem->boundingRect();
     QPointF delta = this->rect().center() - rect.center();
-    textItem->setPos(delta.x(), delta.y());
+    d->textItem->setPos(delta.x(), delta.y());
 }
     \endcode
     
@@ -1121,8 +1173,8 @@ void StatusBarItem::setText(QString text)
     \code
 void StatusBarItem::setRect(qreal x, qreal y, qreal w, qreal h)
 {
-    QGraphicsRectItem::setRect(x, y + m_offset, w, h);
-    setText(textItem->text());
+    QGraphicsRectItem::setRect(x, y + d->offset, w, h);
+    setText(d->textItem->text());
 }
     \endcode
     
@@ -1137,8 +1189,8 @@ void StatusBarItem::setRect(qreal x, qreal y, qreal w, qreal h)
     \code
 void StatusBarItem::setOffset(int offset)
 {
-    this->setY(this->y() - m_offset + offset);
-    m_offset = offset;
+    this->setY(this->y() - d->offset + offset);
+    d->offset = offset;
 }
     \endcode
    
@@ -1157,7 +1209,7 @@ void StatusBarItem::show()
 void StatusBarItem::hide()
 {
     QPropertyAnimation *anim = new QPropertyAnimation(this, "offset");
-    anim->setStartValue(m_offset);
+    anim->setStartValue(d->offset);
     anim->setEndValue(0);
     anim->setDuration(500);
     anim->start(QAbstractAnimation::DeleteWhenStopped);
@@ -1189,15 +1241,15 @@ void MapsWidget::initialize(QGeoMappingManager *manager)
 {
     QGraphicsScene *sc;
     ...
-    m_statusBar = new StatusBarItem;
-    sc->addItem(m_statusBar);
+    d->statusBarItem = new StatusBarItem;
+    sc->addItem(d->statusBarItem);
 }
 
 void MapsWidget::resizeEvent(QResizeEvent *event)
 {
-    if (graphicsView && geoMap) {
+    if (d->view && d->map) {
         ...
-        m_statusBar->setRect(0, height(), width(), 20);
+        d->statusBarItem->setRect(0, height(), width(), 20);
     }
 }
 
@@ -1412,13 +1464,13 @@ public:
     \code
 void MapsWidget::animatedPanTo(QGeoCoordinate center)
 {
-    if (!geoMap)
+    if (!d->map)
         return;
 
-    QPropertyAnimation *latAnim = new QPropertyAnimation(geoMap, "centerLatitude");
+    QPropertyAnimation *latAnim = new QPropertyAnimation(d->map, "centerLatitude");
     latAnim->setEndValue(center.latitude());
     latAnim->setDuration(200);
-    QPropertyAnimation *lonAnim = new QPropertyAnimation(geoMap, "centerLongitude");
+    QPropertyAnimation *lonAnim = new QPropertyAnimation(d->map, "centerLongitude");
     lonAnim->setEndValue(center.longitude());
     lonAnim->setDuration(200);
 
@@ -1441,7 +1493,7 @@ void MainWindow::goToMyLocation()
 void MainWindow::updateMyPosition(QGeoPositionInfo info)
 {
     if (mapsWidget) {
-        mapsWidget->setMyLocation(info.coordinate(), false);
+        mapsWidget->setMyLocation(info.coordinate());
         if (tracking)
             mapsWidget->animatedPanTo(info.coordinate());
     }
@@ -1451,7 +1503,7 @@ void MainWindow::updateMyPosition(QGeoPositionInfo info)
     And now we have the simple location tracking functionality we set out to
     implement.
     
-    blah blah blah part4 navigation blah.
+    Continue to \l{tutorials/mapsdemo/part4}{Part 4 - Stopping for Directions}
 
 */
 
@@ -1739,13 +1791,91 @@ void MainWindow::showNavigateDialog()
     In the final part of this tutorial, we will optimise the maps
     demo so far for mobile platforms in order to deploy it to a
     phone.
+    
+    Continue to \l{tutorials/mapsdemo/part5}{Part 5 - Tuning for mobile and kinetic panning}
 */
 
 /*!
     \page tutorials-mapsdemo-part5.html
     \example tutorials/mapsdemo/part5
-    \title Part 5 - Kinetic panning and tuning for mobile
+    \title Part 5 - Tuning for mobile and kinetic panning
 
+    So far in this tutorial we've been mainly aiming at desktop use
+    of the application. If you attempted to build it as is for
+    a mobile platform you would quite quickly notice a number of
+    issues that prevent it from being really usable, and we will
+    now address these one by one.
 
+    \section2 Network connection management
+    
+    Most mobile platforms have multiple network connections, which
+    are not connected all the time, and change regularly in
+    operation. Qt provides the Bearer API for managing these
+    and the events that occur with them.
+    
+    At present when our application starts it simply assumes that
+    a network link is available and that a mapping plugin will
+    load. This could quite easily not be the case, so we will use
+    the Bearer API to verify the state of the network and ensure
+    that it is running before we call \a initialize().
+    
+    First up, we need a QNetworkConfigurationManager in order to 
+    get at the default configuration of our environment:
+    
+    \code
+class MainWindow : public QMainWindow
+{
+    ...
+private:
+    QNetworkConfigurationManager *netConfigManager;
+};
+    \endcode
+    
+    We create it in the constructor of \a MainWindow. As mentioned
+    in the documentation for QNetworkConfigurationManager, we should
+    make a call to \a updateConfigurations() before actually making
+    use of the instance. So we'll also need a slot to be called
+    when this completes (we name this \a openNetworkSession()).
+    
+    \code
+MainWindow::MainWindow() :
+    ...
+{
+    ...
+    netConfigManager = new QNetworkConfigurationManager;
+    connect(netConfigManager, SIGNAL(updateCompleted()),
+            this, SLOT(openNetworkSession()));
+    netConfigManager->updateConfigurations();
+}
+    \endcode
+    
+    And in the slot itself we use the \a defaultConfiguration() method
+    as the parameter to construct a new QNetworkSession to represent
+    our default connection to the network.
+    
+    We first check to see if this session is open, and if so, call
+    initialize() right away. Otherwise, we hook up an appropriate
+    signal and wait for the network to be available.
+    
+    \code
+void MainWindow::openNetworkSession()
+{
+    session = new QNetworkSession(netConfigManager->defaultConfiguration());
+    if (session->isOpen()) {
+        initialize();
+    } else {
+        connect(session, SIGNAL(opened()),
+                this, SLOT(initialize()));
+        session->open();
+    }
+}
+    \endcode
+    
+    So now our \a initialize() method will be called once a network
+    connection is available.
+    
+    \section2 Zoom buttons and panning keys
+    
+    
 
 */

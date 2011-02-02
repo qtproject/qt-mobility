@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,62 +39,34 @@
 **
 ****************************************************************************/
 
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#ifndef QGEOPOSITIONINFOSOURCEFACTORY_H
+#define QGEOPOSITIONINFOSOURCEFACTORY_H
 
-#include <QMainWindow>
-#include <qnetworksession.h>
-#include <qnetworkconfigmanager.h>
-
-#include "qgeoserviceprovider.h"
+#include "qmobilityglobal.h"
 #include "qgeopositioninfosource.h"
-#include "qgeoroutereply.h"
+#include "qgeosatelliteinfosource.h"
+#include <QList>
 
-#include "mapswidget.h"
-#include "marker.h"
-#include "searchdialog.h"
-#include "markerdialog.h"
-#include "navigatedialog.h"
-#include "navigator.h"
+QTM_BEGIN_NAMESPACE
 
-using namespace QtMobility;
-
-class MainWindow : public QMainWindow
+class Q_LOCATION_EXPORT QGeoPositionInfoSourceFactory
 {
-    Q_OBJECT
 public:
-    MainWindow();
-    ~MainWindow();
+    virtual ~QGeoPositionInfoSourceFactory();
 
-public slots:
-    void initialize();
+    virtual QString sourceName() const = 0;
+    virtual int sourceVersion() const = 0;
+    virtual int sourcePriority() const;
 
-private slots:
-    void showSearchDialog();
-    void showNavigateDialog();
-    void showMarkerDialog(Marker *marker);
-    void goToMyLocation();
-
-    void updateMyPosition(QGeoPositionInfo info);
-    void disableTracking();
-
-    void showErrorMessage(QGeoSearchReply::Error err, QString msg);
-    void showErrorMessage(QGeoRouteReply::Error err, QString msg);
-
-    void openNetworkSession();
-
-private:
-    QGeoServiceProvider *serviceProvider;
-    MapsWidget *mapsWidget;
-    MarkerManager *markerManager;
-    QGeoPositionInfoSource *positionSource;
-    Navigator *lastNavigator;
-
-    QNetworkSession *session;
-    QNetworkConfigurationManager *netConfigManager;
-
-    bool tracking;
-    bool firstUpdate;
+    virtual QGeoPositionInfoSource *positionInfoSource(QObject *parent) = 0;
+    virtual QGeoSatelliteInfoSource *satelliteInfoSource(QObject *parent) = 0;
 };
 
-#endif // MAINWINDOW_H
+QTM_END_NAMESPACE
+
+QT_BEGIN_NAMESPACE
+#define QT_POSITION_SOURCE_INTERFACE "com.nokia.qt.mobility.position.sourcefactory/1.0"
+Q_DECLARE_INTERFACE(QtMobility::QGeoPositionInfoSourceFactory, QT_POSITION_SOURCE_INTERFACE);
+QT_END_NAMESPACE
+
+#endif // QGEOPOSITIONINFOSOURCEFACTORY_H

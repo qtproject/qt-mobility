@@ -1705,4 +1705,3 @@ EXPORTS
 	_ZThn8_NK10QtMobility15QGraphicsGeoMap5shapeEv @ 1704 NONAME
 	_ZN10QtMobility16QGeoTiledMapData13replyFinishedEPNS_17QGeoTiledMapReplyE @ 1705 NONAME
 	_ZNK10QtMobility14QGeoCoordinate20atDistanceAndAzimuthEfff @ 1706 NONAME
-
