@@ -75,8 +75,24 @@ MainWindow::MainWindow() :
 
     setMenuBar(mbar);
 
-    initialize();
     setWindowTitle("Maps Demo");
+
+    netConfigManager = new QNetworkConfigurationManager;
+    connect(netConfigManager, SIGNAL(updateCompleted()),
+            this, SLOT(openNetworkSession()));
+    netConfigManager->updateConfigurations();
+}
+
+void MainWindow::openNetworkSession()
+{
+    session = new QNetworkSession(netConfigManager->defaultConfiguration());
+    if (session->isOpen()) {
+        initialize();
+    } else {
+        connect(session, SIGNAL(opened()),
+                this, SLOT(initialize()));
+        session->open();
+    }
 }
 
 MainWindow::~MainWindow()
