@@ -31,7 +31,7 @@
 
 
     \image sysinfo.png
-    
+
 
     The System Information example uses a tabbed dialog, with each tab
     representing a particular type of data: versions, network and so on.
@@ -49,21 +49,20 @@
 
     Device information, starting with the battery level
 
-    \snippet ../../examples/sysinfo/dialog.cpp  createdi
+    \snippet ../../examples/sysinfo/dialog.cpp  batterystatus1
+
     \dots
-    \snippet ../../examples/sysinfo/dialog.cpp  batteryLevel
+
+    \snippet ../../examples/sysinfo/dialog.cpp  batterystatus2
+
+    The battery status is an enum, \l {QSystemBatteryInfo::BatteryStatus}, that indicates
+    various battery levels and their significance, e.g., QSystemBatteryInfo::BatteryVeryLow.
 
     The manufacturer id and the product name
-    
+
     \snippet ../../examples/sysinfo/dialog.cpp  manuf-id
     \dots
     \snippet ../../examples/sysinfo/dialog.cpp  productName
-
-    And there are signals that can be used to update progress bars and other
-    indicators. An example is when the battery level changes, the batteryLevelChanged() signal is emitted
-
-    \snippet ../../examples/sysinfo/dialog.cpp  sig batteryLevelChanged
-
 
     Other information is stored as bitwise flags. The following code shows
     the input methods being determined using flags.

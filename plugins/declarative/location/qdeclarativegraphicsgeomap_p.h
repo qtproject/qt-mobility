@@ -49,6 +49,7 @@
 
 QTM_BEGIN_NAMESPACE
 
+class QGeoCoordinate;
 class QGeoMapObject;
 class QGeoMapData;
 class QGeoServiceProvider;
@@ -116,7 +117,7 @@ public:
     void setZoomLevel(qreal zoomLevel);
     qreal zoomLevel() const;
 
-    void setCenter(const QDeclarativeCoordinate *center);
+    void setCenter(QDeclarativeCoordinate *center);
     QDeclarativeCoordinate* center();
 
     void setMapType(MapType mapType);
@@ -133,6 +134,9 @@ public:
     Q_INVOKABLE QDeclarativeCoordinate* toCoordinate(QPointF screenPosition) const;
     Q_INVOKABLE QPointF toScreenPosition(QDeclarativeCoordinate* coordinate) const;
 
+    void setActiveMouseArea(QDeclarativeGeoMapMouseArea *area);
+    QDeclarativeGeoMapMouseArea* activeMouseArea() const;
+
 public Q_SLOTS:
     void pan(int dx, int dy);
 
@@ -142,7 +146,10 @@ protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
     void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event);
-    void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
+//    void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
+//    void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
+//    void hoverMoveEvent(QGraphicsSceneHoverEvent *event);
+//    void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
 
 Q_SIGNALS:
     void pluginChanged(QDeclarativeGeoServiceProvider *plugin);
@@ -169,6 +176,7 @@ private:
 
     QDeclarativeGeoMapObject* createItem(int modelIndex);
     QDeclarativeGeoMapMouseEvent* createMapMouseEvent(QGraphicsSceneMouseEvent *event);
+    QDeclarativeGeoMapMouseEvent* createMapMouseEvent(QGraphicsSceneHoverEvent *event);
 
     QDeclarativeGeoServiceProvider* plugin_;
     QGeoServiceProvider* serviceProvider_;
@@ -177,6 +185,7 @@ private:
 
     qreal zoomLevel_;
     QDeclarativeCoordinate* center_;
+    QGeoCoordinate *initialCoordinate;
     QDeclarativeGraphicsGeoMap::MapType mapType_;
     QDeclarativeGraphicsGeoMap::ConnectivityMode connectivityMode_;
     QSizeF size_;
@@ -186,6 +195,9 @@ private:
 
     bool componentCompleted_;
     QList<QDeclarativeGeoMapObjectView*> mapViews_;
+    QDeclarativeGeoMapMouseArea* activeMouseArea_;
+    QList<QDeclarativeGeoMapMouseArea*> mouseAreas_;
+
     Q_DISABLE_COPY(QDeclarativeGraphicsGeoMap)
 };
 

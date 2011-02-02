@@ -41,16 +41,16 @@ HEADERS += qdeclarativeposition_p.h \
            qdeclarativegeomapmousearea_p.h \
            qdeclarativegeoserviceprovider_p.h \
            qdeclarativegraphicsgeomap_p.h \
-           qdeclarativegeosearchmodel_p.h \
-           qdeclarativegeocodemodel_p.h \
-           qdeclarativereversegeocodemodel_p.h \
            qdeclarativegeoplace_p.h \
            qdeclarativegeoaddress_p.h \
-           qdeclarativegeoboundingbox_p.h \
-           qdeclarativegeoroutingmodel_p.h \
-           qdeclarativegeoroute_p.h \
-           qdeclarativegeoroutesegment_p.h \
-           qdeclarativegeomaneuver_p.h 
+           qdeclarativegeoboundingbox_p.h
+#           qdeclarativegeosearchmodel_p.h \
+#           qdeclarativegeocodemodel_p.h \
+#           qdeclarativereversegeocodemodel_p.h \
+#           qdeclarativegeoroutingmodel_p.h \
+#           qdeclarativegeoroute_p.h \
+#           qdeclarativegeoroutesegment_p.h \
+#           qdeclarativegeomaneuver_p.h
 
 SOURCES += qdeclarativeposition.cpp \
            location.cpp \
@@ -74,16 +74,16 @@ SOURCES += qdeclarativeposition.cpp \
            qdeclarativegeomapmousearea.cpp \
            qdeclarativegeoserviceprovider.cpp \
            qdeclarativegraphicsgeomap.cpp \
-           qdeclarativegeosearchmodel.cpp \
-           qdeclarativegeocodemodel.cpp \
-           qdeclarativereversegeocodemodel.cpp \
            qdeclarativegeoplace.cpp \
            qdeclarativegeoaddress.cpp \
-           qdeclarativegeoboundingbox.cpp \
-           qdeclarativegeoroutingmodel.cpp \
-           qdeclarativegeoroute.cpp \
-           qdeclarativegeoroutesegment.cpp \
-           qdeclarativegeomaneuver.cpp
+           qdeclarativegeoboundingbox.cpp
+#           qdeclarativegeosearchmodel.cpp \
+#           qdeclarativegeocodemodel.cpp \
+#           qdeclarativereversegeocodemodel.cpp \
+#           qdeclarativegeoroutingmodel.cpp \
+#           qdeclarativegeoroute.cpp \
+#           qdeclarativegeoroutesegment.cpp \
+#           qdeclarativegeomaneuver.cpp
 
 # Tell qmake to create such makefile that qmldir and target (i.e. declarative_location)
 # are both copied to qt/imports/QtMobility/location -directory,

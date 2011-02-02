@@ -41,19 +41,23 @@
 
 #include "qdeclarativegeomapobject_p.h"
 #include "qdeclarativegeomapmousearea_p.h"
-#include <qdeclarativelandmark_p.h>
+#include "qdeclarativelandmark_p.h"
+#include "qgeomapdata.h"
 
 #include <QDeclarativeParserStatus>
 #include <QAbstractItemModel>
 #include <QDeclarativeContext>
-#include <QGeoMapData>
+
+#include <QDebug>
 
 QTM_BEGIN_NAMESPACE
 
 QDeclarativeGeoMapObject::QDeclarativeGeoMapObject(QDeclarativeItem *parent)
     : QDeclarativeItem(parent),
       object_(0),
-      visible_(true) {}
+      visible_(true)
+{
+}
 
 QDeclarativeGeoMapObject::~QDeclarativeGeoMapObject() {}
 
@@ -65,21 +69,23 @@ void QDeclarativeGeoMapObject::componentComplete()
     for (int i = 0; i < children.size(); ++i) {
         QDeclarativeGeoMapMouseArea *mouseArea
                 = qobject_cast<QDeclarativeGeoMapMouseArea*>(children.at(i));
-        if (mouseArea)
+        if (mouseArea) {
+            mouseArea->setMap(map_);
             mouseAreas_.append(mouseArea);
+        }
     }
 }
 
-void QDeclarativeGeoMapObject::clickEvent(QDeclarativeGeoMapMouseEvent *event)
+void QDeclarativeGeoMapObject::setMap(QDeclarativeGraphicsGeoMap *map)
 {
-    if (event->accepted())
-        return;
+    map_ = map;
+    for (int i = 0; i < mouseAreas_.size(); ++i)
+        mouseAreas_[i]->setMap(map_);
+}
 
-    for (int i = 0; i < mouseAreas_.size(); ++i) {
-        mouseAreas_.at(i)->clickEvent(event);
-        if (event->accepted())
-            return;
-    }
+QDeclarativeGraphicsGeoMap* QDeclarativeGeoMapObject::map() const
+{
+    return map_;
 }
 
 void QDeclarativeGeoMapObject::doubleClickEvent(QDeclarativeGeoMapMouseEvent *event)
@@ -118,29 +124,23 @@ void QDeclarativeGeoMapObject::releaseEvent(QDeclarativeGeoMapMouseEvent *event)
     }
 }
 
-void QDeclarativeGeoMapObject::enterEvent()
-{
-    for (int i = 0; i < mouseAreas_.size(); ++i)
-        mouseAreas_.at(i)->enterEvent();
-}
+//void QDeclarativeGeoMapObject::enterEvent()
+//{
+//    for (int i = 0; i < mouseAreas_.size(); ++i)
+//        mouseAreas_.at(i)->enterEvent();
+//}
 
-void QDeclarativeGeoMapObject::exitEvent()
-{
-    for (int i = 0; i < mouseAreas_.size(); ++i)
-        mouseAreas_.at(i)->exitEvent();
-}
+//void QDeclarativeGeoMapObject::exitEvent()
+//{
+//    for (int i = 0; i < mouseAreas_.size(); ++i)
+//        mouseAreas_.at(i)->exitEvent();
+//}
 
-void QDeclarativeGeoMapObject::moveEvent(QDeclarativeGeoMapMouseEvent *event)
-{
-    if (event->accepted())
-        return;
-
-    for (int i = 0; i < mouseAreas_.size(); ++i) {
-        mouseAreas_.at(i)->moveEvent(event);
-        if (event->accepted())
-            return;
-    }
-}
+//void QDeclarativeGeoMapObject::moveEvent(QDeclarativeGeoMapMouseEvent *event)
+//{
+//    for (int i = 0; i < mouseAreas_.size(); ++i)
+//        mouseAreas_.at(i)->moveEvent(event);
+//}
 
 void QDeclarativeGeoMapObject::setMapObject(QGeoMapObject *object)
 {

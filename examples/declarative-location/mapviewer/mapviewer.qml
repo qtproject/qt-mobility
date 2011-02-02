@@ -60,7 +60,7 @@ Item {
                     longitude: 179
                 }
 
-        objects: [
+
             MapCircle {
                 center : Coordinate {
                     //latitude: 0
@@ -68,20 +68,40 @@ Item {
                                     latitude : -27
                                     longitude : 179
                                     }
-                radius : 1000000.0
-		color: "red"
+                color : "red"
+                radius : 1000.0
                 MapMouseArea {
-		    anchors.fill: parent
                     onEntered : { console.log('entered circle') }
                     onExited : { console.log('exited circle') }
                     onPositionChanged : { console.log('moved in circle') }
                     onClicked : { console.log('clicked in circle') }
-                    onDoubleClicked : { console.log('double clicked in circle') }
-                    onPressed: { console.log('pressed in circle') }
+                    onDoubleClicked : {
+                        console.log('double clicked in circle')
+                        mouse.accepted = false
+                    }
+                    onPressed: {console.log('pressed in circle') }
                     onReleased: { console.log('released in circle') }
                 }
+                MapMouseArea {
+                    onEntered : { console.log('entered circle 2') }
+                    onExited : { console.log('exited circle 2') }
+                    onPositionChanged : { console.log('moved in circle 2') }
+                    onClicked : { console.log('clicked in circle 2') }
+                    onDoubleClicked : { console.log('double clicked in circle 2') }
+                    onPressed: { console.log('pressed in circle 2') }
+                    onReleased: { console.log('released in circle 2') }
+                }
             }
-        ]
+
+        MapMouseArea {
+            onEntered : { console.log('entered map') }
+            onExited : { console.log('exited map') }
+            onPositionChanged : { console.log('moved in map') }
+            onClicked : { console.log('clicked in map') }
+            onDoubleClicked : { console.log('double clicked in map') }
+            onPressed: { console.log('pressed in map') }
+            onReleased: { console.log('released in map') }
+        }
     }
 
 /*

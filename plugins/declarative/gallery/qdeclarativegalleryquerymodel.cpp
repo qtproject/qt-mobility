@@ -592,6 +592,7 @@ void QDeclarativeDocumentGalleryModel::classBegin()
     \qmlproperty QStringList DocumentGalleryModel::properties
 
     This property holds the item properties a query should return values for.
+    All supported properties are listed \l QDocumentGallery.
 */
 
 /*!
