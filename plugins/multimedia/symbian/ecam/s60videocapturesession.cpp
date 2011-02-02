@@ -1415,6 +1415,11 @@ void S60VideoCaptureSession::pauseRecording()
             emit stateChanged(m_captureState);
             if (m_durationTimer->isActive())
                 m_durationTimer->stop();
+
+            // Notify last duration
+            TRAP(err, m_position = m_videoRecorder->DurationL().Int64() / 1000);
+            setError(err, tr("Cannot retrieve video position."));
+            emit positionChanged(m_position);
         }
         else
             setError(KErrNotReady, QString("Unexpected camera error."));
