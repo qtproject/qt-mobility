@@ -67,6 +67,8 @@ CCameraEngine::CCameraEngine(TInt aCameraHandle,
     iNew2LImplementation(false),
     iLatestImageBufferIndex(1) // Thus we start from index 0
 {
+    // Observer is mandatory
+    ASSERT(aObserver != NULL);
 }
 
 CCameraEngine::~CCameraEngine()
@@ -212,7 +214,12 @@ void CCameraEngine::StartDirectViewFinderL(RWsSession& aSession,
 
         if (iCameraIndex != 0)
             iCamera->SetViewFinderMirrorL(true);
-        iCamera->StartViewFinderDirectL(aSession, aScreenDevice, aWindow, aSize);
+        if (aSize.Width() != 0 && aSize.Height() != 0) {
+            iCamera->StartViewFinderDirectL(aSession, aScreenDevice, aWindow, aSize);
+        } else {
+            if (iObserver)
+                iObserver->MceoHandleError(EErrViewFinderReady, KErrArgument);
+        }
     }
 }
 
