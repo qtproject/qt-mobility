@@ -68,7 +68,7 @@ S60CameraImageCaptureControl::S60CameraImageCaptureControl(S60CameraService *ser
     connect(m_session, SIGNAL(imageCaptured(const int, QImage)),
         this, SIGNAL(imageCaptured(const int, QImage)));
     connect(m_session, SIGNAL(readyForCaptureChanged(bool)),
-            this, SIGNAL(readyForCaptureChanged(bool)));
+            this, SIGNAL(readyForCaptureChanged(bool)), Qt::QueuedConnection);
     connect(m_session, SIGNAL(imageSaved(const int, const QString&)),
             this, SIGNAL(imageSaved(const int, const QString&)));
     connect(m_session, SIGNAL(imageExposed(int)),
