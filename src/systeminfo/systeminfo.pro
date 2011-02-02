@@ -71,6 +71,8 @@ unix:!simulator {
             SOURCES += qsysteminfo_simulator.cpp qsysteminfodata_simulator.cpp
             HEADERS += qsysteminfo_simulator_p.h qsysteminfodata_simulator_p.h
             DEFINES += TESTR QT_SIMULATOR
+            SOURCES += qsystemalignedtimer_stub.cpp
+            HEADERS += qsystemalignedtimer_stub_p.h
         } else {
 
     !maemo5:!maemo6:linux-*: {
@@ -182,7 +184,9 @@ unix:!simulator {
             SOURCES += qsysteminfo_simulator.cpp qsysteminfodata_simulator.cpp
             HEADERS += qsysteminfo_simulator_p.h qsysteminfodata_simulator_p.h
             DEFINES += TESTR QT_SIMULATOR
-        } else {
+            SOURCES += qsystemalignedtimer_stub.cpp
+            HEADERS += qsystemalignedtimer_stub_p.h
+    } else {
         SOURCES += qsysteminfo_mac.mm qsystemalignedtimer_stub.cpp
         HEADERS += qsysteminfo_mac_p.h qsystemalignedtimer_stub_p.h
         LIBS += -framework SystemConfiguration -framework CoreFoundation \
@@ -315,9 +319,17 @@ unix:!simulator {
 simulator {
     SOURCES += qsysteminfo_simulator.cpp qsysteminfodata_simulator.cpp
     HEADERS += qsysteminfo_simulator_p.h qsysteminfodata_simulator_p.h
+    SOURCES += qsystemalignedtimer_stub.cpp
+    HEADERS += qsystemalignedtimer_stub_p.h
+
+#   contains(build_unit_tests, yes) {
+ #           DEFINES += TESTR QT_SIMULATOR
+  # } else {
     INCLUDEPATH += ../mobilitysimulator
     DEFINES += QT_BUILD_SYSINFO_LIB
     qtAddLibrary(QtMobilitySimulator)
+ # }
+
 }
 
 HEADERS += $$PUBLIC_HEADERS

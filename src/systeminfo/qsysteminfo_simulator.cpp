@@ -94,12 +94,12 @@ QSystemStorageInfoPrivate *SystemInfoConnection::storageInfoPrivate()
     return getSystemStorageInfoPrivate();
 }
 
-//QSystemBatteryInfoPrivate *SystemInfoConnection::batteryInfoPrivate()
-//{
-//    return getSystemBatteryInfoPrivate();
-//}
+QSystemBatteryInfoPrivate *SystemInfoConnection::batteryInfoPrivate()
+{
+    return getSystemBatteryInfoPrivate();
+}
 
-//#include "qsysteminfo_simulator.moc"
+#include "qsysteminfo_simulator.moc"
 #endif
 
 
