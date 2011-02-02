@@ -68,7 +68,7 @@ class GeoMap : public QGraphicsGeoMap
     Q_PROPERTY(double centerLongitude READ centerLongitude WRITE setCenterLongitude)
 
 public:
-    GeoMap(QGeoMappingManager *manager, MapsWidget *mapsWidget);
+    explicit GeoMap(QGeoMappingManager *manager, MapsWidget *mapsWidget);
     ~GeoMap();
 
     double centerLatitude() const;
@@ -99,7 +99,7 @@ class MapsWidget : public QWidget
     Q_OBJECT
 
 public:
-    MapsWidget(QWidget *parent = 0);
+    explicit MapsWidget(QWidget *parent = 0);
     ~MapsWidget();
 
     void setMarkerManager(MarkerManager *markerManager);
@@ -133,7 +133,7 @@ class StatusBarItem : public QObject, public QGraphicsRectItem
     Q_PROPERTY(int offset READ offset WRITE setOffset)
 
 public:
-    StatusBarItem();
+    explicit StatusBarItem();
     ~StatusBarItem();
 
     int offset() const;
@@ -155,7 +155,7 @@ private:
 class ZoomButtonItem : public QGraphicsRectItem
 {
 public:
-    ZoomButtonItem(GeoMap *map);
+    explicit ZoomButtonItem(GeoMap *map);
 
     void setRect(qreal x, qreal y, qreal w, qreal h);
 

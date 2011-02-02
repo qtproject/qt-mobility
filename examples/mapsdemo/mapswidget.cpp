@@ -145,9 +145,9 @@ void GeoMap::wheelEvent(QGraphicsSceneWheelEvent *event)
 }
 
 ZoomButtonItem::ZoomButtonItem(GeoMap *map) :
+    map(map),
     pressedOverTopHalf(false),
-    pressedOverBottomHalf(false),
-    map(map)
+    pressedOverBottomHalf(false)
 {
     setPen(QPen(QBrush(), 0));
     setBrush(QBrush(QColor(0,0,0,150)));
@@ -416,6 +416,7 @@ void MapsWidget::animatedPanTo(QGeoCoordinate center)
 
 void MapsWidget::showEvent(QShowEvent *event)
 {
+    Q_UNUSED(event)
     resizeEvent(0);
 }
 

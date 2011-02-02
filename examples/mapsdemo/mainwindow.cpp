@@ -212,12 +212,14 @@ void MainWindow::showSearchDialog()
 
 void MainWindow::showErrorMessage(QGeoSearchReply::Error err, QString msg)
 {
+    Q_UNUSED(err)
     QMessageBox::critical(this, tr("Error"), msg);
     mapsWidget->statusBar()->hide();
 }
 
 void MainWindow::showErrorMessage(QGeoRouteReply::Error err, QString msg)
 {
+    Q_UNUSED(err)
     QMessageBox::critical(this, tr("Error"), msg);
     mapsWidget->statusBar()->hide();
 }
