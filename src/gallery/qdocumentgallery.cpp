@@ -82,6 +82,9 @@ QTM_BEGIN_NAMESPACE
 
     \section3 File types
 
+    Currently on Symbian, \l Folder, \l Document, \l Text, and \l Playlist are
+    not supported.
+
     \list
     \o \l File
     \o \l Folder
@@ -116,6 +119,10 @@ QTM_BEGIN_NAMESPACE
     Currently on Maemo, all properties listed below are available for file
     types, but only the \l title property is available for the categorical
     types.
+
+    On Symbian, for file types, \l keywords and \l subject are not supported,
+    and \l language is only supported for \l Video; for categorical types, only
+    \l title is supported, and \l url is only supported for \l PhotoAlbum.
 
     \list
     \o \l author
@@ -332,6 +339,8 @@ Q_DEFINE_GALLERY_TYPE(QDocumentGallery, Playlist)
     \o \l duration
     \o \l trackCount
     \endlist
+
+    Note that only \l artist is supported on Symbian.
 */
 
 Q_DEFINE_GALLERY_TYPE(QDocumentGallery, Artist)
@@ -349,6 +358,8 @@ Q_DEFINE_GALLERY_TYPE(QDocumentGallery, Artist)
     \o \l duration
     \o \l trackCount
     \endlist
+
+    Note that only \l albumArtist and \l artist are supported on Symbian.
 */
 
 Q_DEFINE_GALLERY_TYPE(QDocumentGallery, AlbumArtist)
@@ -367,6 +378,8 @@ Q_DEFINE_GALLERY_TYPE(QDocumentGallery, AlbumArtist)
     \o \l duration
     \o \l trackCount
     \endlist
+
+    Note that only \l albumTitle is supported on Symbian.
 */
 
 Q_DEFINE_GALLERY_TYPE(QDocumentGallery, Album)
@@ -383,6 +396,8 @@ Q_DEFINE_GALLERY_TYPE(QDocumentGallery, Album)
     \o \l genre
     \o \l trackCount
     \endlist
+
+    Note that only \l genre is supported on Symbian.
 */
 
 Q_DEFINE_GALLERY_TYPE(QDocumentGallery, AudioGenre)
@@ -517,6 +532,8 @@ Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, fileName)
     \variable QDocumentGallery::fileExtension
 
     This property contains the file extension of a file.
+
+    Note that this property is not supported on Symbian.
 */
 
 Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, fileExtension)
@@ -549,6 +566,8 @@ Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, lastModified)
     \variable QDocumentGallery::lastAccessed
 
     This property contains the date and time a file was last accessed.
+
+    Note that this property is not supported on Symbian.
 */
 
 Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, lastAccessed)
@@ -595,6 +614,9 @@ Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, duration)
     This property contains the name of the producer of a media file.
 
     Note that the producer for Audio is not supported on Maemo.
+
+    This property is not supported on Symbian for neither \l Audio
+    nor \l Video.
 */
 
 Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, producer)
@@ -604,6 +626,8 @@ Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, producer)
 
     This property contains the date and time an audio or video file was last
     played.
+
+    Note that this property is not supported on Symbian.
 */
 
 Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, lastPlayed)
@@ -632,6 +656,8 @@ Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, performer)
 
     This property contains the name of the codec used to encode audio in a media
     file.
+
+    Note that this property for Video is not supported on Symbian.
 */
 
 Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, audioCodec)
@@ -640,6 +666,8 @@ Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, audioCodec)
     \variable QDocumentGallery::audioBitRate
 
     This property contains the bit rate of the audio in a media file.
+
+    Note that this property for Video is not supported on Symbian.
 */
 
 Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, audioBitRate)
@@ -648,6 +676,8 @@ Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, audioBitRate)
     \variable QDocumentGallery::sampleRate
 
     This property contains the sample rate of the audio in a media file.
+
+    Note that this property for Video is not supported on Symbian.
 */
 
 Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, sampleRate)
@@ -655,6 +685,8 @@ Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, sampleRate)
     \variable QDocumentGallery::channelCount
 
     This property contains the number of audio channels in a media file.
+
+    Note that this property is not supported on Symbian.
 */
 
 Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, channelCount)
@@ -705,6 +737,8 @@ Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, genre)
     \variable QDocumentGallery::lyrics
 
     This property contains the lyrics to a music track.
+
+    Note that this property is not supported on Symbian.
 */
 
 Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, lyrics)
@@ -729,6 +763,8 @@ Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, trackNumber)
     \variable QDocumentGallery::discNumber
 
     This property contains the disc number of an album in a set.
+
+    Note that this property is not supported on Symbian.
 */
 
 Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, discNumber)
@@ -860,6 +896,8 @@ Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, frameRate)
     \variable QDocumentGallery::videoCodec
 
     This property contains the codec used to encode the video in a media file.
+
+    Note that this property is not supported on Symbian.
 */
 
 Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, videoCodec)
@@ -885,6 +923,8 @@ Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, resumePosition)
     \variable QDocumentGallery::director
 
     This property contains the name of the director of a video.
+
+    Note that this property is not supported on Symbian.
 */
 
 Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, director)
