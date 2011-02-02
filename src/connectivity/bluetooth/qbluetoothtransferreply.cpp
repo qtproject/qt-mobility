@@ -71,6 +71,20 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
+    \enum QBluetoothTransferReply::TransferError
+
+    This enum describes the type of error that occured
+
+    \value NoError          No error.
+    \value UnknownError     Unkown error, no better enum available
+    \value FileNotFoundError Unable to open the file specified
+    \value HostNotFoundError Unable to connect to the target host
+    \value UserCancelledTransferError User terminated the transfer
+*/
+
+
+
+/*!
     \fn QBluetoothTransferReply::abort()
 
     Aborts this reply.
@@ -88,9 +102,9 @@ void QBluetoothTransferReply::abort()
 */
 
 /*!
-    \fn void QBluetoothTransferReply::finished()
+    \fn void QBluetoothTransferReply::finished(QBluetoothTransferReply *reply)
 
-    This signal is emitted when the transfer is complete.
+    This signal is emitted when the transfer is complete for \a reply.
 */
 
 /*!
@@ -125,7 +139,7 @@ QVariant QBluetoothTransferReply::attribute(QBluetoothTransferRequest::Attribute
 }
 
 /*!
-   \fn void QBluetoothTransferReply::isFinished()
+   \fn bool QBluetoothTransferReply::isFinished() const
 
     Returns true if this reply has finished; otherwise returns false.
 */
@@ -135,7 +149,7 @@ QVariant QBluetoothTransferReply::attribute(QBluetoothTransferRequest::Attribute
 //}
 
 /*!
-   \fn void QBluetoothTransferReply::isRunning()
+   \fn bool QBluetoothTransferReply::isRunning() const
 
     Returns true if this reply is running; otherwise returns false.
 */
@@ -161,7 +175,7 @@ QBluetoothTransferManager::Operation QBluetoothTransferReply::operation() const
     return m_operation;
 }
 
-/*!
+/*
     Returns a copy of the QBluetoothTransferRequest object used to create this
     QBluetoothTransferReply.
 */
@@ -177,6 +191,25 @@ void QBluetoothTransferReply::setOperation(QBluetoothTransferManager::Operation 
 {
     m_operation = operation;
 }
+
+/*!
+  \fn QBluetoothTransferReply::setAttribute(QBluetoothTransferRequest::Attribute code, const QVariant &value)
+
+    Set the attribute associated with the code \a code to the value \a value.
+*/
+
+/*!
+  \fn QBluetoothTransferReply::setManager(QBluetoothTransferManager &manager)
+
+  Set the reply's manager to manager \a manager.
+*/
+
+
+/*!
+  \fn QString QBluetoothTransferReply::errorString() const
+
+  String describing the error.  Can be displayed to the user.
+*/
 
 #include "moc_qbluetoothtransferreply.cpp"
 
