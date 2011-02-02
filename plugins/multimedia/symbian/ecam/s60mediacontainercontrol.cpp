@@ -64,7 +64,7 @@ S60MediaContainerControl::S60MediaContainerControl(S60VideoCaptureSession *sessi
         else
             setContainerMimeType(m_supportedContainers[0]); // First as default
     } else {
-        m_session->setError(KErrGeneral, QString("No supported video containers found."));
+        m_session->setError(KErrGeneral, tr("No supported video containers found."));
     }
 }
 

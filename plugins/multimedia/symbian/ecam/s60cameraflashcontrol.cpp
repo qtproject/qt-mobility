@@ -90,7 +90,7 @@ void S60CameraFlashControl::setFlashMode(QCameraExposure::FlashModes mode)
         m_session->setFlashMode(m_flashMode);
     }
     else
-        m_session->setError(KErrNotSupported, QString("Requested flash mode is not supported."));
+        m_session->setError(KErrNotSupported, tr("Requested flash mode is not supported."));
 }
 
 bool S60CameraFlashControl::isFlashModeSupported(QCameraExposure::FlashModes mode) const

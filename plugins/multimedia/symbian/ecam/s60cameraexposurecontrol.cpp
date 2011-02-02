@@ -127,7 +127,7 @@ void S60CameraExposureControl::setExposureMode(QCameraExposure::ExposureMode mod
         return;
     }
 
-    m_session->setError(KErrNotSupported, QString("Requested exposure mode is not supported."));
+    m_session->setError(KErrNotSupported, tr("Requested exposure mode is not supported."));
 }
 
 bool S60CameraExposureControl::isExposureModeSupported(QCameraExposure::ExposureMode mode) const
@@ -156,7 +156,7 @@ void S60CameraExposureControl::setMeteringMode(QCameraExposure::MeteringMode mod
         }
     }
 
-    m_session->setError(KErrNotSupported, QString("Requested metering mode is not supported."));
+    m_session->setError(KErrNotSupported, tr("Requested metering mode is not supported."));
 }
 
 bool S60CameraExposureControl::isMeteringModeSupported(QCameraExposure::MeteringMode mode) const
@@ -351,17 +351,17 @@ QString S60CameraExposureControl::extendedParameterName(ExposureParameter parame
 {
     switch (parameter) {
         case QCameraExposureControl::ISO:
-            return QString("ISO Sensitivity");
+            return QLatin1String("ISO Sensitivity");
         case QCameraExposureControl::Aperture:
-            return QString("Aperture");
+            return QLatin1String("Aperture");
         case QCameraExposureControl::ShutterSpeed:
-            return QString("Shutter Speed");
+            return QLatin1String("Shutter Speed");
         case QCameraExposureControl::ExposureCompensation:
-            return QString("Exposure Compensation");
+            return QLatin1String("Exposure Compensation");
         case QCameraExposureControl::FlashPower:
-            return QString("Flash Power");
+            return QLatin1String("Flash Power");
         case QCameraExposureControl::FlashCompensation:
-            return QString("Flash Compensation");
+            return QLatin1String("Flash Compensation");
 
         default:
             return QString();

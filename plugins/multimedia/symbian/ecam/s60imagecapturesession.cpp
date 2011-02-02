@@ -121,7 +121,7 @@ void S60ImageCaptureDecoder::decode(CFbsBitmap *destBitmap)
         SetActive();
     }
     else
-        m_imageSession->setError(KErrGeneral, QString("Preview image creation failed."));
+        m_imageSession->setError(KErrGeneral, QLatin1String("Preview image creation failed."));
 }
 
 TFrameInfo *S60ImageCaptureDecoder::frameInfo()
@@ -147,7 +147,7 @@ void S60ImageCaptureDecoder::DoCancel()
 
 TInt S60ImageCaptureDecoder::RunError(TInt aError)
 {
-    m_imageSession->setError(aError, QString("Preview image creation failed."));
+    m_imageSession->setError(aError, QLatin1String("Preview image creation failed."));
     return KErrNone;
 }
 
@@ -228,7 +228,7 @@ void S60ImageCaptureEncoder::encode(CFbsBitmap *sourceBitmap)
         SetActive();
     }
     else
-        m_imageSession->setError(KErrGeneral, QString("Saving image to file failed."));
+        m_imageSession->setError(KErrGeneral, QLatin1String("Saving image to file failed."));
 }
 
 void S60ImageCaptureEncoder::RunL()
@@ -244,7 +244,7 @@ void S60ImageCaptureEncoder::DoCancel()
 
 TInt S60ImageCaptureEncoder::RunError(TInt aError)
 {
-    m_imageSession->setError(aError, QString("Saving image to file failed."));
+    m_imageSession->setError(aError, QLatin1String("Saving image to file failed."));
     return KErrNone;
 }
 
@@ -394,15 +394,15 @@ void S60ImageCaptureSession::resetSession(bool errorHandling)
 #ifndef S60_31_PLATFORM // Post S60 3.1 Platform
         // Adv. settings may not be supported for other than the Primary Camera
         if (m_cameraEngine->CurrentCameraIndex() == 0)
-            setError(err, QString("Unexpected camera error."));
+            setError(err, tr("Unexpected camera error."));
 #endif // !S60_31_PLATFORM
     } else if (err != KErrNone) { // Other errors
         m_advancedSettings = NULL;
         qWarning("Failed to create camera settings handler.");
         if (errorHandling)
-            emit cameraError(QCamera::ServiceMissingError, QString("Failed to recover from error."));
+            emit cameraError(QCamera::ServiceMissingError, tr("Failed to recover from error."));
         else
-            setError(err, QString("Unexpected camera error."));
+            setError(err, tr("Unexpected camera error."));
         return;
     }
 
@@ -410,7 +410,7 @@ void S60ImageCaptureSession::resetSession(bool errorHandling)
         if (m_cameraEngine)
             m_cameraEngine->SetAdvancedObserver(m_advancedSettings);
         else
-            setError(KErrNotReady, QString("Unexpected camera error."));
+            setError(KErrNotReady, tr("Unexpected camera error."));
     }
 
     updateImageCaptureFormats();
@@ -518,7 +518,7 @@ CCamera::TFormat S60ImageCaptureSession::selectFormatForCodec(const QString &cod
         return format;
     }
 
-    setError(KErrNotSupported, QString("Failed to select color format to be used with image codec."));
+    setError(KErrNotSupported, tr("Failed to select color format to be used with image codec."));
     return format;
 }
 
@@ -536,7 +536,7 @@ int S60ImageCaptureSession::prepareImageCapture()
         if (camera)
             camera->SetJpegQuality(m_symbianImageQuality);
         else
-            setError(KErrNotReady, QString("Setting image quality failed."), true);
+            setError(KErrNotReady, tr("Setting image quality failed."), true);
 
         // Then prepare with correct resolution and format
         TSize captureSize = TSize(m_captureSize.width(), m_captureSize.height());
@@ -582,11 +582,11 @@ int S60ImageCaptureSession::capture(const QString &fileName)
     if (m_icState < EImageCapturePrepared) {
         int prepareSuccess = prepareImageCapture();
         if (prepareSuccess) {
-            setError(prepareSuccess, QString("Failure during image capture preparation."), true);
+            setError(prepareSuccess, tr("Failure during image capture preparation."), true);
             return 0;
         }
     } else if (m_icState > EImageCapturePrepared) {
-        setError(KErrNotReady, QString("Previous operation is still ongoing."), true);
+        setError(KErrNotReady, tr("Previous operation is still ongoing."), true);
         return 0;
     }
 
@@ -601,9 +601,9 @@ int S60ImageCaptureSession::capture(const QString &fileName)
 
     if (m_cameraEngine) {
         TRAPD(err, m_cameraEngine->CaptureL());
-        setError(err, QString("Image capture failed."), true);
+        setError(err, tr("Image capture failed."), true);
     } else {
-        setError(KErrNotReady, QString("Unexpected camera error."), true);
+        setError(KErrNotReady, tr("Unexpected camera error."), true);
     }
 
 #ifdef Q_CC_NOKIAX86 // Emulator
@@ -703,7 +703,7 @@ void S60ImageCaptureSession::MceoCapturedDataReady(TDesC8* aData)
         if (m_previewDecodingOngoing)
             m_previewDecodingOngoing = false; // Reset
 
-        setError(err, QString("Writing captured image to a file failed."), true);
+        setError(err, tr("Writing captured image to a file failed."), true);
         m_icState = EImageCapturePrepared;
         return;
     }
@@ -752,12 +752,12 @@ void S60ImageCaptureSession::MceoCapturedBitmapReady(CFbsBitmap* aBitmap)
         // Create FileSystem access
         m_fileSystemAccess = new RFs;
         if (!m_fileSystemAccess) {
-            setError(KErrNoMemory, QString("Failed to write captured image to a file."));
+            setError(KErrNoMemory, tr("Failed to write captured image to a file."));
             return;
         }
         saveError = m_fileSystemAccess->Connect();
         if (saveError) {
-            setError(saveError, QString("Failed to write captured image to a file."));
+            setError(saveError, tr("Failed to write captured image to a file."));
             return;
         }
 
@@ -766,12 +766,12 @@ void S60ImageCaptureSession::MceoCapturedBitmapReady(CFbsBitmap* aBitmap)
                                                                       &path,
                                                                       m_symbianImageQuality));
         if (saveError)
-            setError(saveError, QString("Saving captured image failed."), true);
+            setError(saveError, tr("Saving captured image failed."), true);
         m_previewDecodingOngoing = true;
         m_imageEncoder->encode(aBitmap);
 
     } else {
-        setError(KErrBadHandle, QString("Unexpected camera error."), true);
+        setError(KErrBadHandle, tr("Unexpected camera error."), true);
     }
 
     m_icState = EImageCapturePrepared;
@@ -780,7 +780,7 @@ void S60ImageCaptureSession::MceoCapturedBitmapReady(CFbsBitmap* aBitmap)
 void S60ImageCaptureSession::MceoHandleError(TCameraEngineError aErrorType, TInt aError)
 {
     Q_UNUSED(aErrorType);
-    setError(aError, QString("General camera error."));
+    setError(aError, tr("General camera error."));
 }
 
 TFileName S60ImageCaptureSession::convertImagePath()
@@ -804,7 +804,7 @@ TFileName S60ImageCaptureSession::convertImagePath()
 void S60ImageCaptureSession::saveImageL(TDesC8 *aData, TFileName &aPath)
 {
     if (aData == NULL)
-        setError(KErrGeneral, QString("Captured image data is not available."), true);
+        setError(KErrGeneral, tr("Captured image data is not available."), true);
 
     if (aPath.Size() > 0) {
 #ifndef ECAM_PREVIEW_API
@@ -849,13 +849,13 @@ void S60ImageCaptureSession::saveImageL(TDesC8 *aData, TFileName &aPath)
 
         TFrameInfo *info = imageDecoder->frameInfo();
         if (!info)
-            setError(KErrGeneral, QString("Preview image creation failed."));
+            setError(KErrGeneral, tr("Preview image creation failed."));
 
         CFbsBitmap *previewBitmap = new (ELeave) CFbsBitmap;
         CleanupStack::PushL(previewBitmap);
         TInt bitmapCreationErr = previewBitmap->Create(scaledSize, info->iFrameDisplayMode);
         if (bitmapCreationErr) {
-            setError(bitmapCreationErr, QString("Preview creation failed."));
+            setError(bitmapCreationErr, tr("Preview creation failed."));
             return;
         }
 
@@ -901,7 +901,7 @@ void S60ImageCaptureSession::saveImageL(TDesC8 *aData, TFileName &aPath)
 #endif // ECAM_PREVIEW_API
 
     } else {
-        setError(KErrPathNotFound, QString("Invalid path given."), true);
+        setError(KErrPathNotFound, tr("Invalid path given."), true);
     }
 }
 
@@ -910,7 +910,7 @@ void S60ImageCaptureSession::releaseImageBuffer()
     if (m_cameraEngine)
         m_cameraEngine->ReleaseImageBuffer();
     else
-        setError(KErrNotReady, QString("Unexpected camera error."), true);
+        setError(KErrNotReady, tr("Unexpected camera error."), true);
 }
 
 /*
@@ -1079,7 +1079,7 @@ void S60ImageCaptureSession::setImageCaptureCodec(const QString &codecName)
             m_currentCodec = codecName;
             m_currentFormat = selectFormatForCodec(m_currentCodec);
         } else {
-            setError(KErrNotSupported, QString("Requested image codec is not supported"));
+            setError(KErrNotSupported, tr("Requested image codec is not supported"));
         }
     } else {
         m_currentCodec = KDefaultImageCodec;
@@ -1211,12 +1211,12 @@ void S60ImageCaptureSession::doSetZoomFactorL(qreal optical, qreal digital)
                     if (m_advancedSettings)
                         m_advancedSettings->setOpticalZoomFactorL(optical); // Using Zoom Factor
                     else
-                        setError(KErrNotReady, QString("Zooming failed."));
+                        setError(KErrNotReady, tr("Zooming failed."));
 #else // No advanced settigns
                     camera->SetZoomFactorL(opticalSymbian); // Using Zoom Value
 #endif // USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER | USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER
                 } else {
-                    setError(KErrNotSupported, QString("Requested optical zoom factor is not supported."));
+                    setError(KErrNotSupported, tr("Requested optical zoom factor is not supported."));
                     return;
                 }
             }
@@ -1264,12 +1264,12 @@ void S60ImageCaptureSession::doSetZoomFactorL(qreal optical, qreal digital)
                         if (closestIndex != -1)
                             m_advancedSettings->setDigitalZoomFactorL(factors->at(closestIndex)); // Using Zoom Factor
                         else {
-                            setError(KErrNotSupported, QString("Requested digital zoom factor is not supported."));
+                            setError(KErrNotSupported, tr("Requested digital zoom factor is not supported."));
                             return;
                         }
                     }
                     else
-                        setError(KErrNotReady, QString("Zooming failed."));
+                        setError(KErrNotReady, tr("Zooming failed."));
 #else // No advanced settigns
                     // Define zoom steps
                     int currentZoomFactor = camera->DigitalZoomFactor();
@@ -1292,13 +1292,13 @@ void S60ImageCaptureSession::doSetZoomFactorL(qreal optical, qreal digital)
                     camera->SetDigitalZoomFactorL(digitalSymbian);
 #endif // USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER | USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER
                 } else {
-                    setError(KErrNotSupported, QString("Requested digital zoom factor is not supported."));
+                    setError(KErrNotSupported, tr("Requested digital zoom factor is not supported."));
                     return;
                 }
             }
         }
     } else {
-        setError(KErrGeneral, QString("Unexpected camera error."));
+        setError(KErrGeneral, tr("Unexpected camera error."));
     }
 }
 
@@ -1359,7 +1359,7 @@ qreal S60ImageCaptureSession::digitalZoomFactor()
 void S60ImageCaptureSession::setFlashMode(QCameraExposure::FlashModes mode)
 {
     TRAPD(err, doSetFlashModeL(mode));
-    setError(err, QString("Failed to set flash mode."));
+    setError(err, tr("Failed to set flash mode."));
 }
 
 void S60ImageCaptureSession::doSetFlashModeL(QCameraExposure::FlashModes mode)
@@ -1384,12 +1384,12 @@ void S60ImageCaptureSession::doSetFlashModeL(QCameraExposure::FlashModes mode)
                 break;
 
             default:
-                setError(QCamera::NotSupportedFeatureError, QString("Requested flash mode is not suported"));
+                setError(KErrNotSupported, tr("Requested flash mode is not suported"));
                 break;
         }
     }
     else
-        setError(KErrNotReady, QString("Unexpected camera error."));
+        setError(KErrNotReady, tr("Unexpected camera error."));
 }
 
 QCameraExposure::FlashMode S60ImageCaptureSession::flashMode()
@@ -1413,7 +1413,7 @@ QCameraExposure::FlashMode S60ImageCaptureSession::flashMode()
         }
     }
     else
-        setError(KErrNotReady, QString("Unexpected camera error."));
+        setError(KErrNotReady, tr("Unexpected camera error."));
 
     return QCameraExposure::FlashOff;
 }
@@ -1523,7 +1523,7 @@ bool S60ImageCaptureSession::isExposureModeSupported(QCameraExposure::ExposureMo
 void S60ImageCaptureSession::setExposureMode(QCameraExposure::ExposureMode mode)
 {
     TRAPD(err, doSetExposureModeL(mode));
-    setError(err, QString("Failed to set exposure mode."));
+    setError(err, tr("Failed to set exposure mode."));
 }
 
 void S60ImageCaptureSession::doSetExposureModeL( QCameraExposure::ExposureMode mode)
@@ -1558,12 +1558,12 @@ void S60ImageCaptureSession::doSetExposureModeL( QCameraExposure::ExposureMode m
             case QCameraExposure::ExposurePortrait:
             case QCameraExposure::ExposureSpotlight:
             default:
-                setError(QCamera::NotSupportedFeatureError, QString("Requested exposure mode is not suported"));
+                setError(KErrNotSupported, tr("Requested exposure mode is not suported"));
                 break;
         }
     }
     else
-        setError(KErrNotReady, QString("Unexpected camera error."));
+        setError(KErrNotReady, tr("Unexpected camera error."));
 }
 
 int S60ImageCaptureSession::contrast() const
@@ -1579,10 +1579,10 @@ void S60ImageCaptureSession::setContrast(int value)
 {
     if (m_cameraEngine) {
         TRAPD(err, m_cameraEngine->Camera()->SetContrastL(value));
-        setError(err, QString("Failed to set contrast."));
+        setError(err, tr("Failed to set contrast."));
     }
     else
-        setError(KErrNotReady, QString("Unexpected camera error."));
+        setError(KErrNotReady, tr("Unexpected camera error."));
 }
 
 int S60ImageCaptureSession::brightness() const
@@ -1598,10 +1598,10 @@ void S60ImageCaptureSession::setBrightness(int value)
 {
     if (m_cameraEngine) {
         TRAPD(err, m_cameraEngine->Camera()->SetBrightnessL(value));
-        setError(err, QString("Failed to set brightness."));
+        setError(err, tr("Failed to set brightness."));
     }
     else
-        setError(KErrNotReady, QString("Unexpected camera error."));
+        setError(KErrNotReady, tr("Unexpected camera error."));
 }
 
  QCameraImageProcessing::WhiteBalanceMode S60ImageCaptureSession::whiteBalanceMode()
@@ -1639,7 +1639,7 @@ void S60ImageCaptureSession::setBrightness(int value)
 void S60ImageCaptureSession::setWhiteBalanceMode( QCameraImageProcessing::WhiteBalanceMode mode)
 {
     TRAPD(err, doSetWhiteBalanceModeL(mode));
-    setError(err, QString("Failed to set white balance mode."));
+    setError(err, tr("Failed to set white balance mode."));
 }
 
 void S60ImageCaptureSession::doSetWhiteBalanceModeL( QCameraImageProcessing::WhiteBalanceMode mode)
@@ -1676,12 +1676,12 @@ void S60ImageCaptureSession::doSetWhiteBalanceModeL( QCameraImageProcessing::Whi
                 break;
 
             default:
-                setError(QCamera::NotSupportedFeatureError, QString("Requested white balance mode is not suported"));
+                setError(KErrNotSupported, tr("Requested white balance mode is not suported"));
                 break;
         }
     }
     else
-        setError(KErrNotReady, QString("Unexpected camera error."));
+        setError(KErrNotReady, tr("Unexpected camera error."));
 }
 
 bool S60ImageCaptureSession::isWhiteBalanceModeSupported(QCameraImageProcessing::WhiteBalanceMode mode) const
@@ -1759,20 +1759,20 @@ void S60ImageCaptureSession::startFocus()
 {
     if (m_cameraEngine) {
         TRAPD(err, m_cameraEngine->StartFocusL());
-        setError(err, QString("Failed to start focusing."));
+        setError(err, tr("Failed to start focusing."));
     }
     else
-        setError(KErrNotReady, QString("Unexpected camera error."));
+        setError(KErrNotReady, tr("Unexpected camera error."));
 }
 
 void S60ImageCaptureSession::cancelFocus()
 {
     if (m_cameraEngine) {
         TRAPD(err, m_cameraEngine->FocusCancel());
-        setError(err, QString("Failed to cancel focusing."));
+        setError(err, tr("Failed to cancel focusing."));
     }
     else
-        setError(KErrNotReady, QString("Unexpected camera error."));
+        setError(KErrNotReady, tr("Unexpected camera error."));
 }
 
 void S60ImageCaptureSession::handleImageDecoded(int error)
@@ -1800,7 +1800,7 @@ void S60ImageCaptureSession::handleImageDecoded(int error)
             CActiveScheduler::Stop(); // Notify to continue execution of next Preview Image generation
             m_previewInWaitLoop = false; // Reset
         }
-        setError(error, QString("Preview creation failed."));
+        setError(error, tr("Preview creation failed."));
         return;
     }
 
@@ -1835,7 +1835,7 @@ void S60ImageCaptureSession::handleImageEncoded(int error)
             CActiveScheduler::Stop(); // Notify to continue execution of next Preview Image generation
             m_previewInWaitLoop = false; // Reset
         }
-        setError(error, QString("Saving captured image to file failed."));
+        setError(error, tr("Saving captured image to file failed."));
         return;
     } else {
         QT_TRYCATCH_LEAVING( emit imageSaved(m_currentImageId, m_stillCaptureFileName) );
@@ -1852,7 +1852,7 @@ void S60ImageCaptureSession::handleImageEncoded(int error)
     TFileName fileName = convertImagePath();
     TRAP(previewError, m_imageDecoder = S60ImageCaptureDecoder::FileNewL(this, m_fileSystemAccess, &fileName));
     if (previewError) {
-        setError(previewError, QString("Failed to create preview image."));
+        setError(previewError, tr("Failed to create preview image."));
         return;
     }
 
@@ -1867,16 +1867,16 @@ void S60ImageCaptureSession::handleImageEncoded(int error)
 
     TFrameInfo *info = m_imageDecoder->frameInfo();
     if (!info)
-        setError(KErrGeneral, QString("Preview image creation failed."));
+        setError(KErrGeneral, tr("Preview image creation failed."));
 
     m_previewBitmap = new CFbsBitmap;
     if (!m_previewBitmap) {
-        setError(KErrNoMemory, QString("Failed to create preview image."));
+        setError(KErrNoMemory, tr("Failed to create preview image."));
         return;
     }
     previewError = m_previewBitmap->Create(scaledSize, info->iFrameDisplayMode);
     if (previewError) {
-        setError(previewError, QString("Preview creation failed."));
+        setError(previewError, tr("Preview creation failed."));
         return;
     }
 

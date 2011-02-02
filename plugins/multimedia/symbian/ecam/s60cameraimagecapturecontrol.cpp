@@ -62,7 +62,7 @@ S60CameraImageCaptureControl::S60CameraImageCaptureControl(S60CameraService *ser
     m_cameraControl = qobject_cast<S60CameraControl *>(m_service->requestControl(QCameraControl_iid));
 
     if (!m_cameraControl)
-        m_session->setError(KErrGeneral, QString("Unexpected camera error."));
+        m_session->setError(KErrGeneral, tr("Unexpected camera error."));
 
     // Chain these signals from session class
     connect(m_session, SIGNAL(imageCaptured(const int, QImage)),

@@ -79,7 +79,7 @@ void S60CameraImageProcessingControl::setWhiteBalanceMode(QCameraImageProcessing
     if (isWhiteBalanceModeSupported(mode))
         m_session->setWhiteBalanceMode(mode);
     else
-        m_session->setError(KErrNotSupported, QString("Requested white balance mode is not supported."));
+        m_session->setError(KErrNotSupported, tr("Requested white balance mode is not supported."));
 }
 
 bool S60CameraImageProcessingControl::isWhiteBalanceModeSupported(
@@ -95,7 +95,7 @@ int S60CameraImageProcessingControl::manualWhiteBalance() const
 
 void S60CameraImageProcessingControl::setManualWhiteBalance(int colorTemperature)
 {
-    m_session->setError(KErrNotSupported, QString("Setting manual white balance is not supported."));
+    m_session->setError(KErrNotSupported, tr("Setting manual white balance is not supported."));
     Q_UNUSED(colorTemperature)
 }
 
@@ -203,7 +203,7 @@ void S60CameraImageProcessingControl::setSaturation(int value)
     if (m_advancedSettings)
         m_advancedSettings->setSaturation(value);
     else
-        m_session->setError(KErrNotSupported, QString("Setting saturation is not supported."));
+        m_session->setError(KErrNotSupported, tr("Setting saturation is not supported."));
 }
 
 int S60CameraImageProcessingControl::saturation() const
@@ -215,7 +215,7 @@ int S60CameraImageProcessingControl::saturation() const
 
 void S60CameraImageProcessingControl::setDenoisingLevel(int value)
 {
-    m_session->setError(KErrNotSupported, QString("Setting denoising level is not supported."));
+    m_session->setError(KErrNotSupported, tr("Setting denoising level is not supported."));
     Q_UNUSED(value); // Not supported for Symbian
 }
 
@@ -234,7 +234,7 @@ void S60CameraImageProcessingControl::setSharpeningLevel(int value)
     if (m_advancedSettings)
         m_advancedSettings->setSharpeningLevel(value);
     else
-        m_session->setError(KErrNotSupported, QString("Setting sharpening level is not supported."));
+        m_session->setError(KErrNotSupported, tr("Setting sharpening level is not supported."));
 }
 
 bool S60CameraImageProcessingControl::isSharpeningSupported() const

@@ -68,7 +68,7 @@ S60CameraFocusControl::S60CameraFocusControl(S60ImageCaptureSession *session, QO
 
     TRAPD(err, m_session->doSetZoomFactorL(m_opticalZoomValue, m_digitalZoomValue));
     if (err)
-        m_session->setError(KErrNotSupported, QString("Setting default zoom factors failed."));
+        m_session->setError(KErrNotSupported, tr("Setting default zoom factors failed."));
 }
 
 S60CameraFocusControl::~S60CameraFocusControl()
@@ -89,9 +89,9 @@ void S60CameraFocusControl::setFocusMode(QCameraFocus::FocusMode mode)
         if (m_advancedSettings)
             m_advancedSettings->setFocusMode(m_focusMode);
         else
-            m_session->setError(KErrGeneral, QString("Unable to set focus mode before camera is started."));
+            m_session->setError(KErrGeneral, tr("Unable to set focus mode before camera is started."));
     } else {
-        m_session->setError(KErrNotSupported, QString("Requested focus mode is not supported."));
+        m_session->setError(KErrNotSupported, tr("Requested focus mode is not supported."));
     }
 }
 
@@ -131,7 +131,7 @@ void S60CameraFocusControl::zoomTo(qreal optical, qreal digital)
 {
     TRAPD(err, m_session->doSetZoomFactorL(optical, digital));
     if (err)
-        m_session->setError(KErrNotSupported, QString("Requested zoom factor is not supported."));
+        m_session->setError(KErrNotSupported, tr("Requested zoom factor is not supported."));
 
     // Query new values
     if (m_opticalZoomValue != m_session->opticalZoomFactor()) {
@@ -158,7 +158,7 @@ QCameraFocus::FocusPointMode S60CameraFocusControl::focusPointMode() const
 void S60CameraFocusControl::setFocusPointMode(QCameraFocus::FocusPointMode mode)
 {
     if (mode != QCameraFocus::FocusPointAuto)
-        m_session->setError(KErrNotSupported, QString("Requested focus point mode is not supported."));
+        m_session->setError(KErrNotSupported, tr("Requested focus point mode is not supported."));
 }
 
 bool S60CameraFocusControl::isFocusPointModeSupported(QCameraFocus::FocusPointMode mode) const
@@ -180,7 +180,7 @@ void S60CameraFocusControl::setCustomFocusPoint(const QPointF &point)
 {
     // Not supported in Symbian
     Q_UNUSED(point);
-    m_session->setError(KErrNotSupported, QString("Setting custom focus point is not supported."));
+    m_session->setError(KErrNotSupported, tr("Setting custom focus point is not supported."));
 }
 
 QCameraFocusZoneList S60CameraFocusControl::focusZones() const

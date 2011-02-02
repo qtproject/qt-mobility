@@ -129,7 +129,7 @@ void S60VideoEncoderControl::setEncodingOption(
     else if (qstrcmp(name.toLocal8Bit().constData(), "maxClipSizeInBytes") == 0)
         m_session->setMaxClipSizeInBytes(value.toInt());
     else
-        m_session->setError(KErrNotSupported, QString("Requested encoding option is not supported"));
+        m_session->setError(KErrNotSupported, tr("Requested encoding option is not supported"));
 }
 
 QVideoEncoderSettings S60VideoEncoderControl::videoSettings() const

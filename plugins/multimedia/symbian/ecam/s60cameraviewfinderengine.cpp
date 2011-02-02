@@ -88,7 +88,7 @@ S60CameraViewfinderEngine::S60CameraViewfinderEngine(S60CameraControl *control,
         m_cameraEngine->SetViewfinderObserver(vfObserver);
     }
     else
-        m_cameraControl->setError(KErrGeneral, QString("Unexpected camera error."));
+        m_cameraControl->setError(KErrGeneral, tr("Unexpected camera error."));
     // From now on it is safe to assume engine exists
 
     // Check the UI orientation
