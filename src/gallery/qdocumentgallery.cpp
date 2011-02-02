@@ -113,6 +113,10 @@ QTM_BEGIN_NAMESPACE
 
     \section3 Common item properties
 
+    Currently on Maemo, all properties listed below are available for file
+    types, but only the \l title property is available for the categorical
+    types.
+
     \list
     \o \l author
     \o \l comments
@@ -589,6 +593,8 @@ Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, duration)
     \variable QDocumentGallery::producer
 
     This property contains the name of the producer of a media file.
+
+    Note that the producer for Audio is not supported on Maemo.
 */
 
 Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, producer)
@@ -786,6 +792,8 @@ Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, cameraModel)
 
     This property contains the name of the exposure program used when taking a
     photo.
+
+    Note that this property is not supported on Maemo.
 */
 
 Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, exposureProgram)
