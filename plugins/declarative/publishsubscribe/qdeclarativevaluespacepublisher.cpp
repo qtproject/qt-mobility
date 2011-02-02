@@ -112,11 +112,11 @@ QDeclarativeValueSpacePublisher::~QDeclarativeValueSpacePublisher()
 }
 
 /*!
-  \qmlproperty string ValueSpacePublisher::path
+    \qmlproperty string ValueSpacePublisher::path
 
-  This property holds the base path of the publisher.
-  This property is write-once -- after the first write, subsequent
-  writes will be ignored and produce a warning.
+    This property holds the base path of the publisher.
+    This property is write-once -- after the first write, subsequent
+    writes will be ignored and produce a warning.
   */
 QString QDeclarativeValueSpacePublisher::path() const
 {
@@ -139,12 +139,12 @@ void QDeclarativeValueSpacePublisher::setPath(const QString &path)
 }
 
 /*!
-  \qmlproperty QVariant ValueSpacePublisher::value
+    \qmlproperty QVariant ValueSpacePublisher::value
 
-  This property publishes a new value to the ValueSpace at the
-  path given through the \a path property.
-  This property is write only.
-  */
+    This property publishes a new value to the ValueSpace at the
+    path given through the \a path property.
+    This property is write only.
+*/
 void QDeclarativeValueSpacePublisher::setValue(const QVariant &val)
 {
     if (!m_pathSet) {
@@ -156,14 +156,14 @@ void QDeclarativeValueSpacePublisher::setValue(const QVariant &val)
 }
 
 /*!
-  \qmlproperty bool ValueSpacePublisher::server
+    \qmlproperty bool ValueSpacePublisher::server
 
-  This property can be used to force the Publisher to start the ValueSpace
-  server (if one is appropriate on the platform) before the \a path property
-  has been set.
+    This property can be used to force the Publisher to start the ValueSpace
+    server (if one is appropriate on the platform) before the \a path property
+    has been set.
 
-  This property is write only.
-  */
+    This property is write only.
+*/
 void QDeclarativeValueSpacePublisher::startServer(const bool &really)
 {
     if (really) {
@@ -172,24 +172,24 @@ void QDeclarativeValueSpacePublisher::startServer(const bool &really)
 }
 
 /*!
-  \qmlproperty bool ValueSpacePublisher::hasSubscribers
+    \qmlproperty bool ValueSpacePublisher::hasSubscribers
 
-  This property is true if there are subscribers currently subscribed to
-  the ValueSpace path being published by this Publisher.
+    This property is true if there are subscribers currently subscribed to
+    the ValueSpace path being published by this Publisher.
 
-  This property is read only.
-  */
+    This property is read only.
+*/
 bool QDeclarativeValueSpacePublisher::hasSubscribers() const
 {
     return m_hasSubscribers;
 }
 
 /*!
-  \qmlproperty QStringList ValueSpacePublisher::keys
+    \qmlproperty QStringList ValueSpacePublisher::keys
 
-  Setting this property creates a set of dynamic properties allowing
-  easy access to set the values of keys under this Publisher's path.
-  */
+    Setting this property creates a set of dynamic properties allowing
+    easy access to set the values of keys under this Publisher's path.
+*/
 void QDeclarativeValueSpacePublisher::setKeys(const QStringList &keys)
 {
     foreach (QString key, keys) {
