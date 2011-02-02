@@ -696,7 +696,7 @@ qreal S60CameraSettings::aperture()
 {
 #ifdef POST_31_PLATFORM
     if (m_advancedSettings)
-        return m_advancedSettings->Aperture();
+        return qreal(m_advancedSettings->Aperture()) / KSymbianFineResolutionFactor;
     else
         emit error(QCamera::CameraError, tr("Unexpected camera error."));
     return 0;
@@ -720,7 +720,7 @@ QList<qreal> S60CameraSettings::supportedApertures()
                 emit error(QCamera::CameraError, tr("Failure while querying supported apertures."));
         else {
             for (int i = 0; i < supportedApertures.Count(); i++) {
-                qreal q = supportedApertures[i];
+                qreal q = qreal(supportedApertures[i]) / KSymbianFineResolutionFactor;
                 apertures.append(q);
             }
         }
