@@ -830,7 +830,7 @@ void MapsWidget::initialize(QGeoMappingManager *manager)
     MainWindow:
 
     \code
-void MainWindow::on_markerClicked(Marker *marker)
+void MainWindow::showMarkerDialog(Marker *marker)
 {
     MarkerDialog md(marker);
     if (md.exec() == QDialog::Accepted) {

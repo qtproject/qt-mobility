@@ -141,7 +141,7 @@ void MainWindow::initialize()
     connect(markerManager, SIGNAL(searchError(QGeoSearchReply::Error,QString)),
             this, SLOT(showErrorMessage(QGeoSearchReply::Error,QString)));
     connect(mapsWidget, SIGNAL(markerClicked(Marker*)),
-            this, SLOT(on_markerClicked(Marker*)));
+            this, SLOT(showMarkerDialog(Marker*)));
     connect(mapsWidget, SIGNAL(mapPanned()),
             this, SLOT(disableTracking()));
 
@@ -240,7 +240,7 @@ void MainWindow::showErrorMessage(QGeoRouteReply::Error err, QString msg)
     mapsWidget->statusBar()->hide();
 }
 
-void MainWindow::on_markerClicked(Marker *marker)
+void MainWindow::showMarkerDialog(Marker *marker)
 {
     MarkerDialog md(marker);
     if (md.exec() == QDialog::Accepted) {

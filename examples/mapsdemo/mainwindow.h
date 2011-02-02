@@ -72,12 +72,15 @@ public slots:
 private slots:
     void showSearchDialog();
     void showNavigateDialog();
+    void showMarkerDialog(Marker *marker);
     void goToMyLocation();
+
     void updateMyPosition(QGeoPositionInfo info);
     void disableTracking();
+
     void showErrorMessage(QGeoSearchReply::Error err, QString msg);
     void showErrorMessage(QGeoRouteReply::Error err, QString msg);
-    void on_markerClicked(Marker *marker);
+
     void openNetworkSession();
 
 private:
