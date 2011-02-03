@@ -120,11 +120,18 @@ QDeclarativeGraphicsGeoMap::QDeclarativeGraphicsGeoMap(QDeclarativeItem *parent)
 
 QDeclarativeGraphicsGeoMap::~QDeclarativeGraphicsGeoMap()
 {
+    if (mapData_) {
+        // Remove map objects, we can't allow mapObject
+        // to delete the objects because they are owned
+        // by the declarative elements.
+        QList<QGeoMapObject*> objects = objectMap_.keys();
+        for (int i = 0; i < objects.size(); ++i) {
+            mapData_->removeMapObject(objects.at(i));
+        }
+        delete mapData_;
+    }
     qDeleteAll(objectMap_.values());
     qDeleteAll(mapViews_);
-
-    if (mapData_)
-        delete mapData_;
 
     if (serviceProvider_)
         delete serviceProvider_;
