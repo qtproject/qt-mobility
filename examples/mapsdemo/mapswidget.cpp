@@ -144,21 +144,36 @@ void GeoMap::wheelEvent(QGraphicsSceneWheelEvent *event)
     event->accept();
 }
 
-ZoomButtonItem::ZoomButtonItem(GeoMap *map) :
-    map(map),
-    pressedOverTopHalf(false),
-    pressedOverBottomHalf(false)
+
+class ZoomButtonItemPrivate
 {
+public:
+    GeoMap *map;
+
+    QGraphicsSimpleTextItem *plusText;
+    QGraphicsSimpleTextItem *minusText;
+
+    bool pressedOverTopHalf;
+    bool pressedOverBottomHalf;
+};
+
+ZoomButtonItem::ZoomButtonItem(GeoMap *map) :
+    d(new ZoomButtonItemPrivate)
+{
+    d->map = map;
+    d->pressedOverBottomHalf = false;
+    d->pressedOverTopHalf = false;
+
     setPen(QPen(QBrush(), 0));
     setBrush(QBrush(QColor(0,0,0,150)));
 
-    plusText = new QGraphicsSimpleTextItem(this);
-    plusText->setText("+");
-    plusText->setBrush(QBrush(Qt::white));
+    d->plusText = new QGraphicsSimpleTextItem(this);
+    d->plusText->setText("+");
+    d->plusText->setBrush(QBrush(Qt::white));
 
-    minusText = new QGraphicsSimpleTextItem(this);
-    minusText->setText("-");
-    minusText->setBrush(QBrush(Qt::white));
+    d->minusText = new QGraphicsSimpleTextItem(this);
+    d->minusText->setText("-");
+    d->minusText->setBrush(QBrush(Qt::white));
 }
 
 void ZoomButtonItem::setRect(qreal x, qreal y, qreal w, qreal h)
@@ -168,28 +183,28 @@ void ZoomButtonItem::setRect(qreal x, qreal y, qreal w, qreal h)
     QFont f;
     f.setFixedPitch(true);
     f.setPixelSize(h/3.0);
-    plusText->setFont(f);
-    minusText->setFont(f);
+    d->plusText->setFont(f);
+    d->minusText->setFont(f);
 
-    QRectF plusBound = plusText->boundingRect();
+    QRectF plusBound = d->plusText->boundingRect();
     QPointF plusCenter(x+w/2.0, y+h/4.0);
     QPointF plusDelta = plusCenter - plusBound.center();
-    plusText->setPos(plusDelta);
+    d->plusText->setPos(plusDelta);
 
-    QRectF minusBound = minusText->boundingRect();
+    QRectF minusBound = d->minusText->boundingRect();
     QPointF minusCenter(x+w/2.0, y+3.0*h/4.0);
     QPointF minusDelta = minusCenter - minusBound.center();
-    minusText->setPos(minusDelta);
+    d->minusText->setPos(minusDelta);
 }
 
 void ZoomButtonItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     const QPointF pos = event->pos();
-    if (!pressedOverTopHalf && !pressedOverBottomHalf) {
+    if (!d->pressedOverTopHalf && !d->pressedOverBottomHalf) {
         if (isTopHalf(pos)) {
-            pressedOverTopHalf = true;
+            d->pressedOverTopHalf = true;
         } else if (isBottomHalf(pos)) {
-            pressedOverBottomHalf = true;
+            d->pressedOverBottomHalf = true;
         }
     }
     event->accept();
@@ -210,13 +225,13 @@ bool ZoomButtonItem::isBottomHalf(const QPointF &point)
 void ZoomButtonItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     const QPointF pos = event->pos();
-    if (isTopHalf(pos) && pressedOverTopHalf) {
-        map->setZoomLevel(map->zoomLevel() + 1.0);
-    } else if (isBottomHalf(pos) && pressedOverBottomHalf) {
-        map->setZoomLevel(map->zoomLevel() - 1.0);
+    if (isTopHalf(pos) && d->pressedOverTopHalf) {
+        d->map->setZoomLevel(d->map->zoomLevel() + 1.0);
+    } else if (isBottomHalf(pos) && d->pressedOverBottomHalf) {
+        d->map->setZoomLevel(d->map->zoomLevel() - 1.0);
     }
-    pressedOverBottomHalf = false;
-    pressedOverTopHalf = false;
+    d->pressedOverBottomHalf = false;
+    d->pressedOverTopHalf = false;
     event->accept();
 }
 

@@ -152,6 +152,7 @@ private:
     StatusBarItemPrivate *d;
 };
 
+class ZoomButtonItemPrivate;
 class ZoomButtonItem : public QGraphicsRectItem
 {
 public:
@@ -160,13 +161,7 @@ public:
     void setRect(qreal x, qreal y, qreal w, qreal h);
 
 private:
-    GeoMap *map;
-
-    QGraphicsSimpleTextItem *plusText;
-    QGraphicsSimpleTextItem *minusText;
-
-    bool pressedOverTopHalf;
-    bool pressedOverBottomHalf;
+    ZoomButtonItemPrivate *d;
 
     bool isTopHalf(const QPointF &point);
     bool isBottomHalf(const QPointF &point);
