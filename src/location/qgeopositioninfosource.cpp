@@ -390,7 +390,6 @@ QGeoPositionInfoSource *QGeoPositionInfoSource::createDefaultSource(QObject *par
         delete source;
 #elif defined(Q_WS_MEEGO)
     // Use Maemo6 backend if its available, otherwise use Geoclue backend
-    QSettings settings(QSettings::SystemScope, QLatin1String("Nokia"), QLatin1String("QtLocationPosAndSat"));
     if (!settings.value("maemo6positioningavailable").isValid()) {
         QGeoPositionInfoSourceMaemo* maemo6Source = new QGeoPositionInfoSourceMaemo(parent);
         int status = maemo6Source->init();

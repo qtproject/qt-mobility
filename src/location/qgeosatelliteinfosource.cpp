@@ -284,7 +284,6 @@ QGeoSatelliteInfoSource *QGeoSatelliteInfoSource::createDefaultSource(QObject *p
     return new QGeoSatelliteInfoSourceSimulator(parent);
 #elif defined(Q_WS_MEEGO)
     // Use Maemo6 backend if available, otherwise use Gypsy backend
-    QSettings settings(QLatin1String("Nokia"), QLatin1String("QtLocationPosAndSat"));
     if (!settings.value("maemo6satelliteavailable").isValid()) {
         QGeoSatelliteInfoSourceMaemo *maemoSource = new QGeoSatelliteInfoSourceMaemo(parent);
         int status = maemoSource->init();
