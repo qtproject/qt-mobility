@@ -42,6 +42,10 @@
 
 #include "qsystemalignedtimer.h"
 #include "qsystemalignedtimer_meego_p.h"
+#include <QDebug>
+
+#include <errno.h>
+#include <stdio.h>
 
 QTM_BEGIN_NAMESPACE
 
@@ -59,12 +63,14 @@ QSystemAlignedTimerPrivate::QSystemAlignedTimerPrivate(QObject *parent) :
 
     if (!m_iphbdHandler) {
         m_lastError = QSystemAlignedTimer::InternalError;
+        qDebug() << "iphb_open error" <<strerror(errno);
         return;
     }
 
     int sockfd = iphb_get_fd(m_iphbdHandler);
     if (!(sockfd > -1)) {
         m_lastError = QSystemAlignedTimer::InternalError;
+        qDebug() << "socket failure"<<strerror(errno);
         return;
     }
 
@@ -72,6 +78,7 @@ QSystemAlignedTimerPrivate::QSystemAlignedTimerPrivate(QObject *parent) :
     if (!QObject::connect(m_notifier, SIGNAL(activated(int)), this, SLOT(heartbeatReceived(int)))) {
         delete m_notifier, m_notifier = 0;
         m_lastError = QSystemAlignedTimer::TimerFailed;
+        qDebug() << "timer failure";
         return;
     }
     m_notifier->setEnabled(false);

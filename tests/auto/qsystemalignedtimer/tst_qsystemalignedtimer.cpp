@@ -67,6 +67,15 @@ private slots:
 
     void tst_lastError();
 
+    void tst_start();
+    void tst_stop();
+
+public Q_SLOTS:
+    void timeout();
+
+private:
+    QSystemAlignedTimer alignedtime2r;
+
 };
 
 void tst_QSystemAlignedTimer::initTestCase()
@@ -80,8 +89,15 @@ void tst_QSystemAlignedTimer::tst_wokeUp()
     if(alignedtimer.lastError() == QSystemAlignedTimer::AlignedTimerNotSupported) {
         QSKIP("This test not supported on this platform", SkipAll);
     }
-}
+    alignedtimer.setSingleShot(true);
+    alignedtimer.start(8,10);
 
+    QVERIFY(alignedtimer.isActive());
+
+    alignedtimer.wokeUp();
+    QVERIFY(!alignedtimer.isActive());
+
+}
 
 void tst_QSystemAlignedTimer::tst_minimumInterval()
 {
@@ -118,10 +134,10 @@ void tst_QSystemAlignedTimer::tst_setSingleShot()
     if(alignedtimer.lastError() == QSystemAlignedTimer::AlignedTimerNotSupported) {
         QSKIP("This test not supported on this platform", SkipAll);
     }
-    alignedtimer.setMinimumInterval(0);
-    QVERIFY(alignedtimer.minimumInterval() == 0);
-    alignedtimer.setMinimumInterval(10);
-    QVERIFY(alignedtimer.minimumInterval() == 10);
+    alignedtimer.setSingleShot(true);
+    QVERIFY(alignedtimer.isSingleShot());
+    alignedtimer.setSingleShot(false);
+    QVERIFY(!alignedtimer.isSingleShot());
 }
 
 void tst_QSystemAlignedTimer::tst_isSingleShot()
@@ -151,10 +167,41 @@ void tst_QSystemAlignedTimer::tst_lastError()
     if(alignedtimer.lastError() == QSystemAlignedTimer::AlignedTimerNotSupported) {
         QSKIP("This test not supported on this platform", SkipAll);
     }
+}
 
-    alignedtimer.setMinimumInterval(0);
-    alignedtimer.setMaximumInterval(0);
+void tst_QSystemAlignedTimer::tst_start()
+{
+    QSystemAlignedTimer alignedtimer;
+    if(alignedtimer.lastError() == QSystemAlignedTimer::AlignedTimerNotSupported) {
+        QSKIP("This test not supported on this platform", SkipAll);
+    }
+    alignedtimer.start(8,10);
+    QVERIFY(alignedtimer.isActive());
+    alignedtimer.stop();
+    alignedtimer.setMinimumInterval(8);
+    alignedtimer.setMaximumInterval(10);
+    alignedtimer.start();
+    QVERIFY(alignedtimer.isActive());
 
+    alignedtime2r.start(8,10);
+    QSignalSpy spy(&alignedtime2r,SLOT(timeout()));
+    QCOMPARE(spy.count(), 1);
+}
+
+void tst_QSystemAlignedTimer::tst_stop()
+{
+    QSystemAlignedTimer alignedtimer;
+    if(alignedtimer.lastError() == QSystemAlignedTimer::AlignedTimerNotSupported) {
+        QSKIP("This test not supported on this platform", SkipAll);
+    }
+    alignedtimer.start(8,10);
+    alignedtimer.stop();
+    QVERIFY(!alignedtimer.isActive());
+}
+
+void tst_QSystemAlignedTimer::timeout()
+{
+    QVERIFY(!alignedtime2r.isActive());
 }
 
 
