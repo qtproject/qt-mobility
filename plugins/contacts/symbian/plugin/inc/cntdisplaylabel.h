@@ -65,8 +65,15 @@ class CntDisplayLabel;
 // Please keep this in sync with the values in the system header file <cntuids.h>
 // We cannot include this system header file because it is owned by an app layer
 // package (Contacts package). This being a mw layer, the dependency is not allowed
+// Cenrep UIDs used in Avkon & QML phonebook apps. Name ordering is checked in either
+// app depending on the one available. Priority is given to QML. Synchronizing of the
+// key values is done by the applications
+// QML phonebook UIDs
 const TUid KCRCntSettings = {0x2002FF54};
 const TUint32 KCntNameOrdering = 0x00000001;
+
+const TUid KCRUidPhonebook = {0x101f8794};
+const TUint32 KPhonebookNameOrdering = 0x00000001;
 
 // name order enumerations
 // Please keep this in sync with <cntuids.h> See above comments
@@ -84,7 +91,7 @@ enum NameOrder {
 class CntCenrep : public CActive
 {
 public:
-    CntCenrep(TUint32 aKey, CntDisplayLabel& aDisplayLabel );
+    CntCenrep(MDisplayLabel& aDisplayLabel );
     ~CntCenrep();
  
 public:
@@ -97,14 +104,23 @@ private:
 
 private:
     CRepository*                iCenrep;
-    CntDisplayLabel*            iDisplayLabel;
-    const TUint32               iKey;
+    MDisplayLabel&              iDisplayLabel;
+    TUint32                     iKey;
     int                         iValue;
 };
 
 #endif
 
+class MDisplayLabel
+{
+public:
+    virtual void updateNameOrdering() = 0;
+};
+
 class CntDisplayLabel : public QObject
+#ifdef SYMBIAN_BACKEND_USE_CNTMODEL_V2
+                        ,public MDisplayLabel
+#endif
 {
     Q_OBJECT
     
