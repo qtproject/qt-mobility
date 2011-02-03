@@ -120,6 +120,10 @@ public:
         Q_UNUSED(errorString)
         setMinimumZoomLevel(10.0);
         setMaximumZoomLevel(20.0);
+        setMaximumTilt(90.0);
+        setMinimumTilt(0.0);
+        setSupportsBearing(true);
+        setSupportsTilting(true);
         QList<QGraphicsGeoMap::ConnectivityMode> modes;
         modes << QGraphicsGeoMap::OfflineMode;
         modes << QGraphicsGeoMap::OnlineMode;

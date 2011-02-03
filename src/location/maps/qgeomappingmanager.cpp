@@ -175,6 +175,44 @@ qreal QGeoMappingManager::maximumZoomLevel() const
 }
 
 /*!
+    Return whether bearing is supported by this manager.
+*/
+bool QGeoMappingManager::supportsBearing() const
+{
+    return d_ptr->engine->supportsBearing();
+}
+
+/*!
+    Return whether tilting is supported by this manager.
+*/
+bool QGeoMappingManager::supportsTilting() const
+{
+    return d_ptr->engine->supportsTilting();
+}
+
+/*!
+    Returns minimum tilt supported by this manager.
+
+    Value in degrees where 0 is equivalent to 90 degrees between view and earth's
+    surface i.e. looking straight down to earth.
+*/
+qreal QGeoMappingManager::minimumTilt() const
+{
+    return d_ptr->engine->minimumTilt();
+}
+
+/*!
+    Returns maximum tilt supported by this manager.
+
+    Value in degrees where 0 is equivalent to 90 degrees between view and earth's
+    surface i.e. looking straight down to earth.
+*/
+qreal QGeoMappingManager::maximumTilt() const
+{
+    return d_ptr->engine->maximumTilt();
+}
+
+/*!
     Sets the locale to be used by the this manager to \a locale.
 
     If this mapping manager supports returning map labels

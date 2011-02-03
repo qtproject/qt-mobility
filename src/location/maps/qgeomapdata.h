@@ -68,6 +68,12 @@ class Q_LOCATION_EXPORT QGeoMapData : public QObject
     Q_PROPERTY(QGraphicsGeoMap::MapType mapType READ mapType WRITE setMapType NOTIFY mapTypeChanged)
     Q_PROPERTY(QGraphicsGeoMap::ConnectivityMode connectivityMode READ connectivityMode WRITE setConnectivityMode NOTIFY connectivityModeChanged)
     Q_PROPERTY(QGeoCoordinate center READ center WRITE setCenter NOTIFY centerChanged)
+    Q_PROPERTY(qreal tilt READ tilt WRITE setTilt NOTIFY tiltChanged)
+    Q_PROPERTY(qreal minimumTilt READ minimumTilt CONSTANT)
+    Q_PROPERTY(qreal maximumTilt READ maximumTilt CONSTANT)
+    Q_PROPERTY(bool supportsTilting READ supportsTilting CONSTANT)
+    Q_PROPERTY(qreal bearing READ bearing WRITE setBearing NOTIFY bearingChanged)
+    Q_PROPERTY(bool supportsBearing READ supportsBearing CONSTANT)
 
 public:
     QGeoMapData(QGeoMappingManagerEngine *engine);
@@ -80,6 +86,16 @@ public:
 
     virtual void setZoomLevel(qreal zoomLevel);
     virtual qreal zoomLevel() const;
+
+    bool supportsBearing() const;
+    void setBearing(qreal bearing);
+    qreal bearing() const;
+
+    bool supportsTilting() const;
+    void setTilt(qreal tilt);
+    qreal tilt() const;
+    qreal minimumTilt() const;
+    qreal maximumTilt() const;
 
     virtual void pan(int dx, int dy);
 
@@ -137,6 +153,8 @@ Q_SIGNALS:
     void mapTypeChanged(QGraphicsGeoMap::MapType mapType);
     void connectivityModeChanged(QGraphicsGeoMap::ConnectivityMode connectivityMode);
     void updateMapDisplay(const QRectF &target = QRectF());
+    void bearingChanged(qreal bearing);
+    void tiltChanged(qreal tilt);
 
 private:
     Q_DECLARE_PRIVATE(QGeoMapData)

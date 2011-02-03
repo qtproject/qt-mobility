@@ -204,6 +204,122 @@ qreal QGeoMapData::zoomLevel() const
 }
 
 /*!
+    \property QGeoMapData::supportsBearing
+
+    Returns whether bearing is supported by this engine.
+*/
+bool QGeoMapData::supportsBearing() const
+{
+    return d_ptr->engine->supportsBearing();
+}
+
+/*!
+    Sets the bearing of the map to \a bearing.
+
+    Value in degrees in the range of 0-360. 0 being equivalent to 0 degrees from
+    north.
+*/
+void QGeoMapData::setBearing(qreal bearing)
+{
+    if (!supportsBearing())
+        return;
+
+    bearing = qMin(bearing, qreal(360.0));
+    bearing = qMax(bearing, qreal(0.0));
+
+    if (d_ptr->bearing == bearing)
+        return;
+
+    d_ptr->bearing = bearing;
+
+    if (!d_ptr->blockPropertyChangeSignals)
+        emit bearingChanged(d_ptr->bearing);
+}
+
+/*!
+    \property QGeoMapData::bearing
+
+    Returns the current bearing of the map.
+
+    Value in degrees in the range of 0-360. 0 being equivalent to 0 degrees from
+    north.
+*/
+qreal QGeoMapData::bearing() const
+{
+    return d_ptr->bearing;
+}
+
+/*!
+    \property QGeoMapData::supportsTilting
+
+    Returns whether tilting is supported by this engine.
+*/
+bool QGeoMapData::supportsTilting() const
+{
+    return d_ptr->engine->supportsTilting();
+}
+
+/*!
+    \property QGeoMapData::minimumTilt
+
+    Returns minimum tilt supported by this engine.
+*/
+qreal QGeoMapData::minimumTilt() const
+{
+    return d_ptr->engine->minimumTilt();
+}
+
+/*!
+    \property QGeoMapData::maximumTilt
+
+    Returns maximum tilt supported by this engine.
+*/
+qreal QGeoMapData::maximumTilt() const
+{
+    return d_ptr->engine->maximumTilt();
+}
+
+/*!
+    Sets the tilt of the map to \a tilt.
+
+    Value in degrees where 0 is equivalent to 90 degrees between view and earth's
+    surface i.e. looking straight down to earth.
+
+    If \a tilt is less than minimumTilt() then minimumTilt()
+    will be used, and if \a tilt is  larger than
+    maximumTilt() then maximumTilt() will be used.
+*/
+void QGeoMapData::setTilt(qreal tilt)
+{
+    if (!supportsTilting())
+        return;
+
+    tilt = qMin(tilt, d_ptr->engine->maximumTilt());
+    tilt = qMax(tilt, d_ptr->engine->minimumTilt());
+
+    if (d_ptr->tilt == tilt)
+        return;
+
+    d_ptr->tilt = tilt;
+
+    if (!d_ptr->blockPropertyChangeSignals)
+        emit tiltChanged(d_ptr->tilt);
+}
+
+/*!
+    \property QGeoMapData::tilt
+
+    Returns the current tilt of the map.
+
+    Value in degrees where 0 is equivalent to 90 degrees between view and earth's
+    surface i.e. looking straight down to earth.
+*/
+qreal QGeoMapData::tilt() const
+{
+    return d_ptr->tilt;
+}
+
+/*!
     Pans the map view \a dx pixels in the x direction and \a dy pixels
     in the y direction.
 
@@ -593,6 +709,22 @@ void QGeoMapData::setBlockPropertyChangeSignals(bool block)
 */
 
 /*!
+\fn void QGeoMapData::bearingChanged(qreal bearing)
+
+    This signal is emitted when the bearing of the map has changed.
+
+    The new value is \a bearing.
+*/
+
+/*!
+\fn void QGeoMapData::tiltChanged(qreal tilt)
+
+    This signal is emitted when the tilt of the map has changed.
+
+    The new value is \a tilt.
+*/
+
+/*!
 \fn void QGeoMapData::centerChanged(const QGeoCoordinate &coordinate)
 
     This signal is emitted when the center of the map has changed.
@@ -634,6 +766,8 @@ QGeoMapDataPrivate::QGeoMapDataPrivate(QGeoMapData *parent, QGeoMappingManagerEn
     : engine(engine),
       containerObject(0),
       zoomLevel(-1.0),
+      bearing(0.0),
+      tilt(0.0),
       blockPropertyChangeSignals(false),
       q_ptr(parent) {}
 
