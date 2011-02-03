@@ -58,15 +58,26 @@ class QDeclarativeGeoMapPolylineObject : public QDeclarativeGeoMapObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeCoordinate> path READ declarativePath)
+    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeCoordinate> path READ declarativePath NOTIFY pathChanged)
     Q_PROPERTY(QDeclarativeGeoMapObjectBorder* border READ border)
+    Q_CLASSINFO("DefaultProperty", "path")
 
 public:
     QDeclarativeGeoMapPolylineObject(QDeclarativeItem *parent = 0);
     ~QDeclarativeGeoMapPolylineObject();
 
+    Q_INVOKABLE void addCoordinate(QDeclarativeCoordinate* coordinate);
+    Q_INVOKABLE void removeCoordinate(QDeclarativeCoordinate* coordinate);
+
+    // From QDeclarativeParserStatus
+    virtual void classBegin() {}
+    virtual void componentComplete();
+
     QDeclarativeListProperty<QDeclarativeCoordinate> declarativePath();
     QDeclarativeGeoMapObjectBorder* border();
+
+Q_SIGNALS:
+    void pathChanged();
 
 private Q_SLOTS:
     void borderColorChanged(const QColor &color);
@@ -77,10 +88,12 @@ private:
     static int path_count(QDeclarativeListProperty<QDeclarativeCoordinate> *prop);
     static QDeclarativeCoordinate* path_at(QDeclarativeListProperty<QDeclarativeCoordinate> *prop, int index);
     static void path_clear(QDeclarativeListProperty<QDeclarativeCoordinate> *prop);
+    void pathPropertyChanged();
 
     QGeoMapPolylineObject* polyline_;
     QList<QDeclarativeCoordinate*> path_;
     QDeclarativeGeoMapObjectBorder border_;
+    bool componentCompleted_;
 };
 
 QTM_END_NAMESPACE
