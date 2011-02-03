@@ -1645,3 +1645,43 @@ EXPORTS
 	??1QLandmarkCategoryFetchByIdRequest@QtMobility@@UAE@XZ @ 1644 NONAME ; QtMobility::QLandmarkCategoryFetchByIdRequest::~QLandmarkCategoryFetchByIdRequest(void)
 	?atDistanceAndAzimuth@QGeoCoordinate@QtMobility@@QBE?AV12@MMM@Z @ 1645 NONAME ; class QtMobility::QGeoCoordinate QtMobility::QGeoCoordinate::atDistanceAndAzimuth(float, float, float) const
 	?replyFinished@QGeoTiledMapData@QtMobility@@AAEXPAVQGeoTiledMapReply@2@@Z @ 1646 NONAME ; void QtMobility::QGeoTiledMapData::replyFinished(class QtMobility::QGeoTiledMapReply *)
+	?supportsBearing@QGeoMappingManager@QtMobility@@QBE_NXZ @ 1647 NONAME ; bool QtMobility::QGeoMappingManager::supportsBearing(void) const
+	?availableSources@QGeoPositionInfoSource@QtMobility@@SA?AVQStringList@@XZ @ 1648 NONAME ; class QStringList QtMobility::QGeoPositionInfoSource::availableSources(void)
+	?createSource@QGeoPositionInfoSource@QtMobility@@SAPAV12@ABVQString@@PAVQObject@@@Z @ 1649 NONAME ; class QtMobility::QGeoPositionInfoSource * QtMobility::QGeoPositionInfoSource::createSource(class QString const &, class QObject *)
+	?maximumTilt@QGraphicsGeoMap@QtMobility@@QBEMXZ @ 1650 NONAME ; float QtMobility::QGraphicsGeoMap::maximumTilt(void) const
+	?minimumTilt@QGeoMapData@QtMobility@@QBEMXZ @ 1651 NONAME ; float QtMobility::QGeoMapData::minimumTilt(void) const
+	?maximumTilt@QGeoMappingManagerEngine@QtMobility@@QBEMXZ @ 1652 NONAME ; float QtMobility::QGeoMappingManagerEngine::maximumTilt(void) const
+	?sourcePriority@QGeoPositionInfoSourceFactory@QtMobility@@UBEHXZ @ 1653 NONAME ; int QtMobility::QGeoPositionInfoSourceFactory::sourcePriority(void) const
+	?tiltChanged@QGraphicsGeoMap@QtMobility@@IAEXM@Z @ 1654 NONAME ; void QtMobility::QGraphicsGeoMap::tiltChanged(float)
+	?tilt@QGraphicsGeoMap@QtMobility@@QBEMXZ @ 1655 NONAME ; float QtMobility::QGraphicsGeoMap::tilt(void) const
+	??1QGeoPositionInfoSourceFactory@QtMobility@@UAE@XZ @ 1656 NONAME ; QtMobility::QGeoPositionInfoSourceFactory::~QGeoPositionInfoSourceFactory(void)
+	?supportsBearing@QGeoMapData@QtMobility@@QBE_NXZ @ 1657 NONAME ; bool QtMobility::QGeoMapData::supportsBearing(void) const
+	?setSupportsBearing@QGeoMappingManagerEngine@QtMobility@@IAEX_N@Z @ 1658 NONAME ; void QtMobility::QGeoMappingManagerEngine::setSupportsBearing(bool)
+	?bearing@QGeoMapData@QtMobility@@QBEMXZ @ 1659 NONAME ; float QtMobility::QGeoMapData::bearing(void) const
+	?setBearing@QGeoMapData@QtMobility@@QAEXM@Z @ 1660 NONAME ; void QtMobility::QGeoMapData::setBearing(float)
+	?setTilt@QGraphicsGeoMap@QtMobility@@QAEXM@Z @ 1661 NONAME ; void QtMobility::QGraphicsGeoMap::setTilt(float)
+	?supportsTilting@QGeoMapData@QtMobility@@QBE_NXZ @ 1662 NONAME ; bool QtMobility::QGeoMapData::supportsTilting(void) const
+	?maximumTilt@QGeoMapData@QtMobility@@QBEMXZ @ 1663 NONAME ; float QtMobility::QGeoMapData::maximumTilt(void) const
+	?setSupportsTilting@QGeoMappingManagerEngine@QtMobility@@IAEX_N@Z @ 1664 NONAME ; void QtMobility::QGeoMappingManagerEngine::setSupportsTilting(bool)
+	?supportsTilting@QGeoMappingManager@QtMobility@@QBE_NXZ @ 1665 NONAME ; bool QtMobility::QGeoMappingManager::supportsTilting(void) const
+	?bearingChanged@QGraphicsGeoMap@QtMobility@@IAEXM@Z @ 1666 NONAME ; void QtMobility::QGraphicsGeoMap::bearingChanged(float)
+	?maximumTilt@QGeoMappingManager@QtMobility@@QBEMXZ @ 1667 NONAME ; float QtMobility::QGeoMappingManager::maximumTilt(void) const
+	?supportsTilting@QGraphicsGeoMap@QtMobility@@QBE_NXZ @ 1668 NONAME ; bool QtMobility::QGraphicsGeoMap::supportsTilting(void) const
+	?bearingChanged@QGeoMapData@QtMobility@@IAEXM@Z @ 1669 NONAME ; void QtMobility::QGeoMapData::bearingChanged(float)
+	?minimumTilt@QGeoMappingManagerEngine@QtMobility@@QBEMXZ @ 1670 NONAME ; float QtMobility::QGeoMappingManagerEngine::minimumTilt(void) const
+	?minimumTilt@QGeoMappingManager@QtMobility@@QBEMXZ @ 1671 NONAME ; float QtMobility::QGeoMappingManager::minimumTilt(void) const
+	?supportsTilting@QGeoMappingManagerEngine@QtMobility@@QBE_NXZ @ 1672 NONAME ; bool QtMobility::QGeoMappingManagerEngine::supportsTilting(void) const
+	?setMinimumTilt@QGeoMappingManagerEngine@QtMobility@@IAEXM@Z @ 1673 NONAME ; void QtMobility::QGeoMappingManagerEngine::setMinimumTilt(float)
+	?setMaximumTilt@QGeoMappingManagerEngine@QtMobility@@IAEXM@Z @ 1674 NONAME ; void QtMobility::QGeoMappingManagerEngine::setMaximumTilt(float)
+	?tilt@QGeoMapData@QtMobility@@QBEMXZ @ 1675 NONAME ; float QtMobility::QGeoMapData::tilt(void) const
+	?supportsBearing@QGraphicsGeoMap@QtMobility@@QBE_NXZ @ 1676 NONAME ; bool QtMobility::QGraphicsGeoMap::supportsBearing(void) const
+	?createSource@QGeoSatelliteInfoSource@QtMobility@@SAPAV12@ABVQString@@PAVQObject@@@Z @ 1677 NONAME ; class QtMobility::QGeoSatelliteInfoSource * QtMobility::QGeoSatelliteInfoSource::createSource(class QString const &, class QObject *)
+	?setBearing@QGraphicsGeoMap@QtMobility@@QAEXM@Z @ 1678 NONAME ; void QtMobility::QGraphicsGeoMap::setBearing(float)
+	??_EQGeoPositionInfoSourceFactory@QtMobility@@UAE@I@Z @ 1679 NONAME ; QtMobility::QGeoPositionInfoSourceFactory::~QGeoPositionInfoSourceFactory(unsigned int)
+	?supportsBearing@QGeoMappingManagerEngine@QtMobility@@QBE_NXZ @ 1680 NONAME ; bool QtMobility::QGeoMappingManagerEngine::supportsBearing(void) const
+	?tiltChanged@QGeoMapData@QtMobility@@IAEXM@Z @ 1681 NONAME ; void QtMobility::QGeoMapData::tiltChanged(float)
+	?availableSources@QGeoSatelliteInfoSource@QtMobility@@SA?AVQStringList@@XZ @ 1682 NONAME ; class QStringList QtMobility::QGeoSatelliteInfoSource::availableSources(void)
+	?setTilt@QGeoMapData@QtMobility@@QAEXM@Z @ 1683 NONAME ; void QtMobility::QGeoMapData::setTilt(float)
+	?minimumTilt@QGraphicsGeoMap@QtMobility@@QBEMXZ @ 1684 NONAME ; float QtMobility::QGraphicsGeoMap::minimumTilt(void) const
+	?bearing@QGraphicsGeoMap@QtMobility@@QBEMXZ @ 1685 NONAME ; float QtMobility::QGraphicsGeoMap::bearing(void) const
+
