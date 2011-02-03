@@ -46,7 +46,9 @@
 #include "directshowmetadatacontrol.h"
 #include "directshowplayercontrol.h"
 #include "directshowvideorenderercontrol.h"
+#ifndef Q_WS_SIMULATOR
 #include "vmr9videowindowcontrol.h"
+#endif
 
 #include "../../src/multimedia/qmediacontent.h"
 
@@ -81,7 +83,9 @@ DirectShowPlayerService::DirectShowPlayerService(QObject *parent)
     , m_playerControl(0)
     , m_metaDataControl(0)
     , m_videoRendererControl(0)
+#ifndef Q_WS_SIMULATOR
     , m_videoWindowControl(0)
+#endif
     , m_audioEndpointControl(0)
     , m_taskThread(0)
     , m_loop(qt_directShowEventLoop())
@@ -103,6 +107,7 @@ DirectShowPlayerService::DirectShowPlayerService(QObject *parent)
     , m_seekable(false)
     , m_atEnd(false)
 {
+    CoInitialize(NULL);
     m_playerControl = new DirectShowPlayerControl(this);
     m_metaDataControl = new DirectShowMetaDataControl(this);
     m_audioEndpointControl = new DirectShowAudioEndpointControl(this);
@@ -139,9 +144,12 @@ DirectShowPlayerService::~DirectShowPlayerService()
     delete m_audioEndpointControl;
     delete m_metaDataControl;
     delete m_videoRendererControl;
+#ifndef Q_WS_SIMULATOR
     delete m_videoWindowControl;
+#endif
 
     ::CloseHandle(m_taskHandle);
+    CoUninitialize();
 }
 
 QMediaControl *DirectShowPlayerService::requestControl(const char *name)
@@ -153,7 +161,11 @@ QMediaControl *DirectShowPlayerService::requestControl(const char *name)
     } else if (qstrcmp(name, QMetaDataReaderControl_iid) == 0) {
         return m_metaDataControl;
     } else if (qstrcmp(name, QVideoRendererControl_iid) == 0) {
+#ifndef Q_WS_SIMULATOR
         if (!m_videoRendererControl && !m_videoWindowControl) {
+#else
+        if (!m_videoRendererControl) {
+#endif
             m_videoRendererControl = new DirectShowVideoRendererControl(m_loop);
 
             connect(m_videoRendererControl, SIGNAL(filterChanged()),
@@ -161,6 +173,7 @@ QMediaControl *DirectShowPlayerService::requestControl(const char *name)
 
             return m_videoRendererControl;
         }
+#ifndef Q_WS_SIMULATOR
     } else if (qstrcmp(name, QVideoWindowControl_iid) == 0) {
         if (!m_videoRendererControl && !m_videoWindowControl) {
             m_videoWindowControl = new Vmr9VideoWindowControl;
@@ -169,6 +182,7 @@ QMediaControl *DirectShowPlayerService::requestControl(const char *name)
 
             return m_videoWindowControl;
         }
+#endif
     }
     return 0;
 }
@@ -184,12 +198,14 @@ void DirectShowPlayerService::releaseControl(QMediaControl *control)
         delete m_videoRendererControl;
 
         m_videoRendererControl = 0;
+#ifndef Q_WS_SIMULATOR
     } else if (control == m_videoWindowControl) {
         setVideoOutput(0);
 
         delete m_videoWindowControl;
 
         m_videoWindowControl = 0;
+#endif
     }
 }
 
