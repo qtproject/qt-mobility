@@ -86,6 +86,7 @@ class  Q_SYSINFO_EXPORT QSystemDeviceInfo : public QObject
     Q_ENUMS(KeypadType)
 
     Q_FLAGS(KeyboardType KeyboardTypeFlags) //1.2
+    Q_FLAGS(LockType LockTypeFlags) //1.2
 
 public:
 
@@ -125,7 +126,7 @@ public:
         NormalProfile,
         LoudProfile,
         VibProfile,
-        OfflineProfile,
+        OfflineProfile,LockType
         PowersaveProfile,
         CustomProfile,
         BeepProfile
