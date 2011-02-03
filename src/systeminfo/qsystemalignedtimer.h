@@ -70,7 +70,8 @@ public:
       NoError=0,
       AlignedTimerNotSupported,
       InvalidArgument,
-      TimerFailed
+      TimerFailed,
+      InternalError
     };
 
     Q_INVOKABLE void wokeUp();

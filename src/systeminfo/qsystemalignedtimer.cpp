@@ -78,6 +78,7 @@ QTM_BEGIN_NAMESPACE
     \value AlignedTimerNotSupported       The aligned timer is not support on this platform
     \value InvalidArgument                Interval arguments are invalid.
     \value TimerFailed                    General timer failure.
+    \value InternalError                  Internal error.
 
   */
 
@@ -189,7 +190,9 @@ int QSystemAlignedTimer::minimumInterval() const
    Time in seconds when the wait MUST end. It is wise to have maxtime-mintime
    quite big so all users of this service get synced.
    For example if you preferred wait is 120 seconds, use minval 110 and maxval 130.
-   Default value for maxTime is 0. If maxTime is 0, then minTime will be a "preferred" interval.
+
+   max interval must be greater than min interval.
+
  */
 void QSystemAlignedTimer::setMaximumInterval(int seconds)
 {

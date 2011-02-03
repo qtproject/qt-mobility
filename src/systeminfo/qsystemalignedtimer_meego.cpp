@@ -157,7 +157,7 @@ void QSystemAlignedTimerPrivate::start()
     }
 
     if (!(m_iphbdHandler && m_notifier)) {
-        m_lastError = QSystemAlignedTimer::AlignedTimerNotSupported;
+        m_lastError = QSystemAlignedTimer::InternalError;
         emit error(m_lastError);
         return;
     }
@@ -183,7 +183,7 @@ void QSystemAlignedTimerPrivate::stop()
     }
 
     if (!(m_iphbdHandler && m_notifier)) {
-        m_lastError = QSystemAlignedTimer::AlignedTimerNotSupported;
+        m_lastError = QSystemAlignedTimer::InternalError;
         emit error(m_lastError);
         return;
     }
