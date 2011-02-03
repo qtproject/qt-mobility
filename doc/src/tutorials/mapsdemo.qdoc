@@ -1876,6 +1876,172 @@ void MainWindow::openNetworkSession()
     
     \section2 Zoom buttons and panning keys
     
+    In our current implementation we depend upon the presence of a mouse
+    wheel in order to zoom in and out on the map. This is not terribly
+    useful in environments that lack a mouse (ie, anything except a desktop
+    or laptop computer). To address this, we will implement a simple pair
+    of zoom buttons on the right-hand side of the map display.
     
+    We also currently assume that panning the map using a mouse or touch
+    screen is possible, which is not the case on, for example, many
+    Symbian devices, which lack touch input. To rectify this, we will
+    add support for handling arrow key events in \a GeoMap.
+    
+    First up, our zoom buttons. We're going to use a very similar setup
+    to that which we used for the sliding status bar previously, and
+    create a new subclass of QGraphicsRectItem:
+    
+    \code
+class ZoomButtonItemPrivate;
+class ZoomButtonItem : public QGraphicsRectItem
+{
+public:
+    explicit ZoomButtonItem(GeoMap *map);
 
+    void setRect(qreal x, qreal y, qreal w, qreal h);
+
+private:
+    ZoomButtonItemPrivate *d;
+
+    bool isTopHalf(const QPointF &point);
+    bool isBottomHalf(const QPointF &point);
+
+protected:
+    void mousePressEvent(QGraphicsSceneMouseEvent *event);
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
+};
+    \endcode
+    
+    Our button is going to simply be a translucent rectangle, with the top
+    half containing a "+" symbol, which zooms in when clicked, and the
+    bottom half containing a "-" symbol, which zooms out. In the constructor
+    we create the two text items:
+    
+    \code
+class ZoomButtonItemPrivate
+{
+public:
+    GeoMap *map;
+
+    QGraphicsSimpleTextItem *plusText;
+    QGraphicsSimpleTextItem *minusText;
+
+    bool pressedOverTopHalf;
+    bool pressedOverBottomHalf;
+};
+
+ZoomButtonItem::ZoomButtonItem(GeoMap *map) :
+    d(new ZoomButtonItemPrivate)
+{
+    d->map = map;
+    d->pressedOverBottomHalf = false;
+    d->pressedOverTopHalf = false;
+
+    setPen(QPen(QBrush(), 0));
+    setBrush(QBrush(QColor(0,0,0,150)));
+
+    d->plusText = new QGraphicsSimpleTextItem(this);
+    d->plusText->setText("+");
+    d->plusText->setBrush(QBrush(Qt::white));
+
+    d->minusText = new QGraphicsSimpleTextItem(this);
+    d->minusText->setText("-");
+    d->minusText->setBrush(QBrush(Qt::white));
+}
+    \endcode
+    
+    And in \a setRect() we manage sizing and aligning the text items so
+    that they each occupy roughly half the space.
+    
+    \code
+void ZoomButtonItem::setRect(qreal x, qreal y, qreal w, qreal h)
+{
+    QGraphicsRectItem::setRect(x, y, w, h);
+
+    QFont f;
+    f.setFixedPitch(true);
+    f.setPixelSize(h/3.0);
+    d->plusText->setFont(f);
+    d->minusText->setFont(f);
+
+    QRectF plusBound = d->plusText->boundingRect();
+    QPointF plusCenter(x+w/2.0, y+h/4.0);
+    QPointF plusDelta = plusCenter - plusBound.center();
+    d->plusText->setPos(plusDelta);
+
+    QRectF minusBound = d->minusText->boundingRect();
+    QPointF minusCenter(x+w/2.0, y+3.0*h/4.0);
+    QPointF minusDelta = minusCenter - minusBound.center();
+    d->minusText->setPos(minusDelta);
+}
+    \endcode
+    
+    Finally, we use the boolean flags in ZoomButtonItemPrivate, above, to
+    manage click detection in the \a mousePressEvent and \a mouseReleaseEvent
+    functions:
+    
+    \code
+void ZoomButtonItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
+{
+    const QPointF pos = event->pos();
+    if (!d->pressedOverTopHalf && !d->pressedOverBottomHalf) {
+        if (isTopHalf(pos)) {
+            d->pressedOverTopHalf = true;
+        } else if (isBottomHalf(pos)) {
+            d->pressedOverBottomHalf = true;
+        }
+    }
+    event->accept();
+}
+
+void ZoomButtonItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+{
+    const QPointF pos = event->pos();
+    if (isTopHalf(pos) && d->pressedOverTopHalf) {
+        d->map->setZoomLevel(d->map->zoomLevel() + 1.0);
+    } else if (isBottomHalf(pos) && d->pressedOverBottomHalf) {
+        d->map->setZoomLevel(d->map->zoomLevel() - 1.0);
+    }
+    d->pressedOverBottomHalf = false;
+    d->pressedOverTopHalf = false;
+    event->accept();
+}
+    \endcode
+    
+    In this way, if the mouse (or finger for touch screens) is pressed
+    and then released over the same half of the ZoomButtonItem, we
+    perform the zoom action appropriately. We could have simply hooked
+    the corresponding events on the children items, \a plusText and
+    \a minusText, but as they occupy less space and their size/shape vary
+    depending on the default font, users may find it difficult to target 
+    the active portion of the button (especially in a touch environment).
+    
+    Adding the new button item to the MapsWidget also happens similarly
+    to before:
+    
+    \code
+void MapsWidget::initialize(QGeoMappingManager *manager)
+{
+    ...
+    d->zoomButtonItem = new ZoomButtonItem(d->map);
+    sc->addItem(d->zoomButtonItem);
+
+    resizeEvent(0);
+    ...
+}
+
+void MapsWidget::resizeEvent(QResizeEvent *event)
+{
+    if (d->view && d->map) {
+        ...
+        d->zoomButtonItem->setRect(width()-30, height()/2.0 - 35, 25, 70);
+    }
+}
+    \endcode
+    
+    And now we can zoom in and out properly on touch devices. Next we'll
+    address the need to pan and zoom on devices with neither touch
+    nor mouse, which we can do through handling key events.
+    
+    
 */
