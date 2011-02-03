@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -38,6 +38,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
 #ifndef QNFCTAGTESTCOMMON_H
 #define QNFCTAGTESTCOMMON_H
 
@@ -101,36 +102,36 @@ public:
     void touchTarget();
     void removeTarget(); 
     
-    void testSmoke(const QStringList& discription, const QVariantList& commandSet, const QVariantList& responseSet);
+    void testSmoke(const QStringList& description, const QVariantList& commandSet, const QVariantList& responseSet);
     
     // ndef access 
     void testNdefAccess();
     void _testNdefAccess();
 
     // raw command/commands
-    void testRawCommand(const QStringList& discription, const QVariantList& commandSet, const QVariantList& responseSet);
-    void _testRawCommand(const QStringList& discription, const QVariantList& commandSet, const QVariantList& responseSet);
+    void testRawCommand(const QStringList& description, const QVariantList& commandSet, const QVariantList& responseSet);
+    void _testRawCommand(const QStringList& description, const QVariantList& commandSet, const QVariantList& responseSet);
 
 
-    void testWaitRawCommand(const QStringList& discription, const QVariantList& commandSet, const QVariantList& responseSet);
-    void _testWaitRawCommand(const QStringList& discription, const QVariantList& commandSet, const QVariantList& responseSet);
+    void testWaitRawCommand(const QStringList& description, const QVariantList& commandSet, const QVariantList& responseSet);
+    void _testWaitRawCommand(const QStringList& description, const QVariantList& commandSet, const QVariantList& responseSet);
 
 
     // mix ndef access and raw command 
-    void testMixRawCommandAndNdefAccess(const QStringList& discription, const QVariantList& commandSet, const QVariantList& responseSet);
-    void _testMixRawCommandAndNdefAccess(const QStringList& discription, const QVariantList& commandSet, const QVariantList& responseSet);
+    void testMixRawCommandAndNdefAccess(const QStringList& description, const QVariantList& commandSet, const QVariantList& responseSet);
+    void _testMixRawCommandAndNdefAccess(const QStringList& description, const QVariantList& commandSet, const QVariantList& responseSet);
     
 
-    void testWaitMixRawCommandAndNdefAccess(const QStringList& discription, const QVariantList& commandSet, const QVariantList& responseSet);
-    void _testWaitMixRawCommandAndNdefAccess(const QStringList& discription, const QVariantList& commandSet, const QVariantList& responseSet);
+    void testWaitMixRawCommandAndNdefAccess(const QStringList& description, const QVariantList& commandSet, const QVariantList& responseSet);
+    void _testWaitMixRawCommandAndNdefAccess(const QStringList& description, const QVariantList& commandSet, const QVariantList& responseSet);
 
     // multiple wait
-    void testWaitInSlot(const QStringList& discription, const QVariantList& commandSet, const QVariantList& responseSet);
-    void _testWaitInSlot(const QStringList& discription, const QVariantList& commandSet, const QVariantList& responseSet, bool needTimeOut = false);
+    void testWaitInSlot(const QStringList& description, const QVariantList& commandSet, const QVariantList& responseSet);
+    void _testWaitInSlot(const QStringList& description, const QVariantList& commandSet, const QVariantList& responseSet, bool needTimeOut = false);
 
     // delete and remove tag before async request completed
-    void testDeleteTargetBeforeAsyncRequestComplete(const QStringList& discription, const QVariantList& commandSet, const QVariantList& responseSet);
-    void testRemoveTargetBeforeAsyncRequestComplete(const QStringList& discription, const QVariantList& commandSet, const QVariantList& responseSet);
+    void testDeleteTargetBeforeAsyncRequestComplete(const QStringList& description, const QVariantList& commandSet, const QVariantList& responseSet);
+    void testRemoveTargetBeforeAsyncRequestComplete(const QStringList& description, const QVariantList& commandSet, const QVariantList& responseSet);
     void testCancelNdefOperation();
 
 private:
@@ -162,11 +163,11 @@ private:
         } 
     }
 
-    void GetRequestIDs(const QStringList& discription, const QVariantList& commandSet, QList<QNearFieldTarget::RequestId>& requests, bool readNdef = false)
+    void GetRequestIDs(const QStringList& description, const QVariantList& commandSet, QList<QNearFieldTarget::RequestId>& requests, bool readNdef = false)
     {
-        for (int i = 0; i < discription.count(); ++i)
+        for (int i = 0; i < description.count(); ++i)
         {
-            qDebug()<<"test "<<discription.at(i)<<endl;
+            qDebug()<<"test "<<description.at(i)<<endl;
             // sendCommand
             if (commandSet.at(i).type() == QVariant::ByteArray)
             {
@@ -275,15 +276,15 @@ void QNfcTagTestCommon<TAG>::removeTarget()
 }    
 
 template<typename TAG>
-void QNfcTagTestCommon<TAG>::testSmoke(const QStringList& discription, const QVariantList& commandSet, const QVariantList& responseSet)
+void QNfcTagTestCommon<TAG>::testSmoke(const QStringList& description, const QVariantList& commandSet, const QVariantList& responseSet)
 {
     // for one touch testing
-    Q_ASSERT_X(discription.count() == commandSet.count(), "testWaitInSlot", "count mismatch");
-    Q_ASSERT_X(discription.count() == responseSet.count(), "testWaitInSlot", "count mismatch");
-    Q_ASSERT_X(discription.count() > 3, "testWaitInSlot", "list should at least have 3 elements");
+    Q_ASSERT_X(description.count() == commandSet.count(), "testWaitInSlot", "count mismatch");
+    Q_ASSERT_X(description.count() == responseSet.count(), "testWaitInSlot", "count mismatch");
+    Q_ASSERT_X(description.count() > 3, "testWaitInSlot", "list should at least have 3 elements");
     _testNdefAccess();
-    _testWaitInSlot(discription, commandSet, responseSet);
-    _testWaitInSlot(discription, commandSet, responseSet, true);
+    _testWaitInSlot(description, commandSet, responseSet);
+    _testWaitInSlot(description, commandSet, responseSet, true);
 }
 
 template<typename TAG>
@@ -340,23 +341,23 @@ void QNfcTagTestCommon<TAG>::_testNdefAccess()
 }
 
 template<typename TAG>
-void QNfcTagTestCommon<TAG>::testRawCommand(const QStringList& discription, const QVariantList& commandSet, const QVariantList& responseSet)
+void QNfcTagTestCommon<TAG>::testRawCommand(const QStringList& description, const QVariantList& commandSet, const QVariantList& responseSet)
 {
-    Q_ASSERT_X(discription.count() == commandSet.count(), "testRawCommand", "count mismatch");
-    Q_ASSERT_X(discription.count() == responseSet.count(), "testRawCommand", "count mismatch");
-    Q_ASSERT_X(discription.count() > 0, "testRawCommand", "list is empty");
+    Q_ASSERT_X(description.count() == commandSet.count(), "testRawCommand", "count mismatch");
+    Q_ASSERT_X(description.count() == responseSet.count(), "testRawCommand", "count mismatch");
+    Q_ASSERT_X(description.count() > 0, "testRawCommand", "list is empty");
 
     touchTarget();
-    _testRawCommand(discription, commandSet, responseSet);
+    _testRawCommand(description, commandSet, responseSet);
     removeTarget();
 }
 
 template<typename TAG>
-void QNfcTagTestCommon<TAG>::_testRawCommand(const QStringList& discription, const QVariantList& commandSet, const QVariantList& responseSet)
+void QNfcTagTestCommon<TAG>::_testRawCommand(const QStringList& description, const QVariantList& commandSet, const QVariantList& responseSet)
 {
-    Q_ASSERT_X(discription.count() == commandSet.count(), "testRawCommand", "count mismatch");
-    Q_ASSERT_X(discription.count() == responseSet.count(), "testRawCommand", "count mismatch");
-    Q_ASSERT_X(discription.count() > 0, "testRawCommand", "list is empty");
+    Q_ASSERT_X(description.count() == commandSet.count(), "testRawCommand", "count mismatch");
+    Q_ASSERT_X(description.count() == responseSet.count(), "testRawCommand", "count mismatch");
+    Q_ASSERT_X(description.count() > 0, "testRawCommand", "list is empty");
 
     int okCount = 0;
     int errCount = 0;
@@ -366,7 +367,7 @@ void QNfcTagTestCommon<TAG>::_testRawCommand(const QStringList& discription, con
     QList<QNearFieldTarget::RequestId> requests;
 
     GetSignalCount(responseSet, errCount, okCount);
-    GetRequestIDs(discription, commandSet, requests);
+    GetRequestIDs(description, commandSet, requests);
 
     QTest::qWait(5000);
 
@@ -377,29 +378,29 @@ void QNfcTagTestCommon<TAG>::_testRawCommand(const QStringList& discription, con
     qDebug()<<"response check"<<endl;
     for(int i = 0; i < requests.count(); ++i)
     {
-        qDebug()<<"check "<<discription.at(i)<<" response"<<endl;
+        qDebug()<<"check "<<description.at(i)<<" response"<<endl;
         QVERIFY(target->requestResponse(requests.at(i)) == responseSet.at(i));
     }
 }
 
 template<typename TAG>
-void QNfcTagTestCommon<TAG>::testWaitRawCommand(const QStringList& discription, const QVariantList& commandSet, const QVariantList& responseSet)
+void QNfcTagTestCommon<TAG>::testWaitRawCommand(const QStringList& description, const QVariantList& commandSet, const QVariantList& responseSet)
 {
-    Q_ASSERT_X(discription.count() == commandSet.count(), "testWaitRawCommand", "count mismatch");
-    Q_ASSERT_X(discription.count() == responseSet.count(), "testWaitRawCommand", "count mismatch");
-    Q_ASSERT_X(discription.count() > 0, "testWaitRawCommand", "list is empty");
+    Q_ASSERT_X(description.count() == commandSet.count(), "testWaitRawCommand", "count mismatch");
+    Q_ASSERT_X(description.count() == responseSet.count(), "testWaitRawCommand", "count mismatch");
+    Q_ASSERT_X(description.count() > 0, "testWaitRawCommand", "list is empty");
     
     touchTarget();
-    _testWaitRawCommand(discription, commandSet, responseSet); 
+    _testWaitRawCommand(description, commandSet, responseSet);
     removeTarget();    
 }
 
 template<typename TAG>
-void QNfcTagTestCommon<TAG>::_testWaitRawCommand(const QStringList& discription, const QVariantList& commandSet, const QVariantList& responseSet)
+void QNfcTagTestCommon<TAG>::_testWaitRawCommand(const QStringList& description, const QVariantList& commandSet, const QVariantList& responseSet)
 {
-    Q_ASSERT_X(discription.count() == commandSet.count(), "testWaitRawCommand", "count mismatch");
-    Q_ASSERT_X(discription.count() == responseSet.count(), "testWaitRawCommand", "count mismatch");
-    Q_ASSERT_X(discription.count() > 0, "testWaitRawCommand", "list is empty");
+    Q_ASSERT_X(description.count() == commandSet.count(), "testWaitRawCommand", "count mismatch");
+    Q_ASSERT_X(description.count() == responseSet.count(), "testWaitRawCommand", "count mismatch");
+    Q_ASSERT_X(description.count() > 0, "testWaitRawCommand", "list is empty");
     
     int okCount = 0;
     int errCount = 0;
@@ -409,7 +410,7 @@ void QNfcTagTestCommon<TAG>::_testWaitRawCommand(const QStringList& discription,
     QList<QNearFieldTarget::RequestId> requests;
     
     GetSignalCount(responseSet, errCount, okCount);
-    GetRequestIDs(discription, commandSet, requests);
+    GetRequestIDs(description, commandSet, requests);
     
     // wait first request id.
     if (responseSet.first().isValid())
@@ -432,29 +433,29 @@ void QNfcTagTestCommon<TAG>::_testWaitRawCommand(const QStringList& discription,
     qDebug()<<"response check"<<endl;
     for(int i = 0; i < requests.count(); ++i)
     {
-        qDebug()<<"check "<<discription.at(i)<<" response"<<endl;
+        qDebug()<<"check "<<description.at(i)<<" response"<<endl;
         QVERIFY(target->requestResponse(requests.at(i)) == responseSet.at(i));
     }
 }
 
 template<typename TAG>
-void QNfcTagTestCommon<TAG>::testMixRawCommandAndNdefAccess(const QStringList& discription, const QVariantList& commandSet, const QVariantList& responseSet)
+void QNfcTagTestCommon<TAG>::testMixRawCommandAndNdefAccess(const QStringList& description, const QVariantList& commandSet, const QVariantList& responseSet)
 {
-    Q_ASSERT_X(discription.count() == commandSet.count(), "testMixRawCommandAndNdefAccess", "count mismatch");
-    Q_ASSERT_X(discription.count() == responseSet.count(), "testMixRawCommandAndNdefAccess", "count mismatch");
-    Q_ASSERT_X(discription.count() > 2, "testMixRawCommandAndNdefAccess", "list should at least have 2 elements");
+    Q_ASSERT_X(description.count() == commandSet.count(), "testMixRawCommandAndNdefAccess", "count mismatch");
+    Q_ASSERT_X(description.count() == responseSet.count(), "testMixRawCommandAndNdefAccess", "count mismatch");
+    Q_ASSERT_X(description.count() > 2, "testMixRawCommandAndNdefAccess", "list should at least have 2 elements");
     
     touchTarget();
-    _testMixRawCommandAndNdefAccess(discription, commandSet, responseSet); 
+    _testMixRawCommandAndNdefAccess(description, commandSet, responseSet);
     removeTarget();
 }
 
 template<typename TAG>
-void QNfcTagTestCommon<TAG>::_testMixRawCommandAndNdefAccess(const QStringList& discription, const QVariantList& commandSet, const QVariantList& responseSet)
+void QNfcTagTestCommon<TAG>::_testMixRawCommandAndNdefAccess(const QStringList& description, const QVariantList& commandSet, const QVariantList& responseSet)
 {
-    Q_ASSERT_X(discription.count() == commandSet.count(), "testMixRawCommandAndNdefAccess", "count mismatch");
-    Q_ASSERT_X(discription.count() == responseSet.count(), "testMixRawCommandAndNdefAccess", "count mismatch");
-    Q_ASSERT_X(discription.count() > 2, "testMixRawCommandAndNdefAccess", "list should at least have 2 elements");
+    Q_ASSERT_X(description.count() == commandSet.count(), "testMixRawCommandAndNdefAccess", "count mismatch");
+    Q_ASSERT_X(description.count() == responseSet.count(), "testMixRawCommandAndNdefAccess", "count mismatch");
+    Q_ASSERT_X(description.count() > 2, "testMixRawCommandAndNdefAccess", "list should at least have 2 elements");
     
     int okCount = 0;
     int errCount = 0;
@@ -464,7 +465,7 @@ void QNfcTagTestCommon<TAG>::_testMixRawCommandAndNdefAccess(const QStringList& 
     QList<QNearFieldTarget::RequestId> requests;
     
     GetSignalCount(responseSet, errCount, okCount); 
-    GetRequestIDs(discription, commandSet, requests, true);
+    GetRequestIDs(description, commandSet, requests, true);
     
     QTest::qWait(5000);
     qDebug()<<"signal count check"<<endl;
@@ -477,29 +478,29 @@ void QNfcTagTestCommon<TAG>::_testMixRawCommandAndNdefAccess(const QStringList& 
     qDebug()<<"response check"<<endl;
     for(int i = 0; i < requests.count(); ++i)
     {
-        qDebug()<<"check "<<discription.at(i)<<" response"<<endl;
+        qDebug()<<"check "<<description.at(i)<<" response"<<endl;
         QVERIFY(target->requestResponse(requests.at(i)) == responseSet.at(i));
     }
 }
 
 template<typename TAG>
-void QNfcTagTestCommon<TAG>::testWaitMixRawCommandAndNdefAccess(const QStringList& discription, const QVariantList& commandSet, const QVariantList& responseSet)
+void QNfcTagTestCommon<TAG>::testWaitMixRawCommandAndNdefAccess(const QStringList& description, const QVariantList& commandSet, const QVariantList& responseSet)
 {
-    Q_ASSERT_X(discription.count() == commandSet.count(), "testWaitMixRawCommandAndNdefAccess", "count mismatch");
-    Q_ASSERT_X(discription.count() == responseSet.count(), "testWaitMixRawCommandAndNdefAccess", "count mismatch");
-    Q_ASSERT_X(discription.count() > 2, "testWaitMixRawCommandAndNdefAccess", "list should at least have 2 elements");
+    Q_ASSERT_X(description.count() == commandSet.count(), "testWaitMixRawCommandAndNdefAccess", "count mismatch");
+    Q_ASSERT_X(description.count() == responseSet.count(), "testWaitMixRawCommandAndNdefAccess", "count mismatch");
+    Q_ASSERT_X(description.count() > 2, "testWaitMixRawCommandAndNdefAccess", "list should at least have 2 elements");
     
     touchTarget();
-    _testWaitMixRawCommandAndNdefAccess(discription, commandSet, responseSet); 
+    _testWaitMixRawCommandAndNdefAccess(description, commandSet, responseSet);
     removeTarget();
 }
 
 template<typename TAG>
-void QNfcTagTestCommon<TAG>::_testWaitMixRawCommandAndNdefAccess(const QStringList& discription, const QVariantList& commandSet, const QVariantList& responseSet)
+void QNfcTagTestCommon<TAG>::_testWaitMixRawCommandAndNdefAccess(const QStringList& description, const QVariantList& commandSet, const QVariantList& responseSet)
 {
-    Q_ASSERT_X(discription.count() == commandSet.count(), "testWaitMixRawCommandAndNdefAccess", "count mismatch");
-    Q_ASSERT_X(discription.count() == responseSet.count(), "testWaitMixRawCommandAndNdefAccess", "count mismatch");
-    Q_ASSERT_X(discription.count() > 2, "testWaitMixRawCommandAndNdefAccess", "list should at least have 2 elements");
+    Q_ASSERT_X(description.count() == commandSet.count(), "testWaitMixRawCommandAndNdefAccess", "count mismatch");
+    Q_ASSERT_X(description.count() == responseSet.count(), "testWaitMixRawCommandAndNdefAccess", "count mismatch");
+    Q_ASSERT_X(description.count() > 2, "testWaitMixRawCommandAndNdefAccess", "list should at least have 2 elements");
     
     int okCount = 0;
     int errCount = 0;
@@ -509,7 +510,7 @@ void QNfcTagTestCommon<TAG>::_testWaitMixRawCommandAndNdefAccess(const QStringLi
     QList<QNearFieldTarget::RequestId> requests;
     
     GetSignalCount(responseSet, errCount, okCount); 
-    GetRequestIDs(discription, commandSet, requests, true);
+    GetRequestIDs(description, commandSet, requests, true);
     
     // wait first request id.
     if (responseSet.first().isValid())
@@ -531,29 +532,29 @@ void QNfcTagTestCommon<TAG>::_testWaitMixRawCommandAndNdefAccess(const QStringLi
     qDebug()<<"response check"<<endl;
     for(int i = 0; i < requests.count(); ++i)
     {
-        qDebug()<<"check "<<discription.at(i)<<" response"<<endl;
+        qDebug()<<"check "<<description.at(i)<<" response"<<endl;
         QVERIFY(target->requestResponse(requests.at(i)) == responseSet.at(i));
     }
 }
 
 template<typename TAG>
-void QNfcTagTestCommon<TAG>::testWaitInSlot(const QStringList& discription, const QVariantList& commandSet, const QVariantList& responseSet)
+void QNfcTagTestCommon<TAG>::testWaitInSlot(const QStringList& description, const QVariantList& commandSet, const QVariantList& responseSet)
 {
-    Q_ASSERT_X(discription.count() == commandSet.count(), "testWaitInSlot", "count mismatch");
-    Q_ASSERT_X(discription.count() == responseSet.count(), "testWaitInSlot", "count mismatch");
-    Q_ASSERT_X(discription.count() > 3, "testWaitInSlot", "list should at least have 3 elements");
+    Q_ASSERT_X(description.count() == commandSet.count(), "testWaitInSlot", "count mismatch");
+    Q_ASSERT_X(description.count() == responseSet.count(), "testWaitInSlot", "count mismatch");
+    Q_ASSERT_X(description.count() > 3, "testWaitInSlot", "list should at least have 3 elements");
     
     touchTarget();
-    _testWaitInSlot(discription, commandSet, responseSet); 
+    _testWaitInSlot(description, commandSet, responseSet);
     removeTarget();
 }
 
 template<typename TAG>
-void QNfcTagTestCommon<TAG>::_testWaitInSlot(const QStringList& discription, const QVariantList& commandSet, const QVariantList& responseSet, bool needTimeOut)
+void QNfcTagTestCommon<TAG>::_testWaitInSlot(const QStringList& description, const QVariantList& commandSet, const QVariantList& responseSet, bool needTimeOut)
 {
-    Q_ASSERT_X(discription.count() == commandSet.count(), "testWaitInSlot", "count mismatch");
-    Q_ASSERT_X(discription.count() == responseSet.count(), "testWaitInSlot", "count mismatch");
-    Q_ASSERT_X(discription.count() > 3, "testWaitInSlot", "list should at least have 3 elements");
+    Q_ASSERT_X(description.count() == commandSet.count(), "testWaitInSlot", "count mismatch");
+    Q_ASSERT_X(description.count() == responseSet.count(), "testWaitInSlot", "count mismatch");
+    Q_ASSERT_X(description.count() > 3, "testWaitInSlot", "list should at least have 3 elements");
     
     int okCount = 0;
     int errCount = 0;
@@ -571,7 +572,7 @@ void QNfcTagTestCommon<TAG>::_testWaitInSlot(const QStringList& discription, con
     QList<QNearFieldTarget::RequestId> requests;
     
     GetSignalCount(responseSet, errCount, okCount);
-    GetRequestIDs(discription, commandSet, requests, true);
+    GetRequestIDs(description, commandSet, requests, true);
     
     waitSlot.tag = target; 
     waitSlot.iReqId = requests.at(0);
@@ -610,18 +611,18 @@ void QNfcTagTestCommon<TAG>::_testWaitInSlot(const QStringList& discription, con
         qDebug()<<"response check"<<endl;
         for(int i = 0; i < requests.count(); ++i)
         {
-            qDebug()<<"check "<<discription.at(i)<<" response"<<endl;
+            qDebug()<<"check "<<description.at(i)<<" response"<<endl;
             QVERIFY(target->requestResponse(requests.at(i)) == responseSet.at(i));
         }
     }
 }
 
 template<typename TAG>
-void QNfcTagTestCommon<TAG>::testDeleteTargetBeforeAsyncRequestComplete(const QStringList& discription, const QVariantList& commandSet, const QVariantList& responseSet)
+void QNfcTagTestCommon<TAG>::testDeleteTargetBeforeAsyncRequestComplete(const QStringList& description, const QVariantList& commandSet, const QVariantList& responseSet)
 {
-    Q_ASSERT_X(discription.count() == commandSet.count(), "testDeleteTargetBeforeAsyncRequestComplete", "count mismatch");
-    Q_ASSERT_X(discription.count() == responseSet.count(), "testDeleteTargetBeforeAsyncRequestComplete", "count mismatch");
-    Q_ASSERT_X(discription.count() > 2, "testDeleteTargetBeforeAsyncRequestComplete", "list should at least have 2 elements");
+    Q_ASSERT_X(description.count() == commandSet.count(), "testDeleteTargetBeforeAsyncRequestComplete", "count mismatch");
+    Q_ASSERT_X(description.count() == responseSet.count(), "testDeleteTargetBeforeAsyncRequestComplete", "count mismatch");
+    Q_ASSERT_X(description.count() > 2, "testDeleteTargetBeforeAsyncRequestComplete", "list should at least have 2 elements");
     
     touchTarget();
     int okCount = 0;
@@ -632,7 +633,7 @@ void QNfcTagTestCommon<TAG>::testDeleteTargetBeforeAsyncRequestComplete(const QS
     QList<QNearFieldTarget::RequestId> requests;
     
     GetSignalCount(responseSet, errCount, okCount); 
-    GetRequestIDs(discription, commandSet, requests, true);
+    GetRequestIDs(description, commandSet, requests, true);
     
     // wait first request id.
     if (responseSet.first().isValid())
@@ -660,11 +661,11 @@ void QNfcTagTestCommon<TAG>::testDeleteTargetBeforeAsyncRequestComplete(const QS
 }
 
 template<typename TAG>
-void QNfcTagTestCommon<TAG>::testRemoveTargetBeforeAsyncRequestComplete(const QStringList& discription, const QVariantList& commandSet, const QVariantList& responseSet)
+void QNfcTagTestCommon<TAG>::testRemoveTargetBeforeAsyncRequestComplete(const QStringList& description, const QVariantList& commandSet, const QVariantList& responseSet)
 {
-    Q_ASSERT_X(discription.count() == commandSet.count(), "testRemoveTargetBeforeAsyncRequestComplete", "count mismatch");
-    Q_ASSERT_X(discription.count() == responseSet.count(), "testRemoveTargetBeforeAsyncRequestComplete", "count mismatch");
-    Q_ASSERT_X(discription.count() > 2, "testRemoveTargetBeforeAsyncRequestComplete", "list should at least have 2 elements");
+    Q_ASSERT_X(description.count() == commandSet.count(), "testRemoveTargetBeforeAsyncRequestComplete", "count mismatch");
+    Q_ASSERT_X(description.count() == responseSet.count(), "testRemoveTargetBeforeAsyncRequestComplete", "count mismatch");
+    Q_ASSERT_X(description.count() > 2, "testRemoveTargetBeforeAsyncRequestComplete", "list should at least have 2 elements");
     
     touchTarget();
 
@@ -678,9 +679,9 @@ void QNfcTagTestCommon<TAG>::testRemoveTargetBeforeAsyncRequestComplete(const QS
 
     QList<QNearFieldTarget::RequestId> requests;
     
-    for (int i = 0; i < discription.count(); ++i)
+    for (int i = 0; i < description.count(); ++i)
     {
-        qDebug()<<"test "<<discription.at(i)<<endl;
+        qDebug()<<"test "<<description.at(i)<<endl;
         // sendCommand
         if (commandSet.at(i).type() == QVariant::ByteArray)
         {

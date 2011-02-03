@@ -194,7 +194,7 @@ mac:contains(QT_CONFIG,qt_framework) {
     #add framework option
     QMAKE_FRAMEWORKPATH = $$OUTPUT_DIR/lib
 }
-QMAKE_LIBDIR = $$OUTPUT_DIR/lib
+QMAKE_LIBDIR += $$OUTPUT_DIR/lib
 
 linux*-g++*:QMAKE_LFLAGS += $$QMAKE_LFLAGS_NOUNDEF
 

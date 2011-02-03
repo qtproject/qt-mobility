@@ -76,7 +76,7 @@ QTM_BEGIN_NAMESPACE
     This enum describes the type of error that occured
 
     \value NoError          No error.
-    \value UnknownError     Unkown error, no better enum available
+    \value UnknownError     Unknown error, no better enum available
     \value FileNotFoundError Unable to open the file specified
     \value HostNotFoundError Unable to connect to the target host
     \value UserCancelledTransferError User terminated the transfer

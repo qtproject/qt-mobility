@@ -119,7 +119,7 @@ QNearFieldManagerPrivateImpl::~QNearFieldManagerPrivateImpl()
     delete m_adapter;
 }
 
-void QNearFieldManagerPrivateImpl::startTargetDetection(const QList<QNearFieldTarget::Type> &targetTypes)
+bool QNearFieldManagerPrivateImpl::startTargetDetection(const QList<QNearFieldTarget::Type> &targetTypes)
 {
     qDebug() << Q_FUNC_INFO;
 
@@ -129,6 +129,8 @@ void QNearFieldManagerPrivateImpl::startTargetDetection(const QList<QNearFieldTa
             this, SLOT(_q_targetDetected(QString)));
     connect(m_adapter, SIGNAL(TargetLost(QString)),
             this, SLOT(_q_targetLost(QString)));
+
+    return true;
 }
 
 void QNearFieldManagerPrivateImpl::stopTargetDetection()
