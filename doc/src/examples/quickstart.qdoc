@@ -140,7 +140,7 @@ on which parts of an API is utilized by an application.
     \o ReadUserData WriteUserData
 \row
     \o \l {Location}
-    \o Location
+    \o Location LocalServices ReadUserData WriteUserData ReadDeviceData WriteDeviceData NetworkServices
 \row
     \o \l {Multimedia}
     \o UserEnvironment ReadUserData WriteUserData ReadDeviceData WriteDeviceData
