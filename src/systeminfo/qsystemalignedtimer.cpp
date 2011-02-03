@@ -123,6 +123,10 @@ QSystemAlignedTimer::~QSystemAlignedTimer()
   */
 void QSystemAlignedTimer::start(int minimumTime, int maximumTime)
 {
+    if (minimumTime > maximumTime || maximumTime <= 0) {
+        emit error(QSystemAlignedTimer::InvalidArgument);
+        return;
+    }
     d->start(minimumTime, maximumTime);
 }
 
@@ -131,6 +135,13 @@ void QSystemAlignedTimer::start(int minimumTime, int maximumTime)
 */
 void QSystemAlignedTimer::start()
 {
+    int minimumTime = minimumInterval();
+    int maximumTime = maximumInterval();
+
+    if (minimumTime > maximumTime || maximumTime <= 0) {
+        emit error(QSystemAlignedTimer::InvalidArgument);
+        return;
+    }
     d->start();
 }
 
@@ -226,6 +237,9 @@ inline void QSystemAlignedTimer::setSingleShot(bool singleShot)
   */
 void QSystemAlignedTimer::singleShot(int minimumTime, int maximumTime, QObject *receiver, const char *member)
 {
+    if (minimumTime > maximumTime || maximumTime <= 0) {
+        return;
+    }
     QSystemAlignedTimerPrivate::singleShot(minimumTime, maximumTime, receiver, member);
 }
 

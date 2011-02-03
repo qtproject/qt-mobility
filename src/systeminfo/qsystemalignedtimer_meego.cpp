@@ -90,6 +90,17 @@ QSystemAlignedTimerPrivate::~QSystemAlignedTimerPrivate()
 
 void QSystemAlignedTimerPrivate::wokeUp()
 {
+    if (m_singleShot) {
+        stop();
+        return;
+    }
+
+    int st = iphb_I_woke_up(m_iphbdHandler);
+    if (!(st >= 0)) {
+        m_lastError = QSystemAlignedTimer::TimerFailed;
+        emit error(m_lastError);
+        stop();
+    }
 }
 
 int QSystemAlignedTimerPrivate::minimumInterval() const
