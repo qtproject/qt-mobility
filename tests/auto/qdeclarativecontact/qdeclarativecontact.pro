@@ -77,11 +77,13 @@ SOURCES += tst_qdeclarativecontact.cpp \
  	   ../../../plugins/declarative/contacts/qdeclarativecontact.cpp\
            ../../../plugins/declarative/contacts/qdeclarativecontactrelationshipmodel.cpp\
            ../../../plugins/declarative/contacts/qmetaobjectbuilder.cpp
-symbian: {
-    importFiles.sources = data
-    importFiles.path = .
-    DEPLOYMENT = importFiles
-} else {
-    DEFINES += SRCDIR=\\\"$$PWD\\\"
-}
+
+# reserved for future use
+#   symbian: {
+#       importFiles.sources = data
+#       importFiles.path = .
+#       DEPLOYMENT = importFiles
+#   } else {
+#       DEFINES += SRCDIR=\\\"$$PWD\\\"
+#   }
 
