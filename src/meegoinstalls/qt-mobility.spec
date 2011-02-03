@@ -741,6 +741,7 @@ find %{buildroot}%{_libdir}/qtmobility -type f -perm /u+x,g+x,o+x \( -false \
 %{_includedir}/QtLocation/QGeoPlace
 %{_includedir}/QtLocation/QGeoPositionInfo
 %{_includedir}/QtLocation/QGeoPositionInfoSource
+%{_includedir}/QtLocation/QGeoPositionInfoSourceFactory
 %{_includedir}/QtLocation/QGeoRoute
 %{_includedir}/QtLocation/QGeoRouteReply
 %{_includedir}/QtLocation/QGeoRouteRequest
