@@ -40,7 +40,6 @@
 ****************************************************************************/
 
 #include "test_sensorimpl.h"
-#include <qaccelerometer.h>
 #include <QDebug>
 
 const char *testsensorimpl::id("test sensor impl");
@@ -56,11 +55,11 @@ testsensorimpl::testsensorimpl(QSensor *sensor)
     if (doThis == "rates(0)") {
         setDataRates(0);
     } else if (doThis == "rates(nodef)") {
-        QAccelerometer *acc = new QAccelerometer(this);
+        TestSensor *acc = new TestSensor(this);
         setDataRates(acc);
         delete acc;
     } else if (doThis == "rates") {
-        QAccelerometer *acc = new QAccelerometer(this);
+        TestSensor *acc = new TestSensor(this);
         acc->connectToBackend();
         setDataRates(acc);
         delete acc;
@@ -79,13 +78,13 @@ void testsensorimpl::start()
         sensorStopped();
     else if (doThis == "error")
         sensorError(1);
-    else if (doThis == "setFalse") {
+    else if (doThis == "setOne") {
         m_reading.setTimestamp(1);
-        m_reading.setTest(false);
+        m_reading.setTest(1);
         newReadingAvailable();
     } else {
         m_reading.setTimestamp(2);
-        m_reading.setTest(true);
+        m_reading.setTest(2);
         newReadingAvailable();
     }
 }
