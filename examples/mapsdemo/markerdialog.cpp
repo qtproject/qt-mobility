@@ -47,7 +47,7 @@
 #include <QVBoxLayout>
 
 MarkerDialog::MarkerDialog(Marker *marker) :
-    m_marker(marker)
+    marker(marker)
 {
     QVBoxLayout *vbox = new QVBoxLayout;
 
@@ -93,9 +93,9 @@ MarkerDialog::MarkerDialog(Marker *marker) :
 
 void MarkerDialog::updateMarker()
 {
-    m_marker->setName(nameEdit->text());
+    marker->setName(nameEdit->text());
     QGeoCoordinate c(latSpin->value(), lonSpin->value());
-    m_marker->setCoordinate(c);
+    marker->setCoordinate(c);
 }
 
 void MarkerDialog::setAddressLabel(QGeoAddress address)

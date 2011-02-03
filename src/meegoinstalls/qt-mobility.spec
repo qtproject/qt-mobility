@@ -741,6 +741,7 @@ find %{buildroot}%{_libdir}/qtmobility -type f -perm /u+x,g+x,o+x \( -false \
 %{_includedir}/QtLocation/QGeoPlace
 %{_includedir}/QtLocation/QGeoPositionInfo
 %{_includedir}/QtLocation/QGeoPositionInfoSource
+%{_includedir}/QtLocation/QGeoPositionInfoSourceFactory
 %{_includedir}/QtLocation/QGeoRoute
 %{_includedir}/QtLocation/QGeoRouteReply
 %{_includedir}/QtLocation/QGeoRouteRequest
@@ -1008,6 +1009,7 @@ find %{buildroot}%{_libdir}/qtmobility -type f -perm /u+x,g+x,o+x \( -false \
 %{_includedir}/QtServiceFramework/QServiceManager
 %{_includedir}/QtServiceFramework/QServicePluginInterface
 %{_includedir}/QtSystemInfo/*.h
+%{_includedir}/QtSystemInfo/QSystemAlignedTimer
 %{_includedir}/QtSystemInfo/QSystemBatteryInfo
 %{_includedir}/QtSystemInfo/QSystemDeviceInfo
 %{_includedir}/QtSystemInfo/QSystemDisplayInfo

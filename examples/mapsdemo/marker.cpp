@@ -47,8 +47,18 @@
 #include "qlandmark.h"
 #include "qgeoboundingcircle.h"
 
+class MarkerPrivate
+{
+public:
+    Marker::MarkerType type;
+    QString name;
+    bool moveable;
+    QGeoAddress address;
+};
+
 Marker::Marker(MarkerType type) :
-    QGeoMapPixmapObject()
+    QGeoMapPixmapObject(),
+    d(new MarkerPrivate)
 {
     setMarkerType(type);
 }
@@ -59,9 +69,9 @@ void Marker::setMarkerType(MarkerType type)
     QPoint offset;
     int scale;
 
-    m_type = type;
+    d->type = type;
 
-    switch (m_type) {
+    switch (d->type) {
     case MyLocationMarker:
         filename = ":/icons/mylocation.png";
         break;
@@ -82,7 +92,7 @@ void Marker::setMarkerType(MarkerType type)
         break;
     }
 
-    if (m_type == MyLocationMarker) {
+    if (d->type == MyLocationMarker) {
         offset = QPoint(-13,-13);
         scale = 25;
     } else {
@@ -96,64 +106,112 @@ void Marker::setMarkerType(MarkerType type)
 
 void Marker::setAddress(QGeoAddress addr)
 {
-    if (m_address != addr) {
-        m_address = addr;
-        emit addressChanged(m_address);
+    if (d->address != addr) {
+        d->address = addr;
+        emit addressChanged(d->address);
     }
+}
+
+Marker::MarkerType Marker::markerType() const
+{
+    return d->type;
+}
+
+QString Marker::name() const
+{
+    return d->name;
+}
+
+QGeoAddress Marker::address() const
+{
+    return d->address;
+}
+
+bool Marker::moveable() const
+{
+    return d->moveable;
 }
 
 void Marker::setName(QString name)
 {
-    if (m_name != name) {
-        m_name = name;
-        emit nameChanged(m_name);
+    if (d->name != name) {
+        d->name = name;
+        emit nameChanged(d->name);
     }
 }
 
 void Marker::setMoveable(bool moveable)
 {
-    if (m_moveable != moveable) {
-        m_moveable = moveable;
-        emit moveableChanged(m_moveable);
+    if (d->moveable != moveable) {
+        d->moveable = moveable;
+        emit moveableChanged(d->moveable);
     }
 }
 
+
+class MarkerManagerPrivate
+{
+public:
+    Marker *myLocation;
+    QList<Marker*> searchMarkers;
+
+    // a reverse geocode request is currently running
+    bool revGeocodeRunning;
+    // a request is currently running, and my location has changed
+    // since it started (ie, the request is stale)
+    bool myLocHasMoved;
+
+    QGraphicsGeoMap *map;
+    StatusBarItem *status;
+    QGeoSearchManager *searchManager;
+
+    QSet<QGeoSearchReply*> forwardReplies;
+    QSet<QGeoSearchReply*> reverseReplies;
+};
+
 MarkerManager::MarkerManager(QGeoSearchManager *searchManager, QObject *parent) :
     QObject(parent),
-    m_searchManager(searchManager),
-    m_status(0),
-    revGeocodeRunning(false),
-    myLocHasMoved(false)
+    d(new MarkerManagerPrivate)
 {
-    m_myLocation = new Marker(Marker::MyLocationMarker);
-    m_myLocation->setName("Me");
+    d->searchManager = searchManager;
+    d->status = 0;
+    d->revGeocodeRunning = false;
+    d->myLocHasMoved = false;
+
+    d->myLocation = new Marker(Marker::MyLocationMarker);
+    d->myLocation->setName("Me");
 
     // hook the coordinateChanged() signal for reverse geocoding
-    connect(m_myLocation, SIGNAL(coordinateChanged(QGeoCoordinate)),
+    connect(d->myLocation, SIGNAL(coordinateChanged(QGeoCoordinate)),
             this, SLOT(myLocationChanged(QGeoCoordinate)));
 
-    connect(m_searchManager, SIGNAL(finished(QGeoSearchReply*)),
+    connect(d->searchManager, SIGNAL(finished(QGeoSearchReply*)),
             this, SLOT(replyFinished(QGeoSearchReply*)));
-    connect(m_searchManager, SIGNAL(finished(QGeoSearchReply*)),
+    connect(d->searchManager, SIGNAL(finished(QGeoSearchReply*)),
             this, SLOT(reverseReplyFinished(QGeoSearchReply*)));
 }
 
 MarkerManager::~MarkerManager()
 {
-    m_map->removeMapObject(m_myLocation);
-    delete m_myLocation;
+    d->map->removeMapObject(d->myLocation);
+    delete d->myLocation;
     removeSearchMarkers();
+}
+
+void MarkerManager::setStatusBar(StatusBarItem *bar)
+{
+    d->status = bar;
 }
 
 void MarkerManager::setMap(QGraphicsGeoMap *map)
 {
-    m_map = map;
-    map->addMapObject(m_myLocation);
+    d->map = map;
+    map->addMapObject(d->myLocation);
 }
 
 void MarkerManager::setMyLocation(QGeoCoordinate coord)
 {
-    m_myLocation->setCoordinate(coord);
+    d->myLocation->setCoordinate(coord);
 }
 
 void MarkerManager::search(QString query, qreal radius)
@@ -161,20 +219,20 @@ void MarkerManager::search(QString query, qreal radius)
     QGeoSearchReply *reply;
     if (radius > 0) {
         QGeoBoundingCircle *boundingCircle = new QGeoBoundingCircle(
-                    m_myLocation->coordinate(), radius);
-        reply = m_searchManager->search(query,
+                    d->myLocation->coordinate(), radius);
+        reply = d->searchManager->search(query,
                                         QGeoSearchManager::SearchAll,
                                         -1, 0,
                                         boundingCircle);
     } else {
-        reply = m_searchManager->search(query);
+        reply = d->searchManager->search(query);
     }
 
-    forwardReplies.insert(reply);
+    d->forwardReplies.insert(reply);
 
-    if (m_status) {
-        m_status->setText("Searching...");
-        m_status->show();
+    if (d->status) {
+        d->status->setText("Searching...");
+        d->status->show();
     }
 
     if (reply->isFinished()) {
@@ -187,56 +245,56 @@ void MarkerManager::search(QString query, qreal radius)
 
 void MarkerManager::removeSearchMarkers()
 {
-    foreach (Marker *m, searchMarkers) {
-        m_map->removeMapObject(m);
+    foreach (Marker *m, d->searchMarkers) {
+        d->map->removeMapObject(m);
         delete m;
     }
 }
 
 QGeoCoordinate MarkerManager::myLocation() const
 {
-    return m_myLocation->coordinate();
+    return d->myLocation->coordinate();
 }
 
 void MarkerManager::myLocationChanged(QGeoCoordinate location)
 {
-    if (revGeocodeRunning) {
-        myLocHasMoved = true;
+    if (d->revGeocodeRunning) {
+        d->myLocHasMoved = true;
     } else {
-        QGeoSearchReply *reply = m_searchManager->reverseGeocode(location);
-        reverseReplies.insert(reply);
-        myLocHasMoved = false;
+        QGeoSearchReply *reply = d->searchManager->reverseGeocode(location);
+        d->reverseReplies.insert(reply);
+        d->myLocHasMoved = false;
 
         if (reply->isFinished()) {
-            revGeocodeRunning = false;
+            d->revGeocodeRunning = false;
             reverseReplyFinished(reply);
         } else {
-            revGeocodeRunning = true;
+            d->revGeocodeRunning = true;
         }
     }
 }
 
 void MarkerManager::reverseReplyFinished(QGeoSearchReply *reply)
 {
-    if (!reverseReplies.contains(reply))
+    if (!d->reverseReplies.contains(reply))
         return;
 
     if (reply->places().size() > 0) {
         QGeoPlace place = reply->places().first();
-        m_myLocation->setAddress(place.address());
+        d->myLocation->setAddress(place.address());
     }
 
-    revGeocodeRunning = false;
-    if (myLocHasMoved)
-        myLocationChanged(m_myLocation->coordinate());
+    d->revGeocodeRunning = false;
+    if (d->myLocHasMoved)
+        myLocationChanged(d->myLocation->coordinate());
 
-    reverseReplies.remove(reply);
+    d->reverseReplies.remove(reply);
     reply->deleteLater();
 }
 
 void MarkerManager::replyFinished(QGeoSearchReply *reply)
 {
-    if (!forwardReplies.contains(reply))
+    if (!d->forwardReplies.contains(reply))
         return;
 
     // generate the markers and add them to the map
@@ -254,21 +312,21 @@ void MarkerManager::replyFinished(QGeoSearchReply *reply)
         m->setAddress(place.address());
         m->setMoveable(false);
 
-        searchMarkers.append(m);
+        d->searchMarkers.append(m);
 
-        if (m_map) {
-            m_map->addMapObject(m);
+        if (d->map) {
+            d->map->addMapObject(m);
             // also zoom out until marker is visible
-            while (!m_map->viewport().contains(place.coordinate()))
-                m_map->setZoomLevel(m_map->zoomLevel()-1);
+            while (!d->map->viewport().contains(place.coordinate()))
+                d->map->setZoomLevel(d->map->zoomLevel()-1);
         }
     }
 
-    forwardReplies.remove(reply);
+    d->forwardReplies.remove(reply);
     reply->deleteLater();
 
     emit searchFinished();
 
-    if (m_status)
-        m_status->hide();
+    if (d->status)
+        d->status->hide();
 }

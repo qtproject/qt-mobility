@@ -50,6 +50,8 @@
 #include <qgeosearchreply.h>
 #include <qgeomaprouteobject.h>
 
+#include "marker.h"
+
 using namespace QtMobility;
 
 class MapsWidget;
@@ -87,9 +89,10 @@ private:
     QGeoRouteReply *routeReply;
 
     QGeoMapRouteObject *routeObject;
-    QGeoRoute firstRoute;
+    Marker *endMarker;
+    Marker *startMarker;
 
-    bool deleteWhenDone;
+    QGeoRoute firstRoute;
 };
 
 #endif // NAVIGATOR_H

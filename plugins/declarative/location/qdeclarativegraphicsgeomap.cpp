@@ -736,129 +736,129 @@ void QDeclarativeGraphicsGeoMap::mouseDoubleClickEvent(QGraphicsSceneMouseEvent 
     // TODO interact with grabber somehow
 }
 
-void QDeclarativeGraphicsGeoMap::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
-{
-    // TODO send even to grabber
+//void QDeclarativeGraphicsGeoMap::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+//{
+//    // TODO send even to grabber
 
-    /*
-    if (!mapData_)
-        return;
+//    /*
+//    if (!mapData_)
+//        return;
 
-    QList<QGeoMapObject*> objectsThen = mapData_->mapObjectsAtScreenPosition(event->lastPos());
-    QList<QGeoMapObject*> objectsNow = mapData_->mapObjectsAtScreenPosition(event->pos());
+//    QList<QGeoMapObject*> objectsThen = mapData_->mapObjectsAtScreenPosition(event->lastPos());
+//    QList<QGeoMapObject*> objectsNow = mapData_->mapObjectsAtScreenPosition(event->pos());
 
-    QSet<QGeoMapObject*> enter = objectsNow.toSet();
-    enter -= objectsThen.toSet();
+//    QSet<QGeoMapObject*> enter = objectsNow.toSet();
+//    enter -= objectsThen.toSet();
 
-    for (int i = 0; i < objectsNow.size(); ++i) {
-        if (!enter.contains(objectsNow.at(i)))
-            continue;
+//    for (int i = 0; i < objectsNow.size(); ++i) {
+//        if (!enter.contains(objectsNow.at(i)))
+//            continue;
 
-        QDeclarativeGeoMapObject* mapObject = objectMap_.value(objectsNow.at(i), 0);
-        if (mapObject)
-            mapObject->enterEvent();
-    }
+//        QDeclarativeGeoMapObject* mapObject = objectMap_.value(objectsNow.at(i), 0);
+//        if (mapObject)
+//            mapObject->enterEvent();
+//    }
 
-    QSet<QGeoMapObject*> exit = objectsThen.toSet();
-    exit -= objectsNow.toSet();
+//    QSet<QGeoMapObject*> exit = objectsThen.toSet();
+//    exit -= objectsNow.toSet();
 
-    for (int i = 0; i < objectsThen.size(); ++i) {
-        if (!exit.contains(objectsThen.at(i)))
-            continue;
+//    for (int i = 0; i < objectsThen.size(); ++i) {
+//        if (!exit.contains(objectsThen.at(i)))
+//            continue;
 
-        QDeclarativeGeoMapObject* mapObject = objectMap_.value(objectsThen.at(i), 0);
-        if (mapObject)
-            mapObject->exitEvent();
-    }
+//        QDeclarativeGeoMapObject* mapObject = objectMap_.value(objectsThen.at(i), 0);
+//        if (mapObject)
+//            mapObject->exitEvent();
+//    }
 
-    QSet<QGeoMapObject*> move = objectsNow.toSet();
-    move += objectsThen.toSet();
+//    QSet<QGeoMapObject*> move = objectsNow.toSet();
+//    move += objectsThen.toSet();
 
-    QList<QGeoMapObject*> objects = mapData_->mapObjectsInViewport();
-    for (int i = 0; i < objects.size(); ++i) {
-        if (!move.contains(objects.at(i)))
-            continue;
+//    QList<QGeoMapObject*> objects = mapData_->mapObjectsInViewport();
+//    for (int i = 0; i < objects.size(); ++i) {
+//        if (!move.contains(objects.at(i)))
+//            continue;
 
-        QDeclarativeGeoMapMouseEvent *mouseEvent = createMapMouseEvent(event);
+//        QDeclarativeGeoMapMouseEvent *mouseEvent = createMapMouseEvent(event);
 
-        QDeclarativeGeoMapObject* mapObject = objectMap_.value(objects.at(i), 0);
-        if (mapObject)
-            mapObject->moveEvent(mouseEvent);
-    }
-    */
-}
+//        QDeclarativeGeoMapObject* mapObject = objectMap_.value(objects.at(i), 0);
+//        if (mapObject)
+//            mapObject->moveEvent(mouseEvent);
+//    }
+//    */
+//}
 
-void QDeclarativeGraphicsGeoMap::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
-{
-//    qWarning() << "hover enter";
-}
+//void QDeclarativeGraphicsGeoMap::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
+//{
+////    qWarning() << "hover enter";
+//}
 
-void QDeclarativeGraphicsGeoMap::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
-{
-    if (!mapData_)
-        return;
+//void QDeclarativeGraphicsGeoMap::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
+//{
+//    if (!mapData_)
+//        return;
 
-    QList<QGeoMapObject*> objectsThen = mapData_->mapObjectsAtScreenPosition(event->lastPos());
-    QList<QGeoMapObject*> objectsNow = mapData_->mapObjectsAtScreenPosition(event->pos());
+//    QList<QGeoMapObject*> objectsThen = mapData_->mapObjectsAtScreenPosition(event->lastPos());
+//    QList<QGeoMapObject*> objectsNow = mapData_->mapObjectsAtScreenPosition(event->pos());
 
-    QSet<QGeoMapObject*> enter = objectsNow.toSet();
-    enter -= objectsThen.toSet();
+//    QSet<QGeoMapObject*> enter = objectsNow.toSet();
+//    enter -= objectsThen.toSet();
 
-    for (int i = 0; i < objectsNow.size(); ++i) {
-        if (!enter.contains(objectsNow.at(i)))
-            continue;
+//    for (int i = 0; i < objectsNow.size(); ++i) {
+//        if (!enter.contains(objectsNow.at(i)))
+//            continue;
 
-        QDeclarativeGeoMapObject* mapObject = objectMap_.value(objectsNow.at(i), 0);
-        if (mapObject)
-            mapObject->enterEvent();
-    }
+//        QDeclarativeGeoMapObject* mapObject = objectMap_.value(objectsNow.at(i), 0);
+//        if (mapObject)
+//            mapObject->enterEvent();
+//    }
 
-    QSet<QGeoMapObject*> exit = objectsThen.toSet();
-    exit -= objectsNow.toSet();
+//    QSet<QGeoMapObject*> exit = objectsThen.toSet();
+//    exit -= objectsNow.toSet();
 
-    for (int i = 0; i < objectsThen.size(); ++i) {
-        if (!exit.contains(objectsThen.at(i)))
-            continue;
+//    for (int i = 0; i < objectsThen.size(); ++i) {
+//        if (!exit.contains(objectsThen.at(i)))
+//            continue;
 
-        QDeclarativeGeoMapObject* mapObject = objectMap_.value(objectsThen.at(i), 0);
-        if (mapObject)
-            mapObject->exitEvent();
-    }
+//        QDeclarativeGeoMapObject* mapObject = objectMap_.value(objectsThen.at(i), 0);
+//        if (mapObject)
+//            mapObject->exitEvent();
+//    }
 
-    QSet<QGeoMapObject*> move = objectsNow.toSet();
-    move += objectsThen.toSet();
+//    QSet<QGeoMapObject*> move = objectsNow.toSet();
+//    move += objectsThen.toSet();
 
-    QList<QGeoMapObject*> objects = mapData_->mapObjectsInViewport();
+//    QList<QGeoMapObject*> objects = mapData_->mapObjectsInViewport();
 
-    QDeclarativeGeoMapMouseEvent *mouseEvent = createMapMouseEvent(event);
+//    QDeclarativeGeoMapMouseEvent *mouseEvent = createMapMouseEvent(event);
 
-    for (int i = 0; i < objects.size(); ++i) {
-        if (!move.contains(objects.at(i)))
-            continue;
+//    for (int i = 0; i < objects.size(); ++i) {
+//        if (!move.contains(objects.at(i)))
+//            continue;
 
-        QDeclarativeGeoMapObject* mapObject = objectMap_.value(objects.at(i), 0);
-        if (mapObject)
-            mapObject->moveEvent(mouseEvent);
-    }
+//        QDeclarativeGeoMapObject* mapObject = objectMap_.value(objects.at(i), 0);
+//        if (mapObject)
+//            mapObject->moveEvent(mouseEvent);
+//    }
 
-    /*
-    QList<QGeoMapObject*> objects = mapData_->mapObjectsAtScreenPosition(event->pos());
+//    /*
+//    QList<QGeoMapObject*> objects = mapData_->mapObjectsAtScreenPosition(event->pos());
 
-    for (int i = objects.size() - 1; i >= 0; --i) {
-        QDeclarativeGeoMapObject* mapObject = objectMap_.value(objects.at(i), 0);
-        if (mapObject)
-            mapObject->moveEvent(mouseEvent);
-    }
-    */
+//    for (int i = objects.size() - 1; i >= 0; --i) {
+//        QDeclarativeGeoMapObject* mapObject = objectMap_.value(objects.at(i), 0);
+//        if (mapObject)
+//            mapObject->moveEvent(mouseEvent);
+//    }
+//    */
 
-    for (int i = 0; i < mouseAreas_.size(); ++i)
-        mouseAreas_.at(i)->moveEvent(mouseEvent);
-}
+//    for (int i = 0; i < mouseAreas_.size(); ++i)
+//        mouseAreas_.at(i)->moveEvent(mouseEvent);
+//}
 
-void QDeclarativeGraphicsGeoMap::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
-{
-//    qWarning() << "hover leave";
-}
+//void QDeclarativeGraphicsGeoMap::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
+//{
+////    qWarning() << "hover leave";
+//}
 
 void QDeclarativeGraphicsGeoMap::internalCenterChanged(const QGeoCoordinate &coordinate)
 {

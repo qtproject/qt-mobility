@@ -52,7 +52,9 @@ Navigator::Navigator(QGeoRoutingManager *routingManager,
     routingManager(routingManager),
     searchManager(searchManager),
     mapsWidget(mapsWidget),
-    routeObject(0)
+    routeObject(0),
+    endMarker(0),
+    startMarker(0)
 {
 }
 
@@ -62,15 +64,26 @@ Navigator::~Navigator()
         mapsWidget->map()->removeMapObject(routeObject);
         delete routeObject;
     }
+    if (endMarker) {
+        mapsWidget->map()->removeMapObject(endMarker);
+        delete endMarker;
+    }
+    if (startMarker) {
+        mapsWidget->map()->removeMapObject(startMarker);
+        delete startMarker;
+    }
 }
 
 void Navigator::start()
 {
-    this->deleteWhenDone = deleteWhenDone;
-
     QList<QGeoCoordinate> waypoints = request.waypoints();
     waypoints.append(mapsWidget->markerManager()->myLocation());
     request.setWaypoints(waypoints);
+
+    startMarker = new Marker(Marker::StartMarker);
+    startMarker->setCoordinate(mapsWidget->markerManager()->myLocation());
+    startMarker->setName("Start point");
+    mapsWidget->map()->addMapObject(startMarker);
 
     addressReply = searchManager->search(address);
     if (addressReply->isFinished()) {
@@ -105,6 +118,12 @@ void Navigator::on_addressSearchFinished()
         connect(routeReply, SIGNAL(finished()),
                 this, SLOT(on_routingFinished()));
     }
+
+    endMarker = new Marker(Marker::EndMarker);
+    endMarker->setCoordinate(place.coordinate());
+    endMarker->setAddress(place.address());
+    endMarker->setName("Destination");
+    mapsWidget->map()->addMapObject(endMarker);
 
     addressReply->deleteLater();
 }
