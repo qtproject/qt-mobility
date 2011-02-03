@@ -78,7 +78,6 @@ unix:!simulator {
         }
 
         LIBS +=  -lX11 -lXrandr
-    }
 
         # alignedtimer on Linux/MeeGo
             contains(iphb_enabled, yes): {
@@ -91,6 +90,7 @@ unix:!simulator {
             SOURCES += qsystemalignedtimer_stub.cpp
             HEADERS += qsystemalignedtimer_stub_p.h
         }
+    }
 
     !maemo5:!maemo6:linux-*: {
             SOURCES += linux/qsysteminfo_linux.cpp
