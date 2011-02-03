@@ -45,8 +45,22 @@
 #include <qmobilityglobal.h>
 
 #include "qbluetoothlocaldevice.h"
+
+#ifdef Q_OS_SYMBIAN
 #include <e32base.h>
 #include <btengsettings.h>
+#endif
+
+#ifndef Q_NO_DBUS
+#include <QObject>
+#include <QDBusContext>
+#include <QDBusObjectPath>
+#include <QDBusMessage>
+
+class OrgBluezAdapterInterface;
+class OrgBluezAgentAdaptor;
+class QDBusPendingCallWatcher;
+#endif
 
 QT_BEGIN_HEADER
 
@@ -54,12 +68,54 @@ QTM_BEGIN_NAMESPACE
 
 class QBluetoothAddress;
 
-class QBluetoothLocalDevicePrivate: public MBTEngSettingsObserver
+#ifndef QT_NO_DBUS
+class QBluetoothLocalDevicePrivate : public QObject,
+                                     protected QDBusContext
 {
+    Q_OBJECT
     Q_DECLARE_PUBLIC(QBluetoothLocalDevice)
 public:
     QBluetoothLocalDevicePrivate();
     ~QBluetoothLocalDevicePrivate();
+
+    OrgBluezAdapterInterface *adapter;
+    OrgBluezAgentAdaptor *agent;
+    QString agent_path;
+    QBluetoothAddress address;
+    QBluetoothLocalDevice::Pairing pairing;
+    QBluetoothLocalDevice::HostMode currentMode;
+
+public Q_SLOTS: // METHODS
+    void Authorize(const QDBusObjectPath &in0, const QString &in1);
+    void Cancel();
+    void ConfirmModeChange(const QString &in0);
+    void DisplayPasskey(const QDBusObjectPath &in0, uint in1, uchar in2);
+    void Release();
+    uint RequestPasskey(const QDBusObjectPath &in0);
+
+    void RequestConfirmation(const QDBusObjectPath &in0, uint in1);
+    QString RequestPinCode(const QDBusObjectPath &in0);
+
+    void pairingCompleted(QDBusPendingCallWatcher*);
+
+    void PropertyChanged(QString,QDBusVariant);
+
+private:
+    QDBusMessage msgConfirmation;
+    QDBusConnection *msgConnection;
+
+    QBluetoothLocalDevice *q_ptr;
+};
+#endif
+
+#ifdef QT_OS_SYMBIAN
+class QBluetoothLocalDevicePrivate
+        : public MBTEngSettingsObserver
+{
+    Q_DECLARE_PUBLIC(QBluetoothLocalDevice)
+public:
+    QBluetoothLocalDevicePrivate();
+    ~QBluetoothLocalDevicePrivate();QDBusMessage
 
     static QString name();
     static QBluetoothAddress address();
@@ -89,6 +145,7 @@ protected:
     QBluetoothLocalDevice *q_ptr;
 
 };
+#endif
 
 QTM_END_NAMESPACE
 

@@ -40,12 +40,13 @@
 ****************************************************************************/
 
 #include "qbluetoothlocaldevice.h"
-#ifdef QTM_SYMBIAN_BLUETOOTH
+//#ifdef QTM_SYMBIAN_BLUETOOTH
 #include "qbluetoothlocaldevice_p.h"
-#endif //QTM_SYMBIAN_BLUETOOTH
+//#endif //QTM_SYMBIAN_BLUETOOTH
 #include "qbluetoothaddress.h"
 
 #include <QtCore/QString>
+#include <QDebug>
 
 QTM_BEGIN_NAMESPACE
 
