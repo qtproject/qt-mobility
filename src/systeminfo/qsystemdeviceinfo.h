@@ -126,7 +126,7 @@ public:
         NormalProfile,
         LoudProfile,
         VibProfile,
-        OfflineProfile,LockType
+        OfflineProfile,
         PowersaveProfile,
         CustomProfile,
         BeepProfile
