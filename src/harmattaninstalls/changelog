@@ -1,8 +1,8 @@
-qt-mobility (1.2~git20110118) unstable; urgency=low
+qt-mobility (1.2.0~git20110203) unstable; urgency=low
 
   * Bump version to 1.2
 
- -- Rohan McGovern <rohan.mcgovern@nokia.com>  Tue, 18 Jan 2011 13:59:48 +1000
+ -- Rohan McGovern <rohan.mcgovern@nokia.com>  Thu, 03 Feb 2011 13:59:48 +1000
 
 qt-mobility (1.1.1~git20110106) unstable; urgency=low
 
