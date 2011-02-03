@@ -49,7 +49,7 @@
 CntDisplayLabel::CntDisplayLabel()
 {
 #ifdef SYMBIAN_BACKEND_USE_CNTMODEL_V2
-    m_settings = new CntCenrep(KCntNameOrdering, *this);
+    m_settings = new CntCenrep(*this);
     m_nameOrder = m_settings->getValue();
 #endif
     setDisplayLabelDetails();
@@ -196,6 +196,8 @@ QString CntDisplayLabel::delimiter() const
 
 /*!
  * Returns the details to be used for contact filtering
+ * first value: detail definition
+ * second value: field definition
  */
 QList<QPair<QLatin1String, QLatin1String> > CntDisplayLabel::contactFilterDetails() const
 {
@@ -204,6 +206,8 @@ QList<QPair<QLatin1String, QLatin1String> > CntDisplayLabel::contactFilterDetail
 
 /*!
  * Returns the details to be used for group filtering
+ * first value: detail definition
+ * second value: field definition
  */
 QList<QPair<QLatin1String, QLatin1String> > CntDisplayLabel::groupFilterDetails() const
 {
@@ -226,11 +230,11 @@ void CntDisplayLabel::updateNameOrdering()
     emit displayLabelChanged();
 }
 
-CntCenrep::CntCenrep(const TUint32 aKey, CntDisplayLabel& aDisplayLabel) :
+CntCenrep::CntCenrep(MDisplayLabel& aDisplayLabel) :
     CActive(EPriorityStandard),
     iCenrep(NULL),
-    iDisplayLabel(&aDisplayLabel),
-    iKey(aKey)
+    iDisplayLabel(aDisplayLabel),
+    iKey(KCntNameOrdering)
 {   
     TRAPD(error, iCenrep = CRepository::NewL(KCRCntSettings));
     
@@ -239,7 +243,16 @@ CntCenrep::CntCenrep(const TUint32 aKey, CntDisplayLabel& aDisplayLabel) :
         
         // initial subscription and process current property value
         iCenrep->NotifyRequest(iKey, iStatus );
-        SetActive();
+        SetActive();	
+    } else {
+        TRAPD(error, iCenrep = CRepository::NewL(KCRUidPhonebook));
+        if ( error == KErrNone ) {
+            CActiveScheduler::Add(this);
+            
+            iKey = KPhonebookNameOrdering;
+            iCenrep->NotifyRequest(iKey, iStatus );
+            SetActive();
+        }	
     }
     
     iValue = getValue();
@@ -281,7 +294,7 @@ void CntCenrep::RunL()
     int value = getValue();
     if (value != -1 && value != iValue) {
         iValue = value;
-        iDisplayLabel->updateNameOrdering();
+        iDisplayLabel.updateNameOrdering();
     }
 }
 
