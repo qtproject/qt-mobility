@@ -224,8 +224,8 @@ void QGeoMapData::setBearing(qreal bearing)
     if (!supportsBearing())
         return;
 
-    bearing = qMin(bearing, 360.0);
-    bearing = qMax(bearing, 0.0);
+    bearing = qMin(bearing, qreal(360.0));
+    bearing = qMax(bearing, qreal(0.0));
 
     if (d_ptr->bearing == bearing)
         return;
