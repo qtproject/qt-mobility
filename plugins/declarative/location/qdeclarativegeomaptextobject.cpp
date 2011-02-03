@@ -63,7 +63,7 @@ QTM_BEGIN_NAMESPACE
 
     If \l text is empty or \l coordinate is invalid nothing will be displayed.
 
-    The MapText element is part of the \bold{QtMobility.location 1.1} module.
+    The MapText element is part of the \bold{QtMobility.location 1.2} module.
 */
 
 QDeclarativeGeoMapTextObject::QDeclarativeGeoMapTextObject(QDeclarativeItem *parent)

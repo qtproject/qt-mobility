@@ -92,7 +92,7 @@ QTM_BEGIN_NAMESPACE
 
    \snippet doc/src/snippets/declarative/declarative-map.qml Basic MapObjects and View on Map
 
-    The Map element is part of the \bold{QtMobility.location 1.1} module.
+    The Map element is part of the \bold{QtMobility.location 1.2} module.
 */
 QDeclarativeGraphicsGeoMap::QDeclarativeGraphicsGeoMap(QDeclarativeItem *parent)
     : QDeclarativeItem(parent),
