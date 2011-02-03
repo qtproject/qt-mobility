@@ -213,7 +213,7 @@ void QSystemAlignedTimerPrivate::singleShot() {
    this->deleteLater();
 }
 
-bool	QSystemAlignedTimer::isActive () const
+bool	QSystemAlignedTimerPrivate::isActive () const
 {
     return m_running;
 }

@@ -231,7 +231,7 @@ void QSystemAlignedTimer::singleShot(int minimumTime, int maximumTime, QObject *
 
 /*!
   \property QSystemAlignedTimer::singleShot
-  \brief Whether the timer is single shot.
+  Whether the timer is single shot.
 */
 
 /*!
@@ -252,8 +252,13 @@ QSystemAlignedTimer::AlignedTimerError QSystemAlignedTimer::lastError() const
 }
 
 /*!
+    \property QSystemAlignedTimer::active
   Returns true if the timer is running; otherwise false.
-  */
+*/
+
+/*!
+  Returns true if the timer is running; otherwise false.
+*/
 bool	QSystemAlignedTimer::isActive () const
 {
     return d->isActive();
