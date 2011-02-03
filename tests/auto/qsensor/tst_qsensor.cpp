@@ -50,9 +50,7 @@
 #include "qsensor.h"
 #include "test_sensor.h"
 #include "test_sensorimpl.h"
-#include "qambientlightsensor.h"
-#include "qorientationsensor.h"
-#include "qtapsensor.h"
+#include "test_backends.h"
 
 // The unit test needs to change the behaviour of the library. It does this
 // through an exported but undocumented function.
@@ -786,6 +784,64 @@ private slots:
         expected = false;
         actual = QSensorManager::isBackendRegistered("random", "random");
         QCOMPARE(expected, actual);
+    }
+
+    void testAllTheInterfaces()
+    {
+        register_test_backends();
+
+        TEST_SENSORINTERFACE(QAccelerometer, QAccelerometerReading, {
+            QCOMPARE(reading->x(), 1.0);
+            QCOMPARE(reading->y(), 1.0);
+            QCOMPARE(reading->z(), 1.0);
+        })
+
+        TEST_SENSORINTERFACE(QAmbientLightSensor, QAmbientLightReading, {
+            QCOMPARE(reading->lightLevel(), QAmbientLightReading::Twilight);
+        })
+
+        TEST_SENSORINTERFACE(QCompass, QCompassReading, {
+            QCOMPARE(reading->azimuth(), 1.0);
+            QCOMPARE(reading->calibrationLevel(), 1.0);
+        })
+
+        TEST_SENSORINTERFACE(QGyroscope, QGyroscopeReading, {
+            QCOMPARE(reading->x(), 1.0);
+            QCOMPARE(reading->y(), 1.0);
+            QCOMPARE(reading->z(), 1.0);
+        })
+
+        TEST_SENSORINTERFACE(QLightSensor, QLightReading, {
+            QCOMPARE(reading->lux(), 1.0);
+        })
+
+        TEST_SENSORINTERFACE(QMagnetometer, QMagnetometerReading, {
+            QCOMPARE(reading->x(), 1.0);
+            QCOMPARE(reading->y(), 1.0);
+            QCOMPARE(reading->z(), 1.0);
+            QCOMPARE(reading->calibrationLevel(), 1.0);
+        })
+
+        TEST_SENSORINTERFACE(QOrientationSensor, QOrientationReading, {
+            QCOMPARE(reading->orientation(), QOrientationReading::LeftUp);
+        })
+
+        TEST_SENSORINTERFACE(QProximitySensor, QProximityReading, {
+            QCOMPARE(reading->close(), true);
+        })
+
+        TEST_SENSORINTERFACE(QRotationSensor, QRotationReading, {
+            QCOMPARE(reading->x(), 1.0);
+            QCOMPARE(reading->y(), 1.0);
+            QCOMPARE(reading->z(), 1.0);
+        })
+
+        TEST_SENSORINTERFACE(QTapSensor, QTapReading, {
+            QCOMPARE(reading->tapDirection(), QTapReading::Z_Both);
+            QCOMPARE(reading->isDoubleTap(), true);
+        })
+
+        unregister_test_backends();
     }
 
     // This test must be LAST or it will interfere with the other tests
