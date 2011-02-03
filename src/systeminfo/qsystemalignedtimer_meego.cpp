@@ -58,13 +58,13 @@ QSystemAlignedTimerPrivate::QSystemAlignedTimerPrivate(QObject *parent) :
     m_iphbdHandler = iphb_open(0);
 
     if (!m_iphbdHandler) {
-        m_lastError = QSystemAlignedTimer::AlignedTimerNotSupported;
+        m_lastError = QSystemAlignedTimer::InternalError;
         return;
     }
 
     int sockfd = iphb_get_fd(m_iphbdHandler);
     if (!(sockfd > -1)) {
-        m_lastError = QSystemAlignedTimer::AlignedTimerNotSupported;
+        m_lastError = QSystemAlignedTimer::InternalError;
         return;
     }
 
