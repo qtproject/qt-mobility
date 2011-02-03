@@ -80,6 +80,18 @@ unix:!simulator {
         LIBS +=  -lX11 -lXrandr
     }
 
+        # alignedtimer on Linux/MeeGo
+            contains(iphb_enabled, yes): {
+            SOURCES += qsystemalignedtimer_meego.cpp
+            HEADERS += qsystemalignedtimer_meego_p.h
+            PKGCONFIG += libiphb
+            DEFINES += ALIGNEDTIMER_MEEGO
+            LIBS += -liphb
+        } else {
+            SOURCES += qsystemalignedtimer_stub.cpp
+            HEADERS += qsystemalignedtimer_stub_p.h
+        }
+
     !maemo5:!maemo6:linux-*: {
             SOURCES += linux/qsysteminfo_linux.cpp
             HEADERS += linux/qsysteminfo_linux_p.h
@@ -101,18 +113,6 @@ unix:!simulator {
             LIBS += -ludev
             SOURCES += linux/qudevservice_linux.cpp
             HEADERS += linux/qudevservice_linux_p.h
-        }
-
-        # alignedtimer on Linux/MeeGo
-        contains(CONFIG,meego): {
-            SOURCES += qsystemalignedtimer_meego.cpp
-            HEADERS += qsystemalignedtimer_meego_p.h
-            PKGCONFIG += libiphb
-            DEFINES += ALIGNEDTIMER_MEEGO
-            LIBS += -liphb
-        } else {
-            SOURCES += qsystemalignedtimer_stub.cpp
-            HEADERS += qsystemalignedtimer_stub_p.h
         }
 
         contains(networkmanager_enabled, yes): {
@@ -151,16 +151,7 @@ unix:!simulator {
                 SOURCES += linux/qhalservice_linux.cpp
                 HEADERS += linux/qhalservice_linux_p.h
        }
-       maemo6: {
-            SOURCES += qsystemalignedtimer_meego.cpp
-            HEADERS += qsystemalignedtimer_meego_p.h
-            DEFINES += ALIGNEDTIMER_MEEGO
-            PKGCONFIG += libiphb
-       }
-       maemo5: {
-           SOURCES += qsystemalignedtimer_stub.cpp
-           HEADERS += qsystemalignedtimer_stub_p.h
-       }
+
 
        PKGCONFIG += glib-2.0 gconf-2.0
        CONFIG += create_pc create_prl
