@@ -61,6 +61,7 @@ class Q_SYSINFO_EXPORT QSystemAlignedTimer : public QObject
     Q_PROPERTY(int maximumInterval READ maximumInterval WRITE setMaximumInterval)
 
     Q_PROPERTY(bool singleShot READ isSingleShot WRITE setSingleShot)
+    Q_PROPERTY(bool active READ isActive)
 public:
 
     explicit QSystemAlignedTimer(QObject *parent = 0);
@@ -86,7 +87,9 @@ public:
     bool isSingleShot() const;
 
     Q_INVOKABLE static void singleShot(int minimumTime, int maximumTime, QObject *receiver, const char *member);
+
     AlignedTimerError lastError() const;
+    bool	isActive () const;
 
 public Q_SLOTS:
     void start(int minimumTime, int maximumTime);

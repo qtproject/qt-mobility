@@ -115,6 +115,11 @@ void QSystemAlignedTimerPrivate::stop()
 {
 }
 
+bool	QSystemAlignedTimerPrivate::isActive () const
+{
+    return false;
+}
+
 #include "moc_qsystemalignedtimer_stub_p.cpp"
 
 QTM_END_NAMESPACE

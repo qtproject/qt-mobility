@@ -46,6 +46,7 @@
 
 QTM_USE_NAMESPACE
 
+Q_DECLARE_METATYPE(QSystemAlignedTimer::AlignedTimerError);
 
 class tst_QSystemAlignedTimer : public QObject
 {
@@ -56,73 +57,104 @@ private slots:
 
     void tst_wokeUp();
 
-    void tst_setWindow();
-    void tst_timerWindow();
-
-    void tst_setInterval();
-    void tst_interval();
+    void tst_minimumInterval();
+    void tst_maximumInterval();
 
     void tst_setSingleShot();
     void tst_isSingleShot() ;
 
     void tst_singleShot();
 
-    void tst_isRunning();
-    void tst_setRunning();
+    void tst_lastError();
+
 };
 
 void tst_QSystemAlignedTimer::initTestCase()
 {
-
+   qRegisterMetaType<QSystemAlignedTimer::AlignedTimerError>("QSystemAlignedTimer::AlignedTimerError");
 }
 
 void tst_QSystemAlignedTimer::tst_wokeUp()
 {
-
+    QSystemAlignedTimer alignedtimer;
+    if(alignedtimer.lastError() == QSystemAlignedTimer::AlignedTimerNotSupported) {
+        QSKIP("This test not supported on this platform", SkipAll);
+    }
+alignedtimer
 }
 
-void tst_QSystemAlignedTimer::tst_setWindow()
-{
 
+void tst_QSystemAlignedTimer::tst_minimumInterval()
+{
+    QSystemAlignedTimer alignedtimer;
+    if(alignedtimer.lastError() == QSystemAlignedTimer::AlignedTimerNotSupported) {
+        QSKIP("This test not supported on this platform", SkipAll);
+    }
+    alignedtimer.setMinimumInterval(0);
+    QVERIFY(alignedtimer.minimumInterval() == 0);
+    alignedtimer.setMinimumInterval(10);
+    QVERIFY(alignedtimer.minimumInterval() == 10);
 }
 
-void tst_QSystemAlignedTimer::tst_timerWindow()
+void tst_QSystemAlignedTimer::tst_maximumInterval()
 {
 
-}
+    QSystemAlignedTimer alignedtimer;
+    if(alignedtimer.lastError() == QSystemAlignedTimer::AlignedTimerNotSupported) {
+        QSKIP("This test not supported on this platform", SkipAll);
+    }
 
-void tst_QSystemAlignedTimer::tst_setInterval()
-{
+    alignedTimer.setMinimumInterval(0);
+    alignedtimer.setMaximumInterval(0);
+    QVERIFY(alignedtimer.maximumInterval() == 0);
+    QVERIFY(alignedtimer.lastError() == QSystemAlignedTimer::InvalidArgument);
 
-}
-
-void tst_QSystemAlignedTimer::tst_interval()
-{
-
+    alignedtimer.setMaximumInterval(10);
+    QVERIFY(alignedtimer.maximumInterval() == 10);
 }
 
 void tst_QSystemAlignedTimer::tst_setSingleShot()
 {
-
+    QSystemAlignedTimer alignedtimer;
+    if(alignedtimer.lastError() == QSystemAlignedTimer::AlignedTimerNotSupported) {
+        QSKIP("This test not supported on this platform", SkipAll);
+    }
+    alignedtimer.setMinimumInterval(0);
+    QVERIFY(alignedtimer.minimumInterval() == 0);
+    alignedtimer.setMinimumInterval(10);
+    QVERIFY(alignedtimer.minimumInterval() == 10);
 }
 
 void tst_QSystemAlignedTimer::tst_isSingleShot()
 {
-
+    QSystemAlignedTimer alignedtimer;
+    if(alignedtimer.lastError() == QSystemAlignedTimer::AlignedTimerNotSupported) {
+        QSKIP("This test not supported on this platform", SkipAll);
+    }
+    alignedtimer.setSingleShot(true);
+    QVERIFY(isSingleShot());
+    alignedtimer.setSingleShot(false);
+    QVERIFY(!isSingleShot());
 }
 
 void tst_QSystemAlignedTimer::tst_singleShot()
 {
+    QSystemAlignedTimer alignedtimer;
+    if(alignedtimer.lastError() == QSystemAlignedTimer::AlignedTimerNotSupported) {
+        QSKIP("This test not supported on this platform", SkipAll);
+    }
 
 }
 
-void tst_QSystemAlignedTimer::tst_isRunning()
+void tst_QSystemAlignedTimer::tst_lastError()
 {
+    QSystemAlignedTimer alignedtimer;
+    if(alignedtimer.lastError() == QSystemAlignedTimer::AlignedTimerNotSupported) {
+        QSKIP("This test not supported on this platform", SkipAll);
+    }
 
-}
-
-void tst_QSystemAlignedTimer::tst_setRunning()
-{
+    alignedtimer.setMinimumInterval(0);
+    alignedtimer.setMaximumInterval(0);
 
 }
 

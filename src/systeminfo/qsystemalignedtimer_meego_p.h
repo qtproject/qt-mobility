@@ -77,6 +77,7 @@ public:
     static void singleShot(int minimumTime, int maximumTime, QObject *receiver, const char *member);
     QSystemAlignedTimer::AlignedTimerError lastError() const;
 
+        bool	isActive () const;
 Q_SIGNALS:
     void timeout();
     void error(QSystemAlignedTimer::AlignedTimerError error);

@@ -213,6 +213,11 @@ void QSystemAlignedTimerPrivate::singleShot() {
    this->deleteLater();
 }
 
+bool	QSystemAlignedTimer::isActive () const
+{
+    return m_running;
+}
+
 #include "moc_qsystemalignedtimer_meego_p.cpp"
 
 QTM_END_NAMESPACE

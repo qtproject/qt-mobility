@@ -251,6 +251,14 @@ QSystemAlignedTimer::AlignedTimerError QSystemAlignedTimer::lastError() const
     return d->lastError();
 }
 
+/*!
+  Returns true if the timer is running; otherwise false.
+  */
+bool	QSystemAlignedTimer::isActive () const
+{
+    return d->isActive();
+}
+
 #include "moc_qsystemalignedtimer.cpp"
 
 QTM_END_NAMESPACE
