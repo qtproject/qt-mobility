@@ -268,7 +268,6 @@ void DirectShowPlayerService::doSetUrlSource(QMutexLocker *locker)
                 clsid_WMAsfReader, iid_IFileSourceFilter)) {
             locker->unlock();
             hr = fileSource->Load(reinterpret_cast<const OLECHAR *>(url.toString().utf16()), 0);
-            locker->relock();
 
             if (SUCCEEDED(hr)) {
                 source = com_cast<IBaseFilter>(fileSource, IID_IBaseFilter);
@@ -278,16 +277,18 @@ void DirectShowPlayerService::doSetUrlSource(QMutexLocker *locker)
                     source = 0;
                 }
             }
-
             fileSource->Release();
+            locker->relock();
         }
     } else if (url.scheme() == QLatin1String("qrc")) {
         DirectShowRcSource *rcSource = new DirectShowRcSource(m_loop);
 
+        locker->unlock();
         if (rcSource->open(url) && SUCCEEDED(hr = m_graph->AddFilter(rcSource, L"Source")))
             source = rcSource;
         else
             rcSource->Release();
+        locker->relock();
     }
 
     if (!SUCCEEDED(hr)) {
