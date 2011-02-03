@@ -81,17 +81,20 @@ namespace QTest {
 }
 
 
-class MyFilter : public TestSensorFilter
+class MyFilter : public TestSensorFilter { bool filter(TestSensorReading *) { return false; } };
+
+class ModFilter : public TestSensorFilter
 {
     bool filter(TestSensorReading *reading)
     {
-        return reading->test();
+        reading->setTest(3);
+        return true;
     }
 };
 
 class MyFactory : public QSensorBackendFactory
 {
-    QSensorBackend *createBackend(QSensor *sensor)
+    QSensorBackend *createBackend(QSensor * /*sensor*/)
     {
         return 0;
     }
@@ -138,7 +141,7 @@ private slots:
     void testTypeRegistered()
     {
         QList<QByteArray> expected;
-        expected << "QAccelerometer" << TestSensor::type;
+        expected << TestSensor::type;
         QList<QByteArray> actual = QSensor::sensorTypes();
         qSort(actual); // The actual list is not in a defined order
         QCOMPARE(actual, expected);
@@ -207,19 +210,18 @@ private slots:
         QCOMPARE(actual, expected);
     }
 
-    void testSetIdentifier()
+    void testSetIdentifierFail()
     {
-        QSensor sensor("QAccelerometer");
-        sensor.setIdentifier("dummy.accelerometer");
+        TestSensor sensor;
         sensor.connectToBackend();
         QVERIFY(sensor.isConnectedToBackend());
-        QByteArray expected = "dummy.accelerometer";
+        QByteArray expected = testsensorimpl::id;
         QByteArray actual = sensor.identifier();
         QCOMPARE(actual, expected);
 
         QTest::ignoreMessage(QtWarningMsg, "ERROR: Cannot call QSensor::setIdentifier while connected to a backend! ");
-        sensor.setIdentifier(testsensorimpl::id);
-        expected = "dummy.accelerometer";
+        sensor.setIdentifier("dummy.accelerometer");
+        expected = testsensorimpl::id;
         actual = sensor.identifier();
         QCOMPARE(actual, expected);
     }
@@ -256,6 +258,10 @@ private slots:
         QVERIFY(sensor.reading() != 0);
         quint64 timestamp = sensor.reading()->timestamp();
         QVERIFY(timestamp == qtimestamp());
+        sensor.setProperty("doThis", "setOne");
+        sensor.start();
+        timestamp = sensor.reading()->timestamp();
+        QVERIFY(timestamp == 1);
     }
 
     void testStart()
@@ -375,10 +381,8 @@ private slots:
         // Test the generic accessor functions
         TestSensorReading *reading = sensor.reading();
         QCOMPARE(reading->valueCount(), 1);
-        reading->setTest(true);
-        QCOMPARE(reading->test(), reading->value(0).toBool());
-        reading->setTest(false);
-        QCOMPARE(reading->test(), reading->value(0).toBool());
+        reading->setTest(1);
+        QCOMPARE(reading->test(), reading->value(0).toInt());
     }
 
     void testFilter()
@@ -410,8 +414,6 @@ private slots:
         expected = QList<QSensorFilter*>() << filter << filter2;
         QCOMPARE(actual, expected);
 
-        expected.clear();
-
         delete filter2;
 
         actual = sensor.filters();
@@ -427,6 +429,25 @@ private slots:
         delete filter;
     }
 
+    void testFilter2()
+    {
+        TestSensor sensor;
+        sensor.setProperty("doThis", "setOne");
+        TestSensorFilter *filter1 = new ModFilter;
+        TestSensorFilter *filter2 = new MyFilter;
+        sensor.addFilter(filter1);
+        sensor.start();
+        QCOMPARE(sensor.reading()->test(), 3);
+        sensor.stop();
+        sensor.reading()->setTest(1);
+        sensor.addFilter(filter2);
+        sensor.start();
+        QCOMPARE(sensor.reading()->test(), 1);
+        sensor.stop();
+        delete filter1;
+        delete filter2;
+    }
+
     void testStart2()
     {
         TestSensor sensor;
@@ -436,10 +457,12 @@ private slots:
         sensor.start();
         QVERIFY(sensor.isBusy());
         QVERIFY(!sensor.isActive());
+        sensor.stop();
 
         sensor.setProperty("doThis", "stop");
         sensor.start();
         QVERIFY(!sensor.isActive());
+        sensor.stop();
 
         sensor.setProperty("doThis", "error");
         sensor.start();
@@ -449,6 +472,19 @@ private slots:
         // In this case our test sensor is reporting a
         // non-fatal error so the sensor will start.
         QVERIFY(sensor.isActive());
+        sensor.stop();
+
+        sensor.setProperty("doThis", "setOne");
+        sensor.start();
+        QCOMPARE(sensor.reading()->timestamp(), qtimestamp(1));
+        QCOMPARE(sensor.reading()->test(), 1);
+        sensor.stop();
+
+        sensor.setProperty("doThis", "setTwo");
+        sensor.start();
+        QCOMPARE(sensor.reading()->timestamp(), qtimestamp(2));
+        QCOMPARE(sensor.reading()->test(), 2);
+        sensor.stop();
     }
 
     void testSetBadDataRate()
@@ -713,7 +749,7 @@ private slots:
 
         // Make sure we've cleaned up the list of available types
         QList<QByteArray> expected;
-        expected << "QAccelerometer" << TestSensor::type;
+        expected << TestSensor::type;
         QList<QByteArray> actual = QSensor::sensorTypes();
         QCOMPARE(actual, expected);
     }
@@ -734,12 +770,27 @@ private slots:
         QVERIFY(!sensor.isActive());
     }
 
+    void testIsRegistered()
+    {
+        bool expected;
+        bool actual;
+
+        expected = true;
+        actual = QSensorManager::isBackendRegistered(TestSensor::type, testsensorimpl::id);
+        QCOMPARE(expected, actual);
+
+        expected = false;
+        actual = QSensorManager::isBackendRegistered(TestSensor::type, "random");
+        QCOMPARE(expected, actual);
+
+        expected = false;
+        actual = QSensorManager::isBackendRegistered("random", "random");
+        QCOMPARE(expected, actual);
+    }
+
     // This test must be LAST or it will interfere with the other tests
     void testLoadingPlugins()
     {
-        // Unregister this one we did before... otherwise we may get a duplicate registration warning
-        QSensorManager::unregisterBackend("QAccelerometer", "dummy.accelerometer");
-
         // Go ahead and load the actual plugins (as a test that plugin loading works)
         sensors_unit_test_hook(1);
 
