@@ -80,7 +80,6 @@ void tst_QSystemAlignedTimer::tst_wokeUp()
     if(alignedtimer.lastError() == QSystemAlignedTimer::AlignedTimerNotSupported) {
         QSKIP("This test not supported on this platform", SkipAll);
     }
-alignedtimer
 }
 
 
@@ -104,7 +103,7 @@ void tst_QSystemAlignedTimer::tst_maximumInterval()
         QSKIP("This test not supported on this platform", SkipAll);
     }
 
-    alignedTimer.setMinimumInterval(0);
+    alignedtimer.setMinimumInterval(0);
     alignedtimer.setMaximumInterval(0);
     QVERIFY(alignedtimer.maximumInterval() == 0);
     QVERIFY(alignedtimer.lastError() == QSystemAlignedTimer::InvalidArgument);
@@ -132,9 +131,9 @@ void tst_QSystemAlignedTimer::tst_isSingleShot()
         QSKIP("This test not supported on this platform", SkipAll);
     }
     alignedtimer.setSingleShot(true);
-    QVERIFY(isSingleShot());
+    QVERIFY(alignedtimer.isSingleShot());
     alignedtimer.setSingleShot(false);
-    QVERIFY(!isSingleShot());
+    QVERIFY(!alignedtimer.isSingleShot());
 }
 
 void tst_QSystemAlignedTimer::tst_singleShot()
