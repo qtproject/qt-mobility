@@ -88,6 +88,20 @@ bool QL2capServer::listen(const QBluetoothAddress &address, quint16 port)
         addr.SetPort(port);
 
     TBTServiceSecurity security;
+    switch (d->securityFlags) {
+        case QBluetooth::Authentication:
+            security.SetAuthentication(ETrue);
+            break;
+        case QBluetooth::Authorization:
+            security.SetAuthorisation(ETrue);
+            break;
+        case QBluetooth::Encryption:
+            security.SetEncryption(ETrue);
+            break;
+        case QBluetooth::NoSecurity:
+        default:
+            break;
+    }
     addr.SetSecurity(security);
     d->ds->iSocket->Bind(addr);
     d->socket->setSocketState(QBluetoothSocket::BoundState);
