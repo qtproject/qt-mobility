@@ -39,7 +39,7 @@
 ****************************************************************************/
 
 import Qt 4.7
-import QtMobility.location 1.1
+import QtMobility.location 1.2
 
 Item {
     width: 500

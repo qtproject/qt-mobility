@@ -71,7 +71,7 @@ QTM_BEGIN_NAMESPACE
 
     The status of the image loading can be monitored via \l status.
 
-    The MapImage element is part of the \bold{QtMobility.location 1.1} module.
+    The MapImage element is part of the \bold{QtMobility.location 1.2} module.
 */
 
 QDeclarativeGeoMapPixmapObject::QDeclarativeGeoMapPixmapObject(QDeclarativeItem *parent)

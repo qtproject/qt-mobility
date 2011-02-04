@@ -61,7 +61,6 @@ class QDeclarativeGeoMapPolygonObject : public QDeclarativeGeoMapObject
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeCoordinate> path READ declarativePath NOTIFY pathChanged)
     Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged)
     Q_PROPERTY(QDeclarativeGeoMapObjectBorder* border READ border)
-    Q_CLASSINFO("DefaultProperty", "path")
 
 public:
     QDeclarativeGeoMapPolygonObject(QDeclarativeItem *parent = 0);

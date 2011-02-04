@@ -66,7 +66,7 @@ QTM_BEGIN_NAMESPACE
     Simplistic example to illustrate, this element could be defined in Map body:
     \snippet tests/declarative-location/testpolymapobjects.qml Basic MapPolyline
 
-    The MapPolyline element is part of the \bold{QtMobility.location 1.1} module.
+    The MapPolyline element is part of the \bold{QtMobility.location 1.2} module.
 */
 
 QDeclarativeGeoMapPolylineObject::QDeclarativeGeoMapPolylineObject(QDeclarativeItem *parent)
@@ -142,6 +142,19 @@ void QDeclarativeGeoMapPolylineObject::path_clear(QDeclarativeListProperty<QDecl
 
 void QDeclarativeGeoMapPolylineObject::componentComplete()
 {
+    // Setup member coordinates
+    QObjectList kids = children();
+    QList<QGeoCoordinate> path = polyline_->path();
+    for (int i = 0; i < kids.size(); ++i) {
+        QDeclarativeCoordinate *coordinate = qobject_cast<QDeclarativeCoordinate*>(kids.at(i));
+        if (coordinate) {
+            path_.append(coordinate);
+            path.append(coordinate->coordinate());
+        } else {
+            qmlInfo(this) << tr("Member is not a Coordinate");
+        }
+    }
+    polyline_->setPath(path);
     componentCompleted_ = true;
     QDeclarativeGeoMapObject::componentComplete();
 }
@@ -197,7 +210,7 @@ void QDeclarativeGeoMapPolylineObject::borderWidthChanged(int width)
 
     A basic example is to draw the path where one has been:
 
-    \snippet tests/declarative-location/testpolymapobjects.qml Wherever I may Roam
+    \snippet tests/declarative-location/testpolymapobjects.qml Wherever I may roam
 
     \sa removeCoordinate
 

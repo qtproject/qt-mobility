@@ -66,7 +66,7 @@ QTM_BEGIN_NAMESPACE
     Simplistic example to illustrate, this element could be defined in Map body:
     \snippet tests/declarative-location/testpolymapobjects.qml Basic MapPolygon
 
-    The MapPolygon element is part of the \bold{QtMobility.location 1.1} module.
+    The MapPolygon element is part of the \bold{QtMobility.location 1.2} module.
 */
 
 QDeclarativeGeoMapPolygonObject::QDeclarativeGeoMapPolygonObject(QDeclarativeItem *parent)
@@ -148,6 +148,19 @@ void QDeclarativeGeoMapPolygonObject::pathPropertyChanged()
 
 void QDeclarativeGeoMapPolygonObject::componentComplete()
 {
+    // Setup member coordinates
+    QObjectList kids = children();
+    QList<QGeoCoordinate> path = polygon_->path();
+    for (int i = 0; i < kids.size(); ++i) {
+        QDeclarativeCoordinate *coordinate = qobject_cast<QDeclarativeCoordinate*>(kids.at(i));
+        if (coordinate) {
+            path_.append(coordinate);
+            path.append(coordinate->coordinate());
+        } else {
+            qmlInfo(this) << tr("Member is not a Coordinate");
+        }
+    }
+    polygon_->setPath(path);
     componentCompleted_ = true;
     QDeclarativeGeoMapObject::componentComplete();
 }

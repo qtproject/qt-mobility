@@ -57,7 +57,7 @@ QTM_BEGIN_NAMESPACE
     It also allows users to specify an ordering of objects local to the
     group via the z-values and insertion order of the objects in the group.
 
-    The MapGroup element is part of the \bold{QtMobility.location 1.1} module.
+    The MapGroup element is part of the \bold{QtMobility.location 1.2} module.
 */
 
 QDeclarativeGeoMapGroupObject::QDeclarativeGeoMapGroupObject(QDeclarativeItem *parent)

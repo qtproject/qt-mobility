@@ -102,26 +102,26 @@ public:
         qmlRegisterType<QDeclarativeGeoPlace>(uri, 1, 1, "Place");
         qmlRegisterType<QDeclarativeGeoAddress>(uri, 1, 1, "Address");
 
-        qmlRegisterType<QDeclarativeGeoServiceProvider>(uri, 1, 1, "Plugin");
-        qmlRegisterType<QDeclarativeGeoServiceProviderParameter>(uri, 1, 1, "PluginParameter");
-        qmlRegisterType<QDeclarativeGraphicsGeoMap>(uri, 1, 1, "Map");
+        qmlRegisterType<QDeclarativeGeoServiceProvider>(uri, 1, 2, "Plugin");
+        qmlRegisterType<QDeclarativeGeoServiceProviderParameter>(uri, 1, 2, "PluginParameter");
+        qmlRegisterType<QDeclarativeGraphicsGeoMap>(uri, 1, 2, "Map");
         qmlRegisterType<QDeclarativeGeoMapObjectBorder>(); // used as grouped property
-        qmlRegisterType<QGeoMapObject>(uri, 1, 1, "QGeoMapObject");
-        qmlRegisterType<QDeclarativeGeoMapObject>(uri, 1, 1, "MapObject");
-        qmlRegisterType<QDeclarativeGeoMapObjectView>(uri, 1, 1, "MapObjectView");
-        qmlRegisterType<QDeclarativeGeoMapGroupObject>(uri, 1, 1, "MapGroup");
-        qmlRegisterType<QDeclarativeGeoMapCircleObject>(uri, 1, 1, "MapCircle");
-        qmlRegisterType<QDeclarativeGeoMapPolygonObject>(uri, 1, 1, "MapPolygon");
-        qmlRegisterType<QDeclarativeGeoMapPolylineObject>(uri, 1, 1, "MapPolyline");
-        qmlRegisterType<QDeclarativeGeoMapRectangleObject>(uri, 1, 1, "MapRectangle");
-        qmlRegisterType<QDeclarativeGeoMapTextObject>(uri, 1, 1, "MapText");
-        qmlRegisterType<QDeclarativeGeoMapPixmapObject>(uri, 1, 1, "MapImage");
+        qmlRegisterType<QGeoMapObject>(uri, 1, 2, "QGeoMapObject");
+        qmlRegisterType<QDeclarativeGeoMapObject>(uri, 1, 2, "MapObject");
+        qmlRegisterType<QDeclarativeGeoMapObjectView>(uri, 1, 2, "MapObjectView");
+        qmlRegisterType<QDeclarativeGeoMapGroupObject>(uri, 1, 2, "MapGroup");
+        qmlRegisterType<QDeclarativeGeoMapCircleObject>(uri, 1, 2, "MapCircle");
+        qmlRegisterType<QDeclarativeGeoMapPolygonObject>(uri, 1, 2, "MapPolygon");
+        qmlRegisterType<QDeclarativeGeoMapPolylineObject>(uri, 1, 2, "MapPolyline");
+        qmlRegisterType<QDeclarativeGeoMapRectangleObject>(uri, 1, 2, "MapRectangle");
+        qmlRegisterType<QDeclarativeGeoMapTextObject>(uri, 1, 2, "MapText");
+        qmlRegisterType<QDeclarativeGeoMapPixmapObject>(uri, 1, 2, "MapImage");
 
-        qmlRegisterType<QDeclarativeGeoMapMouseArea>(uri, 1, 1, "MapMouseArea");
-        qmlRegisterType<QDeclarativeGeoMapMouseEvent>(uri, 1, 1, "MapMouseEvent");
+        qmlRegisterType<QDeclarativeGeoMapMouseArea>(uri, 1, 2, "MapMouseArea");
+        qmlRegisterType<QDeclarativeGeoMapMouseEvent>(uri, 1, 2, "MapMouseEvent");
 
-        //qmlRegisterType<QDeclarativeGeocodeModel>(uri, 1, 1, "GeocodeModel");
-        //qmlRegisterType<QDeclarativeReverseGeocodeModel>(uri, 1, 1, "ReverseGeocodeModel");
+        //qmlRegisterType<QDeclarativeGeocodeModel>(uri, 1, 3, "GeocodeModel");
+        //qmlRegisterType<QDeclarativeReverseGeocodeModel>(uri, 1, 3, "ReverseGeocodeModel");
     }
 };
 
