@@ -201,6 +201,9 @@ bool QDeclarativeGeoMapObject::isVisible() const
     Note: For model data, currently only LandmarkModel is supported. Using other types
     of models results in undefined behavior.
 
+    Assuming you have a LandmarkModel identified by landmarkModel, an example usage:
+    \snippet tests/declarative-location/testpolymapobjects.qml MapObjectView
+
     The MapObjectView element is part of the \bold{QtMobility.location 1.2} module.
 */
 
@@ -231,7 +234,7 @@ QVariant QDeclarativeGeoMapObjectView::model() const
 }
 
 /*!
-    \qmlproperty Component MapObjectView::model
+    \qmlproperty model MapObjectView::model
 
     This property holds the model that provides data for
     populating data with delegates.
