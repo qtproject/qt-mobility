@@ -92,6 +92,9 @@ QTM_BEGIN_NAMESPACE
 
    \snippet doc/src/snippets/declarative/declarative-map.qml Basic MapObjects and View on Map
 
+   Mouse handling is done by adding MapMouseArea items as children of either
+   MapObjects or the Map item itself.
+
     The Map element is part of the \bold{QtMobility.location 1.2} module.
 */
 QDeclarativeGraphicsGeoMap::QDeclarativeGraphicsGeoMap(QDeclarativeItem *parent)
@@ -616,7 +619,7 @@ QDeclarativeGeoMapMouseEvent* QDeclarativeGraphicsGeoMap::createMapMouseEvent(QG
 
     QDeclarativeGeoMapMouseEvent *mouseEvent = new QDeclarativeGeoMapMouseEvent(this);
 
-    mouseEvent->setButtons(event->buttons());
+    mouseEvent->setButton(event->button());
     QGeoCoordinate coordinate = mapData_->screenPositionToCoordinate(event->pos());
     mouseEvent->setCoordinate(new QDeclarativeCoordinate(coordinate, this));
     mouseEvent->setModifiers(event->modifiers());
@@ -680,6 +683,7 @@ void QDeclarativeGraphicsGeoMap::mouseReleaseEvent(QGraphicsSceneMouseEvent *eve
     if (activeMouseArea_)
         activeMouseArea_->releaseEvent(mouseEvent);
     activeMouseArea_ = 0;
+
     /*
 
     if (!mapData_) {
