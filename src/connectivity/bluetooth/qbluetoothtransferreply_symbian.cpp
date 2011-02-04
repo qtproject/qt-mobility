@@ -56,10 +56,11 @@ QTM_BEGIN_NAMESPACE
 QBluetoothTransferReplySymbian::QBluetoothTransferReplySymbian(QIODevice *input, QObject *parent)
 :   QBluetoothTransferReply(parent), CActive(EPriorityStandard), m_source(input),
     m_running(false), m_finished(false), m_client(NULL), m_object(NULL),
-    m_error(QBluetoothTransferReply::NoError), m_errorStr()
+    m_error(QBluetoothTransferReply::NoError), m_errorStr(), m_timer(new QTimer(this))
 {
     //add this active object to scheduler
     CActiveScheduler::Add(this);
+    connect(m_timer, SIGNAL(timeout()), this, SLOT(updateProgress()));
 }
 
 /*!
@@ -68,6 +69,9 @@ QBluetoothTransferReplySymbian::QBluetoothTransferReplySymbian(QIODevice *input,
 QBluetoothTransferReplySymbian::~QBluetoothTransferReplySymbian()
 {
     Cancel();
+
+    if (m_timer->isActive())
+        m_timer->stop();
 
     delete m_object;
     m_object = NULL;
@@ -84,6 +88,14 @@ void QBluetoothTransferReplySymbian::setAddress(const QBluetoothAddress &address
 void QBluetoothTransferReplySymbian::serviceDiscovered(const QBluetoothServiceInfo &info)
 {
     m_port = info.serverChannel();
+}
+
+void QBluetoothTransferReplySymbian::updateProgress()
+{
+    if (m_object) {
+        qint64 sent = m_object->BytesSent();
+        emit uploadProgress(sent, m_fileSize);
+    }
 }
 
 void QBluetoothTransferReplySymbian::serviceDiscoveryFinished()
@@ -157,6 +169,8 @@ bool QBluetoothTransferReplySymbian::isRunning() const
 
 void QBluetoothTransferReplySymbian::abort()
 {
+    if (m_timer->isActive())
+        m_timer->stop();
     m_state = EIdle;
     m_running = false;
     // Deleting obexclient is the only way to cancel active requests
@@ -186,6 +200,8 @@ void QBluetoothTransferReplySymbian::DoCancel()
         m_client = NULL;
         m_state = EIdle;
     }
+    if (m_timer->isActive())
+        m_timer->stop();
     m_error = UserCancelledTransferError;
 }
 
@@ -248,6 +264,7 @@ void QBluetoothTransferReplySymbian::sendObject(QString filename)
         TRAPD(error, m_object->InitFromFileL( str ));
         if (!error) {
             m_client->Put( *m_object, iStatus );
+            m_timer->start(1000);
             emit uploadProgress(0, m_fileSize);
             SetActive();
         } else {
@@ -262,6 +279,8 @@ void QBluetoothTransferReplySymbian::sendObject(QString filename)
 void QBluetoothTransferReplySymbian::disconnect()
 {
     if ( m_state == EDisconnecting || m_error != NoError) {
+        if (m_timer->isActive())
+            m_timer->stop();
         delete m_object;
         m_object = NULL;
         m_client->Disconnect( iStatus );
