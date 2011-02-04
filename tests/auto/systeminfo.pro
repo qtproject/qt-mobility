@@ -18,7 +18,7 @@ maemo6: {
 contains(QT_CONFIG,declarative) {
 SUBDIRS += \
            qdeclarativedeviceinfo \
-#           qdeclarativedisplayinfo \
+           qdeclarativedisplayinfo \
            qdeclarativesysteminfo \
            qdeclarativenetworkinfo \
            qdeclarativescreensaver \
