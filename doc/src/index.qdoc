@@ -320,7 +320,7 @@
         </tr>
         <tr>
         <td bgcolor="yellow"></td>
-        <td>A functional backend for the API on the platform is being worked however it is not functionally complete.</td>
+        <td>A functional backend for the API on the platform is being worked on, however it is not functionally complete.</td>
 
         </tr>
         <tr>
@@ -330,7 +330,7 @@
     </tr>
     <tr>
     <td bgcolor="gray"></td>
-    <td>A functional backend for the API on the platform is not being worked on. It is possible for others to implement and integrate support.</td>
+    <td>A functional backend for the API on the platform is not being worked on. It is possible for others to implement and integrate support. Alternatively, the platform does not support the feature.</td>
     </tr>
     </tbody>
     </table>
@@ -400,7 +400,7 @@
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
-    <td bgcolor="grey">2)</td>
+    <td bgcolor="grey">3)</td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
@@ -413,8 +413,8 @@
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
@@ -427,8 +427,8 @@
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
@@ -442,35 +442,35 @@
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
-    <td bgcolor="yellow"></td>
+    <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     </tr>
     <tr>
-    <td>Multimedia</td>
+    <td>Multimedia</td>QtMobility Bearer does not support MeeGo. Use Qt 4.7 based Bearer API instead.
     <td>FINAL</td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     </tr>
     <tr>
     <td>System Information</td>
-    <td>FINAL</td>
+    <td>FINAL</td>QtMobility Bearer does not support MeeGo. Use Qt 4.7 based Bearer API instead.
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
-    <td bgcolor="yellow"></td>
+    <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
@@ -525,10 +525,10 @@
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
     <td bgcolor="gray"></td>
-    <td bgcolor="gray"></td>
+    <td bgcolor="green"></td>
     <td bgcolor="gray"></td>
     </tr>
     <tr>
@@ -539,8 +539,8 @@
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
@@ -553,8 +553,8 @@
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
@@ -562,12 +562,12 @@
     <tr>
     <td>Document Gallery</td>
     <td>FINAL</td>
-    <td bgcolor="yellow">1)</td>
-    <td bgcolor="yellow">1)</td>
-    <td bgcolor="yellow">1)</td>
-    <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
     <td bgcolor="yellow"></td>
+    <td bgcolor="yellow"></td>
+    <td bgcolor="yellow"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
     <td bgcolor="yellow"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
@@ -590,27 +590,41 @@
     <tr>
     <td>Feedback</td>
     <td>FINAL</td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
+    <td bgcolor="yellow">1)</td>
+    <td bgcolor="yellow">1)</td>
+    <td bgcolor="yellow">2)</td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
     </tr>
     <tr>
-    <td>Connectivity</td>
-    <td>ALPHA</td>
+    <td>Connectivity (Bluetooth)</td>
+    <td>BETA</td>
+    <td bgcolor="yellow"></td>
+    <td bgcolor="yellow"></td>
+    <td bgcolor="yellow"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="yellow"></td>
+    <td bgcolor="yellow"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="gray"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="gray"></td>
+    </tr>
+    <tr>
+    <td>Connectivity (NFC)</td>
+    <td>BETA</td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
-    <td bgcolor="gray"></td>
-    <td bgcolor="gray"></td>
-    <td bgcolor="gray"></td>
-    <td bgcolor="grey"></td>
+    <td bgcolor="yellow"></td>
+    <td bgcolor="yellow"></td>
+    <td bgcolor="yellow"></td>
+    <td bgcolor="yellow"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
@@ -633,10 +647,11 @@
     <p>
     \endraw
 
-    1) The document gallery backend for S60 3.1, 3.2, and 5.0 is not enabled
-    in pre-built packages due to library dependency issues on some devices.
+    1) S60 3.1, 3.2 no ramp up/down for attack/fade.
 
-    2.) QtMobility Bearer does not support MeeGo. Use Qt 4.7 based Bearer API instead.
+    2) S60 5 only vibration available.
+
+    3) QtMobility Bearer does not support MeeGo. Use Qt 4.7 based Bearer API instead.
 
     \section1 Feedback and bug reports
     Email any inquiries and feedback about QtMobility to qt-mobility-feedback@trolltech.com
