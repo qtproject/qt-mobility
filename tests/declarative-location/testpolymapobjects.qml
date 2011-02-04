@@ -91,8 +91,8 @@ Item {
         color: "#343434"
         Image { source: "landmarkmapmobile/images/stripes.png"; fillMode: Image.Tile; anchors.fill: parent; opacity: 0.3 }
 
+        //![MapObjectView]
         Map {
-            visible: true
             id: map
             plugin : Plugin { name : "nokia" }
             anchors.fill: parent; size.width: parent.width; size.height: parent.height; zoomLevel: 12
@@ -101,8 +101,16 @@ Item {
 	    MapObjectView {
 	        id: circle_basic_view
 		model: landmarkModel
-		delegate: circleMapDelegate
+                delegate: Component {
+                    id: circleMapDelegate
+                    MapCircle {
+                        color: "red"
+                        radius: 500
+                        center: landmark.coordinate
+                    }
+                }
 	    }
+            //![MapObjectView]
 	    
 	    MapObjectView {
 	        id: text_basic_view
@@ -214,49 +222,37 @@ Item {
 
         Component {
             id: textMapDelegate
+            //![MapText]
             MapText {
                 color: "blue"
-                coordinate: Coordinate {
-                    objectName: "textmapCoordinate"
-		    latitude: landmark.coordinate.latitude
-		    longitude: landmark.coordinate.longitude
-		}
+                coordinate: landmark.coordinate
 		text: landmark.name
-		//text: "TEST"
 		font.pointSize: 8
             }
+            //![MapText]
         }
 
         Component {
             id: rectangleMapDelegate
+            //![MapRectangle]
             MapRectangle {
                 color: "yellow"
-		visible:true
-                topLeft: Coordinate {
-                    objectName: "rectmapTopLeft"
-		    latitude: landmark.coordinate.latitude
-		    longitude: landmark.coordinate.longitude
-		}
-		bottomRight: Coordinate {
-                    objectName: "rectmapBottomRight"
-		    latitude: landmark.coordinate.latitude - 1
-		    longitude: landmark.coordinate.longitude - 1
+                topLeft: landmark.coordinate
+                bottomRight: Coordinate {
+                    latitude: landmark.coordinate.latitude - 1
+                    longitude: landmark.coordinate.longitude + 1
 		}
             }
+            //![MapRectangle]
         }
 
+        /* map mouse area testing
         Component {
             id: circleMapDelegate
             MapCircle {
                 color: "red"
-		visible:true
                 radius: 500
-		
-		center: Coordinate {
-                    objectName: "circleMapCenter"
-                    latitude : landmark.coordinate.latitude
-                    longitude: landmark.coordinate.longitude
-                }
+                center: landmark.coordinate
 
                 MapMouseArea {
                     onPressed : {
@@ -270,6 +266,7 @@ Item {
                 }
             }
         }
+        */
 
         Mobile.Floater {
             id : dataFloater

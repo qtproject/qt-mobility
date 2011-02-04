@@ -60,6 +60,11 @@ QTM_BEGIN_NAMESPACE
     If \l center and \l radius are not specified and valid the
     circle will not be displayed.
 
+    An example, a MapCircle positioned at your current position (assuming there
+    is a PositionSource):
+    \snippet tests/declarative-location/testpolymapobjects.qml Basic map position marker definition
+    The element is used with a Map element.
+
     The MapCircle element is part of the \bold{QtMobility.location 1.2} module.
 */
 
