@@ -60,6 +60,7 @@ class Marker;
 class StatusBarItem;
 class ZoomButtonItem;
 
+// The graphics item that actually contains the map
 class GeoMap : public QGraphicsGeoMap
 {
     Q_OBJECT
@@ -93,6 +94,8 @@ signals:
     void panned();
 };
 
+// A widget to hold the view and scene for a GeoMap, as well
+// as control widgets
 class MapsWidgetPrivate;
 class MapsWidget : public QWidget
 {
@@ -125,7 +128,8 @@ private:
     void showEvent(QShowEvent *event);
 };
 
-
+// An animated status bar item that appears at the bottom
+// of the map
 class StatusBarItemPrivate;
 class StatusBarItem : public QObject, public QGraphicsRectItem
 {
@@ -152,6 +156,8 @@ private:
     StatusBarItemPrivate *d;
 };
 
+// Zoom in / zoom out buttons, touch-friendly, appearing on the
+// side of the map
 class ZoomButtonItemPrivate;
 class ZoomButtonItem : public QGraphicsRectItem
 {

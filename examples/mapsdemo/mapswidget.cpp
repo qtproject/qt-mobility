@@ -128,6 +128,8 @@ void GeoMap::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
 void GeoMap::wheelEvent(QGraphicsSceneWheelEvent *event)
 {
+    // pan our current point to the centre, zoom, then pan back
+
     qreal panx = event->pos().x() - size().width() / 2.0;
     qreal pany = event->pos().y() - size().height() / 2.0;
     pan(panx, pany);
