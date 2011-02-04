@@ -243,6 +243,7 @@ void MainWindow::targetDetected(QNearFieldTarget *target)
 
 void MainWindow::targetLost(QNearFieldTarget *target)
 {
+    Q_UNUSED(target);
 }
 
 void MainWindow::ndefMessageRead(const QNdefMessage &message)

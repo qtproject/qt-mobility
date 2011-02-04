@@ -364,6 +364,8 @@ void QNearFieldManagerPrivateImpl::AccessFailed(const QDBusObjectPath &target,
 void QNearFieldManagerPrivateImpl::AccessGranted(const QDBusObjectPath &target,
                                                  const QString &kind)
 {
+    Q_UNUSED(kind);
+
     if (m_pendingDetectedTargets.contains(target.path())) {
         m_pendingDetectedTargets[target.path()].stop();
         m_pendingDetectedTargets.remove(target.path());
