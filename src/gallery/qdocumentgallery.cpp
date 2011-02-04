@@ -258,7 +258,7 @@ Q_DEFINE_GALLERY_TYPE(QDocumentGallery, Audio)
 
     This type matches all image files in the document gallery.
 
-    In addition to the properties derived from the \l File type video files may
+    In addition to the properties derived from the \l File type image files may
     also provide:
 
     \list
