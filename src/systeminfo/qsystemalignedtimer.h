@@ -89,7 +89,7 @@ public:
     Q_INVOKABLE static void singleShot(int minimumTime, int maximumTime, QObject *receiver, const char *member);
 
     AlignedTimerError lastError() const;
-    bool	isActive () const;
+    bool isActive () const;
 
 public Q_SLOTS:
     void start(int minimumTime, int maximumTime);
@@ -103,7 +103,6 @@ Q_SIGNALS:
 
 private:
     QSystemAlignedTimerPrivate *d;
-    QSystemAlignedTimer::AlignedTimerError lastTimerError;
 };
 
 // FIXME how to know if this fails on some platforms where it is not supported, i.e. windows or symbian

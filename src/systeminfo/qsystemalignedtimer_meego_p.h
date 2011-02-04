@@ -77,13 +77,13 @@ public:
     static void singleShot(int minimumTime, int maximumTime, QObject *receiver, const char *member);
     QSystemAlignedTimer::AlignedTimerError lastError() const;
 
-        bool	isActive () const;
+    bool isActive() const;
+    QSystemAlignedTimer::AlignedTimerError m_lastError;
 Q_SIGNALS:
     void timeout();
     void error(QSystemAlignedTimer::AlignedTimerError error);
 
 private:
-    QSystemAlignedTimer::AlignedTimerError m_lastError;
     int m_minimumInterval;
     int m_maximumInterval;
     bool m_running;

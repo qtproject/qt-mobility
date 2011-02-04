@@ -115,7 +115,7 @@ void QSystemAlignedTimerPrivate::stop()
 {
 }
 
-bool	QSystemAlignedTimerPrivate::isActive () const
+bool QSystemAlignedTimerPrivate::isActive () const
 {
     return false;
 }

@@ -48,6 +48,21 @@ QTM_USE_NAMESPACE
 
 Q_DECLARE_METATYPE(QSystemAlignedTimer::AlignedTimerError);
 
+static bool waitForSignal(QObject *obj, const char *signal, int timeout = 0)
+{
+    QEventLoop loop;
+    QObject::connect(obj, signal, &loop, SLOT(quit()));
+    QTimer timer;
+    QSignalSpy timeoutSpy(&timer, SIGNAL(timeout()));
+    if (timeout > 0) {
+        QObject::connect(&timer, SIGNAL(timeout()), &loop, SLOT(quit()));
+        timer.setSingleShot(true);
+        timer.start(timeout);
+    }
+    loop.exec();
+    return timeoutSpy.isEmpty();
+}
+
 class tst_QSystemAlignedTimer : public QObject
 {
     Q_OBJECT
@@ -96,7 +111,6 @@ void tst_QSystemAlignedTimer::tst_wokeUp()
 
     alignedtimer.wokeUp();
     QVERIFY(!alignedtimer.isActive());
-
 }
 
 void tst_QSystemAlignedTimer::tst_minimumInterval()
@@ -109,6 +123,10 @@ void tst_QSystemAlignedTimer::tst_minimumInterval()
     QVERIFY(alignedtimer.minimumInterval() == 0);
     alignedtimer.setMinimumInterval(10);
     QVERIFY(alignedtimer.minimumInterval() == 10);
+
+    alignedtimer.setMinimumInterval(-1);
+    alignedtimer.start();
+    QVERIFY(alignedtimer.lastError() == QSystemAlignedTimer::InvalidArgument);
 }
 
 void tst_QSystemAlignedTimer::tst_maximumInterval()
@@ -122,10 +140,13 @@ void tst_QSystemAlignedTimer::tst_maximumInterval()
     alignedtimer.setMinimumInterval(0);
     alignedtimer.setMaximumInterval(0);
     QVERIFY(alignedtimer.maximumInterval() == 0);
-    QVERIFY(alignedtimer.lastError() == QSystemAlignedTimer::InvalidArgument);
 
-    alignedtimer.setMaximumInterval(10);
-    QVERIFY(alignedtimer.maximumInterval() == 10);
+    alignedtimer.setMaximumInterval(11);
+    QVERIFY(alignedtimer.maximumInterval() == 11);
+
+    alignedtimer.setMaximumInterval(-1);
+    alignedtimer.start();
+    QVERIFY(alignedtimer.lastError() == QSystemAlignedTimer::InvalidArgument);
 }
 
 void tst_QSystemAlignedTimer::tst_setSingleShot()
@@ -159,6 +180,17 @@ void tst_QSystemAlignedTimer::tst_singleShot()
         QSKIP("This test not supported on this platform", SkipAll);
     }
 
+    alignedtimer.setSingleShot(true);
+    alignedtimer.start(2,3);
+    QVERIFY(alignedtimer.isActive());
+    QVERIFY(::waitForSignal(&alignedtimer, SIGNAL(timeout()), 4 * 1000));
+    QVERIFY(!alignedtimer.isActive());
+
+    alignedtimer.setSingleShot(false);
+    alignedtimer.start(2,3);
+    QVERIFY(alignedtimer.isActive());
+    QVERIFY(::waitForSignal(&alignedtimer, SIGNAL(timeout()), 4 * 1000));
+    QVERIFY(alignedtimer.isActive());
 }
 
 void tst_QSystemAlignedTimer::tst_lastError()
@@ -175,6 +207,8 @@ void tst_QSystemAlignedTimer::tst_start()
     if(alignedtimer.lastError() == QSystemAlignedTimer::AlignedTimerNotSupported) {
         QSKIP("This test not supported on this platform", SkipAll);
     }
+
+
     alignedtimer.start(8,10);
     QVERIFY(alignedtimer.isActive());
     alignedtimer.stop();
@@ -183,9 +217,28 @@ void tst_QSystemAlignedTimer::tst_start()
     alignedtimer.start();
     QVERIFY(alignedtimer.isActive());
 
-    alignedtime2r.start(8,10);
-    QSignalSpy spy(&alignedtime2r,SLOT(timeout()));
-    QCOMPARE(spy.count(), 1);
+    alignedtime2r.start(2,3);
+    QVERIFY(alignedtime2r.isActive());
+    QVERIFY(::waitForSignal(&alignedtime2r, SIGNAL(timeout()), 5 * 1000));
+    QVERIFY(alignedtime2r.isActive());
+
+    QSystemAlignedTimer alignedtimer2;
+    alignedtimer2.setMinimumInterval(11);
+    alignedtimer2.setMaximumInterval(10);
+    alignedtimer2.start();
+    QVERIFY(alignedtimer2.lastError() == QSystemAlignedTimer::InvalidArgument);
+    QVERIFY(!alignedtimer2.isActive());
+
+    QSystemAlignedTimer alignedtimer3;
+    alignedtimer3.start(11,10);
+    QVERIFY(alignedtimer3.lastError() == QSystemAlignedTimer::InvalidArgument);
+    QVERIFY(!alignedtimer3.isActive());
+
+    QSystemAlignedTimer alignedtimer4;
+    alignedtimer4.start(10,0);
+    QVERIFY(alignedtimer4.lastError() == QSystemAlignedTimer::InvalidArgument);
+    QVERIFY(!alignedtimer4.isActive());
+
 }
 
 void tst_QSystemAlignedTimer::tst_stop()
@@ -196,6 +249,19 @@ void tst_QSystemAlignedTimer::tst_stop()
     }
     alignedtimer.start(8,10);
     alignedtimer.stop();
+    QVERIFY(!alignedtimer.isActive());
+
+    alignedtimer.start();
+    alignedtimer.stop();//symbian this will just reset
+    QVERIFY(!alignedtimer.isActive());
+
+    alignedtimer.setSingleShot(true);
+    alignedtimer.start();
+    alignedtimer.stop();//symbian this will just reset
+    QVERIFY(!alignedtimer.isActive());
+
+    alignedtimer.start();
+    alignedtimer.stop();//symbian this will just reset
     QVERIFY(!alignedtimer.isActive());
 }
 

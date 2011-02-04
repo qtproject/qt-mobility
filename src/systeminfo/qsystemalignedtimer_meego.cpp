@@ -63,9 +63,10 @@ QSystemAlignedTimerPrivate::QSystemAlignedTimerPrivate(QObject *parent) :
 
     if (!m_iphbdHandler) {
         m_lastError = QSystemAlignedTimer::InternalError;
-        qDebug() << "iphb_open error" <<strerror(errno);
+        qDebug() << "iphb_open error" << m_iphbdHandler<< errno <<strerror(errno);
         return;
     }
+
 
     int sockfd = iphb_get_fd(m_iphbdHandler);
     if (!(sockfd > -1)) {
@@ -231,7 +232,7 @@ void QSystemAlignedTimerPrivate::singleShot() {
    this->deleteLater();
 }
 
-bool	QSystemAlignedTimerPrivate::isActive () const
+bool QSystemAlignedTimerPrivate::isActive () const
 {
     return m_running;
 }

@@ -124,7 +124,8 @@ QSystemAlignedTimer::~QSystemAlignedTimer()
 void QSystemAlignedTimer::start(int minimumTime, int maximumTime)
 {
     if (minimumTime > maximumTime || maximumTime <= 0) {
-        Q_EMIT error(QSystemAlignedTimer::InvalidArgument);
+        d->m_lastError = QSystemAlignedTimer::InvalidArgument;
+        Q_EMIT error(d->m_lastError);
         return;
     }
     d->start(minimumTime, maximumTime);
@@ -137,9 +138,9 @@ void QSystemAlignedTimer::start()
 {
     int minimumTime = minimumInterval();
     int maximumTime = maximumInterval();
-
-    if (minimumTime > maximumTime || maximumTime <= 0) {
-        Q_EMIT error(QSystemAlignedTimer::InvalidArgument);
+    if ((minimumTime > maximumTime) || (maximumTime <= 0)) {
+        d->m_lastError = QSystemAlignedTimer::InvalidArgument;
+        Q_EMIT error(d->m_lastError);
         return;
     }
     d->start();
@@ -273,7 +274,7 @@ QSystemAlignedTimer::AlignedTimerError QSystemAlignedTimer::lastError() const
 /*!
   Returns true if the timer is running; otherwise false.
 */
-bool	QSystemAlignedTimer::isActive () const
+bool QSystemAlignedTimer::isActive () const
 {
     return d->isActive();
 }
