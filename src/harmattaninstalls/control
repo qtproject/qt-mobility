@@ -702,16 +702,15 @@ Description: Qt Mobility Connectivity development package
  framework and apply them to phones, netbooks and non-mobile personal
  computers.
 
-Package: libqtm-connectivity-tests
-Architecture: any
-Section: libs
-Depends: ci-testing, ${shlibs:Depends}, ${misc:Depends}
-XB-Maemo-CI-Packages: libqtm-connectivity
-XB-Maemo-CI-Stage: staging
-Description: Qt Mobility Connectivity autotest package
- Qt Mobility Project delivers a set of new APIs to Qt with features that are
- well known from the mobile device world, in particular phones. However,
- these APIs allow the developer to use these features with ease from one
- framework and apply them to phones, netbooks and non-mobile personal
- computers.
-
+#Package: libqtm-connectivity-tests
+#Architecture: any
+#Section: libs
+#Depends: ci-testing, ${shlibs:Depends}, ${misc:Depends}
+#XB-Maemo-CI-Packages: libqtm-connectivity
+#XB-Maemo-CI-Stage: staging
+#Description: Qt Mobility Connectivity autotest package
+# Qt Mobility Project delivers a set of new APIs to Qt with features that are
+# well known from the mobile device world, in particular phones. However,
+# these APIs allow the developer to use these features with ease from one
+# framework and apply them to phones, netbooks and non-mobile personal
+# computers.
