@@ -48,6 +48,9 @@ public:
     ~QDeclarativeValueSpaceSubscriberPrivate();
 
     QValueSpaceSubscriber *subscriber;
+    // store our own copy, since the QVSS doesn't always seem
+    // to return the current path properly
+    QString path;
 };
 
 QDeclarativeValueSpaceSubscriberPrivate::QDeclarativeValueSpaceSubscriberPrivate() :
@@ -74,6 +77,10 @@ QDeclarativeValueSpaceSubscriberPrivate::~QDeclarativeValueSpaceSubscriberPrivat
 
     Each \l ValueSpaceSubscriber element represents a single value or path in the Value Space. The
     path is set using the \i path property.
+
+    Note that unlike the C++ class QValueSpaceSubscriber, the QML element has
+    no default path. A path must be set before the subscriber will connect
+    to the Value Space and begin receiving notifications.
 
     \code
     ValueSpaceSubscriber {
@@ -109,14 +116,16 @@ QDeclarativeValueSpaceSubscriber::~QDeclarativeValueSpaceSubscriber()
 void QDeclarativeValueSpaceSubscriber::setPath(QString path)
 {
     if (d->subscriber) {
-        if (d->subscriber->path() == path)
+        if (d->path == path)
             return;
         d->subscriber->setPath(path);
-        emit pathChanged();
     } else {
-        d->subscriber = new QValueSpaceSubscriber(path);
-        emit pathChanged();
+        d->subscriber = new QValueSpaceSubscriber(path);;
     }
+
+    d->path = path;
+    emit pathChanged();
+
     // re-connect the signal
     connect(d->subscriber, SIGNAL(contentsChanged()),
             this, SIGNAL(contentsChanged()));
@@ -124,9 +133,7 @@ void QDeclarativeValueSpaceSubscriber::setPath(QString path)
 
 QString QDeclarativeValueSpaceSubscriber::path() const
 {
-    if (!d->subscriber)
-        return QString();
-    return d->subscriber->path();
+    return d->path;
 }
 
 /*!
