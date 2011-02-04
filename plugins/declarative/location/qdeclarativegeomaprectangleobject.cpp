@@ -63,7 +63,7 @@ QTM_BEGIN_NAMESPACE
     If \l topLeft and \l bottomRight are not specified and valid the
     rectangle will not be displayed.
 
-    The MapRectangle element is part of the \bold{QtMobility.location 1.1} module.
+    The MapRectangle element is part of the \bold{QtMobility.location 1.2} module.
 */
 
 QDeclarativeGeoMapRectangleObject::QDeclarativeGeoMapRectangleObject(QDeclarativeItem *parent)

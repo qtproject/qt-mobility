@@ -66,7 +66,7 @@ QTM_BEGIN_NAMESPACE
     Simplistic example to illustrate, this element could be defined in Map body:
     \snippet tests/declarative-location/testpolymapobjects.qml Basic MapPolygon
 
-    The MapPolygon element is part of the \bold{QtMobility.location 1.1} module.
+    The MapPolygon element is part of the \bold{QtMobility.location 1.2} module.
 */
 
 QDeclarativeGeoMapPolygonObject::QDeclarativeGeoMapPolygonObject(QDeclarativeItem *parent)
