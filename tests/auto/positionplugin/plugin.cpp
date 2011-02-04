@@ -67,25 +67,43 @@ public:
 
 private:
     QTimer *timer;
+    QTimer *timeoutTimer;
+    QTimer *singleTimer;
     QGeoPositionInfo lastPosition;
 
 private slots:
     void updatePosition();
+    void doTimeout();
 };
 
 DummySource::DummySource(QObject *parent) :
     QGeoPositionInfoSource(parent),
     timer(new QTimer(this)),
+    timeoutTimer(new QTimer(this)),
+    singleTimer(new QTimer(this)),
     lastPosition(QGeoCoordinate(0,0), QDateTime::currentDateTime())
 {
-    timer->setInterval(2500);
+    timer->setInterval(1000);
     connect(timer, SIGNAL(timeout()),
             this, SLOT(updatePosition()));
+    connect(singleTimer, SIGNAL(timeout()),
+            this, SLOT(updatePosition()));
+    connect(timeoutTimer, SIGNAL(timeout()),
+            this, SLOT(doTimeout()));
 }
 
 void DummySource::setUpdateInterval(int msec)
 {
-    timer->setInterval(msec);
+    if (msec == 0) {
+        timer->setInterval(1000);
+    } else if (msec < 1000) {
+        msec = 1000;
+        timer->setInterval(msec);
+    } else {
+        timer->setInterval(msec);
+    }
+
+    QGeoPositionInfoSource::setUpdateInterval(msec);
 }
 
 int DummySource::minimumUpdateInterval() const
@@ -116,7 +134,21 @@ void DummySource::stopUpdates()
 
 void DummySource::requestUpdate(int timeout)
 {
-    QTimer::singleShot(timeout/2, this, SLOT(updatePosition()));
+    if (timeout == 0)
+        timeout = 5000;
+    if (timeout < 0)
+        timeout = 0;
+
+    timeoutTimer->setInterval(timeout);
+    timeoutTimer->start();
+
+    if (timer->isActive()) {
+        timer->stop();
+        timer->start();
+    }
+
+    singleTimer->setInterval(1000);
+    singleTimer->start();
 }
 
 DummySource::~DummySource()
@@ -124,10 +156,20 @@ DummySource::~DummySource()
 
 void DummySource::updatePosition()
 {
+    timeoutTimer->stop();
+    singleTimer->stop();
     QGeoCoordinate coord(lastPosition.coordinate().latitude() + 0.1,
                          lastPosition.coordinate().longitude() + 0.1);
     QGeoPositionInfo info(coord, QDateTime::currentDateTime());
+    lastPosition = info;
     emit positionUpdated(info);
+}
+
+void DummySource::doTimeout()
+{
+    timeoutTimer->stop();
+    singleTimer->stop();
+    emit updateTimeout();
 }
 
 

@@ -53,7 +53,7 @@
     \o \l{tutorials/mapsdemo/part2}{Searching for locations}
     \o \l{tutorials/mapsdemo/part3}{Listening to satellites}
     \o \l{tutorials/mapsdemo/part4}{Stopping for directions}
-    \o \l{tutorials/mapsdemo/part5}{Kinetic panning and tuning for mobile}
+    \o \l{tutorials/mapsdemo/part5}{Tuning for mobile devices}
     \endlist
 */
 
@@ -224,7 +224,7 @@ void GeoMap::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     The panning method is a simple mouse-locked one, and moving long distances on
     a touch screen with it can get quite tedious. Many map applications now make
     use of "kinetic" panning for a better user experience, especially on touch
-    devices, and we'll implement support for that later.
+    devices, but in the interests of simplicity, we'll save that for other examples.
 
     Next, to add zoom support on the mouse scrollwheel:
 
@@ -1019,9 +1019,8 @@ void MarkerManager::reverseReplyFinished(QGeoSearchReply *reply)
 
     In part 3, we will add support for using platform positioning methods such
     as GPS, and in part 4 we will add the ability to fetch directions to a given
-    destination. Finally, in part 5 we will add kinetic scrolling and cover a
-    number of points about means for achieving a better user experience on mobile
-    platforms.
+    destination. Finally, in part 5 we will cover a number of points about 
+    means for achieving a better user experience on mobile platforms.
     
     Continue to \l{tutorials/mapsdemo/part3}{Part 3 - Listening to satellites}
 */
@@ -1792,13 +1791,13 @@ void MainWindow::showNavigateDialog()
     demo so far for mobile platforms in order to deploy it to a
     phone.
     
-    Continue to \l{tutorials/mapsdemo/part5}{Part 5 - Tuning for mobile and kinetic panning}
+    Continue to \l{tutorials/mapsdemo/part5}{Part 5 - Tuning for mobile devices}
 */
 
 /*!
     \page tutorials-mapsdemo-part5.html
     \example tutorials/mapsdemo/part5
-    \title Part 5 - Tuning for mobile and kinetic panning
+    \title Part 5 - Tuning for mobile devices
 
     So far in this tutorial we've been mainly aiming at desktop use
     of the application. If you attempted to build it as is for

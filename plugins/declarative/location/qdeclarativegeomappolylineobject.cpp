@@ -66,7 +66,7 @@ QTM_BEGIN_NAMESPACE
     Simplistic example to illustrate, this element could be defined in Map body:
     \snippet tests/declarative-location/testpolymapobjects.qml Basic MapPolyline
 
-    The MapPolyline element is part of the \bold{QtMobility.location 1.1} module.
+    The MapPolyline element is part of the \bold{QtMobility.location 1.2} module.
 */
 
 QDeclarativeGeoMapPolylineObject::QDeclarativeGeoMapPolylineObject(QDeclarativeItem *parent)
@@ -197,7 +197,7 @@ void QDeclarativeGeoMapPolylineObject::borderWidthChanged(int width)
 
     A basic example is to draw the path where one has been:
 
-    \snippet tests/declarative-location/testpolymapobjects.qml Wherever I may Roam
+    \snippet tests/declarative-location/testpolymapobjects.qml Wherever I may roam
 
     \sa removeCoordinate
 
