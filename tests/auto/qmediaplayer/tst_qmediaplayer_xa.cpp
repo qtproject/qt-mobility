@@ -1182,7 +1182,7 @@ void tst_QMediaPlayer_xa::testGetAccesspoint()
 {
     updateLog("*****testGetAccesspoint");
     resetPlayer();
-    //getting information about the current configured accesspoint without setting any configrations
+    //getting information about the current configured accesspoint without setting any configurations
     QNetworkConfiguration getaccespoint;
     getaccespoint = m_player->currentNetworkConfiguration();
     QCOMPARE(getaccespoint.name(),QString(""));
