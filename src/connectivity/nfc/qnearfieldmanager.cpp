@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -46,6 +46,8 @@
 #include "qnearfieldmanager_simulator_p.h"
 #elif defined(Q_OS_SYMBIAN)
 #include "qnearfieldmanager_symbian_p.h"
+#elif defined(Q_WS_MAEMO_6) || defined (Q_WS_MEEGO)
+#include "qnearfieldmanager_meego_p.h"
 #else
 #include "qnearfieldmanagerimpl_p.h"
 #endif
@@ -176,31 +178,34 @@ QNearFieldManager::~QNearFieldManager()
 }
 
 /*!
-    Starts detecting targets of type \a targetTypes. Causes the targetDetected() signal to be
-    emitted when a target with a type in \a targetTypes is within proximity. If \a targetTypes is
-    empty targets of all types will be detected.
+    Starts detecting targets of type \a targetTypes. Returns true if target detection is
+    successfully started; otherwise returns false.
+
+    Causes the targetDetected() signal to be emitted when a target with a type in \a targetTypes is
+    within proximity. If \a targetTypes is empty targets of all types will be detected.
 
     \sa stopTargetDetection()
 */
-void QNearFieldManager::startTargetDetection(const QList<QNearFieldTarget::Type> &targetTypes)
+bool QNearFieldManager::startTargetDetection(const QList<QNearFieldTarget::Type> &targetTypes)
 {
     Q_D(QNearFieldManager);
 
     if (targetTypes.isEmpty())
-        d->startTargetDetection(QList<QNearFieldTarget::Type>() << QNearFieldTarget::AnyTarget);
+        return d->startTargetDetection(QList<QNearFieldTarget::Type>() << QNearFieldTarget::AnyTarget);
     else
-        d->startTargetDetection(targetTypes);
+        return d->startTargetDetection(targetTypes);
 }
 
 /*!
     \overload
 
-    Starts detecting targets of type \a targetType. Causes the targetDetected() signal to be
-    emitted when a target with the type \a targetType is within proximity.
+    Starts detecting targets of type \a targetType. Returns true if target detection is
+    successfully started; otherwise returns false. Causes the targetDetected() signal to be emitted
+    when a target with the type \a targetType is within proximity.
 */
-void QNearFieldManager::startTargetDetection(QNearFieldTarget::Type targetType)
+bool QNearFieldManager::startTargetDetection(QNearFieldTarget::Type targetType)
 {
-    startTargetDetection(QList<QNearFieldTarget::Type>() << targetType);
+    return startTargetDetection(QList<QNearFieldTarget::Type>() << targetType);
 }
 
 /*!
@@ -332,6 +337,26 @@ bool QNearFieldManager::unregisterTargetDetectedHandler(int handlerId)
     Q_D(QNearFieldManager);
 
     return d->unregisterTargetDetectedHandler(handlerId);
+}
+
+void QNearFieldManager::setTargetAccessModes(TargetAccessModes accessModes)
+{
+    Q_D(QNearFieldManager);
+
+    TargetAccessModes removedModes = ~accessModes & d->m_requestedModes;
+    if (removedModes)
+        d->releaseAccess(removedModes);
+
+    TargetAccessModes newModes = accessModes & ~d->m_requestedModes;
+    if (newModes)
+        d->requestAccess(newModes);
+}
+
+QNearFieldManager::TargetAccessModes QNearFieldManager::targetAccessModes() const
+{
+    Q_D(const QNearFieldManager);
+
+    return d->m_requestedModes;
 }
 
 #include "moc_qnearfieldmanager.cpp"

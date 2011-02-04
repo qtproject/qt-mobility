@@ -161,6 +161,16 @@ interpreted to ensure consistent results on the N900 as well as Symbian and MeeG
     qreal z = reading->z();
 \endcode
 
+Alternatively, applications can set the environment variable \c N900_PORTRAIT_SENSORS to 1. This must be done
+before any Sensors API calls are made so the beginning of the main function is a good place to do it.
+
+\code
+int main(int argc, char **argv)
+{
+    qputenv("N900_PORTRAIT_SENSORS", "1");
+    ...
+\code
+
 Despite hardware that allows for multiple data rates and output ranges, the Sensors API does not allow access to
 these due to permissions issues.
 

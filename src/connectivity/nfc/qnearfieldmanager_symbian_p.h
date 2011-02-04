@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,17 +39,97 @@
 **
 ****************************************************************************/
 
-#ifndef QNEARFIELDMANAGER_SYMBIAN_P_H
-#define QNEARFIELDMANAGER_SYMBIAN_P_H
+#ifndef QNEARFIELDMANAGER_SYMBIAN_P_H_
+#define QNEARFIELDMANAGER_SYMBIAN_P_H_
+
 
 #include "qnearfieldmanager_p.h"
+#include "qnearfieldtarget.h"
+#include "qndeffilter.h"
+
+#include <QtCore/QObject>
+#include <QtCore/QMetaMethod>
+#include <QPointer>
+#include <qremoteserviceregister.h>
+
+class CNearFieldManager;
+class CNdefMessage;
+
+QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
+class Proxy : public QObject
+{
+    Q_OBJECT
+public:
+    Proxy(QObject* parent = 0);
+
+Q_SIGNALS:
+    void handleMessage(const QNdefMessage& message);
+};
+
+class ContentHandlerInterface : public QObject
+{
+    Q_OBJECT
+public:
+    ContentHandlerInterface(QObject* parent = 0);
+
+public slots:
+    void handleMessage(const QByteArray& message);
+};
+
 class QNearFieldManagerPrivateImpl : public QNearFieldManagerPrivate
 {
+    Q_OBJECT
+
+public:
+    QNearFieldManagerPrivateImpl();
+    ~QNearFieldManagerPrivateImpl();
+
+    int registerTargetDetectedHandler(QObject *object, const QMetaMethod &method);
+    int registerTargetDetectedHandler(const QNdefFilter &filter,
+                                      QObject *object, const QMetaMethod &method);
+
+    bool unregisterTargetDetectedHandler(int id);
+
+    bool startTargetDetection(const QList<QNearFieldTarget::Type> &targetTypes);
+    void stopTargetDetection();
+
+public://call back function by symbian backend implementation
+    void targetFound(QNearFieldTarget* target);
+    void targetDisconnected();
+
+public://call back function by symbian backend implementation
+    void invokeTargetDetectedHandler(const QNdefMessage msg);
+
+
+private slots:
+    void _q_privateHandleMessageSlot(QNdefMessage msg);
+
+private:
+    struct Callback {
+        QNdefFilter filter;
+        QObject *object;
+        QMetaMethod method;
+    };
+
+    int getFreeId();
+
+    QList<Callback> m_registeredHandlers;
+    QList<int> m_freeIds;
+
+    CNearFieldManager* m_symbianbackend;
+
+    QPointer<QNearFieldTarget> m_target;
+    //For content handler purpose;
+    QObject *m_chobject;
+    QMetaMethod m_chmethod;
+
+    QRemoteServiceRegister* m_serviceRegister ;
 };
 
 QTM_END_NAMESPACE
 
-#endif // QNEARFIELDMANAGER_SYMBIAN_P_H
+QT_END_HEADER
+#endif /* QNEARFIELDMANAGER_SYMBIAN_P_H_ */

@@ -57,11 +57,11 @@ class TestSensorReadingPrivate
 {
 public:
     TestSensorReadingPrivate()
-        : test(false)
+        : test(0)
     {
     }
 
-    bool test;
+    int test;
 };
 
 #endif

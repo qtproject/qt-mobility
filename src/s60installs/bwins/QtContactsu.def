@@ -1219,24 +1219,24 @@ EXPORTS
 	?match@QContactTag@QtMobility@@SA?AVQContactFilter@2@ABVQString@@@Z @ 1218 NONAME ; class QtMobility::QContactFilter QtMobility::QContactTag::match(class QString const &)
 	??0QContactObserver@QtMobility@@QAE@PAVQContactManager@1@IPAVQObject@@@Z @ 1219 NONAME ; QtMobility::QContactObserver::QContactObserver(class QtMobility::QContactManager *, unsigned int, class QObject *)
 	?ProtocolMsn@QContactOnlineAccount@QtMobility@@2U?$QLatin1Constant@$03@2@B @ 1220 NONAME ; struct QtMobility::QLatin1Constant<4> const QtMobility::QContactOnlineAccount::ProtocolMsn
-	?setMaxCount@QContactFetchHint@QtMobility@@QAEXH@Z @ 1221 NONAME ; void QtMobility::QContactFetchHint::setMaxCount(int)
-	??6QtMobility@@YA?AVQDebug@@V1@ABVQContactSortOrder@0@@Z @ 1222 NONAME ; class QDebug QtMobility::operator<<(class QDebug, class QtMobility::QContactSortOrder const &)
-	?setTags@QContact@QtMobility@@QAEXABVQStringList@@@Z @ 1223 NONAME ; void QtMobility::QContact::setTags(class QStringList const &)
-	?FieldProtocol@QContactOnlineAccount@QtMobility@@2U?$QLatin1Constant@$08@2@B @ 1224 NONAME ; struct QtMobility::QLatin1Constant<9> const QtMobility::QContactOnlineAccount::FieldProtocol
-	?ProtocolYahoo@QContactOnlineAccount@QtMobility@@2U?$QLatin1Constant@$05@2@B @ 1225 NONAME ; struct QtMobility::QLatin1Constant<6> const QtMobility::QContactOnlineAccount::ProtocolYahoo
-	?maxCount@QContactFetchHint@QtMobility@@QBEHXZ @ 1226 NONAME ; int QtMobility::QContactFetchHint::maxCount(void) const
-	?match@QContactGlobalPresence@QtMobility@@SA?AVQContactFilter@2@W4PresenceState@QContactPresence@2@@Z @ 1227 NONAME ; class QtMobility::QContactFilter QtMobility::QContactGlobalPresence::match(enum QtMobility::QContactPresence::PresenceState)
-	??6QtMobility@@YA?AVQDebug@@V1@ABVQContactFetchHint@0@@Z @ 1228 NONAME ; class QDebug QtMobility::operator<<(class QDebug, class QtMobility::QContactFetchHint const &)
-	?trUtf8@QContactObserver@QtMobility@@SA?AVQString@@PBD0@Z @ 1229 NONAME ; class QString QtMobility::QContactObserver::trUtf8(char const *, char const *)
-	?contactRemoved@QContactObserver@QtMobility@@IAEXXZ @ 1230 NONAME ; void QtMobility::QContactObserver::contactRemoved(void)
-	?ProtocolSkype@QContactOnlineAccount@QtMobility@@2U?$QLatin1Constant@$05@2@B @ 1231 NONAME ; struct QtMobility::QLatin1Constant<6> const QtMobility::QContactOnlineAccount::ProtocolSkype
-	??6QtMobility@@YA?AVQDebug@@V1@ABVQContactDetailFieldDefinition@0@@Z @ 1232 NONAME ; class QDebug QtMobility::operator<<(class QDebug, class QtMobility::QContactDetailFieldDefinition const &)
-	?clearTags@QContact@QtMobility@@QAEXXZ @ 1233 NONAME ; void QtMobility::QContact::clearTags(void)
-	?ProtocolJabber@QContactOnlineAccount@QtMobility@@2U?$QLatin1Constant@$06@2@B @ 1234 NONAME ; struct QtMobility::QLatin1Constant<7> const QtMobility::QContactOnlineAccount::ProtocolJabber
-	??6QtMobility@@YA?AVQDebug@@V1@ABVQContactDetailDefinition@0@@Z @ 1235 NONAME ; class QDebug QtMobility::operator<<(class QDebug, class QtMobility::QContactDetailDefinition const &)
-	?setUrl@QContactUrl@QtMobility@@QAEXABVQUrl@@@Z @ 1236 NONAME ; void QtMobility::QContactUrl::setUrl(class QUrl const &)
-	?ProtocolAim@QContactOnlineAccount@QtMobility@@2U?$QLatin1Constant@$03@2@B @ 1237 NONAME ; struct QtMobility::QLatin1Constant<4> const QtMobility::QContactOnlineAccount::ProtocolAim
-	?protocol@QContactOnlineAccount@QtMobility@@QBE?AVQString@@XZ @ 1238 NONAME ; class QString QtMobility::QContactOnlineAccount::protocol(void) const
-	?qt_metacast@QContactObserver@QtMobility@@UAEPAXPBD@Z @ 1239 NONAME ; void * QtMobility::QContactObserver::qt_metacast(char const *)
-	??_EQContactTag@QtMobility@@QAE@I@Z @ 1240 NONAME ; QtMobility::QContactTag::~QContactTag(unsigned int)
+	??6QtMobility@@YA?AVQDebug@@V1@ABVQContactSortOrder@0@@Z @ 1221 NONAME ; class QDebug QtMobility::operator<<(class QDebug, class QtMobility::QContactSortOrder const &)
+	?setTags@QContact@QtMobility@@QAEXABVQStringList@@@Z @ 1222 NONAME ; void QtMobility::QContact::setTags(class QStringList const &)
+	?FieldProtocol@QContactOnlineAccount@QtMobility@@2U?$QLatin1Constant@$08@2@B @ 1223 NONAME ; struct QtMobility::QLatin1Constant<9> const QtMobility::QContactOnlineAccount::FieldProtocol
+	?ProtocolYahoo@QContactOnlineAccount@QtMobility@@2U?$QLatin1Constant@$05@2@B @ 1224 NONAME ; struct QtMobility::QLatin1Constant<6> const QtMobility::QContactOnlineAccount::ProtocolYahoo
+	?match@QContactGlobalPresence@QtMobility@@SA?AVQContactFilter@2@W4PresenceState@QContactPresence@2@@Z @ 1225 NONAME ; class QtMobility::QContactFilter QtMobility::QContactGlobalPresence::match(enum QtMobility::QContactPresence::PresenceState)
+	??6QtMobility@@YA?AVQDebug@@V1@ABVQContactFetchHint@0@@Z @ 1226 NONAME ; class QDebug QtMobility::operator<<(class QDebug, class QtMobility::QContactFetchHint const &)
+	?trUtf8@QContactObserver@QtMobility@@SA?AVQString@@PBD0@Z @ 1227 NONAME ; class QString QtMobility::QContactObserver::trUtf8(char const *, char const *)
+	?contactRemoved@QContactObserver@QtMobility@@IAEXXZ @ 1228 NONAME ; void QtMobility::QContactObserver::contactRemoved(void)
+	?ProtocolSkype@QContactOnlineAccount@QtMobility@@2U?$QLatin1Constant@$05@2@B @ 1229 NONAME ; struct QtMobility::QLatin1Constant<6> const QtMobility::QContactOnlineAccount::ProtocolSkype
+	??6QtMobility@@YA?AVQDebug@@V1@ABVQContactDetailFieldDefinition@0@@Z @ 1230 NONAME ; class QDebug QtMobility::operator<<(class QDebug, class QtMobility::QContactDetailFieldDefinition const &)
+	?clearTags@QContact@QtMobility@@QAEXXZ @ 1231 NONAME ; void QtMobility::QContact::clearTags(void)
+	?ProtocolJabber@QContactOnlineAccount@QtMobility@@2U?$QLatin1Constant@$06@2@B @ 1232 NONAME ; struct QtMobility::QLatin1Constant<7> const QtMobility::QContactOnlineAccount::ProtocolJabber
+	??6QtMobility@@YA?AVQDebug@@V1@ABVQContactDetailDefinition@0@@Z @ 1233 NONAME ; class QDebug QtMobility::operator<<(class QDebug, class QtMobility::QContactDetailDefinition const &)
+	?setUrl@QContactUrl@QtMobility@@QAEXABVQUrl@@@Z @ 1234 NONAME ; void QtMobility::QContactUrl::setUrl(class QUrl const &)
+	?maxCountHint@QContactFetchHint@QtMobility@@QBEHXZ @ 1235 NONAME ; int QtMobility::QContactFetchHint::maxCountHint(void) const
+	?ProtocolAim@QContactOnlineAccount@QtMobility@@2U?$QLatin1Constant@$03@2@B @ 1236 NONAME ; struct QtMobility::QLatin1Constant<4> const QtMobility::QContactOnlineAccount::ProtocolAim
+	?protocol@QContactOnlineAccount@QtMobility@@QBE?AVQString@@XZ @ 1237 NONAME ; class QString QtMobility::QContactOnlineAccount::protocol(void) const
+	?qt_metacast@QContactObserver@QtMobility@@UAEPAXPBD@Z @ 1238 NONAME ; void * QtMobility::QContactObserver::qt_metacast(char const *)
+	??_EQContactTag@QtMobility@@QAE@I@Z @ 1239 NONAME ; QtMobility::QContactTag::~QContactTag(unsigned int)
+	?setMaxCountHint@QContactFetchHint@QtMobility@@QAEXH@Z @ 1240 NONAME ; void QtMobility::QContactFetchHint::setMaxCountHint(int)
 
