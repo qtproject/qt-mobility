@@ -52,8 +52,11 @@
 QTM_BEGIN_NAMESPACE
 
 QBluetoothServiceDiscoveryAgentPrivate::QBluetoothServiceDiscoveryAgentPrivate(const QBluetoothAddress &address)
-: error(QBluetoothServiceDiscoveryAgent::NoError), deviceAddress(address), state(Inactive), deviceDiscoveryAgent(0),
-  mode(QBluetoothServiceDiscoveryAgent::MinimalDiscovery),m_sdpAgent(NULL)
+    : error(QBluetoothServiceDiscoveryAgent::NoError)
+    , state(Inactive)
+    , deviceAddress(address)
+    , deviceDiscoveryAgent(0)
+    , mode(QBluetoothServiceDiscoveryAgent::MinimalDiscovery)
 {
     TRAPD(err,
         m_filter = CSdpSearchPattern::NewL();
