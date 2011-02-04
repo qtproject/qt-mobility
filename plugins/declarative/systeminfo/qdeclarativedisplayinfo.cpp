@@ -47,7 +47,7 @@ Q_GLOBAL_STATIC(QSystemDisplayInfo, displayInfo)
 
 
 /*!
-    \qmlclass NetworkInfo QDeclarativeDisplayInfo
+    \qmlclass DisplayInfo QDeclarativeDisplayInfo
     \brief The DisplayInfo element allows you to get information and
      receive notifications about the diplsay.
     \inherits QObject
