@@ -47,91 +47,85 @@
 
 #include <arpa/inet.h>
 #include <netinet/in.h>
+#include "utf.h"
 
 QTM_BEGIN_NAMESPACE
 
-//#define MINIMAL_SERVICE_ATTRIBUTES
-#define ALL_SERVICE_ATTRIBUTES
-
 QBluetoothServiceDiscoveryAgentPrivate::QBluetoothServiceDiscoveryAgentPrivate(const QBluetoothAddress &address)
 : error(QBluetoothServiceDiscoveryAgent::NoError), deviceAddress(address), state(Inactive), deviceDiscoveryAgent(0),
-  mode(QBluetoothServiceDiscoveryAgent::MinimalDiscovery), sdpAgent(NULL)
+  mode(QBluetoothServiceDiscoveryAgent::MinimalDiscovery),m_sdpAgent(NULL)
 {
-    TRAPD(err, {
-        filter = CSdpSearchPattern::NewL();
+    TRAPD(err,
+        m_filter = CSdpSearchPattern::NewL();
+        m_attributes = CSdpAttrIdMatchList::NewL();
+        )
 
-        attributes = CSdpAttrIdMatchList::NewL();
-    });
-#if defined(MINIMAL_SERVICE_ATTRIBUTES)
-    if (!err) {
-        TRAP(err, {
-            attributes->AddL(QBluetoothServiceInfo::ServiceName);
-            attributes->AddL(QBluetoothServiceInfo::ServiceDescription);
-            attributes->AddL(QBluetoothServiceInfo::ServiceProvider);
-            attributes->AddL(QBluetoothServiceInfo::ProtocolDescriptorList);
-        });
-    }
-#elif defined(ALL_SERVICE_ATTRIBUTES)
-    if (!err) {
-        TRAP(err, {
-            attributes->AddL(KAttrRangeAll);
-            attributes->RemoveL(787);     //attribute id 787 from my N958GB causes parser crash
-        });
-    }
-#endif
+    if (!err)
+        TRAP(err, m_attributes->AddL(KAttrRangeAll);)
+        
+    if (!err)
+        error = QBluetoothServiceDiscoveryAgent::UnknownError;
 }
 
 QBluetoothServiceDiscoveryAgentPrivate::~QBluetoothServiceDiscoveryAgentPrivate()
 {
-    delete filter;
-    delete attributes;
-    delete sdpAgent;
+    delete m_filter;
+    delete m_attributes;
+    delete m_sdpAgent;
 }
 
 void QBluetoothServiceDiscoveryAgentPrivate::start(const QBluetoothAddress &address)
 {
+    Q_Q(QBluetoothServiceDiscoveryAgent);
     TRAPD(err, startL(address));
-    Q_UNUSED(err);
+    if (!err) {
+        error = QBluetoothServiceDiscoveryAgent::UnknownError;
+        emit q->error(error);
+    }
 }
 
 void QBluetoothServiceDiscoveryAgentPrivate::startL(const QBluetoothAddress &address)
 {
     initAgent(address);
-
-    filter->Reset();
-    if (uuidFilter.isEmpty()) {
-        filter->AddL(QBluetoothUuid::PublicBrowseGroup);
-    } else {
-        foreach (const QBluetoothUuid &uuid, uuidFilter) {
-            /* need to support 16, 32 and 128 bit uuids */
-            TUUID sUuid(uuid.toUInt16());
-            filter->AddL(sUuid);
+    if (m_filter) {
+        m_filter->Reset();
+        if (uuidFilter.isEmpty()) {
+            m_filter->AddL(QBluetoothUuid::PublicBrowseGroup);
+        } else {
+            foreach (const QBluetoothUuid &uuid, uuidFilter) {
+                /* need to support 16, 32 and 128 bit uuids */
+                TUUID sUuid(uuid.toUInt16());
+                m_filter->AddL(sUuid);
+            }
         }
-    }
-    sdpAgent->SetRecordFilterL(*filter);
-
-    sdpAgent->NextRecordRequestL();
+        m_sdpAgent->SetRecordFilterL(*m_filter);
+        m_sdpAgent->NextRecordRequestL();
+    } else
+        error = QBluetoothServiceDiscoveryAgent::UnknownError;
 }
 
 void QBluetoothServiceDiscoveryAgentPrivate::stop()
 {
+    if (m_sdpAgent) {
+        m_sdpAgent->Cancel();
+    }
 }
 
 void QBluetoothServiceDiscoveryAgentPrivate::initAgent(const QBluetoothAddress &address)
 {
     TBTDevAddr btAddress(address.toUInt64());
 
-    if (sdpAgent) {
-        delete sdpAgent;
-        sdpAgent = NULL;
+    if (m_sdpAgent) {
+        delete m_sdpAgent;
+        m_sdpAgent = NULL;
     }
-
-    TRAPD(err, sdpAgent = CSdpAgent::NewL(*this, btAddress));
-    Q_UNUSED(err);
+    //Trapped in StartL
+    m_sdpAgent = CSdpAgent::NewL(*this, btAddress);
 }
 
 bool QBluetoothServiceDiscoveryAgentPrivate::quickDiscovery(const QBluetoothAddress &address, const QBluetoothDeviceInfo &info)
 {
+    //not needed
     return false;
 }
 
@@ -139,69 +133,61 @@ void QBluetoothServiceDiscoveryAgentPrivate::NextRecordRequestComplete(TInt aErr
 {
     Q_Q(QBluetoothServiceDiscoveryAgent);
 
-    if (aError == KErrNone && aTotalRecordsCount > 0) {
+    if (aError == KErrNone && aTotalRecordsCount > 0 && m_sdpAgent) {
         // request attributes
-        TRAPD(err, sdpAgent->AttributeRequestL(aHandle, *attributes));
+        TRAPD(err, m_sdpAgent->AttributeRequestL(aHandle, *m_attributes));
         if (err) {
-            qDebug() << "Error calling AttributeRequestL()";
+            error = QBluetoothServiceDiscoveryAgent::UnknownError;
+            emit q->error(error);
         }
     } else if (aError == KErrEof) {
         _q_serviceDiscoveryFinished();
     } else {
-        qDebug() << "Got error in" << __FUNCTION__ << aError;
         _q_serviceDiscoveryFinished();
     }
 }
 
-static QString attributeToString(quint16 attr)
-{
-    switch (attr) {
-    case QBluetoothServiceInfo::ServiceName: return QLatin1String("Service Name");
-    case QBluetoothServiceInfo::ServiceDescription: return QLatin1String("Service Description");
-    case QBluetoothServiceInfo::ServiceProvider: return QLatin1String("Service Provider");
-    case QBluetoothServiceInfo::ProtocolDescriptorList: return QLatin1String("Protocol Descriptor List");
-    }
-
-    return QString::number(attr);
-}
-
 void QBluetoothServiceDiscoveryAgentPrivate::AttributeRequestResult(TSdpServRecordHandle, TSdpAttributeID aAttrID, CSdpAttrValue *aAttrValue)
 {
-    currentAttributeId = aAttrID;
+    Q_Q(QBluetoothServiceDiscoveryAgent);
+    m_currentAttributeId = aAttrID;
     TRAPD(err, aAttrValue->AcceptVisitorL(*this));
-
-    if (stack.size() != 1) {
-        qDebug() << "STACK SIZE NOT 1 for attribute" << aAttrID;
+    delete aAttrValue;
+    
+    if (m_stack.size() != 1) {
+        error = QBluetoothServiceDiscoveryAgent::UnknownError;
+        emit q->error(error);
         return;
     }
 
-    serviceInfo.setAttribute(aAttrID, stack.pop());
+    m_serviceInfo.setAttribute(aAttrID, m_stack.pop());
 
-    if (err)
-        qDebug() << "Got error in" << __FUNCTION__ << err;
+    if (err) {
+        error = QBluetoothServiceDiscoveryAgent::UnknownError;
+        emit q->error(error);
+    }
 }
 
 void QBluetoothServiceDiscoveryAgentPrivate::AttributeRequestComplete(TSdpServRecordHandle, TInt aError)
 {
     Q_Q(QBluetoothServiceDiscoveryAgent);
 
-    if (aError == KErrNone) {
-        serviceInfo.setDevice(discoveredDevices.at(0));
-        discoveredServices.append(serviceInfo);
-        if (serviceInfo.isValid())
-            emit q->serviceDiscovered(serviceInfo);
-        else
-            qDebug() << "Discovered service with no attributes.";
-
-        serviceInfo = QBluetoothServiceInfo();
-
-        TRAPD(err, sdpAgent->NextRecordRequestL());
+    if (aError == KErrNone && m_sdpAgent) {
+        m_serviceInfo.setDevice(discoveredDevices.at(0));
+        discoveredServices.append(m_serviceInfo);
+        m_serviceInfo = QBluetoothServiceInfo();
+        TRAPD(err, m_sdpAgent->NextRecordRequestL());
         if (err) {
-            qDebug() << "Error calling NextRecordRequestL()";
+            error = QBluetoothServiceDiscoveryAgent::UnknownError;
+            emit q->error(error);
         }
     } else if (aError != KErrEof) {
-        qDebug() << "Got error in" << __FUNCTION__ << aError;
+        error = QBluetoothServiceDiscoveryAgent::UnknownError;
+        emit q->error(error);
     }
+
+    if (m_serviceInfo.isValid())
+        emit q->serviceDiscovered(discoveredServices.last());
 }
 
 void QBluetoothServiceDiscoveryAgentPrivate::VisitAttributeValueL(CSdpAttrValue &aValue, TSdpElementType aType)
@@ -211,11 +197,20 @@ void QBluetoothServiceDiscoveryAgentPrivate::VisitAttributeValueL(CSdpAttrValue 
     switch (aType) {
     case ETypeNil:
         break;
-    case ETypeUint:
-        var = QVariant::fromValue(aValue.Uint());
+    case ETypeUint: {
+        TUint64 value;
+        aValue.Uint64(value);
+        var = QVariant::fromValue((quint64)value);
         break;
+    }
     case ETypeInt:
-        var = QVariant::fromValue(aValue.Int());
+        if (aValue.DoesIntFit())
+            var = QVariant::fromValue(aValue.Int());
+        else {
+            TUint64 value;
+            aValue.Uint64(value);
+            var = QVariant::fromValue((quint64)value);
+        }
         break;
     case ETypeUUID: {
         TPtrC8 shortForm(aValue.UUID().ShortestForm());
@@ -240,10 +235,10 @@ void QBluetoothServiceDiscoveryAgentPrivate::VisitAttributeValueL(CSdpAttrValue 
         var = QVariant::fromValue(static_cast<bool>(aValue.Bool()));
         break;
     case ETypeDES:
-        stack.push(QVariant::fromValue(QBluetoothServiceInfo::Sequence()));
+        m_stack.push(QVariant::fromValue(QBluetoothServiceInfo::Sequence()));
         break;
     case ETypeDEA:
-        stack.push(QVariant::fromValue(QBluetoothServiceInfo::Alternative()));
+        m_stack.push(QVariant::fromValue(QBluetoothServiceInfo::Alternative()));
         break;
     case ETypeURL: {
         TPtrC8 stringBuffer = aValue.Des();
@@ -258,16 +253,16 @@ void QBluetoothServiceDiscoveryAgentPrivate::VisitAttributeValueL(CSdpAttrValue 
     }
 
     if (aType != ETypeDES && aType != ETypeDEA) {
-        if (stack.size() == 0) {
+        if (m_stack.size() == 0) {
             // single value attribute, just push onto stack
-            stack.push(var);
-        } else if (stack.size() >= 1) {
+            m_stack.push(var);
+        } else if (m_stack.size() >= 1) {
             // sequence or alternate attribute, add non-DES -DEA values to DES or DEA
-            if (stack.top().canConvert<QBluetoothServiceInfo::Sequence>()) {
-                QBluetoothServiceInfo::Sequence *sequence = static_cast<QBluetoothServiceInfo::Sequence *>(stack.top().data());
+            if (m_stack.top().canConvert<QBluetoothServiceInfo::Sequence>()) {
+                QBluetoothServiceInfo::Sequence *sequence = static_cast<QBluetoothServiceInfo::Sequence *>(m_stack.top().data());
                 sequence->append(var);
-            } else if (stack.top().canConvert<QBluetoothServiceInfo::Alternative>()) {
-                QBluetoothServiceInfo::Alternative *alternative = static_cast<QBluetoothServiceInfo::Alternative *>(stack.top().data());
+            } else if (m_stack.top().canConvert<QBluetoothServiceInfo::Alternative>()) {
+                QBluetoothServiceInfo::Alternative *alternative = static_cast<QBluetoothServiceInfo::Alternative *>(m_stack.top().data());
                 alternative->append(var);
             } else {
                 qWarning("Unknown type in the QVariant, should be either a QBluetoothServiceInfo::Sequence or an QBluetoothServiceInfo::Alternative");
@@ -278,18 +273,19 @@ void QBluetoothServiceDiscoveryAgentPrivate::VisitAttributeValueL(CSdpAttrValue 
 
 void QBluetoothServiceDiscoveryAgentPrivate::StartListL(CSdpAttrValueList &)
 {
+
 }
 
 void QBluetoothServiceDiscoveryAgentPrivate::EndListL()
 {
-    if (stack.size() > 1) {
+    if (m_stack.size() > 1) {
         // finished a sequence or alternative add it to the parent sequence or alternative
-        QVariant var = stack.pop();
-        if (stack.top().canConvert<QBluetoothServiceInfo::Sequence>()) {
-            QBluetoothServiceInfo::Sequence *sequence = static_cast<QBluetoothServiceInfo::Sequence *>(stack.top().data());
+        QVariant var = m_stack.pop();
+        if (m_stack.top().canConvert<QBluetoothServiceInfo::Sequence>()) {
+            QBluetoothServiceInfo::Sequence *sequence = static_cast<QBluetoothServiceInfo::Sequence *>(m_stack.top().data());
             sequence->append(var);
-        } else if (stack.top().canConvert<QBluetoothServiceInfo::Alternative>()) {
-            QBluetoothServiceInfo::Alternative *alternative = static_cast<QBluetoothServiceInfo::Alternative *>(stack.top().data());
+        } else if (m_stack.top().canConvert<QBluetoothServiceInfo::Alternative>()) {
+            QBluetoothServiceInfo::Alternative *alternative = static_cast<QBluetoothServiceInfo::Alternative *>(m_stack.top().data());
             alternative->append(var);
         } else {
             qWarning("Unknown type in the QVariant, should be either a QBluetoothServiceInfo::Sequence or an QBluetoothServiceInfo::Alternative");
