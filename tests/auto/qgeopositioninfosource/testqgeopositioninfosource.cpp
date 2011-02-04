@@ -472,8 +472,6 @@ void TestQGeoPositionInfoSource::lastKnownPosition_data()
 #ifndef Q_WS_MEEGO
     // no good way to determine on MeeGo what are supported. If we ask for all or non-satellites, we
     // typically get geoclue-example provider, which is not suitable for this test.
-    QTest::newRow("nonsatellite - false") << int(QGeoPositionInfoSource::NonSatellitePositioningMethods) << false << false;
-    QTest::newRow("nonsatellite - true") << int(QGeoPositionInfoSource::NonSatellitePositioningMethods) << true << true;
     QTest::newRow("all - false") << int(QGeoPositionInfoSource::AllPositioningMethods) << false << true;
     QTest::newRow("all - true") << int(QGeoPositionInfoSource::AllPositioningMethods) << true << true;
 #endif
