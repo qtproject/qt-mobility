@@ -128,10 +128,7 @@ void QDocumentGalleryMDSUtility::GetDataFieldsForItemType( QStringList &property
     if (itemType == QDocumentGallery::PhotoAlbum.name()) {
         // From MDS base object
         propertyList.append( QDocumentGallery::url.name() );
-        propertyList.append( QDocumentGallery::fileSize.name() );
-        propertyList.append( QDocumentGallery::lastModified.name() );
         propertyList.append( QDocumentGallery::title.name() );
-        propertyList.append( QDocumentGallery::mimeType.name() );
     } 
     else if (itemType == QDocumentGallery::Audio.name()) {
         // From MDS base object
@@ -193,11 +190,6 @@ void QDocumentGalleryMDSUtility::GetDataFieldsForItemType( QStringList &property
         propertyList.append( QDocumentGallery::description.name() );
         propertyList.append( QDocumentGallery::comments.name() );
         propertyList.append( QDocumentGallery::rating.name() );
-
-        propertyList.append( QDocumentGallery::duration.name() );
-        propertyList.append( QDocumentGallery::performer.name() );
-
-        propertyList.append( QDocumentGallery::playCount.name() );
 
         propertyList.append( QDocumentGallery::width.name() );
         propertyList.append( QDocumentGallery::height.name() );
@@ -427,8 +419,7 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS25L( CMdEObject *inputIte
     case EPerformer:
         {
             if (inputItem->Def().Name() != MdeConstants::Audio::KAudioObject &&
-                inputItem->Def().Name() != MdeConstants::Video::KVideoObject &&
-                inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
+                inputItem->Def().Name() != MdeConstants::Video::KVideoObject) {
                 break;
             }
             CMdEPropertyDef& propDef = inputItem->Def().GetPropertyDefL( MdeConstants::MediaObject::KArtistProperty );
@@ -540,8 +531,7 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS25L( CMdEObject *inputIte
     case EPlayCount:
         {
             if (inputItem->Def().Name() != MdeConstants::Audio::KAudioObject
-                    && inputItem->Def().Name() != MdeConstants::Video::KVideoObject
-                    && inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
+                    && inputItem->Def().Name() != MdeConstants::Video::KVideoObject) {
                 break;
             }
             CMdEPropertyDef& propDef = inputItem->Def().GetPropertyDefL( MdeConstants::MediaObject::KAccessCountProperty );
@@ -2327,8 +2317,7 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS25L( CMdEObject *item, co
     case EPerformer:
         {
             if (item->Def().Name() != MdeConstants::Audio::KAudioObject &&
-                item->Def().Name() != MdeConstants::Video::KVideoObject &&
-                item->Def().Name() != MdeConstants::Image::KImageObject) {
+                item->Def().Name() != MdeConstants::Video::KVideoObject) {
                 return false;
             }
             CMdEPropertyDef& propDef = item->Def().GetPropertyDefL( MdeConstants::MediaObject::KArtistProperty );
@@ -2482,8 +2471,7 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS25L( CMdEObject *item, co
     case EPlayCount:
         {
             if (item->Def().Name() != MdeConstants::Audio::KAudioObject &&
-                item->Def().Name() != MdeConstants::Video::KVideoObject &&
-                item->Def().Name() != MdeConstants::Image::KImageObject) {
+                item->Def().Name() != MdeConstants::Video::KVideoObject) {
                 return false;
             }
             CMdEPropertyDef& propDef = item->Def().GetPropertyDefL( MdeConstants::MediaObject::KAccessCountProperty );
@@ -3031,8 +3019,7 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS20L( CMdEObject *item, co
     case EPlayCount:
         {
             if (item->Def().Name() != MdeConstants::Audio::KAudioObject &&
-                item->Def().Name() != MdeConstants::Video::KVideoObject &&
-                item->Def().Name() != MdeConstants::Image::KImageObject) {
+                item->Def().Name() != MdeConstants::Video::KVideoObject) {
                 return false;
             }
             CMdEPropertyDef* propDef = item->Def().GetPropertyDefL( MdeConstants::MediaObject::KAccessCountProperty );
