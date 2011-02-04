@@ -142,10 +142,13 @@ void DummySource::requestUpdate(int timeout)
     timeoutTimer->setInterval(timeout);
     timeoutTimer->start();
 
-    if (!timer->isActive()) {
-        singleTimer->setInterval(1000);
-        singleTimer->start();
+    if (timer->isActive()) {
+        timer->stop();
+        timer->start();
     }
+
+    singleTimer->setInterval(1000);
+    singleTimer->start();
 }
 
 DummySource::~DummySource()
