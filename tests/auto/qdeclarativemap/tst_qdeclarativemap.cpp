@@ -313,7 +313,7 @@ void tst_QDeclarativeMap::basicApiTest_data()
     PropertyValues district = {"", "newValue",0}; geoAddressPropertyMap.insert("district", district);
     PropertyValues street = {"", "newValue",0}; geoAddressPropertyMap.insert("street", street);
     PropertyValues postcode = {"", "newValue",0}; geoAddressPropertyMap.insert("postcode", postcode);
-    QTest::newRow("Address") << "import Qt 4.7 \n import QtMobility.location 1.1 \n Address {}" << geoAddressPropertyMap << true;
+    QTest::newRow("Address") << "import Qt 4.7 \n import QtMobility.location 1.2 \n Address {}" << geoAddressPropertyMap << true;
 
     // Map 1
     PropertyMap mapDefaultPropertyMap;
@@ -334,7 +334,7 @@ void tst_QDeclarativeMap::basicApiTest_data()
     mapDefaultPropertyMap.insert("center", center);
     PropertyValues plugin = {QVariant::fromValue((QDeclarativeGeoServiceProvider*)(0)), QVariant(), &customPodCompFn<QDeclarativeGeoServiceProvider*>};
     mapDefaultPropertyMap.insert("plugin", plugin);
-    QTest::newRow("Map") << "import Qt 4.7 \n import QtMobility.location 1.1 \n Map {}" << mapDefaultPropertyMap << true;
+    QTest::newRow("Map") << "import Qt 4.7 \n import QtMobility.location 1.2 \n Map {}" << mapDefaultPropertyMap << true;
 
     // Map 2 - test separately because setting plugin provider changes the expected values
     PropertyMap mapNokiaPluginPropertyMap;
@@ -342,7 +342,7 @@ void tst_QDeclarativeMap::basicApiTest_data()
     geoServiceProvider->setName("nokia");
     PropertyValues nokiaPlugin = {QVariant::fromValue((QDeclarativeGeoServiceProvider*)(0)), QVariant::fromValue(geoServiceProvider), &customPodCompFn<QDeclarativeGeoServiceProvider*>};
     mapNokiaPluginPropertyMap.insert("plugin", nokiaPlugin);
-    QTest::newRow("Map (existing plugin)") << "import Qt 4.7 \n import QtMobility.location 1.1 \n Map {}" << mapNokiaPluginPropertyMap << false;
+    QTest::newRow("Map (existing plugin)") << "import Qt 4.7 \n import QtMobility.location 1.2 \n Map {}" << mapNokiaPluginPropertyMap << false;
 
     // Map 3 - must not crash even if there is no plugin TODO
     PropertyMap mapNonexistentPluginPropertyMap;
@@ -350,8 +350,8 @@ void tst_QDeclarativeMap::basicApiTest_data()
     geoNonexistentServiceProvider->setName("non_existent_plugin");
     PropertyValues nonexistentPlugin = {QVariant::fromValue((QDeclarativeGeoServiceProvider*)(0)), QVariant::fromValue(geoServiceProvider), &customPodCompFn<QDeclarativeGeoServiceProvider*>};
     mapNonexistentPluginPropertyMap.insert("plugin", nonexistentPlugin);
-    //QTest::newRow("Map (nonexisting plugin)") << "import Qt 4.7 \n import QtMobility.location 1.1 \n Map {}" << mapNokiaPluginPropertyMap << false;
-    QTest::newRow("Map (nonexisting plugin)") << "import Qt 4.7 \n import QtMobility.location 1.1 \n Map {}" << mapNonexistentPluginPropertyMap << false;
+    //QTest::newRow("Map (nonexisting plugin)") << "import Qt 4.7 \n import QtMobility.location 1.2 \n Map {}" << mapNokiaPluginPropertyMap << false;
+    QTest::newRow("Map (nonexisting plugin)") << "import Qt 4.7 \n import QtMobility.location 1.2 \n Map {}" << mapNonexistentPluginPropertyMap << false;
 
     // MapCircle
     PropertyMap mapCircleDefaultPropertyMap;
@@ -362,9 +362,9 @@ void tst_QDeclarativeMap::basicApiTest_data()
     mapCircleDefaultPropertyMap.insert("color", mapCircleColor);
     PropertyValues mapCircleBorder = {QVariant(), QVariant(), 0};
     mapCircleDefaultPropertyMap.insert("border", mapCircleBorder);
-    PropertyValues mapCircleRadius = {double(-1.0), double(2.0), 0}; //zzz
+    PropertyValues mapCircleRadius = {double(-1.0), double(2.0), 0};
     mapCircleDefaultPropertyMap.insert("radius", mapCircleRadius);
-    QTest::newRow("MapCircle") << "import Qt 4.7 \n import QtMobility.location 1.1 \n MapCircle {}" << mapCircleDefaultPropertyMap << true;
+    QTest::newRow("MapCircle") << "import Qt 4.7 \n import QtMobility.location 1.2 \n MapCircle {}" << mapCircleDefaultPropertyMap << true;
 
     // MapText
     PropertyMap mapTextDefaultPropertyMap;
@@ -382,7 +382,7 @@ void tst_QDeclarativeMap::basicApiTest_data()
     mapTextDefaultPropertyMap.insert("horizontalAlignment", mapTextHorizontalAlignment);
     PropertyValues mapTextVerticalAlignment = {QVariant::fromValue(QDeclarativeGeoMapTextObject::AlignVCenter), QVariant::fromValue(QDeclarativeGeoMapTextObject::AlignBottom), &customPodCompFn<QtMobility::QDeclarativeGeoMapTextObject::VerticalAlignment>};
     mapTextDefaultPropertyMap.insert("verticalAlignment", mapTextVerticalAlignment);
-    QTest::newRow("MapText") << "import Qt 4.7 \n import QtMobility.location 1.1 \n MapText {}" << mapTextDefaultPropertyMap << true;
+    QTest::newRow("MapText") << "import Qt 4.7 \n import QtMobility.location 1.2 \n MapText {}" << mapTextDefaultPropertyMap << true;
 
     // MapRectangle
     PropertyMap mapRectangleDefaultPropertyMap;
@@ -394,7 +394,7 @@ void tst_QDeclarativeMap::basicApiTest_data()
     mapRectangleDefaultPropertyMap.insert("color", mapRectangleColor);
     PropertyValues mapRectangleBorder = {QVariant(), QVariant(), 0};
     mapRectangleDefaultPropertyMap.insert("border", mapRectangleBorder);
-    QTest::newRow("MapRectangle") << "import Qt 4.7 \n import QtMobility.location 1.1 \n MapRectangle {}" << mapRectangleDefaultPropertyMap << true;
+    QTest::newRow("MapRectangle") << "import Qt 4.7 \n import QtMobility.location 1.2 \n MapRectangle {}" << mapRectangleDefaultPropertyMap << true;
 
     // MapImage
     PropertyMap mapImageDefaultPropertyMap;
@@ -407,21 +407,21 @@ void tst_QDeclarativeMap::basicApiTest_data()
     // Error below is due to nonexistent image url
     PropertyValues mapImageStatus = {QVariant::fromValue(QDeclarativeGeoMapPixmapObject::Error), QVariant(), &customPodCompFn<QtMobility::QDeclarativeGeoMapPixmapObject::Status>};
     mapImageDefaultPropertyMap.insert("status", mapImageStatus);
-    QTest::newRow("MapImage") << "import Qt 4.7 \n import QtMobility.location 1.1 \n MapImage {}" << mapImageDefaultPropertyMap << true;
+    QTest::newRow("MapImage") << "import Qt 4.7 \n import QtMobility.location 1.2 \n MapImage {}" << mapImageDefaultPropertyMap << true;
 
     // MapPolyLine
     PropertyMap mapPolylineDefaultPropertyMap;
     PropertyValues mapPolylineBorder = {QVariant(), QVariant(), 0};
     mapPolylineDefaultPropertyMap.insert("border", mapPolylineBorder);
     // TODO how to test path list
-    QTest::newRow("MapPolyline") << "import Qt 4.7 \n import QtMobility.location 1.1 \n MapPolyline {}" << mapPolylineDefaultPropertyMap << false;
+    QTest::newRow("MapPolyline") << "import Qt 4.7 \n import QtMobility.location 1.2 \n MapPolyline {}" << mapPolylineDefaultPropertyMap << false;
 
     // MapPolygon
     PropertyMap mapPolygonDefaultPropertyMap;
     // TODO how to test path list
     PropertyValues mapPolygonBorder = {QVariant(), QVariant(), 0};
     mapPolylineDefaultPropertyMap.insert("border", mapPolygonBorder);
-    QTest::newRow("MapPolygon") << "import Qt 4.7 \n import QtMobility.location 1.1 \n MapPolygon {}" << mapPolygonDefaultPropertyMap << false;
+    QTest::newRow("MapPolygon") << "import Qt 4.7 \n import QtMobility.location 1.2 \n MapPolygon {}" << mapPolygonDefaultPropertyMap << false;
 
     // MapObjectView
     PropertyMap mapObjectViewMap;
@@ -429,7 +429,7 @@ void tst_QDeclarativeMap::basicApiTest_data()
     mapObjectViewMap.insert("delegate", mapDelegate);
     PropertyValues mapModel = {QVariant(), QVariant(), 0};
     mapObjectViewMap.insert("model", mapModel);
-    QTest::newRow("PluginParameter") << "import Qt 4.7 \n import QtMobility.location 1.1 \n MapObjectView {}" << mapObjectViewMap << true;
+    QTest::newRow("PluginParameter") << "import Qt 4.7 \n import QtMobility.location 1.2 \n MapObjectView {}" << mapObjectViewMap << true;
 
     // MapGroup TODO
 
@@ -439,21 +439,23 @@ void tst_QDeclarativeMap::basicApiTest_data()
     mapPluginParameterMap.insert("name", mapPluginParameterName);
     PropertyValues mapPluginParameterValue = {QVariant(), QVariant("some_value"), 0};
     mapPluginParameterMap.insert("value", mapPluginParameterValue);
-    QTest::newRow("PluginParameter") << "import Qt 4.7 \n import QtMobility.location 1.1 \n PluginParameter {}" << mapPluginParameterMap << true;
+    QTest::newRow("PluginParameter") << "import Qt 4.7 \n import QtMobility.location 1.2 \n PluginParameter {}" << mapPluginParameterMap << true;
 
     // QGeoMapObject TODO
 
     // GeoCodemodel
+    /*
     PropertyMap geocodeModelMap;
     PropertyValues geocodeModelAddress = {QVariant(), QVariant::fromValue(generalLocationAddress), &customPtrCompFn<QDeclarativeGeoAddress*>};
     geocodeModelMap.insert("address", geocodeModelAddress);
-    QTest::newRow("GeoCodemodel") << "import Qt 4.7 \n import QtMobility.location 1.1 \n GeocodeModel {}" << geocodeModelMap << true;
+    QTest::newRow("GeoCodemodel") << "import Qt 4.7 \n import QtMobility.location 1.2 \n GeocodeModel {}" << geocodeModelMap << true;
 
     // ReverseGeocodeModel
     PropertyMap reverseGeocodeModelMap;
     PropertyValues reverseGeocodeModel = {QVariant(), QVariant::fromValue(generalDeclarativeCoordinate), &customPtrCompFn<QDeclarativeCoordinate*>};
     reverseGeocodeModelMap.insert("coordinate", reverseGeocodeModel);
-    QTest::newRow("GeoCodemodel") << "import Qt 4.7 \n import QtMobility.location 1.1 \n ReverseGeocodeModel {}" << reverseGeocodeModelMap << true;
+    QTest::newRow("GeoCodemodel") << "import Qt 4.7 \n import QtMobility.location 1.2 \n ReverseGeocodeModel {}" << reverseGeocodeModelMap << true;
+    */
 #endif // API_TEST_DECLARATIVE_LOCATION
 }
 
