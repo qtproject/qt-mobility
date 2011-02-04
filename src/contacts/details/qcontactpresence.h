@@ -93,7 +93,7 @@ public:
     void setPresenceStateText(const QString& presenceStateText) {setValue(FieldPresenceStateText, presenceStateText);}
     QString presenceStateText() const {return value(FieldPresenceStateText);}
     void setPresenceStateImageUrl(const QUrl& presenceStateImageUrl) {setValue(FieldPresenceStateImageUrl, presenceStateImageUrl);}
-    QUrl presenceStateImageUrl() const {return value(FieldPresenceStateImageUrl);}
+    QUrl presenceStateImageUrl() const {return value<QUrl>(FieldPresenceStateImageUrl);}
     void setCustomMessage(const QString& customMessage) {setValue(FieldCustomMessage, customMessage);}
     QString customMessage() const {return value(FieldCustomMessage);}
 };
