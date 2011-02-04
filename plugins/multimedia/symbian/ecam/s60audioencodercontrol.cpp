@@ -50,11 +50,7 @@ S60AudioEncoderControl::S60AudioEncoderControl(QObject *parent) :
 S60AudioEncoderControl::S60AudioEncoderControl(S60VideoCaptureSession *session, QObject *parent) :
     QAudioEncoderControl(parent)
 {
-    if (session)
-        m_session = session;
-    else
-        Q_ASSERT(true);
-    // From now on it's safe to assume session exists
+    m_session = session;
 }
 
 S60AudioEncoderControl::~S60AudioEncoderControl()
@@ -71,9 +67,9 @@ QString S60AudioEncoderControl::codecDescription(const QString &codecName) const
     // According to ForumNokia MMF camcorder plugin supports AAC, AMR and QCELP
     // QCELP is speech codec and can be discarded
     if (qstrcmp(codecName.toLocal8Bit().constData(), "audio/aac") == 0)
-        return QString("Advanced Audio Coding");
+        return QLatin1String("Advanced Audio Coding");
     else if (qstrcmp(codecName.toLocal8Bit().constData(), "audio/amr") == 0)
-        return QString("Adaptive Multi-Rate Audio Codec");
+        return QLatin1String("Adaptive Multi-Rate Audio Codec");
 
     return QString();
 }
@@ -98,7 +94,7 @@ QVariant S60AudioEncoderControl::encodingOption(const QString &codec, const QStr
 void S60AudioEncoderControl::setEncodingOption(
     const QString &codec, const QString &name, const QVariant &value)
 {
-    m_session->setError(KErrNotSupported, QString("Audio encoding option is not supported"));
+    m_session->setError(KErrNotSupported, tr("Audio encoding option is not supported"));
 
     // The audio settings can currently be set only using setAudioSettings() function
     Q_UNUSED(value)

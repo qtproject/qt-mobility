@@ -166,6 +166,9 @@ private: // Data
  * Session handling all image capture activities.
  */
 class S60ImageCaptureSession : public QObject,
+#ifdef ECAM_PREVIEW_API
+                               public MCameraPreviewObserver,
+#endif // ECAM_PREVIEW_API
                                public MCameraEngineImageCaptureObserver
 {
     Q_OBJECT
@@ -270,12 +273,18 @@ protected: // MCameraEngineObserver
     void MceoCapturedBitmapReady(CFbsBitmap* aBitmap);
     void MceoHandleError(TCameraEngineError aErrorType, TInt aError);
 
+#ifdef ECAM_PREVIEW_API
+protected: // MCameraPreviewObserver
+
+    void MceoPreviewReady(CFbsBitmap& aPreview);
+#endif // ECAM_PREVIEW_API
+
 private: // Internal
 
     QCameraImageCapture::Error fromSymbianErrorToQtMultimediaError(int aError);
 
     void initializeImageCaptureSettings();
-    void resetSession();
+    void resetSession(bool errorHandling = false);
 
     CCamera::TFormat selectFormatForCodec(const QString &codec);
     CCamera::TFormat defaultImageFormat();

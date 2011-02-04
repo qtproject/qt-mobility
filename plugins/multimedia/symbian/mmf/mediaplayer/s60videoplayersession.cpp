@@ -266,6 +266,8 @@ void S60VideoPlayerSession::applyPendingChanges(bool force)
                 scaled.scale(output->videoDisplayRect().size(), Qt::IgnoreAspectRatio);
             else if(output->videoAspectRatio() == Qt::KeepAspectRatio)
                 scaled.scale(output->videoDisplayRect().size(), Qt::KeepAspectRatio);
+            else if (output->videoAspectRatio() == Qt::   KeepAspectRatioByExpanding)
+                scaled.scale(output->videoDisplayRect().size(), Qt::   KeepAspectRatioByExpanding);
             const qreal width = qreal(scaled.width()) / qreal(m_originalSize.width()) * qreal(100);
             const qreal height = qreal(scaled.height()) / qreal(m_originalSize.height()) * qreal(100);
 #ifdef MMF_VIDEO_SURFACES_SUPPORTED

@@ -63,7 +63,9 @@ class S60CameraLocksControl : public QCameraLocksControl
 public: // Contructors & Destrcutor
 
     S60CameraLocksControl(QObject *parent = 0);
-    S60CameraLocksControl(S60ImageCaptureSession *session, QObject *parent = 0);
+    S60CameraLocksControl(S60CameraService *service,
+                          S60ImageCaptureSession *session,
+                          QObject *parent = 0);
     ~S60CameraLocksControl();
 
 public: // QCameraLocksControl

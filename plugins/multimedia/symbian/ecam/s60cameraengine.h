@@ -53,6 +53,7 @@ class MCameraEngineObserver;
 class MCameraEngineImageCaptureObserver;
 class MAdvancedSettingsObserver;
 class MCameraViewfinderObserver;
+class MCameraPreviewObserver;
 
 /*
  * CameraEngine handling ECam operations needed.
@@ -108,7 +109,7 @@ public:
     /**
      * Returns the index of the currently active camera device
      */
-    TInt currentCameraIndex() const { return iCameraIndex; }
+    TInt CurrentCameraIndex() const { return iCameraIndex; }
 
     /**
      * Returns the current state (TCameraEngineState)
@@ -135,7 +136,7 @@ public:
     /**
      * Returns camera info
      */
-    TCameraInfo *cameraInfo();
+    TCameraInfo *CameraInfo();
 
     /**
      * Captures an image. When complete, observer will receive
@@ -149,7 +150,7 @@ public:
     /**
      * Cancels ongoing image capture
      */
-    void cancelCapture();
+    void CancelCapture();
 
     /**
      * Reserves and powers on the camera. When complete,
@@ -246,6 +247,18 @@ public:
      */
     CCamera* Camera() { return iCamera; }
 
+#ifdef ECAM_PREVIEW_API
+    /**
+     * This enables the preview creation during the capture (image or video).
+     */
+    void EnablePreviewProvider(MCameraPreviewObserver *aPreviewObserver);
+
+    /**
+     * This disabled the preview creation during the capture (image or video)
+     */
+    void DisablePreviewProvider();
+#endif // ECAM_PREVIEW_API
+
 protected:  // Protected constructors
 
     CCameraEngine();
@@ -341,6 +354,19 @@ private:  // Internal functions
      */
     void HandleImageReady(const TInt aError, const bool isBitmap);
 
+#ifdef ECAM_PREVIEW_API
+    /**
+     * Handle preview. Retrieve preview data and notify observer about the
+     * preview availability.
+     */
+    void HandlePreview();
+
+    /**
+     * Calculate proper resolution for the SnapShot (Preview) image.
+     */
+    TSize SelectPreviewResolution();
+#endif // ECAM_PREVIEW_API
+
 private:  // Data
 
     CCamera                             *iCamera;
@@ -348,6 +374,7 @@ private:  // Data
     MCameraEngineImageCaptureObserver   *iImageCaptureObserver;
     MAdvancedSettingsObserver           *iAdvancedSettingsObserver;
     MCameraViewfinderObserver           *iViewfinderObserver;
+    MCameraPreviewObserver              *iPreviewObserver;
     MCameraBuffer                       *iViewFinderBuffer;
     /*
      * Following pointers are for the image buffers:
@@ -364,8 +391,12 @@ private:  // Data
     TCameraEngineState                  iEngineState;
     TCameraInfo                         iCameraInfo;
     CCamera::TFormat                    iImageCaptureFormat;
+    TSize                               iCaptureResolution;
     bool                                iNew2LImplementation;
     int                                 iLatestImageBufferIndex; // 0 = Buffer1, 1 = Buffer2
+#ifdef ECAM_PREVIEW_API
+    CCamera::CCameraSnapshot            *iCameraSnapshot;
+#endif // ECAM_PREVIEW_API
 #ifdef S60_CAM_AUTOFOCUS_SUPPORT
     CCamAutoFocus*                      iAutoFocus;
     CCamAutoFocus::TAutoFocusRange      iAFRange;

@@ -53,7 +53,9 @@ S60CameraLocksControl::S60CameraLocksControl(QObject *parent) :
 {
 }
 
-S60CameraLocksControl::S60CameraLocksControl(S60ImageCaptureSession *session, QObject *parent) :
+S60CameraLocksControl::S60CameraLocksControl(S60CameraService *service,
+                                             S60ImageCaptureSession *session,
+                                             QObject *parent) :
     QCameraLocksControl(parent),
     m_session(NULL),
     m_service(NULL),
@@ -63,20 +65,9 @@ S60CameraLocksControl::S60CameraLocksControl(S60ImageCaptureSession *session, QO
     m_exposureStatus(QCamera::Unlocked),
     m_whiteBalanceStatus(QCamera::Unlocked)
 {
-    if (session)
-        m_session = session;
-    else
-        Q_ASSERT(true);
-    // From now on it is safe to assume session exists
-
-    if (qstrcmp(parent->metaObject()->className(), "S60CameraService") == 0) {
-        m_service = qobject_cast<S60CameraService*>(parent);
-    } else {
-        m_session->setError(KErrGeneral, QString("Unexpected camera error."));
-    }
-
-    if (m_service)
-        m_focusControl = qobject_cast<S60CameraFocusControl *>(m_service->requestControl(QCameraFocusControl_iid));
+    m_session = session;
+    m_service = service;
+    m_focusControl = qobject_cast<S60CameraFocusControl *>(m_service->requestControl(QCameraFocusControl_iid));
 
     connect(m_session, SIGNAL(advancedSettingChanged()), this, SLOT(resetAdvancedSetting()));
     m_advancedSettings = m_session->advancedSettings();
@@ -198,10 +189,11 @@ void S60CameraLocksControl::focusStatusChanged(QCamera::LockStatus status,
 void S60CameraLocksControl::startFocusing()
 {
 #ifndef S60_CAM_AUTOFOCUS_SUPPORT // S60 3.2 or later
-    // Focusing is triggered by setting the focus mode set to FocusControl to be active
+    // Focusing is triggered on Symbian by setting the FocusType corresponding
+    // to the FocusMode set to FocusControl
     if (m_focusControl) {
         if (m_advancedSettings) {
-            m_advancedSettings->setFocusMode(m_focusControl->focusMode());
+            m_advancedSettings->startFocusing();
             m_focusStatus = QCamera::Searching;
             emit lockStatusChanged(QCamera::LockFocus, QCamera::Searching, QCamera::UserRequest);
         }
