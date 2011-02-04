@@ -321,21 +321,8 @@ void TestQGeoPositionInfoSource::createDefaultSource()
     QObject *parent = new QObject;
 
     QGeoPositionInfoSource *source = QGeoPositionInfoSource::createDefaultSource(parent);
-#if defined(Q_OS_SYMBIAN)
+    // now all platforms have the dummy plugin at least
     QVERIFY(source != 0);
-#elif defined(Q_OS_WINCE)
-    QVERIFY(source != 0);
-#elif defined(Q_WS_SIMULATOR)
-    QVERIFY(source != 0);
-#elif defined(Q_WS_MAEMO_5)
-    QVERIFY(source != 0);
-#elif defined(Q_WS_MAEMO_6)
-    QVERIFY(source != 0);
-#elif defined(Q_WS_MEEGO)
-    QVERIFY(source != 0);
-#else 
-    QVERIFY(source == 0);
-#endif
     delete parent;
     //QLocationTestUtils::uheap_mark_end();
 }
