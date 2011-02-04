@@ -38,73 +38,52 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef QDECLARATIVEDISPLAYINFO_P_H
+#define QDECLARATIVEDISPLAYINFO_P_H
 
-#ifndef QSYSTEMALIGNEDTIMER_MEEGO_P_H
-#define QSYSTEMALIGNEDTIMER_MEEGO_P_H
-
-#include "qsystemalignedtimer.h"
-
-#include <QObject>
-#include <QSocketNotifier>
-
-extern "C" {
-#include <iphbd/libiphb.h>
-}
+#include "qsystemdisplayinfo.h"
 
 QT_BEGIN_HEADER
-QTM_BEGIN_NAMESPACE
+QTM_USE_NAMESPACE
 
-class QSystemAlignedTimerPrivate : public QObject
+class QDeclarativeDisplayInfo : public QSystemDisplayInfo
 {
     Q_OBJECT
+    Q_PROPERTY(int screen READ screen WRITE setCurrentScreen)
+    Q_PROPERTY(int displayBrightness READ displayBrightness)
+    Q_PROPERTY(int colorDepth READ colorDepth)
+    Q_PROPERTY(QSystemDisplayInfo::DisplayOrientation orientation READ orientation)
+    Q_PROPERTY(float contrast READ contrast)
+    Q_PROPERTY(int dpiWidth READ dpiWidth)
+    Q_PROPERTY(int dpiHeight READ dpiHeight)
+    Q_PROPERTY(int physicalWidth READ physicalWidth)
+    Q_PROPERTY(int physicalHeight READ physicalHeight)
+    Q_PROPERTY(QSystemDisplayInfo::BacklightState backlightStatus READ backlightStatus)
 
 public:
-    explicit QSystemAlignedTimerPrivate(QObject *parent = 0);
-    ~QSystemAlignedTimerPrivate();
+    explicit QDeclarativeDisplayInfo(QObject *parent = 0);
+    int screen();
+    void setCurrentScreen(int screen);
 
-public:
-    void wokeUp();
+    int displayBrightness();
+    int colorDepth();
 
-    int minimumInterval() const;
-    void setMinimumInterval(int seconds);
+    QSystemDisplayInfo::DisplayOrientation orientation();
+    float contrast();
+    int dpiWidth();
+    int dpiHeight();
+    int physicalHeight();
+    int physicalWidth();
 
-    int maximumInterval() const;
-    void setMaximumInterval(int seconds);
+    QSystemDisplayInfo::BacklightState backlightStatus();
 
-    bool isSingleShot() const;
-    void setSingleShot(bool singleShot);
+signals:
+    void orientationChanged();
 
-    static void singleShot(int minimumTime, int maximumTime, QObject *receiver, const char *member);
-    QSystemAlignedTimer::AlignedTimerError lastError() const;
-
-    bool isActive() const;
-    QSystemAlignedTimer::AlignedTimerError m_lastError;
-Q_SIGNALS:
-    void timeout();
-    void error(QSystemAlignedTimer::AlignedTimerError error);
-
+public slots:
 private:
-    int m_minimumInterval;
-    int m_maximumInterval;
-    bool m_running;
-    bool m_singleShot;
-    iphb_t m_iphbdHandler;
-    QSocketNotifier *m_notifier;
-    QObject *m_singleShotReceiver;
-    const char *m_singleShotMember;
-
-public Q_SLOTS:
-    void start(int minimumTime, int maximumTime);
-    void start();
-    void stop();
-
-private Q_SLOTS:
-    void heartbeatReceived(int sock);
-    void singleShot();
+    int currentScreen;
 };
-
-QTM_END_NAMESPACE
-
+QT_END_NAMESPACE
 QT_END_HEADER
-
-#endif // QSYSTEMALIGNEDTIMER_MEEGO_P_H
+#endif // QDECLARATIVEDISPLAYINFO_P_H

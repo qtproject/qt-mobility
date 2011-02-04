@@ -78,6 +78,7 @@ QTM_BEGIN_NAMESPACE
     \value AlignedTimerNotSupported       The aligned timer is not support on this platform
     \value InvalidArgument                Interval arguments are invalid.
     \value TimerFailed                    General timer failure.
+    \value InternalError                  Internal error.
 
   */
 
@@ -122,6 +123,11 @@ QSystemAlignedTimer::~QSystemAlignedTimer()
   */
 void QSystemAlignedTimer::start(int minimumTime, int maximumTime)
 {
+    if (minimumTime > maximumTime || maximumTime <= 0) {
+        d->m_lastError = QSystemAlignedTimer::InvalidArgument;
+        Q_EMIT error(d->m_lastError);
+        return;
+    }
     d->start(minimumTime, maximumTime);
 }
 
@@ -130,6 +136,13 @@ void QSystemAlignedTimer::start(int minimumTime, int maximumTime)
 */
 void QSystemAlignedTimer::start()
 {
+    int minimumTime = minimumInterval();
+    int maximumTime = maximumInterval();
+    if ((minimumTime > maximumTime) || (maximumTime <= 0)) {
+        d->m_lastError = QSystemAlignedTimer::InvalidArgument;
+        Q_EMIT error(d->m_lastError);
+        return;
+    }
     d->start();
 }
 
@@ -189,7 +202,9 @@ int QSystemAlignedTimer::minimumInterval() const
    Time in seconds when the wait MUST end. It is wise to have maxtime-mintime
    quite big so all users of this service get synced.
    For example if you preferred wait is 120 seconds, use minval 110 and maxval 130.
-   Default value for maxTime is 0. If maxTime is 0, then minTime will be a "preferred" interval.
+
+   max interval must be greater than min interval.
+
  */
 void QSystemAlignedTimer::setMaximumInterval(int seconds)
 {
@@ -210,7 +225,7 @@ int QSystemAlignedTimer::maximumInterval() const
 /*!
   Sets this timer to be a single shot \a singleShot is true, otherwise false.
   */
-inline void QSystemAlignedTimer::setSingleShot(bool singleShot)
+void QSystemAlignedTimer::setSingleShot(bool singleShot)
 {
     d->setSingleShot(singleShot);
 }
@@ -223,12 +238,15 @@ inline void QSystemAlignedTimer::setSingleShot(bool singleShot)
   */
 void QSystemAlignedTimer::singleShot(int minimumTime, int maximumTime, QObject *receiver, const char *member)
 {
+    if (minimumTime > maximumTime || maximumTime <= 0) {
+        return;
+    }
     QSystemAlignedTimerPrivate::singleShot(minimumTime, maximumTime, receiver, member);
 }
 
 /*!
   \property QSystemAlignedTimer::singleShot
-  \brief Whether the timer is single shot.
+  Whether the timer is single shot.
 */
 
 /*!
@@ -246,6 +264,19 @@ bool QSystemAlignedTimer::isSingleShot() const
 QSystemAlignedTimer::AlignedTimerError QSystemAlignedTimer::lastError() const
 {
     return d->lastError();
+}
+
+/*!
+    \property QSystemAlignedTimer::active
+  Returns true if the timer is running; otherwise false.
+*/
+
+/*!
+  Returns true if the timer is running; otherwise false.
+*/
+bool QSystemAlignedTimer::isActive () const
+{
+    return d->isActive();
 }
 
 #include "moc_qsystemalignedtimer.cpp"
