@@ -83,7 +83,7 @@ public:
     int maximumInterval() const;
     void setMaximumInterval(int seconds);
 
-    void setSingleShot(bool singleShot);
+    void setSingleShot(bool single);
     bool isSingleShot() const;
 
     Q_INVOKABLE static void singleShot(int minimumTime, int maximumTime, QObject *receiver, const char *member);

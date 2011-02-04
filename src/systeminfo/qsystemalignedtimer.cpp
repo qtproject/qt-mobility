@@ -224,7 +224,7 @@ int QSystemAlignedTimer::maximumInterval() const
 /*!
   Sets this timer to be a single shot \a singleShot is true, otherwise false.
   */
-inline void QSystemAlignedTimer::setSingleShot(bool singleShot)
+void QSystemAlignedTimer::setSingleShot(bool singleShot)
 {
     d->setSingleShot(singleShot);
 }
