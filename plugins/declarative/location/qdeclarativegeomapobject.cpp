@@ -212,9 +212,9 @@ QDeclarativeGeoMapObjectView::QDeclarativeGeoMapObjectView(QDeclarativeItem *par
 QDeclarativeGeoMapObjectView::~QDeclarativeGeoMapObjectView()
 {
     if (!mapObjects_.isEmpty()) {
-        for (int i = 0; i < mapObjects_.size(); ++i) {
-            mapData_->removeMapObject(mapObjects_.at(i)->mapObject());
-        }
+        //for (int i = 0; i < mapObjects_.size(); ++i) {
+            //mapData_->removeMapObject(mapObjects_.at(i)->mapObject());
+        //}
         // Model owns the data, do not delete the pointers.
         mapObjects_.clear();
     }

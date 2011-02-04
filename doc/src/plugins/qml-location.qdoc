@@ -85,7 +85,8 @@
     specified in terms of coordinates and metres.
 
     \note Maps and Navigation domain supports basic Map functionality, including
-    Map objects and mouse handling. Routing and searching are not yet supported.
+    Map objects and basic mouse handling. Routing and searching are not yet
+    supported.
 
     \section2 Map Elements
 
