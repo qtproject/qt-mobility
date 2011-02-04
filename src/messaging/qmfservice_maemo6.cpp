@@ -465,6 +465,8 @@ QTimer *QMFService::timer()
 
 void QMFService::transmitActivityChanged(QMailServiceAction::Activity a)
 {
+    qDebug() << __PRETTY_FUNCTION__ << "action = " << a;
+
     if (a == QMailServiceAction::Successful) {
         if (!m_transmitIds.isEmpty()) {
             // If these messages were transmitted, we need to move them to Sent folder
@@ -485,12 +487,19 @@ void QMFService::transmitActivityChanged(QMailServiceAction::Activity a)
             // We may have failed due to some part of the request remaining incomplete
             setError(QMessageManager::RequestIncomplete);
         }
+
+        QMessageServicePrivate *p = QMessageServicePrivate::implementation(*m_service);
+        p->setFinished(false);
     }
-    stateChanged(convert(a));
+
+    if (a != QMailServiceAction::Failed)
+        stateChanged(convert(a));
 }
 
 void QMFService::statusChanged(const QMailServiceAction::Status &s)
 {
+    qDebug() << __PRETTY_FUNCTION__ << "status error = " << s.errorCode;
+
     if (s.errorCode != QMailServiceAction::Status::ErrNoError) {
         qWarning() << QString("Service error %1: \"%2\"").arg(s.errorCode).arg(s.text);
         if (s.errorCode == QMailServiceAction::Status::ErrNotImplemented) {
@@ -508,11 +517,20 @@ void QMFService::statusChanged(const QMailServiceAction::Status &s)
 
 void QMFService::retrievalActivityChanged(QMailServiceAction::Activity a)
 {
-    if ((a == QMailServiceAction::Failed) && (error() == QMessageManager::NoError)) {
-        // We may have failed due to some part of the request remaining incomplete
-        setError(QMessageManager::RequestIncomplete);
+    qDebug() << __PRETTY_FUNCTION__ << "action = " << a;
+
+    if (a == QMailServiceAction::Failed) {
+        if (error() == QMessageManager::NoError) {
+            // We may have failed due to some part of the request remaining incomplete
+            setError(QMessageManager::RequestIncomplete);
+        }
+
+        QMessageServicePrivate *p = QMessageServicePrivate::implementation(*m_service);
+        p->setFinished(false);
     }
-    stateChanged(convert(a));
+
+    if (a != QMailServiceAction::Failed)
+        stateChanged(convert(a));
 }
 
 void QMFService::completed()

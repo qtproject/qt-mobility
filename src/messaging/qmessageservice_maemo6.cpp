@@ -220,14 +220,14 @@ void QMessageServicePrivate::setFinished(bool successful)
             _error = QMessageManager::RequestIncomplete;
         }
 
-        _state = QMessageService::FinishedState;
-        emit q_ptr->stateChanged(_state);
+        stateChanged(QMessageService::FinishedState);
         _active = false;
     }
 }
 
 void QMessageServicePrivate::stateChanged(QMessageService::State state)
 {
+    qDebug() << __PRETTY_FUNCTION__ << "emitting stateChanged(" << state << ")";
     _state = state;
     emit q_ptr->stateChanged(state);
 }
