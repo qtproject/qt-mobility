@@ -81,6 +81,12 @@ private:
 
 tst_QBluetoothServiceDiscoveryAgent::tst_QBluetoothServiceDiscoveryAgent()
 {
+    // start Bluetooth if not started
+    QBluetoothLocalDevice *device = new QBluetoothLocalDevice();
+    device->powerOn();
+    delete device;
+    // wait for the device to switch bluetooth mode.
+    QTest::qWait(1000);
     qRegisterMetaType<QBluetoothDeviceInfo>("QBluetoothDeviceInfo");
     qRegisterMetaType<QBluetoothServiceInfo>("QBluetoothServiceInfo");
     qRegisterMetaType<QList<QBluetoothUuid> >("QList<QBluetoothUuid>");
@@ -105,10 +111,6 @@ void tst_QBluetoothServiceDiscoveryAgent::serviceError(const QBluetoothServiceDi
 
 void tst_QBluetoothServiceDiscoveryAgent::initTestCase()
 {
-    // start Bluetooth if not started
-    QBluetoothLocalDevice *device = new QBluetoothLocalDevice();
-    device->powerOn();
-    delete device;
 #if 1
     QBluetoothDeviceDiscoveryAgent discoveryAgent;
 
