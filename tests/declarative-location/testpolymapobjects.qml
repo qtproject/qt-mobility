@@ -39,7 +39,7 @@
 ****************************************************************************/
 
 import Qt 4.7
-import QtMobility.location 1.1
+import QtMobility.location 1.2
 import "landmarkmapcommon" as Common
 import "landmarkmapmobile" as Mobile
 
@@ -160,6 +160,15 @@ Item {
                 }
             }
             //![Basic MapPolyline]
+
+            //![Basic map position marker definition]
+            MapCircle {
+                id: myPositionMarker
+                center: myPositionSource.position.coordinate
+                radius: 100
+                color: "yellow"
+            }
+            //![Basic map position marker definition]
         }
 
         MouseArea {
@@ -245,8 +254,8 @@ Item {
 		
 		center: Coordinate {
                     objectName: "circleMapCenter"
-		    latitude : item.coordinate.latitude
-                    longitude: item.coordinate.longitude
+                    latitude : landmark.coordinate.latitude
+                    longitude: landmark.coordinate.longitude
                 }
 
                 MapMouseArea {
@@ -271,7 +280,7 @@ Item {
 
         Item {
             id: sliderContainer
-            anchors {bottom: toolbar1.top;}
+            anchors {bottom: toolbar0.top;}
             height:  40
             width: parent.width
 
@@ -289,6 +298,27 @@ Item {
         }
 
         Mobile.ToolBar {
+            id: toolbar0
+            opacity: titleBar.opacity
+            height: 40; width: parent.width
+            anchors.bottom: toolbar1.top
+            z: 6
+            button1Label: "-myposmark"; button2Label: "+myposmark"; button3Label: "-"
+            //![Basic remove MapObject]
+            onButton1Clicked: {
+                map.removeMapObject(myPositionMarker)
+            }
+            //![Basic remove MapObject]
+            //![Basic add MapObject]
+            onButton2Clicked: {
+                map.addMapObject(myPositionMarker)
+            }
+            //![Basic add MapObject]
+            onButton3Clicked: {
+            }
+        }
+
+        Mobile.ToolBar {
             id: toolbar1
             opacity: titleBar.opacity
             height: 40; width: parent.width
@@ -297,18 +327,15 @@ Item {
             button1Label: "+polyg"; button2Label: "-polyg"; button3Label: "-initpolyg3"
             //![Adding to polygon]
             onButton1Clicked: {
-                console.log('Clicked: ' + button1Label)
                 polygon.addCoordinate(map.center)
             }
             //![Adding to polygon]
             //![Removing from polygon]
             onButton2Clicked: {
-                console.log('Clicked: ' + button2Label)
                 polygon.removeCoordinate(map.center)
             }
             //![Removing from polygon]
             onButton3Clicked: {
-                console.log('Clicked: ' + button3Label)
                 polygon.removeCoordinate(bottomLeftCoordinate)
             }
         }
@@ -322,7 +349,6 @@ Item {
             button1Label: "-iterpolyg2nd"; button2Label: "no follow"; button3Label: "+initpolyg3"
             //![Iterating and removing polygon]
             onButton1Clicked: {
-                console.log('Clicked: ' + button1Label)
                 for (var index = 0; index < polygon.path.length; index++)  {
                     console.log("Latitude at index:" + index + " , " + polygon.path[index].latitude);
                 }
@@ -330,11 +356,10 @@ Item {
             }
             //![Iterating and removing polygon]
             onButton2Clicked: {
-                console.log('Clicked: ' + button2Label)
                 map.center = defaultMapCenter
+                myPositionSource.active = false
             }
             onButton3Clicked: {
-                console.log('Clicked: ' + button3Label)
                 polygon.addCoordinate(bottomLeftCoordinate)
             }
         }
@@ -347,17 +372,14 @@ Item {
             z: 6
             button1Label: "+polyl"; button2Label: "-polyl"; button3Label: "+initpolyl3"
             onButton1Clicked: {
-                console.log('Clicked: ' + button1Label)
                 polyline.addCoordinate(map.center)
             }
             //![Removing from polyline]
             onButton2Clicked: {
-                console.log('Clicked: ' + button2Label)
                 polyline.removeCoordinate(map.center)
             }
             //![Removing from polyline]
             onButton3Clicked: {
-                console.log('Clicked: ' + button3Label)
                 polyline.addCoordinate(polylineBottomLeftCoordinate)
             }
         }
@@ -371,7 +393,6 @@ Item {
             button1Label: "-iterpolyl2nd"; button2Label: "-"; button3Label: "-initpolyl3"
             //![Iterating and removing polyline]
             onButton1Clicked: {
-                console.log('Clicked: ' + button1Label)
                 for (var index = 0; index < polyline.path.length; index++)  {
                     console.log("Index, latitude:" + index + " , " + polyline.path[index].latitude);
                 }
@@ -379,10 +400,8 @@ Item {
             }
             //![Iterating and removing polyline]
             onButton2Clicked: {
-                console.log('Clicked: ' + button2Label)
             }
             onButton3Clicked: {
-                console.log('Clicked: ' + button3Label)
                 polyline.removeCoordinate(polylineBottomLeftCoordinate)
             }
         }
