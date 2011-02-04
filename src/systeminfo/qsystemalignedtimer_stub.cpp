@@ -39,23 +39,82 @@
 **
 ****************************************************************************/
 
-#include "test_sensor.h"
-#include "test_sensor_p.h"
 
-IMPLEMENT_READING(TestSensorReading)
+#include "qsystemalignedtimer.h"
+#include "qsystemalignedtimer_stub_p.h"
 
-int TestSensorReading::test() const
+QTM_BEGIN_NAMESPACE
+
+QSystemAlignedTimerPrivate::QSystemAlignedTimerPrivate(QObject *parent) :
+    QObject(parent)
 {
-    return d->test;
 }
 
-void TestSensorReading::setTest(int test)
+QSystemAlignedTimerPrivate::~QSystemAlignedTimerPrivate()
 {
-    d->test = test;
 }
 
-// =====================================================================
+void QSystemAlignedTimerPrivate::wokeUp()
+{
+}
 
-const char *TestSensor::type("test sensor");
+int QSystemAlignedTimerPrivate::minimumInterval() const
+{
+    return -1;
+}
 
-#include "moc_test_sensor.cpp"
+void QSystemAlignedTimerPrivate::setMinimumInterval(int seconds)
+{
+    Q_UNUSED(seconds);
+}
+
+int QSystemAlignedTimerPrivate::maximumInterval() const
+{
+    return -1;
+}
+
+void QSystemAlignedTimerPrivate::setMaximumInterval(int seconds)
+{
+    Q_UNUSED(seconds);
+}
+
+void QSystemAlignedTimerPrivate::setSingleShot(bool singleShot)
+{
+    Q_UNUSED(singleShot);
+}
+
+bool QSystemAlignedTimerPrivate::isSingleShot() const
+{
+    return false;
+}
+
+void QSystemAlignedTimerPrivate::singleShot(int minimumTime, int maximumTime, QObject *receiver, const char *member)
+{
+    Q_UNUSED(minimumTime);
+    Q_UNUSED(maximumTime);
+    Q_UNUSED(receiver);
+    Q_UNUSED(member);
+}
+
+QSystemAlignedTimer::AlignedTimerError QSystemAlignedTimerPrivate::lastError() const
+{
+    return QSystemAlignedTimer::AlignedTimerNotSupported;
+}
+
+void QSystemAlignedTimerPrivate::start(int minimumTime, int maximumTime)
+{
+    Q_UNUSED(minimumTime);
+    Q_UNUSED(maximumTime);
+}
+
+void QSystemAlignedTimerPrivate::start()
+{
+}
+
+void QSystemAlignedTimerPrivate::stop()
+{
+}
+
+#include "moc_qsystemalignedtimer_stub_p.cpp"
+
+QTM_END_NAMESPACE

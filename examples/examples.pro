@@ -67,10 +67,10 @@ contains(mobility_modules,publishsubscribe) {
 
 #System Information
 contains(mobility_modules,systeminfo) {
- SUBDIRS += sysinfo
+ SUBDIRS += sysinfo \
+            qsystemalignedtimer
    contains(QT_CONFIG, declarative) {
-        SUBDIRS += declarative-systeminfo \
-                   qsystemalignedtimer
+        SUBDIRS += declarative-systeminfo
    }
 }
 
@@ -154,3 +154,4 @@ contains(mobility_modules,connectivity) {
 sources.path = $$QT_MOBILITY_EXAMPLES
 
 INSTALLS += sources
+

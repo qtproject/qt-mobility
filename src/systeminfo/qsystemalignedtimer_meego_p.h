@@ -39,12 +39,17 @@
 **
 ****************************************************************************/
 
+#ifndef QSYSTEMALIGNEDTIMER_MEEGO_P_H
+#define QSYSTEMALIGNEDTIMER_MEEGO_P_H
 
-#ifndef QSYSTEMALIGNEDTIMERPRIVATE_P_H
-#define QSYSTEMALIGNEDTIMERPRIVATE_P_H
+#include "qsystemalignedtimer.h"
 
 #include <QObject>
-#include "qsystemalignedtimer.h"
+#include <QSocketNotifier>
+
+extern "C" {
+#include <iphbd/libiphb.h>
+}
 
 QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
@@ -52,22 +57,51 @@ QTM_BEGIN_NAMESPACE
 class QSystemAlignedTimerPrivate : public QObject
 {
     Q_OBJECT
+
 public:
     explicit QSystemAlignedTimerPrivate(QObject *parent = 0);
+    ~QSystemAlignedTimerPrivate();
 
-    int id;
-    bool isTimerRunning;
-    bool single;
+public:
+    void wokeUp();
 
+    int minimumInterval() const;
+    void setMinimumInterval(int seconds);
+
+    int maximumInterval() const;
+    void setMaximumInterval(int seconds);
+
+    bool isSingleShot() const;
+    void setSingleShot(bool singleShot);
+
+    static void singleShot(int minimumTime, int maximumTime, QObject *receiver, const char *member);
+    QSystemAlignedTimer::AlignedTimerError lastError() const;
+
+Q_SIGNALS:
+    void timeout();
+    void error(QSystemAlignedTimer::AlignedTimerError error);
 
 private:
-    QTimer *alignedTimer;
-     void timerEvent(QTimerEvent *);
+    QSystemAlignedTimer::AlignedTimerError m_lastError;
+    int m_minimumInterval, m_maximumInterval;
+    bool m_running, m_singleShot;
+    iphb_t m_iphbdHandler;
+    QSocketNotifier *m_notifier;
+    QObject *m_singleShotReceiver;
+    const char *m_singleShotMember;
 
+public Q_SLOTS:
+    void start(int minimumTime, int maximumTime);
+    void start();
+    void stop();
+    
+private Q_SLOTS:
+    void heartbeatReceived(int sock);
+    void singleShot();
 };
 
 QTM_END_NAMESPACE
 
 QT_END_HEADER
 
-#endif // QSYSTEMALIGNEDTIMERPRIVATE_P_H
+#endif // QSYSTEMALIGNEDTIMER_MEEGO_P_H

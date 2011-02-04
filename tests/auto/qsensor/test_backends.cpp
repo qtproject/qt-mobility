@@ -39,23 +39,59 @@
 **
 ****************************************************************************/
 
-#include "test_sensor.h"
-#include "test_sensor_p.h"
+#include <QList>
 
-IMPLEMENT_READING(TestSensorReading)
+#include "qsensorbackend.h"
 
-int TestSensorReading::test() const
+QTM_USE_NAMESPACE
+
+typedef QSensorBackend* (*CreateFunc) (QSensor *sensor);
+class Record
 {
-    return d->test;
+public:
+    QByteArray type;
+    CreateFunc func;
+};
+static QList<Record> records;
+
+static bool registerTestBackend(const char *className, CreateFunc func)
+{
+    Record record;
+    record.type = className;
+    record.func = func;
+    records << record;
+    return true;
 }
 
-void TestSensorReading::setTest(int test)
+#define REGISTER_TOO
+#include "test_backends.h"
+#include <QDebug>
+
+class BackendFactory : public QSensorBackendFactory
 {
-    d->test = test;
+    QSensorBackend *createBackend(QSensor *sensor)
+    {
+        foreach (const Record &record, records) {
+            if (sensor->identifier() == record.type) {
+                return record.func(sensor);
+            }
+        }
+        return 0;
+    };
+};
+static BackendFactory factory;
+
+void register_test_backends()
+{
+    foreach (const Record &record, records) {
+        QSensorManager::registerBackend(record.type, record.type, &factory);
+    }
 }
 
-// =====================================================================
+void unregister_test_backends()
+{
+    foreach (const Record &record, records) {
+        QSensorManager::unregisterBackend(record.type, record.type);
+    }
+}
 
-const char *TestSensor::type("test sensor");
-
-#include "moc_test_sensor.cpp"

@@ -11,7 +11,7 @@ Build-Depends: libqt4-dev (>= 4.6.0), cdbs, debhelper (>= 5), quilt, aegis-build
  libxrandr-dev, libxv-dev, osso-wlan-dev, x11proto-video-dev, libqmf-dev, libqttracker-dev,
  libmessagingif-dev, libcommhistory-dev, libblkid-dev, pulseaudio-dev, libimmvibe-dev[armel], libqtsparql-dev,
  libmkcal-dev, libkcalcoren-dev, libresourceqt-dev, libqmsystem2-dev, libqtsparql-tracker-extensions-dev,
- libudev-dev
+ libudev-dev, libiphb-dev
 Standards-Version: 3.8.0
 
 Package: libqtm-examples
@@ -626,7 +626,7 @@ Description: Qt Mobility Sensors autotest package
 Package: libqtm-systeminfo
 Architecture: any
 Section: libs
-Depends: ${shlibs:Depends}, ${misc:Depends}
+Depends: ${shlibs:Depends}, ${misc:Depends}, sysinfo-dbus
 Description: Qt Mobility SystemInfo module
  Qt Mobility Project delivers a set of new APIs to Qt with features that are
  well known from the mobile device world, in particular phones. However,
