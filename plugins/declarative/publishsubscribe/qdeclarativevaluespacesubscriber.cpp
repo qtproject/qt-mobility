@@ -108,7 +108,7 @@ QDeclarativeValueSpaceSubscriber::~QDeclarativeValueSpaceSubscriber()
 */
 void QDeclarativeValueSpaceSubscriber::setPath(QString path)
 {
-    if (subscriber) {
+    if (d->subscriber) {
         if (d->subscriber->path() == path)
             return;
         d->subscriber->setPath(path);
@@ -118,7 +118,7 @@ void QDeclarativeValueSpaceSubscriber::setPath(QString path)
         emit pathChanged();
     }
     // re-connect the signal
-    connect(subscriber, SIGNAL(contentsChanged()),
+    connect(d->subscriber, SIGNAL(contentsChanged()),
             this, SIGNAL(contentsChanged()));
 }
 
