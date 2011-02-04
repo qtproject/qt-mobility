@@ -103,9 +103,24 @@ void QBluetoothServiceDiscoveryAgentPrivate::startL(const QBluetoothAddress &add
         filter->AddL(QBluetoothUuid::PublicBrowseGroup);
     } else {
         foreach (const QBluetoothUuid &uuid, uuidFilter) {
-            /* need to support 16, 32 and 128 bit uuids */
-            TUUID sUuid(uuid.toUInt16());
-            filter->AddL(sUuid);
+            if (uuid.minimumSize() == 2) {
+                TUUID sUuid(uuid.toUInt16());
+                filter->AddL(sUuid);
+            } else if (uuid.minimumSize() == 4) {
+                TUUID sUuid(uuid.toUInt32());
+                filter->AddL(sUuid);
+            } else if (uuid.minimumSize() == 16) {
+                TUint32 *dataPointer = (TUint32*)uuid.toUInt128().data;
+                TUint32 lL = *(dataPointer++);
+                TUint32 lH = *(dataPointer++);
+                TUint32 hL = *(dataPointer++);
+                TUint32 hH = *(dataPointer);
+                TUUID sUuid(hH, hL, lH, lL);
+                filter->AddL(sUuid);
+            } else {
+                // filter size can be 0 on error cases, searching all services
+                filter->AddL(QBluetoothUuid::PublicBrowseGroup);
+            }
         }
     }
     sdpAgent->SetRecordFilterL(*filter);
