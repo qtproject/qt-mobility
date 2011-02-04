@@ -58,6 +58,7 @@ class QDeclarativeDisplayInfo : public QSystemDisplayInfo
     Q_PROPERTY(int dpiHeight READ dpiHeight)
     Q_PROPERTY(int physicalWidth READ physicalWidth)
     Q_PROPERTY(int physicalHeight READ physicalHeight)
+    Q_PROPERTY(QSystemDisplayInfo::BacklightState backlightStatus READ backlightStatus)
 
 public:
     explicit QDeclarativeDisplayInfo(QObject *parent = 0);
@@ -73,6 +74,8 @@ public:
     int dpiHeight();
     int physicalHeight();
     int physicalWidth();
+
+    QSystemDisplayInfo::BacklightState backlightStatus();
 
 signals:
     void orientationChanged();

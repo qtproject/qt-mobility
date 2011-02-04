@@ -167,3 +167,13 @@ int QDeclarativeDisplayInfo::physicalWidth()
 {
     return displayInfo()->physicalWidth(currentScreen);
 }
+
+/*!
+    \qmlproperty QSystemDisplayInfo::BacklightState  DisplayInfo::backlightStatus
+    Returns whether the QSystemDisplayInfo::BacklightState for the screen
+  */
+QSystemDisplayInfo::BacklightState QDeclarativeDisplayInfo::backlightStatus()
+{
+    return displayInfo()->backlightStatus(currentScreen);
+}
+
