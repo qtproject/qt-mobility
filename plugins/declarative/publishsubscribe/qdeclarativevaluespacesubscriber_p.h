@@ -39,30 +39,45 @@
 **
 ****************************************************************************/
 
-#ifndef QDECLARATIVEVALUESPACEPUBLISHERMETAOBJECT_H
-#define QDECLARATIVEVALUESPACEPUBLISHERMETAOBJECT_H
+#ifndef QDECLARATIVEVALUESPACESUBSCRIBER_P_H
+#define QDECLARATIVEVALUESPACESUBSCRIBER_P_H
 
-#include <QHash>
-
-#include "qdeclarativeopenmetaobject_p.h"
-#include "qvaluespace.h"
-#include "qvaluespacepublisher.h"
+#include <QObject>
+#include "qvaluespacesubscriber.h"
 
 QTM_USE_NAMESPACE
 
-class QDeclarativeValueSpacePublisherMetaObject : public QDeclarativeOpenMetaObject
+class QDeclarativeValueSpaceSubscriberPrivate;
+class QDeclarativeValueSpaceSubscriber : public QObject
 {
+    Q_OBJECT
+
+    Q_PROPERTY(QString path READ path WRITE setPath NOTIFY pathChanged)
+    Q_PROPERTY(QVariant value READ value NOTIFY contentsChanged)
+    Q_PROPERTY(bool connected READ isConnected)
+    Q_PROPERTY(QStringList subPaths READ subPaths)
 
 public:
-    QDeclarativeValueSpacePublisherMetaObject(QObject *obj);
+    QDeclarativeValueSpaceSubscriber();
+    ~QDeclarativeValueSpaceSubscriber();
 
-    virtual void getValue(int id, void **a);
-    virtual void setValue(int id, void **a);
+    QString path() const;
 
-    void addKey(const QString &key, bool interest=false);
+    QVariant value(const QString &subPath = QString(), const QVariant &def=QVariant()) const;
 
-    QHash<int, QString> m_keyProperties;
-    QHash<int, bool> m_subsProperties;
+    QStringList subPaths() const;
+
+    bool isConnected() const;
+
+public slots:
+    void setPath(QString path);
+
+signals:
+    void contentsChanged();
+    void pathChanged();
+
+private:
+    QDeclarativeValueSpaceSubscriberPrivate *d;
 };
 
-#endif
+#endif // QDECLARATIVEVALUESPACESUBSCRIBER_P_H
