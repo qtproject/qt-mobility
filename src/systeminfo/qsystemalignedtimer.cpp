@@ -49,7 +49,7 @@ QTM_BEGIN_NAMESPACE
 Q_GLOBAL_STATIC(QSystemAlignedTimerPrivate, alignedTimerPrivate)
 
 #ifdef QT_SIMULATOR
-QSystemDeviceInfoPrivate *getSystemAlignedTimerPrivate() { return alignedTimerPrivate(); }
+QSystemAlignedTimerPrivate *getSystemAlignedTimerPrivate() { return alignedTimerPrivate(); }
 #endif
 
 /*!
