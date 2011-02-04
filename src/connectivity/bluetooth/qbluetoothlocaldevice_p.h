@@ -51,7 +51,7 @@
 #include <btengsettings.h>
 #endif
 
-#ifndef Q_NO_DBUS
+#ifndef QT_NO_DBUS
 #include <QObject>
 #include <QDBusContext>
 #include <QDBusObjectPath>
