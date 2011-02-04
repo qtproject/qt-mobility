@@ -124,23 +124,23 @@ void QDeclarativeGeoMapObject::releaseEvent(QDeclarativeGeoMapMouseEvent *event)
     }
 }
 
-void QDeclarativeGeoMapObject::enterEvent()
-{
-    for (int i = 0; i < mouseAreas_.size(); ++i)
-        mouseAreas_.at(i)->enterEvent();
-}
+//void QDeclarativeGeoMapObject::enterEvent()
+//{
+//    for (int i = 0; i < mouseAreas_.size(); ++i)
+//        mouseAreas_.at(i)->enterEvent();
+//}
 
-void QDeclarativeGeoMapObject::exitEvent()
-{
-    for (int i = 0; i < mouseAreas_.size(); ++i)
-        mouseAreas_.at(i)->exitEvent();
-}
+//void QDeclarativeGeoMapObject::exitEvent()
+//{
+//    for (int i = 0; i < mouseAreas_.size(); ++i)
+//        mouseAreas_.at(i)->exitEvent();
+//}
 
-void QDeclarativeGeoMapObject::moveEvent(QDeclarativeGeoMapMouseEvent *event)
-{
-    for (int i = 0; i < mouseAreas_.size(); ++i)
-        mouseAreas_.at(i)->moveEvent(event);
-}
+//void QDeclarativeGeoMapObject::moveEvent(QDeclarativeGeoMapMouseEvent *event)
+//{
+//    for (int i = 0; i < mouseAreas_.size(); ++i)
+//        mouseAreas_.at(i)->moveEvent(event);
+//}
 
 void QDeclarativeGeoMapObject::setMapObject(QGeoMapObject *object)
 {

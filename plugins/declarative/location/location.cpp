@@ -66,8 +66,8 @@
 #include "qdeclarativegeomapmousearea_p.h"
 #include "qdeclarativegeomapmouseevent_p.h"
 
-#include "qdeclarativegeocodemodel_p.h"
-#include "qdeclarativereversegeocodemodel_p.h"
+//#include "qdeclarativegeocodemodel_p.h"
+//#include "qdeclarativereversegeocodemodel_p.h"
 
 #include <QtDeclarative/qdeclarativeextensionplugin.h>
 #include <QtDeclarative/qdeclarative.h>
@@ -105,7 +105,7 @@ public:
         qmlRegisterType<QDeclarativeGeoServiceProvider>(uri, 1, 1, "Plugin");
         qmlRegisterType<QDeclarativeGeoServiceProviderParameter>(uri, 1, 1, "PluginParameter");
         qmlRegisterType<QDeclarativeGraphicsGeoMap>(uri, 1, 1, "Map");
-        qmlRegisterType<QDeclarativeGeoMapObjectBorder>();
+        qmlRegisterType<QDeclarativeGeoMapObjectBorder>(); // used as grouped property
         qmlRegisterType<QGeoMapObject>(uri, 1, 1, "QGeoMapObject");
         qmlRegisterType<QDeclarativeGeoMapObject>(uri, 1, 1, "MapObject");
         qmlRegisterType<QDeclarativeGeoMapObjectView>(uri, 1, 1, "MapObjectView");
@@ -120,8 +120,8 @@ public:
         qmlRegisterType<QDeclarativeGeoMapMouseArea>(uri, 1, 1, "MapMouseArea");
         qmlRegisterType<QDeclarativeGeoMapMouseEvent>(uri, 1, 1, "MapMouseEvent");
 
-        qmlRegisterType<QDeclarativeGeocodeModel>(uri, 1, 1, "GeocodeModel");
-        qmlRegisterType<QDeclarativeReverseGeocodeModel>(uri, 1, 1, "ReverseGeocodeModel");
+        //qmlRegisterType<QDeclarativeGeocodeModel>(uri, 1, 1, "GeocodeModel");
+        //qmlRegisterType<QDeclarativeReverseGeocodeModel>(uri, 1, 1, "ReverseGeocodeModel");
     }
 };
 

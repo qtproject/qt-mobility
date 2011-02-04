@@ -43,6 +43,8 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <qnetworksession.h>
+#include <qnetworkconfigmanager.h>
 
 #include "qgeoserviceprovider.h"
 #include "qgeopositioninfosource.h"
@@ -70,12 +72,16 @@ public slots:
 private slots:
     void showSearchDialog();
     void showNavigateDialog();
+    void showMarkerDialog(Marker *marker);
     void goToMyLocation();
+
     void updateMyPosition(QGeoPositionInfo info);
     void disableTracking();
+
     void showErrorMessage(QGeoSearchReply::Error err, QString msg);
     void showErrorMessage(QGeoRouteReply::Error err, QString msg);
-    void on_markerClicked(Marker *marker);
+
+    void openNetworkSession();
 
 private:
     QGeoServiceProvider *serviceProvider;
@@ -83,6 +89,9 @@ private:
     MarkerManager *markerManager;
     QGeoPositionInfoSource *positionSource;
     Navigator *lastNavigator;
+
+    QNetworkSession *session;
+    QNetworkConfigurationManager *netConfigManager;
 
     bool tracking;
     bool firstUpdate;

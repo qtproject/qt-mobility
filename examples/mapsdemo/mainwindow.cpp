@@ -75,8 +75,24 @@ MainWindow::MainWindow() :
 
     setMenuBar(mbar);
 
-    initialize();
     setWindowTitle("Maps Demo");
+
+    netConfigManager = new QNetworkConfigurationManager;
+    connect(netConfigManager, SIGNAL(updateCompleted()),
+            this, SLOT(openNetworkSession()));
+    netConfigManager->updateConfigurations();
+}
+
+void MainWindow::openNetworkSession()
+{
+    session = new QNetworkSession(netConfigManager->defaultConfiguration());
+    if (session->isOpen()) {
+        initialize();
+    } else {
+        connect(session, SIGNAL(opened()),
+                this, SLOT(initialize()));
+        session->open();
+    }
 }
 
 MainWindow::~MainWindow()
@@ -125,7 +141,7 @@ void MainWindow::initialize()
     connect(markerManager, SIGNAL(searchError(QGeoSearchReply::Error,QString)),
             this, SLOT(showErrorMessage(QGeoSearchReply::Error,QString)));
     connect(mapsWidget, SIGNAL(markerClicked(Marker*)),
-            this, SLOT(on_markerClicked(Marker*)));
+            this, SLOT(showMarkerDialog(Marker*)));
     connect(mapsWidget, SIGNAL(mapPanned()),
             this, SLOT(disableTracking()));
 
@@ -224,7 +240,7 @@ void MainWindow::showErrorMessage(QGeoRouteReply::Error err, QString msg)
     mapsWidget->statusBar()->hide();
 }
 
-void MainWindow::on_markerClicked(Marker *marker)
+void MainWindow::showMarkerDialog(Marker *marker)
 {
     MarkerDialog md(marker);
     if (md.exec() == QDialog::Accepted) {

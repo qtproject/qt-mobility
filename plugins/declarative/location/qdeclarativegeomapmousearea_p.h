@@ -56,12 +56,12 @@ class QDeclarativeGeoMapMouseArea : public QDeclarativeItem
 
     Q_PROPERTY(qreal mouseX READ mouseX NOTIFY mouseXChanged)
     Q_PROPERTY(qreal mouseY READ mouseY NOTIFY mouseYChanged)
-    Q_PROPERTY(bool containsMouse READ hovered NOTIFY hoveredChanged)
+//    Q_PROPERTY(bool containsMouse READ hovered NOTIFY hoveredChanged)
     Q_PROPERTY(bool pressed READ pressed NOTIFY pressedChanged)
     Q_PROPERTY(bool enabled READ isEnabled WRITE setEnabled NOTIFY enabledChanged)
     Q_PROPERTY(Qt::MouseButtons pressedButtons READ pressedButtons NOTIFY pressedChanged)
     Q_PROPERTY(Qt::MouseButtons acceptedButtons READ acceptedButtons WRITE setAcceptedButtons NOTIFY acceptedButtonsChanged)
-    Q_PROPERTY(bool hoverEnabled READ hoverEnabled WRITE setHoverEnabled NOTIFY hoverEnabledChanged)
+//    Q_PROPERTY(bool hoverEnabled READ hoverEnabled WRITE setHoverEnabled NOTIFY hoverEnabledChanged)
 
 public:
     QDeclarativeGeoMapMouseArea(QDeclarativeItem *parent = 0);
@@ -72,7 +72,7 @@ public:
 
     qreal mouseX() const;
     qreal mouseY() const;
-    bool hovered() const;
+//    bool hovered() const;
     bool pressed() const;
 
     bool isEnabled() const;
@@ -80,8 +80,8 @@ public:
 
     Qt::MouseButtons pressedButtons() const;
 
-    bool hoverEnabled() const;
-    void setHoverEnabled(bool hoverEnabled);
+//    bool hoverEnabled() const;
+//    void setHoverEnabled(bool hoverEnabled);
 
     void setAcceptedButtons(Qt::MouseButtons acceptedButtons);
     Qt::MouseButtons acceptedButtons() const;
@@ -89,37 +89,37 @@ public:
     void doubleClickEvent(QDeclarativeGeoMapMouseEvent *event);
     void pressEvent(QDeclarativeGeoMapMouseEvent *event);
     void releaseEvent(QDeclarativeGeoMapMouseEvent *event);
-    void enterEvent();
-    void exitEvent();
-    void moveEvent(QDeclarativeGeoMapMouseEvent *event);
+//    void enterEvent();
+//    void exitEvent();
+//    void moveEvent(QDeclarativeGeoMapMouseEvent *event);
 
 Q_SIGNALS:
     void mouseXChanged(qreal mouseX);
     void mouseYChanged(qreal mouseY);
-    void hoveredChanged(bool hovered);
+//    void hoveredChanged(bool hovered);
     void pressedChanged(bool pressed);
     void enabledChanged(bool enabled);
     void pressedButtonsChanged(Qt::MouseButtons pressedButtons);
     void acceptedButtonsChanged(Qt::MouseButtons acceptedButtons);
-    void hoverEnabledChanged(bool hoverEnabled);
+//    void hoverEnabledChanged(bool hoverEnabled);
 
-    void positionChanged(QDeclarativeGeoMapMouseEvent *mouse);
+//    void positionChanged(QDeclarativeGeoMapMouseEvent *mouse);
     void pressed(QDeclarativeGeoMapMouseEvent *mouse);
-    void pressAndHold(QDeclarativeGeoMapMouseEvent *mouse);
+//    void pressAndHold(QDeclarativeGeoMapMouseEvent *mouse);
     void released(QDeclarativeGeoMapMouseEvent *mouse);
     void clicked(QDeclarativeGeoMapMouseEvent *mouse);
     void doubleClicked(QDeclarativeGeoMapMouseEvent *mouse);
-    void entered();
-    void exited();
-    void cancelled();
+//    void entered();
+//    void exited();
+//    void cancelled();
 
 private:
     bool setPressed(bool pressed, QDeclarativeGeoMapMouseEvent *event);
-    void setHovered(bool hovered);
+//    void setHovered(bool hovered);
 
-    bool hovered_;
+//    bool hovered_;
     bool enabled_;
-    bool hoverEnabled_;
+//    bool hoverEnabled_;
     qreal mouseX_;
     qreal mouseY_;
     bool pressed_;
@@ -128,13 +128,13 @@ private:
     Qt::MouseButtons acceptedButtons_;
     Qt::MouseButtons pressedButtons_;
 
-    qreal startX_;
-    qreal startY_;
-    QPointF lastPos_;
-    QPointF lastScenePos_;
-    Qt::MouseButton lastButton_;
-    Qt::MouseButtons lastButtons_;
-    Qt::KeyboardModifiers lastModifiers_;
+//    qreal startX_;
+//    qreal startY_;
+//    QPointF lastPos_;
+//    QPointF lastScenePos_;
+//    Qt::MouseButton lastButton_;
+//    Qt::MouseButtons lastButtons_;
+//    Qt::KeyboardModifiers lastModifiers_;
 
     QDeclarativeGraphicsGeoMap* map_;
 };

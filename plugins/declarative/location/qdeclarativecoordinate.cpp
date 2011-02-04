@@ -157,6 +157,17 @@ double QDeclarativeCoordinate::latitude() const
     return m_coordinate.latitude();
 }
 
+/*!
+    \qmlmethod Coordinate::distanceTo(Coordinate)
+
+    Returns the distance (in meters) from this coordinate to the
+    coordinate specified by other. Altitude is not used in the calculation.
+
+    This calculation returns the great-circle distance between the two
+    coordinates, with an assumption that the Earth is spherical for the
+    purpose of this calculation.
+*/
+
 qreal QDeclarativeCoordinate::distanceTo(QObject* coordinate)
 {
     QDeclarativeCoordinate* coord = static_cast<QDeclarativeCoordinate*>(coordinate);

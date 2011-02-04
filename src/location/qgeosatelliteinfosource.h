@@ -60,6 +60,8 @@ public:
     explicit QGeoSatelliteInfoSource(QObject *parent);
 
     static QGeoSatelliteInfoSource *createDefaultSource(QObject *parent);
+    static QGeoSatelliteInfoSource *createSource(const QString &sourceName, QObject *parent);
+    static QStringList availableSources();
 
 public Q_SLOTS:
     virtual void startUpdates() = 0;

@@ -1645,7 +1645,4 @@ EXPORTS
 	??1QLandmarkCategoryFetchByIdRequest@QtMobility@@UAE@XZ @ 1644 NONAME ; QtMobility::QLandmarkCategoryFetchByIdRequest::~QLandmarkCategoryFetchByIdRequest(void)
 	?atDistanceAndAzimuth@QGeoCoordinate@QtMobility@@QBE?AV12@MMM@Z @ 1645 NONAME ; class QtMobility::QGeoCoordinate QtMobility::QGeoCoordinate::atDistanceAndAzimuth(float, float, float) const
 	?replyFinished@QGeoTiledMapData@QtMobility@@AAEXPAVQGeoTiledMapReply@2@@Z @ 1646 NONAME ; void QtMobility::QGeoTiledMapData::replyFinished(class QtMobility::QGeoTiledMapReply *)
-	?setVisible@QGeoMapGroupObject@QtMobility@@QAEX_N@Z @ 1647 NONAME ; void QtMobility::QGeoMapGroupObject::setVisible(bool)
-	?graphicsItemChanged@QGeoMapObject@QtMobility@@IAEXPAVQGraphicsItem@@@Z @ 1648 NONAME ; void QtMobility::QGeoMapObject::graphicsItemChanged(class QGraphicsItem *)
-	?setOrigin@QGeoMapObject@QtMobility@@QAEXABVQGeoCoordinate@2@@Z @ 1649 NONAME ; void QtMobility::QGeoMapObject::setOrigin(class QtMobility::QGeoCoordinate const &)
 

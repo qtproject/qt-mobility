@@ -1705,12 +1705,4 @@ EXPORTS
 	_ZThn8_NK10QtMobility15QGraphicsGeoMap5shapeEv @ 1704 NONAME
 	_ZN10QtMobility16QGeoTiledMapData13replyFinishedEPNS_17QGeoTiledMapReplyE @ 1705 NONAME
 	_ZNK10QtMobility14QGeoCoordinate20atDistanceAndAzimuthEfff @ 1706 NONAME
-	_ZN10QtMobility13QGeoMapObject13originChangedENS_14QGeoCoordinateE @ 1707 NONAME
-	_ZN10QtMobility13QGeoMapObject15setGraphicsItemEP13QGraphicsItem @ 1708 NONAME
-	_ZN10QtMobility13QGeoMapObject16setTransformTypeERKNS0_13TransformTypeE @ 1709 NONAME
-	_ZN10QtMobility13QGeoMapObject19graphicsItemChangedEP13QGraphicsItem @ 1710 NONAME
-	_ZN10QtMobility13QGeoMapObject6updateEv @ 1711 NONAME
-	_ZN10QtMobility13QGeoMapObject8setUnitsERKNS0_14CoordinateUnitE @ 1712 NONAME
-	_ZN10QtMobility13QGeoMapObject9setOriginERKNS_14QGeoCoordinateE @ 1713 NONAME
-	_ZN10QtMobility18QGeoMapGroupObject10setVisibleEb @ 1714 NONAME
 

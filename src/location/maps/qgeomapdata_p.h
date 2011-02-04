@@ -80,6 +80,8 @@ public:
 
     qreal zoomLevel;
     QPointF shiftSinceLastInval;
+    qreal bearing;
+    qreal tilt;
     QGeoCoordinate center;
     QSizeF windowSize;
     QGraphicsGeoMap::MapType mapType;
