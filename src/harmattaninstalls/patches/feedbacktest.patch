@@ -1,5 +1,5 @@
 diff --git a/plugins/feedback/meegotouch/qfeedback.cpp b/plugins/feedback/meegotouch/qfeedback.cpp
-index 1b00984..f6761e8 100644
+index 1b00984..b624b27 100644
 --- a/plugins/feedback/meegotouch/qfeedback.cpp
 +++ b/plugins/feedback/meegotouch/qfeedback.cpp
 @@ -44,6 +44,7 @@
@@ -10,16 +10,31 @@ index 1b00984..f6761e8 100644
  #include <meegotouch/MFeedback>
  
  Q_EXPORT_PLUGIN2(feedback_meegotouch, QFeedbackMeegoTouch)
-@@ -109,7 +110,8 @@ static QString convertToMeegoTouch(QFeedbackEffect::ThemeEffect effect)
- 
- QFeedbackMeegoTouch::QFeedbackMeegoTouch(QObject *parent) :
+@@ -111,12 +112,23 @@ QFeedbackMeegoTouch::QFeedbackMeegoTouch(QObject *parent) :
      QObject(parent),
--    QFeedbackThemeInterface()
-+    QFeedbackThemeInterface(),
-+    m_mtfComponentData(MComponentData::instance())
+     QFeedbackThemeInterface()
  {
++    if (MComponentData::instance() != 0) {
++        m_mtfComponentData = MComponentData::instance();
++    } else {
++        QByteArray argv0;
++        if (!QCoreApplication::arguments().isEmpty())
++            argv0 = QCoreApplication::arguments().first().toLocal8Bit();
++
++        int argc = 1;
++        char *argv[] = { argv0.data() };
++        m_mtfComponentData = new MComponentData(argc, argv);
++    }
  }
  
+ bool QFeedbackMeegoTouch::play(QFeedbackEffect::ThemeEffect effect)
+ {
+     const QString &feedbackString = convertToMeegoTouch(effect);
+-    if (feedbackString.isEmpty())
++    if (!m_mtfComponentData || feedbackString.isEmpty())
+         return false;
+ 
+     MFeedback::play(feedbackString);
 diff --git a/plugins/feedback/meegotouch/qfeedback.h b/plugins/feedback/meegotouch/qfeedback.h
 index 2a531bf..ed1bedd 100644
 --- a/plugins/feedback/meegotouch/qfeedback.h
