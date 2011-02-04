@@ -36,8 +36,10 @@
     API, including
 
     \list
-    \o items
-    \o here...
+    \o Drawing and interacting with maps;
+    \o Managing map objects;
+    \o Search and routing services; and
+    \o Receiving position updates.
     \endlist
 
     We will be developing the map search and navigation application shown below:
@@ -53,8 +55,6 @@
     \o \l{tutorials/mapsdemo/part4}{Stopping for directions}
     \o \l{tutorials/mapsdemo/part5}{Kinetic panning and tuning for mobile}
     \endlist
-
-    Some more text goes here.
 */
 
 /*!
