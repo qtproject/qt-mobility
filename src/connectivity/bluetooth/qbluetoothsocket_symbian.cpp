@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -41,7 +41,7 @@
 
 #include "qbluetoothsocket_p.h"
 #include "qbluetoothsocket.h"
-#include "utils_symbian_p.h"
+#include "symbian/utils_symbian_p.h"
 
 #include <QCoreApplication>
 
@@ -56,9 +56,13 @@ QTM_BEGIN_NAMESPACE
 Q_GLOBAL_STATIC(QSocketServerPrivate, getSocketServer)
 
 QBluetoothSocketPrivate::QBluetoothSocketPrivate()
-    : iSocket(0),
-    rxDescriptor(0, 0),
-    discoveryAgent(0)
+    : state(QBluetoothSocket::UnconnectedState)
+    , readNotifier(0)
+    , connectWriteNotifier(0)
+    , discoveryAgent(0)
+    , iSocket(0)
+    , rxDescriptor(0, 0)
+
 {
 }
 

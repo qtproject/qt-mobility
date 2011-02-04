@@ -70,6 +70,7 @@ QTM_BEGIN_NAMESPACE
     \value ImagingDevice        An imaging device such as a display, printer, scanner or camera.
     \value WearableDevice       A wearable device such as a watch or pager.
     \value ToyDevice            A toy.
+    \value HealthDevice         A health reated device such as heart rate, or temperature.
     \value UncategorizedDevice  A device that does not fit into any of the other device classes.
 */
 
@@ -173,19 +174,8 @@ QTM_BEGIN_NAMESPACE
     \value UncategorizedImagingDevice   An uncategorized imaging device.
     \value ImageDisplay                 A device capable of displaying images.
     \value ImageCamera                  A camera.
-    \value ImageCamera2                 A camera.
     \value ImageScanner                 An image scanner.
-    \value ImageScanner2                An image scanner.
-    \value ImageScanner3                An image scanner.
-    \value ImageScanner4                An image scanner.
     \value ImagePrinter                 A printer.
-    \value ImagePrinter2                A printer.
-    \value ImagePrinter3                A printer.
-    \value ImagePrinter4                A printer.
-    \value ImagePrinter5                A printer.
-    \value ImagePrinter6                A printer.
-    \value ImagePrinter7                A printer.
-    \value ImagePrinter8                A printer.
 */
 
 /*!
@@ -213,6 +203,22 @@ QTM_BEGIN_NAMESPACE
     \value ToyController        A controller.
     \value ToyGame              A game.
 */
+
+/*!
+    \enum QBluetoothDeviceInfo::MinorHealthClass
+
+    This enum describes the minor device classes for health devices.
+
+    \value UncategorizedHealthDevice    An uncategorized health device.
+    \value HealthBloodPressureMonitor   A blood pressure monitor.
+    \value HealthThermometer            A Thermometer.
+    \value HealthWeightScale            A scale.
+    \value HealthGlucoseMeter           A glucose meter.
+    \value HealthPulseOximeter          A blood oxygen saturation meter.
+    \value HealthDataDisplay            A data display.
+    \value HealthStepCounter            A pedometer.
+*/
+
 
 /*!
     \enum QBluetoothDeviceInfo::ServiceClass
@@ -245,7 +251,7 @@ QTM_BEGIN_NAMESPACE
 */
 
 QBluetoothDeviceInfoPrivate::QBluetoothDeviceInfoPrivate()
-: valid(false)
+: valid(false), cached(false)
 {
 }
 
@@ -286,6 +292,8 @@ QBluetoothDeviceInfo::QBluetoothDeviceInfo(const QBluetoothAddress &address, con
     d->serviceUuidsCompleteness = DataUnavailable;
 
     d->valid = true;
+    d->cached = false;
+    d->rssi = 0;
 }
 
 /*!
@@ -314,6 +322,24 @@ bool QBluetoothDeviceInfo::isValid() const
 
     return d->valid;
 }
+/*!
+  Returns the signal strength when the device was last scanned
+  */
+qint16 QBluetoothDeviceInfo::rssi() const
+{
+    Q_D(const QBluetoothDeviceInfo);
+
+    return d->rssi;
+}
+
+/*!
+  Set the \a signal strength value, used internally.
+  */
+void QBluetoothDeviceInfo::setRssi(qint16 signal)
+{
+    Q_D(QBluetoothDeviceInfo);
+    d->rssi = signal;
+}
 
 /*!
     Makes a copy of the \a other and assigns it to this QBluetoothDeviceInfo object.
@@ -328,8 +354,44 @@ QBluetoothDeviceInfo &QBluetoothDeviceInfo::operator=(const QBluetoothDeviceInfo
     d->majorDeviceClass = other.d_func()->majorDeviceClass;
     d->serviceClasses = other.d_func()->serviceClasses;
     d->valid = other.d_func()->valid;
+    d->cached = other.d_func()->cached;
+    d->serviceUuidsCompleteness = other.d_func()->serviceUuidsCompleteness;
+    d->serviceUuids = other.d_func()->serviceUuids;
+    d->rssi = other.d_func()->rssi;
 
     return *this;
+}
+
+/*!
+  Returns true if the \a other QBluetoothDeviceInfo object and this are identical
+  */
+bool QBluetoothDeviceInfo::operator==(const QBluetoothDeviceInfo &other) const
+{
+    Q_D(const QBluetoothDeviceInfo);
+
+    if(d->cached != other.d_func()->cached)
+        return false;
+    if(d->valid != other.d_func()->valid)
+        return false;
+    if(d->majorDeviceClass != other.d_func()->majorDeviceClass)
+        return false;
+    if(d->minorDeviceClass != other.d_func()->minorDeviceClass)
+        return false;
+    if(d->serviceClasses != other.d_func()->serviceClasses)
+        return false;
+    if(d->name != other.d_func()->name)
+        return false;
+    if(d->address != other.d_func()->address)
+        return false;
+    if(d->serviceUuidsCompleteness != other.d_func()->serviceUuidsCompleteness)
+        return false;
+    if(d->serviceUuids.count() != other.d_func()->serviceUuids.count())
+        return false;
+    if(d->serviceUuids != other.d_func()->serviceUuids)
+        return false;
+
+    return true;
+
 }
 
 /*!
@@ -440,6 +502,27 @@ QByteArray QBluetoothDeviceInfo::manufacturerSpecificData(bool *available) const
 {
     Q_UNUSED(available);
     return QByteArray();
+}
+
+/*!
+    Returns true if the QBluetoothDeviceInfo object is created from cached data
+*/
+bool QBluetoothDeviceInfo::isCached() const
+{
+    Q_D(const QBluetoothDeviceInfo);
+
+    return d->cached;
+}
+
+/*!
+  Used by the system to set the \a cached flag if the QBluetoothDeviceInfo is created from cached data. Cached information
+  may not be as accurate as data read from a live device.
+  */
+void QBluetoothDeviceInfo::setCached(bool cached)
+{
+    Q_D(QBluetoothDeviceInfo);
+
+    d->cached = cached;
 }
 
 QTM_END_NAMESPACE

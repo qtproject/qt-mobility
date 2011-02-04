@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -93,6 +93,7 @@ QTM_BEGIN_NAMESPACE
     \value NfcTagType3      An NFC tag type 3 target.
     \value NfcTagType4      An NFC tag type 4 target.
     \value MifareTag        A Mifare target.
+    \value NfcForumDevice   An NFC Forum device target.
 */
 
 /*!
