@@ -56,7 +56,7 @@ using namespace com::nokia::nfc;
 
 QTM_BEGIN_NAMESPACE
 
-static const char * const ndefAgentPath = "/com/nokia/nfc/ndefAgent/";
+static const char * const registeredHandlerPath = "/com/nokia/nfc/ndefhandler";
 
 static inline bool matchesTarget(QNearFieldTarget::Type type,
                                  const QList<QNearFieldTarget::Type> &types)
@@ -64,10 +64,25 @@ static inline bool matchesTarget(QNearFieldTarget::Type type,
     return types.contains(type) || types.contains(QNearFieldTarget::AnyTarget);
 }
 
-NdefHandler::NdefHandler(QNearFieldManagerPrivateImpl *manager, NDEFHandlerAdaptor *adaptor,
-                         QObject *object, const QMetaMethod &method)
-:   m_manager(manager), m_adaptor(adaptor), m_object(object), m_method(method)
+NdefHandler::NdefHandler(QNearFieldManagerPrivateImpl *manager, const QString &serviceName,
+                         const QString &path, QObject *object, const QMetaMethod &method)
+:   m_manager(manager), m_adaptor(0), m_object(object), m_method(method),
+    m_serviceName(serviceName), m_path(path)
 {
+    QDBusConnection handlerConnection = QDBusConnection::systemBus();
+    if (!serviceName.isEmpty()) {
+        handlerConnection = QDBusConnection::connectToBus(QDBusConnection::SystemBus, serviceName);
+
+        if (!handlerConnection.registerService(serviceName))
+            return;
+    }
+
+    m_adaptor = new NDEFHandlerAdaptor(this);
+
+    if (!handlerConnection.registerObject(path, this)) {
+        delete m_adaptor;
+        m_adaptor = 0;
+    }
 }
 
 NdefHandler::~NdefHandler()
@@ -75,7 +90,22 @@ NdefHandler::~NdefHandler()
     delete m_adaptor;
 }
 
-void NdefHandler::NDEFDetected(const QDBusObjectPath &target, const QByteArray &message)
+bool NdefHandler::isValid() const
+{
+    return m_adaptor;
+}
+
+QString NdefHandler::serviceName() const
+{
+    return m_serviceName;
+}
+
+QString NdefHandler::path() const
+{
+    return m_path;
+}
+
+void NdefHandler::NDEFData(const QDBusObjectPath &target, const QByteArray &message)
 {
     m_method.invoke(m_object, Q_ARG(QNdefMessage, QNdefMessage::fromByteArray(message)),
                     Q_ARG(QNearFieldTarget *, m_manager->targetForPath(target.path())));
@@ -85,44 +115,32 @@ QNearFieldManagerPrivateImpl::QNearFieldManagerPrivateImpl()
 :   m_connection(QDBusConnection::connectToBus(QDBusConnection::SystemBus, QUuid::createUuid())),
     m_accessAgent(0)
 {
-    qDebug() << Q_FUNC_INFO;
-
     qDBusRegisterMetaType<QList<QByteArray> >();
 
     m_manager = new Manager(QLatin1String("com.nokia.nfc"), QLatin1String("/"), m_connection);
 
     QDBusObjectPath defaultAdapterPath = m_manager->DefaultAdapter();
 
-    qDebug() << "Default NFC adapter:" << defaultAdapterPath.path();
-
     m_adapter = new Adapter(QLatin1String("com.nokia.nfc"), defaultAdapterPath.path(),
                             m_connection);
 
-    if (!m_adapter->isValid()) {
-        qDebug() << "adapter is invalid, DBus error?";
+    if (!m_adapter->isValid())
         return;
-    }
-
-    qDebug() << "Adapter properties:";
-    qDebug() << "State:" << m_adapter->state();
-    qDebug() << "Discovering:" << m_adapter->discovering();
-    qDebug() << "Tag Technologies:" << m_adapter->tagTechnologies();
 
     m_adapter->setState(QLatin1String("on"));
-
-    qDebug() << "State:" << m_adapter->state();
 }
 
 QNearFieldManagerPrivateImpl::~QNearFieldManagerPrivateImpl()
 {
+    foreach (int id, m_registeredHandlers.keys())
+        unregisterTargetDetectedHandler(id);
+
     delete m_manager;
     delete m_adapter;
 }
 
 bool QNearFieldManagerPrivateImpl::startTargetDetection(const QList<QNearFieldTarget::Type> &targetTypes)
 {
-    qDebug() << Q_FUNC_INFO;
-
     m_detectTargetTypes = targetTypes;
 
     connect(m_adapter, SIGNAL(TargetDetected(QString)),
@@ -135,8 +153,6 @@ bool QNearFieldManagerPrivateImpl::startTargetDetection(const QList<QNearFieldTa
 
 void QNearFieldManagerPrivateImpl::stopTargetDetection()
 {
-    qDebug() << Q_FUNC_INFO;
-
     m_detectTargetTypes.clear();
 
     disconnect(m_adapter, SIGNAL(TargetDetected(QString)),
@@ -147,15 +163,11 @@ void QNearFieldManagerPrivateImpl::stopTargetDetection()
 
 QNearFieldTarget *QNearFieldManagerPrivateImpl::targetForPath(const QString &path)
 {
-    qDebug() << Q_FUNC_INFO;
-
     QNearFieldTarget *nearFieldTarget = m_targets.value(path);
     if (!nearFieldTarget) {
         Target *target = new Target(QLatin1String("com.nokia.nfc"), path, m_connection);
 
         const QString type = target->type();
-
-        qDebug() << "target type is:" << type;
 
         if (type == QLatin1String("tag")) {
             Tag *tag = new Tag(QLatin1String("com.nokia.nfc"), path, m_connection);
@@ -180,34 +192,30 @@ int QNearFieldManagerPrivateImpl::registerTargetDetectedHandler(const QString &f
                                                                 QObject *object,
                                                                 const QMetaMethod &method)
 {
-    qDebug() << Q_FUNC_INFO;
-
     int id = getFreeId();
 
-    const QString agentPath = QLatin1String(ndefAgentPath) + QString::number(id);
+    const QString handlerPath =
+        QLatin1String(registeredHandlerPath) + QLatin1Char('/') + QString::number(id);
 
-    NDEFHandlerAdaptor *ndefAgent = new NDEFHandlerAdaptor(this);
-
-    if (!QDBusConnection::sessionBus().registerObject(agentPath, this)) {
-        delete ndefAgent;
-        m_freeIds.append(id);
+    NdefHandler *handler = new NdefHandler(this, QString(), handlerPath, object, method);
+    if (!handler->isValid()) {
+        delete handler;
         return -1;
     }
 
-    QDBusPendingReply<> reply = m_manager->RegisterNDEFHandler(QLatin1String("session"),
-                                                               QLatin1String("test name"),
-                                                               QDBusObjectPath(agentPath),
-                                                               QLatin1String("any"),
-                                                               filter);
+    QDBusPendingReply<> reply =
+        m_manager->RegisterNDEFHandler(QLatin1String("system"),
+                                       QDBusConnection::systemBus().baseService(),
+                                       QDBusObjectPath(handlerPath),
+                                       QLatin1String("any"),
+                                       filter);
+
     if (reply.isError()) {
-        qDebug() << "RegisterNDEFAgent error";
-        qDebug() << reply.error().name() << reply.error().message();
-        QDBusConnection::sessionBus().unregisterObject(agentPath);
-        m_freeIds.append(id);
+        delete handler;
         return -1;
     }
 
-    m_registeredHandlers[id] = new NdefHandler(this, ndefAgent, object, method);
+    m_registeredHandlers[id] = handler;
 
     return id;
 }
@@ -215,43 +223,93 @@ int QNearFieldManagerPrivateImpl::registerTargetDetectedHandler(const QString &f
 int QNearFieldManagerPrivateImpl::registerTargetDetectedHandler(QObject *object,
                                                                 const QMetaMethod &method)
 {
-    qDebug() << Q_FUNC_INFO;
+    QFileInfo fi(qApp->applicationFilePath());
+    const QString serviceName = QLatin1String("com.nokia.qtmobility.nfc.") + fi.baseName();
 
-    return registerTargetDetectedHandler(QLatin1String("'*';"), object, method);
+    int id = getFreeId();
+
+    const QString handlerPath = QLatin1String(registeredHandlerPath);
+
+    NdefHandler *handler = new NdefHandler(this, serviceName, handlerPath, object, method);
+    if (!handler->isValid()) {
+        delete handler;
+        return -1;
+    }
+
+    m_registeredHandlers[id] = handler;
+
+    return id;
 }
 
 int QNearFieldManagerPrivateImpl::registerTargetDetectedHandler(const QNdefFilter &filter,
                                                                 QObject *object,
                                                                 const QMetaMethod &method)
 {
-    qDebug() << Q_FUNC_INFO;
+    QString matchString;
 
-    Q_UNUSED(filter);
-    Q_UNUSED(object);
-    Q_UNUSED(method);
+    if (filter.orderMatch())
+        matchString += QLatin1String("sequence:");
+    else
+        matchString += QLatin1String("unordered:");
 
-    return -1;
+    for (int i = 0; i < filter.recordCount(); ++i) {
+        QNdefFilter::Record record = filter.recordAt(i);
+
+        QString type;
+
+        switch (record.typeNameFormat) {
+        case QNdefRecord::NfcRtd:
+            type = QLatin1String("urn:nfc:wkt:") + record.type;
+            break;
+        case QNdefRecord::ExternalRtd:
+            type = QLatin1String("urn:nfc:ext:") + record.type;
+            break;
+        case QNdefRecord::Mime:
+            type = record.type;
+            break;
+        default:
+            qWarning("Unsupported filter type");
+            return -1;
+        }
+
+        matchString += QLatin1Char('\'') + type + QLatin1Char('\'');
+        matchString += QLatin1Char('[');
+
+        if (record.minimum == UINT_MAX)
+            matchString += QLatin1Char('*');
+        else
+            matchString += QString::number(record.minimum);
+
+        matchString += QLatin1Char(':');
+
+        if (record.maximum == UINT_MAX)
+            matchString += QLatin1Char('*');
+        else
+            matchString += QString::number(record.maximum);
+
+        matchString += QLatin1Char(']');
+
+        if (i == filter.recordCount() - 1)
+            matchString += QLatin1Char(';');
+        else
+            matchString += QLatin1Char(',');
+    }
+
+    return registerTargetDetectedHandler(matchString, object, method);
 }
 
 bool QNearFieldManagerPrivateImpl::unregisterTargetDetectedHandler(int handlerId)
 {
-    qDebug() << Q_FUNC_INFO;
-
     if (handlerId < 0 || handlerId >= m_registeredHandlers.count())
         return false;
 
-    const QString agentPath = QLatin1String(ndefAgentPath) + QString::number(handlerId);
-    QDBusConnection::sessionBus().unregisterObject(agentPath);
+    NdefHandler *handler = m_registeredHandlers.take(handlerId);
 
-    delete m_registeredHandlers[handlerId];
-    m_registeredHandlers[handlerId] = 0;
+    QDBusPendingReply<> reply = m_manager->UnregisterNDEFHandler(QLatin1String("system"),
+                                                                 handler->serviceName(),
+                                                                 QDBusObjectPath(handler->path()));
 
-    m_freeIds.append(handlerId);
-
-    while (m_freeIds.contains(m_registeredHandlers.count() - 1)) {
-        m_freeIds.removeAll(m_registeredHandlers.count() - 1);
-        m_registeredHandlers.removeLast();
-    }
+    delete handler;
 
     return true;
 }
@@ -291,8 +349,6 @@ void QNearFieldManagerPrivateImpl::requestAccess(QNearFieldManager::TargetAccess
 
 void QNearFieldManagerPrivateImpl::releaseAccess(QNearFieldManager::TargetAccessModes accessModes)
 {
-    qDebug() << Q_FUNC_INFO;
-
     foreach (const QString &kind, accessModesToKind(accessModes))
         m_adapter->CancelAccessRequest(QDBusObjectPath("/test"), kind);
 
@@ -302,18 +358,12 @@ void QNearFieldManagerPrivateImpl::releaseAccess(QNearFieldManager::TargetAccess
 void QNearFieldManagerPrivateImpl::AccessFailed(const QDBusObjectPath &target,
                                                 const QString &error)
 {
-    qDebug() << Q_FUNC_INFO;
-
     qDebug() << "Access for" << target.path() << "failed with error:" << error;
 }
 
 void QNearFieldManagerPrivateImpl::AccessGranted(const QDBusObjectPath &target,
                                                  const QString &kind)
 {
-    qDebug() << Q_FUNC_INFO;
-
-    qDebug() << "Access granted for" << target.path() << kind;
-
     if (m_pendingDetectedTargets.contains(target.path())) {
         m_pendingDetectedTargets[target.path()].stop();
         m_pendingDetectedTargets.remove(target.path());
@@ -344,8 +394,6 @@ void QNearFieldManagerPrivateImpl::timerEvent(QTimerEvent *event)
 
 void QNearFieldManagerPrivateImpl::emitTargetDetected(const QString &targetPath)
 {
-    qDebug() << Q_FUNC_INFO;
-
     QNearFieldTarget *target = targetForPath(targetPath);
     if (target && matchesTarget(target->type(), m_detectTargetTypes))
         emit targetDetected(target);
@@ -361,8 +409,6 @@ void QNearFieldManagerPrivateImpl::_q_targetDetected(const QString &targetPath)
 
 void QNearFieldManagerPrivateImpl::_q_targetLost(const QString &targetPath)
 {
-    qDebug() << Q_FUNC_INFO;
-
     QNearFieldTarget *nearFieldTarget = m_targets.value(targetPath);
 
     // haven't seen target so just drop this event
@@ -379,13 +425,7 @@ void QNearFieldManagerPrivateImpl::_q_targetLost(const QString &targetPath)
 
 int QNearFieldManagerPrivateImpl::getFreeId()
 {
-    qDebug() << Q_FUNC_INFO;
-
-    if (!m_freeIds.isEmpty())
-        return m_freeIds.takeFirst();
-
-    m_registeredHandlers.append(0);
-    return m_registeredHandlers.count() - 1;
+    return m_registeredHandlers.isEmpty() ? 0 : m_registeredHandlers.keys().last() + 1;
 }
 
 #include "moc_qnearfieldmanager_meego_p.cpp"

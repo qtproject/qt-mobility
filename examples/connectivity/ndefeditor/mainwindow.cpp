@@ -202,6 +202,8 @@ void MainWindow::saveMessage()
 
 void MainWindow::touchReceive()
 {
+    ui->status->setStyleSheet(QLatin1String("background: blue"));
+
     m_touchAction = ReadNdef;
 
     m_manager->setTargetAccessModes(QNearFieldManager::NdefReadTargetAccess);
@@ -209,6 +211,8 @@ void MainWindow::touchReceive()
 
 void MainWindow::touchStore()
 {
+    ui->status->setStyleSheet(QLatin1String("background: yellow"));
+
     m_touchAction = WriteNdef;
 
     m_manager->setTargetAccessModes(QNearFieldManager::NdefWriteTargetAccess);
@@ -243,7 +247,7 @@ void MainWindow::targetLost(QNearFieldTarget *target)
 
 void MainWindow::ndefMessageRead(const QNdefMessage &message)
 {
-    clear();
+    clearMessage();
 
     foreach (const QNdefRecord &record, message) {
         if (record.isRecordType<QNdefNfcTextRecord>()) {
@@ -260,11 +264,13 @@ void MainWindow::ndefMessageRead(const QNdefMessage &message)
         }
     }
 
+    ui->status->setStyleSheet(QString());
     m_manager->setTargetAccessModes(QNearFieldManager::NoTargetAccess);
 }
 
 void MainWindow::ndefMessageWritten()
 {
+    ui->status->setStyleSheet(QString());
     m_manager->setTargetAccessModes(QNearFieldManager::NoTargetAccess);
 }
 
@@ -276,7 +282,7 @@ void MainWindow::targetError(QNearFieldTarget::Error error, const QNearFieldTarg
     m_manager->setTargetAccessModes(QNearFieldManager::NoTargetAccess);
 }
 
-void MainWindow::clear()
+void MainWindow::clearMessage()
 {
     QWidget *scrollArea = ui->scrollAreaWidgetContents;
 
