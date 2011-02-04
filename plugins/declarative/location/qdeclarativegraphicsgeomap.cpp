@@ -92,6 +92,9 @@ QTM_BEGIN_NAMESPACE
 
    \snippet doc/src/snippets/declarative/declarative-map.qml Basic MapObjects and View on Map
 
+   Mouse handling is done by adding MapMouseArea items as children of either
+   MapObjects or the Map item itself.
+
     The Map element is part of the \bold{QtMobility.location 1.2} module.
 */
 QDeclarativeGraphicsGeoMap::QDeclarativeGraphicsGeoMap(QDeclarativeItem *parent)
@@ -414,51 +417,56 @@ qreal QDeclarativeGraphicsGeoMap::zoomLevel() const
 */
 void QDeclarativeGraphicsGeoMap::setCenter(QDeclarativeCoordinate *center)
 {
-    if (!center || center_ == center)
+    if (center_ == center)
         return;
+
+    if (center_) {
+        center_->disconnect(this);
+    }
     center_ = center;
+    if (center_) {
+        connect(center_,
+                SIGNAL(latitudeChanged(double)),
+                this,
+                SLOT(centerLatitudeChanged(double)));
+        connect(center_,
+                SIGNAL(longitudeChanged(double)),
+                this,
+                SLOT(centerLongitudeChanged(double)));
+        connect(center_,
+                SIGNAL(altitudeChanged(double)),
+                this,
+                SLOT(centerAltitudeChanged(double)));
 
-    connect(center_,
-            SIGNAL(latitudeChanged(double)),
-            this,
-            SLOT(centerLatitudeChanged(double)));
-    connect(center_,
-            SIGNAL(longitudeChanged(double)),
-            this,
-            SLOT(centerLongitudeChanged(double)));
-    connect(center_,
-            SIGNAL(altitudeChanged(double)),
-            this,
-            SLOT(centerAltitudeChanged(double)));
-
-    if (mapData_) {
-        mapData_->setCenter(center->coordinate());
+        if (mapData_) {
+            mapData_->setCenter(center_->coordinate());
+        }
     }
     emit declarativeCenterChanged(center_);
 }
 
 QDeclarativeCoordinate* QDeclarativeGraphicsGeoMap::center()
 {
-    if (mapData_)
+    if (mapData_ && center_)
         center_->setCoordinate(mapData_->center());
     return center_;
 }
 
 void QDeclarativeGraphicsGeoMap::centerLatitudeChanged(double /*latitude*/)
 {
-    if (mapData_)
+    if (mapData_ && center_)
         mapData_->setCenter(center_->coordinate());
 }
 
 void QDeclarativeGraphicsGeoMap::centerLongitudeChanged(double /*longitude*/)
 {
-    if (mapData_)
+    if (mapData_ && center_)
         mapData_->setCenter(center_->coordinate());
 }
 
 void QDeclarativeGraphicsGeoMap::centerAltitudeChanged(double /*altitude*/)
 {
-    if (mapData_)
+    if (mapData_ && center_)
         mapData_->setCenter(center_->coordinate());
 }
 
@@ -611,7 +619,7 @@ QDeclarativeGeoMapMouseEvent* QDeclarativeGraphicsGeoMap::createMapMouseEvent(QG
 
     QDeclarativeGeoMapMouseEvent *mouseEvent = new QDeclarativeGeoMapMouseEvent(this);
 
-    mouseEvent->setButtons(event->buttons());
+    mouseEvent->setButton(event->button());
     QGeoCoordinate coordinate = mapData_->screenPositionToCoordinate(event->pos());
     mouseEvent->setCoordinate(new QDeclarativeCoordinate(coordinate, this));
     mouseEvent->setModifiers(event->modifiers());
@@ -675,6 +683,7 @@ void QDeclarativeGraphicsGeoMap::mouseReleaseEvent(QGraphicsSceneMouseEvent *eve
     if (activeMouseArea_)
         activeMouseArea_->releaseEvent(mouseEvent);
     activeMouseArea_ = 0;
+
     /*
 
     if (!mapData_) {
@@ -881,6 +890,12 @@ void QDeclarativeGraphicsGeoMap::internalConnectivityModeChanged(QGraphicsGeoMap
     Adds the given MapOject to the Map. If the object already
     is on the Map, it will not be added again.
 
+    As an example, consider you have a MapCircle presenting your current position:
+
+    \snippet tests/declarative-location/testpolymapobjects.qml Basic map position marker definition
+    You can add it to Map (alterntively it can be defined as a child element of the Map):
+
+    \snippet tests/declarative-location/testpolymapobjects.qml Basic add MapObject
     Note: MapObjectViews can not be added with this method.
 */
 
@@ -899,6 +914,13 @@ void QDeclarativeGraphicsGeoMap::addMapObject(QDeclarativeGeoMapObject *object)
 
     Removes the given MapObject from the Map. If the MapObject does not
     exist, function does nothing.
+
+    As an example, consider you have a MapCircle presenting your current position:
+    \snippet tests/declarative-location/testpolymapobjects.qml Basic map position marker definition
+
+    You can remove it from the Map element:
+    \snippet tests/declarative-location/testpolymapobjects.qml Basic remove MapObject
+
 
 */
 

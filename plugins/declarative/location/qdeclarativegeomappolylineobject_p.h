@@ -60,7 +60,6 @@ class QDeclarativeGeoMapPolylineObject : public QDeclarativeGeoMapObject
 
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeCoordinate> path READ declarativePath NOTIFY pathChanged)
     Q_PROPERTY(QDeclarativeGeoMapObjectBorder* border READ border)
-    Q_CLASSINFO("DefaultProperty", "path")
 
 public:
     QDeclarativeGeoMapPolylineObject(QDeclarativeItem *parent = 0);

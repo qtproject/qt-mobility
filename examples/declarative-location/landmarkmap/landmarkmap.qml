@@ -39,7 +39,7 @@
 ****************************************************************************/
 
 import Qt 4.7
-import QtMobility.location 1.1
+import QtMobility.location 1.2
 import "landmarkmapcommon" as Common
 import "landmarkmapmobile" as Mobile
 
@@ -58,13 +58,12 @@ Item {
     LandmarkBoxFilter {
         id: boxFilter
         topLeft: map.toCoordinate(Qt.point(0,0))
-        bottomRight: map.toCoordinate(Qt.point(page.width, page.height))
+        bottomRight: map.toCoordinate(Qt.point(dataArea.width, dataArea.height))
     }
     
      LandmarkProximityFilter {
          id: proximityFilter
          center: myPositionSource.position.coordinate
-	 //center: Coordinate {latitude: -27; longitude: 153}
          radius: 500000
      }
        
@@ -72,7 +71,7 @@ Item {
         id: landmarkModelAll
         autoUpdate: true
         filter: boxFilter
-        limit: 50
+        limit: 20
         onModelChanged: {
             console.log("All landmark model changed, landmark count: " + count)
         }
@@ -82,7 +81,7 @@ Item {
         id: landmarkModelNear
         autoUpdate: true
         filter: proximityFilter
-        limit: 50
+        limit: 20
         onModelChanged: {
             console.log("Near landmark model changed, landmark count: " + count)
         }
@@ -116,6 +115,12 @@ Item {
         onModelChanged: console.log("Category model changed, category count: " + count)
     }
 
+    Coordinate {
+        id: initCoordinate
+        latitude: -37
+        longitude: 153
+    }
+
     Component {
         id: landmarkCategoryListDelegate
         Item {
@@ -139,48 +144,6 @@ Item {
         color: "#343434"
         //height: toolbar1.y - titleBar.height
         Image { source: "landmarkmapmobile/images/stripes.png"; fillMode: Image.Tile; anchors.fill: parent; opacity: 0.3 }
-
-        MouseArea {
-            anchors.fill: parent
-
-            property bool mouseDown : false
-            property int lastX : -1
-            property int lastY : -1
-
-            onPressed : {
-                mouseDown = true
-                // While panning, its better not to actively udpate the model
-                // as it results in poor performance.
-                landmarkModelAll.autoUpdate = false
-                landmarkModelNear.autoUpdate = false
-                lastX = mouse.x
-                lastY = mouse.y
-            }
-            onReleased : {
-                mouseDown = false
-		landmarkModelAll.autoUpdate = true
-		landmarkModelNear.autoUpdate = true
-                landmarkModel.update()
-                lastX = -1
-                lastY = -1
-            }
-            onPositionChanged: {
-                if (mouseDown) {
-                    var dx = mouse.x - lastX
-                    var dy = mouse.y - lastY
-                    map.pan(-dx, -dy)
-                    page.state = "NoFollowing"
-                    lastX = mouse.x
-                    lastY = mouse.y
-                }
-            }
-            onDoubleClicked: {
-                page.state = "NoFollowing"
-                map.center = map.toCoordinate(Qt.point(mouse.x, mouse.y))
-                if (map.zoomLevel < map.maximumZoomLevel)
-                    map.zoomLevel += 1
-            }
-        }
 
         ListView {
             id: landmarkListView;
@@ -207,9 +170,7 @@ Item {
         //![Category model]
         Map {
             id: map
-            plugin : Plugin {
-                        name : "nokia"
-                    }
+            plugin : Plugin { name : "nokia"}
             anchors.fill: parent
             size.width: parent.width
             size.height: parent.height
@@ -228,7 +189,7 @@ Item {
 	            }
 	        }
 	    }
-	    
+
 	    MapObjectView {
 	        id: landmarksNearMe
 		model: landmarkModelNear
@@ -236,31 +197,15 @@ Item {
 		    MapGroup {
 		        MapCircle {
 	                    color: "red"
-	                    radius: 1000
+                            radius: 10
 		            center: Coordinate {
 	                        latitude: landmark.coordinate.latitude
 		                longitude: landmark.coordinate.longitude
 	                    }
 	                }
-	                
-	                /*
-	                MapText {
-	                    color: "Blue"
-	                    font.pointSize:10
-	                    text: landmark.name
-		            coordinate: Coordinate {
-	                        latitude: landmark.coordinate.latitude
-		                longitude: landmark.coordinate.longitude
-	                    }
-	                }
-	                */
 	            }
 		}
-	    }
-	    
-            center: Coordinate {latitude: -27; longitude: 153}
-            //center: myPositionSource.position.coordinate
-	    
+            }
             onZoomLevelChanged: {
                 console.log("Zoom changed")
                 updateFilters();
@@ -279,6 +224,53 @@ Item {
                 boxFilter.bottomRight = bottomRightCoordinate;
             }
         } // map
+
+        MouseArea {
+            anchors.fill: parent
+
+            property bool mouseDown : false
+            property int lastX : -1
+            property int lastY : -1
+
+            onPressed : {
+                mouseDown = true
+                // While panning, its better not to actively udpate the model
+                // as it results in poor performance.
+                landmarkModelAll.autoUpdate = false
+                landmarkModelNear.autoUpdate = false
+                lastX = mouse.x
+                lastY = mouse.y
+            }
+            onReleased : {
+                mouseDown = false
+                landmarkModelAll.autoUpdate = true
+                landmarkModelNear.autoUpdate = true
+                landmarkModelAll.update()
+                landmarkModelNear.update()
+                lastX = -1
+                lastY = -1
+            }
+            onPositionChanged: {
+                if (mouseDown) {
+                    var dx = mouse.x - lastX
+                    var dy = mouse.y - lastY
+                    map.pan(-dx, -dy)
+                    page.state = "NoFollowing"
+                    myPositionSource.active = false
+                    lastX = mouse.x
+                    lastY = mouse.y
+                }
+            }
+            onDoubleClicked: {
+                page.state = "NoFollowing"
+                myPositionSource.active = false
+                map.center = map.toCoordinate(Qt.point(mouse.x, mouse.y))
+                if (map.zoomLevel < map.maximumZoomLevel)
+                    map.zoomLevel += 1
+            }
+        } // MouseArea
+
+
 
         Mobile.Floater {
             id : dataFloater
@@ -303,7 +295,6 @@ Item {
                 bottomMargin: 5; rightMargin: 5; leftMargin: 5
             }
             onValueChanged: {
-                console.log("Zoom slider value changed to: " + value)
                 map.zoomLevel = value
             }
         }
@@ -339,19 +330,15 @@ Item {
         button1Label: "nmealog.txt"; button2Label: "mylm.lmx"; button3Label: "follow me"
         button3FontColor: "pink"
         onButton1Clicked: {
-            console.log("Clicked, setting nmea log as source");
             myPositionSource.nmeaSource = "nmealog.txt"
             myPositionSource.start()
         }
         onButton2Clicked: {
-            console.log("Clicked, setting import file to get landmarks, count was: " + landmarkModelAll.count);
             landmarkModelAll.importFile = "mylm.lmx"
         }
         onButton3Clicked: {
-            console.log("Clicked, setting map center to follow (rebind map center to myPosition");
-            //if (page.state == "" || page.state == "Following")
-                page.state = "Following"
-                //map.center = myPositionSource.position.coordinate
+            page.state = "Following"
+            myPositionSource.active = true
         }
     }
     // states of page
@@ -371,10 +358,12 @@ Item {
             PropertyChanges { target:  map; center: myPositionSource.position.coordinate}
             PropertyChanges { target: toolbar2; button3FontColor: 'grey'}
             PropertyChanges { target: toolbar2; button3Label: '(following)'}
+            PropertyChanges { target: myPositionSource; active: true}
         }, State {
             name : "NoFollowing"
             PropertyChanges { target: toolbar2; button3FontColor: 'pink'}
             PropertyChanges { target: toolbar2; button3Label: 'follow me'}
+            PropertyChanges { target: myPositionSource; active: false}
         }]
     // state-transition animations for page
     transitions: Transition {

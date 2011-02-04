@@ -57,9 +57,11 @@ MainWindow::MainWindow() :
     tracking(true),
     firstUpdate(true)
 {
+    // our actual maps widget is the centre of the mainwindow
     mapsWidget = new MapsWidget;
     setCentralWidget(mapsWidget);
 
+    // set up the menus
     QMenuBar *mbar = new QMenuBar(this);
     mbar->addAction("My Location", this, SLOT(goToMyLocation()));
 
@@ -74,9 +76,9 @@ MainWindow::MainWindow() :
     navigateMenu->addAction("From here to address", this, SLOT(showNavigateDialog()));
 
     setMenuBar(mbar);
-
     setWindowTitle("Maps Demo");
 
+    // now begin the process of opening the network link
     netConfigManager = new QNetworkConfigurationManager;
     connect(netConfigManager, SIGNAL(updateCompleted()),
             this, SLOT(openNetworkSession()));
@@ -85,6 +87,8 @@ MainWindow::MainWindow() :
 
 void MainWindow::openNetworkSession()
 {
+    // use the default network configuration and make sure that
+    // the link is open
     session = new QNetworkSession(netConfigManager->defaultConfiguration());
     if (session->isOpen()) {
         initialize();
@@ -115,6 +119,8 @@ void MainWindow::initialize()
     if (serviceProvider)
         delete serviceProvider;
 
+    // check we have a valid default provider
+
     QList<QString> providers = QGeoServiceProvider::availableServiceProviders();
     if (providers.size() < 1) {
         QMessageBox::information(this, tr("Maps Demo"),
@@ -130,6 +136,8 @@ void MainWindow::initialize()
         QCoreApplication::quit();
         return;
     }
+
+    // start initialising things (maps, searching, routing)
 
     mapsWidget->initialize(serviceProvider->mappingManager());
 
@@ -147,6 +155,8 @@ void MainWindow::initialize()
 
     if (positionSource)
         delete positionSource;
+
+    // set up position feeds (eg GPS)
 
     positionSource = QGeoPositionInfoSource::createDefaultSource(this);
 
@@ -189,6 +199,8 @@ void MainWindow::showNavigateDialog()
 
             req.setTravelModes(nd.travelMode());
 
+            // tell the old navigator instance to delete itself
+            // so that its map objects will disappear
             if (lastNavigator)
                 lastNavigator->deleteLater();
 
