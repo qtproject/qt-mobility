@@ -56,7 +56,7 @@ class QGeoMapData;
 class QGeoMapObject;
 class QGeoMapObjectInfoPrivate;
 
-/* This class is only here for binary compatiblity reasons and
+/* This class is only here for binary compatibility reasons and
   is no longer in actual use. */
 
 class Q_LOCATION_EXPORT QGeoMapObjectInfo : public QObject
