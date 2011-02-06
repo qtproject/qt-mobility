@@ -68,7 +68,8 @@ QGeoMapRectangleObject::QGeoMapRectangleObject()
     : d_ptr(new QGeoMapRectangleObjectPrivate())
 {
     setGraphicsItem(d_ptr->item);
-    setUnits(QGeoMapObject::RelativeArcSecondUnit);
+    setUnits(QGeoMapObject::AbsoluteArcSecondUnit);
+    setTransformType(QGeoMapObject::ExactTransform);
 }
 
 /*!
@@ -79,10 +80,9 @@ QGeoMapRectangleObject::QGeoMapRectangleObject(const QGeoBoundingBox &boundingBo
 {
     d_ptr->bounds = boundingBox;
     setGraphicsItem(d_ptr->item);
-    setUnits(QGeoMapObject::RelativeArcSecondUnit);
-    setOrigin(boundingBox.center());
-    d_ptr->item->setRect(-0.5*boundingBox.width()*3600.0, -0.5*boundingBox.height()*3600.0,
-                         0.5*boundingBox.width()*3600.0, 0.5*boundingBox.height()*3600.0);
+    setUnits(QGeoMapObject::AbsoluteArcSecondUnit);
+    setTransformType(QGeoMapObject::ExactTransform);
+    d_ptr->regenPolygon();
 }
 
 /*!
@@ -94,10 +94,9 @@ QGeoMapRectangleObject::QGeoMapRectangleObject(const QGeoCoordinate &topLeft, co
 {
     d_ptr->bounds = QGeoBoundingBox(topLeft, bottomRight);
     setGraphicsItem(d_ptr->item);
-    setUnits(QGeoMapObject::RelativeArcSecondUnit);
-    setOrigin(d_ptr->bounds.center());
-    d_ptr->item->setRect(-0.5*d_ptr->bounds.width()*3600.0, -0.5*d_ptr->bounds.height()*3600.0,
-                         0.5*d_ptr->bounds.width()*3600.0, 0.5*d_ptr->bounds.height()*3600.0);
+    setUnits(QGeoMapObject::AbsoluteArcSecondUnit);
+    setTransformType(QGeoMapObject::ExactTransform);
+    d_ptr->regenPolygon();
 }
 
 /*!
@@ -151,9 +150,7 @@ void QGeoMapRectangleObject::setBounds(const QGeoBoundingBox &bounds)
         return;
 
     d_ptr->bounds = bounds;
-    setOrigin(d_ptr->bounds.center());
-    d_ptr->item->setRect(-0.5*d_ptr->bounds.width()*3600.0, -0.5*d_ptr->bounds.height()*3600.0,
-                         0.5*d_ptr->bounds.width()*3600.0, 0.5*d_ptr->bounds.height()*3600.0);
+    d_ptr->regenPolygon();
 
     if (d_ptr->bounds.topLeft() != oldBounds.topLeft())
         emit topLeftChanged(d_ptr->bounds.topLeft());
@@ -183,9 +180,7 @@ void QGeoMapRectangleObject::setTopLeft(const QGeoCoordinate &topLeft)
     if (d_ptr->bounds.topLeft() != topLeft) {
         d_ptr->bounds.setTopLeft(topLeft);
         emit topLeftChanged(d_ptr->bounds.topLeft());
-        setOrigin(d_ptr->bounds.center());
-        d_ptr->item->setRect(-0.5*d_ptr->bounds.width()*3600.0, -0.5*d_ptr->bounds.height()*3600.0,
-                             0.5*d_ptr->bounds.width()*3600.0, 0.5*d_ptr->bounds.height()*3600.0);
+        d_ptr->regenPolygon();
         update();
     }
 }
@@ -209,9 +204,7 @@ void QGeoMapRectangleObject::setBottomRight(const QGeoCoordinate &bottomRight)
     if (d_ptr->bounds.bottomRight() != bottomRight) {
         d_ptr->bounds.setBottomRight(bottomRight);
         emit bottomRightChanged(d_ptr->bounds.bottomRight());
-        setOrigin(d_ptr->bounds.center());
-        d_ptr->item->setRect(-0.5*d_ptr->bounds.width()*3600.0, -0.5*d_ptr->bounds.height()*3600.0,
-                             0.5*d_ptr->bounds.width()*3600.0, 0.5*d_ptr->bounds.height()*3600.0);
+        d_ptr->regenPolygon();
         update();
     }
 }
@@ -307,7 +300,7 @@ void QGeoMapRectangleObject::setBrush(const QBrush &brush)
 *******************************************************************************/
 
 QGeoMapRectangleObjectPrivate::QGeoMapRectangleObjectPrivate() :
-    item(new QGraphicsRectItem)
+    item(new QGraphicsPolygonItem)
 {
     QPen pen = item->pen();
     pen.setCosmetic(true);
@@ -316,6 +309,22 @@ QGeoMapRectangleObjectPrivate::QGeoMapRectangleObjectPrivate() :
 
 QGeoMapRectangleObjectPrivate::~QGeoMapRectangleObjectPrivate()
 {
+}
+
+void QGeoMapRectangleObjectPrivate::regenPolygon()
+{
+    QPolygonF poly;
+
+    const QGeoCoordinate tl = bounds.topLeft();
+    poly << QPointF(tl.longitude()*3600.0, tl.latitude()*3600.0);
+    const QGeoCoordinate tr = bounds.topRight();
+    poly << QPointF(tr.longitude()*3600.0, tr.latitude()*3600.0);
+    const QGeoCoordinate br = bounds.bottomRight();
+    poly << QPointF(br.longitude()*3600.0, br.latitude()*3600.0);
+    const QGeoCoordinate bl = bounds.bottomLeft();
+    poly << QPointF(bl.longitude()*3600.0, bl.latitude()*3600.0);
+
+    item->setPolygon(poly);
 }
 
 #include "moc_qgeomaprectangleobject.cpp"

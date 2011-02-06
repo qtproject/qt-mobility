@@ -46,7 +46,7 @@
 
 #include <QPen>
 #include <QBrush>
-#include <QGraphicsRectItem>
+#include <QGraphicsPolygonItem>
 
 QTM_BEGIN_NAMESPACE
 
@@ -56,8 +56,10 @@ public:
     QGeoMapRectangleObjectPrivate();
     ~QGeoMapRectangleObjectPrivate();
 
+    void regenPolygon();
+
     QGeoBoundingBox bounds;
-    QGraphicsRectItem *item;
+    QGraphicsPolygonItem *item;
 };
 
 QTM_END_NAMESPACE
