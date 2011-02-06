@@ -118,8 +118,8 @@ public:
                     instance = static_cast<T *>(obj);
                     break;
                 }
-                    
-            } while ((source = source->superClass()));
+                source = source->superClass();
+            } while (source != 0);
             if (!instance)
                 delete obj;
         }

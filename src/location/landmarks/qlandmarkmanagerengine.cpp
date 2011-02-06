@@ -1357,8 +1357,6 @@ bool QLandmarkManagerEngine::testFilter(const QLandmarkFilter& filter, const QLa
                 }
                 return false;
             }
-            //should not be reachable
-            return false;
         }
     }
     return false;

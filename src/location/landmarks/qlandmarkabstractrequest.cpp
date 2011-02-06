@@ -401,7 +401,6 @@ bool QLandmarkAbstractRequest::waitForFinished(int msecs)
         default:
             return false;
     }
-    return false;
 }
 
 /*!

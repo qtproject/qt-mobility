@@ -68,10 +68,10 @@ S60VideoPlayerSession::S60VideoPlayerSession(QMediaService *service)
 #endif
     , m_videoOutput(0)
     , m_displayWindow(0)
-    , m_audioEndpoint(DefaultAudioEndpoint)
 #ifdef HAS_AUDIOROUTING_IN_VIDEOPLAYER
     , m_audioOutput(0)
 #endif
+    , m_audioEndpoint(DefaultAudioEndpoint)
     , m_pendingChanges(0)
 {
 #ifdef MMF_VIDEO_SURFACES_SUPPORTED

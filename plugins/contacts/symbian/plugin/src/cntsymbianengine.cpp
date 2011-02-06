@@ -456,6 +456,8 @@ bool CntSymbianEngine::addContact(QContact& contact, QContactChangeSet& changeSe
         changeSet.insertAddedContact(id);
         m_dataBase->appendContactEmitted(id);
     }
+#else
+    Q_UNUSED(id)
 #endif
     CntSymbianTransformError::transformError(err, qtError);
     return (err==KErrNone);

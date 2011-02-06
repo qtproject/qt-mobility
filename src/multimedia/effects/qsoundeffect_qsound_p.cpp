@@ -61,13 +61,13 @@ QT_BEGIN_NAMESPACE
 
 QSoundEffectPrivate::QSoundEffectPrivate(QObject* parent):
     QObject(parent),
+    m_playing(false),
+    m_timerID(0),
     m_muted(false),
     m_loopCount(1),
     m_volume(100),
-    m_sound(0),
-    m_timerID(0),
-    m_playing(false),
-    m_status(QSoundEffect::Null)
+    m_status(QSoundEffect::Null),
+    m_sound(0)
 {
     if (!QSound::isAvailable())
         qWarning("SoundEffect(qsound) : not available");
