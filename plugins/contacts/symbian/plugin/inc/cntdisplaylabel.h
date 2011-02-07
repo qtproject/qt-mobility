@@ -58,7 +58,6 @@ QTM_USE_NAMESPACE
 class CRepository;
 class CntDisplayLabel;
 
-#ifdef SYMBIAN_BACKEND_USE_CNTMODEL_V2
 #include <centralrepository.h>
 
 // CONSTANTS
@@ -81,6 +80,12 @@ enum NameOrder {
     CntOrderLastFirst = 0x0,
     CntOrderLastCommaFirst = 0x1,
     CntOrderFirstLast = 0x2
+};
+
+class MDisplayLabel
+{
+public:
+    virtual void updateNameOrdering() = 0;
 };
 
 /**
@@ -109,18 +114,7 @@ private:
     int                         iValue;
 };
 
-#endif
-
-class MDisplayLabel
-{
-public:
-    virtual void updateNameOrdering() = 0;
-};
-
-class CntDisplayLabel : public QObject
-#ifdef SYMBIAN_BACKEND_USE_CNTMODEL_V2
-                        ,public MDisplayLabel
-#endif
+class CntDisplayLabel : public QObject, public MDisplayLabel
 {
     Q_OBJECT
     
@@ -131,10 +125,7 @@ public:
     QString synthesizedDisplayLabel( const QContact& contact, QContactManager::Error* error);
     QList<QPair<QLatin1String, QLatin1String> > contactFilterDetails() const;
     QList<QPair<QLatin1String, QLatin1String> > groupFilterDetails() const;
-    
-#ifdef SYMBIAN_BACKEND_USE_CNTMODEL_V2
     void updateNameOrdering();
-#endif
 
 signals:
     void displayLabelChanged();
@@ -148,10 +139,8 @@ private:
 private:
     QList<QList<QPair<QLatin1String, QLatin1String> > > m_contactDisplayLabelDetails;
     QList<QList<QPair<QLatin1String, QLatin1String> > > m_groupDisplayLabelDetails;
-#ifdef SYMBIAN_BACKEND_USE_CNTMODEL_V2
     CntCenrep* m_settings;
     int m_nameOrder;
-#endif
 };
 
 #endif /* CNTDISPLAYLABEL_H_ */
