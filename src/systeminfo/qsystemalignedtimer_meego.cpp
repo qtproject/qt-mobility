@@ -42,6 +42,10 @@
 
 #include "qsystemalignedtimer.h"
 #include "qsystemalignedtimer_meego_p.h"
+#include <QDebug>
+
+#include <errno.h>
+#include <stdio.h>
 
 QTM_BEGIN_NAMESPACE
 
@@ -58,13 +62,16 @@ QSystemAlignedTimerPrivate::QSystemAlignedTimerPrivate(QObject *parent) :
     m_iphbdHandler = iphb_open(0);
 
     if (!m_iphbdHandler) {
-        m_lastError = QSystemAlignedTimer::AlignedTimerNotSupported;
+        m_lastError = QSystemAlignedTimer::InternalError;
+        qDebug() << "iphb_open error" << m_iphbdHandler<< errno <<strerror(errno);
         return;
     }
 
+
     int sockfd = iphb_get_fd(m_iphbdHandler);
     if (!(sockfd > -1)) {
-        m_lastError = QSystemAlignedTimer::AlignedTimerNotSupported;
+        m_lastError = QSystemAlignedTimer::InternalError;
+        qDebug() << "socket failure"<<strerror(errno);
         return;
     }
 
@@ -72,6 +79,7 @@ QSystemAlignedTimerPrivate::QSystemAlignedTimerPrivate(QObject *parent) :
     if (!QObject::connect(m_notifier, SIGNAL(activated(int)), this, SLOT(heartbeatReceived(int)))) {
         delete m_notifier, m_notifier = 0;
         m_lastError = QSystemAlignedTimer::TimerFailed;
+        qDebug() << "timer failure";
         return;
     }
     m_notifier->setEnabled(false);
@@ -90,6 +98,17 @@ QSystemAlignedTimerPrivate::~QSystemAlignedTimerPrivate()
 
 void QSystemAlignedTimerPrivate::wokeUp()
 {
+    if (m_singleShot) {
+        stop();
+        return;
+    }
+
+    int st = iphb_I_woke_up(m_iphbdHandler);
+    if (!(st >= 0)) {
+        m_lastError = QSystemAlignedTimer::TimerFailed;
+        emit error(m_lastError);
+        stop();
+    }
 }
 
 int QSystemAlignedTimerPrivate::minimumInterval() const
@@ -157,7 +176,7 @@ void QSystemAlignedTimerPrivate::start()
     }
 
     if (!(m_iphbdHandler && m_notifier)) {
-        m_lastError = QSystemAlignedTimer::AlignedTimerNotSupported;
+        m_lastError = QSystemAlignedTimer::InternalError;
         emit error(m_lastError);
         return;
     }
@@ -183,7 +202,7 @@ void QSystemAlignedTimerPrivate::stop()
     }
 
     if (!(m_iphbdHandler && m_notifier)) {
-        m_lastError = QSystemAlignedTimer::AlignedTimerNotSupported;
+        m_lastError = QSystemAlignedTimer::InternalError;
         emit error(m_lastError);
         return;
     }
@@ -211,6 +230,11 @@ void QSystemAlignedTimerPrivate::heartbeatReceived(int sock) {
 void QSystemAlignedTimerPrivate::singleShot() {
    QMetaObject::invokeMethod(m_singleShotReceiver, m_singleShotMember);
    this->deleteLater();
+}
+
+bool QSystemAlignedTimerPrivate::isActive () const
+{
+    return m_running;
 }
 
 #include "moc_qsystemalignedtimer_meego_p.cpp"

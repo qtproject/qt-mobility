@@ -44,7 +44,7 @@
 
 #include "s60mediaplayersession.h"
 #include "s60mediaplayeraudioendpointselector.h"
-
+#include "s60medianetworkaccesscontrol.h"
 #ifdef MMF_VIDEO_SURFACES_SUPPORTED
 #include <videoplayer2.h>
 #else
@@ -61,6 +61,7 @@
 
 class QTimer;
 class S60VideoOutputInterface;
+class S60MediaNetworkAccessControl;
 
 class S60VideoPlayerSession : public S60MediaPlayerSession
                             , public MVideoPlayerUtilityObserver
@@ -71,7 +72,7 @@ class S60VideoPlayerSession : public S60MediaPlayerSession
 {
     Q_OBJECT
 public:
-    S60VideoPlayerSession(QMediaService *service);
+    S60VideoPlayerSession(QMediaService *service, S60MediaNetworkAccessControl *object);
     ~S60VideoPlayerSession();
 
     // From S60MediaPlayerSession
@@ -95,6 +96,9 @@ public:
 
 public Q_SLOTS:
     void setActiveEndpoint(const QString& name);
+
+signals:
+    void accessPointChanged(int);
 
 protected:
     // From S60MediaPlayerSession
@@ -132,7 +136,7 @@ private:
 #ifdef HAS_AUDIOROUTING_IN_VIDEOPLAYER
     QString qStringFromTAudioOutputPreference(CAudioOutput::TAudioOutputPreference output) const;
 #endif
-    
+
     // From MVideoPlayerUtilityObserver
     void MvpuoOpenComplete(TInt aError);
     void MvpuoPrepareComplete(TInt aError);
@@ -141,6 +145,8 @@ private:
     void MvpuoEvent(const TMMFEvent &aEvent);
 
 private:
+    int m_accessPointId;
+    S60MediaNetworkAccessControl* m_networkAccessControl;
     RWsSession *const m_wsSession;
     CWsScreenDevice *const m_screenDevice;
     QMediaService *const m_service;

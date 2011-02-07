@@ -218,4 +218,6 @@ EXPORTS
 	?wokeUp@QSystemAlignedTimer@QtMobility@@QAEXXZ @ 217 NONAME ; void QtMobility::QSystemAlignedTimer::wokeUp(void)
 	?staticMetaObject@QSystemAlignedTimer@QtMobility@@2UQMetaObject@@B @ 218 NONAME ; struct QMetaObject const QtMobility::QSystemAlignedTimer::staticMetaObject
 	?staticMetaObject@QSystemBatteryInfo@QtMobility@@2UQMetaObject@@B @ 219 NONAME ; struct QMetaObject const QtMobility::QSystemBatteryInfo::staticMetaObject
+	?isActive@QSystemAlignedTimer@QtMobility@@QBE_NXZ @ 220 NONAME ; bool QtMobility::QSystemAlignedTimer::isActive(void) const
+	?orientationChanged@QSystemDisplayInfo@QtMobility@@IAEXW4DisplayOrientation@12@@Z @ 221 NONAME ; void QtMobility::QSystemDisplayInfo::orientationChanged(enum QtMobility::QSystemDisplayInfo::DisplayOrientation)
 

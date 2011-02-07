@@ -64,6 +64,7 @@ class S60MediaStreamControl;
 class S60MediaRecognizer;
 
 class QMediaPlaylistNavigator;
+class S60MediaNetworkAccessControl;
 
 class S60MediaPlayerService : public QMediaService, public MS60MediaPlayerResolver
 {
@@ -89,6 +90,7 @@ private:
     S60MediaMetaDataProvider *m_metaData;
     S60MediaPlayerAudioEndpointSelector *m_audioEndpointSelector;
     S60MediaStreamControl *m_streamControl;
+    S60MediaNetworkAccessControl *m_networkAccessControl;
     QMediaControl *m_videoOutput;
 };
 

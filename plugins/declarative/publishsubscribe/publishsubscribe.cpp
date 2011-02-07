@@ -44,12 +44,11 @@
 
 #include "qvaluespacesubscriber.h"
 #include "qdeclarativevaluespacepublisher_p.h"
+#include "qdeclarativevaluespacesubscriber_p.h"
 
 QT_BEGIN_NAMESPACE
 
 QTM_USE_NAMESPACE
-
-QML_DECLARE_TYPE(QValueSpaceSubscriber);
 
 class QSubscriberDeclarativeModule : public QDeclarativeExtensionPlugin
 {
@@ -59,7 +58,7 @@ public:
     {
         Q_ASSERT(QLatin1String(uri) == QLatin1String("QtMobility.publishsubscribe"));
 
-        qmlRegisterType<QValueSpaceSubscriber>(uri, 1, 1, "ValueSpaceSubscriber");
+        qmlRegisterType<QDeclarativeValueSpaceSubscriber>(uri, 1, 1, "ValueSpaceSubscriber");
         qmlRegisterType<QDeclarativeValueSpacePublisher>(uri, 1, 2, "ValueSpacePublisher");
     }
 };

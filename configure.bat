@@ -408,6 +408,7 @@ echo isEmpty($$QT_MOBILITY_DEMOS):QT_MOBILITY_DEMOS=$$QT_MOBILITY_PREFIX/bin >> 
 
 echo mobility_modules = %MOBILITY_MODULES%  >> %PROJECT_CONFIG%
 echo contains(mobility_modules,versit): mobility_modules *= contacts >> %PROJECT_CONFIG%
+echo contains(mobility_modules,connectivity): mobility_modules *= serviceframework >> %PROJECT_CONFIG%
 
 echo Checking available Qt
 call %QT_PATH%qmake -v >> %PROJECT_LOG% 2>&1
@@ -578,6 +579,9 @@ call :compileTest CHWRMHaptics chwrmhaptics
 call :compileTest MDS mds
 call :compileTest MDS_25 mds_25
 call :compileTest MDS_25_92MCL mds_25_92mcl
+call :compileTest Symbian_NFC nfc
+call :compileTest BTEngineConnectionManager_Symbian btengconnman_symbian
+call :compileTest BTEngineDeviceManager_Symbian btengdevman_symbian
 goto noTests
 
 :windowsTests
@@ -675,6 +679,8 @@ if %FIRST% == bearer (
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtConnectivity %SOURCE_PATH%\src\connectivity
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtConnectivity %SOURCE_PATH%\src\connectivity\nfc
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtConnectivity %SOURCE_PATH%\src\connectivity\bluetooth
+    REM connectivity/nfc implies sfw
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtServiceFramework %SOURCE_PATH%\src\serviceframework
 )
 
 if "%REMAINING%" == "" (

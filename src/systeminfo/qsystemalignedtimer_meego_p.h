@@ -77,14 +77,17 @@ public:
     static void singleShot(int minimumTime, int maximumTime, QObject *receiver, const char *member);
     QSystemAlignedTimer::AlignedTimerError lastError() const;
 
+    bool isActive() const;
+    QSystemAlignedTimer::AlignedTimerError m_lastError;
 Q_SIGNALS:
     void timeout();
     void error(QSystemAlignedTimer::AlignedTimerError error);
 
 private:
-    QSystemAlignedTimer::AlignedTimerError m_lastError;
-    int m_minimumInterval, m_maximumInterval;
-    bool m_running, m_singleShot;
+    int m_minimumInterval;
+    int m_maximumInterval;
+    bool m_running;
+    bool m_singleShot;
     iphb_t m_iphbdHandler;
     QSocketNotifier *m_notifier;
     QObject *m_singleShotReceiver;
@@ -94,7 +97,7 @@ public Q_SLOTS:
     void start(int minimumTime, int maximumTime);
     void start();
     void stop();
-    
+
 private Q_SLOTS:
     void heartbeatReceived(int sock);
     void singleShot();

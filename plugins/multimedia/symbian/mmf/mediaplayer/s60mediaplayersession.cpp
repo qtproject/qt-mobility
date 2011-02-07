@@ -50,6 +50,7 @@
 
 S60MediaPlayerSession::S60MediaPlayerSession(QObject *parent)
     : QObject(parent)
+    , m_stream(false)
     , m_playbackRate(0)
     , m_muted(false)
     , m_volume(0)
@@ -59,7 +60,6 @@ S60MediaPlayerSession::S60MediaPlayerSession(QObject *parent)
     , m_stalledTimer(new QTimer(this))
     , m_error(KErrNone)
     , m_play_requested(false)
-    , m_stream(false)
     , m_seekable(true)
 {    
     connect(m_progressTimer, SIGNAL(timeout()), this, SLOT(tick()));
@@ -141,12 +141,18 @@ void S60MediaPlayerSession::load(QUrl url)
     setMediaStatus(QMediaPlayer::LoadingMedia);
     startStalledTimer();
     m_stream = (url.scheme() == "file")?false:true;
+    m_UrlPath = url;
     TRAPD(err,
         if(m_stream)
             doLoadUrlL(QString2TPtrC(url.toString()));
         else
             doLoadL(QString2TPtrC(QDir::toNativeSeparators(url.toLocalFile()))));
     setError(err);
+}
+
+TBool S60MediaPlayerSession::isStreaming()
+{
+    return m_stream;
 }
 
 void S60MediaPlayerSession::play()
@@ -156,8 +162,11 @@ void S60MediaPlayerSession::play()
         || mediaStatus() == QMediaPlayer::NoMedia
         || mediaStatus() == QMediaPlayer::InvalidMedia)
         return;
-    
-    if (mediaStatus() == QMediaPlayer::LoadingMedia) {
+
+    if (mediaStatus() == QMediaPlayer::LoadingMedia ||
+       (mediaStatus() == QMediaPlayer::StalledMedia &&
+        state() == QMediaPlayer::StoppedState))
+   {
         m_play_requested = true;
         return;
     }
