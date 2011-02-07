@@ -46,7 +46,7 @@
 
 #include "qbluetoothlocaldevice.h"
 
-#ifdef Q_OS_SYMBIAN
+#ifdef QTM_SYMBIAN_BLUETOOTH
 #include <e32base.h>
 #include <btengsettings.h>
 #endif
@@ -108,7 +108,7 @@ private:
 };
 #endif
 
-#ifdef Q_OS_SYMBIAN
+#ifdef QTM_SYMBIAN_BLUETOOTH
 class QBluetoothLocalDevicePrivate
         : public MBTEngSettingsObserver
 {
