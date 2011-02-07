@@ -207,6 +207,9 @@ contains(build_demos, yes):SUBDIRS+=demos
         INSTALLS += qtmheaderconnectivity
     }
 } else {
+    # following needs to be set because symbian-abld or symbian-sbsv2 is not yet
+    # defined in platform_paths.prf and the prj_export gets confused about paths.
+    epocroot_prefix = /
     #absolute path does not work and 
     #include <QtMyLibrary/class.h> style does not work either
     qtmGlobalHeaders = include/QtMobility/*

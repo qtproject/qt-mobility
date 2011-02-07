@@ -268,9 +268,10 @@ bool QBluetoothServiceInfo::registerService() const
         return false;
 
     foreach (quint16 id, d->attributes.keys()) {
-        d->setRegisteredAttribute(id, d->attributes[id]);
-        if (id == ServiceRecordHandle)
-            d->serviceRecord = d->attributes[id].toUInt();
+        // Changing service record handle causes serious problems
+        // on Symbian devices. Hence passing the value update.
+        if (id != ServiceRecordHandle)
+            d->setRegisteredAttribute(id, d->attributes[id]);
     }
 
     return true;

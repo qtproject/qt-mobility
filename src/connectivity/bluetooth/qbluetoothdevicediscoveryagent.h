@@ -76,6 +76,7 @@ public:
     };
 
     QBluetoothDeviceDiscoveryAgent(QObject *parent = 0);
+    ~QBluetoothDeviceDiscoveryAgent();
 
     QBluetoothDeviceDiscoveryAgent::InquiryType inquiryType() const;
     void setInquiryType(QBluetoothDeviceDiscoveryAgent::InquiryType type);

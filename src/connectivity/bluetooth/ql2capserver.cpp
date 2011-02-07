@@ -41,6 +41,7 @@
 
 #include "ql2capserver.h"
 #include "ql2capserver_p.h"
+#include "qbluetoothsocket.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -148,7 +149,9 @@ QL2capServer::~QL2capServer()
 */
 bool QL2capServer::isListening() const
 {
-    return false;
+    Q_D(const QL2capServer);
+
+    return d->socket->state() == QBluetoothSocket::ListeningState;
 }
 
 /*!
@@ -158,7 +161,9 @@ bool QL2capServer::isListening() const
 */
 int QL2capServer::maxPendingConnections() const
 {
-    return 0;
+    Q_D(const QL2capServer);
+
+    return d->maxPendingConnections;
 }
 
 /*!
