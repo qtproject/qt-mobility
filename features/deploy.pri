@@ -11,9 +11,9 @@ contains(TEMPLATE,.*lib) {
         QMAKE_PKGCONFIG_LIBDIR = $$target.path
         QMAKE_PKGCONFIG_INCDIR = $$headers.path
         QMAKE_PKGCONFIG_CFLAGS = -I$${QT_MOBILITY_INCLUDE}/QtMobility
-        pkgconfig.path = $$QT_MOBILITY_LIB/pkgconfig
-        pkgconfig.files = $$TARGET.pc
 
+        pkgconfig.files = $${TARGET}.pc
+        pkgconfig.path = $$QT_MOBILITY_LIB/pkgconfig
         INSTALLS += pkgconfig
     }
 
