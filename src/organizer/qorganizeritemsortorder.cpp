@@ -180,13 +180,22 @@ QDataStream& operator>>(QDataStream& in, QOrganizerItemSortOrder& sortOrder)
  */
 QDebug operator<<(QDebug dbg, const QOrganizerItemSortOrder& sortOrder)
 {
-    dbg.nospace() << "QOrganizerItemSortOrder("
-                  << "detailDefinitionName=" << sortOrder.detailDefinitionName() << ","
-                  << "detailFieldName=" << sortOrder.detailFieldName() << ","
-                  << "blankPolicy=" << static_cast<quint32>(sortOrder.blankPolicy()) << ","
-                  << "direction=" << static_cast<quint32>(sortOrder.direction()) << ","
-                  << "caseSensitivity=" << static_cast<quint32>(sortOrder.caseSensitivity())
-                  << ")";
+    dbg.nospace() << "QOrganizerItemSortOrder(";
+    dbg.nospace() << "detailDefinitionName=";
+    dbg.nospace() << sortOrder.detailDefinitionName();
+    dbg.nospace() << ",";
+    dbg.nospace() << "detailFieldName=";
+    dbg.nospace() << sortOrder.detailFieldName();
+    dbg.nospace() << ",";
+    dbg.nospace() << "blankPolicy=";
+    dbg.nospace() << static_cast<quint32>(sortOrder.blankPolicy());
+    dbg.nospace() << ","; 
+    dbg.nospace() << "direction=";
+    dbg.nospace() << static_cast<quint32>(sortOrder.direction());
+    dbg.nospace() << ",";
+    dbg.nospace() << "caseSensitivity=";
+    dbg.nospace() << static_cast<quint32>(sortOrder.caseSensitivity());
+    dbg.nospace() << ")";
     return dbg.maybeSpace();
 }
 #endif

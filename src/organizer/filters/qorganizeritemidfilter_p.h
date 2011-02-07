@@ -104,7 +104,8 @@ public:
     QDebug& debugStreamOut(QDebug& dbg) const
     {
         dbg.nospace() << "QOrganizerItemIdFilter(";
-        dbg.nospace() << "ids=" << m_ids;
+        dbg.nospace() << "ids=";
+        dbg.nospace() << m_ids;
         dbg.nospace() << ")";
         return dbg.maybeSpace();
     }
