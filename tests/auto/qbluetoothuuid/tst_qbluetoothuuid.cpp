@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include <QtTest/QtTest>
+#include <QUuid>
 
 #include <QDebug>
 
@@ -112,6 +113,30 @@ void tst_QBluetoothUuid::tst_construction()
         QBluetoothUuid copy(uuid);
 
         QCOMPARE(uuid.toUInt16(), copy.toUInt16());
+    }
+
+    {
+        QBluetoothUuid uuid(QBluetoothUuid::L2cap);
+
+        QVERIFY(!uuid.isNull());
+
+        bool ok;
+        quint16 uuid16;
+
+        uuid16 = uuid.toUInt16(&ok);
+
+        QVERIFY(ok);
+        QCOMPARE(uuid16, static_cast<quint16>(QBluetoothUuid::L2cap));
+    }
+
+    {
+        QUuid uuid(0x67c8770b, 0x44f1, 0x410a, 0xab, 0x9a, 0xf9, 0xb5, 0x44, 0x6f, 0x13, 0xee);
+        QBluetoothUuid btUuid(uuid);
+        QVERIFY(!btUuid.isNull());
+
+        QString uuidString(btUuid.toString());
+        QVERIFY(!uuidString.isEmpty());
+        QCOMPARE(uuidString, QString("{67c8770b-44f1-410a-ab9a-f9b5446f13ee}"));
     }
 }
 
