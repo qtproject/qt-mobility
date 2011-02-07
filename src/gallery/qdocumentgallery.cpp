@@ -210,7 +210,8 @@ Q_DEFINE_GALLERY_TYPE(QDocumentGallery, Document)
 /*!
     \variable QDocumentGallery::Text
 
-    This type matches all text files in the document gallery.
+    This type matches all plain text files, e.g. HTML files, in the document
+    gallery.
 
     In addition to the properties derived from the \l File type text files may
     also provide:
