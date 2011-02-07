@@ -44,7 +44,7 @@
 
 Dialog::Dialog() :
     QWidget(),
-    saver(NULL), systemInfo(NULL), di(NULL), ni(NULL),sti(NULL),bi(NULL)
+    saver(NULL), systemInfo(NULL), di(NULL), ni(NULL),sti(NULL),bi(NULL),dis(NULL)
 {
     setupUi(this);
     setupGeneral();
@@ -63,6 +63,7 @@ Dialog::~Dialog()
     delete systemInfo;
     delete di;
     delete saver;
+    delete dis;
 }
 
 void Dialog::changeEvent(QEvent *e)
@@ -239,39 +240,24 @@ void Dialog::updateProfile(QSystemDeviceInfo::Profile /*profile*/)
 
 void Dialog::setupDisplay()
 {
-    QSystemDisplayInfo di;
-    brightnessLabel->setText(QString::number(di.displayBrightness(0)));
-    colorDepthLabel->setText(QString::number(di.colorDepth((0))));
+    if(!dis) {
+        dis = new QSystemDisplayInfo(this);
+        connect(dis,SIGNAL(orientationChanged(QSystemDisplayInfo::DisplayOrientation)),
+                this,SLOT(orientationChanged(QSystemDisplayInfo::DisplayOrientation )));
 
-    QSystemDisplayInfo::DisplayOrientation orientation = di.orientation(0);
-    QString orientStr;
-    switch(orientation) {
-    case QSystemDisplayInfo::Landscape:
-        orientStr="Landscape";
-        break;
-    case QSystemDisplayInfo::Portrait:
-        orientStr="Portrait";
-        break;
-    case QSystemDisplayInfo::InvertedLandscape:
-        orientStr="Inverted Landscape";
-        break;
-    case QSystemDisplayInfo::InvertedPortrait:
-        orientStr="Inverted Portrait";
-        break;
-    default:
-        orientStr="Orientation unknown";
-        break;
     }
+    brightnessLabel->setText(QString::number(dis->displayBrightness(0)));
+    colorDepthLabel->setText(QString::number(dis->colorDepth((0))));
 
-    orientationLabel->setText(orientStr);
+    orientationChanged(dis->orientation(0));
 
-    contrastLabel->setText(QString::number(di.contrast((0))));
+    contrastLabel->setText(QString::number(dis->contrast((0))));
 
-    dpiWidthLabel->setText(QString::number(di.getDPIWidth(0)));
-    dpiHeightLabel->setText(QString::number(di.getDPIHeight((0))));
+    dpiWidthLabel->setText(QString::number(dis->getDPIWidth(0)));
+    dpiHeightLabel->setText(QString::number(dis->getDPIHeight((0))));
 
-    physicalHeightLabel->setText(QString::number(di.physicalHeight(0)));
-    physicalWidthLabel->setText(QString::number(di.physicalWidth((0))));
+    physicalHeightLabel->setText(QString::number(dis->physicalHeight(0)));
+    physicalWidthLabel->setText(QString::number(dis->physicalWidth((0))));
 }
 
 void Dialog::setupStorage()
@@ -975,6 +961,30 @@ void Dialog::chargerTypeChanged(QSystemBatteryInfo::ChargerType chargerType)
         radioButton->setChecked(true);
     }
     currentChargerType = chargerType;
+}
+
+void Dialog::orientationChanged(QSystemDisplayInfo::DisplayOrientation orientation)
+{
+    QString orientStr;
+    switch(orientation) {
+    case QSystemDisplayInfo::Landscape:
+        orientStr="Landscape";
+        break;
+    case QSystemDisplayInfo::Portrait:
+        orientStr="Portrait";
+        break;
+    case QSystemDisplayInfo::InvertedLandscape:
+        orientStr="Inverted Landscape";
+        break;
+    case QSystemDisplayInfo::InvertedPortrait:
+        orientStr="Inverted Portrait";
+        break;
+    default:
+        orientStr="Orientation unknown";
+        break;
+    }
+
+    orientationLabel->setText(orientStr);
 }
 
 
