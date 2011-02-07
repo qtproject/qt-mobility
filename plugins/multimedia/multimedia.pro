@@ -14,7 +14,7 @@ win32 {
     SUBDIRS += audiocapture
 }
 
-win32:!wince*:!simulator {
+win32:!wince* {
     contains(directshow_enabled, yes): SUBDIRS += directshow
 }
 
