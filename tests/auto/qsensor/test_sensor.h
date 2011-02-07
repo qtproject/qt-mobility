@@ -51,11 +51,11 @@ class TestSensorReadingPrivate;
 class TestSensorReading : public QSensorReading
 {
     Q_OBJECT
-    Q_PROPERTY(bool test READ test)
+    Q_PROPERTY(int test READ test)
     DECLARE_READING(TestSensorReading)
 public:
-    bool test() const;
-    void setTest(bool test);
+    int test() const;
+    void setTest(int test);
 };
 
 class TestSensorFilter : public QSensorFilter

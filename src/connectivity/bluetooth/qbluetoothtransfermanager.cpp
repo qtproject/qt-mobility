@@ -65,6 +65,15 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
+    \fn QBluetoothTransferReply *QBluetoothTransferManager::put(const QBluetoothTransferRequest &request, QIODevice *data)
+
+    Sends the contents of \a data to the remote device \a request and returns a new
+    QBluetoothTransferReply, that can be used to track the request's progress.
+*/
+
+
+
+/*!
     \fn void QBluetoothTransferManager::finished(QBluetoothTransferReply *reply)
 
     This signal is emitted when the transfer for \a reply finishes.

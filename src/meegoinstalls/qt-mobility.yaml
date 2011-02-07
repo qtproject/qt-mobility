@@ -42,6 +42,7 @@ PkgConfigBR:
     - gstreamer-plugins-bad-free-0.10
     - gstreamer-plugins-base-0.10
     - gypsy
+    - libiphb
     - libpulse
     - libmkcal
     - meegotouch
@@ -316,6 +317,15 @@ SubPackages:
           Qt Mobility delivers a set of new APIs for mobile device functionality.
 
           This package contains the System Information QML plugin for QtDeclarative.
+
+    - Name: libdeclarative-connectivity
+      AsWholeName: yes
+      Summary: Qt Mobility Connectivity QML plugin
+      Group: System/Libraries
+      Description: |
+          Qt Mobility delivers a set of new APIs for mobile device functionality.
+
+          This package contains the Connectivity QML plugin for QtDeclarative.
 
     - Name: servicefw
       AsWholeName: yes

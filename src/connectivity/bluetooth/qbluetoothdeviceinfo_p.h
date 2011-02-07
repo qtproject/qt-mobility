@@ -58,9 +58,12 @@ public:
     QBluetoothDeviceInfoPrivate();
 
     bool valid;
+    bool cached;
 
     QBluetoothAddress address;
     QString name;
+
+    qint16 rssi;
 
     QBluetoothDeviceInfo::ServiceClasses serviceClasses;
     QBluetoothDeviceInfo::MajorDeviceClass majorDeviceClass;

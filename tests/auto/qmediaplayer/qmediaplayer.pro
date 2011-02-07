@@ -1,8 +1,10 @@
 TARGET = tst_qmediaplayer
+QT += network
 INCLUDEPATH += \
         ../../../src/multimedia \
         ../../../src/multimedia/video
 CONFIG += testcase
+
 
 symbian {
     include(../../../config.pri)
@@ -10,7 +12,7 @@ symbian {
     testFiles.sources = testfiles/*
     testFiles.path = /Data/testfiles
     DEPLOYMENT += testFiles
-    contains(openmaxal_symbian_enabled, yes) {
+    contains(openmaxal_symbian_enabled, no) {
         DEFINES += HAS_OPENMAXAL_MEDIAPLAY_BACKEND
         HEADERS += tst_qmediaplayer_xa.h
         SOURCES += tst_qmediaplayer_xa.cpp

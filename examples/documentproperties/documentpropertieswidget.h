@@ -79,10 +79,16 @@ private:
     void requestImageProperties();
     void requestVideoProperties();
 
+    void makeItemRequestForProperties(const QStringList &propertyNames);
+
+    void addTextPropertyRow(const char *rowTitle, const QString &propertyName);
+    void addTimePropertyRow(const char *rowTitle, const QString &propertyName);
+    void addRowWithTitleAndValue(const char *rowTitle, QWidget *propertyValue);
 
     QDocumentGallery *documentGallery;
     QGalleryQueryRequest *queryRequest;
     QGalleryItemRequest *itemRequest;
+    QGalleryResultSet *resultSet;
 };
 
 #endif

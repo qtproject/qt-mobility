@@ -210,7 +210,14 @@ const QIODevice *S60MediaPlayerControl::mediaStream() const
 void S60MediaPlayerControl::setMedia(const QMediaContent &source, QIODevice *stream)
 {
     Q_UNUSED(stream)
-    // we don't want to set & load media again when it is already loaded    
+
+    if ((m_session && m_currentResource == source) && m_session->isStreaming())
+        {
+            m_session->load(source.canonicalUrl());
+            return;
+        }
+
+    // we don't want to set & load media again when it is already loaded
     if (m_session && m_currentResource == source)
         return;
     

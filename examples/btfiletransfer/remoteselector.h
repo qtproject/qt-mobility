@@ -82,6 +82,8 @@ private:
     QBluetoothLocalDevice *m_localDevice;
     QPointer<pinDisplay> m_pindisplay;
 
+    QString addressToName(const QBluetoothAddress &address);
+
 public Q_SLOTS:
     void startDiscovery();    
 
@@ -93,8 +95,13 @@ private slots:
     void on_sendButton_clicked();
     void on_stopButton_clicked();
     void on_remoteDevices_currentCellChanged(int currentRow, int currentColumn, int previousRow, int previousColumn);
+
     void pairingFinished(const QBluetoothAddress &address,QBluetoothLocalDevice::Pairing pairing);
     void displayPin(const QBluetoothAddress &address, QString pin);
+    void displayConfirmation(const QBluetoothAddress &address, QString pin);
+    void displayConfReject();
+    void displayConfAccepted();
+
     void on_remoteDevices_cellClicked(int row, int column);
     void on_remoteDevices_itemChanged(QTableWidgetItem* item);
 };

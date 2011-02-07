@@ -41,6 +41,7 @@ BuildRequires:  pkgconfig(geoclue)
 BuildRequires:  pkgconfig(gstreamer-plugins-bad-free-0.10)
 BuildRequires:  pkgconfig(gstreamer-plugins-base-0.10)
 BuildRequires:  pkgconfig(gypsy)
+BuildRequires:  pkgconfig(libiphb)
 BuildRequires:  pkgconfig(libpulse)
 BuildRequires:  pkgconfig(libmkcal)
 BuildRequires:  pkgconfig(meegotouch)
@@ -400,6 +401,17 @@ Qt Mobility delivers a set of new APIs for mobile device functionality.
 This package contains the System Information QML plugin for QtDeclarative.
 
 
+%package -n libdeclarative-connectivity
+Summary:    Qt Mobility Connectivity QML plugin
+Group:      System/Libraries
+Requires:   %{name} = %{version}-%{release}
+
+%description -n libdeclarative-connectivity
+Qt Mobility delivers a set of new APIs for mobile device functionality.
+
+This package contains the Connectivity QML plugin for QtDeclarative.
+
+
 %package -n servicefw
 Summary:    Qt Mobility Service Framework tool
 Group:      Development/Tools
@@ -610,6 +622,9 @@ find %{buildroot}%{_libdir}/qtmobility -type f -perm /u+x,g+x,o+x \( -false \
 
 
 
+
+
+
 %files
 %defattr(-,root,root,-)
 # >> files
@@ -624,6 +639,36 @@ find %{buildroot}%{_libdir}/qtmobility -type f -perm /u+x,g+x,o+x \( -false \
 %{_bindir}/servicedbgen
 %{_bindir}/servicexmlgen
 %{_bindir}/vsexplorer
+%{_includedir}/QtConnectivity/*.h
+%{_includedir}/QtConnectivity/QBluetoothAddress
+%{_includedir}/QtConnectivity/QBluetoothDeviceDiscoveryAgent
+%{_includedir}/QtConnectivity/QBluetoothDeviceInfo
+%{_includedir}/QtConnectivity/QBluetoothHostInfo
+%{_includedir}/QtConnectivity/QBluetoothLocalDevice
+%{_includedir}/QtConnectivity/QBluetoothServiceDiscoveryAgent
+%{_includedir}/QtConnectivity/QBluetoothServiceInfo
+%{_includedir}/QtConnectivity/QBluetoothSocket
+%{_includedir}/QtConnectivity/QBluetoothTransferManager
+%{_includedir}/QtConnectivity/QBluetoothTransferReply
+%{_includedir}/QtConnectivity/QBluetoothTransferRequest
+%{_includedir}/QtConnectivity/QBluetoothUuid
+%{_includedir}/QtConnectivity/QL2capServer
+%{_includedir}/QtConnectivity/QL2capSocket
+%{_includedir}/QtConnectivity/QLlcpServer
+%{_includedir}/QtConnectivity/QLlcpSocket
+%{_includedir}/QtConnectivity/QNdefFilter
+%{_includedir}/QtConnectivity/QNdefMessage
+%{_includedir}/QtConnectivity/QNdefNfcTextRecord
+%{_includedir}/QtConnectivity/QNdefNfcUriRecord
+%{_includedir}/QtConnectivity/QNdefRecord
+%{_includedir}/QtConnectivity/QNearFieldManager
+%{_includedir}/QtConnectivity/QNearFieldTagType1
+%{_includedir}/QtConnectivity/QNearFieldTagType2
+%{_includedir}/QtConnectivity/QNearFieldTagType3
+%{_includedir}/QtConnectivity/QNearFieldTagType4
+%{_includedir}/QtConnectivity/QNearFieldTarget
+%{_includedir}/QtConnectivity/QRfcommServer
+%{_includedir}/QtConnectivity/QRfcommSocket
 %{_includedir}/QtContacts/*.h
 %{_includedir}/QtContacts/QContact
 %{_includedir}/QtContacts/QContactAbstractRequest
@@ -1260,6 +1305,13 @@ find %{buildroot}%{_libdir}/qtmobility -type f -perm /u+x,g+x,o+x \( -false \
 %{_libdir}/qt4/imports/QtMobility/systeminfo/libdeclarative_systeminfo.so
 %{_libdir}/qt4/imports/QtMobility/systeminfo/qmldir
 # << files libdeclarative-systeminfo
+
+%files -n libdeclarative-connectivity
+%defattr(-,root,root,-)
+# >> files libdeclarative-connectivity
+%{_libdir}/qt4/imports/QtMobility/connectivity/libdeclarative_connectivity.so
+%{_libdir}/qt4/imports/QtMobility/connectivity/qmldir
+# << files libdeclarative-connectivity
 
 %files -n servicefw
 %defattr(-,root,root,-)

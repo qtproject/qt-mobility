@@ -56,8 +56,9 @@
 
 const QString DefaultAudioEndpoint = QLatin1String("Default");
 
-S60VideoPlayerSession::S60VideoPlayerSession(QMediaService *service)
+S60VideoPlayerSession::S60VideoPlayerSession(QMediaService *service, S60MediaNetworkAccessControl *object)
     : S60MediaPlayerSession(service)
+    , m_accessPointId(0)
     , m_wsSession(&CCoeEnv::Static()->WsSession())
     , m_screenDevice(CCoeEnv::Static()->ScreenDevice())
     , m_service(service)
@@ -74,6 +75,7 @@ S60VideoPlayerSession::S60VideoPlayerSession(QMediaService *service)
 #endif
     , m_pendingChanges(0)
 {
+    m_networkAccessControl = object;
 #ifdef MMF_VIDEO_SURFACES_SUPPORTED
     QT_TRAP_THROWING(m_player = CVideoPlayerUtility2::NewL(
         *this,
@@ -137,18 +139,18 @@ void S60VideoPlayerSession::doLoadL(const TDesC &path)
 
 void S60VideoPlayerSession::setPlaybackRate(qreal rate)
 {
-    /* 
+    /*
      * setPlaybackRate is not supported in S60 3.1 and 3.2
      * This flag will be defined for 3.1 and 3.2
     */
 #ifndef PLAY_RATE_NOT_SUPPORTED
-    //setPlayVelocity requires rate in the form of 
+    //setPlayVelocity requires rate in the form of
     //50 = 0.5x ;100 = 1.x ; 200 = 2.x ; 300 = 3.x
     //so multiplying rate with 100
     TRAPD(err, m_player->SetPlayVelocityL((TInt)(rate*100)));
     setError(err);
 #endif
-   
+
 }
 
 void S60VideoPlayerSession::doLoadUrlL(const TDesC &path)
@@ -160,7 +162,8 @@ void S60VideoPlayerSession::doLoadUrlL(const TDesC &path)
     delete m_audioOutput;
     m_audioOutput = NULL;
 #endif
-    m_player->OpenUrlL(path);
+    m_accessPointId = m_networkAccessControl->accessPointId();
+    m_player->OpenUrlL(path, m_accessPointId);
 }
 
 int S60VideoPlayerSession::doGetBufferStatusL() const
@@ -317,6 +320,9 @@ void S60VideoPlayerSession::doPauseL()
 
 void S60VideoPlayerSession::doStop()
 {
+    if (m_stream)
+        m_networkAccessControl->resetIndex();
+
     m_player->Stop();
 }
 
@@ -361,6 +367,13 @@ void S60VideoPlayerSession::MvpuoOpenComplete(TInt aError)
 
 void S60VideoPlayerSession::MvpuoPrepareComplete(TInt aError)
 {
+    if (KErrNone == aError && m_stream) {
+        emit accessPointChanged(m_accessPointId);
+        }
+    if (KErrCouldNotConnect == aError && !(m_networkAccessControl->isLastAccessPoint())) {
+        load(m_UrlPath);
+    return;
+    }
     TInt error = aError;
     if (KErrNone == error || KErrMMPartialPlayback == error) {
         TSize originalSize;
@@ -396,6 +409,9 @@ void S60VideoPlayerSession::MvpuoFrameReady(CFbsBitmap &aFrame, TInt aError)
 
 void S60VideoPlayerSession::MvpuoPlayComplete(TInt aError)
 {
+    if (m_stream)
+    m_networkAccessControl->resetIndex();
+
     endOfMedia();
     setError(aError);
 }
