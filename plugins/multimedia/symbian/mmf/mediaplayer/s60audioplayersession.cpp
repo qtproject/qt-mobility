@@ -160,7 +160,8 @@ void S60AudioPlayerSession::updateMetaDataEntriesL()
     metaDataEntries().clear();
     int numberOfMetaDataEntries = 0;
 
-    User::LeaveIfError(m_player->GetNumberOfMetaDataEntries(numberOfMetaDataEntries));
+    //User::LeaveIfError(m_player->GetNumberOfMetaDataEntries(numberOfMetaDataEntries));
+    m_player->GetNumberOfMetaDataEntries(numberOfMetaDataEntries);
 
     for (int i = 0; i < numberOfMetaDataEntries; i++) {
         CMMFMetaDataEntry *entry = NULL;
