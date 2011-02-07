@@ -22,3 +22,12 @@ New features
 Contacts
     - Maximum result limit hinting
       http://bugreports.qt.nokia.com/browse/QTMOBILITY-652
+
+****************************************************************************
+*                   Important Behavior Changes                             *
+****************************************************************************
+
+QtVersit
+------
+ - The FN vCard property will now only be generated if a QContactName is
+   provided with a CustomLabel field.

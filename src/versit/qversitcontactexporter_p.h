@@ -74,7 +74,7 @@ public:
     void exportContact(const QContact& contact, QVersitDocument& versitDocument);
 
 protected:
-    static void ensureDocumentContainsName(const QContact& contact, QVersitDocument* document);
+    static void ensureDocumentContainsName(QVersitDocument* document);
     void encodeName(
             const QContactDetail& detail,
             const QVersitDocument& document,
