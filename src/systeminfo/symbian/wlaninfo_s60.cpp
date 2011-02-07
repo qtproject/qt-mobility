@@ -98,8 +98,10 @@ void CWlanInfo::checkWlanInfo()
     TWlanConnectionMode connectionMode;
     TInt err = m_wlanMgmtClient->GetConnectionMode(connectionMode);
     if (err == KErrNone && connectionMode != EWlanConnectionModeNotConnected) {
-        m_wlanStatus = true;
-        emit wlanNetworkStatusChanged();
+        if (m_wlanStatus == false) {
+          m_wlanStatus = true;
+          emit wlanNetworkStatusChanged();
+        }
     } else {
         stopPolling();
         return;
