@@ -43,9 +43,14 @@
 
 #include <qbluetoothaddress.h>
 #include <qbluetoothdevicediscoveryagent.h>
+#include <qbluetoothlocaldevice.h>
+
+#include <QDebug>
 
 DeviceDiscoveryDialog::DeviceDiscoveryDialog(QWidget *parent)
-:   QDialog(parent), discoveryAgent(new QBluetoothDeviceDiscoveryAgent), ui(new Ui_DeviceDiscovery)
+:   QDialog(parent), discoveryAgent(new QBluetoothDeviceDiscoveryAgent),
+    localDevice(new QBluetoothLocalDevice),
+    ui(new Ui_DeviceDiscovery)
 {
     ui->setupUi(this);
 
@@ -63,6 +68,10 @@ DeviceDiscoveryDialog::DeviceDiscoveryDialog(QWidget *parent)
     connect(ui->list, SIGNAL(itemActivated(QListWidgetItem*)),
             this, SLOT(itemActivated(QListWidgetItem*)));
 
+    connect(localDevice, SIGNAL(hostModeStateChanged(QBluetoothLocalDevice::HostMode)),
+            this, SLOT(hostModeStateChanged(QBluetoothLocalDevice::HostMode)));
+
+    hostModeStateChanged(localDevice->hostMode());
 }
 
 DeviceDiscoveryDialog::~DeviceDiscoveryDialog()
@@ -113,4 +122,39 @@ void DeviceDiscoveryDialog::itemActivated(QListWidgetItem *item)
 
     ServiceDiscoveryDialog d(name, address);
     d.exec();
+}
+
+void DeviceDiscoveryDialog::on_discoverable_clicked(bool clicked)
+{
+    if(clicked)
+        localDevice->setHostMode(QBluetoothLocalDevice::HostDiscoverable);
+    else
+        localDevice->setHostMode(QBluetoothLocalDevice::HostConnectable);
+}
+
+void DeviceDiscoveryDialog::on_power_clicked(bool clicked)
+{
+    if(clicked)
+        localDevice->powerOn();
+    else
+        localDevice->setHostMode(QBluetoothLocalDevice::HostPoweredOff);
+}
+
+void DeviceDiscoveryDialog::hostModeStateChanged(QBluetoothLocalDevice::HostMode mode)
+{
+    if(mode != QBluetoothLocalDevice::HostPoweredOff)
+        ui->power->setChecked(true);
+    else
+       ui->power->setChecked( false);
+
+    if(mode == QBluetoothLocalDevice::HostDiscoverable)
+        ui->discoverable->setChecked(true);
+    else
+        ui->discoverable->setChecked(false);
+
+    bool on = !(mode == QBluetoothLocalDevice::HostPoweredOff);
+
+
+    ui->scan->setEnabled(on);
+    ui->discoverable->setEnabled(on);
 }

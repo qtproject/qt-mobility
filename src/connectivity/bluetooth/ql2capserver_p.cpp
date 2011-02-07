@@ -90,6 +90,15 @@ quint16 QL2capServer::serverPort() const
     return 0;
 }
 
+void QL2capServer::setSecurityFlags(QBluetooth::SecurityFlags security)
+{
+}
+
+QBluetooth::SecurityFlags QL2capServer::securityFlags() const
+{
+    return QBluetooth::NoSecurity;
+}
+
 
 
 #ifndef QT_NO_DBUS

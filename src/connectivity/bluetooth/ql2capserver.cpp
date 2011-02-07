@@ -162,20 +162,16 @@ int QL2capServer::maxPendingConnections() const
 }
 
 /*!
+  \fn void QL2capServer::setSecurityFlags(QBluetooth::SecurityFlags security)
     Sets the Bluetooth security flags to \a security. This function must be called prior to calling
     listen().
 */
-void QL2capServer::setSecurityFlags(QBluetooth::SecurityFlags security)
-{
-}
 
 /*!
+  \fn QBluetooth::SecurityFlags QL2capServer::securityFlags() const
+
     Returns the Bluetooth security flags.
 */
-QBluetooth::SecurityFlags QL2capServer::securityFlags() const
-{
-    return QBluetooth::NoSecurity;
-}
 
 #include "moc_ql2capserver.cpp"
 

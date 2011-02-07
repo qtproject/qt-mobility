@@ -44,6 +44,7 @@
 
 #include "qbluetoothlocaldevice.h"
 #include "qbluetoothaddress.h"
+#include "qbluetoothlocaldevice_p.h"
 
 #include "bluez/manager_p.h"
 #include "bluez/adapter_p.h"
@@ -53,43 +54,6 @@
 QTM_BEGIN_NAMESPACE
 
 #define AGENT_PATH "/qt/agent"
-
-class QBluetoothLocalDevicePrivate : public QObject,
-                                     protected QDBusContext
-
-{
-    Q_OBJECT
-
-public:
-    ~QBluetoothLocalDevicePrivate();
-
-    OrgBluezAdapterInterface *adapter;
-    OrgBluezAgentAdaptor *agent;
-    QBluetoothLocalDevice *q;
-    QString agent_path;
-    QBluetoothAddress address;
-    QBluetoothLocalDevice::Pairing pairing;       
-
-public Q_SLOTS: // METHODS
-    void Authorize(const QDBusObjectPath &in0, const QString &in1);
-    void Cancel();
-    void ConfirmModeChange(const QString &in0);
-    void DisplayPasskey(const QDBusObjectPath &in0, uint in1, uchar in2);
-    void Release();
-    uint RequestPasskey(const QDBusObjectPath &in0);
-
-    void RequestConfirmation(const QDBusObjectPath &in0, uint in1);
-    QString RequestPinCode(const QDBusObjectPath &in0);
-
-    void pairingCompleted(QDBusPendingCallWatcher*);
-
-private:
-    QDBusMessage msgConfirmation;
-    QDBusConnection *msgConnection;
-
-    friend class QBluetoothLocalDevice;
-
-};
 
 QBluetoothLocalDevice::QBluetoothLocalDevice(QObject *parent)
 :   QObject(parent)
@@ -109,9 +73,13 @@ QBluetoothLocalDevice::QBluetoothLocalDevice(QObject *parent)
 
     this->d_ptr = new QBluetoothLocalDevicePrivate;
     this->d_ptr->adapter = adapter;    
-    this->d_ptr->q = this;
+    this->d_ptr->q_ptr = this;
     this->d_ptr->agent = 0x0;
     this->d_ptr->msgConnection = 0x0;
+    this->d_ptr->currentMode = static_cast<QBluetoothLocalDevice::HostMode>(-1);
+
+    connect(adapter, SIGNAL(PropertyChanged(QString,QDBusVariant)),
+            this->d_ptr, SLOT(PropertyChanged(QString,QDBusVariant)));
 
 //    connect(d_ptr, SIGNAL(pairingFinished(const QBluetoothAddress&,QBluetoothLocalDevice::Pairing)), this, SIGNAL(pairingFinished(const QBluetoothAddress&,QBluetoothLocalDevice::Pairing)));
 //    connect(this->d_ptr, SIGNAL(pairingDisplayPinCode(const QBluetoothAddress &,QString)),
@@ -386,14 +354,23 @@ QBluetoothLocalDevice::Pairing QBluetoothLocalDevice::pairingStatus(const QBluet
 
 }
 
+QBluetoothLocalDevicePrivate::QBluetoothLocalDevicePrivate()
+    : adapter(0), agent(0)
+{
+
+}
+
 QBluetoothLocalDevicePrivate::~QBluetoothLocalDevicePrivate()
 {
     delete msgConnection;
-    msgConnection = 0;
+    delete adapter;
+    delete agent;
 }
 
 void QBluetoothLocalDevicePrivate::RequestConfirmation(const QDBusObjectPath &in0, uint in1)
 {
+    Q_UNUSED(in0);
+    Q_Q(QBluetoothLocalDevice);
     setDelayedReply(true);
     msgConfirmation = message();
     msgConnection = new QDBusConnection(connection());
@@ -422,6 +399,7 @@ void QBluetoothLocalDevice::pairingConfirmation(bool confirmation)
 
 QString QBluetoothLocalDevicePrivate::RequestPinCode(const QDBusObjectPath &in0)
 {
+    Q_Q(QBluetoothLocalDevice);
     qDebug() << Q_FUNC_INFO << in0.path();
     // seeded in constructor, 6 digit pin
     QString pin = QString("%1").arg(qrand()&1000000);
@@ -433,6 +411,7 @@ QString QBluetoothLocalDevicePrivate::RequestPinCode(const QDBusObjectPath &in0)
 
 void QBluetoothLocalDevicePrivate::pairingCompleted(QDBusPendingCallWatcher *watcher)
 {
+    Q_Q(QBluetoothLocalDevice);
     QDBusPendingReply<> reply = *watcher;
 
     if(reply.isError()) {
@@ -494,10 +473,49 @@ void QBluetoothLocalDevicePrivate::DisplayPasskey(const QDBusObjectPath &in0, ui
 
 uint QBluetoothLocalDevicePrivate::RequestPasskey(const QDBusObjectPath &in0)
 {
+    Q_UNUSED(in0);
     qDebug() << Q_FUNC_INFO;
     return qrand()&0x1000000;
 }
 
-#include "qbluetoothlocaldevice_bluez.moc"
+
+void QBluetoothLocalDevicePrivate::PropertyChanged(QString property, QDBusVariant value)
+{
+    Q_UNUSED(value);
+
+    if (property != QLatin1String("Powered") &&
+        property != QLatin1String("Discoverable"))
+        return;
+
+    Q_Q(QBluetoothLocalDevice);
+    QBluetoothLocalDevice::HostMode mode;
+
+    QDBusPendingReply<QVariantMap> reply = adapter->GetProperties();
+    reply.waitForFinished();
+    if (reply.isError()){
+        qWarning() << "Failed to get bluetooth properties for mode change";
+        return;
+    }
+
+    QVariantMap map = reply.value();
+
+    if(!map.value(QLatin1String("Powered")).toBool()){
+        mode = QBluetoothLocalDevice::HostPoweredOff;
+    }
+    else {
+        if (map.value(QLatin1String("Discoverable")).toBool())
+            mode = QBluetoothLocalDevice::HostDiscoverable;
+        else
+            mode = QBluetoothLocalDevice::HostConnectable;
+    }
+
+    if(mode != currentMode)
+        emit q->hostModeStateChanged(mode);
+
+    currentMode = mode;
+}
+
+//#include "qbluetoothlocaldevice.moc"
+#include "moc_qbluetoothlocaldevice_p.cpp"
 
 QTM_END_NAMESPACE
