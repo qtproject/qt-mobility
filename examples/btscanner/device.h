@@ -44,6 +44,7 @@
 #include "ui_device.h"
 
 #include <qmobilityglobal.h>
+#include <qbluetoothlocaldevice.h>
 
 #include <QDialog>
 
@@ -64,15 +65,19 @@ public:
 
 public slots:
     void addDevice(const QBluetoothDeviceInfo&);
+    void on_power_clicked(bool clicked);
+    void on_discoverable_clicked(bool clicked);
 
 private slots:
     void startScan();
     void scanFinished();
     void setGeneralUnlimited(bool unlimited);
     void itemActivated(QListWidgetItem *item);
+    void hostModeStateChanged(QBluetoothLocalDevice::HostMode);
 
 private:
     QBluetoothDeviceDiscoveryAgent *discoveryAgent;
+    QBluetoothLocalDevice *localDevice;
     Ui_DeviceDiscovery *ui;
 };
 

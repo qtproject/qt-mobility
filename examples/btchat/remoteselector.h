@@ -65,6 +65,7 @@ public:
     ~RemoteSelector();
 
     void startDiscovery(const QBluetoothUuid &uuid);
+    void stopDiscovery();
     QBluetoothServiceInfo service() const;
 
 private:

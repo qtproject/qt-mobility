@@ -207,4 +207,14 @@ void QL2capServerPrivate::HandleShutdownCompleteL(TInt aErr)
         qDebug() << __PRETTY_FUNCTION__ << aErr;
 }
 
+void QL2capServer::setSecurityFlags(QBluetooth::SecurityFlags security)
+{
+}
+
+QBluetooth::SecurityFlags QL2capServer::securityFlags() const
+{
+    return QBluetooth::NoSecurity;
+}
+
+
 QTM_END_NAMESPACE
