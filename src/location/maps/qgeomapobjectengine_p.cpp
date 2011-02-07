@@ -610,12 +610,14 @@ void QGeoMapObjectEngine::exactPixelMap(const QGeoCoordinate &origin,
     pixelExact.remove(object);
 
     double tolerance = exactMappingTolerance;
-    QGeoMapRouteObject *robj = dynamic_cast<QGeoMapRouteObject*>(object);
+    QGeoMapRouteObject *robj = qobject_cast<QGeoMapRouteObject*>(object);
     if (robj)
         tolerance = robj->detailLevel();
+    // square it
+    tolerance = tolerance * tolerance;
 
     foreach (QGraphicsItem *latLonItem, latLonItems) {
-        QGraphicsPolygonItem *polyItem = dynamic_cast<QGraphicsPolygonItem*>(latLonItem);
+        QGraphicsPolygonItem *polyItem = qgraphicsitem_cast<QGraphicsPolygonItem*>(latLonItem);
         if (polyItem) {
             QPolygonF poly = polyItem->polygon();
             QPolygonF pixelPoly = mdp->polyToScreen(poly);
@@ -626,7 +628,7 @@ void QGeoMapObjectEngine::exactPixelMap(const QGeoCoordinate &origin,
             polys << pi->boundingRect();
         }
 
-        QGraphicsPathItem *pathItem = dynamic_cast<QGraphicsPathItem*>(latLonItem);
+        QGraphicsPathItem *pathItem = qgraphicsitem_cast<QGraphicsPathItem*>(latLonItem);
         if (pathItem) {
             QPainterPath path = pathItem->path();
             QPainterPath mpath;
@@ -645,7 +647,8 @@ void QGeoMapObjectEngine::exactPixelMap(const QGeoCoordinate &origin,
                 double y = e.y; y /= 3600.0;
 
                 QPointF pixel = mdp->coordinateToScreenPosition(x, y);
-                double delta = (pixel - lastPixelAdded).manhattanLength();
+                QPointF deltaP = (pixel - lastPixelAdded);
+                double delta = deltaP.x() * deltaP.x() + deltaP.y() * deltaP.y();
 
                 pixelPoints.append(pixel);
 
@@ -752,7 +755,7 @@ void QGeoMapObjectEngine::invalidateZoomDependents()
         _zoomDepsRecurse(this, mdp->containerObject);
 }
 
-void QGeoMapObjectEngine::invalidatePixelsForViewport()
+void QGeoMapObjectEngine::invalidatePixelsForViewport(bool updateNow)
 {
     QPolygonF view = mdp->latLonViewport();
 
@@ -769,6 +772,45 @@ void QGeoMapObjectEngine::invalidatePixelsForViewport()
             objectsForPixelUpdate << object;
             done.insert(object);
         }
+    }
+
+    if (updateNow)
+        mdp->emitUpdateMapDisplay();
+}
+
+void QGeoMapObjectEngine::trimPixelTransforms()
+{
+    QPolygonF view = mdp->latLonViewport();
+
+    QList<QGraphicsItem*> itemsInView;
+    itemsInView = latLonScene->items(view, Qt::IntersectsItemShape,
+                                     Qt::AscendingOrder);
+
+    QSet<QGeoMapObject*> shouldBe;
+    foreach (QGraphicsItem *latLonItem, itemsInView) {
+        QGeoMapObject *object = latLonItems.value(latLonItem);
+        Q_ASSERT(object);
+        shouldBe.insert(object);
+    }
+
+    QList<QGraphicsItem*> itemsInPixels;
+    itemsInPixels = pixelScene->items();
+
+    QSet<QGeoMapObject*> currentlyAre;
+    foreach (QGraphicsItem *pixelItem, itemsInPixels) {
+        QGeoMapObject *object = pixelItems.value(pixelItem);
+        Q_ASSERT(object);
+        currentlyAre.insert(object);
+    }
+
+    QSet<QGeoMapObject*> excess = currentlyAre.subtract(shouldBe);
+    foreach (QGeoMapObject *object, excess) {
+        foreach (QGraphicsItem *item, pixelItems.keys(object)) {
+            pixelScene->removeItem(item);
+            pixelItems.remove(item);
+            delete item;
+        }
+        pixelTrans.remove(object);
     }
 
     mdp->emitUpdateMapDisplay();

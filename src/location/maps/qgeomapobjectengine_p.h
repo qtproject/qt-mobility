@@ -115,7 +115,8 @@ public:
 
     virtual void invalidateObject(QGeoMapObject *obj);
     virtual void invalidateZoomDependents();
-    virtual void invalidatePixelsForViewport();
+    virtual void invalidatePixelsForViewport(bool updateNow=true);
+    virtual void trimPixelTransforms();
 
 public:
 

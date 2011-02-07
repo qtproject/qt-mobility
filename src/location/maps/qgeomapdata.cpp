@@ -160,9 +160,9 @@ void QGeoMapData::setWindowSize(const QSizeF &size)
     if (d_ptr->windowSize == size)
         return;
 
-    d_ptr->oe->invalidatePixelsForViewport();
     d_ptr->windowSize = size;
     d_ptr->oe->invalidatePixelsForViewport();
+    d_ptr->oe->trimPixelTransforms();
 
     if (!d_ptr->blockPropertyChangeSignals)
         emit windowSizeChanged(d_ptr->windowSize);
@@ -197,10 +197,10 @@ void QGeoMapData::setZoomLevel(qreal zoomLevel)
     if (d_ptr->zoomLevel == zoomLevel)
         return;
 
-    d_ptr->oe->invalidatePixelsForViewport();
     d_ptr->zoomLevel = zoomLevel;
     d_ptr->oe->invalidateZoomDependents();
     d_ptr->oe->invalidatePixelsForViewport();
+    d_ptr->oe->trimPixelTransforms();
 
     if (!d_ptr->blockPropertyChangeSignals)
         emit zoomLevelChanged(d_ptr->zoomLevel);
@@ -360,9 +360,9 @@ void QGeoMapData::setCenter(const QGeoCoordinate &center)
     if (d_ptr->center == center)
         return;
 
-    d_ptr->oe->invalidatePixelsForViewport();
     d_ptr->center = center;
     d_ptr->oe->invalidatePixelsForViewport();
+    d_ptr->oe->trimPixelTransforms();
 
     if (!d_ptr->blockPropertyChangeSignals)
         emit centerChanged(d_ptr->center);
