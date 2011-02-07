@@ -268,7 +268,6 @@ void DirectShowPlayerService::doSetUrlSource(QMutexLocker *locker)
                 clsid_WMAsfReader, iid_IFileSourceFilter)) {
             locker->unlock();
             hr = fileSource->Load(reinterpret_cast<const OLECHAR *>(url.toString().utf16()), 0);
-            locker->relock();
 
             if (SUCCEEDED(hr)) {
                 source = com_cast<IBaseFilter>(fileSource, IID_IBaseFilter);
@@ -278,16 +277,18 @@ void DirectShowPlayerService::doSetUrlSource(QMutexLocker *locker)
                     source = 0;
                 }
             }
-
             fileSource->Release();
+            locker->relock();
         }
     } else if (url.scheme() == QLatin1String("qrc")) {
         DirectShowRcSource *rcSource = new DirectShowRcSource(m_loop);
 
+        locker->unlock();
         if (rcSource->open(url) && SUCCEEDED(hr = m_graph->AddFilter(rcSource, L"Source")))
             source = rcSource;
         else
             rcSource->Release();
+        locker->relock();
     }
 
     if (!SUCCEEDED(hr)) {
@@ -836,7 +837,7 @@ qint64 DirectShowPlayerService::position() const
     QMutexLocker locker(const_cast<QMutex *>(&m_mutex));
 
     if (m_graphStatus == Loaded) {
-        if (m_executingTask == Seek || m_executingTask == SetRate) {
+        if (m_executingTask == Seek || m_executingTask == SetRate || (m_pendingTasks & Seek)) {
             return m_position;
         } else if (IMediaSeeking *seeking = com_cast<IMediaSeeking>(m_graph, IID_IMediaSeeking)) {
             LONGLONG position = 0;
@@ -857,7 +858,7 @@ QMediaTimeRange DirectShowPlayerService::availablePlaybackRanges() const
     QMutexLocker locker(const_cast<QMutex *>(&m_mutex));
 
     if (m_graphStatus == Loaded) {
-        if (m_executingTask == Seek || m_executingTask == SetRate) {
+        if (m_executingTask == Seek || m_executingTask == SetRate || (m_pendingTasks & Seek)) {
             return m_playbackRange;
         } else if (IMediaSeeking *seeking = com_cast<IMediaSeeking>(m_graph, IID_IMediaSeeking)) {
             LONGLONG minimum = 0;
