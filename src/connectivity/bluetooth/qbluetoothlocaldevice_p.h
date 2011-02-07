@@ -108,14 +108,14 @@ private:
 };
 #endif
 
-#ifdef QT_OS_SYMBIAN
+#ifdef Q_OS_SYMBIAN
 class QBluetoothLocalDevicePrivate
         : public MBTEngSettingsObserver
 {
     Q_DECLARE_PUBLIC(QBluetoothLocalDevice)
 public:
     QBluetoothLocalDevicePrivate();
-    ~QBluetoothLocalDevicePrivate();QDBusMessage
+    ~QBluetoothLocalDevicePrivate();
 
     static QString name();
     static QBluetoothAddress address();
