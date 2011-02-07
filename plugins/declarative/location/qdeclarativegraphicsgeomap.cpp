@@ -150,7 +150,6 @@ void QDeclarativeGraphicsGeoMap::componentComplete()
     componentCompleted_ = true;
     QDeclarativeItem::componentComplete();
     if (!mapData_) {
-        qmlInfo(this) << tr("Plugin is not set for Map, Map cannot be populated.");
         return;
     }
 
