@@ -21,4 +21,4 @@ usr/include/qt4/QtVersit/qversitreader.h
 usr/include/qt4/QtVersit/qversitresourcehandler.h
 usr/include/qt4/QtVersit/qversitwriter.h
 usr/lib/libQtVersit.so
-#usr/lib/QtVersit.pc usr/lib/pkgconfig
+usr/lib/pkgconfig/QtVersit.pc

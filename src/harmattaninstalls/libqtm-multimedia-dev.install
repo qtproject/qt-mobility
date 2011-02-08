@@ -36,6 +36,7 @@ usr/include/qt4/QtMultimediaKit/QMediaContainerControl
 usr/include/qt4/QtMultimediaKit/QMediaContent
 usr/include/qt4/QtMultimediaKit/QMediaControl
 usr/include/qt4/QtMultimediaKit/QMediaImageViewer
+usr/include/qt4/QtMultimediaKit/QMediaNetworkAccessControl
 usr/include/qt4/QtMultimediaKit/QMediaObject
 usr/include/qt4/QtMultimediaKit/QMediaPlayer
 usr/include/qt4/QtMultimediaKit/QMediaPlayerControl
@@ -104,6 +105,7 @@ usr/include/qt4/QtMultimediaKit/qmediacontent.h
 usr/include/qt4/QtMultimediaKit/qmediacontrol.h
 usr/include/qt4/QtMultimediaKit/qmediaencodersettings.h
 usr/include/qt4/QtMultimediaKit/qmediaimageviewer.h
+usr/include/qt4/QtMultimediaKit/qmedianetworkaccesscontrol.h
 usr/include/qt4/QtMultimediaKit/qmediaobject.h
 usr/include/qt4/QtMultimediaKit/qmediaplayer.h
 usr/include/qt4/QtMultimediaKit/qmediaplayercontrol.h
@@ -135,3 +137,4 @@ usr/include/qt4/QtMultimediaKit/qvideowidget.h
 usr/include/qt4/QtMultimediaKit/qvideowidgetcontrol.h
 usr/include/qt4/QtMultimediaKit/qvideowindowcontrol.h
 usr/lib/libQtMultimediaKit.so
+usr/lib/pkgconfig/QtMultimediaKit.pc
