@@ -7,15 +7,25 @@ include(../../../common.pri)
 IS_SYMBIAN_3_PS3 = no
 exists($${EPOCROOT}epoc32/data/z/system/install/productid_helen.sis) {
     IS_SYMBIAN_3_PS3 = yes
-    message(Building Symbian contacts plugin on S^3 1.11 or later platform)
-} else {
-    message(Building Symbian contacts plugin on S^3 PS2 or older platform)     
+    message(S^3 1.11 hw79 platform)
+}
+
+contains(IS_SYMBIAN_3_PS3, no) {
+    exists($${EPOCROOT}epoc32/rom/config/ncp110) {
+        IS_SYMBIAN_3_PS3 = yes
+        message(S^3 bridge platform)
+    }
+}
+
+contains(IS_SYMBIAN_3_PS3, no) {
+    message(S^3 PS2 or older platform)
 }
 
 contains(IS_SYMBIAN_3_PS3, yes) {
-    message(Building Symbian^3 1.11 CNTMODEL library and plugin)
+    message(Building symbian contacts model library and plugin)
     SUBDIRS += contactsmodel plugin
 } else {
+    message(Building symbian plugin only)
     SUBDIRS += plugin
 }
 
