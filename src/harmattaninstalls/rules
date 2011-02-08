@@ -22,7 +22,8 @@ DEB_MAKE_INVOKE := $(MAKE) $(PARALLEL_MAKEFLAGS)
 DEB_MAKE_INSTALL_TARGET := INSTALL_ROOT=$(DEB_DESTDIR) install
 DEB_DH_INSTALL_SOURCEDIR := debian/tmp
 #DEB_DH_INSTALL_ARGS := --fail-missing -X.prl
-# bearer location contacts multimedia publishsubscribe versit messaging systeminfo serviceframework sensors gallery organizer feedback
+# bearer location contacts multimedia publishsubscribe versit messaging systeminfo serviceframework sensors gallery organizer feedback connectivity
+QTM_MODULES += connectivity
 QTM_MODULES += contacts
 QTM_MODULES += feedback
 QTM_MODULES += gallery
