@@ -450,22 +450,24 @@ bool QGeoMapObjectEngine::exactSecondsToSeconds(const QGeoCoordinate &origin,
         QPainterPath path = pathItem->path() * pathItem->transform();
         path = path * toAbs;
 
+        QPolygonF originalBounds = path.boundingRect();
+
         QGraphicsPathItem *pi = pathCopy(pathItem);
         pi->setPath(path);
         latLonExact.insertMulti(object, pi);
-        polys << pi->boundingRect();
+        polys << originalBounds;
 
         QPainterPath westPath = path * west;
         pi = pathCopy(pathItem);
         pi->setPath(westPath);
         latLonExact.insertMulti(object, pi);
-        polys << pi->boundingRect();
+        polys << originalBounds * west;
 
         QPainterPath eastPath = path * east;
         pi = pathCopy(pathItem);
         pi->setPath(eastPath);
         latLonExact.insertMulti(object, pi);
-        polys << pi->boundingRect();
+        polys << originalBounds * east;
 
         return true;
     }
@@ -597,6 +599,13 @@ void QGeoMapObjectEngine::bilinearSecondsToScreen(const QGeoCoordinate &origin,
     }
 }
 
+struct PathStep
+{
+    bool tooClose;
+    QPointF pixel;
+    QPainterPath::Element e;
+};
+
 void QGeoMapObjectEngine::exactPixelMap(const QGeoCoordinate &origin,
                                        QGeoMapObject *object,
                                        QList<QPolygonF> &polys)
@@ -630,40 +639,44 @@ void QGeoMapObjectEngine::exactPixelMap(const QGeoCoordinate &origin,
 
         QGraphicsPathItem *pathItem = qgraphicsitem_cast<QGraphicsPathItem*>(latLonItem);
         if (pathItem) {
-            QPainterPath path = pathItem->path();
+            const QPainterPath path = pathItem->path();
+            const int pathSize = path.elementCount();
             QPainterPath mpath;
 
-            QRectF screen = mdp->latLonViewport().boundingRect();
+            const QRectF screen = mdp->latLonViewport().boundingRect();
 
             QPointF lastPixelAdded;
             bool lastOutside = true;
 
-            QSet<int> tooClose;
-            QList<QPointF> pixelPoints;
+            struct PathStep *steps = new struct PathStep[pathSize];
 
-            for (int i = 0; i < path.elementCount(); ++i) {
-                QPainterPath::Element e = path.elementAt(i);
+            for (int i = 0; i < pathSize; ++i) {
+                const QPainterPath::Element e = path.elementAt(i);
+                steps[i].e = e;
+
                 double x = e.x; x /= 3600.0;
                 double y = e.y; y /= 3600.0;
 
-                QPointF pixel = mdp->coordinateToScreenPosition(x, y);
-                QPointF deltaP = (pixel - lastPixelAdded);
-                double delta = deltaP.x() * deltaP.x() + deltaP.y() * deltaP.y();
+                const QPointF pixel = mdp->coordinateToScreenPosition(x, y);
+                const QPointF deltaP = (pixel - lastPixelAdded);
+                const double delta = deltaP.x() * deltaP.x() + deltaP.y() * deltaP.y();
 
-                pixelPoints.append(pixel);
+                steps[i].pixel = pixel;
 
-                if (!lastPixelAdded.isNull() && delta < tolerance)
-                    tooClose.insert(i);
-                else
+                if (!lastPixelAdded.isNull() && delta < tolerance) {
+                    steps[i].tooClose = true;
+                } else {
+                    steps[i].tooClose = false;
                     lastPixelAdded = pixel;
+                }
             }
 
-            QPainterPath::Element em = path.elementAt(0);
+            QPainterPath::Element em = steps[0].e;
 
-            for (int i = 0; i < path.elementCount(); ++i) {
-                QPainterPath::Element e = path.elementAt(i);
+            for (int i = 0; i < pathSize; ++i) {
+                const QPainterPath::Element &e = steps[i].e;
 
-                if (tooClose.contains(i))
+                if (steps[i].tooClose)
                     continue;
 
                 // guilty until proven innocent
@@ -688,12 +701,12 @@ void QGeoMapObjectEngine::exactPixelMap(const QGeoCoordinate &origin,
 
                 // entering the screen rect
                 if (!outside && lastOutside && i > 0) {
-                    QPointF lastPixel = pixelPoints.at(i-1);
+                    const QPointF lastPixel = steps[i-1].pixel;
                     mpath.moveTo(lastPixel);
                 }
                 lastOutside = outside;
 
-                QPointF pixel = pixelPoints.at(i);
+                QPointF pixel = steps[i].pixel;
 
                 if (e.isMoveTo())
                     mpath.moveTo(pixel);

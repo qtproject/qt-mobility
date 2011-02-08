@@ -138,6 +138,7 @@ QGeoTiledMapData::~QGeoTiledMapData()
 {
 }
 
+
 QPointF QGeoTiledMapDataPrivate::coordinateToScreenPosition(double lon, double lat) const
 {
     qreal offsetX = ((windowSize.width() * zoomFactor) - worldReferenceViewportRect.width()) / 2.0;
@@ -151,11 +152,11 @@ QPointF QGeoTiledMapDataPrivate::coordinateToScreenPosition(double lon, double l
 
     QPoint pos(coordinateToWorldReferencePosition(lon, lat));
 
-    int x = pos.x() - worldReferenceViewportRect.left();
+    const int x = pos.x() - worldReferenceViewportRect.left();
     //if (x < 0)
     //    x += worldReferenceSize.width();
 
-    int y = pos.y() - worldReferenceViewportRect.top();
+    const int y = pos.y() - worldReferenceViewportRect.top();
 
     QPointF posF(offsetX + qreal(x) / zoomFactor, offsetY + qreal(y) / zoomFactor);
 
@@ -209,8 +210,8 @@ QPoint QGeoTiledMapDataPrivate::screenPositionToWorldReferencePosition(const QPo
 
     QPointF pos(screenPosition.x() - offsetX, screenPosition.y() - offsetY);
 
-    int worldX = int(worldReferenceViewportRect.left() + pos.x() * zoomFactor + 0.5) % worldReferenceSize.width();
-    int worldY = int(worldReferenceViewportRect.top() + pos.y() * zoomFactor + 0.5) % worldReferenceSize.height();
+    const int worldX = int(worldReferenceViewportRect.left() + pos.x() * zoomFactor + 0.5) % worldReferenceSize.width();
+    const int worldY = int(worldReferenceViewportRect.top() + pos.y() * zoomFactor + 0.5) % worldReferenceSize.height();
 
     return QPoint(worldX, worldY);
 }
@@ -223,11 +224,12 @@ QPoint QGeoTiledMapDataPrivate::coordinateToWorldReferencePosition(double lng, d
     lat = qMax(0.0, lat);
     lat = qMin(1.0, lat);
 
-    double x = lng * worldReferenceSize.width();
-    double y = lat * worldReferenceSize.height();
+    const double x = lng * worldReferenceSize.width();
+    const double y = lat * worldReferenceSize.height();
 
-    return QPoint(int(x > 0 ? x + 0.5 : x - 0.5),
-                  int(y > 0 ? y + 0.5 : y - 0.5));
+    const QPoint r(int(x > 0 ? x + 0.5 : x - 0.5),
+                   int(y > 0 ? y + 0.5 : y - 0.5));
+    return r;
 }
 
 /*!

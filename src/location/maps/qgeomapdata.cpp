@@ -986,10 +986,13 @@ QPointF QGeoMapDataPrivate::coordinateToScreenPosition(double lon, double lat) c
 QPolygonF QGeoMapDataPrivate::polyToScreen(const QPolygonF &poly)
 {
     QPolygonF r;
+#if QT_VERSION >= 0x040700
+    r.reserve(poly.size());
+#endif
     foreach (QPointF pt, poly) {
-        double x = pt.x() / 3600.0;
-        double y = pt.y() / 3600.0;
-        QPointF pixel = this->coordinateToScreenPosition(x, y);
+        const double x = pt.x() / 3600.0;
+        const double y = pt.y() / 3600.0;
+        const QPointF pixel = this->coordinateToScreenPosition(x, y);
         r.append(pixel);
     }
     return r;
