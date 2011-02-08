@@ -111,6 +111,7 @@ MainWindow::~MainWindow()
 void MainWindow::goToMyLocation()
 {
     mapsWidget->animatedPanTo(markerManager->myLocation());
+    mapsWidget->map()->setFocus();
     tracking = true;
 }
 
@@ -163,6 +164,7 @@ void MainWindow::initialize()
     if (!positionSource) {
         mapsWidget->statusBar()->showText("Could not open GPS", 5000);
         mapsWidget->setMyLocation(QGeoCoordinate(-27.5796, 153.1));
+        //mapsWidget->setMyLocation(QGeoCoordinate(21.1813, -86.8455));
     } else {
         positionSource->setUpdateInterval(1000);
         connect(positionSource, SIGNAL(positionUpdated(QGeoPositionInfo)),
@@ -223,6 +225,8 @@ void MainWindow::showNavigateDialog()
 
             connect(nvg, SIGNAL(finished()),
                     mapsWidget->statusBar(), SLOT(hide()));
+
+            mapsWidget->map()->setFocus();
         }
     }
 }
@@ -234,6 +238,7 @@ void MainWindow::showSearchDialog()
         if (markerManager) {
             markerManager->removeSearchMarkers();
             markerManager->search(sd.searchTerms(), sd.radius());
+            mapsWidget->map()->setFocus();
         }
     }
 }
@@ -243,6 +248,7 @@ void MainWindow::showErrorMessage(QGeoSearchReply::Error err, QString msg)
     Q_UNUSED(err)
     QMessageBox::critical(this, tr("Error"), msg);
     mapsWidget->statusBar()->hide();
+    mapsWidget->map()->setFocus();
 }
 
 void MainWindow::showErrorMessage(QGeoRouteReply::Error err, QString msg)
@@ -250,6 +256,7 @@ void MainWindow::showErrorMessage(QGeoRouteReply::Error err, QString msg)
     Q_UNUSED(err)
     QMessageBox::critical(this, tr("Error"), msg);
     mapsWidget->statusBar()->hide();
+    mapsWidget->map()->setFocus();
 }
 
 void MainWindow::showMarkerDialog(Marker *marker)
@@ -257,5 +264,6 @@ void MainWindow::showMarkerDialog(Marker *marker)
     MarkerDialog md(marker);
     if (md.exec() == QDialog::Accepted) {
         md.updateMarker();
+        mapsWidget->map()->setFocus();
     }
 }
