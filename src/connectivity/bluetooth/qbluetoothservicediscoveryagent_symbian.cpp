@@ -170,10 +170,10 @@ void QBluetoothServiceDiscoveryAgentPrivate::AttributeRequestResult(TSdpServReco
     Q_Q(QBluetoothServiceDiscoveryAgent);
     m_currentAttributeId = aAttrID;
     TRAPD(err, aAttrValue->AcceptVisitorL(*this));
-    delete aAttrValue;
     if (m_stack.size() != 1) {
         error = QBluetoothServiceDiscoveryAgent::UnknownError;
         emit q->error(error);
+        delete aAttrValue;
         return;
     }
 
@@ -183,6 +183,7 @@ void QBluetoothServiceDiscoveryAgentPrivate::AttributeRequestResult(TSdpServReco
         error = QBluetoothServiceDiscoveryAgent::UnknownError;
         emit q->error(error);
     }
+    delete aAttrValue;
 }
 
 void QBluetoothServiceDiscoveryAgentPrivate::AttributeRequestComplete(TSdpServRecordHandle, TInt aError)
@@ -203,7 +204,8 @@ void QBluetoothServiceDiscoveryAgentPrivate::AttributeRequestComplete(TSdpServRe
         emit q->error(error);
     }
 
-    if (m_serviceInfo.isValid())
+    // emit found service.
+    if (discoveredServices.last().isValid())
         emit q->serviceDiscovered(discoveredServices.last());
 }
 
