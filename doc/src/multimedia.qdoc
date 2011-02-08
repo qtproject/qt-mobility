@@ -42,8 +42,8 @@ collection of media content.
 
 Multimedia provides a set of APIs that allow the developer to play, record
 and manage a collection of media content. It is dependent on the
-QtMultimediaKit module. QtMobility Multimedia is the recommended API to do multimedia using Qt.
-The Phonon API is no longer recommended.
+QtMultimediaKit module. QtMultimediaKit is the recommended API to build multimedia
+applications using Qt. The Phonon API is no longer recommended.
 
 \tableofcontents
 
@@ -65,7 +65,7 @@ deal of flexibility with the media source or the generated multimedia. The
 source file does not need to be local to the device, it could be streamed from a remote location and identified by a URL. Finally, many different codecs are supported 'out
 of the box'.
 
-The supplied examples give a good idea at the ease of use of the API. When
+The supplied \l {qtmultimediakit examples}{examples} give a good idea at the ease of use of the API. When
 the supporting user interface code is ignored we can see that functionality
 is immediately available with minimal effort.
 
@@ -294,8 +294,8 @@ Previously we saw code that allowed the capture of a still image. Recording
 video requires the use of a \l QMediaRecorder object and a \l
 QAudioCaptureSource for sound.
 
-To record video we need to create a camera object as before but this time as
-well as creating a viewfinder, we will also initialize a media recorder object.
+To record video we need a camera object, as before, a media recorder and a
+viewfinder object. The media recorder object will need to be initialized.
 
     \code
     camera = new QCamera;
@@ -381,7 +381,7 @@ autoexposure or white balance cancellation can be done by calling
 
 
 
-
+\target qtmultimediakit examples
 \section1 Examples
 
 \section2 Record a Sound Source
