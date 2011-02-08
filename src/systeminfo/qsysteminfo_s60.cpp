@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010-2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -365,7 +365,13 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
             }
             return false;
         }
-        case QSystemInfo::FmradioFeature:   //Not available in public SDK
+        case QSystemInfo::FmradioFeature:
+        {
+#ifdef SYMBIAN_3_PLATFORM
+        featureId = KFeatureIdFmRadio;
+        break;
+#endif
+        }
         case QSystemInfo::LedFeature:
         case QSystemInfo::VideoOutFeature:  //Accessory monitor available from S60 5.x onwards
         default:
