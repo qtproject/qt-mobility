@@ -1,4 +1,9 @@
 
+contains(SYMBIAN_VERSION, Symbian3) {
+	message("Extended Inquiry Request supported")
+	DEFINES += EIR_SUPPORTED
+}
+
 PRIVATE_HEADERS += \
     bluetooth/symbian/bluetoothlinkmanagerdevicediscoverer.h \
     bluetooth/symbian/utils_symbian_p.h

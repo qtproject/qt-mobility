@@ -43,8 +43,13 @@
 #include "bluetoothlinkmanagerdevicediscoverer.h"
 #include "qbluetoothaddress.h"
 #include "qbluetoothdeviceinfo.h"
-#include <qstring.h>
+#include "qbluetoothuuid.h"
 
+#include <qstring.h>
+#ifdef EIR_SUPPORTED
+#include <arpa/inet.h>
+#include <netinet/in.h>
+#endif
 #include "utils_symbian_p.h"
 #include <qdebug.h>
 
@@ -109,8 +114,11 @@ bool BluetoothLinkManagerDeviceDiscoverer::startDiscovery(const uint discoveryTy
     if (!IsActive()) {
         returnValue = true;
         m_addr.SetIAC( discoveryType );
-        //TODO: add KHostResEir  action for Symbian^3 devices.
-        m_addr.SetAction( KHostResInquiry | KHostResName | KHostResIgnoreCache);
+#ifdef EIR_SUPPORTED
+        m_addr.SetAction(KHostResInquiry | KHostResName | KHostResIgnoreCache | KHostResEir);
+#else
+        m_addr.SetAction(KHostResInquiry | KHostResName | KHostResIgnoreCache);
+#endif
         m_hostResolver.GetByAddress(m_addr, m_entry, iStatus);
         SetActive();
     }
@@ -150,7 +158,87 @@ void BluetoothLinkManagerDeviceDiscoverer::DoCancel()
 QBluetoothDeviceInfo BluetoothLinkManagerDeviceDiscoverer::currentDeviceDataToQBluetoothDeviceInfo() const
 {
     // extract device information from results and map them to QBluetoothDeviceInfo
-    //TODO: use TBluetoothNameRecordWrapper in Symbian^3 for name and service classes.
+#ifdef EIR_SUPPORTED
+    TBluetoothNameRecordWrapper eir(m_entry());
+    TInt bufferlength = 0;
+    QString deviceName;
+    bufferlength = eir.GetDeviceNameLength();
+
+    if (bufferlength > 0) {
+        TBool nameComplete;
+        HBufC *deviceNameBuffer = HBufC::NewLC(bufferlength);
+        TPtr ptr = deviceNameBuffer->Des();
+        TInt error = eir.GetDeviceName(ptr,nameComplete);
+        if (error == KErrNone && nameComplete)
+            deviceName = QString::fromUtf16(ptr.Ptr(), ptr.Length()).toUpper();
+        CleanupStack::PopAndDestroy(deviceNameBuffer);
+    }
+
+    QList<QBluetoothUuid> serviceUidList;
+    RExtendedInquiryResponseUUIDContainer uuidContainer;
+    QBluetoothDeviceInfo::DataCompleteness completenes = QBluetoothDeviceInfo::DataUnavailable;
+
+    if (eir.GetServiceClassUuids(uuidContainer) == KErrNone) {
+        TInt uuidCount = uuidContainer.UUIDs().Count();
+        if (uuidCount > 0) {
+            for (int i = 0; i < uuidCount; ++i) {
+                TPtrC8 shortFormUUid(uuidContainer.UUIDs()[i].ShortestForm());
+                if (shortFormUUid.Size() == 2) {
+                    QBluetoothUuid uuid(ntohs(*reinterpret_cast<const quint16 *>(shortFormUUid.Ptr())));
+                    if (uuidContainer.GetCompleteness(RExtendedInquiryResponseUUIDContainer::EUUID16))
+                        completenes = QBluetoothDeviceInfo::DataComplete;
+                    else
+                        completenes = QBluetoothDeviceInfo::DataIncomplete;
+                    serviceUidList.append(uuid);
+                }else if (shortFormUUid.Size() == 4) {
+                    QBluetoothUuid uuid(ntohl(*reinterpret_cast<const quint32 *>(shortFormUUid.Ptr())));
+                    if (uuidContainer.GetCompleteness(RExtendedInquiryResponseUUIDContainer::EUUID32))
+                        completenes = QBluetoothDeviceInfo::DataComplete;
+                    else
+                        completenes = QBluetoothDeviceInfo::DataIncomplete;
+                    serviceUidList.append(uuid);
+                }else if (shortFormUUid.Size() == 16) {
+                    QBluetoothUuid uuid(*reinterpret_cast<const quint128 *>(shortFormUUid.Ptr()));
+                    if (uuidContainer.GetCompleteness(RExtendedInquiryResponseUUIDContainer::EUUID128))
+                        completenes = QBluetoothDeviceInfo::DataComplete;
+                    else
+                        completenes = QBluetoothDeviceInfo::DataIncomplete;
+                    serviceUidList.append(uuid);
+                }
+            }
+        }
+    }
+    uuidContainer.Close();
+
+    bufferlength = 0;
+    QByteArray manufacturerData;
+    bufferlength = eir.GetVendorSpecificDataLength();
+
+    if (bufferlength > 0) {
+        HBufC8 *msd = HBufC8::NewLC(bufferlength);
+        TPtr8 temp = msd->Des();
+        if (eir.GetVendorSpecificData(temp))
+            manufacturerData = s60Desc8ToQByteArray(temp);
+        CleanupStack::PopAndDestroy(msd);
+    }
+
+    // Get transmission power level
+    TInt8 transmissionPowerLevel = 0;
+    eir.GetTxPowerLevel(transmissionPowerLevel);
+
+    // unique address of the device
+    const TBTDevAddr symbianDeviceAddress = static_cast<TBTSockAddr> (m_entry().iAddr).BTAddr();
+    QBluetoothAddress bluetoothAddress = qTBTDevAddrToQBluetoothAddress(symbianDeviceAddress);
+
+    // format symbian major/minor numbers
+    quint32 deviceClass = qTPackSymbianDeviceClass(m_addr);
+
+    QBluetoothDeviceInfo deviceInfo(bluetoothAddress, deviceName, deviceClass);
+
+    deviceInfo.setRssi(transmissionPowerLevel);
+    deviceInfo.setServiceUuids(serviceUidList, completenes);
+    deviceInfo.setManufacturerSpecificData(manufacturerData);
+#else
     // device name
     THostName symbianDeviceName = m_entry().iName;
     QString deviceName = QString::fromUtf16(symbianDeviceName.Ptr(), symbianDeviceName.Length()).toUpper();
@@ -163,10 +251,13 @@ QBluetoothDeviceInfo BluetoothLinkManagerDeviceDiscoverer::currentDeviceDataToQB
     quint32 deviceClass = qTPackSymbianDeviceClass(m_addr);
 
     QBluetoothDeviceInfo deviceInfo(bluetoothAddress, deviceName, deviceClass);
+
     if (m_addr.Rssi())
         deviceInfo.setRssi(m_addr.Rssi());
     else
         deviceInfo.setRssi(1);
+#endif
+    deviceInfo.setCached(false);  //TODO cache support missing from devicediscovery API
     qDebug()<< "Discovered device: name="<< deviceName <<", address=" << bluetoothAddress.toString() <<", class=" << deviceClass;
     return deviceInfo;
 }
