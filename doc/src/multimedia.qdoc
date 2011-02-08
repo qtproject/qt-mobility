@@ -42,7 +42,8 @@ collection of media content.
 
 Multimedia provides a set of APIs that allow the developer to play, record
 and manage a collection of media content. It is dependent on the
-QtMultimediaKit module. This API is planned to replace Phonon at a later stage.
+QtMultimediaKit module. QtMobility Multimedia is the recommended API to do multimedia using Qt.
+The Phonon API is no longer recommended.
 
 \tableofcontents
 
