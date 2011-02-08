@@ -27,24 +27,18 @@
 
 /*!
 \page connectivity-api.html
-\title Connectivity API (technology preview)
+\title Connectivity
 \brief The Connectivity API facilitates communication with local devices.
 \ingroup mobility
-
-\warning This API is a technology preview. It is under development and
-subject to change.
 
 The Connectivity API provides a set of APIs for communicating with local devices.
 
 \tableofcontents
 
-\section1 Technology Preview Functionality
+\section1 Overview
 
-This section describes the functionality of the Connectivity module that is expected to work in the
-technology preview and the functionality that is known not to work.
-
-The APIs are under development and subject to change between the technology preview release and
-their official release with QtMobility 1.2.
+The Connectivity API includes Bluetooth and NFC features. At this stage Bluetooth is
+well supported but NFC support for hardware backends is minimal.
 
 \section2 NFC
 
