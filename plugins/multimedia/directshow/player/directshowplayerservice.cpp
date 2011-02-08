@@ -46,7 +46,9 @@
 #include "directshowmetadatacontrol.h"
 #include "directshowplayercontrol.h"
 #include "directshowvideorenderercontrol.h"
+#ifndef Q_WS_SIMULATOR
 #include "vmr9videowindowcontrol.h"
+#endif
 
 #include "../../src/multimedia/qmediacontent.h"
 
@@ -81,7 +83,9 @@ DirectShowPlayerService::DirectShowPlayerService(QObject *parent)
     , m_playerControl(0)
     , m_metaDataControl(0)
     , m_videoRendererControl(0)
+#ifndef Q_WS_SIMULATOR
     , m_videoWindowControl(0)
+#endif
     , m_audioEndpointControl(0)
     , m_taskThread(0)
     , m_loop(qt_directShowEventLoop())
@@ -103,6 +107,7 @@ DirectShowPlayerService::DirectShowPlayerService(QObject *parent)
     , m_seekable(false)
     , m_atEnd(false)
 {
+    CoInitialize(NULL);
     m_playerControl = new DirectShowPlayerControl(this);
     m_metaDataControl = new DirectShowMetaDataControl(this);
     m_audioEndpointControl = new DirectShowAudioEndpointControl(this);
@@ -139,9 +144,12 @@ DirectShowPlayerService::~DirectShowPlayerService()
     delete m_audioEndpointControl;
     delete m_metaDataControl;
     delete m_videoRendererControl;
+#ifndef Q_WS_SIMULATOR
     delete m_videoWindowControl;
+#endif
 
     ::CloseHandle(m_taskHandle);
+    CoUninitialize();
 }
 
 QMediaControl *DirectShowPlayerService::requestControl(const char *name)
@@ -153,7 +161,11 @@ QMediaControl *DirectShowPlayerService::requestControl(const char *name)
     } else if (qstrcmp(name, QMetaDataReaderControl_iid) == 0) {
         return m_metaDataControl;
     } else if (qstrcmp(name, QVideoRendererControl_iid) == 0) {
+#ifndef Q_WS_SIMULATOR
         if (!m_videoRendererControl && !m_videoWindowControl) {
+#else
+        if (!m_videoRendererControl) {
+#endif
             m_videoRendererControl = new DirectShowVideoRendererControl(m_loop);
 
             connect(m_videoRendererControl, SIGNAL(filterChanged()),
@@ -161,6 +173,7 @@ QMediaControl *DirectShowPlayerService::requestControl(const char *name)
 
             return m_videoRendererControl;
         }
+#ifndef Q_WS_SIMULATOR
     } else if (qstrcmp(name, QVideoWindowControl_iid) == 0) {
         if (!m_videoRendererControl && !m_videoWindowControl) {
             m_videoWindowControl = new Vmr9VideoWindowControl;
@@ -169,6 +182,7 @@ QMediaControl *DirectShowPlayerService::requestControl(const char *name)
 
             return m_videoWindowControl;
         }
+#endif
     }
     return 0;
 }
@@ -184,12 +198,14 @@ void DirectShowPlayerService::releaseControl(QMediaControl *control)
         delete m_videoRendererControl;
 
         m_videoRendererControl = 0;
+#ifndef Q_WS_SIMULATOR
     } else if (control == m_videoWindowControl) {
         setVideoOutput(0);
 
         delete m_videoWindowControl;
 
         m_videoWindowControl = 0;
+#endif
     }
 }
 
@@ -268,7 +284,6 @@ void DirectShowPlayerService::doSetUrlSource(QMutexLocker *locker)
                 clsid_WMAsfReader, iid_IFileSourceFilter)) {
             locker->unlock();
             hr = fileSource->Load(reinterpret_cast<const OLECHAR *>(url.toString().utf16()), 0);
-            locker->relock();
 
             if (SUCCEEDED(hr)) {
                 source = com_cast<IBaseFilter>(fileSource, IID_IBaseFilter);
@@ -278,16 +293,18 @@ void DirectShowPlayerService::doSetUrlSource(QMutexLocker *locker)
                     source = 0;
                 }
             }
-
             fileSource->Release();
+            locker->relock();
         }
     } else if (url.scheme() == QLatin1String("qrc")) {
         DirectShowRcSource *rcSource = new DirectShowRcSource(m_loop);
 
+        locker->unlock();
         if (rcSource->open(url) && SUCCEEDED(hr = m_graph->AddFilter(rcSource, L"Source")))
             source = rcSource;
         else
             rcSource->Release();
+        locker->relock();
     }
 
     if (!SUCCEEDED(hr)) {
@@ -836,7 +853,7 @@ qint64 DirectShowPlayerService::position() const
     QMutexLocker locker(const_cast<QMutex *>(&m_mutex));
 
     if (m_graphStatus == Loaded) {
-        if (m_executingTask == Seek || m_executingTask == SetRate) {
+        if (m_executingTask == Seek || m_executingTask == SetRate || (m_pendingTasks & Seek)) {
             return m_position;
         } else if (IMediaSeeking *seeking = com_cast<IMediaSeeking>(m_graph, IID_IMediaSeeking)) {
             LONGLONG position = 0;
@@ -857,7 +874,7 @@ QMediaTimeRange DirectShowPlayerService::availablePlaybackRanges() const
     QMutexLocker locker(const_cast<QMutex *>(&m_mutex));
 
     if (m_graphStatus == Loaded) {
-        if (m_executingTask == Seek || m_executingTask == SetRate) {
+        if (m_executingTask == Seek || m_executingTask == SetRate || (m_pendingTasks & Seek)) {
             return m_playbackRange;
         } else if (IMediaSeeking *seeking = com_cast<IMediaSeeking>(m_graph, IID_IMediaSeeking)) {
             LONGLONG minimum = 0;

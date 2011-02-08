@@ -18,6 +18,8 @@ symbian {
     # We break on Symbian^3 unless we have this include (normally obtained by linking to QtGui)
     load(platform_paths)
     INCLUDEPATH *= $$MW_LAYER_SYSTEMINCLUDE
+
+    CONFIG += middleware
 }
 
 QT=core
@@ -65,5 +67,4 @@ for(s,SENSORS) {
 
 HEADERS = $$PUBLIC_HEADERS $$PRIVATE_HEADERS
 
-CONFIG += middleware
 include(../../features/deploy.pri)

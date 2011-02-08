@@ -75,6 +75,13 @@ void RemoteSelector::startDiscovery(const QBluetoothUuid &uuid)
     ui->status->setText(tr("Scanning..."));
 }
 
+void RemoteSelector::stopDiscovery()
+{
+    if(m_discoveryAgent){
+        m_discoveryAgent->stop();
+    }
+}
+
 QBluetoothServiceInfo RemoteSelector::service() const
 {
     return m_service;
