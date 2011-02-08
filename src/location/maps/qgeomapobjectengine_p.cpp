@@ -719,7 +719,7 @@ void QGeoMapObjectEngine::exactPixelMap(const QGeoCoordinate &origin,
             QGraphicsPathItem *pi = pathCopy(pathItem);
             pi->setPath(mpath);
             pixelExact.insertMulti(object, pi);
-            polys << QPolygonF(pi->boundingRect());
+            polys << QPolygonF(mpath.controlPointRect());
         }
     }
 }
