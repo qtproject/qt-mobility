@@ -9,6 +9,10 @@ usr/lib/qtmobility/examples/qml_location_flickr
 usr/lib/qtmobility/examples/qmldialer
 usr/lib/qtmobility/examples/show_rotation
 usr/lib/qtmobility/examples/qml_battery
+usr/lib/qtmobility/examples/qml_battery2
+usr/lib/qtmobility/examples/show_gyroscope
+usr/lib/qtmobility/examples/qsystemalignedtimer
+usr/lib/qtmobility/examples/show_light
 usr/lib/qtmobility/examples/audiodevices
 usr/lib/qtmobility/examples/accel
 usr/lib/qtmobility/examples/keepintouch

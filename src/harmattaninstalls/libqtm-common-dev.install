@@ -1,5 +1,6 @@
 usr/include/qt4/QtMobility/QLatin1Constant
 usr/include/qt4/QtMobility/qlatin1constant.h
 usr/include/qt4/QtMobility/qmobilityglobal.h
+usr/include/qt4/QtMobility/qmalgorithms.h
 usr/share/qt4/mkspecs/features/mobility.prf
 usr/share/qt4/mkspecs/features/mobilityconfig.prf

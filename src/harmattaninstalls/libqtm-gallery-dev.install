@@ -26,3 +26,4 @@ usr/include/qt4/QtGallery/qgalleryresultset.h
 usr/include/qt4/QtGallery/qgallerytype.h
 usr/include/qt4/QtGallery/qgallerytyperequest.h
 usr/lib/libQtGallery.so
+usr/lib/pkgconfig/QtGallery.pc

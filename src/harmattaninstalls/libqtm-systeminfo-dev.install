@@ -11,5 +11,9 @@ usr/include/qt4/QtSystemInfo/qsysteminfo.h
 usr/include/qt4/QtSystemInfo/qsystemnetworkinfo.h
 usr/include/qt4/QtSystemInfo/qsystemscreensaver.h
 usr/include/qt4/QtSystemInfo/qsystemstorageinfo.h
+usr/include/qt4/QtSystemInfo/qsystembatteryinfo.h
+usr/include/qt4/QtSystemInfo/qsystemalignedtimer.h
+usr/include/qt4/QtSystemInfo/QSystemAlignedTimer
+usr/include/qt4/QtSystemInfo/QSystemBatteryInfo
 usr/lib/libQtSystemInfo.so
-usr/lib/QtSystemInfo.pc usr/lib/pkgconfig/
+usr/lib/pkgconfig/QtSystemInfo.pc

@@ -37,4 +37,4 @@ usr/include/qt4/QtMessaging/qmessagemanager.h
 usr/include/qt4/QtMessaging/qmessageservice.h
 usr/include/qt4/QtMessaging/qmessagesortorder.h
 usr/lib/libQtMessaging.so
-usr/lib/QtMessaging.pc usr/lib/pkgconfig/
+usr/lib/pkgconfig/QtMessaging.pc

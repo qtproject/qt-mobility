@@ -18,3 +18,4 @@ usr/include/qt4/QtServiceFramework/qserviceinterfacedescriptor.h
 usr/include/qt4/QtServiceFramework/qservicemanager.h
 usr/include/qt4/QtServiceFramework/qserviceplugininterface.h
 usr/lib/libQtServiceFramework.so
+usr/lib/pkgconfig/QtServiceFramework.pc
