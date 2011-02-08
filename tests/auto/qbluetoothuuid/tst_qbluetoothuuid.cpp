@@ -138,6 +138,20 @@ void tst_QBluetoothUuid::tst_construction()
         QVERIFY(!uuidString.isEmpty());
         QCOMPARE(uuidString, QString("{67c8770b-44f1-410a-ab9a-f9b5446f13ee}"));
     }
+
+    {
+        QBluetoothUuid btUuid(QString("67c8770b-44f1-410a-ab9a-f9b5446f13ee"));
+        QVERIFY(!btUuid.isNull());
+
+        QString uuidString(btUuid.toString());
+        QVERIFY(!uuidString.isEmpty());
+        QCOMPARE(uuidString, QString("{67c8770b-44f1-410a-ab9a-f9b5446f13ee}"));
+    }
+
+    {
+        QBluetoothUuid btUuid(QString("XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX"));
+        QVERIFY(btUuid.isNull());
+    }
 }
 
 void tst_QBluetoothUuid::tst_assignment()
