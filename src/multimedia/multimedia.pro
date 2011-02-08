@@ -8,7 +8,12 @@ INCLUDEPATH+= .
 
 QT += network
 
-contains(QT_CONFIG, opengl): QT += opengl
+contains(QT_CONFIG, opengl): !symbian {
+   QT += opengl
+} else {
+   DEFINES += QT_NO_OPENGL
+}
+
 
 !static:DEFINES += QT_MAKEDLL
 DEFINES += QT_BUILD_MULTIMEDIA_LIB
