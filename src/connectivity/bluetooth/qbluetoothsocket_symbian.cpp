@@ -142,9 +142,16 @@ void QBluetoothSocketPrivate::startReceive()
     receiving = true;
 
     rxDescriptor.Set(reinterpret_cast<unsigned char *>(buffer.reserve(QBLUETOOTHDEVICE_BUFFERSIZE)), 0,  QBLUETOOTHDEVICE_BUFFERSIZE);
-    if (iSocket->RecvOneOrMore(rxDescriptor, 0, rxLength) != KErrNone) {
-        socketError = QBluetoothSocket::UnknownSocketError;
-        emit q->error(socketError);
+    if (socketType == QBluetoothSocket::RfcommSocket) {
+        if (iSocket->RecvOneOrMore(rxDescriptor, 0, rxLength) != KErrNone) {
+            socketError = QBluetoothSocket::UnknownSocketError;
+            emit q->error(socketError);
+        }
+    } else if (socketType == QBluetoothSocket::L2capSocket) {
+        if (iSocket->Recv(rxDescriptor, 0, rxLength) != KErrNone) {
+            socketError = QBluetoothSocket::UnknownSocketError;
+            emit q->error(socketError);
+        }
     }
 }
 
