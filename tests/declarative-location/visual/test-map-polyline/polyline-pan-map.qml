@@ -1,0 +1,135 @@
+/****************************************************************************
+**
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
+** Contact: Nokia Corporation (qt-info@nokia.com)
+**
+** This file is part of the examples of the Qt Mobility Components.
+**
+** $QT_BEGIN_LICENSE:BSD$
+** You may use this file under the terms of the BSD license as follows:
+**
+** "Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are
+** met:
+**   * Redistributions of source code must retain the above copyright
+**     notice, this list of conditions and the following disclaimer.
+**   * Redistributions in binary form must reproduce the above copyright
+**     notice, this list of conditions and the following disclaimer in
+**     the documentation and/or other materials provided with the
+**     distribution.
+**   * Neither the name of Nokia Corporation and its Subsidiary(-ies) nor
+**     the names of its contributors may be used to endorse or promote
+**     products derived from this software without specific prior written
+**     permission.
+**
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+** "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+** LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+** A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+** OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+** LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+** DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+** THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+** (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
+import Qt 4.7
+import QtMobility.location 1.2
+import "../shared-qml" as Shared
+import QtQuick 1.0
+
+Rectangle {
+    id: page; width: 200; height: 300; focus: true
+    Coordinate { id: defaultMapCenter; latitude: -28.36; longitude: 154.42}
+
+    Map {
+        id: map
+        plugin : Plugin { name : "nokia"; PluginParameter {name: "mapping.host"; value: "for.leech"}}
+        anchors.fill: parent; size.width: parent.width; size.height: parent.height; zoomLevel: 12
+        center: defaultMapCenter
+
+        MapPolyline {
+            id: polyline
+            border {color: "red"; width: 4}
+            Coordinate {
+                id: polylineTopLeftCoordinate
+                latitude: -28.35
+                longitude: 154.4
+            }
+            Coordinate {
+                id: polylineRightCoordinate
+                latitude: -28.34
+                longitude: 154.45
+            }
+            Coordinate {
+                id: polylineBottomLeftCoordinate
+                latitude: -28.33
+                longitude: 154.4
+            }
+        }
+    }
+    MouseArea {
+        anchors.fill: parent
+        property bool mouseDown : false
+        property int lastX : -1
+        property int lastY : -1
+        onPressed : {
+            mouseDown = true
+            lastX = mouse.x
+            lastY = mouse.y
+        }
+        onReleased : {
+            mouseDown = false
+            lastX = -1
+            lastY = -1
+        }
+        onPositionChanged: {
+            if (mouseDown) {
+                var dx = mouse.x - lastX
+                var dy = mouse.y - lastY
+                map.pan(-dx, -dy)
+                lastX = mouse.x
+                lastY = mouse.y
+            }
+        }
+        onDoubleClicked: {
+            map.center = map.toCoordinate(Qt.point(mouse.x, mouse.y))
+            if (map.zoomLevel < map.maximumZoomLevel)
+                map.zoomLevel += 1
+        }
+    }
+    Coordinate { id: coordinate1; latitude: -28.35; longitude: 154.42}
+    Coordinate { id: coordinate2; latitude: -28.35; longitude: 154.43}
+    Shared.ToolBar {
+        id: toolbar1
+        height: 40; width: parent.width
+        anchors.bottom: toolbar2.top
+        button1Label: ""; button2Label: ""; button3Label: ""
+        onButton1Clicked: {polyline.addCoordinate(coordinate1)}
+        onButton2Clicked: {polyline.addCoordinate(coordinate2)}
+        onButton3Clicked: {polyline.addCoordinate(coordinate1)}
+    }
+    Shared.ToolBar {
+        id: toolbar2
+        height: 40; width: parent.width
+        anchors.bottom: toolbar3.top
+        button1Label: ""; button2Label: ""; button3Label: ""
+        onButton1Clicked: {polyline.removeCoordinate(coordinate1)}
+        onButton2Clicked: {polyline.removeCoordinate(coordinate2)}
+        onButton3Clicked: {polyline.removeCoordinate(coordinate1)}
+    }
+    Shared.ToolBar {
+        id: toolbar3
+        height: 40; width: parent.width
+        anchors.bottom: parent.bottom
+        button1Label: ""; button2Label: ""; button3Label: ""
+        onButton1Clicked: {polyline.addCoordinate(coordinate1)}
+        onButton2Clicked: {polyline.removeCoordinate(coordinate2)}
+        onButton3Clicked: {polyline.removeCoordinate(coordinate1)}
+    }
+} // page

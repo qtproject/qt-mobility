@@ -150,8 +150,6 @@ void QDeclarativeGeoMapPolylineObject::componentComplete()
         if (coordinate) {
             path_.append(coordinate);
             path.append(coordinate->coordinate());
-        } else {
-            qmlInfo(this) << tr("Member is not a Coordinate");
         }
     }
     polyline_->setPath(path);
