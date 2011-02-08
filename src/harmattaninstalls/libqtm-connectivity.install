@@ -1,3 +1,5 @@
 usr/lib/libQtConnectivity.so.1
 usr/lib/libQtConnectivity.so.1.2
 usr/lib/libQtConnectivity.so.1.2.0
+usr/lib/qt4/imports/QtMobility/connectivity/libdeclarative_connectivity.so
+usr/lib/qt4/imports/QtMobility/connectivity/qmldir
