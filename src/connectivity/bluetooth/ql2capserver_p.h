@@ -98,6 +98,7 @@ public:
     bool pending;
 
     int maxPendingConnections;
+    QBluetooth::SecurityFlags securityFlags;
 
 #ifdef QTM_SYMBIAN_BLUETOOTH
     QBluetoothSocket *pendingSocket;

@@ -58,11 +58,13 @@ QTM_BEGIN_NAMESPACE
 
 QBluetoothLocalDevicePrivate::QBluetoothLocalDevicePrivate()
     : m_settings(NULL)
-    , m_settingVisibility(false)
 {
     TRAPD(err, m_settings = CBTEngSettings::NewL(this));
-    if (err != KErrNone)
+    if (err != KErrNone) {
+        Q_Q(QBluetoothLocalDevice);
+        emit q->error(QBluetoothLocalDevice::UnknownError);
         m_settings = NULL;
+    }
 }
 
 QBluetoothLocalDevicePrivate::~QBluetoothLocalDevicePrivate()
@@ -116,6 +118,10 @@ void QBluetoothLocalDevicePrivate::powerOn()
     TInt error = m_settings->GetPowerState(powerState);
     if (error == KErrNone && powerState == EBTPowerOff)
         m_settings->SetPowerState(EBTPowerOn);
+    else if (error != KErrNone) {
+        Q_Q(QBluetoothLocalDevice);
+        emit q->error(QBluetoothLocalDevice::UnknownError);
+    }
 }
 void QBluetoothLocalDevicePrivate::powerOff()
 {
@@ -125,6 +131,10 @@ void QBluetoothLocalDevicePrivate::powerOff()
     TInt error = m_settings->GetPowerState(powerState);
     if (error == KErrNone && powerState == EBTPowerOn)
         m_settings->SetPowerState(EBTPowerOff);
+    else if (error != KErrNone) {
+        Q_Q(QBluetoothLocalDevice);
+        emit q->error(QBluetoothLocalDevice::UnknownError);
+    }
 }
 void QBluetoothLocalDevicePrivate::setHostMode(QBluetoothLocalDevice::HostMode mode)
 {
@@ -141,8 +151,7 @@ void QBluetoothLocalDevicePrivate::setHostMode(QBluetoothLocalDevice::HostMode m
             error = m_settings->GetPowerState(powerState);
             if (error == KErrNone) {
                 if (powerState == EBTPowerOff) {
-                    m_settingVisibility = true;
-                    m_settings->SetPowerState(EBTPowerOn);
+                    error = m_settings->SetPowerState(EBTPowerOn);
                 }
                 TBTVisibilityMode visibilityMode;
                 error = m_settings->GetVisibilityMode(visibilityMode);
@@ -154,11 +163,10 @@ void QBluetoothLocalDevicePrivate::setHostMode(QBluetoothLocalDevice::HostMode m
         }
         case QBluetoothLocalDevice::HostDiscoverable: {
             TBTPowerStateValue powerState;
-            TInt error = m_settings->GetPowerState(powerState);
+            error = m_settings->GetPowerState(powerState);
             if (error == KErrNone) {
                 if (powerState == EBTPowerOff) {
-                    m_settingVisibility = true;
-                    m_settings->SetPowerState(EBTPowerOn);
+                    error = m_settings->SetPowerState(EBTPowerOn);
                 }
                 TBTVisibilityMode visibilityMode;
                 error = m_settings->GetVisibilityMode(visibilityMode);
@@ -168,6 +176,10 @@ void QBluetoothLocalDevicePrivate::setHostMode(QBluetoothLocalDevice::HostMode m
             }
             break;
         }
+    }
+    if (error != KErrNone) {
+        Q_Q(QBluetoothLocalDevice);
+        emit q->error(QBluetoothLocalDevice::UnknownError);
     }
 }
 
@@ -205,8 +217,6 @@ QBluetoothLocalDevice::HostMode QBluetoothLocalDevicePrivate::hostMode() const
 
 void QBluetoothLocalDevicePrivate::PowerStateChanged(TBTPowerStateValue aState)
 {
-    Q_Q(QBluetoothLocalDevice);
-
     QBluetoothLocalDevice::HostMode hostMode;
     switch (aState) {
         case EBTPowerOn:
@@ -217,14 +227,12 @@ void QBluetoothLocalDevicePrivate::PowerStateChanged(TBTPowerStateValue aState)
             hostMode = QBluetoothLocalDevice::HostPoweredOff;
             break;
     }
-    if (!m_settingVisibility)
-        emit q->hostModeStateChanged(hostMode);
+    Q_Q(QBluetoothLocalDevice);
+    emit q->hostModeStateChanged(hostMode);
 }
 
 void QBluetoothLocalDevicePrivate::VisibilityModeChanged(TBTVisibilityMode aState)
 {
-    Q_Q(QBluetoothLocalDevice);
-
     QBluetoothLocalDevice::HostMode hostMode;
     switch (aState) {
         case EBTVisibilityModeHidden:
@@ -241,7 +249,7 @@ void QBluetoothLocalDevicePrivate::VisibilityModeChanged(TBTVisibilityMode aStat
             hostMode = QBluetoothLocalDevice::HostPoweredOff;
             break;
     }
-    m_settingVisibility = false;
+    Q_Q(QBluetoothLocalDevice);
     emit q->hostModeStateChanged(hostMode);
 }
 
@@ -307,6 +315,7 @@ void QBluetoothLocalDevicePrivate::_q_pairingFinished(const QBluetoothAddress &a
 QBluetoothLocalDevice::QBluetoothLocalDevice(QObject *parent)
 :   QObject(parent), d_ptr(new QBluetoothLocalDevicePrivate())
 {
+    d_ptr->q_ptr = this;
     qRegisterMetaType<QBluetoothLocalDevice::HostMode>("QBluetoothLocalDevice::HostMode");
     if (this->d_ptr->m_settings == NULL) {
         delete this->d_ptr;
@@ -317,6 +326,7 @@ QBluetoothLocalDevice::QBluetoothLocalDevice(QObject *parent)
 QBluetoothLocalDevice::QBluetoothLocalDevice(const QBluetoothAddress &address, QObject *parent)
 : QObject(parent), d_ptr(new QBluetoothLocalDevicePrivate())
 {
+    d_ptr->q_ptr = this;
     qRegisterMetaType<QBluetoothLocalDevice::HostMode>("QBluetoothLocalDevice::HostMode");
     if (this->d_ptr->m_settings == NULL || address != this->d_ptr->address()) {
         delete this->d_ptr;

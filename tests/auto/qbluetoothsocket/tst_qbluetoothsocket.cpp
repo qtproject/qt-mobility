@@ -47,6 +47,7 @@
 #include <qbluetoothdeviceinfo.h>
 #include <qbluetoothserviceinfo.h>
 #include <qbluetoothservicediscoveryagent.h>
+#include <qbluetoothlocaldevice.h>
 
 #include <sys/utsname.h>
 
@@ -121,6 +122,11 @@ tst_QBluetoothSocket::~tst_QBluetoothSocket()
 
 void tst_QBluetoothSocket::initTestCase()
 {
+    // start Bluetooth if not started
+    QBluetoothLocalDevice *device = new QBluetoothLocalDevice();
+    device->powerOn();
+    delete device;
+
     // Go find an echo server for BTADDRESS
     QBluetoothServiceDiscoveryAgent *sda = new QBluetoothServiceDiscoveryAgent(this);
     connect(sda, SIGNAL(serviceDiscovered(QBluetoothServiceInfo)), this, SLOT(serviceDiscovered(QBluetoothServiceInfo)));

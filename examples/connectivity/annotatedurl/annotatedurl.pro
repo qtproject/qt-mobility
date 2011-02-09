@@ -10,3 +10,6 @@ HEADERS  += mainwindow.h \
     annotatedurl.h
 
 FORMS    += mainwindow.ui
+
+symbian:TARGET.CAPABILITY += LocalServices
+
