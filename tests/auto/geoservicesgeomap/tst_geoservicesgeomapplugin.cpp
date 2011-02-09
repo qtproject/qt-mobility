@@ -147,7 +147,7 @@ void tst_GeoServicesGeoMapPlugin::initTestCase()
     m_qgv->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     m_qgv->setVisible(true);
     m_qgv->setInteractive(true);
-    m_qgv->resize(652, 519);
+    m_qgv->resize(50, 50);
     m_qgv->setSceneRect(QRectF(QPointF(0.0, 0.0), m_qgv->size()));
     m_map = new QGraphicsGeoMap(m_serviceProvider->mappingManager());
     m_qgv->scene()->addItem(m_map);
@@ -353,7 +353,7 @@ void tst_GeoServicesGeoMapPlugin::mapObjectsAtScreenPosition_data()
     QTest::newRow("Find 2 objects") << QPointF(17.0, 17.0) << 2;
     QTest::newRow("Find 2 more objects") << QPointF(17.0, 23.0) << 2;
     QTest::newRow("Find 1 object") << QPointF(30.0, 46.0) << 1;
-    QTest::newRow("Find 0 objects") << QPointF(60.0, 60.0) << 0;
+    QTest::newRow("Find 0 objects") << QPointF(0.0, 0.0) << 0;
 }
 
 // public QList<QGeoMapObject*> mapObjectsAtScreenPosition(QPointF const& screenPosition) const
@@ -361,6 +361,8 @@ void tst_GeoServicesGeoMapPlugin::mapObjectsAtScreenPosition()
 {
     QFETCH(QPointF, screenPosition);
     QFETCH(int, expectedcount);
+
+    QSKIP("Test needs reworking", SkipAll);
 
     m_map->clearMapObjects();
 
@@ -370,7 +372,7 @@ void tst_GeoServicesGeoMapPlugin::mapObjectsAtScreenPosition()
         25.0)));
     m_map->addMapObject(new QGeoMapRectangleObject(QGeoCoordinate(40.0, 10.0), QGeoCoordinate(22.0,
         20.0)));
-    m_map->addMapObject(new QGeoMapRectangleObject(QGeoCoordinate(55.0, 25.0), QGeoCoordinate(45.0,
+    m_map->addMapObject(new QGeoMapRectangleObject(QGeoCoordinate(47.0, 25.0), QGeoCoordinate(45.0,
         35.0)));
 
     QTest::qWait(100);
@@ -408,6 +410,8 @@ void tst_GeoServicesGeoMapPlugin::mapObjectsInScreenRect()
 {
     QFETCH(QRectF, screenRect);
     QFETCH(int, expectedcount);
+
+    QSKIP("Test needs reworking", SkipAll);
 
     m_map->clearMapObjects();
 
@@ -684,7 +688,7 @@ void tst_GeoServicesGeoMapPlugin::viewport()
     QSignalSpy spy2(m_map, SIGNAL(mapTypeChanged( QGraphicsGeoMap::MapType)));
     QSignalSpy spy3(m_map, SIGNAL(zoomLevelChanged(qreal)));
 
-    QCOMPARE(m_map->viewport(), QGeoBoundingBox(QGeoCoordinate(0,0), QGeoCoordinate(m_map->size().height(), m_map->size().width())));
+    QCOMPARE(m_map->viewport(), QGeoBoundingBox(QGeoCoordinate(50,0), QGeoCoordinate(0,50)));
 
     QCOMPARE(spy0.count(), 0);
     QCOMPARE(spy1.count(), 0);

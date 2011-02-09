@@ -495,6 +495,9 @@ void QGeoMapData::clearMapObjects()
 */
 QList<QGeoMapObject*> QGeoMapData::mapObjectsAtScreenPosition(const QPointF &screenPosition) const
 {
+    if (screenPosition.isNull())
+        return QList<QGeoMapObject*>();
+
     QList<QGeoMapObject*> results;
     QSet<QGeoMapObject*> considered;
 
