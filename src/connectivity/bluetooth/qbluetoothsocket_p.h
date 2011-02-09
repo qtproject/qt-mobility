@@ -256,7 +256,7 @@ public:
     void HandleSendCompleteL(TInt aErr);
     void HandleShutdownCompleteL(TInt aErr);
 #endif
-    
+
 public:
     QBluetoothPrivateLinearBuffer buffer;
     int socket;
@@ -278,6 +278,7 @@ public:
 
 #ifdef QTM_SYMBIAN_BLUETOOTH
     CBluetoothSocket *iSocket;
+    CBluetoothSocket *iBlankSocket;
 
     TPtr8 rxDescriptor;
     TSockXfrLength rxLength;
