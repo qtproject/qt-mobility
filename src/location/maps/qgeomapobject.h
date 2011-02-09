@@ -135,6 +135,7 @@ public:
     TransformType transformType() const;
     void setTransformType(const TransformType &type);
 
+public Q_SLOTS:
     void update();
 
 Q_SIGNALS:
