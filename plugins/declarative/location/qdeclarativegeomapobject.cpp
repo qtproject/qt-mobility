@@ -202,7 +202,7 @@ bool QDeclarativeGeoMapObject::isVisible() const
     of models results in undefined behavior.
 
     Assuming you have a LandmarkModel identified by landmarkModel, an example usage:
-    \snippet tests/declarative-location/testpolymapobjects.qml MapObjectView
+    \snippet doc/src/snippets/declarative/testpolymapobjects.qml MapObjectView
 
     The MapObjectView element is part of the \bold{QtMobility.location 1.2} module.
 */

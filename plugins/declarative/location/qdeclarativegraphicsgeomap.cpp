@@ -896,10 +896,10 @@ void QDeclarativeGraphicsGeoMap::internalConnectivityModeChanged(QGraphicsGeoMap
 
     As an example, consider you have a MapCircle presenting your current position:
 
-    \snippet tests/declarative-location/testpolymapobjects.qml Basic map position marker definition
+    \snippet doc/src/snippets/declarative/testpolymapobjects.qml Basic map position marker definition
     You can add it to Map (alterntively it can be defined as a child element of the Map):
 
-    \snippet tests/declarative-location/testpolymapobjects.qml Basic add MapObject
+    \snippet doc/src/snippets/declarative/testpolymapobjects.qml Basic add MapObject
     Note: MapObjectViews can not be added with this method.
 */
 
@@ -920,10 +920,10 @@ void QDeclarativeGraphicsGeoMap::addMapObject(QDeclarativeGeoMapObject *object)
     exist, function does nothing.
 
     As an example, consider you have a MapCircle presenting your current position:
-    \snippet tests/declarative-location/testpolymapobjects.qml Basic map position marker definition
+    \snippet doc/src/snippets/declarative/testpolymapobjects.qml Basic map position marker definition
 
     You can remove it from the Map element:
-    \snippet tests/declarative-location/testpolymapobjects.qml Basic remove MapObject
+    \snippet doc/src/snippets/declarative/testpolymapobjects.qml Basic remove MapObject
 
 
 */

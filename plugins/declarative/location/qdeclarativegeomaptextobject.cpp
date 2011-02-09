@@ -64,7 +64,7 @@ QTM_BEGIN_NAMESPACE
     If \l text is empty or \l coordinate is invalid nothing will be displayed.
 
     An example of text item:
-    \snippet tests/declarative-location/testpolymapobjects.qml MapText
+    \snippet doc/src/snippets/declarative/testpolymapobjects.qml MapText
 
     The MapText element is part of the \bold{QtMobility.location 1.2} module.
 */
