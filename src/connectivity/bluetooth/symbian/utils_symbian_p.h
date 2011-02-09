@@ -65,6 +65,10 @@ inline QString s60DescToQString(const TDesC &desc)
 {
     return QString::fromUtf16(desc.Ptr(), desc.Length());
 }
+inline QByteArray s60Desc8ToQByteArray(const TDesC8 &desc)
+{
+    return QByteArray((const char*)desc.Ptr(), desc.Length());
+}
 
 QTM_END_NAMESPACE
 
