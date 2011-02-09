@@ -2132,6 +2132,11 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoPrivate::currentPowerState()
     return state;
 }
 
+QSystemDeviceInfo::ThermalState QSystemDeviceInfoPrivate::currentThermalState()
+{
+    return QSystemDeviceInfo::UnknownThermal;
+}
+
 QString QSystemDeviceInfoPrivate::imei()
 {
     return "";

@@ -2857,6 +2857,10 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoLinuxCommonPrivate::currentPowerS
        return QSystemDeviceInfo::WallPower;
 }
 
+QSystemDeviceInfo::ThermalState QSystemDeviceInfoLinuxCommonPrivate::currentThermalState(){
+	return QSystemDeviceInfo::UnknownThermal;
+}
+
 #if !defined(QT_NO_DBUS)
  void QSystemDeviceInfoLinuxCommonPrivate::bluezPropertyChanged(const QString &str, QDBusVariant v)
   {

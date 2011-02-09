@@ -88,6 +88,13 @@ QSystemDeviceInfoPrivate *getSystemDeviceInfoPrivate() { return deviceInfoPrivat
           \a state is the new power state.
          */
 
+          /*!
+         \fn void QSystemDeviceInfo::thermalStateChanged(QSystemDeviceInfo::ThermalState state)
+
+          This signal is emitted when the thermal state has changed.
+          \a state is the new thermal state.
+         */
+
         /*!
           \fn  void QSystemDeviceInfo::currentProfileChanged(QSystemDeviceInfo::Profile profile)
 
@@ -116,6 +123,19 @@ QSystemDeviceInfoPrivate *getSystemDeviceInfoPrivate() { return deviceInfoPrivat
             \value WallPowerChargingBattery       On wall power and charging main battery.
 
           */
+
+       /*!
+          \enum QSystemDeviceInfo::ThermalState
+          This enum describes the thermal state:
+
+          \value UnknownThermal                 UnKnown State.
+          \value NormalThermal                  Normal State.
+          \value WarningThermal                 Warning State.
+          \value AlertThermal                   Alert State.
+          \value ErrorThermal                   Thermal Error.
+
+        */
+
         /*!
             \enum QSystemDeviceInfo::Profile
             This enum describes the current operating profile of the device or computer.
@@ -225,6 +245,7 @@ QSystemDeviceInfo::QSystemDeviceInfo(QObject *parent)
 {
     qRegisterMetaType<QSystemDeviceInfo::BatteryStatus>("QSystemDeviceInfo::BatteryStatus");
     qRegisterMetaType<QSystemDeviceInfo::PowerState>("QSystemDeviceInfo::PowerState");
+    qRegisterMetaType<QSystemDeviceInfo::ThermalState>("QSystemDeviceInfo::ThermalState");
     qRegisterMetaType<QSystemDeviceInfo::SimStatus>("QSystemDeviceInfo::SimStatus");
     qRegisterMetaType<QSystemDeviceInfo::Profile>("QSystemDeviceInfo::Profile");
     qRegisterMetaType<QSystemDeviceInfo::InputMethodFlags>("QSystemDeviceInfo::InputMethodFlags");
@@ -276,7 +297,11 @@ void QSystemDeviceInfo::connectNotify(const char *signal)
         connect(d,SIGNAL(powerStateChanged(QSystemDeviceInfo::PowerState)),
                 this,SIGNAL(powerStateChanged(QSystemDeviceInfo::PowerState)),Qt::UniqueConnection);
     }
-
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+    		thermalStateChanged(QSystemDeviceInfo::ThermalState))))) {
+       connect(d,SIGNAL(thermalStateChanged(QSystemDeviceInfo::ThermalState)),
+    			this,SIGNAL(thermalStateChanged(QSystemDeviceInfo::ThermalState)),Qt::UniqueConnection);
+    }
     if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
             wirelessKeyboardConnected(bool))))) {
         connect(d,SIGNAL(wirelessKeyboardConnected(bool)),
@@ -335,6 +360,11 @@ void QSystemDeviceInfo::disconnectNotify(const char *signal)
             powerStateChanged(QSystemDeviceInfo::PowerState))))) {
         disconnect(d,SIGNAL(powerStateChanged(QSystemDeviceInfo::PowerState)),
                 this,SIGNAL(powerStateChanged(QSystemDeviceInfo::PowerState)));
+    }
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            thermalStateChanged(QSystemDeviceInfo::ThermalState))))) {
+        disconnect(d,SIGNAL(thermalStateChanged(QSystemDeviceInfo::ThermalState)),
+                this,SIGNAL(thermalStateChanged(QSystemDeviceInfo::ThermalState)));
     }
     if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
             wirelessKeyboardConnected(bool))))) {
@@ -507,6 +537,17 @@ QSystemDeviceInfo::Profile QSystemDeviceInfo::currentProfile()
 QSystemDeviceInfo::PowerState QSystemDeviceInfo::currentPowerState()
 {
     return deviceInfoPrivate()->currentPowerState();
+}
+
+/*!
+  \property QSystemDeviceInfo::currentThermalState
+  \brief the thermal state.
+
+  Gets the current QSystemDeviceInfo::currentThermalState state.
+*/
+QSystemDeviceInfo::ThermalState QSystemDeviceInfo::currentThermalState()
+{
+    return deviceInfoPrivate()->currentThermalState();
 }
 
 /*!

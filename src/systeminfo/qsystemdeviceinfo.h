@@ -58,6 +58,7 @@ class  Q_SYSINFO_EXPORT QSystemDeviceInfo : public QObject
     Q_OBJECT
     Q_PROPERTY(Profile currentProfile READ currentProfile NOTIFY currentProfileChanged)
     Q_PROPERTY(PowerState currentPowerState READ currentPowerState NOTIFY powerStateChanged)
+    Q_PROPERTY(ThermalState currentThermalState READ currentThermalState NOTIFY thermalStateChanged)
     Q_PROPERTY(SimStatus simStatus READ simStatus CONSTANT)
     Q_PROPERTY(BatteryStatus batteryStatus READ batteryStatus NOTIFY batteryStatusChanged)
     Q_PROPERTY(QSystemDeviceInfo::InputMethodFlags inputMethodType READ inputMethodType)
@@ -79,6 +80,7 @@ class  Q_SYSINFO_EXPORT QSystemDeviceInfo : public QObject
 
     Q_ENUMS(BatteryStatus)
     Q_ENUMS(PowerState)
+    Q_ENUMS(ThermalState)
     Q_FLAGS(InputMethod InputMethodFlags)
     Q_ENUMS(SimStatus)
     Q_ENUMS(Profile)
@@ -101,7 +103,6 @@ public:
         BatteryNormal
     };
 
-
     enum PowerState {
         UnknownPower = 0,
         BatteryPower,
@@ -109,6 +110,13 @@ public:
         WallPowerChargingBattery
     };
 
+    enum ThermalState {
+    	UnknownThermal = 0,
+    	NormalThermal,
+    	WarningThermal,
+    	AlertThermal,
+    	ErrorThermal
+    };
 
     enum InputMethod {
         Keys = 0x0000001,
@@ -177,6 +185,7 @@ public:
     QSystemDeviceInfo::SimStatus simStatus();
     QSystemDeviceInfo::Profile currentProfile();
     QSystemDeviceInfo::PowerState currentPowerState();
+    QSystemDeviceInfo::ThermalState currentThermalState();
 
     bool currentBluetoothPowerState();
 
@@ -209,6 +218,7 @@ Q_SIGNALS:
     void batteryLevelChanged(int level);
     void batteryStatusChanged(QSystemDeviceInfo::BatteryStatus batteryStatus);
     void powerStateChanged(QSystemDeviceInfo::PowerState powerState);
+    void thermalStateChanged(QSystemDeviceInfo::ThermalState thermalState);
     void currentProfileChanged(QSystemDeviceInfo::Profile currentProfile);
     void bluetoothStateChanged(bool on);
 

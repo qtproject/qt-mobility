@@ -280,6 +280,7 @@ public:
     QSystemDeviceInfo::Profile currentProfile();
 
     QSystemDeviceInfo::PowerState currentPowerState();
+    QSystemDeviceInfo::ThermalState currentThermalState();
     void setConnection();
     static QSystemDeviceInfoPrivate *instance();
 
@@ -305,6 +306,7 @@ Q_SIGNALS:
     void batteryStatusChanged(QSystemDeviceInfo::BatteryStatus );
 
     void powerStateChanged(QSystemDeviceInfo::PowerState);
+    void thermalStateChanged(QSystemDeviceInfo::ThermalState);
     void currentProfileChanged(QSystemDeviceInfo::Profile);
     void bluetoothStateChanged(bool);
 

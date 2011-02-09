@@ -271,6 +271,7 @@ public:
     QTM_PREPEND_NAMESPACE(QSystemDeviceInfo::Profile) currentProfile();
 
     QTM_PREPEND_NAMESPACE(QSystemDeviceInfo::PowerState) currentPowerState();
+    QTM_PREPEND_NAMESPACE(QSystemDeviceInfo::ThermalState) currentThermalState();
     void setConnection();
     static QSystemDeviceInfoPrivate *instance() {return self;}
 
@@ -294,6 +295,7 @@ Q_SIGNALS:
     void batteryStatusChanged(QSystemDeviceInfo::BatteryStatus );
 
     void powerStateChanged(QSystemDeviceInfo::PowerState);
+    void thermalStateChanged(QSystemDeviceInfo::ThermalState);
     void currentProfileChanged(QSystemDeviceInfo::Profile);
     void bluetoothStateChanged(bool);
 
