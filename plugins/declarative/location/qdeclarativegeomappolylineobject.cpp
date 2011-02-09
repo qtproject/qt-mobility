@@ -64,7 +64,7 @@ QTM_BEGIN_NAMESPACE
     will not be displayed.
 
     Simplistic example to illustrate, this element could be defined in Map body:
-    \snippet tests/declarative-location/testpolymapobjects.qml Basic MapPolyline
+    \snippet doc/src/snippets/declarative/testpolymapobjects.qml Basic MapPolyline
 
     The MapPolyline element is part of the \bold{QtMobility.location 1.2} module.
 */
@@ -208,7 +208,7 @@ void QDeclarativeGeoMapPolylineObject::borderWidthChanged(int width)
 
     A basic example is to draw the path where one has been:
 
-    \snippet tests/declarative-location/testpolymapobjects.qml Wherever I may roam
+    \snippet doc/src/snippets/declarative/testpolymapobjects.qml Wherever I may roam
 
     \sa removeCoordinate
 
@@ -229,12 +229,12 @@ void QDeclarativeGeoMapPolylineObject::addCoordinate(QDeclarativeCoordinate* coo
     Remove coordinate from the path. If there are multiple instances
     of the same coordinate, the one added last is removed. Removed Coordinate is not deleted.
 
-    \snippet tests/declarative-location/testpolymapobjects.qml Removing from polyline
+    \snippet doc/src/snippets/declarative/testpolymapobjects.qml Removing from polyline
 
     If more finetuned control is needed, one can also
     iterate and/or use the inherent index property of the path list.
 
-    \snippet tests/declarative-location/testpolymapobjects.qml Iterating and removing polyline
+    \snippet doc/src/snippets/declarative/testpolymapobjects.qml Iterating and removing polyline
 
     \sa addCoordinate
 

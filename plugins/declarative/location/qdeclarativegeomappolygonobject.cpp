@@ -64,7 +64,7 @@ QTM_BEGIN_NAMESPACE
     will not be displayed.
 
     Simplistic example to illustrate, this element could be defined in Map body:
-    \snippet tests/declarative-location/testpolymapobjects.qml Basic MapPolygon
+    \snippet doc/src/snippets/declarative/testpolymapobjects.qml Basic MapPolygon
 
     The MapPolygon element is part of the \bold{QtMobility.location 1.2} module.
 */
@@ -232,7 +232,7 @@ void QDeclarativeGeoMapPolygonObject::borderWidthChanged(int width)
     from values at the time of assignment, meaning that later changes
     in values are not reflected in the path.
 
-    \snippet tests/declarative-location/testpolymapobjects.qml Adding to polygon
+    \snippet doc/src/snippets/declarative/testpolymapobjects.qml Adding to polygon
 
     \sa removeCoordinate
 
@@ -254,12 +254,12 @@ void QDeclarativeGeoMapPolygonObject::addCoordinate(QDeclarativeCoordinate* coor
     If there are multiple instances of the same coordinate, the one added
     last is removed.
 
-    \snippet tests/declarative-location/testpolymapobjects.qml Removing from polygon
+    \snippet doc/src/snippets/declarative/testpolymapobjects.qml Removing from polygon
 
     If more finetuned control is needed, one can also
     iterate and/or use the inherent index property of the path list.
 
-    \snippet tests/declarative-location/testpolymapobjects.qml Iterating and removing polyline
+    \snippet doc/src/snippets/declarative/testpolymapobjects.qml Iterating and removing polyline
 
     \sa addCoordinate
 
