@@ -76,6 +76,8 @@
     {
         margin-left: 0.5em;
         margin-right: 0.5em;
+        font-size: 11pt;
+        line-height: normal
     }
     a
     {
@@ -309,19 +311,19 @@
     .content h1
     {
         font-weight: bold;
-        font-size: 150%
+        font-size: 130%
     }
 
     .content h2
     {
         font-weight: bold;
-        font-size: 135%;
+        font-size: 120%;
         width: 100%;
     }
     .content h3
     {
         font-weight: bold;
-        font-size: 120%;
+        font-size: 110%;
         width: 100%;
     }
     .content table p
