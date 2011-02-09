@@ -1,11 +1,11 @@
-#alias.i				= e
-alias.include			= input
+#alias.i                         = e
+alias.include                   = input
 
 macro.0                         = "\\\\0"
 macro.b                         = "\\\\b"
 macro.n                         = "\\\\n"
-#macro.i                         = "\\o"
 macro.r                         = "\\\\r"
+#macro.i                         = "\\o"
 macro.i11                       = "\\o{1,1}"
 macro.i12                       = "\\o{1,2}"
 macro.i13                       = "\\o{1,3}"
@@ -27,5 +27,5 @@ macro.img                       = "\\image"
 macro.endquote                  = "\\endquotation"
 macro.relatesto                 = "\\relates"
 
-spurious			= "Missing comma in .*" \
-				  "Missing pattern .*"
+spurious                        = "Missing comma in .*" \
+                                  "Missing pattern .*"
