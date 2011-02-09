@@ -64,7 +64,12 @@ QTM_BEGIN_NAMESPACE
     Constructs a new polyline object.
 */
 QGeoMapPolylineObject::QGeoMapPolylineObject()
-    : d_ptr(new QGeoMapPolylineObjectPrivate()) {}
+    : d_ptr(new QGeoMapPolylineObjectPrivate())
+{
+    setGraphicsItem(d_ptr->item);
+    setUnits(QGeoMapObject::RelativeArcSecondUnit);
+    setTransformType(QGeoMapObject::ExactTransform);
+}
 
 /*!
     Destroys this polyline object.
@@ -100,7 +105,10 @@ void QGeoMapPolylineObject::setPath(const QList<QGeoCoordinate> &path)
 {
     if (d_ptr->path != path) {
         d_ptr->path = path;
+        setOrigin(path.at(0));
+        d_ptr->genPath();
         emit pathChanged(d_ptr->path);
+        update();
     }
 }
 
@@ -123,16 +131,17 @@ void QGeoMapPolylineObject::setPen(const QPen &pen)
     QPen newPen = pen;
     newPen.setCosmetic(false);
 
-    if (d_ptr->pen == newPen)
+    if (d_ptr->item->pen() == newPen)
         return;
 
-    d_ptr->pen = newPen;
-    emit penChanged(d_ptr->pen);
+    d_ptr->item->setPen(pen);
+    emit penChanged(pen);
+    update();
 }
 
 QPen QGeoMapPolylineObject::pen() const
 {
-    return d_ptr->pen;
+    return d_ptr->item->pen();
 }
 
 /*!
@@ -156,9 +165,31 @@ QPen QGeoMapPolylineObject::pen() const
 /*******************************************************************************
 *******************************************************************************/
 
-QGeoMapPolylineObjectPrivate::QGeoMapPolylineObjectPrivate()
+QGeoMapPolylineObjectPrivate::QGeoMapPolylineObjectPrivate() :
+    item(new QGraphicsPathItem)
 {
+    QPen pen = item->pen();
     pen.setCosmetic(false);
+    item->setPen(pen);
+}
+
+void QGeoMapPolylineObjectPrivate::genPath()
+{
+    QPainterPath p;
+
+    QGeoCoordinate origin = path.at(0);
+    double ox = origin.longitude() * 3600.0;
+    double oy = origin.latitude() * 3600.0;
+
+    p.moveTo(0, 0);
+    for (int i = 0; i < path.size(); ++i) {
+        QGeoCoordinate pt = path.at(i);
+        double x = pt.longitude() * 3600.0 - ox;
+        double y = pt.latitude() * 3600.0 - oy;
+        p.lineTo(x, y);
+    }
+
+    item->setPath(p);
 }
 
 QGeoMapPolylineObjectPrivate::~QGeoMapPolylineObjectPrivate() {}

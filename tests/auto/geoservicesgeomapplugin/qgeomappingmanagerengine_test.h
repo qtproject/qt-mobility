@@ -85,8 +85,10 @@ public:
 
     virtual QGeoBoundingBox viewport() const
     {
-        return QGeoBoundingBox();
+        return QGeoBoundingBox(QGeoCoordinate(50.0,0.0),
+                               QGeoCoordinate(0.0,50.0));
     }
+
     virtual void fitInViewport(const QGeoBoundingBox &bounds, bool preserveViewportCenter = false)
     {
         if (!preserveViewportCenter)
@@ -120,6 +122,10 @@ public:
         Q_UNUSED(errorString)
         setMinimumZoomLevel(10.0);
         setMaximumZoomLevel(20.0);
+        setMaximumTilt(90.0);
+        setMinimumTilt(0.0);
+        setSupportsBearing(true);
+        setSupportsTilting(true);
         QList<QGraphicsGeoMap::ConnectivityMode> modes;
         modes << QGraphicsGeoMap::OfflineMode;
         modes << QGraphicsGeoMap::OnlineMode;

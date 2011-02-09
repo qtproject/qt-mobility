@@ -67,6 +67,8 @@ public:
     void removeChildObject(QGeoMapObject *childObject);
     void clearChildObjects();
 
+    void setVisible(bool visible);
+
     void setMapData(QGeoMapData *mapData);
 
 Q_SIGNALS:

@@ -84,9 +84,9 @@
     Various map objects can be added to the map.  These map objects are
     specified in terms of coordinates and metres.
 
-    \note At the time of the QtMobility 1.1 release the QML support for
-    the Maps and Navigation API is incomplete and likely to be refined and
-    improved in the next patch release.
+    \note Maps and Navigation domain supports basic Map functionality, including
+    Map objects and basic mouse handling. Routing and searching are not yet
+    supported.
 
     \section2 Map Elements
 

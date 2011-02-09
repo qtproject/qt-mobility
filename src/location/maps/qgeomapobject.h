@@ -49,6 +49,7 @@
 
 class QPainter;
 class QRectF;
+class QGraphicsItem;
 
 QTM_BEGIN_NAMESPACE
 
@@ -66,6 +67,10 @@ class Q_LOCATION_EXPORT QGeoMapObject : public QObject
     Q_PROPERTY(int zValue READ zValue WRITE setZValue NOTIFY zValueChanged)
     Q_PROPERTY(bool visible READ isVisible WRITE setVisible NOTIFY visibleChanged)
     Q_PROPERTY(bool selected READ isSelected WRITE setSelected NOTIFY selectedChanged)
+    Q_PROPERTY(QGeoCoordinate origin READ origin WRITE setOrigin NOTIFY originChanged)
+    Q_PROPERTY(CoordinateUnit units READ units WRITE setUnits)
+    Q_PROPERTY(QGraphicsItem* graphicsItem READ graphicsItem WRITE setGraphicsItem NOTIFY graphicsItemChanged)
+    Q_PROPERTY(TransformType transformType READ transformType WRITE setTransformType)
 
 public:
     enum Type {
@@ -77,7 +82,20 @@ public:
         PolygonType,
         PixmapType,
         TextType,
-        RouteType
+        RouteType,
+        CustomType
+    };
+
+    enum CoordinateUnit {
+        PixelUnit,
+        MeterUnit,
+        RelativeArcSecondUnit,
+        AbsoluteArcSecondUnit
+    };
+
+    enum TransformType {
+        BilinearTransform,
+        ExactTransform
     };
 
     QGeoMapObject(QGeoMapData *mapData = 0);
@@ -103,12 +121,28 @@ public:
     virtual void setMapData(QGeoMapData *mapData);
     virtual QGeoMapData* mapData() const;
 
-    QGeoMapObjectInfo* info() const;
+    QGeoMapObjectInfo *info() const;
+
+    QGeoCoordinate origin() const;
+    void setOrigin(const QGeoCoordinate &origin);
+
+    CoordinateUnit units() const;
+    void setUnits(const CoordinateUnit &unit);
+
+    QGraphicsItem *graphicsItem() const;
+    void setGraphicsItem(QGraphicsItem *item);
+
+    TransformType transformType() const;
+    void setTransformType(const TransformType &type);
+
+    void update();
 
 Q_SIGNALS:
     void zValueChanged(int zValue);
     void visibleChanged(bool visible);
     void selectedChanged(bool selected);
+    void originChanged(QGeoCoordinate origin);
+    void graphicsItemChanged(QGraphicsItem *item);
 
 private:
     QGeoMapObjectPrivate *d_ptr;

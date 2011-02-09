@@ -60,6 +60,7 @@ class Marker;
 class StatusBarItem;
 class ZoomButtonItem;
 
+// The graphics item that actually contains the map
 class GeoMap : public QGraphicsGeoMap
 {
     Q_OBJECT
@@ -68,7 +69,7 @@ class GeoMap : public QGraphicsGeoMap
     Q_PROPERTY(double centerLongitude READ centerLongitude WRITE setCenterLongitude)
 
 public:
-    GeoMap(QGeoMappingManager *manager, MapsWidget *mapsWidget);
+    explicit GeoMap(QGeoMappingManager *manager, MapsWidget *mapsWidget);
     ~GeoMap();
 
     double centerLatitude() const;
@@ -87,19 +88,22 @@ private:
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
     void wheelEvent(QGraphicsSceneWheelEvent *event);
+    void keyPressEvent(QKeyEvent *event);
 
 signals:
     void clicked(Marker *marker);
     void panned();
 };
 
+// A widget to hold the view and scene for a GeoMap, as well
+// as control widgets
 class MapsWidgetPrivate;
 class MapsWidget : public QWidget
 {
     Q_OBJECT
 
 public:
-    MapsWidget(QWidget *parent = 0);
+    explicit MapsWidget(QWidget *parent = 0);
     ~MapsWidget();
 
     void setMarkerManager(MarkerManager *markerManager);
@@ -125,7 +129,8 @@ private:
     void showEvent(QShowEvent *event);
 };
 
-
+// An animated status bar item that appears at the bottom
+// of the map
 class StatusBarItemPrivate;
 class StatusBarItem : public QObject, public QGraphicsRectItem
 {
@@ -133,7 +138,7 @@ class StatusBarItem : public QObject, public QGraphicsRectItem
     Q_PROPERTY(int offset READ offset WRITE setOffset)
 
 public:
-    StatusBarItem();
+    explicit StatusBarItem();
     ~StatusBarItem();
 
     int offset() const;
@@ -152,21 +157,18 @@ private:
     StatusBarItemPrivate *d;
 };
 
+// Zoom in / zoom out buttons, touch-friendly, appearing on the
+// side of the map
+class ZoomButtonItemPrivate;
 class ZoomButtonItem : public QGraphicsRectItem
 {
 public:
-    ZoomButtonItem(GeoMap *map);
+    explicit ZoomButtonItem(GeoMap *map);
 
     void setRect(qreal x, qreal y, qreal w, qreal h);
 
 private:
-    GeoMap *map;
-
-    QGraphicsSimpleTextItem *plusText;
-    QGraphicsSimpleTextItem *minusText;
-
-    bool pressedOverTopHalf;
-    bool pressedOverBottomHalf;
+    ZoomButtonItemPrivate *d;
 
     bool isTopHalf(const QPointF &point);
     bool isBottomHalf(const QPointF &point);

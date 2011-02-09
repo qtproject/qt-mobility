@@ -107,6 +107,8 @@ public:
 
 private:
     QGeoCoordinatePrivate *d;
+
+    friend class QGeoCoordinatePrivate;
 };
 
 #ifndef QT_NO_DEBUG_STREAM

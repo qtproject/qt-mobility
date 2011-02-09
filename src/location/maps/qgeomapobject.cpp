@@ -41,8 +41,13 @@
 
 #include "qgeomapobject.h"
 #include "qgeomapobject_p.h"
+#include "qgeomapobjectengine_p.h"
+#include "qgeomapobjectinfo.h"
 #include "qgeomapdata.h"
+#include "qgeomapdata_p.h"
 #include "qgeoboundingbox.h"
+#include "qgeocoordinate.h"
+#include "projwrapper_p.h"
 
 #include <QtAlgorithms>
 
@@ -50,17 +55,47 @@ QTM_BEGIN_NAMESPACE
 
 /*!
     \class QGeoMapObject
-    \brief The QGeoMapObject class is graphical item for display in
-    QGraphicsGeoMap instancse, that is specified in terms of coordinates and
-    distances.
-
+    \brief The QGeoMapObject class is a graphical item to be displayed on a map.
     \inmodule QtLocation
 
     \ingroup maps-mapping-objects
 
+    Any arbitrary QGraphicsItem can be associated with a QGeoMapObject, and to
+    this end it contains support for interpreting the coordinates of the
+    QGraphicsItem in a variety of different ways.
+
+    The QGeoMapObject subclasses are convenience classes that automatically set
+    up particular QGraphicsItem subclasses and coordinate systems, but
+    QGeoMapObject can also be used directly.
+
+    For example, the following code creates a QGraphicsEllipseItem and a
+    QGeoMapObject to display it. The EllipseItem extends from the origin point,
+    out 20 meters to the east and 30 metres south.
+
+    \code
+    QGraphicsEllipseItem *ellipseItem = new QGraphicsEllipseItem;
+    ellipseItem->setRect(0, 0, 20, 30);
+
+    QGeoMapObject *mapObject = new QGeoMapObject;
+    mapObject->setGraphicsItem(ellipseItem);
+    mapObject->setUnits(QGeoMapObject::MeterUnit);
+    mapObject->setOrigin(QGeoCoordinate(-27.5796, 153.1));
+    \endcode
+
+    Normally, the GraphicsItem will be transformed into map coordinates using
+    a bilinear interpolation. Another option is the ExactTransform, which
+    converts the GraphicsItem exactly into map coordinates, but is only available
+    for certain subclasses of QGraphicsItem. Other interpolation methods may
+    be provided in future for greater accuracy near poles and in different
+    map projections, without the limitations of ExactTransform.
+
+    Calling setUnits() or setting the units property will result in the
+    default value of transformType being restored. See QGeoMapObject::transformType
+    for more details.
+
     QGeoMapObject instances can also be grouped into heirarchies in order to
     simplify the process of creating compound objects and managing groups of
-    objects.
+    objects (see QGeoMapGroupObject)
 */
 
 /*!
@@ -86,10 +121,54 @@ QTM_BEGIN_NAMESPACE
         A QGeoMapObject used to display text on a map
     \value RouteType
         A QGeoMapObject used to display a route.
+    \value CustomType
+        A QGeoMapObject displaying a custom GraphicsItem.
+*/
+
+/*!
+    \enum QGeoMapObject::CoordinateUnit
+
+    \since 1.2
+
+    Describes the units of measurement used for a map object's
+    graphics item.
+
+    \value PixelUnit
+        Units are in pixels on the screen. Pixel coordinate (0,0) is
+        translated to the origin coordinate.
+    \value MeterUnit
+        Units are in meters on the ground -- a local Transverse Mercator
+        coordinate system (on the WGS84 ellipsoid) is used for translation,
+        centered on the origin coordinate.
+    \value RelativeArcSecondUnit
+        Units are in arc seconds relative to the origin coordinate (along the
+        WGS84 ellipsoid).
+    \value AbsoluteArcSecondUnit
+        Units are in arc seconds on WGS84, origin ignored.
+*/
+
+/*!
+    \enum QGeoMapObject::TransformType
+
+    \since 1.2
+
+    Describes the type of transformation applied to change this object's
+    coordinate system into screen coordinates.
+
+    \value BilinearTransform
+        This object's bounding box is taken, and transformed at each of its
+        corners into screen coordinates. A bilinear interpolation is then used
+        to draw the rest of the object's GraphicsItem.
+    \value ExactTransform
+        Individual key points on the object are transformed and the GraphicsItem
+        is constructed in direct pixel coordinates. This is only available for
+        certain subclasses, depending on the implementation of QGeoMapData used.
 */
 
 /*!
     Constructs a new map object associated with \a mapData.
+
+    The object will be in pixel coordinates, with exact transform.
 */
 QGeoMapObject::QGeoMapObject(QGeoMapData *mapData)
     : d_ptr(new QGeoMapObjectPrivate())
@@ -107,11 +186,25 @@ QGeoMapObject::~QGeoMapObject()
 }
 
 /*!
+    Causes the QGeoMapData containing this object to be updated.
+*/
+void QGeoMapObject::update()
+{
+    if (!d_ptr->mapData || !d_ptr->mapData->d_ptr)
+        return;
+
+    d_ptr->mapData->d_ptr->update(this);
+}
+
+/*!
     Returns the type of this map object.
 */
 QGeoMapObject::Type QGeoMapObject::type() const
 {
-    return QGeoMapObject::NullType;
+    if (d_ptr->graphicsItem)
+        return QGeoMapObject::CustomType;
+    else
+        return QGeoMapObject::NullType;
 }
 
 /*!
@@ -128,7 +221,14 @@ void QGeoMapObject::setZValue(int zValue)
 {
     if (d_ptr->zValue != zValue) {
         d_ptr->zValue = zValue;
+        if (d_ptr->graphicsItem)
+            d_ptr->graphicsItem->setZValue(zValue);
         emit zValueChanged(d_ptr->zValue);
+        if (d_ptr->mapData && d_ptr->mapData->d_ptr->oe) {
+            QGeoMapObjectEngine *e = d_ptr->mapData->d_ptr->oe;
+            e->rebuildScenes();
+        }
+        update();
     }
 }
 
@@ -148,7 +248,10 @@ void QGeoMapObject::setVisible(bool visible)
 {
     if (d_ptr->isVisible != visible) {
         d_ptr->isVisible = visible;
+        if (d_ptr->graphicsItem)
+            d_ptr->graphicsItem->setVisible(visible);
         emit visibleChanged(d_ptr->isVisible);
+        update();
     }
 }
 
@@ -166,6 +269,7 @@ void QGeoMapObject::setSelected(bool selected)
     if (d_ptr->isSelected != selected) {
         d_ptr->isSelected = selected;
         emit selectedChanged(d_ptr->isSelected);
+        update();
     }
 }
 
@@ -179,10 +283,34 @@ bool QGeoMapObject::isSelected() const
 */
 QGeoBoundingBox QGeoMapObject::boundingBox() const
 {
-    if (!d_ptr->info)
+    if (!d_ptr->graphicsItem || !d_ptr->mapData)
         return QGeoBoundingBox();
 
-    return d_ptr->info->boundingBox();
+    QGeoMapObjectEngine *e = d_ptr->mapData->d_ptr->oe;
+
+    e->updateTransforms();
+    QTransform trans = e->latLonTrans.value(this);
+
+    QRectF bounds = d_ptr->graphicsItem->boundingRect();
+    QPolygonF poly = bounds * trans;
+
+    QRectF latLonBounds = poly.boundingRect();
+    QPointF topLeft = latLonBounds.bottomLeft();
+    if (topLeft.x() > 180.0 * 3600.0)
+        topLeft.setX(topLeft.x() - 360.0 * 3600.0);
+    if (topLeft.x() < -180.0 * 3600.0)
+        topLeft.setX(topLeft.x() + 360.0 * 3600.0);
+
+    QPointF bottomRight = latLonBounds.topRight();
+    if (bottomRight.x() > 180.0 * 3600.0)
+        bottomRight.setX(bottomRight.x() - 360.0 * 3600.0);
+    if (bottomRight.x() < -180.0 * 3600.0)
+        bottomRight.setX(bottomRight.x() + 360.0 * 3600.0);
+
+    QGeoCoordinate tlc(topLeft.y() / 3600.0, topLeft.x() / 3600.0);
+    QGeoCoordinate brc(bottomRight.y() / 3600.0, bottomRight.x() / 3600.0);
+
+    return QGeoBoundingBox(tlc, brc);
 }
 
 /*!
@@ -191,10 +319,36 @@ QGeoBoundingBox QGeoMapObject::boundingBox() const
 */
 bool QGeoMapObject::contains(const QGeoCoordinate &coordinate) const
 {
-    if (!d_ptr->info)
+    if (!d_ptr->graphicsItem || !d_ptr->mapData)
         return false;
 
-    return d_ptr->info->contains(coordinate);
+    QGeoMapObjectEngine *e = d_ptr->mapData->d_ptr->oe;
+
+    e->updateTransforms();
+    QPointF latLonPoint(coordinate.longitude()*3600.0, coordinate.latitude()*3600.0);
+
+    if (e->latLonExact.contains(this)) {
+        QList<QGraphicsItem*> items = e->latLonExact.values(this);
+        foreach (QGraphicsItem *item, items) {
+            if (item->contains(latLonPoint))
+                return true;
+        }
+        return false;
+    } else {
+        QList<QTransform> transList = e->latLonTrans.values(this);
+        foreach (QTransform trans, transList) {
+            bool ok;
+            QTransform inv = trans.inverted(&ok);
+            if (!ok)
+                continue;
+
+            QPointF localPoint = latLonPoint * inv;
+
+            if (d_ptr->graphicsItem->contains(localPoint))
+                return true;
+        }
+        return false;
+    }
 }
 
 /*!
@@ -225,48 +379,9 @@ void QGeoMapObject::setMapData(QGeoMapData *mapData)
     if (d_ptr->mapData == mapData)
         return;
 
-    if (d_ptr->info) {
-        delete d_ptr->info;
-        d_ptr->info = 0;
-    }
-
     d_ptr->mapData = mapData;
     if (!d_ptr->mapData)
         return;
-
-    d_ptr->info = mapData->createMapObjectInfo(this);
-
-    if (!d_ptr->info)
-        return;
-
-    connect(d_ptr->mapData,
-            SIGNAL(windowSizeChanged(QSizeF)),
-            d_ptr->info,
-            SLOT(windowSizeChanged(QSizeF)));
-    connect(d_ptr->mapData,
-            SIGNAL(zoomLevelChanged(qreal)),
-            d_ptr->info,
-            SLOT(zoomLevelChanged(qreal)));
-    connect(d_ptr->mapData,
-            SIGNAL(centerChanged(QGeoCoordinate)),
-            d_ptr->info,
-            SLOT(centerChanged(QGeoCoordinate)));
-
-    connect(this,
-            SIGNAL(zValueChanged(int)),
-            d_ptr->info,
-            SLOT(zValueChanged(int)));
-    connect(this,
-            SIGNAL(visibleChanged(bool)),
-            d_ptr->info,
-            SLOT(visibleChanged(bool)));
-    connect(this,
-            SIGNAL(selectedChanged(bool)),
-            d_ptr->info,
-            SLOT(selectedChanged(bool)));
-
-    d_ptr->info->init();
-
 }
 
 /*!
@@ -279,16 +394,115 @@ QGeoMapData* QGeoMapObject::mapData() const
     return d_ptr->mapData;
 }
 
-/*!
-    Returns the QGeoMapObjectInfo instance which implements the
-    QGeoMapData specific behaviours of this map object.
-
-    This will mostly be useful when implementing custom QGeoMapData
-    subclasses.
-*/
-QGeoMapObjectInfo* QGeoMapObject::info() const
+QGeoMapObjectInfo *QGeoMapObject::info() const
 {
-    return d_ptr->info;
+    qWarning("QGeoMapObject::info() is deprecated, returning null");
+    return NULL;
+}
+
+/*!
+    \property QGeoMapObject::graphicsItem
+    \brief This property holds the GraphicsItem that will be drawn on the map.
+
+    \since 1.2
+
+    The GraphicsItem's coordinates are in the units specified by the
+    QGeoMapObject::units property.
+
+    To offset the coordinates of the GraphicsItem (for items that can only
+    be constructed about their parent position), use the QGraphicsItem::setTransform
+    method with a QTransform containing the desired translation.
+
+    Note that setting this property will cause the QGeoMapObject to take
+    ownership of the GraphicsItem. Before taking ownership of the new item,
+    it will first relinquish ownership of its predecessor (if any).
+*/
+QGraphicsItem *QGeoMapObject::graphicsItem() const
+{
+    return d_ptr->graphicsItem;
+}
+
+void QGeoMapObject::setGraphicsItem(QGraphicsItem *item)
+{
+    if (item == d_ptr->graphicsItem)
+        return;
+
+    d_ptr->graphicsItem = item;
+    item->setZValue(this->zValue());
+    emit graphicsItemChanged(item);
+    update();
+}
+
+/*!
+    \property QGeoMapObject::transformType
+    \brief This property holds the transformation type used to draw the object.
+
+    \since 1.2
+
+    \sa QGeoMapObject::TransformType
+*/
+QGeoMapObject::TransformType QGeoMapObject::transformType() const
+{
+    return d_ptr->transType;
+}
+
+void QGeoMapObject::setTransformType(const TransformType &type)
+{
+    d_ptr->transType = type;
+    update();
+}
+
+/*!
+    \property QGeoMapObject::origin
+    \brief This property holds the origin of the object's coordinate system.
+
+    \since 1.2
+
+    How the origin coordinate is used depends on the selected coordinate
+    system, see QGeoMapObject::TransformType for more details.
+*/
+QGeoCoordinate QGeoMapObject::origin() const
+{
+    return d_ptr->origin;
+}
+
+void QGeoMapObject::setOrigin(const QGeoCoordinate &origin)
+{
+    if (origin == d_ptr->origin)
+        return;
+
+    d_ptr->origin = origin;
+    emit originChanged(origin);
+    update();
+}
+
+/*!
+    \property QGeoMapObject::units
+    \brief This property holds the units of measurement for the object.
+
+    \since 1.2
+
+    Note that setting this property will reset the transformType property to
+    the default for the units given. For PixelUnit, this is ExactTransform,
+    and for all others, BilinearTransform.
+
+    \sa QGeoMapObject::CoordinateUnit
+*/
+QGeoMapObject::CoordinateUnit QGeoMapObject::units() const
+{
+    return d_ptr->units;
+}
+
+void QGeoMapObject::setUnits(const CoordinateUnit &unit)
+{
+    d_ptr->units = unit;
+
+    if (unit == QGeoMapObject::PixelUnit)
+        setTransformType(QGeoMapObject::ExactTransform);
+    else
+        setTransformType(QGeoMapObject::BilinearTransform);
+
+    update();
 }
 
 /*!
@@ -325,13 +539,15 @@ QGeoMapObjectPrivate::QGeoMapObjectPrivate()
     : zValue(0),
       isVisible(true),
       isSelected(false),
+      units(QGeoMapObject::PixelUnit),
+      transType(QGeoMapObject::ExactTransform),
       mapData(0),
-      info(0) {}
+      graphicsItem(0) {}
 
 QGeoMapObjectPrivate::~QGeoMapObjectPrivate()
 {
-    if (info)
-        delete info;
+    if (graphicsItem)
+        delete graphicsItem;
 }
 
 /*******************************************************************************

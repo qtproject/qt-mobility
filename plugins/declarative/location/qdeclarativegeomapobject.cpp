@@ -124,23 +124,23 @@ void QDeclarativeGeoMapObject::releaseEvent(QDeclarativeGeoMapMouseEvent *event)
     }
 }
 
-void QDeclarativeGeoMapObject::enterEvent()
-{
-    for (int i = 0; i < mouseAreas_.size(); ++i)
-        mouseAreas_.at(i)->enterEvent();
-}
+//void QDeclarativeGeoMapObject::enterEvent()
+//{
+//    for (int i = 0; i < mouseAreas_.size(); ++i)
+//        mouseAreas_.at(i)->enterEvent();
+//}
 
-void QDeclarativeGeoMapObject::exitEvent()
-{
-    for (int i = 0; i < mouseAreas_.size(); ++i)
-        mouseAreas_.at(i)->exitEvent();
-}
+//void QDeclarativeGeoMapObject::exitEvent()
+//{
+//    for (int i = 0; i < mouseAreas_.size(); ++i)
+//        mouseAreas_.at(i)->exitEvent();
+//}
 
-void QDeclarativeGeoMapObject::moveEvent(QDeclarativeGeoMapMouseEvent *event)
-{
-    for (int i = 0; i < mouseAreas_.size(); ++i)
-        mouseAreas_.at(i)->moveEvent(event);
-}
+//void QDeclarativeGeoMapObject::moveEvent(QDeclarativeGeoMapMouseEvent *event)
+//{
+//    for (int i = 0; i < mouseAreas_.size(); ++i)
+//        mouseAreas_.at(i)->moveEvent(event);
+//}
 
 void QDeclarativeGeoMapObject::setMapObject(QGeoMapObject *object)
 {
@@ -201,6 +201,9 @@ bool QDeclarativeGeoMapObject::isVisible() const
     Note: For model data, currently only LandmarkModel is supported. Using other types
     of models results in undefined behavior.
 
+    Assuming you have a LandmarkModel identified by landmarkModel, an example usage:
+    \snippet doc/src/snippets/declarative/testpolymapobjects.qml MapObjectView
+
     The MapObjectView element is part of the \bold{QtMobility.location 1.2} module.
 */
 
@@ -212,9 +215,9 @@ QDeclarativeGeoMapObjectView::QDeclarativeGeoMapObjectView(QDeclarativeItem *par
 QDeclarativeGeoMapObjectView::~QDeclarativeGeoMapObjectView()
 {
     if (!mapObjects_.isEmpty()) {
-        for (int i = 0; i < mapObjects_.size(); ++i) {
-            mapData_->removeMapObject(mapObjects_.at(i)->mapObject());
-        }
+        //for (int i = 0; i < mapObjects_.size(); ++i) {
+            //mapData_->removeMapObject(mapObjects_.at(i)->mapObject());
+        //}
         // Model owns the data, do not delete the pointers.
         mapObjects_.clear();
     }
@@ -231,7 +234,7 @@ QVariant QDeclarativeGeoMapObjectView::model() const
 }
 
 /*!
-    \qmlproperty Component MapObjectView::model
+    \qmlproperty model MapObjectView::model
 
     This property holds the model that provides data for
     populating data with delegates.

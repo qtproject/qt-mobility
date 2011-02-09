@@ -39,6 +39,7 @@
 **
 ****************************************************************************/
 #include "qgeocoordinate.h"
+#include "qgeocoordinate_p.h"
 #include "qlocationutils_p.h"
 
 #include <QDateTime>
@@ -69,19 +70,11 @@ inline static double qgeocoordinate_radToDeg(double rad)
 }
 
 
-class QGeoCoordinatePrivate
-{
-public:
-    double lat;
-    double lng;
-    double alt;
-
-    QGeoCoordinatePrivate() {
-        lat = qQNaN();
-        lng = qQNaN();
-        alt = qQNaN();
-    }
-};
+QGeoCoordinatePrivate::QGeoCoordinatePrivate() {
+    lat = qQNaN();
+    lng = qQNaN();
+    alt = qQNaN();
+}
 
 
 /*!
@@ -399,6 +392,30 @@ qreal QGeoCoordinate::azimuthTo(const QGeoCoordinate &other) const
     return qreal((int(whole + 360) % 360) + fraction);
 }
 
+void QGeoCoordinatePrivate::atDistanceAndAzimuth(const QGeoCoordinate &coord,
+                                                 qreal distance, qreal azimuth,
+                                                 double *lon, double *lat)
+{
+    double latRad = qgeocoordinate_degToRad(coord.d->lat);
+    double lonRad = qgeocoordinate_degToRad(coord.d->lng);
+    double cosLatRad = cos(latRad);
+    double sinLatRad = sin(latRad);
+
+    double azimuthRad = qgeocoordinate_degToRad(azimuth);
+
+    double ratio = (distance / (qgeocoordinate_EARTH_MEAN_RADIUS * 1000.0));
+    double cosRatio = cos(ratio);
+    double sinRatio = sin(ratio);
+
+    double resultLatRad = asin(sinLatRad * cosRatio
+                               + cosLatRad * sinRatio * cos(azimuthRad));
+    double resultLonRad  = lonRad
+                           + atan2(sin(azimuthRad) * sinRatio * cosLatRad,
+                                   cosRatio - sinLatRad * sin(resultLatRad));
+
+    *lat = qgeocoordinate_radToDeg(resultLatRad);
+    *lon = qgeocoordinate_radToDeg(resultLonRad);
+}
 
 /*!
     Returns the coordinate that is reached by traveling \a distance metres 
@@ -415,25 +432,14 @@ QGeoCoordinate QGeoCoordinate::atDistanceAndAzimuth(qreal distance, qreal azimut
     if (!isValid())
         return QGeoCoordinate();
 
-    double latRad = qgeocoordinate_degToRad(d->lat);
-    double lonRad = qgeocoordinate_degToRad(d->lng);
-    double cosLatRad = cos(latRad);
-    double sinLatRad = sin(latRad);
+    double resultLon, resultLat;
+    QGeoCoordinatePrivate::atDistanceAndAzimuth(*this, distance, azimuth,
+                                                &resultLon, &resultLat);
 
-    double azimuthRad = qgeocoordinate_degToRad(azimuth);
-
-    double ratio = (distance / (qgeocoordinate_EARTH_MEAN_RADIUS * 1000.0));
-    double cosRatio = cos(ratio);
-    double sinRatio = sin(ratio);
-
-    double resultLatRad = asin(sinLatRad * cosRatio
-                               + cosLatRad * sinRatio * cos(azimuthRad));
-    double resultLonRad  = lonRad 
-                           + atan2(sin(azimuthRad) * sinRatio * cosLatRad, 
-                                   cosRatio - sinLatRad * sin(resultLatRad));
-
-    double resultLat = qgeocoordinate_radToDeg(resultLatRad);
-    double resultLon = qgeocoordinate_radToDeg(resultLonRad);
+    if (resultLon > 180.0)
+        resultLon -= 360.0;
+    else if (resultLon < -180.0)
+        resultLon += 360.0;
 
     double resultAlt = d->alt + distanceUp;
     return QGeoCoordinate(resultLat, resultLon, resultAlt);

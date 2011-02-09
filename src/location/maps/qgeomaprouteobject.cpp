@@ -41,6 +41,8 @@
 
 #include "qgeomaprouteobject.h"
 #include "qgeomaprouteobject_p.h"
+#include "qgeocoordinate.h"
+#include "qgeoroutesegment.h"
 
 #define DEFAULT_ROUTE_DETAIL_LEVEL 6
 
@@ -70,7 +72,12 @@ QTM_BEGIN_NAMESPACE
     Constructs a new route object.
 */
 QGeoMapRouteObject::QGeoMapRouteObject()
-    : d_ptr(new QGeoMapRouteObjectPrivate()) {}
+    : d_ptr(new QGeoMapRouteObjectPrivate())
+{
+    setGraphicsItem(d_ptr->item);
+    setUnits(QGeoMapObject::AbsoluteArcSecondUnit);
+    setTransformType(QGeoMapObject::ExactTransform);
+}
 
 /*!
     Constructs a new route object for the route \a route.
@@ -79,6 +86,10 @@ QGeoMapRouteObject::QGeoMapRouteObject(const QGeoRoute &route)
     : d_ptr(new QGeoMapRouteObjectPrivate())
 {
     d_ptr->route = route;
+    d_ptr->regenPath();
+    setGraphicsItem(d_ptr->item);
+    setUnits(QGeoMapObject::AbsoluteArcSecondUnit);
+    setTransformType(QGeoMapObject::ExactTransform);
 }
 
 /*!
@@ -115,7 +126,9 @@ void QGeoMapRouteObject::setRoute(const QGeoRoute &route)
 {
     //if (d_ptr->route != route) {
     d_ptr->route = route;
+    d_ptr->regenPath();
     emit routeChanged(d_ptr->route);
+    update();
     //}
 }
 
@@ -130,7 +143,7 @@ void QGeoMapRouteObject::setRoute(const QGeoRoute &route)
 */
 QPen QGeoMapRouteObject::pen() const
 {
-    return d_ptr->pen;
+    return d_ptr->item->pen();
 }
 
 void QGeoMapRouteObject::setPen(const QPen &pen)
@@ -138,11 +151,12 @@ void QGeoMapRouteObject::setPen(const QPen &pen)
     QPen newPen = pen;
     newPen.setCosmetic(false);
 
-    if (d_ptr->pen == newPen)
+    if (d_ptr->item->pen() == newPen)
         return;
 
-    d_ptr->pen = newPen;
-    emit penChanged(d_ptr->pen);
+    d_ptr->item->setPen(newPen);
+    emit penChanged(newPen);
+    update();
 }
 
 /*!
@@ -170,6 +184,7 @@ void QGeoMapRouteObject::setDetailLevel(quint32 detailLevel)
     if (d_ptr->detailLevel != detailLevel) {
         d_ptr->detailLevel = detailLevel;
         emit detailLevelChanged(d_ptr->detailLevel);
+        update();
     }
 }
 
@@ -203,10 +218,37 @@ void QGeoMapRouteObject::setDetailLevel(quint32 detailLevel)
 /*******************************************************************************
 *******************************************************************************/
 
-QGeoMapRouteObjectPrivate::QGeoMapRouteObjectPrivate()
+QGeoMapRouteObjectPrivate::QGeoMapRouteObjectPrivate() :
+    item(new QGraphicsPathItem)
 {
     detailLevel = DEFAULT_ROUTE_DETAIL_LEVEL;
+    QPen pen = item->pen();
     pen.setCosmetic(false);
+    item->setPen(pen);
+}
+
+void QGeoMapRouteObjectPrivate::regenPath()
+{
+    QList<QGeoCoordinate> path;
+
+    QGeoRouteSegment segment = route.firstRouteSegment();
+    while (segment.isValid()) {
+        path.append(segment.path());
+        segment = segment.nextRouteSegment();
+    }
+
+    QPainterPath pth;
+
+    for (int i = 0; i < path.size(); ++i) {
+        double x = path.at(i).longitude() * 3600.0;
+        double y = path.at(i).latitude() * 3600.0;
+        if (i == 0)
+            pth.moveTo(x, y);
+        else
+            pth.lineTo(x, y);
+    }
+
+    item->setPath(pth);
 }
 
 QGeoMapRouteObjectPrivate::~QGeoMapRouteObjectPrivate() {}

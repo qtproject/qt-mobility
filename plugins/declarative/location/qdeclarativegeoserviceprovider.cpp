@@ -53,7 +53,10 @@ QTM_BEGIN_NAMESPACE
 
     \ingroup qml-location-maps
 
-    The Plugin element is part of the \bold{QtMobility.location 1.1} module.
+    An example of setting the Plugin in the Map element:
+    \snippet examples/declarative-location/landmarkmap/landmarkmap.qml Map Plugin
+
+    The Plugin element is part of the \bold{QtMobility.location 1.2} module.
 */
 
 QDeclarativeGeoServiceProvider::QDeclarativeGeoServiceProvider(QObject *parent)
@@ -139,7 +142,7 @@ QMap<QString, QVariant> QDeclarativeGeoServiceProvider::parameterMap() const
 
     \ingroup qml-location-maps
 
-    The PluginParameter element is part of the \bold{QtMobility.location 1.1} module.
+    The PluginParameter element is part of the \bold{QtMobility.location 1.2} module.
 */
 
 QDeclarativeGeoServiceProviderParameter::QDeclarativeGeoServiceProviderParameter(QObject *parent)

@@ -40,180 +40,93 @@
 ****************************************************************************/
 
 #include "qgeomapobjectinfo.h"
-#include "qgeomapobjectinfo_p.h"
-
-#include "qgeomapdata.h"
-#include "qgeomapdata_p.h"
-#include "qgeomapobject.h"
-#include "qgeomapobject_p.h"
 #include "qgeoboundingbox.h"
+#include "qgeomapdata.h"
+#include "qgeomapobject.h"
+#include "qgeocoordinate.h"
 
 QTM_BEGIN_NAMESPACE
 
-/*!
-    \class QGeoMapObjectInfo
-    \brief The QGeoMapObjectInfo class is the base class used to define the
-    parts of QGeoMapObject and its subclasses that are specific to a
-    particular QGeoMapData subclass.
-
-    \inmodule QtLocation
-
-    \ingroup maps-impl
-
-    Most of the mapping functionality is provided by a QGeoMapData subclass,
-    including the rendering of the map itself.
-
-    This means that QGeoMapData subclasses need to be able to render each of
-    the QGeoMapObject instances and instances of the QGeoMapObject subclasses.
-
-    Furthermore, the need to be able to create and manipulate map objects
-    independently from the QGeoMapData instance precludes the use of a set of
-    factory methods for creating QGeoMapData specific map objects.
-
-    The QGeoMapObjectInfo class is used to provide the QGeoMapData subclass
-    specific behaviours for the map objects in a way which fulfils this need,
-    as the QGeoMapObjectInfo instances are only created at the point when a
-    map object becomes associated with a QGeoMapData subclass - which is most
-    commonly when the object is added to a QGraphicsGeoMap.
-*/
-
-/*!
-    Constructs a new object info instance which will provide the behaviours of
-    \a mapObject which are specific to \a mapData.
-*/
 QGeoMapObjectInfo::QGeoMapObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject)
-    : QObject(mapObject),
-      d_ptr(new QGeoMapObjectInfoPrivate(mapData, mapObject)) {}
+{
+    Q_UNUSED(mapData)
+    Q_UNUSED(mapObject)
+}
 
-/*!
-    Destroys this info object.
-*/
 QGeoMapObjectInfo::~QGeoMapObjectInfo()
+{}
+
+static void deprecatedWarning()
 {
-    delete d_ptr;
+    qWarning("Use of QGeoMapObjectInfo is deprecated and will be removed "
+             "in the next major release.");
 }
 
-/*!
-    This function is run after the constructor.
-
-    The default implementation does nothing.
-*/
-void QGeoMapObjectInfo::init() {}
-
-/*!
-    This function is called when the window size of the map changes to 
-    \a windowSize.
-
-    The default implementation does nothing.
-*/
-void QGeoMapObjectInfo::windowSizeChanged(const QSizeF &windowSize)
+void QGeoMapObjectInfo::init()
 {
-    Q_UNUSED(windowSize)
+    deprecatedWarning();
 }
 
-/*!
-    This function is called when the zoom level of the map changes to 
-    \a zoomLevel.
-
-    The default implementation does nothing.
-*/
-void QGeoMapObjectInfo::zoomLevelChanged(qreal zoomLevel)
-{
-    Q_UNUSED(zoomLevel)
-}
-
-/*!
-    This function is called when the center of the map changes to 
-    \a coordinate.
-
-    The default implementation does nothing.
-*/
-void QGeoMapObjectInfo::centerChanged(const QGeoCoordinate &coordinate)
-{
-    Q_UNUSED(coordinate)
-}
-
-/*!
-    This function is run when the z value of the object changes to \a zValue.
-
-    The default implementation does nothing.
-*/
-void QGeoMapObjectInfo::zValueChanged(int zValue)
-{
-    Q_UNUSED(zValue)
-}
-
-/*!
-    This function is run when the visible state of the object changes to 
-    \a visible.
-
-    The default implementation does nothing.
-*/
-void QGeoMapObjectInfo::visibleChanged(bool visible)
-{
-    Q_UNUSED(visible)
-}
-
-/*!
-    This function is run when the selected state of the object changes to 
-    \a selected.
-
-    The default implementation does nothing.
-*/
-void QGeoMapObjectInfo::selectedChanged(bool selected)
-{
-    Q_UNUSED(selected)
-}
-
-/*!
-    Returns a bounding box which contains this map object.
-
-    The default implementation returns an invalid bounding box.
-*/
 QGeoBoundingBox QGeoMapObjectInfo::boundingBox() const
 {
+    deprecatedWarning();
     return QGeoBoundingBox();
 }
 
-/*!
-    Returns whether \a coordinate is contained with the boundary of this
-    map object.
-
-    The default implementation returns false.
-*/
 bool QGeoMapObjectInfo::contains(const QGeoCoordinate &coordinate) const
 {
-    Q_UNUSED(coordinate)
+    Q_UNUSED(coordinate);
+    deprecatedWarning();
     return false;
 }
 
-/*!
-    Returns the QGeoMapData instance associated with this info object.
-*/
+void QGeoMapObjectInfo::windowSizeChanged(const QSizeF &windowSize)
+{
+    Q_UNUSED(windowSize);
+    deprecatedWarning();
+}
+
+void QGeoMapObjectInfo::zoomLevelChanged(qreal zoomLevel)
+{
+    Q_UNUSED(zoomLevel);
+    deprecatedWarning();
+}
+
+void QGeoMapObjectInfo::centerChanged(const QGeoCoordinate &coordinate)
+{
+    Q_UNUSED(coordinate);
+    deprecatedWarning();
+}
+
+void QGeoMapObjectInfo::zValueChanged(int zValue)
+{
+    Q_UNUSED(zValue);
+    deprecatedWarning();
+}
+
+void QGeoMapObjectInfo::visibleChanged(bool visible)
+{
+    Q_UNUSED(visible);
+    deprecatedWarning();
+}
+
+void QGeoMapObjectInfo::selectedChanged(bool selected)
+{
+    Q_UNUSED(selected);
+    deprecatedWarning();
+}
+
 QGeoMapData* QGeoMapObjectInfo::mapData()
 {
-    return d_ptr->mapData;
+    deprecatedWarning();
+    return 0;
 }
 
-/*!
-    Returns the QGeoMapObject instance associated with this info object.
-*/
 QGeoMapObject* QGeoMapObjectInfo::mapObject()
 {
-    return d_ptr->mapObject;
+    deprecatedWarning();
+    return 0;
 }
-
-/*******************************************************************************
-*******************************************************************************/
-
-QGeoMapObjectInfoPrivate::QGeoMapObjectInfoPrivate(QGeoMapData *mapData, QGeoMapObject *mapObject)
-    : mapData(mapData),
-      mapObject(mapObject) {}
-
-QGeoMapObjectInfoPrivate::~QGeoMapObjectInfoPrivate() {}
-
-/*******************************************************************************
-*******************************************************************************/
 
 #include "moc_qgeomapobjectinfo.cpp"
 

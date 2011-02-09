@@ -45,6 +45,8 @@
 #include <QColor>
 #include <QBrush>
 
+#include <QtDeclarative/qdeclarativeinfo.h>
+
 QTM_BEGIN_NAMESPACE
 
 /*!
@@ -61,11 +63,14 @@ QTM_BEGIN_NAMESPACE
     If the list contains less than 3 valid coordinates the polygon
     will not be displayed.
 
-    The MapPolygon element is part of the \bold{QtMobility.location 1.1} module.
+    Simplistic example to illustrate, this element could be defined in Map body:
+    \snippet doc/src/snippets/declarative/testpolymapobjects.qml Basic MapPolygon
+
+    The MapPolygon element is part of the \bold{QtMobility.location 1.2} module.
 */
 
 QDeclarativeGeoMapPolygonObject::QDeclarativeGeoMapPolygonObject(QDeclarativeItem *parent)
-    : QDeclarativeGeoMapObject(parent)
+    : QDeclarativeGeoMapObject(parent), polygon_(0), componentCompleted_(false)
 {
     polygon_ = new QGeoMapPolygonObject();
     setMapObject(polygon_);
@@ -82,7 +87,8 @@ QDeclarativeGeoMapPolygonObject::QDeclarativeGeoMapPolygonObject(QDeclarativeIte
 
 QDeclarativeGeoMapPolygonObject::~QDeclarativeGeoMapPolygonObject()
 {
-    qDeleteAll(path_);
+    // QML engine deletes coordinates, no need to delete them here.
+    path_.clear();
     delete polygon_;
 }
 
@@ -111,6 +117,7 @@ void QDeclarativeGeoMapPolygonObject::path_append(QDeclarativeListProperty<QDecl
     QList<QGeoCoordinate> p = poly->polygon_->path();
     p.append(coordinate->coordinate());
     poly->polygon_->setPath(p);
+    poly->pathPropertyChanged();
 }
 
 int QDeclarativeGeoMapPolygonObject::path_count(QDeclarativeListProperty<QDeclarativeCoordinate> *prop)
@@ -130,6 +137,32 @@ void QDeclarativeGeoMapPolygonObject::path_clear(QDeclarativeListProperty<QDecla
     qDeleteAll(p);
     p.clear();
     poly->polygon_->setPath(QList<QGeoCoordinate>());
+    poly->pathPropertyChanged();
+}
+
+void QDeclarativeGeoMapPolygonObject::pathPropertyChanged()
+{
+    if (componentCompleted_)
+        emit pathChanged();
+}
+
+void QDeclarativeGeoMapPolygonObject::componentComplete()
+{
+    // Setup member coordinates
+    QObjectList kids = children();
+    QList<QGeoCoordinate> path = polygon_->path();
+    for (int i = 0; i < kids.size(); ++i) {
+        QDeclarativeCoordinate *coordinate = qobject_cast<QDeclarativeCoordinate*>(kids.at(i));
+        if (coordinate) {
+            path_.append(coordinate);
+            path.append(coordinate->coordinate());
+        } else {
+            qmlInfo(this) << tr("Member is not a Coordinate");
+        }
+    }
+    polygon_->setPath(path);
+    componentCompleted_ = true;
+    QDeclarativeGeoMapObject::componentComplete();
 }
 
 /*!
@@ -190,6 +223,64 @@ void QDeclarativeGeoMapPolygonObject::borderWidthChanged(int width)
     else
         p.setStyle(Qt::SolidLine);
     polygon_->setPen(p);
+}
+
+/*!
+    \qmlmethod MapPolygon::addCoordinate(Coordinate)
+
+    Adds coordinate to the path. The resulting path is derived
+    from values at the time of assignment, meaning that later changes
+    in values are not reflected in the path.
+
+    \snippet doc/src/snippets/declarative/testpolymapobjects.qml Adding to polygon
+
+    \sa removeCoordinate
+
+*/
+
+void QDeclarativeGeoMapPolygonObject::addCoordinate(QDeclarativeCoordinate* coordinate)
+{
+    path_.append(coordinate);
+    QList<QGeoCoordinate> p = polygon_->path();
+    p.append(coordinate->coordinate());
+    polygon_->setPath(p);
+    emit pathChanged();
+}
+
+/*!
+    \qmlmethod MapPolygon::removeCoordinate(Coordinate)
+
+    Remove coordinate from the path. Removed Coordinate is not deleted.
+    If there are multiple instances of the same coordinate, the one added
+    last is removed.
+
+    \snippet doc/src/snippets/declarative/testpolymapobjects.qml Removing from polygon
+
+    If more finetuned control is needed, one can also
+    iterate and/or use the inherent index property of the path list.
+
+    \snippet doc/src/snippets/declarative/testpolymapobjects.qml Iterating and removing polyline
+
+    \sa addCoordinate
+
+*/
+
+void QDeclarativeGeoMapPolygonObject::removeCoordinate(QDeclarativeCoordinate* coordinate)
+{
+    int index = path_.lastIndexOf(coordinate);
+    if (index == -1) {
+        qmlInfo(this) << tr("Cannot remove nonexistent coordinate.");
+        return;
+    }
+    QList<QGeoCoordinate> path = polygon_->path();
+    if (path.count() < index + 1) {
+        qmlInfo(this) << tr("Cannot remove the coordinate, it does not exist.");
+        return;
+    }
+    path.removeAt(index);
+    path_.removeAt(index);
+    polygon_->setPath(path);
+    emit pathChanged();
 }
 
 /*!

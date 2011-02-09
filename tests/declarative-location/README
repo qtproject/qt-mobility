@@ -1,0 +1,27 @@
+This folder subdivides into three different subfolders. 
+The testcases use some experimental QML libraries and cannot be ran as autotests.
+
+--- algorihmic 
+Contains non-visual tests (~the traditional autotest).
+
+1) Install the qtest-qml library. 
+http://qt.gitorious.org/qt-labs/qtest-qml
+See the README file of the project for instructions.
+2) Modify the .pro file according to your installation (the 
+qtest-qml.pro -file needs to be found) by adjusting the 
+FIND_TOP variable.
+3) Make and execute the test.
+The .qml files prefixed with 'tst_' will be scanned and ran when running the
+resulting testbinary,
+
+--- visual 
+Contains visual QML tests. Manual interactions and resulting visuals are recorded with 
+qmlviewer and then replayed and verified.
+
+During replay, qmlviewer is invoked as processes so expect to see coming and going 
+QML windows. The reason forcing qmlviewer is that the needed Qt.VisualTest plugin is baked into the 
+viewer. In future (fingers crossed) the plugin may be yanked as a separate plugin and be thus 
+used also in other test frameworks.
+
+--- manual
+Contains manual QML applications for all sort of manual hack and slash exploratory testing.

@@ -56,8 +56,7 @@
 #include "qgeomapdata_p.h"
 #include "qgeomapobject.h"
 #include "qgeomapobject_p.h"
-
-#include "qgeotiledmapobjectinfo_p.h"
+#include "projwrapper_p.h"
 
 #include <QRectF>
 #include <QHash>
@@ -84,7 +83,6 @@ public:
     void clearRequests();
 
     void paintMap(QPainter *painter, const QStyleOptionGraphicsItem *option);
-    void paintObjects(QPainter *painter, const QStyleOptionGraphicsItem *option);
 
     void cleanupCaches();
 
@@ -97,11 +95,9 @@ public:
     bool intersectsScreen(const QRect &rect) const;
     QList<QPair<QRect, QRect> > intersectedScreen(const QRect &rect, bool translateToScreen = true) const;
 
-    void removeObjectInfo(QGeoTiledMapObjectInfo* object);
-
-    void addObjectInfo(QGeoTiledMapObjectInfo* object);
-
-    QPoint screenPositionToWorldReferencePosition(const QPointF &screenPosition) const;
+    virtual QPoint screenPositionToWorldReferencePosition(const QPointF &screenPosition) const;
+    virtual QPoint coordinateToWorldReferencePosition(double lon, double lat) const;
+    virtual QPointF coordinateToScreenPosition(double lon, double lat) const;
 
     int zoomFactor;
 
@@ -120,6 +116,9 @@ public:
 
     QCache<QGeoTiledMapRequest, QImage> cache;
     QCache<QGeoTiledMapRequest, QPixmap> zoomCache;
+
+    ProjCoordinateSystem spherical;
+    ProjCoordinateSystem wgs84;
 
 
     Q_DECLARE_PUBLIC(QGeoTiledMapData)
