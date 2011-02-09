@@ -111,11 +111,11 @@ public:
     };
 
     enum ThermalState {
-    	UnknownThermal = 0,
-    	NormalThermal,
-    	WarningThermal,
-    	AlertThermal,
-    	ErrorThermal
+        UnknownThermal = 0,
+        NormalThermal,
+        WarningThermal,
+        AlertThermal,
+        ErrorThermal
     };
 
     enum InputMethod {

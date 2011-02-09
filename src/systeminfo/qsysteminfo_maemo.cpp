@@ -1278,26 +1278,26 @@ QSystemDeviceInfo::ThermalState QSystemDeviceInfoPrivate::currentThermalState()
 #if !defined(QT_NO_DBUS)
     QString dBusService = "com.nokia.thermalmanager";
     QDBusReply<QString> thermalStateReply = QDBusConnection::systemBus().call
-                                            (QDBusMessage::createMethodCall("com.nokia.thermalmanager",
-                                                                            "/com/nokia/thermalmanager",
-			                                                                "com.nokia.thermalmanager",
-			                                                                "get_thermal_state"));
-    if(thermalStateReply.isValid()){
-    	if(thermalStateReply.value() == "normal"){
-    		return QSystemDeviceInfo::NormalThermal;
-    	}
-		if(thermalStateReply.value() == "warning"){
-			return QSystemDeviceInfo::WarningThermal;
-		}
-		if(thermalStateReply.value() == "alert"){
-			return QSystemDeviceInfo::AlertThermal;
-		}
-		if(thermalStateReply.value() == "unknown"){
-			return QSystemDeviceInfo::UnknownThermal;
-		} else {
-			return QSystemDeviceInfo::ErrorThermal;
-		}
-	}
+            (QDBusMessage::createMethodCall("com.nokia.thermalmanager",
+                                            "/com/nokia/thermalmanager",
+                                            "com.nokia.thermalmanager",
+                                            "get_thermal_state"));
+    if (thermalStateReply.isValid()){
+        if (thermalStateReply.value() == "normal"){
+            return QSystemDeviceInfo::NormalThermal;
+        }
+        if (thermalStateReply.value() == "warning"){
+            return QSystemDeviceInfo::WarningThermal;
+        }
+        if (thermalStateReply.value() == "alert"){
+            return QSystemDeviceInfo::AlertThermal;
+        }
+        if (thermalStateReply.value() == "unknown"){
+            return QSystemDeviceInfo::UnknownThermal;
+        } else {
+            return QSystemDeviceInfo::ErrorThermal;
+        }
+    }
 #endif
 }
 

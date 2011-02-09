@@ -298,9 +298,9 @@ void QSystemDeviceInfo::connectNotify(const char *signal)
                 this,SIGNAL(powerStateChanged(QSystemDeviceInfo::PowerState)),Qt::UniqueConnection);
     }
     if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
-    		thermalStateChanged(QSystemDeviceInfo::ThermalState))))) {
+            thermalStateChanged(QSystemDeviceInfo::ThermalState))))) {
        connect(d,SIGNAL(thermalStateChanged(QSystemDeviceInfo::ThermalState)),
-    			this,SIGNAL(thermalStateChanged(QSystemDeviceInfo::ThermalState)),Qt::UniqueConnection);
+                this,SIGNAL(thermalStateChanged(QSystemDeviceInfo::ThermalState)),Qt::UniqueConnection);
     }
     if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
             wirelessKeyboardConnected(bool))))) {

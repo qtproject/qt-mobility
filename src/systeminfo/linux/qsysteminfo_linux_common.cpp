@@ -2858,7 +2858,7 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoLinuxCommonPrivate::currentPowerS
 }
 
 QSystemDeviceInfo::ThermalState QSystemDeviceInfoLinuxCommonPrivate::currentThermalState(){
-	return QSystemDeviceInfo::UnknownThermal;
+    return QSystemDeviceInfo::UnknownThermal;
 }
 
 #if !defined(QT_NO_DBUS)
