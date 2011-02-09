@@ -42,13 +42,13 @@ HTML.footer = \
 
 # Files not referenced in any qdoc file.
 # See also extraimages.HTML
-qhp.Qt.extraFiles = index.html \
-                    images/arrow_down.png \
-                    images/breadcrumb.png \
-                    images/bullet_gt.png \
-                    images/bullet_dn.png \
-                    images/bullet_sq.png \
-                    images/bullet_up.png \
-                    images/horBar.png \
-                    images/sprites-combined.png \
-                    style/offline.css
+qhp.QtMobility.extraFiles = index.html \
+                            images/arrow_down.png \
+                            images/breadcrumb.png \
+                            images/bullet_gt.png \
+                            images/bullet_dn.png \
+                            images/bullet_sq.png \
+                            images/bullet_up.png \
+                            images/horBar.png \
+                            images/sprites-combined.png \
+                            style/offline.css
