@@ -704,6 +704,11 @@ void CQGeoPositionInfoSourceS60::requestUpdate(int aTimeout)
     TUint8 bits;
 
     CQMLBackendAO *temp = NULL;
+    
+    if ( mRegUpdateAO == NULL || mCurrentModuleId == TUid::Null()){
+    	emit updateTimeout();
+    	return;
+    }
 
     //return if already a request update is pending
     if (mReqUpdateAO && mReqUpdateAO->isRequestPending())
@@ -772,6 +777,11 @@ void CQGeoPositionInfoSourceS60::requestUpdate(int aTimeout)
 // starts the regular updates
 void CQGeoPositionInfoSourceS60::startUpdates()
 {
+		if ( mRegUpdateAO == NULL || mCurrentModuleId == TUid::Null()){
+    	emit updateTimeout();
+    	return;
+    } 
+	
     if (receivers(SIGNAL(positionUpdated(QGeoPositionInfo))) > 0 && !mStartUpdates)
         mRegUpdateAO->startUpdates();
     mRegularUpdateTimedOut = false;
@@ -782,6 +792,12 @@ void CQGeoPositionInfoSourceS60::startUpdates()
 void CQGeoPositionInfoSourceS60::stopUpdates()
 {
     mStartUpdates = false;
+    
+    if ( mRegUpdateAO == NULL || mCurrentModuleId == TUid::Null()){
+    	emit updateTimeout();
+    	return;
+    }
+    
     mRegUpdateAO->cancelUpdate();
 }
 
