@@ -450,11 +450,10 @@ bool QGeoMapObjectEngine::exactSecondsToSeconds(const QGeoCoordinate &origin,
         QPainterPath path = pathItem->path() * pathItem->transform();
         path = path * toAbs;
 
-        QPolygonF originalBounds = path.boundingRect();
-
         QGraphicsPathItem *pi = pathCopy(pathItem);
         pi->setPath(path);
         latLonExact.insertMulti(object, pi);
+        const QPolygonF originalBounds = pi->boundingRect();
         polys << originalBounds;
 
         QPainterPath westPath = path * west;
@@ -716,10 +715,12 @@ void QGeoMapObjectEngine::exactPixelMap(const QGeoCoordinate &origin,
                 em = e;
             }
 
+            delete[] steps;
+
             QGraphicsPathItem *pi = pathCopy(pathItem);
             pi->setPath(mpath);
             pixelExact.insertMulti(object, pi);
-            polys << QPolygonF(mpath.controlPointRect());
+            polys << QPolygonF(pi->boundingRect());
         }
     }
 }
