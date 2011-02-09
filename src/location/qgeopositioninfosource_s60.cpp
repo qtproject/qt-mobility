@@ -52,17 +52,17 @@ QTM_BEGIN_NAMESPACE
 
 // constructor
 CQGeoPositionInfoSourceS60::CQGeoPositionInfoSourceS60(QObject* aParent) : QGeoPositionInfoSource(aParent),
-        mCurrentModuleId(TUid::Null()),
-        mReqModuleId(TUid::Null()),
-        mDevStatusUpdateAO(NULL),
-        mReqUpdateAO(NULL),
-        mRegUpdateAO(NULL),
-        mSupportedMethods(PositioningMethod(0)),
-        mCurrentMethod(PositioningMethod(0)),
-        mListSize(0),
-        mStartUpdates(FALSE),
-        mRegularUpdateTimedOut(FALSE),
-        mModuleFlags(0)
+    mCurrentModuleId(TUid::Null()),
+    mReqModuleId(TUid::Null()),
+    mDevStatusUpdateAO(NULL),
+    mReqUpdateAO(NULL),
+    mRegUpdateAO(NULL),
+    mSupportedMethods(PositioningMethod(0)),
+    mCurrentMethod(PositioningMethod(0)),
+    mListSize(0),
+    mStartUpdates(FALSE),
+    mRegularUpdateTimedOut(FALSE),
+    mModuleFlags(0)
 {
     memset(mList, 0 , MAX_SIZE * sizeof(CPosMethodInfo));
 }
@@ -125,9 +125,9 @@ void CQGeoPositionInfoSourceS60::ConstructL()
 
         //update the list array with the available method initially
         updateDeviceStatus();
-        
+
         // Set the PreferredPositioningMethods based on Supported methods
-        QGeoPositionInfoSource::setPreferredPositioningMethods( mSupportedMethods );
+        QGeoPositionInfoSource::setPreferredPositioningMethods(mSupportedMethods);
 
         //devStatusUpdateAO->NotifyDeviceStatus(mStatusEvent);
 
@@ -169,11 +169,11 @@ QGeoPositionInfo CQGeoPositionInfoSourceS60::lastKnownPosition(bool aFromSatelli
         iLastKnownpositioner.Close();
 
         if ((error == KErrNone) || (error == KPositionPartialUpdate)) {
-        
+
             TPositionModuleInfo modInfo;
             mPositionServer.GetModuleInfoById(posInfo.ModuleId(), modInfo);
-            
-            if(!aFromSatellitePositioningMethodsOnly || (aFromSatellitePositioningMethodsOnly && (modInfo.Capabilities() & TPositionModuleInfo::ECapabilitySatellite))){
+
+            if (!aFromSatellitePositioningMethodsOnly || (aFromSatellitePositioningMethodsOnly && (modInfo.Capabilities() & TPositionModuleInfo::ECapabilitySatellite))) {
                 QGeoCoordinate  coord;
 
                 posInfo.GetPosition(pos);
@@ -189,7 +189,7 @@ QGeoPositionInfo CQGeoPositionInfoSourceS60::lastKnownPosition(bool aFromSatelli
                 QDateTime dt(QDate(datetime.Year(), datetime.Month() + 1, datetime.Day() + 1),
                              QTime(datetime.Hour(), datetime.Minute(), datetime.Second(),
                                    datetime.MicroSecond() / 1000),
-                            Qt::UTC);
+                             Qt::UTC);
 
                 //store the time stamp
                 posUpdate.setTimestamp(dt);
@@ -407,10 +407,10 @@ void CQGeoPositionInfoSourceS60::updateStatus(TPositionModuleInfo &aModInfo, TIn
 
         //count on the mList array size
         mListSize++;
-        
+
         //update the supported source types based on the device status
         updateAvailableTypes();
-        
+
         //store the correct method in use from the mCurrentModuleId retireved earlier
         if (id == mCurrentModuleId) {
             mCurrentMethod = method;
@@ -435,7 +435,7 @@ void CQGeoPositionInfoSourceS60::updateStatus(TPositionModuleInfo &aModInfo, TIn
         //module's time to subsequent fix has changed
         if (mList[i].mTimeToNextFix != time_to_next_fix)
             mList[i].mTimeToFirstFix = time_to_next_fix;
-        
+
         //update the supported source types based on the device status
         updateAvailableTypes();
 
@@ -527,7 +527,7 @@ void CQGeoPositionInfoSourceS60::updateStatus(TPositionModuleInfo &aModInfo, TIn
                     mRegUpdateAO = NULL;
                     mCurrentModuleId = TUid::Null();
                     mCurrentMethod = PositioningMethod(0);
-                    
+
                     emit updateTimeout();
                 }
 
@@ -626,7 +626,7 @@ void CQGeoPositionInfoSourceS60::TPositionInfo2QGeoPositionInfo(
     QDateTime dt(QDate(datetime.Year() , datetime.Month() + 1, datetime.Day() + 1),
                  QTime(datetime.Hour() , datetime.Minute(), datetime.Second(),
                        datetime.MicroSecond() / 1000),
-                Qt::UTC);
+                 Qt::UTC);
 
     //store the time stamp
     aPosInfo2.setTimestamp(dt);
@@ -704,10 +704,10 @@ void CQGeoPositionInfoSourceS60::requestUpdate(int aTimeout)
     TUint8 bits;
 
     CQMLBackendAO *temp = NULL;
-    
-    if ( mRegUpdateAO == NULL || mCurrentModuleId == TUid::Null()){
-    	emit updateTimeout();
-    	return;
+
+    if (mRegUpdateAO == NULL || mCurrentModuleId == TUid::Null()) {
+        emit updateTimeout();
+        return;
     }
 
     //return if already a request update is pending
@@ -777,11 +777,11 @@ void CQGeoPositionInfoSourceS60::requestUpdate(int aTimeout)
 // starts the regular updates
 void CQGeoPositionInfoSourceS60::startUpdates()
 {
-		if ( mRegUpdateAO == NULL || mCurrentModuleId == TUid::Null()){
-    	emit updateTimeout();
-    	return;
-    } 
-	
+    if (mRegUpdateAO == NULL || mCurrentModuleId == TUid::Null()) {
+        emit updateTimeout();
+        return;
+    }
+
     if (receivers(SIGNAL(positionUpdated(QGeoPositionInfo))) > 0 && !mStartUpdates)
         mRegUpdateAO->startUpdates();
     mRegularUpdateTimedOut = false;
@@ -792,19 +792,19 @@ void CQGeoPositionInfoSourceS60::startUpdates()
 void CQGeoPositionInfoSourceS60::stopUpdates()
 {
     mStartUpdates = false;
-    
-    if ( mRegUpdateAO == NULL || mCurrentModuleId == TUid::Null()){
-    	emit updateTimeout();
-    	return;
+
+    if (mRegUpdateAO == NULL || mCurrentModuleId == TUid::Null()) {
+        emit updateTimeout();
+        return;
     }
-    
+
     mRegUpdateAO->cancelUpdate();
 }
 
 void CQGeoPositionInfoSourceS60::setPreferredPositioningMethods(PositioningMethods aMethods)
 {
     QGeoPositionInfoSource::setPreferredPositioningMethods(aMethods);
-    
+
     PositioningMethods preferredMethod(PositioningMethods(0));
     TInt index = -1;
     // the poistioning methods are not supported
