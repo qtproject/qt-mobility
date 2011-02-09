@@ -1,0 +1,13 @@
+usr/include/qt4/QtVersitOrganizer/QVersitOrganizerExporter
+usr/include/qt4/QtVersitOrganizer/QVersitOrganizerExporterDetailHandler
+usr/include/qt4/QtVersitOrganizer/QVersitOrganizerHandler
+usr/include/qt4/QtVersitOrganizer/QVersitOrganizerHandlerFactory
+usr/include/qt4/QtVersitOrganizer/QVersitOrganizerImporter
+usr/include/qt4/QtVersitOrganizer/QVersitOrganizerImporterPropertyHandler
+usr/include/qt4/QtVersitOrganizer/QVersitTimeZoneHandler
+usr/include/qt4/QtVersitOrganizer/qversitorganizerexporter.h
+usr/include/qt4/QtVersitOrganizer/qversitorganizerhandler.h
+usr/include/qt4/QtVersitOrganizer/qversitorganizerimporter.h
+usr/include/qt4/QtVersitOrganizer/qversittimezonehandler.h
+usr/lib/libQtVersitOrganizer.so
+usr/lib/pkgconfig/QtVersitOrganizer.pc

@@ -1,0 +1,60 @@
+diff --git a/plugins/feedback/meegotouch/qfeedback.cpp b/plugins/feedback/meegotouch/qfeedback.cpp
+index 1b00984..b624b27 100644
+--- a/plugins/feedback/meegotouch/qfeedback.cpp
++++ b/plugins/feedback/meegotouch/qfeedback.cpp
+@@ -44,6 +44,7 @@
+ #include <QtCore/QCoreApplication>
+ #include <QtCore/QtPlugin>
+ 
++#include <meegotouch/MComponentData>
+ #include <meegotouch/MFeedback>
+ 
+ Q_EXPORT_PLUGIN2(feedback_meegotouch, QFeedbackMeegoTouch)
+@@ -111,12 +112,23 @@ QFeedbackMeegoTouch::QFeedbackMeegoTouch(QObject *parent) :
+     QObject(parent),
+     QFeedbackThemeInterface()
+ {
++    if (MComponentData::instance() != 0) {
++        m_mtfComponentData = MComponentData::instance();
++    } else {
++        QByteArray argv0;
++        if (!QCoreApplication::arguments().isEmpty())
++            argv0 = QCoreApplication::arguments().first().toLocal8Bit();
++
++        int argc = 1;
++        char *argv[] = { argv0.data() };
++        m_mtfComponentData = new MComponentData(argc, argv);
++    }
+ }
+ 
+ bool QFeedbackMeegoTouch::play(QFeedbackEffect::ThemeEffect effect)
+ {
+     const QString &feedbackString = convertToMeegoTouch(effect);
+-    if (feedbackString.isEmpty())
++    if (!m_mtfComponentData || feedbackString.isEmpty())
+         return false;
+ 
+     MFeedback::play(feedbackString);
+diff --git a/plugins/feedback/meegotouch/qfeedback.h b/plugins/feedback/meegotouch/qfeedback.h
+index 2a531bf..ed1bedd 100644
+--- a/plugins/feedback/meegotouch/qfeedback.h
++++ b/plugins/feedback/meegotouch/qfeedback.h
+@@ -45,6 +45,8 @@
+ #include <qmobilityglobal.h>
+ #include <qfeedbackplugininterfaces.h>
+ 
++class MComponentData;
++
+ QT_BEGIN_HEADER
+ QTM_USE_NAMESPACE
+ 
+@@ -56,6 +58,9 @@ public:
+ 
+     virtual bool play(QFeedbackEffect::ThemeEffect);
+     virtual QFeedbackInterface::PluginPriority pluginPriority();
++
++private:
++    MComponentData *m_mtfComponentData;
+ };
+ 
+ QT_END_HEADER
