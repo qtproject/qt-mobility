@@ -239,10 +239,9 @@ void tst_QVersitContactExporter::testConvertContact()
     QVERIFY(mExporter->exportContacts(QList<QContact>() << contact, QVersitDocument::VCard30Type));
     QList<QVersitDocument> documents = mExporter->documents();
 
-    // Each Contact has display label detail by default. Display label is enocded
-    // if some value exist for the Label or if value for Name exist.
+    // Contact should have N and TEL properties
     QCOMPARE(documents.size(), 1);
-    QCOMPARE(documents.first().properties().count(), 3);
+    QCOMPARE(documents.first().properties().count(), 2);
 }
 
 void tst_QVersitContactExporter::testEmptyContact()
@@ -257,12 +256,11 @@ void tst_QVersitContactExporter::testEmptyContact()
     QList<QVersitDocument> documents = mExporter->documents();
     QCOMPARE(documents.size(), 1); // only contact2 was exported
     QVersitDocument document1 = documents.first();
+    QCOMPARE(document1.properties().size(), 1);
     QVersitProperty property = findPropertyByName(document1, "N");
     QCOMPARE(property.valueType(), QVersitProperty::CompoundType);
     QCOMPARE(property.value<QStringList>(),
             QStringList() << QString() << QString() << QString() << QString() << QString());
-    property = findPropertyByName(document1, "FN");
-    QCOMPARE(property.value(), QString());
 }
 
 void tst_QVersitContactExporter::testContactDetailHandler()
@@ -334,14 +332,11 @@ void tst_QVersitContactExporter::testEncodeName()
     QContact contact;
     QContactName name;
 
-    // Test 1: An empty contact - a blank FN and a blank N should be generated
+    // Test 1: An empty contact - a blank N should be generated
     QVERIFY(mExporter->exportContacts(QList<QContact>() << contact, QVersitDocument::VCard21Type));
     QCOMPARE(mExporter->documents().size(), 1);
     QVersitDocument document = mExporter->documents().first();
-    QCOMPARE(document.properties().size(), 2);
-    QVersitProperty displayProperty = findPropertyByName(document, QLatin1String("FN"));
-    QCOMPARE(displayProperty.name(), QLatin1String("FN"));
-    QCOMPARE(displayProperty.value(), QString());
+    QCOMPARE(document.properties().size(), 1);
     QVersitProperty nameProperty = findPropertyByName(document, QLatin1String("N"));
     QCOMPARE(nameProperty.name(), QLatin1String("N"));
     CHECK_VALUE(nameProperty, QVersitProperty::CompoundType,
@@ -361,7 +356,7 @@ void tst_QVersitContactExporter::testEncodeName()
     document = mExporter->documents().first();
     // Check that FN comes from the custom label and N is populated with the right fields from N
     QCOMPARE(document.properties().count(), 2);
-    displayProperty = findPropertyByName(document, QLatin1String("FN"));
+    QVersitProperty displayProperty = findPropertyByName(document, QLatin1String("FN"));
     QCOMPARE(displayProperty.name(), QLatin1String("FN"));
     QCOMPARE(displayProperty.value(), QLatin1String("Label"));
     nameProperty = findPropertyByName(document, QLatin1String("N"));
@@ -371,7 +366,7 @@ void tst_QVersitContactExporter::testEncodeName()
                 QStringList() << QLatin1String("Last") << QLatin1String("Fi;rst")
                 << QLatin1String("Middle") << QLatin1String("Prefix") << QLatin1String("Suffix"));
 
-    // Test 3: No display label, but QContactName found
+    // Test 3: Just QContactName
     contact.clearDetails();
     name = QContactName();
     name.setFirstName(QLatin1String("First"));
@@ -380,45 +375,38 @@ void tst_QVersitContactExporter::testEncodeName()
     contact.saveDetail(&name);
     QVERIFY(mExporter->exportContacts(QList<QContact>() << contact, QVersitDocument::VCard21Type));
     document = mExporter->documents().first();
-
-    QCOMPARE(document.properties().count(), 2); // FN and N
-    displayProperty = findPropertyByName(document, QLatin1String("FN"));
-    QCOMPARE(displayProperty.name(), QLatin1String("FN"));
-    QCOMPARE(displayProperty.value(), QLatin1String("First Middle Last"));
+    QCOMPARE(document.properties().count(), 1);
+    // Unlike older versions, FN is not generated
     nameProperty = findPropertyByName(document, QLatin1String("N"));
     QCOMPARE(nameProperty.name(), QLatin1String("N"));
     CHECK_VALUE(nameProperty, QVersitProperty::CompoundType, QStringList()
                 << QLatin1String("Last") << QLatin1String("First") << QLatin1String("Middle")
                 << QString() << QString());
 
-    // Test 4: Nickname but no name or display label
+    // Test 4: Just nickname
     contact.clearDetails();
     QContactNickname nickname;
     nickname.setNickname(QLatin1String("Nickname"));
     contact.saveDetail(&nickname);
     QVERIFY(mExporter->exportContacts(QList<QContact>() << contact, QVersitDocument::VCard21Type));
     document = mExporter->documents().first();
-    QCOMPARE(document.properties().count(), 3); // FN and N and NICKNAME
-    displayProperty = findPropertyByName(document, QLatin1String("FN"));
-    QCOMPARE(displayProperty.name(), QLatin1String("FN"));
-    QCOMPARE(displayProperty.value(), QLatin1String("Nickname"));
+    QCOMPARE(document.properties().count(), 2); // N and NICKNAME
+    // Unlike older versions, FN is not generated
     nameProperty = findPropertyByName(document, QLatin1String("N"));
     QCOMPARE(nameProperty.name(), QLatin1String("N"));
     CHECK_VALUE(nameProperty, QVersitProperty::CompoundType, QStringList()
                 << QString() << QString() << QString()
                 << QString() << QString());
 
-    // Test 5: Organization but no name or display label
+    // Test 5: Just organization
     contact.clearDetails();
     QContactOrganization org;
     org.setName(QLatin1String("Organization"));
     contact.saveDetail(&org);
     QVERIFY(mExporter->exportContacts(QList<QContact>() << contact, QVersitDocument::VCard21Type));
     document = mExporter->documents().first();
-    QCOMPARE(document.properties().count(), 3); // FN and N and ORG
-    displayProperty = findPropertyByName(document, QLatin1String("FN"));
-    QCOMPARE(displayProperty.name(), QLatin1String("FN"));
-    QCOMPARE(displayProperty.value(), QLatin1String("Organization"));
+    QCOMPARE(document.properties().count(), 2); // N and ORG
+    // Unlike older versions, FN is not generated
     nameProperty = findPropertyByName(document, QLatin1String("N"));
     QCOMPARE(nameProperty.name(), QLatin1String("N"));
     CHECK_VALUE(nameProperty, QVersitProperty::CompoundType, QStringList()
@@ -430,10 +418,8 @@ void tst_QVersitContactExporter::testEncodeName()
     QContactManagerEngine::setContactDisplayLabel(&contact, "Bobby Tables");
     QVERIFY(mExporter->exportContacts(QList<QContact>() << contact, QVersitDocument::VCard21Type));
     document = mExporter->documents().first();
-    QCOMPARE(document.properties().count(), 2); // FN and N
-    displayProperty = findPropertyByName(document, QLatin1String("FN"));
-    QCOMPARE(displayProperty.name(), QLatin1String("FN"));
-    QCOMPARE(displayProperty.value(), QLatin1String("Bobby Tables"));
+    QCOMPARE(document.properties().count(), 1); // N
+    // Unlike older versions, FN is not generated from display label
     nameProperty = findPropertyByName(document, QLatin1String("N"));
     QCOMPARE(nameProperty.name(), QLatin1String("N"));
     CHECK_VALUE(nameProperty, QVersitProperty::CompoundType, QStringList()
