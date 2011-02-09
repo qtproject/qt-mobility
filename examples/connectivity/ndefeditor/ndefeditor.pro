@@ -24,4 +24,4 @@ FORMS += \
     urirecordeditor.ui \
     mimeimagerecordeditor.ui
 
-symbian:TARGET.CAPABILITY = All -TCB
+symbian:TARGET.CAPABILITY += LocalServices

@@ -11,4 +11,5 @@ HEADERS  += mainwindow.h \
 
 FORMS    += mainwindow.ui
 
-symbian:TARGET.CAPABILITY = All -TCB
+symbian:TARGET.CAPABILITY += LocalServices
+
