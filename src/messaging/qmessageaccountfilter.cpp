@@ -120,7 +120,7 @@ QTM_BEGIN_NAMESPACE
 
     An empty filter matches all accounts.
 
-    The result of combining an empty filtter with a non-empty filter using an AND operation is the
+    The result of combining an empty filter with a non-empty filter using an AND operation is the
     original non-empty filter.
 
     The result of combining an empty filter with a non-empty filter using an OR operation is the
