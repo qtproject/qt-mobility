@@ -243,6 +243,7 @@ public:
     int socketDescriptor() const;
 
 #ifdef QTM_SYMBIAN_BLUETOOTH
+    void _q_startReceive();
     void startReceive();
     void ensureBlankNativeSocket();
 
@@ -280,6 +281,7 @@ public:
 
     TPtr8 rxDescriptor;
     TSockXfrLength rxLength;
+    bool receiving;
 #endif
 
     // private slots

@@ -43,6 +43,7 @@
 #include "qrfcommserver_p.h"
 #include "qbluetoothsocket.h"
 #include "qbluetoothsocket_p.h"
+#include "qbluetoothlocaldevice.h"
 #include "symbian/utils_symbian_p.h"
 
 #include <QTimer>
@@ -53,7 +54,7 @@
 QTM_BEGIN_NAMESPACE
 
 QRfcommServerPrivate::QRfcommServerPrivate()
-: pendingSocket(0), maxPendingConnections(1)
+: pendingSocket(0), maxPendingConnections(1), securityFlags(QBluetooth::NoSecurity)
 {
     socket = new QBluetoothSocket(QBluetoothSocket::RfcommSocket);    
     ds = socket->d_ptr;
@@ -82,15 +83,31 @@ bool QRfcommServer::listen(const QBluetoothAddress &address, quint16 port)
     Q_D(QRfcommServer);
 
     TRfcommSockAddr addr;
-// TODO: isValid() is missing...
-//    if (address.isValid())
-//        addr.SetBTAddr(TBTDevAddr(address.toUInt64()));
+    if (!address.isNull())
+        addr.SetBTAddr(TBTDevAddr(address.toUInt64()));
+    else
+        addr.SetBTAddr(TBTDevAddr(Q_UINT64_C(0)));
+
     if (port == 0)
         addr.SetPort(KRfcommPassiveAutoBind);
     else
         addr.SetPort(port);
 
     TBTServiceSecurity security;
+    switch (d->securityFlags) {
+        case QBluetooth::Authentication:
+            security.SetAuthentication(ETrue);
+            break;
+        case QBluetooth::Authorization:
+            security.SetAuthorisation(ETrue);
+            break;
+        case QBluetooth::Encryption:
+            security.SetEncryption(ETrue);
+            break;
+        case QBluetooth::NoSecurity:
+        default:
+            break;
+    }
     addr.SetSecurity(security);
     d->ds->iSocket->Bind(addr);
     d->socket->setSocketState(QBluetoothSocket::BoundState);
@@ -124,10 +141,7 @@ QBluetoothAddress QRfcommServer::serverAddress() const
     if (d->socket->state() == QBluetoothSocket::UnconnectedState)
         return QBluetoothAddress();
 
-    TBTSockAddr address;
-    d->ds->iSocket->LocalName(address);
-
-    return qTBTDevAddrToQBluetoothAddress(address.BTAddr());
+    return d->ds->localAddress();
 }
 
 quint16 QRfcommServer::serverPort() const
@@ -221,13 +235,17 @@ void QRfcommServerPrivate::HandleShutdownCompleteL(TInt aErr)
 
 void QRfcommServer::setSecurityFlags(QBluetooth::SecurityFlags security)
 {
+    Q_D(QRfcommServer);
+
+    d->securityFlags = security;
 }
 
 QBluetooth::SecurityFlags QRfcommServer::securityFlags() const
 {
-    return QBluetooth::NoSecurity;
-}
+    Q_D(const QRfcommServer);
 
+    return d->securityFlags;
+}
 
 
 QTM_END_NAMESPACE
