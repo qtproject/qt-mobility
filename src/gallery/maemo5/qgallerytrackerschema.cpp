@@ -1151,7 +1151,7 @@ static const QGalleryItemProperty qt_galleryPhotoAlbumPropertyList[] =
 
 static const QGalleryAggregateProperty qt_galleryPhotoAlbumAggregateList[] =
 {
-    QT_GALLERY_AGGREGATE_PROPERTY("trackCount", "*", "COUNT", Int)
+    QT_GALLERY_AGGREGATE_PROPERTY("count", "*", "COUNT", Int)
 };
 
 static void qt_writePhotoAlbumIdCondition(QDocumentGallery::Error *, QXmlStreamWriter *xml, const QStringRef &itemId)
