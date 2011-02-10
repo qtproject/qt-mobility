@@ -40,8 +40,8 @@ usr/include/qt4/QtSensors/qaccelerometer.h
 usr/include/qt4/QtSensors/qambientlightsensor.h
 usr/include/qt4/QtSensors/qcompass.h
 usr/include/qt4/QtSensors/qgyroscope.h
-usr/include/qt4/QtSensors/qlightsensor.h
 usr/include/qt4/QtSensors/qmagnetometer.h
+usr/include/qt4/QtSensors/qlightsensor.h
 usr/include/qt4/QtSensors/qorientationsensor.h
 usr/include/qt4/QtSensors/qproximitysensor.h
 usr/include/qt4/QtSensors/qrotationsensor.h
