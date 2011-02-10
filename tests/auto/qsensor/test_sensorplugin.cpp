@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include "test_sensorimpl.h"
+#include "test_sensor2impl.h"
 #include <qsensorplugin.h>
 #include <qsensorbackend.h>
 #include <qsensormanager.h>
@@ -72,6 +73,7 @@ public:
 
         QSensorManager::registerBackend(TestSensor::type, testsensorimpl::id, this);
         QSensorManager::registerBackend(TestSensor::type, "test sensor 2", this);
+        QSensorManager::registerBackend(TestSensor2::type, testsensor2impl::id, this);
     }
 
     void sensorsChanged()
@@ -96,6 +98,9 @@ public:
     {
         if (sensor->identifier() == testsensorimpl::id) {
             return new testsensorimpl(sensor);
+        }
+        if (sensor->identifier() == testsensor2impl::id) {
+            return new testsensor2impl(sensor);
         }
 
         qWarning() << "Can't create backend" << sensor->identifier();

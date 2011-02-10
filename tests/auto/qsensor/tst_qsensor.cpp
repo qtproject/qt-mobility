@@ -49,6 +49,7 @@
 
 #include "qsensor.h"
 #include "test_sensor.h"
+#include "test_sensor2.h"
 #include "test_sensorimpl.h"
 #include "test_backends.h"
 
@@ -157,7 +158,7 @@ private slots:
     void testTypeRegistered()
     {
         QList<QByteArray> expected;
-        expected << TestSensor::type;
+        expected << TestSensor::type << TestSensor2::type;
         QList<QByteArray> actual = QSensor::sensorTypes();
         qSort(actual); // The actual list is not in a defined order
         QCOMPARE(actual, expected);
@@ -766,8 +767,9 @@ private slots:
 
         // Make sure we've cleaned up the list of available types
         QList<QByteArray> expected;
-        expected << TestSensor::type;
+        expected << TestSensor::type << TestSensor2::type;
         QList<QByteArray> actual = QSensor::sensorTypes();
+        qSort(actual); // The actual list is not in a defined order
         QCOMPARE(actual, expected);
     }
 
@@ -861,6 +863,26 @@ private slots:
         })
 
         unregister_test_backends();
+    }
+
+    void testReadingBC()
+    {
+        // QSensorReading changed in 1.0.1 due to QTMOBILITY-226
+        // This test verifies that a backend built against the 1.0.0
+        // version of qsensor.h still runs.
+        TestSensor2 sensor;
+
+        sensor.setProperty("doThis", "setOne");
+        sensor.start();
+        QCOMPARE(sensor.reading()->timestamp(), qtimestamp(1));
+        QCOMPARE(sensor.reading()->test(), 1);
+        sensor.stop();
+
+        sensor.setProperty("doThis", "setTwo");
+        sensor.start();
+        QCOMPARE(sensor.reading()->timestamp(), qtimestamp(2));
+        QCOMPARE(sensor.reading()->test(), 2);
+        sensor.stop();
     }
 };
 
