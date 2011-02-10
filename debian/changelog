@@ -1,8 +1,9 @@
-qt-mobility (1.2.0~git20110203) unstable; urgency=low
+qt-mobility (1.2.0~git20110210) unstable; urgency=low
 
   * Bump version to 1.2
+  * Fixes: NB#206728
 
- -- Rohan McGovern <rohan.mcgovern@nokia.com>  Thu, 03 Feb 2011 13:59:48 +1000
+ -- Sunil Thaha <sunil.thaha@nokia.com>  Wed, 10 Feb 2011 13:59:48 +1000
 
 qt-mobility (1.1.1~git20110106) unstable; urgency=low
 
