@@ -54,7 +54,7 @@ class  Q_SYSINFO_EXPORT QSystemScreenSaver : public QObject
 {
     Q_OBJECT
     Q_ENUMS(ScreenSaverState)
-    Q_PROPERTY(bool screenSaverInhibit READ screenSaverInhibit WRITE setScreenSaverInhibited)
+    Q_PROPERTY(bool screenSaverInhibited READ screenSaverInhibited WRITE setScreenSaverInhibited)
 
 public:
 

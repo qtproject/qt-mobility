@@ -769,7 +769,7 @@ QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QSystemScreenSaverLinuxComm
  QSystemScreenSaverPrivate::~QSystemScreenSaverPrivate()
  {
      if(currentPid != 0) {
-         setScreenSaverDelayed(false);
+         setScreenSaverInhibited(false);
      }
 #if defined(QT_NO_DBUS) && defined(Q_WS_X11) && !defined(Q_WS_MEEGO)
      changeTimeout(-1);
