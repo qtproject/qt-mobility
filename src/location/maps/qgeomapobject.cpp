@@ -82,6 +82,32 @@ QTM_BEGIN_NAMESPACE
     mapObject->setOrigin(QGeoCoordinate(-27.5796, 153.1));
     \endcode
 
+    QGeoMapObject instances can also be grouped into heirarchies in order to
+    simplify the process of creating compound objects and managing groups of
+    objects (see QGeoMapGroupObject)
+
+    \section2 Units and coordinates
+
+    The local units and coordinates of the QGraphicsItem are transformed
+    onto the map based on the \a units, \a origin, \a transformType and
+    \a transform properties. Several systems are available, including
+    pixels, meters and seconds of arc.
+
+    It should be noted that both pixel and meter coordinate systems are south-
+    oriented (ie, positive Y axis faces south on the map). However, the
+    RelativeArcSeconds unit system faces north to align with the standard
+    latitude grid. The Y axis can be flipped if necessary by making use of the
+    GraphicsItem's \a transform property
+
+    \code
+    QTransform northFlip;
+    northFlip.scale(0, -1);
+
+    ellipseItem->setTransform(northFlip);
+    \endcode
+
+    \section2 Transform methods
+
     Normally, the GraphicsItem will be transformed into map coordinates using
     a bilinear interpolation. Another option is the ExactTransform, which
     converts the GraphicsItem exactly into map coordinates, but is only available
@@ -93,9 +119,20 @@ QTM_BEGIN_NAMESPACE
     default value of transformType being restored. See QGeoMapObject::transformType
     for more details.
 
-    QGeoMapObject instances can also be grouped into heirarchies in order to
-    simplify the process of creating compound objects and managing groups of
-    objects (see QGeoMapGroupObject)
+    \section2 Caveats
+
+    Other than the coordinate system features, there are a few differences
+    with using QGraphicsItems on a map compared to using them on a standard
+    QGraphicsScene. One of the most important of these is the use of the
+    \a update() function. When an application changes anything that has an
+    effect upon the appearance, size, shape etc of the QGraphicsItem, it
+    must call \a QGeoMapObject::update() to ensure that the map is updated.
+
+    Another is the use of child items of a QGraphicsItem. These are supported
+    in more or less the same manner as in QGraphicsScene, with the exception
+    of use in concert with \a ExactTransform -- any object with transformType
+    set to \a ExactTransform will not have children of its QGraphicsItem drawn
+    on the map.
 */
 
 /*!
