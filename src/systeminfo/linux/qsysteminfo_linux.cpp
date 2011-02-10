@@ -817,6 +817,7 @@ Q_UNUSED(timeout)
                                                                      QLatin1String("QSystemScreenSaver"));
                  if(reply.isValid()) {
                      currentPid = reply.value();
+                     screenSaverIsInhibited = true;
                      return reply.isValid();
                  }
              }
@@ -835,11 +836,7 @@ Q_UNUSED(timeout)
 bool QSystemScreenSaverPrivate::screenSaverInhibited()
 {
     if(kdeIsRunning || gnomeIsRunning || meegoIsRunning) {
-        if(currentPid != 0) {
-            return true;
-        } else {
-            return false;
-        }
+           return screenSaverIsInhibited;
     }
 
 #if defined(Q_WS_X11) && !defined(Q_WS_MEEGO)
@@ -956,6 +953,7 @@ void QSystemScreenSaverPrivate::setScreenSaverDelayed(bool on)
              if(connectionInterface->isValid()) {
                  QDBusReply<uint> reply =  connectionInterface->call(QLatin1String("UnInhibit"),
                                                                      currentPid);
+                 screenSaverIsInhibited = false;
              }
          }
 #endif
