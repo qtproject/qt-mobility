@@ -552,7 +552,7 @@ void CQGeoSatelliteInfoSourceS60::requestUpdate(int aTimeout)
     CQMLBackendAO *temp = NULL;
 
     if (mRegUpdateAO == NULL || mCurrentModuleId == TUid::Null()) {
-        emit updateTimeout();
+        emit requestTimeout();
         return;
     }
 
@@ -622,7 +622,7 @@ void CQGeoSatelliteInfoSourceS60::requestUpdate(int aTimeout)
 void CQGeoSatelliteInfoSourceS60::startUpdates()
 {
     if (mRegUpdateAO == NULL || mCurrentModuleId == TUid::Null()) {
-        emit updateTimeout();
+        emit requestTimeout();
         return;
     }
 
@@ -639,7 +639,7 @@ void CQGeoSatelliteInfoSourceS60::stopUpdates()
     mStartUpdates = false;
 
     if (mRegUpdateAO == NULL || mCurrentModuleId == TUid::Null()) {
-        emit updateTimeout();
+        emit requestTimeout();
         return;
     }
 
