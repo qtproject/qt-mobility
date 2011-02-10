@@ -43,6 +43,7 @@
 
 #include <QWidget>
 #include <qsysteminfo.h>
+#include <qsystemdeviceinfo.h>
 
 #include "ui_dialog_small_landscape.h"
 QTM_USE_NAMESPACE
@@ -72,6 +73,8 @@ private:
     QSystemNetworkInfo *ni;
     QSystemStorageInfo *sti;
     QSystemBatteryInfo *bi;
+    QSystemDisplayInfo *dis;
+
     void updateStorage();
 
     QSystemBatteryInfo::BatteryStatus currentBatStat;
@@ -108,6 +111,8 @@ private slots:
 
     void chargingStateChanged(QSystemBatteryInfo::ChargingState chargingState);
     void chargerTypeChanged(QSystemBatteryInfo::ChargerType chargerType);
+
+    void orientationChanged(QSystemDisplayInfo::DisplayOrientation);
 
 
 };

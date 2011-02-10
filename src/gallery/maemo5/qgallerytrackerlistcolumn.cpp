@@ -87,7 +87,10 @@ QVariant QGalleryTrackerDoubleColumn::toVariant(const QString &string) const
 
 QVariant QGalleryTrackerDateTimeColumn::toVariant(const QString &string) const
 {
-    QDateTime dateTime = QDateTime::fromString(string, Qt::ISODate);
+    QDateTime dateTime;
+    uint timeStamp=string.toUInt();
+    if (timeStamp)
+        dateTime = QDateTime::fromTime_t(timeStamp);
 
     return dateTime.isValid() ? QVariant(dateTime) : QVariant();
 }

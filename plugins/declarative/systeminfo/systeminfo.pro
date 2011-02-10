@@ -17,7 +17,8 @@ SOURCES += systeminfo.cpp \
     qdeclarativedeviceinfo.cpp \
     qdeclarativegeneralinfo.cpp \
     qdeclarativebatteryinfo.cpp \
-    qdeclarativealignedtimer.cpp
+    qdeclarativealignedtimer.cpp \
+    qdeclarativedisplayinfo.cpp
 
 HEADERS += \
     qdeclarativenetworkinfo_p.h \
@@ -25,7 +26,8 @@ HEADERS += \
     qdeclarativedeviceinfo_p.h \
     qdeclarativegeneralinfo_p.h \
     qdeclarativebatteryinfo_p.h \
-    qdeclarativealignedtimer_p.h
+    qdeclarativealignedtimer_p.h \
+    qdeclarativedisplayinfo_p.h
 
 CONFIG += mobility
 MOBILITY += systeminfo
@@ -45,7 +47,7 @@ symbian {
     # Target UID, makes every Symbian app unique
     TARGET.UID3 = 0x200315F9
     # Specifies what files shall be deployed: the plugin itself and the qmldir file.
-    importFiles.sources = $$DESTDIR/declarative_systeminfo$${QT_LIBINFIX}.dll qmldir 
+    importFiles.sources = $$DESTDIR/declarative_systeminfo$${QT_LIBINFIX}.dll qmldir
     importFiles.path = $$QT_IMPORTS_BASE_DIR/$$TARGETPATH
     DEPLOYMENT = importFiles
  }

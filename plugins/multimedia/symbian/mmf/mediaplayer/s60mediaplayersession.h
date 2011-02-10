@@ -99,8 +99,9 @@ public:
     void setAudioEndpoint(const QString& audioEndpoint);
     virtual void setPlaybackRate(qreal rate) = 0;
     virtual bool getIsSeekable() const { return ETrue; }
-    
-protected:    
+    TBool isStreaming();
+
+protected:
     virtual void doLoadL(const TDesC &path) = 0;
     virtual void doLoadUrlL(const TDesC &path) = 0;
     virtual void doPlay() = 0;
@@ -158,7 +159,10 @@ signals:
     void error(int error, const QString &errorString);
     void activeEndpointChanged(const QString &name);
     void mediaChanged();
-    
+
+protected:
+    QUrl m_UrlPath;
+    bool m_stream;
 private:
     qreal m_playbackRate;
     QMap<QString, QVariant> m_metaDataMap;
@@ -170,7 +174,6 @@ private:
     QTimer *m_stalledTimer;
     int m_error;    
     bool m_play_requested;
-    bool m_stream;
     bool m_seekable;
 };
 

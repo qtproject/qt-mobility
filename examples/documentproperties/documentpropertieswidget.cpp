@@ -64,6 +64,7 @@ DocumentPropertiesWidget::DocumentPropertiesWidget(
     addAction(doneAction);
 
     QFormLayout *layout = new QFormLayout;
+    setLayout(layout);
 
     queryRequest = new QGalleryQueryRequest(documentGallery, this);
     queryRequest->setRootType(QDocumentGallery::File);
@@ -77,42 +78,49 @@ DocumentPropertiesWidget::DocumentPropertiesWidget(
             << QDocumentGallery::lastAccessed);
     queryRequest->execute();
 
-    if (QGalleryResultSet *resultSet = queryRequest->resultSet()) {
-        QLabel *fileName = new QLabel;
-        layout->addRow(tr("File Name"), fileName);
-        new MetaDataBinding(fileName, "text", resultSet, QDocumentGallery::fileName, this);
+    resultSet = queryRequest->resultSet();
+    if (resultSet) {
+        addTextPropertyRow("File Name", QDocumentGallery::fileName);
+        addTextPropertyRow("Type", QDocumentGallery::mimeType);
+        addTextPropertyRow("Path", QDocumentGallery::path);
+        addTextPropertyRow("Size", QDocumentGallery::fileSize);
 
-        QLabel *mimeType = new QLabel;
-        layout->addRow(tr("Type"), mimeType);
-        new MetaDataBinding(mimeType, "text", resultSet, QDocumentGallery::mimeType, this);
-
-        QLabel *path = new QLabel;
-        layout->addRow(tr("Path"), path);
-        new MetaDataBinding(path, "text", resultSet, QDocumentGallery::path, this);
-
-        QLabel *size = new QLabel;
-        layout->addRow(tr("Size"), size);
-        new MetaDataBinding(size, "text", resultSet, QDocumentGallery::fileSize, this);
-
-        QDateTimeEdit *lastModified = new QDateTimeEdit;
-        lastModified->setReadOnly(true);
-        layout->addRow(tr("Modified"), lastModified);
-        new MetaDataBinding(
-                lastModified, "dateTime", resultSet, QDocumentGallery::lastModified, this);
-
-        QDateTimeEdit *lastAccessed = new QDateTimeEdit;
-        lastAccessed->setReadOnly(true);
-        layout->addRow(tr("Accessed"), lastAccessed);
-        new MetaDataBinding(
-                lastAccessed, "dateTime", resultSet, QDocumentGallery::lastAccessed, this);
-
-        setLayout(layout);
+        addTimePropertyRow("Modified", QDocumentGallery::lastModified);
+        addTimePropertyRow("Accessed", QDocumentGallery::lastAccessed);
 
         if (queryRequest->state() == QGalleryAbstractRequest::Active)
             connect(queryRequest, SIGNAL(finished()), this, SLOT(queryRequestFinished()));
         else if (queryRequest->state() == QGalleryAbstractRequest::Finished)
             queryRequestFinished();
     }
+}
+
+void DocumentPropertiesWidget::addTextPropertyRow(const char *rowTitle,
+    const QString &propertyName)
+{
+    QLineEdit *propertyValue = new QLineEdit;
+    propertyValue->setReadOnly(true);
+    addRowWithTitleAndValue(rowTitle, propertyValue);
+    new MetaDataBinding(propertyValue, "text", resultSet, propertyName, this);
+}
+
+void DocumentPropertiesWidget::addRowWithTitleAndValue(
+    const char *rowTitle, QWidget *propertyValue)
+{
+    QLineEdit *title = new QLineEdit(tr(rowTitle));
+    title->setReadOnly(true);
+
+    QFormLayout *layout = static_cast<QFormLayout *> (this->layout());
+    layout->addRow(title, propertyValue);
+}
+
+void DocumentPropertiesWidget::addTimePropertyRow(
+    const char *rowTitle, const QString &propertyName)
+{
+    QDateTimeEdit *propertyValue = new QDateTimeEdit;
+    propertyValue->setReadOnly(true);
+    addRowWithTitleAndValue(rowTitle, propertyValue);
+    new MetaDataBinding(propertyValue, "dateTime", resultSet, propertyName, this);
 }
 
 void DocumentPropertiesWidget::queryRequestFinished()
@@ -131,133 +139,78 @@ void DocumentPropertiesWidget::queryRequestFinished()
 
 void DocumentPropertiesWidget::requestAudioProperties()
 {
-    itemRequest = new QGalleryItemRequest(documentGallery, this);
-    itemRequest->setItemId(queryRequest->itemId());
-    itemRequest->setPropertyNames(QStringList()
+    makeItemRequestForProperties(QStringList()
             << QDocumentGallery::title
             << QDocumentGallery::artist
             << QDocumentGallery::albumTitle
             << QDocumentGallery::albumArtist
             << QDocumentGallery::genre
             << QDocumentGallery::duration);
-    itemRequest->execute();
 
-    if (QGalleryResultSet *resultSet = itemRequest->resultSet()) {
-        QFormLayout *layout = static_cast<QFormLayout *>(QWidget::layout());
-
-        QLabel *title = new QLabel;
-        layout->addRow(tr("Title"), title);
-        new MetaDataBinding(title, "text", resultSet, QDocumentGallery::title, this);
-
-        QLabel *artist = new QLabel;
-        layout->addRow(tr("Artist"), artist);
-        new MetaDataBinding(artist, "text", resultSet, QDocumentGallery::artist, this);
-
-        QLabel *album = new QLabel;
-        layout->addRow(tr("Album"), album);
-        new MetaDataBinding(album, "text", resultSet, QDocumentGallery::albumTitle, this);
-
-        QLabel *albumArtist = new QLabel;
-        layout->addRow(tr("Album Artist"), albumArtist);
-        new MetaDataBinding(albumArtist, "text", resultSet, QDocumentGallery::albumArtist, this);
-
-        QLabel *genre = new QLabel;
-        layout->addRow(tr("Genre"), genre);
-        new MetaDataBinding(genre, "text", resultSet, QDocumentGallery::genre, this);
-
-        QLabel *duration = new QLabel;
-        layout->addRow(tr("Duration"), duration);
-        new MetaDataBinding(duration, "text", resultSet, QDocumentGallery::duration, this);
+    resultSet = itemRequest->resultSet();
+    if (resultSet) {
+        addTextPropertyRow("Title", QDocumentGallery::title);
+        addTextPropertyRow("Artist", QDocumentGallery::artist);
+        addTextPropertyRow("Album", QDocumentGallery::albumTitle);
+        addTextPropertyRow("Album Artist", QDocumentGallery::albumArtist);
+        addTextPropertyRow("Genre", QDocumentGallery::genre);
+        addTextPropertyRow("Duration", QDocumentGallery::duration);
     }
+}
+
+void DocumentPropertiesWidget::makeItemRequestForProperties(const QStringList &propertyNames)
+{
+    itemRequest = new QGalleryItemRequest(documentGallery, this);
+    itemRequest->setItemId(queryRequest->itemId());
+    itemRequest->setPropertyNames(propertyNames);
+    itemRequest->execute();
 }
 
 void DocumentPropertiesWidget::requestDocumentProperties()
 {
-    itemRequest = new QGalleryItemRequest(documentGallery, this);
-    itemRequest->setItemId(queryRequest->itemId());
-    itemRequest->setPropertyNames(QStringList()
+    makeItemRequestForProperties(QStringList()
                 << QDocumentGallery::title
                 << QDocumentGallery::author
                 << QDocumentGallery::pageCount);
-    itemRequest->execute();
 
-    if (QGalleryResultSet *resultSet = itemRequest->resultSet()) {
-        QFormLayout *layout = static_cast<QFormLayout *>(QWidget::layout());
-
-        QLabel *title = new QLabel;
-        layout->addRow(tr("Title"), title);
-        new MetaDataBinding(title, "text", resultSet, QDocumentGallery::title, this);
-
-        QLabel *author = new QLabel;
-        layout->addRow(tr("Author"), author);
-        new MetaDataBinding(author, "text", resultSet, QDocumentGallery::author, this);
-
-        QLabel *pageCount = new QLabel;
-        layout->addRow(tr("Page Count"), pageCount);
-        new MetaDataBinding(pageCount, "text", resultSet, QDocumentGallery::pageCount, this);
+    resultSet = itemRequest->resultSet();
+    if (resultSet) {
+        addTextPropertyRow("Title", QDocumentGallery::title);
+        addTextPropertyRow("Author", QDocumentGallery::author);
+        addTextPropertyRow("Page Count", QDocumentGallery::pageCount);
     }
 }
 
 void DocumentPropertiesWidget::requestImageProperties()
 {
-    itemRequest = new QGalleryItemRequest(documentGallery, this);
-    itemRequest->setItemId(queryRequest->itemId());
-    itemRequest->setPropertyNames(QStringList()
+    makeItemRequestForProperties(QStringList()
             << QDocumentGallery::title
             << QDocumentGallery::width
             << QDocumentGallery::height
             << QDocumentGallery::keywords);
-    itemRequest->execute();
 
-    if (QGalleryResultSet *resultSet = itemRequest->resultSet()) {
-        QFormLayout *layout = static_cast<QFormLayout *>(QWidget::layout());
-
-        QLabel *title = new QLabel;
-        layout->addRow(tr("Title"), title);
-        new MetaDataBinding(title, "text", resultSet, QDocumentGallery::title, this);
-
-        QLabel *width = new QLabel;
-        layout->addRow(tr("Width"), width);
-        new MetaDataBinding(width, "text", resultSet, QDocumentGallery::width, this);
-
-        QLabel *height = new QLabel;
-        layout->addRow(tr("Height"), height);
-        new MetaDataBinding(height, "text", resultSet, QDocumentGallery::height, this);
-
-        QLabel *keywords = new QLabel;
-        layout->addRow(tr("Keywords"), keywords);
-        new MetaDataBinding(keywords, "text", resultSet, QDocumentGallery::keywords, this);
+    resultSet = itemRequest->resultSet();
+    if (resultSet) {
+        addTextPropertyRow("Title", QDocumentGallery::title);
+        addTextPropertyRow("Width", QDocumentGallery::width);
+        addTextPropertyRow("Height", QDocumentGallery::height);
+        addTextPropertyRow("Keywords", QDocumentGallery::keywords);
     }
 }
 
 void DocumentPropertiesWidget::requestVideoProperties()
 {
-    itemRequest = new QGalleryItemRequest(documentGallery, this);
-    itemRequest->setItemId(queryRequest->itemId());
-    itemRequest->setPropertyNames(QStringList()
+    makeItemRequestForProperties(QStringList()
             << QDocumentGallery::title
             << QDocumentGallery::width
             << QDocumentGallery::height
             << QDocumentGallery::duration);
-    itemRequest->execute();
 
-    if (QGalleryResultSet *resultSet = itemRequest->resultSet()) {
-        QFormLayout *layout = static_cast<QFormLayout *>(QWidget::layout());
-
-        QLabel *title = new QLabel;
-        layout->addRow(tr("Title"), title);
-        new MetaDataBinding(title, "text", resultSet, QDocumentGallery::title, this);
-
-        QLabel *width = new QLabel;
-        layout->addRow(tr("Width"), width);
-        new MetaDataBinding(width, "text", resultSet, QDocumentGallery::width, this);
-
-        QLabel *height = new QLabel;
-        layout->addRow(tr("Height"), height);
-        new MetaDataBinding(height, "text", resultSet, QDocumentGallery::height, this);
-
-        QLabel *duration = new QLabel;
-        layout->addRow(tr("Duration"), duration);
-        new MetaDataBinding(duration, "text", resultSet, QDocumentGallery::duration, this);
+    resultSet = itemRequest->resultSet();
+    if (resultSet) {
+        addTextPropertyRow("Title", QDocumentGallery::title);
+        addTextPropertyRow("Width", QDocumentGallery::width);
+        addTextPropertyRow("Height", QDocumentGallery::height);
+        addTextPropertyRow("Duration", QDocumentGallery::duration);
     }
 }

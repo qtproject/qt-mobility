@@ -92,7 +92,10 @@ QTM_BEGIN_NAMESPACE
 
    \snippet doc/src/snippets/declarative/declarative-map.qml Basic MapObjects and View on Map
 
-    The Map element is part of the \bold{QtMobility.location 1.1} module.
+   Mouse handling is done by adding MapMouseArea items as children of either
+   MapObjects or the Map item itself.
+
+    The Map element is part of the \bold{QtMobility.location 1.2} module.
 */
 QDeclarativeGraphicsGeoMap::QDeclarativeGraphicsGeoMap(QDeclarativeItem *parent)
     : QDeclarativeItem(parent),
@@ -120,11 +123,18 @@ QDeclarativeGraphicsGeoMap::QDeclarativeGraphicsGeoMap(QDeclarativeItem *parent)
 
 QDeclarativeGraphicsGeoMap::~QDeclarativeGraphicsGeoMap()
 {
+    if (mapData_) {
+        // Remove map objects, we can't allow mapObject
+        // to delete the objects because they are owned
+        // by the declarative elements.
+        QList<QGeoMapObject*> objects = objectMap_.keys();
+        for (int i = 0; i < objects.size(); ++i) {
+            mapData_->removeMapObject(objects.at(i));
+        }
+        delete mapData_;
+    }
     qDeleteAll(objectMap_.values());
     qDeleteAll(mapViews_);
-
-    if (mapData_)
-        delete mapData_;
 
     if (serviceProvider_)
         delete serviceProvider_;
@@ -140,7 +150,6 @@ void QDeclarativeGraphicsGeoMap::componentComplete()
     componentCompleted_ = true;
     QDeclarativeItem::componentComplete();
     if (!mapData_) {
-        qmlInfo(this) << tr("Plugin is not set for Map, Map cannot be populated.");
         return;
     }
 
@@ -407,51 +416,56 @@ qreal QDeclarativeGraphicsGeoMap::zoomLevel() const
 */
 void QDeclarativeGraphicsGeoMap::setCenter(QDeclarativeCoordinate *center)
 {
-    if (!center || center_ == center)
+    if (center_ == center)
         return;
+
+    if (center_) {
+        center_->disconnect(this);
+    }
     center_ = center;
+    if (center_) {
+        connect(center_,
+                SIGNAL(latitudeChanged(double)),
+                this,
+                SLOT(centerLatitudeChanged(double)));
+        connect(center_,
+                SIGNAL(longitudeChanged(double)),
+                this,
+                SLOT(centerLongitudeChanged(double)));
+        connect(center_,
+                SIGNAL(altitudeChanged(double)),
+                this,
+                SLOT(centerAltitudeChanged(double)));
 
-    connect(center_,
-            SIGNAL(latitudeChanged(double)),
-            this,
-            SLOT(centerLatitudeChanged(double)));
-    connect(center_,
-            SIGNAL(longitudeChanged(double)),
-            this,
-            SLOT(centerLongitudeChanged(double)));
-    connect(center_,
-            SIGNAL(altitudeChanged(double)),
-            this,
-            SLOT(centerAltitudeChanged(double)));
-
-    if (mapData_) {
-        mapData_->setCenter(center->coordinate());
+        if (mapData_) {
+            mapData_->setCenter(center_->coordinate());
+        }
     }
     emit declarativeCenterChanged(center_);
 }
 
 QDeclarativeCoordinate* QDeclarativeGraphicsGeoMap::center()
 {
-    if (mapData_)
+    if (mapData_ && center_)
         center_->setCoordinate(mapData_->center());
     return center_;
 }
 
 void QDeclarativeGraphicsGeoMap::centerLatitudeChanged(double /*latitude*/)
 {
-    if (mapData_)
+    if (mapData_ && center_)
         mapData_->setCenter(center_->coordinate());
 }
 
 void QDeclarativeGraphicsGeoMap::centerLongitudeChanged(double /*longitude*/)
 {
-    if (mapData_)
+    if (mapData_ && center_)
         mapData_->setCenter(center_->coordinate());
 }
 
 void QDeclarativeGraphicsGeoMap::centerAltitudeChanged(double /*altitude*/)
 {
-    if (mapData_)
+    if (mapData_ && center_)
         mapData_->setCenter(center_->coordinate());
 }
 
@@ -555,6 +569,11 @@ QDeclarativeGraphicsGeoMap::ConnectivityMode QDeclarativeGraphicsGeoMap::connect
 
     Returns an invalid coordinate if \a screenPosition is not within
     the current viewport.
+
+    An example to constraint landmarks of a model to just those
+    currently on Map:
+    \snippet examples/declarative-location/landmarkmap/landmarkmap.qml Map toCoordinate
+
 */
 
 QDeclarativeCoordinate* QDeclarativeGraphicsGeoMap::toCoordinate(QPointF screenPosition) const
@@ -604,7 +623,7 @@ QDeclarativeGeoMapMouseEvent* QDeclarativeGraphicsGeoMap::createMapMouseEvent(QG
 
     QDeclarativeGeoMapMouseEvent *mouseEvent = new QDeclarativeGeoMapMouseEvent(this);
 
-    mouseEvent->setButtons(event->buttons());
+    mouseEvent->setButton(event->button());
     QGeoCoordinate coordinate = mapData_->screenPositionToCoordinate(event->pos());
     mouseEvent->setCoordinate(new QDeclarativeCoordinate(coordinate, this));
     mouseEvent->setModifiers(event->modifiers());
@@ -668,6 +687,7 @@ void QDeclarativeGraphicsGeoMap::mouseReleaseEvent(QGraphicsSceneMouseEvent *eve
     if (activeMouseArea_)
         activeMouseArea_->releaseEvent(mouseEvent);
     activeMouseArea_ = 0;
+
     /*
 
     if (!mapData_) {
@@ -729,129 +749,129 @@ void QDeclarativeGraphicsGeoMap::mouseDoubleClickEvent(QGraphicsSceneMouseEvent 
     // TODO interact with grabber somehow
 }
 
-void QDeclarativeGraphicsGeoMap::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
-{
-    // TODO send even to grabber
+//void QDeclarativeGraphicsGeoMap::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+//{
+//    // TODO send even to grabber
 
-    /*
-    if (!mapData_)
-        return;
+//    /*
+//    if (!mapData_)
+//        return;
 
-    QList<QGeoMapObject*> objectsThen = mapData_->mapObjectsAtScreenPosition(event->lastPos());
-    QList<QGeoMapObject*> objectsNow = mapData_->mapObjectsAtScreenPosition(event->pos());
+//    QList<QGeoMapObject*> objectsThen = mapData_->mapObjectsAtScreenPosition(event->lastPos());
+//    QList<QGeoMapObject*> objectsNow = mapData_->mapObjectsAtScreenPosition(event->pos());
 
-    QSet<QGeoMapObject*> enter = objectsNow.toSet();
-    enter -= objectsThen.toSet();
+//    QSet<QGeoMapObject*> enter = objectsNow.toSet();
+//    enter -= objectsThen.toSet();
 
-    for (int i = 0; i < objectsNow.size(); ++i) {
-        if (!enter.contains(objectsNow.at(i)))
-            continue;
+//    for (int i = 0; i < objectsNow.size(); ++i) {
+//        if (!enter.contains(objectsNow.at(i)))
+//            continue;
 
-        QDeclarativeGeoMapObject* mapObject = objectMap_.value(objectsNow.at(i), 0);
-        if (mapObject)
-            mapObject->enterEvent();
-    }
+//        QDeclarativeGeoMapObject* mapObject = objectMap_.value(objectsNow.at(i), 0);
+//        if (mapObject)
+//            mapObject->enterEvent();
+//    }
 
-    QSet<QGeoMapObject*> exit = objectsThen.toSet();
-    exit -= objectsNow.toSet();
+//    QSet<QGeoMapObject*> exit = objectsThen.toSet();
+//    exit -= objectsNow.toSet();
 
-    for (int i = 0; i < objectsThen.size(); ++i) {
-        if (!exit.contains(objectsThen.at(i)))
-            continue;
+//    for (int i = 0; i < objectsThen.size(); ++i) {
+//        if (!exit.contains(objectsThen.at(i)))
+//            continue;
 
-        QDeclarativeGeoMapObject* mapObject = objectMap_.value(objectsThen.at(i), 0);
-        if (mapObject)
-            mapObject->exitEvent();
-    }
+//        QDeclarativeGeoMapObject* mapObject = objectMap_.value(objectsThen.at(i), 0);
+//        if (mapObject)
+//            mapObject->exitEvent();
+//    }
 
-    QSet<QGeoMapObject*> move = objectsNow.toSet();
-    move += objectsThen.toSet();
+//    QSet<QGeoMapObject*> move = objectsNow.toSet();
+//    move += objectsThen.toSet();
 
-    QList<QGeoMapObject*> objects = mapData_->mapObjectsInViewport();
-    for (int i = 0; i < objects.size(); ++i) {
-        if (!move.contains(objects.at(i)))
-            continue;
+//    QList<QGeoMapObject*> objects = mapData_->mapObjectsInViewport();
+//    for (int i = 0; i < objects.size(); ++i) {
+//        if (!move.contains(objects.at(i)))
+//            continue;
 
-        QDeclarativeGeoMapMouseEvent *mouseEvent = createMapMouseEvent(event);
+//        QDeclarativeGeoMapMouseEvent *mouseEvent = createMapMouseEvent(event);
 
-        QDeclarativeGeoMapObject* mapObject = objectMap_.value(objects.at(i), 0);
-        if (mapObject)
-            mapObject->moveEvent(mouseEvent);
-    }
-    */
-}
+//        QDeclarativeGeoMapObject* mapObject = objectMap_.value(objects.at(i), 0);
+//        if (mapObject)
+//            mapObject->moveEvent(mouseEvent);
+//    }
+//    */
+//}
 
-void QDeclarativeGraphicsGeoMap::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
-{
-//    qWarning() << "hover enter";
-}
+//void QDeclarativeGraphicsGeoMap::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
+//{
+////    qWarning() << "hover enter";
+//}
 
-void QDeclarativeGraphicsGeoMap::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
-{
-    if (!mapData_)
-        return;
+//void QDeclarativeGraphicsGeoMap::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
+//{
+//    if (!mapData_)
+//        return;
 
-    QList<QGeoMapObject*> objectsThen = mapData_->mapObjectsAtScreenPosition(event->lastPos());
-    QList<QGeoMapObject*> objectsNow = mapData_->mapObjectsAtScreenPosition(event->pos());
+//    QList<QGeoMapObject*> objectsThen = mapData_->mapObjectsAtScreenPosition(event->lastPos());
+//    QList<QGeoMapObject*> objectsNow = mapData_->mapObjectsAtScreenPosition(event->pos());
 
-    QSet<QGeoMapObject*> enter = objectsNow.toSet();
-    enter -= objectsThen.toSet();
+//    QSet<QGeoMapObject*> enter = objectsNow.toSet();
+//    enter -= objectsThen.toSet();
 
-    for (int i = 0; i < objectsNow.size(); ++i) {
-        if (!enter.contains(objectsNow.at(i)))
-            continue;
+//    for (int i = 0; i < objectsNow.size(); ++i) {
+//        if (!enter.contains(objectsNow.at(i)))
+//            continue;
 
-        QDeclarativeGeoMapObject* mapObject = objectMap_.value(objectsNow.at(i), 0);
-        if (mapObject)
-            mapObject->enterEvent();
-    }
+//        QDeclarativeGeoMapObject* mapObject = objectMap_.value(objectsNow.at(i), 0);
+//        if (mapObject)
+//            mapObject->enterEvent();
+//    }
 
-    QSet<QGeoMapObject*> exit = objectsThen.toSet();
-    exit -= objectsNow.toSet();
+//    QSet<QGeoMapObject*> exit = objectsThen.toSet();
+//    exit -= objectsNow.toSet();
 
-    for (int i = 0; i < objectsThen.size(); ++i) {
-        if (!exit.contains(objectsThen.at(i)))
-            continue;
+//    for (int i = 0; i < objectsThen.size(); ++i) {
+//        if (!exit.contains(objectsThen.at(i)))
+//            continue;
 
-        QDeclarativeGeoMapObject* mapObject = objectMap_.value(objectsThen.at(i), 0);
-        if (mapObject)
-            mapObject->exitEvent();
-    }
+//        QDeclarativeGeoMapObject* mapObject = objectMap_.value(objectsThen.at(i), 0);
+//        if (mapObject)
+//            mapObject->exitEvent();
+//    }
 
-    QSet<QGeoMapObject*> move = objectsNow.toSet();
-    move += objectsThen.toSet();
+//    QSet<QGeoMapObject*> move = objectsNow.toSet();
+//    move += objectsThen.toSet();
 
-    QList<QGeoMapObject*> objects = mapData_->mapObjectsInViewport();
+//    QList<QGeoMapObject*> objects = mapData_->mapObjectsInViewport();
 
-    QDeclarativeGeoMapMouseEvent *mouseEvent = createMapMouseEvent(event);
+//    QDeclarativeGeoMapMouseEvent *mouseEvent = createMapMouseEvent(event);
 
-    for (int i = 0; i < objects.size(); ++i) {
-        if (!move.contains(objects.at(i)))
-            continue;
+//    for (int i = 0; i < objects.size(); ++i) {
+//        if (!move.contains(objects.at(i)))
+//            continue;
 
-        QDeclarativeGeoMapObject* mapObject = objectMap_.value(objects.at(i), 0);
-        if (mapObject)
-            mapObject->moveEvent(mouseEvent);
-    }
+//        QDeclarativeGeoMapObject* mapObject = objectMap_.value(objects.at(i), 0);
+//        if (mapObject)
+//            mapObject->moveEvent(mouseEvent);
+//    }
 
-    /*
-    QList<QGeoMapObject*> objects = mapData_->mapObjectsAtScreenPosition(event->pos());
+//    /*
+//    QList<QGeoMapObject*> objects = mapData_->mapObjectsAtScreenPosition(event->pos());
 
-    for (int i = objects.size() - 1; i >= 0; --i) {
-        QDeclarativeGeoMapObject* mapObject = objectMap_.value(objects.at(i), 0);
-        if (mapObject)
-            mapObject->moveEvent(mouseEvent);
-    }
-    */
+//    for (int i = objects.size() - 1; i >= 0; --i) {
+//        QDeclarativeGeoMapObject* mapObject = objectMap_.value(objects.at(i), 0);
+//        if (mapObject)
+//            mapObject->moveEvent(mouseEvent);
+//    }
+//    */
 
-    for (int i = 0; i < mouseAreas_.size(); ++i)
-        mouseAreas_.at(i)->moveEvent(mouseEvent);
-}
+//    for (int i = 0; i < mouseAreas_.size(); ++i)
+//        mouseAreas_.at(i)->moveEvent(mouseEvent);
+//}
 
-void QDeclarativeGraphicsGeoMap::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
-{
-//    qWarning() << "hover leave";
-}
+//void QDeclarativeGraphicsGeoMap::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
+//{
+////    qWarning() << "hover leave";
+//}
 
 void QDeclarativeGraphicsGeoMap::internalCenterChanged(const QGeoCoordinate &coordinate)
 {
@@ -874,6 +894,12 @@ void QDeclarativeGraphicsGeoMap::internalConnectivityModeChanged(QGraphicsGeoMap
     Adds the given MapOject to the Map. If the object already
     is on the Map, it will not be added again.
 
+    As an example, consider you have a MapCircle presenting your current position:
+
+    \snippet doc/src/snippets/declarative/testpolymapobjects.qml Basic map position marker definition
+    You can add it to Map (alterntively it can be defined as a child element of the Map):
+
+    \snippet doc/src/snippets/declarative/testpolymapobjects.qml Basic add MapObject
     Note: MapObjectViews can not be added with this method.
 */
 
@@ -892,6 +918,13 @@ void QDeclarativeGraphicsGeoMap::addMapObject(QDeclarativeGeoMapObject *object)
 
     Removes the given MapObject from the Map. If the MapObject does not
     exist, function does nothing.
+
+    As an example, consider you have a MapCircle presenting your current position:
+    \snippet doc/src/snippets/declarative/testpolymapobjects.qml Basic map position marker definition
+
+    You can remove it from the Map element:
+    \snippet doc/src/snippets/declarative/testpolymapobjects.qml Basic remove MapObject
+
 
 */
 

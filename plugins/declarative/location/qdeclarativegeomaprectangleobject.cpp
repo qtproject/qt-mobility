@@ -63,7 +63,10 @@ QTM_BEGIN_NAMESPACE
     If \l topLeft and \l bottomRight are not specified and valid the
     rectangle will not be displayed.
 
-    The MapRectangle element is part of the \bold{QtMobility.location 1.1} module.
+    An example of one big yellow rectangle:
+    \snippet doc/src/snippets/declarative/testpolymapobjects.qml MapRectangle
+
+    The MapRectangle element is part of the \bold{QtMobility.location 1.2} module.
 */
 
 QDeclarativeGeoMapRectangleObject::QDeclarativeGeoMapRectangleObject(QDeclarativeItem *parent)
