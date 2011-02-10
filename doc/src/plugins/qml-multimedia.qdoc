@@ -181,6 +181,31 @@
    
     \annotatedlist qml-multimedia
 
+    \section3 SoundEffect
+
+    The \l {SoundEffect}{soundeffect} element provides a way to play short sound effects, like in video games. Multiple sound effect instances can be played simultaneously.
+    You should use the \l {Audio}{audio} element for music playback.
+
+    \code
+    import Qt 4.7
+    import QtMultimediaKit 1.1
+    ...
+
+        SoundEffect {
+            id: effect
+            source: "test.wav"
+        }
+        MouseArea {
+            id: playArea
+            anchors.fill: parent
+            onPressed:  { effect.play() }
+        }
+
+    \endcode
+
+    In the above sample the sound effect will be played when the MouseArea is clicked.
+
+    For a complete description of this element, see \l {SoundEffect}{soundeffect}.
 */
 
 
