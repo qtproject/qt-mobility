@@ -429,6 +429,7 @@ void CContactStoreField::InternalizeL(RReadStream& aStream)
     if (iThing)
     	{
     	delete (iThing);
+    	iThing = NULL;
     	}
     if (length)
     	{
@@ -461,6 +462,7 @@ field. */
     if (iThing)
     	{
     	delete (iThing);
+    	iThing = NULL;
     	}
 	iThing = aDes.AllocL();
     }
@@ -473,6 +475,7 @@ EXPORT_C void CContactStoreField::SetThingL(const HBufC8& aBuf)
     if (iThing)
     	{
     	delete (iThing);
+    	iThing = NULL;
     	}
 	iThing = aBuf.AllocL();
     }
