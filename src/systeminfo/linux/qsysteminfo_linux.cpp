@@ -930,12 +930,7 @@ bool QSystemScreenSaverPrivate::isScreenSaverActive()
     return false;
 }
 
-bool QSystemScreenSaverPrivate::screenSaverDelayed()
-{
-        return isScreenLockEnabled();
-}
-
-void QSystemScreenSaverPrivate::setScreenSaverDelayed(bool on)
+void QSystemScreenSaverPrivate::setScreenSaverInhibited(bool on)
 {
     if (on) {
        setScreenSaverInhibit();

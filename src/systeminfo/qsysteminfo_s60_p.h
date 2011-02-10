@@ -358,10 +358,7 @@ public:
 
     bool screenSaverInhibited();
     bool setScreenSaverInhibit();
-
-
-    bool screenSaverDelayed();
-    void setScreenSaverDelayed(bool on);
+    void setScreenSaverInhibited(bool on);
 
 private Q_SLOTS:
     void resetInactivityTime();

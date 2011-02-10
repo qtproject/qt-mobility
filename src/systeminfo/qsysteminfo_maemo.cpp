@@ -1630,12 +1630,7 @@ bool QSystemScreenSaverPrivate::screenSaverInhibited()
     return ((displayOn && isBlankingInhibited) || (displayOn && isInhibited));
 }
 
-bool QSystemScreenSaverPrivate::screenSaverDelayed()
-{
-        return screenSaverInhibited();
-}
-
-void QSystemScreenSaverPrivate::setScreenSaverDelayed(bool on)
+void QSystemScreenSaverPrivate::setScreenSaverInhibited(bool on)
 {
     if (on) {
         setScreenSaverInhibit();

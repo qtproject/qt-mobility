@@ -54,8 +54,7 @@ class  Q_SYSINFO_EXPORT QSystemScreenSaver : public QObject
 {
     Q_OBJECT
     Q_ENUMS(ScreenSaverState)
-    Q_PROPERTY(bool screenSaverInhibited READ screenSaverInhibited)
-    Q_PROPERTY(bool screenSaverDelayed READ screenSaverDelayed WRITE setScreenSaverDelayed)
+    Q_PROPERTY(bool screenSaverInhibit READ screenSaverInhibit WRITE setScreenSaverInhibited)
 
 public:
 
@@ -65,10 +64,7 @@ public:
     bool screenSaverInhibited();
     Q_INVOKABLE bool setScreenSaverInhibit();
 
-        bool screenSaverDelayed();
-
-public slots:
-    void setScreenSaverDelayed(bool on);
+    void setScreenSaverInhibited(bool on);
 
 private:
     bool screenSaverIsInhibited;

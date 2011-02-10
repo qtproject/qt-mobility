@@ -233,8 +233,7 @@ public:
     bool isScreenLockEnabled();
     bool isScreenSaverActive();
 
-    bool screenSaverDelayed();
-    void setScreenSaverDelayed(bool on);
+    void setScreenSaverInhibited(bool on);
 
 private:
     QString screenPath;
