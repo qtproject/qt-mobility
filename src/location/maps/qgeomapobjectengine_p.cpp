@@ -211,8 +211,8 @@ static QPolygonF approximateCircle(QGraphicsEllipseItem *elItem,
 {
     const QRectF rect = elItem->rect();
 
-    const double a = rect.width() / 2.0;
-    const double b = rect.height() / 2.0;
+    const double a = rect.height() / 2.0;
+    const double b = rect.width() / 2.0;
 
     const double asq = a*a;
     const double bsq = b*b;
@@ -267,7 +267,7 @@ static QPolygonF approximateCircle(QGraphicsEllipseItem *elItem,
     }
 
     if (drawToCenter)
-        secPoly << QPointF(projCenter.x() * 3600.0, projCenter.y() * 3600);
+        secPoly << QPointF(projCenter.x() * 3600.0, projCenter.y() * 3600.0);
 
     return secPoly;
 }
@@ -299,7 +299,7 @@ bool QGeoMapObjectEngine::exactMetersToSeconds(const QGeoCoordinate &origin,
         QRectF rect = elItem->rect();
 
         const QPointF cen = rect.center();
-        ProjCoordinate c(cen.x(), cen.y(), 0.0, localSys);
+        ProjCoordinate c(cen.x(), -1*cen.y(), 0.0, localSys);
         c.convert(wgs84);
         const QGeoCoordinate center = c.toGeoCoordinate();
 
@@ -330,6 +330,7 @@ bool QGeoMapObjectEngine::exactMetersToSeconds(const QGeoCoordinate &origin,
         QPolygonF poly = polyItem->polygon() * polyItem->transform();
 
         ProjPolygon p(poly, localSys);
+        p.scalarMultiply(1, -1, 1);
         p.convert(wgs84);
         QPolygonF wgs = p.toPolygonF(3600.0);
 
@@ -360,7 +361,7 @@ bool QGeoMapObjectEngine::exactMetersToSeconds(const QGeoCoordinate &origin,
         for (int i = 0; i < path.elementCount(); ++i) {
             QPainterPath::Element e = path.elementAt(i);
 
-            ProjCoordinate c(e.x, e.y, 0.0, localSys);
+            ProjCoordinate c(e.x, -1*e.y, 0.0, localSys);
             Q_ASSERT(c.convert(wgs84));
 
             path.setElementPositionAt(i, c.x() * 3600.0, c.y() * 3600.0);
@@ -519,7 +520,10 @@ void QGeoMapObjectEngine::bilinearMetersToSeconds(const QGeoCoordinate &origin,
         return;
     }
 
-    latLon = item->transform() * latLon;
+    QTransform flip;
+    flip.scale(1, -1);
+
+    latLon = flip * item->transform() * latLon;
 }
 
 void QGeoMapObjectEngine::bilinearPixelsToSeconds(const QGeoCoordinate &origin,

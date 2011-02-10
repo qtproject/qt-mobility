@@ -227,6 +227,16 @@ bool ProjPolygon::convert(const ProjCoordinateSystem &system)
     return true;
 }
 
+void ProjPolygon::scalarMultiply(double sx, double sy, double sz)
+{
+    for (int i=0; i<size(); ++i) {
+        ProjCoordinate &c = operator [](i);
+        c.d->x *= sx;
+        c.d->y *= sy;
+        c.d->z *= sz;
+    }
+}
+
 QPolygonF ProjPolygon::toPolygonF(double scale) const
 {
     QPolygonF poly;
