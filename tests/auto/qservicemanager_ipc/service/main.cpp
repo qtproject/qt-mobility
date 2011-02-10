@@ -53,6 +53,23 @@ Q_DECLARE_METATYPE(QServiceFilter);
 Q_DECLARE_METATYPE(QVariant);
 Q_DECLARE_METATYPE(QList<QString>);
 
+#ifndef QT_NO_DBUS
+#include <QtDBus/QtDBus>
+inline QDBusArgument &operator<<(QDBusArgument &arg, const QVariantHash &map)
+{
+    arg.beginMap(QVariant::String, qMetaTypeId<QDBusVariant>());
+    QVariantHash::ConstIterator it = map.constBegin();
+    QVariantHash::ConstIterator end = map.constEnd();
+    for ( ; it != end; ++it) {
+        arg.beginMapEntry();
+        arg << it.key() << QDBusVariant(it.value());
+        arg.endMapEntry();
+    }
+    arg.endMap();
+    return arg;
+}
+#endif
+
 class SharedTestService : public QObject 
 {
     Q_OBJECT
@@ -158,7 +175,7 @@ public slots:
                 .arg(f.majorVersion()).arg(f.minorVersion());
         m_hash = qHash(output);
     }
-    
+
     void testSlotWithUnknownArg(const QServiceInterfaceDescriptor& )
     {
         m_hash = 1;
@@ -259,7 +276,7 @@ public:
         list << "1" << "2" << "3";
         return list;
     }
-    
+
     Q_INVOKABLE uint slotConfirmation() const
     {
         return m_hash;
@@ -331,6 +348,22 @@ public slots:
             if (i<list.size()-1)
                 output += ", ";
         }
+        m_hash = qHash(output);
+    }
+
+    void testSlotWithComplexArg(QVariantHash arg)
+    {
+        QHashIterator<QString, QVariant> i(arg);
+        QString output;
+        while (i.hasNext()) {
+            i.next();
+//            qDebug() << i.key() << ": " << i.value();
+            output += i.key();
+            output += "=";
+            output += i.value().toString();
+            output += ", ";
+        }
+        qDebug() << output;
         m_hash = qHash(output);
     }
 
@@ -423,6 +456,12 @@ int main(int argc, char** argv)
   
     qRegisterMetaType<QList<QString> >();    
     qRegisterMetaTypeStreamOperators<QList<QString> >("QList<QString>");
+
+    qRegisterMetaTypeStreamOperators<QVariantHash>("QVariantHash");
+    qRegisterMetaType<QVariantHash>("QVariantHash");
+#ifndef QT_NO_DBUS
+    qDBusRegisterMetaType<QVariantHash>();
+#endif
    
     registerExampleService();
 

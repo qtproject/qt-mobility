@@ -3186,8 +3186,8 @@ void tst_QGalleryTrackerSchema::queryResponseValueColumnToVariant_data()
     QTest::newRow("Image.dateTaken")
             << QString::fromLatin1("Image")
             << QString::fromLatin1("dateTaken")
-            << QString::fromLatin1("2009-08-23T09:03:32")
-            << QVariant(QDateTime(QDate(2009, 8, 23), QTime(9, 3, 32)));
+            << QString::fromLatin1("1251007412")
+            << QVariant(QDateTime::fromTime_t(1251007412));
 
     QTest::newRow("Image.dateTaken (Invalid)")
             << QString::fromLatin1("Image")

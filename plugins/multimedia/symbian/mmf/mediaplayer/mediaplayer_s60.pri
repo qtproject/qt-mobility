@@ -9,7 +9,7 @@ LIBS += -lmediaclientvideo \
     -lbitgdi \
     -lapgrfx \
     -lapmime \
-
+    -lcommdb
 # If support to DRM is wanted then comment out the following line
 #CONFIG += drm_supported
 
@@ -36,7 +36,8 @@ HEADERS += \
     $$PWD/ms60mediaplayerresolver.h \
     $$PWD/s60videowidget.h \
     $$PWD/s60mediaplayeraudioendpointselector.h \
-    $$PWD/s60mediastreamcontrol.h
+    $$PWD/s60mediastreamcontrol.h \
+    $$PWD/s60medianetworkaccesscontrol.h
 
 SOURCES += \
     $$PWD/s60mediaplayercontrol.cpp \
@@ -50,7 +51,8 @@ SOURCES += \
     $$PWD/s60audioplayersession.cpp \
     $$PWD/s60videowidget.cpp \
     $$PWD/s60mediaplayeraudioendpointselector.cpp \
-    $$PWD/s60mediastreamcontrol.cpp
+    $$PWD/s60mediastreamcontrol.cpp \
+    $$PWD/s60medianetworkaccesscontrol.cpp
 
 contains(DEFINES, HAS_VIDEORENDERERCONTROL_IN_VIDEOPLAYER) {
     HEADERS += $$PWD/s60videorenderer.h

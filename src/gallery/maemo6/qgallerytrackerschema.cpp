@@ -955,18 +955,18 @@ static const QGalleryItemProperty qt_galleryAudioGenrePropertyList[] =
 
 static const QGalleryItemType qt_galleryItemTypeList[] =
 {
-    QT_GALLERY_ITEM_TYPE(File      , nfo, FileDataObject, file      , File),
-    QT_GALLERY_ITEM_TYPE(Folder    , nfo, Folder        , folder    , File),
-    QT_GALLERY_ITEM_TYPE(Document  , nfo, Document      , document  , Document),
-    QT_GALLERY_ITEM_TYPE(Audio     , nfo, Audio         , audio     , Audio),
-    QT_GALLERY_ITEM_TYPE(Image     , nmm, Photo         , image     , Image),
-    QT_GALLERY_ITEM_TYPE(Video     , nfo, Video         , video     , Video),
-    QT_GALLERY_ITEM_TYPE(Playlist  , nmm, Playlist      , playlist  , Playlist),
-    QT_GALLERY_ITEM_TYPE(Text      , nfo, TextDocument  , text      , Text),
+    QT_GALLERY_ITEM_TYPE(File      , nfo, FileDataObject   , file      , File),
+    QT_GALLERY_ITEM_TYPE(Folder    , nfo, Folder           , folder    , File),
+    QT_GALLERY_ITEM_TYPE(Document  , nfo, Document         , document  , Document),
+    QT_GALLERY_ITEM_TYPE(Audio     , nfo, Audio            , audio     , Audio),
+    QT_GALLERY_ITEM_TYPE(Image     , nmm, Photo            , image     , Image),
+    QT_GALLERY_ITEM_TYPE(Video     , nfo, Video            , video     , Video),
+    QT_GALLERY_ITEM_TYPE(Playlist  , nmm, Playlist         , playlist  , Playlist),
+    QT_GALLERY_ITEM_TYPE(Text      , nfo, PlainTextDocument, text      , Text),
     QT_GALLERY_ITEM_TYPE_NO_COMPOSITE_FILTERED(Artist     , nmm, Artist, nmm:MusicPiece, nmm:performer  , artist     , Artist),
     QT_GALLERY_ITEM_TYPE_NO_COMPOSITE_FILTERED(AlbumArtist, nmm, Artist, nmm:MusicAlbum, nmm:albumArtist, albumArtist, AlbumArtist),
-    QT_GALLERY_ITEM_TYPE_NO_COMPOSITE(Album     , nmm, MusicAlbum    , album     , Album),
-    QT_GALLERY_ITEM_TYPE_NO_COMPOSITE(PhotoAlbum, nmm, ImageList     , photoAlbum, PhotoAlbum),
+    QT_GALLERY_ITEM_TYPE_NO_COMPOSITE(Album     , nmm, MusicAlbum, album     , Album),
+    QT_GALLERY_ITEM_TYPE_NO_COMPOSITE(PhotoAlbum, nmm, ImageList , photoAlbum, PhotoAlbum),
     QT_GALLERY_AGGREGATE_TYPE_NO_COMPOSITE(AudioGenre, nfo, Audio, nfo:genre(?x), audioGenre, AudioGenre),
 };
 

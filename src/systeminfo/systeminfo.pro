@@ -23,10 +23,9 @@ SOURCES += qsystemgeneralinfo.cpp \
     qsystemscreensaver.cpp \
     qsystemstorageinfo.cpp \
     qsystembatteryinfo.cpp \
-    qsystemalignedtimer.cpp \
-    qsystemalignedtimerprivate.cpp
+    qsystemalignedtimer.cpp
 
-PRIVATE_HEADERS += qsysteminfocommon_p.h qsystemalignedtimerprivate_p.h
+PRIVATE_HEADERS += qsysteminfocommon_p.h
 
 DEFINES += QT_BUILD_SYSINFO_LIB QT_MAKEDLL
 
@@ -35,8 +34,8 @@ win32:!simulator {
     contains(CONFIG,release) {
        CONFIG-=console
     }
-    SOURCES += qsysteminfo_win.cpp
-    HEADERS += qsysteminfo_win_p.h
+    SOURCES += qsysteminfo_win.cpp qsystemalignedtimer_stub.cpp
+    HEADERS += qsysteminfo_win_p.h qsystemalignedtimer_stub_p.h
 
     win32-msvc*: {
         SOURCES += windows/qwmihelper_win.cpp
@@ -79,6 +78,18 @@ unix:!simulator {
         }
 
         LIBS +=  -lX11 -lXrandr
+
+        # alignedtimer on Linux/MeeGo
+            contains(iphb_enabled, yes): {
+            SOURCES += qsystemalignedtimer_meego.cpp
+            HEADERS += qsystemalignedtimer_meego_p.h
+            PKGCONFIG += libiphb
+            DEFINES += ALIGNEDTIMER_MEEGO
+            LIBS += -liphb
+        } else {
+            SOURCES += qsystemalignedtimer_stub.cpp
+            HEADERS += qsystemalignedtimer_stub_p.h
+        }
     }
 
     !maemo5:!maemo6:linux-*: {
@@ -140,6 +151,8 @@ unix:!simulator {
                 SOURCES += linux/qhalservice_linux.cpp
                 HEADERS += linux/qhalservice_linux_p.h
        }
+
+
        PKGCONFIG += glib-2.0 gconf-2.0
        CONFIG += create_pc create_prl
        QMAKE_PKGCONFIG_REQUIRES = glib-2.0 gconf-2.0
@@ -148,8 +161,8 @@ unix:!simulator {
     }
 
     mac: {
-        SOURCES += qsysteminfo_mac.mm
-        HEADERS += qsysteminfo_mac_p.h
+        SOURCES += qsysteminfo_mac.mm qsystemalignedtimer_stub.cpp
+        HEADERS += qsysteminfo_mac_p.h qsystemalignedtimer_stub_p.h
         LIBS += -framework SystemConfiguration -framework CoreFoundation \
          -framework IOKit -framework ApplicationServices -framework Foundation \
          -framework CoreServices -framework ScreenSaver -framework QTKit \
@@ -179,10 +192,9 @@ unix:!simulator {
         contains(S60_VERSION, 3.1){
             DEFINES += SYMBIAN_3_1
         }
-         contains(S60_VERSION, 3.1)|contains(S60_VERSION, 3.2)|contains(S60_VERSION, 5.0) | contains(S60_VERSION, 5.2){
-        } else {
-         DEFINES += SYMBIAN_3_PLATFORM
-            # s60 is not symbian^3
+
+        contains(S60_VERSION, 5.2){
+          DEFINES += SYMBIAN_3_PLATFORM
           SOURCES += lockandflipstatus_s60.cpp \
                      storagedisknotifier_s60.cpp
           HEADERS += lockandflipstatus_s60.h \
@@ -209,7 +221,8 @@ unix:!simulator {
             storagestatus_s60.cpp \
             pubandsubkey_s60.cpp \
             batterystatus_s60.cpp \
-            networkinfo_s60.cpp
+            networkinfo_s60.cpp \
+            qsystemalignedtimer_stub.cpp
 
         HEADERS += qsysteminfo_s60_p.h \
             telephonyinfo_s60.h \
@@ -218,7 +231,8 @@ unix:!simulator {
             storagestatus_s60.h \
             pubandsubkey_s60.h \
             batterystatus_s60.h \
-            networkinfo_s60.h
+            networkinfo_s60.h \
+            qsystemalignedtimer_stub_p.h
 
         LIBS += -lprofileengine \
             -letel3rdparty \
@@ -281,7 +295,6 @@ simulator {
     qtAddLibrary(QtMobilitySimulator)
 }
 
-HEADERS += $$PUBLIC_HEADERS \
-    qsystemalignedtimerprivate_p.h
+HEADERS += $$PUBLIC_HEADERS
 CONFIG += middleware
 include (../../features/deploy.pri)
