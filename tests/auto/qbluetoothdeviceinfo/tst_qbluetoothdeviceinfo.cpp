@@ -46,6 +46,7 @@
 #include <qbluetoothaddress.h>
 #include <qbluetoothdeviceinfo.h>
 #include <qbluetoothlocaldevice.h>
+#include <qbluetoothuuid.h>
 
 QTM_USE_NAMESPACE
 
@@ -68,6 +69,10 @@ private slots:
 
     void tst_assignment_data();
     void tst_assignment();
+
+    void tst_serviceUuids();
+
+    void tst_manufacturerSpecificData();
 };
 
 tst_QBluetoothDeviceInfo::tst_QBluetoothDeviceInfo()
@@ -329,6 +334,38 @@ void tst_QBluetoothDeviceInfo::tst_assignment()
         QCOMPARE(copyInfo1.minorDeviceClass(), minorDeviceClass);
         QCOMPARE(copyInfo2.minorDeviceClass(), minorDeviceClass);
     }
+
+    {
+        QBluetoothDeviceInfo testDeviceInfo;
+        QVERIFY(testDeviceInfo == QBluetoothDeviceInfo());
+    }
+}
+
+void tst_QBluetoothDeviceInfo::tst_serviceUuids()
+{
+    QBluetoothDeviceInfo deviceInfo;
+    QList<QBluetoothUuid> servicesList;
+    servicesList.append(QBluetoothUuid::L2cap);
+    servicesList.append(QBluetoothUuid::Rfcomm);
+    QVERIFY(servicesList.count() > 0);
+
+    deviceInfo.setServiceUuids(servicesList, QBluetoothDeviceInfo::DataComplete);
+    QVERIFY(deviceInfo.serviceUuids().count() > 0);
+
+    QBluetoothDeviceInfo::DataCompleteness completeness;
+    completeness = deviceInfo.serviceUuidsCompleteness();
+    qDebug()<<completeness<<"completeness";
+    QVERIFY(completeness == QBluetoothDeviceInfo::DataComplete);
+}
+
+void tst_QBluetoothDeviceInfo::tst_manufacturerSpecificData()
+{
+    QBluetoothDeviceInfo deviceInfo;
+    QByteArray data;
+    bool available;
+    data = deviceInfo.manufacturerSpecificData(&available);
+    // Current API implementation returns only empty QByteArray()
+    QCOMPARE(data, QByteArray());
 }
 
 QTEST_MAIN(tst_QBluetoothDeviceInfo)
