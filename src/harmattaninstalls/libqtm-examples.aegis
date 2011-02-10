@@ -27,6 +27,6 @@
         <credential name="Location" />
 	<credential name="TrackerReadAccess" />
 	<credential name="TrackerWriteAccess" />
-        <for path="/usr/lib/qtmobilty/examples/mapsdemo" />
+        <for path="/usr/lib/qtmobility/examples/mapsdemo" />
     </request>
 </aegis>
