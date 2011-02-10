@@ -2087,7 +2087,7 @@ bool QSystemDeviceInfoPrivate::isDeviceLocked()
         }
     }
 #else
-    QSystemververPrivate si;
+    QSystemDeviceInfoPrivate si;
     if( SystemParametersInfo( SPI_GETSCREENSAVERRUNNING,true,0,0)
         && si.screenSaverSecureEnabled() )
         return true;
