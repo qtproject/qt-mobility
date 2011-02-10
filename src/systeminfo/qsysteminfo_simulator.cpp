@@ -996,6 +996,16 @@ bool QSystemScreenSaverPrivate::isScreenLockOn()
     return true;
 }
 
+bool QSystemScreenSaverPrivate::screenSaverDelayed()
+{
+        return d->screenSaverDelayed();
+}
+
+void QSystemScreenSaverPrivate::setScreenSaverDelayed(bool on)
+{
+    return d->setScreenSaverDelayed(on);
+}
+
 
 //////////////
 ///////

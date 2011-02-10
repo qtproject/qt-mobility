@@ -497,16 +497,17 @@ void Dialog::setupSaver()
 
 void Dialog::setSaverEnabled(bool b)
 {
-    if (b) {
-        if (!saver) {
-            saver = new QSystemScreenSaver(this);
-        }
-       if(saver->setScreenSaverInhibit()) {
-        }
-    } else {
-        delete saver;
-        saver = NULL;
-    }
+    saver->setScreenSaverDelayed(b);
+//    if (b) {
+//        if (!saver) {
+//            saver = new QSystemScreenSaver(this);
+//        }
+//       if(saver->setScreenSaverInhibit()) {
+//        }
+//    } else {
+//        delete saver;
+//        saver = NULL;
+//    }
 }
 
 

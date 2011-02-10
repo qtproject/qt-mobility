@@ -769,22 +769,7 @@ QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QSystemScreenSaverLinuxComm
  QSystemScreenSaverPrivate::~QSystemScreenSaverPrivate()
  {
      if(currentPid != 0) {
-#if !defined(QT_NO_DBUS)
-         QStringList ifaceList;
-         ifaceList <<  QLatin1String("org.freedesktop.ScreenSaver");
-         ifaceList << QLatin1String("org.gnome.ScreenSaver");
-         QDBusInterface *connectionInterface;
-         foreach (const QString iface, ifaceList) {
-             connectionInterface = new QDBusInterface(QLatin1String(iface.toLatin1()),
-                                                      QLatin1String("/ScreenSaver"),
-                                                      QLatin1String(iface.toLatin1()),
-                                                      QDBusConnection::systemBus());
-             if(connectionInterface->isValid()) {
-                 QDBusReply<uint> reply =  connectionInterface->call(QLatin1String("UnInhibit"),
-                                                                     currentPid);
-             }
-         }
-#endif
+         setScreenSaverDelayed(false);
      }
 #if defined(QT_NO_DBUS) && defined(Q_WS_X11) && !defined(Q_WS_MEEGO)
      changeTimeout(-1);
@@ -947,6 +932,36 @@ bool QSystemScreenSaverPrivate::isScreenSaverActive()
     }
     return false;
 }
+
+bool QSystemScreenSaverPrivate::screenSaverDelayed()
+{
+        return isScreenLockEnabled();
+}
+
+void QSystemScreenSaverPrivate::setScreenSaverDelayed(bool on)
+{
+    if (on) {
+       setScreenSaverInhibit();
+   } else {
+#if !defined(QT_NO_DBUS)
+         QStringList ifaceList;
+         ifaceList <<  QLatin1String("org.freedesktop.ScreenSaver");
+         ifaceList << QLatin1String("org.gnome.ScreenSaver");
+         QDBusInterface *connectionInterface;
+         foreach (const QString iface, ifaceList) {
+             connectionInterface = new QDBusInterface(QLatin1String(iface.toLatin1()),
+                                                      QLatin1String("/ScreenSaver"),
+                                                      QLatin1String(iface.toLatin1()),
+                                                      QDBusConnection::systemBus());
+             if(connectionInterface->isValid()) {
+                 QDBusReply<uint> reply =  connectionInterface->call(QLatin1String("UnInhibit"),
+                                                                     currentPid);
+             }
+         }
+#endif
+   }
+}
+
 
 QSystemBatteryInfoPrivate::QSystemBatteryInfoPrivate(QSystemBatteryInfoLinuxCommonPrivate *parent)
     : QSystemBatteryInfoLinuxCommonPrivate(parent)

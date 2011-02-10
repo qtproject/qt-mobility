@@ -56,6 +56,7 @@
 
 #include <QObject>
 #include <QStringList>
+#include <QTimer>
 
 #include "qmobilityglobal.h"
 #include "qsysteminfo.h"
@@ -358,11 +359,16 @@ public:
     bool screenSaverInhibited();
     bool setScreenSaverInhibit();
 
+
+    bool screenSaverDelayed();
+    void setScreenSaverDelayed(bool on);
+
 private Q_SLOTS:
     void resetInactivityTime();
 
 private:    //data
     bool m_screenSaverInhibited;
+    QTimer *timer;
 };
 
 //////// DeviceInfo (singleton)

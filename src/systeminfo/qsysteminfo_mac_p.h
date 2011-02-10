@@ -338,6 +338,8 @@ public:
 
     bool screenSaverInhibited();
     bool setScreenSaverInhibit();
+    bool screenSaverDelayed();
+    void setScreenSaverDelayed(bool on);
 
 private:
     QString screenPath;

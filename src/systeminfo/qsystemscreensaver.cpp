@@ -107,6 +107,16 @@ bool QSystemScreenSaver::screenSaverInhibited()
     return d->screenSaverInhibited();
 }
 
+bool QSystemScreenSaver::screenSaverDelayed()
+{
+        return d->screenSaverDelayed();
+}
+
+void QSystemScreenSaver::setScreenSaverDelayed(bool on)
+{
+    return d->setScreenSaverDelayed(on);
+}
+
 #include "moc_qsystemscreensaver.cpp"
 
 

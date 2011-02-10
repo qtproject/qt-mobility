@@ -2087,7 +2087,7 @@ bool QSystemDeviceInfoPrivate::isDeviceLocked()
         }
     }
 #else
-    QSystemScreenSaverPrivate si;
+    QSystemververPrivate si;
     if( SystemParametersInfo( SPI_GETSCREENSAVERRUNNING,true,0,0)
         && si.screenSaverSecureEnabled() )
         return true;
@@ -2163,6 +2163,7 @@ bool QSystemDeviceInfoPrivate::vibrationActive()
 {
     return false;
 }
+
 QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QObject *parent)
         : QObject(parent)
 {
@@ -2214,6 +2215,21 @@ QSystemBatteryInfoPrivate::QSystemBatteryInfoPrivate(QObject *parent)
     getBatteryStatus();
 
 }
+
+bool QSystemScreenSaverPrivate::screenSaverDelayed()
+{
+        return screenSaverInhibited();
+}
+
+void QSystemScreenSaverPrivate::setScreenSaverDelayed(bool on)
+{
+    if (on) {
+        setScreenSaverInhibit();
+    } else {
+
+    }
+}
+
 
 QSystemBatteryInfoPrivate::~QSystemBatteryInfoPrivate()
 {

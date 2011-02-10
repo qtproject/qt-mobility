@@ -1561,9 +1561,8 @@ QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QObject *parent)
 
 QSystemScreenSaverPrivate::~QSystemScreenSaverPrivate()
 {
-    if (ssTimer->isActive()) {
-        ssTimer->stop();
-    }
+    setScreenSaverDelayed(false);
+
 #if !defined(QT_NO_DBUS)
     delete mceConnectionInterface, mceConnectionInterface = 0;
 #endif
@@ -1629,6 +1628,23 @@ bool QSystemScreenSaverPrivate::screenSaverInhibited()
     }
 #endif
     return ((displayOn && isBlankingInhibited) || (displayOn && isInhibited));
+}
+
+bool QSystemScreenSaverPrivate::screenSaverDelayed()
+{
+        return screenSaverInhibited();
+}
+
+void QSystemScreenSaverPrivate::setScreenSaverDelayed(bool on)
+{
+    if (on) {
+        setScreenSaverInhibit();
+    } else {
+        if (ssTimer->isActive()) {
+            ssTimer->stop();
+            isInhibited = false;
+        }
+    }
 }
 
 QSystemBatteryInfoPrivate::QSystemBatteryInfoPrivate(QSystemBatteryInfoLinuxCommonPrivate *parent)
