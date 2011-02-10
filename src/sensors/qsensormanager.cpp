@@ -166,9 +166,15 @@ void QSensorManagerPrivate::loadPlugins()
     d->pluginsLoaded = true;
 
     SENSORLOG() << "initializing static plugins";
+    // Legacy static plugins
     Q_FOREACH (CreatePluginFunc func, d->staticRegistrations) {
         QSensorPluginInterface *plugin = func();
         plugin->registerSensors();
+    }
+
+    // Qt-style static plugins
+    Q_FOREACH (QObject *plugin, QPluginLoader::staticInstances()) {
+        initPlugin(plugin);
     }
 
     if (load_external_plugins) {
