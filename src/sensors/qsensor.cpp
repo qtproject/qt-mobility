@@ -472,7 +472,7 @@ bool QSensor::start()
 */
 void QSensor::stop()
 {
-    if (!isActive() || !isConnectedToBackend())
+    if (!isConnectedToBackend() || !isActive())
         return;
     d->active = false;
     d->backend->stop();

@@ -76,6 +76,15 @@ namespace QTest {
         QString ret = QString("qoutputrangelist: (%1)").arg(list.join("), ("));
         return qstrdup(ret.toLatin1().data());
     }
+    template<> char *toString(const QList<QByteArray> &data)
+    {
+        QStringList list;
+        foreach (const QByteArray &str, data) {
+            list << QString::fromLatin1(str);
+        }
+        QString ret = QString("QList<QByteArray>: (%1)").arg(list.join("), ("));
+        return qstrdup(ret.toLatin1().data());
+    }
 }
 
 
@@ -220,6 +229,7 @@ private slots:
     void testSetIdentifierFail()
     {
         TestSensor sensor;
+        sensor.setIdentifier(testsensorimpl::id);
         sensor.connectToBackend();
         QVERIFY(sensor.isConnectedToBackend());
         QByteArray expected = testsensorimpl::id;
@@ -851,17 +861,6 @@ private slots:
         })
 
         unregister_test_backends();
-    }
-
-    // This test must be LAST or it will interfere with the other tests
-    void testLoadingPlugins()
-    {
-        // Go ahead and load the actual plugins (as a test that plugin loading works)
-        sensors_unit_test_hook(1);
-
-        // Hmm... There's no real way to tell if this worked or not.
-        // If it doesn't work the unit test will probably crash.
-        // That's what it did on Symbian before plugin loading was fixed.
     }
 };
 
