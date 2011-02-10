@@ -55,6 +55,7 @@
 #include <mmf/common/mmfcontrollerframeworkbase.h>
 
 const QString DefaultAudioEndpoint = QLatin1String("Default");
+const TUid KHelixUID = {0x101F8514};
 
 S60VideoPlayerSession::S60VideoPlayerSession(QMediaService *service)
     : S60MediaPlayerSession(service)
@@ -132,7 +133,7 @@ void S60VideoPlayerSession::doLoadL(const TDesC &path)
     delete m_audioOutput;
     m_audioOutput = NULL;
 #endif
-    m_player->OpenFileL(path);
+    m_player->OpenFileL(path, KHelixUID);
 }
 
 void S60VideoPlayerSession::setPlaybackRate(qreal rate)
@@ -163,7 +164,7 @@ void S60VideoPlayerSession::doLoadUrlL(const TDesC &path)
     delete m_audioOutput;
     m_audioOutput = NULL;
 #endif
-    m_player->OpenUrlL(path);
+    m_player->OpenUrlL(path , KUseDefaultIap , KNullDesC8 , KHelixUID);
 }
 
 int S60VideoPlayerSession::doGetBufferStatusL() const
