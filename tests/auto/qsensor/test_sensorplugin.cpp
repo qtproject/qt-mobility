@@ -82,7 +82,18 @@ public:
     }
 };
 
-REGISTER_STATIC_PLUGIN(TestSensorPlugin)
+REGISTER_STATIC_PLUGIN_V2(TestSensorPlugin)
+
+class LegacySensorPlugin : public QSensorPluginInterface
+{
+public:
+    void registerSensors()
+    {
+        qWarning() << "Loaded the LegacySensorPlugin";
+    }
+};
+
+REGISTER_STATIC_PLUGIN_V1(LegacySensorPlugin)
 
 #include "test_sensorplugin.moc"
 
