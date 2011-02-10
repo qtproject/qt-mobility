@@ -97,6 +97,8 @@ public:
 
     bool convert(const ProjCoordinateSystem &system);
 
+    ProjCoordinate &operator=(const ProjCoordinate &other);
+
 private:
     ProjCoordinatePrivate *d;
 };
