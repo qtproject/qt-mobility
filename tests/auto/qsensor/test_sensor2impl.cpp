@@ -39,54 +39,33 @@
 **
 ****************************************************************************/
 
-#ifndef TEST_SENSOR_H
-#define TEST_SENSOR_H
+#include "test_sensor2impl.h"
+#include <qaccelerometer.h>
+#include <QDebug>
 
-#include <qsensor.h>
+char const * const testsensor2impl::id("test sensor 2 impl");
 
-QTM_USE_NAMESPACE
-
-class TestSensorReadingPrivate;
-
-class TestSensorReading : public QSensorReading
+testsensor2impl::testsensor2impl(QSensor *sensor)
+    : QSensorBackend(sensor)
 {
-    Q_OBJECT
-    Q_PROPERTY(int test READ test)
-    DECLARE_READING(TestSensorReading)
-public:
-    int test() const;
-    void setTest(int test);
-};
+    setReading<TestSensor2Reading>(&m_reading);
+}
 
-class TestSensorFilter : public QSensorFilter
+void testsensor2impl::start()
 {
-public:
-    virtual bool filter(TestSensorReading *reading) = 0;
-private:
-    bool filter(QSensorReading *reading) { return filter(static_cast<TestSensorReading*>(reading)); }
-};
-
-class TestSensor : public QSensor
-{
-    Q_OBJECT
-public:
-    explicit TestSensor(QObject *parent = 0)
-        : QSensor(TestSensor::type, parent)
-        , sensorsChangedEmitted(0)
-    {
-        connect(this, SIGNAL(availableSensorsChanged()), this, SLOT(s_availableSensorsChanged()));
+    QString doThis = sensor()->property("doThis").toString();
+    if (doThis == "setOne") {
+        m_reading.setTimestamp(1);
+        m_reading.setTest(1);
+        newReadingAvailable();
+    } else {
+        m_reading.setTimestamp(2);
+        m_reading.setTest(2);
+        newReadingAvailable();
     }
-    virtual ~TestSensor() {}
-    TestSensorReading *reading() const { return static_cast<TestSensorReading*>(QSensor::reading()); }
-    static const char *type;
+}
 
-    // used by the testSensorsChangedSignal test function
-    int sensorsChangedEmitted;
-private slots:
-    void s_availableSensorsChanged()
-    {
-        sensorsChangedEmitted++;
-    }
-};
+void testsensor2impl::stop()
+{
+}
 
-#endif

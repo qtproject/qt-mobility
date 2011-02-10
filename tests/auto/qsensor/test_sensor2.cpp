@@ -39,54 +39,45 @@
 **
 ****************************************************************************/
 
-#ifndef TEST_SENSOR_H
-#define TEST_SENSOR_H
+#include "test_sensor2.h"
+#include "test_sensor2_p.h"
 
-#include <qsensor.h>
+#undef IMPLEMENT_READING
+#undef IMPLEMENT_READING_D
 
-QTM_USE_NAMESPACE
+#define IMPLEMENT_READING(classname)\
+        IMPLEMENT_READING_D(classname, classname ## Private)
 
-class TestSensorReadingPrivate;
-
-class TestSensorReading : public QSensorReading
-{
-    Q_OBJECT
-    Q_PROPERTY(int test READ test)
-    DECLARE_READING(TestSensorReading)
-public:
-    int test() const;
-    void setTest(int test);
-};
-
-class TestSensorFilter : public QSensorFilter
-{
-public:
-    virtual bool filter(TestSensorReading *reading) = 0;
-private:
-    bool filter(QSensorReading *reading) { return filter(static_cast<TestSensorReading*>(reading)); }
-};
-
-class TestSensor : public QSensor
-{
-    Q_OBJECT
-public:
-    explicit TestSensor(QObject *parent = 0)
-        : QSensor(TestSensor::type, parent)
-        , sensorsChangedEmitted(0)
-    {
-        connect(this, SIGNAL(availableSensorsChanged()), this, SLOT(s_availableSensorsChanged()));
+#define IMPLEMENT_READING_D(classname, pclassname)\
+    classname::classname(QObject *parent)\
+        : QSensorReading(parent, new pclassname)\
+        , d(d_ptr())\
+        {}\
+    classname::~classname() {}\
+    void classname::copyValuesFrom(QSensorReading *_other)\
+    {\
+        /* No need to verify types, only called by QSensorBackend */\
+        classname *other = static_cast<classname *>(_other);\
+        pclassname *my_ptr = static_cast<pclassname*>(d_ptr()->data());\
+        pclassname *other_ptr = static_cast<pclassname*>(other->d_ptr()->data());\
+        /* Do a direct copy of the private class */\
+        *(my_ptr) = *(other_ptr);\
     }
-    virtual ~TestSensor() {}
-    TestSensorReading *reading() const { return static_cast<TestSensorReading*>(QSensor::reading()); }
-    static const char *type;
 
-    // used by the testSensorsChangedSignal test function
-    int sensorsChangedEmitted;
-private slots:
-    void s_availableSensorsChanged()
-    {
-        sensorsChangedEmitted++;
-    }
-};
+IMPLEMENT_READING(TestSensor2Reading)
 
-#endif
+int TestSensor2Reading::test() const
+{
+    return d->test;
+}
+
+void TestSensor2Reading::setTest(int test)
+{
+    d->test = test;
+}
+
+// =====================================================================
+
+char const * const TestSensor2::type("test sensor 2");
+
+#include "moc_test_sensor2.cpp"
