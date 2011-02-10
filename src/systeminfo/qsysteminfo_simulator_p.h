@@ -330,7 +330,7 @@ public:
 
     bool screenSaverInhibited();
     bool setScreenSaverInhibit();
-    bool setScreenSaverInhibited(bool on);
+    void setScreenSaverInhibited(bool on);
     bool isScreenLockOn();
 
 private:

@@ -50,9 +50,10 @@ class tst_QSystemScreenSaver : public QObject
     Q_OBJECT
 
 private slots:
-        void initTestCase();
+   void initTestCase();
     void tst_screenSaverInhibited();
     void tst_setScreenSaverInhibit();
+    void tst_setScreenSaverInhibited();
 
 };
 
@@ -73,6 +74,15 @@ void tst_QSystemScreenSaver::tst_setScreenSaverInhibit()
     QSystemScreenSaver si;
     bool enabled = si.setScreenSaverInhibit();
     QVERIFY( enabled || !enabled);
+}
+
+void tst_QSystemScreenSaver::tst_setScreenSaverInhibited()
+{
+    QSystemScreenSaver si;
+    si.setScreenSaverInhibited(true);
+    QVERIFY(si.screenSaverInhibited());
+    si.setScreenSaverInhibited(false);
+    QVERIFY(!si.screenSaverInhibited());
 }
 
 QTEST_MAIN(tst_QSystemScreenSaver)
