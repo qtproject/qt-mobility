@@ -576,7 +576,7 @@ void QGeoMapObjectEngine::bilinearSecondsToScreen(const QGeoCoordinate &origin,
         QTransform pixel;
 
         QGraphicsItem *item = object->graphicsItem();
-        QPolygonF local = item->boundingRect();
+        QPolygonF local = (item->boundingRect() | item->childrenBoundingRect());
         QPolygonF latLonPoly = latLon.map(local);
 
         QPolygonF pixelPoly = mdp->polyToScreen(latLonPoly);
@@ -729,6 +729,9 @@ void QGeoMapObjectEngine::pixelShiftToScreen(const QGeoCoordinate &origin,
                                             QGeoMapObject *object,
                                             QList<QPolygonF> &polys)
 {
+    const QRectF localRect = object->graphicsItem()->boundingRect() |
+            object->graphicsItem()->childrenBoundingRect();
+
     // compute the transform as an origin shift
     QList<QPointF> origins;
     origins << QPointF(origin.longitude(), origin.latitude());
@@ -740,7 +743,7 @@ void QGeoMapObjectEngine::pixelShiftToScreen(const QGeoCoordinate &origin,
         QPointF pixelOrigin = mdp->coordinateToScreenPosition(o.x(), o.y());
         pixel.translate(pixelOrigin.x(), pixelOrigin.y());
         pixelTrans.insertMulti(object, pixel);
-        polys << pixel.map(object->graphicsItem()->boundingRect());
+        polys << pixel.map(localRect);
     }
 }
 
@@ -954,13 +957,13 @@ void QGeoMapObjectEngine::updateLatLonTransform(QGeoMapObject *object)
     if (!item)
         return;
 
-    QRectF localRect = item->boundingRect();
+    QRectF localRect = (item->boundingRect() | item->childrenBoundingRect());
 
     // skip any objects with invalid bounds
     if (!localRect.isValid() || localRect.isEmpty() || localRect.isNull())
         return;
 
-    QPolygonF local = item->boundingRect() * item->transform();
+    QPolygonF local = localRect * item->transform();
     QList<QPolygonF> polys;
 
     latLonTrans.remove(object);
@@ -977,21 +980,21 @@ void QGeoMapObjectEngine::updateLatLonTransform(QGeoMapObject *object)
             bilinearPixelsToSeconds(origin, item, local, latLon);
         }
 
-        polys << latLon.map(object->graphicsItem()->boundingRect());
+        polys << latLon.map(localRect);
         latLonTrans.insertMulti(object, latLon);
 
         QTransform latLonWest;
         latLonWest.translate(360.0 * 3600.0, 0.0);
         latLonWest = latLon * latLonWest;
 
-        polys << latLonWest.map(object->graphicsItem()->boundingRect());
+        polys << latLonWest.map(localRect);
         latLonTrans.insertMulti(object, latLonWest);
 
         QTransform latLonEast;
         latLonEast.translate(-360.0 * 3600.0, 0.0);
         latLonEast = latLon * latLonEast;
 
-        polys << latLonEast.map(object->graphicsItem()->boundingRect());
+        polys << latLonEast.map(localRect);
         latLonTrans.insertMulti(object, latLonEast);
 
     } else if (object->transformType() == QGeoMapObject::ExactTransform) {
@@ -1043,7 +1046,7 @@ void QGeoMapObjectEngine::updatePixelTransform(QGeoMapObject *object)
     if (!item)
         return;
 
-    QRectF localRect = item->boundingRect();
+    QRectF localRect = (item->boundingRect() | item->childrenBoundingRect());
 
     // skip any objects with invalid bounds
     if (!localRect.isValid() || localRect.isEmpty() || localRect.isNull())
