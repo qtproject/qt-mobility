@@ -22,6 +22,7 @@ usr/include/qt4/QtLocation/QGeoMappingManagerEngine
 usr/include/qt4/QtLocation/QGeoPlace
 usr/include/qt4/QtLocation/QGeoPositionInfo
 usr/include/qt4/QtLocation/QGeoPositionInfoSource
+usr/include/qt4/QtLocation/QGeoPositionInfoSourceFactory
 usr/include/qt4/QtLocation/QGeoRoute
 usr/include/qt4/QtLocation/QGeoRouteReply
 usr/include/qt4/QtLocation/QGeoRouteRequest
@@ -96,6 +97,7 @@ usr/include/qt4/QtLocation/qgeomaptextobject.h
 usr/include/qt4/QtLocation/qgeoplace.h
 usr/include/qt4/QtLocation/qgeopositioninfo.h
 usr/include/qt4/QtLocation/qgeopositioninfosource.h
+usr/include/qt4/QtLocation/qgeopositioninfosourcefactory.h
 usr/include/qt4/QtLocation/qgeoroute.h
 usr/include/qt4/QtLocation/qgeoroutereply.h
 usr/include/qt4/QtLocation/qgeorouterequest.h

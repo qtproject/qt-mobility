@@ -88,6 +88,8 @@ QSystemDisplayInfo::QSystemDisplayInfo(QObject *parent)
 {
     qRegisterMetaType<QSystemDisplayInfo::DisplayOrientation>("QSystemDisplayInfo::DisplayOrientation");
     qRegisterMetaType<QSystemDisplayInfo::BacklightState>("QSystemDisplayInfo::BacklightState");
+    connect(displayInfoPrivate(),SIGNAL(orientationChanged(QSystemDisplayInfo::DisplayOrientation )),
+            this,SIGNAL(orientationChanged(QSystemDisplayInfo::DisplayOrientation )),Qt::UniqueConnection);
 }
 
 /*!

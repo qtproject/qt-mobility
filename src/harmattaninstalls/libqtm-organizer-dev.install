@@ -57,6 +57,7 @@ usr/include/qt4/QtOrganizer/QOrganizerJournal
 usr/include/qt4/QtOrganizer/QOrganizerJournalTime
 usr/include/qt4/QtOrganizer/QOrganizerManager
 usr/include/qt4/QtOrganizer/QOrganizerManagerEngine
+usr/include/qt4/QtOrganizer/QOrganizerManagerEngineV2
 usr/include/qt4/QtOrganizer/QOrganizerManagerEngineFactory
 usr/include/qt4/QtOrganizer/QOrganizerManagerEngineV2
 usr/include/qt4/QtOrganizer/QOrganizerNote

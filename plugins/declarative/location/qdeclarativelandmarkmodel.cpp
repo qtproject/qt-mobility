@@ -40,6 +40,7 @@
 ***************************************************************************/
 
 #include "qdeclarativelandmarkmodel_p.h"
+#include <QtDeclarative/qdeclarativeinfo.h>
 #include <QTimer>
 
 #ifdef QDECLARATIVE_LANDMARK_DEBUG
@@ -679,9 +680,13 @@ void QDeclarativeLandmarkModel::componentComplete()
 void QDeclarativeLandmarkModel::startImport()
 {
     if (!m_manager || m_importFile.isEmpty()) {
+        qmlInfo(this) << tr("Cannot import, import file is empty.");
         m_importPending = false;
         return;
     }
+    if (!QFile::exists(m_importFile))
+        qmlInfo(this) << tr("Import file not found.");
+
     if (m_importRequest)
         delete m_importRequest;
     m_importRequest = new QLandmarkImportRequest(m_manager);

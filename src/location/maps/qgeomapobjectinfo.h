@@ -56,6 +56,9 @@ class QGeoMapData;
 class QGeoMapObject;
 class QGeoMapObjectInfoPrivate;
 
+/* This class is only here for binary compatibility reasons and
+  is no longer in actual use. */
+
 class Q_LOCATION_EXPORT QGeoMapObjectInfo : public QObject
 {
     Q_OBJECT
@@ -88,4 +91,4 @@ private:
 
 QTM_END_NAMESPACE
 
-#endif
+#endif // QGEOMAPOBJECTINFO_H

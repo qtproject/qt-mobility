@@ -57,7 +57,10 @@ QTM_BEGIN_NAMESPACE
     It also allows users to specify an ordering of objects local to the
     group via the z-values and insertion order of the objects in the group.
 
-    The MapGroup element is part of the \bold{QtMobility.location 1.1} module.
+    An example of group having a small red circle on top of bigger green circle:
+    \snippet examples/declarative-location/landmarkmap/landmarkmap.qml MapGroup
+
+    The MapGroup element is part of the \bold{QtMobility.location 1.2} module.
 */
 
 QDeclarativeGeoMapGroupObject::QDeclarativeGeoMapGroupObject(QDeclarativeItem *parent)
@@ -178,35 +181,35 @@ void QDeclarativeGeoMapGroupObject::releaseEvent(QDeclarativeGeoMapMouseEvent *e
     QDeclarativeGeoMapObject::releaseEvent(event);
 }
 
-void QDeclarativeGeoMapGroupObject::enterEvent()
-{
-    for (int i = objects_.size() - 1; i >= 0; --i)
-        objects_.at(i)->enterEvent();
+//void QDeclarativeGeoMapGroupObject::enterEvent()
+//{
+//    for (int i = objects_.size() - 1; i >= 0; --i)
+//        objects_.at(i)->enterEvent();
 
-    QDeclarativeGeoMapObject::enterEvent();
-}
+//    QDeclarativeGeoMapObject::enterEvent();
+//}
 
-void QDeclarativeGeoMapGroupObject::exitEvent()
-{
-    for (int i = objects_.size() - 1; i >= 0; --i)
-        objects_.at(i)->exitEvent();
+//void QDeclarativeGeoMapGroupObject::exitEvent()
+//{
+//    for (int i = objects_.size() - 1; i >= 0; --i)
+//        objects_.at(i)->exitEvent();
 
-    QDeclarativeGeoMapObject::exitEvent();
-}
+//    QDeclarativeGeoMapObject::exitEvent();
+//}
 
-void QDeclarativeGeoMapGroupObject::moveEvent(QDeclarativeGeoMapMouseEvent *event)
-{
-    if (event->accepted())
-        return;
+//void QDeclarativeGeoMapGroupObject::moveEvent(QDeclarativeGeoMapMouseEvent *event)
+//{
+//    if (event->accepted())
+//        return;
 
-    for (int i = objects_.size() - 1; i >= 0; --i) {
-        objects_.at(i)->moveEvent(event);
-        if (event->accepted())
-            return;
-    }
+//    for (int i = objects_.size() - 1; i >= 0; --i) {
+//        objects_.at(i)->moveEvent(event);
+//        if (event->accepted())
+//            return;
+//    }
 
-    QDeclarativeGeoMapObject::moveEvent(event);
-}
+//    QDeclarativeGeoMapObject::moveEvent(event);
+//}
 
 /*!
     \qmlproperty int MapGroup::zValue

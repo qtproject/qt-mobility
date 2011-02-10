@@ -47,6 +47,7 @@ usr/include/qt4/QtContacts/QContactNote
 usr/include/qt4/QtContacts/QContactObserver
 usr/include/qt4/QtContacts/QContactOnlineAccount
 usr/include/qt4/QtContacts/QContactOrganization
+usr/include/qt4/QtContacts/QContactObserver
 usr/include/qt4/QtContacts/QContactPhoneNumber
 usr/include/qt4/QtContacts/QContactPresence
 usr/include/qt4/QtContacts/QContactRelationship

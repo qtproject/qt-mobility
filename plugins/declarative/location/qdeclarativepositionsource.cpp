@@ -39,6 +39,7 @@
 **
 ****************************************************************************/
 
+#include <QtDeclarative/qdeclarativeinfo.h>
 #include "qdeclarativepositionsource_p.h"
 #include "qdeclarativeposition_p.h"
 #include "qdeclarative.h"
@@ -142,6 +143,7 @@ void QDeclarativePositionSource::setNmeaSource(const QUrl& nmeaSource)
             QTimer::singleShot(0, this, SLOT(start()));
         }
     } else {
+        qmlInfo(this) << tr("Nmea file not found.");
 #ifdef QDECLARATIVE_POSITION_DEBUG
         qDebug() << "QDeclarativePositionSource NMEA File was not found: " << localFileName;
 #endif

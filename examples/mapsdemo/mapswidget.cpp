@@ -53,6 +53,7 @@
 GeoMap::GeoMap(QGeoMappingManager *manager, MapsWidget *mapsWidget) :
     QGraphicsGeoMap(manager), mapsWidget(mapsWidget)
 {
+    this->setFocus();
 }
 
 GeoMap::~GeoMap()
@@ -94,6 +95,7 @@ void GeoMap::mousePressEvent(QGraphicsSceneMouseEvent *event)
         markerPressed = true;
     }
 
+    this->setFocus();
     event->accept();
 }
 
@@ -113,6 +115,7 @@ void GeoMap::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
         markerPressed = false;
     }
 
+    this->setFocus();
     event->accept();
 }
 
@@ -123,11 +126,14 @@ void GeoMap::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         pan(delta.x(), delta.y());
         emit panned();
     }
+    this->setFocus();
     event->accept();
 }
 
 void GeoMap::wheelEvent(QGraphicsSceneWheelEvent *event)
 {
+    // pan our current point to the centre, zoom, then pan back
+
     qreal panx = event->pos().x() - size().width() / 2.0;
     qreal pany = event->pos().y() - size().height() / 2.0;
     pan(panx, pany);
@@ -141,24 +147,99 @@ void GeoMap::wheelEvent(QGraphicsSceneWheelEvent *event)
         }
     }
     pan(-panx, -pany);
+    this->setFocus();
     event->accept();
 }
 
-ZoomButtonItem::ZoomButtonItem(GeoMap *map) :
-    pressedOverTopHalf(false),
-    pressedOverBottomHalf(false),
-    map(map)
+void GeoMap::keyPressEvent(QKeyEvent *event)
 {
+    QGeoCoordinate center;
+    QPropertyAnimation *anim;
+    const qreal width = size().width();
+    const qreal height = size().height();
+
+    switch (event->key()) {
+    case Qt::Key_4:
+    case Qt::Key_Left:
+        center = screenPositionToCoordinate(
+                    QPointF(width/2 - width/5, height/2));
+        anim = new QPropertyAnimation(this, "centerLongitude");
+        anim->setEndValue(center.longitude());
+        anim->setDuration(200);
+        anim->start(QAbstractAnimation::DeleteWhenStopped);
+        break;
+    case Qt::Key_6:
+    case Qt::Key_Right:
+        center = screenPositionToCoordinate(
+                    QPointF(width/2 + width/5, height/2));
+        anim = new QPropertyAnimation(this, "centerLongitude");
+        anim->setEndValue(center.longitude());
+        anim->setDuration(200);
+        anim->start(QAbstractAnimation::DeleteWhenStopped);
+        break;
+    case Qt::Key_2:
+    case Qt::Key_Up:
+        center = screenPositionToCoordinate(
+                    QPointF(width/2, height/2 - height/5));
+        anim = new QPropertyAnimation(this, "centerLatitude");
+        anim->setEndValue(center.latitude());
+        anim->setDuration(200);
+        anim->start(QAbstractAnimation::DeleteWhenStopped);
+        break;
+    case Qt::Key_8:
+    case Qt::Key_Down:
+        center = screenPositionToCoordinate(
+                    QPointF(width/2, height/2 + height/5));
+        anim = new QPropertyAnimation(this, "centerLatitude");
+        anim->setEndValue(center.latitude());
+        anim->setDuration(200);
+        anim->start(QAbstractAnimation::DeleteWhenStopped);
+        break;
+    case Qt::Key_1:
+        if (zoomLevel() > minimumZoomLevel()) {
+            setZoomLevel(zoomLevel() - 1);
+        }
+        break;
+    case Qt::Key_3:
+        if (zoomLevel() < maximumZoomLevel()) {
+            setZoomLevel(zoomLevel() + 1);
+        }
+        break;
+    }
+    this->setFocus();
+    event->accept();
+}
+
+
+class ZoomButtonItemPrivate
+{
+public:
+    GeoMap *map;
+
+    QGraphicsSimpleTextItem *plusText;
+    QGraphicsSimpleTextItem *minusText;
+
+    bool pressedOverTopHalf;
+    bool pressedOverBottomHalf;
+};
+
+ZoomButtonItem::ZoomButtonItem(GeoMap *map) :
+    d(new ZoomButtonItemPrivate)
+{
+    d->map = map;
+    d->pressedOverBottomHalf = false;
+    d->pressedOverTopHalf = false;
+
     setPen(QPen(QBrush(), 0));
     setBrush(QBrush(QColor(0,0,0,150)));
 
-    plusText = new QGraphicsSimpleTextItem(this);
-    plusText->setText("+");
-    plusText->setBrush(QBrush(Qt::white));
+    d->plusText = new QGraphicsSimpleTextItem(this);
+    d->plusText->setText("+");
+    d->plusText->setBrush(QBrush(Qt::white));
 
-    minusText = new QGraphicsSimpleTextItem(this);
-    minusText->setText("-");
-    minusText->setBrush(QBrush(Qt::white));
+    d->minusText = new QGraphicsSimpleTextItem(this);
+    d->minusText->setText("-");
+    d->minusText->setBrush(QBrush(Qt::white));
 }
 
 void ZoomButtonItem::setRect(qreal x, qreal y, qreal w, qreal h)
@@ -168,30 +249,31 @@ void ZoomButtonItem::setRect(qreal x, qreal y, qreal w, qreal h)
     QFont f;
     f.setFixedPitch(true);
     f.setPixelSize(h/3.0);
-    plusText->setFont(f);
-    minusText->setFont(f);
+    d->plusText->setFont(f);
+    d->minusText->setFont(f);
 
-    QRectF plusBound = plusText->boundingRect();
+    QRectF plusBound = d->plusText->boundingRect();
     QPointF plusCenter(x+w/2.0, y+h/4.0);
     QPointF plusDelta = plusCenter - plusBound.center();
-    plusText->setPos(plusDelta);
+    d->plusText->setPos(plusDelta);
 
-    QRectF minusBound = minusText->boundingRect();
+    QRectF minusBound = d->minusText->boundingRect();
     QPointF minusCenter(x+w/2.0, y+3.0*h/4.0);
     QPointF minusDelta = minusCenter - minusBound.center();
-    minusText->setPos(minusDelta);
+    d->minusText->setPos(minusDelta);
 }
 
 void ZoomButtonItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     const QPointF pos = event->pos();
-    if (!pressedOverTopHalf && !pressedOverBottomHalf) {
+    if (!d->pressedOverTopHalf && !d->pressedOverBottomHalf) {
         if (isTopHalf(pos)) {
-            pressedOverTopHalf = true;
+            d->pressedOverTopHalf = true;
         } else if (isBottomHalf(pos)) {
-            pressedOverBottomHalf = true;
+            d->pressedOverBottomHalf = true;
         }
     }
+    d->map->setFocus();
     event->accept();
 }
 
@@ -210,13 +292,14 @@ bool ZoomButtonItem::isBottomHalf(const QPointF &point)
 void ZoomButtonItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     const QPointF pos = event->pos();
-    if (isTopHalf(pos) && pressedOverTopHalf) {
-        map->setZoomLevel(map->zoomLevel() + 1.0);
-    } else if (isBottomHalf(pos) && pressedOverBottomHalf) {
-        map->setZoomLevel(map->zoomLevel() - 1.0);
+    if (isTopHalf(pos) && d->pressedOverTopHalf) {
+        d->map->setZoomLevel(d->map->zoomLevel() + 1.0);
+    } else if (isBottomHalf(pos) && d->pressedOverBottomHalf) {
+        d->map->setZoomLevel(d->map->zoomLevel() - 1.0);
     }
-    pressedOverBottomHalf = false;
-    pressedOverTopHalf = false;
+    d->pressedOverBottomHalf = false;
+    d->pressedOverTopHalf = false;
+    d->map->setFocus();
     event->accept();
 }
 
@@ -416,6 +499,7 @@ void MapsWidget::animatedPanTo(QGeoCoordinate center)
 
 void MapsWidget::showEvent(QShowEvent *event)
 {
+    Q_UNUSED(event)
     resizeEvent(0);
 }
 
