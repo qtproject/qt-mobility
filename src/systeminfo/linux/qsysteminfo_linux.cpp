@@ -758,19 +758,14 @@ bool QSystemDeviceInfoPrivate::vibrationActive()
 }
 
 QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QSystemScreenSaverLinuxCommonPrivate *parent)
-         : QSystemScreenSaverLinuxCommonPrivate(parent), currentPid(0)
+         : QSystemScreenSaverLinuxCommonPrivate(parent), currentPid(0),kdeIsRunning(0),gnomeIsRunning(0),meegoIsRunning(0)
  {
-     kdeIsRunning = false;
-     gnomeIsRunning = false;
-     meegoIsRunning = false;
      whichWMRunning();
  }
 
  QSystemScreenSaverPrivate::~QSystemScreenSaverPrivate()
  {
-     if(currentPid != 0) {
-         setScreenSaverInhibited(false);
-     }
+     setScreenSaverInhibited(false);
 #if defined(QT_NO_DBUS) && defined(Q_WS_X11) && !defined(Q_WS_MEEGO)
      changeTimeout(-1);
 #endif
@@ -862,7 +857,7 @@ void QSystemScreenSaverPrivate::whichWMRunning()
     connectionInterface = new QDBusInterface(QLatin1String("org.kde.kwin"),
                                              QLatin1String("/KWin"),
                                              QLatin1String("org.kde.KWin"),
-                                             QDBusConnection::systemBus());
+                                             QDBusConnection::sessionBus());
     if(connectionInterface->isValid()) {
         kdeIsRunning = true;
         return;
