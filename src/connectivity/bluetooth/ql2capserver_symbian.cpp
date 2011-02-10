@@ -108,11 +108,11 @@ bool QL2capServer::listen(const QBluetoothAddress &address, quint16 port)
 
     d->ds->iSocket->Listen(d->maxPendingConnections);
 
-    d->pendingSocket = new QBluetoothSocket;
+    d->pendingSocket = new QBluetoothSocket(QBluetoothSocket::L2capSocket);
 
     QBluetoothSocketPrivate *pd = d->pendingSocket->d_ptr;
     pd->ensureBlankNativeSocket();
-    if (d->ds->iSocket->Accept(*pd->iSocket) == KErrNone)
+    if (d->ds->iSocket->Accept(*pd->iBlankSocket) == KErrNone)
         d->socket->setSocketState(QBluetoothSocket::ListeningState);
     else
         d->socket->close();
@@ -172,9 +172,11 @@ void QL2capServerPrivate::HandleAcceptCompleteL(TInt aErr)
         pendingSocket->setSocketState(QBluetoothSocket::ConnectedState);
         activeSockets.append(pendingSocket);
 
-        pendingSocket = new QBluetoothSocket;
         QBluetoothSocketPrivate *pd = pendingSocket->d_ptr;
-        pd->iSocket->Accept(*pd->iSocket);
+
+        pd->ensureBlankNativeSocket();
+
+        pd->iSocket->Accept(*pd->iBlankSocket);
 
         emit q->newConnection();
     } else if (aErr == KErrCancel) {

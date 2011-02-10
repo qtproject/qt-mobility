@@ -71,6 +71,7 @@ private slots:
     void tst_hostModes();
     void tst_hostModes_data();
     void tst_address();
+    void tst_name();
     void tst_isValid();
     void tst_allDevices();
     void tst_construction();
@@ -206,6 +207,11 @@ void tst_QBluetoothLocalDevice::tst_address()
 {
     QBluetoothLocalDevice localDevice;
     QVERIFY(!localDevice.address().toString().isEmpty());
+}
+void tst_QBluetoothLocalDevice::tst_name()
+{
+    QBluetoothLocalDevice localDevice;
+    QVERIFY(!localDevice.name().isEmpty());
 }
 void tst_QBluetoothLocalDevice::tst_isValid()
 {
