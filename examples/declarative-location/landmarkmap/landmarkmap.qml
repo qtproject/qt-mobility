@@ -55,12 +55,14 @@ Item {
         updateInterval: 2000
         onPositionChanged: console.log("Position changed in PositionSource")
     }
+    //![Map toCoordinate]
     LandmarkBoxFilter {
         id: boxFilter
         topLeft: map.toCoordinate(Qt.point(0,0))
-        bottomRight: map.toCoordinate(Qt.point(dataArea.width, dataArea.height))
+        bottomRight: map.toCoordinate(Qt.point(map.width, map.height))
     }
-    
+    //![Map toCoordinate]
+
      LandmarkProximityFilter {
          id: proximityFilter
          center: myPositionSource.position.coordinate
@@ -168,9 +170,11 @@ Item {
             focus: true
         }
         //![Category model]
+        //![Map Plugin]
         Map {
             id: map
             plugin : Plugin { name : "nokia"}
+            //![Map Plugin]
             anchors.fill: parent
             size.width: parent.width
             size.height: parent.height
@@ -180,13 +184,12 @@ Item {
 	        id: allLandmarks
 		model: landmarkModelAll
 		delegate: Component {
+                    //![MapImage]
 		    MapImage {
 	                source:  "landmarkmapmobile/images/landmarkstar.png"
-		        coordinate: Coordinate {
-	                    latitude: landmark.coordinate.latitude
-		            longitude: landmark.coordinate.longitude
-	                }
+                        coordinate: landmark.coordinate
 	            }
+                    //![MapImage]
 	        }
 	    }
 
@@ -194,16 +197,20 @@ Item {
 	        id: landmarksNearMe
 		model: landmarkModelNear
 		delegate: Component {
+                    //![MapGroup]
 		    MapGroup {
+                        MapCircle {
+                            color: "green"
+                            radius: 100
+                            center: landmark.coordinate
+                        }
 		        MapCircle {
 	                    color: "red"
-                            radius: 10
-		            center: Coordinate {
-	                        latitude: landmark.coordinate.latitude
-		                longitude: landmark.coordinate.longitude
-	                    }
+                            radius: 30
+                            center: landmark.coordinate
 	                }
 	            }
+                    //![MapGroup]
 		}
             }
             onZoomLevelChanged: {

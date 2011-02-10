@@ -19,7 +19,9 @@ contains(mobility_modules,bearer){
     }
 }
     
-contains(mobility_modules,location): SUBDIRS += location
+contains(mobility_modules,location) {
+	SUBDIRS += location
+}
 contains(mobility_modules,multimedia): SUBDIRS += multimedia
 
 ## The order must be contacts, organizer, versit, versitorganizer

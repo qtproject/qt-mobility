@@ -56,9 +56,10 @@ class QGeoCoordinate;
 class QGeoBoundingBox;
 class QGeoMappingManagerEngine;
 class QGeoMapObject;
-class QGeoMapObjectInfo;
+class QGeoMapGroupObject;
 class QGeoMapDataPrivate;
 class QGeoMapOverlay;
+class QGeoMapObjectInfo;
 
 class Q_LOCATION_EXPORT QGeoMapData : public QObject
 {
@@ -161,7 +162,7 @@ private:
     Q_DISABLE_COPY(QGeoMapData)
 
     friend class QGeoMapObject;
-    friend class QGeoMapObjectInfo;
+    friend class QGeoMapGroupObject;
 };
 
 QTM_END_NAMESPACE

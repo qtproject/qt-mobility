@@ -53,6 +53,7 @@
 GeoMap::GeoMap(QGeoMappingManager *manager, MapsWidget *mapsWidget) :
     QGraphicsGeoMap(manager), mapsWidget(mapsWidget)
 {
+    this->setFocus();
 }
 
 GeoMap::~GeoMap()
@@ -94,6 +95,7 @@ void GeoMap::mousePressEvent(QGraphicsSceneMouseEvent *event)
         markerPressed = true;
     }
 
+    this->setFocus();
     event->accept();
 }
 
@@ -113,6 +115,7 @@ void GeoMap::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
         markerPressed = false;
     }
 
+    this->setFocus();
     event->accept();
 }
 
@@ -123,6 +126,7 @@ void GeoMap::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         pan(delta.x(), delta.y());
         emit panned();
     }
+    this->setFocus();
     event->accept();
 }
 
@@ -143,6 +147,66 @@ void GeoMap::wheelEvent(QGraphicsSceneWheelEvent *event)
         }
     }
     pan(-panx, -pany);
+    this->setFocus();
+    event->accept();
+}
+
+void GeoMap::keyPressEvent(QKeyEvent *event)
+{
+    QGeoCoordinate center;
+    QPropertyAnimation *anim;
+    const qreal width = size().width();
+    const qreal height = size().height();
+
+    switch (event->key()) {
+    case Qt::Key_4:
+    case Qt::Key_Left:
+        center = screenPositionToCoordinate(
+                    QPointF(width/2 - width/5, height/2));
+        anim = new QPropertyAnimation(this, "centerLongitude");
+        anim->setEndValue(center.longitude());
+        anim->setDuration(200);
+        anim->start(QAbstractAnimation::DeleteWhenStopped);
+        break;
+    case Qt::Key_6:
+    case Qt::Key_Right:
+        center = screenPositionToCoordinate(
+                    QPointF(width/2 + width/5, height/2));
+        anim = new QPropertyAnimation(this, "centerLongitude");
+        anim->setEndValue(center.longitude());
+        anim->setDuration(200);
+        anim->start(QAbstractAnimation::DeleteWhenStopped);
+        break;
+    case Qt::Key_2:
+    case Qt::Key_Up:
+        center = screenPositionToCoordinate(
+                    QPointF(width/2, height/2 - height/5));
+        anim = new QPropertyAnimation(this, "centerLatitude");
+        anim->setEndValue(center.latitude());
+        anim->setDuration(200);
+        anim->start(QAbstractAnimation::DeleteWhenStopped);
+        break;
+    case Qt::Key_8:
+    case Qt::Key_Down:
+        center = screenPositionToCoordinate(
+                    QPointF(width/2, height/2 + height/5));
+        anim = new QPropertyAnimation(this, "centerLatitude");
+        anim->setEndValue(center.latitude());
+        anim->setDuration(200);
+        anim->start(QAbstractAnimation::DeleteWhenStopped);
+        break;
+    case Qt::Key_1:
+        if (zoomLevel() > minimumZoomLevel()) {
+            setZoomLevel(zoomLevel() - 1);
+        }
+        break;
+    case Qt::Key_3:
+        if (zoomLevel() < maximumZoomLevel()) {
+            setZoomLevel(zoomLevel() + 1);
+        }
+        break;
+    }
+    this->setFocus();
     event->accept();
 }
 
@@ -209,6 +273,7 @@ void ZoomButtonItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
             d->pressedOverBottomHalf = true;
         }
     }
+    d->map->setFocus();
     event->accept();
 }
 
@@ -234,6 +299,7 @@ void ZoomButtonItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     }
     d->pressedOverBottomHalf = false;
     d->pressedOverTopHalf = false;
+    d->map->setFocus();
     event->accept();
 }
 

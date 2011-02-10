@@ -85,8 +85,10 @@ public:
 
     virtual QGeoBoundingBox viewport() const
     {
-        return QGeoBoundingBox();
+        return QGeoBoundingBox(QGeoCoordinate(50.0,0.0),
+                               QGeoCoordinate(0.0,50.0));
     }
+
     virtual void fitInViewport(const QGeoBoundingBox &bounds, bool preserveViewportCenter = false)
     {
         if (!preserveViewportCenter)

@@ -88,6 +88,7 @@ private:
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
     void wheelEvent(QGraphicsSceneWheelEvent *event);
+    void keyPressEvent(QKeyEvent *event);
 
 signals:
     void clicked(Marker *marker);

@@ -42,15 +42,26 @@
 #include "qgeomapdata.h"
 #include "qgeomapdata_p.h"
 
+#include <QGraphicsScene>
+#include <QGraphicsItem>
+#include <QGraphicsPolygonItem>
+#include <QGraphicsLineItem>
+#include <QGraphicsEllipseItem>
+#include <QGraphicsPathItem>
+
 #include "qgeoboundingbox.h"
 #include "qgeocoordinate.h"
 #include "qgraphicsgeomap.h"
 #include "qgeomapobject.h"
+#include "qgeomappixmapobject.h"
 #include "qgeomapgroupobject.h"
+#include "qgeomaptextobject.h"
 #include "qgeomappingmanagerengine.h"
 #include "qgeomapoverlay.h"
 
+#include "qgeomapobjectengine_p.h"
 #include "qgeomapobject_p.h"
+#include "projwrapper_p.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -150,6 +161,8 @@ void QGeoMapData::setWindowSize(const QSizeF &size)
         return;
 
     d_ptr->windowSize = size;
+    d_ptr->oe->invalidatePixelsForViewport();
+    d_ptr->oe->trimPixelTransforms();
 
     if (!d_ptr->blockPropertyChangeSignals)
         emit windowSizeChanged(d_ptr->windowSize);
@@ -185,6 +198,9 @@ void QGeoMapData::setZoomLevel(qreal zoomLevel)
         return;
 
     d_ptr->zoomLevel = zoomLevel;
+    d_ptr->oe->invalidateZoomDependents();
+    d_ptr->oe->invalidatePixelsForViewport();
+    d_ptr->oe->trimPixelTransforms();
 
     if (!d_ptr->blockPropertyChangeSignals)
         emit zoomLevelChanged(d_ptr->zoomLevel);
@@ -345,6 +361,8 @@ void QGeoMapData::setCenter(const QGeoCoordinate &center)
         return;
 
     d_ptr->center = center;
+    d_ptr->oe->invalidatePixelsForViewport();
+    d_ptr->oe->trimPixelTransforms();
 
     if (!d_ptr->blockPropertyChangeSignals)
         emit centerChanged(d_ptr->center);
@@ -427,7 +445,7 @@ QList<QGeoMapObject*> QGeoMapData::mapObjects() const
 */
 void QGeoMapData::addMapObject(QGeoMapObject *mapObject)
 {
-    d_ptr->containerObject->addChildObject(mapObject);
+    d_ptr->addObject(mapObject);
 }
 
 /*!
@@ -436,7 +454,7 @@ void QGeoMapData::addMapObject(QGeoMapObject *mapObject)
 */
 void QGeoMapData::removeMapObject(QGeoMapObject *mapObject)
 {
-    d_ptr->containerObject->removeChildObject(mapObject);
+    d_ptr->removeObject(mapObject);
 }
 
 /*!
@@ -446,7 +464,7 @@ void QGeoMapData::removeMapObject(QGeoMapObject *mapObject)
 */
 void QGeoMapData::clearMapObjects()
 {
-    d_ptr->containerObject->clearChildObjects();
+    d_ptr->clearObjects();
 }
 
 /*!
@@ -477,15 +495,69 @@ void QGeoMapData::clearMapObjects()
 */
 QList<QGeoMapObject*> QGeoMapData::mapObjectsAtScreenPosition(const QPointF &screenPosition) const
 {
+    if (screenPosition.isNull())
+        return QList<QGeoMapObject*>();
+
     QList<QGeoMapObject*> results;
+    QSet<QGeoMapObject*> considered;
 
-    QGeoCoordinate coord = screenPositionToCoordinate(screenPosition);
+    QGeoMapObjectEngine *e = d_ptr->oe;
 
-    int childObjectCount = d_ptr->containerObject->childObjects().count();
-    for (int i = 0; i < childObjectCount; ++i) {
-        QGeoMapObject *object = d_ptr->containerObject->childObjects().at(i);
-        if (object->contains(coord) && object->isVisible())
-            results.append(object);
+    e->updateTransforms();
+
+    QList<QGraphicsItem*> pixelItems;
+    pixelItems = e->pixelScene->items(QRectF(screenPosition - QPointF(1,1),
+                                             screenPosition + QPointF(1,1)),
+                                      Qt::IntersectsItemShape,
+                                      Qt::AscendingOrder);
+
+    foreach (QGraphicsItem *item, pixelItems) {
+        QGeoMapObject *object = e->pixelItems.value(item);
+        Q_ASSERT(object);
+
+        if (object->isVisible() && !considered.contains(object)) {
+            bool contains = false;
+
+            if (e->pixelExact.contains(object)) {
+                foreach (QGraphicsItem *item, e->pixelExact.values(object)) {
+                    if (item->shape().contains(screenPosition)) {
+                        contains = true;
+                        break;
+                    }
+                }
+            } else {
+                QList<QTransform> trans = e->pixelTrans.values(object);
+
+                foreach (QTransform t, trans) {
+                    bool ok;
+                    QTransform inv = t.inverted(&ok);
+                    if (ok) {
+                        QPointF testPt = screenPosition * inv;
+                        QGraphicsItem *item = object->graphicsItem();
+
+                        // we have to special case text objects here
+                        // in order to maintain their old (1.1) behaviour
+                        QGeoMapTextObject *tobj = qobject_cast<QGeoMapTextObject*>(object);
+                        if (tobj) {
+                            if (item->boundingRect().contains(testPt)) {
+                                contains = true;
+                                break;
+                            }
+                        } else {
+                            if (item->shape().contains(testPt)) {
+                                contains = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (contains)
+                results << object;
+
+            considered.insert(object);
+        }
     }
 
     return results;
@@ -498,17 +570,54 @@ QList<QGeoMapObject*> QGeoMapData::mapObjectsAtScreenPosition(const QPointF &scr
 QList<QGeoMapObject*> QGeoMapData::mapObjectsInScreenRect(const QRectF &screenRect) const
 {
     QList<QGeoMapObject*> results;
+    QSet<QGeoMapObject*> considered;
 
-    QGeoCoordinate topLeft = screenPositionToCoordinate(screenRect.topLeft());
-    QGeoCoordinate bottomRight = screenPositionToCoordinate(screenRect.bottomRight());
+    QGeoMapObjectEngine *e = d_ptr->oe;
 
-    QGeoBoundingBox bounds(topLeft, bottomRight);
+    e->updateTransforms();
 
-    int childObjectCount = d_ptr->containerObject->childObjects().count();
-    for (int i = 0; i < childObjectCount; ++i) {
-        QGeoMapObject *object = d_ptr->containerObject->childObjects().at(i);
-        if (bounds.intersects(object->boundingBox()) && object->isVisible())
-            results.append(object);
+    QList<QGraphicsItem*> pixelItems = e->pixelScene->items(screenRect,
+                                                            Qt::IntersectsItemShape,
+                                                            Qt::AscendingOrder);
+
+    foreach (QGraphicsItem *item, pixelItems) {
+        QGeoMapObject *object = e->pixelItems.value(item);
+        Q_ASSERT(object);
+
+        if (object->isVisible() && !considered.contains(object)) {
+            bool contains = false;
+
+            if (e->pixelExact.contains(object)) {
+                foreach (QGraphicsItem *item, e->pixelExact.values(object))
+                    if (item->shape().intersects(screenRect))
+                        contains = true;
+            } else {
+                QList<QTransform> trans = e->pixelTrans.values(object);
+
+                foreach (QTransform t, trans) {
+                    bool ok;
+                    QTransform inv = t.inverted(&ok);
+                    if (ok) {
+                        QPolygonF testPoly = screenRect * inv;
+
+                        QPainterPath testPath;
+                        testPath.moveTo(testPoly[0]);
+                        testPath.lineTo(testPoly[1]);
+                        testPath.lineTo(testPoly[2]);
+                        testPath.lineTo(testPoly[3]);
+                        testPath.closeSubpath();
+
+                        if (object->graphicsItem()->shape().intersects(testPath))
+                            contains = true;
+                    }
+                }
+            }
+
+            if (contains)
+                results << object;
+
+            considered.insert(object);
+        }
     }
 
     return results;
@@ -583,12 +692,56 @@ void QGeoMapData::paintMap(QPainter *painter, const QStyleOptionGraphicsItem *op
 /*!
     Paints the map objects on \a painter, using the options \a option.
 
-    The default implementation does not paint anything.
+    The default implementation makes use of the coordinateToScreenPosition
+    implemented by the subclass to perform object positioning and rendering.
+
+    This implementation should suffice for most common use cases, and supports
+    the full range of coordinate systems and transforms available to a
+    QGeoMapObject.
 */
 void QGeoMapData::paintObjects(QPainter *painter, const QStyleOptionGraphicsItem *option)
 {
-    Q_UNUSED(painter)
-    Q_UNUSED(option)
+    painter->setRenderHint(QPainter::Antialiasing);
+
+    QRectF target = option ? option->rect : QRectF(QPointF(0,0), d_ptr->windowSize);
+
+    QGeoMapObjectEngine *e = d_ptr->oe;
+
+    e->updateTransforms();
+
+    QList<QGraphicsItem*> items = e->pixelScene->items(target,
+                                                       Qt::IntersectsItemShape,
+                                                       Qt::DescendingOrder);
+    QSet<QGeoMapObject*> objsDone;
+
+    QTransform baseTrans = painter->transform();
+
+    foreach (QGraphicsItem *item, items) {
+        QGeoMapObject *object = e->pixelItems.value(item);
+        Q_ASSERT(object);
+        if (object->isVisible() && !objsDone.contains(object)) {
+            if (e->pixelExact.contains(object)) {
+                foreach (QGraphicsItem *it, e->pixelExact.values(object)) {
+                    painter->setTransform(baseTrans);
+
+                    QStyleOptionGraphicsItem *style = new QStyleOptionGraphicsItem;
+                    it->paint(painter, style);
+                    delete style;
+                }
+            } else {
+                foreach (QTransform trans, e->pixelTrans.values(object)) {
+                    painter->setTransform(trans * baseTrans);
+
+                    QStyleOptionGraphicsItem *style = new QStyleOptionGraphicsItem;
+                    object->graphicsItem()->paint(painter, style);
+                    delete style;
+                }
+            }
+            objsDone.insert(object);
+        }
+    }
+
+    painter->setTransform(baseTrans);
 }
 
 /*!
@@ -611,6 +764,13 @@ void QGeoMapData::paintProviderNotices(QPainter *painter, const QStyleOptionGrap
 {
     Q_UNUSED(painter)
     Q_UNUSED(option)
+}
+
+QGeoMapObjectInfo *QGeoMapData::createMapObjectInfo(QGeoMapObject *object)
+{
+    Q_UNUSED(object);
+    qWarning("QGeoMapData::createMapObjectInfo is obsolete, returning null");
+    return 0;
 }
 
 /*!
@@ -661,17 +821,6 @@ void QGeoMapData::clearMapOverlays()
     d_ptr->overlays.clear();
 }
 
-/*!
-    Creates a QGeoMapObjectInfo instance which implements the behaviours of
-    the map object \a object which are specific to this QGeoMapData.
-
-    The default implementation returns 0.
-*/
-QGeoMapObjectInfo* QGeoMapData::createMapObjectInfo(QGeoMapObject *object)
-{
-    Q_UNUSED(object)
-    return 0;
-}
 
 /*!
     Sets whether changes to properties will trigger their corresponding signals to \a block.
@@ -763,21 +912,119 @@ void QGeoMapData::setBlockPropertyChangeSignals(bool block)
 *******************************************************************************/
 
 QGeoMapDataPrivate::QGeoMapDataPrivate(QGeoMapData *parent, QGeoMappingManagerEngine *engine)
-    : engine(engine),
+    : QObject(0),
+      engine(engine),
       containerObject(0),
       zoomLevel(-1.0),
+      shiftSinceLastInval(0, 0),
+      windowSize(0, 0),
       bearing(0.0),
       tilt(0.0),
       blockPropertyChangeSignals(false),
-      q_ptr(parent) {}
+      oe(new QGeoMapObjectEngine(parent, this)),
+      q_ptr(parent)
+{}
 
 QGeoMapDataPrivate::~QGeoMapDataPrivate()
 {
     if (containerObject)
         delete containerObject;
     qDeleteAll(overlays);
+    delete oe;
+}
+
+void QGeoMapDataPrivate::addObject(QGeoMapObject *object)
+{
+    containerObject->addChildObject(object);
+    oe->addObject(object);
+    emit q_ptr->updateMapDisplay();
+}
+
+void QGeoMapDataPrivate::removeObject(QGeoMapObject *object)
+{
+    containerObject->removeChildObject(object);
+    oe->removeObject(object);
+}
+
+void QGeoMapDataPrivate::clearObjects()
+{
+    foreach (QGeoMapObject *obj, containerObject->childObjects()) {
+        removeObject(obj);
+        delete obj;
+    }
+}
+
+void QGeoMapDataPrivate::emitUpdateMapDisplay(const QRectF &target)
+{
+    emit q_ptr->updateMapDisplay(target);
+}
+
+QPolygonF QGeoMapDataPrivate::latLonViewport()
+{
+    QPolygonF view;
+    QGeoBoundingBox viewport = q_ptr->viewport();
+    QGeoCoordinate c, c2;
+    double offset = 0.0;
+
+    c = viewport.bottomLeft();
+    view << QPointF(c.longitude() * 3600.0, c.latitude() * 3600.0);
+    c2 = viewport.bottomRight();
+    if (c2.longitude() < c.longitude())
+        offset = 360.0 * 3600.0;
+    view << QPointF(c2.longitude() * 3600.0 + offset, c2.latitude() * 3600.0);
+    c = viewport.topRight();
+    view << QPointF(c.longitude() * 3600.0 + offset, c.latitude() * 3600.0);
+    c = viewport.topLeft();
+    view << QPointF(c.longitude() * 3600.0, c.latitude() * 3600.0);
+
+    return view;
+}
+
+QPointF QGeoMapDataPrivate::coordinateToScreenPosition(double lon, double lat) const
+{
+    QGeoCoordinate c(lat, lon);
+    return q_ptr->coordinateToScreenPosition(c);
+}
+
+QPolygonF QGeoMapDataPrivate::polyToScreen(const QPolygonF &poly)
+{
+    QPolygonF r;
+#if QT_VERSION >= 0x040700
+    r.reserve(poly.size());
+#endif
+    foreach (QPointF pt, poly) {
+        const double x = pt.x() / 3600.0;
+        const double y = pt.y() / 3600.0;
+        const QPointF pixel = this->coordinateToScreenPosition(x, y);
+        r.append(pixel);
+    }
+    return r;
+}
+
+void QGeoMapDataPrivate::update(QObject *object)
+{
+    QGeoMapObject *obj = qobject_cast<QGeoMapObject*>(object);
+    if (obj) {
+        QGeoMapGroupObject *group = qobject_cast<QGeoMapGroupObject*>(obj);
+        if (group) {
+            oe->objectsForLatLonUpdate << group;
+            oe->objectsForPixelUpdate << group;
+            emit q_ptr->updateMapDisplay();
+        } else {
+            oe->invalidateObject(obj);
+        }
+    } else {
+        emit q_ptr->updateMapDisplay();
+    }
+}
+
+// ensures the sender is up to date on the map
+void QGeoMapDataPrivate::updateSender()
+{
+    update(sender());
 }
 
 #include "moc_qgeomapdata.cpp"
+#include "moc_qgeomapdata_p.cpp"
 
 QTM_END_NAMESPACE

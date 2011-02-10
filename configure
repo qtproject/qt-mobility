@@ -566,6 +566,7 @@ if [ -z "$PLATFORM_CONFIG" ]; then
     compileTest "Maemo5 organizer dependencies" maemo5-calendar
     compileTest "Maemo6 landmarks dependencies" maemo6-landmarks
     compileTest "Bluez" bluez
+    compileTest "Proj.4" proj
     compileTest "Gstreamer Photography" gstreamer-photography
     compileTest "Blkid" blkid
     compileTest "Pulse Audio" pulseaudio

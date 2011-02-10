@@ -13,6 +13,12 @@ DEPENDPATH += .
 include(landmarks/landmarks.pri)
 include(maps/maps.pri)
 
+contains(proj_enabled, yes) {
+  LIBS += -lproj
+} else {
+  include($$PWD/../3rdparty/proj.pri)
+}
+
 PUBLIC_HEADERS += \
                     qgeoaddress.h \
                     qgeoareamonitor.h \
@@ -35,7 +41,9 @@ PRIVATE_HEADERS += \
                     qgeoplace_p.h \
                     qlocationutils_p.h \
                     qnmeapositioninfosource_p.h \
-                    qgeoareamonitor_polling_p.h
+                    qgeoareamonitor_polling_p.h \
+                    projwrapper_p.h \
+                    qgeocoordinate_p.h
 
 symbian {
     PRIVATE_HEADERS += qgeopositioninfosource_s60_p.h \
@@ -150,6 +158,7 @@ SOURCES += \
             qlocationutils.cpp \
             qnmeapositioninfosource.cpp \
             qgeoareamonitor_polling.cpp \
+            projwrapper_p.cpp \
             qgeopositioninfosourcefactory.cpp
 
 symbian {

@@ -158,12 +158,10 @@ void tst_QGeoMapCircleObject::qgeomapcircleobject()
 
     QVERIFY(list.at(0)==object);
 
-    QVERIFY2(object->info(),"info object not created");
     QVERIFY2(object->mapData(),"no map data set");
 
     map->removeMapObject(object);
 
-    QVERIFY2(!object->info(),"info object not deleted");
     QVERIFY2(!object->mapData(),"no map data still set");
 
     delete (object);
@@ -458,6 +456,7 @@ void tst_QGeoMapCircleObject::zvalue()
     map->setCenter(center);
 
     QPointF point = map->coordinateToScreenPosition(center);
+    qDebug("center = (%f, %f)", point.x(), point.y());
 
     QCOMPARE(map->mapObjectsAtScreenPosition(point).size(),3);
 
