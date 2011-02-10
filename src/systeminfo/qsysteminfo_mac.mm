@@ -2345,7 +2345,7 @@ QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QObject *parent)
 
 QSystemScreenSaverPrivate::~QSystemScreenSaverPrivate()
 {
-    setScreenSaverDelayed(false);
+    setScreenSaverInhibited(false);
 }
 
 bool QSystemScreenSaverPrivate::setScreenSaverInhibit()
@@ -2371,12 +2371,7 @@ void QSystemScreenSaverPrivate::activityTimeout()
     UpdateSystemActivity(OverallAct);
 }
 
-bool QSystemScreenSaverPrivate::screenSaverDelayed()
-{
-        return screenSaverInhibited();
-}
-
-void QSystemScreenSaverPrivate::setScreenSaverDelayed(bool on)
+void QSystemScreenSaverPrivate::setScreenSaverInhibited(bool on)
 {
     if (on) {
         setScreenSaverInhibit();
