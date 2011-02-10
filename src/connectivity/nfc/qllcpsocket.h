@@ -104,6 +104,7 @@ public:
     bool waitForBytesWritten(int msecs = 30000);
     virtual bool waitForConnected(int msecs = 30000);
     virtual bool waitForDisconnected(int msecs = 30000);
+    bool isSequential() const;
 
 signals:
     void connected();

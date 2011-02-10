@@ -26,7 +26,7 @@ FORMS = \
 
 
 symbian {
-    TARGET.CAPABILITY = LocalServices UserEnvironment ReadUserData WriteUserData NetworkServices
+    TARGET.CAPABILITY = LocalServices UserEnvironment ReadUserData WriteUserData NetworkServices ReadDeviceData WriteDeviceData
 }
 
 OTHER_FILES += \

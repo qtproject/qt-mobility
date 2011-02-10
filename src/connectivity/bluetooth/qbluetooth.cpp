@@ -58,4 +58,5 @@
     \value Authorization    The service requires authorization.
     \value Authentication   The service requires authentication.
     \value Encryption       The service requires that the communications link be encrypted.
+    \value Secure           The service requires that the communications link be secure. Only supported by 2.1 devices.
 */

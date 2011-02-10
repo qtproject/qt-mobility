@@ -93,49 +93,6 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \qmlclass ValueSpaceSubscriber QValueSpaceSubscriber
-    \brief The ValueSpaceSubscriber elements accesses a single Value Space value.
-    \inherits QObject
-    \ingroup qml-publishsubscribe
-
-    The ValueSpaceSubscriber element is part of the \bold {QtMobility.publishsubscribe 1.1} module.
-
-    The \l ValueSpaceSubscriber element enables the creation of QML bindings that use values stored
-    in the Value Space. The QML binding is automatically reevaluated when the value in the Value
-    Space changes.
-
-    Each \l ValueSpaceSubscriber element represents a single value or path in the Value Space. The
-    path is set using the \i path property.
-
-    \code
-    ValueSpaceSubscriber {
-        id: nowPlaying
-        path: "/applications/mediaplayer/now-playing"
-    }
-    \endcode
-
-    The value is accessed using the \i value property.
-
-    \code
-    Text {
-        text: nowPlaying.value
-    }
-    \endcode
-*/
-
-/*!
-    \qmlproperty QString ValueSpaceSubscriber::path
-
-    This property holds that path that the element accesses.
-*/
-
-/*!
-    \qmlproperty QVariant ValueSpaceSubscriber::value read-only
-
-    This property hold the value of the Value Space value.
-*/
-
-/*!
     \fn QValueSpaceSubscriber::contentsChanged()
 
     Emitted whenever any value under the current path changes.

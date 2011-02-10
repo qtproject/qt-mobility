@@ -45,7 +45,7 @@
 #include <QtGlobal>
 #include <QList>
 
-#ifdef Q_OS_SYMBIAN
+#ifdef QTM_SYMBIAN_BLUETOOTH
 #include <es_sock.h>
 #include <bt_sock.h>
 #endif
@@ -61,14 +61,14 @@ QTM_BEGIN_NAMESPACE
 class QBluetoothAddress;
 class QBluetoothSocket;
 
-#ifdef Q_OS_SYMBIAN
+#ifdef QTM_SYMBIAN_BLUETOOTH
 class QBluetoothSocketPrivate;
 #endif
 
 class QRfcommServer;
 
 class QRfcommServerPrivate
-#ifdef Q_OS_SYMBIAN
+#ifdef QTM_SYMBIAN_BLUETOOTH
 : public MBluetoothSocketNotifier
 #endif
 {
@@ -78,7 +78,7 @@ public:
     QRfcommServerPrivate();
     ~QRfcommServerPrivate();
 
-#ifdef Q_OS_SYMBIAN
+#ifdef QTM_SYMBIAN_BLUETOOTH
     /* MBluetoothSocketNotifier virtual functions */
     void HandleAcceptCompleteL(TInt aErr);
     void HandleActivateBasebandEventNotifierCompleteL(TInt aErr, TBTBasebandEventNotification &aEventNotification);
@@ -96,7 +96,7 @@ public:
 public:
     QBluetoothSocket *socket;
 
-#ifdef Q_OS_SYMBIAN
+#ifdef QTM_SYMBIAN_BLUETOOTH
     QBluetoothSocket *pendingSocket;
     mutable QList<QBluetoothSocket *> activeSockets;
     QBluetoothSocketPrivate *ds;
