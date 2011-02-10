@@ -22,4 +22,11 @@
         <for path="/usr/lib/qtmobility/examples/querymessages" />
         <for path="/usr/lib/qtmobility/examples/keepintouch" />
     </request>
+    <request>
+        <credential name="Cellular" />
+        <credential name="Location" />
+	<credential name="TrackerReadAccess" />
+	<credential name="TrackerWriteAccess" />
+        <for path="/usr/lib/qtmobilty/examples/mapsdemo" />
+    </request>
 </aegis>

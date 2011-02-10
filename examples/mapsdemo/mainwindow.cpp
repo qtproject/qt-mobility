@@ -130,10 +130,26 @@ void MainWindow::initialize()
         return;
     }
 
-    serviceProvider = new QGeoServiceProvider(providers[0]);
+    foreach (QString provider, providers) {
+        serviceProvider = new QGeoServiceProvider(provider);
+        if (serviceProvider->mappingManager() &&
+                serviceProvider->searchManager() &&
+                serviceProvider->routingManager())
+            break;
+    }
+
     if (serviceProvider->error() != QGeoServiceProvider::NoError) {
         QMessageBox::information(this, tr("Maps Demo"),
-                                 tr("Error loading geoservice plugin: %1").arg(providers[0]));
+                                 tr("Error loading geoservice plugin"));
+        QCoreApplication::quit();
+        return;
+    }
+
+    if (!serviceProvider->mappingManager() ||
+            !serviceProvider->searchManager() ||
+            !serviceProvider->routingManager()) {
+        QMessageBox::information(this, tr("Maps Demo"),
+                                 tr("No geoservice found with mapping/search/routing"));
         QCoreApplication::quit();
         return;
     }
