@@ -172,9 +172,10 @@ void QL2capServerPrivate::HandleAcceptCompleteL(TInt aErr)
         pendingSocket->setSocketState(QBluetoothSocket::ConnectedState);
         activeSockets.append(pendingSocket);
 
-        pendingSocket = new QBluetoothSocket;
+        pendingSocket = new QBluetoothSocket;        
         QBluetoothSocketPrivate *pd = pendingSocket->d_ptr;
-        pd->iSocket->Accept(*pd->iSocket);
+        pd->ensureBlankNativeSocket();
+        iSocket->Accept(*pd->iSocket);
 
         emit q->newConnection();
     } else if (aErr == KErrCancel) {
