@@ -130,3 +130,8 @@ bool  QDeclarativeScreenSaver::screenSaverInhibited()
 {
     return screenSaverDelay;
 }
+
+void QDeclarativeScreenSaver::setScreenSaverInhibited(bool on)
+{
+    setScreenSaverDelayed(on);
+}
