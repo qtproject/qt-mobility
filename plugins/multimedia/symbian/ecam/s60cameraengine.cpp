@@ -42,7 +42,7 @@
 #include "s60cameraengine.h"
 #include "s60cameraengineobserver.h"
 #include "s60cameraconstants.h"
-
+#include <QtCore/qglobal.h>
 #include <fbs.h> // CFbsBitmap
 #ifdef ECAM_PREVIEW_API
     #include <platform/ecam/camerasnapshot.h>
@@ -202,8 +202,10 @@ void CCameraEngine::StopViewFinder()
 void CCameraEngine::StartDirectViewFinderL(RWsSession& aSession,
                             CWsScreenDevice& aScreenDevice,
                             RWindowBase& aWindow,
-                            TRect& aSize)
+                            TRect& aScreenRect,
+                            TRect& aClipRect)
 {
+    Q_UNUSED(aClipRect)
     if (iEngineState < EEngineIdle)
         User::Leave(KErrNotReady);
 
@@ -214,8 +216,8 @@ void CCameraEngine::StartDirectViewFinderL(RWsSession& aSession,
 
         if (iCameraIndex != 0)
             iCamera->SetViewFinderMirrorL(true);
-        if (aSize.Width() != 0 && aSize.Height() != 0) {
-            iCamera->StartViewFinderDirectL(aSession, aScreenDevice, aWindow, aSize);
+        if (aScreenRect.Width() != 0 && aScreenRect.Height() != 0) {
+            iCamera->StartViewFinderDirectL(aSession, aScreenDevice, aWindow, aScreenRect);
         } else {
             if (iObserver)
                 iObserver->MceoHandleError(EErrViewFinderReady, KErrArgument);
