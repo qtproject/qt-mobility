@@ -130,13 +130,19 @@ private slots:
 #endif
     }
 
+    // This test MUST be first
     void testRecursiveLoadPlugins()
     {
+        TestSensor sensor;
+
         // This confirms that legacy static plugins can still be registered
         QTest::ignoreMessage(QtWarningMsg, "Loaded the LegacySensorPlugin ");
 
         // The logic for the test is in test_sensorplugin.cpp (which warns and aborts if the test fails)
         (void)QSensor::sensorTypes();
+
+        // Checking that the availableSensorsChanged() signal was not emitted too many times while loading plugins.
+        QCOMPARE(sensor.sensorsChangedEmitted, 1);
     }
 
     void testTypeRegistered()
@@ -151,7 +157,7 @@ private slots:
     void testSensorRegistered()
     {
         QList<QByteArray> expected;
-        expected << "test sensor 2" << testsensorimpl::id;
+        expected << "test sensor 2" << "test sensor 3" << testsensorimpl::id;
         QList<QByteArray> actual = QSensor::sensorsForType(TestSensor::type);
         qSort(actual); // The actual list is not in a defined order
         QCOMPARE(actual, expected);
@@ -721,32 +727,32 @@ private slots:
         MyFactory factory;
 
         // Register a bogus backend
-        sensor.sensorsChangedEmitted = false;
+        sensor.sensorsChangedEmitted = 0;
         QSensorManager::registerBackend("a random type", "a random id", &factory);
-        QVERIFY(sensor.sensorsChangedEmitted);
+        QCOMPARE(sensor.sensorsChangedEmitted, 1);
 
         // Register it again (creates a warning)
-        sensor.sensorsChangedEmitted = false;
+        sensor.sensorsChangedEmitted = 0;
         QTest::ignoreMessage(QtWarningMsg, "A backend with type \"a random type\" and identifier \"a random id\" has already been registered! ");
         QSensorManager::registerBackend("a random type", "a random id", &factory);
-        QVERIFY(!sensor.sensorsChangedEmitted);
+        QCOMPARE(sensor.sensorsChangedEmitted, 0);
 
         // Unregister a bogus backend
-        sensor.sensorsChangedEmitted = false;
+        sensor.sensorsChangedEmitted = 0;
         QSensorManager::unregisterBackend("a random type", "a random id");
-        QVERIFY(sensor.sensorsChangedEmitted);
+        QCOMPARE(sensor.sensorsChangedEmitted, 1);
 
         // Unregister an unknown identifier
-        sensor.sensorsChangedEmitted = false;
+        sensor.sensorsChangedEmitted = 0;
         QTest::ignoreMessage(QtWarningMsg, "Identifier \"a random id\" is not registered ");
         QSensorManager::unregisterBackend(TestSensor::type, "a random id");
-        QVERIFY(!sensor.sensorsChangedEmitted);
+        QCOMPARE(sensor.sensorsChangedEmitted, 0);
 
         // Unregister for an unknown type
-        sensor.sensorsChangedEmitted = false;
+        sensor.sensorsChangedEmitted = 0;
         QTest::ignoreMessage(QtWarningMsg, "No backends of type \"foo\" are registered ");
         QSensorManager::unregisterBackend("foo", "bar");
-        QVERIFY(!sensor.sensorsChangedEmitted);
+        QCOMPARE(sensor.sensorsChangedEmitted, 0);
 
         // Make sure we've cleaned up the list of available types
         QList<QByteArray> expected;

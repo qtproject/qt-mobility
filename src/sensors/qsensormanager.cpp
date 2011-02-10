@@ -151,12 +151,13 @@ static void initPlugin(QObject *o)
     if (!o) return;
     QSensorManagerPrivate *d = sensorManagerPrivate();
 
-    QSensorPluginInterface *plugin = qobject_cast<QSensorPluginInterface*>(o);
-    if (plugin)
-        plugin->registerSensors();
     QSensorChangesInterface *changes = qobject_cast<QSensorChangesInterface*>(o);
     if (changes)
         d->changeListeners << changes;
+
+    QSensorPluginInterface *plugin = qobject_cast<QSensorPluginInterface*>(o);
+    if (plugin)
+        plugin->registerSensors();
 }
 
 void QSensorManagerPrivate::loadPlugins()

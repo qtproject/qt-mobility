@@ -48,10 +48,13 @@
 
 QTM_USE_NAMESPACE
 
-class TestSensorPlugin : public QObject, public QSensorPluginInterface, public QSensorBackendFactory
+class TestSensorPlugin : public QObject,
+                         public QSensorPluginInterface,
+                         public QSensorChangesInterface,
+                         public QSensorBackendFactory
 {
     Q_OBJECT
-    Q_INTERFACES(QtMobility::QSensorPluginInterface)
+    Q_INTERFACES(QtMobility::QSensorPluginInterface QtMobility::QSensorChangesInterface)
 public:
     void registerSensors()
     {
@@ -69,6 +72,24 @@ public:
 
         QSensorManager::registerBackend(TestSensor::type, testsensorimpl::id, this);
         QSensorManager::registerBackend(TestSensor::type, "test sensor 2", this);
+    }
+
+    void sensorsChanged()
+    {
+        // Register a new type on initial load
+        // This is testing the "don't emit availableSensorsChanged() too many times" functionality.
+        if (!QSensorManager::isBackendRegistered(TestSensor::type, "test sensor 3"))
+            QSensorManager::registerBackend(TestSensor::type, "test sensor 3", this);
+
+        // When a sensor of type "a random type" is registered, register another sensor.
+        // This is testing the "don't emit availableSensorsChanged() too many times" functionality.
+        if (!QSensor::defaultSensorForType("a random type").isEmpty()) {
+            if (!QSensorManager::isBackendRegistered("a random type 2", "random.dynamic"))
+                QSensorManager::registerBackend("a random type 2", "random.dynamic", this);
+        } else {
+            if (QSensorManager::isBackendRegistered("a random type 2", "random.dynamic"))
+                QSensorManager::unregisterBackend("a random type 2", "random.dynamic");
+        }
     }
 
     QSensorBackend *createBackend(QSensor *sensor)
