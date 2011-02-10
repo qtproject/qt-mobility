@@ -190,32 +190,34 @@ EXPORTS
 	?remainingCapacityPercentChanged@QSystemBatteryInfo@QtMobility@@IAEXH@Z @ 189 NONAME ; void QtMobility::QSystemBatteryInfo::remainingCapacityPercentChanged(int)
 	?remainingChargingTime@QSystemBatteryInfo@QtMobility@@QBEHXZ @ 190 NONAME ; int QtMobility::QSystemBatteryInfo::remainingChargingTime(void) const
 	?remainingChargingTimeChanged@QSystemBatteryInfo@QtMobility@@IAEXH@Z @ 191 NONAME ; void QtMobility::QSystemBatteryInfo::remainingChargingTimeChanged(int)
-	?setMaximumInterval@QSystemAlignedTimer@QtMobility@@QBEXH@Z @ 192 NONAME ; void QtMobility::QSystemAlignedTimer::setMaximumInterval(int) const
-	?setMinimumInterval@QSystemAlignedTimer@QtMobility@@QBEXH@Z @ 193 NONAME ; void QtMobility::QSystemAlignedTimer::setMinimumInterval(int) const
-	?setSingleShot@QSystemAlignedTimer@QtMobility@@QAEX_N@Z @ 194 NONAME ; void QtMobility::QSystemAlignedTimer::setSingleShot(bool)
-	?singleShot@QSystemAlignedTimer@QtMobility@@SAXHHPAVQObject@@PBD@Z @ 195 NONAME ; void QtMobility::QSystemAlignedTimer::singleShot(int, int, class QObject *, char const *)
-	?start@QSystemAlignedTimer@QtMobility@@QAEXHH@Z @ 196 NONAME ; void QtMobility::QSystemAlignedTimer::start(int, int)
-	?start@QSystemAlignedTimer@QtMobility@@QAEXXZ @ 197 NONAME ; void QtMobility::QSystemAlignedTimer::start(void)
-	?stop@QSystemAlignedTimer@QtMobility@@QAEXXZ @ 198 NONAME ; void QtMobility::QSystemAlignedTimer::stop(void)
-	?storageStateChanged@QSystemStorageInfo@QtMobility@@IAEXABVQString@@W4StorageState@12@@Z @ 199 NONAME ; void QtMobility::QSystemStorageInfo::storageStateChanged(class QString const &, enum QtMobility::QSystemStorageInfo::StorageState)
-	?timeout@QSystemAlignedTimer@QtMobility@@IAEXXZ @ 200 NONAME ; void QtMobility::QSystemAlignedTimer::timeout(void)
-	?tr@QSystemAlignedTimer@QtMobility@@SA?AVQString@@PBD0@Z @ 201 NONAME ; class QString QtMobility::QSystemAlignedTimer::tr(char const *, char const *)
-	?tr@QSystemAlignedTimer@QtMobility@@SA?AVQString@@PBD0H@Z @ 202 NONAME ; class QString QtMobility::QSystemAlignedTimer::tr(char const *, char const *, int)
-	?tr@QSystemBatteryInfo@QtMobility@@SA?AVQString@@PBD0@Z @ 203 NONAME ; class QString QtMobility::QSystemBatteryInfo::tr(char const *, char const *)
-	?tr@QSystemBatteryInfo@QtMobility@@SA?AVQString@@PBD0H@Z @ 204 NONAME ; class QString QtMobility::QSystemBatteryInfo::tr(char const *, char const *, int)
-	?trUtf8@QSystemAlignedTimer@QtMobility@@SA?AVQString@@PBD0@Z @ 205 NONAME ; class QString QtMobility::QSystemAlignedTimer::trUtf8(char const *, char const *)
-	?trUtf8@QSystemAlignedTimer@QtMobility@@SA?AVQString@@PBD0H@Z @ 206 NONAME ; class QString QtMobility::QSystemAlignedTimer::trUtf8(char const *, char const *, int)
-	?trUtf8@QSystemBatteryInfo@QtMobility@@SA?AVQString@@PBD0@Z @ 207 NONAME ; class QString QtMobility::QSystemBatteryInfo::trUtf8(char const *, char const *)
-	?trUtf8@QSystemBatteryInfo@QtMobility@@SA?AVQString@@PBD0H@Z @ 208 NONAME ; class QString QtMobility::QSystemBatteryInfo::trUtf8(char const *, char const *, int)
-	?uniqueDeviceID@QSystemDeviceInfo@QtMobility@@QAE?AUQUuid@@XZ @ 209 NONAME ; struct QUuid QtMobility::QSystemDeviceInfo::uniqueDeviceID(void)
-	?uriForDrive@QSystemStorageInfo@QtMobility@@QAE?AVQString@@ABV3@@Z @ 210 NONAME ; class QString QtMobility::QSystemStorageInfo::uriForDrive(class QString const &)
-	?vibrationActive@ProfileDetails@QSystemDeviceInfo@QtMobility@@QBE_NXZ @ 211 NONAME ; bool QtMobility::QSystemDeviceInfo::ProfileDetails::vibrationActive(void) const
-	?voiceRingtoneVolume@ProfileDetails@QSystemDeviceInfo@QtMobility@@QBEHXZ @ 212 NONAME ; int QtMobility::QSystemDeviceInfo::ProfileDetails::voiceRingtoneVolume(void) const
-	?voltage@QSystemBatteryInfo@QtMobility@@QBEHXZ @ 213 NONAME ; int QtMobility::QSystemBatteryInfo::voltage(void) const
-	?wirelessKeyboardConnected@QSystemDeviceInfo@QtMobility@@IAEX_N@Z @ 214 NONAME ; void QtMobility::QSystemDeviceInfo::wirelessKeyboardConnected(bool)
-	?wokeUp@QSystemAlignedTimer@QtMobility@@QAEXXZ @ 215 NONAME ; void QtMobility::QSystemAlignedTimer::wokeUp(void)
-	?staticMetaObject@QSystemAlignedTimer@QtMobility@@2UQMetaObject@@B @ 216 NONAME ; struct QMetaObject const QtMobility::QSystemAlignedTimer::staticMetaObject
-	?staticMetaObject@QSystemBatteryInfo@QtMobility@@2UQMetaObject@@B @ 217 NONAME ; struct QMetaObject const QtMobility::QSystemBatteryInfo::staticMetaObject
-	?error@QSystemAlignedTimer@QtMobility@@IAEXW4AlignedTimerError@12@@Z @ 218 NONAME ; void QtMobility::QSystemAlignedTimer::error(enum QtMobility::QSystemAlignedTimer::AlignedTimerError)
-	?lastError@QSystemAlignedTimer@QtMobility@@QBE?AW4AlignedTimerError@12@XZ @ 219 NONAME ; enum QtMobility::QSystemAlignedTimer::AlignedTimerError QtMobility::QSystemAlignedTimer::lastError(void) const
+	?error@QSystemAlignedTimer@QtMobility@@IAEXW4AlignedTimerError@12@@Z @ 192 NONAME ; void QtMobility::QSystemAlignedTimer::error(enum QtMobility::QSystemAlignedTimer::AlignedTimerError)
+	?lastError@QSystemAlignedTimer@QtMobility@@QBE?AW4AlignedTimerError@12@XZ @ 193 NONAME ; enum QtMobility::QSystemAlignedTimer::AlignedTimerError QtMobility::QSystemAlignedTimer::lastError(void) const
+	?setMaximumInterval@QSystemAlignedTimer@QtMobility@@QAEXH@Z @ 194 NONAME ; void QtMobility::QSystemAlignedTimer::setMaximumInterval(int)
+	?setMinimumInterval@QSystemAlignedTimer@QtMobility@@QAEXH@Z @ 195 NONAME ; void QtMobility::QSystemAlignedTimer::setMinimumInterval(int)
+	?setSingleShot@QSystemAlignedTimer@QtMobility@@QAEX_N@Z @ 196 NONAME ; void QtMobility::QSystemAlignedTimer::setSingleShot(bool)
+	?singleShot@QSystemAlignedTimer@QtMobility@@SAXHHPAVQObject@@PBD@Z @ 197 NONAME ; void QtMobility::QSystemAlignedTimer::singleShot(int, int, class QObject *, char const *)
+	?start@QSystemAlignedTimer@QtMobility@@QAEXHH@Z @ 198 NONAME ; void QtMobility::QSystemAlignedTimer::start(int, int)
+	?start@QSystemAlignedTimer@QtMobility@@QAEXXZ @ 199 NONAME ; void QtMobility::QSystemAlignedTimer::start(void)
+	?stop@QSystemAlignedTimer@QtMobility@@QAEXXZ @ 200 NONAME ; void QtMobility::QSystemAlignedTimer::stop(void)
+	?storageStateChanged@QSystemStorageInfo@QtMobility@@IAEXABVQString@@W4StorageState@12@@Z @ 201 NONAME ; void QtMobility::QSystemStorageInfo::storageStateChanged(class QString const &, enum QtMobility::QSystemStorageInfo::StorageState)
+	?timeout@QSystemAlignedTimer@QtMobility@@IAEXXZ @ 202 NONAME ; void QtMobility::QSystemAlignedTimer::timeout(void)
+	?tr@QSystemAlignedTimer@QtMobility@@SA?AVQString@@PBD0@Z @ 203 NONAME ; class QString QtMobility::QSystemAlignedTimer::tr(char const *, char const *)
+	?tr@QSystemAlignedTimer@QtMobility@@SA?AVQString@@PBD0H@Z @ 204 NONAME ; class QString QtMobility::QSystemAlignedTimer::tr(char const *, char const *, int)
+	?tr@QSystemBatteryInfo@QtMobility@@SA?AVQString@@PBD0@Z @ 205 NONAME ; class QString QtMobility::QSystemBatteryInfo::tr(char const *, char const *)
+	?tr@QSystemBatteryInfo@QtMobility@@SA?AVQString@@PBD0H@Z @ 206 NONAME ; class QString QtMobility::QSystemBatteryInfo::tr(char const *, char const *, int)
+	?trUtf8@QSystemAlignedTimer@QtMobility@@SA?AVQString@@PBD0@Z @ 207 NONAME ; class QString QtMobility::QSystemAlignedTimer::trUtf8(char const *, char const *)
+	?trUtf8@QSystemAlignedTimer@QtMobility@@SA?AVQString@@PBD0H@Z @ 208 NONAME ; class QString QtMobility::QSystemAlignedTimer::trUtf8(char const *, char const *, int)
+	?trUtf8@QSystemBatteryInfo@QtMobility@@SA?AVQString@@PBD0@Z @ 209 NONAME ; class QString QtMobility::QSystemBatteryInfo::trUtf8(char const *, char const *)
+	?trUtf8@QSystemBatteryInfo@QtMobility@@SA?AVQString@@PBD0H@Z @ 210 NONAME ; class QString QtMobility::QSystemBatteryInfo::trUtf8(char const *, char const *, int)
+	?uniqueDeviceID@QSystemDeviceInfo@QtMobility@@QAE?AUQUuid@@XZ @ 211 NONAME ; struct QUuid QtMobility::QSystemDeviceInfo::uniqueDeviceID(void)
+	?uriForDrive@QSystemStorageInfo@QtMobility@@QAE?AVQString@@ABV3@@Z @ 212 NONAME ; class QString QtMobility::QSystemStorageInfo::uriForDrive(class QString const &)
+	?vibrationActive@ProfileDetails@QSystemDeviceInfo@QtMobility@@QBE_NXZ @ 213 NONAME ; bool QtMobility::QSystemDeviceInfo::ProfileDetails::vibrationActive(void) const
+	?voiceRingtoneVolume@ProfileDetails@QSystemDeviceInfo@QtMobility@@QBEHXZ @ 214 NONAME ; int QtMobility::QSystemDeviceInfo::ProfileDetails::voiceRingtoneVolume(void) const
+	?voltage@QSystemBatteryInfo@QtMobility@@QBEHXZ @ 215 NONAME ; int QtMobility::QSystemBatteryInfo::voltage(void) const
+	?wirelessKeyboardConnected@QSystemDeviceInfo@QtMobility@@IAEX_N@Z @ 216 NONAME ; void QtMobility::QSystemDeviceInfo::wirelessKeyboardConnected(bool)
+	?wokeUp@QSystemAlignedTimer@QtMobility@@QAEXXZ @ 217 NONAME ; void QtMobility::QSystemAlignedTimer::wokeUp(void)
+	?staticMetaObject@QSystemAlignedTimer@QtMobility@@2UQMetaObject@@B @ 218 NONAME ; struct QMetaObject const QtMobility::QSystemAlignedTimer::staticMetaObject
+	?staticMetaObject@QSystemBatteryInfo@QtMobility@@2UQMetaObject@@B @ 219 NONAME ; struct QMetaObject const QtMobility::QSystemBatteryInfo::staticMetaObject
+	?isActive@QSystemAlignedTimer@QtMobility@@QBE_NXZ @ 220 NONAME ; bool QtMobility::QSystemAlignedTimer::isActive(void) const
+	?orientationChanged@QSystemDisplayInfo@QtMobility@@IAEXW4DisplayOrientation@12@@Z @ 221 NONAME ; void QtMobility::QSystemDisplayInfo::orientationChanged(enum QtMobility::QSystemDisplayInfo::DisplayOrientation)
 

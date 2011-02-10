@@ -211,8 +211,8 @@ static QPolygonF approximateCircle(QGraphicsEllipseItem *elItem,
 {
     const QRectF rect = elItem->rect();
 
-    const double a = rect.width() / 2.0;
-    const double b = rect.height() / 2.0;
+    const double a = rect.height() / 2.0;
+    const double b = rect.width() / 2.0;
 
     const double asq = a*a;
     const double bsq = b*b;
@@ -267,7 +267,7 @@ static QPolygonF approximateCircle(QGraphicsEllipseItem *elItem,
     }
 
     if (drawToCenter)
-        secPoly << QPointF(projCenter.x() * 3600.0, projCenter.y() * 3600);
+        secPoly << QPointF(projCenter.x() * 3600.0, projCenter.y() * 3600.0);
 
     return secPoly;
 }
@@ -299,7 +299,7 @@ bool QGeoMapObjectEngine::exactMetersToSeconds(const QGeoCoordinate &origin,
         QRectF rect = elItem->rect();
 
         const QPointF cen = rect.center();
-        ProjCoordinate c(cen.x(), cen.y(), 0.0, localSys);
+        ProjCoordinate c(cen.x(), -1*cen.y(), 0.0, localSys);
         c.convert(wgs84);
         const QGeoCoordinate center = c.toGeoCoordinate();
 
@@ -330,6 +330,7 @@ bool QGeoMapObjectEngine::exactMetersToSeconds(const QGeoCoordinate &origin,
         QPolygonF poly = polyItem->polygon() * polyItem->transform();
 
         ProjPolygon p(poly, localSys);
+        p.scalarMultiply(1, -1, 1);
         p.convert(wgs84);
         QPolygonF wgs = p.toPolygonF(3600.0);
 
@@ -360,7 +361,7 @@ bool QGeoMapObjectEngine::exactMetersToSeconds(const QGeoCoordinate &origin,
         for (int i = 0; i < path.elementCount(); ++i) {
             QPainterPath::Element e = path.elementAt(i);
 
-            ProjCoordinate c(e.x, e.y, 0.0, localSys);
+            ProjCoordinate c(e.x, -1*e.y, 0.0, localSys);
             Q_ASSERT(c.convert(wgs84));
 
             path.setElementPositionAt(i, c.x() * 3600.0, c.y() * 3600.0);
@@ -519,7 +520,10 @@ void QGeoMapObjectEngine::bilinearMetersToSeconds(const QGeoCoordinate &origin,
         return;
     }
 
-    latLon = item->transform() * latLon;
+    QTransform flip;
+    flip.scale(1, -1);
+
+    latLon = flip * item->transform() * latLon;
 }
 
 void QGeoMapObjectEngine::bilinearPixelsToSeconds(const QGeoCoordinate &origin,
@@ -576,7 +580,7 @@ void QGeoMapObjectEngine::bilinearSecondsToScreen(const QGeoCoordinate &origin,
         QTransform pixel;
 
         QGraphicsItem *item = object->graphicsItem();
-        QPolygonF local = item->boundingRect();
+        QPolygonF local = (item->boundingRect() | item->childrenBoundingRect());
         QPolygonF latLonPoly = latLon.map(local);
 
         QPolygonF pixelPoly = mdp->polyToScreen(latLonPoly);
@@ -729,6 +733,9 @@ void QGeoMapObjectEngine::pixelShiftToScreen(const QGeoCoordinate &origin,
                                             QGeoMapObject *object,
                                             QList<QPolygonF> &polys)
 {
+    const QRectF localRect = object->graphicsItem()->boundingRect() |
+            object->graphicsItem()->childrenBoundingRect();
+
     // compute the transform as an origin shift
     QList<QPointF> origins;
     origins << QPointF(origin.longitude(), origin.latitude());
@@ -740,7 +747,7 @@ void QGeoMapObjectEngine::pixelShiftToScreen(const QGeoCoordinate &origin,
         QPointF pixelOrigin = mdp->coordinateToScreenPosition(o.x(), o.y());
         pixel.translate(pixelOrigin.x(), pixelOrigin.y());
         pixelTrans.insertMulti(object, pixel);
-        polys << pixel.map(object->graphicsItem()->boundingRect());
+        polys << pixel.map(localRect);
     }
 }
 
@@ -954,13 +961,13 @@ void QGeoMapObjectEngine::updateLatLonTransform(QGeoMapObject *object)
     if (!item)
         return;
 
-    QRectF localRect = item->boundingRect();
+    QRectF localRect = (item->boundingRect() | item->childrenBoundingRect());
 
     // skip any objects with invalid bounds
     if (!localRect.isValid() || localRect.isEmpty() || localRect.isNull())
         return;
 
-    QPolygonF local = item->boundingRect() * item->transform();
+    QPolygonF local = localRect * item->transform();
     QList<QPolygonF> polys;
 
     latLonTrans.remove(object);
@@ -977,21 +984,21 @@ void QGeoMapObjectEngine::updateLatLonTransform(QGeoMapObject *object)
             bilinearPixelsToSeconds(origin, item, local, latLon);
         }
 
-        polys << latLon.map(object->graphicsItem()->boundingRect());
+        polys << latLon.map(localRect);
         latLonTrans.insertMulti(object, latLon);
 
         QTransform latLonWest;
         latLonWest.translate(360.0 * 3600.0, 0.0);
         latLonWest = latLon * latLonWest;
 
-        polys << latLonWest.map(object->graphicsItem()->boundingRect());
+        polys << latLonWest.map(localRect);
         latLonTrans.insertMulti(object, latLonWest);
 
         QTransform latLonEast;
         latLonEast.translate(-360.0 * 3600.0, 0.0);
         latLonEast = latLon * latLonEast;
 
-        polys << latLonEast.map(object->graphicsItem()->boundingRect());
+        polys << latLonEast.map(localRect);
         latLonTrans.insertMulti(object, latLonEast);
 
     } else if (object->transformType() == QGeoMapObject::ExactTransform) {
@@ -1043,7 +1050,7 @@ void QGeoMapObjectEngine::updatePixelTransform(QGeoMapObject *object)
     if (!item)
         return;
 
-    QRectF localRect = item->boundingRect();
+    QRectF localRect = (item->boundingRect() | item->childrenBoundingRect());
 
     // skip any objects with invalid bounds
     if (!localRect.isValid() || localRect.isEmpty() || localRect.isNull())

@@ -1281,7 +1281,19 @@ void tst_QContactDetails::url()
     QCOMPARE(c.details(QContactUrl::DefinitionName).value(0).value("label"), QString("label1"));
     QCOMPARE(c.details(QContactUrl::DefinitionName).value(0).value(QContactUrl::FieldUrl), QString("12345"));
 
+    // now as above, but with the QUrl setter.
+    QUrl urlValue("http://www.example.com");
+    QContactUrl u3;
+    u3.setUrl(urlValue);
+    QCOMPARE(u3.url(), urlValue.toString());
+    QVERIFY(c.saveDetail(&u3));
+    QVERIFY(c.details(QContactUrl::DefinitionName).contains(u3));
+    u3.setUrl(QString(QLatin1String("http://www.anotherexample.com")));
+    QCOMPARE(u3.url(), QString(QLatin1String("http://www.anotherexample.com")));
+    QVERIFY(c.saveDetail(&u3));
+
     // test property remove
+    QVERIFY(c.removeDetail(&u3));
     QVERIFY(c.removeDetail(&u1));
     QCOMPARE(c.details(QContactUrl::DefinitionName).count(), 0);
     QVERIFY(c.saveDetail(&u2));

@@ -193,7 +193,7 @@ void TestCntTransformContactData::executeCntTransformOrganisation()
 
 void TestCntTransformContactData::executeCntTransformAvatar()
 {
-    TRAPD(err, validateCntTransformAvatarL(_L("dummyavatar"), QString("dummyavatar"));
+    TRAPD(err, validateCntTransformAvatarL(_L("c:\\dummyavatar.jpg"), QString("c:\\dummyavatar.jpg"));
         validateCntTransformAvatarL(_L(""), QString(""));
         );
     QVERIFY(err == 0);
@@ -201,8 +201,8 @@ void TestCntTransformContactData::executeCntTransformAvatar()
 
 void TestCntTransformContactData::executeCntTransformRingtone()
 {
-    TRAPD(err, validateCntTransformRingtoneL(_L("dummyaudioringtone"), QString("dummyaudioringtone"),
-                                             _L("dummyvideoringtone"), QString("dummyvideoringtone"));
+    TRAPD(err, validateCntTransformRingtoneL(_L("c:\\dummyaudioringtone"), QString("c:\\dummyaudioringtone"),
+                                             _L("c:\\dummyvideoringtone"), QString("c:\\dummyvideoringtone"));
         validateCntTransformRingtoneL(_L(""), QString(""), _L(""), QString(""));
         );
     QVERIFY(err == 0);
@@ -1474,7 +1474,7 @@ void TestCntTransformContactData::validateCntTransformAvatarL(TPtrC16 field, QSt
     QContactDetail* contactDetail = transformAvatar->transformItemField(*newField, contact);
     QVERIFY(contactDetail != NULL);
     const QContactAvatar* avatarInfo1(static_cast<const QContactAvatar*>(contactDetail));
-    QCOMPARE(avatarInfo1->imageUrl().toString(), detail);
+    QCOMPARE(avatarInfo1->imageUrl().toString(), QUrl::fromUserInput(detail).toString());
     delete contactDetail;
     contactDetail = 0;
     delete newField;
@@ -1527,7 +1527,7 @@ void TestCntTransformContactData::validateCntTransformRingtoneL(TPtrC16 audioRin
     QContactDetail* contactDetail = transformRingtone->transformItemField(*newField, contact);
     QVERIFY(contactDetail != NULL);
     const QContactRingtone* ringtoneInfo1(static_cast<const QContactRingtone*>(contactDetail));
-    QCOMPARE(ringtoneInfo1->audioRingtoneUrl().toString(), audioRingtoneDetail);
+    QCOMPARE(ringtoneInfo1->audioRingtoneUrl().toString(), QUrl::fromUserInput(audioRingtoneDetail).toString());
     delete contactDetail;
     contactDetail = 0;
     delete newField;
@@ -1538,7 +1538,7 @@ void TestCntTransformContactData::validateCntTransformRingtoneL(TPtrC16 audioRin
     contactDetail = transformRingtone->transformItemField(*newField, contact);
     QVERIFY(contactDetail != NULL);
     const QContactRingtone* ringtoneInfo2(static_cast<const QContactRingtone*>(contactDetail));
-    QCOMPARE(ringtoneInfo2->videoRingtoneUrl().toString(), videoRingtoneDetail);
+    QCOMPARE(ringtoneInfo2->videoRingtoneUrl().toString(), QUrl::fromUserInput(videoRingtoneDetail).toString());
     delete contactDetail;
     contactDetail = 0;
     delete newField;

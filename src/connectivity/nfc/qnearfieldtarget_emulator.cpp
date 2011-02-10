@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -46,6 +46,7 @@
 #include <QtCore/QSettings>
 #include <QtCore/QMutex>
 #include <QtCore/QCoreApplication>
+#include <QtCore/QDateTime>
 
 #include <QtCore/QDebug>
 
@@ -195,7 +196,7 @@ bool TagType2::waitForRequestCompleted(const RequestId &id, int msecs)
 TagActivator::TagActivator()
 :   timerId(-1)
 {
-
+    qRegisterMetaType<QNearFieldTarget::Error>("QNearFieldTarget::Error");
 }
 
 TagActivator::~TagActivator()
@@ -269,6 +270,11 @@ void TagActivator::timerEvent(QTimerEvent *e)
     tagMutex.lock();
 
     if (m_current != tagMap.end()) {
+        if (m_current.key()->lastAccessTime() + 1500 > QDateTime::currentMSecsSinceEpoch()) {
+            tagMutex.unlock();
+            return;
+        }
+
         *m_current = false;
 
         tagMutex.unlock();

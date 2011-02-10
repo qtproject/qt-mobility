@@ -16,11 +16,13 @@ QT += declarative
 
 SOURCES += publishsubscribe.cpp \
     qdeclarativevaluespacepublisher.cpp \
-    qdeclarativevaluespacepublishermetaobject.cpp
+    qdeclarativevaluespacepublishermetaobject.cpp \
+    qdeclarativevaluespacesubscriber.cpp
 
 HEADERS += \
     qdeclarativevaluespacepublisher_p.h \
-    qdeclarativevaluespacepublishermetaobject_p.h
+    qdeclarativevaluespacepublishermetaobject_p.h \
+    qdeclarativevaluespacesubscriber_p.h
 
 CONFIG += mobility
 MOBILITY += publishsubscribe

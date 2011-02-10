@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -42,6 +42,7 @@
 #include "targetemulator_p.h"
 
 #include <QtCore/QSettings>
+#include <QtCore/QDateTime>
 
 #include <QtCore/QDebug>
 
@@ -49,6 +50,7 @@
 #include "checksum_p.h"
 
 TagBase::TagBase()
+:   lastAccess(0)
 {
 }
 
@@ -124,6 +126,8 @@ void NfcTagType1::load(QSettings *settings)
 
 QByteArray NfcTagType1::uid() const
 {
+    lastAccess = QDateTime::currentMSecsSinceEpoch();
+
     return memory.left(7);
 }
 
@@ -134,6 +138,8 @@ quint8 NfcTagType1::readData(quint8 block, quint8 byte)
 
 QByteArray NfcTagType1::processCommand(const QByteArray &command)
 {
+    lastAccess = QDateTime::currentMSecsSinceEpoch();
+
     QByteArray response;
 
     bool tagType1 = (hr0 & 0xf0) == 0x10;
@@ -295,6 +301,8 @@ void NfcTagType2::load(QSettings *settings)
 
 QByteArray NfcTagType2::uid() const
 {
+    lastAccess = QDateTime::currentMSecsSinceEpoch();
+
     return memory.left(3) + memory.mid(4, 4);
 }
 
@@ -303,6 +311,8 @@ QByteArray NfcTagType2::uid() const
 
 QByteArray NfcTagType2::processCommand(const QByteArray &command)
 {
+    lastAccess = QDateTime::currentMSecsSinceEpoch();
+
     QByteArray response;
 
     // check checksum

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -41,6 +41,8 @@
 #include "annotatedurl.h"
 
 #include <qnearfieldmanager.h>
+#include <qndefnfctextrecord.h>
+#include <qndefnfcurirecord.h>
 
 #include <QtCore/QLocale>
 
@@ -62,11 +64,20 @@ int main(int argc, char *argv[])
     annotatedUrl.connect(&manager, SIGNAL(targetLost(QNearFieldTarget*)),
                          SLOT(targetLost(QNearFieldTarget*)));
 
-    manager.startTargetDetection();
+    QNdefFilter filter;
+    filter.setOrderMatch(false);
+    filter.appendRecord<QNdefNfcTextRecord>(1, UINT_MAX);
+    filter.appendRecord<QNdefNfcUriRecord>();
+    manager.registerTargetDetectedHandler(filter, &annotatedUrl,
+                                          SLOT(targetDetected(QNdefMessage,QNearFieldTarget*)));
 
     mainWindow.setCentralWidget(&annotatedUrl);
 
+#if defined(Q_WS_S60) || defined(Q_WS_MAEMO_6) || defined(Q_WS_MEEGO)
+    mainWindow.showFullScreen();
+#else
     mainWindow.show();
+#endif
 
     return a.exec();
 }

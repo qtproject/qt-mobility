@@ -212,12 +212,15 @@ EXPORTS
 	_ZNK10QtMobility19QSystemAlignedTimer12isSingleShotEv @ 211 NONAME
 	_ZNK10QtMobility19QSystemAlignedTimer15maximumIntervalEv @ 212 NONAME
 	_ZNK10QtMobility19QSystemAlignedTimer15minimumIntervalEv @ 213 NONAME
-	_ZNK10QtMobility19QSystemAlignedTimer18setMaximumIntervalEi @ 214 NONAME
-	_ZNK10QtMobility19QSystemAlignedTimer18setMinimumIntervalEi @ 215 NONAME
-	_ZTIN10QtMobility18QSystemBatteryInfoE @ 216 NONAME ; #<TI>#
-	_ZTIN10QtMobility19QSystemAlignedTimerE @ 217 NONAME ; #<TI>#
-	_ZTVN10QtMobility18QSystemBatteryInfoE @ 218 NONAME ; #<VT>#
-	_ZTVN10QtMobility19QSystemAlignedTimerE @ 219 NONAME ; #<VT>#
-	_ZN10QtMobility19QSystemAlignedTimer5errorENS0_17AlignedTimerErrorE @ 220 NONAME
-	_ZNK10QtMobility19QSystemAlignedTimer9lastErrorEv @ 221 NONAME
+	_ZN10QtMobility19QSystemAlignedTimer18setMaximumIntervalEi @ 214 NONAME
+	_ZN10QtMobility19QSystemAlignedTimer18setMinimumIntervalEi @ 215 NONAME
+	_ZN10QtMobility19QSystemAlignedTimer5errorENS0_17AlignedTimerErrorE @ 216 NONAME
+	_ZNK10QtMobility19QSystemAlignedTimer9lastErrorEv @ 217 NONAME
+	_ZTIN10QtMobility18QSystemBatteryInfoE @ 218 NONAME ; #<TI>#
+	_ZTIN10QtMobility19QSystemAlignedTimerE @ 219 NONAME ; #<TI>#
+	_ZTVN10QtMobility18QSystemBatteryInfoE @ 220 NONAME ; #<VT>#
+	_ZTVN10QtMobility19QSystemAlignedTimerE @ 221 NONAME ; #<VT>#
+	_ZN10QtMobility18QSystemDisplayInfo18orientationChangedENS0_18DisplayOrientationE @ 222 NONAME
+	_ZNK10QtMobility19QSystemAlignedTimer8isActiveEv @ 223 NONAME
+	_ZN10QtMobility19QSystemAlignedTimer13setSingleShotEb @ 224 NONAME
 

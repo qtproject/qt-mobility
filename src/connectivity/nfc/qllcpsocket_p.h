@@ -55,6 +55,8 @@ class QLlcpSocketPrivate
 public:
     QLlcpSocketPrivate(QLlcpSocket *q);
 
+    ~QLlcpSocketPrivate();
+    
     void connectToService(QNearFieldTarget *target, const QString &serviceUri);
     void disconnectFromService();
 

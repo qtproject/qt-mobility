@@ -60,6 +60,9 @@ isEmpty(QT_LIBINFIX):symbian {
     contains(mobility_modules, messaging): qtmobilitydeployment.sources += \
         $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtMessaging.dll
     
+    contains(mobility_modules, connectivity): qtmobilitydeployment.sources += \
+        $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtConnectivity.dll
+
     contains(mobility_modules, serviceframework) { 
         qtmobilitydeployment.sources += \
         $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtServiceFramework.dll \

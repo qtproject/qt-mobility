@@ -50,15 +50,13 @@
 #include <QEvent>
 #include <QResizeEvent>
 
-#include "remoteselector.h"
 #include "tennisserver.h"
 #include "tennisclient.h"
 
 #include <qbluetooth.h>
 #include <qbluetoothdeviceinfo.h>
 #include <qbluetoothsocket.h>
-
-
+#include <qbluetoothservicediscoveryagent.h>
 
 Tennis::Tennis(QWidget *parent)
 : QDialog(parent), ui(new Ui_Tennis), board(new Board), controller(new Controller), socket(0),
@@ -77,6 +75,9 @@ Tennis::Tennis(QWidget *parent)
 
     ui->pongView->setScene(board->getScene());    
 
+    connect(ui->pongView, SIGNAL(mouseMove(int, int)), this, SLOT(mouseMove(int, int)));
+    ui->pongView->setMouseTracking(false);
+
     connect(board, SIGNAL(ballCollision(Board::Edge)), controller, SLOT(ballCollision(Board::Edge)));
     connect(board, SIGNAL(scored(Board::Edge)), controller, SLOT(scored(Board::Edge)));
     connect(controller, SIGNAL(moveBall(int,int)), board, SLOT(setBall(int,int)));
@@ -87,6 +88,7 @@ Tennis::Tennis(QWidget *parent)
     setFocusPolicy(Qt::WheelFocus);
 
     paddle_pos = (Board::Height-12)/2-Board::Paddle/2;
+    endPaddlePos = paddle_pos;
 
     emit moveLeftPaddle(paddle_pos);
     board->setRightPaddle(paddle_pos);
@@ -99,6 +101,7 @@ Tennis::Tennis(QWidget *parent)
     connect(server, SIGNAL(clientConnected(QString)), this, SLOT(serverConnected(QString)));
     connect(server, SIGNAL(clientDisconnected(QString)), this, SLOT(serverDisconnected()));
     connect(server, SIGNAL(moveRightPaddle(int)), board, SLOT(setRightPaddle(int)));
+    connect(server, SIGNAL(lag(int)), this, SLOT(lagReport(int)));
 
     connect(server, SIGNAL(clientConnected(QString)), controller, SLOT(refresh()));
 
@@ -112,6 +115,7 @@ Tennis::Tennis(QWidget *parent)
     connect(client, SIGNAL(disconnected()), this, SLOT(clientDisconnected()));
     connect(this, SIGNAL(moveRightPaddle(int)), client, SLOT(moveRightPaddle(int)));
     connect(client, SIGNAL(score(int,int)), board, SLOT(setScore(int,int)));
+    connect(client, SIGNAL(lag(int)), this, SLOT(lagReport(int)));
 
     connect(this, SIGNAL(moveLeftPaddle(int)), controller, SLOT(moveLeftPaddle(int)));
     connect(this, SIGNAL(moveRightPaddle(int)), controller, SLOT(moveRightPaddle(int)));
@@ -138,13 +142,22 @@ Tennis::Tennis(QWidget *parent)
         service.setDevice(device);
         client->startClient(service);
         board->setStatus("Connecting", 100, 25);
-        QTimer::singleShot(5000, this, SLOT(startDiscovery()));
+//        board->setStatus("Waiting", 100, 25);
+//        QTimer::singleShot(15000, this, SLOT(startDiscovery()));
     }
     else {
 
     //    m_discoveryAgent->start(); // do minimal scan first
-        startDiscovery();
+//        startDiscovery();
+        board->setStatus("Waiting", 100, 25);
     }
+
+    setEnabled(true);
+
+    paddleAnimation = new QPropertyAnimation(this, "paddlePos", this);
+    paddleAnimation->setEasingCurve(QEasingCurve::InOutQuad);
+
+    ui->pongView->installEventFilter(this);
 
 }
 
@@ -172,28 +185,67 @@ void Tennis::wheelEvent(QWheelEvent *event)
     }
 }
 
-void Tennis::moveUp()
+void Tennis::moveUp(int px)
 {
-    paddle_pos -= 10;
-    if(paddle_pos <= 0)
-        paddle_pos = 0;
-    if(isClient)
-        emit moveRightPaddle(paddle_pos);
-    else
-        emit moveLeftPaddle(paddle_pos);
+    endPaddlePos -= px;
+    if(endPaddlePos <= 0)
+        endPaddlePos = 0;
+    move(endPaddlePos);
+}
+
+void Tennis::moveDown(int px)
+{
+    endPaddlePos += px;
+    if(endPaddlePos > Board::Height-Board::Paddle-24)
+        endPaddlePos = Board::Height-Board::Paddle-24;
+    move(endPaddlePos);
 
 }
 
-void Tennis::moveDown()
+void Tennis::move(int px)
 {
-    paddle_pos += 10;
-    if(paddle_pos > Board::Height-Board::Paddle-24)
-        paddle_pos = Board::Height-Board::Paddle-24;
+    int distance = abs(paddle_pos - endPaddlePos);
+
+    paddleAnimation->stop();
+    paddleAnimation->setStartValue(paddle_pos);
+    paddleAnimation->setEndValue(px);
+    paddleAnimation->setDuration((1000*distance)/350);
+    paddleAnimation->start();
+}
+
+void Tennis::setPaddlePos(int p)
+{
+    paddle_pos = p;
     if(isClient)
         emit moveRightPaddle(paddle_pos);
     else
         emit moveLeftPaddle(paddle_pos);
+}
 
+
+void Tennis::mouseMove(int x, int y)
+{
+    if(isConnected == false){
+        // look for clicks in the bt connect icon
+        if(x > 440 && x < 540 && y > 200 && y < 300) {
+            if(m_discoveryAgent->isActive()) {
+                m_discoveryAgent->stop();
+                board->animateConnect(false);
+            }
+            else {
+                startDiscovery();
+            }
+        }
+
+    }
+    y-=12+Board::Paddle/2;
+    if(y <= 0)
+        y = 0;
+    else if(y > Board::Height-Board::Paddle-24)
+        y = Board::Height-Board::Paddle-24;
+
+    endPaddlePos = y;
+    move(y);
 }
 
 void Tennis::clientConnected(const QString &name)
@@ -203,12 +255,14 @@ void Tennis::clientConnected(const QString &name)
     server->stopServer();
     isClient = true;
     isConnected = true;
+    board->animateConnect(false);
+    board->fadeConnect(true);
     emit moveRightPaddle(paddle_pos);
 }
 
 void Tennis::clientDisconnected()
 {
-    board->setStatus("Disconnect", 100, 15);
+    board->setStatus("Disconnect", 100, 25);
     controller->start();
     server->startServer();
     isClient = false;    
@@ -221,20 +275,22 @@ void Tennis::serverConnected(const QString &name)
     board->setStatus("Server for " + name, 100, 0);
     m_discoveryAgent->stop();
     isConnected = true;
+    board->animateConnect(false);
+    board->fadeConnect(true);
     emit moveLeftPaddle(paddle_pos);
 }
 
 void Tennis::serverDisconnected()
 {
-    board->setStatus("Disconnected", 100, 15);
-    isConnected = false;
+    board->setStatus("Disconnected", 100, 25);
+    isConnected = false;    
     discoveryFinished();
 }
 
 void Tennis::serviceDiscovered(const QBluetoothServiceInfo &serviceInfo)
 {
     qDebug() << "***** Discovered! " << serviceInfo.device().name() << serviceInfo.serviceName() << serviceInfo.serviceUuid();
-    qDebug() << "Found one!";
+    qDebug() << "Found one!" << serviceInfo.protocolServiceMultiplexer();
     m_discoveryAgent->stop();
     client->startClient(serviceInfo);
     QSettings settings("QtDF", "bttennis");
@@ -243,23 +299,33 @@ void Tennis::serviceDiscovered(const QBluetoothServiceInfo &serviceInfo)
 
 void Tennis::discoveryFinished()
 {
-    if(!isConnected)
-        board->setStatus("Waiting", 100, 10);
-        QTimer::singleShot(60000, this, SLOT(startDiscovery()));
+    if(!m_discoveryAgent->isActive()) {
+        if(!isConnected) {
+            board->setStatus("Waiting", 100, 25);
+    //        QTimer::singleShot(60000, this, SLOT(startDiscovery()));
+            board->animateConnect(false);
+            board->fadeConnect(false);
+       }
+    }
 }
 
 void Tennis::startDiscovery()
 {
     if(!isConnected) {
-        board->setStatus("Scanning", 100, 10);
-        if(quickDiscovery)
-            m_discoveryAgent->start(QBluetoothServiceDiscoveryAgent::MinimalDiscovery);
-        else
-            m_discoveryAgent->start(QBluetoothServiceDiscoveryAgent::FullDiscovery);
-        quickDiscovery = !quickDiscovery;
+        board->setStatus("Scanning", 100, 25);
+        board->fadeConnect(false);
+        board->animateConnect(true);
+        m_discoveryAgent->start(QBluetoothServiceDiscoveryAgent::MinimalDiscovery);
+//        if(quickDiscovery)
+//            m_discoveryAgent->start(QBluetoothServiceDiscoveryAgent::MinimalDiscovery);
+//        else
+//            m_discoveryAgent->start(QBluetoothServiceDiscoveryAgent::FullDiscovery);
+//        quickDiscovery = !quickDiscovery;
     }
     else {
         board->setStatus("", 0, 0);
+        board->animateConnect(false);
+        board->fadeConnect(true);
     }
 }
 
@@ -272,4 +338,11 @@ void Tennis::resizeEvent(QResizeEvent *re)
         ui->pongView->scale(x, y);
     }
     ui->pongView->resize(re->size());
+}
+
+void Tennis::lagReport(int ms)
+{
+    if(ms > 250){
+        board->setStatus(QString("Caution Lag %1ms").arg(ms), 100, 0);
+    }
 }

@@ -10,3 +10,4 @@ usr/include/qt4/QtFeedback/qfeedbackactuator.h
 usr/include/qt4/QtFeedback/qfeedbackeffect.h
 usr/include/qt4/QtFeedback/qfeedbackplugininterfaces.h
 usr/lib/libQtFeedback.so
+usr/lib/pkgconfig/QtFeedback.pc

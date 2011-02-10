@@ -75,6 +75,13 @@ void RemoteSelector::startDiscovery(const QBluetoothUuid &uuid)
     ui->status->setText(tr("Scanning..."));
 }
 
+void RemoteSelector::stopDiscovery()
+{
+    if(m_discoveryAgent){
+        m_discoveryAgent->stop();
+    }
+}
+
 QBluetoothServiceInfo RemoteSelector::service() const
 {
     return m_service;
@@ -94,6 +101,13 @@ void RemoteSelector::serviceDiscovered(const QBluetoothServiceInfo &serviceInfo)
              << serviceInfo.protocolServiceMultiplexer();
     qDebug() << "\tRFCOMM server channel:" << serviceInfo.serverChannel();
 #endif
+    QMapIterator<QListWidgetItem *, QBluetoothServiceInfo> i(m_discoveredServices);
+    while(i.hasNext()){
+        i.next();
+        if(serviceInfo.device().address() == i.value().device().address()){
+            return;
+        }
+    }
 
     QString remoteName;
     if (serviceInfo.device().name().isEmpty())
@@ -103,7 +117,7 @@ void RemoteSelector::serviceDiscovered(const QBluetoothServiceInfo &serviceInfo)
 
     QListWidgetItem *item =
         new QListWidgetItem(QString::fromLatin1("%1 %2").arg(remoteName,
-                                                             serviceInfo.serviceName()));
+                                                             serviceInfo.serviceName()));    
 
     m_discoveredServices.insert(item, serviceInfo);
     ui->remoteDevices->addItem(item);
