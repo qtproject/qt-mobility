@@ -771,9 +771,10 @@ QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QSystemScreenSaverLinuxComm
 #endif
  }
 
+#if defined(Q_WS_X11)
  int QSystemScreenSaverPrivate::changeTimeout(int timeout)
  {
-#if defined(Q_WS_X11) && !defined(Q_WS_MEEGO)
+#if !defined(Q_WS_MEEGO)
 
      int ttime;
      int interval;
@@ -786,11 +787,11 @@ QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QSystemScreenSaverLinuxComm
          int result = XSetScreenSaver(QX11Info::display(), timeout, interval, preferBlank, allowExp);
          return result;
      }
-#else
-Q_UNUSED(timeout)
 #endif
+     Q_UNUSED(timeout)
      return 0;
  }
+#endif
 
  bool QSystemScreenSaverPrivate::setScreenSaverInhibit()
  {
