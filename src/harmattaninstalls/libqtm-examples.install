@@ -56,6 +56,7 @@ usr/lib/qtmobility/examples/qml_landmarkmap
 usr/lib/qtmobility/examples/sensor_explorer
 usr/lib/qtmobility/examples/qml_camera
 usr/lib/qtmobility/examples/MapViewer
+usr/lib/qtmobility/examples/mapsdemo
 usr/lib/qtmobility/examples/mapviewer.qml
 usr/lib/qtmobility/examples/flickr.qml
 usr/lib/qtmobility/examples/calendardemo
