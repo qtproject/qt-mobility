@@ -625,7 +625,7 @@ Description: Qt Mobility Sensors autotest package
 Package: libqtm-systeminfo
 Architecture: any
 Section: libs
-Depends: ${shlibs:Depends}, ${misc:Depends}
+Depends: ${shlibs:Depends}, ${misc:Depends}, sysinfo-dbus
 Description: Qt Mobility SystemInfo module
  Qt Mobility Project delivers a set of new APIs to Qt with features that are
  well known from the mobile device world, in particular phones. However, 

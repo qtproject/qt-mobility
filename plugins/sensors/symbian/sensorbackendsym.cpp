@@ -478,7 +478,7 @@ void CSensorBackendSym::GetMeasurementrangeAndAccuracy()
         {
         if(measurerange_prop.GetArrayIndex() == ESensrvSingleProperty)
         {
-            TReal measureMin, measureMax, value;
+            TReal measureMin, measureMax;
             if(measurerange_prop.PropertyType() == ESensrvIntProperty)
                 {
                 TInt intMin, intMax;

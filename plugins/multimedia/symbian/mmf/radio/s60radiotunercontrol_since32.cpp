@@ -51,18 +51,18 @@ S60RadioTunerControl::S60RadioTunerControl(QObject *parent)
     , m_radioUtility(NULL)
     , m_fmTunerUtility(NULL)
     , m_playerUtility(NULL)
+    , m_maxVolume(100)
     , m_audioInitializationComplete(false)
     , m_muted(false)
     , m_isStereo(true)
     , m_vol(50)
     , m_signal(0)
-    , m_radioError(QRadioTuner::NoError)
     , m_scanning(false)
     , m_currentBand(QRadioTuner::FM)
     , m_currentFreq(87500000)
+    , m_radioError(QRadioTuner::NoError)
     , m_stereoMode(QRadioTuner::Auto)
     , m_apiTunerState(QRadioTuner::StoppedState)
-    , m_maxVolume(100)
     , m_previousSignal(0)
     , m_volChangeRequired(false)
     , m_signalStrengthTimer(new QTimer(this))
@@ -73,7 +73,7 @@ S60RadioTunerControl::S60RadioTunerControl(QObject *parent)
         emit error(QRadioTuner::ResourceError);
     } else {
         connect(m_signalStrengthTimer, SIGNAL(timeout()), this, SLOT(changeSignalStrength()));
-    }  
+    }
 }
 
 S60RadioTunerControl::~S60RadioTunerControl()

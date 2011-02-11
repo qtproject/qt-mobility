@@ -2359,7 +2359,6 @@ bool QOrganizerManagerEngine::testFilter(const QOrganizerItemFilter &filter, con
                     return true;
                 return false;
             }
-            break;
     }
     return false;
 }

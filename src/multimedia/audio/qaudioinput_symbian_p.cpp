@@ -244,7 +244,7 @@ int QAudioInputPrivate::bufferSize() const
 void QAudioInputPrivate::setNotifyInterval(int ms)
 {
     if (ms >= 0) {
-        const int oldNotifyInterval = m_notifyInterval;
+        //const int oldNotifyInterval = m_notifyInterval;
         m_notifyInterval = ms;
         if (m_notifyInterval && (SymbianAudio::ActiveState == m_internalState ||
                                  SymbianAudio::IdleState == m_internalState))
@@ -383,7 +383,8 @@ qint64 QAudioInputPrivate::read(char *data, qint64 len)
     qint64 bytesRead = 0;
 
     CMMFDataBuffer *buffer = 0;
-    while ((buffer = currentBuffer()) && (bytesRead < len)) {
+    buffer = currentBuffer();
+    while (buffer && (bytesRead < len)) {
         if (SymbianAudio::IdleState == m_internalState)
             setState(SymbianAudio::ActiveState);
 
@@ -403,6 +404,8 @@ qint64 QAudioInputPrivate::read(char *data, qint64 len)
 
         if (inputBytes == copyBytes)
             bufferEmptied();
+
+        buffer = currentBuffer();
     }
 
     return bytesRead;
@@ -414,7 +417,8 @@ void QAudioInputPrivate::pullData()
         "pullData called when in push mode");
 
     CMMFDataBuffer *buffer = 0;
-    while (buffer = currentBuffer()) {
+    buffer = currentBuffer();
+    while (buffer) {
         if (SymbianAudio::IdleState == m_internalState)
             setState(SymbianAudio::ActiveState);
 
@@ -432,6 +436,8 @@ void QAudioInputPrivate::pullData()
 
         if (!bytesPushed)
             break;
+
+        buffer = currentBuffer();
     }
 }
 

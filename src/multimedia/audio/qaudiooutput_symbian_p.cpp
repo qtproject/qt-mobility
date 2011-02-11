@@ -255,7 +255,7 @@ int QAudioOutputPrivate::bufferSize() const
 void QAudioOutputPrivate::setNotifyInterval(int ms)
 {
     if (ms >= 0) {
-        const int oldNotifyInterval = m_notifyInterval;
+        //const int oldNotifyInterval = m_notifyInterval;
         m_notifyInterval = ms;
         if (m_notifyInterval && (SymbianAudio::ActiveState == m_internalState ||
                                  SymbianAudio::IdleState == m_internalState))
