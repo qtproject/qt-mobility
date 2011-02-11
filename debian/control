@@ -2,10 +2,10 @@ Source: qt-mobility
 Section: libs
 Priority: extra
 Maintainer: Qt Development Frameworks <qt-info@nokia.com>
-Build-Depends: libqt4-dev (>= 4.6.0), cdbs, debhelper (>= 5), quilt, aegis-builder (>= 1.4),
- libicd-network-wlan-dev, libqt4-opengl-dev (>= 4.6.0),
+Build-Depends: libqt4-dev (>= 4.7.0), cdbs, debhelper (>= 5), quilt, aegis-builder (>= 1.4),
+ libicd-network-wlan-dev, libqt4-opengl-dev (>= 4.7.0),
  libconninet0-dev, libcontextsubscriber-dev, libbluetooth3-dev, libcontextprovider-dev,
- libx11-dev, libsensord-dev (>= 0.6.4), libqt4-declarative-dev (>= 4.6.0),
+ libx11-dev, libsensord-dev (>= 0.6.4), libqt4-declarative-dev (>= 4.7.0),
  libxrandr-dev,  gstreamer0.10-plugins-bad-dev, icd2-dev, libasound2-dev,
  libconnsettings0-dev, libgstreamer-plugins-base0.10-dev, libgstreamer0.10-dev, libtelepathy-qt4-dev,
  libxrandr-dev, libxv-dev, osso-wlan-dev, x11proto-video-dev, libqmf-dev, libqttracker-dev,
@@ -47,7 +47,7 @@ Description: Qt Mobility development package
 Package: libqtm-common-dev
 Architecture: any
 Section: devel
-Depends: ${shlibs:Depends}, ${misc:Depends}
+Depends: ${shlibs:Depends}, ${misc:Depends}, libqt4-dev, libqt4-declarative-dev
 Description: Qt Mobility development package that contains the headers common to all modules
  Qt Mobility Project delivers a set of new APIs to Qt with features that are
  well known from the mobile device world, in particular phones. However,
