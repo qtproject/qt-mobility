@@ -126,7 +126,7 @@ public:
     QString endpointDescription(const QString& name) const;
 
 #ifdef AUDIOINPUT_ROUTING
-    static const QString defaultMic;
+    static const QString microPhone;
     static const QString voiceCall;
     static const QString fmRadio;
 #endif //AUDIOINPUT_ROUTING

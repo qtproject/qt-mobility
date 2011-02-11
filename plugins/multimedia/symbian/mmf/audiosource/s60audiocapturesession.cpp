@@ -54,11 +54,11 @@
 #include <bautils.h>
 #include <f32file.h>
 
-
-const QString S60AudioCaptureSession::defaultMic("Default Mic");
+#ifdef AUDIOINPUT_ROUTING
+const QString S60AudioCaptureSession::microPhone("Microphone");
 const QString S60AudioCaptureSession::voiceCall("Voice Call");
 const QString S60AudioCaptureSession::fmRadio("FM Radio");
-
+#endif
 
 S60AudioCaptureSession::S60AudioCaptureSession(QObject *parent):
     QObject(parent)
@@ -68,11 +68,11 @@ S60AudioCaptureSession::S60AudioCaptureSession(QObject *parent):
     , m_audioCodeclist(QHash<QString, CodecData>())
     , m_error(QMediaRecorder::NoError)
     , m_isMuted(false)
-    , m_audioEndpoint(S60AudioCaptureSession::defaultMic)
 {
 #ifdef AUDIOINPUT_ROUTING
     m_audioInput = NULL;
     m_setActiveEndPoint = FALSE;
+    m_audioEndpoint = S60AudioCaptureSession::microPhone;
 #endif //AUDIOINPUT_ROUTING
     TRAPD(err, initializeSessionL());
     setError(err);
@@ -372,7 +372,7 @@ void S60AudioCaptureSession::stop()
 
 void S60AudioCaptureSession::initAudioInputs()
 {
-    m_audioInputs[S60AudioCaptureSession::defaultMic] = QString("Microphone associated with the currently active speaker.");
+    m_audioInputs[S60AudioCaptureSession::microPhone] = QString("Microphone associated with the currently active speaker.");
     m_audioInputs[S60AudioCaptureSession::voiceCall] = QString("Audio stream associated with the current phone call.");
     m_audioInputs[S60AudioCaptureSession::fmRadio] = QString("Audio of the currently tuned FM radio station.");
 }
@@ -386,7 +386,9 @@ void S60AudioCaptureSession::setActiveEndpoint(const QString& audioEndpoint)
 
     if (activeEndpoint().compare(audioEndpoint) != 0) {
         m_audioEndpoint = audioEndpoint;
+#ifdef AUDIOINPUT_ROUTING
         m_setActiveEndPoint = TRUE;
+#endif
        }
 }
 
@@ -416,7 +418,11 @@ QString S60AudioCaptureSession::activeEndpoint() const
 
 QString S60AudioCaptureSession::defaultEndpoint() const
 {
-    return QString(S60AudioCaptureSession::defaultMic);
+#ifdef AUDIOINPUT_ROUTING
+    return QString(S60AudioCaptureSession::microPhone);
+#else
+    return NULL;
+#endif
 }
 
 #ifdef AUDIOINPUT_ROUTING
@@ -435,7 +441,7 @@ void S60AudioCaptureSession::doSetAudioInputL(const QString& name)
 //    commented because they are not supported on 9.2
     else if (name.compare(S60AudioCaptureSession::fmRadio) == 0)
         input = CAudioInput::EFMRadio;
-    else // S60AudioCaptureSession::defaultMic
+    else // S60AudioCaptureSession::microPhone
         input = CAudioInput::EDefaultMic;
 
         RArray<CAudioInput::TAudioInputPreference> inputArray;
@@ -462,7 +468,7 @@ QString S60AudioCaptureSession::qStringFromTAudioInputPreference(CAudioInput::TA
     else if (input == CAudioInput::EFMRadio)
         return S60AudioCaptureSession::fmRadio;
     else
-        return S60AudioCaptureSession::defaultMic; // CAudioInput::EDefaultMic
+        return S60AudioCaptureSession::microPhone; // CAudioInput::EDefaultMic
 }
 #endif //AUDIOINPUT_ROUTING
 
