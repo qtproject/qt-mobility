@@ -197,6 +197,8 @@ void S60AudioPlayerSession::MapcInitComplete(TInt aError, const TTimeIntervalMic
 {
     Q_UNUSED(aDuration);
     setError(aError);
+    if (KErrNone != aError)
+        return;
 #ifdef HAS_AUDIOROUTING    
     TRAPD(err, 
         m_audioOutput = CAudioOutput::NewL(*m_player);
