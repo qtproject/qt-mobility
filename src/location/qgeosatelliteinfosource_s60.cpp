@@ -42,6 +42,7 @@
 
 #include <QObject>
 #include <QDateTime>
+#include <QDebug>
 #include <limits.h>
 #include "qgeopositioninfosource_s60_p.h"
 #include "qgeosatelliteinfosource_s60_p.h"
@@ -92,6 +93,12 @@ CQGeoSatelliteInfoSourceS60* CQGeoSatelliteInfoSourceS60::NewLC(QObject* aParent
 // static function NewL
 CQGeoSatelliteInfoSourceS60* CQGeoSatelliteInfoSourceS60::NewL(QObject * aParent)
 {
+    RProcess thisProcess;
+    if (!thisProcess.HasCapability(ECapabilityLocation)) {
+        qWarning() << "QGeoSatelliteInfoSource::createDefaultSource() requires the Symbian Location capability to succeed on the Symbian platform.";
+        return 0;
+    }
+
     CQGeoSatelliteInfoSourceS60* self = CQGeoSatelliteInfoSourceS60::NewLC(aParent);
     CleanupStack::Pop();
 
