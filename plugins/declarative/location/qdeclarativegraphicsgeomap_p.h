@@ -159,9 +159,6 @@ Q_SIGNALS:
     void mapTypeChanged(QDeclarativeGraphicsGeoMap::MapType mapType);
     void connectivityModeChanged(QDeclarativeGraphicsGeoMap::ConnectivityMode connectivityMode);
 
-    void modelChanged();
-    void delegateChanged();
-
 private Q_SLOTS:
     void updateMapDisplay(const QRectF& target);
     void internalCenterChanged(const QGeoCoordinate &coordinate);

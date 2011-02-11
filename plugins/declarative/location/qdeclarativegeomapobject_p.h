@@ -100,6 +100,7 @@ class QDeclarativeGeoMapObjectView : public QObject, public QDeclarativeParserSt
     Q_OBJECT
     Q_PROPERTY(QVariant model READ model WRITE setModel NOTIFY modelChanged)
     Q_PROPERTY(QDeclarativeComponent* delegate READ delegate WRITE setDelegate NOTIFY delegateChanged)
+    Q_PROPERTY(bool visible READ isVisible WRITE setVisible NOTIFY visibleChanged)
 
 public:
     QDeclarativeGeoMapObjectView(QDeclarativeItem *parent = 0);
@@ -114,8 +115,10 @@ public:
     void setMapData(QGeoMapData *);
     void repopulate();
 
-    QDeclarativeGeoMapObject* createItem(int modelRow);
+    void setVisible(bool visible);
+    bool isVisible() const;
 
+    QDeclarativeGeoMapObject* createItem(int modelRow);
     // From QDeclarativeParserStatus
     virtual void componentComplete();
     void classBegin() {}
@@ -123,11 +126,13 @@ public:
 Q_SIGNALS:
     void modelChanged();
     void delegateChanged();
+    void visibleChanged();
 
 private Q_SLOTS:
     void modelReset();
 
 private:
+    bool visible_;
     bool componentCompleted_;
     QList<QDeclarativeGeoMapObject*> mapObjects_;
     QDeclarativeComponent *delegate_;
