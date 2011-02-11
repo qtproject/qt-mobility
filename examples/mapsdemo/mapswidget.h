@@ -95,6 +95,17 @@ signals:
     void panned();
 };
 
+class FixedGraphicsView : public QGraphicsView
+{
+    Q_OBJECT
+
+public:
+    FixedGraphicsView(QGraphicsScene *scene, QWidget *parent);
+
+protected:
+    void scrollContentsBy(int dx, int dy);
+};
+
 // A widget to hold the view and scene for a GeoMap, as well
 // as control widgets
 class MapsWidgetPrivate;
