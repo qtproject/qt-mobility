@@ -1561,7 +1561,7 @@ QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QObject *parent)
 
 QSystemScreenSaverPrivate::~QSystemScreenSaverPrivate()
 {
-    setScreenSaverDelayed(false);
+    setScreenSaverInhibited(false);
 
 #if !defined(QT_NO_DBUS)
     delete mceConnectionInterface, mceConnectionInterface = 0;
