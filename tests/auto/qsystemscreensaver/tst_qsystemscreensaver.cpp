@@ -42,6 +42,8 @@
 //TESTED_COMPONENT=src/systeminfo
 
 #include <QtTest/QtTest>
+ #include <QDesktopWidget>
+
 #include "qsysteminfo.h"
 
 QTM_USE_NAMESPACE
@@ -79,8 +81,11 @@ void tst_QSystemScreenSaver::tst_setScreenSaverInhibit()
 void tst_QSystemScreenSaver::tst_setScreenSaverInhibited()
 {
     QSystemScreenSaver si;
+    QDesktopWidget wid;
     si.setScreenSaverInhibited(true);
-    QVERIFY(si.screenSaverInhibited());
+    if(wid.screenCount() > 0) {
+        QVERIFY(si.screenSaverInhibited());
+    }
     si.setScreenSaverInhibited(false);
     QVERIFY(!si.screenSaverInhibited());
 }

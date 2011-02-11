@@ -802,16 +802,21 @@ QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QSystemScreenSaverLinuxComm
          ifaceList <<  QLatin1String("org.freedesktop.ScreenSaver");
          ifaceList << QLatin1String("org.gnome.ScreenSaver");
          QDBusInterface *connectionInterface;
+         bool ok = false;
+         QDBusReply<uint> reply;
          foreach (const QString iface, ifaceList) {
              connectionInterface = new QDBusInterface(QLatin1String(iface.toLatin1()),
                                                       QLatin1String("/ScreenSaver"),
                                                       QLatin1String(iface.toLatin1()),
-                                                      QDBusConnection::systemBus());
+                                                      QDBusConnection::sessionBus());
              if(connectionInterface->isValid()) {
-                 QDBusReply<uint> reply =  connectionInterface->call(QLatin1String("Inhibit"),
-                                                                     QString::number((int)pid),
-                                                                     QLatin1String("QSystemScreenSaver"));
+                 reply =  connectionInterface->call(QLatin1String("Inhibit"),
+                                                    QString::number((int)pid),
+                                                    QLatin1String("QSystemScreenSaver"));
                  if(reply.isValid()) {
+                     ok = true;
+                 }
+                 if(ok) {
                      currentPid = reply.value();
                      screenSaverIsInhibited = true;
                      return reply.isValid();
@@ -940,7 +945,7 @@ void QSystemScreenSaverPrivate::setScreenSaverInhibited(bool on)
              connectionInterface = new QDBusInterface(QLatin1String(iface.toLatin1()),
                                                       QLatin1String("/ScreenSaver"),
                                                       QLatin1String(iface.toLatin1()),
-                                                      QDBusConnection::systemBus());
+                                                      QDBusConnection::sessionBus());
              if(connectionInterface->isValid()) {
                  QDBusReply<uint> reply =  connectionInterface->call(QLatin1String("UnInhibit"),
                                                                      currentPid);
