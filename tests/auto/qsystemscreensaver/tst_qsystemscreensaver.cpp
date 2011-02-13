@@ -42,6 +42,8 @@
 //TESTED_COMPONENT=src/systeminfo
 
 #include <QtTest/QtTest>
+ #include <QDesktopWidget>
+
 #include "qsysteminfo.h"
 
 QTM_USE_NAMESPACE
@@ -65,22 +67,37 @@ private slots:
 void tst_QSystemScreenSaver::tst_screenSaverInhibited()
 {
     QSystemScreenSaver si;
-    bool enabled = si.screenSaverInhibited();
-    QVERIFY( enabled || !enabled);
+    QDesktopWidget wid;
+   bool enabled = si.setScreenSaverInhibit();
+    if(wid.screenCount() > 0) {
+        QVERIFY( si.screenSaverInhibited() && enabled);
+    } else{
+        QVERIFY(!si.screenSaverInhibited() && !enabled);
+    }
 }
 
 void tst_QSystemScreenSaver::tst_setScreenSaverInhibit()
 {
     QSystemScreenSaver si;
+    QDesktopWidget wid;
     bool enabled = si.setScreenSaverInhibit();
-    QVERIFY( enabled || !enabled);
+    if(wid.screenCount() > 0) {
+        QVERIFY(enabled);
+    } else{
+        QVERIFY(!enabled);
+    }
 }
 
 void tst_QSystemScreenSaver::tst_setScreenSaverInhibited()
 {
     QSystemScreenSaver si;
+    QDesktopWidget wid;
     si.setScreenSaverInhibited(true);
-    QVERIFY(si.screenSaverInhibited());
+    if(wid.screenCount() > 0) {
+        QVERIFY(si.screenSaverInhibited());
+    } else{
+        QVERIFY(!si.screenSaverInhibited());
+    }
     si.setScreenSaverInhibited(false);
     QVERIFY(!si.screenSaverInhibited());
 }
