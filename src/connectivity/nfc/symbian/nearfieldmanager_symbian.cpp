@@ -64,10 +64,6 @@ void CNearFieldManager::ConstructL()
     {
     BEGIN
     User::LeaveIfError(iServer.Open());
-
-    //create LLCP provider api
-    iLlcpProvider = CLlcpProvider::NewL( iServer );
-    iLlcpProvider->AddLlcpLinkListenerL( *this );
     END
     }
 
@@ -128,9 +124,23 @@ void CNearFieldManager::StartTargetDetectionL(const QList<QNearFieldTarget::Type
                     iTagSubscription->AddConnectionModeL( TNfcConnectionInfo::ENfcType3 );
                     iTagSubscription->AddConnectionModeL( TNfcConnectionInfo::ENfc14443P4 );
                     iTagSubscription->AddConnectionModeL( TNfcConnectionInfo::ENfcMifareStd );
+                    if (!iLlcpProvider)
+                        {
+                        //create LLCP provider api
+                        iLlcpProvider = CLlcpProvider::NewL( iServer );
+                        iLlcpProvider->AddLlcpLinkListenerL( *this );
+                        }
                     break;
                 case QNearFieldTarget::ProprietaryTag:
                     //No conterpart in symbian api
+                    break;
+                case QNearFieldTarget::NfcForumDevice:
+                    if (!iLlcpProvider)
+                        {
+                        //create LLCP provider api
+                        iLlcpProvider = CLlcpProvider::NewL( iServer );
+                        iLlcpProvider->AddLlcpLinkListenerL( *this );
+                        }
                     break;
                 default:
                     break;
@@ -160,6 +170,13 @@ void CNearFieldManager::stopTargetDetection()
         delete iNfcTagDiscovery;
         iNfcTagDiscovery = NULL;
         }
+    if (iLlcpProvider)
+        {
+        iLlcpProvider->RemoveLlcpLinkListener();
+        delete iLlcpProvider;
+        iLlcpProvider = NULL;
+        }
+
     END
     }
 

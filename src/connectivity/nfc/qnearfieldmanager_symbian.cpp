@@ -252,8 +252,8 @@ bool QNearFieldManagerPrivateImpl::startTargetDetection(const QList<QNearFieldTa
     {
     BEGIN
     TRAPD(err, m_symbianbackend->StartTargetDetectionL(targetTypes));
-    return err == KErrNone;
     END
+    return err == KErrNone;
     }
 
 void QNearFieldManagerPrivateImpl::stopTargetDetection()
