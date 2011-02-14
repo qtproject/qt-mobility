@@ -195,6 +195,7 @@ private:
     QDeclarativeGeoMapMouseArea* activeMouseArea_;
     QList<QDeclarativeGeoMapMouseArea*> mouseAreas_;
 
+    friend class QDeclarativeGeoMapObjectView;
     Q_DISABLE_COPY(QDeclarativeGraphicsGeoMap)
 };
 
