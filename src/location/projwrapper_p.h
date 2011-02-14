@@ -81,6 +81,8 @@ private:
     friend class ProjCoordinate;
 };
 
+class ProjPolygon;
+
 class ProjCoordinatePrivate;
 class ProjCoordinate
 {
@@ -97,8 +99,12 @@ public:
 
     bool convert(const ProjCoordinateSystem &system);
 
+    ProjCoordinate &operator=(const ProjCoordinate &other);
+
 private:
     ProjCoordinatePrivate *d;
+
+    friend class ProjPolygon;
 };
 
 class ProjPolygonPrivate;
@@ -108,6 +114,8 @@ public:
     ProjPolygon(const ProjCoordinateSystem &system);
     ProjPolygon(const QPolygonF &poly, const ProjCoordinateSystem &system, double scale=1.0);
     ~ProjPolygon();
+
+    void scalarMultiply(double sx, double sy, double sz);
 
     bool convert(const ProjCoordinateSystem &system);
     QPolygonF toPolygonF(double scale=1.0) const;

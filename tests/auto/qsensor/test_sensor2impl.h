@@ -39,68 +39,26 @@
 **
 ****************************************************************************/
 
-//TESTED_COMPONENT=src/systeminfo
+#ifndef TEST_SENSOR2IMPL_H
+#define TEST_SENSOR2IMPL_H
 
-#include <QtTest/QtTest>
- #include <QDesktopWidget>
-
-#include "qsysteminfo.h"
+#include <qsensorbackend.h>
+#include "test_sensor2.h"
 
 QTM_USE_NAMESPACE
-class tst_QSystemScreenSaver : public QObject
+
+class testsensor2impl : public QSensorBackend
 {
-    Q_OBJECT
+public:
+    static char const * const id;
 
-private slots:
-   void initTestCase();
-    void tst_screenSaverInhibited();
-    void tst_setScreenSaverInhibit();
-    void tst_setScreenSaverInhibited();
+    testsensor2impl(QSensor *sensor);
 
+    void start();
+    void stop();
+
+private:
+    TestSensor2Reading m_reading;
 };
 
- void tst_QSystemScreenSaver::initTestCase()
- {
-
- }
-
-void tst_QSystemScreenSaver::tst_screenSaverInhibited()
-{
-    QSystemScreenSaver si;
-    QDesktopWidget wid;
-   bool enabled = si.setScreenSaverInhibit();
-    if(wid.screenCount() > 0) {
-        QVERIFY( si.screenSaverInhibited() && enabled);
-    } else{
-        QVERIFY(!si.screenSaverInhibited() && !enabled);
-    }
-}
-
-void tst_QSystemScreenSaver::tst_setScreenSaverInhibit()
-{
-    QSystemScreenSaver si;
-    QDesktopWidget wid;
-    bool enabled = si.setScreenSaverInhibit();
-    if(wid.screenCount() > 0) {
-        QVERIFY(enabled);
-    } else{
-        QVERIFY(!enabled);
-    }
-}
-
-void tst_QSystemScreenSaver::tst_setScreenSaverInhibited()
-{
-    QSystemScreenSaver si;
-    QDesktopWidget wid;
-    si.setScreenSaverInhibited(true);
-    if(wid.screenCount() > 0) {
-        QVERIFY(si.screenSaverInhibited());
-    } else{
-        QVERIFY(!si.screenSaverInhibited());
-    }
-    si.setScreenSaverInhibited(false);
-    QVERIFY(!si.screenSaverInhibited());
-}
-
-QTEST_MAIN(tst_QSystemScreenSaver)
-#include "tst_qsystemscreensaver.moc"
+#endif

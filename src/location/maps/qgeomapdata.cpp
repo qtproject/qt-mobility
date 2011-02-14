@@ -734,6 +734,12 @@ void QGeoMapData::paintObjects(QPainter *painter, const QStyleOptionGraphicsItem
 
                     QStyleOptionGraphicsItem *style = new QStyleOptionGraphicsItem;
                     object->graphicsItem()->paint(painter, style);
+                    foreach (QGraphicsItem *child, object->graphicsItem()->children()) {
+                        painter->setTransform(child->transform() * trans * baseTrans);
+                        painter->translate(child->pos());
+                        child->paint(painter, style);
+                    }
+
                     delete style;
                 }
             }

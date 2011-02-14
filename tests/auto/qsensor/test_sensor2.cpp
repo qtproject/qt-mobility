@@ -39,68 +39,45 @@
 **
 ****************************************************************************/
 
-//TESTED_COMPONENT=src/systeminfo
+#include "test_sensor2.h"
+#include "test_sensor2_p.h"
 
-#include <QtTest/QtTest>
- #include <QDesktopWidget>
+#undef IMPLEMENT_READING
+#undef IMPLEMENT_READING_D
 
-#include "qsysteminfo.h"
+#define IMPLEMENT_READING(classname)\
+        IMPLEMENT_READING_D(classname, classname ## Private)
 
-QTM_USE_NAMESPACE
-class tst_QSystemScreenSaver : public QObject
-{
-    Q_OBJECT
-
-private slots:
-   void initTestCase();
-    void tst_screenSaverInhibited();
-    void tst_setScreenSaverInhibit();
-    void tst_setScreenSaverInhibited();
-
-};
-
- void tst_QSystemScreenSaver::initTestCase()
- {
-
- }
-
-void tst_QSystemScreenSaver::tst_screenSaverInhibited()
-{
-    QSystemScreenSaver si;
-    QDesktopWidget wid;
-   bool enabled = si.setScreenSaverInhibit();
-    if(wid.screenCount() > 0) {
-        QVERIFY( si.screenSaverInhibited() && enabled);
-    } else{
-        QVERIFY(!si.screenSaverInhibited() && !enabled);
+#define IMPLEMENT_READING_D(classname, pclassname)\
+    classname::classname(QObject *parent)\
+        : QSensorReading(parent, new pclassname)\
+        , d(d_ptr())\
+        {}\
+    classname::~classname() {}\
+    void classname::copyValuesFrom(QSensorReading *_other)\
+    {\
+        /* No need to verify types, only called by QSensorBackend */\
+        classname *other = static_cast<classname *>(_other);\
+        pclassname *my_ptr = static_cast<pclassname*>(d_ptr()->data());\
+        pclassname *other_ptr = static_cast<pclassname*>(other->d_ptr()->data());\
+        /* Do a direct copy of the private class */\
+        *(my_ptr) = *(other_ptr);\
     }
+
+IMPLEMENT_READING(TestSensor2Reading)
+
+int TestSensor2Reading::test() const
+{
+    return d->test;
 }
 
-void tst_QSystemScreenSaver::tst_setScreenSaverInhibit()
+void TestSensor2Reading::setTest(int test)
 {
-    QSystemScreenSaver si;
-    QDesktopWidget wid;
-    bool enabled = si.setScreenSaverInhibit();
-    if(wid.screenCount() > 0) {
-        QVERIFY(enabled);
-    } else{
-        QVERIFY(!enabled);
-    }
+    d->test = test;
 }
 
-void tst_QSystemScreenSaver::tst_setScreenSaverInhibited()
-{
-    QSystemScreenSaver si;
-    QDesktopWidget wid;
-    si.setScreenSaverInhibited(true);
-    if(wid.screenCount() > 0) {
-        QVERIFY(si.screenSaverInhibited());
-    } else{
-        QVERIFY(!si.screenSaverInhibited());
-    }
-    si.setScreenSaverInhibited(false);
-    QVERIFY(!si.screenSaverInhibited());
-}
+// =====================================================================
 
-QTEST_MAIN(tst_QSystemScreenSaver)
-#include "tst_qsystemscreensaver.moc"
+char const * const TestSensor2::type("test sensor 2");
+
+#include "moc_test_sensor2.cpp"

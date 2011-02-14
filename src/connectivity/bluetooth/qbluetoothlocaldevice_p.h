@@ -139,7 +139,6 @@ private:
 
 private:
     CBTEngSettings *m_settings;
-    bool m_settingVisibility;
 
 protected:
     QBluetoothLocalDevice *q_ptr;

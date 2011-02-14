@@ -39,68 +39,31 @@
 **
 ****************************************************************************/
 
-//TESTED_COMPONENT=src/systeminfo
+#ifndef TEST_SENSOR2_P_H
+#define TEST_SENSOR2_P_H
 
-#include <QtTest/QtTest>
- #include <QDesktopWidget>
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API. It exists purely as an
+// implementation detail. This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
-#include "qsysteminfo.h"
+#include "qsensor_p.h"
 
-QTM_USE_NAMESPACE
-class tst_QSystemScreenSaver : public QObject
+class TestSensor2ReadingPrivate : public QSensorReadingPrivate
 {
-    Q_OBJECT
+public:
+    TestSensor2ReadingPrivate()
+        : test(0)
+    {
+    }
 
-private slots:
-   void initTestCase();
-    void tst_screenSaverInhibited();
-    void tst_setScreenSaverInhibit();
-    void tst_setScreenSaverInhibited();
-
+    int test;
 };
 
- void tst_QSystemScreenSaver::initTestCase()
- {
-
- }
-
-void tst_QSystemScreenSaver::tst_screenSaverInhibited()
-{
-    QSystemScreenSaver si;
-    QDesktopWidget wid;
-   bool enabled = si.setScreenSaverInhibit();
-    if(wid.screenCount() > 0) {
-        QVERIFY( si.screenSaverInhibited() && enabled);
-    } else{
-        QVERIFY(!si.screenSaverInhibited() && !enabled);
-    }
-}
-
-void tst_QSystemScreenSaver::tst_setScreenSaverInhibit()
-{
-    QSystemScreenSaver si;
-    QDesktopWidget wid;
-    bool enabled = si.setScreenSaverInhibit();
-    if(wid.screenCount() > 0) {
-        QVERIFY(enabled);
-    } else{
-        QVERIFY(!enabled);
-    }
-}
-
-void tst_QSystemScreenSaver::tst_setScreenSaverInhibited()
-{
-    QSystemScreenSaver si;
-    QDesktopWidget wid;
-    si.setScreenSaverInhibited(true);
-    if(wid.screenCount() > 0) {
-        QVERIFY(si.screenSaverInhibited());
-    } else{
-        QVERIFY(!si.screenSaverInhibited());
-    }
-    si.setScreenSaverInhibited(false);
-    QVERIFY(!si.screenSaverInhibited());
-}
-
-QTEST_MAIN(tst_QSystemScreenSaver)
-#include "tst_qsystemscreensaver.moc"
+#endif

@@ -132,13 +132,39 @@ Tennis::Tennis(QWidget *parent)
 
     m_discoveryAgent->setUuidFilter(QBluetoothUuid(serviceUuid));
 
-    QSettings settings("QtDF", "bttennis");
-    QString address = settings.value("lastclient").toString();
+
+    QString address;
+    QString port;
+    QStringList args = QCoreApplication::arguments();
+    if(args.length() >= 2){
+        address = args.at(1);
+        if(args.length() >= 3){
+            port = args.at(2);
+        }
+    }
+
+    if(address.isEmpty()){
+        QSettings settings("QtDF", "bttennis");
+        address = settings.value("lastclient").toString();
+    }
+
     if(!address.isEmpty()){
-        qDebug() << "Connect to" << address;
+        qDebug() << "Connect to" << address << port;
         QBluetoothDeviceInfo device = QBluetoothDeviceInfo(QBluetoothAddress(address), "", QBluetoothDeviceInfo::ComputerDevice);
         QBluetoothServiceInfo service;
-        service.setServiceUuid(QBluetoothUuid(serviceUuid));
+        if (!port.isEmpty()) {
+            QBluetoothServiceInfo::Sequence protocolDescriptorList;
+            QBluetoothServiceInfo::Sequence protocol;
+            protocol << QVariant::fromValue(QBluetoothUuid(QBluetoothUuid::L2cap))
+                     << QVariant::fromValue(port.toUShort());
+            protocolDescriptorList.append(QVariant::fromValue(protocol));
+            service.setAttribute(QBluetoothServiceInfo::ProtocolDescriptorList,
+                                 protocolDescriptorList);
+            qDebug() << "port" << port.toUShort() << service.protocolServiceMultiplexer();
+        }
+        else {
+            service.setServiceUuid(QBluetoothUuid(serviceUuid));
+        }
         service.setDevice(device);
         client->startClient(service);
         board->setStatus("Connecting", 100, 25);

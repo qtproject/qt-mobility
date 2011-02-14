@@ -137,7 +137,9 @@
 
     \list
     \o \l{sensors/grueplugin}{Grue Plugin}
-    \omit \o \l{sensors/grueapp}{Grue Application} \endomit
+    \o \l{sensors/grueapp}{Grue Application}
+    \o \l{sensors/cubehouse}{Cube House}
+    \o \l{sensors/sensor_explorer}{Sensor Explorer}
     \endlist
 */
 

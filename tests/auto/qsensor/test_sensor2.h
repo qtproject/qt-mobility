@@ -39,54 +39,78 @@
 **
 ****************************************************************************/
 
-#ifndef TEST_SENSOR_H
-#define TEST_SENSOR_H
+#ifndef TEST_SENSOR2_H
+#define TEST_SENSOR2_H
 
-#include <qsensor.h>
+#define UNIT_TEST
+#include "qsensor.h"
+
+QTM_BEGIN_NAMESPACE
+
+#undef DECLARE_READING
+#undef DECLARE_READING_D
+
+template <typename T>
+class qTypedWrapper
+{
+public:
+    qTypedWrapper(QScopedPointer<QSensorReadingPrivate> *_ptr)
+        : ptr(_ptr)
+    {
+    }
+
+    T *operator->() const
+    {
+        return static_cast<T*>(ptr->data());
+    }
+
+private:
+    QScopedPointer<QSensorReadingPrivate> *ptr;
+};
+
+#define DECLARE_READING(classname)\
+        DECLARE_READING_D(classname, classname ## Private)
+
+#define DECLARE_READING_D(classname, pclassname)\
+    public:\
+        classname(QObject *parent = 0);\
+        virtual ~classname();\
+        void copyValuesFrom(QSensorReading *other);\
+    private:\
+        qTypedWrapper<pclassname> d;
+
+QTM_END_NAMESPACE
 
 QTM_USE_NAMESPACE
 
-class TestSensorReadingPrivate;
+class TestSensor2ReadingPrivate;
 
-class TestSensorReading : public QSensorReading
+class TestSensor2Reading : public QSensorReading
 {
     Q_OBJECT
     Q_PROPERTY(int test READ test)
-    DECLARE_READING(TestSensorReading)
+    DECLARE_READING(TestSensor2Reading)
 public:
     int test() const;
     void setTest(int test);
 };
 
-class TestSensorFilter : public QSensorFilter
+class TestSensor2Filter : public QSensorFilter
 {
 public:
-    virtual bool filter(TestSensorReading *reading) = 0;
+    virtual bool filter(TestSensor2Reading *reading) = 0;
 private:
-    bool filter(QSensorReading *reading) { return filter(static_cast<TestSensorReading*>(reading)); }
+    bool filter(QSensorReading *reading) { return filter(static_cast<TestSensor2Reading*>(reading)); }
 };
 
-class TestSensor : public QSensor
+class TestSensor2 : public QSensor
 {
     Q_OBJECT
 public:
-    explicit TestSensor(QObject *parent = 0)
-        : QSensor(TestSensor::type, parent)
-        , sensorsChangedEmitted(0)
-    {
-        connect(this, SIGNAL(availableSensorsChanged()), this, SLOT(s_availableSensorsChanged()));
-    }
-    virtual ~TestSensor() {}
-    TestSensorReading *reading() const { return static_cast<TestSensorReading*>(QSensor::reading()); }
-    static const char *type;
-
-    // used by the testSensorsChangedSignal test function
-    int sensorsChangedEmitted;
-private slots:
-    void s_availableSensorsChanged()
-    {
-        sensorsChangedEmitted++;
-    }
+    explicit TestSensor2(QObject *parent = 0) : QSensor(TestSensor2::type, parent) {}
+    virtual ~TestSensor2() {}
+    TestSensor2Reading *reading() const { return static_cast<TestSensor2Reading*>(QSensor::reading()); }
+    static char const * const type;
 };
 
 #endif
