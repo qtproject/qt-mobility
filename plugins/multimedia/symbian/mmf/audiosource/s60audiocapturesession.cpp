@@ -642,7 +642,7 @@ void S60AudioCaptureSession::applyAudioSettingsL()
         return;
 
 #ifdef AUDIOINPUT_ROUTING
-    //CAudioInput needs to be re-initialized everytime recording starts
+    //CAudioInput needs to be re-initialized every time recording starts
     if (m_audioInput) {
         delete m_audioInput;
         m_audioInput = NULL;
