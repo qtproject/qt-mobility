@@ -175,8 +175,22 @@ done:
         QBluetoothServiceInfo serviceInfo;
 
         serviceInfo.setDevice(info);
-        serviceInfo.setAttribute(QBluetoothServiceInfo::ProtocolDescriptorList,
-                                 QBluetoothServiceInfo::Sequence(v.values("UUIDs")));
+
+        QList<QVariant> uuids;
+
+        if(!uuidFilter.isEmpty()) {
+            foreach (const QBluetoothUuid &uuid, uuidFilter) {
+                foreach (const QString s, device_uuids){
+                    if(QBluetoothUuid(s) == uuid){
+                        uuids += QVariant::fromValue(uuid);
+                        serviceInfo.setServiceUuid(uuid);
+                    }
+                }
+            }
+        }
+        if(!uuids.empty())
+            serviceInfo.setAttribute(QBluetoothServiceInfo::ServiceClassIds,
+                                     QBluetoothServiceInfo::Sequence(uuids));
 
         Q_Q(QBluetoothServiceDiscoveryAgent);
 

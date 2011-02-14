@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -72,9 +72,10 @@ void QNearFieldManagerPrivateImpl::reset()
     TagActivator::instance()->reset();
 }
 
-void QNearFieldManagerPrivateImpl::startTargetDetection(const QList<QNearFieldTarget::Type> &targetTypes)
+bool QNearFieldManagerPrivateImpl::startTargetDetection(const QList<QNearFieldTarget::Type> &targetTypes)
 {
     m_detectTargetTypes = targetTypes;
+    return true;
 }
 
 void QNearFieldManagerPrivateImpl::stopTargetDetection()

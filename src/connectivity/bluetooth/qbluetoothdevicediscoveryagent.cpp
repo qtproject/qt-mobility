@@ -123,7 +123,15 @@ QTM_BEGIN_NAMESPACE
 QBluetoothDeviceDiscoveryAgent::QBluetoothDeviceDiscoveryAgent(QObject *parent)
 : QObject(parent), d_ptr(new QBluetoothDeviceDiscoveryAgentPrivate)
 {
-  d_ptr->q_ptr = this;
+    d_ptr->q_ptr = this;
+}
+
+/*!
+  Destructor for ~QBluetoothDeviceDiscoveryAgent()
+*/
+QBluetoothDeviceDiscoveryAgent::~QBluetoothDeviceDiscoveryAgent()
+{
+    delete d_ptr;
 }
 
 /*!

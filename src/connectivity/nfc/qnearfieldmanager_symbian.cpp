@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -248,10 +248,11 @@ bool QNearFieldManagerPrivateImpl::unregisterTargetDetectedHandler(int id)
     return true;
 }
 
-void QNearFieldManagerPrivateImpl::startTargetDetection(const QList<QNearFieldTarget::Type> &targetTypes)
+bool QNearFieldManagerPrivateImpl::startTargetDetection(const QList<QNearFieldTarget::Type> &targetTypes)
     {
     BEGIN
-    QT_TRAP_THROWING(m_symbianbackend->StartTargetDetectionL(targetTypes));
+    TRAPD(err, m_symbianbackend->StartTargetDetectionL(targetTypes));
+    return err == KErrNone;
     END
     }
 

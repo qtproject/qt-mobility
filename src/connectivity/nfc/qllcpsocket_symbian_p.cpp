@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -38,12 +38,14 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
 #include "qllcpsocket_symbian_p.h"
 #include "qllcpstate_symbian_p.h"
 #include "symbian/llcpsockettype1_symbian.h"
 #include "symbian/llcpsockettype2_symbian.h"
 #include "symbian/nearfieldutility_symbian.h"
 #include "symbian/debug.h"
+
 QTM_BEGIN_NAMESPACE
 
 /*!
@@ -162,7 +164,7 @@ void QLlcpSocketPrivate::invokeReadyRead()
 
     if (!m_emittedReadyRead){
         m_emittedReadyRead = true;
-        LOG("readyRead signal has been emited!");
+        LOG("readyRead signal has been emitted!");
         emit q->readyRead();
         m_emittedReadyRead = false;
     }

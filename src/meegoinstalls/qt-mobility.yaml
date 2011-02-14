@@ -42,6 +42,7 @@ PkgConfigBR:
     - gstreamer-plugins-bad-free-0.10
     - gstreamer-plugins-base-0.10
     - gypsy
+    - libiphb
     - libpulse
     - libmkcal
     - meegotouch

@@ -70,17 +70,24 @@ class NdefHandler : public QObject
     Q_OBJECT
 
 public:
-    NdefHandler(QNearFieldManagerPrivateImpl *manager, NDEFHandlerAdaptor *adaptor,
-                QObject *object, const QMetaMethod &method);
+    NdefHandler(QNearFieldManagerPrivateImpl *manager, const QString &serviceName,
+                const QString &path, QObject *object, const QMetaMethod &method);
     ~NdefHandler();
 
+    bool isValid() const;
+
+    QString serviceName() const;
+    QString path() const;
+
 private:
-    Q_INVOKABLE void NDEFDetected(const QDBusObjectPath &target, const QByteArray &message);
+    Q_INVOKABLE void NDEFData(const QDBusObjectPath &target, const QByteArray &message);
 
     QNearFieldManagerPrivateImpl *m_manager;
     NDEFHandlerAdaptor *m_adaptor;
     QObject *m_object;
     QMetaMethod m_method;
+    QString m_serviceName;
+    QString m_path;
 };
 
 class QNearFieldManagerPrivateImpl : public QNearFieldManagerPrivate
@@ -91,7 +98,7 @@ public:
     QNearFieldManagerPrivateImpl();
     ~QNearFieldManagerPrivateImpl();
 
-    void startTargetDetection(const QList<QNearFieldTarget::Type> &targetTypes);
+    bool startTargetDetection(const QList<QNearFieldTarget::Type> &targetTypes);
     void stopTargetDetection();
 
     QNearFieldTarget *targetForPath(const QString &path);
@@ -130,8 +137,7 @@ private:
 
     AccessRequestorAdaptor *m_accessAgent;
 
-    QList<NdefHandler *> m_registeredHandlers;
-    QList<int> m_freeIds;
+    QMap<int, NdefHandler *> m_registeredHandlers;
 
     QMap<QString, QBasicTimer> m_pendingDetectedTargets;
 };

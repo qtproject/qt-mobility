@@ -6,7 +6,7 @@ include($$PWD/deployment.pri)
 TARGET = qml_tennis
 
 symbian {
-    TARGET.CAPABILITY = NetworkServices Location ReadUserData WriteUserData
+    TARGET.CAPABILITY = LocalServices NetworkServices Location ReadUserData WriteUserData WriteDeviceData ReadDeviceData
     TARGET.EPOCHEAPSIZE = 0x20000 0x2000000
 }
 

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -43,7 +43,7 @@
 #include "ql2capserver_p.h"
 #include "qbluetoothsocket.h"
 #include "qbluetoothsocket_p.h"
-#include "utils_symbian_p.h"
+#include "symbian/utils_symbian_p.h"
 
 #include <QTimer>
 #include <QCoreApplication>
@@ -83,18 +83,32 @@ bool QL2capServer::listen(const QBluetoothAddress &address, quint16 port)
 
     TL2CAPSockAddr addr;
     if (port == 0)
-        addr.SetPort(KRfcommPassiveAutoBind);
+        addr.SetPort(KL2CAPPassiveAutoBind);
     else
         addr.SetPort(port);
 
     TBTServiceSecurity security;
+    switch (d->securityFlags) {
+        case QBluetooth::Authentication:
+            security.SetAuthentication(ETrue);
+            break;
+        case QBluetooth::Authorization:
+            security.SetAuthorisation(ETrue);
+            break;
+        case QBluetooth::Encryption:
+            security.SetEncryption(ETrue);
+            break;
+        case QBluetooth::NoSecurity:
+        default:
+            break;
+    }
     addr.SetSecurity(security);
     d->ds->iSocket->Bind(addr);
     d->socket->setSocketState(QBluetoothSocket::BoundState);
 
     d->ds->iSocket->Listen(d->maxPendingConnections);
 
-    d->pendingSocket = new QBluetoothSocket;
+    d->pendingSocket = new QBluetoothSocket(QBluetoothSocket::L2capSocket);
 
     QBluetoothSocketPrivate *pd = d->pendingSocket->d_ptr;
     pd->ensureBlankNativeSocket();
@@ -154,13 +168,14 @@ void QL2capServerPrivate::HandleAcceptCompleteL(TInt aErr)
 {
     Q_Q(QL2capServer);
 
-    if (aErr == KErrNone) {
+    if (aErr == KErrNone) {        
         pendingSocket->setSocketState(QBluetoothSocket::ConnectedState);
         activeSockets.append(pendingSocket);
 
-        pendingSocket = new QBluetoothSocket;
+        pendingSocket = new QBluetoothSocket(QBluetoothSocket::L2capSocket);        
         QBluetoothSocketPrivate *pd = pendingSocket->d_ptr;
-        pd->iSocket->Accept(*pd->iSocket);
+        pd->ensureBlankNativeSocket();        
+        ds->iSocket->Accept(*pd->iSocket);
 
         emit q->newConnection();
     } else if (aErr == KErrCancel) {
@@ -206,5 +221,21 @@ void QL2capServerPrivate::HandleShutdownCompleteL(TInt aErr)
     else
         qDebug() << __PRETTY_FUNCTION__ << aErr;
 }
+
+void QL2capServer::setSecurityFlags(QBluetooth::SecurityFlags security)
+{
+    Q_D(QL2capServer);
+
+    d->securityFlags = security;
+}
+
+QBluetooth::SecurityFlags QL2capServer::securityFlags() const
+{
+    Q_D(const QL2capServer);
+
+    return d->securityFlags;
+}
+
+
 
 QTM_END_NAMESPACE

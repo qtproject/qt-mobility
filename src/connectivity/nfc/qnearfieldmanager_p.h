@@ -70,9 +70,11 @@ public:
     {
     }
 
-    virtual void startTargetDetection(const QList<QNearFieldTarget::Type> &targetTypes)
+    virtual bool startTargetDetection(const QList<QNearFieldTarget::Type> &targetTypes)
     {
         Q_UNUSED(targetTypes);
+
+        return false;
     }
 
     virtual void stopTargetDetection()

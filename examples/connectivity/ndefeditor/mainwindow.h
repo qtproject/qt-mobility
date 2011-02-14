@@ -72,6 +72,8 @@ private slots:
     void addMimeImageRecord();
     void addEmptyRecord();
 
+    void clearMessage();
+
     void loadMessage();
     void saveMessage();
 
@@ -93,8 +95,6 @@ private:
     };
 
     QNdefMessage ndefMessage() const;
-
-    void clear();
 
 private:
     Ui::MainWindow *ui;

@@ -3,7 +3,6 @@ TEMPLATE = lib
 TARGET   = QtConnectivity
 
 include(../../common.pri)
-
 DEFINES += QT_BUILD_CONNECTIVITY_LIB QT_MAKEDLL
 
 QT = core
@@ -30,6 +29,5 @@ simulator {
     INCLUDEPATH += ../mobilitysimulator
     qtAddLibrary(QtMobilitySimulator)
 }
-CONFIG += middleware
 CONFIG += middleware
 include(../../features/deploy.pri)

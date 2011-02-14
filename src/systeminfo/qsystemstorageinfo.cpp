@@ -55,7 +55,7 @@ QSystemStorageInfoPrivate *getSystemStorageInfoPrivate() { return storageInfoPri
    \class QSystemStorageInfo
    \ingroup systeminfo
    \inmodule QtSystemInfo
-        \brief The QSystemStorageInfo class provides access to memory and disk information from the system.
+        \brief The QSystemStorageInfo class provides access to disk storage information from the system.
 */
 
 /*!
@@ -84,16 +84,18 @@ QSystemStorageInfoPrivate *getSystemStorageInfoPrivate() { return storageInfoPri
 */
 
 /*!
-     \fn void QSystemStorageInfo::logicalDriveChanged(bool ,const QString &)
+     \fn void QSystemStorageInfo::logicalDriveChanged(bool added,const QString &vol)
 
      This signal gets emitted when new storage has been added or removed from the system.
+     \a added is true when a new drive is found, otherwise false when removed.
+     \a vol is the volume's name.
 */
 
 /*!
      \fn void QSystemStorageInfo::storageStateChanged(const QString &vol, QSystemStorageInfo::StorageState state)
 
-     This signal gets emitted when a volume has changed from one StorageState to another, \vol
-     being the volume name, and \state being the new state..
+     This signal gets emitted when a volume has changed from one StorageState to another, \a vol
+     being the volume name, and \a state being the new state..
 */
 
 
@@ -158,7 +160,7 @@ QSystemStorageInfo::DriveType QSystemStorageInfo::typeForDrive(const QString &dr
 }
 
 /*!
-  Returns the uri, or unique identifier fir \a driveVolume.
+  Returns the uri, or unique identifier for \a driveVolume.
   */
 QString QSystemStorageInfo::uriForDrive(const QString &driveVolume)
 {
