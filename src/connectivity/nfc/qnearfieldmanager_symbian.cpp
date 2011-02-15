@@ -101,6 +101,7 @@ QNearFieldManagerPrivateImpl::~QNearFieldManagerPrivateImpl()
 {
     BEGIN
     delete m_target;
+    qDeleteAll(m_targetList);
     delete m_serviceRegister;
     delete m_symbianbackend;
     END
@@ -279,8 +280,7 @@ void QNearFieldManagerPrivateImpl::targetFound(QNearFieldTarget *target)
         return;
     }
     if (m_target){
-        delete m_target;
-        m_target = NULL;
+        m_targetList.append(m_target);
     }
     m_target = target;
     emit targetDetected(target);
