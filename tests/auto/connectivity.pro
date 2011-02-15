@@ -33,4 +33,5 @@ symbian:SUBDIRS += \
         qbluetoothsocket\
         qrfcommserver \
         qbluetoothtransferrequest \
-        qbluetoothlocaldevice
+        qbluetoothlocaldevice \
+        qbluetoothtransfermanager
