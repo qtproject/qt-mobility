@@ -105,7 +105,7 @@ void tst_qllcpsockettype2::initTestCase()
     QString message("Please touch a NFC device with llcp client enabled");
     QNearFieldManager nfcManager;
     QSignalSpy targetDetectedSpy(&nfcManager, SIGNAL(targetDetected(QNearFieldTarget*)));
-    nfcManager.startTargetDetection(QNearFieldTarget::AnyTarget);
+    nfcManager.startTargetDetection(QNearFieldTarget::NfcForumDevice);
 
     QNfcTestUtil::ShowAutoMsg(message, &targetDetectedSpy, 1);
     QTRY_VERIFY(!targetDetectedSpy.isEmpty());
@@ -114,7 +114,7 @@ void tst_qllcpsockettype2::initTestCase()
     QVERIFY(m_target != NULL);
     QVERIFY(m_target->accessMethods() & QNearFieldTarget::LlcpAccess);
     QVERIFY(m_target->uid() == QByteArray());
-    QVERIFY(m_target->type() == QNearFieldTarget::AnyTarget);
+    QVERIFY(m_target->type() == QNearFieldTarget::NfcForumDevice);
     qDebug()<<"tst_qllcpsockettype2::initTestCase()   End";
 }
 

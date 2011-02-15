@@ -96,7 +96,7 @@ void tst_qllcpsocketremote::testCase0()
 {
     m_nfcManager = new QNearFieldManager;
     QSignalSpy targetDetectedSpy(m_nfcManager, SIGNAL(targetDetected(QNearFieldTarget*)));
-    m_nfcManager->startTargetDetection(QNearFieldTarget::AnyTarget);
+    m_nfcManager->startTargetDetection(QNearFieldTarget::NfcForumDevice);
 
     QString message("Please touch a NFC device with llcp client enabled");
     QNfcTestUtil::ShowAutoMsg(message, &targetDetectedSpy);

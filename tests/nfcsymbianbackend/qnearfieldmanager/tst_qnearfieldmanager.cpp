@@ -122,7 +122,7 @@ void tst_QNearFieldManager::targetDetected()
     QSignalSpy disconnectedSpy(target, SIGNAL(disconnected()));
     QVERIFY(target);
 
-    if (type != QNearFieldTarget::AnyTarget)
+    if (type != QNearFieldTarget::NfcForumDevice)
     {
         QVERIFY(!target->uid().isEmpty());
         QCOMPARE(target->type(), type);
@@ -144,7 +144,7 @@ void tst_QNearFieldManager::targetDetected_data()
 {
     QTest::addColumn<QNearFieldTarget::Type>("type");
     QTest::addColumn<QString>("hint");
-    QTest::newRow("llcp device") << QNearFieldTarget::AnyTarget << "Please touch llcp device";
+    QTest::newRow("llcp device") << QNearFieldTarget::NfcForumDevice << "Please touch llcp device";
     QTest::newRow("NfcTagType1") << QNearFieldTarget::NfcTagType1 << "Please touch tag type1";
     QTest::newRow("NfcTagType2") << QNearFieldTarget::NfcTagType2 << "Please touch tag type2";
     QTest::newRow("NfcTagType3") << QNearFieldTarget::NfcTagType3 << "Please touch tag type3";
