@@ -69,7 +69,15 @@ CNearFieldTag* CNearFieldTag::NewLC(MNfcTag * aNfcTag, RNfcServer& aNfcServer)
 CNearFieldTag::~CNearFieldTag()
     {
     Cancel();
-    delete iTagConnection;
+    if (iTagConnection)
+    {
+        if(iTagConnection->IsActivated())
+        {
+            CloseConnection();
+        }
+        delete iTagConnection;
+    }
+
     delete iNfcTag;
     }
 
