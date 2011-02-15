@@ -353,13 +353,13 @@ void CLlcpSocketType2::AttachCallbackHandler(QtMobility::QLlcpSocketPrivate* aCa
                 return;
                 }
             }
-        if (iReceiver->StartReceiveDatagram() != KErrNone)
-            {
-            Error(QtMobility::QLlcpSocket::UnknownSocketError);
-            }
         if (!iConnecter)
             {
             TRAP_IGNORE(iConnecter = CLlcpConnecterAO::NewL( *iTransporter, *this ));
+            }
+        if (iReceiver->StartReceiveDatagram() != KErrNone)
+            {
+            Error(QtMobility::QLlcpSocket::UnknownSocketError);
             }
         }
     END
@@ -845,8 +845,8 @@ void CLlcpSenderAO::RunL()
     TInt error = iStatus.Int();
     if ( error == KErrNone )
         {
-        //emit BytesWritten signal
-        iSocket.BytesWritten(iCurrentSendPtr.Length());
+        TInt bytesWritten = iCurrentSendPtr.Length();
+
         iCurrentPos += iCurrentSendPtr.Length();
         if (iCurrentBuffer == EBuffer0)
             {
@@ -856,6 +856,8 @@ void CLlcpSenderAO::RunL()
             {
             SendRestDataAndSwitchBuffer(iSendBuf1, iSendBuf0);
             }
+        //emit BytesWritten signal
+        iSocket.BytesWritten(bytesWritten);
         }//if ( error == KErrNone )
     else
         {

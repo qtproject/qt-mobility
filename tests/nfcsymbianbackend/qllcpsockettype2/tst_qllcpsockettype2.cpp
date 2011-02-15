@@ -620,7 +620,10 @@ void tst_qllcpsockettype2::negTestCase3()
     QVERIFY(size == -1);
 
 }
-
+/*!
+ Description: Send empty data to server
+ CounterPart test: tst_QLlcpServer::negTestCase1()
+*/
 void tst_qllcpsockettype2::sendEmptyData()
     {
 
@@ -772,12 +775,16 @@ public:
 private slots:
     void gotBytesWritten(qint64 w)
         {
-        qDebug()<<"Delete the socket when still alive...";
+        qDebug()<<"In BytesWrittenSlot: Delete the socket when still alive...";
         delete m_socket;
         }
 private:
     QLlcpSocket* m_socket;
 };
+/*!
+ Description: test delete socket when sending is active
+ CounterPart test: tst_QLlcpServer::newConnection()
+*/
 void tst_qllcpsockettype2::deleteSocketWhenInUse()
     {
     QString message("test deleteSocketWhenInUse");
@@ -813,7 +820,7 @@ void tst_qllcpsockettype2::deleteSocketWhenInUse()
 
     qint64 val = socket->write(block);
     QVERIFY( val == 0);
-    QTRY_VERIFY(!bytesWrittenSpy.isEmpty());
+    QTest::qWait(5 * 1000);//give some time to wait bytesWritten signal
     QVERIFY(errorSpy.isEmpty());
     }
 QTEST_MAIN(tst_qllcpsockettype2);
