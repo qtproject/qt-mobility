@@ -690,11 +690,8 @@ void CLlcpSenderType1::RunL(void)
         iSendObserver.WriteComplete(error, iCurrentSendBufPos - iCurrentSendBufPtr.Length());
         return;
         }
-    else
-        {
-        // Sent signal for each successful sending
-        iSendObserver.WriteComplete(error, iCurrentSendBufPtr.Length());
-        }
+
+    TInt bytesWritten =  iCurrentSendBufPtr.Length();
 
     // Still have some buffer need send, don't stop
     if (iCurrentSendBufPos < iTransmitBuf.Length())
@@ -725,6 +722,8 @@ void CLlcpSenderType1::RunL(void)
         iConnection.Transmit(iStatus, iTempSendBuf);
         SetActive();
         }
+    // Sent signal for each successful sending
+    iSendObserver.WriteComplete(error, bytesWritten);
     END
     }
 
