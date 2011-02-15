@@ -682,7 +682,12 @@ private:
     QLlcpSocket& m_socket;
     int m_signalCount;
 };
-
+/*!
+ Description: Test WaitForReadyRead() in slot of
+ ReadyRead signal, make sure the signal will not
+ be emitted twice in the slot function.
+ CounterPart test: tst_QLlcpServer::newConnection()
+*/
 void tst_qllcpsockettype2::waitReadyReadInSlot()
 {
     QString message("test waitReadyReadInSlot");
@@ -782,7 +787,7 @@ private:
     QLlcpSocket* m_socket;
 };
 /*!
- Description: test delete socket when sending is active
+ Description: Add a case to test delete the socket in the slot when the transmission is still alive.
  CounterPart test: tst_QLlcpServer::newConnection()
 */
 void tst_qllcpsockettype2::deleteSocketWhenInUse()

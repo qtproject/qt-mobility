@@ -72,6 +72,9 @@ private Q_SLOTS:
     void newConnection_wait_data();
     void api_coverage();  // handshake 3
 
+    //advance test case
+    void multiConnection();
+
     // nagetive testcases
     void negTestCase1();  // handshake 4
 };
@@ -358,8 +361,94 @@ void tst_QLlcpServer::negTestCase1()
 
     server.close();
 }
+/*!
+ Description: Add a llcp2 server which will always
+ run( actually run twice ), then a client in a device connect,
+ after the case finish, another device connect the
+ server again.
 
+ CounterPart: tst_qllcpsockettype2 echo:"0"
+ run this case twice to test multiConnection()
+*/
+void tst_QLlcpServer::multiConnection()
+    {
+    QString uri = TestUri;
+    QString hint ="multiConnection test";
 
+    QLlcpServer server;
+    qDebug() << "Create QLlcpServer completed";
+    qDebug() << "Start listening...";
+    QSignalSpy connectionSpy(&server, SIGNAL(newConnection()));
+
+    bool ret = server.listen(uri);
+    QVERIFY(ret);
+    qDebug() << "Listen() return ok";
+    const int KLoopCount = 2;
+    int loopCount = 0;
+    while(loopCount < KLoopCount)
+        {
+        qDebug() << "#########Loop count = " << loopCount <<" #########";
+        QNfcTestUtil::ShowAutoMsg(hint, &connectionSpy, 1);
+
+        QTRY_VERIFY(!connectionSpy.isEmpty());
+        qDebug() << "try to call nextPendingConnection()";
+        QLlcpSocket *socket = server.nextPendingConnection();
+        QVERIFY(socket != NULL);
+        QSignalSpy readyReadSpy(socket, SIGNAL(readyRead()));
+        QSignalSpy errorSpy(socket, SIGNAL(error(QLlcpSocket::Error)));
+
+        //Get data from client
+        QTRY_VERIFY(!readyReadSpy.isEmpty());
+
+        qDebug() << "Bytes available = " << socket->bytesAvailable();
+        quint16 blockSize = 0;
+        QDataStream in(socket);
+        in.setVersion(QDataStream::Qt_4_6);
+        while (socket->bytesAvailable() < (int)sizeof(quint16)){
+            QSignalSpy readyRead(socket, SIGNAL(readyRead()));
+            QTRY_VERIFY(!readyRead.isEmpty());
+        }
+        in >> blockSize;
+        qDebug()<<"Read blockSize from client: " << blockSize;
+        while (socket ->bytesAvailable() < blockSize){
+            QSignalSpy readyRead(socket, SIGNAL(readyRead()));
+            QTRY_VERIFY(!readyRead.isEmpty());
+        }
+        QString echo;
+        in >> echo;
+        qDebug() << "Read data from client:" << echo;
+        //Send data to client
+        QSignalSpy bytesWrittenSpy(socket, SIGNAL(bytesWritten(qint64)));
+        QByteArray block;
+        QDataStream out(&block, QIODevice::WriteOnly);
+        out.setVersion(QDataStream::Qt_4_6);
+        out << (quint16)0;
+        out << echo;
+        qDebug()<<"Write echoed data back to client";
+        out.device()->seek(0);
+        out << (quint16)(block.size() - sizeof(quint16));
+        qint64 val = socket->write(block);
+        qDebug("Write() return value = %d", val);
+        QVERIFY(val == 0);
+
+        QTRY_VERIFY(!bytesWrittenSpy.isEmpty());
+        qint64 written = bytesWrittenSpy.first().at(0).value<qint64>();
+        qDebug()<<"Server::bytesWritten signal return value = " << written;
+        while (written < block.size())
+            {
+            QSignalSpy bytesWrittenSpy(socket, SIGNAL(bytesWritten(qint64)));
+            QTRY_VERIFY(!bytesWrittenSpy.isEmpty());
+            written += bytesWrittenSpy.first().at(0).value<qint64>();
+            }
+        QVERIFY(written == block.size());
+        //Now data has been sent,check the if existing error
+        QVERIFY(errorSpy.isEmpty());
+
+        connectionSpy.clear();
+        loopCount++;
+        }
+    server.close();
+    }
 QTEST_MAIN(tst_QLlcpServer);
 
 #include "tst_qllcpserver.moc"
