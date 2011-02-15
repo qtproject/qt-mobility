@@ -152,6 +152,11 @@ QNearFieldTarget::RequestId QNearFieldTagType2Symbian::sendCommands(const QList<
     return _sendCommands(commands);
 }
 
+bool QNearFieldTagType2Symbian::hasNdefMessage()
+{
+    return _hasNdefMessage();
+}
+
 void QNearFieldTagType2Symbian::readNdefMessages()
 {
     BEGIN

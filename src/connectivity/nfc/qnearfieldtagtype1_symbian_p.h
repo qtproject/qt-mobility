@@ -77,6 +77,7 @@ public:
     RequestId writeBlock(quint8 blockAddress, const QByteArray &data,
                          WriteMode mode = EraseAndWrite);
 
+    bool hasNdefMessage();
     void readNdefMessages();
     void writeNdefMessages(const QList<QNdefMessage> &messages);
 

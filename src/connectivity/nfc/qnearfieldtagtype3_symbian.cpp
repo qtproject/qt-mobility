@@ -97,6 +97,7 @@ QVariant QNearFieldTagType3Symbian::decodeResponse(const QByteArray & command, c
 
 bool QNearFieldTagType3Symbian::hasNdefMessage()
 {
+#if 0
     BEGIN
     bool hasNdef = false;
     QList<quint16> blockList;
@@ -124,6 +125,8 @@ bool QNearFieldTagType3Symbian::hasNdefMessage()
     }
     END
     return hasNdef;
+#endif
+    return _hasNdefMessage();
 }
 
 void QNearFieldTagType3Symbian::readNdefMessages()

@@ -306,6 +306,11 @@ QNearFieldTarget::RequestId QNearFieldTagType1Symbian::writeBlock(quint8 blockAd
     return sendCommand(command);
 }
 
+bool QNearFieldTagType1Symbian::hasNdefMessage()
+{
+    return _hasNdefMessage();
+}
+
 void QNearFieldTagType1Symbian::readNdefMessages()
 {
     BEGIN
