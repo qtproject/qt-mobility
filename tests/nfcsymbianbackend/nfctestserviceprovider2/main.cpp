@@ -1,45 +1,13 @@
-/****************************************************************************
-**
-** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
-** All rights reserved.
-** Contact: Nokia Corporation (qt-info@nokia.com)
-**
-** This file is part of the Qt Mobility Components.
-**
-** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
-** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
-**
-** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
-** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
-**
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
-**
-**
-**
-**
-**
-**
-**
-**
-** $QT_END_LICENSE$
-**
-****************************************************************************/
+/*
+============================================================================
+ Name		: nfctestserviceprovider2.cpp
+ Author	  : 
+ Copyright   : Your copyright notice
+ Description : Main GUI Application
+============================================================================
+*/
 
-#include "nfctestserviceprovider.h"
+#include "nfctestserviceprovider2.h"
 
 #include <QtGui>
 #include <QApplication>
@@ -64,7 +32,7 @@ using namespace std;
 void MyOutputHandler(QtMsgType type, const char *msg) {
     static int fd = -1;
       if (fd == -1)
-          fd = ::open("E:\\nfctestserviceprovider.log", O_WRONLY | O_CREAT);
+          fd = ::open("E:\\nfctestserviceprovider2.log", O_WRONLY | O_CREAT);
 
       ::write(fd, msg, strlen(msg));
       ::write(fd, "\n", 1);
@@ -78,7 +46,7 @@ void MyOutputHandler(QtMsgType type, const char *msg) {
 
 QTM_USE_NAMESPACE
 
-nfctestserviceprovider* w;
+nfctestserviceprovider2* w;
 
 class MyContentHandler : public QObject
 {
@@ -91,13 +59,12 @@ signals:
 public slots:
         void handleMessage(const QNdefMessage& msg, QNearFieldTarget* target)
         {
-        QFile m_file("E:\\testserviceprovider.dat");
+        QFile m_file("E:\\testserviceprovider2.dat");
         m_file.open(QIODevice::ReadWrite | QIODevice::Append);
-        QDataStream *m_dataStream = new QDataStream(&m_file);
+        QDataStream m_dataStream(&m_file);
         QByteArray msgArray = msg.toByteArray();
-        (*m_dataStream) << msgArray;
-        delete m_dataStream;
-                       
+        m_dataStream << msgArray;
+                         
         w->close();
         }
         
@@ -106,7 +73,7 @@ public:
         : QObject(parent)
     {
     qDebug() << " MyContentHandler constructed !!!!!" << endl;
-    connect(this, SIGNAL(userHandleMessage(const QNdefMessage& , QNearFieldTarget* )),
+      connect(this, SIGNAL(userHandleMessage(const QNdefMessage& , QNearFieldTarget* )),
             this, SLOT(handleMessage(const QNdefMessage& , QNearFieldTarget* )));
     }
 
@@ -115,14 +82,14 @@ public:
 void unregisterExampleService()
 {
     QServiceManager m;
-    m.removeService("nfctestserviceprovider");
+    m.removeService("nfctestserviceprovider2");
 }
 
 void registerExampleService()
 {
     unregisterExampleService();
     QServiceManager m;
-    const QString path = QCoreApplication::applicationDirPath() + "/xmldata/nfctestserviceprovider.xml";
+    const QString path = QCoreApplication::applicationDirPath() + "/xmldata/nfctestserviceprovider2.xml";
     qWarning() << "xml path:" << path;
     if (!m.addService(path))
         {
@@ -142,11 +109,11 @@ int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
     
-    w = new nfctestserviceprovider();
-    w->setWindowTitle( "nfc test service provider" );
+    w = new nfctestserviceprovider2();
+    w->setWindowTitle( "nfc test service provider 2" );
     w->showMaximized();
     
-    //qInstallMsgHandler(MyOutputHandler);
+    qInstallMsgHandler(MyOutputHandler);
     
     qRegisterMetaType<QNearFieldTarget*>("QNearFieldTarget*"); 
     qRegisterMetaType<QNdefMessage>("QNdefMessage"); 
@@ -157,7 +124,14 @@ int main(int argc, char *argv[])
     QNearFieldManager manager;
     
     int handle = manager.registerTargetDetectedHandler(&handler, SIGNAL(userHandleMessage(QNdefMessage, QNearFieldTarget*)));
+    
+    QFile m_file("E:\\testserviceprovider2.dat");
+    m_file.open(QIODevice::ReadWrite | QIODevice::Append);
+    QTextStream m_textStream(&m_file);
+    m_textStream << "register handle return " << QString::number(handle);
+            
     int ret = app.exec();
+    
     manager.unregisterTargetDetectedHandler(handle);
     delete w;
     return ret;
