@@ -1336,6 +1336,11 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoPrivate::currentPowerState()
     }
 }
 
+QSystemDeviceInfo::ThermalState QSystemDeviceInfoPrivate::currentThermalState()
+{
+    return QSystemDeviceInfo::UnknownThermal;
+}
+
 QString QSystemDeviceInfoPrivate::imei()
 {
     return DeviceInfo::instance()->phoneInfo()->imei();

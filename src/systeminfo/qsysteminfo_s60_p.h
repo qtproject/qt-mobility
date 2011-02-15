@@ -275,6 +275,7 @@ public:
     QSystemDeviceInfo::Profile currentProfile();
 
     QSystemDeviceInfo::PowerState currentPowerState();
+    QSystemDeviceInfo::ThermalState currentThermalState();
 
     bool currentBluetoothPowerState();
 
@@ -295,6 +296,7 @@ Q_SIGNALS:
     void bluetoothStateChanged(bool);
     void currentProfileChanged(QSystemDeviceInfo::Profile);
     void powerStateChanged(QSystemDeviceInfo::PowerState);
+    void thermalStateChanged(QSystemDeviceInfo::ThermalState);
 
     void wirelessKeyboardConnected(bool connected);//1.2
     void keyboardFlipped(bool open);//1.2
