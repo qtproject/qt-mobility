@@ -81,3 +81,5 @@ bool meegogyroscope::doConnect(){
 const QString meegogyroscope::sensorName(){
     return "gyroscopesensor";
 }
+
+const qreal meegogyroscope::correctionFactor(){return MILLI;}
