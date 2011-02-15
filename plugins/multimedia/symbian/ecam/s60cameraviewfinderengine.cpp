@@ -684,6 +684,9 @@ void S60CameraViewfinderEngine::viewFinderBitmapReady(const CFbsBitmap &bitmap)
 
 void S60CameraViewfinderEngine::handleVisibilityChange(const bool isVisible)
 {
+    if (m_isViewFinderVisible == isVisible)
+        return;
+
     m_isViewFinderVisible = isVisible;
 
     if (m_isViewFinderVisible) {
