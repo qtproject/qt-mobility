@@ -209,7 +209,7 @@ bool QDeclarativeGeoMapObject::isVisible() const
 
 QDeclarativeGeoMapObjectView::QDeclarativeGeoMapObjectView(QDeclarativeItem *parent)
     : QObject(parent), visible_(true), componentCompleted_(false), delegate_(0),
-      model_(0), mapData_(0)
+      model_(0), map_(0)
 {
 }
 
@@ -292,21 +292,21 @@ void QDeclarativeGeoMapObjectView::setDelegate(QDeclarativeComponent *delegate)
     emit delegateChanged();
 }
 
-void QDeclarativeGeoMapObjectView::setMapData(QGeoMapData *data)
+void QDeclarativeGeoMapObjectView::setMapData(QDeclarativeGraphicsGeoMap* map)
 {
-    if (!data || mapData_) // changing mapData_ on the fly not supported
+    if (!map || !map->mapData_) // changing mapData_ on the fly not supported
         return;
-    mapData_ = data;
+    map_ = map;
 }
 
 // Removes and repopulates all items.
 void QDeclarativeGeoMapObjectView::repopulate()
 {
-    if (!componentCompleted_ || !mapData_ || !delegate_ || !model_)
+    if (!componentCompleted_ || !map_ || !map_->mapData_ || !delegate_ || !model_)
         return;
     if (!mapObjects_.isEmpty()) {
         for (int i = 0; i < mapObjects_.size(); ++i) {
-            mapData_->removeMapObject(mapObjects_.at(i)->mapObject());
+            map_->mapData_->removeMapObject(mapObjects_.at(i)->mapObject());
         }
         // Model owns the data, do not delete the pointers.
         mapObjects_.clear();
@@ -321,8 +321,10 @@ void QDeclarativeGeoMapObjectView::repopulate()
          if (!mapObject)
              break;
          mapObject->setVisible(visible_);
+         mapObject->setMap(map_);
          mapObjects_.append(mapObject);
-         mapData_->addMapObject(mapObject->mapObject());
+         map_->mapData_->addMapObject(mapObject->mapObject());
+         map_->objectMap_.insert(mapObject->mapObject(), mapObject);
     }
 }
 
@@ -341,7 +343,6 @@ QDeclarativeGeoMapObject* QDeclarativeGeoMapObjectView::createItem(int modelRow)
     QDeclarativeContext *itemContext = new QDeclarativeContext(qmlContext(this));
     while (iterator.hasNext()) {
         iterator.next();
-
         QVariant modelData = model_->data(index, iterator.key());
         if (!modelData.isValid())
             continue;
@@ -362,6 +363,7 @@ QDeclarativeGeoMapObject* QDeclarativeGeoMapObjectView::createItem(int modelRow)
         // This however needs to be figured out if model support is generalized.
     }
     QObject* obj = delegate_->create(itemContext);
+
     if (!obj) {
         qWarning() << "QDeclarativeGeoMapObject map object creation failed.";
         delete itemContext;
@@ -373,7 +375,7 @@ QDeclarativeGeoMapObject* QDeclarativeGeoMapObjectView::createItem(int modelRow)
         delete itemContext;
         return NULL;
     }
-    delete itemContext;
+    itemContext->setParent(declMapObj);
     return declMapObj;
 }
 

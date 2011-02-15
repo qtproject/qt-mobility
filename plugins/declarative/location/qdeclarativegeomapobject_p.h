@@ -112,7 +112,7 @@ public:
     QDeclarativeComponent *delegate() const;
     void setDelegate(QDeclarativeComponent*);
 
-    void setMapData(QGeoMapData *);
+    void setMapData(QDeclarativeGraphicsGeoMap*);
     void repopulate();
 
     void setVisible(bool visible);
@@ -138,7 +138,7 @@ private:
     QDeclarativeComponent *delegate_;
     QVariant modelVariant_;
     QAbstractItemModel* model_;
-    QGeoMapData *mapData_;
+    QDeclarativeGraphicsGeoMap *map_;
 };
 
 QTM_END_NAMESPACE

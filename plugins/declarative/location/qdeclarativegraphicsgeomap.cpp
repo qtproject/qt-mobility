@@ -185,7 +185,7 @@ void QDeclarativeGraphicsGeoMap::setupMapViews()
         return;
     for (int i = 0; i < mapViews_.size(); ++i) {
         QDeclarativeGeoMapObjectView *mapView = mapViews_.at(i);
-        mapView->setMapData(mapData_);
+        mapView->setMapData(this);
         mapView->repopulate();
     }
 }
@@ -656,6 +656,10 @@ void QDeclarativeGraphicsGeoMap::mousePressEvent(QGraphicsSceneMouseEvent *event
         return;
     }
 
+    // First deliver the mouse event to possible map objects (they will accept it if
+    // they have their own mouse area). If no accepting objects, check if the map
+    // object itself has any mouse areas. This way the map objects have higher priority
+    // in mouse event handling.
     QList<QGeoMapObject*> objects = mapData_->mapObjectsAtScreenPosition(event->pos());
 
     QDeclarativeGeoMapMouseEvent *mouseEvent = createMapMouseEvent(event);
