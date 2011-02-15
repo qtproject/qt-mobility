@@ -41,7 +41,13 @@
 
 #include <QtTest/QtTest>
 
+#include "testhelper.h"
+
 #include "qgeomapobject.h"
+#include "qgraphicsgeomap.h"
+#include <QGraphicsRectItem>
+#include <QPointer>
+#include <QGraphicsTextItem>
 
 QTM_USE_NAMESPACE
 
@@ -51,10 +57,72 @@ class tst_QGeoMapObject : public QObject
 
 private slots:
     void init();
+    void cleanup();
+
+    void holdsGraphicsItem();
+    void ownsGraphicsItem();
+    void type();
+
+
+private:
+    TestHelper *m_helper;
 };
 
 void tst_QGeoMapObject::init()
 {
+    m_helper = new TestHelper();
+    QGraphicsGeoMap *map = m_helper->map();
+
+    if (!map)
+        QFAIL("Could not create map!");
+}
+
+void tst_QGeoMapObject::cleanup()
+{
+    delete m_helper;
+    m_helper = 0;
+}
+
+void tst_QGeoMapObject::ownsGraphicsItem()
+{
+    QPointer<QGeoMapObject> obj = new QGeoMapObject;
+    QPointer<QGraphicsTextItem> ri = new QGraphicsTextItem;
+    obj->setGraphicsItem(ri);
+
+    delete obj;
+    QVERIFY(!ri);
+}
+
+void tst_QGeoMapObject::holdsGraphicsItem()
+{
+    QGeoMapObject *obj = new QGeoMapObject;
+
+    QVERIFY(!obj->graphicsItem());
+
+    QGraphicsRectItem *ri = new QGraphicsRectItem;
+    obj->setGraphicsItem(ri);
+
+    QCOMPARE(obj->graphicsItem(), ri);
+
+    obj->setGraphicsItem(0);
+    delete ri;
+    delete obj;
+}
+
+void tst_QGeoMapObject::type()
+{
+    QGeoMapObject *obj = new QGeoMapObject;
+
+    QCOMPARE(obj->type(), QGeoMapObject::NullType);
+
+    QGraphicsRectItem *ri = new QGraphicsRectItem;
+
+    obj->setGraphicsItem(ri);
+    QCOMPARE(obj->type(), QGeoMapObject::CustomType);
+
+    obj->setGraphicsItem(0);
+    delete ri;
+    delete obj;
 }
 
 QTEST_MAIN(tst_QGeoMapObject)

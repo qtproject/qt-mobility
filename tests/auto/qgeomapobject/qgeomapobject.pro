@@ -5,10 +5,14 @@ TARGET=tst_qgeomapobject
 include (../../../common.pri)
 
 INCLUDEPATH += ../../../src/location \
-                ../../../src/location/maps
+                ../../../src/location/maps \
+                ../qgeomapobjectplugin
 
 # Input
-SOURCES += tst_qgeomapobject.cpp
+SOURCES += tst_qgeomapobject.cpp \
+            ../qgeomapobjectplugin/testhelper.cpp
+
+HEADERS += ../qgeomapobjectplugin/testhelper.h
 
 CONFIG += mobility
 MOBILITY = location
