@@ -194,12 +194,8 @@ void tst_QDocumentGallery::itemTypeProperties_data()
     );
     QTest::newRow("PhotoAlbum") << QString(QDocumentGallery::PhotoAlbum) << (QStringList()
 #if defined(Q_OS_UNIX) && !defined(QT_NO_DBUS)
-                << QDocumentGallery::title
-#if defined (Q_WS_MAEMO_6)
                 << QDocumentGallery::count
-#else
-                << QDocumentGallery::trackCount
-#endif
+                << QDocumentGallery::title
 #elif defined (Q_OS_SYMBIAN)
                 << QDocumentGallery::url
                 << QDocumentGallery::title

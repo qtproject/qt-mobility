@@ -116,9 +116,13 @@ QTM_BEGIN_NAMESPACE
 
     \section3 Common item properties
 
-    Currently on Maemo, all properties listed below are available for file
-    types, but only the \l title property is available for the categorical
-    types.
+    Currently on Maemo, only the \l title property is available for the
+    categorical types. For Maemo 6, all these properties are supported for
+    file types.
+
+    For Maemo 5, \l comments is only supported for \l Document. The property of
+    \l description is not supported by \l Document, \l Video, and \l Playlist.
+    Also, \l rating is not supported for \l Document.
 
     On Symbian, for file types, \l keywords and \l subject are not supported,
     and \l language is only supported for \l Video; for categorical types, only
@@ -534,7 +538,7 @@ Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, fileName)
 
     This property contains the file extension of a file.
 
-    Note that this property is not supported on Symbian.
+    Note that this property is not supported on Symbian and Maemo 5.
 */
 
 Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, fileExtension)
@@ -587,6 +591,8 @@ Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, pageCount)
     \variable QDocumentGallery::wordCount
 
     This property contains the number of words in document.
+
+    This property for \l Text is not supported on Maemo 5.
 */
 
 Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, wordCount)
@@ -595,6 +601,8 @@ Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, wordCount)
     \variable QDocumentGallery::created
 
     This property contains the date and time a document was created.
+
+    This property is not supported on Maemo 5.
 */
 
 Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, created)
@@ -614,7 +622,8 @@ Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, duration)
 
     This property contains the name of the producer of a media file.
 
-    Note that the producer for Audio is not supported on Maemo.
+    Note that this property for \l Audio is not supported on Maemo,
+    for \l Video is not supported on Maemo 5.
 
     This property is not supported on Symbian for neither \l Audio
     nor \l Video.
@@ -629,6 +638,8 @@ Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, producer)
     played.
 
     Note that this property is not supported on Symbian.
+
+    This property for \l Video is not supported on Maemo 5.
 */
 
 Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, lastPlayed)
@@ -646,6 +657,8 @@ Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, playCount)
     \variable QDocumentGallery::performer
 
     This property contains the names of performers in a media file.
+
+    Note that this property for \l Video is not supported on Maemo 5.
 */
 
 Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, performer)
@@ -658,7 +671,7 @@ Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, performer)
     This property contains the name of the codec used to encode audio in a media
     file.
 
-    Note that this property for Video is not supported on Symbian.
+    Note that this property for Video is not supported on Symbian and Maemo 5.
 */
 
 Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, audioCodec)
@@ -668,7 +681,7 @@ Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, audioCodec)
 
     This property contains the bit rate of the audio in a media file.
 
-    Note that this property for Video is not supported on Symbian.
+    Note that this property for Video is not supported on Symbian and Maemo 5.
 */
 
 Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, audioBitRate)
@@ -678,7 +691,7 @@ Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, audioBitRate)
 
     This property contains the sample rate of the audio in a media file.
 
-    Note that this property for Video is not supported on Symbian.
+    Note that this property for Video is not supported on Symbian and Maemo 5.
 */
 
 Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, sampleRate)
@@ -688,6 +701,8 @@ Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, sampleRate)
     This property contains the number of audio channels in a media file.
 
     Note that this property is not supported on Symbian.
+
+    This property for \l Video is not supported on Maemo 5.
 */
 
 Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, channelCount)
@@ -722,6 +737,8 @@ Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, albumTitle)
     \variable QDocumentGallery::composer
 
     This property contains the name of the composer of a music track.
+
+    This property is not supported on Maemo 5.
 */
 
 Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, composer)
@@ -925,7 +942,7 @@ Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, resumePosition)
 
     This property contains the name of the director of a video.
 
-    Note that this property is not supported on Symbian.
+    Note that this property is not supported on Symbian and Maemo 5.
 */
 
 Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, director)

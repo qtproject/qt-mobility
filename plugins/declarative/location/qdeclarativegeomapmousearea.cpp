@@ -55,7 +55,7 @@ QTM_BEGIN_NAMESPACE
     \ingroup qml-location-maps
 
    A MapMouseArea is an invisible item that is typically used in conjunction
-   with a visible map objec or map item in order to provide mouse handling.
+   with a visible map object or map item in order to provide mouse handling.
    By effectively acting as a proxy, the logic for mouse handling can be
    contained within a MapMouseArea item.
 

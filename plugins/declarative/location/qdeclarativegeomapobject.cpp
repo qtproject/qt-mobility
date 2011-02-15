@@ -208,7 +208,8 @@ bool QDeclarativeGeoMapObject::isVisible() const
 */
 
 QDeclarativeGeoMapObjectView::QDeclarativeGeoMapObjectView(QDeclarativeItem *parent)
-    : QObject(parent), componentCompleted_(false), delegate_(0), model_(0), mapData_(0)
+    : QObject(parent), visible_(true), componentCompleted_(false), delegate_(0),
+      model_(0), mapData_(0)
 {
 }
 
@@ -319,6 +320,7 @@ void QDeclarativeGeoMapObjectView::repopulate()
          mapObject = createItem(i);
          if (!mapObject)
              break;
+         mapObject->setVisible(visible_);
          mapObjects_.append(mapObject);
          mapData_->addMapObject(mapObject->mapObject());
     }
@@ -374,6 +376,34 @@ QDeclarativeGeoMapObject* QDeclarativeGeoMapObjectView::createItem(int modelRow)
     delete itemContext;
     return declMapObj;
 }
+
+/*!
+    \qmlproperty bool MapObjectView::visible
+
+    This property holds whether the delegate objects created from the
+    model are visible or not. Default value is true.
+
+*/
+
+void QDeclarativeGeoMapObjectView::setVisible(bool visible)
+{
+    if (visible_ == visible)
+        return;
+    visible_ = visible;
+
+     if (!mapObjects_.isEmpty()) {
+         for (int i = 0; i < mapObjects_.count(); ++i) {
+             mapObjects_.at(i)->setVisible(visible_);
+         }
+     }
+     emit visibleChanged();
+}
+
+bool QDeclarativeGeoMapObjectView::isVisible() const
+{
+    return visible_;
+}
+
 
 #include "moc_qdeclarativegeomapobject_p.cpp"
 
