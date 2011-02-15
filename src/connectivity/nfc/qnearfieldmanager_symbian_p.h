@@ -50,6 +50,7 @@
 #include <QtCore/QObject>
 #include <QtCore/QMetaMethod>
 #include <QPointer>
+#include <QList>
 #include <qremoteserviceregister.h>
 
 class CNearFieldManager;
@@ -122,6 +123,7 @@ private:
     CNearFieldManager* m_symbianbackend;
 
     QPointer<QNearFieldTarget> m_target;
+    QList<QPointer<QNearFieldTarget> > m_targetList;
     //For content handler purpose;
     QObject *m_chobject;
     QMetaMethod m_chmethod;
