@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010-2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -212,7 +212,7 @@ CCellNetworkInfo::CCellNetworkInfo(CTelephony &telephony) : CTelephonyInfo(telep
     m_cellId = m_networkInfoV1.iCellId;
     m_locationAreaCode = m_networkInfoV1.iLocationAreaCode;
 
-	TBuf<CTelephony::KNetworkIdentitySize> networkId = m_networkInfoV1.iNetworkId;
+    TBuf<CTelephony::KNetworkIdentitySize> networkId = m_networkInfoV1.iNetworkId;
     m_networkId = QString::fromUtf16(networkId.Ptr(), networkId.Length());
     m_previousNetworkId = m_networkId;
 
@@ -241,6 +241,7 @@ void CCellNetworkInfo::RunL()
     if (m_initializing) {
         CTelephonyInfo::RunL();
     } else {
+        if (iStatus != KErrNone) return; //To avoid looping if app doesn't have ReadDeviceData Cap
         m_cellId = m_networkInfoV1.iCellId;
         m_locationAreaCode = m_networkInfoV1.iLocationAreaCode;
 
@@ -347,6 +348,7 @@ void CCellNetworkRegistrationInfo::RunL()
     if (m_initializing) {
         CTelephonyInfo::RunL();
     } else {
+        if (iStatus != KErrNone) return; //To avoid looping if app doesn't have ReadDeviceData Cap
         m_networkStatus = m_networkRegistrationV1.iRegStatus;
 
         foreach (MTelephonyInfoObserver *observer, m_observers) {
@@ -401,6 +403,7 @@ void CCellSignalStrengthInfo::RunL()
     if (m_initializing) {
         CTelephonyInfo::RunL();
     } else {
+        if (iStatus != KErrNone) return; //To avoid looping if app doesn't have ReadDeviceData Cap
         m_cellNetworkSignalStrength = m_signalStrengthV1.iSignalStrength;
         m_signalBar = m_signalStrengthV1.iBar;
 
