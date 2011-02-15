@@ -45,28 +45,42 @@
 
 #include "qgeomapobject.h"
 #include "qgraphicsgeomap.h"
+#include "qgeocoordinate.h"
 #include <QGraphicsRectItem>
 #include <QPointer>
 #include <QGraphicsTextItem>
+#include <QGraphicsEllipseItem>
+#include <QSignalSpy>
 
 QTM_USE_NAMESPACE
+
+Q_DECLARE_METATYPE(QGeoCoordinate)
 
 class tst_QGeoMapObject : public QObject
 {
     Q_OBJECT
 
 private slots:
+    void initTestCase();
+
     void init();
     void cleanup();
 
+    // basic property tests
     void holdsGraphicsItem();
     void ownsGraphicsItem();
     void type();
-
+    void holdsVisible();
+    void holdsOrigin();
 
 private:
     TestHelper *m_helper;
 };
+
+void tst_QGeoMapObject::initTestCase()
+{
+    qRegisterMetaType<QGeoCoordinate>();
+}
 
 void tst_QGeoMapObject::init()
 {
@@ -99,10 +113,12 @@ void tst_QGeoMapObject::holdsGraphicsItem()
 
     QVERIFY(!obj->graphicsItem());
 
+    QSignalSpy spy(obj, SIGNAL(graphicsItemChanged(QGraphicsItem*)));
     QGraphicsRectItem *ri = new QGraphicsRectItem;
     obj->setGraphicsItem(ri);
 
-    QCOMPARE(obj->graphicsItem(), ri);
+    QVERIFY(spy.count() == 1);
+    QVERIFY(obj->graphicsItem() == ri);
 
     obj->setGraphicsItem(0);
     delete ri;
@@ -122,6 +138,40 @@ void tst_QGeoMapObject::type()
 
     obj->setGraphicsItem(0);
     delete ri;
+    delete obj;
+}
+
+void tst_QGeoMapObject::holdsVisible()
+{
+    QGeoMapObject *obj = new QGeoMapObject;
+
+    QVERIFY(obj->isVisible());
+    QSignalSpy spy(obj, SIGNAL(visibleChanged(bool)));
+
+    obj->setVisible(true);
+    QCOMPARE(spy.count(), 0);
+
+    obj->setVisible(false);
+    QCOMPARE(spy.count(), 1);
+    QVERIFY(!obj->isVisible());
+
+    delete obj;
+}
+
+void tst_QGeoMapObject::holdsOrigin()
+{
+    QGeoMapObject *obj = new QGeoMapObject;
+
+    QCOMPARE(obj->origin(), QGeoCoordinate());
+
+    QSignalSpy spy(obj, SIGNAL(originChanged(QGeoCoordinate)));
+
+    QGeoCoordinate c(10, 5);
+    obj->setOrigin(c);
+
+    QCOMPARE(spy.count(), 1);
+    QCOMPARE(obj->origin(), c);
+
     delete obj;
 }
 
