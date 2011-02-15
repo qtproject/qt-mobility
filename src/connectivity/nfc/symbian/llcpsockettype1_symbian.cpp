@@ -655,7 +655,7 @@ TInt CLlcpSenderType1::Transfer(const TDesC8& aData)
     if (error == KErrNone)
         {
         iTransmitBuf.Append(aData);
-        iCurrentSendBufPos = supportedDataLength;
+
         if (iTransmitBuf.Length() > supportedDataLength)
             {
             iCurrentSendBufPtr.Set(iTransmitBuf.Ptr(), supportedDataLength);
@@ -664,6 +664,7 @@ TInt CLlcpSenderType1::Transfer(const TDesC8& aData)
             {
             iCurrentSendBufPtr.Set(iTransmitBuf.Ptr(), iTransmitBuf.Length());
             }
+		iCurrentSendBufPos = iCurrentSendBufPtr.Length();
         // Sending data, don't need check active, external func has checked it
         iTempSendBuf.Close();
         iTempSendBuf.Create(iCurrentSendBufPtr);
@@ -685,9 +686,16 @@ void CLlcpSenderType1::RunL(void)
     // Sending error, notify user
     if (KErrNone != error)
         {
-        iSendObserver.WriteComplete(error, iCurrentSendBufPtr.Length());
+        // Return buffer's length which has been sent successfully.
+        iSendObserver.WriteComplete(error, iCurrentSendBufPos - iCurrentSendBufPtr.Length());
         return;
         }
+    else
+        {
+        // Sent signal for each successful sending
+        iSendObserver.WriteComplete(error, iCurrentSendBufPtr.Length());
+        }
+
     // Still have some buffer need send, don't stop
     if (iCurrentSendBufPos < iTransmitBuf.Length())
         {
@@ -716,10 +724,6 @@ void CLlcpSenderType1::RunL(void)
         iTempSendBuf.Create(iCurrentSendBufPtr);
         iConnection.Transmit(iStatus, iTempSendBuf);
         SetActive();
-        }
-    else
-        {
-        iSendObserver.WriteComplete(error, iCurrentSendBufPos);
         }
     END
     }
