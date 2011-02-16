@@ -465,7 +465,8 @@ void QGeoMapObject::setGraphicsItem(QGraphicsItem *item)
         return;
 
     d_ptr->graphicsItem = item;
-    item->setZValue(this->zValue());
+    if (item)
+        item->setZValue(this->zValue());
     emit graphicsItemChanged(item);
     update();
 }
