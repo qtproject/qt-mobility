@@ -503,12 +503,9 @@ void S60CameraViewfinderEngine::startViewfinder(const bool internalStart)
                 return;
             }
 
-            if (size.iWidth != m_viewfinderSize.width() || size.iHeight != m_viewfinderSize.height())
-                m_actualViewFinderSize = QSize(size.iWidth, size.iHeight);
-
-                // Notify control about the different than requested frame size
-                if (m_viewfinderDisplay)
-                    m_viewfinderDisplay->setNativeSize(m_actualViewFinderSize);
+            m_actualViewFinderSize = QSize(size.iWidth, size.iHeight);
+            if (m_viewfinderDisplay)
+                m_viewfinderDisplay->setNativeSize(m_actualViewFinderSize);
         }
     }
 }
@@ -562,8 +559,11 @@ void S60CameraViewfinderEngine::resetViewfinderSize(const QSize size)
 {
     m_viewfinderSize = size;
 
-    if(m_vfState != EVFIsConnectedIsStartedIsVisible)
+    if(m_vfState != EVFIsConnectedIsStartedIsVisible) {
+        if (m_viewfinderDisplay)
+            m_viewfinderDisplay->setNativeSize(m_actualViewFinderSize);
         return;
+    }
 
     stopViewfinder(true);
 
