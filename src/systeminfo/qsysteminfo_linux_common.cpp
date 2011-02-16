@@ -1356,7 +1356,7 @@ void QSystemStorageInfoLinuxCommonPrivate::mountEntries()
 }
 
 QSystemDeviceInfoLinuxCommonPrivate::QSystemDeviceInfoLinuxCommonPrivate(QObject *parent)
-    : QObject(parent)
+    : QObject(parent), btPowered(0)
 {
     halIsAvailable = halAvailable();
     setConnection();
