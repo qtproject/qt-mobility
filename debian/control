@@ -35,7 +35,7 @@ Depends: ${shlibs:Depends}, ${misc:Depends}, libqtm-common-dev(= ${binary:Versio
  libqtm-organizer-dev(= ${binary:Version}), libqtm-publishsubscribe-dev(= ${binary:Version}),
  libqtm-sensors-dev(= ${binary:Version}), libqtm-serviceframework-dev(= ${binary:Version}),
  libqtm-systeminfo-dev(= ${binary:Version}), libqtm-versit-dev(= ${binary:Version}),
- libqtm-versitorganizer-dev(= ${binary:Version})
+ libqtm-versitorganizer-dev(= ${binary:Version}), libqtm-connectivity-dev(= ${binary:Version})
 Description: Qt Mobility development package
  Qt Mobility Project delivers a set of new APIs to Qt with features that are
  well known from the mobile device world, in particular phones. However,
