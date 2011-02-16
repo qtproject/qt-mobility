@@ -79,7 +79,11 @@ WId QGstreamerVideoOverlay::winId() const
 
 void QGstreamerVideoOverlay::setWinId(WId id)
 {
+    bool wasReady = isReady();
     m_surface->setWinId(id);
+
+    if (isReady() != wasReady)
+        emit readyChanged(!wasReady);
 }
 
 QRect QGstreamerVideoOverlay::displayRect() const
