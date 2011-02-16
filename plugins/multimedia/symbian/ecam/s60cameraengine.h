@@ -195,7 +195,8 @@ public:
     void StartDirectViewFinderL(RWsSession& aSession,
                                 CWsScreenDevice& aScreenDevice,
                                 RWindowBase& aWindow,
-                                TRect& aSize);
+                                TRect& aScreenRect,
+                                TRect& aClipRect);
 
     /**
      * Releases memory for the last received viewfinder frame.

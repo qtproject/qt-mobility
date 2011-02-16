@@ -175,11 +175,17 @@ void S60AudioPlayerSession::updateMetaDataEntriesL()
 
 void S60AudioPlayerSession::setPlaybackRate(qreal rate)
 {
-    /*set playback rate is not supported so returning 
-    not supported error.*/
-	Q_UNUSED(rate);
-    int err = KErrNotSupported;
-    setError(err);
+    /*Since AudioPlayerUtility doesn't support set playback rate hence
+     * setPlaybackRate emits playbackRateChanged signal for 1.0x ie normal playback.
+     * For all other playBackRates it sets and emits error signal.
+    */
+    if (rate == 1.0) {
+        emit playbackRateChanged(rate);
+        return;
+    } else {
+        int err = KErrNotSupported;
+        setAndEmitError(err);
+    }
 }
 
 int S60AudioPlayerSession::doGetBufferStatusL() const
@@ -197,6 +203,8 @@ void S60AudioPlayerSession::MapcInitComplete(TInt aError, const TTimeIntervalMic
 {
     Q_UNUSED(aDuration);
     setError(aError);
+    if (KErrNone != aError)
+        return;
 #ifdef HAS_AUDIOROUTING    
     TRAPD(err, 
         m_audioOutput = CAudioOutput::NewL(*m_player);

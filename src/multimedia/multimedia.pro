@@ -167,8 +167,16 @@ maemo5 {
     LIBS += -lXv  -lX11 -lXext
 }
 
-maemo6|symbian {
+maemo6 {
     SOURCES += qgraphicsvideoitem_overlay.cpp
+}
+
+symbian {
+    contains(surfaces_s60_enabled, yes) {
+        SOURCES += qgraphicsvideoitem_symbian.cpp
+    } else {
+        SOURCES += qgraphicsvideoitem_overlay.cpp
+    }
 }
 
 !maemo*:!symbian {

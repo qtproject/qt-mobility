@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,81 +39,50 @@
 **
 ****************************************************************************/
 
-#ifndef QGSTREAMERVIDEOOVERLAY_H
-#define QGSTREAMERVIDEOOVERLAY_H
+#ifndef S60VIDEOWINDOWCONTROL_H
+#define S60VIDEOWINDOWCONTROL_H
 
 #include <qvideowindowcontrol.h>
 
-#include "qgstreamervideorendererinterface.h"
-
-QT_BEGIN_NAMESPACE
-class QAbstractVideoSurface;
-QT_END_NAMESPACE
-class QX11VideoSurface;
-
-#if defined(Q_WS_X11) && !defined(QT_NO_XVIDEO)
+class S60VideoWindowDisplay;
 
 QT_USE_NAMESPACE
 
-class QGstreamerVideoOverlay : public QVideoWindowControl, public QGstreamerVideoRendererInterface
+class S60VideoWindowControl : public QVideoWindowControl
 {
     Q_OBJECT
-    Q_INTERFACES(QGstreamerVideoRendererInterface)
 public:
-    QGstreamerVideoOverlay(QObject *parent = 0);
-    ~QGstreamerVideoOverlay();
+    S60VideoWindowControl(QObject *parent);
+    ~S60VideoWindowControl();
 
+public:
+    // QVideoWindowControl
     WId winId() const;
     void setWinId(WId id);
-
     QRect displayRect() const;
     void setDisplayRect(const QRect &rect);
-
     bool isFullScreen() const;
     void setFullScreen(bool fullScreen);
-
+    void repaint();
     QSize nativeSize() const;
-
     Qt::AspectRatioMode aspectRatioMode() const;
     void setAspectRatioMode(Qt::AspectRatioMode mode);
-
-    void repaint();
-
+    QSize customAspectRatio() const;
+    void setCustomAspectRatio(const QSize &customRatio);
     int brightness() const;
     void setBrightness(int brightness);
-
     int contrast() const;
     void setContrast(int contrast);
-
     int hue() const;
     void setHue(int hue);
-
     int saturation() const;
     void setSaturation(int saturation);
 
-    QAbstractVideoSurface *surface() const;
-
-    GstElement *videoSink();
-
-    bool isReady() const { return winId() != 0; }
-
-signals:
-    void sinkChanged();
-    void readyChanged(bool);
-
-private slots:
-    void surfaceFormatChanged();
+    S60VideoWindowDisplay *display() const;
 
 private:
-    void setScaledDisplayRect();
-
-    QX11VideoSurface *m_surface;
-    GstElement *m_videoSink;
-    Qt::AspectRatioMode m_aspectRatioMode;
-    QRect m_displayRect;
-    bool m_fullScreen;
+    S60VideoWindowDisplay *m_display;
 };
 
-#endif //QT_NO_XVIDEO
+#endif // S60VIDEOWINDOWCONTROL_H
 
-#endif

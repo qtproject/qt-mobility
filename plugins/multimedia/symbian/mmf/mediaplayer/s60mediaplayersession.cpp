@@ -574,6 +574,16 @@ void S60MediaPlayerSession::setError(int error, const QString &errorString, bool
     }
 }
 
+void S60MediaPlayerSession::setAndEmitError(int error)
+{
+    m_error = error;
+    QMediaPlayer::Error rateError = fromSymbianErrorToMultimediaError(error);
+    QString symbianError;
+    symbianError.append("Symbian:");
+    symbianError.append(QString::number(error));
+    emit this->error(rateError, symbianError);
+}
+
 void S60MediaPlayerSession::tick()
 {
     emit positionChanged(position());
