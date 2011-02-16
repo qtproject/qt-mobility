@@ -395,22 +395,33 @@ bool S60CameraControl::canChangeProperty(QCameraControl::PropertyChangeType chan
     return returnValue;
 }
 
-void S60CameraControl::setVideoOutput(QObject *output, ViewfinderOutputType type)
+void S60CameraControl::setVideoOutput(QObject *output,
+                                      S60CameraViewfinderEngine::ViewfinderOutputType type)
 {
-    switch (type) {
-        case VideoWidgetOutput:
-            m_viewfinderEngine->setVideoWidgetControl(output);
-            break;
-        case VideoRendererOutput:
-            m_viewfinderEngine->setVideoRendererControl(output);
-            break;
-        case VideoWindowOutput:
-            m_viewfinderEngine->setVideoWindowControl(output);
-            break;
-
-        default:
-            break;
+    if (!m_viewfinderEngine) {
+        setError(KErrGeneral, tr("Failed to set viewfinder"));
+        return;
     }
+
+    switch (type) {
+    case S60CameraViewfinderEngine::OutputTypeVideoWidget:
+        m_viewfinderEngine->setVideoWidgetControl(output);
+        break;
+    case S60CameraViewfinderEngine::OutputTypeRenderer:
+        m_viewfinderEngine->setVideoRendererControl(output);
+        break;
+    case S60CameraViewfinderEngine::OutputTypeVideoWindow:
+        m_viewfinderEngine->setVideoWindowControl(output);
+        break;
+
+    default:
+        break;
+    }
+}
+
+void S60CameraControl::releaseVideoOutput(const S60CameraViewfinderEngine::ViewfinderOutputType type)
+{
+    m_viewfinderEngine->releaseControl(type);
 }
 
 void S60CameraControl::loadCamera()

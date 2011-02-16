@@ -125,6 +125,7 @@ public Q_SLOTS:
 protected:
     int error() const;
     void setError(int error,  const QString &errorString = QString(), bool forceReset = false);
+    void setAndEmitError(int error);
     void loaded();
     void buffering();
     void buffered();

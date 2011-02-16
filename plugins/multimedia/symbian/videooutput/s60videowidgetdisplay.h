@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,24 +39,47 @@
 **
 ****************************************************************************/
 
-#ifndef S60VIDEOOUTPUTINTERFACE_H
-#define S60VIDEOOUTPUTINTERFACE_H
+#ifndef S60VIDEOWIDGETDISPLAY_H
+#define S60VIDEOWIDGETDISPLAY_H
 
-#include <QtCore/qglobal.h>
+#include "s60videodisplay.h"
 #include <QtGui/qwindowdefs.h>
-#include <coecntrl.h>
+#include <QtGui/QPixmap>
 
-class S60VideoOutputInterface
+class CFbsBitmap;
+class S60VideoWidget;
+class QWidget;
+
+QT_USE_NAMESPACE
+
+class S60VideoWidgetDisplay : public S60VideoDisplay
 {
+    Q_OBJECT
 public:
-	RWindow *videoWindowHandle() const { return videoWinId() ? static_cast<RWindow *>(videoWinId()->DrawableWindow()) : 0 ; }
-    virtual WId videoWinId() const = 0;
-    // If VIDEOOUTPUT_GRAPHICS_SURFACES is defined, the return value is the video
-    // rectangle relative to the video window.  If not, the return value is the
-    // absolute screen rectangle.
-    virtual QRect videoDisplayRect() const = 0;
-    virtual Qt::AspectRatioMode videoAspectRatio() const = 0;
+    S60VideoWidgetDisplay(QObject *parent);
+    ~S60VideoWidgetDisplay();
+
+    // QObject
+    bool eventFilter(QObject *object, QEvent *e);
+
+    // S60VideoDisplay
+    WId winId() const;
+    QRect extentRect() const;
+    void setFrame(const CFbsBitmap &bitmap);
+
+    QWidget *widget() const;
+    WId topWinId() const;
+    void setTopWinId(WId id);
+    void setOrdinalPosition(int ordinalPosition);
+    int ordinalPosition() const;
+    const QRect &explicitExtentRect() const;
+    void setExplicitExtentRect(const QRect &rect);
+
+private:
+    S60VideoWidget *m_widget;
+    QPixmap m_pixmap;
+    QRect m_explicitExtentRect;
 };
 
-#endif // S60VIDEOOUTPUTINTERFACE_H
+#endif // S60VIDEOWIDGETDISPLAY_H
 

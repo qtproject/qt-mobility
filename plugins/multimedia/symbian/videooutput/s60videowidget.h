@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,24 +39,58 @@
 **
 ****************************************************************************/
 
-#ifndef S60VIDEOOUTPUTINTERFACE_H
-#define S60VIDEOOUTPUTINTERFACE_H
+#ifndef S60VIDEOWIDGET_H
+#define S60VIDEOWIDGET_H
 
-#include <QtCore/qglobal.h>
-#include <QtGui/qwindowdefs.h>
-#include <coecntrl.h>
+#include <QtGui/QWidget>
 
-class S60VideoOutputInterface
+QT_USE_NAMESPACE
+
+class S60VideoWidget : public QWidget
 {
+    Q_OBJECT
 public:
-	RWindow *videoWindowHandle() const { return videoWinId() ? static_cast<RWindow *>(videoWinId()->DrawableWindow()) : 0 ; }
-    virtual WId videoWinId() const = 0;
-    // If VIDEOOUTPUT_GRAPHICS_SURFACES is defined, the return value is the video
-    // rectangle relative to the video window.  If not, the return value is the
-    // absolute screen rectangle.
-    virtual QRect videoDisplayRect() const = 0;
-    virtual Qt::AspectRatioMode videoAspectRatio() const = 0;
+    S60VideoWidget(QWidget *parent = 0);
+    ~S60VideoWidget();
+
+    // QWidget
+    bool event(QEvent *event);
+    void paintEvent(QPaintEvent *event);
+    void setVisible(bool visible);
+
+    WId videoWinId() const;
+    void setPixmap(const QPixmap *pixmap);
+    void setWindowBackgroundColor();
+    void setTopWinId(WId id);
+    WId topWinId() const;
+    void setOrdinalPosition(int ordinalPosition);
+    int ordinalPosition() const;
+
+public slots:
+    void beginNativePaintEvent(const QRect &rect);
+    void endNativePaintEvent(const QRect &rect);
+    void setPaintingEnabled(bool enabled);
+    void setFullScreen(bool enabled);
+    void setContentRect(const QRect &rect);
+
+signals:
+    void beginVideoWidgetNativePaintEvent();
+    void endVideoWidgetNativePaintEvent();
+
+private:
+    void updateOrdinalPosition();
+    void queueReactivateWindow();
+
+private slots:
+    void reactivateWindow(QWidget *window);
+
+private:
+    const QPixmap *m_pixmap;
+    QRect m_contentRect;
+    bool m_paintingEnabled;
+    WId m_topWinId;
+    int m_ordinalPosition;
 };
 
-#endif // S60VIDEOOUTPUTINTERFACE_H
+#endif // S60VIDEOWIDGET_H
 
