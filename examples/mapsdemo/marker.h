@@ -55,6 +55,7 @@ using namespace QtMobility;
 
 class StatusBarItem;
 
+class MarkerPrivate;
 class Marker : public QGeoMapPixmapObject
 {
     Q_OBJECT
@@ -75,12 +76,12 @@ public:
 
     explicit Marker(MarkerType type);
 
-    inline MarkerType markerType() const { return m_type; }
+    MarkerType markerType() const;
     void setMarkerType(MarkerType type);
 
-    inline QString name() const { return m_name; }
-    inline QGeoAddress address() const { return m_address; }
-    inline bool moveable() const { return m_moveable; }
+    QString name() const;
+    QGeoAddress address() const;
+    bool moveable() const;
 
 public slots:
     void setName(QString name);
@@ -94,12 +95,10 @@ signals:
     void moveableChanged(const bool &moveable);
 
 private:
-    MarkerType m_type;
-    QString m_name;
-    bool m_moveable;
-    QGeoAddress m_address;
+    MarkerPrivate *d;
 };
 
+class MarkerManagerPrivate;
 class MarkerManager : public QObject
 {
     Q_OBJECT
@@ -111,7 +110,7 @@ public:
 
 public slots:
     void setMap(QGraphicsGeoMap *map);
-    inline void setStatusBar(StatusBarItem *bar) { m_status = bar; }
+    void setStatusBar(StatusBarItem *bar);
     void setMyLocation(QGeoCoordinate coord);
     void search(QString query, qreal radius=-1);
     void removeSearchMarkers();
@@ -121,21 +120,7 @@ signals:
     void searchFinished();
 
 private:
-    Marker *m_myLocation;
-    QList<Marker*> searchMarkers;
-
-    // a reverse geocode request is currently running
-    bool revGeocodeRunning;
-    // a request is currently running, and my location has changed
-    // since it started (ie, the request is stale)
-    bool myLocHasMoved;
-
-    QGraphicsGeoMap *m_map;
-    StatusBarItem *m_status;
-    QGeoSearchManager *m_searchManager;
-
-    QSet<QGeoSearchReply*> forwardReplies;
-    QSet<QGeoSearchReply*> reverseReplies;
+    MarkerManagerPrivate *d;
 
 private slots:
     void replyFinished(QGeoSearchReply *reply);

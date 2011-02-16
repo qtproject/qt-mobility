@@ -65,6 +65,9 @@ QSystemAlignedTimerPrivate *getSystemAlignedTimerPrivate() { return alignedTimer
   The service is not only for network-aware applications, it is for use by any applications
   that need to periodic wake-ups.
 
+  The recommended use case is when app uses single-shot timer only: set mintime 0 for the first call
+  'to jump to the train' and mintime > 0 after 1st wakeup.
+
 */
 
 /*!
@@ -81,6 +84,7 @@ QSystemAlignedTimerPrivate *getSystemAlignedTimerPrivate() { return alignedTimer
     \value AlignedTimerNotSupported       The aligned timer is not support on this platform
     \value InvalidArgument                Interval arguments are invalid.
     \value TimerFailed                    General timer failure.
+    \value InternalError                  Internal error.
 
   */
 
@@ -125,6 +129,11 @@ QSystemAlignedTimer::~QSystemAlignedTimer()
   */
 void QSystemAlignedTimer::start(int minimumTime, int maximumTime)
 {
+    if (minimumTime > maximumTime || maximumTime <= 0) {
+        d->m_lastError = QSystemAlignedTimer::InvalidArgument;
+        Q_EMIT error(d->m_lastError);
+        return;
+    }
     d->start(minimumTime, maximumTime);
 }
 
@@ -133,14 +142,22 @@ void QSystemAlignedTimer::start(int minimumTime, int maximumTime)
 */
 void QSystemAlignedTimer::start()
 {
+    int minimumTime = minimumInterval();
+    int maximumTime = maximumInterval();
+    if ((minimumTime > maximumTime) || (maximumTime <= 0)) {
+        d->m_lastError = QSystemAlignedTimer::InvalidArgument;
+        Q_EMIT error(d->m_lastError);
+        return;
+    }
     d->start();
 }
 
 /*!
      This should be called when the application wakes up via other means than QSystemAlignedTimer timeout.
 
-    Other applications that are in their wakeup window may be woken up. Single-shot timer is stopped,
-    and reoccuring timer interval will get reset.
+    Other applications that are in their wakeup window *may* be woken up. Single-shot timer is canceled,
+    and reoccuring timer interval will restart.
+
     Symbian does not support this wokeUp call for reoccuring timers and will simply ignore it.
   */
 void QSystemAlignedTimer::wokeUp()
@@ -163,8 +180,10 @@ void QSystemAlignedTimer::stop()
 
    Time in seconds that MUST be waited before timeout.
    Value 0 means 'wake me up when someboy else is woken'.
-   It  is recommended that the first wait (if possible) uses minimum value of 0 to
-   "jump to the train"
+
+   mintime value 0 should be used with special care, as it may cause too frequent wakeups.
+   It is recommended that the first wait (if possible) uses minimum value of 0 to
+   "jump to the train" and minimum value > 0 after 1st wakeup
 
  */
 void QSystemAlignedTimer::setMinimumInterval(int seconds)
@@ -189,7 +208,9 @@ int QSystemAlignedTimer::minimumInterval() const
    Time in seconds when the wait MUST end. It is wise to have maxtime-mintime
    quite big so all users of this service get synced.
    For example if you preferred wait is 120 seconds, use minval 110 and maxval 130.
-   Default value for maxTime is 0. If maxTime is 0, then minTime will be a "preferred" interval.
+
+   max interval must be greater than min interval.
+
  */
 void QSystemAlignedTimer::setMaximumInterval(int seconds)
 {
@@ -210,7 +231,7 @@ int QSystemAlignedTimer::maximumInterval() const
 /*!
   Sets this timer to be a single shot \a singleShot is true, otherwise false.
   */
-inline void QSystemAlignedTimer::setSingleShot(bool singleShot)
+void QSystemAlignedTimer::setSingleShot(bool singleShot)
 {
     d->setSingleShot(singleShot);
 }
@@ -223,12 +244,15 @@ inline void QSystemAlignedTimer::setSingleShot(bool singleShot)
   */
 void QSystemAlignedTimer::singleShot(int minimumTime, int maximumTime, QObject *receiver, const char *member)
 {
+    if (minimumTime > maximumTime || maximumTime <= 0) {
+        return;
+    }
     QSystemAlignedTimerPrivate::singleShot(minimumTime, maximumTime, receiver, member);
 }
 
 /*!
   \property QSystemAlignedTimer::singleShot
-  \brief Whether the timer is single shot.
+  Whether the timer is single shot.
 */
 
 /*!
@@ -246,6 +270,19 @@ bool QSystemAlignedTimer::isSingleShot() const
 QSystemAlignedTimer::AlignedTimerError QSystemAlignedTimer::lastError() const
 {
     return d->lastError();
+}
+
+/*!
+    \property QSystemAlignedTimer::active
+  Returns true if the timer is running; otherwise false.
+*/
+
+/*!
+  Returns true if the timer is running; otherwise false.
+*/
+bool QSystemAlignedTimer::isActive () const
+{
+    return d->isActive();
 }
 
 #include "moc_qsystemalignedtimer.cpp"

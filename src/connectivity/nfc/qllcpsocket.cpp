@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,13 +39,14 @@
 **
 ****************************************************************************/
 
-
 #include "qllcpsocket.h"
 
 #if defined(QT_SIMULATOR)
 #include "qllcpsocket_simulator_p.h"
 #elif defined(Q_OS_SYMBIAN)
 #include "qllcpsocket_symbian_p.h"
+#elif defined(Q_WS_MAEMO_6) || defined(Q_WS_MEEGO)
+#include "qllcpsocket_meego_p.h"
 #else
 #include "qllcpsocket_p.h"
 #endif
@@ -206,6 +207,10 @@ qint64 QLlcpSocket::writeDatagram(const char *data, qint64 size)
     return d->writeDatagram(data, size);
 }
 
+bool QLlcpSocket::isSequential() const
+{
+	return true;
+}
 /*!
     \overload
 

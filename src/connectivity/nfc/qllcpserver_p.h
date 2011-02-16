@@ -48,12 +48,13 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QLlcpServerPrivate
+class QLlcpServerPrivate 
 {
     Q_DECLARE_PUBLIC(QLlcpServer)
 
 public:
     QLlcpServerPrivate(QLlcpServer *q);
+    ~QLlcpServerPrivate();
 
     bool listen(const QString &serviceUri);
     bool isListening() const;

@@ -48,6 +48,9 @@ pinDisplay::pinDisplay(QString title, QString pin, QWidget *parent) :
     ui->setupUi(this);
     ui->label->setText(title);
     ui->pin->setText(pin);
+
+    connect(ui->buttonBox, SIGNAL(accepted()), this, SIGNAL(accepted()));
+    connect(ui->buttonBox, SIGNAL(rejected()), this, SIGNAL(rejected()));
 }
 
 pinDisplay::~pinDisplay()
@@ -58,4 +61,9 @@ pinDisplay::~pinDisplay()
 void pinDisplay::on_buttonBox_accepted()
 {
     deleteLater();
+}
+
+void pinDisplay::setOkCancel()
+{
+    ui->buttonBox->addButton(QDialogButtonBox::Cancel);
 }

@@ -232,10 +232,11 @@ QString QSystemInfoLinuxCommonPrivate::currentLanguage() const
 
 bool QSystemInfoLinuxCommonPrivate::fmTransmitterAvailable()
 {
+    bool available = false;
+#if defined( __LINUX_VIDEODEV2_H)
     static const char *devices[] = {"/dev/radio",
                                     "/dev/radio0",
                                     0};
-    bool available = false;
     int fd;
     struct v4l2_capability capability;
     const char *device;
@@ -262,6 +263,7 @@ next_device:
             close(fd), fd = -1;
         }
     }
+  #endif
     return available;
 }
 

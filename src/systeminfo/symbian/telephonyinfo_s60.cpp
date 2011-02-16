@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010-2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -242,6 +242,7 @@ void CCellNetworkInfo::RunL()
     if (m_initializing) {
         CTelephonyInfo::RunL();
     } else {
+        if (iStatus != KErrNone) return; //To avoid looping if app doesn't have ReadDeviceData caps
         m_cellId = m_networkInfoV1.iCellId;
         m_locationAreaCode = m_networkInfoV1.iLocationAreaCode;
 
@@ -352,6 +353,7 @@ void CCellNetworkRegistrationInfo::RunL()
     if (m_initializing) {
         CTelephonyInfo::RunL();
     } else {
+        if (iStatus != KErrNone) return; //To avoid looping if app doesn't have ReadDeviceData caps
         m_networkStatus = m_networkRegistrationV1.iRegStatus;
 
         foreach (MTelephonyInfoObserver *observer, m_observers) {
@@ -406,6 +408,7 @@ void CCellSignalStrengthInfo::RunL()
     if (m_initializing) {
         CTelephonyInfo::RunL();
     } else {
+        if (iStatus != KErrNone) return; //To avoid looping if app doesn't have ReadDeviceData caps
         m_cellNetworkSignalStrength = m_signalStrengthV1.iSignalStrength;
         m_signalBar = m_signalStrengthV1.iBar;
 

@@ -615,13 +615,13 @@ void TestSymbianEngine::retrieveLimitedAmountContacts()
     
     //retrieve contacts with a fetch hint to limit amount of results
     QContactFetchHint hint;
-    hint.setMaxCount(1);
+    hint.setMaxCountHint(1);
     contacts = m_engine->contacts(QContactFilter(), QList<QContactSortOrder>(), hint, &err);
     QVERIFY(err == QContactManager::NoError);
     QVERIFY(contacts.count() == 1);
     
     //retrieve contacts with an invalid fetch hint to limit amount of results
-    hint.setMaxCount(3);
+    hint.setMaxCountHint(3);
     contacts = m_engine->contacts(QContactFilter(), QList<QContactSortOrder>(), hint, &err);
     QVERIFY(err == QContactManager::NoError);
     QVERIFY(contacts.count() == 2);

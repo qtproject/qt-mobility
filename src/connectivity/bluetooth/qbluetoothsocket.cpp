@@ -107,6 +107,10 @@ _IceTransSocketUNIXConnect: Cannot connect to non-local host saisd        Socket
 
     \value UnknownSocketError       An unknown error has occurred.
     \value ConnectionRefusedError   Connection refused or device not available.
+    \value RemoteHostClosedError    The remote host closed the socket
+    \value HostNotFoundError        Could not find the remote host
+    \value ServiceNotFoundError     Could not find the service UUID on remote host
+    \value NetworkError             Attempt to read or write from socket returned an error
 */
 
 /*!
@@ -243,7 +247,9 @@ QBluetoothSocket::QBluetoothSocket(QObject *parent)
 */
 QBluetoothSocket::~QBluetoothSocket()
 {
+    qDebug() << "Socket destroyed";
     delete d_ptr;
+    d_ptr = 0;
 }
 
 /*!
@@ -404,9 +410,15 @@ void QBluetoothSocket::setSocketState(QBluetoothSocket::SocketState state)
     if(state == ListeningState){
         // TODO: look at this, is this really correct?
         // if we're a listening socket we can't handle connects?
-        d->readNotifier->setEnabled(false);
+        if (d->readNotifier) {
+            d->readNotifier->setEnabled(false);
+        }
     }
 }
+
+/*!
+    Returns true if you can read atleast one line from the device
+ */
 
 bool QBluetoothSocket::canReadLine() const
 {
@@ -415,7 +427,7 @@ bool QBluetoothSocket::canReadLine() const
 }
 
 /*!
-    Sets the type of error that last occurred to \a error.
+    Sets the type of error that last occurred to \a error_.
 */
 void QBluetoothSocket::setSocketError(QBluetoothSocket::SocketError error_)
 {
@@ -423,6 +435,12 @@ void QBluetoothSocket::setSocketError(QBluetoothSocket::SocketError error_)
     d->socketError = error_;
     emit error(error_);
 }
+
+/*!
+  Start device discovery for \a service and open the socket with \a openMode.  If the socket
+  is created with a service uuid device address we must use service discovery to find the
+  port number to connect to.
+*/
 
 void QBluetoothSocket::doDeviceDiscovery(const QBluetoothServiceInfo &service, OpenMode openMode)
 {
@@ -465,9 +483,8 @@ void QBluetoothSocket::discoveryFinished()
 {
     Q_D(QBluetoothSocket);
     if(d->discoveryAgent){
-        qDebug() << "Could not find service";
-        emit error(QBluetoothSocket::UnknownSocketError);
-        delete d->discoveryAgent;
+        emit error(QBluetoothSocket::ServiceNotFoundError);
+        d->discoveryAgent->deleteLater();
         d->discoveryAgent = 0;
     }
 }
@@ -477,7 +494,6 @@ void QBluetoothSocket::abort()
     Q_D(QBluetoothSocket);
     d->abort();
     setSocketState(QBluetoothSocket::UnconnectedState);
-    emit disconnected();
 }
 
 void QBluetoothSocket::disconnectFromService()
@@ -485,7 +501,6 @@ void QBluetoothSocket::disconnectFromService()
     // TODO: is this all we need to do?
     Q_D(QBluetoothSocket);
     d->close();
-    emit disconnected();
 }
 
 QString QBluetoothSocket::localName() const
@@ -546,12 +561,24 @@ void QBluetoothSocket::close()
     setSocketState(UnconnectedState);
 }
 
+/*!
+  Set the socket to use \a socketDescriptor with a type of \a socketType
+  which is in state \a socketState and mode \a openMode.
+
+  Returns true on success
+*/
+
+
 bool QBluetoothSocket::setSocketDescriptor(int socketDescriptor, SocketType socketType,
                                            SocketState socketState, OpenMode openMode)
 {
     Q_D(QBluetoothSocket);
     return d->setSocketDescriptor(socketDescriptor, socketType, socketState, openMode);
 }
+
+/*!
+  Returns the platform specific socket descriptor, if available
+*/
 
 int QBluetoothSocket::socketDescriptor() const
 {
@@ -568,8 +595,23 @@ QDebug operator<<(QDebug debug, QBluetoothSocket::SocketError error)
     case QBluetoothSocket::UnknownSocketError:
         debug << "QBluetoothSocket::UnknownSocketError";
         break;
+    case QBluetoothSocket::ConnectionRefusedError:
+        debug << "QBluetoothSocket::ConnectionRefusedError";
+        break;
+    case QBluetoothSocket::RemoteHostClosedError:
+        debug << "QBluetoothSocket::RemoteHostClosedError";
+        break;
+    case QBluetoothSocket::HostNotFoundError:
+        debug << "QBluetoothSocket::HostNotFoundError";
+        break;
+    case QBluetoothSocket::ServiceNotFoundError:
+        debug << "QBluetoothSocket::ServiceNotFoundError";
+        break;
+    case QBluetoothSocket::NetworkError:
+        debug << "QBluetoothSocket::NetworkError";
+        break;
     default:
-        debug << "QBluetoothSocket::SocketError(" << error << ")";
+        debug << "QBluetoothSocket::SocketError(" << (int)error << ")";
     }
     return debug;
 }
@@ -596,7 +638,7 @@ QDebug operator<<(QDebug debug, QBluetoothSocket::SocketState state)
         debug << "QBluetoothSocket::ListeningState";
         break;
     default:
-        debug << "QBluetoothSocket::SocketState(" << state << ")";
+        debug << "QBluetoothSocket::SocketState(" << (int)state << ")";
     }
     return debug;
 }

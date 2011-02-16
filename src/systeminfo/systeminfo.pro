@@ -86,7 +86,20 @@ unix:!simulator {
             LIBS += -lblkid
         }
 
-        LIBS +=  -lX11 -lXrandr
+         !embedded:!contains(QT_CONFIG,qpa):LIBS +=  -lX11 -lXrandr
+
+        # alignedtimer on Linux/MeeGo
+            contains(iphb_enabled, yes): {
+            SOURCES += qsystemalignedtimer_meego.cpp
+            HEADERS += qsystemalignedtimer_meego_p.h
+            PKGCONFIG += libiphb
+            DEFINES += ALIGNEDTIMER_MEEGO
+            LIBS += -liphb
+        } else {
+            SOURCES += qsystemalignedtimer_stub.cpp
+            HEADERS += qsystemalignedtimer_stub_p.h
+        }
+    }
 
     !maemo5:!maemo6:linux-*: {
             SOURCES += linux/qsysteminfo_linux.cpp
@@ -111,18 +124,6 @@ unix:!simulator {
             HEADERS += linux/qudevservice_linux_p.h
         }
 
-        # alignedtimer on Linux/MeeGo
-        contains(CONFIG,meego): {
-            SOURCES += qsystemalignedtimer_meego.cpp
-            HEADERS += qsystemalignedtimer_meego_p.h
-            PKGCONFIG += libiphb
-            DEFINES += ALIGNEDTIMER_MEEGO
-            LIBS += -liphb
-        } else {
-            SOURCES += qsystemalignedtimer_stub.cpp
-            HEADERS += qsystemalignedtimer_stub_p.h
-        }
-
         contains(networkmanager_enabled, yes): {
                     SOURCES += linux/qnetworkmanagerservice_linux.cpp linux/qnmdbushelper.cpp
                     HEADERS += linux/qnetworkmanagerservice_linux_p.h linux/qnmdbushelper_p.h
@@ -132,7 +133,7 @@ unix:!simulator {
                 contains(CONFIG,meego): { #for now... udisks
                 } else {
                     DEFINES += QT_NO_UDISKS
-                    LIBS += -lX11 -lXrandr
+                     !embedded:!contains(QT_CONFIG,qpa):LIBS +=  -lX11 -lXrandr
                    }
                 contains(connman_enabled, yes): {
 
@@ -143,8 +144,7 @@ unix:!simulator {
                 }
             } else {
                 DEFINES += QT_NO_NETWORKMANAGER QT_NO_UDISKS QT_NO_CONNMAN
-                LIBS += -lX11 -lXrandr
-
+                 !embedded:!contains(QT_CONFIG,qpa):LIBS +=  -lX11 -lXrandr
             }
         }
      }
@@ -161,16 +161,7 @@ unix:!simulator {
                 SOURCES += linux/qhalservice_linux.cpp
                 HEADERS += linux/qhalservice_linux_p.h
        }
-       maemo6: {
-            SOURCES += qsystemalignedtimer_meego.cpp
-            HEADERS += qsystemalignedtimer_meego_p.h
-            DEFINES += ALIGNEDTIMER_MEEGO
-            PKGCONFIG += libiphb
-       }
-       maemo5: {
-           SOURCES += qsystemalignedtimer_stub.cpp
-           HEADERS += qsystemalignedtimer_stub_p.h
-       }
+
 
        PKGCONFIG += glib-2.0 gconf-2.0
        CONFIG += create_pc create_prl
@@ -218,10 +209,9 @@ unix:!simulator {
         contains(S60_VERSION, 3.1){
             DEFINES += SYMBIAN_3_1
         }
-         contains(S60_VERSION, 3.1)|contains(S60_VERSION, 3.2)|contains(S60_VERSION, 5.0) | contains(S60_VERSION, 5.2){
-        } else {
-         DEFINES += SYMBIAN_3_PLATFORM
-            # s60 is not symbian^3
+
+        contains(S60_VERSION, 5.2){
+          DEFINES += SYMBIAN_3_PLATFORM
           SOURCES += lockandflipstatus_s60.cpp \
                      storagedisknotifier_s60.cpp
           HEADERS += lockandflipstatus_s60.h \
