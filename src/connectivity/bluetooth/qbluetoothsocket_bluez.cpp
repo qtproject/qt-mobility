@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -190,9 +190,9 @@ void QBluetoothSocketPrivate::_q_writeNotify()
 void QBluetoothSocketPrivate::_q_readNotify()
 {
     Q_Q(QBluetoothSocket);
-    char *writePointer = buffer.reserve(QBLUETOOTHDEVICE_BUFFERSIZE);
-//    qint64 readFromDevice = q->readData(writePointer, QBLUETOOTHDEVICE_BUFFERSIZE);
-    int readFromDevice = ::read(socket, writePointer, QBLUETOOTHDEVICE_BUFFERSIZE);
+    char *writePointer = buffer.reserve(QPRIVATELINEARBUFFER_BUFFERSIZE);
+//    qint64 readFromDevice = q->readData(writePointer, QPRIVATELINEARBUFFER_BUFFERSIZE);
+    int readFromDevice = ::read(socket, writePointer, QPRIVATELINEARBUFFER_BUFFERSIZE);
     if(readFromDevice <= 0){
         int errsv = errno;
         // TODO: Something seems wrong here
@@ -210,7 +210,7 @@ void QBluetoothSocketPrivate::_q_readNotify()
         q->disconnectFromService();
     }
     else {
-        buffer.chop(QBLUETOOTHDEVICE_BUFFERSIZE - (readFromDevice < 0 ? 0 : readFromDevice));
+        buffer.chop(QPRIVATELINEARBUFFER_BUFFERSIZE - (readFromDevice < 0 ? 0 : readFromDevice));
 
         emit q->readyRead();
     }
