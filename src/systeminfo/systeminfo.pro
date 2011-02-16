@@ -192,6 +192,12 @@ unix:!simulator {
             DEFINES += SYMBIAN_3_1
         }
 
+     contains(symbiancntsim_enabled,yes){
+            LIBS += -letelmm -letel
+            DEFINES += ETELMM_SUPPORTED
+            message("ETELMM enabled")
+            }
+
         contains(S60_VERSION, 5.2){
           DEFINES += SYMBIAN_3_PLATFORM
           SOURCES += lockandflipstatus_s60.cpp \
