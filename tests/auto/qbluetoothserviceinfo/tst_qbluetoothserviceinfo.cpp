@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include <QtTest/QtTest>
+#include <QUuid>
 
 #include <QDebug>
 
@@ -47,8 +48,13 @@
 #include <qbluetoothserviceinfo.h>
 #include <qbluetoothaddress.h>
 #include <qbluetoothlocaldevice.h>
+#include <qbluetoothuuid.h>
 
 QTM_USE_NAMESPACE
+
+Q_DECLARE_METATYPE(QBluetoothUuid::ProtocolUuid)
+Q_DECLARE_METATYPE(QUuid)
+Q_DECLARE_METATYPE(QBluetoothServiceInfo::Protocol)
 
 class tst_QBluetoothServiceInfo : public QObject
 {
@@ -77,6 +83,9 @@ tst_QBluetoothServiceInfo::~tst_QBluetoothServiceInfo()
 
 void tst_QBluetoothServiceInfo::initTestCase()
 {
+    qRegisterMetaType<QBluetoothUuid::ProtocolUuid>("QBluetoothUuid::ProtocolUuid");
+    qRegisterMetaType<QUuid>("QUuid");
+    qRegisterMetaType<QBluetoothServiceInfo::Protocol>("QBluetoothServiceInfo::Protocol");
     // start Bluetooth if not started
     QBluetoothLocalDevice *device = new QBluetoothLocalDevice();
     device->powerOn();
@@ -116,16 +125,20 @@ void tst_QBluetoothServiceInfo::tst_construction()
 
 void tst_QBluetoothServiceInfo::tst_assignment_data()
 {
-    QTest::addColumn<QUuid>("QUuid");
-    QTest::addColumn<QBluetoothUuid::ProtocolUuid>("QBluetoothUuid::ProtocolUuid");
+    QTest::addColumn<QUuid>("uuid");
+    QTest::addColumn<QBluetoothUuid::ProtocolUuid>("protocolUuid");
+    QTest::addColumn<QBluetoothServiceInfo::Protocol>("serviceInfoProtocol");
 
-    QTest::newRow("assignment_data") << QUuid(0x67c8770b, 0x44f1, 0x410a, 0xab, 0x9a, 0xf9, 0xb5, 0x44, 0x6f, 0x13, 0xee) << QBluetoothUuid::L2cap;
+    QTest::newRow("assignment_data")
+        << QUuid(0x67c8770b, 0x44f1, 0x410a, 0xab, 0x9a, 0xf9, 0xb5, 0x44, 0x6f, 0x13, 0xee)
+        << QBluetoothUuid::L2cap << QBluetoothServiceInfo::L2capProtocol;
 }
 
 void tst_QBluetoothServiceInfo::tst_assignment()
 {
     QFETCH(QUuid, uuid);
     QFETCH(QBluetoothUuid::ProtocolUuid, protocolUuid);
+    QFETCH(QBluetoothServiceInfo::Protocol, serviceInfoProtocol);
 
     const QString serviceName("My Service");
     const QBluetoothDeviceInfo deviceInfo(QBluetoothAddress("001122334455"), "Test Device", 0);
@@ -210,7 +223,7 @@ void tst_QBluetoothServiceInfo::tst_assignment()
                                  protocolDescriptorList);
         QVERIFY(copyInfo.serverChannel() == -1);
         QVERIFY(copyInfo.protocolServiceMultiplexer() != -1);
-        QVERIFY(copyInfo.socketProtocol() == protocolUuid);
+        QVERIFY(copyInfo.socketProtocol() == serviceInfoProtocol);
     }
 }
 
