@@ -40,6 +40,11 @@
 ****************************************************************************/
 
 #include "telephonyinfo_s60.h"
+#ifdef ETELMM_SUPPORTED
+#include <etelmm.h>
+#include <mmtsy_names.h>
+#endif
+
 
 CTelephonyInfo::CTelephonyInfo(CTelephony &telephony) : CActive(EPriorityStandard),
     m_telephony(telephony)
