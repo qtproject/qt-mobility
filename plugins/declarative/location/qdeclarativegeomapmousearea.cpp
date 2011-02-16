@@ -165,8 +165,10 @@ bool QDeclarativeGeoMapMouseArea::setPressed(bool pressed, QDeclarativeGeoMapMou
     } else {
         emit released(event);
         // TODO set saved position in event?
-        if (isClick && !longPress_ && !doubleClick_)
+        if (isClick && !longPress_ && !doubleClick_) {
             emit clicked(event);
+
+        }
     }
 
     emit pressedChanged(pressed_);

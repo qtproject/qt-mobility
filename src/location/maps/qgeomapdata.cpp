@@ -711,7 +711,7 @@ void QGeoMapData::paintObjects(QPainter *painter, const QStyleOptionGraphicsItem
 
     QList<QGraphicsItem*> items = e->pixelScene->items(target,
                                                        Qt::IntersectsItemShape,
-                                                       Qt::DescendingOrder);
+                                                       Qt::AscendingOrder);
     QSet<QGeoMapObject*> objsDone;
 
     QTransform baseTrans = painter->transform();
