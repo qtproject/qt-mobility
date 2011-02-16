@@ -55,6 +55,7 @@
 #include <mmf/common/mmfcontrollerframeworkbase.h>
 
 const QString DefaultAudioEndpoint = QLatin1String("Default");
+const TUid KHelixUID = {0x101F8514};
 
 S60VideoPlayerSession::S60VideoPlayerSession(QMediaService *service, S60MediaNetworkAccessControl *object)
     : S60MediaPlayerSession(service)
@@ -69,10 +70,10 @@ S60VideoPlayerSession::S60VideoPlayerSession(QMediaService *service, S60MediaNet
 #endif
     , m_videoOutput(0)
     , m_displayWindow(0)
-    , m_audioEndpoint(DefaultAudioEndpoint)
 #ifdef HAS_AUDIOROUTING_IN_VIDEOPLAYER
     , m_audioOutput(0)
 #endif
+    , m_audioEndpoint(DefaultAudioEndpoint)
     , m_pendingChanges(0)
 {
     m_networkAccessControl = object;
@@ -134,7 +135,7 @@ void S60VideoPlayerSession::doLoadL(const TDesC &path)
     delete m_audioOutput;
     m_audioOutput = NULL;
 #endif
-    m_player->OpenFileL(path);
+    m_player->OpenFileL(path, KHelixUID);
 }
 
 void S60VideoPlayerSession::setPlaybackRate(qreal rate)
@@ -148,7 +149,10 @@ void S60VideoPlayerSession::setPlaybackRate(qreal rate)
     //50 = 0.5x ;100 = 1.x ; 200 = 2.x ; 300 = 3.x
     //so multiplying rate with 100
     TRAPD(err, m_player->SetPlayVelocityL((TInt)(rate*100)));
-    setError(err);
+    if (KErrNone == err)
+        emit playbackRateChanged(rate);
+    else
+        setError(err);
 #endif
 
 }
@@ -266,6 +270,8 @@ void S60VideoPlayerSession::applyPendingChanges(bool force)
                 scaled.scale(output->videoDisplayRect().size(), Qt::IgnoreAspectRatio);
             else if(output->videoAspectRatio() == Qt::KeepAspectRatio)
                 scaled.scale(output->videoDisplayRect().size(), Qt::KeepAspectRatio);
+            else if (output->videoAspectRatio() == Qt::   KeepAspectRatioByExpanding)
+                scaled.scale(output->videoDisplayRect().size(), Qt::   KeepAspectRatioByExpanding);
             const qreal width = qreal(scaled.width()) / qreal(m_originalSize.width()) * qreal(100);
             const qreal height = qreal(scaled.height()) / qreal(m_originalSize.height()) * qreal(100);
 #ifdef MMF_VIDEO_SURFACES_SUPPORTED
@@ -285,8 +291,15 @@ bool S60VideoPlayerSession::isVideoAvailable()
 #ifdef PRE_S60_50_PLATFORM
     return true; // this is not supported in pre 5th platforms
 #else
+    if ( mediaStatus() == QMediaPlayer::LoadingMedia
+        || mediaStatus() == QMediaPlayer::UnknownMediaStatus
+        || mediaStatus() == QMediaPlayer::NoMedia
+        || (mediaStatus() == QMediaPlayer::StalledMedia && state() == QMediaPlayer::StoppedState)
+        || mediaStatus() == QMediaPlayer::InvalidMedia)
+        return false;
+
     if (m_player) {
-        bool videoAvailable = true;
+        bool videoAvailable = false;
         TRAPD(err, videoAvailable = m_player->VideoEnabledL());
         setError(err);
         return videoAvailable;
@@ -294,10 +307,18 @@ bool S60VideoPlayerSession::isVideoAvailable()
         return false;
     }
 #endif
+
 }
 
 bool S60VideoPlayerSession::isAudioAvailable()
 {
+    if ( mediaStatus() == QMediaPlayer::LoadingMedia
+        || mediaStatus() == QMediaPlayer::UnknownMediaStatus
+        || mediaStatus() == QMediaPlayer::NoMedia
+        || (mediaStatus() == QMediaPlayer::StalledMedia && state() == QMediaPlayer::StoppedState)
+        || mediaStatus() == QMediaPlayer::InvalidMedia)
+         return false;
+
     if (m_player) {
         bool audioAvailable = false;
         TRAPD(err, audioAvailable = m_player->AudioEnabledL());

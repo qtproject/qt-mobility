@@ -17,7 +17,7 @@
 */
 
 
-target          t_pltransactionmanager.exe
+TARGET          t_pltransactionmanager.exe
 targettype      EXE
 CAPABILITY	ReadUserData WriteUserData
 UID		0x10208c25
@@ -35,8 +35,8 @@ source          T_PlTransactionManager.cpp
 
 
 //Parts of contacts model
-library         euser.lib 
-library         cntpldbms.lib
-library         nbcnttestlib.lib 
-library         efsrv.lib 
-library         cntmodel.lib
+LIBRARY         euser.lib 
+LIBRARY         cntpldbms.lib
+LIBRARY         nbcnttestlib.lib 
+LIBRARY         efsrv.lib 
+LIBRARY         cntmodel.lib

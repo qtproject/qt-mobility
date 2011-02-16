@@ -159,10 +159,14 @@ signals:
     void error(int error, const QString &errorString);
     void activeEndpointChanged(const QString &name);
     void mediaChanged();
+    void playbackRateChanged(qreal rate);
+    void volumeChanged(int volume);
+    void mutedChanged(bool muted);
 
 protected:
     QUrl m_UrlPath;
     bool m_stream;
+
 private:
     qreal m_playbackRate;
     QMap<QString, QVariant> m_metaDataMap;

@@ -151,7 +151,7 @@ private: // Internal
     void startCamera();
     void stopCamera();
 
-    void resetCamera();
+    void resetCamera(bool errorHandling = false);
     void setCameraHandles();
 
 Q_SIGNALS: // Internal Signals

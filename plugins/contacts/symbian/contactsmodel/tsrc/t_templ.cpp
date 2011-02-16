@@ -103,7 +103,7 @@ LOCAL_C void CheckDefaultTemplate(CContactDatabase* aDb, RFs& aFs, TContactItemI
 	{
 	test.Next(_L("System template"));
 	
-    _LIT(KCntSystemTemplate,"z:\\resource\\cntmodel\\cntmodel.rsc");
+    _LIT(KCntSystemTemplate,"z:\\resource\\cntmodel\\customisedcntmodel.rsc");
 	
 	TFileName fileName(KCntSystemTemplate);
 	BaflUtils::NearestLanguageFile(aFs,fileName);

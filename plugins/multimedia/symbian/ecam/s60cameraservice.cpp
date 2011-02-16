@@ -77,14 +77,14 @@ S60CameraService::S60CameraService(QObject *parent) :
         m_exposureControl = new S60CameraExposureControl(m_imagesession, this);
         m_flashControl = new S60CameraFlashControl(m_imagesession, this);
         m_imageProcessingControl = new S60CameraImageProcessingControl(m_imagesession, this);
-        m_imageCaptureControl = new S60CameraImageCaptureControl(m_imagesession, this);
-        m_media = new S60MediaRecorderControl(m_videosession, this);
+        m_imageCaptureControl = new S60CameraImageCaptureControl(this, m_imagesession, this);
+        m_media = new S60MediaRecorderControl(this, m_videosession, this);
         m_mediaFormat = new S60MediaContainerControl(m_videosession, this);
         m_videoEncoder = new S60VideoEncoderControl(m_videosession, this);
         m_audioEncoder = new S60AudioEncoderControl(m_videosession, this);
         m_viewFinderWidget = new S60VideoWidgetControl(this);
         m_imageEncoderControl = new S60ImageEncoderControl(m_imagesession, this);
-        m_locksControl = new S60CameraLocksControl(m_imagesession, this);
+        m_locksControl = new S60CameraLocksControl(this, m_imagesession, this);
         m_rendererControl = new S60VideoRendererControl(this);
     }
 }

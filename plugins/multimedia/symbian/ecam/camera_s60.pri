@@ -85,6 +85,19 @@ contains(DEFINES, SYMBIAN_3_PLATFORM){
     message("CameraBE: Using private QWidget methods")
 }
 
+# ECam Snapshot API:
+contains(symbian_camera_snapshot_enabled, yes) {
+    exists($${EPOCROOT}epoc32\\include\\platform\\ecam\\camerasnapshot.h) {
+        DEFINES += ECAM_PREVIEW_API
+        message("CameraBE: Using CCameraSnapshot API")
+        symbian:LIBS += -lecamsnapshot
+    } else {
+        message("CameraBE: Using custom snapshot proving methods")
+    }
+} else {
+    message("CameraBE: Using custom snapshot proving methods")
+}
+
 # Libraries:
 symbian:LIBS += -lfbscli \
         -lmediaclientvideo \

@@ -22,6 +22,37 @@
 */
 
 PRJ_EXPORTS
+../inc/CNTDEF.H SYMBIAN_APP_LAYER_PUBLIC_EXPORT_PATH(cntdef.h)
+../inc/CNTDB.H SYMBIAN_APP_LAYER_PUBLIC_EXPORT_PATH(cntdb.h)         
+../inc/CNTDBOBS.H SYMBIAN_APP_LAYER_PUBLIC_EXPORT_PATH(cntdbobs.h)      
+../inc/CNTFIELD.H SYMBIAN_APP_LAYER_PUBLIC_EXPORT_PATH(cntfield.h)      
+../inc/CNTFLDST.H SYMBIAN_APP_LAYER_PUBLIC_EXPORT_PATH(cntfldst.h)	
+../inc/CNTFILT.H SYMBIAN_APP_LAYER_PUBLIC_EXPORT_PATH(cntfilt.h)	
+../inc/CNTITEM.H SYMBIAN_APP_LAYER_PUBLIC_EXPORT_PATH(cntitem.h)       
+../inc/cntview.h SYMBIAN_APP_LAYER_PUBLIC_EXPORT_PATH(cntview.h)
+../inc/cntviewbase.h SYMBIAN_APP_LAYER_PUBLIC_EXPORT_PATH(cntviewbase.h)
+../inc/cntsync.h SYMBIAN_APP_LAYER_PUBLIC_EXPORT_PATH(cntsync.h)
+//Cntmodel Find configuration Implementation definition header.
+../inc/cntviewfindconfig.h	 SYMBIAN_APP_LAYER_PLATFORM_EXPORT_PATH(cntviewfindconfig.h)
+../inc/cntviewfindconfig.inl SYMBIAN_APP_LAYER_PLATFORM_EXPORT_PATH(cntviewfindconfig.inl)
+//CntModel Sort Plug-in implementation definition header
+../inc/cntviewsortplugin.h SYMBIAN_APP_LAYER_PUBLIC_EXPORT_PATH(cntviewsortplugin.h)
+#ifdef SYMBIAN_ENABLE_SPLIT_HEADERS
+../inc/cntphonenumparser.h SYMBIAN_APP_LAYER_PLATFORM_EXPORT_PATH(cntphonenumparser.h)
+../inc/cntviewsortpluginbase.h SYMBIAN_APP_LAYER_PLATFORM_EXPORT_PATH(cntviewsortpluginbase.h)
+../inc/cntsyncecom.h SYMBIAN_APP_LAYER_PLATFORM_EXPORT_PATH(cntsyncecom.h)
+#endif
+
+../inc/CNTMODEL.RH SYMBIAN_APP_LAYER_PLATFORM_EXPORT_PATH(cntmodel.rh)
+../inc/CNTDEF.HRH /epoc32/include/cntdef.hrh
+
+ 
+// VCard Converter Plugin
+../cntvcard/CNTVCARD.H SYMBIAN_APP_LAYER_PUBLIC_EXPORT_PATH(cntvcard.h)
+
+// Default View Definition store
+../inc/cntviewstore.h SYMBIAN_APP_LAYER_PLATFORM_EXPORT_PATH(cntviewstore.h)
+
 // Documentation (not exported until re-contributed to Symbian Foundation)
 // ../documentation/contacts_connectivityapi.doc	/epoc32/engdoc/cntmodel/contacts_connectivityapi.doc
 // ../documentation/contacts_current_itemapi.doc	/epoc32/engdoc/cntmodel/contacts_current_itemapi.doc
@@ -37,7 +68,7 @@ PRJ_MMPFILES
 ../cntvcard/CNTVCARD.MMP
 ../cntphone/cntphone.mmp
 
-#include "../cntmatchlog/group/BLD.INF"
+#include "../cntmatchlog/group/bld.inf"
 
 PRJ_TESTMMPFILES
 // specify the .mmp files required for building any test programs here
@@ -51,7 +82,7 @@ PRJ_TESTMMPFILES
 // i.e. tests where no user input is required.  The default will apply if neither "manual"
 // or "support" is specified.
 
-#include "../tsrc/cntmatchlog/group/BLD.INF"
+#include "../tsrc/cntmatchlog/group/bld.inf"
 
 // Contacts View Sort Plug-in sample
 ../tsrc/cntsimplesortplugin/group/cntsimplesortplugin.mmp	support
@@ -176,6 +207,8 @@ PRJ_TESTMMPFILES
 
 ../tsrc/t_db_sortl_test.mmp
 ../tsrc/t_subview.mmp
+../tsrc/t_launchTest.mmp
+../tsrc/t_datacompatibility.mmp
 
 PRJ_TESTEXPORTS 
 // Central Repository registration file for ICC plugin controller

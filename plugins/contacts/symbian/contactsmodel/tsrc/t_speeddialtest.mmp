@@ -16,7 +16,7 @@
 */
 
 
-target          t_speeddialtest.exe
+TARGET          t_speeddialtest.exe
 targettype      EXE
 CAPABILITY   ReadUserData WriteUserData AllFiles PowerMgmt
 UID		0x1000097a
@@ -29,7 +29,7 @@ userinclude ../inc
 source          t_speeddialtest.cpp
 source		t_utils2.cpp
 
-library         euser.lib  cntmodel.lib efsrv.lib
+LIBRARY         euser.lib  cntmodel.lib efsrv.lib
 
 LIBRARY 	pimtestclient.lib
 

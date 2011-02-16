@@ -50,11 +50,7 @@ S60VideoEncoderControl::S60VideoEncoderControl(QObject *parent) :
 S60VideoEncoderControl::S60VideoEncoderControl(S60VideoCaptureSession *session, QObject *parent) :
     QVideoEncoderControl(parent)
 {
-    if (session)
-        m_session = session;
-    else
-        Q_ASSERT(true);
-    // From now on it is safe to assume session exists
+    m_session = session;
 }
 
 S60VideoEncoderControl::~S60VideoEncoderControl()
@@ -133,7 +129,7 @@ void S60VideoEncoderControl::setEncodingOption(
     else if (qstrcmp(name.toLocal8Bit().constData(), "maxClipSizeInBytes") == 0)
         m_session->setMaxClipSizeInBytes(value.toInt());
     else
-        m_session->setError(KErrNotSupported, QString("Requested encoding option is not supported"));
+        m_session->setError(KErrNotSupported, tr("Requested encoding option is not supported"));
 }
 
 QVideoEncoderSettings S60VideoEncoderControl::videoSettings() const

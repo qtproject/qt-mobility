@@ -139,13 +139,9 @@ void S60MediaPlayerControl::setPlaybackRate(qreal rate)
     {
         if(m_session)
             m_session->setPlaybackRate(rate);
-        
-        m_mediaSettings.setPlaybackRate(rate);
 
-        emit playbackRateChanged(playbackRate());
+        m_mediaSettings.setPlaybackRate(rate);
     }
-    
-    
 }
 
 void S60MediaPlayerControl::setPosition(qint64 pos)
@@ -177,24 +173,22 @@ void S60MediaPlayerControl::setVolume(int volume)
     int boundVolume = qBound(0, volume, 100);
     if (boundVolume == m_mediaSettings.volume())
         return;
-    
+
     m_mediaSettings.setVolume(boundVolume);
+
     if (m_session)
         m_session->setVolume(boundVolume);
-
-    emit volumeChanged(boundVolume);
 }
 
 void S60MediaPlayerControl::setMuted(bool muted)
 {
     if (m_mediaSettings.isMuted() == muted)
         return;
-    
+
     m_mediaSettings.setMuted(muted);
+
     if (m_session)
         m_session->setMuted(muted);
-    
-    emit mutedChanged(muted);
 }
 
 QMediaContent S60MediaPlayerControl::media() const
