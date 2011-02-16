@@ -174,8 +174,6 @@ void QL2capServerPrivate::HandleAcceptCompleteL(TInt aErr)
 
         QBluetoothSocketPrivate *pd = pendingSocket->d_ptr;
 
-        pd->ensureBlankNativeSocket();
-
         pd->iSocket->Accept(*pd->iBlankSocket);
 
         emit q->newConnection();
