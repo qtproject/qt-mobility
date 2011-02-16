@@ -77,7 +77,7 @@ unix:!simulator {
             LIBS += -lblkid
         }
 
-        LIBS +=  -lX11 -lXrandr
+         !embedded:!contains(QT_CONFIG,qpa):LIBS +=  -lX11 -lXrandr
 
         # alignedtimer on Linux/MeeGo
             contains(iphb_enabled, yes): {
@@ -124,7 +124,7 @@ unix:!simulator {
                 contains(CONFIG,meego): { #for now... udisks
                 } else {
                     DEFINES += QT_NO_UDISKS
-                    LIBS += -lX11 -lXrandr
+                     !embedded:!contains(QT_CONFIG,qpa):LIBS +=  -lX11 -lXrandr
                    }
                 contains(connman_enabled, yes): {
 
@@ -135,8 +135,7 @@ unix:!simulator {
                 }
             } else {
                 DEFINES += QT_NO_NETWORKMANAGER QT_NO_UDISKS QT_NO_CONNMAN
-                LIBS += -lX11 -lXrandr
-
+                 !embedded:!contains(QT_CONFIG,qpa):LIBS +=  -lX11 -lXrandr
             }
         }
 
