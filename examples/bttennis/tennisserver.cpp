@@ -141,6 +141,11 @@ void TennisServer::stopServer()
 }
 //! [stopServer]
 
+quint16 TennisServer::serverPort() const
+{
+    return l2capServer->serverPort();
+}
+
 //! [moveBall]
 void TennisServer::moveBall(int x, int y)
 {

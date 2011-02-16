@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -38,100 +38,55 @@
 **
 ****************************************************************************/
 
-#include "ui_tennis.h"
+#ifndef HANDOVER_H
+#define HANDOVER_H
 
-#include <QDialog>
+#include <QtCore/QObject>
 
-#include <QResizeEvent>
-#include <QMoveEvent>
-#include <QPropertyAnimation>
-#include <qbluetoothserviceinfo.h>
-#include <qbluetoothsocket.h>
-#include <qbluetoothdevicediscoveryagent.h>
-
-#include "board.h"
-#include "controller.h"
-
-#include <QDebug>
+#include <qbluetoothaddress.h>
+#include <qbluetoothuuid.h>
 
 QTM_BEGIN_NAMESPACE
-class QBluetoothServiceDiscoveryAgent;
+class QNearFieldManager;
+class QNearFieldTarget;
+class QLlcpServer;
+class QLlcpSocket;
 QTM_END_NAMESPACE
 
 QTM_USE_NAMESPACE
 
-static const QLatin1String serviceUuid("e8e10f95-1a70-4b27-9ccf-02010264e9c9");
-
-class TennisServer;
-class TennisClient;
-class Handover;
-
-//! [declaration]
-class Tennis : public QDialog
+class Handover : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(int paddlePos READ paddlePos WRITE setPaddlePos);
 
 public:
-    Tennis(QWidget *parent = 0);
-    ~Tennis();
+    explicit Handover(quint16 serverPort, QObject *parent = 0);
+    ~Handover();
 
-    int paddlePos() { return paddle_pos; }
-    void setPaddlePos(int p);
-
-signals:
-    void moveLeftPaddle(int y);
-    void moveRightPaddle(int y);
-
-protected:
-    void wheelEvent ( QWheelEvent * event );
-    void keyPressEvent ( QKeyEvent * event );
-    void resizeEvent(QResizeEvent *);
+    QBluetoothAddress bluetoothAddress() const;
+    quint16 serverPort() const;
 
 private slots:
-    void serverConnected(const QString &name);
-    void serverDisconnected();
+    void handleNewConnection();
 
-    void clientConnected(const QString &name);
+    void readRemote();
+    void remoteDisconnected();
+
+    void clientConnected();
     void clientDisconnected();
 
-    void serviceDiscovered(const QBluetoothServiceInfo &serviceInfo);
-    void discoveryFinished();
-
-    void startDiscovery();
-
-    void mouseMove(int x, int y);
-
-    void lagReport(int ms);
-
-    void nearFieldHandover();
+signals:
+    void bluetoothServiceChanged();
 
 private:
+    QNearFieldManager *m_manager;
+    QLlcpServer *m_server;
+    QLlcpSocket *m_client;
+    QLlcpSocket *m_remote;
 
-    void moveUp(int px = 10);
-    void moveDown(int px = 10);
-
-    void move(int px);
-
-    Ui_Tennis *ui;
-
-    Board *board;
-    Controller *controller;
-
-    int paddle_pos;
-    int endPaddlePos;
-
-    bool isClient;
-    bool isConnected;
-    bool quickDiscovery;
-
-    QBluetoothSocket *socket;
-    TennisServer *server;
-    TennisClient *client;
-
-    QPropertyAnimation *paddleAnimation;
-
-    QBluetoothServiceDiscoveryAgent *m_discoveryAgent;
-    Handover *m_handover;
+    QBluetoothAddress m_address;
+    quint16 m_serverPort;
+    quint16 m_localServerPort;
 };
-//! [declaration]
+
+#endif // HANDOVER_H

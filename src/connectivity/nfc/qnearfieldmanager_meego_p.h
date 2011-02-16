@@ -46,7 +46,7 @@
 #include "qnearfieldmanager.h"
 #include "qnearfieldtarget.h"
 
-#include <QtCore/QPointer>
+#include <QtCore/QWeakPointer>
 #include <QtCore/QMap>
 #include <QtCore/QPair>
 #include <QtCore/QMetaMethod>
@@ -133,7 +133,7 @@ private:
     ComNokiaNfcAdapterInterface *m_adapter;
 
     QList<QNearFieldTarget::Type> m_detectTargetTypes;
-    QMap<QString, QPointer<QNearFieldTarget> > m_targets;
+    QMap<QString, QWeakPointer<QNearFieldTarget> > m_targets;
 
     AccessRequestorAdaptor *m_accessAgent;
 
