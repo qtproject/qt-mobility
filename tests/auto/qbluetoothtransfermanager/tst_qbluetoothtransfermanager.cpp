@@ -112,7 +112,7 @@ void tst_QBluetoothTransferManager::initTestCase()
     device->powerOn();
     delete device;
 
-#ifdef Q_OS_SYMBIAN
+#ifndef Q_OS_SYMBIAN
     // Go find an echo server for BTADDRESS
     QBluetoothServiceDiscoveryAgent *sda = new QBluetoothServiceDiscoveryAgent(this);
     connect(sda, SIGNAL(serviceDiscovered(QBluetoothServiceInfo)), this, SLOT(serviceDiscovered(QBluetoothServiceInfo)));
