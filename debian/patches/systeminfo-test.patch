@@ -1,0 +1,33 @@
+commit 6830890e23db1d721fd7508d1ad0f6cba302c072
+Author: Lorn Potter <lorn.potter@nokia.com>
+Date:   Wed Feb 16 10:32:59 2011 +1000
+
+    add aegis stuff fo rsysteminfo tests.
+    
+    Task-number: QTMOBILITY-1231
+
+diff --git a/src/harmattaninstalls/libqtm-examples.aegis b/src/harmattaninstalls/libqtm-examples.aegis
+index d70137e..200288b 100644
+--- a/src/harmattaninstalls/libqtm-examples.aegis
++++ b/src/harmattaninstalls/libqtm-examples.aegis
+@@ -22,4 +22,8 @@
+         <for path="/opt/examples/QtMobility/querymessages" />
+         <for path="/opt/examples/QtMobility/keepintouch" />
+     </request>
++    <request>
++        <credential name="mce::TKLockControl" />
++        <for path="/opt/examples/QtMobility/qsysinfo" />
++    </request>
+ </aegis>
+diff --git a/src/harmattaninstalls/libqtm-systeminfo-tests.aegis b/src/harmattaninstalls/libqtm-systeminfo-tests.aegis
+new file mode 100644
+index 0000000..9c6ae80
+--- /dev/null
++++ b/src/harmattaninstalls/libqtm-systeminfo-tests.aegis
+@@ -0,0 +1,6 @@
++<aegis>
++    <request>
++        <credential name="mce::TKLockControl" />
++        <for path="/usr/tests/qtm/tst_qsystemscreensaver" />
++    </request>
++</aegis>
