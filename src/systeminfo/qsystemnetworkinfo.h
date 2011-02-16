@@ -110,7 +110,7 @@ public:
     QString homeMobileCountryCode();
     QString homeMobileNetworkCode();
     Q_INVOKABLE static QString networkName(QSystemNetworkInfo::NetworkMode mode);
-    QNetworkInterface interfaceForMode(QSystemNetworkInfo::NetworkMode mode);
+    Q_INVOKABLE QNetworkInterface interfaceForMode(QSystemNetworkInfo::NetworkMode mode);
 
 
 Q_SIGNALS:

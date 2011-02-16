@@ -4,6 +4,10 @@ requires(contains(mobility_modules,connectivity))
 
 TEMPLATE = subdirs
 
+# Required by tst_maketestselftest::tests_pro_files
+# Mark the following non unit test directories ok
+# nfcdata
+
 SUBDIRS += \
         qndefrecord \
         qndefmessage \

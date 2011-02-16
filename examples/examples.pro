@@ -36,11 +36,11 @@ contains(mobility_modules,location) {
     equals(QT_MAJOR_VERSION, 4):lessThan(QT_MINOR_VERSION, 7) {
         contains(mobility_modules,bearer) {
     	    SUBDIRS +=  flickrdemo \
-                        mapsnavigator
+                        mapsdemo
         }
     } else {
         SUBDIRS +=  flickrdemo \
-                    mapsnavigator
+                    mapsdemo
     }
 
     contains(QT_CONFIG, declarative) {
@@ -67,7 +67,8 @@ contains(mobility_modules,publishsubscribe) {
 
 #System Information
 contains(mobility_modules,systeminfo) {
- SUBDIRS += sysinfo
+ SUBDIRS += sysinfo \
+            qsystemalignedtimer
    contains(QT_CONFIG, declarative) {
         SUBDIRS += declarative-systeminfo
    }

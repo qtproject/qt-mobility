@@ -167,25 +167,15 @@ int QRfcommServer::maxPendingConnections() const
 }
 
 /*!
+  \fn QRfcommServer::setSecurityFlags(QBluetooth::SecurityFlags security)
     Sets the Bluetooth security flags to \a security. This function must be called prior to calling
     listen().
 */
-void QRfcommServer::setSecurityFlags(QBluetooth::SecurityFlags security)
-{
-    Q_D(QRfcommServer);
-
-    d->securityFlags = security;
-}
 
 /*!
+  \fn QBluetooth::SecurityFlags QRfcommServer::securityFlags() const
     Returns the Bluetooth security flags.
 */
-QBluetooth::SecurityFlags QRfcommServer::securityFlags() const
-{
-    Q_D(const QRfcommServer);
-
-    return d->securityFlags;
-}
 
 #include "moc_qrfcommserver.cpp"
 

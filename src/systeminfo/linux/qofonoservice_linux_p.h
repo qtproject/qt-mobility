@@ -64,6 +64,7 @@
 #include <QtDBus/QDBusObjectPath>
 #include <QtDBus/QDBusContext>
 #include <QMap>
+#include <QVariantMap>
 
 #define OFONO_SERVICE	                         "org.ofono"
 #define OFONO_MANAGER_INTERFACE                  "org.ofono.Manager"

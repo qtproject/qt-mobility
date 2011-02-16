@@ -234,4 +234,19 @@ void QRfcommServerPrivate::HandleShutdownCompleteL(TInt aErr)
         qDebug() << __PRETTY_FUNCTION__ << aErr;
 }
 
+void QRfcommServer::setSecurityFlags(QBluetooth::SecurityFlags security)
+{
+    Q_D(QRfcommServer);
+
+    d->securityFlags = security;
+}
+
+QBluetooth::SecurityFlags QRfcommServer::securityFlags() const
+{
+    Q_D(const QRfcommServer);
+
+    return d->securityFlags;
+}
+
+
 QTM_END_NAMESPACE

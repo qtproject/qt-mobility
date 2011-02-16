@@ -46,7 +46,7 @@ QT_BEGIN_NAMESPACE
 /*!
     \class QMediaNetworkAccessControl
     \preliminary
-    \brief The QMediaNetworkAccessControl is used to allow the setting of the Network Access Point for media related activities.
+    \brief The QMediaNetworkAccessControl class allows the setting of the Network Access Point for media related activities.
     \ingroup multimedia
 
     The functionality provided by this control allows the
@@ -55,9 +55,6 @@ QT_BEGIN_NAMESPACE
     This control can be used to set a network access for various
     network related activities. the exact nature in dependant on the underlying
     usage by the supported QMediaObject
-
-    Note: For Qt 4.7 and above the id's in question are taken from QNetworkConfiguration::identifier()
-    \sa QMediaServices::requestControl()
 */
 
 QMediaNetworkAccessControl::QMediaNetworkAccessControl(QObject *parent) :
@@ -73,25 +70,27 @@ QMediaNetworkAccessControl::~QMediaNetworkAccessControl()
 }
 
 /*!
-    \fn void QMediaNetworkAccessControl::setConfigurations(const QList<QString> &configurationIds);
+    \fn void QMediaNetworkAccessControl::setConfigurations(const QList<QNetworkConfiguration> &configurations);
 
     \a configurations contains a list of network configurations to be used for network access.
 
-    It is assumed the list is sorted in highest to lowest preference order.
-    By calling this function all previous configurations will be invalidated.
+    It is assumed the list is given in highest to lowest preference order.
+    By calling this function all previous configurations will be invalidated
+    and replaced with the new list.
 */
 
 /*
-    \fn QString QMediaNetworkAccessControl::currentConfiguration() const
+    \fn QNetworkConfiguration QMediaNetworkAccessControl::currentConfiguration() const
 
-    Returns the current active configuration id in use.
-    An QString is returned if no user supplied configuration Ids are used.
+    Returns the current active configuration in use.
+    A default constructed QNetworkConfigration is returned if no user supplied configuration are in use.
 */
 
 
 /*!
-    \fn QNetworkAccessControl::configurationChanged(const QString &configurationId)
-    This signal is emitted when the current active configuration Id changes to \a configurationId.
+    \fn QMediaNetworkAccessControl::configurationChanged(const QNetworkConfiguration &configuration)
+    This signal is emitted when the current active network configuration changes
+    to \a configuration.
 */
 
 

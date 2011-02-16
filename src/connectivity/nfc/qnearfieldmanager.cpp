@@ -178,31 +178,34 @@ QNearFieldManager::~QNearFieldManager()
 }
 
 /*!
-    Starts detecting targets of type \a targetTypes. Causes the targetDetected() signal to be
-    emitted when a target with a type in \a targetTypes is within proximity. If \a targetTypes is
-    empty targets of all types will be detected.
+    Starts detecting targets of type \a targetTypes. Returns true if target detection is
+    successfully started; otherwise returns false.
+
+    Causes the targetDetected() signal to be emitted when a target with a type in \a targetTypes is
+    within proximity. If \a targetTypes is empty targets of all types will be detected.
 
     \sa stopTargetDetection()
 */
-void QNearFieldManager::startTargetDetection(const QList<QNearFieldTarget::Type> &targetTypes)
+bool QNearFieldManager::startTargetDetection(const QList<QNearFieldTarget::Type> &targetTypes)
 {
     Q_D(QNearFieldManager);
 
     if (targetTypes.isEmpty())
-        d->startTargetDetection(QList<QNearFieldTarget::Type>() << QNearFieldTarget::AnyTarget);
+        return d->startTargetDetection(QList<QNearFieldTarget::Type>() << QNearFieldTarget::AnyTarget);
     else
-        d->startTargetDetection(targetTypes);
+        return d->startTargetDetection(targetTypes);
 }
 
 /*!
     \overload
 
-    Starts detecting targets of type \a targetType. Causes the targetDetected() signal to be
-    emitted when a target with the type \a targetType is within proximity.
+    Starts detecting targets of type \a targetType. Returns true if target detection is
+    successfully started; otherwise returns false. Causes the targetDetected() signal to be emitted
+    when a target with the type \a targetType is within proximity.
 */
-void QNearFieldManager::startTargetDetection(QNearFieldTarget::Type targetType)
+bool QNearFieldManager::startTargetDetection(QNearFieldTarget::Type targetType)
 {
-    startTargetDetection(QList<QNearFieldTarget::Type>() << targetType);
+    return startTargetDetection(QList<QNearFieldTarget::Type>() << targetType);
 }
 
 /*!

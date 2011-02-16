@@ -202,18 +202,12 @@ void tst_QDocumentGallery::itemTypeProperties_data()
 #endif
 #elif defined (Q_OS_SYMBIAN)
                 << QDocumentGallery::url
-                << QDocumentGallery::fileSize
-                << QDocumentGallery::lastModified
                 << QDocumentGallery::title
-                << QDocumentGallery::mimeType
 #endif
     );    
 
 #if defined (Q_OS_SYMBIAN)
     QTest::newRow("Image") << QString(QDocumentGallery::Image) << (QStringList(fileProperties)
-            << QDocumentGallery::duration
-            << QDocumentGallery::performer
-            << QDocumentGallery::playCount
             << QDocumentGallery::width
             << QDocumentGallery::height
             << QDocumentGallery::orientation

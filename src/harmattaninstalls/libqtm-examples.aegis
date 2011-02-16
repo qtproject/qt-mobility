@@ -2,24 +2,24 @@
     <request>
         <credential name="TrackerReadAccess" />
         <credential name="TrackerWriteAccess" />
-        <for path="/opt/examples/QtMobility/samplephonebook" />
-        <for path="/opt/examples/QtMobility/qmlcontacts" />
+        <for path="/usr/lib/qtmobility/examples/samplephonebook" />
+        <for path="/usr/lib/qtmobility/demos/qmlcontacts" />
     </request>
     <request>
         <credential name="Location" />
 	<credential name="TrackerReadAccess" />
 	<credential name="TrackerWriteAccess" />
-        <for path="/opt/examples/QtMobility/landmarkbrowser" />
-        <for path="/opt/examples/QtMobility/qml_landmarkmap" />
-        <for path="/opt/examples/QtMobility/qml_location_flickr" />
-        <for path="/opt/examples/QtMobility/qml_mapviewer" />
+        <for path="/usr/lib/qtmobility/examples/landmarkbrowser" />
+        <for path="/usr/lib/qtmobility/examples/qml_landmarkmap" />
+        <for path="/usr/lib/qtmobility/examples/qml_location_flickr" />
+        <for path="/usr/lib/qtmobility/examples/qml_mapviewer" />
     </request>
     <request>
         <credential name="Cellular" />
         <credential name="TrackerReadAccess" />
-        <for path="/opt/examples/QtMobility/serviceactions" />
-        <for path="/opt/examples/QtMobility/writemessage" />
-        <for path="/opt/examples/QtMobility/querymessages" />
-        <for path="/opt/examples/QtMobility/keepintouch" />
+        <for path="/usr/lib/qtmobility/demos/serviceactions" />
+        <for path="/usr/lib/qtmobility/examples/writemessage" />
+        <for path="/usr/lib/qtmobility/examples/querymessages" />
+        <for path="/usr/lib/qtmobility/examples/keepintouch" />
     </request>
 </aegis>

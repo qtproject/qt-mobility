@@ -143,7 +143,7 @@ void TennisClient::readSocket()
             }
         }
         else {
-            qDebug() << "Unknown command" << s;
+            qDebug() << Q_FUNC_INFO << "Unknown command" << str;
         }
     }
 }

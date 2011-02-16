@@ -222,7 +222,10 @@ symbian|win32|maemo6|maemo5|mac:!simulator {
 	contains(messaging_freestyle_enabled, yes) {
    	CONFIG += FREESTYLEMAIL
 	DEFINES += FREESTYLEMAILUSED
-	DEFINES += FREESTYLEMAILBOXOBSERVERUSED
+	}
+	contains(messaging_freestyle_mapi12_enabled, yes) {
+	CONFIG += FREESTYLEMAILMAPI12
+	DEFINES += FREESTYLEMAILMAPI12USED
 	}
 	contains(messaging_ncnlist_enabled, no) {
 	DEFINES += NCNLISTREMOVED

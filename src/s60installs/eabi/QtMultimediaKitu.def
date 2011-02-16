@@ -1620,20 +1620,20 @@ EXPORTS
 	_ZNK12QSoundEffect6statusEv @ 1619 NONAME
 	_ZNK12QSoundEffect9isPlayingEv @ 1620 NONAME
 	_ZN12QMediaPlayer14setVideoOutputEP21QAbstractVideoSurface @ 1621 NONAME
-	_ZN12QMediaPlayer24setNetworkConfigurationsERK5QListI7QStringE @ 1622 NONAME
-	_ZN12QMediaPlayer27networkConfigurationChangedERK7QString @ 1623 NONAME
+	_ZN12QMediaPlayer24setNetworkConfigurationsERK5QListI21QNetworkConfigurationE @ 1622 NONAME
+	_ZN12QMediaPlayer27networkConfigurationChangedERK21QNetworkConfiguration @ 1623 NONAME
 	_ZN17QMediaImageViewer14setVideoOutputEP21QAbstractVideoSurface @ 1624 NONAME
 	_ZN26QMediaNetworkAccessControl11qt_metacallEN11QMetaObject4CallEiPPv @ 1625 NONAME
 	_ZN26QMediaNetworkAccessControl11qt_metacastEPKc @ 1626 NONAME
 	_ZN26QMediaNetworkAccessControl16staticMetaObjectE @ 1627 NONAME DATA 16
 	_ZN26QMediaNetworkAccessControl19getStaticMetaObjectEv @ 1628 NONAME
-	_ZN26QMediaNetworkAccessControl20configurationChangedERK7QString @ 1629 NONAME
+	_ZN26QMediaNetworkAccessControl20configurationChangedERK21QNetworkConfiguration @ 1629 NONAME
 	_ZN26QMediaNetworkAccessControlC2EP7QObject @ 1630 NONAME
 	_ZN26QMediaNetworkAccessControlD0Ev @ 1631 NONAME
 	_ZN26QMediaNetworkAccessControlD1Ev @ 1632 NONAME
 	_ZN26QMediaNetworkAccessControlD2Ev @ 1633 NONAME
 	_ZN7QCamera13setViewfinderEP21QAbstractVideoSurface @ 1634 NONAME
-	_ZNK12QMediaPlayer29currentNetworkConfigurationIdEv @ 1635 NONAME
+	_ZNK12QMediaPlayer27currentNetworkConfigurationEv @ 1635 NONAME
 	_ZNK26QMediaNetworkAccessControl10metaObjectEv @ 1636 NONAME
 	_ZTI26QMediaNetworkAccessControl @ 1637 NONAME
 	_ZTV26QMediaNetworkAccessControl @ 1638 NONAME

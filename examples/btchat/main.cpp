@@ -48,11 +48,13 @@ int main(int argc, char *argv[])
 
     Chat d;
     QObject::connect(&d, SIGNAL(accepted()), &app, SLOT(quit()));
-#ifdef Q_OS_SYMBIAN
+
+#if defined(Q_WS_MAEMO_6) || defined(Q_OS_SYMBIAN)
     d.showFullScreen();
 #else
     d.show();
 #endif
+
     app.exec();
 
     return 0;

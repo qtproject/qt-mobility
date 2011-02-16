@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -43,7 +43,7 @@
 #include "ql2capserver_p.h"
 #include "qbluetoothsocket.h"
 #include "qbluetoothsocket_p.h"
-#include "utils_symbian_p.h"
+#include "symbian/utils_symbian_p.h"
 
 #include <QTimer>
 #include <QCoreApplication>
@@ -168,7 +168,7 @@ void QL2capServerPrivate::HandleAcceptCompleteL(TInt aErr)
 {
     Q_Q(QL2capServer);
 
-    if (aErr == KErrNone) {
+    if (aErr == KErrNone) {        
         pendingSocket->setSocketState(QBluetoothSocket::ConnectedState);
         activeSockets.append(pendingSocket);
 
@@ -222,5 +222,21 @@ void QL2capServerPrivate::HandleShutdownCompleteL(TInt aErr)
     else
         qDebug() << __PRETTY_FUNCTION__ << aErr;
 }
+
+void QL2capServer::setSecurityFlags(QBluetooth::SecurityFlags security)
+{
+    Q_D(QL2capServer);
+
+    d->securityFlags = security;
+}
+
+QBluetooth::SecurityFlags QL2capServer::securityFlags() const
+{
+    Q_D(const QL2capServer);
+
+    return d->securityFlags;
+}
+
+
 
 QTM_END_NAMESPACE

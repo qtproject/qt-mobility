@@ -395,49 +395,53 @@ QSystemNetworkInfo::NetworkMode QSystemNetworkInfoPrivate::currentMode()
     return mode;
 }
 
+#if !defined(Q_WS_MAEMO_6) && defined(Q_WS_X11)  && !defined(Q_WS_MEEGO)
+bool q_XEventFilter(void *message)
+{
+    XEvent *xev = (XEvent *)message;
+    if (xev->type == QTM_NAMESPACE::QSystemDisplayInfoPrivate::instance()->xEventBase + RRScreenChangeNotify) {
+        int rot = QTM_NAMESPACE::QSystemDisplayInfoPrivate::instance()->lastRotation;
+
+        XRRScreenChangeNotifyEvent *rrev = (XRRScreenChangeNotifyEvent *)(xev);
+        if (rrev->rotation != rot) {
+            rot  =  rrev->rotation;
+            QTM_NAMESPACE::QSystemDisplayInfoPrivate::instance()->emitOrientationChanged(rot);
+            QTM_NAMESPACE::QSystemDisplayInfoPrivate::instance()->lastRotation = rot;
+        }
+        return true;
+    }
+    return false;
+}
+#endif
+QSystemDisplayInfoPrivate *QSystemDisplayInfoPrivate::self = 0;
+
 QSystemDisplayInfoPrivate::QSystemDisplayInfoPrivate(QSystemDisplayInfoLinuxCommonPrivate *parent)
         : QSystemDisplayInfoLinuxCommonPrivate(parent)
-{
+{    if(!self)
+        self = this;
+
+#if !defined(Q_WS_MAEMO_6) && defined(Q_WS_X11)  && !defined(Q_WS_MEEGO)
+    QAbstractEventDispatcher::instance()->setEventFilter(q_XEventFilter);
+    Display *display = QX11Info::display();
+    XRRQueryExtension(display, &xEventBase, &xErrorBase);
+
+    Window desktopWindow = QX11Info::appRootWindow(0);
+    XRRSelectInput(display, desktopWindow,0);
+    XRRSelectInput(display, desktopWindow, RRScreenChangeNotifyMask);
+
+    XRRScreenConfiguration *sc;
+    Rotation cur_rotation;
+    sc = XRRGetScreenInfo(QX11Info::display(), RootWindow(QX11Info::display(), 0));
+    if (sc) {
+        XRRConfigRotations(sc, &cur_rotation);
+        lastRotation = cur_rotation;
+    }
+#endif
 }
 
 QSystemDisplayInfoPrivate::~QSystemDisplayInfoPrivate()
 {
 }
-
-QSystemDisplayInfo::DisplayOrientation QSystemDisplayInfoPrivate::getOrientation(int screen)
-{
-    QSystemDisplayInfo::DisplayOrientation orientation = QSystemDisplayInfo::Unknown;
-#if defined(Q_WS_X11)
-    XRRScreenConfiguration *sc;
-    Rotation cur_rotation;
-    sc = XRRGetScreenInfo(QX11Info::display(), RootWindow(QX11Info::display(), screen));
-    if (!sc) {
-        return orientation;
-    }
-    XRRConfigRotations(sc, &cur_rotation);
-
-    if(screen < 16 && screen > -1) {
-        switch(cur_rotation) {
-        case RR_Rotate_0:
-            orientation = QSystemDisplayInfo::Landscape;
-            break;
-        case RR_Rotate_90:
-            orientation = QSystemDisplayInfo::Portrait;
-            break;
-        case RR_Rotate_180:
-            orientation = QSystemDisplayInfo::InvertedLandscape;
-            break;
-        case RR_Rotate_270:
-            orientation = QSystemDisplayInfo::InvertedPortrait;
-            break;
-        };
-    }
-#else
-Q_UNUSED(screen)
-#endif
-    return orientation;
-}
-
 
 float QSystemDisplayInfoPrivate::contrast(int screen)
 {
@@ -505,6 +509,26 @@ Q_UNUSED(screen)
 #endif
     return width;
 }
+
+#if !defined(Q_WS_MAEMO_6) && defined(Q_WS_X11)  && !defined(Q_WS_MEEGO)
+void QSystemDisplayInfoPrivate::emitOrientationChanged(int curRotation)
+{
+    switch(curRotation) {
+    case 1:
+        Q_EMIT orientationChanged(QSystemDisplayInfo::Landscape);
+        break;
+    case 2:
+        Q_EMIT orientationChanged(QSystemDisplayInfo::Portrait);
+        break;
+    case 4:
+        Q_EMIT orientationChanged(QSystemDisplayInfo::InvertedLandscape);
+        break;
+    case 8:
+        Q_EMIT orientationChanged(QSystemDisplayInfo::InvertedPortrait);
+        break;
+    };
+}
+#endif
 
 QSystemDisplayInfo::BacklightState  QSystemDisplayInfoPrivate::backlightStatus(int screen)
 {
@@ -717,11 +741,28 @@ QString QSystemDeviceInfoPrivate::productName()
     return QString();
 }
 
+
+int QSystemDeviceInfoPrivate::messageRingtoneVolume()
+{
+    return 0;
+}
+
+int QSystemDeviceInfoPrivate::voiceRingtoneVolume()
+{
+    return 0;
+}
+
+bool QSystemDeviceInfoPrivate::vibrationActive()
+{
+    return false;
+}
+
 QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QSystemScreenSaverLinuxCommonPrivate *parent)
          : QSystemScreenSaverLinuxCommonPrivate(parent), currentPid(0)
  {
      kdeIsRunning = false;
      gnomeIsRunning = false;
+     meegoIsRunning = false;
      whichWMRunning();
  }
 
@@ -729,8 +770,6 @@ QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QSystemScreenSaverLinuxComm
  {
      if(currentPid != 0) {
 #if !defined(QT_NO_DBUS)
-         QDBusConnection dbusConnection = QDBusConnection::sessionBus();
-
          QStringList ifaceList;
          ifaceList <<  QLatin1String("org.freedesktop.ScreenSaver");
          ifaceList << QLatin1String("org.gnome.ScreenSaver");
@@ -739,7 +778,7 @@ QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QSystemScreenSaverLinuxComm
              connectionInterface = new QDBusInterface(QLatin1String(iface.toLatin1()),
                                                       QLatin1String("/ScreenSaver"),
                                                       QLatin1String(iface.toLatin1()),
-                                                      dbusConnection);
+                                                      QDBusConnection::systemBus());
              if(connectionInterface->isValid()) {
                  QDBusReply<uint> reply =  connectionInterface->call(QLatin1String("UnInhibit"),
                                                                      currentPid);
@@ -747,14 +786,14 @@ QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QSystemScreenSaverLinuxComm
          }
 #endif
      }
-#if defined(QT_NO_DBUS) && defined(Q_WS_X11) && defined(QT_NO_MEEGO)
+#if defined(QT_NO_DBUS) && defined(Q_WS_X11) && !defined(Q_WS_MEEGO)
      changeTimeout(-1);
 #endif
  }
 
  int QSystemScreenSaverPrivate::changeTimeout(int timeout)
  {
-#if defined(Q_WS_X11) && defined(QT_NO_MEEGO)
+#if defined(Q_WS_X11) && !defined(Q_WS_MEEGO)
 
      int ttime;
      int interval;
@@ -775,11 +814,9 @@ Q_UNUSED(timeout)
 
  bool QSystemScreenSaverPrivate::setScreenSaverInhibit()
  {
-     if(kdeIsRunning || gnomeIsRunning) {
+     if(kdeIsRunning || gnomeIsRunning || meegoIsRunning) {
 #if !defined(QT_NO_DBUS)
          const pid_t pid = getppid();
-         QDBusConnection dbusConnection = QDBusConnection::sessionBus();
-
          QStringList ifaceList;
          ifaceList <<  QLatin1String("org.freedesktop.ScreenSaver");
          ifaceList << QLatin1String("org.gnome.ScreenSaver");
@@ -788,7 +825,7 @@ Q_UNUSED(timeout)
              connectionInterface = new QDBusInterface(QLatin1String(iface.toLatin1()),
                                                       QLatin1String("/ScreenSaver"),
                                                       QLatin1String(iface.toLatin1()),
-                                                      dbusConnection);
+                                                      QDBusConnection::systemBus());
              if(connectionInterface->isValid()) {
                  QDBusReply<uint> reply =  connectionInterface->call(QLatin1String("Inhibit"),
                                                                      QString::number((int)pid),
@@ -801,7 +838,7 @@ Q_UNUSED(timeout)
          }
 #endif
      } else {
-#ifdef Q_WS_X11
+#if defined(Q_WS_X11) && !defined(Q_WS_MEEGO)
          changeTimeout(0);
          screenSaverIsInhibited = true;
 #endif
@@ -812,7 +849,7 @@ Q_UNUSED(timeout)
 
 bool QSystemScreenSaverPrivate::screenSaverInhibited()
 {
-    if(kdeIsRunning || gnomeIsRunning) {
+    if(kdeIsRunning || gnomeIsRunning || meegoIsRunning) {
         if(currentPid != 0) {
             return true;
         } else {
@@ -820,7 +857,7 @@ bool QSystemScreenSaverPrivate::screenSaverInhibited()
         }
     }
 
-#if defined(Q_WS_X11) && defined(QT_NO_MEEGO)
+#if defined(Q_WS_X11) && !defined(Q_WS_MEEGO)
 
     int timeout;
     int interval;
@@ -839,20 +876,23 @@ bool QSystemScreenSaverPrivate::screenSaverInhibited()
 void QSystemScreenSaverPrivate::whichWMRunning()
 {
 #if !defined(QT_NO_DBUS)
-    QDBusConnection dbusConnection = QDBusConnection::sessionBus();
     QDBusInterface *connectionInterface;
     connectionInterface = new QDBusInterface(QLatin1String("org.kde.kwin"),
                                              QLatin1String("/KWin"),
                                              QLatin1String("org.kde.KWin"),
-                                             dbusConnection);
+                                             QDBusConnection::systemBus());
     if(connectionInterface->isValid()) {
         kdeIsRunning = true;
+        return;
+    }
+    if(QFileInfo("/etc/meego-release").exists()) {
+        meegoIsRunning = true;
         return;
     }
     connectionInterface = new QDBusInterface(QLatin1String("org.gnome.SessionManager"),
                                              QLatin1String("/org/gnome/SessionManager"),
                                              QLatin1String("org.gnome.SessionManager"),
-                                             dbusConnection);
+                                             QDBusConnection::systemBus());
     if(connectionInterface->isValid()) {
        gnomeIsRunning = true;
        return;
@@ -874,7 +914,7 @@ bool QSystemScreenSaverPrivate::isScreenLockEnabled()
         if(kdeScreenSaveConfig.status() == QSettings::NoError) {
             return kdeScreenSaveConfig.value(QLatin1String("Lock")).toBool();
         }
-    } else if(gnomeIsRunning) {
+    } else if(meegoIsRunning || gnomeIsRunning) {
 
     }
 
@@ -883,11 +923,9 @@ bool QSystemScreenSaverPrivate::isScreenLockEnabled()
 
 bool QSystemScreenSaverPrivate::isScreenSaverActive()
 {
-    if(kdeIsRunning || gnomeIsRunning) {
+    if(kdeIsRunning || gnomeIsRunning || meegoIsRunning) {
 #if !defined(QT_NO_DBUS)
         const pid_t pid = getppid();
-        QDBusConnection dbusConnection = QDBusConnection::sessionBus();
-
         QStringList ifaceList;
         ifaceList <<  QLatin1String("org.freedesktop.ScreenSaver");
         ifaceList << QLatin1String("org.gnome.ScreenSaver");
@@ -896,7 +934,7 @@ bool QSystemScreenSaverPrivate::isScreenSaverActive()
             connectionInterface = new QDBusInterface(QLatin1String(iface.toLatin1()),
                                                      QLatin1String("/ScreenSaver"),
                                                      QLatin1String(iface.toLatin1()),
-                                                     dbusConnection);
+                                                     QDBusConnection::systemBus());
 
             const QDBusReply<bool> reply =  connectionInterface->call(QLatin1String("GetActive"),
                                                                 QString::number((int)pid),

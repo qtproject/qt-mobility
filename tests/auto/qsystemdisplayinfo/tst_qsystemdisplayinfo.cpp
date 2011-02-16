@@ -59,7 +59,7 @@ class tst_QSystemDisplayInfo : public QObject
 private slots:
     void tst_displayBrightness();
     void tst_colorDepth();
-    void tst_getOrientation();
+    void tst_orientation();
     void tst_contrast();
     void tst_getDPIWidth();
     void tst_getDPIHeight();
@@ -91,11 +91,11 @@ void tst_QSystemDisplayInfo::tst_colorDepth()
     QVERIFY(di.colorDepth(999) == -1);
 }
 
-void tst_QSystemDisplayInfo::tst_getOrientation()
+void tst_QSystemDisplayInfo::tst_orientation()
 {
     QSystemDisplayInfo::DisplayOrientation orient = QSystemDisplayInfo::Unknown;
     QSystemDisplayInfo di;
-    orient = di.getOrientation(0);
+    orient = di.orientation(0);
     QRect availableGeometry = QApplication::desktop()->availableGeometry(0);
 
     if(availableGeometry.width() > availableGeometry.height()) {

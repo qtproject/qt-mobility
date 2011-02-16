@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -500,7 +500,7 @@ TInt COwnLlcpConnectionWrapper::TransferL(MLlcpReadWriteCb& aLlcpSendCb, const T
     {  
     BEGIN
     TInt error = KErrNone;
-    // Pass message into transmiter AO
+    // Pass message into transmitter AO
     if (!iSenderAO->IsActive())
         {
         error = iSenderAO->Transfer(aLlcpSendCb, aData);
@@ -690,7 +690,7 @@ CLlcpReceiverType1* CLlcpReceiverType1::NewL(MLlcpConnLessTransporter* aConnecti
 
 /*!
     Set active for the receiver AO 
-    Receive complete callback function "cb" registed
+    Receive complete callback function "cb" registered
 */
 TInt CLlcpReceiverType1::Receive(MLlcpReadWriteCb& cb)
     {
