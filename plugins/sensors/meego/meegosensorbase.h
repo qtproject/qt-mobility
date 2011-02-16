@@ -67,6 +67,8 @@ protected:
     static const float GRAVITY_EARTH;
     static const float GRAVITY_EARTH_THOUSANDTH;    //for speed
     static const int KErrNotFound;
+    static const int KErrInUse;
+
     void setRanges(qreal correctionFactor=1);
     virtual const QString sensorName()=0;
 
@@ -152,6 +154,7 @@ protected:
     AbstractSensorChannelInterface* m_sensorInterface;
     int m_bufferSize;
     const int bufferSize();
+    virtual const qreal correctionFactor();
 
 private:
     static SensorManagerInterface* m_remoteSensorManager;
