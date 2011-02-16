@@ -22,4 +22,8 @@
         <for path="/opt/examples/QtMobility/querymessages" />
         <for path="/opt/examples/QtMobility/keepintouch" />
     </request>
+    <request>
+        <credential name="mce::TKLockControl" />
+        <for path="/opt/examples/QtMobility/qsysinfo" />
+    </request>
 </aegis>
