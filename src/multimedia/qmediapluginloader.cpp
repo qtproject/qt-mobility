@@ -243,7 +243,6 @@ void QMediaPluginLoader::load()
             }
 
             delete o;
-            loader.unload();
         }
     }
 }
