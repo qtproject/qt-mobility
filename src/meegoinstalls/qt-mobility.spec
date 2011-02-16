@@ -453,7 +453,7 @@ export QMF_LIBDIR=%{_libdir}
 -plugindir "%{_libdir}/qt4/plugins" \
 -demosdir "%{_libdir}/qtmobility/demos" \
 -examplesdir "%{_libdir}/qtmobility/examples" \
--languages "ar cs da de es fr he hu ja pl pt ru sk sl sv zh_CN zh_TW"
+-languages "ar cs da de es fr he hu ja pl pt ru sk sl sv zh_CN zh_TW" \
 -examples \
 -demos \
 -modules "location contacts multimedia publishsubscribe versit messaging systeminfo serviceframework sensors gallery organizer feedback connectivity" \
