@@ -154,6 +154,10 @@ void QAudioPluginLoader::load()
     if (!m_plugins.isEmpty())
         return;
 
+#if !defined QT_NO_DEBUG
+    const bool showDebug = qgetenv("QT_DEBUG_PLUGINS").toInt() > 0;
+#endif
+
     QStringList plugins = pluginList();
     for (int i=0; i < plugins.count(); i++) {
         QPluginLoader* loader = new QPluginLoader(plugins.at(i));
@@ -161,8 +165,11 @@ void QAudioPluginLoader::load()
         if (o != 0 && o->qt_metacast(m_iid) != 0) {
             m_plugins.append(loader);
         } else {
-            qWarning() << "QAudioPluginLoader: Failed to load plugin: "
-                << plugins.at(i) << loader->errorString();
+#if !defined QT_NO_DEBUG
+            if (showDebug)
+                qWarning() << "QAudioPluginLoader: Failed to load plugin: "
+                           << plugins.at(i) << loader->errorString();
+#endif
             delete o;
             //we are not calling loader->unload here for it may cause problem on some device
             delete loader;

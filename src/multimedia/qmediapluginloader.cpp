@@ -215,6 +215,10 @@ void QMediaPluginLoader::load()
     if (!m_instances.isEmpty())
         return;
 
+#if !defined QT_NO_DEBUG
+    const bool showDebug = qgetenv("QT_DEBUG_PLUGINS").toInt() > 0;
+#endif
+
     if (staticMediaPlugins() && staticMediaPlugins()->contains(m_location)) {
         foreach(QObject *o, staticMediaPlugins()->value(m_location)) {
             if (o != 0 && o->qt_metacast(m_iid) != 0) {
@@ -239,7 +243,10 @@ void QMediaPluginLoader::load()
 
                 continue;
             } else {
-                qWarning() << "QMediaPluginLoader: Failed to load plugin: " << plugin << loader.errorString();
+#if !defined QT_NO_DEBUG
+                if (showDebug)
+                    qWarning() << "QMediaPluginLoader: Failed to load plugin: " << plugin << loader.errorString();
+#endif
             }
 
             delete o;
