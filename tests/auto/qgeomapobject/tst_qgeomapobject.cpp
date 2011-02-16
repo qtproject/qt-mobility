@@ -50,6 +50,7 @@
 #include <QPointer>
 #include <QGraphicsTextItem>
 #include <QGraphicsEllipseItem>
+#include <QGraphicsPathItem>
 #include <QSignalSpy>
 #include <QStyleOptionGraphicsItem>
 
@@ -79,6 +80,10 @@ private slots:
     void findsPixelEllipse();
     void drawsBilinearEllipse();
     void drawsExactEllipse();
+    void pixelChildren();
+    void bilinearChildren();
+
+    void autoUpdate();
 
 private:
     TestHelper *m_helper;
@@ -338,7 +343,7 @@ void tst_QGeoMapObject::drawsExactEllipse()
     QGeoMapObject *obj = new QGeoMapObject;
 
     QGraphicsEllipseItem *el = new QGraphicsEllipseItem;
-    el->setRect(-100, -100, 200, 200);
+    el->setRect(-1000, -1000, 2000, 2000);
     el->setBrush(QBrush(Qt::black));
 
     obj->setGraphicsItem(el);
@@ -360,7 +365,7 @@ void tst_QGeoMapObject::drawsExactEllipse()
         p[i] = new QPainter(px[i]);
     }
     QStyleOptionGraphicsItem style;
-    style.rect = QRect(0,0,3000,3000);
+    style.rect = QRect(0,0,300,300);
 
     m_helper->map()->paint(p[0], &style, 0);
     int r13 = centredEllipseRadius(*px[0]);
@@ -391,6 +396,226 @@ void tst_QGeoMapObject::drawsExactEllipse()
         delete p[i];
         delete px[i];
     }
+}
+
+void tst_QGeoMapObject::pixelChildren()
+{
+    QGeoMapObject *obj = new QGeoMapObject;
+
+    QGraphicsEllipseItem *el = new QGraphicsEllipseItem;
+    el->setRect(-40, -40, 80, 80);
+    el->setBrush(QBrush(Qt::black));
+
+    QGraphicsEllipseItem *childEl = new QGraphicsEllipseItem(el);
+    childEl->setRect(-20, -20, 40, 40);
+    childEl->setBrush(QBrush(Qt::blue));
+
+    obj->setGraphicsItem(el);
+    obj->setOrigin(QGeoCoordinate(0, 0));
+
+    QCOMPARE(obj->units(), QGeoMapObject::PixelUnit);
+    QCOMPARE(obj->transformType(), QGeoMapObject::ExactTransform);
+
+    m_helper->map()->setCenter(QGeoCoordinate(0, 0));
+    m_helper->map()->resize(300, 300);
+    m_helper->map()->addMapObject(obj);
+
+    QTest::qWait(10);
+
+    QPixmap px(300, 300);
+    QPainter p(&px);
+    QStyleOptionGraphicsItem style;
+    style.rect = QRect(0,0,300,300);
+    m_helper->map()->paint(&p, &style, 0);
+
+    int r = centredEllipseRadius(px);
+    QVERIFY(r <= 21 && r >= 19);
+}
+
+void tst_QGeoMapObject::bilinearChildren()
+{
+    QGeoMapObject *obj = new QGeoMapObject;
+
+    QGraphicsEllipseItem *el = new QGraphicsEllipseItem;
+    el->setRect(-200, -200, 400, 400);
+    el->setBrush(QBrush(Qt::black));
+
+    obj->setGraphicsItem(el);
+    obj->setOrigin(QGeoCoordinate(0, 0));
+    obj->setUnits(QGeoMapObject::MeterUnit);
+    QCOMPARE(obj->transformType(), QGeoMapObject::BilinearTransform);
+
+    m_helper->map()->setCenter(QGeoCoordinate(0, 0));
+    m_helper->map()->resize(300, 300);
+    m_helper->map()->setZoomLevel(16.0);
+    m_helper->map()->addMapObject(obj);
+
+    QTest::qWait(10);
+
+    QPixmap *px[2];
+    QPainter *p[2];
+    for (int i=0; i < 2; i++) {
+        px[i] = new QPixmap(300, 300);
+        p[i] = new QPainter(px[i]);
+    }
+    QStyleOptionGraphicsItem style;
+    style.rect = QRect(0,0,300,300);
+
+    QTest::qWait(10);
+    m_helper->map()->paint(p[0], &style, 0);
+    int rParent = centredEllipseRadius(*px[0]);
+
+    QGraphicsEllipseItem *childEl = new QGraphicsEllipseItem(el);
+    childEl->setRect(-100, -100, 200, 200);
+    childEl->setBrush(QBrush(Qt::blue));
+
+    obj->update();
+
+    QTest::qWait(10);
+    m_helper->map()->paint(p[1], &style, 0);
+    int rChild = centredEllipseRadius(*px[1]);
+
+    QVERIFY(rParent > rChild);
+    QVERIFY(rParent - rChild > 2);
+
+    double ratio = rChild;
+    ratio /= rParent;
+    QVERIFY(ratio >= 0.49 && ratio <= 0.51);
+}
+
+static void malteseCross(QPainterPath &path, const qreal &width,
+                         const qreal &height, const qreal &thickness)
+{
+    path.moveTo(-0.5*thickness, -0.5*thickness);
+    path.lineTo(-0.5*width, -0.5*thickness);
+    path.lineTo(-0.5*width, 0.5*thickness);
+    path.lineTo(-0.5*thickness, 0.5*thickness);
+    path.lineTo(-0.5*thickness, 0.5*height);
+    path.lineTo(0.5*thickness, 0.5*height);
+    path.lineTo(0.5*thickness, 0.5*thickness);
+    path.lineTo(0.5*width, 0.5*thickness);
+    path.lineTo(0.5*width, -0.5*thickness);
+    path.lineTo(0.5*thickness, -0.5*thickness);
+    path.lineTo(0.5*thickness, -0.5*height);
+    path.lineTo(-0.5*thickness, -0.5*height);
+    path.closeSubpath();
+}
+
+struct Cross {
+    int width;
+    int height;
+    int thickness;
+};
+
+static struct Cross findCross(QGraphicsGeoMap *map)
+{
+    struct Cross result;
+    QGeoMapObject *obj = map->mapObjectsAtScreenPosition(QPointF(150, 150)).first();
+    Q_ASSERT(obj);
+
+    QList<QGeoMapObject*> list;
+
+    for (int x = 0; x < 300; x++) {
+        list = map->mapObjectsAtScreenPosition(QPointF(150-x, 150));
+        if (!list.contains(obj)) {
+            result.width = x - 1;
+            break;
+        }
+        list = map->mapObjectsAtScreenPosition(QPointF(150+x, 150));
+        if (!list.contains(obj)) {
+            result.width = x - 1;
+            break;
+        }
+    }
+
+    for (int y = 0; y < 300; y++) {
+        list = map->mapObjectsAtScreenPosition(QPointF(150, 150-y));
+        if (!list.contains(obj)) {
+            result.height = y - 1;
+            break;
+        }
+        list = map->mapObjectsAtScreenPosition(QPointF(150, 150+y));
+        if (!list.contains(obj)) {
+            result.height = y - 1;
+            break;
+        }
+    }
+
+    for (int t = 0; t < 300; t++) {
+        list = map->mapObjectsAtScreenPosition(QPointF(150-t, 150-t));
+        if (!list.contains(obj)) {
+            result.thickness = t - 1;
+            break;
+        }
+        list = map->mapObjectsAtScreenPosition(QPointF(150+t, 150+t));
+        if (!list.contains(obj)) {
+            result.thickness = t - 1;
+            break;
+        }
+    }
+
+    return result;
+}
+
+#define EXF_NO_AUTOUPDATE   QEXPECT_FAIL("", "Auto-update not implemented yet", Continue)
+
+void tst_QGeoMapObject::autoUpdate()
+{
+    QGeoMapObject *obj = new QGeoMapObject;
+
+    QGraphicsPathItem *item = new QGraphicsPathItem;
+    obj->setGraphicsItem(item);
+    obj->setUnits(QGeoMapObject::MeterUnit);
+    obj->setTransformType(QGeoMapObject::ExactTransform);
+    obj->setOrigin(QGeoCoordinate(0, 0));
+
+    QPainterPath bigPath;
+    malteseCross(bigPath, 500, 500, 40);
+
+    QPainterPath smallPath;
+    malteseCross(smallPath, 300, 300, 60);
+
+    item->setPath(bigPath);
+
+    m_helper->map()->setCenter(QGeoCoordinate(0, 0));
+    m_helper->map()->resize(300, 300);
+    m_helper->map()->setZoomLevel(16.0);
+    m_helper->map()->addMapObject(obj);
+
+    QTest::qWait(10);
+    struct Cross c1 = findCross(m_helper->map());
+
+    item->setPath(smallPath);
+    QTest::qWait(10);
+    struct Cross c2 = findCross(m_helper->map());
+
+    EXF_NO_AUTOUPDATE;
+    QVERIFY(c1.width > c2.width);
+    EXF_NO_AUTOUPDATE;
+    QVERIFY(c1.width - c2.width > 2);
+    EXF_NO_AUTOUPDATE;
+    QVERIFY(c1.height > c2.height);
+    EXF_NO_AUTOUPDATE;
+    QVERIFY(c1.height - c2.height > 2);
+    EXF_NO_AUTOUPDATE;
+    QVERIFY(c2.thickness > c1.thickness);
+    EXF_NO_AUTOUPDATE;
+    QVERIFY(c2.thickness - c1.thickness > 2);
+
+    obj->update();
+    QTest::qWait(10);
+    struct Cross c3 = findCross(m_helper->map());
+
+    QVERIFY(c1.width > c3.width);
+    QVERIFY(c1.width - c3.width > 2);
+    QVERIFY(c1.height > c3.height);
+    QVERIFY(c1.height - c3.height > 2);
+    QVERIFY(c3.thickness > c1.thickness);
+    QVERIFY(c3.thickness - c1.thickness > 2);
+
+    qreal ratio = c3.width;
+    ratio /= c1.width;
+    QVERIFY(ratio <= 0.61 && ratio >= 0.59);
 }
 
 void tst_QGeoMapObject::type()
