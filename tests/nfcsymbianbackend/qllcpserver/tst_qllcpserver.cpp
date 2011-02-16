@@ -444,7 +444,7 @@ void tst_QLlcpServer::multiConnection()
         //Now data has been sent,check the if existing error
         QVERIFY(errorSpy.isEmpty());
 
-        connectionSpy.clear();
+        connectionSpy.removeFirst();
         loopCount++;
         }
     server.close();
