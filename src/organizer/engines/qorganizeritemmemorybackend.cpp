@@ -1387,7 +1387,8 @@ bool QOrganizerItemMemoryEngine::removeCollection(const QOrganizerCollectionId& 
         if (d->m_organizerCollectionIds.at(i) == collectionId) {
             // found the collection to remove.  remove the items in the collection.
             if (!itemsToRemove.isEmpty()) {
-                if (!removeItems(itemsToRemove, 0, error)) {
+                QMap<int, QOrganizerManager::Error> errorMap;
+                if (!removeItems(itemsToRemove, &errorMap, error)) {
                     // without transaction support, we can't back out.  but the operation should fail.
                     return false;
                 }
