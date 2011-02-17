@@ -624,30 +624,46 @@ void tst_QGeoMapCircleObject::qtmobility1255()
     QGeoCoordinate center(0,0,0);
 
     QGeoMapCircleObject *outer = new QGeoMapCircleObject(center, 1000);
-    outer->setZValue(4);
+    outer->setZValue(5);
+    outer->setBrush(QBrush(Qt::black));
+    QGeoMapCircleObject *middle = new QGeoMapCircleObject(center, 700);
+    middle->setZValue(4);
+    middle->setBrush(QBrush(Qt::red));
     QGeoMapCircleObject *inner = new QGeoMapCircleObject(center, 500);
     inner->setZValue(5);
+    inner->setBrush(QBrush(Qt::blue));
 
     QGraphicsGeoMap *map = m_helper->map();
 
     map->addMapObject(outer);
+    map->addMapObject(middle);
     map->addMapObject(inner);
     map->setCenter(center);
 
+    QList<QGeoMapObject*> list;
+    list = map->mapObjects();
+    QCOMPARE(list.size(), 3);
+
     QPointF pxCenter = map->coordinateToScreenPosition(center);
-    QList<QGeoMapObject*> list = map->mapObjectsAtScreenPosition(pxCenter);
-    QVERIFY(list.at(0) == outer);
-    QVERIFY(list.at(1) == inner);
-
-    outer->setZValue(5);
     list = map->mapObjectsAtScreenPosition(pxCenter);
-    QVERIFY(list.at(0) == outer);
-    QVERIFY(list.at(1) == inner);
-
-    outer->setZValue(6);
-    list = map->mapObjectsAtScreenPosition(pxCenter);
-    QVERIFY(list.at(0) == inner);
+    QCOMPARE(list.size(), 3);
+    QVERIFY(list.at(0) == middle);
     QVERIFY(list.at(1) == outer);
+    QVERIFY(list.at(2) == inner);
+
+    middle->setZValue(5);
+    list = map->mapObjectsAtScreenPosition(pxCenter);
+    QCOMPARE(list.size(), 3);
+    QVERIFY(list.at(0) == outer);
+    QVERIFY(list.at(1) == middle);
+    QVERIFY(list.at(2) == inner);
+
+    middle->setZValue(6);
+    list = map->mapObjectsAtScreenPosition(pxCenter);
+    QCOMPARE(list.size(), 3);
+    QVERIFY(list.at(0) == outer);
+    QVERIFY(list.at(1) == inner);
+    QVERIFY(list.at(2) == middle);
 }
 
 QTEST_MAIN(tst_QGeoMapCircleObject)
