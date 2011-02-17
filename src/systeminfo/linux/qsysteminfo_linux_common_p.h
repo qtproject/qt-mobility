@@ -439,7 +439,7 @@ private Q_SLOTS:
     void getBatteryStats();
     void timeout();
 #if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5)
-    void propertyChanged(const QString &, const QVariant &);
+    void uPowerPropertyChanged(const QString &, const QVariant &);
 #endif
 #endif
 private:

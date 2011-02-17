@@ -3447,7 +3447,7 @@ void QSystemBatteryInfoLinuxCommonPrivate::setConnection()
                 battery = new QUPowerDeviceInterface(objpath.path(),this);
                 pMap = battery->getProperties();
                 connect(battery,SIGNAL(propertyChanged(QString,QVariant)),
-                        this,SLOT(propertyChanged(QString,QVariant)));
+                        this,SLOT(uPowerPropertyChanged(QString,QVariant)));
             }
 //            connect(powerDevice,SIGNAL(changed()),this,SLOT(upowerDeviceChanged()));
 //            connect(powerDevice,SIGNAL(propertyChanged(QString,QVariant)),
@@ -3868,7 +3868,7 @@ int QSystemBatteryInfoLinuxCommonPrivate::batteryLevel() const
 }
 
 #if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5)
-void QSystemBatteryInfoLinuxCommonPrivate::propertyChanged(const QString & prop, const QVariant &v)
+void QSystemBatteryInfoLinuxCommonPrivate::uPowerPropertyChanged(const QString & prop, const QVariant &v)
 {
  //   qDebug() << __FUNCTION__ << prop << v;
 
