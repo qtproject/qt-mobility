@@ -374,5 +374,10 @@ void QBluetoothSocketPrivate::_q_startReceive()
     startReceive();
 }
 
+qint64 QBluetoothSocketPrivate::bytesAvailable() const
+{
+    return rxDescriptor.Length();
+}
+
 QTM_END_NAMESPACE
 
