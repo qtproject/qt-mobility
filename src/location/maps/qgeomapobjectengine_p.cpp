@@ -933,7 +933,7 @@ static void addGroupToScene(QGeoMapObjectEngine *eng, QGeoMapGroupObject *group)
 void QGeoMapObjectEngine::rebuildScenes()
 {
     // QTMOBILITY-1265: memory leaks fixed here at the cost of
-    //                  some efficiency, this will need optimisation
+    //                  some efficiency, this will need optimization
     QSet<QGraphicsItem*> old;
     foreach (QGraphicsItem *i, latLonScene->items()) {
         latLonScene->removeItem(i);
