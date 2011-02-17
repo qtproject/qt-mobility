@@ -83,7 +83,7 @@ public:
 private slots:
     void timeOutFired()
     {
-        if(m_spy->count() == m_signalCount)
+        if(m_spy->count() >= m_signalCount)
         {
             QApplication::postEvent(this, new QCloseEvent);
             m_timer->stop();
