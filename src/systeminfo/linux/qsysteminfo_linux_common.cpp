@@ -1921,6 +1921,26 @@ out:
     return width;
 }
 
+
+int QSystemDisplayInfoLinuxCommonPrivate::getDPIWidth(int screen)
+{
+    qDebug() << Q_FUNC_INFO;
+#if defined(Q_WS_X11)
+    return QX11Info::appDpiY(screen);
+#else
+    return 0;
+#endif
+}
+
+int QSystemDisplayInfoLinuxCommonPrivate::getDPIHeight(int screen)
+{
+#if defined(Q_WS_X11)
+    return QX11Info::appDpiX(screen);
+#else
+    return 0;
+#endif
+}
+
 QSystemStorageInfoLinuxCommonPrivate::QSystemStorageInfoLinuxCommonPrivate(QObject *parent)
     : QObject(parent)
 {

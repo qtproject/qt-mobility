@@ -1015,23 +1015,23 @@ float QSystemDisplayInfoPrivate::contrast(int screen)
     return 0.0;
 }
 
-int QSystemDisplayInfoPrivate::getDPIWidth(int screen)
-{
-    int dpi=0;
-    if(screen < 16 && screen > -1) {
-        dpi = QDesktopWidget().screenGeometry().width() / (physicalWidth(0) / 25.4);
-    }
-    return dpi;
-}
+//int QSystemDisplayInfoPrivate::getDPIWidth(int screen)
+//{
+//    int dpi=0;
+//    if(screen < 16 && screen > -1) {
+//        dpi = QDesktopWidget().screenGeometry().width() / (physicalWidth(0) / 25.4);
+//    }
+//    return dpi;
+//}
 
-int QSystemDisplayInfoPrivate::getDPIHeight(int screen)
-{
-    int dpi=0;
-    if(screen < 16 && screen > -1) {
-        dpi = QDesktopWidget().screenGeometry().height() / (physicalHeight(0) / 25.4);
-    }
-    return dpi;
-}
+//int QSystemDisplayInfoPrivate::getDPIHeight(int screen)
+//{
+//    int dpi=0;
+//    if(screen < 16 && screen > -1) {
+//        dpi = QDesktopWidget().screenGeometry().height() / (physicalHeight(0) / 25.4);
+//    }
+//    return dpi;
+//}
 
 QSystemDisplayInfo::BacklightState QSystemDisplayInfoPrivate::backlightStatus(int screen)
 {
@@ -1588,8 +1588,10 @@ void QSystemScreenSaverPrivate::wakeUpDisplay()
 {
 #if !defined(QT_NO_DBUS)
     if (mceConnectionInterface->isValid()) {
-        mceConnectionInterface->call("req_tklock_mode_change", "unlocked");
-        mceConnectionInterface->call("req_display_blanking_pause");
+        QDBusMessage msg = mceConnectionInterface->call("req_tklock_mode_change", "unlocked");
+        qDebug() << msg.errorName() << msg.errorMessage();
+        msg = mceConnectionInterface->call("req_display_blanking_pause");
+        qDebug() << msg.errorName() << msg.errorMessage();
     }
 #endif
 }

@@ -212,8 +212,8 @@ public:
     QSystemDisplayInfoPrivate(QSystemDisplayInfoLinuxCommonPrivate *parent = 0);
     virtual ~QSystemDisplayInfoPrivate();
     float contrast(int screen);
-    int getDPIWidth(int screen);
-    int getDPIHeight(int screen);
+//    int getDPIWidth(int screen);
+//    int getDPIHeight(int screen);
     int displayBrightness(int screen);
     QSystemDisplayInfo::BacklightState backlightStatus(int screen);
 };
