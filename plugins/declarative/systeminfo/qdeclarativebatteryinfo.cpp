@@ -330,7 +330,7 @@ This signal is emitted when the charger type has changed, such as when a phone g
  \sa QSystemBatteryInfo::remainingCapacityPercent
 */
 /*!
-    \qmlsignal BatteryInfo::remainingCapacityChanged
+    \qmlsignal BatteryInfo::remainingCapacityChanged(QSystemBatteryInfo::EnergyUnit)
   This signal is emitted when battery capacity has changed, reported in QSystemBatteryInfo::EnergyUnit.
 
  \sa QSystemBatteryInfo::remainingCapacity

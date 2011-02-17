@@ -57,7 +57,7 @@ Q_GLOBAL_STATIC(QSystemDisplayInfo, displayInfo)
     This element is part of the \bold{QtMobility.systeminfo 1.2} module.
     It is a convience class to make QML usage easier.
 
-    \endqml
+    This class is currently only implemented on Meego.
 
 \sa QSystemDisplayInfo
 */
