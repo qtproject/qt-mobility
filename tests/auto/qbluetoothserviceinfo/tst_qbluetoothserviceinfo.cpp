@@ -225,6 +225,19 @@ void tst_QBluetoothServiceInfo::tst_assignment()
         QVERIFY(copyInfo.protocolServiceMultiplexer() != -1);
         QVERIFY(copyInfo.socketProtocol() == serviceInfoProtocol);
     }
+
+    {
+        QBluetoothServiceInfo copyInfo;
+        QVERIFY(!copyInfo.isValid());
+        copyInfo = serviceInfo;
+        QVERIFY(!copyInfo.isRegistered());
+
+        QVERIFY(copyInfo.registerService());
+        QVERIFY(copyInfo.isRegistered());
+
+        QVERIFY(copyInfo.unregisterService());
+        QVERIFY(!copyInfo.isRegistered());
+    }
 }
 
 QTEST_MAIN(tst_QBluetoothServiceInfo)
