@@ -254,6 +254,14 @@ QNearFieldTarget::QNearFieldTarget(QObject *parent)
 }
 
 /*!
+    Destroys the near field target.
+*/
+QNearFieldTarget::~QNearFieldTarget()
+{
+    delete d_ptr;
+}
+
+/*!
     \fn QByteArray QNearFieldTarget::uid() const = 0
 
     Returns the UID of the near field target.
