@@ -89,6 +89,8 @@ private slots:
 
     // QTMOBILITY-1255: Changing z value of map object causes it to break insertion order
     void qtmobility1255();
+    // QTMOBILITY-1199: Result of QGraphicsGeoMap::mapObjectsInViewport is zoom level dependent
+    void qtmobility1199();
 
 private:
     TestHelper *m_helper;
@@ -663,6 +665,36 @@ void tst_QGeoMapCircleObject::qtmobility1255()
     QVERIFY(list.at(0) == outer);
     QVERIFY(list.at(1) == inner);
     QVERIFY(list.at(2) == middle);
+}
+
+
+// QTMOBILITY-1199: Result of QGraphicsGeoMap::mapObjectsInViewport is zoom level dependent
+void tst_QGeoMapCircleObject::qtmobility1199()
+{
+    QGeoCoordinate seattle(47.609722,-122.333056,0);
+
+    QGeoMapCircleObject *obj = new QGeoMapCircleObject(seattle, 100);
+
+    QGraphicsGeoMap *map = m_helper->map();
+    map->setCenter(seattle);
+    map->setZoomLevel(20.0);
+    map->pan(10, 10);
+
+    map->addMapObject(obj);
+
+    for (qreal z = 20.0; z > 0.0; z -= 1.0) {
+        QPointF coord = map->coordinateToScreenPosition(seattle);
+
+        QList<QGeoMapObject*> list;
+
+        list = map->mapObjectsAtScreenPosition(coord);
+        QCOMPARE(list.size(), 1);
+        QVERIFY(list.at(0) == obj);
+
+        list = map->mapObjectsInViewport();
+        QCOMPARE(list.size(), 1);
+        QVERIFY(list.at(0) == obj);
+    }
 }
 
 QTEST_MAIN(tst_QGeoMapCircleObject)
