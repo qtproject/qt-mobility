@@ -197,6 +197,7 @@ void S60CameraViewfinderEngine::setVideoWidgetControl(QObject *viewfinderOutput)
 
         connect(m_viewfinderDisplay, SIGNAL(visibilityChanged(bool)), this, SLOT(handleVisibilityChange(bool)));
         connect(m_viewfinderDisplay, SIGNAL(displayRectChanged(QRect, QRect)), this, SLOT(resetVideoWindowSize()));
+        connect(m_viewfinderDisplay, SIGNAL(windowHandleChanged(RWindow*)), this, SLOT(handleWindowChange(RWindow*)));
 
         m_viewfinderSize = m_viewfinderDisplay->extentRect().size();
         m_viewfinderOutput = viewfinderOutput;
@@ -362,6 +363,7 @@ void S60CameraViewfinderEngine::setVideoWindowControl(QObject *viewfinderOutput)
 
         connect(m_viewfinderDisplay, SIGNAL(displayRectChanged(QRect, QRect)), this, SLOT(resetVideoWindowSize()));
         connect(m_viewfinderDisplay, SIGNAL(visibilityChanged(bool)), this, SLOT(handleVisibilityChange(bool)));
+        connect(m_viewfinderDisplay, SIGNAL(windowHandleChanged(RWindow*)), this, SLOT(handleWindowChange(RWindow*)));
 
         m_viewfinderSize = m_viewfinderDisplay->extentRect().size();
         m_viewfinderOutput = viewfinderOutput;
@@ -706,10 +708,17 @@ void S60CameraViewfinderEngine::handleVisibilityChange(const bool isVisible)
         }
         startViewfinder(true);
     } else {
-        if (m_vfState == EVFIsConnectedIsStartedIsVisible)
-            m_vfState = EVFIsConnectedIsStartedNotVisible;
+        // Stopping takes care of the state change
         stopViewfinder(true);
     }
+}
+
+void S60CameraViewfinderEngine::handleWindowChange(RWindow *handle)
+{
+    stopViewfinder(true);
+
+    if (handle) // New handle available, start viewfinder
+        startViewfinder(true);
 }
 
 void S60CameraViewfinderEngine::checkAndRotateCamera()
