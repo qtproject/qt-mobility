@@ -22,5 +22,5 @@ SOURCES += tst_qnearfieldtagtype4.cpp \
            ../common/qnfctagutil.cpp
 
 
-symbian:TARGET.CAPABILITY = ALL -TCB
+symbian:TARGET.CAPABILITY = LocalServices
 

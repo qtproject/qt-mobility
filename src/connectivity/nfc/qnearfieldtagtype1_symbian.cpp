@@ -45,56 +45,97 @@
 #include "qnearfieldtagtype1_symbian_p.h"
 #include "debug.h"
 
+#define SYMBIAN_BUG_NOT_FIX
+
 QTM_BEGIN_NAMESPACE
+static void OutputByteArray(const QByteArray& data)
+{
+    for(int i = 0; i < data.count(); ++i)
+    {
+        LOG("data ["<<i<<"] = "<<((quint16)(data.at(i))));
+    }
+}
 
 QVariant QNearFieldTagType1Symbian::decodeResponse(const QByteArray &command, const QByteArray &response)
 {
     BEGIN
+    OutputByteArray(response);
     END
     switch (command.at(0)) {
     case 0x01:  // READ
+#ifndef SYMBIAN_BUG_NOT_FIX
         if (command.at(1) == response.at(0))
             return quint8(response.at(1));
         break;
+#else
+        return quint8(response.at(0));
+#endif
     case 0x53: { // WRITE-E
+#ifndef SYMBIAN_BUG_NOT_FIX
         quint8 address = command.at(1);
         quint8 data = command.at(2);
         quint8 writeAddress = response.at(0);
         quint8 writeData = response.at(1);
-
         return ((writeAddress == address) && (writeData == data));
+#else
+        quint8 data = command.at(2);
+
+        quint8 writeData = response.at(0);
+        return (writeData == data);
+#endif
     }
     case 0x1a: { // WRITE-NE
+#ifndef SYMBIAN_BUG_NOT_FIX
         quint8 address = command.at(1);
         quint8 data = command.at(2);
         quint8 writeAddress = response.at(0);
         quint8 writeData = response.at(1);
 
         return ((writeAddress == address) && ((writeData & data) == data));
+#else
+        quint8 data = command.at(2);
+        quint8 writeData = response.at(0);
+        return ((writeData & data) == data);
+#endif
     }
     case 0x10: { // RSEG
+#ifndef SYMBIAN_BUG_NOT_FIX
         quint8 segmentAddress = quint8(command.at(1)) >> 4;
         quint8 readSegmentAddress = quint8(response.at(0)) >> 4;
         if (readSegmentAddress == segmentAddress)
             return response.mid(1);
         break;
+#else
+        return response;
+#endif
     }
     case 0x02: { // READ8
+#ifndef SYMBIAN_BUG_NOT_FIX
         quint8 blockAddress = command.at(1);
         quint8 readBlockAddress = response.at(0);
         if (readBlockAddress == blockAddress)
             return response.mid(1);
         break;
+#else
+        return response;
+#endif
     }
     case 0x54: { // WRITE-E8
+#ifndef SYMBIAN_BUG_NOT_FIX
         quint8 blockAddress = command.at(1);
         QByteArray data = command.mid(2, 8);
         quint8 writeBlockAddress = response.at(0);
         QByteArray writeData = response.mid(1);
 
         return ((writeBlockAddress == blockAddress) && (writeData == data));
+#else
+        QByteArray data = command.mid(2, 8);
+
+        return (response == data);
+#endif
     }
     case 0x1b: { // WRITE-NE8
+#ifndef SYMBIAN_BUG_NOT_FIX
         quint8 blockAddress = command.at(1);
         QByteArray data = command.mid(2, 8);
         quint8 writeBlockAddress = response.at(0);
@@ -107,8 +148,17 @@ QVariant QNearFieldTagType1Symbian::decodeResponse(const QByteArray &command, co
             if ((writeData.at(i) & data.at(i)) != data.at(i))
                 return false;
         }
-
         return true;
+#else
+        QByteArray data = command.mid(2, 8);
+        QByteArray writeData = response;
+
+        for (int i = 0; i < writeData.length(); ++i) {
+            if ((writeData.at(i) & data.at(i)) != data.at(i))
+                return false;
+        }
+        return true;
+#endif
     }
     }
 
@@ -154,10 +204,6 @@ QNearFieldTarget::RequestId QNearFieldTagType1Symbian::readIdentification()
     command.append(char(0x00));     // Address (unused)
     command.append(char(0x00));     // Data (unused)
     command.append(uid().left(4));  // 4 bytes of UID
-    // Hardware will append CRC bytes. The CRC value appended
-    // to the command will be ignored.
-    command.append(char(0x00)); // CRC1
-    command.append(char(0x00)); // CRC2
     END
     return sendCommand(command);
 }
@@ -173,10 +219,6 @@ QNearFieldTarget::RequestId QNearFieldTagType1Symbian::readAll()
     command.append(char(0x00));
     command.append(char(0x00));
     command.append(uid().left(4)); // UID
-    // Hardware will append CRC bytes. The CRC value appended
-    // to the command will be ignored.
-    command.append(char(0x00)); // CRC1
-    command.append(char(0x00)); // CRC2
     END
     return sendCommand(command);
 }
@@ -197,10 +239,6 @@ QNearFieldTarget::RequestId QNearFieldTagType1Symbian::readByte(quint8 address)
     command.append(char(0x00));     // Data (unused)
     command.append(uid().left(4));  // 4 bytes of UID
 
-    // Hardware will append CRC bytes. The CRC value appended
-    // to the command will be ignored.
-    command.append(char(0x00)); // CRC1
-    command.append(char(0x00)); // CRC2
     END
     return sendCommand(command);
 }
@@ -226,10 +264,6 @@ QNearFieldTarget::RequestId QNearFieldTagType1Symbian::writeByte(quint8 address,
     command.append(char(data));     // Data
     command.append(uid().left(4));  // 4 bytes of UID
 
-    // Hardware will append CRC bytes. The CRC value appended
-    // to the command will be ignored.
-    command.append(char(0x00)); // CRC1
-    command.append(char(0x00)); // CRC2
     END
     return sendCommand(command);
 }
@@ -249,10 +283,6 @@ QNearFieldTarget::RequestId QNearFieldTagType1Symbian::readSegment(quint8 segmen
     command.append(QByteArray(8, char(0x00)));  // Data (unused)
     command.append(uid().left(4));              // 4 bytes of UIDD
 
-    // Hardware will append CRC bytes. The CRC value appended
-    // to the command will be ignored.
-    command.append(char(0x00)); // CRC1
-    command.append(char(0x00)); // CRC2
     END
     return sendCommand(command);
 }
@@ -269,10 +299,6 @@ QNearFieldTarget::RequestId QNearFieldTagType1Symbian::readBlock(quint8 blockAdd
     command.append(QByteArray(8, char(0x00)));  // Data (unused)
     command.append(uid().left(4));              // 4 bytes of UID
 
-    // Hardware will append CRC bytes. The CRC value appended
-    // to the command will be ignored.
-    command.append(char(0x00)); // CRC1
-    command.append(char(0x00)); // CRC2
     END
     return sendCommand(command);
 }
@@ -298,10 +324,6 @@ QNearFieldTarget::RequestId QNearFieldTagType1Symbian::writeBlock(quint8 blockAd
     command.append(data);               // Data
     command.append(uid().left(4));      // 4 bytes of UID
 
-    // Hardware will append CRC bytes. The CRC value appended
-    // to the command will be ignored.
-    command.append(char(0x00)); // CRC1
-    command.append(char(0x00)); // CRC2
     END
     return sendCommand(command);
 }

@@ -123,11 +123,7 @@ void tst_qnearfieldtagtype4::initTestCase()
         command.append(char(0x01));
         command.append(char(0x00));
 
-        QByteArray resp;
-        resp.append(char(0x90));
-        resp.append(char(0x00));
-
-        dataPool.insert(name, qMakePair(QVariant(command), QVariant(resp)));
+        dataPool.insert(name, qMakePair(QVariant(command), QVariant(true)));
     }
 
     {
@@ -151,7 +147,7 @@ void tst_qnearfieldtagtype4::initTestCase()
         resp.append(char(0x6a));
         resp.append(char(0x86));
 
-        dataPool.insert(name, qMakePair(QVariant(command), QVariant(resp)));
+        dataPool.insert(name, qMakePair(QVariant(command), QVariant(true)));
     }
 
     {
@@ -171,7 +167,7 @@ void tst_qnearfieldtagtype4::initTestCase()
         resp.append(char(0x90));
         resp.append(char(0x00));
 
-        dataPool.insert(name, qMakePair(QVariant(command), QVariant(resp)));
+        dataPool.insert(name, qMakePair(QVariant(command), QVariant(true)));
     }
 
     {
@@ -219,7 +215,7 @@ void tst_qnearfieldtagtype4::initTestCase()
         QVariantList respList;
 
         cmdList.append(command);
-        respList.append(resp);
+        respList.append(true);
 
         command.clear();
         command.append(char(0x00)); // CLA
@@ -233,7 +229,7 @@ void tst_qnearfieldtagtype4::initTestCase()
                        sizeof(quint16)); // P1/P2 offset
 
         cmdList.append(command);
-        respList.append(resp);
+        respList.append(QVariant(true));
 
         dataPool.insert(name, qMakePair(QVariant(cmdList), QVariant(respList)));
     }
