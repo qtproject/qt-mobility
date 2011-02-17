@@ -14,7 +14,6 @@ License:    LGPLv2.1 with exception or GPLv3
 URL:        http://qt.gitorious.org/qt-mobility
 Source0:    http://get.qt.nokia.com/qt/add-ons/%{name}-opensource-src-%{version}.tar.gz
 Source100:  qt-mobility.yaml
-Patch0:     fix_translations_install_path.patch
 Requires:   libqtconnectivity1 = %{version}
 Requires:   libqtcontacts1 = %{version}
 Requires:   libqtfeedback1 = %{version}
@@ -450,8 +449,6 @@ This package contains Qt Mobility translations.
 %prep
 %setup -q -n %{name}-opensource-src-%{version}
 
-# fix_translations_install_path.patch
-%patch0 -p1
 # >> setup
 # << setup
 
@@ -468,6 +465,7 @@ export QMF_LIBDIR=%{_libdir}
 -plugindir "%{_libdir}/qt4/plugins" \
 -demosdir "%{_libdir}/qtmobility/demos" \
 -examplesdir "%{_libdir}/qtmobility/examples" \
+-languages "ar cs da de es fr he hu ja pl pt ru sk sl sv zh_CN zh_TW" \
 -examples \
 -demos \
 -modules "location contacts multimedia publishsubscribe versit messaging systeminfo serviceframework sensors gallery organizer feedback connectivity" \
