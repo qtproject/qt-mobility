@@ -179,14 +179,14 @@ qint64 QLlcpSocketPrivate::writeDatagram(const QByteArray &datagram,
     return -1;
 }
 
-QLlcpSocket::Error QLlcpSocketPrivate::error() const
+QLlcpSocket::SocketError QLlcpSocketPrivate::error() const
 {
     qDebug() << Q_FUNC_INFO << "is unimplemented";
 
     return QLlcpSocket::UnknownSocketError;
 }
 
-QLlcpSocket::State QLlcpSocketPrivate::state() const
+QLlcpSocket::SocketState QLlcpSocketPrivate::state() const
 {
     qDebug() << Q_FUNC_INFO << "is unimplemented";
 
