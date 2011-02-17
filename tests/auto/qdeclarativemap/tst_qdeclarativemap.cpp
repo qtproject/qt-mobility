@@ -431,6 +431,8 @@ void tst_QDeclarativeMap::basicApiTest_data()
     mapObjectViewMap.insert("model", mapModel);
     PropertyValues mapVisible = {true,false,0};
     mapObjectViewMap.insert("visible", mapVisible);
+    PropertyValues mapObjectViewZ = {QVariant(), QVariant(),0};
+    mapObjectViewMap.insert("z", mapObjectViewZ);
     QTest::newRow("PluginParameter") << "import Qt 4.7 \n import QtMobility.location 1.2 \n MapObjectView {}" << mapObjectViewMap << true;
 
     // MapGroup TODO

@@ -215,12 +215,12 @@ QDeclarativeGeoMapObjectView::QDeclarativeGeoMapObjectView(QDeclarativeItem *par
 
 QDeclarativeGeoMapObjectView::~QDeclarativeGeoMapObjectView()
 {
-    if (!mapObjects_.isEmpty()) {
-        //for (int i = 0; i < mapObjects_.size(); ++i) {
-            //mapData_->removeMapObject(mapObjects_.at(i)->mapObject());
-        //}
-        // Model owns the data, do not delete the pointers.
-        mapObjects_.clear();
+    // Remove group from map, and items from the group. This is to
+    // prevent their deletion. The objects are owned by the
+    // declarative objects and are to be deleted by them.
+    if (map_ && map_->mapData_) {
+        map_->mapData_->removeMapObject(&group_);
+        removeInstantiatedItems();
     }
 }
 
@@ -260,6 +260,7 @@ void QDeclarativeGeoMapObjectView::setModel(const QVariant &model)
     // restriction, connecting to model resets is adequate. This must be changed
     // if and when the model support is leveraged.
     QObject::connect(model_, SIGNAL(modelReset()), this, SLOT(modelReset()));
+    repopulate();
     emit modelChanged();
 }
 
@@ -287,16 +288,34 @@ void QDeclarativeGeoMapObjectView::setDelegate(QDeclarativeComponent *delegate)
     if (!delegate)
         return;
     delegate_ = delegate;
-    if (componentCompleted_)
-        repopulate();
+
+    repopulate();
     emit delegateChanged();
 }
 
 void QDeclarativeGeoMapObjectView::setMapData(QDeclarativeGraphicsGeoMap* map)
 {
-    if (!map || !map->mapData_) // changing mapData_ on the fly not supported
+    if (!map || !map->mapData_ || map_) // changing map on the fly not supported
         return;
     map_ = map;
+    map_->mapData_->addMapObject(&group_);
+}
+
+void QDeclarativeGeoMapObjectView::removeInstantiatedItems()
+{
+    QList<QGeoMapObject*> kids = group_.childObjects();
+    for (int i = 0; i < kids.size(); i++) {
+        group_.removeChildObject(kids.at(i));
+    }
+    // Delete the declarative components we have instantiated.
+    // They will also delete the actual qgeomapobjects
+    if (!mapObjects_.isEmpty()) {
+        //qDeleteAll(mapObjects_);
+        for (int i = 0; i < mapObjects_.size(); i++) {
+            delete mapObjects_.at(i);
+        }
+        mapObjects_.clear();
+    }
 }
 
 // Removes and repopulates all items.
@@ -304,13 +323,9 @@ void QDeclarativeGeoMapObjectView::repopulate()
 {
     if (!componentCompleted_ || !map_ || !map_->mapData_ || !delegate_ || !model_)
         return;
-    if (!mapObjects_.isEmpty()) {
-        for (int i = 0; i < mapObjects_.size(); ++i) {
-            map_->mapData_->removeMapObject(mapObjects_.at(i)->mapObject());
-        }
-        // Model owns the data, do not delete the pointers.
-        mapObjects_.clear();
-    }
+    // Free any earlier instances
+    removeInstantiatedItems();
+
     // Iterate model data and instantiate delegates.
     // We could use more specialized landmark model calls here too,
     // but hopefully the support will be leveraged to a general model
@@ -323,7 +338,8 @@ void QDeclarativeGeoMapObjectView::repopulate()
          mapObject->setVisible(visible_);
          mapObject->setMap(map_);
          mapObjects_.append(mapObject);
-         map_->mapData_->addMapObject(mapObject->mapObject());
+         group_.addChildObject(mapObject->mapObject());
+         // Needed in order for mouse areas to work.
          map_->objectMap_.insert(mapObject->mapObject(), mapObject);
     }
 }
@@ -406,6 +422,28 @@ bool QDeclarativeGeoMapObjectView::isVisible() const
     return visible_;
 }
 
+/*!
+    \qmlproperty int MapObjectView::z
+
+    This property holds the z-value of the MapObjectView.
+    It determines the z-value of the instantiated delegates.
+
+    As with other Map objects, objects with same z-value are
+    drawn in insertion order.
+
+*/
+
+void QDeclarativeGeoMapObjectView::setZValue(qreal zValue)
+{
+    qDebug() << "zet is being set and then emitting.";
+    group_.setZValue(zValue);
+    emit zChanged();
+}
+
+qreal QDeclarativeGeoMapObjectView::zValue()
+{
+    return group_.zValue();
+}
 
 #include "moc_qdeclarativegeomapobject_p.cpp"
 

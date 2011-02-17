@@ -169,7 +169,8 @@ private Q_SLOTS:
     void centerAltitudeChanged(double altitude);
 
 private:
-    void setupMapViews();
+    void setupMapView(QDeclarativeGeoMapObjectView *view);
+    void populateMap();
 
     QDeclarativeGeoMapObject* createItem(int modelIndex);
     QDeclarativeGeoMapMouseEvent* createMapMouseEvent(QGraphicsSceneMouseEvent *event);

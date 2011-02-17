@@ -124,18 +124,17 @@ QDeclarativeGraphicsGeoMap::QDeclarativeGraphicsGeoMap(QDeclarativeItem *parent)
 QDeclarativeGraphicsGeoMap::~QDeclarativeGraphicsGeoMap()
 {
     if (mapData_) {
+        qDeleteAll(mapViews_);
         // Remove map objects, we can't allow mapObject
         // to delete the objects because they are owned
         // by the declarative elements.
-        QList<QGeoMapObject*> objects = objectMap_.keys();
+        //QList<QGeoMapObject*> objects = objectMap_.keys();
+        QList<QDeclarativeGeoMapObject*> objects = mapObjects_;
         for (int i = 0; i < objects.size(); ++i) {
-            mapData_->removeMapObject(objects.at(i));
+            mapData_->removeMapObject(objects.at(i)->mapObject());
         }
         delete mapData_;
     }
-    qDeleteAll(objectMap_.values());
-    qDeleteAll(mapViews_);
-
     if (serviceProvider_)
         delete serviceProvider_;
 
@@ -149,16 +148,20 @@ void QDeclarativeGraphicsGeoMap::componentComplete()
 {
     componentCompleted_ = true;
     QDeclarativeItem::componentComplete();
-    if (!mapData_) {
-        return;
-    }
+    populateMap();
+}
 
+void QDeclarativeGraphicsGeoMap::populateMap()
+{
+    if (!mapData_ || !componentCompleted_)
+        return;
     QObjectList kids = children();
     for (int i = 0; i < kids.size(); ++i) {
         // dispatch items appropriately
         QDeclarativeGeoMapObjectView* mapView = qobject_cast<QDeclarativeGeoMapObjectView*>(kids.at(i));
         if (mapView) {
             mapViews_.append(mapView);
+            setupMapView(mapView);
             continue;
         }
         QDeclarativeGeoMapObject *mapObject = qobject_cast<QDeclarativeGeoMapObject*>(kids.at(i));
@@ -176,18 +179,12 @@ void QDeclarativeGraphicsGeoMap::componentComplete()
             mouseAreas_.append(mouseArea);
         }
     }
-    setupMapViews();
 }
 
-void QDeclarativeGraphicsGeoMap::setupMapViews()
+void QDeclarativeGraphicsGeoMap::setupMapView(QDeclarativeGeoMapObjectView *view)
 {
-    if (mapViews_.isEmpty())
-        return;
-    for (int i = 0; i < mapViews_.size(); ++i) {
-        QDeclarativeGeoMapObjectView *mapView = mapViews_.at(i);
-        mapView->setMapData(this);
-        mapView->repopulate();
-    }
+    view->setMapData(this);
+    view->repopulate();
 }
 
 void QDeclarativeGraphicsGeoMap::paint(QPainter *painter,
@@ -261,18 +258,9 @@ void QDeclarativeGraphicsGeoMap::setPlugin(QDeclarativeGeoServiceProvider *plugi
     mapData_->setMapType(QGraphicsGeoMap::MapType(mapType_));
     mapData_->setConnectivityMode(QGraphicsGeoMap::ConnectivityMode(connectivityMode_));
 
-    // todo this needs to be addressed when figuring out the overall issue of
-    // layering (z) between view objects and simple objects;
-    // values() of hash is not in same order as user put them.
-    // furthermore also objectviews must be setup here - plugin may be
-    // set later than at componentComplete()
-    if (componentCompleted_) {
-        for (int i = 0; i < mapObjects_.size(); ++i)
-            mapData_->addMapObject(mapObjects_.at(i)->mapObject());
-        setupMapViews();
-    }
+    // Populate the map objects.
+    populateMap();
     // setup signals
-
     connect(mapData_,
             SIGNAL(updateMapDisplay(QRectF)),
             this,
