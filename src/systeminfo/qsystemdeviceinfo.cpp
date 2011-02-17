@@ -566,11 +566,13 @@ bool QSystemDeviceInfo::keypadLightOn(QSystemDeviceInfo::KeypadType type)
 /*!
   \property QSystemDeviceInfo::uniqueDeviceID
   \brief unique host id.
-
+  Returns a unique identifier for the machine.
+*/
+/*!
   Returns a unique identifier for the machine.
 
   Depending on security enforcement on platform, this may return a non unique number, or 0.
-
+    This will be a unique ID constant to this device.
   */
 QUuid QSystemDeviceInfo::uniqueDeviceID()
 {
