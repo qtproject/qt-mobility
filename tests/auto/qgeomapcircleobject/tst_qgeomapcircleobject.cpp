@@ -45,6 +45,7 @@
 #include <qgeomapcircleobject.h>
 #include <qgeocoordinate.h>
 #include <qgeoboundingcircle.h>
+#include <qgeomappixmapobject.h>
 #include <qgraphicsgeomap.h>
 #include <qgeoboundingbox.h>
 
@@ -672,28 +673,45 @@ void tst_QGeoMapCircleObject::qtmobility1255()
 void tst_QGeoMapCircleObject::qtmobility1199()
 {
     QGeoCoordinate seattle(47.609722,-122.333056,0);
+    QGeoCoordinate seattle2(47.60981194,-122.33185897);
+    QGeoCoordinate seattle3(47.60972200, -122.33332201);
 
-    QGeoMapCircleObject *obj = new QGeoMapCircleObject(seattle, 100);
+    QGeoMapCircleObject *obj = new QGeoMapCircleObject(seattle3, 30);
+    QGeoMapCircleObject *obj2 = new QGeoMapCircleObject(seattle2, 120);
+
+    QPixmap pm(20,20);
+    pm.fill(Qt::blue);
+    QPainter p(&pm);
+    p.setPen(QPen(Qt::red));
+    p.drawEllipse(10,10,5,7);
+    QGeoMapPixmapObject *pobj = new QGeoMapPixmapObject(seattle, QPoint(0,0),
+                                                        pm);
 
     QGraphicsGeoMap *map = m_helper->map();
     map->setCenter(seattle);
-    map->setZoomLevel(20.0);
+    map->setZoomLevel(18.0);
     map->pan(10, 10);
 
     map->addMapObject(obj);
+    map->addMapObject(obj2);
+    map->addMapObject(pobj);
 
-    for (qreal z = 20.0; z > 0.0; z -= 1.0) {
+    for (qreal z = 18.0; z >= 0.0; z -= 1.0) {
         QPointF coord = map->coordinateToScreenPosition(seattle);
 
         QList<QGeoMapObject*> list;
 
         list = map->mapObjectsAtScreenPosition(coord);
-        QCOMPARE(list.size(), 1);
+        QCOMPARE(list.size(), 3);
         QVERIFY(list.at(0) == obj);
+        QVERIFY(list.at(1) == obj2);
+        QVERIFY(list.at(2) == pobj);
 
         list = map->mapObjectsInViewport();
-        QCOMPARE(list.size(), 1);
+        QCOMPARE(list.size(), 3);
         QVERIFY(list.at(0) == obj);
+        QVERIFY(list.at(1) == obj2);
+        QVERIFY(list.at(2) == pobj);
     }
 }
 
