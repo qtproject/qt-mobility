@@ -161,6 +161,7 @@ bool QGraphicsVideoItemPrivate::setMediaObject(QMediaObject *mediaObject)
                     m_service->requestControl(QVideoWidgetControl_iid));
                 if (m_widgetControl) {
                     connect(m_widgetControl, SIGNAL(nativeSizeChanged()), q_ptr, SLOT(_q_updateNativeSize()));
+                    m_widgetControl->setAspectRatioMode(Qt::IgnoreAspectRatio);
                     updateGeometry();
                     updateTopWinId();
                     updateWidgetOrdinalPosition();
@@ -349,23 +350,24 @@ void QGraphicsVideoItemPrivate::updateEventFilters()
 void QGraphicsVideoItemPrivate::updateGeometry()
 {
     q_ptr->prepareGeometryChange();
+    QSizeF videoSize;
     if (m_nativeSize.isEmpty()) {
-        m_boundingRect = m_rect;
+        videoSize = m_rect.size();
     } else if (m_aspectRatioMode == Qt::IgnoreAspectRatio) {
-        m_boundingRect = m_rect;
-    } else if (m_aspectRatioMode == Qt::KeepAspectRatio) {
-        QSizeF size = m_nativeSize;
-        size.scale(m_rect.size(), Qt::KeepAspectRatio);
-        m_boundingRect = QRectF(0, 0, size.width(), size.height());
-        m_boundingRect.moveCenter(m_rect.center());
-    } else if (m_aspectRatioMode == Qt::KeepAspectRatioByExpanding) {
-        m_boundingRect = m_rect;
+        videoSize = m_rect.size();
+    } else {
+        // KeepAspectRatio or KeepAspectRatioByExpanding
+        videoSize = m_nativeSize;
+        videoSize.scale(m_rect.size(), m_aspectRatioMode);
     }
+    QRectF displayRect(QPointF(0, 0), videoSize);
+    displayRect.moveCenter(m_rect.center());
+    m_boundingRect = displayRect.intersected(m_rect);
     if (QWidget *widget = videoWidget()) {
         QRect widgetGeometry;
         QRect extent;
         if (m_currentView) {
-            const QRectF viewRectF = m_transform.mapRect(m_boundingRect);
+            const QRectF viewRectF = m_transform.mapRect(displayRect);
             const QRect viewRect(viewRectF.topLeft().toPoint(), viewRectF.size().toSize());
             // Without this, a line of transparent pixels is visible round the edge of the
             // item.  This is probably down to an error in conversion between scene and
@@ -381,11 +383,8 @@ void QGraphicsVideoItemPrivate::updateGeometry()
                            videoGeometry.size());
         }
         setWithinViewBounds(!widgetGeometry.size().isEmpty());
-        if (widgetGeometry != widget->geometry()) {
-            widget->setGeometry(widgetGeometry);
-            // Set custom property
-            m_widgetControl->setProperty("extentRect", QVariant::fromValue<QRect>(extent));
-        }
+        widget->setGeometry(widgetGeometry);
+        m_widgetControl->setProperty("extentRect", QVariant::fromValue<QRect>(extent));
     }
 }
 
