@@ -60,16 +60,25 @@
 
 Q_DECLARE_METATYPE(QVideoSurfaceFormat)
 
-QVideoSurfaceGstDelegate::QVideoSurfaceGstDelegate(QAbstractVideoSurface *surface)
+QVideoSurfaceGstDelegate::QVideoSurfaceGstDelegate(
+    QAbstractVideoSurface *surface)
     : m_surface(surface)
+    , m_pool(0)
     , m_renderReturn(GST_FLOW_ERROR)
     , m_bytesPerLine(0)
 {
     if (m_surface) {
-        m_supportedPixelFormats = m_surface->supportedPixelFormats();
-        m_supportedXVideoPixelFormats = m_surface->supportedPixelFormats(QAbstractVideoBuffer::XvShmImageHandle);
-        connect(m_surface, SIGNAL(supportedFormatsChanged()), this, SLOT(supportedFormatsChanged()));
+#if defined(Q_WS_X11) && !defined(QT_NO_XVIDEO)
+        m_pools.append(new QGstXvImageBufferPool());
+#endif
+        updateSupportedFormats();
+        connect(m_surface, SIGNAL(supportedFormatsChanged()), this, SLOT(updateSupportedFormats()));
     }
+}
+
+QVideoSurfaceGstDelegate::~QVideoSurfaceGstDelegate()
+{
+    qDeleteAll(m_pools);
 }
 
 QList<QVideoFrame::PixelFormat> QVideoSurfaceGstDelegate::supportedPixelFormats(QAbstractVideoBuffer::HandleType handleType) const
@@ -80,8 +89,8 @@ QList<QVideoFrame::PixelFormat> QVideoSurfaceGstDelegate::supportedPixelFormats(
         return QList<QVideoFrame::PixelFormat>();
     else if (handleType == QAbstractVideoBuffer::NoHandle)
         return m_supportedPixelFormats;
-    else if (handleType == QAbstractVideoBuffer::XvShmImageHandle)
-        return m_supportedXVideoPixelFormats;
+    else if (handleType == m_pool->handleType())
+        return m_supportedPoolPixelFormats;
     else
         return m_surface->supportedPixelFormats(handleType);
 }
@@ -150,15 +159,11 @@ GstFlowReturn QVideoSurfaceGstDelegate::render(GstBuffer *buffer)
 
     QMutexLocker locker(&m_mutex);
 
-    QGstVideoBuffer *videoBuffer = 0;
+    QAbstractVideoBuffer *videoBuffer = 0;
 
-#if defined(Q_WS_X11) && !defined(QT_NO_XVIDEO)
-    if (G_TYPE_CHECK_INSTANCE_TYPE(buffer, QGstXvImageBuffer::get_type())) {
-        QGstXvImageBuffer *xvBuffer = reinterpret_cast<QGstXvImageBuffer *>(buffer);
-        QVariant handle = QVariant::fromValue(xvBuffer->xvImage);
-        videoBuffer = new QGstVideoBuffer(buffer, m_bytesPerLine, QAbstractVideoBuffer::XvShmImageHandle, handle);
-    } else
-#endif
+    if (m_pool && G_TYPE_CHECK_INSTANCE_TYPE(buffer, m_pool->bufferType()))
+        videoBuffer = m_pool->prepareVideoBuffer(buffer, m_bytesPerLine);
+    else
         videoBuffer = new QGstVideoBuffer(buffer, m_bytesPerLine);
 
     m_frame = QVideoFrame(
@@ -235,15 +240,32 @@ void QVideoSurfaceGstDelegate::queuedRender()
     m_renderCondition.wakeAll();
 }
 
-void QVideoSurfaceGstDelegate::supportedFormatsChanged()
+void QVideoSurfaceGstDelegate::updateSupportedFormats()
 {
+    QAbstractGstBufferPool *newPool = 0;
+    foreach (QAbstractGstBufferPool *pool, m_pools) {
+        if (!m_surface->supportedPixelFormats(pool->handleType()).isEmpty()) {
+            newPool = pool;
+            break;
+        }
+    }
+
+    if (newPool != m_pool) {
+        QMutexLocker lock(&m_poolMutex);
+
+        if (m_pool)
+            m_pool->clear();
+        m_pool = newPool;
+    }
+
     QMutexLocker locker(&m_mutex);
 
     m_supportedPixelFormats.clear();
-    m_supportedXVideoPixelFormats.clear();
+    m_supportedPoolPixelFormats.clear();
     if (m_surface) {
         m_supportedPixelFormats = m_surface->supportedPixelFormats();
-        m_supportedXVideoPixelFormats = m_surface->supportedPixelFormats(QAbstractVideoBuffer::XvShmImageHandle);
+        if (m_pool)
+            m_supportedPoolPixelFormats = m_surface->supportedPixelFormats(m_pool->handleType());
     }
 }
 
@@ -419,9 +441,7 @@ void QVideoSurfaceGstSink::instance_init(GTypeInstance *instance, gpointer g_cla
     Q_UNUSED(g_class);
 
     sink->delegate = 0;
-#if defined(Q_WS_X11) && !defined(QT_NO_XVIDEO)
-    sink->pool = new QGstXvImageBufferPool();
-#endif
+
     sink->lastRequestedCaps = 0;
     sink->lastBufferCaps = 0;
     sink->lastSurfaceFormat = new QVideoSurfaceFormat;
@@ -430,10 +450,6 @@ void QVideoSurfaceGstSink::instance_init(GTypeInstance *instance, gpointer g_cla
 void QVideoSurfaceGstSink::finalize(GObject *object)
 {
     VO_SINK(object);
-#if defined(Q_WS_X11) && !defined(QT_NO_XVIDEO)
-    delete sink->pool;
-    sink->pool = 0;
-#endif
 
     delete sink->lastSurfaceFormat;
     sink->lastSurfaceFormat = 0;
@@ -628,18 +644,25 @@ GstFlowReturn QVideoSurfaceGstSink::buffer_alloc(
     Q_UNUSED(offset);
     Q_UNUSED(size);
 
+    if (!sink->delegate->pool())
+        return GST_FLOW_OK;
+
+    QMutexLocker poolLock(sink->delegate->poolMutex());
+    QAbstractGstBufferPool *pool = sink->delegate->pool();
+
     *buffer = 0;
 
-#if defined(Q_WS_X11) && !defined(QT_NO_XVIDEO)
+    if (!pool)
+        return GST_FLOW_OK;
 
     if (sink->lastRequestedCaps && gst_caps_is_equal(sink->lastRequestedCaps, caps)) {
         //qDebug() << "reusing last caps";
-        *buffer = GST_BUFFER(sink->pool->takeBuffer(*sink->lastSurfaceFormat, sink->lastBufferCaps));
+        *buffer = GST_BUFFER(pool->takeBuffer(*sink->lastSurfaceFormat, sink->lastBufferCaps));
         return GST_FLOW_OK;
     }
 
-    if (sink->delegate->supportedPixelFormats(QAbstractVideoBuffer::XvShmImageHandle).isEmpty()) {
-        //qDebug() << "sink doesn't support Xv buffers, skip buffers allocation";
+    if (sink->delegate->supportedPixelFormats(pool->handleType()).isEmpty()) {
+        //qDebug() << "sink doesn't support native pool buffers, skip buffers allocation";
         return GST_FLOW_OK;
     }
 
@@ -649,6 +672,8 @@ GstFlowReturn QVideoSurfaceGstSink::buffer_alloc(
         gst_caps_unref(intersection);
         return GST_FLOW_NOT_NEGOTIATED;
     }
+
+    poolLock.unlock();
 
     if (sink->delegate->isActive()) {
         //if format was changed, restart the surface
@@ -674,10 +699,13 @@ GstFlowReturn QVideoSurfaceGstSink::buffer_alloc(
         }
     }
 
+    poolLock.relock();
+    pool = sink->delegate->pool();
+
     QVideoSurfaceFormat surfaceFormat = sink->delegate->surfaceFormat();
 
-    if (!sink->pool->isFormatSupported(surfaceFormat)) {
-        //qDebug() << "sink doesn't provide Xv buffer details, skip buffers allocation";
+    if (!pool->isFormatSupported(surfaceFormat)) {
+        //qDebug() << "sink doesn't support native pool format, skip custom buffers allocation";
         return GST_FLOW_OK;
     }
 
@@ -693,9 +721,8 @@ GstFlowReturn QVideoSurfaceGstSink::buffer_alloc(
 
     *sink->lastSurfaceFormat = surfaceFormat;
 
-    *buffer =  GST_BUFFER(sink->pool->takeBuffer(surfaceFormat, intersection));
+    *buffer =  GST_BUFFER(pool->takeBuffer(surfaceFormat, intersection));
 
-#endif
     return GST_FLOW_OK;
 }
 
