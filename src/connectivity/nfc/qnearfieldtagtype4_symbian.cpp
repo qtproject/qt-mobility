@@ -47,6 +47,14 @@
 
 QTM_BEGIN_NAMESPACE
 
+static void OutputByteArray(const QByteArray& data)
+{
+    for(int i = 0; i < data.count(); ++i)
+    {
+        LOG("data ["<<i<<"] = "<<((quint16)(data.at(i))));
+    }
+}
+
 QNearFieldTagType4Symbian::QNearFieldTagType4Symbian(CNearFieldNdefTarget *tag, QObject *parent)
                                 : QNearFieldTagType4(parent), QNearFieldTagImpl(tag)
 {
@@ -108,6 +116,7 @@ QVariant QNearFieldTagType4Symbian::decodeResponse(const QByteArray &command, co
     BEGIN
     QVariant result;
 
+    OutputByteArray(response);
     if ((command.count() > 2) && (0x00 == command.at(0)))
     {
         if ( (0xA4 == command.at(1)) || (0xD6 == command.at(1)) )

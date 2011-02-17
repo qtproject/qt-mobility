@@ -46,6 +46,14 @@
 
 QTM_BEGIN_NAMESPACE
 
+static void OutputByteArray(const QByteArray& data)
+{
+    for(int i = 0; i < data.count(); ++i)
+    {
+        LOG("data ["<<i<<"] = "<<((quint16)(data.at(i))));
+    }
+}
+
 QNearFieldTagType3Symbian::QNearFieldTagType3Symbian(CNearFieldNdefTarget *tag, QObject *parent)
                                 : QNearFieldTagType3(parent), QNearFieldTagImpl(tag)
 {
@@ -65,6 +73,7 @@ QByteArray QNearFieldTagType3Symbian::uid() const
 QVariant QNearFieldTagType3Symbian::decodeResponse(const QByteArray & command, const QByteArray &response)
 {
     BEGIN
+    OutputByteArray(response);
     QVariant result;
     if (command.count() < 0)
     {
@@ -216,6 +225,7 @@ QNearFieldTarget::RequestId QNearFieldTagType3Symbian::update(const QMap<quint16
 
 const QByteArray& QNearFieldTagType3Symbian::getIDm()
 {
+    BEGIN
     if (mIDm.isEmpty())
     {
         // this is the first time to get IDm
@@ -232,6 +242,8 @@ const QByteArray& QNearFieldTagType3Symbian::getIDm()
             }
         }
     }
+    OutputByteArray(mIDm);
+    END
     return mIDm;
 }
 
