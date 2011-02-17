@@ -1015,24 +1015,6 @@ float QSystemDisplayInfoPrivate::contrast(int screen)
     return 0.0;
 }
 
-//int QSystemDisplayInfoPrivate::getDPIWidth(int screen)
-//{
-//    int dpi=0;
-//    if(screen < 16 && screen > -1) {
-//        dpi = QDesktopWidget().screenGeometry().width() / (physicalWidth(0) / 25.4);
-//    }
-//    return dpi;
-//}
-
-//int QSystemDisplayInfoPrivate::getDPIHeight(int screen)
-//{
-//    int dpi=0;
-//    if(screen < 16 && screen > -1) {
-//        dpi = QDesktopWidget().screenGeometry().height() / (physicalHeight(0) / 25.4);
-//    }
-//    return dpi;
-//}
-
 QSystemDisplayInfo::BacklightState QSystemDisplayInfoPrivate::backlightStatus(int screen)
 {
     Q_UNUSED(screen)
