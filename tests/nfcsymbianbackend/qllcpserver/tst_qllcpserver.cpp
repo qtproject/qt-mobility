@@ -51,6 +51,16 @@ QTM_USE_NAMESPACE
 
 QString TestUri("urn:nfc:xsn:nokia:symbiantest");
 
+static qint64 countBytesWritten(QSignalSpy& bytesWrittenSpy)
+    {
+    qint64 ret = 0;
+    for(int i = 0; i < bytesWrittenSpy.count(); i++)
+        {
+        ret+=bytesWrittenSpy[i].at(0).value<qint64>();
+        }
+    return ret;
+    }
+
 Q_DECLARE_METATYPE(QLlcpSocket::Error)
 class tst_QLlcpServer : public QObject
 {
@@ -63,20 +73,19 @@ private Q_SLOTS:
     void initTestCase();
     void cleanupTestCase();
 
-    // ALERT Handshake required, do NOT change the following sequence of testcases.
 
     // basic acceptance test
-    void newConnection(); //  handshake 1
+    void newConnection();
     void newConnection_data();
-    void newConnection_wait(); // handshake 2
+    void newConnection_wait();
     void newConnection_wait_data();
-    void api_coverage();  // handshake 3
+    void api_coverage();
 
     //advance test case
     void multiConnection();
 
     // nagetive testcases
-    void negTestCase1();  // handshake 4
+    void negTestCase1();
 };
 
 tst_QLlcpServer::tst_QLlcpServer()
@@ -171,18 +180,18 @@ void tst_QLlcpServer::newConnection()
     QVERIFY(val == 0);
 
     QTRY_VERIFY(!bytesWrittenSpy.isEmpty());
-    qint64 written = bytesWrittenSpy.first().at(0).value<qint64>();
+    qint64 written = countBytesWritten(bytesWrittenSpy);
     qDebug()<<"Server::bytesWritten signal return value = " << written;
     while (written < block.size())
         {
         QSignalSpy bytesWrittenSpy(socket, SIGNAL(bytesWritten(qint64)));
         QTRY_VERIFY(!bytesWrittenSpy.isEmpty());
-        written += bytesWrittenSpy.first().at(0).value<qint64>();
+        written += countBytesWritten(bytesWrittenSpy);
         }
     QVERIFY(written == block.size());
     //Now data has been sent,check the if existing error
     QVERIFY(errorSpy.isEmpty());
-
+    QTest::qWait(1500);//give some time to client to finish
     server.close();
 }
 
@@ -262,7 +271,7 @@ void tst_QLlcpServer::newConnection_wait()
     QVERIFY(ret);
 
     QTRY_VERIFY(!bytesWrittenSpy.isEmpty());
-    qint64 written = bytesWrittenSpy.first().at(0).value<qint64>();
+    qint64 written = countBytesWritten(bytesWrittenSpy);
 
     while (written < block.size())
         {
@@ -270,7 +279,7 @@ void tst_QLlcpServer::newConnection_wait()
         bool ret = socket->waitForBytesWritten(Timeout);
         QVERIFY(ret);
         QTRY_VERIFY(!bytesWrittenSpy.isEmpty());
-        written += bytesWrittenSpy.first().at(0).value<qint64>();
+        written += countBytesWritten(bytesWrittenSpy);
         }
     QVERIFY(written == block.size());
     //Now data has been sent,check the if existing error
@@ -280,7 +289,7 @@ void tst_QLlcpServer::newConnection_wait()
             qDebug("QLlcpSocket::Error =%d", error);
         }
     QVERIFY(errorSpy.isEmpty());
-
+    QTest::qWait(1500);//give some time to client to finish
     server.close();
     }
 
@@ -308,7 +317,7 @@ void tst_QLlcpServer::api_coverage()
     bool ret = server.listen(uri);
     QVERIFY(ret);
 
-    QString message("handshake 3: api_coverage test");
+    QString message("api_coverage test");
 
     QNfcTestUtil::ShowAutoMsg(message, &connectionSpy, 1);
     QTRY_VERIFY(!connectionSpy.isEmpty());
@@ -352,13 +361,13 @@ void tst_QLlcpServer::negTestCase1()
     bool ret = server.listen(uri);
     QVERIFY(ret);
 
-    QString message("handshake 4: negTestCase1 test");
+    QString message("negTestCase1 test");
 
     QNfcTestUtil::ShowAutoMsg(message, &connectionSpy, 1);
 
     ret = server.listen(uri);
     QVERIFY(ret == false);
-
+    QTest::qWait(1 * 1000);//give some time to wait new connection
     server.close();
 }
 /*!
@@ -432,21 +441,22 @@ void tst_QLlcpServer::multiConnection()
         QVERIFY(val == 0);
 
         QTRY_VERIFY(!bytesWrittenSpy.isEmpty());
-        qint64 written = bytesWrittenSpy.first().at(0).value<qint64>();
+        qint64 written = countBytesWritten(bytesWrittenSpy);
         qDebug()<<"Server::bytesWritten signal return value = " << written;
         while (written < block.size())
             {
             QSignalSpy bytesWrittenSpy(socket, SIGNAL(bytesWritten(qint64)));
             QTRY_VERIFY(!bytesWrittenSpy.isEmpty());
-            written += bytesWrittenSpy.first().at(0).value<qint64>();
+            written += countBytesWritten(bytesWrittenSpy);
             }
         QVERIFY(written == block.size());
         //Now data has been sent,check the if existing error
         QVERIFY(errorSpy.isEmpty());
 
-        connectionSpy.clear();
+        connectionSpy.removeFirst();
         loopCount++;
         }
+    QTest::qWait(1500);//give some time to client to finish
     server.close();
     }
 QTEST_MAIN(tst_QLlcpServer);

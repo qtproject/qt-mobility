@@ -56,7 +56,15 @@ Q_DECLARE_METATYPE(QLlcpSocket::State)
 Q_DECLARE_METATYPE(QLlcpSocket::Error)
 
 QString TestUri("urn:nfc:xsn:nokia:symbiantest");
-
+static qint64 countBytesWritten(QSignalSpy& bytesWrittenSpy)
+    {
+    qint64 ret = 0;
+    for(int i = 0; i < bytesWrittenSpy.count(); i++)
+        {
+        ret+=bytesWrittenSpy[i].at(0).value<qint64>();
+        }
+    return ret;
+    }
 class tst_qllcpsockettype2 : public QObject
 {
     Q_OBJECT
@@ -69,17 +77,18 @@ private Q_SLOTS:
     void cleanupTestCase();
 
     // basic acceptance testcases
-    void echo();   // handshake 1
+    void echo();
     void echo_data();
-    void echo_wait();  // handshake 2
+    void echo_wait();
     void echo_wait_data();
-    void api_coverage();  // handshake 3
+    void api_coverage();
 
     void multipleWrite();
     void multipleWrite_data();
-
+    // advanced testcases
     void waitReadyReadInSlot();
     void deleteSocketWhenInUse();
+    void multiSocketToOneServer();
     // nagetive testcases
     void connectTest();
     void negTestCase1();
@@ -145,7 +154,7 @@ void tst_qllcpsockettype2::echo()
     QFETCH(QString, uri);
     QFETCH(QString, echo);
 
-    QString message("handshake 1");
+    QString message("echo test");
 
     QNfcTestUtil::ShowAutoMsg(message);
     QLlcpSocket socket(this);
@@ -187,14 +196,14 @@ void tst_qllcpsockettype2::echo()
     QVERIFY( val == 0);
 
     QTRY_VERIFY(!bytesWrittenSpy.isEmpty());
-    qint64 written = bytesWrittenSpy.first().at(0).value<qint64>();
+    qint64 written = countBytesWritten(bytesWrittenSpy);
 
     qDebug()<<"bytesWritten signal return value = "<<written;
     while (written < block.size())
         {
         QSignalSpy bytesWrittenSpy(&socket, SIGNAL(bytesWritten(qint64)));
         QTRY_VERIFY(!bytesWrittenSpy.isEmpty());
-        qint64 w = bytesWrittenSpy.first().at(0).value<qint64>();
+        qint64 w = countBytesWritten(bytesWrittenSpy);
         qDebug()<<"got bytesWritten signal = "<<w;
         written += w;
         }
@@ -263,7 +272,7 @@ void tst_qllcpsockettype2::echo_wait()
     QFETCH(QString, uri);
     QFETCH(QString, echo);
 
-    QString message("handshake 2");
+    QString message("echo_wait test");
 
     QNfcTestUtil::ShowAutoMsg(message);
     QLlcpSocket socket(this);
@@ -300,7 +309,7 @@ void tst_qllcpsockettype2::echo_wait()
     QVERIFY(ret);
 
     QTRY_VERIFY(!bytesWrittenSpy.isEmpty());
-    qint64 written = bytesWrittenSpy.first().at(0).value<qint64>();
+    qint64 written = countBytesWritten(bytesWrittenSpy);
 
     while (written < block.size())
         {
@@ -308,7 +317,7 @@ void tst_qllcpsockettype2::echo_wait()
         ret = socket.waitForBytesWritten(Timeout);
         QVERIFY(ret);
         QTRY_VERIFY(!bytesWrittenSpy.isEmpty());
-        written += bytesWrittenSpy.first().at(0).value<qint64>();
+        written += countBytesWritten(bytesWrittenSpy);
         }
     QVERIFY(written == block.size());
     //Get the echoed data from server
@@ -363,7 +372,7 @@ void tst_qllcpsockettype2::echo_wait_data()
 void tst_qllcpsockettype2::api_coverage()
 {
 
-    QString message("handshake 3: api_coverage test");
+    QString message("api_coverage test");
 
     QNfcTestUtil::ShowAutoMsg(message);
 
@@ -408,11 +417,11 @@ void tst_qllcpsockettype2::api_coverage()
                 2) disconnect the connecting socket should not cause failure
                 3) readDatagram after disconnection will cause failure.
 
- CounterPart test: tst_QLlcpServer::newConnection() or newConnection_wait()
+ CounterPart test: tst_QLlcpServer::negTestCase1()
  */
 void tst_qllcpsockettype2::connectTest()
 {
-    QString message("handshake 4");
+    QString message("connectTest");
 
     QNfcTestUtil::ShowAutoMsg(message);
 
@@ -466,7 +475,7 @@ void tst_qllcpsockettype2::multipleWrite()
     {
     QFETCH(QString, uri);
     QFETCH(QString, echo);
-    QString message("handshake 5: multipleWrite");
+    QString message("multipleWrite test");
     QNfcTestUtil::ShowAutoMsg(message);
 
     QLlcpSocket socket(this);
@@ -490,14 +499,14 @@ void tst_qllcpsockettype2::multipleWrite()
     QVERIFY( ret == 0);
 
     QTRY_VERIFY(!bytesWrittenSpy.isEmpty());
-    qint64 written = bytesWrittenSpy.first().at(0).value<qint64>();
+    qint64 written = countBytesWritten(bytesWrittenSpy);;
 
     qDebug()<<"bytesWritten signal return value = "<<written;
     while (written < block.size())
         {
         QSignalSpy bytesWrittenSpy(&socket, SIGNAL(bytesWritten(qint64)));
         QTRY_VERIFY(!bytesWrittenSpy.isEmpty());
-        qint64 w = bytesWrittenSpy.first().at(0).value<qint64>();
+        qint64 w = countBytesWritten(bytesWrittenSpy);
         qDebug()<<"got bytesWritten signal = "<<w;
         written += w;
         }
@@ -542,12 +551,12 @@ void tst_qllcpsockettype2::multipleWrite_data()
     QTest::newRow("1") << TestUri << longStr4k;
 }
 /*!
- Description:  negative test - over sender DoCancel() method
-
+ Description:  coverage test - cover sender DoCancel() method
+ CounterPart test: tst_QLlcpServer::negTestCase1()
 */
 void tst_qllcpsockettype2::negTestCase1()
 {
-    QString message("handshake 5: negTestCase1");
+    QString message("negTestCase1 test");
     QNfcTestUtil::ShowAutoMsg(message);
 
     QLlcpSocket socket(this);
@@ -567,13 +576,13 @@ void tst_qllcpsockettype2::negTestCase1()
     out << (quint16)(block.size() - sizeof(quint16));
     qint64 ret = socket.writeDatagram(block.constData(), block.size());
     QVERIFY( ret != -1);
-    //cover sender DoCancel() method
+    //cover SenderAO DoCancel() method
 }
 
 /*!
  Description: readDatagram/writeDatagram negative test - read/write without connectToService
 
- CounterPart test: tst_QLlcpServer::newConnection() or newConnection_wait()
+ CounterPart test: No need counterpart in server side
 */
 void tst_qllcpsockettype2::negTestCase2()
 {
@@ -588,11 +597,14 @@ void tst_qllcpsockettype2::negTestCase2()
 
 /*!
  Description: negative testcase II - invalid usage of connection-less API
- CounterPart test: tst_QLlcpServer::newConnection() or newConnection_wait()
+ CounterPart test: tst_QLlcpServer::negTestCase1()
 */
 void tst_qllcpsockettype2::negTestCase3()
 {
     QLlcpSocket socket(this);
+
+    QString message("negTestCase3 test");
+    QNfcTestUtil::ShowAutoMsg(message);
 
     QSignalSpy errorSpy(&socket, SIGNAL(error(QLlcpSocket::Error)));
     socket.connectToService(m_target, TestUri);
@@ -606,7 +618,7 @@ void tst_qllcpsockettype2::negTestCase3()
     qint64 size = socket.pendingDatagramSize();
     QVERIFY(size == -1);
 
-    QString message = "Oops, Invalid usage for writeDatagram";
+    message = "Oops, Invalid usage for writeDatagram";
     const char* data = (const char *) message.data();
     qint64 strSize = message.size();
     size = socket.writeDatagram(data,strSize,m_target, 35);
@@ -627,7 +639,7 @@ void tst_qllcpsockettype2::negTestCase3()
 void tst_qllcpsockettype2::sendEmptyData()
     {
 
-    QString message("send Empty Data");
+    QString message("sendEmptyData test");
 
     QNfcTestUtil::ShowAutoMsg(message);
     QLlcpSocket socket(this);
@@ -690,7 +702,7 @@ private:
 */
 void tst_qllcpsockettype2::waitReadyReadInSlot()
 {
-    QString message("test waitReadyReadInSlot");
+    QString message("waitReadyReadInSlot test");
 
     QNfcTestUtil::ShowAutoMsg(message);
     QLlcpSocket socket(this);
@@ -727,14 +739,14 @@ void tst_qllcpsockettype2::waitReadyReadInSlot()
     QVERIFY( val == 0);
 
     QTRY_VERIFY(!bytesWrittenSpy.isEmpty());
-    qint64 written = bytesWrittenSpy.first().at(0).value<qint64>();
+    qint64 written = countBytesWritten(bytesWrittenSpy);
 
     qDebug()<<"bytesWritten signal return value = "<<written;
     while (written < block.size())
         {
         QSignalSpy bytesWrittenSpy(&socket, SIGNAL(bytesWritten(qint64)));
         QTRY_VERIFY(!bytesWrittenSpy.isEmpty());
-        qint64 w = bytesWrittenSpy.first().at(0).value<qint64>();
+        qint64 w = countBytesWritten(bytesWrittenSpy);
         qDebug()<<"got bytesWritten signal = "<<w;
         written += w;
         }
@@ -792,7 +804,7 @@ private:
 */
 void tst_qllcpsockettype2::deleteSocketWhenInUse()
     {
-    QString message("test deleteSocketWhenInUse");
+    QString message("deleteSocketWhenInUse test");
 
     QNfcTestUtil::ShowAutoMsg(message);
     QLlcpSocket* socket = new QLlcpSocket;
@@ -827,6 +839,283 @@ void tst_qllcpsockettype2::deleteSocketWhenInUse()
     QVERIFY( val == 0);
     QTest::qWait(5 * 1000);//give some time to wait bytesWritten signal
     QVERIFY(errorSpy.isEmpty());
+    }
+/*!
+ Description: Add a server in one device, then two
+ client socket in another device to connect the server at same time
+ CounterPart test: tst_QLlcpServer::multiConnection()
+*/
+void tst_qllcpsockettype2::multiSocketToOneServer()
+    {
+    QString message("multiSocketToOneServer test");
+
+    QNfcTestUtil::ShowAutoMsg(message);
+    QLlcpSocket* socket1 = new QLlcpSocket;
+    QLlcpSocket* socket2 = new QLlcpSocket;
+    QSignalSpy connectedSpy1(socket1, SIGNAL(connected()));
+    QSignalSpy errorSpy1(socket1, SIGNAL(error(QLlcpSocket::Error)));
+    QSignalSpy readyReadSpy1(socket1, SIGNAL(readyRead()));
+    QSignalSpy bytesWrittenSpy1(socket1, SIGNAL(bytesWritten(qint64)));
+
+    QSignalSpy connectedSpy2(socket2, SIGNAL(connected()));
+    QSignalSpy errorSpy2(socket2, SIGNAL(error(QLlcpSocket::Error)));
+    QSignalSpy readyReadSpy2(socket2, SIGNAL(readyRead()));
+    QSignalSpy bytesWrittenSpy2(socket2, SIGNAL(bytesWritten(qint64)));
+
+    socket1->connectToService(m_target, TestUri);
+    socket2->connectToService(m_target, TestUri);
+
+    //test connect when some socket still processing data
+    QLlcpSocket* socket3 = new QLlcpSocket;
+
+    QTRY_VERIFY(!connectedSpy1.isEmpty() || !connectedSpy2.isEmpty());
+    if (!connectedSpy1.isEmpty())
+        {
+        qDebug() << "socket 1 connected";
+        QString echo1 = "aaaaaaa";
+        //Send data to server
+        QByteArray block;
+        QDataStream out(&block, QIODevice::WriteOnly);
+        out.setVersion(QDataStream::Qt_4_6);
+        out << (quint16)0;
+        out << echo1;
+
+        qDebug("Client-- write quint16 length = %d", sizeof(quint16));
+        qDebug("Client-- write echo string = %s", qPrintable(echo1));
+        qDebug("Client-- write echo string length= %d", echo1.length());
+        qDebug("Client-- write data length = %d", block.length());
+        out.device()->seek(0);
+        out << (quint16)(block.size() - sizeof(quint16));
+
+        qint64 val = socket1->write(block);
+        QVERIFY( val == 0);
+
+        QTRY_VERIFY(!bytesWrittenSpy1.isEmpty());
+        qint64 written = countBytesWritten(bytesWrittenSpy1);
+
+        socket3->connectToService(m_target, TestUri);
+
+        qDebug()<<"bytesWritten signal return value = "<<written;
+        while (written < block.size())
+            {
+            QSignalSpy bytesWrittenSpy(socket1, SIGNAL(bytesWritten(qint64)));
+            QTRY_VERIFY(!bytesWrittenSpy.isEmpty());
+            qint64 w = countBytesWritten(bytesWrittenSpy);
+            qDebug()<<"got bytesWritten signal = "<<w;
+            written += w;
+            }
+        qDebug()<<"Overall bytesWritten = "<<written;
+        qDebug()<<"Overall block size = "<<block.size();
+        QTRY_VERIFY(written == block.size());
+        //Get the echoed data from server
+        QTRY_VERIFY(!readyReadSpy1.isEmpty());
+        quint16 blockSize = 0;
+        QDataStream in(socket1);
+        in.setVersion(QDataStream::Qt_4_6);
+        while (socket1->bytesAvailable() < (int)sizeof(quint16)){
+            QSignalSpy readyRead(socket1, SIGNAL(readyRead()));
+            QTRY_VERIFY(!readyRead.isEmpty());
+        }
+        in >> blockSize;
+        qDebug() << "Client-- read blockSize=" << blockSize;
+        while (socket1->bytesAvailable() < blockSize){
+            QSignalSpy readyRead(socket1, SIGNAL(readyRead()));
+            QTRY_VERIFY(!readyRead.isEmpty());
+        }
+        QString echoed;
+        in >> echoed;
+
+        qDebug() << "Client-- read echoed string =" << echoed;
+        //test the echoed string is same as the original string
+        QCOMPARE(echo1, echoed);
+
+        //
+        //try to handle the socket2
+        //
+        QTRY_VERIFY(!connectedSpy2.isEmpty());
+        qDebug() << "socket 2 connected";
+        QString echo2 = "bbbbbbb";
+        //Send data to server
+        QByteArray block2;
+        QDataStream out2(&block2, QIODevice::WriteOnly);
+        out2.setVersion(QDataStream::Qt_4_6);
+        out2 << (quint16)0;
+        out2 << echo2;
+
+        qDebug("Client-- write quint16 length = %d", sizeof(quint16));
+        qDebug("Client-- write echo string = %s", qPrintable(echo2));
+        qDebug("Client-- write echo string length= %d", echo2.length());
+        qDebug("Client-- write data length = %d", block2.length());
+        out2.device()->seek(0);
+        out2 << (quint16)(block2.size() - sizeof(quint16));
+
+        qint64 val2 = socket2->write(block2);
+        QVERIFY( val2 == 0);
+
+        QTRY_VERIFY(!bytesWrittenSpy2.isEmpty());
+        qint64 written2 = countBytesWritten(bytesWrittenSpy2);
+
+        qDebug()<<"bytesWritten signal return value = "<<written2;
+        while (written2 < block2.size())
+            {
+            QSignalSpy bytesWrittenSpy(socket2, SIGNAL(bytesWritten(qint64)));
+            QTRY_VERIFY(!bytesWrittenSpy.isEmpty());
+            qint64 w = countBytesWritten(bytesWrittenSpy);
+            qDebug()<<"got bytesWritten signal = "<<w;
+            written2 += w;
+            }
+        qDebug()<<"Overall bytesWritten = "<<written2;
+        qDebug()<<"Overall block size = "<<block2.size();
+        QTRY_VERIFY(written2 == block2.size());
+        //Get the echoed data from server
+        QTRY_VERIFY(!readyReadSpy2.isEmpty());
+        quint16 blockSize2 = 0;
+        QDataStream in2(socket2);
+        in2.setVersion(QDataStream::Qt_4_6);
+        while (socket2->bytesAvailable() < (int)sizeof(quint16)){
+            QSignalSpy readyRead(socket2, SIGNAL(readyRead()));
+            QTRY_VERIFY(!readyRead.isEmpty());
+        }
+        in2 >> blockSize2;
+        qDebug() << "Client-- read blockSize=" << blockSize2;
+        while (socket2->bytesAvailable() < blockSize2){
+            QSignalSpy readyRead(socket2, SIGNAL(readyRead()));
+            QTRY_VERIFY(!readyRead.isEmpty());
+        }
+        QString echoed2;
+        in2 >> echoed2;
+
+        qDebug() << "Client-- read echoed string =" << echoed;
+        //test the echoed string is same as the original string
+        QCOMPARE(echo2, echoed2);
+        }
+    else
+        {
+
+        qDebug() << "socket 2 connected";
+        QString echo2 = "bbbbbbb";
+        //Send data to server
+        QByteArray block2;
+        QDataStream out2(&block2, QIODevice::WriteOnly);
+        out2.setVersion(QDataStream::Qt_4_6);
+        out2 << (quint16)0;
+        out2 << echo2;
+
+        qDebug("Client-- write quint16 length = %d", sizeof(quint16));
+        qDebug("Client-- write echo string = %s", qPrintable(echo2));
+        qDebug("Client-- write echo string length= %d", echo2.length());
+        qDebug("Client-- write data length = %d", block2.length());
+        out2.device()->seek(0);
+        out2 << (quint16)(block2.size() - sizeof(quint16));
+
+        qint64 val2 = socket2->write(block2);
+        QVERIFY( val2 == 0);
+
+        QTRY_VERIFY(!bytesWrittenSpy2.isEmpty());
+        qint64 written2 = countBytesWritten(bytesWrittenSpy2);
+
+        socket3->connectToService(m_target, TestUri);
+
+        qDebug()<<"bytesWritten signal return value = "<<written2;
+        while (written2 < block2.size())
+            {
+            QSignalSpy bytesWrittenSpy(socket2, SIGNAL(bytesWritten(qint64)));
+            QTRY_VERIFY(!bytesWrittenSpy.isEmpty());
+            qint64 w = countBytesWritten(bytesWrittenSpy);
+            qDebug()<<"got bytesWritten signal = "<<w;
+            written2 += w;
+            }
+        qDebug()<<"Overall bytesWritten = "<<written2;
+        qDebug()<<"Overall block size = "<<block2.size();
+        QTRY_VERIFY(written2 == block2.size());
+        //Get the echoed data from server
+        QTRY_VERIFY(!readyReadSpy2.isEmpty());
+        quint16 blockSize2 = 0;
+        QDataStream in2(socket2);
+        in2.setVersion(QDataStream::Qt_4_6);
+        while (socket2->bytesAvailable() < (int)sizeof(quint16)){
+            QSignalSpy readyRead(socket2, SIGNAL(readyRead()));
+            QTRY_VERIFY(!readyRead.isEmpty());
+        }
+        in2 >> blockSize2;
+        qDebug() << "Client-- read blockSize=" << blockSize2;
+        while (socket2->bytesAvailable() < blockSize2){
+            QSignalSpy readyRead(socket2, SIGNAL(readyRead()));
+            QTRY_VERIFY(!readyRead.isEmpty());
+        }
+        QString echoed2;
+        in2 >> echoed2;
+
+        qDebug() << "Client-- read echoed string =" << echoed2;
+        //test the echoed string is same as the original string
+        QCOMPARE(echo2, echoed2);
+
+        //
+        //try to handle the socket1
+        //
+        QTRY_VERIFY(!connectedSpy1.isEmpty());
+        qDebug() << "socket 1 connected";
+        QString echo1 = "aaaaaaa";
+        //Send data to server
+        QByteArray block;
+        QDataStream out(&block, QIODevice::WriteOnly);
+        out.setVersion(QDataStream::Qt_4_6);
+        out << (quint16)0;
+        out << echo1;
+
+        qDebug("Client-- write quint16 length = %d", sizeof(quint16));
+        qDebug("Client-- write echo string = %s", qPrintable(echo1));
+        qDebug("Client-- write echo string length= %d", echo1.length());
+        qDebug("Client-- write data length = %d", block.length());
+        out.device()->seek(0);
+        out << (quint16)(block.size() - sizeof(quint16));
+
+        qint64 val = socket1->write(block);
+        QVERIFY( val == 0);
+
+        QTRY_VERIFY(!bytesWrittenSpy1.isEmpty());
+        qint64 written = countBytesWritten(bytesWrittenSpy1);
+
+        qDebug()<<"bytesWritten signal return value = "<<written;
+        while (written < block.size())
+            {
+            QSignalSpy bytesWrittenSpy(socket1, SIGNAL(bytesWritten(qint64)));
+            QTRY_VERIFY(!bytesWrittenSpy.isEmpty());
+            qint64 w = countBytesWritten(bytesWrittenSpy);
+            qDebug()<<"got bytesWritten signal = "<<w;
+            written += w;
+            }
+        qDebug()<<"Overall bytesWritten = "<<written;
+        qDebug()<<"Overall block size = "<<block.size();
+        QTRY_VERIFY(written == block.size());
+        //Get the echoed data from server
+        QTRY_VERIFY(!readyReadSpy1.isEmpty());
+        quint16 blockSize = 0;
+        QDataStream in(socket1);
+        in.setVersion(QDataStream::Qt_4_6);
+        while (socket1->bytesAvailable() < (int)sizeof(quint16)){
+            QSignalSpy readyRead(socket1, SIGNAL(readyRead()));
+            QTRY_VERIFY(!readyRead.isEmpty());
+        }
+        in >> blockSize;
+        qDebug() << "Client-- read blockSize=" << blockSize;
+        while (socket1->bytesAvailable() < blockSize){
+            QSignalSpy readyRead(socket1, SIGNAL(readyRead()));
+            QTRY_VERIFY(!readyRead.isEmpty());
+        }
+        QString echoed;
+        in >> echoed;
+
+        qDebug() << "Client-- read echoed string =" << echoed;
+        //test the echoed string is same as the original string
+        QCOMPARE(echo1, echoed);
+
+        }
+    QVERIFY(errorSpy1.isEmpty());
+    QVERIFY(errorSpy2.isEmpty());
+    delete socket1;
+    delete socket2;
+    delete socket3;
     }
 QTEST_MAIN(tst_qllcpsockettype2);
 

@@ -936,6 +936,7 @@ TInt CLlcpReceiverAO::StartReceiveDatagram()
     else
         {
         // if length is 0 or negative, LLCP link is destroyed.
+        LOG("Error: length is"<<length);
         error = KErrNotReady;
         }
     END
