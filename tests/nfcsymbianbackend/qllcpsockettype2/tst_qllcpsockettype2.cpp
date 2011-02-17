@@ -56,7 +56,15 @@ Q_DECLARE_METATYPE(QLlcpSocket::State)
 Q_DECLARE_METATYPE(QLlcpSocket::Error)
 
 QString TestUri("urn:nfc:xsn:nokia:symbiantest");
-
+static qint64 countBytesWritten(QSignalSpy& bytesWrittenSpy)
+    {
+    qint64 ret = 0;
+    for(int i = 0; i < bytesWrittenSpy.count(); i++)
+        {
+        ret+=bytesWrittenSpy[i].at(0).value<qint64>();
+        }
+    return ret;
+    }
 class tst_qllcpsockettype2 : public QObject
 {
     Q_OBJECT
@@ -188,14 +196,14 @@ void tst_qllcpsockettype2::echo()
     QVERIFY( val == 0);
 
     QTRY_VERIFY(!bytesWrittenSpy.isEmpty());
-    qint64 written = bytesWrittenSpy.first().at(0).value<qint64>();
+    qint64 written = countBytesWritten(bytesWrittenSpy);
 
     qDebug()<<"bytesWritten signal return value = "<<written;
     while (written < block.size())
         {
         QSignalSpy bytesWrittenSpy(&socket, SIGNAL(bytesWritten(qint64)));
         QTRY_VERIFY(!bytesWrittenSpy.isEmpty());
-        qint64 w = bytesWrittenSpy.first().at(0).value<qint64>();
+        qint64 w = countBytesWritten(bytesWrittenSpy);
         qDebug()<<"got bytesWritten signal = "<<w;
         written += w;
         }
@@ -301,7 +309,7 @@ void tst_qllcpsockettype2::echo_wait()
     QVERIFY(ret);
 
     QTRY_VERIFY(!bytesWrittenSpy.isEmpty());
-    qint64 written = bytesWrittenSpy.first().at(0).value<qint64>();
+    qint64 written = countBytesWritten(bytesWrittenSpy);
 
     while (written < block.size())
         {
@@ -309,7 +317,7 @@ void tst_qllcpsockettype2::echo_wait()
         ret = socket.waitForBytesWritten(Timeout);
         QVERIFY(ret);
         QTRY_VERIFY(!bytesWrittenSpy.isEmpty());
-        written += bytesWrittenSpy.first().at(0).value<qint64>();
+        written += countBytesWritten(bytesWrittenSpy);
         }
     QVERIFY(written == block.size());
     //Get the echoed data from server
@@ -491,14 +499,14 @@ void tst_qllcpsockettype2::multipleWrite()
     QVERIFY( ret == 0);
 
     QTRY_VERIFY(!bytesWrittenSpy.isEmpty());
-    qint64 written = bytesWrittenSpy.first().at(0).value<qint64>();
+    qint64 written = countBytesWritten(bytesWrittenSpy);;
 
     qDebug()<<"bytesWritten signal return value = "<<written;
     while (written < block.size())
         {
         QSignalSpy bytesWrittenSpy(&socket, SIGNAL(bytesWritten(qint64)));
         QTRY_VERIFY(!bytesWrittenSpy.isEmpty());
-        qint64 w = bytesWrittenSpy.first().at(0).value<qint64>();
+        qint64 w = countBytesWritten(bytesWrittenSpy);
         qDebug()<<"got bytesWritten signal = "<<w;
         written += w;
         }
@@ -543,7 +551,7 @@ void tst_qllcpsockettype2::multipleWrite_data()
     QTest::newRow("1") << TestUri << longStr4k;
 }
 /*!
- Description:  negative test - over sender DoCancel() method
+ Description:  coverage test - cover sender DoCancel() method
  CounterPart test: tst_QLlcpServer::negTestCase1()
 */
 void tst_qllcpsockettype2::negTestCase1()
@@ -568,7 +576,7 @@ void tst_qllcpsockettype2::negTestCase1()
     out << (quint16)(block.size() - sizeof(quint16));
     qint64 ret = socket.writeDatagram(block.constData(), block.size());
     QVERIFY( ret != -1);
-    //cover sender DoCancel() method
+    //cover SenderAO DoCancel() method
 }
 
 /*!
@@ -595,6 +603,9 @@ void tst_qllcpsockettype2::negTestCase3()
 {
     QLlcpSocket socket(this);
 
+    QString message("negTestCase3 test");
+    QNfcTestUtil::ShowAutoMsg(message);
+
     QSignalSpy errorSpy(&socket, SIGNAL(error(QLlcpSocket::Error)));
     socket.connectToService(m_target, TestUri);
 
@@ -607,7 +618,7 @@ void tst_qllcpsockettype2::negTestCase3()
     qint64 size = socket.pendingDatagramSize();
     QVERIFY(size == -1);
 
-    QString message = "Oops, Invalid usage for writeDatagram";
+    message = "Oops, Invalid usage for writeDatagram";
     const char* data = (const char *) message.data();
     qint64 strSize = message.size();
     size = socket.writeDatagram(data,strSize,m_target, 35);
@@ -728,14 +739,14 @@ void tst_qllcpsockettype2::waitReadyReadInSlot()
     QVERIFY( val == 0);
 
     QTRY_VERIFY(!bytesWrittenSpy.isEmpty());
-    qint64 written = bytesWrittenSpy.first().at(0).value<qint64>();
+    qint64 written = countBytesWritten(bytesWrittenSpy);
 
     qDebug()<<"bytesWritten signal return value = "<<written;
     while (written < block.size())
         {
         QSignalSpy bytesWrittenSpy(&socket, SIGNAL(bytesWritten(qint64)));
         QTRY_VERIFY(!bytesWrittenSpy.isEmpty());
-        qint64 w = bytesWrittenSpy.first().at(0).value<qint64>();
+        qint64 w = countBytesWritten(bytesWrittenSpy);
         qDebug()<<"got bytesWritten signal = "<<w;
         written += w;
         }
@@ -854,6 +865,9 @@ void tst_qllcpsockettype2::multiSocketToOneServer()
     socket1->connectToService(m_target, TestUri);
     socket2->connectToService(m_target, TestUri);
 
+    //test connect when some socket still processing data
+    QLlcpSocket* socket3 = new QLlcpSocket;
+
     QTRY_VERIFY(!connectedSpy1.isEmpty() || !connectedSpy2.isEmpty());
     if (!connectedSpy1.isEmpty())
         {
@@ -877,14 +891,16 @@ void tst_qllcpsockettype2::multiSocketToOneServer()
         QVERIFY( val == 0);
 
         QTRY_VERIFY(!bytesWrittenSpy1.isEmpty());
-        qint64 written = bytesWrittenSpy1.first().at(0).value<qint64>();
+        qint64 written = countBytesWritten(bytesWrittenSpy1);
+
+        socket3->connectToService(m_target, TestUri);
 
         qDebug()<<"bytesWritten signal return value = "<<written;
         while (written < block.size())
             {
             QSignalSpy bytesWrittenSpy(socket1, SIGNAL(bytesWritten(qint64)));
             QTRY_VERIFY(!bytesWrittenSpy.isEmpty());
-            qint64 w = bytesWrittenSpy.first().at(0).value<qint64>();
+            qint64 w = countBytesWritten(bytesWrittenSpy);
             qDebug()<<"got bytesWritten signal = "<<w;
             written += w;
             }
@@ -937,14 +953,14 @@ void tst_qllcpsockettype2::multiSocketToOneServer()
         QVERIFY( val2 == 0);
 
         QTRY_VERIFY(!bytesWrittenSpy2.isEmpty());
-        qint64 written2 = bytesWrittenSpy2.first().at(0).value<qint64>();
+        qint64 written2 = countBytesWritten(bytesWrittenSpy2);
 
         qDebug()<<"bytesWritten signal return value = "<<written2;
         while (written2 < block2.size())
             {
             QSignalSpy bytesWrittenSpy(socket2, SIGNAL(bytesWritten(qint64)));
             QTRY_VERIFY(!bytesWrittenSpy.isEmpty());
-            qint64 w = bytesWrittenSpy.first().at(0).value<qint64>();
+            qint64 w = countBytesWritten(bytesWrittenSpy);
             qDebug()<<"got bytesWritten signal = "<<w;
             written2 += w;
             }
@@ -996,14 +1012,16 @@ void tst_qllcpsockettype2::multiSocketToOneServer()
         QVERIFY( val2 == 0);
 
         QTRY_VERIFY(!bytesWrittenSpy2.isEmpty());
-        qint64 written2 = bytesWrittenSpy2.first().at(0).value<qint64>();
+        qint64 written2 = countBytesWritten(bytesWrittenSpy2);
+
+        socket3->connectToService(m_target, TestUri);
 
         qDebug()<<"bytesWritten signal return value = "<<written2;
         while (written2 < block2.size())
             {
             QSignalSpy bytesWrittenSpy(socket2, SIGNAL(bytesWritten(qint64)));
             QTRY_VERIFY(!bytesWrittenSpy.isEmpty());
-            qint64 w = bytesWrittenSpy.first().at(0).value<qint64>();
+            qint64 w = countBytesWritten(bytesWrittenSpy);
             qDebug()<<"got bytesWritten signal = "<<w;
             written2 += w;
             }
@@ -1056,14 +1074,14 @@ void tst_qllcpsockettype2::multiSocketToOneServer()
         QVERIFY( val == 0);
 
         QTRY_VERIFY(!bytesWrittenSpy1.isEmpty());
-        qint64 written = bytesWrittenSpy1.first().at(0).value<qint64>();
+        qint64 written = countBytesWritten(bytesWrittenSpy1);
 
         qDebug()<<"bytesWritten signal return value = "<<written;
         while (written < block.size())
             {
             QSignalSpy bytesWrittenSpy(socket1, SIGNAL(bytesWritten(qint64)));
             QTRY_VERIFY(!bytesWrittenSpy.isEmpty());
-            qint64 w = bytesWrittenSpy.first().at(0).value<qint64>();
+            qint64 w = countBytesWritten(bytesWrittenSpy);
             qDebug()<<"got bytesWritten signal = "<<w;
             written += w;
             }
@@ -1093,8 +1111,11 @@ void tst_qllcpsockettype2::multiSocketToOneServer()
         QCOMPARE(echo1, echoed);
 
         }
+    QVERIFY(errorSpy1.isEmpty());
+    QVERIFY(errorSpy2.isEmpty());
     delete socket1;
     delete socket2;
+    delete socket3;
     }
 QTEST_MAIN(tst_qllcpsockettype2);
 
