@@ -87,6 +87,11 @@ private slots:
     void isSelected();
     void isVisible();
 
+    // QTMOBILITY-1255: Changing z value of map object causes it to break insertion order
+    void qtmobility1255();
+    // QTMOBILITY-1199: Result of QGraphicsGeoMap::mapObjectsInViewport is zoom level dependent
+    void qtmobility1199();
+
 private:
     TestHelper *m_helper;
 
@@ -612,6 +617,84 @@ void tst_QGeoMapCircleObject::boundingBox()
     QVERIFY2(object->boundingBox().width()>0,"no bounding box");
     QVERIFY2(object->boundingBox().height()>0,"no bounding box");
 
+}
+
+// QTMOBILITY-1255: Changing z value of map object causes it to break insertion order
+void tst_QGeoMapCircleObject::qtmobility1255()
+{
+    QGeoCoordinate center(0,0,0);
+
+    QGeoMapCircleObject *outer = new QGeoMapCircleObject(center, 1000);
+    outer->setZValue(5);
+    outer->setBrush(QBrush(Qt::black));
+    QGeoMapCircleObject *middle = new QGeoMapCircleObject(center, 700);
+    middle->setZValue(4);
+    middle->setBrush(QBrush(Qt::red));
+    QGeoMapCircleObject *inner = new QGeoMapCircleObject(center, 500);
+    inner->setZValue(5);
+    inner->setBrush(QBrush(Qt::blue));
+
+    QGraphicsGeoMap *map = m_helper->map();
+
+    map->addMapObject(outer);
+    map->addMapObject(middle);
+    map->addMapObject(inner);
+    map->setCenter(center);
+
+    QList<QGeoMapObject*> list;
+    list = map->mapObjects();
+    QCOMPARE(list.size(), 3);
+
+    QPointF pxCenter = map->coordinateToScreenPosition(center);
+    list = map->mapObjectsAtScreenPosition(pxCenter);
+    QCOMPARE(list.size(), 3);
+    QVERIFY(list.at(0) == middle);
+    QVERIFY(list.at(1) == outer);
+    QVERIFY(list.at(2) == inner);
+
+    middle->setZValue(5);
+    list = map->mapObjectsAtScreenPosition(pxCenter);
+    QCOMPARE(list.size(), 3);
+    QVERIFY(list.at(0) == outer);
+    QVERIFY(list.at(1) == middle);
+    QVERIFY(list.at(2) == inner);
+
+    middle->setZValue(6);
+    list = map->mapObjectsAtScreenPosition(pxCenter);
+    QCOMPARE(list.size(), 3);
+    QVERIFY(list.at(0) == outer);
+    QVERIFY(list.at(1) == inner);
+    QVERIFY(list.at(2) == middle);
+}
+
+
+// QTMOBILITY-1199: Result of QGraphicsGeoMap::mapObjectsInViewport is zoom level dependent
+void tst_QGeoMapCircleObject::qtmobility1199()
+{
+    QGeoCoordinate seattle(47.609722,-122.333056,0);
+
+    QGeoMapCircleObject *obj = new QGeoMapCircleObject(seattle, 100);
+
+    QGraphicsGeoMap *map = m_helper->map();
+    map->setCenter(seattle);
+    map->setZoomLevel(20.0);
+    map->pan(10, 10);
+
+    map->addMapObject(obj);
+
+    for (qreal z = 20.0; z > 0.0; z -= 1.0) {
+        QPointF coord = map->coordinateToScreenPosition(seattle);
+
+        QList<QGeoMapObject*> list;
+
+        list = map->mapObjectsAtScreenPosition(coord);
+        QCOMPARE(list.size(), 1);
+        QVERIFY(list.at(0) == obj);
+
+        list = map->mapObjectsInViewport();
+        QCOMPARE(list.size(), 1);
+        QVERIFY(list.at(0) == obj);
+    }
 }
 
 QTEST_MAIN(tst_QGeoMapCircleObject)
