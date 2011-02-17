@@ -674,8 +674,8 @@ void tst_QGeoMapCircleObject::qtmobility1255()
 void tst_QGeoMapCircleObject::qtmobility1199()
 {
     QGeoCoordinate seattle(47.609722,-122.333056,0);
-    QGeoCoordinate seattle2 = seattle.atDistanceAndAzimuth(100, 150);
-    QGeoCoordinate seattle3 = seattle.atDistanceAndAzimuth(20, 10);
+    QGeoCoordinate seattle2(47.60981194,-122.33185897);
+    QGeoCoordinate seattle3(47.60972200, -122.33332201);
 
     QGeoMapCircleObject *obj = new QGeoMapCircleObject(seattle3, 30);
     QGeoMapCircleObject *obj2 = new QGeoMapCircleObject(seattle2, 120);
