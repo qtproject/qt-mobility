@@ -55,7 +55,8 @@ HEADERS += \
     qgstvideobuffer.h \
     qvideosurfacegstsink.h \
     qgstreamervideoinputdevicecontrol.h \
-    gstvideoconnector.h
+    gstvideoconnector.h \
+    qabstractgstbufferpool.h
 
 SOURCES += \
     qgstreamermessage.cpp \
