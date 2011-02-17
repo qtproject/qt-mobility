@@ -393,7 +393,8 @@ bool QGeoMapObject::contains(const QGeoCoordinate &coordinate) const
 */
 bool QGeoMapObject::operator<(const QGeoMapObject &other) const
 {
-    return d_ptr->zValue < other.d_ptr->zValue;
+    return d_ptr->zValue < other.d_ptr->zValue ||
+            (d_ptr->zValue == other.d_ptr->zValue && d_ptr->serial < other.d_ptr->serial);
 }
 
 /*!
@@ -401,7 +402,8 @@ bool QGeoMapObject::operator<(const QGeoMapObject &other) const
 */
 bool QGeoMapObject::operator>(const QGeoMapObject &other) const
 {
-    return d_ptr->zValue > other.d_ptr->zValue;
+    return d_ptr->zValue > other.d_ptr->zValue ||
+            (d_ptr->zValue == other.d_ptr->zValue && d_ptr->serial > other.d_ptr->serial);
 }
 
 /*!
@@ -580,6 +582,7 @@ QGeoMapObjectPrivate::QGeoMapObjectPrivate()
       units(QGeoMapObject::PixelUnit),
       transType(QGeoMapObject::ExactTransform),
       mapData(0),
+      serial(0),
       graphicsItem(0) {}
 
 QGeoMapObjectPrivate::~QGeoMapObjectPrivate()
