@@ -87,6 +87,9 @@ private slots:
     void isSelected();
     void isVisible();
 
+    // QTMOBILITY-1255: Changing z value of map object causes it to break insertion order
+    void qtmobility1255();
+
 private:
     TestHelper *m_helper;
 
@@ -612,6 +615,38 @@ void tst_QGeoMapCircleObject::boundingBox()
     QVERIFY2(object->boundingBox().width()>0,"no bounding box");
     QVERIFY2(object->boundingBox().height()>0,"no bounding box");
 
+}
+
+// QTMOBILITY-1255: Changing z value of map object causes it to break insertion order
+void tst_QGeoMapCircleObject::qtmobility1255()
+{
+    QGeoCoordinate center(0,0,0);
+
+    QGeoMapCircleObject *outer = new QGeoMapCircleObject(center, 1000);
+    outer->setZValue(4);
+    QGeoMapCircleObject *inner = new QGeoMapCircleObject(center, 500);
+    inner->setZValue(5);
+
+    QGraphicsGeoMap *map = m_helper->map();
+
+    map->addMapObject(outer);
+    map->addMapObject(inner);
+    map->setCenter(center);
+
+    QPointF pxCenter = map->coordinateToScreenPosition(center);
+    QList<QGeoMapObject*> list = map->mapObjectsAtScreenPosition(pxCenter);
+    QVERIFY(list.at(0) == outer);
+    QVERIFY(list.at(1) == inner);
+
+    outer->setZValue(5);
+    list = map->mapObjectsAtScreenPosition(pxCenter);
+    QVERIFY(list.at(0) == outer);
+    QVERIFY(list.at(1) == inner);
+
+    outer->setZValue(6);
+    list = map->mapObjectsAtScreenPosition(pxCenter);
+    QVERIFY(list.at(0) == inner);
+    QVERIFY(list.at(1) == outer);
 }
 
 QTEST_MAIN(tst_QGeoMapCircleObject)
