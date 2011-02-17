@@ -62,8 +62,6 @@ QL2capServerPrivate::QL2capServerPrivate()
 
 QL2capServerPrivate::~QL2capServerPrivate()
 {
-    delete pendingSocket;
-
     delete socket;
 }
 
@@ -108,7 +106,7 @@ bool QL2capServer::listen(const QBluetoothAddress &address, quint16 port)
 
     d->ds->iSocket->Listen(d->maxPendingConnections);
 
-    d->pendingSocket = new QBluetoothSocket(QBluetoothSocket::L2capSocket);
+    d->pendingSocket = new QBluetoothSocket(QBluetoothSocket::L2capSocket, this);
 
     QBluetoothSocketPrivate *pd = d->pendingSocket->d_ptr;
     pd->ensureBlankNativeSocket();
@@ -145,7 +143,7 @@ QBluetoothSocket *QL2capServer::nextPendingConnection()
     QBluetoothSocket *next = d->activeSockets.takeFirst();
     QBluetoothSocketPrivate *n = next->d_ptr;
 
-    n->startReceive();
+    n->startServerSideReceive();
 
     return next;
 }
