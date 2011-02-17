@@ -1188,9 +1188,9 @@ bool QOrganizerItemMemoryEngine::typesAreRelated(const QString& occurrenceType, 
 /*! \reimp */
 bool QOrganizerItemMemoryEngine::saveItems(QList<QOrganizerItem>* organizeritems, QMap<int, QOrganizerManager::Error>* errorMap, QOrganizerManager::Error* error)
 {
-    if(errorMap) {
-        errorMap->clear();
-    }
+    Q_ASSERT(errorMap);
+
+    errorMap->clear();
 
     if (!organizeritems) {
         *error = QOrganizerManager::BadArgumentError;
@@ -1254,6 +1254,8 @@ bool QOrganizerItemMemoryEngine::removeItem(const QOrganizerItemId& organizerite
 /*! \reimp */
 bool QOrganizerItemMemoryEngine::removeItems(const QList<QOrganizerItemId>& organizeritemIds, QMap<int, QOrganizerManager::Error>* errorMap, QOrganizerManager::Error* error)
 {
+    Q_ASSERT(errorMap);
+
     if (organizeritemIds.count() == 0) {
         *error = QOrganizerManager::BadArgumentError;
         return false;
@@ -1266,8 +1268,7 @@ bool QOrganizerItemMemoryEngine::removeItems(const QList<QOrganizerItemId>& orga
         current = organizeritemIds.at(i);
         if (!removeItem(current, changeSet, error)) {
             operationError = *error;
-            if (errorMap)
-                errorMap->insert(i, operationError);
+            errorMap->insert(i, operationError);
         }
     }
 
