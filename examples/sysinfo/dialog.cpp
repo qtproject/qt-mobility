@@ -153,6 +153,7 @@ void Dialog::setupDevice()
     deviceLockPushButton->setChecked(di->isDeviceLocked());
 
     updateSimStatus();
+    updateThermalState();
     updateProfile();
 
     connect(di, SIGNAL(currentProfileChanged(QSystemDeviceInfo::Profile)),
@@ -841,7 +842,6 @@ void Dialog::updateSimStatus()
         case QSystemDeviceInfo::SingleSimAvailable:
             {
                 simstring = "Single Sim Available";
-
             }
             break;
         case QSystemDeviceInfo::DualSimAvailable:
@@ -855,6 +855,40 @@ void Dialog::updateSimStatus()
     }
 }
 
+void Dialog::updateThermalState()
+{
+    if(di) {
+        QString thermalState;
+        switch (di->currentThermalState()) {
+        case QSystemDeviceInfo::UnknownThermal:
+            {
+                thermalState = "Unknown";
+            }
+            break;
+        case QSystemDeviceInfo::NormalThermal:
+            {
+                thermalState = "Normal";
+            }
+            break;
+        case QSystemDeviceInfo::WarningThermal:
+            {
+                thermalState = "Warning";
+            }
+            break;
+        case QSystemDeviceInfo::AlertThermal:
+            {
+                thermalState = "Alert";
+            }
+            break;
+        case QSystemDeviceInfo::ErrorThermal:
+            {
+                thermalState = "Error";
+            }
+            break;
+        };
+        thermalStateLabel->setText(thermalState);
+    }
+}
 
 void Dialog::storageChanged(bool added,const QString &volName)
 {
