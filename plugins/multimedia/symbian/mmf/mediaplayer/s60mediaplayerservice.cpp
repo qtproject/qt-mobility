@@ -208,7 +208,6 @@ S60MediaPlayerSession* S60MediaPlayerService::VideoPlayerSession()
                 m_streamControl, SLOT(handleStreamsChanged()));
         connect(m_videoPlayerSession, SIGNAL(accessPointChanged(int)),
                 m_networkAccessControl, SLOT(accessPointChanged(int)));
-    }
 
         m_videoPlayerSession->setVolume(m_control->mediaControlSettings().volume());
         m_videoPlayerSession->setMuted(m_control->mediaControlSettings().isMuted());
