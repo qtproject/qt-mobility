@@ -44,8 +44,49 @@
 #include "qsystemgeneralinfo.h"
 
 QT_BEGIN_NAMESPACE
+/*!
+    \qmlclass AlignedTimer QDeclarativeAlignedTimer
+    \brief The AlignedTimer element allows applications to synchronize activity,
+     such as network access, like checking for updates.
 
-QDeclarativeAlignedTImer::QDeclarativeAlignedTImer(QObject *parent) :
+
+    \inherits QSystemAlignedTimer
+
+    \ingroup qml-systeminfo
+
+    This element is part of the \bold{QtMobility.systeminfo 1.2} module.
+    It is a convience class to make QML usage easier.
+
+    \sa QSystemAlignedTimer
+    */
+/*!
+  \qmlproperty int AlignedTimer::minimumInterval
+ The timers's minimumInterval.
+
+  Returns this current timer minimum interval.
+  */
+
+/*!
+  \qmlproperty int AlignedTimer::maximumInterval
+  The timers's maximumInterval.
+
+  Returns this current timer maximum interval.
+  */
+/*!
+  \qmlproperty bool AlignedTimer::singleShot
+  Whether the timer is single shot.
+*/
+
+/*!
+    \qmlproperty bool AlignedTimer::running
+  If the timer is running; otherwise false.
+*/
+
+/*!
+  Constructs the AlignedTimer
+  */
+
+QDeclarativeAlignedTimer::QDeclarativeAlignedTimer(QObject *parent) :
     QSystemAlignedTimer(parent)
 {
 }
@@ -53,16 +94,16 @@ QDeclarativeAlignedTImer::QDeclarativeAlignedTImer(QObject *parent) :
 /*!
    Sets the timer if \a running is true, otherwise stops it.
   */
-void QDeclarativeAlignedTImer::setRunning(bool running)
+void QDeclarativeAlignedTimer::setRunning(bool running)
 {
 
 }
 /*
-\property QDeclarativeAlignedTImer::running
-Start the timer as single shot.
+Returns if the timer is running.
 */
- bool QDeclarativeAlignedTImer::running() const
+ bool QDeclarativeAlignedTimer::running() const
  {
      return false;
  }
+
 

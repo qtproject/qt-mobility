@@ -70,6 +70,7 @@ public:
     virtual ~QGeoMapObjectPrivate();
 
     int zValue;
+    quint32 serial;
     bool isVisible;
     bool isSelected;
     QGeoMapObject::CoordinateUnit units;

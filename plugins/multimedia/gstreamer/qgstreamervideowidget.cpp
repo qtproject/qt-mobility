@@ -46,7 +46,9 @@
 #include <QtGui/qapplication.h>
 #include <QtGui/qpainter.h>
 
-#include <X11/Xlib.h>
+#ifdef Q_WS_X11
+#  include <X11/Xlib.h>
+#endif
 #include <gst/gst.h>
 #include <gst/interfaces/xoverlay.h>
 #include <gst/interfaces/propertyprobe.h>

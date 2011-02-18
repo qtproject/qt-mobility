@@ -219,6 +219,8 @@ void QDeclarativeLandmarkAbstractModel::setDbFileName(QString fileName)
     m_manager = new QLandmarkManager("com.nokia.qt.landmarks.engines.sqlite", map);
 #endif
     connectManager();
+    if (m_autoUpdate)
+        scheduleUpdate();
 }
 
 

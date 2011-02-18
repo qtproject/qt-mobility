@@ -163,7 +163,8 @@ void QNearFieldManagerPrivateImpl::stopTargetDetection()
 
 QNearFieldTarget *QNearFieldManagerPrivateImpl::targetForPath(const QString &path)
 {
-    QNearFieldTarget *nearFieldTarget = m_targets.value(path);
+    QNearFieldTarget *nearFieldTarget = m_targets.value(path).data();
+
     if (!nearFieldTarget) {
         Target *target = new Target(QLatin1String("com.nokia.nfc"), path, m_connection);
 
@@ -411,7 +412,7 @@ void QNearFieldManagerPrivateImpl::_q_targetDetected(const QString &targetPath)
 
 void QNearFieldManagerPrivateImpl::_q_targetLost(const QString &targetPath)
 {
-    QNearFieldTarget *nearFieldTarget = m_targets.value(targetPath);
+    QNearFieldTarget *nearFieldTarget = m_targets.value(targetPath).data();
 
     // haven't seen target so just drop this event
     if (!nearFieldTarget) {

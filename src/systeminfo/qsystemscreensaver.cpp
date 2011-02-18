@@ -107,6 +107,11 @@ bool QSystemScreenSaver::screenSaverInhibited()
     return d->screenSaverInhibited();
 }
 
+void QSystemScreenSaver::setScreenSaverInhibited(bool on)
+{
+     d->setScreenSaverInhibited(on);
+}
+
 #include "moc_qsystemscreensaver.cpp"
 
 

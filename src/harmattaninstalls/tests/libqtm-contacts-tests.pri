@@ -4,5 +4,7 @@ SUBDIRS += qcontactdetail \
 	qcontactfilter \
 	qcontactmemusage \
 	qlatin1constant \
+	qcontactasync \
+	qcontactmanager \
 	qcontactrelationship
 

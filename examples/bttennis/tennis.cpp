@@ -52,11 +52,16 @@
 
 #include "tennisserver.h"
 #include "tennisclient.h"
+#include "handover.h"
 
 #include <qbluetooth.h>
 #include <qbluetoothdeviceinfo.h>
 #include <qbluetoothsocket.h>
 #include <qbluetoothservicediscoveryagent.h>
+
+#include <qnearfieldmanager.h>
+#include <qllcpserver.h>
+#include <qllcpsocket.h>
 
 Tennis::Tennis(QWidget *parent)
 : QDialog(parent), ui(new Ui_Tennis), board(new Board), controller(new Controller), socket(0),
@@ -125,6 +130,9 @@ Tennis::Tennis(QWidget *parent)
 //    ui->pongView->setBackgroundBrush(QBrush(Qt::white));
     ui->pongView->setCacheMode(QGraphicsView::CacheBackground);
 
+    m_handover = new Handover(server->serverPort(), this);
+    connect(m_handover, SIGNAL(bluetoothServiceChanged()), this, SLOT(nearFieldHandover()));
+
     connect(m_discoveryAgent, SIGNAL(serviceDiscovered(QBluetoothServiceInfo)),
             this, SLOT(serviceDiscovered(QBluetoothServiceInfo)));
     connect(m_discoveryAgent, SIGNAL(finished()), this, SLOT(discoveryFinished()));
@@ -132,25 +140,53 @@ Tennis::Tennis(QWidget *parent)
 
     m_discoveryAgent->setUuidFilter(QBluetoothUuid(serviceUuid));
 
-    QSettings settings("QtDF", "bttennis");
-    QString address = settings.value("lastclient").toString();
+
+    QString address;
+    QString port;
+    QStringList args = QCoreApplication::arguments();
+    if(args.length() >= 2){
+        address = args.at(1);
+        if(args.length() >= 3){
+            port = args.at(2);
+        }
+    }
+
+    if(address.isEmpty()){
+        QSettings settings("QtDF", "bttennis");
+        address = settings.value("lastclient").toString();
+    }
+
     if(!address.isEmpty()){
-        qDebug() << "Connect to" << address;
+        qDebug() << "Connect to" << address << port;
         QBluetoothDeviceInfo device = QBluetoothDeviceInfo(QBluetoothAddress(address), "", QBluetoothDeviceInfo::ComputerDevice);
         QBluetoothServiceInfo service;
-        service.setServiceUuid(QBluetoothUuid(serviceUuid));
+        if (!port.isEmpty()) {
+            QBluetoothServiceInfo::Sequence protocolDescriptorList;
+            QBluetoothServiceInfo::Sequence protocol;
+            protocol << QVariant::fromValue(QBluetoothUuid(QBluetoothUuid::L2cap))
+                     << QVariant::fromValue(port.toUShort());
+            protocolDescriptorList.append(QVariant::fromValue(protocol));
+            service.setAttribute(QBluetoothServiceInfo::ProtocolDescriptorList,
+                                 protocolDescriptorList);
+            qDebug() << "port" << port.toUShort() << service.protocolServiceMultiplexer();
+        }
+        else {
+            service.setServiceUuid(QBluetoothUuid(serviceUuid));
+        }
         service.setDevice(device);
         client->startClient(service);
         board->setStatus("Connecting", 100, 25);
 //        board->setStatus("Waiting", 100, 25);
 //        QTimer::singleShot(15000, this, SLOT(startDiscovery()));
-    }
-    else {
+    } else {
+        board->setStatus(tr("Touch to play"), 100, 25);
 
     //    m_discoveryAgent->start(); // do minimal scan first
 //        startDiscovery();
-        board->setStatus("Waiting", 100, 25);
+       // board->setStatus("Waiting", 100, 25);
     }
+
+
 
     setEnabled(true);
 
@@ -345,4 +381,27 @@ void Tennis::lagReport(int ms)
     if(ms > 250){
         board->setStatus(QString("Caution Lag %1ms").arg(ms), 100, 0);
     }
+}
+
+void Tennis::nearFieldHandover()
+{
+    qDebug() << "Connecting to NFC provided address" << m_handover->bluetoothAddress().toString();
+
+    QBluetoothDeviceInfo device = QBluetoothDeviceInfo(m_handover->bluetoothAddress(), QString(),
+                                                       QBluetoothDeviceInfo::ComputerDevice);
+
+    QBluetoothServiceInfo service;
+    service.setServiceUuid(QBluetoothUuid(serviceUuid));
+    service.setDevice(device);
+
+    QBluetoothServiceInfo::Sequence protocolDescriptorList;
+    QBluetoothServiceInfo::Sequence protocol;
+    protocol << QVariant::fromValue(QBluetoothUuid(QBluetoothUuid::L2cap))
+             << QVariant::fromValue(m_handover->serverPort());
+    protocolDescriptorList.append(QVariant::fromValue(protocol));
+    service.setAttribute(QBluetoothServiceInfo::ProtocolDescriptorList,
+                         protocolDescriptorList);
+
+    client->startClient(service);
+    board->setStatus(tr("Connecting: %1 %2").arg(m_handover->bluetoothAddress().toString()).arg(m_handover->serverPort()), 100, 25);
 }

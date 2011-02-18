@@ -141,6 +141,11 @@ void TennisServer::stopServer()
 }
 //! [stopServer]
 
+quint16 TennisServer::serverPort() const
+{
+    return l2capServer->serverPort();
+}
+
 //! [moveBall]
 void TennisServer::moveBall(int x, int y)
 {
@@ -220,7 +225,7 @@ void TennisServer::readSocket()
             clientSocket = 0;
         }
         else {
-            qDebug() << "Unknown command" << s[0];
+            qDebug() << Q_FUNC_INFO << "Unknown command" << str;
         }
     }
 }

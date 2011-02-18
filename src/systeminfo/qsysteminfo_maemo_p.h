@@ -300,6 +300,7 @@ public:
     bool screenSaverInhibited();
     bool setScreenSaverInhibit();
     bool isInhibited;
+    void setScreenSaverInhibited(bool on);
 
 private Q_SLOTS:
     void wakeUpDisplay();

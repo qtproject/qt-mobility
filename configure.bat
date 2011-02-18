@@ -59,6 +59,7 @@ set BUILD_EXAMPLES=no
 set BUILD_DEMOS=no
 set BUILD_DOCS=yes
 set BUILD_TOOLS=yes
+set LANGUAGES_CONFIG=
 set MOBILITY_MODULES=bearer location contacts systeminfo publishsubscribe versit messaging sensors serviceframework multimedia gallery organizer feedback connectivity
 set MOBILITY_MODULES_UNPARSED=
 set VC_TEMPLATE_OPTION=
@@ -103,7 +104,8 @@ if "%1" == "-h"                 goto usage
 if "%1" == "-help"              goto usage
 if "%1" == "--help"             goto usage
 if "%1" == "-symbian-unfrozen"  goto unfrozenTag
-if "%1" == "-staticconfig"     goto staticConfigTag
+if "%1" == "-staticconfig"      goto staticConfigTag
+if "%1" == "-languages"         goto languagesTag
 
 echo Unknown option: "%1"
 goto usage
@@ -146,6 +148,8 @@ echo Usage: configure.bat [-prefix (dir)] [headerdir (dir)] [libdir (dir)]
     echo                     by double quotation. If a selected module depends on other modules
     echo                     those modules (and their dependencies) will automatically be enabled.
     echo -vc ............... Generate Visual Studio make files
+    echo -languages ........ Languages/translations to be installed (e.g.: ar de ko)
+    echo                     (default is empty)
 
 
 if exist "%PROJECT_CONFIG%" del %PROJECT_CONFIG%
@@ -154,6 +158,29 @@ goto exitTag
 :qtTag
 shift
 set QT_PATH=%1\
+shift
+goto cmdline_parsing
+
+:languagesTag
+shift
+:: %1 can have leading/trailing quotes, so we can't use if "%1" == ""
+if xx%1xx == xxxx (
+    echo. >&2
+    echo >&2The -languages option requires a list of languages.
+    echo. >&2
+    goto usage
+)
+
+:: Remove leading/trailing quotes, if we have them
+set MOBILITY_LANGUAGES_UNPARSED=xxx%1xxx
+set MOBILITY_LANGUAGES_UNPARSED=%MOBILITY_LANGUAGES_UNPARSED:"xxx=%
+set MOBILITY_LANGUAGES_UNPARSED=%MOBILITY_LANGUAGES_UNPARSED:xxx"=%
+set MOBILITY_LANGUAGES_UNPARSED=%MOBILITY_LANGUAGES_UNPARSED:xxx=%
+
+REM for now we don't check the languages for their validity
+set LANGUAGES_CONFIG=
+set LANGUAGES_CONFIG= %MOBILITY_LANGUAGES_UNPARSED%
+echo Selected Languages: %LANGUAGES_CONFIG%
 shift
 goto cmdline_parsing
 
@@ -405,6 +432,8 @@ echo isEmpty($$QT_MOBILITY_BIN):QT_MOBILITY_BIN=$$QT_MOBILITY_PREFIX/bin >> %PRO
 echo isEmpty($$QT_MOBILITY_PLUGINS):QT_MOBILITY_PLUGINS=$$QT_MOBILITY_PREFIX/plugins >> %PROJECT_CONFIG%
 echo isEmpty($$QT_MOBILITY_EXAMPLES):QT_MOBILITY_EXAMPLES=$$QT_MOBILITY_PREFIX/bin >> %PROJECT_CONFIG%
 echo isEmpty($$QT_MOBILITY_DEMOS):QT_MOBILITY_DEMOS=$$QT_MOBILITY_PREFIX/bin >> %PROJECT_CONFIG%
+
+echo selected_languages = %LANGUAGES_CONFIG% >> %PROJECT_CONFIG%
 
 echo mobility_modules = %MOBILITY_MODULES%  >> %PROJECT_CONFIG%
 echo contains(mobility_modules,versit): mobility_modules *= contacts >> %PROJECT_CONFIG%
@@ -730,6 +759,7 @@ set QT_MOBILITY_EXAMPLES=
 set QT_MOBILITY_DEMOS=
 set ORGANIZER_REQUESTED=
 set PLATFORM_CONFIG=
+set LANGUAGES_CONFIG=
 exit /b 1
 
 :exitTag
@@ -751,4 +781,5 @@ set QT_MOBILITY_EXAMPLES=
 set QT_MOBILITY_DEMOS=
 set ORGANIZER_REQUESTED=
 set PLATFORM_CONFIG=
+set LANGUAGES_CONFIG=
 exit /b 0

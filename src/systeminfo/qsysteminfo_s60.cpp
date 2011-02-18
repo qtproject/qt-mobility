@@ -1655,6 +1655,7 @@ DeviceInfo *DeviceInfo::m_instance = NULL;
 QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QObject *parent)
     : QObject(parent), m_screenSaverInhibited(false)
 {
+    timer = new QTimer(this);
 }
 
 bool QSystemScreenSaverPrivate::screenSaverInhibited()
@@ -1671,7 +1672,6 @@ bool QSystemScreenSaverPrivate::setScreenSaverInhibit()
     m_screenSaverInhibited = true;
     resetInactivityTime();
 
-    QTimer *timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(resetInactivityTime()));
     timer->start(3000); //3 seconds interval
 
@@ -1681,6 +1681,18 @@ bool QSystemScreenSaverPrivate::setScreenSaverInhibit()
 void QSystemScreenSaverPrivate::resetInactivityTime()
 {
     User::ResetInactivityTime();
+}
+
+void QSystemScreenSaverPrivate::setScreenSaverInhibited(bool on)
+{
+    if (on) {
+        setScreenSaverInhibit();
+    } else {
+        if (timer->isActive()) {
+            timer->stop();
+            m_screenSaverInhibited = false;
+        }
+    }
 }
 
 QSystemBatteryInfoPrivate::QSystemBatteryInfoPrivate(QObject *parent)

@@ -12,4 +12,4 @@ include(../../../common.pri)
 CONFIG += mobility
 MOBILITY = connectivity
 
-symbian: TARGET.CAPABILITY = ReadDeviceData LocalServices
+symbian: TARGET.CAPABILITY = ReadDeviceData LocalServices WriteDeviceData

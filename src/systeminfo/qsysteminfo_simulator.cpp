@@ -986,6 +986,11 @@ bool QSystemScreenSaverPrivate::screenSaverInhibited()
     return true;
 }
 
+void QSystemScreenSaverPrivate::screenSaverInhibited(bool on)
+{
+    return on;
+}
+
 bool QSystemScreenSaverPrivate::setScreenSaverInhibit()
 {
     return true;
@@ -994,6 +999,16 @@ bool QSystemScreenSaverPrivate::setScreenSaverInhibit()
 bool QSystemScreenSaverPrivate::isScreenLockOn()
 {
     return true;
+}
+
+bool QSystemScreenSaverPrivate::screenSaverDelayed()
+{
+        return d->screenSaverDelayed();
+}
+
+void QSystemScreenSaverPrivate::setScreenSaverDelayed(bool on)
+{
+    return d->setScreenSaverDelayed(on);
 }
 
 

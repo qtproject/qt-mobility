@@ -47,6 +47,9 @@
 #include <QFile>
 #include <QTimer>
 #include <QApplication>
+#if defined(Q_OS_SYMBIAN)
+#include <e32std.h>
+#endif
 
 QTM_BEGIN_NAMESPACE
 
@@ -84,14 +87,21 @@ QTM_BEGIN_NAMESPACE
 */
 
 QDeclarativePositionSource::QDeclarativePositionSource()
-        : m_positionSource(0), m_positioningMethod(QDeclarativePositionSource::NoPositioningMethod),
-        m_nmeaFile(0), m_active(false), m_singleUpdate(false), m_updateInterval(0)
+    : m_positionSource(0), m_positioningMethod(QDeclarativePositionSource::NoPositioningMethod),
+      m_nmeaFile(0), m_active(false), m_singleUpdate(false), m_updateInterval(0)
 {
     m_positionSource = QGeoPositionInfoSource::createDefaultSource(this);
     if (m_positionSource) {
         connect(m_positionSource, SIGNAL(positionUpdated(QGeoPositionInfo)),
                 this, SLOT(positionUpdateReceived(QGeoPositionInfo)));
         m_positioningMethod = positioningMethod();
+#if defined(Q_OS_SYMBIAN)
+    } else {
+        RProcess thisProcess;
+        if (!thisProcess.HasCapability(ECapabilityLocation)) {
+            qmlInfo(this) << tr("PositionSource requires the Symbian Location capability to succeed on the Symbian platform.");
+        }
+#endif
     }
 #ifdef QDECLARATIVE_POSITION_DEBUG
     if (m_positionSource)
