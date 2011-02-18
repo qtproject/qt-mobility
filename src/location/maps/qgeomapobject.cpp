@@ -261,11 +261,11 @@ void QGeoMapObject::setZValue(int zValue)
         if (d_ptr->graphicsItem)
             d_ptr->graphicsItem->setZValue(zValue);
         emit zValueChanged(d_ptr->zValue);
+        update();
         if (d_ptr->mapData && d_ptr->mapData->d_ptr->oe) {
             QGeoMapObjectEngine *e = d_ptr->mapData->d_ptr->oe;
             e->rebuildScenes();
         }
-        update();
     }
 }
 
