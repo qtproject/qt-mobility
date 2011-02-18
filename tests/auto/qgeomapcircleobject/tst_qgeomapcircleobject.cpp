@@ -626,13 +626,13 @@ void tst_QGeoMapCircleObject::qtmobility1255()
 {
     QGeoCoordinate center(0,0,0);
 
-    QGeoMapCircleObject *outer = new QGeoMapCircleObject(center, 1000);
+    QGeoMapCircleObject *outer = new QGeoMapCircleObject(center, 5000);
     outer->setZValue(5);
     outer->setBrush(QBrush(Qt::black));
-    QGeoMapCircleObject *middle = new QGeoMapCircleObject(center, 700);
+    QGeoMapCircleObject *middle = new QGeoMapCircleObject(center, 3500);
     middle->setZValue(4);
     middle->setBrush(QBrush(Qt::red));
-    QGeoMapCircleObject *inner = new QGeoMapCircleObject(center, 500);
+    QGeoMapCircleObject *inner = new QGeoMapCircleObject(center, 1000);
     inner->setZValue(5);
     inner->setBrush(QBrush(Qt::blue));
 

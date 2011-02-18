@@ -385,7 +385,7 @@ void QDeclarativeGeoMapTextObject::setVerticalAlignment(QDeclarativeGeoMapTextOb
 }
 
 /*!
-    \qmlproperty int MapText::zValue
+    \qmlproperty int MapText::z
 
     This property holds the z-value of the text.
 
