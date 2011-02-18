@@ -26,13 +26,13 @@
     {
         text-decoration: none;
     }
-    li
-    {
-        list-style: none;
-    }
     ol li
     {
         list-style: decimal;
+    }
+    ul li
+    {
+        list-style: none;
     }
     caption, th
     {
@@ -76,7 +76,7 @@
     {
         margin-left: 0.5em;
         margin-right: 0.5em;
-        font-size: 11pt;
+        font-family: sans-serif;
         line-height: normal
     }
     a
@@ -126,13 +126,13 @@
     }
     th
     {
-        padding: 0.5em 1.5em 0.5em 1.5em;
+        padding: 0.5em 1.5em 0.5em 1em;
         background-color: #E1E1E1;
         border-left: 1px solid #E6E6E6;
     }
     td
     {
-        padding: 0.25em 1.5em 0.25em 2em;
+        padding: 0.25em 1.5em 0.25em 1em;
     }
 
     td.rightAlign
@@ -241,10 +241,6 @@
         margin-bottom: 0.5em
     }
 
-    .naviNextPrevious
-    {
-        display: none
-    }
     .header .breadcrumb
     {
         font-size: 90%;
@@ -471,6 +467,11 @@
     }
     .annotated td {
         padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+
+    .toc
+    {
+        font-size: 80%
     }
 
     .header .content .toc ul
