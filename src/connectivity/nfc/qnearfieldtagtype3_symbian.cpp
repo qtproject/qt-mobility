@@ -108,12 +108,12 @@ QVariant QNearFieldTagType3Symbian::decodeResponse(const QByteArray & command, c
         case 0x06:
         {
             // check command
-            result.setValue(checkResponse2ServiceBlockList(Cmd2ServiceBlockList(command), response));
+            result.setValue(checkResponse2ServiceBlockList(cmd2ServiceBlockList(command), response));
             break;
         }
         case 0x08:
         {
-            result = (response.at(8) == 0);
+            result = (response.at(9) == 0);
             break;
         }
         default:
@@ -136,12 +136,12 @@ QVariant QNearFieldTagType3Symbian::decodeResponse(const QByteArray & command, c
         case 0x06:
         {
             // check command
-            result.setValue(checkResponse2ServiceBlockList(Cmd2ServiceBlockList(command), newResponse));
+            result.setValue(checkResponse2ServiceBlockList(cmd2ServiceBlockList(command), newResponse));
             break;
         }
         case 0x08:
         {
-            result = (newResponse.at(8) == 0);
+            result = (newResponse.at(9) == 0);
             break;
         }
         default:
@@ -242,22 +242,26 @@ QNearFieldTarget::RequestId QNearFieldTagType3Symbian::writeServiceData(quint16 
 
 QNearFieldTarget::RequestId QNearFieldTagType3Symbian::check(const QMap<quint16, QList<quint16> > &serviceBlockList)
 {
+    BEGIN
     quint8 numberOfBlocks;
     QByteArray command;
     command.append(0x06); // command code
     command.append(serviceBlockList2CmdParam(serviceBlockList, numberOfBlocks, true));
     if (command.count() > 1)
     {
+        END
         return (_sendCommand(command));
     }
     else
     {
+        END
         return QNearFieldTarget::RequestId();
     }
 }
 
 QNearFieldTarget::RequestId QNearFieldTagType3Symbian::update(const QMap<quint16, QList<quint16> > &serviceBlockList, const QByteArray &data)
 {
+    BEGIN
     quint8 numberOfBlocks;
     QByteArray command;
     command.append(0x08); // command code
@@ -265,10 +269,12 @@ QNearFieldTarget::RequestId QNearFieldTagType3Symbian::update(const QMap<quint16
     if (command.count() > 1)
     {
         command.append(data);
+        END
         return (_sendCommand(command));
     }
     else
     {
+        END
         return QNearFieldTarget::RequestId();
     }
 }
@@ -331,10 +337,13 @@ QByteArray QNearFieldTagType3Symbian::serviceBlockList2CmdParam(const QMap<quint
         serviceCodeList.append(reinterpret_cast<const char *>(&serviceCode), sizeof(quint16));
 
         numberOfBlocks += serviceBlockList.value(serviceCode).count();
+        LOG("numberOfBlocks "<<numberOfBlocks)
         if ( (isCheckCommand && (numberOfBlocks > 12)) ||
              (!isCheckCommand && (numberOfBlocks > 8)) )
         {
             // out of range of block number
+            LOG("out of range of block number");
+            END
             return QByteArray();
         }
 
@@ -360,6 +369,7 @@ QByteArray QNearFieldTagType3Symbian::serviceBlockList2CmdParam(const QMap<quint
     if (numberOfBlocks < 1)
     {
         // out of range of block number
+        LOG("out of range of block number, number of blocks < 1");
         return QByteArray();
     }
 
@@ -371,93 +381,65 @@ QByteArray QNearFieldTagType3Symbian::serviceBlockList2CmdParam(const QMap<quint
     return command;
 }
 
-QMap<quint16, QList<quint16> > QNearFieldTagType3Symbian::Cmd2ServiceBlockList(const QByteArray& cmd)
+QMap<quint16, QList<quint16> > QNearFieldTagType3Symbian::cmd2ServiceBlockList(const QByteArray& cmd)
 {
     BEGIN
     QMap<quint16, QList<quint16> > result;
     // skip command code and IDm
     QByteArray data = cmd.right(cmd.count() - 9);
-    LOG("after skip command code and IDm ");
-    OutputByteArray(data);
 
-    quint8 numberOfServices = cmd.at(9);
-    LOG("number of services "<<numberOfServices);
+    quint8 numberOfServices = data.at(0);
 
-    QByteArray serviceCodeList = cmd.mid(10, numberOfServices * 2);
-    LOG("ServiceCodeList ");
-    OutputByteArray(serviceCodeList);
+    QByteArray serviceCodeList = data.mid(1, 2 * numberOfServices);
 
-    // quint8 numberOfBlocks = cmd.at(10 + numberOfServices * 2);
-    QByteArray blockList = cmd.right(cmd.count() - (9 + 1 + numberOfServices * 2 + 1));
-    LOG("blockList ")
-    OutputByteArray(blockList);
+    quint8 numberOfBlocks = data.at(2 * numberOfServices + 1);
+
+    QByteArray blockList = data.right(data.count() - 1 - 2*numberOfServices - 1);
 
     QList<quint16> svcList;
-    for(int i = 0; i < serviceCodeList.count() - 1; i += 2)
+    for (int i = 0; i < numberOfServices; ++i)
     {
-        quint8 temp = serviceCodeList.at(i);
-        quint16 serviceCode = 0;
-        serviceCode |= temp;
-        serviceCode <<= 8;
-        temp = serviceCodeList.at(i  + 1);
-        serviceCode |= temp;
-
-        serviceCode = qToLittleEndian(serviceCode);
+        unsigned char bytes[2];
+        bytes[0] = serviceCodeList.at(i*2);
+        bytes[1] = serviceCodeList.at(i*2+1);
+        quint16 serviceCode = qFromLittleEndian<quint16>(bytes);
         svcList.append(serviceCode);
-        LOG("get service code "<<(int)serviceCode)
     }
 
-    int i = 0;
-    QList<quint16> blockNumberList;
-
-    quint8 currentServiceCodeListOrder = 0;
-    if (blockList.count() > 0)
+    for (int j = 0, k = 0; j < numberOfBlocks; ++j, ++k)
     {
-        currentServiceCodeListOrder = blockList.at(0) & 0x0F;
-    }
-
-    while(i < blockList.count())
-    {
-        quint8 temp;
-        temp = blockList.at(i);
-        quint8 len = temp & 0x80;
-        quint8 serviceCodeListOrder = temp & 0x0F;
+        quint8 byte0 = blockList.at(k);
+        quint8 serviceCodeListOrder = byte0 & 0x0F;
         quint16 blockNumber = 0;
-        if (len > 0)
+
+        if (byte0 & 0x80)
         {
             // two bytes format
-            blockNumber = blockList.at(++i);
-            LOG("two bytes format "<<blockNumber);
+            blockNumber = blockList.at(++k);
         }
         else
         {
             // three bytes format
-            quint8 temp = blockList.at(++i);
-            blockNumber |= temp;
-            blockNumber <<= 8;
-            temp = blockList.at(++i);
-            blockNumber |= temp;
-            blockNumber = qToLittleEndian(blockNumber);
-            LOG("three bytes format "<<blockNumber);
+            unsigned char bytes[2];
+            bytes[0] = blockList.at(++k);
+            bytes[1] = blockList.at(++k);
+            blockNumber = qFromLittleEndian<quint16>(bytes);
         }
 
-        if (currentServiceCodeListOrder == serviceCodeListOrder)
+        if (result.contains(svcList.at(serviceCodeListOrder)))
         {
-            blockNumberList.append(blockNumber);
-            LOG("get blockNumber"<<blockNumber);
+            result[svcList.at(serviceCodeListOrder)].append(blockNumber);
         }
         else
         {
-            LOG("insert blockNumberList");
-            result.insert(currentServiceCodeListOrder, blockNumberList);
-            LOG("temp dump cmd map begin");
-            OutputCmdMap(result);
-            LOG("temp dump cmd map end");
-            currentServiceCodeListOrder = serviceCodeListOrder;
-            blockNumberList.clear();
+            QList<quint16> blocks;
+            blocks.append(blockNumber);
+            result.insert(svcList.at(serviceCodeListOrder), blocks);
         }
     }
+
     OutputCmdMap(result);
+
     END
     return result;
 }

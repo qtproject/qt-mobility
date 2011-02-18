@@ -469,44 +469,107 @@ void tst_qnearfieldtagtype3::testRawAccessAndNdefAccess(const QList<QNdefMessage
 
     QNearFieldTarget::RequestId id = tester.target->check(serviceBlockList);
 
-    if (tester.target->waitForRequestCompleted(id))
-    {
-        QMap<quint16, QByteArray> result = tester.target->requestResponse(id).value<QMap<quint16, QByteArray> >();
-        if (result.contains(serviceCode))
-        {
-            const QByteArray& lens = result.value(serviceCode);
-            if (!lens.isEmpty())
-            {
-                quint32 len1 = lens.at(11);
-                quint32 len2 = lens.at(13);
+    QVERIFY(tester.target->waitForRequestCompleted(id));
+    ++okCount;
+    QCOMPARE(okSpy.count(), okCount);
 
-                len1<<=8;
-                len2<<=8;
-                len1 |= lens.at(12);
-                len2 |= lens.at(12);
-                len1<<=8;
-                len2<<=8;
-                len1 |= lens.at(13);
-                len2 |= lens.at(11);
+    QMap<quint16, QByteArray> result = tester.target->requestResponse(id).value<QMap<quint16, QByteArray> >();
+    QVERIFY(result.contains(serviceCode));
 
-                qDebug()<<"len1 = "<<len1<<" len2 = "<<len2<<" real size = "<<messages.at(0).toByteArray().count();
-            }
-            else
-            {
-                qDebug()<<"len is empty";
-            }
-        }
-        else
-        {
-            qDebug()<<"analysis failed";
-        }
-    }
-    else
-    {
-        qDebug()<<"cmd failed";
-    }
+    const QByteArray& attribInfo = result.value(serviceCode);
+    QVERIFY(!attribInfo.isEmpty());
+
+    quint32 len = attribInfo.at(11);
+    len<<=8;
+    len |= attribInfo.at(12);
+    len<<=8;
+    len |= attribInfo.at(13);
+
+    QCOMPARE(len, (quint32)(messages.at(0).toByteArray().count()));
+
     // read NDEF with RAW command
+    int Nbc = (0 == len%16)?(len/16):(len/16+1);
+    qDebug()<<"Nbc = "<<Nbc;
+
+    serviceBlockList.clear();
+    blockList.clear();
+    for(int i = 1; i <= Nbc; ++i)
+    {
+        blockList.append(i);
+    }
+    serviceBlockList.insert(serviceCode, blockList);
+
+    QNearFieldTarget::RequestId id1 = tester.target->check(serviceBlockList);
+
+    QVERIFY(tester.target->waitForRequestCompleted(id1));
+    ++okCount;
+    QCOMPARE(okSpy.count(), okCount);
+
+    QMap<quint16, QByteArray> ndefContent = tester.target->requestResponse(id1).value<QMap<quint16, QByteArray> >();
+
+    QVERIFY(ndefContent.contains(serviceCode));
+    QCOMPARE(ndefContent.value(serviceCode).left(len), messages.at(0).toByteArray());
+
+    // update the ndef meesage with raw command
+    QNdefMessage message;
+    QNdefNfcTextRecord textRecord;
+    textRecord.setText("nfc");
+    message.append(textRecord);
+
+    QByteArray expectedNdefContent = message.toByteArray();
+    len = expectedNdefContent.count();
+    serviceCode = 0x0009;
+
+    // use previous attribute information block data, just update the len
+    QByteArray newAttribInfo = attribInfo;
+    newAttribInfo[13] = len&0xFF;
+    newAttribInfo[12] = (len>>8)&0xFF;
+    newAttribInfo[11] = (len>>16)&0xFF;
+    newAttribInfo[9] = 0x0F;
+
+    QByteArray ndefData;
+    ndefData.append(newAttribInfo);
+    ndefData.append(expectedNdefContent);
+
+    qDebug()<<"updated ndef len = "<<len;
+
+    for (int i = 0; i < 16 - ndefData.count()%16; ++i)
+    {
+        // appending padding data
+        ndefData.append((char)0);
+    }
+    qDebug()<<"raw ndefData len = "<<ndefData.count();
+
+    QList<quint16> updatedBlockList;
+
+    int blockNumber = (len%16 == 0)?len/16:(len/16+1);
+    qDebug()<<"updated block number = "<<blockNumber;
+
+    for(int i = 0; i <= blockNumber; ++i)
+    {
+        updatedBlockList.append((char)i);
+    }
+
+    qDebug()<<"updatedBlockList len = "<<updatedBlockList.count();
+    serviceBlockList.clear();
+    serviceBlockList.insert(serviceCode, updatedBlockList);
+    QNearFieldTarget::RequestId id2 = tester.target->update(serviceBlockList, ndefData);
+    QVERIFY(tester.target->waitForRequestCompleted(id2));
+    QVERIFY(tester.target->requestResponse(id2).toBool());
+    ++okCount;
+    QCOMPARE(okSpy.count(), okCount);
+
+    // read ndef with ndef access
+    tester.target->readNdefMessages();
+    ++ndefReadCount;
+    QTRY_COMPARE(ndefMessageReadSpy.count(), ndefReadCount);
+
+    const QNdefMessage& ndefMessage_new(ndefMessageReadSpy.first().at(0).value<QNdefMessage>());
+
+    QCOMPARE(expectedNdefContent, ndefMessage_new.toByteArray());
+    QCOMPARE(errSpy.count(), errCount);
 }
+
 
 void tst_qnearfieldtagtype3::testRawAndNdefAccess()
 {
