@@ -70,6 +70,8 @@ public:
     void startServer();
     void stopServer();
 
+    quint16 serverPort() const;
+
 public slots:
     void moveBall(int x, int y);
     void score(int left, int right);
