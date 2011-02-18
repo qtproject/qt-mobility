@@ -315,6 +315,11 @@ class QSystemBatteryInfoPrivate : public QSystemBatteryInfoLinuxCommonPrivate
 public:
     QSystemBatteryInfoPrivate(QSystemBatteryInfoLinuxCommonPrivate *parent = 0);
     ~QSystemBatteryInfoPrivate();
+
+private Q_SLOTS:
+#if !defined(QT_NO_DBUS)
+    void halChangedMaemo(int,QVariantList);
+#endif
 };
 
 

@@ -1629,13 +1629,65 @@ void QSystemScreenSaverPrivate::setScreenSaverInhibited(bool on)
 QSystemBatteryInfoPrivate::QSystemBatteryInfoPrivate(QSystemBatteryInfoLinuxCommonPrivate *parent)
     : QSystemBatteryInfoLinuxCommonPrivate(parent)
 {
-
+#if !defined(QT_NO_DBUS)
+    QHalInterface iface;
+    QStringList list = iface.findDeviceByCapability("battery");
+    if (!list.isEmpty()) {
+        foreach (const QString &dev, list) {
+            halIfaceDevice = new QHalDeviceInterface(dev);
+            if (halIfaceDevice->isValid()) {
+                if (halIfaceDevice->setConnections()) {
+                    qDebug() << "connect battery" <<  halIfaceDevice->getPropertyString("battery.type");
+                    if (!connect(halIfaceDevice,SIGNAL(propertyModified(int, QVariantList)),
+                                 this,SLOT(halChangedMaemo(int,QVariantList)))) {
+                        qDebug() << "connection malfunction";
+                    }
+                }
+                return;
+            }
+        }
+    }
+#endif
 }
 
 QSystemBatteryInfoPrivate::~QSystemBatteryInfoPrivate()
 {
 
 }
+
+#if !defined(QT_NO_DBUS)
+void QSystemBatteryInfoPrivate::halChangedMaemo(int count,QVariantList map)
+{
+    QHalInterface iface;
+    QStringList list = iface.findDeviceByCapability("battery");
+    QHalDeviceInterface ifaceDevice(list.at(0)); //default battery
+    if (ifaceDevice.isValid()) {
+        for(int i=0; i < count; i++) {
+            QString mapS = map.at(i).toString();
+          qDebug() << mapS;
+            QSystemBatteryInfo::ChargerType chargerType = QSystemBatteryInfo::UnknownCharger;
+             if (  mapS == "maemo.charger.connection_status" | mapS == "maemo.charger.type") {
+                const QString chargeType = ifaceDevice.getPropertyString("maemo.charger.type");
+                if(chargeType == "host 500 mA") {
+                    chargerType = QSystemBatteryInfo::USB_500mACharger;
+                }
+                if(chargeType == "host 100 mA") {
+                    chargerType = QSystemBatteryInfo::USB_100mACharger;
+                }
+                chargerType = QSystemBatteryInfoLinuxCommonPrivate::currentChargerType();
+                if (chargerType == QSystemBatteryInfo::UnknownCharger) {
+                    chargerType = QSystemBatteryInfo::WallCharger;
+                }
+
+                if(chargerType != curChargeType) {
+                    curChargeType = chargerType;
+                    Q_EMIT chargerTypeChanged(curChargeType);
+                }
+            }
+         }
+    }
+}
+#endif
 
 #include "moc_qsysteminfo_maemo_p.cpp"
 

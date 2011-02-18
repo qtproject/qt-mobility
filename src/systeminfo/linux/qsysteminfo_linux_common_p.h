@@ -406,6 +406,7 @@ public:
     QSystemBatteryInfo::BatteryStatus batteryStatus() const;
     QSystemBatteryInfo::EnergyUnit energyMeasurementUnit() const;
     bool batteryIsPresent;
+    QSystemBatteryInfo::ChargerType curChargeType;
 
 Q_SIGNALS:
     void batteryStatusChanged(QSystemBatteryInfo::BatteryStatus batteryStatus);
@@ -433,6 +434,8 @@ protected:
     QHalDeviceInterface *halIfaceDevice;
     QUDisksInterface *udisksIface;
 
+    QSystemBatteryInfo::ChargerType currentChargerType();
+
 private Q_SLOTS:
     void setConnection();
     virtual void halChanged(int,QVariantList);
@@ -446,7 +449,6 @@ private:
 
     QSystemBatteryInfo::BatteryStatus currentBatStatus;
     QSystemBatteryInfo::ChargingState curChargeState;
-    QSystemBatteryInfo::ChargerType curChargeType;
     QVariantMap pMap;
 
     int currentBatLevelPercent;
