@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -41,20 +41,43 @@
 #include "annotatedurl.h"
 
 #include <qnearfieldmanager.h>
-#include <qndefnfctextrecord.h>
-#include <qndefnfcurirecord.h>
 
 #include <QtCore/QLocale>
 
 #include <QtGui/QApplication>
 #include <QtGui/QMainWindow>
-
-
+#include <QFile>
+#include <QTextStream>
+void customMessageHandler(QtMsgType type, const char *msg)
+{
+	QString txt;
+	switch (type) {
+	case QtDebugMsg:
+		txt = QString("Debug: %1").arg(msg);
+		break;
+ 
+	case QtWarningMsg:
+		txt = QString("Warning: %1").arg(msg);
+	break;
+	case QtCriticalMsg:
+		txt = QString("Critical: %1").arg(msg);
+	break;
+	case QtFatalMsg:
+		txt = QString("Fatal: %1").arg(msg);
+		abort();
+	}
+ 
+	QFile outFile("e:\\debuglog.txt");
+	outFile.open(QIODevice::WriteOnly | QIODevice::Append);
+	QTextStream ts(&outFile);
+	ts << txt << endl;
+}
 int main(int argc, char *argv[])
 {
     //QLocale::setDefault(QLocale(QLocale::Japanese));
 
     QApplication a(argc, argv);
+    qInstallMsgHandler(customMessageHandler);
     QMainWindow mainWindow;
 
     QNearFieldManager manager;
@@ -64,20 +87,11 @@ int main(int argc, char *argv[])
     annotatedUrl.connect(&manager, SIGNAL(targetLost(QNearFieldTarget*)),
                          SLOT(targetLost(QNearFieldTarget*)));
 
-    QNdefFilter filter;
-    filter.setOrderMatch(false);
-    filter.appendRecord<QNdefNfcTextRecord>(1, UINT_MAX);
-    filter.appendRecord<QNdefNfcUriRecord>();
-    manager.registerTargetDetectedHandler(filter, &annotatedUrl,
-                                          SLOT(targetDetected(QNdefMessage,QNearFieldTarget*)));
+    manager.startTargetDetection();
 
     mainWindow.setCentralWidget(&annotatedUrl);
 
-#if defined(Q_WS_S60) || defined(Q_WS_MAEMO_6) || defined(Q_WS_MEEGO)
-    mainWindow.showFullScreen();
-#else
     mainWindow.show();
-#endif
 
     return a.exec();
 }

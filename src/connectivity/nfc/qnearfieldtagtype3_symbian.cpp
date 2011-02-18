@@ -46,11 +46,32 @@
 
 QTM_BEGIN_NAMESPACE
 
+#define SYMBIAN_RESP_INCLUDE_LEN
+
 static void OutputByteArray(const QByteArray& data)
 {
     for(int i = 0; i < data.count(); ++i)
     {
         LOG("data ["<<i<<"] = "<<((quint16)(data.at(i))));
+    }
+}
+
+static void OutputCmdMap(const QMap<quint16, QList<quint16> >& data)
+{
+    QList<quint16> mapKeys = data.keys();
+    for(int i = 0; i < mapKeys.count(); ++i)
+    {
+        LOG("cmd Map key "<<mapKeys.at(i)<<" value "<<data.value(mapKeys.at(i)));
+    }
+}
+
+static void OutputRspMap(const QMap<quint16, QByteArray>& data)
+{
+    QList<quint16> mapKeys = data.keys();
+    for(int i = 0; i < mapKeys.count(); ++i)
+    {
+        LOG("rsp Map key "<<mapKeys.at(i));
+        OutputByteArray(data.value(mapKeys.at(i)));
     }
 }
 
@@ -74,6 +95,7 @@ QVariant QNearFieldTagType3Symbian::decodeResponse(const QByteArray & command, c
 {
     BEGIN
     OutputByteArray(response);
+#ifndef SYMBIAN_RESP_INCLUDE_LEN
     QVariant result;
     if (command.count() < 0)
     {
@@ -101,6 +123,34 @@ QVariant QNearFieldTagType3Symbian::decodeResponse(const QByteArray & command, c
 
     }
     END
+#else
+    QVariant result;
+    if (command.count() < 0)
+    {
+        END;
+        return result;
+    }
+    QByteArray newResponse = response.right(response.count() - 1);
+    switch(command.at(0))
+    {
+        case 0x06:
+        {
+            // check command
+            result.setValue(checkResponse2ServiceBlockList(Cmd2ServiceBlockList(command), newResponse));
+            break;
+        }
+        case 0x08:
+        {
+            result = (newResponse.at(8) == 0);
+            break;
+        }
+        default:
+        {
+            result = newResponse;
+        }
+    }
+    END
+#endif
     return result;
 }
 
@@ -249,6 +299,8 @@ const QByteArray& QNearFieldTagType3Symbian::getIDm()
 
 QByteArray QNearFieldTagType3Symbian::serviceBlockList2CmdParam(const QMap<quint16, QList<quint16> > &serviceBlockList, quint8& numberOfBlocks, bool isCheckCommand)
 {
+    BEGIN
+    OutputCmdMap(serviceBlockList);
     QByteArray command;
     command.append(getIDm());
     numberOfBlocks = 0;
@@ -314,6 +366,8 @@ QByteArray QNearFieldTagType3Symbian::serviceBlockList2CmdParam(const QMap<quint
     command.append(serviceCodeList);
     command.append(numberOfBlocks);
     command.append(blockList);
+    OutputByteArray(command);
+    END
     return command;
 }
 
@@ -323,10 +377,20 @@ QMap<quint16, QList<quint16> > QNearFieldTagType3Symbian::Cmd2ServiceBlockList(c
     QMap<quint16, QList<quint16> > result;
     // skip command code and IDm
     QByteArray data = cmd.right(cmd.count() - 9);
+    LOG("after skip command code and IDm ");
+    OutputByteArray(data);
+
     quint8 numberOfServices = cmd.at(9);
+    LOG("number of services "<<numberOfServices);
+
     QByteArray serviceCodeList = cmd.mid(10, numberOfServices * 2);
+    LOG("ServiceCodeList ");
+    OutputByteArray(serviceCodeList);
+
     // quint8 numberOfBlocks = cmd.at(10 + numberOfServices * 2);
     QByteArray blockList = cmd.right(cmd.count() - (9 + 1 + numberOfServices * 2 + 1));
+    LOG("blockList ")
+    OutputByteArray(blockList);
 
     QList<quint16> svcList;
     for(int i = 0; i < serviceCodeList.count() - 1; i += 2)
@@ -335,10 +399,12 @@ QMap<quint16, QList<quint16> > QNearFieldTagType3Symbian::Cmd2ServiceBlockList(c
         quint16 serviceCode = 0;
         serviceCode |= temp;
         serviceCode <<= 8;
-        temp = serviceCodeList.at(i + 1);
+        temp = serviceCodeList.at(i  + 1);
         serviceCode |= temp;
 
+        serviceCode = qToLittleEndian(serviceCode);
         svcList.append(serviceCode);
+        LOG("get service code "<<(int)serviceCode)
     }
 
     int i = 0;
@@ -361,6 +427,7 @@ QMap<quint16, QList<quint16> > QNearFieldTagType3Symbian::Cmd2ServiceBlockList(c
         {
             // two bytes format
             blockNumber = blockList.at(++i);
+            LOG("two bytes format "<<blockNumber);
         }
         else
         {
@@ -370,25 +437,35 @@ QMap<quint16, QList<quint16> > QNearFieldTagType3Symbian::Cmd2ServiceBlockList(c
             blockNumber <<= 8;
             temp = blockList.at(++i);
             blockNumber |= temp;
+            blockNumber = qToLittleEndian(blockNumber);
+            LOG("three bytes format "<<blockNumber);
         }
 
         if (currentServiceCodeListOrder == serviceCodeListOrder)
         {
             blockNumberList.append(blockNumber);
+            LOG("get blockNumber"<<blockNumber);
         }
         else
         {
+            LOG("insert blockNumberList");
             result.insert(currentServiceCodeListOrder, blockNumberList);
+            LOG("temp dump cmd map begin");
+            OutputCmdMap(result);
+            LOG("temp dump cmd map end");
             currentServiceCodeListOrder = serviceCodeListOrder;
             blockNumberList.clear();
         }
     }
-
+    OutputCmdMap(result);
+    END
     return result;
 }
 
 QMap<quint16, QByteArray> QNearFieldTagType3Symbian::checkResponse2ServiceBlockList(const QMap<quint16, QList<quint16> > &serviceBlockList, const QByteArray& response)
 {
+    BEGIN
+    OutputCmdMap(serviceBlockList);
     QMap<quint16, QByteArray> result;
     // at least, the response should contain resp code + IDM + status flags
     if (response.count() < 11)
@@ -408,6 +485,8 @@ QMap<quint16, QByteArray> QNearFieldTagType3Symbian::checkResponse2ServiceBlockL
         result.insert(serviceCode, response.mid(index, 16*blockCount));
         index+=16*blockCount;
     }
+    OutputRspMap(result);
+    END
     return result;
 }
 
