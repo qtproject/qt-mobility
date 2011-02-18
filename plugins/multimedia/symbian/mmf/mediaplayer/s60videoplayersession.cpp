@@ -249,11 +249,14 @@ void S60VideoPlayerSession::applyPendingChanges(bool force)
         }
 #else
         if (m_pendingChanges & WindowHandle || m_pendingChanges & DisplayRect) {
-            if (window)
+            if (window) {
                TRAP(error, m_player->SetDisplayWindowL(*m_wsSession, *m_screenDevice,
                                                        *window,
                                                        QRect2TRect(extentRect),
                                                        QRect2TRect(clipRect)));
+               if (KErrNone == error)
+                   m_displayWindow = window;
+            }
             m_dsaActive = (KErrNone == error);
             m_dsaStopped = false;
             m_pendingChanges = ScaleFactors;

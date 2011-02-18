@@ -56,6 +56,7 @@ class QAbstractVideoSurface;
 class RWsSession;
 class CWsScreenDevice;
 class RWindowBase;
+class RWindow;
 class QDesktopWidget;
 
 class S60VideoDisplay;
@@ -123,6 +124,7 @@ private slots:
     void resetViewfinderDisplay();
     void viewFinderBitmapReady(const CFbsBitmap &bitmap);
     void handleVisibilityChange(const bool isVisible);
+    void handleWindowChange(RWindow *handle);
     void handleDesktopResize(int screen);
 
 private: // Enums
