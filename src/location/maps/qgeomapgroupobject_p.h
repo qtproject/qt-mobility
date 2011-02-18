@@ -60,6 +60,8 @@ public:
 
     QList<QGeoMapObject *> children;
 
+    quint32 serial;
+
 public slots:
     void childChangedZValue(int zValue);
 
