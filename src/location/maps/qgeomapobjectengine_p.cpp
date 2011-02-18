@@ -932,17 +932,10 @@ static void addGroupToScene(QGeoMapObjectEngine *eng, QGeoMapGroupObject *group)
 
 void QGeoMapObjectEngine::rebuildScenes()
 {
-    // QTMOBILITY-1265: memory leaks fixed here at the cost of
-    //                  some efficiency, this will need optimization
-    QSet<QGraphicsItem*> old;
-    foreach (QGraphicsItem *i, latLonScene->items()) {
+    foreach (QGraphicsItem *i, latLonScene->items())
         latLonScene->removeItem(i);
-        old.insert(i);
-    }
-    foreach (QGraphicsItem *i, pixelScene->items()) {
+    foreach (QGraphicsItem *i, pixelScene->items())
         pixelScene->removeItem(i);
-        old.insert(i);
-    }
 
     delete latLonScene;
     delete pixelScene;
@@ -952,17 +945,6 @@ void QGeoMapObjectEngine::rebuildScenes()
     pixelScene->setItemIndexMethod(QGraphicsScene::NoIndex);
 
     addGroupToScene(this, mdp->containerObject);
-
-    QSet<QGraphicsItem*> after;
-    foreach (QGraphicsItem *i, latLonScene->items())
-        after.insert(i);
-    foreach (QGraphicsItem *i, pixelScene->items())
-        after.insert(i);
-
-    QSet<QGraphicsItem*> removed = after.subtract(old);
-
-    foreach (QGraphicsItem *i, removed)
-        delete i;
 }
 
 /*****************************************************************************
