@@ -134,6 +134,11 @@ public:
     Q_INVOKABLE QDeclarativeCoordinate* toCoordinate(QPointF screenPosition) const;
     Q_INVOKABLE QPointF toScreenPosition(QDeclarativeCoordinate* coordinate) const;
 
+    // This function is strictly for testing purposes and may be removed at
+    // any time without any notice (hence also the obscure naming to avoid
+    // accidental usage):
+    Q_INVOKABLE int testGetDeclarativeMapObjectCount();
+
     void setActiveMouseArea(QDeclarativeGeoMapMouseArea *area);
     QDeclarativeGeoMapMouseArea* activeMouseArea() const;
 

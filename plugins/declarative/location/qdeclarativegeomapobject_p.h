@@ -141,7 +141,6 @@ private Q_SLOTS:
 private:
     bool visible_;   
     bool componentCompleted_;
-    QList<QDeclarativeGeoMapObject*> mapObjects_;
     QDeclarativeComponent *delegate_;
     QVariant modelVariant_;
     QAbstractItemModel* model_;

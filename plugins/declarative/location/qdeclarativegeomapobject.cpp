@@ -303,18 +303,14 @@ void QDeclarativeGeoMapObjectView::setMapData(QDeclarativeGraphicsGeoMap* map)
 
 void QDeclarativeGeoMapObjectView::removeInstantiatedItems()
 {
-    QList<QGeoMapObject*> kids = group_.childObjects();
-    for (int i = 0; i < kids.size(); i++) {
-        group_.removeChildObject(kids.at(i));
-    }
     // Delete the declarative components we have instantiated.
     // They will also delete the actual qgeomapobjects
-    if (!mapObjects_.isEmpty()) {
-        //qDeleteAll(mapObjects_);
-        for (int i = 0; i < mapObjects_.size(); i++) {
-            delete mapObjects_.at(i);
+    QList<QGeoMapObject*> mapObjects = group_.childObjects();
+    if (!mapObjects.isEmpty()) {
+        for (int i = 0; i < mapObjects.size(); i++) {
+            group_.removeChildObject(mapObjects.at(i));
+            delete map_->objectMap_.take(mapObjects.at(i));
         }
-        mapObjects_.clear();
     }
 }
 
@@ -337,7 +333,6 @@ void QDeclarativeGeoMapObjectView::repopulate()
              break;
          mapObject->setVisible(visible_);
          mapObject->setMap(map_);
-         mapObjects_.append(mapObject);
          group_.addChildObject(mapObject->mapObject());
          // Needed in order for mouse areas to work.
          map_->objectMap_.insert(mapObject->mapObject(), mapObject);
@@ -409,12 +404,13 @@ void QDeclarativeGeoMapObjectView::setVisible(bool visible)
         return;
     visible_ = visible;
 
-     if (!mapObjects_.isEmpty()) {
-         for (int i = 0; i < mapObjects_.count(); ++i) {
-             mapObjects_.at(i)->setVisible(visible_);
-         }
-     }
-     emit visibleChanged();
+    QList<QGeoMapObject*> mapObjects = group_.childObjects();
+    if (!mapObjects.isEmpty()) {
+        for (int i = 0; i < mapObjects.count(); ++i) {
+            mapObjects.at(i)->setVisible(visible_);
+        }
+    }
+    emit visibleChanged();
 }
 
 bool QDeclarativeGeoMapObjectView::isVisible() const
@@ -435,7 +431,6 @@ bool QDeclarativeGeoMapObjectView::isVisible() const
 
 void QDeclarativeGeoMapObjectView::setZValue(qreal zValue)
 {
-    qDebug() << "zet is being set and then emitting.";
     group_.setZValue(zValue);
     emit zChanged();
 }

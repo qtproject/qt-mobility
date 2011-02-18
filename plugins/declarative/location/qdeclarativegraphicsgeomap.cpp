@@ -138,8 +138,9 @@ QDeclarativeGraphicsGeoMap::~QDeclarativeGraphicsGeoMap()
     if (serviceProvider_)
         delete serviceProvider_;
 
-    if (initialCoordinate)
+    if (initialCoordinate) {
         delete initialCoordinate;
+    }
 }
 
 // todo: mixture of mapviews and mapobjects does not preserve the order (z).
@@ -902,6 +903,7 @@ void QDeclarativeGraphicsGeoMap::addMapObject(QDeclarativeGeoMapObject *object)
     if (!mapData_ || !object || objectMap_.contains(object->mapObject()))
         return;
     objectMap_.insert(object->mapObject(), object);
+    mapObjects_.append(object);
     mapData_->addMapObject(object->mapObject());
 }
 
@@ -927,6 +929,7 @@ void QDeclarativeGraphicsGeoMap::removeMapObject(QDeclarativeGeoMapObject *objec
     if (!mapData_ || !object || !objectMap_.contains(object->mapObject()))
         return;
     objectMap_.remove(object->mapObject());
+    mapObjects_.removeOne(object);
     mapData_->removeMapObject(object->mapObject());
 }
 
@@ -938,6 +941,12 @@ void QDeclarativeGraphicsGeoMap::setActiveMouseArea(QDeclarativeGeoMapMouseArea 
 QDeclarativeGeoMapMouseArea* QDeclarativeGraphicsGeoMap::activeMouseArea() const
 {
     return activeMouseArea_;
+}
+
+// This function is strictly for testing purposes
+int QDeclarativeGraphicsGeoMap::testGetDeclarativeMapObjectCount()
+{
+   return objectMap_.values().count();
 }
 
 #include "moc_qdeclarativegraphicsgeomap_p.cpp"
