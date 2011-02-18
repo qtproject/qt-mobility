@@ -308,8 +308,10 @@ bool QGraphicsVideoItemPrivate::eventFilter(QObject *watched, QEvent *event)
 
 void QGraphicsVideoItemPrivate::customEvent(QEvent *event)
 {
-    if (event->type() == UpdateViewportTransparencyEvent && m_currentView)
+    if (event->type() == UpdateViewportTransparencyEvent && m_currentView) {
         m_currentView->window()->setAttribute(Qt::WA_TranslucentBackground);
+        m_currentView->window()->update();
+    }
     QObject::customEvent(event);
 }
 
