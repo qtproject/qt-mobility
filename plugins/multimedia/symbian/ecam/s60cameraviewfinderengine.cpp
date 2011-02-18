@@ -197,6 +197,7 @@ void S60CameraViewfinderEngine::setVideoWidgetControl(QObject *viewfinderOutput)
 
         connect(m_viewfinderDisplay, SIGNAL(visibilityChanged(bool)), this, SLOT(handleVisibilityChange(bool)));
         connect(m_viewfinderDisplay, SIGNAL(displayRectChanged(QRect, QRect)), this, SLOT(resetVideoWindowSize()));
+        connect(m_viewfinderDisplay, SIGNAL(windowHandleChanged(RWindow*)), this, SLOT(handleWindowChange(RWindow*)));
 
         m_viewfinderSize = m_viewfinderDisplay->extentRect().size();
         m_viewfinderOutput = viewfinderOutput;
@@ -362,6 +363,7 @@ void S60CameraViewfinderEngine::setVideoWindowControl(QObject *viewfinderOutput)
 
         connect(m_viewfinderDisplay, SIGNAL(displayRectChanged(QRect, QRect)), this, SLOT(resetVideoWindowSize()));
         connect(m_viewfinderDisplay, SIGNAL(visibilityChanged(bool)), this, SLOT(handleVisibilityChange(bool)));
+        connect(m_viewfinderDisplay, SIGNAL(windowHandleChanged(RWindow*)), this, SLOT(handleWindowChange(RWindow*)));
 
         m_viewfinderSize = m_viewfinderDisplay->extentRect().size();
         m_viewfinderOutput = viewfinderOutput;
@@ -503,12 +505,9 @@ void S60CameraViewfinderEngine::startViewfinder(const bool internalStart)
                 return;
             }
 
-            if (size.iWidth != m_viewfinderSize.width() || size.iHeight != m_viewfinderSize.height())
-                m_actualViewFinderSize = QSize(size.iWidth, size.iHeight);
-
-                // Notify control about the different than requested frame size
-                if (m_viewfinderDisplay)
-                    m_viewfinderDisplay->setNativeSize(m_actualViewFinderSize);
+            m_actualViewFinderSize = QSize(size.iWidth, size.iHeight);
+            if (m_viewfinderDisplay)
+                m_viewfinderDisplay->setNativeSize(m_actualViewFinderSize);
         }
     }
 }
@@ -562,8 +561,11 @@ void S60CameraViewfinderEngine::resetViewfinderSize(const QSize size)
 {
     m_viewfinderSize = size;
 
-    if(m_vfState != EVFIsConnectedIsStartedIsVisible)
+    if(m_vfState != EVFIsConnectedIsStartedIsVisible) {
+        if (m_viewfinderDisplay)
+            m_viewfinderDisplay->setNativeSize(m_actualViewFinderSize);
         return;
+    }
 
     stopViewfinder(true);
 
@@ -684,6 +686,9 @@ void S60CameraViewfinderEngine::viewFinderBitmapReady(const CFbsBitmap &bitmap)
 
 void S60CameraViewfinderEngine::handleVisibilityChange(const bool isVisible)
 {
+    if (m_isViewFinderVisible == isVisible)
+        return;
+
     m_isViewFinderVisible = isVisible;
 
     if (m_isViewFinderVisible) {
@@ -703,10 +708,17 @@ void S60CameraViewfinderEngine::handleVisibilityChange(const bool isVisible)
         }
         startViewfinder(true);
     } else {
-        if (m_vfState == EVFIsConnectedIsStartedIsVisible)
-            m_vfState = EVFIsConnectedIsStartedNotVisible;
+        // Stopping takes care of the state change
         stopViewfinder(true);
     }
+}
+
+void S60CameraViewfinderEngine::handleWindowChange(RWindow *handle)
+{
+    stopViewfinder(true);
+
+    if (handle) // New handle available, start viewfinder
+        startViewfinder(true);
 }
 
 void S60CameraViewfinderEngine::checkAndRotateCamera()

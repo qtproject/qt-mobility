@@ -82,9 +82,11 @@ void S60VideoWindowDisplay::setFrame(const CFbsBitmap &bitmap)
         CWindowGc &gc = m_winId->SystemGc();
         RWindow *window = windowHandle();
         gc.Activate(*window);
-        TRect winRect(TPoint(0,0), window->Size());
+        const QPoint offsetQ = displayRect().topLeft() + contentRect().topLeft();
+        const TPoint offsetT(offsetQ.x(), offsetQ.y());
+        const TRect winRect(offsetT, m_bitmap->SizeInPixels());
         window->BeginRedraw(winRect);
-        gc.BitBlt(TPoint(contentRect().topLeft().x(), contentRect().topLeft().y()), m_bitmap);
+        gc.BitBlt(offsetT, m_bitmap);
         window->EndRedraw();
         gc.Deactivate();
     }
