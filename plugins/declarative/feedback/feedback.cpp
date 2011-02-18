@@ -285,22 +285,17 @@
 */
 
 /*!
-    \property Actuator::id
-    This property hold the id of the feedback actuator.
-*/
-
-/*!
     \qmlproperty bool Actuator::valid
 
     This property is true if the actuator is valid.
 */
 
 /*!
-   \qmlproperty  Actuator::name
+   \qmlproperty string Actuator::name
     This property holds the name of the feedback actuator.
 */
 /*!
-    \qmlproperty Actuator::state
+    \qmlproperty string Actuator::state
     This property holds the state of the feedback actuator.
 */
 
@@ -313,7 +308,7 @@
     \endlist
 */
 /*!
-    \qmlproperty Actuator::enabled
+    \qmlproperty bool Actuator::enabled
     This property is true if the feedback actuator is enabled.
 */
 

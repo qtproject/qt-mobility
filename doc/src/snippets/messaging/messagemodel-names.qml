@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,35 +39,32 @@
 **
 ****************************************************************************/
 
-#include "qnearfieldllcpdevice_symbian_p.h"
+import Qt 4.7
+import QtMobility.messaging 1.1
 
-QTM_BEGIN_NAMESPACE
+Rectangle {
+    width: 320
+    height: 480
+    ListView {
+        anchors.fill: parent
 
-QNearFieldLlcpDeviceSymbian::QNearFieldLlcpDeviceSymbian(RNfcServer& nfcServer, QObject *parent)
-                                  : QNearFieldTarget(parent), mNfcServer(nfcServer) 
-{
-    setAccessMethods(QNearFieldTarget::LlcpAccess);
+        //! [model]
+        model: MessageModel {
+            sortBy: MessageModel.Timestamp
+            sortOrder: MessageModel.DescendingOrder
+            filter: MessageUnionFilter {
+                MessageFilter {
+                    type: MessageFilter.Sender
+                    value: "martin"
+                    comparator: MessageFilter.Includes
+                }
+                MessageFilter {
+                    type: MessageFilter.Sender
+                    value: "don"
+                    comparator: MessageFilter.Includes
+                }
+            }
+        }
+        //! [model]
+    }
 }
-
-QByteArray QNearFieldLlcpDeviceSymbian::uid() const
-{
-    return QByteArray();
-}
-
-QNearFieldTarget::Type QNearFieldLlcpDeviceSymbian::type() const
-{
-    return QNearFieldTarget::AnyTarget;
-}
-
-QNearFieldTarget::AccessMethods QNearFieldLlcpDeviceSymbian::accessMethods() const
-{
-    return QNearFieldTarget::LlcpAccess;
-}
-
-void QNearFieldLlcpDeviceSymbian::setAccessMethods(const QNearFieldTarget::AccessMethods& accessMethods)
-{
-}
-
-#include "moc_qnearfieldllcpdevice_symbian_p.cpp"
-
-QTM_END_NAMESPACE

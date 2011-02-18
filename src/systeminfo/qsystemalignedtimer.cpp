@@ -208,7 +208,7 @@ void QSystemAlignedTimer::setMaximumInterval(int seconds)
 
 /*!
   \property QSystemAlignedTimer::maximumInterval
-  \brief The timers's maximumInterval.
+  \brief The timer's maximumInterval.
 
   Returns this current timer maximum interval.
   */
@@ -227,8 +227,12 @@ void QSystemAlignedTimer::setSingleShot(bool singleShot)
 
 /*!
 
-  This static function calls a slot after a given time interval.
-  \a sec is the time interval in seconds.
+  This static function starts a timer to call a slot after a \a minimumTime
+  interval has elapsed, and ensures that it will be called before the
+  \a maximumTime has elapsed.
+
+  These values are specified in seconds.
+
   The receiver is the \a receiver object and the \a member is the slot.
   */
 void QSystemAlignedTimer::singleShot(int minimumTime, int maximumTime, QObject *receiver, const char *member)
