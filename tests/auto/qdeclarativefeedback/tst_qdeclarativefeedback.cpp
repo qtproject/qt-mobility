@@ -96,29 +96,30 @@ void tst_qdeclarativefeedback::hapticsEffect()
     QDeclarativeComponent component(&engine);
     component.loadUrl(QUrl::fromLocalFile(SRCDIR "/data/hapticseffect.qml"));
 
-    QFeedbackHapticsEffect *hapticsEffect = qobject_cast<QFeedbackHapticsEffect*>(component.create());
+    QObject *hapticsEffect = component.create();
     QVERIFY(hapticsEffect != 0);
 
-    QCOMPARE(hapticsEffect->attackIntensity(), 0.0);
-    QCOMPARE(hapticsEffect->attackTime(), 250);
-    QCOMPARE(hapticsEffect->intensity(), 1.0);
-    QCOMPARE(hapticsEffect->duration(), 100);
-    QCOMPARE(hapticsEffect->fadeTime(), 250);
-    QCOMPARE(hapticsEffect->fadeIntensity(), 0.0);
-    QVERIFY(hapticsEffect->actuator() != 0);
-    QCOMPARE(hapticsEffect->state(), QFeedbackEffect::Stopped);
+    QCOMPARE(hapticsEffect->property("attackIntensity").toReal(), 0.0);
+    QCOMPARE(hapticsEffect->property("attackTime").toInt(), 250);
+    QCOMPARE(hapticsEffect->property("intensity").toReal(), 1.0);
+    QCOMPARE(hapticsEffect->property("duration").toInt(), 100);
+    QCOMPARE(hapticsEffect->property("fadeTime").toInt(), 250);
+    QCOMPARE(hapticsEffect->property("fadeIntensity").toReal(), 0.0);
+    QVERIFY(!hapticsEffect->property("actuator").isNull());
+    QCOMPARE(hapticsEffect->property("state").toInt(), (int)(QFeedbackEffect::Stopped));
 
-    QCOMPARE(hapticsEffect->property("running").toBool(), false);
-    QCOMPARE(hapticsEffect->property("paused").toBool(), false);
-    hapticsEffect->setProperty("running", true);
-    QCOMPARE(hapticsEffect->property("running").toBool(), true);
-    QCOMPARE(hapticsEffect->property("paused").toBool(), false);
-    hapticsEffect->setProperty("paused", true);
+    if (!hapticsEffect->property("availableActuators").toList().isEmpty()) {
+      QCOMPARE(hapticsEffect->property("running").toBool(), false);
+      QCOMPARE(hapticsEffect->property("paused").toBool(), false);
+      hapticsEffect->setProperty("running", true);
+      QCOMPARE(hapticsEffect->property("running").toBool(), true);
+      QCOMPARE(hapticsEffect->property("paused").toBool(), false);
+      hapticsEffect->setProperty("paused", true);
 
-    // XXX make sure we just test dummy backend
-    QCOMPARE(hapticsEffect->property("running").toBool(), false);
-    QCOMPARE(hapticsEffect->property("paused").toBool(), true);
-
+      // XXX make sure we just test dummy backend
+      QCOMPARE(hapticsEffect->property("running").toBool(), false);
+      QCOMPARE(hapticsEffect->property("paused").toBool(), true);
+    }
     delete hapticsEffect;
 }
 
@@ -127,12 +128,12 @@ void tst_qdeclarativefeedback::fileEffect()
     QDeclarativeComponent component(&engine);
     component.loadUrl(QUrl::fromLocalFile(SRCDIR "/data/fileeffect.qml"));
 
-    QFeedbackFileEffect *fileEffect = qobject_cast<QFeedbackFileEffect*>(component.create());
+    QObject *fileEffect = component.create();
     QVERIFY(fileEffect != 0);
 
-    QCOMPARE(fileEffect->source(), QUrl("qrc:nonexistingfile.haptic"));
-    QCOMPARE(fileEffect->isLoaded(), false);
-    QTRY_COMPARE(fileEffect->state(), QFeedbackEffect::Stopped);
+    QCOMPARE(fileEffect->property("source").toUrl(), QUrl("qrc:nonexistingfile.haptic"));
+    QCOMPARE(fileEffect->property("loaded").toBool(), false);
+    QTRY_COMPARE(fileEffect->property("state").toInt(), (int)(QFeedbackEffect::Stopped));
 
     QCOMPARE(fileEffect->property("running").toBool(), false);
     QCOMPARE(fileEffect->property("paused").toBool(), false);
@@ -151,9 +152,9 @@ void tst_qdeclarativefeedback::actuator()
     QDeclarativeComponent component(&engine);
     component.loadUrl(QUrl::fromLocalFile(SRCDIR "/data/actuator.qml"));
 
-    QFeedbackActuator *actuator = qobject_cast<QFeedbackActuator*>(component.create());
+    QObject *actuator = component.create();
     QVERIFY(actuator != 0);
-    QCOMPARE(actuator->isEnabled(), false);
+    QCOMPARE(actuator->property("enabled").toBool(), false);
 
     delete actuator;
 }

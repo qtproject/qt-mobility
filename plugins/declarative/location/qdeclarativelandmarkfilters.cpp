@@ -190,6 +190,7 @@ void QDeclarativeLandmarkBoxFilter::setTopLeft(QDeclarativeCoordinate* coordinat
 {
     if (m_topLeft == coordinate)
         return;
+
     m_topLeft = coordinate;
 
     if (m_topLeft && m_bottomRight)
@@ -211,9 +212,9 @@ QDeclarativeCoordinate* QDeclarativeLandmarkBoxFilter::bottomRight() const
 void QDeclarativeLandmarkBoxFilter::setBottomRight(QDeclarativeCoordinate* coordinate)
 {
     if (m_bottomRight == coordinate)
-         return;
-     m_bottomRight = coordinate;
+        return;
 
+    m_bottomRight = coordinate;
     if (m_topLeft && m_bottomRight)
         m_filter.setBoundingBox(QGeoBoundingBox(m_topLeft->coordinate(), m_bottomRight->coordinate()));
     emit bottomRightChanged();

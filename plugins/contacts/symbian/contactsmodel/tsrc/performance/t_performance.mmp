@@ -16,7 +16,7 @@
 */
 
 
-target          t_performance.exe
+TARGET          t_performance.exe
 targettype      EXE
 CAPABILITY   ReadUserData WriteUserData
 UID				0x1000097a
@@ -29,5 +29,5 @@ userinclude ../
 
 source          T_Performance.cpp T_PerfInitialSync.cpp T_PerfSyncDelete.cpp T_PerfBulkDelete.cpp
 source          T_PerfStartUp.cpp T_PerfDbCreator.cpp T_PerfResortView.cpp T_PerfCrudOperations.cpp
-library         euser.lib  cntmodel.lib efsrv.lib  estor.lib cnttutil.lib pimtestclient.lib hal.lib
+LIBRARY         euser.lib  cntmodel.lib efsrv.lib  estor.lib cnttutil.lib pimtestclient.lib hal.lib
 

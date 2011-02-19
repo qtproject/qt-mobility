@@ -20,8 +20,7 @@
 
 #if (!defined __TESTUPDATEMULTIPLECONTACTSSTEP_H__)
 #define __TESTUPDATEMULTIPLECONTACTSSTEP_H__
-#include <testexecutestepbase.h>
-//#include "testcontactsuiteserver.h"
+#include <test/testexecutestepbase.h>
 class CTestUpdateMultipleContactsStep : public CTestStep
 	{
 public:

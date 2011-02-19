@@ -20,6 +20,10 @@
 
 #include <sql.iby>
 
+#ifndef FF_QT_IN_UDA
+
 file=ABI_DIR\BUILD_DIR\cntplsql.dll		System\Libs\cntplsql.dll
 
-#endif
+#endif // FF_QT_IN_UDA
+
+#endif //__CNTPLSQL_IBY__

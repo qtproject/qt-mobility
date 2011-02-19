@@ -20,7 +20,7 @@
 
 #if (!defined __TESTIMPEXVCARD_STEP_BASE__)
 #define __TESTIMPEXVCARD_STEP_BASE__
-#include <testexecutestepbase.h>
+#include <test/testexecutestepbase.h>
 #include "testimpexvcardsuitedefs.h"
 
 /****************************************************************************

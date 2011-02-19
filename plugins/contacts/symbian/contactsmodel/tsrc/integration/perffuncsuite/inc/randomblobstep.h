@@ -25,7 +25,7 @@
 */
 #if (!defined __RANDOMBLOB_STEP_H__)
 #define __RANDOMBLOB_STEP_H__
-#include <testexecutestepbase.h>
+#include <test/testexecutestepbase.h>
 #include "performancefunctionalitybase.h"
 
 class CRandomBlobStep : public CPerformanceFunctionalityBase

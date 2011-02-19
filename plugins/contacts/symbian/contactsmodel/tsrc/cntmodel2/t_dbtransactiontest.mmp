@@ -17,7 +17,7 @@
 */
 
 
-target          T_DBTransactionTest.exe
+TARGET          t_dbtransactiontest.exe
 targettype      EXE
 CAPABILITY	ReadUserData WriteUserData
 UID		0x102731D4
@@ -34,7 +34,7 @@ source		T_CAsyncTest.cpp
 
 
 //Parts of contacts model
-library         EUSER.LIB 
-library         efsrv.lib 
-library         NbCntTestLib.LIB 
-library         CntModel.lib
+LIBRARY         euser.lib 
+LIBRARY         efsrv.lib 
+LIBRARY         nbcnttestlib.lib 
+LIBRARY         cntmodel.lib

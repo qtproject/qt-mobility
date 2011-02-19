@@ -44,6 +44,8 @@
 #include <QtCore/qurl.h>
 #include <QDir>
 
+#include <mda/common/audio.h>
+#include <mda/common/resource.h>
 #include <mda/client/utility.h>
 #include <mdaaudiosampleeditor.h>
 #include <mmf/common/mmfcontrollerpluginresolver.h>
@@ -51,6 +53,12 @@
 #include <badesca.h>
 #include <bautils.h>
 #include <f32file.h>
+
+#ifdef AUDIOINPUT_ROUTING
+const QString S60AudioCaptureSession::microPhone("Microphone");
+const QString S60AudioCaptureSession::voiceCall("Voice Call");
+const QString S60AudioCaptureSession::fmRadio("FM Radio");
+#endif
 
 S60AudioCaptureSession::S60AudioCaptureSession(QObject *parent):
     QObject(parent)
@@ -61,6 +69,11 @@ S60AudioCaptureSession::S60AudioCaptureSession(QObject *parent):
     , m_error(QMediaRecorder::NoError)
     , m_isMuted(false)
 {
+#ifdef AUDIOINPUT_ROUTING
+    m_audioInput = NULL;
+    m_setActiveEndPoint = FALSE;
+    m_audioEndpoint = S60AudioCaptureSession::microPhone;
+#endif //AUDIOINPUT_ROUTING
     TRAPD(err, initializeSessionL());
     setError(err);
 }
@@ -71,6 +84,9 @@ void S60AudioCaptureSession::initializeSessionL()
     updateAudioContainersL();
     populateAudioCodecsDataL();
     setDefaultSettings();
+#ifdef AUDIOINPUT_ROUTING
+    initAudioInputs();
+#endif
     User::LeaveIfError(m_fsSession.Connect());
     m_captureState = EInitialized;
     emit stateChanged(m_captureState);
@@ -89,6 +105,7 @@ void S60AudioCaptureSession::setError(TInt aError)
     QString symbianError;
     symbianError.append("Symbian:");
     symbianError.append(QString::number(m_error));
+    stop();
     emit error(recorderError, symbianError);
 }
 
@@ -121,7 +138,10 @@ QMediaRecorder::Error S60AudioCaptureSession::fromSymbianErrorToMultimediaError(
 
 S60AudioCaptureSession::~S60AudioCaptureSession()
 {
-    delete m_recorderUtility;
+    //stop the utility before deleting it
+    stop();
+    if (m_recorderUtility)
+        delete m_recorderUtility;
     m_fsSession.Close();
 }
 
@@ -333,15 +353,125 @@ void S60AudioCaptureSession::stop()
         return;
 
     m_recorderUtility->Stop();
+
+#ifdef AUDIOINPUT_ROUTING
+    //delete audio input instance before closing the utility.
+    if (m_audioInput)
+     {
+        delete m_audioInput;
+        m_audioInput = NULL;
+     }
+#endif //AUDIOINPUT_ROUTING
+
     m_recorderUtility->Close();
     m_captureState = ERecordComplete;
     emit stateChanged(m_captureState);
 }
 
-void S60AudioCaptureSession::setCaptureDevice(const QString &deviceName)
+#ifdef AUDIOINPUT_ROUTING
+
+void S60AudioCaptureSession::initAudioInputs()
 {
-    m_captureDevice = deviceName;
+    m_audioInputs[S60AudioCaptureSession::microPhone] = QString("Microphone associated with the currently active speaker.");
+    m_audioInputs[S60AudioCaptureSession::voiceCall] = QString("Audio stream associated with the current phone call.");
+    m_audioInputs[S60AudioCaptureSession::fmRadio] = QString("Audio of the currently tuned FM radio station.");
 }
+
+#endif //AUDIOINPUT_ROUTING
+
+void S60AudioCaptureSession::setActiveEndpoint(const QString& audioEndpoint)
+{
+    if (!m_audioInputs.keys().contains(audioEndpoint))
+        return;
+
+    if (activeEndpoint().compare(audioEndpoint) != 0) {
+        m_audioEndpoint = audioEndpoint;
+#ifdef AUDIOINPUT_ROUTING
+        m_setActiveEndPoint = TRUE;
+#endif
+       }
+}
+
+QList<QString> S60AudioCaptureSession::availableEndpoints() const
+{
+    return m_audioInputs.keys();
+}
+
+QString S60AudioCaptureSession::endpointDescription(const QString& name) const
+{
+    if (m_audioInputs.keys().contains(name))
+        return m_audioInputs.value(name);
+    return QString();
+}
+
+QString S60AudioCaptureSession::activeEndpoint() const
+{
+    QString inputSourceName = NULL;
+#ifdef AUDIOINPUT_ROUTING
+    if (m_audioInput) {
+        CAudioInput::TAudioInputArray input = m_audioInput->AudioInput();
+        inputSourceName = qStringFromTAudioInputPreference(input[0]);
+    }
+#endif //AUDIOINPUT_ROUTING
+    return inputSourceName;
+}
+
+QString S60AudioCaptureSession::defaultEndpoint() const
+{
+#ifdef AUDIOINPUT_ROUTING
+    return QString(S60AudioCaptureSession::microPhone);
+#else
+    return NULL;
+#endif
+}
+
+#ifdef AUDIOINPUT_ROUTING
+
+void S60AudioCaptureSession::doSetAudioInputL(const QString& name)
+{
+    TInt err(KErrNone);
+
+    if (!m_recorderUtility)
+        return;
+
+    CAudioInput::TAudioInputPreference input = CAudioInput::EDefaultMic;
+
+    if (name.compare(S60AudioCaptureSession::voiceCall) == 0)
+        input = CAudioInput::EVoiceCall;
+//    commented because they are not supported on 9.2
+    else if (name.compare(S60AudioCaptureSession::fmRadio) == 0)
+        input = CAudioInput::EFMRadio;
+    else // S60AudioCaptureSession::microPhone
+        input = CAudioInput::EDefaultMic;
+
+        RArray<CAudioInput::TAudioInputPreference> inputArray;
+        inputArray.Append(input);
+
+        if (m_audioInput){
+            TRAP(err,m_audioInput->SetAudioInputL(inputArray.Array()));
+
+            if (err == KErrNone) {
+                emit activeEndpointChanged(name);
+            }
+            else{
+                setError(err);
+            }
+        }
+        inputArray.Close();
+}
+
+
+QString S60AudioCaptureSession::qStringFromTAudioInputPreference(CAudioInput::TAudioInputPreference input) const
+{
+    if (input == CAudioInput::EVoiceCall)
+        return S60AudioCaptureSession::voiceCall;
+    else if (input == CAudioInput::EFMRadio)
+        return S60AudioCaptureSession::fmRadio;
+    else
+        return S60AudioCaptureSession::microPhone; // CAudioInput::EDefaultMic
+}
+#endif //AUDIOINPUT_ROUTING
+
 
 void S60AudioCaptureSession::MoscoStateChangeEvent(CBase* aObject,
         TInt aPreviousState, TInt aCurrentState, TInt aErrorCode)
@@ -350,7 +480,9 @@ void S60AudioCaptureSession::MoscoStateChangeEvent(CBase* aObject,
 	    TRAPD(err, MoscoStateChangeEventL(aObject, aPreviousState, aCurrentState, NULL));
 	    setError(err);
 	}
-	setError(aErrorCode);
+    else {
+        setError(aErrorCode);
+    }
 }
 
 void S60AudioCaptureSession::MoscoStateChangeEventL(CBase* aObject,
@@ -364,7 +496,8 @@ void S60AudioCaptureSession::MoscoStateChangeEventL(CBase* aObject,
             if(aPreviousState == CMdaAudioClipUtility::ENotReady) {
                 applyAudioSettingsL();
                 m_recorderUtility->SetGain(m_recorderUtility->MaxGain());
-                m_recorderUtility->RecordL();
+                TRAPD(err, m_recorderUtility->RecordL());
+                setError(err);
                 m_captureState = EOpenCompelete;
                 emit stateChanged(m_captureState);
             }
@@ -504,7 +637,24 @@ void S60AudioCaptureSession::populateAudioCodecsDataL()
 
 void S60AudioCaptureSession::applyAudioSettingsL()
 {
-    if (!m_recorderUtility || m_format.codec() == "AMR")
+
+    if (!m_recorderUtility)
+        return;
+
+#ifdef AUDIOINPUT_ROUTING
+    //CAudioInput needs to be re-initialized every time recording starts
+    if (m_audioInput) {
+        delete m_audioInput;
+        m_audioInput = NULL;
+    }
+
+    if (m_setActiveEndPoint) {
+        m_audioInput = CAudioInput::NewL(*m_recorderUtility);
+        doSetAudioInputL(m_audioEndpoint);
+    }
+#endif //AUDIOINPUT_ROUTING
+
+    if (m_format.codec() == "AMR")
         return;
 
     TFourCC fourCC = m_audioCodeclist.value(m_format.codec()).fourCC;
