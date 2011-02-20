@@ -1921,6 +1921,26 @@ out:
     return width;
 }
 
+
+int QSystemDisplayInfoLinuxCommonPrivate::getDPIWidth(int screen)
+{
+    qDebug() << Q_FUNC_INFO;
+#if defined(Q_WS_X11)
+    return QX11Info::appDpiY(screen);
+#else
+    return 0;
+#endif
+}
+
+int QSystemDisplayInfoLinuxCommonPrivate::getDPIHeight(int screen)
+{
+#if defined(Q_WS_X11)
+    return QX11Info::appDpiX(screen);
+#else
+    return 0;
+#endif
+}
+
 QSystemStorageInfoLinuxCommonPrivate::QSystemStorageInfoLinuxCommonPrivate(QObject *parent)
     : QObject(parent)
 {
@@ -2503,8 +2523,7 @@ void QSystemDeviceInfoLinuxCommonPrivate::disconnectNotify(const char */*signal*
 #if !defined(QT_NO_DBUS)
 void QSystemDeviceInfoLinuxCommonPrivate::halChanged(int,QVariantList map)
 {
-    for(int i=0; i < map.count(); i
-        ++) {
+    for(int i=0; i < map.count(); i ++) {
        if (map.at(i).toString() == "battery.charge_level.percentage") {
             const int level = batteryLevel();
             emit batteryLevelChanged(level);
@@ -2675,6 +2694,10 @@ QSystemDeviceInfo::InputMethodFlags QSystemDeviceInfoLinuxCommonPrivate::inputMe
             } else if (strvalue.contains("keypad",Qt::CaseInsensitive)) {
                 if ( (methods & QSystemDeviceInfo::Keypad) != QSystemDeviceInfo::Keypad) {
                     methods = (methods | QSystemDeviceInfo::Keys);
+                }
+            } else if (strvalue.contains("Multi Touch",Qt::CaseInsensitive)) {
+                if ( (methods & QSystemDeviceInfo::MultiTouch) != QSystemDeviceInfo::MultiTouch) {
+                    methods = (methods | QSystemDeviceInfo::MultiTouch);
                 }
             } else if (strvalue.contains("Touch",Qt::CaseInsensitive)) {
                 if ( (methods & QSystemDeviceInfo::SingleTouch) != QSystemDeviceInfo::SingleTouch) {
@@ -3427,7 +3450,7 @@ void QSystemBatteryInfoLinuxCommonPrivate::setConnection()
                 battery = new QUPowerDeviceInterface(objpath.path(),this);
                 pMap = battery->getProperties();
                 connect(battery,SIGNAL(propertyChanged(QString,QVariant)),
-                        this,SLOT(propertyChanged(QString,QVariant)));
+                        this,SLOT(uPowerPropertyChanged(QString,QVariant)));
             }
 //            connect(powerDevice,SIGNAL(changed()),this,SLOT(upowerDeviceChanged()));
 //            connect(powerDevice,SIGNAL(propertyChanged(QString,QVariant)),
@@ -3467,7 +3490,6 @@ void QSystemBatteryInfoLinuxCommonPrivate::setConnection()
                 halIfaceDevice = new QHalDeviceInterface(dev);
                 if (halIfaceDevice->isValid()) {
                     if (halIfaceDevice->setConnections() ) {
-                        qDebug() << "connect ac_adapter" ;
                         if (!connect(halIfaceDevice,SIGNAL(propertyModified(int, QVariantList)),
                                     this,SLOT(halChanged(int,QVariantList)))) {
                             qDebug() << "connection malfunction";
@@ -3484,7 +3506,6 @@ void QSystemBatteryInfoLinuxCommonPrivate::setConnection()
                 halIfaceDevice = new QHalDeviceInterface(dev);
                 if (halIfaceDevice->isValid()) {
                     if (halIfaceDevice->setConnections()) {
-                        qDebug() << "connect battery" <<  halIfaceDevice->getPropertyString("battery.type");
                         if (!connect(halIfaceDevice,SIGNAL(propertyModified(int, QVariantList)),
                                     this,SLOT(halChanged(int,QVariantList)))) {
                             qDebug() << "connection malfunction";
@@ -3507,9 +3528,9 @@ void QSystemBatteryInfoLinuxCommonPrivate::halChanged(int count,QVariantList map
     if (ifaceDevice.isValid()) {
         for(int i=0; i < count; i++) {
             QString mapS = map.at(i).toString();
+          //  qDebug() << mapS;
             if (mapS == "battery.present") {
                 batteryIsPresent = true;
-
             }
             if (mapS == "battery.charge_level.percentage") {
                 currentBatLevelPercent = ifaceDevice.getPropertyInt("battery.charge_level.percentage");
@@ -3534,12 +3555,15 @@ void QSystemBatteryInfoLinuxCommonPrivate::halChanged(int count,QVariantList map
             }
 
             if (mapS == "ac_adapter.present") {
-                if (curChargeType != QSystemBatteryInfo::WallCharger) {
-                    curChargeType = QSystemBatteryInfo::WallCharger;
-                } else {
-                    curChargeType = QSystemBatteryInfo::NoCharger;
+                QSystemBatteryInfo::ChargerType chargerType = QSystemBatteryInfo::UnknownCharger;
+                chargerType = currentChargerType();
+                if (chargerType == QSystemBatteryInfo::UnknownCharger) {
+                    chargerType = QSystemBatteryInfo::WallCharger;
                 }
-                Q_EMIT chargerTypeChanged(curChargeType);
+                if(chargerType != curChargeType) {
+                    curChargeType = chargerType;
+                    Q_EMIT chargerTypeChanged(curChargeType);
+                }
             }
 
             if (mapS == "battery.rechargeable.is_charging") {
@@ -3551,13 +3575,18 @@ void QSystemBatteryInfoLinuxCommonPrivate::halChanged(int count,QVariantList map
                 }
                 Q_EMIT chargingStateChanged(curChargeState);
             }
+            if (mapS == "battery.rechargeable.is_discharging") {
+                curChargeState = QSystemBatteryInfo::NotCharging;
+                Q_EMIT chargingStateChanged(curChargeState);
+            }
 
             if (mapS == "battery.voltage.current") {
                 currentVoltage = ifaceDevice.getPropertyInt("battery.voltage.current");
             }
 
-            if (mapS == "battery.charge_level.rate") {
-                dischargeRate = ifaceDevice.getPropertyInt("battery.charge_level.rate");
+            if (mapS == "battery.reporting.rate") {
+                dischargeRate = ifaceDevice.getPropertyInt("battery.reporting.rate");
+              //  qDebug() << "current flow" << dischargeRate;
                 Q_EMIT currentFlowChanged(dischargeRate);
             }
 
@@ -3567,11 +3596,11 @@ void QSystemBatteryInfoLinuxCommonPrivate::halChanged(int count,QVariantList map
             }
 
             if (mapS == "battery.reporting.current") {
-                if(ifaceDevice.getPropertyBool("battery.rechargeable.is_charging")) {
+              //  if(ifaceDevice.getPropertyBool("battery.rechargeable.is_charging")) {
                     remainingEnergy = ifaceDevice.getPropertyInt("battery.reporting.current");
-                } else {
-                    remainingEnergy = -1;
-                }
+               // } else {
+                //    remainingEnergy = -1;
+               // }
                 Q_EMIT remainingCapacityChanged(remainingEnergy);
             }
 
@@ -3680,8 +3709,15 @@ void QSystemBatteryInfoLinuxCommonPrivate::getBatteryStats()
                     cVoltage = ifaceDevice.getPropertyInt("battery.voltage.current");
                     cEnergy = ifaceDevice.getPropertyInt("battery.charge_level.rate");
                     cLevel = ifaceDevice.getPropertyInt("battery.charge_level.percentage");
-                    capacity = ifaceDevice.getPropertyInt("battery.reporting.last_full");
+
+                    int cap = ifaceDevice.getPropertyInt("battery.reporting.last_full");
+                    if(cap > 1) {
+                        capacity = cap;
+                    } else {
+                        capacity = ifaceDevice.getPropertyInt("battery.reporting.design");
+                    }
                     rEnergy = ifaceDevice.getPropertyInt("battery.reporting.current");
+
                     break;
                 }
             }
@@ -3702,7 +3738,9 @@ void QSystemBatteryInfoLinuxCommonPrivate::getBatteryStats()
                 QHalDeviceInterface ifaceDevice(dev);
                 if (ifaceDevice.isValid()) {
                     if (ifaceDevice.getPropertyBool("ac_adapter.present")) {
-                        cType = QSystemBatteryInfo::WallCharger;
+                        if (cType == QSystemBatteryInfo::UnknownCharger) {
+                         cType = currentChargerType();
+                        }
                         break;
                     } else {
                         cType = QSystemBatteryInfo::NoCharger;
@@ -3717,6 +3755,7 @@ void QSystemBatteryInfoLinuxCommonPrivate::getBatteryStats()
     if(cType == QSystemBatteryInfo::UnknownCharger && !batteryIsPresent) {
         cType = QSystemBatteryInfo::WallCharger;
     }
+
     curChargeType = cType;
     currentVoltage = cVoltage;
     curChargeState = cState;
@@ -3743,7 +3782,53 @@ void QSystemBatteryInfoLinuxCommonPrivate::getBatteryStats()
     }
     currentBatStatus = stat;
 }
+
+QSystemBatteryInfo::ChargerType QSystemBatteryInfoLinuxCommonPrivate::currentChargerType()
+{
+    QSystemBatteryInfo::ChargerType chargerType = QSystemBatteryInfo::UnknownCharger;
+    QFile acfile("/sys/class/power_supply/AC/online");
+    if (acfile.open(QIODevice::ReadOnly)) {
+        const QString acpresent = acfile.readAll().simplified();
+        acfile.close();
+        if (acpresent == "1") {
+            return QSystemBatteryInfo::WallCharger;
+        } else  {
+            return QSystemBatteryInfo::NoCharger;
+        }
+    }
+    QFile presentfile("/sys/class/power_supply/usb/present");
+    if (presentfile.open(QIODevice::ReadOnly)) {
+        const QString usbpresent = presentfile.readAll().simplified();
+        presentfile.close();
+        if (usbpresent == "0") {
+            return QSystemBatteryInfo::NoCharger;
+        }
+    }
+   QFile typefile("/sys/class/power_supply/usb/type");
+    if (typefile.open(QIODevice::ReadOnly)) {
+        const QString result = typefile.readAll().simplified();
+        typefile.close();
+        if (result == "USB_DCP") {
+            chargerType = QSystemBatteryInfo::WallCharger;
+        } else if (result == "USB") {
+            chargerType = QSystemBatteryInfo::USBCharger;
+            QFile typefile2("/sys/class/power_supply/usb/current_now");
+            if (typefile2.open(QIODevice::ReadOnly)) {
+                const QString result2 = typefile2.readAll().simplified();
+                typefile2.close();
+                if (result2 == "500") {
+                    chargerType = QSystemBatteryInfo::USB_500mACharger;
+                }
+                if (result2 == "100") {
+                    chargerType = QSystemBatteryInfo::USB_100mACharger;
+                }
+            }
+        }
+    }
+    return chargerType;
+}
 #endif
+
 
 void QSystemBatteryInfoLinuxCommonPrivate::timeout()
 {
@@ -3848,7 +3933,7 @@ int QSystemBatteryInfoLinuxCommonPrivate::batteryLevel() const
 }
 
 #if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5)
-void QSystemBatteryInfoLinuxCommonPrivate::propertyChanged(const QString & prop, const QVariant &v)
+void QSystemBatteryInfoLinuxCommonPrivate::uPowerPropertyChanged(const QString & prop, const QVariant &v)
 {
  //   qDebug() << __FUNCTION__ << prop << v;
 
