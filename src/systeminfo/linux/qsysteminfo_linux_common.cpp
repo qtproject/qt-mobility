@@ -3709,7 +3709,13 @@ void QSystemBatteryInfoLinuxCommonPrivate::getBatteryStats()
                     cVoltage = ifaceDevice.getPropertyInt("battery.voltage.current");
                     cEnergy = ifaceDevice.getPropertyInt("battery.charge_level.rate");
                     cLevel = ifaceDevice.getPropertyInt("battery.charge_level.percentage");
-                    capacity = ifaceDevice.getPropertyInt("battery.reporting.design");
+
+                    int cap = ifaceDevice.getPropertyInt("battery.reporting.last_full");
+                    if(cap > 1) {
+                        capacity = cap;
+                    } else {
+                        capacity = ifaceDevice.getPropertyInt("battery.reporting.design");
+                    }
                     rEnergy = ifaceDevice.getPropertyInt("battery.reporting.current");
 
                     break;
