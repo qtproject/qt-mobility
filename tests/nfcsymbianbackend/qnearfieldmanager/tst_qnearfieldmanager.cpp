@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -71,12 +71,12 @@ private Q_SLOTS:
     void cleanupTestCase();
     void targetDetected();
     void targetDetected_data();
-    void unregisterTargetDetectedHandler();
-    void registerTargetDetectedHandler();
-    void registerTargetDetectedHandler_filter_data();
-    void registerTargetDetectedHandler_filter();
-    void registerTargetDetectedHandler_filter_negtive();
-    void registerTargetDetectedHandler_filter_negtive_data();
+    void unregisterNdefMessageHandler();
+    void registerNdefMessageHandler();
+    void registerNdefMessageHandler_filter_data();
+    void registerNdefMessageHandler_filter();
+    void registerNdefMessageHandler_filter_negtive();
+    void registerNdefMessageHandler_filter_negtive_data();
 };
 
 tst_QNearFieldManager::tst_QNearFieldManager()
@@ -152,19 +152,19 @@ void tst_QNearFieldManager::targetDetected_data()
 }
 
 /*!
- Description: Unit test for NFC unregisterTargetDetectedHandler function
+ Description: Unit test for NFC unregisterNdefMessageHandler function
 
  TestScenario: 1.
 
  TestExpectedResults: 1. return false
 */
 
-void tst_QNearFieldManager::unregisterTargetDetectedHandler()
+void tst_QNearFieldManager::unregisterNdefMessageHandler()
 {
     QNearFieldManager manager;
 
-    QVERIFY(!manager.unregisterTargetDetectedHandler(-1));
-    QVERIFY(!manager.unregisterTargetDetectedHandler(0));
+    QVERIFY(!manager.unregisterNdefMessageHandler(-1));
+    QVERIFY(!manager.unregisterNdefMessageHandler(0));
 }
 
 class MessageListener : public QObject
@@ -176,26 +176,26 @@ signals:
 };
 
 /*!
- Description: Unit test for NFC registerTargetDetectedHandler function
+ Description: Unit test for NFC registerNdefMessageHandler function
 
- TestScenario: 1. Symbian backend does not support registerTargetDetectedHandler without a QNdefFilter
+ TestScenario: 1. Symbian backend does not support registerNdefMessageHandler without a QNdefFilter
 
  TestExpectedResults: 1. return -1
 */
-void tst_QNearFieldManager::registerTargetDetectedHandler()
+void tst_QNearFieldManager::registerNdefMessageHandler()
 {
     QNearFieldManager manager;
 
     MessageListener listener;
     QSignalSpy messageSpy(&listener, SIGNAL(matchedNdefMessage(QNdefMessage,QNearFieldTarget*)));
 
-    int id = manager.registerTargetDetectedHandler(&listener,
-                                                   SIGNAL(matchedNdefMessage(QNdefMessage,QNearFieldTarget*)));
+    int id = manager.registerNdefMessageHandler(&listener,
+                                                SIGNAL(matchedNdefMessage(QNdefMessage,QNearFieldTarget*)));
 
-    QVERIFY(id == -1);//symbian backend does not support registerTargetDetectedHandler without QNdefFilter
+    QVERIFY(id == -1);//symbian backend does not support registerNdefMessageHandler without QNdefFilter
 }
 
-void tst_QNearFieldManager::registerTargetDetectedHandler_filter_data()
+void tst_QNearFieldManager::registerNdefMessageHandler_filter_data()
 {
     QTest::addColumn<QNdefFilter>("filter");
     QTest::addColumn<QString>("hint");
@@ -218,13 +218,13 @@ void tst_QNearFieldManager::registerTargetDetectedHandler_filter_data()
 }
 
 /*!
- Description: Unit test for NFC registerTargetDetectedHandler with a NDef filter
+ Description: Unit test for NFC registerNdefMessageHandler with a NDef filter
 
  TestScenario: 1. Touch a tag with random NDef message/with 'Image + Multiple Text + URI' NDef message/with 'Text + URI' NDef message
 
  TestExpectedResults: 1. matchedNdefMessage signal will be emitted
 */
-void tst_QNearFieldManager::registerTargetDetectedHandler_filter()
+void tst_QNearFieldManager::registerNdefMessageHandler_filter()
 {
     QFETCH(QNdefFilter, filter);
     QFETCH(QString, hint);
@@ -234,8 +234,8 @@ void tst_QNearFieldManager::registerTargetDetectedHandler_filter()
     MessageListener listener;
     QSignalSpy messageSpy(&listener, SIGNAL(matchedNdefMessage(QNdefMessage,QNearFieldTarget*)));
 
-    int id = manager.registerTargetDetectedHandler(filter, &listener,
-                                                   SIGNAL(matchedNdefMessage(QNdefMessage,QNearFieldTarget*)));
+    int id = manager.registerNdefMessageHandler(filter, &listener,
+                                                SIGNAL(matchedNdefMessage(QNdefMessage,QNearFieldTarget*)));
 
     QVERIFY(id != -1);
 
@@ -249,10 +249,10 @@ void tst_QNearFieldManager::registerTargetDetectedHandler_filter()
 
     QVERIFY(target == NULL);//symbain backend always return NULL target
 
-    QVERIFY(manager.unregisterTargetDetectedHandler(id));
+    QVERIFY(manager.unregisterNdefMessageHandler(id));
 }
 
-void tst_QNearFieldManager::registerTargetDetectedHandler_filter_negtive_data()
+void tst_QNearFieldManager::registerNdefMessageHandler_filter_negtive_data()
 {
     QTest::addColumn<QNdefFilter>("filter");
     QTest::addColumn<QString>("hint");
@@ -268,13 +268,13 @@ void tst_QNearFieldManager::registerTargetDetectedHandler_filter_negtive_data()
 }
 
 /*!
- Description: Unit test for NFC registerTargetDetectedHandler with a NDef filter
+ Description: Unit test for NFC registerNdefMessageHandler with a NDef filter
 
  TestScenario: 1. Touch a tag without filter expected NDef message
 
  TestExpectedResults: 1. matchedNdefMessage signal will NOT be emitted
 */
-void tst_QNearFieldManager::registerTargetDetectedHandler_filter_negtive()
+void tst_QNearFieldManager::registerNdefMessageHandler_filter_negtive()
 {
     QFETCH(QNdefFilter, filter);
     QFETCH(QString, hint);
@@ -284,15 +284,15 @@ void tst_QNearFieldManager::registerTargetDetectedHandler_filter_negtive()
     MessageListener listener;
     QSignalSpy messageSpy(&listener, SIGNAL(matchedNdefMessage(QNdefMessage,QNearFieldTarget*)));
 
-    int id = manager.registerTargetDetectedHandler(filter, &listener,
-                                                   SIGNAL(matchedNdefMessage(QNdefMessage,QNearFieldTarget*)));
+    int id = manager.registerNdefMessageHandler(filter, &listener,
+                                                SIGNAL(matchedNdefMessage(QNdefMessage,QNearFieldTarget*)));
 
     QVERIFY(id != -1);
 
     QNfcTestUtil::ShowMessage(hint);
 
     QTRY_VERIFY(messageSpy.isEmpty());
-    QVERIFY(manager.unregisterTargetDetectedHandler(id));
+    QVERIFY(manager.unregisterNdefMessageHandler(id));
 }
 
 QTEST_MAIN(tst_QNearFieldManager);

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -150,11 +150,11 @@ QLlcpSocket *QLlcpServerPrivate::nextPendingConnection()
     return qSocket;
 }
 
-QLlcpServer::Error QLlcpServerPrivate::serverError() const
+QLlcpSocket::SocketError QLlcpServerPrivate::serverError() const
 {
     BEGIN
     END
-    return QLlcpServer::UnknownSocketError;
+    return QLlcpSocket::UnknownSocketError;
 }
 
 QTM_END_NAMESPACE

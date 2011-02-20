@@ -68,8 +68,8 @@ int main(int argc, char *argv[])
     filter.setOrderMatch(false);
     filter.appendRecord<QNdefNfcTextRecord>(1, UINT_MAX);
     filter.appendRecord<QNdefNfcUriRecord>();
-    manager.registerTargetDetectedHandler(filter, &annotatedUrl,
-                                          SLOT(targetDetected(QNdefMessage,QNearFieldTarget*)));
+    manager.registerNdefMessageHandler(filter, &annotatedUrl,
+                                       SLOT(targetDetected(QNdefMessage,QNearFieldTarget*)));
 
     mainWindow.setCentralWidget(&annotatedUrl);
 
