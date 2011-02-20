@@ -43,7 +43,6 @@
 #include "qdeclarativevaluespacepublishermetaobject_p.h"
 
 #include <QDeclarativeInfo>
-#include <QCoreApplication>
 
 class QDeclarativeValueSpacePublisherQueueItem
 {
@@ -107,18 +106,6 @@ QDeclarativeValueSpacePublisherQueueItem::QDeclarativeValueSpacePublisherQueueIt
     }
     \endcode
 
-    \section2 Platform-specific notes (ContextKit)
-
-    On platforms where ContextKit is the default backend, the values of
-    QCoreApplication properties applicationName and organizationDomain
-    must be set to match the XML description file packaged with your
-    application. ValueSpacePublisher supports two extra properties on
-    these platforms, \a applicationName and \a organizationDomain, which
-    set the properties of the same name on QCoreApplication.
-
-    This is a workaround until QCoreApplication can be exposed to QML in
-    some manner.
-
     \ingroup qml-publishsubscribe
 
     \sa QValueSpacePublisher
@@ -169,28 +156,6 @@ void QDeclarativeValueSpacePublisher::doQueue()
         m_publisher->setValue(i.subPath, i.value);
     }
     m_queue.clear();
-}
-
-// these should be removed after QTBUG-17521 is resolved
-
-QString QDeclarativeValueSpacePublisher::applicationName() const
-{
-    return QCoreApplication::applicationName();
-}
-
-void QDeclarativeValueSpacePublisher::setApplicationName(const QString &name)
-{
-    QCoreApplication::setApplicationName(name);
-}
-
-QString QDeclarativeValueSpacePublisher::organizationDomain() const
-{
-    return QCoreApplication::organizationDomain();
-}
-
-void QDeclarativeValueSpacePublisher::setOrganizationDomain(const QString &domain)
-{
-    QCoreApplication::setOrganizationDomain(domain);
 }
 
 /*!
