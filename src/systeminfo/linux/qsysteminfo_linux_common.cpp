@@ -2695,6 +2695,10 @@ QSystemDeviceInfo::InputMethodFlags QSystemDeviceInfoLinuxCommonPrivate::inputMe
                 if ( (methods & QSystemDeviceInfo::Keypad) != QSystemDeviceInfo::Keypad) {
                     methods = (methods | QSystemDeviceInfo::Keys);
                 }
+            } else if (strvalue.contains("Multi Touch",Qt::CaseInsensitive)) {
+                if ( (methods & QSystemDeviceInfo::MultiTouch) != QSystemDeviceInfo::MultiTouch) {
+                    methods = (methods | QSystemDeviceInfo::MultiTouch);
+                }
             } else if (strvalue.contains("Touch",Qt::CaseInsensitive)) {
                 if ( (methods & QSystemDeviceInfo::SingleTouch) != QSystemDeviceInfo::SingleTouch) {
                     methods = (methods | QSystemDeviceInfo::SingleTouch);
