@@ -52,7 +52,7 @@
 QTM_USE_NAMESPACE
 
 Q_DECLARE_METATYPE(QNearFieldTarget*)
-Q_DECLARE_METATYPE(QLlcpSocket::Error);
+Q_DECLARE_METATYPE(QLlcpSocket::SocketError);
 
 class tst_qllcpsocketremote : public QObject
 {
@@ -146,7 +146,7 @@ void tst_qllcpsocketremote::testCase1()
     }
 
     // STEP 3: Send the received message back to the intiated device.
-    QSignalSpy errorSpy(m_socket, SIGNAL(error(QLlcpSocket::Error)));
+    QSignalSpy errorSpy(m_socket, SIGNAL(error(QLlcpSocket::SocketError)));
     QSignalSpy bytesWrittenSpy(m_socket, SIGNAL(bytesWritten(qint64)));
 
     qint64 val = m_socket->writeDatagram(datagram,m_target, m_port);
