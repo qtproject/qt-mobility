@@ -92,6 +92,7 @@ public:
     QHash<const QGeoMapObject*, QTransform> pixelTrans;
     QGraphicsScene *pixelScene;
     QHash<QGraphicsItem*, QGeoMapObject*> pixelItems;
+    QHash<QGeoMapObject*, QGraphicsItem*> pixelItemsRev;
 
     /*** Object management ***/
 
