@@ -256,6 +256,31 @@ bool QDeclarativeDeviceInfo::monitorBluetoothStateChanges()
 }
 
 /*!
+   This function starts the thermalStateChanged notification
+
+*/
+void QDeclarativeDeviceInfo::startThermalStateChanged(bool on)
+{
+    monitorThermalState = on;
+    if (on) {
+    connect(deviceInfo(), SIGNAL(thermalStateChanged(QSystemDeviceInfo::ThermalState)),
+            this, SIGNAL(thermalStateChanged(QSystemDeviceInfo::ThermalState)), Qt::UniqueConnection);
+    } else {
+        disconnect(deviceInfo(), SIGNAL(thermalStateChanged(QSystemDeviceInfo::ThermalState)),
+                this, SIGNAL(thermalStateChanged(QSystemDeviceInfo::ThermalState)));
+    }
+}
+
+/*!
+    \qmlproperty bool DeviceInfo::monitorThermalStateChanges
+    Use the thermalStateChanges signal.
+  */
+bool QDeclarativeDeviceInfo::monitorThermalStateChanges()
+{
+   return monitorThermalState;
+}
+
+/*!
 
   \qmlproperty bool DeviceInfo::monitorWirelessKeyboardConnects()
 
