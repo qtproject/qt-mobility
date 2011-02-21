@@ -97,6 +97,7 @@ BUILD_TOOLS=yes
 RELEASEMODE=
 BUILD_SILENT=
 LINUX_TARGET=
+LANGUAGES=
 QMAKE_CACHE="$shadowpath/.qmake.cache"
 QMAKE_EXEC=qmake
 LIB_PATH="lib"
@@ -156,6 +157,8 @@ usage()
     echo "-meego  ........... Build Qt Mobility for MeeGo."
     echo "-sdk <sdk> ........ Build using Apple provided SDK <path/to/sdk>."
     echo "                    example: -sdk /Developer/SDKs/MacOSX10.6.sdk"
+    echo "-languages ........ Languages/translations to be installed (e.g.: \"ar de ko\")."
+    echo "                    (default is empty)"
     echo "-qmake-exec <name>  Sets custom binary name for qmake binary"
     echo "                    (default: qmake)"
 #    echo "-staticconfig <name>"
@@ -279,6 +282,10 @@ while [ "$#" -gt 0 ]; do
             ;;
         -staticconfig)
             PLATFORM_CONFIG=$2
+            shift
+            ;;
+        -languages)
+            LANGUAGES=$2
             shift
             ;;
         *)
@@ -478,6 +485,14 @@ if [ -z "$BUILD_TOOLS" ]; then
 else
     echo "build_tools = yes" >> "$CONFIG_IN"
 fi
+
+#process languages
+if [ -z "LANGUAGES" ]; then
+    echo "selected_languages =" >> "$CONFIG_IN"
+else
+    echo "selected_languages = $LANGUAGES" >> "$CONFIG_IN"
+fi
+
 
 echo "Configuring Qt Mobility"
 echo 

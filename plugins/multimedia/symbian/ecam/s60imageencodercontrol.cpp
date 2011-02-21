@@ -52,11 +52,7 @@ S60ImageEncoderControl::S60ImageEncoderControl(QObject *parent) :
 S60ImageEncoderControl::S60ImageEncoderControl(S60ImageCaptureSession *session, QObject *parent) :
     QImageEncoderControl(parent)
 {
-    if (session)
-        m_session = session;
-    else
-        Q_ASSERT(true);
-    // From now on it is safe to assume session is valid
+    m_session = session;
 }
 
 S60ImageEncoderControl::~S60ImageEncoderControl()
@@ -125,7 +121,7 @@ void S60ImageEncoderControl::setImageSettings(const QImageEncoderSettings &setti
         // Preparation fails with KErrNotReady if camera has not been started.
         // That can be ignored since settings are set internally in that case.
         if (prepareSuccess != KErrNotReady && prepareSuccess != KErrNone)
-            m_session->setError(prepareSuccess, QString("Failure in preparation of image capture."));
+            m_session->setError(prepareSuccess, tr("Failure in preparation of image capture."));
     }
 }
 

@@ -17,7 +17,7 @@
 // T_ViewSort.mmp
 //
 
-target          t_viewsort.exe
+TARGET          t_viewsort.exe
 targettype      EXE
 CAPABILITY   ReadUserData WriteUserData
 UID		0
@@ -27,6 +27,6 @@ APP_LAYER_SYSTEMINCLUDE_SYMBIAN
 userinclude	..
 source          T_ViewSort.cpp
 source          CContactViewEventQueue.cpp
-library         euser.lib cntmodel.lib
+LIBRARY         euser.lib cntmodel.lib
 
 SMPSAFE

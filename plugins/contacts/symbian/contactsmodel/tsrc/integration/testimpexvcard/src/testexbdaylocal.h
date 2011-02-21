@@ -20,7 +20,7 @@
 
 #if (!defined __TESTEXBDAYLOCAL_H__)
 #define __TESTEXBDAYLOCAL_H__
-#include <testexecutestepbase.h>
+#include <test/testexecutestepbase.h>
 #include "testimpexvcardsuitestepbase.h"
 #include "testimpexvcardsuitedefs.h"
 

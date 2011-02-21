@@ -3,6 +3,9 @@ TEMPLATE=app
 TARGET=tst_qcontactmanager
 CONFIG+=testcase
 
+# run this test on maemo but a failure is not critical
+maemo*:CONFIG += insignificant_test
+
 include(../../../common.pri)
 
 INCLUDEPATH += ../../../src/contacts \

@@ -16,7 +16,7 @@
 */
 
 
-target          t_platsec.exe
+TARGET          t_platsec.exe
 targettype      EXE
 CAPABILITY   ReadUserData
 UID		0x1000097a
@@ -29,4 +29,4 @@ userinclude ../inc
 source			t_platsec.cpp
 source			t_utils2.cpp
 
-library         euser.lib  cntmodel.lib	efsrv.lib cnttutil.lib pimtestclient.lib
+LIBRARY         euser.lib  cntmodel.lib	efsrv.lib cnttutil.lib pimtestclient.lib

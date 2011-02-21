@@ -46,7 +46,7 @@
 #include "qnearfieldmanager.h"
 #include "qnearfieldtarget.h"
 
-#include <QtCore/QPointer>
+#include <QtCore/QWeakPointer>
 #include <QtCore/QMap>
 #include <QtCore/QPair>
 #include <QtCore/QMetaMethod>
@@ -103,12 +103,12 @@ public:
 
     QNearFieldTarget *targetForPath(const QString &path);
 
-    int registerTargetDetectedHandler(const QString &filter,
-                                      QObject *object, const QMetaMethod &method);
-    int registerTargetDetectedHandler(QObject *object, const QMetaMethod &method);
-    int registerTargetDetectedHandler(const QNdefFilter &filter,
-                                      QObject *object, const QMetaMethod &method);
-    bool unregisterTargetDetectedHandler(int handlerId);
+    int registerNdefMessageHandler(const QString &filter,
+                                   QObject *object, const QMetaMethod &method);
+    int registerNdefMessageHandler(QObject *object, const QMetaMethod &method);
+    int registerNdefMessageHandler(const QNdefFilter &filter,
+                                   QObject *object, const QMetaMethod &method);
+    bool unregisterNdefMessageHandler(int handlerId);
 
     void requestAccess(QNearFieldManager::TargetAccessModes accessModes);
     void releaseAccess(QNearFieldManager::TargetAccessModes accessModes);
@@ -133,7 +133,7 @@ private:
     ComNokiaNfcAdapterInterface *m_adapter;
 
     QList<QNearFieldTarget::Type> m_detectTargetTypes;
-    QMap<QString, QPointer<QNearFieldTarget> > m_targets;
+    QMap<QString, QWeakPointer<QNearFieldTarget> > m_targets;
 
     AccessRequestorAdaptor *m_accessAgent;
 

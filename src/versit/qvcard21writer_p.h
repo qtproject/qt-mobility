@@ -65,7 +65,8 @@ public:
     ~QVCard21Writer();
 
     void encodeVersitProperty(const QVersitProperty& property);
-    void encodeVersitValue(QMultiHash<QString,QString>& parameters, QString& value);
+    bool requiresUtf8(const QStringList& values);
+    void encodeVersitValue(QMultiHash<QString,QString>& parameters, QString& value, bool forceUtf8);
     void encodeParameters(const QMultiHash<QString,QString>& parameters);
     static bool containsNonAscii(const QString& str);
     static bool quotedPrintableEncode(QString& text);

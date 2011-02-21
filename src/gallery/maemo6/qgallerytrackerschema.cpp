@@ -1421,8 +1421,7 @@ void QGalleryTrackerSchema::populateItemArguments(
             int fieldIndex = arguments->fieldNames.indexOf(field);
 
             if (fieldIndex >= 0) {
-                Q_ASSERT( 0 );
-                arguments->aliasColumns.append(fieldIndex + 2);
+                arguments->aliasColumns.append(fieldIndex);
                 aliasNames.append(*it);
                 aliasAttributes.append(itemProperties[propertyIndex].attributes);
                 aliasTypes.append(itemProperties[propertyIndex].type);

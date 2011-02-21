@@ -25,7 +25,7 @@
 */
 #ifndef __TRANSACTION_STEP_H__
 #define __TRANSACTION_STEP_H__
-#include <testexecutestepbase.h>
+#include <test/testexecutestepbase.h>
 #include "performancefunctionalitybase.h"
 
 enum FieldFullness

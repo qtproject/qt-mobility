@@ -112,7 +112,7 @@
     The Grue sensor backend is delivered as a plugin. The plugin has a factory object
     that registers the types available and does the actual instantiation of the backend.
 
-    \sa \l{sensors/grueapp}{Grue Application}
+    \sa {sensors/grueapp}{Grue Application}
 */
 
 
@@ -126,7 +126,7 @@
     there is no link-time dependency on the Grue plugin. The Grue application uses
     the generic access feature of the Sensors API.
 
-    \sa \l{sensors/grueplugin}{Grue Plugin}
+    \sa {sensors/grueplugin}{Grue Plugin}
 */
 
 

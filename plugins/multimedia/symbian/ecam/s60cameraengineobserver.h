@@ -51,6 +51,7 @@ enum TCameraEngineError
     EErrPowerOn,
     EErrViewFinderReady,
     EErrImageReady,
+    EErrPreview,
     EErrAutoFocusInit,
     EErrAutoFocusMode,
     EErrAutoFocusArea,
@@ -154,6 +155,23 @@ public:
      */
     virtual void MceoViewFinderFrameReady( CFbsBitmap& aFrame ) = 0;
 };
+
+//=============================================================================
+
+#ifdef ECAM_PREVIEW_API
+/*
+ * CameraEngine Observer class towards Camera ViewFinderEngine
+ */
+class MCameraPreviewObserver
+{
+public:
+    /**
+     * A new preview is available.
+     * @param aPreview Pointer to an FBS bitmap containing a preview.
+     */
+    virtual void MceoPreviewReady( CFbsBitmap& aPreview ) = 0;
+};
+#endif // ECAM_PREVIEW_API
 
 #endif // CCAMERAENGINEOBSERVER_H
 

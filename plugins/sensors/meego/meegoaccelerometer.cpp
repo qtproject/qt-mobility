@@ -83,3 +83,6 @@ bool meegoaccelerometer::doConnect(){
 const QString meegoaccelerometer::sensorName(){
     return "accelerometersensor";
 }
+
+
+const qreal meegoaccelerometer::correctionFactor(){return GRAVITY_EARTH_THOUSANDTH;}

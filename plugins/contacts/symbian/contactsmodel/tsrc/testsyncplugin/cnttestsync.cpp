@@ -23,7 +23,7 @@
 #include <cntitem.h>
 #include <cntdb.h>
 #include "cnttestsynchroniser.h"
-#include <implementationproxy.h>
+#include <ecom/implementationproxy.h>
 
 
 CContactActiveTestSync::CContactActiveTestSync(CContactSyncChecker& aSyncChecker, TUid aPhoneBookUid) 

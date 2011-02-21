@@ -19,7 +19,10 @@
 #define __CNTMATCHLOG_IBY__
 
 REM Contact matching plugin
+#ifndef FF_QT_IN_UDA
 
 ECOM_PLUGIN(cntmatchlog.dll,2000862D.rsc)
+
+#endif // FF_QT_IN_UDA
 
 #endif

@@ -26,7 +26,7 @@
 
 #ifndef __PERFORMANCEFUNCTIONALITY_SERVER_H__
 #define __PERFORMANCEFUNCTIONALITY_SERVER_H__
-#include <testexecuteserverbase.h>
+#include <test/testexecuteserverbase.h>
 
 
 class CPerformanceFunctionalityTestsSuite : public CTestServer

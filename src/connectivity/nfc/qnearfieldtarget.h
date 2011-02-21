@@ -117,6 +117,7 @@ public:
     };
 
     explicit QNearFieldTarget(QObject *parent = 0);
+    virtual ~QNearFieldTarget();
 
     virtual QByteArray uid() const = 0;
     virtual QUrl url() const;
