@@ -44,7 +44,7 @@
 #include <qbluetoothaddress.h>
 #include <qbluetoothdevicediscoveryagent.h>
 #include <qbluetoothlocaldevice.h>
-
+#include <QMenu>
 #include <QDebug>
 
 DeviceDiscoveryDialog::DeviceDiscoveryDialog(QWidget *parent)
@@ -55,7 +55,7 @@ DeviceDiscoveryDialog::DeviceDiscoveryDialog(QWidget *parent)
     ui->setupUi(this);
 
 #if defined (Q_OS_SYMBIAN) || defined(Q_OS_WINCE) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
-    setWindowState(Qt::WindowMaximized);
+    setWindowState(Qt::WindowFullScreen);
 #endif
 
     connect(ui->inquiryType, SIGNAL(toggled(bool)), this, SLOT(setGeneralUnlimited(bool)));
@@ -72,6 +72,12 @@ DeviceDiscoveryDialog::DeviceDiscoveryDialog(QWidget *parent)
             this, SLOT(hostModeStateChanged(QBluetoothLocalDevice::HostMode)));
 
     hostModeStateChanged(localDevice->hostMode());
+    // add context menu for devices to be able to pair device
+    ui->list->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(ui->list, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(displayPairingMenu(QPoint)));
+    connect(localDevice, SIGNAL(pairingFinished(const QBluetoothAddress&, QBluetoothLocalDevice::Pairing))
+        , this, SLOT(pairingDone(const QBluetoothAddress&, QBluetoothLocalDevice::Pairing)));
+
 }
 
 DeviceDiscoveryDialog::~DeviceDiscoveryDialog()
@@ -83,8 +89,16 @@ void DeviceDiscoveryDialog::addDevice(const QBluetoothDeviceInfo &info)
 {
     QString label = QString("%1 %2").arg(info.address().toString()).arg(info.name());
     QList<QListWidgetItem *> items = ui->list->findItems(label, Qt::MatchExactly);
-    if(items.empty())
-        ui->list->addItem(QString("%1 %2").arg(info.address().toString()).arg(info.name()));
+    if(items.empty()) {
+        QListWidgetItem *item = new QListWidgetItem(label);
+        QBluetoothLocalDevice::Pairing pairingStatus = localDevice->pairingStatus(info.address());
+        if (pairingStatus == QBluetoothLocalDevice::Paired || pairingStatus == QBluetoothLocalDevice::AuthorizedPaired )
+            item->setTextColor(QColor(Qt::green));
+        
+        ui->list->addItem(item);
+    }
+    
+
 }
 
 void DeviceDiscoveryDialog::startScan()
@@ -157,4 +171,40 @@ void DeviceDiscoveryDialog::hostModeStateChanged(QBluetoothLocalDevice::HostMode
 
     ui->scan->setEnabled(on);
     ui->discoverable->setEnabled(on);
+}
+void DeviceDiscoveryDialog::displayPairingMenu(const QPoint &pos)
+{
+    QMenu menu(this);
+    QAction *pairAction = menu.addAction("Pair");
+    QAction *removePairAction = menu.addAction("Remove Pairing");
+    QAction *chosenAction = menu.exec(ui->list->viewport()->mapToGlobal(pos));
+    QListWidgetItem *currentItem = ui->list->currentItem(); 
+    
+    QString text = currentItem->text();
+    int index = text.indexOf(' ');
+    if (index == -1)
+        return;
+
+    QBluetoothAddress address (text.left(index));
+    if (chosenAction == pairAction) {
+        localDevice->requestPairing(address, QBluetoothLocalDevice::Paired);
+    } else if (chosenAction == removePairAction) {
+        localDevice->requestPairing(address, QBluetoothLocalDevice::Unpaired);
+    }
+}
+void DeviceDiscoveryDialog::pairingDone(const QBluetoothAddress &address, QBluetoothLocalDevice::Pairing pairing)
+{
+    QList<QListWidgetItem *> items = ui->list->findItems(address.toString(), Qt::MatchContains);
+    
+    if (pairing == QBluetoothLocalDevice::Paired || pairing == QBluetoothLocalDevice::AuthorizedPaired ) {
+        for (int var = 0; var < items.count(); ++var) {
+            QListWidgetItem *item = items.at(var);
+            item->setTextColor(QColor(Qt::green));
+        }
+    } else {
+        for (int var = 0; var < items.count(); ++var) {
+            QListWidgetItem *item = items.at(var);
+            item->setTextColor(QColor(Qt::red));
+        }
+    }
 }
