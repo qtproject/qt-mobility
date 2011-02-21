@@ -52,8 +52,8 @@
 QTM_USE_NAMESPACE
 
 Q_DECLARE_METATYPE(QNearFieldTarget*)
-Q_DECLARE_METATYPE(QLlcpSocket::Error)
-Q_DECLARE_METATYPE(QLlcpSocket::State)
+Q_DECLARE_METATYPE(QLlcpSocket::SocketError )
+Q_DECLARE_METATYPE(QLlcpSocket::SocketState )
 
 class tst_qllcpsocketlocal : public QObject
 {
@@ -86,8 +86,8 @@ private:
 tst_qllcpsocketlocal::tst_qllcpsocketlocal()
 {
     qRegisterMetaType<QNearFieldTarget *>("QNearFieldTarget*");
-    qRegisterMetaType<QNearFieldTarget *>("QLlcpSocket::Error");
-    qRegisterMetaType<QNearFieldTarget *>("QLlcpSocket::State");
+    qRegisterMetaType<QLlcpSocket::SocketError>("QLlcpSocket::SocketError");
+    qRegisterMetaType<QLlcpSocket::SocketState>("QLlcpSocket::SocketState");
 }
 
 /*!
@@ -147,7 +147,7 @@ void tst_qllcpsocketlocal::echoClient()
     QVERIFY(ret == -1);
 
     QCOMPARE(localSocket.state(), QLlcpSocket::UnconnectedState);
-    QSignalSpy stateChangedSpy(&localSocket, SIGNAL(stateChanged(QLlcpSocket::State)));
+    QSignalSpy stateChangedSpy(&localSocket, SIGNAL(stateChanged(QLlcpSocket::SocketState)));
 
     // STEP 2:  bind the local port for current socket
     QSignalSpy readyReadSpy(&localSocket, SIGNAL(readyRead()));
@@ -155,13 +155,13 @@ void tst_qllcpsocketlocal::echoClient()
     QVERIFY(retBool);
     QVERIFY(!stateChangedSpy.isEmpty());
     QCOMPARE(localSocket.state(), QLlcpSocket::BoundState);
-    
+
     // Wait remote part bind
     QString messageBox("Wait remote bind");
     QNfcTestUtil::ShowAutoMsg(messageBox);
 
     // STEP 3: Local peer sends the  message to the remote peer
-    QSignalSpy errorSpy(&localSocket, SIGNAL(error(QLlcpSocket::Error)));
+    QSignalSpy errorSpy(&localSocket, SIGNAL(error(QLlcpSocket::SocketState)));
     QSignalSpy bytesWrittenSpy(&localSocket, SIGNAL(bytesWritten(qint64)));
 
     //Prepare data to send
@@ -338,7 +338,7 @@ void tst_qllcpsocketlocal::coverageTest1()
 {
     QLlcpSocket localSocket;
 
-    QSignalSpy errorSpy(&localSocket, SIGNAL(error(QLlcpSocket::Error)));
+    QSignalSpy errorSpy(&localSocket, SIGNAL(error(QLlcpSocket::SocketError)));
     localSocket.connectToService(m_target,"uri");
     QTRY_VERIFY(errorSpy.count() == 1);
     QVERIFY(localSocket.error() == QLlcpSocket::UnknownSocketError);
