@@ -146,7 +146,12 @@ QString QSystemInfoPrivate::currentCountryCode() const
 {
 #if defined(Q_WS_MAEMO_6)
     GConfItem langItem("/meegotouch/i18n/language");
-    return langItem.value().toString().section("_",1,1);
+     QString langCC = langItem.value().toString().section("_",1,1);
+     if (langCC.isEmpty()) {
+         langCC = QString::fromLocal8Bit(qgetenv("LANG")).section("_",1,1);
+         langCC = langCC.remove(".UTF-8",Qt::CaseSensitive);
+         return langCC;
+     }
 #else
     return QSystemInfoLinuxCommonPrivate::currentCountryCode();
 #endif
