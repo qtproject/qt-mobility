@@ -22,7 +22,7 @@
 #define __ADD_MODIFY_DELETE_CONTACTS__
 
 // System Includes
-#include <testexecutestepbase.h>
+#include <test/testexecutestepbase.h>
 #include <cntdb.h>
 #include <cntitem.h>
 #include <cntviewbase.h>

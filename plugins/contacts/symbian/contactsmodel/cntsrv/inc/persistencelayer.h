@@ -178,7 +178,6 @@ public:
 	virtual CContactIdArray& CardTemplateIdsL() = 0;
 	virtual CContactIdArray& GroupIdListL() = 0;
     virtual CBufSeg* DetailsListL(const TDesC& aSearchQuery) const = 0;
-    virtual CBufSeg* DetailsListPredictiveL(const TDesC& aSearchPattern) const = 0;
     
 	virtual void SetMachineIdL(TInt64 aMachineId) = 0;
 	virtual TPtrC UniqueIdL() = 0; 
@@ -247,6 +246,17 @@ public:
      virtual CContactIdArray* MatchPhoneNumberL(const TDesC& aNumber, TInt aMatchLengthFromRight) = 0;
 	};
 
+
+/**
+ * This interface defines a function to close the resource 
+ * which is running and depends on RSqlDatabase.
+ */
+class MLplSqlDatabaseObserver
+    {
+public:
+    virtual void OnCloseL() = 0;
+    };
+ 
 
 /**
 This interface provides a simplified way of querying the database.  The result

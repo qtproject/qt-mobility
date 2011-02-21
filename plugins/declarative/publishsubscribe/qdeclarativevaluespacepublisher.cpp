@@ -43,6 +43,22 @@
 #include "qdeclarativevaluespacepublishermetaobject_p.h"
 
 #include <QDeclarativeInfo>
+#include <QCoreApplication>
+
+class QDeclarativeValueSpacePublisherQueueItem
+{
+public:
+    QDeclarativeValueSpacePublisherQueueItem(const QString &subPath, const QVariant &value);
+
+    QString subPath;
+    QVariant value;
+};
+
+QDeclarativeValueSpacePublisherQueueItem::QDeclarativeValueSpacePublisherQueueItem(const QString &subPath, const QVariant &value) :
+    subPath(subPath),
+    value(value)
+{
+}
 
 /*!
     \qmlclass ValueSpacePublisher QDeclarativeValueSpacePublisher
@@ -91,6 +107,18 @@
     }
     \endcode
 
+    \section2 Platform-specific notes (ContextKit)
+
+    On platforms where ContextKit is the default backend, the values of
+    QCoreApplication properties applicationName and organizationDomain
+    must be set to match the XML description file packaged with your
+    application. ValueSpacePublisher supports two extra properties on
+    these platforms, \a applicationName and \a organizationDomain, which
+    set the properties of the same name on QCoreApplication.
+
+    This is a workaround until QCoreApplication can be exposed to QML in
+    some manner.
+
     \ingroup qml-publishsubscribe
 
     \sa QValueSpacePublisher
@@ -99,16 +127,70 @@
 
 QDeclarativeValueSpacePublisher::QDeclarativeValueSpacePublisher(QObject *parent)
     : QObject(parent),
-      d(new QDeclarativeValueSpacePublisherMetaObject(this))
+      d(new QDeclarativeValueSpacePublisherMetaObject(this)),
+      m_publisher(0),
+      m_pathSet(false),
+      m_hasSubscribers(false),
+      m_complete(false)
 {
-    m_pathSet = false;
-    m_hasSubscribers = false;
 }
 
 QDeclarativeValueSpacePublisher::~QDeclarativeValueSpacePublisher()
 {
-    if (m_pathSet)
+    if (m_publisher)
         delete m_publisher;
+}
+
+void QDeclarativeValueSpacePublisher::classBegin()
+{
+}
+
+void QDeclarativeValueSpacePublisher::componentComplete()
+{
+    if (m_pathSet) {
+        m_publisher = new QValueSpacePublisher(m_path, this);
+        connect(m_publisher, SIGNAL(interestChanged(QString,bool)),
+                this, SLOT(onInterestChanged(QString,bool)));
+    }
+    m_complete = true;
+    doQueue();
+}
+
+void QDeclarativeValueSpacePublisher::queueChange(const QString &subPath, const QVariant &val)
+{
+    m_queue << QDeclarativeValueSpacePublisherQueueItem(subPath, val);
+    if (m_publisher)
+        doQueue();
+}
+
+void QDeclarativeValueSpacePublisher::doQueue()
+{
+    foreach (QDeclarativeValueSpacePublisherQueueItem i, m_queue) {
+        m_publisher->setValue(i.subPath, i.value);
+    }
+    m_queue.clear();
+}
+
+// these should be removed after QTBUG-17521 is resolved
+
+QString QDeclarativeValueSpacePublisher::applicationName() const
+{
+    return QCoreApplication::applicationName();
+}
+
+void QDeclarativeValueSpacePublisher::setApplicationName(const QString &name)
+{
+    QCoreApplication::setApplicationName(name);
+}
+
+QString QDeclarativeValueSpacePublisher::organizationDomain() const
+{
+    return QCoreApplication::organizationDomain();
+}
+
+void QDeclarativeValueSpacePublisher::setOrganizationDomain(const QString &domain)
+{
+    QCoreApplication::setOrganizationDomain(domain);
 }
 
 /*!
@@ -132,10 +214,9 @@ void QDeclarativeValueSpacePublisher::setPath(const QString &path)
 
     m_path = path;
     startServer(true);
-    m_publisher = new QValueSpacePublisher(m_path, this);
-    connect(m_publisher, SIGNAL(interestChanged(QString,bool)),
-            this, SLOT(onInterestChanged(QString,bool)));
     m_pathSet = true;
+    if (m_complete)
+        componentComplete();
 }
 
 /*!
@@ -147,12 +228,7 @@ void QDeclarativeValueSpacePublisher::setPath(const QString &path)
 */
 void QDeclarativeValueSpacePublisher::setValue(const QVariant &val)
 {
-    if (!m_pathSet) {
-        qmlInfo(this) << "Tried to set value on a publisher with no path; ignored";
-        return;
-    }
-
-    m_publisher->setValue("", val);
+    queueChange("", val);
 }
 
 /*!

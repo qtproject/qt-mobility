@@ -265,14 +265,14 @@ LOCAL_C void DoTestsL()
 
 	// Generate a test image
 	GenerateTestImageL();
-
+	
 	TestCreateContactL();
 	TestUpdateContactL();
 	TestDeleteContactL();
-
+	
 	// Test this as the last since it removes the images folder
 	TestCreateContactWithoutImagesFoldeL();
-
+	
     test.End();
     // Pause the test in eshell
     test.Getch();
@@ -298,12 +298,12 @@ GLDEF_C TInt E32Main()
 
     // Run the tests
     TRAPD(err, DoTestsL());
-
+		
     // Cleanup
     delete activeScheduler;
  	delete cleanupStack;
 	activeScheduler = NULL;
 	cleanupStack = NULL;
-
+	
 	return err;
     }

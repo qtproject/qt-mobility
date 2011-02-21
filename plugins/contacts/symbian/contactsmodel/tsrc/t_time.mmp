@@ -16,7 +16,7 @@
 */
 
 
-target          t_time.exe
+TARGET          t_time.exe
 targettype      EXE
 CAPABILITY   ReadUserData WriteUserData
 UID		0x1000007a
@@ -29,6 +29,6 @@ userinclude ../inc
 
 source          T_TIME.CPP
 
-library         euser.lib  cntmodel.lib	cnttutil.lib bafl.lib
+LIBRARY         euser.lib  cntmodel.lib	cnttutil.lib bafl.lib
 
 SMPSAFE

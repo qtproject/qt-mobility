@@ -64,16 +64,11 @@ public:
     QString defaultEndpoint() const;
     QString activeEndpoint() const;
 
-private:    
-    void update();    
     
 public Q_SLOTS:
     void setActiveEndpoint(const QString& name);
 
 private:
-    QString          m_audioInput;
-    QList<QString>   m_names;
-    QList<QString>   m_descriptions;
 
     S60AudioCaptureSession* m_session;
 };

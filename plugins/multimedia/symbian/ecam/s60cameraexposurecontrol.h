@@ -98,6 +98,7 @@ private Q_SLOTS: // Internal Slots
     void apertureRangeChanged();
     void shutterSpeedChanged();
     void isoSensitivityChanged();
+    void evChanged();
 
 private: // Internal - Implementing ExposureParameter
 

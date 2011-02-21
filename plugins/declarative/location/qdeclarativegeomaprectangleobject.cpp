@@ -257,7 +257,7 @@ void QDeclarativeGeoMapRectangleObject::borderWidthChanged(int width)
 }
 
 /*!
-    \qmlproperty int MapRectangle::zValue
+    \qmlproperty int MapRectangle::z
 
     This property holds the z-value of the rectangle.
 

@@ -159,7 +159,7 @@ int main(int argc, char *argv[])
     
     qDebug() << " begin to register target detect handler" << endl;
 
-    manager.registerTargetDetectedHandler(&handler, SIGNAL(userHandleMessage(QNdefMessage, QNearFieldTarget*)));
+    manager.registerNdefMessageHandler(&handler, SIGNAL(userHandleMessage(QNdefMessage, QNearFieldTarget*)));
     
     qDebug() << " register target detect handler ok" << endl;
 

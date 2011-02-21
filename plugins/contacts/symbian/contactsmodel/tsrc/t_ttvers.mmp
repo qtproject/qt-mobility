@@ -16,7 +16,7 @@
 */
 
 
-target          t_ttvers.exe
+TARGET          t_ttvers.exe
 targettype      EXE
 CAPABILITY   ReadUserData WriteUserData
 UID		0x1000007a
@@ -29,7 +29,7 @@ userinclude ../inc .
 
 source          T_TTVERS.CPP TTVCARD.CPP
 
-library         euser.lib  efsrv.lib  cntmodel.lib  estor.lib  cnttutil.lib pimtestclient.lib
-library         versit.lib  vcard.lib
+LIBRARY         euser.lib  efsrv.lib  cntmodel.lib  estor.lib  cnttutil.lib pimtestclient.lib
+LIBRARY         versit.lib  vcard.lib
 
 SMPSAFE

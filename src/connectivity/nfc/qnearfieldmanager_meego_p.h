@@ -103,12 +103,12 @@ public:
 
     QNearFieldTarget *targetForPath(const QString &path);
 
-    int registerTargetDetectedHandler(const QString &filter,
-                                      QObject *object, const QMetaMethod &method);
-    int registerTargetDetectedHandler(QObject *object, const QMetaMethod &method);
-    int registerTargetDetectedHandler(const QNdefFilter &filter,
-                                      QObject *object, const QMetaMethod &method);
-    bool unregisterTargetDetectedHandler(int handlerId);
+    int registerNdefMessageHandler(const QString &filter,
+                                   QObject *object, const QMetaMethod &method);
+    int registerNdefMessageHandler(QObject *object, const QMetaMethod &method);
+    int registerNdefMessageHandler(const QNdefFilter &filter,
+                                   QObject *object, const QMetaMethod &method);
+    bool unregisterNdefMessageHandler(int handlerId);
 
     void requestAccess(QNearFieldManager::TargetAccessModes accessModes);
     void releaseAccess(QNearFieldManager::TargetAccessModes accessModes);

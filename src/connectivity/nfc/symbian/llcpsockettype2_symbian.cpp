@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -38,6 +38,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
 #include "nearfieldutility_symbian.h"
 #include "llcpsockettype2_symbian.h"
 
@@ -365,7 +366,7 @@ void CLlcpSocketType2::AttachCallbackHandler(QtMobility::QLlcpSocketPrivate* aCa
     END
     }
 
-void CLlcpSocketType2::Error(QtMobility::QLlcpSocket::Error /*aSocketError*/)
+void CLlcpSocketType2::Error(QtMobility::QLlcpSocket::SocketError /*aSocketError*/)
     {
     BEGIN
     //emit error
@@ -378,7 +379,7 @@ void CLlcpSocketType2::Error(QtMobility::QLlcpSocket::Error /*aSocketError*/)
         }
     END
     }
-void CLlcpSocketType2::StateChanged(QtMobility::QLlcpSocket::State aSocketState)
+void CLlcpSocketType2::StateChanged(QtMobility::QLlcpSocket::SocketState aSocketState)
     {
     BEGIN
     if (aSocketState == QtMobility::QLlcpSocket::ConnectedState && iWaitStatus == EWaitForConnected)

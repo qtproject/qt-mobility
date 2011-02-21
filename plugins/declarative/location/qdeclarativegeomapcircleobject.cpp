@@ -222,7 +222,7 @@ void QDeclarativeGeoMapCircleObject::borderWidthChanged(int width)
 }
 
 /*!
-    \qmlproperty int MapCircle::zValue
+    \qmlproperty int MapCircle::z
 
     This property holds the z-value of the circle.
 

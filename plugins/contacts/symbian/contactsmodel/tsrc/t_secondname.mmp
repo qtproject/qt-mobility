@@ -16,7 +16,7 @@
 */
 
 
-target          t_secondname.exe
+TARGET          t_secondname.exe
 targettype      EXE
 CAPABILITY   ReadUserData WriteUserData
 UID		0x1000007a
@@ -29,6 +29,6 @@ userinclude ../inc .
 
 source          T_secondname.cpp
 
-library         euser.lib  efsrv.lib estor.lib cntmodel.lib vcard.lib versit.lib
+LIBRARY         euser.lib  efsrv.lib estor.lib cntmodel.lib vcard.lib versit.lib
 
 SMPSAFE
