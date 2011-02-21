@@ -52,7 +52,7 @@
 QTM_USE_NAMESPACE
 
 Q_DECLARE_METATYPE(QNearFieldTarget*)
-Q_DECLARE_METATYPE(QLlcpSocket::Error);
+Q_DECLARE_METATYPE(QLlcpSocket::SocketError);
 
 class tst_qllcpsocketremote : public QObject
 {
@@ -78,7 +78,7 @@ private:
 tst_qllcpsocketremote::tst_qllcpsocketremote()
 {
     qRegisterMetaType<QNearFieldTarget *>("QNearFieldTarget*");
-    qRegisterMetaType<QNearFieldTarget *>("QLlcpSocket::Error");
+    qRegisterMetaType<QLlcpSocket::SocketError>("QLlcpSocket::SocketError");
 }
 
 /*!
@@ -178,7 +178,7 @@ void tst_qllcpsocketremote::echoServer()
     }
 
     // STEP 3: Send the received message back to the intiated device.
-    QSignalSpy errorSpy(&remoteSocket, SIGNAL(error(QLlcpSocket::Error)));
+    QSignalSpy errorSpy(&remoteSocket, SIGNAL(error(QLlcpSocket::SocketError)));
     QSignalSpy bytesWrittenSpy(&remoteSocket, SIGNAL(bytesWritten(qint64)));
 
     qDebug("Server-- write payload length = %d", inPayload.length());

@@ -52,8 +52,8 @@
 QTM_USE_NAMESPACE
 
 Q_DECLARE_METATYPE(QNearFieldTarget*)
-Q_DECLARE_METATYPE(QLlcpSocket::State)
-Q_DECLARE_METATYPE(QLlcpSocket::Error)
+Q_DECLARE_METATYPE(QLlcpSocket::SocketState)
+Q_DECLARE_METATYPE(QLlcpSocket::SocketError)
 
 QString TestUri("urn:nfc:xsn:nokia:symbiantest");
 static qint64 countBytesWritten(QSignalSpy& bytesWrittenSpy)
@@ -104,8 +104,8 @@ private Q_SLOTS:
 tst_qllcpsockettype2::tst_qllcpsockettype2()
 {
     qRegisterMetaType<QNearFieldTarget*>("QNearFieldTarget*");
-    qRegisterMetaType<QLlcpSocket::Error>("QLlcpSocket::Error");
-    qRegisterMetaType<QLlcpSocket::State>("QLlcpSocket::State");
+    qRegisterMetaType<QLlcpSocket::SocketError>("QLlcpSocket::SocketError");
+    qRegisterMetaType<QLlcpSocket::SocketState>("QLlcpSocket::SocketState");
 }
 
 void tst_qllcpsockettype2::initTestCase()
@@ -159,7 +159,7 @@ void tst_qllcpsockettype2::echo()
     QNfcTestUtil::ShowAutoMsg(message);
     QLlcpSocket socket(this);
     QSignalSpy connectedSpy(&socket, SIGNAL(connected()));
-    QSignalSpy errorSpy(&socket, SIGNAL(error(QLlcpSocket::Error)));
+    QSignalSpy errorSpy(&socket, SIGNAL(error(QLlcpSocket::SocketError)));
     QSignalSpy readyReadSpy(&socket, SIGNAL(readyRead()));
 
     QSignalSpy bytesWrittenSpy(&socket, SIGNAL(bytesWritten(qint64)));
@@ -283,7 +283,7 @@ void tst_qllcpsockettype2::echo_wait()
     bool ret = socket.waitForConnected(Timeout);
     QVERIFY(ret);
 
-    QSignalSpy errorSpy(&socket, SIGNAL(error(QLlcpSocket::Error)));
+    QSignalSpy errorSpy(&socket, SIGNAL(error(QLlcpSocket::SocketError)));
 
     //Send data to server
     QSignalSpy bytesWrittenSpy(&socket, SIGNAL(bytesWritten(qint64)));
@@ -378,15 +378,15 @@ void tst_qllcpsockettype2::api_coverage()
 
     QLlcpSocket socket(this);
     QCOMPARE(socket.state(), QLlcpSocket::UnconnectedState);
-    QSignalSpy stateChangedSpy(&socket, SIGNAL(stateChanged(QLlcpSocket::State)));
+    QSignalSpy stateChangedSpy(&socket, SIGNAL(stateChanged(QLlcpSocket::SocketState)));
 
     QSignalSpy connectedSpy(&socket, SIGNAL(connected()));
     socket.connectToService(m_target, TestUri);
     QTRY_VERIFY(!connectedSpy.isEmpty());
 
     QVERIFY(stateChangedSpy.count() == 2);
-    QLlcpSocket::State  state1 = stateChangedSpy.at(0).at(0).value<QLlcpSocket::State>();
-    QLlcpSocket::State  state2 = stateChangedSpy.at(1).at(0).value<QLlcpSocket::State>();
+    QLlcpSocket::SocketState  state1 = stateChangedSpy.at(0).at(0).value<QLlcpSocket::SocketState>();
+    QLlcpSocket::SocketState  state2 = stateChangedSpy.at(1).at(0).value<QLlcpSocket::SocketState>();
     QCOMPARE(state1, QLlcpSocket::ConnectingState);
     QCOMPARE(state2, QLlcpSocket::ConnectedState);
 
@@ -403,7 +403,7 @@ void tst_qllcpsockettype2::api_coverage()
     stateChangedSpy.clear();
     socket.disconnectFromService();
     QVERIFY(stateChangedSpy.count() == 1);
-    state1 = stateChangedSpy.at(0).at(0).value<QLlcpSocket::State>();
+    state1 = stateChangedSpy.at(0).at(0).value<QLlcpSocket::SocketState>();
     QCOMPARE(state1, QLlcpSocket::UnconnectedState);
 
     QCOMPARE(socket.error(),QLlcpSocket::UnknownSocketError);
@@ -427,7 +427,7 @@ void tst_qllcpsockettype2::connectTest()
 
     QLlcpSocket socket(this);
     QCOMPARE(socket.state(), QLlcpSocket::UnconnectedState);
-    QSignalSpy errorSpy(&socket, SIGNAL(error(QLlcpSocket::Error)));
+    QSignalSpy errorSpy(&socket, SIGNAL(error(QLlcpSocket::SocketError)));
 
     QSignalSpy connectedSpy(&socket, SIGNAL(connected()));
     socket.connectToService(m_target, TestUri);
@@ -644,7 +644,7 @@ void tst_qllcpsockettype2::sendEmptyData()
     QNfcTestUtil::ShowAutoMsg(message);
     QLlcpSocket socket(this);
     QSignalSpy connectedSpy(&socket, SIGNAL(connected()));
-    QSignalSpy errorSpy(&socket, SIGNAL(error(QLlcpSocket::Error)));
+    QSignalSpy errorSpy(&socket, SIGNAL(error(QLlcpSocket::SocketError)));
     QSignalSpy readyReadSpy(&socket, SIGNAL(readyRead()));
 
     QSignalSpy bytesWrittenSpy(&socket, SIGNAL(bytesWritten(qint64)));
@@ -707,7 +707,7 @@ void tst_qllcpsockettype2::waitReadyReadInSlot()
     QNfcTestUtil::ShowAutoMsg(message);
     QLlcpSocket socket(this);
     QSignalSpy connectedSpy(&socket, SIGNAL(connected()));
-    QSignalSpy errorSpy(&socket, SIGNAL(error(QLlcpSocket::Error)));
+    QSignalSpy errorSpy(&socket, SIGNAL(error(QLlcpSocket::SocketError)));
 
     QSignalSpy readyReadSpy(&socket, SIGNAL(readyRead()));
     ReadyReadSlot slot(socket);
@@ -809,7 +809,7 @@ void tst_qllcpsockettype2::deleteSocketWhenInUse()
     QNfcTestUtil::ShowAutoMsg(message);
     QLlcpSocket* socket = new QLlcpSocket;
     QSignalSpy connectedSpy(socket, SIGNAL(connected()));
-    QSignalSpy errorSpy(socket, SIGNAL(error(QLlcpSocket::Error)));
+    QSignalSpy errorSpy(socket, SIGNAL(error(QLlcpSocket::SocketError)));
 
     BytesWrittenSlot slot(socket);
     QSignalSpy bytesWrittenSpy(socket, SIGNAL(bytesWritten(qint64)));
@@ -853,12 +853,12 @@ void tst_qllcpsockettype2::multiSocketToOneServer()
     QLlcpSocket* socket1 = new QLlcpSocket;
     QLlcpSocket* socket2 = new QLlcpSocket;
     QSignalSpy connectedSpy1(socket1, SIGNAL(connected()));
-    QSignalSpy errorSpy1(socket1, SIGNAL(error(QLlcpSocket::Error)));
+    QSignalSpy errorSpy1(socket1, SIGNAL(error(QLlcpSocket::SocketError)));
     QSignalSpy readyReadSpy1(socket1, SIGNAL(readyRead()));
     QSignalSpy bytesWrittenSpy1(socket1, SIGNAL(bytesWritten(qint64)));
 
     QSignalSpy connectedSpy2(socket2, SIGNAL(connected()));
-    QSignalSpy errorSpy2(socket2, SIGNAL(error(QLlcpSocket::Error)));
+    QSignalSpy errorSpy2(socket2, SIGNAL(error(QLlcpSocket::SocketError)));
     QSignalSpy readyReadSpy2(socket2, SIGNAL(readyRead()));
     QSignalSpy bytesWrittenSpy2(socket2, SIGNAL(bytesWritten(qint64)));
 

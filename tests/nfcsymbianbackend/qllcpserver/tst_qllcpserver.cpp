@@ -61,7 +61,7 @@ static qint64 countBytesWritten(QSignalSpy& bytesWrittenSpy)
     return ret;
     }
 
-Q_DECLARE_METATYPE(QLlcpSocket::Error)
+Q_DECLARE_METATYPE(QLlcpSocket::SocketError)
 class tst_QLlcpServer : public QObject
 {
     Q_OBJECT
@@ -94,7 +94,7 @@ tst_QLlcpServer::tst_QLlcpServer()
 
 void tst_QLlcpServer::initTestCase()
 {
-    qRegisterMetaType<QLlcpSocket::SocketError>("QLlcpSocket::Error");
+    qRegisterMetaType<QLlcpSocket::SocketError>("QLlcpSocket::SocketError");
 }
 
 void tst_QLlcpServer::cleanupTestCase()
@@ -286,7 +286,7 @@ void tst_QLlcpServer::newConnection_wait()
     //Now data has been sent,check the if existing error
     if (!errorSpy.isEmpty())
         {
-            QLlcpSocket::SocketError error = errorSpy.first().at(0).value<QLlcpSocket::Error>();
+            QLlcpSocket::SocketError error = errorSpy.first().at(0).value<QLlcpSocket::SocketError>();
             qDebug("QLlcpSocket::Error =%d", error);
         }
     QVERIFY(errorSpy.isEmpty());
@@ -405,7 +405,7 @@ void tst_QLlcpServer::multiConnection()
         QLlcpSocket *socket = server.nextPendingConnection();
         QVERIFY(socket != NULL);
         QSignalSpy readyReadSpy(socket, SIGNAL(readyRead()));
-        QSignalSpy errorSpy(socket, SIGNAL(error(QLlcpSocket::Error)));
+        QSignalSpy errorSpy(socket, SIGNAL(error(QLlcpSocket::SocketError)));
 
         //Get data from client
         QTRY_VERIFY(!readyReadSpy.isEmpty());
