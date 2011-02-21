@@ -29,4 +29,8 @@
 	<credential name="TrackerWriteAccess" />
         <for path="/usr/lib/qtmobility/examples/mapsdemo" />
     </request>
+    <request>
+        <credential name="mce::TKLockControl" />
+        <for path="/opt/examples/QtMobility/qsysinfo" />
+    </request>
 </aegis>
