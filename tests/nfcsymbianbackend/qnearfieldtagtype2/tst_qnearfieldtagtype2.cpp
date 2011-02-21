@@ -448,8 +448,76 @@ void tst_qnearfieldtagtype2::testRawAccessAndNdefAccess(const QList<QNdefMessage
     ++ndefWriteCount;
     QTRY_COMPARE(ndefMessageWriteSpy.count(), ndefWriteCount);
 
-    QNearFieldTarget::RequestId id = tester.target->readBlock(0);
-    tester.target->waitForRequestCompleted(id, 50000);
+    QNearFieldTarget::RequestId id = tester.target->readBlock(3);
+    QVERIFY(tester.target->waitForRequestCompleted(id, 50000));
+    ++okCount;
+    QCOMPARE(okSpy.count(), okCount);
+    // check if NDEF existed
+    QByteArray cc = tester.target->requestResponse(id).toByteArray();
+    QCOMPARE((char)(cc.at(0)), (char)0xE1);
+
+    // try to find NDEF tlv
+    QByteArray blocks;
+    int NdefLen = -1;
+    for(int i = 4; i < 15; i+=4)
+    {
+        QNearFieldTarget::RequestId id1 = tester.target->readBlock(i);
+        QVERIFY(tester.target->waitForRequestCompleted(id1, 50000));
+        QByteArray tlv = tester.target->requestResponse(id1).toByteArray();
+        blocks.append(tlv);
+        ++okCount;
+        QCOMPARE(okSpy.count(), okCount);
+    }
+
+    QByteArray ndefContent;
+    for (int i = 0; i < blocks.count(); ++i)
+    {
+        if ((blocks.at(i) == 0x03) && (i < blocks.count() - 1))
+        {
+            // find ndef tlv
+            NdefLen = blocks.at(i+1);
+            ndefContent = blocks.mid(i+2, NdefLen);
+            break;
+        }
+    }
+
+    QCOMPARE(ndefContent, messages.at(0).toByteArray());
+    // update the ndef meesage with raw command
+    QNdefMessage message;
+    QNdefNfcTextRecord textRecord;
+    textRecord.setText("nfc");
+    message.append(textRecord);
+
+    QByteArray newNdefMessage = message.toByteArray();
+    NdefLen = newNdefMessage.count();
+    qDebug()<<"new Ndef len is "<<NdefLen;
+    newNdefMessage.push_front((char)NdefLen);
+    newNdefMessage.push_front((char)0x03);
+
+    for(int i = 0; i < 16 - NdefLen; ++i)
+    {
+        // append padding
+        newNdefMessage.append((char)0);
+    }
+
+    for(int i = 4; i < 8; ++i)
+    {
+        QNearFieldTarget::RequestId id2 = tester.target->writeBlock(i, newNdefMessage.left(4));
+        QVERIFY(tester.target->waitForRequestCompleted(id2));
+        ++okCount;
+        QCOMPARE(okSpy.count(), okCount);
+        newNdefMessage.remove(0,4);
+    }
+
+    // read ndef with ndef access
+    tester.target->readNdefMessages();
+    ++ndefReadCount;
+    QTRY_COMPARE(ndefMessageReadSpy.count(), ndefReadCount);
+
+    const QNdefMessage& ndefMessage_new(ndefMessageReadSpy.first().at(0).value<QNdefMessage>());
+
+    QCOMPARE(message.toByteArray(), ndefMessage_new.toByteArray());
+    QCOMPARE(errSpy.count(), errCount);
 }
 
 void tst_qnearfieldtagtype2::testRawAndNdefAccess()

@@ -46,6 +46,7 @@
 QTM_BEGIN_NAMESPACE
 
 #define SYMBIAN_NEED_CRC
+#define SYMBIAN_RETURN_CRC
 
 static void OutputByteArray(const QByteArray& data)
 {
@@ -77,7 +78,11 @@ QVariant QNearFieldTagType2Symbian::decodeResponse(const QByteArray& command, co
         case 0x30:
         {
             // read command
+#ifdef SYMBIAN_RETURN_CRC
+            result = response.left(16);
+#else
             result = response;
+#endif
             break;
         }
         case 0xA2:
@@ -88,7 +93,11 @@ QVariant QNearFieldTagType2Symbian::decodeResponse(const QByteArray& command, co
         }
         default:
         {
+#ifdef SYMBIAN_RETURN_CRC
+            result = response.left(16);
+#else
             result = response;
+#endif
         }
     }
     END
@@ -105,8 +114,8 @@ QNearFieldTarget::RequestId QNearFieldTagType2Symbian::readBlock(quint8 blockAdd
 #ifdef SYMBIAN_NEED_CRC
     // append CRC
     quint16 crc = qNfcChecksum(command.constData(), command.count());
-    command.append((unsigned char)(crc&0x0F));
-    command.append((unsigned char)((crc>>8)&0x0F));
+    command.append((unsigned char)(crc&0xFF));
+    command.append((unsigned char)((crc>>8)&0xFF));
 #endif
     END
     return sendCommand(command);
@@ -126,8 +135,8 @@ QNearFieldTarget::RequestId QNearFieldTagType2Symbian::writeBlock(quint8 blockAd
 #ifdef SYMBIAN_NEED_CRC
     // append CRC
     quint16 crc = qNfcChecksum(command.constData(), command.count());
-    command.append((unsigned char)(crc&0x0F));
-    command.append((unsigned char)((crc>>8)&0x0F));
+    command.append((unsigned char)(crc&0xFF));
+    command.append((unsigned char)((crc>>8)&0xFF));
 #endif
 
     END
@@ -144,8 +153,8 @@ QNearFieldTarget::RequestId QNearFieldTagType2Symbian::selectSector(quint8 secto
 #ifdef SYMBIAN_NEED_CRC
     // append CRC
     quint16 crc = qNfcChecksum(command.constData(), command.count());
-    command.append((unsigned char)(crc&0x0F));
-    command.append((unsigned char)((crc>>8)&0x0F));
+    command.append((unsigned char)(crc&0xFF));
+    command.append((unsigned char)((crc>>8)&0xFF));
 #endif
 
     RequestId id = sendCommand(command);
@@ -161,10 +170,10 @@ QNearFieldTarget::RequestId QNearFieldTagType2Symbian::selectSector(quint8 secto
         command.append(char(sector));               // Sector number
         command.append(QByteArray(3, char(0x00)));  // RFU
 #ifdef SYMBIAN_NEED_CRC
-        // append CRC
-        quint16 crc = qNfcChecksum(command.constData(), command.count());
-        command.append((unsigned char)(crc&0x0F));
-        command.append((unsigned char)((crc>>8)&0x0F));
+    // append CRC
+    quint16 crc = qNfcChecksum(command.constData(), command.count());
+    command.append((unsigned char)(crc&0xFF));
+    command.append((unsigned char)((crc>>8)&0xFF));
 #endif
         END
         return sendCommand(command);
