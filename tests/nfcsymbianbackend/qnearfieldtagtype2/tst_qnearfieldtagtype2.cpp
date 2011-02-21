@@ -57,26 +57,30 @@ public:
     tst_qnearfieldtagtype2();
     void testCommandSet();
 
+    void testRawAccessAndNdefAccess(const QList<QNdefMessage> &messages);
+
 private Q_SLOTS:
     void initTestCase();
-    
+
     void testSmoke_data();
     void testSmoke();
 
     void testNdefAccess();
 
+    void testRawAndNdefAccess();
+
     void testRawCommand_data();
     void testRawCommand();
-    
+
     void testWaitRawCommand_data();
     void testWaitRawCommand();
-    
+
     void testMixRawCommandAndNdefAccess_data();
     void testMixRawCommandAndNdefAccess();
-    
+
     void testWaitMixRawCommandAndNdefAccess_data();
     void testWaitMixRawCommandAndNdefAccess();
-    
+
     void testWaitInSlot_data();
     void testWaitInSlot();
 
@@ -114,11 +118,11 @@ void tst_qnearfieldtagtype2::initTestCase()
         command.append(char(0x00));     // Address (unused)
         command.append(char(0x00));     // Data (unused)
         command.append(uid.left(4));  // 4 bytes of UID
-        // Hardware will append CRC bytes. The CRC value appended 
+        // Hardware will append CRC bytes. The CRC value appended
         // to the command will be ignored.
         command.append(char(0x00)); // CRC1
         command.append(char(0x00)); // CRC2
-        
+
         dataPool.insert(name, qMakePair(QVariant(command), QVariant()));
     }
 
@@ -129,7 +133,7 @@ void tst_qnearfieldtagtype2::initTestCase()
         command.append(char(0x00));
         command.append(char(0x00));
         command.append(uid.left(4)); // UID
-        // Hardware will append CRC bytes. The CRC value appended 
+        // Hardware will append CRC bytes. The CRC value appended
         // to the command will be ignored.
         command.append(char(0x00)); // CRC1
         command.append(char(0x00)); // CRC2
@@ -166,11 +170,11 @@ void tst_qnearfieldtagtype2::testSmoke_data()
     QTest::addColumn<QStringList>("dsp");
     QTest::addColumn<QVariantList>("cmd");
     QTest::addColumn<QVariantList>("rsp");
-    
+
     QStringList dsp;
     QVariantList cmd;
     QVariantList rsp;
-    
+
     dsp<<"RID"<<"READ ALL"<<"INVALID";
     cmd.append(dataPool["RID"].first);
     cmd.append(dataPool["READ ALL"].first);
@@ -184,8 +188,8 @@ void tst_qnearfieldtagtype2::testSmoke_data()
 void tst_qnearfieldtagtype2::testSmoke()
 {
     tester.touchTarget();
-    
-    testCommandSet(); 
+
+    testCommandSet();
 
     QFETCH(QStringList, dsp);
     QFETCH(QVariantList, cmd);
@@ -198,7 +202,7 @@ void tst_qnearfieldtagtype2::testCommandSet()
 {
     QSignalSpy okSpy(tester.target, SIGNAL(requestCompleted(const QNearFieldTarget::RequestId&)));
     QSignalSpy errSpy(tester.target, SIGNAL(error(QNearFieldTarget::Error, const QNearFieldTarget::RequestId&)));
-    
+
     int okCount = 0;
     int errCount = 0;
 
@@ -219,7 +223,7 @@ void tst_qnearfieldtagtype2::testCommandSet()
     QVERIFY(!tester.target->waitForRequestCompleted(id3));
     ++errCount;
 
-    QNearFieldTarget::RequestId id4 = tester.target->selectSector(2); 
+    QNearFieldTarget::RequestId id4 = tester.target->selectSector(2);
     QVERIFY(!id4.isValid());
 
     QTRY_COMPARE(okSpy.count(), okCount);
@@ -236,11 +240,11 @@ void tst_qnearfieldtagtype2::testRawCommand_data()
     QTest::addColumn<QStringList>("dsp");
     QTest::addColumn<QVariantList>("cmd");
     QTest::addColumn<QVariantList>("rsp");
-    
+
     QStringList dsp;
     QVariantList cmd;
     QVariantList rsp;
-    
+
     dsp<<"RID"<<"READ ALL"<<"INVALID";
     cmd.append(dataPool["RID"].first);
     cmd.append(dataPool["READ ALL"].first);
@@ -255,7 +259,7 @@ void tst_qnearfieldtagtype2::testRawCommand()
     QFETCH(QStringList, dsp);
     QFETCH(QVariantList, cmd);
     QFETCH(QVariantList, rsp);
-    tester.testRawCommand(dsp, cmd, rsp); 
+    tester.testRawCommand(dsp, cmd, rsp);
 }
 
 void tst_qnearfieldtagtype2::testWaitRawCommand_data()
@@ -263,11 +267,11 @@ void tst_qnearfieldtagtype2::testWaitRawCommand_data()
     QTest::addColumn<QStringList>("dsp");
     QTest::addColumn<QVariantList>("cmd");
     QTest::addColumn<QVariantList>("rsp");
-    
+
     QStringList dsp;
     QVariantList cmd;
     QVariantList rsp;
-    
+
     dsp<<"RID"<<"READ ALL"<<"INVALID";
     cmd.append(dataPool["RID"].first);
     cmd.append(dataPool["READ ALL"].first);
@@ -291,11 +295,11 @@ void tst_qnearfieldtagtype2::testMixRawCommandAndNdefAccess_data()
     QTest::addColumn<QStringList>("dsp");
     QTest::addColumn<QVariantList>("cmd");
     QTest::addColumn<QVariantList>("rsp");
-    
+
     QStringList dsp;
     QVariantList cmd;
     QVariantList rsp;
-    
+
     dsp<<"RID"<<"READ ALL"<<"INVALID";
     cmd.append(dataPool["RID"].first);
     cmd.append(dataPool["READ ALL"].first);
@@ -318,11 +322,11 @@ void tst_qnearfieldtagtype2::testWaitMixRawCommandAndNdefAccess_data()
     QTest::addColumn<QStringList>("dsp");
     QTest::addColumn<QVariantList>("cmd");
     QTest::addColumn<QVariantList>("rsp");
-    
+
     QStringList dsp;
     QVariantList cmd;
     QVariantList rsp;
-    
+
     dsp<<"RID"<<"READ ALL"<<"INVALID";
     cmd.append(dataPool["RID"].first);
     cmd.append(dataPool["READ ALL"].first);
@@ -346,11 +350,11 @@ void tst_qnearfieldtagtype2::testWaitInSlot_data()
     QTest::addColumn<QStringList>("dsp");
     QTest::addColumn<QVariantList>("cmd");
     QTest::addColumn<QVariantList>("rsp");
-    
+
     QStringList dsp;
     QVariantList cmd;
     QVariantList rsp;
-    
+
     dsp<<"RID"<<"READ ALL"<<"INVALID";
     cmd.append(dataPool["RID"].first);
     cmd.append(dataPool["READ ALL"].first);
@@ -373,11 +377,11 @@ void tst_qnearfieldtagtype2::testDeleteTargetBeforeAsyncRequestComplete_data()
     QTest::addColumn<QStringList>("dsp");
     QTest::addColumn<QVariantList>("cmd");
     QTest::addColumn<QVariantList>("rsp");
-    
+
     QStringList dsp;
     QVariantList cmd;
     QVariantList rsp;
-    
+
     dsp<<"RID"<<"READ ALL"<<"INVALID";
     cmd.append(dataPool["RID"].first);
     cmd.append(dataPool["READ ALL"].first);
@@ -400,11 +404,11 @@ void tst_qnearfieldtagtype2::testRemoveTargetBeforeAsyncRequestComplete_data()
     QTest::addColumn<QStringList>("dsp");
     QTest::addColumn<QVariantList>("cmd");
     QTest::addColumn<QVariantList>("rsp");
-    
+
     QStringList dsp;
     QVariantList cmd;
     QVariantList rsp;
-    
+
     dsp<<"RID"<<"READ ALL"<<"INVALID";
     cmd.append(dataPool["RID"].first);
     cmd.append(dataPool["READ ALL"].first);
@@ -426,6 +430,44 @@ void tst_qnearfieldtagtype2::testCancelNdefOperation()
 {
     tester.testCancelNdefOperation();
 }
+
+void tst_qnearfieldtagtype2::testRawAccessAndNdefAccess(const QList<QNdefMessage> &messages)
+{
+    QSignalSpy okSpy(tester.target, SIGNAL(requestCompleted(const QNearFieldTarget::RequestId&)));
+    QSignalSpy errSpy(tester.target, SIGNAL(error(QNearFieldTarget::Error, const QNearFieldTarget::RequestId&)));
+    QSignalSpy ndefMessageReadSpy(tester.target, SIGNAL(ndefMessageRead(QNdefMessage)));
+    QSignalSpy ndefMessageWriteSpy(tester.target, SIGNAL(ndefMessagesWritten()));
+
+    int okCount = 0;
+    int errCount = 0;
+    int ndefReadCount = 0;
+    int ndefWriteCount = 0;
+
+    // write ndef first
+    tester.target->writeNdefMessages(messages);
+    ++ndefWriteCount;
+    QTRY_COMPARE(ndefMessageWriteSpy.count(), ndefWriteCount);
+
+    //QNearFieldTarget::RequestId id = tester.target->readBlock(3);
+
+}
+
+void tst_qnearfieldtagtype2::void testRawAndNdefAccess()
+{
+    tester.touchTarget();
+    QNdefMessage message;
+    QNdefNfcUriRecord uriRecord;
+    uriRecord.setUri(QUrl("http://qt.nokia.com"));
+    message.append(uriRecord);
+
+    QList<QNdefMessage> messages;
+    messages.append(message);
+
+    testRawAccessAndNdefAccess(messages);
+    tester.removeTarget();
+}
+
+
 QTEST_MAIN(tst_qnearfieldtagtype2);
 
 #include "tst_qnearfieldtagtype2.moc"
