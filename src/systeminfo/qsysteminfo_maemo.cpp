@@ -131,7 +131,11 @@ QString QSystemInfoPrivate::currentLanguage() const
 {
 #if defined(Q_WS_MAEMO_6)
     GConfItem langItem("/meegotouch/i18n/language");
-    return langItem.value().toString().left(2);
+    QString lang = langItem.value().toString().left(2);
+    if (lang.isEmpty()) {
+        lang = QString::fromLocal8Bit(qgetenv("LANG")).left(2);
+    }
+    return lang;
 #else
     return QSystemInfoLinuxCommonPrivate::currentLanguage();
 #endif
