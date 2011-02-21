@@ -684,9 +684,7 @@ static bool qt_writeFileExtensionCondition(
     QT_GALLERY_ITEM_PROPERTY("audioCodec"    , "nfo:codec(?x)"                    , String  , CanRead | CanSort | CanFilter | IsResource), \
     QT_GALLERY_ITEM_PROPERTY("channelCount"  , "nfo:channels(?x)"                 , Int     , CanRead | CanSort | CanFilter | IsResource), \
     QT_GALLERY_ITEM_PROPERTY("duration"      , "nfo:duration(?x)"                 , Int     , CanRead | CanSort | CanFilter | IsResource), \
-    QT_GALLERY_ITEM_PROPERTY("genre"         , "nfo:genre(?x)"                    , String  , CanRead | CanWrite | CanSort | CanFilter), \
     QT_GALLERY_ITEM_PROPERTY("lastPlayed"    , "nie:contentAccessed(?x)"          , DateTime, CanRead | CanSort | CanFilter), \
-    QT_GALLERY_ITEM_PROPERTY("resumePosition", "nfo:streamPosition(?x)"           , Int     , CanRead | CanWrite | CanSort | CanFilter), \
     QT_GALLERY_ITEM_PROPERTY("performer"     , "nmm:artistName(nmm:performer(?x))", String  , CanRead | CanSort | CanFilter), \
     QT_GALLERY_ITEM_PROPERTY("playCount"     , "nie:usageCounter(?x)"             , Int     , CanRead | CanWrite | CanSort | CanFilter), \
     QT_GALLERY_ITEM_PROPERTY("sampleRate"    , "nfo:sampleRate(?x)"               , Int     , CanRead | CanSort | CanFilter | IsResource)
@@ -740,6 +738,7 @@ static const QGalleryItemProperty qt_galleryAudioPropertyList[] =
     QT_GALLERY_ITEM_PROPERTY("artist"     , "nmm:artistName(nmm:performer(?x))"                  , String, CanRead | CanSort | CanFilter),
     QT_GALLERY_ITEM_PROPERTY("composer"   , "nmm:artistName(nmm:composer(?x))"                   , String, CanRead | CanSort | CanFilter),
     QT_GALLERY_ITEM_PROPERTY("discNumber" , "nmm:setNumber(nmm:musicAlbumDisc(?x))"              , Int   , CanRead | CanSort | CanFilter),
+    QT_GALLERY_ITEM_PROPERTY("genre"      , "nfo:genre(?x)"                                      , String, CanRead | CanWrite | CanSort | CanFilter),
     QT_GALLERY_ITEM_PROPERTY("lyrics"     , "nmm:lyrics(?x)"                                     , String, CanRead | CanWrite | CanSort | CanFilter),
     QT_GALLERY_ITEM_PROPERTY("trackNumber", "nmm:trackNumber(?x)"                                , Int   , CanRead | CanWrite | CanSort | CanFilter)
 };
@@ -818,11 +817,12 @@ static const QGalleryItemProperty qt_galleryVideoPropertyList[] =
 {
     QT_GALLERY_NFO_MEDIA_PROPERTIES,
     QT_GALLERY_NFO_VISUAL_PROPERTIES,
-    QT_GALLERY_ITEM_PROPERTY("director"      , "nmm:artistName(nmm:director(?x))"  , String, CanRead | CanSort | CanFilter | IsResource),
-    QT_GALLERY_ITEM_PROPERTY("frameRate"     , "nfo:frameRate(?x)"                 , Double, CanRead | CanSort | CanFilter | IsResource),
-    QT_GALLERY_ITEM_PROPERTY("producer"      , "nmm:artistName(nmm:producedBy(?x))", String, CanRead | CanSort | CanFilter | IsResource),
-    QT_GALLERY_ITEM_PROPERTY("videoCodec"    , "nfo:codec(?x)"                     , String, CanRead | CanSort | CanFilter | IsResource),
-    QT_GALLERY_ITEM_PROPERTY("videoBitRate"  , "nfo:averageBitrate(?x)"            , Int   , CanRead | CanSort | CanFilter | IsResource),
+    QT_GALLERY_ITEM_PROPERTY("director"      , "nmm:artistName(nmm:director(?x))"  , String, CanRead | CanSort  | CanFilter | IsResource),
+    QT_GALLERY_ITEM_PROPERTY("frameRate"     , "nfo:frameRate(?x)"                 , Double, CanRead | CanSort  | CanFilter | IsResource),
+    QT_GALLERY_ITEM_PROPERTY("producer"      , "nmm:artistName(nmm:producedBy(?x))", String, CanRead | CanSort  | CanFilter | IsResource),
+    QT_GALLERY_ITEM_PROPERTY("resumePosition", "nfo:streamPosition(?x)"            , Int   , CanRead | CanWrite | CanSort   | CanFilter),
+    QT_GALLERY_ITEM_PROPERTY("videoCodec"    , "nfo:codec(?x)"                     , String, CanRead | CanSort  | CanFilter | IsResource),
+    QT_GALLERY_ITEM_PROPERTY("videoBitRate"  , "nfo:averageBitrate(?x)"            , Int   , CanRead | CanSort  | CanFilter | IsResource),
 };
 
 static const QGalleryCompositeProperty qt_galleryVideoCompositePropertyList[] =
