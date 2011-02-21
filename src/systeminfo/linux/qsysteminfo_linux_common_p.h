@@ -232,6 +232,9 @@ public:
     int physicalHeight(int screen);
     int physicalWidth(int screen);
     QSystemDisplayInfo::BacklightState backlightStatus(int screen); //1.2
+Q_SIGNALS:
+    void orientationChanged(QSystemDisplayInfo::DisplayOrientation newOrientation);
+
 };
 
 class QSystemStorageInfoLinuxCommonPrivate : public QObject

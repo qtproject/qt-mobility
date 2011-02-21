@@ -192,6 +192,8 @@ void Dialog::setupDevice()
     updateKeyboard(di->keyboardTypes());
 
     keyboardFlipRadioButton->setChecked(di->isKeyboardFlippedOpen());
+    connect(di,SIGNAL(keyboardFlipped(bool)),this,SLOT(keyboardFlipped(bool)));
+
     wirelessKeyboardConnectedRadioButton->setChecked(di->isWirelessKeyboardConnected());
 
     QString lockState;
@@ -979,3 +981,7 @@ void Dialog::orientationChanged(QSystemDisplayInfo::DisplayOrientation orientati
 }
 
 
+void Dialog::keyboardFlipped(bool on)
+{
+    keyboardFlipRadioButton->setChecked(on);
+}
