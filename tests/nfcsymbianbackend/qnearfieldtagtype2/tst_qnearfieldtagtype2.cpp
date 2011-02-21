@@ -448,11 +448,11 @@ void tst_qnearfieldtagtype2::testRawAccessAndNdefAccess(const QList<QNdefMessage
     ++ndefWriteCount;
     QTRY_COMPARE(ndefMessageWriteSpy.count(), ndefWriteCount);
 
-    //QNearFieldTarget::RequestId id = tester.target->readBlock(3);
-
+    QNearFieldTarget::RequestId id = tester.target->readBlock(0);
+    tester.target->waitForRequestCompleted(id, 50000);
 }
 
-void tst_qnearfieldtagtype2::void testRawAndNdefAccess()
+void tst_qnearfieldtagtype2::testRawAndNdefAccess()
 {
     tester.touchTarget();
     QNdefMessage message;
