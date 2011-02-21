@@ -112,6 +112,7 @@ QGeoMapObjectEngine::~QGeoMapObjectEngine()
 
     latLonTrans.clear();
     latLonItems.clear();
+    latLonItemsRev.clear();
     pixelTrans.clear();
     pixelItems.clear();
     pixelItemsRev.clear();
@@ -149,11 +150,12 @@ void QGeoMapObjectEngine::removeObject(QGeoMapObject *object)
             rectsToUpdate << item->boundingRect();
 
         latLonTrans.remove(object);
-        foreach (QGraphicsItem *item, latLonItems.keys(object)) {
+        foreach (QGraphicsItem *item, latLonItemsRev.values(object)) {
             latLonItems.remove(item);
             latLonScene->removeItem(item);
             delete item;
         }
+        latLonItemsRev.remove(object);
 
         pixelTrans.remove(object);
         foreach (QGraphicsItem *item, pixelItemsRev.values(object)) {
@@ -849,7 +851,7 @@ void QGeoMapObjectEngine::invalidateObject(QGeoMapObject *obj)
     const QRectF view = mdp->latLonViewport().boundingRect();
 
     bool needsPixelUpdate = false;
-    foreach (QGraphicsItem *item, latLonItems.keys(obj)) {
+    foreach (QGraphicsItem *item, latLonItemsRev.values(obj)) {
         if (item->boundingRect().intersects(view)) {
             needsPixelUpdate = true;
             break;
@@ -925,7 +927,7 @@ static void addGroupToScene(QGeoMapObjectEngine *eng, QGeoMapGroupObject *group)
         if (subGroup) {
             addGroupToScene(eng, subGroup);
         } else {
-            foreach (QGraphicsItem *i, eng->latLonItems.keys(object))
+            foreach (QGraphicsItem *i, eng->latLonItemsRev.values(object))
                 eng->latLonScene->addItem(i);
             foreach (QGraphicsItem *i, eng->pixelItemsRev.values(object))
                 eng->pixelScene->addItem(i);
@@ -1018,19 +1020,21 @@ void QGeoMapObjectEngine::updateLatLonTransform(QGeoMapObject *object)
         }
     }
 
-    QList<QGraphicsItem*> items = latLonItems.keys(object);
+    QList<QGraphicsItem*> items = latLonItemsRev.values(object);
     if (items.size() != polys.size()) {
         foreach (QGraphicsItem *item, items) {
             latLonScene->removeItem(item);
             latLonItems.remove(item);
             delete item;
         }
+        latLonItemsRev.remove(object);
 
         foreach (QPolygonF poly, polys) {
             QGraphicsItem *item = new QGraphicsPolygonItem(poly);
             //item->setZValue(object->zValue());
             item->setVisible(true);
             latLonItems.insert(item, object);
+            latLonItemsRev.insertMulti(object, item);
             latLonScene->addItem(item);
         }
     } else {

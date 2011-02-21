@@ -88,6 +88,7 @@ public:
     QHash<const QGeoMapObject*, QTransform> latLonTrans;
     QGraphicsScene *latLonScene;
     QHash<QGraphicsItem*, QGeoMapObject*> latLonItems;
+    QHash<QGeoMapObject*, QGraphicsItem*> latLonItemsRev;
 
     QHash<const QGeoMapObject*, QTransform> pixelTrans;
     QGraphicsScene *pixelScene;
