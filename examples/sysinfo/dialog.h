@@ -113,6 +113,7 @@ private slots:
     void chargerTypeChanged(QSystemBatteryInfo::ChargerType chargerType);
 
     void orientationChanged(QSystemDisplayInfo::DisplayOrientation);
+    void keyboardFlipped(bool);
 
 
 };

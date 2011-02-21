@@ -1046,9 +1046,8 @@ QSystemStorageInfoPrivate::QSystemStorageInfoPrivate(QSystemStorageInfoLinuxComm
 QSystemStorageInfoPrivate::~QSystemStorageInfoPrivate()
 {
 }
-
 QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QSystemDeviceInfoLinuxCommonPrivate *parent)
-        : QSystemDeviceInfoLinuxCommonPrivate(parent), flightMode(0)
+        : QSystemDeviceInfoLinuxCommonPrivate(parent), flightMode(0),gpioFD(-1)
 {
 
  #if !defined(QT_NO_DBUS)
@@ -1059,6 +1058,10 @@ QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QSystemDeviceInfoLinuxCommonP
 
 QSystemDeviceInfoPrivate::~QSystemDeviceInfoPrivate()
 {
+    if (gpioFD == -1) {
+        ::close(gpioFD);
+        gpioFD = -1;
+    }
 }
 
 void QSystemDeviceInfoPrivate::connectNotify(const char *signal)
@@ -1085,6 +1088,19 @@ void QSystemDeviceInfoPrivate::connectNotify(const char *signal)
             qDebug() << "unable to connect to profile_changed";
         }
     }
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(keyboardFlipped(bool))))) {
+        if (gpioFD == -1) {
+            gpioFD = ::open("/dev/input/gpio-keys", O_RDONLY | O_NONBLOCK);
+        }
+
+        if (gpioFD != -1) {
+            notifier = new QSocketNotifier(gpioFD, QSocketNotifier::Read);
+            connect(notifier, SIGNAL(activated(int)), this, SLOT(socketActivated(int)));
+        } else {
+            qDebug() << "Could not open gpiokeys";
+            notifier = 0;
+        }
+    }
     QSystemDeviceInfoLinuxCommonPrivate::connectNotify(signal);
 }
 
@@ -1107,6 +1123,12 @@ void QSystemDeviceInfoPrivate::disconnectNotify(const char *signal)
                                "com.nokia.profiled",
                                "profile_changed",
                                this, SLOT(profileChanged(bool, bool, QString, QList<ProfileDataValue>)));
+    }
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(keyboardFlipped(bool))))) {
+        if (gpioFD != -1) {
+            ::close(gpioFD);
+            gpioFD = -1;
+        }
     }
     QSystemDeviceInfoLinuxCommonPrivate::disconnectNotify(signal);
 }
@@ -1423,24 +1445,31 @@ bool QSystemDeviceInfoPrivate::isKeyboardFlippedOpen()
 {
     bool keyboardFlippedOpen = false;
     unsigned long bits[NBITS(KEY_MAX)] = {0}; /* switch state bits */
-    int eventFd = open("/dev/input/gpio-keys", O_RDONLY | O_NONBLOCK);
+    int eventFd = ::open("/dev/input/gpio-keys", O_RDONLY | O_NONBLOCK);
 
-    if (-1 == eventFd) {
-        goto probing_done;
+    if ((eventFd != -1) && (ioctl(eventFd, EVIOCGSW(KEY_MAX), bits) != -1)) {
+            keyboardFlippedOpen = (0 == test_bit(SW_KEYPAD_SLIDE, bits));
     }
-
-    if (-1 == ioctl(eventFd, EVIOCGSW(KEY_MAX), bits)) {
-        goto probing_done;
-    }
-
-    keyboardFlippedOpen = (0 == test_bit(SW_KEYPAD_SLIDE, bits));
-
-probing_done:
     if (eventFd != -1) {
-        close(eventFd);
+        ::close(eventFd);
     }
     return keyboardFlippedOpen;
 }
+
+void QSystemDeviceInfoPrivate::socketActivated(int fd)
+{
+    int result = 0;
+     do {
+        struct input_event inputEvent;
+        result = read(fd, &inputEvent, sizeof(inputEvent));
+        if (result == sizeof(inputEvent)) {
+            if(inputEvent.type > 0 && inputEvent.code == SW_KEYPAD_SLIDE) {
+                Q_EMIT keyboardFlipped(!inputEvent.value);
+            }
+        }
+    } while (result > 0);
+}
+
 
 bool QSystemDeviceInfoPrivate::keypadLightOn(QSystemDeviceInfo::KeypadType type)
 {
