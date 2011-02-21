@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -91,9 +91,10 @@ private Q_SLOTS:
 tst_QLlcpServer::tst_QLlcpServer()
 {
 }
+
 void tst_QLlcpServer::initTestCase()
 {
-	qRegisterMetaType<QLlcpSocket::Error>("QLlcpSocket::Error");
+    qRegisterMetaType<QLlcpSocket::SocketError>("QLlcpSocket::Error");
 }
 
 void tst_QLlcpServer::cleanupTestCase()
@@ -143,7 +144,7 @@ void tst_QLlcpServer::newConnection()
     QLlcpSocket *socket = server.nextPendingConnection();
     QVERIFY(socket != NULL);
     QSignalSpy readyReadSpy(socket, SIGNAL(readyRead()));
-    QSignalSpy errorSpy(socket, SIGNAL(error(QLlcpSocket::Error)));
+    QSignalSpy errorSpy(socket, SIGNAL(error(QLlcpSocket::SocketError)));
 
     //Get data from client
     QTRY_VERIFY(!readyReadSpy.isEmpty());
@@ -230,7 +231,7 @@ void tst_QLlcpServer::newConnection_wait()
     QLlcpSocket *socket = server.nextPendingConnection();
     QVERIFY(socket != NULL);
 
-    QSignalSpy errorSpy(socket, SIGNAL(error(QLlcpSocket::Error)));
+    QSignalSpy errorSpy(socket, SIGNAL(error(QLlcpSocket::SocketError)));
     //Get data from client
     const int Timeout = 10 * 1000;
 
@@ -285,7 +286,7 @@ void tst_QLlcpServer::newConnection_wait()
     //Now data has been sent,check the if existing error
     if (!errorSpy.isEmpty())
         {
-            QLlcpSocket::Error error = errorSpy.first().at(0).value<QLlcpSocket::Error>();
+            QLlcpSocket::SocketError error = errorSpy.first().at(0).value<QLlcpSocket::Error>();
             qDebug("QLlcpSocket::Error =%d", error);
         }
     QVERIFY(errorSpy.isEmpty());
@@ -344,7 +345,7 @@ void tst_QLlcpServer::api_coverage()
     QCOMPARE(unsupportedPort,server.serverPort());
 
     QVERIFY(server.isListening() == true);
-    QVERIFY(server.serverError() == QLlcpServer::UnknownSocketError);
+    QVERIFY(server.serverError() == QLlcpSocket::UnknownSocketError);
     server.close();
 }
 

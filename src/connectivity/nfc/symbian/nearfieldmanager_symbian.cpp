@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -323,7 +323,7 @@ void CNearFieldManager::MessageDetected( CNdefMessage* aMessage )
         TRAP(error, msg = QNFCNdefUtility::CNdefMsg2QNdefMsgL( *aMessage));
         if (error == KErrNone)
             {
-            QT_TRYCATCH_ERROR(error, iCallback.invokeTargetDetectedHandler(msg));
+            QT_TRYCATCH_ERROR(error, iCallback.invokeNdefMessageHandler(msg));
             Q_UNUSED(error);//just skip the error
             }
         delete aMessage;
