@@ -67,6 +67,8 @@ private Q_SLOTS:
     void echoServer();   // handshake 1,2  - work with  tst_qllcpsocketlocal echoClient
     void testCase2();   // handshake 3   - work with  tst_qllcpsocketlocal testCase2
 
+    void dumpServer();
+
     void initTestCase();
     void cleanupTest();
 
@@ -212,6 +214,21 @@ void tst_qllcpsocketremote::echoServer()
     QCOMPARE(errorSpy.count(), 0);
 }
 
+/*!
+ Description: This server will all dump data received from client
+ To test some negtive case
+*/
+void tst_qllcpsocketremote::dumpServer()
+    {
+    QLlcpSocket remoteSocket;
+    QSignalSpy readyReadSpy(&remoteSocket, SIGNAL(readyRead()));
+    bool ret = remoteSocket.bind(m_port);
+    QVERIFY(ret);
+    QString message("dumpServer test");
+    QNfcTestUtil::ShowAutoMsg(message, &readyReadSpy);
+
+    QTest::qWait(2 * 1000);
+    }
 /*!
  Description: Unit test for NFC LLCP connection-less mode socket - remote peer (passive)
 

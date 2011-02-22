@@ -63,13 +63,15 @@ public:
     tst_qllcpsocketlocal();
 private Q_SLOTS:
 
-    // ALERT: Handshake required, do NOT change the sequence of handshaking testcases.
     void echoClient();   // handshake 1,2  - work with  tst_qllcpsocketremote echoServer
     void echoClient_data();
     void testCase2();   // handshake 3   - work with  tst_qllcpsocketremote testCase2
     void testCase3();
     void coverageTest1();
-
+    //advanced test
+    void deleteSocketWhenInUse();
+    void waitBytesWrittenInSlot();
+    //negtive test
     void negTestCase1();
     void negTestCase2();
     //void negTestCase3();
@@ -357,6 +359,216 @@ void tst_qllcpsocketlocal::coverageTest1()
     QVERIFY(ret == -1);
 }
 
+class BytesWrittenSlot : public QObject
+{
+    Q_OBJECT
+public:
+    BytesWrittenSlot(QLlcpSocket* s): m_socket(s)
+        {
+        connect(m_socket,SIGNAL(bytesWritten(qint64)),this,SLOT(gotBytesWritten(qint64)));
+        }
+private slots:
+    void gotBytesWritten(qint64 w)
+        {
+        qDebug()<<"In BytesWrittenSlot: Delete the socket when still alive...";
+        delete m_socket;
+        }
+private:
+    QLlcpSocket* m_socket;
+};
+/*!
+ Description: Add a case to test delete the socket in the slot when the transmission is still alive.
+ CounterPart test: tst_QLlcpServer::newConnection()
+*/
+void tst_qllcpsocketlocal::deleteSocketWhenInUse()
+    {
+    QString message("deleteSocketWhenInUse test");
+    QNfcTestUtil::ShowAutoMsg(message);
+
+    QLlcpSocket* socket = new QLlcpSocket;
+
+    bool retBool = socket->bind(m_port);
+    QVERIFY(retBool);
+
+    // STEP 3: Local peer sends the  message to the remote peer
+    QSignalSpy errorSpy(socket, SIGNAL(error(QLlcpSocket::SocketState)));
+
+    BytesWrittenSlot slot(socket);
+
+    QString echo;
+    for (int i = 0; i < 2000; i++)
+        echo.append((char)(i%26 + 'a'));
+    //Prepare data to send
+    QByteArray outPayload;
+    QDataStream out(&outPayload, QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_4_6);
+    out << (quint16)0;
+    out << echo;
+
+    out.device()->seek(0);
+    out << (quint16)(outPayload.size() - sizeof(quint16));
+
+    bool ret = socket->writeDatagram(outPayload, m_target, m_port);
+    QVERIFY(ret == 0);
+
+    QTest::qWait(5 * 1000);//give some time to wait bytesWritten signal
+    QVERIFY(errorSpy.isEmpty());
+
+    }
+
+class WaitBytesWrittenSlot : public QObject
+{
+    Q_OBJECT
+public:
+    WaitBytesWrittenSlot(QLlcpSocket& s): m_socket(s),m_signalCount(0)
+        {
+        connect(&m_socket,SIGNAL(bytesWritten(qint64)),this,SLOT(gotBytesWritten(qint64)));
+        }
+private slots:
+void gotBytesWritten(qint64 w)
+        {
+        m_signalCount++;
+        qDebug()<<"Got BytesWritten() signal number = "<<m_signalCount;
+        const int Timeout = 50;//3* 1000 seems too long, nfc server will panic spray signal
+        bool ret = m_socket.waitForBytesWritten(Timeout);
+        if (!ret)
+            {
+            qDebug()<<"WaitBytesWrittenSlot() in slot of ReadyRead signal return false";
+            }
+        else
+            {
+            qDebug()<<"WaitBytesWrittenSlot() in slot of ReadyRead signal return true";
+            }
+        }
+private:
+    QLlcpSocket& m_socket;
+    int m_signalCount;
+};
+
+void tst_qllcpsocketlocal::waitBytesWrittenInSlot()
+{
+    QLlcpSocket localSocket;
+
+    QCOMPARE(localSocket.state(), QLlcpSocket::UnconnectedState);
+    QSignalSpy stateChangedSpy(&localSocket, SIGNAL(stateChanged(QLlcpSocket::SocketState)));
+
+    QSignalSpy readyReadSpy(&localSocket, SIGNAL(readyRead()));
+    bool retBool = localSocket.bind(m_port);
+    QVERIFY(retBool);
+    QVERIFY(!stateChangedSpy.isEmpty());
+    QCOMPARE(localSocket.state(), QLlcpSocket::BoundState);
+
+    // Wait remote part bind
+    QString messageBox("Wait remote bind");
+    QNfcTestUtil::ShowAutoMsg(messageBox);
+
+    // STEP 3: Local peer sends the  message to the remote peer
+    QSignalSpy errorSpy(&localSocket, SIGNAL(error(QLlcpSocket::SocketState)));
+    QSignalSpy bytesWrittenSpy(&localSocket, SIGNAL(bytesWritten(qint64)));
+
+    WaitBytesWrittenSlot slot(localSocket);
+
+    QString echoPayload;
+    for (int i = 0; i < 2000; i++)
+        echoPayload.append((char)(i%26 + 'a'));
+    //Prepare data to send
+    QByteArray outPayload;
+    QDataStream out(&outPayload, QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_4_6);
+    out << (quint16)0;
+    out << echoPayload;
+
+    out.device()->seek(0);
+    out << (quint16)(outPayload.size() - sizeof(quint16));
+
+    bool ret = localSocket.writeDatagram(outPayload, m_target, m_port);
+    QVERIFY(ret == 0);
+
+    QTRY_VERIFY(!bytesWrittenSpy.isEmpty());
+
+    qint64 written = 0;
+    qint32 lastSignalCount = 0;
+    while(true)
+    {
+        for(int i = lastSignalCount; i < bytesWrittenSpy.count(); i++) {
+            written += bytesWrittenSpy.at(i).at(0).value<qint64>();
+        }
+        lastSignalCount = bytesWrittenSpy.count();
+        qDebug() << "current signal count = " << lastSignalCount;
+        qDebug() << "written payload size = " << written;
+        if (written < outPayload.size()) {
+            QTRY_VERIFY(bytesWrittenSpy.count() > lastSignalCount);
+        }
+        else {
+            break;
+        }
+    }
+    qDebug() << "Overall bytesWritten = " << written;
+    qDebug() << "Overall block size = " << outPayload.size();
+    QVERIFY(written == outPayload.size());
+
+    // STEP 4: Start read payload from server
+    QString messageBox2("Wait remote send buffer");
+    QNfcTestUtil::ShowAutoMsg(messageBox2, &readyReadSpy);
+
+    QByteArray inPayload;
+    while(localSocket.hasPendingDatagrams()) {
+        QByteArray tempBuffer;
+        tempBuffer.resize(localSocket.pendingDatagramSize());
+        quint8 remotePort = 0;
+        QSignalSpy readyRead(&localSocket, SIGNAL(readyRead()));
+        qint64 readSize = localSocket.readDatagram(tempBuffer.data()
+                                                   , tempBuffer.size()
+                                                   , &m_target, &remotePort);
+        QVERIFY(readSize != -1);
+        QVERIFY(remotePort > 0);
+        inPayload.append(tempBuffer);
+        qDebug() << "Client-- read inPayload size=" << inPayload.size();
+        qDebug() << "Client-- read remotePort=" << remotePort;
+        if (inPayload.size() >= (int)sizeof(quint16)) {
+            break;
+        }
+        else
+        {
+            qDebug() << "Client-- not enough header";
+            QTRY_VERIFY(!readyRead.isEmpty());
+        }
+    }
+
+    QDataStream in(inPayload);
+    in.setVersion(QDataStream::Qt_4_6);
+    quint16 headerSize = 0; // size of real echo payload
+    in >> headerSize;
+    qDebug() << "Client-- read headerSize=" << headerSize;
+    while (inPayload.size() < headerSize + (int)sizeof(quint16)){
+        QSignalSpy readyRead(&localSocket, SIGNAL(readyRead()));
+        QTRY_VERIFY(!readyRead.isEmpty());
+        if(localSocket.hasPendingDatagrams()) {
+            QByteArray tempBuffer;
+            tempBuffer.resize(localSocket.pendingDatagramSize());
+            quint8 remotePort = 0;
+            qint64 readSize = localSocket.readDatagram(tempBuffer.data()
+                                                       , tempBuffer.size()
+                                                       , &m_target, &remotePort);
+            QVERIFY(readSize != -1);
+            QVERIFY(remotePort > 0);
+            inPayload.append(tempBuffer);
+            qDebug() << "Client-- read long blocksize=" << inPayload.size();
+        }
+    }
+
+    QDataStream in2(inPayload);
+    in2.setVersion(QDataStream::Qt_4_6);
+    in2 >> headerSize;
+    QString inEchoPayload;
+    in2 >> inEchoPayload;
+    qDebug() << "Client-- in echo string len:" << inEchoPayload.length();
+    qDebug("Client-- in echo string = %s", qPrintable(inEchoPayload));
+    //test the echoed string is same as the original string
+    QVERIFY(echoPayload == inEchoPayload);
+    // make sure the no error signal emitted
+    QVERIFY(errorSpy.isEmpty());
+}
 /*!
  Description: writeDatagram negative testcase I - invalid port num & wait* functions
 */
