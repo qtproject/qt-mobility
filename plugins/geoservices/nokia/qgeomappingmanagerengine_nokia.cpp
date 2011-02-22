@@ -57,6 +57,7 @@
 #include <QNetworkProxy>
 #include <QSize>
 #include <QDir>
+#include <QUrl>
 #include <QDateTime>
 
 #include <QDebug>
@@ -104,8 +105,16 @@ QGeoMappingManagerEngineNokia::QGeoMappingManagerEngineNokia(const QMap<QString,
 
     if (parameters.contains("mapping.proxy")) {
         QString proxy = parameters.value("mapping.proxy").toString();
-        if (!proxy.isEmpty())
-            m_networkManager->setProxy(QNetworkProxy(QNetworkProxy::HttpProxy, proxy, 8080));
+        if (!proxy.isEmpty()) {
+            QUrl proxyUrl(proxy);
+            if (proxyUrl.isValid()) {
+                m_networkManager->setProxy(QNetworkProxy(QNetworkProxy::HttpProxy, 
+                    proxyUrl.host(),
+                    proxyUrl.port(8080),
+                    proxyUrl.userName(),
+                    proxyUrl.password()));
+            }
+        }
     }
 
     if (parameters.contains("mapping.host")) {

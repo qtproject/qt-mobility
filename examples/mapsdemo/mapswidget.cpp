@@ -51,7 +51,11 @@
 #include "qgeocoordinate.h"
 
 GeoMap::GeoMap(QGeoMappingManager *manager, MapsWidget *mapsWidget) :
-    QGraphicsGeoMap(manager), mapsWidget(mapsWidget)
+    QGraphicsGeoMap(manager),
+    mapsWidget(mapsWidget),
+    panActive(false),
+    markerPressed(false),
+    pressed(0)
 {
     this->setFocus();
 }
