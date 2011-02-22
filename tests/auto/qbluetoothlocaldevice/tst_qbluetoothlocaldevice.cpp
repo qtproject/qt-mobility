@@ -48,8 +48,6 @@
 #include <qbluetoothlocaldevice.h>
 QTM_USE_NAMESPACE
 
-Q_DECLARE_METATYPE(QBluetoothLocalDevice::Pairing)
-
 #define WAIT_FOR_CONDITION(a,e)            \
     for (int _i = 0; _i < 5000; _i += 1) {  \
         if ((a) == (e)) break;             \
@@ -64,8 +62,6 @@ public:
     ~tst_QBluetoothLocalDevice();
 
 private slots:
-    void initTestCase();
-
     void tst_powerOn();
     void tst_powerOff();
     void tst_hostModes();
@@ -83,8 +79,6 @@ private slots:
 
 tst_QBluetoothLocalDevice::tst_QBluetoothLocalDevice()
 {
-    qRegisterMetaType<QBluetoothLocalDevice::Pairing>("QBluetoothLocalDevice::Pairing");
-    qRegisterMetaType<QBluetoothAddress>("QBluetoothAddress");
     // start with host powered off
     QBluetoothLocalDevice *device = new QBluetoothLocalDevice();
     device->setHostMode(QBluetoothLocalDevice::HostPoweredOff);
@@ -96,11 +90,6 @@ tst_QBluetoothLocalDevice::tst_QBluetoothLocalDevice()
 
 tst_QBluetoothLocalDevice::~tst_QBluetoothLocalDevice()
 {
-}
-
-void tst_QBluetoothLocalDevice::initTestCase()
-{
-    qRegisterMetaType<QBluetoothLocalDevice::Pairing>("QBluetoothLocalDevice::Pairing");
 }
 
 void tst_QBluetoothLocalDevice::tst_hostModes_data()

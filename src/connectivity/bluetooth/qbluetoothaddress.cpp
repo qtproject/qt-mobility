@@ -61,6 +61,18 @@ QTM_BEGIN_NAMESPACE
     Returns true if the Bluetooth addresses are not equal, otherwise returns true.
 */
 
+namespace
+{
+class BluetoothAddressRegisterMetaTypes
+{
+public:
+    BluetoothAddressRegisterMetaTypes()
+    {
+        qRegisterMetaType<QBluetoothAddress>("QBluetoothAddress");
+    }
+} _registerBluetoothAddressMetaTypes;
+}
+
 /*!
     Constructs an null Bluetooth address.
 */

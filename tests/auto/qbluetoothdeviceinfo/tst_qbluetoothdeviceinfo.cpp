@@ -85,7 +85,6 @@ tst_QBluetoothDeviceInfo::~tst_QBluetoothDeviceInfo()
 
 void tst_QBluetoothDeviceInfo::initTestCase()
 {
-    qRegisterMetaType<QBluetoothAddress>("QBluetoothAddress");
     qRegisterMetaType<QBluetoothDeviceInfo::ServiceClasses>("QBluetoothDeviceInfo::ServiceClasses");
     qRegisterMetaType<QBluetoothDeviceInfo::MajorDeviceClass>("QBluetoothDeviceInfo::MajorDeviceClass");
     // start Bluetooth if not started
