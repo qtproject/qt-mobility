@@ -4,6 +4,7 @@ TARGET = QtGallery
 
 include (../../common.pri)
 INCLUDEPATH+= .
+QT=core
 
 !static:DEFINES += QT_MAKEDLL
 DEFINES += QT_BUILD_GALLERY_LIB
