@@ -212,7 +212,7 @@ bool QMessageFolderFilter::operator!=(const QMessageFolderFilter& other) const
 /*!
     \fn QMessageFolderFilter::byName(const QString &pattern, QMessageDataComparator::LikeComparator cmp)
 
-    Returns a filter matching folders whose display name matches \a value, according to \a cmp.
+    Returns a filter matching folders whose display name matches \a pattern, according to \a cmp.
 
     \sa QMessageFolder::name()
 */
@@ -236,7 +236,7 @@ bool QMessageFolderFilter::operator!=(const QMessageFolderFilter& other) const
 /*!
     \fn QMessageFolderFilter::byPath(const QString &pattern, QMessageDataComparator::LikeComparator cmp)
 
-    Returns a filter matching folders whose path matches \a value, according to \a cmp.
+    Returns a filter matching folders whose path matches \a pattern, according to \a cmp.
 
     \sa QMessageFolder::path()
 */

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,35 +39,25 @@
 **
 ****************************************************************************/
 
-#include "qnearfieldllcpdevice_symbian_p.h"
+//! [complete snippet]
+import Qt 4.7
+import QtMultimediaKit 1.1
 
-QTM_BEGIN_NAMESPACE
+Text {
+    text: "Click Me!";
+    font.pointSize: 24;
+    width: 150; height: 50;
 
-QNearFieldLlcpDeviceSymbian::QNearFieldLlcpDeviceSymbian(RNfcServer& nfcServer, QObject *parent)
-                                  : QNearFieldTarget(parent), mNfcServer(nfcServer) 
-{
-    setAccessMethods(QNearFieldTarget::LlcpAccess);
+    //! [play sound on click]
+    SoundEffect {
+        id: playSound
+        source: "soundeffect.wav"
+    }
+    MouseArea {
+        id: playArea
+        anchors.fill: parent
+        onPressed: { playSound.play() }
+    }
+    //! [play sound on click]
 }
-
-QByteArray QNearFieldLlcpDeviceSymbian::uid() const
-{
-    return QByteArray();
-}
-
-QNearFieldTarget::Type QNearFieldLlcpDeviceSymbian::type() const
-{
-    return QNearFieldTarget::AnyTarget;
-}
-
-QNearFieldTarget::AccessMethods QNearFieldLlcpDeviceSymbian::accessMethods() const
-{
-    return QNearFieldTarget::LlcpAccess;
-}
-
-void QNearFieldLlcpDeviceSymbian::setAccessMethods(const QNearFieldTarget::AccessMethods& accessMethods)
-{
-}
-
-#include "moc_qnearfieldllcpdevice_symbian_p.cpp"
-
-QTM_END_NAMESPACE
+//! [complete snippet]
