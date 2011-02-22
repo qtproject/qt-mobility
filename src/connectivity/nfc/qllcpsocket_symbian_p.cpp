@@ -208,7 +208,7 @@ void QLlcpSocketPrivate::invokeBytesWritten(qint64 bytes)
     END
 }
 
-void QLlcpSocketPrivate::invokeStateChanged(QLlcpSocket::State socketState)
+void QLlcpSocketPrivate::invokeStateChanged(QLlcpSocket::SocketState socketState)
 {
     BEGIN
     Q_Q(QLlcpSocket);
@@ -350,13 +350,13 @@ qint64 QLlcpSocketPrivate::writeDatagram(const QByteArray &datagram,
     return writeDatagram(datagram.constData(),datagram.size(),target,port);
 }
 
-QLlcpSocket::Error QLlcpSocketPrivate::error() const
+QLlcpSocket::SocketError QLlcpSocketPrivate::error() const
 {
     BEGIN_END
     return m_error;
 }
 
-QLlcpSocket::State QLlcpSocketPrivate::state() const
+QLlcpSocket::SocketState QLlcpSocketPrivate::state() const
 {
     BEGIN_END
     return m_state->state();

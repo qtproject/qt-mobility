@@ -78,15 +78,6 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \enum QLlcpServer::Error
-
-    This enum describes the errors that can occur. The most recent error can be retrieved through a
-    call to serverError().
-
-    \value UnknownSocketError   An unidentified error has occurred.
-*/
-
-/*!
     \fn QLlcpServer::newConnection()
 
     This signal is emitted every time a new connection is available.
@@ -203,7 +194,7 @@ QLlcpSocket *QLlcpServer::nextPendingConnection()
 /*!
     Returns the last error that occurred.
 */
-QLlcpServer::Error QLlcpServer::serverError() const
+QLlcpSocket::SocketError QLlcpServer::serverError() const
 {
     Q_D(const QLlcpServer);
 

@@ -273,7 +273,7 @@ qint64 QLlcpSocket::writeDatagram(const QByteArray &datagram, QNearFieldTarget *
 /*!
     Returns the type of error that last occurred.
 */
-QLlcpSocket::Error QLlcpSocket::error() const
+QLlcpSocket::SocketError QLlcpSocket::error() const
 {
     Q_D(const QLlcpSocket);
 
@@ -283,7 +283,7 @@ QLlcpSocket::Error QLlcpSocket::error() const
 /*!
     Returns the state of the socket.
 */
-QLlcpSocket::State QLlcpSocket::state() const
+QLlcpSocket::SocketState QLlcpSocket::state() const
 {
     Q_D(const QLlcpSocket);
 

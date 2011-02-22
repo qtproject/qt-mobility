@@ -84,9 +84,9 @@ QLlcpSocket *QLlcpServerPrivate::nextPendingConnection()
     return 0;
 }
 
-QLlcpServer::Error QLlcpServerPrivate::serverError() const
+QLlcpSocket::SocketError QLlcpServerPrivate::serverError() const
 {
-    return QLlcpServer::UnknownSocketError;
+    return QLlcpSocket::UnknownSocketError;
 }
 
 QTM_END_NAMESPACE

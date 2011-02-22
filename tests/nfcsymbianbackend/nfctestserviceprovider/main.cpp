@@ -91,11 +91,14 @@ signals:
 public slots:
         void handleMessage(const QNdefMessage& msg, QNearFieldTarget* target)
         {
-         w->setWindowTitle( "nfc test service provider" );
-         w->showMaximized();
-         qInstallMsgHandler(MyOutputHandler);
-         qDebug() << " MyContentHandler handleMessage was called." << endl; 
-         qInstallMsgHandler(0);
+        QFile m_file("E:\\testserviceprovider.dat");
+        m_file.open(QIODevice::ReadWrite | QIODevice::Append);
+        QDataStream *m_dataStream = new QDataStream(&m_file);
+        QByteArray msgArray = msg.toByteArray();
+        (*m_dataStream) << msgArray;
+        delete m_dataStream;
+                       
+        w->close();
         }
         
 public:
@@ -103,7 +106,7 @@ public:
         : QObject(parent)
     {
     qDebug() << " MyContentHandler constructed !!!!!" << endl;
-      connect(this, SIGNAL(userHandleMessage(const QNdefMessage& , QNearFieldTarget* )),
+    connect(this, SIGNAL(userHandleMessage(const QNdefMessage& , QNearFieldTarget* )),
             this, SLOT(handleMessage(const QNdefMessage& , QNearFieldTarget* )));
     }
 
@@ -140,30 +143,22 @@ int main(int argc, char *argv[])
     QApplication app(argc, argv);
     
     w = new nfctestserviceprovider();
+    w->setWindowTitle( "nfc test service provider" );
+    w->showMaximized();
     
-    qInstallMsgHandler(MyOutputHandler);
+    //qInstallMsgHandler(MyOutputHandler);
     
     qRegisterMetaType<QNearFieldTarget*>("QNearFieldTarget*"); 
-    // qRegisterMetaType<QNearFieldTarget>("QNearFieldTarget"); 
     qRegisterMetaType<QNdefMessage>("QNdefMessage"); 
 
-    
-    qDebug() << "app.applicationName: " << app.applicationName() << "QCoreApplication:: applicaitonname" << QCoreApplication::applicationName() << endl;
-    qDebug() << "app.applicationName: " << app.applicationFilePath() << endl;
-
-   
     registerExampleService();
     
     MyContentHandler handler;
     QNearFieldManager manager;
     
-    qDebug() << " begin to register target detect handler" << endl;
-
-    manager.registerTargetDetectedHandler(&handler, SIGNAL(userHandleMessage(QNdefMessage, QNearFieldTarget*)));
-    
-    qDebug() << " register target detect handler ok" << endl;
-
+    int handle = manager.registerTargetDetectedHandler(&handler, SIGNAL(userHandleMessage(QNdefMessage, QNearFieldTarget*)));
     int ret = app.exec();
+    manager.unregisterTargetDetectedHandler(handle);
     delete w;
     return ret;
 }

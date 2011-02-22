@@ -65,7 +65,7 @@ ContentHandlerInterface::ContentHandlerInterface(QObject* parent)
 void ContentHandlerInterface::handleMessage(const QByteArray& btArray)
 {
      // incoming message from ECOM content handler loader eventually cause object & method registered via below
-     // registerTargetDetectHandler to be invoked with message as parameter.  i.e. MyContentHandler::handleMessage(message)
+     // registerNdefMessageHandler to be invoked with message as parameter.  i.e. MyContentHandler::handleMessage(message)
      // from above.
 
 
@@ -101,6 +101,7 @@ QNearFieldManagerPrivateImpl::~QNearFieldManagerPrivateImpl()
 {
     BEGIN
     delete m_target;
+    qDeleteAll(m_targetList);
     delete m_serviceRegister;
     delete m_symbianbackend;
     END
@@ -129,8 +130,8 @@ int QNearFieldManagerPrivateImpl::getFreeId()
     Returns an identifier, which can be used to unregister the handler, on success; otherwise
     returns -1.
 */
-int QNearFieldManagerPrivateImpl::registerTargetDetectedHandler(QObject *object,
-                                                                const QMetaMethod &method)
+int QNearFieldManagerPrivateImpl::registerNdefMessageHandler(QObject *object,
+                                                             const QMetaMethod &method)
 {
     QServiceFilter filter("com.nokia.symbian.NdefMessageHandler");
     QCoreApplication* app = QCoreApplication::instance();
@@ -180,9 +181,9 @@ int QNearFieldManagerPrivateImpl::registerTargetDetectedHandler(QObject *object,
     Returns an identifier, which can be used to unregister the handler, on success; otherwise
     returns -1.
 */
-int QNearFieldManagerPrivateImpl::registerTargetDetectedHandler(const QNdefFilter &filter,
-                                                                QObject *object,
-                                                                const QMetaMethod &method)
+int QNearFieldManagerPrivateImpl::registerNdefMessageHandler(const QNdefFilter &filter,
+                                                             QObject *object,
+                                                             const QMetaMethod &method)
 {
     BEGIN
     int id = getFreeId();
@@ -219,7 +220,7 @@ int QNearFieldManagerPrivateImpl::registerTargetDetectedHandler(const QNdefFilte
 
     Returns true on success; otherwise returns false.
 */
-bool QNearFieldManagerPrivateImpl::unregisterTargetDetectedHandler(int id)
+bool QNearFieldManagerPrivateImpl::unregisterNdefMessageHandler(int id)
 {
     BEGIN
      if ( 0xffff == id )
@@ -252,8 +253,8 @@ bool QNearFieldManagerPrivateImpl::startTargetDetection(const QList<QNearFieldTa
     {
     BEGIN
     TRAPD(err, m_symbianbackend->StartTargetDetectionL(targetTypes));
-    return err == KErrNone;
     END
+    return err == KErrNone;
     }
 
 void QNearFieldManagerPrivateImpl::stopTargetDetection()
@@ -279,8 +280,7 @@ void QNearFieldManagerPrivateImpl::targetFound(QNearFieldTarget *target)
         return;
     }
     if (m_target){
-        delete m_target;
-        m_target = NULL;
+        m_targetList.append(m_target);
     }
     m_target = target;
     emit targetDetected(target);
@@ -300,8 +300,8 @@ void QNearFieldManagerPrivateImpl::_q_privateHandleMessageSlot(QNdefMessage aMsg
     Helper function to invoke the filtered TargetDetectedHandler for a found \a target.
 */
 
-void QNearFieldManagerPrivateImpl::invokeTargetDetectedHandler(const QNdefMessage msg)
-    {
+void QNearFieldManagerPrivateImpl::invokeNdefMessageHandler(const QNdefMessage msg)
+{
     BEGIN
     for (int i = 0; i < m_registeredHandlers.count(); ++i) {
         if (m_freeIds.contains(i))
@@ -353,13 +353,13 @@ void QNearFieldManagerPrivateImpl::invokeTargetDetectedHandler(const QNdefMessag
 
     }
     END
-    }
+}
 
 /*!
     Callback function when symbian NFC backend lost the NFC \a target.
 */
 void QNearFieldManagerPrivateImpl::targetDisconnected()
-    {
+{
     BEGIN
     if (m_target)
         {
@@ -367,7 +367,7 @@ void QNearFieldManagerPrivateImpl::targetDisconnected()
         emit targetLost(m_target);
         }
     END
-    }
+}
 
 #include "moc_qnearfieldmanager_symbian_p.cpp"
 

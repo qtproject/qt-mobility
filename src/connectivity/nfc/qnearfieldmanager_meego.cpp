@@ -133,7 +133,7 @@ QNearFieldManagerPrivateImpl::QNearFieldManagerPrivateImpl()
 QNearFieldManagerPrivateImpl::~QNearFieldManagerPrivateImpl()
 {
     foreach (int id, m_registeredHandlers.keys())
-        unregisterTargetDetectedHandler(id);
+        unregisterNdefMessageHandler(id);
 
     delete m_manager;
     delete m_adapter;
@@ -189,9 +189,9 @@ QNearFieldTarget *QNearFieldManagerPrivateImpl::targetForPath(const QString &pat
     return nearFieldTarget;
 }
 
-int QNearFieldManagerPrivateImpl::registerTargetDetectedHandler(const QString &filter,
-                                                                QObject *object,
-                                                                const QMetaMethod &method)
+int QNearFieldManagerPrivateImpl::registerNdefMessageHandler(const QString &filter,
+                                                             QObject *object,
+                                                             const QMetaMethod &method)
 {
     int id = getFreeId();
 
@@ -221,8 +221,8 @@ int QNearFieldManagerPrivateImpl::registerTargetDetectedHandler(const QString &f
     return id;
 }
 
-int QNearFieldManagerPrivateImpl::registerTargetDetectedHandler(QObject *object,
-                                                                const QMetaMethod &method)
+int QNearFieldManagerPrivateImpl::registerNdefMessageHandler(QObject *object,
+                                                             const QMetaMethod &method)
 {
     QFileInfo fi(qApp->applicationFilePath());
     const QString serviceName = QLatin1String("com.nokia.qtmobility.nfc.") + fi.baseName();
@@ -242,9 +242,9 @@ int QNearFieldManagerPrivateImpl::registerTargetDetectedHandler(QObject *object,
     return id;
 }
 
-int QNearFieldManagerPrivateImpl::registerTargetDetectedHandler(const QNdefFilter &filter,
-                                                                QObject *object,
-                                                                const QMetaMethod &method)
+int QNearFieldManagerPrivateImpl::registerNdefMessageHandler(const QNdefFilter &filter,
+                                                             QObject *object,
+                                                             const QMetaMethod &method)
 {
     QString matchString;
 
@@ -296,10 +296,10 @@ int QNearFieldManagerPrivateImpl::registerTargetDetectedHandler(const QNdefFilte
             matchString += QLatin1Char(',');
     }
 
-    return registerTargetDetectedHandler(matchString, object, method);
+    return registerNdefMessageHandler(matchString, object, method);
 }
 
-bool QNearFieldManagerPrivateImpl::unregisterTargetDetectedHandler(int handlerId)
+bool QNearFieldManagerPrivateImpl::unregisterNdefMessageHandler(int handlerId)
 {
     if (handlerId < 0 || handlerId >= m_registeredHandlers.count())
         return false;

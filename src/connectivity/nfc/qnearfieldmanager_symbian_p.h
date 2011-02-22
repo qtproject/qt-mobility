@@ -50,6 +50,7 @@
 #include <QtCore/QObject>
 #include <QtCore/QMetaMethod>
 #include <QPointer>
+#include <QList>
 #include <qremoteserviceregister.h>
 
 class CNearFieldManager;
@@ -87,11 +88,11 @@ public:
     QNearFieldManagerPrivateImpl();
     ~QNearFieldManagerPrivateImpl();
 
-    int registerTargetDetectedHandler(QObject *object, const QMetaMethod &method);
-    int registerTargetDetectedHandler(const QNdefFilter &filter,
-                                      QObject *object, const QMetaMethod &method);
+    int registerNdefMessageHandler(QObject *object, const QMetaMethod &method);
+    int registerNdefMessageHandler(const QNdefFilter &filter,
+                                   QObject *object, const QMetaMethod &method);
 
-    bool unregisterTargetDetectedHandler(int id);
+    bool unregisterNdefMessageHandler(int id);
 
     bool startTargetDetection(const QList<QNearFieldTarget::Type> &targetTypes);
     void stopTargetDetection();
@@ -101,7 +102,7 @@ public://call back function by symbian backend implementation
     void targetDisconnected();
 
 public://call back function by symbian backend implementation
-    void invokeTargetDetectedHandler(const QNdefMessage msg);
+    void invokeNdefMessageHandler(const QNdefMessage msg);
 
 
 private slots:
@@ -122,6 +123,7 @@ private:
     CNearFieldManager* m_symbianbackend;
 
     QPointer<QNearFieldTarget> m_target;
+    QList<QPointer<QNearFieldTarget> > m_targetList;
     //For content handler purpose;
     QObject *m_chobject;
     QMetaMethod m_chmethod;

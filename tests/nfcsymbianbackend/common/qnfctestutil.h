@@ -41,7 +41,9 @@
 #ifndef QNFCTESTUTIL_H
 #define QNFCTESTUTIL_H
 #include <QMessageBox>
+#include "qautomsgbox.h"
 
+const int MsgBoxTimeOutTime = 3*1000;
 class QNfcTestUtil : public QObject
 {
     Q_OBJECT
@@ -51,6 +53,28 @@ public:
         QMessageBox b(QMessageBox::Information, QObject::tr("NFC symbian backend test"),
         message, QMessageBox::Ok);
         b.exec();
+    }
+    static void ShowAutoMsg(const QString& message, QSignalSpy* spy, int count = 1)
+    {
+        QAutoMsgBox w;
+        w.addButton(QMessageBox::Ok);
+        w.setIcon(QMessageBox::Information);
+        w.setText(message);
+        w.setWindowTitle(QObject::tr("NFC symbian backend test"));
+        w.setSignalSpy(spy, count);
+
+        w.exec();
+    }
+    static void ShowAutoMsg(const QString& message, int mseconds = MsgBoxTimeOutTime)
+    {
+        QAutoMsgBox w;
+        w.addButton(QMessageBox::Ok);
+        w.setIcon(QMessageBox::Information);
+        w.setText(message);
+        w.setWindowTitle(QObject::tr("NFC symbian backend test"));
+        w.setDismissTimeOut(mseconds);
+
+        w.exec();
     }
 };
 #endif

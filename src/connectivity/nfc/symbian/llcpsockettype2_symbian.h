@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -81,8 +81,8 @@ public:
     TInt64 BytesAvailable();
 
     //for qt signals
-    void Error(QtMobility::QLlcpSocket::Error aSocketError);
-    void StateChanged(QtMobility::QLlcpSocket::State aSocketState);
+    void Error(QtMobility::QLlcpSocket::SocketError aSocketError);
+    void StateChanged(QtMobility::QLlcpSocket::SocketState aSocketState);
     void ReadyRead();
     void BytesWritten(qint64 aBytes);
 
@@ -203,6 +203,8 @@ private:
     CLlcpSenderAO( MLlcpConnOrientedTransporter& aConnection, CLlcpSocketType2& aSocket );
     // Second phase constructor
     void ConstructL();
+private:
+    void SendRestDataAndSwitchBuffer(RBuf8& aWorkingBuffer, RBuf8& aNextBuffer);
 
 private:
     /*!
@@ -222,6 +224,9 @@ private:
     RBuf8 iSendBuf0;
     RBuf8 iSendBuf1;
     TSendBuffer iCurrentBuffer;
+    TPtrC8 iCurrentSendPtr;
+    TInt iCurrentPos;
+    RBuf8 iCurrentSendBuf;
 };
 class CLlcpReceiverAO : public CActive
 {
