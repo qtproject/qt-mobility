@@ -1040,6 +1040,10 @@ void QGeoMapObjectEngine::updateLatLonTransform(QGeoMapObject *object)
     } else {
         for (int i = 0; i < polys.size(); ++i) {
             QGraphicsItem *item = items.at(i);
+
+            if (!item)
+                continue;
+
             QGraphicsPolygonItem *pi = dynamic_cast<QGraphicsPolygonItem*>(item);
             Q_ASSERT(pi);
             pi->setPolygon(polys.at(i));
@@ -1096,6 +1100,10 @@ void QGeoMapObjectEngine::updatePixelTransform(QGeoMapObject *object)
     } else {
         for (int i = 0; i < polys.size(); ++i) {
             QGraphicsItem *item = items.at(i);
+
+            if (!item)
+                continue;
+
             QGraphicsPolygonItem *pi = dynamic_cast<QGraphicsPolygonItem*>(item);
             Q_ASSERT(pi);
             pi->setPolygon(polys.at(i));
