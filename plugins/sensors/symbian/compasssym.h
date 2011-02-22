@@ -66,7 +66,7 @@ public:
      * @return CCompassSym if successful, leaves on failure
      */
     static CCompassSym* NewL(QSensor *sensor);
-    
+
     /**
      * Destructor
      * Closes the backend resources
@@ -75,42 +75,42 @@ public:
 
     /**
      * start() overrides CSensorBackendSym::start()
-     * This is to allow starting magnetometer before stopping the compass 
+     * This is to allow starting magnetometer before stopping the compass
      */
     void start();
-    
+
     /**
      * stop() overrides CSensorBackendSym::stop()
-     * This is to allow stopping magnetometer before stopping the compass 
+     * This is to allow stopping magnetometer before stopping the compass
      */
     void stop();
-    
+
 private:
     /**
      * Default constructor
      */
     CCompassSym(QSensor *sensor);
-    
+
     /*
      * RecvData is used to retrieve the sensor reading from sensor server
      * It is implemented here to handle compass sensor specific
      * reading data and provides conversion and utility code
-     */  
+     */
     void RecvData(CSensrvChannel &aChannel);
-    
+
     /**
      * Second phase constructor
      * Initialize the backend resources
      */
     void ConstructL();
-    
+
 public:
     /**
      * Holds the id of the compass
      */
     static char const * const id;
-    
-private:     
+
+private:
     QCompassReading iReading;
     TSensrvMagneticNorthData iData;
     CMagnetometerSensorSym *iMagnetometer;

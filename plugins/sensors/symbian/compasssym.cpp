@@ -56,7 +56,7 @@ CCompassSym* CCompassSym::NewL(QSensor *sensor)
     CleanupStack::PushL(self);
     self->ConstructL();
     CleanupStack::Pop();
-    return self;    
+    return self;
     }
 
 /**
@@ -80,7 +80,7 @@ CCompassSym::CCompassSym(QSensor *sensor):CSensorBackendSym(sensor)
 
 /**
  * start() overrides CSensorBackendSym::start()
- * This is to allow starting magnetometer before stopping the compass 
+ * This is to allow starting magnetometer before stopping the compass
  */
 void CCompassSym::start()
     {
@@ -92,7 +92,7 @@ void CCompassSym::start()
 
 /**
  * stop() overrides CSensorBackendSym::stop()
- * This is to allow stopping magnetometer before stopping the compass 
+ * This is to allow stopping magnetometer before stopping the compass
  */
 void CCompassSym::stop()
     {
@@ -106,7 +106,7 @@ void CCompassSym::stop()
  * RecvData is used to retrieve the sensor reading from sensor server
  * It is implemented here to handle compass sensor specific
  * reading data and provides conversion and utility code
- */  
+ */
 void CCompassSym::RecvData(CSensrvChannel &aChannel)
     {
     TPckg<TSensrvMagneticNorthData> proxpkg( iData );
@@ -117,7 +117,7 @@ void CCompassSym::RecvData(CSensrvChannel &aChannel)
         return;
         }
     // Get a lock on the reading data
-    iBackendData.iReadingLock.Wait();    
+    iBackendData.iReadingLock.Wait();
     iReading.setAzimuth(iData.iAngleFromMagneticNorth);
     // Retrieve and set the calibration level
     iReading.setCalibrationLevel(iMagnetometer->GetCalibrationLevel());

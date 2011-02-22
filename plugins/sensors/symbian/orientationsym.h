@@ -63,39 +63,39 @@ public:
      * @return COrientationSensorSym if successful, leaves on failure
      */
     static COrientationSensorSym* NewL(QSensor *sensor);
-    
+
     /**
      * Destructor
      * Closes the backend resources
      */
     ~COrientationSensorSym();
-    
+
 private:
     /**
      * Default constructor
      */
     COrientationSensorSym(QSensor *sensor);
-    
+
     /*
      * RecvData is used to retrieve the sensor reading from sensor server
      * It is implemented here to handle orientation sensor specific
      * reading data and provides conversion and utility code
-     */  
+     */
     void RecvData(CSensrvChannel &aChannel);
-    
+
     /**
      * Second phase constructor
      * Initialize the backend resources
      */
     void ConstructL();
-    
+
 public:
     /**
      * Holds the id of the orientation sensor
      */
     static char const * const id;
-    
-private:     
+
+private:
     QOrientationReading iReading;
     TSensrvOrientationData iData;
     };

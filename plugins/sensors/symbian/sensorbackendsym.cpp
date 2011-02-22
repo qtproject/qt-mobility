@@ -64,7 +64,7 @@ void CSensorBackendSym::FindSensorL()
     RSensrvChannelInfoList channelList;
     TSensrvChannelInfo channelInfo;
     channelInfo.iChannelType = iBackendData.iSensorType;
-    // Retrieve the list of channels available    
+    // Retrieve the list of channels available
     finder->FindChannelsL( channelList, channelInfo );
     CleanupStack::PopAndDestroy(finder);
     // Iterate the channel list and look for required sensor
@@ -97,9 +97,9 @@ void CSensorBackendSym::OpenSensorChannelL()
     if( !(iBackendData.iSensorChannel) )
         {
         // Create and Open the Sensor channel
-        iBackendData.iSensorChannel = CSensrvChannel::NewL( iBackendData.iChannelInfo );      
+        iBackendData.iSensorChannel = CSensrvChannel::NewL( iBackendData.iChannelInfo );
         // Open the channel for  sensor
-        iBackendData.iSensorChannel->OpenChannelL();        
+        iBackendData.iSensorChannel->OpenChannelL();
         iBackendData.iReadingLock.CreateLocal();
         iBackendData.iSensorAvailable = ETrue;
         }
@@ -134,7 +134,7 @@ void CSensorBackendSym::CloseSensorChannelL()
 TInt CSensorBackendSym::SetProperty(TSensrvPropertyId aPropertyId, TSensrvPropertyType aPropertyType, TSensrvArrayIndex aArrayIndex, TReal aValue)
     {
     //Creating property object
-    TSensrvProperty prop;   
+    TSensrvProperty prop;
     //Set property Id
     prop.SetPropertyId(aPropertyId);
     //Set Index of property
@@ -175,7 +175,7 @@ TInt CSensorBackendSym::SetMeasurementRange()
         {
         return KErrNone;
         }
-    
+
     TInt err = KErrNone;
     TSensrvPropertyType type = propertyType(KSensrvPropIdMeasureRange, err);
     if(err != KErrNone)
@@ -184,14 +184,14 @@ TInt CSensorBackendSym::SetMeasurementRange()
         }
     //If type is integer
     if(type == ESensrvRealProperty)
-        {    
+        {
         return SetProperty(KSensrvPropIdMeasureRange, ESensrvRealProperty, ESensrvArrayPropertyInfo, sensor()->outputRange());
         }
     //If type is real
     if(type == ESensrvIntProperty)
         {
         return SetProperty(KSensrvPropIdMeasureRange, ESensrvIntProperty, ESensrvArrayPropertyInfo, sensor()->outputRange());
-        }       
+        }
     return KErrNone;
     }
 
@@ -281,7 +281,7 @@ void CSensorBackendSym::StartListeningL()
     if(iBackendData.iDataListening)
         {
         SetProperties();
-        // Start listening to the sensor 
+        // Start listening to the sensor
         // Before calling this api the channel should be found and opened
         iBackendData.iSensorChannel->StartDataListeningL( this,
                 KDesiredReadingCount,
@@ -317,7 +317,7 @@ void CSensorBackendSym::StopListeningL()
  */
 CSensorBackendSym::CSensorBackendSym(QSensor *sensor):QSensorBackend(sensor)
     {
-    // By default enabling Data listening     
+    // By default enabling Data listening
     iBackendData.iDataListening = ETrue;
     // By default disabling Property listening
     iBackendData.iPropertyListening = EFalse;
@@ -340,9 +340,9 @@ void CSensorBackendSym::GetDescription()
         QString str;
         TBuf8<KSensrvPropertyTextBufferSize> desc;
         for(int i=0; i<list.Count(); i++)
-            {            
+            {
             if(list[i].GetArrayIndex() == ESensrvArrayPropertyInfo)
-                {                
+                {
                 continue;
                 }
             list[i].GetValue(desc);
@@ -358,7 +358,7 @@ void CSensorBackendSym::GetDataRate()
     TInt err;
     TRAP(err, iBackendData.iSensorChannel->GetPropertyL(KSensrvPropIdDataRate, KSensrvItemIndexNone, datarate_prop));
     if(err == KErrNone)
-        {    
+        {
         if(datarate_prop.GetArrayIndex() == ESensrvSingleProperty)
         {
             TReal min, max, value;
@@ -366,23 +366,23 @@ void CSensorBackendSym::GetDataRate()
                 {
                 TInt intMin, intMax, intValue;
                 datarate_prop.GetMinValue(intMin);
-                datarate_prop.GetMaxValue(intMax);                
+                datarate_prop.GetMaxValue(intMax);
                 datarate_prop.GetValue(intValue);
                 min = intMin;
                 max = intMax;
-                value = intValue;                
+                value = intValue;
                 }
             else if(datarate_prop.PropertyType() == ESensrvRealProperty)
                 {
                 datarate_prop.GetMinValue(min);
-                datarate_prop.GetMaxValue(max);                
+                datarate_prop.GetMaxValue(max);
                 datarate_prop.GetValue(value);
                 }
             //Set datarate as range
             addDataRate(min, max);
         }
         //if list has more than one item, data rate will be having descrete values, agreed with DS team
-        else if(datarate_prop.GetArrayIndex() == ESensrvArrayPropertyInfo)                             
+        else if(datarate_prop.GetArrayIndex() == ESensrvArrayPropertyInfo)
             {
             TReal datarate;
             TInt min, max, index;
@@ -390,7 +390,7 @@ void CSensorBackendSym::GetDataRate()
             datarate_prop.GetMaxValue(max);
             datarate_prop.GetValue(index);
             for(int i=min; i<=max; i++)
-                {  
+                {
                 TRAP(err, iBackendData.iSensorChannel->GetPropertyL(KSensrvPropIdDataRate, KSensrvItemIndexNone, i, datarate_prop));
                 if(err == KErrNone)
                     {
@@ -419,7 +419,7 @@ void CSensorBackendSym::GetMeasurementrangeAndAccuracy()
     To solve the QT requirement, the mapping used is as follows
     1. If symbian provides only one accuracy, use this with all the measurement ranges
     2. If there are n accuracies and n measurement ranges, map linearly (n:n)
-    3. If there are n accuracies and n+x measurement ranges, then the mapping will be 
+    3. If there are n accuracies and n+x measurement ranges, then the mapping will be
          n:n for each n measurement ranges and accuracies
          KAccuracyInvalid : for each n+x measurement ranges
     */
@@ -428,7 +428,7 @@ void CSensorBackendSym::GetMeasurementrangeAndAccuracy()
     TInt err;
     TRAP(err, iBackendData.iSensorChannel->GetAllPropertiesL(KSensrvPropIdChannelAccuracy, accuracyList));
     if(err == KErrNone)
-        {            
+        {
         // If only one accuracy value present set value to accuracy
         if(accuracyList.Count() == 1)
             {
@@ -446,16 +446,16 @@ void CSensorBackendSym::GetMeasurementrangeAndAccuracy()
         // If more than one accuracy values present set accuracy to invalid
         else
             {
-            accuracy = KAccuracyInvalid; 
+            accuracy = KAccuracyInvalid;
             }
         }
-       
+
     //Scale
     TSensrvProperty scale_prop;
     TReal scale=1;
     TRAP(err, iBackendData.iSensorChannel->GetPropertyL(KSensrvPropIdChannelScale, KSensrvItemIndexNone, scale_prop));
     if(err == KErrNone)
-        {      
+        {
         if(scale_prop.PropertyType() == ESensrvIntProperty)
             {
             TInt intScale;
@@ -469,10 +469,10 @@ void CSensorBackendSym::GetMeasurementrangeAndAccuracy()
             TReal scaleMultiplier;
             Math::Pow(scaleMultiplier, 10, scale);
             scale = scaleMultiplier;
-        }  
-       
+        }
+
     //measurement minimum & maximum
-    TSensrvProperty measurerange_prop;    
+    TSensrvProperty measurerange_prop;
     TRAP(err, iBackendData.iSensorChannel->GetPropertyL(KSensrvPropIdMeasureRange, KSensrvItemIndexNone, measurerange_prop));
     if(err == KErrNone)
         {
@@ -496,7 +496,7 @@ void CSensorBackendSym::GetMeasurementrangeAndAccuracy()
             addOutputRange(measureMin*scale, measureMax*scale, accuracy);
         }
         //if list has more than one item, data rate will be having descrete values, agreed with DS team
-        else if(measurerange_prop.GetArrayIndex() == ESensrvArrayPropertyInfo)                             
+        else if(measurerange_prop.GetArrayIndex() == ESensrvArrayPropertyInfo)
             {
             TReal measureMin, measureMax;
             TInt min, max, index;
@@ -511,13 +511,13 @@ void CSensorBackendSym::GetMeasurementrangeAndAccuracy()
                 TReal realMin, realMax, realValue;
                 measurerange_prop.GetMinValue(realMin);
                 measurerange_prop.GetMaxValue(realMax);
-                measurerange_prop.GetValue(realValue); 
+                measurerange_prop.GetValue(realValue);
                 min = realMin;
                 max = realMax;
                 index = realValue;
                 }
             for(int i=min; i<=max; i++)
-                {  
+                {
                 TRAP(err, iBackendData.iSensorChannel->GetPropertyL(KSensrvPropIdMeasureRange, KSensrvItemIndexNone, i, measurerange_prop));
                 if(err == KErrNone)
                     {
@@ -534,7 +534,7 @@ void CSensorBackendSym::GetMeasurementrangeAndAccuracy()
                         measurerange_prop.GetMinValue(measureMin);
                         measurerange_prop.GetMaxValue(measureMax);
                         }
-                    // If only one accuracy value is present set same accuracy for all 
+                    // If only one accuracy value is present set same accuracy for all
                     if(accuracy != KAccuracyInvalid)
                         {
                         addOutputRange(measureMin*scale, measureMax*scale, accuracy);
@@ -549,7 +549,7 @@ void CSensorBackendSym::GetMeasurementrangeAndAccuracy()
                             }
                         else
                             {
-                            // If less accuracy values are present than measurement ranges then 
+                            // If less accuracy values are present than measurement ranges then
                             // set invalid accuracy for rest of measument ranges
                             addOutputRange(measureMin*scale, measureMax*scale, KAccuracyInvalid);
                             }
@@ -564,10 +564,10 @@ void CSensorBackendSym::GetPropertiesL()
     {
     //description
     GetDescription();
-    
+
     //data rate
     GetDataRate();
-    
+
     //accuracy and measurement ranges
     GetMeasurementrangeAndAccuracy();
     }
@@ -576,14 +576,14 @@ void CSensorBackendSym::GetPropertiesL()
 
 /*
  * InitializeL is used to create and init the sensor server objects
- */ 
+ */
 void CSensorBackendSym::InitializeL()
     {
     // Initialize Symbian Sensor Framework Objects
     OpenSensorChannelL();
     if(sensor())
         {
-        GetPropertiesL();        
+        GetPropertiesL();
         }
     }
 
@@ -612,7 +612,7 @@ void CSensorBackendSym::start()
     if( err != KErrNone )
         {
         sensorStopped();
-        sensorError(err);        
+        sensorError(err);
         }
     }
 
@@ -665,7 +665,7 @@ void CSensorBackendSym::CSensorBackendSym::GetDataListenerInterfaceL (TUid /*aIn
     // No implementation required
     }
 
-// From MSensrvProeprtyListener        
+// From MSensrvProeprtyListener
 
 /**
  * Notification about the changed value of a property.
@@ -674,7 +674,7 @@ void  CSensorBackendSym::PropertyChanged(CSensrvChannel &aChannel, const TSensrv
     {
     TRAP_IGNORE(HandlePropertyChange(aChannel,aChangedProperty))
     }
-   
+
 /**
  *  Property listening failed.
  */
@@ -686,15 +686,15 @@ void  CSensorBackendSym::PropertyError(CSensrvChannel &/*aChannel*/, TSensrvErro
         }
     sensorError(KErrGeneral);
     }
-  
+
 /**
  * Set a listener for the indication, if the setting of the property succeeded.
- */ 
+ */
 void  CSensorBackendSym::SetPropertySuccessIndicationChanged(TSetPropertySuccessIndicator /*aIndication*/)
     {
     // No implementation required
     }
-   
+
 /*
  * Returns a pointer to a specified interface extension - to allow future extension of this class without breaking binary compatibility.
  */

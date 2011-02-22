@@ -69,33 +69,33 @@ public:
      * Closes the backend resources
      */
     ~CProximitySensorSym();
-    
+
 private:
     /**
      * Default constructor
      */
     CProximitySensorSym(QSensor *sensor);
-    
+
     /*
      * RecvData is used to retrieve the sensor reading from sensor server
      * It is implemented here to handle proximity sensor specific
      * reading data and provides conversion and utility code
-     */ 
+     */
     void RecvData(CSensrvChannel &aChannel);
-    
+
     /**
      * Second phase constructor
      * Initialize the backend resources
      */
     void ConstructL();
-    
+
 public:
     /**
      * Holds the id of the proximity sensor
      */
     static char const * const id;
-    
-private:     
+
+private:
     QProximityReading iReading;
     TSensrvProximityData iData;
     };

@@ -68,9 +68,9 @@ public:
      * Closes the backend resources
      */
     ~CTapSensorSym();
-    
+
 private:
-	  /**
+    /**
      * Default constructor
      */
     CTapSensorSym(QSensor *sensor);
@@ -78,20 +78,20 @@ private:
      * RecvData is used to retrieve the sensor reading from sensor server
      * It is implemented here to handle tap sensor specific
      * reading data and provides conversion and utility code
-     */ 
+     */
     void RecvData(CSensrvChannel &aChannel);
    /**
      * Second phase constructor
      * Initialize the backend resources
      */
     void ConstructL();
-    
+
 public:
     /**
      * Holds the id of the magnetometer
-     */	
+     */
     static char const * const id;
-    
+
 private:
     QTapReading iReading;
     TSensrvTappingData iData;

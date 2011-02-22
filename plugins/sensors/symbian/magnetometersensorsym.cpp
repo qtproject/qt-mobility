@@ -59,7 +59,7 @@ CMagnetometerSensorSym* CMagnetometerSensorSym::NewL(QSensor *sensor)
     CleanupStack::PushL(self);
     self->ConstructL();
     CleanupStack::Pop();
-    return self;    
+    return self;
     }
 
 /**
@@ -83,7 +83,7 @@ CMagnetometerSensorSym::CMagnetometerSensorSym(QSensor *sensor):CSensorBackendSy
         {
         setReading<QMagnetometerReading>(&iReading);
         }
-    iBackendData.iSensorType = KSensrvChannelTypeIdMagnetometerXYZAxisData;    
+    iBackendData.iSensorType = KSensrvChannelTypeIdMagnetometerXYZAxisData;
     //Enable Property listening, required to get Calibration level
     SetListening(ETrue, ETrue);
     }
@@ -118,8 +118,8 @@ void CMagnetometerSensorSym::start()
         }
     // Call backend start
     CSensorBackendSym::start();
-    
-    
+
+
     TSensrvProperty dataFormatProperty;
     TRAP(err, iBackendData.iSensorChannel->GetPropertyL(KSensrvPropIdChannelDataFormat, ESensrvSingleProperty, dataFormatProperty));
     if(err == KErrNone)
@@ -129,7 +129,7 @@ void CMagnetometerSensorSym::start()
         if(dataFormat == ESensrvChannelDataFormatScaled)
             {
             TSensrvProperty scaleRangeProperty;
-            TRAP(err, iBackendData.iSensorChannel->GetPropertyL(KSensrvPropIdScaledRange, KSensrvItemIndexNone, scaleRangeProperty)); 
+            TRAP(err, iBackendData.iSensorChannel->GetPropertyL(KSensrvPropIdScaledRange, KSensrvItemIndexNone, scaleRangeProperty));
             if(err == KErrNone)
                 {
                 if(scaleRangeProperty.GetArrayIndex() == ESensrvSingleProperty)
@@ -149,12 +149,12 @@ void CMagnetometerSensorSym::start()
                     {
                     TInt index;
                     if(scaleRangeProperty.PropertyType() == ESensrvIntProperty)
-                        {              
+                        {
                         scaleRangeProperty.GetValue(index);
                         }
                     else if(scaleRangeProperty.PropertyType() == ESensrvRealProperty)
                         {
-                        TReal realIndex;              
+                        TReal realIndex;
                         scaleRangeProperty.GetValue(realIndex);
                         index = realIndex;
                         }
@@ -182,7 +182,7 @@ void CMagnetometerSensorSym::start()
  * RecvData is used to retrieve the sensor reading from sensor server
  * It is implemented here to handle magnetometer sensor specific
  * reading data and provides conversion and utility code
- */ 
+ */
 void CMagnetometerSensorSym::RecvData(CSensrvChannel &aChannel)
     {
     TPckg<TSensrvMagnetometerAxisData> magnetometerpkg( iData );
@@ -192,7 +192,7 @@ void CMagnetometerSensorSym::RecvData(CSensrvChannel &aChannel)
         // If there is no reading available, return without setting
         return;
         }
-    
+
     TReal x, y, z;
     // If Geo values are requested set it
     if(iReturnGeoValues)
@@ -207,20 +207,20 @@ void CMagnetometerSensorSym::RecvData(CSensrvChannel &aChannel)
         x = iData.iAxisXRaw;
         y = iData.iAxisYRaw;
         z = iData.iAxisZRaw;
-        }   
+        }
     // Scale adjustments
     if(iScaleRange)
-	{
-	qoutputrangelist rangeList = sensor()->outputRanges();
+        {
+        qoutputrangelist rangeList = sensor()->outputRanges();
         int outputRange = sensor()->outputRange();
         if (outputRange == -1)
             outputRange = 0;
-	TReal maxValue = rangeList[outputRange].maximum;
-	x = (x/iScaleRange) * maxValue;
-	y = (y/iScaleRange) * maxValue;
-	z = (z/iScaleRange) * maxValue;
-	}
-	// Get a lock on the reading data
+        TReal maxValue = rangeList[outputRange].maximum;
+        x = (x/iScaleRange) * maxValue;
+        y = (y/iScaleRange) * maxValue;
+        z = (z/iScaleRange) * maxValue;
+        }
+    // Get a lock on the reading data
     iBackendData.iReadingLock.Wait();
     iReading.setX(x);
     iReading.setY(y);
@@ -268,6 +268,6 @@ qreal CMagnetometerSensorSym::GetCalibrationLevel()
 void CMagnetometerSensorSym::ConstructL()
     {
     InitializeL();
-    
+
     }
 

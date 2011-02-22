@@ -56,7 +56,7 @@ CAmbientLightSensorSym* CAmbientLightSensorSym::NewL(QSensor *sensor)
     CleanupStack::PushL(self);
     self->ConstructL();
     CleanupStack::Pop();
-    return self;    
+    return self;
     }
 
 /**
@@ -74,7 +74,7 @@ CAmbientLightSensorSym::~CAmbientLightSensorSym()
  */
 CAmbientLightSensorSym::CAmbientLightSensorSym(QSensor *sensor):CSensorBackendSym(sensor)
     {
-    setReading<QAmbientLightReading>(&iReading);    
+    setReading<QAmbientLightReading>(&iReading);
     iBackendData.iSensorType = KSensrvChannelTypeIdAmbientLightData;
     }
 
@@ -82,7 +82,7 @@ CAmbientLightSensorSym::CAmbientLightSensorSym(QSensor *sensor):CSensorBackendSy
  * RecvData is used to retrieve the sensor reading from sensor server
  * It is implemented here to handle ambient light sensor specific
  * reading data and provides conversion and utility code
- */  
+ */
 void CAmbientLightSensorSym::RecvData(CSensrvChannel &aChannel)
     {
     TPckg<TSensrvAmbientLightData> lightpkg( iData );
@@ -99,7 +99,7 @@ void CAmbientLightSensorSym::RecvData(CSensrvChannel &aChannel)
         case TSensrvAmbientLightData::KAmbientLightVeryDark:
         case TSensrvAmbientLightData::KAmbientLightDark:
             {
-            iReading.setLightLevel(QAmbientLightReading::Dark);               
+            iReading.setLightLevel(QAmbientLightReading::Dark);
             }
             break;
 
