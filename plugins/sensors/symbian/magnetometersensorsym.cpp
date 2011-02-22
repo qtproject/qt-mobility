@@ -41,7 +41,6 @@
 
 // Internal Headers
 #include "magnetometersensorsym.h"
-
 #include <sensrvgeneralproperties.h>
 
 /**
@@ -179,18 +178,18 @@ void CMagnetometerSensorSym::start()
     }
 
 /*
- * RecvData is used to retrieve the sensor reading from sensor server
+ * DataReceived is used to retrieve the sensor reading from sensor server
  * It is implemented here to handle magnetometer sensor specific
  * reading data and provides conversion and utility code
  */
-void CMagnetometerSensorSym::RecvData(CSensrvChannel &aChannel)
+void CMagnetometerSensorSym::DataReceived(CSensrvChannel &aChannel, TInt aCount, TInt /*aDataLost*/)
     {
-    TPckg<TSensrvMagnetometerAxisData> magnetometerpkg( iData );
-    TInt ret = aChannel.GetData( magnetometerpkg );
-    if(KErrNone != ret)
+    for (int i = 0; i < aCount; i++)
         {
-        // If there is no reading available, return without setting
-        return;
+        TPckg<TSensrvMagnetometerAxisData> pkg( iData );
+        TInt ret = aChannel.GetData( pkg );
+        if (ret != KErrNone)
+            return;
         }
 
     TReal x, y, z;
@@ -231,6 +230,8 @@ void CMagnetometerSensorSym::RecvData(CSensrvChannel &aChannel)
     iReading.setCalibrationLevel(iCalibrationLevel);
     // Release the lock
     iBackendData.iReadingLock.Signal();
+    // Notify that a reading is available
+    newReadingAvailable();
     }
 
 /**

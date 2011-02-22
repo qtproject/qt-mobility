@@ -41,7 +41,6 @@
 
 // Internal Headers
 #include "rotationsensorsym.h"
-
 #include <sensrvgeneralproperties.h>
 
 /**
@@ -85,19 +84,20 @@ CRotationSensorSym::CRotationSensorSym(QSensor *sensor):CSensorBackendSym(sensor
         }
 
 /*
- * RecvData is used to retrieve the sensor reading from sensor server
+ * DataReceived is used to retrieve the sensor reading from sensor server
  * It is implemented here to handle rotation sensor specific
  * reading data and provides conversion and utility code
  */
-void CRotationSensorSym::RecvData(CSensrvChannel &aChannel)
+void CRotationSensorSym::DataReceived(CSensrvChannel &aChannel, TInt aCount, TInt /*aDataLost*/)
     {
-    TPckg<TSensrvRotationData> rotationpkg( iData );
-    TInt ret = aChannel.GetData( rotationpkg );
-    if(KErrNone != ret)
+    for (int i = 0; i < aCount; i++)
         {
-        // If there is no reading available, return without setting
-        return;
+        TPckg<TSensrvRotationData> pkg( iData );
+        TInt ret = aChannel.GetData( pkg );
+        if (ret != KErrNone)
+            return;
         }
+
     // Get a lock on the reading data
     iBackendData.iReadingLock.Wait();
     // To Do verify with ds and ramsay
@@ -150,6 +150,8 @@ void CRotationSensorSym::RecvData(CSensrvChannel &aChannel)
     iReading.setTimestamp(iData.iTimeStamp.Int64());
     // Release the lock
     iBackendData.iReadingLock.Signal();
+    // Notify that a reading is available
+    newReadingAvailable();
     }
 
 /**

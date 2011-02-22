@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include "tapsensorsym.h"
+
 /**
  * set the id of the Tap sensor
  */
@@ -76,19 +77,20 @@ CTapSensorSym::CTapSensorSym(QSensor *sensor):CSensorBackendSym(sensor)
     iBackendData.iSensorType = KSensrvChannelTypeIdAccelerometerDoubleTappingData;
     }
 /*
- * RecvData is used to retrieve the sensor reading from sensor server
+ * DataReceived is used to retrieve the sensor reading from sensor server
  * It is implemented here to handle tap sensor specific
  * reading data and provides conversion and utility code
  */
-void CTapSensorSym::RecvData(CSensrvChannel &aChannel)
+void CTapSensorSym::DataReceived(CSensrvChannel &aChannel, TInt aCount, TInt /*aDataLost*/)
     {
-    TPckg<TSensrvTappingData> tappkg( iData );
-    TInt ret = aChannel.GetData( tappkg );
-    if(KErrNone != ret)
+    for (int i = 0; i < aCount; i++)
         {
-        // If there is no reading available, return without setting
-        return;
+        TPckg<TSensrvTappingData> pkg( iData );
+        TInt ret = aChannel.GetData( pkg );
+        if (ret != KErrNone)
+            return;
         }
+
     // Get a lock on the reading data
     iBackendData.iReadingLock.Wait();
     //Mapping device tap sensor enum values to Qt tap sensor enum values
@@ -159,6 +161,8 @@ void CTapSensorSym::RecvData(CSensrvChannel &aChannel)
     iReading.setTimestamp(iData.iTimeStamp.Int64());
     // Release the lock
     iBackendData.iReadingLock.Signal();
+    // Notify that a reading is available
+    newReadingAvailable();
     }
 
 /**

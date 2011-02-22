@@ -89,7 +89,7 @@ class CSensorBackendSym : public CBase, public QSensorBackend, public MSensrvDat
          * DataReceived is called by the Sensor Server when ever data is available in the
          * sensor buffer
          */
-        void  DataReceived(CSensrvChannel &aChannel, TInt aCount, TInt aDataLost);
+        //void  DataReceived(CSensrvChannel &aChannel, TInt aCount, TInt aDataLost);
 
         /**
          * DataError is called to indicate an error, fatal errors are unrecoverable
@@ -140,13 +140,6 @@ class CSensorBackendSym : public CBase, public QSensorBackend, public MSensrvDat
          * Deriving class implements this if it requires property change notification
          */
         virtual void HandlePropertyChange(CSensrvChannel &aChannel, const TSensrvProperty &aChangedProperty);
-
-        /*
-         * RecvData is used to retrieve the sensor reading from sensor server
-         * It is implemented the the sensor concrete class and handles sensor specific
-         * reading data and provides conversion and utility code
-         */
-        virtual void RecvData(CSensrvChannel &aChannel) = 0;
 
         /*
          * InitializeL is used to create and init the sensor server objects

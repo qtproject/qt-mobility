@@ -40,13 +40,12 @@
 ****************************************************************************/
 // Internal Includes
 #include "sensorbackendsym.h"
-
 #include <sensrvgeneralproperties.h>
 #include <e32math.h>
 
 // Constants
 const TInt KDesiredReadingCount = 1;
-const TInt KMaximumReadingCount = 1;
+const TInt KMaximumReadingCount = 100;
 const TInt KDefaultBufferingPeriod = 0;
 const TInt KAccuracyInvalid = -1;
 
@@ -630,18 +629,6 @@ void CSensorBackendSym::stop()
     }
 
 //Derived From MSensrvDataListener
-
-/*
- * DataReceived is called by the Sensor Server when ever data is available in the
- * sensor buffer
- */
-void CSensorBackendSym::DataReceived(CSensrvChannel &aChannel, TInt /*aCount*/, TInt /*aDataLost*/)
-    {
-    // Retrieve the data from sensor buffer
-    RecvData(aChannel);
-    // Notify that a reading is available
-    newReadingAvailable();
-    }
 
 /**
  * DataError is called to indicate an error, fatal errors are inrecoverable

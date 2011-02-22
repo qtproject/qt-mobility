@@ -80,19 +80,20 @@ COrientationSensorSym::COrientationSensorSym(QSensor *sensor):CSensorBackendSym(
     }
 
 /*
- * RecvData is used to retrieve the sensor reading from sensor server
+ * DataReceived is used to retrieve the sensor reading from sensor server
  * It is implemented here to handle orientation sensor specific
  * reading data and provides conversion and utility code
  */
-void COrientationSensorSym::RecvData(CSensrvChannel &aChannel)
+void COrientationSensorSym::DataReceived(CSensrvChannel &aChannel, TInt aCount, TInt /*aDataLost*/)
     {
-    TPckg<TSensrvOrientationData> orientationpkg( iData );
-    TInt ret = aChannel.GetData( orientationpkg );
-    if(KErrNone != ret)
+    for (int i = 0; i < aCount; i++)
         {
-        // If there is no reading available, return without setting
-        return;
+        TPckg<TSensrvOrientationData> pkg( iData );
+        TInt ret = aChannel.GetData( pkg );
+        if (ret != KErrNone)
+            return;
         }
+
     // Get a lock on the reading data
     iBackendData.iReadingLock.Wait();
     //Mapping device orientation enum values to Qt Orientation enum values
@@ -150,6 +151,8 @@ void COrientationSensorSym::RecvData(CSensrvChannel &aChannel)
     iReading.setTimestamp(iData.iTimeStamp.Int64());
     // Release the lock
     iBackendData.iReadingLock.Signal();
+    // Notify that a reading is available
+    newReadingAvailable();
     }
 
 /**

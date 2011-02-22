@@ -103,19 +103,20 @@ void CCompassSym::stop()
     }
 
 /*
- * RecvData is used to retrieve the sensor reading from sensor server
+ * DataReceived is used to retrieve the sensor reading from sensor server
  * It is implemented here to handle compass sensor specific
  * reading data and provides conversion and utility code
  */
-void CCompassSym::RecvData(CSensrvChannel &aChannel)
+void CCompassSym::DataReceived(CSensrvChannel &aChannel, TInt aCount, TInt /*aDataLost*/)
     {
-    TPckg<TSensrvMagneticNorthData> proxpkg( iData );
-    TInt ret = aChannel.GetData( proxpkg );
-    if(KErrNone != ret)
+    for (int i = 0; i < aCount; i++)
         {
-        // If there is no reading available, return without setting
-        return;
+        TPckg<TSensrvMagneticNorthData> pkg( iData );
+        TInt ret = aChannel.GetData( pkg );
+        if (ret != KErrNone)
+            return;
         }
+
     // Get a lock on the reading data
     iBackendData.iReadingLock.Wait();
     iReading.setAzimuth(iData.iAngleFromMagneticNorth);
@@ -125,6 +126,8 @@ void CCompassSym::RecvData(CSensrvChannel &aChannel)
     iReading.setTimestamp(iData.iTimeStamp.Int64());
     // Release the lock
     iBackendData.iReadingLock.Signal();
+    // Notify that a reading is available
+    newReadingAvailable();
     }
 
 /**

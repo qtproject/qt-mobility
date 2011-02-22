@@ -82,19 +82,20 @@ CLightSensorSym::CLightSensorSym(QSensor *sensor):CSensorBackendSym(sensor)
         }
 
 /*
- * RecvData is used to retrieve the sensor reading from sensor server
+ * DataReceived is used to retrieve the sensor reading from sensor server
  * It is implemented here to handle Light data sensor specific
  * reading data and provides conversion and utility code
  */
-void CLightSensorSym::RecvData(CSensrvChannel &aChannel)
+void CLightSensorSym::DataReceived(CSensrvChannel &aChannel, TInt aCount, TInt aDataLost)
     {
-    TPckg<TSensrvAmbientLightLuxData> luxdatapkg( iData );
-    TInt ret = aChannel.GetData( luxdatapkg );
-    if(KErrNone != ret)
+    for (int i = 0; i < aCount; i++)
         {
-        // If there is no reading available, return without setting
-        return;
+        TPckg<TSensrvAmbientLightLuxData> pkg( iData );
+        TInt ret = aChannel.GetData( pkg );
+        if (ret != KErrNone)
+            return;
         }
+
     TReal lightValue = iData.iAmbientLight;
 
     // Get a lock on the reading data
@@ -105,6 +106,8 @@ void CLightSensorSym::RecvData(CSensrvChannel &aChannel)
     iReading.setLux(lightValue);
     // Release the lock
     iBackendData.iReadingLock.Signal();
+    // Notify that a reading is available
+    newReadingAvailable();
     }
 
 /**

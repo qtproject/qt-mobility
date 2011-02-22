@@ -144,19 +144,20 @@ void CAccelerometerSensorSym::start()
 }
 
 /*
- * RecvData is used to retrieve the sensor reading from sensor server
+ * DataReceived is used to retrieve the sensor reading from sensor server
  * It is implemented here to handle accelerometer sensor specific
  * reading data and provides conversion and utility code
  */
-void CAccelerometerSensorSym::RecvData(CSensrvChannel &aChannel)
+void CAccelerometerSensorSym::DataReceived(CSensrvChannel &aChannel, TInt aCount, TInt /*aDataLost*/)
     {
-    TPckg<TSensrvAccelerometerAxisData> accelerometerpkg( iData );
-    TInt ret = aChannel.GetData( accelerometerpkg );
-    if(KErrNone != ret)
+    for (int i = 0; i < aCount; i++)
         {
-        // If there is no reading available, return without setting
-        return;
+        TPckg<TSensrvAccelerometerAxisData> pkg( iData );
+        TInt ret = aChannel.GetData( pkg );
+        if (ret != KErrNone)
+            return;
         }
+
     TReal x = iData.iAxisX;
     TReal y = iData.iAxisY;
     TReal z = iData.iAxisZ;
@@ -186,6 +187,8 @@ void CAccelerometerSensorSym::RecvData(CSensrvChannel &aChannel)
     iReading.setTimestamp(iData.iTimeStamp.Int64());
     // Release the lock
     iBackendData.iReadingLock.Signal();
+    // Notify that a reading is available
+    newReadingAvailable();
     }
 
 /**

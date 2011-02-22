@@ -90,11 +90,11 @@ private:
     CMagnetometerSensorSym(QSensor *sensor);
 
     /*
-     * RecvData is used to retrieve the sensor reading from sensor server
+     * DataReceived is used to retrieve the sensor reading from sensor server
      * It is implemented here to handle magnetometer sensor specific
      * reading data and provides conversion and utility code
      */
-    void RecvData(CSensrvChannel &aChannel);
+    void DataReceived(CSensrvChannel &aChannel, TInt aCount, TInt aDataLost);
 
     /**
      * HandlePropertyChange is called from backend, to indicate a change in property
