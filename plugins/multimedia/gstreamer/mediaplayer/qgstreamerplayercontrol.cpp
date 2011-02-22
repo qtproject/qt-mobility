@@ -184,6 +184,7 @@ void QGstreamerPlayerControl::setPosition(qint64 pos)
 {
     if (m_mediaStatus == QMediaPlayer::EndOfMedia) {
         m_mediaStatus = QMediaPlayer::LoadedMedia;
+        m_seekToStartPending = true;
         emit mediaStatusChanged(m_mediaStatus);
     }
 
@@ -209,8 +210,10 @@ void QGstreamerPlayerControl::playOrPause(QMediaPlayer::State newState)
     QMediaPlayer::State oldState = m_state;
     QMediaPlayer::MediaStatus oldMediaStatus = m_mediaStatus;
 
-    if (m_mediaStatus == QMediaPlayer::EndOfMedia)
+    if (m_mediaStatus == QMediaPlayer::EndOfMedia) {
         m_mediaStatus = QMediaPlayer::BufferedMedia;
+        m_seekToStartPending = true;
+    }
 
     if (m_seekToStartPending) {
         m_session->pause();
@@ -254,6 +257,7 @@ void QGstreamerPlayerControl::playOrPause(QMediaPlayer::State newState)
     if (m_mediaStatus != oldMediaStatus)
         emit mediaStatusChanged(m_mediaStatus);
 
+    emit positionChanged(position());
 }
 
 void QGstreamerPlayerControl::stop()
@@ -261,9 +265,12 @@ void QGstreamerPlayerControl::stop()
     if (m_state != QMediaPlayer::StoppedState) {
         m_state = QMediaPlayer::StoppedState;
         m_session->pause();
-        m_seekToStartPending = true;
         updateState(m_session->state());
-        emit positionChanged(0);
+
+        if (m_mediaStatus != QMediaPlayer::EndOfMedia) {
+            m_seekToStartPending = true;
+            emit positionChanged(position());
+        }
         emit stateChanged(m_state);
 
         //do not release the resource if player
@@ -370,6 +377,8 @@ void QGstreamerPlayerControl::setMedia(const QMediaContent &content, QIODevice *
     if (m_state != oldState)
         emit stateChanged(m_state);
 
+    emit positionChanged(position());
+
     if (m_state != QMediaPlayer::PlayingState)
         m_resources->release();
 }
@@ -430,6 +439,7 @@ void QGstreamerPlayerControl::updateState(QMediaPlayer::State state)
 void QGstreamerPlayerControl::processEOS()
 {
     m_mediaStatus = QMediaPlayer::EndOfMedia;
+    emit positionChanged(position());
     stop();
     emit mediaStatusChanged(m_mediaStatus);
 }
