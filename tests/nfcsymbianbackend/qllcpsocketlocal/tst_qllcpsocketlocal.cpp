@@ -378,7 +378,7 @@ private:
 };
 /*!
  Description: Add a case to test delete the socket in the slot when the transmission is still alive.
- CounterPart test: tst_QLlcpServer::newConnection()
+ CounterPart test: tst_qllcpsocketremote::dumpServer()
 */
 void tst_qllcpsocketlocal::deleteSocketWhenInUse()
     {
@@ -444,7 +444,12 @@ private:
     QLlcpSocket& m_socket;
     int m_signalCount;
 };
-
+/*!
+ Description: Test WaitForBytesWritten() in slot of
+ bytesWritten signal, make sure the signal will not
+ be emitted twice in the slot function.
+ CounterPart test: tst_qllcpsocketremote::echoServer()
+*/
 void tst_qllcpsocketlocal::waitBytesWrittenInSlot()
 {
     QLlcpSocket localSocket;

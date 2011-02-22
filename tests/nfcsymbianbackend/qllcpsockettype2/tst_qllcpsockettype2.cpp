@@ -800,7 +800,7 @@ private:
 };
 /*!
  Description: Add a case to test delete the socket in the slot when the transmission is still alive.
- CounterPart test: tst_QLlcpServer::newConnection()
+ CounterPart test: tst_QLlcpServer::negTestCase1()
 */
 void tst_qllcpsockettype2::deleteSocketWhenInUse()
     {
