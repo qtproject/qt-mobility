@@ -85,6 +85,8 @@ private:
 
     void updateKeyboard(QSystemDeviceInfo::KeyboardTypeFlags type);
 
+    QString storageStateToString(QSystemStorageInfo::StorageState state);
+
 private slots:
     void tabChanged(int index);
     void getVersion(int index);
@@ -114,6 +116,8 @@ private slots:
 
     void orientationChanged(QSystemDisplayInfo::DisplayOrientation);
     void keyboardFlipped(bool);
+
+    void storageStateChanged(const QString &vol, QSystemStorageInfo::StorageState state);
 
 
 };

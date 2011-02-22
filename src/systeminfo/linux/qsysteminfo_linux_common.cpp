@@ -128,6 +128,12 @@
 #endif
 #include "qsysteminfo_dbus_p.h"
 
+#if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MEEGO)
+#define STORAGEPOLL 5 * 1000 //5 seconds for desktop
+#else
+#define STORAGEPOLL 2 * 60 *1000 // 2 minutes for maemo/meego
+#endif
+
 static QString sysinfodValueForKey(const QString& key)
 {
     QString value = "";
@@ -1942,7 +1948,7 @@ int QSystemDisplayInfoLinuxCommonPrivate::getDPIHeight(int screen)
 }
 
 QSystemStorageInfoLinuxCommonPrivate::QSystemStorageInfoLinuxCommonPrivate(QObject *parent)
-    : QObject(parent)
+    : QObject(parent),storageTimer(0)
 {
     halIsAvailable = halAvailable();
 #if !defined(QT_NO_UDISKS)
@@ -1993,6 +1999,13 @@ void QSystemStorageInfoLinuxCommonPrivate::connectNotify(const char *signal)
                 connect(notifier, SIGNAL(activated(int)), this, SLOT(inotifyActivated()));
             }
         }
+    }
+    if (QLatin1String(signal) ==
+        QLatin1String(QMetaObject::normalizedSignature(SIGNAL(storageStateChanged(const QString &, QSystemStorageInfo::StorageState))))) {
+        storageTimer = new QTimer(this);
+        storageTimer->setSingleShot(true);
+        connect(storageTimer, SIGNAL(timeout()), this, SLOT(checkFilesystem()));
+        storageTimer->start(STORAGEPOLL);
     }
 }
 
@@ -2109,6 +2122,12 @@ qint64 QSystemStorageInfoLinuxCommonPrivate::totalDiskSpace(const QString &drive
         return (double)totalBlocks * blockSize;
     }
     return 0;
+}
+
+void QSystemStorageInfoLinuxCommonPrivate::checkFilesystem()
+{
+    checkAvailableStorage();
+    storageTimer->start( STORAGEPOLL);
 }
 
 QSystemStorageInfo::DriveType QSystemStorageInfoLinuxCommonPrivate::typeForDrive(const QString &driveVolume)
@@ -2339,40 +2358,34 @@ QString QSystemStorageInfoLinuxCommonPrivate::uriForDrive(const QString &driveVo
 QSystemStorageInfo::StorageState QSystemStorageInfoLinuxCommonPrivate::getStorageState(const QString &driveVolume)
 {
     QSystemStorageInfo::StorageState storState = QSystemStorageInfo::UnknownStorageState;
-    struct statfs fs;
-    if (statfs(driveVolume.toLocal8Bit(), &fs) == 0) {
-        if ( fs.f_bfree != 0) {
-            long percent = 100 -(fs.f_blocks - fs.f_bfree) * 100 / fs.f_blocks;
-            //       qDebug()  << driveVolume << percent;
-
-            if (percent < 41 && percent > 10 ) {
-                storState = QSystemStorageInfo::LowStorageState;
-            } else if (percent < 11 && percent > 2 ) {
-                storState =  QSystemStorageInfo::VeryLowStorageState;
-            } else if (percent < 3  ) {
-                storState =  QSystemStorageInfo::CriticalStorageState;
-            } else {
-                 storState =  QSystemStorageInfo::NormalStorageState;
-            }
-        }
+    float aspace = availableDiskSpace(driveVolume);
+    float tspace = totalDiskSpace(driveVolume);
+    float percent = (aspace / tspace) * 100;
+    if (percent < 3) {
+        storState = QSystemStorageInfo::CriticalStorageState;
+    } else if (percent < 11) {
+        storState = QSystemStorageInfo::VeryLowStorageState;
+    } else  if (percent < 41) {
+        storState = QSystemStorageInfo::LowStorageState;
+    } else {
+        storState = QSystemStorageInfo::NormalStorageState;
     }
-//    qDebug()  << driveVolume << storState;
-   return storState;
+    return storState;
 }
 
 //QT_LINUXBASE
 
 void QSystemStorageInfoLinuxCommonPrivate::checkAvailableStorage()
 {
-    QMap<QString, QString> oldDrives = mountEntriesMap;
-    foreach (const QString &vol, oldDrives.keys()) {
+    foreach (const QString &vol, logicalDrives()) {
         QSystemStorageInfo::StorageState storState = getStorageState(vol);
         if (!stateMap.contains(vol)) {
             stateMap.insert(vol,storState);
+            Q_EMIT storageStateChanged(vol, storState);
         } else {
+
             if (stateMap.value(vol) != storState) {
-                stateMap[vol] = storState;
-                //      qDebug() << "storage state changed" << storState;
+                stateMap.insert(vol,storState);
                 Q_EMIT storageStateChanged(vol, storState);
             }
         }
