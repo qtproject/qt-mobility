@@ -29,6 +29,10 @@ PRIVATE_HEADERS += qsysteminfocommon_p.h
 
 DEFINES += QT_BUILD_SYSINFO_LIB QT_MAKEDLL
 
+simulator {
+    SOURCES += qsystemalignedtimer_stub.cpp
+    HEADERS += qsystemalignedtimer_stub_p.h
+}
 
 win32:!simulator {
     contains(CONFIG,release) {
