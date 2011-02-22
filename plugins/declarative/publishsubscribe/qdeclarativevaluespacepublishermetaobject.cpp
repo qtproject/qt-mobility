@@ -79,6 +79,6 @@ void QDeclarativeValueSpacePublisherMetaObject::setValue(int id, void **a)
         QVariant &v = *reinterpret_cast<QVariant*>(a[0]);
 
         QDeclarativeValueSpacePublisher *pub = qobject_cast<QDeclarativeValueSpacePublisher*>(object());
-        pub->m_publisher->setValue(key, v);
+        pub->queueChange(key, v);
     }
 }

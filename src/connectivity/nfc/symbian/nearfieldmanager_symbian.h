@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -38,6 +38,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
 #ifndef QNEARFIELDMANAGER_SYMBIAN_H_
 #define QNEARFIELDMANAGER_SYMBIAN_H_
 
@@ -76,7 +77,7 @@ public:
 
     void StartTargetDetectionL(const QList<QtMobility::QNearFieldTarget::Type> &aTargetTypes);
     void stopTargetDetection();
-    //for registerTargetDetectedHandler ... api
+    //for registerNdefMessageHandler ... api
     TInt AddNdefSubscription( const QtMobility::QNdefRecord::TypeNameFormat aTnf,
                                        const QByteArray& aType );
     void RemoveNdefSubscription( const QtMobility::QNdefRecord::TypeNameFormat aTnf,

@@ -212,7 +212,9 @@ ProjPolygon::ProjPolygon(const QPolygonF &poly, const ProjCoordinateSystem &syst
 }
 
 ProjPolygon::~ProjPolygon()
-{}
+{
+    delete d;
+}
 
 bool ProjPolygon::convert(const ProjCoordinateSystem &system)
 {

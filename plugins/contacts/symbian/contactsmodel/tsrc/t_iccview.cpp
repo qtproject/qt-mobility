@@ -960,7 +960,7 @@ void CheckForPhbkSyncPluginL()
 			test.Printf(_L("\n"));
 			test.Printf(_L("This test only works with Contacts the test plugin and not the original phonebooksync plugin."));
 			test.Printf(_L("Depending on the build to removed the plugin in different ways:"));
-			test.Printf(_L("hardware - delete the line \"ECOM_PLUGIN(phbksyncplugin.dll,1020428C.rsc)\" from phbksync.iby"));
+			test.Printf(_L("hardware - delete the line \"ECOM_PLUGIN(phbksyncplugin.dll,1020428c.rsc)\" from phbksync.iby"));
 			test.Printf(_L("winscw - delete phbksyncplugin.dll from %epocroot%/epoc32/release/winscw/udeb or similarly named directory"));
 			test.Printf(_L("\n"));
 			test(0);  // stop

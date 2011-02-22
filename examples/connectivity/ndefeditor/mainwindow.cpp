@@ -243,7 +243,7 @@ void MainWindow::targetDetected(QNearFieldTarget *target)
 
 void MainWindow::targetLost(QNearFieldTarget *target)
 {
-    Q_UNUSED(target);
+    target->deleteLater();
 }
 
 void MainWindow::ndefMessageRead(const QNdefMessage &message)
@@ -280,6 +280,7 @@ void MainWindow::targetError(QNearFieldTarget::Error error, const QNearFieldTarg
     Q_UNUSED(error);
     Q_UNUSED(id);
 
+    ui->status->setStyleSheet(QString());
     m_manager->setTargetAccessModes(QNearFieldManager::NoTargetAccess);
 }
 

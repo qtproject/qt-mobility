@@ -17,13 +17,13 @@
 
 
 CAPABILITY   All -TCB
-target cnttestsync.dll
+TARGET cnttestsync.dll
 targettype plugin
 
 UID				0x10009D8D 0x102035FE
 
-start resource 102035FE.RSS
-target cnttestsync.rsc
+start resource 102035fe.rss
+TARGET cnttestsync.rsc
 end
 VENDORID 0x70000001
 sourcepath	.
@@ -33,6 +33,6 @@ userinclude	.
 userinclude	../../inc
  
 source          cnttestsync.cpp
-library         euser.lib cntsyncchecker.lib cntmodel.lib
+LIBRARY         euser.lib cntsyncchecker.lib cntmodel.lib
 
 SMPSAFE

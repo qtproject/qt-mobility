@@ -212,8 +212,6 @@ public:
     QSystemDisplayInfoPrivate(QSystemDisplayInfoLinuxCommonPrivate *parent = 0);
     virtual ~QSystemDisplayInfoPrivate();
     float contrast(int screen);
-    int getDPIWidth(int screen);
-    int getDPIHeight(int screen);
     int displayBrightness(int screen);
     QSystemDisplayInfo::BacklightState backlightStatus(int screen);
 };
@@ -300,6 +298,7 @@ public:
     bool screenSaverInhibited();
     bool setScreenSaverInhibit();
     bool isInhibited;
+    void setScreenSaverInhibited(bool on);
 
 private Q_SLOTS:
     void wakeUpDisplay();
@@ -316,6 +315,11 @@ class QSystemBatteryInfoPrivate : public QSystemBatteryInfoLinuxCommonPrivate
 public:
     QSystemBatteryInfoPrivate(QSystemBatteryInfoLinuxCommonPrivate *parent = 0);
     ~QSystemBatteryInfoPrivate();
+
+private Q_SLOTS:
+#if !defined(QT_NO_DBUS)
+    void halChangedMaemo(int,QVariantList);
+#endif
 };
 
 

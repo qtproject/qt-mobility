@@ -72,6 +72,13 @@ QDeclarativeGeoMapGroupObject::QDeclarativeGeoMapGroupObject(QDeclarativeItem *p
 
 QDeclarativeGeoMapGroupObject::~QDeclarativeGeoMapGroupObject()
 {
+    // Remove all objects from the group before deleting it.
+    // These objects are owned by their declarative counterparts
+    // and they'll delete them.
+    QList<QGeoMapObject*> objects = group_->childObjects();
+    for (int i = 0; i < objects.size(); ++i) {
+        group_->removeChildObject(objects.at(i));
+    }
     delete group_;
 }
 

@@ -227,8 +227,8 @@ public:
 
     QSystemDisplayInfo::DisplayOrientation orientation(int screen);
     float contrast(int /*screen*/) {return 0.0;};
-    int getDPIWidth(int /*screen*/){return 0;};
-    int getDPIHeight(int /*screen*/){return 0;};
+    int getDPIWidth(int screen);
+    int getDPIHeight(int screen);
     int physicalHeight(int screen);
     int physicalWidth(int screen);
     QSystemDisplayInfo::BacklightState backlightStatus(int screen); //1.2
@@ -406,6 +406,7 @@ public:
     QSystemBatteryInfo::BatteryStatus batteryStatus() const;
     QSystemBatteryInfo::EnergyUnit energyMeasurementUnit() const;
     bool batteryIsPresent;
+    QSystemBatteryInfo::ChargerType curChargeType;
 
 Q_SIGNALS:
     void batteryStatusChanged(QSystemBatteryInfo::BatteryStatus batteryStatus);
@@ -433,20 +434,21 @@ protected:
     QHalDeviceInterface *halIfaceDevice;
     QUDisksInterface *udisksIface;
 
+    QSystemBatteryInfo::ChargerType currentChargerType();
+
 private Q_SLOTS:
     void setConnection();
     virtual void halChanged(int,QVariantList);
     void getBatteryStats();
     void timeout();
 #if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5)
-    void propertyChanged(const QString &, const QVariant &);
+    void uPowerPropertyChanged(const QString &, const QVariant &);
 #endif
 #endif
 private:
 
     QSystemBatteryInfo::BatteryStatus currentBatStatus;
     QSystemBatteryInfo::ChargingState curChargeState;
-    QSystemBatteryInfo::ChargerType curChargeType;
     QVariantMap pMap;
 
     int currentBatLevelPercent;

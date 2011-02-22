@@ -125,6 +125,10 @@ Some devices running S60 3.2 support a newer native API and therefore support mo
 
 More information about these platforms can be found \l{http://wiki.forum.nokia.com/index.php/Nokia_Sensor_APIs}{here}.
 
+Note that timestamps on this platform come from the system clock.
+Applications need to handle shifts in time caused by the user manually setting the clock or
+from the automatic time synchronization feature setting the clock.
+
 \section2 Symbian
 
 Most Symbian devices have their sensor data read via the Sensor Framework API. Some limitations
@@ -138,6 +142,10 @@ Applications must be extremely careful not to use too much CPU time or sensor re
 not be delivered in a timely manner.
 
 More information about the native API can be found \l{http://wiki.forum.nokia.com/index.php/Nokia_Sensor_APIs}{here}.
+
+Note that timestamps on this platform come from the system clock.
+Applications need to handle shifts in time caused by the user manually setting the clock or
+from the automatic time synchronization feature setting the clock.
 
 \section2 Maemo 5
 
@@ -177,6 +185,9 @@ these due to permissions issues.
 Readings are polled using a timer. If the application blocks the event loop or otherwise interferes with the
 ability of the timer to fire, readings will be missed. There are no queues so applications must ensure that
 they process the readings promptly (possibly saving them into a buffer for later processing if required).
+
+Note that timestamps on this platform come from a counter that wraps around once or twice in a 24 hour period.
+Applications that evaluate timestamps over an extended period need to handle this.
 
 \section2 MeeGo
 

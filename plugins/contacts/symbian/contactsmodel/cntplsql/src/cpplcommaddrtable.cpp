@@ -27,6 +27,16 @@
 //max amount of contacts deleted in one go 
 const TInt KDeleteBatchSize = 400;
 
+/// Unnamed namespace for local definitions
+namespace {
+
+TBool ComparePtr( const TPtrC* aLeft, const TPtrC& aRight )
+    {
+    return ( aLeft->Compare( aRight )== 0 );
+    }
+
+} /// namespace
+
 /**
 @param aDatabase A handle to the database.
 @param aProperties A contact properties object.
@@ -234,10 +244,13 @@ void CPplCommAddrTable::CreateInDbL(CContactItem& aItem)
 					}
 				}
 			// get email addresses
-			else if (isEmail && newEmails.Find(currField.TextStorage()->Text() ) == KErrNotFound)
+			else if (isEmail)
 				{
-				DoNonPhoneWriteOpL(currField.TextStorage()->Text(), EInsert, KItemId, EEmailAddress);
-				newEmails.AppendL(currField.TextStorage()->Text() );
+				if (newEmails.Find( currField.TextStorage()->Text(), ComparePtr ) == KErrNotFound)
+					{
+					DoNonPhoneWriteOpL(currField.TextStorage()->Text(), EInsert, KItemId, EEmailAddress);
+					newEmails.AppendL(currField.TextStorage()->Text() );
+					}
 				}
 			// get SIP addresses
 			else if (newSips.Find(currField.TextStorage()->Text() ) == KErrNotFound)
@@ -314,10 +327,13 @@ void CPplCommAddrTable::UpdateL(const CContactItem& aItem)
                     }
 				}
 			// get email addresses
-			else if (isEmail && newEmails.Find(currField.TextStorage()->Text() ) == KErrNotFound)
-				{
-				newEmails.AppendL(currField.TextStorage()->Text() );
-				}
+		   else if (isEmail)
+			  {
+			  if (newEmails.Find(currField.TextStorage()->Text(), ComparePtr ) == KErrNotFound)
+				  {
+				  newEmails.AppendL(currField.TextStorage()->Text() );
+				  }
+			  }
 			// get SIP addresses
 			else if (newSips.Find(currField.TextStorage()->Text() ) == KErrNotFound)
 				{
@@ -349,7 +365,6 @@ void CPplCommAddrTable::UpdateL(const CContactItem& aItem)
 	RemoveNonUpdatedAddrsL(newPhones, newEmails, newSips, freeCommAddrIds, KItemId, extraInfoType);
 
 	// do the actual updating on an address-by-address basis
-
 	DoUpdateCommAddrsL(newPhones, newEmails, newSips, freeCommAddrIds, KItemId,extraInfoType);
 
 	CleanupStack::PopAndDestroy(4, &newPhones); // and freeCommAddrIds, newSips, newEmails
@@ -409,7 +424,7 @@ void CPplCommAddrTable::RemoveNonUpdatedAddrsL(RArray<TMatch>& aNewPhones, RArra
 			// we already have them in the db and they haven't changed...
 			if (KType == EEmailAddress)
 				{
-				matchIndex = aNewEmails.Find(valString);
+				matchIndex = aNewEmails.Find( valString, ComparePtr );
 				if (matchIndex != KErrNotFound)
 					{
 					aNewEmails.Remove(matchIndex);
@@ -910,8 +925,8 @@ CContactIdArray* CPplCommAddrTable::BestMatchingPhoneNumberL(const TDesC& aNumbe
                 stored /= 10;
                 }
 
-            if ( (phoneDigits.iUpperDigits == 0) || (storedUpperDigits == 0) ||
-                 (number == stored) )
+            if ((phoneDigits.iUpperDigits == 0) || (storedUpperDigits == 0) ||
+                 (number == stored))
                 {
                 phoneMatchArray->AddL(stmnt.ColumnInt(KContactIdIdx));
                 }

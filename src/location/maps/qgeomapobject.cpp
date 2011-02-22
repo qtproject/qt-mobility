@@ -261,11 +261,11 @@ void QGeoMapObject::setZValue(int zValue)
         if (d_ptr->graphicsItem)
             d_ptr->graphicsItem->setZValue(zValue);
         emit zValueChanged(d_ptr->zValue);
+        update();
         if (d_ptr->mapData && d_ptr->mapData->d_ptr->oe) {
             QGeoMapObjectEngine *e = d_ptr->mapData->d_ptr->oe;
             e->rebuildScenes();
         }
-        update();
     }
 }
 
@@ -393,7 +393,8 @@ bool QGeoMapObject::contains(const QGeoCoordinate &coordinate) const
 */
 bool QGeoMapObject::operator<(const QGeoMapObject &other) const
 {
-    return d_ptr->zValue < other.d_ptr->zValue;
+    return d_ptr->zValue < other.d_ptr->zValue ||
+            (d_ptr->zValue == other.d_ptr->zValue && d_ptr->serial < other.d_ptr->serial);
 }
 
 /*!
@@ -401,7 +402,8 @@ bool QGeoMapObject::operator<(const QGeoMapObject &other) const
 */
 bool QGeoMapObject::operator>(const QGeoMapObject &other) const
 {
-    return d_ptr->zValue > other.d_ptr->zValue;
+    return d_ptr->zValue > other.d_ptr->zValue ||
+            (d_ptr->zValue == other.d_ptr->zValue && d_ptr->serial > other.d_ptr->serial);
 }
 
 /*!
@@ -465,7 +467,8 @@ void QGeoMapObject::setGraphicsItem(QGraphicsItem *item)
         return;
 
     d_ptr->graphicsItem = item;
-    item->setZValue(this->zValue());
+    if (item)
+        item->setZValue(this->zValue());
     emit graphicsItemChanged(item);
     update();
 }
@@ -579,6 +582,7 @@ QGeoMapObjectPrivate::QGeoMapObjectPrivate()
       units(QGeoMapObject::PixelUnit),
       transType(QGeoMapObject::ExactTransform),
       mapData(0),
+      serial(0),
       graphicsItem(0) {}
 
 QGeoMapObjectPrivate::~QGeoMapObjectPrivate()

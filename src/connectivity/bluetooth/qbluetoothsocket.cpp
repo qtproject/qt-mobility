@@ -247,7 +247,6 @@ QBluetoothSocket::QBluetoothSocket(QObject *parent)
 */
 QBluetoothSocket::~QBluetoothSocket()
 {
-    qDebug() << "Socket destroyed";
     delete d_ptr;
     d_ptr = 0;
 }

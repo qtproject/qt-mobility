@@ -103,6 +103,7 @@ public:
 #endif
 
     int maxPendingConnections;
+    QBluetooth::SecurityFlags securityFlags;
 
 protected:
     QRfcommServer *q_ptr;

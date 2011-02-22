@@ -20,6 +20,7 @@ SUBDIRS += qgeocoordinate \
       qgeoaddress \
       qgeomaneuver \
       qgeomapobjectplugin \
+      qgeomapobject \
       qgeomapcircleobject \
       qgeomapgroupobject \
       qgeomappixmapobject \

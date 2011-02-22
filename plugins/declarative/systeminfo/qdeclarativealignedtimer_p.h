@@ -49,13 +49,13 @@
 QT_BEGIN_HEADER
 QTM_USE_NAMESPACE
 
-class QDeclarativeAlignedTImer : public QSystemAlignedTimer
+class QDeclarativeAlignedTimer : public QSystemAlignedTimer
 {
     Q_OBJECT
     Q_PROPERTY(bool running READ running WRITE setRunning)
 
 public:
-    explicit QDeclarativeAlignedTImer(QObject *parent = 0);
+    explicit QDeclarativeAlignedTimer(QObject *parent = 0);
     bool running() const;
     void setRunning(bool running);
 

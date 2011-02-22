@@ -370,8 +370,9 @@ qint64 QPulseAudioInput::read(char *data, qint64 len)
 
         QPulseAudioEngine *pulseEngine = QPulseAudioEngine::instance();
         pa_threaded_mainloop_lock(pulseEngine->mainloop());
-        const void *audioBuffer = data;
+        const void *audioBuffer;
 
+        // Second parameter (audioBuffer) to pa_stream_peek is an output parameter, the pointer is set to point to the actual pulse audio data.
         if (pa_stream_peek(m_stream, &audioBuffer, &length) < 0) {
             qWarning() << QString("pa_stream_peek() failed: %1").arg(pa_strerror(pa_context_errno(pa_stream_get_context(m_stream))));
             pa_threaded_mainloop_unlock(pulseEngine->mainloop());
@@ -382,13 +383,15 @@ qint64 QPulseAudioInput::read(char *data, qint64 len)
         if (m_pullMode) {
             l = m_audioSource->write((const char*)audioBuffer, length);
             length = l;
+        } else {
+            memcpy(data, audioBuffer, length);
         }
 
         m_totalTimeValue += length;
         readBytes += length;
 
-        pa_threaded_mainloop_unlock(pulseEngine->mainloop());
         pa_stream_drop(m_stream);
+        pa_threaded_mainloop_unlock(pulseEngine->mainloop());
 
         if (!m_pullMode)
             break;

@@ -50,13 +50,13 @@ QTM_BEGIN_NAMESPACE
 
 QBluetoothDeviceDiscoveryAgentPrivate::QBluetoothDeviceDiscoveryAgentPrivate()
     : inquiryType(QBluetoothDeviceDiscoveryAgent::GeneralUnlimitedInquiry)
+    , lastError(QBluetoothDeviceDiscoveryAgent::NoError)
+    , errorString(QString())
     , m_deviceDiscovery(0)
 {
-    TInt result;
     /* connect to socker server */
-    result = m_socketServer.Connect();
-    if (result != KErrNone)
-        setError(result,QString("RSocketServ.Connect() failed with error"));
+    TInt result = m_socketServer.Connect();
+    setError(result, QString("RSocketServ.Connect() failed with error"));
 }
 
 QBluetoothDeviceDiscoveryAgentPrivate::~QBluetoothDeviceDiscoveryAgentPrivate()
@@ -86,9 +86,9 @@ void QBluetoothDeviceDiscoveryAgentPrivate::start()
             q, SIGNAL(error(QBluetoothDeviceDiscoveryAgent::Error)));
         // startup the device discovery. Discovery results are obtained from signal connected above.
         if (!m_deviceDiscovery->startDiscovery(inquiryTypeToIAC()))
-            setError(KErrNotReady,"Discovery is still active");
+            setError(KErrNotReady, "Discovery is still active");
     } else {
-        setError(KErrBadHandle,QString("RSocketServ.Connect() failed with error"));
+        setError(KErrBadHandle, QString("RSocketServ.Connect() failed with error"));
     }
 }
 
@@ -100,21 +100,24 @@ void QBluetoothDeviceDiscoveryAgentPrivate::stop()
 
 bool QBluetoothDeviceDiscoveryAgentPrivate::isActive() const
 {
-    bool returnValue = false;
     if (m_deviceDiscovery)
-        returnValue =  m_deviceDiscovery->IsActive();
-
-    return returnValue;
+        return m_deviceDiscovery->IsActive();
+    return false;
 }
 
-void QBluetoothDeviceDiscoveryAgentPrivate::setError(int errorCode, QString errorString)
+void QBluetoothDeviceDiscoveryAgentPrivate::setError(int errorCode, QString errorDescription)
 {
-    //TODO missing error string from base classes
-    Q_Q(QBluetoothDeviceDiscoveryAgent);
+    if (errorCode == KErrNone)
+        return;
+
+    errorString = errorDescription;
     if (errorCode == KErrCancel)
-        emit q->error(QBluetoothDeviceDiscoveryAgent::Canceled);
-    else if (errorCode != KErrNone)
-        emit q->error(QBluetoothDeviceDiscoveryAgent::UnknownError);
+        lastError = QBluetoothDeviceDiscoveryAgent::Canceled;
+    else
+        lastError = QBluetoothDeviceDiscoveryAgent::UnknownError;
+
+    Q_Q(QBluetoothDeviceDiscoveryAgent);
+    emit q->error(lastError);
 }
 
 void QBluetoothDeviceDiscoveryAgentPrivate::_q_newDeviceFound(const QBluetoothDeviceInfo &device)

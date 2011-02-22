@@ -1015,24 +1015,6 @@ float QSystemDisplayInfoPrivate::contrast(int screen)
     return 0.0;
 }
 
-int QSystemDisplayInfoPrivate::getDPIWidth(int screen)
-{
-    int dpi=0;
-    if(screen < 16 && screen > -1) {
-        dpi = QDesktopWidget().screenGeometry().width() / (physicalWidth(0) / 25.4);
-    }
-    return dpi;
-}
-
-int QSystemDisplayInfoPrivate::getDPIHeight(int screen)
-{
-    int dpi=0;
-    if(screen < 16 && screen > -1) {
-        dpi = QDesktopWidget().screenGeometry().height() / (physicalHeight(0) / 25.4);
-    }
-    return dpi;
-}
-
 QSystemDisplayInfo::BacklightState QSystemDisplayInfoPrivate::backlightStatus(int screen)
 {
     Q_UNUSED(screen)
@@ -1561,9 +1543,8 @@ QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QObject *parent)
 
 QSystemScreenSaverPrivate::~QSystemScreenSaverPrivate()
 {
-    if (ssTimer->isActive()) {
-        ssTimer->stop();
-    }
+    setScreenSaverInhibited(false);
+
 #if !defined(QT_NO_DBUS)
     delete mceConnectionInterface, mceConnectionInterface = 0;
 #endif
@@ -1589,8 +1570,10 @@ void QSystemScreenSaverPrivate::wakeUpDisplay()
 {
 #if !defined(QT_NO_DBUS)
     if (mceConnectionInterface->isValid()) {
-        mceConnectionInterface->call("req_tklock_mode_change", "unlocked");
-        mceConnectionInterface->call("req_display_blanking_pause");
+        QDBusMessage msg = mceConnectionInterface->call("req_tklock_mode_change", "unlocked");
+        qDebug() << msg.errorName() << msg.errorMessage();
+        msg = mceConnectionInterface->call("req_display_blanking_pause");
+        qDebug() << msg.errorName() << msg.errorMessage();
     }
 #endif
 }
@@ -1631,16 +1614,80 @@ bool QSystemScreenSaverPrivate::screenSaverInhibited()
     return ((displayOn && isBlankingInhibited) || (displayOn && isInhibited));
 }
 
+void QSystemScreenSaverPrivate::setScreenSaverInhibited(bool on)
+{
+    if (on) {
+        setScreenSaverInhibit();
+    } else {
+        if (ssTimer->isActive()) {
+            ssTimer->stop();
+            isInhibited = false;
+        }
+    }
+}
+
 QSystemBatteryInfoPrivate::QSystemBatteryInfoPrivate(QSystemBatteryInfoLinuxCommonPrivate *parent)
     : QSystemBatteryInfoLinuxCommonPrivate(parent)
 {
-
+#if !defined(QT_NO_DBUS)
+    QHalInterface iface;
+    QStringList list = iface.findDeviceByCapability("battery");
+    if (!list.isEmpty()) {
+        foreach (const QString &dev, list) {
+            halIfaceDevice = new QHalDeviceInterface(dev);
+            if (halIfaceDevice->isValid()) {
+                if (halIfaceDevice->setConnections()) {
+                    qDebug() << "connect battery" <<  halIfaceDevice->getPropertyString("battery.type");
+                    if (!connect(halIfaceDevice,SIGNAL(propertyModified(int, QVariantList)),
+                                 this,SLOT(halChangedMaemo(int,QVariantList)))) {
+                        qDebug() << "connection malfunction";
+                    }
+                }
+                return;
+            }
+        }
+    }
+#endif
 }
 
 QSystemBatteryInfoPrivate::~QSystemBatteryInfoPrivate()
 {
 
 }
+
+#if !defined(QT_NO_DBUS)
+void QSystemBatteryInfoPrivate::halChangedMaemo(int count,QVariantList map)
+{
+    QHalInterface iface;
+    QStringList list = iface.findDeviceByCapability("battery");
+    QHalDeviceInterface ifaceDevice(list.at(0)); //default battery
+    if (ifaceDevice.isValid()) {
+        for(int i=0; i < count; i++) {
+            QString mapS = map.at(i).toString();
+          qDebug() << mapS;
+            QSystemBatteryInfo::ChargerType chargerType = QSystemBatteryInfo::UnknownCharger;
+             if (  mapS == "maemo.charger.connection_status" | mapS == "maemo.charger.type") {
+                const QString chargeType = ifaceDevice.getPropertyString("maemo.charger.type");
+                if(chargeType == "host 500 mA") {
+                    chargerType = QSystemBatteryInfo::USB_500mACharger;
+                }
+                if(chargeType == "host 100 mA") {
+                    chargerType = QSystemBatteryInfo::USB_100mACharger;
+                }
+                chargerType = QSystemBatteryInfoLinuxCommonPrivate::currentChargerType();
+                if (chargerType == QSystemBatteryInfo::UnknownCharger) {
+                    chargerType = QSystemBatteryInfo::WallCharger;
+                }
+
+                if(chargerType != curChargeType) {
+                    curChargeType = chargerType;
+                    Q_EMIT chargerTypeChanged(curChargeType);
+                }
+            }
+         }
+    }
+}
+#endif
 
 #include "moc_qsysteminfo_maemo_p.cpp"
 

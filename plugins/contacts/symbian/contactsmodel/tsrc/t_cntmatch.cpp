@@ -241,7 +241,7 @@ LOCAL_C void TestCallingAmericaL()
 	TESTVALUE(CheckPhoneMatchL(_L("(+1) 0755 345 3644 644"),14),1);
 	TESTVALUE(CheckPhoneMatchL(_L("(+1) 0755 345 3644 644"),15),1);
 	TESTVALUE(CheckPhoneMatchL(_L("(+1) 0755 345 3644 644"),16),1);
-	TESTVALUE(CheckPhoneMatchL(_L("(+1) 0755 345 3644 644"), KBestMatchingPhoneNumbers),1);
+    TESTVALUE(CheckPhoneMatchL(_L("(+1) 0755 345 3644 644"), KBestMatchingPhoneNumbers),1);
 	}
 
 
@@ -301,7 +301,7 @@ LOCAL_C void Test5L()
 	TESTVALUE(CheckPhoneMatchL(_L("00 44 1234 56789"),13),0);
 	TESTVALUE(CheckPhoneMatchL(_L("00 44 1234 56789"),14),0);
 	TESTVALUE(CheckPhoneMatchL(_L("00 44 1234 56789"),15),0);
-	TESTVALUE(CheckPhoneMatchL(_L("00 44 1234 56789"), KBestMatchingPhoneNumbers),1);
+    TESTVALUE(CheckPhoneMatchL(_L("00 44 1234 56789"), KBestMatchingPhoneNumbers),1);
 	}
 
 /**
@@ -804,8 +804,19 @@ LOCAL_C void TestBestMatchingStrategyL()
     CreateContactL(KCntName,KCntSurname,_L("584443049607"),KNullDesC);
     TESTVALUE(CheckPhoneMatchL(_L("4443049607"), KBestMatchingPhoneNumbers),1);
     
+    ResetDatabaseL();
     CreateContactL(KCntName,KCntSurname,_L("401234567"),KNullDesC);
     TESTVALUE(CheckPhoneMatchL(_L("2041234567"), KBestMatchingPhoneNumbers),0);
+    
+    ResetDatabaseL();
+    CreateContactL(KCntName,KCntSurname,_L("0401234567"),KNullDesC);
+    CreateContactL(KCntName,KCntSurname,_L("0501234567"),KNullDesC);
+    TESTVALUE(CheckPhoneMatchL(_L("0401234567"), KBestMatchingPhoneNumbers),1);
+    
+    ResetDatabaseL();
+    CreateContactL(KCntName,KCntSurname,_L("020421234567"),KNullDesC);
+    CreateContactL(KCntName,KCntSurname,_L("005021234567"),KNullDesC);
+    TESTVALUE(CheckPhoneMatchL(_L("020421234567"), KBestMatchingPhoneNumbers),1);
     
     }
 
@@ -835,7 +846,6 @@ LOCAL_C void DoTestsL()
 	TestMatchWithContactWithMultipleNumbersL();
 	TestMatchWithContactAfterEditL();
 	TestBestMatchingStrategyL();
-
 	CntTest->CloseDatabase();
 	CntTest->DeleteDatabaseL();
     }

@@ -16,7 +16,7 @@
 */
 
 
-target          T_MULTS.EXE
+TARGET          t_mults.EXE
 targettype      EXE
 CAPABILITY   ReadUserData WriteUserData
 UID		0x1000007a
@@ -31,4 +31,4 @@ userinclude   ../INC
 source          T_MULTS.CPP
 source 		t_utils2.cpp
 
-library         EUSER.LIB  EFSRV.LIB  cntmodel.LIB	CNTTUTIL.LIB  PIMTestClient.lib
+LIBRARY         euser.lib  efsrv.lib  cntmodel.lib	cnttutil.lib  pimtestclient.lib

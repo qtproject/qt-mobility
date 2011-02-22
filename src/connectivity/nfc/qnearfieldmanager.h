@@ -81,15 +81,15 @@ public:
     void stopTargetDetection();
 
     template<typename T>
-    int registerTargetDetectedHandler(QObject *object, const char *method);
-    int registerTargetDetectedHandler(QObject *object, const char *method);
-    int registerTargetDetectedHandler(QNdefRecord::TypeNameFormat typeNameFormat,
-                                      const QByteArray &type,
-                                      QObject *object, const char *method);
-    int registerTargetDetectedHandler(const QNdefFilter &filter,
-                                      QObject *object, const char *method);
+    int registerNdefMessageHandler(QObject *object, const char *method);
+    int registerNdefMessageHandler(QObject *object, const char *method);
+    int registerNdefMessageHandler(QNdefRecord::TypeNameFormat typeNameFormat,
+                                   const QByteArray &type,
+                                   QObject *object, const char *method);
+    int registerNdefMessageHandler(const QNdefFilter &filter,
+                                   QObject *object, const char *method);
 
-    bool unregisterTargetDetectedHandler(int handlerId);
+    bool unregisterNdefMessageHandler(int handlerId);
 
 signals:
     void targetDetected(QNearFieldTarget *target);
@@ -101,11 +101,11 @@ private:
 };
 
 template<typename T>
-int QNearFieldManager::registerTargetDetectedHandler(QObject *object, const char *method)
+int QNearFieldManager::registerNdefMessageHandler(QObject *object, const char *method)
 {
     T record;
 
-    return registerTargetDetectedHandler(record.userTypeNameFormat(), record.type(),
+    return registerNdefMessageHandler(record.userTypeNameFormat(), record.type(),
                                          object, method);
 }
 

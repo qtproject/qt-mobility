@@ -50,18 +50,25 @@
 #include "qvaluespacesubscriber.h"
 
 #include <QDeclarativeListProperty>
+#include <QDeclarativeParserStatus>
 
 QTM_USE_NAMESPACE
 
 class QDeclarativeValueSpacePublisherMetaObject;
+class QDeclarativeValueSpacePublisherQueueItem;
 
-class QDeclarativeValueSpacePublisher : public QObject
+class QDeclarativeValueSpacePublisher : public QObject, public QDeclarativeParserStatus
 {
     Q_OBJECT
+    Q_INTERFACES(QDeclarativeParserStatus)
 
     Q_PROPERTY(QString path READ path WRITE setPath)
     Q_PROPERTY(bool hasSubscribers READ hasSubscribers NOTIFY subscribersChanged)
     Q_PROPERTY(QStringList keys READ keys WRITE setKeys)
+
+    // these should be removed after QTBUG-17521 is resolved
+    Q_PROPERTY(QString applicationName READ applicationName WRITE setApplicationName);
+    Q_PROPERTY(QString organizationDomain READ organizationDomain WRITE setOrganizationDomain);
 
     // these should be write-only
     // but MSVC can't cope with write-only Q_PROPERTYs?
@@ -86,6 +93,15 @@ public:
 
     void setKeys(const QStringList &keys);
 
+    // these should be removed after QTBUG-17521 is resolved
+    QString applicationName() const;
+    QString organizationDomain() const;
+    void setApplicationName(const QString &name);
+    void setOrganizationDomain(const QString &domain);
+
+    void classBegin();
+    void componentComplete();
+
 signals:
     void subscribersChanged();
 
@@ -93,7 +109,12 @@ private:
     QDeclarativeValueSpacePublisherMetaObject *d;
     friend class QDeclarativeValueSpacePublisherMetaObject;
 
+    void queueChange(const QString &subPath, const QVariant &val);
+    void doQueue();
+
+    QList<QDeclarativeValueSpacePublisherQueueItem> m_queue;
     bool m_hasSubscribers;
+    bool m_complete;
     QValueSpacePublisher *m_publisher;
     QString m_path;
     QStringList m_keys;

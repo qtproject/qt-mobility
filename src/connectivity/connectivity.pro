@@ -3,14 +3,13 @@ TEMPLATE = lib
 TARGET   = QtConnectivity
 
 include(../../common.pri)
-
 DEFINES += QT_BUILD_CONNECTIVITY_LIB QT_MAKEDLL
 
 QT = core
 
 include(nfc/nfc.pri)
 
-!mac:!win32:include(bluetooth/bluetooth.pri)
+include(bluetooth/bluetooth.pri)
 
 HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
 
@@ -30,6 +29,5 @@ simulator {
     INCLUDEPATH += ../mobilitysimulator
     qtAddLibrary(QtMobilitySimulator)
 }
-CONFIG += middleware
 CONFIG += middleware
 include(../../features/deploy.pri)

@@ -16,7 +16,7 @@
 */
 
 
-target          t_database_killer.exe
+TARGET          t_database_killer.exe
 targettype      EXE
 CAPABILITY   ReadUserData WriteUserData PowerMgmt
 UID		0x1000097a
@@ -30,6 +30,6 @@ userinclude ../inc
 source          t_database_killer.cpp
 source			t_utils2.cpp
 
-library         euser.lib  cntmodel.lib efsrv.lib pimtestclient.lib
+LIBRARY         euser.lib  cntmodel.lib efsrv.lib pimtestclient.lib
 
 SMPSAFE
