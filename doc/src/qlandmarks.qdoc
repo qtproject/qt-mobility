@@ -103,7 +103,7 @@ We may reuse the QLandmarkSaveRequest by setting another landmark and running \l
 To retrieve categories we simply make the appropriate call to the QLandmarkManager:
 \snippet snippets/qtlandmarksdocsample/qtlandmarksdocsample.cpp Retrieve categories synchronously
 
-When retrieiving categories we may do so by the category ids.  When the category data is needed
+When retrieving categories we may do so by the category ids.  When the category data is needed
 we may use the id to retrieve a category object:
 \snippet snippets/qtlandmarksdocsample/qtlandmarksdocsample.cpp Retrieve categories synchronously by id
 
@@ -160,7 +160,7 @@ To remove a category we simply pass the category id to a QLandmarkManager.
 
 \section3 \bold{Deleting a landmark}
 
-To remove a landmark we simply passs the landmark id to a QLandmarkManager.
+To remove a landmark we simply pass the landmark id to a QLandmarkManager.
 
 \snippet snippets/qtlandmarksdocsample/qtlandmarksdocsample.cpp Remove landmark synchronously
 
@@ -262,5 +262,25 @@ We may reuse the QLandmarkExportRequest by setting another filename and/or forma
 {start()} again.
 
 \snippet snippets/qtlandmarksdocsample/qtlandmarksdocsample.cpp Export landmarks asynchronously handler
+
+\section1 C++ Examples
+
+There are no C++ only, documented examples of the Landmarks API. However, there
+is the \l {Maps Demo Tutorial} which is C++ only, though being a tutorial it is
+longer and more complicated than an example.
+
+\section1 QML Examples
+
+\section3 \bold{Landmark Map QML Example}
+
+The \l {Landmark Map Example}
+
+\section3 \bold{Map Viewer QML Example}
+
+The \l {Declarative Map Viewer Example}{Map Viewer example} displays a map of
+the current location or failing that a hard-coded default location to display
+a typical map navigation application in form typical of a mobile phone.
+
+
 
 */
