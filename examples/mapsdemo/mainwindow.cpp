@@ -201,11 +201,11 @@ void MainWindow::updateMyPosition(QGeoPositionInfo info)
         mapsWidget->setMyLocation(info.coordinate(), false);
         if (tracking)
             mapsWidget->animatedPanTo(info.coordinate());
+        if (firstUpdate)
+            mapsWidget->statusBar()->showText("Receiving from GPS");
     }
-    if (firstUpdate) {
-        mapsWidget->statusBar()->showText("Receiving from GPS");
-        firstUpdate = false;
-    }
+    
+    firstUpdate = false;
 }
 
 void MainWindow::showNavigateDialog()
