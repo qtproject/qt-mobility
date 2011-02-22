@@ -3717,7 +3717,7 @@ void QSystemBatteryInfoLinuxCommonPrivate::getBatteryStats()
                         cTime = ifaceDevice.getPropertyInt("battery.remaining_time");
                     } else {
                         cState = QSystemBatteryInfo::NotCharging;
-                        cTime = 0;
+                        cTime = -1;
                     }
                     cVoltage = ifaceDevice.getPropertyInt("battery.voltage.current");
                     cEnergy = ifaceDevice.getPropertyInt("battery.charge_level.rate");
@@ -3768,6 +3768,9 @@ void QSystemBatteryInfoLinuxCommonPrivate::getBatteryStats()
     if(cType == QSystemBatteryInfo::UnknownCharger && !batteryIsPresent) {
         cType = QSystemBatteryInfo::WallCharger;
     }
+
+    if(cTime == 0 && currentBatLevelPercent != 100)
+        cTime == -1;
 
     curChargeType = cType;
     currentVoltage = cVoltage;
