@@ -269,7 +269,7 @@ void QBluetoothLocalDevicePrivate::requestPairing(const QBluetoothAddress &addre
     BluetoothSymbianPairingAdapter *pairingAdapter = new BluetoothSymbianPairingAdapter(address,q);
 
     // After pairing has completed we emit pairingFinished signal in every case.
-    // earlier we checked pairing status from Symbian Bluetooth registry at this point but it 
+    // earlier we checked pairing status from Symbian Bluetooth registry at this point but it
     // was not updated and the result was that we emitted wrong pairing status.
     QObject::connect(pairingAdapter, SIGNAL(pairingFinished(const QBluetoothAddress&,QBluetoothLocalDevice::Pairing)),
         q, SLOT(_q_pairingFinished(const QBluetoothAddress&,QBluetoothLocalDevice::Pairing)));
