@@ -284,6 +284,8 @@ private Q_SLOTS:
 private Q_SLOTS:
     void deviceChanged();
     void inotifyActivated();
+    void checkFilesystem();
+
 protected:
     void connectNotify(const char *signal);
     void disconnectNotify(const char *signal);
