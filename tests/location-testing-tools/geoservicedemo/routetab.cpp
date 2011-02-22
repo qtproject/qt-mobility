@@ -155,6 +155,9 @@ RouteTab::~RouteTab()
 void RouteTab::initialize(QGeoRoutingManager *routingManager)
 {
     m_resultTree->clear();
+
+    m_updateBtn->setDisabled(true);
+
     m_routingManager = routingManager;
     if (m_routingManager) {
         QObject::connect(m_routingManager, SIGNAL(finished(QGeoRouteReply*)), this,
@@ -163,8 +166,9 @@ void RouteTab::initialize(QGeoRoutingManager *routingManager)
                          SIGNAL(error(QGeoRouteReply*, QGeoRouteReply::Error, QString)), this,
                          SLOT(resultsError(QGeoRouteReply*, QGeoRouteReply::Error, QString)));
         m_requestBtn->setDisabled(false);
-    } else
+    } else {
         m_requestBtn->setDisabled(true);
+    }
 }
 
 void RouteTab::on_btnRequest_clicked()
