@@ -192,6 +192,8 @@ void Dialog::setupDevice()
     updateKeyboard(di->keyboardTypes());
 
     keyboardFlipRadioButton->setChecked(di->isKeyboardFlippedOpen());
+    connect(di,SIGNAL(keyboardFlipped(bool)),this,SLOT(keyboardFlipped(bool)));
+
     wirelessKeyboardConnectedRadioButton->setChecked(di->isWirelessKeyboardConnected());
 
     QString lockState;
@@ -269,6 +271,9 @@ void Dialog::setupStorage()
     connect(sti,SIGNAL(logicalDriveChanged(bool,const QString &)),
             this,SLOT(storageChanged(bool ,const QString &)));
     }
+    connect(sti,SIGNAL(storageStateChanged(const QString &,QSystemStorageInfo::StorageState)),
+            this,SLOT(storageStateChanged(const QString &, QSystemStorageInfo::StorageState)));
+
     updateStorage();
 }
 
@@ -305,6 +310,8 @@ void Dialog::updateStorage()
         items << QString::number(sti->totalDiskSpace(volName));
         items << QString::number(sti->availableDiskSpace(volName));
         items << sti->uriForDrive(volName);
+        items << storageStateToString(sti->getStorageState(volName));
+
         QTreeWidgetItem *item = new QTreeWidgetItem(items);
         storageTreeWidget->addTopLevelItem(item);
     }
@@ -979,3 +986,29 @@ void Dialog::orientationChanged(QSystemDisplayInfo::DisplayOrientation orientati
 }
 
 
+void Dialog::keyboardFlipped(bool on)
+{
+    keyboardFlipRadioButton->setChecked(on);
+}
+
+void Dialog::storageStateChanged(const QString &vol, QSystemStorageInfo::StorageState state)
+{
+    QList<QTreeWidgetItem *>item = storageTreeWidget->findItems(vol,Qt::MatchExactly,0);
+    item.at(0)->setText(3,QString::number(sti->availableDiskSpace(item.at(0)->text(0))));
+    item.at(0)->setText(5,storageStateToString(state));
+}
+
+QString Dialog::storageStateToString(QSystemStorageInfo::StorageState state)
+{
+    QString str;
+    if (state == QSystemStorageInfo::CriticalStorageState) {
+        str = "Critical";
+    } else if (state == QSystemStorageInfo::VeryLowStorageState) {
+        str = "Very Low";
+    } else if (state == QSystemStorageInfo::LowStorageState) {
+        str = "Low";
+    } else {
+        str = "Normal";
+    }
+    return str;
+}

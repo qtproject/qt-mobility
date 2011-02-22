@@ -134,7 +134,8 @@ float QDeclarativeDisplayInfo::contrast()
 
 /*!
     \qmlproperty int DisplayInfo::dpiWidth
-   Returns the DPI width of the screen in millimeters.
+    Returns the current dots per inch (DPI) for the width.
+
   */
 int QDeclarativeDisplayInfo::dpiWidth()
 {
@@ -143,7 +144,8 @@ int QDeclarativeDisplayInfo::dpiWidth()
 
 /*!
     \qmlproperty int DisplayInfo::dpiHeight
-   Returns the DPI height of the screen in millimeters.
+    Returns the current dots per inch (DPI) for the width.
+
   */
 int QDeclarativeDisplayInfo::dpiHeight()
 {
