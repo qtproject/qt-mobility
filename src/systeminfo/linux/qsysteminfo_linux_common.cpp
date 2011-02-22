@@ -3233,8 +3233,6 @@ QSystemDeviceInfo::LockTypeFlags QSystemDeviceInfoLinuxCommonPrivate::lockStatus
 
 QString QSystemDeviceInfoLinuxCommonPrivate::model()
 {
-    qDebug() << Q_FUNC_INFO;
-
 #if !defined(QT_NO_DBUS)
     QString productName = sysinfodValueForKey("/component/product-name");
     if (!productName.isEmpty()) {
@@ -3744,16 +3742,23 @@ void QSystemBatteryInfoLinuxCommonPrivate::getBatteryStats()
                         cTime = -1;
                     }
                     cVoltage = ifaceDevice.getPropertyInt("battery.voltage.current");
+
                     cEnergy = ifaceDevice.getPropertyInt("battery.charge_level.rate");
+                    if (cEnergy == 0)
+                        cEnergy = ifaceDevice.getPropertyInt("battery.reporting.rate");
+
                     cLevel = ifaceDevice.getPropertyInt("battery.charge_level.percentage");
 
-                    int cap = ifaceDevice.getPropertyInt("battery.reporting.last_full");
-                    if(cap > 1) {
-                        capacity = cap;
-                    } else {
+                    rEnergy = ifaceDevice.getPropertyInt("battery.charge_level.current");
+                    if(rEnergy == 0)
+                        rEnergy = ifaceDevice.getPropertyInt("battery.reporting.current");
+
+
+                    capacity = ifaceDevice.getPropertyInt("battery.charge_level.last_full");
+                    if(capacity == 0)
+                        capacity =  ifaceDevice.getPropertyInt("battery.reporting.last_full");;//
+                    if(capacity == 0)
                         capacity = ifaceDevice.getPropertyInt("battery.reporting.design");
-                    }
-                    rEnergy = ifaceDevice.getPropertyInt("battery.reporting.current");
 
                     break;
                 }
