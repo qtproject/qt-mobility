@@ -6,10 +6,10 @@ MOBILITY_ENABLE_STATIC_CONFIG=1
 
 
 include /usr/share/cdbs/1/rules/debhelper.mk
-include /usr/share/cdbs/1/class/makefile.mk
 include /usr/share/cdbs/1/rules/utils.mk
-include /usr/share/cdbs/1/class/autotools.mk
 include /usr/share/cdbs/1/rules/patchsys-quilt.mk
+include /usr/share/cdbs/1/class/autotools.mk
+include /usr/share/cdbs/1/class/makefile.mk
 
 # Find out how many parallel threads to run
 TMP_BUILD_OPTS = $(subst $(comma),$(space),$(DEB_BUILD_OPTIONS))
@@ -25,6 +25,7 @@ DEB_DH_INSTALL_SOURCEDIR := debian/tmp
 # to DEB_DH_INSTALL_SOURCEDIR is not listed in any of the libqtm*.install files
 # except the *.prl files (-X.prl)
 DEB_DH_INSTALL_ARGS := --fail-missing -X.prl
+DEB_CLEAN_EXCLUDE := *.orig
 
 # bearer location contacts multimedia publishsubscribe versit messaging systeminfo serviceframework sensors gallery organizer feedback connectivity
 QTM_MODULES += connectivity
@@ -120,12 +121,11 @@ build-maemo-tests:
 	cp -f debian/tests/libqtm-systeminfo-tests.pri tests/auto/
 	cp -f debian/tests/libqtm-serviceframework-tests.pri tests/auto/
 	cp -f debian/tests/libqtm-organizer-tests.pri tests/auto/
-	qmake -recursive CONFIG+=maemo_tests tests/auto/qtm-maemo-auto.pro
+	cd tests/auto/ && qmake -recursive CONFIG+=maemo_tests qtm-maemo-auto.pro
 	$(DEB_MAKE_INVOKE) -C tests/auto
 
 common-install-arch::
 	$(DEB_MAKE_INVOKE) -C tests/auto $(DEB_MAKE_INSTALL_TARGET)
-	rm -f debian/libqtm-sensors-tests.install
 	$(QTM_MAEMO_TESTDIR)/install_tests -d debian -t $(QTM_MAEMO_TESTDIR) \
                 -i $(DEB_DESTDIR) -c -xml $(QTM_AUTOTESTS_SIMPLE)
 
