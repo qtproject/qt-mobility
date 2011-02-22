@@ -88,6 +88,9 @@ public:
 
     bool waitForRequestCompleted(const RequestId &id, int msecs = 5000);
     friend class QNearFieldTagImpl<QNearFieldTagType2Symbian>;
+
+private:
+    quint8 mCurrentSector;
 };
 
 QTM_END_NAMESPACE
