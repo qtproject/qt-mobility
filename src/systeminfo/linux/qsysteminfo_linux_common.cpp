@@ -2321,6 +2321,21 @@ QString QSystemStorageInfoLinuxCommonPrivate::uriForDrive(const QString &driveVo
         return QString();
     }
 #endif
+    QByteArray driveuid;
+    if (halIsAvailable) {
+        QHalInterface iface;
+        QStringList list = iface.findDeviceByCapability("volume");
+        if (!list.isEmpty()) {
+            QString lastdev;
+            foreach (const QString &dev, list) {
+                halIfaceDevice = new QHalDeviceInterface(dev, this);
+                if (halIfaceDevice->isValid() && (halIfaceDevice->getPropertyString("volume.mount_point") == driveVolume)) {
+                    return halIfaceDevice->getPropertyString("volume.uuid").toLocal8Bit();
+                }
+            }
+        }
+    }
+
 #endif
     QString driveUuid = getUuid(driveVolume);
     if(!driveUuid.isEmpty()) {
@@ -2333,19 +2348,28 @@ QString QSystemStorageInfoLinuxCommonPrivate::uriForDrive(const QString &driveVo
     uint64_t size;
     const char *label;
     char *ret;
+    int result = 0;
+
     QFile dev(mountEntriesMap.value(driveVolume));
-    dev.open(QIODevice::ReadOnly);
+    if(!dev.open(QIODevice::ReadOnly)) {
+        return QString();
+    }
     fd = dev.handle();
+
     if (fd < 0) {
-//        qDebug() << "XXXXXXXXXXXXXXXXXXXXXXXXXXXX" << mountEntriesMap.value(driveVolume);
-       return QString();
+        return QString();
     } else {
         pr = blkid_new_probe();
-        blkid_probe_set_request (pr, BLKID_PROBREQ_UUID);
+        blkid_probe_set_request(pr, BLKID_PROBREQ_UUID);
         ::ioctl(fd, BLKGETSIZE64, &size);
-        blkid_probe_set_device (pr, fd, 0, size);
-        blkid_do_safeprobe (pr);
+        blkid_probe_set_device(pr, fd, 0, size);
+        result = blkid_do_safeprobe(pr);
+
+        if (result == -1)
+            qDebug() << "Unable to probe device";
+
         blkid_probe_lookup_value(pr, "UUID", &label, NULL);
+
         ret = strdup(label);
         blkid_free_probe (pr);
         close(fd);
@@ -3158,7 +3182,7 @@ QUuid QSystemDeviceInfoLinuxCommonPrivate::uniqueDeviceID()
             foreach (const QString &dev, list) {
                 halIfaceDevice = new QHalDeviceInterface(dev, this);
                 if (halIfaceDevice->isValid() && (halIfaceDevice->getPropertyString("volume.mount_point") == "/")) {
-                    driveuid =  halIfaceDevice->getPropertyString("volume.uuid").toLocal8Bit();
+                    driveuid = halIfaceDevice->getPropertyString("volume.uuid").toLocal8Bit();
                     break;
                 }
             }
@@ -3166,9 +3190,9 @@ QUuid QSystemDeviceInfoLinuxCommonPrivate::uniqueDeviceID()
     }
     QByteArray bytes = imei().toLocal8Bit();
     QCryptographicHash hash(QCryptographicHash::Sha1);
+
     hash.addData(bytes);
     hash.addData(driveuid);
-
     return QUuid(QString(hash.result().toHex()));
 #endif
 #if !defined(QT_NO_DBUS)
