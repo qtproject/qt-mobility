@@ -771,7 +771,7 @@ void DirectShowPlayerService::doStop(QMutexLocker *locker)
         }
 
         m_position = 0;
-        m_pendingTask |= Seek;
+        m_pendingTasks |= Seek;
 
         m_executedTasks &= ~(Play | Pause);
         
