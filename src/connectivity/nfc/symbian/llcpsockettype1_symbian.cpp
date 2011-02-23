@@ -239,7 +239,25 @@ void CLlcpSocketType1::FrameReceived(MLlcpConnLessTransporter* aConnection)
     BEGIN
     iRemotePort = aConnection->SsapL();
     qDebug() << "FrameReceived " << iRemotePort;
-    StartTransportAndReceive(aConnection);
+//    StartTransportAndReceive(aConnection);
+    // Only accepting one incoming remote connection
+    TInt error = KErrNone;
+    if (iConnectionWrapper)
+        {
+        delete iConnectionWrapper;
+        iConnectionWrapper = NULL;
+        }
+    // Creating wrapper for connection.
+    TRAP(error, iConnectionWrapper = COwnLlcpConnectionWrapper::NewL(aConnection, *this));
+
+    if (error == KErrNone && iConnectionWrapper != NULL)
+        {
+        error = iConnectionWrapper->Receive();
+        }
+    if (error != KErrNone)
+        {
+        QT_TRYCATCH_ERROR(error,iCallback.invokeError());
+        }
     END
     }
 
@@ -256,6 +274,7 @@ void CLlcpSocketType1::ReceiveComplete(TInt aError)
         }
     else
         {
+        LOG("err = "<<err);
         QT_TRYCATCH_ERROR(err,iCallback.invokeError());
         }
     Q_UNUSED(err);
@@ -465,14 +484,14 @@ COwnLlcpConnectionWrapper::~COwnLlcpConnectionWrapper()
     iSendBufArray.ResetAndDestroy();
     iSendBufArray.Close();
 
+    delete iSenderAO;
+    delete iReceiverAO;
+
     if (iConnection)
         {
         delete iConnection;
         iConnection = NULL;
         }
-
-    delete iSenderAO;
-    delete iReceiverAO;
     END
     }
 
