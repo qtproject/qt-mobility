@@ -1131,6 +1131,8 @@ void DirectShowPlayerService::customEvent(QEvent *event)
     } else if (event->type() == QEvent::Type(PositionChange)) {
         QMutexLocker locker(&m_mutex);
 
+        if (m_playerControl->mediaStatus() == QMediaPlayer::EndOfMedia)
+            m_playerControl->updateStatus(QMediaPlayer::LoadedMedia);
         m_playerControl->updatePosition(m_position);
     } else {
         QMediaService::customEvent(event);
