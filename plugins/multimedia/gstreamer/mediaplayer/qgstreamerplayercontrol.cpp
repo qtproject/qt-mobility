@@ -306,6 +306,8 @@ void QGstreamerPlayerControl::setMedia(const QMediaContent &content, QIODevice *
     m_state = QMediaPlayer::StoppedState;    
     m_session->stop();
 
+    bool userStreamValid = false;
+
     if (m_bufferProgress != -1) {
         m_bufferProgress = -1;
         emit bufferStatusChanged(0);
@@ -348,20 +350,43 @@ void QGstreamerPlayerControl::setMedia(const QMediaContent &content, QIODevice *
     QNetworkRequest request;
 
     if (m_stream) {
+#if !defined(HAVE_GST_APPSRC)
         if (m_stream->isReadable() && openFifo()) {
             request = QNetworkRequest(QUrl(QString(QLatin1String("fd://%1")).arg(m_fifoFd[0])));
         }
+#else
+        userStreamValid = stream->isOpen() && m_stream->isReadable();
+        request = content.canonicalRequest();
+#endif
     } else if (!content.isNull()) {
         request = content.canonicalRequest();
     }
 
-    m_session->load(request);    
+#if !defined(HAVE_GST_APPSRC)
+    m_session->loadFromUri(request);
+#else
+    if (userStreamValid){
+        m_session->loadFromStream(request, m_stream);
+    } else {
+        m_mediaStatus = QMediaPlayer::InvalidMedia;
+        emit mediaStatusChanged(m_mediaStatus);
+        if (m_state != oldState)
+            emit stateChanged(m_state);
+        emit error(QMediaPlayer::FormatError, tr("Attempting to play invalid user stream"));
+        if (m_state != QMediaPlayer::PlayingState)
+            m_resources->release();
+        return;
+    }
 
+#endif
+
+#if !defined(HAVE_GST_APPSRC)
     if (m_fifoFd[1] >= 0) {
         m_fifoCanWrite = true;
 
         writeFifo();
     }
+#endif
 
     if (!request.url().isEmpty()) {
         if (m_mediaStatus != QMediaPlayer::LoadingMedia)

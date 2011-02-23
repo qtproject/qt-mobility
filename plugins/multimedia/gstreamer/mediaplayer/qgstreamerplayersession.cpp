@@ -85,6 +85,9 @@ QGstreamerPlayerSession::QGstreamerPlayerSession(QObject *parent)
      m_bus(0),
      m_videoOutput(0),
      m_renderer(0),
+#if defined(HAVE_GST_APPSRC)
+     m_appSrc(0),
+#endif
      m_volume(100),
      m_playbackRate(1.0),
      m_muted(false),
@@ -174,7 +177,48 @@ QGstreamerPlayerSession::~QGstreamerPlayerSession()
     }
 }
 
-void QGstreamerPlayerSession::load(const QNetworkRequest &request)
+#if defined(HAVE_GST_APPSRC)
+void QGstreamerPlayerSession::configureAppSrcElement(GObject* object, GObject *orig, GParamSpec *pspec, QGstreamerPlayerSession* self)
+{
+    if (self->appsrc()->isReady())
+        return;
+
+    GstElement *appsrc;
+    g_object_get(orig, "source", &appsrc, NULL);
+
+    if (!self->appsrc()->setup(appsrc))
+        qWarning()<<"Could not setup appsrc element";
+}
+#endif
+
+void QGstreamerPlayerSession::loadFromStream(const QNetworkRequest &request, QIODevice *appSrcStream)
+{
+#if defined(HAVE_GST_APPSRC)
+    m_request = request;
+    m_duration = -1;
+
+    if (!m_appSrc)
+        m_appSrc = new QGstAppSrc(this);
+    m_appSrc->setStream(appSrcStream);
+
+    if (m_playbin) {
+        m_tags.clear();
+        emit tagsChanged();
+
+        g_signal_connect(G_OBJECT(m_playbin), "deep-notify::source", (GCallback) &QGstreamerPlayerSession::configureAppSrcElement, (gpointer)this);
+        g_object_set(G_OBJECT(m_playbin), "uri", "appsrc://", NULL);
+
+        if (!m_streamTypes.isEmpty()) {
+            m_streamProperties.clear();
+            m_streamTypes.clear();
+
+            emit streamsChanged();
+        }
+    }
+#endif
+}
+
+void QGstreamerPlayerSession::loadFromUri(const QNetworkRequest &request)
 {
     m_request = request;
     m_duration = -1;
