@@ -47,6 +47,8 @@
 #include <qsensormanager.h>
 #include <QDebug>
 
+bool portraitOrientation;
+
 class n900SensorPlugin : public QObject, public QSensorPluginInterface, public QSensorBackendFactory
 {
     Q_OBJECT
@@ -55,6 +57,9 @@ public:
     void registerSensors()
     {
         qDebug() << "loaded the N900 plugin";
+        portraitOrientation = false;
+        if (qgetenv("N900_PORTRAIT_SENSORS") == "1")
+            portraitOrientation = true;
         QSensorManager::registerBackend(QAccelerometer::type, n900accelerometer::id, this);
         QSensorManager::registerBackend(QLightSensor::type, n900lightsensor::id, this);
         QSensorManager::registerBackend(QProximitySensor::type, n900proximitysensor::id, this);

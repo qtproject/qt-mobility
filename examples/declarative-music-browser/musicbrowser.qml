@@ -57,16 +57,16 @@ Rectangle {
         front: Item {
             anchors.fill: parent
 
-            Row {
+            Grid {
                 anchors.centerIn: parent
+                columns: parent.width > parent.height ? 4 : 2
 
                 TypeDelegate {
                     icon: "MusicBrowserCore/images/albums.png"
                     itemType: DocumentGallery.Album
-                    text: qsTr("Albums")
                     onClicked: {
                         viewLoader.sourceComponent = albumView
-                        viewButton.text = text
+                        viewButton.text = "Albums"
                         menu.state = "showView"
                     }
                 }
@@ -74,10 +74,9 @@ Rectangle {
                 TypeDelegate {
                     icon: "MusicBrowserCore/images/artists.png"
                     itemType: DocumentGallery.Artist
-                    text: qsTr("Artists")
                     onClicked: {
                         viewLoader.sourceComponent = artistView
-                        viewButton.text = text
+                        viewButton.text = "Artists"
                         menu.state = "showView"
                     }
                 }
@@ -85,10 +84,9 @@ Rectangle {
                 TypeDelegate {
                     icon: "MusicBrowserCore/images/genres.png"
                     itemType: DocumentGallery.AudioGenre
-                    text: qsTr("Genres")
                     onClicked: {
                         viewLoader.sourceComponent = genreView;
-                        viewButton.text = text
+                        viewButton.text = "Genres"
                         menu.state = "showView"
                     }
                 }
@@ -96,10 +94,9 @@ Rectangle {
                 TypeDelegate {
                     icon: "MusicBrowserCore/images/songs.png"
                     itemType: DocumentGallery.Audio
-                    text: qsTr("Songs")
                     onClicked: {
                         viewLoader.sourceComponent = songView;
-                        viewButton.text = text
+                        viewButton.text = "Songs"
                         menu.state = "showView"
                     }
                 }
@@ -155,28 +152,6 @@ Rectangle {
                 visible: viewLoader.status == Loader.Ready && viewLoader.item.backEnabled
                 text: viewLoader.status == Loader.Ready ? viewLoader.item.subTitle : ""
                 enabled: false
-            }
-
-            Text {
-                anchors.top: parent.top
-                anchors.topMargin: 5
-                anchors.right: parent.right
-                anchors.rightMargin: 5
-
-                color: "grey"
-                font.pointSize: 20
-
-                text: qsTr("Back")
-
-                MouseArea {
-                    anchors.fill: parent
-                    onClicked: {
-                        if (viewButton.enabled)
-                            viewLoader.item.back()
-                        else
-                            menu.state = ""
-                    }
-                }
             }
 
             Loader {

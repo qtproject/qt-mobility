@@ -33,7 +33,7 @@
 \brief Landmarks allows management of landmark data, these examples show
 how it is done.
 
-The Landmarks portion of the Location API facilitates the creation,
+The Landmarks portion of the Location API enables the creation,
 retrieval, updating and deletion of landmarks from arbitrary data stores.
 The following page demonstrates how to perform these operations.
 
@@ -200,12 +200,19 @@ We may reuse the QLandmarkRemoveRequest by setting another landmark id and runni
 
 \section2 Synchronous
 
-To import landmarks from a file we can simply provide the filename to the manager (the manager will try to automatically
-detect the file format).  If we know the format we can provide one of the \l {QLandmarkManager::Gpx} {format strings}
-as a parameter.  Using a QLandmarkManager::TransferOption, we  can choose to include category data that comes with the landmarks(default),
-exclude category data meaning that the landmarks will not be associated with any categories or we can attach the landmarks to a single
-category meaning all the imported landmarks will be assigned to the given category. Typically an import operation
-will take a long time to execute, it is therefore recommended that landmarks be imported asynchronously rather than synchronously.
+To import landmarks from a file we can simply provide the filename to the manager
+(the manager will try to automatically detect the file format).  If we know
+the format we can provide one of the \l {QLandmarkManager::Gpx} {format strings}
+as a parameter.  Using a QLandmarkManager::TransferOption, an option for
+controlling import/export behavior, we  can choose to include category data
+that comes with the landmarks(default), exclude category data meaning that
+the landmarks will not be associated with any categories or we can attach the
+landmarks to a single category meaning all the imported landmarks will be
+assigned to the given category.
+
+\note Typically an import operation will take a long time to execute, it is therefore
+recommended that landmarks be imported asynchronously rather than synchronously.
+
 \snippet snippets/qtlandmarksdocsample/qtlandmarksdocsample.cpp Import landmarks sync complex
 
 \section2 Asynchronous

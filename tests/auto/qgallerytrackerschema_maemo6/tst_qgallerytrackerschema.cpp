@@ -237,7 +237,7 @@ void tst_QGalleryTrackerSchema::serviceUpdateId_data()
             << QString::fromLatin1("nmm:Playlist")
             << 0x40;
     QTest::newRow("Text")
-            << QString::fromLatin1("nfo:TextDocument")
+            << QString::fromLatin1("nfo:PlainTextDocument")
             << 0x80;
     QTest::newRow("Artist")
             << QString::fromLatin1("nmm:Artist")
@@ -646,7 +646,7 @@ void tst_QGalleryTrackerSchema::queryResponseRootType_data()
     QTest::newRow("Text: Text")
             << "Text"
             <<  "SELECT ?x nie:url(?x) rdf:type(?x) "
-                "WHERE {{?x rdf:type nfo:TextDocument}} "
+                "WHERE {{?x rdf:type nfo:PlainTextDocument}} "
                 "GROUP BY ?x"
             << 0x80
             << 1
@@ -2864,7 +2864,7 @@ void tst_QGalleryTrackerSchema::serviceForType_data()
             << QString::fromLatin1("nmm:Playlist");
     QTest::newRow("Text")
             << QString::fromLatin1("Text")
-            << QString::fromLatin1("nfo:TextDocument");
+            << QString::fromLatin1("nfo:PlainTextDocument");
     QTest::newRow("Artist")
             << QString::fromLatin1("Artist")
             << QString::fromLatin1("nmm:Artist");

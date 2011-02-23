@@ -189,4 +189,61 @@ quint16 QL2capServer::serverPort() const
     return d->socket->localPort();
 }
 
+void QL2capServer::setSecurityFlags(QBluetooth::SecurityFlags security)
+{
+    Q_D(QL2capServer);
+
+    int lm = 0;
+    if(security == QBluetooth::NoSecurity){
+        lm = 0;
+    }
+    else if(lm & QBluetooth::Authorization){
+        lm |= L2CAP_LM_AUTH;
+    }
+    else if(lm & QBluetooth::Authentication) {
+        lm |= L2CAP_LM_TRUSTED;
+    }
+    else if(lm & QBluetooth::Encryption){
+        lm |= L2CAP_LM_ENCRYPT;
+    }
+    else if(lm & QBluetooth::Secure){
+        lm |= L2CAP_LM_SECURE;
+    }
+
+    if(setsockopt(d->socket->socketDescriptor(), SOL_L2CAP, L2CAP_LM, &lm, sizeof(lm)) < 0){
+        qWarning() << "Failed to set socket option, closing socket for safety" << errno;
+        qWarning() << "Error: " << strerror(errno);
+        d->socket->close();
+    }
+}
+
+QBluetooth::SecurityFlags QL2capServer::securityFlags() const
+{
+    Q_D(const QL2capServer);
+
+    int lm = 0;
+    int len = sizeof(lm);
+    int security = QBluetooth::NoSecurity;
+
+    if(getsockopt(d->socket->socketDescriptor(), SOL_L2CAP, L2CAP_LM, &lm, (socklen_t *)&len) < 0) {
+        qWarning() << "Failed to get security flags" << strerror(errno);
+        return QBluetooth::NoSecurity;
+    }
+
+    if(lm & L2CAP_LM_SECURE)
+        security |= QBluetooth::Secure;
+
+    if(lm & L2CAP_LM_ENCRYPT)
+        security |= QBluetooth::Encryption;
+
+    if(lm & L2CAP_LM_AUTH)
+        security |= QBluetooth::Authentication;
+
+    if(lm & L2CAP_LM_TRUSTED)
+        security |= QBluetooth::Authorization;
+
+    return static_cast<QBluetooth::SecurityFlags>(security);
+}
+
+
 QTM_END_NAMESPACE

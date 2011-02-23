@@ -41,6 +41,7 @@
 
 #include "ql2capserver.h"
 #include "ql2capserver_p.h"
+#include "qbluetoothsocket.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -148,7 +149,9 @@ QL2capServer::~QL2capServer()
 */
 bool QL2capServer::isListening() const
 {
-    return false;
+    Q_D(const QL2capServer);
+
+    return d->socket->state() == QBluetoothSocket::ListeningState;
 }
 
 /*!
@@ -158,24 +161,22 @@ bool QL2capServer::isListening() const
 */
 int QL2capServer::maxPendingConnections() const
 {
-    return 0;
+    Q_D(const QL2capServer);
+
+    return d->maxPendingConnections;
 }
 
 /*!
+  \fn void QL2capServer::setSecurityFlags(QBluetooth::SecurityFlags security)
     Sets the Bluetooth security flags to \a security. This function must be called prior to calling
     listen().
 */
-void QL2capServer::setSecurityFlags(QBluetooth::SecurityFlags security)
-{
-}
 
 /*!
+  \fn QBluetooth::SecurityFlags QL2capServer::securityFlags() const
+
     Returns the Bluetooth security flags.
 */
-QBluetooth::SecurityFlags QL2capServer::securityFlags() const
-{
-    return QBluetooth::NoSecurity;
-}
 
 #include "moc_ql2capserver.cpp"
 

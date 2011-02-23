@@ -2,11 +2,11 @@ BEGIN:VCARD
 VERSION:3.0
 REV:20061103T142334Z
 UID:b8488c65a121fa3b-00e0fc34dbeb8050-2
-N:k;divya;ghm;Ms;ghn
+N:k;dtest;ghm;Ms;ghn
 FN:k
-ADR;TYPE=HOME:;;ghjghdgyh55;Bangalore;Karnataka;560016;India
+ADR;TYPE=HOME:;;ghjghdgyh55;Babcdefgi;Kabcdefgi;ZZ99EX;Iabcd
 ADR;TYPE=WORK:;;gth;fgh;gh;556;gh
-ORG:symbian;fghj
+ORG:symbianfoundation;fghj
 TEL;TYPE=HOME;TYPE=VOICE;TYPE=CELL:343455
 TEL;TYPE=HOME;TYPE=VOICE;TYPE=CELL:98985
 TEL;TYPE=HOME;TYPE=VOICE:455

@@ -292,7 +292,7 @@ void QGeoSearchManagerEngineNokia::placesError(QGeoSearchReply::Error error, con
 QString QGeoSearchManagerEngineNokia::languageToMarc(QLocale::Language language)
 {
     uint offset = 3 * (uint(language));
-    if (language == QLocale::C || offset + 2 > sizeof(marc_language_code_list))
+    if (language == QLocale::C || offset + 3 > sizeof(marc_language_code_list))
         return QLatin1String("eng");
 
     const unsigned char *c = marc_language_code_list + offset;

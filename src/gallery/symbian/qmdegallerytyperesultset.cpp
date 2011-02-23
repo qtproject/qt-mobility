@@ -77,14 +77,15 @@ QMDEGalleryTypeResultSet::QMDEGalleryTypeResultSet(QMdeSession *session, QGaller
 
             m_query.reset(session->NewObjectQuery(namespaceDef, objectDef, this));
         );
-        if (err != KErrNone)
+        if (err != KErrNone) {
             QGalleryResultSet::error(QDocumentGallery::ItemTypeError);
+        } else {
+            m_query->SetResultMode(EQueryResultModeCount);
 
-        m_query->SetResultMode(EQueryResultModeCount);
-
-        TRAP(err, m_query->FindL());
-        if (err != KErrNone)
-            QGalleryResultSet::error(QDocumentGallery::ConnectionError);
+            TRAP(err, m_query->FindL());
+            if (err != KErrNone)
+                QGalleryResultSet::error(QDocumentGallery::ConnectionError);
+        }
     }
 }
 

@@ -44,12 +44,12 @@
 
 IMPLEMENT_READING(TestSensorReading)
 
-bool TestSensorReading::test() const
+int TestSensorReading::test() const
 {
     return d->test;
 }
 
-void TestSensorReading::setTest(bool test)
+void TestSensorReading::setTest(int test)
 {
     d->test = test;
 }

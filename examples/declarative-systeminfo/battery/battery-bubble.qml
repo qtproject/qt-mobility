@@ -57,20 +57,14 @@ Rectangle{
         onBatteryLevelChanged: doBatteryLevelChange(level)
         property int battlevel: batteryLevel;
 
-
-    }
-
-    Component.onCompleted: {
-        deviceinfo.startBatteryLevelChanged();
-        deviceinfo.startBatteryStatusChanged();
-        deviceinfo.startPowerStateChanged();
-        deviceinfo.startCurrentProfileChanged();
-        deviceinfo.startBluetoothStateChanged();
+        monitorBatteryLevelChanges: true
+        monitorBatteryStatusChanges: true
+        monitorPowerStateChanges: true
+        monitorCurrentProfileChanges: true
+        monitorBluetoothStateChanges: true
     }
 
     property alias batlevel: deviceinfo.battlevel;
-    property alias curPowerState: deviceinfo.powerState;
-
     property string oldstate;
 
     function doBatteryLevelChange(level) {
@@ -101,15 +95,15 @@ Rectangle{
     function getPowerState() {
 
         console.debug("curPowerState: " );
-        if ( curPowerState == 1) {
+        if (  deviceinfo.powerState == 1) {
             img.state = "Battery"
             oldstate = img.state;
         }
-        if ( curPowerState == 2 ) {
+        if (  deviceinfo.powerState == 2 ) {
             img.state = "WallPower"
             oldstate = img.state;
         }
-        if ( curPowerState == 3) {
+        if (  deviceinfo.powerState == 3) {
             img.state = "Charging"
             oldstate = img.state;
         }

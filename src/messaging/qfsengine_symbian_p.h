@@ -68,8 +68,9 @@
 #include <memailmessagesearch.h>
 #include <memailfolder.h>
 #include <mmailboxsyncobserver.h>
-#ifdef FREESTYLEMAILBOXOBSERVERUSED
 #include <mmailboxcontentobserver.h>
+
+#ifdef FREESTYLEMAILMAPI12USED
 #include <memailclientapiobserver.h>
 #include <memailrequestobserver.h>
 #endif
@@ -107,6 +108,7 @@ struct FSSearchOperation
     TEmailSortCriteria m_emailSortCriteria;
 };
 
+#ifdef FREESTYLEMAILMAPI12USED
 class EMailSyncRequest : public MMailboxSyncObserver
 {
 public:
@@ -148,11 +150,12 @@ public:
     /// 
     TMailboxId                  m_mailbox;
 };
+#endif
 
-#ifdef FREESTYLEMAILBOXOBSERVERUSED
+#ifdef FREESTYLEMAILMAPI12USED
 class CFSEngine : public QObject, public MMailboxContentObserver, public MEmailClientApiObserver, public MEmailRequestObserver
 #else
-class CFSEngine : public QObject
+class CFSEngine : public QObject, public MMailboxContentObserver, public MMailboxSyncObserver
 #endif
 {
     Q_OBJECT
@@ -163,15 +166,16 @@ public:
 
     CFSEngine();
     ~CFSEngine();
-    
+#ifdef FREESTYLEMAILMAPI12USED
     void setMessageStorePrivateSingleton(QMessageStorePrivate* privateStore);
-    
+#endif
     QMessageAccountIdList queryAccounts(const QMessageAccountFilter &filter, const QMessageAccountSortOrder &sortOrder, uint limit, uint offset) const;
     int countAccounts(const QMessageAccountFilter &filter) const;
     QMessageAccount account(const QMessageAccountId &id) const;
     QMessageAccountId defaultAccount(QMessage::Type type) const;
+#ifdef FREESTYLEMAILMAPI12USED
     int removeAccount(const QMessageAccountId &id);
-    
+#endif
     QMessageFolderIdList queryFolders(const QMessageFolderFilter &filter, const QMessageFolderSortOrder &sortOrder, uint limit, uint offset) const;
     int countFolders(const QMessageFolderFilter &filter) const;
     QMessageFolder folder(const QMessageFolderId &id) const;
@@ -192,8 +196,9 @@ public:
     bool retrieveBody(QMessageServicePrivate& privateService, const QMessageId& id);
     bool retrieveHeader(QMessageServicePrivate& privateService, const QMessageId& id);
     bool synchronize(QMessageServicePrivate& observer, const QMessageAccountId& id);
+#ifdef FREESTYLEMAILMAPI12USED
     bool moveMessages(QMessageServicePrivate& observer, const QMessageIdList &messageIds, const QMessageFolderId &toFolderId);
-    
+#endif
     QMessageManager::NotificationFilterId registerNotificationFilter(QMessageStorePrivate& aPrivateStore,
                                         const QMessageFilter& filter, QMessageManager::NotificationFilterId aId);
     void unregisterNotificationFilter(QMessageManager::NotificationFilterId notificationFilterId);
@@ -207,8 +212,12 @@ public:
     QString bodyContent(long int messageId, TMessageContentId bodyContentId) const;
     
     void cancel(QMessageServicePrivate& privateService);
-    
-#ifdef FREESTYLEMAILBOXOBSERVERUSED
+
+public:
+#ifndef FREESTYLEMAILMAPI12USED
+        // from MMailboxSyncObserver
+    void MailboxSynchronisedL(TInt aResult);
+#endif
     void setPluginObserversL();
     
 public:
@@ -216,14 +225,14 @@ public:
     void NewMessageEventL(const TMailboxId& aMailbox, const REmailMessageIdArray aNewMessages, const TFolderId& aParentFolderId);
     void MessageChangedEventL(const TMailboxId& aMailbox, const REmailMessageIdArray aChangedMessages, const TFolderId& aParentFolderId);
     void MessageDeletedEventL(const TMailboxId& aMailbox, const REmailMessageIdArray aDeletedMessages, const TFolderId& aParentFolderId);       
-    
-        // from MEmailClientApiObserver
+
+#ifdef FREESTYLEMAILMAPI12USED
+public:
+    // from MEmailClientApiObserver
     void EmailClientApiEventL(const TEmailClientApiEvent aEvent, const TMailboxId& aId);
-    
-#endif
-    
     // from MEmailRequestObserver
     void EmailRequestCompleteL(TInt aResult, TUint aRequestId);
+#endif
     
 public slots:
     void cleanupFSBackend();
@@ -273,7 +282,9 @@ private:
 
     void handleNestedFiltersFromMessageFilter(QMessageFilter &filter) const;
     void synchronizeL(QMessageServicePrivate &observer, const QMessageAccountId &id);
+#ifdef FREESTYLEMAILMAPI12USED
     void moveMessagesL(QMessageServicePrivate &observer, const REmailMessageIdArray &messages, const TFolderId &toFolder);
+#endif
 
     MEmailAttachment* attachmentById(TMessageContentId attachmentId) const;
     MEmailTextContent* textContentById(TMessageContentId contentId, MEmailMessageContent* parentContent = NULL) const;
@@ -288,10 +299,8 @@ private:
 
     static void cleanup();
 
-#ifdef FREESTYLEMAILBOXOBSERVERUSED
     void notificationL(const TMailboxId& aMailbox, const TMessageId& aMessageId, 
                         const TFolderId& aParentFolderId, QMessageStorePrivate::NotificationType aNotificationType);
-#endif
     
     friend class QMessageService;
     friend class CMessagesFindOperation;
@@ -324,10 +333,12 @@ private:
 
     mutable bool m_cleanedup;
 
+#ifdef FREESTYLEMAILMAPI12USED
     QList<EMailSyncRequest*> m_syncRequests;
     QMap<uint, EMailMoveRequest> m_moveRequests;
     uint m_mailboxMoveRequestId;
     QMessageStorePrivate* m_messageStorePrivateSingleton;
+#endif
 };
 
 class CFSContentFetchOperation : public QObject, MEmailFetchObserver

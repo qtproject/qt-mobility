@@ -16,7 +16,7 @@
 */
 
 
-target          t_cntfindall.exe
+TARGET          t_cntfindall.exe
 targettype      EXE
 CAPABILITY   ReadUserData WriteUserData
 UID		0x1000007a
@@ -31,6 +31,6 @@ userinclude  ../inc
 source          t_CntFindAll.cpp
 source		t_utils2.cpp
 
-library         euser.lib  cntmodel.lib	efsrv.lib pimtestclient.lib
+LIBRARY         euser.lib  cntmodel.lib	efsrv.lib pimtestclient.lib
 
 SMPSAFE

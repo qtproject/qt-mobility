@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -72,9 +72,10 @@ void QNearFieldManagerPrivateImpl::reset()
     TagActivator::instance()->reset();
 }
 
-void QNearFieldManagerPrivateImpl::startTargetDetection(const QList<QNearFieldTarget::Type> &targetTypes)
+bool QNearFieldManagerPrivateImpl::startTargetDetection(const QList<QNearFieldTarget::Type> &targetTypes)
 {
     m_detectTargetTypes = targetTypes;
+    return true;
 }
 
 void QNearFieldManagerPrivateImpl::stopTargetDetection()
@@ -91,8 +92,8 @@ int QNearFieldManagerPrivateImpl::getFreeId()
     return m_registeredHandlers.count() - 1;
 }
 
-int QNearFieldManagerPrivateImpl::registerTargetDetectedHandler(QObject *object,
-                                                                const QMetaMethod &method)
+int QNearFieldManagerPrivateImpl::registerNdefMessageHandler(QObject *object,
+                                                             const QMetaMethod &method)
 {
     int id = getFreeId();
 
@@ -105,9 +106,9 @@ int QNearFieldManagerPrivateImpl::registerTargetDetectedHandler(QObject *object,
     return id;
 }
 
-int QNearFieldManagerPrivateImpl::registerTargetDetectedHandler(const QNdefFilter &filter,
-                                                                QObject *object,
-                                                                const QMetaMethod &method)
+int QNearFieldManagerPrivateImpl::registerNdefMessageHandler(const QNdefFilter &filter,
+                                                             QObject *object,
+                                                             const QMetaMethod &method)
 {
     int id = getFreeId();
 
@@ -120,7 +121,7 @@ int QNearFieldManagerPrivateImpl::registerTargetDetectedHandler(const QNdefFilte
     return id;
 }
 
-bool QNearFieldManagerPrivateImpl::unregisterTargetDetectedHandler(int id)
+bool QNearFieldManagerPrivateImpl::unregisterNdefMessageHandler(int id)
 {
     if (id < 0 || id >= m_registeredHandlers.count())
         return false;

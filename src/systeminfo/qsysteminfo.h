@@ -47,4 +47,5 @@
 #include "qsystemscreensaver.h"
 #include "qsystemstorageinfo.h"
 #include "qsystembatteryinfo.h"
+#include "qsystemalignedtimer.h"
 #endif

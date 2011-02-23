@@ -41,7 +41,6 @@
 #ifndef QSYSTEMINFO_MAEMO_P_H
 #define QSYSTEMINFO_MAEMO_P_H
 
-
 //
 //  W A R N I N G
 //  -------------
@@ -212,13 +211,13 @@ public:
 
     QSystemDisplayInfoPrivate(QSystemDisplayInfoLinuxCommonPrivate *parent = 0);
     virtual ~QSystemDisplayInfoPrivate();
-    QSystemDisplayInfo::DisplayOrientation getOrientation(int screen);
     float contrast(int screen);
-    int getDPIWidth(int screen);
-    int getDPIHeight(int screen);
-    int physicalHeight(int screen);
-    int physicalWidth(int screen);
     int displayBrightness(int screen);
+    QSystemDisplayInfo::BacklightState backlightStatus(int screen);
+Q_SIGNALS:
+    void orientationChanged(QSystemDisplayInfo::DisplayOrientation newOrientation);
+
+
 };
 
 class QSystemStorageInfoPrivate : public QSystemStorageInfoLinuxCommonPrivate
@@ -249,8 +248,20 @@ public:
     QSystemDeviceInfo::PowerState currentPowerState();
     QString model();
     QString productName();
+    bool isKeyboardFlippedOpen();//1.2
+    bool keypadLightOn(QSystemDeviceInfo::KeypadType type);//1.2
+
+    int messageRingtoneVolume();//1.2
+    int voiceRingtoneVolume();//1.2
+    bool vibrationActive();//1.2
+
+    QSystemDeviceInfo::LockTypeFlags lockStatus();//1.2
+
+Q_SIGNALS:
+    void keyboardFlipped(bool open);
 
 protected:
+
 #if !defined(QT_NO_DBUS)
     QHalInterface *halIface;
     QHalDeviceInterface *halIfaceDevice;
@@ -262,18 +273,28 @@ private Q_SLOTS:
     void bluezPropertyChanged(const QString&, QDBusVariant);
     void deviceModeChanged(QString newMode);
     void profileChanged(bool changed, bool active, QString profile, QList<ProfileDataValue> values);
+    void deviceStateChanged(int device, int state);
+    void touchAndKeyboardStateChanged(const QString& state);
 
+    void socketActivated(int);
 private:
+    void connectNotify(const char *signal);
+    void disconnectNotify(const char *signal);
+
     bool flightMode;
     QString profileName;
     bool silentProfile;
     bool vibratingAlertEnabled;
     bool beepProfile;
     int ringingAlertVolume;
+    int smsAlertVolume;
     QSystemDeviceInfo::BatteryStatus currentBatStatus;
 
     QSystemDeviceInfo::PowerState previousPowerState;
 #endif
+     QSocketNotifier *notifier;
+     int gpioFD;
+
 };
 
 
@@ -288,6 +309,7 @@ public:
     bool screenSaverInhibited();
     bool setScreenSaverInhibit();
     bool isInhibited;
+    void setScreenSaverInhibited(bool on);
 
 private Q_SLOTS:
     void wakeUpDisplay();
@@ -304,6 +326,11 @@ class QSystemBatteryInfoPrivate : public QSystemBatteryInfoLinuxCommonPrivate
 public:
     QSystemBatteryInfoPrivate(QSystemBatteryInfoLinuxCommonPrivate *parent = 0);
     ~QSystemBatteryInfoPrivate();
+
+private Q_SLOTS:
+#if !defined(QT_NO_DBUS)
+    void halChangedMaemo(int,QVariantList);
+#endif
 };
 
 

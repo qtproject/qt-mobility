@@ -95,6 +95,8 @@ public:
 
     GstElement *videoSink();
 
+    bool isReady() const { return winId() != 0; }
+
 signals:
     void sinkChanged();
     void readyChanged(bool);

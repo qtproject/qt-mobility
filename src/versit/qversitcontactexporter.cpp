@@ -52,10 +52,12 @@ QTM_USE_NAMESPACE
 /*!
   \deprecated
   \class QVersitContactExporterDetailHandler
-  \brief The QVersitContactExporterDetailHandler class is an interface for clients wishing to
-  implement custom export behaviour for certain contact details.
+  \brief The QVersitContactExporterDetailHandler class is the legacy interface for clients wishing
+  to implement custom export behaviour for certain contact details.
 
-  This interface is replaced by QVersitContactExporterDetailHandlerV2.
+  This interface is replaced by QVersitContactExporterDetailHandlerV2.  For general information on
+  extending Qt Versit, see the document on \l{Versit Plugins}.
+
 
   \sa QVersitContactExporter
  */
@@ -91,12 +93,14 @@ QTM_USE_NAMESPACE
 
 /*!
   \class QVersitContactExporterDetailHandlerV2
-  \brief The QVersitContactExporterDetailHandlerV2 class is an interface for clients wishing to
-  implement custom export behaviour for certain contact details.
+  \brief The QVersitContactExporterDetailHandlerV2 class is an interface for specifying custom
+  export behaviour for certain contact details.
   \ingroup versit-extension
   \inmodule QtVersit
 
-  This interface supercedes QVersitContactImporterPropertyHandler.
+  This interface supercedes QVersitContactExporterDetailHandler.  For general information on
+  extending Qt Versit, see the document on \l{Versit Plugins}.
+
 
   \sa QVersitContactExporter
  */
@@ -192,6 +196,15 @@ QTM_USE_NAMESPACE
   does this translation.
 
   \snippet ../../doc/src/snippets/qtversitdocsample/qtversitdocsample.cpp Export relationship example
+
+  \section1 Other implementation notes
+
+  Some Symbian and Android devices do not properly handle the \c FN vCard property.  If a
+  CustomLabel is set on a contact and this class is used to generate a vCard, the receiving device
+  might display this label in an unexpected field (eg. Last Name).
+
+  The vCard specification requires the \c FN property to be present.  However, because of this
+  interoperability issue, Qt Versit only generates an FN property if a CustomLabel is set.
 
   \sa QVersitDocument, QVersitProperty, QVersitResourceHandler, QVersitContactExporterDetailHandlerV2
  */

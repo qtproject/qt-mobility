@@ -20,7 +20,7 @@
 
 #if (!defined __TESTEXREVUTC_H__)
 #define __TESTEXREVUTC_H__
-#include <testexecutestepbase.h>
+#include <test/testexecutestepbase.h>
 #include "testimpexvcardsuitestepbase.h"
 #include "testimpexvcardsuitedefs.h"
 

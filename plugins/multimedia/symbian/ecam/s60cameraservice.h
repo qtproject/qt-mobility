@@ -64,6 +64,7 @@ class S60VideoWidgetControl;
 class S60ImageEncoderControl;
 class S60CameraLocksControl;
 class S60VideoRendererControl;
+class S60VideoWindowControl;
 
 class S60CameraService : public QMediaService
 {
@@ -104,6 +105,7 @@ private: // Data
     S60ImageEncoderControl          *m_imageEncoderControl;
     S60CameraLocksControl           *m_locksControl;
     S60VideoRendererControl         *m_rendererControl;
+    S60VideoWindowControl           *m_windowControl;
 };
 
 #endif // S60CAMERASERVICE_H

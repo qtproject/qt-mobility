@@ -27,7 +27,7 @@
 #include <s32file.h>
 #include <e32std.h>
 #include <f32file.h>
-#include <testexecutestepbase.h>
+#include <test/testexecutestepbase.h>
 #include <cntdb.h>
 #include <vcard.h>
 #include <cntitem.h>

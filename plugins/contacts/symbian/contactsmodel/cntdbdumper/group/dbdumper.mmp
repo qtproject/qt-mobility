@@ -16,21 +16,23 @@
 */
 
 
-target          	DBDumper.EXE
-targettype      	EXE
+target              DBDumper.EXE
+targettype          EXE
 CAPABILITY   ReadUserData WriteUserData
-UID			0x1000097a
+UID                 0x1000097a
 VENDORID 0x70000001
-SOURCEPATH		../src
+SOURCEPATH        ../src
 
 
-systeminclude		/epoc32/include 
-userinclude			../src ../../src
-source          	dbdbmsdumper.CPP
+systeminclude       /EPOC32/INCLUDE 
+userinclude         ../src ../../src
+source              dbdbmsdumper.CPP
 
-library         	EUSER.LIB  
-library				EFSRV.LIB 
-library				edbms.lib 
-library				estor.lib 
-library				BAFL.LIB
-library         	PIMTestClient.lib
+library             EUSER.LIB  
+library             EFSRV.LIB 
+library             edbms.lib 
+library             estor.lib 
+library             BAFL.LIB
+library             PIMTestClient.lib
+
+SMPSAFE

@@ -99,7 +99,7 @@ namespace
             QT_MDE_CONSTANT(Audio::KAlbumProperty),
             QT_MDE_ARRAY(qt_mdeAlbumProperties)
         }, {
-            "Genre",
+            "AudioGenre",
             QT_MDE_CONSTANT(Audio::KAudioObject),
             QT_MDE_CONSTANT(MediaObject::KGenreProperty),
             QT_MDE_ARRAY(qt_mdeGenreProperties)

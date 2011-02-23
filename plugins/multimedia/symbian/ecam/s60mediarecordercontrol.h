@@ -64,7 +64,9 @@ class S60MediaRecorderControl : public QMediaRecorderControl
 public: // Contructors & Destructor
 
     S60MediaRecorderControl(QObject *parent = 0);
-    S60MediaRecorderControl(S60VideoCaptureSession *session, QObject *parent = 0);
+    S60MediaRecorderControl(S60CameraService *service,
+                            S60VideoCaptureSession *session,
+                            QObject *parent = 0);
     ~S60MediaRecorderControl();
 
 public: // QMediaRecorderControl

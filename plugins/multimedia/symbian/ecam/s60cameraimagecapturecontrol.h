@@ -60,7 +60,9 @@ class S60CameraImageCaptureControl : public QCameraImageCaptureControl
 public: // Contructors & Destrcutor
 
     S60CameraImageCaptureControl(QObject *parent = 0);
-    S60CameraImageCaptureControl(S60ImageCaptureSession *session, QObject *parent = 0);
+    S60CameraImageCaptureControl(S60CameraService *service,
+                                 S60ImageCaptureSession *session,
+                                 QObject *parent = 0);
     ~S60CameraImageCaptureControl();
 
 public: // QCameraImageCaptureControl

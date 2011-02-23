@@ -161,7 +161,6 @@ void tst_QDocumentGallery::itemTypeProperties_data()
             << QDocumentGallery::performer
 #if defined(Q_WS_MAEMO_6)
             << QDocumentGallery::composer
-            << QDocumentGallery::resumePosition
 #else
             << QDocumentGallery::description
             << QDocumentGallery::title
@@ -194,26 +193,16 @@ void tst_QDocumentGallery::itemTypeProperties_data()
     );
     QTest::newRow("PhotoAlbum") << QString(QDocumentGallery::PhotoAlbum) << (QStringList()
 #if defined(Q_OS_UNIX) && !defined(QT_NO_DBUS)
-                << QDocumentGallery::title
-#if defined (Q_WS_MAEMO_6)
                 << QDocumentGallery::count
-#else
-                << QDocumentGallery::trackCount
-#endif
+                << QDocumentGallery::title
 #elif defined (Q_OS_SYMBIAN)
                 << QDocumentGallery::url
-                << QDocumentGallery::fileSize
-                << QDocumentGallery::lastModified
                 << QDocumentGallery::title
-                << QDocumentGallery::mimeType
 #endif
     );    
 
 #if defined (Q_OS_SYMBIAN)
     QTest::newRow("Image") << QString(QDocumentGallery::Image) << (QStringList(fileProperties)
-            << QDocumentGallery::duration
-            << QDocumentGallery::performer
-            << QDocumentGallery::playCount
             << QDocumentGallery::width
             << QDocumentGallery::height
             << QDocumentGallery::orientation

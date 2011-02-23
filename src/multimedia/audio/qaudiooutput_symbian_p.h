@@ -109,6 +109,7 @@ public:
 
 private slots:
     void dataReady();
+    void notifyTimerExpired();
     void underflowTimerExpired();
     void devsoundInitializeComplete(int err);
     void devsoundBufferToBeFilled(CMMFBuffer *);
@@ -138,6 +139,7 @@ private:
     int m_clientBufferSize;
     int m_notifyInterval;
     QScopedPointer<QTimer> m_notifyTimer;
+    qint64 m_lastNotifyPosition;
     QTime m_elapsed;
     QAudio::Error m_error;
 
