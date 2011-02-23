@@ -46,7 +46,9 @@
 #include <QtCore/QDebug>
 
 CameraBinRecorder::CameraBinRecorder(CameraBinSession *session)
-    :QMediaRecorderControl(session), m_session(session), m_state(QMediaRecorder::StoppedState)
+    :QMediaRecorderControl(session),
+     m_session(session),
+     m_state(QMediaRecorder::StoppedState)
 {
     connect(m_session, SIGNAL(stateChanged(QCamera::State)), SLOT(updateState()));
     connect(m_session, SIGNAL(error(int,QString)), SIGNAL(error(int,QString)));
@@ -222,4 +224,3 @@ void CameraBinRecorder::setMuted(bool muted)
 {
     m_session->setMuted(muted);
 }
-

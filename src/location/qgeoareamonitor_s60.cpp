@@ -75,7 +75,7 @@ void QGeoAreaMonitorS60::setMonitoredArea(const QGeoCoordinate & aCoordinate, qr
     if ((ret1 != KErrNone) || (ret2 != KErrNone))
         return;
 
-    //Intialize the trigger and enable the trigger if atleast one slot is  connected to the areaEntered
+    //Initialize the trigger and enable the trigger if atleast one slot is  connected to the areaEntered
     //signal
     if ((iTriggerCreateAO->InitializeTrigger(this, EntryTrigger, coord, aRadius)) &&
             (receivers(SIGNAL(areaEntered(const QGeoPositionInfo&))) > 0)) {
@@ -83,7 +83,7 @@ void QGeoAreaMonitorS60::setMonitoredArea(const QGeoCoordinate & aCoordinate, qr
         iTriggerAO->NotifyFiredEvent();
     }
 
-    //Intialize the trigger and enable the trigger if atleast one slot is  connected to the areaExited
+    //Initialize the trigger and enable the trigger if atleast one slot is  connected to the areaExited
     //signal
     if ((iTriggerCreateAO->InitializeTrigger(this, ExitTrigger, coord, aRadius)) &&
             (receivers(SIGNAL(areaExited(const QGeoPositionInfo&))) > 0)) {
@@ -107,7 +107,7 @@ void QGeoAreaMonitorS60::setCenter(const QGeoCoordinate& coordinate)
         setMonitoredArea(coordinate, QGeoAreaMonitor::radius());
 }
 
-//virtual fucntion sets the radius of the monitorijng area to the radius
+//virtual function sets the radius of the monitorijng area to the radius
 void QGeoAreaMonitorS60::setRadius(qreal radius)
 {
     setMonitoredArea(QGeoAreaMonitor::center(), radius);

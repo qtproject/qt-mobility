@@ -129,16 +129,11 @@ QVersitContactExporterPrivate::~QVersitContactExporterPrivate()
 /*!
  * Export QT Contact into Versit Document.
  */
-bool QVersitContactExporterPrivate::exportContact(
+void QVersitContactExporterPrivate::exportContact(
     const QContact& contact,
-    QVersitDocument& document,
-    QVersitContactExporter::Error* error)
+    QVersitDocument& document)
 {
     QList<QContactDetail> allDetails = contact.details();
-    if (allDetails.isEmpty()) {
-        *error = QVersitContactExporter::EmptyContactError;
-        return false;
-    }
     foreach (const QContactDetail& detail, allDetails) {
         // If the custom detail handler handles it, we don't have to.
         if (mDetailHandler
@@ -226,7 +221,7 @@ bool QVersitContactExporterPrivate::exportContact(
     }
 
     ensureDocumentContainsName(contact, &document);
-    return true;
+    return;
 }
 
 /*!
@@ -606,13 +601,15 @@ void QVersitContactExporterPrivate::encodeAvatar(
     QUrl imageUrl(contactAvatar.imageUrl());
     // XXX: fix up this mess: checking the scheme here and in encodeContentFromFile,
     // organisation logo and ringtone are QStrings but avatar is a QUrl
-    if (!imageUrl.scheme().isEmpty() && !imageUrl.host().isEmpty()) {
+    if (!imageUrl.scheme().isEmpty()
+            && !imageUrl.host().isEmpty()
+            && imageUrl.scheme() != QLatin1String("file")) {
         property.insertParameter(QLatin1String("VALUE"), QLatin1String("URL"));
         property.setValue(imageUrl.toString());
         *generatedProperties << property;
         *processedFields << QContactAvatar::FieldImageUrl;
     } else {
-        if (encodeContentFromFile(contactAvatar.imageUrl().toString(), property)) {
+        if (encodeContentFromFile(contactAvatar.imageUrl().toLocalFile(), property)) {
             *generatedProperties << property;
             *processedFields << QContactAvatar::FieldImageUrl;
         }
@@ -705,21 +702,40 @@ void QVersitContactExporterPrivate::encodeOnlineAccount(
 {
     QContactOnlineAccount onlineAccount = static_cast<QContactOnlineAccount>(detail);
     QStringList subTypes = onlineAccount.subTypes();
+    QString serviceProvider = onlineAccount.serviceProvider();
 
-    if (subTypes.contains(QContactOnlineAccount::SubTypeSip) ||
-        subTypes.contains(QContactOnlineAccount::SubTypeSipVoip) ||
-        subTypes.contains(QContactOnlineAccount::SubTypeVideoShare) ||
-        subTypes.contains(QContactOnlineAccount::SubTypeImpp)) {
+    QString propertyName;
+
+    if (serviceProvider == QContactOnlineAccount::ServiceJabber) {
+        propertyName = QLatin1String("X-JABBER");
+    } else if (serviceProvider == QContactOnlineAccount::ServiceAim) {
+        propertyName = QLatin1String("X-AIM");
+    } else if (serviceProvider == QContactOnlineAccount::ServiceIcq) {
+        propertyName = QLatin1String("X-ICQ");
+    } else if (serviceProvider == QContactOnlineAccount::ServiceMsn) {
+        propertyName = QLatin1String("X-MSN");
+    } else if (serviceProvider == QContactOnlineAccount::ServiceQq) {
+        propertyName = QLatin1String("X-QQ");
+    } else if (serviceProvider == QContactOnlineAccount::ServiceYahoo) {
+        propertyName = QLatin1String("X-YAHOO");
+    } else if (serviceProvider == QContactOnlineAccount::ServiceSkype) {
+        propertyName = QLatin1String("X-SKYPE");
+    } else if (subTypes.contains(QContactOnlineAccount::SubTypeSip) ||
+               subTypes.contains(QContactOnlineAccount::SubTypeSipVoip) ||
+               subTypes.contains(QContactOnlineAccount::SubTypeVideoShare)) {
+        propertyName = QLatin1String("X-SIP");
+    } else if (subTypes.contains(QContactOnlineAccount::SubTypeImpp)) {
+        propertyName = QLatin1String("X-IMPP");
+    }
+
+    if (!propertyName.isEmpty()) {
         QVersitProperty property;
         encodeParameters(property, onlineAccount.contexts(), subTypes);
-        QString name(QLatin1String("X-SIP"));
-        if (subTypes.contains(QContactOnlineAccount::SubTypeImpp))
-            name = QLatin1String("X-IMPP");
-        property.setName(name);
+        property.setName(propertyName);
         property.setValue(onlineAccount.accountUri());
         *generatedProperties << property;
         *processedFields << QContactOnlineAccount::FieldSubTypes
-                          << QContactOnlineAccount::FieldAccountUri;
+                         << QContactOnlineAccount::FieldAccountUri;
     }
 }
 

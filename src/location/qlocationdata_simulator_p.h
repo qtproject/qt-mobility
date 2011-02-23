@@ -68,6 +68,15 @@ struct QGeoPositionInfoData
     double longitude;
     double altitude;
 
+    // Attributes
+    // ### transmit whether attributes are set or not
+    qreal direction;
+    qreal groundSpeed;
+    qreal verticalSpeed;
+    qreal magneticVariation;
+    qreal horizontalAccuracy;
+    qreal verticalAccuracy;
+
     // DateTime info
     QDateTime dateTime;
 

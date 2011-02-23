@@ -42,6 +42,9 @@
 #include "qmessage_symbian_p.h"
 #include "qmessagecontentcontainer_symbian_p.h"
 #include "qmessagemanager.h"
+#ifdef FREESTYLEMAILUSED
+#include "qfsengine_symbian_p.h"
+#endif
 
 QTM_BEGIN_NAMESPACE
 
@@ -295,6 +298,12 @@ void QMessage::setPriority(Priority newPriority)
 
 int QMessage::size() const
 {
+#ifdef FREESTYLEMAILUSED
+    QMessageContentContainerPrivate *msgPrivContainer(((QMessageContentContainer *)(this))->d_ptr);
+    if (!msgPrivContainer->_contentRetrieved) {
+        CFSEngine::instance()->retrieveMessageContentHeaders(*(QMessage*)this);
+    }
+#endif
     int size = 0;
     if (d_ptr->_size != 0) {
         size = d_ptr->_size;
@@ -312,6 +321,12 @@ int QMessage::size() const
 
 QMessageContentContainerId QMessage::bodyId() const
 {
+#ifdef FREESTYLEMAILUSED
+    QMessageContentContainerPrivate *msgPrivContainer(((QMessageContentContainer *)(this))->d_ptr);
+    if (!msgPrivContainer->_contentRetrieved) {
+        CFSEngine::instance()->retrieveMessageContentHeaders(*(QMessage*)this);
+    }
+#endif
     // TODO: Example body finding algorithm.
     // If the content type of the message is text, then that is the body
     // otherwise if the first part of the body is text then that is the body.
@@ -321,6 +336,12 @@ QMessageContentContainerId QMessage::bodyId() const
 
 void QMessage::setBody(const QString &body, const QByteArray &mimeType)
 {
+#ifdef FREESTYLEMAILUSED
+    QMessageContentContainerPrivate *msgPrivContainer(((QMessageContentContainer *)(this))->d_ptr);
+    if (!msgPrivContainer->_contentRetrieved) {
+        CFSEngine::instance()->retrieveMessageContentHeaders(*(QMessage*)this);
+    }
+#endif
     QByteArray mainType("text");
     QByteArray subType("plain");   
     QByteArray charset;
@@ -388,6 +409,12 @@ void QMessage::setBody(QTextStream &in, const QByteArray &mimeType)
 
 QMessageContentContainerIdList QMessage::attachmentIds() const
 {
+#ifdef FREESTYLEMAILUSED
+    QMessageContentContainerPrivate *msgPrivContainer(((QMessageContentContainer *)(this))->d_ptr);
+    if (!msgPrivContainer->_contentRetrieved) {
+        CFSEngine::instance()->retrieveMessageContentHeaders(*(QMessage*)this);
+    }
+#endif
 	QMessageContentContainerIdList ids;
 
 	QMessageContentContainerId msgBodyId(bodyId());
@@ -402,6 +429,12 @@ QMessageContentContainerIdList QMessage::attachmentIds() const
 
 void QMessage::appendAttachments(const QStringList &fileNames)
 {
+#ifdef FREESTYLEMAILUSED
+    QMessageContentContainerPrivate *msgPrivContainer(((QMessageContentContainer *)(this))->d_ptr);
+    if (!msgPrivContainer->_contentRetrieved) {
+        CFSEngine::instance()->retrieveMessageContentHeaders(*(QMessage*)this);
+    }
+#endif
 	if (!fileNames.isEmpty()) {
         d_ptr->_modified = true;
 
@@ -439,6 +472,12 @@ void QMessage::appendAttachments(const QStringList &fileNames)
 
 void QMessage::clearAttachments()
 {
+#ifdef FREESTYLEMAILUSED
+    QMessageContentContainerPrivate *msgPrivContainer(((QMessageContentContainer *)(this))->d_ptr);
+    if (!msgPrivContainer->_contentRetrieved) {
+        CFSEngine::instance()->retrieveMessageContentHeaders(*(QMessage*)this);
+    }
+#endif
 	d_ptr->_modified = true;
 	QMessageContentContainerPrivate *container(((QMessageContentContainer *)(this))->d_ptr);
 	container->_attachments.clear();
@@ -451,6 +490,12 @@ bool QMessage::isModified() const
 
 QMessage QMessage::createResponseMessage(ResponseType type) const
 {
+#ifdef FREESTYLEMAILUSED
+    QMessageContentContainerPrivate *msgPrivContainer(((QMessageContentContainer *)(this))->d_ptr);
+    if (!msgPrivContainer->_contentRetrieved) {
+        CFSEngine::instance()->retrieveMessageContentHeaders(*(QMessage*)this);
+    }
+#endif
 	QMessage message;
 	message.setType(d_ptr->_type);
 	message.setParentAccountId(d_ptr->_parentAccountId);

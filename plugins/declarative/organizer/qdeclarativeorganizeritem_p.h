@@ -1,39 +1,40 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the QtDeclarative module of the Qt Toolkit.
 **
-** $QT_BEGIN_LICENSE:BSD$
-** You may use this file under the terms of the BSD license as follows:
+** $QT_BEGIN_LICENSE:LGPL$
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
-** "Redistribution and use in source and binary forms, with or without
-** modification, are permitted provided that the following conditions are
-** met:
-**   * Redistributions of source code must retain the above copyright
-**     notice, this list of conditions and the following disclaimer.
-**   * Redistributions in binary form must reproduce the above copyright
-**     notice, this list of conditions and the following disclaimer in
-**     the documentation and/or other materials provided with the
-**     distribution.
-**   * Neither the name of Nokia Corporation and its Subsidiary(-ies) nor
-**     the names of its contributors may be used to endorse or promote
-**     products derived from this software without specific prior written
-**     permission.
+** GNU Lesser General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU Lesser
+** General Public License version 2.1 as published by the Free Software
+** Foundation and appearing in the file LICENSE.LGPL included in the
+** packaging of this file.  Please review the following information to
+** ensure the GNU Lesser General Public License version 2.1 requirements
+** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
-** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-** "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-** LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-** A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-** OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-** LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-** DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-** THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-** (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
+**
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -56,26 +57,42 @@ class QDeclarativeOrganizerItemDetail;
 class QDeclarativeOrganizerItem : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY (QDeclarativeListProperty<QDeclarativeOrganizerItemDetail> details READ details NOTIFY itemChanged);
-    Q_PROPERTY (QString manager READ manager)
-    Q_PROPERTY (uint itemId READ itemId)
-    Q_PROPERTY (QString type READ type)
+    Q_PROPERTY (QDeclarativeListProperty<QDeclarativeOrganizerItemDetail> details READ details NOTIFY itemChanged)
+    Q_PROPERTY (QString manager READ manager NOTIFY itemChanged)
+    Q_PROPERTY (QString itemId READ itemId NOTIFY itemChanged)
+    Q_PROPERTY (QString type READ type NOTIFY itemChanged)
     Q_PROPERTY (QString displayLabel READ displayLabel WRITE setDisplayLabel NOTIFY itemChanged)
     Q_PROPERTY (QString description READ description WRITE setDescription NOTIFY itemChanged)
     Q_PROPERTY (QString guid READ guid WRITE setGuid NOTIFY itemChanged)
-    Q_PROPERTY (bool modified READ modified)
-
+    Q_PROPERTY (bool modified READ modified NOTIFY itemChanged)
+    Q_PROPERTY(QDateTime itemStartTime READ itemStartTime NOTIFY itemChanged)
+    Q_PROPERTY(QDateTime itemEndTime READ itemEndTime NOTIFY itemChanged)
+    Q_ENUMS(OrganizerItemType)
     Q_CLASSINFO("DefaultProperty", "details")
 
 public:
+    enum OrganizerItemType {
+        Event = 0,
+        EventOccurrence,
+        Todo,
+        TodoOccurrence,
+        Journal,
+        Note,
+        Customized = 100
+    };
+
     explicit QDeclarativeOrganizerItem(QObject *parent = 0);
     explicit QDeclarativeOrganizerItem(const QOrganizerItem& item, const QMap<QString, QOrganizerItemDetailDefinition>& defs, QObject *parent = 0);
     ~QDeclarativeOrganizerItem();
 
-    uint itemId() const;
+    OrganizerItemType itemType() const;
+
+    QString itemId() const;
     QString manager() const;
     bool modified() const;
 
+    QDateTime itemStartTime() const;
+    QDateTime itemEndTime() const;
     void setItem(const QOrganizerItem& c);
     QOrganizerItem item() const;
 
@@ -87,7 +104,7 @@ public:
     Q_INVOKABLE QVariant detail(const QString& name);
     Q_INVOKABLE QVariant details(const QString& name);
     Q_INVOKABLE void addComment(const QString& comment);
-    Q_INVOKABLE void clearComments();
+    Q_INVOKABLE bool removeDetail(QDeclarativeOrganizerItemDetail* detail);
 
     QString type() const;
     QString displayLabel() const;
@@ -100,6 +117,7 @@ public:
 public slots:
     void save();
     void clearDetails();
+    void clearComments();
 signals:
     void itemChanged();
 private slots:
@@ -142,9 +160,6 @@ public:
 
 signals:
     void valueChanged();
-private:
-    QOrganizerEvent* m_event;
-
 };
 QML_DECLARE_TYPE(QDeclarativeOrganizerEvent)
 
@@ -156,7 +171,7 @@ class QDeclarativeOrganizerEventOccurrence : public QDeclarativeOrganizerItem
     Q_PROPERTY(QDateTime endDateTime READ endDateTime WRITE setEndDateTime NOTIFY valueChanged)
     Q_PROPERTY(QString location READ location WRITE setLocation NOTIFY valueChanged)
     Q_PROPERTY(QDeclarativeOrganizerItemPriority::PriorityType priority READ priority WRITE setPriority NOTIFY valueChanged)
-    Q_PROPERTY(uint parentId READ parentId WRITE setParentId NOTIFY valueChanged)
+    Q_PROPERTY(QString parentId READ parentId WRITE setParentId NOTIFY valueChanged)
     Q_PROPERTY(QDate originalDate READ originalDate WRITE setOriginalDate NOTIFY valueChanged)
 public:
     Q_DECLARE_LATIN1_CONSTANT(ItemName, "eventOccurrence");
@@ -164,8 +179,8 @@ public:
 
     explicit QDeclarativeOrganizerEventOccurrence(QObject *parent = 0);
 
-    void setParentId(uint parentId);
-    uint parentId() const;
+    void setParentId(const QString& parentId);
+    QString parentId() const;
 
     void setOriginalDate(const QDate& date);
 
@@ -185,8 +200,6 @@ public:
 
 signals:
     void valueChanged();
-private:
-    QOrganizerEventOccurrence* m_eo;
 };
 QML_DECLARE_TYPE(QDeclarativeOrganizerEventOccurrence)
 
@@ -203,8 +216,6 @@ public:
     QDateTime dateTime() const;
 signals:
     void valueChanged();
-private:
-    QOrganizerJournal* m_journal;
 };
 QML_DECLARE_TYPE(QDeclarativeOrganizerJournal)
 
@@ -262,8 +273,6 @@ public:
 
 signals:
     void valueChanged();
-private:
-    QOrganizerTodo* m_todo;
 };
 QML_DECLARE_TYPE(QDeclarativeOrganizerTodo)
 
@@ -277,7 +286,7 @@ class QDeclarativeOrganizerTodoOccurrence : public QDeclarativeOrganizerItem
     Q_PROPERTY(int progressPercentage READ progressPercentage WRITE setProgressPercentage NOTIFY valueChanged)
     Q_PROPERTY(QDeclarativeOrganizerTodoProgress::StatusType status READ status WRITE setStatus NOTIFY valueChanged)
     Q_PROPERTY(QDateTime finishedDateTime READ finishedDateTime WRITE setFinishedDateTime NOTIFY valueChanged)
-    Q_PROPERTY(uint parentId READ parentId WRITE setParentId NOTIFY valueChanged)
+    Q_PROPERTY(QString parentId READ parentId WRITE setParentId NOTIFY valueChanged)
     Q_PROPERTY(QDate originalDate READ originalDate WRITE setOriginalDate NOTIFY valueChanged)
 public:
     Q_DECLARE_LATIN1_CONSTANT(ItemName, "todoOccurrence");
@@ -289,8 +298,8 @@ public:
 
     void setDueDateTime(const QDateTime& dueDateTime);
     QDateTime dueDateTime() const;
-    uint parentId() const;
-    void setParentId(uint parentId);
+    QString parentId() const;
+    void setParentId(const QString& parentId);
 
     void setPriority(QDeclarativeOrganizerItemPriority::PriorityType priority);
 
@@ -310,8 +319,6 @@ public:
     QDateTime finishedDateTime() const;
 signals:
     void valueChanged();
-private:
-    QOrganizerTodoOccurrence* m_to;
 };
 QML_DECLARE_TYPE(QDeclarativeOrganizerTodoOccurrence)
 #endif // QDECLARATIVEORGANIZERITEM_H

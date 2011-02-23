@@ -53,7 +53,7 @@ QT_BEGIN_NAMESPACE
     \inmodule QtMultimediaKit
     \ingroup camera
 
-    \preliminary
+    
 
     The interface name of QCameraImageCaptureControl is \c com.nokia.Qt.QCameraImageCaptureControl/1.0 as
     defined in QCameraImageCaptureControl_iid.

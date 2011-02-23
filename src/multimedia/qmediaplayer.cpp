@@ -66,7 +66,7 @@ QT_BEGIN_NAMESPACE
     \inmodule QtMultimediaKit
     \ingroup multimedia
 
-    \preliminary
+    
 
     The QMediaPlayer class is a high level media playback class. It can be used
     to playback such content as songs, movies and internet radio. The content
@@ -1020,7 +1020,7 @@ void QMediaPlayer::setVideoOutput(QGraphicsVideoItem *output)
     \value StreamPlayback
             The player is expected to play QIODevice based streams.
             If passed to QMediaPlayer constructor, the service supporting
-            streams playback will be choosen.
+            streams playback will be chosen.
 */
 
 #include "moc_qmediaplayer.cpp"

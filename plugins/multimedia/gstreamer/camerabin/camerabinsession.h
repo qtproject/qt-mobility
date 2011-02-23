@@ -79,11 +79,18 @@ class CameraBinSession : public QObject, public QGstreamerSyncEventFilter
     Q_OBJECT
     Q_PROPERTY(qint64 duration READ duration NOTIFY durationChanged)
 public:
+    enum CameraRole {
+       FrontCamera, // Secondary camera
+       BackCamera // Main photo camera
+    };
+
     CameraBinSession(QObject *parent);
     ~CameraBinSession();
 
     GstPhotography *photography();
     GstElement *cameraBin() { return m_pipeline; }
+
+    CameraRole cameraRole() const;
 
     QList< QPair<int,int> > supportedFrameRates(const QSize &frameSize, bool *continuous) const;
     QList<QSize> supportedResolutions( QPair<int,int> rate, bool *continuous, QCamera::CaptureMode mode) const;
@@ -166,6 +173,7 @@ private:
 
     QUrl m_sink;
     QUrl m_actualSink;
+    bool m_recordingActive;
     QString m_captureDevice;
     QCamera::State m_state;
     QCamera::State m_pendingState;
@@ -196,6 +204,7 @@ private:
     GstBus* m_bus;
     GstElement *m_pipeline;
     GstElement *m_videoSrc;
+    GstElement *m_viewfinderElement;
     bool m_viewfinderHasChanged;
     bool m_videoInputHasChanged;
 

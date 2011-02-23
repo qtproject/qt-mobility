@@ -157,6 +157,7 @@ public:
     void reset()
     {
         m_buffer->reset();
+        m_device = 0;
         m_deviceError = false;
     }
 
@@ -460,8 +461,6 @@ void QAudioOutputPrivate::start(QIODevice* device)
 
 QIODevice* QAudioOutputPrivate::start()
 {
-    QIODevice*  op = 0;
-
     if (!audioDeviceInfo->isFormatSupported(audioFormat) || !open()) {
         stateCode = QAudio::StoppedState;
         errorCode = QAudio::OpenError;
@@ -470,26 +469,18 @@ QIODevice* QAudioOutputPrivate::start()
 
     reset();
     audioBuffer->reset();
-    audioBuffer->setPrefetchDevice(op);
+    audioBuffer->setPrefetchDevice(0);
 
-    if (op == 0) {
-        op = audioIO;
-        stateCode = QAudio::IdleState;
-    }
-    else
-        stateCode = QAudio::ActiveState;
+    stateCode = QAudio::IdleState;
 
     // Start
     errorCode = QAudio::NoError;
     totalFrames = 0;
     startTime = AudioGetCurrentHostTime();
 
-    if (stateCode == QAudio::ActiveState)
-        audioThreadStart();
-
     emit stateChanged(stateCode);
 
-    return op;
+    return audioIO;
 }
 
 void QAudioOutputPrivate::stop()

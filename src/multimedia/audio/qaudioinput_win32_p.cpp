@@ -417,9 +417,12 @@ qint64 QAudioInputPrivate::read(char* data, qint64 len)
 		    resuming = false;
                 }
             } else {
+                l = qMin<qint64>(len, waveBlocks[header].dwBytesRecorded);
                 // push mode
-                memcpy(p,waveBlocks[header].lpData,waveBlocks[header].dwBytesRecorded);
-                l = waveBlocks[header].dwBytesRecorded;
+                memcpy(p, waveBlocks[header].lpData, l);
+
+                len -= l;
+
 #ifdef DEBUG_AUDIO
                 qDebug()<<"IN: "<<waveBlocks[header].dwBytesRecorded<<", OUT: "<<l;
 #endif
@@ -474,7 +477,7 @@ qint64 QAudioInputPrivate::read(char* data, qint64 len)
 
         mutex.lock();
         if(!pullMode) {
-	    if(l+period_size > len && waveFreeBlockCount == buffer_size/period_size)
+            if(len < period_size || waveFreeBlockCount == buffer_size/period_size)
 	        done = true;
 	} else {
 	    if(waveFreeBlockCount == buffer_size/period_size)
@@ -585,7 +588,7 @@ bool QAudioInputPrivate::deviceReady()
 
     if(pullMode) {
         // reads some audio data and writes it to QIODevice
-        read(0,0);
+        read(0, buffer_size);
     } else {
         // emits readyRead() so user will call read() on QIODevice to get some audio data
 	InputPrivate* a = qobject_cast<InputPrivate*>(audioSource);

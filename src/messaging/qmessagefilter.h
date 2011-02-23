@@ -87,11 +87,15 @@ public:
     static QMessageFilter byType(QMessage::Type type, QMessageDataComparator::EqualityComparator cmp = QMessageDataComparator::Equal);
     static QMessageFilter byType(QMessage::TypeFlags type, QMessageDataComparator::InclusionComparator cmp);
 
+    static QMessageFilter bySender(const QString &pattern, QMessageDataComparator::LikeComparator cmp);
     static QMessageFilter bySender(const QString &value, QMessageDataComparator::EqualityComparator cmp);
     static QMessageFilter bySender(const QString &value, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
 
+    static QMessageFilter byRecipients(const QString &pattern, QMessageDataComparator::LikeComparator cmp);
+    static QMessageFilter byRecipients(const QString &value, QMessageDataComparator::EqualityComparator cmp);
     static QMessageFilter byRecipients(const QString &value, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
 
+    static QMessageFilter bySubject(const QString &pattern, QMessageDataComparator::LikeComparator cmp);
     static QMessageFilter bySubject(const QString &value, QMessageDataComparator::EqualityComparator cmp);
     static QMessageFilter bySubject(const QString &value, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
 
@@ -119,6 +123,18 @@ public:
 
     static QMessageFilter byAncestorFolderIds(const QMessageFolderId &id, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
     static QMessageFilter byAncestorFolderIds(const QMessageFolderFilter &filter, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
+
+    static QMessageFilter byTo(const QString &pattern, QMessageDataComparator::LikeComparator cmp);
+    static QMessageFilter byTo(const QString &value, QMessageDataComparator::EqualityComparator cmp);
+    static QMessageFilter byTo(const QString &value, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
+
+    static QMessageFilter byCc(const QString &pattern, QMessageDataComparator::LikeComparator cmp);
+    static QMessageFilter byCc(const QString &value, QMessageDataComparator::EqualityComparator cmp);
+    static QMessageFilter byCc(const QString &value, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
+
+    static QMessageFilter byBcc(const QString &pattern, QMessageDataComparator::LikeComparator cmp);
+    static QMessageFilter byBcc(const QString &value, QMessageDataComparator::EqualityComparator cmp);
+    static QMessageFilter byBcc(const QString &value, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
 
 private:
     QMessageFilterPrivate *d_ptr;

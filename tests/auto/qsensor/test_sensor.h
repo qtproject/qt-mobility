@@ -70,10 +70,21 @@ class TestSensor : public QSensor
 {
     Q_OBJECT
 public:
-    explicit TestSensor(QObject *parent = 0) : QSensor(TestSensor::type, parent) {}
+    explicit TestSensor(QObject *parent = 0) : QSensor(TestSensor::type, parent)
+    {
+        connect(this, SIGNAL(availableSensorsChanged()), this, SLOT(s_availableSensorsChanged()));
+    }
     virtual ~TestSensor() {}
     TestSensorReading *reading() const { return static_cast<TestSensorReading*>(QSensor::reading()); }
     static const char *type;
+
+    // used by the testSensorsChangedSignal test function
+    bool sensorsChangedEmitted;
+private slots:
+    void s_availableSensorsChanged()
+    {
+        sensorsChangedEmitted = true;
+    }
 };
 
 #endif

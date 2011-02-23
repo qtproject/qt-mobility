@@ -93,16 +93,19 @@ void QVersitWriterPrivate::write()
             break;
         }
 
-        QScopedPointer<QVersitDocumentWriter> writer(
-                writerForType( // ... get type from the document if not specified in startWriting
-                    type == QVersitDocument::InvalidType ? document.type() : type,
-                    document));
+        // Get type from the document if not specified in startWriting
+        if (type == QVersitDocument::InvalidType)
+            type = document.type();
+
+        QScopedPointer<QVersitDocumentWriter> writer(writerForType(type, document));
         QTextCodec* codec = mDefaultCodec;
         if (codec == NULL) {
-            if (type == QVersitDocument::VCard21Type)
+            if (type == QVersitDocument::VCard21Type) {
                 codec = QTextCodec::codecForName("ISO-8859-1");
-            else
+                writer->setAsciiCodec();
+            } else {
                 codec = QTextCodec::codecForName("UTF-8");
+            }
         }
         writer->setCodec(codec);
         writer->setDevice(mIoDevice);

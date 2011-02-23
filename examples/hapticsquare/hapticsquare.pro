@@ -12,9 +12,9 @@ INCLUDEPATH += . $$QT_MOBILITY_SOURCE_TREE/src/feedback
 # LIBS += -lQtFeedback
 
 # Input
-HEADERS += dialog.h \
+HEADERS += hapticsquare.h \
     hapticbutton.h
-SOURCES += dialog.cpp main.cpp \
+SOURCES += hapticsquare.cpp main.cpp \
     hapticbutton.cpp
 
 CONFIG += mobility

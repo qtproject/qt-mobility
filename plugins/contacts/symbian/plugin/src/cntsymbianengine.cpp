@@ -59,6 +59,7 @@
 #include "cntrelationship.h"
 #include "cntdisplaylabel.h"
 #include "cntsymbiansrvconnection.h"
+#include "cntbackendsdefs.h"
 
 typedef QList<QContactLocalId> QContactLocalIdList;
 typedef QPair<QContactLocalId, QContactLocalId> QOwnCardPair;
@@ -193,6 +194,11 @@ QList<QContact> CntSymbianEngine::contacts(const QContactFilter& filter, const Q
 
     QList<QContact> contacts;
     QList<QContactLocalId> contactIds = this->contactIds(filter, sortOrders, error);
+    
+    if (fh.maxCount() > 0) {
+        contactIds = contactIds.mid(0, fh.maxCount());
+    }
+    
     if (*error == QContactManager::NoError ) {
         foreach (QContactLocalId id, contactIds) {
             QContact contact = this->contact(id, fh, error);
@@ -240,6 +246,12 @@ QContact CntSymbianEngine::contact(const QContactLocalId& contactId, const QCont
                 *error = relationshipError;
             }
             QContactManagerEngine::setContactRelationships(contact, relationships);
+        }
+        QContactManager::Error selfErr;
+        QContactLocalId selfCntId = selfContactId(&selfErr); 
+        if (err == QContactManager::NoError && selfCntId == contactId) {
+            QContactDetail detail(MYCARD_DEFINTION);
+            contact->saveDetail(&detail);
         }
     }
     return *QScopedPointer<QContact>(contact);
@@ -326,11 +338,27 @@ QList<QContactLocalId> CntSymbianEngine::slowSort(
 bool CntSymbianEngine::doSaveContact(QContact* contact, QContactChangeSet& changeSet, QContactManager::Error* error)
 {
     bool ret = false;
-    if(contact && !validateContact(*contact, error))
+    
+    if (!contact) {
+        *error = QContactManager::BadArgumentError;
         return false;
+    }
+    
+    // Check if my card before validation
+    bool isMyCard = false;
+    QList<QContactDetail> details = contact->details(MYCARD_DEFINTION);
+    if (details.count() > 0) {
+        // Set this contact as MyCard
+        isMyCard = true;
+        contact->removeDetail(&details.first());
+    }
+    
+    if(!validateContact(*contact, error)) {
+        return false;
+    }
 
     // If contact has GUid and no local Id, try to find it in database
-    if (contact && !contact->localId() &&
+    if (!contact->localId() &&
         contact->details(QContactGuid::DefinitionName).count() > 0) {
         QContactDetailFilter guidFilter;
         guidFilter.setDetailDefinitionName(QContactGuid::DefinitionName, QContactGuid::FieldGuid);
@@ -348,12 +376,8 @@ bool CntSymbianEngine::doSaveContact(QContact* contact, QContactChangeSet& chang
         }
     }
 
-    // Check parameters
-    if(!contact) {
-        *error = QContactManager::BadArgumentError;
-        ret = false;
     // Update an existing contact
-    } else if(contact->localId()) {
+    if(contact->localId()) {
         if(contact->id().managerUri() == m_managerUri) {
             ret = updateContact(*contact, changeSet, error);
         } else {
@@ -365,8 +389,13 @@ bool CntSymbianEngine::doSaveContact(QContact* contact, QContactChangeSet& chang
         ret = addContact(*contact, changeSet, error);
     }
 
-    if (ret)
+    if (ret) {
+        if (isMyCard) {
+            // Set this contact as MyCard
+            ret = setSelfContactId(contact->localId(), error);
+        }
         updateDisplayLabel(*contact);
+    }
 
     return ret;
 }

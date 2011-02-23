@@ -40,6 +40,10 @@
 ****************************************************************************/
 #include "qmessageaccountfilter.h"
 #include "qmessageaccountfilter_p.h"
+#include "qmessageaccount.h"
+#include "qmessagemanager.h"
+#include "messagingutil_p.h"
+#include <QRegExp>
 
 QTM_BEGIN_NAMESPACE
 
@@ -58,8 +62,8 @@ QTM_BEGIN_NAMESPACE
     QMessageManager::queryAccounts() and QMessageManager::countAccounts() functions to filter results 
     which meet the criteria defined by the filter.
 
-    QMessageAccountFilters can be combined using the logical operators (&), (|) and (~) to
-    create more refined queries.
+    QMessageAccountFilters can be combined using the overloaded operators (&), (|) and (~) as logical
+    operators to create more refined queries.
 
     \sa QMessageManager, QMessageAccount
 */
@@ -116,7 +120,7 @@ QTM_BEGIN_NAMESPACE
 
     An empty filter matches all accounts.
 
-    The result of combining an empty filter with a non-empty filter using an AND operation is the
+    The result of combining an empty filtter with a non-empty filter using an AND operation is the
     original non-empty filter.
 
     The result of combining an empty filter with a non-empty filter using an OR operation is the
@@ -207,6 +211,14 @@ bool QMessageAccountFilter::operator!=(const QMessageAccountFilter& other) const
 */
 
 /*!
+    \fn QMessageAccountFilter::byName(const QString &pattern, QMessageDataComparator::LikeComparator cmp)
+
+    Returns a filter matching accounts who name matches \a pattern, according to \a cmp.
+
+    \sa QMessageAccount::name()
+*/
+
+/*!
     \fn QMessageAccountFilter::byName(const QString &value, QMessageDataComparator::EqualityComparator cmp)
   
     Returns a filter matching accounts whose name matches \a value, according to \a cmp.
@@ -221,5 +233,20 @@ bool QMessageAccountFilter::operator!=(const QMessageAccountFilter& other) const
 
     \sa QMessageAccount::name()
 */
+
+QMessageAccountFilter QMessageAccountFilter::byName(const QString &pattern, QMessageDataComparator::LikeComparator cmp)
+{
+    QMessageAccountIdList ids;
+    foreach (QMessageAccountId const& id, QMessageManager().queryAccounts()) {
+        bool matched(MessagingUtil::globMatch(pattern, QMessageAccount(id).name()));
+        if ((matched && cmp == QMessageDataComparator::Like)
+                || (!matched && cmp == QMessageDataComparator::NotLike)) {
+            ids.push_back(id);
+        }
+    }
+
+    return QMessageAccountFilter::byId(ids);
+}
+
 
 QTM_END_NAMESPACE

@@ -51,11 +51,11 @@
 #include "qaudioformat.h"
 #include <qmediarecorder.h>
 
-#include <Mda\Common\Audio.h>
-#include <Mda\Common\Resource.h>
-#include <Mda\Client\Utility.h>
-#include <MdaAudioSampleEditor.h>
-#include <mmf\common\mmfutilities.h>
+#include <mda/common/audio.h>
+#include <mda/common/resource.h>
+#include <mda/client/utility.h>
+#include <mdaaudiosampleeditor.h>
+#include <mmf/common/mmfutilities.h>
 
 QT_BEGIN_NAMESPACE
 struct ControllerData

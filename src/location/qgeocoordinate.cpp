@@ -49,6 +49,8 @@
 
 #include <math.h>
 
+#include <QDebug>
+
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
 #endif
@@ -355,10 +357,14 @@ qreal QGeoCoordinate::distanceTo(const QGeoCoordinate &other) const
     // Haversine formula
     double dlat = qgeocoordinate_degToRad(other.d->lat - d->lat);
     double dlon = qgeocoordinate_degToRad(other.d->lng - d->lng);
-    double y = sin(dlat / 2.0) * sin(dlat / 2.0)
-               + cos(qgeocoordinate_degToRad(d->lat))
-               * cos(qgeocoordinate_degToRad(other.d->lat))
-               * sin(dlon / 2.0) * sin(dlon / 2.0);
+    double haversine_dlat = sin(dlat / 2.0);
+    haversine_dlat *= haversine_dlat;
+    double haversine_dlon = sin(dlon / 2.0);
+    haversine_dlon *= haversine_dlon;
+    double y = haversine_dlat
+             + cos(qgeocoordinate_degToRad(d->lat))
+             * cos(qgeocoordinate_degToRad(other.d->lat))
+             * haversine_dlon;
     double x = 2 * asin(sqrt(y));
     return qreal(x * qgeocoordinate_EARTH_MEAN_RADIUS * 1000);
 }
@@ -391,6 +397,46 @@ qreal QGeoCoordinate::azimuthTo(const QGeoCoordinate &other) const
     double whole;
     double fraction = modf(qgeocoordinate_radToDeg(atan2(y, x)), &whole);
     return qreal((int(whole + 360) % 360) + fraction);
+}
+
+
+/*!
+    Returns the coordinate that is reached by traveling \a distance metres 
+    from the current coordinate at \a azimuth (or bearing) along a great-circle.
+    There is an assumption that the Earth is spherical for the purpose of this
+    calculation.
+    
+    The altitude will have \a distanceUp added to it.
+
+    Returns an invalid coordinate if this coordinate is invalid.
+*/
+QGeoCoordinate QGeoCoordinate::atDistanceAndAzimuth(qreal distance, qreal azimuth, qreal distanceUp) const 
+{
+    if (!isValid())
+        return QGeoCoordinate();
+
+    double latRad = qgeocoordinate_degToRad(d->lat);
+    double lonRad = qgeocoordinate_degToRad(d->lng);
+    double cosLatRad = cos(latRad);
+    double sinLatRad = sin(latRad);
+
+    double azimuthRad = qgeocoordinate_degToRad(azimuth);
+
+    double ratio = (distance / (qgeocoordinate_EARTH_MEAN_RADIUS * 1000.0));
+    double cosRatio = cos(ratio);
+    double sinRatio = sin(ratio);
+
+    double resultLatRad = asin(sinLatRad * cosRatio
+                               + cosLatRad * sinRatio * cos(azimuthRad));
+    double resultLonRad  = lonRad 
+                           + atan2(sin(azimuthRad) * sinRatio * cosLatRad, 
+                                   cosRatio - sinLatRad * sin(resultLatRad));
+
+    double resultLat = qgeocoordinate_radToDeg(resultLatRad);
+    double resultLon = qgeocoordinate_radToDeg(resultLonRad);
+
+    double resultAlt = d->alt + distanceUp;
+    return QGeoCoordinate(resultLat, resultLon, resultAlt);
 }
 
 /*!

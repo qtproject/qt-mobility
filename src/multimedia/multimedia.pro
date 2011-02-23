@@ -158,11 +158,11 @@ maemo5 {
     LIBS += -lXv  -lX11 -lXext
 }
 
-maemo6 {
+maemo6|symbian {
     SOURCES += qgraphicsvideoitem_overlay.cpp
 }
 
-!maemo* {
+!maemo*:!symbian {
     SOURCES += qgraphicsvideoitem.cpp
 }
 

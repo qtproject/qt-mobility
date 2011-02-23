@@ -1,3 +1,44 @@
+/****************************************************************************
+**
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
+** Contact: Nokia Corporation (qt-info@nokia.com)
+**
+** This file is part of the QtDeclarative module of the Qt Toolkit.
+**
+** $QT_BEGIN_LICENSE:LGPL$
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
+**
+** GNU Lesser General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU Lesser
+** General Public License version 2.1 as published by the Free Software
+** Foundation and appearing in the file LICENSE.LGPL included in the
+** packaging of this file.  Please review the following information to
+** ensure the GNU Lesser General Public License version 2.1 requirements
+** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+**
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
+**
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
 #include <QString>
 #include <QDebug>
 
@@ -38,6 +79,12 @@ static OrganizerItemDetailNameMap qt_organizerItemDetailNameMap[] = {
     Q_DECLARATIVE_ORGANIZER_ITEM_DETAILNAME(TodoProgress, TodoProgress),
     Q_DECLARATIVE_ORGANIZER_ITEM_DETAILNAME(TodoTime, TodoTime)
 };
+
+/*!
+    \class QDeclarativeOrganizerItemMetaObject
+    \internal
+    \brief open organizer item meta object for accessing organizer item detail dynamic properties in qml
+*/
 
 QDeclarativeOrganizerItemMetaObject::QDeclarativeOrganizerItemMetaObject(QObject* obj, const QOrganizerItem& item)
     :QDeclarativeOpenMetaObject(obj),
@@ -193,9 +240,15 @@ void QDeclarativeOrganizerItemMetaObject::setItem(const QOrganizerItem& item)
       QDeclarativeOrganizerItemDetail* itemDetail = new QDeclarativeOrganizerItemDetail(object());
 
       itemDetail->setDetail(detail);
-      itemDetail->connect(itemDetail, SIGNAL(valueChanged()), object(), SIGNAL(detailsChanged()));
+      itemDetail->connect(itemDetail, SIGNAL(detailChanged()), object(), SIGNAL(itemChanged()));
 
       m_details.append(itemDetail);
+    }
+    if (m_item.id().isNull ()) {
+        //create temporary id for occurrence items
+        m_id = QString("qtorganizer:occurrence:%1").arg (QUuid::createUuid ().toString ());
+    } else {
+        m_id = m_item.id().toString();
     }
 }
 
@@ -208,9 +261,9 @@ QOrganizerItem QDeclarativeOrganizerItemMetaObject::item()
     return m_item;
 }
 
-uint QDeclarativeOrganizerItemMetaObject::itemId() const
+QString QDeclarativeOrganizerItemMetaObject::itemId() const
 {
-    return qHash(m_item.id());
+    return m_id;
 }
 
 

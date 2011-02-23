@@ -47,6 +47,7 @@
 #include <QtCore/QHash>
 #include <QtCore/QObject>
 #include <QtCore/QMutex>
+#include <QtCore/QTimer>
 
 #include <qfeedbackplugininterfaces.h>
 
@@ -88,11 +89,17 @@ private:
     VibeInt32 handleForActuator(const QFeedbackActuator &actuator);
     VibeInt32 handleForActuator(int actId);
     static VibeInt32 convertedDuration(int duration);
+    QFeedbackEffect::State updateImmState(const QFeedbackEffect *effect, VibeInt32 effectHandle, VibeInt32 state);
+
+    void killTimerForHandle(VibeInt32 handle);
+    void startTimerForHandle(VibeInt32 handle, const QFeedbackHapticsEffect* effect);
+    void startTimerForHandle(VibeInt32 handle, QFeedbackFileEffect* effect);
 
     QMutex mutex;
     QVector<VibeInt32> actuatorHandles;
     QList<QFeedbackActuator*> actuatorList;
     QHash<const QFeedbackEffect*, VibeInt32> effectHandles;
+    QHash<VibeInt32, QTimer*> effectTimers;
 
     struct FileContent {
         FileContent() : refCount(0) { }

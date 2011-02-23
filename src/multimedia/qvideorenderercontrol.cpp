@@ -47,7 +47,7 @@ QT_BEGIN_NAMESPACE
 
 /*!
     \class QVideoRendererControl
-    \preliminary
+    
 
     \brief The QVideoRendererControl class provides a control for rendering
     to a video surface.

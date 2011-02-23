@@ -58,6 +58,7 @@ class Q_ORGANIZER_EXPORT QOrganizerItemDetailDefinitionSaveRequest : public QOrg
 
 public:
     QOrganizerItemDetailDefinitionSaveRequest(QObject* parent = 0);
+    ~QOrganizerItemDetailDefinitionSaveRequest();
 
     /* Selection */
     void setDefinition(const QOrganizerItemDetailDefinition& definition);

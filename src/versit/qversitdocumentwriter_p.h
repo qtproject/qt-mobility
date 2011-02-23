@@ -72,6 +72,7 @@ public:
     virtual ~QVersitDocumentWriter();
 
     void setCodec(QTextCodec* codec);
+    void setAsciiCodec();
     void setDevice(QIODevice* device);
 
     virtual void encodeVersitProperty(const QVersitProperty& property) = 0;
@@ -80,16 +81,16 @@ public:
     void encodeGroupsAndName(const QVersitProperty& property);
 
     void writeBytes(const QByteArray& value);
-    void writeString(const QString& value, bool useUtf8 = false);
+    void writeString(const QString& value);
     void writeCrlf();
 
 protected:
     QVersitDocument::VersitType mType;
     QIODevice* mDevice;
     QTextCodec* mCodec;
+    bool mCodecIsAscii;
     bool mCodecIsAsciiCompatible;
     QTextEncoder* mEncoder;
-    QTextEncoder* mUtf8Encoder;
     bool mSuccessful;
     int mCurrentLineLength;
 };

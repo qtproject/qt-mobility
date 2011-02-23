@@ -51,7 +51,7 @@ class  QDeclarativeContactPhoneNumber : public QDeclarativeContactDetail
     Q_OBJECT
 
     Q_PROPERTY(QString number READ number WRITE setNumber NOTIFY fieldsChanged)
-    Q_PROPERTY(QVariantList subTypes READ subTypes WRITE setSubTypes NOTIFY fieldsChanged)
+    Q_PROPERTY(QVariant subTypes READ subTypes WRITE setSubTypes NOTIFY fieldsChanged)
     Q_ENUMS(FieldType)
     Q_ENUMS(PhoneNumberSubType)
 
@@ -111,52 +111,56 @@ public:
     QString number() const {return detail().value(QContactPhoneNumber::FieldNumber);}
 
 
-    void setSubTypes(const QVariantList& v)
+    void setSubTypes(const QVariant& v)
     {
         QStringList savedList;
-        foreach (const QVariant subType, v) {
-            switch (static_cast<PhoneNumberSubType>(subType.value<int>()))
-            {
-            case Landline:
-                savedList << QContactPhoneNumber::SubTypeLandline;
-                break;
-            case Mobile:
-                savedList << QContactPhoneNumber::SubTypeMobile;
-                break;
-            case Fax:
-                savedList << QContactPhoneNumber::SubTypeFax;
-                break;
-            case Pager:
-                savedList << QContactPhoneNumber::SubTypePager;
-                break;
-            case Voice:
-                savedList << QContactPhoneNumber::SubTypeVoice;
-                break;
-            case Modem:
-                savedList << QContactPhoneNumber::SubTypeModem;
-                break;
-            case Video:
-                savedList << QContactPhoneNumber::SubTypeVideo;
-                break;
-            case Car:
-                savedList << QContactPhoneNumber::SubTypeCar;
-                break;
-            case BulletinBoardSystem:
-                savedList << QContactPhoneNumber::SubTypeBulletinBoardSystem;
-                break;
-            case MessagingCapable:
-                savedList << QContactPhoneNumber::SubTypeMessagingCapable;
-                break;
-            case Assistant:
-                savedList << QContactPhoneNumber::SubTypeAssistant;
-                break;
-            case DtmfMenu:
-                savedList << QContactPhoneNumber::SubTypeDtmfMenu;
-                break;
-            default:
-                //qWarning unknown type
-                break;
+        foreach (const QVariant subType, v.toList()) {
+            if (subType.type() != QVariant::String) {
+                switch (subType.toInt())
+                {
+                case Landline:
+                    savedList << QContactPhoneNumber::SubTypeLandline;
+                    break;
+                case Mobile:
+                    savedList << QContactPhoneNumber::SubTypeMobile;
+                    break;
+                case Fax:
+                    savedList << QContactPhoneNumber::SubTypeFax;
+                    break;
+                case Pager:
+                    savedList << QContactPhoneNumber::SubTypePager;
+                    break;
+                case Voice:
+                    savedList << QContactPhoneNumber::SubTypeVoice;
+                    break;
+                case Modem:
+                    savedList << QContactPhoneNumber::SubTypeModem;
+                    break;
+                case Video:
+                    savedList << QContactPhoneNumber::SubTypeVideo;
+                    break;
+                case Car:
+                    savedList << QContactPhoneNumber::SubTypeCar;
+                    break;
+                case BulletinBoardSystem:
+                    savedList << QContactPhoneNumber::SubTypeBulletinBoardSystem;
+                    break;
+                case MessagingCapable:
+                    savedList << QContactPhoneNumber::SubTypeMessagingCapable;
+                    break;
+                case Assistant:
+                    savedList << QContactPhoneNumber::SubTypeAssistant;
+                    break;
+                case DtmfMenu:
+                    savedList << QContactPhoneNumber::SubTypeDtmfMenu;
+                    break;
+                default:
+                    //qWarning unknown type
+                    break;
 
+                }
+            } else {
+                savedList << subType.toString();
             }
         }
         QStringList oldList = detail().value<QStringList>(QContactPhoneNumber::FieldSubTypes);
@@ -166,37 +170,9 @@ public:
         }
     }
 
-    QVariantList subTypes() const
+    QVariant subTypes() const
     {
-        QVariantList returnList;
-        QStringList savedList = detail().value<QStringList>(QContactPhoneNumber::FieldSubTypes);
-        foreach (const QString& subType, savedList) {
-            if (subType == QContactPhoneNumber::SubTypeLandline)
-                returnList << static_cast<int>(Landline);
-            else if (subType == QContactPhoneNumber::SubTypeMobile)
-                returnList << static_cast<int>(Mobile);
-            else if (subType == QContactPhoneNumber::SubTypeFax)
-                returnList << static_cast<int>(Fax);
-            else if (subType == QContactPhoneNumber::SubTypePager)
-                returnList << static_cast<int>(Pager);
-            else if (subType == QContactPhoneNumber::SubTypeVoice)
-                returnList << static_cast<int>(Voice);
-            else if (subType == QContactPhoneNumber::SubTypeModem)
-                returnList << static_cast<int>(Modem);
-            else if (subType == QContactPhoneNumber::SubTypeVideo)
-                returnList << static_cast<int>(Video);
-            else if (subType == QContactPhoneNumber::SubTypeCar)
-                returnList << static_cast<int>(Car);
-            else if (subType == QContactPhoneNumber::SubTypeBulletinBoardSystem)
-                returnList << static_cast<int>(BulletinBoardSystem);
-            else if (subType == QContactPhoneNumber::SubTypeMessagingCapable)
-                returnList << static_cast<int>(MessagingCapable);
-            else if (subType == QContactPhoneNumber::SubTypeAssistant)
-                returnList << static_cast<int>(Assistant);
-            else if (subType == QContactPhoneNumber::SubTypeDtmfMenu)
-                returnList << static_cast<int>(DtmfMenu);
-        }
-        return returnList;
+        return QVariant::fromValue(detail().value<QStringList>(QContactPhoneNumber::FieldSubTypes));
     }
 
 signals:

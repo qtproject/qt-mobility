@@ -54,7 +54,7 @@ QTM_USE_NAMESPACE
 class QDeclarativeOrganizerCollection : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(uint collectionId READ id NOTIFY valueChanged)
+    Q_PROPERTY(QString collectionId READ id WRITE setId NOTIFY valueChanged)
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY valueChanged)
     Q_PROPERTY(QString description READ description WRITE setDescription NOTIFY valueChanged)
     Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY valueChanged)
@@ -66,9 +66,14 @@ public:
     }
 
 
-    uint id() const
+    QString id() const
     {
-        return qHash(d.id());
+        return d.id().toString();
+    }
+
+    void setId(const QString& newId)
+    {
+        d.setId(QOrganizerCollectionId::fromString(newId));
     }
 
     QString name() const

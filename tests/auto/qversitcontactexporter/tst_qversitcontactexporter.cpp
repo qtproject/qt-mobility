@@ -245,6 +245,26 @@ void tst_QVersitContactExporter::testConvertContact()
     QCOMPARE(documents.first().properties().count(), 3);
 }
 
+void tst_QVersitContactExporter::testEmptyContact()
+{
+    QContact contact1; // empty
+    QList<QContact> contacts;
+    contacts << contact1;
+
+    QVERIFY(mExporter->exportContacts(contacts)); // do not fail on empty contact1
+    QMap<int, QVersitContactExporter::Error> errorMap = mExporter->errorMap();
+    QVERIFY(errorMap.isEmpty());
+    QList<QVersitDocument> documents = mExporter->documents();
+    QCOMPARE(documents.size(), 1); // only contact2 was exported
+    QVersitDocument document1 = documents.first();
+    QVersitProperty property = findPropertyByName(document1, "N");
+    QCOMPARE(property.valueType(), QVersitProperty::CompoundType);
+    QCOMPARE(property.value<QStringList>(),
+            QStringList() << QString() << QString() << QString() << QString() << QString());
+    property = findPropertyByName(document1, "FN");
+    QCOMPARE(property.value(), QString());
+}
+
 void tst_QVersitContactExporter::testContactDetailHandler()
 {
     MyQVersitContactExporterDetailHandler detailHandler;;
@@ -1159,6 +1179,62 @@ void tst_QVersitContactExporter::testEncodeOnlineAccount()
     QVERIFY(mExporter->exportContacts(QList<QContact>() << contact, QVersitDocument::VCard30Type));
     document = mExporter->documents().first();
     QCOMPARE(countProperties(document), 0);
+
+    // Test service providers Jabber, AIM, ICQ, MSN, Yahoo, Skype
+    contact.clearDetails();
+    onlineAccount = QContactOnlineAccount();
+    onlineAccount.setServiceProvider(QContactOnlineAccount::ServiceJabber);
+    onlineAccount.setAccountUri("a");
+    contact.saveDetail(&onlineAccount);
+    onlineAccount = QContactOnlineAccount();
+    onlineAccount.setServiceProvider(QContactOnlineAccount::ServiceAim);
+    onlineAccount.setAccountUri("b");
+    contact.saveDetail(&onlineAccount);
+    onlineAccount = QContactOnlineAccount();
+    onlineAccount.setServiceProvider(QContactOnlineAccount::ServiceIcq);
+    onlineAccount.setAccountUri("c");
+    contact.saveDetail(&onlineAccount);
+    onlineAccount = QContactOnlineAccount();
+    onlineAccount.setServiceProvider(QContactOnlineAccount::ServiceMsn);
+    onlineAccount.setAccountUri("d");
+    contact.saveDetail(&onlineAccount);
+    onlineAccount = QContactOnlineAccount();
+    onlineAccount.setServiceProvider(QContactOnlineAccount::ServiceQq);
+    onlineAccount.setAccountUri("e");
+    contact.saveDetail(&onlineAccount);
+    onlineAccount = QContactOnlineAccount();
+    onlineAccount.setServiceProvider(QContactOnlineAccount::ServiceYahoo);
+    onlineAccount.setAccountUri("f");
+    contact.saveDetail(&onlineAccount);
+    onlineAccount = QContactOnlineAccount();
+    onlineAccount.setServiceProvider(QContactOnlineAccount::ServiceSkype);
+    onlineAccount.setAccountUri("g");
+    contact.saveDetail(&onlineAccount);
+
+    QVERIFY(mExporter->exportContacts(QList<QContact>() << contact, QVersitDocument::VCard30Type));
+    document = mExporter->documents().first();
+
+    property = findPropertyByName(document, QLatin1String("X-JABBER"));
+    QVERIFY(!property.isEmpty());
+    QVERIFY(property.value() == "a");
+    property = findPropertyByName(document, QLatin1String("X-AIM"));
+    QVERIFY(!property.isEmpty());
+    QVERIFY(property.value() == "b");
+    property = findPropertyByName(document, QLatin1String("X-ICQ"));
+    QVERIFY(!property.isEmpty());
+    QVERIFY(property.value() == "c");
+    property = findPropertyByName(document, QLatin1String("X-MSN"));
+    QVERIFY(!property.isEmpty());
+    QVERIFY(property.value() == "d");
+    property = findPropertyByName(document, QLatin1String("X-QQ"));
+    QVERIFY(!property.isEmpty());
+    QVERIFY(property.value() == "e");
+    property = findPropertyByName(document, QLatin1String("X-YAHOO"));
+    QVERIFY(!property.isEmpty());
+    QVERIFY(property.value() == "f");
+    property = findPropertyByName(document, QLatin1String("X-SKYPE"));
+    QVERIFY(!property.isEmpty());
+    QVERIFY(property.value() == "g");
 }
 
 void tst_QVersitContactExporter::testEncodeFamily()

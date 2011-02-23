@@ -80,6 +80,7 @@ void QContactManagerEngineV2Wrapper::requestDestroyed(QContactAbstractRequest* r
     if (controller) {
         // If we own it, just delete the controller (and ignore any subrequests' signals from now on)
         delete controller;
+        m_controllerForRequest.insert(req, 0);
     } else {
         m_engine->requestDestroyed(req);
     }
@@ -119,13 +120,14 @@ void QContactManagerEngineV2Wrapper::requestStateChanged(QContactAbstractRequest
     RequestController* controller = qobject_cast<RequestController*>(sender());
     Q_ASSERT(controller);
     QContactAbstractRequest* request = controller->request();
-    Q_ASSERT(request);
 
     if (state == QContactAbstractRequest::FinishedState) {
         delete controller;
-        // Keep the key in m_controllerForRequest but point it to null to indicate a defunct
-        // controller
-        m_controllerForRequest.insert(request, 0);
+        if (request) { // It's possible the request was deleted by the sender.
+            // Keep the key in m_controllerForRequest but point it to null to indicate a defunct
+            // controller
+            m_controllerForRequest.insert(request, 0);
+        }
     } else {
         updateRequestState(request, state);
     }
@@ -194,11 +196,12 @@ void RequestController::handleUpdatedSubRequest(QContactAbstractRequest::State s
     QContactAbstractRequest* subRequest = qobject_cast<QContactAbstractRequest*>(caller);
     if (subRequest) {
         if (state == QContactAbstractRequest::FinishedState) {
-            handleFinishedSubRequest(subRequest);
+            // It's possibly already finished if waitForFinished has previously been called
+            if (!isFinished())
+                handleFinishedSubRequest(subRequest);
         } else {
             // XXX maybe Canceled should be handled
         }
-        emit stateChanged(state);
     }
 }
 
@@ -225,11 +228,12 @@ bool FetchByIdRequestController::start()
     // Our strategy is to translate it to a ContactFetchRequest.  Later when it finishes, we can
     // fiddle with the results to get it in the right format.
     Q_ASSERT(m_request);
+    QContactFetchByIdRequest* originalRequest = static_cast<QContactFetchByIdRequest*>(m_request.data());
     QContactFetchRequest* qcfr = new QContactFetchRequest;
     QContactLocalIdFilter lif;
-    lif.setIds(static_cast<QContactFetchByIdRequest*>(m_request.data())->localIds());
+    lif.setIds(originalRequest->localIds());
     qcfr->setFilter(lif);
-    qcfr->setFetchHint(qcfr->fetchHint());
+    qcfr->setFetchHint(originalRequest->fetchHint());
     // normally, you'd set the manager, but in this case, we only have a bare engine:
     QContactManagerEngineV2Wrapper::setEngineOfRequest(qcfr, m_engine);
     m_currentSubRequest.reset(qcfr);
@@ -242,11 +246,6 @@ bool FetchByIdRequestController::start()
 /* One of our subrequests has finished.  Go to the next step. */
 void FetchByIdRequestController::handleFinishedSubRequest(QContactAbstractRequest* subReq)
 {
-    // It's possibly already finished if this function is called asynchronously and waitForFinished
-    // had previously been called
-    if (isFinished())
-        return;
-
     // For a FetchByIdRequest, we know that the only subrequest is a QContactFetchRequest.
     // The next step is simply to take the results and reformat it.
     // Take the results:
@@ -255,10 +254,10 @@ void FetchByIdRequestController::handleFinishedSubRequest(QContactAbstractReques
     QContactManager::Error error = qcfr->error();
 
     // Build an index into the results
-    QHash<QContactLocalId, QContact> idMap;
+    QHash<QContactLocalId, int> idMap; // value is index into unsorted
     if (error == QContactManager::NoError) {
-        foreach (const QContact& contact, contacts) {
-            idMap.insert(contact.localId(), contact);
+        for (int i = 0; i < contacts.size(); i++) {
+            idMap.insert(contacts[i].localId(), i);
         }
     }
 
@@ -275,8 +274,10 @@ void FetchByIdRequestController::handleFinishedSubRequest(QContactAbstractReques
             errorMap.insert(i, QContactManager::DoesNotExistError);
             if (error == QContactManager::NoError)
                 error = QContactManager::DoesNotExistError;
+            results.append(QContact());
+        } else {
+            results.append(contacts[idMap[id]]);
         }
-        results.append(idMap.value(id));
     }
 
     // Update the request object
@@ -331,11 +332,6 @@ bool PartialSaveRequestController::start()
 /* One of our subrequests has finished.  Go to the next step. */
 void PartialSaveRequestController::handleFinishedSubRequest(QContactAbstractRequest* subReq)
 {
-    // It's possibly already finished if this function is called asynchronously and waitForFinished
-    // had previously been called
-    if (isFinished())
-        return;
-
     if (subReq->type() == QContactAbstractRequest::ContactFetchByIdRequest) {
         QContactFetchByIdRequest* cfbir = qobject_cast<QContactFetchByIdRequest*>(subReq);
         QList<QContact> contactsToSave;

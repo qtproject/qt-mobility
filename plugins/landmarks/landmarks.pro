@@ -5,7 +5,11 @@ CONFIG += ordered
 include(../../common.pri)
 
 !symbian {
-SUBDIRS += sqlite
+    maemo6 {
+        contains(maemo6-landmarks_enabled, yes): SUBDIRS += qsparql
+    } else {
+        SUBDIRS += sqlite
+    }
 }
 
 symbian {

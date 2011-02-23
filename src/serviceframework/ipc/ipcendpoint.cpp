@@ -52,6 +52,7 @@ QServiceIpcEndPoint::QServiceIpcEndPoint(QObject* parent)
 
 QServiceIpcEndPoint::~QServiceIpcEndPoint()
 {
+    incoming.clear();
 }
 
 bool QServiceIpcEndPoint::packageAvailable() const

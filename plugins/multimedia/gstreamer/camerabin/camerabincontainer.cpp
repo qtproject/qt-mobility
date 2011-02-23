@@ -55,6 +55,7 @@ CameraBinContainer::CameraBinContainer(QObject *parent)
 
     elementNames.insertMulti("mp4", "ffmux_mp4");
     elementNames.insertMulti("mp4", "hantromp4mux");
+    elementNames.insertMulti("mp4", "mp4mux");
     elementNames.insert("ogg", "oggmux");
     elementNames["wav"] = "wavenc";
     elementNames["amr"] = "ffmux_amr";
@@ -65,7 +66,7 @@ CameraBinContainer::CameraBinContainer(QObject *parent)
     elementNames["webm"] = "webmmux";
     elementNames["mjpeg"] = "ffmux_mjpeg";
     elementNames["asf"] = "ffmux_asf";
-    elementNames["mov"] = "mp4mux";
+    elementNames["mov"] = "qtmux";
 
     QSet<QString> allTypes;
 

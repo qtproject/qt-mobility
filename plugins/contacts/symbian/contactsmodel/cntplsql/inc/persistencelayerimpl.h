@@ -85,6 +85,9 @@ private: // General methods used to implement all interfaces.
 
 	void GetPhysicalPathL(TDes& aPhysicalFileName, const TDesC& aSecuredFileName);
 	void GetPhysicalFileNameL(TDes& aPhysicalFileName, const TDesC& aSecuredFileName);
+	void DeleteImagesDirL();
+	void CreateImagesDirL();
+	void CreateImagesBackupRegistrationFileL(const TPath& aDir);
 
 	inline void LocalFsL();
 

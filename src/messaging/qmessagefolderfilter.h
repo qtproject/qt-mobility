@@ -81,9 +81,11 @@ public:
     static QMessageFolderFilter byId(const QMessageFolderIdList &ids, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
     static QMessageFolderFilter byId(const QMessageFolderFilter &filter, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
 
+    static QMessageFolderFilter byName(const QString &pattern, QMessageDataComparator::LikeComparator cmp);
     static QMessageFolderFilter byName(const QString &value, QMessageDataComparator::EqualityComparator cmp);
     static QMessageFolderFilter byName(const QString &value, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
 
+    static QMessageFolderFilter byPath(const QString &pattern, QMessageDataComparator::LikeComparator cmp);
     static QMessageFolderFilter byPath(const QString &value, QMessageDataComparator::EqualityComparator cmp);
     static QMessageFolderFilter byPath(const QString &value, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
 

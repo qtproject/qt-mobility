@@ -3359,7 +3359,7 @@ INotifyWatcher::INotifyWatcher()
     // => returned file descriptor is associated with
     //    a new inotify event queue
     // O_CLOEXEC flag makes sure that file descriptor
-    //           is closed if execution is transfered
+    //           is closed if execution is transferred
     //           from this process to a new program
     //           (Check more info from 'execve' documentation)
 #ifdef IN_CLOEXEC

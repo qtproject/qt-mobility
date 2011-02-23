@@ -64,13 +64,27 @@
 #include <QtCore/qcoreapplication.h>
 #include <QtCore/qbasictimer.h>
 #include <QtCore/qcoreevent.h>
-#include <QtCore/qfuturewatcher.h>
+#include <QtCore/qmutex.h>
 #include <QtCore/qqueue.h>
+#include <QtCore/qrunnable.h>
+#include <QtCore/qthread.h>
 #include <QtCore/qwaitcondition.h>
+#include <QtDBus/qdbusargument.h>
 
 QTM_BEGIN_NAMESPACE
 
-class QGalleryTrackerResultSetPrivate : public QGalleryResultSetPrivate
+class QGalleryTrackerResultSetThread : public QThread
+{
+public:
+    QGalleryTrackerResultSetThread(QRunnable *runnable) : runnable(runnable) {}
+
+    void run() { runnable->run(); }
+
+private:
+    QRunnable *runnable;
+};
+
+class QGalleryTrackerResultSetPrivate : public QGalleryResultSetPrivate, public QRunnable
 {
     Q_DECLARE_PUBLIC(QGalleryTrackerResultSet)
 public:
@@ -272,6 +286,8 @@ public:
         , currentIndex(-1)
         , rowCount(0)
         , progressMaximum(0)
+        , parserLimit(0)
+        , parserReset(false)
         , queryInterface(arguments->queryInterface)
         , queryMethod(arguments->queryMethod)
         , queryArguments(arguments->queryArguments)
@@ -283,6 +299,7 @@ public:
         , aliasColumns(arguments->aliasColumns)
         , sortCriteria(arguments->sortCriteria)
         , resourceKeys(arguments->resourceKeys)
+        , parserThread(this)
     {
         arguments->clear();
 
@@ -314,6 +331,8 @@ public:
     int currentIndex;
     int rowCount;
     int progressMaximum;
+    int parserLimit;
+    bool parserReset;
     const QGalleryDBusInterfacePointer queryInterface;
     const QString queryMethod;
     const QVariantList queryArguments;
@@ -330,7 +349,8 @@ public:
     Cache iCache;   // Insert cache.
 
     QScopedPointer<QDBusPendingCallWatcher> queryWatcher;
-    QFutureWatcher<bool> parseWatcher;
+    QDBusArgument queryReply;
+    QGalleryTrackerResultSetThread parserThread;
     QList<QGalleryTrackerMetaDataEdit *> edits;
     QBasicTimer updateTimer;
     SyncEventQueue syncEvents;
@@ -352,7 +372,7 @@ public:
     void query();
 
     void queryFinished(const QDBusPendingCall &call);
-    bool parseRows(const QDBusPendingCall &call, int limit, bool reset);
+    void run();
     void correctRows(
             row_iterator begin,
             row_iterator end,

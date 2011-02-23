@@ -111,13 +111,8 @@ void QMediaImageViewerRenderer::setSurface(QAbstractVideoSurface *surface)
 
     m_surface = surface;
 
-    if (m_surface && !m_image.isNull()) {
-        QVideoSurfaceFormat format(
-                m_image.size(), QVideoFrame::pixelFormatFromImageFormat(m_image.format()));
-
-        if (surface->start(format))
-            surface->present(QVideoFrame(m_image));
-    }
+    if (m_surface && !m_image.isNull())
+        showImage(m_image);
 }
 
 void QMediaImageViewerRenderer::showImage(const QImage &image)
@@ -131,8 +126,26 @@ void QMediaImageViewerRenderer::showImage(const QImage &image)
             QVideoSurfaceFormat format(
                     image.size(), QVideoFrame::pixelFormatFromImageFormat(image.format()));
 
-            if (m_surface->start(format))
+            if (!m_surface->isFormatSupported(format)) {
+                foreach (QVideoFrame::PixelFormat pixelFormat, m_surface->supportedPixelFormats()) {
+                    const QImage::Format imageFormat
+                            = QVideoFrame::imageFormatFromPixelFormat(pixelFormat);
+
+                    if (imageFormat != QImage::Format_Invalid) {
+                        format = QVideoSurfaceFormat(image.size(), pixelFormat);
+
+                        if (m_surface->isFormatSupported(format) && m_surface->start(format)) {
+                            m_image = image.convertToFormat(imageFormat);
+
+                            m_surface->present(QVideoFrame(m_image));
+
+                            return;
+                        }
+                    }
+                }
+            } else if (m_surface->start(format)) {
                 m_surface->present(QVideoFrame(image));
+            }
         }
     }
 }
@@ -254,6 +267,10 @@ public:
         , headReply(0)
         , status(QMediaImageViewer::NoMedia)
     {
+        foreach (const QByteArray &format, QImageReader::supportedImageFormats()) {
+            supportedExtensions.append(
+                    QLatin1Char('.') + QString::fromLatin1(format.data(), format.size()));
+        }
     }
 
     bool isImageType(const QUrl &url, const QString &mimeType) const;
@@ -271,6 +288,7 @@ public:
     QMediaContent media;
     QMediaResource currentMedia;
     QList<QMediaResource> possibleResources;
+    QStringList supportedExtensions;
 };
 
 bool QMediaImageViewerControlPrivate::isImageType(const QUrl &url, const QString &mimeType) const
@@ -281,15 +299,12 @@ bool QMediaImageViewerControlPrivate::isImageType(const QUrl &url, const QString
     } else if (url.scheme() == QLatin1String("file")) {
         QString path = url.path();
 
-        return path.endsWith(QLatin1String(".jpeg"), Qt::CaseInsensitive)
-                || path.endsWith(QLatin1String(".jpg"), Qt::CaseInsensitive)
-                || path.endsWith(QLatin1String(".png"), Qt::CaseInsensitive)
-                || path.endsWith(QLatin1String(".bmp"), Qt::CaseInsensitive)
-                || path.endsWith(QLatin1String(".svg"), Qt::CaseInsensitive)
-                || path.endsWith(QLatin1String(".tiff"), Qt::CaseInsensitive);
-    } else {
-        return false;
+        foreach (const QString &extension, supportedExtensions) {
+            if (path.endsWith(extension, Qt::CaseInsensitive))
+                return true;
+        }
     }
+    return false;
 }
 
 void QMediaImageViewerControlPrivate::loadImage()

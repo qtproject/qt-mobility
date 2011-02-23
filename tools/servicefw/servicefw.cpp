@@ -241,7 +241,7 @@ void CommandProcessor::remove(const QStringList &args)
 void CommandProcessor::dbusservice(const QStringList &args)
 {
     if (args.isEmpty() || args.size() == 1) {
-        *stdoutStream << "Usage:\n\tautostart <service-xml-file> <service-file>\n";
+        *stdoutStream << "Usage:\n\tdbusservice <service-xml-file> <service-executable>\n";
         return;
     }
   

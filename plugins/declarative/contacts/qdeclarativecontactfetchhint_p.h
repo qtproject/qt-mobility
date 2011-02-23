@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the QtDeclarative module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
@@ -38,7 +38,6 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-
 #ifndef QDECLARATIVECONTACTFETCHHINT_H
 #define QDECLARATIVECONTACTFETCHHINT_H
 
@@ -59,8 +58,9 @@ class QDeclarativeContactFetchHint : public QObject
     Q_PROPERTY(QStringList detailDefinitionsHint READ detailDefinitionsHint WRITE setDetailDefinitionsHint NOTIFY fetchHintChanged )
     Q_PROPERTY(QStringList relationshipTypesHint READ relationshipTypesHint WRITE setRelationshipTypesHint NOTIFY fetchHintChanged )
     Q_PROPERTY(OptimizationHints optimizationHints READ optimizationHints WRITE setOptimizationHints NOTIFY fetchHintChanged )
-    Q_PROPERTY(QSize optimizationHints READ preferredImageSize WRITE setPreferredImageSize NOTIFY fetchHintChanged )
-    Q_FLAGS(OptimizationHints);
+    Q_PROPERTY(int imageWidth READ preferredImageWidth WRITE setPreferredImageWidth NOTIFY fetchHintChanged )
+    Q_PROPERTY(int imageHeight READ preferredImageHeight WRITE setPreferredImageHeight NOTIFY fetchHintChanged )
+    Q_FLAGS(OptimizationHints)
 public:
     enum OptimizationHint {
         AllRequired = QContactFetchHint::AllRequired,
@@ -77,9 +77,11 @@ public:
     QStringList relationshipTypesHint() const;
     void setRelationshipTypesHint(const QStringList& relationshipTypes);
 
-    QSize preferredImageSize() const;
-    void setPreferredImageSize(const QSize& size);
+    int preferredImageWidth() const;
+    void setPreferredImageWidth(int w);
 
+    int preferredImageHeight() const;
+    void setPreferredImageHeight(int h);
 
     OptimizationHints optimizationHints() const;
     void setOptimizationHints(OptimizationHints hints);

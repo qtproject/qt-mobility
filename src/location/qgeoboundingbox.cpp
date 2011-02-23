@@ -150,7 +150,7 @@ bool QGeoBoundingBox::operator != (const QGeoBoundingBox &other) const
     Returns QGeoBoundingArea::BoxType to identify this as
     a QGeoBoundingBox instance.
 
-    This funciton is provided to help find the specific type of
+    This function is provided to help find the specific type of
     aQGeoBoundingArea instance.
 */
 QGeoBoundingArea::AreaType QGeoBoundingBox::type() const

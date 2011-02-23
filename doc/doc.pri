@@ -23,7 +23,7 @@ unix {
             @( cd "$$PWD/src";\
             for file in *.dia; do\
                 destfile="images/\$$(echo "\$$file" | sed 's/dia\$$/png/')";\
-                if [ "\$$file" -nt "\$$destfile" ]; then\
+                if [ ! -f "\$$destfile" -o "\$$file" -nt "\$$destfile" ]; then\
                     dia -e "\$$destfile" "\$$file";\
                 fi;\
             done ) || true\

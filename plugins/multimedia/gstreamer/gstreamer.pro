@@ -28,14 +28,20 @@ PKGCONFIG += \
     gstreamer-audio-0.10 \
     gstreamer-video-0.10
 
-maemo* {
-  PKGCONFIG +=gstreamer-plugins-bad-0.10
+maemo*:PKGCONFIG +=gstreamer-plugins-bad-0.10
 
+maemo5 {
   HEADERS += camerabuttonlistener_maemo.h
-
   SOURCES += camerabuttonlistener_maemo.cpp
 
   QT += dbus
+}
+
+maemo6 {
+    HEADERS += camerabuttonlistener_meego.h
+    SOURCES += camerabuttonlistener_meego.cpp
+
+    PKGCONFIG += qmsystem2 libresourceqt1
 }
 
 # Input
@@ -48,7 +54,8 @@ HEADERS += \
     qgstreamervideorenderer.h \
     qgstvideobuffer.h \
     qvideosurfacegstsink.h \
-    qgstreamervideoinputdevicecontrol.h
+    qgstreamervideoinputdevicecontrol.h \
+    gstvideoconnector.h
 
 SOURCES += \
     qgstreamermessage.cpp \
@@ -59,7 +66,8 @@ SOURCES += \
     qgstreamervideorenderer.cpp \
     qgstvideobuffer.cpp \
     qvideosurfacegstsink.cpp \
-    qgstreamervideoinputdevicecontrol.cpp
+    qgstreamervideoinputdevicecontrol.cpp \
+    gstvideoconnector.c
 
 
 !win32:!embedded:!mac:!symbian:!simulator {

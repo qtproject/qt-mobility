@@ -255,22 +255,33 @@ bool MessagingHelper::messageLessThan(const QMessageId messageId1, const QMessag
     if (msg1 == 0 || msg2 == 0) {
         QMessageStore* store = QMessageStore::instance();
         if (msg1 != 0) {
+            cache->unlock();
+            QMessage message2 = store->message(messageId2);
+            cache->lock();
             retVal = QMessageSortOrderPrivate::lessThan(*messagingHelper()->m_MessageSortOrder,
                                                         *msg1,
-                                                        store->message(messageId2));
+                                                        message2);
+            cache->unlock();
         } else if (msg2 != 0) {
+            cache->unlock();
+            QMessage message1 = store->message(messageId1);
+            cache->lock();
             retVal = QMessageSortOrderPrivate::lessThan(*messagingHelper()->m_MessageSortOrder,
-                                                        store->message(messageId1),
+                                                        message1,
                                                         *msg2);
+            cache->unlock();
         } else {
+            cache->unlock();
+            QMessage message1 = store->message(messageId1);
+            QMessage message2 = store->message(messageId2);
             retVal = QMessageSortOrderPrivate::lessThan(*messagingHelper()->m_MessageSortOrder,
-                                                      store->message(messageId1),
-                                                      store->message(messageId2));
+                                                        message1,
+                                                        message2);
         }
     } else {
         retVal = QMessageSortOrderPrivate::lessThan(*messagingHelper()->m_MessageSortOrder, *msg1, *msg2);
+        cache->unlock();
     }
-    cache->unlock();
 
     return retVal;
 }
@@ -546,12 +557,46 @@ bool MessagingHelper::preFilter(QMessageFilter &filter, QMessage::Type type)
 
     QString prefix;
     if (type == QMessage::Email) {
+#if defined(Q_OS_SYMBIAN)
+    #ifdef FREESTYLEMAILUSED
+        prefix = "FS_";
+    #else
+        prefix = "MTM_";
+    #endif
+#else // Q_WS_MAEMO_5
         prefix = "MO_";
+#endif
     } else if (type == QMessage::Sms) {
+#if defined(Q_OS_SYMBIAN)
+        prefix = "MTM_";
+#else // Q_WS_MAEMO_5
         prefix = "el";
+#endif
     }
 
     return pMFFilter->preFilter(type, prefix);
+}
+
+void MessagingHelper::extractMIMEHeaderParts(const QByteArray &mimeHeaderString, QByteArray &mimeType,
+                                             QByteArray &mimeSubType, QByteArray &charset)
+{
+    int index = mimeHeaderString.indexOf("/");
+    if (index != -1) {
+        mimeType = mimeHeaderString.left(index).trimmed();
+
+        mimeSubType = mimeHeaderString.mid(index + 1).trimmed();
+        index = mimeSubType.indexOf(";");
+        if (index != -1) {
+            QString remainder = mimeSubType.mid(index + 1);
+            mimeSubType = mimeSubType.left(index).trimmed();
+
+            QRegExp charsetPattern("charset=(\\S+)");
+            index = charsetPattern.indexIn(remainder);
+            if (index != -1) {
+                charset = charsetPattern.cap(1).toLatin1().toUpper();
+            }
+        }
+    }
 }
 
 MessageCache* MessageCache::instance()
@@ -623,6 +668,17 @@ QMessage MessageCache::message(const QMessageId &id)
     return message;
 }
 
+bool MessageCache::contains(const QMessageId &id)
+{
+    bool retVal;
+
+    m_mutex.lock();
+    retVal = m_messageCache.contains(id.toString());
+    m_mutex.unlock();
+
+    return retVal;
+}
+
 bool MessageCache::isFull() const
 {
     if (m_messageCache.size() >= maxMessageCacheSize) {
@@ -675,5 +731,11 @@ void MessageCache::unlock()
     m_mutex.unlock();
 }
 
+void MessageCache::clear()
+{
+    m_mutex.lock();
+    m_messageCache.clear();
+    m_mutex.unlock();
+}
 
 QTM_END_NAMESPACE

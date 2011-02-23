@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the examples of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:BSD$
 ** You may use this file under the terms of the BSD license as follows:
@@ -99,6 +99,12 @@ QUrl Utility::getAlbumArtThumbnailUrl(const QString &artist, const QString &titl
                 + QCryptographicHash::hash(
                         albumUrl.toString().toUtf8(), QCryptographicHash::Md5).toHex()
                 + QLatin1String(".jpeg");
+#elif defined(Q_WS_MAEMO_6)
+        QString thumbnailPath = QDir::homePath()
+                + QLatin1String("/.thumbnails/grid/")
+                + QCryptographicHash::hash(
+                        albumUrl.toString().toUtf8(), QCryptographicHash::Md5).toHex()
+                + QLatin1String(".jpeg");
 #else
         QString thumbnailPath = QDir::homePath()
                 + QLatin1String("/.thumbnails/normal/")
@@ -109,7 +115,7 @@ QUrl Utility::getAlbumArtThumbnailUrl(const QString &artist, const QString &titl
         if (QFile::exists(thumbnailPath))
             return QUrl::fromLocalFile(thumbnailPath);
     }
-    return QUrl();
+    return albumUrl;
 }
 
 QString Utility::hash(const QString &identifier) const

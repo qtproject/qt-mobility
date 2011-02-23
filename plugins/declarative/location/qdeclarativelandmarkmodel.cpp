@@ -188,7 +188,7 @@ void QDeclarativeLandmarkAbstractModel::scheduleUpdate()
 /*!
     \qmlproperty string LandmarkAbstractModel::error
 
-    Human readable string of the last error that occured
+    Human readable string of the last error that occurred
     (read-only).
 
 */

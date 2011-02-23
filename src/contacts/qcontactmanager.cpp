@@ -279,7 +279,7 @@ QContactManager::QContactManager(const QString& managerName, const QMap<QString,
     d(new QContactManagerData)
 {
     createEngine(managerName, parameters); 
-} 
+}
 
 void QContactManager::createEngine(const QString& managerName, const QMap<QString, QString>& parameters) 
 { 
@@ -291,6 +291,14 @@ void QContactManager::createEngine(const QString& managerName, const QMap<QStrin
     connect(d->m_engine, SIGNAL(relationshipsAdded(QList<QContactLocalId>)), this, SIGNAL(relationshipsAdded(QList<QContactLocalId>)));
     connect(d->m_engine, SIGNAL(relationshipsRemoved(QList<QContactLocalId>)), this, SIGNAL(relationshipsRemoved(QList<QContactLocalId>)));
     connect(d->m_engine, SIGNAL(selfContactIdChanged(QContactLocalId,QContactLocalId)), this, SIGNAL(selfContactIdChanged(QContactLocalId,QContactLocalId)));
+
+    connect(d->m_engine, SIGNAL(contactsChanged(QList<QContactLocalId>)),
+            this, SLOT(contactsUpdated(QList<QContactLocalId>)));
+    connect(d->m_engine, SIGNAL(contactsRemoved(QList<QContactLocalId>)),
+            this, SLOT(contactsDeleted(QList<QContactLocalId>)));
+
+
+    QContactManagerData::m_aliveEngines.insert(this);
 }
 
 /*!
@@ -314,6 +322,7 @@ QContactManager::QContactManager(const QString& managerName, int implementationV
 /*! Frees the memory used by the QContactManager */
 QContactManager::~QContactManager()
 {
+    QContactManagerData::m_aliveEngines.remove(this);
     delete d;
 }
 
@@ -456,11 +465,10 @@ QList<QContactLocalId> QContactManager::contactIds(const QContactFilter& filter,
   Returns the list of contacts stored in the manager sorted according to the given list of \a sortOrders.
 
   The \a fetchHint parameter describes the optimization hints that a manager may take.
-  If the \a fetchHint is the default constructed hint, all existing details, relationships and action preferences
-  in the matching contacts will be returned.  A client should not make changes to a contact which has
-  been retrieved using a fetch hint other than the default fetch hint.  Doing so will result in information
-  loss when saving the contact back to the manager (as the "new" restricted contact will
-  replace the previously saved contact in the backend).
+  If the \a fetchHint is the default constructed hint, all existing details, relationships and
+  action preferences in the matching contact will be returned.  If a client makes changes to an
+  contact which has been retrieved with a fetch hint, they should save it back using a partial save,
+  masked by the same set of detail names in order to avoid information loss.
 
   \sa QContactFetchHint
  */
@@ -478,11 +486,10 @@ QList<QContact> QContactManager::contacts(const QList<QContactSortOrder>& sortOr
   contacts and testing them against the supplied filter - see the \l isFilterSupported() function.
 
   The \a fetchHint parameter describes the optimization hints that a manager may take.
-  If the \a fetchHint is the default constructed hint, all existing details, relationships and action preferences
-  in the matching contacts will be returned.  A client should not make changes to a contact which has
-  been retrieved using a fetch hint other than the default fetch hint.  Doing so will result in information
-  loss when saving the contact back to the manager (as the "new" restricted contact will
-  replace the previously saved contact in the backend).
+  If the \a fetchHint is the default constructed hint, all existing details, relationships and
+  action preferences in the matching contact will be returned.  If a client makes changes to an
+  contact which has been retrieved with a fetch hint, they should save it back using a partial save,
+  masked by the same set of detail names in order to avoid information loss.
 
   \sa QContactFetchHint
  */
@@ -500,11 +507,11 @@ QList<QContact> QContactManager::contacts(const QContactFilter& filter, const QL
   and the error returned by \l error() will be \c QContactManager::DoesNotExistError.
 
   The \a fetchHint parameter describes the optimization hints that a manager may take.
-  If the \a fetchHint is the default constructed hint, all existing details, relationships and action preferences
-  in the matching contact will be returned.  A client should not make changes to a contact which has
-  been retrieved using a fetch hint other than the default fetch hint.  Doing so will result in information
-  loss when saving the contact back to the manager (as the "new" restricted contact will
-  replace the previously saved contact in the backend).
+  If the \a fetchHint is the default constructed hint, all existing details, relationships and
+  action preferences in the matching contact will be returned.  If a client makes changes to an
+  contact which has been retrieved with a fetch hint, they should save it back using a partial save,
+  masked by the same set of detail names in order to avoid information loss.
+
 
   \sa QContactFetchHint
  */
@@ -526,11 +533,10 @@ QContact QContactManager::contact(const QContactLocalId& contactId, const QConta
   In all cases, calling \l errorMap() will return the per-input errors for the latest batch function.
 
   The \a fetchHint parameter describes the optimization hints that a manager may take.
-  If the \a fetchHint is the default constructed hint, all existing details, relationships and action preferences
-  in the matching contacts will be returned.  A client should not make changes to a contact which has
-  been retrieved using a fetch hint other than the default fetch hint.  Doing so will result in information
-  loss when saving the contact back to the manager (as the "new" restricted contact will
-  replace the previously saved contact in the backend).
+  If the \a fetchHint is the default constructed hint, all existing details, relationships and
+  action preferences in the matching contact will be returned.  If a client makes changes to an
+  contact which has been retrieved with a fetch hint, they should save it back using a partial save,
+  masked by the same set of detail names in order to avoid information loss.
 
   \sa QContactFetchHint
  */
@@ -718,6 +724,57 @@ bool QContactManager::removeContacts(const QList<QContactLocalId>& contactIds, Q
         *errorMap = d->m_errorMap;
 
     return retn;
+}
+
+
+/*!
+  Returns an observer object for the contact with id \a contactId.
+
+  The returned object will emit contactChanged and contactRemoved signals until it is deleted (eg.
+  by the pointer falling out of scope).  Note that the QContactObserver in the returned
+  QSharedPointer may or may not be deleted when the client loses its reference to it.  The client
+  is responsible for keeping a reference to the shared pointer as long as it is interested in the
+  observer's signals.  When the client wishes to stop receiving signals, it should both disconnect
+  the signals and delete the shared pointer.
+
+  \sa QContactObserver
+ */
+QSharedPointer<QContactObserver> QContactManager::observeContact(QContactLocalId contactId)
+{
+    QContactObserver* observer = new QContactObserver(this);
+    connect(observer, SIGNAL(destroyed(QObject*)), this, SLOT(observerDestroyed(QObject*)));
+    d->m_observerForContact.insert(contactId, observer);
+    return QSharedPointer<QContactObserver>(observer);
+}
+
+// Some private slots for observing contacts
+void QContactManager::observerDestroyed(QObject* object)
+{
+    QContactObserver* observer = reinterpret_cast<QContactObserver*>(object);
+    QContactLocalId key = d->m_observerForContact.key(observer);
+    if (key != 0) {
+        d->m_observerForContact.remove(key, observer);
+    }
+}
+
+void QContactManager::contactsUpdated(const QList<QContactLocalId>& ids)
+{
+    foreach (QContactLocalId id, ids) {
+        QList<QContactObserver*> observers = d->m_observerForContact.values(id);
+        foreach (QContactObserver* observer, observers) {
+            observer->emitContactChanged();
+        }
+    }
+}
+
+void QContactManager::contactsDeleted(const QList<QContactLocalId>& ids)
+{
+    foreach (QContactLocalId id, ids) {
+        QList<QContactObserver*> observers = d->m_observerForContact.values(id);
+        foreach (QContactObserver* observer, observers) {
+            observer->emitContactRemoved();
+        }
+    }
 }
 
 /*!

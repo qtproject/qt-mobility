@@ -19,7 +19,12 @@
 #include "pltables.h"
 #include "dbsqlconstants.h"
 #include "cntpersistenceutility.h"
+#include "cntdbconsts_internal.h"
+
 #include <cntdef.h>
+#include <pathinfo.h>
+#include <driveinfo.h>
+#include <bautils.h>
 
 //max amount of contacts deleted in one go 
 const TInt KDeleteBatchSize = 400;
@@ -66,6 +71,8 @@ Set up the CCntSqlStatement objects held by the class.
 */
 void CPplContactTable::ConstructL()
 	{
+    User::LeaveIfError(iFs.Connect());
+    
 	_LIT(KOwnCardInvariant, "((((%S>>%d==%d)*%d) | ((NOT(%S>>%d==%d))*%S))<<%d)| %S");
 	
 	iCardTemplateIds = CContactIdArray::NewL();
@@ -199,7 +206,46 @@ void CPplContactTable::ConstructL()
 	iFieldMap.InsertL(KUidContactFieldCompanyNamePronunciationValue, KContactCompanyNamePrnParam() );
 
 	CleanupStack::PopAndDestroy(2, whereIdClause); //whereIdClause, typeFlagsParameter
+	
+	SetImagesDirL();
+	
 	}
+
+/**
+Find the images folder exists. If it exists set the path in a local variable
+*/
+void CPplContactTable::SetImagesDirL()
+    {    
+    TInt drive;
+    
+#ifdef __WINS__
+    TInt err = DriveInfo::GetDefaultDrive(DriveInfo::EDefaultPhoneMemory, drive);
+#else
+    TInt err = DriveInfo::GetDefaultDrive(DriveInfo::EDefaultMassStorage, drive);
+#endif
+    
+    // Do not leave with this error. The phone does not have to have this support
+    if (err == KErrNotSupported)
+        {
+        return;
+        }
+    else
+        {
+        User::LeaveIfError(err);
+        }
+    
+    // Get the root path in this drive to create
+    // to create the images directory
+    iImagesDirPath = TPath();
+    User::LeaveIfError(PathInfo::GetRootPath(iImagesDirPath, drive));
+    iImagesDirPath.Append(KImagesFolder);
+    
+    // Check if images directory exists
+    if (!BaflUtils::FolderExists(iFs, iImagesDirPath))
+        {
+        iImagesDirPath.Zero();
+        }
+    }
 
 /**
 Destructor
@@ -216,6 +262,7 @@ CPplContactTable::~CPplContactTable()
 	delete iDeleteStmnt;
 	iFieldMap.Close();
 	delete iCardTemplateIds;
+	iFs.Close();
 	}
 
 
@@ -460,12 +507,48 @@ void CPplContactTable::WriteContactItemL(const CContactItem& aItem, TCntSqlState
 				User::LeaveIfError(stmnt.BindText(KParamIndex, textToSet));
 			    }
 			}
-        else if (field.StorageType() == KStorageTypeText &&  // the field is textual
-             field.TextStorage()->Text().Length() &&     // ignore empty fields
-             custFiltFields != NULL)
+		else if (field.StorageType() == KStorageTypeText &&  // the field is textual
+				 field.TextStorage()->Text().Length() &&     // ignore empty fields
+				 custFiltFields != NULL)
+			{
+			// the field is not stored in contact table but potentially maps to a hint
+			hint.UpdateHintL(field, *custFiltFields);
+			}
+		}
+
+	// Rename the image file to contain the guid
+	if (aType == EInsert && iImagesDirPath.Length())
+	    {
+        CContactItemFieldSet& fieldSet = aItem.CardFields();
+        
+        // Find the image field
+        TInt index = fieldSet.Find(KUidContactFieldCodImage, KUidContactFieldVCardMapUnknown);
+        if (index != KErrNotFound)
             {
-            // the field is not stored in contact table but potentially maps to a hint
-            hint.UpdateHintL(field, *custFiltFields);
+            // Image path field from list of contact fields
+            CContactItemField& field = fieldSet[index];
+            TPtrC oldImagePath = field.TextStorage()->Text();
+            
+            // Append the guid in the filename if it resides in the images folder
+            if (oldImagePath.Find(iImagesDirPath) != KErrNotFound)
+                {
+                // Image file type
+                TParse p;
+                p.Set(oldImagePath, NULL, NULL);
+                
+                // Generate the image path
+                // Format <path>guid_timestamp_filename.ext
+                TPath newImagePath;
+                newImagePath.Append(iImagesDirPath);
+                newImagePath.Append(const_cast<CContactItem&>(aItem).Guid());
+                newImagePath.Append(p.NameAndExt());
+                
+                TInt err = BaflUtils::RenameFile(iFs, oldImagePath, newImagePath); // Rename the file
+                if (err == KErrNone)
+                    {
+                    field.TextStorage()->SetTextL(newImagePath);
+                    }
+                }
             }
 		}
 	
@@ -652,6 +735,17 @@ CContactItem* CPplContactTable::DeleteLC(TContactItemId  aItemId, TBool& aLowDis
 	item->SetAccessCount(accessCount);
 	item->SetTemplateRefId(templateId);
 	
+    // Create a view def to filter the image field only
+    CContactItemViewDef* imageViewDef = CContactItemViewDef::NewLC(CContactItemViewDef::EIncludeFields,CContactItemViewDef::EMaskHiddenFields);
+    imageViewDef->AddL(KUidContactFieldCodImage);
+    
+    // System template is needed unless we are creating a template.
+    const CContactTemplate* sysTemplate = &iProperties.SystemTemplateL();
+    
+	// Read the image field into the contact from the BLOB
+    TCntPersistenceUtility::ReadTextBlobL(*item, *imageViewDef, sysTemplate, iDatabase);
+    CleanupStack::PopAndDestroy(imageViewDef);  // imageViewDef
+	
 	if (item->IsDeletable() )
 		{
 		// delete it here
@@ -670,6 +764,27 @@ CContactItem* CPplContactTable::DeleteLC(TContactItemId  aItemId, TBool& aLowDis
 			{
 			User::LeaveIfError(err);
 			}
+		
+		// Remove contact image from file system
+		if (iImagesDirPath.Length())
+		    {
+		    CContactItemFieldSet& fieldSet = item->CardFields();
+		    
+		    // Find the image field
+		    TInt index = fieldSet.Find(KUidContactFieldCodImage, KUidContactFieldVCardMapUnknown);
+		    if (index != KErrNotFound)
+		        {
+		        // Image path field from list of contact fields
+		        CContactItemField& field = fieldSet[index];
+		        TPtrC imagePath = field.TextStorage()->Text();
+		        
+		        // Remove image file if it is stored in private folder
+		        if (imagePath.Find(iImagesDirPath) != KErrNotFound)
+		            {
+		            TInt err = BaflUtils::DeleteFile(iFs, imagePath); // Error value not necessary
+		            }
+		        }
+		    }
 		}
 	else // Not deletable because of access count > 0.
 		{

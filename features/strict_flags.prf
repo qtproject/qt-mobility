@@ -31,7 +31,7 @@ equals(STRICT,1) {
     }
 
     contains(TEMPLATE,lib) {
-        DEFINES += QT_NO_CAST_FROM_ASCII
+        DEFINES += QT_NO_CAST_FROM_ASCII QT_NO_CAST_TO_ASCII
         CONFIG += no_keywords
     }
 }

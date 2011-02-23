@@ -49,7 +49,7 @@ symbian {
     # Target UID, makes every Symbian app unique
     TARGET.UID3 = 0x20031601
     # Specifies what files shall be deployed: the plugin itself and the qmldir file.
-    importFiles.sources = $$DESTDIR/declarative_gallery$${QT_LIBINFIX}.dll qmldir
+    importFiles.sources = $$DESTDIR/declarative_messaging$${QT_LIBINFIX}.dll qmldir
     importFiles.path = $$QT_IMPORTS_BASE_DIR/$$TARGETPATH
     DEPLOYMENT = importFiles
  }

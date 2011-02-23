@@ -102,6 +102,11 @@ public:
     /* The (backend synthesized, or set with QCME::setContactDisplayLabel()) display label of the contact */
     QString displayLabel() const;
 
+    QStringList tags() const;
+    void clearTags();
+    void addTag(const QString& tag);
+    void setTags(const QStringList& tags);
+
     /* Is this an empty contact? */
     bool isEmpty() const;
     void clearDetails();

@@ -117,7 +117,7 @@ void UT_CKoreanKeyMap::UT_GetMappedString_JamoL()
 
 	QString result = iKeyMap->GetMappedString(koreanInput);
 
-	EUNIT_ASSERT(result == "11b2");
+	EUNIT_ASSERT(result == "112");
 	}
 
 // -----------------------------------------------------------------------------
@@ -132,7 +132,7 @@ void UT_CKoreanKeyMap::UT_GetMappedString_HangulL()
 
     QString result = iKeyMap->GetMappedString(koreanInput);
 
-    EUNIT_ASSERT(result == "13 13a1a ");
+    EUNIT_ASSERT(result == "13 131 ");
     
     
     
@@ -142,7 +142,7 @@ void UT_CKoreanKeyMap::UT_GetMappedString_HangulL()
 
     QString result2 = iKeyMap->GetMappedString(koreanInput2);
 
-    EUNIT_ASSERT(result2 == "8a33a2 ");
+    EUNIT_ASSERT(result2 == "8332 ");
     }
 
 // -----------------------------------------------------------------------------
@@ -161,7 +161,7 @@ void UT_CKoreanKeyMap::UT_GetMappedString_MixedL()
 
     QString result = iKeyMap->GetMappedString(koreanInput);
 
-    EUNIT_ASSERT(result == "13 1b013a1a 33a92ab");
+    EUNIT_ASSERT(result == "13 10131 332");
     }
 
 // -----------------------------------------------------------------------------
@@ -177,7 +177,7 @@ void UT_CKoreanKeyMap::UT_GetMappedString_TokenizeHangulL()
 
     QString result = iKeyMap->GetMappedString(koreanInput);
 
-    EUNIT_ASSERT(result == "13a1a 1b095 266 ");
+    EUNIT_ASSERT(result == "131 105 266 ");
     }
 
 // -----------------------------------------------------------------------------

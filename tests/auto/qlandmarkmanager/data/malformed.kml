@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://earth.google.com/kml/2.2">
+<Document>
+	<lacemark>
+		<name>w0</name>
+		<description>Test data</description>
+		<styleUrl>#default_copy0+nicon=http://maps.google.com/mapfiles/kml/pal3/icon60.png+hicon=http://maps.google.com/mapfiles/kml/pal3/icon52.png</styleUrl>
+		<Point>
+			<coordinates>1.000000,2.000000,3</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark>
+		<name>w1</name>
+		<description></description>
+		<styleUrl>#default_copy0+nicon=http://maps.google.com/mapfiles/kml/pal3/icon60.png+hicon=http://maps.google.com/mapfiles/kml/pal3/icon52.png</styleUrl>
+		<Point>
+			<coordinates>2.000000,1.000000,3</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark>
+		<name>w2</name>
+		<description>Test data1</description>
+		<styleUrl>#default_copy0+nicon=http://maps.google.com/mapfiles/kml/pal3/icon60.png+hicon=http://maps.google.com/mapfiles/kml/pal3/icon52.png</styleUrl>
+		<Point>
+			<coordinates>3.000000,2.000000,1</coordinates>
+		</Point>
+	</Placemark>
+</Document>
+</kml>

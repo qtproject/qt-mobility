@@ -5,7 +5,8 @@ PLUGIN_TYPE=landmarks
 
 include(../../../../common.pri)
 
-INCLUDEPATH += ../../../../src/location
+INCLUDEPATH += ../../../../src/location \
+               ../../../../src/location/landmarks
 
 CONFIG += mobility
 MOBILITY = location

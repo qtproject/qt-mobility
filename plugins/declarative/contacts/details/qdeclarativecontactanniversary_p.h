@@ -77,7 +77,7 @@ public:
         :QDeclarativeContactDetail(parent)
     {
         setDetail(QContactAnniversary());
-        connect(this, SIGNAL(fieldsChanged), SIGNAL(valueChanged()));
+        connect(this, SIGNAL(fieldsChanged()), SIGNAL(valueChanged()));
     }
 
     ContactDetailType detailType() const

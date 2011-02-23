@@ -94,7 +94,7 @@ QMessageAccountId addAccount(const Parameters &params)
         }
 
         // Ensure that we initialise to the current version for file storage
-        const QString key("qtopiamailfile");
+        const QString key("qmfstoragemanager");
 
         QMailAccountConfiguration config;
         config.addServiceConfiguration(key);

@@ -135,6 +135,4 @@ QGalleryTrackerCompositeColumn *QGalleryTrackerFilePathColumn::create(const QVec
     return new QGalleryTrackerFilePathColumn;
 }
 
-#include "moc_qgallerytrackerlistcolumn_p.cpp"
-
 QTM_END_NAMESPACE

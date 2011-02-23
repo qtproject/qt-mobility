@@ -57,7 +57,7 @@ QT_BEGIN_NAMESPACE
 /*!
     \class QCameraImageProcessing
 
-    \preliminary
+    
     \brief The QCameraImageProcessing class provides interface for
     focus and zoom related camera settings.
 

@@ -47,7 +47,7 @@ QT_BEGIN_NAMESPACE
 /*!
     \class QCameraFocusControl
 
-    \preliminary
+    
     \brief The QCameraFocusControl class supplies control for
     focusing related camera parameters.
 
@@ -224,7 +224,7 @@ QCameraFocusControl::~QCameraFocusControl()
 /*!
   \fn QCameraFocusControl::focusZonesChanged()
 
-  Signal is emited when the set of zones, camera focused on is changed.
+  Signal is emitted when the set of zones, camera focused on is changed.
 
   Usually the zones list is changed when the camera is focused.
 

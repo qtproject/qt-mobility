@@ -54,6 +54,7 @@ maemo6magnetometer::maemo6magnetometer(QSensor *sensor)
     setDescription(QLatin1String("magnetic flux density in teslas (T)"));
     setRanges(NANO);
 
+
     if (m_sensorInterface){
         if (!(QObject::connect(m_sensorInterface, SIGNAL(dataAvailable(const MagneticField&)),
                                this, SLOT(slotDataAvailable(const MagneticField&)))))
@@ -68,9 +69,18 @@ maemo6magnetometer::maemo6magnetometer(QSensor *sensor)
 }
 
 void maemo6magnetometer::start(){
-    maemo6sensorbase::start();
+
+
     QVariant v = sensor()->property("returnGeoValues");
-    m_isGeoMagnetometer =  v.isValid() && v.toBool()? true: false;
+    if (!(v.isValid())){
+        sensor()->setProperty("returnGeoValues", false); //Set to false (the default) to return raw magnetic flux density
+        m_isGeoMagnetometer=false;
+    }
+    else m_isGeoMagnetometer =  v.toBool();
+
+
+
+    maemo6sensorbase::start();
 }
 
 void maemo6magnetometer::slotDataAvailable(const MagneticField& data)

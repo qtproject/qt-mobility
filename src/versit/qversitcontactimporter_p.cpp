@@ -166,6 +166,7 @@ bool QVersitContactImporterPrivate::importContact(
     contact->setType(QContactType::TypeContact);
     QContactManagerEngine::setContactDisplayLabel(contact, QVersitContactImporterPrivate::synthesizedDisplayLabel(*contact));
 
+    mRestoreHandler.documentProcessed();
     // run plugin handlers
     foreach (QVersitContactImporterPropertyHandlerV2* handler, mPluginPropertyHandlers) {
         handler->documentProcessed(document, contact);
@@ -230,6 +231,9 @@ void QVersitContactImporterPrivate::importProperty(
         // Look up mDetailMappings for a simple mapping from property to detail.
         success = createNameValueDetail(property, contact, &updatedDetails);
     }
+
+    if (mRestoreHandler.propertyProcessed(property, &updatedDetails))
+        success = true;
 
     // run plugin handlers
     foreach (QVersitContactImporterPropertyHandlerV2* handler, mPluginPropertyHandlers) {
@@ -574,9 +578,24 @@ bool QVersitContactImporterPrivate::createOnlineAccount(
             subTypes.append(QContactOnlineAccount::SubTypeSip);
         onlineAccount.setSubTypes(subTypes);
     } else if (property.name() == QLatin1String("X-IMPP") ||
-               property.name() == QLatin1String("IMPP") ||
-               property.name() == QLatin1String("X-JABBER")) {
+               property.name() == QLatin1String("IMPP")) {
         onlineAccount.setSubTypes(QContactOnlineAccount::SubTypeImpp);
+    } else if (property.name() == QLatin1String("X-JABBER")) {
+        onlineAccount.setSubTypes(QContactOnlineAccount::SubTypeImpp);
+        onlineAccount.setServiceProvider(QContactOnlineAccount::ServiceJabber);
+    } else if (property.name() == QLatin1String("X-AIM")) {
+        onlineAccount.setServiceProvider(QContactOnlineAccount::ServiceAim);
+    } else if (property.name() == QLatin1String("X-ICQ")) {
+        onlineAccount.setServiceProvider(QContactOnlineAccount::ServiceIcq);
+    } else if (property.name() == QLatin1String("X-MSN")) {
+        onlineAccount.setServiceProvider(QContactOnlineAccount::ServiceMsn);
+    } else if (property.name() == QLatin1String("X-QQ")) {
+        onlineAccount.setServiceProvider(QContactOnlineAccount::ServiceQq);
+    } else if (property.name() == QLatin1String("X-YAHOO")) {
+        onlineAccount.setServiceProvider(QContactOnlineAccount::ServiceYahoo);
+    } else if (property.name() == QLatin1String("X-SKYPE") ||
+            property.name() == QLatin1String("X-SKYPE-USERNAME")) {
+        onlineAccount.setServiceProvider(QContactOnlineAccount::ServiceSkype);
     }
 
     saveDetailWithContext(updatedDetails, onlineAccount, extractContexts(property));

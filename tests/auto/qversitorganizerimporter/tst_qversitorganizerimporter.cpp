@@ -540,6 +540,11 @@ void tst_QVersitOrganizerImporter::testImportEventProperties_data()
         QTest::newRow("rrule until")
             << (QList<QVersitProperty>() << rrule)
             << (QList<QOrganizerItemDetail>() << recurrence);
+
+        rrule.setValue(QLatin1String("FREQ=DAILY;UNTIL=20000131T101112;BYMONTH=1"));
+        QTest::newRow("rrule until with time")
+            << (QList<QVersitProperty>() << rrule)
+            << (QList<QOrganizerItemDetail>() << recurrence);
     }
 
     {
@@ -554,6 +559,54 @@ void tst_QVersitOrganizerImporter::testImportEventProperties_data()
                 << QOrganizerRecurrenceRule::January);
         recurrence.setRecurrenceRules(QSet<QOrganizerRecurrenceRule>() << recurrenceRule);
         QTest::newRow("rrule count")
+            << (QList<QVersitProperty>() << rrule)
+            << (QList<QOrganizerItemDetail>() << recurrence);
+    }
+
+    {
+        QVersitProperty rrule;
+        rrule.setName(QLatin1String("RRULE"));
+        rrule.setValue(QLatin1String("FREQ=WEEKLY;INTERVAL=0"));
+        QOrganizerItemRecurrence recurrence;
+        QOrganizerRecurrenceRule recurrenceRule;
+        recurrenceRule.setFrequency(QOrganizerRecurrenceRule::Weekly);
+        recurrenceRule.setInterval(1); // default interval when invalid interval is found
+        recurrence.setRecurrenceRules(QSet<QOrganizerRecurrenceRule>() << recurrenceRule);
+        QTest::newRow("rrule invalid interval1")
+            << (QList<QVersitProperty>() << rrule)
+            << (QList<QOrganizerItemDetail>() << recurrence);
+
+        rrule.setValue(QLatin1String("FREQ=WEEKLY;INTERVAL=bad"));
+        QTest::newRow("rrule invalid interval2")
+            << (QList<QVersitProperty>() << rrule)
+            << (QList<QOrganizerItemDetail>() << recurrence);
+
+        rrule.setValue(QLatin1String("FREQ=WEEKLY;INTERVAL="));
+        QTest::newRow("rrule invalid interval3")
+            << (QList<QVersitProperty>() << rrule)
+            << (QList<QOrganizerItemDetail>() << recurrence);
+    }
+
+    {
+        QVersitProperty rrule;
+        rrule.setName(QLatin1String("RRULE"));
+        rrule.setValue(QLatin1String("FREQ=WEEKLY;COUNT=-2"));
+        QOrganizerItemRecurrence recurrence;
+        QOrganizerRecurrenceRule recurrenceRule;
+        recurrenceRule.setFrequency(QOrganizerRecurrenceRule::Weekly);
+        recurrenceRule.setLimit(-1); // default count when invalid count is found
+        recurrence.setRecurrenceRules(QSet<QOrganizerRecurrenceRule>() << recurrenceRule);
+        QTest::newRow("rrule invalid count1")
+            << (QList<QVersitProperty>() << rrule)
+            << (QList<QOrganizerItemDetail>() << recurrence);
+
+        rrule.setValue(QLatin1String("FREQ=WEEKLY;COUNT=bad"));
+        QTest::newRow("rrule invalid count2")
+            << (QList<QVersitProperty>() << rrule)
+            << (QList<QOrganizerItemDetail>() << recurrence);
+
+        rrule.setValue(QLatin1String("FREQ=WEEKLY;COUNT="));
+        QTest::newRow("rrule invalid count3")
             << (QList<QVersitProperty>() << rrule)
             << (QList<QOrganizerItemDetail>() << recurrence);
     }

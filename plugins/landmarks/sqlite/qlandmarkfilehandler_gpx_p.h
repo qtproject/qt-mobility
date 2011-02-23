@@ -56,8 +56,8 @@
 #include <qlandmark.h>
 #include <qlandmarkmanagerengine.h>
 
-class QXmlStreamReader;
-class QXmlStreamWriter;
+#include <QXmlStreamReader>
+#include <QXmlStreamWriter>
 
 class QIODevice;
 

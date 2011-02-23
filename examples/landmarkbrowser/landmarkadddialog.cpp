@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the examples of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:BSD$
 ** You may use this file under the terms of the BSD license as follows:
@@ -137,7 +137,7 @@ void LandmarkAddDialog::accept()
     lm.setUrl(QUrl(urlLineEdit->text()));
     lm.setPhoneNumber(phoneLineEdit->text());
     lm.setRadius(radiusLineEdit->text().toDouble());
-
+    lm.setCategoryIds(QList<QLandmarkCategoryId>());
     for (int i=0; i < categoryList->count(); ++i) {
         if (categoryList->item(i)->checkState() == Qt::Checked) {
             lm.addCategoryId(categoryList->item(i)->data(Qt::UserRole).value<QLandmarkCategoryId>());

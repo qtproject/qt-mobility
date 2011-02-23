@@ -65,11 +65,7 @@ public:
 
         qmlRegisterType<QSoundEffect>(uri, 1, 1, "SoundEffect");
         qmlRegisterType<QDeclarativeAudio>(uri, 1, 1, "Audio");
-#ifndef Q_OS_SYMBIAN
         qmlRegisterType<QDeclarativeVideo>(uri, 1, 1, "Video");
-#else
-        qmlRegisterUncreatableType<QDeclarativeVideo>(uri, 1, 1, "Video", "Type not supported in symbian");
-#endif
         qmlRegisterType<QDeclarativeCamera>(uri, 1, 1, "Camera");
         qmlRegisterType<QDeclarativeMediaMetaData>();
     }

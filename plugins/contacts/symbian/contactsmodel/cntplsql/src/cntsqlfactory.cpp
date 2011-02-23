@@ -31,7 +31,7 @@
 /**
 CCntPplViewSession first phase constructor.
 */
-CntSqlFactory::CntSqlFactory( C12keyKeyMap* twelveKeyKeyMap )
+CntSqlFactory::CntSqlFactory( const C12keyKeyMap* twelveKeyKeyMap )
     :mTwelveKeyKeyMap(twelveKeyKeyMap)
     {
     
@@ -46,7 +46,7 @@ CntSqlFactory::~CntSqlFactory()
     
     }
 
-CntSqlSearchInterface* CntSqlFactory::getSqlIinstance(const QString &pattern, QLocale& language)
+CntSqlSearchInterface* CntSqlFactory::getSqlIinstance(QLocale& language)
     {
     
     int sysLang = language.language();

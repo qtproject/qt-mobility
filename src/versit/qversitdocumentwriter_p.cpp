@@ -64,20 +64,17 @@ QVersitDocumentWriter::QVersitDocumentWriter(QVersitDocument::VersitType type)
     : mType(type),
     mDevice(0),
     mCodec(0),
+    mCodecIsAscii(false),
     mEncoder(0),
-    mUtf8Encoder(QTextCodec::codecForName("UTF-8")->makeEncoder()),
     mSuccessful(true),
     mCurrentLineLength(0)
 {
-    // Hack so the encoder doesn't output a byte order mark for UTF-8.
-    mUtf8Encoder->fromUnicode(QString());
 }
 
 QVersitDocumentWriter::~QVersitDocumentWriter()
 {
     if (mEncoder)
         delete mEncoder;
-    delete mUtf8Encoder;
 }
 
 /*!
@@ -98,6 +95,15 @@ void QVersitDocumentWriter::setCodec(QTextCodec *codec)
     // the same as in ASCII.  For ASCII compatible codecs, we can do some optimizations.
     mCodecIsAsciiCompatible = !(mCodec->name().startsWith("UTF-16")
                              || mCodec->name().startsWith("UTF-32"));
+}
+
+/*!
+  Specifies that the codec is actually ASCII (setCodec must also be called with an ASCII-compatible
+  codec.
+ */
+void QVersitDocumentWriter::setAsciiCodec()
+{
+    mCodecIsAscii = true;
 }
 
 /*!
@@ -205,14 +211,12 @@ void QVersitDocumentWriter::writeBytes(const QByteArray &value)
 
 /*!
   Writes \a value to the device.
-  If \a useUtf8 is true, uses the UTF-8 codec instead of the one set in setCodec().
 
   This function tracks how many characters have been written to the line and folds (wraps) the line
   according to RFC2425.
   */
-void QVersitDocumentWriter::writeString(const QString &value, bool useUtf8)
+void QVersitDocumentWriter::writeString(const QString &value)
 {
-    QTextEncoder* encoder = useUtf8 ? mUtf8Encoder : mEncoder;
     int spaceRemaining = MAX_LINE_LENGTH - mCurrentLineLength;
     int charsWritten = 0;
     QString crlfSpace(QLatin1String("\r\n "));
@@ -220,14 +224,14 @@ void QVersitDocumentWriter::writeString(const QString &value, bool useUtf8)
         // Write the first "spaceRemaining" characters
         QStringRef line(&value, charsWritten, spaceRemaining);
         charsWritten += spaceRemaining;
-        if (mDevice->write(encoder->fromUnicode(line.constData(), line.length())) < 0
-               || mDevice->write(encoder->fromUnicode(crlfSpace)) < 0)
+        if (mDevice->write(mEncoder->fromUnicode(line.constData(), line.length())) < 0
+               || mDevice->write(mEncoder->fromUnicode(crlfSpace)) < 0)
             mSuccessful = false;
         spaceRemaining = MAX_LINE_LENGTH - 1; // minus 1 for the space at the front.
         mCurrentLineLength = 1;
     }
 
-    if (mDevice->write(encoder->fromUnicode(value.mid(charsWritten))) < 0)
+    if (mDevice->write(mEncoder->fromUnicode(value.mid(charsWritten))) < 0)
         mSuccessful = false;
     mCurrentLineLength += value.length() - charsWritten;
 }

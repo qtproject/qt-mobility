@@ -139,10 +139,7 @@ void CntFilterUnion::getSelectQueryforFilter(const QContactFilter& filter,
                 dtlfltr.emulateBestMatching();
             }
 #endif
-            if (dtlfltr.bestMatchingEnabled())
-                dtlfltr.bestMatchPhoneNumberQuery(filter,sqlSelectQuery,error);
-            else
-                dtlfltr.createMatchPhoneNumberQuery(filter,sqlSelectQuery,error);
+                dtlfltr.createPhoneNumberQuery(filter,sqlSelectQuery,error);
             }
             else {
                 CntFilterDetail dtlfltr(m_contactdatabase,m_srvConnection,m_dbInfo);

@@ -99,7 +99,7 @@ void QLandmarkCategoryFilter::setCategoryId(const QLandmarkCategoryId &categoryI
 }
 
 /*!
-    Convenience function to set the cateory that this filter matches by.
+    Convenience function to set the \a category that this filter matches by.
     It is equivalent to calling setCategory(category.categoryId()).
 */
 void QLandmarkCategoryFilter::setCategory(const QLandmarkCategory &category)

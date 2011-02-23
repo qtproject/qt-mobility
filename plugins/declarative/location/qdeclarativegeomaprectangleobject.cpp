@@ -57,52 +57,52 @@ QTM_BEGIN_NAMESPACE
 
     \ingroup qml-location-maps
 
-    The rectangle is specified in terms of the top left and bottom 
+    The rectangle is specified in terms of the top left and bottom
     right coordinates.
 
-    If \l topLeft and \l bottomRight are not specified and valid the 
+    If \l topLeft and \l bottomRight are not specified and valid the
     rectangle will not be displayed.
 
     The MapRectangle element is part of the \bold{QtMobility.location 1.1} module.
 */
 
-QDeclarativeGeoMapRectangleObject::QDeclarativeGeoMapRectangleObject()
+QDeclarativeGeoMapRectangleObject::QDeclarativeGeoMapRectangleObject(QDeclarativeItem *parent)
+    : QDeclarativeGeoMapObject(parent)
 {
-    m_topLeft = new QDeclarativeCoordinate(this);
+    rectangle_ = new QGeoMapRectangleObject();
+    setMapObject(rectangle_);
 
-    connect(m_topLeft,
+    connect(&topLeft_,
             SIGNAL(latitudeChanged(double)),
             this,
             SLOT(topLeftLatitudeChanged(double)));
-    connect(m_topLeft,
+    connect(&topLeft_,
             SIGNAL(longitudeChanged(double)),
             this,
             SLOT(topLeftLongitudeChanged(double)));
-    connect(m_topLeft,
+    connect(&topLeft_,
             SIGNAL(altitudeChanged(double)),
             this,
             SLOT(topLeftAltitudeChanged(double)));
 
-    m_bottomRight = new QDeclarativeCoordinate(this);
-
-    connect(m_bottomRight,
+    connect(&bottomRight_,
             SIGNAL(latitudeChanged(double)),
             this,
             SLOT(bottomRightLatitudeChanged(double)));
-    connect(m_bottomRight,
+    connect(&bottomRight_,
             SIGNAL(longitudeChanged(double)),
             this,
             SLOT(bottomRightLongitudeChanged(double)));
-    connect(m_bottomRight,
+    connect(&bottomRight_,
             SIGNAL(altitudeChanged(double)),
             this,
             SLOT(bottomRightAltitudeChanged(double)));
 
-    connect(&m_border,
+    connect(&border_,
             SIGNAL(colorChanged(QColor)),
             this,
             SLOT(borderColorChanged(QColor)));
-    connect(&m_border,
+    connect(&border_,
             SIGNAL(widthChanged(int)),
             this,
             SLOT(borderWidthChanged(int)));
@@ -110,86 +110,87 @@ QDeclarativeGeoMapRectangleObject::QDeclarativeGeoMapRectangleObject()
 
 QDeclarativeGeoMapRectangleObject::~QDeclarativeGeoMapRectangleObject()
 {
+    delete rectangle_;
 }
 
 /*!
     \qmlproperty Coordinate MapRectangle::topLeft
-    
-    This property holds the coordinate corresponding to the top left 
+
+    This property holds the coordinate corresponding to the top left
     corner of the rectangle.
 
     The default value is an invalid coordinate.
 */
 
-void QDeclarativeGeoMapRectangleObject::setDeclarativeTopLeft(const QDeclarativeCoordinate *topLeft)
+void QDeclarativeGeoMapRectangleObject::setTopLeft(const QDeclarativeCoordinate *topLeft)
 {
-    if (m_topLeft->coordinate() == topLeft->coordinate())
+    if (topLeft_.coordinate() == topLeft->coordinate())
         return;
 
-    m_topLeft->setCoordinate(topLeft->coordinate());
-    setTopLeft(topLeft->coordinate());
+    topLeft_.setCoordinate(topLeft->coordinate());
+    rectangle_->setTopLeft(topLeft->coordinate());
 
-    emit declarativeTopLeftChanged(m_topLeft);
+    emit topLeftChanged(&topLeft_);
 }
 
-QDeclarativeCoordinate* QDeclarativeGeoMapRectangleObject::declarativeTopLeft()
+QDeclarativeCoordinate* QDeclarativeGeoMapRectangleObject::topLeft()
 {
-    return m_topLeft;
+    return &topLeft_;
 }
 
 void QDeclarativeGeoMapRectangleObject::topLeftLatitudeChanged(double /*latitude*/)
 {
-    setTopLeft(m_topLeft->coordinate());
+    rectangle_->setTopLeft(topLeft_.coordinate());
 }
 
 void QDeclarativeGeoMapRectangleObject::topLeftLongitudeChanged(double /*longitude*/)
 {
-    setTopLeft(m_topLeft->coordinate());
+    rectangle_->setTopLeft(topLeft_.coordinate());
 }
 
 void QDeclarativeGeoMapRectangleObject::topLeftAltitudeChanged(double /*altitude*/)
 {
-    setTopLeft(m_topLeft->coordinate());
+    rectangle_->setTopLeft(topLeft_.coordinate());
 }
 
 /*!
     \qmlproperty Coordinate MapRectangle::bottomRight
-    
+
     This property holds the coordinate corresponding to the bottom right
     corner of the rectangle.
 
     The default value is an invalid coordinate.
 */
 
-void QDeclarativeGeoMapRectangleObject::setDeclarativeBottomRight(const QDeclarativeCoordinate *bottomRight)
+void QDeclarativeGeoMapRectangleObject::setBottomRight(const QDeclarativeCoordinate *bottomRight)
 {
-    if (m_bottomRight->coordinate() == bottomRight->coordinate())
+    if (bottomRight_.coordinate() == bottomRight->coordinate())
         return;
 
-    m_bottomRight->setCoordinate(bottomRight->coordinate());
-    setBottomRight(bottomRight->coordinate());
+    bottomRight_.setCoordinate(bottomRight->coordinate());
+    rectangle_->setBottomRight(bottomRight->coordinate());
 
-    emit declarativeBottomRightChanged(m_bottomRight);
+    emit bottomRightChanged(&bottomRight_);
 }
 
-QDeclarativeCoordinate* QDeclarativeGeoMapRectangleObject::declarativeBottomRight()
+QDeclarativeCoordinate* QDeclarativeGeoMapRectangleObject::bottomRight()
 {
-    return m_bottomRight;
+    return &bottomRight_;
 }
 
 void QDeclarativeGeoMapRectangleObject::bottomRightLatitudeChanged(double /*latitude*/)
 {
-    setBottomRight(m_bottomRight->coordinate());
+    rectangle_->setBottomRight(bottomRight_.coordinate());
 }
 
 void QDeclarativeGeoMapRectangleObject::bottomRightLongitudeChanged(double /*longitude*/)
 {
-    setBottomRight(m_bottomRight->coordinate());
+    rectangle_->setBottomRight(bottomRight_.coordinate());
 }
 
 void QDeclarativeGeoMapRectangleObject::bottomRightAltitudeChanged(double /*altitude*/)
 {
-    setBottomRight(m_bottomRight->coordinate());
+    rectangle_->setBottomRight(bottomRight_.coordinate());
 }
 
 /*!
@@ -202,18 +203,18 @@ void QDeclarativeGeoMapRectangleObject::bottomRightAltitudeChanged(double /*alti
 
 void QDeclarativeGeoMapRectangleObject::setColor(const QColor &color)
 {
-    if (m_color == color)
+    if (color_ == color)
         return;
 
-    m_color = color;
+    color_ = color;
     QBrush m_brush(color);
-    setBrush(m_brush);
-    emit colorChanged(m_color);
+    rectangle_->setBrush(m_brush);
+    emit colorChanged(color_);
 }
 
 QColor QDeclarativeGeoMapRectangleObject::color() const
 {
-    return m_color;
+    return color_;
 }
 
 /*!
@@ -231,25 +232,25 @@ QColor QDeclarativeGeoMapRectangleObject::color() const
 
 QDeclarativeGeoMapObjectBorder* QDeclarativeGeoMapRectangleObject::border()
 {
-    return &m_border;
+    return &border_;
 }
 
 void QDeclarativeGeoMapRectangleObject::borderColorChanged(const QColor &color)
 {
-    QPen p = pen();
+    QPen p = rectangle_->pen();
     p.setColor(color);
-    setPen(p);
+    rectangle_->setPen(p);
 }
 
 void QDeclarativeGeoMapRectangleObject::borderWidthChanged(int width)
 {
-    QPen p = pen();
+    QPen p = rectangle_->pen();
     p.setWidth(width);
     if (width == 0)
         p.setStyle(Qt::NoPen);
     else
         p.setStyle(Qt::SolidLine);
-    setPen(p);
+    rectangle_->setPen(p);
 }
 
 /*!
@@ -257,21 +258,21 @@ void QDeclarativeGeoMapRectangleObject::borderWidthChanged(int width)
 
     This property holds the z-value of the rectangle.
 
-    Map objects are drawn in z-value order, and objects with the 
+    Map objects are drawn in z-value order, and objects with the
     same z-value will be drawn in insertion order.
 */
 
 /*!
     \qmlproperty bool MapRectangle::visible
 
-    This property holds a boolean corresponding to whether or not the 
+    This property holds a boolean corresponding to whether or not the
     rectangle is visible.
 */
 
 /*!
     \qmlproperty bool MapRectangle::selected
 
-    This property holds a boolean corresponding to whether or not the 
+    This property holds a boolean corresponding to whether or not the
     rectangle is selected.
 */
 

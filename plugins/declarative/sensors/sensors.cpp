@@ -98,3 +98,165 @@ QT_END_NAMESPACE
 
 Q_EXPORT_PLUGIN2(qsensorsdeclarativemodule, QT_PREPEND_NAMESPACE(QSensorsDeclarativeModule));
 
+// =====================================================================
+
+/*!
+    \qmlclass Accelerometer QAccelerometer
+    \brief The Accelerometer element wraps the QAccelerometer class.
+    \ingroup qml-sensors_type
+
+    This element is part of the \bold{QtMobility.sensors 1.1} module.
+
+    \sa QAccelerometer, QAccelerometerReading
+*/
+
+/*!
+    \qmlclass AccelerometerReading QAccelerometerReading
+    \brief The AccelerometerReading element wraps the QAccelerometerReading class.
+    \ingroup qml-sensors_reading
+
+    This element is part of the \bold{QtMobility.sensors 1.1} module.
+
+    \sa QAccelerometer, QAccelerometerReading
+*/
+
+/*!
+    \qmlclass AmbientLightSensor QAmbientLightSensor
+    \brief The AmbientLightSensor element wraps the QAmbientLightSensor class.
+    \ingroup qml-sensors_type
+
+    This element is part of the \bold{QtMobility.sensors 1.1} module.
+
+    \sa QAmbientLightSensor, QAmbientLightReading
+*/
+
+/*!
+    \qmlclass AmbientLightReading QAmbientLightReading
+    \brief The AmbientLightReading element wraps the QAmbientLightReading class.
+    \ingroup qml-sensors_reading
+
+    This element is part of the \bold{QtMobility.sensors 1.1} module.
+
+    \sa QAmbientLightSensor, QAmbientLightReading
+*/
+
+/*!
+    \qmlclass Compass QCompass
+    \brief The Compass element wraps the QCompass class.
+    \ingroup qml-sensors_type
+
+    This element is part of the \bold{QtMobility.sensors 1.1} module.
+
+    \sa QCompass, QCompassReading
+*/
+
+/*!
+    \qmlclass CompassReading QCompassReading
+    \brief The CompassReading element wraps the QCompassReading class.
+    \ingroup qml-sensors_reading
+
+    This element is part of the \bold{QtMobility.sensors 1.1} module.
+
+    \sa QCompass, QCompassReading
+*/
+
+/*!
+    \qmlclass Magnetometer QMagnetometer
+    \brief The Magnetometer element wraps the QMagnetometer class.
+    \ingroup qml-sensors_type
+
+    This element is part of the \bold{QtMobility.sensors 1.1} module.
+
+    \sa QMagnetometer, QMagnetometerReading
+*/
+
+/*!
+    \qmlclass MagnetometerReading QMagnetometerReading
+    \brief The MagnetometerReading element wraps the QMagnetometerReading class.
+    \ingroup qml-sensors_reading
+
+    This element is part of the \bold{QtMobility.sensors 1.1} module.
+
+    \sa QMagnetometer, QMagnetometerReading
+*/
+
+/*!
+    \qmlclass OrientationSensor QOrientationSensor
+    \brief The OrientationSensor element wraps the QOrientationSensor class.
+    \ingroup qml-sensors_type
+
+    This element is part of the \bold{QtMobility.sensors 1.1} module.
+
+    \sa QOrientationSensor, QOrientationReading
+*/
+
+/*!
+    \qmlclass OrientationReading QOrientationReading
+    \brief The OrientationReading element wraps the QOrientationReading class.
+    \ingroup qml-sensors_reading
+
+    This element is part of the \bold{QtMobility.sensors 1.1} module.
+
+    \sa QOrientationSensor, QOrientationReading
+*/
+
+/*!
+    \qmlclass ProximitySensor QProximitySensor
+    \brief The ProximitySensor element wraps the QProximitySensor class.
+    \ingroup qml-sensors_type
+
+    This element is part of the \bold{QtMobility.sensors 1.1} module.
+
+    \sa QProximitySensor, QProximityReading
+*/
+
+/*!
+    \qmlclass ProximityReading QProximityReading
+    \brief The ProximityReading element wraps the QProximityReading class.
+    \ingroup qml-sensors_reading
+
+    This element is part of the \bold{QtMobility.sensors 1.1} module.
+
+    \sa QProximitySensor, QProximityReading
+*/
+
+/*!
+    \qmlclass RotationSensor QRotationSensor
+    \brief The RotationSensor element wraps the QRotationSensor class.
+    \ingroup qml-sensors_type
+
+    This element is part of the \bold{QtMobility.sensors 1.1} module.
+
+    \sa QRotationSensor, QRotationReading
+*/
+
+/*!
+    \qmlclass RotationReading QRotationReading
+    \brief The RotationReading element wraps the QRotationReading class.
+    \ingroup qml-sensors_reading
+
+    This element is part of the \bold{QtMobility.sensors 1.1} module.
+
+    \sa QRotationSensor, QRotationReading
+*/
+
+/*!
+    \qmlclass TapSensor QTapSensor
+    \brief The TapSensor element wraps the QTapSensor class.
+    \ingroup qml-sensors_type
+
+    This element is part of the \bold{QtMobility.sensors 1.1} module.
+
+    \sa QTapSensor, QTapReading
+*/
+
+/*!
+    \qmlclass TapReading QTapReading
+    \brief The TapReading element wraps the QTapReading class.
+    \ingroup qml-sensors_reading
+
+    This element is part of the \bold{QtMobility.sensors 1.1} module.
+
+    \sa QTapSensor, QTapReading
+*/
+

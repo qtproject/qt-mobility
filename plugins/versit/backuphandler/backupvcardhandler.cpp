@@ -51,22 +51,6 @@
 
 QTM_USE_NAMESPACE
 
-/*
- * This is a map from Versit group names to the details that were generated from properties with the
- * said groups.  Multiple details can be associated with a single group.
- */
-class DetailGroupMap
-{
-public:
-    QList<QContactDetail> detailsInGroup(const QString& groupName) const;
-    void insert(const QString& groupName, const QContactDetail& detail);
-    void update(const QContactDetail& detail);
-    void clear();
-
-private:
-    QHash<int, QString> mDetailGroupName; // detailid -> group name
-    QHash<int, QContactDetail> mDetailById; // detailid -> detail
-};
 
 /* See QVersitContactImporter::createBackupHandler() */
 class BackupVCardHandler : public QVersitContactHandler
@@ -90,7 +74,6 @@ public:
                           QVersitDocument* document);
 
 private:
-    static QVariant deserializeValue(const QVersitProperty& property);
     static void serializeValue(QVersitProperty* property, const QVariant& value);
     DetailGroupMap mDetailGroupMap; // remembers which details came from which groups
     int mDetailNumber;
@@ -135,50 +118,6 @@ QVersitContactHandler* BackupVCardHandlerFactory::createHandler() const
 
 Q_EXPORT_PLUGIN2(qtversit_backuphandler, BackupVCardHandlerFactory);
 
-/*
- * Returns a list of details generated from a Versit group.
- */
-QList<QContactDetail> DetailGroupMap::detailsInGroup(const QString& groupName) const
-{
-    QList<int> detailIds = mDetailGroupName.keys(groupName);
-    QList<QContactDetail> details;
-    foreach (int detailId, detailIds) {
-        details << mDetailById[detailId];
-    }
-    return details;
-}
-
-/*
- * Inserts the association between \a detail and \a groupName to the map.
- * The detail must have a key (ie. have already been saved in a contact) and the group name must not
- * be the empty string.
- */
-void DetailGroupMap::insert(const QString& groupName, const QContactDetail& detail)
-{
-    Q_ASSERT(!groupName.isEmpty());
-    mDetailGroupName[detail.key()] = groupName;
-    mDetailById[detail.key()] = detail;
-}
-
-/*
- * Replaces the detail currently in the map with \a detail.
- * The detail must have a key (ie. have already been saved in a contact).
- */
-void DetailGroupMap::update(const QContactDetail& detail)
-{
-    Q_ASSERT(detail.key());
-    mDetailById[detail.key()] = detail;
-}
-
-/*!
- * Removes details and groups from the map.
- */
-void DetailGroupMap::clear()
-{
-    mDetailGroupName.clear();
-    mDetailById.clear();
-}
-
 
 BackupVCardHandler::BackupVCardHandler()
     : mDetailNumber(0)
@@ -193,84 +132,10 @@ void BackupVCardHandler::propertyProcessed(
         QList<QContactDetail>* updatedDetails)
 {
     Q_UNUSED(document)
+    Q_UNUSED(property)
     Q_UNUSED(contact)
-    QString group;
-    if (!property.groups().isEmpty())
-        group = property.groups().first();
-    if (!*alreadyProcessed) {
-        if (property.name() != PropertyName)
-            return;
-        if (property.groups().size() != 1)
-            return;
-        QMultiHash<QString,QString> parameters = property.parameters();
-        QString definitionName = parameters.value(DetailDefinitionParameter);
-        QString fieldName = parameters.value(FieldParameter);
-
-        // Find a detail previously seen with the same definitionName, which was generated from
-        // a property from the same group
-        QContactDetail detail(definitionName);
-        foreach (const QContactDetail& previousDetail, mDetailGroupMap.detailsInGroup(group)) {
-            if (previousDetail.definitionName() == definitionName) {
-                detail = previousDetail;
-            }
-        }
-        // If not found, it's a new empty detail with the definitionName set.
-
-        detail.setValue(fieldName, deserializeValue(property));
-
-        // Replace the equivalent detail in updatedDetails with the new one
-        QMutableListIterator<QContactDetail> it(*updatedDetails);
-        while (it.hasNext()) {
-            if (it.next().key() == detail.key()) {
-                it.remove();
-                break;
-            }
-        }
-        updatedDetails->append(detail);
-        *alreadyProcessed = true;
-    }
-    if (!group.isEmpty()) {
-        // Keep track of which details were generated from which Versit groups
-        foreach (const QContactDetail& detail, *updatedDetails) {
-            mDetailGroupMap.insert(group, detail);
-        }
-    }
-}
-
-QVariant BackupVCardHandler::deserializeValue(const QVersitProperty& property)
-{
-    // Import the field
-    if (property.parameters().contains(DatatypeParameter, DatatypeParameterVariant)) {
-        // The value was stored as a QVariant serialized in a QByteArray
-        QDataStream stream(property.variantValue().toByteArray());
-        QVariant value;
-        stream >> value;
-        return value;
-    } else if (property.parameters().contains(DatatypeParameter, DatatypeParameterDate)) {
-        // The value was a QDate serialized as a string
-        return QDate::fromString(property.value(), Qt::ISODate);
-    } else if (property.parameters().contains(DatatypeParameter, DatatypeParameterTime)) {
-        // The value was a QTime serialized as a string
-        return QTime::fromString(property.value(), Qt::ISODate);
-    } else if (property.parameters().contains(DatatypeParameter, DatatypeParameterDateTime)) {
-        // The value was a QDateTime serialized as a string
-        return QDateTime::fromString(property.value(), Qt::ISODate);
-    } else if (property.parameters().contains(DatatypeParameter, DatatypeParameterBool)) {
-        // The value was a bool serialized as a string
-        return property.value().toInt() != 0;
-    } else if (property.parameters().contains(DatatypeParameter, DatatypeParameterInt)) {
-        // The value was an int serialized as a string
-        return property.value().toInt();
-    } else if (property.parameters().contains(DatatypeParameter, DatatypeParameterUInt)) {
-        // The value was a uint serialized as a string
-        return property.value().toUInt();
-    } else if (property.parameters().contains(DatatypeParameter, DatatypeParameterUrl)) {
-        // The value was a QUrl serialized as a string
-        return QUrl(property.value());
-    } else {
-        // The value was stored as a QString or QByteArray
-        return property.variantValue();
-    }
+    Q_UNUSED(alreadyProcessed)
+    Q_UNUSED(updatedDetails)
 }
 
 void BackupVCardHandler::documentProcessed(
@@ -279,7 +144,6 @@ void BackupVCardHandler::documentProcessed(
 {
     Q_UNUSED(document)
     Q_UNUSED(contact)
-    mDetailGroupMap.clear();
 }
 
 void BackupVCardHandler::detailProcessed(

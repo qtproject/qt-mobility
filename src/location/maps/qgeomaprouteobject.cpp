@@ -125,7 +125,7 @@ void QGeoMapRouteObject::setRoute(const QGeoRoute &route)
 
     The pen is used to draw the route.
 
-    The pen will be treated as a cosmetic pen, which means that the width
+    The pen will be treated like a cosmetic pen, which means that the width
     of the pen will be independent of the zoom level of the map.
 */
 QPen QGeoMapRouteObject::pen() const
@@ -136,7 +136,7 @@ QPen QGeoMapRouteObject::pen() const
 void QGeoMapRouteObject::setPen(const QPen &pen)
 {
     QPen newPen = pen;
-    newPen.setCosmetic(true);
+    newPen.setCosmetic(false);
 
     if (d_ptr->pen == newPen)
         return;
@@ -206,7 +206,7 @@ void QGeoMapRouteObject::setDetailLevel(quint32 detailLevel)
 QGeoMapRouteObjectPrivate::QGeoMapRouteObjectPrivate()
 {
     detailLevel = DEFAULT_ROUTE_DETAIL_LEVEL;
-    pen.setCosmetic(true);
+    pen.setCosmetic(false);
 }
 
 QGeoMapRouteObjectPrivate::~QGeoMapRouteObjectPrivate() {}

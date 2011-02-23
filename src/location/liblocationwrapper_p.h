@@ -68,6 +68,7 @@ class LiblocationWrapper : public QObject
 
 public:
     static LiblocationWrapper *instance();
+    LiblocationWrapper();
     ~LiblocationWrapper();
 
     void start();

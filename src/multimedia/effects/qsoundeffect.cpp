@@ -91,6 +91,8 @@ QT_BEGIN_NAMESPACE
     \qmlproperty int SoundEffect::loops
 
     This property provides a way to control the number of times to repeat the sound on each play().
+
+    Set to -1 (infinite) to enable infinite loop.
 */
 
 /*!
@@ -106,6 +108,23 @@ QT_BEGIN_NAMESPACE
 */
 
 /*!
+    \qmlproperty bool SoundEffect::playing
+
+    This property indicates if the soundeffect is playing or not.
+*/
+
+/*!
+    \qmlproperty int SoundEffect::status
+
+    This property indicates the following status of the soundeffect.
+
+    Null: no source has been set or is null.
+    Loading: the soundeffect is trying to load the source.
+    Ready: the source is loaded and ready for play.
+    Error: some error happened during operation, such as failure of loading the source.
+*/
+
+/*!
     \qmlsignal SoundEffect::sourceChanged()
 
     This handler is called when the source has changed.
@@ -114,7 +133,7 @@ QT_BEGIN_NAMESPACE
 /*!
     \qmlsignal SoundEffect::loopsChanged()
 
-    This handler is called when the number of loops has changes.
+    This handler is called when the number of loops has changed.
 */
 
 /*!
@@ -129,11 +148,16 @@ QT_BEGIN_NAMESPACE
     This handler is called when the mute state has changed.
 */
 
+/*!
+    \qmlsignal SoundEffect::playingChanged()
+
+    This handler is called when the playing property has changed.
+*/
 
 /*!
-    \qmlsignal SoundEffect::loadedChanged()
+    \qmlsignal SoundEffect::statusChanged()
 
-    This handler is called when the audio source is loaded and ready for play.
+    This handler is called when the status property has changed.
 */
 
 
@@ -148,6 +172,8 @@ QSoundEffect::QSoundEffect(QObject *parent) :
     connect(d, SIGNAL(volumeChanged()), SIGNAL(volumeChanged()));
     connect(d, SIGNAL(mutedChanged()), SIGNAL(mutedChanged()));
     connect(d, SIGNAL(loadedChanged()), SIGNAL(loadedChanged()));
+    connect(d, SIGNAL(playingChanged()), SIGNAL(playingChanged()));
+    connect(d, SIGNAL(statusChanged()), SIGNAL(statusChanged()));
 }
 
 QSoundEffect::~QSoundEffect()
@@ -182,6 +208,10 @@ int QSoundEffect::loopCount() const
 
 void QSoundEffect::setLoopCount(int loopCount)
 {
+    if (loopCount < 0 && loopCount != Infinite) {
+        qWarning("SoundEffect: loops should be SoundEffect.Infinite, 0 or positive integer");
+        return;
+    }
     if (loopCount == 0)
         loopCount = 1;
     if (d->loopCount() == loopCount)
@@ -198,6 +228,10 @@ qreal QSoundEffect::volume() const
 
 void QSoundEffect::setVolume(qreal volume)
 {
+    if (volume < 0 || volume > 1) {
+        qWarning("SoundEffect: volume should be between 0.0 and 1.0");
+        return;
+    }
     int iVolume = qRound(volume * 100);
     if (d->volume() == iVolume)
         return;
@@ -225,10 +259,36 @@ bool QSoundEffect::isLoaded() const
     return d->isLoaded();
 }
 
+/*!
+  \qmlmethod SoundEffect::play()
+
+  Start playback of the sound effect, looping the effect for the number of
+  times as specificed in the loops property.
+
+  This is the default method for SoundEffect.
+
+  \qml
+  MouseArea {
+      anchors.fill: parent
+      onPressed: { SoundEffect { source:"soundeffect.wav" } }
+  }
+  \endqml
+*/
 void QSoundEffect::play()
 {
     d->play();
 }
+
+bool QSoundEffect::isPlaying() const
+{
+    return d->isPlaying();
+}
+
+QSoundEffect::Status QSoundEffect::status() const
+{
+    return d->status();
+}
+
 
 /*!
   \qmlmethod SoundEffect::stop()

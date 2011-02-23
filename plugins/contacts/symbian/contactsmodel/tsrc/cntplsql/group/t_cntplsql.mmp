@@ -54,6 +54,7 @@ SOURCE          cpredictivesearchsettingstable.cpp
 SOURCE          cpredictivesearchsynchronizer.cpp
 // Other required code
 SOURCE          cntsqlprovider.cpp
+SOURCE          koreaninput.cpp
 
 USERINCLUDE     ../../../cntplsql/inc
 USERINCLUDE     ../../../cntsrv/inc
@@ -84,6 +85,7 @@ LIBRARY     	libstdcppv5.lib
 LIBRARY     	libc.lib
 LIBRARY     	libm.lib
 LIBRARY         efsrv.lib	 // For copying DB file
+LIBRARY         xqsettingsmanager
 
 //OPTION ARMCC --visibility_inlines_hidden
 

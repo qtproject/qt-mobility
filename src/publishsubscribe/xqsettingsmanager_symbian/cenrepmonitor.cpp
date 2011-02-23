@@ -39,11 +39,11 @@
 **
 ****************************************************************************/
 
-#include "cenrepmonitor.h"
+#include "cenrepmonitor_p.h"
 #include <centralrepository.h>
 
-#include "xqsettingskey.h"
-#include "settingshandlerbase.h"
+#include "xqsettingskey_p.h"
+#include "settingshandlerbase_p.h"
 
 CCenRepMonitor::CCenRepMonitor(CRepository& aRepository, const XQSettingsKey& aKey, XQSettingsManager::Type type, MSettingsHandlerObserver& aObserver)
     : CActive(EPriorityStandard), iRepository(aRepository), iKey(aKey), m_type(type), iObserver(aObserver)

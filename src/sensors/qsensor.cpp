@@ -153,6 +153,7 @@ QSensor::QSensor(const QByteArray &type, QObject *parent)
     , d(new QSensorPrivate)
 {
     d->type = type;
+    registerInstance(); // so the availableSensorsChanged() signal works
 }
 
 /*!
@@ -272,6 +273,9 @@ bool QSensor::isBusy() const
     \brief a value to indicate if the sensor is active.
 
     This is true if the sensor is active (returning values). This is false otherwise.
+
+    Note that setting this value to true will not have an immediate effect. Instead,
+    the sensor will be started once the event loop has been reached.
 */
 void QSensor::setActive(bool active)
 {
@@ -491,6 +495,14 @@ void QSensor::removeFilter(QSensorFilter *filter)
 */
 
 /*!
+    \fn QSensor::activeChanged()
+
+    This signal is emitted when the QSensor::active property has changed.
+
+    \sa QSensor::active
+*/
+
+/*!
     \property QSensor::outputRanges
     \brief a list of output ranges the sensor supports.
 
@@ -571,6 +583,19 @@ int QSensor::error() const
     This signal is emitted when an \a error code is set on the sensor.
     Note that some errors will cause the sensor to stop working.
     You should call isActive() to determine if the sensor is still running.
+*/
+
+/*!
+    \fn QSensor::availableSensorsChanged()
+
+    This signal is emitted when the list of available sensors has changed.
+    The sensors available to a program will not generally change over time
+    however some of the avilable sensors may represent hardware that is not
+    permanently connected. For example, a game controller that is connected
+    via bluetooth would become available when it was on and would become
+    unavailable when it was off.
+
+    \sa QSensor::sensorTypes(), QSensor::sensorsForType()
 */
 
 // =====================================================================

@@ -181,7 +181,7 @@ QString OrganizerRecurrenceTransform::qrecurrenceRuleToIcalRecurrenceRule(const 
     if (rule.limitCount() > 0)
         icalRule << qcountToIcalCount(rule.limitCount());
     else if (rule.limitDate() != QDate())
-        icalRule << qendDateToIcalUntil(rule.limitDate().addDays(-1)); // in Maemo5 the end date is inclusive
+        icalRule << qendDateToIcalUntil(rule.limitDate());
 
     icalRule << qintervalToIcalInterval(rule.interval());
 
@@ -398,7 +398,7 @@ QOrganizerRecurrenceRule OrganizerRecurrenceTransform::icalRecurrenceRuleToQrecu
     time_t until = rule->getUntil();
     if (until > 0) {
         QDateTime endDate(QDateTime::fromTime_t(until));
-        retn.setLimit(endDate.date().addDays(1)); // in Maemo5 the end date is inclusive
+        retn.setLimit(endDate.date());
     }
 
     int count = rule->getCount();

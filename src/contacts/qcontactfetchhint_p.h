@@ -65,7 +65,8 @@ class QContactFetchHintPrivate : public QSharedData
 public:
     QContactFetchHintPrivate()
         : QSharedData(),
-        m_optimizationHints(QContactFetchHint::AllRequired)
+        m_optimizationHints(QContactFetchHint::AllRequired),
+        m_maxCount(-1)
     {
     }
 
@@ -73,7 +74,8 @@ public:
         : QSharedData(other),
         m_definitionsHint(other.m_definitionsHint),
         m_relationshipsHint(other.m_relationshipsHint),
-        m_optimizationHints(other.m_optimizationHints)
+        m_optimizationHints(other.m_optimizationHints),
+        m_maxCount(other.m_maxCount)
     {
     }
 
@@ -85,6 +87,7 @@ public:
     QStringList m_relationshipsHint;
     QSize m_preferredImageSize;
     QContactFetchHint::OptimizationHints m_optimizationHints;
+    int m_maxCount;
 };
 
 QTM_END_NAMESPACE

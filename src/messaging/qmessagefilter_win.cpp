@@ -1800,7 +1800,7 @@ QMessageFilter QMessageFilterPrivate::bySender(const QString &value, QMessageDat
     QMessageAddress::parseEmailAddress(sender, &name, &address, &suffix, &startDelimeterFound);
     if (startDelimeterFound) {
         QMessageFilter result(QMessageFilterPrivate::from(QMessageFilterPrivate::SenderAddress, QVariant(address), QMessageDataComparator::Equal));
-        // An exact match requires a Suffix comparision (which is not supported by MAPI) rather than just an Includes
+        // An exact match requires a Suffix comparison (which is not supported by MAPI) rather than just an Includes
         // Furthermore this seems to trigger some kind of MAPI restriction bug, results are being missed, so comment out for now
         // result &= QMessageFilterPrivate::from(QMessageFilterPrivate::SenderName, QVariant(name), QMessageDataComparator::Equal);
         if (cmp == QMessageDataComparator::Equal) {
@@ -1858,7 +1858,7 @@ QMessageFilter QMessageFilterPrivate::bySender(const QString &value, QMessageDat
             result &= QMessageFilterPrivate::from(QMessageFilterPrivate::SenderAddress, QVariant(address), QMessageDataComparator::Includes);
         }
 
-        // An exact match requires a Suffix comparision (which is not supported by MAPI) rather than just an Includes
+        // An exact match requires a Suffix comparison (which is not supported by MAPI) rather than just an Includes
         // Furthermore this seems to trigger some kind of MAPI restriction bug, results are being missed, so comment out for now
         // result &= QMessageFilterPrivate::from(QMessageFilterPrivate::SenderName, QVariant(name), QMessageDataComparator::Includes);
 
@@ -1910,7 +1910,7 @@ QMessageFilter QMessageFilter::byRecipients(const QString &value, QMessageDataCo
             result &= QMessageFilterPrivate::from(QMessageFilterPrivate::RecipientAddress, QVariant(address), QMessageDataComparator::Includes);
         }
 
-        // Need additional matches check, this should be a Suffix comparision rather than just an Includes
+        // Need additional matches check, this should be a Suffix comparison rather than just an Includes
         result &= QMessageFilterPrivate::from(QMessageFilterPrivate::RecipientName, QVariant(name), QMessageDataComparator::Includes);
 
         if (cmp == QMessageDataComparator::Includes) {

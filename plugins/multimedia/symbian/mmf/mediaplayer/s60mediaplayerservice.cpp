@@ -139,8 +139,9 @@ S60MediaPlayerSession* S60MediaPlayerService::PlayerSession()
         return NULL;
     }
 
-    S60MediaRecognizer *m_mediaRecognizer = new S60MediaRecognizer(this);
-    S60MediaRecognizer::MediaType mediaType = m_mediaRecognizer->mediaType(url);
+    QScopedPointer<S60MediaRecognizer> mediaRecognizer(new S60MediaRecognizer);
+    S60MediaRecognizer::MediaType mediaType = mediaRecognizer->mediaType(url);
+    mediaRecognizer.reset();
 
     switch (mediaType) {
     case S60MediaRecognizer::Video:

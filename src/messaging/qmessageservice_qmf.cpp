@@ -83,6 +83,7 @@ public:
 
     QMailTransmitAction _transmit;
     QMailRetrievalAction _retrieval;
+    QMailStorageAction _storage;
     QMailServiceAction *_active;
     QMessageManager::Error _error;
     bool _activeStoreAction;
@@ -108,6 +109,7 @@ signals:
 protected slots:
     void transmitActivityChanged(QMailServiceAction::Activity a);
     void retrievalActivityChanged(QMailServiceAction::Activity a);
+    void storageActivityChanged(QMailServiceAction::Activity a);
     void statusChanged(const QMailServiceAction::Status &s);
     void completed();
     void reportMatchingIds();
@@ -132,6 +134,9 @@ QMessageServicePrivate::QMessageServicePrivate()
 
     connect(&_retrieval, SIGNAL(activityChanged(QMailServiceAction::Activity)), this, SLOT(retrievalActivityChanged(QMailServiceAction::Activity)));
     connect(&_retrieval, SIGNAL(statusChanged(QMailServiceAction::Status)), this, SLOT(statusChanged(QMailServiceAction::Status)));
+
+    connect(&_storage, SIGNAL(activityChanged(QMailServiceAction::Activity)), this, SLOT(storageActivityChanged(QMailServiceAction::Activity)));
+    connect(&_storage, SIGNAL(statusChanged(QMailServiceAction::Status)), this, SLOT(statusChanged(QMailServiceAction::Status)));
 }
 
 bool QMessageServicePrivate::isBusy() const
@@ -201,6 +206,7 @@ void QMessageServicePrivate::retrievalActivityChanged(QMailServiceAction::Activi
 
     emit stateChanged(convert(a));
 }
+
 
 void QMessageServicePrivate::completed()
 {
@@ -577,6 +583,40 @@ bool QMessageService::exportUpdates(const QMessageAccountId &id)
     d_ptr->_error = QMessageManager::NoError;
     d_ptr->_active = &d_ptr->_retrieval;
     d_ptr->_retrieval.exportUpdates(accountId);
+    return true;
+}
+
+void QMessageServicePrivate::storageActivityChanged(QMailServiceAction::Activity a)
+{
+    if ((a == QMailServiceAction::Failed) && (_error == QMessageManager::NoError)) {
+        _error = QMessageManager::RequestIncomplete;
+    }
+
+    emit stateChanged(convert(a));
+}
+
+bool QMessageService::moveMessages(const QMessageIdList &messageIds, const QMessageFolderId &toFolderId)
+{
+    if (d_ptr->isBusy()) {
+        return false;
+    }
+    d_ptr->_active = 0;
+    d_ptr->_error = QMessageManager::NoError;
+    d_ptr->_active = &d_ptr->_storage;
+    d_ptr->_storage.moveMessages(convert(messageIds), convert(toFolderId));
+    return true;
+}
+
+bool QMessageService::synchronize(const QMessageAccountId &id)
+{
+    if (d_ptr->isBusy()) {
+        return false;
+    }
+
+    d_ptr->_active = 0;
+    d_ptr->_error = QMessageManager::NoError;
+    d_ptr->_active = &d_ptr->_retrieval;
+    d_ptr->_retrieval.synchronize(convert(id), 0);
     return true;
 }
 

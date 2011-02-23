@@ -43,7 +43,7 @@
 #define N900LIGHTSENSOR_H
 
 #include "n900filebasedsensor.h"
-#include <qambientlightsensor.h>
+#include <qlightsensor.h>
 
 QTM_USE_NAMESPACE
 
@@ -59,7 +59,7 @@ public:
     void start();
 
 private:
-    QAmbientLightReading m_reading;
+    QLightReading m_reading;
 };
 
 #endif

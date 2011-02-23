@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>qlandmarkmanagerengine_qsparql_fk.ddl</file>
+        <file>qlandmarkmanagerengine_qsparql_no_fk.ddl</file>
+    </qresource>
+</RCC>

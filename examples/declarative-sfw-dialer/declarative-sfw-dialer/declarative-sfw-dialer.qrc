@@ -1,0 +1,13 @@
+<!DOCTYPE RCC>
+ <RCC version="1.0">
+
+ <qresource prefix="/">
+     <file>declarative-sfw-dialer.qml</file>
+     <file>content-sfw-dialer/DialButton.qml</file>
+     <file>content-sfw-dialer/DialerList.qml</file>
+     <file>content-sfw-dialer/DialScreen.qml</file>
+     <file>content-sfw-dialer/qmldir</file>
+     <file>content-sfw-dialer/hangup.png</file>
+     <file>content-sfw-dialer/call.png</file>
+ </qresource>
+ </RCC>

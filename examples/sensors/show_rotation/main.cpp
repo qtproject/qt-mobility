@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the examples of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:BSD$
 ** You may use this file under the terms of the BSD license as follows:
@@ -70,6 +70,8 @@ int main(int argc, char **argv)
     if (rate_place != -1)
         rate_val = args.at(rate_place + 1).toInt();
     QRotationSensor sensor;
+    sensor.connectToBackend();
+
     if (rate_val > 0) {
         sensor.setDataRate(rate_val);
     }

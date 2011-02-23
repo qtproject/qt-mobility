@@ -42,6 +42,7 @@
 #define QFEEDBACK_SYMBIAN_H
 
 #include <QtCore/QHash>
+#include <QtCore/QTimer>
 #include <QtGui/QWidget>
 
 #if QT_VERSION >= QT_VERSION_CHECK(4, 7, 0)
@@ -105,7 +106,7 @@ private:
     class PausableElapsedTimer
     {
     public:
-        PausableElapsedTimer() : pausedTime(0)
+        PausableElapsedTimer() : pausedTime(0), mTimer(0)
         {
 #if QT_VERSION >= QT_VERSION_CHECK(4, 7, 0)
            m_elapsedTimer.invalidate();
@@ -114,9 +115,26 @@ private:
 #endif
         }
 
-        void start()
+        ~PausableElapsedTimer()
+        {
+            delete mTimer;
+        }
+
+        void start(const QFeedbackHapticsEffect* effect, int millis)
         {
             m_elapsedTimer.start();
+            Q_ASSERT(mTimer == 0);
+            mTimer = new QTimer;
+            mTimer->setSingleShot(true);
+            mTimer->setInterval(millis);
+            connect(mTimer, SIGNAL(timeout()), const_cast<QFeedbackHapticsEffect*>(effect), SIGNAL(stateChanged()));
+            mTimer->start();
+        }
+
+        bool isTimerActive() const {
+            if (!mTimer)
+                return false;
+            return mTimer->isActive();
         }
 
         void pause()
@@ -128,6 +146,8 @@ private:
 #else
             m_elapsedTimer = QTime();
 #endif
+            delete mTimer;
+            mTimer = 0;
         }
 
         bool isPaused() const
@@ -135,12 +155,10 @@ private:
             return !m_elapsedTimer.isValid();
         }
 
-
         int elapsed() const
         {
             return pausedTime + (m_elapsedTimer.isValid() ? m_elapsedTimer.elapsed() : 0);
         }
-
 
     private:
 #if QT_VERSION >= QT_VERSION_CHECK(4, 7, 0)
@@ -149,6 +167,7 @@ private:
         QTime m_elapsedTimer;
 #endif
         int pausedTime;
+        QTimer* mTimer;
 
     };
 

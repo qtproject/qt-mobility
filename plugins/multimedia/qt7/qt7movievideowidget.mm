@@ -46,6 +46,7 @@
 #import <QTKit/QTMovieView.h>
 #import <QTKit/QTMovieLayer.h>
 #import <AppKit/NSImage.h>
+#import <OpenGL/glu.h>
 
 
 #include "qt7playercontrol.h"

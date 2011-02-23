@@ -45,6 +45,7 @@
 #include <QObject>
 #include <QtPlugin>
 #include "qversitcontacthandler.h"
+#include "qvcardrestorehandler_p.h"
 
 QTM_USE_NAMESPACE
 

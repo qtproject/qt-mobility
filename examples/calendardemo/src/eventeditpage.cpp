@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the examples of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:BSD$
 ** You may use this file under the terms of the BSD license as follows:
@@ -60,8 +60,10 @@ EventEditPage::EventEditPage(QWidget *parent)
     m_subjectEdit = new QLineEdit(this);
     QLabel *startTimeLabel = new QLabel("Start time:", this);
     m_startTimeEdit = new QDateTimeEdit(this);
+    m_startTimeEdit->setDisplayFormat(QString("yyyy-MM-dd hh:mm:ss AP"));
     QLabel *endTimeLabel = new QLabel("End time:", this);
     m_endTimeEdit = new QDateTimeEdit(this);
+    m_endTimeEdit->setDisplayFormat(QString("yyyy-MM-dd hh:mm:ss AP"));
     QLabel *repeatLabel = new QLabel("Repeat:", this);
     QLabel *alarmLabel = new QLabel("Alarm:", this);
     QLabel *calendarLabel = new QLabel("Calendar:", this);
@@ -117,6 +119,10 @@ EventEditPage::EventEditPage(QWidget *parent)
     hbLayout->addWidget(cancelButton);
 #endif
 
+    // check to see whether we support alarms.
+    QOrganizerManager defaultManager;
+    QStringList supportedDefinitionNames = defaultManager.detailDefinitions(QOrganizerItemType::TypeEvent).keys();
+
     QVBoxLayout *scrollAreaLayout = new QVBoxLayout();
     scrollAreaLayout->addWidget(subjectLabel);
     scrollAreaLayout->addWidget(m_subjectEdit);
@@ -124,8 +130,10 @@ EventEditPage::EventEditPage(QWidget *parent)
     scrollAreaLayout->addWidget(m_startTimeEdit);
     scrollAreaLayout->addWidget(endTimeLabel);
     scrollAreaLayout->addWidget(m_endTimeEdit);
-    scrollAreaLayout->addWidget(alarmLabel);
-    scrollAreaLayout->addWidget(m_alarmComboBox);
+    if (supportedDefinitionNames.contains(QOrganizerItemVisualReminder::DefinitionName)) {
+        scrollAreaLayout->addWidget(alarmLabel);
+        scrollAreaLayout->addWidget(m_alarmComboBox);
+    }
     scrollAreaLayout->addWidget(repeatLabel);
     scrollAreaLayout->addWidget(m_typeComboBox);
     scrollAreaLayout->addWidget(m_endConditionComboBox);
@@ -209,6 +217,24 @@ void EventEditPage::eventChanged(QOrganizerManager *manager, const QOrganizerEve
 
     // set calendar selection
     m_calendarComboBox->clear();
+
+    QOrganizerItemReminder reminder = event.detail<QOrganizerItemReminder>();
+    if (!reminder.isEmpty()) {
+        // Alarm combo is only able to handle certain time limits correctly; for example time
+        // limit 3 minutes is rounded up to 5 minutes
+        if (reminder.secondsBeforeStart() == 0)
+            m_alarmComboBox->setCurrentIndex(1);
+        else if (reminder.secondsBeforeStart() < 300)
+            m_alarmComboBox->setCurrentIndex(2);
+        else if (reminder.secondsBeforeStart() < 900)
+            m_alarmComboBox->setCurrentIndex(3);
+        else if (reminder.secondsBeforeStart() < 1800)
+            m_alarmComboBox->setCurrentIndex(4);
+        else
+            m_alarmComboBox->setCurrentIndex(5);
+    } else {
+        m_alarmComboBox->setCurrentIndex(0);
+    }
 
     // resolve metadata field that contains calendar name (if any)
     QString calendarNameMetadataKey;
@@ -301,26 +327,33 @@ void EventEditPage::frequencyChanged(const QString& frequency)
 
 void EventEditPage::alarmIndexChanged(const QString time)
 {
-    QOrganizerItemVisualReminder reminder;
-    reminder.setMessage(m_subjectEdit->text());
+    bool noVisualReminders = m_manager->detailDefinition(QOrganizerItemVisualReminder::DefinitionName, m_organizerEvent.type()).isEmpty();
+
+    QScopedPointer<QOrganizerItemReminder> reminder;
+    if (noVisualReminders) {
+        reminder.reset(new QOrganizerItemReminder());
+    } else {
+        reminder.reset(new QOrganizerItemVisualReminder());
+        static_cast<QOrganizerItemVisualReminder *>(reminder.data())->setMessage(m_subjectEdit->text());
+    }
 
     if (time == "None") {
          QOrganizerItemVisualReminder fetchedReminder = m_organizerEvent.detail(QOrganizerItemVisualReminder::DefinitionName);
          m_organizerEvent.removeDetail(&fetchedReminder);
         return;
     } else if (time == "0 minutes before") {
-        reminder.setSecondsBeforeStart(0);
+        reminder->setSecondsBeforeStart(0);
     } else if (time == "5 minutes before") {
-        reminder.setSecondsBeforeStart(5*60);
+        reminder->setSecondsBeforeStart(5*60);
     } else if (time == "15 minutes before") {
-        reminder.setSecondsBeforeStart(15*60);
+        reminder->setSecondsBeforeStart(15*60);
     } else if (time == "30 minutes before") {
-        reminder.setSecondsBeforeStart(30*60);
+        reminder->setSecondsBeforeStart(30*60);
     } else if (time == "1 hour before") {
-        reminder.setSecondsBeforeStart(60*60);
+        reminder->setSecondsBeforeStart(60*60);
     }
 
-    m_organizerEvent.saveDetail(&reminder);
+    m_organizerEvent.saveDetail(reminder.data());
 }
 
 void EventEditPage::showEvent(QShowEvent *event)

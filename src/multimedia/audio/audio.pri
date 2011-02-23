@@ -21,8 +21,6 @@ SOURCES += audio/qaudio.cpp \
            audio/qaudiodevicefactory.cpp \
            audio/qaudiopluginloader.cpp
 
-#contains(QT_CONFIG, audio-backend) {
-
 mac {
     PRIVATE_HEADERS +=  audio/qaudioinput_mac_p.h \
                 audio/qaudiooutput_mac_p.h \
@@ -35,17 +33,18 @@ mac {
                audio/qaudio_mac.cpp
 
     LIBS += -framework ApplicationServices -framework CoreAudio -framework AudioUnit -framework AudioToolbox
+}
 
-} else:win32 {
-
+win32 {
     PRIVATE_HEADERS += audio/qaudioinput_win32_p.h audio/qaudiooutput_win32_p.h audio/qaudiodeviceinfo_win32_p.h
     SOURCES += audio/qaudiodeviceinfo_win32_p.cpp \
                audio/qaudiooutput_win32_p.cpp \
                audio/qaudioinput_win32_p.cpp
     !wince*:LIBS += -lwinmm
     wince*:LIBS += -lcoredll
+}
 
-} else:symbian {
+symbian {
     INCLUDEPATH += /epoc32/include/mmf/common
     INCLUDEPATH += /epoc32/include/mmf/server
 
@@ -60,9 +59,14 @@ mac {
                audio/qaudiooutput_symbian_p.cpp
 
     LIBS += -lmmfdevsound
-} else:unix {
-    unix:contains(QT_CONFIG, alsa) {
-        linux-*|freebsd-*|openbsd-*:{
+}
+
+unix:!mac:!symbian {
+    contains(pulseaudio_enabled, yes) {
+        DEFINES += QT_NO_AUDIO_BACKEND
+    }
+    else:contains(QT_CONFIG, alsa) {
+        linux-*|freebsd-*|openbsd-* {
             DEFINES += HAS_ALSA
             PRIVATE_HEADERS += audio/qaudiooutput_alsa_p.h audio/qaudioinput_alsa_p.h audio/qaudiodeviceinfo_alsa_p.h
             SOURCES += audio/qaudiodeviceinfo_alsa_p.cpp \
@@ -72,6 +76,3 @@ mac {
         }
     }
 }
-#} else {
-#    DEFINES += QT_NO_AUDIO_BACKEND
-#}

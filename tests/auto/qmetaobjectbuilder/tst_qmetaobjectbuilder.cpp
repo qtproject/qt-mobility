@@ -45,7 +45,6 @@
 #include <QtCore/qlocale.h>
 #include <qmetaobjectbuilder_p.h>
 
-QTM_USE_NAMESPACE
 
 class tst_QMetaObjectBuilder : public QObject
 {
@@ -1009,6 +1008,11 @@ void tst_QMetaObjectBuilder::serialize()
     QMap<QByteArray, const QMetaObject *> references;
     references.insert(QByteArray("QLocale"), &QLocale::staticMetaObject);
     builder2.deserialize(stream2, references);
+#ifdef Q_NO_DATA_RELOCATION
+    //the related meta objects will be function pointers
+    //which you have to add to the builder manually.
+    builder2.addRelatedMetaObject(QLocale::getStaticMetaObject);
+#endif
     builder2.setStaticMetacallFunction(builder.staticMetacallFunction());
     QMetaObject *meta2 = builder2.toMetaObject();
 

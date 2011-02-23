@@ -42,6 +42,7 @@
 #ifndef QDECLARATIVEGEOMAPPIXMAPOBJECT_H
 #define QDECLARATIVEGEOMAPPIXMAPOBJECT_H
 
+#include "qdeclarativegeomapobject_p.h"
 #include "qdeclarativecoordinate_p.h"
 #include "qgeomappixmapobject.h"
 
@@ -51,13 +52,14 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QDeclarativeGeoMapPixmapObject : public QGeoMapPixmapObject
+class QDeclarativeGeoMapPixmapObject : public QDeclarativeGeoMapObject
 {
     Q_OBJECT
     Q_ENUMS(Status)
 
-    Q_PROPERTY(QDeclarativeCoordinate* coordinate READ declarativeCoordinate WRITE setDeclarativeCoordinate NOTIFY declarativeCoordinateChanged)
+    Q_PROPERTY(QDeclarativeCoordinate* coordinate READ coordinate WRITE setCoordinate NOTIFY coordinateChanged)
     Q_PROPERTY(QUrl source READ source WRITE setSource NOTIFY sourceChanged)
+    Q_PROPERTY(QPoint offset READ offset WRITE setOffset NOTIFY offsetChanged)
     Q_PROPERTY(Status status READ status NOTIFY statusChanged)
 
 public:
@@ -68,20 +70,24 @@ public:
         Error
     };
 
-    QDeclarativeGeoMapPixmapObject();
+    QDeclarativeGeoMapPixmapObject(QDeclarativeItem *parent = 0);
     ~QDeclarativeGeoMapPixmapObject();
 
-    QDeclarativeCoordinate* declarativeCoordinate();
-    void setDeclarativeCoordinate(const QDeclarativeCoordinate *coordinate);
+    QDeclarativeCoordinate* coordinate();
+    void setCoordinate(const QDeclarativeCoordinate *coordinate);
 
     QUrl source() const;
     void setSource(const QUrl &source);
 
+    QPoint offset() const;
+    void setOffset(const QPoint &offset);
+
     Status status() const;
 
 Q_SIGNALS:
-    void declarativeCoordinateChanged(const QDeclarativeCoordinate *coordinate);
+    void coordinateChanged(const QDeclarativeCoordinate *coordinate);
     void sourceChanged(const QUrl &source);
+    void offsetChanged(const QPoint &offset);
     void statusChanged(QDeclarativeGeoMapPixmapObject::Status status);
 
 private Q_SLOTS:
@@ -95,10 +101,11 @@ private:
     void setStatus(const QDeclarativeGeoMapPixmapObject::Status status);
     void load();
 
-    Status m_status;
-    QDeclarativeCoordinate* m_coordinate;
-    QUrl m_source;
-    QNetworkReply *m_reply;
+    QGeoMapPixmapObject* pixmap_;
+    QDeclarativeCoordinate coordinate_;
+    QUrl source_;
+    QNetworkReply *reply_;
+    Status status_;
 
     Q_DISABLE_COPY(QDeclarativeGeoMapPixmapObject)
 };

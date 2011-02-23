@@ -46,7 +46,7 @@ QT_BEGIN_NAMESPACE
 
 /*!
     \class QMediaStreamsControl
-    \preliminary
+    
     \inmodule QtMultimediaKit
     \ingroup multimedia
     \brief The QMediaStreamsControl class provides a media stream selection control.
@@ -138,13 +138,13 @@ QMediaStreamsControl::~QMediaStreamsControl()
 /*!
     \fn QMediaStreamsControl::streamsChanged()
 
-    The signal is emited when the available streams list is changed.
+    The signal is emitted when the available streams list is changed.
 */
 
 /*!
     \fn QMediaStreamsControl::activeStreamsChanged()
 
-    The signal is emited when the active streams list is changed.
+    The signal is emitted when the active streams list is changed.
 */
 
 #include "moc_qmediastreamscontrol.cpp"

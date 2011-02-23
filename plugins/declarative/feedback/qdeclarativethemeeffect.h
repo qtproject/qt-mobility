@@ -51,15 +51,55 @@ QTM_USE_NAMESPACE
 class QDeclarativeThemeEffect : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(bool supportsEffect READ effectSupported)
-    Q_PROPERTY(QDeclarativeFeedbackEffect::ThemeEffect effect READ effect WRITE setEffect NOTIFY effectChanged)
+    Q_PROPERTY(bool supported READ effectSupported)
+    Q_PROPERTY(ThemeEffect effect READ effect WRITE setEffect NOTIFY effectChanged)
     Q_CLASSINFO("DefaultMethod", "play()")
+    Q_ENUMS(ThemeEffect)
 
 public:
 
+    enum ThemeEffect {
+        Basic = QFeedbackEffect::ThemeBasic,
+        Sensitive = QFeedbackEffect::ThemeSensitive,
+        BasicButton = QFeedbackEffect::ThemeBasicButton,
+        SensitiveButton = QFeedbackEffect::ThemeSensitiveButton,
+        BasicKeypad = QFeedbackEffect::ThemeBasicKeypad,
+        SensitiveKeypad = QFeedbackEffect::ThemeSensitiveKeypad,
+        BasicSlider = QFeedbackEffect::ThemeBasicSlider,
+        SensitiveSlider = QFeedbackEffect::ThemeSensitiveSlider,
+        BasicItem = QFeedbackEffect::ThemeBasicItem,
+        SensitiveItem = QFeedbackEffect::ThemeSensitiveItem,
+        ItemScroll = QFeedbackEffect::ThemeItemScroll,
+        ItemPick = QFeedbackEffect::ThemeItemPick,
+        ItemDrop = QFeedbackEffect::ThemeItemDrop,
+        ItemMoveOver = QFeedbackEffect::ThemeItemMoveOver,
+        BounceEffect = QFeedbackEffect::ThemeBounceEffect,
+        CheckBox = QFeedbackEffect::ThemeCheckBox,
+        MultipleCheckBox = QFeedbackEffect::ThemeMultipleCheckBox,
+        Editor = QFeedbackEffect::ThemeEditor,
+        TextSelection = QFeedbackEffect::ThemeTextSelection,
+        BlankSelection = QFeedbackEffect::ThemeBlankSelection,
+        LineSelection = QFeedbackEffect::ThemeLineSelection,
+        EmptyLineSelection = QFeedbackEffect::ThemeEmptyLineSelection,
+        PopUp = QFeedbackEffect::ThemePopUp,
+        PopupOpen = QFeedbackEffect::ThemePopupOpen,
+        PopupClose = QFeedbackEffect::ThemePopupClose,
+        Flick = QFeedbackEffect::ThemeFlick,
+        StopFlick = QFeedbackEffect::ThemeStopFlick,
+        MultiPointTouchActivate = QFeedbackEffect::ThemeMultiPointTouchActivate,
+        RotateStep = QFeedbackEffect::ThemeRotateStep,
+        LongPress = QFeedbackEffect::ThemeLongPress,
+        PositiveTacticon = QFeedbackEffect::ThemePositiveTacticon,
+        NeutralTacticon = QFeedbackEffect::ThemeNeutralTacticon,
+        NegativeTacticon = QFeedbackEffect::ThemeNegativeTacticon,
+
+        NumberOfThemeEffects = QFeedbackEffect::NumberOfThemeEffects,
+        ThemeUser = QFeedbackEffect::ThemeUser
+    };
+
     QDeclarativeThemeEffect(QObject *parent = 0)
         : QObject(parent),
-        m_effect(QDeclarativeFeedbackEffect::Basic)
+        m_effect(Basic)
     {
     }
 
@@ -67,7 +107,7 @@ public:
         return QFeedbackEffect::supportsThemeEffect();
     }
 
-    void setEffect(QDeclarativeFeedbackEffect::ThemeEffect effect)
+    void setEffect(ThemeEffect effect)
     {
         if (m_effect != effect) {
             m_effect = effect;
@@ -75,7 +115,7 @@ public:
         }
     }
 
-    QDeclarativeFeedbackEffect::ThemeEffect effect() const
+    ThemeEffect effect() const
     {
         return m_effect;
     }
@@ -88,7 +128,7 @@ signals:
     void effectChanged();
 
 public:
-    QDeclarativeFeedbackEffect::ThemeEffect m_effect;
+    ThemeEffect m_effect;
 };
 
 QML_DECLARE_TYPE(QDeclarativeThemeEffect);

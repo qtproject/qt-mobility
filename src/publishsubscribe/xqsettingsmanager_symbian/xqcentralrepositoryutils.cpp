@@ -39,7 +39,6 @@
 **
 ****************************************************************************/
 
-#include "xqcentralrepositoryutils.h"
 #include "xqcentralrepositoryutils_p.h"
 
 /*

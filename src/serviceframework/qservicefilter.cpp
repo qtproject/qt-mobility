@@ -68,6 +68,7 @@ public:
     \class QServiceFilter
     
     \ingroup servicefw
+    \inmodule QtServiceFramework
     \brief The QServiceFilter class defines criteria for defining a sub-set of 
     all available services.
 

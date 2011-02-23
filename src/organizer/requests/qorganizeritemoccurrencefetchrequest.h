@@ -61,6 +61,7 @@ class Q_ORGANIZER_EXPORT QOrganizerItemOccurrenceFetchRequest : public QOrganize
 
 public:
     QOrganizerItemOccurrenceFetchRequest(QObject* parent = 0);
+    ~QOrganizerItemOccurrenceFetchRequest();
 
     void setParentItem(const QOrganizerItem& item);
     void setStartDate(const QDateTime& date);

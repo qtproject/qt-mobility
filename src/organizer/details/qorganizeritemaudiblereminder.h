@@ -55,7 +55,7 @@ public:
     const char* DefinitionName;
     const char* FieldDataUrl;
 #else
-    Q_DECLARE_CUSTOM_ORGANIZER_REMINDER_DETAIL(QOrganizerItemAudibleReminder, "AudibleReminder", QOrganizerItemReminder::AudibleReminder)
+    Q_DECLARE_CUSTOM_ORGANIZER_REMINDER_DETAIL(QOrganizerItemAudibleReminder, "AudibleReminder")
     Q_DECLARE_LATIN1_CONSTANT(FieldDataUrl, "DataUrl");
 #endif
 

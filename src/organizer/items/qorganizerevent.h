@@ -51,7 +51,10 @@ QTM_BEGIN_NAMESPACE
 class Q_ORGANIZER_EXPORT QOrganizerEvent : public QOrganizerItem
 {
 public:
-#if !Q_QDOC
+
+#ifdef Q_QDOC
+    static const QLatin1Constant QOrganizerEvent;
+#else
     Q_DECLARE_CUSTOM_ORGANIZER_ITEM(QOrganizerEvent, QOrganizerItemType::TypeEvent)
 #endif
 
@@ -64,8 +67,6 @@ public:
     bool isAllDay() const;
 
     void setRecurrenceDate(const QDate& rdate);
-    QDate recurrenceDate() const;
-
     void setRecurrenceDates(const QSet<QDate>& rdates);
     QSet<QDate> recurrenceDates() const;
 

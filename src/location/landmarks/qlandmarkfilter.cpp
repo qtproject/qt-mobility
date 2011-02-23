@@ -114,7 +114,7 @@ QLandmarkFilterPrivate::~QLandmarkFilterPrivate()
 /*!
     \enum QLandmarkFilter::MatchFlag
     Describes the semantics of matching followed by the filter.
-    \value MatchExactly Performs QVariant-based matching.
+    \value MatchExactly Performs QVariant-based matching. (For the Symbian and S60 platforms MatchExactly has the same semantics as MatchFixedString)
     \value MatchContains The search term is contained in the item.
     \value MatchStartsWith The search term matches the start of the item.
     \value MatchEndsWith The search term matches the end of the item.

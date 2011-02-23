@@ -70,7 +70,7 @@
 /**
  * \fn void TpSessionAccount::messageReceived(const Tp::ReceivedMessage &,TpSessionAccount *);
  *
- * Emitted when any of Account Managers recived message
+ * Emitted when any of Account Managers received message
  *
  * \param  Tp::ReceivedMessage  Message received
  * \param  TpSessionAccount  pointer to account received message

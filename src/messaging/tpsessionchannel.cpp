@@ -71,7 +71,7 @@
 /**
  * \fn void TpSessionChannel::messageReceived(const Tp::ReceivedMessage &,TpSessionConnection *);
  *
- * Emitted when any of Account Managers recived message
+ * Emitted when any of Account Managers received message
  *
  * \param  Tp::ReceivedMessage  Message received
  * \param  TpSessionChannel  pointer to channel received message

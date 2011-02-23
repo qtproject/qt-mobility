@@ -1,43 +1,43 @@
 /****************************************************************************
-**
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
-** All rights reserved.
-** Contact: Nokia Corporation (qt-info@nokia.com)
-**
-** This file is part of the Qt Mobility Components.
-**
-** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
-** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
-**
-** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
-** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
-**
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
-**
-**
-**
-**
-**
-**
-**
-**
-** $QT_END_LICENSE$
-**
-****************************************************************************/
+ **
+ ** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+ ** All rights reserved.
+ ** Contact: Nokia Corporation (qt-info@nokia.com)
+ **
+ ** This file is part of the Qt Mobility Components.
+ **
+ ** $QT_BEGIN_LICENSE:LGPL$
+ ** No Commercial Usage
+ ** This file contains pre-release code and may not be distributed.
+ ** You may use this file in accordance with the terms and conditions
+ ** contained in the Technology Preview License Agreement accompanying
+ ** this package.
+ **
+ ** GNU Lesser General Public License Usage
+ ** Alternatively, this file may be used under the terms of the GNU Lesser
+ ** General Public License version 2.1 as published by the Free Software
+ ** Foundation and appearing in the file LICENSE.LGPL included in the
+ ** packaging of this file.  Please review the following information to
+ ** ensure the GNU Lesser General Public License version 2.1 requirements
+ ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+ **
+ ** In addition, as a special exception, Nokia gives you certain additional
+ ** rights.  These rights are described in the Nokia Qt LGPL Exception
+ ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
+ **
+ ** If you have questions regarding the use of this file, please contact
+ ** Nokia at qt-info@nokia.com.
+ **
+ **
+ **
+ **
+ **
+ **
+ **
+ **
+ ** $QT_END_LICENSE$
+ **
+ ****************************************************************************/
 #include "pathmapper_proxy_symbian_p.h"
 #include "clientservercommon.h"
 
@@ -77,13 +77,18 @@ PathMapper::RPathMapperServerSession::RPathMapperServerSession()
 
 TInt PathMapper::RPathMapperServerSession::Connect()
 {
-    TInt err = StartServer();
-    if (err == KErrNone)    {
-        err = CreateSession(KPSPathMapperServerName, Version(), 8, EIpcSession_Sharable);
+    TInt retryCount = 2; // A maximum of two iterations of the loop required
+    for (;;) {
+        TInt err = CreateSession(KPSPathMapperServerName, Version(), 8, EIpcSession_Sharable);
+        if ((err != KErrNotFound) && (err != KErrServerTerminated))
+            return err;
+        if (--retryCount == 0)
+            return err;
+        err = StartServer();
+        if ((err != KErrNone) && (err != KErrAlreadyExists))
+            return err;
     }
-    return err;
 }
-
 
 TVersion PathMapper::RPathMapperServerSession::Version() const
 {
@@ -96,7 +101,7 @@ bool PathMapper::RPathMapperServerSession::getChildren(const QString &path, QSet
     QDataStream out(&pathByteArray, QIODevice::WriteOnly);
     out.setVersion(QDataStream::Qt_4_6);
     out << path;
-    TPtrC8 pathPtr((TUint8*)(pathByteArray.constData()), pathByteArray.size());
+    TPtrC8 pathPtr((TUint8*) (pathByteArray.constData()), pathByteArray.size());
     TPckgBuf<TInt> lengthPckg(0);
     SendReceive(EGetChildrenLengthRequest, TIpcArgs(&pathPtr, &lengthPckg));
     int length = lengthPckg();
@@ -110,7 +115,7 @@ bool PathMapper::RPathMapperServerSession::getChildren(const QString &path, QSet
     TPtr8 childrenPtr(childrenBuf->Des());
     SendReceive(EGetChildrenRequest, TIpcArgs(&childrenPtr));
 
-    QByteArray childrenByteArray((const char*)childrenPtr.Ptr(), childrenPtr.Length());
+    QByteArray childrenByteArray((const char*) childrenPtr.Ptr(), childrenPtr.Length());
     QDataStream in(childrenByteArray);
     in >> children;
 
@@ -125,7 +130,7 @@ QStringList PathMapper::RPathMapperServerSession::childPaths(const QString &path
     QDataStream out(&pathByteArray, QIODevice::WriteOnly);
     out.setVersion(QDataStream::Qt_4_6);
     out << path;
-    TPtrC8 pathPtr((TUint8*)(pathByteArray.constData()), pathByteArray.size());
+    TPtrC8 pathPtr((TUint8*) (pathByteArray.constData()), pathByteArray.size());
     TPckgBuf<TInt> lengthPckg(0);
     SendReceive(EChildPathsLengthRequest, TIpcArgs(&pathPtr, &lengthPckg));
     int length = lengthPckg();
@@ -139,7 +144,7 @@ QStringList PathMapper::RPathMapperServerSession::childPaths(const QString &path
     TPtr8 childPathsPtr(childPathsBuf->Des());
     SendReceive(EChildPathsRequest, TIpcArgs(&childPathsPtr));
 
-    QByteArray childPathsByteArray((const char*)childPathsPtr.Ptr(), childPathsPtr.Length());
+    QByteArray childPathsByteArray((const char*) childPathsPtr.Ptr(), childPathsPtr.Length());
     QDataStream in(childPathsByteArray);
     QStringList childPaths;
     in >> childPaths;
@@ -148,13 +153,14 @@ QStringList PathMapper::RPathMapperServerSession::childPaths(const QString &path
     return childPaths;
 }
 
-bool PathMapper::RPathMapperServerSession::resolvePath(const QString &path, Target &target, quint32 &category, quint32 &key) const
+bool PathMapper::RPathMapperServerSession::resolvePath(const QString &path, Target &target,
+    quint32 &category, quint32 &key) const
 {
     QByteArray pathByteArray;
     QDataStream out(&pathByteArray, QIODevice::WriteOnly);
     out.setVersion(QDataStream::Qt_4_6);
     out << path;
-    TPtrC8 pathPtr((TUint8*)(pathByteArray.constData()), pathByteArray.size());
+    TPtrC8 pathPtr((TUint8*) (pathByteArray.constData()), pathByteArray.size());
     TPckgBuf<TInt> lengthPckg(0);
     SendReceive(EResolvePathLengthRequest, TIpcArgs(&pathPtr, &lengthPckg));
     int length = lengthPckg();
@@ -168,7 +174,7 @@ bool PathMapper::RPathMapperServerSession::resolvePath(const QString &path, Targ
     TPtr8 keyDetailsPtr(keyDetailsBuf->Des());
     SendReceive(EResolvePathRequest, TIpcArgs(&keyDetailsPtr));
 
-    QByteArray keyDetailsByteArray((const char*)keyDetailsPtr.Ptr(), keyDetailsPtr.Length());
+    QByteArray keyDetailsByteArray((const char*) keyDetailsPtr.Ptr(), keyDetailsPtr.Length());
     QDataStream in(keyDetailsByteArray);
 
     int t;
@@ -178,7 +184,7 @@ bool PathMapper::RPathMapperServerSession::resolvePath(const QString &path, Targ
     in >> t;
     in >> c;
     in >> k;
-    target = (Target)t;
+    target = (Target) t;
     category = c;
     key = k;
     delete keyDetailsBuf;
@@ -194,20 +200,21 @@ TInt PathMapper::RPathMapperServerSession::StartServer()
         TRequestStatus status;
         RProcess server;
         ret = server.Create(KPSPathMapperServerProcess, KNullDesC);
-        if(ret != KErrNone) {
+        if (ret != KErrNone) {
             return ret;
         }
         server.Rendezvous(status);
-        if(status != KRequestPending) {
+        if (status != KRequestPending) {
             server.Kill(KErrNone);
             server.Close();
             return KErrGeneral;
-        } else {
+        }
+        else {
             server.Resume();
         }
 
         User::WaitForRequest(status);
-        if(status != KErrNone) {
+        if (status != KErrNone) {
             server.Close();
             return status.Int();
         }

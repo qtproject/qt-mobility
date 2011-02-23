@@ -42,6 +42,7 @@
 #ifndef QDECLARATIVEGEOMAPRECTANGLEOBJECT_H
 #define QDECLARATIVEGEOMAPRECTANGLEOBJECT_H
 
+#include "qdeclarativegeomapobject_p.h"
 #include "qdeclarativecoordinate_p.h"
 #include "qdeclarativegeomapobjectborder_p.h"
 #include "qgeomaprectangleobject.h"
@@ -51,24 +52,24 @@ class QBrush;
 
 QTM_BEGIN_NAMESPACE
 
-class QDeclarativeGeoMapRectangleObject : public QGeoMapRectangleObject
+class QDeclarativeGeoMapRectangleObject : public QDeclarativeGeoMapObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(QDeclarativeCoordinate* topLeft READ declarativeTopLeft WRITE setDeclarativeTopLeft NOTIFY declarativeTopLeftChanged)
-    Q_PROPERTY(QDeclarativeCoordinate* bottomRight READ declarativeBottomRight WRITE setDeclarativeBottomRight NOTIFY declarativeBottomRightChanged)
+    Q_PROPERTY(QDeclarativeCoordinate* topLeft READ topLeft WRITE setTopLeft NOTIFY topLeftChanged)
+    Q_PROPERTY(QDeclarativeCoordinate* bottomRight READ bottomRight WRITE setBottomRight NOTIFY bottomRightChanged)
     Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged)
     Q_PROPERTY(QDeclarativeGeoMapObjectBorder* border READ border)
 
 public:
-    QDeclarativeGeoMapRectangleObject();
+    QDeclarativeGeoMapRectangleObject(QDeclarativeItem *parent = 0);
     ~QDeclarativeGeoMapRectangleObject();
 
-    QDeclarativeCoordinate* declarativeTopLeft();
-    void setDeclarativeTopLeft(const QDeclarativeCoordinate *center);
+    QDeclarativeCoordinate* topLeft();
+    void setTopLeft(const QDeclarativeCoordinate *center);
 
-    QDeclarativeCoordinate* declarativeBottomRight();
-    void setDeclarativeBottomRight(const QDeclarativeCoordinate *center);
+    QDeclarativeCoordinate* bottomRight();
+    void setBottomRight(const QDeclarativeCoordinate *center);
 
     QColor color() const;
     void setColor(const QColor &color);
@@ -76,8 +77,8 @@ public:
     QDeclarativeGeoMapObjectBorder* border();
 
 Q_SIGNALS:
-    void declarativeTopLeftChanged(const QDeclarativeCoordinate *center);
-    void declarativeBottomRightChanged(const QDeclarativeCoordinate *center);
+    void topLeftChanged(const QDeclarativeCoordinate *center);
+    void bottomRightChanged(const QDeclarativeCoordinate *center);
     void colorChanged(const QColor &color);
 
 private Q_SLOTS:
@@ -93,11 +94,11 @@ private Q_SLOTS:
     void borderWidthChanged(int width);
 
 private:
-    QDeclarativeCoordinate* m_topLeft;
-    QDeclarativeCoordinate* m_bottomRight;
-    QColor m_color;
-    QDeclarativeGeoMapObjectBorder m_border;
-    Q_DISABLE_COPY(QDeclarativeGeoMapRectangleObject)
+    QGeoMapRectangleObject* rectangle_;
+    QDeclarativeCoordinate topLeft_;
+    QDeclarativeCoordinate bottomRight_;
+    QColor color_;
+    QDeclarativeGeoMapObjectBorder border_;
 };
 
 QTM_END_NAMESPACE

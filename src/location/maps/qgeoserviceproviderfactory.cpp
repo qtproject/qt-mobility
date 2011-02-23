@@ -57,7 +57,7 @@ QTM_BEGIN_NAMESPACE
     Implementers must provide a unique combination of providerName() and
     providerVersion() per plugin.
 
-    The other functions should be overriden if the plugin supports the
+    The other functions should be overridden if the plugin supports the
     associated set of functionality.
 */
 

@@ -81,8 +81,8 @@ QTM_BEGIN_NAMESPACE
     implementation provided by \a engine.
 
     This constructor is used internally by QGeoServiceProviderFactory. Regular
-    users should aquire instance of QGeoMappingManager with
-    QGeoServiceProvider::mappingManager();
+    users should acquire instances of QGeoMappingManager with
+    QGeoServiceProvider::mappingManager()
 */
 QGeoMappingManager::QGeoMappingManager(QGeoMappingManagerEngine *engine, QObject *parent)
     : QObject(parent),

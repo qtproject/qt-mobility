@@ -46,6 +46,7 @@ source		ccntcompact.cpp
 source		ccntpackager.cpp
 source		ccntnotificationmonitor.cpp
 source		rcntmodel.cpp
+source		cntimagerescaler.cpp
 
 //Parts of original contacts model
 SOURCEPATH	../src
@@ -85,10 +86,15 @@ library         estor.lib
 library         bafl.lib 
 library         ecom.lib
 library         conarc.lib //for CContactTextField::EncodeL CCnaConverterList
-library		versit.lib 
+library         versit.lib 
 library         efsrv.lib 
-library		centralrepository.lib
-
+library         centralrepository.lib
+LIBRARY         platformenv.lib
+LIBRARY         imageconversion.lib
+LIBRARY         bitmaptransforms.lib
+LIBRARY         hal.lib
+LIBRARY         fbscli.lib
+LIBRARY         charconv.lib
 
 // New APIs for 9.0 are non-configurable
 // so only 2 def files are required

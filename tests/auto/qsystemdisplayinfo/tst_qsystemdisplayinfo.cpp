@@ -42,10 +42,16 @@
 //TESTED_COMPONENT=src/systeminfo
 
 #include <QtTest/QtTest>
+#include <QDesktopWidget>
+
 #include "qsysteminfo.h"
+#include "qsystemdisplayinfo.h"
 #include <QDesktopWidget>
 
 QTM_USE_NAMESPACE
+
+Q_DECLARE_METATYPE(QSystemDisplayInfo::DisplayOrientation);
+
 class tst_QSystemDisplayInfo : public QObject
 {
     Q_OBJECT
@@ -53,6 +59,12 @@ class tst_QSystemDisplayInfo : public QObject
 private slots:
     void tst_displayBrightness();
     void tst_colorDepth();
+    void tst_getOrientation();
+    void tst_contrast();
+    void tst_getDPIWidth();
+    void tst_getDPIHeight();
+    void tst_physicalHeight();
+    void tst_physicalWidth();
 
 };
 
@@ -77,6 +89,54 @@ void tst_QSystemDisplayInfo::tst_colorDepth()
                 || depth == 64);
         }
     QVERIFY(di.colorDepth(999) == -1);
+}
+
+void tst_QSystemDisplayInfo::tst_getOrientation()
+{
+    QSystemDisplayInfo::DisplayOrientation orient = QSystemDisplayInfo::Unknown;
+    QSystemDisplayInfo di;
+    orient = di.getOrientation(0);
+    QRect availableGeometry = QApplication::desktop()->availableGeometry(0);
+
+    if(availableGeometry.width() > availableGeometry.height()) {
+        QVERIFY(orient == QSystemDisplayInfo::Landscape
+                || orient == QSystemDisplayInfo::InvertedLandscape);
+    } else {
+        QVERIFY(orient == QSystemDisplayInfo::Portrait
+                || orient == QSystemDisplayInfo::InvertedPortrait);
+    }
+}
+
+void tst_QSystemDisplayInfo::tst_contrast()
+{
+    QSystemDisplayInfo di;
+    QVERIFY(di.contrast(0) >= 0
+            && di.contrast(0)< 1.0 );
+    // contrast levels are between 0 and 1.0
+}
+
+void tst_QSystemDisplayInfo::tst_getDPIWidth()
+{
+    QSystemDisplayInfo di;
+    QVERIFY(di.getDPIWidth(0) > -1);
+}
+
+void tst_QSystemDisplayInfo::tst_getDPIHeight()
+{
+    QSystemDisplayInfo di;
+    QVERIFY(di.getDPIHeight(0) > -1);
+}
+
+void tst_QSystemDisplayInfo::tst_physicalHeight()
+{
+    QSystemDisplayInfo di;
+    QVERIFY(di.physicalHeight(0) > -1);
+}
+
+void tst_QSystemDisplayInfo::tst_physicalWidth()
+{
+    QSystemDisplayInfo di;
+    QVERIFY(di.physicalWidth(0) > -1);
 }
 
 

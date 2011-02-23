@@ -65,6 +65,14 @@ public:
     static const QLatin1Constant SubTypeSipVoip;
     static const QLatin1Constant SubTypeImpp;
     static const QLatin1Constant SubTypeVideoShare;
+    static const QLatin1Constant ServiceAim;
+    static const QLatin1Constant ServiceIcq;
+    static const QLatin1Constant ServiceIrc;
+    static const QLatin1Constant ServiceJabber;
+    static const QLatin1Constant ServiceMsn;
+    static const QLatin1Constant ServiceQq;
+    static const QLatin1Constant ServiceSkype;
+    static const QLatin1Constant ServiceYahoo;
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactOnlineAccount, "OnlineAccount")
     Q_DECLARE_LATIN1_CONSTANT(FieldAccountUri, "AccountUri");
@@ -75,6 +83,17 @@ public:
     Q_DECLARE_LATIN1_CONSTANT(SubTypeSipVoip, "SipVoip");
     Q_DECLARE_LATIN1_CONSTANT(SubTypeImpp, "Impp");
     Q_DECLARE_LATIN1_CONSTANT(SubTypeVideoShare, "VideoShare");
+
+    // These strings are taken from
+    // http://telepathy.freedesktop.org/spec/Connection_Manager.html#Protocol
+    Q_DECLARE_LATIN1_CONSTANT(ServiceAim, "Aim");
+    Q_DECLARE_LATIN1_CONSTANT(ServiceIcq, "Icq");
+    Q_DECLARE_LATIN1_CONSTANT(ServiceIrc, "Irc");
+    Q_DECLARE_LATIN1_CONSTANT(ServiceJabber, "Jabber");
+    Q_DECLARE_LATIN1_CONSTANT(ServiceMsn, "Msn");
+    Q_DECLARE_LATIN1_CONSTANT(ServiceQq, "Qq");
+    Q_DECLARE_LATIN1_CONSTANT(ServiceSkype, "Skype");
+    Q_DECLARE_LATIN1_CONSTANT(ServiceYahoo, "Yahoo");
 #endif
 
     void setAccountUri(const QString& accountUri) {setValue(FieldAccountUri, accountUri);}
@@ -94,4 +113,3 @@ public:
 QTM_END_NAMESPACE
 
 #endif
-

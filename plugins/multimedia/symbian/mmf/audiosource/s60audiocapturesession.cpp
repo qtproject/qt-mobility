@@ -44,12 +44,12 @@
 #include <QtCore/qurl.h>
 #include <QDir>
 
-#include <Mda\Client\Utility.h>
-#include <MdaAudioSampleEditor.h>
-#include <mmf\common\mmfcontrollerpluginresolver.h>
-#include <mmf\common\mmfcontroller.h>
-#include <BADESCA.H>
-#include <BAUTILS.H>
+#include <mda/client/utility.h>
+#include <mdaaudiosampleeditor.h>
+#include <mmf/common/mmfcontrollerpluginresolver.h>
+#include <mmf/common/mmfcontroller.h>
+#include <badesca.h>
+#include <bautils.h>
 #include <f32file.h>
 
 S60AudioCaptureSession::S60AudioCaptureSession(QObject *parent):

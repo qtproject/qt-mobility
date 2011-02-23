@@ -34,6 +34,8 @@
 #include <cntdef.h>
 #include <cntitem.h>
 #include <cntfldst.h>
+#include <f32file.h>
+#include <e32std.h>
 
 #include <sqldb.h>
 #include <e32hashtab.h>
@@ -146,6 +148,7 @@ private:
 	void GetTypeFlagFields(TInt aTypeFlags, TUid& aType, TUint& aAttributes, TUint& aHintFields);
 	TInt GenerateTypeFlags(TUid aType, TUint aAttributes, TUint aHintFields);
 	TUint NumDigits(TInt aNum);
+	void SetImagesDirL();
 	
 private:
 	CLplContactProperties& iProperties;
@@ -157,6 +160,8 @@ private:
 	CCntSqlStatement* iDeleteStmnt;
 	RHashMap<TInt, TPtrC> iFieldMap;
 	RSqlDatabase&  iDatabase;
+	RFs iFs;
+	TPath iImagesDirPath;
 	
 	CContactIdArray* iCardTemplateIds;
 	TContactItemId iOwnCardId;
@@ -382,7 +387,8 @@ protected:
 	// aLastName ownership is not transferred
 	QStringList GetTokens(QStringList aNonTokenizedFields,
 						  HBufC* aFirstName,
-						  HBufC* aLastName) const;
+						  HBufC* aLastName,
+						  bool aIsKorea) const;
 
 private:
 	void WriteToDbL(const CContactItem& aItem);
@@ -395,11 +401,13 @@ private:
 	//			  	   pushed to cleanupstack. Ownership is transferred.
 	// aLastName OUT: Pointer to the first N characters of last name,
 	//			  	  pushed to cleanupstack. Ownership is transferred.
+	// aIsKorea OUT: true if contact contains Korean text
 	void GetFieldsLC(const CContactItem& aItem,
 					 HBufC** aFirstNameAsNbr,
 					 HBufC** aLastNameAsNbr,
 					 HBufC** aFirstName,
-					 HBufC** aLastName) const;
+					 HBufC** aLastName,
+					 bool& aIsKorea) const;
 
 	// aString ownership is not transferred
 	void AddTokens(HBufC* aString, QStringList& aTokens) const;
@@ -423,6 +431,10 @@ protected:
 
 	// Max length of a single token that can be stored into predictive search table
 	const TInt		  iMaxTokenLength;
+
+
+	// For unit testing
+	friend class UT_CPplPredictiveSearchTable;
 	};
 
 

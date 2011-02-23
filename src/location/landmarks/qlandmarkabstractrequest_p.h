@@ -43,6 +43,7 @@
 #define QLANDMARKABSTRACTREQUEST_P_H
 
 #include <QMutex>
+#include <QPointer>
 
 //
 //  W A R N I N G
@@ -71,7 +72,7 @@ public:
     QLandmarkAbstractRequest::State state;
     QLandmarkManager::Error error;
     QString errorString;
-    QLandmarkManager *manager;
+    QPointer<QLandmarkManager> manager;
     mutable QMutex mutex;
 };
 

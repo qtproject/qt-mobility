@@ -135,7 +135,9 @@ void tst_QAudioInput::initTestCase()
     // Only perform tests if audio output device exists
     const QList<QAudioDeviceInfo> devices =
         QAudioDeviceInfo::availableDevices(QAudio::AudioInput);
-    QVERIFY(devices.size() > 0);
+
+    if (devices.size() <= 0)
+        QSKIP("No audio backend", SkipAll);
 
     audioDevice = QAudioDeviceInfo::defaultInputDevice();
 

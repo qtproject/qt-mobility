@@ -58,6 +58,9 @@ QTM_BEGIN_NAMESPACE
     Please see the class documentation for QLandmarkAbstractRequest for more information about
     the usage of request classes and ownership semantics.
 
+    Note that for S60 and Symbian platforms, the waitForFinished() function is not
+    supported for import requests and will always return false.
+
     \inmodule QtLocation
 
     \ingroup landmarks-request

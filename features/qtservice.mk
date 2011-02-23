@@ -1,3 +1,5 @@
+do_nothing : ;
+
 TMPROOT:=$(subst \,/,$(EPOCROOT))
 EPOCROOT:=$(patsubst %/,%,$(TMPROOT))/
 
@@ -5,12 +7,12 @@ SFWTOOL=$(EPOCROOT)epoc32/tools/servicedbgen
 
 #choose target database to deal with
 ifeq ($(PLATFORM), WINSCW)
-QTSERVICE_TARGET:=-twinscw
+	QTSERVICE_TARGET:=-twinscw
 else
 ifeq ($(PLATFORM), ARMV5)
 QTSERVICE_TARGET:=-tarmv5
 else
-QTSERVICE_TARGET:=-tall
+	QTSERVICE_TARGET:=-tall
 endif
 endif
 
@@ -18,11 +20,10 @@ endif
 #we cannot use the path specified in the QTSERVICE_DESCRIPTOR option, so use the default path
 DES_PATH=$(EPOCROOT)epoc32/data/z/private/2002AC7F/des/$(QTSERVICE_DESCRIPTOR)
 
-FINAL: 
+MAKMAKE: 
 	@$(SFWTOOL) $(QTSERVICE_TARGET) $(QTSERVICE_INITIALIZE) add $(DES_PATH)
 
 CLEAN: 
 	@$(SFWTOOL) $(QTSERVICE_TARGET) $(QTSERVICE_INITIALIZE) remove $(DES_PATH)
 
-MAKMAKE BLD SAVESPACE FREEZE LIB CLEANLIB RESOURCE RELEASABLES: 
-	@echo $@ does nothing for these
+BLD SAVESPACE FREEZE LIB CLEANLIB RESOURCE RELEASABLES FINAL: do_nothing

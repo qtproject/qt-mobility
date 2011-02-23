@@ -46,6 +46,91 @@ QTM_BEGIN_NAMESPACE
 
 
 
+/* ==================== QOrganizerItemAttachment ======================= */
+/*!
+   \class QOrganizerItemAttachment
+   \brief The QOrganizerItemAttachment class contains information about a file (or other attachment) which is related to a particular organizer item.
+   \inmodule QtOrganizer
+   \ingroup organizer-details
+
+   This leaf-class has been part of the default schema since version
+   1.2 of the Qt Mobility project.
+ */
+
+/*!
+   \variable QOrganizerItemAttachment::DefinitionName
+   The constant string which identifies the definition of details which contain information about arbitrary attachments.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemAttachment::DefinitionName, "Attachment");
+
+/*!
+   \variable QOrganizerItemAttachment::FieldDescription
+
+   The constant key for which the attachment description value is stored in details of
+   the QOrganizerItemAttachment type.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemAttachment::FieldDescription, "Description");
+
+/*!
+   \variable QOrganizerItemAttachment::FieldAttachmentData
+
+   The constant key for which the attachment data value is stored in details of
+   the QOrganizerItemAttachment type.  This data can be any arbitrary blob,
+   which means that the client should also set the mime-type associated with the
+   attachment if possible.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemAttachment::FieldAttachmentData, "AttachmentData");
+
+/*!
+   \variable QOrganizerItemAttachment::FieldAttachmentMimeType
+
+   The constant key for which the attachment mime-type value is stored in details of
+   the QOrganizerItemAttachment type.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemAttachment::FieldAttachmentMimeType, "AttachmentMimeType");
+
+/*!
+   \fn QOrganizerItemAttachment::setDescription(const QString& description)
+   Sets a description associated with the attachment to an organizer item to \a description.
+ */
+
+/*!
+   \fn QOrganizerItemAttachment::description() const
+   Returns a string for a description associated with the attachment to an organizer item.
+ */
+
+/*!
+  Sets the attachment value to be the given \a data, and specifies that the mime-type of
+  the attachment is the given \a mimeType.  If the given \a mimeType is empty, it
+  specifies that the attachment is of an unknown mime type.  Since the \a data value
+  is a free-form blob, clients must specify \a mimeType in order to allow other clients
+  to interpret the attachment correctly.
+ */
+void QOrganizerItemAttachment::setAttachment(const QByteArray& data, const QString& mimeType)
+{
+    setValue(QOrganizerItemAttachment::FieldAttachmentData, data);
+    setValue(QOrganizerItemAttachment::FieldAttachmentMimeType, mimeType);
+}
+
+/*!
+  Returns the data of the attachment, if it was specified.
+  If the attachment detail stores a url of an attachment instead of a data
+  blob attachment, this function will return a default-constructed byte array.
+ */
+QByteArray QOrganizerItemAttachment::attachmentData() const
+{
+    return value<QByteArray>(QOrganizerItemAttachment::FieldAttachmentData);
+}
+
+/*!
+  Returns the mime type of the attachment, if known.  If the mime type
+  of the attachment was not specified, this function will return an
+  empty QString.
+ */
+QString QOrganizerItemAttachment::attachmentMimeType() const
+{
+    return value(QOrganizerItemAttachment::FieldAttachmentMimeType);
+}
 
 
 
@@ -140,6 +225,332 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemDisplayLabel::FieldLabel, "Label");
 
 
 
+/* ==================== QOrganizerEventAttendee ======================= */
+/*!
+   \class QOrganizerEventAttendee
+   \brief The QOrganizerEventAttendee class contains information about an attendee of an event
+   \inmodule QtOrganizer
+   \ingroup organizer-details
+
+   Attendee details contain information such as the display label (name) of an attendee, their
+   role in the event, and their participation status.
+
+   This leaf-class has been part of the default schema since version
+   1.2 of the Qt Mobility project.
+ */
+
+/*!
+   \variable QOrganizerEventAttendee::DefinitionName
+   The constant string which identifies the definition of details which are long descriptions.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerEventAttendee::DefinitionName, "Attendee");
+
+/*!
+   \variable QOrganizerEventAttendee::FieldName
+
+   The constant key for which the name (or title or other label) of the attendee is stored in
+   details of the QOrganizerEventAttendee type.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerEventAttendee::FieldName, "Name");
+
+/*!
+   \variable QOrganizerEventAttendee::FieldEmailAddress
+
+   The constant key for which the email address of the attendee is stored in
+   details of the QOrganizerEventAttendee type.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerEventAttendee::FieldEmailAddress, "EmailAddress");
+
+/*!
+   \variable QOrganizerEventAttendee::FieldContactId
+   \preliminary
+
+   The constant key for which the string which identifies the attendee is stored in
+   details of the QOrganizerEventAttendee type.  It contains a free-form string which
+   may be a serialized contact id, vCard UID, or other platform-specific identifier.
+
+   This field is under discussion and subject to change.
+ */
+// XXX TODO: review and finalise this constant.  Is it really needed?
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerEventAttendee::FieldContactId, "ContactId");
+
+/*!
+   \variable QOrganizerEventAttendee::FieldParticipationStatus
+
+   The constant key for which the participation status of the attendee is stored in
+   details of the QOrganizerEventAttendee type.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerEventAttendee::FieldParticipationStatus, "ParticipationStatus");
+
+/*!
+   \variable QOrganizerEventAttendee::FieldParticipationRole
+
+   The constant key for which the participation role of the attendee is stored in
+   details of the QOrganizerEventAttendee type.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerEventAttendee::FieldParticipationRole, "ParticipationRole");
+
+/*!
+   \enum QOrganizerEventAttendee::ParticipationStatus
+   \value StatusUnknown The status of the attendee is unknown or they have yet to respond
+   \value StatusAccepted The attendee has responded that they will be attending the event
+   \value StatusDeclined The attendee has responded that they will not be attending the event
+   \value StatusTentative The attendee has responded that they may be attending the event
+   \value StatusDelegated The attendee has delegated attendance at the event to another person
+   \value StatusInProcess The attendee is currently attending the event
+   \value StatusCompleted The attendee attended the event
+*/
+
+/*!
+   \enum QOrganizerEventAttendee::ParticipationRole
+   \value RoleUnknown The role of the attendee is unknown or they have yet to respond
+   \value RoleOrganizer The attendee is the organizer of the event
+   \value RoleChairperson The attendee is the chairperson of the event
+   \value RoleHost The attendee is the host of the event
+   \value RoleRequiredParticipant The attendee is a required participant of the event
+   \value RoleParticipant The attendee is an optional participant of the event
+   \value RoleNonParticipant The attendee is not participating in the event (value included for informational purposes only, as per iCalendar specification)
+*/
+
+/*!
+   \fn QOrganizerEventAttendee::setName(const QString& name)
+   Sets the name (or title or other label) of the attendee to \a name.
+ */
+
+/*!
+   \fn QOrganizerEventAttendee::name() const
+   Returns the name (or title or other label) of the attendee.
+ */
+
+/*!
+   \fn QOrganizerEventAttendee::setEmailAddress(const QString& emailAddress)
+   Sets the email address of the attendee to \a emailAddress.
+ */
+
+/*!
+   \fn QOrganizerEventAttendee::emailAddress() const
+   Returns the email address of the attendee.
+ */
+
+/*!
+   \fn QOrganizerEventAttendee::setContactId(const QString& contactId)
+   Sets the unique identifier of the attendee to \a contactId.
+ */
+
+/*!
+   \fn QOrganizerEventAttendee::contactId() const
+   Returns the unique identifier of the attendee.  The format of the identifier
+   is platform specific and may be a serialized id, a vCard UID, or something else.
+ */
+
+/*!
+   \fn QOrganizerEventAttendee::setParticipationStatus(QOrganizerEventAttendee::Status status)
+   Sets the participation status of the attendee in the event to \a status.
+ */
+
+/*!
+   \fn QOrganizerEventAttendee::participationStatus() const
+   Returns the participation status of the attendee in the event.
+ */
+
+/*!
+   \fn QOrganizerEventAttendee::setParticipationRole(QOrganizerEventAttendee::ParticipationRole role)
+   Sets the role of the attendee in the event to \a role.
+ */
+
+/*!
+   \fn QOrganizerEventAttendee::participationRole() const
+   Returns the participation role of the attendee in the event.
+ */
+
+
+
+
+/* ==================== QOrganizerEventRsvp ======================= */
+/*!
+   \class QOrganizerEventRsvp
+   \brief The QOrganizerEventRsvp class contains RSVP information for an event, applicable to the user of the calendar
+   \inmodule QtOrganizer
+   \ingroup organizer-details
+
+   RSVP details contain information such as the role of the calendar user in the event,
+   the participation status of the calendar user in the event, the date by which the
+   user is requested to respond to the invitation, the date at which the user did
+   respond to the invitation, the name of the organizer of the event, and the contact
+   details of the organizer of the event.
+
+   Any event which contains an RSVP detail is an event to which the user of the
+   calendar has been invited.
+
+   This leaf-class has been part of the default schema since version
+   1.2 of the Qt Mobility project.
+ */
+
+/*!
+   \variable QOrganizerEventRsvp::DefinitionName
+   The constant string which identifies the definition of details which are event invitation RSVP details.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerEventRsvp::DefinitionName, "Rsvp");
+
+/*!
+   \variable QOrganizerEventRsvp::FieldParticipationStatus
+
+   The constant key for which the participation status of the calendar user is stored in
+   details of the QOrganizerEventRsvp type.  The participation statuses valid for the user
+   are the same as those for any other attendee, and are enumerated in \c QOrganizerEventAttendee::Status.
+
+   \sa QOrganizerEventAttendee
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerEventRsvp::FieldParticipationStatus, "ParticipationStatus");
+
+/*!
+   \variable QOrganizerEventRsvp::FieldParticipationRole
+
+   The constant key for which the participation role of the calendar user is stored in
+   details of the QOrganizerEventRsvp type.  The participation roles valid for the user
+   are the same as those for any other attendee.
+
+   \sa QOrganizerEventAttendee
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerEventRsvp::FieldParticipationRole, "ParticipationRole");
+
+/*!
+   \variable QOrganizerEventRsvp::FieldResponseRequirement
+
+   The constant key for which the value is stored which determines whether or
+   not the organizer of the event requires a response to the invitation from the
+   calendar user, in details of the QOrganizerEventRsvp type.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerEventRsvp::FieldResponseRequirement, "ResponseRequirement");
+
+/*!
+   \variable QOrganizerEventRsvp::FieldResponseDeadline
+
+   The constant key for which the response deadline date is stored in
+   details of the QOrganizerEventRsvp type.  This date is the date by
+   which the user must respond to the event invitation.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerEventRsvp::FieldResponseDeadline, "ResponseDeadline");
+
+/*!
+   \variable QOrganizerEventRsvp::FieldResponseDate
+
+   The constant key for which the date of response is stored in
+   details of the QOrganizerEventRsvp type.  This date is the date at
+   which the user responded to the event invitation.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerEventRsvp::FieldResponseDate, "ResponseDate");
+
+/*!
+   \variable QOrganizerEventRsvp::FieldOrganizerName
+
+   The constant key for which the name of the event organizer is stored in
+   details of the QOrganizerEventRsvp type.  This is the name of the person
+   who organized the event, to whom the user of the calendar should respond
+   regarding the invitation to the event, as requested by the organizer.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerEventRsvp::FieldOrganizerName, "OrganizerName");
+
+/*!
+   \variable QOrganizerEventRsvp::FieldOrganizerEmail
+
+   The constant key for which the email address of the event organizer is stored in
+   details of the QOrganizerEventRsvp type.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerEventRsvp::FieldOrganizerEmail, "OrganizerEmail");
+
+/*!
+   \enum QOrganizerEventRsvp::ResponseRequirement
+   \value ResponseNotRequired The organizer does not require the calendar user to respond to the invitation
+   \value ResponseRequired The organizer requires the calendar user to respond to the invitation
+*/
+
+/*!
+   \fn QOrganizerEventRsvp::setOrganizerName(const QString& name)
+   Sets the name of the organizer of the event (who sent the invitation) to \a name.
+ */
+
+/*!
+   \fn QOrganizerEventRsvp::organizerName() const
+   Returns the name of the organizer of the event.
+ */
+
+/*!
+   \fn QOrganizerEventRsvp::setOrganizerEmail(const QString& emailAddress)
+   Sets the email address of the organizer of the event (who sent the invitation) to \a emailAddress.
+ */
+
+/*!
+   \fn QOrganizerEventRsvp::organizerEmail() const
+   Returns the email address of the organizer of the event.
+ */
+
+/*!
+   \fn QOrganizerEventRsvp::setResponseRequirement(QOrganizerEventRsvp::ResponseRequirement responseRequirement)
+   Sets the response requirement for the invitation to \a responseRequirement.
+ */
+
+/*!
+   \fn QOrganizerEventRsvp::responseRequirement() const
+   Returns the response requirement of the invitation.
+ */
+
+/*!
+   \fn QOrganizerEventRsvp::setResponseDeadline(const QDate& date)
+   Sets the date by which the user was requested to have responded to the invitation to the event to \a date.
+ */
+
+/*!
+   \fn QOrganizerEventRsvp::responseDeadline() const
+   Returns the date by which the user was requested to have responded to the invitation to the event.
+ */
+
+/*!
+   \fn QOrganizerEventRsvp::setResponseDate(const QDate& date)
+   Sets the date at which the user responded to the invitation to the event to \a date.
+ */
+
+/*!
+   \fn QOrganizerEventRsvp::responseDate() const
+   Returns the date at which user responded to the invitation to the event.
+ */
+
+/*!
+   \fn QOrganizerEventRsvp::setParticipationStatus(QOrganizerEventAttendee::ParticipationStatus status)
+   Sets the participation status of the user of the calendar in the event to \a status.
+ */
+
+/*!
+   \fn QOrganizerEventRsvp::participationStatus() const
+   Returns the participation status of the user of the calendar in the event.
+ */
+
+/*!
+   \fn QOrganizerEventRsvp::setParticipationRole(QOrganizerEventAttendee::ParticipationRole role)
+   Sets the role of the user of the calendar in the event to \a role.
+ */
+
+/*!
+   \fn QOrganizerEventRsvp::participationRole() const
+   Returns the participation role of the user of the calendar in the event.
+ */
+
+/*!
+    Returns a filter suitable for finding events based upon the participation
+    status of the calendar user.  The filter will match any event at which the
+    calendar user's participation status is \a status.
+*/
+QOrganizerItemFilter QOrganizerEventRsvp::match(QOrganizerEventAttendee::ParticipationStatus status)
+{
+    QOrganizerItemDetailFilter f;
+    f.setDetailDefinitionName(QOrganizerEventRsvp::DefinitionName,
+                              QOrganizerEventRsvp::FieldParticipationStatus);
+    f.setValue(status);
+    f.setMatchFlags(QOrganizerItemFilter::MatchExactly);
+
+    return f;
+}
+
 
 
 
@@ -204,6 +615,20 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerEventTime::FieldAllDay, "AllDay");
 /*!
     \fn QOrganizerEventTime::setEndDateTime(const QDateTime& dueDateTime)
     Sets the event timerange's due date and time to \a dueDateTime.
+ */
+
+/*!
+    \fn QOrganizerEventTime::setAllDay(bool isAllDay)
+    Sets the all-day status of the event to \a isAllDay.
+    If the event is an all-day event, no time is considered to be
+    specified for the event, even if a start or end date time set
+    for the event has a time component.
+ */
+
+/*!
+    \fn QOrganizerEventTime::isAllDay() const
+    Returns true if a specific time was specified for the event.
+    Returns false if the event is an all-day event.
  */
 
 /* ==================== QOrganizerItemGuid ======================= */
@@ -553,6 +978,15 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemPriority::FieldPriority, "Priority");
  */
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrence::DefinitionName, "Recurrence");
 
+/*!
+  Returns true if the \a other recurrence detail is equal to this detail; otherwise, false.
+
+  Since the data types stored in this detail are custom data types, the base class
+  operator==() doesn't know how to perform the comparison without calling this function.
+  However, it means that if (in the future) a backend were to extend the detail with
+  more fields, this operator== would no longer work; it'd have to be updated to compare
+  the other fields also.
+ */
 bool QOrganizerItemRecurrence::operator==(const QOrganizerItemRecurrence& other) const
 {
     return accessConstraints() == other.accessConstraints()
@@ -561,6 +995,13 @@ bool QOrganizerItemRecurrence::operator==(const QOrganizerItemRecurrence& other)
         && recurrenceDates() == other.recurrenceDates()
         && exceptionDates() == other.exceptionDates();
 }
+
+/*!
+  \fn QOrganizerItemRecurrence::operator!=(const QOrganizerItemRecurrence& other) const
+  \internal
+  Returns true if the \a other recurrence detail is equal to this detail; otherwise, false.
+  Implemented in terms of operator==() for QOrganizerItemRecurrence detail.
+ */
 
 /*!
    \variable QOrganizerItemRecurrence::FieldRecurrenceRules
@@ -610,7 +1051,7 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrence::FieldExceptionRules, "Excepti
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrence::FieldExceptionDates, "ExceptionDates");
 
 /*!
-   Returns a list of recurrence dates.
+   Returns the set of recurrence dates.
  */
 QSet<QDate> QOrganizerItemRecurrence::recurrenceDates() const
 {
@@ -618,7 +1059,7 @@ QSet<QDate> QOrganizerItemRecurrence::recurrenceDates() const
 }
 
 /*!
-   Sets a list of recurrence dates to \a rdates.
+   Sets the set of recurrence dates to \a rdates.
  */
 void QOrganizerItemRecurrence::setRecurrenceDates(const QSet<QDate>& rdates)
 {
@@ -626,21 +1067,21 @@ void QOrganizerItemRecurrence::setRecurrenceDates(const QSet<QDate>& rdates)
 }
 
 /*!
-   Returns a list of exception rules.
+   Returns the set of exception rules.
  */
 QSet<QOrganizerRecurrenceRule> QOrganizerItemRecurrence::exceptionRules() const
 {
     return variantValue(FieldExceptionRules).value< QSet<QOrganizerRecurrenceRule> >();
 }
 /*!
-   Sets a list of exception rules to \a xrules.
+   Sets the set of exception rules to \a xrules.
  */
 void QOrganizerItemRecurrence::setExceptionRules(const QSet<QOrganizerRecurrenceRule>& xrules)
 {
     setValue(FieldExceptionRules, QVariant::fromValue(xrules));
 }
 /*!
-   Returns a list of recurrence rules.
+   Returns the set of recurrence rules.
  */
 QSet<QOrganizerRecurrenceRule> QOrganizerItemRecurrence::recurrenceRules() const
 {
@@ -649,14 +1090,14 @@ QSet<QOrganizerRecurrenceRule> QOrganizerItemRecurrence::recurrenceRules() const
 
 
 /*!
-   Sets a list of recurrence rules to \a rrules.
+   Sets the set of recurrence rules to \a rrules.
  */
 void QOrganizerItemRecurrence::setRecurrenceRules(const QSet<QOrganizerRecurrenceRule>& rrules)
 {
     setValue(FieldRecurrenceRules, QVariant::fromValue(rrules));
 }
 /*!
-   Returns a list of exception dates.
+   Returns the set of exception dates.
  */
 QSet<QDate> QOrganizerItemRecurrence::exceptionDates() const
 {
@@ -664,7 +1105,7 @@ QSet<QDate> QOrganizerItemRecurrence::exceptionDates() const
 }
 
 /*!
-   Sets a list of exception dates to \a exdates.
+   Sets the set of exception dates to \a xdates.
  */
 void QOrganizerItemRecurrence::setExceptionDates(const QSet<QDate>& xdates)
 {
@@ -692,19 +1133,23 @@ void QOrganizerItemRecurrence::setExceptionDates(const QSet<QDate>& xdates)
    \value EmailReminder This reminder has a email element
 */
 
+/*! 
+   \fn QOrganizerItemReminder::QOrganizerItemReminder(const char* definitionName)
+
+    Constructor of a QOrganizerItemReminder object by defining the \a definitionName. 
+*/
+
+/*! 
+    \fn QOrganizerItemReminder::QOrganizerItemReminder(const QOrganizerItemDetail& detail, const char* definitionName)
+
+    Constructor of a QOrganizerItemReminder object by defining the \a detail, and \a definitionName. 
+*/
+
 /*!
    \variable QOrganizerItemReminder::DefinitionName
    The constant string which identifies the definition of details which contain reminder information of an organizer item.
  */
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemReminder::DefinitionName, "Reminder");
-
-/*!
-   \variable QOrganizerItemReminder::FieldReminderType
-
-   The constant key for which the reminder type value is stored in details of
-   the QOrganizerItemReminder type (and its subclasses).
- */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemReminder::FieldReminderType, "ReminderType");
 
 /*!
    \variable QOrganizerItemReminder::FieldSecondsBeforeStart
@@ -731,10 +1176,20 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemReminder::FieldRepetitionCount, "Repetiti
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemReminder::FieldRepetitionDelay, "RepetitionDelay");
 
 /*!
-   \fn ReminderTypes QOrganizerItemReminder::reminderType() const
-
    Returns the reminder type of this reminder for an organizer item.
  */
+QOrganizerItemReminder::ReminderType QOrganizerItemReminder::reminderType() const
+{
+    if (definitionName() == QOrganizerItemAudibleReminder::DefinitionName) {
+        return QOrganizerItemReminder::AudibleReminder;
+    } else if (definitionName() == QOrganizerItemEmailReminder::DefinitionName) {
+        return QOrganizerItemReminder::EmailReminder;
+    } else if (definitionName() == QOrganizerItemVisualReminder::DefinitionName) {
+        return QOrganizerItemReminder::VisualReminder;
+    }
+
+    return QOrganizerItemReminder::NoReminder;
+}
 
 /*!
    \fn QOrganizerItemReminder::setSecondsBeforeStart(int seconds)
@@ -845,10 +1300,11 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemAudibleReminder::FieldDataUrl, "DataUrl")
 */
 
 /*!
-   \fn QOrganizerItemAudibleReminder::dataUrl() const
+   \fn QUrl QOrganizerItemAudibleReminder::dataUrl() const
 
-   Returns the url of the audible data to play.
+   Returns the url of the audible data which should be played.
 */
+
 
 /* ==================== QOrganizerItemEmailReminder ======================= */
 
@@ -1229,7 +1685,15 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerTodoTime::FieldAllDay, "AllDay");
  */
 
 /*!
-    \fn QOrganizerTodoTimeRange::isAllDay() const
+    \fn QOrganizerTodoTime::setAllDay(bool isAllDay)
+    Sets the all-day status of the todo to \a isAllDay.
+    If the event is an all-day todo, no time is considered to be
+    specified for the todo, even if the start date time set
+    for the todo has a time component.
+ */
+
+/*!
+    \fn QOrganizerTodoTime::isAllDay() const
     Returns true if a specific time was specified for the todo.
     Returns false if the todo is an all-day todo.
  */
@@ -1307,22 +1771,5 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemType::TypeTodoOccurrence, "TodoOccurrence
    \fn QOrganizerItemType::setType(const QString& type)
    Sets the type of the organizer item to be the give \a type.
  */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 QTM_END_NAMESPACE

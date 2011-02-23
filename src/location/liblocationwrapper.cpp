@@ -54,6 +54,18 @@ LiblocationWrapper *LiblocationWrapper::instance()
     return LocationEngine();
 }
 
+LiblocationWrapper::LiblocationWrapper()
+    : file(NULL),
+    locationControl(NULL),
+    locationDevice(NULL),
+    errorHandlerId(0),
+    posChangedId(0),
+    origUpdateInterval(0),
+    startcounter(0),
+    validLastUpdate(false),
+    validLastSatUpdate(false),
+    locationState(LiblocationWrapper::Undefined) {}
+
 LiblocationWrapper::~LiblocationWrapper()
 {
     if (locationDevice)

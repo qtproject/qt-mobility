@@ -75,6 +75,8 @@ public:
     bool removeMessage(const QMessageId &id, QMessageManager::RemovalOption option, QMessageManager::Error &error);
     bool removeMessages(const QMessageFilter &filter, QMessageManager::RemovalOption option, QMessageManager::Error &error);
 
+    bool removeAccount(const QMessageAccountId &id, QMessageManager::Error &error);
+
     QMessage message(const QMessageId &id, QMessageManager::Error &error) const;
     QMessageFolder folder(const QMessageFolderId &id, QMessageManager::Error &error) const;
     QMessageAccount account(const QMessageAccountId &id, QMessageManager::Error &error) const;

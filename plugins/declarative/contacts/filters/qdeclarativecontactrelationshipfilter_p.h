@@ -46,28 +46,59 @@
 #include "qcontactrelationshipfilter.h"
 #include "qdeclarativecontactrelationship_p.h"
 
+#include <QDebug>
+
 class QDeclarativeContactRelationshipFilter : public QDeclarativeContactFilter
 {
     Q_OBJECT
-    Q_PROPERTY(QVariant relationshipType READ relationshipType WRITE setRelationshipType NOTIFY valueChanged)
-    Q_PROPERTY(QContactLocalId relatedContactId READ relatedContactId WRITE setRelatedContactId NOTIFY valueChanged)
-    Q_PROPERTY(QDeclarativeContactRelationship::RelationshipRole relatedContactRole READ relatedContactRole WRITE setRelatedContactRole NOTIFY valueChanged)
+    Q_PROPERTY(QVariant relationshipType READ relationshipType WRITE setRelationshipType NOTIFY valueChanged())
+    Q_PROPERTY(QContactLocalId relatedContactId READ relatedContactId WRITE setRelatedContactId NOTIFY valueChanged())
+    Q_PROPERTY(QDeclarativeContactRelationship::RelationshipRole relatedContactRole READ relatedContactRole WRITE setRelatedContactRole NOTIFY valueChanged())
 
 public:
 
     QDeclarativeContactRelationshipFilter(QObject* parent = 0)
         :QDeclarativeContactFilter(parent)
     {
+        connect(this, SIGNAL(valueChanged()), SIGNAL(filterChanged()));
     }
 
     QVariant relationshipType() const
     {
-       return r.relationshipType();
+        return d.relationshipType();
     }
     void setRelationshipType(const QVariant& v)
     {
-        if (v != relationshipType()) {
-            r.setRelationshipType(v);
+        QString rt;
+        if (v.type() != QVariant::String) {
+            switch (v.toInt()) {
+            case QDeclarativeContactRelationship::HasMember:
+                rt = QLatin1String(QContactRelationship::HasMember);
+                break;
+            case QDeclarativeContactRelationship::Aggregates:
+                rt = QLatin1String(QContactRelationship::Aggregates);
+                break;
+            case QDeclarativeContactRelationship::IsSameAs:
+                rt = QLatin1String(QContactRelationship::IsSameAs);
+                break;
+            case QDeclarativeContactRelationship::HasAssistant:
+                rt = QLatin1String(QContactRelationship::HasAssistant);
+                break;
+            case QDeclarativeContactRelationship::HasManager:
+                rt = QLatin1String(QContactRelationship::HasManager);
+                break;
+            case QDeclarativeContactRelationship::HasSpouse:
+                rt = QLatin1String(QContactRelationship::HasSpouse);
+                break;
+           default:
+                break;
+            }
+        } else {
+            rt = v.toString();
+        }
+
+        if (rt != relationshipType()) {
+            d.setRelationshipType(rt);
             emit valueChanged();
         }
     }
@@ -79,7 +110,7 @@ public:
 
     void setRelatedContactId(const QContactLocalId& v)
     {
-        if (v != relatedContactId()) {
+        if (v != d.relatedContactId().localId()) {
             QContactId contactId;
             contactId.setLocalId(v);
             d.setRelatedContactId(contactId);
@@ -106,27 +137,24 @@ public:
             switch (v) {
             case QDeclarativeContactRelationship::First:
                 d.setRelatedContactRole(QContactRelationship::First);
+                break;
             case QDeclarativeContactRelationship::Second:
                 d.setRelatedContactRole(QContactRelationship::Second);
+                break;
             case QDeclarativeContactRelationship::Either:
+                d.setRelatedContactRole(QContactRelationship::Either);
                 break;
             }
-            d.setRelatedContactRole(QContactRelationship::Either);
             emit valueChanged();
         }
     }
     QContactFilter filter() const
     {
-        QContactRelationshipFilter filter(d);
-        filter.setRelationshipType(r.relationship().relationshipType());
-        return filter;
+        return d;
     }
 signals:
     void valueChanged();
-
-
 private:
-    QDeclarativeContactRelationship r;
     QContactRelationshipFilter d;
 };
 

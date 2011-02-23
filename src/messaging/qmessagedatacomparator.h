@@ -68,6 +68,12 @@ namespace QMessageDataComparator {
         GreaterThanEqual
     };
 
+    enum LikeComparator
+    {
+        Like,
+        NotLike
+    };
+
     enum MatchFlag
     {
         MatchCaseSensitive   = Qt::MatchCaseSensitive,

@@ -39,7 +39,8 @@ public:
 	static void WriteBlobL(CEmbeddedStore& aTextEmbeddedStore, RWriteStream& aTextValues, CEmbeddedStore& aBinaryEmbeddedStore, CEmbeddedStore& aBinaryEmbeddedBlobStore, const CContactItem& aItem, const CContactTemplate* aSysTemplate);
 
     static void ReadTextBlobL(RReadStream& aHeaderStream, const HBufC* aTextBuffer, const CContactTextDef& aTextDef, const CContactTemplate& aSystemTemplate, RPointerArray<CContactItemField>& aFields, TBool& aSearchFastAccessFields);	
-	            
+    static void ReadTextBlobL(CContactItem& aItem, const CContactItemViewDef& aView, const CContactItem* aTemplate, RSqlDatabase& aDatabase);
+                   
 	static TBool FindTxtFieldInTextBlobL(RReadStream& aHeaderStream, HBufC* aTextFieldsBuf, const CContactTemplate& aSystemTemplate, const TFieldType& aFieldType, TDes& aText);
 	
 	static TBool CopyMinFieldText(TPtrC aSrc,TDes& aDest);
@@ -54,7 +55,6 @@ public:
     static TInt  ContactTypeUidToTypeFlags(TUid aContactTypeUid);
 
 private:
-	static void ReadTextBlobL(CContactItem& aItem, const CContactItemViewDef& aView, const CContactItem* aTemplate, RSqlDatabase& aDatabase);
 	static void ReadBinaryBlobL(CContactItem& aItem, const CContactItemViewDef& aView, const CContactItem* aTemplate, RSqlDatabase& aDatabase);
 	
 	static HBufC* LoadTextStreamLC(RReadStream& aStream);

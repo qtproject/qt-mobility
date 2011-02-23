@@ -82,6 +82,7 @@ public:
         return QOrganizerAbstractRequest::InvalidRequest;
     }
 
+    // XXX this should have been used in 1.1
     static void notifyEngine(QOrganizerAbstractRequest* request)
     {
         Q_ASSERT(request);

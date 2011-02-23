@@ -23,7 +23,10 @@ TEMPLATE = subdirs
 BLD_INF_RULES.prj_mmpfiles = "./groupsql/cntmodel.mmp"\
                              "./group/cntview.mmp"\
                              "./group/template.mmp"\
-                             "./groupsql/cntsrv.mmp"
+                             "./groupsql/cntsrv.mmp"\
+                             "./cntmatchlog/group/cntmatchlog.mmp"\
+                             "./cntvcard/cntvcard.mmp"\
+                             "./cntphone/cntphone.mmp"
 
 # Exports
 deploy.path = /

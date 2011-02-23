@@ -19,7 +19,7 @@
 #include "predictivesearchkeymapdefs.h"
 #include "ckoreankeymap.h"
 // This macro suppresses log writes
-// #define NO_PRED_SEARCH_LOGS
+//#define NO_PRED_SEARCH_LOGS
 #include "predictivesearchlog.h"
 
 // Detection for Thai language is needed for both hardcoded and Orbit keymaps
@@ -216,6 +216,18 @@ TInt C12keyKeyMap::ReadExtraCharacters(const HbInputLanguage& aLanguage)
 	}
 
 // ----------------------------------------------------------------------------
+// C12keyKeyMap::CheckLanguage
+// ----------------------------------------------------------------------------
+MLanguageSpecificKeymap* C12keyKeyMap::CheckLanguage(QString aSource) const
+	{
+	if (iKoreanKeymap->IsLanguageSupported(aSource))
+		{
+		return iKoreanKeymap;
+		}
+	return NULL;
+	}
+
+// ----------------------------------------------------------------------------
 // C12keyKeyMap::SelectLanguages
 // In emulator (except in unit tests), select just the default language, as new
 // SDKs have over 40 languages, causing out of memory error.
@@ -272,18 +284,6 @@ TBool C12keyKeyMap::ShouldSkipChar(QChar aChar, TBool aSkipHashStar) const
 	{
 	return aSkipHashStar &&
 		   (aChar == KMappedCharForStar || aChar == KMappedCharForHash);
-	}
-
-// ----------------------------------------------------------------------------
-// C12keyKeyMap::CheckLanguage
-// ----------------------------------------------------------------------------
-MLanguageSpecificKeymap* C12keyKeyMap::CheckLanguage(QString aSource) const
-	{
-	if (iKoreanKeymap->IsLanguageSupported(aSource))
-		{
-		return iKoreanKeymap;
-		}
-	return NULL;
 	}
 
 // ----------------------------------------------------------------------------

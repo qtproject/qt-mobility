@@ -253,7 +253,7 @@ QSet<QOrganizerRecurrenceRule> OrganizerItemRecurrenceTransform::toItemRecurrenc
     if (calrrule.Count()) {
         rrule.setLimit(calrrule.Count());
     } else if (calrrule.Until().TimeUtcL() != Time::NullTTime()) {
-        rrule.setLimit(toQDateTimeL(calrrule.Until()).date());
+        rrule.setLimit(toQDateTimeL(calrrule.Until()).date().addDays(-1));
     }
 
     // Set the interval
@@ -330,7 +330,7 @@ TCalRRule OrganizerItemRecurrenceTransform::toCalRRuleL(QSet<QOrganizerRecurrenc
                 // End date before start date!
                 User::Leave(KErrArgument);
             }
-            calRule.SetUntil(toTCalTimeL(rrule.limitDate()));
+            calRule.SetUntil(toTCalTimeL(rrule.limitDate().addDays(1)));
         }
 
         // Set the interval. Values greater than 255 or less than 1 are

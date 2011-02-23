@@ -86,11 +86,51 @@ QList<KeyData> QCrmlParser::parseQCrml(const QString &filePath)
         }
     }
 
-    if (isStartElement()) {
-        if (name() == "repository") {
-            rv = parseRepository();
-        } else {
-            setError(ParseError, QObject::tr("root element is not a repository element"));
+    bool repVal = false;
+    bool multiRep = false;
+    //enter if the root element is repositories
+    if (isStartElement()  && name() == "repositories") {
+        repVal = true;
+        multiRep = true;
+    }
+
+    while (!atEnd()) {
+        //If the root is set to repository readNext() should not be called again as it returns characters
+        if (repVal) {
+            readNext();
+            if (QXmlStreamReader::error() != QXmlStreamReader::NoError) {
+                setError(ParseError, QXmlStreamReader::errorString());
+                rv.clear();
+                return rv;
+            }
+        }
+        if (isEndElement() && name() == "repositories") {
+            if (repVal)
+                break;
+            else {
+                setError(ParseError, QObject::tr("root startelement is set to a repositories but not the root endelement"));
+                break;
+            }
+        }
+        if (isStartElement()) {
+            if (name() == "repository") {
+                //now the readNext() needs to be called in order to read the next element
+                repVal = true;
+                rv.append(parseRepository());
+            }
+            else {
+                setError(ParseError, QObject::tr("root element is not a repository element"));
+                break;
+            }
+        }
+    }
+
+    //checks whether the endelement is repositories, only if the root is repositories
+    if (multiRep) {
+        if (!isEndElement() && name() != "repositories") {
+            setError(ParseError, QObject::tr("File did not end with a repositories end tag"));
+            rv.clear();
+            return rv;
         }
     }
     return rv;

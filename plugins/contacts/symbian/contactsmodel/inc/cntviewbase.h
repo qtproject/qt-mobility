@@ -80,7 +80,10 @@ enum TContactViewPreferences
 	EICCEntriesOnly					=0x00000040, 
 	/** Only contact cards and ICC entries (of type KUidContactCard, KUidContactOwnCard 
 	or KUidContactICCEntry) are included in the view. */
-	EICCEntriesAndContacts			=0x00000080  
+	EICCEntriesAndContacts			=0x00000080,
+	/** Only contact cards (of type KUidContactCard) are included 
+	in the view. Own card not included. */
+    EContactCardsOnly				=0x00000100
 	};
 
 

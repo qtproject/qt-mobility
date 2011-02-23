@@ -68,8 +68,8 @@ QtMessaging
 QtMultimediaKit
 ------
 
- - foo
-    * bar
+ - QGraphicsVideoItem
+    * Implemented support for rendering video on Symbian [QTMOBILITY-645]
 
 QtPublishSubscribe
 ------

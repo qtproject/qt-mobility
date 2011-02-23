@@ -447,7 +447,7 @@ TInt XAPlaySessionImpl::load(const TDesC& aURI)
     if(mbMetadataAvailable) {
         keyMap.clear();
         extendedKeyMap.clear();
-        setupMetaData(); //done everytime source is changed
+        setupMetaData(); //done every time source is changed
     }
     else { //send signal for seekable
         mParent.cbSeekableChanged(ETrue);

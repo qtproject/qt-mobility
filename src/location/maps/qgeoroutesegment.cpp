@@ -80,6 +80,9 @@ QGeoRouteSegment::QGeoRouteSegment()
 QGeoRouteSegment::QGeoRouteSegment(const QGeoRouteSegment &other)
     : d_ptr(other.d_ptr) {}
 
+/*!
+    \internal
+*/
 QGeoRouteSegment::QGeoRouteSegment(QExplicitlySharedDataPointer<QGeoRouteSegmentPrivate> &d_ptr)
     : d_ptr(d_ptr) {}
 
@@ -195,7 +198,7 @@ qreal QGeoRouteSegment::distance() const
     Sets the geometric shape of this segment of the route to \a path.
 
     The coordinates in \a path should be listed in the order in which they
-    would be traversed by someone travelling along this segment of the route.
+    would be traversed by someone traveling along this segment of the route.
 */
 void QGeoRouteSegment::setPath(const QList<QGeoCoordinate> &path)
 {
@@ -207,7 +210,7 @@ void QGeoRouteSegment::setPath(const QList<QGeoCoordinate> &path)
     Returns the geometric shape of this route segment of the route.
 
     The coordinates should be listed in the order in which they
-    would be traversed by someone travelling along this segment of the route.
+    would be traversed by someone traveling along this segment of the route.
 */
 
 QList<QGeoCoordinate> QGeoRouteSegment::path() const
@@ -239,7 +242,7 @@ QGeoManeuver QGeoRouteSegment::maneuver() const
 *******************************************************************************/
 
 QGeoRouteSegmentPrivate::QGeoRouteSegmentPrivate()
-    : valid(true),
+    : valid(false),
       travelTime(0),
       distance(0.0) {}
 

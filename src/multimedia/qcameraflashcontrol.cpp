@@ -47,7 +47,7 @@ QT_BEGIN_NAMESPACE
 /*!
     \class QCameraFlashControl
 
-    \preliminary
+    
     \brief The QCameraFlashControl class supplies a camera flash control.
 
     \ingroup camera

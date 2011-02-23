@@ -317,6 +317,7 @@ private:
     QList<MessageEvent> iUndeliveredMessageEvents;
     RTimer              iTimer; // Timer used for delaying delivering of received
                                 // messages until messages are ready to be read
+    QMap<TMsvId, TMsvSessionEvent>  iMessagesInPreparation;
     TMsvId iMessageId;
     bool iNewMessage;
     

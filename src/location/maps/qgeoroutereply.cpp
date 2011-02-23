@@ -58,7 +58,7 @@ QTM_BEGIN_NAMESPACE
     operations.
 
     The isFinished(), error() and errorString() methods provide information
-    on whether the operation has completed and if it completed succesfully.
+    on whether the operation has completed and if it completed successfully.
 
     The finished() and error(QGeoRouteReply::Error,QString)
     signals can be used to monitor the progress of the operation.
@@ -126,7 +126,7 @@ QGeoRouteReply::~QGeoRouteReply()
     emitted.
 
     If the operation completed successfully, QGeoRouteReply::setRoutes() should
-    be called before this function. If an error occured,
+    be called before this function. If an error occurred,
     QGeoRouteReply::setError() should be used instead.
 */
 void QGeoRouteReply::setFinished(bool finished)

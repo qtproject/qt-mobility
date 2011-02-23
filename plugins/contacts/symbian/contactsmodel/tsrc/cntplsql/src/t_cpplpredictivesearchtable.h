@@ -91,6 +91,8 @@ NONSHARABLE_CLASS( UT_CPplPredictiveSearchTable ): public CEUnitTestSuiteClass
 		void UT_WriteToDbL();
 		void UT_ConvertToHexL();
 		void UT_HbKeymapFactoryApiL();
+		void UT_GetFieldsLCL();
+		void UT_ReadSettingL();
         
     private: // New functions
 
@@ -114,6 +116,10 @@ NONSHARABLE_CLASS( UT_CPplPredictiveSearchTable ): public CEUnitTestSuiteClass
         void AddContactL(const TDesC& aFirstName,
                          const TDesC& aLastName,
                          TContactItemId aContactId);
+        
+        CContactItem* CreateContactLC(const TDesC& aFirstName,
+                                      const TDesC& aLastName,
+                                      TContactItemId aContactId) const;
         
         /**
          * Searches the table for matches, and returns an array containing

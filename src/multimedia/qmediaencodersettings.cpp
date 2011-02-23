@@ -82,7 +82,7 @@ private:
 
 /*!
     \class QAudioEncoderSettings
-    \preliminary
+    
     \brief The QAudioEncoderSettings class provides a set of audio encoder settings.
 
     \inmodule QtMultimediaKit
@@ -347,7 +347,7 @@ private:
 
 /*!
     \class QVideoEncoderSettings
-    \preliminary
+    
     \brief The QVideoEncoderSettings class provides a set of video encoder settings.
 
     A video encoder settings object is used to specify the video encoder
@@ -620,7 +620,7 @@ private:
 
 /*!
     \class QImageEncoderSettings
-    \preliminary
+    
 
     \brief The QImageEncoderSettings class provides a set of image encoder
     settings.

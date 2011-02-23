@@ -86,7 +86,16 @@ void tst_QDocumentGallery::itemTypeProperties_data()
     QTest::newRow("non-existent item type") << QString::fromLatin1("Hello") << QStringList();
 
     const QStringList fileProperties = QStringList()
-#if defined(Q_OS_UNIX) && !defined(QT_NO_DBUS)
+#if defined(Q_WS_MAEMO_6)
+            << QDocumentGallery::copyright
+            << QDocumentGallery::fileName
+            << QDocumentGallery::filePath
+            << QDocumentGallery::fileSize
+            << QDocumentGallery::lastAccessed
+            << QDocumentGallery::lastModified
+            << QDocumentGallery::mimeType
+            << QDocumentGallery::url;
+#elif defined(Q_OS_UNIX) && !defined(QT_NO_DBUS)
             << QDocumentGallery::copyright
             << QDocumentGallery::fileName
             << QDocumentGallery::path
@@ -113,7 +122,12 @@ void tst_QDocumentGallery::itemTypeProperties_data()
 #endif
             ;
     QTest::newRow("File") << QString(QDocumentGallery::File) << (QStringList(fileProperties)
-#if defined(Q_OS_UNIX) && !defined(QT_NO_DBUS)
+#if defined(Q_WS_MAEMO_6)
+            << QDocumentGallery::description
+            << QDocumentGallery::keywords
+            << QDocumentGallery::subject
+            << QDocumentGallery::title
+#elif defined(Q_OS_UNIX) && !defined(QT_NO_DBUS)
             << QDocumentGallery::author
             << QDocumentGallery::description
             << QDocumentGallery::keywords
@@ -132,16 +146,18 @@ void tst_QDocumentGallery::itemTypeProperties_data()
             << QDocumentGallery::audioCodec
             << QDocumentGallery::channelCount
             << QDocumentGallery::description
-            << QDocumentGallery::discNumber
             << QDocumentGallery::duration
             << QDocumentGallery::genre
-            << QDocumentGallery::lastPlayed
             << QDocumentGallery::lyrics
-            << QDocumentGallery::performer
             << QDocumentGallery::playCount
             << QDocumentGallery::sampleRate
             << QDocumentGallery::title
             << QDocumentGallery::trackNumber
+#if !defined(Q_WS_MAEMO_6)
+            << QDocumentGallery::discNumber
+            << QDocumentGallery::lastPlayed
+            << QDocumentGallery::performer
+#endif
 #elif defined (Q_OS_SYMBIAN)
             << QDocumentGallery::duration
             << QDocumentGallery::performer
@@ -172,6 +188,9 @@ void tst_QDocumentGallery::itemTypeProperties_data()
 #if defined(Q_OS_UNIX) && !defined(QT_NO_DBUS)
                 << QDocumentGallery::title
                 << QDocumentGallery::trackCount
+#if defined (Q_WS_MAEMO_6)
+                << QDocumentGallery::count
+#endif
 #elif defined (Q_OS_SYMBIAN)
                 << QDocumentGallery::url
                 << QDocumentGallery::fileSize
@@ -290,17 +309,14 @@ void tst_QDocumentGallery::propertyAttributes_data()
     QTest::newRow("Album.duration")
             << QString(QDocumentGallery::Album)
             << QString(QDocumentGallery::duration)
-#if defined(Q_OS_UNIX) && !defined(QT_NO_DBUS)
+#if defined(Q_WS_MAEMO_6)
+            << (QGalleryProperty::CanRead
+                    | QGalleryProperty::CanFilter
+                    | QGalleryProperty::CanSort);
+#elif defined(Q_OS_UNIX) && !defined(QT_NO_DBUS)
             << QGalleryProperty::Attributes(QGalleryProperty::CanRead);
 #else
-#ifdef Q_OS_SYMBIAN
             << QGalleryProperty::Attributes();
-#else
-            << (QGalleryProperty::CanRead
-                | QGalleryProperty::CanWrite
-                | QGalleryProperty::CanFilter
-                | QGalleryProperty::CanSort);
-#endif        
 #endif
 }
 

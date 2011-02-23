@@ -61,6 +61,7 @@ class Q_ORGANIZER_EXPORT QOrganizerItemFetchRequest : public QOrganizerAbstractR
 
 public:
     QOrganizerItemFetchRequest(QObject* parent = 0);
+    ~QOrganizerItemFetchRequest();
 
     /* Selection, restriction and sorting */
     void setFilter(const QOrganizerItemFilter& filter);
@@ -68,11 +69,13 @@ public:
     void setFetchHint(const QOrganizerItemFetchHint& fetchHint);
     void setStartDate(const QDateTime& date);
     void setEndDate(const QDateTime& date);
+    void setMaxCount(int maxCount);
     QOrganizerItemFilter filter() const;
     QList<QOrganizerItemSortOrder> sorting() const;
     QOrganizerItemFetchHint fetchHint() const;
     QDateTime startDate() const;
     QDateTime endDate() const;
+    int maxCount() const;
 
     /* Results */
     QList<QOrganizerItem> items() const;

@@ -1684,36 +1684,40 @@ TBool CIdleContactSorter::InsertViewPreferences(TContactViewPreferences &aInsert
 	}
 
 TBool CContactLocalView::ContactCorrectType(TUid aType,TContactViewPreferences aTypeToInclude)
-	{
-	TBool correctType(EFalse);
-	if (aType==KUidContactCard || aType==KUidContactOwnCard)
-		{
-		// Ignore Unsorted Contacts flags & White Space flag
-		// catch non- contact views
-		// Should be EContactsOnly, EContactAndGroups & EICCEntriesAndContacts
-		if (0 == ((aTypeToInclude & ~(ESingleWhiteSpaceIsEmptyField | EIgnoreUnSorted | EUnSortedAtBeginning | EUnSortedAtEnd))
-				& (EGroupsOnly | EICCEntriesOnly))) // Ignore 'UnSorted' flags, exclude Groups Only & ICC Only 
-			{
-			correctType = ETrue;
-			}
-		}
+    {
+    TBool correctType = EFalse;
+
+    if (aType == KUidContactCard)
+        {
+        if (!(aTypeToInclude & (EGroupsOnly | EICCEntriesOnly)))
+            {
+            correctType = ETrue;
+            }
+        }
+    else if (aType == KUidContactOwnCard)
+        {
+        if (!(aTypeToInclude & (EGroupsOnly | EICCEntriesOnly | EContactCardsOnly)))
+            {
+            correctType = ETrue;
+            }
+        }
 	else if (aType==KUidContactGroup)
 		{
-		if (aTypeToInclude & (EGroupsOnly | EContactAndGroups))
-			{
-			correctType = ETrue;
-			}
-		}
+        if (aTypeToInclude & (EGroupsOnly | EContactAndGroups))
+            {
+            correctType = ETrue;
+            }
+        }
 	else if (aType == KUidContactICCEntry)
-		{
-		if (aTypeToInclude & (EICCEntriesOnly | EICCEntriesAndContacts))
-			{
-			correctType = ETrue;
-			}
-		}
-	return correctType;
-	}
+        {
+        if (aTypeToInclude & (EICCEntriesOnly | EICCEntriesAndContacts))
+            {
+            correctType = ETrue;
+            }
+        }
 
+    return correctType;
+    }
 
 void CIdleContactSorter::ContactPhbkSyncEventHandler(TPhonebookState aPhbkState)
 	{

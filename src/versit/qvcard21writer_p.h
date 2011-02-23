@@ -65,10 +65,14 @@ public:
     ~QVCard21Writer();
 
     void encodeVersitProperty(const QVersitProperty& property);
-    bool encodeVersitValue(QMultiHash<QString,QString>& parameters, QString& value);
+    void encodeVersitValue(QMultiHash<QString,QString>& parameters, QString& value);
     void encodeParameters(const QMultiHash<QString,QString>& parameters);
-    bool quotedPrintableEncode(QString& text) const;
-    bool shouldBeQuotedPrintableEncoded(QChar chr) const;
+    static bool containsNonAscii(const QString& str);
+    static bool quotedPrintableEncode(QString& text);
+    static bool shouldBeQuotedPrintableEncoded(QChar chr);
+
+private:
+    static QTextEncoder* utf8Encoder();
 };
 
 QTM_END_NAMESPACE

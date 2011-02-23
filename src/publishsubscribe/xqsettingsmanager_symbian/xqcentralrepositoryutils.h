@@ -54,8 +54,8 @@
 //
 
 #include <QObject>
-#include "xqsettingskey.h"
-#include "settingsmanager_global.h"
+#include "xqsettingskey_p.h"
+#include "settingsmanager_global_p.h"
 
 class XQSettingsManager;
 class XQCentralRepositoryUtilsPrivate;

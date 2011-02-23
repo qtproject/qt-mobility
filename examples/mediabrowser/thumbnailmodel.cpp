@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the examples of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:BSD$
 ** You may use this file under the terms of the BSD license as follows:
@@ -40,11 +40,8 @@
 
 #include "thumbnailmodel.h"
 
-#include <QtCore/qcryptographichash.h>
-#include <QtCore/qdir.h>
-#include <QtCore/qtconcurrentrun.h>
 #include <QtCore/qurl.h>
-#include <QtGui/qimagereader.h>
+#include <QtGui/qpixmap.h>
 
 #if defined(Q_WS_MAEMO_5)
 const QSize ThumbnailModel::thumbnailSize(124, 124);
@@ -55,99 +52,26 @@ const QSize ThumbnailModel::thumbnailSize(128, 128);
 ThumbnailModel::ThumbnailModel(QAbstractGallery *gallery, QObject *parent)
     : QGalleryQueryModel(gallery, parent)
 {
+    connect(&cache, SIGNAL(thumbnailReady()), this, SLOT(thumbnailLoaded()));
 }
 
 ThumbnailModel::~ThumbnailModel()
 {
 }
 
-#ifndef QT_NO_QFUTURE
-
 QVariant ThumbnailModel::data(const QModelIndex &index, int role) const
 {
-    if (role == Qt::DecorationRole && index.isValid()) {
-        QString id = itemId(index).toString();
-
-        QFutureWatcher<QImage> *future = cache.object(id);
-
-        if (!future) {
-            future = new QFutureWatcher<QImage>;
-
-            QString path = imagePath(index);
-
-            if (!path.isEmpty()) {
-                future->setFuture(QtConcurrent::run(ThumbnailModel::load, path));
-
-                connect(future, SIGNAL(finished()), this, SLOT(thumbnailLoaded()));
-            }
-
-            cache.insert(id, future);
-        }
-
-        return !future->isCanceled()
-                ? future->result()
-                : QVariant();
-    } else {
-        return QGalleryQueryModel::data(index, role);
-    }
+    return role == Qt::DecorationRole && index.isValid()
+            ? cache.thumbnail(imageUrl(index))
+            : QGalleryQueryModel::data(index, role);
 }
 
-QString ThumbnailModel::imagePath(const QModelIndex &index) const
+QUrl ThumbnailModel::imageUrl(const QModelIndex &index) const
 {
-    QUrl url = itemUrl(index);
-
-    return url.isValid() ? thumbnailPath(url) : QString();
-}
-
-QString ThumbnailModel::thumbnailPath(const QUrl &url) const
-{
-#if defined(Q_OS_UNIX) && !(defined(Q_OS_SYMBIAN) || defined(Q_OS_MAC))
-#if defined(Q_WS_MAEMO_5)
-    QString thumbnailPath = QDir::homePath()
-            + QLatin1String("/.thumbnails/cropped/")
-            + QCryptographicHash::hash(url.toString().toUtf8(), QCryptographicHash::Md5).toHex()
-            + QLatin1String(".jpeg");
-#else
-    QString thumbnailPath = QDir::homePath()
-            + QLatin1String("/.thumbnails/normal/")
-            + QCryptographicHash::hash(url.toEncoded(), QCryptographicHash::Md5).toHex()
-            + QLatin1String(".png");
-#endif
-    if (QFile::exists(thumbnailPath))
-        return thumbnailPath;
-#endif
-
-    return url.path();
+    return itemUrl(index);
 }
 
 void ThumbnailModel::thumbnailLoaded()
 {
     emit dataChanged(index(0, 0), index(rowCount() - 1, columnCount() -1));
 }
-
-QImage ThumbnailModel::load(const QString &fileName)
-{
-    QImageReader reader(fileName);
-    reader.setQuality(25);
-
-    if (reader.supportsOption(QImageIOHandler::Size)) {
-        QSize size = reader.size();
-
-        if (!reader.supportsOption(QImageIOHandler::ScaledSize)
-                && (size.width() > 1280 || size.height() > 1280)) {
-            return QImage();
-        }
-
-        if (size.width() > thumbnailSize.width() || size.height() > thumbnailSize.height())
-            size.scale(thumbnailSize, Qt::KeepAspectRatio);
-
-        reader.setScaledSize(size);
-    } else {
-        reader.setScaledSize(thumbnailSize);
-    }
-
-    return reader.read();
-}
-
-#endif
-

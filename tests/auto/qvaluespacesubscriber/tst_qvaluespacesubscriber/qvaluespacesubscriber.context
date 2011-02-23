@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<provider bus="session" service="com.nokia.qt.tests.qvaluespacesubscriber">
+<key name="/home/user/bool" />
+<key name="/home/user/int" />
+<key name="/home/user/QString" />
+<key name="/home/user/QStringList" />
+<key name="/home/user/qint64" />
+<key name="/home/user/QByteArray" />
+<key name="/home/user/double" />
+<key name="/home/user/float" />
+<key name="/home/user/QChar" />
+<key name="/home/usercount" />
+<key name="/layer/name" />
+<key name="/layer/id" />
+<key name="/layer/options" />
+<key name="/usr/alex/busy" />
+<key name="/usr/lorn/busy" />
+<key name="/threads/value" />
+<key name="/home/user" />
+
+<key name="/usr/data/Int" />
+<key name="/usr/data/Bool" />
+<key name="/usr/data/UInt" />
+<key name="/usr/data/LongLong" />
+<key name="/usr/data/ULongLong" />
+<key name="/usr/data/Double" />
+<key name="/usr/data/Char" />
+<key name="/usr/data/QString" />
+<key name="/usr/data/QByteArray" />
+<key name="/usr/data/QStringList" />
+<key name="/usr/data/QRect" />
+<key name="/usr/data/QDateTime" />
+</provider>

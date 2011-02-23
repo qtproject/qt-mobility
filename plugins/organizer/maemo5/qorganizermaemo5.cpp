@@ -251,7 +251,8 @@ QOrganizerItemMaemo5Engine::QOrganizerItemMaemo5Engine()
     QString dbPath = QDir::homePath().append(CALENDAR).append(CALENDARDB);
     QFileSystemWatcher *databaseMonitor = new QFileSystemWatcher(this);
     databaseMonitor->addPath(dbPath);
-    connect(databaseMonitor, SIGNAL(fileChanged(const QString &)), this, SLOT(dataChanged()));
+    connect(databaseMonitor, SIGNAL(fileChanged(QString)), this, SLOT(databaseChanged()));
+    connect(&m_waitTimer, SIGNAL(timeout()), this, SIGNAL(dataChanged()));
 
     d->m_itemTransformer.setManagerUri(managerUri());
     d->m_asynchProcess = new OrganizerAsynchProcess(this);
@@ -262,21 +263,22 @@ QOrganizerItemMaemo5Engine::QOrganizerItemMaemo5Engine()
 
     bool dbOk = d->m_dbAccess->open(QDir::homePath().append(CALENDAR).append(CALENDARDB));
     if (!dbOk) {
-        qDebug() << "Database didn't open!";
-        // TODO: Then what? Constructor has no error status. Throw an exception?
+        qWarning() << "QOrganizerItemMaemo5Engine: error: unable to open database; instance will be invalid.";
     }
 }
 
-void QOrganizerItemMaemo5Engine::dataChanged()
+void QOrganizerItemMaemo5Engine::databaseChanged()
 {
     // Timer prevents from sending multiple signals
     // when database is changed during short period of time
-    if (!m_waitTimer.isActive()) {
-        m_waitTimer.setSingleShot(true);
-        m_waitTimer.setInterval(50);
-        m_waitTimer.start();
-        emit dataChanged();
+    if (m_waitTimer.isActive()) {
+        // we need to reset the timer.
+        m_waitTimer.stop();
     }
+
+    m_waitTimer.setSingleShot(true);
+    m_waitTimer.setInterval(50);
+    m_waitTimer.start();
 }
 
 QOrganizerItemMaemo5Engine::~QOrganizerItemMaemo5Engine()
@@ -1807,7 +1809,7 @@ QOrganizerItem QOrganizerItemMaemo5Engine::parentOf(CCalendar *cal, QOrganizerIt
                             QList<QOrganizerItem> parentCandidateOccurrences =
                                     internalItemOccurrences(*parentCandidateEvent, periodStart, periodEnd, 0, error);
                             if (*error != QOrganizerManager::NoError)
-                                return QOrganizerItem(); // error occured
+                                return QOrganizerItem(); // error occurred
 
                             // Because the period was set, it's enough to just check if we got any
                             if (!parentCandidateOccurrences.isEmpty()) {

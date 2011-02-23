@@ -51,7 +51,7 @@ QT_BEGIN_NAMESPACE
     \inmodule QtMultimediaKit
     \ingroup multimedia
 
-    \preliminary
+    
 
     QAudioCaptureSource provides access to the audio inputs available on your system.
 

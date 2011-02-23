@@ -47,6 +47,12 @@ private slots: //test methods
 
     void testCreateInputSpecificSearch();     
     void testGetSQLQueryType();
+    void testBasicKoreanSearch();
+    void testCompareColumnsInOrder();
+    void testCompareColumnsFromMidleInOrder();
+    void testGetSearchColumns();
+    void testGetSearchPattern();
+    void testVariationRemoval();
     
 private:
  

@@ -393,6 +393,7 @@ void tst_QDeclarativeVideo::playing()
     QDeclarativeVideo video;
     video.classBegin();
     video.componentComplete();
+    video.setSource(QUrl("http://example.com"));
 
     QSignalSpy playingChangedSpy(&video, SIGNAL(playingChanged()));
     QSignalSpy startedSpy(&video, SIGNAL(started()));
@@ -482,6 +483,7 @@ void tst_QDeclarativeVideo::paused()
     QDeclarativeVideo video;
     video.classBegin();
     video.componentComplete();
+    video.setSource(QUrl("http://example.com"));
 
     QSignalSpy playingChangedSpy(&video, SIGNAL(playingChanged()));
     QSignalSpy pausedChangedSpy(&video, SIGNAL(pausedChanged()));

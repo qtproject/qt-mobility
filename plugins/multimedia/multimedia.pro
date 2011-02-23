@@ -18,6 +18,8 @@ win32:!wince*:!simulator {
     contains(directshow_enabled, yes): SUBDIRS += directshow
 }
 
+simulator: SUBDIRS += simulator
+
 unix:!mac:!symbian {
     TMP_GST_LIBS = \
         gstreamer-0.10 >= 0.10.19 \
@@ -31,10 +33,15 @@ unix:!mac:!symbian {
     } else {
         SUBDIRS += audiocapture
     }
-    SUBDIRS += v4l
+
+    !maemo*:SUBDIRS += v4l
+
+    contains(pulseaudio_enabled, yes) {
+        SUBDIRS += pulseaudio
+    }
 }
 
-mac {
+mac:!simulator {
     SUBDIRS += audiocapture qt7
 }
 

@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include <qmobilityglobal.h>
+#include <QTimer>
 #include "instancemanager_p.h"
 #include "qremoteserviceregisterentry_p.h"
 
@@ -69,12 +70,12 @@ InstanceManager::~InstanceManager()
         ServiceIdentDescriptor descr = metaMap.take(allEntries.takeFirst());
         if (descr.entryData->instanceType == QRemoteServiceRegister::GlobalInstance) {
             if (descr.globalInstance)
-               descr.globalInstance->deleteLater();
+               QTimer::singleShot(0, descr.globalInstance, SLOT(deleteLater())); // Symbian issue, use timer
             descr.globalInstance = 0;
         } else {
             QList<QUuid> allUuids = descr.individualInstances.keys();
             while (!allUuids.isEmpty()) {
-                descr.individualInstances.take(allUuids.takeFirst())->deleteLater();
+                QTimer::singleShot(0, descr.individualInstances.take(allUuids.takeFirst()), SLOT(deleteLater())); // Symbian issue
             }
         }
     }
@@ -192,7 +193,7 @@ void InstanceManager::removeObjectInstance(const QRemoteServiceRegister::Entry& 
 
         if (descr.globalRefCount == 1) {            
             if (descr.globalInstance)
-                descr.globalInstance->deleteLater();
+                QTimer::singleShot(0, descr.globalInstance, SLOT(deleteLater()));
             descr.globalInstance = 0;
             descr.globalId = QUuid();
             descr.globalRefCount = 0;
@@ -204,7 +205,7 @@ void InstanceManager::removeObjectInstance(const QRemoteServiceRegister::Entry& 
     } else {
         QObject* service = descr.individualInstances.take(instanceId);
         if (service) {
-            service->deleteLater();
+            QTimer::singleShot(0, service, SLOT(deleteLater())); // symbian issue
             emit instanceClosed(entry);
             emit instanceClosed(entry, instanceId);    //internal use
         }

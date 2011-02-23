@@ -80,6 +80,9 @@ public:
     bool show(const QMessageId &id);
     bool exportUpdates(const QMessageAccountId &id);
 
+    bool moveMessages(const QMessageIdList &messageIds, const QMessageFolderId &toFolderId);
+    bool synchronize(const QMessageAccountId &id);
+
     State state() const;
     QMessageManager::Error error() const;
 

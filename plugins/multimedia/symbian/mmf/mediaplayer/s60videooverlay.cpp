@@ -42,30 +42,36 @@
 #include "qvideosurfaceformat.h"
 #include "s60videooverlay.h"
 #include "s60videosurface.h"
+#include <coecntrl.h>
+#include <w32std.h>
+#include <QEvent>
 
 S60VideoOverlay::S60VideoOverlay(QObject *parent)
     : QVideoWindowControl(parent)
-    , m_surface(new S60VideoSurface)
+    , m_winId(0)
     , m_aspectRatioMode(Qt::KeepAspectRatio)
     , m_fullScreen(false)
 {
-    connect(m_surface, SIGNAL(surfaceFormatChanged(QVideoSurfaceFormat)),
-            this, SLOT(surfaceFormatChanged()));
+    setProperty("colorKey", Qt::transparent);
 }
 
 S60VideoOverlay::~S60VideoOverlay()
 {
-    delete m_surface;
+    m_winId = 0;
+    emit windowHandleChanged();
 }
 
 WId S60VideoOverlay::winId() const
 {
-    return m_surface->winId();
+    return m_winId;
 }
 
 void S60VideoOverlay::setWinId(WId id)
 {
-    m_surface->setWinId(id);
+    if (id != m_winId) {
+        m_winId = id;
+        emit windowHandleChanged();
+    }
 }
 
 QRect S60VideoOverlay::displayRect() const
@@ -75,9 +81,10 @@ QRect S60VideoOverlay::displayRect() const
 
 void S60VideoOverlay::setDisplayRect(const QRect &rect)
 {
-    m_displayRect = rect;
-
-    setScaledDisplayRect();
+    if (rect != m_displayRect) {
+        m_displayRect = rect;
+        emit displayRectChanged();
+    }
 }
 
 Qt::AspectRatioMode S60VideoOverlay::aspectRatioMode() const
@@ -87,9 +94,10 @@ Qt::AspectRatioMode S60VideoOverlay::aspectRatioMode() const
 
 void S60VideoOverlay::setAspectRatioMode(Qt::AspectRatioMode ratio)
 {
-    m_aspectRatioMode = ratio;
-
-    setScaledDisplayRect();
+    if (aspectRatioMode() != ratio) {
+        m_aspectRatioMode = ratio;
+        emit aspectRatioChanged();
+    }
 }
 
 QSize S60VideoOverlay::customAspectRatio() const
@@ -99,61 +107,55 @@ QSize S60VideoOverlay::customAspectRatio() const
 
 void S60VideoOverlay::setCustomAspectRatio(const QSize &customRatio)
 {
-    m_aspectRatio = customRatio;
-
-    setScaledDisplayRect();
+    if (customAspectRatio() != customRatio) {
+        m_aspectRatio = customRatio;
+        emit aspectRatioChanged();
+    }
 }
 
 void S60VideoOverlay::repaint()
 {
+
 }
 
 int S60VideoOverlay::brightness() const
 {
-    return m_surface->brightness();
+    return 0;
 }
 
 void S60VideoOverlay::setBrightness(int brightness)
 {
-    m_surface->setBrightness(brightness);
-
-    emit brightnessChanged(m_surface->brightness());
+    Q_UNUSED(brightness)
 }
 
 int S60VideoOverlay::contrast() const
 {
-    return m_surface->contrast();
+    return 0;
 }
 
 void S60VideoOverlay::setContrast(int contrast)
 {
-    m_surface->setContrast(contrast);
-
-    emit contrastChanged(m_surface->contrast());
+    Q_UNUSED(contrast)
 }
 
 int S60VideoOverlay::hue() const
 {
-    return m_surface->hue();
+    return 0;
 }
 
 void S60VideoOverlay::setHue(int hue)
 {
-    m_surface->setHue(hue);
-
-    emit hueChanged(m_surface->hue());
+    Q_UNUSED(hue)
 }
 
 int S60VideoOverlay::saturation() const
 {
-    return m_surface->saturation();
+    return 0;
 }
 
 void S60VideoOverlay::setSaturation(int saturation)
 {
-    m_surface->setSaturation(saturation);
-
-    emit saturationChanged(m_surface->saturation());
+    Q_UNUSED(saturation)
 }
 
 bool S60VideoOverlay::isFullScreen() const
@@ -168,38 +170,34 @@ void S60VideoOverlay::setFullScreen(bool fullScreen)
 
 QSize S60VideoOverlay::nativeSize() const
 {
-    return m_surface->surfaceFormat().sizeHint();
+    return QSize();
 }
 
-QAbstractVideoSurface *S60VideoOverlay::surface() const
+WId S60VideoOverlay::videoWinId() const
 {
-    return m_surface;
+    return winId();
 }
 
-void S60VideoOverlay::surfaceFormatChanged()
+QRect S60VideoOverlay::videoDisplayRect() const
 {
-    setScaledDisplayRect();
-
-    emit nativeSizeChanged();
+    QRect rect = displayRect();
+#ifndef MMF_VIDEO_SURFACES_SUPPORTED
+    if (m_winId) {
+        // Translate rect into screen coordinates
+        RWindow *window = static_cast<RWindow *>(m_winId->DrawableWindow());
+        const TPoint windowPos = window->AbsPosition();
+        rect.translate(windowPos.iX, windowPos.iY);
+    }
+#endif
+    return rect;
 }
 
-void S60VideoOverlay::setScaledDisplayRect()
+Qt::AspectRatioMode S60VideoOverlay::videoAspectRatio() const
 {
-    switch (m_aspectRatioMode) {
-    case Qt::KeepAspectRatio:
-        {
-            QSize size = m_surface->surfaceFormat().viewport().size();
+    return aspectRatioMode();
+}
 
-            size.scale(m_displayRect.size(), Qt::KeepAspectRatio);
-
-            QRect rect(QPoint(0, 0), size);
-            rect.moveCenter(m_displayRect.center());
-
-            m_surface->setDisplayRect(rect);
-        }
-        break;
-    case Qt::IgnoreAspectRatio:
-        m_surface->setDisplayRect(m_displayRect);
-        break;
-    };
+void S60VideoOverlay::videoStateChanged(QMediaPlayer::State state)
+{
+    Q_UNUSED(state)
 }

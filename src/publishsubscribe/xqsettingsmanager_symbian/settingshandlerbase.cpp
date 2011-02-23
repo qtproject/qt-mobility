@@ -39,9 +39,9 @@
 **
 ****************************************************************************/
 
-#include "settingshandlerbase.h"
+#include "settingshandlerbase_p.h"
 
-#include "xqsettingskey.h"
+#include "xqsettingskey_p.h"
 
 QVariant SettingsHandlerBase::handleReadItemValue(const XQSettingsKey& key, XQSettingsManager::Type type, TInt& error)
 {

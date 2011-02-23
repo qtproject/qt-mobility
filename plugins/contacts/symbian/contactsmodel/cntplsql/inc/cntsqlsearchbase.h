@@ -29,7 +29,7 @@ public:
     
     CntSqlSearchBase(){};
     
-    CntSqlSearchBase(C12keyKeyMap* twelveKeyKeyMap);
+    CntSqlSearchBase(const C12keyKeyMap* twelveKeyKeyMap);
     
     ~CntSqlSearchBase();
     
@@ -49,9 +49,9 @@ protected:
     
     QString selectTable(const QString &pattern) const;
     
-private:
-    
     const C12keyKeyMap* mTwelveKeyMap;
+    
+private:
     
     friend class UT_CntSqlSearchBase;
         

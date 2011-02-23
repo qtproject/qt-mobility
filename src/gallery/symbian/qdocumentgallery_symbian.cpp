@@ -54,6 +54,7 @@
 #include "qmdegallerytyperesultset_p.h"
 #include "qmdegalleryitemresultset_p.h"
 #include "qmdegalleryqueryresultset_p.h"
+#include "qmdegallerycategoryresultset_p.h"
 #include "qmdesession_p.h"
 
 QTM_BEGIN_NAMESPACE
@@ -79,15 +80,44 @@ QGalleryAbstractResponse* QDocumentGalleryPrivate::createTypeResponse(QGalleryTy
 QGalleryAbstractResponse* QDocumentGalleryPrivate::createItemResponse(QGalleryItemRequest *request)
 {
     // Fill up response class with with request data (create proper query)
-    QMDEGalleryItemResultSet *response = new QMDEGalleryItemResultSet(m_session, request);
-    return response;
+    if (request->itemId().type() == QVariant::String) {
+        const QString itemType = QMDEGalleryCategoryResultSet::itemIdType(
+                request->itemId().toString());
+
+        QMDEGalleryCategoryResultSet *response = new QMDEGalleryCategoryResultSet(
+                m_session,
+                itemType,
+                request->propertyNames(),
+                QStringList(),
+                request->itemId(),
+                QGalleryFilter(),
+                0,
+                0);
+        return response;
+    } else {
+        QMDEGalleryItemResultSet *response = new QMDEGalleryItemResultSet(m_session, request);
+        return response;
+    }
 }
 
 QGalleryAbstractResponse* QDocumentGalleryPrivate::createQueryResponse(QGalleryQueryRequest *request)
 {
     // Fill up response class with with request data (create proper query)
-    QMDEGalleryQueryResultSet *response = new QMDEGalleryQueryResultSet(m_session, request);
-    return response;
+    if (QMDEGalleryCategoryResultSet::isCategoryType(request->rootType())) {
+        QMDEGalleryCategoryResultSet *response = new QMDEGalleryCategoryResultSet(
+                m_session,
+                request->rootType(),
+                request->propertyNames(),
+                request->sortPropertyNames(),
+                request->rootItem(),
+                request->filter(),
+                request->offset(),
+                request->limit());
+        return response;
+    } else {
+        QMDEGalleryQueryResultSet *response = new QMDEGalleryQueryResultSet(m_session, request);
+        return response;
+    }
 }
 
 QDocumentGallery::QDocumentGallery(QObject *parent)

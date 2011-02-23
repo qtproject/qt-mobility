@@ -58,6 +58,7 @@ class Q_ORGANIZER_EXPORT QOrganizerCollectionRemoveRequest : public QOrganizerAb
 
 public:
     QOrganizerCollectionRemoveRequest(QObject* parent = 0);
+    ~QOrganizerCollectionRemoveRequest();
 
     /* Selection */
     void setCollectionId(const QOrganizerCollectionId& collectionId);

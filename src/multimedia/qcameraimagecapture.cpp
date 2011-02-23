@@ -59,7 +59,7 @@ QT_BEGIN_NAMESPACE
     \inmodule QtMultimediaKit
     \ingroup multimedia
 
-    \preliminary
+    
     \brief The QCameraImageCapture class is used for the recording of media content.
 
     The QCameraImageCapture class is a high level images recording class.
@@ -469,20 +469,20 @@ void QCameraImageCapture::cancelCapture()
 /*!
     \fn QCameraImageCapture::imageExposed(int id)
 
-    Signal emited when the frame with request \a id was exposed.
+    Signal emitted when the frame with request \a id was exposed.
 */
 
 /*!
     \fn QCameraImageCapture::imageCaptured(int id, const QImage &preview);
 
-    Signal emited when the frame with request \a id was captured, but not processed and saved yet.
+    Signal emitted when the frame with request \a id was captured, but not processed and saved yet.
     Frame \a preview can be displayed to user.
 */
 
 /*!
     \fn QCameraImageCapture::imageSaved(int id, const QString &fileName)
 
-    Signal emited when the frame with request \a id was saved to \a fileName.
+    Signal emitted when the frame with request \a id was saved to \a fileName.
 */
 
 

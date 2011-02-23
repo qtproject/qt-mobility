@@ -82,6 +82,12 @@ public:
 
     ~QOrganizerItemData() {}
 
+    void removeOnly(const QString& definitionName);
+    void removeOnly(const QSet<QString>& definitionNames);
+
+    // Trampoline
+    static QSharedDataPointer<QOrganizerItemData>& itemData(QOrganizerItem& item) {return item.d;}
+
     QOrganizerItemId m_id;
     QOrganizerCollectionId m_collectionId;
     QList<QOrganizerItemDetail> m_details;

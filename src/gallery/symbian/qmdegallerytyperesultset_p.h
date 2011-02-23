@@ -57,41 +57,48 @@
 
 #include "qmdegalleryresultset_p.h"
 
+#include <mdequery.h>
+
 QTM_BEGIN_NAMESPACE
 
 class QGalleryTypeRequest;
 
-class QMDEGalleryTypeResultSet : public QMDEGalleryResultSet
+class QMDEGalleryTypeResultSet : public QGalleryResultSet, public MMdEQueryObserver
 {
     Q_OBJECT
 public:
-    QMDEGalleryTypeResultSet(QMdeSession *session, QObject *parent = 0);
+    QMDEGalleryTypeResultSet(QMdeSession *session, QGalleryTypeRequest *request);
     ~QMDEGalleryTypeResultSet();
 
-    void createQuery();
+    int propertyKey(const QString &property) const;
+    QGalleryProperty::Attributes propertyAttributes(int key) const;
+    QVariant::Type propertyType(int key) const;
 
-public: // from QGalleryResultSet
+    int itemCount() const;
 
-    virtual int itemCount() const;
+    bool isValid() const;
 
-    virtual QVariant itemId() const;
-    virtual QUrl itemUrl() const;
+    QVariant itemId() const;
+    QUrl itemUrl() const;
+    QString itemType() const;
 
-    virtual QVariant metaData(int key) const;
-    virtual bool setMetaData(int key, const QVariant &value);
+    QVariant metaData(int key) const;
+    bool setMetaData(int key, const QVariant &value);
 
-    virtual bool fetch(int index);
-    /* non pure virtual */
-    virtual bool fetchNext();
-    virtual bool fetchPrevious();
-    virtual bool fetchFirst();
-    virtual bool fetchLast();
+    int currentIndex() const;
+    bool fetch(int index);
+
+    void cancel();
+
+    void HandleQueryNewResults(CMdEQuery &aQuery, TInt aFirstNewItemIndex, TInt aNewItemCount);
+    void HandleQueryCompleted(CMdEQuery& aQuery, TInt aError);
 
 private:
-
-    QGalleryTypeRequest *m_request;
-    QStringList m_propertyList;
-
+    const QString m_itemType;
+    QScopedPointer<CMdEObjectQuery> m_query;
+    int m_count;
+    int m_itemCount;
+    int m_currentIndex;
 };
 
 QTM_END_NAMESPACE

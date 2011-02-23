@@ -51,11 +51,10 @@ class QDeclarativeContactUrl : public QDeclarativeContactDetail
     Q_OBJECT
 
     Q_PROPERTY(QString url READ url WRITE setUrl NOTIFY fieldsChanged)
-    Q_PROPERTY(UrlSubType subType READ subType WRITE setSubType NOTIFY fieldsChanged)
+    Q_PROPERTY(QVariant subType READ subType WRITE setSubType NOTIFY fieldsChanged)
 
     Q_ENUMS(FieldType)
     Q_ENUMS(UrlSubType)
-    Q_CLASSINFO("DefaultProperty", "url")
 public:
     enum FieldType {
         Url = 0,
@@ -65,6 +64,7 @@ public:
     enum UrlSubType {
         Unknown = 0,
         HomePage,
+        Blog,
         Favourite
     };
 
@@ -99,25 +99,36 @@ public:
     }
     QString url() const {return detail().value(QContactUrl::FieldUrl);}
 
-    void setSubType(UrlSubType v)
+    void setSubType(const QVariant& v)
     {
-        if (!readOnly() && v != subType()) {
-            if (v == HomePage)
-                detail().setValue(QContactUrl::FieldSubType, QContactUrl::SubTypeHomePage);
-            else if (v == Favourite)
-                detail().setValue(QContactUrl::FieldSubType, QContactUrl::SubTypeFavourite);
-            emit fieldsChanged();
+        if (!readOnly()) {
+            QString st;
+            if (v.type() != QVariant::String) {
+                switch (v.toInt()) {
+                case HomePage:
+                    st = QLatin1String(QContactUrl::SubTypeHomePage);
+                    break;
+                case Blog:
+                    st = QLatin1String(QContactUrl::SubTypeBlog);
+                    break;
+                case Favourite:
+                    st = QLatin1String(QContactUrl::SubTypeFavourite);
+                    break;
+                default:break;
+                }
+            } else {
+                st = v.toString();
+            }
+
+            if (st != detail().value(QContactUrl::FieldSubType)) {
+                detail().setValue(QContactUrl::FieldSubType, st);
+                emit fieldsChanged();
+            }
         }
     }
-    UrlSubType subType() const
+    QVariant subType() const
     {
-        QString typeString = detail().value(QContactUrl::FieldSubType);
-        if (typeString == QContactUrl::SubTypeFavourite)
-            return Favourite;
-        else if (typeString == QContactUrl::SubTypeHomePage)
-            return HomePage;
-        //qWarning: unknown type
-        return Unknown;
+        return detail().value(QContactUrl::FieldSubType);
     }
 signals:
     void fieldsChanged();

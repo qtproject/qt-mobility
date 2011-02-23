@@ -423,7 +423,7 @@ void COrganizerItemRequestsServiceProvider::FetchItemsandFilter()
     if (error == QOrganizerManager::NoError) {
         // Append the fetched item to the result if it passes the filter
         items.append(item);
-        items = iOrganizerItemManagerEngine.slowFilter(items, req->filter(), req->sorting());
+        items = iOrganizerItemManagerEngine.slowFilterItems(items, req->filter(), req->sorting());
     }
     items.append(req->items());
 
@@ -557,7 +557,7 @@ void COrganizerItemRequestsServiceProvider::DoCancel()
 // Call if RunL leaves
 TInt COrganizerItemRequestsServiceProvider::RunError(TInt aError)
 {
-    // Operation not successfull
+    // Operation not successful
     // Generate error map
     QOrganizerManager::Error error(QOrganizerManager::NoError);
     iOrganizerItemManagerEngine.transformError(aError, &error);

@@ -60,6 +60,7 @@ private slots:
     void saveContacts();
     void retrieveContact();
     void retrieveContacts();
+    void retrieveLimitedAmountContacts();
     void retrieveName();
     void retrieveNames();
     void updateContact();

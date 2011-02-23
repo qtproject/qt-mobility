@@ -64,7 +64,10 @@ QSoundEffectPrivate::QSoundEffectPrivate(QObject* parent):
     m_muted(false),
     m_loopCount(1),
     m_volume(100),
-    m_sound(0)
+    m_sound(0),
+    m_timerID(0),
+    m_playing(false),
+    m_status(QSoundEffect::Null)
 {
     if (!QSound::isAvailable())
         qWarning("SoundEffect(qsound) : not available");
@@ -88,8 +91,15 @@ QUrl QSoundEffectPrivate::source() const
 
 void QSoundEffectPrivate::setSource(const QUrl &url)
 {
-    if (url.isEmpty() || url.scheme() != QLatin1String("file")) {
+    if (url.isEmpty()) {
         m_source = QUrl();
+        setStatus(QSoundEffect::Null);
+        return;
+    }
+
+    if (url.scheme() != QLatin1String("file")) {
+        m_source = url;
+        setStatus(QSoundEffect::Error);
         return;
     }
 
@@ -99,6 +109,9 @@ void QSoundEffectPrivate::setSource(const QUrl &url)
     m_source = url;
     m_sound = new QSound(m_source.toLocalFile(), this);
     m_sound->setLoops(m_loopCount);
+    m_status = QSoundEffect::Ready;
+    emit statusChanged();
+    emit loadedChanged();
 }
 
 int QSoundEffectPrivate::loopCount() const
@@ -135,17 +148,72 @@ void QSoundEffectPrivate::setMuted(bool muted)
 
 bool QSoundEffectPrivate::isLoaded() const
 {
-    return true;
+    return m_status == QSoundEffect::Ready;
 }
 
 void QSoundEffectPrivate::play()
 {
+    if (m_status == QSoundEffect::Null || m_status == QSoundEffect::Error)
+        return;
+    if (m_timerID != 0)
+        killTimer(m_timerID);
+    m_timerID = startTimer(500);
     m_sound->play();
+    setPlaying(true);
 }
+
 
 void QSoundEffectPrivate::stop()
 {
+    if (m_timerID != 0)
+        killTimer(m_timerID);
+    m_timerID = 0;
     m_sound->stop();
+    setPlaying(false);
+}
+
+bool QSoundEffectPrivate::isPlaying()
+{
+    if (m_playing && m_sound && m_sound->isFinished()) {
+        if (m_timerID != 0)
+            killTimer(m_timerID);
+        m_timerID = 0;
+        setPlaying(false);
+    }
+    return m_playing;
+}
+
+QSoundEffect::Status QSoundEffectPrivate::status() const
+{
+    return m_status;
+}
+
+void QSoundEffectPrivate::timerEvent(QTimerEvent *event)
+{
+    setPlaying(!m_sound->isFinished());
+    if (isPlaying())
+        return;
+    killTimer(m_timerID);
+    m_timerID = 0;
+}
+
+void QSoundEffectPrivate::setStatus(QSoundEffect::Status status)
+{
+    if (m_status == status)
+        return;
+    bool oldLoaded = isLoaded();
+    m_status = status;
+    emit statusChanged();
+    if (oldLoaded != isLoaded())
+        emit loadedChanged();
+}
+
+void QSoundEffectPrivate::setPlaying(bool playing)
+{
+    if (m_playing == playing)
+        return;
+    m_playing = playing;
+    emit playingChanged();
 }
 
 QT_END_NAMESPACE

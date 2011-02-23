@@ -79,7 +79,7 @@ public:
 
     void setItem(const QOrganizerItem& item);
     QOrganizerItem item();
-    uint itemId() const;
+    QString itemId() const;
 
     static void detail_append(QDeclarativeListProperty<QDeclarativeOrganizerItemDetail> *p, QDeclarativeOrganizerItemDetail *detail);
     static int  detail_count(QDeclarativeListProperty<QDeclarativeOrganizerItemDetail> *p);
@@ -94,6 +94,7 @@ public:
 
     bool m_modified;
     QOrganizerItem m_item;
+    QString m_id;
     QMap<QString, QOrganizerItemDetailDefinition> m_defs;
     QList<QDeclarativeOrganizerItemDetail*> m_details;
     QHash<int, OrganizerItemDetailNameMap*> m_properties;

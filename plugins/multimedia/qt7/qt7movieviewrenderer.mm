@@ -51,6 +51,8 @@
 #include <QtCore/qcoreevent.h>
 #include <QtCore/qcoreapplication.h>
 
+#include <QtCore/qreadwritelock.h>
+
 #include <qabstractvideobuffer.h>
 #include <qabstractvideosurface.h>
 #include <qvideosurfaceformat.h>
@@ -110,6 +112,7 @@ private:
 @private
     QWidget *m_window;
     QT7MovieViewRenderer *m_renderer;
+    QReadWriteLock m_rendererLock;
 }
 
 - (HiddenQTMovieView *) initWithRenderer:(QT7MovieViewRenderer *)renderer;
@@ -127,6 +130,7 @@ private:
         [self setControllerVisible:NO];
         [self setDelegate:self];
 
+        QWriteLocker lock(&self->m_rendererLock);
         self->m_renderer = renderer;
 
         self->m_window = new QWidget;
@@ -147,6 +151,7 @@ private:
 
 - (void) setRenderer:(QT7MovieViewRenderer *)renderer
 {
+    QWriteLocker lock(&m_rendererLock);
     m_renderer = renderer;
 }
 
@@ -165,6 +170,8 @@ private:
     // This method is called from QTMovieView just
     // before the image will be drawn.
     Q_UNUSED(view);
+    QReadLocker lock(&m_rendererLock);
+
     if (m_renderer) {
         CGRect bounds = [img extent];
         int w = bounds.size.width;
@@ -198,8 +205,7 @@ private:
             [bitmap release];
         }
 
-        if (m_renderer)
-            m_renderer->renderFrame(frame);
+        m_renderer->renderFrame(frame);
     }
 
     return img;

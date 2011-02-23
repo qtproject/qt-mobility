@@ -784,6 +784,7 @@ void TestFiltering::testContactDetailFilter_5()
     int seachedcontactcount = cnt_ids.count();
     int expectedCount =9;  
     QVERIFY(expectedCount == seachedcontactcount);
+    QVERIFY(error == QContactManager::NoError);
 }
 
 void TestFiltering::testContactDetailFilter_6()
@@ -813,6 +814,7 @@ void TestFiltering::testContactDetailFilter_6()
     int seachedcontactcount = cnt_ids.count();
     int expectedCount =9;  
     QVERIFY(expectedCount == seachedcontactcount);
+    QVERIFY(error == QContactManager::NoError);
 }
 
 void TestFiltering::testContactDetailFilter_7()
@@ -842,6 +844,7 @@ void TestFiltering::testContactDetailFilter_7()
     int seachedcontactcount = cnt_ids.count();
     int expectedCount =2;  
     QVERIFY(expectedCount == seachedcontactcount);
+    QVERIFY(error == QContactManager::NoError);
 }
 
 void TestFiltering::testContactDetailFilter_8()
@@ -928,6 +931,7 @@ void TestFiltering::testIntersectionFilter()
     testIntersectionFilter_1();
     testIntersectionFilter_2();
     testIntersectionFilter_3();
+    testIntersectionFilter_4();
 }
 
 void TestFiltering::testIntersectionFilter_1()
@@ -1106,11 +1110,57 @@ void TestFiltering::testIntersectionFilter_3()
     }
 }
 
+void TestFiltering::testIntersectionFilter_4()
+{
+    //Create first filter to match all contacts with name field
+    QContactDetailFilter f1;
+    f1.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldFirstName);
+    f1.setValue("Jo");
+    f1.setMatchFlags(QContactFilter::MatchStartsWith);
+    //Create second filter to fetch all mobile numbers
+    QContactDetailFilter f2;
+    f2.setDetailDefinitionName(QContactPhoneNumber::DefinitionName, QContactPhoneNumber::FieldSubTypes); 
+    f2.setValue(QLatin1String(QContactPhoneNumber::SubTypeMobile));
+
+    
+    //Create an intersection filter with the above created filters 
+    QList<QContactLocalId> cnt_ids;
+    QContactIntersectionFilter filter;
+    filter.append(f1);
+    filter.append(f2);
+    QContactManager::Error error;
+    
+    //Search for contacts 
+    cnt_ids = m_engine->contactIds(filter, QList<QContactSortOrder>(), &error);
+
+    // Now check the results 
+    int seachedcontactcount = cnt_ids.count();
+    int expectedCount = 1; 
+    QVERIFY(seachedcontactcount == expectedCount);
+    QVERIFY(error == QContactManager::NoError);
+    
+    for(int j=0; j<seachedcontactcount; j++) 
+    {
+        QContact sc = m_engine->contact(cnt_ids[j],QContactFetchHint(),&error);
+        //Get the first name
+        QContactName name = sc.detail(QContactName::DefinitionName);
+        QString firstname = name.firstName();
+        //get the Phone number
+        QContactPhoneNumber phoneDetail = sc.detail(QContactPhoneNumber::DefinitionName);
+        QString number = phoneDetail.number();
+        // Not testing equal to due to MatchFlags definitions
+        // in the filter.
+        QVERIFY(firstname.contains("Jo"));
+    }
+}
+
+
 void TestFiltering::testUnionFilter()
     {
     testUnionFilter_1();
     testUnionFilter_2();
     testUnionFilter_3();
+    testUnionFilter_4();
     }
 
 void TestFiltering::testUnionFilter_1()
@@ -1262,6 +1312,40 @@ void TestFiltering::testUnionFilter_3()
         // in the filter.
         QVERIFY(firstname.contains("J") || (number.contains("5022423")));     
     }
+}
+
+void TestFiltering::testUnionFilter_4()
+{
+    //Create first filter to match all contacts with name field
+    QContactDetailFilter f1;
+    f1.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldFirstName);
+    f1.setValue("J");
+    f1.setMatchFlags(QContactFilter::MatchStartsWith);
+    //Create second filter to fetch all mobile numbers
+    QContactDetailFilter f2;
+    f2.setDetailDefinitionName(QContactPhoneNumber::DefinitionName, QContactPhoneNumber::FieldSubTypes); 
+    f2.setValue(QLatin1String(QContactPhoneNumber::SubTypeMobile));
+    
+    //Create an union filter
+    QList<QContactLocalId> cnt_ids;
+    QContactUnionFilter filter;
+    filter.append(f1);
+    filter.append(f2);
+    QList<QContactSortOrder> sortOrder;
+    QContactSortOrder sortOrderFirstName;
+    sortOrderFirstName.setDetailDefinitionName(QContactName::DefinitionName,
+        QContactName::FieldFirstName);
+    sortOrder.append(sortOrderFirstName);
+    QContactManager::Error error;
+
+    //Search for contacts 
+    cnt_ids = m_engine->contactIds(filter, sortOrder, &error);
+    
+    // Now check the results 
+    int seachedcontactcount = cnt_ids.count();
+    int expectedCount = 8;
+    QVERIFY(seachedcontactcount == expectedCount);
+    QVERIFY(error == QContactManager::NoError);
 }
 
 void TestFiltering::testDefaultFilter()

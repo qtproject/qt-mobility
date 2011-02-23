@@ -62,7 +62,7 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QOrganizerItemInvalidEngine : public QOrganizerManagerEngine
+class QOrganizerItemInvalidEngine : public QOrganizerManagerEngineV2
 {
 public:
     QOrganizerItemInvalidEngine();
@@ -83,6 +83,13 @@ public:
     {
         *error =  QOrganizerManager::NotSupportedError;
         return QOrganizerItem();
+    }
+
+    /*! \reimp */
+    virtual QSharedPointer<QOrganizerItemObserver> observeItem(const QOrganizerItemId& itemId)
+    {
+        Q_UNUSED(itemId);
+        return QSharedPointer<QOrganizerItemObserver>(createOrganizerItemObserver(this));
     }
 };
 

@@ -88,9 +88,19 @@ void QGeoTiledMapPolylineObjectInfo::pathChanged(const QList<QGeoCoordinate> &pa
     updateItem();
 }
 
+void QGeoTiledMapPolylineObjectInfo::zoomLevelChanged(qreal zoomLevel)
+{
+    QPen p = polyline->pen();
+    p.setWidth(p.width() * tiledMapData->zoomFactor());
+    pathItem->setPen(p);
+    updateItem();
+}
+
 void QGeoTiledMapPolylineObjectInfo::penChanged(const QPen &pen)
 {
-    pathItem->setPen(polyline->pen());
+    QPen p = polyline->pen();
+    p.setWidth(p.width() * tiledMapData->zoomFactor());
+    pathItem->setPen(p);
     updateItem();
 }
 

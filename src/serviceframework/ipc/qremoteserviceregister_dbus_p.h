@@ -62,7 +62,9 @@ class DBusSession: public QObject, protected QDBusContext
 {
     Q_OBJECT
 public:
-    DBusSession() {} 
+    DBusSession(QObject* parent = 0)
+        : QObject(parent)
+    {}
     ~DBusSession() {}
 
 public slots:
@@ -137,6 +139,7 @@ private:
     QList<ObjectEndPoint*> pendingConnections;
     QDBusInterface *iface;
     DBusSession *session;
+    QDBusConnection *connection; 
 };
 
 QTM_END_NAMESPACE

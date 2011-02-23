@@ -43,6 +43,7 @@
 #include <QtDeclarative/qdeclarative.h>
 
 #include "qvaluespacesubscriber.h"
+#include "qdeclarativevaluespacepublisher_p.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -59,6 +60,7 @@ public:
         Q_ASSERT(QLatin1String(uri) == QLatin1String("QtMobility.publishsubscribe"));
 
         qmlRegisterType<QValueSpaceSubscriber>(uri, 1, 1, "ValueSpaceSubscriber");
+        qmlRegisterType<QDeclarativeValueSpacePublisher>(uri, 1, 2, "ValueSpacePublisher");
     }
 };
 

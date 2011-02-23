@@ -41,6 +41,7 @@
 
 //Backend
 #include "qmdegallerytyperesultset_p.h"
+#include "qmdegallerycategoryresultset_p.h"
 #include "qgallerymdsutility_p.h"
 #include "qmdesession_p.h"
 //API
@@ -48,115 +49,170 @@
 
 QTM_BEGIN_NAMESPACE
 
-QMDEGalleryTypeResultSet::QMDEGalleryTypeResultSet(QMdeSession *session, QObject *parent)
-: QMDEGalleryResultSet(parent)
-{
-    m_request = static_cast<QGalleryTypeRequest *>(parent);
-    m_session = session;
 
-    createQuery();
+QMDEGalleryTypeResultSet::QMDEGalleryTypeResultSet(QMdeSession *session, QGalleryTypeRequest *request)
+    : m_itemType(request->itemType())
+    , m_count(0)
+    , m_itemCount(0)
+    , m_currentIndex(0)
+{
+    if (QMDEGalleryCategoryResultSet::isCategoryType(m_itemType)) {
+        int error = QMDEGalleryCategoryResultSet::createTypeQuery(
+                &m_query, session, m_itemType, this);
+
+        if (error != QDocumentGallery::NoError) {
+            QGalleryResultSet::error(error);
+        } else {
+            m_query->SetResultMode(EQueryResultModeDistinctValues);
+
+            TRAPD(err, m_query->FindL());
+            if (err != KErrNone)
+                QGalleryResultSet::error(QDocumentGallery::ConnectionError);
+        }
+    } else {
+        TRAPD(err,
+            CMdENamespaceDef &namespaceDef = session->GetDefaultNamespaceDefL();
+            CMdEObjectDef &objectDef = QDocumentGalleryMDSUtility::ObjDefFromItemTypeL(
+                    namespaceDef, m_itemType);
+
+            m_query.reset(session->NewObjectQuery(namespaceDef, objectDef, this));
+        );
+        if (err != KErrNone)
+            QGalleryResultSet::error(QDocumentGallery::ItemTypeError);
+
+        m_query->SetResultMode(EQueryResultModeCount);
+
+        TRAP(err, m_query->FindL());
+        if (err != KErrNone)
+            QGalleryResultSet::error(QDocumentGallery::ConnectionError);
+    }
 }
 
 QMDEGalleryTypeResultSet::~QMDEGalleryTypeResultSet()
 {
-
+    if (m_query) {
+        m_query->RemoveObserver(*this);
+        m_query->Cancel();
+    }
 }
 
-void QMDEGalleryTypeResultSet::createQuery()
+int QMDEGalleryTypeResultSet::propertyKey(const QString &property) const
 {
-    QDocumentGalleryMDSUtility::GetDataFieldsForItemType( m_propertyList, m_request->itemType() );
-    finish(false);
+    return property == QLatin1String("count") ? 0 : -1;
+}
+
+QGalleryProperty::Attributes QMDEGalleryTypeResultSet::propertyAttributes(int key) const
+{
+    return key == 0
+            ? QGalleryProperty::CanRead
+            : QGalleryProperty::Attributes();
+}
+
+QVariant::Type QMDEGalleryTypeResultSet::propertyType(int key) const
+{
+    return key == 0
+            ? QVariant::Int
+            : QVariant::Invalid;
 }
 
 int QMDEGalleryTypeResultSet::itemCount() const
 {
-    return m_propertyList.count();
+    return m_itemCount;
+}
+
+bool QMDEGalleryTypeResultSet::isValid() const
+{
+    return m_currentIndex == 0 && m_itemCount == 1;
 }
 
 QVariant QMDEGalleryTypeResultSet::itemId() const
 {
-    int unvalidId = -1;
-    QVariant id( unvalidId );
-    return id;
+    return QVariant();
 }
 
 QUrl QMDEGalleryTypeResultSet::itemUrl() const
 {
-    QUrl url;
-    url.clear();
-    return url;
+    return QUrl();
+}
+
+QString QMDEGalleryTypeResultSet::itemType() const
+{
+    return QString();
 }
 
 QVariant QMDEGalleryTypeResultSet::metaData(int key) const
 {
-    QVariant tempNull;
-    tempNull.clear();
-    return tempNull;
+    return m_currentIndex == 0 && m_itemCount == 1 && key == 0
+            ? QVariant(m_count)
+            : QVariant();
 }
 
-bool QMDEGalleryTypeResultSet::setMetaData(int key, const QVariant &value)
+bool QMDEGalleryTypeResultSet::setMetaData(int, const QVariant &)
 {
     return false;
 }
 
+int QMDEGalleryTypeResultSet::currentIndex() const
+{
+    return m_currentIndex;
+}
+
 bool QMDEGalleryTypeResultSet::fetch(int index)
 {
-    if (m_propertyList.count() <= 0 || index < 0 || index > m_propertyList.count()) {
-        return false;
-    } else {
-        m_cursorPosition = index;
-        m_isValid = true;
-        return true;
+    const bool isValid = index == 0 && m_itemCount == 1;
+
+    if (index != m_currentIndex) {
+        const bool wasValid = m_currentIndex == 0 && m_itemCount == 1;
+
+        m_currentIndex = index;
+
+        if (isValid || wasValid)
+            emit currentItemChanged();
+
+        emit currentIndexChanged(m_currentIndex);
     }
+    return isValid;
 }
 
-bool QMDEGalleryTypeResultSet::fetchNext()
+void QMDEGalleryTypeResultSet::cancel()
 {
-    int newIndex = m_cursorPosition + 1;
-    if (m_propertyList.count() <= 0 || newIndex < 0 || newIndex > m_propertyList.count()) {
-        return false;
-    } else {
-        m_cursorPosition = newIndex;
-        m_isValid = true;
-        return true;
-    }
+    if (m_query)
+        m_query->Cancel();
 }
 
-bool QMDEGalleryTypeResultSet::fetchPrevious()
+void QMDEGalleryTypeResultSet::HandleQueryNewResults(CMdEQuery &, TInt, TInt)
 {
-    int newIndex = m_cursorPosition - 1;
-    if (m_propertyList.count() <= 0 || newIndex < 0 || newIndex > m_propertyList.count()) {
-        return false;
-    } else {
-        m_cursorPosition = newIndex;
-        m_isValid = true;
-        return true;
-    }
 }
 
-bool QMDEGalleryTypeResultSet::fetchFirst()
+void QMDEGalleryTypeResultSet::HandleQueryCompleted(CMdEQuery &aQuery, TInt aError)
 {
-    int newIndex = 0; // first item
-    if (m_propertyList.count() <= 0) {
-        return false;
-    } else {
-        m_cursorPosition = newIndex;
-        m_isValid = true;
-        return true;
-    }
-}
+    switch (aError) {
+    case KErrNone:
+        {
+            m_count = aQuery.Count();
 
-bool QMDEGalleryTypeResultSet::fetchLast()
-{
-    int newIndex = m_itemArray.Count() - 1; // last item
-    if (m_propertyList.count() <= 0 || newIndex < 0 || newIndex > m_propertyList.count()) {
-        return false;
-    } else {
-        m_cursorPosition = newIndex;
-        m_isValid = true;
-        return true;
+            m_itemCount = 1;
+            const int currentIndex = m_currentIndex;
+            if (m_currentIndex >= 0)
+                m_currentIndex += 1;
+
+            emit itemsInserted(0, 1);
+
+            if (currentIndex != m_currentIndex)
+                emit currentIndexChanged(m_currentIndex);
+
+            finish();
+        }
+        break;
+    case KErrCancel:
+        QGalleryResultSet::cancel();
+        break;
+    default:
+        error(QDocumentGallery::ConnectionError);
+        break;
     }
 }
 
 #include "moc_qmdegallerytyperesultset_p.cpp"
+
 QTM_END_NAMESPACE

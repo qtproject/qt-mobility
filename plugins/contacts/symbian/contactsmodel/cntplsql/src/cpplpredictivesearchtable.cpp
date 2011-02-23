@@ -201,7 +201,9 @@ void CPplPredictiveSearchTableBase::WriteToDbL(const CContactItem& aItem)
     HBufC* lastNameAsNbr(NULL);  // owned
 	HBufC* firstName(NULL); // owned
     HBufC* lastName(NULL);  // owned
-	GetFieldsLC(aItem, &firstNameAsNbr, &lastNameAsNbr, &firstName, &lastName);
+	bool isKorea(false);
+	GetFieldsLC(aItem, &firstNameAsNbr, &lastNameAsNbr,
+			    &firstName, &lastName, isKorea);
 
 	QStringList tokens;
 	QList<QChar> tables;
@@ -211,7 +213,7 @@ void CPplPredictiveSearchTableBase::WriteToDbL(const CContactItem& aItem)
 			GetTableSpecificFields(aItem, requiredFieldsExist);
 		if (requiredFieldsExist)
 			{
-			tokens = GetTokens(tableSpecificFields, firstNameAsNbr, lastNameAsNbr);
+			tokens = GetTokens(tableSpecificFields, firstNameAsNbr, lastNameAsNbr, isKorea);
 			tables = DetermineTables(tokens);
 			}
 		});
@@ -268,7 +270,8 @@ void CPplPredictiveSearchTableBase::GetFieldsLC(const CContactItem& aItem,
 										  	    HBufC** aFirstNameAsNbr,
 											    HBufC** aLastNameAsNbr,
 											    HBufC** aFirstName,
-  											    HBufC** aLastName) const
+  											    HBufC** aLastName,
+												bool& aIsKorea) const
 	{
 	PRINT(_L("CPplPredictiveSearchTableBase::GetFieldsLC"));
 	__ASSERT_ALWAYS(aFirstNameAsNbr != NULL && *aFirstNameAsNbr == NULL,
@@ -280,6 +283,7 @@ void CPplPredictiveSearchTableBase::GetFieldsLC(const CContactItem& aItem,
 	__ASSERT_ALWAYS(aLastName != NULL && *aLastName == NULL,
 					User::Leave(KErrArgument));
 
+	aIsKorea = false;
 	CContactItemFieldSet& fieldset = aItem.CardFields();
     TInt pos = fieldset.Find(KUidContactFieldGivenName);
     if (pos != KErrNotFound)
@@ -317,12 +321,24 @@ void CPplPredictiveSearchTableBase::GetFieldsLC(const CContactItem& aItem,
 		}
 	CleanupStack::PushL(*aLastNameAsNbr);
 
+	if (*aFirstName)
+		{
+		QString fn((QChar*)((*aFirstName)->Ptr()), (*aFirstName)->Length());
+		aIsKorea = iKeyMap->CheckLanguage(fn);
+		}
+	if (!aIsKorea && *aLastName)
+		{
+		QString ln((QChar*)((*aLastName)->Ptr()), (*aLastName)->Length());
+		aIsKorea = iKeyMap->CheckLanguage(ln);
+		}
+
 	PRINT5(_L("CPplPredictiveSearchTableBase::GetFieldsLC id=%d FNnbr='%S' LNnbr='%S' FN='%S' LN='%S'"),
 		aItem.Id(),
 	    *aFirstNameAsNbr ? *aFirstNameAsNbr : &KNullDesC,
 	    *aLastNameAsNbr ? *aLastNameAsNbr : &KNullDesC,
 		*aFirstName ? *aFirstName : &KNullDesC,
 	    *aLastName ? *aLastName: &KNullDesC);
+	PRINT1(_L("  isKorea=%d"), aIsKorea);
 	}
 
 
@@ -334,10 +350,14 @@ void CPplPredictiveSearchTableBase::GetFieldsLC(const CContactItem& aItem,
 // :
 // If LN or FN runs out of tokens before maximum amount of tokens have been found,
 // keep getting tokens from the other field.
+//
+// For Korean contacts the token order (LN-1, LN-2, LN-3, LN-n.., FN-1, FN-2..)
+// must be maintained. All LN tokens are stored before the first FN token.
 QStringList
 CPplPredictiveSearchTableBase::GetTokens(QStringList aNonTokenizedFields,
 										 HBufC* aFirstName,
-										 HBufC* aLastName) const
+										 HBufC* aLastName,
+										 bool aIsKorea) const
 	{
 	PRINT2(_L("CPplPredictiveSearchTableBase::GetTokens FN='%S',LN='%S'"),
 		   aFirstName ? aFirstName : &KNullDesC,
@@ -351,8 +371,18 @@ CPplPredictiveSearchTableBase::GetTokens(QStringList aNonTokenizedFields,
 
 	QStringList firstNameTokens;
 	QStringList lastNameTokens;
-	AddTokens(aFirstName, firstNameTokens);
-	AddTokens(aLastName, lastNameTokens);
+	if (aIsKorea)
+		{
+		// Add both last name and first name tokens to same list, so that the
+		// order (all last name tokens before any first name tokens) is preserved.
+		AddTokens(aLastName, lastNameTokens);
+		AddTokens(aFirstName, lastNameTokens);
+		}
+	else
+		{
+		AddTokens(aFirstName, firstNameTokens);
+		AddTokens(aLastName, lastNameTokens);
+		}
 	
 	while (tokens.count() < iMaxTokens &&
 		   (!firstNameTokens.isEmpty() || !lastNameTokens.isEmpty()))

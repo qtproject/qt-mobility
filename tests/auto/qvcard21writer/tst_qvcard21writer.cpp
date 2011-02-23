@@ -57,6 +57,10 @@ const QString KATAKANA_NOKIA(QString::fromUtf8("\xe3\x83\x8e\xe3\x82\xad\xe3\x82
 QTM_USE_NAMESPACE
 
 Q_DECLARE_METATYPE(QVersitProperty)
+
+// Because the QFETCH macro balks on the comma in QMultiHash<QString,QString>
+typedef QMultiHash<QString,QString> StringHash;
+Q_DECLARE_METATYPE(StringHash)
 #ifdef QT_BUILD_INTERNAL
 void tst_QVCard21Writer::init()
 {
@@ -171,7 +175,10 @@ END:VCARD\r\n\
     QTest::newRow("base64 encoded") << property << expectedResult << codec;
 
     // Characters other than ASCII:
-    expectedResult = "ORG;CHARSET=UTF-8:" + KATAKANA_NOKIA.toUtf8() + "\r\n";
+    // Note: KATAKANA_NOKIA is defined as: QString::fromUtf8("\xe3\x83\x8e\xe3\x82\xad\xe3\x82\xa2")
+    // The expected behaviour is to convert to UTF8, then encode with quoted-printable
+    expectedResult = "ORG;CHARSET=UTF-8;ENCODING=QUOTED-PRINTABLE:=E3=83=8E=E3=82=AD=E3=82=A2\r\n";
+
     property = QVersitProperty();
     property.setName(QLatin1String("ORG"));
     property.setValue(KATAKANA_NOKIA);
@@ -185,67 +192,69 @@ END:VCARD\r\n\
     property.setName(QLatin1String("ORG"));
     property.setValue(KATAKANA_NOKIA);
     QTest::newRow("JIS codec") << property << expectedResult << QByteArray("Shift-JIS");
-
-    // CHARSET and QUOTED-PRINTABLE
-    expectedResult = "EMAIL;CHARSET=UTF-8;ENCODING=QUOTED-PRINTABLE:john=40"
-                     + KATAKANA_NOKIA.toUtf8() + ".com\r\n";
-    property = QVersitProperty();
-    property.setName(QLatin1String("EMAIL"));
-    property.setValue(QString::fromAscii("john@%1.com").arg(KATAKANA_NOKIA));
-    QTest::newRow("Charset and QP") << property << expectedResult << codec;
 }
 
 void tst_QVCard21Writer::testEncodeParameters()
 {
+    QFETCH(StringHash, parameters);
+    QFETCH(QByteArray, expected);
+
     QByteArray encodedParameters;
     QBuffer buffer(&encodedParameters);
     mWriter->setDevice(&buffer);
     buffer.open(QIODevice::WriteOnly);
 
-    QString typeParameterName(QString::fromAscii("TYPE"));
-    QString encodingParameterName(QString::fromAscii("ENCODING"));
-
     // No parameters
+    mWriter->encodeParameters(parameters);
+    if (encodedParameters != expected) {
+        qDebug() << "Encoded: " << encodedParameters;
+        qDebug() << "Expected: " << expected;
+        QVERIFY(false);
+    }
+}
+
+void tst_QVCard21Writer::testEncodeParameters_data()
+{
+    QTest::addColumn< QMultiHash<QString, QString> >("parameters");
+    QTest::addColumn<QByteArray>("expected");
+
     QMultiHash<QString,QString> parameters;
-    mWriter->encodeParameters(parameters);
-    QCOMPARE(encodedParameters, QByteArray(""));
 
-    // One TYPE parameter
-    mWriter->writeCrlf(); // so it doesn't start folding
-    buffer.close();
-    encodedParameters.clear();
-    buffer.open(QIODevice::WriteOnly);
-    parameters.insert(typeParameterName,QString::fromAscii("HOME"));
-    mWriter->encodeParameters(parameters);
-    QCOMPARE(encodedParameters, QByteArray(";HOME"));
+    QTest::newRow("No parameters") << parameters << QByteArray("");
 
-    // Two TYPE parameters
-    mWriter->writeCrlf(); // so it doesn't start folding
-    buffer.close();
-    encodedParameters.clear();
-    buffer.open(QIODevice::WriteOnly);
-    parameters.insert(typeParameterName,QString::fromAscii("VOICE"));
-    mWriter->encodeParameters(parameters);
-    QCOMPARE(encodedParameters, QByteArray(";VOICE;HOME"));
+    parameters.insert(QLatin1String("TYPE"), QString::fromAscii("HOME"));
+    QTest::newRow("One TYPE parameter") << parameters << QByteArray(";HOME");
 
-    // One ENCODING parameter
-    mWriter->writeCrlf(); // so it doesn't start folding
-    buffer.close();
-    encodedParameters.clear();
-    buffer.open(QIODevice::WriteOnly);
+    // HOME should appear before VOICE because it is more "important" and some vCard
+    // parsers may ignore everything after the first TYPE
+    parameters.insert(QLatin1String("TYPE"), QString::fromAscii("VOICE"));
+    QTest::newRow("Two TYPE parameters") << parameters << QByteArray(";HOME;VOICE");
+
     parameters.clear();
-    parameters.insert(encodingParameterName,QString::fromAscii("8BIT"));
-    mWriter->encodeParameters(parameters);
-    QCOMPARE(encodedParameters, QByteArray(";ENCODING=8BIT"));
+    parameters.insert(QLatin1String("ENCODING"), QString::fromAscii("8BIT"));
+    QTest::newRow("One ENCODING parameter") << parameters << QByteArray(";ENCODING=8BIT");
 
-    // Two parameters
-    mWriter->writeCrlf(); // so it doesn't start folding
-    buffer.close();
-    encodedParameters.clear();
-    buffer.open(QIODevice::WriteOnly);
     parameters.insert(QString::fromAscii("X-PARAM"),QString::fromAscii("VALUE"));
-    mWriter->encodeParameters(parameters);
-    QCOMPARE(encodedParameters, QByteArray(";X-PARAM=VALUE;ENCODING=8BIT"));
+    QTest::newRow("Two parameters") << parameters << QByteArray(";X-PARAM=VALUE;ENCODING=8BIT");
+
+    parameters.clear();
+    parameters.insert(QLatin1String("TYPE"), QLatin1String("VOICE"));
+    parameters.insert(QLatin1String("TYPE"), QLatin1String("CELL"));
+    parameters.insert(QLatin1String("TYPE"), QLatin1String("MODEM"));
+    parameters.insert(QLatin1String("TYPE"), QLatin1String("CAR"));
+    parameters.insert(QLatin1String("TYPE"), QLatin1String("VIDEO"));
+    parameters.insert(QLatin1String("TYPE"), QLatin1String("FAX"));
+    parameters.insert(QLatin1String("TYPE"), QLatin1String("BBS"));
+    parameters.insert(QLatin1String("TYPE"), QLatin1String("PAGER"));
+    parameters.insert(QLatin1String("TYPE"), QLatin1String("HOME"));
+    parameters.insert(QLatin1String("TYPE"), QLatin1String("WORK"));
+    // Ensure CELL and FAX are at the front because they are "more important" and some vCard
+    // parsers may ignore everything after the first TYPE
+    // Ensure WORK and HOME come next.
+    // Besides these conditions, there are no other ordering constraints.  The data here is simply
+    // what the writer produces (as dictated by its internal data structures).
+    QTest::newRow("TYPE parameters order") << parameters
+        << QByteArray(";CELL;FAX;WORK;HOME;MODEM;CAR;VIDEO;BBS;PAGER;VOICE");
 }
 
 void tst_QVCard21Writer::testEncodeGroupsAndName()

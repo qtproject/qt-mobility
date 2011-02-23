@@ -27,6 +27,14 @@ SOURCES += \
     tst_qmessage.cpp
 
 symbian {
+    INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
+
+    contains(messaging_freestyle_enabled, yes) {
+        CONFIG += FREESTYLEMAIL
+        DEFINES += FREESTYLEMAILUSED
+        DEFINES += FREESTYLEMAILBOXOBSERVERUSED
+    }
+
     LIBS += -limcm \
             -lcommsdat \
             -lmsgs

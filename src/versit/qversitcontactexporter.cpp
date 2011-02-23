@@ -270,13 +270,8 @@ bool QVersitContactExporter::exportContacts(
         QVersitDocument versitDocument;
         versitDocument.setType(versitType);
         versitDocument.setComponentType(QLatin1String("VCARD"));
-        QVersitContactExporter::Error error;
-        if (d->exportContact(contact, versitDocument, &error)) {
-            d->mDocuments.append(versitDocument);
-        } else {
-            d->mErrors.insert(contactIndex, error);
-            ok = false;
-        }
+        d->exportContact(contact, versitDocument);
+        d->mDocuments.append(versitDocument);
         contactIndex++;
     }
 

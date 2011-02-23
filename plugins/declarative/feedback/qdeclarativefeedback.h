@@ -48,55 +48,17 @@
 
 QTM_USE_NAMESPACE
 
-// This is a wrapper for QFeedbackEffect, to rewrite enum values
-class QDeclarativeFeedbackEffect: public QObject
+// This is a wrapper namespace, to rewrite enum values
+// (well, it was. probably not needed any more)
+class QDeclarativeFeedback: public QObject
 {
     Q_OBJECT
 
-    Q_ENUMS(ThemeEffect)
     Q_ENUMS(Duration)
     Q_ENUMS(State)
     Q_ENUMS(ErrorType)
 
 public:
-    enum ThemeEffect {
-        Basic = QFeedbackEffect::ThemeBasic,
-        Sensitive = QFeedbackEffect::ThemeSensitive,
-        BasicButton = QFeedbackEffect::ThemeBasicButton,
-        SensitiveButton = QFeedbackEffect::ThemeSensitiveButton,
-        BasicKeypad = QFeedbackEffect::ThemeBasicKeypad,
-        SensitiveKeypad = QFeedbackEffect::ThemeSensitiveKeypad,
-        BasicSlider = QFeedbackEffect::ThemeBasicSlider,
-        SensitiveSlider = QFeedbackEffect::ThemeSensitiveSlider,
-        BasicItem = QFeedbackEffect::ThemeBasicItem,
-        SensitiveItem = QFeedbackEffect::ThemeSensitiveItem,
-        ItemScroll = QFeedbackEffect::ThemeItemScroll,
-        ItemPick = QFeedbackEffect::ThemeItemPick,
-        ItemDrop = QFeedbackEffect::ThemeItemDrop,
-        ItemMoveOver = QFeedbackEffect::ThemeItemMoveOver,
-        BounceEffect = QFeedbackEffect::ThemeBounceEffect,
-        CheckBox = QFeedbackEffect::ThemeCheckBox,
-        MultipleCheckBox = QFeedbackEffect::ThemeMultipleCheckBox,
-        Editor = QFeedbackEffect::ThemeEditor,
-        TextSelection = QFeedbackEffect::ThemeTextSelection,
-        BlankSelection = QFeedbackEffect::ThemeBlankSelection,
-        LineSelection = QFeedbackEffect::ThemeLineSelection,
-        EmptyLineSelection = QFeedbackEffect::ThemeEmptyLineSelection,
-        PopUp = QFeedbackEffect::ThemePopUp,
-        PopupOpen = QFeedbackEffect::ThemePopupOpen,
-        PopupClose = QFeedbackEffect::ThemePopupClose,
-        Flick = QFeedbackEffect::ThemeFlick,
-        StopFlick = QFeedbackEffect::ThemeStopFlick,
-        MultiPointTouchActivate = QFeedbackEffect::ThemeMultiPointTouchActivate,
-        RotateStep = QFeedbackEffect::ThemeRotateStep,
-        LongPress = QFeedbackEffect::ThemeLongPress,
-        PositiveTacticon = QFeedbackEffect::ThemePositiveTacticon,
-        NeutralTacticon = QFeedbackEffect::ThemeNeutralTacticon,
-        NegativeTacticon = QFeedbackEffect::ThemeNegativeTacticon,
-
-        NumberOfThemeEffects = QFeedbackEffect::NumberOfThemeEffects,
-        ThemeUser = QFeedbackEffect::ThemeUser
-    };
 
     // These don't need rewriting, they're already nice
     enum Duration {
@@ -115,13 +77,13 @@ public:
         DeviceBusy = QFeedbackEffect::DeviceBusy
     };
 
-    QDeclarativeFeedbackEffect(QObject* parent) : QObject(parent)
+    QDeclarativeFeedback(QObject* parent) : QObject(parent)
     {
 
     }
 };
 
-QML_DECLARE_TYPE(QDeclarativeFeedbackEffect);
+QML_DECLARE_TYPE(QDeclarativeFeedback);
 
 
 #endif // QDECLARATIVEFEEDBACK_H

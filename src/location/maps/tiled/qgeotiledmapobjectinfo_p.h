@@ -98,6 +98,11 @@ public:
     bool isValid;
     bool isVisible;
 
+    QGeoMapObject* mapObject() {
+        return QGeoMapObjectInfo::mapObject();
+    }
+
+
 public slots:
     virtual void zValueChanged(int zValue);
     virtual void visibleChanged(bool visible);

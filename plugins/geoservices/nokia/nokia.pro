@@ -20,7 +20,8 @@ HEADERS += \
             qgeosearchmanagerengine_nokia.h \
             qgeosearchreply_nokia.h \
             qgeoserviceproviderplugin_nokia.h \
-            marclanguagecodes.h
+            marclanguagecodes.h \
+            qgeotiledmapdata_nokia.h
 
 SOURCES += \
             qgeocodexmlparser.cpp \
@@ -31,7 +32,8 @@ SOURCES += \
             qgeoroutingmanagerengine_nokia.cpp \
             qgeosearchmanagerengine_nokia.cpp \
             qgeosearchreply_nokia.cpp \
-            qgeoserviceproviderplugin_nokia.cpp
+            qgeoserviceproviderplugin_nokia.cpp \
+            qgeotiledmapdata_nokia.cpp
 
 INCLUDEPATH += $$SOURCE_DIR/src/location \
                 $$SOURCE_DIR/src/location/maps \
@@ -46,3 +48,4 @@ symbian {
     DEPLOYMENT += pluginDep      
 }
 
+RESOURCES += resource.qrc

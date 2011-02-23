@@ -17,7 +17,7 @@ symbian:
                         WriteUserData
 
     # Performance testing potentially takes a lot of memory
-    TARGET.EPOCHEAPSIZE = 0x200000 0x4000000
+    TARGET.EPOCHEAPSIZE = 0x10000 0x2000000
 
     LIBS += -lqtorganizer
 }

@@ -47,14 +47,19 @@
 
 #include <QDeclarativeListProperty>
 
-
 class QDeclarativeContactIntersectionFilter : public QDeclarativeContactFilter
 {
     Q_OBJECT
-    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeContactFilter> filters READ filters NOTIFY valueChanged)
+    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeContactFilter> filters READ filters NOTIFY valueChanged())
     Q_CLASSINFO("DefaultProperty", "filters")
 
 public:
+    QDeclarativeContactIntersectionFilter(QObject* parent = 0)
+        :QDeclarativeContactFilter(parent)
+    {
+        connect(this, SIGNAL(valueChanged()), SIGNAL(filterChanged()));
+    }
+
     QDeclarativeListProperty<QDeclarativeContactFilter> filters()
     {
         return QDeclarativeListProperty<QDeclarativeContactFilter>(this, m_filters);
@@ -62,25 +67,21 @@ public:
 
     QContactFilter filter() const
     {
-        return d;
-    }
-
-public slots:
-    void setFilters()
-    {
         QList<QContactFilter> filters;
         foreach (QDeclarativeContactFilter* f, m_filters) {
             filters << f->filter();
         }
-        d.setFilters(filters);
+        QContactIntersectionFilter f;
+        f.setFilters(filters);
+        return f;
     }
+
 signals:
     void valueChanged();
 
 
 private:
     QList<QDeclarativeContactFilter*> m_filters;
-    QContactIntersectionFilter d;
 };
 
 QML_DECLARE_TYPE(QDeclarativeContactIntersectionFilter)

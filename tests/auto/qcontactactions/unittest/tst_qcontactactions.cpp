@@ -64,6 +64,7 @@ public slots:
     void init();
     void cleanup();
 private slots:
+    void contactFunctions();
     void testSendEmail();
     void testDescriptor();
     void testDescriptorHash();
@@ -119,6 +120,69 @@ void tst_QContactActions::init()
 
 void tst_QContactActions::cleanup()
 {
+}
+
+void tst_QContactActions::contactFunctions()
+{
+    QContact c;  // empty contact.
+    QContact c2; // contact with email saved.
+    QContact c3; // two emails
+    QContact c4; // two emails, plus a preference
+    QContact c5; // two emails, plus a preference for an unsupported detail
+    QContactEmailAddress e2;
+    QContactEmailAddress e;
+    e.setEmailAddress("test@nokia.com");
+    c2.saveDetail(&e);
+    e2.setEmailAddress("secondtest@nokia.com");
+
+    c3.saveDetail(&e);
+    c3.saveDetail(&e2);
+    c4.saveDetail(&e);
+    c4.saveDetail(&e2);
+    c5.saveDetail(&e2); // reverse order for c5
+    c5.saveDetail(&e);
+
+    c4.setPreferredDetail("SendEmail", e2);
+    c5.setPreferredDetail("SendEmail", c5.detail<QContactDisplayLabel>());
+
+    // Get our descriptor
+    QContactActionDescriptor descriptor = QContactAction::actionDescriptors("SendEmail").value(0);
+    QVERIFY(descriptor.actionName() == "SendEmail");
+
+    // available actions:
+    // empty contact
+    QList<QContactActionDescriptor> availableActions = c.availableActions(QString());
+    QVERIFY(availableActions.isEmpty());  // should not contain SendEmail
+    // contact with email
+    availableActions = c2.availableActions(QString());
+    QVERIFY(!availableActions.isEmpty()); // should contain SendEmail
+    QVERIFY(availableActions.contains(descriptor));
+
+    // try various combinations of version and name
+    availableActions = c2.availableActions();
+    QVERIFY(!availableActions.isEmpty()); // should contain SendEmail
+    QVERIFY(availableActions.contains(descriptor));
+    availableActions = c2.availableActions("tst_qcontactactions:sendemailaction");
+    QVERIFY(!availableActions.isEmpty()); // should contain SendEmail
+    availableActions = c2.availableActions(QString());
+    QVERIFY(!availableActions.isEmpty()); // should contain SendEmail
+    QVERIFY(availableActions.contains(descriptor));
+
+    // Again with c3
+    availableActions = c3.availableActions(QString());
+    QVERIFY(!availableActions.isEmpty()); // should contain SendEmail
+    QVERIFY(availableActions.contains(descriptor));
+
+    // try various combinations of version and name
+    availableActions = c3.availableActions();
+    QVERIFY(!availableActions.isEmpty()); // should contain SendEmail
+    QVERIFY(availableActions.contains(descriptor));
+    availableActions = c3.availableActions("tst_qcontactactions:sendemailaction");
+    QVERIFY(!availableActions.isEmpty()); // should contain SendEmail
+    QVERIFY(availableActions.contains(descriptor));
+    availableActions = c3.availableActions(QString());
+    QVERIFY(!availableActions.isEmpty()); // should contain SendEmail
+    QVERIFY(availableActions.contains(descriptor));
 }
 
 void tst_QContactActions::testSendEmail()

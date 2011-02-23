@@ -92,10 +92,11 @@ QLandmarkAbstractRequestPrivate::QLandmarkAbstractRequestPrivate(QLandmarkManage
     the stateChanged() signal, and in the slot to which that signal is
     connected, check whether the state has changed to the \c FinishedState
     (which signifies that the manager has finished handling the request, and
-    that the request will not be updated with any more results). If the client
+    that the request will not be updated with any more results).  If the client
     is not interested in any results (including error information), they may
-    choose to delete the request after calling \l start(), or simply not
-    connect the request's signals to any slots.
+    choose to delete the request after calling \l start(), or simply may not
+    connect the the request's signals to any slots.  (Please see the note
+    below if you are working on Symbian with QtMobility 1.1.0)
 
     If the request is allocated via operator new, the client must delete the
     request when they are no longer using it in order to avoid leaking memory.
@@ -108,17 +109,16 @@ QLandmarkAbstractRequestPrivate::QLandmarkAbstractRequestPrivate(QLandmarkManage
     connected to a signal emitted by the request, for example \l
     stateChanged()).
 
-    An active request may be deleted by the client, but the client will not
-    receive any notifications about whether the request succeeded or not,
-    nor any results of the request.
+    An active request may be deleted by the client, but the client will
+    not receive notifications about whether the request succeeded or not,
+    nor the results of the request.
 
     Because clients retain ownership of any request object, and may delete a
-    request object at any time, manager engine implementors must be careful to
-    ensure that they do not assume that a request has not been deleted at some
-    point during processing of a request, particularly if the engine has a
-    multithreaded implementation.
+    request object at any time, the manager engine,  implementers must be
+    careful to ensue that they do not assume that a request has not been
+    deleted at some time point during processing of a request, particularly
+    if the engine has a multithreaded implementation.
 */
-
 
 QLandmarkAbstractRequestPrivate::~QLandmarkAbstractRequestPrivate()
 {
@@ -137,7 +137,6 @@ void QLandmarkAbstractRequestPrivate::notifyEngine(QLandmarkAbstractRequest* req
             }
         }
 }
-
 
 /*!
     \enum QLandmarkAbstractRequest::RequestType
@@ -188,9 +187,11 @@ QLandmarkAbstractRequest::QLandmarkAbstractRequest(QLandmarkAbstractRequestPriva
 }
 
 /*!
-    Destroys the asynchronous request.  Because the request object is effectively a handle to
-    a request operation, the operation may continue or it may be canceled, depending upon
-    the engine implementation, even though the request object itself has been destroyed.
+    Destroys the asynchronous request.  Because the request object is effectiely a handle to a
+    request operation, the operation may continue or it may just be canceled, depending upon
+    the enine implementation, even though the request itself has been destroyed.
+    The sqlite engine continues the operation behind the scenes if the
+    request is destroyed whilst active.  For the symbian engine see the note below.
 */
 QLandmarkAbstractRequest::~QLandmarkAbstractRequest()
 {
@@ -368,6 +369,9 @@ bool QLandmarkAbstractRequest::cancel()
     Returns true if the request was canceled or completed
     within the given period, otherwise returns false.  Some backends may be unable
     to support this  operation safely and will return false immediately.
+    The sqlite and sparql managers currently do not support waitForFinished(),
+    while the symbian manager does. (with the exception of an import request,
+    which will always return false on symbian when waitForFinished() is called).
 
     Note that any signals generated while waiting for the request to be complete
     may be queued and delivered sometime after this function has returned, when

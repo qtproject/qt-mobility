@@ -55,6 +55,10 @@
 
 #include "qgalleryabstractresponse.h"
 
+QT_BEGIN_NAMESPACE
+class QEventLoop;
+QT_END_NAMESPACE
+
 QTM_BEGIN_NAMESPACE
 
 class QGalleryAbstractResponsePrivate
@@ -62,6 +66,7 @@ class QGalleryAbstractResponsePrivate
 public:
     QGalleryAbstractResponsePrivate()
         : q_ptr(0)
+        , waitLoop(0)
         , error(QGalleryAbstractRequest::NoError)
         , state(QGalleryAbstractRequest::Active)
     {
@@ -70,6 +75,7 @@ public:
     virtual ~QGalleryAbstractResponsePrivate() {}
 
     QGalleryAbstractResponse *q_ptr;
+    QEventLoop *waitLoop;
     int error;
     QGalleryAbstractRequest::State state;
     QString errorString;

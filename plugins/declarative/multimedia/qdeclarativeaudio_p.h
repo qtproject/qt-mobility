@@ -71,6 +71,7 @@ class QDeclarativeAudio : public QObject, public QDeclarativeMediaBase, public Q
     Q_PROPERTY(QUrl source READ source WRITE setSource NOTIFY sourceChanged)
     Q_PROPERTY(bool autoLoad READ isAutoLoad WRITE setAutoLoad NOTIFY autoLoadChanged)
     Q_PROPERTY(bool playing READ isPlaying WRITE setPlaying NOTIFY playingChanged)
+    Q_PROPERTY(int loops READ loopCount WRITE setLoopCount NOTIFY loopCountChanged)
     Q_PROPERTY(bool paused READ isPaused WRITE setPaused NOTIFY pausedChanged)
     Q_PROPERTY(Status status READ status NOTIFY statusChanged)
     Q_PROPERTY(int duration READ duration NOTIFY durationChanged)
@@ -85,6 +86,7 @@ class QDeclarativeAudio : public QObject, public QDeclarativeMediaBase, public Q
     Q_PROPERTY(QDeclarativeMediaMetaData *metaData READ metaData CONSTANT)
     Q_ENUMS(Status)
     Q_ENUMS(Error)
+    Q_ENUMS(Loop)
     Q_INTERFACES(QDeclarativeParserStatus)
 public:
     enum Status
@@ -110,6 +112,11 @@ public:
         ServiceMissing = QMediaPlayer::ServiceMissingError
     };
 
+    enum Loop
+    {
+        Infinite = QDeclarativeMediaBase::INFINITE
+    };
+
     QDeclarativeAudio(QObject *parent = 0);
     ~QDeclarativeAudio();
 
@@ -129,6 +136,7 @@ Q_SIGNALS:
     void autoLoadChanged();
     void playingChanged();
     void pausedChanged();
+    void loopCountChanged();
 
     void started();
     void resumed();

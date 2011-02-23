@@ -176,7 +176,7 @@ QContactLocalId QContactMemoryEngine::selfContactId(QContactManager::Error* erro
 /*! \reimp */
 QContact QContactMemoryEngine::contact(const QContactLocalId& contactId, const QContactFetchHint& fetchHint, QContactManager::Error* error) const
 {
-    Q_UNUSED(fetchHint); // no optimisations are possible in the memory backend; ignore the fetch hint.
+    Q_UNUSED(fetchHint); // no optimizations are possible in the memory backend; ignore the fetch hint.
     int index = d->m_contactIds.indexOf(contactId);
     if (index != -1) {
         // found the contact successfully.
@@ -209,7 +209,7 @@ QList<QContactLocalId> QContactMemoryEngine::contactIds(const QContactFilter& fi
 /*! \reimp */
 QList<QContact> QContactMemoryEngine::contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, const QContactFetchHint& fetchHint, QContactManager::Error* error) const
 {
-    Q_UNUSED(fetchHint); // no optimisations are possible in the memory backend; ignore the fetch hint.
+    Q_UNUSED(fetchHint); // no optimizations are possible in the memory backend; ignore the fetch hint.
     Q_UNUSED(error);
 
     QList<QContact> sorted;

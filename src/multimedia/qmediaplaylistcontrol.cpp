@@ -50,7 +50,7 @@ QT_BEGIN_NAMESPACE
     \inmodule QtMultimediaKit
     \ingroup multimedia
 
-    \preliminary
+    
     \brief The QMediaPlaylistControl class provides access to the playlist
     functionality of a QMediaService.
 
@@ -178,19 +178,19 @@ QMediaPlaylistControl::~QMediaPlaylistControl()
 /*!
   \fn QMediaPlaylistControl::playlistProviderChanged()
 
-  Signal emited when the playlist provider has changed.
+  Signal emitted when the playlist provider has changed.
 */
 
 /*!
   \fn QMediaPlaylistControl::currentIndexChanged(int position)
 
-  Signal emited when the playlist \a position is changed.
+  Signal emitted when the playlist \a position is changed.
 */
 
 /*!
   \fn QMediaPlaylistControl::playbackModeChanged(QMediaPlaylist::PlaybackMode mode)
 
-  Signal emited when the playback \a mode is changed.
+  Signal emitted when the playback \a mode is changed.
 */
 
 /*!

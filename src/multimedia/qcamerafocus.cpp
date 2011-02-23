@@ -166,7 +166,7 @@ void QCameraFocusZone::setStatus(QCameraFocusZone::FocusZoneStatus status)
 /*!
     \class QCameraFocus
 
-    \preliminary
+    
     \brief The QCameraFocus class provides interface for
     focus and zoom related camera settings.
 
@@ -416,7 +416,7 @@ void QCameraFocus::zoomTo(qreal optical, qreal digital)
 /*!
     \enum QCameraFocus::FocusPointMode
 
-    \value FocusPointAuto       Automaticaly select one or multiple focus points.
+    \value FocusPointAuto       Automatically select one or multiple focus points.
     \value FocusPointCenter     Focus to the frame center.
     \value FocusPointFaceDetection Focus on faces in the frame.
     \value FocusPointCustom     Focus to the custom point, defined by QCameraFocus::customFocusPoint property.
@@ -454,7 +454,7 @@ void QCameraFocus::zoomTo(qreal optical, qreal digital)
 /*!
   \fn QCameraFocus::focusZonesChanged()
 
-  Signal is emited when the set of zones, camera focused on is changed.
+  Signal is emitted when the set of zones, camera focused on is changed.
 
   Usually the zones list is changed when the camera is focused.
 */

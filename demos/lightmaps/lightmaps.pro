@@ -10,7 +10,6 @@ SOURCES = lightmaps.cpp \
 QT += network
 
 INCLUDEPATH += ../../src/global \
-                ../../src/bearer \
                 ../../src/location \
                 ../../examples/satellitedialog \
                 ../../examples/flickrdemo
@@ -20,11 +19,12 @@ include(../demos.pri)
 CONFIG += mobility
 MOBILITY = location
 
-equals(QT_MAJOR_VERSION, 4) : greaterThan(QT_MINOR_VERSION, 6) {
+equals(QT_MAJOR_VERSION, 4):lessThan(QT_MINOR_VERSION, 7) {
+    MOBILITY += bearer
+    INCLUDEPATH += ../../src/bearer
+} else {
     # use Bearer Management classes in QtNetwork module
     DEFINES += BEARER_IN_QTNETWORK
-} else {
-    MOBILITY += bearer
 }
 
 symbian|wince* {

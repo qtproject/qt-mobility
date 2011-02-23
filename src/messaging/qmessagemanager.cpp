@@ -468,6 +468,18 @@ bool QMessageManager::removeMessages(const QMessageFilter& filter, QMessageManag
     return store->removeMessages(filter, option);
 }
 
+
+/*!
+  \fn QMessageManager::removeAccount(const QMessageAccountId &id)
+
+  Remove account \a id and all associated information (folders, messages etc.)
+
+*/
+bool QMessageManager::removeAccount(const QMessageAccountId &id)
+{
+    return store->removeAccount(id);
+}
+
 /*!
     \fn QMessageManager::addMessage(QMessage *message)
     

@@ -61,7 +61,7 @@ QTM_BEGIN_NAMESPACE
     operations.
 
     The isFinished(), error() and errorString() methods provide information
-    on whether the operation has completed and if it completed succesfully.
+    on whether the operation has completed and if it completed successfully.
 
     The finished() and error(QGeoTiledMapReply::Error,QString)
     signals can be used to monitor the progress of the operation.
@@ -126,7 +126,7 @@ QGeoTiledMapReply::~QGeoTiledMapReply()
     If the operation completed successfully,
     QGeoTiledMapReply::setMapImageData() and
     QGeoTiledMapReply::setTiledMapFormat() should be called before this
-    function. If an error occured, QGeoTiledMapReply::setError() should be used
+    function. If an error occurred, QGeoTiledMapReply::setError() should be used
     instead.
 */
 void QGeoTiledMapReply::setFinished(bool finished)

@@ -1,10 +1,6 @@
 TEMPLATE=subdirs
 !wince* {
-
-!symbian {
-SUBDIRS += dummystaticplugin
-}
-
+!symbian:SUBDIRS+= dummystaticplugin
 SUBDIRS += dummydynamicplugin \
            dummydynamiccopyplugin \
            nonlandmarkdynamicplugin \

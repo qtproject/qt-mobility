@@ -38,7 +38,6 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-
 #ifndef QDECLARATIVECONTACTMETAOBJECT_H
 #define QDECLARATIVECONTACTMETAOBJECT_H
 

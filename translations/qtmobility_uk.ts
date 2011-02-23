@@ -94,13 +94,6 @@
     </message>
 </context>
 <context>
-    <name>QGstreamerCameraControl</name>
-    <message>
-        <source>State not supported.</source>
-        <translation>Стан не підтримується.</translation>
-    </message>
-</context>
-<context>
     <name>QGstreamerCaptureSession</name>
     <message>
         <source>Could not create an audio source element</source>
@@ -109,13 +102,6 @@
     <message>
         <source>Failed to build media capture pipeline.</source>
         <translation>Збій побудови конвеєру захоплення медіа.</translation>
-    </message>
-</context>
-<context>
-    <name>QGstreamerImageEncode</name>
-    <message>
-        <source>JPEG image encoder</source>
-        <translation>Кодувальник зображень JPEG</translation>
     </message>
 </context>
 <context>
@@ -393,6 +379,9 @@
         <source>Internal error</source>
         <translation>Внутрішня помилка</translation>
     </message>
+    <message>
+        <source>Invalid sample rate</source>
+        <translation>Неправильний розмір семплу</translation>
 </context>
 <context>
     <name>S60CameraImageCaptureControl</name>

@@ -145,6 +145,25 @@ private slots:
         QTest::newRow("allEqual") << cat0 << cat5 << true;
     }
 
+    void clear() {
+        QLandmarkCategory cat1;
+        cat1.setName("cat-1");
+        cat1.setIconUrl(QUrl("cat1 icon url"));
+        QLandmarkCategoryId catId1;
+        catId1.setLocalId("cat-1 Id");
+        catId1.setManagerUri("cat1-managerUri");
+        cat1.setCategoryId(catId1);
+        QCOMPARE(cat1.name(), QString("cat-1"));
+        QCOMPARE(cat1.iconUrl(), QUrl("cat1 icon url"));
+        QCOMPARE(cat1.categoryId(), catId1);
+        cat1.clear();
+        QVERIFY(cat1.name().isEmpty());
+        QVERIFY(cat1.iconUrl().isEmpty());
+        QCOMPARE(cat1.categoryId(), QLandmarkCategoryId());
+        QVERIFY(cat1.categoryId().localId().isEmpty());
+        QVERIFY(cat1.categoryId().managerUri().isEmpty());
+    }
+
 private:
     void genericData() {
         QTest::addColumn<QString>("name");

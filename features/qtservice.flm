@@ -1,0 +1,44 @@
+# /****************************************************************************
+# **
+# ** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+# ** Contact: 
+# **
+# ****************************************************************************/
+
+# FLM to be used for registering/unregistering QtServiceFW services build time
+SFWTOOL := $(EPOCROOT)/epoc32/tools/servicedbgen$(DOTEXE)
+
+#choose target database to deal with
+ifeq ($(PLATFORM), WINSCW)
+QTSERVICE_TARGET := -twinscw
+DES_PATH := ${EPOCROOT}/epoc32/winscw/c/private/2002AC7F/des/$(QTSERVICE_DESCRIPTOR)
+else
+ifeq ($(PLATFORM), ARMV5)
+QTSERVICE_TARGET := -tarmv5
+DES_PATH := $(EPOCROOT)/epoc32/data/z/private/2002AC7F/des/$(QTSERVICE_DESCRIPTOR)
+else
+QTSERVICE_TARGET := -tall
+DES_PATH := $(EPOCROOT)/epoc32/data/z/private/2002AC7F/des/$(QTSERVICE_DESCRIPTOR)
+endif
+endif
+
+define handle_service
+
+MAKEFILE::
+	$(call startrule,add_service,FORCESUCCESS) \
+	$(SFWTOOL) $(QTSERVICE_TARGET) $(QTSERVICE_INITIALIZE) add $(DES_PATH) \
+	$(call endrule,add_service)
+
+CLEAN::
+	$(call startrule,remove_service,FORCESUCCESS) \
+	$(SFWTOOL) $(QTSERVICE_TARGET) $(QTSERVICE_INITIALIZE) remove $(DES_PATH)  \
+	$(call endrule,remove_service)
+
+endef
+
+SINGLETON:=done_$(call sanitise,$(DES_PATH))
+
+ifeq ($($(SINGLETON)),)
+$(SINGLETON):=1
+$(eval $(handle_service))
+endif

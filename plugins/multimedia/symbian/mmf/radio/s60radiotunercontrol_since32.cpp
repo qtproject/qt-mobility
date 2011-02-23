@@ -43,7 +43,7 @@
 #include "s60radiotunerservice.h"
 
 #include <QtCore/qdebug.h>
-#include <radiofmtunerutility.h>
+#include <RadioFmTunerUtility.h>
 
 S60RadioTunerControl::S60RadioTunerControl(QObject *parent)
     : QRadioTunerControl(parent)

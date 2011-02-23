@@ -49,9 +49,9 @@ QT_BEGIN_NAMESPACE
     \inmodule QtMultimediaKit
     \ingroup multimedia-serv
 
-    \preliminary
+    
     \brief The QCameraImageProcessingControl class provides an abstract class
-    for controling image processing parameters, like white balance,
+    for controlling image processing parameters, like white balance,
     contrast, saturation, sharpening and denoising.
     
     The interface name of QCameraImageProcessingControl is \c com.nokia.Qt.QCameraImageProcessingControl/1.0 as

@@ -62,10 +62,6 @@
 #include <qabstractvideosurface.h>
 #include <qvideosurfaceformat.h>
 
-#if defined(Q_OS_SYMBIAN)
-# define TESTDATA_DIR "./tst_qmediaimageviewer_images"
-#endif
-
 QT_USE_NAMESPACE
 class QtTestNetworkAccessManager;
 
@@ -89,16 +85,15 @@ private slots:
     void setVideoOutput();
 
 public:
-    tst_QMediaImageViewer() : m_network(0), m_imageDir(QLatin1String(TESTDATA_DIR)) {}
+    tst_QMediaImageViewer() : m_network(0) {}
 
 private:
     QUrl imageUrl(const char *fileName) const {
-        return QUrl::fromLocalFile(m_imageDir.absoluteFilePath(QLatin1String(fileName))); }
+        return QUrl(QLatin1String("qrc:///images/") + QLatin1String(fileName)); }
     QString imageFileName(const char *fileName) {
-        return m_imageDir.absoluteFilePath(QLatin1String(fileName)); }
+        return QLatin1String(":/images/") + QLatin1String(fileName); }
 
     QtTestNetworkAccessManager *m_network;
-    QDir m_imageDir;
     QString m_fileProtocol;
 };
 

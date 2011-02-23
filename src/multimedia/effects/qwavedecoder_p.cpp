@@ -119,8 +119,6 @@ void QWaveDecoder::handleData()
         emit invalidFormat();
     }
     else {
-        DATAHeader dataHeader;
-
         if (qFromLittleEndian<quint32>(header.wave.descriptor.size) > sizeof(WAVEHeader)) {
             // Extended data available
             quint16 extraFormatBytes;
@@ -128,8 +126,6 @@ void QWaveDecoder::handleData()
             extraFormatBytes = qFromLittleEndian<quint16>(extraFormatBytes);
             source->read(sizeof(quint16) + extraFormatBytes);   // dump it all
         }
-
-        source->read((char*)&dataHeader, sizeof(DATAHeader));
 
         int bps = qFromLittleEndian<quint16>(header.wave.bitsPerSample);
 
@@ -140,7 +136,19 @@ void QWaveDecoder::handleData()
         format.setSampleSize(bps);
         format.setChannels(qFromLittleEndian<quint16>(header.wave.numChannels));
 
-        dataSize = qFromLittleEndian<quint32>(dataHeader.descriptor.size);
+        bool haveData = false;
+        chunk descriptor;
+        while(!haveData) {
+            source->read((char*)&descriptor, sizeof(chunk));
+
+            if(qstrncmp(descriptor.id, "data", 4) != 0) {
+                source->read(qFromLittleEndian<quint32>(descriptor.size)); // dump chunk contents
+            } else {
+                haveData = true;
+            }
+        }
+
+        dataSize = qFromLittleEndian<quint32>(descriptor.size);
 
         haveFormat = true;
         connect(source, SIGNAL(readyRead()), SIGNAL(readyRead()));

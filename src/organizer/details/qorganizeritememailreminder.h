@@ -58,7 +58,7 @@ public:
     const char* FieldAttachments;
     const char* FieldRecipients;
 #else
-    Q_DECLARE_CUSTOM_ORGANIZER_REMINDER_DETAIL(QOrganizerItemEmailReminder, "EmailReminder", QOrganizerItemReminder::EmailReminder)
+    Q_DECLARE_CUSTOM_ORGANIZER_REMINDER_DETAIL(QOrganizerItemEmailReminder, "EmailReminder")
     Q_DECLARE_LATIN1_CONSTANT(FieldSubject, "Subject");
     Q_DECLARE_LATIN1_CONSTANT(FieldBody, "Body");
     Q_DECLARE_LATIN1_CONSTANT(FieldAttachments, "Attachments");

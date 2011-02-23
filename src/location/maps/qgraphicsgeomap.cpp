@@ -286,7 +286,7 @@ qreal QGraphicsGeoMap::zoomLevel() const
     viewed area to the right and that positive values of \a dy move the
     viewed area down.
 
-    After the panning has occured the centerChanged() signal will be emitted.
+    After the panning has occurred the centerChanged() signal will be emitted.
 */
 void QGraphicsGeoMap::pan(int dx, int dy)
 {

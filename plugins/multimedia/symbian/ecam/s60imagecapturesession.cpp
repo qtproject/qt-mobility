@@ -49,7 +49,7 @@
 
 #include <fbs.h>        // CFbsBitmap
 #include <pathinfo.h>
-#include <ImageConversion.h> // ICL Decoder (for SnapShot) & Encoder (for Bitmap Images)
+#include <imageconversion.h> // ICL Decoder (for SnapShot) & Encoder (for Bitmap Images)
 
 S60ImageCaptureDecoder::S60ImageCaptureDecoder(S60ImageCaptureSession *imageSession,
                                                RFs *fileSystemAccess,
@@ -455,7 +455,7 @@ QCameraImageCapture::Error S60ImageCaptureSession::fromSymbianErrorToQtMultimedi
             return QCameraImageCapture::ResourceError; // No resources available
 
         default:
-            return QCameraImageCapture::ResourceError; // Other error has occured
+            return QCameraImageCapture::ResourceError; // Other error has occurred
     }
 }
 

@@ -153,8 +153,9 @@ public:
     QAtomicInt m_refCount;
     QString m_id;                                  // the id parameter value
 
-    QList<QOrganizerItem> m_organizeritems;                      // list of organizer items
-    QList<QOrganizerItemId> m_organizeritemIds;             // list of organizer item Id's
+    QHash<QOrganizerItemId, QOrganizerItem> m_idToItemHash; // hash of id to the item identified by that id
+    QMultiHash<QOrganizerItemId, QOrganizerItemId> m_parentIdToChildIdHash; // hash of id to that item's children's ids
+
     QList<QOrganizerCollection> m_organizerCollections;          // list of collections
     QList<QOrganizerCollectionId> m_organizerCollectionIds; // list of collection ids
     QMultiMap<QOrganizerCollectionId, QOrganizerItemId> m_itemsInCollections; // map of collection ids to the ids of items the collection contains.
@@ -267,9 +268,10 @@ protected:
     virtual bool removeDetailDefinition(const QString& definitionId, const QString& organizeritemType, QOrganizerItemChangeSet& changeSet, QOrganizerManager::Error* error);
 
 private:
+    QOrganizerItem item(const QOrganizerItemId& organizeritemId) const;
     QList<QOrganizerItem> internalItems(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, QOrganizerManager::Error* error, bool forExport) const;
     QList<QOrganizerItem> internalItemOccurrences(const QOrganizerItem& parentItem, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount, bool includeExceptions, QOrganizerManager::Error* error) const;
-    void addItemRecurrences(QList<QOrganizerItem>& sorted, const QOrganizerItem& c, const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, bool forExport) const;
+    void addItemRecurrences(QList<QOrganizerItem>& sorted, const QOrganizerItem& c, const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, bool forExport, QSet<QOrganizerItemId>* parentsAdded) const;
 
     bool fixOccurrenceReferences(QOrganizerItem* item, QOrganizerManager::Error* error);
     bool typesAreRelated(const QString& occurrenceType, const QString& parentType);

@@ -1,6 +1,8 @@
 TARGET = qt_sfw_example_ipc_unittest
 INCLUDEPATH += ../../../../src/serviceframework
+INCLUDEPATH += ../../../../src/serviceframework/ipc
 DEPENDPATH += ../../../../src/serviceframework
+DEPENDPATH += ../../../../src/serviceframework/ipc
 
 QT = core testlib
 CONFIG+=testcase

@@ -15,10 +15,13 @@ symbian {
 
        #deploy descriptor file to service framework server's private folder
        #so batch mode tool execution can include the service
-       QtService.sources = $$QTSERVICE.DESCRIPTOR
-       QtService.path = $$EPOCROOT/private/2002AC7F/des
-       DEPLOYMENT += QtService
-
+       qtservice_descriptors = $$QTSERVICE.DESCRIPTOR
+       for(descriptor, qtservice_descriptors) {
+           BASENAME = $$basename(descriptor)
+           BLD_INF_RULES.prj_exports += "$$descriptor			$${EPOCROOT}epoc32/winscw/c/private/2002AC7F/des/$$BASENAME"
+           BLD_INF_RULES.prj_exports += "$$descriptor			$${EPOCROOT}epoc32/data/z/private/2002AC7F/des/$$BASENAME"
+       }
+       
        symbian-sbsv2{
            sfwextension = \
               "START EXTENSION qt/qtservice" \

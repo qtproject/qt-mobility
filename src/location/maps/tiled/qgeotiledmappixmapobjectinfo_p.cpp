@@ -76,6 +76,11 @@ QGeoTiledMapPixmapObjectInfo::QGeoTiledMapPixmapObjectInfo(QGeoTiledMapData *map
 
 QGeoTiledMapPixmapObjectInfo::~QGeoTiledMapPixmapObjectInfo() {}
 
+QGeoBoundingBox QGeoTiledMapPixmapObjectInfo::boundingBox() const
+{
+    return boundingBox_;
+}
+
 void QGeoTiledMapPixmapObjectInfo::updateValidity()
 {
     setValid((pixmap->coordinate().isValid() && !pixmap->pixmap().isNull()));
@@ -133,6 +138,10 @@ void QGeoTiledMapPixmapObjectInfo::update()
     pos.setX(x);
 
     int rightBound = pos.x() + pixmap->pixmap().width() * zoomFactor;
+    int bottomBound = pos.y() + pixmap->pixmap().height() * zoomFactor;
+
+    boundingBox_ = QGeoBoundingBox(tiledMapData->worldReferencePositionToCoordinate(pos.toPoint()),
+                                   tiledMapData->worldReferencePositionToCoordinate(QPoint(rightBound, bottomBound)));
 
     QPointF pos2 = QPointF(-1.0 * static_cast<qreal>(width / zoomFactor), 0);
 

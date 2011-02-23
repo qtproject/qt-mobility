@@ -42,6 +42,7 @@
 #ifndef QDECLARATIVEGEOMAPTEXTOBJECT_H
 #define QDECLARATIVEGEOMAPTEXTOBJECT_H
 
+#include "qdeclarativegeomapobject_p.h"
 #include "qdeclarativecoordinate_p.h"
 #include "qgeomaptextobject.h"
 
@@ -49,14 +50,17 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QDeclarativeGeoMapTextObject : public QGeoMapTextObject
+class QDeclarativeGeoMapTextObject : public QDeclarativeGeoMapObject
 {
     Q_OBJECT
     Q_ENUMS(HorizontalAlignment)
     Q_ENUMS(VerticalAlignment)
 
-    Q_PROPERTY(QDeclarativeCoordinate* coordinate READ declarativeCoordinate WRITE setDeclarativeCoordinate NOTIFY declarativeCoordinateChanged)
+    Q_PROPERTY(QDeclarativeCoordinate* coordinate READ coordinate WRITE setCoordinate NOTIFY coordinateChanged)
+    Q_PROPERTY(QString text READ text WRITE setText NOTIFY textChanged)
+    Q_PROPERTY(QFont font READ font WRITE setFont NOTIFY fontChanged)
     Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged)
+    Q_PROPERTY(QPoint offset READ offset WRITE setOffset NOTIFY offsetChanged)
     Q_PROPERTY(HorizontalAlignment horizontalAlignment READ horizontalAlignment WRITE setHorizontalAlignment NOTIFY horizontalAlignmentChanged)
     Q_PROPERTY(VerticalAlignment verticalAlignment READ verticalAlignment WRITE setVerticalAlignment NOTIFY verticalAlignmentChanged)
 
@@ -73,14 +77,23 @@ public:
         AlignBottom = Qt::AlignBottom
     };
 
-    QDeclarativeGeoMapTextObject();
+    QDeclarativeGeoMapTextObject(QDeclarativeItem *parent = 0);
     ~QDeclarativeGeoMapTextObject();
 
-    QDeclarativeCoordinate* declarativeCoordinate();
-    void setDeclarativeCoordinate(const QDeclarativeCoordinate *coordinate);
+    QDeclarativeCoordinate* coordinate();
+    void setCoordinate(const QDeclarativeCoordinate *coordinate);
+
+    QString text() const;
+    void setText(const QString &text);
+
+    QFont font() const;
+    void setFont(const QFont &font);
 
     QColor color() const;
     void setColor(const QColor &color);
+
+    QPoint offset() const;
+    void setOffset(const QPoint &offset);
 
     HorizontalAlignment horizontalAlignment() const;
     void setHorizontalAlignment(HorizontalAlignment alignment);
@@ -89,8 +102,11 @@ public:
     void setVerticalAlignment(VerticalAlignment alignment);
 
 Q_SIGNALS:
-    void declarativeCoordinateChanged(const QDeclarativeCoordinate *coordinate);
+    void coordinateChanged(const QDeclarativeCoordinate *coordinate);
+    void textChanged(const QString &text);
+    void fontChanged(const QFont &font);
     void colorChanged(const QColor &color);
+    void offsetChanged(const QPoint &offset);
     void horizontalAlignmentChanged(HorizontalAlignment alignment);
     void verticalAlignmentChanged(VerticalAlignment alignment);
 
@@ -100,11 +116,11 @@ private Q_SLOTS:
     void coordinateAltitudeChanged(double altitude);
 
 private:
-    QDeclarativeCoordinate* m_coordinate;
-    QColor m_color;
-    HorizontalAlignment m_hAlignment;
-    VerticalAlignment m_vAlignment;
-    Q_DISABLE_COPY(QDeclarativeGeoMapTextObject)
+    QGeoMapTextObject* text_;
+    QDeclarativeCoordinate coordinate_;
+    QColor color_;
+    HorizontalAlignment hAlignment_;
+    VerticalAlignment vAlignment_;
 };
 
 QTM_END_NAMESPACE

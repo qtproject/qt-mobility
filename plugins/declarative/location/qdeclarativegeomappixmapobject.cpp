@@ -63,10 +63,10 @@ QTM_BEGIN_NAMESPACE
 
     \ingroup qml-location-maps
 
-    The image loaded from \l source will be drawn \l offset.x and 
+    The image loaded from \l source will be drawn \l offset.x and
     \l offset.y pixels away from the on-screen position of \l coordinate.
-    
-    If \l source does not point to an image or \l coordinate is 
+
+    If \l source does not point to an image or \l coordinate is
     invalid nothing will be displayed.
 
     The status of the image loading can be monitored via \l status.
@@ -74,23 +74,29 @@ QTM_BEGIN_NAMESPACE
     The MapImage element is part of the \bold{QtMobility.location 1.1} module.
 */
 
-QDeclarativeGeoMapPixmapObject::QDeclarativeGeoMapPixmapObject()
-    : m_status(QDeclarativeGeoMapPixmapObject::Null),
-    m_reply(0)
+QDeclarativeGeoMapPixmapObject::QDeclarativeGeoMapPixmapObject(QDeclarativeItem *parent)
+    : QDeclarativeGeoMapObject(parent),
+      pixmap_(0),
+      reply_(0),
+      status_(QDeclarativeGeoMapPixmapObject::Null)
 {
-    m_coordinate = new QDeclarativeCoordinate(this);
+    pixmap_ = new QGeoMapPixmapObject();
+    setMapObject(pixmap_);
 
-    connect(m_coordinate,
+    connect(pixmap_,
+            SIGNAL(offsetChanged(QPoint)),
+            this,
+            SIGNAL(offsetChanged(QPoint)));
+
+    connect(&coordinate_,
             SIGNAL(latitudeChanged(double)),
             this,
             SLOT(coordinateLatitudeChanged(double)));
-
-    connect(m_coordinate,
+    connect(&coordinate_,
             SIGNAL(longitudeChanged(double)),
             this,
             SLOT(coordinateLongitudeChanged(double)));
-
-    connect(m_coordinate,
+    connect(&coordinate_,
             SIGNAL(altitudeChanged(double)),
             this,
             SLOT(coordinateAltitudeChanged(double)));
@@ -98,72 +104,83 @@ QDeclarativeGeoMapPixmapObject::QDeclarativeGeoMapPixmapObject()
 
 QDeclarativeGeoMapPixmapObject::~QDeclarativeGeoMapPixmapObject()
 {
+    delete pixmap_;
 }
 
 /*!
     \qmlproperty Coordinate MapImage::coordinate
 
-    This property holds the coordinate at which to anchor the image. 
+    This property holds the coordinate at which to anchor the image.
 */
 
-void QDeclarativeGeoMapPixmapObject::setDeclarativeCoordinate(const QDeclarativeCoordinate *coordinate)
+void QDeclarativeGeoMapPixmapObject::setCoordinate(const QDeclarativeCoordinate *coordinate)
 {
-    if (m_coordinate->coordinate() == coordinate->coordinate())
+    if (coordinate_.coordinate() == coordinate->coordinate())
         return;
 
-    m_coordinate->setCoordinate(coordinate->coordinate());
-    setCoordinate(coordinate->coordinate());
+    coordinate_.setCoordinate(coordinate->coordinate());
+    pixmap_->setCoordinate(coordinate->coordinate());
 
-    emit declarativeCoordinateChanged(m_coordinate);
+    emit coordinateChanged(&coordinate_);
 }
 
-QDeclarativeCoordinate* QDeclarativeGeoMapPixmapObject::declarativeCoordinate() 
+QDeclarativeCoordinate* QDeclarativeGeoMapPixmapObject::coordinate()
 {
-    return m_coordinate;
+    return &coordinate_;
 }
 
 void QDeclarativeGeoMapPixmapObject::coordinateLatitudeChanged(double /*latitude*/)
 {
-    setCoordinate(m_coordinate->coordinate());
+    pixmap_->setCoordinate(coordinate_.coordinate());
 }
 
 void QDeclarativeGeoMapPixmapObject::coordinateLongitudeChanged(double /*longitude*/)
 {
-    setCoordinate(m_coordinate->coordinate());
+    pixmap_->setCoordinate(coordinate_.coordinate());
 }
 
 void QDeclarativeGeoMapPixmapObject::coordinateAltitudeChanged(double /*altitude*/)
 {
-    setCoordinate(m_coordinate->coordinate());
+    pixmap_->setCoordinate(coordinate_.coordinate());
 }
 
 /*!
     \qmlproperty int MapImage::offset.x
     \qmlproperty int MapImage::offset.y
 
-    These properties hold the offset from the on-screen position of 
+    These properties hold the offset from the on-screen position of
     \l coordinate at which the image should be displayed.
 
     They both default to 0.
 */
 
+QPoint QDeclarativeGeoMapPixmapObject::offset() const
+{
+    return pixmap_->offset();
+}
+
+void QDeclarativeGeoMapPixmapObject::setOffset(const QPoint &offset)
+{
+    pixmap_->setOffset(offset);
+}
+
 /*!
     \qmlproperty url MapImage::source
 
-    This property holds the URL describing the location of the image to 
+    This property holds the URL describing the location of the image to
     display.
 
-    The URL can be absolute or relative to where the QML file 
-    was loaded from, and can be a local file, a file embedded within 
+    The URL can be absolute or relative to where the QML file
+    was loaded from, and can be a local file, a file embedded within
     a Qt Resource bundle, or a file retrieved from the network.
 */
 
 void QDeclarativeGeoMapPixmapObject::setSource(const QUrl &source)
 {
-    if (m_source == source)
+    if (source_ == source)
         return;
 
-    m_source = source;
+    source_ = source;
 
     load();
 
@@ -172,7 +189,7 @@ void QDeclarativeGeoMapPixmapObject::setSource(const QUrl &source)
 
 QUrl QDeclarativeGeoMapPixmapObject::source() const
 {
-    return m_source;
+    return source_;
 }
 
 /*!
@@ -189,25 +206,25 @@ QUrl QDeclarativeGeoMapPixmapObject::source() const
 
 QDeclarativeGeoMapPixmapObject::Status QDeclarativeGeoMapPixmapObject::status() const
 {
-    return m_status;
+    return status_;
 }
 
 
 void QDeclarativeGeoMapPixmapObject::setStatus(const QDeclarativeGeoMapPixmapObject::Status status)
 {
-    if (m_status == status)
+    if (status_ == status)
         return;
 
-    m_status = status;
+    status_ = status;
 
-    emit statusChanged(m_status);
+    emit statusChanged(status_);
 }
 
 void QDeclarativeGeoMapPixmapObject::load()
 {
     // need to deal with absolute / relative local / remote files
 
-    QUrl url = QDeclarativeEngine::contextForObject(this)->resolvedUrl(m_source);
+    QUrl url = QDeclarativeEngine::contextForObject(this)->resolvedUrl(source_);
 
     QString path;
 
@@ -224,54 +241,54 @@ void QDeclarativeGeoMapPixmapObject::load()
             QImage image;
             QImageReader imageReader(&f);
             if (imageReader.read(&image)) {
-                setPixmap(QPixmap::fromImage(image));
+                pixmap_->setPixmap(QPixmap::fromImage(image));
                 setStatus(QDeclarativeGeoMapPixmapObject::Ready);
             } else {
-                setPixmap(QPixmap());
+                pixmap_->setPixmap(QPixmap());
                 setStatus(QDeclarativeGeoMapPixmapObject::Error);
                 //qWarning() << "image read fail";
             }
         } else {
-            setPixmap(QPixmap());
+            pixmap_->setPixmap(QPixmap());
             setStatus(QDeclarativeGeoMapPixmapObject::Error);
             //qWarning() << "file open fail";
         }
     } else {
-        if (m_reply) {
-            m_reply->abort();
-            m_reply->deleteLater();
-            m_reply = 0;
+        if (reply_) {
+            reply_->abort();
+            reply_->deleteLater();
+            reply_ = 0;
         }
 
         QDeclarativeEngine *engine = QDeclarativeEngine::contextForObject(this)->engine();
         if (engine) {
             QNetworkAccessManager *nam = engine->networkAccessManager();
-            m_reply = nam->get(QNetworkRequest(url));
+            reply_ = nam->get(QNetworkRequest(url));
 
-            if (m_reply->isFinished()) {
-                if (m_reply->error() == QNetworkReply::NoError) {
+            if (reply_->isFinished()) {
+                if (reply_->error() == QNetworkReply::NoError) {
                     finished();
                 } else {
-                    error(m_reply->error());
+                    error(reply_->error());
                 }
-                delete m_reply;
-                m_reply = 0;
+                delete reply_;
+                reply_ = 0;
                 return;
             }
 
             setStatus(QDeclarativeGeoMapPixmapObject::Loading);
 
-            connect(m_reply,
+            connect(reply_,
                     SIGNAL(finished()),
                     this,
                     SLOT(finished()));
-            connect(m_reply,
+            connect(reply_,
                     SIGNAL(error(QNetworkReply::NetworkError)),
                     this,
                     SLOT(error(QNetworkReply::NetworkError)));
 
         } else {
-            setPixmap(QPixmap());
+            pixmap_->setPixmap(QPixmap());
             setStatus(QDeclarativeGeoMapPixmapObject::Error);
             //qWarning() << "null engine fail";
         }
@@ -280,33 +297,33 @@ void QDeclarativeGeoMapPixmapObject::load()
 
 void QDeclarativeGeoMapPixmapObject::finished()
 {
-    if (m_reply->error() != QNetworkReply::NoError) {
-        m_reply->deleteLater();
-        m_reply = 0;
+    if (reply_->error() != QNetworkReply::NoError) {
+        reply_->deleteLater();
+        reply_ = 0;
         return;
     }
 
     QImage image;
-    QImageReader imageReader(m_reply);
+    QImageReader imageReader(reply_);
     if (imageReader.read(&image)) {
-        setPixmap(QPixmap::fromImage(image));
+        pixmap_->setPixmap(QPixmap::fromImage(image));
         setStatus(QDeclarativeGeoMapPixmapObject::Ready);
     } else {
-        setPixmap(QPixmap());
+        pixmap_->setPixmap(QPixmap());
         setStatus(QDeclarativeGeoMapPixmapObject::Error);
         //qWarning() << "image read fail";
     }
 
-    m_reply->deleteLater();
-    m_reply = 0;
+    reply_->deleteLater();
+    reply_ = 0;
 }
 
 void QDeclarativeGeoMapPixmapObject::error(QNetworkReply::NetworkError error)
 {
-    m_reply->deleteLater();
-    m_reply = 0;
+    reply_->deleteLater();
+    reply_ = 0;
 
-    setPixmap(QPixmap());
+    pixmap_->setPixmap(QPixmap());
     setStatus(QDeclarativeGeoMapPixmapObject::Error);
     //qWarning() << "network error fail";
 }
@@ -316,21 +333,21 @@ void QDeclarativeGeoMapPixmapObject::error(QNetworkReply::NetworkError error)
 
     This property holds the z-value of the image.
 
-    Map objects are drawn in z-value order, and objects with the 
+    Map objects are drawn in z-value order, and objects with the
     same z-value will be drawn in insertion order.
 */
 
 /*!
     \qmlproperty bool MapImage::visible
 
-    This property holds a boolean corresponding to whether or not the 
+    This property holds a boolean corresponding to whether or not the
     image is visible.
 */
 
 /*!
     \qmlproperty bool MapImage::selected
 
-    This property holds a boolean corresponding to whether or not the 
+    This property holds a boolean corresponding to whether or not the
     image is selected.
 */
 

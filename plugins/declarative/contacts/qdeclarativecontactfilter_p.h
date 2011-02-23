@@ -1,10 +1,10 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the plugins of the Qt Toolkit.
+** This file is part of the QtDeclarative module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
@@ -38,7 +38,6 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-
 #ifndef QDECLARATIVECONTACTFILTER_P_H
 #define QDECLARATIVECONTACTFILTER_P_H
 #include <qdeclarative.h>
@@ -51,15 +50,16 @@ QTM_USE_NAMESPACE
 class QDeclarativeContactFilter : public QObject
 {
     Q_OBJECT
-
-    Q_PROPERTY(FilterType type READ type NOTIFY typeChanged)
-
     Q_ENUMS(FilterType)
     Q_FLAGS(MatchFlags)
 public:
     QDeclarativeContactFilter(QObject *parent=0)
         :QObject(parent)
     {
+        //for grouped filter: intersect /union filters
+        if (parent && qobject_cast<QDeclarativeContactFilter*>(parent)) {
+            connect(this, SIGNAL(filterChanged()), parent, SIGNAL(filterChanged()));
+        }
     }
 
     enum FilterType {
@@ -97,8 +97,7 @@ public:
     }
 
 signals:
-    void typeChanged();
-    void valueChanged();
+    void filterChanged();
 };
 
 

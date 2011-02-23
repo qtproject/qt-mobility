@@ -48,6 +48,7 @@
 
 #include "qgeomappingmanagerengine_nokia.h"
 #include "qgeomapreply_nokia.h"
+#include "qgeotiledmapdata_nokia.h"
 
 #include <qgeotiledmaprequest.h>
 
@@ -77,6 +78,7 @@
 
 QGeoMappingManagerEngineNokia::QGeoMappingManagerEngineNokia(const QMap<QString, QVariant> &parameters, QGeoServiceProvider::Error *error, QString *errorString)
         : QGeoTiledMappingManagerEngine(parameters),
+        m_cache(0),
         m_host("maptile.maps.svc.ovi.com"),
         m_token(QGeoServiceProviderFactoryNokia::defaultToken),
         m_referer(QGeoServiceProviderFactoryNokia::defaultReferer)
@@ -157,7 +159,7 @@ QGeoMappingManagerEngineNokia::~QGeoMappingManagerEngineNokia() {}
 
 QGeoMapData* QGeoMappingManagerEngineNokia::createMapData()
 {
-    QGeoMapData *data = QGeoTiledMappingManagerEngine::createMapData();
+    QGeoMapData *data = new QGeoTiledMapDataNokia(this);
     if (!data)
         return 0;
 

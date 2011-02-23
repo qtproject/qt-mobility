@@ -78,6 +78,7 @@ public:
     QPolygonF points;
 
 public slots:
+    void zoomLevelChanged(qreal zoomLevel);
     void pathChanged(const QList<QGeoCoordinate> &path);
     void penChanged(const QPen &pen);
 };

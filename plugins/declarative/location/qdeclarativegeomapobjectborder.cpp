@@ -46,9 +46,9 @@
 
 QTM_BEGIN_NAMESPACE
 
-QDeclarativeGeoMapObjectBorder::QDeclarativeGeoMapObjectBorder(QObject *parent) 
+QDeclarativeGeoMapObjectBorder::QDeclarativeGeoMapObjectBorder(QObject *parent)
     : QObject(parent),
-    m_width(1) {}
+      m_width(1) {}
 
 QDeclarativeGeoMapObjectBorder::~QDeclarativeGeoMapObjectBorder() {}
 

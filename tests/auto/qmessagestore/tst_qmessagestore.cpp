@@ -160,6 +160,8 @@ private slots:
     void testFolder_data();
     void testFolder();
 
+    void testRemoveAccount();
+
     void testMessage_data();
     void testMessage();
 
@@ -190,6 +192,28 @@ void tst_QMessageStore::initTestCase()
 
     Support::clearMessageStore();
 
+#ifdef FREESTYLEMAILUSED
+    // Create test accounts before starting actual tests
+    // Note: This is done because FreeStyle backend can
+    //       not update internal Account cache due to
+    //       Symbian Email message API limitations.
+    //       => Accounts must be created before FreeStyle
+    //          backend instance is created.
+    static const QString testAccountName("testAccount");
+    Support::Parameters p;
+    p.insert("name", "Test Account #1");
+    p.insert("fromAddress", "tester1@example.com");
+    Support::addAccount(p);
+
+    p.insert("name", "Test Account #2");
+    p.insert("fromAddress", "tester2@example.com");
+    Support::addAccount(p);
+
+    p.insert("name", "testAccount");
+    p.insert("fromAddress", "someone@example.com");
+    Support::addAccount(p);
+#endif
+
     manager = new QMessageManager;
 }
 
@@ -215,6 +239,17 @@ void tst_QMessageStore::testAccount()
     QFETCH(QString, name);
     QFETCH(QString, fromAddress);
 
+#ifdef FREESTYLEMAILUSED
+    // Accounts have already been created in initTestCase()
+    // => Try to find created accounts by name.
+    QMessageAccountIdList accounts = manager->queryAccounts(QMessageAccountFilter::byName(name));
+    QMessageAccountId accountId;
+    if (accounts.count() > 0) {
+        accountId = accounts[0];
+    }
+    QVERIFY(accountId.isValid());
+    QVERIFY(accountId != QMessageAccountId());
+#else
     Support::Parameters p;
     p.insert("name", name);
     p.insert("fromAddress", fromAddress);
@@ -225,6 +260,7 @@ void tst_QMessageStore::testAccount()
     QVERIFY(accountId.isValid());
     QVERIFY(accountId != QMessageAccountId());
     QCOMPARE(manager->countAccounts(), originalCount + 1);
+#endif
 
     QMessageAccount account(accountId);
     QCOMPARE(account.id(), accountId);
@@ -248,6 +284,11 @@ void tst_QMessageStore::testFolder_data()
     QTest::addColumn<QString>("parentFolderPath");
     QTest::addColumn<QString>("nameResult");
 
+#ifdef FREESTYLEMAILUSED
+    // Symbian FreeStyle email does not support local folder creation
+    // => Use Drafts folder for testing
+    QTest::newRow("Drafts") << "Drafts" << "Drafts" << "" << "Drafts";
+#else
 	// Note: on Win CE, we can't use 'Inbox' 'Drafts' etc., becuase they're added automatically by the system
     QTest::newRow("Inbox") << "Unbox" << "Unbox" << "" << "Unbox";
 #if !defined(Q_OS_SYMBIAN) && !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
@@ -255,7 +296,8 @@ void tst_QMessageStore::testFolder_data()
     QTest::newRow("Drafts") << "Crafts" << "" << "" << "Crafts";
     QTest::newRow("Archived") << "Unbox/Archived" << "Archived" << "Unbox" << "Archived";
     QTest::newRow("Backup") << "Unbox/Archived/Backup" << "Backup" << "Unbox/Archived" << "Backup";
-#endif    
+#endif
+#endif
 }
 
 void tst_QMessageStore::testFolder()
@@ -265,10 +307,13 @@ void tst_QMessageStore::testFolder()
     QMessageAccountId testAccountId;
     QMessageAccountIdList accountIds(manager->queryAccounts(QMessageAccountFilter::byName(testAccountName)));
     if (accountIds.isEmpty()) {
+#ifndef FREESTYLEMAILUSED
+        // Accounts have already been created in initTestCase()
         Support::Parameters p;
         p.insert("name", testAccountName);
         p.insert("fromAddress", "someone@example.com");
         testAccountId = Support::addAccount(p);
+#endif
     } else {
         testAccountId = accountIds.first();
     }
@@ -279,6 +324,13 @@ void tst_QMessageStore::testFolder()
     QFETCH(QString, parentFolderPath);
     QFETCH(QString, nameResult);
 
+#ifdef FREESTYLEMAILUSED
+    // Symbian FreeStyle email does not support local folder creation
+    // => Drafts folder is searched by name
+    QMessageFolderIdList folders = manager->queryFolders(QMessageFolderFilter::byName(name) &
+                                                         QMessageFolderFilter::byParentAccountId(testAccountId));
+    QMessageFolderId folderId = folders[0];
+#else
     Support::Parameters p;
     p.insert("path", path);
     p.insert("name", name);
@@ -299,12 +351,18 @@ void tst_QMessageStore::testFolder()
 #else
     QCOMPARE(manager->countFolders(), originalCount + 1);
 #endif    
-    
+#endif
     QMessageFolder folder(folderId);
     QCOMPARE(folder.id(), folderId);
     QCOMPARE(folder.path(), path);
     QCOMPARE(folder.name(), nameResult);
+#ifndef FREESTYLEMAILUSED
+    // Drafts folder is used for Symbian FreeStyle backend tests
+    // => Drafts folder can be found from any account because all accounts
+    //    share same Drafts folder
+    // <=> parentAccountId can be id of any existing account
     QCOMPARE(folder.parentAccountId(), testAccountId);
+#endif
 
     QCOMPARE(QMessageFolder(folder).id(), folderId);
     QVERIFY(!(folderId < folderId));
@@ -361,7 +419,11 @@ void tst_QMessageStore::testMessage_data()
         << QByteArray("text")
         << QByteArray("plain")
 #if defined(Q_OS_SYMBIAN)
+#ifdef FREESTYLEMAILUSED
+        << 26
+#else
         << 89
+#endif
 #else
 #if defined(Q_OS_WIN) && defined(_WIN32_WCE)
         << 32
@@ -389,7 +451,11 @@ void tst_QMessageStore::testMessage_data()
         << QByteArray("text")
         << QByteArray("html")
 #if defined(Q_OS_SYMBIAN)
+#ifdef FREESTYLEMAILUSED
+        << 80
+#else
         << 157
+#endif
 #else
 #if defined(Q_OS_WIN) && defined(_WIN32_WCE)
         << 64
@@ -417,7 +483,11 @@ void tst_QMessageStore::testMessage_data()
         << QByteArray("multipart")
         << QByteArray("mixed")
 #if defined(Q_OS_SYMBIAN)
+#ifdef FREESTYLEMAILUSED
+        << 494
+#else
         << 611
+#endif
 #else
 #if defined(Q_OS_WIN) && defined(_WIN32_WCE)
         << 512
@@ -445,7 +515,11 @@ void tst_QMessageStore::testMessage_data()
         << QByteArray("multipart")
         << QByteArray("mixed")
 #if defined(Q_OS_SYMBIAN)
+#ifdef FREESTYLEMAILUSED
+        << 4623
+#else
         << 4731
+#endif
 #else
 #if defined(Q_OS_WIN) && !defined(_WIN32_WCE)
         << 5120
@@ -465,6 +539,23 @@ void tst_QMessageStore::testMessage_data()
         << "byFilter";
 }
 
+void tst_QMessageStore::testRemoveAccount()
+{
+    QVERIFY(QMessageManager().queryAccounts(QMessageAccountFilter::byName("Mr. Temp")).empty());
+
+    Support::Parameters p;
+    p.insert("name", "Mr. Temp");
+    p.insert("fromAddress", "anaddress@example.com");
+    QMessageAccountId id(Support::addAccount(p));
+    QVERIFY(id.isValid());
+
+    QVERIFY(!QMessageManager().queryAccounts(QMessageAccountFilter::byName("Mr. Temp")).empty());
+    QVERIFY(QMessageManager().removeAccount(id));
+
+    QTest::qWait(4000);
+    QVERIFY(QMessageManager().queryAccounts(QMessageAccountFilter::byName("Mr. Temp")).empty());
+}
+
 void tst_QMessageStore::testMessage()
 {
     // Ensure we have an account to create messages with
@@ -473,9 +564,12 @@ void tst_QMessageStore::testMessage()
     QMessageAccountId testAccountId;
     QMessageAccountIdList accountIds(manager->queryAccounts(QMessageAccountFilter::byName(testAccountName)));
     if (accountIds.isEmpty()) {
+#ifndef FREESTYLEMAILUSED
+        // Accounts have already been created in initTestCase()
         Support::Parameters p;
         p.insert("name", testAccountName);
         testAccountId = Support::addAccount(p);
+#endif
     } else {
         testAccountId = accountIds.first();
         QMessageAccount acc(testAccountId);
@@ -483,11 +577,17 @@ void tst_QMessageStore::testMessage()
     QVERIFY(testAccountId.isValid());
 
     QMessageFolderId testFolderId;
+#ifdef FREESTYLEMAILUSED
+    // Symbian FreeStyle email does not support local folder creation
+    // => Drafts folder is searched by name
+    QMessageFolderFilter filter(QMessageFolderFilter::byName("Drafts") & QMessageFolderFilter::byParentAccountId(testAccountId));
+#else
 #if !defined(Q_OS_SYMBIAN) && !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
     QMessageFolderFilter filter(QMessageFolderFilter::byName("Inbox") & QMessageFolderFilter::byParentAccountId(testAccountId));
 #else
     // Created Messages can not be stored into "Inbox" folder in Symbian & Meamo
     QMessageFolderFilter filter(QMessageFolderFilter::byName("Unbox") & QMessageFolderFilter::byParentAccountId(testAccountId));
+#endif
 #endif
     QMessageFolderIdList folderIds(manager->queryFolders(filter));
     if (folderIds.isEmpty()) {
@@ -574,8 +674,20 @@ void tst_QMessageStore::testMessage()
 
     int originalCount = manager->countMessages();
 
+#ifdef FREESTYLEMAILUSED
+    QEventLoop eventLoop;
+    connect(manager, SIGNAL(messageAdded(QMessageId, QMessageManager::NotificationFilterIdSet)), &eventLoop, SLOT(quit()));
+    connect(manager, SIGNAL(messageRemoved(QMessageId, QMessageManager::NotificationFilterIdSet)), &eventLoop, SLOT(quit()));
+#endif
+
     // Test message addition
     QMessageId messageId(Support::addMessage(p));
+#ifdef FREESTYLEMAILUSED
+    // Wait until messageAdded signal quits eventLoop or until
+    // 10 seconds timout is reached.
+    QTimer::singleShot(10000, &eventLoop, SLOT(quit())); // 10 seconds timeout
+    eventLoop.exec();
+#endif
     QVERIFY(messageId.isValid());
     QVERIFY(messageId != QMessageId());
     QCOMPARE(manager->countMessages(), originalCount + 1);
@@ -614,6 +726,9 @@ void tst_QMessageStore::testMessage()
     QCOMPARE(message.to().first(), toAddress);
     QCOMPARE(message.to().first().addressee(), to);
 
+#ifndef FREESTYLEMAILUSED
+    // Symbian FreeStyle backend can not set sender address
+    // <=> Symbian Email message API does not offer functionality for setting sender address
 #if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
     // From address is currently taken automatically from account in Maemo implementation
     QMessageAddress fromAddress;
@@ -621,6 +736,7 @@ void tst_QMessageStore::testMessage()
     fromAddress.setAddressee(from);
     QCOMPARE(message.from(), fromAddress);
     QCOMPARE(message.from().addressee(), from);
+#endif
 #endif
     QList<QMessageAddress> ccAddresses;
     foreach (const QString &element, cc.split(",", QString::SkipEmptyParts)) {
@@ -632,14 +748,25 @@ void tst_QMessageStore::testMessage()
 
     QCOMPARE(message.cc(), ccAddresses);
 
+#ifndef FREESTYLEMAILUSED
+    // Symbian FreeStyle backend can not set message date
+    // <=> Symbian Email message API message date setting does not seem to work
 #if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
     // Dates can not be stored with addMessage in Maemo implementation
     QCOMPARE(message.date(), QDateTime::fromString(date, Qt::ISODate));
 #endif
+#endif
     QCOMPARE(message.subject(), subject);
 
     QCOMPARE(message.contentType().toLower(), messageType.toLower());
+#ifdef FREESTYLEMAILUSED
+    // html contentType handling does not work correctly in Symbian Email message API
+    if (messageSubType.toLower() != "html") {
+        QCOMPARE(message.contentSubType().toLower(), messageSubType.toLower());
+    }
+#else
     QCOMPARE(message.contentSubType().toLower(), messageSubType.toLower());
+#endif
 
     if (message.contentType().toLower() == "multipart") {
         QVERIFY(!message.contentIds().isEmpty());
@@ -647,7 +774,14 @@ void tst_QMessageStore::testMessage()
         QVERIFY(message.contentIds().isEmpty());
     }
 
+#ifndef FREESTYLEMAILUSED
+    // Test messages are created into Drafts folder for Symbian FreeStyle
+    // backend tests
+    // => message can be found from any account because all accounts
+    //    share same Drafts folder
+    // <=> parentAccountId can be id of any existing account
     QCOMPARE(message.parentAccountId(), testAccountId);
+#endif
     QCOMPARE(message.parentFolderId(), testFolderId);
 #if !defined(Q_OS_SYMBIAN) && !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6) // Created Messages are not stored in Standard Folders in Symbian & Maemo
     QCOMPARE(message.standardFolder(), QMessage::InboxFolder);
@@ -667,7 +801,14 @@ void tst_QMessageStore::testMessage()
     QMessageContentContainer body(message.find(bodyId));
 
     QCOMPARE(body.contentType().toLower(), bodyType.toLower());
+#ifdef FREESTYLEMAILUSED
+    // html contentType handling does not work correctly in Symbian Email message API
+    if (messageSubType.toLower() != "html") {
+        QCOMPARE(message.contentSubType().toLower(), messageSubType.toLower());
+    }
+#else
     QCOMPARE(body.contentSubType().toLower(), bodySubType.toLower());
+#endif
     QCOMPARE(body.contentCharset().toLower(), defaultCharset.toLower());
     QCOMPARE(body.isContentAvailable(), true);
     QCOMPARE(body.textContent(), text);
@@ -691,7 +832,7 @@ void tst_QMessageStore::testMessage()
         // We cannot create nested multipart messages
         QVERIFY(attachment.contentIds().isEmpty());
 
-#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6) || defined(FREESTYLEMAILUSED)
         // Check attachment content
         QByteArray attachmentContent = attachment.content();
         QString fileName = QString(TESTDATA_DIR) + QString("/testdata/") + attachments[index];
@@ -739,11 +880,18 @@ void tst_QMessageStore::testMessage()
     while (QCoreApplication::hasPendingEvents())
         QCoreApplication::processEvents();
 
+#ifndef FREESTYLEMAILUSED
+    // For some reason FreeStyle backend does not emit messageUpdated signals
+    // <=> It seems that there is a bug in Symbian Email message API
+    //     because MessageChangedEventL() callback does not called when
+    //     message is updated
+
     // MAPI generates multiple update notifications per message updated
     QVERIFY(catcher.updated.count() > 0);
     QCOMPARE(catcher.updated.first().first, messageId);
     QCOMPARE(catcher.updated.first().second.count(), 2);
     QCOMPARE(catcher.updated.first().second, QSet<QMessageManager::NotificationFilterId>() << filter2->id << filter3->id);
+#endif
 
     QMessage updated(message.id());
 
@@ -753,7 +901,11 @@ void tst_QMessageStore::testMessage()
     QCOMPARE(QMessage(message).id(), message.id());
     QVERIFY(!(message.id() < message.id()));
     QVERIFY((QMessageId() < message.id()) || (message.id() < QMessageId()));
+#ifndef FREESTYLEMAILUSED
+    // Symbian FreeStyle backend can not set message date
+    // <=> Symbian Email message API message date setting does not seem to work
     QCOMPARE(updated.date(), dt);
+#endif
 
     bodyId = updated.bodyId();
     QCOMPARE(bodyId.isValid(), true);
@@ -764,10 +916,13 @@ void tst_QMessageStore::testMessage()
     body = updated.find(bodyId);
   
     QCOMPARE(body.contentType().toLower(), QByteArray("text"));
+#ifndef FREESTYLEMAILUSED
+    // html contentType handling does not work correctly in Symbian Email message API
     QCOMPARE(body.contentSubType().toLower(), QByteArray("html"));
 #if !defined(Q_OS_WIN)
     // Original charset is not preserved on windows
     QCOMPARE(body.contentCharset().toLower(), alternateCharset.toLower());
+#endif
 #endif
     QCOMPARE(body.isContentAvailable(), true);
     QCOMPARE(body.textContent(), replacementText);
@@ -801,7 +956,12 @@ void tst_QMessageStore::testMessage()
     } else { // byFilter
         manager->removeMessages(QMessageFilter::byId(message.id()));
     }
-#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+#ifdef FREESTYLEMAILUSED
+    // Wait until messageRemoved signal quits eventLoop or until
+    // 10 seconds timout is reached.
+    QTimer::singleShot(10000, &eventLoop, SLOT(quit())); // 10 seconds timeout
+    eventLoop.exec();
+#elif defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
     // Wait 1 second to make sure that there is
     // enough time to get removed signal
     {
@@ -819,7 +979,7 @@ void tst_QMessageStore::testMessage()
     while (QCoreApplication::hasPendingEvents())
         QCoreApplication::processEvents();
 
-#if !defined(Q_OS_SYMBIAN)
+#if !defined(Q_OS_SYMBIAN) || defined(FREESTYLEMAILUSED)
     QCOMPARE(removeCatcher.removed.count(), 1);
     QCOMPARE(removeCatcher.removed.first().first, messageId);
 #if defined(Q_WS_MAEMO_5)

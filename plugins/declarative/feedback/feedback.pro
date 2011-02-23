@@ -32,7 +32,7 @@ symbian {
     # Allow writable DLL data
     TARGET.EPOCALLOWDLLDATA = 1
     # Target UID, makes every Symbian app unique
-    # TARGET.UID3 = 0x20021324
+    TARGET.UID3 = 0x200315FC
     # Specifies what files shall be deployed: the plugin itself and the qmldir file.
     importFiles.sources = $$DESTDIR/declarative_feedback$${QT_LIBINFIX}.dll qmldir
     importFiles.path = $$QT_IMPORTS_BASE_DIR/$$TARGETPATH

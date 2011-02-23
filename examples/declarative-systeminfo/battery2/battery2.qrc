@@ -1,0 +1,7 @@
+<!DOCTYPE RCC>
+ <RCC version="1.0">
+
+ <qresource prefix="/">
+     <file>battery2.qml</file>
+ </qresource>
+ </RCC>

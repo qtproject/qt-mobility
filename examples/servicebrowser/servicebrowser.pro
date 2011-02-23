@@ -19,6 +19,7 @@ mac:CONFIG -= app_bundle
 symbian {
     addFiles.sources = ../filemanagerplugin/filemanagerservice.xml
     addFiles.sources += ../bluetoothtransferplugin/bluetoothtransferservice.xml
+    addFiles.sources += ../notesmanagerplugin/notesmanagerservice.xml
     addFiles.path = xmldata
     DEPLOYMENT += addFiles
 

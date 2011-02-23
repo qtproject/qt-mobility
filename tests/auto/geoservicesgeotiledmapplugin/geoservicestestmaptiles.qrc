@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/tiles">
+        <file>png8.png</file>
+    </qresource>
+</RCC>

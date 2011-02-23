@@ -49,7 +49,7 @@ CameraBinVideoEncoder::CameraBinVideoEncoder(CameraBinSession *session)
     :QVideoEncoderControl(session), m_session(session)
 {
     QList<QByteArray> codecCandidates;
-#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+#if defined(Q_WS_MAEMO_5)
     codecCandidates << "video/mpeg4" << "video/h264" << "video/h263" << "video/theora"
                     << "video/mpeg2" << "video/mpeg1" << "video/mjpeg" << "video/VP8" << "video/h261";
 
@@ -64,6 +64,17 @@ CameraBinVideoEncoder::CameraBinVideoEncoder(CameraBinSession *session)
     m_elementNames["video/h261"] = "ffenc_h261";
 
     m_codecOptions["video/mpeg4"] = QStringList() << "mode" << "keyframe-interval";
+#elif defined(Q_WS_MAEMO_6)
+    codecCandidates << "video/mpeg4" << "video/h264" << "video/h263";
+
+    m_elementNames["video/h264"] = "dsph264enc";
+    m_elementNames["video/mpeg4"] = "dsphdmp4venc";
+    m_elementNames["video/h263"] = "dsph263enc";
+
+    QStringList options = QStringList() << "mode" << "keyframe-interval" << "max-bitrate" << "intra-refresh";
+    m_codecOptions["video/h264"] = options;
+    m_codecOptions["video/mpeg4"] = options;
+    m_codecOptions["video/h263"] = options;
 #else
     codecCandidates << "video/h264" << "video/xvid" << "video/mpeg4"
                     << "video/mpeg1" << "video/mpeg2" << "video/theora"
@@ -246,6 +257,7 @@ GstElement *CameraBinVideoEncoder::createEncoder()
                 g_object_set(G_OBJECT(encoderElement), "quality", quality, NULL);
             } else if (elementName == "dsph264enc" ||
                        elementName == "dspmp4venc" ||
+                       elementName == "dsphdmp4venc" ||
                        elementName == "dsph263enc") {
                 //only bitrate parameter is supported
                 int qualityTable[] = {

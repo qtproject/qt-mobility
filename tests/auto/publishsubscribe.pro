@@ -10,12 +10,12 @@ SUBDIRS += qvaluespace \
        qcrmlparser
 
 unix|win32 {
-    !symbian:!maemo6:!maemo5: SUBDIRS+= \
+    !symbian:!maemo6:!maemo5:!meego: SUBDIRS+= \
         qsystemreadwritelock \
         qsystemreadwritelock_oop
 }
 
-unix:!symbian:!maemo6:!maemo5 {
+unix:!symbian:!maemo6:!maemo5:!meego {
     SUBDIRS+= \
            qpacket \
            qmallocpool \

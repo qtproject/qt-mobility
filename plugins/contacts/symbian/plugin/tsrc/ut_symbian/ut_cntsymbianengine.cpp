@@ -594,6 +594,40 @@ void TestSymbianEngine::retrieveContacts()
     QVERIFY(err == QContactManager::NoError);
 }
 
+void TestSymbianEngine::retrieveLimitedAmountContacts()
+{
+    QContactManager::Error err;
+    QList<QContact> contacts;
+    
+    //save couple contacts
+    QContact c1;
+    c1.setType(QContactType::TypeContact);
+    QVERIFY(m_engine->saveContact(&c1, &err));
+    QVERIFY(err == QContactManager::NoError);
+    QContact c2;
+    c2.setType(QContactType::TypeContact);
+    QVERIFY(m_engine->saveContact(&c2, &err));
+    QVERIFY(err == QContactManager::NoError);
+    
+    //check number of existing contacts
+    contacts = m_engine->contacts(QContactFilter(), QList<QContactSortOrder>(), QContactFetchHint(), &err);
+    QVERIFY(err == QContactManager::NoError);
+    
+    //retrieve contacts with a fetch hint to limit amount of results
+    QContactFetchHint hint;
+    hint.setMaxCount(1);
+    contacts = m_engine->contacts(QContactFilter(), QList<QContactSortOrder>(), hint, &err);
+    QVERIFY(err == QContactManager::NoError);
+    QVERIFY(contacts.count() == 1);
+    
+    //retrieve contacts with an invalid fetch hint to limit amount of results
+    hint.setMaxCount(3);
+    contacts = m_engine->contacts(QContactFilter(), QList<QContactSortOrder>(), hint, &err);
+    QVERIFY(err == QContactManager::NoError);
+    QVERIFY(contacts.count() == 2);
+
+}
+
 void TestSymbianEngine::retrieveName()
 {
     QContactManager::Error err;

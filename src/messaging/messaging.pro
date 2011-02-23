@@ -147,6 +147,13 @@ symbian|win32|maemo6|maemo5|mac:!simulator {
             -lhildonmime
     }
     maemo6 { 
+	# qt-messaging depends on CommHistory, and CommHistory depends on qtm-contacts
+	# so the include path needs to contain the QtContacts files CommHistory includes
+	INCLUDEPATH += ../../include/QtContacts \
+	../contacts \
+	../contacts/details \
+	../contacts/filters \
+	../contacts/requests
         QT += dbus
         QT += sql
         CONFIG += link_pkgconfig

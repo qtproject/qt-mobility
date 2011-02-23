@@ -108,14 +108,20 @@ private Q_SLOTS:
     void fifoReadyWrite(int socket);
 
     void updateState(QMediaPlayer::State);
+#ifdef Q_WS_MAEMO_6
+    void resourceLost();
+#endif // Q_WS_MAEMO_6
     void processEOS();
     void setBufferProgress(int progress);
+
+    void handleInvalidMedia();
 
 private:
     bool openFifo();
     void closeFifo();
     void playOrPause(QMediaPlayer::State state);
 
+    bool m_ownStream;
     QGstreamerPlayerSession *m_session;
     QMediaPlayer::State m_state;
     QMediaPlayer::MediaStatus m_mediaStatus;

@@ -81,6 +81,9 @@ public:
     OptimizationHints optimizationHints() const;
     void setOptimizationHints(OptimizationHints hints);
 
+    int maxCount() const;
+    void setMaxCount(int count);
+
 private:
     QSharedDataPointer<QContactFetchHintPrivate> d;
 };

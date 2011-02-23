@@ -49,7 +49,7 @@ QT_BEGIN_NAMESPACE
     \inmodule QtMultimediaKit
     \ingroup multimedia
 
-    \preliminary
+    
     \brief The QMediaRecorderControl class provides access to the recording
     functionality of a QMediaService.
 

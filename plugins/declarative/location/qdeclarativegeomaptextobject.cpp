@@ -55,10 +55,10 @@ QTM_BEGIN_NAMESPACE
 
     \ingroup qml-location-maps
 
-    The string \l text will be drawn \l offset.x and \l offset.y pixels away from the 
+    The string \l text will be drawn \l offset.x and \l offset.y pixels away from the
     on-screen position of \l coordinate.
 
-    The text will be rendered with font \l font and color \l color, and will 
+    The text will be rendered with font \l font and color \l color, and will
     be aligned according to \l horizontalAlignment and \l verticalAlignment.
 
     If \l text is empty or \l coordinate is invalid nothing will be displayed.
@@ -66,37 +66,52 @@ QTM_BEGIN_NAMESPACE
     The MapText element is part of the \bold{QtMobility.location 1.1} module.
 */
 
-QDeclarativeGeoMapTextObject::QDeclarativeGeoMapTextObject()
+QDeclarativeGeoMapTextObject::QDeclarativeGeoMapTextObject(QDeclarativeItem *parent)
+    : QDeclarativeGeoMapObject(parent),
+      text_(0)
 {
-    QPen p = pen();
+    text_ = new QGeoMapTextObject();
+    setMapObject(text_);
+
+    QPen p = text_->pen();
     p.setStyle(Qt::NoPen);
-    setPen(p);
+    text_->setPen(p);
 
-    setBrush(QBrush(Qt::black));
+    text_->setBrush(QBrush(Qt::black));
 
-    m_coordinate = new QDeclarativeCoordinate(this);
+    connect(text_,
+            SIGNAL(textChanged(QString)),
+            this,
+            SIGNAL(textChanged(QString)));
+    connect(text_,
+            SIGNAL(fontChanged(QFont)),
+            this,
+            SIGNAL(fontChanged(QFont)));
+    connect(text_,
+            SIGNAL(offsetChanged(QPoint)),
+            this,
+            SIGNAL(offsetChanged(QPoint)));
 
-    connect(m_coordinate,
+    connect(&coordinate_,
             SIGNAL(latitudeChanged(double)),
             this,
             SLOT(coordinateLatitudeChanged(double)));
-
-    connect(m_coordinate,
+    connect(&coordinate_,
             SIGNAL(longitudeChanged(double)),
             this,
             SLOT(coordinateLongitudeChanged(double)));
-
-    connect(m_coordinate,
+    connect(&coordinate_,
             SIGNAL(altitudeChanged(double)),
             this,
             SLOT(coordinateAltitudeChanged(double)));
 
-    m_hAlignment = QDeclarativeGeoMapTextObject::AlignHCenter;
-    m_vAlignment = QDeclarativeGeoMapTextObject::AlignVCenter;
+    hAlignment_ = QDeclarativeGeoMapTextObject::AlignHCenter;
+    vAlignment_ = QDeclarativeGeoMapTextObject::AlignVCenter;
 }
 
 QDeclarativeGeoMapTextObject::~QDeclarativeGeoMapTextObject()
 {
+    delete text_;
 }
 
 /*!
@@ -105,35 +120,35 @@ QDeclarativeGeoMapTextObject::~QDeclarativeGeoMapTextObject()
     This property holds the coordinate at which to anchor the text.
 */
 
-void QDeclarativeGeoMapTextObject::setDeclarativeCoordinate(const QDeclarativeCoordinate *coordinate)
+void QDeclarativeGeoMapTextObject::setCoordinate(const QDeclarativeCoordinate *coordinate)
 {
-    if (m_coordinate->coordinate() == coordinate->coordinate())
+    if (coordinate_.coordinate() == coordinate->coordinate())
         return;
 
-    m_coordinate->setCoordinate(coordinate->coordinate());
-    setCoordinate(coordinate->coordinate());
+    coordinate_.setCoordinate(coordinate->coordinate());
+    text_->setCoordinate(coordinate->coordinate());
 
-    emit declarativeCoordinateChanged(m_coordinate);
+    emit coordinateChanged(&coordinate_);
 }
 
-QDeclarativeCoordinate* QDeclarativeGeoMapTextObject::declarativeCoordinate()
+QDeclarativeCoordinate* QDeclarativeGeoMapTextObject::coordinate()
 {
-    return m_coordinate;
+    return &coordinate_;
 }
 
 void QDeclarativeGeoMapTextObject::coordinateLatitudeChanged(double /*latitude*/)
 {
-    setCoordinate(m_coordinate->coordinate());
+    text_->setCoordinate(coordinate_.coordinate());
 }
 
 void QDeclarativeGeoMapTextObject::coordinateLongitudeChanged(double /*longitude*/)
 {
-    setCoordinate(m_coordinate->coordinate());
+    text_->setCoordinate(coordinate_.coordinate());
 }
 
 void QDeclarativeGeoMapTextObject::coordinateAltitudeChanged(double /*altitude*/)
 {
-    setCoordinate(m_coordinate->coordinate());
+    text_->setCoordinate(coordinate_.coordinate());
 }
 
 /*!
@@ -143,6 +158,16 @@ void QDeclarativeGeoMapTextObject::coordinateAltitudeChanged(double /*altitude*/
 
     The default value is an empty string.
 */
+
+QString QDeclarativeGeoMapTextObject::text() const
+{
+    return text_->text();
+}
+
+void QDeclarativeGeoMapTextObject::setText(const QString &text)
+{
+    text_->setText(text);
+}
 
 /*!
     \qmlproperty string MapText::font.family
@@ -239,8 +264,8 @@ void QDeclarativeGeoMapTextObject::coordinateAltitudeChanged(double /*altitude*/
     \list
     \o Font.MixedCase - This is the normal text rendering option where no capitalization change is applied.
     \o Font.AllUppercase - This alters the text to be rendered in all uppercase type.
-    \o Font.AllLowercase	 - This alters the text to be rendered in all lowercase type.
-    \o Font.SmallCaps -	This alters the text to be rendered in small-caps type.
+    \o Font.AllLowercase     - This alters the text to be rendered in all lowercase type.
+    \o Font.SmallCaps - This alters the text to be rendered in small-caps type.
     \o Font.Capitalize - This alters the text to be rendered with the first character of each word as an uppercase character.
     \endlist
 
@@ -249,16 +274,35 @@ void QDeclarativeGeoMapTextObject::coordinateAltitudeChanged(double /*altitude*/
     \endqml
 */
 
+QFont QDeclarativeGeoMapTextObject::font() const
+{
+    return text_->font();
+}
+
+void QDeclarativeGeoMapTextObject::setFont(const QFont &font)
+{
+    text_->setFont(font);
+}
 
 /*!
     \qmlproperty int MapText::offset.x
     \qmlproperty int MapText::offset.y
 
-    These properties hold the offset from the on-screen position of 
+    These properties hold the offset from the on-screen position of
     \l coordinate at which the text should be displayed.
 
     They both default to 0.
 */
+
+QPoint QDeclarativeGeoMapTextObject::offset() const
+{
+    return text_->offset();
+}
+
+void QDeclarativeGeoMapTextObject::setOffset(const QPoint &offset)
+{
+    text_->setOffset(offset);
+}
 
 /*!
     \qmlproperty color MapText::color
@@ -270,18 +314,18 @@ void QDeclarativeGeoMapTextObject::coordinateAltitudeChanged(double /*altitude*/
 
 void QDeclarativeGeoMapTextObject::setColor(const QColor &color)
 {
-    if (m_color == color)
+    if (color_ == color)
         return;
 
-    m_color = color;
+    color_ = color;
     QBrush m_brush(color);
-    setBrush(m_brush);
-    emit colorChanged(m_color);
+    text_->setBrush(m_brush);
+    emit colorChanged(color_);
 }
 
 QColor QDeclarativeGeoMapTextObject::color() const
 {
-    return m_color;
+    return color_;
 }
 
 /*!
@@ -290,52 +334,52 @@ QColor QDeclarativeGeoMapTextObject::color() const
 
     Sets the horizontal and vertical alignment of the text.
 
-    The alignment is relative to the point \l offset.x and \l offset.y pixels away from 
+    The alignment is relative to the point \l offset.x and \l offset.y pixels away from
     the on-screen position of \l coordinate.
 
     The valid values for \c horizontalAlignment are \c MapText.AlignLeft,
-    \c MapText.AlignRight and \c MapText.AlignHCenter.  The valid values 
-    for \c verticalAlignment are \c MapText.AlignTop, \c MapText.AlignBottom 
+    \c MapText.AlignRight and \c MapText.AlignHCenter.  The valid values
+    for \c verticalAlignment are \c MapText.AlignTop, \c MapText.AlignBottom
     and \c MapText.AlignVCenter.
 
-    The default values are \c MapText.AlignHCenter and \c MapText.AlignVCenter 
+    The default values are \c MapText.AlignHCenter and \c MapText.AlignVCenter
     respectively.
 */
 
 QDeclarativeGeoMapTextObject::HorizontalAlignment QDeclarativeGeoMapTextObject::horizontalAlignment() const
 {
-    return m_hAlignment;
+    return hAlignment_;
 }
 
 void QDeclarativeGeoMapTextObject::setHorizontalAlignment(QDeclarativeGeoMapTextObject::HorizontalAlignment alignment)
 {
-    if (m_hAlignment == alignment)
+    if (hAlignment_ == alignment)
         return;
 
 
-    m_hAlignment = alignment;
+    hAlignment_ = alignment;
 
-    setAlignment(Qt::Alignment(m_hAlignment | m_vAlignment));
+    text_->setAlignment(Qt::Alignment(hAlignment_ | vAlignment_));
 
-    emit horizontalAlignmentChanged(m_hAlignment);
+    emit horizontalAlignmentChanged(hAlignment_);
 }
 
 
 QDeclarativeGeoMapTextObject::VerticalAlignment QDeclarativeGeoMapTextObject::verticalAlignment() const
 {
-    return m_vAlignment;
+    return vAlignment_;
 }
 
 void QDeclarativeGeoMapTextObject::setVerticalAlignment(QDeclarativeGeoMapTextObject::VerticalAlignment alignment)
 {
-    if (m_vAlignment == alignment)
+    if (vAlignment_ == alignment)
         return;
 
-    m_vAlignment = alignment;
+    vAlignment_ = alignment;
 
-    setAlignment(Qt::Alignment(m_hAlignment | m_vAlignment));
+    text_->setAlignment(Qt::Alignment(hAlignment_ | vAlignment_));
 
-    emit verticalAlignmentChanged(m_vAlignment);
+    emit verticalAlignmentChanged(vAlignment_);
 }
 
 /*!
@@ -343,21 +387,21 @@ void QDeclarativeGeoMapTextObject::setVerticalAlignment(QDeclarativeGeoMapTextOb
 
     This property holds the z-value of the text.
 
-    Map objects are drawn in z-value order, and objects with the 
+    Map objects are drawn in z-value order, and objects with the
     same z-value will be drawn in insertion order.
 */
 
 /*!
     \qmlproperty bool MapText::visible
 
-    This property holds a boolean corresponding to whether or not the 
+    This property holds a boolean corresponding to whether or not the
     text is visible.
 */
 
 /*!
     \qmlproperty bool MapText::selected
 
-    This property holds a boolean corresponding to whether or not the 
+    This property holds a boolean corresponding to whether or not the
     text is selected.
 */
 

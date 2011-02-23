@@ -50,7 +50,7 @@ QTM_USE_NAMESPACE
 class QDeclarativeOrganizerItemFetchHint : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(OptimizationHints optimizationHints READ optimizationHints WRITE setOptimizationHints NOTIFY valueChanged)
+    Q_PROPERTY(OptimizationHints optimizationHints READ optimizationHints WRITE setOptimizationHints NOTIFY fetchHintChanged)
     Q_ENUMS(OptimizationHint)
     Q_FLAGS(OptimizationHints)
 public:
@@ -68,8 +68,7 @@ public:
     OptimizationHints optimizationHints() const
     {
         OptimizationHints hints;
-        hints &= 0xFFFFFFFF;
-        hints &= (int)d.optimizationHints();
+        hints = ~hints & (int)d.optimizationHints();
         return hints;
     }
 
@@ -77,10 +76,9 @@ public:
     {
         if (hints != d.optimizationHints()) {
             QOrganizerItemFetchHint::OptimizationHints newHints;
-            newHints &= 0xFFFFFFFF;
-            newHints &= (int)hints;
+            newHints = ~newHints & (int)hints;
             d.setOptimizationHints(newHints);
-            emit valueChanged();
+            emit fetchHintChanged();
         }
     }
 
@@ -92,10 +90,11 @@ public:
     void setFetchHint(const QOrganizerItemFetchHint& fetchHint)
     {
         d = fetchHint;
+        emit fetchHintChanged();
     }
 
 signals:
-    void valueChanged();
+    void fetchHintChanged();
 private:
     QOrganizerItemFetchHint d;
 };

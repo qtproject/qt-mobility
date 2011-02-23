@@ -59,6 +59,7 @@ class Q_ORGANIZER_EXPORT QOrganizerCollectionFetchRequest : public QOrganizerAbs
 
 public:
     QOrganizerCollectionFetchRequest(QObject* parent = 0);
+    ~QOrganizerCollectionFetchRequest();
 
     /* Selection, restriction and sorting */
     // none.  you get all collections from the manager.

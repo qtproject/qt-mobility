@@ -510,6 +510,94 @@ private slots:
                 << NORTH_POLE << SOUTH_POLE << qreal(180.0);
     }
 
+/*
+    void atDistance()
+    {
+        QFETCH(QGeoCoordinate, origin);
+        QFETCH(qreal, distanceNorth);
+        QFETCH(qreal, distanceEast);
+        QFETCH(QGeoCoordinate, result);
+
+        QCOMPARE(result, origin.atDistance(distanceNorth, distanceEast));
+    }
+
+    void atDistance_data()
+    {
+        QTest::addColumn<QGeoCoordinate>("origin");
+        QTest::addColumn<qreal>("distanceNorth");
+        QTest::addColumn<qreal>("distanceEast");
+        QTest::addColumn<QGeoCoordinate>("result");
+
+        QTest::newRow("invalid coord")
+            << QGeoCoordinate() 
+            << qreal(1000.0) 
+            << qreal(1000.0) 
+            << QGeoCoordinate();
+
+        qWarning() << BRISBANE.toString()
+                    << " "
+                    << MELBOURNE.toString();
+
+        QTest::newRow("brisbane -> melbourne")
+            << BRISBANE 
+            << qreal(-1150000.0)
+            << qreal(-795700.0)
+            << MELBOURNE;
+
+
+        QTest::newRow("london -> new york")
+            << LONDON
+            << qreal(0.0)
+            << qreal(0.0)
+            << NEW_YORK;
+
+        QTest::newRow("north pole -> south pole")
+            << NORTH_POLE
+            << qreal(0.0)
+            << qreal(0.0)
+            << SOUTH_POLE;
+    }
+*/
+
+    void atDistanceAndAzimuth()
+    {
+        QFETCH(QGeoCoordinate, origin);
+        QFETCH(qreal, distance);
+        QFETCH(qreal, azimuth);
+        QFETCH(QGeoCoordinate, result);
+
+        QCOMPARE(result, origin.atDistanceAndAzimuth(distance, azimuth));
+    }
+
+    void atDistanceAndAzimuth_data()
+    {
+        QTest::addColumn<QGeoCoordinate>("origin");
+        QTest::addColumn<qreal>("distance");
+        QTest::addColumn<qreal>("azimuth");
+        QTest::addColumn<QGeoCoordinate>("result");
+
+        QTest::newRow("invalid coord")
+            << QGeoCoordinate() 
+            << qreal(1000.0) 
+            << qreal(10.0) 
+            << QGeoCoordinate();
+        QTest::newRow("brisbane -> melbourne")
+            << BRISBANE 
+            << qreal(1374820.1618767744)
+            << qreal(211.1717286649)
+            << MELBOURNE;
+        QTest::newRow("london -> new york")
+            << LONDON
+            << qreal(5570538.4987236429)
+            << qreal(288.3388804508)
+            << NEW_YORK;
+        QTest::newRow("north pole -> south pole")
+            << NORTH_POLE
+            << qreal(20015109.4154876769)
+            << qreal(180.0)
+            << SOUTH_POLE;
+    }
+
     void degreesToString()
     {
         QFETCH(QGeoCoordinate, coord);

@@ -55,7 +55,7 @@ QTM_BEGIN_NAMESPACE
 
     \ingroup qml-location-maps
 
-    The polyline is specified in terms of an ordered list of 
+    The polyline is specified in terms of an ordered list of
     coordinates.  Any invalid coordinates in the list will be ignored.
 
     If the list contains less than 2 valid coordinates the polyline
@@ -64,13 +64,17 @@ QTM_BEGIN_NAMESPACE
     The MapPolyline element is part of the \bold{QtMobility.location 1.1} module.
 */
 
-QDeclarativeGeoMapPolylineObject::QDeclarativeGeoMapPolylineObject()
+QDeclarativeGeoMapPolylineObject::QDeclarativeGeoMapPolylineObject(QDeclarativeItem *parent)
+    : QDeclarativeGeoMapObject(parent)
 {
-    connect(&m_border,
+    polyline_ = new QGeoMapPolylineObject();
+    setMapObject(polyline_);
+
+    connect(&border_,
             SIGNAL(colorChanged(QColor)),
             this,
             SLOT(borderColorChanged(QColor)));
-    connect(&m_border,
+    connect(&border_,
             SIGNAL(widthChanged(int)),
             this,
             SLOT(borderWidthChanged(int)));
@@ -78,14 +82,15 @@ QDeclarativeGeoMapPolylineObject::QDeclarativeGeoMapPolylineObject()
 
 QDeclarativeGeoMapPolylineObject::~QDeclarativeGeoMapPolylineObject()
 {
-    qDeleteAll(m_path);
+    qDeleteAll(path_);
+    delete polyline_;
 }
 
 /*!
     \qmlproperty list<Coordinate> MapPolyline::path
     \default
 
-    This property holds the ordered list of coordinates which 
+    This property holds the ordered list of coordinates which
     define the polyline.
 */
 
@@ -102,29 +107,29 @@ QDeclarativeListProperty<QDeclarativeCoordinate> QDeclarativeGeoMapPolylineObjec
 void QDeclarativeGeoMapPolylineObject::path_append(QDeclarativeListProperty<QDeclarativeCoordinate> *prop, QDeclarativeCoordinate *coordinate)
 {
     QDeclarativeGeoMapPolylineObject* poly = static_cast<QDeclarativeGeoMapPolylineObject*>(prop->object);
-    poly->m_path.append(coordinate);
-    QList<QGeoCoordinate> p = poly->path();
+    poly->path_.append(coordinate);
+    QList<QGeoCoordinate> p = poly->polyline_->path();
     p.append(coordinate->coordinate());
-    poly->setPath(p);
+    poly->polyline_->setPath(p);
 }
 
 int QDeclarativeGeoMapPolylineObject::path_count(QDeclarativeListProperty<QDeclarativeCoordinate> *prop)
 {
-    return static_cast<QDeclarativeGeoMapPolylineObject*>(prop->object)->m_path.count();
+    return static_cast<QDeclarativeGeoMapPolylineObject*>(prop->object)->path_.count();
 }
 
 QDeclarativeCoordinate* QDeclarativeGeoMapPolylineObject::path_at(QDeclarativeListProperty<QDeclarativeCoordinate> *prop, int index)
 {
-    return static_cast<QDeclarativeGeoMapPolylineObject*>(prop->object)->m_path.at(index);
+    return static_cast<QDeclarativeGeoMapPolylineObject*>(prop->object)->path_.at(index);
 }
 
 void QDeclarativeGeoMapPolylineObject::path_clear(QDeclarativeListProperty<QDeclarativeCoordinate> *prop)
 {
     QDeclarativeGeoMapPolylineObject* poly = static_cast<QDeclarativeGeoMapPolylineObject*>(prop->object);
-    QList<QDeclarativeCoordinate*> p = poly->m_path;
+    QList<QDeclarativeCoordinate*> p = poly->path_;
     qDeleteAll(p);
     p.clear();
-    poly->setPath(QList<QGeoCoordinate>());
+    poly->polyline_->setPath(QList<QGeoCoordinate>());
 }
 
 /*!
@@ -142,25 +147,25 @@ void QDeclarativeGeoMapPolylineObject::path_clear(QDeclarativeListProperty<QDecl
 
 QDeclarativeGeoMapObjectBorder* QDeclarativeGeoMapPolylineObject::border()
 {
-    return &m_border;
+    return &border_;
 }
 
 void QDeclarativeGeoMapPolylineObject::borderColorChanged(const QColor &color)
 {
-    QPen p = pen();
+    QPen p = polyline_->pen();
     p.setColor(color);
-    setPen(p);
+    polyline_->setPen(p);
 }
 
 void QDeclarativeGeoMapPolylineObject::borderWidthChanged(int width)
 {
-    QPen p = pen();
+    QPen p = polyline_->pen();
     p.setWidth(width);
     if (width == 0)
         p.setStyle(Qt::NoPen);
     else
         p.setStyle(Qt::SolidLine);
-    setPen(p);
+    polyline_->setPen(p);
 }
 
 /*!
@@ -168,21 +173,21 @@ void QDeclarativeGeoMapPolylineObject::borderWidthChanged(int width)
 
     This property holds the z-value of the polyline.
 
-    Map objects are drawn in z-value order, and objects with the 
+    Map objects are drawn in z-value order, and objects with the
     same z-value will be drawn in insertion order.
 */
 
 /*!
     \qmlproperty bool MapPolyline::visible
 
-    This property holds a boolean corresponding to whether or not the 
+    This property holds a boolean corresponding to whether or not the
     polyline is visible.
 */
 
 /*!
     \qmlproperty bool MapPolyline::selected
 
-    This property holds a boolean corresponding to whether or not the 
+    This property holds a boolean corresponding to whether or not the
     polyline is selected.
 */
 

@@ -55,22 +55,26 @@ QTM_BEGIN_NAMESPACE
 
     \ingroup qml-location-maps
 
-    The polygon is specified in terms of an ordered list of 
+    The polygon is specified in terms of an ordered list of
     coordinates.  Any invalid coordinates in the list will be ignored.
 
-    If the list contains less than 3 valid coordinates the polygon 
+    If the list contains less than 3 valid coordinates the polygon
     will not be displayed.
 
     The MapPolygon element is part of the \bold{QtMobility.location 1.1} module.
 */
 
-QDeclarativeGeoMapPolygonObject::QDeclarativeGeoMapPolygonObject()
+QDeclarativeGeoMapPolygonObject::QDeclarativeGeoMapPolygonObject(QDeclarativeItem *parent)
+    : QDeclarativeGeoMapObject(parent)
 {
-    connect(&m_border,
+    polygon_ = new QGeoMapPolygonObject();
+    setMapObject(polygon_);
+
+    connect(&border_,
             SIGNAL(colorChanged(QColor)),
             this,
             SLOT(borderColorChanged(QColor)));
-    connect(&m_border,
+    connect(&border_,
             SIGNAL(widthChanged(int)),
             this,
             SLOT(borderWidthChanged(int)));
@@ -78,14 +82,15 @@ QDeclarativeGeoMapPolygonObject::QDeclarativeGeoMapPolygonObject()
 
 QDeclarativeGeoMapPolygonObject::~QDeclarativeGeoMapPolygonObject()
 {
-    qDeleteAll(m_path);
+    qDeleteAll(path_);
+    delete polygon_;
 }
 
 /*!
     \qmlproperty list<Coordinate> MapPolygon::path
     \default
 
-    This property holds the ordered list of coordinates which 
+    This property holds the ordered list of coordinates which
     define the polygon.
 */
 
@@ -102,29 +107,29 @@ QDeclarativeListProperty<QDeclarativeCoordinate> QDeclarativeGeoMapPolygonObject
 void QDeclarativeGeoMapPolygonObject::path_append(QDeclarativeListProperty<QDeclarativeCoordinate> *prop, QDeclarativeCoordinate *coordinate)
 {
     QDeclarativeGeoMapPolygonObject* poly = static_cast<QDeclarativeGeoMapPolygonObject*>(prop->object);
-    poly->m_path.append(coordinate);
-    QList<QGeoCoordinate> p = poly->path();
+    poly->path_.append(coordinate);
+    QList<QGeoCoordinate> p = poly->polygon_->path();
     p.append(coordinate->coordinate());
-    poly->setPath(p);
+    poly->polygon_->setPath(p);
 }
 
 int QDeclarativeGeoMapPolygonObject::path_count(QDeclarativeListProperty<QDeclarativeCoordinate> *prop)
 {
-    return static_cast<QDeclarativeGeoMapPolygonObject*>(prop->object)->m_path.count();
+    return static_cast<QDeclarativeGeoMapPolygonObject*>(prop->object)->path_.count();
 }
 
 QDeclarativeCoordinate* QDeclarativeGeoMapPolygonObject::path_at(QDeclarativeListProperty<QDeclarativeCoordinate> *prop, int index)
 {
-    return static_cast<QDeclarativeGeoMapPolygonObject*>(prop->object)->m_path.at(index);
+    return static_cast<QDeclarativeGeoMapPolygonObject*>(prop->object)->path_.at(index);
 }
 
 void QDeclarativeGeoMapPolygonObject::path_clear(QDeclarativeListProperty<QDeclarativeCoordinate> *prop)
 {
     QDeclarativeGeoMapPolygonObject* poly = static_cast<QDeclarativeGeoMapPolygonObject*>(prop->object);
-    QList<QDeclarativeCoordinate*> p = poly->m_path;
+    QList<QDeclarativeCoordinate*> p = poly->path_;
     qDeleteAll(p);
     p.clear();
-    poly->setPath(QList<QGeoCoordinate>());
+    poly->polygon_->setPath(QList<QGeoCoordinate>());
 }
 
 /*!
@@ -137,18 +142,18 @@ void QDeclarativeGeoMapPolygonObject::path_clear(QDeclarativeListProperty<QDecla
 
 void QDeclarativeGeoMapPolygonObject::setColor(const QColor &color)
 {
-    if (m_color == color)
+    if (color_ == color)
         return;
 
-    m_color = color;
+    color_ = color;
     QBrush m_brush(color);
-    setBrush(m_brush);
-    emit colorChanged(m_color);
+    polygon_->setBrush(m_brush);
+    emit colorChanged(color_);
 }
 
 QColor QDeclarativeGeoMapPolygonObject::color() const
 {
-    return m_color;
+    return color_;
 }
 
 /*!
@@ -166,25 +171,25 @@ QColor QDeclarativeGeoMapPolygonObject::color() const
 
 QDeclarativeGeoMapObjectBorder* QDeclarativeGeoMapPolygonObject::border()
 {
-    return &m_border;
+    return &border_;
 }
 
 void QDeclarativeGeoMapPolygonObject::borderColorChanged(const QColor &color)
 {
-    QPen p = pen();
+    QPen p = polygon_->pen();
     p.setColor(color);
-    setPen(p);
+    polygon_->setPen(p);
 }
 
 void QDeclarativeGeoMapPolygonObject::borderWidthChanged(int width)
 {
-    QPen p = pen();
+    QPen p = polygon_->pen();
     p.setWidth(width);
     if (width == 0)
         p.setStyle(Qt::NoPen);
     else
         p.setStyle(Qt::SolidLine);
-    setPen(p);
+    polygon_->setPen(p);
 }
 
 /*!
@@ -192,21 +197,21 @@ void QDeclarativeGeoMapPolygonObject::borderWidthChanged(int width)
 
     This property holds the z-value of the polygon.
 
-    Map objects are drawn in z-value order, and objects with the 
+    Map objects are drawn in z-value order, and objects with the
     same z-value will be drawn in insertion order.
 */
 
 /*!
     \qmlproperty bool MapPolygon::visible
 
-    This property holds a boolean corresponding to whether or not the 
+    This property holds a boolean corresponding to whether or not the
     polygon is visible.
 */
 
 /*!
     \qmlproperty bool MapPolygon::selected
 
-    This property holds a boolean corresponding to whether or not the 
+    This property holds a boolean corresponding to whether or not the
     polygon is selected.
 */
 

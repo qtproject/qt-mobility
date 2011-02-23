@@ -10,6 +10,7 @@ PUBLIC_HEADERS += requests/qorganizeritemrequests.h \
     requests/qorganizeritemdetaildefinitionsaverequest.h \
     requests/qorganizeritemfetchrequest.h \
     requests/qorganizeritemfetchforexportrequest.h \
+    requests/qorganizeritemfetchbyidrequest.h \
     requests/qorganizeritemoccurrencefetchrequest.h \
     requests/qorganizeritemidfetchrequest.h \
     requests/qorganizeritemremoverequest.h \
@@ -26,6 +27,7 @@ SOURCES += \
     requests/qorganizeritemdetaildefinitionsaverequest.cpp \
     requests/qorganizeritemfetchrequest.cpp \
     requests/qorganizeritemfetchforexportrequest.cpp \
+    requests/qorganizeritemfetchbyidrequest.cpp \
     requests/qorganizeritemoccurrencefetchrequest.cpp \
     requests/qorganizeritemidfetchrequest.cpp \
     requests/qorganizeritemremoverequest.cpp \

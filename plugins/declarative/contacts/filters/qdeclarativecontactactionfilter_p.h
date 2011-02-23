@@ -1,10 +1,10 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the QtDeclarative module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
@@ -38,7 +38,6 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-
 #ifndef QDECLARATIVECONTACTACTIONFILTER_H
 #define QDECLARATIVECONTACTACTIONFILTER_H
 
@@ -48,16 +47,19 @@
 class QDeclarativeContactActionFilter : public QDeclarativeContactFilter
 {
     Q_OBJECT
-    Q_PROPERTY(QString actionName READ actionName WRITE setActionName NOTIFY valueChanged)
-    Q_CLASSINFO("DefaultProperty", "actionName")
+    Q_PROPERTY(QString actionName READ actionName WRITE setActionName NOTIFY valueChanged())
 public:
     QDeclarativeContactActionFilter(QObject* parent=0)
         :QDeclarativeContactFilter(parent)
     {
+        connect(this, SIGNAL(valueChanged()), SIGNAL(filterChanged()));
     }
     void setActionName(const QString& action)
     {
-        d.setActionName(action);
+        if (action != d.actionName()) {
+            d.setActionName(action);
+            emit valueChanged();
+        }
     }
 
     QString actionName() const

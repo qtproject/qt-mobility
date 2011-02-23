@@ -177,7 +177,7 @@ bool QLandmarkPrivate::operator== (const QLandmarkPrivate &other) const
     \l {QLandmarkManager::removeLandmark()} {removeLandmark()}).
 
     Note that QLandmark inherits from QGeoPlace and thus has a viewport data field.
-    Most managers usally however ignore this field when saving the landmark.
+    Most managers usually however ignore this field when saving the landmark.
 */
 
 /*!

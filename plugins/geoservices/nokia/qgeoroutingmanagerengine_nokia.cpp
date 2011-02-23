@@ -55,7 +55,7 @@
 
 QGeoRoutingManagerEngineNokia::QGeoRoutingManagerEngineNokia(const QMap<QString, QVariant> &parameters, QGeoServiceProvider::Error *error, QString *errorString)
         : QGeoRoutingManagerEngine(parameters),
-        m_host("stg.loupe.lbsp.navteq.com"),
+        m_host("prd.lbsp.navteq.com"),
         m_token(QGeoServiceProviderFactoryNokia::defaultToken),
         m_referer(QGeoServiceProviderFactoryNokia::defaultReferer)
 {

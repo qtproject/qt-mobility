@@ -74,7 +74,6 @@ QNetworkManagerInterface::QNetworkManagerInterface(QObject *parent)
                                                 QLatin1String(NM_DBUS_INTERFACE),
                                                 dbusConnection);
     if (!d->connectionInterface->isValid()) {
-        qWarning() << "Could not find NetworkManager";
         d->valid = false;
         return;
     }
@@ -200,7 +199,6 @@ QNetworkManagerInterfaceAccessPoint::QNetworkManagerInterfaceAccessPoint(const Q
                                                 dbusConnection);
     if (!d->connectionInterface->isValid()) {
         d->valid = false;
-        qWarning() << "Could not find InterfaceAccessPoint";
         return;
     }
     d->valid = true;
@@ -308,7 +306,6 @@ QNetworkManagerInterfaceDevice::QNetworkManagerInterfaceDevice(const QString &de
                                                 dbusConnection);
     if (!d->connectionInterface->isValid()) {
         d->valid = false;
-        qWarning() << "Could not find NetworkManager";
         return;
     }
     d->valid = true;
@@ -398,7 +395,6 @@ QNetworkManagerInterfaceDeviceWired::QNetworkManagerInterfaceDeviceWired(const Q
                                                 dbusConnection, parent);
     if (!d->connectionInterface->isValid()) {
         d->valid = false;
-        qWarning() << "Could not find InterfaceDeviceWired";
         return;
     }
     d->valid = true;
@@ -474,7 +470,6 @@ QNetworkManagerInterfaceDeviceWireless::QNetworkManagerInterfaceDeviceWireless(c
                                                 dbusConnection, parent);
     if (!d->connectionInterface->isValid()) {
         d->valid = false;
-        qWarning() << "Could not find InterfaceDeviceWireless";
         return;
     }
     d->valid = true;
@@ -591,7 +586,6 @@ QNetworkManagerSettings::QNetworkManagerSettings(const QString &settingsService,
                                                 dbusConnection);
     if (!d->connectionInterface->isValid()) {
         d->valid = false;
-        qWarning() << "Could not find NetworkManagerSettings";
         return;
     }
     d->valid = true;
@@ -654,7 +648,6 @@ QNetworkManagerSettingsConnection::QNetworkManagerSettingsConnection(const QStri
                                                 QLatin1String(NM_DBUS_IFACE_SETTINGS_CONNECTION),
                                                 dbusConnection, parent);
     if (!d->connectionInterface->isValid()) {
-        qWarning() << "Could not find NetworkManagerSettingsConnection";
         d->valid = false;
         return;
     }
@@ -807,7 +800,6 @@ QNetworkManagerConnectionActive::QNetworkManagerConnectionActive( const QString 
                                                 dbusConnection, parent);
     if (!d->connectionInterface->isValid()) {
         d->valid = false;
-        qWarning() << "Could not find NetworkManagerSettingsConnection";
         return;
     }
     d->valid = true;
@@ -900,7 +892,6 @@ QNetworkManagerIp4Config::QNetworkManagerIp4Config( const QString &deviceObjectP
                                                 dbusConnection, parent);
     if (!d->connectionInterface->isValid()) {
         d->valid = false;
-        qWarning() << "Could not find NetworkManagerIp4Config";
         return;
     }
     d->valid = true;

@@ -52,6 +52,7 @@ QTM_BEGIN_NAMESPACE
 /*!
     \class QServiceInterfaceDescriptor
     \ingroup servicefw
+    \inmodule QtServiceFramework
     \brief The QServiceInterfaceDescriptor class identifies a service implementation.
 
     A service can implement multiple interfaces and each interface can have multiple implementations. 

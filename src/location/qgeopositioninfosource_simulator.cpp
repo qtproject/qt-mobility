@@ -66,7 +66,14 @@ namespace Simulator
         else
             timestamp = QDateTime::currentDateTime();
         QGeoCoordinate coord(data.latitude, data.longitude, data.altitude);
-        return QGeoPositionInfo(coord, timestamp);
+        QGeoPositionInfo info(coord, timestamp);
+        info.setAttribute(QGeoPositionInfo::Direction, data.direction);
+        info.setAttribute(QGeoPositionInfo::GroundSpeed, data.groundSpeed);
+        info.setAttribute(QGeoPositionInfo::VerticalSpeed, data.verticalSpeed);
+        info.setAttribute(QGeoPositionInfo::MagneticVariation, data.magneticVariation);
+        info.setAttribute(QGeoPositionInfo::HorizontalAccuracy, data.horizontalAccuracy);
+        info.setAttribute(QGeoPositionInfo::VerticalAccuracy, data.verticalAccuracy);
+        return info;
     }
 } //namespace
 

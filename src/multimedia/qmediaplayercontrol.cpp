@@ -51,7 +51,7 @@ QT_BEGIN_NAMESPACE
     \inmodule QtMultimediaKit
     \ingroup multimedia
 
-    \preliminary
+    
     \brief The QMediaPlayerControl class provides access to the media playing
     functionality of a QMediaService.
 
@@ -356,7 +356,7 @@ QMediaPlayerControl::QMediaPlayerControl(QObject *parent):
 
     Stops playback of the current media.
 
-    If succesful the player control will immediately enter the \l {QMediaPlayer::StoppedState}
+    If successful the player control will immediately enter the \l {QMediaPlayer::StoppedState}
     {stopped} state.
 */
 

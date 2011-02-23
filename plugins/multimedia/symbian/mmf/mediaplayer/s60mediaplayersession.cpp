@@ -60,6 +60,7 @@ S60MediaPlayerSession::S60MediaPlayerSession(QObject *parent)
     , m_error(KErrNone)
     , m_play_requested(false)
     , m_stream(false)
+    , m_seekable(true)
 {    
     connect(m_progressTimer, SIGNAL(timeout()), this, SLOT(tick()));
     connect(m_stalledTimer, SIGNAL(timeout()), this, SLOT(stalled()));
@@ -100,7 +101,10 @@ bool S60MediaPlayerSession::isMuted() const
 
 bool S60MediaPlayerSession::isSeekable() const
 {
-    return (m_stream)?false:true;
+    // Currently, there is no API in mmf to check whether a clip is seekable or not.
+    //Hence, m_seekable is true by default, and, once setPosition() fails, m_seekable is set to false, also client will be notified.
+    //TODO: When mmf API is available to check whether a clip is seekable or not, this function will call that API instead of this (dirty) book-keeping.
+    return m_seekable;
 }
 
 void S60MediaPlayerSession::setMediaStatus(QMediaPlayer::MediaStatus status)
@@ -140,6 +144,7 @@ void S60MediaPlayerSession::load(QUrl url)
     setMediaStatus(QMediaPlayer::LoadingMedia);
     startStalledTimer();
     m_stream = (url.scheme() == "file")?false:true;
+    m_seekable = true;
     TRAPD(err,
         if(m_stream)
             doLoadUrlL(QString2TPtrC(url.toString()));
@@ -200,6 +205,7 @@ void S60MediaPlayerSession::reset()
     stopProgressTimer();
     stopStalledTimer();
     doStop();
+    doClose();
     setState(QMediaPlayer::StoppedState);
     setMediaStatus(QMediaPlayer::UnknownMediaStatus);
 }
@@ -375,7 +381,10 @@ void S60MediaPlayerSession::setPosition(qint64 pos)
 
     TRAPD(err, doSetPositionL(pos * 1000));
     setError(err);
-
+    if (err ==  KErrNotSupported) {
+        m_seekable = false;
+        emit seekableChanged(m_seekable);
+    }
     if (state() == QMediaPlayer::PausedState)
         play();
 
@@ -488,6 +497,11 @@ QMediaPlayer::Error S60MediaPlayerSession::fromSymbianErrorToMultimediaError(int
         default:
             return QMediaPlayer::NoError;
     }
+}
+
+int S60MediaPlayerSession::error() const
+{
+    return m_error;
 }
 
 void S60MediaPlayerSession::setError(int error, const QString &errorString, bool forceReset)

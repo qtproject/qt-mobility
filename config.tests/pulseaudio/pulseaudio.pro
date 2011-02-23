@@ -6,4 +6,3 @@ CONFIG += link_pkgconfig
 PKGCONFIG += \
         libpulse \
         libpulse-mainloop-glib
-

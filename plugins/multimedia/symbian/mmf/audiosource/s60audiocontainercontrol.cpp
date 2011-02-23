@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "S60audiocontainercontrol.h"
+#include "s60audiocontainercontrol.h"
 #include "s60audiocapturesession.h"
 #include <QtCore/qdebug.h>
 

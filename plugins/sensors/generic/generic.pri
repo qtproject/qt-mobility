@@ -1,7 +1,9 @@
 HEADERS += genericorientationsensor.h\
-           genericrotationsensor.h
+           genericrotationsensor.h\
+           genericalssensor.h
 
 SOURCES += genericorientationsensor.cpp\
            main.cpp\
-           genericrotationsensor.cpp
+           genericrotationsensor.cpp\
+           genericalssensor.cpp
 

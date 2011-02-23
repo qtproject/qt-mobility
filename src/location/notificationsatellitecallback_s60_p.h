@@ -39,7 +39,6 @@
 **
 ****************************************************************************/
 
-
 #ifndef NOTIFICATIONSATELLITECALLBACK_H_
 #define NOTIFICATIONSATELLITECALLBACK_H_
 
@@ -68,7 +67,7 @@ public:
 
     virtual void updateDeviceStatus(void) = 0 ;
 
-    virtual void updatePosition(TPositionSatelliteInfo  aSatInfo, int error, bool isStartUpdate) = 0 ;
+    virtual void updatePosition(TPositionSatelliteInfo  &aSatInfo, int error, bool isStartUpdate) = 0 ;
 };
 
 QTM_END_NAMESPACE

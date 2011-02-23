@@ -91,27 +91,19 @@ QLocalSocket *Connection::sendSocket()
     return mConnection->sendSocket();
 }
 
-void Connection::translateItemIds(QOrganizerItem *item, const QString &managerUri, const LocalIdTranslation &idTranslation)
+void Connection::translateItemIds(QOrganizerItem *item, const IdTranslation &idTranslation)
 {
     // translate the main id
     {
-        const QOrganizerItemLocalId previousLocalId = item->localId();
-        QOrganizerItemId id;
-        if (idTranslation.items.contains(previousLocalId)) {
-            id.setManagerUri(managerUri);
-            id.setLocalId(idTranslation.items.value(previousLocalId));
-        }
+        const QOrganizerItemId previousId = item->id();
+        QOrganizerItemId id = idTranslation.items.value(previousId);
         item->setId(id);
     }
 
     // translate the collection id
     {
-        QOrganizerCollectionLocalId previousLocalId = item->collectionId().localId();
-        QOrganizerCollectionId id;
-        if (idTranslation.collections.contains(previousLocalId)) {
-            id.setManagerUri(managerUri);
-            id.setLocalId(idTranslation.collections.value(previousLocalId));
-        }
+        QOrganizerCollectionId previousId = item->collectionId();
+        QOrganizerCollectionId id = idTranslation.collections.value(previousId);
         item->setCollectionId(id);
     }
 
@@ -124,16 +116,10 @@ void Connection::translateItemIds(QOrganizerItem *item, const QString &managerUr
             it.next();
             const QVariant &value = it.value();
             const int type = value.userType();
-            if (type == qMetaTypeId<QOrganizerItemLocalId>()) {
-                QOrganizerItemLocalId oldId = value.value<QOrganizerItemLocalId>();
-                detailCopy.setValue(it.key(), QVariant::fromValue(idTranslation.items.value(oldId)));
-                modified = true;
-            }
             if (type == qMetaTypeId<QOrganizerItemId>()) {
                 QOrganizerItemId id = value.value<QOrganizerItemId>();
-                id.setManagerUri(managerUri);
-                id.setLocalId(idTranslation.items.value(id.localId()));
-                detailCopy.setValue(it.key(), QVariant::fromValue(id));
+                QOrganizerItemId translated = idTranslation.items.value(id);
+                detailCopy.setValue(it.key(), QVariant::fromValue(translated));
                 modified = true;
             }
         }
@@ -145,15 +131,11 @@ void Connection::translateItemIds(QOrganizerItem *item, const QString &managerUr
     // ### Any other ids in an item?
 }
 
-void Connection::translateCollectionIds(QOrganizerCollection *collection, const QString &managerUri, const LocalIdTranslation &idTranslation)
+void Connection::translateCollectionIds(QOrganizerCollection *collection, const IdTranslation &idTranslation)
 {
     // translate the main id
-    const QOrganizerCollectionLocalId previousLocalId = collection->localId();
-    QOrganizerCollectionId id;
-    if (idTranslation.collections.contains(previousLocalId)) {
-        id.setManagerUri(managerUri);
-        id.setLocalId(idTranslation.collections.value(previousLocalId));
-    }
+    const QOrganizerCollectionId previousId = collection->id();
+    QOrganizerCollectionId id = idTranslation.collections.value(previousId);
     collection->setId(id);
 
     // ### ids in metadata
@@ -193,7 +175,7 @@ void Connection::initialOrganizerDataSent()
     mInitialDataReceived = true;
 }
 
-void Connection::clearOrganizerData()
+void Connection::clearOrganizerData(QtMobility::Simulator::OrganizerCollectionId remoteDefaultCollectionId)
 {
     mLocalToRemote.items.clear();
     mRemoteToLocal.items.clear();
@@ -201,9 +183,9 @@ void Connection::clearOrganizerData()
     mRemoteToLocal.collections.clear();
 
     // map default collections to each other
-    QOrganizerCollectionLocalId defaultCollectionId = mManager.defaultCollection().localId();
-    mLocalToRemote.collections.insert(defaultCollectionId, defaultCollectionId);
-    mRemoteToLocal.collections.insert(defaultCollectionId, defaultCollectionId);
+    QOrganizerCollectionId defaultCollectionId = mManager.defaultCollection().id();
+    mLocalToRemote.collections.insert(defaultCollectionId, remoteDefaultCollectionId.id);
+    mRemoteToLocal.collections.insert(remoteDefaultCollectionId.id, defaultCollectionId);
 
     mNotifySimulator = false;
 
@@ -212,15 +194,15 @@ void Connection::clearOrganizerData()
 
     // collections
     foreach (const QOrganizerCollection &collection, mManager.collections())
-        mManager.removeCollection(collection.localId());
+        mManager.removeCollection(collection.id());
 
     mNotifySimulator = true;
 }
 
 void Connection::saveOrganizerItem(QtMobility::QOrganizerItem item)
 {
-    const QOrganizerItemLocalId remoteLocalId = item.localId();
-    translateItemIds(&item, mManager.managerUri(), mRemoteToLocal);
+    const QOrganizerItemId remoteId = item.id();
+    translateItemIds(&item, mRemoteToLocal);
     bool newItem = item.id().isNull();
 
     mNotifySimulator = false;
@@ -234,19 +216,19 @@ void Connection::saveOrganizerItem(QtMobility::QOrganizerItem item)
 
     // if this is a new item, save the new id in the maps
     if (newItem) {
-        mRemoteToLocal.items.insert(remoteLocalId, item.localId());
-        mLocalToRemote.items.insert(item.localId(), remoteLocalId);
+        mRemoteToLocal.items.insert(remoteId, item.id());
+        mLocalToRemote.items.insert(item.id(), remoteId);
     }
 }
 
 void Connection::removeOrganizerItem(Simulator::OrganizerItemId id)
 {
-    QOrganizerItemLocalId remoteLocalId = id.id.localId();
-    if (!mRemoteToLocal.items.contains(remoteLocalId))
+    QOrganizerItemId remoteId = id.id;
+    if (!mRemoteToLocal.items.contains(remoteId))
         return;
 
-    QOrganizerItemLocalId localId = mRemoteToLocal.items.value(remoteLocalId);
-    mRemoteToLocal.items.remove(remoteLocalId);
+    QOrganizerItemId localId = mRemoteToLocal.items.value(remoteId);
+    mRemoteToLocal.items.remove(remoteId);
     mLocalToRemote.items.remove(localId);
 
     mNotifySimulator = false;
@@ -256,8 +238,8 @@ void Connection::removeOrganizerItem(Simulator::OrganizerItemId id)
 
 void Connection::saveOrganizerCollection(QtMobility::QOrganizerCollection collection)
 {
-    const QOrganizerCollectionLocalId remoteLocalId = collection.localId();
-    translateCollectionIds(&collection, mManager.managerUri(), mRemoteToLocal);
+    const QOrganizerCollectionId remoteId = collection.id();
+    translateCollectionIds(&collection, mRemoteToLocal);
     bool newItem = collection.id().isNull();
 
     mNotifySimulator = false;
@@ -269,19 +251,19 @@ void Connection::saveOrganizerCollection(QtMobility::QOrganizerCollection collec
 
     // if this is a new collection, save the new id in the maps
     if (newItem) {
-        mRemoteToLocal.collections.insert(remoteLocalId, collection.localId());
-        mLocalToRemote.collections.insert(collection.localId(), remoteLocalId);
+        mRemoteToLocal.collections.insert(remoteId, collection.id());
+        mLocalToRemote.collections.insert(collection.id(), remoteId);
     }
 }
 
 void Connection::removeOrganizerCollection(Simulator::OrganizerCollectionId id)
 {
-    QOrganizerCollectionLocalId remoteLocalId = id.id.localId();
-    if (!mRemoteToLocal.collections.contains(remoteLocalId))
+    QOrganizerCollectionId remoteId = id.id;
+    if (!mRemoteToLocal.collections.contains(remoteId))
         return;
 
-    QOrganizerCollectionLocalId localId = mRemoteToLocal.collections.value(remoteLocalId);
-    mRemoteToLocal.collections.remove(remoteLocalId);
+    QOrganizerCollectionId localId = mRemoteToLocal.collections.value(remoteId);
+    mRemoteToLocal.collections.remove(remoteId);
     mLocalToRemote.collections.remove(localId);
 
     mNotifySimulator = false;

@@ -466,7 +466,7 @@ bool QLandmarkManagerEngine::removeCategory(const QLandmarkCategoryId& /*categor
     The \a option can be used to control whether categories in the imported
     file will be added during the import.  If the \c AttachSingleCategory option is used, then
     all the landmarks in the import file are assigned to the category identified by
-    \a categoryId, in all other cirumstances \a categoryId is ignored.  If \a categoryId
+    \a categoryId, in all other circumstances \a categoryId is ignored.  If \a categoryId
     doesn't exist when using \c AttachSingleCategory, QLandmarkManager::CategoryDoesNotExist error is returned.  Note that
     some file formats may not support categories at all.
 
@@ -676,8 +676,7 @@ bool QLandmarkManagerEngine::waitForRequestFinished(QLandmarkAbstractRequest* re
     As it is possible that other processes(or other devices) may have modified the landmarks,
     the timing cannot be determined.
 
-    Note that removal of a category will not trigger a \c landmarksChanged signal for landmarks belonging to that category, nor will modifying
-    list of categories that a landmark is belongs to.
+    Note that removal of a category will not trigger a \c landmarksChanged signal for landmarks belonging to that category.
 
     There may be one ore more landmark identifiers in the \a landmarkIds list.
     \sa dataChanged(), landmarksAdded(), landmarksRemoved()

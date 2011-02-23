@@ -46,15 +46,17 @@
 #include "qcontactlocalidfilter.h"
 
 #include <QStringList>
+#include <QSet>
 class QDeclarativeContactLocalIdFilter : public QDeclarativeContactFilter
 {
     Q_OBJECT
-    Q_PROPERTY(QStringList ids READ ids WRITE setIds NOTIFY valueChanged)
+    Q_PROPERTY(QStringList ids READ ids WRITE setIds NOTIFY valueChanged())
     Q_CLASSINFO("DefaultProperty", "ids")
 public:
     QDeclarativeContactLocalIdFilter(QObject* parent = 0)
         :QDeclarativeContactFilter(parent)
     {
+        connect(this, SIGNAL(valueChanged()), SIGNAL(filterChanged()));
     }
 
     QStringList ids() const
@@ -77,7 +79,10 @@ public:
                 contactIds << localId;
             }
         }
-        d.setIds(contactIds);
+        if (contactIds.toSet() != d.ids().toSet()) {
+            d.setIds(contactIds);
+            emit valueChanged();
+        }
     }
 
     QContactFilter filter() const

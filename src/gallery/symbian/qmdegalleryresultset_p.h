@@ -95,15 +95,12 @@ public:
 
     virtual int currentIndex() const;
     virtual bool fetch(int index);
-    /* non pure virtual */
-    virtual bool fetchNext();
-    virtual bool fetchPrevious();
-    virtual bool fetchFirst();
-    virtual bool fetchLast();
 
 public: //MDS spesific
 
     virtual void createQuery() = 0;
+
+    virtual void cleanupResultSet() = 0;
 
     // Signals to send
     //        void currentIndexChanged(int index);
@@ -125,6 +122,7 @@ protected:
     bool m_isValid;
 
     RPointerArray<CMdEObject> m_itemArray;
+    bool m_cleaned;
 
 };
 

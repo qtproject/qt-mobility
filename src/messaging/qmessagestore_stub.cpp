@@ -170,6 +170,11 @@ bool QMessageStore::removeMessages(const QMessageFilter& filter, QMessageManager
     return true; // stub
 }
 
+bool QMessageStore::removeAccount(const QMessageAccountId &)
+{
+    return true; // stub
+}
+
 bool QMessageStore::addMessage(QMessage *m)
 {
     Q_UNUSED(m)

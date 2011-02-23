@@ -53,8 +53,8 @@
 // We mean it.
 //
 
-#include "xqsettingsmanager.h"
-#include "xqsettingskey.h"
+#include "xqsettingsmanager_p.h"
+#include "xqsettingskey_p.h"
 #include "xqcentralrepositoryutils.h"
 
 class XQSettingsManagerPrivate;

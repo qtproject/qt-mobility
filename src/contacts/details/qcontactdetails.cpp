@@ -754,6 +754,12 @@ Q_DEFINE_LATIN1_CONSTANT(QContactUrl::SubTypeBlog, "Blog");
  */
 
 /*!
+   \fn QContactUrl::setUrl(const QUrl& url)
+   Sets the url stored in this detail to the string representation
+   of the given \a url.
+ */
+
+/*!
    \fn QContactUrl::setSubType(const QString& subType)
    Sets the subtype which this detail implements to be the given \a subType.
  */
@@ -1907,6 +1913,78 @@ Q_DEFINE_LATIN1_CONSTANT(QContactOnlineAccount::SubTypeImpp, "Impp");
     \sa subTypes(), setSubTypes()
  */
 Q_DEFINE_LATIN1_CONSTANT(QContactOnlineAccount::SubTypeVideoShare, "VideoShare");
+
+/*!
+   \variable QContactOnlineAccount::ServiceAim
+
+    The predefined string constant for a service provider value,
+    indicating this online account is for the AIM protocol.
+    \sa serviceProvider(), setServiceProvider()
+ */
+Q_DEFINE_LATIN1_CONSTANT(QContactOnlineAccount::ServiceAim, "Aim");
+
+/*!
+   \variable QContactOnlineAccount::ServiceIcq
+
+    The predefined string constant for a service provider value,
+    indicating this online account is for the ICQ protocol.
+    \sa serviceProvider(), setServiceProvider()
+ */
+Q_DEFINE_LATIN1_CONSTANT(QContactOnlineAccount::ServiceIcq, "Icq");
+
+/*!
+   \variable QContactOnlineAccount::ServiceIrc
+
+    The predefined string constant for a service provider value,
+    indicating this online account is for the IRC protocol.
+    \sa serviceProvider(), setServiceProvider()
+ */
+Q_DEFINE_LATIN1_CONSTANT(QContactOnlineAccount::ServiceIrc, "Irc");
+
+/*!
+   \variable QContactOnlineAccount::ServiceJabber
+
+    The predefined string constant for a service provider value,
+    indicating this online account is for the Jabber protocol.
+    \sa serviceProvider(), setServiceProvider()
+ */
+Q_DEFINE_LATIN1_CONSTANT(QContactOnlineAccount::ServiceJabber, "Jabber");
+
+/*!
+   \variable QContactOnlineAccount::ServiceMsn
+
+    The predefined string constant for a service provider value,
+    indicating this online account is for the MSN protocol.
+    \sa serviceProvider(), setServiceProvider()
+ */
+Q_DEFINE_LATIN1_CONSTANT(QContactOnlineAccount::ServiceMsn, "Msn");
+
+/*!
+   \variable QContactOnlineAccount::ServiceQq
+
+    The predefined string constant for a service provider value,
+    indicating this online account is for the Tecent QQ protocol.
+    \sa serviceProvider(), setServiceProvider()
+ */
+Q_DEFINE_LATIN1_CONSTANT(QContactOnlineAccount::ServiceQq, "Qq");
+
+/*!
+   \variable QContactOnlineAccount::ServiceSkype
+
+    The predefined string constant for a service provider value,
+    indicating this online account is for the Skype protocol.
+    \sa serviceProvider(), setServiceProvider()
+ */
+Q_DEFINE_LATIN1_CONSTANT(QContactOnlineAccount::ServiceSkype, "Skype");
+
+/*!
+   \variable QContactOnlineAccount::ServiceYahoo
+
+    The predefined string constant for a service provider value,
+    indicating this online account is for the Yahoo chat protocol.
+    \sa serviceProvider(), setServiceProvider()
+ */
+Q_DEFINE_LATIN1_CONSTANT(QContactOnlineAccount::ServiceYahoo, "Yahoo");
 
 
 /*!

@@ -1,4 +1,6 @@
 TEMPLATE = subdirs
 SUBDIRS += battery \
 		 network \
-		 storage
+		 storage \
+         battery2
+

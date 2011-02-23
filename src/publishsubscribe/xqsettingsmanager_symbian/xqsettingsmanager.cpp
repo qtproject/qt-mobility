@@ -39,7 +39,6 @@
 **
 ****************************************************************************/
 
-#include "xqsettingsmanager.h"
 #include "xqsettingsmanager_p.h"
 #include <QVariant>
 

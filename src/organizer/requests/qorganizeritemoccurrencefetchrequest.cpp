@@ -63,10 +63,17 @@ QOrganizerItemOccurrenceFetchRequest::QOrganizerItemOccurrenceFetchRequest(QObje
 {
 }
 
+/*! Frees memory in use by this request */
+QOrganizerItemOccurrenceFetchRequest::~QOrganizerItemOccurrenceFetchRequest()
+{
+    QOrganizerAbstractRequestPrivate::notifyEngine(this);
+}
+
 /*! Sets the parent item, whose occurrences are to be fetched to \a item. */
 void QOrganizerItemOccurrenceFetchRequest::setParentItem(const QOrganizerItem &item)
 {
     Q_D(QOrganizerItemOccurrenceFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_generator = item;
 }
 
@@ -75,6 +82,7 @@ void QOrganizerItemOccurrenceFetchRequest::setParentItem(const QOrganizerItem &i
 void QOrganizerItemOccurrenceFetchRequest::setStartDate(const QDateTime &date)
 {
     Q_D(QOrganizerItemOccurrenceFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_startDate = date;
 }
 
@@ -83,19 +91,28 @@ void QOrganizerItemOccurrenceFetchRequest::setStartDate(const QDateTime &date)
 void QOrganizerItemOccurrenceFetchRequest::setEndDate(const QDateTime &date)
 {
     Q_D(QOrganizerItemOccurrenceFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_endDate = date;
 }
 
-/*! Sets the maximum number of items to fetch to \a maxCount. */
+/*! Sets the maximum number of items to fetch to \a maxCount.
+
+  A negative value denotes that no limit will be imposed on the number of items to fetch.
+ */
 void QOrganizerItemOccurrenceFetchRequest::setMaxOccurrences(int maxCount)
 {
     Q_D(QOrganizerItemOccurrenceFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_maxOccurrences = maxCount;
 }
 
+/*! Sets the fetch hint which the manager can use to optimize occurrence retrieval to \a hint.
+    The fetch hint may be ignored by the manager, in which case each occurrence will include
+    all available information. */
 void QOrganizerItemOccurrenceFetchRequest::setFetchHint(const QOrganizerItemFetchHint& hint)
 {
     Q_D(QOrganizerItemOccurrenceFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_fetchHint = hint;
 }
 
@@ -103,6 +120,7 @@ void QOrganizerItemOccurrenceFetchRequest::setFetchHint(const QOrganizerItemFetc
 QOrganizerItem QOrganizerItemOccurrenceFetchRequest::parentItem() const
 {
     Q_D(const QOrganizerItemOccurrenceFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_generator;
 }
 
@@ -110,6 +128,7 @@ QOrganizerItem QOrganizerItemOccurrenceFetchRequest::parentItem() const
 QDateTime QOrganizerItemOccurrenceFetchRequest::startDate() const
 {
     Q_D(const QOrganizerItemOccurrenceFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_startDate;
 }
 
@@ -117,13 +136,20 @@ QDateTime QOrganizerItemOccurrenceFetchRequest::startDate() const
 QDateTime QOrganizerItemOccurrenceFetchRequest::endDate() const
 {
     Q_D(const QOrganizerItemOccurrenceFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_endDate;
 }
 
-/*! Returns the maximum number of items to fetch. */
+/*! Returns the maximum number of items to fetch.
+
+  A negative value denotes that no limit will be imposed on the number of items to fetch.
+
+  The default value is -1.
+ */
 int QOrganizerItemOccurrenceFetchRequest::maxOccurrences() const
 {
     Q_D(const QOrganizerItemOccurrenceFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_maxOccurrences;
 }
 
@@ -131,6 +157,7 @@ int QOrganizerItemOccurrenceFetchRequest::maxOccurrences() const
 QList<QOrganizerItem> QOrganizerItemOccurrenceFetchRequest::itemOccurrences() const
 {
     Q_D(const QOrganizerItemOccurrenceFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_organizeritems;
 }
 
@@ -138,6 +165,7 @@ QList<QOrganizerItem> QOrganizerItemOccurrenceFetchRequest::itemOccurrences() co
 QOrganizerItemFetchHint QOrganizerItemOccurrenceFetchRequest::fetchHint() const
 {
     Q_D(const QOrganizerItemOccurrenceFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_fetchHint;
 }
 

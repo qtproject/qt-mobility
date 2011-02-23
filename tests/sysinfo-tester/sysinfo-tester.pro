@@ -7,3 +7,4 @@ SOURCES  += main.cpp
 include(../../common.pri)
 CONFIG += mobility
 MOBILITY = systeminfo
+CONFIG += console

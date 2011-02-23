@@ -52,6 +52,22 @@
 
 QTM_USE_NAMESPACE
 
+#ifndef QTRY_COMPARE
+#define QTRY_COMPARE(__expr, __expected) \
+    do { \
+        const int __step = 50; \
+        const int __timeout = 5000; \
+        if ((__expr) != (__expected)) { \
+            QTest::qWait(0); \
+        } \
+        for (int __i = 0; __i < __timeout && ((__expr) != (__expected)); __i+=__step) { \
+            QTest::qWait(__step); \
+        } \
+        QCOMPARE(__expr, __expected); \
+    } while(0)
+#endif
+
+
 Q_DECLARE_METATYPE(QFeedbackEffect::ThemeEffect);
 
 class tst_qdeclarativefeedback : public QObject
@@ -92,16 +108,16 @@ void tst_qdeclarativefeedback::hapticsEffect()
     QVERIFY(hapticsEffect->actuator() != 0);
     QCOMPARE(hapticsEffect->state(), QFeedbackEffect::Stopped);
 
-    QCOMPARE(hapticsEffect->property("supportsThemeEffect").toBool(), false);
-
     QCOMPARE(hapticsEffect->property("running").toBool(), false);
     QCOMPARE(hapticsEffect->property("paused").toBool(), false);
     hapticsEffect->setProperty("running", true);
+    QCOMPARE(hapticsEffect->property("running").toBool(), true);
+    QCOMPARE(hapticsEffect->property("paused").toBool(), false);
     hapticsEffect->setProperty("paused", true);
 
-    // dummy backend
+    // XXX make sure we just test dummy backend
     QCOMPARE(hapticsEffect->property("running").toBool(), false);
-    QCOMPARE(hapticsEffect->property("paused").toBool(), false);
+    QCOMPARE(hapticsEffect->property("paused").toBool(), true);
 
     delete hapticsEffect;
 }
@@ -116,7 +132,7 @@ void tst_qdeclarativefeedback::fileEffect()
 
     QCOMPARE(fileEffect->source(), QUrl("qrc:nonexistingfile.haptic"));
     QCOMPARE(fileEffect->isLoaded(), false);
-    QCOMPARE(fileEffect->state(), QFeedbackEffect::Stopped);
+    QTRY_COMPARE(fileEffect->state(), QFeedbackEffect::Stopped);
 
     QCOMPARE(fileEffect->property("running").toBool(), false);
     QCOMPARE(fileEffect->property("paused").toBool(), false);
@@ -155,6 +171,9 @@ void tst_qdeclarativefeedback::themeEffect()
     // Test the effect property gets assigned
     QMetaProperty p = dte->metaObject()->property(dte->metaObject()->indexOfProperty("effect"));
     QCOMPARE(p.read(dte).value<int>(), (int)QFeedbackEffect::ThemeBasicButton);
+
+    p = dte->metaObject()->property(dte->metaObject()->indexOfProperty("supported"));
+    QCOMPARE(p.read(dte).value<bool>(), QFeedbackEffect::supportsThemeEffect());
 
     delete dte;
 

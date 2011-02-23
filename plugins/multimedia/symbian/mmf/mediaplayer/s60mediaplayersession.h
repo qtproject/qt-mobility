@@ -99,6 +99,7 @@ protected:
     virtual void doLoadUrlL(const TDesC &path) = 0;
     virtual void doPlay() = 0;
     virtual void doStop() = 0;
+    virtual void doClose() = 0;
     virtual void doPauseL() = 0;
     virtual void doSetVolumeL(int volume) = 0;
     virtual void doSetPositionL(qint64 microSeconds) = 0;
@@ -116,6 +117,7 @@ public Q_SLOTS:
     virtual void setActiveEndpoint(const QString& name) = 0;
 
 protected:
+    int error() const;
     void setError(int error,  const QString &errorString = QString(), bool forceReset = false);
     void loaded();
     void buffering();
@@ -163,6 +165,7 @@ private:
     int m_error;    
     bool m_play_requested;
     bool m_stream;
+    bool m_seekable;
 };
 
 #endif

@@ -232,7 +232,7 @@ void tst_SymbianOmAsync::fetchSimpleItem()
     QVERIFY(item.id().managerUri().contains(m_om->managerName()));
 
     // Create fetch request
-    QOrganizerItemFetchRequest fetchItemRequest;
+    QOrganizerItemFetchForExportRequest fetchItemRequest;
     fetchItemRequest.setManager(m_om);
 
     // Create signal spys for verification purposes
@@ -254,17 +254,21 @@ void tst_SymbianOmAsync::fetchSimpleItem()
 
 void tst_SymbianOmAsync::fetchWaitForFinished()
 {
-     // Create item
-     QOrganizerItem item;
-     item.setType(QOrganizerItemType::TypeTodo);
+     // Create items
+     QOrganizerTodo todo1;
+     todo1.setDisplayLabel("Todo 1");
+     QOrganizerTodo todo2;
+     todo2.setDisplayLabel("Todo 2");
+     QOrganizerTodo todo3;
+     todo3.setDisplayLabel("Todo 3");
 
      // Save (synchronously)
-     QVERIFY(m_om->saveItem(&item));
-     QVERIFY(item.id() != QOrganizerItemId());
-     QVERIFY(item.id().managerUri().contains(m_om->managerName()));
+     QList<QOrganizerItem> items;
+     items << todo1 << todo2 << todo3;
+     QVERIFY(m_om->saveItems(&items));
 
      // Create fetch request
-     QOrganizerItemFetchRequest fetchItemRequest;
+     QOrganizerItemFetchForExportRequest fetchItemRequest;
      fetchItemRequest.setManager(m_om);
 
      // Create signal spys for verification purposes
@@ -278,6 +282,7 @@ void tst_SymbianOmAsync::fetchWaitForFinished()
      QCOMPARE(stateSpy.count(), 1);  // inactive > active
      QTime startTime = QTime::currentTime();
      QVERIFY(fetchItemRequest.waitForFinished(5000)); // 5 seconds time-out
+     QVERIFY(resultSpy.count() == 3);
 
      // Verify that the fetch did not take over 2 secons
      // Note: at the moment we don't have any performance requirements defined,
@@ -294,7 +299,7 @@ void tst_SymbianOmAsync::fetchItems()
     QVERIFY(m_om->saveItems(&items));
 
     // Create fetch request
-    QOrganizerItemFetchRequest req;
+    QOrganizerItemFetchForExportRequest req;
     req.setManager(m_om);
 
     // Create signal spys for verification purposes
@@ -353,7 +358,7 @@ void tst_SymbianOmAsync::fetchItemsIdFilter()
     QVERIFY(m_om->saveItems(&items));
 
     // Create fetch request
-    QOrganizerItemFetchRequest req;
+    QOrganizerItemFetchForExportRequest req;
     req.setManager(m_om);
 
     // Create signal spys for verification purposes
@@ -387,7 +392,7 @@ void tst_SymbianOmAsync::fetchItemsNonExistingIds()
     QVERIFY(m_om->removeItem(items[1].id()));
 
     // Create fetch request with id filter
-    QOrganizerItemFetchRequest req;
+    QOrganizerItemFetchForExportRequest req;
     req.setManager(m_om);
     QOrganizerItemIdFilter idFilter;
     QList<QOrganizerItemId> ids;
@@ -421,7 +426,7 @@ void tst_SymbianOmAsync::fetchItemsDetailFilter()
     QVERIFY(m_om->saveItems(&items));
 
     // Create fetch request
-    QOrganizerItemFetchRequest req;
+    QOrganizerItemFetchForExportRequest req;
     req.setManager(m_om);
 
     // Create signal spys for verification purposes
@@ -451,7 +456,7 @@ void tst_SymbianOmAsync::fetchItemsSortOrder()
     QVERIFY(m_om->saveItems(&items));
 
     // Create fetch request
-    QOrganizerItemFetchRequest req;
+    QOrganizerItemFetchForExportRequest req;
     req.setManager(m_om);
 
     // Create signal spys for verification purposes
@@ -493,7 +498,7 @@ void tst_SymbianOmAsync::fetchItemsDeleteRequest()
     QVERIFY(m_om->saveItems(&items));
 
     // Create fetch request
-    QOrganizerItemFetchRequest *req = new QOrganizerItemFetchRequest();
+    QOrganizerItemFetchForExportRequest *req = new QOrganizerItemFetchForExportRequest();
     QWeakPointer<QObject> obj(req);
     req->setManager(m_om);
 

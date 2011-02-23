@@ -47,7 +47,7 @@ QT_BEGIN_NAMESPACE
 
 /*!
     \class QVideoEncoderControl
-    \preliminary
+    
     \inmodule QtMultimediaKit
     \ingroup multimedia
 

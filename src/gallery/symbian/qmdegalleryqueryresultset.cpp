@@ -58,20 +58,28 @@ QMDEGalleryQueryResultSet::QMDEGalleryQueryResultSet(QMdeSession *session, QObje
     m_query = NULL;
     m_launchUpdateQuery = false;
     m_query_running = false;
+    m_cleaned = false;
+
+    if (m_session)
+        m_session->AddTrackedResultSet( this );
 
     createQuery();
 }
 
 QMDEGalleryQueryResultSet::~QMDEGalleryQueryResultSet()
 {
+    m_itemArray.ResetAndDestroy();
+
     if (m_query) {
         m_query->Cancel();
         m_query->RemoveObserver( *this );
     }
     delete m_query;
     m_query = NULL;
-    if (m_session)
+    if (m_session && !m_cleaned) {
         m_session->RemoveObjectObserver( *this );
+        m_session->RemoveTrackedResultSet( this );
+    }
 }
 
 void QMDEGalleryQueryResultSet::HandleQueryNewResults( CMdEQuery &aQuery,
@@ -126,11 +134,14 @@ void QMDEGalleryQueryResultSet::HandleQueryCompleted( CMdEQuery &aQuery, TInt aE
                 }
             }
             finish(m_live);
+        } else if (aError == KErrCancel) {
+            QGalleryResultSet::cancel();
         } else {
             error(QDocumentGallery::ConnectionError);
         }
     }
 }
+
 #ifdef MDS_25_COMPILATION_ENABLED
 void QMDEGalleryQueryResultSet::HandleObjectNotification( CMdESession& aSession,
     TObserverNotificationType aType,
@@ -170,7 +181,7 @@ void QMDEGalleryQueryResultSet::HandleObjectRemoved(CMdESession& aSession, const
 }
 #endif //MDS_25_COMPILATION_ENABLED
 
-void QMDEGalleryQueryResultSet::doHandleObjectNotificationL( CMdESession& aSession,
+void QMDEGalleryQueryResultSet::doHandleObjectNotificationL( CMdESession& /*aSession*/,
     QMdeSessionObserverQueryNotificationType aType,
     const RArray<TItemId>& aObjectIdArray )
 {
@@ -244,11 +255,13 @@ void QMDEGalleryQueryResultSet::doHandleObjectNotificationL( CMdESession& aSessi
                 }
             }
         }
-    }   
+    }
 }
 
 void QMDEGalleryQueryResultSet::createQuery()
 {
+    m_itemArray.ResetAndDestroy();
+
     delete m_query;
     m_query = NULL;
 
@@ -302,6 +315,22 @@ void QMDEGalleryQueryResultSet::createQuery()
     } else {
         m_launchUpdateQuery = false;
     }
+}
+
+void QMDEGalleryQueryResultSet::cleanupResultSet()
+{
+    m_itemArray.ResetAndDestroy();
+
+    if (m_session)
+        m_session->RemoveObjectObserver( *this );
+
+    m_cleaned = true;
+}
+
+void QMDEGalleryQueryResultSet::cancel()
+{
+    if (m_query)
+        m_query->Cancel();
 }
 
 void QMDEGalleryQueryResultSet::handleUpdatedResults()

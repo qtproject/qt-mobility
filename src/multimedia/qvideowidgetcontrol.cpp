@@ -46,7 +46,7 @@ QT_BEGIN_NAMESPACE
 
 /*!
     \class QVideoWidgetControl
-    \preliminary
+    
 
     \brief The QVideoWidgetControl class provides a media control which
     implements a video widget.

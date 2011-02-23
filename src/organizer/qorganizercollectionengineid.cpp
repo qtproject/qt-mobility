@@ -47,6 +47,9 @@
   \brief The QOrganizerCollectionEngineId class uniquely identifies an item within a
   particular engine plugin.
 
+  \inmodule QtOrganizer
+  \ingroup organizer-backends
+
   Clients of the Organizer API should never use this class.
   Every engine implementor must implement a class derived from
   QOrganizerCollectionEngineId.
@@ -76,27 +79,20 @@
  */
 
 /*!
-  \fn QOrganizerCollectionEngineId::engineIdType() const
-  Returns an integer which identifies the type of the engine id.
-  This is important because operators ==, < and != require ids of the same type.
-  We suggest that engine implementors embed a globally unique UUID in their engine,
-  and that this function should return the qHash() of that globally unique UUID;
-  alternatively engine implementors can return a qHash() of their managerName.
-
-  If the engine allows access to different datastores based on the construction parameters,
-  the engine-specific implementation of QOrganizerCollectionEngineId may have to include
-  a field which identifies which datastore the item was from, so that persisted item ids
-  don't "magically" change which item they reference based on nothing more than the
-  parameters the client uses to construct the manager.
-
-  Alternatively, engine implementors can return a qHash() their managerUri; but be aware that
-  any engine construction parameters which are used will cause type disparity (even if the
-  engine only provides access to a single datastore, regardless of construction parameters).
-  This may be a problem if (for example) clients store an item id (for example, a "favorite"
-  event that the user wishes to be reminded about regularly) but don't necessarily construct
-  the manager (which stores that item) with the same parameters each time.
+  \fn QOrganizerCollectionEngineId::managerUri() const
+  Returns the manager URI of the constructed manager which created
+  the id.  If the collection which the id identifies has not been deleted,
+  the id should still be valid in the manager identified by the
+  manager URI returned by this function.
  */
 
+/*!
+  \fn QOrganizerCollectionEngineId::toString() const
+  Serializes the id to a string.  It contains all of the information
+  required to identify a particular collection in the manager which created
+  the id, formatted according to the serialization format of the
+  manager.
+ */
 /*!
   \fn QOrganizerCollectionEngineId::clone() const
   Returns a deep-copy clone of this id.
@@ -104,18 +100,8 @@
  */
 
 /*!
-  \fn QOrganizerCollectionEngineId::debugStreamOut(QDebug dbg)
+  \fn QOrganizerCollectionEngineId::debugStreamOut(QDebug& dbg) const
   Streams this id out to the debug stream \a dbg.
- */
-
-/*!
-  \fn QOrganizerCollectionEngineId::dataStreamOut(QDataStream& out)
-  Streams this id out to the data stream \a out.
- */
-
-/*!
-  \fn QOrganizerCollectionEngineId::dataStreamIn(QDataStream& in)
-  Streams this id in from the datastream \a in.
  */
 
 /*!

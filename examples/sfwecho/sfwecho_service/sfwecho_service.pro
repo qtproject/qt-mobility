@@ -13,10 +13,6 @@ MOBILITY = serviceframework
 HEADERS += 
 SOURCES += main.cpp
 
-symbian {
-    TARGET.CAPABILITY = ALL -TCB
-}
-
 wince*|symbian*: {
     addFiles.sources = sfwechoservice.xml
     addFiles.path = xmldata

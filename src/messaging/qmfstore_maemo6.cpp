@@ -269,6 +269,12 @@ bool QMFStore::removeMessages(const QMessageFilter& filter, QMessageManager::Rem
     return d_ptr->_store->removeMessages(convert(filter), convert(option));
 }
 
+bool QMFStore::removeAccount(const QMessageAccountId &id, QMessageManager::Error &error)
+{
+    error = QMessageManager::NoError;
+    return d_ptr->_store->removeAccount(convert(id));
+}
+
 struct TextPartLocator
 {
     QMailMessagePart::Location _location;

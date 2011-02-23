@@ -103,7 +103,9 @@ void QGeoTiledMapRouteObjectInfo::routeChanged(const QGeoRoute &route)
 
 void QGeoTiledMapRouteObjectInfo::penChanged(const QPen &pen)
 {
-    pathItem->setPen(route->pen());
+    QPen p = route->pen();
+    p.setWidth(p.width() * tiledMapData->zoomFactor());
+    pathItem->setPen(p);
     updateItem();
 }
 
@@ -114,6 +116,9 @@ void QGeoTiledMapRouteObjectInfo::detailLevelChanged(quint32 detailLevel)
 
 void QGeoTiledMapRouteObjectInfo::zoomLevelChanged(qreal zoomLevel)
 {
+    QPen p = route->pen();
+    p.setWidth(p.width() * tiledMapData->zoomFactor());
+    pathItem->setPen(p);
     updateData();
 }
 
@@ -121,17 +126,18 @@ void QGeoTiledMapRouteObjectInfo::updateData()
 {
     distanceFilteredPoints.clear();
 
-    QPointF lastPoint = points.at(0);
-    distanceFilteredPoints.append(points.at(0));
-    for (int i = 1; i < points.size() - 1; ++i) {
-        if ((lastPoint - points.at(i)).manhattanLength() >= route->detailLevel() * tiledMapData->zoomFactor()) {
-            distanceFilteredPoints.append(points.at(i));
-            lastPoint = points.at(i);
+    if (!points.isEmpty()) {
+        QPointF lastPoint = points.at(0);
+        distanceFilteredPoints.append(points.at(0));
+        for (int i = 1; i < points.size() - 1; ++i) {
+            if ((lastPoint - points.at(i)).manhattanLength() >= route->detailLevel() * tiledMapData->zoomFactor()) {
+                distanceFilteredPoints.append(points.at(i));
+                lastPoint = points.at(i);
+            }
         }
+
+        distanceFilteredPoints.append(points.at(points.size() - 1));
     }
-
-    distanceFilteredPoints.append(points.at(points.size() - 1));
-
     setValid((distanceFilteredPoints.size() >= 2));
 
     if (valid())

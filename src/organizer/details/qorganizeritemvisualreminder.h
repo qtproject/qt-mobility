@@ -56,7 +56,7 @@ public:
     const char* FieldMessage;
     const char* FieldDataUrl;
 #else
-    Q_DECLARE_CUSTOM_ORGANIZER_REMINDER_DETAIL(QOrganizerItemVisualReminder, "VisualReminder", QOrganizerItemReminder::VisualReminder)
+    Q_DECLARE_CUSTOM_ORGANIZER_REMINDER_DETAIL(QOrganizerItemVisualReminder, "VisualReminder")
     Q_DECLARE_LATIN1_CONSTANT(FieldMessage, "Message");
     Q_DECLARE_LATIN1_CONSTANT(FieldDataUrl, "DataUrl");
 #endif

@@ -301,7 +301,7 @@ void QGalleryQueryRequest::setOffset(int offset)
 /*!
     \property QGalleryQueryRequest::limit
 
-    \brief the maximimum number of items a query should return.
+    \brief the maximum number of items a query should return.
 */
 
 int QGalleryQueryRequest::limit() const

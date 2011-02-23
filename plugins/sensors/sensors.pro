@@ -6,7 +6,7 @@ maemo5 {
     SUBDIRS += n900
 }
 
-maemo6 {
+maemo6|meego {
     equals(sensord_enabled,yes) {
         SUBDIRS += maemo6
     } else {

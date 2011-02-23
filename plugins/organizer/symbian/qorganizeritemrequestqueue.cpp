@@ -105,20 +105,28 @@ bool QOrganizerItemRequestQueue::cancelRequest(
 bool QOrganizerItemRequestQueue::waitForRequestFinished(
         QOrganizerAbstractRequest* req, int msecs)
 {
+    // Verify that request exists in this manager
     if (!m_abstractRequestMap.keys().contains(req)) 
         return false;
     
+    // Verify that request is active
     if (req->state() != QOrganizerAbstractRequest::ActiveState)
         return false;
     
+    // Create an event loop
     QEventLoop *loop = new QEventLoop(this);
-    QObject::connect(req, SIGNAL(resultsAvailable()), loop, SLOT(quit()));
+    
+    // If request state changes quit the loop
+    QObject::connect(req, SIGNAL(stateChanged(QOrganizerAbstractRequest::State)), loop, SLOT(quit()));
 
+    // Set a timeout for the request
     // NOTE: zero means wait forever
     if (msecs > 0)
         QTimer::singleShot(msecs, loop, SLOT(quit()));
 
+    // Start the loop
     loop->exec();
+    
     loop->disconnect();
     loop->deleteLater();
 

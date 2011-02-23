@@ -29,9 +29,7 @@ int main(int argc, char *argv[])
             promptOnExit = false;
     }
     printf("Running tests...\n");
-            
-    QApplication app(argc, argv);
-    
+
     QString resultFileName = "c:/ut_sqlSearch.xml";
     QStringList args_sqlSearch( "UT_CntSqlSearch");
     args_sqlSearch << "-o" << resultFileName;
@@ -43,7 +41,7 @@ int main(int argc, char *argv[])
     args_sqlsearchbase << "-o" << resultFileName;
     UT_CntSqlSearchBase ut_sqlsearchbase;
     QTest::qExec(&ut_sqlsearchbase, args_sqlsearchbase);
-    
+  
     resultFileName = QString("c:/ut_sqlkoreanitut.xml");
     QStringList args_sqlkoreanitut( "UT_CntSqlKoreanItuT");
     args_sqlkoreanitut << "-o" << resultFileName;
