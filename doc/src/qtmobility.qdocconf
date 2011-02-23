@@ -162,6 +162,7 @@ excludedirs = ../../src/messaging/win32wce \
               ../../src/publishsubscribe/symbian
 
 exampledirs = ../../examples \
+              ../../tutorials \
               ../../demos \
               ../.. \
               .
