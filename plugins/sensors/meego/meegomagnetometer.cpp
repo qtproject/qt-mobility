@@ -96,3 +96,5 @@ bool meegomagnetometer::doConnect(){
 const QString meegomagnetometer::sensorName(){
     return "magnetometersensor";
 }
+
+const qreal meegomagnetometer::correctionFactor(){return meegomagnetometer::NANO;}

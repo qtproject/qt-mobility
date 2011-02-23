@@ -395,11 +395,12 @@ QLocale QGeoMappingManagerEngine::locale() const
 
 QGeoMappingManagerEnginePrivate::QGeoMappingManagerEnginePrivate()
     : managerVersion(-1),
-      supportsBearing(false),
-      supportsTilting(false),
-      minimumTilt(0),
-      maximumTilt(0)
- {}
+    minimumZoomLevel(0.0),
+    maximumZoomLevel(0.0),
+    supportsBearing(false),
+    supportsTilting(false),
+    minimumTilt(0.0),
+    maximumTilt(0.0) {}
 
 QGeoMappingManagerEnginePrivate::~QGeoMappingManagerEnginePrivate() {}
 

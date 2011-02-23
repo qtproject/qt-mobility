@@ -51,7 +51,11 @@
 #include "qgeocoordinate.h"
 
 GeoMap::GeoMap(QGeoMappingManager *manager, MapsWidget *mapsWidget) :
-    QGraphicsGeoMap(manager), mapsWidget(mapsWidget)
+    QGraphicsGeoMap(manager),
+    mapsWidget(mapsWidget),
+    panActive(false),
+    markerPressed(false),
+    pressed(0)
 {
     this->setFocus();
 }
@@ -385,6 +389,17 @@ void StatusBarItem::hide()
 }
 
 
+FixedGraphicsView::FixedGraphicsView(QGraphicsScene *scene, QWidget *parent) :
+    QGraphicsView(scene, parent)
+{
+}
+
+void FixedGraphicsView::scrollContentsBy(int dx, int dy)
+{
+    Q_UNUSED(dx)
+    Q_UNUSED(dy)
+}
+
 
 class MapsWidgetPrivate
 {
@@ -426,7 +441,7 @@ void MapsWidget::initialize(QGeoMappingManager *manager)
     d->map->setPos(0, 0);
     d->map->resize(this->size());
 
-    d->view = new QGraphicsView(sc, this);
+    d->view = new FixedGraphicsView(sc, this);
     d->view->setVisible(true);
     d->view->setInteractive(true);
     d->view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -438,10 +453,10 @@ void MapsWidget::initialize(QGeoMappingManager *manager)
     d->zoomButtonItem = new ZoomButtonItem(d->map);
     sc->addItem(d->zoomButtonItem);
 
-    resizeEvent(0);
-
     d->view->resize(this->size());
     d->view->centerOn(d->map);
+
+    resizeEvent(0);
 
     d->map->setCenter(QGeoCoordinate(-27.5796, 153.1));
     d->map->setZoomLevel(15);
@@ -471,11 +486,14 @@ void MapsWidget::resizeEvent(QResizeEvent *event)
 
     if (d->view && d->map) {
         d->view->resize(size());
-        d->map->resize(size());
+        d->map->resize(width()-2, height()-2);
         d->view->centerOn(d->map);
 
-        d->statusBarItem->setRect(0, height(), width(), 20);
-        d->zoomButtonItem->setRect(width()-30, height()/2.0 - 35, 25, 70);
+        d->statusBarItem->setRect(0, height()-2, width()-2, 20);
+        d->zoomButtonItem->setRect((width()-2)-(width()-2)/10.0,
+                                   (height()-2)/2.0 - (height()-2)/6.0,
+                                   (width()-2)/10.0,
+                                   (height()-2)/3.0);
     }
 }
 

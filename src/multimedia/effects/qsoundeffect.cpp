@@ -57,28 +57,9 @@ QT_BEGIN_NAMESPACE
 
     This element is part of the \bold{QtMultimediaKit 1.1} module.
 
-    The following example plays a wav file on mouse click.
+    The following example plays a WAV file on mouse click.
 
-    \qml
-    import Qt 4.7
-    import QtMultimediaKit 1.1
-
-    Text {
-        text: "Click Me!";
-        font.pointSize: 24;
-        width: 150; height: 50;
-
-        SoundEffect {
-            id: playSound
-            source: "soundeffect.wav"
-        }
-        MouseArea {
-            id: playArea
-            anchors.fill: parent
-            onPressed: { playSound.play() }
-        }
-    }
-    \endqml
+    \snippet doc/src/snippets/multimedia-snippets/soundeffect.qml complete snippet
 */
 
 /*!
@@ -265,12 +246,7 @@ bool QSoundEffect::isLoaded() const
 
   This is the default method for SoundEffect.
 
-  \qml
-  MouseArea {
-      anchors.fill: parent
-      onPressed: { SoundEffect { source:"soundeffect.wav" } }
-  }
-  \endqml
+  \snippet doc/src/snippets/multimedia-snippets/soundeffect.qml play sound on click
 */
 void QSoundEffect::play()
 {

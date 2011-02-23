@@ -346,8 +346,9 @@ void CalendarDemo::addEvents()
 void CalendarDemo::importItems()
 {
 #ifdef BUILD_VERSIT
+    QString messageTitle(tr("Import of Items failed"));
     if (!m_manager) {
-        qWarning() << "No manager selected; cannot import";
+        QMessageBox::warning(this, messageTitle, tr("No manager selected; cannot import"));
         return;
     }
     QString docPath = QDesktopServices::storageLocation(QDesktopServices::DocumentsLocation);
@@ -357,22 +358,46 @@ void CalendarDemo::importItems()
         docPath = ".";
     QString fileName = QFileDialog::getOpenFileName(this,
        tr("Select iCalendar file"), docPath, tr("iCalendar files (*.ics)"));
+
+    // user chose to cancel file dialog?
+    if (fileName.isEmpty())
+         return;
+
     QFile file(fileName);
-    file.open(QIODevice::ReadOnly);
-    if (!file.isReadable()) {
-        qWarning() << "File is not readable";
+    if (!file.open(QIODevice::ReadOnly) || !file.isReadable()){
+        QMessageBox::warning(this, messageTitle, tr("Unable to read from file: %1").arg(fileName));
         return;
     }
     QVersitReader reader;
     reader.setDevice(&file);
     if (!reader.startReading() || !reader.waitForFinished()) {
-        qWarning() << "Read failed, " << reader.error();
+        QMessageBox::warning(this, messageTitle, tr("Versit reader failed: %1").arg(reader.error()));
+        return;
     }
     QVersitOrganizerImporter importer;
     QList<QOrganizerItem> allItems;
+    QString errorMessage;
     foreach (const QVersitDocument& document, reader.results()) {
         if (!importer.importDocument(document)) {
-            qWarning() << "Import failed, " << importer.errorMap();
+            errorMessage += tr("Import failed,");
+            QMap<int, QVersitOrganizerImporter::Error>::const_iterator iterator = importer.errorMap().constBegin();
+            while(iterator != importer.errorMap().constEnd()){
+                switch (iterator.value()){
+                case QVersitOrganizerImporter::InvalidDocumentError:
+                    errorMessage += QString(" index %1:").arg(iterator.key());
+                    errorMessage += tr("One of the documents is not an iCalendar file");
+                break;
+                case QVersitOrganizerImporter::EmptyDocumentError:
+                    errorMessage += QString(" index %1:").arg(iterator.key());
+                    errorMessage += tr("One of the documents is empty");
+                break;
+                default:
+                    errorMessage += QString(" index %1:").arg(iterator.key());
+                    errorMessage += tr("Unknown error");
+                }
+                ++iterator;
+            }
+            errorMessage += QLatin1String("\n");
             continue;
         }
         QList<QOrganizerItem> items = importer.items();
@@ -380,6 +405,9 @@ void CalendarDemo::importItems()
             allItems.append(m_manager->compatibleItem(item));
         }
     }
+    if (!errorMessage.isEmpty())
+        QMessageBox::warning(this, messageTitle, errorMessage);
+
     m_manager->saveItems(&allItems);
     m_monthPage->refresh();
     m_dayPage->refresh();
@@ -389,8 +417,9 @@ void CalendarDemo::importItems()
 void CalendarDemo::exportItems()
 {
 #ifdef BUILD_VERSIT
+    QString messageTitle(tr("Export of Items failed"));
     if (!m_manager) {
-        qWarning() << "No manager selected; cannot export";
+        QMessageBox::warning(this, messageTitle, tr("No manager selected; cannot export"));
         return;
     }
     QString docPath = QDesktopServices::storageLocation(QDesktopServices::DocumentsLocation);
@@ -402,24 +431,57 @@ void CalendarDemo::exportItems()
     QString fileName = QFileDialog::getSaveFileName(this, tr("Save iCalendar"),
                                                     docPath,
                                                     tr("iCalendar files (*.ics)"));
+    // user chose to cancel file dialog?
+    if (fileName.isEmpty())
+         return;
+
     QFile file(fileName);
-    file.open(QIODevice::WriteOnly);
-    if (!file.isWritable()) {
-        qWarning() << "File is not writable";
+    if (!file.open(QIODevice::WriteOnly) || !file.isWritable()) {
+        QMessageBox::warning(this, messageTitle, tr("Unable to write to file: %1").arg(fileName));
         return;
     }
     QList<QOrganizerItem> items(m_manager->itemsForExport());
     QVersitOrganizerExporter exporter;
+    QString errorMessage;
     if (!exporter.exportItems(items)) {
-        qWarning() << "Export failed, " << exporter.errorMap();
-        return;
+            errorMessage += tr("Export failed,");
+            QMap<int, QVersitOrganizerExporter::Error>::const_iterator iterator = exporter.errorMap().constBegin();
+            while(iterator != exporter.errorMap().constEnd()){
+                switch (iterator.value()){
+                case QVersitOrganizerExporter::EmptyOrganizerError:
+                    errorMessage += QString(" index %1:").arg(iterator.key());
+                    errorMessage += tr("One of the documents is not an iCalendar file");
+                break;
+                case QVersitOrganizerExporter::UnknownComponentTypeError:
+                    errorMessage += QString(" index %1:").arg(iterator.key());
+                    errorMessage += tr("One of the components in the iCalendar file is"
+                                       " not supported");
+                break;
+                case QVersitOrganizerExporter::UnderspecifiedOccurrenceError:
+                    errorMessage += QString(" index %1:").arg(iterator.key());
+                    errorMessage += tr("An event or todo exception was found which"
+                                       " did not specify both its parent and a specifier for"
+                                       " which instance to override");
+                break;
+                default:
+                    errorMessage += QString(" index %1:%2 ").arg(iterator.key())
+                                                           .arg(tr("Unknown error"));
+                }
+                ++iterator;
+            }
+            errorMessage += QLatin1String("\n");
+        if (!errorMessage.isEmpty()){
+            QMessageBox::warning(this, messageTitle, errorMessage);
+            return;
+        }
     }
     QVersitDocument document = exporter.document();
     QVersitWriter writer;
     writer.setDevice(&file);
     if (!writer.startWriting(QList<QVersitDocument>() << document)
         || !writer.waitForFinished()) {
-        qWarning() << "Write failed, " << writer.error();
+        QMessageBox::warning(this, messageTitle,
+            tr("Versit writing of organizer items failed: %1").arg(writer.error()));
     }
 #endif
 }

@@ -29,8 +29,6 @@
     \example keepintouch
     \title 'Keep in Touch' Example
 
-
-
     This example demonstrates using the QtMobility Messaging API to
     extract useful information from the messages stored by the system.
 
@@ -119,7 +117,6 @@
     have prepared:
 
     \snippet    ../../examples/keepintouch/addressfinder.cpp compose-message
-
 */
 
 

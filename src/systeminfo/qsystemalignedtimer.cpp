@@ -69,6 +69,11 @@ QTM_BEGIN_NAMESPACE
 
   This signal is emitted when the timer times out.
  */
+/*!
+  \fn void QSystemAlignedTimer::error(QSystemAlignedTimer::AlignedTimerError error)
+
+  This signal is emitted when an \a error happens.
+ */
 
 /*!
     \enum QSystemAlignedTimer::AlignedTimerError
@@ -79,16 +84,6 @@ QTM_BEGIN_NAMESPACE
     \value InvalidArgument                Interval arguments are invalid.
     \value TimerFailed                    General timer failure.
     \value InternalError                  Internal error.
-
-  */
-
-/*!
-    \enum QSystemAlignedTimer::AlignedTimerError
-    This enum describes the last known AlignedTimerError
-
-    \value AlignedTimerNotSupported       The aligned timer is not support on this platform
-    \value InvalidArgument                Interval arguments are invalid.
-    \value TimerFailed                    General timer failure.
 
   */
 /*!
@@ -111,12 +106,12 @@ QSystemAlignedTimer::~QSystemAlignedTimer()
 }
 
 /*!
-  Starts the timer with the preferred interval of \a sec in seconds.
+  Starts the timer with the minimal interval of \a minimumTime, and maximum interval \a maximumTime in seconds.
 
   This is not a guaranteed interval, and the timeout signal may be fired at any time,
   depending on other clients attached to this timer.
 
-  In the case of 0, it means 'wake me up when someone else is woken up'.
+  In the case of minimalInterval of 0, it means 'wake me up when someone else is woken up'.
 
   If you need a window of time in which your timer should fire, use QSystemAlignedTimer::setWindow
 
@@ -213,7 +208,7 @@ void QSystemAlignedTimer::setMaximumInterval(int seconds)
 
 /*!
   \property QSystemAlignedTimer::maximumInterval
-  \brief The timers's maximumInterval.
+  \brief The timer's maximumInterval.
 
   Returns this current timer maximum interval.
   */
@@ -232,8 +227,12 @@ void QSystemAlignedTimer::setSingleShot(bool singleShot)
 
 /*!
 
-  This static function calls a slot after a given time interval.
-  \a sec is the time interval in seconds.
+  This static function starts a timer to call a slot after a \a minimumTime
+  interval has elapsed, and ensures that it will be called before the
+  \a maximumTime has elapsed.
+
+  These values are specified in seconds.
+
   The receiver is the \a receiver object and the \a member is the slot.
   */
 void QSystemAlignedTimer::singleShot(int minimumTime, int maximumTime, QObject *receiver, const char *member)

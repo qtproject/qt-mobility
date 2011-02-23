@@ -95,7 +95,9 @@ QSystemStorageInfoPrivate *getSystemStorageInfoPrivate() { return storageInfoPri
      \fn void QSystemStorageInfo::storageStateChanged(const QString &vol, QSystemStorageInfo::StorageState state)
 
      This signal gets emitted when a volume has changed from one StorageState to another, \a vol
-     being the volume name, and \a state being the new state..
+     being the volume name, and \a state being the new state.
+
+     The polling time may be different for different platforms.
 */
 
 

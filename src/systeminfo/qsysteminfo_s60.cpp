@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010-2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -394,7 +394,13 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
 #endif
         }
 
-        case QSystemInfo::FmradioFeature:   //Not available in public SDK
+        case QSystemInfo::FmradioFeature:
+        {
+#ifdef SYMBIAN_3_PLATFORM
+            featureId = KFeatureIdFmRadio;
+            break;
+#endif
+        }
         case QSystemInfo::LedFeature:
         case QSystemInfo::VideoOutFeature:  //Accessory monitor available from S60 5.x onwards
 
@@ -574,12 +580,9 @@ QString QSystemNetworkInfoPrivate::homeMobileCountryCode()
 
 QString QSystemNetworkInfoPrivate::homeMobileNetworkCode()
 {
-    CTelephony::TRegistrationStatus networkStatus = DeviceInfo::instance()
-        ->cellNetworkRegistrationInfo()->cellNetworkStatus();
-    if (networkStatus == CTelephony::ERegisteredOnHomeNetwork) {
-        return DeviceInfo::instance()->cellNetworkInfo()->networkCode();
-    }
-    return QString();
+
+        return DeviceInfo::instance()->cellNetworkInfo()->homeNetworkCode();
+
 }
 
 QString QSystemNetworkInfoPrivate::networkName(QSystemNetworkInfo::NetworkMode mode)
@@ -1655,6 +1658,7 @@ DeviceInfo *DeviceInfo::m_instance = NULL;
 QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QObject *parent)
     : QObject(parent), m_screenSaverInhibited(false)
 {
+    timer = new QTimer(this);
 }
 
 bool QSystemScreenSaverPrivate::screenSaverInhibited()
@@ -1671,7 +1675,6 @@ bool QSystemScreenSaverPrivate::setScreenSaverInhibit()
     m_screenSaverInhibited = true;
     resetInactivityTime();
 
-    QTimer *timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(resetInactivityTime()));
     timer->start(3000); //3 seconds interval
 
@@ -1681,6 +1684,18 @@ bool QSystemScreenSaverPrivate::setScreenSaverInhibit()
 void QSystemScreenSaverPrivate::resetInactivityTime()
 {
     User::ResetInactivityTime();
+}
+
+void QSystemScreenSaverPrivate::setScreenSaverInhibited(bool on)
+{
+    if (on) {
+        setScreenSaverInhibit();
+    } else {
+        if (timer->isActive()) {
+            timer->stop();
+            m_screenSaverInhibited = false;
+        }
+    }
 }
 
 QSystemBatteryInfoPrivate::QSystemBatteryInfoPrivate(QObject *parent)

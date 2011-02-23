@@ -16,7 +16,7 @@
 */
 
 
-target          t_filterview_matching_profile.exe
+TARGET          t_filterview_matching_profile.exe
 targettype      EXE
 CAPABILITY   ReadUserData WriteUserData
 UID		0x1000097a
@@ -31,6 +31,6 @@ source          t_filterview_matching_profile.cpp
 source		cfindtext.cpp
 source		t_utils2.cpp
 
-library         euser.lib  cntmodel.lib cntview.lib efsrv.lib cnttutil.lib pimtestclient.lib
+LIBRARY         euser.lib  cntmodel.lib cntview.lib efsrv.lib cnttutil.lib pimtestclient.lib
 
 SMPSAFE

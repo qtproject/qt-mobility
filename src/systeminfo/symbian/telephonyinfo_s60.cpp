@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010-2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -40,6 +40,11 @@
 ****************************************************************************/
 
 #include "telephonyinfo_s60.h"
+#ifdef ETELMM_SUPPORTED
+#include <etelmm.h>
+#include <mmtsy_names.h>
+#endif
+
 
 CTelephonyInfo::CTelephonyInfo(CTelephony &telephony) : CActive(EPriorityStandard),
     m_telephony(telephony)
@@ -242,6 +247,7 @@ void CCellNetworkInfo::RunL()
     if (m_initializing) {
         CTelephonyInfo::RunL();
     } else {
+        if (iStatus != KErrNone) return; //To avoid looping if app doesn't have ReadDeviceData caps
         m_cellId = m_networkInfoV1.iCellId;
         m_locationAreaCode = m_networkInfoV1.iLocationAreaCode;
 
@@ -321,11 +327,59 @@ QString CCellNetworkInfo::networkName() const
     return m_networkName;
 }
 
+QString CCellNetworkInfo::homeNetworkCode()
+    {
+#ifdef ETELMM_SUPPORTED
+        RTelServer telServer;
+        RMobilePhone mobilePhone;
+        TInt error = telServer.Connect();
+        if ( error != KErrNone )
+            {
+            return QString();
+            }
+        error = telServer.LoadPhoneModule( KMmTsyModuleName );
+        if ( error != KErrNone )
+            {
+            telServer.Close();
+            return QString();
+            }
+        RTelServer::TPhoneInfo phoneInfo;
+        const TInt KPhoneIndex = 0;
+        error = telServer.GetPhoneInfo( KPhoneIndex, phoneInfo );
+        if ( error != KErrNone )
+            {
+            telServer.Close();
+            return QString();
+            }
+        error = mobilePhone.Open( telServer, phoneInfo.iName );
+        if ( error != KErrNone )
+            {
+            telServer.Close();
+            return QString();
+            }
+          TRequestStatus networkStatus;
+          RMobilePhone::TMobilePhoneNetworkInfoV1 infov1;
+          RMobilePhone::TMobilePhoneNetworkInfoV1Pckg statusPkg(infov1);
+          mobilePhone.GetHomeNetwork(networkStatus, statusPkg);
+          User::WaitForRequest(networkStatus);
+          mobilePhone.Close();
+          telServer.Close();
+          if (networkStatus == KErrNone)
+              {
+              QString homeNetworkCode= QString::fromUtf16(infov1.iNetworkId.Ptr(), infov1.iNetworkId.Length());
+              return homeNetworkCode;
+              }
+           else
+               return QString();
+#else
+     return QString();
+#endif
+    }
+
 CTelephony::TNetworkMode CCellNetworkInfo::networkMode() const
 {
     return m_networkMode;
 }
-
 
 void CCellNetworkInfo::startMonitoring()
 {
@@ -352,6 +406,7 @@ void CCellNetworkRegistrationInfo::RunL()
     if (m_initializing) {
         CTelephonyInfo::RunL();
     } else {
+        if (iStatus != KErrNone) return; //To avoid looping if app doesn't have ReadDeviceData caps
         m_networkStatus = m_networkRegistrationV1.iRegStatus;
 
         foreach (MTelephonyInfoObserver *observer, m_observers) {
@@ -406,6 +461,7 @@ void CCellSignalStrengthInfo::RunL()
     if (m_initializing) {
         CTelephonyInfo::RunL();
     } else {
+        if (iStatus != KErrNone) return; //To avoid looping if app doesn't have ReadDeviceData caps
         m_cellNetworkSignalStrength = m_signalStrengthV1.iSignalStrength;
         m_signalBar = m_signalStrengthV1.iBar;
 
