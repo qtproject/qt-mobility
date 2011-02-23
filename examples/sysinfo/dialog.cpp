@@ -598,32 +598,74 @@ void Dialog::networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode mode ,
         strength = 0;
     }
 
-    if(mode == QSystemNetworkInfo::WlanMode) {
-        if(netStatusComboBox->currentText() == "Wlan") {
+    if (mode == QSystemNetworkInfo::UnknownMode) {
+        if(netStatusComboBox->currentText() == "Unknown") {
             signalLevelProgressBar->setValue(strength);
         }
     }
 
-    if(mode == QSystemNetworkInfo::EthernetMode) {
-        if(netStatusComboBox->currentText() == "Ethernet") {
-            signalLevelProgressBar->setValue(strength);
-        }
-    }
-
-    if(mode == QSystemNetworkInfo::GsmMode) {
+    if (mode == QSystemNetworkInfo::GsmMode) {
         if(netStatusComboBox->currentText() == "Gsm") {
             signalLevelProgressBar->setValue(strength);
         }
     }
 
-    if(mode == QSystemNetworkInfo::CdmaMode) {
+    if (mode == QSystemNetworkInfo::CdmaMode) {
         if(netStatusComboBox->currentText() == "Cdma") {
             signalLevelProgressBar->setValue(strength);
         }
     }
 
-    if(mode == QSystemNetworkInfo::WcdmaMode) {
+    if (mode == QSystemNetworkInfo::WcdmaMode) {
         if(netStatusComboBox->currentText() == "Wcdma") {
+            signalLevelProgressBar->setValue(strength);
+        }
+    }
+
+    if (mode == QSystemNetworkInfo::WlanMode) {
+        if(netStatusComboBox->currentText() == "Wlan") {
+            signalLevelProgressBar->setValue(strength);
+        }
+    }
+
+    if (mode == QSystemNetworkInfo::EthernetMode) {
+        if(netStatusComboBox->currentText() == "Ethernet") {
+            signalLevelProgressBar->setValue(strength);
+        }
+    }
+
+    if (mode == QSystemNetworkInfo::BluetoothMode) {
+        if(netStatusComboBox->currentText() == "Bluetooth") {
+            signalLevelProgressBar->setValue(strength);
+        }
+    }
+
+    if (mode == QSystemNetworkInfo::WimaxMode) {
+        if(netStatusComboBox->currentText() == "Wimax") {
+            signalLevelProgressBar->setValue(strength);
+        }
+    }
+
+    if (mode == QSystemNetworkInfo::GprsMode) {
+        if(netStatusComboBox->currentText() == "Gprs") {
+            signalLevelProgressBar->setValue(strength);
+        }
+    }
+
+    if (mode == QSystemNetworkInfo::EdgeMode) {
+        if(netStatusComboBox->currentText() == "Edge") {
+            signalLevelProgressBar->setValue(strength);
+        }
+    }
+
+    if (mode == QSystemNetworkInfo::HspaMode) {
+        if(netStatusComboBox->currentText() == "Hpsa") {
+            signalLevelProgressBar->setValue(strength);
+        }
+    }
+
+    if (mode == QSystemNetworkInfo::LteMode) {
+        if(netStatusComboBox->currentText() == "Lte") {
             signalLevelProgressBar->setValue(strength);
         }
     }
@@ -632,95 +674,202 @@ void Dialog::networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode mode ,
 
 void Dialog::networkNameChanged(QSystemNetworkInfo::NetworkMode mode,const QString &text)
 {
-    if(mode == QSystemNetworkInfo::WlanMode) {
-        if(netStatusComboBox->currentText() == "Wlan") {
+    if (mode == QSystemNetworkInfo::UnknownMode) {
+        if(netStatusComboBox->currentText() == "Unknown") {
             operatorNameLabel->setText(text);
         }
     }
 
-    if(mode == QSystemNetworkInfo::EthernetMode) {
-        if(netStatusComboBox->currentText() == "Ethernet") {
-            operatorNameLabel->setText(text);
-        }
-    }
-
-    if(mode == QSystemNetworkInfo::GsmMode) {
+    if (mode == QSystemNetworkInfo::GsmMode) {
         if(netStatusComboBox->currentText() == "Gsm") {
             operatorNameLabel->setText(text);
         }
     }
 
-    if(mode == QSystemNetworkInfo::CdmaMode) {
+    if (mode == QSystemNetworkInfo::CdmaMode) {
         if(netStatusComboBox->currentText() == "Cdma") {
             operatorNameLabel->setText(text);
         }
     }
 
-    if(mode == QSystemNetworkInfo::WcdmaMode) {
+    if (mode == QSystemNetworkInfo::WcdmaMode) {
         if(netStatusComboBox->currentText() == "Wcdma") {
             operatorNameLabel->setText(text);
         }
     }
 
+    if (mode == QSystemNetworkInfo::WlanMode) {
+        if(netStatusComboBox->currentText() == "Wlan") {
+            operatorNameLabel->setText(text);
+        }
+    }
+
+    if (mode == QSystemNetworkInfo::EthernetMode) {
+        if(netStatusComboBox->currentText() == "Ethernet") {
+            operatorNameLabel->setText(text);
+        }
+    }
+
+    if (mode == QSystemNetworkInfo::BluetoothMode) {
+        if(netStatusComboBox->currentText() == "Bluetooth") {
+            operatorNameLabel->setText(text);
+        }
+    }
+
+    if (mode == QSystemNetworkInfo::WimaxMode) {
+        if(netStatusComboBox->currentText() == "Wimax") {
+            operatorNameLabel->setText(text);
+        }
+    }
+
+    if (mode == QSystemNetworkInfo::GprsMode) {
+        if(netStatusComboBox->currentText() == "Gprs") {
+            operatorNameLabel->setText(text);
+        }
+    }
+
+    if (mode == QSystemNetworkInfo::EdgeMode) {
+        if(netStatusComboBox->currentText() == "Edge") {
+            operatorNameLabel->setText(text);
+        }
+    }
+
+    if (mode == QSystemNetworkInfo::HspaMode) {
+        if(netStatusComboBox->currentText() == "Hpsa") {
+            operatorNameLabel->setText(text);
+        }
+    }
+
+    if (mode == QSystemNetworkInfo::LteMode) {
+        if(netStatusComboBox->currentText() == "Lte") {
+            operatorNameLabel->setText(text);
+        }
+    }
 }
 
 void Dialog::networkStatusChanged(QSystemNetworkInfo::NetworkMode mode , QSystemNetworkInfo::NetworkStatus status)
 {
-    if(mode == QSystemNetworkInfo::WlanMode) {
-        if(netStatusComboBox->currentText() == "Wlan") {
-           displayNetworkStatus(status);
+
+    if (mode == QSystemNetworkInfo::UnknownMode) {
+        if(netStatusComboBox->currentText() == "Unknown") {
+            displayNetworkStatus(status);
         }
     }
 
-    if(mode == QSystemNetworkInfo::EthernetMode) {
-        if(netStatusComboBox->currentText() == "Ethernet") {
-           displayNetworkStatus(status);
-        }
-    }
-
-    if(mode == QSystemNetworkInfo::GsmMode) {
+    if (mode == QSystemNetworkInfo::GsmMode) {
         if(netStatusComboBox->currentText() == "Gsm") {
             displayNetworkStatus(status);
         }
     }
 
-    if(mode == QSystemNetworkInfo::CdmaMode) {
+    if (mode == QSystemNetworkInfo::CdmaMode) {
         if(netStatusComboBox->currentText() == "Cdma") {
             displayNetworkStatus(status);
         }
     }
 
-    if(mode == QSystemNetworkInfo::WcdmaMode) {
+    if (mode == QSystemNetworkInfo::WcdmaMode) {
         if(netStatusComboBox->currentText() == "Wcdma") {
             displayNetworkStatus(status);
         }
     }
 
+    if (mode == QSystemNetworkInfo::WlanMode) {
+        if(netStatusComboBox->currentText() == "Wlan") {
+           displayNetworkStatus(status);
+        }
+    }
+
+    if (mode == QSystemNetworkInfo::EthernetMode) {
+        if(netStatusComboBox->currentText() == "Ethernet") {
+           displayNetworkStatus(status);
+        }
+    }
+
+    if (mode == QSystemNetworkInfo::BluetoothMode) {
+        if(netStatusComboBox->currentText() == "Bluetooth") {
+            displayNetworkStatus(status);
+        }
+    }
+
+    if (mode == QSystemNetworkInfo::WimaxMode) {
+        if(netStatusComboBox->currentText() == "Wimax") {
+            displayNetworkStatus(status);
+        }
+    }
+
+    if (mode == QSystemNetworkInfo::GprsMode) {
+        if(netStatusComboBox->currentText() == "Gprs") {
+            displayNetworkStatus(status);
+        }
+    }
+
+    if (mode == QSystemNetworkInfo::EdgeMode) {
+        if(netStatusComboBox->currentText() == "Edge") {
+            displayNetworkStatus(status);
+        }
+    }
+
+    if (mode == QSystemNetworkInfo::HspaMode) {
+        if(netStatusComboBox->currentText() == "Hspa") {
+            displayNetworkStatus(status);
+        }
+    }
+
+    if (mode == QSystemNetworkInfo::LteMode) {
+        if(netStatusComboBox->currentText() == "Lte") {
+            displayNetworkStatus(status);
+        }
+    }
 }
 
 void Dialog::networkModeChanged(QSystemNetworkInfo::NetworkMode mode)
 {
-    if(mode == QSystemNetworkInfo::WlanMode) {
-        primaryModeLabel->setText("Wlan");
+    if (mode == QSystemNetworkInfo::UnknownMode) {
+        primaryModeLabel->setText("None");
     }
 
-    if(mode == QSystemNetworkInfo::EthernetMode) {
-        primaryModeLabel->setText("Ethernet");
-    }
-
-    if(mode == QSystemNetworkInfo::GsmMode) {
+    if (mode == QSystemNetworkInfo::GsmMode) {
         primaryModeLabel->setText("Gsm");
     }
 
-    if(mode == QSystemNetworkInfo::CdmaMode) {
+    if (mode == QSystemNetworkInfo::CdmaMode) {
         primaryModeLabel->setText("Cdma");
     }
 
-    if(mode == QSystemNetworkInfo::WcdmaMode) {
+    if (mode == QSystemNetworkInfo::WcdmaMode) {
         primaryModeLabel->setText("Wcdma");
     }
-    if(mode == QSystemNetworkInfo::UnknownMode) {
-        primaryModeLabel->setText("None");
+    if (mode == QSystemNetworkInfo::WlanMode) {
+        primaryModeLabel->setText("Wlan");
+    }
+
+    if (mode == QSystemNetworkInfo::EthernetMode) {
+        primaryModeLabel->setText("Ethernet");
+    }
+
+    if (mode == QSystemNetworkInfo::BluetoothMode) {
+        primaryModeLabel->setText("Bluetooth");
+    }
+
+    if (mode == QSystemNetworkInfo::WimaxMode) {
+        primaryModeLabel->setText("Wimax");
+    }
+
+    if (mode == QSystemNetworkInfo::GprsMode) {
+        primaryModeLabel->setText("Gprs");
+    }
+
+    if (mode == QSystemNetworkInfo::EdgeMode) {
+        primaryModeLabel->setText("Edge");
+    }
+
+    if (mode == QSystemNetworkInfo::HspaMode) {
+        primaryModeLabel->setText("Hspa");
+    }
+
+    if (mode == QSystemNetworkInfo::LteMode) {
+        primaryModeLabel->setText("Lte");
     }
 }
 
