@@ -139,7 +139,8 @@ that need to influence the used data rate should connect to the sensor, check th
 and select one as appropriate.
 
 Applications must be extremely careful not to use too much CPU time or sensor readings will
-not be delivered in a timely manner.
+not be delivered in a timely manner. Likewise, if an application blocks the event loop, sensor
+readings will not be delivered in a timely manner.
 
 More information about the native API can be found \l{http://wiki.forum.nokia.com/index.php/Nokia_Sensor_APIs}{here}.
 
