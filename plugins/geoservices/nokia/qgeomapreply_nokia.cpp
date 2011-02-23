@@ -99,9 +99,8 @@ void QGeoMapReplyNokia::networkFinished()
     if (!m_reply)
         return;
 
-    if (m_reply->error() != QNetworkReply::NoError) {
+    if (m_reply->error() != QNetworkReply::NoError)
         return;
-    }
 
     setMapImageData(m_reply->readAll());
     setMapImageFormat("PNG");
@@ -118,6 +117,7 @@ void QGeoMapReplyNokia::networkError(QNetworkReply::NetworkError error)
 
     if (error != QNetworkReply::OperationCanceledError)
         setError(QGeoTiledMapReply::CommunicationError, m_reply->errorString());
+    setFinished(true);
     m_reply->deleteLater();
     m_reply = 0;
 }
