@@ -765,16 +765,8 @@ void DirectShowPlayerService::doStop(QMutexLocker *locker)
             control->Release();
         }
 
-        if (IMediaSeeking *seeking = com_cast<IMediaSeeking>(m_graph, IID_IMediaSeeking)) {
-            LONGLONG position = 0;
-
-            seeking->GetCurrentPosition(&position);
-            seeking->Release();
-
-            m_position = position / qt_directShowTimeScale;
-        } else {
-            m_position = 0;
-        }
+        m_position = 0;
+        m_pendingTask |= Seek;
 
         m_executedTasks &= ~(Play | Pause);
         
