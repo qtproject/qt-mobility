@@ -79,9 +79,9 @@ QTM_BEGIN_NAMESPACE
     transaction occurs.
 
     NFC Forum Tags can contain one or more messages in a standardized format.  These messages are
-    encapsulated in the QNdefMessage class.  Use the registerTargetDetectedHandler() functions to
+    encapsulated in the QNdefMessage class.  Use the registerNdefMessageHandler() functions to
     register message handlers with particular criteria.  Handlers can be unregistered with the
-    unregisterTargetDetectedHandler() function.
+    unregisterNdefMessageHandler() function.
 */
 
 /*!
@@ -124,6 +124,20 @@ QTM_BEGIN_NAMESPACE
     The \a applicationIdentifier is a byte array of up to 16 bytes as defined by ISO 7816-4 and
     uniquely identifies the application and application vendor that was involved in the
     transaction.
+*/
+
+/*!
+    \fn int QNearFieldManager::registerNdefMessageHandler(QObject *object, const char *method)
+
+    Registers \a object to receive notifications on \a method when a tag has been detected and has
+    an NDEF record that matches template argument.  The \a method on \a object should have the
+    prototype 'void targetDetected(const QNdefMessage &message, QNearFieldTarget *target)'.
+
+    Returns an identifier, which can be used to unregister the handler, on success; otherwise
+    returns -1.
+
+    \note The \i target parameter of \a method may not be available on all platforms, in which case
+    \i target will be 0.
 */
 
 /*!
@@ -252,9 +266,9 @@ static QMetaMethod methodForSignature(QObject *object, const char *method)
     \i target will be 0.
 */
 
-int QNearFieldManager::registerTargetDetectedHandler(QNdefRecord::TypeNameFormat typeNameFormat,
-                                                     const QByteArray &type,
-                                                     QObject *object, const char *method)
+int QNearFieldManager::registerNdefMessageHandler(QNdefRecord::TypeNameFormat typeNameFormat,
+                                                  const QByteArray &type,
+                                                  QObject *object, const char *method)
 {
     QMetaMethod metaMethod = methodForSignature(object, method);
     if (!metaMethod.enclosingMetaObject())
@@ -265,13 +279,13 @@ int QNearFieldManager::registerTargetDetectedHandler(QNdefRecord::TypeNameFormat
 
     Q_D(QNearFieldManager);
 
-    return d->registerTargetDetectedHandler(filter, object, metaMethod);
+    return d->registerNdefMessageHandler(filter, object, metaMethod);
 }
 
 /*!
     Registers \a object to receive notifications on \a method when a tag has been detected and has
-    an NDEF record that matches template argument.  The \a method on \a object should have the
-    prototype \c{void targetDetected(const QNdefMessage &message, QNearFieldTarget *target)}.
+    an NDEF message.  The \a method on \a object should have the prototype
+    'void targetDetected(const QNdefMessage &message, QNearFieldTarget *target)'.
 
     Returns an identifier, which can be used to unregister the handler, on success; otherwise
     returns -1.
@@ -279,7 +293,7 @@ int QNearFieldManager::registerTargetDetectedHandler(QNdefRecord::TypeNameFormat
     \note The \i target parameter of \a method may not be available on all platforms, in which case
     \i target will be 0.
 */
-int QNearFieldManager::registerTargetDetectedHandler(QObject *object, const char *method)
+int QNearFieldManager::registerNdefMessageHandler(QObject *object, const char *method)
 {
     QMetaMethod metaMethod = methodForSignature(object, method);
     if (!metaMethod.enclosingMetaObject())
@@ -287,7 +301,7 @@ int QNearFieldManager::registerTargetDetectedHandler(QObject *object, const char
 
     Q_D(QNearFieldManager);
 
-    return d->registerTargetDetectedHandler(object, metaMethod);
+    return d->registerNdefMessageHandler(object, metaMethod);
 }
 
 /*!
@@ -301,8 +315,8 @@ int QNearFieldManager::registerTargetDetectedHandler(QObject *object, const char
     \note The \i target parameter of \a method may not be available on all platforms, in which case
     \i target will be 0.
 */
-int QNearFieldManager::registerTargetDetectedHandler(const QNdefFilter &filter,
-                                                     QObject *object, const char *method)
+int QNearFieldManager::registerNdefMessageHandler(const QNdefFilter &filter,
+                                                  QObject *object, const char *method)
 {
     QMetaMethod metaMethod = methodForSignature(object, method);
     if (!metaMethod.enclosingMetaObject())
@@ -310,7 +324,7 @@ int QNearFieldManager::registerTargetDetectedHandler(const QNdefFilter &filter,
 
     Q_D(QNearFieldManager);
 
-    return d->registerTargetDetectedHandler(filter, object, metaMethod);
+    return d->registerNdefMessageHandler(filter, object, metaMethod);
 }
 
 /*!
@@ -318,11 +332,11 @@ int QNearFieldManager::registerTargetDetectedHandler(const QNdefFilter &filter,
 
     Returns true on success; otherwise returns false.
 */
-bool QNearFieldManager::unregisterTargetDetectedHandler(int handlerId)
+bool QNearFieldManager::unregisterNdefMessageHandler(int handlerId)
 {
     Q_D(QNearFieldManager);
 
-    return d->unregisterTargetDetectedHandler(handlerId);
+    return d->unregisterNdefMessageHandler(handlerId);
 }
 
 void QNearFieldManager::setTargetAccessModes(TargetAccessModes accessModes)

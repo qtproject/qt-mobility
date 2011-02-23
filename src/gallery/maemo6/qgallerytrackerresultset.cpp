@@ -49,8 +49,6 @@
 #include <qdocumentgallery.h>
 #include <qgalleryresource.h>
 
-#include <QtCore/qdebug.h>
-
 Q_DECLARE_METATYPE(QVector<QStringList>)
 
 QTM_BEGIN_NAMESPACE
@@ -650,7 +648,7 @@ QVariant QGalleryTrackerResultSet::metaData(int key) const
     } else if (key < d->aliasOffset) {      // Composite column.
         return d->compositeColumns.at(key - d->compositeOffset)->value(d->currentRow);
     } else if (key < d->columnCount) {      // Alias column.
-        return *(d->currentRow + d->aliasColumns.at(key - d->aliasOffset));
+        return *(d->currentRow + d->aliasColumns.at(key - d->aliasOffset) + d->valueOffset);
     } else {
         return QVariant();
     }

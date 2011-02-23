@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -62,7 +62,7 @@ public:
     explicit QLLCPSocketState(QLlcpSocketPrivate*);
 
 public:
-    virtual QLlcpSocket::State state() const = 0;
+    virtual QLlcpSocket::SocketState state() const = 0;
     virtual bool WaitForBytesWritten(int) = 0;
 
 public:
@@ -95,14 +95,14 @@ public:
     explicit QLLCPUnconnected(QLlcpSocketPrivate*);
 
 public: // from base class
-     QLlcpSocket::State state() const {return QLlcpSocket::UnconnectedState;}
-     bool Bind(quint8 port);
-     void ConnectToService(QNearFieldTarget *target, const QString &serviceUri);
-     void DisconnectFromService();
-     qint64 WriteDatagram(const char *data, qint64 size,
-                          QNearFieldTarget *target, quint8 port);
-     bool WaitForBytesWritten(int);
-     bool WaitForDisconnected(int);
+    QLlcpSocket::SocketState state() const {return QLlcpSocket::UnconnectedState;}
+    bool Bind(quint8 port);
+    void ConnectToService(QNearFieldTarget *target, const QString &serviceUri);
+    void DisconnectFromService();
+    qint64 WriteDatagram(const char *data, qint64 size,
+                         QNearFieldTarget *target, quint8 port);
+    bool WaitForBytesWritten(int);
+    bool WaitForDisconnected(int);
 
 public:
 public:
@@ -127,7 +127,7 @@ public:
      QLLCPSocketState* Instance(QLlcpSocketPrivate* aSocket);
 
 public: // from base class
-    QLlcpSocket::State state() const {return QLlcpSocket::ConnectingState;}
+    QLlcpSocket::SocketState state() const {return QLlcpSocket::ConnectingState;}
     void ConnectToService(QNearFieldTarget *target, const QString &serviceUri);
     void DisconnectFromService();
     bool WaitForConnected(int);
@@ -143,7 +143,7 @@ public:
     explicit QLLCPConnected(QLlcpSocketPrivate*);
 
 public: // from base class
-    QLlcpSocket::State state() const {return QLlcpSocket::ConnectedState;}
+    QLlcpSocket::SocketState state() const {return QLlcpSocket::ConnectedState;}
     void ConnectToService(QNearFieldTarget *target, const QString &serviceUri);
     void DisconnectFromService();
     qint64 WriteDatagram(const char *data, qint64 size);
@@ -161,7 +161,7 @@ public:
     explicit QLLCPBind(QLlcpSocketPrivate*);
 
 public://from base class
-    QLlcpSocket::State state() const {return QLlcpSocket::BoundState;}
+    QLlcpSocket::SocketState state() const {return QLlcpSocket::BoundState;}
     qint64 WriteDatagram(const char *data, qint64 size,QNearFieldTarget *target, quint8 port);
     qint64 ReadDatagram(char *data, qint64 maxSize,QNearFieldTarget **target = 0, quint8 *port = 0);
     bool WaitForBytesWritten(int msecs);

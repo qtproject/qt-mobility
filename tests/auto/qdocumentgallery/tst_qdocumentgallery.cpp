@@ -161,7 +161,6 @@ void tst_QDocumentGallery::itemTypeProperties_data()
             << QDocumentGallery::performer
 #if defined(Q_WS_MAEMO_6)
             << QDocumentGallery::composer
-            << QDocumentGallery::resumePosition
 #else
             << QDocumentGallery::description
             << QDocumentGallery::title

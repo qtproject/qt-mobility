@@ -50,14 +50,17 @@
 #include "qvaluespacesubscriber.h"
 
 #include <QDeclarativeListProperty>
+#include <QDeclarativeParserStatus>
 
 QTM_USE_NAMESPACE
 
 class QDeclarativeValueSpacePublisherMetaObject;
+class QDeclarativeValueSpacePublisherQueueItem;
 
-class QDeclarativeValueSpacePublisher : public QObject
+class QDeclarativeValueSpacePublisher : public QObject, public QDeclarativeParserStatus
 {
     Q_OBJECT
+    Q_INTERFACES(QDeclarativeParserStatus)
 
     Q_PROPERTY(QString path READ path WRITE setPath)
     Q_PROPERTY(bool hasSubscribers READ hasSubscribers NOTIFY subscribersChanged)
@@ -86,6 +89,9 @@ public:
 
     void setKeys(const QStringList &keys);
 
+    void classBegin();
+    void componentComplete();
+
 signals:
     void subscribersChanged();
 
@@ -93,7 +99,12 @@ private:
     QDeclarativeValueSpacePublisherMetaObject *d;
     friend class QDeclarativeValueSpacePublisherMetaObject;
 
+    void queueChange(const QString &subPath, const QVariant &val);
+    void doQueue();
+
+    QList<QDeclarativeValueSpacePublisherQueueItem> m_queue;
     bool m_hasSubscribers;
+    bool m_complete;
     QValueSpacePublisher *m_publisher;
     QString m_path;
     QStringList m_keys;

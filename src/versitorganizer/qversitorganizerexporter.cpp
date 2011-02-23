@@ -52,7 +52,7 @@ QTM_USE_NAMESPACE
   \class QVersitOrganizerExporter
   \brief The QVersitOrganizerExporter class converts \l {QOrganizerItem}{QOrganizerItems} into
   \l {QVersitDocument}{QVersitDocuments}.
-  
+
   \ingroup versit
   \inmodule QtVersit
 
@@ -65,10 +65,13 @@ QTM_USE_NAMESPACE
 
 /*!
   \class QVersitOrganizerExporterDetailHandler
-  \brief The QVersitOrganizerExporterDetailHandler class is an interface for clients wishing to
-  implement custom export behaviour for certain organizer item details.
+  \brief The QVersitOrganizerExporterDetailHandler class is an interface for specifying
+  custom export behaviour for certain organizer item details.
+
   \ingroup versit-extension
   \inmodule QtVersit
+
+  For general information on extending Qt Versit, see the document on \l{Versit Plugins}.
 
   \sa QVersitOrganizerExporter
  */
@@ -82,7 +85,7 @@ QTM_USE_NAMESPACE
   \fn void QVersitOrganizerExporterDetailHandler::detailProcessed(const QOrganizerItem& item, const QOrganizerItemDetail& detail, const QVersitDocument& document, QSet<QString>* processedFields, QList<QVersitProperty>* toBeRemoved, QList<QVersitProperty>* toBeAdded)
 
   Process \a detail and provide a list of updated \l{QVersitProperty}{QVersitProperties} by
-  modifying the \a toBeRemoved and \a toBeAdded lists.  
+  modifying the \a toBeRemoved and \a toBeAdded lists.
 
   This function is called on every QOrganizerItemDetail encountered during an export, after the
   detail has been processed by the QVersitOrganizerExporter.  An implementation of this function can

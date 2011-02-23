@@ -22,7 +22,7 @@
  @released
 */
 
-#include <testexecutelog.h>
+#include <test/testexecutelog.h>
 #include <cntfldst.h>
 #include "clientserver.h"
 #include "viewdefanyfieldstest.h"

@@ -323,6 +323,7 @@ QGeoSearchReplyPrivate::QGeoSearchReplyPrivate()
     : error(QGeoSearchReply::NoError),
       errorString(""),
       isFinished(false),
+      viewport(0),
       limit(-1),
       offset(0) {}
 

@@ -152,12 +152,19 @@ QDataStream& operator>>(QDataStream& in, QOrganizerItemDetailDefinition& definit
  */
 QDebug operator<<(QDebug dbg, const QOrganizerItemDetailDefinition& definition)
 {
-    dbg.nospace() << "QOrganizerItemDetailDefinition("
-                  << "name=" << definition.name() << ","
-                  << "isUnique=" << definition.isUnique() << ","
-                  << "isEmpty=" << definition.isEmpty() << ","
-                  << "fields=" << definition.fields()
-                  << ")";
+    dbg.nospace() << "QOrganizerItemDetailDefinition(";
+    dbg.nospace() << "name=";
+    dbg.nospace() << definition.name();
+    dbg.nospace() << ",";
+    dbg.nospace() << "isUnique=";
+    dbg.nospace() << definition.isUnique();
+    dbg.nospace() << ",";
+    dbg.nospace() << "isEmpty=";
+    dbg.nospace() << definition.isEmpty();
+    dbg.nospace() << ",";
+    dbg.nospace() << "fields=";
+    dbg.nospace() << definition.fields();
+    dbg.nospace() << ")";
     return dbg.maybeSpace();
 }
 #endif

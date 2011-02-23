@@ -131,22 +131,8 @@ effect which was started at time \c t and ended at time \c q, with an
 \l{QFeedbackHapticsEffect::attackTime()}{attack time} of \c{AT}, and a
 \l{QFeedbackHapticsEffect::fadeTime()}{fade time} of \c{FT}, with a total
 \l{QFeedbackEffect::duration()}{duration} of \c{Duration} milliseconds:
-\code
-   Intensity
-        ^
-      I_|
-        |        .--------------.
-        |       /                \
-     AI_|      /                  \
-        |     (                    \
-        |     |                     \
-     FI_|     |                      )
-        |     |                      |
-        |     |                      |
-        +-----t----------------------q----->  Time (msec)
-              <AT>              <-FT->
-              <-------Duration------->
-\endcode
+
+\image non-periodic-effect.png
 
 The following diagram shows the graph of intensity over time of a periodic
 effect which was started at time \c t and ended at time \c q, with an
@@ -157,23 +143,8 @@ effect which was started at time \c t and ended at time \c q, with an
 \l{QFeedbackHapticsEffect::fadeTime()}{fade time} of \c{FT}, with a
 \l{QFeedbackHapticsEffect::period()}{period} of \c{Period} milliseconds and a total
 \l{QFeedbackEffect::duration()}{duration} of \c{Duration} milliseconds:
-\code
-   Intensity
-        ^
-      I_|
-        |        .-------.        .-------.        .-----+
-        |       /         \      /         \      /      |
-     AI_|      /           \    /           \    /       |
-        |     (             \  (             \  (        |
-        |     |              \ |              \ |        |
-     FI_|     |               \|               \|        |
-        |     |                '                '        |
-        |     |                                          |
-        +-----t------------------------------------------q----->  Time (msec)
-              <AT>       <-FT->
-              <-----Period---->
-              <------------------Duration---------------->
-\endcode
+
+\image periodic-effect.png
 
 A custom haptic effect may be defined in the following manner:
 \snippet ../../doc/src/snippets/qtfeedbackdocsample/qtfeedbackdocsample.cpp Define a custom haptic effect

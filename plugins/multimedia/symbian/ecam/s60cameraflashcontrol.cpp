@@ -57,11 +57,7 @@ S60CameraFlashControl::S60CameraFlashControl(S60ImageCaptureSession *session, QO
     m_advancedSettings(NULL),
     m_flashMode(QCameraExposure::FlashOff)
 {
-    if (session)
-        m_session = session;
-    else
-        Q_ASSERT(true);
-    // From now on it is safe to assume session exists
+    m_session = session;
 
     connect(m_session, SIGNAL(advancedSettingChanged()), this, SLOT(resetAdvancedSetting()));
     m_advancedSettings = m_session->advancedSettings();
@@ -94,7 +90,7 @@ void S60CameraFlashControl::setFlashMode(QCameraExposure::FlashModes mode)
         m_session->setFlashMode(m_flashMode);
     }
     else
-        m_session->setError(KErrNotSupported, QString("Requested flash mode is not supported."));
+        m_session->setError(KErrNotSupported, tr("Requested flash mode is not supported."));
 }
 
 bool S60CameraFlashControl::isFlashModeSupported(QCameraExposure::FlashModes mode) const

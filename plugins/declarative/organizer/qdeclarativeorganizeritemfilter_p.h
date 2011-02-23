@@ -60,8 +60,8 @@ class QDeclarativeOrganizerItemFilter : public QObject
 
     Q_PROPERTY(FilterType type READ type)
 
-    Q_ENUMS(FilterType);
-    Q_FLAGS(MatchFlags);
+    Q_ENUMS(FilterType)
+    Q_FLAGS(MatchFlags)
 public:
     QDeclarativeOrganizerItemFilter(QObject *parent=0)
         :QObject(parent)

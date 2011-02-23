@@ -44,6 +44,21 @@
 
 #include <QDeclarativeInfo>
 
+class QDeclarativeValueSpacePublisherQueueItem
+{
+public:
+    QDeclarativeValueSpacePublisherQueueItem(const QString &subPath, const QVariant &value);
+
+    QString subPath;
+    QVariant value;
+};
+
+QDeclarativeValueSpacePublisherQueueItem::QDeclarativeValueSpacePublisherQueueItem(const QString &subPath, const QVariant &value) :
+    subPath(subPath),
+    value(value)
+{
+}
+
 /*!
     \qmlclass ValueSpacePublisher QDeclarativeValueSpacePublisher
 
@@ -99,16 +114,48 @@
 
 QDeclarativeValueSpacePublisher::QDeclarativeValueSpacePublisher(QObject *parent)
     : QObject(parent),
-      d(new QDeclarativeValueSpacePublisherMetaObject(this))
+      d(new QDeclarativeValueSpacePublisherMetaObject(this)),
+      m_publisher(0),
+      m_pathSet(false),
+      m_hasSubscribers(false),
+      m_complete(false)
 {
-    m_pathSet = false;
-    m_hasSubscribers = false;
 }
 
 QDeclarativeValueSpacePublisher::~QDeclarativeValueSpacePublisher()
 {
-    if (m_pathSet)
+    if (m_publisher)
         delete m_publisher;
+}
+
+void QDeclarativeValueSpacePublisher::classBegin()
+{
+}
+
+void QDeclarativeValueSpacePublisher::componentComplete()
+{
+    if (m_pathSet) {
+        m_publisher = new QValueSpacePublisher(m_path, this);
+        connect(m_publisher, SIGNAL(interestChanged(QString,bool)),
+                this, SLOT(onInterestChanged(QString,bool)));
+    }
+    m_complete = true;
+    doQueue();
+}
+
+void QDeclarativeValueSpacePublisher::queueChange(const QString &subPath, const QVariant &val)
+{
+    m_queue << QDeclarativeValueSpacePublisherQueueItem(subPath, val);
+    if (m_publisher)
+        doQueue();
+}
+
+void QDeclarativeValueSpacePublisher::doQueue()
+{
+    foreach (QDeclarativeValueSpacePublisherQueueItem i, m_queue) {
+        m_publisher->setValue(i.subPath, i.value);
+    }
+    m_queue.clear();
 }
 
 /*!
@@ -132,10 +179,9 @@ void QDeclarativeValueSpacePublisher::setPath(const QString &path)
 
     m_path = path;
     startServer(true);
-    m_publisher = new QValueSpacePublisher(m_path, this);
-    connect(m_publisher, SIGNAL(interestChanged(QString,bool)),
-            this, SLOT(onInterestChanged(QString,bool)));
     m_pathSet = true;
+    if (m_complete)
+        componentComplete();
 }
 
 /*!
@@ -147,12 +193,7 @@ void QDeclarativeValueSpacePublisher::setPath(const QString &path)
 */
 void QDeclarativeValueSpacePublisher::setValue(const QVariant &val)
 {
-    if (!m_pathSet) {
-        qmlInfo(this) << "Tried to set value on a publisher with no path; ignored";
-        return;
-    }
-
-    m_publisher->setValue("", val);
+    queueChange("", val);
 }
 
 /*!

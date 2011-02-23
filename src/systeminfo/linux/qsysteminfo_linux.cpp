@@ -450,66 +450,6 @@ float QSystemDisplayInfoPrivate::contrast(int screen)
     return 0.0;
 }
 
-int QSystemDisplayInfoPrivate::getDPIWidth(int screen)
-{
-#if defined(Q_WS_X11)
-    return QX11Info::appDpiY(screen);
-#else
-    return 0;
-#endif
-}
-
-int QSystemDisplayInfoPrivate::getDPIHeight(int screen)
-{
-#if defined(Q_WS_X11)
-    return QX11Info::appDpiX(screen);
-#else
-    return 0;
-#endif
-}
-
-int QSystemDisplayInfoPrivate::physicalHeight(int screen)
-{
-    int height=0;
-#if defined(Q_WS_X11)
-    XRRScreenResources *sr;
-
-    sr = XRRGetScreenResources(QX11Info::display(), RootWindow(QX11Info::display(), screen));
-    for (int i = 0; i < sr->noutput; ++i) {
-        XRROutputInfo *output = XRRGetOutputInfo(QX11Info::display(),sr,sr->outputs[i]);
-        if (output->crtc) {
-           height = output->mm_height;
-        }
-        XRRFreeOutputInfo(output);
-    }
-    XRRFreeScreenResources(sr);
-#else
-Q_UNUSED(screen)
-#endif
-    return height;
-}
-
-int QSystemDisplayInfoPrivate::physicalWidth(int screen)
-{
-    int width=0;
-#if defined(Q_WS_X11)
-    XRRScreenResources *sr;
-
-    sr = XRRGetScreenResources(QX11Info::display(), RootWindow(QX11Info::display(), screen));
-    for (int i = 0; i < sr->noutput; ++i) {
-        XRROutputInfo *output = XRRGetOutputInfo(QX11Info::display(),sr,sr->outputs[i]);
-        if (output->crtc) {
-           width = output->mm_width;
-        }
-        XRRFreeOutputInfo(output);
-    }
-    XRRFreeScreenResources(sr);
-#else
-Q_UNUSED(screen)
-#endif
-    return width;
-}
-
 #if !defined(Q_WS_MAEMO_6) && defined(Q_WS_X11)  && !defined(Q_WS_MEEGO)
 void QSystemDisplayInfoPrivate::emitOrientationChanged(int curRotation)
 {

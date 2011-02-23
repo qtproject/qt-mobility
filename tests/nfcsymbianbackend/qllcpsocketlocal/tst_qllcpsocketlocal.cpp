@@ -52,8 +52,8 @@
 QTM_USE_NAMESPACE
 
 Q_DECLARE_METATYPE(QNearFieldTarget*)
-Q_DECLARE_METATYPE(QLlcpSocket::Error)
-Q_DECLARE_METATYPE(QLlcpSocket::State)
+Q_DECLARE_METATYPE(QLlcpSocket::SocketError)
+Q_DECLARE_METATYPE(QLlcpSocket::SocketState)
 
 class tst_qllcpsocketlocal : public QObject
 {
@@ -87,8 +87,8 @@ private:
 tst_qllcpsocketlocal::tst_qllcpsocketlocal()
 {
     qRegisterMetaType<QNearFieldTarget *>("QNearFieldTarget*");
-    qRegisterMetaType<QNearFieldTarget *>("QLlcpSocket::Error");
-    qRegisterMetaType<QNearFieldTarget *>("QLlcpSocket::State");
+    qRegisterMetaType<QLlcpSocket::SocketError>("QLlcpSocket::SocketError");
+    qRegisterMetaType<QLlcpSocket::SocketState>("QLlcpSocket::SocketState");
 }
 
 
@@ -147,7 +147,7 @@ void tst_qllcpsocketlocal::testCase1()
     QVERIFY(ret == -1);
 
     QCOMPARE(m_socket->state(), QLlcpSocket::UnconnectedState);
-    QSignalSpy stateChangedSpy(m_socket, SIGNAL(stateChanged(QLlcpSocket::State)));
+    QSignalSpy stateChangedSpy(m_socket, SIGNAL(stateChanged(QLlcpSocket::SocketState)));
 
     // STEP 2:  bind the local port for current socket
     QSignalSpy readyReadSpy(m_socket, SIGNAL(readyRead()));
@@ -160,7 +160,7 @@ void tst_qllcpsocketlocal::testCase1()
     QNfcTestUtil::ShowMessage(messageBox);
 
     // STEP 3: Local peer sends the  message to the remote peer
-    QSignalSpy errorSpy(m_socket, SIGNAL(error(QLlcpSocket::Error)));
+    QSignalSpy errorSpy(m_socket, SIGNAL(error(QLlcpSocket::SocketError)));
     QSignalSpy bytesWrittenSpy(m_socket, SIGNAL(bytesWritten(qint64)));
 
     QByteArray tmpArray(message.toAscii());
@@ -309,7 +309,7 @@ void tst_qllcpsocketlocal::testCase3()
 */
 void tst_qllcpsocketlocal::coverageTest1()
 {
-    QSignalSpy errorSpy(m_socket, SIGNAL(error(QLlcpSocket::Error)));
+    QSignalSpy errorSpy(m_socket, SIGNAL(error(QLlcpSocket::SocketError)));
     m_socket->connectToService(m_target,"uri");
     QTRY_VERIFY(errorSpy.count() == 1);
     QVERIFY(m_socket->error() == QLlcpSocket::UnknownSocketError);

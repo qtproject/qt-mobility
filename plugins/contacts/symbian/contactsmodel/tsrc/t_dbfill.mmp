@@ -16,7 +16,7 @@
 */
 
 
-target          t_dbfill.exe
+TARGET          t_dbfill.exe
 targettype      EXE
 CAPABILITY   ReadUserData WriteUserData
 UID		0x1000007a
@@ -29,6 +29,6 @@ userinclude ../inc
 
 source          T_DBFill.cpp
 
-library         euser.lib  cntmodel.lib	cntview.lib
+LIBRARY         euser.lib  cntmodel.lib	cntview.lib
 
 SMPSAFE

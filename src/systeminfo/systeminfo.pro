@@ -29,6 +29,10 @@ PRIVATE_HEADERS += qsysteminfocommon_p.h
 
 DEFINES += QT_BUILD_SYSINFO_LIB QT_MAKEDLL
 
+simulator {
+    SOURCES += qsystemalignedtimer_stub.cpp
+    HEADERS += qsystemalignedtimer_stub_p.h
+}
 
 win32:!simulator {
     contains(CONFIG,release) {
@@ -191,6 +195,12 @@ unix:!simulator {
         contains(S60_VERSION, 3.1){
             DEFINES += SYMBIAN_3_1
         }
+
+     contains(symbiancntsim_enabled,yes){
+            LIBS += -letelmm -letel
+            DEFINES += ETELMM_SUPPORTED
+            message("ETELMM enabled")
+            }
 
         contains(S60_VERSION, 5.2){
           DEFINES += SYMBIAN_3_PLATFORM

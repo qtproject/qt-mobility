@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -85,8 +85,8 @@ public: //Implementation of QLlcpSocket API
                          QNearFieldTarget *target, quint8 port);
     qint64 writeDatagram(const QByteArray &datagram, QNearFieldTarget *target, quint8 port);
 
-    QLlcpSocket::Error error() const;
-    QLlcpSocket::State state() const;
+    QLlcpSocket::SocketError error() const;
+    QLlcpSocket::SocketState state() const;
 
     qint64 readData(char *data, qint64 maxlen);
     qint64 writeData(const char *data, qint64 len);
@@ -115,7 +115,7 @@ public:
 public:
     void invokeReadyRead();
     void invokeBytesWritten(qint64 bytes) ;
-    void invokeStateChanged(QLlcpSocket::State socketState);
+    void invokeStateChanged(QLlcpSocket::SocketState socketState);
     void invokeError();
     void invokeDisconnected();
     void invokeConnected();
@@ -133,7 +133,7 @@ private:
     CLlcpSocketType2* m_symbianSocketType2; // own
 
 private:
-    QLlcpSocket::Error m_error;
+    QLlcpSocket::SocketError m_error;
     QLLCPSocketState* m_state;  // not own
     QLLCPSocketState* m_unconnectedState;  // own
     QLLCPSocketState* m_connectedState; // own
