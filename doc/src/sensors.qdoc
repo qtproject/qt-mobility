@@ -138,9 +138,10 @@ Only specific data rates can be selected. Setting an invalid data rate has no ef
 that need to influence the used data rate should connect to the sensor, check the available data rates
 and select one as appropriate.
 
-Applications must be extremely careful not to use too much CPU time or sensor readings will
-not be delivered in a timely manner. Likewise, if an application blocks the event loop, sensor
-readings will not be delivered in a timely manner.
+Readings are delivered to the application via a queue. If the application blocks the event loop or otherwise
+interferes with the ability of the system to deliver readings (eg. by using up too much CPU time), they can
+get blocked in this queue. Since delayed readings are not useful, the system will drop readings as needed
+so that the application is always dealing with the most recent reading available.
 
 More information about the native API can be found \l{http://wiki.forum.nokia.com/index.php/Nokia_Sensor_APIs}{here}.
 
