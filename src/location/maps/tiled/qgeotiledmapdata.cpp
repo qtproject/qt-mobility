@@ -697,7 +697,7 @@ void QGeoTiledMapData::replyFinished(QGeoTiledMapReply *reply)
     if (reply->error() != QGeoTiledMapReply::NoError) {
         if (d->requests.size() > 0)
             QTimer::singleShot(0, this, SLOT(processRequests()));
-        QTimer::singleShot(0, reply, SLOT(deleteLater()));
+        reply->deleteLater();
         return;
     }
 
@@ -706,7 +706,7 @@ void QGeoTiledMapData::replyFinished(QGeoTiledMapReply *reply)
             || (connectivityMode() != reply->request().connectivityMode())) {
         if (d->requests.size() > 0)
             QTimer::singleShot(0, this, SLOT(processRequests()));
-        QTimer::singleShot(0, reply, SLOT(deleteLater()));
+        reply->deleteLater();
         return;
     }
 
@@ -717,7 +717,7 @@ void QGeoTiledMapData::replyFinished(QGeoTiledMapReply *reply)
         delete tile;
         if (d->requests.size() > 0)
             QTimer::singleShot(0, this, SLOT(processRequests()));
-        QTimer::singleShot(0, reply, SLOT(deleteLater()));
+        reply->deleteLater();
         return;
         //setError(QGeoTiledMapReply::ParseError, "The response from the service was not in a recognisable format.");
     }
@@ -726,7 +726,7 @@ void QGeoTiledMapData::replyFinished(QGeoTiledMapReply *reply)
         delete tile;
         if (d->requests.size() > 0)
             QTimer::singleShot(0, this, SLOT(processRequests()));
-        QTimer::singleShot(0, reply, SLOT(deleteLater()));
+        reply->deleteLater();
         return;
         //setError(QGeoTiledMapReply::ParseError, "The map image is empty.");
     }
@@ -760,7 +760,7 @@ void QGeoTiledMapData::replyFinished(QGeoTiledMapReply *reply)
     if (d->requests.size() > 0)
         QTimer::singleShot(0, this, SLOT(processRequests()));
 
-    QTimer::singleShot(0, reply, SLOT(deleteLater()));
+    reply->deleteLater();
 }
 
 void QGeoTiledMapData::tileError(QGeoTiledMapReply::Error error, QString errorString)
