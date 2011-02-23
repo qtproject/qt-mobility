@@ -87,6 +87,18 @@ private slots:
     void tst_put_data();
     void tst_put();
 
+    void tst_putAbort_data();
+    void tst_putAbort();
+
+    void tst_attribute_data();
+    void tst_attribute();
+
+    void tst_operation_data();
+    void tst_operation();
+
+    void tst_manager_data();
+    void tst_manager();
+
 public slots:
     void serviceDiscovered(const QBluetoothServiceInfo &info);
     void finished();
@@ -225,6 +237,193 @@ void tst_QBluetoothTransferManager::tst_put()
         qDebug() << "Failed to send file";
     }
     delete reply;
+    file.close();
+#endif
+}
+
+void tst_QBluetoothTransferManager::tst_putAbort_data()
+{
+    QTest::addColumn<QBluetoothAddress>("address");
+    QTest::addColumn<QMap<int, QVariant> >("parameters");
+
+    QMap<int, QVariant> inparameters;
+    inparameters.insert((int)QBluetoothTransferRequest::DescriptionAttribute, "Desciption");
+    inparameters.insert((int)QBluetoothTransferRequest::LengthAttribute, QVariant(1024));
+    inparameters.insert((int)QBluetoothTransferRequest::TypeAttribute, "OPP");
+
+    QTest::newRow("0x000000 COD") << QBluetoothAddress(BTADDRESS) << inparameters;
+}
+
+void tst_QBluetoothTransferManager::tst_putAbort()
+{
+    QFETCH(QBluetoothAddress, address);
+    QFETCH(tst_QBluetoothTransferManager_QParameterMap, parameters);
+
+    QBluetoothTransferRequest transferRequest(address);
+
+    foreach (int key, parameters.keys()) {
+        transferRequest.setAttribute((QBluetoothTransferRequest::Attribute)key, parameters[key]);
+    }
+
+    QBluetoothTransferManager manager;
+
+#ifdef Q_OS_SYMBIAN
+    {
+        QFile fileToWrite(testfile);
+         if (!fileToWrite.open(QIODevice::WriteOnly | QIODevice::Text))
+             return;
+
+         QTextStream out(&fileToWrite);
+         out << "This_is_testdata!!!";
+         fileToWrite.close();
+    }
+
+    QFile file(testfile);
+    if (!file.exists())
+        return;
+
+    QBluetoothTransferReply *reply = manager.put(transferRequest, &file);
+    reply->abort();
+
+    QVERIFY(reply->operation() == QBluetoothTransferManager::PutOperation);
+    QVERIFY(reply->manager() == &manager);
+
+    int error = reply->error();
+    qDebug()<<"QtMobilityBtTester::SendData reply->error ="<<error;
+    QVERIFY(error == QBluetoothTransferReply::NoError);
+
+    if (error != QBluetoothTransferReply::NoError) {
+        qDebug() << "Failed to send file";
+    }
+    delete reply;
+    file.close();
+#endif
+}
+
+void tst_QBluetoothTransferManager::tst_attribute_data()
+{
+    QTest::addColumn<QBluetoothAddress>("address");
+    QTest::addColumn<QMap<int, QVariant> >("parameters");
+
+    QMap<int, QVariant> inparameters;
+    inparameters.insert((int)QBluetoothTransferRequest::DescriptionAttribute, "Desciption");
+    inparameters.insert((int)QBluetoothTransferRequest::LengthAttribute, QVariant(1024));
+    inparameters.insert((int)QBluetoothTransferRequest::TypeAttribute, "OPP");
+
+    QTest::newRow("0x000000 COD") << QBluetoothAddress(BTADDRESS) << inparameters;
+}
+
+void tst_QBluetoothTransferManager::tst_attribute()
+{
+    QFETCH(QBluetoothAddress, address);
+    QFETCH(tst_QBluetoothTransferManager_QParameterMap, parameters);
+
+    QBluetoothTransferRequest transferRequest(address);
+
+    foreach (int key, parameters.keys()) {
+        transferRequest.setAttribute((QBluetoothTransferRequest::Attribute)key, parameters[key]);
+    }
+
+    QBluetoothTransferManager manager;
+
+#ifdef Q_OS_SYMBIAN
+    {
+        QFile fileToWrite(testfile);
+         if (!fileToWrite.open(QIODevice::WriteOnly | QIODevice::Text))
+             return;
+
+         QTextStream out(&fileToWrite);
+         out << "This_is_testdata!!!";
+         fileToWrite.close();
+    }
+
+    QFile file(testfile);
+    if (!file.exists())
+        return;
+
+    QBluetoothTransferReply *reply = manager.put(transferRequest, &file);
+    reply->abort();
+
+    QVERIFY(reply->attribute(QBluetoothTransferRequest::DescriptionAttribute) == QVariant("Desciption"));
+    QVERIFY(reply->attribute(QBluetoothTransferRequest::LengthAttribute) == QVariant("1024"));
+    QVERIFY(reply->attribute(QBluetoothTransferRequest::TypeAttribute) == QVariant("OPP"));
+
+    delete reply;
+    file.close();
+#endif
+}
+
+void tst_QBluetoothTransferManager::tst_operation_data()
+{
+    QTest::addColumn<QBluetoothAddress>("address");
+
+    QTest::newRow("0x000000 COD") << QBluetoothAddress(BTADDRESS);
+}
+
+void tst_QBluetoothTransferManager::tst_operation()
+{
+    QFETCH(QBluetoothAddress, address);
+
+    QBluetoothTransferRequest transferRequest(address);
+    QBluetoothTransferManager manager;
+#ifdef Q_OS_SYMBIAN
+    {
+        QFile fileToWrite(testfile);
+         if (!fileToWrite.open(QIODevice::WriteOnly | QIODevice::Text))
+             return;
+
+         QTextStream out(&fileToWrite);
+         out << "This_is_testdata!!!";
+         fileToWrite.close();
+    }
+
+    QFile file(testfile);
+    if (!file.exists())
+        return;
+
+    QBluetoothTransferReply *reply = manager.put(transferRequest, &file);
+
+    QVERIFY(reply->operation() == QBluetoothTransferManager::PutOperation);
+
+    delete reply;
+    file.close();
+#endif
+}
+
+void tst_QBluetoothTransferManager::tst_manager_data()
+{
+    QTest::addColumn<QBluetoothAddress>("address");
+
+    QTest::newRow("0x000000 COD") << QBluetoothAddress(BTADDRESS);
+}
+
+void tst_QBluetoothTransferManager::tst_manager()
+{
+    QFETCH(QBluetoothAddress, address);
+
+    QBluetoothTransferRequest transferRequest(address);
+    QBluetoothTransferManager manager;
+#ifdef Q_OS_SYMBIAN
+    {
+        QFile fileToWrite(testfile);
+         if (!fileToWrite.open(QIODevice::WriteOnly | QIODevice::Text))
+             return;
+
+         QTextStream out(&fileToWrite);
+         out << "This_is_testdata!!!";
+         fileToWrite.close();
+    }
+
+    QFile file(testfile);
+    if (!file.exists())
+        return;
+
+    QBluetoothTransferReply *reply = manager.put(transferRequest, &file);
+
+    QVERIFY(reply->manager() == &manager);
+
+    delete reply;
+    file.close();
 #endif
 }
 
