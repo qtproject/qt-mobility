@@ -141,7 +141,7 @@ public:
     };
 
     enum KeyboardType {
-        UnknownKeyboard = 0xfffffff,
+        UnknownKeyboard = 0,
         SoftwareKeyboard = 0x0000001,
         ITUKeypad = 0x0000002,
         HalfQwertyKeyboard = 0x0000004,

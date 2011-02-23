@@ -178,10 +178,13 @@ QDataStream& operator>>(QDataStream& in, QOrganizerItemDetailFieldDefinition& de
  */
 QDebug operator<<(QDebug dbg, const QOrganizerItemDetailFieldDefinition& definition)
 {
-    dbg.nospace() << "QOrganizerItemDetailFieldDefinition("
-                  << "dataType=" << static_cast<qint32>(definition.dataType()) << ","
-                  << "allowableValues=" << definition.allowableValues()
-                  << ")";
+    dbg.nospace() << "QOrganizerItemDetailFieldDefinition(";
+    dbg.nospace() << "dataType=";
+    dbg.nospace() << static_cast<qint32>(definition.dataType());
+    dbg.nospace() << ",";
+    dbg.nospace() << "allowableValues=";
+    dbg.nospace() << definition.allowableValues();
+    dbg.nospace() << ")";
     return dbg.maybeSpace();
 }
 #endif
