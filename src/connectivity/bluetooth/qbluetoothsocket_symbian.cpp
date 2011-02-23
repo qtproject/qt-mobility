@@ -41,6 +41,7 @@
 
 #include "qbluetoothsocket_p.h"
 #include "qbluetoothsocket.h"
+#include "qbluetoothlocaldevice_p.h"
 #include "symbian/utils_symbian_p.h"
 
 #include <QCoreApplication>
@@ -290,7 +291,7 @@ QSocketServerPrivate::~QSocketServerPrivate()
 
 QString QBluetoothSocketPrivate::localName() const
 {
-    return localAddress().toString();
+    return QBluetoothLocalDevicePrivate::name();
 }
 
 QBluetoothAddress QBluetoothSocketPrivate::localAddress() const
