@@ -177,6 +177,7 @@ QGstreamerPlayerSession::~QGstreamerPlayerSession()
 void QGstreamerPlayerSession::load(const QNetworkRequest &request)
 {
     m_request = request;
+    m_duration = -1;
 
     if (m_playbin) {
         m_tags.clear();
