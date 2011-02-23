@@ -47,6 +47,8 @@
 #include "qdeclarativedeviceinfo_p.h"
 #include "qdeclarativegeneralinfo_p.h"
 #include "qdeclarativebatteryinfo_p.h"
+#include "qdeclarativedisplayinfo_p.h"
+#include "qdeclarativealignedtimer_p.h"
 
 #include "qsysteminfo.h"
 QT_BEGIN_NAMESPACE
@@ -62,7 +64,6 @@ QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QSystemStorageInfo));
 QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeNetworkInfo));
 QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeBatteryInfo));
 QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QSystemAlignedTimer));
-
 class QSystemInfoDeclarativeModule : public QDeclarativeExtensionPlugin
 {
     Q_OBJECT
@@ -72,7 +73,7 @@ public:
         Q_ASSERT(QLatin1String(uri) == QLatin1String("QtMobility.systeminfo"));
 
         qmlRegisterType<QDeclarativeGeneralInfo>(uri, 1, 1, "GeneralInfo");
-        qmlRegisterType<QSystemDisplayInfo>(uri, 1, 1, "DisplayInfo");
+        qmlRegisterType<QDeclarativeDisplayInfo>(uri, 1, 1, "DisplayInfo");
         qmlRegisterType<QDeclarativeDeviceInfo>(uri, 1, 1, "DeviceInfo");
         qmlRegisterType<QDeclarativeNetworkInfo>(uri,1, 1, "NetworkInfo");
         qmlRegisterType<QDeclarativeScreenSaver>(uri, 1, 1, "ScreenSaver");

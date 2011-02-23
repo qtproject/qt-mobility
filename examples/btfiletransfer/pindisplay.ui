@@ -7,26 +7,13 @@
     <x>0</x>
     <y>0</y>
     <width>240</width>
-    <height>122</height>
+    <height>153</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Enter Pin Code</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
-   <item>
-    <spacer name="verticalSpacer">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>40</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
    <item>
     <widget class="QLabel" name="pin">
      <property name="font">
@@ -58,7 +45,7 @@
       <enum>Qt::Horizontal</enum>
      </property>
      <property name="standardButtons">
-      <set>QDialogButtonBox::Close</set>
+      <set>QDialogButtonBox::Ok</set>
      </property>
     </widget>
    </item>

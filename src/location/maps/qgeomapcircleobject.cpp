@@ -71,7 +71,12 @@ QTM_BEGIN_NAMESPACE
     Constructs a new circle object.
 */
 QGeoMapCircleObject::QGeoMapCircleObject()
-    : d_ptr(new QGeoMapCircleObjectPrivate()) {}
+    : d_ptr(new QGeoMapCircleObjectPrivate())
+{
+    setUnits(QGeoMapObject::MeterUnit);
+    setTransformType(QGeoMapObject::ExactTransform);
+    setGraphicsItem(d_ptr->item);
+}
 
 /*!
     Constructs a new circle object based on the circle \a circle.
@@ -80,6 +85,9 @@ QGeoMapCircleObject::QGeoMapCircleObject(const QGeoBoundingCircle &circle)
     : d_ptr(new QGeoMapCircleObjectPrivate())
 {
     d_ptr->circle = circle;
+    setUnits(QGeoMapObject::MeterUnit);
+    setTransformType(QGeoMapObject::ExactTransform);
+    setGraphicsItem(d_ptr->item);
 }
 
 /*!
@@ -90,6 +98,12 @@ QGeoMapCircleObject::QGeoMapCircleObject(const QGeoCoordinate &center, qreal rad
     : d_ptr(new QGeoMapCircleObjectPrivate())
 {
     d_ptr->circle = QGeoBoundingCircle(center, radius);
+    setUnits(QGeoMapObject::MeterUnit);
+    setTransformType(QGeoMapObject::ExactTransform);
+    setOrigin(center);
+    setGraphicsItem(d_ptr->item);
+    d_ptr->item->setPos(0, 0);
+    d_ptr->item->setRect(-1*radius, -1*radius, 2*radius, 2*radius);
 }
 
 /*!
@@ -122,17 +136,27 @@ void QGeoMapCircleObject::setPen(const QPen &pen)
 {
     QPen newPen = pen;
     newPen.setCosmetic(true);
+    const QPen oldPen = d_ptr->item->pen();
 
-    if (d_ptr->pen == newPen)
+    if (oldPen == newPen)
         return;
 
-    d_ptr->pen = newPen;
-    emit penChanged(d_ptr->pen);
+    d_ptr->item->setPen(newPen);
+    emit penChanged(newPen);
+    update();
 }
 
 QPen QGeoMapCircleObject::pen() const
 {
-    return d_ptr->pen;
+    return d_ptr->item->pen();
+}
+
+/*!
+  \reimp
+  */
+bool QGeoMapCircleObject::contains(const QGeoCoordinate &coordinate) const
+{
+    return d_ptr->circle.contains(coordinate);
 }
 
 /*!
@@ -146,15 +170,37 @@ QPen QGeoMapCircleObject::pen() const
 */
 void QGeoMapCircleObject::setBrush(const QBrush &brush)
 {
-    if (d_ptr->brush != brush) {
-        d_ptr->brush = brush;
-        emit brushChanged(d_ptr->brush);
+    if (d_ptr->item->brush() != brush) {
+        d_ptr->item->setBrush(brush);
+        update();
+        emit brushChanged(brush);
     }
 }
 
 QBrush QGeoMapCircleObject::brush() const
 {
-    return d_ptr->brush;
+    return d_ptr->item->brush();
+}
+
+/*!
+    \property QGeoMapCircleObject::pointCount
+    \brief This property holds the number of vertices used in an approximate polygon.
+
+    \since 1.2
+
+    For a circle using ExactTransform, this property describes the number
+    of sides that should be used to generate a polygonal approximation which
+    is then transformed vertex-by-vertex into screen coordinates.
+*/
+quint32 QGeoMapCircleObject::pointCount() const
+{
+    return d_ptr->pointCount;
+}
+
+void QGeoMapCircleObject::setPointCount(quint32 pointCount)
+{
+    d_ptr->pointCount = pointCount;
+    update();
 }
 
 /*!
@@ -192,12 +238,17 @@ void QGeoMapCircleObject::setCircle(const QGeoBoundingCircle &circle)
         return;
 
     d_ptr->circle = circle;
+    d_ptr->item->setRect(-1*circle.radius(), -1*circle.radius(),
+                        2*circle.radius(), 2*circle.radius());
+    setOrigin(circle.center());
 
     if (oldCircle.center() != d_ptr->circle.center())
         emit centerChanged(d_ptr->circle.center());
 
     if (oldCircle.radius() != d_ptr->circle.radius())
         emit radiusChanged(d_ptr->circle.radius());
+
+    update();
 }
 
 /*!
@@ -213,6 +264,7 @@ void QGeoMapCircleObject::setCenter(const QGeoCoordinate &center)
 {
     if (d_ptr->circle.center() != center) {
         d_ptr->circle.setCenter(center);
+        setOrigin(center);
         emit centerChanged(center);
     }
 }
@@ -234,7 +286,9 @@ void QGeoMapCircleObject::setRadius(qreal radius)
 {
     if (d_ptr->circle.radius() != radius) {
         d_ptr->circle.setRadius(radius);
+        d_ptr->item->setRect(-1*radius, -1*radius, 2*radius, 2*radius);
         emit radiusChanged(radius);
+        update();
     }
 }
 
@@ -282,12 +336,18 @@ qreal QGeoMapCircleObject::radius() const
 /*******************************************************************************
 *******************************************************************************/
 
-QGeoMapCircleObjectPrivate::QGeoMapCircleObjectPrivate()
+QGeoMapCircleObjectPrivate::QGeoMapCircleObjectPrivate() :
+    pointCount(120)
 {
+    item = new QGraphicsEllipseItem();
+    QPen pen = item->pen();
     pen.setCosmetic(true);
+    item->setPen(pen);
 }
 
-QGeoMapCircleObjectPrivate::~QGeoMapCircleObjectPrivate() {}
+QGeoMapCircleObjectPrivate::~QGeoMapCircleObjectPrivate()
+{
+}
 
 #include "moc_qgeomapcircleobject.cpp"
 

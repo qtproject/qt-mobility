@@ -5,6 +5,8 @@ TEMPLATE = lib
 TARGET = QtVersit
 include(../../common.pri)
 
+QT+=core
+
 DEFINES += QT_BUILD_VERSIT_LIB QT_MAKEDLL QT_ASCII_CAST_WARNINGS
 
 qtAddLibrary(QtContacts)

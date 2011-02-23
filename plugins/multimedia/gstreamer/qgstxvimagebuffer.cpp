@@ -46,6 +46,7 @@
 
 #include "qgstxvimagebuffer.h"
 #include "qvideosurfacegstsink.h"
+#include "qgstvideobuffer.h"
 
 #ifndef QT_NO_XVIDEO
 
@@ -112,7 +113,7 @@ QGstXvImageBufferPool::~QGstXvImageBufferPool()
 {
 }
 
-bool QGstXvImageBufferPool::isFormatSupported(const QVideoSurfaceFormat &surfaceFormat)
+bool QGstXvImageBufferPool::isFormatSupported(const QVideoSurfaceFormat &surfaceFormat) const
 {
     bool ok = true;
     surfaceFormat.property("portId").toULongLong(&ok);
@@ -130,7 +131,13 @@ bool QGstXvImageBufferPool::isFormatSupported(const QVideoSurfaceFormat &surface
     return true;
 }
 
-QGstXvImageBuffer *QGstXvImageBufferPool::takeBuffer(const QVideoSurfaceFormat &format, GstCaps *caps)
+GType QGstXvImageBufferPool::bufferType() const
+{
+    return QGstXvImageBuffer::get_type();
+}
+
+GstBuffer *QGstXvImageBufferPool::takeBuffer(
+    const QVideoSurfaceFormat &format, GstCaps *caps)
 {
     m_poolMutex.lock();
 
@@ -158,7 +165,19 @@ QGstXvImageBuffer *QGstXvImageBufferPool::takeBuffer(const QVideoSurfaceFormat &
 
     m_poolMutex.unlock();
 
-    return res;
+    return GST_BUFFER(res);
+}
+
+QAbstractVideoBuffer::HandleType QGstXvImageBufferPool::handleType() const
+{
+    return QAbstractVideoBuffer::XvShmImageHandle;
+}
+
+QAbstractVideoBuffer *QGstXvImageBufferPool::prepareVideoBuffer(GstBuffer *buffer, int bytesPerLine)
+{
+    QGstXvImageBuffer *xvBuffer = reinterpret_cast<QGstXvImageBuffer *>(buffer);
+    QVariant handle = QVariant::fromValue(xvBuffer->xvImage);
+    return new QGstVideoBuffer(buffer, bytesPerLine, QAbstractVideoBuffer::XvShmImageHandle, handle);
 }
 
 void QGstXvImageBufferPool::queuedAlloc()

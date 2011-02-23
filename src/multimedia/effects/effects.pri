@@ -8,6 +8,7 @@ unix:!mac:!symbian {
         DEFINES += QT_MULTIMEDIA_PULSEAUDIO
         PRIVATE_HEADERS += effects/qsoundeffect_pulse_p.h
         SOURCES += effects/qsoundeffect_pulse_p.cpp
+        !maemo*:DEFINES += QTM_PULSEAUDIO_DEFAULTBUFFER
     } else {
         DEFINES += QT_MULTIMEDIA_QMEDIAPLAYER
         PRIVATE_HEADERS += effects/qsoundeffect_qmedia_p.h

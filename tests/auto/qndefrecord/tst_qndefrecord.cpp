@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -235,7 +235,7 @@ void tst_QNdefRecord::tst_textRecord()
     // test setters
     {
         QNdefNfcTextRecord record;
-        record.setLocale(QLocale(locale));
+        record.setLocale(locale);
         record.setText(text);
         record.setEncoding(utf8 ? QNdefNfcTextRecord::Utf8 : QNdefNfcTextRecord::Utf16);
 
@@ -249,7 +249,7 @@ void tst_QNdefRecord::tst_textRecord()
         QNdefNfcTextRecord record;
         record.setPayload(payload);
 
-        QCOMPARE(record.locale(), QLocale(locale));
+        QCOMPARE(record.locale(), locale);
         QCOMPARE(record.text(), text);
         QCOMPARE(record.encoding() == QNdefNfcTextRecord::Utf8, utf8);
     }
@@ -271,7 +271,7 @@ void tst_QNdefRecord::tst_textRecord()
 
         QVERIFY(record == textRecord);
 
-        QCOMPARE(textRecord.locale(), QLocale(locale));
+        QCOMPARE(textRecord.locale(), locale);
         QCOMPARE(textRecord.text(), text);
         QCOMPARE(textRecord.encoding() == QNdefNfcTextRecord::Utf8, utf8);
     }

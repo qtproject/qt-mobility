@@ -88,7 +88,9 @@ public:
         UnknownSocketError = QAbstractSocket::UnknownSocketError,
         ConnectionRefusedError = QAbstractSocket::ConnectionRefusedError,        
         RemoteHostClosedError = QAbstractSocket::RemoteHostClosedError,
-        HostNotFoundError = QAbstractSocket::HostNotFoundError
+        HostNotFoundError = QAbstractSocket::HostNotFoundError,
+        ServiceNotFoundError = QAbstractSocket::SocketAddressNotAvailableError,
+        NetworkError = QAbstractSocket::NetworkError
     };
 
     QBluetoothSocket(SocketType socketType, QObject *parent = 0);   // create socket of type socketType
@@ -165,6 +167,9 @@ protected:
 private:
     Q_PRIVATE_SLOT(d_func(), void _q_readNotify())
     Q_PRIVATE_SLOT(d_func(), void _q_writeNotify())
+#ifdef QTM_SYMBIAN_BLUETOOTH
+    Q_PRIVATE_SLOT(d_func(), void _q_startReceive())
+#endif //QTM_SYMBIAN_BLUETOOTH
 };
 
 #ifndef QT_NO_DEBUG_STREAM

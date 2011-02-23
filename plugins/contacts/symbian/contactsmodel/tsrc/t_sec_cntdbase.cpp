@@ -26,7 +26,7 @@
 #include <cntitem.h>
 #include <cntfield.h>
 #include <cntfldst.h>
-#include <testserver.h>
+#include <coreappstest/testserver.h>
 #include "t_utils.h"
 
 _LIT(KTestName,"T_SEC_CNTDBASE");

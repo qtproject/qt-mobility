@@ -109,6 +109,7 @@ QTM_BEGIN_NAMESPACE
     \value BrowseGroupList          List of browse groups the service is in.
     \value ServiceAvailability      Value indicating the availability of the service.
     \value PrimaryLanguageBase      Base index for primary language text descriptors.
+    \value ServiceRecordHandle      Specifies a service record from which attributes can be retrieved
     \value ServiceName              Name of the Bluetooth service in the primary language.
     \value ServiceDescription       Description of the Bluetooth service in the primary language.
     \value ServiceProvider          Name of the company / entity that provides the Bluetooth
@@ -498,6 +499,8 @@ QBluetoothServiceInfo::Sequence QBluetoothServiceInfo::protocolDescriptor(QBluet
 
     foreach (const QVariant &v, attribute(QBluetoothServiceInfo::ProtocolDescriptorList).value<QBluetoothServiceInfo::Sequence>()) {
         QBluetoothServiceInfo::Sequence parameters = v.value<QBluetoothServiceInfo::Sequence>();
+        if(parameters.empty())
+            continue;
         if (parameters.at(0).userType() == qMetaTypeId<QBluetoothUuid>()) {
             if (parameters.at(0).value<QBluetoothUuid>() == protocol)
                 return parameters;

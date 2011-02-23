@@ -16,16 +16,17 @@
 */
 
 
-target          cnttutil.dll
+TARGET          cnttutil.dll
 targettype      DLL
 CAPABILITY   All -TCB
 UID		0x1000008D
 VENDORID 0x70000001
 
 SOURCEPATH ../group
-START RESOURCE  CNTMODEL.RSS
+START RESOURCE  cntmodel.rss
     TARGETPATH	resource/cntmodel
-lang		sc
+TARGET      customisedcntmodel.rsc
+LANG		sc
 END
 
 SOURCEPATH	../tsrc
@@ -41,6 +42,6 @@ nostrictdef
 
 deffile		t_utils.def
 
-library         euser.lib  efsrv.lib  estor.lib	cntmodel.lib
+LIBRARY         euser.lib  efsrv.lib  estor.lib	cntmodel.lib
 
 LIBRARY			ecom.lib hal.lib

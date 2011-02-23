@@ -87,15 +87,15 @@ public:
     Q_DECLARE_LATIN1_CONSTANT(SubTypeVideoShare, "VideoShare");
 
     // These strings are taken from
-    // http://telepathy.freedesktop.org/spec/Connection_Manager.html#Protocol
-    Q_DECLARE_LATIN1_CONSTANT(ProtocolAim, "Aim");
-    Q_DECLARE_LATIN1_CONSTANT(ProtocolIcq, "Icq");
-    Q_DECLARE_LATIN1_CONSTANT(ProtocolIrc, "Irc");
-    Q_DECLARE_LATIN1_CONSTANT(ProtocolJabber, "Jabber");
-    Q_DECLARE_LATIN1_CONSTANT(ProtocolMsn, "Msn");
-    Q_DECLARE_LATIN1_CONSTANT(ProtocolQq, "Qq");
-    Q_DECLARE_LATIN1_CONSTANT(ProtocolSkype, "Skype");
-    Q_DECLARE_LATIN1_CONSTANT(ProtocolYahoo, "Yahoo");
+    // http://telepathy.freedesktop.org/spec/Connection_Manager.html#Simple-Type:Protocol
+    Q_DECLARE_LATIN1_CONSTANT(ProtocolAim, "aim");
+    Q_DECLARE_LATIN1_CONSTANT(ProtocolIcq, "icq");
+    Q_DECLARE_LATIN1_CONSTANT(ProtocolIrc, "irc");
+    Q_DECLARE_LATIN1_CONSTANT(ProtocolJabber, "jabber");
+    Q_DECLARE_LATIN1_CONSTANT(ProtocolMsn, "msn");
+    Q_DECLARE_LATIN1_CONSTANT(ProtocolQq, "qq");
+    Q_DECLARE_LATIN1_CONSTANT(ProtocolSkype, "skype");
+    Q_DECLARE_LATIN1_CONSTANT(ProtocolYahoo, "yahoo");
 #endif
 
     void setAccountUri(const QString& accountUri) {setValue(FieldAccountUri, accountUri);}

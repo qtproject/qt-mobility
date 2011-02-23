@@ -50,8 +50,8 @@
 
 QTM_USE_NAMESPACE
 
-const static QString NORMAL_MODE = "normal";
-const static QString OFFLINE_MODE = "offline";
+const static int NORMAL_MODE =1;
+const static int OFFLINE_MODE =0;
 
 static QDBusInterface mceConnectionInterface("com.nokia.mce",
                                              "/com/nokia/mce/request",
@@ -85,9 +85,11 @@ static void log(QString message)
     qDebug() << QDateTime::currentDateTime().toTime_t() << " " << message;
 }
 
-static void setDeviceMode(QString deviceMode)
+static void setDeviceMode(int deviceMode)
 {
-    mceConnectionInterface.call("req_device_mode_change", deviceMode);
+    //"req_radio_states_change"
+   QDBusMessage msg = mceConnectionInterface.call("req_radio_states_change", deviceMode,1);
+//   qDebug() << Q_FUNC_INFO << msg.errorMessage();
 }
 
 class DropNetworkThread : public QThread

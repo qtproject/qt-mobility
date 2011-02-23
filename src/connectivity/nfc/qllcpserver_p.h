@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -48,12 +48,13 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QLlcpServerPrivate
+class QLlcpServerPrivate 
 {
     Q_DECLARE_PUBLIC(QLlcpServer)
 
 public:
     QLlcpServerPrivate(QLlcpServer *q);
+    ~QLlcpServerPrivate();
 
     bool listen(const QString &serviceUri);
     bool isListening() const;
@@ -66,7 +67,7 @@ public:
     bool hasPendingConnections() const;
     QLlcpSocket *nextPendingConnection();
 
-    QLlcpServer::Error serverError() const;
+    QLlcpSocket::SocketError serverError() const;
 
 private:
     QLlcpServer *q_ptr;

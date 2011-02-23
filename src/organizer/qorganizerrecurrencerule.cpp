@@ -535,14 +535,20 @@ uint qHash(const QOrganizerRecurrenceRule& r)
  */
 QDebug operator<<(QDebug dbg, const QOrganizerRecurrenceRule& rule)
 {
-    dbg.nospace() << "QOrganizerRecurrenceRule(frequency=" << rule.frequency() << ",";
-    dbg.nospace() << "interval=" << rule.interval() << ",";
+    dbg.nospace() << "QOrganizerRecurrenceRule(frequency=";
+    dbg.nospace() << rule.frequency();
+    dbg.nospace() << ",";
+    dbg.nospace() << "interval=";
+    dbg.nospace() << rule.interval();
+    dbg.nospace() << ",";
     switch (rule.limitType()) {
         case QOrganizerRecurrenceRule::CountLimit:
-            dbg.nospace() << "limitCount=" << rule.limitCount();
+            dbg.nospace() << "limitCount=";
+            dbg.nospace() << rule.limitCount();
             break;
         case QOrganizerRecurrenceRule::DateLimit:
-            dbg.nospace() << "limitDate=" << rule.limitDate().toString();
+            dbg.nospace() << "limitDate=";
+            dbg.nospace() << rule.limitDate().toString();
             break;
         case QOrganizerRecurrenceRule::NoLimit:
             dbg.nospace() << "no limit";
@@ -585,7 +591,8 @@ QDebug operator<<(QDebug dbg, const QOrganizerRecurrenceRule& rule)
     }
     dbg.nospace() << "\",";
 
-    dbg.nospace() << "firstDayOfWeek=" << static_cast<quint32>(rule.firstDayOfWeek());
+    dbg.nospace() << "firstDayOfWeek=";
+    dbg.nospace() << static_cast<quint32>(rule.firstDayOfWeek());
     dbg.nospace() << ')';
     return dbg.maybeSpace();
 }

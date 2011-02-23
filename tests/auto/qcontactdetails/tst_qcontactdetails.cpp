@@ -607,6 +607,14 @@ void tst_QContactDetails::globalPresence()
     p2.setPresenceStateImageUrl(QUrl("http://example.com/someimage.png"));
     p2.setCustomMessage("C is for generic biscuit-type pastry product!");
 
+    // now test that the setPresenceStateImageUrl function doesn't escape spaces and so forth.
+    QString imgUrlStr(QLatin1String("http://example.com/some image.png"));
+    QUrl imgUrl(imgUrlStr);
+    QContactPresence p3;
+    p3.setPresenceStateImageUrl(imgUrl);
+    QCOMPARE(p3.presenceStateImageUrl(), imgUrl);
+    QCOMPARE(p3.presenceStateImageUrl().toString(), imgUrlStr);
+
     // test property remove
     QVERIFY(c.removeDetail(&p1));
     QCOMPARE(c.details(QContactGlobalPresence::DefinitionName).count(), 0);
@@ -1281,7 +1289,19 @@ void tst_QContactDetails::url()
     QCOMPARE(c.details(QContactUrl::DefinitionName).value(0).value("label"), QString("label1"));
     QCOMPARE(c.details(QContactUrl::DefinitionName).value(0).value(QContactUrl::FieldUrl), QString("12345"));
 
+    // now as above, but with the QUrl setter.
+    QUrl urlValue("http://www.example.com");
+    QContactUrl u3;
+    u3.setUrl(urlValue);
+    QCOMPARE(u3.url(), urlValue.toString());
+    QVERIFY(c.saveDetail(&u3));
+    QVERIFY(c.details(QContactUrl::DefinitionName).contains(u3));
+    u3.setUrl(QString(QLatin1String("http://www.anotherexample.com")));
+    QCOMPARE(u3.url(), QString(QLatin1String("http://www.anotherexample.com")));
+    QVERIFY(c.saveDetail(&u3));
+
     // test property remove
+    QVERIFY(c.removeDetail(&u3));
     QVERIFY(c.removeDetail(&u1));
     QCOMPARE(c.details(QContactUrl::DefinitionName).count(), 0);
     QVERIFY(c.saveDetail(&u2));

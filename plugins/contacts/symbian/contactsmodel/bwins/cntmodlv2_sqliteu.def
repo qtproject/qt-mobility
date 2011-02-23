@@ -542,3 +542,10 @@ EXPORTS
 	?RemoveContactsFromGroupL@CContactDatabase@@QAEXAAV?$RArray@J@@J@Z @ 541 NONAME ; void CContactDatabase::RemoveContactsFromGroupL(class RArray<long> &, long)
 	?AddContactsToGroupL@CContactDatabase@@QAEXAAV?$RArray@J@@J@Z @ 542 NONAME ; void CContactDatabase::AddContactsToGroupL(class RArray<long> &, long)
 	?DeleteContactsV2L@CContactDatabase@@QAEXABVCContactIdArray@@@Z @ 543 NONAME ; void CContactDatabase::DeleteContactsV2L(class CContactIdArray const &)
+	?DeleteImageL@TCntImageRescaleUtility@@SAXABVCContactItem@@@Z @ 544 NONAME ; void TCntImageRescaleUtility::DeleteImageL(class CContactItem const &)
+	?CreateImageDirectoryL@TCntImageRescaleUtility@@SA?AV?$TBuf@$0BAA@@@XZ @ 545 NONAME ; class TBuf<256> TCntImageRescaleUtility::CreateImageDirectoryL(void)
+	?StoreImageFieldL@TCntImageRescaleUtility@@SAXABVCContactItem@@V?$TBuf@$0BAA@@@@Z @ 546 NONAME ; void TCntImageRescaleUtility::StoreImageFieldL(class CContactItem const &, class TBuf<256>)
+	?ImageDirectoryL@TCntImageRescaleUtility@@SA?AV?$TBuf@$0BAA@@@XZ @ 547 NONAME ; class TBuf<256> TCntImageRescaleUtility::ImageDirectoryL(void)
+	?UpdateImageNameL@TCntImageRescaleUtility@@SAXABVCContactItem@@@Z @ 548 NONAME ; void TCntImageRescaleUtility::UpdateImageNameL(class CContactItem const &)
+	?DeleteImageDirectoryL@TCntImageRescaleUtility@@SAXXZ @ 549 NONAME ; void TCntImageRescaleUtility::DeleteImageDirectoryL(void)
+

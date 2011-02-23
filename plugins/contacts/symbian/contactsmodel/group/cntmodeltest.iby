@@ -84,6 +84,7 @@ define CNTMODEL_DATA Core-Apps\App-Engines\CntModel\Databases
 data=DATAZ_\CNTMODEL_DATA\SQLite__Contacts.cdb		CNTMODEL_DATA\SQLite__Contacts.cdb
 data=DATAZ_\CNTMODEL_DATA\SQLite__Contacts58920.cdb	CNTMODEL_DATA\SQLite__Contacts58920.cdb
 
+file=ABI_DIR\BUILD_DIR\t_launchTest.exe	System\Programs\CntmodelTest\t_launchTest.exe
 file=ABI_DIR\BUILD_DIR\T_ITEM.EXE	System\Programs\CntmodelTest\T_ITEM.EXE
 file=ABI_DIR\BUILD_DIR\T_FIELD.EXE	System\Programs\CntmodelTest\T_FIELD.EXE
 file=ABI_DIR\BUILD_DIR\T_DBASE2.EXE	System\Programs\CntmodelTest\T_DBASE2.EXE
@@ -170,6 +171,7 @@ file=ABI_DIR\BUILD_DIR\T_ViewSortProfiling.EXE	System\Programs\CntmodelTest\T_Vi
 file=ABI_DIR\BUILD_DIR\t_ViewSortPlugin.EXE      System\Programs\CntmodelTest\t_ViewSortPlugin.EXE
 file=ABI_DIR\BUILD_DIR\T_AsyncOpen.EXE       System\Programs\CntmodelTest\T_AsyncOpen.EXE
 file=ABI_DIR\BUILD_DIR\T_Sec_AsyncOpen.EXE       System\Programs\CntmodelTest\T_Sec_AsyncOpen.EXE
+file=ABI_DIR\BUILD_DIR\t_datacompatibility.exe       System\Programs\CntmodelTest\t_datacompatibility.exe
 file=ABI_DIR\BUILD_DIR\t_cnt_backup.EXE       System\Programs\CntmodelTest\t_cnt_backup.EXE
 file=ABI_DIR\BUILD_DIR\T_platsec.EXE             System\Programs\CntmodelTest\T_platsec.EXE
 file=ABI_DIR\BUILD_DIR\T_SampProf.exe        System\Programs\CntmodelTest\T_SampProf.exe

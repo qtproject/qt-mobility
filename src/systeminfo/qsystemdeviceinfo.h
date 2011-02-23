@@ -86,6 +86,7 @@ class  Q_SYSINFO_EXPORT QSystemDeviceInfo : public QObject
     Q_ENUMS(KeypadType)
 
     Q_FLAGS(KeyboardType KeyboardTypeFlags) //1.2
+    Q_FLAGS(LockType LockTypeFlags) //1.2
 
 public:
 
@@ -140,7 +141,7 @@ public:
     };
 
     enum KeyboardType {
-        UnknownKeyboard = 0xfffffff,
+        UnknownKeyboard = 0,
         SoftwareKeyboard = 0x0000001,
         ITUKeypad = 0x0000002,
         HalfQwertyKeyboard = 0x0000004,

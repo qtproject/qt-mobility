@@ -281,6 +281,7 @@ static QByteArray get_device_info(AudioDeviceID audioDevice, QAudio::Mode mode)
     if (AudioDeviceGetProperty(audioDevice, 0, isInput, kAudioObjectPropertyName,
                                 &size, &name) != noErr) {
         qWarning() << "QAudioDeviceInfo: Unable to find device name";
+        return QByteArray();
     }
     ds << cfStringToQString(name);
 

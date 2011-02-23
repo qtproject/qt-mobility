@@ -82,7 +82,8 @@
     by the Plugin element associated with the Map.
 
     Various map objects can be added to the map.  These map objects are
-    specified in terms of coordinates and metres.
+    specified in terms of coordinates and meters.
+
 
     \section2 Map Elements
 

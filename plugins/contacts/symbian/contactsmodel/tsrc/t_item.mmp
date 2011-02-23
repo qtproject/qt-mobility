@@ -16,7 +16,7 @@
 */
 
 
-target          t_item.exe
+TARGET          t_item.exe
 targettype      EXE
 CAPABILITY   ReadUserData WriteUserData
 UID		0x1000007a
@@ -29,6 +29,6 @@ userinclude ../inc
 
 source          T_ITEM.CPP
 
-library         euser.lib cntmodel.lib	cnttutil.lib
+LIBRARY         euser.lib cntmodel.lib	cnttutil.lib
 
 SMPSAFE
