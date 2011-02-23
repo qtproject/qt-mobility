@@ -138,6 +138,8 @@ private:
     QBluetoothLocalDevicePrivate *d_ptr;
 #ifdef QTM_SYMBIAN_BLUETOOTH
     Q_PRIVATE_SLOT(d_func(), void _q_pairingFinished(const QBluetoothAddress &, QBluetoothLocalDevice::Pairing))
+    Q_PRIVATE_SLOT(d_func(), void _q_registryError(int error))
+    Q_PRIVATE_SLOT(d_func(), void _q_pairingError(int error))
 #endif //QTM_SYMBIAN_BLUETOOTH
 };
 
