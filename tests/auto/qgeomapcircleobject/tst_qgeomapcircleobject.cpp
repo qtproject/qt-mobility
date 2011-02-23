@@ -42,6 +42,7 @@
 #include "testhelper.h"
 #include <QtTest/QtTest>
 #include <QMetaType>
+#include <QStyleOptionGraphicsItem>
 #include <qgeomapcircleobject.h>
 #include <qgeocoordinate.h>
 #include <qgeoboundingcircle.h>
@@ -422,9 +423,11 @@ void tst_QGeoMapCircleObject::zvalue_data()
     QTest::addColumn<int>("zValue1");
     QTest::addColumn<int>("zValue2");
     QTest::addColumn<int>("zValue3");
-    QTest::newRow("1,2,3") << 1 << 2 << 3;
-    QTest::newRow("3,2,1") << 3 << 2 << 1;
-    QTest::newRow("2,1,3") << 2 << 1 << 3;
+    QTest::addColumn<int>("topIdx");
+    QTest::newRow("1,2,3") << 1 << 2 << 3 << 2;
+    QTest::newRow("1,3,2") << 1 << 3 << 2 << 1;
+    QTest::newRow("3,2,1") << 3 << 2 << 1 << 0;
+    QTest::newRow("2,1,3") << 2 << 1 << 3 << 2;
 }
 
 // public int zValue() const
@@ -434,6 +437,7 @@ void tst_QGeoMapCircleObject::zvalue()
     QFETCH(int, zValue1);
     QFETCH(int, zValue2);
     QFETCH(int, zValue3);
+    QFETCH(int, topIdx);
 
     QGeoCoordinate center(1.0, 1.0, 0);
 
@@ -441,7 +445,15 @@ void tst_QGeoMapCircleObject::zvalue()
     QGeoMapCircleObject* object2 = new QGeoMapCircleObject(center, 1000);
     QGeoMapCircleObject* object3 = new QGeoMapCircleObject(center, 1000);
 
+    QList<QColor> colors;
+    colors << Qt::blue << Qt::red << Qt::green;
+    object1->setBrush(QBrush(colors.at(0)));
+    object2->setBrush(QBrush(colors.at(1)));
+    object3->setBrush(QBrush(colors.at(2)));
+
     QGraphicsGeoMap* map = m_helper->map();
+    map->setCenter(center);
+    map->setZoomLevel(14.0);
 
     map->addMapObject(object1);
     map->addMapObject(object2);
@@ -459,10 +471,25 @@ void tst_QGeoMapCircleObject::zvalue()
     QSignalSpy spy1(object1, SIGNAL(visibleChanged(bool)));
     QSignalSpy spy2(object1, SIGNAL(zValueChanged(int)));
 
-    map->setCenter(center);
+    QPixmap *px[2];
+    QPainter *p[2];
+    for (int i=0; i < 2; i++) {
+        px[i] = new QPixmap(map->size().toSize());
+        p[i] = new QPainter(px[i]);
+    }
+    QStyleOptionGraphicsItem style;
+    style.rect = QRect(QPoint(0,0), map->size().toSize());
+
+    QTest::qWait(10);
+    map->paint(p[0], &style, 0);
 
     QPointF point = map->coordinateToScreenPosition(center);
     qDebug("center = (%f, %f)", point.x(), point.y());
+
+    QRgb col = px[0]->toImage().pixel(int(point.x()), int(point.y()));
+    QCOMPARE(qRed(col), colors.at(2).red());
+    QCOMPARE(qGreen(col), colors.at(2).green());
+    QCOMPARE(qBlue(col), colors.at(2).blue());
 
     QCOMPARE(map->mapObjectsAtScreenPosition(point).size(),3);
 
@@ -481,6 +508,14 @@ void tst_QGeoMapCircleObject::zvalue()
     QCOMPARE(object3->zValue(), zValue3);
     //check if object is there
 
+    QTest::qWait(10);
+    map->paint(p[1], &style, 0);
+
+    col = px[1]->toImage().pixel(int(point.x()), int(point.y()));
+    QCOMPARE(qRed(col), colors.at(topIdx).red());
+    QCOMPARE(qGreen(col), colors.at(topIdx).green());
+    QCOMPARE(qBlue(col), colors.at(topIdx).blue());
+
     QCOMPARE(map->mapObjectsAtScreenPosition(point).size(),3);
 
     QVERIFY(map->mapObjectsAtScreenPosition(point).at(zValue1-1)==object1);
@@ -490,6 +525,11 @@ void tst_QGeoMapCircleObject::zvalue()
     QCOMPARE(spy0.count(), 0);
     QCOMPARE(spy1.count(), 0);
     QCOMPARE(spy2.count(), 1);
+
+    for (int i=0; i < 2; i++) {
+        delete p[i];
+        delete px[i];
+    }
 
 }
 

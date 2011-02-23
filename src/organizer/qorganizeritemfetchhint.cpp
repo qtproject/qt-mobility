@@ -202,10 +202,13 @@ QDataStream& operator>>(QDataStream& in, QOrganizerItemFetchHint& hint)
  */
 QDebug operator<<(QDebug dbg, const QOrganizerItemFetchHint& hint)
 {
-    dbg.nospace() << "QOrganizerItemFetchHint("
-                  << "detailDefinitionsHint=" << hint.detailDefinitionsHint() << ","
-                  << "optimizationHints=" << static_cast<quint32>(hint.optimizationHints())
-                  << ")";
+    dbg.nospace() << "QOrganizerItemFetchHint(";
+    dbg.nospace() << "detailDefinitionsHint=";
+    dbg.nospace() << hint.detailDefinitionsHint();
+    dbg.nospace() << ",";
+    dbg.nospace() << "optimizationHints=";
+    dbg.nospace() << static_cast<quint32>(hint.optimizationHints());
+    dbg.nospace() << ")";
     return dbg.maybeSpace();
 }
 #endif
