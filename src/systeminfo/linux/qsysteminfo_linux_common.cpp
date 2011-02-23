@@ -128,6 +128,12 @@
 #endif
 #include "qsysteminfo_dbus_p.h"
 
+#if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MEEGO)
+#define STORAGEPOLL 5 * 1000 //5 seconds for desktop
+#else
+#define STORAGEPOLL 2 * 60 *1000 // 2 minutes for maemo/meego
+#endif
+
 static QString sysinfodValueForKey(const QString& key)
 {
     QString value = "";
@@ -1942,7 +1948,7 @@ int QSystemDisplayInfoLinuxCommonPrivate::getDPIHeight(int screen)
 }
 
 QSystemStorageInfoLinuxCommonPrivate::QSystemStorageInfoLinuxCommonPrivate(QObject *parent)
-    : QObject(parent)
+    : QObject(parent),storageTimer(0)
 {
     halIsAvailable = halAvailable();
 #if !defined(QT_NO_UDISKS)
@@ -1993,6 +1999,13 @@ void QSystemStorageInfoLinuxCommonPrivate::connectNotify(const char *signal)
                 connect(notifier, SIGNAL(activated(int)), this, SLOT(inotifyActivated()));
             }
         }
+    }
+    if (QLatin1String(signal) ==
+        QLatin1String(QMetaObject::normalizedSignature(SIGNAL(storageStateChanged(const QString &, QSystemStorageInfo::StorageState))))) {
+        storageTimer = new QTimer(this);
+        storageTimer->setSingleShot(true);
+        connect(storageTimer, SIGNAL(timeout()), this, SLOT(checkFilesystem()));
+        storageTimer->start(STORAGEPOLL);
     }
 }
 
@@ -2109,6 +2122,12 @@ qint64 QSystemStorageInfoLinuxCommonPrivate::totalDiskSpace(const QString &drive
         return (double)totalBlocks * blockSize;
     }
     return 0;
+}
+
+void QSystemStorageInfoLinuxCommonPrivate::checkFilesystem()
+{
+    checkAvailableStorage();
+    storageTimer->start( STORAGEPOLL);
 }
 
 QSystemStorageInfo::DriveType QSystemStorageInfoLinuxCommonPrivate::typeForDrive(const QString &driveVolume)
@@ -2302,6 +2321,21 @@ QString QSystemStorageInfoLinuxCommonPrivate::uriForDrive(const QString &driveVo
         return QString();
     }
 #endif
+    QByteArray driveuid;
+    if (halIsAvailable) {
+        QHalInterface iface;
+        QStringList list = iface.findDeviceByCapability("volume");
+        if (!list.isEmpty()) {
+            QString lastdev;
+            foreach (const QString &dev, list) {
+                halIfaceDevice = new QHalDeviceInterface(dev, this);
+                if (halIfaceDevice->isValid() && (halIfaceDevice->getPropertyString("volume.mount_point") == driveVolume)) {
+                    return halIfaceDevice->getPropertyString("volume.uuid").toLocal8Bit();
+                }
+            }
+        }
+    }
+
 #endif
     QString driveUuid = getUuid(driveVolume);
     if(!driveUuid.isEmpty()) {
@@ -2314,19 +2348,28 @@ QString QSystemStorageInfoLinuxCommonPrivate::uriForDrive(const QString &driveVo
     uint64_t size;
     const char *label;
     char *ret;
+    int result = 0;
+
     QFile dev(mountEntriesMap.value(driveVolume));
-    dev.open(QIODevice::ReadOnly);
+    if(!dev.open(QIODevice::ReadOnly)) {
+        return QString();
+    }
     fd = dev.handle();
+
     if (fd < 0) {
-//        qDebug() << "XXXXXXXXXXXXXXXXXXXXXXXXXXXX" << mountEntriesMap.value(driveVolume);
-       return QString();
+        return QString();
     } else {
         pr = blkid_new_probe();
-        blkid_probe_set_request (pr, BLKID_PROBREQ_UUID);
+        blkid_probe_set_request(pr, BLKID_PROBREQ_UUID);
         ::ioctl(fd, BLKGETSIZE64, &size);
-        blkid_probe_set_device (pr, fd, 0, size);
-        blkid_do_safeprobe (pr);
+        blkid_probe_set_device(pr, fd, 0, size);
+        result = blkid_do_safeprobe(pr);
+
+        if (result == -1)
+            qDebug() << "Unable to probe device";
+
         blkid_probe_lookup_value(pr, "UUID", &label, NULL);
+
         ret = strdup(label);
         blkid_free_probe (pr);
         close(fd);
@@ -2339,40 +2382,34 @@ QString QSystemStorageInfoLinuxCommonPrivate::uriForDrive(const QString &driveVo
 QSystemStorageInfo::StorageState QSystemStorageInfoLinuxCommonPrivate::getStorageState(const QString &driveVolume)
 {
     QSystemStorageInfo::StorageState storState = QSystemStorageInfo::UnknownStorageState;
-    struct statfs fs;
-    if (statfs(driveVolume.toLocal8Bit(), &fs) == 0) {
-        if ( fs.f_bfree != 0) {
-            long percent = 100 -(fs.f_blocks - fs.f_bfree) * 100 / fs.f_blocks;
-            //       qDebug()  << driveVolume << percent;
-
-            if (percent < 41 && percent > 10 ) {
-                storState = QSystemStorageInfo::LowStorageState;
-            } else if (percent < 11 && percent > 2 ) {
-                storState =  QSystemStorageInfo::VeryLowStorageState;
-            } else if (percent < 3  ) {
-                storState =  QSystemStorageInfo::CriticalStorageState;
-            } else {
-                 storState =  QSystemStorageInfo::NormalStorageState;
-            }
-        }
+    float aspace = availableDiskSpace(driveVolume);
+    float tspace = totalDiskSpace(driveVolume);
+    float percent = (aspace / tspace) * 100;
+    if (percent < 3) {
+        storState = QSystemStorageInfo::CriticalStorageState;
+    } else if (percent < 11) {
+        storState = QSystemStorageInfo::VeryLowStorageState;
+    } else  if (percent < 41) {
+        storState = QSystemStorageInfo::LowStorageState;
+    } else {
+        storState = QSystemStorageInfo::NormalStorageState;
     }
-//    qDebug()  << driveVolume << storState;
-   return storState;
+    return storState;
 }
 
 //QT_LINUXBASE
 
 void QSystemStorageInfoLinuxCommonPrivate::checkAvailableStorage()
 {
-    QMap<QString, QString> oldDrives = mountEntriesMap;
-    foreach (const QString &vol, oldDrives.keys()) {
+    foreach (const QString &vol, logicalDrives()) {
         QSystemStorageInfo::StorageState storState = getStorageState(vol);
         if (!stateMap.contains(vol)) {
             stateMap.insert(vol,storState);
+            Q_EMIT storageStateChanged(vol, storState);
         } else {
+
             if (stateMap.value(vol) != storState) {
-                stateMap[vol] = storState;
-                //      qDebug() << "storage state changed" << storState;
+                stateMap.insert(vol,storState);
                 Q_EMIT storageStateChanged(vol, storState);
             }
         }
@@ -2694,6 +2731,10 @@ QSystemDeviceInfo::InputMethodFlags QSystemDeviceInfoLinuxCommonPrivate::inputMe
             } else if (strvalue.contains("keypad",Qt::CaseInsensitive)) {
                 if ( (methods & QSystemDeviceInfo::Keypad) != QSystemDeviceInfo::Keypad) {
                     methods = (methods | QSystemDeviceInfo::Keys);
+                }
+            } else if (strvalue.contains("Multi Touch",Qt::CaseInsensitive)) {
+                if ( (methods & QSystemDeviceInfo::MultiTouch) != QSystemDeviceInfo::MultiTouch) {
+                    methods = (methods | QSystemDeviceInfo::MultiTouch);
                 }
             } else if (strvalue.contains("Touch",Qt::CaseInsensitive)) {
                 if ( (methods & QSystemDeviceInfo::SingleTouch) != QSystemDeviceInfo::SingleTouch) {
@@ -3141,7 +3182,7 @@ QUuid QSystemDeviceInfoLinuxCommonPrivate::uniqueDeviceID()
             foreach (const QString &dev, list) {
                 halIfaceDevice = new QHalDeviceInterface(dev, this);
                 if (halIfaceDevice->isValid() && (halIfaceDevice->getPropertyString("volume.mount_point") == "/")) {
-                    driveuid =  halIfaceDevice->getPropertyString("volume.uuid").toLocal8Bit();
+                    driveuid = halIfaceDevice->getPropertyString("volume.uuid").toLocal8Bit();
                     break;
                 }
             }
@@ -3149,9 +3190,9 @@ QUuid QSystemDeviceInfoLinuxCommonPrivate::uniqueDeviceID()
     }
     QByteArray bytes = imei().toLocal8Bit();
     QCryptographicHash hash(QCryptographicHash::Sha1);
+
     hash.addData(bytes);
     hash.addData(driveuid);
-
     return QUuid(QString(hash.result().toHex()));
 #endif
 #if !defined(QT_NO_DBUS)
@@ -3192,8 +3233,6 @@ QSystemDeviceInfo::LockTypeFlags QSystemDeviceInfoLinuxCommonPrivate::lockStatus
 
 QString QSystemDeviceInfoLinuxCommonPrivate::model()
 {
-    qDebug() << Q_FUNC_INFO;
-
 #if !defined(QT_NO_DBUS)
     QString productName = sysinfodValueForKey("/component/product-name");
     if (!productName.isEmpty()) {
@@ -3700,13 +3739,26 @@ void QSystemBatteryInfoLinuxCommonPrivate::getBatteryStats()
                         cTime = ifaceDevice.getPropertyInt("battery.remaining_time");
                     } else {
                         cState = QSystemBatteryInfo::NotCharging;
-                        cTime = 0;
+                        cTime = -1;
                     }
                     cVoltage = ifaceDevice.getPropertyInt("battery.voltage.current");
+
                     cEnergy = ifaceDevice.getPropertyInt("battery.charge_level.rate");
+                    if (cEnergy == 0)
+                        cEnergy = ifaceDevice.getPropertyInt("battery.reporting.rate");
+
                     cLevel = ifaceDevice.getPropertyInt("battery.charge_level.percentage");
-                    capacity = ifaceDevice.getPropertyInt("battery.reporting.design");
-                    rEnergy = ifaceDevice.getPropertyInt("battery.reporting.current");
+
+                    rEnergy = ifaceDevice.getPropertyInt("battery.charge_level.current");
+                    if(rEnergy == 0)
+                        rEnergy = ifaceDevice.getPropertyInt("battery.reporting.current");
+
+
+                    capacity = ifaceDevice.getPropertyInt("battery.charge_level.last_full");
+                    if(capacity == 0)
+                        capacity =  ifaceDevice.getPropertyInt("battery.reporting.last_full");;//
+                    if(capacity == 0)
+                        capacity = ifaceDevice.getPropertyInt("battery.reporting.design");
 
                     break;
                 }
@@ -3745,6 +3797,9 @@ void QSystemBatteryInfoLinuxCommonPrivate::getBatteryStats()
     if(cType == QSystemBatteryInfo::UnknownCharger && !batteryIsPresent) {
         cType = QSystemBatteryInfo::WallCharger;
     }
+
+    if(cTime == 0 && currentBatLevelPercent != 100)
+        cTime == -1;
 
     curChargeType = cType;
     currentVoltage = cVoltage;

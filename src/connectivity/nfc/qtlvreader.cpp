@@ -189,7 +189,7 @@ quint8 QTlvReader::tag() const
 }
 
 /*!
-    Returns the length of the data of the current TLV.
+    Returns the length of the data of the current TLV. Returns -1 if a parse error occurs.
 */
 int QTlvReader::length()
 {
@@ -221,7 +221,7 @@ QByteArray QTlvReader::data()
 }
 
 /*!
-    Reads more data until \a sparseOffset is available in m_data.
+    Reads more data until \a sparseOffset is available.
 */
 void QTlvReader::readMoreData(int sparseOffset)
 {

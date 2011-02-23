@@ -6,7 +6,7 @@
     }
 
     .narrow a {
-      color: #00732f;
+      color: #44a51c;
     }
 
     .narrow .header, .narrow .header .content, .narrow .footer, .narrow .wrapper {
@@ -45,7 +45,7 @@
     {
       width: auto;
       height: auto;
-      color: #00732f;
+      color: #363534;
       position: static;
       float: left;
       margin-left: 25px;
@@ -61,7 +61,6 @@
     {
       background-image: none;
       text-indent: 0;
-        width: 260px;
     }
 
     .narrow .header #nav-topright
@@ -164,7 +163,7 @@
     }
 
     .narrow .wrap .breadcrumb ul li a {
-      color: #00732f;
+      color: #44a51c;
     }
 
     .narrow .wrap .breadcrumb ul li.last a {
@@ -204,7 +203,11 @@
       *border: 1px solid #fff;
       *height: 17px;
       _height: 18px;
+	  /* to be fixed */
+	  display: none;
+	  /* to be fixed */
     }
+
     .narrow .indexbox .indexIcon {
       display: none;
     }
@@ -265,6 +268,3 @@
     }
 
     /* end narrow mode */
-	.creator #narrowsearch, .creator #narrowmenu{
-		display:none;
-	}

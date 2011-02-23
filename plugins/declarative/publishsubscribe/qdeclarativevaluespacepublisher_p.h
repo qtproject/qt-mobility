@@ -66,10 +66,6 @@ class QDeclarativeValueSpacePublisher : public QObject, public QDeclarativeParse
     Q_PROPERTY(bool hasSubscribers READ hasSubscribers NOTIFY subscribersChanged)
     Q_PROPERTY(QStringList keys READ keys WRITE setKeys)
 
-    // these should be removed after QTBUG-17521 is resolved
-    Q_PROPERTY(QString applicationName READ applicationName WRITE setApplicationName);
-    Q_PROPERTY(QString organizationDomain READ organizationDomain WRITE setOrganizationDomain);
-
     // these should be write-only
     // but MSVC can't cope with write-only Q_PROPERTYs?
     Q_PROPERTY(QVariant value READ dummyValue WRITE setValue)
@@ -92,12 +88,6 @@ public:
     bool hasSubscribers() const;
 
     void setKeys(const QStringList &keys);
-
-    // these should be removed after QTBUG-17521 is resolved
-    QString applicationName() const;
-    QString organizationDomain() const;
-    void setApplicationName(const QString &name);
-    void setOrganizationDomain(const QString &domain);
 
     void classBegin();
     void componentComplete();
