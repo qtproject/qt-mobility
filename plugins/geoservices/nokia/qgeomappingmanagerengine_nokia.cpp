@@ -58,20 +58,16 @@
 #include <QSize>
 #include <QDir>
 #include <QUrl>
-#include <QDateTime>
-
-#include <QDebug>
 
 #define LARGE_TILE_DIMENSION 256
 
-// TODO: Tweak the max size or create something better
-#if defined(Q_OS_SYMBIAN)
-#define DISK_CACHE_MAX_SIZE 10*1024*1024  //10MB
-#else
-#define DISK_CACHE_MAX_SIZE 50*1024*1024  //50MB
+#if defined(Q_OS_SYMBIAN) && defined(SYMBIAN_ENABLE_CACHE)
+#include <qsystemstorageinfo.h>
 #endif
 
-#if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE_WM) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+#define DISK_CACHE_MAX_SIZE 50*1024*1024  //50MB
+
+#if defined(Q_OS_WINCE_WM) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6) || (defined(Q_OS_SYMBIAN) && !defined(SYMBIAN_ENABLE_CACHE))
 #undef DISK_CACHE_ENABLED
 #else
 #define DISK_CACHE_ENABLED 1
@@ -108,7 +104,7 @@ QGeoMappingManagerEngineNokia::QGeoMappingManagerEngineNokia(const QMap<QString,
         if (!proxy.isEmpty()) {
             QUrl proxyUrl(proxy);
             if (proxyUrl.isValid()) {
-                m_networkManager->setProxy(QNetworkProxy(QNetworkProxy::HttpProxy, 
+                m_networkManager->setProxy(QNetworkProxy(QNetworkProxy::HttpProxy,
                     proxyUrl.host(),
                     proxyUrl.port(8080),
                     proxyUrl.userName(),
@@ -136,9 +132,26 @@ QGeoMappingManagerEngineNokia::QGeoMappingManagerEngineNokia(const QMap<QString,
 
 
 #ifdef DISK_CACHE_ENABLED
+
+#if defined(Q_OS_SYMBIAN) && defined(SYMBIAN_ENABLE_CACHE)
+    QDir dir;
+    QSystemStorageInfo info;
+    QStringList drives = info.logicalDrives();
+    for (int i=0;i<drives.count();++i) {
+        if (info.typeForDrive(drives.at(i))==QSystemStorageInfo::InternalFlashDrive){
+            dir.setPath(drives.at(i)+":/");
+            QString cachePath("data/nokia");
+            dir.mkpath(cachePath);
+            dir.cd(cachePath);
+            break;
+        }
+    }
+#else
+    QDir dir = QDir::temp();
+#endif
+    if (!dir.path().isEmpty()) {
     m_cache = new QNetworkDiskCache(this);
 
-    QDir dir = QDir::temp();
     dir.mkdir("maptiles");
     dir.cd("maptiles");
 
@@ -161,6 +174,7 @@ QGeoMappingManagerEngineNokia::QGeoMappingManagerEngineNokia(const QMap<QString,
         m_cache->setMaximumCacheSize(DISK_CACHE_MAX_SIZE);
 
     m_networkManager->setCache(m_cache);
+    }
 #endif
 }
 
@@ -186,7 +200,6 @@ QGeoTiledMapReply* QGeoMappingManagerEngineNokia::getTileImage(const QGeoTiledMa
 
 #ifdef DISK_CACHE_ENABLED
     netRequest.setAttribute(QNetworkRequest::CacheLoadControlAttribute, QNetworkRequest::PreferCache);
-    m_cache->metaData(netRequest.url()).setLastModified(QDateTime::currentDateTime());
 #endif
 
     QNetworkReply* netReply = m_networkManager->get(netRequest);
