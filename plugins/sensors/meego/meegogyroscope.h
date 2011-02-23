@@ -60,6 +60,8 @@ public:
 protected:
     virtual bool doConnect();
     virtual const QString sensorName();
+    virtual const qreal correctionFactor();
+
 
 private:
     QGyroscopeReading m_reading;

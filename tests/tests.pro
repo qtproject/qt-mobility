@@ -18,4 +18,5 @@ linux*:!linux-armcc:contains(mobility_modules,connectivity): SUBDIRS += btclient
 symbian {
     contains(mobility_modules,messaging): SUBDIRS += messagingex
     contains(mobility_modules,publishsubscribe): SUBDIRS += publishsubscribeex
+    contains(mobility_modules,connectivity): SUBDIRS += nfcsymbianbackend
 }

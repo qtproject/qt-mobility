@@ -16,7 +16,7 @@
 */
 
 
-target          t_sec_cntdbase.exe
+TARGET          t_sec_cntdbase.exe
 targettype      EXE
 //CAPABILITY   ReadUserData WriteUserData
 CAPABILITY   All -TCB
@@ -32,6 +32,6 @@ userinclude ../inc
 
 source          T_SEC_CNTDBASE.CPP
 
-library         euser.lib  efsrv.lib  cntmodel.lib cnttutil.lib
-library         pimtestclient.lib
+LIBRARY         euser.lib  efsrv.lib  cntmodel.lib cnttutil.lib
+LIBRARY         pimtestclient.lib
 

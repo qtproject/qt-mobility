@@ -44,74 +44,126 @@
 
 #include <QDeclarativeInfo>
 
+class QDeclarativeValueSpacePublisherQueueItem
+{
+public:
+    QDeclarativeValueSpacePublisherQueueItem(const QString &subPath, const QVariant &value);
+
+    QString subPath;
+    QVariant value;
+};
+
+QDeclarativeValueSpacePublisherQueueItem::QDeclarativeValueSpacePublisherQueueItem(const QString &subPath, const QVariant &value) :
+    subPath(subPath),
+    value(value)
+{
+}
+
 /*!
-  \qmlclass ValueSpacePublisher QDeclarativeValueSpacePublisher
+    \qmlclass ValueSpacePublisher QDeclarativeValueSpacePublisher
 
-  \brief The ValueSpacePublisher element represents a path in the value space
-   where keys can be published.
+    \brief The ValueSpacePublisher element represents a path in the value space
+           where keys can be published.
 
-  If the key names to be published are alphanumeric, they may be accessed
-  through dynamic properties by setting the \a keys list.
+    ValueSpacePublishers are constructed with a set \a path which cannot be
+    changed. If you need to publish within multiple different paths, you will
+    need multiple ValueSpacePublishers.
 
-  Example:
-  \code
-  ValueSpacePublisher {
-    id: battery
-    path: "/power/battery"
-    keys: ["charge", "charging"]
-  }
+    For the keys within the path chosen, if the key names to be published
+    are alphanumeric, they may be accessed through dynamic properties by
+    setting the \a keys list.
 
-  MouseArea {
-    onClicked: {
-      battery.charge = 50
-      battery.charging = true
+    Example:
+    \code
+    ValueSpacePublisher {
+        id: battery
+        path: "/power/battery"
+        keys: ["charge", "charging"]
     }
-  }
-  \endcode
 
-  Alternatively, for key names that can't be mapped to properties, or for
-  key names shadowed by existing properties (like "value" or "path"), you
-  can also access the \a value property of the Publisher itself.
-
-  \code
-  ValueSpacePublisher {
-    id: nonalpha
-    path: "/something/with a space/value"
-  }
-
-  MouseArea {
-    onClicked: {
-      nonalpha.value = "example"
+    MouseArea {
+        onClicked: {
+            battery.charge = 50
+            battery.charging = true
+        }
     }
-  }
-  \endcode
+    \endcode
 
-  \ingroup qml-publishsubscribe
+    Alternatively, for key names that can't be mapped to properties, or for
+    key names shadowed by existing properties (like "value" or "path"), you
+    can also access the \a value property of the Publisher itself.
 
-  \sa QValueSpacePublisher
-  The ValueSpacePublisher element is part of the \bold{QtMobility.publishsubscribe 1.2} module.
-  */
+    \code
+    ValueSpacePublisher {
+        id: nonalpha
+        path: "/something/with a space/value"
+    }
+
+    MouseArea {
+        onClicked: {
+            nonalpha.value = "example"
+        }
+    }
+    \endcode
+
+    \ingroup qml-publishsubscribe
+
+    \sa QValueSpacePublisher
+    The ValueSpacePublisher element is part of the \bold{QtMobility.publishsubscribe 1.2} module.
+*/
 
 QDeclarativeValueSpacePublisher::QDeclarativeValueSpacePublisher(QObject *parent)
     : QObject(parent),
-      d(new QDeclarativeValueSpacePublisherMetaObject(this))
+      d(new QDeclarativeValueSpacePublisherMetaObject(this)),
+      m_publisher(0),
+      m_pathSet(false),
+      m_hasSubscribers(false),
+      m_complete(false)
 {
-    m_pathSet = false;
-    m_hasSubscribers = false;
 }
 
 QDeclarativeValueSpacePublisher::~QDeclarativeValueSpacePublisher()
 {
-    if (m_pathSet)
+    if (m_publisher)
         delete m_publisher;
 }
 
-/*!
-  \qmlproperty string ValueSpacePublisher::path
+void QDeclarativeValueSpacePublisher::classBegin()
+{
+}
 
-  This property holds the base path of the publisher.
-  This property is write-once -- after the first write, subsequent
-  writes will be ignored and produce a warning.
+void QDeclarativeValueSpacePublisher::componentComplete()
+{
+    if (m_pathSet) {
+        m_publisher = new QValueSpacePublisher(m_path, this);
+        connect(m_publisher, SIGNAL(interestChanged(QString,bool)),
+                this, SLOT(onInterestChanged(QString,bool)));
+    }
+    m_complete = true;
+    doQueue();
+}
+
+void QDeclarativeValueSpacePublisher::queueChange(const QString &subPath, const QVariant &val)
+{
+    m_queue << QDeclarativeValueSpacePublisherQueueItem(subPath, val);
+    if (m_publisher)
+        doQueue();
+}
+
+void QDeclarativeValueSpacePublisher::doQueue()
+{
+    foreach (QDeclarativeValueSpacePublisherQueueItem i, m_queue) {
+        m_publisher->setValue(i.subPath, i.value);
+    }
+    m_queue.clear();
+}
+
+/*!
+    \qmlproperty string ValueSpacePublisher::path
+
+    This property holds the base path of the publisher.
+    This property is write-once -- after the first write, subsequent
+    writes will be ignored and produce a warning.
   */
 QString QDeclarativeValueSpacePublisher::path() const
 {
@@ -127,38 +179,32 @@ void QDeclarativeValueSpacePublisher::setPath(const QString &path)
 
     m_path = path;
     startServer(true);
-    m_publisher = new QValueSpacePublisher(m_path, this);
-    connect(m_publisher, SIGNAL(interestChanged(QString,bool)),
-            this, SLOT(onInterestChanged(QString,bool)));
     m_pathSet = true;
+    if (m_complete)
+        componentComplete();
 }
 
 /*!
-  \qmlproperty QVariant ValueSpacePublisher::value
+    \qmlproperty QVariant ValueSpacePublisher::value
 
-  This property publishes a new value to the ValueSpace at the
-  path given through the \a path property.
-  This property is write only.
-  */
+    This property publishes a new value to the ValueSpace at the
+    path given through the \a path property.
+    This property is write only.
+*/
 void QDeclarativeValueSpacePublisher::setValue(const QVariant &val)
 {
-    if (!m_pathSet) {
-        qmlInfo(this) << "Tried to set value on a publisher with no path; ignored";
-        return;
-    }
-
-    m_publisher->setValue("", val);
+    queueChange("", val);
 }
 
 /*!
-  \qmlproperty bool ValueSpacePublisher::server
+    \qmlproperty bool ValueSpacePublisher::server
 
-  This property can be used to force the Publisher to start the ValueSpace
-  server (if one is appropriate on the platform) before the \a path property
-  has been set.
+    This property can be used to force the Publisher to start the ValueSpace
+    server (if one is appropriate on the platform) before the \a path property
+    has been set.
 
-  This property is write only.
-  */
+    This property is write only.
+*/
 void QDeclarativeValueSpacePublisher::startServer(const bool &really)
 {
     if (really) {
@@ -167,24 +213,24 @@ void QDeclarativeValueSpacePublisher::startServer(const bool &really)
 }
 
 /*!
-  \qmlproperty bool ValueSpacePublisher::hasSubscribers
+    \qmlproperty bool ValueSpacePublisher::hasSubscribers
 
-  This property is true if there are subscribers currently subscribed to
-  the ValueSpace path being published by this Publisher.
+    This property is true if there are subscribers currently subscribed to
+    the ValueSpace path being published by this Publisher.
 
-  This property is read only.
-  */
+    This property is read only.
+*/
 bool QDeclarativeValueSpacePublisher::hasSubscribers() const
 {
     return m_hasSubscribers;
 }
 
 /*!
-  \qmlproperty QStringList ValueSpacePublisher::keys
+    \qmlproperty QStringList ValueSpacePublisher::keys
 
-  Setting this property creates a set of dynamic properties allowing
-  easy access to set the values of keys under this Publisher's path.
-  */
+    Setting this property creates a set of dynamic properties allowing
+    easy access to set the values of keys under this Publisher's path.
+*/
 void QDeclarativeValueSpacePublisher::setKeys(const QStringList &keys)
 {
     foreach (QString key, keys) {

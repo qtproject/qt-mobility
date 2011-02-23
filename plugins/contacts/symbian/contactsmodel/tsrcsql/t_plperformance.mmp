@@ -18,7 +18,7 @@
 
 #include "../groupsql/cntmodel.mmh"
 
-target          t_plperformance.exe
+TARGET          t_plperformance.exe
 targettype      EXE
 CAPABILITY   	ReadUserData WriteUserData
 UID		0x1020831C
@@ -33,12 +33,11 @@ SOURCEPATH	../tsrc
 source		T_PlPerformance.cpp 
 source		T_CntTestImplementor.cpp 
 
-library         euser.lib
-library         pimtestclient.lib
-library         cntmodel.lib
-library         nbcnttestlib.lib
-library         efsrv.lib 
-
-library         cntplsql.lib
+LIBRARY         euser.lib
+LIBRARY         pimtestclient.lib
+LIBRARY         cntmodel.lib
+LIBRARY         nbcnttestlib.lib
+LIBRARY         efsrv.lib 
+LIBRARY         cntplsql.lib
 
 SMPSAFE

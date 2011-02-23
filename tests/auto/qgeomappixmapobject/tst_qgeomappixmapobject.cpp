@@ -141,12 +141,10 @@ void tst_QGeoMapPixmapObject::qgeomappixmapobject()
 
     QVERIFY(list.at(0)==object);
 
-    QVERIFY2(object->info(),"info object not created");
     QVERIFY2(object->mapData(),"no map data set");
 
     map->removeMapObject(object);
 
-    QVERIFY2(!object->info(),"info object not deleted");
     QVERIFY2(!object->mapData(),"no map data still set");
 
     delete (object);
@@ -548,19 +546,16 @@ void tst_QGeoMapPixmapObject::contains()
 // public QGeoBoundingBox boundingBox() const
 void tst_QGeoMapPixmapObject::boundingBox()
 {
-
     QGeoCoordinate center(0, 0, 0);
 
     QPixmap image(100, 100);
 
     QGeoMapPixmapObject* object = new QGeoMapPixmapObject(center, QPoint(0, 0), image);
 
-    QVERIFY2(object->boundingBox().width()!=0,"no bounding box");
-    QVERIFY2(object->boundingBox().height()!=0,"no bounding box");
-
     QGraphicsGeoMap* map = m_helper->map();
 
     map->addMapObject(object);
+    map->setCenter(center);
 
     QList<QGeoMapObject *> list = map->mapObjects();
 

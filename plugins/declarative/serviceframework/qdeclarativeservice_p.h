@@ -100,7 +100,7 @@ class QDeclarativeServiceList : public QObject, public QDeclarativeParserStatus 
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeService> services READ services NOTIFY resultsChanged)
 
     Q_PROPERTY(MatchRule versionMatch READ versionMatch WRITE setVersionMatch NOTIFY versionMatchChanged)
-    Q_ENUMS(MatchRule);
+    Q_ENUMS(MatchRule)
 
 public:
     enum MatchRule {

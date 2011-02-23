@@ -44,7 +44,7 @@
 
 Dialog::Dialog() :
     QWidget(),
-    saver(NULL), systemInfo(NULL), di(NULL), ni(NULL),sti(NULL),bi(NULL)
+    saver(NULL), systemInfo(NULL), di(NULL), ni(NULL),sti(NULL),bi(NULL),dis(NULL)
 {
     setupUi(this);
     setupGeneral();
@@ -63,6 +63,7 @@ Dialog::~Dialog()
     delete systemInfo;
     delete di;
     delete saver;
+    delete dis;
 }
 
 void Dialog::changeEvent(QEvent *e)
@@ -191,6 +192,8 @@ void Dialog::setupDevice()
     updateKeyboard(di->keyboardTypes());
 
     keyboardFlipRadioButton->setChecked(di->isKeyboardFlippedOpen());
+    connect(di,SIGNAL(keyboardFlipped(bool)),this,SLOT(keyboardFlipped(bool)));
+
     wirelessKeyboardConnectedRadioButton->setChecked(di->isWirelessKeyboardConnected());
 
     QString lockState;
@@ -239,39 +242,24 @@ void Dialog::updateProfile(QSystemDeviceInfo::Profile /*profile*/)
 
 void Dialog::setupDisplay()
 {
-    QSystemDisplayInfo di;
-    brightnessLabel->setText(QString::number(di.displayBrightness(0)));
-    colorDepthLabel->setText(QString::number(di.colorDepth((0))));
+    if(!dis) {
+        dis = new QSystemDisplayInfo(this);
+        connect(dis,SIGNAL(orientationChanged(QSystemDisplayInfo::DisplayOrientation)),
+                this,SLOT(orientationChanged(QSystemDisplayInfo::DisplayOrientation )));
 
-    QSystemDisplayInfo::DisplayOrientation orientation = di.orientation(0);
-    QString orientStr;
-    switch(orientation) {
-    case QSystemDisplayInfo::Landscape:
-        orientStr="Landscape";
-        break;
-    case QSystemDisplayInfo::Portrait:
-        orientStr="Portrait";
-        break;
-    case QSystemDisplayInfo::InvertedLandscape:
-        orientStr="Inverted Landscape";
-        break;
-    case QSystemDisplayInfo::InvertedPortrait:
-        orientStr="Inverted Portrait";
-        break;
-    default:
-        orientStr="Orientation unknown";
-        break;
     }
+    brightnessLabel->setText(QString::number(dis->displayBrightness(0)));
+    colorDepthLabel->setText(QString::number(dis->colorDepth((0))));
 
-    orientationLabel->setText(orientStr);
+    orientationChanged(dis->orientation(0));
 
-    contrastLabel->setText(QString::number(di.contrast((0))));
+    contrastLabel->setText(QString::number(dis->contrast((0))));
 
-    dpiWidthLabel->setText(QString::number(di.getDPIWidth(0)));
-    dpiHeightLabel->setText(QString::number(di.getDPIHeight((0))));
+    dpiWidthLabel->setText(QString::number(dis->getDPIWidth(0)));
+    dpiHeightLabel->setText(QString::number(dis->getDPIHeight((0))));
 
-    physicalHeightLabel->setText(QString::number(di.physicalHeight(0)));
-    physicalWidthLabel->setText(QString::number(di.physicalWidth((0))));
+    physicalHeightLabel->setText(QString::number(dis->physicalHeight(0)));
+    physicalWidthLabel->setText(QString::number(dis->physicalWidth((0))));
 }
 
 void Dialog::setupStorage()
@@ -283,6 +271,9 @@ void Dialog::setupStorage()
     connect(sti,SIGNAL(logicalDriveChanged(bool,const QString &)),
             this,SLOT(storageChanged(bool ,const QString &)));
     }
+    connect(sti,SIGNAL(storageStateChanged(const QString &,QSystemStorageInfo::StorageState)),
+            this,SLOT(storageStateChanged(const QString &, QSystemStorageInfo::StorageState)));
+
     updateStorage();
 }
 
@@ -319,6 +310,8 @@ void Dialog::updateStorage()
         items << QString::number(sti->totalDiskSpace(volName));
         items << QString::number(sti->availableDiskSpace(volName));
         items << sti->uriForDrive(volName);
+        items << storageStateToString(sti->getStorageState(volName));
+
         QTreeWidgetItem *item = new QTreeWidgetItem(items);
         storageTreeWidget->addTopLevelItem(item);
     }
@@ -511,16 +504,7 @@ void Dialog::setupSaver()
 
 void Dialog::setSaverEnabled(bool b)
 {
-    if (b) {
-        if (!saver) {
-            saver = new QSystemScreenSaver(this);
-        }
-       if(saver->setScreenSaverInhibit()) {
-        }
-    } else {
-        delete saver;
-        saver = NULL;
-    }
+    saver->setScreenSaverInhibited(b);
 }
 
 
@@ -977,4 +961,54 @@ void Dialog::chargerTypeChanged(QSystemBatteryInfo::ChargerType chargerType)
     currentChargerType = chargerType;
 }
 
+void Dialog::orientationChanged(QSystemDisplayInfo::DisplayOrientation orientation)
+{
+    QString orientStr;
+    switch(orientation) {
+    case QSystemDisplayInfo::Landscape:
+        orientStr="Landscape";
+        break;
+    case QSystemDisplayInfo::Portrait:
+        orientStr="Portrait";
+        break;
+    case QSystemDisplayInfo::InvertedLandscape:
+        orientStr="Inverted Landscape";
+        break;
+    case QSystemDisplayInfo::InvertedPortrait:
+        orientStr="Inverted Portrait";
+        break;
+    default:
+        orientStr="Orientation unknown";
+        break;
+    }
 
+    orientationLabel->setText(orientStr);
+}
+
+
+void Dialog::keyboardFlipped(bool on)
+{
+    keyboardFlipRadioButton->setChecked(on);
+}
+
+void Dialog::storageStateChanged(const QString &vol, QSystemStorageInfo::StorageState state)
+{
+    QList<QTreeWidgetItem *>item = storageTreeWidget->findItems(vol,Qt::MatchExactly,0);
+    item.at(0)->setText(3,QString::number(sti->availableDiskSpace(item.at(0)->text(0))));
+    item.at(0)->setText(5,storageStateToString(state));
+}
+
+QString Dialog::storageStateToString(QSystemStorageInfo::StorageState state)
+{
+    QString str;
+    if (state == QSystemStorageInfo::CriticalStorageState) {
+        str = "Critical";
+    } else if (state == QSystemStorageInfo::VeryLowStorageState) {
+        str = "Very Low";
+    } else if (state == QSystemStorageInfo::LowStorageState) {
+        str = "Low";
+    } else {
+        str = "Normal";
+    }
+    return str;
+}

@@ -16,7 +16,7 @@
 */
 
 
-target          t_dbase2.exe
+TARGET          t_dbase2.exe
 targettype      EXE
 CAPABILITY   ReadUserData WriteUserData AllFiles
 UID		0x1000007a
@@ -29,4 +29,4 @@ userinclude ../inc
 
 source          T_DBASE2.CPP T_FIND.CPP CContactDbEventQueue.cpp
 
-library         euser.lib  efsrv.lib  cntmodel.lib	estor.lib	cnttutil.lib	bafl.lib
+LIBRARY         euser.lib  efsrv.lib  cntmodel.lib	estor.lib	cnttutil.lib	bafl.lib

@@ -105,9 +105,7 @@ CntSymbianEngine::CntSymbianEngine(const QMap<QString, QString>& parameters, QCo
 #endif
         m_relationship     = new CntRelationship(m_dataBase->contactDatabase(), m_managerUri);
         m_displayLabel     = new CntDisplayLabel();
-#ifdef SYMBIAN_BACKEND_USE_CNTMODEL_V2
         connect(m_displayLabel, SIGNAL(displayLabelChanged()), this, SIGNAL(dataChanged()));
-#endif
     }
 }
 
@@ -195,8 +193,8 @@ QList<QContact> CntSymbianEngine::contacts(const QContactFilter& filter, const Q
     QList<QContact> contacts;
     QList<QContactLocalId> contactIds = this->contactIds(filter, sortOrders, error);
     
-    if (fh.maxCount() > 0) {
-        contactIds = contactIds.mid(0, fh.maxCount());
+    if (fh.maxCountHint() > 0) {
+        contactIds = contactIds.mid(0, fh.maxCountHint());
     }
     
     if (*error == QContactManager::NoError ) {
@@ -463,6 +461,8 @@ bool CntSymbianEngine::addContact(QContact& contact, QContactChangeSet& changeSe
         changeSet.insertAddedContact(id);
         m_dataBase->appendContactEmitted(id);
     }
+#else
+    Q_UNUSED(id)
 #endif
     CntSymbianTransformError::transformError(err, qtError);
     return (err==KErrNone);

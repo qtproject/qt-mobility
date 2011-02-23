@@ -26,58 +26,9 @@
 ****************************************************************************/
 
 /*!
-    \example audiorecorder
-    \title Audio Recorder Example
-*/
-
-/*!
-    \example declarative-sfw-dialer
-    \title Declarative Service Framework Example
-*/
-
-/*!
-    \example keepintouch
-    \title Keep in Touch Example
-*/
-
-/*  (this is documented Location overview)
-    \example logfilepositionsource
-    \title Log File Position Source Example
-*/
-
-/*!
-    \example player
-    \title Player Example
-*/
-
-/*!
-    \example querymessages
-    \title Query Messages Example
-*/
-
-/*!
     \example radio
     \title Radio Example
-*/
-
-/*!
-    \example writemessage
-    \title Write Message Example
-*/
-
-/*!
-    \example serviceactions
-    \title Service Actions Example
-*/
-
-/*!
-    \example slideshow
-    \title Slideshow Example
-*/
-
-/*!
-    \example sysinfo
-    \title System Information Example
+    \internal
 */
 
 /*!

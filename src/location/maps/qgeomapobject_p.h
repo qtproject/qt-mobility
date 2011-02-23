@@ -54,8 +54,9 @@
 //
 
 #include "qgeomapobject.h"
-#include "qgeomapobjectinfo.h"
+#include "qgeocoordinate.h"
 
+class QGraphicsItem;
 
 QTM_BEGIN_NAMESPACE
 
@@ -69,11 +70,15 @@ public:
     virtual ~QGeoMapObjectPrivate();
 
     int zValue;
+    quint32 serial;
     bool isVisible;
     bool isSelected;
+    QGeoMapObject::CoordinateUnit units;
+    QGeoMapObject::TransformType transType;
 
     QGeoMapData *mapData;
-    mutable QGeoMapObjectInfo *info;
+    QGraphicsItem *graphicsItem;
+    QGeoCoordinate origin;
 
     Q_DISABLE_COPY(QGeoMapObjectPrivate)
 };

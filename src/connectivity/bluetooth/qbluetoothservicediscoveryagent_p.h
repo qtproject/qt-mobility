@@ -49,7 +49,7 @@
 
 #include <QStack>
 
-#ifdef Q_OS_SYMBIAN
+#ifdef QTM_SYMBIAN_BLUETOOTH
 #include <btsdp.h>
 #endif
 
@@ -68,7 +68,7 @@ QTM_BEGIN_NAMESPACE
 class QBluetoothDeviceDiscoveryAgent;
 
 class QBluetoothServiceDiscoveryAgentPrivate
-#ifdef Q_OS_SYMBIAN
+#ifdef QTM_SYMBIAN_BLUETOOTH
 : public MSdpAgentNotifier, public MSdpAttributeValueVisitor
 #endif
 {
@@ -104,7 +104,7 @@ public:
     void _q_createdDevice(QDBusPendingCallWatcher *watcher);
 #endif
 
-#ifdef Q_OS_SYMBIAN
+#ifdef QTM_SYMBIAN_BLUETOOTH
     /* MSdpAgentNotifier virtual functions */
     void NextRecordRequestComplete(TInt aError, TSdpServRecordHandle aHandle, TInt aTotalRecordsCount);
     void AttributeRequestResult(TSdpServRecordHandle aHandle, TSdpAttributeID aAttrID, CSdpAttrValue *aAttrValue);
@@ -121,8 +121,9 @@ private:
     bool quickDiscovery(const QBluetoothAddress &address, const QBluetoothDeviceInfo &info);
     void stop();
 
-#ifdef Q_OS_SYMBIAN
-    void initAgent(const QBluetoothAddress &address);
+#ifdef QTM_SYMBIAN_BLUETOOTH
+    void startL(const QBluetoothAddress &address);
+    void initAgentL(const QBluetoothAddress &address);
 #elif !defined(QT_NO_DBUS)
     QVariant readAttributeValue(QXmlStreamReader &xml);
 #endif
@@ -142,14 +143,14 @@ private:
 
     QBluetoothServiceDiscoveryAgent::DiscoveryMode mode;
 
-#ifdef Q_OS_SYMBIAN
-    CSdpAgent *sdpAgent;
-    CSdpSearchPattern *filter;
-    CSdpAttrIdMatchList *attributes;
-    QBluetoothServiceInfo serviceInfo;
-    TSdpAttributeID currentAttributeId;
+#ifdef QTM_SYMBIAN_BLUETOOTH
+    CSdpAgent *m_sdpAgent;
+    CSdpSearchPattern *m_filter;
+    CSdpAttrIdMatchList *m_attributes;
+    QBluetoothServiceInfo m_serviceInfo;
+    TSdpAttributeID m_currentAttributeId;
 
-    QStack<QVariant> stack;
+    QStack<QVariant> m_stack;
 #elif !defined(QT_NO_DBUS)
     OrgBluezManagerInterface *manager;
     OrgBluezAdapterInterface *adapter;

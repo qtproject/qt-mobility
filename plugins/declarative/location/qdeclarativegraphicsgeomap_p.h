@@ -134,6 +134,11 @@ public:
     Q_INVOKABLE QDeclarativeCoordinate* toCoordinate(QPointF screenPosition) const;
     Q_INVOKABLE QPointF toScreenPosition(QDeclarativeCoordinate* coordinate) const;
 
+    // This function is strictly for testing purposes and may be removed at
+    // any time without any notice (hence also the obscure naming to avoid
+    // accidental usage):
+    Q_INVOKABLE int testGetDeclarativeMapObjectCount();
+
     void setActiveMouseArea(QDeclarativeGeoMapMouseArea *area);
     QDeclarativeGeoMapMouseArea* activeMouseArea() const;
 
@@ -146,10 +151,10 @@ protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
     void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event);
-    void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
-    void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
-    void hoverMoveEvent(QGraphicsSceneHoverEvent *event);
-    void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
+//    void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
+//    void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
+//    void hoverMoveEvent(QGraphicsSceneHoverEvent *event);
+//    void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
 
 Q_SIGNALS:
     void pluginChanged(QDeclarativeGeoServiceProvider *plugin);
@@ -158,9 +163,6 @@ Q_SIGNALS:
     void declarativeCenterChanged(const QDeclarativeCoordinate *coordinate);
     void mapTypeChanged(QDeclarativeGraphicsGeoMap::MapType mapType);
     void connectivityModeChanged(QDeclarativeGraphicsGeoMap::ConnectivityMode connectivityMode);
-
-    void modelChanged();
-    void delegateChanged();
 
 private Q_SLOTS:
     void updateMapDisplay(const QRectF& target);
@@ -172,7 +174,8 @@ private Q_SLOTS:
     void centerAltitudeChanged(double altitude);
 
 private:
-    void setupMapViews();
+    void setupMapView(QDeclarativeGeoMapObjectView *view);
+    void populateMap();
 
     QDeclarativeGeoMapObject* createItem(int modelIndex);
     QDeclarativeGeoMapMouseEvent* createMapMouseEvent(QGraphicsSceneMouseEvent *event);
@@ -198,6 +201,7 @@ private:
     QDeclarativeGeoMapMouseArea* activeMouseArea_;
     QList<QDeclarativeGeoMapMouseArea*> mouseAreas_;
 
+    friend class QDeclarativeGeoMapObjectView;
     Q_DISABLE_COPY(QDeclarativeGraphicsGeoMap)
 };
 

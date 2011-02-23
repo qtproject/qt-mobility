@@ -18,7 +18,7 @@
 
 #include "../groupsql/cntmodel.mmh"
 
-target          t_persistencelayer.exe
+TARGET          t_persistencelayer.exe
 targettype      EXE
 CAPABILITY   	ReadUserData WriteUserData
 UID           	0x1000097a 0x10003A73 //The same UID as CntSrv
@@ -35,13 +35,12 @@ sourcepath		../tsrc
 source			T_PersistenceLayer.cpp 
 source			T_CntTestImplementor.cpp 
 
-library         euser.lib 
-library         pimtestclient.lib
-library         nbcnttestlib.lib
-library         efsrv.lib 
-library         cntmodel.lib
-library         cntsyncchecker.lib
-
-library         cntplsql.lib 
+LIBRARY         euser.lib 
+LIBRARY         pimtestclient.lib
+LIBRARY         nbcnttestlib.lib
+LIBRARY         efsrv.lib 
+LIBRARY         cntmodel.lib
+LIBRARY         cntsyncchecker.lib
+LIBRARY         cntplsql.lib 
 
 SMPSAFE

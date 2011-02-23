@@ -44,17 +44,29 @@
 
 #include "qgeomapobject.h"
 
+#include <QObject>
 #include <QList>
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoMapGroupObjectPrivate
+class QGeoMapGroupObject;
+
+class QGeoMapGroupObjectPrivate : public QObject
 {
+    Q_OBJECT
 public:
-    QGeoMapGroupObjectPrivate();
+    QGeoMapGroupObjectPrivate(QGeoMapGroupObject *p);
     ~QGeoMapGroupObjectPrivate();
 
     QList<QGeoMapObject *> children;
+
+    quint32 serial;
+
+public slots:
+    void childChangedZValue(int zValue);
+
+private:
+    QGeoMapGroupObject *q_ptr;
 };
 
 QTM_END_NAMESPACE

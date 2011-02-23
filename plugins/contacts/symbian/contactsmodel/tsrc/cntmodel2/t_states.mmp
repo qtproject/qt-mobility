@@ -16,7 +16,7 @@
 */
 
 
-target          T_States.exe
+TARGET          t_states.exe
 targettype      EXE
 CAPABILITY   	ReadUserData WriteUserData
 UID				0x1027289C
@@ -33,8 +33,8 @@ source		T_CStatesTest.cpp
 source		T_CStatesTestMain.cpp 
 
 
-library         EUSER.LIB 
-library         ESTOR.LIB 
-library         BAFL.LIB 
-library		cntmodel.lib
-library         NbCntTestLib.LIB
+LIBRARY         euser.lib 
+LIBRARY         estor.lib 
+LIBRARY         bafl.lib 
+LIBRARY		cntmodel.lib
+LIBRARY         nbcnttestlib.lib

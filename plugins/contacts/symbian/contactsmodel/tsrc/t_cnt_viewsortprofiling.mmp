@@ -17,7 +17,7 @@
 // T_Cnt_ViewSortProfiling.mmp
 //
 
-target          t_cnt_viewsortprofiling.exe
+TARGET          t_cnt_viewsortprofiling.exe
 targettype      EXE
 CAPABILITY   ReadUserData WriteUserData
 UID		0
@@ -28,6 +28,6 @@ userinclude	..
 source          T_Cnt_ViewSortProfiling.cpp
 source          t_utils2.cpp
 source          CContactViewEventQueue.cpp
-library         euser.lib efsrv.lib cntmodel.lib cnttutil.lib pimtestclient.lib
+LIBRARY         euser.lib efsrv.lib cntmodel.lib cnttutil.lib pimtestclient.lib
 
 SMPSAFE

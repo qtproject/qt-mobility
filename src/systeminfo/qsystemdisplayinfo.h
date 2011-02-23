@@ -87,6 +87,9 @@ public:
 
     QSystemDisplayInfo::BacklightState backlightStatus(int screen); //1.2
 
+
+Q_SIGNALS:
+    void orientationChanged(QSystemDisplayInfo::DisplayOrientation newOrientation);
 };
 
 

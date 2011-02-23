@@ -39,7 +39,7 @@
 ****************************************************************************/
 
 import Qt 4.7
-import QtMobility.location 1.1
+import QtMobility.location 1.2
 
 Item {
     width: 500
@@ -57,7 +57,7 @@ Item {
         zoomLevel: 7
         center: Coordinate {
                     latitude: -27
-                    longitude: 179
+                    longitude: 153
                 }
 
 

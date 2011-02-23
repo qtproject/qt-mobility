@@ -26,5 +26,5 @@ FORMS = \
     remoteselector.ui
 
 symbian {
-    TARGET.CAPABILITY = LocalServices UserEnvironment ReadUserData WriteUserData NetworkServices
+    TARGET.CAPABILITY = LocalServices UserEnvironment ReadUserData WriteUserData NetworkServices NetworkControl ReadDeviceData WriteDeviceData SwEvent
 }
