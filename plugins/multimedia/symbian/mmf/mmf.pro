@@ -22,6 +22,7 @@ INCLUDEPATH += . \
     $${SOURCE_DIR}/src/multimedia \
     $${SOURCE_DIR}/src/multimedia/audio \
     $${SOURCE_DIR}/src/multimedia/video \
+    $${SOURCE_DIR}/plugins/multimedia/symbian/mmf/inc \
     $${SOURCE_DIR}
 
 
