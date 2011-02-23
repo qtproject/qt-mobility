@@ -48,9 +48,9 @@
 #include "s60videoplayersession.h"
 #include "s60audioplayersession.h"
 #include "s60mediametadataprovider.h"
-#include "s60videowidget.h"
 #include "s60mediarecognizer.h"
-#include "s60videooverlay.h"
+#include "s60videowidgetcontrol.h"
+#include "s60videowindowcontrol.h"
 #ifdef HAS_VIDEORENDERERCONTROL_IN_VIDEOPLAYER
 #include "s60videorenderer.h"
 #endif
@@ -104,7 +104,7 @@ QMediaControl *S60MediaPlayerService::requestControl(const char *name)
         }
 #endif /* HAS_VIDEORENDERERCONTROL_IN_VIDEOPLAYER */
         else if (qstrcmp(name, QVideoWindowControl_iid) == 0) {
-            m_videoOutput = new S60VideoOverlay(this);
+            m_videoOutput = new S60VideoWindowControl(this);
         }
 
         if (m_videoOutput) {

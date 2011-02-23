@@ -70,6 +70,12 @@ platformincheaders = cntmodel.rh cntviewfindconfig.h cntviewfindconfig.inl cntvi
 # these headers come from ./cntvcard and go to APP_LAYER_PUBLIC_EXPORT_PATH
 publiccntvcardheaders = cntvcard.h
 
+# these confml  comes from ./conf and go to APP_LAYER_EXPORTS_CONFML
+publicconfmls = contactsmodel.confml
+
+# these crml comes from ./conf and go to APP_LAYER_EXPORTS_CRML
+publiccrmls = contactsmodel_10003a73.crml
+
 for(header, publicincheaders):BLD_INF_RULES.prj_exports += "./inc/$$header APP_LAYER_PUBLIC_EXPORT_PATH($$header)"
 for(header, platformincheaders):BLD_INF_RULES.prj_exports += "./inc/$$header APP_LAYER_PLATFORM_EXPORT_PATH($$header)"
 for(header, publiccntvcardheaders):BLD_INF_RULES.prj_exports += "./cntvcard/$$header APP_LAYER_PUBLIC_EXPORT_PATH($$header)"
@@ -79,4 +85,6 @@ for(header, publicincheaders):BLD_INF_RULES.prj_exports += "./inc/$$header /epoc
 for(header, platformincheaders):BLD_INF_RULES.prj_exports += "./inc/$$header /epoc32/include/$$header"
 for(header, publiccntvcardheaders):BLD_INF_RULES.prj_exports += "./cntvcard/$$header /epoc32/include/$$header"
 
+for(header, publicconfmls ):BLD_INF_RULES.prj_exports += "./conf/$$header APP_LAYER_EXPORTS_CONFML($$header)"
+for(header, publiccrmls):BLD_INF_RULES.prj_exports += "./conf/$$header APP_LAYER_EXPORTS_CRML($$header)"
 

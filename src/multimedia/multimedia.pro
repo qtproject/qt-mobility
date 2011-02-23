@@ -8,7 +8,12 @@ INCLUDEPATH+= .
 
 QT += network
 
-contains(QT_CONFIG, opengl): QT += opengl
+contains(QT_CONFIG, opengl): !symbian {
+   QT += opengl
+} else {
+   DEFINES += QT_NO_OPENGL
+}
+
 
 !static:DEFINES += QT_MAKEDLL
 DEFINES += QT_BUILD_MULTIMEDIA_LIB
@@ -158,8 +163,16 @@ maemo5 {
     LIBS += -lXv  -lX11 -lXext
 }
 
-maemo6|symbian {
+maemo6 {
     SOURCES += qgraphicsvideoitem_overlay.cpp
+}
+
+symbian {
+    contains(surfaces_s60_enabled, yes) {
+        SOURCES += qgraphicsvideoitem_symbian.cpp
+    } else {
+        SOURCES += qgraphicsvideoitem_overlay.cpp
+    }
 }
 
 !maemo*:!symbian {

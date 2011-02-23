@@ -200,7 +200,7 @@ int QSystemNetworkInfo::locationAreaCode()
   \brief The current MCC.
 
    Returns the current Mobile Country Code. In the case of a Desktop computer, an empty string is returned.
-/*/
+*/
 QString QSystemNetworkInfo::currentMobileCountryCode()
 {
    return netInfoPrivate()->currentMobileCountryCode();

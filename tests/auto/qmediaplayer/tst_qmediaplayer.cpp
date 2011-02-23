@@ -785,6 +785,27 @@ void tst_QMediaPlayer::testPlaylist()
 
     QVERIFY(player->playlist() == 0);
     QCOMPARE(player->media(), QMediaContent());
+
+    // Test when the player service encounters an invalid media, the player moves onto
+    // the next item without stopping
+    {
+        QSignalSpy ss(player, SIGNAL(stateChanged(QMediaPlayer::State)));
+        QSignalSpy ms(player, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)));
+
+        player->setPlaylist(playlist);
+        player->play();
+        QCOMPARE(ss.count(), 1);
+
+        mockService->setState(QMediaPlayer::StoppedState, QMediaPlayer::InvalidMedia);
+        QCOMPARE(player->state(), QMediaPlayer::PlayingState);
+        QCOMPARE(player->mediaStatus(), QMediaPlayer::InvalidMedia);
+        QCOMPARE(ss.count(), 1);
+        QCOMPARE(ms.count(), 1);
+
+        // NOTE: status should begin transitioning through to BufferedMedia.
+        QCOMPARE(player->media(), content2);
+    }
+
 }
 
 void tst_QMediaPlayer::testPositionPropertyWatch()

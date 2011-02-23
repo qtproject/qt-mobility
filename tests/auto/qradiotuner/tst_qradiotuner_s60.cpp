@@ -43,6 +43,12 @@
 
 #include "tst_qradiotuner_s60.h"
 
+#define QTRY_COMPARE_S60(a,e)                       \
+    for (int _i = 0; _i < 5000; _i += 100) {    \
+        if ((a) == (e)) break;                  \
+        QTest::qWait(100);                      \
+    }
+
 void tst_QRadioTuner_s60::initTestCase()
 {
     qRegisterMetaType<QRadioTuner::State>("QRadioTuner::State");
@@ -55,7 +61,8 @@ void tst_QRadioTuner_s60::initTestCase()
 
     QCOMPARE(radio->state(), QRadioTuner::StoppedState);
     radio->start();
-    QCOMPARE(radio->state(), QRadioTuner::ActiveState);
+    //QCOMPARE(radio->state(), QRadioTuner::ActiveState);
+    QTRY_COMPARE_S60(radio->state(), QRadioTuner::ActiveState);
 
     QCOMPARE(stateSpy.count(), 1);
     QCOMPARE(stateSpy.first()[0].value<QRadioTuner::State>(), QRadioTuner::ActiveState);
@@ -69,7 +76,7 @@ void tst_QRadioTuner_s60::cleanupTestCase()
     QSignalSpy stateSpy(radio, SIGNAL(stateChanged(QRadioTuner::State)));
 
     radio->stop();
-    QCOMPARE(radio->state(), QRadioTuner::StoppedState);
+    QTRY_COMPARE_S60(radio->state(), QRadioTuner::StoppedState);
     QCOMPARE(stateSpy.count(), 1);
 
     QCOMPARE(stateSpy.first()[0].value<QRadioTuner::State>(), QRadioTuner::StoppedState);
@@ -140,12 +147,12 @@ void tst_QRadioTuner_s60::testSearch()
 
 void tst_QRadioTuner_s60::testVolume()
 {
-    QVERIFY(radio->volume() == 100);
-    QSignalSpy readSignal(radio, SIGNAL(volumeChanged(int)));
-    radio->setVolume(50);
-    QTestEventLoop::instance().enterLoop(1);
     QVERIFY(radio->volume() == 50);
-    QVERIFY(readSignal.count() == 1);
+    QSignalSpy readSignal(radio, SIGNAL(volumeChanged(int)));
+    radio->setVolume(70);
+    QTestEventLoop::instance().enterLoop(1);
+    QTRY_COMPARE_S60(radio->volume() , 70);
+    QTRY_COMPARE_S60(readSignal.count() ,1);
 }
 
 void tst_QRadioTuner_s60::testSignal()

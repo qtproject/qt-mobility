@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,75 +39,34 @@
 **
 ****************************************************************************/
 
-#ifndef S60VIDEOOVERLAY_H
-#define S60VIDEOOVERLAY_H
+#ifndef S60VIDEOWINDOWDISPLAY_H
+#define S60VIDEOWINDOWDISPLAY_H
 
-#include "s60videooutputinterface.h"
-#include <QtCore/qobject.h>
-#include <qmediaplayer.h>
-#include <qvideowindowcontrol.h>
+#include "s60videodisplay.h"
 
 QT_USE_NAMESPACE
 
-class S60VideoOverlay : public QVideoWindowControl
-                      , public S60VideoOutputInterface
+class S60VideoWindowDisplay : public S60VideoDisplay
 {
-    Q_OBJECT
-
 public:
-    S60VideoOverlay(QObject *parent = 0);
-    ~S60VideoOverlay();
+    S60VideoWindowDisplay(QObject *parent);
+    ~S60VideoWindowDisplay();
 
+    // S60VideoDisplay
     WId winId() const;
+    QRect extentRect() const;
+    void setFrame(const CFbsBitmap &bitmap);
+
     void setWinId(WId id);
-
-    QRect displayRect() const;
     void setDisplayRect(const QRect &rect);
-
-    bool isFullScreen() const;
-    void setFullScreen(bool fullScreen);
-
-    QSize nativeSize() const;
-
-    Qt::AspectRatioMode aspectRatioMode() const;
-    void setAspectRatioMode(Qt::AspectRatioMode mode);
-
-    QSize customAspectRatio() const;
-    void setCustomAspectRatio(const QSize &customRatio);
-
+    QRect displayRect() const;
     void repaint();
-
-    int brightness() const;
-    void setBrightness(int brightness);
-
-    int contrast() const;
-    void setContrast(int contrast);
-
-    int hue() const;
-    void setHue(int hue);
-
-    int saturation() const;
-    void setSaturation(int saturation);
-
-    // S60VideoOutputInterface
-    WId videoWinId() const;
-    QRect videoDisplayRect() const;
-    Qt::AspectRatioMode videoAspectRatio() const;
-
-public slots:
-    void videoStateChanged(QMediaPlayer::State state);
-
-signals:
-    void windowHandleChanged();
-    void displayRectChanged();
-    void aspectRatioChanged();
 
 private:
     WId m_winId;
-    Qt::AspectRatioMode m_aspectRatioMode;
     QRect m_displayRect;
-    QSize m_aspectRatio;
-    bool m_fullScreen;
+    CFbsBitmap *m_bitmap;
 };
 
-#endif // S60VIDEOOVERLAY_H
+#endif // S60VIDEOWINDOWDISPLAY_H
+

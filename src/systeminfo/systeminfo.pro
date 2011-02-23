@@ -12,7 +12,7 @@ PUBLIC_HEADERS +=   qsysteminfo.h \
     qsystemdisplayinfo.h \
     qsystemnetworkinfo.h \
     qsystemscreensaver.h \
-    qsystemstorageinfo.h 
+    qsystemstorageinfo.h
 
 SOURCES += qsystemgeneralinfo.cpp \
     qsystemdeviceinfo.cpp \
@@ -30,8 +30,8 @@ win32:!simulator {
     contains(CONFIG,release) {
        CONFIG-=console
     }
-    SOURCES += qsysteminfo_win.cpp 
-    HEADERS += qsysteminfo_win_p.h 
+    SOURCES += qsysteminfo_win.cpp
+    HEADERS += qsysteminfo_win_p.h
 
     win32-msvc*: {
         SOURCES += qwmihelper_win.cpp
@@ -112,9 +112,9 @@ LIBS+=-lX11 -lXrandr
                      } else {
                          contains(QMAKE_MAC_SDK, "/Developer/SDKs/MacOSX10.6.sdk") {
                              SDK6="yes"
-                     }     
+                     }
                  }
-            
+
                 !isEmpty(SDK6) {
                         LIBS += -framework CoreWLAN  -framework CoreLocation
                         DEFINES += MAC_SDK_10_6
@@ -129,10 +129,19 @@ LIBS+=-lX11 -lXrandr
     symbian:{
         contains(S60_VERSION, 3.1){
             DEFINES += SYMBIAN_3_1
-        }        
+        }
 
+     contains(symbiancntsim_enabled,yes){
+            LIBS += -letelmm -letel
+            DEFINES += ETELMM_SUPPORTED
+            message("ETELMM enabled")
+            }
+
+        contains(S60_VERSION, 5.2){
+            DEFINES += SYMBIAN_3_PLATFORM
+        }
         contains(hb_symbian_enabled,yes) {
-            ## for symbian ^4 
+            ## for symbian ^4
             CONFIG += qt hb
             DEFINES += HB_SUPPORTED
             message("s60_HbKeymap enabled")
@@ -141,9 +150,9 @@ LIBS+=-lX11 -lXrandr
             LIBS += -lptiengine \
         }
 
-        INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE        
+        INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
         DEPENDPATH += symbian
-        
+
         SOURCES += qsysteminfo_s60.cpp \
             telephonyinfo_s60.cpp \
             chargingstatus_s60.cpp \
@@ -161,7 +170,7 @@ LIBS+=-lX11 -lXrandr
             -lsysutil \
             -lcentralrepository \
             -lcenrepnotifhandler \
-            -lefsrv \            
+            -lefsrv \
             -lfeatdiscovery \
             -lhwrmvibraclient \
             -lavkon \    #Used by AknLayoutUtils::PenEnabled(). Try to remove this dependency.
@@ -192,6 +201,6 @@ simulator {
     qtAddLibrary(QtMobilitySimulator)
 }
 
-HEADERS += $$PUBLIC_HEADERS 
+HEADERS += $$PUBLIC_HEADERS
 CONFIG += middleware
 include (../../features/deploy.pri)

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -42,119 +42,81 @@
 #ifndef S60VIDEOWIDGETCONTROL_H
 #define S60VIDEOWIDGETCONTROL_H
 
-#include <QtGui>
 #include <qvideowidgetcontrol.h>
 
 QT_USE_NAMESPACE
 
-/*
- * This class implements the widget used for displaying DirectScreen
- * ViewFinder with QVideoWidget on platforms that support it. Other platforms
- * are using Bitmap ViewFinder.
- */
-class S60ViewFinderWidget : public QLabel
-{
-    Q_OBJECT
+class S60VideoWidgetDisplay;
 
-public: // Constructor & Destructor
-
-    S60ViewFinderWidget(QWidget *parent = 0);
-    virtual ~S60ViewFinderWidget();
-
-public: // Methods
-
-    void reconfigureWidget(const bool isVFDirect);
-
-Q_SIGNALS: // NativePaintEvent Signals
-
-    void beginVideoWindowNativePaint();
-    void endVideoWindowNativePaint();
-
-private Q_SLOTS: // Slots to receive NativePaintEvents
-
-    void beginNativePaintEvent(const QRect&);
-    void endNativePaintEvent(const QRect&);
-
-protected: // Re-implement Paint operation to avoid drawing over viewfinder view
-
-    void paintEvent(QPaintEvent *event);
-
-private: // Data
-
-    bool m_isDirect;
-};
-
-//#############################################################################
-
-/*
- * Control for QVideoWidget viewfinder output.
- */
 class S60VideoWidgetControl : public QVideoWidgetControl
 {
     Q_OBJECT
 
-public: // Constructor & Destructor
+    /**
+     * WId of the topmost window in the application, used to calculate the
+     * absolute ordinal position of the video widget.
+     * This is used by the "window" implementation of QGraphicsVideoItem.
+     */
+    Q_PROPERTY(WId topWinId READ topWinId WRITE setTopWinId)
 
-    S60VideoWidgetControl(QObject *parent = 0);
-    virtual ~S60VideoWidgetControl();
+    /**
+     * Ordinal position of the video widget, relative to the topmost window
+     * in the application.  If both the topWinId property and the ordinalPosition
+     * property are set, the absolute ordinal position of the video widget is
+     * the sum of the topWinId ordinal position and the value of the
+     * ordinalPosition property.
+     * This is used by the "window" implementation of QGraphicsVideoItem.
+     */
+    Q_PROPERTY(int ordinalPosition READ ordinalPosition WRITE setOrdinalPosition)
 
-public: // QVideoWidgetControl
+    /**
+     * Extent of the video, relative to this video widget.
+     * This is used by the "window" implementation of QGraphicsVideoItem.
+     */
+    Q_PROPERTY(QRect extentRect READ extentRect WRITE setExtentRect)
 
+    /**
+     * Native size of video.
+     * This is used by the "window" implementation of QGraphicsVideoItem.
+     */
+    Q_PROPERTY(QSize nativeSize READ nativeSize)
+
+public:
+    S60VideoWidgetControl(QObject *parent);
+    ~S60VideoWidgetControl();
+
+public:
+    // QVideoWidgetControl
     QWidget *videoWidget();
-
-    // Aspect Ratio
     Qt::AspectRatioMode aspectRatioMode() const;
     void setAspectRatioMode(Qt::AspectRatioMode ratio);
-
-    // Full Screen
     bool isFullScreen() const;
     void setFullScreen(bool fullScreen);
-
-    // Brightness
     int brightness() const;
     void setBrightness(int brightness);
-
-    // Contrast
     int contrast() const;
     void setContrast(int contrast);
-
-    // Hue
     int hue() const;
     void setHue(int hue);
-
-    // Saturation
     int saturation() const;
     void setSaturation(int saturation);
 
-public: // Internal
+    S60VideoWidgetDisplay *display() const;
 
-    bool eventFilter(QObject *object, QEvent *event);
-    void reconfigureWidget(const bool directVF);
-    WId windowId();
+    WId topWinId() const;
+    void setTopWinId(WId id);
+    int ordinalPosition() const;
+    void setOrdinalPosition(int ordinalPosition);
+    const QRect &extentRect() const;
+    void setExtentRect(const QRect &rect);
+    QSize nativeSize() const;
 
-/*
-Q_SIGNALS: // QVideoWidgetControl
+signals:
+    void nativeSizeChanged();
 
-    void fullScreenChanged(bool fullScreen);
-    void brightnessChanged(int brightness);
-    void contrastChanged(int contrast);
-    void hueChanged(int hue);
-    void saturationChanged(int saturation);
-*/
-
-Q_SIGNALS: // Internal Signals
-
-    void widgetResized(QSize size);
-    void widgetUpdated();
-    void widgetVisible(bool isVisible);
-
-private: // Data
-
-    S60ViewFinderWidget *m_widget;
-    WId                 m_windowId;
-    Qt::AspectRatioMode m_aspectRatioMode;
-    bool                m_fullScreen;
-    bool                m_isViewFinderDirect;
+private:
+    S60VideoWidgetDisplay *m_display;
 };
 
 #endif // S60VIDEOWIDGETCONTROL_H
+

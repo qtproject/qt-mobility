@@ -90,7 +90,7 @@ _LIT(KContactBinaryFieldsParam, ":binary_fields");
 // New Column should be added after the old columns. If the column has "Not NULL" constraint
 // then Default Value should be provide. 
 // New Column should be added to CCntSqlDbStructure::InitializeContactsTableInfoL() also 
-_LIT(KContactCreateStmnt, "CREATE TABLE contact (contact_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, template_id INTEGER, type_flags INTEGER, access_count INTEGER, creation_date , last_modified , guid_string VARCHAR(255) NULL, first_name VARCHAR(255) NOT NULL DEFAULT \"\", last_name VARCHAR(255) NOT NULL DEFAULT \"\", company_name VARCHAR(255) NOT NULL DEFAULT \"\", firstname_prn VARCHAR(255) NULL, lastname_prn VARCHAR(255) NULL, companyname_prn VARCHAR(255) NULL, text_fields_header BLOB, binary_fields_header BLOB, text_fields TEXT, binary_fields BLOB, favorite_index INTEGER NULL); CREATE INDEX contact_guid_string_idx  ON contact (guid_string);");
+_LIT(KContactCreateStmnt, "CREATE TABLE contact (contact_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, template_id INTEGER, type_flags INTEGER, access_count INTEGER, creation_date , last_modified , guid_string VARCHAR(255) NULL, first_name VARCHAR(255) NULL, last_name VARCHAR(255) NULL, company_name VARCHAR(255) NULL, firstname_prn VARCHAR(255) NULL, lastname_prn VARCHAR(255) NULL, companyname_prn VARCHAR(255) NULL, text_fields_header BLOB, binary_fields_header BLOB, text_fields TEXT, binary_fields BLOB, favorite_index INTEGER NULL); CREATE INDEX contact_guid_string_idx  ON contact (guid_string);");
 // end contact table
 
 // comm-address table

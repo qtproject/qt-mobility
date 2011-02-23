@@ -569,6 +569,7 @@ call :compileTest IMMERSION immersion
 call :compileTest Symbian_CamAutoFocus_31 symbian_camera_camautofocus
 call :compileTest Symbian_ECamAdvancedSettings_Post31 symbian_camera_ecamadvsettings
 call :compileTest Symbian_DevVideoRecord symbian_camera_devvideorecord
+call :compileTest Symbian_SnapShotAPI symbian_camera_snapshot
 call :compileTest AdvancedTouchFeedback advancedtouchfeedback
 call :compileTest CHWRMHaptics chwrmhaptics
 call :compileTest MDS mds

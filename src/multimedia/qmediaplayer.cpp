@@ -159,7 +159,8 @@ void QMediaPlayerPrivate::_q_stateChanged(QMediaPlayer::State ps)
 
     if (playlist
             && ps != state && ps == QMediaPlayer::StoppedState
-            && control->mediaStatus() == QMediaPlayer::EndOfMedia) {
+            && (control->mediaStatus() == QMediaPlayer::EndOfMedia ||
+                control->mediaStatus() == QMediaPlayer::InvalidMedia)) {
         playlist->next();
         ps = control->state();
     }

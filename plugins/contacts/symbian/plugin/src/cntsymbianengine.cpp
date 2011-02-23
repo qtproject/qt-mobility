@@ -105,9 +105,7 @@ CntSymbianEngine::CntSymbianEngine(const QMap<QString, QString>& parameters, QCo
 #endif
         m_relationship     = new CntRelationship(m_dataBase->contactDatabase(), m_managerUri);
         m_displayLabel     = new CntDisplayLabel();
-#ifdef SYMBIAN_BACKEND_USE_CNTMODEL_V2
         connect(m_displayLabel, SIGNAL(displayLabelChanged()), this, SIGNAL(dataChanged()));
-#endif
     }
 }
 
@@ -456,6 +454,8 @@ bool CntSymbianEngine::addContact(QContact& contact, QContactChangeSet& changeSe
         changeSet.insertAddedContact(id);
         m_dataBase->appendContactEmitted(id);
     }
+#else
+    Q_UNUSED(id)
 #endif
     CntSymbianTransformError::transformError(err, qtError);
     return (err==KErrNone);

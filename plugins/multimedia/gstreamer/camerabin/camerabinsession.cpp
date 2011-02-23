@@ -379,30 +379,31 @@ GstElement *CameraBinSession::buildVideoSrc()
     if (m_videoInputFactory) {
         videoSrc = m_videoInputFactory->buildElement();
     } else {
-        videoSrc = gst_element_factory_make("subdevsrc", "camera_source");
+        QList<QByteArray> candidates;
+        candidates << "subdevsrc"
+                   << "v4l2camsrc"
+                   << "v4l2src"
+                   << "autovideosrc";
+        QByteArray sourceElementName;
 
-        if (!videoSrc)
-            videoSrc = gst_element_factory_make("v4l2camsrc", "camera_source");
-
-        if (!videoSrc)
-            videoSrc = gst_element_factory_make("v4l2src", "camera_source");
-
-        if (!videoSrc)
-            gst_element_factory_make("autovideosrc", "camera_source");
+        foreach(sourceElementName, candidates) {
+            videoSrc = gst_element_factory_make(sourceElementName.constData(), "camera_source");
+            if (videoSrc)
+                break;
+        }
 
         if (videoSrc && !m_inputDevice.isEmpty()) {
 #if CAMERABIN_DEBUG
             qDebug() << "set camera device" << m_inputDevice;
 #endif
-
-#ifdef Q_WS_MAEMO_6
-            if (m_inputDevice == QLatin1String("secondary"))
-                g_object_set(G_OBJECT(videoSrc), "camera-device", 1, NULL);
-            else
-                g_object_set(G_OBJECT(videoSrc), "camera-device", 0, NULL);
-#else
-            g_object_set(G_OBJECT(videoSrc), "device", m_inputDevice.toLocal8Bit().constData(), NULL);
-#endif
+            if (sourceElementName == "subdevsrc") {
+                if (m_inputDevice == QLatin1String("secondary"))
+                    g_object_set(G_OBJECT(videoSrc), "camera-device", 1, NULL);
+                else
+                    g_object_set(G_OBJECT(videoSrc), "camera-device", 0, NULL);
+            } else {
+                g_object_set(G_OBJECT(videoSrc), "device", m_inputDevice.toLocal8Bit().constData(), NULL);
+            }
         }
     }
 
