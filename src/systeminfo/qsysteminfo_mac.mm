@@ -1699,7 +1699,7 @@ void unmountCallback(DADiskRef disk, void *context)
 }
 
 QSystemStorageInfoPrivate::QSystemStorageInfoPrivate(QObject *parent)
-        : QObject(parent), daSessionThread(0),sessionThreadStarted(0), storageTimer(0)
+        : QObject(parent), storageTimer(0), daSessionThread(0),sessionThreadStarted(0)
 {
     updateVolumesMap();
     checkAvailableStorage();
