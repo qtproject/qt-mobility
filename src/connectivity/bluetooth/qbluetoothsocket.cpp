@@ -247,7 +247,6 @@ QBluetoothSocket::QBluetoothSocket(QObject *parent)
 */
 QBluetoothSocket::~QBluetoothSocket()
 {
-    qDebug() << "Socket destroyed";
     delete d_ptr;
     d_ptr = 0;
 }
@@ -313,6 +312,10 @@ void QBluetoothSocket::connectToService(const QBluetoothServiceInfo &service, Op
         d->connectToService(service.device().address(), service.serverChannel(), openMode);
     } else {
         // try doing service discovery to see if we can find the socket
+        if(service.serviceUuid().isNull()){
+            qWarning() << "No port, no PSM, and no UUID provided, unable to connect";
+            return;
+        }
         doDeviceDiscovery(service, openMode);
     }
 }

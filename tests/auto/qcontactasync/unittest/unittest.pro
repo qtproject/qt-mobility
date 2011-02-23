@@ -3,6 +3,9 @@ TEMPLATE=app
 TARGET=tst_qcontactasync
 CONFIG+=testcase
 
+# run this test on maemo but a failure is not critical
+maemo*:CONFIG += insignificant_test
+
 PLUGIN_SUBDIR=dummyplugin/plugins
 
 include(../../../../common.pri)
@@ -23,6 +26,7 @@ HEADERS += ../../qcontactmanagerdataholder.h
 # App local deployment
 symbian:QCONTACTASYNC_PLUGINS_DEPLOY.sources = contacts_maliciousplugin.dll
 wince*: QCONTACTASYNC_PLUGINS_DEPLOY.sources = $$OUTPUT_DIR/build/tests/bin/plugins/contacts/$$mobilityDeployFilename(contacts_maliciousplugin).dll
+maemo*: QCONTACTASYNC_PLUGINS_DEPLOY.sources = $$OUTPUT_DIR/build/tests/bin/plugins/contacts/lib$$mobilityDeployFilename(contacts_maliciousplugin).so
 
 QCONTACTASYNC_PLUGINS_DEPLOY.path = ./plugins/contacts
 

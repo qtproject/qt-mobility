@@ -310,15 +310,6 @@ bool QMessageFilter::operator!=(const QMessageFilter& other) const
 */
 
 /*!
-    \fn QMessageFilter::bySubject(const QString &value, QMessageDataComparator::InclusionComparator cmp)
-  
-    Returns a filter matching messages whose subject matches the 
-    substring \a value, according to \a cmp.
-
-    \sa QMessage::subject()
-*/
-
-/*!
     \fn QMessageFilter::byTimeStamp(const QDateTime &value, QMessageDataComparator::EqualityComparator cmp)
   
     Returns a filter matching messages whose timestamp matches \a value, according to \a cmp.

@@ -123,7 +123,7 @@ private:
 
 #ifdef QTM_SYMBIAN_BLUETOOTH
     void startL(const QBluetoothAddress &address);
-    void initAgent(const QBluetoothAddress &address);
+    void initAgentL(const QBluetoothAddress &address);
 #elif !defined(QT_NO_DBUS)
     QVariant readAttributeValue(QXmlStreamReader &xml);
 #endif
@@ -144,13 +144,13 @@ private:
     QBluetoothServiceDiscoveryAgent::DiscoveryMode mode;
 
 #ifdef QTM_SYMBIAN_BLUETOOTH
-    CSdpAgent *sdpAgent;
-    CSdpSearchPattern *filter;
-    CSdpAttrIdMatchList *attributes;
-    QBluetoothServiceInfo serviceInfo;
-    TSdpAttributeID currentAttributeId;
+    CSdpAgent *m_sdpAgent;
+    CSdpSearchPattern *m_filter;
+    CSdpAttrIdMatchList *m_attributes;
+    QBluetoothServiceInfo m_serviceInfo;
+    TSdpAttributeID m_currentAttributeId;
 
-    QStack<QVariant> stack;
+    QStack<QVariant> m_stack;
 #elif !defined(QT_NO_DBUS)
     OrgBluezManagerInterface *manager;
     OrgBluezAdapterInterface *adapter;

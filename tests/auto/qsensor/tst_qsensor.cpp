@@ -49,6 +49,7 @@
 
 #include "qsensor.h"
 #include "test_sensor.h"
+#include "test_sensor2.h"
 #include "test_sensorimpl.h"
 #include "test_backends.h"
 
@@ -74,6 +75,15 @@ namespace QTest {
             list << QString("%1-%2%3%4").arg(item.minimum).arg(item.maximum).arg(QString::fromWCharArray(L"\u00B1")).arg(item.accuracy);
         }
         QString ret = QString("qoutputrangelist: (%1)").arg(list.join("), ("));
+        return qstrdup(ret.toLatin1().data());
+    }
+    template<> char *toString(const QList<QByteArray> &data)
+    {
+        QStringList list;
+        foreach (const QByteArray &str, data) {
+            list << QString::fromLatin1(str);
+        }
+        QString ret = QString("QList<QByteArray>: (%1)").arg(list.join("), ("));
         return qstrdup(ret.toLatin1().data());
     }
 }
@@ -130,16 +140,25 @@ private slots:
 #endif
     }
 
+    // This test MUST be first
     void testRecursiveLoadPlugins()
     {
+        TestSensor sensor;
+
+        // This confirms that legacy static plugins can still be registered
+        QTest::ignoreMessage(QtWarningMsg, "Loaded the LegacySensorPlugin ");
+
         // The logic for the test is in test_sensorplugin.cpp (which warns and aborts if the test fails)
         (void)QSensor::sensorTypes();
+
+        // Checking that the availableSensorsChanged() signal was not emitted too many times while loading plugins.
+        QCOMPARE(sensor.sensorsChangedEmitted, 1);
     }
 
     void testTypeRegistered()
     {
         QList<QByteArray> expected;
-        expected << TestSensor::type;
+        expected << TestSensor::type << TestSensor2::type;
         QList<QByteArray> actual = QSensor::sensorTypes();
         qSort(actual); // The actual list is not in a defined order
         QCOMPARE(actual, expected);
@@ -148,7 +167,7 @@ private slots:
     void testSensorRegistered()
     {
         QList<QByteArray> expected;
-        expected << "test sensor 2" << testsensorimpl::id;
+        expected << "test sensor 2" << "test sensor 3" << testsensorimpl::id;
         QList<QByteArray> actual = QSensor::sensorsForType(TestSensor::type);
         qSort(actual); // The actual list is not in a defined order
         QCOMPARE(actual, expected);
@@ -211,6 +230,7 @@ private slots:
     void testSetIdentifierFail()
     {
         TestSensor sensor;
+        sensor.setIdentifier(testsensorimpl::id);
         sensor.connectToBackend();
         QVERIFY(sensor.isConnectedToBackend());
         QByteArray expected = testsensorimpl::id;
@@ -718,37 +738,38 @@ private slots:
         MyFactory factory;
 
         // Register a bogus backend
-        sensor.sensorsChangedEmitted = false;
+        sensor.sensorsChangedEmitted = 0;
         QSensorManager::registerBackend("a random type", "a random id", &factory);
-        QVERIFY(sensor.sensorsChangedEmitted);
+        QCOMPARE(sensor.sensorsChangedEmitted, 1);
 
         // Register it again (creates a warning)
-        sensor.sensorsChangedEmitted = false;
+        sensor.sensorsChangedEmitted = 0;
         QTest::ignoreMessage(QtWarningMsg, "A backend with type \"a random type\" and identifier \"a random id\" has already been registered! ");
         QSensorManager::registerBackend("a random type", "a random id", &factory);
-        QVERIFY(!sensor.sensorsChangedEmitted);
+        QCOMPARE(sensor.sensorsChangedEmitted, 0);
 
         // Unregister a bogus backend
-        sensor.sensorsChangedEmitted = false;
+        sensor.sensorsChangedEmitted = 0;
         QSensorManager::unregisterBackend("a random type", "a random id");
-        QVERIFY(sensor.sensorsChangedEmitted);
+        QCOMPARE(sensor.sensorsChangedEmitted, 1);
 
         // Unregister an unknown identifier
-        sensor.sensorsChangedEmitted = false;
+        sensor.sensorsChangedEmitted = 0;
         QTest::ignoreMessage(QtWarningMsg, "Identifier \"a random id\" is not registered ");
         QSensorManager::unregisterBackend(TestSensor::type, "a random id");
-        QVERIFY(!sensor.sensorsChangedEmitted);
+        QCOMPARE(sensor.sensorsChangedEmitted, 0);
 
         // Unregister for an unknown type
-        sensor.sensorsChangedEmitted = false;
+        sensor.sensorsChangedEmitted = 0;
         QTest::ignoreMessage(QtWarningMsg, "No backends of type \"foo\" are registered ");
         QSensorManager::unregisterBackend("foo", "bar");
-        QVERIFY(!sensor.sensorsChangedEmitted);
+        QCOMPARE(sensor.sensorsChangedEmitted, 0);
 
         // Make sure we've cleaned up the list of available types
         QList<QByteArray> expected;
-        expected << TestSensor::type;
+        expected << TestSensor::type << TestSensor2::type;
         QList<QByteArray> actual = QSensor::sensorTypes();
+        qSort(actual); // The actual list is not in a defined order
         QCOMPARE(actual, expected);
     }
 
@@ -844,15 +865,24 @@ private slots:
         unregister_test_backends();
     }
 
-    // This test must be LAST or it will interfere with the other tests
-    void testLoadingPlugins()
+    void testReadingBC()
     {
-        // Go ahead and load the actual plugins (as a test that plugin loading works)
-        sensors_unit_test_hook(1);
+        // QSensorReading changed in 1.0.1 due to QTMOBILITY-226
+        // This test verifies that a backend built against the 1.0.0
+        // version of qsensor.h still runs.
+        TestSensor2 sensor;
 
-        // Hmm... There's no real way to tell if this worked or not.
-        // If it doesn't work the unit test will probably crash.
-        // That's what it did on Symbian before plugin loading was fixed.
+        sensor.setProperty("doThis", "setOne");
+        sensor.start();
+        QCOMPARE(sensor.reading()->timestamp(), qtimestamp(1));
+        QCOMPARE(sensor.reading()->test(), 1);
+        sensor.stop();
+
+        sensor.setProperty("doThis", "setTwo");
+        sensor.start();
+        QCOMPARE(sensor.reading()->timestamp(), qtimestamp(2));
+        QCOMPARE(sensor.reading()->test(), 2);
+        sensor.stop();
     }
 };
 

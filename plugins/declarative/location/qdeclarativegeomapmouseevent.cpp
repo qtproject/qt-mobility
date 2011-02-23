@@ -43,9 +43,24 @@
 
 QTM_BEGIN_NAMESPACE
 
+/*!
+    \qmlclass MapMouseEvent QDeclarativeGeoMapMouseEvent
+
+    \brief The MapMouseEvent object provides information about a mouse event.
+
+    \ingroup qml-location-maps
+
+    The position of the mouse can be found via the \l x and \l y properties
+    or the \l coordinate property.
+    The button that caused the event is available via the \l button property.
+
+    \sa MapMouseArea
+*/
+
 QDeclarativeGeoMapMouseEvent::QDeclarativeGeoMapMouseEvent(QObject *parent)
     : QObject(parent),
-      accepted_(false)
+      accepted_(false),
+      coordinate_(0)
 {
 }
 
@@ -53,14 +68,20 @@ QDeclarativeGeoMapMouseEvent::~QDeclarativeGeoMapMouseEvent()
 {
 }
 
+/*!
+    \qmlproperty bool MapMouseEvent::accepted
+
+    Setting \a accepted to true prevents the mouse event from being
+    propagated to items below this item.
+
+    Generally, if the item acts on the mouse event then it should be accepted
+    so that items lower in the stacking order do not also respond to the same ev
+ent.
+*/
+
 void QDeclarativeGeoMapMouseEvent::setAccepted(bool accepted)
 {
-    if (accepted_ == accepted)
-        return;
-
     accepted_ = accepted;
-
-    emit acceptedChanged(accepted_);
 }
 
 bool QDeclarativeGeoMapMouseEvent::accepted() const
@@ -68,29 +89,47 @@ bool QDeclarativeGeoMapMouseEvent::accepted() const
     return accepted_;
 }
 
-void QDeclarativeGeoMapMouseEvent::setButtons(int buttons)
+/*!
+    \qmlproperty enumeration MapMouseEvent::button
+
+    This property holds the button that caused the event.  It can be one of:
+    \list
+    \o Qt.LeftButton
+    \o Qt.RightButton
+    \o Qt.MiddleButton
+    \endlist
+*/
+
+void QDeclarativeGeoMapMouseEvent::setButton(int button)
 {
-    if (buttons_ == buttons)
-        return;
-
-    buttons_ = buttons;
-
-    emit buttonsChanged(buttons_);
+    button_ = button;
 }
 
-int QDeclarativeGeoMapMouseEvent::buttons() const
+int QDeclarativeGeoMapMouseEvent::button() const
 {
-    return buttons_;
+    return button_;
 }
+
+/*!
+    \qmlproperty int MapMouseEvent::modifiers
+
+    This property holds the keyboard modifier flags that existed immediately
+    before the event occurred.
+
+    It contains a bitwise combination of:
+    \list
+    \o Qt.NoModifier - No modifier key is pressed.
+    \o Qt.ShiftModifier - A Shift key on the keyboard is pressed.
+    \o Qt.ControlModifier - A Ctrl key on the keyboard is pressed.
+    \o Qt.AltModifier - An Alt key on the keyboard is pressed.
+    \o Qt.MetaModifier - A Meta key on the keyboard is pressed.
+    \o Qt.KeypadModifier - A keypad button is pressed.
+    \endlist
+*/
 
 void QDeclarativeGeoMapMouseEvent::setModifiers(int modifiers)
 {
-    if (modifiers == modifiers_)
-        return;
-
     modifiers_ = modifiers;
-
-    emit modifiersChanged(modifiers_);
 }
 
 int QDeclarativeGeoMapMouseEvent::modifiers() const
@@ -98,29 +137,27 @@ int QDeclarativeGeoMapMouseEvent::modifiers() const
     return modifiers_;
 }
 
-void QDeclarativeGeoMapMouseEvent::setWasHeld(bool wasHeld)
-{
-    if (wasHeld_ == wasHeld)
-        return;
+//void QDeclarativeGeoMapMouseEvent::setWasHeld(bool wasHeld)
+//{
+//    wasHeld_ = wasHeld;
+//}
 
-    wasHeld_ = wasHeld;
+//bool QDeclarativeGeoMapMouseEvent::wasHeld() const
+//{
+//    return wasHeld_;
+//}
 
-    emit wasHeldChanged(wasHeld_);
-}
+/*!
+    \qmlproperty int MapMouseEvent::x
+    \qmlproperty int MapMouseEvent::y
 
-bool QDeclarativeGeoMapMouseEvent::wasHeld() const
-{
-    return wasHeld_;
-}
+    These properties hold the screen coordinates of the position supplied
+    by the mouse event.
+*/
 
 void QDeclarativeGeoMapMouseEvent::setX(int x)
 {
-    if (x_ == x)
-        return;
-
     x_ = x;
-
-    emit xChanged(x_);
 }
 
 int QDeclarativeGeoMapMouseEvent::x() const
@@ -130,12 +167,7 @@ int QDeclarativeGeoMapMouseEvent::x() const
 
 void QDeclarativeGeoMapMouseEvent::setY(int y)
 {
-    if (y_ == y)
-        return;
-
     y_ = y;
-
-    emit yChanged(y_);
 }
 
 int QDeclarativeGeoMapMouseEvent::y() const
@@ -143,35 +175,25 @@ int QDeclarativeGeoMapMouseEvent::y() const
     return y_;
 }
 
+/*!
+    \qmlproperty Coordinate MapMouseEvent::coordinate
+
+    This property holds the coordinate corresponding to the latitude
+    and longitude of the position on the map at which the mouse event
+    occurred.
+*/
+
 void QDeclarativeGeoMapMouseEvent::setCoordinate(QDeclarativeCoordinate *coordinate)
 {
-    if (coordinate_.coordinate() == coordinate->coordinate())
+    if (!coordinate || (coordinate == coordinate_))
         return;
 
-    coordinate_.setCoordinate(coordinate->coordinate());
-
-    emit coordinateChanged(&coordinate_);
+    coordinate_ = coordinate;
 }
 
 QDeclarativeCoordinate* QDeclarativeGeoMapMouseEvent::coordinate()
 {
-    return &coordinate_;
-}
-
-
-void QDeclarativeGeoMapMouseEvent::coordinateLatitudeChanged(double /*latitude*/)
-{
-    emit coordinateChanged(&coordinate_);
-}
-
-void QDeclarativeGeoMapMouseEvent::coordinateLongitudeChanged(double /*longitude*/)
-{
-    emit coordinateChanged(&coordinate_);
-}
-
-void QDeclarativeGeoMapMouseEvent::coordinateAltitudeChanged(double /*altitude*/)
-{
-    emit coordinateChanged(&coordinate_);
+    return coordinate_;
 }
 
 #include "moc_qdeclarativegeomapmouseevent_p.cpp"

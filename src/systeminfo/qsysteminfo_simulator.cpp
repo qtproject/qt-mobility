@@ -215,7 +215,7 @@ namespace Simulator
         foreach (const QString &name, curDrives)
             s->removeDrive(name);
         foreach (const QString &name, data.drives.keys()) {
-            s->addDrive(name, data.drives[name].type, data.drives[name].totalSpace, data.drives[name].availableSpace);
+            s->addDrive(name, data.drives[name].type, data.drives[name].totalSpace, data.drives[name].availableSpace, data.drives[name].uri);
         }
     }
 
@@ -1050,17 +1050,6 @@ bool QSystemScreenSaverPrivate::isScreenLockOn()
 {
     return true;
 }
-
-bool QSystemScreenSaverPrivate::screenSaverDelayed()
-{
-        return d->screenSaverDelayed();
-}
-
-void QSystemScreenSaverPrivate::setScreenSaverDelayed(bool on)
-{
-    return d->setScreenSaverDelayed(on);
-}
-
 
 //////////////
 ///////

@@ -18,7 +18,7 @@
 
 
 #include <cntviewfindconfig.h>
-#include <implementationproxy.h>
+#include <ecom/implementationproxy.h>
 
 // Static DLL functions
 

@@ -212,10 +212,12 @@ public:
     QSystemDisplayInfoPrivate(QSystemDisplayInfoLinuxCommonPrivate *parent = 0);
     virtual ~QSystemDisplayInfoPrivate();
     float contrast(int screen);
-    int getDPIWidth(int screen);
-    int getDPIHeight(int screen);
     int displayBrightness(int screen);
     QSystemDisplayInfo::BacklightState backlightStatus(int screen);
+Q_SIGNALS:
+    void orientationChanged(QSystemDisplayInfo::DisplayOrientation newOrientation);
+
+
 };
 
 class QSystemStorageInfoPrivate : public QSystemStorageInfoLinuxCommonPrivate
@@ -255,6 +257,9 @@ public:
 
     QSystemDeviceInfo::LockTypeFlags lockStatus();//1.2
 
+Q_SIGNALS:
+    void keyboardFlipped(bool open);
+
 protected:
 
 #if !defined(QT_NO_DBUS)
@@ -271,6 +276,7 @@ private Q_SLOTS:
     void deviceStateChanged(int device, int state);
     void touchAndKeyboardStateChanged(const QString& state);
 
+    void socketActivated(int);
 private:
     void connectNotify(const char *signal);
     void disconnectNotify(const char *signal);
@@ -286,6 +292,9 @@ private:
 
     QSystemDeviceInfo::PowerState previousPowerState;
 #endif
+     QSocketNotifier *notifier;
+     int gpioFD;
+
 };
 
 
@@ -317,6 +326,11 @@ class QSystemBatteryInfoPrivate : public QSystemBatteryInfoLinuxCommonPrivate
 public:
     QSystemBatteryInfoPrivate(QSystemBatteryInfoLinuxCommonPrivate *parent = 0);
     ~QSystemBatteryInfoPrivate();
+
+private Q_SLOTS:
+#if !defined(QT_NO_DBUS)
+    void halChangedMaemo(int,QVariantList);
+#endif
 };
 
 

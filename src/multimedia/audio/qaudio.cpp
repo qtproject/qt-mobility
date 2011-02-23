@@ -62,14 +62,14 @@ public:
 
 }
 
-/*!
+/*
     \namespace QAudio
     \brief The QAudio namespace contains enums used by the audio classes.
     \inmodule QtMultimediaKit
     \ingroup multimedia
 */
 
-/*!
+/*
     \enum QAudio::Error
 
     \value NoError         No errors have occurred
@@ -79,7 +79,7 @@ public:
     \value FatalError      A non-recoverable error has occurred, the audio device is not usable at this time.
 */
 
-/*!
+/*
     \enum QAudio::State
 
     \value ActiveState     Audio data is being processed, this state is set after start() is called
@@ -91,7 +91,7 @@ public:
                            is set after start() is called and while no audio data is available to be processed.
 */
 
-/*!
+/*
     \enum QAudio::Mode
 
     \value AudioOutput   audio output device

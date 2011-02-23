@@ -30,7 +30,7 @@
 * ============================================================================
 */
 
-target cntfindplugin.dll
+TARGET cntfindplugin.dll
 targettype plugin
 CAPABILITY   All -TCB
 
@@ -45,12 +45,12 @@ sourcepath              ../src
 source  cntfindplugin.cpp 
 
 
-start resource 101F8010.rss
-target cntfindplugin.rsc
+start resource 101f8010.rss
+TARGET cntfindplugin.rsc
 end
 
 
-library euser.lib 
-library ecom.lib
+LIBRARY euser.lib 
+LIBRARY ecom.lib
 
 SMPSAFE

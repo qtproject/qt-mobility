@@ -184,8 +184,6 @@ void QVersitContactExporterPrivate::exportContact(
             encodeOnlineAccount(detail, &generatedProperties, &processedFields);
         } else if (detail.definitionName() == QContactFamily::DefinitionName) {
             encodeFamily(detail, &generatedProperties, &processedFields);
-        } else if (detail.definitionName() == QContactDisplayLabel::DefinitionName) {
-            encodeDisplayLabel(detail, document, &removedProperties, &generatedProperties, &processedFields);
         }
 
         // run plugin handlers
@@ -220,34 +218,21 @@ void QVersitContactExporterPrivate::exportContact(
         mDetailHandler2->contactProcessed(contact, &document);
     }
 
-    ensureDocumentContainsName(contact, &document);
+    ensureDocumentContainsName(&document);
     return;
 }
 
 /*!
- * Returns true if and only if \a document has a "FN" or "N" property.
+ * Adds to \a document an empty "N" property if it doesn't already have one.
  */
-void QVersitContactExporterPrivate::ensureDocumentContainsName(const QContact& contact,
-                                                               QVersitDocument* document)
+void QVersitContactExporterPrivate::ensureDocumentContainsName(QVersitDocument* document)
 {
     bool containsN = false;
-    bool containsFN = false;
-    QString fnValue;
     foreach (const QVersitProperty& property, document->properties()) {
         const QString& name = property.name();
-        if (name == QLatin1String("FN")) {
-            containsFN = true;
-            fnValue = property.value();
-        } else if (name == QLatin1String("N")) {
+        if (name == QLatin1String("N")) {
             containsN = true;
         }
-    }
-    if (!containsFN) {
-        QVersitProperty fnProperty;
-        fnProperty.setName(QLatin1String("FN"));
-        fnValue = QVersitContactImporterPrivate::synthesizedDisplayLabel(contact);
-        fnProperty.setValue(fnValue);
-        document->addProperty(fnProperty);
     }
 
     if (!containsN) {
@@ -288,6 +273,13 @@ void QVersitContactExporterPrivate::encodeName(
                           << contactName.suffix());
         property.setValueType(QVersitProperty::CompoundType);
         *generatedProperties << property;
+    }
+
+    if (!contactName.customLabel().isEmpty()) {
+        QVersitProperty fnProperty;
+        fnProperty.setName(QLatin1String("FN"));
+        fnProperty.setValue(contactName.customLabel());
+        *generatedProperties << fnProperty;
     }
 
     *processedFields << QContactName::FieldLastName
@@ -764,29 +756,6 @@ void QVersitContactExporterPrivate::encodeFamily(
         property.setValueType(QVersitProperty::ListType);
         *generatedProperties << property;
         *processedFields << QContactFamily::FieldChildren;
-    }
-}
-
-
-/*!
- * Encode family versit property if its supported in Versit Document
- */
-void QVersitContactExporterPrivate::encodeDisplayLabel(
-    const QContactDetail &detail,
-    const QVersitDocument& document,
-    QList<QVersitProperty>* removedProperties,
-    QList<QVersitProperty>* generatedProperties,
-    QSet<QString>* processedFields)
-{
-    // Override any previous FN property
-    QVersitProperty property =
-        VersitUtils::takeProperty(document, QLatin1String("FN"), removedProperties);
-    property.setName(mPropertyMappings.value(detail.definitionName()));
-    QContactDisplayLabel displayLabel = static_cast<QContactDisplayLabel>(detail);
-    if (!displayLabel.label().isEmpty()) {
-        property.setValue(displayLabel.label());
-        *generatedProperties << property;
-        *processedFields << QContactDisplayLabel::FieldLabel;
     }
 }
 

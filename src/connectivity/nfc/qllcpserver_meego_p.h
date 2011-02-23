@@ -64,7 +64,7 @@ public:
     bool hasPendingConnections() const;
     QLlcpSocket *nextPendingConnection();
 
-    QLlcpServer::Error serverError() const;
+    QLlcpSocket::SocketError serverError() const;
 
 private:
     QLlcpServer *q_ptr;

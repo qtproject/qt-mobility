@@ -20,6 +20,7 @@ SUBDIRS += qgeocoordinate \
       qgeoaddress \
       qgeomaneuver \
       qgeomapobjectplugin \
+      qgeomapobject \
       qgeomapcircleobject \
       qgeomapgroupobject \
       qgeomappixmapobject \
@@ -42,7 +43,12 @@ SUBDIRS += qgeocoordinate \
       geoservicesgeomap \
       geoservicesgeotiledmapplugin \
       geoservicesgeotiledmap \
-      pixelindex
+      pixelindex \
+      positionplugin \
+      positionplugintest
+
+# Uses experimental qtest-qml library, cannot be enabled yet.
+# qmlmapsandnav
 
 # With MeeGo, by default use mock backend for autotesting.
 meego: {
