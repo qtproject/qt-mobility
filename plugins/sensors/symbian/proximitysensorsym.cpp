@@ -86,14 +86,11 @@ CProximitySensorSym::CProximitySensorSym(QSensor *sensor):CSensorBackendSym(sens
  */
 void CProximitySensorSym::DataReceived(CSensrvChannel &aChannel, TInt aCount, TInt /*aDataLost*/)
     {
-    for (int i = 0; i < aCount; i++)
-        {
-        TPckg<TSensrvProximityData> pkg( iData );
-        TInt ret = aChannel.GetData( pkg );
-        if (ret != KErrNone)
-            return;
-        }
+    ProcessData(aChannel, aCount, iData);
+    }
 
+void CProximitySensorSym::ProcessReading()
+    {
     // Get a lock on the reading data
     iBackendData.iReadingLock.Wait();
     iReading.setClose(iData.iProximityState == TSensrvProximityData::EProximityDiscernible);

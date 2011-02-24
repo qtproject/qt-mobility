@@ -86,16 +86,13 @@ CLightSensorSym::CLightSensorSym(QSensor *sensor):CSensorBackendSym(sensor)
  * It is implemented here to handle Light data sensor specific
  * reading data and provides conversion and utility code
  */
-void CLightSensorSym::DataReceived(CSensrvChannel &aChannel, TInt aCount, TInt aDataLost)
+void CLightSensorSym::DataReceived(CSensrvChannel &aChannel, TInt aCount, TInt /*aDataLost*/)
     {
-    for (int i = 0; i < aCount; i++)
-        {
-        TPckg<TSensrvAmbientLightLuxData> pkg( iData );
-        TInt ret = aChannel.GetData( pkg );
-        if (ret != KErrNone)
-            return;
-        }
+    ProcessData(aChannel, aCount, iData);
+    }
 
+void CLightSensorSym::ProcessReading()
+    {
     TReal lightValue = iData.iAmbientLight;
 
     // Get a lock on the reading data

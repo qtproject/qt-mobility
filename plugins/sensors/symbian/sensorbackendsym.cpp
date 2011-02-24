@@ -48,6 +48,7 @@ const TInt KDesiredReadingCount = 1;
 const TInt KMaximumReadingCount = 100;
 const TInt KDefaultBufferingPeriod = 0;
 const TInt KAccuracyInvalid = -1;
+const TInt KProcessAllReadings = false;
 
 ///// Internal Functions
 
@@ -284,7 +285,7 @@ void CSensorBackendSym::StartListeningL()
         // Before calling this api the channel should be found and opened
         iBackendData.iSensorChannel->StartDataListeningL( this,
                 KDesiredReadingCount,
-                KMaximumReadingCount,
+                m_maximumReadingCount,
                 KDefaultBufferingPeriod );
         }
     // start property listening if required         //put it above
@@ -605,6 +606,14 @@ TInt CSensorBackendSym::Close()
  */
 void CSensorBackendSym::start()
     {
+    m_maximumReadingCount = KMaximumReadingCount;
+    QVariant var = sensor()->property("maximumReadingCount");
+    if (var.isValid())
+        m_maximumReadingCount = var.toInt();
+    m_processAllReadings = KProcessAllReadings;
+    var = sensor()->property("processAllReadings");
+    if (var.isValid())
+        m_processAllReadings = var.toBool();
     // Start listening to sensor, after this call DataRecieved will be called
     // when data is available
     TRAPD(err,StartListeningL())

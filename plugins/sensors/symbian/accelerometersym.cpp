@@ -150,14 +150,11 @@ void CAccelerometerSensorSym::start()
  */
 void CAccelerometerSensorSym::DataReceived(CSensrvChannel &aChannel, TInt aCount, TInt /*aDataLost*/)
     {
-    for (int i = 0; i < aCount; i++)
-        {
-        TPckg<TSensrvAccelerometerAxisData> pkg( iData );
-        TInt ret = aChannel.GetData( pkg );
-        if (ret != KErrNone)
-            return;
-        }
+    ProcessData(aChannel, aCount, iData);
+    }
 
+void CAccelerometerSensorSym::ProcessReading()
+    {
     TReal x = iData.iAxisX;
     TReal y = iData.iAxisY;
     TReal z = iData.iAxisZ;

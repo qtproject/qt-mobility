@@ -85,14 +85,11 @@ CAmbientLightSensorSym::CAmbientLightSensorSym(QSensor *sensor):CSensorBackendSy
  */
 void CAmbientLightSensorSym::DataReceived(CSensrvChannel &aChannel, TInt aCount, TInt /*aDataLost*/)
     {
-    for (int i = 0; i < aCount; i++)
-        {
-        TPckg<TSensrvAmbientLightData> pkg( iData );
-        TInt ret = aChannel.GetData( pkg );
-        if (ret != KErrNone)
-            return;
-        }
+    ProcessData(aChannel, aCount, iData);
+    }
 
+void CAmbientLightSensorSym::ProcessReading()
+    {
     // Get a lock on the reading data
     iBackendData.iReadingLock.Wait();
     switch (iData.iAmbientLight)

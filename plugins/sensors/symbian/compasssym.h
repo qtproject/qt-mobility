@@ -96,7 +96,8 @@ private:
      * It is implemented here to handle compass sensor specific
      * reading data and provides conversion and utility code
      */
-    void DataReceived(CSensrvChannel &aChannel, TInt aCount, TInt /*aDataLost*/);
+    void DataReceived(CSensrvChannel &aChannel, TInt aCount, TInt aDataLost);
+    void ProcessReading();
 
     /**
      * Second phase constructor

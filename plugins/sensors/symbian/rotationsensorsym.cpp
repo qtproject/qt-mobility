@@ -90,14 +90,11 @@ CRotationSensorSym::CRotationSensorSym(QSensor *sensor):CSensorBackendSym(sensor
  */
 void CRotationSensorSym::DataReceived(CSensrvChannel &aChannel, TInt aCount, TInt /*aDataLost*/)
     {
-    for (int i = 0; i < aCount; i++)
-        {
-        TPckg<TSensrvRotationData> pkg( iData );
-        TInt ret = aChannel.GetData( pkg );
-        if (ret != KErrNone)
-            return;
-        }
+    ProcessData(aChannel, aCount, iData);
+    }
 
+void CRotationSensorSym::ProcessReading()
+    {
     // Get a lock on the reading data
     iBackendData.iReadingLock.Wait();
     // To Do verify with ds and ramsay

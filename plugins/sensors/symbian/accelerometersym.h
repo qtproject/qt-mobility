@@ -84,6 +84,7 @@ private:
      * reading data and provides conversion and utility code
      */
     void DataReceived(CSensrvChannel &aChannel, TInt aCount, TInt aDataLost);
+    void ProcessReading();
 
     /**
      * Second phase constructor

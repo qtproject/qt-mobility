@@ -86,14 +86,11 @@ COrientationSensorSym::COrientationSensorSym(QSensor *sensor):CSensorBackendSym(
  */
 void COrientationSensorSym::DataReceived(CSensrvChannel &aChannel, TInt aCount, TInt /*aDataLost*/)
     {
-    for (int i = 0; i < aCount; i++)
-        {
-        TPckg<TSensrvOrientationData> pkg( iData );
-        TInt ret = aChannel.GetData( pkg );
-        if (ret != KErrNone)
-            return;
-        }
+    ProcessData(aChannel, aCount, iData);
+    }
 
+void COrientationSensorSym::ProcessReading()
+    {
     // Get a lock on the reading data
     iBackendData.iReadingLock.Wait();
     //Mapping device orientation enum values to Qt Orientation enum values

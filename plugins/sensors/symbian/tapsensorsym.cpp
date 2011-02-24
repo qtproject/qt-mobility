@@ -83,14 +83,11 @@ CTapSensorSym::CTapSensorSym(QSensor *sensor):CSensorBackendSym(sensor)
  */
 void CTapSensorSym::DataReceived(CSensrvChannel &aChannel, TInt aCount, TInt /*aDataLost*/)
     {
-    for (int i = 0; i < aCount; i++)
-        {
-        TPckg<TSensrvTappingData> pkg( iData );
-        TInt ret = aChannel.GetData( pkg );
-        if (ret != KErrNone)
-            return;
-        }
+    ProcessData(aChannel, aCount, iData);
+    }
 
+void CTapSensorSym::ProcessReading()
+    {
     // Get a lock on the reading data
     iBackendData.iReadingLock.Wait();
     //Mapping device tap sensor enum values to Qt tap sensor enum values

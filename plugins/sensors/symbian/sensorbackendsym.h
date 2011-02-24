@@ -89,6 +89,7 @@ class CSensorBackendSym : public CBase, public QSensorBackend, public MSensrvDat
          * DataReceived is called by the Sensor Server when ever data is available in the
          * sensor buffer
          */
+        // implemnented by sub-classes
         //void  DataReceived(CSensrvChannel &aChannel, TInt aCount, TInt aDataLost);
 
         /**
@@ -223,11 +224,54 @@ class CSensorBackendSym : public CBase, public QSensorBackend, public MSensrvDat
          */
         void StopListeningL();
 
+        /*
+         * ProcessReading is used to process one sensor reading
+         * It is implemented the the sensor concrete class and handles sensor specific
+         * reading data and provides conversion and utility code
+         */
+        virtual void ProcessReading() = 0;
+
+        /*
+         * ProcessData is called by the sub-clases to handle the conditional fetching logic
+         * It either processes all arriving readings or just the last one. It calls
+         * ProcessReading to do the actual processing
+         */
+        template <typename T>
+        void ProcessData(CSensrvChannel &aChannel, TInt aCount, T &iData)
+            {
+            int loopMax = aCount;
+            if (!m_processAllReadings)
+                {
+                for (int i = 0; i < aCount; i++)
+                    {
+                    TPckg<T> pkg( iData );
+                    TInt ret = aChannel.GetData( pkg );
+                    if (ret != KErrNone)
+                        return;
+                    }
+                loopMax = 1;
+                }
+
+            for (int i = 0; i < loopMax; i++)
+                {
+                if (m_processAllReadings)
+                    {
+                    TPckg<T> pkg( iData );
+                    TInt ret = aChannel.GetData( pkg );
+                    if (ret != KErrNone)
+                        return;
+                    }
+                ProcessReading();
+                }
+            }
+
     private:
         TSensrvPropertyType propertyType(TSensrvPropertyId, TInt&);
 
     protected:
         TSensorBackendDataSym iBackendData;
+        int m_maximumReadingCount;
+        bool m_processAllReadings;
     };
 
 #endif //SENSORBACKENDSYM_H

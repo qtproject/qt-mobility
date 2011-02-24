@@ -95,6 +95,7 @@ private:
      * reading data and provides conversion and utility code
      */
     void DataReceived(CSensrvChannel &aChannel, TInt aCount, TInt aDataLost);
+    void ProcessReading();
 
     /**
      * HandlePropertyChange is called from backend, to indicate a change in property
