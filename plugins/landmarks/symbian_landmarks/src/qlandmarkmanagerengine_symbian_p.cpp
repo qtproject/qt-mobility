@@ -1482,12 +1482,7 @@ QLandmarkManager::SupportLevel LandmarkManagerEngineSymbianPrivate::filterSuppor
 
             break;
         }
-        
-        if ( opType == QLandmarkAttributeFilter::AndOperation ) 
-            {
-            break;
-            }
-			
+
         if (keyList.size() > 0) {
 
             //if any of the attribute matchflag is set to MatchCaseSensitive, then return KErrNotSupported 
@@ -3342,13 +3337,7 @@ CPosLmSearchCriteria* LandmarkManagerEngineSymbianPrivate::getSearchCriteriaL(
             || QSysInfo::s60Version() == QSysInfo::SV_S60_5_0)) {
             User::Leave(KErrNotSupported);
         }
-        
-        if ( opType == QLandmarkAttributeFilter::AndOperation )
-            {
-            // Attribute filter doesn't support 'AND" operation
-            User::Leave(KErrNotSupported);
-            }
-        
+
         QStringList keyList = attributeFilter.attributeKeys();
         for (int i = 0; i < keyList.size(); ++i) {
 
