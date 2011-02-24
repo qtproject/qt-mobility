@@ -245,6 +245,11 @@ that is received by \c ClientApplication.
 Before running the example, make sure you have done both \tt make
 and \tt {make install}.
 
+\section2 QML Elements
+
+For details on the QML support provided for the Location API see the documentation for the
+\l {Location QML Plugin}.
+
 \section2 Examples
 
 \section3 \bold{Flickr Demo}
@@ -260,9 +265,25 @@ weather for the current location.
 The \l{lightmaps}{Light Maps demo} uses Location display a street map for
 the current location.
 
+\section2 QML Example
+
+Examples using the Location QML Plugin demonstrate how to use the QML/C++
+bindings to easily access the Location API features.
+
+\section3 \bold{Flickr QML Example}
+The Flickr example now in the form of a QML application. This also displays
+in the form of a mobile application.
+
+
 \section2 Location classes
 
 \annotatedlist location
+
+
+
+
+
+
 
 \target Landmarks
 \section1 Landmarks
