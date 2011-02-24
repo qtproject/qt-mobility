@@ -2004,7 +2004,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactOnlineAccount::SubTypeVideoShare, "VideoShare")
     indicating this online account is for the AIM protocol.
     \sa protocol(), setProtocol()
  */
-Q_DEFINE_LATIN1_CONSTANT(QContactOnlineAccount::ProtocolAim, "Aim");
+Q_DEFINE_LATIN1_CONSTANT(QContactOnlineAccount::ProtocolAim, "aim");
 
 /*!
    \variable QContactOnlineAccount::ProtocolIcq
@@ -2013,7 +2013,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactOnlineAccount::ProtocolAim, "Aim");
     indicating this online account is for the ICQ protocol.
     \sa protocol(), setProtocol()
  */
-Q_DEFINE_LATIN1_CONSTANT(QContactOnlineAccount::ProtocolIcq, "Icq");
+Q_DEFINE_LATIN1_CONSTANT(QContactOnlineAccount::ProtocolIcq, "icq");
 
 /*!
    \variable QContactOnlineAccount::ProtocolIrc
@@ -2022,7 +2022,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactOnlineAccount::ProtocolIcq, "Icq");
     indicating this online account is for the IRC protocol.
     \sa protocol(), setProtocol()
  */
-Q_DEFINE_LATIN1_CONSTANT(QContactOnlineAccount::ProtocolIrc, "Irc");
+Q_DEFINE_LATIN1_CONSTANT(QContactOnlineAccount::ProtocolIrc, "irc");
 
 /*!
    \variable QContactOnlineAccount::ProtocolJabber
@@ -2031,7 +2031,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactOnlineAccount::ProtocolIrc, "Irc");
     indicating this online account is for the Jabber protocol.
     \sa protocol(), setProtocol()
  */
-Q_DEFINE_LATIN1_CONSTANT(QContactOnlineAccount::ProtocolJabber, "Jabber");
+Q_DEFINE_LATIN1_CONSTANT(QContactOnlineAccount::ProtocolJabber, "jabber");
 
 /*!
    \variable QContactOnlineAccount::ProtocolMsn
@@ -2040,7 +2040,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactOnlineAccount::ProtocolJabber, "Jabber");
     indicating this online account is for the MSN protocol.
     \sa protocol(), setProtocol()
  */
-Q_DEFINE_LATIN1_CONSTANT(QContactOnlineAccount::ProtocolMsn, "Msn");
+Q_DEFINE_LATIN1_CONSTANT(QContactOnlineAccount::ProtocolMsn, "msn");
 
 /*!
    \variable QContactOnlineAccount::ProtocolQq
@@ -2049,7 +2049,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactOnlineAccount::ProtocolMsn, "Msn");
     indicating this online account is for the Tecent QQ protocol.
     \sa protocol(), setProtocol()
  */
-Q_DEFINE_LATIN1_CONSTANT(QContactOnlineAccount::ProtocolQq, "Qq");
+Q_DEFINE_LATIN1_CONSTANT(QContactOnlineAccount::ProtocolQq, "qq");
 
 /*!
    \variable QContactOnlineAccount::ProtocolSkype
@@ -2058,7 +2058,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactOnlineAccount::ProtocolQq, "Qq");
     indicating this online account is for the Skype protocol.
     \sa protocol(), setProtocol()
  */
-Q_DEFINE_LATIN1_CONSTANT(QContactOnlineAccount::ProtocolSkype, "Skype");
+Q_DEFINE_LATIN1_CONSTANT(QContactOnlineAccount::ProtocolSkype, "skype");
 
 /*!
    \variable QContactOnlineAccount::ProtocolYahoo
@@ -2067,7 +2067,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactOnlineAccount::ProtocolSkype, "Skype");
     indicating this online account is for the Yahoo chat protocol.
     \sa protocol(), setProtocol()
  */
-Q_DEFINE_LATIN1_CONSTANT(QContactOnlineAccount::ProtocolYahoo, "Yahoo");
+Q_DEFINE_LATIN1_CONSTANT(QContactOnlineAccount::ProtocolYahoo, "yahoo");
 
 
 /*!

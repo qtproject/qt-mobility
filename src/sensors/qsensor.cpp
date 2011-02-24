@@ -60,6 +60,11 @@ QTM_BEGIN_NAMESPACE
 
     Note that sensor timestamps from different sensors may not be directly
     comparable (as they may choose different fixed points for their reference).
+
+    \bold{Note that some platforms do not deliver timestamps correctly}.
+    Applications should be prepared for occasional issues that cause timestamps to jump
+    forwards or backwards. The \l{sensors-api.html#platform-notes}{platform notes} have
+    more details.
 */
 
 /*!
@@ -181,6 +186,8 @@ static int qoutputrangelist_id = qRegisterMetaType<QtMobility::qoutputrangelist>
     \endlist
 
     The sensor data is delivered via QSensorData and its sub-classes.
+
+    \sa QSensorReading
 */
 
 /*!
@@ -472,7 +479,7 @@ bool QSensor::start()
 */
 void QSensor::stop()
 {
-    if (!isActive() || !isConnectedToBackend())
+    if (!isConnectedToBackend() || !isActive())
         return;
     d->active = false;
     d->backend->stop();

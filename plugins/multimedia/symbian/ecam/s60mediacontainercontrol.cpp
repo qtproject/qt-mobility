@@ -51,11 +51,7 @@ S60MediaContainerControl::S60MediaContainerControl(QObject *parent):
 S60MediaContainerControl::S60MediaContainerControl(S60VideoCaptureSession *session, QObject *parent):
     QMediaContainerControl(parent)
 {
-    if (session)
-        m_session = session;
-    else
-        Q_ASSERT(true);
-    // From now on it is safe to assume session exists
+    m_session = session;
 
     // Set default video container
     m_supportedContainers = m_session->supportedVideoContainers();
@@ -68,7 +64,7 @@ S60MediaContainerControl::S60MediaContainerControl(S60VideoCaptureSession *sessi
         else
             setContainerMimeType(m_supportedContainers[0]); // First as default
     } else {
-        m_session->setError(KErrGeneral, QString("No supported video containers found."));
+        m_session->setError(KErrGeneral, tr("No supported video containers found."));
     }
 }
 

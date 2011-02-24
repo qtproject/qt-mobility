@@ -43,60 +43,131 @@
 
 #include "manager_interface.h"
 #include "meego/adapter_interface_p.h"
-#include "accessrequestor_adaptor.h"
-#include "llcprequestor_adaptor.h"
+#include "meego/socketrequestor_p.h"
+
+#include <QtCore/QSocketNotifier>
+#include <QtCore/QAtomicInt>
+
+#include <errno.h>
+#include <signal.h>
 
 using namespace com::nokia::nfc;
 
 QTM_BEGIN_NAMESPACE
 
-static int requestorId = 0;
-static const char * const requestorBasePath = "/com/nokia/nfc/llcprequestor/";
+static void qt_ignore_sigpipe()
+{
+    // Set to ignore SIGPIPE once only.
+    static QBasicAtomicInt atom = Q_BASIC_ATOMIC_INITIALIZER(0);
+    if (atom.testAndSetRelaxed(0, 1)) {
+        struct sigaction noaction;
+        memset(&noaction, 0, sizeof(noaction));
+        noaction.sa_handler = SIG_IGN;
+        ::sigaction(SIGPIPE, &noaction, 0);
+    }
+}
+
+static QAtomicInt requestorId = 0;
+static const char * const requestorBasePath = "/com/nokia/nfc/llcpclient/";
 
 QLlcpSocketPrivate::QLlcpSocketPrivate(QLlcpSocket *q)
 :   q_ptr(q),
-    m_connection(QDBusConnection::connectToBus(QDBusConnection::SystemBus, QUuid::createUuid()))
+    m_connection(QDBusConnection::connectToBus(QDBusConnection::SystemBus, QUuid::createUuid())),
+    m_socketRequestor(0), m_readNotifier(0),
+    m_state(QLlcpSocket::UnconnectedState), m_error(QLlcpSocket::UnknownSocketError)
 {
+    qt_ignore_sigpipe();
+}
+
+QLlcpSocketPrivate::QLlcpSocketPrivate(const QDBusConnection &connection, int readFd, int writeFd)
+:   q_ptr(0), m_connection(connection), m_socketRequestor(0),
+    m_readFd(readFd), m_writeFd(writeFd),
+    m_state(QLlcpSocket::ConnectedState), m_error(QLlcpSocket::UnknownSocketError)
+{
+    qt_ignore_sigpipe();
+
+    m_readNotifier = new QSocketNotifier(m_readFd, QSocketNotifier::Read, this);
+    connect(m_readNotifier, SIGNAL(activated(int)), this, SLOT(_q_readNotify()));
+}
+
+QLlcpSocketPrivate::~QLlcpSocketPrivate()
+{
+    delete m_readNotifier;
 }
 
 void QLlcpSocketPrivate::connectToService(QNearFieldTarget *target, const QString &serviceUri)
 {
-    qDebug() << Q_FUNC_INFO << target << serviceUri;
+    Q_UNUSED(target);
 
-    const QString requestorPath = QLatin1String(requestorBasePath) + QString::number(++requestorId);
+    Q_Q(QLlcpSocket);
 
-    // change state to waiting for touch
+    m_state = QLlcpSocket::ConnectingState;
+    emit q->stateChanged(m_state);
 
-    m_accessRequestor = new AccessRequestorAdaptor(this);
-    m_llcpRequestor = new LLCPRequestorAdaptor(this);
-
-    if (!QDBusConnection::sessionBus().registerObject(requestorPath, this)) {
-        qDebug() << "failed to register dbus service";
-        delete m_llcpRequestor;
-        m_llcpRequestor = 0;
-        delete m_accessRequestor;
-        m_accessRequestor = 0;
-
-        // emit error
-
-        // change state to Unconnected
-        return;
+    if (m_requestorPath.isEmpty()) {
+        m_requestorPath = QLatin1String(requestorBasePath) +
+                          QString::number(requestorId.fetchAndAddOrdered(1));
     }
-
-    qDebug() << Q_FUNC_INFO << "registered object at" << requestorPath;
-    QString accessKind(QLatin1String("device.llcp.co.client:") + serviceUri);
 
     Manager manager(QLatin1String("com.nokia.nfc"), QLatin1String("/"), m_connection);
     QDBusObjectPath defaultAdapterPath = manager.DefaultAdapter();
 
-    Adapter adapter(QLatin1String("com.nokia.nfc"), defaultAdapterPath.path(), m_connection);
+    if (!m_socketRequestor) {
+        m_socketRequestor = new SocketRequestor(defaultAdapterPath.path(), this);
 
-    qDebug() << Q_FUNC_INFO << "requesting access";
-    adapter.RequestAccess(QDBusObjectPath(requestorPath), accessKind);
+        connect(m_socketRequestor, SIGNAL(accessFailed(QDBusObjectPath,QString)),
+                this, SLOT(AccessFailed(QDBusObjectPath,QString)));
+        connect(m_socketRequestor, SIGNAL(accessGranted(QDBusObjectPath,QString)),
+                this, SLOT(AccessGranted(QDBusObjectPath,QString)));
+        connect(m_socketRequestor, SIGNAL(accept(QDBusVariant,QDBusVariant,int,int)),
+                this, SLOT(Accept(QDBusVariant,QDBusVariant,int,int)));
+        connect(m_socketRequestor, SIGNAL(connect(QDBusVariant,QDBusVariant,int,int)),
+                this, SLOT(Connect(QDBusVariant,QDBusVariant,int,int)));
+        connect(m_socketRequestor, SIGNAL(socket(QDBusVariant,QDBusVariant,int,int)),
+                this, SLOT(Socket(QDBusVariant,QDBusVariant,int,int)));
+    }
+
+    if (m_socketRequestor) {
+        m_serviceUri = serviceUri;
+
+        QString accessKind(QLatin1String("device.llcp.co.client:") + serviceUri);
+
+        m_socketRequestor->requestAccess(m_requestorPath, accessKind);
+    } else {
+        m_error = QLlcpSocket::UnknownSocketError;
+        emit q->error();
+
+        m_state = QLlcpSocket::UnconnectedState;
+        emit q->stateChanged(m_state);
+    }
 }
 
 void QLlcpSocketPrivate::disconnectFromService()
 {
+    Q_Q(QLlcpSocket);
+
+    m_state = QLlcpSocket::ClosingState;
+    emit q->stateChanged(m_state);
+
+    delete m_readNotifier;
+    m_readNotifier = 0;
+    ::close(m_readFd);
+    m_readFd = -1;
+    ::close(m_writeFd);
+    m_writeFd = -1;
+
+    if (m_socketRequestor) {
+        QString accessKind(QLatin1String("device.llcp.co.client:") + m_serviceUri);
+
+        Manager manager(QLatin1String("com.nokia.nfc"), QLatin1String("/"), m_connection);
+        QDBusObjectPath defaultAdapterPath = manager.DefaultAdapter();
+
+        m_socketRequestor->cancelAccessRequest(m_requestorPath, accessKind);
+    }
+
+    m_state = QLlcpSocket::UnconnectedState;
+    emit q->stateChanged(m_state);
+    emit q->disconnected();
 }
 
 bool QLlcpSocketPrivate::bind(quint8 port)
@@ -181,43 +252,51 @@ qint64 QLlcpSocketPrivate::writeDatagram(const QByteArray &datagram,
 
 QLlcpSocket::SocketError QLlcpSocketPrivate::error() const
 {
-    qDebug() << Q_FUNC_INFO << "is unimplemented";
-
-    return QLlcpSocket::UnknownSocketError;
+    return m_error;
 }
 
 QLlcpSocket::SocketState QLlcpSocketPrivate::state() const
 {
-    qDebug() << Q_FUNC_INFO << "is unimplemented";
-
-    return QLlcpSocket::UnconnectedState;
+    return m_state;
 }
 
 qint64 QLlcpSocketPrivate::readData(char *data, qint64 maxlen)
 {
-    Q_UNUSED(data);
-    Q_UNUSED(maxlen);
+    if (!buffer.isEmpty()) {
+        int i = buffer.read(data, maxlen);
+        return i;
+    }
 
-    qDebug() << Q_FUNC_INFO << "is unimplemented";
-
-    return -1;
+    return 0;
 }
 
 qint64 QLlcpSocketPrivate::writeData(const char *data, qint64 len)
 {
-    Q_UNUSED(data);
-    Q_UNUSED(len);
+    Q_Q(QLlcpSocket);
 
-    qDebug() << Q_FUNC_INFO << "is unimplemented";
+    qDebug() << Q_FUNC_INFO;
 
-    return -1;
+    ssize_t wrote = ::write(m_writeFd, data, len);
+    if (wrote == -1) {
+        m_error = QLlcpSocket::RemoteHostClosedError;
+        emit q->error(m_error);
+        q->disconnectFromService();
+        return -1;
+    } else {
+        emit q->bytesWritten(wrote);
+
+        return wrote;
+    }
 }
 
-bool QLlcpSocketPrivate::bytesAvailable() const
+qint64 QLlcpSocketPrivate::bytesAvailable() const
 {
-    qDebug() << Q_FUNC_INFO << "is unimplemented";
+    return buffer.size();
+}
 
-    return 0;
+bool QLlcpSocketPrivate::canReadLine() const
+{
+    return buffer.canReadLine();
 }
 
 bool QLlcpSocketPrivate::waitForReadyRead(int msecs)
@@ -258,31 +337,84 @@ bool QLlcpSocketPrivate::waitForDisconnected(int msecs)
 
 void QLlcpSocketPrivate::AccessFailed(const QDBusObjectPath &targetPath, const QString &error)
 {
-    qDebug() << Q_FUNC_INFO << "is unimplemented";
+    Q_UNUSED(targetPath);
+    Q_UNUSED(error);
+
+    Q_Q(QLlcpSocket);
+
+    m_error = QLlcpSocket::UnknownSocketError;
+    emit q->error();
+
+    m_state = QLlcpSocket::UnconnectedState;
+    emit q->stateChanged(m_state);
 }
 
 void QLlcpSocketPrivate::AccessGranted(const QDBusObjectPath &targetPath,
-                                       const QStringList &accessKind)
+                                       const QString &accessKind)
 {
-    qDebug() << Q_FUNC_INFO << "is unimplemented";
+    Q_UNUSED(targetPath);
+    Q_UNUSED(accessKind);
 }
 
-void QLlcpSocketPrivate::Accept(const QDBusObjectPath &targetPath, const QDBusVariant &lsap,
-                                const QDBusVariant &rsap, int fd)
+void QLlcpSocketPrivate::Accept(const QDBusVariant &lsap, const QDBusVariant &rsap,
+                                int readFd, int writeFd)
 {
-    qDebug() << Q_FUNC_INFO << "is unimplemented";
+    Q_UNUSED(lsap);
+    Q_UNUSED(rsap);
+    Q_UNUSED(readFd);
+    Q_UNUSED(writeFd);
 }
 
-void QLlcpSocketPrivate::Connect(const QDBusObjectPath &targetPath, const QDBusVariant &lsap,
-                                 const QDBusVariant &rsap, int fd)
+void QLlcpSocketPrivate::Connect(const QDBusVariant &lsap, const QDBusVariant &rsap,
+                                 int readFd, int writeFd)
 {
-    qDebug() << Q_FUNC_INFO << "is unimplemented";
+    Q_UNUSED(lsap);
+    Q_UNUSED(rsap);
+
+    m_readFd = readFd;
+    m_writeFd = writeFd;
+
+    m_readNotifier = new QSocketNotifier(m_readFd, QSocketNotifier::Read, this);
+    connect(m_readNotifier, SIGNAL(activated(int)), this, SLOT(_q_readNotify()));
+
+    Q_Q(QLlcpSocket);
+
+    q->setOpenMode(QIODevice::ReadWrite);
+
+    m_state = QLlcpSocket::ConnectedState;
+    emit q->stateChanged(m_state);
+    emit q->connected();
 }
 
-void QLlcpSocketPrivate::Socket(const QDBusObjectPath &targetPath, const QDBusVariant &lsap,
-                                const QDBusVariant &rsap, int fd)
+void QLlcpSocketPrivate::Socket(const QDBusVariant &lsap, const QDBusVariant &rsap,
+                                int readFd, int writeFd)
 {
-    qDebug() << Q_FUNC_INFO << "is unimplemented";
+    Q_UNUSED(lsap);
+    Q_UNUSED(rsap);
+    Q_UNUSED(readFd);
+    Q_UNUSED(writeFd);
+}
+
+void QLlcpSocketPrivate::_q_readNotify()
+{
+    Q_Q(QLlcpSocket);
+
+    char *writePointer = buffer.reserve(QPRIVATELINEARBUFFER_BUFFERSIZE);
+    int readFromDevice =
+        ::read(m_readFd, writePointer, QPRIVATELINEARBUFFER_BUFFERSIZE);
+
+    if (readFromDevice <= 0) {
+        m_readNotifier->setEnabled(false);
+
+        m_error = QLlcpSocket::RemoteHostClosedError;
+        emit q->error(m_error);
+
+        q->disconnectFromService();
+    } else if (readFromDevice > 0) {
+        buffer.chop(QPRIVATELINEARBUFFER_BUFFERSIZE - (readFromDevice < 0 ? 0 : readFromDevice));
+
+        emit q->readyRead();
+    }
 }
 
 #include "moc_qllcpsocket_meego_p.cpp"

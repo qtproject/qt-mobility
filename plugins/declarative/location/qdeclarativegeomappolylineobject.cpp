@@ -259,7 +259,7 @@ void QDeclarativeGeoMapPolylineObject::removeCoordinate(QDeclarativeCoordinate* 
 }
 
 /*!
-    \qmlproperty int MapPolyline::zValue
+    \qmlproperty int MapPolyline::z
 
     This property holds the z-value of the polyline.
 

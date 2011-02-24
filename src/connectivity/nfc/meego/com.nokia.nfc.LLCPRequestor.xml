@@ -2,22 +2,22 @@
 <node name="/foo">
     <interface name="com.nokia.nfc.LLCPRequestor">
         <method name="Accept">
-            <arg type="o" direction="in"/>
             <arg type="v" direction="in"/>
             <arg type="v" direction="in"/>
-            <arg type="i" direction="in"/>
+            <arg type="h" direction="in"/>
+            <arg type="h" direction="in"/>
         </method>
         <method name="Connect">
-            <arg type="o" direction="in"/>
             <arg type="v" direction="in"/>
             <arg type="v" direction="in"/>
-            <arg type="i" direction="in"/>
+            <arg type="h" direction="in"/>
+            <arg type="h" direction="in"/>
         </method>
         <method name="Socket">
-            <arg type="o" direction="in"/>
             <arg type="v" direction="in"/>
             <arg type="v" direction="in"/>
-            <arg type="i" direction="in"/>
+            <arg type="h" direction="in"/>
+            <arg type="h" direction="in"/>
         </method>
     </interface>
 </node>

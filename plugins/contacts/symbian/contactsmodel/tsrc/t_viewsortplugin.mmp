@@ -24,10 +24,10 @@ SOURCEPATH	.
 SOURCE			T_ViewSortPlugin.cpp
 APP_LAYER_SYSTEMINCLUDE_SYMBIAN
 
-library  euser.lib efsrv.lib estor.lib cntmodel.lib
+LIBRARY  euser.lib efsrv.lib estor.lib cntmodel.lib
 
-library  cntview.lib	//For CContactFindView
-library  bafl.lib		//For CPtrC16Array
+LIBRARY  cntview.lib	//For CContactFindView
+LIBRARY  bafl.lib		//For CPtrC16Array
 
 LIBRARY pimtestclient.lib
 

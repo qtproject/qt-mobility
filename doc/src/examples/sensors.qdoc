@@ -30,7 +30,8 @@
     \title Grue Plugin
 
     The Grue plugin example demonstrates the creation of a new sensor type,
-    a sensor backend and plugin for the sensors library.
+    a sensor backend and plugin for the sensors library. Related to this example
+    is the \l{sensors/grueapp}{Grue Application} example.
 
     \tableofcontents
 
@@ -49,7 +50,7 @@
     to adventurers, particularly if they are going into dark places as this is
     where Grues live.
 
-    The interface is a simple one. It provides only 1 bit of information, your
+    The interface is a simple one. It provides only 1 piece of information, your
     chance of being eaten. For the details on how this is property should be
     interpreted please see the documentation in gruesensor.cpp.
 
@@ -111,6 +112,55 @@
     The Grue sensor backend is delivered as a plugin. The plugin has a factory object
     that registers the types available and does the actual instantiation of the backend.
 
+    \sa {sensors/grueapp}{Grue Application}
 */
 
+
+/*!
+    \example sensors/grueapp
+    \title Grue Application
+
+    The Grue application example demonstrates the use of the Grue sensor which
+    was defined and implemented by the \l{sensors/grueplugin}{Grue Plugin} example.
+    The Grue application is a commandline application. It is significant to note that
+    there is no link-time dependency on the Grue plugin. The Grue application uses
+    the generic access feature of the Sensors API.
+
+    \sa {sensors/grueplugin}{Grue Plugin}
+*/
+
+
+/*!
+    \example sensors/cubehouse
+    \title Cube House
+
+    \image cubehouse.png
+
+    The Cube House example demonstrates the use of the accelerometer to drive a camera
+    to create a pseudo-3D effect. It also demonstrates the use of a filter to smooth
+    out the accelerometer values.
+
+    The accelerometer is created and the filter is added.
+
+    \snippet ../../examples/sensors/cubehouse/view.cpp accelerometer
+
+    When new values are available, the view is recalculated.
+
+    \snippet ../../examples/sensors/cubehouse/view.cpp accelerometer2
+
+    The filter is defined like this.
+
+    \snippet ../../examples/sensors/cubehouse/view.cpp smoothed
+*/
+
+
+/*!
+    \example sensors/sensor_explorer
+    \title Sensor Explorer
+
+    \image sensor_explorer.png
+
+    The Sensor Explorer example demonstrates how to read the meta-data of available sensors.
+    It was designed as a debugging aid.
+*/
 

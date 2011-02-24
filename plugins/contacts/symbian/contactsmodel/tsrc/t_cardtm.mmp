@@ -16,7 +16,7 @@
 */
 
 
-target          t_cardtm.exe
+TARGET          t_cardtm.exe
 targettype      EXE
 CAPABILITY   ReadUserData WriteUserData
 UID              0x1000007a
@@ -30,6 +30,6 @@ userinclude 	 ../inc
 
 source          T_CARDTM.CPP
 
-library         euser.lib cntmodel.lib cnttutil.lib
+LIBRARY         euser.lib cntmodel.lib cnttutil.lib
 
 SMPSAFE

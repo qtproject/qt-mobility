@@ -23,7 +23,7 @@
 */
 
 #include <e32panic.h>
-#include <testexecutelog.h>
+#include <test/testexecutelog.h>
 #include <cntfldst.h>
 #include "clientserver.h"
 #include "viewdefcustomfieldstest.h"

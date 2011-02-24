@@ -64,7 +64,7 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \enum QLlcpSocket::Error
+    \enum QLlcpSocket::SocketError
 
     This enum describes the errors that can occur. The most recent error can be retrieved through a
     call to error().
@@ -73,7 +73,7 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \enum QLlcpSocket::State
+    \enum QLlcpSocket::SocketState
 
     This enum describes the different state in which a socket can be.
 
@@ -103,13 +103,13 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn QLlcpSocket::error(QLlcpSocket::Error socketError)
+    \fn QLlcpSocket::error(QLlcpSocket::SocketError socketError)
 
     This signal is emitted when an error occurs. The \a socketError parameter describes the error.
 */
 
 /*!
-    \fn QLlcpSocket::stateChanged(QLlcpSocket::State socketState)
+    \fn QLlcpSocket::stateChanged(QLlcpSocket::SocketState socketState)
 
     This signal is emitted when the state of the socket changes. The \a socketState parameter
     describes the new state.
@@ -121,6 +121,7 @@ QTM_BEGIN_NAMESPACE
 QLlcpSocket::QLlcpSocket(QObject *parent)
 :   QIODevice(parent), d_ptr(new QLlcpSocketPrivate(this))
 {
+    setOpenMode(QIODevice::NotOpen);
 }
 
 /*!
@@ -129,6 +130,7 @@ QLlcpSocket::QLlcpSocket(QObject *parent)
 QLlcpSocket::QLlcpSocket(QLlcpSocketPrivate *d, QObject *parent)
 :   QIODevice(parent), d_ptr(d)
 {
+    setOpenMode(QIODevice::ReadWrite);
     d_ptr->q_ptr = this;
 }
 
@@ -156,6 +158,8 @@ void QLlcpSocket::connectToService(QNearFieldTarget *target, const QString &serv
 void QLlcpSocket::disconnectFromService()
 {
     Q_D(QLlcpSocket);
+
+    setOpenMode(NotOpen);
 
     d->disconnectFromService();
 }
@@ -207,10 +211,16 @@ qint64 QLlcpSocket::writeDatagram(const char *data, qint64 size)
     return d->writeDatagram(data, size);
 }
 
+/*!
+    \reimp
+
+    Always returns true.
+*/
 bool QLlcpSocket::isSequential() const
 {
 	return true;
 }
+
 /*!
     \overload
 
@@ -298,6 +308,16 @@ qint64 QLlcpSocket::bytesAvailable() const
     Q_D(const QLlcpSocket);
 
     return d->bytesAvailable() + QIODevice::bytesAvailable();
+}
+
+/*!
+    \reimp
+*/
+bool QLlcpSocket::canReadLine() const
+{
+    Q_D(const QLlcpSocket);
+
+    return d->canReadLine() || QIODevice::canReadLine();
 }
 
 /*!

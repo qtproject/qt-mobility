@@ -41,32 +41,84 @@
 
 #include "qllcpserver_meego_p.h"
 
+#include "manager_interface.h"
+#include "meego/adapter_interface_p.h"
+#include "qllcpsocket_meego_p.h"
+#include "meego/socketrequestor_p.h"
+
+using namespace com::nokia::nfc;
+
 QTM_BEGIN_NAMESPACE
 
+static QAtomicInt requestorId = 0;
+static const char * const requestorBasePath = "/com/nokia/nfc/llcpserver/";
+
 QLlcpServerPrivate::QLlcpServerPrivate(QLlcpServer *q)
-:   q_ptr(q)
+:   q_ptr(q),
+    m_connection(QDBusConnection::connectToBus(QDBusConnection::SystemBus, QUuid::createUuid())),
+    m_socketRequestor(0)
 {
 }
 
 bool QLlcpServerPrivate::listen(const QString &serviceUri)
 {
-    Q_UNUSED(serviceUri);
+    if (m_requestorPath.isEmpty()) {
+        m_requestorPath = QLatin1String(requestorBasePath) +
+                          QString::number(requestorId.fetchAndAddOrdered(1));
+    }
 
-    return false;
+    Manager manager(QLatin1String("com.nokia.nfc"), QLatin1String("/"), m_connection);
+    QDBusObjectPath defaultAdapterPath = manager.DefaultAdapter();
+
+    if (!m_socketRequestor) {
+        m_socketRequestor = new SocketRequestor(defaultAdapterPath.path(), this);
+
+        connect(m_socketRequestor, SIGNAL(accessFailed(QDBusObjectPath,QString)),
+                this, SLOT(AccessFailed(QDBusObjectPath,QString)));
+        connect(m_socketRequestor, SIGNAL(accessGranted(QDBusObjectPath,QString)),
+                this, SLOT(AccessGranted(QDBusObjectPath,QString)));
+        connect(m_socketRequestor, SIGNAL(accept(QDBusVariant,QDBusVariant,int,int)),
+                this, SLOT(Accept(QDBusVariant,QDBusVariant,int,int)));
+        connect(m_socketRequestor, SIGNAL(connect(QDBusVariant,QDBusVariant,int,int)),
+                this, SLOT(Connect(QDBusVariant,QDBusVariant,int,int)));
+        connect(m_socketRequestor, SIGNAL(socket(QDBusVariant,QDBusVariant,int,int)),
+                this, SLOT(Socket(QDBusVariant,QDBusVariant,int,int)));
+    }
+
+    if (m_socketRequestor) {
+        QString accessKind(QLatin1String("device.llcp.co.server:") + serviceUri);
+        m_socketRequestor->requestAccess(m_requestorPath, accessKind);
+
+        m_serviceUri = serviceUri;
+    } else {
+        Q_Q(QLlcpServer);
+
+        m_error = QLlcpSocket::UnknownSocketError;
+        emit q->serverError();
+
+        m_serviceUri.clear();
+    }
+
+    return !m_serviceUri.isEmpty();
 }
 
 bool QLlcpServerPrivate::isListening() const
 {
-    return false;
+    return !m_serviceUri.isEmpty();
 }
 
 void QLlcpServerPrivate::close()
 {
+    QString accessKind(QLatin1String("device.llcp.co.server:") + m_serviceUri);
+
+    m_socketRequestor->cancelAccessRequest(m_requestorPath, accessKind);
+
+    m_serviceUri.clear();
 }
 
 QString QLlcpServerPrivate::serviceUri() const
 {
-    return QString();
+    return m_serviceUri;
 }
 
 quint8 QLlcpServerPrivate::serverPort() const
@@ -76,17 +128,77 @@ quint8 QLlcpServerPrivate::serverPort() const
 
 bool QLlcpServerPrivate::hasPendingConnections() const
 {
-    return false;
+    return !m_pendingSockets.isEmpty();
 }
 
 QLlcpSocket *QLlcpServerPrivate::nextPendingConnection()
 {
-    return 0;
+    if (m_pendingSockets.isEmpty())
+        return 0;
+
+    QPair<int, int> fds = m_pendingSockets.takeFirst();
+
+    QLlcpSocketPrivate *socketPrivate =
+        new QLlcpSocketPrivate(m_connection, fds.first, fds.second);
+
+    QLlcpSocket *socket = new QLlcpSocket(socketPrivate, 0);
+
+    return socket;
 }
 
 QLlcpSocket::SocketError QLlcpServerPrivate::serverError() const
 {
     return QLlcpSocket::UnknownSocketError;
 }
+
+void QLlcpServerPrivate::AccessFailed(const QDBusObjectPath &targetPath, const QString &error)
+{
+    Q_UNUSED(targetPath);
+    Q_UNUSED(error);
+
+    Q_Q(QLlcpServer);
+
+    m_serviceUri.clear();
+
+    m_error = QLlcpSocket::UnknownSocketError;
+    emit q->serverError();
+}
+
+void QLlcpServerPrivate::AccessGranted(const QDBusObjectPath &targetPath,
+                                       const QString &accessKind)
+{
+    Q_UNUSED(targetPath);
+    Q_UNUSED(accessKind);
+}
+
+void QLlcpServerPrivate::Accept(const QDBusVariant &lsap, const QDBusVariant &rsap,
+                                int readFd, int writeFd)
+{
+    Q_Q(QLlcpServer);
+
+    m_pendingSockets.append(qMakePair(readFd, writeFd));
+
+    emit q->newConnection();
+}
+
+void QLlcpServerPrivate::Connect(const QDBusVariant &lsap, const QDBusVariant &rsap,
+                                 int readFd, int writeFd)
+{
+    Q_UNUSED(lsap);
+    Q_UNUSED(rsap);
+    Q_UNUSED(readFd);
+    Q_UNUSED(writeFd);
+}
+
+void QLlcpServerPrivate::Socket(const QDBusVariant &lsap, const QDBusVariant &rsap,
+                                int readFd, int writeFd)
+{
+    Q_UNUSED(lsap);
+    Q_UNUSED(rsap);
+    Q_UNUSED(readFd);
+    Q_UNUSED(writeFd);
+}
+
+#include "moc_qllcpserver_meego_p.cpp"
 
 QTM_END_NAMESPACE

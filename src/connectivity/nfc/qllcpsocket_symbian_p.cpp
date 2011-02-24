@@ -196,6 +196,11 @@ qint64 QLlcpSocketPrivate::bytesAvailable() const
     return bytes;
 }
 
+bool QLlcpSocketPrivate::canReadLine() const
+{
+    return false;
+}
+
 void QLlcpSocketPrivate::invokeBytesWritten(qint64 bytes)
 {
     BEGIN

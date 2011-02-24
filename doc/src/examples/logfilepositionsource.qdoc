@@ -30,4 +30,10 @@
     \title Log File Position Source Example
 
     This example demonstrates the replaying of position data from a log file.
+
+    The data is read from a file which has positional data in NMEA format. The resulting
+    time and position information is then displayed to the screen as simple text in
+    date/time and latitude/longitude format.
+
+    A detailed analysis is given in the overview documentation for the \l {Location API}.
 */

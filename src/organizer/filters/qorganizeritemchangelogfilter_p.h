@@ -110,7 +110,10 @@ public:
     QDebug& debugStreamOut(QDebug& dbg) const
     {
         dbg.nospace() << "QOrganizerItemChangeLogFilter(";
-        dbg.nospace() << "eventType=" << static_cast<quint32>(m_eventType) << ",since=" << m_since;
+        dbg.nospace() << "eventType=";
+        dbg.nospace() << static_cast<quint32>(m_eventType);
+        dbg.nospace() << ",since=";
+        dbg.nospace() << m_since;
         dbg.nospace() << ")";
         return dbg.maybeSpace();
     }

@@ -57,7 +57,7 @@ Item {
         zoomLevel: 7
         center: Coordinate {
                     latitude: -27
-                    longitude: 179
+                    longitude: 153
                 }
 
 

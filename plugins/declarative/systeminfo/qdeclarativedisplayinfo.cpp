@@ -57,7 +57,7 @@ Q_GLOBAL_STATIC(QSystemDisplayInfo, displayInfo)
     This element is part of the \bold{QtMobility.systeminfo 1.2} module.
     It is a convience class to make QML usage easier.
 
-    \endqml
+    This class is currently only implemented on Meego.
 
 \sa QSystemDisplayInfo
 */
@@ -134,7 +134,8 @@ float QDeclarativeDisplayInfo::contrast()
 
 /*!
     \qmlproperty int DisplayInfo::dpiWidth
-   Returns the DPI width of the screen in millimeters.
+    Returns the current dots per inch (DPI) for the width.
+
   */
 int QDeclarativeDisplayInfo::dpiWidth()
 {
@@ -143,7 +144,8 @@ int QDeclarativeDisplayInfo::dpiWidth()
 
 /*!
     \qmlproperty int DisplayInfo::dpiHeight
-   Returns the DPI height of the screen in millimeters.
+    Returns the current dots per inch (DPI) for the width.
+
   */
 int QDeclarativeDisplayInfo::dpiHeight()
 {

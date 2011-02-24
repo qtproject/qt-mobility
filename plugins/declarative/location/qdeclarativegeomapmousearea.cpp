@@ -55,7 +55,7 @@ QTM_BEGIN_NAMESPACE
     \ingroup qml-location-maps
 
    A MapMouseArea is an invisible item that is typically used in conjunction
-   with a visible map objec or map item in order to provide mouse handling.
+   with a visible map object or map item in order to provide mouse handling.
    By effectively acting as a proxy, the logic for mouse handling can be
    contained within a MapMouseArea item.
 
@@ -165,8 +165,10 @@ bool QDeclarativeGeoMapMouseArea::setPressed(bool pressed, QDeclarativeGeoMapMou
     } else {
         emit released(event);
         // TODO set saved position in event?
-        if (isClick && !longPress_ && !doubleClick_)
+        if (isClick && !longPress_ && !doubleClick_) {
             emit clicked(event);
+
+        }
     }
 
     emit pressedChanged(pressed_);

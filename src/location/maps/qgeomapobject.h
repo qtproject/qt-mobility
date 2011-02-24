@@ -151,6 +151,7 @@ private:
     Q_DISABLE_COPY(QGeoMapObject)
 
     friend class QGeoMapDataPrivate;
+    friend class QGeoMapGroupObject;
 };
 
 QTM_END_NAMESPACE

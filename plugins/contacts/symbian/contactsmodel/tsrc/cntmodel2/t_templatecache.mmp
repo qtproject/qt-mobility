@@ -16,7 +16,7 @@
 */
 
 
-target          T_TemplateCache.exe
+TARGET          t_templatecache.exe
 targettype      EXE
 CAPABILITY   	ReadUserData WriteUserData
 UID				0x102730F8
@@ -34,7 +34,7 @@ source		T_TemplateCache.cpp
 SOURCEPATH	../../cntmodel/src
 source		CContactPrivate.cpp 
 
-library         EUSER.LIB 
-library         ESTOR.LIB 
-library     	NbCntTestLib.LIB
-library		cntmodel.lib
+LIBRARY         euser.lib 
+LIBRARY         estor.lib 
+LIBRARY     	nbcnttestlib.lib
+LIBRARY		cntmodel.lib

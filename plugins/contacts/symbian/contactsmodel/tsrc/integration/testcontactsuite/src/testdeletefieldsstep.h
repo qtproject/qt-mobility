@@ -20,7 +20,7 @@
 
 #if (!defined __TESTDELETEFIELDSSTEP_H__)
 #define __TESTDELETEFIELDSSTEP_H__
-#include <testexecutestepbase.h>
+#include <test/testexecutestepbase.h>
 
 _LIT(KTestDeleteFieldsStep,"TestDeleteFieldsStep");
 

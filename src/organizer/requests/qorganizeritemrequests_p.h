@@ -85,10 +85,15 @@ public:
 #ifndef QT_NO_DEBUG_STREAM
     QDebug& debugStreamOut(QDebug& dbg) const
     {
-        dbg.nospace() << "QOrganizerItemSaveRequest(\n"
-                      << "* items=" << m_organizeritems << ",\n"
-                      << "* definitionMask=" << m_definitionMask << ",\n"
-                      << "* errorMap=" << m_errors;
+        dbg.nospace() << "QOrganizerItemSaveRequest(\n";
+        dbg.nospace() << "* items=";
+        dbg.nospace() << m_organizeritems;
+        dbg.nospace() << ",\n";
+        dbg.nospace() << "* definitionMask=";
+        dbg.nospace() << m_definitionMask;
+        dbg.nospace() << ",\n";
+        dbg.nospace() << "* errorMap=";
+        dbg.nospace() << m_errors;
         dbg.nospace() << "\n)";
         return dbg.maybeSpace();
     }
@@ -120,14 +125,27 @@ public:
 #ifndef QT_NO_DEBUG_STREAM
     QDebug& debugStreamOut(QDebug& dbg) const
     {
-        dbg.nospace() << "QOrganizerItemFetchRequest(\n"
-                      << "* items=" << m_organizeritems << ",\n"
-                      << "* filter=" << m_filter << ",\n"
-                      << "* sorting=" << m_sorting << ",\n"
-                      << "* startDate=" << m_startDate << ",\n"
-                      << "* endDate=" << m_endDate << ",\n"
-                      << "* fetchHint=" << m_fetchHint << ",\n"
-                      << "* maxCount=" << m_maxCount;
+        dbg.nospace() << "QOrganizerItemFetchRequest(\n";
+        dbg.nospace() << "* items=";
+        dbg.nospace() << m_organizeritems;
+        dbg.nospace() << ",\n";
+        dbg.nospace() << "* filter=";
+        dbg.nospace() << m_filter;
+        dbg.nospace() << ",\n";
+        dbg.nospace() << "* sorting=";
+        dbg.nospace() << m_sorting;
+        dbg.nospace() << ",\n";
+        dbg.nospace() << "* startDate=";
+        dbg.nospace() << m_startDate;
+        dbg.nospace() << ",\n";
+        dbg.nospace() << "* endDate=";
+        dbg.nospace() << m_endDate;
+        dbg.nospace() << ",\n";
+        dbg.nospace() << "* fetchHint=";
+        dbg.nospace() << m_fetchHint;
+        dbg.nospace() << ",\n";
+        dbg.nospace() << "* maxCount=";
+        dbg.nospace() << m_maxCount;
         dbg.nospace() << "\n)";
         return dbg.maybeSpace();
     }
@@ -165,13 +183,24 @@ public:
 #ifndef QT_NO_DEBUG_STREAM
     QDebug& debugStreamOut(QDebug& dbg) const
     {
-        dbg.nospace() << "QOrganizerItemFetchForExportRequest(\n"
-                      << "* items=" << m_organizeritems << ",\n"
-                      << "* filter=" << m_filter << ",\n"
-                      << "* sorting=" << m_sorting << ",\n"
-                      << "* startDate=" << m_startDate << ",\n"
-                      << "* endDate=" << m_endDate << ",\n"
-                      << "* fetchHint=" << m_fetchHint;
+        dbg.nospace() << "QOrganizerItemFetchForExportRequest(\n";
+        dbg.nospace() << "* items=";
+        dbg.nospace() << m_organizeritems;
+        dbg.nospace() << ",\n";
+        dbg.nospace() << "* filter=";
+        dbg.nospace() << m_filter;
+        dbg.nospace() << ",\n";
+        dbg.nospace() << "* sorting=";
+        dbg.nospace() << m_sorting;
+        dbg.nospace() << ",\n";
+        dbg.nospace() << "* startDate=";
+        dbg.nospace() << m_startDate;
+        dbg.nospace() << ",\n";
+        dbg.nospace() << "* endDate=";
+        dbg.nospace() << m_endDate;
+        dbg.nospace() << ",\n";
+        dbg.nospace() << "* fetchHint=";
+        dbg.nospace() << m_fetchHint;
         dbg.nospace() << "\n)";
         return dbg.maybeSpace();
     }
@@ -207,11 +236,18 @@ public:
 #ifndef QT_NO_DEBUG_STREAM
     QDebug& debugStreamOut(QDebug& dbg) const
     {
-        dbg.nospace() << "QOrganizerItemFetchByIdRequest(\n"
-                      << "* items=" << m_items << ",\n"
-                      << "* ids=" << m_ids << ",\n"
-                      << "* fetchHint=" << m_fetchHint << ",\n"
-                      << "* errorMap=" << m_errors;
+        dbg.nospace() << "QOrganizerItemFetchByIdRequest(\n";
+        dbg.nospace() << "* items=";
+        dbg.nospace() << m_items;
+        dbg.nospace() << ",\n";
+        dbg.nospace() << "* ids=";
+        dbg.nospace() << m_ids;
+        dbg.nospace() << ",\n";
+        dbg.nospace() << "* fetchHint=";
+        dbg.nospace() << m_fetchHint;
+        dbg.nospace() << ",\n";
+        dbg.nospace() << "* errorMap=";
+        dbg.nospace() << m_errors;
         dbg.nospace() << "\n)";
         return dbg.maybeSpace();
     }
@@ -245,13 +281,24 @@ public:
 #ifndef QT_NO_DEBUG_STREAM
     QDebug& debugStreamOut(QDebug& dbg) const
     {
-        dbg.nospace() << "QOrganizerItemOccurrenceFetchRequest(\n"
-                      << "* itemOccurrences=" << m_organizeritems << ",\n"
-                      << "* parentItem=" << m_generator << ",\n"
-                      << "* startDate=" << m_startDate << ",\n"
-                      << "* endDate=" << m_endDate << ",\n"
-                      << "* fetchHint=" << m_fetchHint << ",\n"
-                      << "* maxOccurrences=" << m_maxOccurrences;
+        dbg.nospace() << "QOrganizerItemOccurrenceFetchRequest(\n";
+        dbg.nospace() << "* itemOccurrences=";
+        dbg.nospace() << m_organizeritems;
+        dbg.nospace() << ",\n";
+        dbg.nospace() << "* parentItem=";
+        dbg.nospace() << m_generator;
+        dbg.nospace() << ",\n";
+        dbg.nospace() << "* startDate=";
+        dbg.nospace() << m_startDate;
+        dbg.nospace() << ",\n";
+        dbg.nospace() << "* endDate=";
+        dbg.nospace() << m_endDate;
+        dbg.nospace() << ",\n";
+        dbg.nospace() << "* fetchHint=";
+        dbg.nospace() << m_fetchHint;
+        dbg.nospace() << ",\n";
+        dbg.nospace() << "* maxOccurrences=";
+        dbg.nospace() << m_maxOccurrences;
         dbg.nospace() << "\n)";
         return dbg.maybeSpace();
     }
@@ -286,9 +333,12 @@ public:
 #ifndef QT_NO_DEBUG_STREAM
     QDebug& debugStreamOut(QDebug& dbg) const
     {
-        dbg.nospace() << "QOrganizerItemRemoveRequest("
-                      << "itemIds=" << m_organizeritemIds << ","
-                      << "errorMap=" << m_errors;
+        dbg.nospace() << "QOrganizerItemRemoveRequest(";
+        dbg.nospace() << "itemIds=";
+        dbg.nospace() << m_organizeritemIds;
+        dbg.nospace() << ",";
+        dbg.nospace() << "errorMap=";
+        dbg.nospace() << m_errors;
         dbg.nospace() << "\n)";
         return dbg.maybeSpace();
     }
@@ -318,12 +368,21 @@ public:
 #ifndef QT_NO_DEBUG_STREAM
     QDebug& debugStreamOut(QDebug& dbg) const
     {
-        dbg.nospace() << "QOrganizerItemIdFetchRequest(\n"
-                      << "* itemIds=" << m_ids << ",\n"
-                      << "* filter=" << m_filter << ",\n"
-                      << "* sorting=" << m_sorting << ",\n"
-                      << "* startDate=" << m_startDate << ",\n"
-                      << "* endDate=" << m_endDate;
+        dbg.nospace() << "QOrganizerItemIdFetchRequest(\n";
+        dbg.nospace() << "* itemIds=";
+        dbg.nospace() << m_ids;
+        dbg.nospace() << ",\n";
+        dbg.nospace() << "* filter=";
+        dbg.nospace() << m_filter;
+        dbg.nospace() << ",\n";
+        dbg.nospace() << "* sorting=";
+        dbg.nospace() << m_sorting;
+        dbg.nospace() << ",\n";
+        dbg.nospace() << "* startDate=";
+        dbg.nospace() << m_startDate;
+        dbg.nospace() << ",\n";
+        dbg.nospace() << "* endDate=";
+        dbg.nospace() << m_endDate;
         dbg.nospace() << "\n)";
         return dbg.maybeSpace();
     }
@@ -359,11 +418,18 @@ public:
 #ifndef QT_NO_DEBUG_STREAM
     QDebug& debugStreamOut(QDebug& dbg) const
     {
-        dbg.nospace() << "QOrganizerItemDetailDefinitionFetchRequest(\n"
-                      << "* definitionNames=" << m_names << ",\n"
-                      << "* definitions=" << m_definitions << ",\n"
-                      << "* itemType=" << m_organizeritemType << ",\n"
-                      << "* errorMap=" << m_errors;
+        dbg.nospace() << "QOrganizerItemDetailDefinitionFetchRequest(\n";
+        dbg.nospace() << "* definitionNames=";
+        dbg.nospace() << m_names;
+        dbg.nospace() << ",\n";
+        dbg.nospace() << "* definitions=";
+        dbg.nospace() << m_definitions;
+        dbg.nospace() << ",\n";
+        dbg.nospace() << "* itemType=";
+        dbg.nospace() << m_organizeritemType;
+        dbg.nospace() << ",\n";
+        dbg.nospace() << "* errorMap=";
+        dbg.nospace() << m_errors;
         dbg.nospace() << "\n)";
         return dbg.maybeSpace();
     }
@@ -396,10 +462,15 @@ public:
 #ifndef QT_NO_DEBUG_STREAM
     QDebug& debugStreamOut(QDebug& dbg) const
     {
-        dbg.nospace() << "QOrganizerItemDetailDefinitionSaveRequest(\n"
-                      << "* definitions=" << m_definitions << ",\n"
-                      << "* itemType=" << m_organizeritemType << ",\n"
-                      << "* errorMap=" << m_errors;
+        dbg.nospace() << "QOrganizerItemDetailDefinitionSaveRequest(\n";
+        dbg.nospace() << "* definitions=";
+        dbg.nospace() << m_definitions;
+        dbg.nospace() << ",\n";
+        dbg.nospace() << "* itemType=";
+        dbg.nospace() << m_organizeritemType;
+        dbg.nospace() << ",\n";
+        dbg.nospace() << "* errorMap=";
+        dbg.nospace() << m_errors;
         dbg.nospace() << "\n)";
         return dbg.maybeSpace();
     }
@@ -430,10 +501,15 @@ public:
 #ifndef QT_NO_DEBUG_STREAM
     QDebug& debugStreamOut(QDebug& dbg) const
     {
-        dbg.nospace() << "QOrganizerItemDetailDefinitionRemoveRequest(\n"
-                      << "* definitionNames=" << m_names << ",\n"
-                      << "* itemType=" << m_organizeritemType << ",\n"
-                      << "* errorMap=" << m_errors;
+        dbg.nospace() << "QOrganizerItemDetailDefinitionRemoveRequest(\n";
+        dbg.nospace() << "* definitionNames=";
+        dbg.nospace() << m_names;
+        dbg.nospace() << ",\n";
+        dbg.nospace() << "* itemType=";
+        dbg.nospace() << m_organizeritemType;
+        dbg.nospace() << ",\n";
+        dbg.nospace() << "* errorMap=";
+        dbg.nospace() << m_errors;
         dbg.nospace() << "\n)";
         return dbg.maybeSpace();
     }
@@ -464,8 +540,9 @@ public:
 #ifndef QT_NO_DEBUG_STREAM
     QDebug& debugStreamOut(QDebug& dbg) const
     {
-        dbg.nospace() << "QOrganizerCollectionFetchRequest("
-                      << "collections=" << m_collections;
+        dbg.nospace() << "QOrganizerCollectionFetchRequest(";
+        dbg.nospace() << "collections=";
+        dbg.nospace() << m_collections;
         dbg.nospace() << ")";
         return dbg.maybeSpace();
     }
@@ -494,9 +571,12 @@ public:
 #ifndef QT_NO_DEBUG_STREAM
     QDebug& debugStreamOut(QDebug& dbg) const
     {
-        dbg.nospace() << "QOrganizerCollectionRemoveRequest("
-                      << "collectionIds=" << m_collectionIds << ","
-                      << "errorMap=" << m_errors;
+        dbg.nospace() << "QOrganizerCollectionRemoveRequest(";
+        dbg.nospace() << "collectionIds=";
+        dbg.nospace() << m_collectionIds;
+        dbg.nospace() << ",";
+        dbg.nospace() << "errorMap=";
+        dbg.nospace() << m_errors;
         dbg.nospace() << ")";
         return dbg.maybeSpace();
     }
@@ -526,9 +606,12 @@ public:
 #ifndef QT_NO_DEBUG_STREAM
     QDebug& debugStreamOut(QDebug& dbg) const
     {
-        dbg.nospace() << "QOrganizerCollectionSaveRequest("
-                      << "collections=" << m_collections << ","
-                      << "errorMap=" << m_errors;
+        dbg.nospace() << "QOrganizerCollectionSaveRequest(";
+        dbg.nospace() << "collections=";
+        dbg.nospace() << m_collections;
+        dbg.nospace() << ",";
+        dbg.nospace() << "errorMap=";
+        dbg.nospace() << m_errors;
         dbg.nospace() << ")";
         return dbg.maybeSpace();
     }

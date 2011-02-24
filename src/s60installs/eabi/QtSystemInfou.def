@@ -223,4 +223,5 @@ EXPORTS
 	_ZN10QtMobility18QSystemDisplayInfo18orientationChangedENS0_18DisplayOrientationE @ 222 NONAME
 	_ZNK10QtMobility19QSystemAlignedTimer8isActiveEv @ 223 NONAME
 	_ZN10QtMobility19QSystemAlignedTimer13setSingleShotEb @ 224 NONAME
+	_ZN10QtMobility18QSystemScreenSaver23setScreenSaverInhibitedEb @ 225 NONAME
 
