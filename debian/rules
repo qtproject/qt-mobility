@@ -24,7 +24,6 @@ DEB_DH_INSTALL_SOURCEDIR := debian/tmp
 # to DEB_DH_INSTALL_SOURCEDIR is not listed in any of the libqtm*.install files
 # except the *.prl files (-X.prl)
 DEB_DH_INSTALL_ARGS := --fail-missing -X.prl
-DEB_CLEAN_EXCLUDE := *.orig
 
 # bearer location contacts multimedia publishsubscribe versit messaging systeminfo serviceframework sensors gallery organizer feedback connectivity
 QTM_MODULES += connectivity
@@ -42,6 +41,7 @@ QTM_MODULES += systeminfo
 QTM_MODULES += versit
 
 # Add here any variable or target overrides you need.
+# Arguments to configure
 DEB_CONFIGURE_NORMAL_ARGS := -maemo6  -prefix /usr -headerdir /usr/include/qt4 \
 		-plugindir /usr/lib/qt4/plugins -modules "$(QTM_MODULES)" \
 		-examples -examplesdir /usr/lib/qtmobility/examples \
@@ -114,17 +114,14 @@ $(PACKAGE_TARGETS)::
 	    [ ! -f debian/$(notdir $@).aegis ] || aegis-deb-add -control debian/$(notdir $@)/DEBIAN/control .. debian/$(notdir $@).aegis=_aegis
 
 clean::
-	# Delete all Makefiles
 	find  \( -false \
-	    -o -type f -name Makefile \
-	    -o -type f -name *.o  \
 	    -o -type f -name mobility*.prf \
 	  \) -delete
 	rm -rf include build lib patches
 	# Delete the config tests and 
 	rm -f \
 	  config.tests/maemo-icd-network-wlan/maemo-icd-network-wlan \
-          config.tests/maemo-icd/maemo-icd \
+      config.tests/maemo-icd/maemo-icd \
 	  config.tests/sensord/sensord \
 	  config.tests/gstreamer-photography/gstreamer-photography \
 	  config.tests/immersion/immersion \
