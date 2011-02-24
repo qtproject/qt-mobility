@@ -90,7 +90,6 @@
     \sa {OrganizerItem::isFloatingTime}.
 
     \section2 Organizer Elements
-    \note At the time of the QtMobility 1.1 release the QML support for the Organizer API is incomplete and likely to be refined and improved in the next patch release.
 
     \annotatedlist qml-organizer
 */

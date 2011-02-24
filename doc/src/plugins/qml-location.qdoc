@@ -81,11 +81,8 @@
     by the Plugin element associated with the Map.
 
     Various map objects can be added to the map.  These map objects are
-    specified in terms of coordinates and metres.
+    specified in terms of coordinates and meters.
 
-    \note Maps and Navigation domain supports basic Map functionality, including
-    Map objects and basic mouse handling. Routing and searching are not yet
-    supported.
 
     \section2 Map Elements
 
