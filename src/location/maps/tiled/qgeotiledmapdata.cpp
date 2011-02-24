@@ -615,10 +615,10 @@ void QGeoTiledMapData::processRequests()
                 || (zoomLevel() != reply->request().zoomLevel())
                 || (mapType() != reply->request().mapType())
                 || (connectivityMode() != reply->request().connectivityMode())) {
-            reply->abort();
             d->replyRects.remove(reply->request().tileRect());
-            replyIter.remove();
             d->zoomCache.remove(reply->request());
+            replyIter.remove();
+            reply->abort();
         }
     }
 

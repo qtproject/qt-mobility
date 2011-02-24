@@ -137,7 +137,7 @@ void tst_QGeoBoundingCircle::translate_data()
                                  5.0 << 5.0 << QGeoCoordinate(5.0, 5.0);
     QTest::newRow("across 0,0") << QGeoCoordinate(-2, -2) << 20.0 <<
                                    5.0 << 5.0 << QGeoCoordinate(3.0, 3.0);
-    QTest::newRow("backwards accross 0,0") << QGeoCoordinate(5,5) << 50.0
+    QTest::newRow("backwards across 0,0") << QGeoCoordinate(5,5) << 50.0
                                               << -13.0 << 5.0
                                               << QGeoCoordinate(-8.0, 10.0);
 }
