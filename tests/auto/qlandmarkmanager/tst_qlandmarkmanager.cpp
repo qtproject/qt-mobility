@@ -3548,11 +3548,16 @@ void tst_QLandmarkManager::removeLandmark()
 #endif
         QCOMPARE(spyLmAdd.count(), 0);
         QCOMPARE(spyLmChange.count(), 0);
-        QCOMPARE(spyLmRemove.count(), 1);
-        QCOMPARE(spyLmRemove.at(0).at(0).value<QList<QLandmarkId> >().count(), 3);
-        QVERIFY(spyLmRemove.at(0).at(0).value<QList<QLandmarkId> >().contains(lm1.landmarkId()));
-        QVERIFY(spyLmRemove.at(0).at(0).value<QList<QLandmarkId> >().contains(lm3.landmarkId()));
-        QVERIFY(spyLmRemove.at(0).at(0).value<QList<QLandmarkId> >().contains(lm4.landmarkId()));
+        QVERIFY(spyLmRemove.count() > 0 );
+        QList<QLandmarkId> removedIds;
+        for (int i=0; i < spyLmRemove.count(); ++i) {
+            removedIds.append(spyLmRemove.at(i).at(0).value<QList<QLandmarkId> >());
+        }
+        QCOMPARE(removedIds.count(), 3);
+        qDebug() << "AMOS";
+        QVERIFY(removedIds.contains(lm1.landmarkId()));
+        QVERIFY(removedIds.contains(lm3.landmarkId()));
+        QVERIFY(removedIds.contains(lm4.landmarkId()));
         QCOMPARE(spyCatAdd.count(), 0);
         QCOMPARE(spyCatChange.count(), 0);
         spyLmRemove.clear();

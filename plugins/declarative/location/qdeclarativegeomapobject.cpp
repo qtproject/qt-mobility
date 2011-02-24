@@ -257,9 +257,10 @@ void QDeclarativeGeoMapObjectView::setModel(const QVariant &model)
     modelVariant_ = model;
     model_ = itemModel;
     // At the moment maps only works with landmark model. Because of this tight
-    // restriction, connecting to model resets is adequate. This must be changed
-    // if and when the model support is leveraged.
+    // restriction, we are not listening to all change signals.
     QObject::connect(model_, SIGNAL(modelReset()), this, SLOT(modelReset()));
+    QObject::connect(model_, SIGNAL(rowsRemoved(QModelIndex, int, int)), this, SLOT(modelRowsRemoved(QModelIndex, int, int)));
+    QObject::connect(model_, SIGNAL(rowsInserted(QModelIndex, int, int)), this, SLOT(modelRowsInserted(QModelIndex, int, int)));
     repopulate();
     emit modelChanged();
 }
@@ -267,6 +268,43 @@ void QDeclarativeGeoMapObjectView::setModel(const QVariant &model)
 void QDeclarativeGeoMapObjectView::modelReset()
 {
     repopulate();
+}
+
+void QDeclarativeGeoMapObjectView::modelRowsInserted(QModelIndex, int start, int end)
+{
+    if (!componentCompleted_ || !map_ || !map_->mapData_ || !delegate_ || !model_)
+        return;
+    Q_ASSERT(declarativeObjectList_.count() == group_.childObjects().count());
+    QDeclarativeGeoMapObject* mapObject;
+    for (int i = start; i <= end; ++i) {
+         mapObject = createItem(i);
+         if (!mapObject) {
+             break;
+         }
+         declarativeObjectList_.append(mapObject);
+         mapObject->setVisible(visible_);
+         mapObject->setMap(map_);
+         group_.addChildObject(mapObject->mapObject());
+         // Needed in order for mouse areas to work.
+         map_->objectMap_.insert(mapObject->mapObject(), mapObject);
+    }
+    Q_ASSERT(declarativeObjectList_.count() == group_.childObjects().count());
+}
+
+void QDeclarativeGeoMapObjectView::modelRowsRemoved(QModelIndex, int start, int end)
+{
+    if (!componentCompleted_ || !map_ || !map_->mapData_ || !delegate_ || !model_)
+        return;
+    Q_ASSERT(declarativeObjectList_.count() == group_.childObjects().count());
+    for (int i = end; i >= start; --i) {
+        QDeclarativeGeoMapObject *object = declarativeObjectList_.takeAt(i);
+        if (!object) // bad
+            break;
+        group_.removeChildObject(object->mapObject());
+        map_->objectMap_.remove(object->mapObject());
+        delete object;
+    }
+    Q_ASSERT(declarativeObjectList_.count() == group_.childObjects().count());
 }
 
 QDeclarativeComponent* QDeclarativeGeoMapObjectView::delegate() const
@@ -312,6 +350,7 @@ void QDeclarativeGeoMapObjectView::removeInstantiatedItems()
             delete map_->objectMap_.take(mapObjects.at(i));
         }
     }
+    declarativeObjectList_.clear();
 }
 
 // Removes and repopulates all items.
@@ -331,6 +370,7 @@ void QDeclarativeGeoMapObjectView::repopulate()
          mapObject = createItem(i);
          if (!mapObject)
              break;
+         declarativeObjectList_.append(mapObject);
          mapObject->setVisible(visible_);
          mapObject->setMap(map_);
          group_.addChildObject(mapObject->mapObject());

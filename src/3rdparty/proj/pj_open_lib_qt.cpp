@@ -72,6 +72,12 @@ FILE *pj_open_lib(char *name, char *mode)
     if (QFile::exists(QString(":/proj_data/%1").arg(name))) {
         QFile *f = new QFile(QString(":/proj_data/%1").arg(name));
         f->open(QIODevice::ReadOnly);
+ 
+        if (f->handle() == -1) {
+            delete f;
+            return NULL;
+        }
+
         tracker.files.append(f);
         return fdopen(f->handle(), "r");
     } else {
