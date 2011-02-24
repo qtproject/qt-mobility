@@ -148,6 +148,8 @@ QMessageManager::QMessageManager(QObject *parent)
     connect(store, SIGNAL(messageAdded(QMessageId, QMessageManager::NotificationFilterIdSet)), this, SIGNAL(messageAdded(QMessageId, QMessageManager::NotificationFilterIdSet)));
     connect(store, SIGNAL(messageRemoved(QMessageId, QMessageManager::NotificationFilterIdSet)), this, SIGNAL(messageRemoved(QMessageId, QMessageManager::NotificationFilterIdSet)));
     connect(store, SIGNAL(messageUpdated(QMessageId, QMessageManager::NotificationFilterIdSet)), this, SIGNAL(messageUpdated(QMessageId, QMessageManager::NotificationFilterIdSet)));
+
+    connect(store, SIGNAL(accountRemoved(QMessageAccountId)), this, SIGNAL(accountRemoved(QMessageAccountId)));
 }
 
 /*!
