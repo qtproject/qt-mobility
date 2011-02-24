@@ -6,6 +6,9 @@ SOURCES += tst_qgraphicsvideoitem.cpp
 
 include (../../../common.pri)
 
+symbian: TARGET.CAPABILITY = ReadDeviceData WriteDeviceData
+
+
 CONFIG += mobility
 MOBILITY = multimedia
 
