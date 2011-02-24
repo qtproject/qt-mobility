@@ -103,7 +103,8 @@ install_tests()
     end_test_suite $xmlFile
 
     echo "$xmlInstallDir/$packageName/tests.xml" >> "$installFile"
-
+	# add the contents of package.install file if it exist in template dir 
+	test -r $templateDir/$packageName.install && cat $templateDir/$packageName.install >> $installFile
     # remove the black list file to ensure that it is not packaged
     if [ -r "$blacklistFile" ] ; then rm "$blacklistFile"; fi
 }
