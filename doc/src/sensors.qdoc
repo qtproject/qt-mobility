@@ -215,9 +215,6 @@ Readings are polled using a timer. If the application blocks the event loop or o
 ability of the timer to fire, readings will be missed. There are no queues so applications must ensure that
 they process the readings promptly (possibly saving them into a buffer for later processing if required).
 
-Note that timestamps on this platform come from a counter that wraps around once or twice in a 24 hour period.
-Applications that evaluate timestamps over an extended period need to handle this.
-
 \section2 MeeGo
 
 The data rates offered by MeeGo are not tied to how fast the hardware runs.
