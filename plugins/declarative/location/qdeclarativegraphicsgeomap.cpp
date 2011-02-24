@@ -671,6 +671,8 @@ void QDeclarativeGraphicsGeoMap::mousePressEvent(QGraphicsSceneMouseEvent *event
             return;
         }
     }
+
+    QDeclarativeItem::mousePressEvent(event);
 }
 
 void QDeclarativeGraphicsGeoMap::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
@@ -706,6 +708,11 @@ void QDeclarativeGraphicsGeoMap::mouseReleaseEvent(QGraphicsSceneMouseEvent *eve
 
     // TODO send event to grabber if exists
     // TODO clear grabber either way
+   
+    if (mouseEvent->accepted())
+        return;
+ 
+    QDeclarativeItem::mouseReleaseEvent(event);
 }
 
 void QDeclarativeGraphicsGeoMap::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
@@ -740,6 +747,8 @@ void QDeclarativeGraphicsGeoMap::mouseDoubleClickEvent(QGraphicsSceneMouseEvent 
     }
 
     // TODO interact with grabber somehow
+    
+    QDeclarativeItem::mouseDoubleClickEvent(event);
 }
 
 //void QDeclarativeGraphicsGeoMap::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
