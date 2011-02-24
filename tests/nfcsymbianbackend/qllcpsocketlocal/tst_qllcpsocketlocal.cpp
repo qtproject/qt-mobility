@@ -63,9 +63,11 @@ public:
     tst_qllcpsocketlocal();
 private Q_SLOTS:
 
-    void echoClient();   // handshake 1,2  - work with  tst_qllcpsocketremote echoServer
+
+    void multipleClient();
+    void echoClient();
     void echoClient_data();
-    void testCase2();   // handshake 3   - work with  tst_qllcpsocketremote testCase2
+    void testCase2();   //work with  tst_qllcpsocketremote testCase2
     void testCase3();
     void coverageTest1();
     //advanced test
@@ -81,6 +83,8 @@ private Q_SLOTS:
     void initTestCase();
     void cleanupTest();
 
+private:
+    void writeMessage(QLlcpSocket& localSocket,QString& payLoad);
 private:
      QNearFieldTarget *m_target; // not own
      quint8 m_port;
@@ -164,48 +168,8 @@ void tst_qllcpsocketlocal::echoClient()
     QNfcTestUtil::ShowAutoMsg(messageBox);
 
     // STEP 3: Local peer sends the  message to the remote peer
+    writeMessage(localSocket,echoPayload);
     QSignalSpy errorSpy(&localSocket, SIGNAL(error(QLlcpSocket::SocketState)));
-    QSignalSpy bytesWrittenSpy(&localSocket, SIGNAL(bytesWritten(qint64)));
-
-    //Prepare data to send
-    QByteArray outPayload;
-    QDataStream out(&outPayload, QIODevice::WriteOnly);
-    out.setVersion(QDataStream::Qt_4_6);
-    out << (quint16)0;
-    out << echoPayload;
-
-    qDebug("Client-- write quint16 length = %d", sizeof(quint16));
-    qDebug("Client-- write echo string = %s", qPrintable(echoPayload));
-    qDebug("Client-- write echo string length= %d", echoPayload.length());
-    qDebug("Client-- write payload length = %d", outPayload.length());
-    out.device()->seek(0);
-    out << (quint16)(outPayload.size() - sizeof(quint16));
-
-    ret = localSocket.writeDatagram(outPayload, m_target, m_port);
-    QVERIFY(ret == 0);
-
-    QTRY_VERIFY(!bytesWrittenSpy.isEmpty());
-
-    qint64 written = 0;
-    qint32 lastSignalCount = 0;
-    while(true)
-    {
-        for(int i = lastSignalCount; i < bytesWrittenSpy.count(); i++) {
-            written += bytesWrittenSpy.at(i).at(0).value<qint64>();
-        }
-        lastSignalCount = bytesWrittenSpy.count();
-        qDebug() << "current signal count = " << lastSignalCount;
-        qDebug() << "written payload size = " << written;
-        if (written < outPayload.size()) {
-            QTRY_VERIFY(bytesWrittenSpy.count() > lastSignalCount);
-        }
-        else {
-            break;
-        }
-    }
-    qDebug() << "Overall bytesWritten = " << written;
-    qDebug() << "Overall block size = " << outPayload.size();
-    QVERIFY(written == outPayload.size());
 
     // STEP 4: Start read payload from server
     QString messageBox2("Wait remote send buffer");
@@ -279,6 +243,96 @@ void tst_qllcpsocketlocal::echoClient_data()
         longStr4k.append((char)(i%26 + 'a'));
     QTest::newRow("1") << longStr4k;
 }
+
+void tst_qllcpsocketlocal::writeMessage(
+                          QLlcpSocket& localSocket,
+                          QString& payLoad)
+{
+    // STEP 2: Local peer sends the  message to the remote peer
+    QSignalSpy errorSpy(&localSocket, SIGNAL(error(QLlcpSocket::SocketState)));
+    QSignalSpy bytesWrittenSpy(&localSocket, SIGNAL(bytesWritten(qint64)));
+
+    //Prepare data to send
+    QByteArray outPayload;
+    QDataStream out(&outPayload, QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_4_6);
+    out << (quint16)0;
+    out << payLoad;
+
+    qDebug("Client-- write quint16 length = %d", sizeof(quint16));
+    qDebug("Client-- write echo string = %s", qPrintable(payLoad));
+    qDebug("Client-- write echo string length= %d", payLoad.length());
+    qDebug("Client-- write payload length = %d", outPayload.length());
+    out.device()->seek(0);
+    out << (quint16)(outPayload.size() - sizeof(quint16));
+
+    qint64 ret = localSocket.writeDatagram(outPayload, m_target, m_port);
+    QVERIFY(ret == 0);
+
+    QTRY_VERIFY(!bytesWrittenSpy.isEmpty());
+
+    qint64 written = 0;
+    qint32 lastSignalCount = 0;
+    while(true)
+    {
+       for(int i = lastSignalCount; i < bytesWrittenSpy.count(); i++) {
+           written += bytesWrittenSpy.at(i).at(0).value<qint64>();
+       }
+       lastSignalCount = bytesWrittenSpy.count();
+       qDebug() << "current signal count = " << lastSignalCount;
+       qDebug() << "written payload size = " << written;
+       if (written < outPayload.size()) {
+           QTRY_VERIFY(bytesWrittenSpy.count() > lastSignalCount);
+       }
+       else {
+           break;
+       }
+    }
+    qDebug() << "Overall bytesWritten = " << written;
+    qDebug() << "Overall block size = " << outPayload.size();
+    QVERIFY(written == outPayload.size());
+}
+
+
+/*!
+ Description: Send the message and Receive the acknowledged identical message
+
+ TestScenario:
+           1. Local peer sends the very long message to the remote peer
+           2. Local peer sends the second very long message to the remote peer
+
+ TestExpectedResults:
+           1. The message has be sent to remote peer.
+           2. The second message has been received from remote peer.
+*/
+void tst_qllcpsocketlocal::multipleClient()
+{
+    QLlcpSocket localSocket;
+    QString longStr1k;
+    for (int i = 0; i < 1000; i++)
+        longStr1k.append((char)(i%26 + 'a'));
+
+    QString longStr2k;
+    for (int i = 0; i < 2000; i++)
+        longStr2k.append((char)(i%26 + 'b'));
+
+    QCOMPARE(localSocket.state(), QLlcpSocket::UnconnectedState);
+    QSignalSpy stateChangedSpy(&localSocket, SIGNAL(stateChanged(QLlcpSocket::SocketState)));
+
+    // STEP 1:  bind the local port for current socket
+    bool retBool = localSocket.bind(m_port);
+    QVERIFY(retBool);
+    QVERIFY(!stateChangedSpy.isEmpty());
+    QCOMPARE(localSocket.state(), QLlcpSocket::BoundState);
+
+    // Wait remote part bind
+    QString messageBox("Wait remote bind");
+    QNfcTestUtil::ShowAutoMsg(messageBox);
+
+    writeMessage(localSocket,longStr1k);
+    writeMessage(localSocket,longStr2k);
+}
+
 
 void tst_qllcpsocketlocal::testCase2()
 {
