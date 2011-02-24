@@ -615,10 +615,10 @@ void QGeoTiledMapData::processRequests()
                 || (zoomLevel() != reply->request().zoomLevel())
                 || (mapType() != reply->request().mapType())
                 || (connectivityMode() != reply->request().connectivityMode())) {
-            reply->abort();
             d->replyRects.remove(reply->request().tileRect());
-            replyIter.remove();
             d->zoomCache.remove(reply->request());
+            replyIter.remove();
+            reply->abort();
         }
     }
 
@@ -665,9 +665,6 @@ void QGeoTiledMapData::processRequests()
 
         if (reply->isFinished())
             replyFinished(reply);
-
-        if (reply->isCached())
-            break;
     }
 }
 
@@ -885,16 +882,6 @@ void QGeoTiledMapDataPrivate::updateMapImage()
         return;
 
     bool wasEmpty = (requests.size() == 0);
-
-    QMutableListIterator<QGeoTiledMapRequest> requestIter(requests);
-    while (requestIter.hasNext()) {
-        QGeoTiledMapRequest req = requestIter.next();
-        if (!intersectsScreen(req.tileRect())) {
-            requestRects.remove(req.tileRect());
-            requestIter.remove();
-        }
-    }
-
     QGeoTileIterator it(this);
 
     while (it.hasNext()) {
