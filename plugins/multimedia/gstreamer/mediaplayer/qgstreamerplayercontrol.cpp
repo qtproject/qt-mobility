@@ -365,19 +365,21 @@ void QGstreamerPlayerControl::setMedia(const QMediaContent &content, QIODevice *
 #if !defined(HAVE_GST_APPSRC)
     m_session->loadFromUri(request);
 #else
-    if (userStreamValid){
-        m_session->loadFromStream(request, m_stream);
-    } else {
-        m_mediaStatus = QMediaPlayer::InvalidMedia;
-        emit mediaStatusChanged(m_mediaStatus);
-        if (m_state != oldState)
-            emit stateChanged(m_state);
-        emit error(QMediaPlayer::FormatError, tr("Attempting to play invalid user stream"));
-        if (m_state != QMediaPlayer::PlayingState)
-            m_resources->release();
-        return;
-    }
-
+    if (m_stream) {
+        if (userStreamValid){
+            m_session->loadFromStream(request, m_stream);
+        } else {
+            m_mediaStatus = QMediaPlayer::InvalidMedia;
+            emit mediaStatusChanged(m_mediaStatus);
+            if (m_state != oldState)
+                emit stateChanged(m_state);
+            emit error(QMediaPlayer::FormatError, tr("Attempting to play invalid user stream"));
+            if (m_state != QMediaPlayer::PlayingState)
+                m_resources->release();
+            return;
+        }
+    } else
+        m_session->loadFromUri(request);
 #endif
 
 #if !defined(HAVE_GST_APPSRC)
