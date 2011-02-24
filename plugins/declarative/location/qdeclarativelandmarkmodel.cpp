@@ -295,6 +295,10 @@ QDeclarativeLandmarkAbstractModel::SortKey QDeclarativeLandmarkAbstractModel::so
 
     Specifies the role to sort the items by.
 
+    Note: both sortBy and sortOrder incur performance costs.
+    If the order is not important (e.g. when displaying landmarks
+    as Map objects) it is advisable not to set them.
+
     \list
     \o LandmarkAbstractModel.None (default)
     \o LandmarkAbstractModel.NameSort
@@ -321,6 +325,10 @@ QDeclarativeLandmarkAbstractModel::SortOrder QDeclarativeLandmarkAbstractModel::
     \qmlproperty enumeration LandmarkAbstractModel::sortOrder
 
     Specifies the sort order.
+
+    Note: both sortBy and sortOrder incur performance costs.
+    If the order is not important (e.g. when displaying landmarks
+    as Map objects) it is advisable not to set them.
 
     \list
     \o LandmarkAbstractModel.AscendingOrder
@@ -385,8 +393,11 @@ QDeclarativeLandmarkModel::~QDeclarativeLandmarkModel()
     delete m_fetchRequest;
     delete m_sortingOrder;
     delete m_importRequest;
-    qDeleteAll(m_landmarkMap.values());
-    m_landmarkMap.clear();
+
+    qDeleteAll(m_declarativeLandmarks);
+    m_declarativeLandmarks.clear();
+    m_landmarkIdSet.clear();
+    m_landmarks.clear();
 }
 
 // When the parent is valid it means that rowCount is returning the number of children of parent.
@@ -399,17 +410,16 @@ int QDeclarativeLandmarkModel::rowCount(const QModelIndex& parent) const
 // Returns the stored under the given role for the item referred to by the index.
 QVariant QDeclarativeLandmarkModel::data(const QModelIndex& index, int role) const
 {
-    QLandmark landmark = m_landmarks.value(index.row());
+    QDeclarativeLandmark *declarativeLandmark = m_declarativeLandmarks.at(index.row());
 
     switch (role) {
-        case Qt::DisplayRole:
-            return landmark.name();
-        case LandmarkRole:
-            if (m_landmarkMap.value(landmark.landmarkId().localId()))
-                return QVariant::fromValue(m_landmarkMap.value(landmark.landmarkId().localId()));
-            else
-                return QVariant();
-        }
+    case Qt::DisplayRole:
+        if (declarativeLandmark)
+            return declarativeLandmark->landmark().name();
+    case LandmarkRole:
+        if (declarativeLandmark)
+            return QVariant::fromValue(declarativeLandmark);
+    }
     return QVariant();
 }
 
@@ -584,45 +594,114 @@ void QDeclarativeLandmarkModel::landmarks_append(QDeclarativeListProperty<QDecla
 int QDeclarativeLandmarkModel::landmarks_count(QDeclarativeListProperty<QDeclarativeLandmark>* prop)
 {
     // The 'prop' is in a sense 'this' for this static function (as given in landmarks() function)
-    return static_cast<QDeclarativeLandmarkModel*>(prop->object)->m_landmarkMap.values().count();
+    return static_cast<QDeclarativeLandmarkModel*>(prop->object)->m_declarativeLandmarks.count();
 }
 
 QDeclarativeLandmark* QDeclarativeLandmarkModel::landmarks_at(QDeclarativeListProperty<QDeclarativeLandmark>* prop, int index)
 {
-    //qDebug() << "landmarks_at returning index" << index;
-    return static_cast<QDeclarativeLandmarkModel*>(prop->object)->m_landmarkMap.values().at(index);
+    return static_cast<QDeclarativeLandmarkModel*>(prop->object)->m_declarativeLandmarks.at(index);
 }
 
 void QDeclarativeLandmarkModel::landmarks_clear(QDeclarativeListProperty<QDeclarativeLandmark>* prop)
 {
     QDeclarativeLandmarkModel* model = static_cast<QDeclarativeLandmarkModel*>(prop->object);
-    QMap<QString, QDeclarativeLandmark*>* landmarkMap = &model->m_landmarkMap;
-    qDeleteAll(landmarkMap->values());
-    landmarkMap->clear();
+    qDeleteAll(model->m_declarativeLandmarks);
+    model->m_declarativeLandmarks.clear();
     model->m_landmarks.clear();
     emit model->landmarksChanged();
 }
 
-void QDeclarativeLandmarkModel::convertLandmarksToDeclarative()
+bool QDeclarativeLandmarkModel::convertLandmarksToDeclarative()
 {
-    QList<QString> landmarksToRemove = m_landmarkMap.keys();
-
-    foreach(const QLandmark& landmark, m_landmarks) {
-        if (!m_landmarkMap.contains(landmark.landmarkId().localId())) {
-            QDeclarativeLandmark* declarativeLandmark = new QDeclarativeLandmark(landmark, this);
-            m_landmarkMap.insert(landmark.landmarkId().localId(), declarativeLandmark);
-        } else {
-            // The landmark exists already, update it
-            m_landmarkMap.value(landmark.landmarkId().localId())->setLandmark(landmark);
-            // Item is still valid, remove it from the list of removables
-            landmarksToRemove.removeOne(landmark.landmarkId().localId());
+    bool changed = false;
+    if (m_sortOrder == NoOrder && m_sortKey == NoSort) {
+        Q_ASSERT(m_declarativeLandmarks.count() == m_landmarkIdSet.count());
+        // If order does not matter, we can up update without reseting the entire model
+        // which will enable performance improvements in the view as it does not need
+        // to recreate all items (which may have significant cost in rendering engine).
+        // Note: this optimization does not take into account changes in the landmark's
+        // contents (e.g name or phone number changes). Roughly ~O(2n) + O(rm) + O(new)
+        // -cost but we need to enable removing and adding range of items
+        // rather than sending signal for each removed item (typically all may change
+        // if user pans map). Also we need to be able first to remove obsolete items
+        // and only then append new ones.
+        QList<int> indexListOfNewItems;
+        QSet<QString> landmarksToRemoveIdSet = m_landmarkIdSet;
+        for (int i = 0; i < m_landmarks.count(); ++i) {
+            QString landmarkId = m_landmarks.at(i).landmarkId().localId();
+            if (!m_landmarkIdSet.contains(landmarkId)) {
+                 // After looping contains all new items
+                indexListOfNewItems.append(i);
+                changed = true;
+            }
+            else {
+                // After looping obsolete items will remain
+                landmarksToRemoveIdSet.remove(landmarkId);
+                changed = true;
+            }
         }
-    }
-    foreach (const QString removable, landmarksToRemove) {
-        delete m_landmarkMap.value(removable);
-        m_landmarkMap.remove(removable);
+        // Find continuous areas for removals, starting from the end so we can remove on the fly.
+        int bookmark = m_declarativeLandmarks.count() - 1;
+        int landmarksToRemove = landmarksToRemoveIdSet.count();
+        while (landmarksToRemove > 0) {
+            int removeBegin = -1; // will be index starting from the end
+            int removablesInBlock = 0;
+            while (bookmark >= 0) {
+                QString landmarkId = m_declarativeLandmarks.at(bookmark)->landmark().landmarkId().localId();
+                if (landmarksToRemoveIdSet.contains(landmarkId)) {
+                    // Landmark is obsolete, mark start of removable block.
+                    if (removeBegin == -1) {
+                        removeBegin = bookmark;
+                    }
+                    m_landmarkIdSet.remove(landmarkId);
+                    removablesInBlock++;
+                    bookmark--;
+                } else {
+                    // Landmark is a keeper. Remove the block of obsolete landmarks detected so far.
+                    bookmark--;
+                    break; // this block of removables is ready to be removed
+                }
+            }
+            if (removeBegin != -1 && removablesInBlock > 0) {
+                beginRemoveRows(QModelIndex(), removeBegin + 1 - removablesInBlock, removeBegin);
+                for (int i = 0; i < removablesInBlock; ++i)
+                    delete m_declarativeLandmarks.takeAt(removeBegin + 1 - removablesInBlock);
+                endRemoveRows();
+                landmarksToRemove -= removablesInBlock;
+             }
+        } // while landmarks to remove
+        // Append the new items
+        if (!indexListOfNewItems.isEmpty()) {
+            int insertBegin = m_declarativeLandmarks.count();
+            beginInsertRows(QModelIndex(), insertBegin, insertBegin + indexListOfNewItems.count() - 1);
+            for (int i = 0; i < indexListOfNewItems.count(); ++i) {
+                QDeclarativeLandmark* declarativeLandmark = new QDeclarativeLandmark(m_landmarks.at(indexListOfNewItems.at(i)), this);
+                m_declarativeLandmarks.append(declarativeLandmark);
+                m_landmarkIdSet.insert(m_landmarks.at(indexListOfNewItems.at(i)).landmarkId().localId());
+            }
+            endInsertRows();
+        }
+    } else {
+        // Order matters, reset the whole model. Brutal but otherwise we would need
+        // to create complex logic to detect item removals, additions and
+        // moves. This could be optimized to only occur when sortOrder and/or sortBy
+        // have changed. However e.g. user panning the map will likely cause complex and costly
+        // update sequences (but definately here is room for improvement if this
+        // turns in to a bottleneck).
+        changed = true;
+        beginResetModel();
+        qDeleteAll(m_declarativeLandmarks);
+        m_declarativeLandmarks.clear();
+        m_landmarkIdSet.clear();
+        foreach(const QLandmark& landmark, m_landmarks) {
+            QDeclarativeLandmark* declarativeLandmark = new QDeclarativeLandmark(landmark, this);
+            m_declarativeLandmarks.append(declarativeLandmark);
+            m_landmarkIdSet.insert(landmark.landmarkId().localId());
+        }
+        endResetModel();
     }
     emit landmarksChanged();
+    return changed;
 }
 
 QString QDeclarativeLandmarkModel::importFile() const
@@ -721,14 +800,12 @@ void QDeclarativeLandmarkModel::fetchRequestStateChanged(QLandmarkAbstractReques
 
     if (m_fetchRequest->error() == QLandmarkManager::NoError) {
         // Later improvement item is to make udpate incremental by connecting to resultsAvailable() -function.
-        beginResetModel();
         int oldCount = m_landmarks.count();
         m_landmarks = m_fetchRequest->landmarks();
         // Convert into declarative classes
-        convertLandmarksToDeclarative();
-        endResetModel();
-        if (!(oldCount == 0 && m_landmarks.count() == 0))
+        if (convertLandmarksToDeclarative()) {
             emit modelChanged();
+        }
         if (oldCount != m_landmarks.count())
             emit countChanged();
     } else if (m_error != m_fetchRequest->errorString()) {        

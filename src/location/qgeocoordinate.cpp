@@ -598,7 +598,7 @@ QDebug operator<<(QDebug dbg, const QGeoCoordinate &coord)
 
     Writes the given \a coordinate to the specified \a stream.
 
-    \sa {Format of the QDataStream Operators}
+    \sa {Serializing Qt Data Types}
 */
 
 QDataStream &operator<<(QDataStream &stream, const QGeoCoordinate &coordinate)
@@ -618,7 +618,7 @@ QDataStream &operator<<(QDataStream &stream, const QGeoCoordinate &coordinate)
     Reads a coordinate from the specified \a stream into the given
     \a coordinate.
 
-    \sa {Format of the QDataStream Operators}
+    \sa {Serializing Qt Data Types}
 */
 
 QDataStream &operator>>(QDataStream &stream, QGeoCoordinate &coordinate)
