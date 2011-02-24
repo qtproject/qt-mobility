@@ -10,28 +10,28 @@ include(version.pri)
 include(../../../common.pri)
 
 SOURCES +=  \
-			sensorbackendsym.cpp \
-			proximitysensorsym.cpp \
-			ambientlightsensorsym.cpp \
-			magnetometersensorsym.cpp \
-			compasssym.cpp \
-			accelerometersym.cpp \
-			orientationsym.cpp \
-			rotationsensorsym.cpp \
-			tapsensorsym.cpp \
-			main.cpp
+            sensorbackendsym.cpp \
+            proximitysensorsym.cpp \
+            ambientlightsensorsym.cpp \
+            magnetometersensorsym.cpp \
+            compasssym.cpp \
+            accelerometersym.cpp \
+            orientationsym.cpp \
+            rotationsensorsym.cpp \
+            tapsensorsym.cpp \
+            main.cpp
 
 HEADERS += \
-			sensorbackendsym.h \
-			sensorbackenddatasym.h \
-			proximitysensorsym.h \
-			ambientlightsensorsym.h \
-			magnetometersensorsym.h \
-			compasssym.h \
-			accelerometersym.h \
-			orientationsym.h \
-			rotationsensorsym.h \
-			tapsensorsym.h
+            sensorbackendsym.h \
+            sensorbackenddatasym.h \
+            proximitysensorsym.h \
+            ambientlightsensorsym.h \
+            magnetometersensorsym.h \
+            compasssym.h \
+            accelerometersym.h \
+            orientationsym.h \
+            rotationsensorsym.h \
+            tapsensorsym.h
 
 equals(sensors_symbian_light_enabled,yes) {
     HEADERS += lightsensorsym.h

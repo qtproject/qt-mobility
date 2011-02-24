@@ -6064,10 +6064,8 @@ void tst_QLandmarkManager::filterAttribute() {
 
     attributeFilter.setAttribute("city", "adelai", QLandmarkFilter::MatchStartsWith);
     attributeFilter.setAttribute("description", "The description", QLandmarkFilter::MatchStartsWith);
-    QVERIFY(doFetch(type,attributeFilter, &lms));
 #ifdef Q_OS_SYMBIAN
-    QEXPECT_FAIL("", "MOBILITY-2331: and operation with filter is failing", Continue);
-    QCOMPARE(lms.count(), 1);
+    QVERIFY(doFetch(type,attributeFilter,&lms,QLandmarkManager::NotSupportedError));
 #else
     QCOMPARE(lms.count(), 1);
     QCOMPARE(lms.at(0), lm1);
