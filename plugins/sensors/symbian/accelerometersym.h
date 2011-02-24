@@ -63,40 +63,41 @@ public:
      * @return CAccelerometerSensorSym if successful, leaves on failure
      */
     static CAccelerometerSensorSym* NewL(QSensor *sensor);
-    
+
     /**
      * Destructor
      * Closes the backend resources
      */
     ~CAccelerometerSensorSym();
-    
+
     void start();
-    
+
 private:
     /**
      * Default constructor
      */
     CAccelerometerSensorSym(QSensor *sensor);
-    
+
     /*
-     * RecvData is used to retrieve the sensor reading from sensor server
+     * DataReceived is used to retrieve the sensor reading from sensor server
      * It is implemented here to handle accelerometer sensor specific
      * reading data and provides conversion and utility code
-     */  
-    void RecvData(CSensrvChannel &aChannel);
-    
+     */
+    void DataReceived(CSensrvChannel &aChannel, TInt aCount, TInt aDataLost);
+    void ProcessReading();
+
     /**
      * Second phase constructor
      * Initialize the backend resources
      */
-    void ConstructL();   
-    
+    void ConstructL();
+
 public:
     /**
      * Holds the id of the accelerometer
      */
     static char const * const id;
-    
+
 private:
     QAccelerometerReading iReading;
     TSensrvAccelerometerAxisData iData;

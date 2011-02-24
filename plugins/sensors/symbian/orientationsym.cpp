@@ -57,7 +57,7 @@ COrientationSensorSym* COrientationSensorSym::NewL(QSensor *sensor)
     CleanupStack::PushL(self);
     self->ConstructL();
     CleanupStack::Pop();
-    return self;    
+    return self;
     }
 
 /**
@@ -75,33 +75,31 @@ COrientationSensorSym::~COrientationSensorSym()
  */
 COrientationSensorSym::COrientationSensorSym(QSensor *sensor):CSensorBackendSym(sensor)
     {
-    setReading<QOrientationReading>(&iReading);    
+    setReading<QOrientationReading>(&iReading);
     iBackendData.iSensorType = KSensrvChannelTypeIdOrientationData;
     }
 
 /*
- * RecvData is used to retrieve the sensor reading from sensor server
+ * DataReceived is used to retrieve the sensor reading from sensor server
  * It is implemented here to handle orientation sensor specific
  * reading data and provides conversion and utility code
- */ 
-void COrientationSensorSym::RecvData(CSensrvChannel &aChannel)
+ */
+void COrientationSensorSym::DataReceived(CSensrvChannel &aChannel, TInt aCount, TInt /*aDataLost*/)
     {
-    TPckg<TSensrvOrientationData> orientationpkg( iData );
-    TInt ret = aChannel.GetData( orientationpkg );
-    if(KErrNone != ret)
-        {
-        // If there is no reading available, return without setting
-        return;
-        }
+    ProcessData(aChannel, aCount, iData);
+    }
+
+void COrientationSensorSym::ProcessReading()
+    {
     // Get a lock on the reading data
-    iBackendData.iReadingLock.Wait();    
+    iBackendData.iReadingLock.Wait();
     //Mapping device orientation enum values to Qt Orientation enum values
     switch (iData.iDeviceOrientation)
         {
-        // Indicates Display facing down 
+        // Indicates Display facing down
         case TSensrvOrientationData::EOrientationDisplayDown:
-            {            
-            iReading.setOrientation(QOrientationReading::TopDown);                
+            {
+            iReading.setOrientation(QOrientationReading::TopDown);
             }
             break;
 
@@ -146,10 +144,12 @@ void COrientationSensorSym::RecvData(CSensrvChannel &aChannel)
             iReading.setOrientation(QOrientationReading::Undefined);
             }
         }
-    
+
     iReading.setTimestamp(iData.iTimeStamp.Int64());
     // Release the lock
     iBackendData.iReadingLock.Signal();
+    // Notify that a reading is available
+    newReadingAvailable();
     }
 
 /**

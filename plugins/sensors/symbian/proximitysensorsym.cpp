@@ -57,7 +57,7 @@ CProximitySensorSym* CProximitySensorSym::NewL(QSensor *sensor)
     CleanupStack::PushL(self);
     self->ConstructL();
     CleanupStack::Pop();
-    return self;    
+    return self;
     }
 
 /**
@@ -75,31 +75,31 @@ CProximitySensorSym::~CProximitySensorSym()
  */
 CProximitySensorSym::CProximitySensorSym(QSensor *sensor):CSensorBackendSym(sensor)
         {
-        setReading<QProximityReading>(&iReading);    
+        setReading<QProximityReading>(&iReading);
         iBackendData.iSensorType = KSensrvChannelTypeIdProximityMonitor;
         }
 
 /*
- * RecvData is used to retrieve the sensor reading from sensor server
+ * DataReceived is used to retrieve the sensor reading from sensor server
  * It is implemented here to handle proximity sensor specific
  * reading data and provides conversion and utility code
- */ 
-void CProximitySensorSym::RecvData(CSensrvChannel &aChannel)
+ */
+void CProximitySensorSym::DataReceived(CSensrvChannel &aChannel, TInt aCount, TInt /*aDataLost*/)
     {
-    TPckg<TSensrvProximityData> proxpkg( iData );
-    TInt ret = aChannel.GetData( proxpkg );
-    if(KErrNone != ret)
-        {
-        // If there is no reading available, return without setting
-        return;
-        }
+    ProcessData(aChannel, aCount, iData);
+    }
+
+void CProximitySensorSym::ProcessReading()
+    {
     // Get a lock on the reading data
-    iBackendData.iReadingLock.Wait();    
+    iBackendData.iReadingLock.Wait();
     iReading.setClose(iData.iProximityState == TSensrvProximityData::EProximityDiscernible);
     // Set the timestamp
     iReading.setTimestamp(iData.iTimeStamp.Int64());
     // Release the lock
     iBackendData.iReadingLock.Signal();
+    // Notify that a reading is available
+    newReadingAvailable();
     }
 
 /**

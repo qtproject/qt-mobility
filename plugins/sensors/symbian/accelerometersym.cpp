@@ -60,7 +60,7 @@ CAccelerometerSensorSym* CAccelerometerSensorSym::NewL(QSensor *sensor)
     CleanupStack::PushL(self);
     self->ConstructL();
     CleanupStack::Pop();
-    return self;    
+    return self;
     }
 
 /**
@@ -81,7 +81,7 @@ CAccelerometerSensorSym::CAccelerometerSensorSym(QSensor *sensor):CSensorBackend
         iUnit(0)
         {
         setReading<QAccelerometerReading>(&iReading);
-        iBackendData.iSensorType = KSensrvChannelTypeIdAccelerometerXYZAxisData;    
+        iBackendData.iSensorType = KSensrvChannelTypeIdAccelerometerXYZAxisData;
         //Disable property listening
         SetListening(ETrue, EFalse);
         }
@@ -95,7 +95,7 @@ void CAccelerometerSensorSym::start()
     if(err == KErrNone)
         {
         TSensrvProperty scaleRangeProperty;
-        TRAP(err, iBackendData.iSensorChannel->GetPropertyL(KSensrvPropIdScaledRange, KSensrvItemIndexNone, scaleRangeProperty)); 
+        TRAP(err, iBackendData.iSensorChannel->GetPropertyL(KSensrvPropIdScaledRange, KSensrvItemIndexNone, scaleRangeProperty));
         if(err == KErrNone)
             {
             if(scaleRangeProperty.GetArrayIndex() == ESensrvSingleProperty)
@@ -115,12 +115,12 @@ void CAccelerometerSensorSym::start()
                 {
                 TInt index;
                 if(scaleRangeProperty.PropertyType() == ESensrvIntProperty)
-                    {               
+                    {
                     scaleRangeProperty.GetValue(index);
                     }
                 else if(scaleRangeProperty.PropertyType() == ESensrvRealProperty)
                     {
-                    TReal realIndex;           
+                    TReal realIndex;
                     scaleRangeProperty.GetValue(realIndex);
                     index = realIndex;
                     }
@@ -144,33 +144,31 @@ void CAccelerometerSensorSym::start()
 }
 
 /*
- * RecvData is used to retrieve the sensor reading from sensor server
+ * DataReceived is used to retrieve the sensor reading from sensor server
  * It is implemented here to handle accelerometer sensor specific
  * reading data and provides conversion and utility code
  */
-void CAccelerometerSensorSym::RecvData(CSensrvChannel &aChannel)
+void CAccelerometerSensorSym::DataReceived(CSensrvChannel &aChannel, TInt aCount, TInt /*aDataLost*/)
     {
-    TPckg<TSensrvAccelerometerAxisData> accelerometerpkg( iData );
-    TInt ret = aChannel.GetData( accelerometerpkg );
-    if(KErrNone != ret)
-        {
-        // If there is no reading available, return without setting
-        return;
-        }
+    ProcessData(aChannel, aCount, iData);
+    }
+
+void CAccelerometerSensorSym::ProcessReading()
+    {
     TReal x = iData.iAxisX;
     TReal y = iData.iAxisY;
     TReal z = iData.iAxisZ;
     //Converting unit to m/s^2
     if(iScaleRange && iUnit == ESensevChannelUnitAcceleration)
         {
-	qoutputrangelist rangeList = sensor()->outputRanges();
+        qoutputrangelist rangeList = sensor()->outputRanges();
         int outputRange = sensor()->outputRange();
         if (outputRange == -1)
             outputRange = 0;
-	TReal maxValue = rangeList[outputRange].maximum;
+        TReal maxValue = rangeList[outputRange].maximum;
         x = (x/iScaleRange) * maxValue;
         y = (y/iScaleRange) * maxValue;
-        z = (z/iScaleRange) * maxValue;        
+        z = (z/iScaleRange) * maxValue;
         }
     else if(iUnit == ESensrvChannelUnitGravityConstant)
         {
@@ -186,6 +184,8 @@ void CAccelerometerSensorSym::RecvData(CSensrvChannel &aChannel)
     iReading.setTimestamp(iData.iTimeStamp.Int64());
     // Release the lock
     iBackendData.iReadingLock.Signal();
+    // Notify that a reading is available
+    newReadingAvailable();
     }
 
 /**
@@ -195,8 +195,8 @@ void CAccelerometerSensorSym::RecvData(CSensrvChannel &aChannel)
 void CAccelerometerSensorSym::ConstructL()
     {
     //Initialize the backend resources
-    InitializeL(); 
-    
+    InitializeL();
+
     TInt err;
     TSensrvProperty unitProperty;
     TRAP(err, iBackendData.iSensorChannel->GetPropertyL(KSensrvPropIdChannelUnit, ESensrvSingleProperty, unitProperty));

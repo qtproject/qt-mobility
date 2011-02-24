@@ -56,7 +56,7 @@ CAmbientLightSensorSym* CAmbientLightSensorSym::NewL(QSensor *sensor)
     CleanupStack::PushL(self);
     self->ConstructL();
     CleanupStack::Pop();
-    return self;    
+    return self;
     }
 
 /**
@@ -74,24 +74,22 @@ CAmbientLightSensorSym::~CAmbientLightSensorSym()
  */
 CAmbientLightSensorSym::CAmbientLightSensorSym(QSensor *sensor):CSensorBackendSym(sensor)
     {
-    setReading<QAmbientLightReading>(&iReading);    
+    setReading<QAmbientLightReading>(&iReading);
     iBackendData.iSensorType = KSensrvChannelTypeIdAmbientLightData;
     }
 
 /*
- * RecvData is used to retrieve the sensor reading from sensor server
+ * DataReceived is used to retrieve the sensor reading from sensor server
  * It is implemented here to handle ambient light sensor specific
  * reading data and provides conversion and utility code
- */  
-void CAmbientLightSensorSym::RecvData(CSensrvChannel &aChannel)
+ */
+void CAmbientLightSensorSym::DataReceived(CSensrvChannel &aChannel, TInt aCount, TInt /*aDataLost*/)
     {
-    TPckg<TSensrvAmbientLightData> lightpkg( iData );
-    TInt ret = aChannel.GetData( lightpkg );
-    if(KErrNone != ret)
-        {
-        // If there is no reading available, return without setting
-        return;
-        }
+    ProcessData(aChannel, aCount, iData);
+    }
+
+void CAmbientLightSensorSym::ProcessReading()
+    {
     // Get a lock on the reading data
     iBackendData.iReadingLock.Wait();
     switch (iData.iAmbientLight)
@@ -99,7 +97,7 @@ void CAmbientLightSensorSym::RecvData(CSensrvChannel &aChannel)
         case TSensrvAmbientLightData::KAmbientLightVeryDark:
         case TSensrvAmbientLightData::KAmbientLightDark:
             {
-            iReading.setLightLevel(QAmbientLightReading::Dark);               
+            iReading.setLightLevel(QAmbientLightReading::Dark);
             }
             break;
 
@@ -136,6 +134,8 @@ void CAmbientLightSensorSym::RecvData(CSensrvChannel &aChannel)
     iReading.setTimestamp(iData.iTimeStamp.Int64());
     // Release the lock
     iBackendData.iReadingLock.Signal();
+    // Notify that a reading is available
+    newReadingAvailable();
     }
 
 /**

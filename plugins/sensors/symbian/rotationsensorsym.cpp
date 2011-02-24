@@ -41,7 +41,6 @@
 
 // Internal Headers
 #include "rotationsensorsym.h"
-
 #include <sensrvgeneralproperties.h>
 
 /**
@@ -80,28 +79,26 @@ CRotationSensorSym::~CRotationSensorSym()
  */
 CRotationSensorSym::CRotationSensorSym(QSensor *sensor):CSensorBackendSym(sensor)
         {
-        setReading<QRotationReading>(&iReading);    
+        setReading<QRotationReading>(&iReading);
         iBackendData.iSensorType = KSensrvChannelTypeIdRotationData;
         }
 
 /*
- * RecvData is used to retrieve the sensor reading from sensor server
+ * DataReceived is used to retrieve the sensor reading from sensor server
  * It is implemented here to handle rotation sensor specific
  * reading data and provides conversion and utility code
- */ 
-void CRotationSensorSym::RecvData(CSensrvChannel &aChannel)
+ */
+void CRotationSensorSym::DataReceived(CSensrvChannel &aChannel, TInt aCount, TInt /*aDataLost*/)
     {
-    TPckg<TSensrvRotationData> rotationpkg( iData );
-    TInt ret = aChannel.GetData( rotationpkg );
-    if(KErrNone != ret)
-        {
-        // If there is no reading available, return without setting
-        return;
-        }
+    ProcessData(aChannel, aCount, iData);
+    }
+
+void CRotationSensorSym::ProcessReading()
+    {
     // Get a lock on the reading data
     iBackendData.iReadingLock.Wait();
     // To Do verify with ds and ramsay
-    
+
     // For x axis symbian provides reading from 0 to 359 range
     // This logic maps value to Qt range -90 to 90
     if(iData.iDeviceRotationAboutXAxis >= 0 && iData.iDeviceRotationAboutXAxis <= 180)
@@ -116,7 +113,7 @@ void CRotationSensorSym::RecvData(CSensrvChannel &aChannel)
         {
         iReading.setX(iData.iDeviceRotationAboutXAxis - 270);
         }
-    
+
     // For y axis symbian provides reading from 0 to 359 range
     // This logic maps value to Qt range -180 to 180
     if(iData.iDeviceRotationAboutYAxis >= 0 && iData.iDeviceRotationAboutYAxis <= 180)
@@ -127,7 +124,7 @@ void CRotationSensorSym::RecvData(CSensrvChannel &aChannel)
         {
         iReading.setY(iData.iDeviceRotationAboutYAxis - 360);
         }
-    
+
     if(iData.iDeviceRotationAboutZAxis == TSensrvRotationData::KSensrvRotationUndefined)
         {
         sensor()->setProperty("hasZ", QVariant(FALSE));
@@ -150,10 +147,12 @@ void CRotationSensorSym::RecvData(CSensrvChannel &aChannel)
     iReading.setTimestamp(iData.iTimeStamp.Int64());
     // Release the lock
     iBackendData.iReadingLock.Signal();
+    // Notify that a reading is available
+    newReadingAvailable();
     }
 
 /**
- * Overriding this method in rotation sensor to hard code value of 
+ * Overriding this method in rotation sensor to hard code value of
  * mesurement range from -180 to 180 as Qt wants
  * Symbian provides measurement range from 0 to 359
  */
@@ -179,6 +178,6 @@ void CRotationSensorSym::GetMeasurementrangeAndAccuracy()
 void CRotationSensorSym::ConstructL()
     {
     //Initialize the backend resources
-    InitializeL();    
+    InitializeL();
     }
 

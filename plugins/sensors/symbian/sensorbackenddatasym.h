@@ -49,7 +49,7 @@ QTM_USE_NAMESPACE
 class TSensorBackendDataSym
     {
 public:
-    TBool iSensorAvailable;    
+    TBool iSensorAvailable;
     CSensrvChannel* iSensorChannel;
     TSensrvChannelTypeId iSensorType;
     TSensrvChannelInfo iChannelInfo;

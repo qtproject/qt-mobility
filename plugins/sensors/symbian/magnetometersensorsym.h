@@ -63,57 +63,58 @@ public:
      * @return CMagnetometerSensorSym if successful, leaves on failure
      */
     static CMagnetometerSensorSym* NewL(QSensor *sensor);
-    
+
     /**
      * Destructor
      * Closes the backend resources
      */
     ~CMagnetometerSensorSym();
-    
+
     /*
      * Used to retrieve the current calibration level
      * iCalibrationLevel is automatically updated whenever there is a change
      * in calibration level
      */
     qreal GetCalibrationLevel();
-    
+
     /**
      * start is overridden to allow retrieving initial calibration property before
      * and to set the required value type flags
      */
     void start();
-    
+
 private:
     /**
      * Default constructor
      */
     CMagnetometerSensorSym(QSensor *sensor);
-    
+
     /*
-     * RecvData is used to retrieve the sensor reading from sensor server
+     * DataReceived is used to retrieve the sensor reading from sensor server
      * It is implemented here to handle magnetometer sensor specific
      * reading data and provides conversion and utility code
-     */ 
-    void RecvData(CSensrvChannel &aChannel);
-    
+     */
+    void DataReceived(CSensrvChannel &aChannel, TInt aCount, TInt aDataLost);
+    void ProcessReading();
+
     /**
      * HandlePropertyChange is called from backend, to indicate a change in property
      */
     void HandlePropertyChange(CSensrvChannel &aChannel, const TSensrvProperty &aChangedProperty);
-    
+
     /**
      * Second phase constructor
      * Initialize the backend resources
      */
-    void ConstructL();    
-    
+    void ConstructL();
+
 public:
     /**
      * Holds the id of the magnetometer
      */
     static char const * const id;
-    
-private:     
+
+private:
     QMagnetometerReading iReading;
     TSensrvMagnetometerAxisData iData;
     qreal iCalibrationLevel;
