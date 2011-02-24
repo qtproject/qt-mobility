@@ -61,17 +61,44 @@
 
 #define LARGE_TILE_DIMENSION 256
 
-#if defined(Q_OS_SYMBIAN) && defined(SYMBIAN_ENABLE_CACHE)
-#include <qsystemstorageinfo.h>
-#endif
-
 #define DISK_CACHE_MAX_SIZE 50*1024*1024  //50MB
 
-#if defined(Q_OS_WINCE_WM) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6) || (defined(Q_OS_SYMBIAN) && !defined(SYMBIAN_ENABLE_CACHE))
+#if defined(Q_OS_WINCE_WM) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
 #undef DISK_CACHE_ENABLED
 #else
 #define DISK_CACHE_ENABLED 1
 #endif
+
+#if defined(Q_OS_SYMBIAN)
+#include <f32file.h>
+QChar QGeoMappingManagerEngineNokia::findFirstInternalFlashDrive()
+{
+    QChar flashDrive;
+    RFs fsSession;
+    // if something leaves just return an empty QChar
+    TRAP_IGNORE(
+        User::LeaveIfError(fsSession.Connect());
+        CleanupClosePushL(fsSession);
+        TDriveList drivelist;
+        User::LeaveIfError(fsSession.DriveList(drivelist));
+        for (int i = 0; i < KMaxDrives; ++i) {
+            if (drivelist[i] != 0) {
+                TChar driveChar;
+                User::LeaveIfError(RFs::DriveToChar(i, driveChar));
+                TDriveInfo driveInfo;
+                if (fsSession.Drive(driveInfo, i) != KErrNone)
+                    continue;
+                if ((driveInfo.iDriveAtt & KDriveAttInternal) && driveInfo.iType == EMediaHardDisk) {
+                    flashDrive = QChar(driveChar);
+                    break;
+                }
+            }
+        }
+        CleanupStack::PopAndDestroy(&fsSession);
+    )
+    return flashDrive;
+}
+#endif //Q_OS_SYMBIAN
 
 QGeoMappingManagerEngineNokia::QGeoMappingManagerEngineNokia(const QMap<QString, QVariant> &parameters, QGeoServiceProvider::Error *error, QString *errorString)
         : QGeoTiledMappingManagerEngine(parameters),
@@ -129,51 +156,41 @@ QGeoMappingManagerEngineNokia::QGeoMappingManagerEngineNokia(const QMap<QString,
     else if (parameters.contains("token")) {
         m_token = parameters.value("token").toString();
     }
-
-
 #ifdef DISK_CACHE_ENABLED
+    QString cacheDir;
+    if (parameters.contains("mapping.cache.directory"))
+        cacheDir = parameters.value("mapping.cache.directory").toString();
 
-#if defined(Q_OS_SYMBIAN) && defined(SYMBIAN_ENABLE_CACHE)
-    QDir dir;
-    QSystemStorageInfo info;
-    QStringList drives = info.logicalDrives();
-    for (int i=0;i<drives.count();++i) {
-        if (info.typeForDrive(drives.at(i))==QSystemStorageInfo::InternalFlashDrive){
-            dir.setPath(drives.at(i)+":/");
-            QString cachePath("data/nokia");
-            dir.mkpath(cachePath);
-            dir.cd(cachePath);
-            break;
+    if (cacheDir.isEmpty()) {
+#if defined(Q_OS_SYMBIAN)
+        QChar driveLetter(findFirstInternalFlashDrive());
+        if (!driveLetter.isNull()) {
+            cacheDir = driveLetter;
+            cacheDir += ":/data/nokia/maptiles";
         }
-    }
 #else
-    QDir dir = QDir::temp();
+        cacheDir = QDir::temp().path()+"/maptiles";
 #endif
-    if (!dir.path().isEmpty()) {
-    m_cache = new QNetworkDiskCache(this);
-
-    dir.mkdir("maptiles");
-    dir.cd("maptiles");
-
-    m_cache->setCacheDirectory(dir.path());
-
-    if (parameters.contains("mapping.cache.directory")) {
-        QString cacheDir = parameters.value("mapping.cache.directory").toString();
-        if (!cacheDir.isEmpty())
-            m_cache->setCacheDirectory(cacheDir);
     }
+    if (!cacheDir.isEmpty()) {
+        m_cache = new QNetworkDiskCache(this);
+        QDir dir;
+        dir.mkpath(cacheDir);
+        dir.setPath(cacheDir);
 
-    if (parameters.contains("mapping.cache.size")) {
-        bool ok = false;
-        qint64 cacheSize = parameters.value("mapping.cache.size").toString().toLongLong(&ok);
-        if (ok)
-            m_cache->setMaximumCacheSize(cacheSize);
-    }
+        m_cache->setCacheDirectory(dir.path());
 
-    if (m_cache->maximumCacheSize() > DISK_CACHE_MAX_SIZE)
-        m_cache->setMaximumCacheSize(DISK_CACHE_MAX_SIZE);
+        if (parameters.contains("mapping.cache.size")) {
+            bool ok = false;
+            qint64 cacheSize = parameters.value("mapping.cache.size").toString().toLongLong(&ok);
+            if (ok)
+                m_cache->setMaximumCacheSize(cacheSize);
+        }
 
-    m_networkManager->setCache(m_cache);
+        if (m_cache->maximumCacheSize() > DISK_CACHE_MAX_SIZE)
+            m_cache->setMaximumCacheSize(DISK_CACHE_MAX_SIZE);
+
+        m_networkManager->setCache(m_cache);
     }
 #endif
 }

@@ -40,17 +40,13 @@ INCLUDEPATH += $$SOURCE_DIR/src/location \
                 $$SOURCE_DIR/src/location/maps/tiled
 
 symbian {
-    contains(mobility_modules,systeminfo) {
-       DEFINES += SYMBIAN_ENABLE_CACHE
-       MOBILITY += systeminfo
-    }
-
     TARGET.EPOCALLOWDLLDATA = 1
     TARGET.CAPABILITY = ALL -TCB
     TARGET.UID3 = 0x2002BFCA
     pluginDep.sources = $${TARGET}.dll
     pluginDep.path = $${QT_PLUGINS_BASE_DIR}/$${PLUGIN_TYPE}
     DEPLOYMENT += pluginDep      
+    LIBS += -lefsrv
 }
 
 RESOURCES += resource.qrc
