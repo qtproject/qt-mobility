@@ -271,11 +271,13 @@ longer and more complicated than an example.
 
 \section1 QML Examples
 
-\section3 \bold{Landmark Map QML Example}
+\section2 \bold{Landmark Map QML Example}
 
-The \l {Landmark Map Example}
+The \l {Landmark Map Example} shows how a mobile application might display
+some map information which includes landmark information imported from a landmark
+file.
 
-\section3 \bold{Map Viewer QML Example}
+\section2 \bold{Map Viewer QML Example}
 
 The \l {Declarative Map Viewer Example}{Map Viewer example} displays a map of
 the current location or failing that a hard-coded default location to display
