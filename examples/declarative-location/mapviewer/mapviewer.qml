@@ -98,9 +98,8 @@ Item {
                 mouse.accepted = false
             }
         }
-
-    }
 */
+    }
 
     MouseArea {
 
