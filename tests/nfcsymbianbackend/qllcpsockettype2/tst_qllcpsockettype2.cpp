@@ -606,7 +606,7 @@ void tst_qllcpsockettype2::negTestCase3()
     QString message("negTestCase3 test");
     QNfcTestUtil::ShowAutoMsg(message);
 
-    QSignalSpy errorSpy(&socket, SIGNAL(error(QLlcpSocket::Error)));
+    QSignalSpy errorSpy(&socket, SIGNAL(error(QLlcpSocket::SocketError)));
     socket.connectToService(m_target, TestUri);
 
     bool ret = socket.bind(35);

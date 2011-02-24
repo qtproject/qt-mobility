@@ -287,7 +287,7 @@ void tst_QLlcpServer::newConnection_wait()
     if (!errorSpy.isEmpty())
         {
             QLlcpSocket::SocketError error = errorSpy.first().at(0).value<QLlcpSocket::SocketError>();
-            qDebug("QLlcpSocket::Error =%d", error);
+            qDebug("QLlcpSocket::SocketError =%d", error);
         }
     QVERIFY(errorSpy.isEmpty());
     QTest::qWait(1500);//give some time to client to finish
