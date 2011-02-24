@@ -65,7 +65,7 @@ public:
     {
         int id = mob.propertyCount();
         mob.addSignal("__" + QByteArray::number(id) + "()");
-        QMetaPropertyBuilder build = mob.addProperty(name, type, id);
+        QDMetaPropertyBuilder build = mob.addProperty(name, type, id);
         build.setDynamic(true);
         qFree(mem);
         mem = mob.toMetaObject();
@@ -87,7 +87,7 @@ public:
 
         mob.setSuperClass(metaObj);
         mob.setClassName(metaObj->className());
-        mob.setFlags(QMetaObjectBuilder::DynamicMetaObject);
+        mob.setFlags(QDMetaObjectBuilder::DynamicMetaObject);
 
         mem = mob.toMetaObject();
 
@@ -102,7 +102,7 @@ public:
     int m_propertyOffset;
     int m_signalOffset;
 
-    QMetaObjectBuilder mob;
+    QDMetaObjectBuilder mob;
     QMetaObject *mem;
 };
 
