@@ -663,6 +663,8 @@ void DirectShowPlayerService::play()
 
         ::SetEvent(m_taskHandle);
     }
+
+    updateStatus();
 }
 
 void DirectShowPlayerService::doPlay(QMutexLocker *locker)
@@ -705,6 +707,8 @@ void DirectShowPlayerService::pause()
 
         ::SetEvent(m_taskHandle);
     }
+
+    updateStatus();
 }
 
 void DirectShowPlayerService::doPause(QMutexLocker *locker)
@@ -755,6 +759,7 @@ void DirectShowPlayerService::stop()
         m_loop->wait(&m_mutex);
     }
 
+    updateStatus();
 }
 
 void DirectShowPlayerService::doStop(QMutexLocker *locker)
