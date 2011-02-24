@@ -72,7 +72,8 @@ public:
     };
 
     enum SocketError {
-        UnknownSocketError = QAbstractSocket::UnknownSocketError
+        UnknownSocketError = QAbstractSocket::UnknownSocketError,
+        RemoteHostClosedError = QAbstractSocket::RemoteHostClosedError
     };
 
     explicit QLlcpSocket(QObject *parent = 0);

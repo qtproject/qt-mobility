@@ -39,72 +39,47 @@
 **
 ****************************************************************************/
 
-#ifndef QLLCPSERVER_MEEGO_P_H
-#define QLLCPSERVER_MEEGO_P_H
+#ifndef SOCKETREQUESTOR_P_H
+#define SOCKETREQUESTOR_P_H
 
 #include <qmobilityglobal.h>
 
-#include "qllcpserver.h"
-
-#include <QtDBus/QDBusConnection>
+#include <QtCore/QObject>
 
 QT_FORWARD_DECLARE_CLASS(QDBusObjectPath)
 QT_FORWARD_DECLARE_CLASS(QDBusVariant)
 
-class AccessRequestorAdaptor;
-class LLCPRequestorAdaptor;
+class DBusConnection;
+
+QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
-class SocketRequestor;
-
-class QLlcpServerPrivate : public QObject
+class SocketRequestor : public QObject
 {
     Q_OBJECT
 
-    Q_DECLARE_PUBLIC(QLlcpServer)
-
 public:
-    QLlcpServerPrivate(QLlcpServer *q);
+    explicit SocketRequestor(const QString &adaptor, QObject *parent = 0);
+    ~SocketRequestor();
 
-    bool listen(const QString &serviceUri);
-    bool isListening() const;
+    void requestAccess(const QString &path, const QString &kind);
+    void cancelAccessRequest(const QString &path, const QString &kind);
 
-    void close();
+signals:
+    void accessFailed(const QDBusObjectPath &targetPath, const QString &error);
+    void accessGranted(const QDBusObjectPath &targetPath, const QString &accessKind);
 
-    QString serviceUri() const;
-    quint8 serverPort() const;
-
-    bool hasPendingConnections() const;
-    QLlcpSocket *nextPendingConnection();
-
-    QLlcpSocket::SocketError serverError() const;
-
-private slots:
-    // com.nokia.nfc.AccessRequestor
-    void AccessFailed(const QDBusObjectPath &targetPath, const QString &error);
-    void AccessGranted(const QDBusObjectPath &targetPath, const QString &accessKind);
-
-    // com.nokia.nfc.LLCPRequestor
-    void Accept(const QDBusVariant &lsap, const QDBusVariant &rsap, int readFd, int writeFd);
-    void Connect(const QDBusVariant &lsap, const QDBusVariant &rsap, int readFd, int writeFd);
-    void Socket(const QDBusVariant &lsap, const QDBusVariant &rsap, int readFd, int writeFd);
+    void accept(const QDBusVariant &lsap, const QDBusVariant &rsap, int readFd, int writeFd);
+    void connect(const QDBusVariant &lsap, const QDBusVariant &rsap, int readFd, int writeFd);
+    void socket(const QDBusVariant &lsap, const QDBusVariant &rsap, int readFd, int writeFd);
 
 private:
-    QLlcpServer *q_ptr;
-
-    QDBusConnection m_connection;
-
-    QString m_serviceUri;
-
-    QString m_requestorPath;
-    SocketRequestor *m_socketRequestor;
-
-    QList<QPair<int, int> > m_pendingSockets;
-
-    QLlcpSocket::SocketError m_error;
+    const QString m_adaptor;
 };
 
 QTM_END_NAMESPACE
 
-#endif // QLLCPSERVER_MEEGO_P_H
+QT_END_HEADER
+
+#endif // SOCKETREQUESTOR_P_H

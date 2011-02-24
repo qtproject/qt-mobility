@@ -121,6 +121,7 @@ QTM_BEGIN_NAMESPACE
 QLlcpSocket::QLlcpSocket(QObject *parent)
 :   QIODevice(parent), d_ptr(new QLlcpSocketPrivate(this))
 {
+    setOpenMode(QIODevice::NotOpen);
 }
 
 /*!
@@ -129,6 +130,7 @@ QLlcpSocket::QLlcpSocket(QObject *parent)
 QLlcpSocket::QLlcpSocket(QLlcpSocketPrivate *d, QObject *parent)
 :   QIODevice(parent), d_ptr(d)
 {
+    setOpenMode(QIODevice::ReadWrite);
     d_ptr->q_ptr = this;
 }
 
@@ -156,6 +158,8 @@ void QLlcpSocket::connectToService(QNearFieldTarget *target, const QString &serv
 void QLlcpSocket::disconnectFromService()
 {
     Q_D(QLlcpSocket);
+
+    setOpenMode(NotOpen);
 
     d->disconnectFromService();
 }
