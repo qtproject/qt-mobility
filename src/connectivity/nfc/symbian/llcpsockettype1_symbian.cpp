@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -47,7 +47,7 @@
 #include "debug.h"
 
 
-/*!
+/*
     CLlcpSocketType1::NewL()
 */
 CLlcpSocketType1* CLlcpSocketType1::NewL(QtMobility::QLlcpSocketPrivate& aCallback)
@@ -57,7 +57,7 @@ CLlcpSocketType1* CLlcpSocketType1::NewL(QtMobility::QLlcpSocketPrivate& aCallba
     return self;
     }
 
-/*!
+/*
     CLlcpSocketType1::NewLC()
 */
 CLlcpSocketType1* CLlcpSocketType1::NewLC(QtMobility::QLlcpSocketPrivate& aCallback)
@@ -68,7 +68,7 @@ CLlcpSocketType1* CLlcpSocketType1::NewLC(QtMobility::QLlcpSocketPrivate& aCallb
     return self;
     }
 
-/*!
+/*
     CLlcpSocketType1::CLlcpSocketType1()
 */
 CLlcpSocketType1::CLlcpSocketType1(QtMobility::QLlcpSocketPrivate& aCallback)
@@ -78,7 +78,7 @@ CLlcpSocketType1::CLlcpSocketType1(QtMobility::QLlcpSocketPrivate& aCallback)
     {
     }
 
-/*!
+/*
     CLlcpSocketPrivate::ContructL()
 */
 void CLlcpSocketType1::ConstructL()
@@ -88,7 +88,7 @@ void CLlcpSocketType1::ConstructL()
     iWait = new (ELeave) CActiveSchedulerWait;
     }
 
-/*!
+/*
     Destroys the LLCP socket.
 */
 CLlcpSocketType1::~CLlcpSocketType1()
@@ -109,7 +109,7 @@ CLlcpSocketType1::~CLlcpSocketType1()
     END
     }
 
-/*!
+/*
     Cancel the Receive/Transfer and destroy the local/remote connection.
 */
 void CLlcpSocketType1::Cleanup()
@@ -126,7 +126,7 @@ void CLlcpSocketType1::Cleanup()
     END
     }
 
-/*!
+/*
     Start to listen the port as given, set as local port which is used to read datagram
 */
 TBool CLlcpSocketType1::Bind(TUint8 aPortNum)
@@ -148,7 +148,7 @@ TBool CLlcpSocketType1::Bind(TUint8 aPortNum)
     return bindOK;
     }
 
-/*!
+/*
     Sends the datagram at aData  to the service that this socket is connected to.
     Returns the number of bytes sent on success; otherwise return -1;
 */
@@ -231,7 +231,7 @@ TInt64 CLlcpSocketType1::PendingDatagramSize() const
     return val;
     }
 
-/*!
+/*
     Call back from MLlcpConnLessListener
 */
 void CLlcpSocketType1::FrameReceived(MLlcpConnLessTransporter* aConnection)
@@ -243,7 +243,7 @@ void CLlcpSocketType1::FrameReceived(MLlcpConnLessTransporter* aConnection)
     END
     }
 
-/*!
+/*
     Call back from MLlcpReadWriteCb
 */
 void CLlcpSocketType1::ReceiveComplete(TInt aError)
@@ -262,7 +262,7 @@ void CLlcpSocketType1::ReceiveComplete(TInt aError)
     END
     }
 
-/*!
+/*
     Call back from MLlcpReadWriteCb
 */
 void CLlcpSocketType1::WriteComplete(TInt aError, TInt aSize)
@@ -310,7 +310,7 @@ void CLlcpSocketType1::StopWaitNow(TWaitStatus aWaitStatus)
     END
     }
 
-/*!
+/*
     Creating MLlcpConnLessTransporter object if  connection type connectionless,
     Creating Creating wrapper for local peer connection.
 */
@@ -410,7 +410,7 @@ TBool CLlcpSocketType1::WaitForOperationReady(TWaitStatus aWaitStatus,TInt aMill
     }
 
 
-/*!
+/*
     Construct the wrapper for connectionLess transport.
 */
 COwnLlcpConnectionWrapper* COwnLlcpConnectionWrapper::NewL(MLlcpConnLessTransporter* aConnection
@@ -421,7 +421,7 @@ COwnLlcpConnectionWrapper* COwnLlcpConnectionWrapper::NewL(MLlcpConnLessTranspor
     return self;
     }
 
-/*!
+/*
     Construct the new wrapper for connectionLess transport.
 */
 COwnLlcpConnectionWrapper* COwnLlcpConnectionWrapper::NewLC(MLlcpConnLessTransporter* aConnection
@@ -433,7 +433,7 @@ COwnLlcpConnectionWrapper* COwnLlcpConnectionWrapper::NewLC(MLlcpConnLessTranspo
     return self;
     }
 
-/*!
+/*
     Constructor
 */
 COwnLlcpConnectionWrapper::COwnLlcpConnectionWrapper(MLlcpConnLessTransporter* aConnection)
@@ -441,7 +441,7 @@ COwnLlcpConnectionWrapper::COwnLlcpConnectionWrapper(MLlcpConnLessTransporter* a
     {
     }
 
-/*!
+/*
     ConstructL
 */
 void COwnLlcpConnectionWrapper::ConstructL(MLlcpReadWriteCb& aCallBack)
@@ -456,7 +456,7 @@ void COwnLlcpConnectionWrapper::ConstructL(MLlcpReadWriteCb& aCallBack)
     iReceiverAO = CLlcpReceiverType1::NewL(*iConnection, aCallBack);
     }
 
-/*!
+/*
     Destroy the new wrapper for connectionLess transport.
 */
 COwnLlcpConnectionWrapper::~COwnLlcpConnectionWrapper()
@@ -476,7 +476,7 @@ COwnLlcpConnectionWrapper::~COwnLlcpConnectionWrapper()
     END
     }
 
-/*!
+/*
     Send data from queued buffer
 */
 bool COwnLlcpConnectionWrapper::TransferQueued()
@@ -503,7 +503,7 @@ bool COwnLlcpConnectionWrapper::TransferQueued()
     return ret;
     }
 
-/*!
+/*
     Send data from local peer to remote peer via connectionLess transport
 */
 TInt COwnLlcpConnectionWrapper::TransferL(const TDesC8& aData)
@@ -527,7 +527,7 @@ TInt COwnLlcpConnectionWrapper::TransferL(const TDesC8& aData)
     }
 
 
-/*!
+/*
  *  Trigger the receiver AO to start receive datagram
     Receive data from remote peer to local peer via connectionLess transport
 */
@@ -545,7 +545,7 @@ TInt COwnLlcpConnectionWrapper::Receive()
     return error;
     }
 
-/*!
+/*
     Retrieve data from the buffer of the connection less socket
 */
 TInt COwnLlcpConnectionWrapper::ReceiveDataFromBuf(TDes8& aData)
@@ -569,7 +569,7 @@ TInt64 COwnLlcpConnectionWrapper::PendingDatagramSize() const
     return iReceiverAO->PendingDatagramSize();
     }
 
-/*!
+/*
     Cancel data transfer from local peer to remote peer via connectionLess transport
 */
 void COwnLlcpConnectionWrapper::TransferCancel()
@@ -582,7 +582,7 @@ void COwnLlcpConnectionWrapper::TransferCancel()
     END
     }
 
-/*!
+/*
     Cancel data receive from local peer to remote peer via connectionLess transport
 */
 void COwnLlcpConnectionWrapper::ReceiveCancel()
@@ -595,11 +595,11 @@ void COwnLlcpConnectionWrapper::ReceiveCancel()
     END
     }
 
-/*!
+/*
     Start of implementation of Sender AO & Receiver AO for connection less mode (type1)
 */
 
-/*!
+/*
     Constructor
 */
 CLlcpSenderType1::CLlcpSenderType1(MLlcpConnLessTransporter& aConnection, MLlcpReadWriteCb& aCallBack)
@@ -609,7 +609,7 @@ CLlcpSenderType1::CLlcpSenderType1(MLlcpConnLessTransporter& aConnection, MLlcpR
     {
     }
 
-/*!
+/*
     Constructor
 */
 CLlcpSenderType1* CLlcpSenderType1::NewL(MLlcpConnLessTransporter& iConnection, MLlcpReadWriteCb& aCallBack)
@@ -619,7 +619,7 @@ CLlcpSenderType1* CLlcpSenderType1::NewL(MLlcpConnLessTransporter& iConnection, 
     return self;
     }
 
-/*!
+/*
     Destructor
 */
 CLlcpSenderType1::~CLlcpSenderType1()
@@ -735,11 +735,11 @@ void CLlcpSenderType1::DoCancel(void)
     END
     }
 
-/*!
+/*
     Start of implementation of Receiver AO for connection less mode (type1) - CLlcpReceiverType1
 */
 
-/*!
+/*
     Constructor
 */
 CLlcpReceiverType1::CLlcpReceiverType1(MLlcpConnLessTransporter& aConnection, MLlcpReadWriteCb& aCallBack)
@@ -749,7 +749,7 @@ CLlcpReceiverType1::CLlcpReceiverType1(MLlcpConnLessTransporter& aConnection, ML
     {
     }
 
-/*!
+/*
     Constructor
 */
 CLlcpReceiverType1* CLlcpReceiverType1::NewL(MLlcpConnLessTransporter& aConnection, MLlcpReadWriteCb& aCallBack)
@@ -760,7 +760,7 @@ CLlcpReceiverType1* CLlcpReceiverType1::NewL(MLlcpConnLessTransporter& aConnecti
     }
 
 
-/*!
+/*
     Set active for the receiver AO
     Receive complete callback function "cb" registed
 */

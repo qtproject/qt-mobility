@@ -164,7 +164,7 @@ QVariant QNearFieldTagType1Symbian::decodeResponse(const QByteArray &command, co
 
     return response;
 }
-/*!
+/*
     \class QNearFieldTagType1Symbian
     \brief The QNearFieldTagType1Symbian class provides symbian backend implementation for communicating with an NFC Tag
            Type 1 tag.
@@ -173,7 +173,7 @@ QVariant QNearFieldTagType1Symbian::decodeResponse(const QByteArray &command, co
     \inmodule QtConnectivity
 */
 
-/*!
+/*
     Constructs a new tag type 1 near field target with \a tag and \a parent.
 */
 QNearFieldTagType1Symbian::QNearFieldTagType1Symbian(CNearFieldNdefTarget *tag, QObject *parent)
@@ -181,7 +181,7 @@ QNearFieldTagType1Symbian::QNearFieldTagType1Symbian(CNearFieldNdefTarget *tag, 
 {
 }
 
-/*!
+/*
     Destructor
 */
 QNearFieldTagType1Symbian::~QNearFieldTagType1Symbian()
@@ -193,7 +193,7 @@ QByteArray QNearFieldTagType1Symbian::uid() const
     return _uid();
 }
 
-/*!
+/*
     \reimp
 */
 QNearFieldTarget::RequestId QNearFieldTagType1Symbian::readIdentification()
@@ -208,7 +208,7 @@ QNearFieldTarget::RequestId QNearFieldTagType1Symbian::readIdentification()
     return sendCommand(command);
 }
 
-/*!
+/*
     \reimp
 */
 QNearFieldTarget::RequestId QNearFieldTagType1Symbian::readAll()
@@ -223,7 +223,7 @@ QNearFieldTarget::RequestId QNearFieldTagType1Symbian::readAll()
     return sendCommand(command);
 }
 
-/*!
+/*
     \reimp
 */
 QNearFieldTarget::RequestId QNearFieldTagType1Symbian::readByte(quint8 address)
@@ -243,7 +243,7 @@ QNearFieldTarget::RequestId QNearFieldTagType1Symbian::readByte(quint8 address)
     return sendCommand(command);
 }
 
-/*!
+/*
     \reimp
 */
 QNearFieldTarget::RequestId QNearFieldTagType1Symbian::writeByte(quint8 address, quint8 data, WriteMode mode)
@@ -268,7 +268,7 @@ QNearFieldTarget::RequestId QNearFieldTagType1Symbian::writeByte(quint8 address,
     return sendCommand(command);
 }
 
-/*!
+/*
     \reimp
 */
 QNearFieldTarget::RequestId QNearFieldTagType1Symbian::readSegment(quint8 segmentAddress)
@@ -287,7 +287,7 @@ QNearFieldTarget::RequestId QNearFieldTagType1Symbian::readSegment(quint8 segmen
     return sendCommand(command);
 }
 
-/*!
+/*
     \reimp
 */
 QNearFieldTarget::RequestId QNearFieldTagType1Symbian::readBlock(quint8 blockAddress)
@@ -303,7 +303,7 @@ QNearFieldTarget::RequestId QNearFieldTagType1Symbian::readBlock(quint8 blockAdd
     return sendCommand(command);
 }
 
-/*!
+/*
     \reimp
 */
 QNearFieldTarget::RequestId QNearFieldTagType1Symbian::writeBlock(quint8 blockAddress, const QByteArray &data,
@@ -347,7 +347,7 @@ void QNearFieldTagType1Symbian::writeNdefMessages(const QList<QNdefMessage> &mes
     END
 }
 
-/*!
+/*
     \reimp
 */
 QNearFieldTarget::RequestId QNearFieldTagType1Symbian::sendCommand(const QByteArray &command)
@@ -357,7 +357,7 @@ QNearFieldTarget::RequestId QNearFieldTagType1Symbian::sendCommand(const QByteAr
     return _sendCommand(command);
 }
 
-/*!
+/*
     \reimp
 */
 QNearFieldTarget::RequestId QNearFieldTagType1Symbian::sendCommands(const QList<QByteArray> &commands)

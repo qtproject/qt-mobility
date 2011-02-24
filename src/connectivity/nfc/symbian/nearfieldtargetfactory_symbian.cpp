@@ -53,7 +53,7 @@
 #include "qnearfieldtagtype4_symbian_p.h"
 #include "qnearfieldtagmifare_symbian_p.h"
 #include "qnearfieldllcpdevice_symbian_p.h"
-/*!
+/*
     \class TNearFieldTargetFactory
     \brief The TNearFieldTargetFactory class creates detected target instance according
            to the input tag information
@@ -62,7 +62,7 @@
     \inmodule QtConnectivity
 */
 
-/*!
+/*
     Create tag type instance according to the tag information in \a aNfcTag and assign
     the \a aParent as target's parent. 
 */
@@ -102,7 +102,7 @@ QNearFieldTarget * TNearFieldTargetFactory::CreateTagTypeL<CIso14443Connection, 
     return tag;
 }
 
-/*!
+/*
     Create target instance according to the tag information in \a aNfcTag and assign
     the \a aParent as target's parent. 
 */
