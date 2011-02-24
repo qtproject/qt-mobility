@@ -20,7 +20,6 @@ endif
 DEB_MAKE_INVOKE := $(MAKE) $(PARALLEL_MAKEFLAGS)
 DEB_MAKE_INSTALL_TARGET := INSTALL_ROOT=$(DEB_DESTDIR) install
 DEB_DH_INSTALL_SOURCEDIR := debian/tmp
-
 # DEB_DH_INSTALL_ARGS ensures that the build breaks if a file installed 
 # to DEB_DH_INSTALL_SOURCEDIR is not listed in any of the libqtm*.install files
 # except the *.prl files (-X.prl)
@@ -42,6 +41,7 @@ QTM_MODULES += systeminfo
 QTM_MODULES += versit
 
 # Add here any variable or target overrides you need.
+# Arguments to configure
 DEB_CONFIGURE_NORMAL_ARGS := -maemo6  -prefix /usr -headerdir /usr/include/qt4 \
 		-plugindir /usr/lib/qt4/plugins -modules "$(QTM_MODULES)" \
 		-examples -examplesdir /usr/lib/qtmobility/examples \
@@ -69,9 +69,9 @@ endif
 export QMAKEFEATURES=$(CURDIR)/debian/tests
 export QTM_TEST_INSTALL_FILE=$(CURDIR)/debian/pkg.install
 
+#List of auto tests
 QTM_MAEMO_TESTDIR := debian/tests
 
-#List of auto tests
 QTM_AUTOTESTS_SIMPLE := $(QTM_MAEMO_TESTDIR)/libqtm-sensors-tests.pri \
 			$(QTM_MAEMO_TESTDIR)/libqtm-location-tests.pri \
 			$(QTM_MAEMO_TESTDIR)/libqtm-contacts-tests.pri \
@@ -84,17 +84,14 @@ QTM_AUTOTESTS_SIMPLE := $(QTM_MAEMO_TESTDIR)/libqtm-sensors-tests.pri \
 			$(QTM_MAEMO_TESTDIR)/libqtm-versit-tests.pri
 
 clean::
-	# Delete all Makefiles
 	find  \( -false \
-	    -o -type f -name Makefile \
-	    -o -type f -name *.o  \
 	    -o -type f -name mobility*.prf \
 	  \) -delete
 	rm -rf include build lib patches
 	# Delete the config tests and 
 	rm -f \
 	  config.tests/maemo-icd-network-wlan/maemo-icd-network-wlan \
-          config.tests/maemo-icd/maemo-icd \
+      config.tests/maemo-icd/maemo-icd \
 	  config.tests/sensord/sensord \
 	  config.tests/gstreamer-photography/gstreamer-photography \
 	  config.tests/immersion/immersion \
