@@ -79,6 +79,19 @@ QTM_BEGIN_NAMESPACE
   More information on writing an organizer engine plugin is available in
   the \l{Qt Organizer Manager Engines} documentation.
 
+  Engines that support the QOrganizerManagerEngine interface but not the
+  QOrganizerManagerEngineV2 interface will be wrapped by the QOrganizerManager
+  by a class that emulates the extra functionality of the
+  QOrganizerManagerEngineV2 interface.
+
+  The additional features of a V2 engine compared to the original QOrganizerManagerEngine are:
+  \list
+  \o The items function which takes a \i{maxCount} parameter
+  \o The result of the items functions must be sorted by date according to the sort order defined by
+     \l itemLessThan
+  \o The corresponding changes to QOrganizerItemFetchRequest
+  \endlist
+
   \sa QOrganizerManager, QOrganizerManagerEngineFactory
  */
 
@@ -2971,41 +2984,6 @@ void QOrganizerManagerEngine::updateCollectionSaveRequest(QOrganizerCollectionSa
             emit ireq.data()->stateChanged(newState);
     }
 }
-
-/*!
-  \class QOrganizerManagerEngine
-  \brief The QOrganizerManagerEngine class provides the interface for all
-  implementations of the organizer item manager backend functionality.
-
-  \inmodule QtOrganizer
-  \ingroup organizer-backends
-
-  Instances of this class are usually provided by a
-  \l QOrganizerManagerEngineFactory, which is loaded from a plugin.
-
-  The default implementation of this interface provides a basic
-  level of functionality for some functions so that specific engines
-  can simply implement the functionality that is supported by
-  the specific organizer items engine that is being adapted.
-
-  More information on writing an organizer engine plugin is available in
-  the \l{Qt Organizer Manager Engines} documentation.
-
-  Engines that support the QOrganizerManagerEngine interface but not the
-  QOrganizerManagerEngineV2 interface will be wrapped by the QOrganizerManager
-  by a class that emulates the extra functionality of the
-  QOrganizerManagerEngineV2 interface.
-
-  The additional features of a V2 engine compared to the original QOrganizerManagerEngine are:
-  \list
-  \o The items function which takes a \i{maxCount} parameter
-  \o The result of the items functions must be sorted by date according to the sort order defined by
-     \l itemLessThan
-  \o The corresponding changes to QOrganizerItemFetchRequest
-  \endlist
-
-  \sa QOrganizerManager, QOrganizerManagerEngineFactory
- */
 
 /*!
   Returns the list of organizer items which match the given \a filter stored in the manager sorted

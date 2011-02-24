@@ -54,21 +54,11 @@ QByteArray QNearFieldLlcpDeviceSymbian::uid() const
     return QByteArray();
 }
 
-/*!
-    \fn QNearFieldTarget::Type QNearFieldTarget::type() const = 0
-
-    Returns the type of tag type of this near field target.
-*/
 QNearFieldTarget::Type QNearFieldLlcpDeviceSymbian::type() const
 {
     return QNearFieldTarget::AnyTarget;
 }
 
-/*!
-    \fn QNearFieldTarget::AccessMethods QNearFieldTarget::accessMethods() const = 0
-
-    Returns the access methods support by this near field target.
-*/
 QNearFieldTarget::AccessMethods QNearFieldLlcpDeviceSymbian::accessMethods() const
 {
     return QNearFieldTarget::LlcpAccess;

@@ -99,3 +99,16 @@
 
     \generatelist functionindex
 */
+
+
+/*!
+    \page namespaces.html
+    \title All Namespaces
+    \ingroup classlists
+
+    \brief A list of namespaces found in the QtMobility API.
+
+    This is a list of the main namespaces in the QtMobility API.
+
+    \generatelist{namespaces}
+*/

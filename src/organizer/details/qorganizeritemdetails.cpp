@@ -824,16 +824,6 @@ QOrganizerItemReminder::ReminderType QOrganizerItemReminder::reminderType() cons
 */
 
 /*!
-  \fn QOrganizerItemReminder::QOrganizerItemReminder(const char*)
-  \internal
-*/
-
-/*!
-  \fn QOrganizerItemReminder::QOrganizerItemReminder(const QOrganizerItemDetail& detail, const char* definitionName)
-  \internal
-*/
-
-/*!
    \fn int QOrganizerItemReminder::repetitionDelay() const
 
    Returns the delay (in seconds) between each repetition of the reminder.
