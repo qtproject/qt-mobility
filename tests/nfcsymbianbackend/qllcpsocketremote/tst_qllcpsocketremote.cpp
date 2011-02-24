@@ -63,9 +63,9 @@ public:
 
 private Q_SLOTS:
 
-    // ALERT: Handshake required, do NOT change the sequence of handshaking testcases.
-    void echoServer();   // handshake 1,2  - work with  tst_qllcpsocketlocal echoClient
-    void testCase2();   // handshake 3   - work with  tst_qllcpsocketlocal testCase2
+    void mulitpleServer();
+    void echoServer();
+    void testCase2();
 
     void dumpServer();
     void multiConnection();
@@ -73,6 +73,10 @@ private Q_SLOTS:
     void initTestCase();
     void cleanupTest();
 
+
+private:
+    void readMessage(QLlcpSocket& remoteSocket,QByteArray& inPayload);
+    void verifyString(QString& longStr4k, QByteArray& inPayload);
 private:
      QNearFieldTarget *m_target; // Not own
      quint8 m_port;
@@ -112,6 +116,117 @@ void tst_qllcpsocketremote::initTestCase()
     m_port = 35;
 }
 
+
+void tst_qllcpsocketremote::readMessage(
+                        QLlcpSocket& remoteSocket,
+                        QByteArray& inPayload)
+{
+    // STEP 2: Receive data from the peer which send messages to
+   while(remoteSocket.hasPendingDatagrams()) {
+       QByteArray tempBuffer;
+       tempBuffer.resize(remoteSocket.pendingDatagramSize());
+       quint8 remotePort = 0;
+       QSignalSpy readyRead(&remoteSocket, SIGNAL(readyRead()));
+       qint64 readSize = remoteSocket.readDatagram(tempBuffer.data()
+                                                  , tempBuffer.size()
+                                                  , &m_target, &remotePort);
+       QVERIFY(readSize != -1);
+       QVERIFY(remotePort > 0);
+       inPayload.append(tempBuffer);
+       qDebug() << "Server-- read inPayload size=" << inPayload.size();
+       qDebug() << "Server-- read remotePort=" << remotePort;
+       if (inPayload.size() >= (int)sizeof(quint16)) {
+           break;
+       }
+       else {
+           qDebug() << "Server-- not enough header";
+           QTRY_VERIFY(!readyRead.isEmpty());
+       }
+   }
+
+   QDataStream in(inPayload);
+   quint16 headerSize = 0; // size of real echo payload
+   in >> headerSize;
+   qDebug() << "Server-- read headerSize=" << headerSize;
+    while (inPayload.size() < headerSize + (int)sizeof(quint16)){
+       QSignalSpy readyRead(&remoteSocket, SIGNAL(readyRead()));
+       QTRY_VERIFY(!readyRead.isEmpty());
+       if(remoteSocket.hasPendingDatagrams()) {
+           QByteArray tempBuffer;
+           tempBuffer.resize(remoteSocket.pendingDatagramSize());
+           quint8 remotePort = 0;
+           qint64 readSize = remoteSocket.readDatagram(tempBuffer.data()
+                                                      , tempBuffer.size()
+                                                      , &m_target, &remotePort);
+           QVERIFY(readSize != -1);
+           QVERIFY(remotePort > 0);
+           inPayload.append(tempBuffer);
+           qDebug() << "Server-- read long blocksize=" << inPayload.size();
+       }
+   }
+}
+
+void tst_qllcpsocketremote::verifyString(
+                        QString& longStr,
+                        QByteArray& inPayload)
+{
+     quint16 headerSize;
+     QDataStream in2(inPayload);
+     in2.setVersion(QDataStream::Qt_4_6);
+     in2 >> headerSize;
+     QString receivedLongStr;
+     in2 >> receivedLongStr;
+     qDebug() << "Client-- in received string len:" << receivedLongStr.length();
+     qDebug("Client-- in received string = %s", qPrintable(receivedLongStr));
+     //test the received string is same as the original string
+     QVERIFY(longStr == receivedLongStr);
+}
+
+
+/*!
+ Description:  Description: Receive the message and send the acknowledged identical message
+
+ TestScenario: 1. Remote peer binds to local port
+               2. Remote peer receives the long message sending from the local peer
+               3. Remote peer receives the other long message sending from the local peer
+
+ TestExpectedResults:
+               1. Remote peer binds to local port successfully.
+               2. The 1st long message has been received from remote peer.
+               3. The 2nd long message has been received from remote peer.
+*/
+void tst_qllcpsocketremote::mulitpleServer()
+{
+    QLlcpSocket remoteSocket;
+    bool ret = remoteSocket.bind(m_port);
+    QVERIFY(ret);
+
+    QString longStr1k;
+    for (int i = 0; i < 1000; i++)
+        longStr1k.append((char)(i%26 + 'a'));
+
+    QString longStr2k;
+    for (int i = 0; i < 2000; i++)
+        longStr2k.append((char)(i%26 + 'b'));
+
+    QSignalSpy readyReadSpy(&remoteSocket, SIGNAL(readyRead()));
+    QString message("mulitpleServer 1: Wait multiple msg comming");
+    QNfcTestUtil::ShowAutoMsg(message, &readyReadSpy);
+
+    QByteArray inPayload;
+    readMessage(remoteSocket,inPayload);
+
+    QSignalSpy readyReadSpy2(&remoteSocket, SIGNAL(readyRead()));
+    QString message2("mulitpleServer 2: Wait multiple msg comming");
+    QNfcTestUtil::ShowAutoMsg(message2, &readyReadSpy2);
+
+    QByteArray inPayload2;
+    readMessage(remoteSocket,inPayload2);
+
+    verifyString(longStr1k,inPayload);
+    verifyString(longStr2k,inPayload2);
+}
+
 /*!
  Description:  Description: Receive the message and send the acknowledged identical message
 
@@ -137,48 +252,7 @@ void tst_qllcpsocketremote::echoServer()
 
     // STEP 2: Receive data from the peer which send messages to
     QByteArray inPayload;
-    while(remoteSocket.hasPendingDatagrams()) {
-        QByteArray tempBuffer;
-        tempBuffer.resize(remoteSocket.pendingDatagramSize());
-        quint8 remotePort = 0;
-        QSignalSpy readyRead(&remoteSocket, SIGNAL(readyRead()));
-        qint64 readSize = remoteSocket.readDatagram(tempBuffer.data()
-                                                   , tempBuffer.size()
-                                                   , &m_target, &remotePort);
-        QVERIFY(readSize != -1);
-        QVERIFY(remotePort > 0);
-        inPayload.append(tempBuffer);
-        qDebug() << "Server-- read inPayload size=" << inPayload.size();
-        qDebug() << "Server-- read remotePort=" << remotePort;
-        if (inPayload.size() >= (int)sizeof(quint16)) {
-            break;
-        }
-        else {
-            qDebug() << "Server-- not enough header";
-            QTRY_VERIFY(!readyRead.isEmpty());
-        }
-    }
-
-    QDataStream in(inPayload);
-    quint16 headerSize = 0; // size of real echo payload
-    in >> headerSize;
-    qDebug() << "Server-- read headerSize=" << headerSize;
-    while (inPayload.size() < headerSize + (int)sizeof(quint16)){
-        QSignalSpy readyRead(&remoteSocket, SIGNAL(readyRead()));
-        QTRY_VERIFY(!readyRead.isEmpty());
-        if(remoteSocket.hasPendingDatagrams()) {
-            QByteArray tempBuffer;
-            tempBuffer.resize(remoteSocket.pendingDatagramSize());
-            quint8 remotePort = 0;
-            qint64 readSize = remoteSocket.readDatagram(tempBuffer.data()
-                                                       , tempBuffer.size()
-                                                       , &m_target, &remotePort);
-            QVERIFY(readSize != -1);
-            QVERIFY(remotePort > 0);
-            inPayload.append(tempBuffer);
-            qDebug() << "Server-- read long blocksize=" << inPayload.size();
-        }
-    }
+    readMessage(remoteSocket,inPayload);
 
     // STEP 3: Send the received message back to the intiated device.
     QSignalSpy errorSpy(&remoteSocket, SIGNAL(error(QLlcpSocket::SocketError)));
