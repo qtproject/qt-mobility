@@ -309,6 +309,16 @@ qint64 QLlcpSocket::bytesAvailable() const
 /*!
     \reimp
 */
+bool QLlcpSocket::canReadLine() const
+{
+    Q_D(const QLlcpSocket);
+
+    return d->canReadLine() || QIODevice::canReadLine();
+}
+
+/*!
+    \reimp
+*/
 bool QLlcpSocket::waitForReadyRead(int msecs)
 {
     Q_D(QLlcpSocket);

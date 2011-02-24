@@ -99,6 +99,7 @@ public:
     SocketState state() const;
 
     qint64 bytesAvailable() const;
+    bool canReadLine() const;
 
     bool waitForReadyRead(int msecs = 30000);
     bool waitForBytesWritten(int msecs = 30000);
