@@ -89,6 +89,8 @@ public:
     QDeclarativeCoordinate* coordinate();
     void setCoordinate(QDeclarativeCoordinate* coordinate);
 
+    QLandmark landmark();
+
 signals:
     void nameChanged();
     void phoneNumberChanged();
