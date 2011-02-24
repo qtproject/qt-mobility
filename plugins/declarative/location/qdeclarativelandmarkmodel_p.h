@@ -206,7 +206,7 @@ private slots:
     void fetchRequestStateChanged(QLandmarkAbstractRequest::State);
 
 private:
-    void convertLandmarksToDeclarative();
+    bool convertLandmarksToDeclarative();
     void setFetchRange();
     void setFetchOrder();
 
@@ -219,7 +219,8 @@ private:
     // Landmark list received from platform
     QList<QLandmark> m_landmarks;
     // Same landmark list, but as declarative classes
-    QMap<QString, QDeclarativeLandmark*> m_landmarkMap;
+    QList<QDeclarativeLandmark*> m_declarativeLandmarks; // The declarative list
+    QSet<QString> m_landmarkIdSet; // For faster lookups when updating items
 };
 
 QTM_END_NAMESPACE
