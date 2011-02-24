@@ -47,6 +47,7 @@ QTM_BEGIN_NAMESPACE
 
 #define SYMBIAN_NEED_CRC
 #define SYMBIAN_RETURN_CRC
+#define SYMBIAN_RETURN_NO_ACK
 
 static void OutputByteArray(const QByteArray& data)
 {
@@ -87,8 +88,12 @@ QVariant QNearFieldTagType2Symbian::decodeResponse(const QByteArray& command, co
         }
         case 0xA2:
         {
+#ifdef SYMBIAN_RETURN_NO_ACK
+            result = true;
+#else
             // write command
             result = (response.at(0) == 0x0A);
+#endif
             break;
         }
         default:

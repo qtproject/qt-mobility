@@ -125,9 +125,8 @@ public:
 
 private Q_SLOTS:
     void initTestCase();
-
     void testRawAndNdefAccess();
-
+    void testSequence();
     void cleanupTestCase(){}
 private:
     QNfcTagTestCommon<QtMobility::QNearFieldTagType2> tester;
@@ -140,6 +139,59 @@ tst_qnearfieldtagtype2::tst_qnearfieldtagtype2()
 
 void tst_qnearfieldtagtype2::initTestCase()
 {
+}
+
+void tst_qnearfieldtagtype2::testSequence()
+{
+    tester.touchTarget();
+    QByteArray uid = tester.target->uid();
+    QVERIFY(!uid.isEmpty());
+
+    OperationList rawCommandList;
+    const char data[] = {0,1,2,3};
+    QByteArray blockData;
+    blockData.append(data, sizeof(data));
+
+    for (int i = 4; i < 8; ++i)
+    {
+        NfcTagRawCommandOperationType2 * op1 = new NfcTagRawCommandOperationType2(tester.target);
+        op1->setWriteBlock(i, blockData);
+        op1->setExpectedOkSignal();
+        op1->setExpectedResponse(QVariant(true));
+
+        if (i == 6)
+        {
+            op1->setWaitOperation(NfcTagRawCommandOperationCommon::EWaitTrue);
+        }
+        rawCommandList.append(op1);
+    }
+
+    QList<QByteArray> cmdList;
+    QByteArray command;
+    command.append(char(0xff)); // Invalid command
+    command.append(char(0xff));
+    command.append(char(0xff));
+    command.append(char(0xff));
+    command.append(char(0xff));
+    command.append(char(0xff));
+    cmdList.append(command);
+    cmdList.append(command);
+
+    QVariantList expectRsp;
+    expectRsp.push_back(QVariant());
+    expectRsp.push_back(QVariant());
+
+    NfcTagSendCommandsCommon * op7 = new NfcTagSendCommandsCommon(tester.target);
+    op7->SetCommandLists(cmdList);
+    op7->setExpectedErrorSignal(QNearFieldTarget::UnsupportedError);
+    op7->SetExpectedResponse(expectRsp);
+    op7->setWaitOperation(NfcTagRawCommandOperationCommon::EWaitFalse);
+    rawCommandList.append(op7);
+
+    tester.testSequence(rawCommandList);
+    qDeleteAll(rawCommandList);
+
+    tester.removeTarget();
 }
 
 void tst_qnearfieldtagtype2::testRawAccessAndNdefAccess(const QList<QNdefMessage> &messages)
