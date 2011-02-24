@@ -59,7 +59,7 @@
 #include <QtCore/qdatastream.h>
 #include <QtCore/qmap.h>
 
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 class QMetaObjectBuilderPrivate;
 class QMetaMethodBuilder;
@@ -317,6 +317,6 @@ private:
 Q_DECLARE_OPERATORS_FOR_FLAGS(QMetaObjectBuilder::AddMembers)
 Q_DECLARE_OPERATORS_FOR_FLAGS(QMetaObjectBuilder::MetaObjectFlags)
 
-QT_END_NAMESPACE
+QTM_END_NAMESPACE
 
 #endif
