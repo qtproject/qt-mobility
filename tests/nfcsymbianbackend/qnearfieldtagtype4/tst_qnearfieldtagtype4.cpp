@@ -50,6 +50,88 @@
 #include <QtEndian>
 
 QTM_USE_NAMESPACE
+
+class NfcTagRawCommandOperationType4: public NfcTagRawCommandOperationCommon
+{
+public:
+    NfcTagRawCommandOperationType4(QNearFieldTarget * tag);
+
+    void run()
+    {
+        if (selectByName)
+        {
+            mId = (tagType4->*selectByName)(mName);
+        }
+
+        if (selectById)
+        {
+            mId = (tagType4->*selectById)(mFileId);
+        }
+
+        if (read)
+        {
+            mId = (tagType4->*read)(mLength, mStartOffset);
+        }
+        
+        if (write)
+        {
+            mId = (tagType4>*write)(mDataArray, mStartOffset);
+        }
+        checkInvalidId();
+        waitRequest();
+    }
+    
+    void setRead(quint16 length, quint16 startOffset)
+    {
+        mLength = length;
+        mStartOffset = startOffset;
+        read = &QNearFieldTagType4::read;
+    }
+
+    void setWrite(constQByteArray &data, quint16 startOffset)
+    {
+        mDataArray = data;
+        mStartOffset = startOffset;
+        write = &QNearFieldTagType4::write;
+    }
+
+    void setSelectByName(const QByteArray &name)
+    {
+        mName = name;
+        selectByName = &QNearFieldTagType4::select;
+    }
+
+    void setSelectById(quint16 fileId)
+    {
+        mFileId = fileId;
+        selectById = &QNearFieldTagType4::select;
+    }
+
+protected:
+    QtMobility::QNearFieldTagType4 * tagType4;
+    QNearFieldTarget::RequestId (QNearFieldTagType4::*selectByName)(const QByteArray &name);
+    QNearFieldTarget::RequestId (QNearFieldTagType4::*selectById)(quint16 fileIdentifier);
+    QNearFieldTarget::RequestId (QNearFieldTagType4::*write)(const QByteArray &data, quint16 startOffset);
+    QNearFieldTarget::RequestId (QNearFieldTagType4::*read)(quint16 length, quint16 startOffset);
+
+    QByteArray mDataArray;
+    QByteArray mName;
+    quint16 mLength;
+    quint16 mFileId;
+    quint16 mStartOffset;
+};
+
+NfcTagRawCommandOperationType4::NfcTagRawCommandOperationType4(QNearFieldTarget * tag):NfcTagRawCommandOperationCommon(tag)
+{
+    tagType4 = qobject_cast<QNearFieldTagType4 *>(mTarget);
+    QVERIFY(tagType4);
+    selectByName = 0;
+    selectById = 0;
+    write = 0;
+    read = 0;
+}
+
+
 class tst_qnearfieldtagtype4 : public QObject
 {
     Q_OBJECT

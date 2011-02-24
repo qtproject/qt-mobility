@@ -38,13 +38,12 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-
 #include "qdummyslot.h"
+#include "qnfctagtestcommon.h"
 
 QDummySlot::QDummySlot(QObject *parent) :
     QObject(parent)
 {
-    tag = 0;
 }
 
 void QDummySlot::errorHandling(QNearFieldTarget::Error error, const QNearFieldTarget::RequestId& id)
@@ -52,10 +51,10 @@ void QDummySlot::errorHandling(QNearFieldTarget::Error error, const QNearFieldTa
     if (id == iReqId)
     {
         qDebug()<<"get the error signal, wait for dummy request"<<endl;
-        QByteArray dummyCommand;
-        dummyCommand.append((char)0);
-        iWaitId = tag->sendCommand(dummyCommand);
-        tag->waitForRequestCompleted(iWaitId);
+        iOp->run();
+        // iOp must use wait
+        iOp->checkSignal();
+        iOp->checkResponse();
         qDebug()<<"waited request completed"<<endl;
     }
 }
@@ -65,11 +64,10 @@ void QDummySlot::requestCompletedHandling(const QNearFieldTarget::RequestId& id)
     if (id == iReqId)
     {
         qDebug()<<"get the requestCompleted signal, wait for dummy request"<<endl;
-        QByteArray dummyCommand;
-        dummyCommand.append((char)0);
-        iWaitId = tag->sendCommand(dummyCommand);
-        tag->waitForRequestCompleted(iWaitId);
+        iOp->run();
+        // iOp must use wait
+        iOp->checkSignal();
+        iOp->checkResponse();
         qDebug()<<"waited request completed"<<endl;
     }
 }
-        

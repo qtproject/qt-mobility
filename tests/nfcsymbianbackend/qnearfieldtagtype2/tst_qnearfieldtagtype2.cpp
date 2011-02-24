@@ -49,6 +49,71 @@
 #include "qnfctestcommon.h"
 
 QTM_USE_NAMESPACE
+
+class NfcTagRawCommandOperationType2: public NfcTagRawCommandOperationCommon
+{
+public:
+    NfcTagRawCommandOperationType2(QNearFieldTarget * tag);
+
+    void run()
+    {
+        if (readBlock)
+        {
+            mId = (tagType2->*readBlock)(mAddr);
+        }
+
+        if (writeBlock)
+        {
+            mId = (tagType2->*writeBlock)(mAddr, mDataArray);
+        }
+
+        if (selectSector)
+        {
+            mId = (tagType2>*selectSector)(mSector);
+        }
+        checkInvalidId();
+        waitRequest();
+    }
+    
+    void setReadBlock(quint8 blockAddress)
+    {
+        mAddr = blockAddress;
+        readBlock = &QNearFieldTagType2::readBlock;
+    }
+
+    void setWriteBlock(quint8 blockAddress, constQByteArray &data)
+    {
+        mAddr = blockAddress;
+        mDataArray = data;
+        writeBlock = &QNearFieldTagType2::writeBlock;
+    }
+
+    void setSelectSector(quint8 sector)
+    {
+        mSector = sector;
+        selectSector = &QNearFieldTagType2::selectSector;
+    }
+
+protected:
+    QtMobility::QNearFieldTagType2 * tagType2;
+    QNearFieldTarget::RequestId (QNearFieldTagType2::*readBlock)(quint8 blockAddress);
+    QNearFieldTarget::RequestId (QNearFieldTagType2::*writeBlock)(quint8 blockAddress, const QByteArray &data);
+    QNearFieldTarget::RequestId (QNearFieldTagType2::*selectSector)(quint8 sector);
+
+    quint8 mAddr;
+    quint8 mSector;
+    QByteArray mDataArray;
+};
+
+NfcTagRawCommandOperationType2::NfcTagRawCommandOperationType2(QNearFieldTarget * tag):NfcTagRawCommandOperationCommon(tag)
+{
+    tagType2 = qobject_cast<QNearFieldTagType2 *>(mTarget);
+    QVERIFY(tagType2);
+    readBlock = 0;
+    writeBlock = 0;
+    selectSector = 0;
+}
+
 class tst_qnearfieldtagtype2: public QObject
 {
     Q_OBJECT

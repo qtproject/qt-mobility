@@ -152,20 +152,17 @@ class tst_qnearfieldtagtype1 : public QObject
 
 public:
     tst_qnearfieldtagtype1();
-
     void _testRawAccessAndNdefAccess(const QList<QNdefMessage> &messages);
-    void _testSequence(OperationList& operations);
 
 private Q_SLOTS:
     void initTestCase();
-
     void testRawAndNdefAccess();
-
     void testSequence();
-
-
+    void testWaitInSlot();
+    void testDeleteOperationBeforeAsyncRequestComplete();
+    void testRemoveTagBeforeAsyncRequestComplete();
+    void testCancelNdefOperation();
     void cleanupTestCase();
-
 private:
     QNfcTagTestCommon<QtMobility::QNearFieldTagType1> tester;
 };
@@ -185,7 +182,7 @@ void tst_qnearfieldtagtype1::cleanupTestCase()
 
 void tst_qnearfieldtagtype1::testSequence()
 {
-    tester.touchTarget();
+    tester.touchTarget(" dynamic ");
     QByteArray uid = tester.target->uid();
     QVERIFY(!uid.isEmpty());
 
@@ -197,102 +194,217 @@ void tst_qnearfieldtagtype1::testSequence()
     blockData.append(data, sizeof(data));
     QByteArray segmentData;
 
-//    for (int i = 0x10; i <= 0x1F; ++i)
-//    {
-//        NfcTagRawCommandOperationType1 * op1 = new NfcTagRawCommandOperationType1(tester.target);
-//        op1->setWriteBlock(i, blockData, QNearFieldTagType1::EraseAndWrite);
-//        op1->setExpectedOkSignal();
-//        op1->setExpectedResponse(QVariant(true));
-//
-//        if (i == 5)
-//        {
-//            op1->setWaitOperation(NfcTagRawCommandOperationCommon::EWaitTrue);
-//        }
-//        rawCommandList.append(op1);
-//        segmentData.append(blockData);
-//    }
-//
-//    NfcTagRawCommandOperationType1 * op2 = new NfcTagRawCommandOperationType1(tester.target);
-//    op2->setReadSegment(1);
-//    op2->setExpectedOkSignal();
-//    op2->setWaitOperation(NfcTagRawCommandOperationCommon::EWaitTrue);
-//    op2->setExpectedResponse(segmentData);
-//    rawCommandList.append(op2);
-//
-//    _testSequence(rawCommandList);
+    for (int i = 0x10; i <= 0x1F; ++i)
+    {
+        NfcTagRawCommandOperationType1 * op1 = new NfcTagRawCommandOperationType1(tester.target);
+        op1->setWriteBlock(i, blockData, QNearFieldTagType1::EraseAndWrite);
+        op1->setExpectedOkSignal();
+        op1->setExpectedResponse(QVariant(true));
 
+        if (i == 0x15)
+        {
+            op1->setWaitOperation(NfcTagRawCommandOperationCommon::EWaitTrue);
+        }
+        rawCommandList.append(op1);
+        segmentData.append(blockData);
+    }
+
+    NfcTagRawCommandOperationType1 * op2 = new NfcTagRawCommandOperationType1(tester.target);
+    op2->setReadSegment(1);
+    op2->setExpectedOkSignal();
+    op2->setWaitOperation(NfcTagRawCommandOperationCommon::EWaitTrue);
+    op2->setExpectedResponse(segmentData);
+    rawCommandList.append(op2);
+
+    tester.testSequence(rawCommandList);
+    qDeleteAll(rawCommandList);
 
 //////////////////////////////////////////////////////////////////////////////////////////////
-    qDebug()<<"========== Test invalid readSeg, writeNE, writeBlockNE ==========";
-    rawCommandList.clear();
-    NfcTagRawCommandOperationType1 * op6 = new NfcTagRawCommandOperationType1(tester.target);
-    op6->setReadSegment(0xf1);
-    op6->setExpectedInvalidId();
-    op6->setExpectedResponse(QVariant());
-    rawCommandList.append(op6);
-
-    NfcTagRawCommandOperationType1 * op3 = new NfcTagRawCommandOperationType1(tester.target);
-    op3->setWriteBlock(0x10, blockData, QNearFieldTagType1::WriteOnly);
-    op3->setExpectedOkSignal();
-    op3->setExpectedResponse(QVariant(true));
-    rawCommandList.append(op3);
-
-    NfcTagRawCommandOperationType1 * op4 = new NfcTagRawCommandOperationType1(tester.target);
-    op4->setWriteByteOp(0x10, 0xff, QNearFieldTagType1::WriteOnly);
-    op4->setExpectedOkSignal();
-    op4->setExpectedResponse(QVariant(true));
-    rawCommandList.append(op4);
-
-    QList<QByteArray> cmdList;
-    QByteArray command;
-    command.append(char(0x1a));   // WRITE-NE
-    command.append(char(0x10));  // Address
-    command.append(char(0x00));  // Data
-    command.append(uid.left(4)); // 4 bytes of UID
-    cmdList.append(command);
-
-    command.clear();
-    command.append(char(0xff)); // Invalid command
-    command.append(char(0xff));
-    command.append(char(0xff));
-    command.append(char(0xff));
-    command.append(char(0xff));
-    command.append(char(0xff));
-    cmdList.append(command);
-
-    QVariantList expectRsp;
-    expectRsp.push_back(QVariant(true));
-    expectRsp.push_back(QVariant());
-
-    NfcTagSendCommandsCommon * op7 = new NfcTagSendCommandsCommon(tester.target);
-    op7->SetCommandLists(cmdList);
-    op7->setExpectedErrorSignal(QNearFieldTarget::UnsupportedError);
-    op7->SetExpectedResponse(expectRsp);
-    op7->setWaitOperation(NfcTagRawCommandOperationCommon::EWaitFalse);
-    rawCommandList.append(op7);
-
-    _testSequence(rawCommandList);
+//    qDebug()<<"========== Test invalid readSeg, writeNE, writeBlockNE ==========";
+//    rawCommandList.clear();
+//    NfcTagRawCommandOperationType1 * op6 = new NfcTagRawCommandOperationType1(tester.target);
+//    op6->setReadSegment(0xf1);
+//    op6->setExpectedInvalidId();
+//    op6->setExpectedResponse(QVariant());
+//    rawCommandList.append(op6);
+//
+//    NfcTagRawCommandOperationType1 * op3 = new NfcTagRawCommandOperationType1(tester.target);
+//    op3->setWriteBlock(0x10, blockData, QNearFieldTagType1::WriteOnly);
+//    op3->setExpectedOkSignal();
+//    op3->setExpectedResponse(QVariant(true));
+//    rawCommandList.append(op3);
+//
+//    NfcTagRawCommandOperationType1 * op4 = new NfcTagRawCommandOperationType1(tester.target);
+//    op4->setWriteByteOp(0x10, 0xff, QNearFieldTagType1::WriteOnly);
+//    op4->setExpectedOkSignal();
+//    op4->setExpectedResponse(QVariant(true));
+//    rawCommandList.append(op4);
+//
+//    QList<QByteArray> cmdList;
+//    QByteArray command;
+//    command.append(char(0x1a));   // WRITE-NE
+//    command.append(char(0x10));  // Address
+//    command.append(char(0x00));  // Data
+//    command.append(uid.left(4)); // 4 bytes of UID
+//    cmdList.append(command);
+//
+//    command.clear();
+//    command.append(char(0xff)); // Invalid command
+//    command.append(char(0xff));
+//    command.append(char(0xff));
+//    command.append(char(0xff));
+//    command.append(char(0xff));
+//    command.append(char(0xff));
+//    cmdList.append(command);
+//
+//    QVariantList expectRsp;
+//    expectRsp.push_back(QVariant(true));
+//    expectRsp.push_back(QVariant());
+//
+//    NfcTagSendCommandsCommon * op7 = new NfcTagSendCommandsCommon(tester.target);
+//    op7->SetCommandLists(cmdList);
+//    op7->setExpectedErrorSignal(QNearFieldTarget::UnsupportedError);
+//    op7->SetExpectedResponse(expectRsp);
+//    op7->setWaitOperation(NfcTagRawCommandOperationCommon::EWaitFalse);
+//    rawCommandList.append(op7);
+//
+//    tester.testSequence(rawCommandList);
+//    qDeleteAll(rawCommandList);
 
     tester.removeTarget();
 }
 
-void tst_qnearfieldtagtype1::_testSequence(OperationList& operations)
+void tst_qnearfieldtagtype1::testWaitInSlot()
 {
-    qDebug()<<"_testSequence begin";
-    for (int i = 0; i < operations.count(); ++i)
+    tester.touchTarget(" dynamic ");
+
+    const char data[] = {0,1,2,3,4,5,6,7};
+    QByteArray blockData;
+    blockData.append(data, sizeof(data));
+
+    NfcTagRawCommandOperationType1 * op1 = new NfcTagRawCommandOperationType1(tester.target);
+    op1->setWriteBlock(0x10, blockData, QNearFieldTagType1::EraseAndWrite);
+    op1->setExpectedOkSignal();
+    op1->setExpectedResponse(QVariant(true));
+
+    NfcTagRawCommandOperationType1 * op2Wait = new NfcTagRawCommandOperationType1(tester.target);
+    op2Wait->setWriteBlock(0x11, blockData, QNearFieldTagType1::EraseAndWrite);
+    op2Wait->setExpectedOkSignal();
+    op2Wait->setExpectedResponse(QVariant(true));
+    op2Wait->setWaitOperation(NfcTagRawCommandOperationCommon::EWaitTrue);
+
+    NfcTagRawCommandOperationType1 * op3 = new NfcTagRawCommandOperationType1(tester.target);
+    op3->setWriteBlock(0x12, blockData, QNearFieldTagType1::EraseAndWrite);
+    op3->setExpectedOkSignal();
+    op3->setExpectedResponse(QVariant(true));
+
+    NfcTagRawCommandOperationType1 * op4WaitInSlot = new NfcTagRawCommandOperationType1(tester.target);
+    op4WaitInSlot->setWriteBlock(0x13, blockData, QNearFieldTagType1::EraseAndWrite);
+    op4WaitInSlot->setExpectedOkSignal();
+    op4WaitInSlot->setExpectedResponse(QVariant(true));
+
+    tester.testWaitInSlot(op1, op2Wait, op3, op4WaitInSlot);
+
+    delete op1;
+    delete op2Wait;
+    delete op3;
+    delete op4WaitInSlot;
+
+    tester.removeTarget();
+}
+
+void tst_qnearfieldtagtype1::testDeleteOperationBeforeAsyncRequestComplete()
+{
+    tester.touchTarget(" dynamic ");
+    OperationList rawCommandList;
+    const char data[] = {0,1,2,3,4,5,6,7};
+    QByteArray blockData;
+    blockData.append(data, sizeof(data));
+    QByteArray segmentData;
+
+    for (int i = 0x10; i <= 0x1F; ++i)
     {
-        operations.at(i)->run();
+       NfcTagRawCommandOperationType1 * op1 = new NfcTagRawCommandOperationType1(tester.target);
+       op1->setWriteBlock(i, blockData, QNearFieldTagType1::EraseAndWrite);
+       op1->setExpectedOkSignal();
+       op1->setExpectedResponse(QVariant(true));
+
+       if (i == 0x15)
+       {
+           op1->setWaitOperation(NfcTagRawCommandOperationCommon::EWaitTrue);
+       }
+       rawCommandList.append(op1);
+       segmentData.append(blockData);
     }
 
-    QTest::qWait(10000);
-    for (int i = 0; i < operations.count(); ++i)
+    NfcTagRawCommandOperationType1 * op2 = new NfcTagRawCommandOperationType1(tester.target);
+    op2->setReadSegment(1);
+    op2->setExpectedOkSignal();
+    op2->setWaitOperation(NfcTagRawCommandOperationCommon::EWaitTrue);
+    op2->setExpectedResponse(segmentData);
+    rawCommandList.append(op2);
+    tester.testDeleteOperationBeforeAsyncRequestComplete(rawCommandList);
+
+    qDeleteAll(rawCommandList);
+}
+
+void tst_qnearfieldtagtype1::testRemoveTagBeforeAsyncRequestComplete()
+{
+    tester.touchTarget(" dynamic ");
+    OperationList rawCommandList;
+    const char data[] = {0,1,2,3,4,5,6,7};
+    QByteArray blockData;
+    blockData.append(data, sizeof(data));
+    QByteArray segmentData;
+
+    for (int i = 0x10; i <= 0x1F; ++i)
     {
-        operations.at(i)->checkSignal();
-        operations.at(i)->checkResponse();
+       NfcTagRawCommandOperationType1 * op1 = new NfcTagRawCommandOperationType1(tester.target);
+       op1->setWriteBlock(i, blockData, QNearFieldTagType1::EraseAndWrite);
+       op1->setExpectedOkSignal();
+       op1->setExpectedResponse(QVariant(true));
+
+       rawCommandList.append(op1);
+       segmentData.append(blockData);
     }
 
-    qDeleteAll(operations);
-    qDebug()<<"_testSequence end";
+    NfcTagRawCommandOperationType1 * op2 = new NfcTagRawCommandOperationType1(tester.target);
+    op2->setReadSegment(1);
+    op2->setExpectedOkSignal();
+    op2->setExpectedResponse(segmentData);
+    rawCommandList.append(op2);
+
+    OperationList rawCommandList1;
+
+    segmentData.clear();
+
+    for (int i = 0x10; i <= 0x1F; ++i)
+    {
+       NfcTagRawCommandOperationType1 * op1 = new NfcTagRawCommandOperationType1(tester.target);
+       op1->setWriteBlock(i, blockData, QNearFieldTagType1::EraseAndWrite);
+       op1->setExpectedOkSignal();
+       op1->setExpectedResponse(QVariant(true));
+
+       rawCommandList1.append(op1);
+       segmentData.append(blockData);
+    }
+
+    NfcTagRawCommandOperationType1 * op3 = new NfcTagRawCommandOperationType1(tester.target);
+    op3->setReadSegment(1);
+    op3->setExpectedOkSignal();
+    op3->setWaitOperation(NfcTagRawCommandOperationCommon::EWaitFalse);
+    op3->setExpectedResponse(segmentData);
+    rawCommandList1.append(op3);
+
+    tester.testRemoveTagBeforeAsyncRequestComplete(rawCommandList, rawCommandList1);
+    qDeleteAll(rawCommandList);
+    qDeleteAll(rawCommandList1);
+}
+
+void tst_qnearfieldtagtype1::testCancelNdefOperation()
+{
+    tester.touchTarget(" static ");
+    tester.testCancelNdefOperation();
 }
 
 void tst_qnearfieldtagtype1::_testRawAccessAndNdefAccess(const QList<QNdefMessage> &messages)
@@ -383,7 +495,7 @@ void tst_qnearfieldtagtype1::_testRawAccessAndNdefAccess(const QList<QNdefMessag
 
 void tst_qnearfieldtagtype1::testRawAndNdefAccess()
 {
-    tester.touchTarget();
+    tester.touchTarget(" static ");
     QByteArray uid = tester.target->uid();
     QVERIFY(!uid.isEmpty());
 

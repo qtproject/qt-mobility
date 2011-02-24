@@ -92,18 +92,7 @@ struct TagTrait<QtMobility::QNearFieldTagType4>
     static QString info(){ return QString("tag type 4"); }
 };
 
-template <typename TAG>
-class QNfcTagTestCommon
-{
-public:
-    QNfcTagTestCommon();
-    ~QNfcTagTestCommon();
-    void touchTarget();
-    void removeTarget();
-public:
-    QNearFieldManager manager;
-    TAG* target;
-};
+
 
 class MNfcTagOperation
 {
@@ -138,7 +127,7 @@ public:
             ECompleteSignal
         };
 public:
-    NfcTagRawCommandOperationCommon(QNearFieldTarget * tag);
+    inline NfcTagRawCommandOperationCommon(QNearFieldTarget * tag);
 
     ~NfcTagRawCommandOperationCommon()
     {
@@ -256,8 +245,9 @@ public:
             QVERIFY(mTarget->waitForRequestCompleted(mId));
         }
     }
-protected:
+
     QNearFieldTarget::RequestId mId;
+protected:
     QSignalSpy * okSpy;
     QSignalSpy * errSpy;
     Wait mWaitOp;
@@ -288,7 +278,7 @@ public:
         EWriteSignal
     };
 public:
-    NfcTagNdefOperationCommon(QNearFieldTarget * tag);
+    inline NfcTagNdefOperationCommon(QNearFieldTarget * tag);
 
     ~NfcTagNdefOperationCommon()
     {
@@ -317,7 +307,6 @@ public:
         {
             case NfcTagNdefOperationCommon::EErrorSignal:
             {
-                int findRequest = 0;
                 for (int i = 0; i < errSpy->count(); ++i)
                 {
                     QTRY_COMPARE(errSpy->at(i).at(1).value<QNearFieldTarget::Error>(), mExpectedErrCode);
@@ -391,7 +380,7 @@ NfcTagNdefOperationCommon::NfcTagNdefOperationCommon(QNearFieldTarget * tag) : M
 class NfcTagSendCommandsCommon : public NfcTagRawCommandOperationCommon
 {
 public:
-    NfcTagSendCommandsCommon(QNearFieldTarget * tag);
+    inline NfcTagSendCommandsCommon(QNearFieldTarget * tag);
 public:
     void run()
     {
@@ -423,7 +412,23 @@ Q_DECLARE_METATYPE(QNearFieldTarget::AccessMethod)
 Q_DECLARE_METATYPE(MNfcTagOperation *)
 Q_DECLARE_METATYPE(OperationList)
 
-
+template <typename TAG>
+class QNfcTagTestCommon
+{
+public:
+    QNfcTagTestCommon();
+    ~QNfcTagTestCommon();
+    void touchTarget(QString info = QString(""));
+    void removeTarget();
+    void testSequence(OperationList& operations);
+    void testWaitInSlot(MNfcTagOperation * op1, NfcTagRawCommandOperationCommon * op2WithWait, MNfcTagOperation * op3, MNfcTagOperation * waitOpInSlot);
+    void testDeleteOperationBeforeAsyncRequestComplete(OperationList& operations);
+    void testRemoveTagBeforeAsyncRequestComplete(OperationList& operations1, OperationList& operations2);
+    void testCancelNdefOperation();
+public:
+    QNearFieldManager manager;
+    TAG* target;
+};
 
 template<typename TAG>
 QNfcTagTestCommon<TAG>::QNfcTagTestCommon()
@@ -448,7 +453,7 @@ QNfcTagTestCommon<TAG>::~QNfcTagTestCommon()
 }
 
 template<typename TAG>
-void QNfcTagTestCommon<TAG>::touchTarget()
+void QNfcTagTestCommon<TAG>::touchTarget(QString info)
 {
     if (target)
     {
@@ -463,7 +468,7 @@ void QNfcTagTestCommon<TAG>::touchTarget()
 
     QString hint("please touch ");
     hint += TagTrait<TAG>::info();
-    hint += " with NDef Message inside";
+    hint += info;
     QNfcTestUtil::ShowAutoMsg(hint, &targetDetectedSpy);
 
     QTRY_VERIFY(!targetDetectedSpy.isEmpty());
@@ -495,5 +500,112 @@ void QNfcTagTestCommon<TAG>::removeTarget()
     QVERIFY(!disconnectedSpy.isEmpty());
 
     manager.stopTargetDetection();
+}
+
+template<typename TAG>
+void QNfcTagTestCommon<TAG>::testSequence(OperationList& operations)
+{
+    qDebug()<<"_testSequence begin";
+    for (int i = 0; i < operations.count(); ++i)
+    {
+        operations.at(i)->run();
+    }
+
+    QTest::qWait(10000);
+    for (int i = 0; i < operations.count(); ++i)
+    {
+        operations.at(i)->checkSignal();
+        operations.at(i)->checkResponse();
+    }
+
+    qDebug()<<"_testSequence end";
+}
+
+template <typename TAG>
+void QNfcTagTestCommon<TAG>::testWaitInSlot(MNfcTagOperation * op1, NfcTagRawCommandOperationCommon * op2WithWait, MNfcTagOperation * op3, MNfcTagOperation * waitOpInSlot)
+{
+    QDummySlot waitSlot;
+    QObject::connect(target, SIGNAL(requestCompleted(const QNearFieldTarget::RequestId&)),
+                     &waitSlot, SLOT(requestCompletedHandling(const QNearFieldTarget::RequestId&)));
+    QObject::connect(target, SIGNAL(error(QNearFieldTarget::Error, const QNearFieldTarget::RequestId&)),
+                     &waitSlot, SLOT(errorHandling(QNearFieldTarget::Error, const QNearFieldTarget::RequestId&)));
+
+    waitSlot.iOp = waitOpInSlot;
+
+    op1->run();
+    op2WithWait->run();
+    QVERIFY(!target->waitForRequestCompleted(op2WithWait->mId));
+    op3->run();
+
+    QTest::qWait(10000);
+    op1->checkSignal();
+    op1->checkResponse();
+
+    op2WithWait->checkSignal();
+    op2WithWait->checkResponse();
+
+    op3->checkSignal();
+    op3->checkResponse();
+}
+
+template <typename TAG>
+void QNfcTagTestCommon<TAG>::testDeleteOperationBeforeAsyncRequestComplete(OperationList& operations)
+{
+    for (int i = 0; i < operations.count(); ++i)
+    {
+        operations.at(i)->run();
+    }
+    delete target;
+    target = 0;
+
+    QNfcTestUtil::ShowMessage("Remove tag and press ok");
+}
+
+template <typename TAG>
+void QNfcTagTestCommon<TAG>::testRemoveTagBeforeAsyncRequestComplete(OperationList& operations1, OperationList& operations2)
+{
+    for (int i = 0; i < operations1.count(); ++i)
+    {
+        operations1.at(i)->run();
+    }
+
+    QSignalSpy targetLostSpy(&manager, SIGNAL(targetLost(QNearFieldTarget*)));
+
+    QNfcTestUtil::ShowAutoMsg("please remove the tag", &targetLostSpy);
+    QTRY_VERIFY(!targetLostSpy.isEmpty());
+
+    for (int i = 0; i < operations2.count(); ++i)
+    {
+        operations2.at(i)->run();
+    }
+    delete target;
+    target = 0;
+}
+
+template<typename TAG>
+void QNfcTagTestCommon<TAG>::testCancelNdefOperation()
+{
+    target->readNdefMessages();
+    delete target;
+    target = 0;
+
+    QNfcTestUtil::ShowMessage("please remove tag and press ok");
+
+    touchTarget();
+
+    QNdefMessage message;
+    QNdefNfcTextRecord textRecord;
+    textRecord.setText(QLatin1String("nfc"));
+
+    message.append(textRecord);
+
+    QList<QNdefMessage> messages;
+    messages.append(message);
+
+    target->writeNdefMessages(messages);
+    delete target;
+    target = 0;
+
+    QNfcTestUtil::ShowMessage("please remove tag and press ok");
 }
 #endif // QNFCTAGTESTCOMMON_H

@@ -49,6 +49,80 @@
 #include "qnfctestcommon.h"
 
 QTM_USE_NAMESPACE
+
+typedef QMap<quint16,QByteArray> checkResponseType;
+Q_DECLARE_METATYPE(checkResponseType)
+
+class NfcTagRawCommandOperationType3: public NfcTagRawCommandOperationCommon
+{
+public:
+    NfcTagRawCommandOperationType3(QNearFieldTarget * tag);
+
+    void run()
+    {
+        if (check)
+        {
+            mId = (tagType3->*check)(mSerivceBlockList);
+        }
+
+        if (update)
+        {
+            mId = (tagType3->*update)(mSerivceBlockList, mDataArray);
+        }
+
+        checkInvalidId();
+        waitRequest();
+    }
+    
+    void setCheck(const QMap<quint16, QList<quint16> > &serviceBlockList)
+    {
+        check = &QNearFieldTagType3::check;
+        mSerivceBlockList = serviceBlockList;
+    }
+
+    void setUpdate(const QMap<quint16, QList<quint16> > &serviceBlockList,
+                   const QByteArray &data);
+    {
+        update = &QNearFieldTagType3::update;
+        mSerivceBlockList = serviceBlockList;
+        mDataArray = data;
+    }
+
+    void checkResponse()
+    {
+        qDebug()<<"checkResponse begin";
+        if (check)
+        {
+            // response is QMap<quint16, QByteArray>
+            checkResponseType e = mExpectedResponse.value<checkResponseType>();
+            checkResponseType r = mTarget->requestResponse(mId).value<checkResponseType>();
+            QCOMPARE(e, r);
+        }
+        else
+        {
+            QTRY_COMPARE(mTarget->requestResponse(mId), mExpectedResult);
+        }
+        qDebug()<<"checkResponse end";
+    }
+    }
+
+protected:
+    QtMobility::QNearFieldtagType3 * tagType3;
+    QNearFieldTarget::RequestId (QNearFieldtagType3::*check)(const QMap<quint16, QList<quint16> > &serviceBlockList);
+    QNearFieldTarget::RequestId (QNearFieldtagType3::*update)(const QMap<quint16, QList<quint16> > &serviceBlockList, 
+                                                             const QByteArray &data);
+    QMap<quint16, QList<quint16> > mSerivceBlockList;
+    QByteArray mDataArray;
+};
+
+NfcTagRawCommandOperationType3::NfcTagRawCommandOperationType3(QNearFieldTarget * tag):NfcTagRawCommandOperationCommon(tag)
+{
+    tagType3 = qobject_cast<QNearFieldtagType3 *>(mTarget);
+    QVERIFY(tagType3);
+    check = 0;
+    update = 0;
+}
+
 class tst_qnearfieldtagtype3 : public QObject
 {
     Q_OBJECT
@@ -97,8 +171,6 @@ private:
     QMap<QString, QPair<QVariant, QVariant> > dataPool;
 };
 
-typedef QMap<quint16,QByteArray> checkResponseType;
-Q_DECLARE_METATYPE(checkResponseType)
 
 tst_qnearfieldtagtype3::tst_qnearfieldtagtype3()
 {
