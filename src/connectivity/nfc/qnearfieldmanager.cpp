@@ -85,6 +85,20 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
+    \enum QNearFieldManager::TargetAccessMode
+
+    This enum describes the different access modes an application can have.
+
+    \value NoTargetAccess           The application cannot access NFC capabilities.
+    \value NdefReadTargetAccess     The application can read NDEF messages from targets by calling
+                                    QNearFieldTarget::readNdefMessages().
+    \value NdefWriteTargetAccess    The application can write NDEF messages to targets by calling
+                                    QNearFieldTarget::writeNdefMessages().
+    \value TagTypeSpecificTargetAccess  The application can access targets using raw commands by
+                                        calling QNearFieldTarget::sendCommand().
+*/
+
+/*!
     \fn void QNearFieldManager::targetDetected(QNearFieldTarget *target)
 
     This signal is emitted whenever a target is detected. The \a target parameter represents the
@@ -339,6 +353,9 @@ bool QNearFieldManager::unregisterNdefMessageHandler(int handlerId)
     return d->unregisterNdefMessageHandler(handlerId);
 }
 
+/*!
+    Sets the requested target access modes to \a accessModes.
+*/
 void QNearFieldManager::setTargetAccessModes(TargetAccessModes accessModes)
 {
     Q_D(QNearFieldManager);
@@ -352,6 +369,9 @@ void QNearFieldManager::setTargetAccessModes(TargetAccessModes accessModes)
         d->requestAccess(newModes);
 }
 
+/*!
+    Returns current requested target access modes.
+*/
 QNearFieldManager::TargetAccessModes QNearFieldManager::targetAccessModes() const
 {
     Q_D(const QNearFieldManager);

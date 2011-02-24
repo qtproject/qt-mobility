@@ -64,7 +64,7 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \enum QLlcpSocket::Error
+    \enum QLlcpSocket::SocketError
 
     This enum describes the errors that can occur. The most recent error can be retrieved through a
     call to error().
@@ -73,7 +73,7 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \enum QLlcpSocket::State
+    \enum QLlcpSocket::SocketState
 
     This enum describes the different state in which a socket can be.
 
@@ -103,13 +103,13 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn QLlcpSocket::error(QLlcpSocket::Error socketError)
+    \fn QLlcpSocket::error(QLlcpSocket::SocketError socketError)
 
     This signal is emitted when an error occurs. The \a socketError parameter describes the error.
 */
 
 /*!
-    \fn QLlcpSocket::stateChanged(QLlcpSocket::State socketState)
+    \fn QLlcpSocket::stateChanged(QLlcpSocket::SocketState socketState)
 
     This signal is emitted when the state of the socket changes. The \a socketState parameter
     describes the new state.
@@ -207,10 +207,16 @@ qint64 QLlcpSocket::writeDatagram(const char *data, qint64 size)
     return d->writeDatagram(data, size);
 }
 
+/*!
+    \reimp
+
+    Always returns true.
+*/
 bool QLlcpSocket::isSequential() const
 {
 	return true;
 }
+
 /*!
     \overload
 
