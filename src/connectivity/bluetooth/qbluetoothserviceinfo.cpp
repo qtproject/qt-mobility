@@ -303,6 +303,7 @@ QTM_BEGIN_NAMESPACE
 QBluetoothServiceInfo::QBluetoothServiceInfo()
 : d_ptr(new QBluetoothServiceInfoPrivate)
 {
+    d_ptr->q_ptr = this;
 }
 
 /*!
@@ -311,6 +312,7 @@ QBluetoothServiceInfo::QBluetoothServiceInfo()
 QBluetoothServiceInfo::QBluetoothServiceInfo(const QBluetoothServiceInfo &other)
 : d_ptr(new QBluetoothServiceInfoPrivate)
 {
+    d_ptr->q_ptr = this;
     *this = other;
 }
 
