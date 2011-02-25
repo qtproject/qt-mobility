@@ -248,8 +248,8 @@ void tst_QMediaPlayerBackend::playPauseStop()
 
     QCOMPARE(stateSpy.count(), 1);
     QCOMPARE(stateSpy.last()[0].value<QMediaPlayer::State>(), QMediaPlayer::PlayingState);
-    QVERIFY(statusSpy.count() > 0);
-    QCOMPARE(statusSpy.last()[0].value<QMediaPlayer::MediaStatus>(), QMediaPlayer::BufferedMedia);
+    QTRY_VERIFY(statusSpy.count() > 0 &&
+                statusSpy.last()[0].value<QMediaPlayer::MediaStatus>() == QMediaPlayer::BufferedMedia);
 
     QTest::qWait(500);
     QVERIFY(player.position() > 0);
@@ -278,7 +278,8 @@ void tst_QMediaPlayerBackend::playPauseStop()
 
     QCOMPARE(stateSpy.count(), 1);
     QCOMPARE(stateSpy.last()[0].value<QMediaPlayer::State>(), QMediaPlayer::StoppedState);
-    QCOMPARE(statusSpy.count(), 1);
+    //it's allowed to emit statusChanged() signal async
+    QTRY_COMPARE(statusSpy.count(), 1);
     QCOMPARE(statusSpy.last()[0].value<QMediaPlayer::MediaStatus>(), QMediaPlayer::LoadedMedia);
 
     //ensure the position is reset to 0 at stop and positionChanged(0) is emited
@@ -347,8 +348,8 @@ void tst_QMediaPlayerBackend::processEOS()
     QTRY_COMPARE(player.mediaStatus(), QMediaPlayer::LoadedMedia);
 
     QCOMPARE(stateSpy.count(), 0);
-    QVERIFY(statusSpy.count() > 0);
-    QCOMPARE(statusSpy.last()[0].value<QMediaPlayer::MediaStatus>(), QMediaPlayer::LoadedMedia);
+    QTRY_VERIFY(statusSpy.count() > 0 &&
+        statusSpy.last()[0].value<QMediaPlayer::MediaStatus>() == QMediaPlayer::LoadedMedia);
 }
 
 void tst_QMediaPlayerBackend::volumeAndMuted()
