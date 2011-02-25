@@ -163,6 +163,21 @@ void QSystemNetworkInfoPrivate::setupNmConnections()
                 }
             }
             break;
+        case DEVICE_TYPE_GSM:
+        {
+            devGsmIface = new QNetworkManagerInterfaceDeviceGsm(devIface->connectionInterface()->path(), this);
+            devGsmIface->setConnections();
+            connect(devGsmIface, SIGNAL(propertiesChanged(const QString &,QMap<QString,QVariant>)),
+                    this,SLOT(nmPropertiesChanged( const QString &, QMap<QString,QVariant>)));
+
+        }
+            break;
+        case DEVICE_TYPE_CDMA:
+        {
+            qDebug() << Q_FUNC_INFO << devIface->deviceType() << "CDMA";
+
+        }
+            break;
         default:
             break;
         };
@@ -259,6 +274,9 @@ void QSystemNetworkInfoPrivate::nmPropertiesChanged( const QString & path, QMap<
                         emit networkSignalStrengthChanged(QSystemNetworkInfo::WlanMode, accessPointIfaceL->strength());
                     }
                 }
+                if (nmDevType == DEVICE_TYPE_GSM){
+                    qDebug() << Q_FUNC_INFO << "gsm changeed";
+                }
             }
         }
         if( i.key() == QLatin1String("ActiveAccessPoint")) {
@@ -308,9 +326,13 @@ QSystemNetworkInfo::NetworkMode QSystemNetworkInfoPrivate::deviceTypeToMode(quin
     case DEVICE_TYPE_802_11_WIRELESS:
         return QSystemNetworkInfo::WlanMode;
         break;
-    case DEVICE_TYPE_UNKNOWN:
     case DEVICE_TYPE_GSM:
+        return QSystemNetworkInfo::GsmMode;
+        break;
+    case DEVICE_TYPE_UNKNOWN:
+        break;
     case DEVICE_TYPE_CDMA:
+        return QSystemNetworkInfo::CdmaMode;
         break;
     };
     return QSystemNetworkInfo::UnknownMode;
@@ -328,9 +350,21 @@ int QSystemNetworkInfoPrivate::cellId()
 
 int QSystemNetworkInfoPrivate::locationAreaCode()
 {
+
+    foreach (const QDBusObjectPath &path, iface->getDevices()) {
+        QNetworkManagerInterfaceDevice devIface(path.path(), this);
+
+        if (devIface->deviceType() == DEVICE_TYPE_GSM) {
+            QModemManagerModemLocation loc(devIface.udi());
+            if(loc.isValid()) {
+
+            }
+        }
+    }
 #if !defined(QT_NO_CONNMAN)
     return QSystemNetworkInfoLinuxCommonPrivate::locationAreaCode();
 #endif
+
     return -1;
 }
 
@@ -393,6 +427,179 @@ QSystemNetworkInfo::NetworkMode QSystemNetworkInfoPrivate::currentMode()
 #endif
 
     return mode;
+}
+
+QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSystemNetworkInfo::NetworkMode mode)
+{
+    switch(mode) {
+    case QSystemNetworkInfo::GsmMode:
+//    case QSystemNetworkInfo::GprsMode:
+//    case QSystemNetworkInfo::EdgeMode:
+//    case QSystemNetworkInfo::HspaMode:
+    {
+#if !defined(QT_NO_DBUS)
+        foreach (const QDBusObjectPath &path, iface->getDevices()) {
+            QNetworkManagerInterfaceDevice devIface(path.path(), this);
+
+            if (devIface.deviceType() == DEVICE_TYPE_GSM) {
+                QModemManagerModem modem(devIface.udi());
+                QModemManagerGsmNetworkInterface mmnet(devIface.udi());
+                if(mmnet.isValid()) {
+                    MMRegistrationInfoType info = mmnet.registrationStatus();
+//                    qDebug() << mmnet.signalQuality() << info.operatorName << info.status;
+//                    qDebug() << "mode"<< modem.ipMethod();
+                    if ( mmnet.signalQuality() != 0/* && info.status == 0*/) {
+                        switch (info.status) {
+                        case 0:
+                            return QSystemNetworkInfo::NoNetworkAvailable;
+                            break;
+                        case 1:
+                            return QSystemNetworkInfo::HomeNetwork;
+                            break;
+                        case 2:
+                            return QSystemNetworkInfo::Searching;
+                            break;
+                        case 3:
+                            return QSystemNetworkInfo::Denied;
+                            break;
+                        case 4:
+                            return QSystemNetworkInfo::UndefinedStatus;
+                            break;
+                        case 5:
+                            return QSystemNetworkInfo::Roaming;
+                            break;
+                        };
+                    } else {
+                        return QSystemNetworkInfo::UndefinedStatus;
+                    }
+                }
+            }
+        }
+#endif
+    }
+        break;
+    case QSystemNetworkInfo::CdmaMode:
+    case QSystemNetworkInfo::WcdmaMode:
+{
+#if !defined(QT_NO_DBUS)
+        foreach (const QDBusObjectPath &path, iface->getDevices()) {
+            QNetworkManagerInterfaceDevice devIface(path.path(), this);
+
+            if (devIface.deviceType() == DEVICE_TYPE_CDMA) {
+                QModemManagerGsmNetworkInterface mmnet(devIface.udi());
+                if(mmnet.isValid()) {
+                    MMRegistrationInfoType info = mmnet.registrationStatus();
+                    if ( mmnet.signalQuality() != 0/* && info.status == 0*/) {
+                        switch (info.status) {
+                        case 0: //Idle
+                            return QSystemNetworkInfo::NoNetworkAvailable;
+                            break;
+                        case 1:
+                            return QSystemNetworkInfo::HomeNetwork;
+                            break;
+                        case 2:
+                            return QSystemNetworkInfo::Searching;
+                            break;
+                        case 3:
+                            return QSystemNetworkInfo::Denied;
+                            break;
+                        case 4:// Unknown
+                            return QSystemNetworkInfo::UndefinedStatus;
+                            break;
+                        case 5:
+                            return QSystemNetworkInfo::Roaming;
+                            break;
+                        };
+                    } else {
+                        return QSystemNetworkInfo::UndefinedStatus;
+                    }
+                }
+            }
+        }
+#endif
+    }
+        break;
+    };
+    return QSystemNetworkInfoLinuxCommonPrivate::networkStatus(mode);
+}
+
+qint32 QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::NetworkMode mode)
+{
+    switch(mode) {
+
+    case QSystemNetworkInfo::GsmMode:
+        //    case QSystemNetworkInfo::CdmaMode:
+        //    case QSystemNetworkInfo::WcdmaMode:
+        //    case QSystemNetworkInfo::GprsMode:
+    {
+#if !defined(QT_NO_DBUS)
+        foreach (const QDBusObjectPath &path, iface->getDevices()) {
+            QNetworkManagerInterfaceDevice devIface(path.path(), this);
+            if (devIface.deviceType() == DEVICE_TYPE_GSM) {
+                QModemManagerGsmNetworkInterface mmnet(devIface.udi());
+                return mmnet.signalQuality();
+            }
+        }
+#endif
+    }
+        break;
+    };
+    return QSystemNetworkInfoLinuxCommonPrivate::networkSignalStrength(mode);
+}
+
+QString QSystemNetworkInfoPrivate::networkName(QSystemNetworkInfo::NetworkMode mode)
+{
+
+    switch(mode) {
+    case QSystemNetworkInfo::GsmMode:
+//    case QSystemNetworkInfo::CdmaMode:
+//    case QSystemNetworkInfo::WcdmaMode:
+//    case QSystemNetworkInfo::GprsMode:
+    {
+#if !defined(QT_NO_DBUS)
+        foreach (const QDBusObjectPath &path, iface->getDevices()) {
+            QNetworkManagerInterfaceDevice devIface(path.path(), this);
+
+            if (devIface.deviceType() == DEVICE_TYPE_GSM) {
+                QModemManagerGsmNetworkInterface mmnet(devIface.udi());
+                if(mmnet.isValid()) {
+                    MMRegistrationInfoType info = mmnet.registrationStatus();
+                    return info.operatorName;
+                }
+            }
+        }
+#endif
+    }
+        break;
+
+    };
+    return QSystemNetworkInfoLinuxCommonPrivate::networkName(mode);
+}
+
+QString QSystemNetworkInfoPrivate::macAddress(QSystemNetworkInfo::NetworkMode mode)
+{
+    switch(mode) {
+    case QSystemNetworkInfo::GsmMode:
+//    case QSystemNetworkInfo::CdmaMode:
+//    case QSystemNetworkInfo::WcdmaMode:
+//    case QSystemNetworkInfo::GprsMode:
+    {
+        foreach (const QDBusObjectPath &path, iface->getDevices()) {
+            QNetworkManagerInterfaceDevice devIface(path.path(), this);
+
+            if (devIface.deviceType() == DEVICE_TYPE_GSM) {
+                QModemManagerGsmNetworkInterface mmnet(devIface->udi());
+                if(mmnet.isValid()) {
+                    MMRegistrationInfoType info = mmnet.registrationStatus();
+                }
+            }
+        }
+    }
+        break;
+
+    };
+    return QSystemNetworkInfoLinuxCommonPrivate::macAddress(mode);
+
 }
 
 #if !defined(Q_WS_MAEMO_6) && defined(Q_WS_X11)  && !defined(Q_WS_MEEGO)
@@ -502,20 +709,16 @@ QSystemDeviceInfo::Profile QSystemDeviceInfoPrivate::currentProfile()
 QString QSystemDeviceInfoPrivate::imei()
 {
 #if !defined(QT_NO_DBUS)
-#if !defined(QT_NO_CONNMAN)
-     if(ofonoAvailable()) {
-         QOfonoManagerInterface ofonoManager;
-         QString modem = ofonoManager.currentModem().path();
-         if(!modem.isEmpty()) {
-             QOfonoModemInterface modemIface(modem,this);
 
-             QString imei = modemIface.getSerial();
-             if(!imei.isEmpty()) {
-                 return imei;
-             }
+     QNetworkManagerInterface iface;
+     foreach (const QDBusObjectPath &path, iface.getDevices()) {
+         QNetworkManagerInterfaceDevice devIface(path.path(), this);
+         if (devIface.deviceType() == DEVICE_TYPE_GSM) {
+             QModemManagerModemGsmCard card(devIface.udi());
+             return card.imei();
          }
      }
-#endif
+
 #endif
      return QLatin1String("");
  }
@@ -523,54 +726,18 @@ QString QSystemDeviceInfoPrivate::imei()
 QString QSystemDeviceInfoPrivate::imsi()
 {
 #if !defined(QT_NO_DBUS)
-#if !defined(QT_NO_CONNMAN)
-     if(ofonoAvailable()) {
-         QOfonoManagerInterface ofonoManager;
-         QString modem = ofonoManager.currentModem().path();
-         if(!modem.isEmpty()) {
-             QOfonoSimInterface simInterface(modem,this);
-             if(simInterface.isPresent()) {
-                 QString id = simInterface.getImsi();
-                 if(!id.isEmpty()) {
-                     return id;
-                 }
-             }
+     QNetworkManagerInterface iface;
+     foreach (const QDBusObjectPath &path, iface.getDevices()) {
+         QNetworkManagerInterfaceDevice devIface(path.path(), this);
+         if (devIface.deviceType() == DEVICE_TYPE_GSM) {
+             QModemManagerModemGsmCard card(devIface.udi());
+             return card.imsi();
          }
      }
-#endif
 #endif
          return QLatin1String("");
 }
 
-QSystemDeviceInfo::SimStatus QSystemDeviceInfoPrivate::simStatus()
-{
-#if !defined(QT_NO_DBUS)
-#if !defined(QT_NO_CONNMAN)
-     if(ofonoAvailable()) {
-         QOfonoManagerInterface ofonoManager;
-         QString modem = ofonoManager.currentModem().path();
-         if(!modem.isEmpty()) {
-             QOfonoSimInterface simInterface(modem,this);
-             QString simpin = simInterface.pinRequired();
-             if(simpin == "pin"
-            || simpin == "phone"
-            || simpin == "firstphone"
-            || simpin == "pin2"
-            || simpin == "puk"
-            || simpin == "firstphonepuk"
-            || simpin == "puk2"
-            ) {
-                 return QSystemDeviceInfo::SimLocked;
-             }
-             if(simInterface.isPresent()) {
-                 return QSystemDeviceInfo::SingleSimAvailable;
-             }
-         }
-     }
-#endif
-#endif
-    return QSystemDeviceInfo::SimNotAvailable;
-}
 
 bool QSystemDeviceInfoPrivate::isDeviceLocked()
 {
@@ -679,6 +846,31 @@ QString QSystemDeviceInfoPrivate::productName()
         }
     }
     return QString();
+}
+
+QSystemDeviceInfo::SimStatus QSystemDeviceInfoPrivate::simStatus()
+{
+#if !defined(QT_NO_DBUS)
+    QNetworkManagerInterface iface;
+    foreach (const QDBusObjectPath &path, iface.getDevices()) {
+        QNetworkManagerInterfaceDevice devIface(path.path(), this);
+        if (devIface.deviceType() == DEVICE_TYPE_GSM
+                || devIface.deviceType() == DEVICE_TYPE_CDMA) {
+            QModemManager manager(this);
+            if (manager.enumerateDevices().count() > 1) {
+                return QSystemDeviceInfo::DualSimAvailable;
+            }
+
+            QModemManagerModem modem(devIface.udi());
+            if(!modem.unlockRequired().isEmpty()) {
+                return QSystemDeviceInfo::SimLocked;
+            }
+            return QSystemDeviceInfo::SingleSimAvailable;
+        }
+    }
+
+#endif
+    return QSystemDeviceInfo::SimNotAvailable;
 }
 
 

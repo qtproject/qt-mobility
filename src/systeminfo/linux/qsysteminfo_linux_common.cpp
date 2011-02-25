@@ -738,6 +738,16 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoLinuxCommonPrivate::networkS
             return getBluetoothNetStatus();
        }
         break;
+//    case QSystemNetworkInfo::GsmMode:
+//    case QSystemNetworkInfo::CdmaMode:
+//    case QSystemNetworkInfo::WcdmaMode:
+//    case QSystemNetworkInfo::GprsMode:
+////    case QSystemNetworkInfo::EdgeMode:
+////    case QSystemNetworkInfo::HspaMode:
+//    {
+////        return getBluetoothNetStatus();
+//   }
+//    break;
     default:
         break;
     };
@@ -3340,6 +3350,75 @@ QString QSystemDeviceInfoLinuxCommonPrivate::productName()
     return QString();
 }
 
+QString QSystemDeviceInfoLinuxCommonPrivate::imei()
+{
+#if !defined(QT_NO_CONNMAN)
+     if(ofonoAvailable()) {
+         QOfonoManagerInterface ofonoManager;
+         QString modem = ofonoManager.currentModem().path();
+         if(!modem.isEmpty()) {
+             QOfonoModemInterface modemIface(modem,this);
+
+             QString imei = modemIface.getSerial();
+             if(!imei.isEmpty()) {
+                 return imei;
+             }
+         }
+     }
+#endif
+    return QString();
+}
+
+QString QSystemDeviceInfoLinuxCommonPrivate::imsi()
+{
+#if !defined(QT_NO_CONNMAN)
+     if(ofonoAvailable()) {
+         QOfonoManagerInterface ofonoManager;
+         QString modem = ofonoManager.currentModem().path();
+         if(!modem.isEmpty()) {
+             QOfonoSimInterface simInterface(modem,this);
+             if(simInterface.isPresent()) {
+                 QString id = simInterface.getImsi();
+                 if(!id.isEmpty()) {
+                     return id;
+                 }
+             }
+         }
+     }
+#endif
+    return QString();
+}
+
+QSystemDeviceInfo::SimStatus QSystemDeviceInfoLinuxCommonPrivate::simStatus()
+{
+#if !defined(QT_NO_DBUS)
+#if !defined(QT_NO_CONNMAN)
+     if(ofonoAvailable()) {
+         QOfonoManagerInterface ofonoManager;
+         QString modem = ofonoManager.currentModem().path();
+         if(!modem.isEmpty()) {
+             QOfonoSimInterface simInterface(modem,this);
+             QString simpin = simInterface.pinRequired();
+             if(simpin == "pin"
+            || simpin == "phone"
+            || simpin == "firstphone"
+            || simpin == "pin2"
+            || simpin == "puk"
+            || simpin == "firstphonepuk"
+            || simpin == "puk2"
+            ) {
+                 return QSystemDeviceInfo::SimLocked;
+             }
+             if(simInterface.isPresent()) {
+                 return QSystemDeviceInfo::SingleSimAvailable;
+             }
+         }
+     }
+#endif
+#endif
+    return QSystemDeviceInfo::SimNotAvailable;
+}
+
 QSystemScreenSaverLinuxCommonPrivate::QSystemScreenSaverLinuxCommonPrivate(QObject *parent)
     : QObject(parent)
 {
@@ -3756,7 +3835,7 @@ void QSystemBatteryInfoLinuxCommonPrivate::getBatteryStats()
 
                     capacity = ifaceDevice.getPropertyInt("battery.charge_level.last_full");
                     if(capacity == 0)
-                        capacity =  ifaceDevice.getPropertyInt("battery.reporting.last_full");;//
+                        capacity =  ifaceDevice.getPropertyInt("battery.reporting.last_full");
                     if(capacity == 0)
                         capacity = ifaceDevice.getPropertyInt("battery.reporting.design");
 
