@@ -350,11 +350,9 @@ int QSystemNetworkInfoPrivate::cellId()
 
 int QSystemNetworkInfoPrivate::locationAreaCode()
 {
-
     foreach (const QDBusObjectPath &path, iface->getDevices()) {
         QNetworkManagerInterfaceDevice devIface(path.path(), this);
-
-        if (devIface->deviceType() == DEVICE_TYPE_GSM) {
+        if (devIface.deviceType() == DEVICE_TYPE_GSM) {
             QModemManagerModemLocation loc(devIface.udi());
             if(loc.isValid()) {
 
@@ -588,10 +586,10 @@ QString QSystemNetworkInfoPrivate::macAddress(QSystemNetworkInfo::NetworkMode mo
             QNetworkManagerInterfaceDevice devIface(path.path(), this);
 
             if (devIface.deviceType() == DEVICE_TYPE_GSM) {
-                QModemManagerGsmNetworkInterface mmnet(devIface->udi());
-                if(mmnet.isValid()) {
-                    MMRegistrationInfoType info = mmnet.registrationStatus();
-                }
+//                QModemManagerGsmNetworkInterface mmnet(devIface.udi());
+//                if(mmnet.isValid()) {
+//                    MMRegistrationInfoType info = mmnet.registrationStatus();
+//                }
             }
         }
     }
