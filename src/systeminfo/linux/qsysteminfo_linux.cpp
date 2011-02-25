@@ -350,6 +350,8 @@ int QSystemNetworkInfoPrivate::cellId()
 
 int QSystemNetworkInfoPrivate::locationAreaCode()
 {
+#if !defined(QT_NO_NETWORKMANAGER)
+
     foreach (const QDBusObjectPath &path, iface->getDevices()) {
         QNetworkManagerInterfaceDevice devIface(path.path(), this);
         if (devIface.deviceType() == DEVICE_TYPE_GSM) {
@@ -359,6 +361,8 @@ int QSystemNetworkInfoPrivate::locationAreaCode()
             }
         }
     }
+#endif
+
 #if !defined(QT_NO_CONNMAN)
     return QSystemNetworkInfoLinuxCommonPrivate::locationAreaCode();
 #endif
@@ -435,8 +439,8 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSyst
 //    case QSystemNetworkInfo::EdgeMode:
 //    case QSystemNetworkInfo::HspaMode:
     {
-#if !defined(QT_NO_DBUS)
-        foreach (const QDBusObjectPath &path, iface->getDevices()) {
+#if !defined(QT_NO_DBUS) && !defined(QT_NO_NETWORKMANAGER)
+            foreach (const QDBusObjectPath &path, iface->getDevices()) {
             QNetworkManagerInterfaceDevice devIface(path.path(), this);
 
             if (devIface.deviceType() == DEVICE_TYPE_GSM) {
@@ -479,7 +483,7 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSyst
     case QSystemNetworkInfo::CdmaMode:
     case QSystemNetworkInfo::WcdmaMode:
 {
-#if !defined(QT_NO_DBUS)
+#if !defined(QT_NO_DBUS) && !defined(QT_NO_NETWORKMANAGER)
         foreach (const QDBusObjectPath &path, iface->getDevices()) {
             QNetworkManagerInterfaceDevice devIface(path.path(), this);
 
@@ -517,6 +521,8 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSyst
 #endif
     }
         break;
+    default:
+        break;
     };
     return QSystemNetworkInfoLinuxCommonPrivate::networkStatus(mode);
 }
@@ -530,7 +536,7 @@ qint32 QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::Netw
         //    case QSystemNetworkInfo::WcdmaMode:
         //    case QSystemNetworkInfo::GprsMode:
     {
-#if !defined(QT_NO_DBUS)
+#if !defined(QT_NO_DBUS) && !defined(QT_NO_NETWORKMANAGER)
         foreach (const QDBusObjectPath &path, iface->getDevices()) {
             QNetworkManagerInterfaceDevice devIface(path.path(), this);
             if (devIface.deviceType() == DEVICE_TYPE_GSM) {
@@ -540,6 +546,8 @@ qint32 QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::Netw
         }
 #endif
     }
+        break;
+    default:
         break;
     };
     return QSystemNetworkInfoLinuxCommonPrivate::networkSignalStrength(mode);
@@ -554,7 +562,7 @@ QString QSystemNetworkInfoPrivate::networkName(QSystemNetworkInfo::NetworkMode m
 //    case QSystemNetworkInfo::WcdmaMode:
 //    case QSystemNetworkInfo::GprsMode:
     {
-#if !defined(QT_NO_DBUS)
+#if !defined(QT_NO_DBUS) && !defined(QT_NO_NETWORKMANAGER)
         foreach (const QDBusObjectPath &path, iface->getDevices()) {
             QNetworkManagerInterfaceDevice devIface(path.path(), this);
 
@@ -569,7 +577,8 @@ QString QSystemNetworkInfoPrivate::networkName(QSystemNetworkInfo::NetworkMode m
 #endif
     }
         break;
-
+    default:
+        break;
     };
     return QSystemNetworkInfoLinuxCommonPrivate::networkName(mode);
 }
@@ -582,6 +591,7 @@ QString QSystemNetworkInfoPrivate::macAddress(QSystemNetworkInfo::NetworkMode mo
 //    case QSystemNetworkInfo::WcdmaMode:
 //    case QSystemNetworkInfo::GprsMode:
     {
+#if !defined(QT_NO_DBUS) && !defined(QT_NO_NETWORKMANAGER)
         foreach (const QDBusObjectPath &path, iface->getDevices()) {
             QNetworkManagerInterfaceDevice devIface(path.path(), this);
 
@@ -592,9 +602,11 @@ QString QSystemNetworkInfoPrivate::macAddress(QSystemNetworkInfo::NetworkMode mo
 //                }
             }
         }
+#endif
     }
         break;
-
+    default:
+        break;
     };
     return QSystemNetworkInfoLinuxCommonPrivate::macAddress(mode);
 
@@ -708,7 +720,7 @@ QSystemDeviceInfo::Profile QSystemDeviceInfoPrivate::currentProfile()
 
 QString QSystemDeviceInfoPrivate::imei()
 {
-#if !defined(QT_NO_DBUS)
+#if !defined(QT_NO_DBUS) && !defined(QT_NO_NETWORKMANAGER)
 
      QNetworkManagerInterface iface;
      foreach (const QDBusObjectPath &path, iface.getDevices()) {
@@ -725,7 +737,7 @@ QString QSystemDeviceInfoPrivate::imei()
 
 QString QSystemDeviceInfoPrivate::imsi()
 {
-#if !defined(QT_NO_DBUS)
+#if !defined(QT_NO_DBUS) && !defined(QT_NO_NETWORKMANAGER)
      QNetworkManagerInterface iface;
      foreach (const QDBusObjectPath &path, iface.getDevices()) {
          QNetworkManagerInterfaceDevice devIface(path.path(), this);
@@ -850,7 +862,7 @@ QString QSystemDeviceInfoPrivate::productName()
 
 QSystemDeviceInfo::SimStatus QSystemDeviceInfoPrivate::simStatus()
 {
-#if !defined(QT_NO_DBUS)
+#if !defined(QT_NO_DBUS) && !defined(QT_NO_NETWORKMANAGER)
     QNetworkManagerInterface iface;
     foreach (const QDBusObjectPath &path, iface.getDevices()) {
         QNetworkManagerInterfaceDevice devIface(path.path(), this);
