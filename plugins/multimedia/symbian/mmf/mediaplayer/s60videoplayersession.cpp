@@ -60,6 +60,7 @@
 #include <mmf/common/mmfcontrollerframeworkbase.h>
 
 const QString DefaultAudioEndpoint = QLatin1String("Default");
+const TUid KHelixUID = {0x101F8514};
 
 /*!
     Constructs the CVideoPlayerUtility2 object with given \a service and \a object.
