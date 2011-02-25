@@ -102,6 +102,8 @@ public:
 
     QAudioFormat format() const;
     bool setFormat(const QAudioFormat &format);
+    QAudioEncoderSettings settings() const;
+    bool setEncoderSettings(const QAudioEncoderSettings &setting);
     QStringList supportedAudioCodecs() const;
     QString codecDescription(const QString &codecName);
     bool setAudioCodec(const QString &codecName);
@@ -169,6 +171,7 @@ private:
     CMdaAudioRecorderUtility *m_recorderUtility;
     TAudioCaptureState m_captureState;
     QAudioFormat m_format;
+    QAudioEncoderSettings m_audioEncoderSettings;
     QHash<QString, ControllerData> m_controllerIdMap;
     QHash<QString, CodecData>  m_audioCodeclist;
     QList<int> m_supportedSampleRates;
