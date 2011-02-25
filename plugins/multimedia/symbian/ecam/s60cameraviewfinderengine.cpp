@@ -488,6 +488,9 @@ void S60CameraViewfinderEngine::startViewfinder(const bool internalStart)
             TSize size = TSize(m_viewfinderSize.width(), m_viewfinderSize.height());
 
             if( m_viewfinderType == OutputTypeRenderer && m_viewfinderSurface) {
+                if (!m_surfaceFormat.isValid())
+                    return;
+
                 // Start rendering to surface with correct size and format
                 if (m_viewfinderSurface->isFormatSupported(m_surfaceFormat))
                     m_viewfinderSurface->start(m_surfaceFormat);
@@ -620,6 +623,7 @@ void S60CameraViewfinderEngine::resetViewfinderDisplay()
             // Nothing to do
             break;
         case OutputTypeRenderer: {
+            // New surface has been set
             S60VideoRendererControl* viewFinderRenderControl =
                 qobject_cast<S60VideoRendererControl*>(m_viewfinderOutput);
             m_viewfinderSurface = viewFinderRenderControl->surface();
@@ -628,6 +632,27 @@ void S60CameraViewfinderEngine::resetViewfinderDisplay()
                 stopViewfinder(); // Stop viewfinder
                 return;
             }
+
+            if (!m_viewfinderSurface->nativeResolution().isEmpty()) {
+                if (m_viewfinderSurface->nativeResolution() != m_viewfinderSize)
+                    resetViewfinderSize(m_viewfinderSurface->nativeResolution());
+            }
+
+            connect(m_viewfinderSurface, SIGNAL(nativeResolutionChanged(const QSize&)),
+                this, SLOT(resetViewfinderSize(QSize)));
+
+            // Set Surface Properties
+            if (m_viewfinderSurface->supportedPixelFormats().contains(QVideoFrame::Format_RGB32))
+                m_surfaceFormat = QVideoSurfaceFormat(m_actualViewFinderSize, QVideoFrame::Format_RGB32);
+            else if (m_viewfinderSurface->supportedPixelFormats().contains(QVideoFrame::Format_ARGB32))
+                m_surfaceFormat = QVideoSurfaceFormat(m_actualViewFinderSize, QVideoFrame::Format_ARGB32);
+            else
+                return;
+
+            m_surfaceFormat.setFrameRate(KViewfinderFrameRate);
+            m_surfaceFormat.setYCbCrColorSpace(QVideoSurfaceFormat::YCbCr_Undefined); // EColor16MU (compatible with EColor16MA)
+            m_surfaceFormat.setPixelAspectRatio(1,1); // PAR 1:1
+
             connect(this, SIGNAL(viewFinderFrameReady(const CFbsBitmap &)),
                 this, SLOT(viewFinderBitmapReady(const CFbsBitmap &)));
         }
