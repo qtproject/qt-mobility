@@ -413,10 +413,10 @@ void QGraphicsVideoItemPrivate::updateWidgetOrdinalPosition()
         foreach (QGraphicsItem *item, items)
             if (QGraphicsVideoItem *x = qobject_cast<QGraphicsVideoItem *>(item->toGraphicsObject()))
                 graphicsVideoItems.append(x);
-        int ordinalPosition = graphicsVideoItems.count();
+        int ordinalPosition = 1;
         foreach (QGraphicsVideoItem *item, graphicsVideoItems)
             if (QVideoWidgetControl *widgetControl = item->d_ptr->m_widgetControl)
-                widgetControl->setProperty("ordinalPosition", ordinalPosition--);
+                widgetControl->setProperty("ordinalPosition", ordinalPosition++);
     }
 }
 
