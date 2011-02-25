@@ -438,7 +438,8 @@ DatabaseOperations::DatabaseOperations()
     : connectionName(QString()),
     managerUri(QString()),
     queryRun(0),
-    sharedMemory("QLandmarksSharedMemory")
+    sharedMemory("QLandmarksSharedMemory"),
+    m_timeStamp(0)
 {
     m_conn = new QSparqlConnection("QTRACKER");
 }
@@ -1571,7 +1572,6 @@ QList<QLandmark> DatabaseOperations::landmarks(const QLandmarkFilter& filter,
         return result;
     }
 
-    bool needAll = false;
     if (filter.type() == QLandmarkFilter::LandmarkIdFilter) {
         QLandmarkIdFilter idFilter = filter;
     }
@@ -1591,13 +1591,7 @@ QList<QLandmark> DatabaseOperations::landmarks(const QLandmarkFilter& filter,
             result.append(lm);
          } else {
             if (*error == QLandmarkManager::DoesNotExistError) {
-                if (!needAll) {
                     continue;
-                 }
-                else {
-                    result.clear();
-                    return result;
-                }
             } else {
                 result.clear();
                 return result;
@@ -2241,10 +2235,20 @@ QList<QLandmarkCategory> DatabaseOperations::categories(const QList<QLandmarkCat
     Q_ASSERT(error);
     Q_ASSERT(errorString);
 
-    if (error)
-        *error = QLandmarkManager::NoError;
-    if (errorString)
-        errorString->clear();
+    if (!error) {
+        //this code path should not be possible
+        qWarning() << "null error pointer passed to DatabaseOperaitons::categories()";
+        return QList<QLandmarkCategory>();
+    }
+
+    if (!errorString) {
+        //this code path should not be possible
+        qWarning() << "null error string pointer passed to DatabaseOperaitons::categories()";
+        return QList<QLandmarkCategory>();
+    }
+
+    *error = QLandmarkManager::NoError;
+    errorString->clear();
 
     QList<QLandmarkCategory> result;
     QList<QLandmarkCategoryId> ids = landmarkCategoryIds;
@@ -2257,10 +2261,8 @@ QList<QLandmarkCategory> DatabaseOperations::categories(const QList<QLandmarkCat
     }
 
     for (int i = 0; i < ids.size(); ++i) {
-        if (error)
-            *error = QLandmarkManager::NoError;
-        if (errorString)
-            (*errorString).clear();
+        *error = QLandmarkManager::NoError;
+        (*errorString).clear();
 
         if (queryRun && queryRun->isCanceled) {
             if (error)
@@ -2274,7 +2276,7 @@ QList<QLandmarkCategory> DatabaseOperations::categories(const QList<QLandmarkCat
         QLandmarkCategory cat = category(ids.at(i), error,errorString);
         if (*error == QLandmarkManager::NoError)
             result << cat;
-         else  {
+        else  {
             if (*error == QLandmarkManager::DoesNotExistError) {
                 if (!needAll)
                     continue;
@@ -2284,12 +2286,12 @@ QList<QLandmarkCategory> DatabaseOperations::categories(const QList<QLandmarkCat
             }
             result.clear();
             return result;
-         }
+        }
+
     }
-    if (error)
-        *error = QLandmarkManager::NoError;
-    if (errorString)
-        *errorString = "";
+
+    *error = QLandmarkManager::NoError;
+    *errorString = "";
 
     return result;
 }
@@ -3124,7 +3126,9 @@ QLandmarkManager::SupportLevel DatabaseOperations::filterSupportLevel(const QLan
 {
     switch(filter.type()) {
         case QLandmarkFilter::DefaultFilter:
+        {
             return QLandmarkManager::NativeSupport;
+        }
         case QLandmarkFilter::AttributeFilter:
         {
             const QLandmarkAttributeFilter attribFilter(filter);

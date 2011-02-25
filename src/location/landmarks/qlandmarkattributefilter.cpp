@@ -82,7 +82,8 @@ QLandmarkAttributeFilterPrivate::QLandmarkAttributeFilterPrivate()
 QLandmarkAttributeFilterPrivate::QLandmarkAttributeFilterPrivate(const QLandmarkAttributeFilterPrivate &other)
     : QLandmarkFilterPrivate(other),
     attributes(other.attributes),
-    flags(other.flags)
+    flags(other.flags),
+    operationType(other.operationType)
 {
 }
 

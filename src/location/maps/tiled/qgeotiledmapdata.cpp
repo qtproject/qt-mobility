@@ -615,10 +615,10 @@ void QGeoTiledMapData::processRequests()
                 || (zoomLevel() != reply->request().zoomLevel())
                 || (mapType() != reply->request().mapType())
                 || (connectivityMode() != reply->request().connectivityMode())) {
-            reply->abort();
             d->replyRects.remove(reply->request().tileRect());
-            replyIter.remove();
             d->zoomCache.remove(reply->request());
+            replyIter.remove();
+            reply->abort();
         }
     }
 
@@ -665,9 +665,6 @@ void QGeoTiledMapData::processRequests()
 
         if (reply->isFinished())
             replyFinished(reply);
-
-        if (reply->isCached())
-            break;
     }
 }
 
@@ -697,7 +694,7 @@ void QGeoTiledMapData::replyFinished(QGeoTiledMapReply *reply)
     if (reply->error() != QGeoTiledMapReply::NoError) {
         if (d->requests.size() > 0)
             QTimer::singleShot(0, this, SLOT(processRequests()));
-        QTimer::singleShot(0, reply, SLOT(deleteLater()));
+        reply->deleteLater();
         return;
     }
 
@@ -706,7 +703,7 @@ void QGeoTiledMapData::replyFinished(QGeoTiledMapReply *reply)
             || (connectivityMode() != reply->request().connectivityMode())) {
         if (d->requests.size() > 0)
             QTimer::singleShot(0, this, SLOT(processRequests()));
-        QTimer::singleShot(0, reply, SLOT(deleteLater()));
+        reply->deleteLater();
         return;
     }
 
@@ -717,7 +714,7 @@ void QGeoTiledMapData::replyFinished(QGeoTiledMapReply *reply)
         delete tile;
         if (d->requests.size() > 0)
             QTimer::singleShot(0, this, SLOT(processRequests()));
-        QTimer::singleShot(0, reply, SLOT(deleteLater()));
+        reply->deleteLater();
         return;
         //setError(QGeoTiledMapReply::ParseError, "The response from the service was not in a recognisable format.");
     }
@@ -726,7 +723,7 @@ void QGeoTiledMapData::replyFinished(QGeoTiledMapReply *reply)
         delete tile;
         if (d->requests.size() > 0)
             QTimer::singleShot(0, this, SLOT(processRequests()));
-        QTimer::singleShot(0, reply, SLOT(deleteLater()));
+        reply->deleteLater();
         return;
         //setError(QGeoTiledMapReply::ParseError, "The map image is empty.");
     }
@@ -760,7 +757,7 @@ void QGeoTiledMapData::replyFinished(QGeoTiledMapReply *reply)
     if (d->requests.size() > 0)
         QTimer::singleShot(0, this, SLOT(processRequests()));
 
-    QTimer::singleShot(0, reply, SLOT(deleteLater()));
+    reply->deleteLater();
 }
 
 void QGeoTiledMapData::tileError(QGeoTiledMapReply::Error error, QString errorString)
@@ -885,16 +882,6 @@ void QGeoTiledMapDataPrivate::updateMapImage()
         return;
 
     bool wasEmpty = (requests.size() == 0);
-
-    QMutableListIterator<QGeoTiledMapRequest> requestIter(requests);
-    while (requestIter.hasNext()) {
-        QGeoTiledMapRequest req = requestIter.next();
-        if (!intersectsScreen(req.tileRect())) {
-            requestRects.remove(req.tileRect());
-            requestIter.remove();
-        }
-    }
-
     QGeoTileIterator it(this);
 
     while (it.hasNext()) {

@@ -69,6 +69,9 @@ int main(int argc, char **argv)
     QLightSensor sensor;
     sensor.connectToBackend();
 
+    const char* alwaysOn = "alwaysOn";
+    sensor.setProperty(alwaysOn, true);
+
     if (rate_val > 0) {
         sensor.setDataRate(rate_val);
     }

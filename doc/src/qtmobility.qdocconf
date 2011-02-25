@@ -1,9 +1,4 @@
-include(compat.qdocconf)
-include(macros.qdocconf)
-include(qt-cpp-ignore.qdocconf)
 include(qt-html-templates.qdocconf)
-include(qt-defines.qdocconf)
-include(qtmobility-cpp-ignore.qdocconf)
 
 project                 = QtMobility
 description             = Qt Mobility Project Library Reference Documentation
@@ -162,6 +157,7 @@ excludedirs = ../../src/messaging/win32wce \
               ../../src/publishsubscribe/symbian
 
 exampledirs = ../../examples \
+              ../../tutorials \
               ../../demos \
               ../.. \
               .
