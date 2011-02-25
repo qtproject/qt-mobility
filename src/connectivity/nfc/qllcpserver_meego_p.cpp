@@ -174,6 +174,9 @@ void QLlcpServerPrivate::AccessGranted(const QDBusObjectPath &targetPath,
 void QLlcpServerPrivate::Accept(const QDBusVariant &lsap, const QDBusVariant &rsap,
                                 int readFd, int writeFd)
 {
+    Q_UNUSED(lsap);
+    Q_UNUSED(rsap);
+
     Q_Q(QLlcpServer);
 
     m_pendingSockets.append(qMakePair(readFd, writeFd));
