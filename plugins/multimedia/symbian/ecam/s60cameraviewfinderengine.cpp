@@ -82,6 +82,7 @@ S60CameraViewfinderEngine::S60CameraViewfinderEngine(S60CameraControl *control,
     m_vfState(EVFNotConnectedNotStarted),
     m_viewfinderSize(KDefaultViewfinderSize),
     m_actualViewFinderSize(KDefaultViewfinderSize),
+    m_viewfinderAspectRatio(0.0),
     m_viewfinderType(OutputTypeNotSet),
     m_viewfinderNativeType(EBitmapViewFinder), // Default type
     m_isViewFinderVisible(true), // True by default (only QVideoWidgetControl supports being hidden)
@@ -481,6 +482,7 @@ void S60CameraViewfinderEngine::startViewfinder(const bool internalStart)
             }
 
             m_actualViewFinderSize = QSize(extentRectSymbian.Size().iWidth, extentRectSymbian.Size().iHeight);
+            m_viewfinderAspectRatio = qreal(m_actualViewFinderSize.width()) / qreal(m_actualViewFinderSize.height());
 
         } else { // Bitmap ViewFinder
             TSize size = TSize(m_viewfinderSize.width(), m_viewfinderSize.height());
@@ -506,6 +508,8 @@ void S60CameraViewfinderEngine::startViewfinder(const bool internalStart)
             }
 
             m_actualViewFinderSize = QSize(size.iWidth, size.iHeight);
+            m_viewfinderAspectRatio = qreal(m_actualViewFinderSize.width()) / qreal(m_actualViewFinderSize.height());
+
             if (m_viewfinderDisplay)
                 m_viewfinderDisplay->setNativeSize(m_actualViewFinderSize);
         }
@@ -740,6 +744,27 @@ void S60CameraViewfinderEngine::checkAndRotateCamera()
         m_cameraControl->resetCameraOrientation();
     }
     m_uiLandscape = isUiNowLandscape;
+}
+
+void S60CameraViewfinderEngine::handleContentAspectRatioChange(const QSize& newSize)
+{
+    qreal newAspectRatio = qreal(newSize.width()) / qreal(newSize.height());
+    // Check if aspect ratio changed
+    if (qFuzzyCompare(newAspectRatio, m_viewfinderAspectRatio))
+        return;
+
+    // Resize viewfinder by reducing either width or height to comply with the new aspect ratio
+    QSize newNativeResolution;
+    if (newAspectRatio > m_viewfinderAspectRatio) { // New AspectRatio is wider => Reduce height
+        newNativeResolution = QSize(m_actualViewFinderSize.width(), (m_actualViewFinderSize.width() / newAspectRatio));
+    } else { // New AspectRatio is higher => Reduce width
+        newNativeResolution = QSize((m_actualViewFinderSize.height() * newAspectRatio), m_actualViewFinderSize.height());
+    }
+
+    // Notify aspect ratio change (use actual content size to notify that)
+    // This triggers item size/position re-calculation
+    if (m_viewfinderDisplay)
+        m_viewfinderDisplay->setNativeSize(newNativeResolution);
 }
 
 // End of file
