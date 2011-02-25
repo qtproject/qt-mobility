@@ -1867,9 +1867,13 @@ QSystemDisplayInfo::DisplayOrientation QSystemDisplayInfoLinuxCommonPrivate::ori
 #if defined(Q_WS_X11)
     XRRScreenConfiguration *sc;
     Rotation cur_rotation;
-    sc = XRRGetScreenInfo(QX11Info::display(), RootWindow(QX11Info::display(), screen));
+    Display *display = QX11Info::display();
+    if (!display) {
+        goto out;
+    }
+    sc = XRRGetScreenInfo(display, RootWindow(display, screen));
     if (!sc) {
-        return orientation;
+        goto out;
     }
     XRRConfigRotations(sc, &cur_rotation);
 
@@ -1892,6 +1896,7 @@ QSystemDisplayInfo::DisplayOrientation QSystemDisplayInfoLinuxCommonPrivate::ori
 #else
 Q_UNUSED(screen)
 #endif
+out:
     return orientation;
 }
 

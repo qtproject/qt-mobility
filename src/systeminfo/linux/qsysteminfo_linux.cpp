@@ -630,18 +630,20 @@ QSystemDisplayInfoPrivate::QSystemDisplayInfoPrivate(QSystemDisplayInfoLinuxComm
 #if !defined(Q_WS_MAEMO_6) && defined(Q_WS_X11)  && !defined(Q_WS_MEEGO)
     QAbstractEventDispatcher::instance()->setEventFilter(q_XEventFilter);
     Display *display = QX11Info::display();
-    XRRQueryExtension(display, &xEventBase, &xErrorBase);
+    if (display) {
+        XRRQueryExtension(display, &xEventBase, &xErrorBase);
 
-    Window desktopWindow = QX11Info::appRootWindow(0);
-    XRRSelectInput(display, desktopWindow,0);
-    XRRSelectInput(display, desktopWindow, RRScreenChangeNotifyMask);
+        Window desktopWindow = QX11Info::appRootWindow(0);
+        XRRSelectInput(display, desktopWindow,0);
+        XRRSelectInput(display, desktopWindow, RRScreenChangeNotifyMask);
 
-    XRRScreenConfiguration *sc;
-    Rotation cur_rotation;
-    sc = XRRGetScreenInfo(QX11Info::display(), RootWindow(QX11Info::display(), 0));
-    if (sc) {
-        XRRConfigRotations(sc, &cur_rotation);
-        lastRotation = cur_rotation;
+        XRRScreenConfiguration *sc;
+        Rotation cur_rotation;
+        sc = XRRGetScreenInfo(display, RootWindow(display, 0));
+        if (sc) {
+            XRRConfigRotations(sc, &cur_rotation);
+            lastRotation = cur_rotation;
+        }
     }
 #endif
 }
@@ -916,7 +918,7 @@ QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QSystemScreenSaverLinuxComm
      Display *dis = QX11Info::display();
      if(dis) {
          XGetScreenSaver(dis, &ttime, &interval, &preferBlank, &allowExp);
-         int result = XSetScreenSaver(QX11Info::display(), timeout, interval, preferBlank, allowExp);
+         int result = XSetScreenSaver(dis, timeout, interval, preferBlank, allowExp);
          return result;
      }
 #endif
@@ -978,9 +980,13 @@ bool QSystemScreenSaverPrivate::screenSaverInhibited()
     int interval;
     int preferBlank;
     int allowExp;
-    XGetScreenSaver(QX11Info::display(), &timeout, &interval, &preferBlank, &allowExp);
-    if(preferBlank == DontPreferBlanking || timeout == 0) {
-        return true;
+    Display *display = QX11Info::display();
+
+    if (display) {
+        XGetScreenSaver(display, &timeout, &interval, &preferBlank, &allowExp);
+        if(preferBlank == DontPreferBlanking || timeout == 0) {
+            return true;
+        }
     }
 
 #endif
