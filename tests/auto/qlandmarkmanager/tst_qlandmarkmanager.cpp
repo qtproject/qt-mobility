@@ -6585,7 +6585,6 @@ void tst_QLandmarkManager::filterAttribute3()
 
     QList<QLandmark> lms;
 #ifdef Q_OS_SYMBIAN
-    QEXPECT_FAIL("", "MOBILITY-2283: symbian does not support MatchContains", Continue);
     QCOMPARE(m_manager->filterSupportLevel(attributeFilter), QLandmarkManager::NoSupport);
     QVERIFY(doFetch(type, attributeFilter, &lms,QLandmarkManager::NotSupportedError));
 #else
