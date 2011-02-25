@@ -41,6 +41,9 @@
 
 #include "qdeclarativeservice_p.h"
 
+#include <QDeclarativeEngine>
+#include <QDeclarativeInfo>
+
 QTM_BEGIN_NAMESPACE
 
 /*!
@@ -205,13 +208,19 @@ QObject* QDeclarativeService::serviceObject()
 */
 QDeclarativeServiceList::QDeclarativeServiceList()
     : m_service(QString()),
-      m_match(QDeclarativeServiceList::Minimum)
+      m_interface(),
+      m_major(1),
+      m_minor(1),
+      m_match(QDeclarativeServiceList::Minimum),
+      m_componentComplete(false)
 {
-    serviceManager = new QServiceManager();
+    serviceManager = new QServiceManager(this);
 }
 
 QDeclarativeServiceList::~QDeclarativeServiceList()
 {
+    while(m_services.count())
+        delete m_services.takeFirst();
 }
 /*!
     \qmlproperty QString ServiceList::serviceName
@@ -222,6 +231,9 @@ QDeclarativeServiceList::~QDeclarativeServiceList()
 void QDeclarativeServiceList::setServiceName(const QString &service)
 {
     m_service = service;
+    updateFilterResults();
+    if (m_componentComplete)
+        emit serviceNameChanged();
 }
 
 QString QDeclarativeServiceList::serviceName() const
@@ -238,6 +250,9 @@ QString QDeclarativeServiceList::serviceName() const
 void QDeclarativeServiceList::setInterfaceName(const QString &interface)
 {
     m_interface = interface;
+    updateFilterResults();
+    if (m_componentComplete)
+        emit interfaceNameChanged();
 }
 
 QString QDeclarativeServiceList::interfaceName() const
@@ -254,6 +269,9 @@ QString QDeclarativeServiceList::interfaceName() const
 void QDeclarativeServiceList::setMajorVersion(int major)
 {
     m_major = major;
+    updateFilterResults();
+    if (m_componentComplete)
+        emit majorVersionChanged();
 }
 
 int QDeclarativeServiceList::majorVersion() const
@@ -270,6 +288,9 @@ int QDeclarativeServiceList::majorVersion() const
 void QDeclarativeServiceList::setMinorVersion(int minor)
 {
     m_minor = minor;
+    updateFilterResults();
+    if (m_componentComplete)
+        emit minorVersionChanged();
 }
 
 int QDeclarativeServiceList::minorVersion() const
@@ -280,15 +301,18 @@ int QDeclarativeServiceList::minorVersion() const
 /*!
     \qmlproperty enumeration ServiceList::versionMatch
     
-    This property holds the veresion match rule of the service filter that
+    This property holds the version match rule of the service filter that
     corresponds to QServiceFilter::versionMatchRule(). Within QML the values
     ServiceList.Exact and ServiceList.Minimum correspond to 
     QServiceFilter::ExactVersionMatch and QServiceFilter::MinimumVersionMatch
-    repsectively.
+    respectively.
 */
 void QDeclarativeServiceList::setVersionMatch(MatchRule match)
 {
     m_match = match;
+    updateFilterResults();
+    if (m_componentComplete)
+        emit versionMatchChanged();
 }
 
 QDeclarativeServiceList::MatchRule QDeclarativeServiceList::versionMatch() const
@@ -296,15 +320,12 @@ QDeclarativeServiceList::MatchRule QDeclarativeServiceList::versionMatch() const
     return m_match;
 }
 
-/*!
-    \qmlproperty QDeclarativeListProperty ServiceList::services
-
-    This property holds the list of \l Service elements that match
-    the Service::interfaceName and minimum Service::versionNumber properties. 
-*/
-QDeclarativeListProperty<QDeclarativeService> QDeclarativeServiceList::services()
+void QDeclarativeServiceList::updateFilterResults()
 {
-    QString version = QString::number(m_major) + "." + QString::number(m_minor);
+    if (!m_componentComplete)
+        return;
+
+    const QString version = QString::number(m_major) + "." + QString::number(m_minor);
     
     QServiceFilter filter;
     filter.setServiceName(m_service);
@@ -312,7 +333,11 @@ QDeclarativeListProperty<QDeclarativeService> QDeclarativeServiceList::services(
         filter.setInterface(m_interface, version, QServiceFilter::ExactVersionMatch);
     else
         filter.setInterface(m_interface, version);
-    
+
+    while (m_services.count()) //for now we refresh the entire list
+        delete m_services.takeFirst();
+
+
     QList<QServiceInterfaceDescriptor> list = serviceManager->findInterfaces(filter);
     for (int i = 0; i < list.size(); i++) {
         QDeclarativeService *service;
@@ -320,10 +345,70 @@ QDeclarativeListProperty<QDeclarativeService> QDeclarativeServiceList::services(
         service->setInterfaceDesc(list.at(i));
         m_services.append(service);
     }
-    
-    return QDeclarativeListProperty<QDeclarativeService>(this, m_services);
+
+    emit resultsChanged();
 }
 
+/*!
+    \qmlproperty QDeclarativeListProperty ServiceList::services
+
+    This property holds the list of \l Service elements that match
+    the Service::interfaceName and minimum Service::versionNumber properties.
+*/
+QDeclarativeListProperty<QDeclarativeService> QDeclarativeServiceList::services()
+{
+
+    return QDeclarativeListProperty<QDeclarativeService>(this,
+            0,
+            s_append,
+            s_count,
+            s_at,
+            s_clear);
+}
+
+void QDeclarativeServiceList::classBegin()
+{
+}
+
+void QDeclarativeServiceList::componentComplete()
+{
+    if (!m_componentComplete) {
+        m_componentComplete = true;
+        updateFilterResults();
+    }
+}
+
+void QDeclarativeServiceList::listUpdated()
+{
+    if (m_componentComplete)
+        emit resultsChanged();
+}
+
+void QDeclarativeServiceList::s_append(QDeclarativeListProperty<QDeclarativeService> *prop, QDeclarativeService *service)
+{
+    QDeclarativeServiceList* list = static_cast<QDeclarativeServiceList*>(prop->object);
+    list->m_services.append(service);
+    list->listUpdated();
+}
+int QDeclarativeServiceList::s_count(QDeclarativeListProperty<QDeclarativeService> *prop)
+{
+    qmlInfo(0) << "s_count" << static_cast<QDeclarativeServiceList*>(prop->object)->m_services.count();
+
+    return static_cast<QDeclarativeServiceList*>(prop->object)->m_services.count();
+}
+
+QDeclarativeService* QDeclarativeServiceList::s_at(QDeclarativeListProperty<QDeclarativeService> *prop, int index)
+{
+    return static_cast<QDeclarativeServiceList*>(prop->object)->m_services[index];
+}
+
+void QDeclarativeServiceList::s_clear(QDeclarativeListProperty<QDeclarativeService> *prop)
+{
+    QDeclarativeServiceList* list = static_cast<QDeclarativeServiceList*>(prop->object);
+    qDeleteAll(list->m_services);
+    list->m_services.clear();
+    list->listUpdated();
+}
 #include "moc_qdeclarativeservice_p.cpp"
 
 QTM_END_NAMESPACE

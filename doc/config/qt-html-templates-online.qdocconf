@@ -5,7 +5,7 @@ HTML.postheader = \
     "    <div class=\"content\"> \n" \
     "    <div id=\"nav-logo\">\n" \
     "      <a href=\"index.html\">Home</a></div>\n" \
-    "    <a href=\"index.html\" class=\"qtref\"><span>Qt Mobility Reference Documentation</span></a>\n" \
+    "    <a href=\"index.html\" class=\"qtref\"><span>QtMobility Reference Documentation</span></a>\n" \
     "    <div id=\"narrowsearch\"></div>\n" \
     "    <div id=\"nav-topright\">\n" \
     "      <ul>\n" \
@@ -19,7 +19,7 @@ HTML.postheader = \
     "    </div>\n" \
     "    <div id=\"shortCut\">\n" \
     "      <ul>\n" \
-    "        <li class=\"shortCut-topleft-inactive\"><span><a href=\"index.html\">Qt Mobility 1.2</a></span></li>\n" \
+    "        <li class=\"shortCut-topleft-inactive\"><span><a href=\"index.html\">QtMobility 1.2</a></span></li>\n" \
     "        <li class=\"shortCut-topleft-active\"><a href=\"http://doc.qt.nokia.com\">ALL VERSIONS" \
     "        </a></li>\n" \
     "      </ul>\n" \
