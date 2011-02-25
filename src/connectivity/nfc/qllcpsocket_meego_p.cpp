@@ -166,6 +166,7 @@ void QLlcpSocketPrivate::disconnectFromService()
     }
 
     m_state = QLlcpSocket::UnconnectedState;
+    q->setOpenMode(QIODevice::NotOpen);
     emit q->stateChanged(m_state);
     emit q->disconnected();
 }
@@ -410,6 +411,7 @@ void QLlcpSocketPrivate::_q_readNotify()
         emit q->error(m_error);
 
         q->disconnectFromService();
+        q->setOpenMode(QIODevice::NotOpen);
     } else if (readFromDevice > 0) {
         buffer.chop(QPRIVATELINEARBUFFER_BUFFERSIZE - (readFromDevice < 0 ? 0 : readFromDevice));
 
