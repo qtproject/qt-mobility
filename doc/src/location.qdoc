@@ -537,6 +537,69 @@ The Ovi services plugin can be loaded by using the plugin key "nokia".
 
 Note that accepting the terms and conditions only applies those terms and conditions to the use of the Ovi Maps Services plugin and does not limit the use of the other maps and navigation API plugins that may be included with the QtMobility package.
 
+On Symbian platforms the applications using the Nokia plugin will need NetworkServices capability to access the online services.
+
+The following table lists optional parameters that can be passed to the Nokia plugin.
+\table
+\header
+    \o Parameter
+    \o Description
+\row
+    \o mapping.proxy
+    \o Proxy server URL used by mapping manager.
+\row
+    \o mapping.host
+    \o Map tile service URL used by mapping manager.
+\row
+    \o mapping.referer
+    \o Referer for the mapping token used for authentication by mapping manager.
+\row
+    \o mapping.token
+    \o Client token for the service used for authentication by mapping manager.
+\row
+    \o mapping.cache.directory
+    \o Map tile cache directory used as network disk cache.
+
+    Default place for the cache is "maptiles" directory in system temp.
+
+    On Symbian platform by default the cache is placed into internal mass memory drive directory "/data/nokia/maptiles".
+
+    If no internal mass memory is present on Symbian device caching is not used by default.
+
+    Changing the cache directory on Symbian may cause additional capability needs depending on where the new directory is placed.
+
+    Map tile caching is disabled on Maemo, Meego and Windows CE platforms. Using the parameter on these platforms will have no effect.
+
+    Map tiles will expire and are refetched 14 days after download.
+\row
+    \o mapping.cache.size
+    \o Map tile cache size. Maximum size of the cache is 50MB.
+\row
+    \o routing.proxy
+    \o Proxy server URL used by routing manager.
+\row
+    \o routing.host
+    \o Routing service URL used by routing manager.
+\row
+    \o routing.referer
+    \o Referer for the routing token used for authentication by routing manager.
+\row
+    \o routing.token
+    \o Client token for the service used for authentication by routing manager.
+\row
+    \o places.proxy
+    \o Proxy server URL used by search manager.
+\row
+    \o places.host
+    \o Search service URL used by search manager.
+\row
+    \o places.referer
+    \o Referer for the places token used for authentication by search manager.
+\row
+    \o places.token
+    \o Client token for the service used for authentication by search manager.
+\endtable
+
 \section2 Implementing plugins
 
 A plugin implementer needs to subclass QGeoServiceProviderFactory and as
