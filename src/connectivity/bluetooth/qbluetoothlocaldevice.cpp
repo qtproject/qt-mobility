@@ -97,6 +97,20 @@ QTM_BEGIN_NAMESPACE
                                 Bluetooth device.  The device will also be connectable, and powered on.
 */
 
+namespace
+{
+class LocalDeviceRegisterMetaTypes
+{
+public:
+    LocalDeviceRegisterMetaTypes()
+    {
+        qRegisterMetaType<QBluetoothLocalDevice::HostMode>("QBluetoothLocalDevice::HostMode");
+        qRegisterMetaType<QBluetoothLocalDevice::Pairing>("QBluetoothLocalDevice::Pairing");
+        qRegisterMetaType<QBluetoothLocalDevice::Error>("QBluetoothLocalDevice::Error");
+    }
+} _registerLocalDeviceMetaTypes;
+}
+
 /*!
     Destroys the QBluetoothLocalDevice.
 */

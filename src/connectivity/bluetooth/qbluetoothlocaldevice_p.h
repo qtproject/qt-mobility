@@ -129,8 +129,10 @@ public:
     QBluetoothLocalDevice::Pairing pairingStatus(const QBluetoothAddress &address) const;
 
     void pairingConfirmation(bool confirmation);
-    //slot exposed for the public api.
+    //slots exposed for the public api.
     void _q_pairingFinished(const QBluetoothAddress &address, QBluetoothLocalDevice::Pairing pairing);
+    void _q_registryError(int error);
+    void _q_pairingError(int error);
 
 private:
     //From MBTEngSettingsObserver

@@ -58,16 +58,7 @@ QBluetoothServiceDiscoveryAgentPrivate::QBluetoothServiceDiscoveryAgentPrivate(c
     , m_filter(NULL)
     , m_attributes(NULL)
 {
-    TRAPD(err,
-        m_filter = CSdpSearchPattern::NewL();
-        m_attributes = CSdpAttrIdMatchList::NewL();
-        )
 
-    if (!err)
-        TRAP(err, m_attributes->AddL(KAttrRangeAll);)
-        
-    if (err != KErrNone)
-        error = QBluetoothServiceDiscoveryAgent::UnknownError;
 }
 
 QBluetoothServiceDiscoveryAgentPrivate::~QBluetoothServiceDiscoveryAgentPrivate()
@@ -89,69 +80,68 @@ void QBluetoothServiceDiscoveryAgentPrivate::start(const QBluetoothAddress &addr
 
 void QBluetoothServiceDiscoveryAgentPrivate::startL(const QBluetoothAddress &address)
 {
-    initAgentL(address);
-    if (m_filter) {
-        m_filter->Reset();
-        if (uuidFilter.isEmpty()) {
-            m_filter->AddL(QBluetoothUuid::PublicBrowseGroup);
-        } else {
-            foreach (const QBluetoothUuid &uuid, uuidFilter) {
-                if (uuid.minimumSize() == 2) {
-                    TUUID sUuid(uuid.toUInt16());
-                    m_filter->AddL(sUuid);
-                } else if (uuid.minimumSize() == 4) {
-                    TUUID sUuid(uuid.toUInt32());
-                    m_filter->AddL(sUuid);
-                } else if (uuid.minimumSize() == 16) {
-                    TUint32 *dataPointer = (TUint32*)uuid.toUInt128().data;
-                    TUint32 lL = *(dataPointer++);
-                    TUint32 lH = *(dataPointer++);
-                    TUint32 hL = *(dataPointer++);
-                    TUint32 hH = *(dataPointer);
-                    TUUID sUuid(hH, hL, lH, lL);
-                    m_filter->AddL(sUuid);
-                } else {
-                    // filter size can be 0 on error cases, searching all services
-                    m_filter->AddL(QBluetoothUuid::PublicBrowseGroup);
-                }
+    initL(address);
+
+    if (uuidFilter.isEmpty()) {
+        m_filter->AddL(QBluetoothUuid::PublicBrowseGroup);
+    } else {
+        foreach (const QBluetoothUuid &uuid, uuidFilter) {
+            if (uuid.minimumSize() == 2) {
+                TUUID sUuid(uuid.toUInt16());
+                m_filter->AddL(sUuid);
+            } else if (uuid.minimumSize() == 4) {
+                TUUID sUuid(uuid.toUInt32());
+                m_filter->AddL(sUuid);
+            } else if (uuid.minimumSize() == 16) {
+                TUint32 *dataPointer = (TUint32*)uuid.toUInt128().data;
+                TUint32 lL = *(dataPointer++);
+                TUint32 lH = *(dataPointer++);
+                TUint32 hL = *(dataPointer++);
+                TUint32 hH = *(dataPointer);
+                TUUID sUuid(hH, hL, lH, lL);
+                m_filter->AddL(sUuid);
+            } else {
+                // filter size can be 0 on error cases, searching all services
+                m_filter->AddL(QBluetoothUuid::PublicBrowseGroup);
             }
         }
-        m_sdpAgent->SetRecordFilterL(*m_filter);
-        m_sdpAgent->NextRecordRequestL();
-    } else
-        error = QBluetoothServiceDiscoveryAgent::UnknownError;
+    }
+    m_sdpAgent->SetRecordFilterL(*m_filter);
+    m_sdpAgent->NextRecordRequestL();
 }
 
 void QBluetoothServiceDiscoveryAgentPrivate::stop()
 {
-    if (m_sdpAgent) {
-        m_sdpAgent->Cancel();
-    }
+    delete m_sdpAgent;
+    m_sdpAgent = NULL;
+    delete m_filter;
+    m_filter = NULL;
+    delete m_attributes;
+    m_attributes = NULL;
 }
 
-void QBluetoothServiceDiscoveryAgentPrivate::initAgentL(const QBluetoothAddress &address)
+void QBluetoothServiceDiscoveryAgentPrivate::initL(const QBluetoothAddress &address)
 {
     TBTDevAddr btAddress(address.toUInt64());
+    stop();
 
-    if (m_sdpAgent) {
-        delete m_sdpAgent;
-        m_sdpAgent = NULL;
-    }
     //Trapped in Start
-    m_sdpAgent = CSdpAgent::NewL(*this, btAddress);
+    m_sdpAgent = q_check_ptr(CSdpAgent::NewL(*this, btAddress));
+    m_filter = q_check_ptr(CSdpSearchPattern::NewL());
+    m_attributes = q_check_ptr(CSdpAttrIdMatchList::NewL());
+    m_attributes->AddL(KAttrRangeAll);
+
 }
 
 bool QBluetoothServiceDiscoveryAgentPrivate::quickDiscovery(const QBluetoothAddress &address, const QBluetoothDeviceInfo &info)
 {
-    //not needed
     return false;
 }
 
 void QBluetoothServiceDiscoveryAgentPrivate::NextRecordRequestComplete(TInt aError, TSdpServRecordHandle aHandle, TInt aTotalRecordsCount)
 {
     Q_Q(QBluetoothServiceDiscoveryAgent);
-
-    if (aError == KErrNone && aTotalRecordsCount > 0 && m_sdpAgent) {
+    if (aError == KErrNone && aTotalRecordsCount > 0 && m_sdpAgent && m_attributes) {
         // request attributes
         TRAPD(err, m_sdpAgent->AttributeRequestL(aHandle, *m_attributes));
         if (err) {
@@ -262,10 +252,10 @@ void QBluetoothServiceDiscoveryAgentPrivate::VisitAttributeValueL(CSdpAttrValue 
         break;
     }
     case ETypeEncoded:
-        qDebug() << "Don't know how to handle encoded type.";
+        qWarning() << "Don't know how to handle encoded type.";
         break;
     default:
-        qDebug() << "Don't know how to handle type" << aType;
+        qWarning() << "Don't know how to handle type" << aType;
     }
 
     if (aType != ETypeDES && aType != ETypeDEA) {

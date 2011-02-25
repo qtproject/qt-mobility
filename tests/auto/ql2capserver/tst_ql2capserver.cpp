@@ -43,7 +43,7 @@
 
 #include <QDebug>
 
-#include <qrfcommserver.h>
+#include <ql2capserver.h>
 #include <qbluetoothsocket.h>
 
 QTM_USE_NAMESPACE
@@ -52,13 +52,13 @@ Q_DECLARE_METATYPE(QBluetooth::SecurityFlags);
 // Max time to wait for connection
 static const int MaxConnectTime = 60 * 1000;   // 1 minute in ms
 
-class tst_QRfcommServer : public QObject
+class tst_QL2capServer : public QObject
 {
     Q_OBJECT
 
 public:
-    tst_QRfcommServer();
-    ~tst_QRfcommServer();
+    tst_QL2capServer();
+    ~tst_QL2capServer();
 
 private slots:
     void initTestCase();
@@ -77,51 +77,51 @@ private slots:
     void tst_secureFlags();
 };
 
-tst_QRfcommServer::tst_QRfcommServer()
+tst_QL2capServer::tst_QL2capServer()
 {
 }
 
-tst_QRfcommServer::~tst_QRfcommServer()
+tst_QL2capServer::~tst_QL2capServer()
 {
 }
 
-void tst_QRfcommServer::initTestCase()
+void tst_QL2capServer::initTestCase()
 {
     qRegisterMetaType<QBluetooth::SecurityFlags>("QBluetooth::SecurityFlags");
 }
 
-void tst_QRfcommServer::tst_construction()
+void tst_QL2capServer::tst_construction()
 {
     {
-        QRfcommServer server;
+        QL2capServer server;
 
         QVERIFY(!server.isListening());
         QCOMPARE(server.maxPendingConnections(), 1);
         QVERIFY(!server.hasPendingConnections());
         QVERIFY(server.nextPendingConnection() == 0);
         QVERIFY(server.serverAddress().isNull());
-        QCOMPARE(server.serverPort(), quint16(0));
+        QCOMPARE(server.serverPort(), quint16(24160));
     }
 }
 
-void tst_QRfcommServer::tst_listen_data()
+void tst_QL2capServer::tst_listen_data()
 {
     QTest::addColumn<QBluetoothAddress>("address");
     QTest::addColumn<quint16>("port");
 
     QTest::newRow("default") << QBluetoothAddress() << quint16(0);
     QTest::newRow("specified address") << QBluetoothAddress("00:11:B1:08:AD:B8") << quint16(0);
-    QTest::newRow("specified port") << QBluetoothAddress() << quint16(10);
+    QTest::newRow("specified port") << QBluetoothAddress() << quint16(24160);
     QTest::newRow("specified address/port") << QBluetoothAddress("00:11:B1:08:AD:B8") << quint16(10);
 }
 
-void tst_QRfcommServer::tst_listen()
+void tst_QL2capServer::tst_listen()
 {
     QFETCH(QBluetoothAddress, address);
     QFETCH(quint16, port);
 
     {
-        QRfcommServer server;
+        QL2capServer server;
 
         bool result = server.listen(address, port);
 
@@ -155,7 +155,7 @@ void tst_QRfcommServer::tst_listen()
     }
 }
 
-void tst_QRfcommServer::tst_pendingConnections_data()
+void tst_QL2capServer::tst_pendingConnections_data()
 {
     QTest::addColumn<int>("maxConnections");
 
@@ -163,12 +163,12 @@ void tst_QRfcommServer::tst_pendingConnections_data()
     //QTest::newRow("2 connections") << 2;
 }
 
-void tst_QRfcommServer::tst_pendingConnections()
+void tst_QL2capServer::tst_pendingConnections()
 {
     QFETCH(int, maxConnections);
 
     {
-        QRfcommServer server;
+        QL2capServer server;
 
         server.setMaxPendingConnections(maxConnections);
 
@@ -177,7 +177,7 @@ void tst_QRfcommServer::tst_pendingConnections()
         QVERIFY(result);
         QVERIFY(server.isListening());
 
-        qDebug() << "Listening on RFCOMM channel:" << server.serverPort();
+        qDebug() << "Listening on L2CAP channel:" << server.serverPort();
 
         QCOMPARE(server.maxPendingConnections(), maxConnections);
 
@@ -223,24 +223,24 @@ void tst_QRfcommServer::tst_pendingConnections()
     }
 }
 
-void tst_QRfcommServer::tst_receive_data()
+void tst_QL2capServer::tst_receive_data()
 {
     QTest::addColumn<QByteArray>("expected");
 
     QTest::newRow("test") << QByteArray("hello\r\n");
 }
 
-void tst_QRfcommServer::tst_receive()
+void tst_QL2capServer::tst_receive()
 {
     QFETCH(QByteArray, expected);
 
-    QRfcommServer server;
+    QL2capServer server;
 
     bool result = server.listen();
 
     QVERIFY(result);
 
-    qDebug() << "Listening on RFCOMM channel:" << server.serverPort();
+    qDebug() << "Listening on L2CAP channel:" << server.serverPort();
 
     int connectTime = MaxConnectTime;
     while (!server.hasPendingConnections() && connectTime > 0) {
@@ -270,15 +270,15 @@ void tst_QRfcommServer::tst_receive()
     QCOMPARE(data, expected);
 }
 
-void tst_QRfcommServer::tst_secureFlags()
+void tst_QL2capServer::tst_secureFlags()
 {
-    QRfcommServer server;
+    QL2capServer server;
     QCOMPARE(server.securityFlags(), QBluetooth::NoSecurity);
 
     server.setSecurityFlags(QBluetooth::Encryption);
     QCOMPARE(server.securityFlags(), QBluetooth::Encryption);
 }
 
-QTEST_MAIN(tst_QRfcommServer)
+QTEST_MAIN(tst_QL2capServer)
 
-#include "tst_qrfcommserver.moc"
+#include "tst_ql2capserver.moc"

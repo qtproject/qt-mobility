@@ -84,6 +84,7 @@ public:
 protected: // From CActive
     void RunL();
     void DoCancel();
+    TInt RunError(TInt aError);
 
 private:
     void setError(int error);

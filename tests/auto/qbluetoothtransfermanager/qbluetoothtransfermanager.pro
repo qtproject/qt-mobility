@@ -1,8 +1,8 @@
-SOURCES += tst_qbluetoothsocket.cpp
-TARGET = tst_qbluetoothsocket
+SOURCES += tst_qbluetoothtransfermanager.cpp
+TARGET=tst_qbluetoothtransfermanager
 CONFIG += testcase
 
-QT = core network
+QT = core
 
 INCLUDEPATH += ../../../src/connectivity/bluetooth
 DEPENDPATH += ../../../src/connectivity/bluetooth
@@ -14,4 +14,5 @@ include(../../../common.pri)
 
 CONFIG += mobility
 MOBILITY = connectivity
-symbian: TARGET.CAPABILITY = NetworkControl ReadDeviceData LocalServices WriteDeviceData
+
+symbian: TARGET.CAPABILITY = All-TCB #ReadDeviceData LocalServices WriteDeviceData

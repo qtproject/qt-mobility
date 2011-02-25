@@ -53,14 +53,25 @@
 
 QTM_BEGIN_NAMESPACE
 
-QBluetoothTransferReplySymbian::QBluetoothTransferReplySymbian(QIODevice *input, QObject *parent)
-:   QBluetoothTransferReply(parent), CActive(EPriorityStandard), m_source(input),
-    m_running(false), m_finished(false), m_client(NULL), m_object(NULL),
-    m_error(QBluetoothTransferReply::NoError), m_errorStr(), m_timer(new QTimer(this))
+QBluetoothTransferReplySymbian::QBluetoothTransferReplySymbian(QIODevice *input,
+    QBluetoothTransferManager::Operation operation, QObject *parent)
+    : QBluetoothTransferReply(parent)
+    , CActive(EPriorityStandard)
+    , m_source(input)
+    , m_running(false)
+    , m_finished(false)
+    , m_client(NULL)
+    , m_object(NULL)
+    , m_error(QBluetoothTransferReply::NoError)
+    , m_errorStr()
+    , m_timer(new QTimer(this))
 {
+    setOperation(operation);
+
     //add this active object to scheduler
     CActiveScheduler::Add(this);
     connect(m_timer, SIGNAL(timeout()), this, SLOT(updateProgress()));
+
 }
 
 /*!
