@@ -720,7 +720,8 @@ QSystemDeviceInfo::Profile QSystemDeviceInfoPrivate::currentProfile()
 
 QString QSystemDeviceInfoPrivate::imei()
 {
-#if !defined(QT_NO_DBUS) && !defined(QT_NO_NETWORKMANAGER)
+#if !defined(QT_NO_DBUS)
+#if !defined(QT_NO_NETWORKMANAGER)
 
      QNetworkManagerInterface iface;
      foreach (const QDBusObjectPath &path, iface.getDevices()) {
@@ -732,12 +733,28 @@ QString QSystemDeviceInfoPrivate::imei()
      }
 
 #endif
+#if !defined(QT_NO_CONNMAN)
+     if(ofonoAvailable()) {
+         QOfonoManagerInterface ofonoManager;
+         QString modem = ofonoManager.currentModem().path();
+         if(!modem.isEmpty()) {
+             QOfonoModemInterface modemIface(modem,this);
+
+             QString imei = modemIface.getSerial();
+             if(!imei.isEmpty()) {
+                 return imei;
+             }
+         }
+     }
+#endif
+#endif
      return QLatin1String("");
  }
 
 QString QSystemDeviceInfoPrivate::imsi()
 {
-#if !defined(QT_NO_DBUS) && !defined(QT_NO_NETWORKMANAGER)
+#if !defined(QT_NO_DBUS)
+#if !defined(QT_NO_NETWORKMANAGER)
      QNetworkManagerInterface iface;
      foreach (const QDBusObjectPath &path, iface.getDevices()) {
          QNetworkManagerInterfaceDevice devIface(path.path(), this);
@@ -746,6 +763,22 @@ QString QSystemDeviceInfoPrivate::imsi()
              return card.imsi();
          }
      }
+#endif
+#if !defined(QT_NO_CONNMAN)
+     if(ofonoAvailable()) {
+         QOfonoManagerInterface ofonoManager;
+         QString modem = ofonoManager.currentModem().path();
+         if(!modem.isEmpty()) {
+             QOfonoSimInterface simInterface(modem,this);
+             if(simInterface.isPresent()) {
+                 QString id = simInterface.getImsi();
+                 if(!id.isEmpty()) {
+                     return id;
+                 }
+             }
+         }
+     }
+#endif
 #endif
          return QLatin1String("");
 }
@@ -862,7 +895,8 @@ QString QSystemDeviceInfoPrivate::productName()
 
 QSystemDeviceInfo::SimStatus QSystemDeviceInfoPrivate::simStatus()
 {
-#if !defined(QT_NO_DBUS) && !defined(QT_NO_NETWORKMANAGER)
+#if !defined(QT_NO_DBUS)
+#if !defined(QT_NO_NETWORKMANAGER)
     QNetworkManagerInterface iface;
     foreach (const QDBusObjectPath &path, iface.getDevices()) {
         QNetworkManagerInterfaceDevice devIface(path.path(), this);
@@ -882,7 +916,31 @@ QSystemDeviceInfo::SimStatus QSystemDeviceInfoPrivate::simStatus()
     }
 
 #endif
-    return QSystemDeviceInfo::SimNotAvailable;
+#if !defined(QT_NO_CONNMAN)
+     if(ofonoAvailable()) {
+         QOfonoManagerInterface ofonoManager;
+         QString modem = ofonoManager.currentModem().path();
+         if(!modem.isEmpty()) {
+             QOfonoSimInterface simInterface(modem,this);
+             QString simpin = simInterface.pinRequired();
+             if(simpin == "pin"
+            || simpin == "phone"
+            || simpin == "firstphone"
+            || simpin == "pin2"
+            || simpin == "puk"
+            || simpin == "firstphonepuk"
+            || simpin == "puk2"
+            ) {
+                 return QSystemDeviceInfo::SimLocked;
+             }
+             if(simInterface.isPresent()) {
+                 return QSystemDeviceInfo::SingleSimAvailable;
+             }
+         }
+     }
+#endif
+#endif
+     return QSystemDeviceInfo::SimNotAvailable;
 }
 
 
