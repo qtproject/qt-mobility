@@ -176,6 +176,7 @@ private:
     bool m_play_requested;
     bool m_stream;
     bool m_seekable;
+    qint64 m_duration;
 };
 
 #endif

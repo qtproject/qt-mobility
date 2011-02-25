@@ -257,6 +257,7 @@ void S60MediaPlayerSession::play()
     }
 
     m_play_requested = false;
+    m_duration = duration();
     setVolume(m_volume);
     setMuted(m_muted);
     setState(QMediaPlayer::PlayingState);
@@ -581,6 +582,9 @@ qint64 S60MediaPlayerSession::position() const
     
     qint64 pos = 0;
     TRAP_IGNORE(pos = doGetPositionL());
+    if (!m_play_requested && pos ==0
+        && mediaStatus() != QMediaPlayer::LoadedMedia)
+        return m_duration;
     return pos;
 }
 
@@ -650,6 +654,7 @@ void S60MediaPlayerSession::loaded()
         TRAPD(err, updateMetaDataEntriesL());
         setError(err);
         emit durationChanged(duration());
+        emit positionChanged(0);
         emit videoAvailableChanged(isVideoAvailable());
         emit audioAvailableChanged(isAudioAvailable());
         emit mediaChanged();
@@ -673,7 +678,7 @@ void S60MediaPlayerSession::endOfMedia()
     //if we are already in playing state, do not send state change callback
     if(m_state == QMediaPlayer::StoppedState)
         emit stateChanged(QMediaPlayer::StoppedState);
-    emit positionChanged(0);
+    emit positionChanged(m_duration);
 
     DP0("S60MediaPlayerSession::endOfMedia ---");
 }
