@@ -368,8 +368,8 @@ void QT7PlayerSession::setVolume(int volume)
 
     if (m_QTMovie != 0)
         [(QTMovie*)m_QTMovie setVolume:m_volume / 100.0f];
-    else
-        emit volumeChanged(m_volume);
+
+    emit volumeChanged(m_volume);
 }
 
 void QT7PlayerSession::setMuted(bool muted)
