@@ -42,6 +42,7 @@
 #include "qbluetoothservicediscoveryagent_p.h"
 
 #include <QUrl>
+#include <QtEndian>
 
 #include <arpa/inet.h>
 #include <netinet/in.h>
@@ -94,10 +95,10 @@ void QBluetoothServiceDiscoveryAgentPrivate::startL(const QBluetoothAddress &add
                 m_filter->AddL(sUuid);
             } else if (uuid.minimumSize() == 16) {
                 TUint32 *dataPointer = (TUint32*)uuid.toUInt128().data;
-                TUint32 lL = *(dataPointer++);
-                TUint32 lH = *(dataPointer++);
-                TUint32 hL = *(dataPointer++);
-                TUint32 hH = *(dataPointer);
+                TUint32 hH = qToBigEndian<quint32>(*(dataPointer++));
+                TUint32 hL = qToBigEndian<quint32>(*(dataPointer++));
+                TUint32 lH = qToBigEndian<quint32>(*(dataPointer++));
+                TUint32 lL = qToBigEndian<quint32>(*(dataPointer));
                 TUUID sUuid(hH, hL, lH, lL);
                 m_filter->AddL(sUuid);
             } else {

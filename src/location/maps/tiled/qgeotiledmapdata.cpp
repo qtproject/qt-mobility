@@ -840,9 +840,10 @@ void QGeoTiledMapData::triggerUpdateMapDisplay(const QRectF &target)
 
 QGeoTiledMapDataPrivate::QGeoTiledMapDataPrivate(QGeoTiledMapData *parent, QGeoMappingManagerEngine *engine)
     : QGeoMapDataPrivate(parent, engine),
-      spherical("+proj=latlon +ellps=sphere"),
-      wgs84("+proj=latlon +ellps=WGS84"),
-      scene(0)
+    zoomFactor(0),
+    spherical("+proj=latlon +ellps=sphere"),
+    wgs84("+proj=latlon +ellps=WGS84"),
+    scene(0)
 {
 }
 

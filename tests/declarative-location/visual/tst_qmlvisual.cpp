@@ -46,6 +46,7 @@
 #include <QDebug>
 #include <QProcess>
 #include <QFile>
+#include <QSettings>
 
 #ifdef Q_OS_SYMBIAN
 // In Symbian OS test data is located in applications private dir
@@ -144,8 +145,35 @@ void tst_qmlvisual::visual()
 #endif
 
     QProcess p;
-    qDebug() << "qmlruntime is: " << qmlruntime;
-    qDebug() << "argumentlist is: " << arguments;
+    //qDebug() << "qmlruntime is: " << qmlruntime;
+    //qDebug() << "argumentlist is: " << arguments;
+    // Delete possibly existing default database to avoid any problems
+#if !(defined(Q_OS_SYMBIAN) || defined(SPARQL_BACKEND))
+    QString dbFileName;
+    QSettings settings(QSettings::IniFormat, QSettings::UserScope,
+                       QLatin1String("Nokia"), QLatin1String("QtLandmarks"));
+    QFileInfo fi(settings.fileName());
+    QDir dir = fi.dir();
+    dir.mkpath(dir.path());
+    dbFileName = dir.path() + QDir::separator() + QString("QtLandmarks") +  QLatin1String(".db");
+    if (QFile::exists(dbFileName)) {
+        qDebug() << "tst_qmlvisual" << __FUNCTION__ <<  " deleting default database (so it won't mess tests): " << dbFileName;
+        QFile::remove(dbFileName);
+    }
+#else
+    // Using the symbian or sparql backend we can't just go about and delete the databasefile. Empty it manually instead.
+    m_manager = new QLandmarkManager();
+    if (m_manager) {
+        m_manager->removeLandmarks(m_manager->landmarkIds());
+        QList<QLandmarkCategoryId> catIds = m_manager->categoryIds();
+        for ( int i=0; i < catIds.count(); ++i) {
+            // Don't try to delete read-only global categories
+            if (!m_manager->isReadOnly(catIds.at(i)))
+                m_manager->removeCategory(catIds.at(i));
+        }
+    }
+#endif
+
 
     p.start(qmlruntime, arguments);
     bool finished = p.waitForFinished();

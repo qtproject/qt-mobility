@@ -27,7 +27,7 @@ symbian {
     TARGET.EPOCALLOWDLLDATA = 1
     TARGET.CAPABILITY = ALL \
         -TCB
-    
+
     # UID
     TARGET.UID3 = 0x2002BFCE
 
@@ -38,11 +38,7 @@ symbian {
     FEEDBACK_DEPLOYMENT.path = /sys/bin
     DEPLOYMENT += FEEDBACK_DEPLOYMENT
     deploy.path = $$EPOCROOT
-    exportheaders.sources = $$PUBLIC_HEADERS
-    exportheaders.path = epoc32/include
-    
-    # export headers into EPOCROOT
-    for(header, exportheaders.sources):BLD_INF_RULES.prj_exports += "$$header $$deploy.path$$exportheaders.path/$$basename(header)"
 }
+CONFIG += middleware
 include(../../features/deploy.pri)
 

@@ -16,7 +16,7 @@
 */
 
 
-target		t_subview.exe
+TARGET		t_subview.exe
 targettype	EXE
 CAPABILITY	ReadUserData WriteUserData ReadDeviceData WriteDeviceData AllFiles
 

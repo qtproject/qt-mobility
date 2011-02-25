@@ -46,6 +46,7 @@ private slots:
 
 private slots: //test methods
 
+    void testCompareTwoColumnsWithModifiedPattern();
     void testPredictiveSearch();
     void testSelectQweryTable();
     void testSelectTableView();
@@ -55,7 +56,7 @@ private slots: //test methods
     void testExactMatchSearchQwerty();
     void testIntersectionSearch();
     void testSearchTokensFromOneTable();
-    void testCompareTwoColumnsWithModifiedPattern();   
+    //void testCompareTwoColumnsWithModifiedPattern();   
     void testModifiedMatchColumns();
     void testExactMatch();
     void testExactMatchQwerty();
@@ -67,7 +68,6 @@ private slots: //test methods
     void testGetTokens();
     void testTestPattern();
     void testIsQwerty();
-    void testremZerosEndOfString();
     void testQwertyTokens();
     
     

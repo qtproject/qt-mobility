@@ -262,9 +262,15 @@ private slots:
         props << QGeoSatelliteInfo::Elevation
               << QGeoSatelliteInfo::Azimuth;
         for (int i=0; i<props.count(); i++) {
-            QTest::newRow(QTest::toString("attribute " + props[i])) << props[i] << qreal(-1.0);
-            QTest::newRow(QTest::toString("attribute " + props[i])) << props[i] << qreal(0.0);
-            QTest::newRow(QTest::toString("attribute " + props[i])) << props[i] << qreal(1.0);
+            QTest::newRow(qPrintable(QString("Attribute %1 = -1.0").arg(props[i])))
+                << props[i]
+                << qreal(-1.0);
+            QTest::newRow(qPrintable(QString("Attribute %1 = 0.0").arg(props[i])))
+                << props[i]
+                << qreal(0.0);
+            QTest::newRow(qPrintable(QString("Attribute %1 = 1.0").arg(props[i])))
+                << props[i]
+                << qreal(1.0);
         }
     }
 

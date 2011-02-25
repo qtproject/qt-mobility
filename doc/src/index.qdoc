@@ -39,15 +39,11 @@
 /*!
     \page index.html
     \startpage index.html  Qt Reference Documentation
+    \title Qt Mobility Project Reference Documentation
 
     \brief An overview of the QtMobility Project APIs.
 
     \tableofcontents
-
-    Although we anticipate that the new APIs will be of most advantage to those
-    developers embarked on mobile application development, in many cases they may
-    be equally relevant for other development usage including, in some cases,
-    desktop application development.
 
 
     \section1 Overview
@@ -214,7 +210,7 @@
     retrieval of points of interests while the Maps and Navigation API provides
     mapping, geocoding and routing functionality.
 
-    For more details, see the \l {Location} {Location API overview}.
+    For more details, see the \l {Location API} {Location API overview}.
 
     \section2 Multimedia
 
@@ -313,7 +309,6 @@
     <td>Explanation</td>
 
     </tr>
-        </tr>
         <tr>
         <td bgcolor="green"></td>
         <td>A functional backend for the API on the platform is complete.</td>
@@ -323,7 +318,6 @@
         <td>A functional backend for the API on the platform is being worked on, however it is not functionally complete.</td>
 
         </tr>
-        <tr>
     <tr>
     <td bgcolor="lightgray"></td>
     <td>A functional backend for the API on the platform is being worked on. At this point it is far from functionally complete or there is no platform specific code inside QDF source code.</td>
@@ -334,15 +328,15 @@
     </tr>
     </tbody>
     </table>
-    <br>
+    <br />
 
-    <b>Tier 1 Platforms</b><br>
+    <b>Tier 1 Platforms</b><br />
     QtMobility API development focuses on Nokia platforms. These platforms are part of our ongoing QA, which includes unit test coverage per API and rigorous testing via test utilities and other system test processes.
-    <br>
-    <b>Tier 2 Platforms</b><br>
+    <br />
+    <b>Tier 2 Platforms</b><br />
     These platforms are not currently under active development or QA. Contributions to these platforms are welcome.
-    <br>
-    <br>
+    <br />
+    <br />
     <table align="center" cellpadding="2" cellspacing="1" border="1" rules="all">
     <tbody>
     <tr>
@@ -633,18 +627,6 @@
     <p></p>
     </tbody>
     </table>
-    <br>
-
-    \endraw
-
-    \raw HTML
-
-
-
-    \endraw
-
-    \raw HTML
-    <p>
     \endraw
 
     1) S60 3.1, 3.2 no ramp up/down for attack/fade.

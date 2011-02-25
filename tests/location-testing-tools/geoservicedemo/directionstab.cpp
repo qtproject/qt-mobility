@@ -187,6 +187,8 @@ void DirectionsTab::initialize(QGeoRoutingManager *routingManager, QGeoSearchMan
     m_resultList->clear();
     directionsRequest = false;
 
+    m_updateBtn->setDisabled(true);
+
     m_routingManager = routingManager;
     if (m_routingManager) {
         QObject::connect(m_routingManager, SIGNAL(finished(QGeoRouteReply*)), this,

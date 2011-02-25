@@ -20,7 +20,7 @@
 
 #if (!defined __TESTDELETEMULTIPLECONTACTSSTEP_H__)
 #define __TESTDELETEMULTIPLECONTACTSSTEP_H__
-#include <testexecutestepbase.h>
+#include <test/testexecutestepbase.h>
 class CTestDeleteMultipleContactsStep : public CTestStep
 	{
 public:

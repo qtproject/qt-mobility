@@ -284,7 +284,7 @@ void QDeclarativeGeoMapPolygonObject::removeCoordinate(QDeclarativeCoordinate* c
 }
 
 /*!
-    \qmlproperty int MapPolygon::zValue
+    \qmlproperty int MapPolygon::z
 
     This property holds the z-value of the polygon.
 

@@ -15,8 +15,7 @@
 *
 */
 
-
-#include "registryinfo.rh"
+#include <ecom/registryinfo.rh>
 RESOURCE REGISTRY_INFO theInfo
 	{
 	dll_uid = 0x102035FE;

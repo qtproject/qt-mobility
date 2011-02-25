@@ -46,14 +46,14 @@
 QTM_BEGIN_NAMESPACE
 
 
-/*!
+/*
     Constructs a new near field manager private implementation.
 */
 QNearFieldManagerPrivateImpl::QNearFieldManagerPrivateImpl()
 {
 }
 
-/*!
+/*
     Destroys the near field manager private implementation.
 */
 QNearFieldManagerPrivateImpl::~QNearFieldManagerPrivateImpl()

@@ -17,7 +17,7 @@
 // T_VExportBirthday.mmp
 //
 
-target          t_vexportbirthday.exe
+TARGET          t_vexportbirthday.exe
 targettype      EXE
 CAPABILITY   ReadUserData WriteUserData
 UID		0
@@ -26,6 +26,6 @@ SOURCEPATH	.
 APP_LAYER_SYSTEMINCLUDE_SYMBIAN
 userinclude	..
 source          T_VExportBirthday.cpp
-library         euser.lib  estor.lib cntmodel.lib cnttutil.lib
+LIBRARY         euser.lib  estor.lib cntmodel.lib cnttutil.lib
 
 SMPSAFE

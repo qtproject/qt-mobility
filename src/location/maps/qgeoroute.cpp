@@ -278,7 +278,8 @@ QList<QGeoCoordinate> QGeoRoute::path() const
 
 QGeoRoutePrivate::QGeoRoutePrivate()
     : travelTime(0),
-      distance(0.0) {}
+      distance(0.0),
+      travelMode(QGeoRouteRequest::CarTravel) {}
 
 QGeoRoutePrivate::QGeoRoutePrivate(const QGeoRoutePrivate &other)
     : QSharedData(other),
