@@ -3836,6 +3836,7 @@ void QSystemBatteryInfoLinuxCommonPrivate::getBatteryStats()
     curChargeType = cType;
     currentVoltage = cVoltage;
     curChargeState = cState;
+    if(cEnergy == 0) cEnergy = -1;
     dischargeRate = cEnergy;
     currentBatLevelPercent = cLevel;
     timeToFull = cTime;
