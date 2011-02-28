@@ -69,7 +69,7 @@ public:
 
     void initializeEngine(QDeclarativeEngine *engine, const char *uri) {
         Q_UNUSED(uri);
-        engine->addImageProvider("thumbnail", new BluetoothThumbnailImageProvider);
+        engine->addImageProvider("bluetoothicons", new BluetoothThumbnailImageProvider);
     }
 };
 
