@@ -30,7 +30,7 @@ INCLUDEPATH += $$SYMBIAN_PATHS
 INCLUDEPATH += /orbit/include
 
 SOURCES += 		$$SYMBIAN_HEADERS \
-				ut_cntsqlsearch.cpp\
+				ut_cntsqlsearch.cpp\			
         		../../cntplsql/src/cntsqlsearch.cpp\
 				../../cntplsql/src/cpcskeymap.cpp\
 				../../cntplsql/src/cqwertykeymap.cpp\
@@ -38,11 +38,11 @@ SOURCES += 		$$SYMBIAN_HEADERS \
 
 # Input
 HEADERS += 		$$SYMBIAN_SOURCES \
-                        ut_cntsqlsearch.h\
+				ut_cntsqlsearch.h\
         		../../cntplsql/inc/cntsqlsearch.h\
         		../../cntplsql/inc/cpcskeymap.h\
         		../../cntplsql/inc/cqwertykeymap.h\
-                        ../../cntplsql/inc/c12keykeymap.h
+        		../../cntplsql/inc/c12keykeymap.h
         		
 symbian: {
     TARGET.UID2 = 0x100039CE

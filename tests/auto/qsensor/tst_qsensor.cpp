@@ -884,6 +884,17 @@ private slots:
         QCOMPARE(sensor.reading()->test(), 2);
         sensor.stop();
     }
+
+    // This test must be LAST or it will interfere with the other tests
+    void testLoadingPlugins()
+    {
+        // Go ahead and load the actual plugins (as a test that plugin loading works)
+        sensors_unit_test_hook(1);
+
+        // Hmm... There's no real way to tell if this worked or not.
+        // If it doesn't work the unit test will probably crash.
+        // That's what it did on Symbian before plugin loading was fixed.
+    }
 };
 
 QTEST_MAIN(tst_QSensor)

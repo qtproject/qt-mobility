@@ -215,6 +215,11 @@ QList<QLandmarkCategoryId> QDeclarativeLandmark::categoryIds () const
     return m_landmark.categoryIds();
 }
 
+QLandmark QDeclarativeLandmark::landmark()
+{
+    return m_landmark;
+}
+
 #include "moc_qdeclarativelandmark_p.cpp"
 
 QTM_END_NAMESPACE

@@ -1553,6 +1553,31 @@
            <string>Bluetooth</string>
           </property>
          </item>
+         <item>
+          <property name="text">
+           <string>Wimax</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Gprs</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Edge</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Hspa</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Lte</string>
+          </property>
+         </item>
         </widget>
        </item>
        <item row="1" column="0">

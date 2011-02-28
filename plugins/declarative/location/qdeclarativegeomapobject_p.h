@@ -45,6 +45,7 @@
 #include "qgeomapobject.h"
 #include "qdeclarativegeomapmouseevent_p.h"
 #include "qgeomapgroupobject.h"
+#include "QModelIndex"
 
 #include <QtDeclarative/qdeclarativeitem.h>
 class QAbstractItemModel;
@@ -137,6 +138,8 @@ Q_SIGNALS:
 
 private Q_SLOTS:
     void modelReset();
+    void modelRowsInserted(QModelIndex, int start, int end);
+    void modelRowsRemoved(QModelIndex, int start, int end);
 
 private:
     bool visible_;   
@@ -146,6 +149,7 @@ private:
     QAbstractItemModel* model_;
     QDeclarativeGraphicsGeoMap *map_;
     QGeoMapGroupObject group_;
+    QList<QDeclarativeGeoMapObject*> declarativeObjectList_;
 };
 
 QTM_END_NAMESPACE

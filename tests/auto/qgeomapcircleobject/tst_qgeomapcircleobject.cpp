@@ -737,9 +737,13 @@ void tst_QGeoMapCircleObject::qtmobility1199()
     map->addMapObject(obj2);
     map->addMapObject(pobj);
 
-    for (qreal z = 18.0; z >= 0.0; z -= 1.0) {
-        QPointF coord = map->coordinateToScreenPosition(seattle);
+    QTest::qWait(10);
 
+    for (qreal z = 18.0; z >= 0.0; z -= 1.0) {
+        map->setZoomLevel(z);
+        QTest::qWait(10);
+
+        QPointF coord = map->coordinateToScreenPosition(seattle);
         QList<QGeoMapObject*> list;
 
         list = map->mapObjectsAtScreenPosition(coord);
