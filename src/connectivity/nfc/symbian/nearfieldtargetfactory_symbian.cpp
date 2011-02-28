@@ -63,6 +63,8 @@
 */
 
 /*!
+    \fn QNearFieldTarget * TNearFieldTargetFactory::CreateTagTypeL(MNfcTag * aNfcTag, RNfcServer& aNfcServer, QObject * aParent)
+    
     Create tag type instance according to the tag information in \a aNfcTag and assign
     the \a aParent as target's parent. 
 */
