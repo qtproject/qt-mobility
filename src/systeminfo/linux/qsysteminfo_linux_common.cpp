@@ -2578,7 +2578,10 @@ void QSystemDeviceInfoLinuxCommonPrivate::halChanged(int,QVariantList map)
     for(int i=0; i < map.count(); i ++) {
        if (map.at(i).toString() == "battery.charge_level.percentage") {
             const int level = batteryLevel();
-            emit batteryLevelChanged(level);
+            if(currentBatLevel != level) {
+                currentBatLevel = level;
+                emit batteryLevelChanged(level);
+            }
             QSystemDeviceInfo::BatteryStatus stat = QSystemDeviceInfo::NoBatteryLevel;
 
             if (level < 4) {
@@ -3600,8 +3603,11 @@ void QSystemBatteryInfoLinuxCommonPrivate::halChanged(int count,QVariantList map
                 batteryIsPresent = true;
             }
             if (mapS == "battery.charge_level.percentage") {
-                currentBatLevelPercent = ifaceDevice.getPropertyInt("battery.charge_level.percentage");
-                emit remainingCapacityPercentChanged(currentBatLevelPercent);
+                int level = ifaceDevice.getPropertyInt("battery.charge_level.percentage");
+                if(currentBatLevelPercent != level) {
+                    currentBatLevelPercent = level;
+                    emit remainingCapacityPercentChanged(currentBatLevelPercent);
+                }
 
                 QSystemBatteryInfo::BatteryStatus stat = QSystemBatteryInfo::BatteryUnknown;
 
