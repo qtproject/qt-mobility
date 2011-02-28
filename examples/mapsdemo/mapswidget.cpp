@@ -87,7 +87,6 @@ void GeoMap::setCenterLongitude(double lon)
 void GeoMap::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     panActive = true;
-
     markerPressed = false;
     QList<QGeoMapObject*> objects = mapObjectsAtScreenPosition(event->pos());
     if (objects.size() > 0) {
@@ -385,8 +384,8 @@ void StatusBarItem::hide()
 }
 
 
-FixedGraphicsView::FixedGraphicsView(QGraphicsScene *scene, QWidget *parent) :
-    QGraphicsView(scene, parent)
+FixedGraphicsView::FixedGraphicsView(QWidget *parent) :
+    QGraphicsView(parent)
 {
 }
 
@@ -436,12 +435,12 @@ void MapsWidget::initialize(QGeoMappingManager *manager)
 
     d->map->setPos(0, 0);
     d->map->resize(this->size());
-
-    d->view = new FixedGraphicsView(sc, this);
+    d->view = new FixedGraphicsView(this);
     d->view->setVisible(true);
     d->view->setInteractive(true);
     d->view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     d->view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    d->view->setScene(sc);
 
     d->statusBarItem = new StatusBarItem;
     sc->addItem(d->statusBarItem);
@@ -451,9 +450,7 @@ void MapsWidget::initialize(QGeoMappingManager *manager)
 
     d->view->resize(this->size());
     d->view->centerOn(d->map);
-
     resizeEvent(0);
-
     d->map->setCenter(QGeoCoordinate(-27.5796, 153.1));
     d->map->setZoomLevel(15);
 }
@@ -484,7 +481,6 @@ void MapsWidget::resizeEvent(QResizeEvent *event)
         d->view->resize(size());
         d->map->resize(width()-2, height()-2);
         d->view->centerOn(d->map);
-
         d->statusBarItem->setRect(0, height()-2, width()-2, 20);
         d->zoomButtonItem->setRect((width()-2)-(width()-2)/10.0,
                                    (height()-2)/2.0 - (height()-2)/6.0,
