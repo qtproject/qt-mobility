@@ -159,7 +159,17 @@ void QLlcpSocket::disconnectFromService()
 {
     Q_D(QLlcpSocket);
 
-    setOpenMode(NotOpen);
+    d->disconnectFromService();
+}
+
+/*!
+    Disconnects the socket.
+*/
+void QLlcpSocket::close()
+{
+    Q_D(QLlcpSocket);
+
+    QIODevice::close();
 
     d->disconnectFromService();
 }

@@ -82,6 +82,8 @@ public:
     void connectToService(QNearFieldTarget *target, const QString &serviceUri);
     void disconnectFromService();
 
+    void close();
+
     bool bind(quint8 port);
 
     bool hasPendingDatagrams() const;

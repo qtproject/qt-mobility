@@ -166,6 +166,7 @@ void QLlcpSocketPrivate::disconnectFromService()
     }
 
     m_state = QLlcpSocket::UnconnectedState;
+    q->setOpenMode(QIODevice::NotOpen);
     emit q->stateChanged(m_state);
     emit q->disconnected();
 }
@@ -384,6 +385,8 @@ void QLlcpSocketPrivate::Connect(const QDBusVariant &lsap, const QDBusVariant &r
     m_state = QLlcpSocket::ConnectedState;
     emit q->stateChanged(m_state);
     emit q->connected();
+
+    qDebug() << Q_FUNC_INFO << readFd << writeFd;
 }
 
 void QLlcpSocketPrivate::Socket(const QDBusVariant &lsap, const QDBusVariant &rsap,
@@ -399,6 +402,8 @@ void QLlcpSocketPrivate::_q_readNotify()
 {
     Q_Q(QLlcpSocket);
 
+    qDebug() << Q_FUNC_INFO;
+
     char *writePointer = buffer.reserve(QPRIVATELINEARBUFFER_BUFFERSIZE);
     int readFromDevice =
         ::read(m_readFd, writePointer, QPRIVATELINEARBUFFER_BUFFERSIZE);
@@ -410,6 +415,7 @@ void QLlcpSocketPrivate::_q_readNotify()
         emit q->error(m_error);
 
         q->disconnectFromService();
+        q->setOpenMode(QIODevice::NotOpen);
     } else if (readFromDevice > 0) {
         buffer.chop(QPRIVATELINEARBUFFER_BUFFERSIZE - (readFromDevice < 0 ? 0 : readFromDevice));
 

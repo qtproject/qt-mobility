@@ -480,5 +480,10 @@ int QBluetoothSocketPrivate::socketDescriptor() const
     return socket;
 }
 
+qint64 QBluetoothSocketPrivate::bytesAvailable() const
+{
+    return buffer.size();
+}
+
 
 QTM_END_NAMESPACE

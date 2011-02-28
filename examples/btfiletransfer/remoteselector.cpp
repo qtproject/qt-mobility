@@ -57,15 +57,11 @@
 
 QTM_USE_NAMESPACE
 
-Q_DECLARE_METATYPE(QBluetoothTransferReply *);
-
 RemoteSelector::RemoteSelector(QWidget *parent)
 :   QDialog(parent), ui(new Ui::RemoteSelector),
     m_discoveryAgent(new QBluetoothServiceDiscoveryAgent), m_localDevice(new QBluetoothLocalDevice), m_pindisplay(0)
 {
-    ui->setupUi(this);
-
-    qRegisterMetaType<QBluetoothTransferReply*>("QBluetoothTransferReply");
+    ui->setupUi(this);    
 
     connect(m_discoveryAgent, SIGNAL(serviceDiscovered(QBluetoothServiceInfo)),
             this, SLOT(serviceDiscovered(QBluetoothServiceInfo)));

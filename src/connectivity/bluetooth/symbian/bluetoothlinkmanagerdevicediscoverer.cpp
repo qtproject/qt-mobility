@@ -131,10 +131,8 @@ void BluetoothLinkManagerDeviceDiscoverer::RunL()
 {
     if (iStatus.Int() == KErrHostResNoMoreResults) {
         emit deviceDiscoveryComplete(iStatus.Int());
-        m_hostResolver.Close();
     } else if (iStatus.Int() != KErrNone) {
         setError(iStatus.Int());
-        m_hostResolver.Close();
     } else {
         // get next (possible) discovered device
         m_hostResolver.Next(m_entry, iStatus);
@@ -150,6 +148,12 @@ void BluetoothLinkManagerDeviceDiscoverer::RunL()
 void BluetoothLinkManagerDeviceDiscoverer::DoCancel()
 {
     m_hostResolver.Cancel();
+}
+
+TInt BluetoothLinkManagerDeviceDiscoverer::RunError(TInt aError)
+{
+    setError(aError);
+    return KErrNone;
 }
 
 /*!
@@ -254,11 +258,12 @@ QBluetoothDeviceInfo BluetoothLinkManagerDeviceDiscoverer::currentDeviceDataToQB
 
     if (m_addr.Rssi())
         deviceInfo.setRssi(m_addr.Rssi());
-    else
-        deviceInfo.setRssi(1);
 #endif
+    if (!deviceInfo.rssi())
+        deviceInfo.setRssi(1);
+
     deviceInfo.setCached(false);  //TODO cache support missing from devicediscovery API
-    qDebug()<< "Discovered device: name="<< deviceName <<", address=" << bluetoothAddress.toString() <<", class=" << deviceClass;
+    //qDebug()<< "Discovered device: name="<< deviceName <<", address=" << bluetoothAddress.toString() <<", class=" << deviceClass;
     return deviceInfo;
 }
 

@@ -41,6 +41,7 @@
 
 #include "qbluetoothsocket_p.h"
 #include "qbluetoothsocket.h"
+#include "qbluetoothlocaldevice_p.h"
 #include "symbian/utils_symbian_p.h"
 
 #include <QCoreApplication>
@@ -138,18 +139,39 @@ void QBluetoothSocketPrivate::ensureBlankNativeSocket()
 
 void QBluetoothSocketPrivate::startReceive()
 {
-
     if (receiving)
         return;
 
     Q_Q(QBluetoothSocket);
-    if (!iBlankSocket) {
+    if (!iSocket) {
         emit q->error(QBluetoothSocket::UnknownSocketError);
         return;
     }
     receiving = true;
 
-    rxDescriptor.Set(reinterpret_cast<unsigned char *>(buffer.reserve(QBLUETOOTHDEVICE_BUFFERSIZE)), 0,  QBLUETOOTHDEVICE_BUFFERSIZE);
+    rxDescriptor.Set(reinterpret_cast<unsigned char *>(buffer.reserve(QPRIVATELINEARBUFFER_BUFFERSIZE)), 0,  QPRIVATELINEARBUFFER_BUFFERSIZE);
+    if (socketType == QBluetoothSocket::RfcommSocket) {
+        if (iSocket->RecvOneOrMore(rxDescriptor, 0, rxLength) != KErrNone) {
+            socketError = QBluetoothSocket::UnknownSocketError;
+            emit q->error(socketError);
+        }
+    } else if (socketType == QBluetoothSocket::L2capSocket) {
+        if (iSocket->Recv(rxDescriptor, 0, rxLength) != KErrNone) {
+            socketError = QBluetoothSocket::UnknownSocketError;
+            emit q->error(socketError);
+        }
+    }
+}
+
+void QBluetoothSocketPrivate::startServerSideReceive()
+{
+    Q_Q(QBluetoothSocket);
+    if (!iBlankSocket) {
+        emit q->error(QBluetoothSocket::UnknownSocketError);
+        return;
+    }
+
+    rxDescriptor.Set(reinterpret_cast<unsigned char *>(buffer.reserve(QPRIVATELINEARBUFFER_BUFFERSIZE)), 0,  QPRIVATELINEARBUFFER_BUFFERSIZE);
     if (socketType == QBluetoothSocket::RfcommSocket) {
         if (iBlankSocket->RecvOneOrMore(rxDescriptor, 0, rxLength) != KErrNone) {
             socketError = QBluetoothSocket::UnknownSocketError;
@@ -213,7 +235,7 @@ void QBluetoothSocketPrivate::HandleReceiveCompleteL(TInt aErr)
             return;
         }
 
-        buffer.chop(QBLUETOOTHDEVICE_BUFFERSIZE - (rxDescriptor.Length()));
+        buffer.chop(QPRIVATELINEARBUFFER_BUFFERSIZE - (rxDescriptor.Length()));
 
         emit q->readyRead();
 
@@ -269,7 +291,7 @@ QSocketServerPrivate::~QSocketServerPrivate()
 
 QString QBluetoothSocketPrivate::localName() const
 {
-    return localAddress().toString();
+    return QBluetoothLocalDevicePrivate::name();
 }
 
 QBluetoothAddress QBluetoothSocketPrivate::localAddress() const
@@ -372,6 +394,11 @@ bool QBluetoothSocketPrivate::setSocketDescriptor(int socketDescriptor, QBluetoo
 void QBluetoothSocketPrivate::_q_startReceive()
 {
     startReceive();
+}
+
+qint64 QBluetoothSocketPrivate::bytesAvailable() const
+{
+    return rxDescriptor.Length();
 }
 
 QTM_END_NAMESPACE

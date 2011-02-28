@@ -59,7 +59,12 @@ Q_DECLARE_METATYPE(QBluetoothSocket::SocketState)
 Q_DECLARE_METATYPE(QBluetoothSocket::SocketType)
 
 //#define BTADDRESS "00:1A:9F:92:9E:5A"
+#ifndef Q_OS_SYMBIAN
 char BTADDRESS[] = "00:00:00:00:00:00";
+#else
+char BTADDRESS[] = "00:09:DD:50:93:DD";
+static const QString peerNameSymbian("Patagonia_bluetooth_client");
+#endif
 
 // Max time to wait for connection
 
@@ -99,6 +104,8 @@ private slots:
     void tst_localPeer_data();
     void tst_localPeer();
 
+    void tst_error();
+
 public slots:
     void serviceDiscovered(const QBluetoothServiceInfo &info);
     void finished();
@@ -128,6 +135,7 @@ void tst_QBluetoothSocket::initTestCase()
     delete device;
 
     // Go find an echo server for BTADDRESS
+#ifndef Q_OS_SYMBIAN
     QBluetoothServiceDiscoveryAgent *sda = new QBluetoothServiceDiscoveryAgent(this);
     connect(sda, SIGNAL(serviceDiscovered(QBluetoothServiceInfo)), this, SLOT(serviceDiscovered(QBluetoothServiceInfo)));
     connect(sda, SIGNAL(error(QBluetoothServiceDiscoveryAgent::Error)), this, SLOT(error(QBluetoothServiceDiscoveryAgent::Error)));
@@ -152,7 +160,7 @@ void tst_QBluetoothSocket::initTestCase()
         QFAIL("Unable to find test service");
     }
     delete sda;
-
+#endif
 }
 
 void tst_QBluetoothSocket::error(QBluetoothServiceDiscoveryAgent::Error error)
@@ -665,6 +673,7 @@ void tst_QBluetoothSocket::tst_localPeer()
     QFETCH(QBluetoothAddress, peerAddress);
     QFETCH(quint16, peerPort);
 
+#ifndef Q_OS_SYMBIAN
     QStringList args;
     args << "name" << peerAddress.toString();
     QProcess *hcitool = new QProcess();
@@ -673,6 +682,7 @@ void tst_QBluetoothSocket::tst_localPeer()
     QString peerNameHCI = hcitool->readLine().trimmed();
     hcitool->close();
     delete hcitool;
+#endif
 
 
     /* Construction */
@@ -717,7 +727,11 @@ void tst_QBluetoothSocket::tst_localPeer()
     QCOMPARE(socket->localName(), list[2]);
     QCOMPARE(socket->localAddress(), QBluetoothAddress(list[3]));
     QCOMPARE(socket->localPort(), list[4].toUShort());
+#ifndef Q_OS_SYMBIAN
     QCOMPARE(socket->peerName(), peerNameHCI);
+#else
+    QCOMPARE(socket->peerName(), peerNameSymbian);
+#endif
 
     /* Disconnection */
     QSignalSpy disconnectedSpy(socket, SIGNAL(disconnected()));
@@ -736,6 +750,22 @@ void tst_QBluetoothSocket::tst_localPeer()
     QCOMPARE(qvariant_cast<QBluetoothSocket::SocketState>(stateSpy.takeFirst().at(0)), QBluetoothSocket::UnconnectedState);
 
     delete socket;
+}
+
+void tst_QBluetoothSocket::tst_error()
+{
+    QBluetoothSocket socket;
+    QSignalSpy errorSpy(&socket, SIGNAL(error(QBluetoothSocket::SocketError)));
+    QCOMPARE(errorSpy.count(), 0);
+
+    QVERIFY(socket.error() != (QBluetoothSocket::ConnectionRefusedError ||
+        QBluetoothSocket::HostNotFoundError ||
+        QBluetoothSocket::NetworkError ||
+        QBluetoothSocket::RemoteHostClosedError ||
+        QBluetoothSocket::ServiceNotFoundError ||
+        QBluetoothSocket::UnknownSocketError));
+
+    QVERIFY(socket.errorString() == QString());
 }
 
 QTEST_MAIN(tst_QBluetoothSocket)

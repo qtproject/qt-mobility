@@ -69,7 +69,6 @@ QBluetoothLocalDevice::QBluetoothLocalDevice(QObject *parent)
     OrgBluezAdapterInterface *adapter = new OrgBluezAdapterInterface(QLatin1String("org.bluez"),
                                                                      reply.value().path(),
                                                                      QDBusConnection::systemBus());
-    qRegisterMetaType<QBluetoothAddress>("QBluetoothAddress");
 
     this->d_ptr = new QBluetoothLocalDevicePrivate;
     this->d_ptr->adapter = adapter;    
@@ -89,7 +88,6 @@ QBluetoothLocalDevice::QBluetoothLocalDevice(QObject *parent)
     this->d_ptr->agent_path = AGENT_PATH;
     this->d_ptr->agent_path.append(QString("/%1").arg(qrand()));
 
-    qRegisterMetaType<QBluetoothLocalDevice::Pairing>("QBluetoothLocalDevice::Pairing");
 }
 
 QBluetoothLocalDevice::QBluetoothLocalDevice(const QBluetoothAddress &address, QObject *parent)

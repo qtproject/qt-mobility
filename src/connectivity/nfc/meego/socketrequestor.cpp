@@ -115,8 +115,6 @@ static dbus_bool_t dbusWatch(DBusWatch *watch, void *data)
 
 SocketRequestorPrivate::SocketRequestorPrivate()
 {
-    QMutexLocker locker(&m_mutex);
-
     DBusError error;
     dbus_error_init(&error);
     m_dbusConnection = dbus_bus_get_private(DBUS_BUS_SYSTEM, &error);
@@ -127,8 +125,6 @@ SocketRequestorPrivate::SocketRequestorPrivate()
 
 SocketRequestorPrivate::~SocketRequestorPrivate()
 {
-    QMutexLocker locker(&m_mutex);
-
     dbus_connection_close(m_dbusConnection);
     dbus_connection_unref(m_dbusConnection);
 }
@@ -356,27 +352,42 @@ void SocketRequestorPrivate::socketRead()
 {
     QMutexLocker locker(&m_mutex);
 
+    QList<DBusWatch *> pendingWatches;
+
     foreach (const WatchNotifier &watchNotifier, m_watchNotifiers) {
         if (watchNotifier.readNotifier != sender())
             continue;
 
-        dbus_watch_handle(watchNotifier.watch, DBUS_WATCH_READABLE);
+        pendingWatches.append(watchNotifier.watch);
     }
 
-    while (dbus_connection_dispatch(m_dbusConnection) == DBUS_DISPATCH_DATA_REMAINS);
+    DBusConnection *connection = m_dbusConnection;
+    locker.unlock();
+
+    foreach (DBusWatch *watch, pendingWatches)
+        dbus_watch_handle(watch, DBUS_WATCH_READABLE);
+
+    while (dbus_connection_dispatch(connection) == DBUS_DISPATCH_DATA_REMAINS);
 }
 
 void SocketRequestorPrivate::socketWrite()
 {
     QMutexLocker locker(&m_mutex);
 
+    QList<DBusWatch *> pendingWatches;
+
     foreach (const WatchNotifier &watchNotifier, m_watchNotifiers) {
         if (watchNotifier.writeNotifier != sender())
             continue;
 
         watchNotifier.writeNotifier->setEnabled(false);
-        dbus_watch_handle(watchNotifier.watch, DBUS_WATCH_WRITABLE);
+        pendingWatches.append(watchNotifier.watch);
     }
+
+    locker.unlock();
+
+    foreach (DBusWatch *watch, pendingWatches)
+        dbus_watch_handle(watch, DBUS_WATCH_WRITABLE);
 }
 
 void SocketRequestorPrivate::registerObject(const QString &path, SocketRequestor *object)

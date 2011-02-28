@@ -42,7 +42,6 @@
 #ifndef QBLUETOOTHSERVICEINFO_P_H
 #define QBLUETOOTHSERVICEINFO_P_H
 
-#include "qbluetoothserviceinfo.h"
 #include "qbluetoothuuid.h"
 #include "qbluetoothdeviceinfo.h"
 
@@ -59,8 +58,11 @@ QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
+class QBluetoothServiceInfo;
+
 class QBluetoothServiceInfoPrivate
 {
+    Q_DECLARE_PUBLIC(QBluetoothServiceInfo)
 public:
     QBluetoothServiceInfoPrivate();
     ~QBluetoothServiceInfoPrivate();
@@ -92,6 +94,9 @@ public:
     mutable quint32 serviceRecord;
     mutable bool registered;
 #endif
+    
+private:
+    QBluetoothServiceInfo *q_ptr;
 };
 
 QTM_END_NAMESPACE

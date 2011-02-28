@@ -47,7 +47,7 @@
 #ifndef QPRIVATELINEARBUFFER_BUFFERSIZE
 #define QPRIVATELINEARBUFFER_BUFFERSIZE Q_INT64_C(16384)
 #endif
-#include "qprivatelinearbuffer_p.h"
+#include "../qprivatelinearbuffer_p.h"
 
 #include <QtGlobal>
 
@@ -118,9 +118,12 @@ public:
                              QBluetoothSocket::OpenMode openMode = QBluetoothSocket::ReadWrite);
     int socketDescriptor() const;
 
+    qint64 bytesAvailable() const;
+
 #ifdef QTM_SYMBIAN_BLUETOOTH
     void _q_startReceive();
     void startReceive();
+    void startServerSideReceive();
     void ensureBlankNativeSocket();
 
     /* MBluetoothSocketNotifier virtual functions */
@@ -155,7 +158,6 @@ public:
 #ifdef QTM_SYMBIAN_BLUETOOTH
     CBluetoothSocket *iSocket;
     CBluetoothSocket *iBlankSocket;
-
     TPtr8 rxDescriptor;
     TSockXfrLength rxLength;
     bool receiving;

@@ -47,6 +47,7 @@
 #include <qbluetoothsocket.h>
 
 QTM_USE_NAMESPACE
+Q_DECLARE_METATYPE(QBluetooth::SecurityFlags);
 
 // Max time to wait for connection
 static const int MaxConnectTime = 60 * 1000;   // 1 minute in ms
@@ -72,6 +73,8 @@ private slots:
 
     void tst_receive_data();
     void tst_receive();
+
+    void tst_secureFlags();
 };
 
 tst_QRfcommServer::tst_QRfcommServer()
@@ -84,6 +87,7 @@ tst_QRfcommServer::~tst_QRfcommServer()
 
 void tst_QRfcommServer::initTestCase()
 {
+    qRegisterMetaType<QBluetooth::SecurityFlags>("QBluetooth::SecurityFlags");
 }
 
 void tst_QRfcommServer::tst_construction()
@@ -264,6 +268,15 @@ void tst_QRfcommServer::tst_receive()
     const QByteArray data = socket->readAll();
 
     QCOMPARE(data, expected);
+}
+
+void tst_QRfcommServer::tst_secureFlags()
+{
+    QRfcommServer server;
+    QCOMPARE(server.securityFlags(), QBluetooth::NoSecurity);
+
+    server.setSecurityFlags(QBluetooth::Encryption);
+    QCOMPARE(server.securityFlags(), QBluetooth::Encryption);
 }
 
 QTEST_MAIN(tst_QRfcommServer)
