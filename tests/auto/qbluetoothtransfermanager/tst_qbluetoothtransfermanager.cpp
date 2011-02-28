@@ -61,7 +61,6 @@ QTM_USE_NAMESPACE
 
 typedef QMap<int,QVariant> tst_QBluetoothTransferManager_QParameterMap;
 Q_DECLARE_METATYPE(tst_QBluetoothTransferManager_QParameterMap)
-Q_DECLARE_METATYPE(QBluetoothTransferReply *);
 
 //char BTADDRESS[] = "00:00:00:00:00:00";
 #ifdef Q_OS_SYMBIAN
@@ -117,7 +116,6 @@ tst_QBluetoothTransferManager::~tst_QBluetoothTransferManager()
 
 void tst_QBluetoothTransferManager::initTestCase()
 {
-    qRegisterMetaType<QBluetoothTransferReply*>("QBluetoothTransferReply");
     // start Bluetooth if not started
     QBluetoothLocalDevice *device = new QBluetoothLocalDevice();
     device->powerOn();

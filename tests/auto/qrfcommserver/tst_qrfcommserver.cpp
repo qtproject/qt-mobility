@@ -45,6 +45,7 @@
 
 #include <qrfcommserver.h>
 #include <qbluetoothsocket.h>
+#include <qbluetoothlocaldevice.h>
 
 QTM_USE_NAMESPACE
 Q_DECLARE_METATYPE(QBluetooth::SecurityFlags);
@@ -75,10 +76,13 @@ private slots:
     void tst_receive();
 
     void tst_secureFlags();
+private:
+    QBluetoothLocalDevice localDevice;
 };
 
 tst_QRfcommServer::tst_QRfcommServer()
 {
+    localDevice.powerOn();
 }
 
 tst_QRfcommServer::~tst_QRfcommServer()
@@ -110,9 +114,16 @@ void tst_QRfcommServer::tst_listen_data()
     QTest::addColumn<quint16>("port");
 
     QTest::newRow("default") << QBluetoothAddress() << quint16(0);
+#ifdef Q_OS_SYMBIAN
+    //use localdevice address for listen address.
+    QTest::newRow("specified address") << localDevice.address() << quint16(0);
+    QTest::newRow("specified port") << QBluetoothAddress() << quint16(20);
+    QTest::newRow("specified address/port") << localDevice.address() << quint16(21);
+#else
     QTest::newRow("specified address") << QBluetoothAddress("00:11:B1:08:AD:B8") << quint16(0);
     QTest::newRow("specified port") << QBluetoothAddress() << quint16(10);
     QTest::newRow("specified address/port") << QBluetoothAddress("00:11:B1:08:AD:B8") << quint16(10);
+#endif
 }
 
 void tst_QRfcommServer::tst_listen()
@@ -124,15 +135,19 @@ void tst_QRfcommServer::tst_listen()
         QRfcommServer server;
 
         bool result = server.listen(address, port);
+        QTest::qWait(1000);
 
         QVERIFY(result);
         QVERIFY(server.isListening());
 
         if (!address.isNull())
             QCOMPARE(server.serverAddress(), address);
+#ifndef Q_OS_SYMBIAN
+// In Symbian there is only one bluetoothdevice per device and its address is returned always.
         else
             QVERIFY(!server.serverAddress().isNull());
-
+#endif
+        qDebug()<<"Server Port="<<server.serverPort();
         if (port != 0)
             QCOMPARE(server.serverPort(), port);
         else
@@ -144,6 +159,7 @@ void tst_QRfcommServer::tst_listen()
         QVERIFY(server.nextPendingConnection() == 0);
 
         server.close();
+        QTest::qWait(500);
 
         QVERIFY(!server.isListening());
 
