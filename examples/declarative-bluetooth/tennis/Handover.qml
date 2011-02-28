@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the examples of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:BSD$
 ** You may use this file under the terms of the BSD license as follows:
@@ -38,55 +38,41 @@
 **
 ****************************************************************************/
 
-#ifndef HANDOVER_H
-#define HANDOVER_H
+import QtQuick 1.0
+import QtMobility.connectivity 1.2
 
-#include <QtCore/QObject>
+Item {
+    id: root
 
-#include <qbluetoothaddress.h>
-#include <qbluetoothuuid.h>
+    property BluetoothService bluetoothService
+    property bool available : false
 
-QTM_BEGIN_NAMESPACE
-class QNearFieldManager;
-class QNearFieldTarget;
-class QLlcpServer;
-class QLlcpSocket;
-QTM_END_NAMESPACE
+    NearFieldSocket {
+        id: socket
 
-QTM_USE_NAMESPACE
+        uri: "urn:nfc:sn:com.nokia.qtmobility.tennis"
+        connected: true
 
-class Handover : public QObject
-{
-    Q_OBJECT
+        function parse(s) {
+            console.log(s);
 
-public:
-    explicit Handover(quint16 serverPort, QObject *parent = 0);
-    ~Handover();
+            var args = s.split(" ");
 
-    QBluetoothAddress bluetoothAddress() const;
-    quint16 serverPort() const;
+            if (args.length == 2) {
+                console.log("Split: " + args[0] + " " + args[1]);
 
-private slots:
-    void handleNewConnection();
-    void remoteDisconnected();
+                bluetoothService.deviceAddress = args[0];
+                bluetoothService.servicePort = args[1];
+                root.bluetoothServiceChanged();
+            }
+        }
 
-    void clientDisconnected();
+        onDataAvailable: parse(socket.stringData)
 
-    void readBluetoothService();
-    void sendBluetoothService();
-
-signals:
-    void bluetoothServiceChanged();
-
-private:
-    QNearFieldManager *m_manager;
-    QLlcpServer *m_server;
-    QLlcpSocket *m_client;
-    QLlcpSocket *m_remote;
-
-    QBluetoothAddress m_address;
-    quint16 m_serverPort;
-    quint16 m_localServerPort;
-};
-
-#endif // HANDOVER_H
+        onStateChanged: {
+            if (state == "Connecting") {
+                available = true;
+            }
+        }
+    }
+}

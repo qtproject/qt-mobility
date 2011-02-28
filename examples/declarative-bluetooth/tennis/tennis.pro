@@ -14,4 +14,5 @@ RESOURCES += \
     tennis.qrc
 
 OTHER_FILES += \
-    sensor.qml
+    sensor.qml \
+    Handover.qml

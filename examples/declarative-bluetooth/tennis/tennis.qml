@@ -112,7 +112,7 @@ Rectangle {
                }
            }
 
-           connected: true
+           //connected: true
 //           service: btservice
 
            onStateChanged: console.log("New socket state " + state);
@@ -190,6 +190,24 @@ Rectangle {
            }
        }
 
+       Handover {
+           id: handover
+
+           bluetoothService: BluetoothService {
+               serviceName: "bttennis"
+               serviceProtocol: "l2cap";
+               serviceUuid: "e8e10f95-1a70-4b27-9ccf-02010264e9c9"
+           }
+
+           onBluetoothServiceChanged: {
+               console.log("Connecting to NFC provided address " + bluetoothService.deviceAddress);
+               statusText.text = "Connecting: " + bluetoothService.deviceAddress + " " + bluetoothService.serverPort;
+               socket.setService(bluetoothService);
+               socket.setConnected(true);
+           }
+
+           onAvailableChanged: statusText.text = "Touch to play";
+       }
 
        MouseArea {
            anchors.fill: parent
@@ -360,7 +378,7 @@ Rectangle {
             id: statusText
             font.family: "Old English"
             font.pixelSize: 25; font.bold: true
-            text:  ""
+            text: ""
             color:  fg
             y: page.height-height-25
             x: 24
