@@ -206,7 +206,7 @@ int main(int argc, char **argv)
 {
     qputenv("N900_PORTRAIT_SENSORS", "1");
     ...
-\code
+\endcode
 
 Despite hardware that allows for multiple data rates and output ranges, the Sensors API does not allow access to
 these due to permissions issues.
