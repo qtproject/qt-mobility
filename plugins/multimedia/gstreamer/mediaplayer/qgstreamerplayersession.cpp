@@ -50,6 +50,7 @@
 #include <QtCore/qdatetime.h>
 #include <QtCore/qdebug.h>
 #include <QtCore/qsize.h>
+#include <QtCore/qtimer.h>
 #include <QtCore/qdebug.h>
 
 #if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6) || (GST_VERSION_MICRO > 20)
@@ -95,7 +96,8 @@ QGstreamerPlayerSession::QGstreamerPlayerSession(QObject *parent)
      m_videoAvailable(false),
      m_seekable(false),
      m_lastPosition(0),
-     m_duration(-1)
+     m_duration(-1),
+     m_durationQueries(0)
 {
 #ifdef USE_PLAYBIN2
     m_playbin = gst_element_factory_make("playbin2", NULL);
@@ -868,6 +870,8 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
             //qDebug() << m_tags;
 
             emit tagsChanged();
+        } else if (GST_MESSAGE_TYPE(gm) == GST_MESSAGE_DURATION) {
+            updateDuration();
         }
 
         bool handlePlaybin2 = false;
@@ -913,6 +917,12 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
                         if (oldState == GST_STATE_READY) {
                             getStreamsInfo();
                             updateVideoResolutionTag();
+
+                            //gstreamer doesn't give a reliable indication the duration
+                            //information is ready, GST_MESSAGE_DURATION is not sent by most elements
+                            //the duration is queried up to 5 times with increasing delay
+                            m_durationQueries = 5;
+                            updateDuration();
 
                             /*
                                 //gst_element_seek_simple doesn't work reliably here, have to find a better solution
@@ -1023,20 +1033,6 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
                 break;
             case GST_MESSAGE_SEGMENT_DONE:
                 break;
-            case GST_MESSAGE_DURATION:
-                {
-                    GstFormat   format = GST_FORMAT_TIME;
-                    gint64      duration = 0;
-
-                    if (gst_element_query_duration(m_playbin, &format, &duration)) {
-                        int newDuration = duration / 1000000;
-                        if (m_duration != newDuration) {
-                            m_duration = newDuration;
-                            emit durationChanged(m_duration);
-                        }
-                    }
-                }
-                break;
             case GST_MESSAGE_LATENCY:
 #if (GST_VERSION_MAJOR >= 0) &&  (GST_VERSION_MINOR >= 10) && (GST_VERSION_MICRO >= 13)
             case GST_MESSAGE_ASYNC_START:
@@ -1135,17 +1131,6 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
 
 void QGstreamerPlayerSession::getStreamsInfo()
 {
-    GstFormat   format = GST_FORMAT_TIME;
-    gint64      duration = 0;
-
-    if (gst_element_query_duration(m_playbin, &format, &duration)) {
-        int newDuration = duration / 1000000;
-        if (m_duration != newDuration) {
-            m_duration = newDuration;
-            emit durationChanged(m_duration);
-        }
-    }
-
     //check if video is available:
     bool haveAudio = false;
     bool haveVideo = false;
@@ -1323,6 +1308,31 @@ void QGstreamerPlayerSession::updateVideoResolutionTag()
         }
 
         emit tagsChanged();
+    }
+}
+
+void QGstreamerPlayerSession::updateDuration()
+{
+    GstFormat format = GST_FORMAT_TIME;
+    gint64 gstDuration = 0;
+    int duration = -1;
+
+    if (m_playbin && gst_element_query_duration(m_playbin, &format, &gstDuration))
+        duration = gstDuration / 1000000;
+
+    if (m_duration != duration) {
+        m_duration = duration;
+        emit durationChanged(m_duration);
+    }
+
+    if (m_duration > 0)
+        m_durationQueries = 0;
+
+    if (m_durationQueries > 0) {
+        //increase delay between duration requests
+        int delay = 25 << (5 - m_durationQueries);
+        QTimer::singleShot(delay, this, SLOT(updateDuration()));
+        m_durationQueries--;
     }
 }
 

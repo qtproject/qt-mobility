@@ -148,6 +148,7 @@ private slots:
     void updateVideoResolutionTag();
     void updateVolume();
     void updateMuted();
+    void updateDuration();
 
 private:
     static void playbinNotifySource(GObject *o, GParamSpec *p, gpointer d);
@@ -193,6 +194,7 @@ private:
 
     qint64 m_lastPosition;
     qint64 m_duration;
+    int m_durationQueries;
 };
 
 #endif // QGSTREAMERPLAYERSESSION_H
