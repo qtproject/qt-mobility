@@ -247,7 +247,7 @@ void ZoomButtonItem::setRect(qreal x, qreal y, qreal w, qreal h)
 
     QFont f;
     f.setFixedPitch(true);
-    f.setPixelSize(h/3.0);
+    f.setPixelSize(h/5.0);
     d->plusText->setFont(f);
     d->minusText->setFont(f);
 
