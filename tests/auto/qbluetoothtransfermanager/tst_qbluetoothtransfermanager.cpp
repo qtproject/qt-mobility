@@ -285,9 +285,6 @@ void tst_QBluetoothTransferManager::tst_putAbort()
     QBluetoothTransferReply *reply = manager.put(transferRequest, &file);
     reply->abort();
 
-    QVERIFY(reply->operation() == QBluetoothTransferManager::PutOperation);
-    QVERIFY(reply->manager() == &manager);
-
     int error = reply->error();
     qDebug()<<"QtMobilityBtTester::SendData reply->error ="<<error;
     QVERIFY(error == QBluetoothTransferReply::NoError);
