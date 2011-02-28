@@ -159,7 +159,7 @@ QGstreamerPlayerSession::QGstreamerPlayerSession(QObject *parent)
 
         g_signal_connect(G_OBJECT(m_playbin), "notify::volume", G_CALLBACK(handleVolumeChange), this);
         if (m_usePlaybin2)
-            g_signal_connect(G_OBJECT(m_playbin), "notify::mute", G_CALLBACK(handleVolumeChange), this);
+            g_signal_connect(G_OBJECT(m_playbin), "notify::mute", G_CALLBACK(handleMutedChange), this);
     }
 }
 
@@ -1398,17 +1398,48 @@ void QGstreamerPlayerSession::updateVolume()
 {
     double volume = 1.0;
     g_object_get(m_playbin, "volume", &volume, NULL);
-    if (m_volume != int(volume*100)) {
-        m_volume = int(volume*100);
-        emit volumeChanged(m_volume);
+
+    //special case for playbin1 volume changes in muted state
+    //playbin1 has no separate muted state,
+    //it's emulated with volume value saved and set to 0
+    //this change should not be reported to user
+    if (!m_usePlaybin2 && m_muted) {
+        if (volume > 0.001) {
+            //volume is changed, player in not muted any more
+            m_muted = false;
+            emit mutedStateChanged(m_muted = false);
+        } else {
+            //don't emit volume changed to 0 when player is muted
+            return;
+        }
     }
 
-    if (m_usePlaybin2) {
-        bool muted = false;
-        g_object_get(G_OBJECT(m_playbin), "mute", &muted, NULL);
-        if (m_muted != muted) {
-            m_muted = muted;
-            emit mutedStateChanged(muted);
-        }
+    if (m_volume != int(volume*100)) {
+        m_volume = int(volume*100);
+#ifdef DEBUG_PLAYBIN
+        qDebug() << Q_FUNC_INFO << m_muted;
+#endif
+        emit volumeChanged(m_volume);
+    }
+}
+
+void QGstreamerPlayerSession::handleMutedChange(GObject *o, GParamSpec *p, gpointer d)
+{
+    Q_UNUSED(o);
+    Q_UNUSED(p);
+    QGstreamerPlayerSession *session = reinterpret_cast<QGstreamerPlayerSession *>(d);
+    QMetaObject::invokeMethod(session, "updateMuted", Qt::QueuedConnection);
+}
+
+void QGstreamerPlayerSession::updateMuted()
+{
+    bool muted = false;
+    g_object_get(G_OBJECT(m_playbin), "mute", &muted, NULL);
+    if (m_muted != muted) {
+        m_muted = muted;
+#ifdef DEBUG_PLAYBIN
+        qDebug() << Q_FUNC_INFO << m_muted;
+#endif
+        emit mutedStateChanged(muted);
     }
 }
