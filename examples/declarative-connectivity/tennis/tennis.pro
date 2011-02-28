@@ -1,6 +1,6 @@
 QT += declarative network
 SOURCES += $$PWD/qmltennis.cpp
-include($$PWD/../declarative-bluetooth.pri)
+include($$PWD/../declarative-connectivity.pri)
 include($$PWD/deployment.pri)
 
 TARGET = qml_tennis

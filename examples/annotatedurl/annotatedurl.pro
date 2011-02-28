@@ -1,4 +1,10 @@
-include(../connectivity.pri)
+include(../examples.pri)
+
+CONFIG += mobility strict_flags
+MOBILITY += connectivity
+
+INCLUDEPATH += $$PWD/../../src/connectivity/nfc
+DEPENDPATH += $$PWD/../../src/connectivity/nfc
 
 TARGET = annotatedurl
 
