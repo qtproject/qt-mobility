@@ -6066,6 +6066,7 @@ void tst_QLandmarkManager::filterAttribute() {
 #ifdef Q_OS_SYMBIAN
     QVERIFY(doFetch(type,attributeFilter,&lms,QLandmarkManager::NotSupportedError));
 #else
+    QVERIFY(doFetch(type,attributeFilter,&lms));
     QCOMPARE(lms.count(), 1);
     QCOMPARE(lms.at(0), lm1);
 #endif
@@ -6159,13 +6160,12 @@ void tst_QLandmarkManager::filterAttribute() {
     attributeFilter.setAttribute("country", "", QLandmarkFilter::MatchFixedString);
 
 #ifdef Q_OS_SYMBIAN
-    QVERIFY(doFetch(type,attributeFilter,&lms, QLandmarkManager::BadArgumentError));
+    QVERIFY(doFetch(type,attributeFilter,&lms, QLandmarkManager::NotSupportedError));
 #else
     QVERIFY(doFetch(type,attributeFilter,&lms));
-#endif
-
     QEXPECT_FAIL("", "bug covered in MOBILITY-1720", Continue);
     QCOMPARE(lms.count(), 1);
+#endif
 }
 
 void tst_QLandmarkManager::filterAttribute_data()
@@ -6589,7 +6589,6 @@ void tst_QLandmarkManager::filterAttribute3()
 
     QList<QLandmark> lms;
 #ifdef Q_OS_SYMBIAN
-    QEXPECT_FAIL("", "MOBILITY-2283: symbian does not support MatchContains", Continue);
     QCOMPARE(m_manager->filterSupportLevel(attributeFilter), QLandmarkManager::NoSupport);
     QVERIFY(doFetch(type, attributeFilter, &lms,QLandmarkManager::NotSupportedError));
 #else
