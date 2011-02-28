@@ -1,10 +1,10 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the QtDeclarative module of the Qt Toolkit.
+** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
@@ -48,6 +48,7 @@
 #include "qdeclarativebtimageprovider_p.h"
 #include "qdeclarativebluetoothservice_p.h"
 #include "qdeclarativebluetoothsocket_p.h"
+#include "qdeclarativenearfieldsocket_p.h"
 
 QT_USE_NAMESPACE
 
@@ -63,6 +64,8 @@ public:
         qmlRegisterType<QDeclarativeBluetoothDiscoveryModel>(uri, 1, 2, "BluetoothDiscoveryModel");
         qmlRegisterType<QDeclarativeBluetoothService>(uri, 1, 2, "BluetoothService");
         qmlRegisterType<QDeclarativeBluetoothSocket>(uri, 1, 2, "BluetoothSocket");
+
+        qmlRegisterType<QDeclarativeNearFieldSocket>(uri, 1, 2, "NearFieldSocket");
 
         //details
     }

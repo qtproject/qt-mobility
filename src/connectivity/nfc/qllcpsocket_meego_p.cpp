@@ -385,6 +385,8 @@ void QLlcpSocketPrivate::Connect(const QDBusVariant &lsap, const QDBusVariant &r
     m_state = QLlcpSocket::ConnectedState;
     emit q->stateChanged(m_state);
     emit q->connected();
+
+    qDebug() << Q_FUNC_INFO << readFd << writeFd;
 }
 
 void QLlcpSocketPrivate::Socket(const QDBusVariant &lsap, const QDBusVariant &rsap,
@@ -399,6 +401,8 @@ void QLlcpSocketPrivate::Socket(const QDBusVariant &lsap, const QDBusVariant &rs
 void QLlcpSocketPrivate::_q_readNotify()
 {
     Q_Q(QLlcpSocket);
+
+    qDebug() << Q_FUNC_INFO;
 
     char *writePointer = buffer.reserve(QPRIVATELINEARBUFFER_BUFFERSIZE);
     int readFromDevice =
