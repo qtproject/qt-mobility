@@ -99,9 +99,9 @@ void meegosensorbase::start()
                 m_prevOutputRange = currentRange;
 
                 //TODO - uncomment when functionality available in sensord
-//                bool isOk = m_sensorInterface->setDataRangeIndex(currentRange); //NOTE THAT THE CHANGE MIGHT NOT SUCCEED, FIRST COME FIRST SERVED
-//                if (!isOk) sensorError(KErrInUse);
-//                else m_prevOutputRange = currentRange;
+                bool isOk = m_sensorInterface->setDataRangeIndex(currentRange); //NOTE THAT THE CHANGE MIGHT NOT SUCCEED, FIRST COME FIRST SERVED
+                if (!isOk) sensorError(KErrInUse);
+                else m_prevOutputRange = currentRange;
             }
         }
         
