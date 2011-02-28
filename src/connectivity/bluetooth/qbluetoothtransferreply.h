@@ -105,6 +105,8 @@ private:
 
 QTM_END_NAMESPACE
 
+Q_DECLARE_METATYPE(QtMobility::QBluetoothTransferReply *);
+
 QT_END_HEADER
 
 #endif // QBLUETOOTHTRANSFERREPLY_H

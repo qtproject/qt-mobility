@@ -205,7 +205,7 @@ QVariant QDeclarativeBluetoothDiscoveryModel::data(const QModelIndex &index, int
             return label;
         }
         case Qt::DecorationRole:
-            return QLatin1String("image://thumbnail/default");
+            return QLatin1String("image://bluetoothicons/default");
         case ServiceRole:
         {
             return QVariant::fromValue(service);

@@ -56,8 +56,8 @@ Handover::Handover(quint16 serverPort, QObject *parent)
     connect(m_server, SIGNAL(newConnection()), this, SLOT(handleNewConnection()));
     m_server->listen(tennisUri);
 
-    connect(m_client, SIGNAL(connected()), this, SLOT(clientConnected()));
     connect(m_client, SIGNAL(disconnected()), this, SLOT(clientDisconnected()));
+    connect(m_client, SIGNAL(readyRead()), this, SLOT(readBluetoothService()));
 
     m_client->connectToService(0, tennisUri);
 }
@@ -83,13 +83,25 @@ void Handover::handleNewConnection()
 
     m_remote = m_server->nextPendingConnection();
 
-    connect(m_remote, SIGNAL(readyRead()), this, SLOT(readRemote()));
     connect(m_remote, SIGNAL(disconnected()), this, SLOT(remoteDisconnected()));
+
+    sendBluetoothService();
 }
 
-void Handover::readRemote()
+void Handover::remoteDisconnected()
 {
-    QByteArray rawData = m_remote->readAll();
+    m_remote->deleteLater();
+    m_remote = 0;
+}
+
+void Handover::clientDisconnected()
+{
+    m_client->connectToService(0, tennisUri);
+}
+
+void Handover::readBluetoothService()
+{
+    QByteArray rawData = m_client->readAll();
     QString data = QString::fromUtf8(rawData.constData(), rawData.size());
     QStringList split = data.split(QLatin1Char(' '));
 
@@ -106,22 +118,12 @@ void Handover::readRemote()
     }
 }
 
-void Handover::remoteDisconnected()
-{
-    m_remote->deleteLater();
-    m_remote = 0;
-}
-
-void Handover::clientConnected()
+void Handover::sendBluetoothService()
 {
     QBluetoothLocalDevice localDevice;
     const QString data = localDevice.address().toString() + QLatin1Char(' ') +
                          QString::number(m_localServerPort);
 
-    m_client->write(data.toUtf8());
+    m_remote->write(data.toUtf8());
 }
 
-void Handover::clientDisconnected()
-{
-    m_client->connectToService(0, tennisUri);
-}
