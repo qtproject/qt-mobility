@@ -2435,6 +2435,7 @@ QSystemDeviceInfoLinuxCommonPrivate::QSystemDeviceInfoLinuxCommonPrivate(QObject
     : QObject(parent),btPowered(0), hasWirelessKeyboardConnected(0)
 {
 #if !defined(QT_NO_DBUS)
+
     halIsAvailable = halAvailable();
     currentPowerState();
 #endif
@@ -3837,7 +3838,7 @@ void QSystemBatteryInfoLinuxCommonPrivate::getBatteryStats()
     }
 
     if(cTime == 0 && currentBatLevelPercent != 100)
-        cTime == -1;
+        cTime = -1;
 
     curChargeType = cType;
     currentVoltage = cVoltage;

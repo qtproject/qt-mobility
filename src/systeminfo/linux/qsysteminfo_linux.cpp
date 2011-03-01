@@ -960,7 +960,11 @@ bool QSystemDeviceInfoPrivate::vibrationActive()
 }
 
 QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QSystemScreenSaverLinuxCommonPrivate *parent)
-         : QSystemScreenSaverLinuxCommonPrivate(parent), currentPid(0),kdeIsRunning(0),gnomeIsRunning(0),meegoIsRunning(0)
+         : QSystemScreenSaverLinuxCommonPrivate(parent),
+           currentPid(0),
+           kdeIsRunning(0),
+           meegoIsRunning(0),
+           gnomeIsRunning(0)
  {
      whichWMRunning();
  }
