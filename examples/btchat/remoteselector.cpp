@@ -135,3 +135,8 @@ void RemoteSelector::on_remoteDevices_itemActivated(QListWidgetItem *item)
 
     accept();
 }
+
+void RemoteSelector::on_cancelButton_clicked()
+{
+    reject();
+}
