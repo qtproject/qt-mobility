@@ -232,6 +232,9 @@ public:
     int physicalHeight(int screen);
     int physicalWidth(int screen);
     QSystemDisplayInfo::BacklightState backlightStatus(int screen); //1.2
+Q_SIGNALS:
+    void orientationChanged(QSystemDisplayInfo::DisplayOrientation newOrientation);
+
 };
 
 class QSystemStorageInfoLinuxCommonPrivate : public QObject
@@ -281,6 +284,8 @@ private Q_SLOTS:
 private Q_SLOTS:
     void deviceChanged();
     void inotifyActivated();
+    void checkFilesystem();
+
 protected:
     void connectNotify(const char *signal);
     void disconnectNotify(const char *signal);

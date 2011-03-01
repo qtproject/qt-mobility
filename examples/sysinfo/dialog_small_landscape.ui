@@ -1499,6 +1499,11 @@
            <string>Uri</string>
           </property>
          </column>
+         <column>
+          <property name="text">
+           <string>State</string>
+          </property>
+         </column>
         </widget>
        </item>
       </layout>
@@ -1546,6 +1551,31 @@
          <item>
           <property name="text">
            <string>Bluetooth</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Wimax</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Gprs</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Edge</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Hspa</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Lte</string>
           </property>
          </item>
         </widget>

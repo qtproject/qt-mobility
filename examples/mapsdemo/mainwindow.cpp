@@ -63,6 +63,7 @@ MainWindow::MainWindow() :
 
     // set up the menus
     QMenuBar *mbar = new QMenuBar(this);
+    mbar->addAction("Quit", qApp, SLOT(quit()));
     mbar->addAction("My Location", this, SLOT(goToMyLocation()));
 
     QMenu *searchMenu = new QMenu("Search");

@@ -3548,11 +3548,15 @@ void tst_QLandmarkManager::removeLandmark()
 #endif
         QCOMPARE(spyLmAdd.count(), 0);
         QCOMPARE(spyLmChange.count(), 0);
-        QCOMPARE(spyLmRemove.count(), 1);
-        QCOMPARE(spyLmRemove.at(0).at(0).value<QList<QLandmarkId> >().count(), 3);
-        QVERIFY(spyLmRemove.at(0).at(0).value<QList<QLandmarkId> >().contains(lm1.landmarkId()));
-        QVERIFY(spyLmRemove.at(0).at(0).value<QList<QLandmarkId> >().contains(lm3.landmarkId()));
-        QVERIFY(spyLmRemove.at(0).at(0).value<QList<QLandmarkId> >().contains(lm4.landmarkId()));
+        QVERIFY(spyLmRemove.count() > 0 );
+        QList<QLandmarkId> removedIds;
+        for (int i=0; i < spyLmRemove.count(); ++i) {
+            removedIds.append(spyLmRemove.at(i).at(0).value<QList<QLandmarkId> >());
+        }
+        QCOMPARE(removedIds.count(), 3);
+        QVERIFY(removedIds.contains(lm1.landmarkId()));
+        QVERIFY(removedIds.contains(lm3.landmarkId()));
+        QVERIFY(removedIds.contains(lm4.landmarkId()));
         QCOMPARE(spyCatAdd.count(), 0);
         QCOMPARE(spyCatChange.count(), 0);
         spyLmRemove.clear();
@@ -6059,11 +6063,10 @@ void tst_QLandmarkManager::filterAttribute() {
 
     attributeFilter.setAttribute("city", "adelai", QLandmarkFilter::MatchStartsWith);
     attributeFilter.setAttribute("description", "The description", QLandmarkFilter::MatchStartsWith);
-    QVERIFY(doFetch(type,attributeFilter, &lms));
 #ifdef Q_OS_SYMBIAN
-    QEXPECT_FAIL("", "MOBILITY-2331: and operation with filter is failing", Continue);
-    QCOMPARE(lms.count(), 1);
+    QVERIFY(doFetch(type,attributeFilter,&lms,QLandmarkManager::NotSupportedError));
 #else
+    QVERIFY(doFetch(type,attributeFilter,&lms));
     QCOMPARE(lms.count(), 1);
     QCOMPARE(lms.at(0), lm1);
 #endif
@@ -6157,13 +6160,12 @@ void tst_QLandmarkManager::filterAttribute() {
     attributeFilter.setAttribute("country", "", QLandmarkFilter::MatchFixedString);
 
 #ifdef Q_OS_SYMBIAN
-    QVERIFY(doFetch(type,attributeFilter,&lms, QLandmarkManager::BadArgumentError));
+    QVERIFY(doFetch(type,attributeFilter,&lms, QLandmarkManager::NotSupportedError));
 #else
     QVERIFY(doFetch(type,attributeFilter,&lms));
-#endif
-
     QEXPECT_FAIL("", "bug covered in MOBILITY-1720", Continue);
     QCOMPARE(lms.count(), 1);
+#endif
 }
 
 void tst_QLandmarkManager::filterAttribute_data()
@@ -6587,7 +6589,6 @@ void tst_QLandmarkManager::filterAttribute3()
 
     QList<QLandmark> lms;
 #ifdef Q_OS_SYMBIAN
-    QEXPECT_FAIL("", "MOBILITY-2283: symbian does not support MatchContains", Continue);
     QCOMPARE(m_manager->filterSupportLevel(attributeFilter), QLandmarkManager::NoSupport);
     QVERIFY(doFetch(type, attributeFilter, &lms,QLandmarkManager::NotSupportedError));
 #else

@@ -49,6 +49,7 @@ Item {
 
     Map {
         id: map
+        z : 1
         plugin : Plugin {
                             name : "nokia"
                         }
@@ -62,51 +63,86 @@ Item {
 
 
             MapCircle {
+                id : circle
                 center : Coordinate {
                     //latitude: 0
                     //longitude: 0
                                     latitude : -27
-                                    longitude : 179
+                                    longitude : 153
                                     }
                 color : "red"
                 radius : 1000.0
                 MapMouseArea {
-                    onEntered : { console.log('entered circle') }
-                    onExited : { console.log('exited circle') }
-                    onPositionChanged : { console.log('moved in circle') }
-                    onClicked : { console.log('clicked in circle') }
-                    onDoubleClicked : {
-                        console.log('double clicked in circle')
-                        mouse.accepted = false
+//                    onClicked : { console.log('clicked in circle') }
+//                    onDoubleClicked : { console.log('double clicked in circle') }
+//                    onPressed: {console.log('pressed in circle') }
+//                    onReleased: { console.log('released in circle') }
+//                    onPositionChanged: { console.log('moved in circle') }
+
+                    property bool mouseDown : false
+                    property int lastX : -1
+                    property int lastY : -1
+
+                    hoverEnabled : true
+
+                    onPressed : {
+                        mouseDown = true
+                        lastX = mouse.x
+                        lastY = mouse.y
                     }
-                    onPressed: {console.log('pressed in circle') }
-                    onReleased: { console.log('released in circle') }
-                }
-                MapMouseArea {
-                    onEntered : { console.log('entered circle 2') }
-                    onExited : { console.log('exited circle 2') }
-                    onPositionChanged : { console.log('moved in circle 2') }
-                    onClicked : { console.log('clicked in circle 2') }
-                    onDoubleClicked : { console.log('double clicked in circle 2') }
-                    onPressed: { console.log('pressed in circle 2') }
-                    onReleased: { console.log('released in circle 2') }
+                    onReleased : {
+                        mouseDown = false
+                        lastX = -1
+                        lastY = -1
+                    }
+                    onPositionChanged: {
+                        if (mouseDown) {
+                            circle.center = mouse.coordinate
+                        }
+                    }
                 }
             }
 
+
         MapMouseArea {
-            onEntered : { console.log('entered map') }
-            onExited : { console.log('exited map') }
-            onPositionChanged : { console.log('moved in map') }
-            onClicked : { console.log('clicked in map') }
-            onDoubleClicked : { console.log('double clicked in map') }
-            onPressed: { console.log('pressed in map') }
-            onReleased: { console.log('released in map') }
+            property bool mouseDown : false
+            property int lastX : -1
+            property int lastY : -1
+
+            hoverEnabled : true
+
+            onPressed : {
+                mouseDown = true
+                lastX = mouse.x
+                lastY = mouse.y
+            }
+            onReleased : {
+                mouseDown = false
+                lastX = -1
+                lastY = -1
+            }
+            onPositionChanged: {
+                console.log(mouse.button)
+                if (mouse.button == Qt.LeftMouseButton) {
+//                if (mouseDown) {
+                    var dx = mouse.x - lastX
+                    var dy = mouse.y - lastY
+                    map.pan(-dx, -dy)
+                    lastX = mouse.x
+                    lastY = mouse.y
+                    map.center = mouse.coordinate
+                }
+            }
+            onDoubleClicked: {
+                map.center = mouse.coordinate
+                map.zoomLevel += 1
+            }
         }
     }
-
 /*
     MouseArea {
 
+        z : 0
         anchors.fill : parent
 
         property bool mouseDown : false
@@ -139,7 +175,6 @@ Item {
         }
     }
 */
-
     Keys.onPressed: {
         if (event.key == Qt.Key_Plus) {
             map.zoomLevel += 1

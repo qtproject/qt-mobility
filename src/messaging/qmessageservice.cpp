@@ -305,7 +305,7 @@ QTM_BEGIN_NAMESPACE
 /*!
     \fn QMessageService::moveMessages(const QMessageIdList &messageIds, const QMessageFolderId &toFolderId)
 
-    Initiate a request to move messages \a messageIds to the folder \toFolderId
+    Initiate a request to move messages \a messageIds to the folder \a toFolderId
 
     The folder must be in the same account as the message. This will move the message on the external server, as well as locally.
 

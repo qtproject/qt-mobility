@@ -1756,4 +1756,10 @@ EXPORTS
 	_ZNK10QtMobility24QGeoMappingManagerEngine11minimumTiltEv @ 1755 NONAME
 	_ZNK10QtMobility24QGeoMappingManagerEngine15supportsBearingEv @ 1756 NONAME
 	_ZNK10QtMobility24QGeoMappingManagerEngine15supportsTiltingEv @ 1757 NONAME
+	_ZN10QtMobility29QGeoPositionInfoSourceFactoryD0Ev @ 1758 NONAME
+	_ZN10QtMobility29QGeoPositionInfoSourceFactoryD1Ev @ 1759 NONAME
+	_ZN10QtMobility29QGeoPositionInfoSourceFactoryD2Ev @ 1760 NONAME
+	_ZNK10QtMobility29QGeoPositionInfoSourceFactory14sourcePriorityEv @ 1761 NONAME
+	_ZTIN10QtMobility29QGeoPositionInfoSourceFactoryE @ 1762 NONAME
+	_ZTVN10QtMobility29QGeoPositionInfoSourceFactoryE @ 1763 NONAME
 
