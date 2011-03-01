@@ -294,6 +294,7 @@ private:
 #endif
      QSocketNotifier *notifier;
      int gpioFD;
+     int currentBatteryLevel;
 
 };
 
