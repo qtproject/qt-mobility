@@ -131,7 +131,8 @@ QString QSystemInfoPrivate::currentLanguage() const
 {
 #if defined(Q_WS_MAEMO_6)
     GConfItem langItem("/meegotouch/i18n/language");
-    QString lang = langItem.value().toString().left(2);
+    QString lang = langItem.value().toString();
+    if(lang.count() > 2) lang = lang.left(2);
     if (lang.isEmpty()) {
         lang = QString::fromLocal8Bit(qgetenv("LANG")).left(2);
     }
@@ -145,7 +146,7 @@ QString QSystemInfoPrivate::currentLanguage() const
 QString QSystemInfoPrivate::currentCountryCode() const
 {
 #if defined(Q_WS_MAEMO_6)
-    GConfItem langItem("/meegotouch/i18n/language");
+    GConfItem langItem("/meegotouch/i18n/region");
      QString langCC = langItem.value().toString().section("_",1,1);
      if (langCC.isEmpty()) {
          langCC = QString::fromLocal8Bit(qgetenv("LANG")).section("_",1,1);
@@ -1148,7 +1149,10 @@ void QSystemDeviceInfoPrivate::halChanged(int,QVariantList map)
     for(int i=0; i < map.count(); i++) {
        if(map.at(i).toString() == "battery.charge_level.percentage") {
             int level = batteryLevel();
-            emit batteryLevelChanged(level);
+            if(currentBatteryLevel != level) {
+                currentBatteryLevel = level;
+                emit batteryLevelChanged(level);
+            }
             QSystemDeviceInfo::BatteryStatus stat = QSystemDeviceInfo::NoBatteryLevel;
 
             if(level < 4) {
@@ -1675,7 +1679,6 @@ QSystemBatteryInfoPrivate::QSystemBatteryInfoPrivate(QSystemBatteryInfoLinuxComm
             halIfaceDevice = new QHalDeviceInterface(dev);
             if (halIfaceDevice->isValid()) {
                 if (halIfaceDevice->setConnections()) {
-                    qDebug() << "connect battery" <<  halIfaceDevice->getPropertyString("battery.type");
                     if (!connect(halIfaceDevice,SIGNAL(propertyModified(int, QVariantList)),
                                  this,SLOT(halChangedMaemo(int,QVariantList)))) {
                         qDebug() << "connection malfunction";
@@ -1702,7 +1705,7 @@ void QSystemBatteryInfoPrivate::halChangedMaemo(int count,QVariantList map)
     if (ifaceDevice.isValid()) {
         for(int i=0; i < count; i++) {
             QString mapS = map.at(i).toString();
-          qDebug() << mapS;
+            qDebug() << __FUNCTION__ << mapS;
             QSystemBatteryInfo::ChargerType chargerType = QSystemBatteryInfo::UnknownCharger;
              if (  mapS == "maemo.charger.connection_status" | mapS == "maemo.charger.type") {
                 const QString chargeType = ifaceDevice.getPropertyString("maemo.charger.type");

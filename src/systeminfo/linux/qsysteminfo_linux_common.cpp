@@ -738,6 +738,16 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoLinuxCommonPrivate::networkS
             return getBluetoothNetStatus();
        }
         break;
+//    case QSystemNetworkInfo::GsmMode:
+//    case QSystemNetworkInfo::CdmaMode:
+//    case QSystemNetworkInfo::WcdmaMode:
+//    case QSystemNetworkInfo::GprsMode:
+////    case QSystemNetworkInfo::EdgeMode:
+////    case QSystemNetworkInfo::HspaMode:
+//    {
+////        return getBluetoothNetStatus();
+//   }
+//    break;
     default:
         break;
     };
@@ -1857,9 +1867,13 @@ QSystemDisplayInfo::DisplayOrientation QSystemDisplayInfoLinuxCommonPrivate::ori
 #if defined(Q_WS_X11)
     XRRScreenConfiguration *sc;
     Rotation cur_rotation;
-    sc = XRRGetScreenInfo(QX11Info::display(), RootWindow(QX11Info::display(), screen));
+    Display *display = QX11Info::display();
+    if (!display) {
+        goto out;
+    }
+    sc = XRRGetScreenInfo(display, RootWindow(display, screen));
     if (!sc) {
-        return orientation;
+        goto out;
     }
     XRRConfigRotations(sc, &cur_rotation);
 
@@ -1882,6 +1896,7 @@ QSystemDisplayInfo::DisplayOrientation QSystemDisplayInfoLinuxCommonPrivate::ori
 #else
 Q_UNUSED(screen)
 #endif
+out:
     return orientation;
 }
 
@@ -2420,6 +2435,7 @@ QSystemDeviceInfoLinuxCommonPrivate::QSystemDeviceInfoLinuxCommonPrivate(QObject
     : QObject(parent),btPowered(0), hasWirelessKeyboardConnected(0)
 {
 #if !defined(QT_NO_DBUS)
+
     halIsAvailable = halAvailable();
     currentPowerState();
 #endif
@@ -2563,7 +2579,10 @@ void QSystemDeviceInfoLinuxCommonPrivate::halChanged(int,QVariantList map)
     for(int i=0; i < map.count(); i ++) {
        if (map.at(i).toString() == "battery.charge_level.percentage") {
             const int level = batteryLevel();
-            emit batteryLevelChanged(level);
+            if(currentBatLevel != level) {
+                currentBatLevel = level;
+                emit batteryLevelChanged(level);
+            }
             QSystemDeviceInfo::BatteryStatus stat = QSystemDeviceInfo::NoBatteryLevel;
 
             if (level < 4) {
@@ -3340,6 +3359,23 @@ QString QSystemDeviceInfoLinuxCommonPrivate::productName()
     return QString();
 }
 
+QString QSystemDeviceInfoLinuxCommonPrivate::imei()
+{
+
+    return QString();
+}
+
+QString QSystemDeviceInfoLinuxCommonPrivate::imsi()
+{
+    return QString();
+}
+
+QSystemDeviceInfo::SimStatus QSystemDeviceInfoLinuxCommonPrivate::simStatus()
+{
+
+    return QSystemDeviceInfo::SimNotAvailable;
+}
+
 QSystemScreenSaverLinuxCommonPrivate::QSystemScreenSaverLinuxCommonPrivate(QObject *parent)
     : QObject(parent)
 {
@@ -3568,8 +3604,11 @@ void QSystemBatteryInfoLinuxCommonPrivate::halChanged(int count,QVariantList map
                 batteryIsPresent = true;
             }
             if (mapS == "battery.charge_level.percentage") {
-                currentBatLevelPercent = ifaceDevice.getPropertyInt("battery.charge_level.percentage");
-                emit remainingCapacityPercentChanged(currentBatLevelPercent);
+                int level = ifaceDevice.getPropertyInt("battery.charge_level.percentage");
+                if(currentBatLevelPercent != level) {
+                    currentBatLevelPercent = level;
+                    emit remainingCapacityPercentChanged(currentBatLevelPercent);
+                }
 
                 QSystemBatteryInfo::BatteryStatus stat = QSystemBatteryInfo::BatteryUnknown;
 
@@ -3756,7 +3795,7 @@ void QSystemBatteryInfoLinuxCommonPrivate::getBatteryStats()
 
                     capacity = ifaceDevice.getPropertyInt("battery.charge_level.last_full");
                     if(capacity == 0)
-                        capacity =  ifaceDevice.getPropertyInt("battery.reporting.last_full");;//
+                        capacity =  ifaceDevice.getPropertyInt("battery.reporting.last_full");
                     if(capacity == 0)
                         capacity = ifaceDevice.getPropertyInt("battery.reporting.design");
 
@@ -3799,11 +3838,12 @@ void QSystemBatteryInfoLinuxCommonPrivate::getBatteryStats()
     }
 
     if(cTime == 0 && currentBatLevelPercent != 100)
-        cTime == -1;
+        cTime = -1;
 
     curChargeType = cType;
     currentVoltage = cVoltage;
     curChargeState = cState;
+    if(cEnergy == 0) cEnergy = -1;
     dischargeRate = cEnergy;
     currentBatLevelPercent = cLevel;
     timeToFull = cTime;
