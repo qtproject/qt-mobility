@@ -77,6 +77,7 @@ unix:!simulator {
             DEFINES += TESTR QT_SIMULATOR
             SOURCES += qsystemalignedtimer_stub.cpp
             HEADERS += qsystemalignedtimer_stub_p.h
+
         } else {
 
     !maemo5:!maemo6:linux-*: {
@@ -314,7 +315,6 @@ unix:!simulator {
         QtSystemInfoDeployment.path = /sys/bin
         DEPLOYMENT += QtSystemInfoDeployment
     }
-}
 
 simulator {
     SOURCES += qsysteminfo_simulator.cpp qsysteminfodata_simulator.cpp

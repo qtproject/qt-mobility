@@ -492,14 +492,12 @@ else
     echo "build_tools = yes" >> "$CONFIG_IN"
 fi
 
-<<<<<<< HEAD
 if [ -z "$TEST_USE_SIMULATOR" ]; then
     echo "test_use_sim = no" >> "$CONFIG_IN"
 else
     echo "test_use_sim = yes" >> "$CONFIG_IN"
 fi
 
-=======
 #process languages
 if [ -z "LANGUAGES" ]; then
     echo "selected_languages =" >> "$CONFIG_IN"
@@ -508,7 +506,6 @@ else
 fi
 
 
->>>>>>> master
 echo "Configuring Qt Mobility"
 echo 
 
