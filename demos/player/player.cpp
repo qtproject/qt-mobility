@@ -42,7 +42,6 @@
 
 #include "playercontrols.h"
 #include "playlistmodel.h"
-#include "videowidget.h"
 
 #include <qmediaservice.h>
 #include <qmediaplaylist.h>
