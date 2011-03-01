@@ -29,3 +29,7 @@ contains(QT_CONFIG,opengles2) {
     SOURCES += painter_fixed.cpp
 }
 RESOURCES = cubehouse.qrc
+
+symbian: {
+    TARGET.CAPABILITY = ReadUserData
+}
