@@ -5,6 +5,9 @@ include(../examples.pri)
 
 QT += declarative
 
+CONFIG += mobility
+MOBILITY += organizer
+
 HEADERS = qmlapplicationviewer.h
 SOURCES = \
     main.cpp  \
@@ -43,7 +46,7 @@ OTHER_FILES += \
 
 symbian: {
     load(data_caging_paths)
-    TARGET.CAPABILITY = ReadDeviceData WriteDeviceData ReadUserData WriteUserData
+    TARGET.CAPABILITY = ReadUserData WriteUserData
     TARGET.UID3 = 0xA000E408
     TARGET.EPOCHEAPSIZE = 0x20000 0x2000000
     contains(DEFINES, ORIENTATIONLOCK):LIBS += -lavkon -leikcore -leiksrv -lcone
