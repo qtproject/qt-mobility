@@ -25,9 +25,7 @@ symbian: {
     TARGET.CAPABILITY = Location \
                         NetworkServices \
                         ReadUserData \
-                        WriteUserData \
-                        ReadDeviceData \
-                        WriteDeviceData
+                        WriteUserData
 }
 
 HEADERS += \
