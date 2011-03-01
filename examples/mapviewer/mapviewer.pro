@@ -11,7 +11,7 @@ SOURCES += main.cpp \
 HEADERS += mapwidget.h \
            mainwindow.h
 
-include(../examples.pri)
+include(../mobility_examples.pri)
 
 CONFIG += mobility
 MOBILITY = location

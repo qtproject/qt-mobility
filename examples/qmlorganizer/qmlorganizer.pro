@@ -1,7 +1,7 @@
 TEMPLATE = app
 TARGET = qmlorganizer
 
-include(../examples.pri)
+include(../mobility_examples.pri)
 
 QT += declarative
 

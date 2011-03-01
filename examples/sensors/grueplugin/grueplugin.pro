@@ -7,7 +7,7 @@ INCLUDEPATH+=../../../src/sensors
 
 include(version.pri)
 include(grueplugin.pri)
-include(../../examples.pri)
+include(../../mobility_examples.pri)
 
 symbian {
     TARGET.EPOCALLOWDLLDATA = 1

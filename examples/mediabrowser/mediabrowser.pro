@@ -1,7 +1,7 @@
 TEMPLATE = app
 TARGET = mediabrowser
 
-include(../examples.pri)
+include(../mobility_examples.pri)
 CONFIG += mobility
 MOBILITY = gallery
 
