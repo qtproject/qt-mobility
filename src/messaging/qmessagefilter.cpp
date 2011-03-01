@@ -177,13 +177,7 @@ QTM_BEGIN_NAMESPACE
 
 /*!
     \fn QMessageFilter::operator|=(const QMessageFilter& other)
-    foreach(QMessageAccount const& id, QMessageManager().queryMessages()) {
-        if (MessagingUtil::globMatch(pattern, QMessageAccount(id).name())) {
-            ids.push_back(id);
-        }
-    }
 
-    return QMessageAccountFilter::byId(ids);
     Performs a logical OR with this filter and the filter \a other and assigns the result
     to this filter.
 */
