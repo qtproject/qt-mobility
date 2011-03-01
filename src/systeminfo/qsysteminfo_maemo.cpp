@@ -145,7 +145,7 @@ QString QSystemInfoPrivate::currentLanguage() const
 QString QSystemInfoPrivate::currentCountryCode() const
 {
 #if defined(Q_WS_MAEMO_6)
-    GConfItem langItem("/meegotouch/i18n/language");
+    GConfItem langItem("/meegotouch/i18n/region");
      QString langCC = langItem.value().toString().section("_",1,1);
      if (langCC.isEmpty()) {
          langCC = QString::fromLocal8Bit(qgetenv("LANG")).section("_",1,1);
@@ -1704,6 +1704,7 @@ void QSystemBatteryInfoPrivate::halChangedMaemo(int count,QVariantList map)
     if (ifaceDevice.isValid()) {
         for(int i=0; i < count; i++) {
             QString mapS = map.at(i).toString();
+            qDebug() << __FUNCTION__ << mapS;
             QSystemBatteryInfo::ChargerType chargerType = QSystemBatteryInfo::UnknownCharger;
              if (  mapS == "maemo.charger.connection_status" | mapS == "maemo.charger.type") {
                 const QString chargeType = ifaceDevice.getPropertyString("maemo.charger.type");
