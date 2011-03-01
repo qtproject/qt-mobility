@@ -986,9 +986,9 @@ bool QSystemScreenSaverPrivate::screenSaverInhibited()
     return true;
 }
 
-void QSystemScreenSaverPrivate::screenSaverInhibited(bool on)
+void QSystemScreenSaverPrivate::setScreenSaverInhibited(bool on)
 {
-    return on;
+    Q_UNUSED(on)
 }
 
 bool QSystemScreenSaverPrivate::setScreenSaverInhibit()
