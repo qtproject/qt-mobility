@@ -393,9 +393,14 @@ void Player::showColorDialog()
         layout->addRow(tr("Hue"), hueSlider);
         layout->addRow(tr("Saturation"), saturationSlider);
 
+        QPushButton *button = new QPushButton(tr("Close"));
+        layout->addRow(button);
+
         colorDialog = new QDialog(this);
         colorDialog->setWindowTitle(tr("Color Options"));
         colorDialog->setLayout(layout);
+
+        connect(button, SIGNAL(clicked()), colorDialog, SLOT(close()));
     }
     colorDialog->show();
 }
