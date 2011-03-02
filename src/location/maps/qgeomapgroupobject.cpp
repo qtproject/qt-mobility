@@ -42,6 +42,9 @@
 #include "qgeomapgroupobject.h"
 #include "qgeomapgroupobject_p.h"
 
+#include "qgeomapobject_p.h"
+#include "qgeomapobjectengine_p.h"
+
 #include "qgeocoordinate.h"
 #include "qgeoboundingbox.h"
 
@@ -153,6 +156,7 @@ void QGeoMapGroupObject::addChildObject(QGeoMapObject *childObject)
         return;
 
     childObject->setMapData(mapData());
+    childObject->d_func()->serial = d_func()->serial++;
 
     //binary search
     QList<QGeoMapObject*>::iterator i = qUpperBound(d_ptr->children.begin(),
@@ -185,6 +189,12 @@ void QGeoMapGroupObject::removeChildObject(QGeoMapObject *childObject)
 
         emit childRemoved(childObject);
         childObject->setMapData(0);
+
+        if (this->mapData()) {
+            QGeoMapObjectEngine *oe = this->mapData()->d_ptr->oe;
+            if (oe)
+                oe->removeObject(childObject);
+        }
     }
 
     update();
@@ -208,6 +218,13 @@ void QGeoMapGroupObject::clearChildObjects()
     for (int i = 0; i < d_ptr->children.size(); ++i) {
         emit childRemoved(d_ptr->children[i]);
         d_ptr->children[i]->setMapData(0);
+
+        if (this->mapData()) {
+            QGeoMapObjectEngine *oe = this->mapData()->d_ptr->oe;
+            if (oe)
+                oe->removeObject(d_ptr->children[i]);
+        }
+
         delete d_ptr->children[i];
     }
 
@@ -263,6 +280,7 @@ void QGeoMapGroupObject::setMapData(QGeoMapData *mapData)
 
 QGeoMapGroupObjectPrivate::QGeoMapGroupObjectPrivate(QGeoMapGroupObject *p) :
     QObject(p),
+    serial(1),
     q_ptr(p)
 {}
 

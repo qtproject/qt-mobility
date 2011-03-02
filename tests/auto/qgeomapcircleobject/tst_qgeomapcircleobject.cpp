@@ -42,9 +42,11 @@
 #include "testhelper.h"
 #include <QtTest/QtTest>
 #include <QMetaType>
+#include <QStyleOptionGraphicsItem>
 #include <qgeomapcircleobject.h>
 #include <qgeocoordinate.h>
 #include <qgeoboundingcircle.h>
+#include <qgeomappixmapobject.h>
 #include <qgraphicsgeomap.h>
 #include <qgeoboundingbox.h>
 
@@ -86,6 +88,11 @@ private slots:
     void contains();
     void isSelected();
     void isVisible();
+
+    // QTMOBILITY-1255: Changing z value of map object causes it to break insertion order
+    void qtmobility1255();
+    // QTMOBILITY-1199: Result of QGraphicsGeoMap::mapObjectsInViewport is zoom level dependent
+    void qtmobility1199();
 
 private:
     TestHelper *m_helper;
@@ -416,9 +423,11 @@ void tst_QGeoMapCircleObject::zvalue_data()
     QTest::addColumn<int>("zValue1");
     QTest::addColumn<int>("zValue2");
     QTest::addColumn<int>("zValue3");
-    QTest::newRow("1,2,3") << 1 << 2 << 3;
-    QTest::newRow("3,2,1") << 3 << 2 << 1;
-    QTest::newRow("2,1,3") << 2 << 1 << 3;
+    QTest::addColumn<int>("topIdx");
+    QTest::newRow("1,2,3") << 1 << 2 << 3 << 2;
+    QTest::newRow("1,3,2") << 1 << 3 << 2 << 1;
+    QTest::newRow("3,2,1") << 3 << 2 << 1 << 0;
+    QTest::newRow("2,1,3") << 2 << 1 << 3 << 2;
 }
 
 // public int zValue() const
@@ -428,6 +437,7 @@ void tst_QGeoMapCircleObject::zvalue()
     QFETCH(int, zValue1);
     QFETCH(int, zValue2);
     QFETCH(int, zValue3);
+    QFETCH(int, topIdx);
 
     QGeoCoordinate center(1.0, 1.0, 0);
 
@@ -435,7 +445,15 @@ void tst_QGeoMapCircleObject::zvalue()
     QGeoMapCircleObject* object2 = new QGeoMapCircleObject(center, 1000);
     QGeoMapCircleObject* object3 = new QGeoMapCircleObject(center, 1000);
 
+    QList<QColor> colors;
+    colors << Qt::blue << Qt::red << Qt::green;
+    object1->setBrush(QBrush(colors.at(0)));
+    object2->setBrush(QBrush(colors.at(1)));
+    object3->setBrush(QBrush(colors.at(2)));
+
     QGraphicsGeoMap* map = m_helper->map();
+    map->setCenter(center);
+    map->setZoomLevel(14.0);
 
     map->addMapObject(object1);
     map->addMapObject(object2);
@@ -453,10 +471,25 @@ void tst_QGeoMapCircleObject::zvalue()
     QSignalSpy spy1(object1, SIGNAL(visibleChanged(bool)));
     QSignalSpy spy2(object1, SIGNAL(zValueChanged(int)));
 
-    map->setCenter(center);
+    QPixmap *px[2];
+    QPainter *p[2];
+    for (int i=0; i < 2; i++) {
+        px[i] = new QPixmap(map->size().toSize());
+        p[i] = new QPainter(px[i]);
+    }
+    QStyleOptionGraphicsItem style;
+    style.rect = QRect(QPoint(0,0), map->size().toSize());
+
+    QTest::qWait(10);
+    map->paint(p[0], &style, 0);
 
     QPointF point = map->coordinateToScreenPosition(center);
     qDebug("center = (%f, %f)", point.x(), point.y());
+
+    QRgb col = px[0]->toImage().pixel(int(point.x()), int(point.y()));
+    QCOMPARE(qRed(col), colors.at(2).red());
+    QCOMPARE(qGreen(col), colors.at(2).green());
+    QCOMPARE(qBlue(col), colors.at(2).blue());
 
     QCOMPARE(map->mapObjectsAtScreenPosition(point).size(),3);
 
@@ -475,6 +508,14 @@ void tst_QGeoMapCircleObject::zvalue()
     QCOMPARE(object3->zValue(), zValue3);
     //check if object is there
 
+    QTest::qWait(10);
+    map->paint(p[1], &style, 0);
+
+    col = px[1]->toImage().pixel(int(point.x()), int(point.y()));
+    QCOMPARE(qRed(col), colors.at(topIdx).red());
+    QCOMPARE(qGreen(col), colors.at(topIdx).green());
+    QCOMPARE(qBlue(col), colors.at(topIdx).blue());
+
     QCOMPARE(map->mapObjectsAtScreenPosition(point).size(),3);
 
     QVERIFY(map->mapObjectsAtScreenPosition(point).at(zValue1-1)==object1);
@@ -484,6 +525,11 @@ void tst_QGeoMapCircleObject::zvalue()
     QCOMPARE(spy0.count(), 0);
     QCOMPARE(spy1.count(), 0);
     QCOMPARE(spy2.count(), 1);
+
+    for (int i=0; i < 2; i++) {
+        delete p[i];
+        delete px[i];
+    }
 
 }
 
@@ -613,6 +659,101 @@ void tst_QGeoMapCircleObject::boundingBox()
     QVERIFY2(object->boundingBox().width()>0,"no bounding box");
     QVERIFY2(object->boundingBox().height()>0,"no bounding box");
 
+}
+
+// QTMOBILITY-1255: Changing z value of map object causes it to break insertion order
+void tst_QGeoMapCircleObject::qtmobility1255()
+{
+    QGeoCoordinate center(0,0,0);
+
+    QGeoMapCircleObject *outer = new QGeoMapCircleObject(center, 5000);
+    outer->setZValue(5);
+    outer->setBrush(QBrush(Qt::black));
+    QGeoMapCircleObject *middle = new QGeoMapCircleObject(center, 3500);
+    middle->setZValue(4);
+    middle->setBrush(QBrush(Qt::red));
+    QGeoMapCircleObject *inner = new QGeoMapCircleObject(center, 1000);
+    inner->setZValue(5);
+    inner->setBrush(QBrush(Qt::blue));
+
+    QGraphicsGeoMap *map = m_helper->map();
+
+    map->addMapObject(outer);
+    map->addMapObject(middle);
+    map->addMapObject(inner);
+    map->setCenter(center);
+
+    QList<QGeoMapObject*> list;
+    list = map->mapObjects();
+    QCOMPARE(list.size(), 3);
+
+    QPointF pxCenter = map->coordinateToScreenPosition(center);
+    list = map->mapObjectsAtScreenPosition(pxCenter);
+    QCOMPARE(list.size(), 3);
+    QVERIFY(list.at(0) == middle);
+    QVERIFY(list.at(1) == outer);
+    QVERIFY(list.at(2) == inner);
+
+    middle->setZValue(5);
+    list = map->mapObjectsAtScreenPosition(pxCenter);
+    QCOMPARE(list.size(), 3);
+    QVERIFY(list.at(0) == outer);
+    QVERIFY(list.at(1) == middle);
+    QVERIFY(list.at(2) == inner);
+
+    middle->setZValue(6);
+    list = map->mapObjectsAtScreenPosition(pxCenter);
+    QCOMPARE(list.size(), 3);
+    QVERIFY(list.at(0) == outer);
+    QVERIFY(list.at(1) == inner);
+    QVERIFY(list.at(2) == middle);
+}
+
+
+// QTMOBILITY-1199: Result of QGraphicsGeoMap::mapObjectsInViewport is zoom level dependent
+void tst_QGeoMapCircleObject::qtmobility1199()
+{
+    QGeoCoordinate seattle(47.609722,-122.333056,0);
+    QGeoCoordinate seattle2(47.60981194,-122.33185897);
+    QGeoCoordinate seattle3(47.60972200, -122.33332201);
+
+    QGeoMapCircleObject *obj = new QGeoMapCircleObject(seattle3, 30);
+    QGeoMapCircleObject *obj2 = new QGeoMapCircleObject(seattle2, 120);
+
+    QPixmap pm(20,20);
+    pm.fill(Qt::blue);
+    QPainter p(&pm);
+    p.setPen(QPen(Qt::red));
+    p.drawEllipse(10,10,5,7);
+    QGeoMapPixmapObject *pobj = new QGeoMapPixmapObject(seattle, QPoint(0,0),
+                                                        pm);
+
+    QGraphicsGeoMap *map = m_helper->map();
+    map->setCenter(seattle);
+    map->setZoomLevel(18.0);
+    map->pan(10, 10);
+
+    map->addMapObject(obj);
+    map->addMapObject(obj2);
+    map->addMapObject(pobj);
+
+    for (qreal z = 18.0; z >= 0.0; z -= 1.0) {
+        QPointF coord = map->coordinateToScreenPosition(seattle);
+
+        QList<QGeoMapObject*> list;
+
+        list = map->mapObjectsAtScreenPosition(coord);
+        QCOMPARE(list.size(), 3);
+        QVERIFY(list.at(0) == obj);
+        QVERIFY(list.at(1) == obj2);
+        QVERIFY(list.at(2) == pobj);
+
+        list = map->mapObjectsInViewport();
+        QCOMPARE(list.size(), 3);
+        QVERIFY(list.at(0) == obj);
+        QVERIFY(list.at(1) == obj2);
+        QVERIFY(list.at(2) == pobj);
+    }
 }
 
 QTEST_MAIN(tst_QGeoMapCircleObject)

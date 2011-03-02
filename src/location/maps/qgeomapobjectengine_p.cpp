@@ -112,8 +112,10 @@ QGeoMapObjectEngine::~QGeoMapObjectEngine()
 
     latLonTrans.clear();
     latLonItems.clear();
+    latLonItemsRev.clear();
     pixelTrans.clear();
     pixelItems.clear();
+    pixelItemsRev.clear();
 
     foreach (QGraphicsItem *i, latLonExact.values())
         delete i;
@@ -144,22 +146,24 @@ void QGeoMapObjectEngine::removeObject(QGeoMapObject *object)
             removeObject(child);
     } else {
         QList<QRectF> rectsToUpdate;
-        foreach (QGraphicsItem *item, pixelItems.keys(object))
+        foreach (QGraphicsItem *item, pixelItemsRev.values(object))
             rectsToUpdate << item->boundingRect();
 
         latLonTrans.remove(object);
-        foreach (QGraphicsItem *item, latLonItems.keys(object)) {
+        foreach (QGraphicsItem *item, latLonItemsRev.values(object)) {
             latLonItems.remove(item);
             latLonScene->removeItem(item);
             delete item;
         }
+        latLonItemsRev.remove(object);
 
         pixelTrans.remove(object);
-        foreach (QGraphicsItem *item, pixelItems.keys(object)) {
+        foreach (QGraphicsItem *item, pixelItemsRev.values(object)) {
             pixelItems.remove(item);
             pixelScene->removeItem(item);
             delete item;
         }
+        pixelItemsRev.remove(object);
 
         foreach (QRectF rect, rectsToUpdate)
             mdp->emitUpdateMapDisplay(rect);
@@ -211,8 +215,8 @@ static QPolygonF approximateCircle(QGraphicsEllipseItem *elItem,
 {
     const QRectF rect = elItem->rect();
 
-    const double a = rect.width() / 2.0;
-    const double b = rect.height() / 2.0;
+    const double a = rect.height() / 2.0;
+    const double b = rect.width() / 2.0;
 
     const double asq = a*a;
     const double bsq = b*b;
@@ -267,7 +271,7 @@ static QPolygonF approximateCircle(QGraphicsEllipseItem *elItem,
     }
 
     if (drawToCenter)
-        secPoly << QPointF(projCenter.x() * 3600.0, projCenter.y() * 3600);
+        secPoly << QPointF(projCenter.x() * 3600.0, projCenter.y() * 3600.0);
 
     return secPoly;
 }
@@ -299,7 +303,7 @@ bool QGeoMapObjectEngine::exactMetersToSeconds(const QGeoCoordinate &origin,
         QRectF rect = elItem->rect();
 
         const QPointF cen = rect.center();
-        ProjCoordinate c(cen.x(), cen.y(), 0.0, localSys);
+        ProjCoordinate c(cen.x(), -1*cen.y(), 0.0, localSys);
         c.convert(wgs84);
         const QGeoCoordinate center = c.toGeoCoordinate();
 
@@ -330,6 +334,7 @@ bool QGeoMapObjectEngine::exactMetersToSeconds(const QGeoCoordinate &origin,
         QPolygonF poly = polyItem->polygon() * polyItem->transform();
 
         ProjPolygon p(poly, localSys);
+        p.scalarMultiply(1, -1, 1);
         p.convert(wgs84);
         QPolygonF wgs = p.toPolygonF(3600.0);
 
@@ -360,7 +365,7 @@ bool QGeoMapObjectEngine::exactMetersToSeconds(const QGeoCoordinate &origin,
         for (int i = 0; i < path.elementCount(); ++i) {
             QPainterPath::Element e = path.elementAt(i);
 
-            ProjCoordinate c(e.x, e.y, 0.0, localSys);
+            ProjCoordinate c(e.x, -1*e.y, 0.0, localSys);
             Q_ASSERT(c.convert(wgs84));
 
             path.setElementPositionAt(i, c.x() * 3600.0, c.y() * 3600.0);
@@ -519,7 +524,10 @@ void QGeoMapObjectEngine::bilinearMetersToSeconds(const QGeoCoordinate &origin,
         return;
     }
 
-    latLon = item->transform() * latLon;
+    QTransform flip;
+    flip.scale(1, -1);
+
+    latLon = flip * item->transform() * latLon;
 }
 
 void QGeoMapObjectEngine::bilinearPixelsToSeconds(const QGeoCoordinate &origin,
@@ -576,7 +584,7 @@ void QGeoMapObjectEngine::bilinearSecondsToScreen(const QGeoCoordinate &origin,
         QTransform pixel;
 
         QGraphicsItem *item = object->graphicsItem();
-        QPolygonF local = item->boundingRect();
+        QPolygonF local = (item->boundingRect() | item->childrenBoundingRect());
         QPolygonF latLonPoly = latLon.map(local);
 
         QPolygonF pixelPoly = mdp->polyToScreen(latLonPoly);
@@ -729,6 +737,9 @@ void QGeoMapObjectEngine::pixelShiftToScreen(const QGeoCoordinate &origin,
                                             QGeoMapObject *object,
                                             QList<QPolygonF> &polys)
 {
+    const QRectF localRect = object->graphicsItem()->boundingRect() |
+            object->graphicsItem()->childrenBoundingRect();
+
     // compute the transform as an origin shift
     QList<QPointF> origins;
     origins << QPointF(origin.longitude(), origin.latitude());
@@ -740,7 +751,7 @@ void QGeoMapObjectEngine::pixelShiftToScreen(const QGeoCoordinate &origin,
         QPointF pixelOrigin = mdp->coordinateToScreenPosition(o.x(), o.y());
         pixel.translate(pixelOrigin.x(), pixelOrigin.y());
         pixelTrans.insertMulti(object, pixel);
-        polys << pixel.map(object->graphicsItem()->boundingRect());
+        polys << pixel.map(localRect);
     }
 }
 
@@ -819,12 +830,13 @@ void QGeoMapObjectEngine::trimPixelTransforms()
 
     QSet<QGeoMapObject*> excess = currentlyAre.subtract(shouldBe);
     foreach (QGeoMapObject *object, excess) {
-        foreach (QGraphicsItem *item, pixelItems.keys(object)) {
+        foreach (QGraphicsItem *item, pixelItemsRev.values(object)) {
             pixelScene->removeItem(item);
             pixelItems.remove(item);
             delete item;
         }
         pixelTrans.remove(object);
+        pixelItemsRev.remove(object);
     }
 
     mdp->emitUpdateMapDisplay();
@@ -839,7 +851,7 @@ void QGeoMapObjectEngine::invalidateObject(QGeoMapObject *obj)
     const QRectF view = mdp->latLonViewport().boundingRect();
 
     bool needsPixelUpdate = false;
-    foreach (QGraphicsItem *item, latLonItems.keys(obj)) {
+    foreach (QGraphicsItem *item, latLonItemsRev.values(obj)) {
         if (item->boundingRect().intersects(view)) {
             needsPixelUpdate = true;
             break;
@@ -915,9 +927,9 @@ static void addGroupToScene(QGeoMapObjectEngine *eng, QGeoMapGroupObject *group)
         if (subGroup) {
             addGroupToScene(eng, subGroup);
         } else {
-            foreach (QGraphicsItem *i, eng->latLonItems.keys(object))
+            foreach (QGraphicsItem *i, eng->latLonItemsRev.values(object))
                 eng->latLonScene->addItem(i);
-            foreach (QGraphicsItem *i, eng->pixelItems.keys(object))
+            foreach (QGraphicsItem *i, eng->pixelItemsRev.values(object))
                 eng->pixelScene->addItem(i);
         }
     }
@@ -954,13 +966,13 @@ void QGeoMapObjectEngine::updateLatLonTransform(QGeoMapObject *object)
     if (!item)
         return;
 
-    QRectF localRect = item->boundingRect();
+    QRectF localRect = (item->boundingRect() | item->childrenBoundingRect());
 
     // skip any objects with invalid bounds
     if (!localRect.isValid() || localRect.isEmpty() || localRect.isNull())
         return;
 
-    QPolygonF local = item->boundingRect() * item->transform();
+    QPolygonF local = localRect * item->transform();
     QList<QPolygonF> polys;
 
     latLonTrans.remove(object);
@@ -977,21 +989,21 @@ void QGeoMapObjectEngine::updateLatLonTransform(QGeoMapObject *object)
             bilinearPixelsToSeconds(origin, item, local, latLon);
         }
 
-        polys << latLon.map(object->graphicsItem()->boundingRect());
+        polys << latLon.map(localRect);
         latLonTrans.insertMulti(object, latLon);
 
         QTransform latLonWest;
         latLonWest.translate(360.0 * 3600.0, 0.0);
         latLonWest = latLon * latLonWest;
 
-        polys << latLonWest.map(object->graphicsItem()->boundingRect());
+        polys << latLonWest.map(localRect);
         latLonTrans.insertMulti(object, latLonWest);
 
         QTransform latLonEast;
         latLonEast.translate(-360.0 * 3600.0, 0.0);
         latLonEast = latLon * latLonEast;
 
-        polys << latLonEast.map(object->graphicsItem()->boundingRect());
+        polys << latLonEast.map(localRect);
         latLonTrans.insertMulti(object, latLonEast);
 
     } else if (object->transformType() == QGeoMapObject::ExactTransform) {
@@ -1008,24 +1020,30 @@ void QGeoMapObjectEngine::updateLatLonTransform(QGeoMapObject *object)
         }
     }
 
-    QList<QGraphicsItem*> items = latLonItems.keys(object);
+    QList<QGraphicsItem*> items = latLonItemsRev.values(object);
     if (items.size() != polys.size()) {
         foreach (QGraphicsItem *item, items) {
             latLonScene->removeItem(item);
             latLonItems.remove(item);
             delete item;
         }
+        latLonItemsRev.remove(object);
 
         foreach (QPolygonF poly, polys) {
             QGraphicsItem *item = new QGraphicsPolygonItem(poly);
             //item->setZValue(object->zValue());
             item->setVisible(true);
             latLonItems.insert(item, object);
+            latLonItemsRev.insertMulti(object, item);
             latLonScene->addItem(item);
         }
     } else {
         for (int i = 0; i < polys.size(); ++i) {
             QGraphicsItem *item = items.at(i);
+
+            if (!item)
+                continue;
+
             QGraphicsPolygonItem *pi = dynamic_cast<QGraphicsPolygonItem*>(item);
             Q_ASSERT(pi);
             pi->setPolygon(polys.at(i));
@@ -1043,7 +1061,7 @@ void QGeoMapObjectEngine::updatePixelTransform(QGeoMapObject *object)
     if (!item)
         return;
 
-    QRectF localRect = item->boundingRect();
+    QRectF localRect = (item->boundingRect() | item->childrenBoundingRect());
 
     // skip any objects with invalid bounds
     if (!localRect.isValid() || localRect.isEmpty() || localRect.isNull())
@@ -1062,7 +1080,7 @@ void QGeoMapObjectEngine::updatePixelTransform(QGeoMapObject *object)
         }
     }
 
-    QList<QGraphicsItem*> items = pixelItems.keys(object);
+    QList<QGraphicsItem*> items = pixelItemsRev.values(object);
 
     if (items.size() != polys.size()) {
         foreach (QGraphicsItem *item, items) {
@@ -1070,16 +1088,22 @@ void QGeoMapObjectEngine::updatePixelTransform(QGeoMapObject *object)
             pixelScene->removeItem(item);
             delete item;
         }
+        pixelItemsRev.remove(object);
         foreach (QPolygonF poly, polys) {
             QGraphicsPolygonItem *item = new QGraphicsPolygonItem(poly);
             //item->setZValue(object->zValue());
             item->setVisible(true);
             pixelItems.insert(item, object);
+            pixelItemsRev.insertMulti(object, item);
             pixelScene->addItem(item);
         }
     } else {
         for (int i = 0; i < polys.size(); ++i) {
             QGraphicsItem *item = items.at(i);
+
+            if (!item)
+                continue;
+
             QGraphicsPolygonItem *pi = dynamic_cast<QGraphicsPolygonItem*>(item);
             Q_ASSERT(pi);
             pi->setPolygon(polys.at(i));

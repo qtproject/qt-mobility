@@ -153,6 +153,11 @@ qint64 QLlcpSocketPrivate::bytesAvailable() const
     return 0;
 }
 
+bool QLlcpSocketPrivate::canReadLine() const
+{
+    return false;
+}
+
 bool QLlcpSocketPrivate::waitForReadyRead(int msecs)
 {
     Q_UNUSED(msecs);

@@ -332,7 +332,7 @@ void QDeclarativeGeoMapPixmapObject::error(QNetworkReply::NetworkError error)
 }
 
 /*!
-    \qmlproperty int MapImage::zValue
+    \qmlproperty int MapImage::z
 
     This property holds the z-value of the image.
 

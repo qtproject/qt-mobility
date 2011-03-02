@@ -67,7 +67,8 @@ public slots:
     void addDevice(const QBluetoothDeviceInfo&);
     void on_power_clicked(bool clicked);
     void on_discoverable_clicked(bool clicked);
-
+    void displayPairingMenu(const QPoint &pos);
+    void pairingDone(const QBluetoothAddress&, QBluetoothLocalDevice::Pairing);
 private slots:
     void startScan();
     void scanFinished();

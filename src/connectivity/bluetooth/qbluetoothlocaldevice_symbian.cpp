@@ -268,12 +268,20 @@ void QBluetoothLocalDevicePrivate::requestPairing(const QBluetoothAddress &addre
     // pass q pointer so that adapter gets deleted when q object is deleted. Not optimal though.
     BluetoothSymbianPairingAdapter *pairingAdapter = new BluetoothSymbianPairingAdapter(address,q);
 
-    // create link between these adapter. After pairing has completed we check the status from bluetooth registry
+    // After pairing has completed we emit pairingFinished signal in every case.
+    // earlier we checked pairing status from Symbian Bluetooth registry at this point but it
+    // was not updated and the result was that we emitted wrong pairing status.
     QObject::connect(pairingAdapter, SIGNAL(pairingFinished(const QBluetoothAddress&,QBluetoothLocalDevice::Pairing)),
-        registryAdapter, SLOT(setRemoteDevicePairingStatusFromRegistry()));
+        q, SLOT(_q_pairingFinished(const QBluetoothAddress&,QBluetoothLocalDevice::Pairing)));
     // if pairing status changes then emit pairing finished.
+    // Currently this is used after removing a paired device from Symbian Bluetooth registry
     QObject::connect(registryAdapter, SIGNAL(pairingStatusChanged(const QBluetoothAddress&,QBluetoothLocalDevice::Pairing)),
         q, SLOT(_q_pairingFinished(const QBluetoothAddress&,QBluetoothLocalDevice::Pairing)));
+    // if there are pairing errors, emit them
+    QObject::connect(registryAdapter, SIGNAL(registryHandlingError(int)),
+        q, SLOT((_q_registryError(int))));
+    QObject::connect(pairingAdapter, SIGNAL(pairingError(int)),
+        q, SLOT(_q_pairingError(int)));
 
     switch (pairing) {
     case QBluetoothLocalDevice::Unpaired:
@@ -311,12 +319,23 @@ void QBluetoothLocalDevicePrivate::_q_pairingFinished(const QBluetoothAddress &a
     Q_Q(QBluetoothLocalDevice);
     emit q->pairingFinished(address, pairing);
 }
+void QBluetoothLocalDevicePrivate::_q_registryError(int error)
+{
+    Q_Q(QBluetoothLocalDevice);
+    //TODO Add more errorCodes to LocalDevice api and map them to Symbian errorcodes
+    emit q->error(QBluetoothLocalDevice::UnknownError);
+}
+void QBluetoothLocalDevicePrivate::_q_pairingError(int error)
+{
+    Q_Q(QBluetoothLocalDevice);
+    //TODO Add more errorCodes to LocalDevice api and map them to Symbian errorcodes
+    emit q->error(QBluetoothLocalDevice::PairingError);
+}
 
 QBluetoothLocalDevice::QBluetoothLocalDevice(QObject *parent)
 :   QObject(parent), d_ptr(new QBluetoothLocalDevicePrivate())
 {
     d_ptr->q_ptr = this;
-    qRegisterMetaType<QBluetoothLocalDevice::HostMode>("QBluetoothLocalDevice::HostMode");
     if (this->d_ptr->m_settings == NULL) {
         delete this->d_ptr;
         this->d_ptr = NULL;
@@ -327,7 +346,6 @@ QBluetoothLocalDevice::QBluetoothLocalDevice(const QBluetoothAddress &address, Q
 : QObject(parent), d_ptr(new QBluetoothLocalDevicePrivate())
 {
     d_ptr->q_ptr = this;
-    qRegisterMetaType<QBluetoothLocalDevice::HostMode>("QBluetoothLocalDevice::HostMode");
     if (this->d_ptr->m_settings == NULL || address != this->d_ptr->address()) {
         delete this->d_ptr;
         this->d_ptr = NULL;

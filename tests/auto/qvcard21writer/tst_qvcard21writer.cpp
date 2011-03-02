@@ -122,6 +122,32 @@ void tst_QVCard21Writer::testEncodeVersitProperty_data()
     expectedResult = "N;ENCODING=QUOTED-PRINTABLE:La\\;st;Fi,rst;Mi:ddle;Pr=5Cefix;Suffix\r\n";
     QTest::newRow("N property") << property << expectedResult << codec;
 
+    // Structured N - there was a bug where if two fields had to be escaped,
+    // two ENCODING parameters were added
+    property.setName(QLatin1String("N"));
+    property.setValue(QStringList()
+                      << QLatin1String("La\\st")
+                      << QLatin1String("Fi\\rst")
+                      << QString()
+                      << QString()
+                      << QString());
+    property.setValueType(QVersitProperty::CompoundType);
+    expectedResult = "N;ENCODING=QUOTED-PRINTABLE:La=5Cst;Fi=5Crst;;;\r\n";
+    QTest::newRow("N property, double-encoded") << property << expectedResult << codec;
+
+    // Structured N - one field needs to be encoded in UTF-8 while the other doesn't
+    // correct behaviour is to encode the whole thing in UTF-8
+    property.setName(QLatin1String("N"));
+    property.setValue(QStringList()
+                      << QString::fromUtf8("\xE2\x82\xAC") // euro sign
+                      << QString::fromLatin1("\xA3") // pound sign (upper Latin-1)
+                      << QString()
+                      << QString()
+                      << QString());
+    property.setValueType(QVersitProperty::CompoundType);
+    expectedResult = "N;CHARSET=UTF-8;ENCODING=QUOTED-PRINTABLE:=E2=82=AC;=C2=A3;;;\r\n";
+    QTest::newRow("N property, double-encoded") << property << expectedResult << codec;
+
     // Structured CATEGORIES - escaping should happen for commas, not semicolons
     property.setName(QLatin1String("CATEGORIES"));
     property.setValue(QStringList()

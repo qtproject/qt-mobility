@@ -48,12 +48,16 @@ maemo6|meego {
 
     DBUS_ADAPTORS += \
         nfc/meego/com.nokia.nfc.AccessRequestor.xml \
-        nfc/meego/com.nokia.nfc.LLCPRequestor.xml \
         nfc/meego/com.nokia.nfc.NDEFHandler.xml
 
     # work around bug in Qt
     dbus_interface_source.depends = ${QMAKE_FILE_OUT_BASE}.h
     dbus_adaptor_source.depends = ${QMAKE_FILE_OUT_BASE}.h
+
+    # Link against libdbus until Qt has support for passing file descriptors over DBus.
+    CONFIG += link_pkgconfig
+    DEFINES += DBUS_API_SUBJECT_TO_CHANGE
+    PKGCONFIG += dbus-1
 
     PRIVATE_HEADERS += \
         nfc/qnearfieldmanager_meego_p.h \
@@ -62,7 +66,8 @@ maemo6|meego {
         nfc/qllcpserver_meego_p.h \
         nfc/meego/adapter_interface_p.h \
         nfc/meego/target_interface_p.h \
-        nfc/meego/tag_interface_p.h
+        nfc/meego/tag_interface_p.h \
+        nfc/meego/socketrequestor_p.h
 
     SOURCES += \
         nfc/qnearfieldmanager_meego.cpp \
@@ -71,7 +76,8 @@ maemo6|meego {
         nfc/qllcpserver_meego_p.cpp \
         nfc/meego/adapter_interface.cpp \
         nfc/meego/target_interface.cpp \
-        nfc/meego/tag_interface.cpp
+        nfc/meego/tag_interface.cpp \
+        nfc/meego/socketrequestor.cpp
 
     OTHER_FILES += \
         $$DBUS_INTERFACES \
@@ -158,11 +164,11 @@ contains(nfc_enabled, yes):symbian {
         nfc/symbian/nearfieldtagasyncrequest_symbian.h \
         nfc/symbian/nearfieldtagndefoperationcallback_symbian.h \
         nfc/symbian/nearfieldtagoperationcallback_symbian.h \
-        nfc/symbian/nearfieldtargetoperation_symbian.h \
         nfc/symbian/nearfieldtagndefrequest_symbian.h \
         nfc/symbian/nearfieldtagcommandrequest_symbian.h \
         nfc/symbian/nearfieldtagcommandsrequest_symbian.h \
-        nfc/symbian/debug.h
+        nfc/symbian/debug.h \
+        nfc/symbian/nearfieldtagimplcommon_symbian.h
 
     SOURCES += \
         nfc/qnearfieldmanager_symbian.cpp \
@@ -186,9 +192,11 @@ contains(nfc_enabled, yes):symbian {
         nfc/symbian/nearfieldtagasyncrequest_symbian.cpp \
         nfc/symbian/nearfieldtagndefrequest_symbian.cpp \
         nfc/symbian/nearfieldtagcommandrequest_symbian.cpp \
-        nfc/symbian/nearfieldtagcommandsrequest_symbian.cpp 
+        nfc/symbian/nearfieldtagcommandsrequest_symbian.cpp \
+        nfc/symbian/nearfieldtagimplcommon_symbian.cpp
 
     INCLUDEPATH += $${EPOCROOT}epoc32/include/mw
 
     LIBS += -lnfc -lndef -lndefaccess -lnfcdiscoveryservice -lllcp -lnfctagextension
 }
+

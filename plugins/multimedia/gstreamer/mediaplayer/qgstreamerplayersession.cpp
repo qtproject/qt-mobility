@@ -1026,7 +1026,19 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
             if (qstrcmp(GST_OBJECT_NAME(GST_MESSAGE_SRC(gm)), "source") == 0) {
                 emit invalidMedia();
                 stop();
-                emit error(int(QMediaPlayer::ResourceError), QString::fromUtf8(err->message));
+                // Try and differentiate network related resource errors from the others
+                if (!m_request.url().isRelative() && m_request.url().scheme().compare(QLatin1String("file"), Qt::CaseInsensitive) != 0 ) {
+                    if (err->domain == GST_RESOURCE_ERROR && (
+                        err->code == GST_RESOURCE_ERROR_BUSY ||
+                        err->code == GST_RESOURCE_ERROR_OPEN_READ ||
+                        err->code == GST_RESOURCE_ERROR_READ ||
+                        err->code == GST_RESOURCE_ERROR_SEEK ||
+                        err->code == GST_RESOURCE_ERROR_SYNC)) {
+                            emit error(int(QMediaPlayer::NetworkError), QString::fromUtf8(err->message));
+                    }
+                }
+                else
+                    emit error(int(QMediaPlayer::ResourceError), QString::fromUtf8(err->message));
             } else if (err->domain == GST_STREAM_ERROR
                        && (err->code == GST_STREAM_ERROR_DECRYPT || err->code == GST_STREAM_ERROR_DECRYPT_NOKEY)) {
                 emit invalidMedia();

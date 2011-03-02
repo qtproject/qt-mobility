@@ -46,10 +46,24 @@
 
 #include "qllcpserver.h"
 
+#include <QtDBus/QDBusConnection>
+
+QT_FORWARD_DECLARE_CLASS(QDBusObjectPath)
+QT_FORWARD_DECLARE_CLASS(QDBusVariant)
+
+class AccessRequestorAdaptor;
+class LLCPRequestorAdaptor;
+
 QTM_BEGIN_NAMESPACE
 
-class QLlcpServerPrivate
+class SocketRequestor;
+
+class QLlcpServerPrivate : public QObject
 {
+    Q_OBJECT
+
+    Q_DECLARE_PUBLIC(QLlcpServer)
+
 public:
     QLlcpServerPrivate(QLlcpServer *q);
 
@@ -66,8 +80,29 @@ public:
 
     QLlcpSocket::SocketError serverError() const;
 
+private slots:
+    // com.nokia.nfc.AccessRequestor
+    void AccessFailed(const QDBusObjectPath &targetPath, const QString &error);
+    void AccessGranted(const QDBusObjectPath &targetPath, const QString &accessKind);
+
+    // com.nokia.nfc.LLCPRequestor
+    void Accept(const QDBusVariant &lsap, const QDBusVariant &rsap, int readFd, int writeFd);
+    void Connect(const QDBusVariant &lsap, const QDBusVariant &rsap, int readFd, int writeFd);
+    void Socket(const QDBusVariant &lsap, const QDBusVariant &rsap, int readFd, int writeFd);
+
 private:
     QLlcpServer *q_ptr;
+
+    QDBusConnection m_connection;
+
+    QString m_serviceUri;
+
+    QString m_requestorPath;
+    SocketRequestor *m_socketRequestor;
+
+    QList<QPair<int, int> > m_pendingSockets;
+
+    QLlcpSocket::SocketError m_error;
 };
 
 QTM_END_NAMESPACE

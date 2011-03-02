@@ -74,7 +74,7 @@ ProjCoordinateSystemPrivate::ProjCoordinateSystemPrivate(const ProjCoordinateSys
     char *str = pj_get_def(other.projection, 0);
     projection = pj_init_plus(str);
     Q_ASSERT_X(projection, "pj_init_plus", "invalid projection string");
-    delete str;
+    free(str);
 }
 
 ProjCoordinateSystemPrivate::~ProjCoordinateSystemPrivate()
@@ -119,10 +119,16 @@ ProjCoordinate::ProjCoordinate(double x, double y, double z, const ProjCoordinat
 ProjCoordinate::ProjCoordinate(const ProjCoordinate &other) :
     d(new ProjCoordinatePrivate)
 {
+    *this = other;
+}
+
+ProjCoordinate &ProjCoordinate::operator=(const ProjCoordinate &other)
+{
     d->x = other.d->x;
     d->y = other.d->y;
     d->z = other.d->z;
     d->currentSystem = other.d->currentSystem;
+    return *this;
 }
 
 ProjCoordinate::~ProjCoordinate()
@@ -206,7 +212,9 @@ ProjPolygon::ProjPolygon(const QPolygonF &poly, const ProjCoordinateSystem &syst
 }
 
 ProjPolygon::~ProjPolygon()
-{}
+{
+    delete d;
+}
 
 bool ProjPolygon::convert(const ProjCoordinateSystem &system)
 {
@@ -219,6 +227,16 @@ bool ProjPolygon::convert(const ProjCoordinateSystem &system)
 
     d->currentSystem = system;
     return true;
+}
+
+void ProjPolygon::scalarMultiply(double sx, double sy, double sz)
+{
+    for (int i=0; i<size(); ++i) {
+        ProjCoordinate &c = operator [](i);
+        c.d->x *= sx;
+        c.d->y *= sy;
+        c.d->z *= sz;
+    }
 }
 
 QPolygonF ProjPolygon::toPolygonF(double scale) const

@@ -46,6 +46,7 @@
 
 #include "s60cameraengineobserver.h"    // MCameraEngineObserver
 #include "s60videocapturesession.h"     // TVideoCaptureState
+#include "s60cameraviewfinderengine.h"  // ViewfinderOutputType
 
 #include <e32base.h>
 #include <fbs.h>
@@ -67,14 +68,6 @@ class QTimer;
 class S60CameraControl : public QCameraControl, public MCameraEngineObserver
 {
     Q_OBJECT
-
-public: // Enums
-
-    enum ViewfinderOutputType {
-        VideoWidgetOutput,
-        VideoRendererOutput,
-        VideoWindowOutput
-    };
 
 public: // Constructors & Destructor
 
@@ -122,7 +115,9 @@ public: // Internal
     int selectedDevice() const;
     void setSelectedDevice(const int index);
 
-    void setVideoOutput(QObject *output, ViewfinderOutputType type);
+    void setVideoOutput(QObject *output,
+                        const S60CameraViewfinderEngine::ViewfinderOutputType type);
+    void releaseVideoOutput(const S60CameraViewfinderEngine::ViewfinderOutputType type);
 
 private Q_SLOTS: // Internal Slots
 
@@ -151,7 +146,7 @@ private: // Internal
     void startCamera();
     void stopCamera();
 
-    void resetCamera();
+    void resetCamera(bool errorHandling = false);
     void setCameraHandles();
 
 Q_SIGNALS: // Internal Signals

@@ -46,15 +46,23 @@
 
 #include "qllcpsocket.h"
 
+#ifndef QPRIVATELINEARBUFFER_BUFFERSIZE
+#define QPRIVATELINEARBUFFER_BUFFERSIZE Q_INT64_C(16384)
+#endif
+#include "../qprivatelinearbuffer_p.h"
+
 #include <QtDBus/QDBusConnection>
 
 QT_FORWARD_DECLARE_CLASS(QDBusObjectPath)
 QT_FORWARD_DECLARE_CLASS(QDBusVariant)
+QT_FORWARD_DECLARE_CLASS(QSocketNotifier)
 
 class AccessRequestorAdaptor;
 class LLCPRequestorAdaptor;
 
 QTM_BEGIN_NAMESPACE
+
+class SocketRequestor;
 
 class QLlcpSocketPrivate : public QObject
 {
@@ -64,6 +72,8 @@ class QLlcpSocketPrivate : public QObject
 
 public:
     QLlcpSocketPrivate(QLlcpSocket *q);
+    QLlcpSocketPrivate(const QDBusConnection &connection, int readFd, int writeFd);
+    ~QLlcpSocketPrivate();
 
     void connectToService(QNearFieldTarget *target, const QString &serviceUri);
     void disconnectFromService();
@@ -88,7 +98,8 @@ public:
     qint64 readData(char *data, qint64 maxlen);
     qint64 writeData(const char *data, qint64 len);
 
-    bool bytesAvailable() const;
+    qint64 bytesAvailable() const;
+    bool canReadLine() const;
 
     bool waitForReadyRead(int msecs);
     bool waitForBytesWritten(int msecs);
@@ -98,23 +109,33 @@ public:
 private slots:
     // com.nokia.nfc.AccessRequestor
     void AccessFailed(const QDBusObjectPath &targetPath, const QString &error);
-    void AccessGranted(const QDBusObjectPath &targetPath, const QStringList &accessKind);
+    void AccessGranted(const QDBusObjectPath &targetPath, const QString &accessKind);
 
     // com.nokia.nfc.LLCPRequestor
-    void Accept(const QDBusObjectPath &targetPath, const QDBusVariant &lsap,
-                const QDBusVariant &rsap, int fd);
-    void Connect(const QDBusObjectPath &targetPath, const QDBusVariant &lsap,
-                 const QDBusVariant &rsap, int fd);
-    void Socket(const QDBusObjectPath &targetPath, const QDBusVariant &lsap,
-                const QDBusVariant &rsap, int fd);
+    void Accept(const QDBusVariant &lsap, const QDBusVariant &rsap, int readFd, int writeFd);
+    void Connect(const QDBusVariant &lsap, const QDBusVariant &rsap, int readFd, int writeFd);
+    void Socket(const QDBusVariant &lsap, const QDBusVariant &rsap, int readFd, int writeFd);
+
+    void _q_readNotify();
 
 private:
     QLlcpSocket *q_ptr;
+    QPrivateLinearBuffer buffer;
 
     QDBusConnection m_connection;
 
-    AccessRequestorAdaptor *m_accessRequestor;
-    LLCPRequestorAdaptor *m_llcpRequestor;
+    QString m_serviceUri;
+
+    QString m_requestorPath;
+
+    SocketRequestor *m_socketRequestor;
+
+    int m_readFd;
+    int m_writeFd;
+    QSocketNotifier *m_readNotifier;
+
+    QLlcpSocket::SocketState m_state;
+    QLlcpSocket::SocketError m_error;
 };
 
 QTM_END_NAMESPACE

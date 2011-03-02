@@ -106,6 +106,11 @@ contains(qmf_enabled,yes)|wince*|win32|symbian|maemo5|maemo6 {
 
             # MessagingEx lives in tests for some reason
             maemo5|maemo6:SUBDIRS += ../tests/messagingex
+
+            contains(QT_CONFIG, declarative) {
+                SUBDIRS += \
+                    declarative-messages
+            }
          }
     }
 }
@@ -142,14 +147,16 @@ contains(mobility_modules, feedback) {
 }
 
 # Connectivity
-contains(mobility_modules,connectivity) {
-    SUBDIRS += connectivity
-}
-
-# Connectivity
 contains(mobility_modules,connectivity):!win32 {
-    SUBDIRS += btscanner btchat btfiletransfer bttennis
-    contains(QT_CONFIG, declarative):SUBDIRS += declarative-bluetooth
+    SUBDIRS += \
+        annotatedurl \
+        btchat \
+        btfiletransfer \
+        btscanner \
+        bttennis \
+        ndefeditor
+
+    contains(QT_CONFIG, declarative):SUBDIRS += declarative-connectivity
 }
 
 sources.path = $$QT_MOBILITY_EXAMPLES

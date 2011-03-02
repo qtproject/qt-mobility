@@ -52,6 +52,7 @@
 QTM_USE_NAMESPACE
 
 Q_DECLARE_METATYPE(QBluetoothDeviceInfo)
+Q_DECLARE_METATYPE(QBluetoothServiceDiscoveryAgent::Error)
 
 // Maximum time to for bluetooth device scan
 const int MaxScanTime = 5 * 60 * 1000;  // 5 minutes in ms
@@ -91,7 +92,7 @@ tst_QBluetoothServiceDiscoveryAgent::tst_QBluetoothServiceDiscoveryAgent()
     qRegisterMetaType<QBluetoothServiceInfo>("QBluetoothServiceInfo");
     qRegisterMetaType<QList<QBluetoothUuid> >("QList<QBluetoothUuid>");
     qRegisterMetaType<QBluetoothServiceDiscoveryAgent::Error>("QBluetoothServiceDiscoveryAgent::Error");
-    qRegisterMetaType<QBluetoothServiceDiscoveryAgent::Error>("QBluetoothDeviceDiscoveryAgent::Error");
+    qRegisterMetaType<QBluetoothDeviceDiscoveryAgent::Error>("QBluetoothDeviceDiscoveryAgent::Error");
 }
 
 tst_QBluetoothServiceDiscoveryAgent::~tst_QBluetoothServiceDiscoveryAgent()
@@ -226,19 +227,22 @@ void tst_QBluetoothServiceDiscoveryAgent::tst_serviceDiscovery_data()
 
     QTest::addColumn<QBluetoothDeviceInfo>("deviceInfo");
     QTest::addColumn<QList<QBluetoothUuid> >("uuidFilter");
+    QTest::addColumn<QBluetoothServiceDiscoveryAgent::Error>("serviceDiscoveryError");
 
     // Only need to test the first 5 live devices
     int max = 5;
     foreach (const QBluetoothDeviceInfo &info, devices) {
         if(info.isCached())
             continue;
-        QTest::newRow("default filter") << info << QList<QBluetoothUuid>();
+        QTest::newRow("default filter") << info << QList<QBluetoothUuid>()
+            << QBluetoothServiceDiscoveryAgent::NoError;
         if(!--max)
             break;
         //QTest::newRow("public browse group") << info << (QList<QBluetoothUuid>() << QBluetoothUuid::PublicBrowseGroup);
         //QTest::newRow("l2cap") << info << (QList<QBluetoothUuid>() << QBluetoothUuid::L2cap);
     }
-    QTest::newRow("all devices") << QBluetoothDeviceInfo() << QList<QBluetoothUuid>();
+    QTest::newRow("all devices") << QBluetoothDeviceInfo() << QList<QBluetoothUuid>()
+        << QBluetoothServiceDiscoveryAgent::NoError;
 }
 
 
@@ -249,6 +253,7 @@ void tst_QBluetoothServiceDiscoveryAgent::tst_serviceDiscovery()
 
     QFETCH(QBluetoothDeviceInfo, deviceInfo);
     QFETCH(QList<QBluetoothUuid>, uuidFilter);
+    QFETCH(QBluetoothServiceDiscoveryAgent::Error, serviceDiscoveryError);
 
     qDebug() << "Doing address" << deviceInfo.address().toString();
     QBluetoothServiceDiscoveryAgent discoveryAgent(deviceInfo.address());
@@ -283,6 +288,10 @@ void tst_QBluetoothServiceDiscoveryAgent::tst_serviceDiscovery()
     }
     qDebug() << "Scan time left:" << scanTime;
 
+    QVERIFY(discoveryAgent.error() == serviceDiscoveryError);
+    qDebug()<<discoveryAgent.errorString();
+    QVERIFY(discoveryAgent.errorString() == QString());
+
     // Expect finished signal with no error
     QVERIFY(finishedSpy.count() == 1);
     QVERIFY(errorSpy.isEmpty());
@@ -311,6 +320,13 @@ void tst_QBluetoothServiceDiscoveryAgent::tst_serviceDiscovery()
 #endif
         }
     }
+
+    QVERIFY(discoveryAgent.discoveredServices().count() != 0);
+    discoveryAgent.clear();
+    QVERIFY(discoveryAgent.discoveredServices().count() == 0);
+
+    discoveryAgent.stop();
+    QVERIFY(!discoveryAgent.isActive());
 }
 
 QTEST_MAIN(tst_QBluetoothServiceDiscoveryAgent)

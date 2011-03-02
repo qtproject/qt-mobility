@@ -150,23 +150,12 @@ CBTDeviceArray* BluetoothSymbianRegistryAdapter::createDeviceArrayL() const
     return q_check_ptr(new CBTDeviceArray(10));
 }
 
-void BluetoothSymbianRegistryAdapter::setRemoteDevicePairingStatusFromRegistry()
-{
-    QBluetoothLocalDevice::Pairing currentPairingStatus = remoteDevicePairingStatus();
-    // check current pairing status from Symbian Bluetooth registry
-    if (currentPairingStatus != m_pairingStatus) {
-        m_pairingStatus = currentPairingStatus;
-        emit pairingStatusChanged(m_address, m_pairingStatus);
-    }
-    else
-        currentPairingStatus = m_pairingStatus;
-}
-
 void BluetoothSymbianRegistryAdapter::removePairing()
 {
     // setup current values
     int errorCode = 0;
-
+    //setup current status so that we emit correct signal when done.
+    m_pairingStatus = QBluetoothLocalDevice::Unpaired;
     // Spesify search criteria
     TBTRegistrySearch searchCriteria;
     TBTDevAddr btAddress(m_address.toUInt64());
@@ -189,7 +178,7 @@ void BluetoothSymbianRegistryAdapter::HandleDevManComplete( TInt aErr )
     if (aErr != KErrNone)
         emit registryHandlingError(aErr);
 
-    emit operationFinished(m_address);
+    emit pairingStatusChanged(m_address, m_pairingStatus);
 
 }
 

@@ -60,6 +60,8 @@
 
 
 #include <gst/gst.h>
+#include "qabstractgstbufferpool.h"
+
 class QGstXvImageBufferPool;
 
 struct QGstXvImageBuffer {
@@ -78,17 +80,21 @@ struct QGstXvImageBuffer {
 
 Q_DECLARE_METATYPE(XvImage*)
 
-class QGstXvImageBufferPool : public QObject {
+class QGstXvImageBufferPool : public QObject, public QAbstractGstBufferPool {
 Q_OBJECT
 friend class QGstXvImageBuffer;
 public:
     QGstXvImageBufferPool(QObject *parent = 0);
     virtual ~QGstXvImageBufferPool();
 
-    bool isFormatSupported(const QVideoSurfaceFormat &format);
+    bool isFormatSupported(const QVideoSurfaceFormat &format) const;
 
-    QGstXvImageBuffer *takeBuffer(const QVideoSurfaceFormat &format, GstCaps *caps);
+    GType bufferType() const;
+    GstBuffer *takeBuffer(const QVideoSurfaceFormat &format, GstCaps *caps);
     void clear();
+
+    QAbstractVideoBuffer::HandleType handleType() const;
+    QAbstractVideoBuffer *prepareVideoBuffer(GstBuffer *buffer, int bytesPerLine);
 
 private slots:
     void queuedAlloc();

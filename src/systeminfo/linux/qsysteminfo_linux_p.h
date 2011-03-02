@@ -147,15 +147,12 @@ class QSystemDisplayInfoPrivate : public QSystemDisplayInfoLinuxCommonPrivate
     Q_OBJECT
 
 public:
-    float contrast(int screen);
-    int getDPIWidth(int screen);
-    int getDPIHeight(int screen);
-    int physicalHeight(int screen);
-    int physicalWidth(int screen);
-    QSystemDisplayInfo::BacklightState backlightStatus(int screen); //1.2
-
     QSystemDisplayInfoPrivate(QSystemDisplayInfoLinuxCommonPrivate *parent = 0);
     virtual ~QSystemDisplayInfoPrivate();
+
+    float contrast(int screen);
+
+    QSystemDisplayInfo::BacklightState backlightStatus(int screen); //1.2
 
     static QSystemDisplayInfoPrivate *instance() {return self;}
 
@@ -232,6 +229,8 @@ public:
     bool setScreenSaverInhibit();
     bool isScreenLockEnabled();
     bool isScreenSaverActive();
+
+    void setScreenSaverInhibited(bool on);
 
 private:
     QString screenPath;

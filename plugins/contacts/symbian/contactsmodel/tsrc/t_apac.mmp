@@ -16,7 +16,7 @@
 */
 
 
-target          t_apac.exe
+TARGET          t_apac.exe
 targettype      EXE
 CAPABILITY   ReadUserData WriteUserData
 UID		0x1000097a
@@ -30,6 +30,6 @@ userinclude 	../inc
 source          t_apac.cpp
 source		t_utils2.cpp
 
-library         euser.lib  cntmodel.lib efsrv.lib bafl.lib pimtestclient.lib
+LIBRARY         euser.lib  cntmodel.lib efsrv.lib bafl.lib pimtestclient.lib
 
 SMPSAFE

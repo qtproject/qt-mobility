@@ -376,7 +376,7 @@ void tst_QGalleryTrackerResultSet::query()
     QCOMPARE(resultSet.metaData(4), QVariant(QLatin1String("000")));
     QCOMPARE(resultSet.metaData(5), QVariant(QLatin1String("query")));
     QCOMPARE(resultSet.metaData(6), QVariant(QLatin1String("|000")));
-    QCOMPARE(resultSet.metaData(7), QVariant(QLatin1String("000")));
+    QCOMPARE(resultSet.metaData(7), QVariant(QLatin1String("a-000")));
     QCOMPARE(resultSet.metaData(8), QVariant());
     QCOMPARE(resultSet.resources(), QList<QGalleryResource>());
 
@@ -411,7 +411,7 @@ void tst_QGalleryTrackerResultSet::query()
     QCOMPARE(resultSet.metaData(4), QVariant(QLatin1String("015")));
     QCOMPARE(resultSet.metaData(5), QVariant(QLatin1String("query")));
     QCOMPARE(resultSet.metaData(6), QVariant(QLatin1String("a|015")));
-    QCOMPARE(resultSet.metaData(7), QVariant(QLatin1String("015")));
+    QCOMPARE(resultSet.metaData(7), QVariant());
     QCOMPARE(resultSet.metaData(8), QVariant());
     {
         QMap<int, QVariant> attributes;

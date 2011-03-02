@@ -123,7 +123,7 @@ private:
 
 #ifdef QTM_SYMBIAN_BLUETOOTH
     void startL(const QBluetoothAddress &address);
-    void initAgentL(const QBluetoothAddress &address);
+    void initL(const QBluetoothAddress &address);
 #elif !defined(QT_NO_DBUS)
     QVariant readAttributeValue(QXmlStreamReader &xml);
 #endif

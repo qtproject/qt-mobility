@@ -30,7 +30,7 @@
 
 /*!
     \group location
-    \title Location API
+    \title Location Classes
 
     The Location API provides a library for location positioning, landmark
     management, and mapping and navigation.
@@ -39,7 +39,8 @@
 /*!
 \page location-overview.html
 
-\title Location
+\title Location API
+
 \brief The Location API provides a library for location positioning, landmark management
 and mapping and navigation.
 

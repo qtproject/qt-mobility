@@ -77,11 +77,11 @@ SOURCES += tst_qdeclarativecontact.cpp \
 
 include(../../../plugins/declarative/common/dynamicproperties.pri)
 
-symbian: {
-    importFiles.sources = data
-    importFiles.path = .
-    DEPLOYMENT = importFiles
-} else {
-    DEFINES += SRCDIR=\\\"$$PWD\\\"
-}
-
+# reserved for future use
+#symbian: {
+#    importFiles.sources = data
+#    importFiles.path = .
+#    DEPLOYMENT = importFiles
+#} else {
+#    DEFINES += SRCDIR=\\\"$$PWD\\\"
+#}

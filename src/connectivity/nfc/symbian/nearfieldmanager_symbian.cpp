@@ -47,7 +47,7 @@
 #include <ndefmessage.h>
 #include "debug.h"
 
-/*!
+/*
     \class CNearFieldManager
     \brief The Symbain class provides symbian backend implementation to access NFC service.
 
@@ -57,21 +57,17 @@
     A Symbian implementation class to support symbian NFC backend.
 */
 
-/*!
+/*
     Constructs a CNearFieldManager.
 */
 void CNearFieldManager::ConstructL()
     {
     BEGIN
     User::LeaveIfError(iServer.Open());
-
-    //create LLCP provider api
-    iLlcpProvider = CLlcpProvider::NewL( iServer );
-    iLlcpProvider->AddLlcpLinkListenerL( *this );
     END
     }
 
-/*!
+/*
     Start listening all type tags.
 */
 void CNearFieldManager::StartTargetDetectionL(const QList<QNearFieldTarget::Type> &aTargetTypes)
@@ -128,9 +124,23 @@ void CNearFieldManager::StartTargetDetectionL(const QList<QNearFieldTarget::Type
                     iTagSubscription->AddConnectionModeL( TNfcConnectionInfo::ENfcType3 );
                     iTagSubscription->AddConnectionModeL( TNfcConnectionInfo::ENfc14443P4 );
                     iTagSubscription->AddConnectionModeL( TNfcConnectionInfo::ENfcMifareStd );
+                    if (!iLlcpProvider)
+                        {
+                        //create LLCP provider api
+                        iLlcpProvider = CLlcpProvider::NewL( iServer );
+                        iLlcpProvider->AddLlcpLinkListenerL( *this );
+                        }
                     break;
                 case QNearFieldTarget::ProprietaryTag:
                     //No conterpart in symbian api
+                    break;
+                case QNearFieldTarget::NfcForumDevice:
+                    if (!iLlcpProvider)
+                        {
+                        //create LLCP provider api
+                        iLlcpProvider = CLlcpProvider::NewL( iServer );
+                        iLlcpProvider->AddLlcpLinkListenerL( *this );
+                        }
                     break;
                 default:
                     break;
@@ -141,7 +151,7 @@ void CNearFieldManager::StartTargetDetectionL(const QList<QNearFieldTarget::Type
     END
     }
 
-/*!
+/*
     Stop listening all type tags.
 */
 void CNearFieldManager::stopTargetDetection()
@@ -160,6 +170,13 @@ void CNearFieldManager::stopTargetDetection()
         delete iNfcTagDiscovery;
         iNfcTagDiscovery = NULL;
         }
+    if (iLlcpProvider)
+        {
+        iLlcpProvider->RemoveLlcpLinkListener();
+        delete iLlcpProvider;
+        iLlcpProvider = NULL;
+        }
+
     END
     }
 
@@ -191,7 +208,7 @@ CNdefRecord::TNdefRecordTnf CNearFieldManager::QTnf2CTnf(const QtMobility::QNdef
     return ret;
     }
 
-/*!
+/*
     Register interested TNF NDEF message to NFC server.
 */
 TInt CNearFieldManager::AddNdefSubscription( const QNdefRecord::TypeNameFormat aTnf,
@@ -221,7 +238,7 @@ TInt CNearFieldManager::AddNdefSubscription( const QNdefRecord::TypeNameFormat a
     return err;
     }
 
-/*!
+/*
     Unregister interested TNF NDEF message to NFC server.
 */
 void CNearFieldManager::RemoveNdefSubscription( const QNdefRecord::TypeNameFormat aTnf,
@@ -236,7 +253,7 @@ void CNearFieldManager::RemoveNdefSubscription( const QNdefRecord::TypeNameForma
     END
     }
 
-/*!
+/*
     Callback function when the tag found by NFC symbain services.
 */
 void CNearFieldManager::TagDetected( MNfcTag* aNfcTag )
@@ -252,7 +269,7 @@ void CNearFieldManager::TagDetected( MNfcTag* aNfcTag )
     END
     }
 
-/*!
+/*
     Callback function when the tag lost event found by NFC symbain services.
 */
 void CNearFieldManager::TagLost()
@@ -264,7 +281,7 @@ void CNearFieldManager::TagLost()
     END
     }
 
-/*!
+/*
     Callback function when the LLCP peer found by NFC symbain services.
 */
 void CNearFieldManager::LlcpRemoteFound()
@@ -281,7 +298,7 @@ void CNearFieldManager::LlcpRemoteFound()
     END
     }
 
-/*!
+/*
     Callback function when the LLCP peer lost event found by NFC symbain services.
 */
 void CNearFieldManager::LlcpRemoteLost()
@@ -293,7 +310,7 @@ void CNearFieldManager::LlcpRemoteLost()
     END
     }
 
-/*!
+/*
     Callback function when the registerd NDEF message found by NFC symbain services.
 */
 void CNearFieldManager::MessageDetected( CNdefMessage* aMessage )
@@ -314,7 +331,7 @@ void CNearFieldManager::MessageDetected( CNdefMessage* aMessage )
     END
     }
 
-/*!
+/*
     New a CNearFieldManager instance.
 */
 CNearFieldManager::CNearFieldManager( QtMobility::QNearFieldManagerPrivateImpl& aCallback)
@@ -322,7 +339,7 @@ CNearFieldManager::CNearFieldManager( QtMobility::QNearFieldManagerPrivateImpl& 
     {
     }
 
-/*!
+/*
     Create a new instance of this class.
 */
 CNearFieldManager* CNearFieldManager::NewL( QtMobility::QNearFieldManagerPrivateImpl& aCallback)
@@ -336,7 +353,7 @@ CNearFieldManager* CNearFieldManager::NewL( QtMobility::QNearFieldManagerPrivate
     return self;
     }
 
-/*!
+/*
     Destructor.
 */
 CNearFieldManager::~CNearFieldManager()

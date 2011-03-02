@@ -49,34 +49,6 @@
 
 QTM_BEGIN_NAMESPACE
 
-/*!
-    \class QTlvReader
-    \brief The QTlvReader class provides a TLV parser.
-
-    \ingroup connectivity-nfc
-    \inmodule QtConnectivity
-
-    \internal
-
-    QTlvReader can parse TLV data from either a QByteArray or directly from a QNearFieldTarget.
-
-    TLV stands for Tag, Length, Value and is a common structure for storing data in near field
-    targets.
-
-    The following code shows how to use QTlvReader to extract NDEF messages from a near field
-    target.
-
-    \code
-    QTlvReader reader(target);
-    while (!reader.atEnd()) {
-        reader.readNext();
-
-        if (reader.tag() == 0x03)
-            QNdefMessage ndefMessage = QNdefMessage::fromByteArray(reader.data());
-    }
-    \endcode
-*/
-
 QPair<int, int> qParseReservedMemoryControlTlv(const QByteArray &tlvData)
 {
     quint8 position = tlvData.at(0);
@@ -118,9 +90,6 @@ QPair<int, int> qParseLockControlTlv(const QByteArray &tlvData)
     return qMakePair(byteAddress, size);
 }
 
-/*!
-    Constructs a new TLV reader for \a target.
-*/
 QTlvReader::QTlvReader(QNearFieldTarget *target)
 :   m_target(target), m_index(-1)
 {
@@ -132,18 +101,11 @@ QTlvReader::QTlvReader(QNearFieldTarget *target)
     }
 }
 
-/*!
-    Constructs a new TLV reader for \a data.
-*/
 QTlvReader::QTlvReader(const QByteArray &data)
 :   m_target(0), m_rawData(data), m_index(-1)
 {
 }
 
-/*!
-    Add reserved memory area from \a offset of \a length bytes.  The parser will skip over reserved
-    memory areas.
-*/
 void QTlvReader::addReservedMemory(int offset, int length)
 {
     m_reservedMemory.insert(offset, length);
@@ -172,9 +134,6 @@ QNearFieldTarget::RequestId QTlvReader::requestId() const
     return m_requestId;
 }
 
-/*!
-    Returns true if the TLV reader is at the end of the list of TLVs; otherwise returns false.
-*/
 bool QTlvReader::atEnd() const
 {
     if (m_index == -1)
@@ -238,17 +197,11 @@ bool QTlvReader::readNext()
     return true;
 }
 
-/*!
-    Returns the tag of the current TLV.
-*/
 quint8 QTlvReader::tag() const
 {
     return m_tlvData.at(m_index);
 }
 
-/*!
-    Returns the length of the data of the current TLV. Returns -1 if a parse error occurs.
-*/
 int QTlvReader::length()
 {
     if (tag() == 0x00 || tag() == 0xfe)
@@ -275,9 +228,6 @@ int QTlvReader::length()
     return longLength;
 }
 
-/*!
-    Returns the data of the current TLV.
-*/
 QByteArray QTlvReader::data()
 {
     int tlvLength = length();
@@ -290,9 +240,6 @@ QByteArray QTlvReader::data()
     return m_tlvData.mid(dataOffset, tlvLength);
 }
 
-/*!
-    Reads more data until \a sparseOffset is available in m_data.
-*/
 bool QTlvReader::readMoreData(int sparseOffset)
 {
     while (sparseOffset >= m_tlvData.length()) {
@@ -336,9 +283,6 @@ bool QTlvReader::readMoreData(int sparseOffset)
     return true;
 }
 
-/*!
-    Returns the absoluate offset for \a sparseOffset, taking all reserved memory into account.
-*/
 int QTlvReader::absoluteOffset(int sparseOffset) const
 {
     int absoluteOffset = sparseOffset;

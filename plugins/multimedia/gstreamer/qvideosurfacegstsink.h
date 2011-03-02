@@ -53,6 +53,8 @@
 #include <qvideoframe.h>
 #include <qabstractvideobuffer.h>
 
+#include "qabstractgstbufferpool.h"
+
 QT_BEGIN_NAMESPACE
 class QAbstractVideoSurface;
 QT_END_NAMESPACE
@@ -67,6 +69,7 @@ class QVideoSurfaceGstDelegate : public QObject
     Q_OBJECT
 public:
     QVideoSurfaceGstDelegate(QAbstractVideoSurface *surface);
+    ~QVideoSurfaceGstDelegate();
 
     QList<QVideoFrame::PixelFormat> supportedPixelFormats(
             QAbstractVideoBuffer::HandleType handleType = QAbstractVideoBuffer::NoHandle) const;
@@ -78,6 +81,9 @@ public:
 
     bool isActive();
 
+    QAbstractGstBufferPool *pool() { return m_pool; }
+    QMutex *poolMutex() { return &m_poolMutex; }
+
     GstFlowReturn render(GstBuffer *buffer);
 
 private slots:
@@ -85,12 +91,16 @@ private slots:
     void queuedStop();
     void queuedRender();
 
-    void supportedFormatsChanged();
+    void updateSupportedFormats();
 
 private:
     QPointer<QAbstractVideoSurface> m_surface;
     QList<QVideoFrame::PixelFormat> m_supportedPixelFormats;
-    QList<QVideoFrame::PixelFormat> m_supportedXVideoPixelFormats;
+    //pixel formats of buffers pool native type
+    QList<QVideoFrame::PixelFormat> m_supportedPoolPixelFormats;
+    QAbstractGstBufferPool *m_pool;
+    QList<QAbstractGstBufferPool *> m_pools;
+    QMutex m_poolMutex;
     QMutex m_mutex;
     QWaitCondition m_setupCondition;
     QWaitCondition m_renderCondition;
@@ -136,10 +146,6 @@ private:
 
 private:
     QVideoSurfaceGstDelegate *delegate;
-
-#if defined(Q_WS_X11) && !defined(QT_NO_XVIDEO)
-    QGstXvImageBufferPool *pool;
-#endif
 
     GstCaps *lastRequestedCaps;
     GstCaps *lastBufferCaps;

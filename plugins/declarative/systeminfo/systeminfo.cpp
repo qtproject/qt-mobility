@@ -48,6 +48,7 @@
 #include "qdeclarativegeneralinfo_p.h"
 #include "qdeclarativebatteryinfo_p.h"
 #include "qdeclarativedisplayinfo_p.h"
+#include "qdeclarativealignedtimer_p.h"
 
 #include "qsysteminfo.h"
 QT_BEGIN_NAMESPACE
@@ -63,7 +64,6 @@ QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QSystemStorageInfo));
 QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeNetworkInfo));
 QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeBatteryInfo));
 QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QSystemAlignedTimer));
-
 class QSystemInfoDeclarativeModule : public QDeclarativeExtensionPlugin
 {
     Q_OBJECT

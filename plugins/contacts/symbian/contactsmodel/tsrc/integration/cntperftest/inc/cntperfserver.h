@@ -26,7 +26,7 @@
 
 #ifndef __CNT_PERF_SERVER_H__
 #define __CNT_PERF_SERVER_H__
-#include <testexecuteserverbase.h>
+#include <test/testexecuteserverbase.h>
 
 class CCntPerfServer : public CTestServer
 	{

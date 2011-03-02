@@ -267,7 +267,7 @@ bool QBluetoothSocket::isSequential() const
 qint64 QBluetoothSocket::bytesAvailable() const
 {
     Q_D(const QBluetoothSocket);
-    return QIODevice::bytesAvailable() + d->buffer.size();
+    return QIODevice::bytesAvailable() + d->bytesAvailable();
 }
 
 /*!
