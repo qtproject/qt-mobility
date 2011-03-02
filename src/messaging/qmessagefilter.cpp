@@ -287,6 +287,14 @@ bool QMessageFilter::operator!=(const QMessageFilter& other) const
 */
 
 /*!
+    \fn QMessageFilter::bySubject(const QString &pattern, QMessageDataComparator::LikeComparator cmp)
+
+    Returns a filter matching messages whose subject matches \a pattern, according to \a cmp.
+
+    \sa QMessage::subject()
+*/
+
+/*!
     \fn QMessageFilter::bySubject(const QString &pattern, QMessageDataComparator::EqualityComparator cmp)
 
     Returns a filter matching messages whose subject matches \a pattern, according to \a cmp.
@@ -437,25 +445,7 @@ bool QMessageFilter::operator!=(const QMessageFilter& other) const
 /*!
     \fn QMessageFilter::byTo(const QString &pattern, QMessageDataComparator::LikeComparator cmp)
 
-    Returns a filter matching messages whose recipients include the substring \a pattern,
-    according to \a cmp.
-
-    \sa QMessage::to(), QMessage::cc(), QMessage::bcc()
-*/
-
-/*!
-    \fn QMessageFilter::byTo(const QString &value, QMessageDataComparator::InclusionComparator cmp)
-
-    Returns a filter matching messages whose recipients include the substring \a value,
-    according to \a cmp.
-
-    \sa QMessage::to(), QMessage::cc(), QMessage::bcc()
-*/
-
-/*!
-    \fn QMessageFilter::byTo(const QString &value, QMessageDataComparator::EqualityComparator cmp)
-
-    Returns a filter matching messages whose recipients include the substring \a value,
+    Returns a filter matching messages whose to recipients include the substring \a pattern,
     according to \a cmp.
 
     \sa QMessage::to(), QMessage::cc(), QMessage::bcc()
@@ -464,25 +454,7 @@ bool QMessageFilter::operator!=(const QMessageFilter& other) const
 /*!
     \fn QMessageFilter::byCc(const QString &pattern, QMessageDataComparator::LikeComparator cmp)
 
-    Returns a filter matching messages whose recipients include the substring \a pattern,
-    according to \a cmp.
-
-    \sa QMessage::to(), QMessage::cc(), QMessage::bcc()
-*/
-
-/*!
-    \fn QMessageFilter::byCc(const QString &value, QMessageDataComparator::InclusionComparator cmp)
-
-    Returns a filter matching messages whose recipients include the substring \a value,
-    according to \a cmp.
-
-    \sa QMessage::to(), QMessage::cc(), QMessage::bcc()
-*/
-
-/*!
-    \fn QMessageFilter::byCc(const QString &value, QMessageDataComparator::EqualityComparator cmp)
-
-    Returns a filter matching messages whose recipients include the substring \a value,
+    Returns a filter matching messages whose cc recipients include the substring \a pattern,
     according to \a cmp.
 
     \sa QMessage::to(), QMessage::cc(), QMessage::bcc()
@@ -491,25 +463,7 @@ bool QMessageFilter::operator!=(const QMessageFilter& other) const
 /*!
     \fn QMessageFilter::byBcc(const QString &pattern, QMessageDataComparator::LikeComparator cmp)
 
-    Returns a filter matching messages whose recipients include the substring \a pattern,
-    according to \a cmp.
-
-    \sa QMessage::to(), QMessage::cc(), QMessage::bcc()
-*/
-
-/*!
-    \fn QMessageFilter::byBcc(const QString &value, QMessageDataComparator::InclusionComparator cmp)
-
-    Returns a filter matching messages whose recipients include the substring \a value,
-    according to \a cmp.
-
-    \sa QMessage::to(), QMessage::cc(), QMessage::bcc()
-*/
-
-/*!
-    \fn QMessageFilter::byBcc(const QString &value, QMessageDataComparator::EqualityComparator cmp)
-
-    Returns a filter matching messages whose recipients include the substring \a value,
+    Returns a filter matching messages whose bcc recipients include the substring \a pattern,
     according to \a cmp.
 
     \sa QMessage::to(), QMessage::cc(), QMessage::bcc()
