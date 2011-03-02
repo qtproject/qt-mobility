@@ -19,7 +19,9 @@ contains(mobility_modules,bearer){
     }
 }
     
-contains(mobility_modules,location): SUBDIRS += location
+contains(mobility_modules,location) {
+	SUBDIRS += location
+}
 contains(mobility_modules,multimedia): SUBDIRS += multimedia
 
 ## The order must be contacts, organizer, versit, versitorganizer
@@ -67,6 +69,13 @@ contains(mobility_modules,landmarks): SUBDIRS += landmarks
 landmarks.subdir=landmarks
 landmarks.target=sub-landmarks
 landmarks.depends=location
+
+symbian {
+# Connectivity (nfc) depends on Service Framework on Symbian
+    connectivity.subdir=connectivity
+    connectivity.target=sub-connectivity
+    connectivity.depends=serviceframework
+}
 
 symbian {
     SUBDIRS += s60installs

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -68,20 +68,22 @@ private slots:
     void targetDetected_data();
     void targetDetected();
 
-    void unregisterTargetDetectedHandler();
+    void unregisterNdefMessageHandler();
 
-    void registerTargetDetectedHandler();
+    void registerNdefMessageHandler();
 
-    void registerTargetDetectedHandler_type_data();
-    void registerTargetDetectedHandler_type();
+    void registerNdefMessageHandler_type_data();
+    void registerNdefMessageHandler_type();
 
-    void registerTargetDetectedHandler_filter_data();
-    void registerTargetDetectedHandler_filter();
+    void registerNdefMessageHandler_filter_data();
+    void registerNdefMessageHandler_filter();
 };
 
 tst_QNearFieldManager::tst_QNearFieldManager()
 {
+#ifndef Q_OS_SYMBIAN
     QDir::setCurrent(QLatin1String(SRCDIR));
+#endif
 
     qRegisterMetaType<QNdefMessage>("QNdefMessage");
     qRegisterMetaType<QNearFieldTarget *>("QNearFieldTarget*");
@@ -128,13 +130,13 @@ void tst_QNearFieldManager::targetDetected()
     manager.stopTargetDetection();
 }
 
-void tst_QNearFieldManager::unregisterTargetDetectedHandler()
+void tst_QNearFieldManager::unregisterNdefMessageHandler()
 {
     QNearFieldManagerPrivateImpl *emulatorBackend = new QNearFieldManagerPrivateImpl;
     QNearFieldManager manager(emulatorBackend, 0);
 
-    QVERIFY(!manager.unregisterTargetDetectedHandler(-1));
-    QVERIFY(!manager.unregisterTargetDetectedHandler(0));
+    QVERIFY(!manager.unregisterNdefMessageHandler(-1));
+    QVERIFY(!manager.unregisterNdefMessageHandler(0));
 }
 
 class MessageListener : public QObject
@@ -145,7 +147,7 @@ signals:
     void matchedNdefMessage(const QNdefMessage &message, QNearFieldTarget *target);
 };
 
-void tst_QNearFieldManager::registerTargetDetectedHandler()
+void tst_QNearFieldManager::registerNdefMessageHandler()
 {
     QNearFieldManagerPrivateImpl *emulatorBackend = new QNearFieldManagerPrivateImpl;
     QNearFieldManager manager(emulatorBackend, 0);
@@ -153,8 +155,8 @@ void tst_QNearFieldManager::registerTargetDetectedHandler()
     MessageListener listener;
     QSignalSpy messageSpy(&listener, SIGNAL(matchedNdefMessage(QNdefMessage,QNearFieldTarget*)));
 
-    int id = manager.registerTargetDetectedHandler(&listener,
-                                                   SIGNAL(matchedNdefMessage(QNdefMessage,QNearFieldTarget*)));
+    int id = manager.registerNdefMessageHandler(&listener,
+                                                SIGNAL(matchedNdefMessage(QNdefMessage,QNearFieldTarget*)));
 
     QVERIFY(id != -1);
 
@@ -165,10 +167,10 @@ void tst_QNearFieldManager::registerTargetDetectedHandler()
 
     QVERIFY(target);
 
-    QVERIFY(manager.unregisterTargetDetectedHandler(id));
+    QVERIFY(manager.unregisterNdefMessageHandler(id));
 }
 
-void tst_QNearFieldManager::registerTargetDetectedHandler_type_data()
+void tst_QNearFieldManager::registerNdefMessageHandler_type_data()
 {
     QTest::addColumn<QNdefRecord::TypeNameFormat>("typeNameFormat");
     QTest::addColumn<QByteArray>("type");
@@ -178,7 +180,7 @@ void tst_QNearFieldManager::registerTargetDetectedHandler_type_data()
     QTest::newRow("Text") << QNdefRecord::NfcRtd << QByteArray("T");
 }
 
-void tst_QNearFieldManager::registerTargetDetectedHandler_type()
+void tst_QNearFieldManager::registerNdefMessageHandler_type()
 {
     QFETCH(QNdefRecord::TypeNameFormat, typeNameFormat);
     QFETCH(QByteArray, type);
@@ -189,8 +191,8 @@ void tst_QNearFieldManager::registerTargetDetectedHandler_type()
     MessageListener listener;
     QSignalSpy messageSpy(&listener, SIGNAL(matchedNdefMessage(QNdefMessage,QNearFieldTarget*)));
 
-    int id = manager.registerTargetDetectedHandler(typeNameFormat, type, &listener,
-                                                   SIGNAL(matchedNdefMessage(QNdefMessage,QNearFieldTarget*)));
+    int id = manager.registerNdefMessageHandler(typeNameFormat, type, &listener,
+                                                SIGNAL(matchedNdefMessage(QNdefMessage,QNearFieldTarget*)));
 
     QVERIFY(id != -1);
 
@@ -213,7 +215,7 @@ void tst_QNearFieldManager::registerTargetDetectedHandler_type()
     QVERIFY(target);
 }
 
-void tst_QNearFieldManager::registerTargetDetectedHandler_filter_data()
+void tst_QNearFieldManager::registerNdefMessageHandler_filter_data()
 {
     QTest::addColumn<QNdefFilter>("filter");
 
@@ -247,7 +249,7 @@ void tst_QNearFieldManager::registerTargetDetectedHandler_filter_data()
     QTest::newRow("Unordered Text + URI") << filter;
 }
 
-void tst_QNearFieldManager::registerTargetDetectedHandler_filter()
+void tst_QNearFieldManager::registerNdefMessageHandler_filter()
 {
     QFETCH(QNdefFilter, filter);
 
@@ -257,8 +259,8 @@ void tst_QNearFieldManager::registerTargetDetectedHandler_filter()
     MessageListener listener;
     QSignalSpy messageSpy(&listener, SIGNAL(matchedNdefMessage(QNdefMessage,QNearFieldTarget*)));
 
-    int id = manager.registerTargetDetectedHandler(filter, &listener,
-                                                   SIGNAL(matchedNdefMessage(QNdefMessage,QNearFieldTarget*)));
+    int id = manager.registerNdefMessageHandler(filter, &listener,
+                                                SIGNAL(matchedNdefMessage(QNdefMessage,QNearFieldTarget*)));
 
     QVERIFY(id != -1);
 

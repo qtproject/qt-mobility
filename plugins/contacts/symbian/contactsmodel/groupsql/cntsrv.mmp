@@ -19,6 +19,8 @@
 
 #include "cntmodel.mmh"
 
+EPOCHEAPSIZE    0x1000 0x200000
+
 #include "../group/cntsrv.mmp"
 
 SMPSAFE

@@ -51,7 +51,7 @@ class S60VideoOutputInterface
 public:
 	RWindow *videoWindowHandle() const { return videoWinId() ? static_cast<RWindow *>(videoWinId()->DrawableWindow()) : 0 ; }
     virtual WId videoWinId() const = 0;
-    // If MMF_VIDEO_SURFACES_SUPPORTED is defined, the return value is the video
+    // If VIDEOOUTPUT_GRAPHICS_SURFACES is defined, the return value is the video
     // rectangle relative to the video window.  If not, the return value is the
     // absolute screen rectangle.
     virtual QRect videoDisplayRect() const = 0;

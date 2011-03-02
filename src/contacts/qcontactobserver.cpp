@@ -64,7 +64,8 @@ QTM_USE_NAMESPACE
  */
 
 /*!
-  Constructs a QContactObserver to observe the contact in \a manager with the given \a localId.
+  Constructs a QContactObserver to observe the contact in \a manager with the
+  given \a localId and \a parent object.
  */
 QContactObserver::QContactObserver(QContactManager* manager,
                                    QContactLocalId localId,
@@ -94,13 +95,13 @@ QContactLocalId QContactObserver::contactLocalId() const {
 }
 
 /*!
-  \fn contactChanged()
+  \fn QContactObserver::contactChanged()
 
   This signal is emitted when the observed contact is changed in the manager.
  */
 
 /*!
-  \fn contactRemoved()
+  \fn QContactObserver::contactRemoved()
 
   This signal is emitted when the observed contact is removed from the manager.
  */

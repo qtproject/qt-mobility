@@ -15,21 +15,15 @@
 #
 
 component	app-engines_cntmodel
-source	\src\common\generic\app-engines\cntmodel
-binary	\src\common\generic\app-engines\cntmodel\groupsql	all
+source	\sf\app\contacts\phonebookengines\contactsmodel
+binary	\sf\app\contacts\phonebookengines\contactsmodel\groupsql	all
 
-exports	\src\common\generic\app-engines\cntmodel\groupsql
+exports	\sf\app\contacts\phonebookengines\contactsmodel\groupsql
 
--export_file	\src\common\generic\app-engines\cntmodel\documentation\contacts_connectivityapi.doc	\epoc32\engdoc\cntmodel\Contacts_ConnectivityAPI.doc
--export_file	\src\common\generic\app-engines\cntmodel\documentation\contacts_current_itemapi.doc	\epoc32\engdoc\cntmodel\Contacts_Current_ItemAPI.doc
--export_file	\src\common\generic\app-engines\cntmodel\documentation\contacts_group_supportapi.doc	\epoc32\engdoc\cntmodel\Contacts_Group_SupportAPI.DOC
--export_file	\src\common\generic\app-engines\cntmodel\documentation\contacts_multiple_templatesapi.doc	\epoc32\engdoc\cntmodel\Contacts_Multiple_TemplatesAPI.doc
--export_file	\src\common\generic\app-engines\cntmodel\documentation\contacts_own_card_supportapi.doc	\epoc32\engdoc\cntmodel\Contacts_Own_Card_SupportAPI.doc
--export_file	\src\common\generic\app-engines\cntmodel\documentation\contacts_sorting_view_supportapi.doc	\epoc32\engdoc\cntmodel\Contacts_sorting_view_supportAPI.doc
 notes_source	\component_defs\release.src
 
 
 ipr E 
-ipr T \src\common\generic\app-engines\cntmodel\tsrc
-ipr T \src\common\generic\app-engines\cntmodel\tsrcsql
+ipr T \sf\app\contacts\phonebookengines\contactsmodel\tsrc
+ipr T \sf\app\contacts\phonebookengines\contactsmodel\tsrcsql
 

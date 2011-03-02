@@ -75,7 +75,6 @@
     \o \l{lightmaps}{LightMaps}
     \o \l{flickrdemo}{Flickr Demo}
     \o \l{landmarkbrowser}{Landmark Browser}
-    \o \l{mapsnavigator}{Maps Navigator}
     \o \l{declarative-location/landmarkmap}{Landmark Map}
     \o \l{declarative-location/flickr}{Declarative Location Flickr}
     \o \l{declarative-location/mapviewer}{Declarative Map Viewer}
@@ -137,7 +136,9 @@
 
     \list
     \o \l{sensors/grueplugin}{Grue Plugin}
-    \omit \o \l{sensors/grueapp}{Grue Application} \endomit
+    \o \l{sensors/grueapp}{Grue Application}
+    \o \l{sensors/cubehouse}{Cube House}
+    \o \l{sensors/sensor_explorer}{Sensor Explorer}
     \endlist
 */
 

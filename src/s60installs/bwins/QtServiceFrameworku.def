@@ -138,4 +138,6 @@ EXPORTS
 	?resetClientData@QServiceContext@QtMobility@@QAEXXZ @ 137 NONAME ; void QtMobility::QServiceContext::resetClientData(void)
 	??5QtMobility@@YAAAVQDataStream@@AAV1@AAVEntry@QRemoteServiceRegister@0@@Z @ 138 NONAME ; class QDataStream & QtMobility::operator>>(class QDataStream &, class QtMobility::QRemoteServiceRegister::Entry &)
 	?isValid@Entry@QRemoteServiceRegister@QtMobility@@QBE_NXZ @ 139 NONAME ; bool QtMobility::QRemoteServiceRegister::Entry::isValid(void) const
+	??_EQServiceInterfaceDescriptor@QtMobility@@QAE@I@Z @ 140 NONAME ; QtMobility::QServiceInterfaceDescriptor::~QServiceInterfaceDescriptor(unsigned int)
+	??_EEntry@QRemoteServiceRegister@QtMobility@@QAE@I@Z @ 141 NONAME ; QtMobility::QRemoteServiceRegister::Entry::~Entry(unsigned int)
 

@@ -26,27 +26,14 @@
 #include "cntsqlprovider.h"
 #include "dbsqlconstants.h"
 #include "cntpersistenceutility.h"
-#include "c12keypredictivesearchtable.h"
-#include "cqwertypredictivesearchtable.h"
-#include "cpredictivesearchsettingstable.h"
-#include "cpredictivesearchsynchronizer.h"
-#include "predictivesearchlog.h"
-#include "cntsqlsearch.h"
+#include "cntsqldbstructure.h"
 
 //#include "cntmetadataoperation.h"
 
 #include <cntdef.h>
 #include <sqldb.h>
 #include <cntdb.h>
-#include <XQSettingsManager>
-#include <LogsDomainCRKeys.h>
 
-// The code related to predictive search tables is placed inside this macro.
-// If you want to build without predictive search code, comment the below line.
-#define USE_PRED_SEARCH_TABLE
-
-// If this macro is defined, then pred.search qwerty tables are used
-#define USE_QWERTY_PRED_SEARCH_TABLE
 
 
 /**
@@ -75,18 +62,7 @@ CPplContactItemManager::~CPplContactItemManager()
 	delete iSelectStatement;	
 	delete iContactTable;
 	delete iCommAddrTable;
-#if defined(USE_PRED_SEARCH_TABLE)
-	PRINT(_L("delete pred search table objects"));
-	delete iPredictiveSearchSynchronizer;
-	delete iPredSearch12keyTable;
-#if defined(USE_QWERTY_PRED_SEARCH_TABLE)
-	delete iPredSearchQwertyTable;
-	delete iPredSearchSettingsTable;
-#endif
-	PRINT(_L("delete pred search table objects - done"));
-#endif
-    delete iPresenceTable; 
-	delete iGroupTable;
+    delete iGroupTable;
 	delete iPreferencePersistor;
 	//iColSession.Close();
 	}
@@ -102,8 +78,7 @@ CPplContactItemManager::CPplContactItemManager(RSqlDatabase& aDatabase, MLplTran
 	iDatabase(aDatabase),
 	iTransactionManager(aTransactionManager),
 	iContactProperties(aContactProperties),
-	iIccContactStore(aIccContactStore),
-	iPredictiveSearchInUse(false)
+	iIccContactStore(aIccContactStore)
 	{
 	}
 	
@@ -148,18 +123,6 @@ TContactItemId CPplContactItemManager::CreateL(CContactItem& aItem, TUint aSessi
 	iContactTable->CreateInDbL(aItem);	
 	iGroupTable->CreateInDbL(aItem);	
 	iCommAddrTable->CreateInDbL(aItem);
-#if defined(USE_PRED_SEARCH_TABLE)
-	if (iPredictiveSearchInUse)
-		{
-		PRINT(_L("add new contact to pred search tables"));
-		iPredSearch12keyTable->CreateInDbL(aItem);
-#if defined(USE_QWERTY_PRED_SEARCH_TABLE)
-		iPredSearchQwertyTable->CreateInDbL(aItem);
-		iPredSearchSettingsTable->CreateInDbL(aItem);
-#endif
-		PRINT(_L("add new contact to pred search tables - done"));
-		}
-#endif
 
    	TContactItemId groupId = iIccContactStore.CreateInDbL(aItem, aSessionId);
    	if(groupId != KNullContactId)
@@ -286,7 +249,7 @@ CContactItem* CPplContactItemManager::ReadLC(TContactItemId aItemId, const CCont
 				}
 			}
 			
-		CleanupStack::PopAndDestroy(&fastAccessFields);		
+		CleanupStack::PopAndDestroy(&fastAccessFields);
 		}
 	else
 		{
@@ -348,18 +311,6 @@ void CPplContactItemManager::UpdateL(CContactItem& aItem, TUint aSessionId, TBoo
 	iContactTable->UpdateL(aItem);	
 	iGroupTable->UpdateL(aItem);	
 	iCommAddrTable->UpdateL(aItem);
-#if defined(USE_PRED_SEARCH_TABLE)
-	if (iPredictiveSearchInUse)
-		{
-		PRINT(_L("update contact in pred search tables"));
-		iPredSearch12keyTable->UpdateL(aItem);
-#if defined(USE_QWERTY_PRED_SEARCH_TABLE)
-		iPredSearchQwertyTable->UpdateL(aItem);
-		iPredSearchSettingsTable->UpdateL(aItem);
-#endif
-		PRINT(_L("update contact in pred search tables - done"));
-		}
-#endif
 
 	if(controlTransaction)
 		{
@@ -444,33 +395,6 @@ CContactItem* CPplContactItemManager::DeleteLC(TContactItemId  aItemId, TUint aS
 		DeleteInLowDiskConditionL(iCommAddrTable, savedContactItem);
 		}
 
-#if defined(USE_PRED_SEARCH_TABLE)
-	if (iPredictiveSearchInUse)
-		{
-		PRINT(_L("delete contact from pred search tables"));
-		lowDisk = EFalse;
-		iPredSearch12keyTable->DeleteL(*savedContactItem, lowDisk);
-		if (lowDisk) 
-			{
-			DeleteInLowDiskConditionL(iPredSearch12keyTable, savedContactItem);
-			}
-		lowDisk = EFalse;
-#if defined(USE_QWERTY_PRED_SEARCH_TABLE)
-		iPredSearchQwertyTable->DeleteL(*savedContactItem, lowDisk);
-		if (lowDisk) 
-			{
-			DeleteInLowDiskConditionL(iPredSearchQwertyTable, savedContactItem);
-			}
-		iPredSearchSettingsTable->DeleteL(*savedContactItem, lowDisk);
-		if (lowDisk) 
-			{
-			DeleteInLowDiskConditionL(iPredSearchSettingsTable, savedContactItem);
-			}
-#endif
-		PRINT(_L("delete contact from pred search tables - done"));
-		}
-#endif
-  
     //Fake checking read access to ICCEntry store to keep BC.
     iIccContactStore.ReadL(*savedContactItem, EPlGroupMembershipInfo, aSessionId, EFalse);    
     
@@ -597,7 +521,7 @@ void CPplContactItemManager::ConstructL()
 	iSelectStatement->SetParamL(KContactFirstNamePrn, KSpace);
 	iSelectStatement->SetParamL(KContactLastNamePrn, KSpace);
 	iSelectStatement->SetParamL(KContactCompanyNamePrn, KSpace);
-	
+		
 	HBufC* condition = HBufC::NewLC(KWhereStringEqualsStringFormatText().Size() + KContactId().Size());
 	TPtr ptrCondition = condition->Des();
 	ptrCondition.Format(KWhereStringEqualsStringFormatText, &KContactId, &KVar);
@@ -612,34 +536,6 @@ void CPplContactItemManager::ConstructL()
 	iCommAddrTable = CPplCommAddrTable::NewL(iDatabase, iContactProperties);
 	iGroupTable = CPplGroupsTable::NewL(iDatabase);
 	iPreferencePersistor = CPplPreferencesPersistor::NewL(iDatabase);
-
-#if defined(USE_PRED_SEARCH_TABLE)
-	iPredictiveSearchInUse = CheckPredictiveSearchSetting();
-	if (iPredictiveSearchInUse)
-		{
-		PRINT(_L("create C12keyPredictiveSearchTable object"));
-		iPredSearch12keyTable = C12keyPredictiveSearchTable::NewL(iDatabase);
-#if defined(USE_QWERTY_PRED_SEARCH_TABLE)
-		PRINT(_L("create CQwertyPredictiveSearchTable object"));
-		iPredSearchQwertyTable = CQwertyPredictiveSearchTable::NewL(iDatabase);
-		PRINT(_L("create CPredictiveSearchSettingsTable object"));
-		iPredSearchSettingsTable = CPredictiveSearchSettingsTable::NewL(iDatabase);
-
-		iPredictiveSearchSynchronizer =
-			CPredictiveSearchSynchronizer::NewL(iDatabase,
-												*iPredSearch12keyTable,
-												*iPredSearchQwertyTable,
-												*iPredSearchSettingsTable);
-#endif // #if defined(USE_QWERTY_PRED_SEARCH_TABLE)
-		}
-	else
-		{
-		PRINT(_L("predictive search is not in use"));
-		}
-#endif // #if defined(USE_PRED_SEARCH_TABLE)
-
-	iPresenceTable = CPplPresenceTable::NewL(iDatabase); 
-	
 	// Connect to metadata server
 	//User::LeaveIfError(iColSession.Connect());
 
@@ -719,16 +615,6 @@ void CPplContactItemManager::CreateTablesL()
 	iGroupTable->CreateTableL();	
 	iCommAddrTable->CreateTableL();
 	iPreferencePersistor->CreateTableL();
-#if defined(USE_PRED_SEARCH_TABLE)
-	PRINT(_L("create pred search tables to DB"));
-	iPredSearch12keyTable->CreateTableL();
-#if defined(USE_QWERTY_PRED_SEARCH_TABLE)
-	iPredSearchQwertyTable->CreateTableL();
-	iPredSearchSettingsTable->CreateTableL();
-#endif
-	PRINT(_L("create pred search tables to DB - done"));	
-#endif
-	iPresenceTable->CreateTableL(); 
 	
 	if (controlTransaction)
 		{
@@ -884,24 +770,6 @@ CBufSeg* CPplContactItemManager::DetailsListL(const TDesC& aSearchQuery) const
     return array;
     }
 
-
-CBufSeg* CPplContactItemManager::DetailsListPredictiveL(const TDesC& aSearchPattern ) const
-    {
-    
-	
-    QString qString;
-    QString queryString;
-    CntSqlSearch sqlSearch( *iPredSearch12keyTable->KeyMap(), 
-	                        *iPredSearchQwertyTable->KeyMap() );
-
-    QT_TRYCATCH_LEAVING({
-        qString = QString((QChar*)aSearchPattern.Ptr(),aSearchPattern.Length());
-        queryString = sqlSearch.CreatePredictiveSearch( qString );
-        });
-    TPtrC query (reinterpret_cast<const TText*>(queryString.constData()),queryString.length());   
-    return DetailsListL( query );
-    }
-
 /**
 Utility method used to rthe prefered card template id
 */
@@ -918,51 +786,14 @@ void CPplContactItemManager::SetCardTemplatePrefIdL(TInt aCardTemplatePrefId)
 	iPreferencePersistor->SetPreferredCardTemplateIdL(aCardTemplatePrefId);
 	}
 
-void CPplContactItemManager::SynchronizePredSearchTableL()
-	{
-#if defined(USE_PRED_SEARCH_TABLE)
-	if (iPredictiveSearchInUse)
-		{
-		iPredictiveSearchSynchronizer->SynchronizeTablesL();
-		}
-#endif
-	}
+void CPplContactItemManager::MakeDatabaseCompatibleL()
+    {
+    //check compatibility
+    CCntSqlDbStructure* tblStructure = CCntSqlDbStructure::NewL( iDatabase );   
+    CleanupStack::PushL(tblStructure);
+    tblStructure->MakeDatabaseCompatibleL();
+    CleanupStack::PopAndDestroy(); //tblStructure
+    }
 
-void CPplContactItemManager::RecreatePredSearchTablesL()
-	{
-#if defined(USE_PRED_SEARCH_TABLE)
-	if (iPredictiveSearchInUse)
-		{
-		iPredictiveSearchSynchronizer->DeletePredSearchTablesL();
-		iPredictiveSearchSynchronizer->CreatePredSearchTablesL();
-		}
-#endif
-	}
 
-bool CPplContactItemManager::CheckPredictiveSearchSetting() const
-	{
-#if defined(USE_PRED_SEARCH_TABLE)
-	PRINT(_L("CPplContactItemManager::CheckPredictiveSearchSetting"));
-
-	// These have been copied from recents/logsui/logsapp/inc/logsdefs.h
-	const int logsContactSearchPermanentlyDisabled = 0;
-	const int logsContactSearchEnabled = 1;
-
-	XQSettingsManager* settingsManager = new XQSettingsManager();
-	XQSettingsKey key(XQSettingsKey::TargetCentralRepository, 
-                      KCRUidLogs.iUid, 
-                      KLogsPredictiveSearch);
-    QVariant value = settingsManager->readItemValue(key, XQSettingsManager::TypeInt);
-	delete settingsManager;
-
-	int status(logsContactSearchEnabled);
-    if (!value.isNull())
-		{
-        status = value.toInt();
-		}
-	PRINT1(_L("CPplContactItemManager::CheckPredictiveSearchSetting status = %d"), status);
-    return status != logsContactSearchPermanentlyDisabled;
-#else
-	return false;
-#endif
-	}
+    

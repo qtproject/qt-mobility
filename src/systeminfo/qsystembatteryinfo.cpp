@@ -49,7 +49,7 @@ QTM_BEGIN_NAMESPACE
 Q_GLOBAL_STATIC(QSystemBatteryInfoPrivate, batteryInfoPrivate)
 
 #ifdef QT_SIMULATOR
-QSystemBatteryInfoPrivate *getSystemBatteryInfoPrivate() { return d; }
+QSystemBatteryInfoPrivate *getSystemBatteryInfoPrivate() { return batteryInfoPrivate(); }
 #endif
 
 /*!
@@ -259,7 +259,9 @@ int QSystemBatteryInfo::voltage() const
   \brief The remaining time of charging
 
     Returns the remaining time of charging in seconds if charging,
-    0 if battery is full and not charging, or -1 no battery found.
+    In the case of battery is full and not charging 0 will be returned. In the case where no battery is found
+    or the platform does not provide this information, -1 will be returned.
+
 */
 int QSystemBatteryInfo::remainingChargingTime() const
 {

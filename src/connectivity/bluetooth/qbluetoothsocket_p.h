@@ -46,7 +46,7 @@
 
 #include <QtGlobal>
 
-#ifdef Q_OS_SYMBIAN
+#ifdef QTM_SYMBIAN_BLUETOOTH
 #include <es_sock.h>
 #include <bt_sock.h>
 #endif
@@ -194,7 +194,7 @@ public:
     QSocketServerPrivate();
     ~QSocketServerPrivate();
 
-#ifdef Q_OS_SYMBIAN
+#ifdef QTM_SYMBIAN_BLUETOOTH
     RSocketServ socketServer;
 #endif
 };
@@ -205,7 +205,7 @@ class QBluetoothSocket;
 class QBluetoothServiceDiscoveryAgent;
 
 class QBluetoothSocketPrivate
-#ifdef Q_OS_SYMBIAN
+#ifdef QTM_SYMBIAN_BLUETOOTH
 : public MBluetoothSocketNotifier
 #endif
 {
@@ -242,7 +242,8 @@ public:
                              QBluetoothSocket::OpenMode openMode = QBluetoothSocket::ReadWrite);
     int socketDescriptor() const;
 
-#ifdef Q_OS_SYMBIAN
+#ifdef QTM_SYMBIAN_BLUETOOTH
+    void _q_startReceive();
     void startReceive();
     void ensureBlankNativeSocket();
 
@@ -255,7 +256,7 @@ public:
     void HandleSendCompleteL(TInt aErr);
     void HandleShutdownCompleteL(TInt aErr);
 #endif
-    
+
 public:
     QBluetoothPrivateLinearBuffer buffer;
     int socket;
@@ -275,11 +276,13 @@ public:
     QByteArray txBuffer;
     QString errorString;
 
-#ifdef Q_OS_SYMBIAN
+#ifdef QTM_SYMBIAN_BLUETOOTH
     CBluetoothSocket *iSocket;
+    CBluetoothSocket *iBlankSocket;
 
     TPtr8 rxDescriptor;
     TSockXfrLength rxLength;
+    bool receiving;
 #endif
 
     // private slots

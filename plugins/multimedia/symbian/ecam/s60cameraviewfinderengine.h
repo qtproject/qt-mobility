@@ -56,7 +56,10 @@ class QAbstractVideoSurface;
 class RWsSession;
 class CWsScreenDevice;
 class RWindowBase;
+class RWindow;
 class QDesktopWidget;
+
+class S60VideoDisplay;
 
 /*
  * Class implementing video output selection for the viewfinder and the handler of
@@ -66,10 +69,25 @@ class S60CameraViewfinderEngine : public QObject, public MCameraViewfinderObserv
 {
     Q_OBJECT
 
+public: // Enums
+
+    /*
+     * Defines whether viewfinder output backend control is of type
+     * QVideoWidgetControl, QVideoRendererControl or QVideoWindowControl
+     */
+    enum ViewfinderOutputType {
+        OutputTypeNotSet = 0,   // No viewfinder output connected
+        OutputTypeVideoWidget,  // Using QVideoWidget
+        OutputTypeRenderer,     // (Using QGraphicsVideoItem with) QVideoRendererControl
+        OutputTypeVideoWindow   // Using QGraphicsVideoItem with QVideoWindow
+    };
+
 public: // Constructor & Destructor
 
-    S60CameraViewfinderEngine(QObject *parent, CCameraEngine *engine);
-    virtual ~S60CameraViewfinderEngine();
+    S60CameraViewfinderEngine(S60CameraControl *control,
+                              CCameraEngine *engine,
+                              QObject *parent = 0);
+    ~S60CameraViewfinderEngine();
 
 public: // Methods
 
@@ -77,7 +95,7 @@ public: // Methods
     void setVideoWidgetControl(QObject *viewfinderOutput);
     void setVideoRendererControl(QObject *viewfinderOutput);
     void setVideoWindowControl(QObject *viewfinderOutput);
-    void releaseCurrentControl();
+    void releaseControl(ViewfinderOutputType type);
 
     // Controls
     void startViewfinder(const bool internalStart = false);
@@ -94,31 +112,22 @@ private: // Internal operation
 
     void checkAndRotateCamera();
 
-Q_SIGNALS:
+signals:
 
     void error(int error, const QString &errorString);
-    void viewFinderFrameReady(const QPixmap &pixmap);
+    void viewFinderFrameReady(const CFbsBitmap &bitmap);
 
-private Q_SLOTS:
+private slots:
 
-    void resetViewfinderSize(QSize size);
+    void resetViewfinderSize(const QSize size);
+    void resetVideoWindowSize();
     void resetViewfinderDisplay();
-    void viewFinderBitmapReady(const QPixmap &pixmap);
+    void viewFinderBitmapReady(const CFbsBitmap &bitmap);
     void handleVisibilityChange(const bool isVisible);
+    void handleWindowChange(RWindow *handle);
     void handleDesktopResize(int screen);
 
 private: // Enums
-
-    /*
-     * Defines whether viewfinder output backend control is of type
-     * QVideoWidgetControl, QVideoRendererControl or QVideoWindowControl
-     */
-    enum ViewfinderOutputType {
-        OutputTypeNotSet = 0,   // No viewfinder output connected
-        OutputTypeVideoWidget,  // Using QVideoWidget
-        OutputTypeRenderer,     // Using QGraphicsVideoItem
-        OutputTypeVideoWindow   // Using QVideoWindow
-    };
 
     /*
      * Defines the internal state of the viewfinder. ViewFinder will only be
@@ -148,6 +157,7 @@ private: // Data
     CCameraEngine           *m_cameraEngine;
     S60CameraControl        *m_cameraControl;
     QObject                 *m_viewfinderOutput;
+    S60VideoDisplay         *m_viewfinderDisplay;
     QAbstractVideoSurface   *m_viewfinderSurface; // Used only by QVideoRendererControl
     RWsSession              &m_wsSession;
     CWsScreenDevice         &m_screenDevice;

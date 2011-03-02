@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -42,8 +42,7 @@
 #include <qndefnfctextrecord.h>
 
 #include <QtCore/QTextCodec>
-
-#include <QtCore/QDebug>
+#include <QtCore/QLocale>
 
 QTM_BEGIN_NAMESPACE
 
@@ -69,24 +68,24 @@ QTM_BEGIN_NAMESPACE
 /*!
     Returns the locale of the text record.
 */
-QLocale QNdefNfcTextRecord::locale() const
+QString QNdefNfcTextRecord::locale() const
 {
     const QByteArray p = payload();
 
     if (p.isEmpty())
-        return QLocale();
+        return QString();
 
     quint8 status = p.at(0);
 
     quint8 codeLength = status & 0x3f;
 
-    return QLocale(QString::fromAscii(p.constData() + 1, codeLength));
+    return p.mid(1, codeLength);
 }
 
 /*!
     Sets the locale of the text record to \a locale.
 */
-void QNdefNfcTextRecord::setLocale(const QLocale &locale)
+void QNdefNfcTextRecord::setLocale(const QString &locale)
 {
     QByteArray p = payload();
 
@@ -94,10 +93,10 @@ void QNdefNfcTextRecord::setLocale(const QLocale &locale)
 
     quint8 codeLength = status & 0x3f;
 
-    quint8 newStatus = (status & 0xd0) | locale.name().length();
+    quint8 newStatus = (status & 0xd0) | locale.length();
 
     p[0] = newStatus;
-    p.replace(1, codeLength, locale.name().toAscii());
+    p.replace(1, codeLength, locale.toAscii());
 
     setPayload(p);
 }
@@ -128,7 +127,7 @@ QString QNdefNfcTextRecord::text() const
 void QNdefNfcTextRecord::setText(const QString text)
 {
     if (payload().isEmpty())
-        setLocale(QLocale::system());
+        setLocale(QLocale::system().name());
 
     QByteArray p = payload();
 

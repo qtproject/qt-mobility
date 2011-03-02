@@ -54,7 +54,8 @@ enum Security {
     NoSecurity = 0x00,
     Authorization = 0x01,
     Authentication = 0x02,
-    Encryption = 0x04
+    Encryption = 0x04,
+    Secure = 0x08
 };
 
 Q_DECLARE_FLAGS(SecurityFlags, Security)

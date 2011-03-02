@@ -1189,9 +1189,9 @@ bool QOrganizerItemMemoryEngine::typesAreRelated(const QString& occurrenceType, 
 /*! \reimp */
 bool QOrganizerItemMemoryEngine::saveItems(QList<QOrganizerItem>* organizeritems, QMap<int, QOrganizerManager::Error>* errorMap, QOrganizerManager::Error* error)
 {
-    if(errorMap) {
-        errorMap->clear();
-    }
+    Q_ASSERT(errorMap);
+
+    errorMap->clear();
 
     if (!organizeritems) {
         *error = QOrganizerManager::BadArgumentError;
@@ -1255,6 +1255,8 @@ bool QOrganizerItemMemoryEngine::removeItem(const QOrganizerItemId& organizerite
 /*! \reimp */
 bool QOrganizerItemMemoryEngine::removeItems(const QList<QOrganizerItemId>& organizeritemIds, QMap<int, QOrganizerManager::Error>* errorMap, QOrganizerManager::Error* error)
 {
+    Q_ASSERT(errorMap);
+
     if (organizeritemIds.count() == 0) {
         *error = QOrganizerManager::BadArgumentError;
         return false;
@@ -1267,8 +1269,7 @@ bool QOrganizerItemMemoryEngine::removeItems(const QList<QOrganizerItemId>& orga
         current = organizeritemIds.at(i);
         if (!removeItem(current, changeSet, error)) {
             operationError = *error;
-            if (errorMap)
-                errorMap->insert(i, operationError);
+            errorMap->insert(i, operationError);
         }
     }
 
@@ -1387,7 +1388,8 @@ bool QOrganizerItemMemoryEngine::removeCollection(const QOrganizerCollectionId& 
         if (d->m_organizerCollectionIds.at(i) == collectionId) {
             // found the collection to remove.  remove the items in the collection.
             if (!itemsToRemove.isEmpty()) {
-                if (!removeItems(itemsToRemove, 0, error)) {
+                QMap<int, QOrganizerManager::Error> errorMap;
+                if (!removeItems(itemsToRemove, &errorMap, error)) {
                     // without transaction support, we can't back out.  but the operation should fail.
                     return false;
                 }

@@ -104,7 +104,8 @@ public:
     QDebug& debugStreamOut(QDebug& dbg) const
     {
         dbg.nospace() << "QOrganizerItemIntersectionFilter(";
-        dbg.nospace() << "filters=" << m_filters;
+        dbg.nospace() << "filters=";
+        dbg.nospace() << m_filters;
         dbg.nospace() << ")";
         return dbg.maybeSpace();
     }

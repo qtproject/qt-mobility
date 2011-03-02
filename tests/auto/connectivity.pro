@@ -4,6 +4,10 @@ requires(contains(mobility_modules,connectivity))
 
 TEMPLATE = subdirs
 
+# Required by tst_maketestselftest::tests_pro_files
+# Mark the following non unit test directories ok
+# nfcdata
+
 SUBDIRS += \
         qndefrecord \
         qndefmessage \
@@ -19,6 +23,18 @@ SUBDIRS += \
 #        qbluetoothserviceinfo\
 #        qbluetoothservicediscoveryagent\
 #        qbluetoothsocket\
-#        qrfcommserver
+#        qrfcommserver \
+#        qbluetoothtransferrequest
 
-
+#enable autotests on symbian
+symbian:SUBDIRS += \
+        qbluetoothaddress\
+        qbluetoothuuid\
+        qbluetoothdeviceinfo\
+        qbluetoothdevicediscoveryagent\
+        qbluetoothserviceinfo\
+        qbluetoothservicediscoveryagent\
+        qbluetoothsocket\
+        qrfcommserver \
+        qbluetoothtransferrequest \
+        qbluetoothlocaldevice
