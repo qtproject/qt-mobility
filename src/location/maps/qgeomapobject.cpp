@@ -176,9 +176,6 @@ bool QGeoMapObject::isSelected() const
 
 /*!
     Returns a bounding box which contains this map object.
-
-    The default implementation requires the object to be added to a map
-    before this function returns a valid bounding box.
 */
 QGeoBoundingBox QGeoMapObject::boundingBox() const
 {
@@ -191,9 +188,6 @@ QGeoBoundingBox QGeoMapObject::boundingBox() const
 /*!
     Returns whether \a coordinate is contained with the boundary of this
     map object.
-
-    In the default implementation, if this object has not been added to a
-    map yet, \a contains will always return \a false.
 */
 bool QGeoMapObject::contains(const QGeoCoordinate &coordinate) const
 {

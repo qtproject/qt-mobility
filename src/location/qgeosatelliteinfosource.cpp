@@ -89,9 +89,6 @@ QGeoSatelliteInfoSource::QGeoSatelliteInfoSource(QObject *parent)
     from the system's default source of satellite update information.
 
     Returns 0 if the system has no default source.
-    
-    Note: Symbian applications will need to have the Location capability 
-    otherwise this will return 0.
 */
 QGeoSatelliteInfoSource *QGeoSatelliteInfoSource::createDefaultSource(QObject *parent)
 {

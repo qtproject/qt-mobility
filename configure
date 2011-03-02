@@ -561,7 +561,6 @@ if [ -z "$PLATFORM_CONFIG" ]; then
     compileTest "Maemo6 landmarks dependencies" maemo6-landmarks
     compileTest "Bluez" bluez
     compileTest "Gstreamer Photography" gstreamer-photography
-    compileTest "Gstreamer AppSrc" gstreamer-appsrc
     compileTest "Pulse Audio" pulseaudio
     if [ "$LINUX_TARGET" = maemo6 ]; then
         compileTest sensord sensord

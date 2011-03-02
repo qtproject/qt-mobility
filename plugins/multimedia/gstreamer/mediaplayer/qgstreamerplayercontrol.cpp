@@ -184,7 +184,6 @@ void QGstreamerPlayerControl::setPosition(qint64 pos)
 {
     if (m_mediaStatus == QMediaPlayer::EndOfMedia) {
         m_mediaStatus = QMediaPlayer::LoadedMedia;
-        m_seekToStartPending = true;
         emit mediaStatusChanged(m_mediaStatus);
     }
 
@@ -210,10 +209,8 @@ void QGstreamerPlayerControl::playOrPause(QMediaPlayer::State newState)
     QMediaPlayer::State oldState = m_state;
     QMediaPlayer::MediaStatus oldMediaStatus = m_mediaStatus;
 
-    if (m_mediaStatus == QMediaPlayer::EndOfMedia) {
+    if (m_mediaStatus == QMediaPlayer::EndOfMedia)
         m_mediaStatus = QMediaPlayer::BufferedMedia;
-        m_seekToStartPending = true;
-    }
 
     if (m_seekToStartPending) {
         m_session->pause();
@@ -257,7 +254,6 @@ void QGstreamerPlayerControl::playOrPause(QMediaPlayer::State newState)
     if (m_mediaStatus != oldMediaStatus)
         emit mediaStatusChanged(m_mediaStatus);
 
-    emit positionChanged(position());
 }
 
 void QGstreamerPlayerControl::stop()
@@ -265,12 +261,9 @@ void QGstreamerPlayerControl::stop()
     if (m_state != QMediaPlayer::StoppedState) {
         m_state = QMediaPlayer::StoppedState;
         m_session->pause();
+        m_seekToStartPending = true;
         updateState(m_session->state());
-
-        if (m_mediaStatus != QMediaPlayer::EndOfMedia) {
-            m_seekToStartPending = true;
-            emit positionChanged(position());
-        }
+        emit positionChanged(0);
         emit stateChanged(m_state);
 
         //do not release the resource if player
@@ -305,8 +298,6 @@ void QGstreamerPlayerControl::setMedia(const QMediaContent &content, QIODevice *
     QMediaPlayer::State oldState = m_state;
     m_state = QMediaPlayer::StoppedState;    
     m_session->stop();
-
-    bool userStreamValid = false;
 
     if (m_bufferProgress != -1) {
         m_bufferProgress = -1;
@@ -350,43 +341,20 @@ void QGstreamerPlayerControl::setMedia(const QMediaContent &content, QIODevice *
     QNetworkRequest request;
 
     if (m_stream) {
-#if !defined(HAVE_GST_APPSRC)
         if (m_stream->isReadable() && openFifo()) {
             request = QNetworkRequest(QUrl(QString(QLatin1String("fd://%1")).arg(m_fifoFd[0])));
         }
-#else
-        userStreamValid = stream->isOpen() && m_stream->isReadable();
-        request = content.canonicalRequest();
-#endif
     } else if (!content.isNull()) {
         request = content.canonicalRequest();
     }
 
-#if !defined(HAVE_GST_APPSRC)
-    m_session->loadFromUri(request);
-#else
-    if (userStreamValid){
-        m_session->loadFromStream(request, m_stream);
-    } else {
-        m_mediaStatus = QMediaPlayer::InvalidMedia;
-        emit mediaStatusChanged(m_mediaStatus);
-        if (m_state != oldState)
-            emit stateChanged(m_state);
-        emit error(QMediaPlayer::FormatError, tr("Attempting to play invalid user stream"));
-        if (m_state != QMediaPlayer::PlayingState)
-            m_resources->release();
-        return;
-    }
+    m_session->load(request);    
 
-#endif
-
-#if !defined(HAVE_GST_APPSRC)
     if (m_fifoFd[1] >= 0) {
         m_fifoCanWrite = true;
 
         writeFifo();
     }
-#endif
 
     if (!request.url().isEmpty()) {
         if (m_mediaStatus != QMediaPlayer::LoadingMedia)
@@ -401,8 +369,6 @@ void QGstreamerPlayerControl::setMedia(const QMediaContent &content, QIODevice *
     emit mediaChanged(m_currentResource);
     if (m_state != oldState)
         emit stateChanged(m_state);
-
-    emit positionChanged(position());
 
     if (m_state != QMediaPlayer::PlayingState)
         m_resources->release();
@@ -464,7 +430,6 @@ void QGstreamerPlayerControl::updateState(QMediaPlayer::State state)
 void QGstreamerPlayerControl::processEOS()
 {
     m_mediaStatus = QMediaPlayer::EndOfMedia;
-    emit positionChanged(position());
     stop();
     emit mediaStatusChanged(m_mediaStatus);
 }

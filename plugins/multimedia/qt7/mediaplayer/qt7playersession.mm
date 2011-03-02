@@ -317,7 +317,6 @@ void QT7PlayerSession::play()
     float preferredRate = [[(QTMovie*)m_QTMovie attributeForKey:@"QTMoviePreferredRateAttribute"] floatValue];
     [(QTMovie*)m_QTMovie setRate:preferredRate * m_rate];
 
-    processLoadStateChange();
     emit stateChanged(m_state);
 }
 
@@ -337,7 +336,6 @@ void QT7PlayerSession::pause()
 
     [(QTMovie*)m_QTMovie setRate:0];
 
-    processLoadStateChange();
     emit stateChanged(m_state);
 }
 
@@ -354,7 +352,6 @@ void QT7PlayerSession::stop()
     if (m_videoOutput)
         m_videoOutput->setMovie(0);
 
-    processLoadStateChange();
     emit stateChanged(m_state);
     emit positionChanged(position());
 }
