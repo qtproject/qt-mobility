@@ -190,14 +190,14 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerEventTime::FieldAllDay, "AllDay");
     \fn QOrganizerEventTime::startDateTime() const
     Returns the event time's start date and time as QDateTime.
     For all-day events, the time part is meaningless.
-    \sa QOrganizerEvent::startDateTime
+    \sa QOrganizerEvent::startDateTime()
  */
 
 /*!
     \fn QOrganizerEventTime::setStartDateTime(const QDateTime& startDateTime)
     Sets the event time's start date and time to \a startDateTime.
     For all-day events, the time part can be set to any valid value.
-    \sa QOrganizerEvent::setStartDateTime
+    \sa QOrganizerEvent::setStartDateTime()
  */
 
 /*!
@@ -206,7 +206,7 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerEventTime::FieldAllDay, "AllDay");
     For all-day events, the time part is meaningless, and the date is to be interpreted as the
     inclusive end date.
 
-    \sa QOrganizerEvent::endDateTime
+    \sa QOrganizerEvent::endDateTime()
  */
 
 /*!
@@ -214,7 +214,7 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerEventTime::FieldAllDay, "AllDay");
     Sets the event time's due date and time to \a dueDateTime.
     For all-day events, the time part can be set to any valid value, and the date is to be
     interpreted as the inclusive end date.
-    \sa QOrganizerEvent::setEndDateTime
+    \sa QOrganizerEvent::setEndDateTime()
  */
 
 /*!
@@ -733,16 +733,16 @@ void QOrganizerItemRecurrence::setExceptionDates(const QSet<QDate>& xdates)
    \value EmailReminder This reminder has a email element
 */
 
-/*! 
+/*!
    \fn QOrganizerItemReminder::QOrganizerItemReminder(const char* definitionName)
 
-    Constructor of a QOrganizerItemReminder object by defining the \a definitionName. 
+    Constructor of a QOrganizerItemReminder object by defining the \a definitionName.
 */
 
-/*! 
+/*!
     \fn QOrganizerItemReminder::QOrganizerItemReminder(const QOrganizerItemDetail& detail, const char* definitionName)
 
-    Constructor of a QOrganizerItemReminder object by defining the \a detail, and \a definitionName. 
+    Constructor of a QOrganizerItemReminder object by defining the \a detail, and \a definitionName.
 */
 
 /*!

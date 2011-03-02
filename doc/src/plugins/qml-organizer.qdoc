@@ -88,10 +88,8 @@
     are returned in local time. But when assign new values to these properties, the
     time specs remain the same while saving these values into backend organizer engines.
     \sa {OrganizerItem::isFloatingTime}.
- 
+
     \section2 Organizer Elements
 
     \annotatedlist qml-organizer
 */
-
-

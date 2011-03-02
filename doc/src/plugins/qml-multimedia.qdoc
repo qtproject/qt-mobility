@@ -29,7 +29,6 @@
     \group qml-multimedia
     \title QML Multimedia Plugin
     QML Support for the QtMobility Project Multimedia API.
-
 */
 
 /*!
@@ -53,10 +52,10 @@
 
     The code extract below shows the creation and use of an audio element.
 
-    \code
+    \qml
     import Qt 4.7
     import QtMultimediaKit 1.1
-    ...
+    // ...
 
         Audio {
             id: playMusic
@@ -67,7 +66,7 @@
             anchors.fill: parent
             onPressed:  { playMusic.play() }
         }
-    \endcode
+    \endqml
 
     The snippet above shows how the inclusion of \i playMusic enables audio features on the element that contains it. So that when the parent's MouseArea is clicked the \l {Audio::play()}{play()} method of the audio element is run. Other typical audio control methods are available such as \l {Audio::pause}{pause()} and \l {Audio::stop()}{stop()}.
 
@@ -148,7 +147,7 @@
 
     Adding video playback, with sound, to a Qt Quick scene is also easy. The process is very similar to that of Audio above, in fact \l {Video} shares many of the property names, methods and signals. Here is the equivalent sample code to implement a video playback element in a scene
 
-    \code
+    \qml
 
     Video {
         id: video
@@ -169,7 +168,7 @@
         Keys.onRightPressed: video.position += 5000
     }
 
-    \endcode
+    \endqml
 
     There are similar features like \l {Video::play()}{play()} with new
     features specific to video.
@@ -180,32 +179,6 @@
 
 
     \annotatedlist qml-multimedia
-
-    \section3 SoundEffect
-
-    The \l {SoundEffect}{soundeffect} element provides a way to play short sound effects, like in video games. Multiple sound effect instances can be played simultaneously.
-    You should use the \l {Audio}{audio} element for music playback.
-
-    \code
-    import Qt 4.7
-    import QtMultimediaKit 1.1
-    ...
-
-        SoundEffect {
-            id: effect
-            source: "test.wav"
-        }
-        MouseArea {
-            id: playArea
-            anchors.fill: parent
-            onPressed:  { effect.play() }
-        }
-
-    \endcode
-
-    In the above sample the sound effect will be played when the MouseArea is clicked.
-
-    For a complete description of this element, see \l {SoundEffect}{soundeffect}.
 */
 
 
