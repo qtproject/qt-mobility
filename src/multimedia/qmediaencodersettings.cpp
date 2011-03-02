@@ -94,13 +94,7 @@ private:
     and then passing it to a QMediaRecorder instance using the
     QMediaRecorder::setEncodingSettings() function.
 
-    \code
-    QAudioEncoderSettings audioSettings;
-    audioSettings.setCodec("audio/mpeg");
-    audioSettings.setChannelCount(2);
-
-    recorder->setEncodingSettings(audioSettings);
-    \endcode
+    \snippet doc/src/snippets/multimedia-snippets/media.cpp Audio encoder settings
 
     \sa QMediaRecorder, QAudioEncoderControl
 */
@@ -356,13 +350,7 @@ private:
     and then passing it to a QMediaRecorder instance using the
     QMediaRecorder::setEncodingSettings() function.
 
-    \code
-    QVideoEncoderSettings videoSettings;
-    videoSettings.setCodec("video/mpeg2");
-    videoSettings.setResolution(640, 480);
-
-    recorder->setEncodingSettings(audioSettings, videoSettings);
-    \endcode
+    \snippet doc/src/snippets/multimedia-snippets/media.cpp Video encoder settings
 
     \sa QMediaRecorder, QVideoEncoderControl
 */
@@ -631,13 +619,7 @@ private:
     properties and then passing it to a QCameraImageCapture instance using the
     QCameraImageCapture::setImageSettings() function.
 
-    \code
-    QImageEncoderSettings imageSettings;
-    imageSettings.setCodec("image/jpeg");
-    imageSettings.setResolution(1600, 1200);
-
-    imageCapture->setImageSettings(imageSettings);
-    \endcode
+    \snippet doc/src/snippets/multimedia-snippets/media.cpp Image encoder settings
 
     \sa QImageEncoderControl
 */
