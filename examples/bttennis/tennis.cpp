@@ -301,6 +301,7 @@ void Tennis::clientDisconnected()
     board->setStatus("Disconnect", 100, 25);
     controller->start();
     server->startServer();
+    client->stopClient();
     isClient = false;    
     isConnected = false;
     discoveryFinished();

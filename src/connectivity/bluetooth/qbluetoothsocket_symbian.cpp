@@ -234,7 +234,7 @@ void QBluetoothSocketPrivate::HandleReceiveCompleteL(TInt aErr)
             emit q->disconnected();
             return;
         }
-
+               
         buffer.chop(QPRIVATELINEARBUFFER_BUFFERSIZE - (rxDescriptor.Length()));
 
         emit q->readyRead();
@@ -398,7 +398,7 @@ void QBluetoothSocketPrivate::_q_startReceive()
 
 qint64 QBluetoothSocketPrivate::bytesAvailable() const
 {
-    return rxDescriptor.Length();
+    return buffer.size();
 }
 
 QTM_END_NAMESPACE
