@@ -33,8 +33,6 @@
 #include <cntdef.h>
 #include <sqldb.h>
 #include <cntdb.h>
-#include <XQSettingsManager>
-#include <LogsDomainCRKeys.h>
 
 
 
@@ -80,8 +78,7 @@ CPplContactItemManager::CPplContactItemManager(RSqlDatabase& aDatabase, MLplTran
 	iDatabase(aDatabase),
 	iTransactionManager(aTransactionManager),
 	iContactProperties(aContactProperties),
-	iIccContactStore(aIccContactStore),
-	iPredictiveSearchInUse(false)
+	iIccContactStore(aIccContactStore)
 	{
 	}
 	
@@ -797,3 +794,6 @@ void CPplContactItemManager::MakeDatabaseCompatibleL()
     tblStructure->MakeDatabaseCompatibleL();
     CleanupStack::PopAndDestroy(); //tblStructure
     }
+
+
+    

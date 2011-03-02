@@ -62,6 +62,10 @@
 #include "qsysteminfo.h"
 #include <qmobilityglobal.h>
 
+#ifndef QT_NO_NETWORKMANAGER
+#include "linux/qnetworkmanagerservice_linux_p.h"
+#endif
+
 QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
@@ -113,6 +117,12 @@ public:
     QString homeMobileCountryCode();
     QString homeMobileNetworkCode();
     QSystemNetworkInfo::NetworkMode currentMode();
+    QSystemNetworkInfo::NetworkStatus networkStatus(QSystemNetworkInfo::NetworkMode mode);
+
+    qint32 networkSignalStrength(QSystemNetworkInfo::NetworkMode mode);
+
+    QString networkName(QSystemNetworkInfo::NetworkMode mode);
+    QString macAddress(QSystemNetworkInfo::NetworkMode mode);
 
 public Q_SLOTS:
 #if !defined(QT_NO_NETWORKMANAGER)
@@ -125,6 +135,8 @@ private:
     QNetworkManagerInterfaceDeviceWired * devWiredIface;
     QNetworkManagerInterfaceDeviceWireless *devWirelessIface;
     QNetworkManagerInterfaceAccessPoint *accessPointIface;
+    QNetworkManagerInterfaceDeviceGsm *devGsmIface;
+
 
     void setupNmConnections();
     bool isDefaultConnectionPath(const QString &path);
@@ -190,7 +202,6 @@ public:
 
     QString imei();
     QString imsi();
-    QSystemDeviceInfo::SimStatus simStatus();
     bool isDeviceLocked();
     QSystemDeviceInfo::Profile currentProfile();
     void setConnection();
@@ -200,7 +211,7 @@ public:
     int messageRingtoneVolume();//1.2
     int voiceRingtoneVolume();//1.2
     bool vibrationActive();//1.2
-
+    QSystemDeviceInfo::SimStatus simStatus();
 //    QSystemDeviceInfo::KeyboardTypeFlags keyboardTypes(); //1.2
 //    bool isWirelessKeyboardConnected(); //1.2
 //    bool isKeyboardFlippedOpen();//1.2
