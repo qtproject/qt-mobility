@@ -100,7 +100,7 @@ class FixedGraphicsView : public QGraphicsView
     Q_OBJECT
 
 public:
-    FixedGraphicsView(QGraphicsScene *scene, QWidget *parent);
+    FixedGraphicsView(QWidget *parent);
 
 protected:
     void scrollContentsBy(int dx, int dy);
