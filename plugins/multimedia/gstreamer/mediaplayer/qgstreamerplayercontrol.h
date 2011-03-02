@@ -126,6 +126,7 @@ private:
     QGstreamerPlayerSession *m_session;
     QMediaPlayer::State m_state;
     QMediaPlayer::MediaStatus m_mediaStatus;
+    bool m_blockStatusChangedSignal;
     int m_bufferProgress;
     bool m_seekToStartPending;
     QMediaContent m_currentResource;
