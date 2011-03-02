@@ -573,7 +573,12 @@ void QGstreamerPlayerSession::finishVideoOutputChange()
 #endif
     //it's necessary to send a new segment event just before
     //the first buffer pushed to the new sink
-    GST_VIDEO_CONNECTOR(m_videoIdentity)->relinked = true;
+    g_signal_emit_by_name(m_videoIdentity,
+                          "resend-new-segment",
+                          true //emit connection-failed signal
+                               //to have a chance to insert colorspace element
+                          );
+
 
     GstState state;
 
@@ -625,7 +630,10 @@ void QGstreamerPlayerSession::insertColorSpaceElement(GstElement *element, gpoin
 #endif
     //it's necessary to send a new segment event just before
     //the first buffer pushed to the new sink
-    GST_VIDEO_CONNECTOR(session->m_videoIdentity)->relinked = true;
+    g_signal_emit_by_name(session->m_videoIdentity,
+                          "resend-new-segment",
+                          false // don't emit connection-failed signal
+                          );
 
     gst_element_unlink(session->m_videoIdentity, session->m_videoSink);
     gst_bin_add(GST_BIN(session->m_videoOutputBin), session->m_colorSpace);
