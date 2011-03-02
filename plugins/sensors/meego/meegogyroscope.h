@@ -45,7 +45,7 @@
 #include "meegosensorbase.h"
 #include <qgyroscope.h>
 #include <datatypes/xyz.h>
-//#include <gyroscopesensor_i.h>
+#include <gyroscopesensor_i.h>
 
 
 QTM_USE_NAMESPACE
