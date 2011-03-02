@@ -139,7 +139,7 @@ bool QGeoBoundingCircle::isValid() const
 {
     return (d_ptr->center.isValid()
             && !qIsNaN(d_ptr->radius)
-            && d_ptr->radius >= -1e-7);
+            && d_ptr->radius >= 0.0);
 }
 
 /*!
@@ -149,7 +149,7 @@ bool QGeoBoundingCircle::isValid() const
 */
 bool QGeoBoundingCircle::isEmpty() const
 {
-    return (!isValid() || (d_ptr->radius <= 1e-7));
+    return (!isValid() && (d_ptr->radius > 0.0));
 }
 
 /*!

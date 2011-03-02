@@ -174,9 +174,6 @@ qreal QGeoAreaMonitor::radius() const
     monitors areas using resources on the underlying system.
 
     Returns 0 if the system has no support for position monitoring.
-
-    Note: Symbian applications will need to have the Location capability 
-    otherwise this will return 0.
 */
 QGeoAreaMonitor *QGeoAreaMonitor::createDefaultMonitor(QObject *parent)
 {
