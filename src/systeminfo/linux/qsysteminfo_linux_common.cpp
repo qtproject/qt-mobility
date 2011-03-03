@@ -528,7 +528,7 @@ bool QSystemInfoLinuxCommonPrivate::hasFeatureSupported(QSystemInfo::Feature fea
             QProcess syscall;
             QString program = "/usr/bin/lsb_release";
             QStringList arguments;
-            arguments << "-d";
+            arguments << "-r";
             syscall.start(program, arguments);
             syscall.waitForFinished();
             QString desc = syscall.readAllStandardOutput();
