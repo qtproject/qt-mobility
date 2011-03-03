@@ -3899,10 +3899,24 @@ QSystemBatteryInfo::EnergyUnit QSystemBatteryInfoLinuxCommonPrivate::energyMeasu
 #endif
 #if !defined(QT_NO_DBUS)
     if (halIsAvailable && batteryIsPresent) {
-        return QSystemBatteryInfo::UnitmWh;
+        QHalInterface iface;
+        const QStringList list = iface.findDeviceByCapability("battery");
+        if (!list.isEmpty()) {
+            foreach (const QString &dev, list) {
+                QHalDeviceInterface ifaceDevice(dev);
+                if (ifaceDevice.isValid()) {
+                    const QString unit = ifaceDevice.getPropertyString("battery.reporting.unit");
+                    if (unit == "mAh") {
+                        return QSystemBatteryInfo::UnitmAh;
+                    } else if (unit == "mWh") {
+                        return QSystemBatteryInfo::UnitmWh;
+                    }
+                }
+            }
+        }
     }
 #endif
-    return QSystemBatteryInfo::UnitUnknown;
+return QSystemBatteryInfo::UnitUnknown;
 }
 
 int QSystemBatteryInfoLinuxCommonPrivate::batteryLevel() const
