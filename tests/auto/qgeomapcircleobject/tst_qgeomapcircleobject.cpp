@@ -45,6 +45,7 @@
 #include <qgeomapcircleobject.h>
 #include <qgeocoordinate.h>
 #include <qgeoboundingcircle.h>
+#include <qgeomappixmapobject.h>
 #include <qgraphicsgeomap.h>
 #include <qgeoboundingbox.h>
 
@@ -86,6 +87,11 @@ private slots:
     void contains();
     void isSelected();
     void isVisible();
+
+    // QTMOBILITY-1255: Changing z value of map object causes it to break insertion order
+    void qtmobility1255();
+    // QTMOBILITY-1199: Result of QGraphicsGeoMap::mapObjectsInViewport is zoom level dependent
+    void qtmobility1199();
 
 private:
     TestHelper *m_helper;
@@ -612,6 +618,109 @@ void tst_QGeoMapCircleObject::boundingBox()
     QVERIFY2(object->boundingBox().width()>0,"no bounding box");
     QVERIFY2(object->boundingBox().height()>0,"no bounding box");
 
+}
+
+// QTMOBILITY-1255: Changing z value of map object causes it to break insertion order
+void tst_QGeoMapCircleObject::qtmobility1255()
+{
+    QGeoCoordinate center(0,0,0);
+
+    QGeoMapCircleObject *outer = new QGeoMapCircleObject(center, 1000);
+    outer->setZValue(5);
+    outer->setBrush(QBrush(Qt::black));
+    QGeoMapCircleObject *middle = new QGeoMapCircleObject(center, 700);
+    middle->setZValue(4);
+    middle->setBrush(QBrush(Qt::red));
+    QGeoMapCircleObject *inner = new QGeoMapCircleObject(center, 500);
+    inner->setZValue(5);
+    inner->setBrush(QBrush(Qt::blue));
+
+    QGraphicsGeoMap *map = m_helper->map();
+
+    map->addMapObject(outer);
+    map->addMapObject(middle);
+    map->addMapObject(inner);
+    map->setCenter(center);
+
+    QList<QGeoMapObject*> list;
+    list = map->mapObjects();
+    QCOMPARE(list.size(), 3);
+
+    QPointF pxCenter = map->coordinateToScreenPosition(center);
+    list = map->mapObjectsAtScreenPosition(pxCenter);
+    QCOMPARE(list.size(), 3);
+    QVERIFY(list.at(0) == middle);
+    QVERIFY(list.at(1) == outer);
+    QVERIFY(list.at(2) == inner);
+
+    middle->setZValue(5);
+    list = map->mapObjectsAtScreenPosition(pxCenter);
+    QCOMPARE(list.size(), 3);
+    QVERIFY(list.at(0) == outer);
+    QVERIFY(list.at(1) == middle);
+    QVERIFY(list.at(2) == inner);
+
+    middle->setZValue(6);
+    list = map->mapObjectsAtScreenPosition(pxCenter);
+    QCOMPARE(list.size(), 3);
+    QVERIFY(list.at(0) == outer);
+    QVERIFY(list.at(1) == inner);
+    QVERIFY(list.at(2) == middle);
+}
+
+
+// QTMOBILITY-1199: Result of QGraphicsGeoMap::mapObjectsInViewport is zoom level dependent
+void tst_QGeoMapCircleObject::qtmobility1199()
+{
+#if QTM_VERSION < 0x010200
+    QSKIP("Mobility 1.1 fails qtmobility-1199", SkipAll);
+#endif
+
+    QGeoCoordinate seattle(47.609722,-122.333056,0);
+    QGeoCoordinate seattle2(47.60981194,-122.33185897);
+    QGeoCoordinate seattle3(47.60972200, -122.33332201);
+
+    QGeoMapCircleObject *obj = new QGeoMapCircleObject(seattle3, 30);
+    QGeoMapCircleObject *obj2 = new QGeoMapCircleObject(seattle2, 120);
+
+    QPixmap pm(20,20);
+    pm.fill(Qt::blue);
+    QPainter p(&pm);
+    p.setPen(QPen(Qt::red));
+    p.drawEllipse(10,10,5,7);
+    QGeoMapPixmapObject *pobj = new QGeoMapPixmapObject(seattle, QPoint(0,0),
+                                                        pm);
+
+    QGraphicsGeoMap *map = m_helper->map();
+    map->setCenter(seattle);
+    map->setZoomLevel(18.0);
+    map->pan(10, 10);
+
+    map->addMapObject(obj);
+    map->addMapObject(obj2);
+    map->addMapObject(pobj);
+
+    QTest::qWait(10);
+
+    for (qreal z = 18.0; z >= 0.0; z -= 1.0) {
+        map->setZoomLevel(z);
+        QTest::qWait(10);
+
+        QPointF coord = map->coordinateToScreenPosition(seattle);
+        QList<QGeoMapObject*> list;
+
+        list = map->mapObjectsAtScreenPosition(coord);
+        QCOMPARE(list.size(), 3);
+        QVERIFY(list.at(0) == obj);
+        QVERIFY(list.at(1) == obj2);
+        QVERIFY(list.at(2) == pobj);
+
+        list = map->mapObjectsInViewport();
+        QCOMPARE(list.size(), 3);
+        QVERIFY(list.at(0) == obj);
+        QVERIFY(list.at(1) == obj2);
+        QVERIFY(list.at(2) == pobj);
+    }
 }
 
 QTEST_MAIN(tst_QGeoMapCircleObject)

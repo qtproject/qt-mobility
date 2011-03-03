@@ -199,6 +199,9 @@ QGeoPositionInfoSource::PositioningMethods QGeoPositionInfoSource::preferredPosi
     reads from the system's default sources of location data.
 
     Returns 0 if the system has no default position source.
+
+    Note: Symbian applications will need to have the Location capability 
+    otherwise this will return 0.
 */
 
 QGeoPositionInfoSource *QGeoPositionInfoSource::createDefaultSource(QObject *parent)

@@ -39,6 +39,7 @@
 **
 ****************************************************************************/
 
+#include <QDebug>
 #include "qgeoareamonitor_s60_p.h"
 #include "qgeopositioninfo.h"
 #include "qmlbackendmonitorinfo_s60_p.h"
@@ -50,6 +51,12 @@ TInt QGeoAreaMonitorS60::refCount = 0;
 
 QGeoAreaMonitorS60* QGeoAreaMonitorS60::NewL(QObject *aParent)
 {
+    RProcess thisProcess;
+    if (!thisProcess.HasCapability(ECapabilityLocation)) {
+        qWarning() << "QGeoAreaMonitor::createDefaultMonitor() requires the Symbian Location capability to succeed on the Symbian platform.";
+        return 0;
+    }
+
     QGeoAreaMonitorS60 *self = QGeoAreaMonitorS60::NewLC(aParent);
     CleanupStack::Pop();
     if (!self->isValid()) {

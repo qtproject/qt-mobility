@@ -42,7 +42,6 @@
 
 #include "qdocumentgallery.h"
 
-#include <QtCore/QFileInfo>
 #include <QtCore/QDateTime>
 
 QTM_BEGIN_NAMESPACE
@@ -185,15 +184,16 @@ bool QSimulatorGalleryResultSet::isValid() const
 
 QVariant QSimulatorGalleryResultSet::itemId() const
 {
-    if (valid)
-        return QFileInfo(filePath).absoluteFilePath();
+    if (valid) {
+        return currentFileInfo().absoluteFilePath();
+    }
     return QVariant();
 }
 
 QUrl QSimulatorGalleryResultSet::itemUrl() const
 {
     if (connection) {
-        QString data = connection->galleryData().images.at(mCurrentIndex).fileName;
+        QString data = currentFileInfo().absoluteFilePath();
         return QUrl::fromLocalFile(data);
     }
     return QUrl();
@@ -206,9 +206,9 @@ QString QSimulatorGalleryResultSet::itemType() const
 
 QVariant QSimulatorGalleryResultSet::metaData(int key) const
 {
-    QFileInfo info(filePath);
+    QFileInfo info = currentFileInfo();
     if (key == Utility::FileName)
-        return info.fileName();
+        return info.absoluteFilePath();
     else if (key == Utility::FilePath)
         return info.absolutePath();
     else if (key == Utility::FileExtension)
@@ -250,6 +250,14 @@ bool QSimulatorGalleryResultSet::fetch(int index)
         mCurrentIndex = index;
     }
     return true;
+}
+
+QFileInfo QSimulatorGalleryResultSet::currentFileInfo() const
+{
+    if (connection)
+        return QFileInfo(connection->galleryData().images.at(mCurrentIndex).fileName);
+    else
+        return QFileInfo(filePath);
 }
 
 #include "moc_qsimulatorgalleryresultset_p.cpp"

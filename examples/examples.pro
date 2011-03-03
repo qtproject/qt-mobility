@@ -37,12 +37,14 @@ contains(mobility_modules,location) {
         contains(mobility_modules,bearer) {
     	    SUBDIRS +=  flickrdemo \
                         geoservicedemo \
-                        mapviewer
+                        mapviewer \
+                        mapsdemo
         }
     } else {
         SUBDIRS +=  flickrdemo \
                     geoservicedemo \
-                    mapviewer
+                    mapviewer \
+                    mapsdemo
     }
 
     contains(QT_CONFIG, declarative) {
