@@ -540,8 +540,10 @@ bool QPulseAudioInput::deviceReady()
         read(0,0);
     } else {
         // emits readyRead() so user will call read() on QIODevice to get some audio data
-        InputPrivate *a = qobject_cast<InputPrivate*>(m_audioSource);
-        a->trigger();
+        if (m_audioSource != 0) {
+            InputPrivate *a = qobject_cast<InputPrivate*>(m_audioSource);
+            a->trigger();
+        }
     }
     m_bytesAvailable = checkBytesReady();
 
