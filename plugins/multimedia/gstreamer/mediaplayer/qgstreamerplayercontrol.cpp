@@ -304,23 +304,27 @@ void QGstreamerPlayerControl::setMedia(const QMediaContent &content, QIODevice *
     m_state = QMediaPlayer::StoppedState;
     QMediaContent oldMedia = m_currentResource;
 
-    if (!m_resources->isRequested())
-        m_resources->acquire();
+    if (!content.isNull() || stream) {
+        if (!m_resources->isRequested() && !m_resources->isGranted())
+            m_resources->acquire();
 
-    if (!m_resources->isGranted()) {
-        m_currentResource = content;
-        m_stream = stream;
+        if (!m_resources->isGranted()) {
+            m_currentResource = content;
+            m_stream = stream;
 
-        QMediaPlayer::MediaStatus oldStatus = m_mediaStatus;
-        m_state = QMediaPlayer::StoppedState;
-        m_mediaStatus = QMediaPlayer::LoadingMedia;
-        if (m_currentResource != oldMedia)
-            emit mediaChanged(m_currentResource);
-        if (m_state != oldState && !m_blockStatusChangedSignal)
-            emit stateChanged(m_state);
-        if (m_mediaStatus != oldStatus && !m_blockStatusChangedSignal)
-            emit mediaStatusChanged(m_mediaStatus);
-        return;
+            QMediaPlayer::MediaStatus oldStatus = m_mediaStatus;
+            m_state = QMediaPlayer::StoppedState;
+            m_mediaStatus = QMediaPlayer::LoadingMedia;
+            if (m_currentResource != oldMedia)
+                emit mediaChanged(m_currentResource);
+            if (m_state != oldState && !m_blockStatusChangedSignal)
+                emit stateChanged(m_state);
+            if (m_mediaStatus != oldStatus && !m_blockStatusChangedSignal)
+                emit mediaStatusChanged(m_mediaStatus);
+            return;
+        }
+    } else {
+        m_resources->release();
     }
 
     m_session->stop();
@@ -644,6 +648,22 @@ void QGstreamerPlayerControl::handleResourcesGranted()
 
 void QGstreamerPlayerControl::handleResourcesLost()
 {
+    //on resource lost the pipeline should be stopped
+    //player status is changed to paused
+
+    QMediaPlayer::State oldState = m_state;
+    QMediaPlayer::MediaStatus oldMediaStatus = m_mediaStatus;
+
+    m_blockStatusChangedSignal = true;
     m_session->stop();
-    updateState(m_session->state());
+    m_blockStatusChangedSignal = false;
+
+    if (oldState != QMediaPlayer::StoppedState )
+        m_state = QMediaPlayer::PausedState;
+
+    if (m_state != oldState)
+        emit stateChanged(m_state);
+
+    if (m_mediaStatus != oldMediaStatus)
+        emit mediaStatusChanged(m_mediaStatus);
 }
