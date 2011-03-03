@@ -61,10 +61,12 @@ public:
     ~QNearFieldManagerPrivateImpl();
 
 private slots:
-    void targetInRange(const QByteArray &uid);
+    void targetEnteringProximity(const QByteArray &uid);
+    void targetLeavingProximity(const QByteArray &uid);
 
 private:
     Simulator::NfcConnection *nfcConnection;
+    QMap<QByteArray, QNearFieldTarget *> m_targets;
 };
 
 QTM_END_NAMESPACE

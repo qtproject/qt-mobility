@@ -142,7 +142,8 @@ public:
     virtual ~NfcConnection();
 
 signals:
-    void targetInRange(const QByteArray &uid);
+    void targetEnteringProximity(const QByteArray &uid);
+    void targetLeavingProximity(const QByteArray &uid);
 };
 
 NfcConnection::NfcConnection()
@@ -163,8 +164,10 @@ NfcConnection::~NfcConnection()
 QNearFieldManagerPrivateImpl::QNearFieldManagerPrivateImpl()
 :   nfcConnection(new Simulator::NfcConnection)
 {
-    QObject::connect(nfcConnection, SIGNAL(targetInRange(QByteArray)),
-                     this, SLOT(targetInRange(QByteArray)));
+    connect(nfcConnection, SIGNAL(targetEnteringProximity(QByteArray)),
+            this, SLOT(targetEnteringProximity(QByteArray)));
+    connect(nfcConnection, SIGNAL(targetLeavingProximity(QByteArray)),
+            this, SLOT(targetLeavingProximity(QByteArray)));
 }
 
 QNearFieldManagerPrivateImpl::~QNearFieldManagerPrivateImpl()
@@ -172,10 +175,24 @@ QNearFieldManagerPrivateImpl::~QNearFieldManagerPrivateImpl()
     delete nfcConnection;
 }
 
-void QNearFieldManagerPrivateImpl::targetInRange(const QByteArray &uid)
+void QNearFieldManagerPrivateImpl::targetEnteringProximity(const QByteArray &uid)
 {
-    Simulator::TagType1 *target = new Simulator::TagType1(uid, this);
+    QNearFieldTarget *target = m_targets.value(uid);
+    if (!target) {
+        target = new Simulator::TagType1(uid, this);
+        m_targets.insert(uid, target);
+    }
+
     targetActivated(target);
+}
+
+void QNearFieldManagerPrivateImpl::targetLeavingProximity(const QByteArray &uid)
+{
+    QNearFieldTarget *target = m_targets.value(uid);
+    if (!target)
+        return;
+
+    targetDeactivated(target);
 }
 
 #include "qnearfieldmanager_simulator.moc"
