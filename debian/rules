@@ -75,6 +75,7 @@ QTM_AUTOTESTS_SIMPLE := $(QTM_MAEMO_TESTDIR)/libqtm-sensors-tests.pri \
 			$(QTM_MAEMO_TESTDIR)/libqtm-systeminfo-tests.pri \
 			$(QTM_MAEMO_TESTDIR)/libqtm-serviceframework-tests.pri \
 			$(QTM_MAEMO_TESTDIR)/libqtm-organizer-tests.pri \
+			$(QTM_MAEMO_TESTDIR)/libqtm-connectivity-tests.pri \
 			$(QTM_MAEMO_TESTDIR)/libqtm-versit-tests.pri
 
 
