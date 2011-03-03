@@ -714,6 +714,7 @@ void QGstreamerPlayerSession::stop()
         finishVideoOutputChange();
 
         //we have to do it here, since gstreamer will not emit bus messages any more
+        setSeekable(false);
         if (oldState != m_state)
             emit stateChanged(m_state);
     }
