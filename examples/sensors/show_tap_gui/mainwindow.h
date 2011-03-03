@@ -37,22 +37,46 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef MAINWINDOW_H
+#define MAINWINDOW_H
 
-#include <QtGui/QApplication>
-#include "qmlapplicationviewer.h"
+#include <QMainWindow>
+#include <qtapsensor.h>
+#include <QList>
+#include <QTime>
+#include "ui_mainwindow.h"
+#include "qlayout.h"
+#include "tap.h"
 
-int main(int argc, char *argv[])
-{
-    QApplication app(argc, argv);
+QTM_USE_NAMESPACE
 
-    QmlApplicationViewer viewer;
-    viewer.setOrientation(QmlApplicationViewer::Auto);
-    viewer.setMainQmlFile(QLatin1String("qrc:/organizer.qml"));
-#if defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_SIMULATOR)
-    viewer.showFullScreen();
-#else
-    viewer.show();
-#endif
-
-    return app.exec();
+namespace Ui {
+    class MainWindow;
 }
+
+class MainWindow : public QMainWindow
+{
+    Q_OBJECT
+
+public:
+    explicit MainWindow(QWidget *parent = 0);
+    ~MainWindow();
+
+private slots:
+    void changeSingleState(int);
+    void changeDoubleState(int);
+    void singleHappened(QString,long);
+    void doubleHappened(QString,long);
+
+private:
+    Ui::MainWindow *ui;
+    QTapSensor* doublesensor;
+    QTapSensor* singlesensor;
+    TapSensorFilter* filter;
+    void resize();
+    static int m_singleCounter, m_doubleCounter;
+    static long m_lastSingle, m_lastDouble;
+
+};
+
+#endif // MAINWINDOW_H

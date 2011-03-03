@@ -37,22 +37,32 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#include "tap.h"
 
-#include <QtGui/QApplication>
-#include "qmlapplicationviewer.h"
-
-int main(int argc, char *argv[])
+bool TapSensorFilter::filter(QTapReading *reading)
 {
-    QApplication app(argc, argv);
-
-    QmlApplicationViewer viewer;
-    viewer.setOrientation(QmlApplicationViewer::Auto);
-    viewer.setMainQmlFile(QLatin1String("qrc:/organizer.qml"));
-#if defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_SIMULATOR)
-    viewer.showFullScreen();
-#else
-    viewer.show();
-#endif
-
-    return app.exec();
+    QString output;
+    switch (reading->tapDirection()) {
+        case QTapReading::X:
+        case QTapReading::X_Both:
+                output = "X";         break;
+        case QTapReading::Y:
+        case QTapReading::Y_Both:
+                output = "Y";         break;
+        case QTapReading::Z:
+        case QTapReading::Z_Both:  
+                output = "Z";         break;
+        case QTapReading::X_Pos:     output = "X pos";     break;
+        case QTapReading::Y_Pos:     output = "Y pos";     break;
+        case QTapReading::Z_Pos:     output = "Z pos";     break;
+        case QTapReading::X_Neg:     output = "X neg";     break;
+        case QTapReading::Y_Neg:     output = "Y neg";     break;
+        case QTapReading::Z_Neg:     output = "Z neg";     break;
+        case QTapReading::Undefined: output = "Undefined"; break;
+        default: output = "Invalid enum value";
+    }
+    long timestamp = reading->timestamp();
+    emit reading->isDoubleTap()?doubleHappened(output, timestamp):singleHappened(output, timestamp);
+    return false; // don't store the reading in the sensor
 }
+

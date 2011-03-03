@@ -13,6 +13,7 @@ include(../../../common.pri)
 QT=core
 CONFIG+=mobility
 MOBILITY+=sensors
+LIBS += -lrt
 
 CONFIG+=strict_flags
 

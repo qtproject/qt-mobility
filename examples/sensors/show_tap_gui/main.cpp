@@ -37,22 +37,13 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-
 #include <QtGui/QApplication>
-#include "qmlapplicationviewer.h"
+#include "mainwindow.h"
 
 int main(int argc, char *argv[])
 {
-    QApplication app(argc, argv);
-
-    QmlApplicationViewer viewer;
-    viewer.setOrientation(QmlApplicationViewer::Auto);
-    viewer.setMainQmlFile(QLatin1String("qrc:/organizer.qml"));
-#if defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_SIMULATOR)
-    viewer.showFullScreen();
-#else
-    viewer.show();
-#endif
-
-    return app.exec();
+    QApplication a(argc, argv);
+    MainWindow w;
+    w.show();
+    return a.exec();
 }

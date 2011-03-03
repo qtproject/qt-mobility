@@ -37,22 +37,21 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef TAP_H
+#define TAP_H
 
-#include <QtGui/QApplication>
-#include "qmlapplicationviewer.h"
+#include <qtapsensor.h>
 
-int main(int argc, char *argv[])
+QTM_USE_NAMESPACE
+
+class TapSensorFilter : public QObject, public QTapFilter
 {
-    QApplication app(argc, argv);
+ Q_OBJECT
+ public:
+    bool filter(QTapReading *reading);
+signals:
+    void doubleHappened(QString, long);
+    void singleHappened(QString, long);
+};
 
-    QmlApplicationViewer viewer;
-    viewer.setOrientation(QmlApplicationViewer::Auto);
-    viewer.setMainQmlFile(QLatin1String("qrc:/organizer.qml"));
-#if defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_SIMULATOR)
-    viewer.showFullScreen();
-#else
-    viewer.show();
-#endif
-
-    return app.exec();
-}
+#endif // TAP_H

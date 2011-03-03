@@ -99,6 +99,8 @@ View::View(QWidget *parent)
       painter(0),
       showFrameRate(false)
 {
+    setAttribute(Qt::WA_LockPortraitOrientation);
+
     mainCamera = new Camera(this);
 
     roomCamera = new Camera(this);

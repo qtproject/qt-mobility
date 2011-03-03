@@ -42,7 +42,6 @@
 #include "n900accelerometer.h"
 #include <QFile>
 #include <QDebug>
-#include <time.h>
 #include <stdio.h>
 
 char const * const n900accelerometer::id("n900.accelerometer");
@@ -93,7 +92,7 @@ void n900accelerometer::poll()
     qreal ay = y * -0.00980665;
     qreal az = z * -0.00980665;
 
-    m_reading.setTimestamp(clock());
+    m_reading.setTimestamp(getTimestamp());
     if (portraitOrientation) {
         m_reading.setX(ay);
         m_reading.setY(-ax);
