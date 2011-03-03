@@ -362,6 +362,8 @@ The behaviour of some parts of the Landmarks API varies between platforms.  A fe
 
 \list
 \o The symbian manager does not support MatchContains in the name or attribute filters.
+The symbian manager also does not support multiple attributes with AND operation type
+in an attribute filter.  See the documentation on the attribute filter for more details.
 \o The sparql manager as of 1.1.1 does not support the countryCode, county and district
 fields of QGeoAddress.  These fields are ignored when a landmark is saved.
 \endlist

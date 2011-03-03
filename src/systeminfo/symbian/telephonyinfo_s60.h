@@ -91,7 +91,6 @@ public:
     CPhoneInfo(CTelephony &telephony);
 
 protected:
-    void RunL();
     void DoCancel();
 
 public:

@@ -251,7 +251,7 @@ QGeoSatelliteInfoSource::QGeoSatelliteInfoSource(QObject *parent)
 
     Returns 0 if the system has no default source and no valid plugins
     could be found.
-    
+
     Note: Symbian applications will need to have the Location capability 
     otherwise this will return 0.
 */
