@@ -130,8 +130,10 @@ QNearFieldTarget::RequestId QNearFieldTagType2Symbian::writeBlock(quint8 blockAd
 {
     BEGIN
     if (data.length() != 4)
+    {
+        END
         return QNearFieldTarget::RequestId();
-
+    }
     QByteArray command;
     command.append(char(0xa2));         // WRITE
     command.append(char(blockAddress)); // Block address

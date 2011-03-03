@@ -251,7 +251,10 @@ QNearFieldTarget::RequestId QNearFieldTagType1Symbian::writeByte(quint8 address,
     BEGIN
     // MSB must be 0
     if (address & 0x80)
-        return QNearFieldTarget::RequestId();;
+    {
+        END
+        return QNearFieldTarget::RequestId();
+    }
 
     QByteArray command;
 
@@ -275,7 +278,10 @@ QNearFieldTarget::RequestId QNearFieldTagType1Symbian::readSegment(quint8 segmen
 {
     BEGIN
     if (segmentAddress & 0xf0)
+    {
+        END
         return QNearFieldTarget::RequestId();
+    }
 
     QByteArray command;
     command.append(char(0x10));                 // RSEG
@@ -311,7 +317,10 @@ QNearFieldTarget::RequestId QNearFieldTagType1Symbian::writeBlock(quint8 blockAd
 {
     BEGIN
     if (data.length() != 8)
+    {
+        END
         return QNearFieldTarget::RequestId();
+    }
 
     QByteArray command;
 

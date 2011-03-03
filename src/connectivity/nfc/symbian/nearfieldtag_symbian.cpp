@@ -136,15 +136,7 @@ TInt CNearFieldTag::RawModeAccess(const TDesC8& aCommand, TDes8& aResponse, TTim
             {
             LOG("Connection is open");
             error = KErrNone;
-            if (iIsTag4)
-                {
-                CIso14443Connection * tag4 = static_cast<CIso14443Connection *>(TagConnection());
-                tag4->ExchangeData(iStatus, aCommand, aResponse);
-                }
-            else
-                {
-                iTagConnection->RawModeAccess(iStatus, aCommand, aResponse, aTimeout);
-                }
+            iTagConnection->RawModeAccess(iStatus, aCommand, aResponse, aTimeout);
             SetActive();
             }
         }
@@ -155,16 +147,7 @@ TInt CNearFieldTag::RawModeAccess(const TDesC8& aCommand, TDes8& aResponse, TTim
 void CNearFieldTag::DoCancel()
     {
     BEGIN
-
-    if (iIsTag4)
-    {
-        CIso14443Connection * tag4 = static_cast<CIso14443Connection *>(TagConnection());
-        tag4->ExchangeDataCancel();
-    }
-    else
-    {
-        iTagConnection->CancelRawModeAccess();
-    }
+    iTagConnection->CancelRawModeAccess();
     if (iCallback)
         {
         LOG("call back command complete with KErrCancel");

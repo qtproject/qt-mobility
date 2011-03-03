@@ -46,6 +46,11 @@
 
 QTM_BEGIN_NAMESPACE
 
+/* For all #if 0 blocks: this is due to symbian RawModeAccess API is not
+ * available yet. After the RawModeAccess API is stable, those blocks
+ * should be enabled.
+ */
+
 #define SYMBIAN_RESP_INCLUDE_LEN
 
 static void OutputByteArray(const QByteArray& data)
@@ -314,6 +319,7 @@ QByteArray QNearFieldTagType3Symbian::serviceBlockList2CmdParam(const QMap<quint
     if (command.isEmpty())
     {
         // can't get IDm
+        END
         return command;
     }
 
@@ -322,6 +328,7 @@ QByteArray QNearFieldTagType3Symbian::serviceBlockList2CmdParam(const QMap<quint
     if ((numberOfServices > 16) || (numberOfServices < 1))
     {
         // out of range of services number
+        END
         return QByteArray();
     }
     else
@@ -370,6 +377,7 @@ QByteArray QNearFieldTagType3Symbian::serviceBlockList2CmdParam(const QMap<quint
     {
         // out of range of block number
         LOG("out of range of block number, number of blocks < 1");
+        END
         return QByteArray();
     }
 
@@ -452,11 +460,13 @@ QMap<quint16, QByteArray> QNearFieldTagType3Symbian::checkResponse2ServiceBlockL
     // at least, the response should contain resp code + IDM + status flags
     if (response.count() < 11)
     {
+        END
         return result;
     }
 
     if ((response.at(0) != 0x07) || (response.mid(1,8) != getIDm()) || (response.at(10) != 0))
     {
+        END
         return result;
     }
 

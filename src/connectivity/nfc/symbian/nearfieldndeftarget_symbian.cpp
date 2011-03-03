@@ -81,11 +81,14 @@ CNearFieldNdefTarget::~CNearFieldNdefTarget()
     if (iNdefConnection)
         {
         if (iNdefConnection->IsActivated())
-        {
+            {
             CloseConnection();
-        }
+            }
         delete iNdefConnection;
         }
+
+    // when Ndef target has a tag connection, iNfcTag ownership
+    // will transfer to tag connection.
     if (iTagConnection)
         {
         delete iTagConnection;
@@ -98,7 +101,7 @@ CNearFieldNdefTarget::~CNearFieldNdefTarget()
     }
 
 void CNearFieldNdefTarget::Cancel()
-{
+    {
     BEGIN
     if (ERead == iCurrentOperation)
     {
@@ -111,7 +114,7 @@ void CNearFieldNdefTarget::Cancel()
 
     iCurrentOperation = ENull;
     END
-}
+    }
 
 CNearFieldTag * CNearFieldNdefTarget::CastToTag()
     {
