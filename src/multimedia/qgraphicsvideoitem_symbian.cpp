@@ -284,6 +284,7 @@ bool QGraphicsVideoItemPrivate::eventFilter(QObject *watched, QEvent *event)
                 updateTopWinId();
                 break;
             case QEvent::Move:
+            case QEvent::Resize:
                 updateGeometryRequired = true;
                 break;
             }
