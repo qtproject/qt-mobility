@@ -57,7 +57,7 @@ public:
     QContactObserver(QContactManager* manager, QContactLocalId localId, QObject* parent = 0);
     ~QContactObserver();
     QContactLocalId contactLocalId() const;
-signals:
+Q_SIGNALS:
     void contactChanged();
     void contactRemoved();
 

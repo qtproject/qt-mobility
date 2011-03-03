@@ -3554,7 +3554,6 @@ void tst_QLandmarkManager::removeLandmark()
             removedIds.append(spyLmRemove.at(i).at(0).value<QList<QLandmarkId> >());
         }
         QCOMPARE(removedIds.count(), 3);
-        qDebug() << "AMOS";
         QVERIFY(removedIds.contains(lm1.landmarkId()));
         QVERIFY(removedIds.contains(lm3.landmarkId()));
         QVERIFY(removedIds.contains(lm4.landmarkId()));
