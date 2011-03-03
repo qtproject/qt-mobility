@@ -364,6 +364,7 @@ qint64 QPulseAudioInput::read(char *data, qint64 len)
     if (!m_pullMode && !m_tempBuffer.isEmpty()) {
         readBytes = qMin(static_cast<int>(len), m_tempBuffer.size());
         memcpy(data, m_tempBuffer.constData(), readBytes);
+        m_totalTimeValue += readBytes;
 
         if (readBytes < m_tempBuffer.size()) {
             m_tempBuffer.remove(0, readBytes);
@@ -492,9 +493,8 @@ int QPulseAudioInput::notifyInterval() const
 
 qint64 QPulseAudioInput::processedUSecs() const
 {
-    qint64 result = qint64(1000000) * m_totalTimeValue /
-        (m_format.channels() * (m_format.sampleSize() / 8)) /
-        m_format.frequency();
+    pa_sample_spec spec = QPulseAudioInternal::audioFormatToSampleSpec(m_format);
+    qint64 result = pa_bytes_to_usec(m_totalTimeValue, &spec);
 
     return result;
 }
