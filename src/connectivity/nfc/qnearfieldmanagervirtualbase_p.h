@@ -39,36 +39,56 @@
 **
 ****************************************************************************/
 
-#ifndef QNEARFIELDMANAGER_SIMULATOR_P_H
-#define QNEARFIELDMANAGER_SIMULATOR_P_H
+#ifndef QNEARFIELDMANAGERVIRTUALBASE_P_H
+#define QNEARFIELDMANAGERVIRTUALBASE_P_H
 
-#include "qnearfieldmanagervirtualbase_p.h"
+#include "qnearfieldmanager_p.h"
+
+#include <QtCore/QMetaMethod>
 
 QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
-namespace Simulator {
-class NfcConnection;
-}
-
-class QNearFieldManagerPrivateImpl : public QNearFieldManagerPrivateVirtualBase
+class QNearFieldManagerPrivateVirtualBase : public QNearFieldManagerPrivate
 {
     Q_OBJECT
 
 public:
-    QNearFieldManagerPrivateImpl();
-    ~QNearFieldManagerPrivateImpl();
+    QNearFieldManagerPrivateVirtualBase();
+    ~QNearFieldManagerPrivateVirtualBase();
 
-private slots:
-    void targetInRange(const QByteArray &uid);
+    bool startTargetDetection(const QList<QNearFieldTarget::Type> &targetTypes);
+    void stopTargetDetection();
+
+    int registerNdefMessageHandler(QObject *object, const QMetaMethod &method);
+    int registerNdefMessageHandler(const QNdefFilter &filter,
+                                   QObject *object, const QMetaMethod &method);
+
+    bool unregisterNdefMessageHandler(int id);
+
+protected:
+    struct Callback {
+        QNdefFilter filter;
+
+        QObject *object;
+        QMetaMethod method;
+    };
+
+    void targetActivated(QNearFieldTarget *target);
+    void targetDeactivated(QNearFieldTarget *target);
 
 private:
-    Simulator::NfcConnection *nfcConnection;
+    int getFreeId();
+    void ndefReceived(const QNdefMessage &message, QNearFieldTarget *target);
+
+    QList<Callback> m_registeredHandlers;
+    QList<int> m_freeIds;
+    QList<QNearFieldTarget::Type> m_detectTargetTypes;
 };
 
 QTM_END_NAMESPACE
 
 QT_END_HEADER
 
-#endif // QNEARFIELDMANAGER_SIMULATOR_P_H
+#endif // QNEARFIELDMANAGERVIRTUALBASE_P_H
