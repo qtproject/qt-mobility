@@ -134,31 +134,6 @@
 #define STORAGEPOLL 2 * 60 *1000 // 2 minutes for maemo/meego
 #endif
 
-static QString sysinfodValueForKey(const QString& key)
-{
-    QString value = "";
-#if !defined(QT_NO_DBUS)
-    QDBusInterface connectionInterface("com.nokia.SystemInfo",
-                                       "/com/nokia/SystemInfo",
-                                       "com.nokia.SystemInfo",
-                                       QDBusConnection::systemBus());
-    QDBusReply<QByteArray> reply = connectionInterface.call("GetConfigValue", key);
-    if (reply.isValid()) {
-        /*
-         * sysinfod automatically terminates after some idle time (no D-Bus traffic).
-         * Therefore, we cannot use isServiceRegistered() to determine if sysinfod is available.
-         *
-         * Thus, make a query to sysinfod and if we got back a valid reply, sysinfod
-         * is available.
-         */
-        value = reply.value();
-    }
-#endif
-    return value;
-}
-
-//#endif
-
 bool halIsAvailable;
 bool udisksIsAvailable;
 bool connmanIsAvailable;
@@ -522,10 +497,6 @@ bool QSystemInfoLinuxCommonPrivate::hasFeatureSupported(QSystemInfo::Feature fea
      case QSystemInfo::Firmware :
      {
 #if !defined(QT_NO_DBUS)
-         QString sysinfodValue = sysinfodValueForKey("/device/sw-release-ver");
-         if (!sysinfodValue.isEmpty()) {
-             return sysinfodValue;
-         }
          QHalDeviceInterface iface(QLatin1String("/org/freedesktop/Hal/devices/computer"));
          QString str;
          if (iface.isValid()) {
@@ -3256,12 +3227,6 @@ QSystemDeviceInfo::LockTypeFlags QSystemDeviceInfoLinuxCommonPrivate::lockStatus
 
 QString QSystemDeviceInfoLinuxCommonPrivate::model()
 {
-#if !defined(QT_NO_DBUS)
-    QString productName = sysinfodValueForKey("/component/product-name");
-    if (!productName.isEmpty()) {
-        return productName.split("/").at(0);
-    }
-#endif
     if (halAvailable()) {
 #if !defined(QT_NO_DBUS)
         QHalDeviceInterface iface("/org/freedesktop/Hal/devices/computer", this);
@@ -3294,12 +3259,6 @@ QString QSystemDeviceInfoLinuxCommonPrivate::model()
 
 QString QSystemDeviceInfoLinuxCommonPrivate::productName()
 {
-#if !defined(QT_NO_DBUS)
-    QString productName = sysinfodValueForKey("/component/product-name");
-    if (!productName.isEmpty()) {
-        return productName;
-    }
-#endif
     if (halAvailable()) {
 #if !defined(QT_NO_DBUS)
         QHalDeviceInterface iface("/org/freedesktop/Hal/devices/computer", this);
