@@ -585,7 +585,7 @@ void COwnLlcpConnectionWrapper::ReceiveCancel()
     END
     }
 
-/*!
+/*
     Start of implementation of Sender AO & Receiver AO for connection less mode (type1)
 */
 
@@ -665,7 +665,7 @@ void CLlcpSenderType1::DoCancel(void)
     END
     }
 
-/*!
+/*
     Start of implementation of Receiver AO for connection less mode (type1) - CLlcpReceiverType1
 */
 

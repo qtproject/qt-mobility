@@ -29,7 +29,6 @@
     \group qml-location
     \title QML Location Plugin
     QML Support for the QtMobility Project Location API.
-
 */
 
 /*!
