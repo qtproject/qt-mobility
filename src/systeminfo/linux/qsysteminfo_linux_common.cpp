@@ -134,31 +134,6 @@
 #define STORAGEPOLL 2 * 60 *1000 // 2 minutes for maemo/meego
 #endif
 
-static QString sysinfodValueForKey(const QString& key)
-{
-    QString value = "";
-#if !defined(QT_NO_DBUS)
-    QDBusInterface connectionInterface("com.nokia.SystemInfo",
-                                       "/com/nokia/SystemInfo",
-                                       "com.nokia.SystemInfo",
-                                       QDBusConnection::systemBus());
-    QDBusReply<QByteArray> reply = connectionInterface.call("GetConfigValue", key);
-    if (reply.isValid()) {
-        /*
-         * sysinfod automatically terminates after some idle time (no D-Bus traffic).
-         * Therefore, we cannot use isServiceRegistered() to determine if sysinfod is available.
-         *
-         * Thus, make a query to sysinfod and if we got back a valid reply, sysinfod
-         * is available.
-         */
-        value = reply.value();
-    }
-#endif
-    return value;
-}
-
-//#endif
-
 bool halIsAvailable;
 bool udisksIsAvailable;
 bool connmanIsAvailable;
@@ -522,10 +497,6 @@ bool QSystemInfoLinuxCommonPrivate::hasFeatureSupported(QSystemInfo::Feature fea
      case QSystemInfo::Firmware :
      {
 #if !defined(QT_NO_DBUS)
-         QString sysinfodValue = sysinfodValueForKey("/device/sw-release-ver");
-         if (!sysinfodValue.isEmpty()) {
-             return sysinfodValue;
-         }
          QHalDeviceInterface iface(QLatin1String("/org/freedesktop/Hal/devices/computer"));
          QString str;
          if (iface.isValid()) {
@@ -557,7 +528,7 @@ bool QSystemInfoLinuxCommonPrivate::hasFeatureSupported(QSystemInfo::Feature fea
             QProcess syscall;
             QString program = "/usr/bin/lsb_release";
             QStringList arguments;
-            arguments << "-d";
+            arguments << "-r";
             syscall.start(program, arguments);
             syscall.waitForFinished();
             QString desc = syscall.readAllStandardOutput();
@@ -1775,6 +1746,26 @@ int QSystemDisplayInfoLinuxCommonPrivate::colorDepth(int screen)
     return wid.screen(screen)->x11Info().depth();
 #else
 #endif
+#else
+
+    QString frameBufferDevicePath = QString("/dev/fb%1").arg(screen);
+    int bpp = 0;
+    int fd;
+    struct fb_var_screeninfo vi;
+
+    if (-1 == (fd = open(frameBufferDevicePath.toStdString().c_str(), O_RDONLY | O_NONBLOCK))) {
+        if (-1 == ioctl(fd, FBIOGET_VSCREENINFO, &vi)) {
+            bpp = vi.bits_per_pixel;
+        } else {
+            qDebug() << "fail 2";
+        }
+    } else {
+        qDebug() << "fail 1";
+    }
+    if (fd != -1) {
+        close(fd);
+    }
+    return bpp;
 #endif
     return QPixmap::defaultDepth();
 }
@@ -2178,64 +2169,48 @@ QSystemStorageInfo::DriveType QSystemStorageInfoLinuxCommonPrivate::typeForDrive
 #endif
 #endif
     }
-    if (halIsAvailable) {
-#if !defined(QT_NO_DBUS)
-        QStringList mountedVol;
-        QHalInterface iface;
-        const QStringList list = iface.findDeviceByCapability("volume");
-        if (!list.isEmpty()) {
-            foreach (const QString &vol, list) {
-                QHalDeviceInterface ifaceDevice(vol);
-                if (mountEntriesMap.value(driveVolume) == ifaceDevice.getPropertyString("block.device")) {
-                    QHalDeviceInterface ifaceDeviceParent(ifaceDevice.getPropertyString("info.parent"), this);
 
-                    if (ifaceDeviceParent.getPropertyBool("storage.removable")
-                        ||  ifaceDeviceParent.getPropertyString("storage.drive_type") != "disk") {
-                        return QSystemStorageInfo::RemovableDrive;
-                        break;
-                    } else {
-                         return QSystemStorageInfo::InternalDrive;
-                    }
-                }
-            }
-        }
-#endif
+    // manually read sys file for block device
+    // not perfect, more complete than hal
+
+    QString dmFile;
+
+    if (mountEntriesMap.value(driveVolume).contains("mapper")) {
+        struct stat stat_buf;
+        stat( mountEntriesMap.value(driveVolume).toLatin1(), &stat_buf);
+
+        dmFile = QString("/sys/block/dm-%1/removable").arg(stat_buf.st_rdev & 0377);
+
     } else {
-        //no hal need to manually read sys file for block device
-        QString dmFile;
 
-        if (mountEntriesMap.value(driveVolume).contains("mapper")) {
-            struct stat stat_buf;
-            stat( mountEntriesMap.value(driveVolume).toLatin1(), &stat_buf);
+        dmFile = mountEntriesMap.value(driveVolume).section("/",2,3);
 
-            dmFile = QString("/sys/block/dm-%1/removable").arg(stat_buf.st_rdev & 0377);
-
-        } else {
-
-            dmFile = mountEntriesMap.value(driveVolume).section("/",2,3);
-            if (dmFile.left(3) == "mmc") { //assume this dev is removable sd/mmc card.
-                return QSystemStorageInfo::RemovableDrive;
-            }
-
-            if (dmFile.length() > 3) { //if device has number, we need the 'parent' device
-                dmFile.chop(1);
-                if (dmFile.right(1) == "p") //get rid of partition number
-                    dmFile.chop(1);
-            }
-            dmFile = "/sys/block/"+dmFile+"/removable";
+        if (dmFile.left(3) == "mmc") { //assume this dev is removable sd/mmc card.
+            return QSystemStorageInfo::RemovableDrive;
+        }
+        if (dmFile.left(3) == "ram") {
+            return QSystemStorageInfo::RamDrive;
         }
 
-        QFile file(dmFile);
-        if (!file.open(QIODevice::ReadOnly)) {
-            qDebug() << "Could not open sys file";
-        } else {
-            QTextStream sysinfo(&file);
-            QString line = sysinfo.readAll();
-            if (line.contains("1")) {
-                return QSystemStorageInfo::RemovableDrive;
-            }
+        if (dmFile.length() > 3) { //if device has number, we need the 'parent' device
+            dmFile.chop(1);
+            if (dmFile.right(1) == "p") //get rid of partition number
+                dmFile.chop(1);
+        }
+        dmFile = "/sys/block/"+dmFile+"/removable";
+    }
+
+    QFile file(dmFile);
+    if (!file.open(QIODevice::ReadOnly)) {
+        qDebug() << "Could not open sys file";
+    } else {
+        QTextStream sysinfo(&file);
+        QString line = sysinfo.readAll();
+        if (line.contains("1")) {
+            return QSystemStorageInfo::RemovableDrive;
         }
     }
+
     if (driveVolume.left(2) == "//") {
         return QSystemStorageInfo::RemoteDrive;
     }
@@ -3252,12 +3227,6 @@ QSystemDeviceInfo::LockTypeFlags QSystemDeviceInfoLinuxCommonPrivate::lockStatus
 
 QString QSystemDeviceInfoLinuxCommonPrivate::model()
 {
-#if !defined(QT_NO_DBUS)
-    QString productName = sysinfodValueForKey("/component/product-name");
-    if (!productName.isEmpty()) {
-        return productName.split("/").at(0);
-    }
-#endif
     if (halAvailable()) {
 #if !defined(QT_NO_DBUS)
         QHalDeviceInterface iface("/org/freedesktop/Hal/devices/computer", this);
@@ -3290,12 +3259,6 @@ QString QSystemDeviceInfoLinuxCommonPrivate::model()
 
 QString QSystemDeviceInfoLinuxCommonPrivate::productName()
 {
-#if !defined(QT_NO_DBUS)
-    QString productName = sysinfodValueForKey("/component/product-name");
-    if (!productName.isEmpty()) {
-        return productName;
-    }
-#endif
     if (halAvailable()) {
 #if !defined(QT_NO_DBUS)
         QHalDeviceInterface iface("/org/freedesktop/Hal/devices/computer", this);
@@ -3642,16 +3605,23 @@ void QSystemBatteryInfoLinuxCommonPrivate::halChanged(int count,QVariantList map
 
             if (mapS == "battery.rechargeable.is_charging") {
 
+                QSystemBatteryInfo::ChargingState bState;
                 if (ifaceDevice.getPropertyBool("battery.rechargeable.is_charging")) {
-                    curChargeState = QSystemBatteryInfo::Charging;
+                    bState = QSystemBatteryInfo::Charging;
                 } else {
-                    curChargeState = QSystemBatteryInfo::NotCharging;
+                    bState = QSystemBatteryInfo::NotCharging;
                 }
-                Q_EMIT chargingStateChanged(curChargeState);
+                if(curChargeState != bState) {
+                    curChargeState = bState;
+                    Q_EMIT chargingStateChanged(curChargeState);
+                }
             }
             if (mapS == "battery.rechargeable.is_discharging") {
-                curChargeState = QSystemBatteryInfo::NotCharging;
-                Q_EMIT chargingStateChanged(curChargeState);
+                QSystemBatteryInfo::ChargingState bState = QSystemBatteryInfo::NotCharging;
+                if (curChargeState != bState) {
+                    curChargeState = bState;
+                    Q_EMIT chargingStateChanged(curChargeState);
+                }
             }
 
             if (mapS == "battery.voltage.current") {
@@ -3929,10 +3899,24 @@ QSystemBatteryInfo::EnergyUnit QSystemBatteryInfoLinuxCommonPrivate::energyMeasu
 #endif
 #if !defined(QT_NO_DBUS)
     if (halIsAvailable && batteryIsPresent) {
-        return QSystemBatteryInfo::UnitmWh;
+        QHalInterface iface;
+        const QStringList list = iface.findDeviceByCapability("battery");
+        if (!list.isEmpty()) {
+            foreach (const QString &dev, list) {
+                QHalDeviceInterface ifaceDevice(dev);
+                if (ifaceDevice.isValid()) {
+                    const QString unit = ifaceDevice.getPropertyString("battery.reporting.unit");
+                    if (unit == "mAh") {
+                        return QSystemBatteryInfo::UnitmAh;
+                    } else if (unit == "mWh") {
+                        return QSystemBatteryInfo::UnitmWh;
+                    }
+                }
+            }
+        }
     }
 #endif
-    return QSystemBatteryInfo::UnitUnknown;
+return QSystemBatteryInfo::UnitUnknown;
 }
 
 int QSystemBatteryInfoLinuxCommonPrivate::batteryLevel() const

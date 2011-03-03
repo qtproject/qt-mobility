@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>750</width>
-    <height>444</height>
+    <height>460</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -646,6 +646,9 @@
          <property name="text">
           <string>keyboard flip open</string>
          </property>
+         <property name="autoExclusive">
+          <bool>false</bool>
+         </property>
         </widget>
        </item>
        <item row="7" column="0">
@@ -655,6 +658,9 @@
          </property>
          <property name="text">
           <string>Wireless Keyboard connected</string>
+         </property>
+         <property name="autoExclusive">
+          <bool>false</bool>
          </property>
         </widget>
        </item>
@@ -954,6 +960,9 @@
             </property>
             <property name="text">
              <string>Vibration active</string>
+            </property>
+            <property name="autoExclusive">
+             <bool>false</bool>
             </property>
            </widget>
           </item>

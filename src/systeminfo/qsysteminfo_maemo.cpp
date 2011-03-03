@@ -76,6 +76,29 @@
 #endif
 
 #include <QDBusInterface>
+static QString sysinfodValueForKey(const QString& key)
+{
+    QString value = "";
+#if !defined(QT_NO_DBUS)
+    QDBusInterface connectionInterface("com.nokia.SystemInfo",
+                                       "/com/nokia/SystemInfo",
+                                       "com.nokia.SystemInfo",
+                                       QDBusConnection::systemBus());
+
+    QDBusReply<QByteArray> reply = connectionInterface.call("GetConfigValue", key);
+    if (reply.isValid()) {
+        /*
+         * sysinfod automatically terminates after some idle time (no D-Bus traffic).
+         * Therefore, we cannot use isServiceRegistered() to determine if sysinfod is available.
+         *
+         * Thus, make a query to sysinfod and if we got back a valid reply, sysinfod
+         * is available.
+         */
+        value = reply.value();
+    }
+#endif
+    return value;
+}
 
 #if !defined(QT_NO_DBUS)
 QDBusArgument &operator<<(QDBusArgument &argument, const ProfileDataValue &value)
@@ -158,28 +181,31 @@ QString QSystemInfoPrivate::currentCountryCode() const
 #endif
 }
 
-QString QSystemInfoPrivate::version(QSystemInfo::Version type,
-                                    const QString &parameter)
+QString QSystemInfoPrivate::version(QSystemInfo::Version type,const QString &parameter)
 {
     QString errorStr = "Not Available";
 
     switch(type) {
-        case QSystemInfo::Firmware :
-        {
-            QDBusInterface connectionInterface("com.nokia.SystemInfo",
-                                               "/com/nokia/SystemInfo",
-                                               "com.nokia.SystemInfo",
-                                               QDBusConnection::systemBus(), this);
-            QDBusReply< QByteArray > reply =
-                connectionInterface.call("GetConfigValue",
-                                         "/device/sw-release-ver");
-            if(reply.isValid())
-                return reply.value();
-            break;
+    case QSystemInfo::Os :
+    {
+        QString sysinfodValue = sysinfodValueForKey("/device/sw-release-ver");//("/device/content-ver");
+        if (!sysinfodValue.isEmpty()) {
+           sysinfodValue =  sysinfodValue.section("_",2,4);
+            return sysinfodValue;
         }
-        default:
-            return QSystemInfoLinuxCommonPrivate::version(type, parameter);
-            break;
+    }
+        break;
+    case QSystemInfo::Firmware :
+    {
+        QString sysinfodValue = sysinfodValueForKey("/device/sw-release-ver");
+        if (!sysinfodValue.isEmpty()) {
+            return sysinfodValue;
+        }
+    }
+
+    default:
+        return QSystemInfoLinuxCommonPrivate::version(type, parameter);
+        break;
     };
     return errorStr;
 }
@@ -1415,19 +1441,10 @@ void QSystemDeviceInfoPrivate::profileChanged(bool changed, bool active, QString
 QString QSystemDeviceInfoPrivate::model()
 {
 #if !defined(QT_NO_DBUS)
-#if defined(Q_WS_MAEMO_6)
-    QString dBusService = "com.nokia.SystemInfo";
-#else
-    /* Maemo 5 */
-    QString dBusService = "com.nokia.SystemInfo";
-#endif
-    QDBusInterface connectionInterface(dBusService,
-                                       "/com/nokia/SystemInfo",
-                                       "com.nokia.SystemInfo",
-                                       QDBusConnection::systemBus(), this);
-
-    QDBusReply< QByteArray > reply = connectionInterface.call("GetConfigValue","/component/product");
-    return reply.value();
+    QString productName = sysinfodValueForKey("/component/product-name");
+    if (!productName.isEmpty()) {
+        return productName.split("/").at(0);
+    }
 #endif
     return QString();
 }
@@ -1435,19 +1452,10 @@ QString QSystemDeviceInfoPrivate::model()
 QString QSystemDeviceInfoPrivate::productName()
 {
 #if !defined(QT_NO_DBUS)
-#if defined(Q_WS_MAEMO_6)
-    QString dBusService = "com.nokia.SystemInfo";
-#else
-    /* Maemo 5 */
-    QString dBusService = "com.nokia.SystemInfo";
-#endif
-    QDBusInterface connectionInterface(dBusService,
-                                       "/com/nokia/SystemInfo",
-                                       "com.nokia.SystemInfo",
-                                       QDBusConnection::systemBus(), this);
-
-    QDBusReply< QByteArray > reply = connectionInterface.call("GetConfigValue","/component/product-name");
-    return reply.value();
+    QString productName = sysinfodValueForKey("/component/product-name");
+    if (!productName.isEmpty()) {
+        return productName;
+    }
 #endif
     return QString();
 }
