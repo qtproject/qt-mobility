@@ -1771,28 +1771,22 @@ QSystemDisplayInfoLinuxCommonPrivate::~QSystemDisplayInfoLinuxCommonPrivate()
 
 int QSystemDisplayInfoLinuxCommonPrivate::colorDepth(int screen)
 {
-    int colorDepth = 0;
-
 #if defined(Q_WS_MAEMO_6) || defined(Q_WS_MEEGO)
     struct fb_var_screeninfo *screenInfo = allocFrameBufferInfo(screen);
     if (screenInfo) {
-       colorDepth = screenInfo->bits_per_pixel;
+       int colorDepth = screenInfo->bits_per_pixel;
        free(screenInfo), screenInfo = 0;
-       goto out;
+       return colorDepth;
     }
 #endif
 
 #ifdef Q_WS_X11
     QDesktopWidget wid;
-    colorDepth = wid.screen(screen)->x11Info().depth();
-    goto out;
+    return wid.screen(screen)->x11Info().depth();
 #endif
 
     /* as a last resort, use the default depth */
-    colorDepth = QPixmap::defaultDepth();
-
-out:
-    return colorDepth;
+    return QPixmap::defaultDepth();
 }
 
 int QSystemDisplayInfoLinuxCommonPrivate::displayBrightness(int screen)
