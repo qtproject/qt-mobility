@@ -1775,6 +1775,26 @@ int QSystemDisplayInfoLinuxCommonPrivate::colorDepth(int screen)
     return wid.screen(screen)->x11Info().depth();
 #else
 #endif
+#else
+
+    QString frameBufferDevicePath = QString("/dev/fb%1").arg(screen);
+    int bpp = 0;
+    int fd;
+    struct fb_var_screeninfo vi;
+
+    if (-1 == (fd = open(frameBufferDevicePath.toStdString().c_str(), O_RDONLY | O_NONBLOCK))) {
+        if (-1 == ioctl(fd, FBIOGET_VSCREENINFO, &vi)) {
+            bpp = vi.bits_per_pixel;
+        } else {
+            qDebug() << "fail 2";
+        }
+    } else {
+        qDebug() << "fail 1";
+    }
+    if (fd != -1) {
+        close(fd);
+    }
+    return bpp;
 #endif
     return QPixmap::defaultDepth();
 }
@@ -2178,64 +2198,48 @@ QSystemStorageInfo::DriveType QSystemStorageInfoLinuxCommonPrivate::typeForDrive
 #endif
 #endif
     }
-    if (halIsAvailable) {
-#if !defined(QT_NO_DBUS)
-        QStringList mountedVol;
-        QHalInterface iface;
-        const QStringList list = iface.findDeviceByCapability("volume");
-        if (!list.isEmpty()) {
-            foreach (const QString &vol, list) {
-                QHalDeviceInterface ifaceDevice(vol);
-                if (mountEntriesMap.value(driveVolume) == ifaceDevice.getPropertyString("block.device")) {
-                    QHalDeviceInterface ifaceDeviceParent(ifaceDevice.getPropertyString("info.parent"), this);
 
-                    if (ifaceDeviceParent.getPropertyBool("storage.removable")
-                        ||  ifaceDeviceParent.getPropertyString("storage.drive_type") != "disk") {
-                        return QSystemStorageInfo::RemovableDrive;
-                        break;
-                    } else {
-                         return QSystemStorageInfo::InternalDrive;
-                    }
-                }
-            }
-        }
-#endif
+    // manually read sys file for block device
+    // not perfect, more complete than hal
+
+    QString dmFile;
+
+    if (mountEntriesMap.value(driveVolume).contains("mapper")) {
+        struct stat stat_buf;
+        stat( mountEntriesMap.value(driveVolume).toLatin1(), &stat_buf);
+
+        dmFile = QString("/sys/block/dm-%1/removable").arg(stat_buf.st_rdev & 0377);
+
     } else {
-        //no hal need to manually read sys file for block device
-        QString dmFile;
 
-        if (mountEntriesMap.value(driveVolume).contains("mapper")) {
-            struct stat stat_buf;
-            stat( mountEntriesMap.value(driveVolume).toLatin1(), &stat_buf);
+        dmFile = mountEntriesMap.value(driveVolume).section("/",2,3);
 
-            dmFile = QString("/sys/block/dm-%1/removable").arg(stat_buf.st_rdev & 0377);
-
-        } else {
-
-            dmFile = mountEntriesMap.value(driveVolume).section("/",2,3);
-            if (dmFile.left(3) == "mmc") { //assume this dev is removable sd/mmc card.
-                return QSystemStorageInfo::RemovableDrive;
-            }
-
-            if (dmFile.length() > 3) { //if device has number, we need the 'parent' device
-                dmFile.chop(1);
-                if (dmFile.right(1) == "p") //get rid of partition number
-                    dmFile.chop(1);
-            }
-            dmFile = "/sys/block/"+dmFile+"/removable";
+        if (dmFile.left(3) == "mmc") { //assume this dev is removable sd/mmc card.
+            return QSystemStorageInfo::RemovableDrive;
+        }
+        if (dmFile.left(3) == "ram") {
+            return QSystemStorageInfo::RamDrive;
         }
 
-        QFile file(dmFile);
-        if (!file.open(QIODevice::ReadOnly)) {
-            qDebug() << "Could not open sys file";
-        } else {
-            QTextStream sysinfo(&file);
-            QString line = sysinfo.readAll();
-            if (line.contains("1")) {
-                return QSystemStorageInfo::RemovableDrive;
-            }
+        if (dmFile.length() > 3) { //if device has number, we need the 'parent' device
+            dmFile.chop(1);
+            if (dmFile.right(1) == "p") //get rid of partition number
+                dmFile.chop(1);
+        }
+        dmFile = "/sys/block/"+dmFile+"/removable";
+    }
+
+    QFile file(dmFile);
+    if (!file.open(QIODevice::ReadOnly)) {
+        qDebug() << "Could not open sys file";
+    } else {
+        QTextStream sysinfo(&file);
+        QString line = sysinfo.readAll();
+        if (line.contains("1")) {
+            return QSystemStorageInfo::RemovableDrive;
         }
     }
+
     if (driveVolume.left(2) == "//") {
         return QSystemStorageInfo::RemoteDrive;
     }
