@@ -69,7 +69,8 @@ QTM_BEGIN_NAMESPACE
     This enum describes the errors that can occur. The most recent error can be retrieved through a
     call to error().
 
-    \value UnknownSocketError   An unidentified error has occurred.
+    \value UnknownSocketError       An unidentified error has occurred.
+    \value RemoteHostClosedError    The remote host closed the connection.
 */
 
 /*!
