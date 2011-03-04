@@ -233,7 +233,7 @@ public:
     void setExpectedOkSignal() { mSignalType = ECompleteSignal; }
     void setExpectedResponse(QVariant expected){ mExpectedResult = expected; }
     void setIfExpectInvalidId() { mInvalidId = true; }
-    void checkInvalidId() { if (mInvalidId) QVERIFY(!mId.isValid()) else QVERIFY(mId.isValid()); }
+    void checkInvalidId() { if (mInvalidId) QVERIFY(!mId.isValid()); }
     void waitRequest()
     {
         if (mWaitOp == NfcTagRawCommandOperationCommon::EWaitFalse)
