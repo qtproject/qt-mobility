@@ -46,6 +46,7 @@
 #include <qsensormanager.h>
 #include <QFile>
 #include <QDebug>
+#include <QTest>
 
 QTM_USE_NAMESPACE
 
@@ -60,10 +61,8 @@ public:
     void registerSensors()
     {
         static bool recursive = false;
-        if (recursive) {
-            qWarning() << "Recursively called TestSensorPlugin::registerSensors!";
-            abort();
-        }
+        QVERIFY2(!recursive, "Recursively called TestSensorPlugin::registerSensors!");
+        if (recursive) return;
         recursive = true;
 
         // This is bad code. It caused a crash due to recursively calling

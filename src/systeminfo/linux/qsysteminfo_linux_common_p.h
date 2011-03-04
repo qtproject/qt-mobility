@@ -139,22 +139,22 @@ public:
     QSystemNetworkInfoLinuxCommonPrivate(QObject *parent = 0);
     virtual ~QSystemNetworkInfoLinuxCommonPrivate();
 
-    virtual QSystemNetworkInfo::NetworkStatus networkStatus(QSystemNetworkInfo::NetworkMode mode);
+    QSystemNetworkInfo::NetworkStatus networkStatus(QSystemNetworkInfo::NetworkMode mode);
     qint32 networkSignalStrength(QSystemNetworkInfo::NetworkMode mode);
-    virtual qint32 cellId();
-    virtual int locationAreaCode();
+    qint32 cellId();
+    int locationAreaCode();
 
-    virtual QString currentMobileCountryCode();
-    virtual QString currentMobileNetworkCode();
+    QString currentMobileCountryCode();
+    QString currentMobileNetworkCode();
 
-    virtual QString homeMobileCountryCode();
-    virtual QString homeMobileNetworkCode();
+    QString homeMobileCountryCode();
+    QString homeMobileNetworkCode();
 
-    virtual QString networkName(QSystemNetworkInfo::NetworkMode mode);
-    virtual QString macAddress(QSystemNetworkInfo::NetworkMode mode);
+    QString networkName(QSystemNetworkInfo::NetworkMode mode);
+    QString macAddress(QSystemNetworkInfo::NetworkMode mode);
 
-    virtual QNetworkInterface interfaceForMode(QSystemNetworkInfo::NetworkMode mode);
-    virtual QSystemNetworkInfo::NetworkMode currentMode();
+    QNetworkInterface interfaceForMode(QSystemNetworkInfo::NetworkMode mode);
+    QSystemNetworkInfo::NetworkMode currentMode();
 
 #if !defined(QT_NO_CONNMAN)
     QSystemNetworkInfo::NetworkStatus getOfonoStatus(QSystemNetworkInfo::NetworkMode mode);
@@ -301,8 +301,8 @@ public:
     QSystemDeviceInfoLinuxCommonPrivate(QObject *parent = 0);
     virtual ~QSystemDeviceInfoLinuxCommonPrivate();
 
-    QString imei() {return QString();}
-    QString imsi() {return QString();}
+    QString imei();
+    QString imsi();
     QString manufacturer();
     QString model();
     QString productName();
@@ -311,7 +311,7 @@ public:
 
     int  batteryLevel() const ;
 
-    QSystemDeviceInfo::SimStatus simStatus() {return QSystemDeviceInfo::SimNotAvailable;}
+    QSystemDeviceInfo::SimStatus simStatus();
     bool isDeviceLocked() {return false;}
     QSystemDeviceInfo::Profile currentProfile() {return QSystemDeviceInfo::UnknownProfile;}
 

@@ -40,7 +40,7 @@
 ****************************************************************************/
 
 /*!
-    \example tennis
+    \example declarative-bluetooth/tennis
     \title QML Bluetooth Tennis Example
 
     The Bluetooth Tennis example shows how to use QML and the Qt Connectivity Bluetooth API
