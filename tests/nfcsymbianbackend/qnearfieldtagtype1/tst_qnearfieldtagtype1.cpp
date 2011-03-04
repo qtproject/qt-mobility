@@ -224,7 +224,7 @@ void tst_qnearfieldtagtype1::testSequence()
     rawCommandList.clear();
     NfcTagRawCommandOperationType1 * op6 = new NfcTagRawCommandOperationType1(tester.target);
     op6->setReadSegment(0xf1);
-    op6->setExpectedInvalidId();
+    op6->setIfExpectInvalidId();
     op6->setExpectedResponse(QVariant());
     rawCommandList.append(op6);
 
