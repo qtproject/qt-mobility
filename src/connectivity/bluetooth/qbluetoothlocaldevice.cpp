@@ -174,6 +174,12 @@ bool QBluetoothLocalDevice::isValid() const
   The \a state of the host has transitioned to a different HostMode
 */
 
+/*!
+  \fn QBluetoothLocalDevice::pairingStatus(const QBluetoothAddress &address) const
+
+  Returns the status of \a address and if it's unpaired, paired, or paired and authorized.
+*/
+
 
 /*!
   \fn QBluetoothLocalDevice::pairingDisplayConfirmation(const QBluetoothAddress &address, QString pin)
