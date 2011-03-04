@@ -8,6 +8,7 @@ CONFIG += plugin
 TARGET  = $$qtLibraryTarget(declarative_multimedia)
 TARGETPATH = QtMultimediaKit
 PLUGIN_TYPE = declarative
+DEFINES += QT_MAKEDLL
 include(../../../common.pri)
 
 QT += declarative
