@@ -59,10 +59,8 @@ Q_DECLARE_METATYPE(QBluetoothSocket::SocketState)
 Q_DECLARE_METATYPE(QBluetoothSocket::SocketType)
 
 //#define BTADDRESS "00:1A:9F:92:9E:5A"
-#ifndef Q_OS_SYMBIAN
 char BTADDRESS[] = "00:00:00:00:00:00";
-#else
-char BTADDRESS[] = "00:09:DD:50:93:DD";
+#ifdef Q_OS_SYMBIAN
 static const QString peerNameSymbian("Patagonia_bluetooth_client");
 #endif
 
@@ -135,7 +133,6 @@ void tst_QBluetoothSocket::initTestCase()
     delete device;
 
     // Go find an echo server for BTADDRESS
-#ifndef Q_OS_SYMBIAN
     QBluetoothServiceDiscoveryAgent *sda = new QBluetoothServiceDiscoveryAgent(this);
     connect(sda, SIGNAL(serviceDiscovered(QBluetoothServiceInfo)), this, SLOT(serviceDiscovered(QBluetoothServiceInfo)));
     connect(sda, SIGNAL(error(QBluetoothServiceDiscoveryAgent::Error)), this, SLOT(error(QBluetoothServiceDiscoveryAgent::Error)));
@@ -160,7 +157,6 @@ void tst_QBluetoothSocket::initTestCase()
         QFAIL("Unable to find test service");
     }
     delete sda;
-#endif
 }
 
 void tst_QBluetoothSocket::error(QBluetoothServiceDiscoveryAgent::Error error)

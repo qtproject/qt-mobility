@@ -64,6 +64,7 @@ QBluetoothServiceDiscoveryAgentPrivate::QBluetoothServiceDiscoveryAgentPrivate(c
 
 QBluetoothServiceDiscoveryAgentPrivate::~QBluetoothServiceDiscoveryAgentPrivate()
 {
+  qDebug() << "QBluetoothServiceDiscoveryAgent being destroyed";
     delete m_filter;
     delete m_attributes;
     delete m_sdpAgent;
@@ -74,14 +75,16 @@ void QBluetoothServiceDiscoveryAgentPrivate::start(const QBluetoothAddress &addr
     Q_Q(QBluetoothServiceDiscoveryAgent);
     TRAPD(err, startL(address));
     if (err != KErrNone) {
+        qDebug() << "Service discovery start failed" << err;
         error = QBluetoothServiceDiscoveryAgent::UnknownError;
         emit q->error(error);
     }
+    qDebug() << "Service discovery started";
 }
 
 void QBluetoothServiceDiscoveryAgentPrivate::startL(const QBluetoothAddress &address)
 {
-    initL(address);
+    initL(address);    
 
     if (uuidFilter.isEmpty()) {
         m_filter->AddL(QBluetoothUuid::PublicBrowseGroup);
@@ -109,10 +112,12 @@ void QBluetoothServiceDiscoveryAgentPrivate::startL(const QBluetoothAddress &add
     }
     m_sdpAgent->SetRecordFilterL(*m_filter);
     m_sdpAgent->NextRecordRequestL();
+    qDebug() << "Service discovery started, in startL";
 }
 
 void QBluetoothServiceDiscoveryAgentPrivate::stop()
 {
+  qDebug() << "Stop discovery called";
     delete m_sdpAgent;
     m_sdpAgent = NULL;
     delete m_filter;
@@ -141,6 +146,7 @@ bool QBluetoothServiceDiscoveryAgentPrivate::quickDiscovery(const QBluetoothAddr
 
 void QBluetoothServiceDiscoveryAgentPrivate::NextRecordRequestComplete(TInt aError, TSdpServRecordHandle aHandle, TInt aTotalRecordsCount)
 {
+  qDebug() << "NextRecordRequestComplete";
     Q_Q(QBluetoothServiceDiscoveryAgent);
     if (aError == KErrNone && aTotalRecordsCount > 0 && m_sdpAgent && m_attributes) {
         // request attributes
@@ -158,12 +164,13 @@ void QBluetoothServiceDiscoveryAgentPrivate::NextRecordRequestComplete(TInt aErr
 
 void QBluetoothServiceDiscoveryAgentPrivate::AttributeRequestResult(TSdpServRecordHandle, TSdpAttributeID aAttrID, CSdpAttrValue *aAttrValue)
 {
+  qDebug() << "AttributeRequestResult";
     Q_Q(QBluetoothServiceDiscoveryAgent);
     m_currentAttributeId = aAttrID;
     TRAPD(err, aAttrValue->AcceptVisitorL(*this));
     if (m_stack.size() != 1) {
         error = QBluetoothServiceDiscoveryAgent::UnknownError;
-        emit q->error(error);
+        emit q->error(error);                            
         delete aAttrValue;
         return;
     }
@@ -179,6 +186,7 @@ void QBluetoothServiceDiscoveryAgentPrivate::AttributeRequestResult(TSdpServReco
 
 void QBluetoothServiceDiscoveryAgentPrivate::AttributeRequestComplete(TSdpServRecordHandle, TInt aError)
 {
+  qDebug() << "AttributeRequestComplete";
     Q_Q(QBluetoothServiceDiscoveryAgent);
 
     if (aError == KErrNone && m_sdpAgent) {
@@ -198,10 +206,12 @@ void QBluetoothServiceDiscoveryAgentPrivate::AttributeRequestComplete(TSdpServRe
     // emit found service.
     if (discoveredServices.last().isValid())
         emit q->serviceDiscovered(discoveredServices.last());
+    
 }
 
 void QBluetoothServiceDiscoveryAgentPrivate::VisitAttributeValueL(CSdpAttrValue &aValue, TSdpElementType aType)
 {
+  qDebug() << "VisitAttributeValueL";
     QVariant var;
     TUint datasize = aValue.DataSize();
     
