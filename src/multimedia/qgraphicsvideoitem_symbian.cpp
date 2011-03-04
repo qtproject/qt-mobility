@@ -64,6 +64,8 @@ QT_BEGIN_NAMESPACE
 
 class QGraphicsVideoItemPrivate : public QObject
 {
+    Q_OBJECT
+
 public:
     QGraphicsVideoItemPrivate(QGraphicsVideoItem *parent);
     ~QGraphicsVideoItemPrivate();
@@ -92,13 +94,15 @@ public:
     void _q_serviceDestroyed();
     void _q_mediaObjectDestroyed();
 
+public slots:
     void updateWidgetOrdinalPosition();
+    void updateItemAncestors();
 
 private:
     void clearService();
     QWidget *videoWidget() const;
     void updateGeometry();
-    void updateEventFilters();
+    void updateViewportAncestorEventFilters();
     void updateWidgetVisibility();
     void updateTopWinId();
 
@@ -108,7 +112,8 @@ private:
     QMediaObject *m_mediaObject;
     QVideoWidgetControl *m_widgetControl;
     QPointer<QGraphicsView> m_currentView;
-    QList<QPointer<QObject> > m_eventFilterTargets;
+    QList<QPointer<QObject> > m_viewportAncestors;
+    QList<QPointer<QObject> > m_itemAncestors;
     QGraphicsView::ViewportUpdateMode m_savedViewportUpdateMode;
     Qt::AspectRatioMode m_aspectRatioMode;
     QRectF m_rect;
@@ -133,6 +138,7 @@ QGraphicsVideoItemPrivate::QGraphicsVideoItemPrivate(QGraphicsVideoItem *parent)
 ,   m_withinViewBounds(false)
 {
     qRegisterMetaType<WId>("WId");
+    updateItemAncestors();
 }
 
 QGraphicsVideoItemPrivate::~QGraphicsVideoItemPrivate()
@@ -241,7 +247,7 @@ void QGraphicsVideoItemPrivate::setCurrentView(QGraphicsView *view)
             updateWidgetOrdinalPosition();
             updateGeometry();
         }
-        updateEventFilters();
+        updateViewportAncestorEventFilters();
      }
 }
 
@@ -271,16 +277,16 @@ void QGraphicsVideoItemPrivate::setWithinViewBounds(bool within)
 
 bool QGraphicsVideoItemPrivate::eventFilter(QObject *watched, QEvent *event)
 {
-    bool updateEventFiltersRequired = false;
+    bool updateViewportAncestorEventFiltersRequired = false;
     bool updateGeometryRequired = false;
-    foreach (QPointer<QObject> target, m_eventFilterTargets) {
+    foreach (QPointer<QObject> target, m_viewportAncestors) {
         if (watched == target.data()) {
             switch (event->type()) {
             case QEvent::ParentChange:
-                updateEventFiltersRequired = true;
+                updateViewportAncestorEventFiltersRequired = true;
                 break;
             case QEvent::WinIdChange:
-                updateEventFiltersRequired = true;
+                updateViewportAncestorEventFiltersRequired = true;
                 updateTopWinId();
                 break;
             case QEvent::Move:
@@ -290,8 +296,8 @@ bool QGraphicsVideoItemPrivate::eventFilter(QObject *watched, QEvent *event)
             }
         }
     }
-    if (updateEventFiltersRequired)
-        updateEventFilters();
+    if (updateViewportAncestorEventFiltersRequired)
+        updateViewportAncestorEventFilters();
     if (updateGeometryRequired)
         updateGeometry();
     if (watched == m_currentView) {
@@ -333,20 +339,45 @@ QWidget *QGraphicsVideoItemPrivate::videoWidget() const
     return m_widgetControl ? m_widgetControl->videoWidget() : 0;
 }
 
-void QGraphicsVideoItemPrivate::updateEventFilters()
+void QGraphicsVideoItemPrivate::updateViewportAncestorEventFilters()
 {
     // In order to determine when the absolute screen position of the item
     // changes, we need to receive move events sent to m_currentView
     // or any of its ancestors.
-    foreach (QPointer<QObject> target, m_eventFilterTargets)
+    foreach (QPointer<QObject> target, m_viewportAncestors)
         if (target)
             target->removeEventFilter(this);
-    m_eventFilterTargets.clear();
+    m_viewportAncestors.clear();
     QObject *target = m_currentView;
     while (target) {
         target->installEventFilter(this);
-        m_eventFilterTargets.append(target);
+        m_viewportAncestors.append(target);
         target = target->parent();
+    }
+}
+
+void QGraphicsVideoItemPrivate::updateItemAncestors()
+{
+    // We need to monitor the ancestors of this item to check for zOrder
+    // changes and reparenting, both of which influence the stacking order
+    // of this item and so require changes to the backend window ordinal position.
+    foreach (QPointer<QObject> target, m_itemAncestors) {
+        if (target) {
+            disconnect(target, SIGNAL(zChanged()), this, SLOT(updateWidgetOrdinalPosition()));
+            disconnect(target, SIGNAL(parentChanged()), this, SLOT(updateItemAncestors()));
+            disconnect(target, SIGNAL(parentChanged()), this, SLOT(updateWidgetOrdinalPosition()));
+        }
+    }
+    m_itemAncestors.clear();
+    QGraphicsItem *item = q_ptr;
+    while (item) {
+        if (QGraphicsObject *object = item->toGraphicsObject()) {
+            connect(object, SIGNAL(zChanged()), this, SLOT(updateWidgetOrdinalPosition()));
+            connect(object, SIGNAL(parentChanged()), this, SLOT(updateItemAncestors()));
+            connect(object, SIGNAL(parentChanged()), this, SLOT(updateWidgetOrdinalPosition()));
+            m_itemAncestors.append(object);
+        }
+        item = item->parentItem();
     }
 }
 
@@ -409,6 +440,9 @@ void QGraphicsVideoItemPrivate::updateTopWinId()
 void QGraphicsVideoItemPrivate::updateWidgetOrdinalPosition()
 {
     if (m_currentView) {
+        QGraphicsScene *scene = m_currentView->scene();
+        const QGraphicsScene::ItemIndexMethod indexMethod = scene->itemIndexMethod();
+        scene->setItemIndexMethod(QGraphicsScene::BspTreeIndex);
         const QList<QGraphicsItem*> items = m_currentView->items();
         QList<QGraphicsVideoItem*> graphicsVideoItems;
         foreach (QGraphicsItem *item, items)
@@ -418,6 +452,7 @@ void QGraphicsVideoItemPrivate::updateWidgetOrdinalPosition()
         foreach (QGraphicsVideoItem *item, graphicsVideoItems)
             if (QVideoWidgetControl *widgetControl = item->d_ptr->m_widgetControl)
                 widgetControl->setProperty("ordinalPosition", ordinalPosition++);
+        scene->setItemIndexMethod(indexMethod);
     }
 }
 
@@ -561,6 +596,7 @@ void QGraphicsVideoItem::timerEvent(QTimerEvent *event)
     QGraphicsObject::timerEvent(event);
 }
 
+#include "qgraphicsvideoitem_symbian.moc"
 #include "moc_qgraphicsvideoitem.cpp"
 
 QT_END_NAMESPACE
