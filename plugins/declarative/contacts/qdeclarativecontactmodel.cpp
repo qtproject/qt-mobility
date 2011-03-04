@@ -476,9 +476,13 @@ void QDeclarativeContactModel::startImport(QVersitReader::State state)
         d->m_reader.setDevice(0);
 
         if (d->m_manager) {
-            if (d->m_manager->saveContacts(&contacts))
+            for (int i = 0; i < contacts.size(); i++) {
+                contacts[i] = d->m_manager->compatibleContact(contacts[i]);
+            }
+            if (d->m_manager->saveContacts(&contacts)) {
                 qmlInfo(this) << tr("contacts imported.");
                 update();
+            }
         }
     }
 }
