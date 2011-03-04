@@ -39,49 +39,44 @@
 **
 ****************************************************************************/
 
-#ifndef QGSTVIDEOCONNECTOR_H
-#define QGSTVIDEOCONNECTOR_H
+/* Camera snippets */
 
-#include <gst/gst.h>
+#include "qcamera.h"
+#include "qcameraviewfinder.h"
+#include "qmediarecorder.h"
+#include "qcameraimagecapture.h"
 
-G_BEGIN_DECLS
+void camera()
+{
+    QCamera *camera = 0;
+    QCameraViewfinder *viewfinder = 0;
+    QMediaRecorder *recorder = 0;
+    QCameraImageCapture *imageCapture = 0;
 
-#define GST_TYPE_VIDEO_CONNECTOR \
-  (gst_video_connector_get_type())
-#define GST_VIDEO_CONNECTOR(obj) \
-  (G_TYPE_CHECK_INSTANCE_CAST ((obj), GST_TYPE_VIDEO_CONNECTOR, GstVideoConnector))
-#define GST_VIDEO_CONNECTOR_CLASS(klass) \
-  (G_TYPE_CHECK_CLASS_CAST ((klass), GST_TYPE_VIDEO_CONNECTOR, GstVideoConnectorClass))
-#define GST_IS_VIDEO_CONNECTOR(obj) \
-  (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GST_TYPE_VIDEO_CONNECTOR))
-#define GST_IS_VIDEO_CONNECTOR_CLASS(klass) \
-  (G_TYPE_CHECK_CLASS_TYPE ((klass), GST_TYPE_VIDEO_CONNECTOR))
+    //! [Camera]
+    camera = new QCamera;
 
-typedef struct _GstVideoConnector GstVideoConnector;
-typedef struct _GstVideoConnectorClass GstVideoConnectorClass;
+    viewfinder = new QCameraViewfinder();
+    viewfinder->show();
 
-struct _GstVideoConnector {
-  GstElement element;
+    camera->setViewfinder(viewfinder);
 
-  GstPad *srcpad;
-  GstPad *sinkpad;
+    recorder = new QMediaRecorder(camera);
+    imageCapture = new QCameraImageCapture(camera);
 
-  gboolean relinked;
-  gboolean failedSignalEmited;
-  GstSegment segment;
-  GstBuffer *latest_buffer;
-};
+    camera->setCaptureMode(QCamera::CaptureStillImage);
+    camera->start();
+    //! [Camera]
 
-struct _GstVideoConnectorClass {
-  GstElementClass parent_class;
+    //! [Camera keys]
+    //on half pressed shutter button
+    camera->searchAndLock();
 
-  /* action signal to resend new segment */
-  void (*resend_new_segment) (GstElement * element, gboolean emitFailedSignal);
-};
+    //on shutter button pressed
+    imageCapture->capture();
 
-GType gst_video_connector_get_type (void);
+    //on shutter button released
+    camera->unlock();
+    //! [Camera keys]
 
-G_END_DECLS
-
-#endif
-
+}

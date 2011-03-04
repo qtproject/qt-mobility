@@ -147,10 +147,13 @@ private slots:
     void updateVideoRenderer();
     void updateVideoResolutionTag();
     void updateVolume();
+    void updateMuted();
+    void updateDuration();
 
 private:
     static void playbinNotifySource(GObject *o, GParamSpec *p, gpointer d);
     static void handleVolumeChange(GObject *o, GParamSpec *p, gpointer d);
+    static void handleMutedChange(GObject *o, GParamSpec *p, gpointer d);
     static void insertColorSpaceElement(GstElement *element, gpointer data);
 
     QNetworkRequest m_request;
@@ -191,6 +194,7 @@ private:
 
     qint64 m_lastPosition;
     qint64 m_duration;
+    int m_durationQueries;
 };
 
 #endif // QGSTREAMERPLAYERSESSION_H
