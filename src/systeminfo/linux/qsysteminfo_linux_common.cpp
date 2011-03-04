@@ -70,6 +70,7 @@
 #include <sys/vfs.h>
 #include <mntent.h>
 #include <sys/stat.h>
+#include <errno.h>
 
 #ifdef Q_WS_X11
 #include <QX11Info>
@@ -168,6 +169,36 @@ static bool btHasPower() {
      }
 #endif
      return false;
+}
+
+static struct fb_var_screeninfo* allocFrameBufferInfo(int screen)
+{
+    QString frameBufferDevicePath = QString("/dev/fb%1").arg(screen);
+    int fd;
+    struct fb_var_screeninfo *vi = 0;
+
+    if (-1 == (fd = open(frameBufferDevicePath.toStdString().c_str(), O_RDONLY | O_NONBLOCK))) {
+        qDebug() << "Failed to open the frame buffer device " << frameBufferDevicePath
+                 << strerror(errno);
+        goto out;
+    }
+
+    vi = (struct fb_var_screeninfo *)calloc(1, sizeof *vi);
+    if (!vi) {
+        goto out;
+    }
+
+    if (-1 == ioctl(fd, FBIOGET_VSCREENINFO, vi)) {
+        qDebug() << "Failed to ioctl() the frame buffer device " << frameBufferDevicePath
+                 << strerror(errno);
+        goto out;
+    }
+
+out:
+    if (fd != -1) {
+        close(fd);
+    }
+    return vi;
 }
 
 QTM_BEGIN_NAMESPACE
@@ -1740,36 +1771,23 @@ QSystemDisplayInfoLinuxCommonPrivate::~QSystemDisplayInfoLinuxCommonPrivate()
 
 int QSystemDisplayInfoLinuxCommonPrivate::colorDepth(int screen)
 {
-#if !defined(Q_WS_MAEMO_6)  && !defined(Q_WS_MEEGO)
+#if defined(Q_WS_MAEMO_6) || defined(Q_WS_MEEGO)
+    struct fb_var_screeninfo *screenInfo = allocFrameBufferInfo(screen);
+    if (screenInfo) {
+       int colorDepth = screenInfo->bits_per_pixel;
+       free(screenInfo), screenInfo = 0;
+       return colorDepth;
+    }
+#endif
+
 #ifdef Q_WS_X11
     QDesktopWidget wid;
     return wid.screen(screen)->x11Info().depth();
-#else
 #endif
-#else
 
-    QString frameBufferDevicePath = QString("/dev/fb%1").arg(screen);
-    int bpp = 0;
-    int fd;
-    struct fb_var_screeninfo vi;
-
-    if (-1 == (fd = open(frameBufferDevicePath.toStdString().c_str(), O_RDONLY | O_NONBLOCK))) {
-        if (-1 == ioctl(fd, FBIOGET_VSCREENINFO, &vi)) {
-            bpp = vi.bits_per_pixel;
-        } else {
-            qDebug() << "fail 2";
-        }
-    } else {
-        qDebug() << "fail 1";
-    }
-    if (fd != -1) {
-        close(fd);
-    }
-    return bpp;
-#endif
+    /* as a last resort, use the default depth */
     return QPixmap::defaultDepth();
 }
-
 
 int QSystemDisplayInfoLinuxCommonPrivate::displayBrightness(int screen)
 {
@@ -1893,46 +1911,27 @@ out:
 
 int QSystemDisplayInfoLinuxCommonPrivate::physicalHeight(int screen)
 {
-    QString frameBufferDevicePath = QString("/dev/fb%1").arg(screen);
     int height = 0;
-    int fd;
-    struct fb_var_screeninfo vi;
+    struct fb_var_screeninfo *screenInfo = allocFrameBufferInfo(screen);
 
-    if (-1 == (fd = open(frameBufferDevicePath.toStdString().c_str(), O_RDONLY | O_NONBLOCK))) {
-        goto out;
-    }
-    if (-1 == ioctl(fd, FBIOGET_VSCREENINFO, &vi)) {
-        goto out;
-    }
-    height = vi.height;
-out:
-    if (fd != -1) {
-        close(fd);
+    if (screenInfo) {
+         height = screenInfo->height;
+         free(screenInfo), screenInfo = 0;
     }
     return height;
 }
 
 int QSystemDisplayInfoLinuxCommonPrivate::physicalWidth(int screen)
 {
-    QString frameBufferDevicePath = QString("/dev/fb%1").arg(screen);
     int width = 0;
-    int fd;
-    struct fb_var_screeninfo vi;
+    struct fb_var_screeninfo *screenInfo = allocFrameBufferInfo(screen);
 
-    if (-1 == (fd = open(frameBufferDevicePath.toStdString().c_str(), O_RDONLY | O_NONBLOCK))) {
-        goto out;
-    }
-    if (-1 == ioctl(fd, FBIOGET_VSCREENINFO, &vi)) {
-        goto out;
-    }
-    width = vi.width;
-out:
-    if (fd != -1) {
-        close(fd);
+    if (screenInfo) {
+        width = screenInfo->width;
+        free(screenInfo), screenInfo = 0;
     }
     return width;
 }
-
 
 int QSystemDisplayInfoLinuxCommonPrivate::getDPIWidth(int screen)
 {
