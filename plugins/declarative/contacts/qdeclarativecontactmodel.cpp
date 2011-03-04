@@ -339,7 +339,7 @@ void QDeclarativeContactModel::exportContacts(const QUrl& url, const QStringList
    exporter.exportContacts(contacts, QVersitDocument::VCard30Type);
    QList<QVersitDocument> documents = exporter.documents();
    QFile* file = new QFile(urlToLocalFileName(url));
-   bool ok = file->open(QIODevice::ReadWrite);
+   bool ok = file->open(QIODevice::WriteOnly);
    if (ok) {
       d->m_writer.setDevice(file);
       d->m_writer.startWriting(documents);
