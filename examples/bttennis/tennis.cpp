@@ -264,11 +264,14 @@ void Tennis::mouseMove(int x, int y)
     if(isConnected == false){
         // look for clicks in the bt connect icon
         if(x > 440 && x < 540 && y > 200 && y < 300) {
+            qDebug() << "Got connect click!";
             if(m_discoveryAgent->isActive()) {
+                qDebug() << "stopping!";
                 m_discoveryAgent->stop();
                 board->animateConnect(false);
             }
             else {
+                qDebug() << "starting!";
                 startDiscovery();
             }
         }
@@ -348,7 +351,9 @@ void Tennis::discoveryFinished()
 
 void Tennis::startDiscovery()
 {
+    qDebug() << "startDiscovery() called";
     if(!isConnected) {
+        qDebug() << "Scanning!";
         board->setStatus("Scanning", 100, 25);
         board->fadeConnect(false);
         board->animateConnect(true);
@@ -360,6 +365,7 @@ void Tennis::startDiscovery()
 //        quickDiscovery = !quickDiscovery;
     }
     else {
+        qDebug() << "Stop scanning!";
         board->setStatus("", 0, 0);
         board->animateConnect(false);
         board->fadeConnect(true);
