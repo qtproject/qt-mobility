@@ -69,7 +69,11 @@ class QMetaPropertyBuilderPrivate;
 class QMetaEnumBuilder;
 class QMetaEnumBuilderPrivate;
 
-class QM_AUTOTEST_EXPORT QMetaObjectBuilder
+#ifdef IGNORE_METAOBJECTBUILDER_EXPORT
+  class QMetaObjectBuilder
+#else
+  class QM_AUTOTEST_EXPORT QMetaObjectBuilder
+#endif
 {
 public:
     enum AddMember
@@ -194,7 +198,11 @@ private:
     friend class QMetaEnumBuilder;
 };
 
-class QM_AUTOTEST_EXPORT  QMetaMethodBuilder
+#ifdef IGNORE_METAOBJECTBUILDER_EXPORT
+  class QMetaMethodBuilder
+#else
+  class QM_AUTOTEST_EXPORT QMetaMethodBuilder
+#endif
 {
 public:
     QMetaMethodBuilder() : _mobj(0), _index(0) {}
@@ -232,7 +240,11 @@ private:
     QMetaMethodBuilderPrivate *d_func() const;
 };
 
-class QM_AUTOTEST_EXPORT QMetaPropertyBuilder
+#ifdef IGNORE_METAOBJECTBUILDER_EXPORT
+  class QMetaPropertyBuilder
+#else
+  class QM_AUTOTEST_EXPORT QMetaPropertyBuilder
+#endif
 {
 public:
     QMetaPropertyBuilder() : _mobj(0), _index(0) {}
@@ -283,7 +295,11 @@ private:
     QMetaPropertyBuilderPrivate *d_func() const;
 };
 
-class QM_AUTOTEST_EXPORT QMetaEnumBuilder
+#ifdef IGNORE_METAOBJECTBUILDER_EXPORT
+  class QMetaEnumBuilder
+#else
+  class QM_AUTOTEST_EXPORT QMetaEnumBuilder
+#endif
 {
 public:
     QMetaEnumBuilder() : _mobj(0), _index(0) {}
