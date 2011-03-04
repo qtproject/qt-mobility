@@ -5,7 +5,7 @@
     <ipcaddress>nfctestserviceprovider</ipcaddress>
     <description>NFC serive provider</description>
     <interface>
-        <name>com.nokia.symbian.NdefMessageHandler</name>
+        <name>com.nokia.qtmobility.nfc.NdefMessageHandler</name>
         <version>1.0</version>
         <description>nfc service provider</description>
         <capabilities></capabilities>

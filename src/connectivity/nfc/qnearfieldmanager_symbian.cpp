@@ -133,7 +133,7 @@ int QNearFieldManagerPrivateImpl::getFreeId()
 int QNearFieldManagerPrivateImpl::registerNdefMessageHandler(QObject *object,
                                                              const QMetaMethod &method)
 {
-    QServiceFilter filter("com.nokia.symbian.NdefMessageHandler");
+    QServiceFilter filter("com.nokia.qtmobility.nfc.NdefMessageHandler");
     QCoreApplication* app = QCoreApplication::instance();
     //The appfile path will return something like \sys\bin\nfcspserviceprovider.exe
     //but we only need nfcspserviceprovider as service name
@@ -159,7 +159,7 @@ int QNearFieldManagerPrivateImpl::registerNdefMessageHandler(QObject *object,
             m_serviceRegister = new QRemoteServiceRegister();
             QRemoteServiceRegister::Entry entry =
                     m_serviceRegister->createEntry<ContentHandlerInterface>(servicename,
-                                                                         "com.nokia.symbian.NdefMessageHandler",
+                                                                         "com.nokia.qtmobility.nfc.NdefMessageHandler",
                                                                          "1.0");
             entry.setInstantiationType(QRemoteServiceRegister::PrivateInstance);
             m_serviceRegister->publishEntries(servicename);
