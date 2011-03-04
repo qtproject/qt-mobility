@@ -282,7 +282,7 @@ void tst_QMediaPlayerBackend::playPauseStop()
     QTRY_COMPARE(statusSpy.count(), 1);
     QCOMPARE(statusSpy.last()[0].value<QMediaPlayer::MediaStatus>(), QMediaPlayer::LoadedMedia);
 
-    //ensure the position is reset to 0 at stop and positionChanged(0) is emited
+    //ensure the position is reset to 0 at stop and positionChanged(0) is emitted
     QCOMPARE(player.position(), qint64(0));
     QCOMPARE(positionSpy.last()[0].value<qint64>(), qint64(0));
     QVERIFY(player.duration() > 0);
@@ -332,7 +332,7 @@ void tst_QMediaPlayerBackend::processEOS()
     //wait up to 5 seconds for EOS
     QTRY_COMPARE(player.mediaStatus(), QMediaPlayer::EndOfMedia);
 
-    //ensure the positionChanged() signal is emited
+    //ensure the positionChanged() signal is emitted
     QVERIFY(positionSpy.count() > 0);
 
     QCOMPARE(player.mediaStatus(), QMediaPlayer::EndOfMedia);
