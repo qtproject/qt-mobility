@@ -106,6 +106,7 @@ _IceTransSocketUNIXConnect: Cannot connect to non-local host saisd        Socket
     This enum describes Bluetooth socket error types.
 
     \value UnknownSocketError       An unknown error has occurred.
+    \value NoSocketError            No error. Used for testing.
     \value ConnectionRefusedError   Connection refused or device not available.
     \value RemoteHostClosedError    The remote host closed the socket
     \value HostNotFoundError        Could not find the remote host

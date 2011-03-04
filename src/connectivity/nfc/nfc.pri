@@ -95,11 +95,13 @@ simulator {
     QT *= gui
 
     PRIVATE_HEADERS += \
+        nfc/qnearfieldmanagervirtualbase_p.h \
         nfc/qnearfieldmanager_simulator_p.h \
         nfc/qllcpsocket_simulator_p.h \
         nfc/qllcpserver_simulator_p.h
 
     SOURCES += \
+        nfc/qnearfieldmanagervirtualbase.cpp \
         nfc/qnearfieldmanager_simulator.cpp \
         nfc/qllcpsocket_simulator_p.cpp \
         nfc/qllcpserver_simulator_p.cpp
@@ -199,4 +201,3 @@ contains(nfc_enabled, yes):symbian {
 
     LIBS += -lnfc -lndef -lndefaccess -lnfcdiscoveryservice -lllcp -lnfctagextension
 }
-

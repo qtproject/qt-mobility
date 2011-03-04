@@ -49,9 +49,9 @@
 
 QTM_BEGIN_NAMESPACE
 
-/*!
+/*! \internal
     \class BluetoothSymbianRegistryAdapter
-    \brief The BluetoothSymbianRegistryAdapter is an adapter class for handling Symbian Bluetooth
+    \brief The BluetoothSymbianRegistryAdapter class is an adapter for handling Symbian Bluetooth
     Registry.
 
     The BluetoothSymbianRegistryAdapter is constructed to use for a one QBluetoothAddress.
@@ -59,6 +59,8 @@ QTM_BEGIN_NAMESPACE
 
     \ingroup connectivity-bluetooth
     \inmodule QtConnectivity
+
+    @internalComponent
 
 */
 

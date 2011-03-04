@@ -152,6 +152,7 @@ QSystemDisplayInfo::DisplayOrientation QSystemDisplayInfo::orientation(int scree
 
 /*!
     Returns the current contrast of the screen \a screen, from 0 to 1.
+    \bold sNOTE: Some platforms do not support detecting the contrast of the display.
 
     \sa QDesktopWidget::screenCount()
 */

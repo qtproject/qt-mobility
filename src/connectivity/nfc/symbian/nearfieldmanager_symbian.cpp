@@ -49,7 +49,7 @@
 
 /*
     \class CNearFieldManager
-    \brief The Symbain class provides symbian backend implementation to access NFC service.
+    \brief The CNearFieldManager class provides symbian backend implementation to access NFC service.
 
     \ingroup connectivity-nfc
     \inmodule QtConnectivity

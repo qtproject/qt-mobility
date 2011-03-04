@@ -42,7 +42,7 @@
 #ifndef QNEARFIELDMANAGER_SIMULATOR_P_H
 #define QNEARFIELDMANAGER_SIMULATOR_P_H
 
-#include "qnearfieldmanager_p.h"
+#include "qnearfieldmanagervirtualbase_p.h"
 
 QT_BEGIN_HEADER
 
@@ -52,7 +52,7 @@ namespace Simulator {
 class NfcConnection;
 }
 
-class QNearFieldManagerPrivateImpl : public QNearFieldManagerPrivate
+class QNearFieldManagerPrivateImpl : public QNearFieldManagerPrivateVirtualBase
 {
     Q_OBJECT
 
@@ -60,15 +60,13 @@ public:
     QNearFieldManagerPrivateImpl();
     ~QNearFieldManagerPrivateImpl();
 
-    bool startTargetDetection(const QList<QNearFieldTarget::Type> &targetTypes);
-    void stopTargetDetection();
-
 private slots:
-    void targetInRange(const QByteArray &uid);
+    void targetEnteringProximity(const QByteArray &uid);
+    void targetLeavingProximity(const QByteArray &uid);
 
 private:
     Simulator::NfcConnection *nfcConnection;
-    QList<QNearFieldTarget::Type> detectTargetTypes;
+    QMap<QByteArray, QNearFieldTarget *> m_targets;
 };
 
 QTM_END_NAMESPACE

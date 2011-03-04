@@ -70,7 +70,7 @@ NdefHandler::NdefHandler(QNearFieldManagerPrivateImpl *manager, const QString &s
     m_serviceName(serviceName), m_path(path)
 {
     QDBusConnection handlerConnection = QDBusConnection::systemBus();
-    if (!serviceName.isEmpty()) {
+    if (serviceName != handlerConnection.baseService()) {
         handlerConnection = QDBusConnection::connectToBus(QDBusConnection::SystemBus, serviceName);
 
         if (!handlerConnection.registerService(serviceName))
@@ -198,7 +198,8 @@ int QNearFieldManagerPrivateImpl::registerNdefMessageHandler(const QString &filt
     const QString handlerPath =
         QLatin1String(registeredHandlerPath) + QLatin1Char('/') + QString::number(id);
 
-    NdefHandler *handler = new NdefHandler(this, QString(), handlerPath, object, method);
+    NdefHandler *handler = new NdefHandler(this, QDBusConnection::systemBus().baseService(),
+                                           handlerPath, object, method);
     if (!handler->isValid()) {
         delete handler;
         return -1;

@@ -92,7 +92,7 @@ Item {
         anchors.fill: parent
         color: "#343434"
 
-//![Basic MapObjects and View on Map]
+        //![Basic MapObjects and View on Map]
         Map {
             id: map
             plugin : Plugin {name : "nokia"}
@@ -122,7 +122,7 @@ Item {
 		radius: 1000
 		center: myPositionSource.position.coordinate
 	    }
-//![Basic MapObjects and View on Map]
+        //![Basic MapObjects and View on Map]
 
 	    MapObjectView {
 	        id: landmarksNearMe
