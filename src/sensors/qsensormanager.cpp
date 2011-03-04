@@ -138,6 +138,14 @@ Q_SENSORS_EXPORT void sensors_unit_test_hook(int index)
         settings_scope = QSettings::UserScope;
         load_external_plugins = false;
         break;
+    case 1:
+        Q_ASSERT(load_external_plugins == false);
+        Q_ASSERT(d->pluginLoadingState == QSensorManagerPrivate::Loaded);
+        SENSORLOG() << "initializing plugins";
+        Q_FOREACH (QObject *plugin, pluginLoader()->plugins()) {
+            initPlugin(plugin);
+        }
+        break;
     default:
         break;
     }

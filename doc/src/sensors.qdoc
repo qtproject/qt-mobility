@@ -138,8 +138,37 @@ Only specific data rates can be selected. Setting an invalid data rate has no ef
 that need to influence the used data rate should connect to the sensor, check the available data rates
 and select one as appropriate.
 
-Applications must be extremely careful not to use too much CPU time or sensor readings will
-not be delivered in a timely manner.
+Readings are delivered to the application via a queue. If the application blocks the event loop or otherwise
+interferes with the ability of the system to deliver readings (eg. by using up too much CPU time), they can
+get blocked in this queue. Since delayed readings are not useful, the system will drop readings as needed
+so that the application is always dealing with the most recent reading available. The application can tweak
+the policy by setting properties on the sensor.
+
+The default policy is to accept up to 100 readings from the system at once and to discard all but the last one.
+
+\code
+QAccelerometer sensor;
+sensor.setProperty("maximumReadingCount", 100);
+sensor.setProperty("processAllReadings", false);
+\endcode
+
+Applications that desire the original behaviour can set the maximumReadingCount to 1. Note that this does not
+guarantee that readings will not be dropped by the system. If the queue fills up, readings will be dropped.
+
+\code
+QAccelerometer sensor;
+sensor.setProperty("maximumReadingCount", 1);
+\endcode
+
+Larger maximumReadingCount values reduce the need for the lower-priority sensor daemon to get CPU timeslices.
+If the application is using lots of CPU but is still able to process readings quickly, it can request that
+all the fetched readings are processed.
+
+\code
+QAccelerometer sensor;
+sensor.setProperty("maximumReadingCount", 10);
+sensor.setProperty("processAllReadings", true);
+\endcode
 
 More information about the native API can be found \l{http://wiki.forum.nokia.com/index.php/Nokia_Sensor_APIs}{here}.
 
@@ -177,7 +206,7 @@ int main(int argc, char **argv)
 {
     qputenv("N900_PORTRAIT_SENSORS", "1");
     ...
-\code
+\endcode
 
 Despite hardware that allows for multiple data rates and output ranges, the Sensors API does not allow access to
 these due to permissions issues.
@@ -185,9 +214,6 @@ these due to permissions issues.
 Readings are polled using a timer. If the application blocks the event loop or otherwise interferes with the
 ability of the timer to fire, readings will be missed. There are no queues so applications must ensure that
 they process the readings promptly (possibly saving them into a buffer for later processing if required).
-
-Note that timestamps on this platform come from a counter that wraps around once or twice in a 24 hour period.
-Applications that evaluate timestamps over an extended period need to handle this.
 
 \section2 MeeGo
 

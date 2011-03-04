@@ -51,8 +51,6 @@
     The Feedback API allows application developers to implement feedback and programmatic vibration in their applications.
     Use this in the QML \i {import} statement.
 
-    \note At the time of the QtMobility 1.1 release the QML support for the Feedback API is incomplete and likely to be refined
-          and improved in the next patch release.
 
 
     \section1 Feedback elements
