@@ -5,7 +5,9 @@ MOBILITY = serviceframework
 
 INCLUDEPATH += ../../src/serviceframework
 
-SOURCES = servicefw.cpp
+SOURCES = servicefw.cpp \
+          ../../src/serviceframework/servicemetadata.cpp
+HEADERS += ../../src/serviceframework/servicemetadata_p.h
 
 include(../../common.pri)
 
