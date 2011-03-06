@@ -2294,8 +2294,40 @@ void QSystemDeviceInfoPrivate::keyboardConnected(bool connect)
     Q_EMIT wirelessKeyboardConnected(connect);
 }
 
-bool QSystemDeviceInfoPrivate::keypadLightOn(QSystemDeviceInfo::KeypadType /*type*/)
+bool QSystemDeviceInfoPrivate::keypadLightOn(QSystemDeviceInfo::KeypadType type)
 {
+    if(type == QSystemDeviceInfo::PrimaryKeypad) {
+         static io_connect_t dataPort = 0;
+
+         kern_return_t kreturn;
+         io_service_t ioService;
+
+         ioService = IOServiceGetMatchingService(kIOMasterPortDefault, IOServiceMatching("AppleLMUController"));
+         if (!ioService) {
+             qDebug() << "AppleLMUController error";
+             return false;
+         }
+
+         kreturn = IOServiceOpen(ioService, mach_task_self(), 0, &dataPort);
+         IOObjectRelease(ioService);
+         if (kreturn != KERN_SUCCESS) {
+             qDebug() << "IOServiceOpen "<< kreturn;
+             return false;
+         }
+
+         uint64_t inputValues[1] = {0};
+
+         uint32_t outputCount = 1;
+         uint64_t outputValues[1];
+
+         kreturn = IOConnectCallScalarMethod(dataPort,1,inputValues,1,outputValues,&outputCount);
+         if (kreturn != KERN_SUCCESS) {
+             qDebug() << "keyboard error";
+             return false;
+         }
+
+         if(outputValues[0] > 0) return true;
+     }
     return false;
 }
 
