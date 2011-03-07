@@ -2,7 +2,7 @@ TEMPLATE = app
 TARGET = servicefw
 CONFIG += console mobility
 MOBILITY = serviceframework
-
+DEFINES += IGNORE_SERVICEMETADATA_EXPORT
 INCLUDEPATH += ../../src/serviceframework
 
 SOURCES = servicefw.cpp \
