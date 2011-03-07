@@ -43,7 +43,7 @@
 #include "qmetaobjectbuilder_p.h"
 #include <qdebug.h>
 
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 class QDeclarativeOpenMetaObjectPrivate
 {
@@ -211,4 +211,4 @@ QObject *QDeclarativeOpenMetaObject::object() const
     return d->object;
 }
 
-QT_END_NAMESPACE
+QTM_END_NAMESPACE

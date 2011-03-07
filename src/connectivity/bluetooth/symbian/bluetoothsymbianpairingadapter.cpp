@@ -54,7 +54,7 @@ QTM_BEGIN_NAMESPACE
 const static TInt BTKErrRemoteDeviceIndicatedNoBonding = KLinkManagerErrBase-4;
 /*!
     \class BluetoothSymbianPairingAdapter
-    \brief The BluetoothSymbianPairingAdapter is an adapter class for bluetooth pairing functinality.
+    \brief The BluetoothSymbianPairingAdapter class is an adapter for bluetooth pairing functionality.
 
     The BluetoothSymbianPairingAdapter is constructed to use for a one QBluetoothAddress.
     It uses following Symbian class CBTEngConnMan for native operations.

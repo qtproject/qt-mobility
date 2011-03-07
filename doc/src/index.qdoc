@@ -337,7 +337,7 @@
     These platforms are not currently under active development or QA. Contributions to these platforms are welcome.
     <br />
     <br />
-    <table align="center" cellpadding="2" cellspacing="1" border="1" rules="all">
+    <table align="center" cellpadding="2" cellspacing="1" border="1" rules="all" width="90%">
     <tbody>
     <tr>
     <td rowspan="2">&nbsp;</td>
@@ -442,7 +442,7 @@
     <td bgcolor="green"></td>
     </tr>
     <tr>
-    <td>Multimedia</td>QtMobility Bearer does not support MeeGo. Use Qt 4.7 based Bearer API instead.
+    <td>Multimedia</td>
     <td>FINAL</td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
@@ -457,7 +457,7 @@
     </tr>
     <tr>
     <td>System Information</td>
-    <td>FINAL</td>QtMobility Bearer does not support MeeGo. Use Qt 4.7 based Bearer API instead.
+    <td>FINAL</td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
