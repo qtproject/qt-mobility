@@ -345,6 +345,15 @@ void QGeoTiledMapData::setMapType(QGraphicsGeoMap::MapType mapType)
 /*!
     \reimp
 */
+void QGeoTiledMapData::setConnectivityMode(QGraphicsGeoMap::ConnectivityMode connectivityMode)
+{
+    QGeoMapData::setConnectivityMode(connectivityMode);
+    emit connectivityModeChanged(connectivityMode);
+}
+
+/*!
+    \reimp
+*/
 QGeoCoordinate QGeoTiledMapData::center() const
 {
     Q_D(const QGeoTiledMapData);
