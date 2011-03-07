@@ -84,7 +84,8 @@ maemo6|meego {
         $$DBUS_ADAPTORS \
         nfc/meego/com.nokia.nfc.Adapter.xml \
         nfc/meego/com.nokia.nfc.Target.xml \
-        nfc/meego/com.nokia.nfc.Tag.xml
+        nfc/meego/com.nokia.nfc.Tag.xml \
+        nfc/meego/com.nokia.nfc.LLCPRequestor.xml
 
     # Add OUT_PWD to INCLUDEPATH so that creator picks up headers for generated files
     # This is not needed for the build otherwise.

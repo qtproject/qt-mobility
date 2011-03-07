@@ -43,10 +43,9 @@
 
 #include <QtCore/QMutex>
 #include <QtCore/QHash>
-#include <QtDBus/QDBusObjectPath>
 #include <QtCore/QSocketNotifier>
-
-#include <QtCore/QDebug>
+#include <QtCore/QStringList>
+#include <QtDBus/QDBusObjectPath>
 
 #include <dbus/dbus.h>
 
@@ -58,6 +57,121 @@ struct WatchNotifier
     QSocketNotifier *readNotifier;
     QSocketNotifier *writeNotifier;
 };
+
+static QVariant getVariantFromDBusMessage(DBusMessageIter *iter)
+{
+    dbus_bool_t bool_data;
+    dbus_int32_t int32_data;
+    dbus_uint32_t uint32_data;
+    dbus_int64_t int64_data;
+    dbus_uint64_t uint64_data;
+    char *str_data;
+    char char_data;
+    int argtype = dbus_message_iter_get_arg_type(iter);
+
+    switch (argtype) {
+    case DBUS_TYPE_BOOLEAN: {
+        dbus_message_iter_get_basic(iter, &bool_data);
+        QVariant variant((bool)bool_data);
+        return variant;
+    }
+    case DBUS_TYPE_ARRAY: {
+        // Handle all arrays here
+        int elem_type = dbus_message_iter_get_element_type(iter);
+        DBusMessageIter array_iter;
+
+        dbus_message_iter_recurse(iter, &array_iter);
+
+        if (elem_type == DBUS_TYPE_BYTE) {
+            QByteArray byte_array;
+            do {
+                dbus_message_iter_get_basic(&array_iter, &char_data);
+                byte_array.append(char_data);
+            } while (dbus_message_iter_next(&array_iter));
+            QVariant variant(byte_array);
+            return variant;
+        } else if (elem_type == DBUS_TYPE_STRING) {
+            QStringList str_list;
+            do {
+                dbus_message_iter_get_basic(&array_iter, &str_data);
+                str_list.append(str_data);
+            } while (dbus_message_iter_next(&array_iter));
+            QVariant variant(str_list);
+            return variant;
+        } else {
+            QVariantList variantList;
+            do {
+                variantList << getVariantFromDBusMessage(&array_iter);
+            } while (dbus_message_iter_next(&array_iter));
+            QVariant variant(variantList);
+            return variant;
+        }
+        break;
+    }
+    case DBUS_TYPE_BYTE: {
+        dbus_message_iter_get_basic(iter, &char_data);
+        QChar ch(char_data);
+        QVariant variant(ch);
+        return variant;
+    }
+    case DBUS_TYPE_INT32: {
+        dbus_message_iter_get_basic(iter, &int32_data);
+        QVariant variant((int)int32_data);
+        return variant;
+    }
+    case DBUS_TYPE_UINT32: {
+        dbus_message_iter_get_basic(iter, &uint32_data);
+        QVariant variant((uint)uint32_data);
+        return variant;
+    }
+    case DBUS_TYPE_OBJECT_PATH:
+    case DBUS_TYPE_STRING: {
+        dbus_message_iter_get_basic(iter, &str_data);
+        QString str(str_data);
+        QVariant variant(str);
+        return variant;
+    }
+    case DBUS_TYPE_INT64: {
+        dbus_message_iter_get_basic(iter, &int64_data);
+        QVariant variant((qlonglong)int64_data);
+        return variant;
+    }
+    case DBUS_TYPE_UINT64: {
+        dbus_message_iter_get_basic(iter, &uint64_data);
+        QVariant variant((qulonglong)uint64_data);
+        return variant;
+    }
+    case DBUS_TYPE_DICT_ENTRY:
+    case DBUS_TYPE_STRUCT: {
+        // Handle all structs here
+        DBusMessageIter struct_iter;
+        dbus_message_iter_recurse(iter, &struct_iter);
+
+        QVariantList variantList;
+        do {
+            variantList << getVariantFromDBusMessage(&struct_iter);
+        } while (dbus_message_iter_next(&struct_iter));
+        QVariant variant(variantList);
+        return variant;
+    }
+    case DBUS_TYPE_VARIANT: {
+        DBusMessageIter variant_iter;
+        dbus_message_iter_recurse(iter, &variant_iter);
+
+        return getVariantFromDBusMessage(&variant_iter);
+    }
+    case DBUS_TYPE_UNIX_FD: {
+        dbus_message_iter_get_basic(iter, &uint32_data);
+        QVariant variant((uint)uint32_data);
+        return variant;
+    }
+
+    default:
+        qWarning("Unsupported DBUS type: %d\n", argtype);
+    }
+
+    return QVariant();
+}
 
 class SocketRequestorPrivate : public QObject
 {
@@ -81,9 +195,8 @@ public:
 private:
     bool parseAccessFailed(DBusMessage *message, SocketRequestor *socketRequestor);
     bool parseAccessGranted(DBusMessage *message, SocketRequestor *socketRequestor);
-    bool parseAccept(DBusMessage *message, SocketRequestor *socketRequestor);
-    bool parseConnect(DBusMessage *message, SocketRequestor *socketRequestor);
-    bool parseSocket(DBusMessage *message, SocketRequestor *socketRequestor);
+    bool parseAcceptConnectSocket(DBusMessage *message, SocketRequestor *socketRequestor,
+                                  const char *member);
 
 private slots:
     void socketRead();
@@ -154,11 +267,11 @@ DBusHandlerResult SocketRequestorPrivate::messageFilter(DBusConnection *connecti
     else if (dbus_message_is_method_call(message, "com.nokia.nfc.AccessRequestor", "AccessGranted"))
         handled = parseAccessGranted(message, socketRequestor);
     else if (dbus_message_is_method_call(message, "com.nokia.nfc.LLCPRequestor", "Accept"))
-        handled = parseAccept(message, socketRequestor);
+        handled = parseAcceptConnectSocket(message, socketRequestor, "accept");
     else if (dbus_message_is_method_call(message, "com.nokia.nfc.LLCPRequestor", "Connect"))
-        handled = parseConnect(message, socketRequestor);
+        handled = parseAcceptConnectSocket(message, socketRequestor, "connect");
     else if (dbus_message_is_method_call(message, "com.nokia.nfc.LLCPRequestor", "Socket"))
-        handled = parseSocket(message, socketRequestor);
+        handled = parseAcceptConnectSocket(message, socketRequestor, "socket");
     else
         handled = false;
 
@@ -172,31 +285,57 @@ DBusHandlerResult SocketRequestorPrivate::messageFilter(DBusConnection *connecti
     return DBUS_HANDLER_RESULT_HANDLED;
 }
 
-bool SocketRequestorPrivate::parseAccessFailed(DBusMessage *message, SocketRequestor *socketRequestor)
+bool SocketRequestorPrivate::parseAccessFailed(DBusMessage *message,
+                                               SocketRequestor *socketRequestor)
 {
     Q_UNUSED(message);
 
     // m_mutex is locked in messageFilter()
+
+    DBusMessageIter args;
+
+    if (!dbus_message_iter_init(message, &args))
+        return false;
+
+    // read DBus Object Path
+    QVariant objectPath = getVariantFromDBusMessage(&args);
+
+    // read DBus error string
+    QVariant errorString = getVariantFromDBusMessage(&args);
 
     QMetaObject::invokeMethod(socketRequestor, "accessFailed",
-                              Q_ARG(QDBusObjectPath, QDBusObjectPath()),
-                              Q_ARG(QString, QString()));
+                              Q_ARG(QDBusObjectPath, QDBusObjectPath(objectPath.toString())),
+                              Q_ARG(QString, errorString.toString()));
     return true;
 }
 
-bool SocketRequestorPrivate::parseAccessGranted(DBusMessage *message, SocketRequestor *socketRequestor)
+bool SocketRequestorPrivate::parseAccessGranted(DBusMessage *message,
+                                                SocketRequestor *socketRequestor)
 {
     Q_UNUSED(message);
 
     // m_mutex is locked in messageFilter()
 
+    DBusMessageIter args;
+
+    if (!dbus_message_iter_init(message, &args))
+        return false;
+
+    // read DBus Object Path
+    QVariant objectPath = getVariantFromDBusMessage(&args);
+
+    // read access kind
+    QVariant kind = getVariantFromDBusMessage(&args);
+
     QMetaObject::invokeMethod(socketRequestor, "accessGranted",
-                              Q_ARG(QDBusObjectPath, QDBusObjectPath()),
-                              Q_ARG(QString, QString()));
+                              Q_ARG(QDBusObjectPath, QDBusObjectPath(objectPath.toString())),
+                              Q_ARG(QString, kind.toString()));
     return true;
 }
 
-bool SocketRequestorPrivate::parseAccept(DBusMessage *message, SocketRequestor *socketRequestor)
+bool SocketRequestorPrivate::parseAcceptConnectSocket(DBusMessage *message,
+                                                      SocketRequestor *socketRequestor,
+                                                      const char *member)
 {
     // m_mutex is locked in messageFilter()
 
@@ -205,128 +344,37 @@ bool SocketRequestorPrivate::parseAccept(DBusMessage *message, SocketRequestor *
     if (!dbus_message_iter_init(message, &args))
         return false;
 
-    if (dbus_message_iter_get_arg_type(&args) != DBUS_TYPE_VARIANT)
+    // read DBus Variant (lsap)
+    QVariant lsap = getVariantFromDBusMessage(&args);
+
+    if (!dbus_message_iter_next(&args))
         return false;
+    // read DBus Variant (rsap)
+    QVariant rsap = getVariantFromDBusMessage(&args);
 
     if (!dbus_message_iter_next(&args))
         return false;
 
-    if (dbus_message_iter_get_arg_type(&args) != DBUS_TYPE_VARIANT)
-        return false;
+    // read socket fd
+    QVariant fd = getVariantFromDBusMessage(&args);
 
     if (!dbus_message_iter_next(&args))
         return false;
 
-    if (dbus_message_iter_get_arg_type(&args) != int('h'))
-        return false;
+    // read DBus a{sv} into QVariantMap
+    QVariant prop = getVariantFromDBusMessage(&args);
+    QVariantMap properties;
+    foreach (const QVariant &v, prop.toList()) {
+        QVariantList vl = v.toList();
+        if (vl.length() != 2)
+            continue;
 
-    int readFd;
+        properties.insert(vl.first().toString(), vl.at(1));
+    }
 
-    dbus_message_iter_get_basic(&args, &readFd);
-
-    if (!dbus_message_iter_next(&args))
-        return false;
-
-    if (dbus_message_iter_get_arg_type(&args) != int('h'))
-        return false;
-
-    int writeFd;
-
-    dbus_message_iter_get_basic(&args, &writeFd);
-
-    QMetaObject::invokeMethod(socketRequestor, "accept", Q_ARG(QDBusVariant, QDBusVariant()),
-                              Q_ARG(QDBusVariant, QDBusVariant()),
-                              Q_ARG(int, readFd), Q_ARG(int, writeFd));
-
-    return true;
-}
-
-bool SocketRequestorPrivate::parseConnect(DBusMessage *message, SocketRequestor *socketRequestor)
-{
-    // m_mutex is locked in messageFilter()
-
-    DBusMessageIter args;
-
-    if (!dbus_message_iter_init(message, &args))
-        return false;
-
-    if (dbus_message_iter_get_arg_type(&args) != DBUS_TYPE_VARIANT)
-        return false;
-
-    if (!dbus_message_iter_next(&args))
-        return false;
-
-    if (dbus_message_iter_get_arg_type(&args) != DBUS_TYPE_VARIANT)
-        return false;
-
-    if (!dbus_message_iter_next(&args))
-        return false;
-
-    if (dbus_message_iter_get_arg_type(&args) != int('h'))
-        return false;
-
-    int readFd;
-
-    dbus_message_iter_get_basic(&args, &readFd);
-
-    if (!dbus_message_iter_next(&args))
-        return false;
-
-    if (dbus_message_iter_get_arg_type(&args) != int('h'))
-        return false;
-
-    int writeFd;
-
-    dbus_message_iter_get_basic(&args, &writeFd);
-
-    QMetaObject::invokeMethod(socketRequestor, "connect", Q_ARG(QDBusVariant, QDBusVariant()),
-                              Q_ARG(QDBusVariant, QDBusVariant()),
-                              Q_ARG(int, readFd), Q_ARG(int, writeFd));
-
-    return true;
-}
-
-bool SocketRequestorPrivate::parseSocket(DBusMessage *message, SocketRequestor *socketRequestor)
-{
-    // m_mutex is locked in messageFilter()
-
-    DBusMessageIter args;
-
-    if (!dbus_message_iter_init(message, &args))
-        return false;
-
-    if (dbus_message_iter_get_arg_type(&args) != DBUS_TYPE_VARIANT)
-        return false;
-
-    if (!dbus_message_iter_next(&args))
-        return false;
-
-    if (dbus_message_iter_get_arg_type(&args) != DBUS_TYPE_VARIANT)
-        return false;
-
-    if (!dbus_message_iter_next(&args))
-        return false;
-
-    if (dbus_message_iter_get_arg_type(&args) != int('h'))
-        return false;
-
-    int readFd;
-
-    dbus_message_iter_get_basic(&args, &readFd);
-
-    if (!dbus_message_iter_next(&args))
-        return false;
-
-    if (dbus_message_iter_get_arg_type(&args) != int('h'))
-        return false;
-
-    int writeFd;
-
-    dbus_message_iter_get_basic(&args, &writeFd);
-
-    QMetaObject::invokeMethod(socketRequestor, "socket", Q_ARG(QDBusVariant, QDBusVariant()),
-                              Q_ARG(QDBusVariant, QDBusVariant()),
-                              Q_ARG(int, readFd), Q_ARG(int, writeFd));
+    QMetaObject::invokeMethod(socketRequestor, member, Q_ARG(QDBusVariant, QDBusVariant(lsap)),
+                              Q_ARG(QDBusVariant, QDBusVariant(rsap)),
+                              Q_ARG(int, fd.toInt()), Q_ARG(QVariantMap, properties));
 
     return true;
 }

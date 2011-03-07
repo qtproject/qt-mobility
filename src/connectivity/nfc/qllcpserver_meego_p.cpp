@@ -77,12 +77,12 @@ bool QLlcpServerPrivate::listen(const QString &serviceUri)
                 this, SLOT(AccessFailed(QDBusObjectPath,QString)));
         connect(m_socketRequestor, SIGNAL(accessGranted(QDBusObjectPath,QString)),
                 this, SLOT(AccessGranted(QDBusObjectPath,QString)));
-        connect(m_socketRequestor, SIGNAL(accept(QDBusVariant,QDBusVariant,int,int)),
-                this, SLOT(Accept(QDBusVariant,QDBusVariant,int,int)));
-        connect(m_socketRequestor, SIGNAL(connect(QDBusVariant,QDBusVariant,int,int)),
-                this, SLOT(Connect(QDBusVariant,QDBusVariant,int,int)));
-        connect(m_socketRequestor, SIGNAL(socket(QDBusVariant,QDBusVariant,int,int)),
-                this, SLOT(Socket(QDBusVariant,QDBusVariant,int,int)));
+        connect(m_socketRequestor, SIGNAL(accept(QDBusVariant,QDBusVariant,int,QVariantMap)),
+                this, SLOT(Accept(QDBusVariant,QDBusVariant,int,QVariantMap)));
+        connect(m_socketRequestor, SIGNAL(connect(QDBusVariant,QDBusVariant,int,QVariantMap)),
+                this, SLOT(Connect(QDBusVariant,QDBusVariant,int,QVariantMap)));
+        connect(m_socketRequestor, SIGNAL(socket(QDBusVariant,QDBusVariant,int,QVariantMap)),
+                this, SLOT(Socket(QDBusVariant,QDBusVariant,int,QVariantMap)));
     }
 
     if (m_socketRequestor) {
@@ -136,10 +136,10 @@ QLlcpSocket *QLlcpServerPrivate::nextPendingConnection()
     if (m_pendingSockets.isEmpty())
         return 0;
 
-    QPair<int, int> fds = m_pendingSockets.takeFirst();
+    int fd = m_pendingSockets.takeFirst();
 
     QLlcpSocketPrivate *socketPrivate =
-        new QLlcpSocketPrivate(m_connection, fds.first, fds.second);
+        new QLlcpSocketPrivate(m_connection, fd);
 
     QLlcpSocket *socket = new QLlcpSocket(socketPrivate, 0);
 
@@ -172,34 +172,35 @@ void QLlcpServerPrivate::AccessGranted(const QDBusObjectPath &targetPath,
 }
 
 void QLlcpServerPrivate::Accept(const QDBusVariant &lsap, const QDBusVariant &rsap,
-                                int readFd, int writeFd)
+                                int readFd, const QVariantMap &properties)
 {
     Q_UNUSED(lsap);
     Q_UNUSED(rsap);
+    Q_UNUSED(properties);
 
     Q_Q(QLlcpServer);
 
-    m_pendingSockets.append(qMakePair(readFd, writeFd));
+    m_pendingSockets.append(readFd);
 
     emit q->newConnection();
 }
 
 void QLlcpServerPrivate::Connect(const QDBusVariant &lsap, const QDBusVariant &rsap,
-                                 int readFd, int writeFd)
+                                 int readFd, const QVariantMap &properties)
 {
     Q_UNUSED(lsap);
     Q_UNUSED(rsap);
     Q_UNUSED(readFd);
-    Q_UNUSED(writeFd);
+    Q_UNUSED(properties);
 }
 
 void QLlcpServerPrivate::Socket(const QDBusVariant &lsap, const QDBusVariant &rsap,
-                                int readFd, int writeFd)
+                                int readFd, const QVariantMap &properties)
 {
     Q_UNUSED(lsap);
     Q_UNUSED(rsap);
     Q_UNUSED(readFd);
-    Q_UNUSED(writeFd);
+    Q_UNUSED(properties);
 }
 
 #include "moc_qllcpserver_meego_p.cpp"

@@ -106,18 +106,25 @@ void tst_QLlcpSocket::tst_construction()
 void tst_QLlcpSocket::tst_clientConnection_data()
 {
     QTest::addColumn<ClientConnectionShutdown>("shutdown");
+    QTest::addColumn<bool>("stream");
 
-    QTest::newRow("server disconnect") << ServerDisconnect;
-    QTest::newRow("server close") << ServerClose;
-    QTest::newRow("client disconnect") << ClientDisconnect;
-    QTest::newRow("client close") << ClientClose;
+    QTest::newRow("server disconnect stream") << ServerDisconnect << true;
+    QTest::newRow("server disconnect datagram") << ServerDisconnect << false;
+    QTest::newRow("server close stream") << ServerClose << true;
+    QTest::newRow("server close datagram") << ServerClose << false;
+    QTest::newRow("client disconnect stream") << ClientDisconnect << true;
+    QTest::newRow("client disconnect datagram") << ClientDisconnect << false;
+    QTest::newRow("client close stream") << ClientClose << true;
+    QTest::newRow("client close datagram") << ClientClose << false;
 }
 
 void tst_QLlcpSocket::tst_clientConnection()
 {
     QFETCH(ClientConnectionShutdown, shutdown);
+    QFETCH(bool, stream);
 
-    const QLatin1String commandServer("urn:nfc:sn:com.nokia.qtmobility.commandserver");
+    QString service = QLatin1String("urn:nfc:sn:com.nokia.qtmobility.commandserver") +
+                      (stream ? QLatin1String(".stream") : QLatin1String(".datagram"));
 
     /* Construction */
     QLlcpSocket *socket = new QLlcpSocket;
@@ -130,7 +137,7 @@ void tst_QLlcpSocket::tst_clientConnection()
     QSignalSpy connectedSpy(socket, SIGNAL(connected()));
     QSignalSpy errorSpy(socket, SIGNAL(error(QLlcpSocket::SocketError)));
 
-    socket->connectToService(0, commandServer);
+    socket->connectToService(0, service);
 
     QCOMPARE(stateSpy.count(), 1);
     QCOMPARE(stateSpy.takeFirst().at(0).value<QLlcpSocket::SocketState>(),
@@ -158,7 +165,7 @@ void tst_QLlcpSocket::tst_clientConnection()
     QSignalSpy readyReadSpy(socket, SIGNAL(readyRead()));
 
     /* Verify connected to correct service */
-    {
+    if (stream) {
         socket->write("URI\n");
 
         QCOMPARE(bytesWrittenSpy.count(), 1);
@@ -168,14 +175,28 @@ void tst_QLlcpSocket::tst_clientConnection()
 
         const QByteArray line = socket->readLine().trimmed();
 
-        QCOMPARE(line.constData(), commandServer.latin1());
+        QCOMPARE(line, service.toLatin1());
+    } else {
+        socket->writeDatagram("URI");
 
-        bytesWrittenSpy.clear();
-        readyReadSpy.clear();
+        QCOMPARE(bytesWrittenSpy.count(), 1);
+        QCOMPARE(bytesWrittenSpy.takeFirst().at(0).value<qint64>(), qint64(3));
+
+        QTRY_VERIFY(!readyReadSpy.isEmpty() && socket->hasPendingDatagrams());
+
+        QByteArray datagram;
+        datagram.resize(socket->pendingDatagramSize());
+
+        socket->readDatagram(datagram.data(), datagram.size());
+
+        QCOMPARE(datagram, service.toLatin1());
     }
 
+    bytesWrittenSpy.clear();
+    readyReadSpy.clear();
+
     /* Read / Write */
-    {
+    if (stream) {
         QByteArray data("ECHO Test data\n");
         socket->write(data);
 
@@ -187,10 +208,24 @@ void tst_QLlcpSocket::tst_clientConnection()
         const QByteArray line = socket->readLine().trimmed();
 
         QCOMPARE(line.constData(), "Test data");
+    } else {
+        socket->writeDatagram("ECHO Test data");
 
-        bytesWrittenSpy.clear();
-        readyReadSpy.clear();
+        QCOMPARE(bytesWrittenSpy.count(), 1);
+        QCOMPARE(bytesWrittenSpy.takeFirst().at(0).value<qint64>(), qint64(14));
+
+        QTRY_VERIFY(!readyReadSpy.isEmpty());
+
+        QByteArray datagram;
+        datagram.resize(socket->pendingDatagramSize());
+
+        socket->readDatagram(datagram.data(), datagram.size());
+
+        QCOMPARE(datagram.constData(), "Test data");
     }
+
+    bytesWrittenSpy.clear();
+    readyReadSpy.clear();
 
     QSignalSpy disconnectedSpy(socket, SIGNAL(disconnected()));
     errorSpy.clear();
@@ -198,10 +233,16 @@ void tst_QLlcpSocket::tst_clientConnection()
     /* Shutdown */
     switch (shutdown) {
     case ServerDisconnect:
-        socket->write("DISCONNECT\n");
+        if (stream)
+            socket->write("DISCONNECT\n");
+        else
+            socket->writeDatagram("DISCONNECT");
         break;
     case ServerClose:
-        socket->write("CLOSE\n");
+        if (stream)
+            socket->write("CLOSE\n");
+        else
+            socket->writeDatagram("CLOSE");
         break;
     case ClientDisconnect:
         socket->disconnectFromService();

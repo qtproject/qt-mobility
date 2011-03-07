@@ -86,9 +86,9 @@ private slots:
     void AccessGranted(const QDBusObjectPath &targetPath, const QString &accessKind);
 
     // com.nokia.nfc.LLCPRequestor
-    void Accept(const QDBusVariant &lsap, const QDBusVariant &rsap, int readFd, int writeFd);
-    void Connect(const QDBusVariant &lsap, const QDBusVariant &rsap, int readFd, int writeFd);
-    void Socket(const QDBusVariant &lsap, const QDBusVariant &rsap, int readFd, int writeFd);
+    void Accept(const QDBusVariant &lsap, const QDBusVariant &rsap, int readFd, const QVariantMap &properties);
+    void Connect(const QDBusVariant &lsap, const QDBusVariant &rsap, int readFd, const QVariantMap &properties);
+    void Socket(const QDBusVariant &lsap, const QDBusVariant &rsap, int readFd, const QVariantMap &properties);
 
 private:
     QLlcpServer *q_ptr;
@@ -100,7 +100,7 @@ private:
     QString m_requestorPath;
     SocketRequestor *m_socketRequestor;
 
-    QList<QPair<int, int> > m_pendingSockets;
+    QList<int> m_pendingSockets;
 
     QLlcpSocket::SocketError m_error;
 };

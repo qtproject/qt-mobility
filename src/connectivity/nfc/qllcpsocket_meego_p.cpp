@@ -79,9 +79,9 @@ QLlcpSocketPrivate::QLlcpSocketPrivate(QLlcpSocket *q)
     qt_ignore_sigpipe();
 }
 
-QLlcpSocketPrivate::QLlcpSocketPrivate(const QDBusConnection &connection, int readFd, int writeFd)
+QLlcpSocketPrivate::QLlcpSocketPrivate(const QDBusConnection &connection, int readFd)
 :   q_ptr(0), m_connection(connection), m_socketRequestor(0),
-    m_readFd(readFd), m_writeFd(writeFd),
+    m_readFd(readFd),
     m_state(QLlcpSocket::ConnectedState), m_error(QLlcpSocket::UnknownSocketError)
 {
     qt_ignore_sigpipe();
@@ -119,12 +119,12 @@ void QLlcpSocketPrivate::connectToService(QNearFieldTarget *target, const QStrin
                 this, SLOT(AccessFailed(QDBusObjectPath,QString)));
         connect(m_socketRequestor, SIGNAL(accessGranted(QDBusObjectPath,QString)),
                 this, SLOT(AccessGranted(QDBusObjectPath,QString)));
-        connect(m_socketRequestor, SIGNAL(accept(QDBusVariant,QDBusVariant,int,int)),
-                this, SLOT(Accept(QDBusVariant,QDBusVariant,int,int)));
-        connect(m_socketRequestor, SIGNAL(connect(QDBusVariant,QDBusVariant,int,int)),
-                this, SLOT(Connect(QDBusVariant,QDBusVariant,int,int)));
-        connect(m_socketRequestor, SIGNAL(socket(QDBusVariant,QDBusVariant,int,int)),
-                this, SLOT(Socket(QDBusVariant,QDBusVariant,int,int)));
+        connect(m_socketRequestor, SIGNAL(accept(QDBusVariant,QDBusVariant,int,QVariantMap)),
+                this, SLOT(Accept(QDBusVariant,QDBusVariant,int,QVariantMap)));
+        connect(m_socketRequestor, SIGNAL(connect(QDBusVariant,QDBusVariant,int,QVariantMap)),
+                this, SLOT(Connect(QDBusVariant,QDBusVariant,int,QVariantMap)));
+        connect(m_socketRequestor, SIGNAL(socket(QDBusVariant,QDBusVariant,int,QVariantMap)),
+                this, SLOT(Socket(QDBusVariant,QDBusVariant,int,QVariantMap)));
     }
 
     if (m_socketRequestor) {
@@ -153,8 +153,6 @@ void QLlcpSocketPrivate::disconnectFromService()
     m_readNotifier = 0;
     ::close(m_readFd);
     m_readFd = -1;
-    ::close(m_writeFd);
-    m_writeFd = -1;
 
     if (m_socketRequestor) {
         QString accessKind(QLatin1String("device.llcp.co.client:") + m_serviceUri);
@@ -182,48 +180,37 @@ bool QLlcpSocketPrivate::bind(quint8 port)
 
 bool QLlcpSocketPrivate::hasPendingDatagrams() const
 {
-    qDebug() << Q_FUNC_INFO << "is unimplemented";
-
-    return false;
+    return !m_datagrams.isEmpty();
 }
 
 qint64 QLlcpSocketPrivate::pendingDatagramSize() const
 {
-    qDebug() << Q_FUNC_INFO << "is unimplemented";
+    if (m_datagrams.isEmpty())
+        return -1;
 
-    return -1;
+    return m_datagrams.first().length();
 }
 
 qint64 QLlcpSocketPrivate::writeDatagram(const char *data, qint64 size)
 {
-    Q_UNUSED(data);
-    Q_UNUSED(size);
-
-    qDebug() << Q_FUNC_INFO << "is unimplemented";
-
-    return -1;
+    return writeData(data, size);
 }
 
 qint64 QLlcpSocketPrivate::writeDatagram(const QByteArray &datagram)
 {
-    Q_UNUSED(datagram);
+    if (uint(datagram.length()) > m_properties.value(QLatin1String("RemoteMIU"), 128).toUInt())
+        return -1;
 
-    qDebug() << Q_FUNC_INFO << "is unimplemented";
-
-    return -1;
+    return writeData(datagram.constData(), datagram.size());
 }
 
 qint64 QLlcpSocketPrivate::readDatagram(char *data, qint64 maxSize,
                                         QNearFieldTarget **target, quint8 *port)
 {
-    Q_UNUSED(data);
-    Q_UNUSED(maxSize);
     Q_UNUSED(target);
     Q_UNUSED(port);
 
-    qDebug() << Q_FUNC_INFO << "is unimplemented";
-
-    return -1;
+    return readData(data, maxSize);
 }
 
 qint64 QLlcpSocketPrivate::writeDatagram(const char *data, qint64 size,
@@ -263,41 +250,55 @@ QLlcpSocket::SocketState QLlcpSocketPrivate::state() const
 
 qint64 QLlcpSocketPrivate::readData(char *data, qint64 maxlen)
 {
-    if (!buffer.isEmpty()) {
-        int i = buffer.read(data, maxlen);
-        return i;
-    }
-
-    return 0;
+    const QByteArray datagram = m_datagrams.takeFirst();
+    qint64 size = qMin(maxlen, qint64(datagram.length()));
+    memcpy(data, datagram.constData(), size);
+    return size;
 }
 
 qint64 QLlcpSocketPrivate::writeData(const char *data, qint64 len)
 {
     Q_Q(QLlcpSocket);
 
-    qDebug() << Q_FUNC_INFO;
+    qint64 miu = m_properties.value(QLatin1String("RemoteMIU"), 128).toUInt();
+    qint64 current = 0;
 
-    ssize_t wrote = ::write(m_writeFd, data, len);
-    if (wrote == -1) {
-        m_error = QLlcpSocket::RemoteHostClosedError;
-        emit q->error(m_error);
-        q->disconnectFromService();
-        return -1;
-    } else {
-        emit q->bytesWritten(wrote);
+    while (current < len) {
+        ssize_t wrote = ::write(m_readFd, data + current, qMin(miu, len - current));
+        if (wrote == -1) {
+            if (current)
+                emit q->bytesWritten(current);
 
-        return wrote;
+            m_error = QLlcpSocket::RemoteHostClosedError;
+            emit q->error(m_error);
+            q->disconnectFromService();
+            return -1;
+        }
+        current += wrote;
     }
+
+    if (current)
+        emit q->bytesWritten(current);
+
+    return current;
 }
 
 qint64 QLlcpSocketPrivate::bytesAvailable() const
 {
-    return buffer.size();
+    qint64 available = 0;
+    foreach (const QByteArray &datagram, m_datagrams)
+        available += datagram.length();
+    return available;
 }
 
 bool QLlcpSocketPrivate::canReadLine() const
 {
-    return buffer.canReadLine();
+    foreach (const QByteArray &datagram, m_datagrams) {
+        if (datagram.contains('\n'))
+            return true;
+    }
+
+    return false;
 }
 
 bool QLlcpSocketPrivate::waitForReadyRead(int msecs)
@@ -358,25 +359,26 @@ void QLlcpSocketPrivate::AccessGranted(const QDBusObjectPath &targetPath,
 }
 
 void QLlcpSocketPrivate::Accept(const QDBusVariant &lsap, const QDBusVariant &rsap,
-                                int readFd, int writeFd)
+                                int readFd, const QVariantMap &properties)
 {
     Q_UNUSED(lsap);
     Q_UNUSED(rsap);
     Q_UNUSED(readFd);
-    Q_UNUSED(writeFd);
+    Q_UNUSED(properties);
 }
 
 void QLlcpSocketPrivate::Connect(const QDBusVariant &lsap, const QDBusVariant &rsap,
-                                 int readFd, int writeFd)
+                                 int readFd, const QVariantMap &properties)
 {
     Q_UNUSED(lsap);
     Q_UNUSED(rsap);
 
     m_readFd = readFd;
-    m_writeFd = writeFd;
 
     m_readNotifier = new QSocketNotifier(m_readFd, QSocketNotifier::Read, this);
     connect(m_readNotifier, SIGNAL(activated(int)), this, SLOT(_q_readNotify()));
+
+    m_properties = properties;
 
     Q_Q(QLlcpSocket);
 
@@ -386,28 +388,26 @@ void QLlcpSocketPrivate::Connect(const QDBusVariant &lsap, const QDBusVariant &r
     emit q->stateChanged(m_state);
     emit q->connected();
 
-    qDebug() << Q_FUNC_INFO << readFd << writeFd;
+    qDebug() << Q_FUNC_INFO << readFd;
 }
 
 void QLlcpSocketPrivate::Socket(const QDBusVariant &lsap, const QDBusVariant &rsap,
-                                int readFd, int writeFd)
+                                int readFd, const QVariantMap &properties)
 {
     Q_UNUSED(lsap);
     Q_UNUSED(rsap);
     Q_UNUSED(readFd);
-    Q_UNUSED(writeFd);
+    Q_UNUSED(properties);
 }
 
 void QLlcpSocketPrivate::_q_readNotify()
 {
     Q_Q(QLlcpSocket);
 
-    qDebug() << Q_FUNC_INFO;
+    QByteArray datagram;
+    datagram.resize(m_properties.value(QLatin1String("LocalMIU"), 128).toUInt());
 
-    char *writePointer = buffer.reserve(QPRIVATELINEARBUFFER_BUFFERSIZE);
-    int readFromDevice =
-        ::read(m_readFd, writePointer, QPRIVATELINEARBUFFER_BUFFERSIZE);
-
+    int readFromDevice = ::read(m_readFd, datagram.data(), datagram.size());
     if (readFromDevice <= 0) {
         m_readNotifier->setEnabled(false);
 
@@ -416,9 +416,8 @@ void QLlcpSocketPrivate::_q_readNotify()
 
         q->disconnectFromService();
         q->setOpenMode(QIODevice::NotOpen);
-    } else if (readFromDevice > 0) {
-        buffer.chop(QPRIVATELINEARBUFFER_BUFFERSIZE - (readFromDevice < 0 ? 0 : readFromDevice));
-
+    } else {
+        m_datagrams.append(datagram.left(readFromDevice));
         emit q->readyRead();
     }
 }

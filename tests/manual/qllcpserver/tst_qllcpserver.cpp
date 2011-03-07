@@ -105,28 +105,35 @@ void tst_QLlcpServer::tst_construction()
 void tst_QLlcpServer::tst_serverConnection_data()
 {
     QTest::addColumn<ServerConnectionShutdown>("shutdown");
+    QTest::addColumn<bool>("stream");
 
-    QTest::newRow("server disconnect") << ServerDisconnect;
-    QTest::newRow("server close") << ServerClose;
-    QTest::newRow("client disconnect") << ClientDisconnect;
-    QTest::newRow("client close") << ClientClose;
+    QTest::newRow("server disconnect stream") << ServerDisconnect << true;
+    QTest::newRow("server disconnect datagram") << ServerDisconnect << false;
+    QTest::newRow("server close stream") << ServerClose << true;
+    QTest::newRow("server close datagram") << ServerClose << false;
+    QTest::newRow("client disconnect stream") << ClientDisconnect << true;
+    QTest::newRow("client disconnect datagram") << ClientDisconnect << false;
+    QTest::newRow("client close stream") << ClientClose << true;
+    QTest::newRow("client close datagram") << ClientClose << false;
 }
 
 void tst_QLlcpServer::tst_serverConnection()
 {
     QFETCH(ServerConnectionShutdown, shutdown);
+    QFETCH(bool, stream);
 
-    const QLatin1String helloServer("urn:nfc:sn:com.nokia.qtmobility.helloserver");
+    QString service = QLatin1String("urn:nfc:sn:com.nokia.qtmobility.helloserver") +
+                      (stream ? QLatin1String(".stream") : QLatin1String(".datagram"));
 
     /* Construction */
     QLlcpServer *server = new QLlcpServer;
 
     QSignalSpy newConnectionSpy(server, SIGNAL(newConnection()));
 
-    QVERIFY(server->listen(helloServer));
+    QVERIFY(server->listen(service));
 
     QVERIFY(server->isListening());
-    QCOMPARE(server->serviceUri(), helloServer);
+    QCOMPARE(server->serviceUri(), service);
 
     QTRY_VERIFY_TIMEOUT(30000, !newConnectionSpy.isEmpty());
 
@@ -144,11 +151,11 @@ void tst_QLlcpServer::tst_serverConnection()
     QSignalSpy stateSpy(socket, SIGNAL(stateChanged(QLlcpSocket::SocketState)));
     QSignalSpy errorSpy(socket, SIGNAL(error(QLlcpSocket::SocketError)));
 
-    /* Read Hello */
-    {
-        QTRY_VERIFY(!readyReadSpy.isEmpty());
-        readyReadSpy.clear();
+    QTRY_VERIFY(!readyReadSpy.isEmpty());
+    readyReadSpy.clear();
 
+    /* Read Hello */
+    if (stream) {
         const QByteArray line = socket->readLine().trimmed();
 
         QVERIFY(!line.isEmpty());
@@ -158,29 +165,51 @@ void tst_QLlcpServer::tst_serverConnection()
         QCOMPARE(fields.count(), 2);
 
         QCOMPARE(fields.at(0), QByteArray("HELLO"));
-        QCOMPARE(QString::fromUtf8(fields.at(1).constData()), helloServer);
+        QCOMPARE(QString::fromUtf8(fields.at(1).constData()), service);
+    } else {
+        QVERIFY(socket->hasPendingDatagrams());
+
+        qint64 size = socket->pendingDatagramSize();
+        QVERIFY(size > 0);
+
+        QByteArray data;
+        data.resize(size);
+        QCOMPARE(size, socket->readDatagram(data.data(), data.size()));
+
+        QList<QByteArray> fields = data.split(' ');
+
+        QCOMPARE(fields.count(), 2);
+
+        QCOMPARE(fields.at(0), QByteArray("HELLO"));
+        QCOMPARE(QString::fromUtf8(fields.at(1).constData()), service);
     }
 
-    readyReadSpy.clear();
     disconnectedSpy.clear();
 
     /* Write shutdown */
-    {
-        switch (shutdown) {
-        case ServerDisconnect:
-            socket->disconnectFromService();
-            break;
-        case ServerClose:
-            socket->close();
-            break;
-        case ClientDisconnect:
+    switch (shutdown) {
+    case ServerDisconnect:
+        socket->disconnectFromService();
+        break;
+    case ServerClose:
+        socket->close();
+        break;
+    case ClientDisconnect:
+        if (stream)
             socket->write("DISCONNECT\n");
-            break;
-        case ClientClose:
+        else
+            socket->writeDatagram("DISCONNECT", 10);
+        break;
+    case ClientClose:
+        if (stream)
             socket->write("CLOSE\n");
-            break;
-        }
+        else
+            socket->writeDatagram("CLOSE", 5);
+        break;
+    }
 
+    /* Verify shutdown */
+    {
         QTRY_VERIFY(!disconnectedSpy.isEmpty());
 
         QCOMPARE(disconnectedSpy.count(), 1);

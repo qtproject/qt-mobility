@@ -39,12 +39,18 @@
 **
 ****************************************************************************/
 
+/*
+    The private API defined in this file is temporary. It should be removed when Qt can handle
+    passing unix file descriptors over DBus. Most likely in Qt 4.8.
+*/
+
 #ifndef SOCKETREQUESTOR_P_H
 #define SOCKETREQUESTOR_P_H
 
 #include <qmobilityglobal.h>
 
 #include <QtCore/QObject>
+#include <QtCore/QVariantMap>
 
 QT_FORWARD_DECLARE_CLASS(QDBusObjectPath)
 QT_FORWARD_DECLARE_CLASS(QDBusVariant)
@@ -70,9 +76,9 @@ signals:
     void accessFailed(const QDBusObjectPath &targetPath, const QString &error);
     void accessGranted(const QDBusObjectPath &targetPath, const QString &accessKind);
 
-    void accept(const QDBusVariant &lsap, const QDBusVariant &rsap, int readFd, int writeFd);
-    void connect(const QDBusVariant &lsap, const QDBusVariant &rsap, int readFd, int writeFd);
-    void socket(const QDBusVariant &lsap, const QDBusVariant &rsap, int readFd, int writeFd);
+    void accept(const QDBusVariant &lsap, const QDBusVariant &rsap, int fd, const QVariantMap &properties);
+    void connect(const QDBusVariant &lsap, const QDBusVariant &rsap, int fd, const QVariantMap &properties);
+    void socket(const QDBusVariant &lsap, const QDBusVariant &rsap, int fd, const QVariantMap &properties);
 
 private:
     const QString m_adaptor;
