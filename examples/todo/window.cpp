@@ -190,9 +190,16 @@ void Window::setupGui()
     stackedWidget->addWidget(frontPage);
     stackedWidget->addWidget(todoEditor);
 
+    // Adding a scroll area to allow proper rendering of the UI on small screens
+    QScrollArea *scrollArea = new QScrollArea;
+    scrollArea->setWidgetResizable(true);
+    scrollArea->setWidget(stackedWidget);
+    QSize suggestedSize;
+    suggestedSize = stackedWidget->sizeHint();
+    stackedWidget->setMinimumSize(suggestedSize);
+
     QGridLayout *layout = new QGridLayout;
-    layout->addWidget(stackedWidget);
+    layout->addWidget(scrollArea);
 
     setLayout(layout); 
 }
-
