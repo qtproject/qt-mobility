@@ -70,10 +70,7 @@ QT_BEGIN_NAMESPACE
     A pointer to media service's QMediaControl implementation can be obtained
     by passing the control's interface name to the requestControl() function.
 
-    \code
-    QMediaPlayerControl *control = qobject_cast<QMediaPlayerControl *>(
-            service->requestControl("com.nokia.Qt.QMediaPlayerControl/1.0"));
-    \endcode
+    \snippet doc/src/snippets/multimedia-snippets/media.cpp Request control
 
     Media objects can use services loaded dynamically from plug-ins or
     implemented statically within an applications.  Plug-in based services
