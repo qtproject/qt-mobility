@@ -206,7 +206,7 @@ QTM_BEGIN_NAMESPACE
     If transmission is successful, the message will be moved to the standard Sent
     folder for the account.
     
-    Currently on the Maemo 5 (Fremantle) and Windows Mobile platforms the service 
+    Currently on the Maemo 5 (Fremantle), Symbian, and Windows Mobile platforms the service 
     action object enters the FinishedState when the message is queued for sending 
     rather than actually sent.
   

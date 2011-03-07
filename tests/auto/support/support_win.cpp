@@ -1296,6 +1296,7 @@ public:
         QString parentFolderPath(params["parentFolderPath"]);
         QString to(params["to"]);
         QString cc(params["cc"]);
+        QString bcc(params["bcc"]);
         QString from(params["from"]);
         QString date(params["date"]);
         QString receivedDate(params["receivedDate"]);
@@ -1338,6 +1339,14 @@ public:
                     if (!ccList.isEmpty()) {
                         message.setCc(ccList);
                     }
+
+                    QList<QMessageAddress> bccList;
+                    foreach (const QString &addr, bcc.split(",")) {
+                        if (!addr.isEmpty()) {
+                            bccList.append(QMessageAddress(QMessageAddress::Email, addr.trimmed()));
+                        }
+                    }
+                    message.setBcc(bccList);
 
                     message.setFrom(QMessageAddress(QMessageAddress::Email, from));
                     message.setSubject(subject);
