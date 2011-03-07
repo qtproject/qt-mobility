@@ -260,6 +260,8 @@ void Dialog::setupDisplay()
 
     physicalHeightLabel->setText(QString::number(dis->physicalHeight(0)));
     physicalWidthLabel->setText(QString::number(dis->physicalWidth((0))));
+
+    backlightTotext(dis->backlightStatus(0));
 }
 
 void Dialog::setupStorage()
@@ -1160,4 +1162,26 @@ QString Dialog::storageStateToString(QSystemStorageInfo::StorageState state)
         str = "Normal";
     }
     return str;
+}
+
+
+void Dialog::backlightTotext(QSystemDisplayInfo::BacklightState state)
+{
+    QString blState;
+
+    switch(state) {
+    case QSystemDisplayInfo::BacklightStateUnknown:
+        blState = "Unknown";
+        break;
+    case QSystemDisplayInfo::BacklightStateOff:
+        blState = "Off";
+        break;
+    case QSystemDisplayInfo::BacklightStateDimmed:
+        blState = "Dimmed";
+        break;
+    case QSystemDisplayInfo::BacklightStateOn:
+        blState = "On";
+        break;
+    };
+    backlightStatusLabel->setText(blState);
 }
