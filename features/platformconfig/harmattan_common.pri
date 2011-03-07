@@ -14,7 +14,12 @@ maemo5-contacts_enabled = no
 maemo5-calendar_enabled = no
 maemo6-landmarks_enabled = yes
 bluez_enabled = yes
+proj_enabled = no
 gstreamer-photography_enabled = yes
+blkid_enabled = yes
 pulseaudio_enabled = yes
+udev_enabled = yes
+iphb_enabled = yes
+nfc_enabled = no
 sensord_enabled = yes
 
