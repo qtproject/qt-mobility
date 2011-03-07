@@ -189,6 +189,8 @@ public:
 private:
     HDC deviceContextHandle;
     int getMonitorCaps(int caps, int screen);
+Q_SIGNALS:
+    void orientationChanged(QSystemDisplayInfo::DisplayOrientation newOrientation);
 
 };
 
