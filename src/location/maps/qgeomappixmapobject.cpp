@@ -42,7 +42,6 @@
 #include "qgeomappixmapobject.h"
 #include "qgeomappixmapobject_p.h"
 #include "qgeoboundingbox.h"
-#include <QGraphicsItemGroup>
 
 QTM_BEGIN_NAMESPACE
 
@@ -67,7 +66,6 @@ QTM_BEGIN_NAMESPACE
 QGeoMapPixmapObject::QGeoMapPixmapObject()
     : d_ptr(new QGeoMapPixmapObjectPrivate())
 {
-    setGraphicsItem(d_ptr->item);
 }
 
 /*!
@@ -77,10 +75,9 @@ QGeoMapPixmapObject::QGeoMapPixmapObject()
 QGeoMapPixmapObject::QGeoMapPixmapObject(const QGeoCoordinate &coordinate, const QPoint &offset, const QPixmap &pixmap)
     : d_ptr(new QGeoMapPixmapObjectPrivate())
 {
-    setGraphicsItem(d_ptr->item);
     setOrigin(coordinate);
-    d_ptr->item->setPixmap(pixmap);
-    d_ptr->item->setPos(offset);
+    d_ptr->pixmap = pixmap;
+    d_ptr->offset = offset;
 }
 
 /*!
@@ -134,22 +131,20 @@ void QGeoMapPixmapObject::setCoordinate(const QGeoCoordinate &coordinate)
 */
 QPixmap QGeoMapPixmapObject::pixmap() const
 {
-    return d_ptr->item->pixmap();
+    return d_ptr->pixmap;
 }
 
 void QGeoMapPixmapObject::setPixmap(const QPixmap &pixmap)
 {
-    const QPixmap curPixmap = d_ptr->item->pixmap();
+    QPixmap curPixmap = d_ptr->pixmap;
     if (curPixmap.isNull() && pixmap.isNull())
         return;
 
     if ((curPixmap.isNull() && !pixmap.isNull())
             || (!curPixmap.isNull() && pixmap.isNull())
             || (curPixmap.toImage() != pixmap.toImage())) {
-        d_ptr->item->setPixmap(pixmap);
-        d_ptr->item->setScale(1.0);
+        d_ptr->pixmap = pixmap;
         emit pixmapChanged(pixmap);
-        update();
     }
 }
 
@@ -168,7 +163,7 @@ void QGeoMapPixmapObject::setPixmap(const QPixmap &pixmap)
 */
 QPoint QGeoMapPixmapObject::offset() const
 {
-    QPointF pt = d_ptr->item->offset();
+    QPointF pt = d_ptr->offset;
 
     QPoint rounded;
     rounded.setX(int(pt.x() > 0 ? pt.x() + 0.5 : pt.x() - 0.5));
@@ -179,10 +174,9 @@ QPoint QGeoMapPixmapObject::offset() const
 
 void QGeoMapPixmapObject::setOffset(const QPoint &offset)
 {
-    if (d_ptr->item->offset() != offset) {
-        d_ptr->item->setOffset(offset);
+    if (d_ptr->offset != offset) {
+        d_ptr->offset = offset;
         emit offsetChanged(offset);
-        update();
     }
 }
 
@@ -216,14 +210,9 @@ void QGeoMapPixmapObject::setOffset(const QPoint &offset)
 /*******************************************************************************
 *******************************************************************************/
 
-QGeoMapPixmapObjectPrivate::QGeoMapPixmapObjectPrivate()
-{
-    item = new QGraphicsPixmapItem();
-}
+QGeoMapPixmapObjectPrivate::QGeoMapPixmapObjectPrivate() {}
 
-QGeoMapPixmapObjectPrivate::~QGeoMapPixmapObjectPrivate()
-{
-}
+QGeoMapPixmapObjectPrivate::~QGeoMapPixmapObjectPrivate() {}
 
 #include "moc_qgeomappixmapobject.cpp"
 

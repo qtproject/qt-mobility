@@ -43,7 +43,9 @@
 #include "qgeomaprouteobject.h"
 #include "qgeomapcircleobject.h"
 #include "qgeocoordinate_p.h"
+#include "qgeoboundingbox.h"
 #include "projwrapper_p.h"
+#include "qgeotiledmapobjectinfo_p.h"
 
 #include <QTransform>
 #include <QGraphicsItem>
@@ -535,8 +537,8 @@ void QGeoMapObjectEngine::bilinearPixelsToSeconds(const QGeoCoordinate &origin,
                                                  QPolygonF &local,
                                                  QTransform &latLon)
 {
-    QPointF pixelOrigin = mdp->coordinateToScreenPosition(origin.longitude(),
-                                                          origin.latitude());
+    QPointF pixelOrigin = coordinateToScreenPosition(origin.longitude(),
+                                                     origin.latitude());
 
     QPolygonF wgs;
     foreach (const QPointF &pt, local) {
@@ -579,15 +581,19 @@ void QGeoMapObjectEngine::bilinearSecondsToScreen(const QGeoCoordinate &origin,
 
     QList<QTransform> latLons = latLonTrans.values(object);
 
+    QGraphicsItem *item = graphicsItemFromMapObject(object);
+    if (!item)
+        return;
+
     // compute the transform by linearising from the lat/lon space
     foreach (QTransform latLon, latLons) {
         QTransform pixel;
 
-        QGraphicsItem *item = object->graphicsItem();
+
         QPolygonF local = (item->boundingRect() | item->childrenBoundingRect());
         QPolygonF latLonPoly = latLon.map(local);
 
-        QPolygonF pixelPoly = mdp->polyToScreen(latLonPoly);
+        QPolygonF pixelPoly = polyToScreen(latLonPoly);
 
         // QTransform expects the last vertex (closing vertex) to be dropped
         local.remove(4);
@@ -636,7 +642,7 @@ void QGeoMapObjectEngine::exactPixelMap(const QGeoCoordinate &origin,
         QGraphicsPolygonItem *polyItem = qgraphicsitem_cast<QGraphicsPolygonItem*>(latLonItem);
         if (polyItem) {
             QPolygonF poly = polyItem->polygon();
-            QPolygonF pixelPoly = mdp->polyToScreen(poly);
+            QPolygonF pixelPoly = polyToScreen(poly);
 
             QGraphicsPolygonItem *pi = polyCopy(polyItem);
             pi->setPolygon(pixelPoly);
@@ -650,7 +656,7 @@ void QGeoMapObjectEngine::exactPixelMap(const QGeoCoordinate &origin,
             const int pathSize = path.elementCount();
             QPainterPath mpath;
 
-            const QRectF screen = mdp->latLonViewport().boundingRect();
+            const QRectF screen = latLonViewport().boundingRect();
 
             QPointF lastPixelAdded;
             bool lastOutside = true;
@@ -664,7 +670,7 @@ void QGeoMapObjectEngine::exactPixelMap(const QGeoCoordinate &origin,
                 double x = e.x; x /= 3600.0;
                 double y = e.y; y /= 3600.0;
 
-                const QPointF pixel = mdp->coordinateToScreenPosition(x, y);
+                const QPointF pixel = coordinateToScreenPosition(x, y);
                 const QPointF deltaP = (pixel - lastPixelAdded);
                 const double delta = deltaP.x() * deltaP.x() + deltaP.y() * deltaP.y();
 
@@ -737,8 +743,12 @@ void QGeoMapObjectEngine::pixelShiftToScreen(const QGeoCoordinate &origin,
                                             QGeoMapObject *object,
                                             QList<QPolygonF> &polys)
 {
-    const QRectF localRect = object->graphicsItem()->boundingRect() |
-            object->graphicsItem()->childrenBoundingRect();
+    QGraphicsItem *item = graphicsItemFromMapObject(object);
+    if (!item)
+        return;
+
+    const QRectF localRect = item->boundingRect()
+                                | item->childrenBoundingRect();
 
     // compute the transform as an origin shift
     QList<QPointF> origins;
@@ -747,8 +757,8 @@ void QGeoMapObjectEngine::pixelShiftToScreen(const QGeoCoordinate &origin,
     origins << QPointF(origin.longitude() - 360.0, origin.latitude());
 
     foreach (QPointF o, origins) {
-        QTransform pixel = object->graphicsItem()->transform();
-        QPointF pixelOrigin = mdp->coordinateToScreenPosition(o.x(), o.y());
+        QTransform pixel = item->transform();
+        QPointF pixelOrigin = coordinateToScreenPosition(o.x(), o.y());
         pixel.translate(pixelOrigin.x(), pixelOrigin.y());
         pixelTrans.insertMulti(object, pixel);
         polys << pixel.map(localRect);
@@ -782,7 +792,7 @@ void QGeoMapObjectEngine::invalidateZoomDependents()
 
 void QGeoMapObjectEngine::invalidatePixelsForViewport(bool updateNow)
 {
-    QPolygonF view = mdp->latLonViewport();
+    QPolygonF view = latLonViewport();
 
     QList<QGraphicsItem*> itemsInView;
     itemsInView = latLonScene->items(view, Qt::IntersectsItemShape,
@@ -805,7 +815,7 @@ void QGeoMapObjectEngine::invalidatePixelsForViewport(bool updateNow)
 
 void QGeoMapObjectEngine::trimPixelTransforms()
 {
-    QPolygonF view = mdp->latLonViewport();
+    QPolygonF view = latLonViewport();
 
     QList<QGraphicsItem*> itemsInView;
     itemsInView = latLonScene->items(view, Qt::IntersectsItemShape,
@@ -848,7 +858,7 @@ void QGeoMapObjectEngine::invalidateObject(QGeoMapObject *obj)
     // otherwise we can't tell if it's supposed to be on screen
     updateLatLonTransform(obj);
 
-    const QRectF view = mdp->latLonViewport().boundingRect();
+    const QRectF view = latLonViewport().boundingRect();
 
     bool needsPixelUpdate = false;
     foreach (QGraphicsItem *item, latLonItemsRev.values(obj)) {
@@ -960,7 +970,7 @@ void QGeoMapObjectEngine::updateLatLonTransform(QGeoMapObject *object)
 {
     QGeoCoordinate origin = object->origin();
 
-    QGraphicsItem *item = object->graphicsItem();
+    QGraphicsItem *item = graphicsItemFromMapObject(object);
 
     // skip any objects without graphicsitems
     if (!item)
@@ -1055,7 +1065,7 @@ void QGeoMapObjectEngine::updateLatLonTransform(QGeoMapObject *object)
 void QGeoMapObjectEngine::updatePixelTransform(QGeoMapObject *object)
 {
     QGeoCoordinate origin = object->origin();
-    QGraphicsItem *item = object->graphicsItem();
+    QGraphicsItem *item = graphicsItemFromMapObject(object);
 
     // skip any objects without graphicsitems
     if (!item)
@@ -1110,6 +1120,62 @@ void QGeoMapObjectEngine::updatePixelTransform(QGeoMapObject *object)
             //pi->setZValue(object->zValue());
         }
     }
+}
+
+QPolygonF QGeoMapObjectEngine::latLonViewport()
+{
+    QPolygonF view;
+    QGeoBoundingBox viewport = md->viewport();
+    QGeoCoordinate c, c2;
+    double offset = 0.0;
+
+    c = viewport.bottomLeft();
+    view << QPointF(c.longitude() * 3600.0, c.latitude() * 3600.0);
+    c2 = viewport.bottomRight();
+    if (c2.longitude() < c.longitude())
+        offset = 360.0 * 3600.0;
+    view << QPointF(c2.longitude() * 3600.0 + offset, c2.latitude() * 3600.0);
+    c = viewport.topRight();
+    view << QPointF(c.longitude() * 3600.0 + offset, c.latitude() * 3600.0);
+    c = viewport.topLeft();
+    view << QPointF(c.longitude() * 3600.0, c.latitude() * 3600.0);
+
+    return view;
+}
+
+QPointF QGeoMapObjectEngine::coordinateToScreenPosition(double lon, double lat)
+{
+    QGeoCoordinate c(lat, lon);
+    return md->coordinateToScreenPosition(c);
+}
+
+QPolygonF QGeoMapObjectEngine::polyToScreen(const QPolygonF &poly)
+{
+    QPolygonF r;
+#if QT_VERSION >= 0x040700
+    r.reserve(poly.size());
+#endif
+    foreach (QPointF pt, poly) {
+        const double x = pt.x() / 3600.0;
+        const double y = pt.y() / 3600.0;
+        const QPointF pixel = coordinateToScreenPosition(x, y);
+        r.append(pixel);
+    }
+    return r;
+}
+
+QGraphicsItem* QGeoMapObjectEngine::graphicsItemFromMapObject(QGeoMapObject *object)
+{
+    if (!object || !object->info())
+        return 0;
+
+    QGeoTiledMapObjectInfo *tiledInfo
+            = static_cast<QGeoTiledMapObjectInfo*>(object->info());
+
+    if (tiledInfo)
+        return tiledInfo->graphicsItem;
+
+    return 0;
 }
 
 #include "moc_qgeomapobjectengine_p.cpp"

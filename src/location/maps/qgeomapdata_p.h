@@ -95,18 +95,7 @@ public:
     virtual void removeObject(QGeoMapObject *object);
     void clearObjects();
 
-    QPolygonF polyToScreen(const QPolygonF &poly);
-    virtual QPointF coordinateToScreenPosition(double lon, double lat) const;
-    QPolygonF latLonViewport();
-
-    virtual void update(QObject *obj);
-
-public slots:
-    void updateSender();
     void emitUpdateMapDisplay(const QRectF &target = QRectF());
-
-public:
-    QGeoMapObjectEngine *oe;
 
     QGeoMapData *q_ptr;
     Q_DECLARE_PUBLIC(QGeoMapData)

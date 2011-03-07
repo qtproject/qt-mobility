@@ -9,6 +9,7 @@ PUBLIC_HEADERS += \
                     maps/qgeomapdata.h \
                     maps/qgeomapgroupobject.h \
                     maps/qgeomapobject.h \
+                    maps/qgeomapobjectinfo.h \
                     maps/qgeomapoverlay.h \
                     maps/qgeomappingmanager.h \
                     maps/qgeomappingmanagerengine.h \
@@ -37,6 +38,7 @@ PRIVATE_HEADERS += \
                     maps/qgeomapdata_p.h \
                     maps/qgeomapgroupobject_p.h \
                     maps/qgeomapobject_p.h \
+                    maps/qgeomapobjectinfo_p.h \
                     maps/qgeomapoverlay_p.h \
                     maps/qgeomappingmanager_p.h \
                     maps/qgeomappingmanagerengine_p.h \
@@ -88,6 +90,3 @@ SOURCES += \
             maps/qgraphicsgeomap.cpp \
             maps/qgeomapobjectinfo.cpp \
             maps/qgeomapobjectengine_p.cpp
-
-PUBLIC_HEADERS += \
-    maps/qgeomapobjectinfo.h

@@ -48,9 +48,6 @@
 #include <QString>
 #include <QPen>
 #include <QBrush>
-#include <QGraphicsTextItem>
-#include <QGraphicsSimpleTextItem>
-#include <QGraphicsItemGroup>
 
 QTM_BEGIN_NAMESPACE
 
@@ -60,12 +57,12 @@ public:
     QGeoMapTextObjectPrivate();
     ~QGeoMapTextObjectPrivate();
 
-    QGeoCoordinate coordinate;
-    QGraphicsSimpleTextItem *item;
+    QString text;
+    QFont font;
+    QPen pen;
+    QBrush brush;
+    QPoint offset;
     Qt::Alignment alignment;
-    QPointF offset;
-
-    void doAlignment();
 };
 
 QTM_END_NAMESPACE

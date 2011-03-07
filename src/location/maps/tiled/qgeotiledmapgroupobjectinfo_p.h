@@ -39,35 +39,43 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOMAPGROUPOBJECT_P_H
-#define QGEOMAPGROUPOBJECT_P_H
+#ifndef QGEOTILEDMAPGROUPOBJECT_INFO_P_H
+#define QGEOTILEDMAPGROUPOBJECT_INFO_P_H
 
-#include "qgeomapobject.h"
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
-#include <QObject>
-#include <QList>
+#include "qgeotiledmapobjectinfo_p.h"
+
+class QGraphicsPathItem;
 
 QTM_BEGIN_NAMESPACE
 
 class QGeoMapGroupObject;
 
-class QGeoMapGroupObjectPrivate : public QObject
+class QGeoTiledMapGroupObjectInfo : public QGeoTiledMapObjectInfo
 {
     Q_OBJECT
 public:
-    QGeoMapGroupObjectPrivate(QGeoMapGroupObject *p);
-    ~QGeoMapGroupObjectPrivate();
+    QGeoTiledMapGroupObjectInfo(QGeoTiledMapData *mapData, QGeoMapObject *mapObject);
+    ~QGeoTiledMapGroupObjectInfo();
 
-    QList<QGeoMapObject *> children;
-    quint32 serial;
+    QGeoMapGroupObject *group;
+    QGraphicsPathItem *pathItem;
 
 public slots:
-    void childChangedZValue(int zValue);
-
-private:
-    QGeoMapGroupObject *q_ptr;
+    void childAdded(QGeoMapObject *childObject);
+    void childRemoved(QGeoMapObject *childObject);
 };
 
 QTM_END_NAMESPACE
 
-#endif
+#endif //QGEOTILEDMAPGROUPOBJECT_INFO_P_H

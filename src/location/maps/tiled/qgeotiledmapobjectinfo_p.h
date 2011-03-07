@@ -39,35 +39,71 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOMAPGROUPOBJECT_P_H
-#define QGEOMAPGROUPOBJECT_P_H
+#ifndef QGEOTILEDMAPOBJECT_INFO_P_H
+#define QGEOTILEDMAPOBJECT_INFO_P_H
 
-#include "qgeomapobject.h"
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
-#include <QObject>
-#include <QList>
+#include "qgeomapobject_p.h"
+
+#include <QRectF>
+
+class QGraphicsItem;
+class QRect;
+class QPolygonF;
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoMapGroupObject;
+class QGeoTiledMapData;
+class QGeoBoundingBox;
+class QGeoCoordinate;
+class QGeoTiledMapDataPrivate;
 
-class QGeoMapGroupObjectPrivate : public QObject
+class QGeoTiledMapObjectInfo : public QGeoMapObjectInfo
 {
     Q_OBJECT
 public:
-    QGeoMapGroupObjectPrivate(QGeoMapGroupObject *p);
-    ~QGeoMapGroupObjectPrivate();
+    QGeoTiledMapObjectInfo(QGeoTiledMapData *mapData, QGeoMapObject *mapObject);
+    ~QGeoTiledMapObjectInfo();
 
-    QList<QGeoMapObject *> children;
-    quint32 serial;
+    virtual void init();
+
+    QGeoMapObject* mapObject() const;
+
+    QGeoBoundingBox boundingBox() const;
+    bool contains(const QGeoCoordinate &coordinate) const;
+
+    void updateItem(const QRectF &target = QRectF());
+
+    bool inited;
+    bool updateAfterInit;
+
+    QGraphicsItem *graphicsItem;
+    QGeoTiledMapData *tiledMapData;
 
 public slots:
-    void childChangedZValue(int zValue);
+    virtual void zValueChanged(int zValue);
+    virtual void visibleChanged(bool visible);
+    virtual void selectedChanged(bool selected);
 
-private:
-    QGeoMapGroupObject *q_ptr;
+    virtual void originChanged(const QGeoCoordinate &origin);
+    virtual void unitsChanged(QGeoMapObject::CoordinateUnit units);
+    virtual void transformTypeChanged(QGeoMapObject::TransformType transformType);
+
+protected:
+    QGeoTiledMapDataPrivate *tiledMapDataPrivate;
 };
 
 QTM_END_NAMESPACE
 
-#endif
+#endif //QGEOTILEDMAPOBJECT_INFO_P_H
+

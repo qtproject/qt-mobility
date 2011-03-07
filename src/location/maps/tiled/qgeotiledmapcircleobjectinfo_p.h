@@ -39,35 +39,49 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOMAPGROUPOBJECT_P_H
-#define QGEOMAPGROUPOBJECT_P_H
+#ifndef QGEOTILEDMAPCIRCLEOBJECT_INFO_P_H
+#define QGEOTILEDMAPCIRCLEOBJECT_INFO_P_H
 
-#include "qgeomapobject.h"
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
-#include <QObject>
-#include <QList>
+#include "qgeotiledmapobjectinfo_p.h"
+
+#include <QPolygonF>
+#include <QPen>
+#include <QBrush>
+
+class QGraphicsEllipseItem;
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoMapGroupObject;
+class QGeoMapCircleObject;
 
-class QGeoMapGroupObjectPrivate : public QObject
+class QGeoTiledMapCircleObjectInfo : public QGeoTiledMapObjectInfo
 {
     Q_OBJECT
 public:
-    QGeoMapGroupObjectPrivate(QGeoMapGroupObject *p);
-    ~QGeoMapGroupObjectPrivate();
+    QGeoTiledMapCircleObjectInfo(QGeoTiledMapData *mapData, QGeoMapObject *mapObject);
+    ~QGeoTiledMapCircleObjectInfo();
 
-    QList<QGeoMapObject *> children;
-    quint32 serial;
+    QGeoMapCircleObject* circle;
+    QGraphicsEllipseItem *ellipseItem;
 
 public slots:
-    void childChangedZValue(int zValue);
-
-private:
-    QGeoMapGroupObject *q_ptr;
+    void centerChanged(const QGeoCoordinate &center);
+    void radiusChanged(qreal radius);
+    void penChanged(const QPen &pen);
+    void brushChanged(const QBrush &brush);
 };
 
 QTM_END_NAMESPACE
 
-#endif
+#endif //QGEOTILEDMAPCIRCLEOBJECT_INFO_P_H

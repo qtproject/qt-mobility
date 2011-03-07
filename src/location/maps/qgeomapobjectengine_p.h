@@ -160,10 +160,14 @@ public:
                             QList<QPolygonF> &polys);
 
     /*** Misc ***/
-
-
+    virtual QGraphicsItem* graphicsItemFromMapObject(QGeoMapObject *object);
 
 private:
+    /*** Internal helpers ***/
+    QPolygonF latLonViewport();
+    QPointF coordinateToScreenPosition(double lon, double lat);
+    QPolygonF polyToScreen(const QPolygonF &poly);
+
     Q_DISABLE_COPY(QGeoMapObjectEngine)
 };
 
