@@ -162,7 +162,7 @@ public:
 
 
     enum LockType {
-        UnknownLock = 0xfffffff,
+        UnknownLock = 0,
         PinLocked = 0x0000001,
         TouchAndKeyboardLocked = 0x0000002
     }; //1.2
