@@ -1496,7 +1496,7 @@ bool QSystemDeviceInfoPrivate::keypadLightOn(QSystemDeviceInfo::KeypadType type)
 {
     bool lightOn = false;
 
-    if (type != QSystemDeviceInfo::SecondaryKeypad) {
+    if (type != QSystemDeviceInfo::PrimaryKeypad) {
         return lightOn;
     }
 
