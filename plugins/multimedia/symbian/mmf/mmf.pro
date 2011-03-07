@@ -11,7 +11,7 @@ include(mediaplayer/mediaplayer_s60.pri)
 include(radio/radio.pri)
 
 # we include mmf audiorecording only if we are not building openmaxal based backend
-contains(openmaxal_symbian_enabled, no) {
+!contains(openmaxal_symbian_enabled, yes) {
     message("Enabling mmf mediarecording backend")
     include(audiosource/audiosource_s60.pri)
 }
