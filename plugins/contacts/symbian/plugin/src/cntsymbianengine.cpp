@@ -1086,9 +1086,9 @@ void CntSymbianEngine::performAsynchronousOperation()
             for (int i = 0; i < contactsToRemove.size(); i++) {
                 QContactManager::Error tempError;
                 removeContact(contactsToRemove.at(i), changeSet, &tempError);
-
-                errorMap.insert(i, tempError);                
+                
                 if (tempError != QContactManager::NoError) {
+                    errorMap.insert(i, tempError);
                     operationError = tempError;
                 }
             }
@@ -1112,8 +1112,8 @@ void CntSymbianEngine::performAsynchronousOperation()
                 QContactDetailDefinition current = detailDefinition(names.at(i), r->contactType(), &tempError);
                 requestedDefinitions.insert(names.at(i), current);
 
-                errorMap.insert(i, tempError);              
                 if (tempError != QContactManager::NoError) {
+                    errorMap.insert(i, tempError); 
                     operationError = tempError;
                 }
             }
@@ -1170,8 +1170,8 @@ void CntSymbianEngine::performAsynchronousOperation()
                 QContactManager::Error tempError;
                 removeRelationship(relationshipsToRemove.at(i), &tempError);
 
-                errorMap.insert(i, tempError);
                 if (tempError != QContactManager::NoError) {
+                    errorMap.insert(i, tempError);
                     operationError = tempError;
                 }
             }
@@ -1188,15 +1188,16 @@ void CntSymbianEngine::performAsynchronousOperation()
             QList<QContactRelationship> requestRelationships = r->relationships();
             QList<QContactRelationship> savedRelationships;
 
-            QContactManager::Error tempError;
             for (int i = 0; i < requestRelationships.size(); i++) {
+                QContactManager::Error tempError;
                 QContactRelationship current = requestRelationships.at(i);
                 saveRelationship(&current, &tempError);
-                savedRelationships.append(current);
 
-                errorMap.insert(i, tempError);
                 if (tempError != QContactManager::NoError) {
+                    errorMap.insert(i, tempError);
                     operationError = tempError;
+                } else {
+                    savedRelationships.append(current);
                 }
             }
 
