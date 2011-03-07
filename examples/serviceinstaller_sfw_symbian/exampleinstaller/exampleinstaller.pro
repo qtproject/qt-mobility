@@ -1,5 +1,5 @@
 TEMPLATE = app
-include(../../examples.pri)
+include(../../mobility_examples.pri)
 
 QT = core
 CONFIG += no_icon

@@ -1,4 +1,4 @@
-include(../../examples.pri)
+include(../../mobility_examples.pri)
 TEMPLATE = app
 QT += testlib
 CONFIG += testcase

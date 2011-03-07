@@ -1,6 +1,6 @@
 TEMPLATE=app
 TARGET=reading_perf
-include(../../examples.pri)
+include(../../mobility_examples.pri)
 QT=core testlib
 #CONFIG+=release
 CONFIG+=mobility
