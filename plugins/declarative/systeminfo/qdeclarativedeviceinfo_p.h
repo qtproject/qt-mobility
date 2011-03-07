@@ -71,6 +71,9 @@ class QDeclarativeDeviceInfo : public QSystemDeviceInfo
 
     Q_PROPERTY(QString uniqueID READ uniqueID CONSTANT)
 
+    Q_PROPERTY(bool primaryKeypadLightOn READ primaryKeypadLightOn CONSTANT);
+    Q_PROPERTY(bool secondaryKeypadLightOn READ secondaryKeypadLightOn CONSTANT);
+
 public:
     explicit QDeclarativeDeviceInfo(QObject *parent = 0);
 
@@ -107,6 +110,9 @@ public:
     bool vibrationActive();
 
     QString uniqueID();
+
+    bool primaryKeypadLightOn();
+    bool secondaryKeypadLightOn();
 
 
  protected:

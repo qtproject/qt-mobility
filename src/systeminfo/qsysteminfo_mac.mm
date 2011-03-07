@@ -78,6 +78,8 @@
 #include <ApplicationServices/ApplicationServices.h>
 #include <DiskArbitration/DASession.h>
 
+#include <mach/mach.h>
+
 #include <dns_sd.h>
 
 #include <QTKit/QTKit.h>
@@ -955,7 +957,6 @@ void QBluetoothListenerThread::doWork()
 
 void QBluetoothListenerThread::setupConnectNotify()
 {
-    qDebug() << Q_FUNC_INFO;
     btConnListener = [[QtBtConnectListener alloc] init];
 }
 
@@ -1997,11 +1998,16 @@ void powerInfoChanged(void* context)
         sys->batteryLevel();
         sys->currentPowerState();
     }
+}
+
+void batteryInfoChanged(void* context)
+{
     QSystemBatteryInfoPrivate *bat = reinterpret_cast<QSystemBatteryInfoPrivate *>(context);
     if(bat) {
         bat->getBatteryInfo();
     }
 }
+
 
 QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QObject *parent)
         : QObject(parent), btThreadOk(0) ,btThread(0),hasWirelessKeyboardConnected(0)
@@ -2014,9 +2020,10 @@ QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QObject *parent)
 
 QSystemDeviceInfoPrivate::~QSystemDeviceInfoPrivate()
 {
-    if( btThreadOk && btThread->keepRunning)
+    if( btThreadOk && btThread->keepRunning) {
         btThread->stop();
-    delete btThread;
+        delete btThread;
+    }
 }
 
 QSystemDeviceInfoPrivate *QSystemDeviceInfoPrivate::instance()
@@ -2028,28 +2035,35 @@ void QSystemDeviceInfoPrivate::connectNotify(const char *signal)
 {
     if (QLatin1String(signal) == SIGNAL(bluetoothStateChanged(bool))
         || QLatin1String(signal) == SIGNAL(wirelessKeyboardConnected(bool))) {
+
         if(!btThread) {
             btThread = new QBluetoothListenerThread();
             btThreadOk = true;
         }
+        btThread->doWork();
+
         if (QLatin1String(signal) == SIGNAL(bluetoothStateChanged(bool))) {
-            connect(btThread,SIGNAL(bluetoothPower(bool)), this, SIGNAL(bluetoothStateChanged(bool)));
-            btThread->doWork();
+            connect(btThread,SIGNAL(bluetoothPower(bool)), this, SIGNAL(bluetoothStateChanged(bool)),Qt::UniqueConnection);
         }
         if( QLatin1String(signal) == SIGNAL(wirelessKeyboardConnected(bool))) {
             btThread->setupConnectNotify();
         }
     }
 
-    if (QLatin1String(signal) == SIGNAL(powerStateChanged(QSystemDeviceInfo::PowerState))) {
+    if (QLatin1String(signal) == SIGNAL(powerStateChanged(QSystemDeviceInfo::PowerState))
+            || QLatin1String(signal) == SIGNAL(batteryLevelChanged(int))
+            || QLatin1String(signal) == SIGNAL(batteryStatusChanged(QSystemDeviceInfo::BatteryStatus))
+            ) {
+
         NSAutoreleasePool *autoreleasepool = [[NSAutoreleasePool alloc] init];
 
+//        if(!runLoopSource)
         CFRunLoopSourceRef runLoopSource = (CFRunLoopSourceRef)IOPSNotificationCreateRunLoopSource(powerInfoChanged, this);
         if (runLoopSource) {
             CFRunLoopAddSource(CFRunLoopGetCurrent(), runLoopSource, kCFRunLoopDefaultMode);
-            CFRelease(runLoopSource);
         }
         [autoreleasepool release];
+        CFRelease(runLoopSource);
     }
 }
 
@@ -2422,7 +2436,7 @@ QSystemBatteryInfoPrivate::QSystemBatteryInfoPrivate(QObject *parent)
 
     NSAutoreleasePool *autoreleasepool = [[NSAutoreleasePool alloc] init];
 
-    CFRunLoopSourceRef runLoopSource = (CFRunLoopSourceRef)IOPSNotificationCreateRunLoopSource(powerInfoChanged, this);
+    CFRunLoopSourceRef runLoopSource = (CFRunLoopSourceRef)IOPSNotificationCreateRunLoopSource(batteryInfoChanged, this);
     if (runLoopSource) {
         CFRunLoopAddSource(CFRunLoopGetCurrent(), runLoopSource, kCFRunLoopDefaultMode);
         CFRelease(runLoopSource);
