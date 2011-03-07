@@ -4005,7 +4005,7 @@ void QSystemBatteryInfoLinuxCommonPrivate::uPowerPropertyChanged(const QString &
 {
  //   qDebug() << __FUNCTION__ << prop << v;
 
-     if (prop == QLatin1String("Energy")) {
+   if (prop == QLatin1String("Energy")) {
         remainingEnergy = (v.toDouble() /  battery->voltage()) * 1000;
         emit remainingCapacityChanged(remainingEnergy);
     } else if (prop == QLatin1String("EnergyRate")) {
@@ -4045,12 +4045,16 @@ void QSystemBatteryInfoLinuxCommonPrivate::uPowerPropertyChanged(const QString &
             break;
         case 2: //discharging
         case 3: //empty
-        case 4: //fully charged
         case 5: //pending charge
         case 6: //pending discharge
             curChargeState = QSystemBatteryInfo::NotCharging;
             curChargeType = QSystemBatteryInfo::NoCharger;
             break;
+        case 4: //fully charged
+            curChargeState = QSystemBatteryInfo::NotCharging;
+            curChargeType = QSystemBatteryInfo::WallCharger;
+            break;
+
         default:
             curChargeState = QSystemBatteryInfo::ChargingError;
             break;
