@@ -191,6 +191,10 @@ static void test_systemdeviceinfo(void)
   X(deviceinfo.simStatus());
   X(deviceinfo.lockStatus());
   X(deviceinfo.uniqueDeviceID());
+
+  X(deviceinfo.keypadLightOn(QSystemDeviceInfo::PrimaryKeypad));
+  X(deviceinfo.keypadLightOn(QSystemDeviceInfo::SecondaryKeypad));
+
 //  X(deviceinfo.activeProfileDetails());
 }
 
