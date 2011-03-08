@@ -429,6 +429,7 @@ QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate(QObject *parent)
         this, SLOT(wlanNetworkSignalStrengthChanged()));
     connect(DeviceInfo::instance()->wlanInfo(), SIGNAL(wlanNetworkStatusChanged()),
         this, SLOT(wlanNetworkStatusChanged()));
+    DeviceInfo::instance()->subscriberInfo();
 }
 
 QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate()
@@ -1185,6 +1186,8 @@ QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QObject *parent)
     DeviceInfo::instance()->keylockStatus()->addObserver(this);
     DeviceInfo::instance()->flipStatus()->addObserver(this);
 #endif
+    DeviceInfo::instance()->phoneInfo();
+    DeviceInfo::instance()->subscriberInfo();
 }
 
 QSystemDeviceInfoPrivate::~QSystemDeviceInfoPrivate()
