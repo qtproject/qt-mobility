@@ -39,51 +39,11 @@
 **
 ****************************************************************************/
 
-/* Part of the Maps Demo tutorial */
-/* You probably want to read it first, look under Tutorials in
-   the Mobility documentation */
+#define GST_USE_UNSTABLE_API
 
-#include "mainwindow.h"
+#include <gst/app/gstappsrc.h>
 
-#include <QApplication>
-#include <QList>
-#include <QString>
-#include <QUrl>
-#include <QSettings>
-#include <QProcessEnvironment>
-#include <QNetworkProxyFactory>
-
-#include "qgeoserviceprovider.h"
-
-int main(int argc, char *argv[])
+int main(int argc, char** argv)
 {
-    QApplication a(argc, argv);
-
-    // not in the tutorial text: set up a proxy server from
-    // a QSettings file if necessary (useful on Linux)
-
-    QApplication::setOrganizationName("Nokia");
-    QApplication::setApplicationName("MapsDemo");
-
-    QSettings settings;
-
-    QVariant value = settings.value("http.proxy");
-    if (value.isValid()) {
-        QUrl url(value.toString(), QUrl::TolerantMode);
-        QNetworkProxy proxy;
-        proxy.setType(QNetworkProxy::HttpProxy);
-        proxy.setHostName(url.host());
-        proxy.setPort(url.port(8080));
-        QNetworkProxy::setApplicationProxy(proxy);
-    }
-
-    // launch the main window
-    MainWindow mw;
-#ifdef Q_OS_SYMBIAN
-    mw.showMaximized();
-#else
-    mw.resize(360,640);
-    mw.show();
-#endif
-    return a.exec();
+    return 0;
 }

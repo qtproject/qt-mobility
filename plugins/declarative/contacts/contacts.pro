@@ -12,7 +12,7 @@ TEMPLATE = lib
 CONFIG += plugin
 TARGET = $$qtLibraryTarget(declarative_contacts)
 TARGETPATH = QtMobility/contacts
-
+DEFINES += QT_MAKEDLL
 PLUGIN_TYPE = declarative
 
 include(../../../common.pri)
