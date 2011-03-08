@@ -41,9 +41,9 @@ PRIVATE_HEADERS += addresshelper_p.h \
     qmessagefoldersortorder_p.h \
     qmessagefilter_p.h \
     qmessagesortorder_p.h \
-    qmessagestore.h \
+    qmessagestore_p.h \
     messagingutil_p.h \
-    qmessagestore_p.h
+    qmessagestore_p_p.h
 SOURCES += qmessageid.cpp \
     qmessagecontentcontainerid.cpp \
     qmessagefolderid.cpp \
@@ -234,7 +234,7 @@ symbian|win32|maemo6|maemo5|mac:!simulator {
             CONFIG += QTHIGHWAY
             DEFINES += QTHIGHWAYUSED
         }
-        HEADERS -= qmessagestore_p.h \
+        HEADERS -= qmessagestore_p_p.h \
             qmessagecontentcontainer_p.h \
             qmessage_p.h
         HEADERS += qmtmengine_symbian_p.h \
