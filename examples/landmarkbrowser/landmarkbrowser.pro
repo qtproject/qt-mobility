@@ -6,7 +6,7 @@ TARGET =
 DEPENDPATH += .
 INCLUDEPATH += ../../src/location \
                 ../../src/location/landmarks
-include(../examples.pri)
+include(../mobility_examples.pri)
 
 # Input
 SOURCES += main.cpp \

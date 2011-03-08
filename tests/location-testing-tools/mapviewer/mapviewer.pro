@@ -12,9 +12,9 @@ SOURCES += main.cpp \
 
 HEADERS += mainwindow.h \
            mapbox.h \
-    geomap.h 
+           geomap.h 
 
-include(../../../examples/examples.pri)
+include(../../../examples/mobility_examples.pri)
 
 CONFIG += mobility
 MOBILITY = location

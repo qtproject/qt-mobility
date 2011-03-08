@@ -9,7 +9,7 @@ SOURCES = logfilepositionsource.cpp \
 
 CONFIG += console
 
-include(../examples.pri)
+include(../mobility_examples.pri)
 
 CONFIG += mobility
 MOBILITY = location
