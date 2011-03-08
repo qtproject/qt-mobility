@@ -839,6 +839,7 @@ void QSystemNetworkInfoPrivate::slotCellChanged(const QString &type, int id, int
     }
     if (currentCellId != id) {
         currentCellId = id;
+        emit cellIdChanged(currentCellId);
     }
     if (currentLac != lac) {
         currentLac = lac;
