@@ -57,7 +57,8 @@ QTM_USE_NAMESPACE
 QLandmarkManagerPrivate::QLandmarkManagerPrivate()
         : engine(0),
         errorCode(QLandmarkManager::NoError),
-        isConnected(false)
+        isConnected(false),
+        q_ptr(0)
 {
 }
 

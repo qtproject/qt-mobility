@@ -15,7 +15,7 @@ SUBDIRS += \
     qgalleryresource \
     qgallerytyperequest
 
-unix: contains(QT_CONFIG, dbus): {
+unix:contains(QT_CONFIG, dbus):!simulator {
     maemo6|meego {
         SUBDIRS += \
             qgallerytrackerresultset_maemo6 \

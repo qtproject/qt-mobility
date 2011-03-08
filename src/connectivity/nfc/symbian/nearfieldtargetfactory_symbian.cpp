@@ -64,7 +64,7 @@
 
 /*
     Create tag type instance according to the tag information in \a aNfcTag and assign
-    the \a aParent as target's parent. 
+    the \a aParent as target's parent.
 */
 template <typename CTAGCONNECTION, typename QTAGTYPE>
 QNearFieldTarget * TNearFieldTargetFactory::CreateTagTypeL(MNfcTag * aNfcTag, RNfcServer& aNfcServer, QObject * aParent)
@@ -83,28 +83,9 @@ QNearFieldTarget * TNearFieldTargetFactory::CreateTagTypeL(MNfcTag * aNfcTag, RN
     return tag;
 }
 
-template<>
-QNearFieldTarget * TNearFieldTargetFactory::CreateTagTypeL<CIso14443Connection, QNearFieldTagType4Symbian>(MNfcTag * aNfcTag, RNfcServer& aNfcServer, QObject * aParent)
-{
-    BEGIN
-    // ownership of aNfcTag transferred.
-    CIso14443Connection * connection = CIso14443Connection::NewLC(aNfcServer);
-    CNearFieldTag * tagType = CNearFieldTag::NewLC(aNfcTag, aNfcServer);
-    tagType->SetTag4();
-    tagType->SetConnection(connection);
-    CNearFieldNdefTarget * ndeftag = WrapNdefAccessL(aNfcTag, aNfcServer, tagType);
-    QNearFieldTagType4Symbian * tag= new(ELeave)QNearFieldTagType4Symbian(ndeftag, aParent);
-    // walk around, symbian discovery API can't know if tag has Ndef Connection mode when detected
-    tag->setAccessMethods(ConnectionMode2AccessMethods(aNfcTag)|QNearFieldTarget::NdefAccess);
-    CleanupStack::Pop(tagType);
-    CleanupStack::Pop(connection);
-    END
-    return tag;
-}
-
 /*
     Create target instance according to the tag information in \a aNfcTag and assign
-    the \a aParent as target's parent. 
+    the \a aParent as target's parent.
 */
 
 QNearFieldTarget * TNearFieldTargetFactory::CreateTargetL(MNfcTag * aNfcTag, RNfcServer& aNfcServer, QObject * aParent)
@@ -114,7 +95,7 @@ QNearFieldTarget * TNearFieldTargetFactory::CreateTargetL(MNfcTag * aNfcTag, RNf
     if (!aNfcTag)
         {
         LOG("llcp device created");
-        target = new (ELeave)QNearFieldLlcpDeviceSymbian(aNfcServer, aParent); 
+        target = new (ELeave)QNearFieldLlcpDeviceSymbian(aNfcServer, aParent);
         }
     else if(aNfcTag->HasConnectionMode(TNfcConnectionInfo::ENfcType1))
         {
@@ -129,7 +110,7 @@ QNearFieldTarget * TNearFieldTargetFactory::CreateTargetL(MNfcTag * aNfcTag, RNf
     else if (aNfcTag->HasConnectionMode(TNfcConnectionInfo::ENfcType3))
         {
         LOG("tag type 3 created");
-        target = CreateTagTypeL<CNfcType3Connection, QNearFieldTagType3Symbian>(aNfcTag, aNfcServer, aParent); 
+        target = CreateTagTypeL<CNfcType3Connection, QNearFieldTagType3Symbian>(aNfcTag, aNfcServer, aParent);
         }
     else if (aNfcTag->HasConnectionMode(TNfcConnectionInfo::ENfc14443P4))
         {
@@ -144,21 +125,21 @@ QNearFieldTarget * TNearFieldTargetFactory::CreateTargetL(MNfcTag * aNfcTag, RNf
     END
     return target;
     }
-   
+
 CNearFieldNdefTarget * TNearFieldTargetFactory::WrapNdefAccessL(MNfcTag * aNfcTag, RNfcServer& aNfcServer, CNearFieldTag * aTarget)
     {
     BEGIN
     // walk around, symbian discovery API can't know if tag has Ndef Connection mode when detected
 
     LOG("Wrap NDEF Access to the tag");
-    
+
     CNearFieldNdefTarget * ndefTarget = CNearFieldNdefTarget::NewLC(aNfcTag, aNfcServer);
     ndefTarget->SetRealTarget(aTarget);
     CleanupStack::Pop(ndefTarget);
     END
     return ndefTarget;
     }
-           
+
 QNearFieldTarget::AccessMethods TNearFieldTargetFactory::ConnectionMode2AccessMethods(MNfcTag * aNfcTag)
     {
     BEGIN

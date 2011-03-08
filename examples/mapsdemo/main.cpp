@@ -78,10 +78,12 @@ int main(int argc, char *argv[])
     }
 
     // launch the main window
-
     MainWindow mw;
-    mw.resize(200,200);
+#ifdef Q_OS_SYMBIAN
+    mw.showMaximized();
+#else
+    mw.resize(360,640);
     mw.show();
-
+#endif
     return a.exec();
 }

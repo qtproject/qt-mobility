@@ -79,12 +79,14 @@ LIBRARY			sqldb.lib
 LIBRARY     	libstdcppv5.lib
 LIBRARY     	libc.lib
 LIBRARY     	libm.lib
-LIBRARY     	xqsettingsmanager
 LIBRARY      	platformenv.lib
 LIBRARY         charconv.lib
 
 OPTION ARMCC --visibility_inlines_hidden
 
+
 EPOCALLOWDLLDATA
 STDCPP
 SMPSAFE
+
+

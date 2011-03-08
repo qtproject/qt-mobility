@@ -257,6 +257,7 @@ bool QNearFieldTagType4Symbian::hasNdefMessage()
     temp = ndefContent.at(1);
     nLen |= temp;
 
+    END
     return ( (nLen > 0) && (nLen < maxNdefLen -2) );
 }
 

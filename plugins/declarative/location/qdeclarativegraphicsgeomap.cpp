@@ -90,10 +90,10 @@ QTM_BEGIN_NAMESPACE
     Of the above list, MapObjectView is a special case and not a MapObject as such.
     Here is a small example to illustrate this:
 
-   \snippet doc/src/snippets/declarative/declarative-map.qml Basic MapObjects and View on Map
+    \snippet doc/src/snippets/declarative/declarative-map.qml Basic MapObjects and View on Map
 
-   Mouse handling is done by adding MapMouseArea items as children of either
-   MapObjects or the Map item itself.
+    Mouse handling is done by adding MapMouseArea items as children of either
+    MapObjects or the Map item itself.
 
     The Map element is part of the \bold{QtMobility.location 1.2} module.
 */
@@ -671,6 +671,8 @@ void QDeclarativeGraphicsGeoMap::mousePressEvent(QGraphicsSceneMouseEvent *event
             return;
         }
     }
+
+    QDeclarativeItem::mousePressEvent(event);
 }
 
 void QDeclarativeGraphicsGeoMap::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
@@ -706,6 +708,11 @@ void QDeclarativeGraphicsGeoMap::mouseReleaseEvent(QGraphicsSceneMouseEvent *eve
 
     // TODO send event to grabber if exists
     // TODO clear grabber either way
+   
+    if (mouseEvent->accepted())
+        return;
+ 
+    QDeclarativeItem::mouseReleaseEvent(event);
 }
 
 void QDeclarativeGraphicsGeoMap::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
@@ -740,6 +747,8 @@ void QDeclarativeGraphicsGeoMap::mouseDoubleClickEvent(QGraphicsSceneMouseEvent 
     }
 
     // TODO interact with grabber somehow
+    
+    QDeclarativeItem::mouseDoubleClickEvent(event);
 }
 
 //void QDeclarativeGraphicsGeoMap::mouseMoveEvent(QGraphicsSceneMouseEvent *event)

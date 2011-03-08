@@ -44,8 +44,6 @@
 #include <qnearfieldmanager.h>
 #include <qnearfieldtarget.h>
 #include <QtTest/QtTest>
-#include "qnfctestcommon.h"
-#include "qnfctestutil.h"
 #include <qndefmessage.h>
 #include <qndefnfctextrecord.h>
 #include <qndefnfcurirecord.h>
@@ -54,6 +52,8 @@
 #include <qnearfieldtagtype3.h>
 #include <qnearfieldtagtype4.h>
 #include "qdummyslot.h"
+#include "qnfctestcommon.h"
+#include "qnfctestutil.h"
 
 QTM_USE_NAMESPACE
 
@@ -114,18 +114,18 @@ class NfcTagRawCommandOperationCommon : public MNfcTagOperation
 {
 public:
     enum Wait
-        {
-            ENoWait,
-            EWaitTrue,
-            EWaitFalse
-        };
+    {
+        ENoWait,
+        EWaitTrue,
+        EWaitFalse
+    };
 
-        enum Signal
-        {
-            ENoSignal,
-            EErrorSignal,
-            ECompleteSignal
-        };
+    enum Signal
+    {
+        ENoSignal,
+        EErrorSignal,
+        ECompleteSignal
+    };
 public:
     inline NfcTagRawCommandOperationCommon(QNearFieldTarget * tag);
 
@@ -232,7 +232,7 @@ public:
     void setExpectedErrorSignal(QNearFieldTarget::Error error) { mExpectedErrCode = error; mSignalType = EErrorSignal; }
     void setExpectedOkSignal() { mSignalType = ECompleteSignal; }
     void setExpectedResponse(QVariant expected){ mExpectedResult = expected; }
-    void setExpectedInvalidId() { mInvalidId = true; }
+    void setIfExpectInvalidId() { mInvalidId = true; }
     void checkInvalidId() { if (mInvalidId) QVERIFY(!mId.isValid()); }
     void waitRequest()
     {
@@ -309,19 +309,23 @@ public:
             {
                 for (int i = 0; i < errSpy->count(); ++i)
                 {
-                    QTRY_COMPARE(errSpy->at(i).at(1).value<QNearFieldTarget::Error>(), mExpectedErrCode);
+                    if (!(errSpy->at(i).at(0).value<QNearFieldTarget::RequestId>().isValid()))
+                    {
+                        QTRY_COMPARE(errSpy->at(i).at(1).value<QNearFieldTarget::Error>(), mExpectedErrCode);
+                        break;
+                    }
                 }
-                QCOMPARE(errSpy->count(), 1);
+
                 break;
             }
 
             case NfcTagNdefOperationCommon::EReadSignal:
             {
+                QVERIFY(ndefMessageReadSpy->count()>0);
                 for (int i = 0; i < ndefMessageReadSpy->count(); ++i)
                 {
                     mReceivedMessages.push_back(ndefMessageReadSpy->at(i).at(0).value<QNdefMessage>());
                 }
-                QVERIFY(ndefMessageReadSpy->count()>0);
                 break;
             }
 

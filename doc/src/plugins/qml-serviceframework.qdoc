@@ -63,10 +63,10 @@
     name, which is the most convenient use-case of the QML plugin. The code snippet below
     demonstrates a typical way to load an interface in QML.
 
-    \code
+    \qml
     import Qt 4.7
     import QtMobility.serviceframework 1.1
-    ...
+    // ...
     property variant myObject: 0
 
     Service {
@@ -77,7 +77,7 @@
             myObject = myService.serviceObject;
         }
     }
-    \endcode
+    \endqml
 
     In the above code we use a variant to store the QObject reference provided by the
     Service::serviceObject. In this case it will be an instance of the default service
@@ -91,7 +91,7 @@
     plugin also allows connecting to signals provided by the service. Here is a typical
     example of receiving service signals within QML for the above code.
 
-    \code
+    \qml
     Connections {
         target: myObject
         ignoreUnknownSignals: true
@@ -100,7 +100,7 @@
             // do something
         }
     }
-    \endcode
+    \endqml
 
     Note the usage of the ignoreUnkownSignals attribute which is useful for ignoring
     uknown signals, especially in the case where Service::serviceObject has not been
@@ -116,7 +116,7 @@
     QServiceFilter class which provides a list of \l Service elements. A very specific
     service list element can be defined by using the following code.
 
-    \code
+    \qml
     ServiceList {
         id: myServiceList
         serviceName: "MyExampleService"
@@ -125,7 +125,7 @@
         majorVersion: 1
         minorVersion: 3
     }
-    \endcode
+    \endqml
 
     If the ServiceList::serviceName is not supplied the filter will search with a default
     empty string as the service name, meaning all interfaces will be returned regardless
@@ -136,14 +136,14 @@
     the ServiceList::services property which searches based on the filter values. This
     list model can then be used in a list view element.
 
-    \code
+    \qml
     ListView {
         id: myListView
         model: myServiceList.services
         delegate: myDelegate
-        ...
+        // ...
     }
-    \endcode
+    \endqml
 
     The service framework example \l{declarative-sfw-dialer}{Declarative Dialer} better
     demonstrates the use of ServiceList coupled with the \l Service element to search
@@ -158,5 +158,3 @@
     \section1 QML Elements
     \annotatedlist qml-serviceframework
 */
-
-

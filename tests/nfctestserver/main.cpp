@@ -48,13 +48,20 @@ QTM_USE_NAMESPACE
 
 static const QLatin1String commandServer("urn:nfc:sn:com.nokia.qtmobility.commandserver");
 static const QLatin1String helloServer("urn:nfc:sn:com.nokia.qtmobility.helloserver");
+static const QLatin1String streamSuffix(".stream");
+static const QLatin1String datagramSuffix(".datagram");
 
 class SocketController : public QObject
 {
     Q_OBJECT
 
 public:
-    SocketController(QObject *parent = 0);
+    enum ConnectionType {
+        StreamConnection,
+        DatagramConnection
+    };
+
+    SocketController(ConnectionType type, QObject *parent = 0);
     ~SocketController();
 
 public slots:
@@ -66,20 +73,32 @@ public slots:
 
 private:
     QLlcpSocket *m_socket;
+    ConnectionType m_connectionType;
+    QString m_service;
 };
 
-SocketController::SocketController(QObject *parent)
-:   QObject(parent), m_socket(new QLlcpSocket(this))
+SocketController::SocketController(ConnectionType type, QObject *parent)
+:   QObject(parent), m_socket(new QLlcpSocket(this)), m_connectionType(type)
 {
     connect(m_socket, SIGNAL(connected()), this, SLOT(connected()));
     connect(m_socket, SIGNAL(disconnected()), this, SLOT(disconnected()));
-    connect(m_socket, SIGNAL(error(QLlcpSocket::Error)), this, SLOT(error(QLlcpSocket::Error)));
-    connect(m_socket, SIGNAL(stateChanged(QLlcpSocket::State)),
-            this, SLOT(stateChanged(QLlcpSocket::State)));
+    connect(m_socket, SIGNAL(error(QLlcpSocket::SocketError)),
+            this, SLOT(error(QLlcpSocket::SocketError)));
+    connect(m_socket, SIGNAL(stateChanged(QLlcpSocket::SocketState)),
+            this, SLOT(stateChanged(QLlcpSocket::SocketState)));
     connect(m_socket, SIGNAL(readyRead()), this, SLOT(readyRead()));
 
-    qDebug() << "Client connecting to" << helloServer;
-    m_socket->connectToService(0, helloServer);
+    switch (m_connectionType) {
+    case StreamConnection:
+        m_service = helloServer + streamSuffix;
+        break;
+    case DatagramConnection:
+        m_service = helloServer + datagramSuffix;
+        break;
+    }
+
+    qDebug() << "Client connecting to" << m_service;
+    m_socket->connectToService(0, m_service);
 }
 
 SocketController::~SocketController()
@@ -90,14 +109,22 @@ SocketController::~SocketController()
 void SocketController::connected()
 {
     qDebug() << "Client connected";
-    const QString data = QLatin1String("HELLO ") + helloServer + QLatin1Char('\n');
-    m_socket->write(data.toUtf8());
+    const QString data = QLatin1String("HELLO ") + m_service;
+    switch (m_connectionType) {
+    case StreamConnection:
+        m_socket->write(data.toUtf8() + '\n');
+        break;
+    case DatagramConnection:
+        m_socket->writeDatagram(data.toUtf8());
+        break;
+    }
 }
 
 void SocketController::disconnected()
 {
     qDebug() << "Client disconnected, reconnecting";
-    m_socket->connectToService(0, helloServer);
+
+    m_socket->connectToService(0, m_service);
 }
 
 void SocketController::error(QLlcpSocket::SocketError socketError)
@@ -112,17 +139,36 @@ void SocketController::stateChanged(QLlcpSocket::SocketState socketState)
 
 void SocketController::readyRead()
 {
-    while (m_socket->canReadLine()) {
-        const QByteArray line = m_socket->readLine().trimmed();
+    switch (m_connectionType) {
+    case StreamConnection:
+        while (m_socket->canReadLine()) {
+            const QByteArray line = m_socket->readLine().trimmed();
 
-        qDebug() << "Client read line:" << line;
+            qDebug() << "Client read line:" << line;
 
-        if (line == "DISCONNECT") {
-            m_socket->disconnectFromService();
-            break;
-        } else if (line == "CLOSE") {
-            m_socket->close();
-            break;
+            if (line == "DISCONNECT") {
+                m_socket->disconnectFromService();
+                break;
+            } else if (line == "CLOSE") {
+                m_socket->close();
+                break;
+            }
+        }
+        break;
+    case DatagramConnection:
+        while (m_socket->hasPendingDatagrams()) {
+            qint64 size = m_socket->pendingDatagramSize();
+            QByteArray data;
+            data.resize(size);
+            m_socket->readDatagram(data.data(), data.size());
+
+            if (data == "DISCONNECT") {
+                m_socket->disconnectFromService();
+                break;
+            } else if (data == "CLOSE") {
+                m_socket->close();
+                break;
+            }
         }
     }
 }
@@ -132,7 +178,12 @@ class ServerController : public QObject
     Q_OBJECT
 
 public:
-    ServerController(QObject *parent = 0);
+    enum ConnectionType {
+        StreamConnection,
+        DatagramConnection
+    };
+
+    ServerController(ConnectionType type, QObject *parent = 0);
     ~ServerController();
 
 private slots:
@@ -145,17 +196,28 @@ private slots:
 private:
     QLlcpServer *m_server;
     QLlcpSocket *m_socket;
+    ConnectionType m_connectionType;
+    QString m_service;
 };
 
-ServerController::ServerController(QObject *parent)
-:   QObject(parent), m_server(new QLlcpServer(this)), m_socket(0)
+ServerController::ServerController(ConnectionType type, QObject *parent)
+:   QObject(parent), m_server(new QLlcpServer(this)), m_socket(0), m_connectionType(type)
 {
     connect(m_server, SIGNAL(newConnection()), this, SLOT(newConnection()));
 
-    m_server->listen(commandServer);
+    switch (m_connectionType) {
+    case StreamConnection:
+        m_service = commandServer + streamSuffix;
+        break;
+    case DatagramConnection:
+        m_service = commandServer + datagramSuffix;
+        break;
+    }
+
+    m_server->listen(m_service);
 
     if (m_server->isListening())
-        qDebug() << "Server listening on" << commandServer;
+        qDebug() << "Server listening on" << m_service;
 }
 
 ServerController::~ServerController()
@@ -177,34 +239,69 @@ void ServerController::newConnection()
 
 void ServerController::socketReadyRead()
 {
-    while (m_socket->canReadLine()) {
-        const QByteArray line = m_socket->readLine().trimmed();
+    switch (m_connectionType) {
+    case StreamConnection:
+        while (m_socket->canReadLine()) {
+            const QByteArray line = m_socket->readLine().trimmed();
 
-        qDebug() << "Server read line:" << line;
+            qDebug() << "Server read line:" << line;
 
-        QByteArray command;
-        QByteArray parameter;
+            QByteArray command;
+            QByteArray parameter;
 
-        int index = line.indexOf(' ');
-        if (index >= 0) {
-            command = line.left(index);
-            parameter = line.mid(index + 1);
-        } else {
-            command = line;
+            int index = line.indexOf(' ');
+            if (index >= 0) {
+                command = line.left(index);
+                parameter = line.mid(index + 1);
+            } else {
+                command = line;
+            }
+
+            if (command == "ECHO") {
+                m_socket->write(parameter + '\n');
+            } else if (command == "DISCONNECT") {
+                m_socket->disconnectFromService();
+                break;
+            } else if (command == "CLOSE") {
+                m_socket->close();
+                break;
+            } else if (command == "URI") {
+                m_socket->write(m_service.toLatin1());
+                m_socket->write("\n");
+            }
         }
+        break;
+    case DatagramConnection:
+        while (m_socket->hasPendingDatagrams()) {
+            qint64 size = m_socket->pendingDatagramSize();
+            QByteArray data;
+            data.resize(size);
+            m_socket->readDatagram(data.data(), data.size());
 
-        if (command == "ECHO") {
-            m_socket->write(parameter + '\n');
-        } else if (command == "DISCONNECT") {
-            m_socket->disconnectFromService();
-            break;
-        } else if (command == "CLOSE") {
-            m_socket->close();
-            break;
-        } else if (command == "URI") {
-            m_socket->write(commandServer.latin1());
-            m_socket->write("\n");
+            QByteArray command;
+            QByteArray parameter;
+
+            int index = data.indexOf(' ');
+            if (index >= 0) {
+                command = data.left(index);
+                parameter = data.mid(index + 1);
+            } else {
+                command = data;
+            }
+
+            if (command == "ECHO") {
+                m_socket->writeDatagram(parameter);
+            } else if (command == "DISCONNECT") {
+                m_socket->disconnectFromService();
+                break;
+            } else if (command == "CLOSE") {
+                m_socket->close();
+                break;
+            } else if (command == "URI") {
+                m_socket->writeDatagram(m_service.toLatin1());
+            }
         }
+        break;
     }
 }
 
@@ -223,8 +320,10 @@ int main(int argc, char *argv[])
 {
     QCoreApplication app(argc, argv);
 
-    new ServerController(&app);
-    new SocketController(&app);
+    new ServerController(ServerController::StreamConnection, &app);
+    //new ServerController(ServerController::DatagramConnection, &app);
+    new SocketController(SocketController::StreamConnection, &app);
+    new SocketController(SocketController::DatagramConnection, &app);
 
     return app.exec();
 }

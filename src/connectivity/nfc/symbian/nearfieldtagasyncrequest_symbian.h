@@ -39,8 +39,8 @@
  **
  ****************************************************************************/
 
-#ifndef NEARFIELDTAGASYNCREQUEST_H
-#define NEARFIELDTAGASYNCREQUEST_H
+#ifndef NEARFIELDTAGASYNCREQUEST_SYMBIAN_H
+#define NEARFIELDTAGASYNCREQUEST_SYMBIAN_H
 
 #include <qnearfieldtarget.h>
 #include <e32base.h>
@@ -106,4 +106,4 @@ protected:
     volatile bool * iCurrentRequestResult;
     };
 
-#endif
+#endif // NEARFIELDTAGASYNCREQUEST_SYMBIAN_H

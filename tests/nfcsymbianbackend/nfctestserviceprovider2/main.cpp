@@ -155,7 +155,7 @@ int main(int argc, char *argv[])
     MyContentHandler handler;
     QNearFieldManager manager;
     
-    int handle = manager.registerTargetDetectedHandler(&handler, SIGNAL(userHandleMessage(QNdefMessage, QNearFieldTarget*)));
+    int handle = manager.registerNdefMessageHandler(&handler, SIGNAL(userHandleMessage(QNdefMessage, QNearFieldTarget*)));
     
     QFile m_file("E:\\testserviceprovider2.dat");
     m_file.open(QIODevice::ReadWrite | QIODevice::Append);
@@ -164,7 +164,7 @@ int main(int argc, char *argv[])
             
     int ret = app.exec();
     
-    manager.unregisterTargetDetectedHandler(handle);
+    manager.unregisterNdefMessageHandler(handle);
     delete w;
     return ret;
 }

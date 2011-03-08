@@ -63,46 +63,47 @@ public:
      * @return CRotationSensorSym if successful, leaves on failure
      */
     static CRotationSensorSym* NewL(QSensor *sensor);
-    
+
     /**
      * Destructor
      * Closes the backend resources
      */
     ~CRotationSensorSym();
-    
+
 private:
     /**
      * Default constructor
      */
     CRotationSensorSym(QSensor *sensor);
-    
+
     /*
-     * RecvData is used to retrieve the sensor reading from sensor server
+     * DataReceived is used to retrieve the sensor reading from sensor server
      * It is implemented here to handle rotation sensor specific
      * reading data and provides conversion and utility code
-     */ 
-    void RecvData(CSensrvChannel &aChannel);
+     */
+    void DataReceived(CSensrvChannel &aChannel, TInt aCount, TInt aDataLost);
+    void ProcessReading();
 
     /**
      * Second phase constructor
      * Initialize the backend resources
      */
     void ConstructL();
-    
+
     /**
-     * Overriding this method in rotation sensor to hard code value of 
+     * Overriding this method in rotation sensor to hard code value of
      * mesurement range from -180 to 180 as Qt want
      * Symbian provides measurement range from 0 to 359
      */
     void GetMeasurementrangeAndAccuracy();
-    
+
 public:
     /**
      * Holds the id of the proximity sensor
      */
     static char const * const id;
-    
-private:     
+
+private:
     QRotationReading iReading;
     TSensrvRotationData iData;
     };

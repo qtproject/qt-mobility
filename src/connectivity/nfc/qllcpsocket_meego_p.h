@@ -46,11 +46,6 @@
 
 #include "qllcpsocket.h"
 
-#ifndef QPRIVATELINEARBUFFER_BUFFERSIZE
-#define QPRIVATELINEARBUFFER_BUFFERSIZE Q_INT64_C(16384)
-#endif
-#include "../qprivatelinearbuffer_p.h"
-
 #include <QtDBus/QDBusConnection>
 
 QT_FORWARD_DECLARE_CLASS(QDBusObjectPath)
@@ -72,7 +67,7 @@ class QLlcpSocketPrivate : public QObject
 
 public:
     QLlcpSocketPrivate(QLlcpSocket *q);
-    QLlcpSocketPrivate(const QDBusConnection &connection, int readFd, int writeFd);
+    QLlcpSocketPrivate(const QDBusConnection &connection, int readFd);
     ~QLlcpSocketPrivate();
 
     void connectToService(QNearFieldTarget *target, const QString &serviceUri);
@@ -112,15 +107,16 @@ private slots:
     void AccessGranted(const QDBusObjectPath &targetPath, const QString &accessKind);
 
     // com.nokia.nfc.LLCPRequestor
-    void Accept(const QDBusVariant &lsap, const QDBusVariant &rsap, int readFd, int writeFd);
-    void Connect(const QDBusVariant &lsap, const QDBusVariant &rsap, int readFd, int writeFd);
-    void Socket(const QDBusVariant &lsap, const QDBusVariant &rsap, int readFd, int writeFd);
+    void Accept(const QDBusVariant &lsap, const QDBusVariant &rsap, int readFd, const QVariantMap &properties);
+    void Connect(const QDBusVariant &lsap, const QDBusVariant &rsap, int readFd, const QVariantMap &properties);
+    void Socket(const QDBusVariant &lsap, const QDBusVariant &rsap, int readFd, const QVariantMap &properties);
 
     void _q_readNotify();
 
 private:
     QLlcpSocket *q_ptr;
-    QPrivateLinearBuffer buffer;
+    QVariantMap m_properties;
+    QList<QByteArray> m_datagrams;
 
     QDBusConnection m_connection;
 
@@ -131,7 +127,6 @@ private:
     SocketRequestor *m_socketRequestor;
 
     int m_readFd;
-    int m_writeFd;
     QSocketNotifier *m_readNotifier;
 
     QLlcpSocket::SocketState m_state;

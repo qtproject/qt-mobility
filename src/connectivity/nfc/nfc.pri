@@ -84,7 +84,8 @@ maemo6|meego {
         $$DBUS_ADAPTORS \
         nfc/meego/com.nokia.nfc.Adapter.xml \
         nfc/meego/com.nokia.nfc.Target.xml \
-        nfc/meego/com.nokia.nfc.Tag.xml
+        nfc/meego/com.nokia.nfc.Tag.xml \
+        nfc/meego/com.nokia.nfc.LLCPRequestor.xml
 
     # Add OUT_PWD to INCLUDEPATH so that creator picks up headers for generated files
     # This is not needed for the build otherwise.
@@ -95,11 +96,13 @@ simulator {
     QT *= gui
 
     PRIVATE_HEADERS += \
+        nfc/qnearfieldmanagervirtualbase_p.h \
         nfc/qnearfieldmanager_simulator_p.h \
         nfc/qllcpsocket_simulator_p.h \
         nfc/qllcpserver_simulator_p.h
 
     SOURCES += \
+        nfc/qnearfieldmanagervirtualbase.cpp \
         nfc/qnearfieldmanager_simulator.cpp \
         nfc/qllcpsocket_simulator_p.cpp \
         nfc/qllcpserver_simulator_p.cpp
@@ -199,4 +202,3 @@ contains(nfc_enabled, yes):symbian {
 
     LIBS += -lnfc -lndef -lndefaccess -lnfcdiscoveryservice -lllcp -lnfctagextension
 }
-

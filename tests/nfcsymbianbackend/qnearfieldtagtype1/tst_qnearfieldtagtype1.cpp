@@ -224,7 +224,7 @@ void tst_qnearfieldtagtype1::testSequence()
     rawCommandList.clear();
     NfcTagRawCommandOperationType1 * op6 = new NfcTagRawCommandOperationType1(tester.target);
     op6->setReadSegment(0xf1);
-    op6->setExpectedInvalidId();
+    op6->setIfExpectInvalidId();
     op6->setExpectedResponse(QVariant());
     rawCommandList.append(op6);
 
@@ -263,7 +263,7 @@ void tst_qnearfieldtagtype1::testSequence()
 
     NfcTagSendCommandsCommon * op7 = new NfcTagSendCommandsCommon(tester.target);
     op7->SetCommandLists(cmdList);
-    op7->setExpectedErrorSignal(QNearFieldTarget::UnsupportedError);
+    op7->setExpectedErrorSignal(QNearFieldTarget::InvalidParametersError);
     op7->SetExpectedResponse(expectRsp);
     op7->setWaitOperation(NfcTagRawCommandOperationCommon::EWaitFalse);
     rawCommandList.append(op7);

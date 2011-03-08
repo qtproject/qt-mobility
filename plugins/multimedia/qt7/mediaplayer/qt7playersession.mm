@@ -61,6 +61,8 @@
 
 QT_USE_NAMESPACE
 
+//#define QT_DEBUG_QT7
+
 @interface QTMovieObserver : NSObject
 {
 @private
@@ -171,7 +173,6 @@ QT7PlayerSession::QT7PlayerSession(QObject *parent)
    , m_mediaStatus(QMediaPlayer::NoMedia)
    , m_mediaStream(0)
    , m_videoOutput(0)
-   , m_currentTime(0)
    , m_muted(false)
    , m_tryingAsync(false)
    , m_volume(100)
@@ -214,14 +215,12 @@ void QT7PlayerSession::setVideoOutput(QT7VideoOutput *output)
 
 qint64 QT7PlayerSession::position() const
 {
-    if (!m_QTMovie || m_state == QMediaPlayer::PausedState)
-        return m_currentTime;
+    if (!m_QTMovie)
+        return 0;
 
     QTTime qtTime = [(QTMovie*)m_QTMovie currentTime];
-    quint64 t = static_cast<quint64>(float(qtTime.timeValue) / float(qtTime.timeScale) * 1000.0f);
-    m_currentTime = t;
 
-    return m_currentTime;
+    return static_cast<quint64>(float(qtTime.timeValue) / float(qtTime.timeScale) * 1000.0f);
 }
 
 qint64 QT7PlayerSession::duration() const
@@ -288,11 +287,16 @@ void QT7PlayerSession::setPosition(qint64 pos)
     if ( !isSeekable() || pos == position())
         return;
 
-    pos = qMin(pos, duration());
+    if (duration() > 0)
+        pos = qMin(pos, duration());
 
     QTTime newQTTime = [(QTMovie*)m_QTMovie currentTime];
     newQTTime.timeValue = (pos / 1000.0f) * newQTTime.timeScale;
     [(QTMovie*)m_QTMovie setCurrentTime:newQTTime];
+
+    //reset the EndOfMedia status position is changed after playback is finished
+    if (m_mediaStatus == QMediaPlayer::EndOfMedia)
+        processLoadStateChange();
 }
 
 void QT7PlayerSession::play()
@@ -305,10 +309,15 @@ void QT7PlayerSession::play()
     if (m_videoOutput)
         m_videoOutput->setMovie(m_QTMovie);
 
+    //reset the EndOfMedia status if the same file is played again
+    if (m_mediaStatus == QMediaPlayer::EndOfMedia)
+        processLoadStateChange();
+
     AutoReleasePool pool;
     float preferredRate = [[(QTMovie*)m_QTMovie attributeForKey:@"QTMoviePreferredRateAttribute"] floatValue];
     [(QTMovie*)m_QTMovie setRate:preferredRate * m_rate];
 
+    processLoadStateChange();
     emit stateChanged(m_state);
 }
 
@@ -322,8 +331,13 @@ void QT7PlayerSession::pause()
     if (m_videoOutput)
         m_videoOutput->setMovie(m_QTMovie);
 
+    //reset the EndOfMedia status if the same file is played again
+    if (m_mediaStatus == QMediaPlayer::EndOfMedia)
+        processLoadStateChange();
+
     [(QTMovie*)m_QTMovie setRate:0];
 
+    processLoadStateChange();
     emit stateChanged(m_state);
 }
 
@@ -340,7 +354,9 @@ void QT7PlayerSession::stop()
     if (m_videoOutput)
         m_videoOutput->setMovie(0);
 
+    processLoadStateChange();
     emit stateChanged(m_state);
+    emit positionChanged(position());
 }
 
 void QT7PlayerSession::setVolume(int volume)
@@ -402,8 +418,10 @@ void QT7PlayerSession::setMedia(const QMediaContent &content, QIODevice *stream)
     m_mediaStream = stream;
     m_mediaStatus = QMediaPlayer::NoMedia;
 
-    if (content.isNull())
+    if (content.isNull()) {
+        emit positionChanged(position());
         return;
+    }
 
     QNetworkRequest request = content.canonicalResource().request();
 
@@ -432,6 +450,8 @@ void QT7PlayerSession::setMedia(const QMediaContent &content, QIODevice *stream)
     // Attempt multiple times to open the movie.
     // First try - attempt open in async mode
     openMovie(true);
+
+    emit positionChanged(position());
 }
 
 void QT7PlayerSession::openMovie(bool tryAsync)
@@ -546,6 +566,7 @@ void QT7PlayerSession::processEOS()
 #ifdef QT_DEBUG_QT7
     qDebug() << Q_FUNC_INFO;
 #endif
+    emit positionChanged(position());
     m_mediaStatus = QMediaPlayer::EndOfMedia;
     if (m_videoOutput)
         m_videoOutput->setMovie(0);
