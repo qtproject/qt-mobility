@@ -114,7 +114,6 @@ void QVersitWriterPrivate::write()
             break;
         }
     }
-    mIoDevice->close();
     if (canceled)
         setState(QVersitWriter::CanceledState);
     else
