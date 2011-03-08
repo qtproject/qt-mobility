@@ -403,6 +403,7 @@ QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate()
     DeviceInfo::instance()->cellSignalStrenghtInfo()->removeObserver(this);
     DeviceInfo::instance()->cellNetworkInfo()->removeObserver(this);
     DeviceInfo::instance()->cellNetworkRegistrationInfo()->removeObserver(this);
+    DeviceInfo::instance()->wlanInfo()->FreeResources();
 }
 
 QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSystemNetworkInfo::NetworkMode mode)
