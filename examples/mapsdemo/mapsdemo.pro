@@ -5,7 +5,7 @@ TEMPLATE = app
 
 RESOURCES += mapsdemo.qrc
 
-include(../examples.pri)
+include(../mobility_examples.pri)
 
 INCLUDEPATH += ../../src/location \
                ../../src/location/maps \
@@ -25,9 +25,7 @@ symbian: {
     TARGET.CAPABILITY = Location \
                         NetworkServices \
                         ReadUserData \
-                        WriteUserData \
-                        ReadDeviceData \
-                        WriteDeviceData
+                        WriteUserData
 }
 
 HEADERS += \

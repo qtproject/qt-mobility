@@ -45,7 +45,7 @@
 
 #include <qmediaplayer.h>
 #include <qmediaplaylist.h>
-#include <qvideowidget.h>
+#include "videowidget.h"
 
 
 QT_BEGIN_NAMESPACE
@@ -104,7 +104,7 @@ private:
 
     QMediaPlayer *player;
     QMediaPlaylist *playlist;
-    QVideoWidget *videoWidget;
+    VideoWidget *videoWidget;
     QLabel *coverLabel;
     QSlider *slider;
     QPushButton *fullScreenButton;

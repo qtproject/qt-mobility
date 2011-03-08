@@ -74,9 +74,11 @@ examples/hapticsquare/hapticsquare
 examples/landmarkbrowser/landmarkbrowser
 examples/logfilepositionsource/logfilepositionsource
 examples/mapviewer/MapViewer
+examples/mapsdemo/mapsdemo
 examples/mediabrowser/mediabrowser
 examples/publish-subscribe/publish-subscribe
 examples/qgeoapiui/geoapiui
+examples/qmlorganizer/qmlorganizer
 examples/radio/radio
 examples/samplephonebook/samplephonebook
 examples/satellitedialog/satellitedialog
@@ -108,6 +110,8 @@ examples/telephony/dialer/dialer
 examples/todo/todo
 examples/videographicsitem/videographicsitem
 examples/videowidget/videowidget
+tests/auto/maketestselftest/checktest/checktest
+tests/auto/maketestselftest/test/tst_maketestselftest
 *.app
 config.tests/networkmanager/networkmanager
 config.tests/qmf/qmf

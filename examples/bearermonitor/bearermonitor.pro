@@ -2,7 +2,7 @@ TARGET = bearermonitor
 QT = core gui network
 
 INCLUDEPATH += ../../src/bearer
-include(../examples.pri)
+include(../mobility_examples.pri)
 
 CONFIG += mobility
 MOBILITY = bearer

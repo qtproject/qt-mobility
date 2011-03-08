@@ -335,8 +335,10 @@ qreal S60CameraSettings::opticalZoomFactorL() const
         else
             User::Leave(KErrNotSupported);
 
-    if (symbianFactor != 0)
-        factor = symbianFactor; factor /= KSymbianFineResolutionFactor;
+    if (symbianFactor != 0) {
+        factor = symbianFactor;
+        factor /= KSymbianFineResolutionFactor;
+    }
 #endif // POST_31_PLATFORM
 
     return factor;
@@ -375,8 +377,10 @@ qreal S60CameraSettings::digitalZoomFactorL() const
         else
             User::Leave(KErrNotSupported);
 
-    if (symbianFactor != 0)
-        factor = symbianFactor; factor /= KSymbianFineResolutionFactor;
+    if (symbianFactor != 0) {
+        factor = symbianFactor;
+        factor /= KSymbianFineResolutionFactor;
+    }
 #endif // POST_31_PLATFORM
 
     return factor;

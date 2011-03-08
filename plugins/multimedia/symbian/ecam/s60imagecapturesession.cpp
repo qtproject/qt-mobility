@@ -547,6 +547,7 @@ int S60ImageCaptureSession::prepareImageCapture()
         // Check if CaptureSize was modified
         if (captureSize.iWidth != m_captureSize.width() || captureSize.iHeight != m_captureSize.height())
             m_captureSize = QSize(captureSize.iWidth, captureSize.iHeight);
+        emit captureSizeChanged(m_captureSize);
 
 #ifdef ECAM_PREVIEW_API
         // Subscribe previews
