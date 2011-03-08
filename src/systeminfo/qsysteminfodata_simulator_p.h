@@ -110,10 +110,6 @@ struct QSystemDisplayInfoData
 
     QSystemDisplayInfo::DisplayOrientation orientation;
     float contrast;
-    int dpiHeight;
-    int dpiWidth;
-    int physicalHeight;
-    int physicalWidth;
     QSystemDisplayInfo::BacklightState backlightStatus;
 
 };
@@ -168,7 +164,7 @@ struct QSystemDeviceInfoData
 
 struct QSystemScreenSaverData
 {
-    unsigned screenSaverInhibited;
+    int inhibitedCount;
 };
 
 struct QSystemBatteryInfoData

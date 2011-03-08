@@ -196,9 +196,7 @@ public:
 
 protected:
     explicit QSensorReading(QObject *parent, QSensorReadingPrivate *d);
-#ifdef UNIT_TEST
     QScopedPointer<QSensorReadingPrivate> *d_ptr() { return &d; }
-#endif
     virtual void copyValuesFrom(QSensorReading *other);
 
 private:

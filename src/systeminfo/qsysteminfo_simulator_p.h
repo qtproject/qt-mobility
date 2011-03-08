@@ -166,10 +166,10 @@ public:
 
     QSystemDisplayInfo::DisplayOrientation orientation(int screen) const { Q_UNUSED(screen); return data.orientation; }
     float contrast(int screen) const { Q_UNUSED(screen); return data.contrast;}
-    int getDPIHeight(int screen) const { Q_UNUSED(screen); return data.dpiHeight; }
-    int getDPIWidth(int screen) const { Q_UNUSED(screen); return data.dpiWidth; }
-    int physicalHeight(int screen) const { Q_UNUSED(screen); return data.physicalHeight; }
-    int physicalWidth(int screen) const { Q_UNUSED(screen); return data.physicalWidth; }
+    int getDPIHeight(int screen) const;
+    int getDPIWidth(int screen) const;
+    int physicalHeight(int screen) const;
+    int physicalWidth(int screen) const;
 
     QSystemDisplayInfo::BacklightState backlightStatus(int screen) { Q_UNUSED(screen); return data.backlightStatus; }
 
@@ -178,10 +178,6 @@ public:
 
     void setOrientation(QSystemDisplayInfo::DisplayOrientation v);
     void setContrast(float v);
-    void setDPIHeight(int v);
-    void setDPIWidth(int v) ;
-    void setPhysicalHeight(int v);
-    void setPhysicalWidth(int v);
     void setBacklightStatus(QSystemDisplayInfo::BacklightState v);
 
     void setInitialData();
@@ -335,6 +331,7 @@ public:
 
 private:
     bool didInhibit;
+    QSystemScreenSaverData data;
 };
 
 
