@@ -519,7 +519,7 @@ void S60VideoPlayerSession::doSetVolumeL(int volume)
 
 /*!
  * Notification to the client that the opening of the video clip has completed.
- * If successfull then an \a aError will be ZERO else system wide error.
+ * If successful then an \a aError will be ZERO else system wide error.
 */
 
 void S60VideoPlayerSession::MvpuoOpenComplete(TInt aError)
@@ -591,7 +591,7 @@ void S60VideoPlayerSession::MvpuoFrameReady(CFbsBitmap &aFrame, TInt aError)
 
 /*!
  * Notification that video playback has completed.
- * If successfull then \a aError will be ZERO else system wide error.
+ * If successful then \a aError will be ZERO else system wide error.
  * This not called if playback is explicitly stopped by calling stop.
 */
 
@@ -855,7 +855,7 @@ void S60VideoPlayerSession::setActiveEndpoint(const QString& name)
 }
 
 /*!
-    The default Audio ouput has been changed.
+    The default Audio ouptut has been changed.
 
     \a aAudioOutput Audio Output object.
 

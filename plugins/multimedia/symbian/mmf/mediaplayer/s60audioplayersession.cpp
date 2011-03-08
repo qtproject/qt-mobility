@@ -517,7 +517,7 @@ void S60AudioPlayerSession::setActiveEndpoint(const QString& name)
 }
 
 /*!
-    The default audio ouput has been changed.
+    The default audio output has been changed.
 
     \a aAudioOutput Audio Output object.
 

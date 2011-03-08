@@ -825,7 +825,7 @@ int S60MediaPlayerSession::error() const
 
 /*!
  * Sets the error.
- * * If playback complete/prepare complete ..., etc with successfull then sets error as ZERO
+ * * If playback complete/prepare complete ..., etc with successful then sets error as ZERO
  *  else Multimedia error.
 */
 
@@ -935,7 +935,7 @@ void S60MediaPlayerSession::startStalledTimer()
 }
 
 /*!
- *  Stops the timer when some events occured while waiting for them.
+ *  Stops the timer when some events occurred while waiting for them.
  *  media source started buffering or call back is received etc.
 */
 
