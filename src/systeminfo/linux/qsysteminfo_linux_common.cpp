@@ -96,6 +96,13 @@
 #include <sys/inotify.h>
 
 #include <linux/videodev2.h>
+
+#if !defined(Q_WS_MAEMO_6)
+#if !defined V4L2_CAP_MODULATOR
+#define V4L2_CAP_MODULATOR 0x00080000
+#endif
+#endif
+
 #include <linux/fb.h>
 #include <fcntl.h>
 
