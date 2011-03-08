@@ -16,7 +16,7 @@
 */
 
 
-target          t_cntdelete.exe
+TARGET          t_cntdelete.exe
 targettype      EXE
 CAPABILITY      ReadUserData WriteUserData
 UID             0x1000007b
@@ -31,6 +31,6 @@ userinclude     ../tsrc
 
 source          T_CntDelete.CPP
 
-library         euser.lib  cntmodel.lib cnttutil.lib
+LIBRARY         euser.lib  cntmodel.lib cnttutil.lib
 
 SMPSAFE

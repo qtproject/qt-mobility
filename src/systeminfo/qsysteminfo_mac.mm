@@ -1699,7 +1699,7 @@ void unmountCallback(DADiskRef disk, void *context)
 }
 
 QSystemStorageInfoPrivate::QSystemStorageInfoPrivate(QObject *parent)
-        : QObject(parent), daSessionThread(0),sessionThreadStarted(0), storageTimer(0)
+        : QObject(parent), storageTimer(0), daSessionThread(0),sessionThreadStarted(0)
 {
     updateVolumesMap();
     checkAvailableStorage();
@@ -2345,8 +2345,7 @@ QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QObject *parent)
 
 QSystemScreenSaverPrivate::~QSystemScreenSaverPrivate()
 {
-    if(ssTimer->isActive())
-        ssTimer->stop();
+    setScreenSaverInhibited(false);
 }
 
 bool QSystemScreenSaverPrivate::setScreenSaverInhibit()
@@ -2372,6 +2371,17 @@ void QSystemScreenSaverPrivate::activityTimeout()
     UpdateSystemActivity(OverallAct);
 }
 
+void QSystemScreenSaverPrivate::setScreenSaverInhibited(bool on)
+{
+    if (on) {
+        setScreenSaverInhibit();
+    } else {
+        if(ssTimer->isActive()) {
+            ssTimer->stop();
+            isInhibited = false;
+        }
+    }
+}
 
 QSystemBatteryInfoPrivate::QSystemBatteryInfoPrivate(QObject *parent)
 : QObject(parent)

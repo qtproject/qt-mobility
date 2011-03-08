@@ -24,7 +24,7 @@
 #include <cntfldst.h>
 #include "t_utils2.h"
 #include "t_utils.h"
-#include <testserver.h>
+#include <coreappstest/testserver.h>
 #include "t_platsec.h"
 
 //
@@ -156,7 +156,7 @@ void CPlatSecTest::DoTestL()
 	iTest.Next(_L("Reading Contact field"));
 
 #ifdef __SYMBIAN_CNTMODEL_USE_SQLITE__
-  	iTest(fieldText1 == _L("john"));
+  	iTest(fieldText1 == _L("Name1"));
 #else //__SYMBIAN_CNTMODEL_USE_SQLITE__
   	iTest(fieldText1 == _L("9AB24C76BmQAte[POqjm_PoyFam\\\\cKq"));
 #endif //__SYMBIAN_CNTMODEL_USE_SQLITE__

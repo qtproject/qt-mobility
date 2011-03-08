@@ -11,9 +11,9 @@ contains(TEMPLATE,.*lib) {
         QMAKE_PKGCONFIG_LIBDIR = $$target.path
         QMAKE_PKGCONFIG_INCDIR = $$headers.path
         QMAKE_PKGCONFIG_CFLAGS = -I$${QT_MOBILITY_INCLUDE}/QtMobility
-        pkgconfig.path = $$QT_MOBILITY_LIB/pkgconfig
-        pkgconfig.files = $$TARGET.pc
 
+        pkgconfig.files = $${TARGET}.pc
+        pkgconfig.path = $$QT_MOBILITY_LIB/pkgconfig
         INSTALLS += pkgconfig
     }
 
@@ -45,10 +45,17 @@ INSTALLS+=target headers
 
 mac:contains(QT_CONFIG,qt_framework) {
     CONFIG += lib_bundle absolute_library_soname
-    FRAMEWORK_HEADERS.version = Versions
-    FRAMEWORK_HEADERS.files = $${PUBLIC_HEADERS}
-    FRAMEWORK_HEADERS.path = Headers
-    QMAKE_BUNDLE_DATA += FRAMEWORK_HEADERS
+
+    CONFIG(debug, debug|release) {
+        !build_pass:CONFIG += build_all
+    } else { #release
+        !debug_and_release|build_pass {
+            FRAMEWORK_HEADERS.version = Versions
+            FRAMEWORK_HEADERS.files = $${PUBLIC_HEADERS}
+            FRAMEWORK_HEADERS.path = Headers
+        }
+        QMAKE_BUNDLE_DATA += FRAMEWORK_HEADERS
+    }
 }
 
 CONFIG+= create_prl

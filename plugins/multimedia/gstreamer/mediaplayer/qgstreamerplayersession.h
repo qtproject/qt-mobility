@@ -49,6 +49,10 @@
 #include <qmediaplayer.h>
 #include <qmediastreamscontrol.h>
 
+#if defined(HAVE_GST_APPSRC)
+#include "qgstappsrc.h"
+#endif
+
 #include <gst/gst.h>
 
 class QGstreamerBusHelper;
@@ -100,9 +104,14 @@ public:
 
     bool processSyncMessage(const QGstreamerMessage &message);
 
-public slots:
-    void load(const QNetworkRequest &url);
+#if defined(HAVE_GST_APPSRC)
+    QGstAppSrc *appsrc() const { return m_appSrc; }
+    static void configureAppSrcElement(GObject*, GObject*, GParamSpec*,QGstreamerPlayerSession* _this);
+#endif
 
+public slots:
+    void loadFromUri(const QNetworkRequest &url);
+    void loadFromStream(const QNetworkRequest &url, QIODevice *stream);
     bool play();
     bool pause();
     void stop();
@@ -162,6 +171,10 @@ private:
     GstBus* m_bus;
     QObject *m_videoOutput;
     QGstreamerVideoRendererInterface *m_renderer;
+
+#if defined(HAVE_GST_APPSRC)
+    QGstAppSrc *m_appSrc;
+#endif
 
     QMap<QByteArray, QVariant> m_tags;
     QList< QMap<QtMultimediaKit::MetaData,QVariant> > m_streamProperties;

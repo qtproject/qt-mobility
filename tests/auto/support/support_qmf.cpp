@@ -147,6 +147,7 @@ QMessageId addMessage(const Parameters &params)
     QString to(params["to"]);
     QString from(params["from"]);
     QString cc(params["cc"]);
+    QString bcc(params["bcc"]);
     QString date(params["date"]);
     QString receivedDate(params["receivedDate"]);
     QString subject(params["subject"]);
@@ -202,6 +203,14 @@ QMessageId addMessage(const Parameters &params)
                 if (!ccList.isEmpty()) {
                     message.setCc(ccList);
                 }
+
+                QList<QMessageAddress> bccList;
+                foreach (const QString &addr, bcc.split(",")) {
+                    if (!addr.isEmpty()) {
+                    bccList.append(QMessageAddress(QMessageAddress::Email, addr.trimmed()));
+                    }
+                }
+                message.setBcc(bccList);
 
                 message.setFrom(QMessageAddress(QMessageAddress::Email, from));
                 message.setSubject(subject);

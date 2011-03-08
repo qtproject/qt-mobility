@@ -206,7 +206,7 @@ QTM_BEGIN_NAMESPACE
     If transmission is successful, the message will be moved to the standard Sent
     folder for the account.
     
-    Currently on the Maemo 5 (Fremantle) and Windows Mobile platforms the service 
+    Currently on the Maemo 5 (Fremantle), Symbian, and Windows Mobile platforms the service 
     action object enters the FinishedState when the message is queued for sending 
     rather than actually sent.
   
@@ -305,7 +305,7 @@ QTM_BEGIN_NAMESPACE
 /*!
     \fn QMessageService::moveMessages(const QMessageIdList &messageIds, const QMessageFolderId &toFolderId)
 
-    Initiate a request to move messages \a messageIds to the folder \toFolderId
+    Initiate a request to move messages \a messageIds to the folder \a toFolderId
 
     The folder must be in the same account as the message. This will move the message on the external server, as well as locally.
 

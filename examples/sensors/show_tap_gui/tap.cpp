@@ -61,7 +61,8 @@ bool TapSensorFilter::filter(QTapReading *reading)
         case QTapReading::Undefined: output = "Undefined"; break;
         default: output = "Invalid enum value";
     }
-    emit reading->isDoubleTap()?doubleHappened(output):singleHappened(output);
+    long timestamp = reading->timestamp();
+    emit reading->isDoubleTap()?doubleHappened(output, timestamp):singleHappened(output, timestamp);
     return false; // don't store the reading in the sensor
 }
 

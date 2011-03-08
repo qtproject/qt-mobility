@@ -49,6 +49,8 @@ meegotapsensor::meegotapsensor(QSensor *sensor)
 {
     initSensor<TapSensorChannelInterface>(m_initDone);
     setReading<QTapReading>(&m_reading);
+    addOutputRange(QTapReading::Undefined, QTapReading::Z_Both, 1);
+    addDataRate(10,10); //TODO: fix this when we know better
 }
 
 

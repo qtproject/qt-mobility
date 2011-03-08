@@ -25,7 +25,7 @@
 #include <cntfldst.h>
 #include <coreappstest/testserver.h>
 
-#include <sbeclient.h>
+#include <connect/sbeclient.h>
 
 #include "t_utils.h"
 #include "t_utils2.h"

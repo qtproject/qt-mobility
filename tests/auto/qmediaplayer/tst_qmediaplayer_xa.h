@@ -54,6 +54,9 @@
 #include <QVideoWidgetControl>
 #include <QVideoWindowControl>
 #include <QMetadataReaderControl>
+#include <QtNetwork/qnetworkconfiguration.h>
+#include <QtNetwork/qnetworkconfigmanager.h>
+#include <qmedianetworkaccesscontrol.h>
 
 QT_USE_NAMESPACE
 
@@ -111,6 +114,15 @@ private slots:
     void testPlaybackRateWhilePlaying();
     void testWindowControl_NativeSize();
     void testWindowControl_AspectRatioMode();
+    void testSetconfigurationsAP();
+    void testSetAccesspoint();
+    void testGetAccesspoint();
+    void testDiffmediacontentAP();
+    void testInvalidaddressAP();
+    void testMultipleAccesspoints();
+    void testReconnectAPWhilestreaming();
+    void teststreampausestream();
+    void testStressAccessPoint();
 
 private:
 
@@ -135,33 +147,42 @@ private:
 
     void setAudioVideoContent()
     {
-        if(mediaContent == audioVideoContent)
-        {
+        if (mediaContent == audioVideoContent) {
             mediaContent = audioVideoAltContent;
             duration = 101840;
-        }
-        else
-        {
+        } else {
             mediaContent = audioVideoContent;
             duration = 141000;
         }
+        m_player->setMedia(*mediaContent);
+    }
+
+    void setStreamingContent3gp()
+    {
+        mediaContent = streamingContent3gp;
+
+        m_player->setMedia(*mediaContent);
+    }
+   
+    void setAudioStreamingContent()
+    {
+        mediaContent = audioStreamingContent;
 
         m_player->setMedia(*mediaContent);
     }
 
-   void setStreamingContent()
-   {
-       mediaContent = streamingContent;
-
-       m_player->setMedia(*mediaContent);
-   }
 
     QMediaContent* audioOnlyContent;
     QMediaContent* videoOnlyContent;
     QMediaContent* audioVideoContent;
     QMediaContent* audioVideoAltContent;
     QMediaContent* mediaContent;
-    QMediaContent* streamingContent;
+    QMediaContent* streamingContent3gp;
+    QMediaContent* audioStreamingContent;
+    //for access-point requirement
+    QList<QNetworkConfiguration> accesspointlist;
+    QList<QNetworkConfiguration> secaccesspoint;
+    QNetworkConfigurationManager manager;
 
     qint64 duration;
     QMediaPlayer *m_player;

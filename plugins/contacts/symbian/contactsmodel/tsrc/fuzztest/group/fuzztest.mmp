@@ -16,7 +16,7 @@
 */
 
 
-TARGET		  FuzzTest.exe
+TARGET		  fuzztest.exe
 TARGETTYPE	  exe
 UID			  0 0xEF17B787
 

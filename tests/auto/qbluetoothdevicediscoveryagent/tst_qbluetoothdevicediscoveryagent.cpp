@@ -46,6 +46,7 @@
 
 #include <qbluetoothaddress.h>
 #include <qbluetoothdevicediscoveryagent.h>
+#include <qbluetoothlocaldevice.h>
 
 QTM_USE_NAMESPACE
 
@@ -72,6 +73,7 @@ private slots:
     void tst_properties();
 
     void tst_deviceDiscovery_data();
+    void tst_startStopDeviceDiscoveries();
     void tst_deviceDiscovery();
 };
 
@@ -88,6 +90,11 @@ void tst_QBluetoothDeviceDiscoveryAgent::initTestCase()
 {
     qRegisterMetaType<QBluetoothDeviceInfo>("QBluetoothDeviceInfo");
     qRegisterMetaType<QBluetoothDeviceDiscoveryAgent::InquiryType>("QBluetoothDeviceDiscoveryAgent::InquiryType");
+
+    // start Bluetooth if not started
+    QBluetoothLocalDevice *device = new QBluetoothLocalDevice();
+    device->powerOn();
+    delete device;
 }
 
 void tst_QBluetoothDeviceDiscoveryAgent::tst_properties()
@@ -116,13 +123,68 @@ void tst_QBluetoothDeviceDiscoveryAgent::tst_deviceDiscovery_data()
     QTest::newRow("limited inquiry") << QBluetoothDeviceDiscoveryAgent::LimitedInquiry;
 }
 
+void tst_QBluetoothDeviceDiscoveryAgent::tst_startStopDeviceDiscoveries()
+{
+    {
+        QBluetoothDeviceDiscoveryAgent::InquiryType inquiryType = QBluetoothDeviceDiscoveryAgent::GeneralUnlimitedInquiry;
+        QBluetoothDeviceDiscoveryAgent discoveryAgent;
+
+        QVERIFY(discoveryAgent.error() == discoveryAgent.NoError);
+        QVERIFY(discoveryAgent.errorString().isEmpty());
+        QVERIFY(!discoveryAgent.isActive());
+        QVERIFY(discoveryAgent.discoveredDevices().isEmpty());
+
+        QSignalSpy finishedSpy(&discoveryAgent, SIGNAL(finished()));
+        QSignalSpy errorSpy(&discoveryAgent, SIGNAL(error(QBluetoothDeviceDiscoveryAgent::Error)));
+        QSignalSpy discoveredSpy(&discoveryAgent, SIGNAL(deviceDiscovered(const QBluetoothDeviceInfo&)));
+
+        discoveryAgent.setInquiryType(inquiryType);
+        // we should have no errors at this point.
+        QVERIFY(errorSpy.isEmpty());
+
+        discoveryAgent.start();
+        QVERIFY(discoveryAgent.isActive());
+        QVERIFY(errorSpy.isEmpty());
+        // cancel current request.
+        discoveryAgent.stop();
+        // we should not be active anymore
+        QVERIFY(!discoveryAgent.isActive());
+        QVERIFY(errorSpy.isEmpty());
+        // start again
+        discoveryAgent.start();
+        // we should be active now
+        QVERIFY(discoveryAgent.isActive());
+        QVERIFY(errorSpy.isEmpty());
+        // start again. should this be error?
+        discoveryAgent.start();
+        QVERIFY(discoveryAgent.isActive());
+        QVERIFY(errorSpy.isEmpty());
+        // stop
+        discoveryAgent.stop();
+        // we should not be active anymore
+        QVERIFY(!discoveryAgent.isActive());
+        QVERIFY(errorSpy.isEmpty());
+        // stop
+        discoveryAgent.stop();
+        QVERIFY(!discoveryAgent.isActive());
+        QVERIFY(errorSpy.isEmpty());
+
+        // Expect finished signal with no error
+        QVERIFY(finishedSpy.count() == 0);
+        QVERIFY(discoveryAgent.error() == discoveryAgent.NoError);
+        QVERIFY(discoveryAgent.errorString().isEmpty());
+
+    }
+}
+
 void tst_QBluetoothDeviceDiscoveryAgent::tst_deviceDiscovery()
 {
     {
         QFETCH(QBluetoothDeviceDiscoveryAgent::InquiryType, inquiryType);
 
         QBluetoothDeviceDiscoveryAgent discoveryAgent;
-
+        QVERIFY(discoveryAgent.error() == discoveryAgent.NoError);
+        QVERIFY(discoveryAgent.errorString().isEmpty());
         QVERIFY(!discoveryAgent.isActive());
 
         QVERIFY(discoveryAgent.discoveredDevices().isEmpty());
@@ -130,8 +192,8 @@ void tst_QBluetoothDeviceDiscoveryAgent::tst_deviceDiscovery()
         QSignalSpy finishedSpy(&discoveryAgent, SIGNAL(finished()));
         QSignalSpy errorSpy(&discoveryAgent, SIGNAL(error(QBluetoothDeviceDiscoveryAgent::Error)));
         QSignalSpy discoveredSpy(&discoveryAgent, SIGNAL(deviceDiscovered(const QBluetoothDeviceInfo&)));
-        connect(&discoveryAgent, SIGNAL(deviceDiscovered(const QBluetoothDeviceInfo&)),
-                this, SLOT(deviceDiscoveryDebug(const QBluetoothDeviceInfo&)));
+//        connect(&discoveryAgent, SIGNAL(deviceDiscovered(const QBluetoothDeviceInfo&)),
+//                this, SLOT(deviceDiscoveryDebug(const QBluetoothDeviceInfo&)));
 
         discoveryAgent.setInquiryType(inquiryType);
         discoveryAgent.start();
@@ -144,11 +206,22 @@ void tst_QBluetoothDeviceDiscoveryAgent::tst_deviceDiscovery()
             QTest::qWait(1000);
             scanTime -= 1000;
         }
+        // verify that we are finished
+        QVERIFY(!discoveryAgent.isActive());
+        // stop
+        discoveryAgent.stop();
+        QVERIFY(!discoveryAgent.isActive());
         qDebug() << "Scan time left:" << scanTime;
-
         // Expect finished signal with no error
         QVERIFY(finishedSpy.count() == 1);
         QVERIFY(errorSpy.isEmpty());
+        QVERIFY(discoveryAgent.error() == discoveryAgent.NoError);
+        QVERIFY(discoveryAgent.errorString().isEmpty());
+
+        // verify that the list is as big as the signals received.
+        QVERIFY(discoveredSpy.count() == discoveryAgent.discoveredDevices().length());
+        // verify that there really was some devices in the array
+        QVERIFY(discoveredSpy.count() > 0);
 
         // All returned QBluetoothDeviceInfo should be valid.
         while (!discoveredSpy.isEmpty()) {

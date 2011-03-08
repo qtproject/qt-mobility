@@ -1,6 +1,5 @@
 symbian: {
-    exists($${EPOCROOT}epoc32/data/z/system/install/productid_helen.sis) {
-        message("S^3 1.11 or later platform")
+    exists($${EPOCROOT}epoc32/data/z/system/install/productid_helen.sis) | exists($${EPOCROOT}epoc32/rom/config/ncp110) {
         DEFINES += SYMBIAN_BACKEND_USE_CNTMODEL_V2
             
         # This will enable signals to be emitted sychronously with every
@@ -8,12 +7,10 @@ symbian: {
         # interface if called (HandleDatabaseEventL). This is an optimization
         # for S^3 1.11+ platform.
         DEFINES += SYMBIAN_BACKEND_SIGNAL_EMISSION_TWEAK
-    } else {
-        message("S^3 PS2 or older platform")
+        
     }
 
     contains(S60_VERSION, 5.0) {
 	      DEFINES += SYMBIAN_USE_SMALL_THUMBNAILS
     } 
-
 }

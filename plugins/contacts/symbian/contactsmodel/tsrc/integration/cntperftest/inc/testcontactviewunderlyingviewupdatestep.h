@@ -22,7 +22,7 @@
 #define __TEST_CONTACTVIEW_UNDERLYING_VIEW_UPDATE_H__
 
 // System Includes
-#include <testexecutestepbase.h>
+#include <test/testexecutestepbase.h>
 #include <cntdb.h>
 #include <cntitem.h>
 #include <cntviewbase.h>

@@ -60,13 +60,18 @@ class QSensorManagerPrivate : public QObject
 
     Q_OBJECT
 public:
+    enum PluginLoadingState {
+        NotLoaded,
+        Loading,
+        Loaded
+    };
     QSensorManagerPrivate()
-        : pluginsLoaded(false)
+        : pluginLoadingState(NotLoaded)
         , sensorsChanged(false)
     {
     }
 
-    bool pluginsLoaded;
+    PluginLoadingState pluginLoadingState;
     void loadPlugins();
 
     QList<CreatePluginFunc> staticRegistrations;
@@ -87,7 +92,7 @@ public Q_SLOTS:
     void emitSensorsChanged()
     {
         static bool alreadyRunning = false;
-        if (!pluginsLoaded || alreadyRunning) {
+        if (pluginLoadingState != QSensorManagerPrivate::Loaded || alreadyRunning) {
             // We're busy.
             // Just note that a registration changed and exit.
             // Someone up the call stack will deal with this.
@@ -129,13 +134,13 @@ Q_SENSORS_EXPORT void sensors_unit_test_hook(int index)
 
     switch (index) {
     case 0:
-        Q_ASSERT(d->pluginsLoaded == false);
+        Q_ASSERT(d->pluginLoadingState == QSensorManagerPrivate::NotLoaded);
         settings_scope = QSettings::UserScope;
         load_external_plugins = false;
         break;
     case 1:
         Q_ASSERT(load_external_plugins == false);
-        Q_ASSERT(d->pluginsLoaded == true);
+        Q_ASSERT(d->pluginLoadingState == QSensorManagerPrivate::Loaded);
         SENSORLOG() << "initializing plugins";
         Q_FOREACH (QObject *plugin, pluginLoader()->plugins()) {
             initPlugin(plugin);
@@ -151,24 +156,32 @@ static void initPlugin(QObject *o)
     if (!o) return;
     QSensorManagerPrivate *d = sensorManagerPrivate();
 
-    QSensorPluginInterface *plugin = qobject_cast<QSensorPluginInterface*>(o);
-    if (plugin)
-        plugin->registerSensors();
     QSensorChangesInterface *changes = qobject_cast<QSensorChangesInterface*>(o);
     if (changes)
         d->changeListeners << changes;
+
+    QSensorPluginInterface *plugin = qobject_cast<QSensorPluginInterface*>(o);
+    if (plugin)
+        plugin->registerSensors();
 }
 
 void QSensorManagerPrivate::loadPlugins()
 {
     QSensorManagerPrivate *d = this;
-    if (d->pluginsLoaded) return;
-    d->pluginsLoaded = true;
+    if (d->pluginLoadingState != QSensorManagerPrivate::NotLoaded) return;
+    d->pluginLoadingState = QSensorManagerPrivate::Loading;
 
-    SENSORLOG() << "initializing static plugins";
+    SENSORLOG() << "initializing legacy static plugins";
+    // Legacy static plugins
     Q_FOREACH (CreatePluginFunc func, d->staticRegistrations) {
         QSensorPluginInterface *plugin = func();
         plugin->registerSensors();
+    }
+
+    SENSORLOG() << "initializing static plugins";
+    // Qt-style static plugins
+    Q_FOREACH (QObject *plugin, QPluginLoader::staticInstances()) {
+        initPlugin(plugin);
     }
 
     if (load_external_plugins) {
@@ -177,6 +190,8 @@ void QSensorManagerPrivate::loadPlugins()
             initPlugin(plugin);
         }
     }
+
+    d->pluginLoadingState = QSensorManagerPrivate::Loaded;
 
     if (d->sensorsChanged) {
         // Notify the app that the available sensor list has changed.
