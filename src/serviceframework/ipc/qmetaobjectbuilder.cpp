@@ -46,7 +46,7 @@
 #include <stdint.h>
 #endif
 
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 /*!
     \class QMetaObjectBuilder
@@ -589,7 +589,7 @@ QMetaMethodBuilder QMetaObjectBuilder::addConstructor(const QMetaMethod& prototy
     specified \a name and \a type.  Returns an object that can be used
     to adjust the other attributes of the property.  The \a type will
     be normalized before it is added to the class. \a notifierId will
-    be registered as the property's notify signal.
+    be registered as the property's \e notify signal.
 
     \sa property(), propertyCount(), removeProperty(), indexOfProperty()
 */
@@ -2579,4 +2579,4 @@ void QMetaEnumBuilder::removeKey(int index)
     }
 }
 
-QT_END_NAMESPACE
+QTM_END_NAMESPACE
