@@ -58,6 +58,12 @@
 #include <sys/ioctl.h>
 #include <linux/input.h>
 
+#if !defined(Q_WS_MAEMO_6)
+#if !defined(SW_KEYPAD_SLIDE)
+#define SW_KEYPAD_SLIDE 0x0a
+#endif
+#endif
+
 #define BITS_PER_LONG (sizeof(long) * 8)
 #define NBITS(x) ((((x)-1)/BITS_PER_LONG)+1)
 #define OFF(x)  ((x)%BITS_PER_LONG)
@@ -1564,7 +1570,8 @@ QSystemDeviceInfo::KeyboardTypeFlags QSystemDeviceInfoPrivate::keyboardTypes()
     QSystemDeviceInfo::KeyboardTypeFlags keyboardFlags;
     keyboardFlags = QSystemDeviceInfoLinuxCommonPrivate::keyboardTypes();
     keyboardFlags = (keyboardFlags | QSystemDeviceInfo::SoftwareKeyboard);
-    keyboardFlags = (keyboardFlags | QSystemDeviceInfo::FlipKeyboard);
+    if(model() == "RX-51") //fixme detect flip keyboard
+        keyboardFlags = (keyboardFlags | QSystemDeviceInfo::FlipKeyboard);
     return keyboardFlags;
 }
 
