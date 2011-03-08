@@ -137,6 +137,7 @@ QDeclarativeContactModel::QDeclarativeContactModel(QObject *parent) :
     
     //import vcard
     connect(&d->m_reader, SIGNAL(stateChanged(QVersitReader::State)), this, SLOT(startImport(QVersitReader::State)));
+    connect(&d->m_writer, SIGNAL(stateChanged(QVersitWriter::State)), this, SLOT(contactsExported(QVersitWriter::State)));
 }
 
 /*!
@@ -339,7 +340,7 @@ void QDeclarativeContactModel::exportContacts(const QUrl& url, const QStringList
    exporter.exportContacts(contacts, QVersitDocument::VCard30Type);
    QList<QVersitDocument> documents = exporter.documents();
    QFile* file = new QFile(urlToLocalFileName(url));
-   bool ok = file->open(QIODevice::ReadWrite);
+   bool ok = file->open(QIODevice::WriteOnly);
    if (ok) {
       d->m_writer.setDevice(file);
       d->m_writer.startWriting(documents);
@@ -476,9 +477,13 @@ void QDeclarativeContactModel::startImport(QVersitReader::State state)
         d->m_reader.setDevice(0);
 
         if (d->m_manager) {
-            if (d->m_manager->saveContacts(&contacts))
+            for (int i = 0; i < contacts.size(); i++) {
+                contacts[i] = d->m_manager->compatibleContact(contacts[i]);
+            }
+            if (d->m_manager->saveContacts(&contacts)) {
                 qmlInfo(this) << tr("contacts imported.");
                 update();
+            }
         }
     }
 }
