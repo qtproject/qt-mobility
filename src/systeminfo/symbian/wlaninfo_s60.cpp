@@ -69,10 +69,14 @@ CWlanInfo::CWlanInfo(QObject *parent) : QObject(parent)
 
 CWlanInfo::~CWlanInfo()
 {
-    if (m_wlanMgmtClient)
+}
+
+void CWlanInfo::FreeResources()
+ {
+  if (m_wlanMgmtClient)
         m_wlanMgmtClient->CancelNotifications();
     delete m_wlanMgmtClient;
-}
+ }
 
 QString CWlanInfo::wlanNetworkName() const
 {
