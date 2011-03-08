@@ -1559,6 +1559,15 @@ QSystemDeviceInfo::LockTypeFlags QSystemDeviceInfoPrivate::lockStatus()
     return lockFlags;
 }
 
+QSystemDeviceInfo::KeyboardTypeFlags QSystemDeviceInfoPrivate::keyboardTypes()
+{
+    QSystemDeviceInfo::KeyboardTypeFlags keyboardFlags;
+    keyboardFlags = QSystemDeviceInfoLinuxCommonPrivate::keyboardTypes();
+    keyboardFlags = (keyboardFlags | QSystemDeviceInfo::SoftwareKeyboard);
+    keyboardFlags = (keyboardFlags | QSystemDeviceInfo::FlipKeyboard);
+    return keyboardFlags;
+}
+
 void QSystemDeviceInfoPrivate::deviceStateChanged(int device, int state)
 {
     QSystemDeviceInfo::LockTypeFlags lockFlags;

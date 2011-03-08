@@ -256,6 +256,7 @@ public:
     bool vibrationActive();//1.2
 
     QSystemDeviceInfo::LockTypeFlags lockStatus();//1.2
+    QSystemDeviceInfo::KeyboardTypeFlags keyboardTypes(); //1.2
 
 Q_SIGNALS:
     void keyboardFlipped(bool open);
