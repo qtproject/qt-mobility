@@ -440,6 +440,7 @@ QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate()
 #ifdef ETELMM_SUPPORTED
     DeviceInfo::instance()->networkInfo()->removeObserver(this);
 #endif
+    DeviceInfo::instance()->wlanInfo()->FreeResources();
 }
 
 QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSystemNetworkInfo::NetworkMode mode)
