@@ -1,7 +1,7 @@
 QT += declarative network
 SOURCES += $$PWD/qmllandmarkmap.cpp
 include($$PWD/../declarative-location.pri)
-include($$PWD/deployment.pri)
+RESOURCES=landmarkmap.qrc
 
 TARGET = qml_landmarkmap
 

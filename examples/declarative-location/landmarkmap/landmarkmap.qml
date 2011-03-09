@@ -337,7 +337,14 @@ Item {
         button1Label: "nmealog.txt"; button2Label: "mylm.lmx"; button3Label: "follow me"
         button3FontColor: "pink"
         onButton1Clicked: {
+	     console.log('setting nmealog.txt as the nmea source1')
             myPositionSource.nmeaSource = "nmealog.txt"
+	    console.log('setting nmealog.txt as the nmea source2')
+	    myPositionSource.nmeaSource = 'nmealog.txt'
+	    console.log('setting nmealog.txt as the nmea source3')
+	    myPositionSource.nmeaSource = ':nmealog.txt'
+	    console.log('setting nmealog.txt as the nmea source4')
+	    myPositionSource.nmeaSource = ':/nmealog.txt'
             myPositionSource.start()
         }
         onButton2Clicked: {
