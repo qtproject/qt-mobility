@@ -661,7 +661,7 @@ void Dialog::networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode mode ,
     }
 
     if (mode == QSystemNetworkInfo::HspaMode) {
-        if (netStatusComboBox->currentText() == "Hpsa") {
+        if (netStatusComboBox->currentText() == "Hspa") {
             signalLevelProgressBar->setValue(strength);
         }
     }
@@ -737,7 +737,7 @@ void Dialog::networkNameChanged(QSystemNetworkInfo::NetworkMode mode,const QStri
     }
 
     if (mode == QSystemNetworkInfo::HspaMode) {
-        if (netStatusComboBox->currentText() == "Hpsa") {
+        if (netStatusComboBox->currentText() == "Hspa") {
             operatorNameLabel->setText(text);
         }
     }
@@ -751,7 +751,6 @@ void Dialog::networkNameChanged(QSystemNetworkInfo::NetworkMode mode,const QStri
 
 void Dialog::networkStatusChanged(QSystemNetworkInfo::NetworkMode mode , QSystemNetworkInfo::NetworkStatus status)
 {
-
     if (mode == QSystemNetworkInfo::UnknownMode) {
         if (netStatusComboBox->currentText() == "Unknown") {
             displayNetworkStatus(status);
