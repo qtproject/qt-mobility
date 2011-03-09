@@ -8,7 +8,7 @@ INCLUDEPATH+= .
 
 QT += network
 
-contains(QT_CONFIG, opengl): !symbian {
+contains(QT_CONFIG, opengl) | contains(QT_CONFIG, opengles2): !symbian {
    QT += opengl
 } else {
    DEFINES += QT_NO_OPENGL
