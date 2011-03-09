@@ -195,7 +195,7 @@ unix:!simulator {
         contains(S60_VERSION, 3.1){
             DEFINES += SYMBIAN_3_1
         }
-        
+
         contains(S60_VERSION, 5.2){
           DEFINES += SYMBIAN_3_PLATFORM
           SOURCES += lockandflipstatus_s60.cpp \
