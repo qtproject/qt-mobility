@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -46,7 +46,7 @@
 
 #include "debug.h"
 
-/*!
+/*
     CLlcpServer::NewL()
 */
 CLlcpServer* CLlcpServer::NewL(QtMobility::QLlcpServerPrivate& aCallback)
@@ -60,7 +60,7 @@ CLlcpServer* CLlcpServer::NewL(QtMobility::QLlcpServerPrivate& aCallback)
     return self;
     }
 
-/*!
+/*
     CLlcpServer::CLlcpServer()
 */
 CLlcpServer::CLlcpServer(QtMobility::QLlcpServerPrivate& aCallback)
@@ -70,7 +70,7 @@ CLlcpServer::CLlcpServer(QtMobility::QLlcpServerPrivate& aCallback)
     {
     }
 
-/*!
+/*
     CLlcpServer::ContructL()
 */
 void CLlcpServer::ConstructL()
@@ -81,7 +81,7 @@ void CLlcpServer::ConstructL()
     END
     }
 
-/*!
+/*
     Destroys the LLCP socket.
 */
 CLlcpServer::~CLlcpServer()
@@ -97,7 +97,7 @@ CLlcpServer::~CLlcpServer()
     END
     }
 
-/*!
+/*
     Returns the next pending connection as a connected CLlcpSocketType2
     object.
 
@@ -134,7 +134,7 @@ const TDesC8&  CLlcpServer::serviceUri() const
     return iServiceName;
     }
 
-/*!
+/*
     Listen to the LLCP Socket by the URI \a serviceUri .
 */
 TBool CLlcpServer::Listen( const TDesC8& aServiceName)
@@ -177,7 +177,7 @@ TBool CLlcpServer::isListening() const
     return iSocketListening;
     }
 
-/*!
+/*
     Call back from MLlcpConnOrientedListener
 */
 void CLlcpServer::RemoteConnectRequest( MLlcpConnOrientedTransporter* aConnection )
