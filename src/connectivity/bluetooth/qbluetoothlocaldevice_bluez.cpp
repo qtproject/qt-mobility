@@ -353,7 +353,7 @@ QBluetoothLocalDevice::Pairing QBluetoothLocalDevice::pairingStatus(const QBluet
 }
 
 QBluetoothLocalDevicePrivate::QBluetoothLocalDevicePrivate()
-    : adapter(0), agent(0)
+    : adapter(0), agent(0), msgConnection(0)
 {
 
 }
