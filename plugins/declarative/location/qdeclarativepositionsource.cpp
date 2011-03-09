@@ -120,20 +120,22 @@ QDeclarativePositionSource::~QDeclarativePositionSource()
 void QDeclarativePositionSource::setNmeaSource(const QUrl& nmeaSource)
 {
     // Strip the filename. This is clumsy but the file may be prefixed in several
-    // ways: "file:///", "qrc:///", "/", ""
+    // ways: "file:///", "qrc:///", "/", "" in platform dependant manner.
     QString localFileName = nmeaSource.toString();
-    if (localFileName.startsWith("qrc:///")) {
-        localFileName.remove(0, 7);
-    } else if (localFileName.startsWith("file:///")) {
-        localFileName.remove(0, 8);
-    } else if (localFileName.startsWith("/")) {
-        localFileName.remove(0,1);
+    if (!QFile::exists(localFileName)) {
+        if (localFileName.startsWith("qrc:///")) {
+            localFileName.remove(0, 7);
+        } else if (localFileName.startsWith("file:///")) {
+            localFileName.remove(0, 7);
+        }
+        if (!QFile::exists(localFileName) && localFileName.startsWith("/")) {
+            localFileName.remove(0,1);
+        }
     }
-    if (m_nmeaFileName == localFileName) {
+    if (m_nmeaFileName == localFileName)
         return;
-    }
-    m_nmeaSource = nmeaSource;
     m_nmeaFileName = localFileName;
+    m_nmeaSource = nmeaSource;
     // The current position source needs to be deleted
     // because QNmeaPositionInfoSource can be bound only to a one file.
     if (m_positionSource) {
