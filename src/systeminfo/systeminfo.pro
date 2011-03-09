@@ -195,13 +195,7 @@ unix:!simulator {
         contains(S60_VERSION, 3.1){
             DEFINES += SYMBIAN_3_1
         }
-
-     contains(symbiancntsim_enabled,yes){
-            LIBS += -letelmm -letel
-            DEFINES += ETELMM_SUPPORTED
-            message("ETELMM enabled")
-            }
-
+        
         contains(S60_VERSION, 5.2){
           DEFINES += SYMBIAN_3_PLATFORM
           SOURCES += lockandflipstatus_s60.cpp \
@@ -275,16 +269,6 @@ unix:!simulator {
             DEFINES += ETELMM_SUPPORTED
             message("ETELMM enabled")
             }
-
-
-        contains(hb_symbian_enabled,yes) {
-                CONFIG += qt hb
-                DEFINES += HB_SUPPORTED
-                message("s60_HbKeymap enabled")
-                LIBS += -lhbcore
-        } else {
-            LIBS += -lptiengine
-        }
 
         TARGET.CAPABILITY = ALL -TCB
 #        TARGET.CAPABILITY = LocalServices NetworkServices ReadUserData UserEnvironment Location ReadDeviceData TrustedUI
