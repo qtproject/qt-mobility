@@ -3076,9 +3076,11 @@ CPosLmSearchCriteria* LandmarkManagerEngineSymbianPrivate::getSearchCriteriaL(
             //qDebug() << "Symbian Landmarks Apis don't support MatchCaseSensitivity.";
             User::Leave(KErrNotSupported);
         }
-
-        if ((nameFilter.matchFlags() & QLandmarkFilter::MatchContains) && (QSysInfo::s60Version()
-            == QSysInfo::SV_S60_3_1 || QSysInfo::s60Version() == QSysInfo::SV_S60_3_2
+	
+        if ((nameFilter.matchFlags() != QLandmarkFilter::MatchEndsWith)
+                && (nameFilter.matchFlags() != QLandmarkFilter::MatchEndsWith)
+                && (nameFilter.matchFlags() & QLandmarkFilter::MatchContains)
+                && (QSysInfo::s60Version() == QSysInfo::SV_S60_3_1 || QSysInfo::s60Version() == QSysInfo::SV_S60_3_2
             || QSysInfo::s60Version() == QSysInfo::SV_S60_5_0)) {
 
             //qDebug() << "3.1, 3.2, 5.0 don't support MatchContains.";
