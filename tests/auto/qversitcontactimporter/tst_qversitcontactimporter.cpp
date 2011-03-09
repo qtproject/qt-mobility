@@ -677,9 +677,47 @@ void tst_QVersitContactImporter::testBirthday()
     QVERIFY(mImporter->importDocuments(QList<QVersitDocument>() << document));
     contact = mImporter->contacts().first();
     bday = contact.detail<QContactBirthday>();
-    QCOMPARE(bday.date().toString(QLatin1String("yyyyMMdd")),
-             dateValue);
+    QCOMPARE(bday.date(), QDate(1981, 5, 20));
 
+    dateValue = QLatin1String("1981-05-20");
+    property.setValue(dateValue);
+    document = createDocumentWithProperty(property);
+    QVERIFY(mImporter->importDocuments(QList<QVersitDocument>() << document));
+    contact = mImporter->contacts().first();
+    bday = contact.detail<QContactBirthday>();
+    QCOMPARE(bday.date(), QDate(1981, 5, 20));
+
+    dateValue = QLatin1String("19810520T100000");
+    property.setValue(dateValue);
+    document = createDocumentWithProperty(property);
+    QVERIFY(mImporter->importDocuments(QList<QVersitDocument>() << document));
+    contact = mImporter->contacts().first();
+    bday = contact.detail<QContactBirthday>();
+    QCOMPARE(bday.dateTime(), QDateTime(QDate(1981, 5, 20), QTime(10, 0, 0), Qt::LocalTime));
+
+    dateValue = QLatin1String("1981-05-20T10:00:00");
+    property.setValue(dateValue);
+    document = createDocumentWithProperty(property);
+    QVERIFY(mImporter->importDocuments(QList<QVersitDocument>() << document));
+    contact = mImporter->contacts().first();
+    bday = contact.detail<QContactBirthday>();
+    QCOMPARE(bday.dateTime(), QDateTime(QDate(1981, 5, 20), QTime(10, 0, 0), Qt::LocalTime));
+
+    dateValue = QLatin1String("19810520T100000Z");
+    property.setValue(dateValue);
+    document = createDocumentWithProperty(property);
+    QVERIFY(mImporter->importDocuments(QList<QVersitDocument>() << document));
+    contact = mImporter->contacts().first();
+    bday = contact.detail<QContactBirthday>();
+    QCOMPARE(bday.dateTime(), QDateTime(QDate(1981, 5, 20), QTime(10, 0, 0), Qt::UTC));
+
+    dateValue = QLatin1String("1981-05-20T10:00:00Z");
+    property.setValue(dateValue);
+    document = createDocumentWithProperty(property);
+    QVERIFY(mImporter->importDocuments(QList<QVersitDocument>() << document));
+    contact = mImporter->contacts().first();
+    bday = contact.detail<QContactBirthday>();
+    QCOMPARE(bday.dateTime(), QDateTime(QDate(1981, 5, 20), QTime(10, 0, 0), Qt::UTC));
 }
 
 void tst_QVersitContactImporter::testGender()

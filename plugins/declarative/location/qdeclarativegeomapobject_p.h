@@ -79,9 +79,9 @@ public:
     virtual void doubleClickEvent(QDeclarativeGeoMapMouseEvent *event);
     virtual void pressEvent(QDeclarativeGeoMapMouseEvent *event);
     virtual void releaseEvent(QDeclarativeGeoMapMouseEvent *event);
-//    virtual void enterEvent();
-//    virtual void exitEvent();
-//    virtual void moveEvent(QDeclarativeGeoMapMouseEvent *event);
+    virtual void enterEvent();
+    virtual void exitEvent();
+    virtual void moveEvent(QDeclarativeGeoMapMouseEvent *event);
 
 Q_SIGNALS:
     void visibleChanged(bool visible);
@@ -142,7 +142,7 @@ private Q_SLOTS:
     void modelRowsRemoved(QModelIndex, int start, int end);
 
 private:
-    bool visible_;   
+    bool visible_;
     bool componentCompleted_;
     QDeclarativeComponent *delegate_;
     QVariant modelVariant_;

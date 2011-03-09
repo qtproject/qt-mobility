@@ -446,7 +446,15 @@ void QVersitContactExporterPrivate::encodeBirthDay(
     QContactBirthday bday = static_cast<QContactBirthday>(detail);
     QVersitProperty property;
     property.setName(mPropertyMappings.value(detail.definitionName()));
-    QString value = bday.date().toString(Qt::ISODate);
+    QVariant variant = bday.variantValue(QContactBirthday::FieldBirthday);
+    QString value;
+    if (variant.type() == QVariant::Date) {
+        value = variant.toDate().toString(Qt::ISODate);
+    } else if (variant.type() == QVariant::DateTime) {
+        value = variant.toDateTime().toString(Qt::ISODate);
+    } else {
+        return;
+    }
     property.setValue(value);
     *generatedProperties << property;
     *processedFields << QContactBirthday::FieldBirthday;
