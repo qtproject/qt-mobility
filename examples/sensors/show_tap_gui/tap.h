@@ -50,8 +50,8 @@ class TapSensorFilter : public QObject, public QTapFilter
  public:
     bool filter(QTapReading *reading);
 signals:
-    void doubleHappened(QString);
-    void singleHappened(QString);
+    void doubleHappened(QString, long);
+    void singleHappened(QString, long);
 };
 
 #endif // TAP_H

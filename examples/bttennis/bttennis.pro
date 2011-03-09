@@ -1,34 +1,43 @@
 TARGET = bttennis
 
-INCLUDEPATH += ../../src/connectivity/bluetooth
-DEPENDPATH += ../../src/connectivity/bluetooth
+INCLUDEPATH += \
+    ../../src/connectivity/bluetooth \
+    ../../src/connectivity/nfc
 
-include(../examples.pri)
+DEPENDPATH += \
+    ../../src/connectivity/bluetooth \
+    ../../src/connectivity/nfc
+
+include(../mobility_examples.pri)
 
 CONFIG += mobility
 MOBILITY = connectivity
 
 SOURCES = \
     main.cpp \
-    remoteselector.cpp \
     board.cpp \
     tennis.cpp \
     controller.cpp \
     tennisserver.cpp \
-    tennisclient.cpp
+    tennisclient.cpp \
+    tennisview.cpp \
+    handover.cpp
 
 HEADERS = \
-    remoteselector.h \
     board.h \
     tennis.h \
     controller.h \
     tennisserver.h \
-    tennisclient.h
+    tennisclient.h \
+    tennisview.h \
+    handover.h
 
 FORMS = \
-    tennis.ui \
-    remoteselector.ui
+    tennis.ui
 
 symbian {
     TARGET.CAPABILITY = LocalServices UserEnvironment ReadUserData WriteUserData NetworkServices
 }
+
+RESOURCES += \
+    tennis.qrc

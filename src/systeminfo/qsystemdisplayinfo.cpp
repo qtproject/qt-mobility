@@ -80,6 +80,13 @@ QSystemDisplayInfoPrivate *getSystemDisplayInfoPrivate() { return displayInfoPri
     \brief The QSystemDisplayInfo class provides access to display information from the system.
 */
 
+        /*!
+          \fn void QSystemDisplayInfo::orientationChanged(QSystemDisplayInfo::DisplayOrientation orientation)
+
+          This signal is emitted when QDesktopWidget's orientation has changed.
+                    \a orientation is the new orientation.
+         */
+
 /*!
    Constructs a QSystemDisplayInfo object with the given \a parent.
  */
@@ -88,6 +95,8 @@ QSystemDisplayInfo::QSystemDisplayInfo(QObject *parent)
 {
     qRegisterMetaType<QSystemDisplayInfo::DisplayOrientation>("QSystemDisplayInfo::DisplayOrientation");
     qRegisterMetaType<QSystemDisplayInfo::BacklightState>("QSystemDisplayInfo::BacklightState");
+    connect(displayInfoPrivate(),SIGNAL(orientationChanged(QSystemDisplayInfo::DisplayOrientation )),
+            this,SIGNAL(orientationChanged(QSystemDisplayInfo::DisplayOrientation )),Qt::UniqueConnection);
 }
 
 /*!
@@ -143,6 +152,7 @@ QSystemDisplayInfo::DisplayOrientation QSystemDisplayInfo::orientation(int scree
 
 /*!
     Returns the current contrast of the screen \a screen, from 0 to 1.
+    \bold sNOTE: Some platforms do not support detecting the contrast of the display.
 
     \sa QDesktopWidget::screenCount()
 */

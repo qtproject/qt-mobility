@@ -109,6 +109,7 @@ public:
     void setFormat(const QAudioFormat& fmt);
 
 private slots:
+    void notifyTimerExpired();
     void pullData();
     void devsoundInitializeComplete(int err);
     void devsoundBufferToBeEmptied(CMMFBuffer *);
@@ -137,6 +138,7 @@ private:
     int m_clientBufferSize;
     int m_notifyInterval;
     QScopedPointer<QTimer> m_notifyTimer;
+    qint64 m_lastNotifyPosition;
     QTime m_elapsed;
     QAudio::Error m_error;
 

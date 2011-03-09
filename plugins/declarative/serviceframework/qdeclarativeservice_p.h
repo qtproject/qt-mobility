@@ -90,16 +90,17 @@ private:
 };
 
 
-class QDeclarativeServiceList : public QObject {
+class QDeclarativeServiceList : public QObject, public QDeclarativeParserStatus {
     Q_OBJECT
+    Q_INTERFACES(QDeclarativeParserStatus)
     Q_PROPERTY(QString serviceName READ serviceName WRITE setServiceName NOTIFY serviceNameChanged)
     Q_PROPERTY(QString interfaceName READ interfaceName WRITE setInterfaceName NOTIFY interfaceNameChanged)
     Q_PROPERTY(int majorVersion READ majorVersion WRITE setMajorVersion NOTIFY majorVersionChanged)
     Q_PROPERTY(int minorVersion READ minorVersion WRITE setMinorVersion NOTIFY minorVersionChanged)
-    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeService> services READ services NOTIFY servicesChanged)
+    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeService> services READ services NOTIFY resultsChanged)
 
     Q_PROPERTY(MatchRule versionMatch READ versionMatch WRITE setVersionMatch NOTIFY versionMatchChanged)
-    Q_ENUMS(MatchRule);
+    Q_ENUMS(MatchRule)
 
 public:
     enum MatchRule {
@@ -126,6 +127,12 @@ public:
     
     void setVersionMatch(QDeclarativeServiceList::MatchRule match);
     QDeclarativeServiceList::MatchRule versionMatch() const;
+
+    void listUpdated();
+
+    //Derived from QDeclarativeParserStatus
+    virtual void classBegin();
+    virtual void componentComplete();
     
 private:
     QList<QDeclarativeService *> m_services;
@@ -135,8 +142,17 @@ private:
     int m_major;
     int m_minor;
     QDeclarativeServiceList::MatchRule m_match;
+    bool m_componentComplete;
+
+    void updateFilterResults();
+
+    static void s_append(QDeclarativeListProperty<QDeclarativeService> *prop, QDeclarativeService *service);
+    static int s_count(QDeclarativeListProperty<QDeclarativeService> *prop);
+    static QDeclarativeService* s_at(QDeclarativeListProperty<QDeclarativeService> *prop, int index);
+    static void s_clear(QDeclarativeListProperty<QDeclarativeService> *prop);
 
 Q_SIGNALS:
+    void resultsChanged();
     void servicesChanged(const QDeclarativeListProperty<QDeclarativeService>&);
     void serviceNameChanged();
     void interfaceNameChanged();

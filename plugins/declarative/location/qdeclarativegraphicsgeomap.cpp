@@ -66,11 +66,11 @@ QTM_BEGIN_NAMESPACE
 
     \ingroup qml-location-maps
 
-    The Map element can be used be used to display a map of the world.  The 
-    bulk of the functionality is provided by a mapping plugin described 
+    The Map element can be used be used to display a map of the world.  The
+    bulk of the functionality is provided by a mapping plugin described
     by the Plugin element associated with the Map.
 
-    Various map objects can be added to the map.  These map objects are 
+    Various map objects can be added to the map.  These map objects are
     specified in terms of coordinates and metres.
 
     MapObjects can be directly added to the Map element and it will display them
@@ -90,21 +90,24 @@ QTM_BEGIN_NAMESPACE
     Of the above list, MapObjectView is a special case and not a MapObject as such.
     Here is a small example to illustrate this:
 
-   \snippet doc/src/snippets/declarative/declarative-map.qml Basic MapObjects and View on Map
+    \snippet doc/src/snippets/declarative/declarative-map.qml Basic MapObjects and View on Map
 
-    The Map element is part of the \bold{QtMobility.location 1.1} module.
+    Mouse handling is done by adding MapMouseArea items as children of either
+    MapObjects or the Map item itself.
+
+    The Map element is part of the \bold{QtMobility.location 1.2} module.
 */
 QDeclarativeGraphicsGeoMap::QDeclarativeGraphicsGeoMap(QDeclarativeItem *parent)
     : QDeclarativeItem(parent),
-    plugin_(0),
-    serviceProvider_(0),
-    mappingManager_(0),
-    mapData_(0),
-    center_(0),
-    initialCoordinate(0),
-    mapType_(NoMap),
-    connectivityMode_(NoConnectivity),
-    componentCompleted_(false)
+      plugin_(0),
+      serviceProvider_(0),
+      mappingManager_(0),
+      mapData_(0),
+      center_(0),
+      initialCoordinate(0),
+      mapType_(NoMap),
+      connectivityMode_(NoConnectivity),
+      componentCompleted_(false)
 {
     setFlag(QGraphicsItem::ItemHasNoContents, false);
 
@@ -120,17 +123,24 @@ QDeclarativeGraphicsGeoMap::QDeclarativeGraphicsGeoMap(QDeclarativeItem *parent)
 
 QDeclarativeGraphicsGeoMap::~QDeclarativeGraphicsGeoMap()
 {
-    qDeleteAll(objectMap_.values());
-    qDeleteAll(mapViews_);
-
-    if (mapData_)
+    if (mapData_) {
+        qDeleteAll(mapViews_);
+        // Remove map objects, we can't allow mapObject
+        // to delete the objects because they are owned
+        // by the declarative elements.
+        //QList<QGeoMapObject*> objects = objectMap_.keys();
+        QList<QDeclarativeGeoMapObject*> objects = mapObjects_;
+        for (int i = 0; i < objects.size(); ++i) {
+            mapData_->removeMapObject(objects.at(i)->mapObject());
+        }
         delete mapData_;
-
+    }
     if (serviceProvider_)
         delete serviceProvider_;
 
-    if (initialCoordinate)
+    if (initialCoordinate) {
         delete initialCoordinate;
+    }
 }
 
 // todo: mixture of mapviews and mapobjects does not preserve the order (z).
@@ -139,17 +149,20 @@ void QDeclarativeGraphicsGeoMap::componentComplete()
 {
     componentCompleted_ = true;
     QDeclarativeItem::componentComplete();
-    if (!mapData_) {
-        qmlInfo(this) << tr("Plugin is not set for Map, Map cannot be populated.");
-        return;
-    }
+    populateMap();
+}
 
+void QDeclarativeGraphicsGeoMap::populateMap()
+{
+    if (!mapData_ || !componentCompleted_)
+        return;
     QObjectList kids = children();
     for (int i = 0; i < kids.size(); ++i) {
         // dispatch items appropriately
         QDeclarativeGeoMapObjectView* mapView = qobject_cast<QDeclarativeGeoMapObjectView*>(kids.at(i));
         if (mapView) {
             mapViews_.append(mapView);
+            setupMapView(mapView);
             continue;
         }
         QDeclarativeGeoMapObject *mapObject = qobject_cast<QDeclarativeGeoMapObject*>(kids.at(i));
@@ -160,25 +173,19 @@ void QDeclarativeGraphicsGeoMap::componentComplete()
             mapObject->setMap(this);
             continue;
         }
-        QDeclarativeGeoMapMouseArea *mouseArea 
-                = qobject_cast<QDeclarativeGeoMapMouseArea*>(kids.at(i));
+        QDeclarativeGeoMapMouseArea *mouseArea
+        = qobject_cast<QDeclarativeGeoMapMouseArea*>(kids.at(i));
         if (mouseArea) {
             mouseArea->setMap(this);
             mouseAreas_.append(mouseArea);
         }
     }
-    setupMapViews();
 }
 
-void QDeclarativeGraphicsGeoMap::setupMapViews()
+void QDeclarativeGraphicsGeoMap::setupMapView(QDeclarativeGeoMapObjectView *view)
 {
-    if (mapViews_.isEmpty())
-        return;
-    for (int i = 0; i < mapViews_.size(); ++i) {
-        QDeclarativeGeoMapObjectView *mapView = mapViews_.at(i);
-        mapView->setMapData(mapData_);
-        mapView->repopulate();
-    }
+    view->setMapData(this);
+    view->repopulate();
 }
 
 void QDeclarativeGraphicsGeoMap::paint(QPainter *painter,
@@ -191,7 +198,7 @@ void QDeclarativeGraphicsGeoMap::paint(QPainter *painter,
 }
 
 void QDeclarativeGraphicsGeoMap::geometryChanged(const QRectF &newGeometry,
-                                                 const QRectF & /*oldGeometry*/)
+        const QRectF & /*oldGeometry*/)
 {
     setSize(newGeometry.size());
 }
@@ -201,7 +208,7 @@ void QDeclarativeGraphicsGeoMap::geometryChanged(const QRectF &newGeometry,
 
     This property holds the plugin which provides the mapping functionality.
 
-    This is write-once property.  Once the map has a plugin associated with 
+    This is write-once property.  Once the map has a plugin associated with
     it any attempted modifications of the plugin will be ignored.
 */
 
@@ -217,7 +224,7 @@ void QDeclarativeGraphicsGeoMap::setPlugin(QDeclarativeGeoServiceProvider *plugi
     emit pluginChanged(plugin_);
 
     serviceProvider_ = new QGeoServiceProvider(plugin_->name(),
-                                               plugin_->parameterMap());
+            plugin_->parameterMap());
 
     if (serviceProvider_->error() != QGeoServiceProvider::NoError) {
         qWarning() << serviceProvider_->errorString();
@@ -252,18 +259,9 @@ void QDeclarativeGraphicsGeoMap::setPlugin(QDeclarativeGeoServiceProvider *plugi
     mapData_->setMapType(QGraphicsGeoMap::MapType(mapType_));
     mapData_->setConnectivityMode(QGraphicsGeoMap::ConnectivityMode(connectivityMode_));
 
-    // todo this needs to be addressed when figuring out the overall issue of
-    // layering (z) between view objects and simple objects;
-    // values() of hash is not in same order as user put them.
-    // furthermore also objectviews must be setup here - plugin may be
-    // set later than at componentComplete()
-    if (componentCompleted_) {
-        for (int i = 0; i < mapObjects_.size(); ++i)
-            mapData_->addMapObject(mapObjects_.at(i)->mapObject());
-        setupMapViews();
-    }
+    // Populate the map objects.
+    populateMap();
     // setup signals
-
     connect(mapData_,
             SIGNAL(updateMapDisplay(QRectF)),
             this,
@@ -354,7 +352,7 @@ void QDeclarativeGraphicsGeoMap::setSize(const QSizeF &size)
 
         emit sizeChanged(size_);
     }
-        
+
 }
 
 QSizeF QDeclarativeGraphicsGeoMap::size() const
@@ -400,58 +398,63 @@ qreal QDeclarativeGraphicsGeoMap::zoomLevel() const
 /*!
     \qmlproperty Coordinate Map::center
 
-    This property holds the coordinate which occupies the center of the 
+    This property holds the coordinate which occupies the center of the
     mapping viewport.
 
     The default value is an arbitrary valid coordinate.
 */
 void QDeclarativeGraphicsGeoMap::setCenter(QDeclarativeCoordinate *center)
 {
-    if (!center || center_ == center)
+    if (center_ == center)
         return;
+
+    if (center_) {
+        center_->disconnect(this);
+    }
     center_ = center;
+    if (center_) {
+        connect(center_,
+                SIGNAL(latitudeChanged(double)),
+                this,
+                SLOT(centerLatitudeChanged(double)));
+        connect(center_,
+                SIGNAL(longitudeChanged(double)),
+                this,
+                SLOT(centerLongitudeChanged(double)));
+        connect(center_,
+                SIGNAL(altitudeChanged(double)),
+                this,
+                SLOT(centerAltitudeChanged(double)));
 
-    connect(center_,
-            SIGNAL(latitudeChanged(double)),
-            this,
-            SLOT(centerLatitudeChanged(double)));
-    connect(center_,
-            SIGNAL(longitudeChanged(double)),
-            this,
-            SLOT(centerLongitudeChanged(double)));
-    connect(center_,
-            SIGNAL(altitudeChanged(double)),
-            this,
-            SLOT(centerAltitudeChanged(double)));
-
-    if (mapData_) {
-        mapData_->setCenter(center->coordinate());
+        if (mapData_) {
+            mapData_->setCenter(center_->coordinate());
+        }
     }
     emit declarativeCenterChanged(center_);
 }
 
 QDeclarativeCoordinate* QDeclarativeGraphicsGeoMap::center()
 {
-    if (mapData_)
+    if (mapData_ && center_)
         center_->setCoordinate(mapData_->center());
     return center_;
 }
 
 void QDeclarativeGraphicsGeoMap::centerLatitudeChanged(double /*latitude*/)
 {
-    if (mapData_)
+    if (mapData_ && center_)
         mapData_->setCenter(center_->coordinate());
 }
 
 void QDeclarativeGraphicsGeoMap::centerLongitudeChanged(double /*longitude*/)
 {
-    if (mapData_)
+    if (mapData_ && center_)
         mapData_->setCenter(center_->coordinate());
 }
 
 void QDeclarativeGraphicsGeoMap::centerAltitudeChanged(double /*altitude*/)
 {
-    if (mapData_)
+    if (mapData_ && center_)
         mapData_->setCenter(center_->coordinate());
 }
 
@@ -550,11 +553,16 @@ QDeclarativeGraphicsGeoMap::ConnectivityMode QDeclarativeGraphicsGeoMap::connect
 /*!
     \qmlmethod Map::toCoordinate(QPointF screenPosition)
 
-    Returns the coordinate which corresponds to the screen position 
+    Returns the coordinate which corresponds to the screen position
     \a screenPosition.
 
     Returns an invalid coordinate if \a screenPosition is not within
     the current viewport.
+
+    An example to constraint landmarks of a model to just those
+    currently on Map:
+    \snippet examples/declarative-location/landmarkmap/landmarkmap.qml Map toCoordinate
+
 */
 
 QDeclarativeCoordinate* QDeclarativeGraphicsGeoMap::toCoordinate(QPointF screenPosition) const
@@ -571,10 +579,10 @@ QDeclarativeCoordinate* QDeclarativeGraphicsGeoMap::toCoordinate(QPointF screenP
 /*!
     \qmlmethod Map::toScreenPosition(Coordinate coordinate)
 
-    Returns the screen position which corresponds to the coordinate 
+    Returns the screen position which corresponds to the coordinate
     \a coordinate.
 
-    Returns an invalid QPointF if \a coordinate is not within the 
+    Returns an invalid QPointF if \a coordinate is not within the
     current viewport.
 */
 QPointF QDeclarativeGraphicsGeoMap::toScreenPosition(QDeclarativeCoordinate* coordinate) const
@@ -604,7 +612,7 @@ QDeclarativeGeoMapMouseEvent* QDeclarativeGraphicsGeoMap::createMapMouseEvent(QG
 
     QDeclarativeGeoMapMouseEvent *mouseEvent = new QDeclarativeGeoMapMouseEvent(this);
 
-    mouseEvent->setButtons(event->buttons());
+    mouseEvent->setButton(event->button());
     QGeoCoordinate coordinate = mapData_->screenPositionToCoordinate(event->pos());
     mouseEvent->setCoordinate(new QDeclarativeCoordinate(coordinate, this));
     mouseEvent->setModifiers(event->modifiers());
@@ -637,6 +645,10 @@ void QDeclarativeGraphicsGeoMap::mousePressEvent(QGraphicsSceneMouseEvent *event
         return;
     }
 
+    // First deliver the mouse event to possible map objects (they will accept it if
+    // they have their own mouse area). If no accepting objects, check if the map
+    // object itself has any mouse areas. This way the map objects have higher priority
+    // in mouse event handling.
     QList<QGeoMapObject*> objects = mapData_->mapObjectsAtScreenPosition(event->pos());
 
     QDeclarativeGeoMapMouseEvent *mouseEvent = createMapMouseEvent(event);
@@ -647,6 +659,7 @@ void QDeclarativeGraphicsGeoMap::mousePressEvent(QGraphicsSceneMouseEvent *event
             mapObject->pressEvent(mouseEvent);
             if (mouseEvent->accepted()) {
                 event->setAccepted(true);
+                delete mouseEvent;
                 return;
             }
         }
@@ -656,9 +669,14 @@ void QDeclarativeGraphicsGeoMap::mousePressEvent(QGraphicsSceneMouseEvent *event
         mouseAreas_.at(i)->pressEvent(mouseEvent);
         if (mouseEvent->accepted()) {
             event->setAccepted(true);
+            delete mouseEvent;
             return;
         }
     }
+
+    delete mouseEvent;
+
+    QDeclarativeItem::mousePressEvent(event);
 }
 
 void QDeclarativeGraphicsGeoMap::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
@@ -668,6 +686,7 @@ void QDeclarativeGraphicsGeoMap::mouseReleaseEvent(QGraphicsSceneMouseEvent *eve
     if (activeMouseArea_)
         activeMouseArea_->releaseEvent(mouseEvent);
     activeMouseArea_ = 0;
+
     /*
 
     if (!mapData_) {
@@ -693,6 +712,15 @@ void QDeclarativeGraphicsGeoMap::mouseReleaseEvent(QGraphicsSceneMouseEvent *eve
 
     // TODO send event to grabber if exists
     // TODO clear grabber either way
+
+    bool accepted = (mouseEvent->accepted());
+
+    delete mouseEvent;
+
+    if (accepted)
+        return;
+
+    QDeclarativeItem::mouseReleaseEvent(event);
 }
 
 void QDeclarativeGraphicsGeoMap::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
@@ -701,6 +729,8 @@ void QDeclarativeGraphicsGeoMap::mouseDoubleClickEvent(QGraphicsSceneMouseEvent 
         qmlInfo(this) << tr("Map plugin is not set, mouse event cannot be processed.");
         return;
     }
+
+    activeMouseArea_ = 0;
 
     QList<QGeoMapObject*> objects = mapData_->mapObjectsAtScreenPosition(event->pos());
 
@@ -712,6 +742,7 @@ void QDeclarativeGraphicsGeoMap::mouseDoubleClickEvent(QGraphicsSceneMouseEvent 
             mapObject->doubleClickEvent(mouseEvent);
             if (mouseEvent->accepted()) {
                 event->setAccepted(true);
+                delete mouseEvent;
                 return;
             }
         }
@@ -722,15 +753,34 @@ void QDeclarativeGraphicsGeoMap::mouseDoubleClickEvent(QGraphicsSceneMouseEvent 
         mouseAreas_.at(i)->doubleClickEvent(mouseEvent);
         if (mouseEvent->accepted()) {
             event->setAccepted(true);
+            delete mouseEvent;
             return;
         }
     }
 
+    delete mouseEvent;
+
     // TODO interact with grabber somehow
+
+    QDeclarativeItem::mouseDoubleClickEvent(event);
 }
 
 void QDeclarativeGraphicsGeoMap::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
+    QDeclarativeGeoMapMouseEvent *mouseEvent = createMapMouseEvent(event);
+
+    if (activeMouseArea_)
+        activeMouseArea_->moveEvent(mouseEvent);
+
+    bool accepted = (mouseEvent->accepted());
+
+    delete mouseEvent;
+
+    if (accepted)
+        return;
+
+    QDeclarativeItem::mouseMoveEvent(event);
+
     // TODO send even to grabber
 
     /*
@@ -846,6 +896,8 @@ void QDeclarativeGraphicsGeoMap::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
 
     for (int i = 0; i < mouseAreas_.size(); ++i)
         mouseAreas_.at(i)->moveEvent(mouseEvent);
+
+    delete mouseEvent;
 }
 
 void QDeclarativeGraphicsGeoMap::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
@@ -874,6 +926,12 @@ void QDeclarativeGraphicsGeoMap::internalConnectivityModeChanged(QGraphicsGeoMap
     Adds the given MapOject to the Map. If the object already
     is on the Map, it will not be added again.
 
+    As an example, consider you have a MapCircle presenting your current position:
+
+    \snippet doc/src/snippets/declarative/testpolymapobjects.qml Basic map position marker definition
+    You can add it to Map (alterntively it can be defined as a child element of the Map):
+
+    \snippet doc/src/snippets/declarative/testpolymapobjects.qml Basic add MapObject
     Note: MapObjectViews can not be added with this method.
 */
 
@@ -884,6 +942,7 @@ void QDeclarativeGraphicsGeoMap::addMapObject(QDeclarativeGeoMapObject *object)
     if (!mapData_ || !object || objectMap_.contains(object->mapObject()))
         return;
     objectMap_.insert(object->mapObject(), object);
+    mapObjects_.append(object);
     mapData_->addMapObject(object->mapObject());
 }
 
@@ -892,6 +951,13 @@ void QDeclarativeGraphicsGeoMap::addMapObject(QDeclarativeGeoMapObject *object)
 
     Removes the given MapObject from the Map. If the MapObject does not
     exist, function does nothing.
+
+    As an example, consider you have a MapCircle presenting your current position:
+    \snippet doc/src/snippets/declarative/testpolymapobjects.qml Basic map position marker definition
+
+    You can remove it from the Map element:
+    \snippet doc/src/snippets/declarative/testpolymapobjects.qml Basic remove MapObject
+
 
 */
 
@@ -902,6 +968,7 @@ void QDeclarativeGraphicsGeoMap::removeMapObject(QDeclarativeGeoMapObject *objec
     if (!mapData_ || !object || !objectMap_.contains(object->mapObject()))
         return;
     objectMap_.remove(object->mapObject());
+    mapObjects_.removeOne(object);
     mapData_->removeMapObject(object->mapObject());
 }
 
@@ -913,6 +980,12 @@ void QDeclarativeGraphicsGeoMap::setActiveMouseArea(QDeclarativeGeoMapMouseArea 
 QDeclarativeGeoMapMouseArea* QDeclarativeGraphicsGeoMap::activeMouseArea() const
 {
     return activeMouseArea_;
+}
+
+// This function is strictly for testing purposes
+int QDeclarativeGraphicsGeoMap::testGetDeclarativeMapObjectCount()
+{
+    return objectMap_.values().count();
 }
 
 #include "moc_qdeclarativegraphicsgeomap_p.cpp"

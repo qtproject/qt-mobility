@@ -226,7 +226,13 @@ uint qHash(const QGeoTiledMapRequest &key)
 *******************************************************************************/
 
 QGeoTiledMapRequestPrivate::QGeoTiledMapRequestPrivate()
-    : QSharedData() {}
+    : QSharedData(),
+    connectivityMode(QGraphicsGeoMap::NoConnectivity),
+    mapType(QGraphicsGeoMap::NoMap),
+    zoomLevel(0),
+    row(0),
+    column(0),
+    tileRect(QRect()) {}
 //mapData(0) {}
 
 QGeoTiledMapRequestPrivate::QGeoTiledMapRequestPrivate(const QGeoTiledMapRequestPrivate &other)

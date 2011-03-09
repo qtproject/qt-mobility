@@ -217,6 +217,9 @@ QVersitReader::Error QVersitReader::error() const
  * if there is another asynchronous read operation already pending.
  * Signal \l stateChanged() is emitted with parameter FinishedState
  * when the reading has finished.
+ *
+ * The device must be already open.  The client is responsible for
+ * closing it when finished.
  */
 bool QVersitReader::startReading()
 {

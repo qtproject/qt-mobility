@@ -180,6 +180,7 @@ private slots:
     void update();
     void remove();
     void batch();
+    void observerDeletion();
     void signalEmission();
     void detailDefinitions();
     void displayName();
@@ -2171,6 +2172,20 @@ void tst_QContactManager::contactValidation()
     c.removeDetail(&d7);
 }
 
+void tst_QContactManager::observerDeletion()
+{
+    QContactManager *manager = new QContactManager("memory");
+    QContact c;
+    QVERIFY(manager->saveContact(&c));
+    QContactLocalId id = c.localId();
+    QContactObserver *observer = new QContactObserver(manager, id);
+    Q_UNUSED(observer)
+    delete manager;
+    delete observer;
+    // Test for bug MOBILITY-2566 - that QContactObserver doesn't crash when it is
+    // destroyed after the associated QContactManager
+}
+
 void tst_QContactManager::signalEmission()
 {
     QTest::qWait(500); // clear the signal queue
@@ -2872,6 +2887,8 @@ void tst_QContactManager::changeSet()
 
 void tst_QContactManager::fetchHint()
 {
+    // This just tests the accessors and mutators (API).
+    // See tst_qcontactmanagerfiltering for the "backend support" test.
     QContactFetchHint hint;
     hint.setOptimizationHints(QContactFetchHint::NoBinaryBlobs);
     QCOMPARE(hint.optimizationHints(), QContactFetchHint::NoBinaryBlobs);
@@ -2879,6 +2896,17 @@ void tst_QContactManager::fetchHint()
     rels << QString(QLatin1String(QContactRelationship::HasMember));
     hint.setRelationshipTypesHint(rels);
     QCOMPARE(hint.relationshipTypesHint(), rels);
+    QStringList defs;
+    defs << QString(QLatin1String(QContactName::DefinitionName))
+         << QString(QLatin1String(QContactPhoneNumber::DefinitionName));
+    hint.setDetailDefinitionsHint(defs);
+    QCOMPARE(hint.detailDefinitionsHint(), defs);
+    QSize prefImageSize(33, 33);
+    hint.setPreferredImageSize(prefImageSize);
+    QCOMPARE(hint.preferredImageSize(), prefImageSize);
+    int limit = 15;
+    hint.setMaxCountHint(limit);
+    QCOMPARE(hint.maxCountHint(), limit);
 }
 
 void tst_QContactManager::selfContactId()

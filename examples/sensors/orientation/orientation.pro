@@ -1,6 +1,6 @@
 TEMPLATE=app
 TARGET=orientation
-include(../../examples.pri)
+include(../../mobility_examples.pri)
 QT+=declarative script network
 CONFIG+=mobility
 MOBILITY+=sensors

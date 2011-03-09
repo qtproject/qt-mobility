@@ -125,16 +125,10 @@ public:
     static QMessageFilter byAncestorFolderIds(const QMessageFolderFilter &filter, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
 
     static QMessageFilter byTo(const QString &pattern, QMessageDataComparator::LikeComparator cmp);
-    static QMessageFilter byTo(const QString &value, QMessageDataComparator::EqualityComparator cmp);
-    static QMessageFilter byTo(const QString &value, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
 
     static QMessageFilter byCc(const QString &pattern, QMessageDataComparator::LikeComparator cmp);
-    static QMessageFilter byCc(const QString &value, QMessageDataComparator::EqualityComparator cmp);
-    static QMessageFilter byCc(const QString &value, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
 
     static QMessageFilter byBcc(const QString &pattern, QMessageDataComparator::LikeComparator cmp);
-    static QMessageFilter byBcc(const QString &value, QMessageDataComparator::EqualityComparator cmp);
-    static QMessageFilter byBcc(const QString &value, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
 
 private:
     QMessageFilterPrivate *d_ptr;

@@ -48,6 +48,7 @@ class QContactObserverPrivate
 {
     public:
         QContactLocalId m_localId;
+        QWeakPointer<QContactManager> m_manager;
         QContactManagerData* m_managerPrivate;
 };
 QTM_END_NAMESPACE
@@ -64,7 +65,8 @@ QTM_USE_NAMESPACE
  */
 
 /*!
-  Constructs a QContactObserver to observe the contact in \a manager with the given \a localId.
+  Constructs a QContactObserver to observe the contact in \a manager with the
+  given \a localId and \a parent object.
  */
 QContactObserver::QContactObserver(QContactManager* manager,
                                    QContactLocalId localId,
@@ -73,6 +75,7 @@ QContactObserver::QContactObserver(QContactManager* manager,
       d(new QContactObserverPrivate)
 {
     d->m_localId = localId;
+    d->m_manager = manager;
     d->m_managerPrivate = QContactManagerData::get(manager);
     d->m_managerPrivate->registerObserver(this);
 }
@@ -82,7 +85,9 @@ QContactObserver::QContactObserver(QContactManager* manager,
  */
 QContactObserver::~QContactObserver()
 {
-    d->m_managerPrivate->unregisterObserver(this);
+    if (d->m_manager.data()) {
+        d->m_managerPrivate->unregisterObserver(this);
+    }
     delete d;
 }
 
@@ -94,13 +99,13 @@ QContactLocalId QContactObserver::contactLocalId() const {
 }
 
 /*!
-  \fn contactChanged()
+  \fn QContactObserver::contactChanged()
 
   This signal is emitted when the observed contact is changed in the manager.
  */
 
 /*!
-  \fn contactRemoved()
+  \fn QContactObserver::contactRemoved()
 
   This signal is emitted when the observed contact is removed from the manager.
  */

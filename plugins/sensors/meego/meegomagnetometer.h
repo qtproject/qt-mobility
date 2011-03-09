@@ -61,6 +61,8 @@ protected:
     virtual bool doConnect();
     virtual void start();
     virtual const QString sensorName();
+    virtual const qreal correctionFactor();
+
 
 private:
     static const float NANO;

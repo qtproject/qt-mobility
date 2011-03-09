@@ -58,15 +58,21 @@ QTM_USE_NAMESPACE
 class CRepository;
 class CntDisplayLabel;
 
-#ifdef SYMBIAN_BACKEND_USE_CNTMODEL_V2
 #include <centralrepository.h>
 
 // CONSTANTS
 // Please keep this in sync with the values in the system header file <cntuids.h>
 // We cannot include this system header file because it is owned by an app layer
 // package (Contacts package). This being a mw layer, the dependency is not allowed
+// Cenrep UIDs used in Avkon & QML phonebook apps. Name ordering is checked in either
+// app depending on the one available. Priority is given to QML. Synchronizing of the
+// key values is done by the applications
+// QML phonebook UIDs
 const TUid KCRCntSettings = {0x2002FF54};
 const TUint32 KCntNameOrdering = 0x00000001;
+
+const TUid KCRUidPhonebook = {0x101f8794};
+const TUint32 KPhonebookNameOrdering = 0x00000001;
 
 // name order enumerations
 // Please keep this in sync with <cntuids.h> See above comments
@@ -74,6 +80,12 @@ enum NameOrder {
     CntOrderLastFirst = 0x0,
     CntOrderLastCommaFirst = 0x1,
     CntOrderFirstLast = 0x2
+};
+
+class MDisplayLabel
+{
+public:
+    virtual void updateNameOrdering() = 0;
 };
 
 /**
@@ -84,7 +96,7 @@ enum NameOrder {
 class CntCenrep : public CActive
 {
 public:
-    CntCenrep(TUint32 aKey, CntDisplayLabel& aDisplayLabel );
+    CntCenrep(MDisplayLabel& aDisplayLabel );
     ~CntCenrep();
  
 public:
@@ -97,14 +109,12 @@ private:
 
 private:
     CRepository*                iCenrep;
-    CntDisplayLabel*            iDisplayLabel;
-    const TUint32               iKey;
+    MDisplayLabel&              iDisplayLabel;
+    TUint32                     iKey;
     int                         iValue;
 };
 
-#endif
-
-class CntDisplayLabel : public QObject
+class CntDisplayLabel : public QObject, public MDisplayLabel
 {
     Q_OBJECT
     
@@ -115,10 +125,7 @@ public:
     QString synthesizedDisplayLabel( const QContact& contact, QContactManager::Error* error);
     QList<QPair<QLatin1String, QLatin1String> > contactFilterDetails() const;
     QList<QPair<QLatin1String, QLatin1String> > groupFilterDetails() const;
-    
-#ifdef SYMBIAN_BACKEND_USE_CNTMODEL_V2
     void updateNameOrdering();
-#endif
 
 signals:
     void displayLabelChanged();
@@ -132,10 +139,8 @@ private:
 private:
     QList<QList<QPair<QLatin1String, QLatin1String> > > m_contactDisplayLabelDetails;
     QList<QList<QPair<QLatin1String, QLatin1String> > > m_groupDisplayLabelDetails;
-#ifdef SYMBIAN_BACKEND_USE_CNTMODEL_V2
     CntCenrep* m_settings;
     int m_nameOrder;
-#endif
 };
 
 #endif /* CNTDISPLAYLABEL_H_ */

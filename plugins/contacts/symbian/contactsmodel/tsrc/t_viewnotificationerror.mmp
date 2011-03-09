@@ -16,7 +16,7 @@
 */
 
 
-target          t_viewnotificationerror.exe
+TARGET          t_viewnotificationerror.exe
 targettype      EXE
 CAPABILITY   	ReadUserData WriteUserData
 UID		0
@@ -26,6 +26,6 @@ APP_LAYER_SYSTEMINCLUDE_SYMBIAN
 userinclude		..
 source          T_ViewNotificationError.cpp
 source          CContactViewEventQueue.cpp
-library         euser.lib cntmodel.lib
+LIBRARY         euser.lib cntmodel.lib
 
 SMPSAFE

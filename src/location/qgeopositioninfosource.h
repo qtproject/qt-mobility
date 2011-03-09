@@ -80,6 +80,8 @@ public:
     virtual int minimumUpdateInterval() const = 0;
 
     static QGeoPositionInfoSource *createDefaultSource(QObject *parent);
+    static QGeoPositionInfoSource *createSource(const QString &sourceName, QObject *parent);
+    static QStringList availableSources();
 
 public Q_SLOTS:
     virtual void startUpdates() = 0;

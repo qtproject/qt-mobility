@@ -20,8 +20,7 @@
 
 LOCAL_C void MainL()
 	{
-        //heap check removed (temporarily) due Qt and/or Orbit memory leak issues
-	//__UHEAP_MARK; 
+	__UHEAP_MARK;
 	CActiveScheduler* sched=NULL;
 	sched=new(ELeave) CActiveScheduler;
 	CActiveScheduler::Install(sched);
@@ -35,7 +34,7 @@ LOCAL_C void MainL()
 		}
 	delete server;
 	delete sched;
-	//__UHEAP_MARKEND;
+	__UHEAP_MARKEND;
 	}
 
 GLDEF_C TInt E32Main()

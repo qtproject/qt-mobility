@@ -326,6 +326,9 @@ public:
     bool screenSaverInhibited();
     bool setScreenSaverInhibit();
     bool screenSaverSecureEnabled();
+
+    void setScreenSaverInhibited(bool on);
+
 private:
     QString screenPath;
     QString settingsPath;

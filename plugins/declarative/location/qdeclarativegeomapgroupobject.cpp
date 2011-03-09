@@ -57,7 +57,10 @@ QTM_BEGIN_NAMESPACE
     It also allows users to specify an ordering of objects local to the
     group via the z-values and insertion order of the objects in the group.
 
-    The MapGroup element is part of the \bold{QtMobility.location 1.1} module.
+    An example of group having a small red circle on top of bigger green circle:
+    \snippet examples/declarative-location/landmarkmap/landmarkmap.qml MapGroup
+
+    The MapGroup element is part of the \bold{QtMobility.location 1.2} module.
 */
 
 QDeclarativeGeoMapGroupObject::QDeclarativeGeoMapGroupObject(QDeclarativeItem *parent)
@@ -69,6 +72,13 @@ QDeclarativeGeoMapGroupObject::QDeclarativeGeoMapGroupObject(QDeclarativeItem *p
 
 QDeclarativeGeoMapGroupObject::~QDeclarativeGeoMapGroupObject()
 {
+    // Remove all objects from the group before deleting it.
+    // These objects are owned by their declarative counterparts
+    // and they'll delete them.
+    QList<QGeoMapObject*> objects = group_->childObjects();
+    for (int i = 0; i < objects.size(); ++i) {
+        group_->removeChildObject(objects.at(i));
+    }
     delete group_;
 }
 
@@ -77,7 +87,7 @@ void QDeclarativeGeoMapGroupObject::componentComplete()
     QList<QGraphicsItem*> children = childItems();
     for (int i = 0; i < children.size(); ++i) {
         QDeclarativeGeoMapObject *mapObject
-            = qobject_cast<QDeclarativeGeoMapObject*>(children.at(i));
+        = qobject_cast<QDeclarativeGeoMapObject*>(children.at(i));
         if (mapObject) {
             group_->addChildObject(mapObject->mapObject());
             objects_.append(mapObject);

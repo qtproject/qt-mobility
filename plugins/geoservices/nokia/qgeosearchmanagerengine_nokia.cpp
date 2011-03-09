@@ -53,6 +53,7 @@
 #include <qgeoaddress.h>
 #include <qgeocoordinate.h>
 #include <QNetworkProxy>
+#include <QUrl>
 #include <QMap>
 
 QGeoSearchManagerEngineNokia::QGeoSearchManagerEngineNokia(const QMap<QString, QVariant> &parameters, QGeoServiceProvider::Error *error, QString *errorString)
@@ -65,8 +66,16 @@ QGeoSearchManagerEngineNokia::QGeoSearchManagerEngineNokia(const QMap<QString, Q
 
     if (parameters.contains("places.proxy")) {
         QString proxy = parameters.value("places.proxy").toString();
-        if (!proxy.isEmpty())
-            m_networkManager->setProxy(QNetworkProxy(QNetworkProxy::HttpProxy, proxy, 8080));
+        if (!proxy.isEmpty()) {
+            QUrl proxyUrl(proxy);
+            if (proxyUrl.isValid()) {
+                m_networkManager->setProxy(QNetworkProxy(QNetworkProxy::HttpProxy, 
+                    proxyUrl.host(),
+                    proxyUrl.port(8080),
+                    proxyUrl.userName(),
+                    proxyUrl.password()));
+            }
+        }
     }
 
     if (parameters.contains("places.host")) {
@@ -292,7 +301,7 @@ void QGeoSearchManagerEngineNokia::placesError(QGeoSearchReply::Error error, con
 QString QGeoSearchManagerEngineNokia::languageToMarc(QLocale::Language language)
 {
     uint offset = 3 * (uint(language));
-    if (language == QLocale::C || offset + 2 > sizeof(marc_language_code_list))
+    if (language == QLocale::C || offset + 3 > sizeof(marc_language_code_list))
         return QLatin1String("eng");
 
     const unsigned char *c = marc_language_code_list + offset;

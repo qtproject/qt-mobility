@@ -49,26 +49,15 @@ S60MediaRecorderControl::S60MediaRecorderControl(QObject *parent) :
 {
 }
 
-S60MediaRecorderControl::S60MediaRecorderControl(S60VideoCaptureSession *session, QObject *parent):
+S60MediaRecorderControl::S60MediaRecorderControl(S60CameraService *service,
+                                                 S60VideoCaptureSession *session,
+                                                 QObject *parent):
     QMediaRecorderControl(parent),
     m_state(QMediaRecorder::StoppedState) // Default RecorderState
 {
-    if (session)
-        m_session = session;
-    else
-        Q_ASSERT(true);
-    // From now on it is safe to assume session exists
-
-    // Check parent is of proper type (QCameraService)
-    if (qstrcmp(parent->metaObject()->className(), "S60CameraService") == 0) {
-        m_service = qobject_cast<S60CameraService*>(parent);
-    } else {
-        m_session->setError(KErrGeneral, QString("Unexpected camera error."));
-    }
-
-    // Request handle to QCameraControl
-    if (m_service)
-        m_cameraControl = qobject_cast<S60CameraControl *>(m_service->requestControl(QCameraControl_iid));
+    m_session = session;
+    m_service = service;
+    m_cameraControl = qobject_cast<S60CameraControl *>(m_service->requestControl(QCameraControl_iid));
 
     // Connect signals
     connect(m_session, SIGNAL(stateChanged(S60VideoCaptureSession::TVideoCaptureState)),

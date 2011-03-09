@@ -3,7 +3,7 @@ TARGET = btfiletransfer
 INCLUDEPATH += ../../src/connectivity/bluetooth
 DEPENDPATH += ../../src/connectivity/bluetooth
 
-include(../examples.pri)
+include(../mobility_examples.pri)
 
 CONFIG += mobility
 MOBILITY = connectivity
@@ -26,7 +26,7 @@ FORMS = \
 
 
 symbian {
-    TARGET.CAPABILITY = LocalServices UserEnvironment ReadUserData WriteUserData NetworkServices
+    TARGET.CAPABILITY = LocalServices UserEnvironment ReadUserData WriteUserData NetworkServices ReadDeviceData WriteDeviceData
 }
 
 OTHER_FILES += \

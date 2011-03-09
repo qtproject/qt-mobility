@@ -16,7 +16,7 @@
 */
 
 
-target          t_generaladdress.exe
+TARGET          t_generaladdress.exe
 targettype      EXE
 CAPABILITY   ReadUserData WriteUserData
 UID		0x1000097a
@@ -29,6 +29,6 @@ userinclude ../inc
 
 source          T_GENERALADDRESS.CPP
 
-library         euser.lib  cntmodel.lib cnttutil.lib efsrv.lib bafl.lib versit.lib estor.lib vcard.lib pimtestclient.lib
+LIBRARY         euser.lib  cntmodel.lib cnttutil.lib efsrv.lib bafl.lib versit.lib estor.lib vcard.lib pimtestclient.lib
 
 SMPSAFE

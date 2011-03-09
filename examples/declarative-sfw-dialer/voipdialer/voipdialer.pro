@@ -12,7 +12,7 @@ TARGET = serviceframework_voipdialerservice
 
 contains(QT_CONFIG, declarative):DEFINES += DECLARATIVE
 
-include(../../examples.pri)
+include(../../mobility_examples.pri)
 CONFIG += mobility
 MOBILITY = serviceframework
 

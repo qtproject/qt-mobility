@@ -48,10 +48,12 @@ bool meegogyroscope::m_initDone = false;
 meegogyroscope::meegogyroscope(QSensor *sensor)
     : meegosensorbase(sensor)
 {
-//    initSensor<GyroscopeSensorChannelInterface>(m_initDone);
+    initSensor<GyroscopeSensorChannelInterface>(m_initDone);
     setDescription(QLatin1String("angular velocities around x, y, and z axis in degrees per second"));
     setRanges(MILLI);
     setReading<QGyroscopeReading>(&m_reading);
+    addDataRate(10, 10);
+    addDataRate(50, 50);
 }
 
 void meegogyroscope::slotDataAvailable(const XYZ& data)
@@ -81,3 +83,5 @@ bool meegogyroscope::doConnect(){
 const QString meegogyroscope::sensorName(){
     return "gyroscopesensor";
 }
+
+const qreal meegogyroscope::correctionFactor(){return MILLI;}

@@ -529,7 +529,7 @@ TContactItemId CreateICCTemplateL(CContactDatabase& aDb)
  * Test SetDbViewContactType can be used for KUidContactICCEntry items.
  * @param aDb Contact database
  */
-void TestDatabaseViewL(CContactDatabase& aDb)
+void TestDatabaseViewL(CContactDatabase& /*aDb*/)
 	{
 	syncChecker->SetValidateResponseL(MContactSynchroniser::ERead,KErrNone);
 	syncChecker->SetValidateWriteResponseL(KErrNone);
@@ -537,9 +537,11 @@ void TestDatabaseViewL(CContactDatabase& aDb)
 	CntTest->DeleteDatabaseL();
 	// re-initialise the TLS
 	syncChecker->EnableVerboseLoggingL();
-
+	
 	CntTest->CreateDatabaseL();	
 	CntTest->OpenDatabaseL();
+	CContactDatabase& db= *CntTest->Db();   
+	
 	delete synchroniser;
 	synchroniser = CContactTestSynchroniser::NewL();
 	// test with GSM ADN phonebook only
@@ -547,28 +549,30 @@ void TestDatabaseViewL(CContactDatabase& aDb)
 
 	// Start from clean
 	CContactItem* card = CContactCard::NewLC();
-	aDb.AddNewContactL(*card);
-	aDb.CreateContactGroupLC();
-	aDb.CreateOwnCardLC();
-	TContactItemId id=CreateICCTemplateL(aDb);
+	db.AddNewContactL(*card);
+	db.CreateContactGroupLC();
+	db.CreateOwnCardLC();
+	TContactItemId id=CreateICCTemplateL(db);
 	test(KErrNone == syncChecker->UpdatePhonebookEntryL(KUidIccGlobalAdnPhonebook, id, KNullContactId));
-	TContactItemId templateId = aDb.ICCTemplateIdL(KUidIccGlobalAdnPhonebook);
-	CContactItem* iccTemplate = aDb.ReadContactLC(templateId);
+	TContactItemId templateId = db.ICCTemplateIdL(KUidIccGlobalAdnPhonebook);
+	CContactItem* iccTemplate = db.ReadContactLC(templateId);
 	CContactICCEntry* iccentry = CContactICCEntry::NewL(*iccTemplate);
 	CleanupStack::PopAndDestroy(iccTemplate);
 	CleanupStack::PushL(iccentry);
-	aDb.AddNewContactL(*iccentry);
+	db.AddNewContactL(*iccentry);
 	TContactItemId iccId = iccentry->Id();
 	CleanupStack::PopAndDestroy(4); //card,group,owncard,iccentry
 	
-	test(aDb.SortedItemsL()->Count() == 5); //default view includes ALL contact types
+	test(db.SortedItemsL()->Count() == 5); //default view includes ALL contact types
 	CntTest->CloseDatabase();
 	delete synchroniser;
 	synchroniser = NULL;
 	CntTest->OpenDatabaseL();
-	aDb.SetDbViewContactType(KUidContactICCEntry);
-	test(aDb.SortedItemsL()->Count() == 1);
-	test((*aDb.SortedItemsL())[0]==iccId);
+	CContactDatabase& db1= *CntTest->Db();
+	db1.SetDbViewContactType(KUidContactICCEntry);
+    TInt some = db1.SortedItemsL()->Count();
+	test(db1.SortedItemsL()->Count() == 1);
+	test((*db1.SortedItemsL())[0]==iccId);
 	}
 
 /** 
@@ -875,7 +879,7 @@ void CheckForPhbkSyncPluginL()
 			test.Printf(_L("\n"));
 			test.Printf(_L("This test only works with Contacts the test plugin and not the original phonebooksync plugin."));
 			test.Printf(_L("Depending on the build to removed the plugin in different ways:"));
-			test.Printf(_L("hardware - delete the line \"ECOM_PLUGIN(phbksyncplugin.dll,1020428C.rsc)\" from phbksync.iby"));
+			test.Printf(_L("hardware - delete the line \"ECOM_PLUGIN(phbksyncplugin.dll,1020428c.rsc)\" from phbksync.iby"));
 			test.Printf(_L("winscw - delete phbksyncplugin.dll from %epocroot%/epoc32/release/winscw/udeb or similarly named directory"));
 			test.Printf(_L("\n"));
 			test(0);  // stop
@@ -916,7 +920,8 @@ void DoTestsL()
 	TestDeleteL(db);
 	TestDatabaseIterationL(db);
 	TestDatabaseViewL(db);
-	TestPhonebookGroupIdL(db);
+	CContactDatabase& db1= *CntTest->Db();
+	TestPhonebookGroupIdL(db1);
 	
 	CntTest->CloseDatabase();
 	CntTest->DeleteDatabaseL();

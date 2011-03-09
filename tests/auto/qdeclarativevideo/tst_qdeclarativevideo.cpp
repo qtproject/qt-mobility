@@ -51,6 +51,7 @@
 #include <qmediaplayercontrol.h>
 #include <qmediaservice.h>
 #include <qvideorenderercontrol.h>
+#include <qvideowindowcontrol.h>
 #include <qvideosurfaceformat.h>
 
 #include <QtGui/qapplication.h>
@@ -192,6 +193,65 @@ private:
     QAbstractVideoSurface *m_surface;
 };
 
+class QtTestWindowControl : public QVideoWindowControl
+{
+public:
+    QtTestWindowControl(QObject *parent)
+        : QVideoWindowControl(parent)
+        , m_winId(0)
+        , m_repaintCount(0)
+        , m_brightness(0)
+        , m_contrast(0)
+        , m_saturation(0)
+        , m_aspectRatioMode(Qt::KeepAspectRatio)
+        , m_fullScreen(0)
+    {
+    }
+
+    WId winId() const { return m_winId; }
+    void setWinId(WId id) { m_winId = id; }
+
+    QRect displayRect() const { return m_displayRect; }
+    void setDisplayRect(const QRect &rect) { m_displayRect = rect; }
+
+    bool isFullScreen() const { return m_fullScreen; }
+    void setFullScreen(bool fullScreen) { emit fullScreenChanged(m_fullScreen = fullScreen); }
+
+    int repaintCount() const { return m_repaintCount; }
+    void setRepaintCount(int count) { m_repaintCount = count; }
+    void repaint() { ++m_repaintCount; }
+
+    QSize nativeSize() const { return m_nativeSize; }
+    void setNativeSize(const QSize &size) { m_nativeSize = size; emit nativeSizeChanged(); }
+
+    Qt::AspectRatioMode aspectRatioMode() const { return m_aspectRatioMode; }
+    void setAspectRatioMode(Qt::AspectRatioMode mode) { m_aspectRatioMode = mode; }
+
+    int brightness() const { return m_brightness; }
+    void setBrightness(int brightness) { emit brightnessChanged(m_brightness = brightness); }
+
+    int contrast() const { return m_contrast; }
+    void setContrast(int contrast) { emit contrastChanged(m_contrast = contrast); }
+
+    int hue() const { return m_hue; }
+    void setHue(int hue) { emit hueChanged(m_hue = hue); }
+
+    int saturation() const { return m_saturation; }
+    void setSaturation(int saturation) { emit saturationChanged(m_saturation = saturation); }
+
+private:
+    WId m_winId;
+    int m_repaintCount;
+    int m_brightness;
+    int m_contrast;
+    int m_hue;
+    int m_saturation;
+    Qt::AspectRatioMode m_aspectRatioMode;
+    QRect m_displayRect;
+    QSize m_nativeSize;
+    bool m_fullScreen;
+};
+
 class QtTestMediaService : public QMediaService
 {
     Q_OBJECT
@@ -199,10 +259,12 @@ public:
     QtTestMediaService(
             QtTestMediaPlayerControl *playerControl,
             QtTestRendererControl *rendererControl,
+            QtTestWindowControl *windowControl,
             QObject *parent)
         : QMediaService(parent)
         , playerControl(playerControl)
         , rendererControl(rendererControl)
+        , windowControl(windowControl)
     {
     }
 
@@ -212,6 +274,8 @@ public:
             return playerControl;
         else if (qstrcmp(name, QVideoRendererControl_iid) == 0)
             return rendererControl;
+        else if (qstrcmp(name, QVideoWindowControl_iid) == 0)
+            return windowControl;
         else
             return 0;
     }
@@ -220,6 +284,7 @@ public:
 
     QtTestMediaPlayerControl *playerControl;
     QtTestRendererControl *rendererControl;
+    QtTestWindowControl *windowControl;
 };
 
 class QtTestMediaServiceProvider : public QMediaServiceProvider
@@ -231,6 +296,7 @@ public:
             new QtTestMediaService(
             new QtTestMediaPlayerControl(this),
             new QtTestRendererControl(this),
+            new QtTestWindowControl(this),
             this))
     {
         setDefaultServiceProvider(this);
@@ -244,8 +310,9 @@ public:
 
     QtTestMediaServiceProvider(
             QtTestMediaPlayerControl *playerControl,
-            QtTestRendererControl *rendererControl)
-        : service(new QtTestMediaService(playerControl, rendererControl, this))
+            QtTestRendererControl *rendererControl,
+            QtTestWindowControl *windowControl)
+        : service(new QtTestMediaService(playerControl, rendererControl, windowControl, this))
     {
         setDefaultServiceProvider(this);
     }
@@ -281,7 +348,7 @@ void tst_QDeclarativeVideo::initTestCase()
 
 void tst_QDeclarativeVideo::nullPlayerControl()
 {
-    QtTestMediaServiceProvider provider(0, 0);
+    QtTestMediaServiceProvider provider(0, 0, 0);
 
     QDeclarativeVideo video;
     video.classBegin();
@@ -900,15 +967,17 @@ void tst_QDeclarativeVideo::geometry()
     }
 
     QAbstractVideoSurface *surface = provider.rendererControl()->surface();
-    QVERIFY(surface);
 
-    QVideoSurfaceFormat format(QSize(640, 480), QVideoFrame::Format_RGB32);
+    //video item can use overlay, QAbstractVideoSurface is not used than.
+    if (surface) {
+        QVideoSurfaceFormat format(QSize(640, 480), QVideoFrame::Format_RGB32);
 
-    QVERIFY(surface->start(format));
-    QCoreApplication::processEvents();
+        QVERIFY(surface->start(format));
+        QCoreApplication::processEvents();
 
-    QCOMPARE(video.implicitWidth(), qreal(640));
-    QCOMPARE(video.implicitHeight(), qreal(480));
+        QCOMPARE(video.implicitWidth(), qreal(640));
+        QCOMPARE(video.implicitHeight(), qreal(480));
+    }
 
     video.setWidth(560);
     video.setHeight(328);

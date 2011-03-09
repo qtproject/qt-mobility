@@ -177,8 +177,6 @@ private:
 
     QT7VideoOutput * m_videoOutput;
 
-    mutable qint64 m_currentTime;
-
     bool m_muted;
     bool m_tryingAsync;
     int m_volume;

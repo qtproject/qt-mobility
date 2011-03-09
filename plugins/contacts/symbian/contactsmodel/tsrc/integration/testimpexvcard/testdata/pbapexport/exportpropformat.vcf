@@ -6,11 +6,11 @@ N:asdsfdfhjkhjhhjh\\jdfhk\;sjdfhjsdhfjhjhj\;hjhjhjhjhjhjhjhjhhjhjhjhjdfksd\
  ,gvf\,dfgsdfg\,jhfdgjfgfdhgdfgdfgdfbhdfgdfgdffffffffffffffffffffffffffffff
  ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
  fffffff;;;;
-FN:Mr. John Q. Public\, Esq.
+FN:Mr. Jtest Q. Public\, Esq.
 ORG:ABC\, Inc.;North American Division;Marketing;
 TITLE:V.P.\, Research and Development
-EMAIL;TYPE=INTERNET:steve@sgsoftware.co.uk
-EMAIL;TYPE=INTERNET:john.public@abc.com
+EMAIL;TYPE=INTERNET:stest@symbianfoundation.co.uk
+EMAIL;TYPE=INTERNET:jtest.public@test.com
 URL:http://abc.com/pub/directory/northam/jpublic.ecd
 LOGO;ENCODING=b:Vld0c1IxSm9RWE5CUVVKWVVWWmFSbHB0TVRCSlFrRkJRVUZCUWtGQlJVRkZ
  VM05CUVVKRmNrRkJRVUpCUVdkQldrZEdNRmxsYzNKQlFVTkJaelJsUTJWWVVqUmxNM1ZCYUc5c
@@ -29,8 +29,8 @@ PHOTO;ENCODING=b:Vld0c1IxSm9RWE5CUVVKWVVWWmFSbHB0TVRCSlFrRkJRVUZCUWtGQlJVRk
  cFNXbFpiVXRxU1dsRVptNTROV1ZZTmtObmIwdEZhRmxYUkdWdVZqVm1TRFpDYUVsVFIybEphVV
  JtU0ZveVpWaDBMMmhKYVV0cVdUSkphRWd4TW1RelZubGpNM1ZFYVVscFJtWXpiRGRtYmpFNFpW
  aHNLMmh2ZFVabU16RTVabTU1UVdkSWJEVmxiME5KYVVsVFEyaEpaVUZtYm5ReUxpNHU=
-LABEL;TYPE=DOM:P. O. Box 456\n 123 Main Street\nAny Town\, CA 91921-1234
-LABEL:Suite 101\n 123 Main Street\nAny Town\, CA 91921-1234\nU.S.A.
+LABEL;TYPE=DOM:P. O. Box 123\n 123 Main Street\nAny Town\, CA ZZ990-1234
+LABEL:Suite 101\n 123 Main Street\nAny Town\, CA ZZ990-1234\nU.S.A.
 MAILER:ccMail 2.2
 ROLE:Executive
 END:VCARD

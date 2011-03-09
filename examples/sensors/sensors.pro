@@ -10,8 +10,6 @@ SUBDIRS += grueplugin grueapp
 
 SUBDIRS += sensor_explorer
 
-#SUBDIRS += reading_perf
-
 contains(QT_CONFIG,opengl):SUBDIRS += cubehouse
 
 SUBDIRS +=\
@@ -26,5 +24,3 @@ SUBDIRS +=\
     show_light\
     show_gyroscope
 
-# does not compile
-#SUBDIRS += test_manual
