@@ -172,4 +172,3 @@ void S60VideoWidgetDisplay::setExplicitExtentRect(const QRect &rect)
         emit displayRectChanged(extentRect(), clipRect());
     }
 }
-

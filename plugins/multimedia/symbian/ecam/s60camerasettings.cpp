@@ -491,7 +491,7 @@ void S60CameraSettings::HandleAdvancedEvent(const TECAMEvent& aEvent)
     else if (aEvent.iEventType == KUidECamEventCameraSettingApertureRange)
         emit apertureRangeChanged();
 
-    else if (aEvent.iEventType == KUidECamEventCameraSettingIsoRate)
+    else if (aEvent.iEventType == KUidECamEventCameraSettingIsoRateType)
         emit isoSensitivityChanged();
 
     else if (aEvent.iEventType == KUidECamEventCameraSettingShutterSpeed)
@@ -626,38 +626,42 @@ bool S60CameraSettings::isMeteringModeSupported(QCameraExposure::MeteringMode mo
 int S60CameraSettings::isoSensitivity()
 {
 #ifdef POST_31_PLATFORM
-    if (m_advancedSettings)
-        return m_advancedSettings->IsoRate();
-    else
+    if (m_advancedSettings) {
+        CCamera::CCameraAdvancedSettings::TISORateType isoRateType;
+        TInt param = 0;
+        TInt isoRate = 0;
+        TRAPD(err, m_advancedSettings->GetISORateL(isoRateType, param, isoRate));
+        if (err)
+            return 0;
+        if (isoRate != KErrNotFound)
+            return isoRate;
+    } else {
         emit error(QCamera::CameraError, tr("Unexpected camera error."));
-    return 0;
-#else // S60 3.1 Platform
-    return 0;
+    }
 #endif // POST_31_PLATFORM
+    return 0;
 }
 
 QList<int> S60CameraSettings::supportedIsoSensitivities()
 {
     QList<int> isoSentitivities;
 #ifdef POST_31_PLATFORM
-
     if (m_advancedSettings) {
         RArray<TInt> supportedIsoRates;
+        CleanupClosePushL(supportedIsoRates);
 
         TRAPD(err, m_advancedSettings->GetSupportedIsoRatesL(supportedIsoRates));
-        if (err != KErrNone)
-            if (err != KErrNotSupported)
+        if (err != KErrNone) {
+            if (err != KErrNotSupported) // Don's emit error if ISO is not supported
                 emit error(QCamera::CameraError, tr("Failure while querying supported iso sensitivities."));
-        else {
-            for (int i = 0; i < supportedIsoRates.Count(); i++) {
-                int q = supportedIsoRates[i];
-                isoSentitivities.append(q);
-            }
+        } else {
+            for (int i = 0; i < supportedIsoRates.Count(); ++i)
+                isoSentitivities << supportedIsoRates[i];
         }
-        supportedIsoRates.Close();
-    }
-    else
+        CleanupStack::PopAndDestroy(); // RArray<TInt> supportedIsoRates
+    } else {
         emit error(QCamera::CameraError, tr("Unexpected camera error."));
+    }
 
     return isoSentitivities;
 #else // S60 3.1 Platform
@@ -669,11 +673,13 @@ void S60CameraSettings::setManualIsoSensitivity(int iso)
 {
 #ifdef POST_31_PLATFORM
     if (m_advancedSettings) {
-        m_advancedSettings->SetIsoRate(iso);
+        TRAPD(err, m_advancedSettings->SetISORateL(CCamera::CCameraAdvancedSettings::EISOManual, iso));
+        if (err)
+            emit error(QCamera::CameraError, tr("Setting manual iso sensitivity failed."));
         return;
-    }
-    else
+    } else {
         emit error(QCamera::CameraError, tr("Unexpected camera error."));
+    }
 #else // S60 3.1 Platform
     Q_UNUSED(iso);
     emit error(QCamera::NotSupportedFeatureError, tr("Setting manual iso sensitivity is not supported."));
