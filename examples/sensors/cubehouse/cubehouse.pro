@@ -3,7 +3,7 @@ TARGET = cubehouse
 CONFIG += qt debug warn_on
 requires(contains(QT_CONFIG,opengl))
 QT += opengl
-include(../../examples.pri)
+include(../../mobility_examples.pri)
 CONFIG+=mobility
 MOBILITY+=sensors
 INCLUDEPATH += ../../../src/sensors
@@ -29,3 +29,7 @@ contains(QT_CONFIG,opengles2) {
     SOURCES += painter_fixed.cpp
 }
 RESOURCES = cubehouse.qrc
+
+symbian: {
+    TARGET.CAPABILITY = ReadUserData
+}

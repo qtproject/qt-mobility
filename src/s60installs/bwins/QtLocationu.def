@@ -1696,4 +1696,7 @@ EXPORTS
 	?minimumTilt@QGraphicsGeoMap@QtMobility@@QBEMXZ @ 1695 NONAME ; float QtMobility::QGraphicsGeoMap::minimumTilt(void) const
 	?bearing@QGraphicsGeoMap@QtMobility@@QBEMXZ @ 1696 NONAME ; float QtMobility::QGraphicsGeoMap::bearing(void) const
 	?setUnits@QGeoMapObject@QtMobility@@QAEXABW4CoordinateUnit@12@@Z @ 1697 NONAME ; void QtMobility::QGeoMapObject::setUnits(enum QtMobility::QGeoMapObject::CoordinateUnit const &)
+	?sourcePriority@QGeoPositionInfoSourceFactory@QtMobility@@UBEHXZ @ 1698 NONAME ; int QtMobility::QGeoPositionInfoSourceFactory::sourcePriority(void) const
+	??1QGeoPositionInfoSourceFactory@QtMobility@@UAE@XZ @ 1699 NONAME ; QtMobility::QGeoPositionInfoSourceFactory::~QGeoPositionInfoSourceFactory(void)
+	??_EQGeoPositionInfoSourceFactory@QtMobility@@UAE@I@Z @ 1700 NONAME ; QtMobility::QGeoPositionInfoSourceFactory::~QGeoPositionInfoSourceFactory(unsigned int)
 

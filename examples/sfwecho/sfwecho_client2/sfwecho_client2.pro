@@ -1,7 +1,7 @@
 TARGET = sfwecho_client2
 INCLUDEPATH += ../../../src/serviceframework
 DEPENDPATH += ../../../src/serviceframework
-include(../../examples.pri)
+include(../../mobility_examples.pri)
 QT = core \
     gui
 TEMPLATE = app
