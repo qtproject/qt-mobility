@@ -129,6 +129,7 @@ private:
 
 public:
     QBluetoothServiceDiscoveryAgent::Error error;
+    QString errorString;
 
     QList<QBluetoothServiceInfo> discoveredServices;
     QList<QBluetoothDeviceInfo> discoveredDevices;

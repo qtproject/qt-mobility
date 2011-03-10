@@ -269,7 +269,8 @@ QBluetoothServiceDiscoveryAgent::Error QBluetoothServiceDiscoveryAgent::error() 
 */
 QString QBluetoothServiceDiscoveryAgent::errorString() const
 {
-    return QString();
+    Q_D(const QBluetoothServiceDiscoveryAgent);
+    return d->errorString;
 }
 
 /*!

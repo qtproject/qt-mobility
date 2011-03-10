@@ -84,7 +84,8 @@ void QBluetoothServiceDiscoveryAgentPrivate::start(const QBluetoothAddress &addr
     QDBusPendingReply<QDBusObjectPath> reply = manager->DefaultAdapter();
     reply.waitForFinished();
     if (reply.isError()) {
-        error = QBluetoothServiceDiscoveryAgent::UnknownError;
+        error = QBluetoothServiceDiscoveryAgent::DeviceDiscoveryError;
+        errorString = "Unable to find default adapter";
         emit q->error(error);
         _q_serviceDiscoveryFinished();
         return;
@@ -195,8 +196,8 @@ void QBluetoothServiceDiscoveryAgentPrivate::_q_discoveredServices(QDBusPendingC
 #endif
         watcher->deleteLater();
         error = QBluetoothServiceDiscoveryAgent::UnknownError;
-        emit q->error(error);
-        _q_serviceDiscoveryFinished();        
+        errorString = reply.error().message();
+        _q_serviceDiscoveryFinished();
         return;
     }
 
