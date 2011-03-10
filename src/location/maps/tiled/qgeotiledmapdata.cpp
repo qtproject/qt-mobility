@@ -100,6 +100,10 @@ QTM_BEGIN_NAMESPACE
 
     These functions include worldReferenceViewportCenter(), worldReferenceSize() and
     worldReferenceViewportRect().
+
+    NOTE: QGeoTiledMapData blocks property change signals from QGeoMapData by calling
+    QGeoMapData::setBlockPropertyChangeSignals() with true. Changing this in 
+    QGeoTiledMapData subclasses will cause the signals being emitted at wrong time.
 */
 
 /*!
@@ -336,6 +340,15 @@ void QGeoTiledMapData::setMapType(QGraphicsGeoMap::MapType mapType)
     emit mapTypeChanged(d->mapType);
 
     d->updateMapImage();
+}
+
+/*!
+    \reimp
+*/
+void QGeoTiledMapData::setConnectivityMode(QGraphicsGeoMap::ConnectivityMode connectivityMode)
+{
+    QGeoMapData::setConnectivityMode(connectivityMode);
+    emit connectivityModeChanged(connectivityMode);
 }
 
 /*!
