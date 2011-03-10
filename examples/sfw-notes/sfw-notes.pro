@@ -2,7 +2,7 @@ TEMPLATE = app
 TARGET = sfw-notes
 INCLUDEPATH += ../../src/serviceframework
 
-include(../examples.pri)
+include(../mobility_examples.pri)
 
 QT += gui
 CONFIG += mobility

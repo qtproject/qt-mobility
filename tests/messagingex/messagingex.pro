@@ -4,7 +4,7 @@ TARGET = MessagingEx
 QT += gui
 
 include(../../common.pri)
-maemo5:include(../../examples/examples.pri)
+maemo5:include(../../examples/mobility_examples.pri)
 
 # Build against the messaging library
 INCLUDEPATH += $$SOURCE_DIR/src/messaging

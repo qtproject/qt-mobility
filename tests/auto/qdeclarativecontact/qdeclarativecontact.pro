@@ -1,7 +1,10 @@
-load(qttest_p4)
+TARGET = tst_qdeclarativecontact
+CONFIG+=testcase
+
 include (../../../common.pri)
 
-CONFIG += mobility 
+CONFIG += mobility
+DEFINES+=IGNORE_METAOBJECTBUILDER_EXPORT 
 MOBILITY += contacts versit
 QT += declarative
 

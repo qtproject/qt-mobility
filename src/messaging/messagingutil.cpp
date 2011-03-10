@@ -226,32 +226,49 @@ namespace MessagingUtil {
         return prefix;
     }
 
-    // Needs to support escaping, and to be unit tested :P
+    // TODO: directly unit test this
     bool globMatch(const QString &pattern, const QString &haystack) {
         QString::const_iterator patIt(pattern.begin());
         QString::const_iterator hayIt(haystack.begin());
 
-        for ( ; hayIt != haystack.end() && *patIt != '%' ; ++hayIt, ++patIt) {
-            if ((patIt->toLower() != hayIt->toLower())
-                    && (*patIt != '_')) {
-                return false;
+        bool escaping(false);
+
+        while (hayIt != haystack.end() && (escaping || *patIt != '%')) {
+
+            if (!escaping && *patIt == '\\') {
+                escaping = true;
+                ++patIt;
+                continue;
             }
+
+            if ((patIt->toLower() != hayIt->toLower()) && (escaping || *patIt != '_'))
+                return false;
+
+            escaping = false;
+            ++hayIt;
+            ++patIt;
          }
 
         QString::const_iterator tPatIt(pattern.end());
         QString::const_iterator tHayIt(haystack.end());
 
         while (patIt != pattern.end() && hayIt != haystack.end()) {
-            if (*patIt == '%') {
+
+            if (!escaping && *patIt == '\\') {
+                escaping = true;
+                ++patIt;
+            } else if (!escaping && *patIt == '%') {
                 if (++patIt == pattern.end())
                     return true;
 
                 tPatIt = patIt;
                 tHayIt = hayIt + 1;
-            } else if (patIt->toLower() == hayIt->toLower() || (*patIt != '_')) {
-                patIt++;
-                hayIt++;
+            } else if (patIt->toLower() == hayIt->toLower() || (!escaping && *patIt == '_')) {
+                escaping = false;
+                ++patIt;
+                ++hayIt;
             } else {
+                escaping = false;
                 patIt = tPatIt;
                 hayIt = tHayIt++;
             }
@@ -259,7 +276,7 @@ namespace MessagingUtil {
 
         // eat trailing %
         while (patIt != pattern.end() && *patIt == '%') {
-            patIt++;
+            ++patIt;
         }
 
         return hayIt == haystack.end() && patIt == pattern.end();

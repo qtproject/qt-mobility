@@ -180,6 +180,7 @@ private slots:
     void update();
     void remove();
     void batch();
+    void observerDeletion();
     void signalEmission();
     void detailDefinitions();
     void displayName();
@@ -2169,6 +2170,20 @@ void tst_QContactManager::contactValidation()
     QVERIFY(cm->saveContact(&c));
     QCOMPARE(cm->error(), QContactManager::NoError);
     c.removeDetail(&d7);
+}
+
+void tst_QContactManager::observerDeletion()
+{
+    QContactManager *manager = new QContactManager("memory");
+    QContact c;
+    QVERIFY(manager->saveContact(&c));
+    QContactLocalId id = c.localId();
+    QContactObserver *observer = new QContactObserver(manager, id);
+    Q_UNUSED(observer)
+    delete manager;
+    delete observer;
+    // Test for bug MOBILITY-2566 - that QContactObserver doesn't crash when it is
+    // destroyed after the associated QContactManager
 }
 
 void tst_QContactManager::signalEmission()

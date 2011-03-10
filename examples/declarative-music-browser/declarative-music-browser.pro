@@ -1,7 +1,7 @@
 TEMPLATE = app
 TARGET = declarative-music-browser
 
-include(../examples.pri)
+include(../mobility_examples.pri)
 
 QT += declarative
 

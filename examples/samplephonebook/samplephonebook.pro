@@ -6,7 +6,7 @@
 
 TEMPLATE = app
 TARGET = samplephonebook
-include(../examples.pri)
+include(../mobility_examples.pri)
 DEPENDPATH += .
 INCLUDEPATH += . \
                ../../src/contacts\

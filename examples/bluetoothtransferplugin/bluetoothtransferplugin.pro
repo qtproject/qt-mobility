@@ -10,7 +10,7 @@ SOURCES += bluetoothtransferplugin.cpp \
 TARGET = serviceframework_bluetoothtransferplugin
 DESTDIR = .
 
-include(../examples.pri)
+include(../mobility_examples.pri)
 CONFIG += mobility
 MOBILITY = serviceframework
 
