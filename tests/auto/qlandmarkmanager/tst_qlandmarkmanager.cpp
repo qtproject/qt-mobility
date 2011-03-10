@@ -90,7 +90,6 @@
 
 #ifdef Q_OS_SYMBIAN
 #include <EPos_CPosLmDatabaseManager.h>
-//#define SYMBIAN_SAVE_WORKAROUND
 #elif defined(SPARQL_BACKEND)
 //no special includes needed for sparql backend.
 #else
@@ -147,8 +146,6 @@
 #define SAVE_CATEGORY_STRESS
 #define REMOVE_CATEGORY_STRESS
 #define SIMPLE_TEST
-
-//#define WORKAROUND
 
 #include <float.h>
 
@@ -8601,8 +8598,13 @@ void tst_QLandmarkManager::fetchWaitForFinished()
     if (QSysInfo::s60Version() == QSysInfo::SV_S60_3_1
         || QSysInfo::s60Version() == QSysInfo::SV_S60_3_2
         || QSysInfo::s60Version() == QSysInfo::SV_S60_5_0) {
+#ifdef MOBILITY_2664
+        numImports= 12;
+        lowLandmarkNumber = false;
+#else
         numImports=2;
         lowLandmarkNumber = true;
+#endif
     }
 #endif
 
