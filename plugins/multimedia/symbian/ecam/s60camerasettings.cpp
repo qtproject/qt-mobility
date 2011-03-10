@@ -79,8 +79,6 @@ S60CameraSettings::~S60CameraSettings()
         m_imageProcessingSettings = NULL;
     }
 #endif // POST_31_PLATFORM
-
-    m_supportedDigitalZoomFactors.clear();
 }
 
 /*
@@ -145,10 +143,8 @@ void S60CameraSettings::ConstructL()
         TValueInfo info = ENotActive;
         m_advancedSettings->GetDigitalZoomStepsL(digitalZoomFactors, info);
 
-        for (int i = 0; i < digitalZoomFactors.Count(); ++i) {
-            qreal factor = digitalZoomFactors[i];
-            m_supportedDigitalZoomFactors << ((factor / 100.0));
-        }
+        for (int i = 0; i < digitalZoomFactors.Count(); ++i)
+            m_supportedSymbianDigitalZoomFactors << digitalZoomFactors[i];
 
         CleanupStack::PopAndDestroy(); // RArray<TInt> digitalZoomFactors
     }
@@ -326,44 +322,23 @@ QCameraFocus::FocusModes S60CameraSettings::supportedFocusModes()
 
 qreal S60CameraSettings::opticalZoomFactorL() const
 {
-    qreal factor = 1.0;
-
-#ifdef POST_31_PLATFORM
-    int symbianFactor = 0;
-    if (m_advancedSettings)
-        symbianFactor = m_advancedSettings->OpticalZoom();
-        else
-            User::Leave(KErrNotSupported);
-
-    if (symbianFactor != 0) {
-        factor = symbianFactor;
-        factor /= KSymbianFineResolutionFactor;
-    }
-#endif // POST_31_PLATFORM
-
-    return factor;
+    // Not supported on Symbian
+    return 1.0;
 }
 
 void S60CameraSettings::setOpticalZoomFactorL(const qreal zoomFactor)
 {
-#ifdef POST_31_PLATFORM
-    int symbianFactor = zoomFactor * KSymbianFineResolutionFactor;
-
-    // Make sure value is supported, and modify if needed
-
-    if (m_advancedSettings)
-        m_advancedSettings->SetDigitalZoom(symbianFactor);
-    else
-        User::Leave(KErrNotSupported);
-#else // S60 3.1 Platform
+    // Not supported on Symbian
     Q_UNUSED(zoomFactor);
-    emit error(QCamera::NotSupportedFeatureError, tr("Settings optical zoom factor is not supported."));
-#endif // POST_31_PLATFORM
 }
 
-QList<qreal> *S60CameraSettings::supportedDigitalZoomFactors()
+QList<qreal> S60CameraSettings::supportedDigitalZoomFactors() const
 {
-    return &m_supportedDigitalZoomFactors;
+    QList<qreal> zoomFactors;
+    foreach (int factor, m_supportedSymbianDigitalZoomFactors)
+        zoomFactors << qreal(factor) / KSymbianFineResolutionFactor;
+
+    return zoomFactors;
 }
 
 qreal S60CameraSettings::digitalZoomFactorL() const
@@ -374,13 +349,11 @@ qreal S60CameraSettings::digitalZoomFactorL() const
     int symbianFactor = 0;
     if (m_advancedSettings)
         symbianFactor = m_advancedSettings->DigitalZoom();
-        else
-            User::Leave(KErrNotSupported);
+    else
+        User::Leave(KErrNotSupported);
 
-    if (symbianFactor != 0) {
-        factor = symbianFactor;
-        factor /= KSymbianFineResolutionFactor;
-    }
+    if (symbianFactor != 0)
+        factor = qreal(symbianFactor) / KSymbianFineResolutionFactor;
 #endif // POST_31_PLATFORM
 
     return factor;
@@ -391,8 +364,22 @@ void S60CameraSettings::setDigitalZoomFactorL(const qreal zoomFactor)
 #ifdef POST_31_PLATFORM
     int symbianFactor = zoomFactor * KSymbianFineResolutionFactor;
 
-    // Make sure value is supported, and modify if needed
-
+    // Find closest supported Symbian ZoomFactor if needed
+    if (!m_supportedSymbianDigitalZoomFactors.contains(symbianFactor)) {
+        int closestIndex = -1;
+        int closestDiff = 1000000; // Sensible maximum
+        for (int i = 0; i < m_supportedSymbianDigitalZoomFactors.count(); ++i) {
+            int diff = abs(m_supportedSymbianDigitalZoomFactors.at(i) - symbianFactor);
+            if (diff < closestDiff) {
+                closestDiff = diff;
+                closestIndex = i;
+            }
+        }
+        if (closestIndex != -1)
+            symbianFactor = m_supportedSymbianDigitalZoomFactors.at(closestIndex);
+        else
+            User::Leave(KErrGeneral);
+    }
     if (m_advancedSettings)
         m_advancedSettings->SetDigitalZoom(symbianFactor);
     else
