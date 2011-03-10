@@ -1029,7 +1029,6 @@ private:
     }
 
     void clearDb() {
-        QFile file;
         QList<QLandmarkId> lmIds = m_manager->landmarkIds();
         for(int i=0; i < lmIds.count(); ++i) {
             QVERIFY(m_manager->removeLandmark(lmIds.at(i)));
@@ -1048,17 +1047,6 @@ private:
         #else
             QTest::qWait(20);
         #endif
-
-        delete m_manager;
-        m_manager = 0;
-
-        delete m_listener;
-        m_listener =0;
-
-        QFile::remove(exportFile);
-        file.setFileName("nopermfile");
-        file.setPermissions(QFile::WriteOwner | QFile::WriteUser | QFile::WriteOther);
-        file.remove();
     }
 
 #if !(defined(Q_OS_SYMBIAN)||defined(SPARQL_BACKEND))
@@ -1340,19 +1328,37 @@ void testViewport_data();
 void tst_QLandmarkManager::initTestCase() {
     m_manager = 0;
     m_listener = 0;
+#ifdef PRESERVE_EXISTING_LANDMARKS
     managerDataHolder.reset(new QLandmarkManagerDataHolder());
+#endif
 }
 
 void tst_QLandmarkManager::init() {
     createDb();
+    clearDb();
+
 }
 
 void tst_QLandmarkManager::cleanup() {
     clearDb();
+
+    delete m_manager;
+    m_manager = 0;
+
+    delete m_listener;
+    m_listener =0;
+
+    QFile::remove(exportFile);
+    QFile file;
+    file.setFileName("nopermfile");
+    file.setPermissions(QFile::WriteOwner | QFile::WriteUser | QFile::WriteOther);
+    file.remove();
 }
 
 void tst_QLandmarkManager::cleanupTestCase() {
+#ifdef PRESERVE_EXISTING_LANDMARKS
     managerDataHolder.reset(0);
+#endif
     QFile::remove(exportFile);
     if (QFile::exists("nopermfile"))
         QFile::remove("nopermfile");
