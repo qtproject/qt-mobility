@@ -1301,7 +1301,7 @@ QSystemNetworkInfo::NetworkMode QSystemNetworkInfoPrivate::currentMode()
     return QSystemNetworkInfo::UnknownMode;
 }
 
-QSystemNetworkInfo::CellDataTechnology QSystemNetworkInfoLinuxCommonPrivate::cellDataTechnology()
+QSystemNetworkInfo::CellDataTechnology QSystemNetworkInfoPrivate::cellDataTechnology()
 {
     return QSystemNetworkInfo::UnknownDataTechnology;
 }
