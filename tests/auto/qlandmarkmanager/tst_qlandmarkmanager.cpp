@@ -4310,6 +4310,8 @@ void tst_QLandmarkManager::filterLandmarksName() {
     //test contains
     nameFilter.setName("err");
     nameFilter.setMatchFlags(QLandmarkFilter::MatchContains);
+
+#ifdef Q_OS_SYMBIAN
     if (QSysInfo::s60Version() == QSysInfo::SV_S60_3_1
         || QSysInfo::s60Version() == QSysInfo::SV_S60_3_2
         || QSysInfo::s60Version() == QSysInfo::SV_S60_5_0) {
@@ -4322,6 +4324,13 @@ void tst_QLandmarkManager::filterLandmarksName() {
         QCOMPARE(lms.at(1), lm6);
         QCOMPARE(lms.at(2), lm8);
     }
+#else
+        QVERIFY(doFetch(type,nameFilter, &lms,QLandmarkManager::NoError));
+        QCOMPARE(lms.count(),3);
+        QCOMPARE(lms.at(0), lm5);
+        QCOMPARE(lms.at(1), lm6);
+        QCOMPARE(lms.at(2), lm8);
+#endif
 
     //test fixed string
     nameFilter.setName("adel");
@@ -4347,6 +4356,7 @@ void tst_QLandmarkManager::filterLandmarksName() {
     //test no match
     nameFilter.setName("Washington");
     nameFilter.setMatchFlags(QLandmarkFilter::MatchContains);
+#ifdef Q_OS_SYMBIAN
     if (QSysInfo::s60Version() == QSysInfo::SV_S60_3_1
         || QSysInfo::s60Version() == QSysInfo::SV_S60_3_2
         || QSysInfo::s60Version() == QSysInfo::SV_S60_5_0) {
@@ -4354,6 +4364,9 @@ void tst_QLandmarkManager::filterLandmarksName() {
     } else {
         QVERIFY(doFetch(type,nameFilter, &lms,QLandmarkManager::NoError));
     }
+#else
+    QVERIFY(doFetch(type,nameFilter, &lms,QLandmarkManager::NoError));
+#endif
     QCOMPARE(lms.count(),0);
 
     //TODO: symbian change the state of the request to finished
@@ -4408,6 +4421,7 @@ void tst_QLandmarkManager::filterLandmarksName() {
 
     //try contains empty string
     nameFilter.setMatchFlags(QLandmarkFilter::MatchContains);
+#ifdef Q_OS_SYMBIAN
     if (QSysInfo::s60Version() == QSysInfo::SV_S60_3_1
         || QSysInfo::s60Version() == QSysInfo::SV_S60_3_2
         || QSysInfo::s60Version() == QSysInfo::SV_S60_5_0) {
@@ -4428,6 +4442,21 @@ void tst_QLandmarkManager::filterLandmarksName() {
         QCOMPARE(lms.at(9), lmNoName1);
         QCOMPARE(lms.at(10), lmNoName2);
     }
+#else
+    QVERIFY(doFetch(type,nameFilter, &lms, QLandmarkManager::NoError));
+    QCOMPARE(lms.count(),11);
+    QCOMPARE(lms.at(0), lm1);
+    QCOMPARE(lms.at(1), lm2);
+    QCOMPARE(lms.at(2), lm3);
+    QCOMPARE(lms.at(3), lm4);
+    QCOMPARE(lms.at(4), lm5);
+    QCOMPARE(lms.at(5), lm6);
+    QCOMPARE(lms.at(6), lm7);
+    QCOMPARE(lms.at(7), lm8);
+    QCOMPARE(lms.at(8), lm9);
+    QCOMPARE(lms.at(9), lmNoName1);
+    QCOMPARE(lms.at(10), lmNoName2);
+#endif
 
     //try ends with an empty string
     nameFilter.setMatchFlags(QLandmarkFilter::MatchEndsWith);
@@ -6223,6 +6252,7 @@ void tst_QLandmarkManager::filterAttribute() {
     attributeFilter.setAttribute("city", "adel", QLandmarkFilter::MatchFixedString);
     attributeFilter.setAttribute("description", "the summary", QLandmarkFilter::MatchStartsWith);
 
+#ifdef Q_OS_SYMBIAN
     if (QSysInfo::s60Version() == QSysInfo::SV_S60_3_1
         || QSysInfo::s60Version() == QSysInfo::SV_S60_3_2
         || QSysInfo::s60Version() == QSysInfo::SV_S60_5_0) {
@@ -6237,6 +6267,15 @@ void tst_QLandmarkManager::filterAttribute() {
         QVERIFY(lms.contains(lm7));
         QVERIFY(lms.contains(lm9));
     }
+#else
+    QVERIFY(doFetch(type,attributeFilter,&lms));
+    QCOMPARE(lms.count(), 4);
+
+    QVERIFY(lms.contains(lm2));
+    QVERIFY(lms.contains(lm4));
+    QVERIFY(lms.contains(lm7));
+    QVERIFY(lms.contains(lm9));
+#endif
 
 /*Undefined behaviour for empty QVariants
     //try an single empty qvariant for and and or
@@ -8552,12 +8591,14 @@ void tst_QLandmarkManager::fetchWaitForFinished()
     int numImports = 8;
     bool lowLandmarkNumber = false;
 
+#ifdef Q_OS_SYMBIAN
     if (QSysInfo::s60Version() == QSysInfo::SV_S60_3_1
         || QSysInfo::s60Version() == QSysInfo::SV_S60_3_2
         || QSysInfo::s60Version() == QSysInfo::SV_S60_5_0) {
         numImports=2;
         lowLandmarkNumber = true;
     }
+#endif
 
     for (int i=0; i < numImports ; ++i) {
         QVERIFY(m_manager->importLandmarks(prefix + "data/AUS-PublicToilet-AustralianCapitalTerritory.gpx"));
@@ -8656,6 +8697,7 @@ void tst_QLandmarkManager::filterSupportLevel() {
     QCOMPARE(m_manager->filterSupportLevel(nameFilter), QLandmarkManager::NativeSupport);
 
     nameFilter.setMatchFlags(QLandmarkFilter::MatchContains);
+#ifdef Q_OS_SYMBIAN
     if (QSysInfo::s60Version() == QSysInfo::SV_S60_3_1
         || QSysInfo::s60Version() == QSysInfo::SV_S60_3_2
         || QSysInfo::s60Version() == QSysInfo::SV_S60_5_0) {
@@ -8663,6 +8705,9 @@ void tst_QLandmarkManager::filterSupportLevel() {
     } else {
         QCOMPARE(m_manager->filterSupportLevel(nameFilter), QLandmarkManager::NativeSupport);
     }
+#else
+    QCOMPARE(m_manager->filterSupportLevel(nameFilter), QLandmarkManager::NativeSupport);
+#endif
 
     nameFilter.setMatchFlags(QLandmarkFilter::MatchEndsWith);
     QCOMPARE(m_manager->filterSupportLevel(nameFilter), QLandmarkManager::NativeSupport);
