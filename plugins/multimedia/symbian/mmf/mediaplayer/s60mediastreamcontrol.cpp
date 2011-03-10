@@ -39,6 +39,8 @@
 **
 ****************************************************************************/
 
+#include "DebugMacros.h"
+
 #include "s60mediastreamcontrol.h"
 #include "s60mediaplayersession.h"
 #include "s60mediaplayercontrol.h"
@@ -48,32 +50,61 @@
 #include <QtCore/qurl.h>
 #include <QtCore/qdebug.h>
 
+/*!
+    Constructs a new media streams control with the given \a control.
+*/
+
 S60MediaStreamControl::S60MediaStreamControl(QObject *control, QObject *parent)
     : QMediaStreamsControl(parent)
     , m_control(NULL)
     , m_mediaType(S60MediaSettings::Unknown)
 {
+    DP0("S60MediaStreamControl::S60MediaStreamControl +++");
+
     m_control = qobject_cast<S60MediaPlayerControl*>(control);
     m_mediaType = m_control->mediaControlSettings().mediaType();
+
+    DP0("S60MediaStreamControl::S60MediaStreamControl ---");
 }
+
+/*!
+    Destroys a media streams control.
+*/
 
 S60MediaStreamControl::~S60MediaStreamControl()
 {
+    DP0("S60MediaStreamControl::~S60MediaStreamControl +++");
+    DP0("S60MediaStreamControl::~S60MediaStreamControl ---");
 }
+
+/*!
+    \return the number of media streams.
+*/
 
 int S60MediaStreamControl::streamCount()
 {
+    DP0("S60MediaStreamControl::streamCount");
+
     int streamCount = 0;
     if (m_control->isAudioAvailable())
         streamCount++;
     if (m_control->isVideoAvailable())
         streamCount++;
+    DP1("S60MediaStreamControl::streamCount", streamCount);
 
     return streamCount;
 }
 
+/*!
+    \return the type of a media \a streamNumber.
+*/
+
 QMediaStreamsControl::StreamType S60MediaStreamControl::streamType(int streamNumber)
 {
+    DP0("S60MediaStreamControl::streamType +++");
+
+    DP1("S60MediaStreamControl::streamType - ", streamNumber);
+
     Q_UNUSED(streamNumber);
 
     QMediaStreamsControl::StreamType type = QMediaStreamsControl::UnknownStream;
@@ -83,11 +114,21 @@ QMediaStreamsControl::StreamType S60MediaStreamControl::streamType(int streamNum
     else
         type = QMediaStreamsControl::AudioStream;
 
+    DP0("S60MediaStreamControl::streamType ---");
+
     return type;
 }
 
+/*!
+    \return the meta-data value of \a key for a given \a streamNumber.
+
+    Useful metadata keya are QtMultimediaKit::Title, QtMultimediaKit::Description and QtMultimediaKit::Language.
+*/
+
 QVariant S60MediaStreamControl::metaData(int streamNumber, QtMultimediaKit::MetaData key)
 {
+    DP0("S60MediaStreamControl::metaData");
+
     Q_UNUSED(streamNumber);
 
     if (m_control->session()) {
@@ -97,8 +138,16 @@ QVariant S60MediaStreamControl::metaData(int streamNumber, QtMultimediaKit::Meta
     return QVariant();
 }
 
+/*!
+    \return true if the media \a streamNumber is active else false.
+*/
+
 bool S60MediaStreamControl::isActive(int streamNumber)
 {
+    DP0("S60MediaStreamControl::isActive +++");
+
+    DP1("S60MediaStreamControl::isActive - ", streamNumber);
+
     if (m_control->mediaControlSettings().mediaType() ==  S60MediaSettings::Video) {
         switch (streamNumber) {
         case 1:
@@ -109,17 +158,44 @@ bool S60MediaStreamControl::isActive(int streamNumber)
             break;
         }
     }
+
+    DP0("S60MediaStreamControl::isActive ---");
+
     return m_control->isAudioAvailable();
 }
 
+/*!
+    Sets the active \a streamNumber of a media \a state.
+
+    Symbian MMF does not support enabling or disabling specific media streams.
+
+    Setting the active state of a media stream to true will activate it.  If any other stream
+    of the same type was previously active it will be deactivated. Setting the active state fo a
+    media stream to false will deactivate it.
+*/
+
 void S60MediaStreamControl::setActive(int streamNumber, bool state)
 {
+    DP0("S60MediaStreamControl::setActive +++");
+
+    DP2("S60MediaStreamControl::setActive - ", streamNumber, state);
+
     Q_UNUSED(streamNumber);
     Q_UNUSED(state);
     // Symbian MMF does not support enabling or disabling specific media streams
+
+    DP0("S60MediaStreamControl::setActive ---");
 }
+
+/*!
+     The signal is emitted when the available streams list is changed.
+*/
 
 void S60MediaStreamControl::handleStreamsChanged()
 {
+    DP0("S60MediaStreamControl::handleStreamsChanged +++");
+
     emit streamsChanged();
+
+    DP0("S60MediaStreamControl::handleStreamsChanged ---");
 }
