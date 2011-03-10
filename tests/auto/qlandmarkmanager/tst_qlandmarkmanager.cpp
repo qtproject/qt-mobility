@@ -86,6 +86,7 @@
 #include <QList>
 #include <QPair>
 #include <QVariant>
+#include <QSysInfo>
 
 #ifdef Q_OS_SYMBIAN
 #include <EPos_CPosLmDatabaseManager.h>
@@ -4313,11 +4314,27 @@ void tst_QLandmarkManager::filterLandmarksName() {
     //test contains
     nameFilter.setName("err");
     nameFilter.setMatchFlags(QLandmarkFilter::MatchContains);
-    QVERIFY(doFetch(type,nameFilter, &lms,QLandmarkManager::NoError));
-    QCOMPARE(lms.count(),3);
-    QCOMPARE(lms.at(0), lm5);
-    QCOMPARE(lms.at(1), lm6);
-    QCOMPARE(lms.at(2), lm8);
+
+#ifdef Q_OS_SYMBIAN
+    if (QSysInfo::s60Version() == QSysInfo::SV_S60_3_1
+        || QSysInfo::s60Version() == QSysInfo::SV_S60_3_2
+        || QSysInfo::s60Version() == QSysInfo::SV_S60_5_0) {
+        QVERIFY(doFetch(type,nameFilter, &lms,QLandmarkManager::NotSupportedError));
+        QCOMPARE(lms.count(),0);
+    } else {
+        QVERIFY(doFetch(type,nameFilter, &lms,QLandmarkManager::NoError));
+        QCOMPARE(lms.count(),3);
+        QCOMPARE(lms.at(0), lm5);
+        QCOMPARE(lms.at(1), lm6);
+        QCOMPARE(lms.at(2), lm8);
+    }
+#else
+        QVERIFY(doFetch(type,nameFilter, &lms,QLandmarkManager::NoError));
+        QCOMPARE(lms.count(),3);
+        QCOMPARE(lms.at(0), lm5);
+        QCOMPARE(lms.at(1), lm6);
+        QCOMPARE(lms.at(2), lm8);
+#endif
 
     //test fixed string
     nameFilter.setName("adel");
@@ -4343,7 +4360,17 @@ void tst_QLandmarkManager::filterLandmarksName() {
     //test no match
     nameFilter.setName("Washington");
     nameFilter.setMatchFlags(QLandmarkFilter::MatchContains);
+#ifdef Q_OS_SYMBIAN
+    if (QSysInfo::s60Version() == QSysInfo::SV_S60_3_1
+        || QSysInfo::s60Version() == QSysInfo::SV_S60_3_2
+        || QSysInfo::s60Version() == QSysInfo::SV_S60_5_0) {
+        QVERIFY(doFetch(type,nameFilter, &lms,QLandmarkManager::NotSupportedError));
+    } else {
+        QVERIFY(doFetch(type,nameFilter, &lms,QLandmarkManager::NoError));
+    }
+#else
     QVERIFY(doFetch(type,nameFilter, &lms,QLandmarkManager::NoError));
+#endif
     QCOMPARE(lms.count(),0);
 
     //TODO: symbian change the state of the request to finished
@@ -4398,6 +4425,28 @@ void tst_QLandmarkManager::filterLandmarksName() {
 
     //try contains empty string
     nameFilter.setMatchFlags(QLandmarkFilter::MatchContains);
+#ifdef Q_OS_SYMBIAN
+    if (QSysInfo::s60Version() == QSysInfo::SV_S60_3_1
+        || QSysInfo::s60Version() == QSysInfo::SV_S60_3_2
+        || QSysInfo::s60Version() == QSysInfo::SV_S60_5_0) {
+        QVERIFY(doFetch(type,nameFilter, &lms, QLandmarkManager::NotSupportedError));
+        QCOMPARE(lms.count(),0);
+    } else {
+        QVERIFY(doFetch(type,nameFilter, &lms, QLandmarkManager::NoError));
+        QCOMPARE(lms.count(),11);
+        QCOMPARE(lms.at(0), lm1);
+        QCOMPARE(lms.at(1), lm2);
+        QCOMPARE(lms.at(2), lm3);
+        QCOMPARE(lms.at(3), lm4);
+        QCOMPARE(lms.at(4), lm5);
+        QCOMPARE(lms.at(5), lm6);
+        QCOMPARE(lms.at(6), lm7);
+        QCOMPARE(lms.at(7), lm8);
+        QCOMPARE(lms.at(8), lm9);
+        QCOMPARE(lms.at(9), lmNoName1);
+        QCOMPARE(lms.at(10), lmNoName2);
+    }
+#else
     QVERIFY(doFetch(type,nameFilter, &lms, QLandmarkManager::NoError));
     QCOMPARE(lms.count(),11);
     QCOMPARE(lms.at(0), lm1);
@@ -4411,6 +4460,7 @@ void tst_QLandmarkManager::filterLandmarksName() {
     QCOMPARE(lms.at(8), lm9);
     QCOMPARE(lms.at(9), lmNoName1);
     QCOMPARE(lms.at(10), lmNoName2);
+#endif
 
     //try ends with an empty string
     nameFilter.setMatchFlags(QLandmarkFilter::MatchEndsWith);
@@ -6205,6 +6255,23 @@ void tst_QLandmarkManager::filterAttribute() {
     attributeFilter.setOperationType(QLandmarkAttributeFilter::OrOperation);
     attributeFilter.setAttribute("city", "adel", QLandmarkFilter::MatchFixedString);
     attributeFilter.setAttribute("description", "the summary", QLandmarkFilter::MatchStartsWith);
+
+#ifdef Q_OS_SYMBIAN
+    if (QSysInfo::s60Version() == QSysInfo::SV_S60_3_1
+        || QSysInfo::s60Version() == QSysInfo::SV_S60_3_2
+        || QSysInfo::s60Version() == QSysInfo::SV_S60_5_0) {
+        QVERIFY(doFetch(type,attributeFilter,&lms, QLandmarkManager::NotSupportedError));
+        QCOMPARE(lms.count(), 0);
+    } else {
+        QVERIFY(doFetch(type,attributeFilter,&lms));
+        QCOMPARE(lms.count(), 4);
+
+        QVERIFY(lms.contains(lm2));
+        QVERIFY(lms.contains(lm4));
+        QVERIFY(lms.contains(lm7));
+        QVERIFY(lms.contains(lm9));
+    }
+#else
     QVERIFY(doFetch(type,attributeFilter,&lms));
     QCOMPARE(lms.count(), 4);
 
@@ -6212,6 +6279,7 @@ void tst_QLandmarkManager::filterAttribute() {
     QVERIFY(lms.contains(lm4));
     QVERIFY(lms.contains(lm7));
     QVERIFY(lms.contains(lm9));
+#endif
 
 /*Undefined behaviour for empty QVariants
     //try an single empty qvariant for and and or
@@ -6279,7 +6347,6 @@ void tst_QLandmarkManager::filterAttribute() {
     address.setStreet("");
     lm10.setAddress(address);
     QVERIFY(m_manager->saveLandmark(&lm10));
-
 
     //try searching with empty strings
     attributeFilter.clearAttributes();
@@ -7003,41 +7070,53 @@ void tst_QLandmarkManager::importKml()
     QVERIFY(m_manager->removeCategory(cat3.categoryId()));
 
     QList<QLandmarkId> lmIds;
-    QVERIFY(doImport(type,
-                     "data/test.kml",
-                     QLandmarkManager::NoError,
-                     &lmIds,inputType,
-                     QLandmarkManager::Kml,
-                     transferOption,
-                     cat2.categoryId()));
-    QList<QLandmark> lms = m_manager->landmarks();
-    QLandmark lm1;
-    lm1.setName("w0");
-    lm1.setDescription("Test data");
-    lm1.setCoordinate(QGeoCoordinate(2.0,1.0,3));
+    if (QSysInfo::s60Version() == QSysInfo::SV_S60_3_1
+        || QSysInfo::s60Version() == QSysInfo::SV_S60_3_2
+        || QSysInfo::s60Version() == QSysInfo::SV_S60_5_0) {
+        QVERIFY(doImport(type,
+                         "data/test.kml",
+                         QLandmarkManager::NotSupportedError,
+                         &lmIds,inputType,
+                         QLandmarkManager::Kml,
+                         transferOption,
+                         cat2.categoryId()));
+    } else {
+        QVERIFY(doImport(type,
+                         "data/test.kml",
+                         QLandmarkManager::NoError,
+                         &lmIds,inputType,
+                         QLandmarkManager::Kml,
+                         transferOption,
+                         cat2.categoryId()));
+        QList<QLandmark> lms = m_manager->landmarks();
+        QLandmark lm1;
+        lm1.setName("w0");
+        lm1.setDescription("Test data");
+        lm1.setCoordinate(QGeoCoordinate(2.0,1.0,3));
 
-    QLandmark lm2;
-    lm2.setName("w1");
-    lm2.setCoordinate(QGeoCoordinate(1.0, 2.0,3));
+        QLandmark lm2;
+        lm2.setName("w1");
+        lm2.setCoordinate(QGeoCoordinate(1.0, 2.0,3));
 
-    QLandmark lm3;
-    lm3.setName("w2");
-    lm3.setDescription("Test data1");
-    lm3.setCoordinate(QGeoCoordinate(2.0,3.0,1));
+        QLandmark lm3;
+        lm3.setName("w2");
+        lm3.setDescription("Test data1");
+        lm3.setCoordinate(QGeoCoordinate(2.0,3.0,1));
 
-    if (transferOption == QLandmarkManager::AttachSingleCategory) {
-        lm1.addCategoryId(cat2.categoryId());
-        lm2.addCategoryId(cat2.categoryId());
-        lm3.addCategoryId(cat2.categoryId());
+        if (transferOption == QLandmarkManager::AttachSingleCategory) {
+            lm1.addCategoryId(cat2.categoryId());
+            lm2.addCategoryId(cat2.categoryId());
+            lm3.addCategoryId(cat2.categoryId());
+        }
+
+        for (int i=0; i < lms.count(); ++i) {
+            lms[i].setLandmarkId(QLandmarkId());
+        }
+
+        QVERIFY(lms.contains(lm1));
+        QVERIFY(lms.contains(lm2));
+        QVERIFY(lms.contains(lm3));
     }
-
-    for (int i=0; i < lms.count(); ++i) {
-        lms[i].setLandmarkId(QLandmarkId());
-    }
-
-    QVERIFY(lms.contains(lm1));
-    QVERIFY(lms.contains(lm2));
-    QVERIFY(lms.contains(lm3));
 
     static bool errorTestsDone = false;
     if (!errorTestsDone) {
@@ -7076,12 +7155,24 @@ void tst_QLandmarkManager::importKml()
 
         //malformed file
         QVERIFY(!m_manager->importLandmarks("data/malformed.kml", QLandmarkManager::Kml));
-        QCOMPARE(m_manager->error(), QLandmarkManager::ParsingError);
+        if (QSysInfo::s60Version() == QSysInfo::SV_S60_3_1
+            || QSysInfo::s60Version() == QSysInfo::SV_S60_3_2
+            || QSysInfo::s60Version() == QSysInfo::SV_S60_5_0) {
+            QCOMPARE(m_manager->error(), QLandmarkManager::NotSupportedError);
+        } else {
+            QCOMPARE(m_manager->error(), QLandmarkManager::ParsingError);
+        }
 
         importRequest.setFormat(QLandmarkManager::Kml);
         importRequest.setFileName("data/malformed.kml");
         importRequest.start();
-        QVERIFY(waitForAsync(spy, &importRequest, QLandmarkManager::ParsingError));
+        if (QSysInfo::s60Version() == QSysInfo::SV_S60_3_1
+            || QSysInfo::s60Version() == QSysInfo::SV_S60_3_2
+            || QSysInfo::s60Version() == QSysInfo::SV_S60_5_0) {
+            QVERIFY(waitForAsync(spy, &importRequest, QLandmarkManager::NotSupportedError));
+        } else {
+            QVERIFY(waitForAsync(spy, &importRequest, QLandmarkManager::ParsingError));
+        }
 
         errorTestsDone = true;
     }
@@ -7130,40 +7221,52 @@ void tst_QLandmarkManager::importKmz()
     QVERIFY(m_manager->removeCategory(cat3.categoryId()));
 
     QList<QLandmarkId> lmIds;
-    QVERIFY(doImport(type,
-                     "data/test.kmz",
-                     QLandmarkManager::NoError,
-                     &lmIds,inputType,
-                     QLandmarkManager::Kmz,
-                     transferOption,
-                     cat2.categoryId()));
-    QList<QLandmark> lms = m_manager->landmarks();
-    QLandmark lm1;
-    lm1.setName("w0");
-    lm1.setCoordinate(QGeoCoordinate(2.0,1.0,3));
 
-    QLandmark lm2;
-    lm2.setName("w1");
-    lm2.setCoordinate(QGeoCoordinate(1.0, 2.0,3));
+    if (QSysInfo::s60Version() == QSysInfo::SV_S60_3_1
+        || QSysInfo::s60Version() == QSysInfo::SV_S60_3_2
+        || QSysInfo::s60Version() == QSysInfo::SV_S60_5_0) {
+        QVERIFY(doImport(type,
+                         "data/test.kmz",
+                         QLandmarkManager::NotSupportedError,
+                         &lmIds,inputType,
+                         QLandmarkManager::Kmz,
+                         transferOption,
+                         cat2.categoryId()));
+    } else {
+        QVERIFY(doImport(type,
+                         "data/test.kmz",
+                         QLandmarkManager::NoError,
+                         &lmIds,inputType,
+                         QLandmarkManager::Kmz,
+                         transferOption,
+                         cat2.categoryId()));
+        QList<QLandmark> lms = m_manager->landmarks();
+        QLandmark lm1;
+        lm1.setName("w0");
+        lm1.setCoordinate(QGeoCoordinate(2.0,1.0,3));
 
-    QLandmark lm3;
-    lm3.setName("w2");
-    lm3.setCoordinate(QGeoCoordinate(2.0,3.0,1));
+        QLandmark lm2;
+        lm2.setName("w1");
+        lm2.setCoordinate(QGeoCoordinate(1.0, 2.0,3));
 
-    if (transferOption == QLandmarkManager::AttachSingleCategory) {
-        lm1.addCategoryId(cat2.categoryId());
-        lm2.addCategoryId(cat2.categoryId());
-        lm3.addCategoryId(cat2.categoryId());
+        QLandmark lm3;
+        lm3.setName("w2");
+        lm3.setCoordinate(QGeoCoordinate(2.0,3.0,1));
+
+        if (transferOption == QLandmarkManager::AttachSingleCategory) {
+            lm1.addCategoryId(cat2.categoryId());
+            lm2.addCategoryId(cat2.categoryId());
+            lm3.addCategoryId(cat2.categoryId());
+        }
+
+        for (int i=0; i < lms.count(); ++i) {
+            lms[i].setLandmarkId(QLandmarkId());
+        }
+
+        QVERIFY(lms.contains(lm1));
+        QVERIFY(lms.contains(lm2));
+        QVERIFY(lms.contains(lm3));
     }
-
-    for (int i=0; i < lms.count(); ++i) {
-        lms[i].setLandmarkId(QLandmarkId());
-    }
-
-    QVERIFY(lms.contains(lm1));
-    QVERIFY(lms.contains(lm2));
-    QVERIFY(lms.contains(lm3));
-
     static bool errorTestsDone = false;
     if (!errorTestsDone) {
         //no io device
@@ -7201,12 +7304,25 @@ void tst_QLandmarkManager::importKmz()
 
         //malformed file
         QVERIFY(!m_manager->importLandmarks("data/malformed.kmz", QLandmarkManager::Kmz));
-        QCOMPARE(m_manager->error(), QLandmarkManager::ParsingError);
+
+        if (QSysInfo::s60Version() == QSysInfo::SV_S60_3_1
+            || QSysInfo::s60Version() == QSysInfo::SV_S60_3_2
+            || QSysInfo::s60Version() == QSysInfo::SV_S60_5_0) {
+            QCOMPARE(m_manager->error(), QLandmarkManager::NotSupportedError);
+        } else {
+            QCOMPARE(m_manager->error(), QLandmarkManager::ParsingError);
+        }
 
         importRequest.setFormat(QLandmarkManager::Kmz);
         importRequest.setFileName("data/malformed.kmz");
         importRequest.start();
-        QVERIFY(waitForAsync(spy, &importRequest, QLandmarkManager::ParsingError)); //does not exist
+        if (QSysInfo::s60Version() == QSysInfo::SV_S60_3_1
+            || QSysInfo::s60Version() == QSysInfo::SV_S60_3_2
+            || QSysInfo::s60Version() == QSysInfo::SV_S60_5_0) {
+            QVERIFY(waitForAsync(spy, &importRequest, QLandmarkManager::NotSupportedError));
+        } else {
+            QVERIFY(waitForAsync(spy, &importRequest, QLandmarkManager::ParsingError));
+        }
 
         errorTestsDone = true;
     }
@@ -8475,16 +8591,24 @@ void tst_QLandmarkManager::fetchWaitForFinished()
     prefix = ":";
 #endif
     int fileLandmarksCount = 187;
-    QVERIFY(m_manager->importLandmarks(prefix + "data/AUS-PublicToilet-AustralianCapitalTerritory.gpx"));
-    QVERIFY(m_manager->importLandmarks(prefix + "data/AUS-PublicToilet-AustralianCapitalTerritory.gpx"));
-    QVERIFY(m_manager->importLandmarks(prefix + "data/AUS-PublicToilet-AustralianCapitalTerritory.gpx"));
-    QVERIFY(m_manager->importLandmarks(prefix + "data/AUS-PublicToilet-AustralianCapitalTerritory.gpx"));
-    QVERIFY(m_manager->importLandmarks(prefix + "data/AUS-PublicToilet-AustralianCapitalTerritory.gpx"));
-    QVERIFY(m_manager->importLandmarks(prefix + "data/AUS-PublicToilet-AustralianCapitalTerritory.gpx"));
-    QVERIFY(m_manager->importLandmarks(prefix + "data/AUS-PublicToilet-AustralianCapitalTerritory.gpx"));
-    QVERIFY(m_manager->importLandmarks(prefix + "data/AUS-PublicToilet-AustralianCapitalTerritory.gpx"));
+    int expectedLandmarksCount = 0;
+    int numImports = 8;
+    bool lowLandmarkNumber = false;
 
-    int expectedLandmarksCount = fileLandmarksCount * 8;
+#ifdef Q_OS_SYMBIAN
+    if (QSysInfo::s60Version() == QSysInfo::SV_S60_3_1
+        || QSysInfo::s60Version() == QSysInfo::SV_S60_3_2
+        || QSysInfo::s60Version() == QSysInfo::SV_S60_5_0) {
+        numImports=2;
+        lowLandmarkNumber = true;
+    }
+#endif
+
+    for (int i=0; i < numImports ; ++i) {
+        QVERIFY(m_manager->importLandmarks(prefix + "data/AUS-PublicToilet-AustralianCapitalTerritory.gpx"));
+    }
+
+    expectedLandmarksCount = fileLandmarksCount * numImports;
 
     QLandmarkFetchRequest fetchRequest(m_manager);
     QSignalSpy spy(&fetchRequest,SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
@@ -8517,7 +8641,8 @@ void tst_QLandmarkManager::fetchWaitForFinished()
 
 #ifdef Q_OS_SYMBIAN
      QList<QLandmarkId> ids = m_manager->landmarkIds();
-     QEXPECT_FAIL("", "MOBILITY-2275: Removal of a large number of landmarks results in DatabaseLockedError", Continue);
+     if (!lowLandmarkNumber)
+        QEXPECT_FAIL("", "MOBILITY-2275: Removal of a large number of landmarks results in DatabaseLockedError", Continue);
      QVERIFY(m_manager->removeLandmarks(ids));
 
      //need to workaround deletion of these landmarks for symbian
@@ -8547,11 +8672,20 @@ void tst_QLandmarkManager::supportedFormats() {
     QVERIFY(formats.at(0) == QLandmarkManager::Lmx);
 
     formats = m_manager->supportedFormats(QLandmarkManager::ImportOperation);
-    QCOMPARE(formats.count(), 4);
-    QVERIFY(formats.contains(QLandmarkManager::Gpx));
-    QVERIFY(formats.contains(QLandmarkManager::Lmx));
-    QVERIFY(formats.contains(QLandmarkManager::Kml));
-    QVERIFY(formats.contains(QLandmarkManager::Kmz));
+    if (QSysInfo::s60Version() == QSysInfo::SV_S60_3_1
+        || QSysInfo::s60Version() == QSysInfo::SV_S60_3_2) {
+        QCOMPARE(formats.count(), 1);
+        QVERIFY(formats.contains(QLandmarkManager::Lmx));
+    } else if (QSysInfo::s60Version() == QSysInfo::SV_S60_5_0) {
+        QCOMPARE(formats.count(), 2);
+        QVERIFY(formats.contains(QLandmarkManager::Lmx));
+        QVERIFY(formats.contains(QLandmarkManager::Gpx));
+    } else { //must be s60 5.2
+        QCOMPARE(formats.count(), 4);
+        QVERIFY(formats.contains(QLandmarkManager::Gpx));
+        QVERIFY(formats.contains(QLandmarkManager::Kml));
+        QVERIFY(formats.contains(QLandmarkManager::Kmz));
+    }
 #endif
 }
 
@@ -8567,7 +8701,17 @@ void tst_QLandmarkManager::filterSupportLevel() {
     QCOMPARE(m_manager->filterSupportLevel(nameFilter), QLandmarkManager::NativeSupport);
 
     nameFilter.setMatchFlags(QLandmarkFilter::MatchContains);
+#ifdef Q_OS_SYMBIAN
+    if (QSysInfo::s60Version() == QSysInfo::SV_S60_3_1
+        || QSysInfo::s60Version() == QSysInfo::SV_S60_3_2
+        || QSysInfo::s60Version() == QSysInfo::SV_S60_5_0) {
+        QCOMPARE(m_manager->filterSupportLevel(nameFilter), QLandmarkManager::NoSupport);
+    } else {
+        QCOMPARE(m_manager->filterSupportLevel(nameFilter), QLandmarkManager::NativeSupport);
+    }
+#else
     QCOMPARE(m_manager->filterSupportLevel(nameFilter), QLandmarkManager::NativeSupport);
+#endif
 
     nameFilter.setMatchFlags(QLandmarkFilter::MatchEndsWith);
     QCOMPARE(m_manager->filterSupportLevel(nameFilter), QLandmarkManager::NativeSupport);
