@@ -53,18 +53,18 @@ QTM_BEGIN_NAMESPACE
 
 // constructor
 CQGeoPositionInfoSourceS60::CQGeoPositionInfoSourceS60(QObject* aParent) : QGeoPositionInfoSource(aParent),
-    mCurrentModuleId(TUid::Null()),
-    mReqModuleId(TUid::Null()),
-    mDevStatusUpdateAO(NULL),
-    mReqUpdateAO(NULL),
-    mRegUpdateAO(NULL),
-    mSupportedMethods(PositioningMethod(0)),
-    mCurrentMethod(PositioningMethod(0)),
-    mListSize(0),
-    mMinUpdateInterval(0),
-    mStartUpdates(FALSE),
-    mRegularUpdateTimedOut(FALSE),
-    mModuleFlags(0)
+        mCurrentModuleId(TUid::Null()),
+        mReqModuleId(TUid::Null()),
+        mDevStatusUpdateAO(NULL),
+        mReqUpdateAO(NULL),
+        mRegUpdateAO(NULL),
+        mSupportedMethods(PositioningMethod(0)),
+        mCurrentMethod(PositioningMethod(0)),
+        mListSize(0),
+        mMinUpdateInterval(0),
+        mStartUpdates(FALSE),
+        mRegularUpdateTimedOut(FALSE),
+        mModuleFlags(0)
 {
     memset(mList, 0 , MAX_SIZE * sizeof(CPosMethodInfo));
 }
@@ -219,14 +219,14 @@ QGeoPositionInfo CQGeoPositionInfoSourceS60::lastKnownPosition(bool aFromSatelli
 int CQGeoPositionInfoSourceS60::minimumUpdateInterval() const
 {
     if (mCurrentModuleId == TUid::Null())
-        return 0;      
-        
-    return mMinUpdateInterval;  
-	
-	  /*TInt i = checkModule(mCurrentModuleId);  
+        return 0;
+
+    return mMinUpdateInterval;
+
+    /*TInt i = checkModule(mCurrentModuleId);
     if (i != -1)
-        return mList[i].mTimeToNextFix.Int64() / 1000;           //divide by 1000, to convert microsecond to milisecond
-        
+      return mList[i].mTimeToNextFix.Int64() / 1000;           //divide by 1000, to convert microsecond to milisecond
+
     return 0;*/
 }
 
@@ -258,14 +258,13 @@ void CQGeoPositionInfoSourceS60::updateAvailableTypes()
 //private function : to retrieve the index of the supplied module id from the mList array
 TInt CQGeoPositionInfoSourceS60::checkModule(TPositionModuleId aId)//const
 {
-	QMutexLocker locker(&m_mutex);
+    QMutexLocker locker(&m_mutex);
     TInt i;
     for (i = 0; i < mListSize; i++)
-        if (mList[i].mUid == aId)
-        {
+        if (mList[i].mUid == aId) {
             return i;
         }
-            
+
     return -1;
 }
 
@@ -273,7 +272,6 @@ TInt CQGeoPositionInfoSourceS60::checkModule(TPositionModuleId aId)//const
 //available,else returns the index of the default module
 TInt CQGeoPositionInfoSourceS60::getIndexPositionModule(TUint8 aBits, PositioningMethods aPosMethods) const
 {
-	
     TInt index, error;
 
     TPositionModuleId modID;
@@ -585,8 +583,7 @@ void CQGeoPositionInfoSourceS60::updateDeviceStatus(void)
         //module ID of the default module
         error = mPositionServer.GetDefaultModuleId(mCurrentModuleId);
 
-        if (error != KErrNone)
-        {
+        if (error != KErrNone) {
             mCurrentModuleId = TUid::Null();
             mMinUpdateInterval = 0;
         }
@@ -715,8 +712,8 @@ void CQGeoPositionInfoSourceS60::updatePosition(HPositionGenericInfo *aPosInfo, 
 // Returns the PositionServer handle
 RPositionServer& CQGeoPositionInfoSourceS60:: getPositionServer()
 {
-	  QMutexLocker locker(&m_mutex);
-	
+    QMutexLocker locker(&m_mutex);
+
     return mPositionServer;
 }
 
@@ -827,8 +824,8 @@ void CQGeoPositionInfoSourceS60::stopUpdates()
 
 void CQGeoPositionInfoSourceS60::setPreferredPositioningMethods(PositioningMethods aMethods)
 {
-		QMutexLocker locker(&m_mutex);
-		
+    QMutexLocker locker(&m_mutex);
+
     QGeoPositionInfoSource::setPreferredPositioningMethods(aMethods);
 
     PositioningMethods preferredMethod(PositioningMethods(0));
@@ -877,7 +874,7 @@ void CQGeoPositionInfoSourceS60::setPreferredPositioningMethods(PositioningMetho
         mRegUpdateAO = temp;
         mCurrentModuleId = mList[index].mUid ;
         mMinUpdateInterval = mList[index].mTimeToNextFix.Int64() / 1000;
-        
+
 
         index = checkModule(mCurrentModuleId);
 
@@ -899,11 +896,9 @@ void CQGeoPositionInfoSourceS60::setPreferredPositioningMethods(PositioningMetho
 
 void CQGeoPositionInfoSourceS60::setUpdateInterval(int aMilliSec)
 {
-	  QMutexLocker locker(&m_mutex);
-	  
-	  if (mRegUpdateAO) {
-    	
-    	
+    QMutexLocker locker(&m_mutex);
+
+    if (mRegUpdateAO) {
         int interval = mRegUpdateAO->setUpdateInterval(aMilliSec);
         // as the above set value can be minimum value so
         // assigning to the base class data member
