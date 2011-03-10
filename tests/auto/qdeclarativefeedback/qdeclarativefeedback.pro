@@ -1,4 +1,6 @@
-load(qttest_p4)
+TARGET = tst_qdeclarativefeedback
+CONFIG+=testcase
+
 include (../../../common.pri)
 QT += declarative network script
 CONFIG += mobility
@@ -15,8 +17,6 @@ symbian: {
 } else {
     DEFINES += SRCDIR=\\\"$$PWD\\\"
 }
-
-CONFIG += testcase
 
 OTHER_FILES += \
     data/hapticseffect.qml \
