@@ -109,34 +109,6 @@ void QBluetoothDeviceDiscoveryAgentPrivate::start()
         return;
     }
 
-#ifdef QTM_DEVICEDISCOVERY_DEBUG
-    qDebug() << "Looking up cached devices";
-#endif
-
-    QVariant p = propertiesReply.value()["Devices"];
-    QDBusArgument d = p.value<QDBusArgument>();
-    QStringList l; d >> l;
-    QString path;
-    foreach (path, l){        
-        OrgBluezDeviceInterface *device = new OrgBluezDeviceInterface(QLatin1String("org.bluez"), path,
-                                                                      QDBusConnection::systemBus());
-        QDBusPendingReply<QVariantMap> deviceReply = device->GetProperties();
-        deviceReply.waitForFinished();
-        if(deviceReply.isError())
-            continue;
-        QVariantMap v = deviceReply.value();
-        QString address = v.value("Address").toString();
-        v.insert(QLatin1String("Cached"), QVariant(true));
-#ifdef QTM_DEVICEDISCOVERY_DEBUG
-        qDebug() << "Cached Address: " << address << "Num UUIDs:" << v.value("UUIDs").toStringList().count();
-#endif
-        _q_deviceFound(address, v);
-    }
-
-#ifdef QTM_DEVICEDISCOVERY_DEBUG
-    qDebug() << "Starting discovery...";
-#endif
-
     QDBusPendingReply<> discoveryReply = adapter->StartDiscovery();
     if (discoveryReply.isError()) {
         delete adapter;

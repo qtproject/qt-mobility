@@ -118,7 +118,6 @@ public:
 
 private:
     void start(const QBluetoothAddress &address);
-    bool quickDiscovery(const QBluetoothAddress &address, const QBluetoothDeviceInfo &info);
     void stop();
 
 #ifdef QTM_SYMBIAN_BLUETOOTH

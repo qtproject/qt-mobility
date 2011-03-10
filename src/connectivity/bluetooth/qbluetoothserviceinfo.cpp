@@ -138,7 +138,8 @@ QTM_BEGIN_NAMESPACE
 
     Registers this service with the platforms service discovery protocol (SDP) implementation,
     making it findable by other devices when they perform service discovery.  Returns true if the
-    service is successfully registered, otherwise returns false.
+    service is successfully registered, otherwise returns false.  Once registered changes to the record
+    cannot be made.  The service must be unregistered and registered.
 */
 
 /*!

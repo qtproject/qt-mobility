@@ -80,6 +80,10 @@ RemoteSelector::RemoteSelector(QWidget *parent)
     ui->pairingBusy->setMovie(new QMovie(":/icons/pairing.gif"));
     ui->pairingBusy->hide();
 
+    ui->remoteDevices->clearContents();
+    ui->remoteDevices->setRowCount(0);
+
+
 }
 
 RemoteSelector::~RemoteSelector()
@@ -94,9 +98,6 @@ void RemoteSelector::startDiscovery(const QBluetoothUuid &uuid)
     ui->stopButton->setDisabled(false);
     if (m_discoveryAgent->isActive())
         m_discoveryAgent->stop();
-
-    ui->remoteDevices->clearContents();
-    ui->remoteDevices->setRowCount(0);
 
     m_discoveryAgent->setUuidFilter(uuid);
     m_discoveryAgent->start();

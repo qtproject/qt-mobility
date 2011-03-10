@@ -139,11 +139,6 @@ void QBluetoothServiceDiscoveryAgentPrivate::initL(const QBluetoothAddress &addr
 
 }
 
-bool QBluetoothServiceDiscoveryAgentPrivate::quickDiscovery(const QBluetoothAddress &address, const QBluetoothDeviceInfo &info)
-{
-    return false;
-}
-
 void QBluetoothServiceDiscoveryAgentPrivate::NextRecordRequestComplete(TInt aError, TSdpServRecordHandle aHandle, TInt aTotalRecordsCount)
 {
   qDebug() << "NextRecordRequestComplete";
