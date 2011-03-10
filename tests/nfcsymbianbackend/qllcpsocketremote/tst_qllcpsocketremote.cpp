@@ -210,14 +210,14 @@ void tst_qllcpsocketremote::mulitpleServer()
         longStr2k.append((char)(i%26 + 'b'));
 
     QSignalSpy readyReadSpy(&remoteSocket, SIGNAL(readyRead()));
-    QString message("mulitpleServer 1: Wait multiple msg comming");
+    QString message("mulitpleServer 1: Wait multiple msg coming");
     QNfcTestUtil::ShowAutoMsg(message, &readyReadSpy);
 
     QByteArray inPayload;
     readMessage(remoteSocket,inPayload);
 
     QSignalSpy readyReadSpy2(&remoteSocket, SIGNAL(readyRead()));
-    QString message2("mulitpleServer 2: Wait multiple msg comming");
+    QString message2("mulitpleServer 2: Wait multiple msg coming");
     QNfcTestUtil::ShowAutoMsg(message2, &readyReadSpy2);
 
     QByteArray inPayload2;
@@ -247,7 +247,7 @@ void tst_qllcpsocketremote::echoServer()
     bool ret = remoteSocket.bind(m_port);
     QVERIFY(ret);
 
-    QString message("Test 1: Wait client msg comming");
+    QString message("Test 1: Wait client msg coming");
     QNfcTestUtil::ShowAutoMsg(message, &readyReadSpy);
 
     // STEP 2: Receive data from the peer which send messages to
@@ -376,7 +376,7 @@ void tst_qllcpsocketremote::multiConnection()
 
     while(loopCount < KLoopCount)
         {
-        QString message("Test 1: Wait client msg comming");
+        QString message("Test 1: Wait client msg coming");
         QNfcTestUtil::ShowAutoMsg(message, &readyReadSpy);
 
         // STEP 2: Receive data from the peer which send messages to

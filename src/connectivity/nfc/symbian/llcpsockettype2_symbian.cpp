@@ -44,7 +44,7 @@
 
 #include "debug.h"
 
-/*!
+/*
     CLlcpSocketType2::ContructL()
 */
 void CLlcpSocketType2::ConstructL()
@@ -56,7 +56,7 @@ void CLlcpSocketType2::ConstructL()
     END
     }
 
-/*!
+/*
     CLlcpSocketType2::CLlcpSocketType2()
 */
 CLlcpSocketType2::CLlcpSocketType2(MLlcpConnOrientedTransporter* aTransporter, QtMobility::QLlcpSocketPrivate* aCallback)
@@ -89,7 +89,7 @@ CLlcpSocketType2* CLlcpSocketType2::NewL(MLlcpConnOrientedTransporter* aTranspor
     return self;
     }
 
-/*!
+/*
     Destroys the LLCP socket.
 */
 CLlcpSocketType2::~CLlcpSocketType2()
@@ -108,7 +108,7 @@ CLlcpSocketType2::~CLlcpSocketType2()
     END
     }
 
-/*!
+/*
     Connects to the service identified by the URI \a serviceUri (on \a target).
 */
 void CLlcpSocketType2::ConnectToServiceL( const QString &serviceUri)
@@ -134,7 +134,7 @@ void CLlcpSocketType2::ConnectToServiceL( const TDesC8& aServiceName)
     END
     }
 
-/*!
+/*
     Disconnects the socket.
 */
 
@@ -172,7 +172,7 @@ TInt CLlcpSocketType2::DisconnectFromService()
     return KErrNone;
     }
 
-/*!
+/*
     Sends the datagram at aData  to the service that this socket is connected to.
     Returns the number of bytes sent on success; otherwise return -1;
 */
@@ -489,7 +489,7 @@ CLlcpConnecterAO::CLlcpConnecterAO( MLlcpConnOrientedTransporter& aConnection, C
       iConnState( ENotConnected )
     {
     }
-/*!
+/*
     ConstructL
 */
 void CLlcpConnecterAO::ConstructL()
@@ -507,7 +507,7 @@ void CLlcpConnecterAO::ConstructL()
     END
     }
 
-/*!
+/*
  * Destructor.
  */
 CLlcpConnecterAO::~CLlcpConnecterAO()
@@ -520,7 +520,7 @@ CLlcpConnecterAO::~CLlcpConnecterAO()
         }
     END
     }
-/*!
+/*
  * Connect to remote peer as given service uri.
  */
 void CLlcpConnecterAO::ConnectL(const TDesC8& /*aServiceName*/)
@@ -538,7 +538,7 @@ void CLlcpConnecterAO::ConnectL(const TDesC8& /*aServiceName*/)
     END
     }
 
-/*!
+/*
  * Disconnect with remote peer.
  */
 void CLlcpConnecterAO::Disconnect()
@@ -662,7 +662,7 @@ CLlcpSenderAO::CLlcpSenderAO( MLlcpConnOrientedTransporter& aConnection, CLlcpSo
       iSocket( aSocket )
     {
     }
-/*!
+/*
     ConstructL
 */
 void CLlcpSenderAO::ConstructL()
@@ -672,7 +672,7 @@ void CLlcpSenderAO::ConstructL()
     END
     }
 
-/*!
+/*
  * Destructor.
  */
 CLlcpSenderAO::~CLlcpSenderAO()
@@ -685,7 +685,7 @@ CLlcpSenderAO::~CLlcpSenderAO()
     iCurrentSendBuf.Close();
     END
     }
-/*!
+/*
  * Transfer given data to remote device.
  */
 TInt CLlcpSenderAO::Send( const TDesC8& aData )
@@ -895,7 +895,7 @@ CLlcpReceiverAO::CLlcpReceiverAO( MLlcpConnOrientedTransporter& aConnection, CLl
       iSocket( aSocket )
     {
     }
-/*!
+/*
     ConstructL
 */
 void CLlcpReceiverAO::ConstructL()
@@ -905,7 +905,7 @@ void CLlcpReceiverAO::ConstructL()
     END
     }
 
-/*!
+/*
  * Destructor.
  */
 CLlcpReceiverAO::~CLlcpReceiverAO()

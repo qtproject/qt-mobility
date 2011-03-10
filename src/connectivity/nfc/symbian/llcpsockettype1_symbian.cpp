@@ -529,7 +529,7 @@ TInt COwnLlcpConnectionWrapper::TransferL(const TDesC8& aData)
     {
     BEGIN
     TInt error = KErrNone;
-    // Pass message into transmiter AO
+    // Pass message into transmitter AO
     if (!iSenderAO->IsActive())
         {
         error = iSenderAO->Transfer(aData);
@@ -781,7 +781,7 @@ CLlcpReceiverType1* CLlcpReceiverType1::NewL(MLlcpConnLessTransporter& aConnecti
 
 /*
     Set active for the receiver AO
-    Receive complete callback function "cb" registed
+    Receive complete callback function "cb" registered
 */
 TInt CLlcpReceiverType1::Receive()
     {

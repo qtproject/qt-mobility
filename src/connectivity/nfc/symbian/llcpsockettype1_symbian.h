@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -46,7 +46,7 @@
 #include <nfcserver.h>                      // RNfcServer
 #include <llcpconnlesslistener.h>           // MLlcpConnLessListener
 
-/*!
+/*
  *   FORWARD DECLARATIONS
  */
 class COwnLlcpConnectionWrapper;
@@ -63,19 +63,19 @@ class MLlcpReadWriteCb
     {
 public:
 
-    /**
+    /*
      * Empty Destructor.
      */
     virtual ~MLlcpReadWriteCb() {};
 
-    /**
+    /*
      * Called
      */
     virtual void ReceiveComplete(TInt aError) = 0;
     virtual void WriteComplete(TInt aError, TInt aSize) = 0;
     };
 
-/*!
+/*
  *  CLASS DECLARATION for CLlcpSocketType1 (ConnectLess Tran).
  */
 class CLlcpSocketType1 : public CBase,
@@ -83,17 +83,17 @@ class CLlcpSocketType1 : public CBase,
                          public MLlcpReadWriteCb
    {
 public:
-   /*!
+   /*
     * Creates a new CLlcpSocketType1 object.
     */
    static CLlcpSocketType1* NewL(QtMobility::QLlcpSocketPrivate&);
 
-   /*!
+   /*
     * Creates a new CLlcpSocketType1 object.
     */
    static CLlcpSocketType1* NewLC(QtMobility::QLlcpSocketPrivate&);
 
-   /*!
+   /*
     * Destructor
     */
    ~CLlcpSocketType1();
@@ -104,7 +104,7 @@ public:
    TInt ReadDatagram(TDes8& aData, TUint8& aRemotePortNum);
    TBool Bind(TUint8 portNum);
 
-   /*!
+   /*
        Returns true if at least one datagram is waiting to be read;
        otherwise returns false.
    */
@@ -142,19 +142,19 @@ private:
     TInt StartTransportAndReceive(MLlcpConnLessTransporter* aConnection);
 
 private:
-   /*!
+   /*
     * Handle to NFC-server.
     * Own.
     */
    RNfcServer iNfcServer;
 
-   /*!
+   /*
     * Pointer to CLlcpProvider object.
     * Own.
     */
    CLlcpProvider* iLlcp;   // Own
 
-   /*!
+   /*
     * Pointer to MLlcpConnLessTransporter object.
     * Own.
     *
@@ -173,7 +173,7 @@ private:
    QtMobility::QLlcpSocketPrivate& iCallback;
    };
 
-/*!
+/*
  *  CLASS DECLARATION for COwnLlcpConnectionWrapper.
  *
  */
@@ -181,25 +181,25 @@ class COwnLlcpConnectionWrapper : public CBase
     {
 public:
 
-   /*!
+   /*
     * Creates a new COwnLlcpConnection object.
     */
    static COwnLlcpConnectionWrapper* NewL(MLlcpConnLessTransporter* aTransporter
                                           , MLlcpReadWriteCb& aCallBack);
 
-   /*!
+   /*
     * Creates a new COwnLlcpConnection object.
     */
    static COwnLlcpConnectionWrapper* NewLC(MLlcpConnLessTransporter* aTransporter
                                            , MLlcpReadWriteCb& aCallBack);
 
-   /*!
+   /*
     * Destructor.
     */
    ~COwnLlcpConnectionWrapper();
 
 public:
-   /*!
+   /*
     * Transfer given data to remote device.
     */
    TInt TransferL(const TDesC8& aData);
@@ -207,7 +207,7 @@ public:
    void TransferCancel();
    TInt Receive();
 
-   /*!
+   /*
     * Cancels COwnLlcpConnection::Receive() request.
     */
    void ReceiveCancel();
@@ -239,13 +239,13 @@ public:
     ~CLlcpSenderType1();
 
 public:
-    /*!
+    /*
      * Transfer given data to remote device.
      */
     TInt Transfer(const TDesC8& aData);
 
-    /*!
-     * Cancels COwnLlcpConnection::Tranfer() request.
+    /*
+     * Cancels COwnLlcpConnection::Transfer() request.
      */
     void TransferCancel();
 
@@ -256,7 +256,7 @@ public: // From CActive
 private:
     CLlcpSenderType1(MLlcpConnLessTransporter& aConnection, MLlcpReadWriteCb& aCallBack);
 private:
-    /*!
+    /*
          Buffered data for transmitting data.
      */
     MLlcpConnLessTransporter& iConnection;
@@ -276,12 +276,12 @@ public:
     ~CLlcpReceiverType1();
 
 public:
-    /*!
+    /*
      * Starts receive data from ConnLess.
      */
     TInt Receive();
 
-    /*!
+    /*
      * Cancels COwnLlcpConnection::Receive() request.
      */
     void ReceiveCancel();

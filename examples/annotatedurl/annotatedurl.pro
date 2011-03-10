@@ -1,4 +1,4 @@
-include(../examples.pri)
+include($$PWD/../examples.pri)
 
 CONFIG += mobility strict_flags
 MOBILITY += connectivity

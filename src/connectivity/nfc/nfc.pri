@@ -40,6 +40,8 @@ SOURCES += \
     nfc/qllcpserver.cpp
 
 maemo6|meego {
+    NFC_BACKEND_AVAILABLE = yes
+
     QT *= dbus
 
     DBUS_INTERFACES += \
@@ -93,6 +95,8 @@ maemo6|meego {
 }
 
 simulator {
+    NFC_BACKEND_AVAILABLE = yes
+
     QT *= gui
 
     PRIVATE_HEADERS += \
@@ -108,38 +112,9 @@ simulator {
         nfc/qllcpserver_simulator_p.cpp
 }
 
-!meego:!maemo6:!simulator:!symbian {
-    # unsupported platform stub
+contains(nfc_symbian_enabled, yes):symbian {
+    NFC_BACKEND_AVAILABLE = yes
 
-    PRIVATE_HEADERS += \
-        nfc/qllcpsocket_p.h \
-        nfc/qllcpserver_p.h \
-        nfc/qnearfieldmanagerimpl_p.h
-
-    SOURCES += \
-        nfc/qllcpsocket_p.cpp \
-        nfc/qllcpserver_p.cpp \
-        nfc/qnearfieldmanagerimpl_p.cpp
-}
-
-INCLUDEPATH += $$PWD
-
-contains(nfc_enabled,no):symbian {
-    # unsupported platform stub
-    
-    PRIVATE_HEADERS += \
-        nfc/qllcpsocket_p.h \
-        nfc/qllcpserver_p.h \
-        nfc/qnearfieldmanagerimpl_p.h
-
-    SOURCES += \
-        nfc/qllcpsocket_p.cpp \
-        nfc/qllcpserver_p.cpp \
-        nfc/qnearfieldmanagerimpl_p.cpp
-}
-
-    
-contains(nfc_enabled, yes):symbian {
     MOBILITY = serviceframework
     INCLUDEPATH += $$SOURCE_DIR/src/serviceframework
     qtAddLibrary(QtServiceFramework)
@@ -162,7 +137,7 @@ contains(nfc_enabled, yes):symbian {
         nfc/symbian/nearfieldutility_symbian.h \
         nfc/symbian/llcpserver_symbian.h \
         nfc/symbian/llcpsockettype1_symbian.h \
-        nfc/symbian/llcpsockettype2_symbian.h \        
+        nfc/symbian/llcpsockettype2_symbian.h \
         nfc/symbian/nearfieldtagimpl_symbian.h \
         nfc/symbian/nearfieldtagasyncrequest_symbian.h \
         nfc/symbian/nearfieldtagndefoperationcallback_symbian.h \
@@ -184,14 +159,14 @@ contains(nfc_enabled, yes):symbian {
         nfc/qnearfieldtagtype4_symbian.cpp \
         nfc/qnearfieldtagmifare_symbian.cpp \
         nfc/qnearfieldllcpdevice_symbian.cpp \
-        nfc/symbian/nearfieldmanager_symbian.cpp \	
+        nfc/symbian/nearfieldmanager_symbian.cpp \
         nfc/symbian/nearfieldtag_symbian.cpp \
         nfc/symbian/nearfieldndeftarget_symbian.cpp \
         nfc/symbian/nearfieldtargetfactory_symbian.cpp \
         nfc/symbian/nearfieldutility_symbian.cpp \
         nfc/symbian/llcpserver_symbian.cpp \
         nfc/symbian/llcpsockettype1_symbian.cpp \
-        nfc/symbian/llcpsockettype2_symbian.cpp \        
+        nfc/symbian/llcpsockettype2_symbian.cpp \
         nfc/symbian/nearfieldtagasyncrequest_symbian.cpp \
         nfc/symbian/nearfieldtagndefrequest_symbian.cpp \
         nfc/symbian/nearfieldtagcommandrequest_symbian.cpp \
@@ -202,3 +177,19 @@ contains(nfc_enabled, yes):symbian {
 
     LIBS += -lnfc -lndef -lndefaccess -lnfcdiscoveryservice -lllcp -lnfctagextension
 }
+
+isEmpty(NFC_BACKEND_AVAILABLE) {
+    # unsupported platform stub
+
+    PRIVATE_HEADERS += \
+        nfc/qllcpsocket_p.h \
+        nfc/qllcpserver_p.h \
+        nfc/qnearfieldmanagerimpl_p.h
+
+    SOURCES += \
+        nfc/qllcpsocket_p.cpp \
+        nfc/qllcpserver_p.cpp \
+        nfc/qnearfieldmanagerimpl_p.cpp
+}
+
+INCLUDEPATH += $$PWD

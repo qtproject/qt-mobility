@@ -111,6 +111,7 @@ QMKSPEC=
 OS="other"
 # By default, all modules are requested.  Reset this later if -modules is supplied
 ORGANIZER_REQUESTED=yes
+NFC_SYMBIAN=auto
 
 usage() 
 {
@@ -161,6 +162,7 @@ usage()
     echo "                    (default is empty)"
     echo "-qmake-exec <name>  Sets custom binary name for qmake binary"
     echo "                    (default: qmake)"
+    echo "-no-nfc-symbian     Disables the NFC Sybmian backend."
 #    echo "-staticconfig <name>"
 #    echo "                    Avoids running of configuration tests. The default"
 #    echo "                    values are sourced from features/platformconfig/<name>.pri"
@@ -287,6 +289,9 @@ while [ "$#" -gt 0 ]; do
         -languages)
             LANGUAGES=$2
             shift
+            ;;
+        -no-nfc-symbian)
+            NFC_SYMBIAN=no
             ;;
         *)
             echo "Unknown option: $1"
@@ -588,7 +593,12 @@ if [ -z "$PLATFORM_CONFIG" ]; then
     compileTest "Pulse Audio" pulseaudio
     compileTest "udev" udev
     compileTest "iphb" iphb
-    compileTest "Symbian NFC" nfc
+
+    if [ "$NFC_SYMBIAN" = auto ]; then
+        compileTest "Symbian NFC" nfc_symbian
+    else
+        echo "nfc_symbian_enabled = no" >> "$CONFIG_IN"
+    fi
 
     if [ "$LINUX_TARGET" = maemo6 ] || [ "$LINUX_TARGET" = meego ]; then
         compileTest sensord sensord
