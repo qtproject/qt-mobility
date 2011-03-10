@@ -73,12 +73,14 @@
 #define RD_STARTUP_CHANGE
 #include <startupdomainpskeys.h>
 #include <hwrmlight.h>
-#ifdef SYMBIAN_3_PLATFORM
-#include <hwrmfmtx.h>
-#include <avkondomainpskeys.h>
-#include <hwrmdomainpskeys.h>
-#include <AvkonInternalCRKeys.h>
-#include <AknFepInternalPSKeys.h>
+#ifdef FMTXCLIENT_SUPPORTED
+ #include <hwrmfmtx.h>
+#endif
+#ifdef LOCKANDFLIP_SUPPORTED
+ #include <avkondomainpskeys.h>
+ #include <hwrmdomainpskeys.h>
+ #include <AvkonInternalCRKeys.h>
+ #include <AknFepInternalPSKeys.h>
 #endif
 #include <e32debug.h>
 #include <QCryptographicHash>
@@ -384,7 +386,7 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
         }
         case QSystemInfo::FmTransmitterFeature:
         {
-#ifdef SYMBIAN_3_PLATFORM
+#ifdef FMTXCLIENT_SUPPORTED
             TRAPD(err,
                 //Leaves with KErrNotSupported if device doesn't support FmTransmitter feature.
                 CHWRMFmTx *fmTX = CHWRMFmTx::NewL();
@@ -984,7 +986,7 @@ QSystemStorageInfoPrivate::QSystemStorageInfoPrivate(QObject *parent)
     iFs.Connect();
     DeviceInfo::instance()->mmcStorageStatus()->addObserver(this);
 
-#ifdef SYMBIAN_3_PLATFORM
+#ifdef DISKNOTIFY_SUPPORTED
     CStorageDiskNotifier* storageNotifier = DeviceInfo::instance()->storagedisknotifier();
     if (storageNotifier != NULL){
         storageNotifier->AddObserver(this);
@@ -996,7 +998,7 @@ QSystemStorageInfoPrivate::~QSystemStorageInfoPrivate()
 {
     iFs.Close();
     DeviceInfo::instance()->mmcStorageStatus()->removeObserver(this);
-#ifdef SYMBIAN_3_PLATFORM
+#ifdef DISKNOTIFY_SUPPORTED
     CStorageDiskNotifier* storageNotifier = DeviceInfo::instance()->storagedisknotifier();
     if (storageNotifier != NULL){
         storageNotifier->RemoveObserver(this);
@@ -1107,7 +1109,7 @@ void QSystemStorageInfoPrivate::storageStatusChanged(bool added, const QString &
     emit logicalDriveChanged(added, aDriveVolume);
 };
 
-#ifdef SYMBIAN_3_PLATFORM
+#ifdef DISKNOTIFY_SUPPORTED
 void QSystemStorageInfoPrivate::DiskSpaceChanged(const QString &aDriveVolume)
 {
     QSystemStorageInfo::StorageState state = CheckDiskSpaceThresholdLimit(aDriveVolume);
@@ -1183,7 +1185,7 @@ QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QObject *parent)
     DeviceInfo::instance()->batteryInfo()->addObserver(this);
     DeviceInfo::instance()->chargingStatus()->addObserver(this);
     m_previousBatteryStatus = QSystemDeviceInfo::NoBatteryLevel;
-#ifdef SYMBIAN_3_PLATFORM
+#ifdef LOCKANDFLIP_SUPPORTED
     DeviceInfo::instance()->keylockStatus()->addObserver(this);
     DeviceInfo::instance()->flipStatus()->addObserver(this);
 #endif
@@ -1195,7 +1197,7 @@ QSystemDeviceInfoPrivate::~QSystemDeviceInfoPrivate()
 {
     DeviceInfo::instance()->chargingStatus()->removeObserver(this);
     DeviceInfo::instance()->batteryInfo()->removeObserver(this);
-#ifdef SYMBIAN_3_PLATFORM
+#ifdef LOCKANDFLIP_SUPPORTED
     DeviceInfo::instance()->keylockStatus()->removeObserver(this);
     DeviceInfo::instance()->flipStatus()->removeObserver(this);
 #endif
@@ -1474,7 +1476,7 @@ QSystemDeviceInfo::KeyboardTypeFlags QSystemDeviceInfoPrivate::keyboardTypes()
     QSystemDeviceInfo::InputMethodFlags methods = inputMethodType();
     QSystemDeviceInfo::KeyboardTypeFlags keyboardFlags = QSystemDeviceInfo::UnknownKeyboard;
 
-#ifdef SYMBIAN_3_PLATFORM
+#ifdef LOCKANDFLIP_SUPPORTED
     TInt kbType = 0;
     if (methods & QSystemDeviceInfo::Keyboard ) {
     TRAP_IGNORE(
@@ -1532,7 +1534,7 @@ bool QSystemDeviceInfoPrivate::isWirelessKeyboardConnected()
 
 bool QSystemDeviceInfoPrivate::isKeyboardFlippedOpen()
 {
-#ifdef SYMBIAN_3_PLATFORM
+#ifdef LOCKANDFLIP_SUPPORTED
     // It is functional only for the Grip open devices
     return ( (DeviceInfo::instance()->flipStatus()->getFlipStatus()) && (DeviceInfo::instance()->flipStatus()->getKeyboardStatus())  );
 #else
@@ -1588,7 +1590,7 @@ QSystemDeviceInfo::LockTypeFlags QSystemDeviceInfoPrivate::lockStatus()
 {
     QSystemDeviceInfo::LockTypeFlags status = QSystemDeviceInfo::UnknownLock;
 
-#ifdef SYMBIAN_3_PLATFORM
+#ifdef LOCKANDFLIP_SUPPORTED
     int value = DeviceInfo::instance()->keylockStatus()->getLockStatus();
     switch ( value ){
              /*case EKeyguardNotActive:
@@ -1608,7 +1610,7 @@ QSystemDeviceInfo::LockTypeFlags QSystemDeviceInfoPrivate::lockStatus()
     return status;
 }
 
-#ifdef SYMBIAN_3_PLATFORM
+#ifdef LOCKANDFLIP_SUPPORTED
 void QSystemDeviceInfoPrivate::keylockStatusChanged(TInt aLockType)
 {
     if (aLockType == EKeyguardLocked){

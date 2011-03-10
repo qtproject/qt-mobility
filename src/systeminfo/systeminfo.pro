@@ -198,10 +198,27 @@ unix:!simulator {
 
         contains(S60_VERSION, 5.2){
           DEFINES += SYMBIAN_3_PLATFORM
-          SOURCES += lockandflipstatus_s60.cpp \
-                     storagedisknotifier_s60.cpp
-          HEADERS += lockandflipstatus_s60.h \
-                     storagedisknotifier_s60.h
+        }
+
+        contains(LockandFlipPSkeys_enabled,yes){
+             message("LockandFlipPSKeys available")
+             DEFINES += LOCKANDFLIP_SUPPORTED
+             SOURCES += lockandflipstatus_s60.cpp
+             HEADERS += lockandflipstatus_s60.h
+        }
+
+        contains(FmTxClient_enabled,yes){
+             message("FmTxClient available")
+             DEFINES += FMTXCLIENT_SUPPORTED
+             LIBS += -lhwrmfmtxclient
+        }
+
+        contains(DiskNotifyClient_enabled,yes){
+             message("DiskNotiferClient available")
+             DEFINES += DISKNOTIFY_SUPPORTED
+             LIBS += -ldisknotifyhandler
+             SOURCES += storagedisknotifier_s60.cpp
+             HEADERS += storagedisknotifier_s60.h
         }
 
         contains(hb_symbian_enabled,yes) {
@@ -259,8 +276,6 @@ unix:!simulator {
 
         contains(S60_VERSION, 5.1) | contains(S60_VERSION, 5.2) {
             LIBS += -lhwrmpowerclient \
-            -ldisknotifyhandler \
-            -lhwrmfmtxclient \
             -lusbman
         }
 
