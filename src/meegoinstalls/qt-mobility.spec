@@ -493,7 +493,7 @@ find %{buildroot}%{_libdir}/qtmobility -type f -perm /u+x,g+x,o+x \( -false \
 -o -name \*.sci \
 -o -name qmldir \
 -o -name \*.txt \
-\) | xargs chmod -x
+\) -exec chmod -x \{\} +
 # Fix duplicate files
 %fdupes %{buildroot}%{_includedir}
 %fdupes %{buildroot}%{_libdir}/qtmobility
