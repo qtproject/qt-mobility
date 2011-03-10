@@ -58,7 +58,6 @@
 #include <e32base.h>
 #include <lbs.h>
 #include <qmutex.h>
-#include <qsemaphore.h>
 #include "qgeopositioninfosource.h"
 #include "qmlbackendao_s60_p.h"
 #include "notificationcallback_s60_p.h"
@@ -100,7 +99,7 @@ public:
  *
  */
 class CQGeoPositionInfoSourceS60 : public INotificationCallback,
-            public QGeoPositionInfoSource
+        public QGeoPositionInfoSource
 
 {
 public:
@@ -147,9 +146,9 @@ public:
     PositioningMethods supportedPositioningMethods() const {
         return mSupportedMethods;
     }
-    
-    
-    //Applications using qt api's should avoid calling below methods as it is 
+
+
+    //Applications using qt api's should avoid calling below methods as it is
     //used internally by CQGeoPositionInfoSourceS60 for maintaining different states
 
     /**
@@ -275,16 +274,15 @@ private:
      * maintaiss the size of thr CPosMethodInfo array
      */
     int mListSize;
-    
+
     int mMinUpdateInterval;
 
     /*
      * query for the status
      */
-    TPositionModuleStatusEvent  mStatusEvent;
+    TPositionModuleStatusEvent mStatusEvent;
 
-    QSemaphore 	m_semaphore;
-    QMutex 			m_mutex;
+    QMutex m_mutex;
 
     /*
      * maintain the startUpdates status
@@ -296,7 +294,7 @@ private:
     /*
      * flags for the modules
      */
-    TUint8  mModuleFlags;
+    TUint8 mModuleFlags;
 };
 
 QTM_END_NAMESPACE
