@@ -635,6 +635,13 @@ void QSystemNetworkInfoPrivate::setupNetworkInfo()
 
         currentCellNetworkStatus = csStatusMaemo6.value(status, -1);
 
+        /* CSD: data technology */
+        QDBusInterface ifc5(service, servicePath, "com.nokia.csd.CSNet.RadioAccess", systemDbusConnection);
+
+        QVariant dataTechnology = ifc5.property("DataTechnology");
+        QString dt = dataTechnology.isValid() ? dataTechnology.value<QString>() : "";
+        currentCellDataTechnology = csdtToCellDataTechnology(dt)
+
         /* Signal handlers */
         if (!systemDbusConnection.connect(service, servicePath, "com.nokia.csd.CSNet.SignalStrength", "SignalStrengthChanged",
                                          this, SLOT(slotSignalStrengthChanged(int, int)))) {
@@ -656,6 +663,11 @@ void QSystemNetworkInfoPrivate::setupNetworkInfo()
                                          this, SLOT(slotCellChanged(const QString&,int,int)))) {
             qDebug() << "unable to connect CellChanged";
         }
+        if (!systemDbusConnection.connect(service, servicePath, "com.nokia.csd.CSNet.RadioAccess", "DataTechnologyChanged",
+                                         this, SLOT(cellDataTechnologyChanged(const QString&)))) {
+            qDebug() << "unable to connect DataTechnologyChanged";
+        }
+
     #else
     /* Maemo 5 */
     QDBusInterface connectionInterface("com.nokia.phone.net",
@@ -846,7 +858,32 @@ void QSystemNetworkInfoPrivate::slotCellChanged(const QString &type, int id, int
     }
 }
 
+void QSystemNetworkInfoPrivate::cellDataTechnologyChanged(const QString &tech)
+{
+    QSystemNetworkInfo::CellDataTechnology cdt = csdtToCellDataTechnology(tech);
+    if(cdt != currentCellDataTechnology) {
+        currentCellDataTechnology = cdt;
+        Q_EMIT cellDataTechnologyChanged(currentCellDataTechnology);
+    }
+}
+
 #endif /* Maemo 6 */
+
+inline QSystemNetworkInfo::CellDataTechnology csdtToCellDataTechnology(const QString &tech)
+{
+    QSystemNetworkInfo::CellDataTechnology cdt = QSystemNetworkInfo::UnknownDataTechnology;
+    if (tech == "GPRS") {
+        cdt = QSystemNetworkInfo::GprsDataTechnology;
+    } else if (tech == "EGPRS") {
+        cdt = QSystemNetworkInfo::EdgeDataTechnology;
+    } else if (tech == "UMTS") {
+        cdt = QSystemNetworkInfo::UmtsDataTechnology;
+    } else if (tech == "HSPA") {
+        cdt = QSystemNetworkInfo::HspaDataTechnology;
+    }
+    return cdt;
+}
+
 
 #if defined(Q_WS_MAEMO_5)
 // Slots only available in Maemo5
