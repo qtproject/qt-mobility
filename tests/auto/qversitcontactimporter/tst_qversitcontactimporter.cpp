@@ -636,6 +636,7 @@ void tst_QVersitContactImporter::testAnniversary()
     QContact contact = mImporter->contacts().first();
     QContactAnniversary anniversary = contact.detail<QContactAnniversary>();
     QCOMPARE(anniversary.originalDate(), QDate(1981, 5, 20));
+    QCOMPARE(anniversary.variantValue(QContactAnniversary::FieldOriginalDate).type(), QVariant::Date);
 
     // Evolution format
     property.setName(QLatin1String("X-EVOLUTION-ANNIVERSARY"));
@@ -645,6 +646,7 @@ void tst_QVersitContactImporter::testAnniversary()
     contact = mImporter->contacts().first();
     anniversary = contact.detail<QContactAnniversary>();
     QCOMPARE(anniversary.originalDate(), QDate(1981, 5, 20));
+    QCOMPARE(anniversary.variantValue(QContactAnniversary::FieldOriginalDate).type(), QVariant::Date);
 
     // Date : ISO 8601 in basic format
     property.setName(QLatin1String("X-ANNIVERSARY"));
@@ -654,6 +656,27 @@ void tst_QVersitContactImporter::testAnniversary()
     contact = mImporter->contacts().first();
     anniversary = contact.detail<QContactAnniversary>();
     QCOMPARE(anniversary.originalDate(), QDate(1981, 5, 20));
+    QCOMPARE(anniversary.variantValue(QContactAnniversary::FieldOriginalDate).type(), QVariant::Date);
+
+    // Date time tests
+    property.setName(QLatin1String("X-ANNIVERSARY"));
+    property.setValue(QLatin1String("19810520T000102")); // localtime
+    document = createDocumentWithProperty(property);
+    QVERIFY(mImporter->importDocuments(QList<QVersitDocument>() << document));
+    contact = mImporter->contacts().first();
+    anniversary = contact.detail<QContactAnniversary>();
+    QCOMPARE(anniversary.originalDate(), QDate(1981, 5, 20));
+    QCOMPARE(anniversary.originalDateTime(), QDateTime(QDate(1981, 5, 20), QTime(0,1,2), Qt::LocalTime));
+    QCOMPARE(anniversary.variantValue(QContactAnniversary::FieldOriginalDate).type(), QVariant::DateTime);
+
+    property.setValue(QLatin1String("19810520T010203Z")); // utc
+    document = createDocumentWithProperty(property);
+    QVERIFY(mImporter->importDocuments(QList<QVersitDocument>() << document));
+    contact = mImporter->contacts().first();
+    anniversary = contact.detail<QContactAnniversary>();
+    QCOMPARE(anniversary.originalDate(), QDate(1981, 5, 20));
+    QCOMPARE(anniversary.originalDateTime(), QDateTime(QDate(1981, 5, 20), QTime(1,2,3), Qt::UTC));
+    QCOMPARE(anniversary.variantValue(QContactAnniversary::FieldOriginalDate).type(), QVariant::DateTime);
 }
 
 void tst_QVersitContactImporter::testBirthday()
@@ -667,8 +690,8 @@ void tst_QVersitContactImporter::testBirthday()
     QVERIFY(mImporter->importDocuments(QList<QVersitDocument>() << document));
     QContact contact = mImporter->contacts().first();
     QContactBirthday bday = contact.detail<QContactBirthday>();
-    QCOMPARE(bday.date().toString(Qt::ISODate),
-             dateValue);
+    QCOMPARE(bday.date().toString(Qt::ISODate), dateValue);
+    QCOMPARE(bday.variantValue(QContactBirthday::FieldBirthday).type(), QVariant::Date);
 
     // Date : ISO 8601 in basic format
     dateValue = QLatin1String("19810520");
@@ -678,6 +701,7 @@ void tst_QVersitContactImporter::testBirthday()
     contact = mImporter->contacts().first();
     bday = contact.detail<QContactBirthday>();
     QCOMPARE(bday.date(), QDate(1981, 5, 20));
+    QCOMPARE(bday.variantValue(QContactBirthday::FieldBirthday).type(), QVariant::Date);
 
     dateValue = QLatin1String("1981-05-20");
     property.setValue(dateValue);
@@ -686,6 +710,7 @@ void tst_QVersitContactImporter::testBirthday()
     contact = mImporter->contacts().first();
     bday = contact.detail<QContactBirthday>();
     QCOMPARE(bday.date(), QDate(1981, 5, 20));
+    QCOMPARE(bday.variantValue(QContactBirthday::FieldBirthday).type(), QVariant::Date);
 
     dateValue = QLatin1String("19810520T100000");
     property.setValue(dateValue);
@@ -694,6 +719,7 @@ void tst_QVersitContactImporter::testBirthday()
     contact = mImporter->contacts().first();
     bday = contact.detail<QContactBirthday>();
     QCOMPARE(bday.dateTime(), QDateTime(QDate(1981, 5, 20), QTime(10, 0, 0), Qt::LocalTime));
+    QCOMPARE(bday.variantValue(QContactBirthday::FieldBirthday).type(), QVariant::DateTime);
 
     dateValue = QLatin1String("1981-05-20T10:00:00");
     property.setValue(dateValue);
@@ -702,6 +728,7 @@ void tst_QVersitContactImporter::testBirthday()
     contact = mImporter->contacts().first();
     bday = contact.detail<QContactBirthday>();
     QCOMPARE(bday.dateTime(), QDateTime(QDate(1981, 5, 20), QTime(10, 0, 0), Qt::LocalTime));
+    QCOMPARE(bday.variantValue(QContactBirthday::FieldBirthday).type(), QVariant::DateTime);
 
     dateValue = QLatin1String("19810520T100000Z");
     property.setValue(dateValue);
@@ -710,6 +737,7 @@ void tst_QVersitContactImporter::testBirthday()
     contact = mImporter->contacts().first();
     bday = contact.detail<QContactBirthday>();
     QCOMPARE(bday.dateTime(), QDateTime(QDate(1981, 5, 20), QTime(10, 0, 0), Qt::UTC));
+    QCOMPARE(bday.variantValue(QContactBirthday::FieldBirthday).type(), QVariant::DateTime);
 
     dateValue = QLatin1String("1981-05-20T10:00:00Z");
     property.setValue(dateValue);
@@ -718,6 +746,7 @@ void tst_QVersitContactImporter::testBirthday()
     contact = mImporter->contacts().first();
     bday = contact.detail<QContactBirthday>();
     QCOMPARE(bday.dateTime(), QDateTime(QDate(1981, 5, 20), QTime(10, 0, 0), Qt::UTC));
+    QCOMPARE(bday.variantValue(QContactBirthday::FieldBirthday).type(), QVariant::DateTime);
 }
 
 void tst_QVersitContactImporter::testGender()
