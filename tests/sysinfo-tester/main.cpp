@@ -125,9 +125,6 @@ static const symbol_t NetworkMode_lut[] =
   SYM(QSystemNetworkInfo::EthernetMode),
   SYM(QSystemNetworkInfo::BluetoothMode),
   SYM(QSystemNetworkInfo::WimaxMode),
-  SYM(QSystemNetworkInfo::GprsMode),
-  SYM(QSystemNetworkInfo::EdgeMode),
-  SYM(QSystemNetworkInfo::HspaMode),
   SYM(QSystemNetworkInfo::LteMode),
   {0,0}
 };

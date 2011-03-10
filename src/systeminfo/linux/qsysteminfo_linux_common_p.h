@@ -60,13 +60,13 @@
 #include <QTimer>
 #include <QVariantMap>
 
-#include "qsysteminfo.h"
-#include "qsystemdeviceinfo.h"
-#include "qsystemdisplayinfo.h"
-#include "qsystemnetworkinfo.h"
-#include "qsystemscreensaver.h"
-#include "qsystemstorageinfo.h"
-#include "qsystembatteryinfo.h"
+#include "../qsysteminfo.h"
+#include "../qsystemdeviceinfo.h"
+#include "../qsystemdisplayinfo.h"
+#include "../qsystemnetworkinfo.h"
+#include "../qsystemscreensaver.h"
+#include "../qsystemstorageinfo.h"
+#include "../qsystembatteryinfo.h"
 
 #include <qmobilityglobal.h>
 
@@ -155,6 +155,8 @@ public:
 
     QNetworkInterface interfaceForMode(QSystemNetworkInfo::NetworkMode mode);
     QSystemNetworkInfo::NetworkMode currentMode();
+
+    QSystemNetworkInfo::CellDataTechnology cellDataTechnology();
 
 #if !defined(QT_NO_CONNMAN)
     QSystemNetworkInfo::NetworkStatus getOfonoStatus(QSystemNetworkInfo::NetworkMode mode);

@@ -144,6 +144,7 @@ public:
     QNetworkInterface interfaceForMode(QSystemNetworkInfo::NetworkMode mode);
     QSystemNetworkInfo::NetworkMode currentMode();
     void setWlanSignalStrengthCheckEnabled(bool enabled);
+    QSystemNetworkInfo::CellDataTechnology cellDataTechnology();
 
 protected:
 
@@ -157,6 +158,7 @@ private Q_SLOTS:
     void slotOperatorNameChanged(const QString &name);
     void slotRegistrationChanged(const QString &status);
     void slotCellChanged(const QString &type, int id, int lac);
+    void cellDataTechnologyChanged(const QString &tech);
 #endif
 
 #if defined(Q_WS_MAEMO_5)
@@ -201,6 +203,9 @@ private:
     QTimer *wlanSignalStrengthTimer;
 
     QMap<QString,int> csStatusMaemo6;
+
+    QSystemNetworkInfo::CellDataTechnology currentCellDataTechnology;
+    QSystemNetworkInfo::CellDataTechnology csdtToCellDataTechnology(const QString &tech);
 };
 
 class QSystemDisplayInfoPrivate : public QSystemDisplayInfoLinuxCommonPrivate
