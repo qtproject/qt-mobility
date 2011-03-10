@@ -1497,7 +1497,7 @@ QSystemDeviceInfo::KeyboardTypeFlags QSystemDeviceInfoPrivate::keyboardTypes()
         default:
                 break;
                 }
-        bool filpKbStatus = DeviceInfo::instance()->flipStatus()->getKeyboardStatus();
+        bool filpKbStatus = DeviceInfo::instance()->flipStatus()->IsFlipSupported();
         if ( filpKbStatus ) {
              if ( keyboardFlags == QSystemDeviceInfo::UnknownKeyboard)
                 keyboardFlags = QSystemDeviceInfo::FlipKeyboard;
@@ -1536,7 +1536,7 @@ bool QSystemDeviceInfoPrivate::isKeyboardFlippedOpen()
 {
 #ifdef LOCKANDFLIP_SUPPORTED
     // It is functional only for the Grip open devices
-    return ( (DeviceInfo::instance()->flipStatus()->getFlipStatus()) && (DeviceInfo::instance()->flipStatus()->getKeyboardStatus())  );
+    return ( (DeviceInfo::instance()->flipStatus()->IsFlipSupported()) && (DeviceInfo::instance()->flipStatus()->getFlipStatus()) );
 #else
     return false;
 #endif
