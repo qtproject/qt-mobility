@@ -81,7 +81,7 @@ void QGeoTiledMapObjectInfo::init()
     }
     inited = true;
     if (updateAfterInit) {
-        updateItem();
+        tiledMapData->updateMapDisplay();
         updateAfterInit = false;
     }
 }
@@ -172,7 +172,7 @@ QGeoBoundingBox QGeoTiledMapObjectInfo::boundingBox() const
 
 bool QGeoTiledMapObjectInfo::contains(const QGeoCoordinate &coordinate) const
 {
-    if (graphicsItem || !tiledMapData)
+    if (!graphicsItem || !tiledMapData)
         return false;
 
     QGeoMapObjectEngine *e = tiledMapDataPrivate->oe;

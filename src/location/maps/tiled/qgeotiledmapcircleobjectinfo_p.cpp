@@ -58,10 +58,6 @@ QGeoTiledMapCircleObjectInfo::QGeoTiledMapCircleObjectInfo(QGeoTiledMapData *map
     circle = static_cast<QGeoMapCircleObject*>(mapObject);
 
     connect(circle,
-            SIGNAL(centerChanged(QGeoCoordinate)),
-            this,
-            SLOT(centerChanged(QGeoCoordinate)));
-    connect(circle,
             SIGNAL(radiusChanged(qreal)),
             this,
             SLOT(radiusChanged(qreal)));
@@ -79,18 +75,12 @@ QGeoTiledMapCircleObjectInfo::QGeoTiledMapCircleObjectInfo(QGeoTiledMapData *map
 
     graphicsItem = ellipseItem;
 
-    centerChanged(circle->center());
     radiusChanged(circle->radius());
     brushChanged(circle->brush());
     penChanged(circle->pen());
 }
 
 QGeoTiledMapCircleObjectInfo::~QGeoTiledMapCircleObjectInfo() {}
-
-void QGeoTiledMapCircleObjectInfo::centerChanged(const QGeoCoordinate &/*center*/)
-{
-    updateItem();
-}
 
 void QGeoTiledMapCircleObjectInfo::radiusChanged(qreal /*radius*/)
 {

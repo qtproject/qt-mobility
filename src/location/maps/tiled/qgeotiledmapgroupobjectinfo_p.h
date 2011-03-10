@@ -73,6 +73,7 @@ public:
 
 public slots:
     void childAdded(QGeoMapObject *childObject);
+    void childUpdated(QGeoMapObject *childObject);
     void childRemoved(QGeoMapObject *childObject);
 };
 

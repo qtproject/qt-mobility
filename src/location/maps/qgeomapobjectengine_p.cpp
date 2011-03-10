@@ -56,6 +56,8 @@
 
 #include <cmath>
 
+#include <QDebug>
+
 QTM_BEGIN_NAMESPACE
 
 /*
@@ -537,8 +539,8 @@ void QGeoMapObjectEngine::bilinearPixelsToSeconds(const QGeoCoordinate &origin,
                                                  QPolygonF &local,
                                                  QTransform &latLon)
 {
-    QPointF pixelOrigin = coordinateToScreenPosition(origin.longitude(),
-                                                     origin.latitude());
+    QPointF pixelOrigin = mdp->coordinateToScreenPosition(origin.longitude(),
+                                                          origin.latitude());
 
     QPolygonF wgs;
     foreach (const QPointF &pt, local) {
@@ -670,7 +672,7 @@ void QGeoMapObjectEngine::exactPixelMap(const QGeoCoordinate &origin,
                 double x = e.x; x /= 3600.0;
                 double y = e.y; y /= 3600.0;
 
-                const QPointF pixel = coordinateToScreenPosition(x, y);
+                const QPointF pixel = mdp->coordinateToScreenPosition(x, y);
                 const QPointF deltaP = (pixel - lastPixelAdded);
                 const double delta = deltaP.x() * deltaP.x() + deltaP.y() * deltaP.y();
 
@@ -758,7 +760,7 @@ void QGeoMapObjectEngine::pixelShiftToScreen(const QGeoCoordinate &origin,
 
     foreach (QPointF o, origins) {
         QTransform pixel = item->transform();
-        QPointF pixelOrigin = coordinateToScreenPosition(o.x(), o.y());
+        QPointF pixelOrigin = mdp->coordinateToScreenPosition(o.x(), o.y());
         pixel.translate(pixelOrigin.x(), pixelOrigin.y());
         pixelTrans.insertMulti(object, pixel);
         polys << pixel.map(localRect);
@@ -1143,12 +1145,6 @@ QPolygonF QGeoMapObjectEngine::latLonViewport()
     return view;
 }
 
-QPointF QGeoMapObjectEngine::coordinateToScreenPosition(double lon, double lat)
-{
-    QGeoCoordinate c(lat, lon);
-    return md->coordinateToScreenPosition(c);
-}
-
 QPolygonF QGeoMapObjectEngine::polyToScreen(const QPolygonF &poly)
 {
     QPolygonF r;
@@ -1158,7 +1154,7 @@ QPolygonF QGeoMapObjectEngine::polyToScreen(const QPolygonF &poly)
     foreach (QPointF pt, poly) {
         const double x = pt.x() / 3600.0;
         const double y = pt.y() / 3600.0;
-        const QPointF pixel = coordinateToScreenPosition(x, y);
+        const QPointF pixel = mdp->coordinateToScreenPosition(x, y);
         r.append(pixel);
     }
     return r;

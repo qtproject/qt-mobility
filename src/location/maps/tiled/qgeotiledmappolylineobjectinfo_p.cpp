@@ -92,16 +92,18 @@ void QGeoTiledMapPolylineObjectInfo::genPath()
 
     QList<QGeoCoordinate> path = polyline->path();
 
-    QGeoCoordinate origin = path.at(0);
-    double ox = origin.longitude() * 3600.0;
-    double oy = origin.latitude() * 3600.0;
+    if (path.size() > 0) {
+        QGeoCoordinate origin = path.at(0);
+        double ox = origin.longitude() * 3600.0;
+        double oy = origin.latitude() * 3600.0;
 
-    p.moveTo(0, 0);
-    for (int i = 0; i < path.size(); ++i) {
-        QGeoCoordinate pt = path.at(i);
-        double x = pt.longitude() * 3600.0 - ox;
-        double y = pt.latitude() * 3600.0 - oy;
-        p.lineTo(x, y);
+        p.moveTo(0, 0);
+        for (int i = 0; i < path.size(); ++i) {
+            QGeoCoordinate pt = path.at(i);
+            double x = pt.longitude() * 3600.0 - ox;
+            double y = pt.latitude() * 3600.0 - oy;
+            p.lineTo(x, y);
+        }
     }
 
     pathItem->setPath(p);

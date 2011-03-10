@@ -76,7 +76,6 @@ public:
     QGraphicsEllipseItem *ellipseItem;
 
 public slots:
-    void centerChanged(const QGeoCoordinate &center);
     void radiusChanged(qreal radius);
     void penChanged(const QPen &pen);
     void brushChanged(const QBrush &brush);

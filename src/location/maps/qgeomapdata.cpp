@@ -530,10 +530,10 @@ QList<QGeoMapObject*> QGeoMapData::mapObjectsInScreenRect(const QRectF &screenRe
 */
 QList<QGeoMapObject*> QGeoMapData::mapObjectsInViewport() const
 {
-    return mapObjectsInScreenRect(QRectF(0.0,
-                                         0.0,
-                                         d_ptr->windowSize.width(),
-                                         d_ptr->windowSize.height()));
+    return this->mapObjectsInScreenRect(QRectF(0.0,
+                                               0.0,
+                                               d_ptr->windowSize.width(),
+                                               d_ptr->windowSize.height()));
 }
 
 /*!
@@ -801,7 +801,7 @@ QGeoMapDataPrivate::~QGeoMapDataPrivate()
 void QGeoMapDataPrivate::addObject(QGeoMapObject *object)
 {
     containerObject->addChildObject(object);
-    emit q_ptr->updateMapDisplay();
+    //emit q_ptr->updateMapDisplay();
 }
 
 void QGeoMapDataPrivate::removeObject(QGeoMapObject *object)
@@ -815,6 +815,12 @@ void QGeoMapDataPrivate::clearObjects()
         this->removeObject(obj);
         delete obj;
     }
+}
+
+QPointF QGeoMapDataPrivate::coordinateToScreenPosition(double lon, double lat) const
+{
+    QGeoCoordinate c(lon, lat);
+    return q_ptr->coordinateToScreenPosition(c);
 }
 
 void QGeoMapDataPrivate::emitUpdateMapDisplay(const QRectF &target)

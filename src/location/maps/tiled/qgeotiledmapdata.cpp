@@ -163,8 +163,8 @@ QPointF QGeoTiledMapDataPrivate::coordinateToScreenPosition(double lon, double l
     QPoint pos(coordinateToWorldReferencePosition(lon, lat));
 
     const int x = pos.x() - worldReferenceViewportRect.left();
-    //if (x < 0)
-    //    x += worldReferenceSize.width();
+//    if (x < 0)
+//        x += worldReferenceSize.width();
 
     const int y = pos.y() - worldReferenceViewportRect.top();
 
@@ -495,6 +495,7 @@ void QGeoTiledMapData::setWindowSize(const QSizeF &size)
         return;
 
     QGeoMapData::setWindowSize(size);
+
     d->oe->invalidatePixelsForViewport();
     d->oe->trimPixelTransforms();
 
@@ -1292,8 +1293,12 @@ QList<QPair<QRect, QRect> > QGeoTiledMapDataPrivate::intersectedScreen(const QRe
 
 void QGeoTiledMapDataPrivate::addObject(QGeoMapObject *object)
 {
-    oe->addObject(object);
+//    containerObject->addChildObject(object);
+//    oe->addObject(object);
+//    emit q_ptr->updateMapDisplay();
+
     QGeoMapDataPrivate::addObject(object);
+    oe->addObject(object);
 }
 
 void QGeoTiledMapDataPrivate::removeObject(QGeoMapObject *object)

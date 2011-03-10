@@ -214,9 +214,10 @@ QList<QGeoMapObject*> QGeoMapGroupObject::childObjects() const
 */
 void QGeoMapGroupObject::clearChildObjects()
 {
-    for (int i = 0; i < d_ptr->children.size(); ++i) {
-        removeChildObject(d_ptr->children[i]);
-        delete d_ptr->children[i];
+    for (int i = d_ptr->children.size() - 1; i >=0; --i) {
+        QGeoMapObject* child = d_ptr->children[i];
+        removeChildObject(child);
+        delete child;
     }
 
     d_ptr->children.clear();
@@ -289,6 +290,7 @@ void QGeoMapGroupObjectPrivate::childChangedZValue(int zValue)
                                                         child,
                                                         mapObjectLessThan);
         children.insert(i, child);
+        emit q_ptr->childUpdated(child);
     }
 }
 

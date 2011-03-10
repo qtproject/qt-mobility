@@ -67,6 +67,10 @@ QGeoTiledMapGroupObjectInfo::QGeoTiledMapGroupObjectInfo(QGeoTiledMapData *mapDa
             this,
             SLOT(childAdded(QGeoMapObject*)));
     connect(group,
+            SIGNAL(childUpdated(QGeoMapObject*)),
+            this,
+            SLOT(childUpdated(QGeoMapObject*)));
+    connect(group,
             SIGNAL(childRemoved(QGeoMapObject*)),
             this,
             SLOT(childRemoved(QGeoMapObject*)));
@@ -98,8 +102,25 @@ void QGeoTiledMapGroupObjectInfo::childAdded(QGeoMapObject *childObject)
 
     QGeoTiledMapObjectInfo* info = static_cast<QGeoTiledMapObjectInfo*>(childObject->info());
     if (info && info->graphicsItem) {
+        // the child's z value will get updated in QGeoTiledMapGroupObjectInfo::childUpdated
+        // we do this in order to keep the same order of operations that we had previously
+        childObject->disconnect(childObject, SIGNAL(zValueChanged(int)), info, SLOT(zValueChanged(int)));
         info->graphicsItem->setParentItem(graphicsItem);
-        updateItem();
+        tiledMapDataPrivate->update(mapObject());
+        //tiledMapDataPrivate->update(childObject);
+    }
+}
+
+void QGeoTiledMapGroupObjectInfo::childUpdated(QGeoMapObject *childObject)
+{
+    if (!childObject)
+        return;
+
+    QGeoTiledMapObjectInfo* info = static_cast<QGeoTiledMapObjectInfo*>(childObject->info());
+    if (info && info->graphicsItem) {
+        //info->graphicsItem->setParentItem(graphicsItem);
+        tiledMapDataPrivate->update(mapObject());
+        info->zValueChanged(childObject->zValue());
     }
 }
 

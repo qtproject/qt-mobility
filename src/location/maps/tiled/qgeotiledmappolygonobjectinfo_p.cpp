@@ -100,16 +100,18 @@ void QGeoTiledMapPolygonObjectInfo::genPoly()
 
     QList<QGeoCoordinate> path = polygon->path();
 
-    QGeoCoordinate origin = path.at(0);
-    double ox = origin.longitude() * 3600.0;
-    double oy = origin.latitude() * 3600.0;
+    if (path.size() > 0) {
+        QGeoCoordinate origin = path.at(0);
+        double ox = origin.longitude() * 3600.0;
+        double oy = origin.latitude() * 3600.0;
 
-    poly << QPointF(0,0);
-    for (int i = 0; i < path.size(); ++i) {
-        QGeoCoordinate pt = path.at(i);
-        double x = pt.longitude() * 3600.0 - ox;
-        double y = pt.latitude() * 3600.0 - oy;
-        poly << QPointF(x, y);
+        poly << QPointF(0,0);
+        for (int i = 0; i < path.size(); ++i) {
+            QGeoCoordinate pt = path.at(i);
+            double x = pt.longitude() * 3600.0 - ox;
+            double y = pt.latitude() * 3600.0 - oy;
+            poly << QPointF(x, y);
+        }
     }
 
     polygonItem->setPolygon(poly);

@@ -95,6 +95,8 @@ public:
     virtual void removeObject(QGeoMapObject *object);
     void clearObjects();
 
+    virtual QPointF coordinateToScreenPosition(double lon, double lat) const;
+
     void emitUpdateMapDisplay(const QRectF &target = QRectF());
 
     QGeoMapData *q_ptr;

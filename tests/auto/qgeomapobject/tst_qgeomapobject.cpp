@@ -76,11 +76,11 @@ private slots:
     void holdsOrigin();
 
     void addToMap();
-    void drawsPixelEllipse();
-    void findsPixelEllipse();
-    void drawsBilinearEllipse();
-    void drawsExactEllipse();
-    void pixelChildren();
+//    void drawsPixelEllipse();
+//    void findsPixelEllipse();
+//    void drawsBilinearEllipse();
+//    void drawsExactEllipse();
+//    void pixelChildren();
 //    void bilinearChildren();
 
 //    void autoUpdate();
@@ -196,241 +196,243 @@ static int centredEllipseRadius(const QPixmap &pxmap)
     return r;
 }
 
-void tst_QGeoMapObject::findsPixelEllipse()
-{
-    QGeoMapObject *obj = new QGeoMapObject;
+// only useful once we add custom graphics items back into the mix
 
-    QGraphicsEllipseItem *el = new QGraphicsEllipseItem;
-    el->setRect(-10, -10, 20, 20);
-    el->setBrush(QBrush(Qt::black));
+//void tst_QGeoMapObject::findsPixelEllipse()
+//{
+//    QGeoMapObject *obj = new QGeoMapObject;
 
-//    obj->setGraphicsItem(el);
-    obj->setOrigin(QGeoCoordinate(0, 0));
-
-    QCOMPARE(obj->units(), QGeoMapObject::PixelUnit);
-    QCOMPARE(obj->transformType(), QGeoMapObject::ExactTransform);
-
-    m_helper->map()->setCenter(QGeoCoordinate(0, 0));
-    m_helper->map()->resize(300, 300);
-
-    QList<QGeoMapObject*> list;
-
-    list = m_helper->map()->mapObjectsAtScreenPosition(QPointF(150, 150));
-    QCOMPARE(list.size(), 0);
-
-    m_helper->map()->addMapObject(obj);
-    QTest::qWait(10);
-
-    QList<QPointF> testPoints;
-    testPoints << QPointF(150, 150) << QPointF(141, 150) << QPointF(150, 159)
-               << QPointF(145, 145);
-
-    foreach (QPointF tp, testPoints) {
-        list = m_helper->map()->mapObjectsAtScreenPosition(tp);
-        QCOMPARE(list.size(), 1);
-        QVERIFY(list.contains(obj));
-    }
-
-    testPoints.clear();
-    testPoints << QPointF(150, 161) << QPointF(139, 150) << QPointF(158, 158);
-
-    foreach (QPointF tp, testPoints) {
-        list = m_helper->map()->mapObjectsAtScreenPosition(tp);
-        QCOMPARE(list.size(), 0);
-    }
-}
-
-void tst_QGeoMapObject::drawsPixelEllipse()
-{
-    QGeoMapObject *obj = new QGeoMapObject;
-
-    QGraphicsEllipseItem *el = new QGraphicsEllipseItem;
-    el->setRect(-10, -10, 20, 20);
-    el->setBrush(QBrush(Qt::black));
+//    QGraphicsEllipseItem *el = new QGraphicsEllipseItem;
+//    el->setRect(-10, -10, 20, 20);
+//    el->setBrush(QBrush(Qt::black));
 
 //    obj->setGraphicsItem(el);
-    obj->setOrigin(QGeoCoordinate(0, 0));
+//    obj->setOrigin(QGeoCoordinate(0, 0));
 
-    QCOMPARE(obj->units(), QGeoMapObject::PixelUnit);
-    QCOMPARE(obj->transformType(), QGeoMapObject::ExactTransform);
+//    QCOMPARE(obj->units(), QGeoMapObject::PixelUnit);
+//    QCOMPARE(obj->transformType(), QGeoMapObject::ExactTransform);
 
-    m_helper->map()->setCenter(QGeoCoordinate(0, 0));
-    m_helper->map()->resize(300, 300);
+//    m_helper->map()->setCenter(QGeoCoordinate(0, 0));
+//    m_helper->map()->resize(300, 300);
 
-    QPixmap px(300, 300);
-    QPainter p(&px);
-    QStyleOptionGraphicsItem style;
-    style.rect = QRect(0,0,300,300);
-    m_helper->map()->paint(&p, &style, 0);
+//    QList<QGeoMapObject*> list;
 
-    QImage im = px.toImage();
-    QRgb pixel = im.pixel(150,150);
-    verifyNotRgb(pixel, 0, 0, 0);
+//    list = m_helper->map()->mapObjectsAtScreenPosition(QPointF(150, 150));
+//    QCOMPARE(list.size(), 0);
 
-    m_helper->map()->addMapObject(obj);
-    QTest::qWait(10);
+//    m_helper->map()->addMapObject(obj);
+//    QTest::qWait(10);
 
-    QPixmap px2(300, 300);
-    QPainter p2(&px2);
-    m_helper->map()->paint(&p2, &style, 0);
-    QImage im2 = px2.toImage();
+//    QList<QPointF> testPoints;
+//    testPoints << QPointF(150, 150) << QPointF(141, 150) << QPointF(150, 159)
+//               << QPointF(145, 145);
 
-    verifyRgb(im2.pixel(150, 150), 0, 0, 0);
-    // avoid the last pixel due to antialiasing
-    verifyRgb(im2.pixel(141, 150), 0, 0, 0);
-    verifyRgb(im2.pixel(150, 158), 0, 0, 0);
-    verifyRgb(im2.pixel(145, 145), 0, 0, 0);
+//    foreach (QPointF tp, testPoints) {
+//        list = m_helper->map()->mapObjectsAtScreenPosition(tp);
+//        QCOMPARE(list.size(), 1);
+//        QVERIFY(list.contains(obj));
+//    }
 
-    verifyNotRgb(im2.pixel(150, 161), 0, 0, 0);
-    verifyNotRgb(im2.pixel(139, 150), 0, 0, 0);
-    verifyNotRgb(im2.pixel(157, 157), 0, 0, 0);
+//    testPoints.clear();
+//    testPoints << QPointF(150, 161) << QPointF(139, 150) << QPointF(158, 158);
 
-    int r = centredEllipseRadius(px2);
-    QVERIFY(r >= 9 && r <= 11);
+//    foreach (QPointF tp, testPoints) {
+//        list = m_helper->map()->mapObjectsAtScreenPosition(tp);
+//        QCOMPARE(list.size(), 0);
+//    }
+//}
 
-    m_helper->map()->removeMapObject(obj);
-    delete obj;
-}
+//void tst_QGeoMapObject::drawsPixelEllipse()
+//{
+//    QGeoMapObject *obj = new QGeoMapObject;
 
-void tst_QGeoMapObject::drawsBilinearEllipse()
-{
-    QGeoMapObject *obj = new QGeoMapObject;
-
-    QGraphicsEllipseItem *el = new QGraphicsEllipseItem;
-    el->setRect(-100, -100, 200, 200);
-    el->setBrush(QBrush(Qt::black));
+//    QGraphicsEllipseItem *el = new QGraphicsEllipseItem;
+//    el->setRect(-10, -10, 20, 20);
+//    el->setBrush(QBrush(Qt::black));
 
 //    obj->setGraphicsItem(el);
-    obj->setOrigin(QGeoCoordinate(0, 0));
-    obj->setUnits(QGeoMapObject::MeterUnit);
-    QCOMPARE(obj->transformType(), QGeoMapObject::BilinearTransform);
+//    obj->setOrigin(QGeoCoordinate(0, 0));
 
-    m_helper->map()->setCenter(QGeoCoordinate(0, 0));
-    m_helper->map()->setZoomLevel(15.0);
-    m_helper->map()->resize(300, 300);
+//    QCOMPARE(obj->units(), QGeoMapObject::PixelUnit);
+//    QCOMPARE(obj->transformType(), QGeoMapObject::ExactTransform);
 
-    m_helper->map()->addMapObject(obj);
-    QTest::qWait(10);
+//    m_helper->map()->setCenter(QGeoCoordinate(0, 0));
+//    m_helper->map()->resize(300, 300);
 
-    QPixmap *px[2];
-    QPainter *p[2];
-    for (int i=0; i < 2; i++) {
-        px[i] = new QPixmap(300, 300);
-        p[i] = new QPainter(px[i]);
-    }
-    QStyleOptionGraphicsItem style;
-    style.rect = QRect(0,0,300,300);
+//    QPixmap px(300, 300);
+//    QPainter p(&px);
+//    QStyleOptionGraphicsItem style;
+//    style.rect = QRect(0,0,300,300);
+//    m_helper->map()->paint(&p, &style, 0);
 
-    m_helper->map()->paint(p[0], &style, 0);
-    int r15 = centredEllipseRadius(*px[0]);
+//    QImage im = px.toImage();
+//    QRgb pixel = im.pixel(150,150);
+//    verifyNotRgb(pixel, 0, 0, 0);
 
-    m_helper->map()->setZoomLevel(14.0);
-    QTest::qWait(10);
-    m_helper->map()->paint(p[1], &style, 0);
-    int r14 = centredEllipseRadius(*px[1]);
+//    m_helper->map()->addMapObject(obj);
+//    QTest::qWait(10);
 
-    QVERIFY(r15 > r14);
-    QVERIFY(r15 - r14 > 2);
+//    QPixmap px2(300, 300);
+//    QPainter p2(&px2);
+//    m_helper->map()->paint(&p2, &style, 0);
+//    QImage im2 = px2.toImage();
 
-    for (int i=0; i < 2; i++) {
-        delete p[i];
-        delete px[i];
-    }
-}
+//    verifyRgb(im2.pixel(150, 150), 0, 0, 0);
+//    // avoid the last pixel due to antialiasing
+//    verifyRgb(im2.pixel(141, 150), 0, 0, 0);
+//    verifyRgb(im2.pixel(150, 158), 0, 0, 0);
+//    verifyRgb(im2.pixel(145, 145), 0, 0, 0);
 
-void tst_QGeoMapObject::drawsExactEllipse()
-{
-    QGeoMapObject *obj = new QGeoMapObject;
+//    verifyNotRgb(im2.pixel(150, 161), 0, 0, 0);
+//    verifyNotRgb(im2.pixel(139, 150), 0, 0, 0);
+//    verifyNotRgb(im2.pixel(157, 157), 0, 0, 0);
 
-    QGraphicsEllipseItem *el = new QGraphicsEllipseItem;
-    el->setRect(-1000, -1000, 2000, 2000);
-    el->setBrush(QBrush(Qt::black));
+//    int r = centredEllipseRadius(px2);
+//    QVERIFY(r >= 9 && r <= 11);
 
-//    obj->setGraphicsItem(el);
-    obj->setOrigin(QGeoCoordinate(0, 0));
-    obj->setUnits(QGeoMapObject::MeterUnit);
-    QCOMPARE(obj->transformType(), QGeoMapObject::BilinearTransform);
+//    m_helper->map()->removeMapObject(obj);
+//    delete obj;
+//}
 
-    m_helper->map()->setCenter(QGeoCoordinate(0, 0));
-    m_helper->map()->setZoomLevel(13.0);
-    m_helper->map()->resize(300, 300);
+//void tst_QGeoMapObject::drawsBilinearEllipse()
+//{
+//    QGeoMapObject *obj = new QGeoMapObject;
 
-    m_helper->map()->addMapObject(obj);
-    QTest::qWait(10);
-
-    QPixmap *px[4];
-    QPainter *p[4];
-    for (int i=0; i < 4; i++) {
-        px[i] = new QPixmap(300, 300);
-        p[i] = new QPainter(px[i]);
-    }
-    QStyleOptionGraphicsItem style;
-    style.rect = QRect(0,0,300,300);
-
-    m_helper->map()->paint(p[0], &style, 0);
-    int r13 = centredEllipseRadius(*px[0]);
-
-    m_helper->map()->setZoomLevel(12.0);
-    QTest::qWait(10);
-    m_helper->map()->paint(p[1], &style, 0);
-    int r12 = centredEllipseRadius(*px[1]);
-
-    obj->setTransformType(QGeoMapObject::ExactTransform);
-    QCOMPARE(obj->transformType(), QGeoMapObject::ExactTransform);
-    QTest::qWait(10);
-
-    m_helper->map()->setZoomLevel(13.0);
-    QTest::qWait(10);
-    m_helper->map()->paint(p[2], &style, 0);
-    int r13_ex = centredEllipseRadius(*px[2]);
-
-    m_helper->map()->setZoomLevel(12.0);
-    QTest::qWait(10);
-    m_helper->map()->paint(p[3], &style, 0);
-    int r12_ex = centredEllipseRadius(*px[3]);
-
-    QVERIFY(r13_ex - r13 <= 1 && r13 - r13_ex <= 1);
-    QVERIFY(r12_ex - r12 <= 1 && r12 - r12_ex <= 1);
-
-    for (int i=0; i < 4; i++) {
-        delete p[i];
-        delete px[i];
-    }
-}
-
-void tst_QGeoMapObject::pixelChildren()
-{
-    QGeoMapObject *obj = new QGeoMapObject;
-
-    QGraphicsEllipseItem *el = new QGraphicsEllipseItem;
-    el->setRect(-40, -40, 80, 80);
-    el->setBrush(QBrush(Qt::black));
-
-    QGraphicsEllipseItem *childEl = new QGraphicsEllipseItem(el);
-    childEl->setRect(-20, -20, 40, 40);
-    childEl->setBrush(QBrush(Qt::blue));
+//    QGraphicsEllipseItem *el = new QGraphicsEllipseItem;
+//    el->setRect(-100, -100, 200, 200);
+//    el->setBrush(QBrush(Qt::black));
 
 //    obj->setGraphicsItem(el);
-    obj->setOrigin(QGeoCoordinate(0, 0));
+//    obj->setOrigin(QGeoCoordinate(0, 0));
+//    obj->setUnits(QGeoMapObject::MeterUnit);
+//    QCOMPARE(obj->transformType(), QGeoMapObject::BilinearTransform);
 
-    QCOMPARE(obj->units(), QGeoMapObject::PixelUnit);
-    QCOMPARE(obj->transformType(), QGeoMapObject::ExactTransform);
+//    m_helper->map()->setCenter(QGeoCoordinate(0, 0));
+//    m_helper->map()->setZoomLevel(15.0);
+//    m_helper->map()->resize(300, 300);
 
-    m_helper->map()->setCenter(QGeoCoordinate(0, 0));
-    m_helper->map()->resize(300, 300);
-    m_helper->map()->addMapObject(obj);
+//    m_helper->map()->addMapObject(obj);
+//    QTest::qWait(10);
 
-    QTest::qWait(10);
+//    QPixmap *px[2];
+//    QPainter *p[2];
+//    for (int i=0; i < 2; i++) {
+//        px[i] = new QPixmap(300, 300);
+//        p[i] = new QPainter(px[i]);
+//    }
+//    QStyleOptionGraphicsItem style;
+//    style.rect = QRect(0,0,300,300);
 
-    QPixmap px(300, 300);
-    QPainter p(&px);
-    QStyleOptionGraphicsItem style;
-    style.rect = QRect(0,0,300,300);
-    m_helper->map()->paint(&p, &style, 0);
+//    m_helper->map()->paint(p[0], &style, 0);
+//    int r15 = centredEllipseRadius(*px[0]);
 
-    int r = centredEllipseRadius(px);
-    QVERIFY(r <= 21 && r >= 19);
-}
+//    m_helper->map()->setZoomLevel(14.0);
+//    QTest::qWait(10);
+//    m_helper->map()->paint(p[1], &style, 0);
+//    int r14 = centredEllipseRadius(*px[1]);
+
+//    QVERIFY(r15 > r14);
+//    QVERIFY(r15 - r14 > 2);
+
+//    for (int i=0; i < 2; i++) {
+//        delete p[i];
+//        delete px[i];
+//    }
+//}
+
+//void tst_QGeoMapObject::drawsExactEllipse()
+//{
+//    QGeoMapObject *obj = new QGeoMapObject;
+
+//    QGraphicsEllipseItem *el = new QGraphicsEllipseItem;
+//    el->setRect(-1000, -1000, 2000, 2000);
+//    el->setBrush(QBrush(Qt::black));
+
+//    obj->setGraphicsItem(el);
+//    obj->setOrigin(QGeoCoordinate(0, 0));
+//    obj->setUnits(QGeoMapObject::MeterUnit);
+//    QCOMPARE(obj->transformType(), QGeoMapObject::BilinearTransform);
+
+//    m_helper->map()->setCenter(QGeoCoordinate(0, 0));
+//    m_helper->map()->setZoomLevel(13.0);
+//    m_helper->map()->resize(300, 300);
+
+//    m_helper->map()->addMapObject(obj);
+//    QTest::qWait(10);
+
+//    QPixmap *px[4];
+//    QPainter *p[4];
+//    for (int i=0; i < 4; i++) {
+//        px[i] = new QPixmap(300, 300);
+//        p[i] = new QPainter(px[i]);
+//    }
+//    QStyleOptionGraphicsItem style;
+//    style.rect = QRect(0,0,300,300);
+
+//    m_helper->map()->paint(p[0], &style, 0);
+//    int r13 = centredEllipseRadius(*px[0]);
+
+//    m_helper->map()->setZoomLevel(12.0);
+//    QTest::qWait(10);
+//    m_helper->map()->paint(p[1], &style, 0);
+//    int r12 = centredEllipseRadius(*px[1]);
+
+//    obj->setTransformType(QGeoMapObject::ExactTransform);
+//    QCOMPARE(obj->transformType(), QGeoMapObject::ExactTransform);
+//    QTest::qWait(10);
+
+//    m_helper->map()->setZoomLevel(13.0);
+//    QTest::qWait(10);
+//    m_helper->map()->paint(p[2], &style, 0);
+//    int r13_ex = centredEllipseRadius(*px[2]);
+
+//    m_helper->map()->setZoomLevel(12.0);
+//    QTest::qWait(10);
+//    m_helper->map()->paint(p[3], &style, 0);
+//    int r12_ex = centredEllipseRadius(*px[3]);
+
+//    QVERIFY(r13_ex - r13 <= 1 && r13 - r13_ex <= 1);
+//    QVERIFY(r12_ex - r12 <= 1 && r12 - r12_ex <= 1);
+
+//    for (int i=0; i < 4; i++) {
+//        delete p[i];
+//        delete px[i];
+//    }
+//}
+
+//void tst_QGeoMapObject::pixelChildren()
+//{
+//    QGeoMapObject *obj = new QGeoMapObject;
+
+//    QGraphicsEllipseItem *el = new QGraphicsEllipseItem;
+//    el->setRect(-40, -40, 80, 80);
+//    el->setBrush(QBrush(Qt::black));
+
+//    QGraphicsEllipseItem *childEl = new QGraphicsEllipseItem(el);
+//    childEl->setRect(-20, -20, 40, 40);
+//    childEl->setBrush(QBrush(Qt::blue));
+
+//    obj->setGraphicsItem(el);
+//    obj->setOrigin(QGeoCoordinate(0, 0));
+
+//    QCOMPARE(obj->units(), QGeoMapObject::PixelUnit);
+//    QCOMPARE(obj->transformType(), QGeoMapObject::ExactTransform);
+
+//    m_helper->map()->setCenter(QGeoCoordinate(0, 0));
+//    m_helper->map()->resize(300, 300);
+//    m_helper->map()->addMapObject(obj);
+
+//    QTest::qWait(10);
+
+//    QPixmap px(300, 300);
+//    QPainter p(&px);
+//    QStyleOptionGraphicsItem style;
+//    style.rect = QRect(0,0,300,300);
+//    m_helper->map()->paint(&p, &style, 0);
+
+//    int r = centredEllipseRadius(px);
+//    QVERIFY(r <= 21 && r >= 19);
+//}
 
 //void tst_QGeoMapObject::bilinearChildren()
 //{

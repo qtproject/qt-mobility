@@ -231,6 +231,7 @@ void QGeoMapCircleObject::setCircle(const QGeoBoundingCircle &circle)
 
     d_ptr->circle = circle;
     setOrigin(circle.center());
+    setRadius(circle.radius());
 
     if (oldCircle.center() != d_ptr->circle.center())
         emit centerChanged(d_ptr->circle.center());
