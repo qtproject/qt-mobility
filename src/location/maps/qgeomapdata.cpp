@@ -695,7 +695,7 @@ void QGeoMapData::clearMapOverlays()
     By default the QGeoMapData implementations of the property functions are used
     which cause the property notification signals to be emitted immediately.
 
-    Calling this function with \a block set to false will prevent these
+    Calling this function with \a block set to true will prevent these
     signals from being called, which will allow a subclass to defer the
     emission of the signal until a later time.
 
