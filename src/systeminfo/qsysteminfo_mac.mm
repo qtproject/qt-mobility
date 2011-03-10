@@ -1472,6 +1472,11 @@ QSystemNetworkInfo::NetworkMode QSystemNetworkInfoPrivate::currentMode()
     return modeForInterface(getDefaultInterface());
 }
 
+QSystemNetworkInfo::CellDataTechnology QSystemNetworkInfoLinuxCommonPrivate::cellDataTechnology()
+{
+    return QSystemNetworkInfo::UnknownDataTechnology;
+}
+
 
 QSystemDisplayInfoPrivate::QSystemDisplayInfoPrivate(QObject *parent)
         : QObject(parent)

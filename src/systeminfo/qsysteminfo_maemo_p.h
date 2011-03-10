@@ -144,6 +144,7 @@ public:
     QNetworkInterface interfaceForMode(QSystemNetworkInfo::NetworkMode mode);
     QSystemNetworkInfo::NetworkMode currentMode();
     void setWlanSignalStrengthCheckEnabled(bool enabled);
+    QSystemNetworkInfo::CellDataTechnology cellDataTechnology();
 
 protected:
 

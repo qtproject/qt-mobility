@@ -64,10 +64,12 @@ Q_GLOBAL_STATIC(QSystemInfo, generalInfo)
 
 
     \qml
-        Component.onCompleted: {
-            generalInfo.startCurrentLanguageChanged();
+
+        Component.onCompleted {
+            generalInfo.startCurrentLanguageChanged()
         }
-    \endqml
+
+\endqml
 
 \sa QSystemInfo
 */

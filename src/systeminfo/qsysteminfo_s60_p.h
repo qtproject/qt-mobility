@@ -135,6 +135,8 @@ public:
     QNetworkInterface interfaceForMode(QSystemNetworkInfo::NetworkMode mode);
     QSystemNetworkInfo::NetworkMode currentMode();
 
+    QSystemNetworkInfo::CellDataTechnology cellDataTechnology();
+
 Q_SIGNALS:
     void networkStatusChanged(QSystemNetworkInfo::NetworkMode, QSystemNetworkInfo::NetworkStatus);
     void networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode, int);

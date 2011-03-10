@@ -120,6 +120,7 @@ private slots:
     void storageStateChanged(const QString &vol, QSystemStorageInfo::StorageState state);
 
     void backlightTotext(QSystemDisplayInfo::BacklightState);
+    void dataTechnologyChanged(QSystemNetworkInfo::CellDataTechnology tech);
 
 
 };

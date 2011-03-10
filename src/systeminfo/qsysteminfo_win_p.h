@@ -135,6 +135,7 @@ public:
    void emitNetworkStatusChanged(QSystemNetworkInfo::NetworkMode, QSystemNetworkInfo::NetworkStatus);
    void emitNetworkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode,int);
    QSystemNetworkInfo::NetworkMode currentMode();
+   QSystemNetworkInfo::CellDataTechnology cellDataTechnology();
 
 
    static QSystemNetworkInfoPrivate *instance();

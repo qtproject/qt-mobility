@@ -1025,6 +1025,11 @@ void QSystemNetworkInfoPrivate::setWlanSignalStrengthCheckEnabled(bool enabled)
     }
 }
 
+QSystemNetworkInfo::CellDataTechnology QSystemNetworkInfoLinuxCommonPrivate::cellDataTechnology()
+{
+    return QSystemNetworkInfo::UnknownDataTechnology;
+}
+
 QSystemDisplayInfoPrivate::QSystemDisplayInfoPrivate(QSystemDisplayInfoLinuxCommonPrivate *parent)
         : QSystemDisplayInfoLinuxCommonPrivate(parent)
 {
