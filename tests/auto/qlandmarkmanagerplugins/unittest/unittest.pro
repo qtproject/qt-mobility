@@ -17,7 +17,7 @@ SOURCES  += tst_qlandmarkmanagerplugins.cpp
 #Note: on symbian it seems static linking doesn't work
 #QTBUG-6270
     LIBS += -L../../../../build/tests/bin/plugins/landmarks/
-    CONFIG(debug, debug|release) {
+    CONFIG(debug) {
         win32 {
             LIBS += -llandmarks_testdummystaticd
         } else {
