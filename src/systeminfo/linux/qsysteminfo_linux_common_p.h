@@ -161,8 +161,6 @@ public:
 #if !defined(QT_NO_CONNMAN)
     QSystemNetworkInfo::NetworkStatus getOfonoStatus(QSystemNetworkInfo::NetworkMode mode);
 #endif
-//public Q_SLOTS:
-//    void getPrimaryMode();
 
 Q_SIGNALS:
    void networkStatusChanged(QSystemNetworkInfo::NetworkMode, QSystemNetworkInfo::NetworkStatus);
@@ -209,11 +207,14 @@ private Q_SLOTS:
     void ofonoNetworkPropertyChangedContext(const QString &path,const QString &item, const QDBusVariant &value);
     void ofonoModemPropertyChangedContext(const QString &path,const QString &item, const QDBusVariant &value);
 #endif
-
+private:
     QSystemNetworkInfo::NetworkStatus getBluetoothNetStatus();
 
     void connectNotify(const char *signal);
     void disconnectNotify(const char *signal);
+#if !defined(QT_NO_CONNMAN)
+    QSystemNetworkInfo::CellDataTechnology ofonoTechToCDT(const QString &tech);
+#endif
 };
 
 class QSystemDisplayInfoLinuxCommonPrivate : public QObject

@@ -1589,6 +1589,10 @@ void QSystemNetworkInfoLinuxCommonPrivate::ofonoPropertyChangedContext(const QSt
             }
         }
     }
+    if (item == "Bearer") {
+        Q_EMIT cellDataTechnologyChanged(ofonoTechToCDT(value.variant().toString()));
+    }
+
 }
 
 void QSystemNetworkInfoLinuxCommonPrivate::ofonoNetworkPropertyChangedContext(const QString &path,const QString &item, const QDBusVariant &value)
@@ -1599,7 +1603,6 @@ void QSystemNetworkInfoLinuxCommonPrivate::ofonoNetworkPropertyChangedContext(co
         Q_EMIT networkSignalStrengthChanged(ofonoTechToMode(netiface.getTechnology()),value.variant().toInt());
     }
     if (item == "Status") {
-
        Q_EMIT networkStatusChanged(ofonoTechToMode(netiface.getTechnology()), ofonoStatusToStatus(value.variant().toString()));
     }
     if (item == "LocationAreaCode") {
@@ -1619,6 +1622,20 @@ void QSystemNetworkInfoLinuxCommonPrivate::ofonoNetworkPropertyChangedContext(co
 
 void QSystemNetworkInfoLinuxCommonPrivate::ofonoModemPropertyChangedContext(const QString &/*path*/,const QString &/*item*/, const QDBusVariant &/*value*/)
 {
+}
+
+QSystemNetworkInfo::CellDataTechnology QSystemNetworkInfoLinuxCommonPrivate::ofonoTechToCDT(const QString &tech)
+{
+    if (tech == "gsm") {
+        return QSystemNetworkInfo::GprsDataTechnology;
+    } else if (tech == "edge") {
+        return QSystemNetworkInfo::EdgeDataTechnology;
+    } else if (tech == "umts") {
+        return QSystemNetworkInfo::UmtsDataTechnology;
+    } else if (tech == "hspa" || tech == "hsdpa" || tech == "hsupa") {// big lump
+        return QSystemNetworkInfo::HspaDataTechnology;
+    }
+    return QSystemNetworkInfo::UnknownDataTechnology;
 }
 
 #endif
