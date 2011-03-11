@@ -7,11 +7,6 @@ include (../../../common.pri)
 INCLUDEPATH += ../../../src/location
 DEPENDPATH += ../../../buid/Debug/bin
 
-message("Include path:")
-message($$INCLUDEPATH)
-message("Depend path:")
-message($$DEPENDPATH)
-
 # Input 
 HEADERS += ../qgeocoordinate/qlocationtestutils_p.h \
            testqgeopositioninfosource_p.h
