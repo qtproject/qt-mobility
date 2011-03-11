@@ -428,6 +428,7 @@ void CQGeoPositionInfoSourceS60::updateStatus(TPositionModuleInfo &aModInfo, TIn
         //store the correct method in use from the mCurrentModuleId retireved earlier
         if (id == mCurrentModuleId) {
             mCurrentMethod = method;
+            mMinUpdateInterval = mList[mListSize-1].mTimeToNextFix.Int64() / 1000;
         }
     } else {
         //module's status has changed
@@ -464,6 +465,7 @@ void CQGeoPositionInfoSourceS60::updateStatus(TPositionModuleInfo &aModInfo, TIn
 
             TRAPD(ret, temp = CQMLBackendAO::NewL(this, RegularUpdate,
                                                   mList[i].mUid));
+            mMinUpdateInterval = interval;
 
             if ((ret == KErrNone) && (temp != NULL)) {
                 temp->setUpdateInterval(interval);
@@ -542,7 +544,7 @@ void CQGeoPositionInfoSourceS60::updateStatus(TPositionModuleInfo &aModInfo, TIn
                     //no methods available,clean up the resources
                     mRegUpdateAO = NULL;
                     mCurrentModuleId = TUid::Null();
-                    mMinUpdateInterval = 0;
+                    mMinUpdateInterval = interval;
                     mCurrentMethod = PositioningMethod(0);
 
                     emit updateTimeout();
@@ -583,10 +585,8 @@ void CQGeoPositionInfoSourceS60::updateDeviceStatus(void)
         //module ID of the default module
         error = mPositionServer.GetDefaultModuleId(mCurrentModuleId);
 
-        if (error != KErrNone) {
+        if (error != KErrNone)
             mCurrentModuleId = TUid::Null();
-            mMinUpdateInterval = 0;
-        }
 
         for (TUint i = 0; i < modCount; i++) {
             //get module information
@@ -712,8 +712,6 @@ void CQGeoPositionInfoSourceS60::updatePosition(HPositionGenericInfo *aPosInfo, 
 // Returns the PositionServer handle
 RPositionServer& CQGeoPositionInfoSourceS60:: getPositionServer()
 {
-    QMutexLocker locker(&m_mutex);
-
     return mPositionServer;
 }
 

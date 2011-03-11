@@ -326,6 +326,8 @@ void CQGeoSatelliteInfoSourceS60::updateStatus(TPositionModuleInfo &aModInfo, TI
 
         //count on the mList array size
         mListSize++;
+
+        mMinUpdateInterval = mList[mListSize-1].mTimeToNextFix.Int64() / 1000;
     } else {
         //module's status has changed
         if (mList[i].mStatus != aStatus)
@@ -426,7 +428,7 @@ void CQGeoSatelliteInfoSourceS60::updateStatus(TPositionModuleInfo &aModInfo, TI
                     //no methods available,clean up the resources
                     mRegUpdateAO = NULL;
                     mCurrentModuleId = TUid::Null();
-                    mMinUpdateInterval = 0;
+                    mMinUpdateInterval = interval;
                 }
 
             }
