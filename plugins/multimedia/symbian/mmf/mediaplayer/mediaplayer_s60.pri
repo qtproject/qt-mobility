@@ -12,7 +12,7 @@ LIBS *= -lmediaclientvideo \
     -lbitgdi \
     -lapgrfx \
     -lapmime \
-    -lcommdb
+    -lcommdb \
     -lbafl
 
 # If support to DRM is wanted then comment out the following line
