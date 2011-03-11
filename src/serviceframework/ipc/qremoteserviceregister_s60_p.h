@@ -73,6 +73,8 @@ enum TServiceProviderRequest
     EPackageRequestComplete = 4
 };
 
+const TInt KIpcBufferMinimumSize = 256; //Bytes
+const TInt KIpcBufferMaximumSize = 1024*16; 
 
 // Forward declarations
 class ObjectEndPoint;
@@ -89,6 +91,44 @@ typedef TPckgBuf<TInt> TError;
 void printServicePackage(const QServicePackage& package);
 #endif
 
+//Internal class which calculates the Simple and Weighted moving average of
+//data sizes from the Service. The average calculated can be used to decide a
+//optimal IPC buffer size.
+template <int WINDOW>
+class MovingAverage
+{
+public:
+  MovingAverage(TInt median):m_index(0),m_averageSimple((TReal)median),m_averageWeighted((TReal)median)
+  {
+    m_weightedSum = m_sum =0;
+    for(TInt i=0;i<WINDOW;i++){
+     m_samples[i]=median;
+     m_weightedSum += m_samples[i]*(i+1);
+     m_sum += m_samples[i];
+     }
+  }
+  int average(){return static_cast<TInt>(m_averageSimple);}
+  int averageWeighted(){return static_cast<TInt>(m_averageWeighted);}
+  void addSample(int sample)
+  {
+     int pop = m_samples[m_index];
+     m_samples[m_index] = sample;
+     m_weightedSum = m_weightedSum + WINDOW*sample - m_sum; 
+     m_sum = m_sum + sample - pop;
+     m_averageSimple = m_averageSimple + ((TReal)sample -pop)/WINDOW;
+     m_averageWeighted = (TReal)m_weightedSum*2/(WINDOW*(WINDOW+1));
+     m_index = (m_index+1)%WINDOW;
+  }
+private:  
+  int m_samples[WINDOW];
+  TInt m_index;
+  TInt m_weightedSum;
+  /* The sum of all the samples */
+  TInt m_sum; 
+  TReal m_averageSimple;
+  TReal m_averageWeighted;
+};
+
 
 // Internal class handling the actual communication with the service provider.
 // Communication is based on standard Symbian client-server architecture.
@@ -102,12 +142,11 @@ public:
     void Close();
     TVersion Version() const;
     void SendServicePackage(const QServicePackage& aPackage);
+    /* Adds sample to calculate the average */
+    void addDataSize(TInt dataSize);
     
  public:
-    // 255 bytes seems to cover a lot of test cases in house
-    // this size might need to be increased to avoid a lot
-    // of context switches
-    TBuf8<255> iMessageFromServer; 
+    RBuf8 iMessageFromServer; 
     TPckgBuf<TInt> iSize; // TPckgBuf type can be used directly as IPC parameter
 
     void setListener(ServiceMessageListener* listener);
@@ -125,12 +164,15 @@ protected:
     
 private:
     TInt StartServer();
+    /* Re-Sizes IPC buffer if needed */
+    void updateIpcBufferSize();
 
 private: 
     TIpcArgs iArgs; // These two are used in actively listening to server
     TError iError;
     QString iServerAddress;
     ServiceMessageListener* iListener;
+    MovingAverage<10> iDataSizes;
     
     friend class ServiceMessageListener;
 };
