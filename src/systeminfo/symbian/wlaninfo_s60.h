@@ -59,10 +59,11 @@ public:
     QString wlanNetworkName() const;
     int wlanNetworkSignalStrength() const;
     bool wlanNetworkConnectionStatus() const;
+    void FreeResources();
 
 private:
     void stopPolling();
-    
+
 protected: // MWlanMgmtNotifications
     void ConnectionStateChanged(TWlanConnectionMode aNewState);
     void BssidChanged(TWlanBssid& aNewBSSID) {};
@@ -72,7 +73,7 @@ protected: // MWlanMgmtNotifications
     void OldNetworksLost() {};
     void TransmitPowerChanged(TUint) {};
     void RssChanged(TWlanRssClass , TUint strength) {};
-    
+
 private slots:
     void checkWlanInfo();
 

@@ -58,16 +58,7 @@ QT_BEGIN_NAMESPACE
 
     You can control the systems analog radio device using this interface, for example:
 
-    \code
-        radio = new QRadioTuner;
-        connect(radio,SIGNAL(frequencyChanged(int)),this,SLOT(freqChanged(int)));
-        if (radio->isBandSupported(QRadioTuner::FM)) {
-            radio->setBand(QRadioTuner::FM);
-            radio->setFrequency(yourRadioStationFrequency);
-            radio->setVolume(100);
-            radio->start();
-        }
-    \endcode
+    \snippet doc/src/snippets/multimedia-snippets/media.cpp Radio tuner
 
     The radio object will emit signals for any changes in state such as:
     bandChanged(), frequencyChanged(), stereoStatusChanged(), searchingChanged(),

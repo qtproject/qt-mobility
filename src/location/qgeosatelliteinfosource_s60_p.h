@@ -57,6 +57,7 @@
 #include <e32std.h>
 #include <e32base.h>
 #include <lbs.h>
+#include <qmutex.h>
 #include "qgeosatelliteinfosource.h"
 #include "notificationsatellitecallback_s60_p.h"
 
@@ -94,7 +95,7 @@ public:
  *
  */
 class CQGeoSatelliteInfoSourceS60 : public INotificationSatelliteCallback,
-            public QGeoSatelliteInfoSource
+        public QGeoSatelliteInfoSource
 
 {
 public:
@@ -165,10 +166,10 @@ public slots :
 
 
 private:
-	
-	    /**
-     * Constructor for performing 1st stage construction
-     */
+
+    /**
+    * Constructor for performing 1st stage construction
+    */
     CQGeoSatelliteInfoSourceS60(QObject* aParent = 0);
 
     /**
@@ -179,7 +180,7 @@ private:
     void updateStatus(TPositionModuleInfo &aModInfo, TInt aStatus);
 
     //get the index of the module in the List array
-    TInt checkModule(TPositionModuleId aId) const;
+    TInt checkModule(TPositionModuleId aId) ;//const;
 
     //get the index of the position module based on the preferred methods
     TInt getIndexPositionModule(TUint8 aBits) const;
@@ -249,10 +250,14 @@ private:
      */
     int mListSize;
 
+    int mMinUpdateInterval;
+
     /*
      * query for the status
      */
     TPositionModuleStatusEvent  mStatusEvent;
+
+    QMutex m_mutex;
 
     /*
      * maintain the startUpdates status

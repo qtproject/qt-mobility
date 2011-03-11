@@ -680,6 +680,8 @@ void DirectShowPlayerService::play()
 
         ::SetEvent(m_taskHandle);
     }
+
+    updateStatus();
 }
 
 void DirectShowPlayerService::doPlay(QMutexLocker *locker)
@@ -722,6 +724,8 @@ void DirectShowPlayerService::pause()
 
         ::SetEvent(m_taskHandle);
     }
+
+    updateStatus();
 }
 
 void DirectShowPlayerService::doPause(QMutexLocker *locker)
@@ -772,6 +776,7 @@ void DirectShowPlayerService::stop()
         m_loop->wait(&m_mutex);
     }
 
+    updateStatus();
 }
 
 void DirectShowPlayerService::doStop(QMutexLocker *locker)
@@ -782,16 +787,8 @@ void DirectShowPlayerService::doStop(QMutexLocker *locker)
             control->Release();
         }
 
-        if (IMediaSeeking *seeking = com_cast<IMediaSeeking>(m_graph, IID_IMediaSeeking)) {
-            LONGLONG position = 0;
-
-            seeking->GetCurrentPosition(&position);
-            seeking->Release();
-
-            m_position = position / qt_directShowTimeScale;
-        } else {
-            m_position = 0;
-        }
+        m_position = 0;
+        m_pendingTasks |= Seek;
 
         m_executedTasks &= ~(Play | Pause);
         
@@ -1156,6 +1153,8 @@ void DirectShowPlayerService::customEvent(QEvent *event)
     } else if (event->type() == QEvent::Type(PositionChange)) {
         QMutexLocker locker(&m_mutex);
 
+        if (m_playerControl->mediaStatus() == QMediaPlayer::EndOfMedia)
+            m_playerControl->updateStatus(QMediaPlayer::LoadedMedia);
         m_playerControl->updatePosition(m_position);
     } else {
         QMediaService::customEvent(event);

@@ -74,8 +74,8 @@ public slots:
     void setContentRect(const QRect &rect);
 
 signals:
-    void beginVideoWidgetNativePaintEvent();
-    void endVideoWidgetNativePaintEvent();
+    void beginVideoWidgetNativePaint();
+    void endVideoWidgetNativePaint();
 
 private:
     void updateOrdinalPosition();

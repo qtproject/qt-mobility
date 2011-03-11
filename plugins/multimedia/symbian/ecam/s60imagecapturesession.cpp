@@ -547,6 +547,7 @@ int S60ImageCaptureSession::prepareImageCapture()
         // Check if CaptureSize was modified
         if (captureSize.iWidth != m_captureSize.width() || captureSize.iHeight != m_captureSize.height())
             m_captureSize = QSize(captureSize.iWidth, captureSize.iHeight);
+        emit captureSizeChanged(m_captureSize);
 
 #ifdef ECAM_PREVIEW_API
         // Subscribe previews
@@ -1188,12 +1189,8 @@ qreal S60ImageCaptureSession::maxDigitalZoom()
 
 void S60ImageCaptureSession::doSetZoomFactorL(qreal optical, qreal digital)
 {
-    // Convert Zoom Factor to Zoom Value if AdvSettings are not available
 #if !defined(USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER) & !defined(USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER)
-    // Convert Zoom Factors to Symbian Zoom Values
-    int opticalSymbian = (optical * m_cameraInfo->iMaxZoom) / maximumZoom();
-    if (m_cameraInfo->iMaxZoom != 0 && optical == 1.0)
-        opticalSymbian = 1; // Make sure zooming out to initial value if requested
+    // Convert Zoom Factor to Zoom Value if AdvSettings are not available
     int digitalSymbian = (digital * m_cameraInfo->iMaxDigitalZoom) / maxDigitalZoom();
     if (m_cameraInfo->iMaxDigitalZoom != 0 && digital == 1.0)
         digitalSymbian = 1; // Make sure zooming out to initial value if requested
@@ -1205,36 +1202,27 @@ void S60ImageCaptureSession::doSetZoomFactorL(qreal optical, qreal digital)
     if (m_cameraEngine && queryCurrentCameraInfo()) {
         CCamera *camera = m_cameraEngine->Camera();
         if (camera) {
+
             // Optical Zoom
-            if (optical != opticalZoomFactor()) {
-                if (optical >= m_cameraInfo->iMinZoomFactor && optical <= m_cameraInfo->iMaxZoomFactor) {
-#if defined(USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER) | defined(USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER)
-                    if (m_advancedSettings)
-                        m_advancedSettings->setOpticalZoomFactorL(optical); // Using Zoom Factor
-                    else
-                        setError(KErrNotReady, tr("Zooming failed."));
-#else // No advanced settigns
-                    camera->SetZoomFactorL(opticalSymbian); // Using Zoom Value
-#endif // USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER | USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER
-                } else {
-                    setError(KErrNotSupported, tr("Requested optical zoom factor is not supported."));
-                    return;
-                }
+            if (!qFuzzyCompare(optical, qreal(1.0)) && !qFuzzyCompare(optical, qreal(0.0))) {
+                setError(KErrNotSupported, tr("Requested optical zoom factor is not supported."));
+                return;
             }
 
             // Digital Zoom (Smooth Zoom - Zoom value set in steps)
             if (digital != digitalZoomFactor()) {
-                if (digital >= 1 && digital <= m_cameraInfo->iMaxDigitalZoomFactor) {
+                if ((digital > 1.0 || qFuzzyCompare(digital, qreal(1.0))) &&
+                    digital <= m_cameraInfo->iMaxDigitalZoomFactor) {
 #if defined(USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER) | defined(USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER)
                     if (m_advancedSettings) {
                         qreal currentZoomFactor = m_advancedSettings->digitalZoomFactorL();
 
                         QList<qreal> smoothZoomSetValues;
-                        QList<qreal> *factors = m_advancedSettings->supportedDigitalZoomFactors();
+                        QList<qreal> factors = m_advancedSettings->supportedDigitalZoomFactors();
                         if (currentZoomFactor < digital) {
-                            for (int i = 0; i < factors->count(); ++i) {
-                                if (factors->at(i) > currentZoomFactor && factors->at(i) < digital)
-                                    smoothZoomSetValues << factors->at(i);
+                            for (int i = 0; i < factors.count(); ++i) {
+                                if (factors.at(i) > currentZoomFactor && factors.at(i) < digital)
+                                    smoothZoomSetValues << factors.at(i);
                             }
 
                             for (int i = 0; i < smoothZoomSetValues.count(); i = i + KSmoothZoomStep) {
@@ -1242,9 +1230,9 @@ void S60ImageCaptureSession::doSetZoomFactorL(qreal optical, qreal digital)
                             }
 
                         } else {
-                            for (int i = 0; i < factors->count(); ++i) {
-                                if (factors->at(i) < currentZoomFactor && factors->at(i) > digital)
-                                    smoothZoomSetValues << factors->at(i);
+                            for (int i = 0; i < factors.count(); ++i) {
+                                if (factors.at(i) < currentZoomFactor && factors.at(i) > digital)
+                                    smoothZoomSetValues << factors.at(i);
                             }
 
                             for (int i = (smoothZoomSetValues.count() - 1); i >= 0; i = i - KSmoothZoomStep) {
@@ -1252,22 +1240,8 @@ void S60ImageCaptureSession::doSetZoomFactorL(qreal optical, qreal digital)
                             }
                         }
 
-                        // Set final value - Find closest supported factor
-                        int closestIndex = -1;
-                        int closestDiff = 1000000; // Sensible maximum
-                        for (int i = 0; i < factors->count(); ++i) {
-                            int diff = abs((factors->at(i)*100) - (digital*100));
-                            if (diff < closestDiff) {
-                                closestDiff = diff;
-                                closestIndex = i;
-                            }
-                        }
-                        if (closestIndex != -1)
-                            m_advancedSettings->setDigitalZoomFactorL(factors->at(closestIndex)); // Using Zoom Factor
-                        else {
-                            setError(KErrNotSupported, tr("Requested digital zoom factor is not supported."));
-                            return;
-                        }
+                        // Set final value
+                        m_advancedSettings->setDigitalZoomFactorL(digital);
                     }
                     else
                         setError(KErrNotReady, tr("Zooming failed."));
