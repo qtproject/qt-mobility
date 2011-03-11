@@ -347,7 +347,16 @@ void QGeoTiledMapData::setMapType(QGraphicsGeoMap::MapType mapType)
 */
 void QGeoTiledMapData::setConnectivityMode(QGraphicsGeoMap::ConnectivityMode connectivityMode)
 {
+    QGraphicsGeoMap::ConnectivityMode oldMode = QGeoMapData::connectivityMode();
+
+    if (oldMode == connectivityMode)
+        return;
+
     QGeoMapData::setConnectivityMode(connectivityMode);
+
+    if (oldMode == QGeoMapData::connectivityMode())
+        return;
+
     emit connectivityModeChanged(connectivityMode);
 }
 
