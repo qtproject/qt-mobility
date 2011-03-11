@@ -53,6 +53,7 @@
 
     \ingroup connectivity-nfc
     \inmodule QtConnectivity
+    \internal
 
     A Symbian implementation class to support symbian NFC backend.
 */

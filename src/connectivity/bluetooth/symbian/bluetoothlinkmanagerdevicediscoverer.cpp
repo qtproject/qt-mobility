@@ -61,6 +61,7 @@ QTM_BEGIN_NAMESPACE
 
     \ingroup connectivity-bluetooth
     \inmodule QtConnectivity
+    \internal
 
     BluetoothLinkManagerDeviceDiscoverer is an Symbian ActiveObject derived class that discovers
     other Bluetooth devices using "BTLinkManager" protocol.

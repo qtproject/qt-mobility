@@ -59,6 +59,7 @@ QTM_BEGIN_NAMESPACE
 
     \ingroup connectivity-bluetooth
     \inmodule QtConnectivity
+    \internal
 
     @internalComponent
 

@@ -61,7 +61,7 @@ const static TInt BTKErrRemoteDeviceIndicatedNoBonding = KLinkManagerErrBase-4;
 
     \ingroup connectivity-bluetooth
     \inmodule QtConnectivity
-
+    \internal
 */
 
 BluetoothSymbianPairingAdapter::BluetoothSymbianPairingAdapter(const QBluetoothAddress &address, QObject *parent)
