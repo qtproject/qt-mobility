@@ -89,12 +89,22 @@ void meegosensorbase::start()
         int currentRange = sensor()->outputRange();
         
         
+
         int l = sensor()->outputRanges().size();
         if (l>1){
             if (currentRange != m_prevOutputRange){
+#ifdef Q_WS_MAEMO6
                 bool isOk = m_sensorInterface->setDataRangeIndex(currentRange); //NOTE THAT THE CHANGE MIGHT NOT SUCCEED, FIRST COME FIRST SERVED
                 if (!isOk) sensorError(KErrInUse);
                 else m_prevOutputRange = currentRange;
+#else
+                // TODO: remove when sensord integrated, in MeeGo env there is a delay
+                qoutputrange range = sensor()->outputRanges().at(currentRange);
+                qreal correction = 1/correctionFactor();
+                DataRange range1(range.minimum*correction, range.maximum*correction, range.accuracy*correction);
+                m_sensorInterface->requestDataRange(range1);
+                m_prevOutputRange = currentRange;
+#endif
             }
         }
         
