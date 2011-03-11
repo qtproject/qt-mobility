@@ -398,11 +398,47 @@ int QSystemNetworkInfoPrivate::locationAreaCode()
 
 QString QSystemNetworkInfoPrivate::currentMobileCountryCode()
 {
+    if (!currentMCC.isEmpty()) {
+        return currentMCC;
+    }
+
+    // Don't have a cached MCC value, let's query it
+    QDBusMessage message = QDBusMessage::createMethodCall("com.nokia.csd.CSNet",
+                                                          "/com/nokia/csd/csnet",
+                                                          "org.freedesktop.DBus.Properties",
+                                                          "Get");
+    message << "com.nokia.csd.CSNet.NetworkOperator";
+    message << "OperatorMCC";
+
+    QDBusReply<QDBusVariant> mccReply = QDBusConnection::systemBus().call(message);
+    if (mccReply.isValid()) {
+        QDBusVariant v = mccReply.value();
+        return v.variant().toString();
+    }
+
     return currentMCC;
 }
 
 QString QSystemNetworkInfoPrivate::currentMobileNetworkCode()
 {
+    if (!currentMNC.isEmpty()) {
+        return currentMNC;
+    }
+
+    // Don't have a cached MNC value, let's query it
+    QDBusMessage message = QDBusMessage::createMethodCall("com.nokia.csd.CSNet",
+                                                          "/com/nokia/csd/csnet",
+                                                          "org.freedesktop.DBus.Properties",
+                                                          "Get");
+    message << "com.nokia.csd.CSNet.NetworkOperator";
+    message << "OperatorMNC";
+
+    QDBusReply<QDBusVariant> mncReply = QDBusConnection::systemBus().call(message);
+    if (mncReply.isValid()) {
+        QDBusVariant v = mncReply.value();
+        return v.variant().toString();
+    }
+
     return currentMNC;
 }
 
