@@ -587,6 +587,26 @@ QNetworkInterface QSystemNetworkInfoPrivate::interfaceForMode(QSystemNetworkInfo
     return QNetworkInterface();
 }
 
+QMap<QString,QVariant> QSystemNetworkInfoPrivate::queryCsdProperties(const QString& service, const QString& servicePath, const QString& interface)
+{
+    QMap<QString,QVariant> props;
+#if !defined(QT_NO_DBUS)
+    const QString dBusProps = "org.freedesktop.DBus.Properties";
+
+    QDBusMessage message = QDBusMessage::createMethodCall(service,
+                                                          servicePath,
+                                                          dBusProps,
+                                                          "GetAll");
+    message << interface;
+    QDBusReply< QMap<QString, QVariant> > csdReply = QDBusConnection::systemBus().call(message);
+
+    if (csdReply.isValid()) {
+        props = csdReply.value();
+    }
+#endif
+    return props;
+}
+
 void QSystemNetworkInfoPrivate::setupNetworkInfo()
 {
     currentCellNetworkStatus = -1;
@@ -628,15 +648,15 @@ void QSystemNetworkInfoPrivate::setupNetworkInfo()
         const QString servicePath = "/com/nokia/csd/csnet";
 
         /* CSD: network cell */
-        QDBusInterface ifc(service, servicePath, "com.nokia.csd.CSNet.NetworkCell", systemDbusConnection);
+        QMap<QString,QVariant> csdNetworkCell = queryCsdProperties(service, servicePath, "com.nokia.csd.CSNet.NetworkCell");
 
-        QVariant cellLac = ifc.property("CellLac");
+        QVariant cellLac = csdNetworkCell.value("CellLac", -1);
         currentLac = cellLac.isValid() ? cellLac.value<int>() : -1;
 
-        QVariant cellId = ifc.property("CellId");
+        QVariant cellId = csdNetworkCell.value("CellId", -1);
         currentCellId =  cellId.isValid() ? cellId.value<int>() : -1;
 
-        QVariant cellType = ifc.property("CellType");
+        QVariant cellType = csdNetworkCell.value("CellType", "");
         QString currentCellType = cellType.isValid() ? cellType.value<QString>() : "";
 
         if (currentCellType == "GSM")
@@ -645,35 +665,35 @@ void QSystemNetworkInfoPrivate::setupNetworkInfo()
             radioAccessTechnology = 2;
 
         /* CSD: network operator */
-        QDBusInterface ifc2(service, servicePath, "com.nokia.csd.CSNet.NetworkOperator", systemDbusConnection);
+        QMap<QString,QVariant> csdNetworkOperator = queryCsdProperties(service, servicePath, "com.nokia.csd.CSNet.NetworkOperator");
 
-        QVariant mcc = ifc2.property("OperatorMCC");
+        QVariant mcc = csdNetworkOperator.value("OperatorMCC", "");
         currentMCC = mcc.isValid() ? mcc.value<QString>() : "";
 
-        QVariant mnc = ifc2.property("OperatorMNC");
+        QVariant mnc = csdNetworkOperator.value("OperatorMNC", "");
         currentMNC = mnc.isValid() ? mnc.value<QString>() : "";
 
-        QVariant operatorName = ifc2.property("OperatorName");
+        QVariant operatorName = csdNetworkOperator.value("OperatorName", "");
         currentOperatorName = operatorName.isValid() ? operatorName.value<QString>() : "";
 
         /* CSD: signal strength */
-        QDBusInterface ifc3(service, servicePath, "com.nokia.csd.CSNet.SignalStrength", systemDbusConnection);
+        QMap<QString,QVariant> csdSignalStrength = queryCsdProperties(service, servicePath, "com.nokia.csd.CSNet.SignalStrength");
 
-        QVariant signalStrength = ifc3.property("SignalPercent");
+        QVariant signalStrength = csdSignalStrength.value("SignalPercent", -1);
         cellSignalStrength = signalStrength.isValid() ? signalStrength.value<int>() : -1;
 
         /* CSD: network registration */
-        QDBusInterface ifc4(service, servicePath, "com.nokia.csd.CSNet.NetworkRegistration", systemDbusConnection);
+        QMap<QString,QVariant> csdNetworkRegistration = queryCsdProperties(service, servicePath, "com.nokia.csd.CSNet.NetworkRegistration");
 
-        QVariant registrationStatus = ifc4.property("RegistrationStatus");
+        QVariant registrationStatus = csdNetworkRegistration.value("RegistrationStatus", "");
         QString status = registrationStatus.isValid() ? registrationStatus.value<QString>() : "";
 
         currentCellNetworkStatus = csStatusMaemo6.value(status, -1);
 
         /* CSD: data technology */
-        QDBusInterface ifc5(service, servicePath, "com.nokia.csd.CSNet.RadioAccess", systemDbusConnection);
+        QMap<QString,QVariant> csdRadioAccess = queryCsdProperties(service, servicePath, "com.nokia.csd.CSNet.RadioAccess");
 
-        QVariant dataTechnology = ifc5.property("DataTechnology");
+        QVariant dataTechnology = csdRadioAccess.value("DataTechnology", "");
         QString dt = dataTechnology.isValid() ? dataTechnology.value<QString>() : "";
         currentCellDataTechnology = csdtToCellDataTechnology(dt);
 
