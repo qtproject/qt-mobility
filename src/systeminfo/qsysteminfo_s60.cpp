@@ -451,9 +451,6 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSyst
         case QSystemNetworkInfo::GsmMode:
         case QSystemNetworkInfo::CdmaMode:
         case QSystemNetworkInfo::WcdmaMode:
-        case QSystemNetworkInfo::GprsMode:
-        case QSystemNetworkInfo::EdgeMode:
-        case QSystemNetworkInfo::HspaMode:
         case QSystemNetworkInfo::LteMode:
         {
         #ifndef ETELMM_SUPPORTED

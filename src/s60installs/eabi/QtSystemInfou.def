@@ -224,4 +224,6 @@ EXPORTS
 	_ZNK10QtMobility19QSystemAlignedTimer8isActiveEv @ 223 NONAME
 	_ZN10QtMobility19QSystemAlignedTimer13setSingleShotEb @ 224 NONAME
 	_ZN10QtMobility18QSystemScreenSaver23setScreenSaverInhibitedEb @ 225 NONAME
+	_ZN10QtMobility18QSystemNetworkInfo18cellDataTechnologyEv @ 226 NONAME
+	_ZN10QtMobility18QSystemNetworkInfo25cellDataTechnologyChangedENS0_18CellDataTechnologyE @ 227 NONAME
 
