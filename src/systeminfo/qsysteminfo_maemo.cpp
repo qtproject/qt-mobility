@@ -1463,18 +1463,15 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoPrivate::currentPowerState()
 
 void QSystemDeviceInfoPrivate::setupProfile()
 {
-    QDBusConnection systemDbusConnection = QDBusConnection::systemBus();
+    QDBusReply<quint32> radioStatesReply = QDBusConnection::systemBus().call(
+                                                       QDBusMessage::createMethodCall("com.nokia.mce",  "/com/nokia/mce/request",
+                                                                                      "com.nokia.mce.request", "get_radio_states"));
+    if (radioStatesReply.isValid()) {
+        quint32 radioStateFlags = radioStatesReply.value();
+#define MCE_RADIO_STATE_WLAN            (1 << 2)
+#define MCE_RADIO_STATE_BLUETOOTH       (1 << 3)
 
-    QDBusInterface mceConnectionInterface("com.nokia.mce",
-                                      "/com/nokia/mce/request",
-                                      "com.nokia.mce.request",
-                                      systemDbusConnection, this);
-    if (!mceConnectionInterface.isValid()) {
-        qDebug() << "mce interface not valid";
-        return;
-    } else {
-        QDBusReply<QString> deviceModeReply = mceConnectionInterface.call("get_device_mode");
-        flightMode = QString::compare(deviceModeReply.value(), "flight", Qt::CaseInsensitive) == 0;
+        flightMode = !(radioStateFlags & ~(MCE_RADIO_STATE_WLAN | MCE_RADIO_STATE_BLUETOOTH));
     }
 
     QDBusInterface connectionInterface("com.nokia.profiled",
