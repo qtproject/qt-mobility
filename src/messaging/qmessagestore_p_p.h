@@ -38,17 +38,51 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef QMESSAGESTOREPRIVATE_H
+#define QMESSAGESTOREPRIVATE_H
 #include "qmessagestore_p.h"
-#include "qmessagestore_p_p.h"
-
+#ifdef Q_OS_WIN
+QT_BEGIN_NAMESPACE
+class QMutex;
+QT_END_NAMESPACE
+#endif
 
 QTM_BEGIN_NAMESPACE
 
-/*!
-    \class QMessageStore
-    \internal
-*/
+class QMessageStorePrivatePlatform;
 
-#include "moc_qmessagestore_p.cpp"
+class QMessageStorePrivate
+{
+    Q_DECLARE_PUBLIC(QMessageStore)
+
+public:
+    QMessageStorePrivate();
+    ~QMessageStorePrivate();
+
+    void initialize(QMessageStore *store);
+
+    QMessageStore *q_ptr;
+    QMessageStorePrivatePlatform *p_ptr;
+
+#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+    enum NotificationType
+    {
+        Added,
+        Updated,
+        Removed
+    };
+    void messageNotification(QMessageStorePrivate::NotificationType type, const QMessageId& id,
+                             const QMessageManager::NotificationFilterIdSet &matchingFilters);
+#endif
+#ifdef Q_WS_MAEMO_6
+    mutable QMessageManager::Error error;
+#endif
+#ifdef Q_OS_WIN
+    static QMutex* mutex(QMessageStore*);
+    static QMutex* mutex(QMessageManager&);
+#endif
+
+};
 
 QTM_END_NAMESPACE
+#endif

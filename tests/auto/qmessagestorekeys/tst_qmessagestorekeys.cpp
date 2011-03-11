@@ -45,7 +45,7 @@
 #include <QTest>
 #include <QDebug>
 
-#include "qmessagestore.h"
+#include "qmessagestore_p.h"
 #include "../support/support.h"
 
 #if (defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6))

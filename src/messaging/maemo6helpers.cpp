@@ -45,7 +45,7 @@
 #include "qmessageaccountsortorder_p.h"
 #include "qmessagefolderfilter_p.h"
 #include "qmessagefoldersortorder_p.h"
-#include "qmessagestore.h"
+#include "qmessagestore_p.h"
 
 QTM_BEGIN_NAMESPACE
 
