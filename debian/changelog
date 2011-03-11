@@ -1,3 +1,9 @@
+qt-mobility (1.2.0~git20110311) unstable; urgency=low
+
+  *
+
+ -- Sunil Thaha <sunil.thaha@nokia.com>  Fri, 11 Mar 2011 13:59:48 +1000
+
 qt-mobility (1.2.0~git20110310) unstable; urgency=low
 
   * Fixes: NB#228976
