@@ -1474,37 +1474,55 @@ void QSystemDeviceInfoPrivate::setupProfile()
         flightMode = !(radioStateFlags & ~(MCE_RADIO_STATE_WLAN | MCE_RADIO_STATE_BLUETOOTH));
     }
 
-    QDBusInterface connectionInterface("com.nokia.profiled",
-                                      "/com/nokia/profiled",
-                                      "com.nokia.profiled",
-                                      QDBusConnection::sessionBus(), this);
-    if(!connectionInterface.isValid()) {
-       qDebug() << "profiled interface not valid";
-       return;
+    QDBusReply<QString> profileNameReply = QDBusConnection::sessionBus().call(
+                                                       QDBusMessage::createMethodCall("com.nokia.profiled", "/com/nokia/profiled",
+                                                                                      "com.nokia.profiled", "get_profile"));
+
+    if (profileNameReply.isValid()) {
+        profileName = profileNameReply.value();
     }
 
-    QDBusReply<QString> profileNameReply = connectionInterface.call("get_profile");
-    if (profileNameReply.isValid())
-        profileName = profileNameReply.value();
+    QDBusMessage ringingAlertTypeMsg = QDBusMessage::createMethodCall("com.nokia.profiled", "/com/nokia/profiled",
+                                                                      "com.nokia.profiled", "get_value");
+    ringingAlertTypeMsg << profileName;
+    ringingAlertTypeMsg << "ringing.alert.type";
 
-    QDBusReply<QString> ringingAlertTypeReply = connectionInterface.call("get_value", profileName, "ringing.alert.type");
+    QDBusReply<QString> ringingAlertTypeReply = QDBusConnection::sessionBus().call(ringingAlertTypeMsg);
 
     if (ringingAlertTypeReply.isValid()) {
         silentProfile = QString::compare(ringingAlertTypeReply.value(), "silent", Qt::CaseInsensitive) == 0;
         beepProfile = QString::compare(ringingAlertTypeReply.value(), "beep", Qt::CaseInsensitive) == 0;
     }
 
-    QDBusReply<QString> vibratingAlertEnabledReply = connectionInterface.call("get_value", profileName, "vibrating.alert.enabled");
-    if (vibratingAlertEnabledReply.isValid())
+    QDBusMessage vibratingAlertMsg = QDBusMessage::createMethodCall("com.nokia.profiled", "/com/nokia/profiled",
+                                                                    "com.nokia.profiled", "get_value");
+    vibratingAlertMsg << profileName;
+    vibratingAlertMsg << "vibrating.alert.enabled";
+
+    QDBusReply<QString> vibratingAlertEnabledReply = QDBusConnection::sessionBus().call(vibratingAlertMsg);
+    if (vibratingAlertEnabledReply.isValid()) {
         vibratingAlertEnabled = QString::compare(vibratingAlertEnabledReply.value(), "On", Qt::CaseInsensitive) == 0;
+    }
 
-    QDBusReply<QString> ringingAlertVolumeReply = connectionInterface.call("get_value", profileName, "ringing.alert.volume");
-    if (ringingAlertVolumeReply.isValid())
+    QDBusMessage ringingAlertVolumeMsg = QDBusMessage::createMethodCall("com.nokia.profiled", "/com/nokia/profiled",
+                                                                        "com.nokia.profiled", "get_value");
+    ringingAlertVolumeMsg << profileName;
+    ringingAlertVolumeMsg << "ringing.alert.volume";
+
+    QDBusReply<QString> ringingAlertVolumeReply = QDBusConnection::sessionBus().call(ringingAlertVolumeMsg);
+    if (ringingAlertVolumeReply.isValid()) {
         ringingAlertVolume = ringingAlertVolumeReply.value().toInt();
+    }
 
-    QDBusReply<QString> smsAlertVolumeReply = connectionInterface.call("get_value", profileName, "sms.alert.volume");
-    if (smsAlertVolumeReply.isValid())
+    QDBusMessage smsAlertVolumeMsg = QDBusMessage::createMethodCall("com.nokia.profiled", "/com/nokia/profiled",
+                                                                    "com.nokia.profiled", "get_value");
+    smsAlertVolumeMsg << profileName;
+    smsAlertVolumeMsg << "sms.alert.volume";
+
+    QDBusReply<QString> smsAlertVolumeReply = QDBusConnection::sessionBus().call(smsAlertVolumeMsg);
+    if (smsAlertVolumeReply.isValid()) {
         smsAlertVolume = smsAlertVolumeReply.value().toInt();
+    }
 
     qDBusRegisterMetaType<ProfileDataValue>();
     qDBusRegisterMetaType<QList<ProfileDataValue> >();
