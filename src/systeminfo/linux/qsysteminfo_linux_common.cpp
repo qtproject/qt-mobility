@@ -1457,14 +1457,8 @@ QSystemNetworkInfo::NetworkMode QSystemNetworkInfoLinuxCommonPrivate::ofonoTechT
     if (ofonoTech == "gsm") {
         return QSystemNetworkInfo::GsmMode;
     }
-    if (ofonoTech == "edge"){
-        return QSystemNetworkInfo::EdgeMode;
-    }
     if (ofonoTech == "umts"){
         return QSystemNetworkInfo::WcdmaMode;
-    }
-    if (ofonoTech == "hspa"){
-         return QSystemNetworkInfo::HspaMode;
     }
     if (ofonoTech == "lte"){
         return QSystemNetworkInfo::LteMode;
