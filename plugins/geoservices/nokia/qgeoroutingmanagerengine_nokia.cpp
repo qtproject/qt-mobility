@@ -51,6 +51,7 @@
 
 #include <QStringList>
 #include <QNetworkProxy>
+#include <QUrl>
 #include <qgeoboundingbox.h>
 
 QGeoRoutingManagerEngineNokia::QGeoRoutingManagerEngineNokia(const QMap<QString, QVariant> &parameters, QGeoServiceProvider::Error *error, QString *errorString)
@@ -63,8 +64,16 @@ QGeoRoutingManagerEngineNokia::QGeoRoutingManagerEngineNokia(const QMap<QString,
 
     if (parameters.contains("routing.proxy")) {
         QString proxy = parameters.value("routing.proxy").toString();
-        if (!proxy.isEmpty())
-            m_networkManager->setProxy(QNetworkProxy(QNetworkProxy::HttpProxy, proxy, 8080));
+        if (!proxy.isEmpty()) {
+            QUrl proxyUrl(proxy);
+            if (proxyUrl.isValid()) {
+                m_networkManager->setProxy(QNetworkProxy(QNetworkProxy::HttpProxy, 
+                    proxyUrl.host(),
+                    proxyUrl.port(8080),
+                    proxyUrl.userName(),
+                    proxyUrl.password()));
+            }
+        }
     }
 
     if (parameters.contains("routing.host")) {

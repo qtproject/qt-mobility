@@ -92,6 +92,8 @@ void meegosensorbase::start()
         int l = sensor()->outputRanges().size();
         if (l>1){
             if (currentRange != m_prevOutputRange){
+
+                // TODO: replace this with the latter uncommented part when sensord ready
                 qoutputrange range = sensor()->outputRanges().at(currentRange);
                 qreal correction = 1/correctionFactor();
                 DataRange range1(range.minimum*correction, range.maximum*correction, range.accuracy*correction);

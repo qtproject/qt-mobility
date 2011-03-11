@@ -46,6 +46,7 @@ symbian {
     pluginDep.sources = $${TARGET}.dll
     pluginDep.path = $${QT_PLUGINS_BASE_DIR}/$${PLUGIN_TYPE}
     DEPLOYMENT += pluginDep      
+    LIBS += -lefsrv
 }
 
 RESOURCES += resource.qrc

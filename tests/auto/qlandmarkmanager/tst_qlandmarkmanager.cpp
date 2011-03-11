@@ -6063,9 +6063,12 @@ void tst_QLandmarkManager::filterAttribute() {
 
     attributeFilter.setAttribute("city", "adelai", QLandmarkFilter::MatchStartsWith);
     attributeFilter.setAttribute("description", "The description", QLandmarkFilter::MatchStartsWith);
+    QVERIFY(doFetch(type,attributeFilter, &lms));
 #ifdef Q_OS_SYMBIAN
-    QVERIFY(doFetch(type,attributeFilter,&lms,QLandmarkManager::NotSupportedError));
+    QEXPECT_FAIL("", "MOBILITY-2331: and operation with filter is failing", Continue);
+    QCOMPARE(lms.count(), 1);
 #else
+    QVERIFY(doFetch(type,attributeFilter,&lms));
     QCOMPARE(lms.count(), 1);
     QCOMPARE(lms.at(0), lm1);
 #endif
@@ -6159,13 +6162,12 @@ void tst_QLandmarkManager::filterAttribute() {
     attributeFilter.setAttribute("country", "", QLandmarkFilter::MatchFixedString);
 
 #ifdef Q_OS_SYMBIAN
-    QVERIFY(doFetch(type,attributeFilter,&lms, QLandmarkManager::BadArgumentError));
+    QVERIFY(doFetch(type,attributeFilter,&lms, QLandmarkManager::NotSupportedError));
 #else
     QVERIFY(doFetch(type,attributeFilter,&lms));
-#endif
-
     QEXPECT_FAIL("", "bug covered in MOBILITY-1720", Continue);
     QCOMPARE(lms.count(), 1);
+#endif
 }
 
 void tst_QLandmarkManager::filterAttribute_data()
@@ -6589,7 +6591,6 @@ void tst_QLandmarkManager::filterAttribute3()
 
     QList<QLandmark> lms;
 #ifdef Q_OS_SYMBIAN
-    QEXPECT_FAIL("", "MOBILITY-2283: symbian does not support MatchContains", Continue);
     QCOMPARE(m_manager->filterSupportLevel(attributeFilter), QLandmarkManager::NoSupport);
     QVERIFY(doFetch(type, attributeFilter, &lms,QLandmarkManager::NotSupportedError));
 #else
@@ -8555,8 +8556,14 @@ void tst_QLandmarkManager::filterSupportLevel() {
     //manager attributes that exist
     QLandmarkAttributeFilter attributeFilter;
     attributeFilter.setAttribute("name", "jack");
-    attributeFilter.setAttribute("description", "colonel");
     QCOMPARE(m_manager->filterSupportLevel(attributeFilter), QLandmarkManager::NativeSupport);
+
+    attributeFilter.setAttribute("description", "colonel");
+#ifdef Q_OS_SYMBIAN
+    QCOMPARE(m_manager->filterSupportLevel(attributeFilter), QLandmarkManager::NoSupport);
+#else
+    QCOMPARE(m_manager->filterSupportLevel(attributeFilter), QLandmarkManager::NativeSupport);
+#endif
 
     //try a manager attribute that doesn't exist
     attributeFilter.setAttribute("weapon", "staff");
@@ -8579,7 +8586,11 @@ void tst_QLandmarkManager::filterSupportLevel() {
     //try see if other match flags will give native support
     attributeFilter.setAttribute("description", "desc");
     attributeFilter.setAttribute("street", "abydos", QLandmarkFilter::MatchStartsWith);
+#ifdef Q_OS_SYMBIAN
+    QCOMPARE(m_manager->filterSupportLevel(attributeFilter), QLandmarkManager::NoSupport);
+#else
     QCOMPARE(m_manager->filterSupportLevel(attributeFilter), QLandmarkManager::NativeSupport);
+#endif
 
     attributeFilter.clearAttributes();
     attributeFilter.setAttribute("street", "e", QLandmarkFilter::MatchContains);

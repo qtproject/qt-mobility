@@ -206,7 +206,7 @@ int main(int argc, char **argv)
 {
     qputenv("N900_PORTRAIT_SENSORS", "1");
     ...
-\code
+\endcode
 
 Despite hardware that allows for multiple data rates and output ranges, the Sensors API does not allow access to
 these due to permissions issues.
@@ -214,9 +214,6 @@ these due to permissions issues.
 Readings are polled using a timer. If the application blocks the event loop or otherwise interferes with the
 ability of the timer to fire, readings will be missed. There are no queues so applications must ensure that
 they process the readings promptly (possibly saving them into a buffer for later processing if required).
-
-Note that timestamps on this platform come from a counter that wraps around once or twice in a 24 hour period.
-Applications that evaluate timestamps over an extended period need to handle this.
 
 \section2 MeeGo
 

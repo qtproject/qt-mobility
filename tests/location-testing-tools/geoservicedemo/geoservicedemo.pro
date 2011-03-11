@@ -27,7 +27,7 @@ HEADERS  += routepresenter.h \
 
 RESOURCES += geoservicedemo.qrc
 
-include(../../../examples/examples.pri)
+include(../../../examples/mobility_examples.pri)
 
 CONFIG += mobility
 MOBILITY = location 

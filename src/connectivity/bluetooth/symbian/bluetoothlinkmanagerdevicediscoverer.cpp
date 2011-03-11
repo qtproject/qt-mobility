@@ -57,7 +57,7 @@ QTM_BEGIN_NAMESPACE
 
 /*!
     \class BluetoothLinkManagerDeviceDiscoverer
-    \brief The BluetoothLinkManagerDeviceDiscoverer is class searches other bluetooth devices.
+    \brief The BluetoothLinkManagerDeviceDiscoverer class searches other bluetooth devices.
 
     \ingroup connectivity-bluetooth
     \inmodule QtConnectivity

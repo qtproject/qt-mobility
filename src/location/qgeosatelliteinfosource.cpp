@@ -257,8 +257,8 @@ QGeoSatelliteInfoSource::QGeoSatelliteInfoSource(QObject *parent)
 */
 QGeoSatelliteInfoSource *QGeoSatelliteInfoSource::createDefaultSource(QObject *parent)
 {
-    QSettings settings(QSettings::SystemScope, QLatin1String("Nokia"), QLatin1String("QtLocationPosAndSat"));
-    QVariant value = settings.value("position.plugin.operator.whitelist");
+    QSettings pluginSettings(QSettings::SystemScope, QLatin1String("Nokia"), QLatin1String("QtLocationPosAndSat"));
+    QVariant value = pluginSettings.value("position.plugin.operator.whitelist");
     if (value.isValid()) {
         QStringList parts = value.toString().split(",");
         if (parts.size() == 4) {
@@ -287,13 +287,14 @@ QGeoSatelliteInfoSource *QGeoSatelliteInfoSource::createDefaultSource(QObject *p
     return new QGeoSatelliteInfoSourceSimulator(parent);
 #elif defined(Q_WS_MEEGO)
     // Use Maemo6 backend if available, otherwise use Gypsy backend
-    if (!settings.value("maemo6satelliteavailable").isValid()) {
+    QSettings maemo6Settings(QSettings::UserScope, QLatin1String("Nokia"), QLatin1String("QtLocationPosAndSatMaemo6"));
+    if (!maemo6Settings.value("maemo6satelliteavailable").isValid()) {
         QGeoSatelliteInfoSourceMaemo *maemoSource = new QGeoSatelliteInfoSourceMaemo(parent);
         int status = maemoSource->init();
         if (status == -1) {
             delete maemoSource;
             maemoSource = 0;
-            settings.setValue("maemo6satelliteavailable", false);
+            maemo6Settings.setValue("maemo6satelliteavailable", false);
         } else {
             return maemoSource;
         }

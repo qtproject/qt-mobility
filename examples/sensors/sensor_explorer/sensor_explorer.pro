@@ -1,6 +1,6 @@
 TEMPLATE=app
 TARGET=sensor_explorer
-include(../../examples.pri)
+include(../../mobility_examples.pri)
 QT=core gui
 CONFIG+=mobility
 MOBILITY+=sensors

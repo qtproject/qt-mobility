@@ -63,6 +63,7 @@ Item {
 
 
             MapCircle {
+                id : circle
                 center : Coordinate {
                     //latitude: 0
                     //longitude: 0
@@ -72,35 +73,73 @@ Item {
                 color : "red"
                 radius : 1000.0
                 MapMouseArea {
-                    onClicked : { console.log('clicked in circle') }
-                    onDoubleClicked : { console.log('double clicked in circle') }
-                    onPressed: {console.log('pressed in circle') }
-                    onReleased: { console.log('released in circle') }
+//                    onClicked : { console.log('clicked in circle') }
+//                    onDoubleClicked : { console.log('double clicked in circle') }
+//                    onPressed: {console.log('pressed in circle') }
+//                    onReleased: { console.log('released in circle') }
+//                    onPositionChanged: { console.log('moved in circle') }
+
+                    property bool mouseDown : false
+                    property int lastX : -1
+                    property int lastY : -1
+
+                    hoverEnabled : true
+
+                    onPressed : {
+                        mouseDown = true
+                        lastX = mouse.x
+                        lastY = mouse.y
+                    }
+                    onReleased : {
+                        mouseDown = false
+                        lastX = -1
+                        lastY = -1
+                    }
+                    onPositionChanged: {
+                        if (mouseDown) {
+                            circle.center = mouse.coordinate
+                        }
+                    }
                 }
             }
 
-/*
+
         MapMouseArea {
-            onClicked : { 
-                console.log('clicked in map') 
-                mouse.accepted = false
+            property bool mouseDown : false
+            property int lastX : -1
+            property int lastY : -1
+
+            hoverEnabled : true
+
+            onPressed : {
+                mouseDown = true
+                lastX = mouse.x
+                lastY = mouse.y
             }
-            onDoubleClicked : { 
-                console.log('double clicked in map') 
-                mouse.accepted = false
+            onReleased : {
+                mouseDown = false
+                lastX = -1
+                lastY = -1
             }
-            onPressed: { 
-                console.log('pressed in map') 
-                mouse.accepted = false
+            onPositionChanged: {
+                console.log(mouse.button)
+                if (mouse.button == Qt.LeftMouseButton) {
+//                if (mouseDown) {
+                    var dx = mouse.x - lastX
+                    var dy = mouse.y - lastY
+                    map.pan(-dx, -dy)
+                    lastX = mouse.x
+                    lastY = mouse.y
+                    map.center = mouse.coordinate
+                }
             }
-            onReleased: { 
-                console.log('released in map') 
-                mouse.accepted = false
+            onDoubleClicked: {
+                map.center = mouse.coordinate
+                map.zoomLevel += 1
             }
         }
-*/
     }
-
+/*
     MouseArea {
 
         z : 0
@@ -135,7 +174,7 @@ Item {
             map.zoomLevel += 1
         }
     }
-
+*/
     Keys.onPressed: {
         if (event.key == Qt.Key_Plus) {
             map.zoomLevel += 1
