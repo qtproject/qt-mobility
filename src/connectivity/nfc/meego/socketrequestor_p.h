@@ -72,6 +72,8 @@ public:
     void requestAccess(const QString &path, const QString &kind);
     void cancelAccessRequest(const QString &path, const QString &kind);
 
+    bool waitForDBusSignal(int msecs);
+
 signals:
     void accessFailed(const QDBusObjectPath &targetPath, const QString &error);
     void accessGranted(const QDBusObjectPath &targetPath, const QString &accessKind);

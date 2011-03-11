@@ -250,6 +250,9 @@ QLlcpSocket::SocketState QLlcpSocketPrivate::state() const
 
 qint64 QLlcpSocketPrivate::readData(char *data, qint64 maxlen)
 {
+    if (m_datagrams.isEmpty())
+        return 0;
+
     const QByteArray datagram = m_datagrams.takeFirst();
     qint64 size = qMin(maxlen, qint64(datagram.length()));
     memcpy(data, datagram.constData(), size);
@@ -301,40 +304,137 @@ bool QLlcpSocketPrivate::canReadLine() const
     return false;
 }
 
-bool QLlcpSocketPrivate::waitForReadyRead(int msecs)
+bool QLlcpSocketPrivate::waitForReadyRead(int msec)
 {
-    Q_UNUSED(msecs);
+    Q_Q(QLlcpSocket);
 
-    qDebug() << Q_FUNC_INFO << "is unimplemented";
+    if (bytesAvailable())
+        return true;
 
-    return false;
+    fd_set fds;
+    FD_ZERO(&fds);
+    FD_SET(m_readFd, &fds);
+
+    timeval timeout;
+    timeout.tv_sec = msec / 1000;
+    timeout.tv_usec = (msec % 1000) * 1000;
+
+    // timeout can not be 0 or else select will return an error.
+    if (0 == msec)
+        timeout.tv_usec = 1000;
+
+    int result = -1;
+    // on Linux timeout will be updated by select, but _not_ on other systems.
+    QElapsedTimer timer;
+    timer.start();
+    while (!bytesAvailable() && (-1 == msec || timer.elapsed() < msec)) {
+        result = ::select(m_readFd + 1, &fds, 0, 0, &timeout);
+        if (result > 0)
+            _q_readNotify();
+
+        if (-1 == result && errno != EINTR) {
+            m_error = QLlcpSocket::UnknownSocketError;
+            emit q->error(m_error);
+            break;
+        }
+    }
+
+    return bytesAvailable();
 }
 
-bool QLlcpSocketPrivate::waitForBytesWritten(int msecs)
+bool QLlcpSocketPrivate::waitForBytesWritten(int msec)
 {
-    Q_UNUSED(msecs);
+    Q_Q(QLlcpSocket);
 
-    qDebug() << Q_FUNC_INFO << "is unimplemented";
+    fd_set fds;
+    FD_ZERO(&fds);
+    FD_SET(m_readFd, &fds);
 
+    timeval timeout;
+    timeout.tv_sec = msec / 1000;
+    timeout.tv_usec = (msec % 1000) * 1000;
+
+    // timeout can not be 0 or else select will return an error.
+    if (0 == msec)
+        timeout.tv_usec = 1000;
+
+    int result = -1;
+    // on Linux timeout will be updated by select, but _not_ on other systems.
+    QElapsedTimer timer;
+    timer.start();
+    while (-1 == msec || timer.elapsed() < msec) {
+        result = ::select(m_readFd + 1, 0, &fds, 0, &timeout);
+        if (result > 0)
+            return true;
+        if (-1 == result && errno != EINTR) {
+            m_error = QLlcpSocket::UnknownSocketError;
+            emit q->error(m_error);
+            return false;
+        }
+    }
+
+    // timeout expired
     return false;
 }
 
 bool QLlcpSocketPrivate::waitForConnected(int msecs)
 {
-    Q_UNUSED(msecs);
+    if (m_state != QLlcpSocket::ConnectingState)
+        return m_state == QLlcpSocket::ConnectedState;
 
-    qDebug() << Q_FUNC_INFO << "is unimplemented";
+    Q_Q(QLlcpSocket);
 
-    return false;
+    QElapsedTimer timer;
+    timer.start();
+    while (m_state == QLlcpSocket::ConnectingState && (msecs == -1 || timer.elapsed() < msecs)) {
+        if (!m_socketRequestor->waitForDBusSignal(qMax(msecs - timer.elapsed(), qint64(0)))) {
+            m_error = QLlcpSocket::UnknownSocketError;
+            emit q->error(m_error);
+            break;
+        }
+    }
+
+    // Possibly not needed.
+    QCoreApplication::sendPostedEvents(this, QEvent::MetaCall);
+
+    return m_state == QLlcpSocket::ConnectedState;
 }
 
-bool QLlcpSocketPrivate::waitForDisconnected(int msecs)
+bool QLlcpSocketPrivate::waitForDisconnected(int msec)
 {
-    Q_UNUSED(msecs);
+    if (m_state == QLlcpSocket::UnconnectedState)
+        return true;
 
-    qDebug() << Q_FUNC_INFO << "is unimplemented";
+    fd_set fds;
+    FD_ZERO(&fds);
+    FD_SET(m_readFd, &fds);
 
-    return false;
+    timeval timeout;
+    timeout.tv_sec = msec / 1000;
+    timeout.tv_usec = (msec % 1000) * 1000;
+
+    // timeout can not be 0 or else select will return an error.
+    if (0 == msec)
+        timeout.tv_usec = 1000;
+
+    int result = -1;
+    // on Linux timeout will be updated by select, but _not_ on other systems.
+    QElapsedTimer timer;
+    timer.start();
+    while (m_state != QLlcpSocket::UnconnectedState && (-1 == msec || timer.elapsed() < msec)) {
+        result = ::select(m_readFd + 1, &fds, 0, 0, &timeout);
+        if (result > 0)
+            _q_readNotify();
+
+        if (-1 == result && errno != EINTR) {
+            Q_Q(QLlcpSocket);
+            m_error = QLlcpSocket::UnknownSocketError;
+            emit q->error(m_error);
+            break;
+        }
+    }
+
+    return m_state == QLlcpSocket::UnconnectedState;
 }
 
 void QLlcpSocketPrivate::AccessFailed(const QDBusObjectPath &targetPath, const QString &error)
@@ -387,8 +487,6 @@ void QLlcpSocketPrivate::Connect(const QDBusVariant &lsap, const QDBusVariant &r
     m_state = QLlcpSocket::ConnectedState;
     emit q->stateChanged(m_state);
     emit q->connected();
-
-    qDebug() << Q_FUNC_INFO << readFd;
 }
 
 void QLlcpSocketPrivate::Socket(const QDBusVariant &lsap, const QDBusVariant &rsap,

@@ -45,9 +45,14 @@
 #include <QtCore/QHash>
 #include <QtCore/QSocketNotifier>
 #include <QtCore/QStringList>
+#include <QtCore/QElapsedTimer>
+#include <QtCore/QCoreApplication>
 #include <QtDBus/QDBusObjectPath>
 
 #include <dbus/dbus.h>
+
+#include <sys/select.h>
+#include <errno.h>
 
 QTM_BEGIN_NAMESPACE
 
@@ -191,6 +196,8 @@ public:
                                        const QString &kind);
     Q_INVOKABLE void sendCancelAccessRequest(const QString &adaptor, const QString &path,
                                              const QString &kind);
+
+    bool waitForDBusSignal(int msecs);
 
 private:
     bool parseAccessFailed(DBusMessage *message, SocketRequestor *socketRequestor);
@@ -524,6 +531,44 @@ void SocketRequestorPrivate::sendCancelAccessRequest(const QString &adaptor, con
     dbus_message_unref(message);
 }
 
+bool SocketRequestorPrivate::waitForDBusSignal(int msecs)
+{
+    dbus_connection_flush(m_dbusConnection);
+
+    fd_set rfds;
+    FD_ZERO(&rfds);
+
+    int nfds = -1;
+    foreach (const WatchNotifier &watchNotifier, m_watchNotifiers) {
+        FD_SET(watchNotifier.readNotifier->socket(), &rfds);
+        nfds = qMax(nfds, watchNotifier.readNotifier->socket());
+    }
+
+    timeval timeout;
+    timeout.tv_sec = msecs / 1000;
+    timeout.tv_usec = (msecs % 1000) * 1000;
+
+    // timeout can not be 0 or else select will return an error
+    if (msecs == 0)
+        timeout.tv_usec = 1000;
+
+    int result = -1;
+    // on Linux timeout will be updated by select, but _not_ on other systems
+    result = ::select(nfds + 1, &rfds, 0, 0, &timeout);
+    if (result == -1 && errno != EINTR)
+        return false;
+
+    foreach (const WatchNotifier &watchNotifier, m_watchNotifiers) {
+        if (FD_ISSET(watchNotifier.readNotifier->socket(), &rfds)) {
+            QMetaObject::invokeMethod(watchNotifier.readNotifier, "activated",
+                                      Q_ARG(int, watchNotifier.readNotifier->socket()));
+        }
+    }
+
+    return true;
+}
+
+
 SocketRequestor::SocketRequestor(const QString &adaptor, QObject *parent)
 :   QObject(parent), m_adaptor(adaptor)
 {
@@ -555,6 +600,22 @@ void SocketRequestor::cancelAccessRequest(const QString &path, const QString &ki
     QMetaObject::invokeMethod(s, "sendCancelAccessRequest", Qt::QueuedConnection,
                               Q_ARG(QString, m_adaptor), Q_ARG(QString, path),
                               Q_ARG(QString, kind));
+}
+
+bool SocketRequestor::waitForDBusSignal(int msecs)
+{
+    SocketRequestorPrivate *s = socketRequestorPrivate();
+
+    // Send queued method calls, i.e. requestAccess() and cancelAccessRequest().
+    QCoreApplication::sendPostedEvents(s, QEvent::MetaCall);
+
+    // Wait for DBus signal.
+    bool result = socketRequestorPrivate()->waitForDBusSignal(msecs);
+
+    // Send queued method calls, i.e. those from DBus.
+    QCoreApplication::sendPostedEvents(this, QEvent::MetaCall);
+
+    return result;
 }
 
 #include <moc_socketrequestor_p.cpp>
