@@ -90,7 +90,6 @@
 
 #ifdef Q_OS_SYMBIAN
 #include <EPos_CPosLmDatabaseManager.h>
-//#define SYMBIAN_SAVE_WORKAROUND
 #elif defined(SPARQL_BACKEND)
 //no special includes needed for sparql backend.
 #else
@@ -147,8 +146,6 @@
 #define SAVE_CATEGORY_STRESS
 #define REMOVE_CATEGORY_STRESS
 #define SIMPLE_TEST
-
-//#define WORKAROUND
 
 #include <float.h>
 
@@ -1029,7 +1026,6 @@ private:
     }
 
     void clearDb() {
-        QFile file;
         QList<QLandmarkId> lmIds = m_manager->landmarkIds();
         for(int i=0; i < lmIds.count(); ++i) {
             QVERIFY(m_manager->removeLandmark(lmIds.at(i)));
@@ -1048,17 +1044,6 @@ private:
         #else
             QTest::qWait(20);
         #endif
-
-        delete m_manager;
-        m_manager = 0;
-
-        delete m_listener;
-        m_listener =0;
-
-        QFile::remove(exportFile);
-        file.setFileName("nopermfile");
-        file.setPermissions(QFile::WriteOwner | QFile::WriteUser | QFile::WriteOther);
-        file.remove();
     }
 
 #if !(defined(Q_OS_SYMBIAN)||defined(SPARQL_BACKEND))
@@ -1340,19 +1325,37 @@ void testViewport_data();
 void tst_QLandmarkManager::initTestCase() {
     m_manager = 0;
     m_listener = 0;
+#ifdef PRESERVE_EXISTING_LANDMARKS
     managerDataHolder.reset(new QLandmarkManagerDataHolder());
+#endif
 }
 
 void tst_QLandmarkManager::init() {
     createDb();
+    clearDb();
+
 }
 
 void tst_QLandmarkManager::cleanup() {
     clearDb();
+
+    delete m_manager;
+    m_manager = 0;
+
+    delete m_listener;
+    m_listener =0;
+
+    QFile::remove(exportFile);
+    QFile file;
+    file.setFileName("nopermfile");
+    file.setPermissions(QFile::WriteOwner | QFile::WriteUser | QFile::WriteOther);
+    file.remove();
 }
 
 void tst_QLandmarkManager::cleanupTestCase() {
+#ifdef PRESERVE_EXISTING_LANDMARKS
     managerDataHolder.reset(0);
+#endif
     QFile::remove(exportFile);
     if (QFile::exists("nopermfile"))
         QFile::remove("nopermfile");
@@ -8599,8 +8602,13 @@ void tst_QLandmarkManager::fetchWaitForFinished()
     if (QSysInfo::s60Version() == QSysInfo::SV_S60_3_1
         || QSysInfo::s60Version() == QSysInfo::SV_S60_3_2
         || QSysInfo::s60Version() == QSysInfo::SV_S60_5_0) {
+#ifdef MOBILITY_2664
+        numImports= 12;
+        lowLandmarkNumber = false;
+#else
         numImports=2;
         lowLandmarkNumber = true;
+#endif
     }
 #endif
 
