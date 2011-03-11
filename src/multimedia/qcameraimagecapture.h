@@ -46,6 +46,8 @@
 #include <qmediaencodersettings.h>
 #include <qmediabindableinterface.h>
 
+#include <qmediaenumdebug.h>
+
 QT_BEGIN_NAMESPACE
 class QSize;
 QT_END_NAMESPACE
@@ -126,6 +128,8 @@ private:
 QT_END_NAMESPACE
 
 Q_DECLARE_METATYPE(QCameraImageCapture::Error)
+
+Q_MEDIA_ENUM_DEBUG(QCameraImageCapture, Error)
 
 #endif
 

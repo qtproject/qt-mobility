@@ -46,12 +46,14 @@
 #include <qmediaobject.h>
 
 #include <qcamera.h>
+#include <qmediaenumdebug.h>
 
 QT_BEGIN_NAMESPACE
 
 class Q_MULTIMEDIA_EXPORT QCameraImageProcessingControl : public QMediaControl
 {
     Q_OBJECT
+    Q_ENUMS(ProcessingParameter)
 
 public:
     ~QCameraImageProcessingControl();
@@ -82,6 +84,10 @@ protected:
 Q_MEDIA_DECLARE_CONTROL(QCameraImageProcessingControl, QCameraImageProcessingControl_iid)
 
 QT_END_NAMESPACE
+
+Q_DECLARE_METATYPE(QCameraImageProcessingControl::ProcessingParameter)
+
+Q_MEDIA_ENUM_DEBUG(QCameraImageProcessingControl, ProcessingParameter)
 
 #endif
 

@@ -71,7 +71,8 @@ PUBLIC_HEADERS += \
     qgraphicsvideoitem.h \
     qvideorenderercontrol.h \
     qmediatimerange.h \
-    qmedianetworkaccesscontrol.h
+    qmedianetworkaccesscontrol.h \
+    qmediaenumdebug.h
 
 SOURCES += qmediacontrol.cpp \
     qmediaobject.cpp \

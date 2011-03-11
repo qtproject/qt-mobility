@@ -39,50 +39,38 @@
 **
 ****************************************************************************/
 
+#ifndef QMEDIAENUMDEBUG_H
+#define QMEDIAENUMDEBUG_H
 
-#ifndef QMEDIASTREAMSCONTROL_H
-#define QMEDIASTREAMSCONTROL_H
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API. It exists purely as an
+// implementation detail. This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
 
-#include "qmediacontrol.h"
-#include "qtmedianamespace.h"
-#include "qmobilityglobal.h"
-#include <qmediaenumdebug.h>
+#include <QtCore/qmetaobject.h>
+#include <QtCore/qdebug.h>
 
-QT_BEGIN_NAMESPACE
+#ifndef QT_NO_DEBUG_STREAM
 
-class Q_MULTIMEDIA_EXPORT QMediaStreamsControl : public QMediaControl
-{
-    Q_OBJECT
-    Q_ENUMS(SteamType)
-public:
-    enum StreamType { UnknownStream, VideoStream, AudioStream, SubPictureStream, DataStream };
+#define Q_MEDIA_ENUM_DEBUG(Class,Enum) \
+inline QDebug operator<<(QDebug dbg, Class::Enum value) \
+{ \
+    int index = Class::staticMetaObject.indexOfEnumerator(#Enum); \
+    dbg.nospace() << #Class << "::" << Class::staticMetaObject.enumerator(index).valueToKey(value); \
+    return dbg.space(); \
+}
 
-    virtual ~QMediaStreamsControl();
+#else
 
-    virtual int streamCount() = 0;
-    virtual StreamType streamType(int streamNumber) = 0;
+#define Q_MEDIA_ENUM_DEBUG(Class,Enum)
 
-    virtual QVariant metaData(int streamNumber, QtMultimediaKit::MetaData key) = 0;
+#endif //QT_NO_DEBUG_STREAM
 
-    virtual bool isActive(int streamNumber) = 0;
-    virtual void setActive(int streamNumber, bool state) = 0;
 
-Q_SIGNALS:
-    void streamsChanged();
-    void activeStreamsChanged();
-
-protected:
-    QMediaStreamsControl(QObject *parent = 0);
-};
-
-#define QMediaStreamsControl_iid "com.nokia.Qt.QMediaStreamsControl/1.0"
-Q_MEDIA_DECLARE_CONTROL(QMediaStreamsControl, QMediaStreamsControl_iid)
-
-QT_END_NAMESPACE
-
-Q_DECLARE_METATYPE(QMediaStreamsControl::StreamType)
-
-Q_MEDIA_ENUM_DEBUG(QMediaStreamsControl, StreamType)
-
-#endif // QMEDIASTREAMSCONTROL_H
+#endif
 

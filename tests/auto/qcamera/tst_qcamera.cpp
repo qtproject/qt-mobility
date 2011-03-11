@@ -929,6 +929,8 @@ private slots:
     void testSetVideoOutputNoControl();
     void testSetVideoOutputDestruction();
 
+    void testEnumDebug();
+
 private:
     MockSimpleCameraService  *mockSimpleCameraService;
     MockProvider *provider;
@@ -1762,6 +1764,26 @@ void tst_QCamera::testSetVideoOutputDestruction()
     }
     QVERIFY(service.rendererControl->surface() == 0);
     QCOMPARE(service.rendererRef, 0);
+}
+
+void tst_QCamera::testEnumDebug()
+{
+    QTest::ignoreMessage(QtDebugMsg, "QCamera::ActiveState ");
+    qDebug() << QCamera::ActiveState;
+    QTest::ignoreMessage(QtDebugMsg, "QCamera::ActiveStatus ");
+    qDebug() << QCamera::ActiveStatus;
+    QTest::ignoreMessage(QtDebugMsg, "QCamera::CaptureVideo ");
+    qDebug() << QCamera::CaptureVideo;
+    QTest::ignoreMessage(QtDebugMsg, "QCamera::CameraError ");
+    qDebug() << QCamera::CameraError;
+    QTest::ignoreMessage(QtDebugMsg, "QCamera::Unlocked ");
+    qDebug() << QCamera::Unlocked;
+    QTest::ignoreMessage(QtDebugMsg, "QCamera::LockAcquired ");
+    qDebug() << QCamera::LockAcquired;
+    QTest::ignoreMessage(QtDebugMsg, "QCamera::NoLock ");
+    qDebug() << QCamera::NoLock;
+    QTest::ignoreMessage(QtDebugMsg, "QCamera::LockExposure ");
+    qDebug() << QCamera::LockExposure;
 }
 
 QTEST_MAIN(tst_QCamera)
