@@ -195,18 +195,20 @@ void QRfcommServer::setSecurityFlags(QBluetooth::SecurityFlags security)
     if(security == QBluetooth::NoSecurity){
         lm = 0;
     }
-    else if(lm & QBluetooth::Authorization){
+    if(security.testFlag(QBluetooth::Authorization)){
         lm |= RFCOMM_LM_AUTH;
     }
-    else if(lm & QBluetooth::Authentication) {
+    if(security.testFlag(QBluetooth::Authentication)) {
         lm |= RFCOMM_LM_TRUSTED;
     }
-    else if(lm & QBluetooth::Encryption){
+    if(security.testFlag(QBluetooth::Encryption)){
         lm |= RFCOMM_LM_ENCRYPT;
     }
-    else if(lm & QBluetooth::Secure){
+    if(security.testFlag(QBluetooth::Secure)){
         lm |= RFCOMM_LM_SECURE;
     }
+
+    qDebug() << hex << "Setting lm to" << lm << security;
 
     if(setsockopt(d->socket->socketDescriptor(), SOL_RFCOMM, RFCOMM_LM, &lm, sizeof(lm)) < 0){
         qWarning() << "Failed to set socket option, closing socket for safety" << errno;
@@ -234,10 +236,10 @@ QBluetooth::SecurityFlags QRfcommServer::securityFlags() const
     if(lm & RFCOMM_LM_ENCRYPT)
         security |= QBluetooth::Encryption;
 
-    if(lm & RFCOMM_LM_AUTH)
+    if(lm & RFCOMM_LM_TRUSTED)
         security |= QBluetooth::Authentication;
 
-    if(lm & RFCOMM_LM_TRUSTED)
+    if(lm & RFCOMM_LM_AUTH)
         security |= QBluetooth::Authorization;
 
     return static_cast<QBluetooth::Security>(security);

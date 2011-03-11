@@ -197,16 +197,16 @@ void QL2capServer::setSecurityFlags(QBluetooth::SecurityFlags security)
     if(security == QBluetooth::NoSecurity){
         lm = 0;
     }
-    else if(lm & QBluetooth::Authorization){
+    if(security.testFlag(QBluetooth::Authorization)){
         lm |= L2CAP_LM_AUTH;
     }
-    else if(lm & QBluetooth::Authentication) {
+    if(security.testFlag(QBluetooth::Authentication)){
         lm |= L2CAP_LM_TRUSTED;
     }
-    else if(lm & QBluetooth::Encryption){
+    if(security.testFlag(QBluetooth::Encryption)){
         lm |= L2CAP_LM_ENCRYPT;
     }
-    else if(lm & QBluetooth::Secure){
+    if(security.testFlag(QBluetooth::Secure)){
         lm |= L2CAP_LM_SECURE;
     }
 
@@ -236,10 +236,10 @@ QBluetooth::SecurityFlags QL2capServer::securityFlags() const
     if(lm & L2CAP_LM_ENCRYPT)
         security |= QBluetooth::Encryption;
 
-    if(lm & L2CAP_LM_AUTH)
+    if(lm & L2CAP_LM_TRUSTED)
         security |= QBluetooth::Authentication;
 
-    if(lm & L2CAP_LM_TRUSTED)
+    if(lm & L2CAP_LM_AUTH)
         security |= QBluetooth::Authorization;
 
     return static_cast<QBluetooth::SecurityFlags>(security);
