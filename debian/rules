@@ -87,13 +87,13 @@ build-maemo-tests:
 	cp -f $(QTM_AUTOTESTS_SIMPLE) $(QTM_MAEMO_TESTDIR)/qtm-maemo-auto.pro tests/auto/
 	cd tests/auto/ && qmake -r CONFIG+=maemo_tests qtm-maemo-auto.pro && $(DEB_MAKE_INVOKE)
 
-# Add additional tests to be packaged to QTM_ADDIONAL_TESTS
+# Add additional tests to be packaged to QTM_ADDITIONAL_TESTS
 # Ensure the targets of these projects are specified in test/libqtm-<package>-tests.install
 # if --fail-missing is enabled
-#QTM_ADDIONAL_TESTS :=  tests/location-testing-tools/mapviewer
+#QTM_ADDITIONAL_TESTS :=  tests/location-testing-tools/mapviewer
 	
 build-additional-tests:
-	  for testdir in $(QTM_ADDIONAL_TESTS) ; do \
+	  for testdir in $(QTM_ADDITIONAL_TESTS) ; do \
 	    cd $$testdir && qmake && $(DEB_MAKE_INVOKE) ; \
 	    cd - ; \
 	  done
@@ -105,7 +105,7 @@ install-autotests:
                 -i $(DEB_DESTDIR) -c -xml $(QTM_AUTOTESTS_SIMPLE)
 				
 install-additional-tests:
-	for testdir in $(QTM_ADDIONAL_TESTS) ; do \
+	for testdir in $(QTM_ADDITIONAL_TESTS) ; do \
 	  $(DEB_MAKE_INVOKE) -C  $$testdir $(DEB_MAKE_INSTALL_TARGET); \
 	done
 
