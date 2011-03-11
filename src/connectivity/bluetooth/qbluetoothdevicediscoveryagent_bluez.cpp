@@ -53,7 +53,7 @@
 QTM_BEGIN_NAMESPACE
 
 QBluetoothDeviceDiscoveryAgentPrivate::QBluetoothDeviceDiscoveryAgentPrivate()
-    :   adapter(0), lastError(QBluetoothDeviceDiscoveryAgent::NoError)
+    :   adapter(0), lastError(QBluetoothDeviceDiscoveryAgent::NoError), pendingCancel(false), pendingStart(false)
 {
     manager = new OrgBluezManagerInterface(QLatin1String("org.bluez"), QLatin1String("/"),
                                            QDBusConnection::systemBus());
@@ -67,11 +67,21 @@ QBluetoothDeviceDiscoveryAgentPrivate::~QBluetoothDeviceDiscoveryAgentPrivate()
 
 bool QBluetoothDeviceDiscoveryAgentPrivate::isActive() const
 {
+    if(pendingStart)
+        return true;
+    if(pendingCancel)
+        return false;
     return adapter != 0;
 }
 
 void QBluetoothDeviceDiscoveryAgentPrivate::start()
 {
+
+    if(pendingCancel == true) {
+        pendingStart = true;
+        return;
+    }
+
     discoveredDevices.clear();
 
     QDBusPendingReply<QDBusObjectPath> reply = manager->DefaultAdapter();
@@ -130,11 +140,11 @@ void QBluetoothDeviceDiscoveryAgentPrivate::stop()
 #ifdef QTM_DEVICEDISCOVERY_DEBUG
         qDebug() << Q_FUNC_INFO;
 #endif
-        adapter->StopDiscovery();
-        adapter->deleteLater();
-        adapter = 0;
         Q_Q(QBluetoothDeviceDiscoveryAgent);
-        emit q->error(QBluetoothDeviceDiscoveryAgent::Canceled);
+        pendingCancel = true;
+        pendingStart = false;
+        QDBusPendingReply<> reply = adapter->StopDiscovery();
+        reply.waitForFinished();
     }
 }
 
@@ -194,11 +204,23 @@ void QBluetoothDeviceDiscoveryAgentPrivate::_q_propertyChanged(const QString &na
 #ifdef QTM_DEVICEDISCOVERY_DEBUG
     qDebug() << Q_FUNC_INFO << name << value.variant();
 #endif
+
     if (name == QLatin1String("Discovering") && !value.variant().toBool()) {
         Q_Q(QBluetoothDeviceDiscoveryAgent);
         adapter->deleteLater();
         adapter = 0;
-        emit q->finished();
+        if(pendingCancel && !pendingStart){
+            emit q->canceled();
+            pendingCancel = false;
+        }
+        else if(pendingStart){
+            pendingStart = false;
+            pendingCancel = false;
+            start();
+        }
+        else {
+            emit q->finished();
+        }
     }
 }
 

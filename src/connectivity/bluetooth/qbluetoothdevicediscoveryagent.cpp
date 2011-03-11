@@ -181,7 +181,10 @@ void QBluetoothDeviceDiscoveryAgent::start()
 }
 
 /*!
-    Stops Bluetooth device discovery.
+    Stops Bluetooth device discovery.  The cancel() signal is emitted once the
+    device discovery is canceled.  start() maybe called before the cancel signal is
+    received.  Once start() has been called the cancel signal from the prior
+    discovery will be silently discarded.
 */
 void QBluetoothDeviceDiscoveryAgent::stop()
 {

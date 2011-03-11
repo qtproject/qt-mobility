@@ -110,14 +110,14 @@ void QBluetoothDeviceDiscoveryAgentPrivate::setError(int errorCode, QString erro
     if (errorCode == KErrNone)
         return;
 
+    Q_Q(QBluetoothDeviceDiscoveryAgent);
+
     errorString = errorDescription;
     if (errorCode == KErrCancel)
-        lastError = QBluetoothDeviceDiscoveryAgent::Canceled;
+        emit q->canceled();
     else
-        lastError = QBluetoothDeviceDiscoveryAgent::UnknownError;
+        emit q->error(QBluetoothDeviceDiscoveryAgent::UnknownError);
 
-    Q_Q(QBluetoothDeviceDiscoveryAgent);
-    emit q->error(lastError);
 }
 
 void QBluetoothDeviceDiscoveryAgentPrivate::_q_newDeviceFound(const QBluetoothDeviceInfo &device)

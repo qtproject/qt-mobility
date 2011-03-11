@@ -168,8 +168,8 @@ void QBluetoothTransferReplyBluez::sendReturned(QDBusPendingCallWatcher *watcher
         m_errorStr = sendReply.error().message();
         if(m_errorStr == QLatin1String("Could not open file for sending"))
             m_error = QBluetoothTransferReply::FileNotFoundError;
-        else if(m_errorStr == QLatin1String("The transfer was cancelled"))
-            m_error = QBluetoothTransferReply::UserCancelledTransferError;
+        else if(m_errorStr == QLatin1String("The transfer was canceled"))
+            m_error = QBluetoothTransferReply::UserCanceledTransferError;
         else
             m_error = QBluetoothTransferReply::UnknownError;
 

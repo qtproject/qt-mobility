@@ -61,7 +61,7 @@ public:
         UnknownError,
         FileNotFoundError,
         HostNotFoundError,
-        UserCancelledTransferError
+        UserCanceledTransferError
     };
 
 
