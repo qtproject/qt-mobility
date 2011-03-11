@@ -75,6 +75,8 @@ private slots:
 
     void tst_waitFor_data();
     void tst_waitFor();
+
+    void tst_invalidServiceUri();
 };
 
 Q_DECLARE_METATYPE(tst_QLlcpSocket::ClientConnectionShutdown)
@@ -339,6 +341,37 @@ void tst_QLlcpSocket::tst_waitFor()
 
     if (shutdown == ServerDisconnect || shutdown == ServerClose)
         QCOMPARE(socket->error(), QLlcpSocket::RemoteHostClosedError);
+
+    delete socket;
+}
+
+void tst_QLlcpSocket::tst_invalidServiceUri()
+{
+    QLatin1String invalidServiceUri("invalid");
+
+    QLlcpSocket *socket = new QLlcpSocket;
+
+    QSignalSpy stateSpy(socket, SIGNAL(stateChanged(QLlcpSocket::SocketState)));
+    QSignalSpy errorSpy(socket, SIGNAL(error(QLlcpSocket::SocketError)));
+
+    socket->connectToService(0, invalidServiceUri);
+
+    QCOMPARE(stateSpy.count(), 1);
+    QCOMPARE(stateSpy.takeFirst().at(0).value<QLlcpSocket::SocketState>(),
+             QLlcpSocket::ConnectingState);
+    QCOMPARE(socket->state(), QLlcpSocket::ConnectingState);
+
+    QTRY_VERIFY(!errorSpy.isEmpty());
+
+    QCOMPARE(stateSpy.count(), 1);
+    QCOMPARE(stateSpy.takeFirst().at(0).value<QLlcpSocket::SocketState>(),
+             QLlcpSocket::UnconnectedState);
+    QCOMPARE(socket->state(), QLlcpSocket::UnconnectedState);
+
+    QCOMPARE(errorSpy.takeFirst().at(0).value<QLlcpSocket::SocketError>(),
+             QLlcpSocket::SocketAccessError);
+    QCOMPARE(socket->error(), QLlcpSocket::SocketAccessError);
+    QVERIFY(!socket->errorString().isEmpty());
 
     delete socket;
 }

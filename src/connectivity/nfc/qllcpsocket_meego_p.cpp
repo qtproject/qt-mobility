@@ -134,8 +134,7 @@ void QLlcpSocketPrivate::connectToService(QNearFieldTarget *target, const QStrin
 
         m_socketRequestor->requestAccess(m_requestorPath, accessKind);
     } else {
-        m_error = QLlcpSocket::UnknownSocketError;
-        emit q->error();
+        setSocketError(QLlcpSocket::SocketResourceError);
 
         m_state = QLlcpSocket::UnconnectedState;
         emit q->stateChanged(m_state);
@@ -272,8 +271,7 @@ qint64 QLlcpSocketPrivate::writeData(const char *data, qint64 len)
             if (current)
                 emit q->bytesWritten(current);
 
-            m_error = QLlcpSocket::RemoteHostClosedError;
-            emit q->error(m_error);
+            setSocketError(QLlcpSocket::RemoteHostClosedError);
             q->disconnectFromService();
             return -1;
         }
@@ -306,8 +304,6 @@ bool QLlcpSocketPrivate::canReadLine() const
 
 bool QLlcpSocketPrivate::waitForReadyRead(int msec)
 {
-    Q_Q(QLlcpSocket);
-
     if (bytesAvailable())
         return true;
 
@@ -333,8 +329,7 @@ bool QLlcpSocketPrivate::waitForReadyRead(int msec)
             _q_readNotify();
 
         if (-1 == result && errno != EINTR) {
-            m_error = QLlcpSocket::UnknownSocketError;
-            emit q->error(m_error);
+            setSocketError(QLlcpSocket::UnknownSocketError);
             break;
         }
     }
@@ -344,8 +339,6 @@ bool QLlcpSocketPrivate::waitForReadyRead(int msec)
 
 bool QLlcpSocketPrivate::waitForBytesWritten(int msec)
 {
-    Q_Q(QLlcpSocket);
-
     fd_set fds;
     FD_ZERO(&fds);
     FD_SET(m_readFd, &fds);
@@ -367,8 +360,7 @@ bool QLlcpSocketPrivate::waitForBytesWritten(int msec)
         if (result > 0)
             return true;
         if (-1 == result && errno != EINTR) {
-            m_error = QLlcpSocket::UnknownSocketError;
-            emit q->error(m_error);
+            setSocketError(QLlcpSocket::UnknownSocketError);
             return false;
         }
     }
@@ -382,14 +374,11 @@ bool QLlcpSocketPrivate::waitForConnected(int msecs)
     if (m_state != QLlcpSocket::ConnectingState)
         return m_state == QLlcpSocket::ConnectedState;
 
-    Q_Q(QLlcpSocket);
-
     QElapsedTimer timer;
     timer.start();
     while (m_state == QLlcpSocket::ConnectingState && (msecs == -1 || timer.elapsed() < msecs)) {
         if (!m_socketRequestor->waitForDBusSignal(qMax(msecs - timer.elapsed(), qint64(0)))) {
-            m_error = QLlcpSocket::UnknownSocketError;
-            emit q->error(m_error);
+            setSocketError(QLlcpSocket::UnknownSocketError);
             break;
         }
     }
@@ -427,9 +416,7 @@ bool QLlcpSocketPrivate::waitForDisconnected(int msec)
             _q_readNotify();
 
         if (-1 == result && errno != EINTR) {
-            Q_Q(QLlcpSocket);
-            m_error = QLlcpSocket::UnknownSocketError;
-            emit q->error(m_error);
+            setSocketError(QLlcpSocket::UnknownSocketError);
             break;
         }
     }
@@ -444,8 +431,7 @@ void QLlcpSocketPrivate::AccessFailed(const QDBusObjectPath &targetPath, const Q
 
     Q_Q(QLlcpSocket);
 
-    m_error = QLlcpSocket::UnknownSocketError;
-    emit q->error();
+    setSocketError(QLlcpSocket::SocketAccessError);
 
     m_state = QLlcpSocket::UnconnectedState;
     emit q->stateChanged(m_state);
@@ -509,8 +495,7 @@ void QLlcpSocketPrivate::_q_readNotify()
     if (readFromDevice <= 0) {
         m_readNotifier->setEnabled(false);
 
-        m_error = QLlcpSocket::RemoteHostClosedError;
-        emit q->error(m_error);
+        setSocketError(QLlcpSocket::RemoteHostClosedError);
 
         q->disconnectFromService();
         q->setOpenMode(QIODevice::NotOpen);
@@ -518,6 +503,31 @@ void QLlcpSocketPrivate::_q_readNotify()
         m_datagrams.append(datagram.left(readFromDevice));
         emit q->readyRead();
     }
+}
+
+void QLlcpSocketPrivate::setSocketError(QLlcpSocket::SocketError socketError)
+{
+    Q_Q(QLlcpSocket);
+
+    QLatin1String c("QLlcpSocket");
+
+    m_error = socketError;
+    switch (socketError) {
+    case QLlcpSocket::UnknownSocketError:
+        q->setErrorString(QLlcpSocket::tr("%1: Unknown error %2").arg(c).arg(errno));
+        break;
+    case QLlcpSocket::RemoteHostClosedError:
+        q->setErrorString(QLlcpSocket::tr("%1: Remote closed").arg(c));
+        break;
+    case QLlcpSocket::SocketAccessError:
+        q->setErrorString(QLlcpSocket::tr("%1: Socket access error"));
+        break;
+    case QLlcpSocket::SocketResourceError:
+        q->setErrorString(QLlcpSocket::tr("%1: Socket resource error"));
+        break;
+    }
+
+    emit q->error(m_error);
 }
 
 #include "moc_qllcpsocket_meego_p.cpp"

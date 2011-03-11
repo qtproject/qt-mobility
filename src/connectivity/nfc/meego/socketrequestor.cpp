@@ -204,6 +204,7 @@ private:
     bool parseAccessGranted(DBusMessage *message, SocketRequestor *socketRequestor);
     bool parseAcceptConnectSocket(DBusMessage *message, SocketRequestor *socketRequestor,
                                   const char *member);
+    bool parseErrorDenied(DBusMessage *message, SocketRequestor *socketRequestor);
 
 private slots:
     void socketRead();
@@ -213,6 +214,7 @@ private:
     QMutex m_mutex;
     DBusConnection *m_dbusConnection;
     QHash<QString, SocketRequestor *> m_dbusObjects;
+    QMap<quint32, SocketRequestor *> m_pendingCalls;
     QList<WatchNotifier> m_watchNotifiers;
 };
 
@@ -260,36 +262,58 @@ DBusHandlerResult SocketRequestorPrivate::messageFilter(DBusConnection *connecti
     if (connection != m_dbusConnection)
         return DBUS_HANDLER_RESULT_NOT_YET_HANDLED;
 
-    QString path = QString::fromUtf8(dbus_message_get_path(message));
-
-    SocketRequestor *socketRequestor = m_dbusObjects.value(path);
-
-    if (!socketRequestor)
+    SocketRequestor *socketRequestor;
+    const QString path = QString::fromUtf8(dbus_message_get_path(message));
+    quint32 serial = dbus_message_get_reply_serial(message);
+    if (!path.isEmpty() && serial == 0)
+        socketRequestor = m_dbusObjects.value(path);
+    else if (path.isEmpty() && serial != 0)
+        socketRequestor = m_pendingCalls.take(serial);
+    else
         return DBUS_HANDLER_RESULT_NOT_YET_HANDLED;
 
-    bool handled;
+    enum {
+        NotHandled,
+        Handled,
+        HandledSendReply
+    } handled;
 
     if (dbus_message_is_method_call(message, "com.nokia.nfc.AccessRequestor", "AccessFailed"))
-        handled = parseAccessFailed(message, socketRequestor);
+        handled = parseAccessFailed(message, socketRequestor) ? HandledSendReply : NotHandled;
     else if (dbus_message_is_method_call(message, "com.nokia.nfc.AccessRequestor", "AccessGranted"))
-        handled = parseAccessGranted(message, socketRequestor);
+        handled = parseAccessGranted(message, socketRequestor) ? HandledSendReply : NotHandled;
     else if (dbus_message_is_method_call(message, "com.nokia.nfc.LLCPRequestor", "Accept"))
-        handled = parseAcceptConnectSocket(message, socketRequestor, "accept");
+        handled = parseAcceptConnectSocket(message, socketRequestor, "accept") ? HandledSendReply : NotHandled;
     else if (dbus_message_is_method_call(message, "com.nokia.nfc.LLCPRequestor", "Connect"))
-        handled = parseAcceptConnectSocket(message, socketRequestor, "connect");
+        handled = parseAcceptConnectSocket(message, socketRequestor, "connect") ? HandledSendReply : NotHandled;
     else if (dbus_message_is_method_call(message, "com.nokia.nfc.LLCPRequestor", "Socket"))
-        handled = parseAcceptConnectSocket(message, socketRequestor, "socket");
+        handled = parseAcceptConnectSocket(message, socketRequestor, "socket") ? HandledSendReply : NotHandled;
+    else if (dbus_message_is_error(message, "com.nokia.nfc.Error.Denied"))
+        handled = parseErrorDenied(message, socketRequestor) ? Handled : NotHandled;
     else
-        handled = false;
+        handled = NotHandled;
 
-    if (!handled)
+    if (handled == NotHandled)
         return DBUS_HANDLER_RESULT_NOT_YET_HANDLED;
 
-    DBusMessage *reply = dbus_message_new_method_return(message);
-    quint32 serial;
-    dbus_connection_send(connection, reply, &serial);
+    if (handled == HandledSendReply) {
+        DBusMessage *reply = dbus_message_new_method_return(message);
+        quint32 serial;
+        dbus_connection_send(connection, reply, &serial);
+    }
 
     return DBUS_HANDLER_RESULT_HANDLED;
+}
+
+bool SocketRequestorPrivate::parseErrorDenied(DBusMessage *message,
+                                              SocketRequestor *socketRequestor)
+{
+    Q_UNUSED(message);
+
+    QMetaObject::invokeMethod(socketRequestor, "accessFailed",
+                              Q_ARG(QDBusObjectPath, QDBusObjectPath()),
+                              Q_ARG(QString, QLatin1String("Access denied")));
+    return true;
 }
 
 bool SocketRequestorPrivate::parseAccessFailed(DBusMessage *message,
@@ -493,6 +517,8 @@ void SocketRequestorPrivate::sendRequestAccess(const QString &adaptor, const QSt
     dbus_connection_send(m_dbusConnection, message, &serial);
 
     dbus_message_unref(message);
+
+    m_pendingCalls.insert(serial, m_dbusObjects.value(path));
 }
 
 void SocketRequestorPrivate::sendCancelAccessRequest(const QString &adaptor, const QString &path,

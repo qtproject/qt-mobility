@@ -114,6 +114,8 @@ private slots:
     void _q_readNotify();
 
 private:
+    void setSocketError(QLlcpSocket::SocketError socketError);
+
     QLlcpSocket *q_ptr;
     QVariantMap m_properties;
     QList<QByteArray> m_datagrams;
