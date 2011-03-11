@@ -173,6 +173,7 @@ Q_SIGNALS:
    void networkModeChanged(QSystemNetworkInfo::NetworkMode);
 
    void cellIdChanged(int); //1.2
+   void cellDataTechnologyChanged(QSystemNetworkInfo::CellDataTechnology); //1.2
 
 protected:
 #if !defined(QT_NO_DBUS)

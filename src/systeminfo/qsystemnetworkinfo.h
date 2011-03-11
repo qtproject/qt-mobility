@@ -66,7 +66,7 @@ class  Q_SYSINFO_EXPORT QSystemNetworkInfo : public QObject
     Q_PROPERTY(QString homeMobileCountryCode READ homeMobileCountryCode CONSTANT)
     Q_PROPERTY(QString homeMobileNetworkCode READ homeMobileNetworkCode CONSTANT)
     Q_PROPERTY(QSystemNetworkInfo::NetworkMode currentMode READ currentMode CONSTANT)
-    Q_PROPERTY(QSystemNetworkInfo::CellDataTechnology cellDataTechnology READ cellDataTechnology NOTIFY cellDataTechnologyChanged);
+    Q_PROPERTY(QSystemNetworkInfo::CellDataTechnology cellDataTechnology READ cellDataTechnology NOTIFY cellDataTechnologyChanged)
 
 public:
 

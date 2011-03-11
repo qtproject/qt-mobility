@@ -182,9 +182,8 @@ QString QSystemInfoPrivate::currentCountryCode() const
          langCC = langCC.remove(".UTF-8",Qt::CaseSensitive);
          return langCC;
      }
-#else
-    return QSystemInfoLinuxCommonPrivate::currentCountryCode();
 #endif
+    return QSystemInfoLinuxCommonPrivate::currentCountryCode();
 }
 
 QString QSystemInfoPrivate::version(QSystemInfo::Version type,const QString &parameter)
@@ -640,7 +639,7 @@ void QSystemNetworkInfoPrivate::setupNetworkInfo()
 
         QVariant dataTechnology = ifc5.property("DataTechnology");
         QString dt = dataTechnology.isValid() ? dataTechnology.value<QString>() : "";
-        currentCellDataTechnology = csdtToCellDataTechnology(dt)
+        currentCellDataTechnology = csdtToCellDataTechnology(dt);
 
         /* Signal handlers */
         if (!systemDbusConnection.connect(service, servicePath, "com.nokia.csd.CSNet.SignalStrength", "SignalStrengthChanged",
@@ -664,7 +663,7 @@ void QSystemNetworkInfoPrivate::setupNetworkInfo()
             qDebug() << "unable to connect CellChanged";
         }
         if (!systemDbusConnection.connect(service, servicePath, "com.nokia.csd.CSNet.RadioAccess", "DataTechnologyChanged",
-                                         this, SLOT(cellDataTechnologyChanged(const QString&)))) {
+                                         this, SLOT(slotCellDataTechnologyChanged(const QString&)))) {
             qDebug() << "unable to connect DataTechnologyChanged";
         }
 
@@ -858,18 +857,18 @@ void QSystemNetworkInfoPrivate::slotCellChanged(const QString &type, int id, int
     }
 }
 
-void QSystemNetworkInfoPrivate::cellDataTechnologyChanged(const QString &tech)
+void QSystemNetworkInfoPrivate::slotCellDataTechnologyChanged(const QString &tech)
 {
     QSystemNetworkInfo::CellDataTechnology cdt = csdtToCellDataTechnology(tech);
-    if(cdt != currentCellDataTechnology) {
+    if (cdt != currentCellDataTechnology) {
         currentCellDataTechnology = cdt;
-        Q_EMIT cellDataTechnologyChanged(currentCellDataTechnology);
+        emit cellDataTechnologyChanged(cdt);
     }
 }
 
 #endif /* Maemo 6 */
 
-inline QSystemNetworkInfo::CellDataTechnology csdtToCellDataTechnology(const QString &tech)
+inline QSystemNetworkInfo::CellDataTechnology QSystemNetworkInfoPrivate::csdtToCellDataTechnology(const QString &tech)
 {
     QSystemNetworkInfo::CellDataTechnology cdt = QSystemNetworkInfo::UnknownDataTechnology;
     if (tech == "GPRS") {
@@ -1397,7 +1396,7 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoPrivate::currentPowerState()
 #endif
 
 #if !defined(QT_NO_DBUS)
- void QSystemDeviceInfoPrivate::bluezPropertyChanged(const QString &str, QDBusVariant v)
+ void QSystemDeviceInfoPrivate::bluezPropertyChanged(const QString&, QDBusVariant v)
  {
      //qDebug() << str << v.variant().toBool();
      emit bluetoothStateChanged(v.variant().toBool());
@@ -1774,7 +1773,7 @@ void QSystemBatteryInfoPrivate::halChangedMaemo(int count,QVariantList map)
             QString mapS = map.at(i).toString();
             qDebug() << __FUNCTION__ << mapS;
             QSystemBatteryInfo::ChargerType chargerType = QSystemBatteryInfo::UnknownCharger;
-             if (  mapS == "maemo.charger.connection_status" | mapS == "maemo.charger.type") {
+             if (  mapS == "maemo.charger.connection_status" || mapS == "maemo.charger.type") {
                 const QString chargeType = ifaceDevice.getPropertyString("maemo.charger.type");
                 if(chargeType == "host 500 mA") {
                     chargerType = QSystemBatteryInfo::USB_500mACharger;
