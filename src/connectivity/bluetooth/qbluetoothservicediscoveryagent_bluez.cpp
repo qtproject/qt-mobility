@@ -48,7 +48,7 @@
 
 #include <QtDBus/QDBusPendingCallWatcher>
 
-#define QTM_SERVICEDISCOVERY_DEBUG
+//#define QTM_SERVICEDISCOVERY_DEBUG
 
 #ifdef QTM_SERVICEDISCOVERY_DEBUG
 #include <QtCore/QDebug>

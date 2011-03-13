@@ -207,7 +207,7 @@ QBluetoothDeviceDiscoveryAgent::Error QBluetoothDeviceDiscoveryAgent::error() co
 {
     Q_D(const QBluetoothDeviceDiscoveryAgent);
 
-    return d_ptr->lastError;
+    return d->lastError;
 }
 
 /*!
@@ -216,7 +216,7 @@ QBluetoothDeviceDiscoveryAgent::Error QBluetoothDeviceDiscoveryAgent::error() co
 QString QBluetoothDeviceDiscoveryAgent::errorString() const
 {
     Q_D(const QBluetoothDeviceDiscoveryAgent);
-    return d_ptr->errorString;
+    return d->errorString;
 }
 
 #include "moc_qbluetoothdevicediscoveryagent.cpp"

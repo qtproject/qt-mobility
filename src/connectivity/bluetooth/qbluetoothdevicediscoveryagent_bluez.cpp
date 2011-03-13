@@ -53,7 +53,7 @@
 QTM_BEGIN_NAMESPACE
 
 QBluetoothDeviceDiscoveryAgentPrivate::QBluetoothDeviceDiscoveryAgentPrivate()
-    :   adapter(0), lastError(QBluetoothDeviceDiscoveryAgent::NoError), pendingCancel(false), pendingStart(false)
+    :   lastError(QBluetoothDeviceDiscoveryAgent::NoError), pendingCancel(false), pendingStart(false), adapter(0)
 {
     manager = new OrgBluezManagerInterface(QLatin1String("org.bluez"), QLatin1String("/"),
                                            QDBusConnection::systemBus());
@@ -139,8 +139,7 @@ void QBluetoothDeviceDiscoveryAgentPrivate::stop()
     if (adapter) {
 #ifdef QTM_DEVICEDISCOVERY_DEBUG
         qDebug() << Q_FUNC_INFO;
-#endif
-        Q_Q(QBluetoothDeviceDiscoveryAgent);
+#endif        
         pendingCancel = true;
         pendingStart = false;
         QDBusPendingReply<> reply = adapter->StopDiscovery();
