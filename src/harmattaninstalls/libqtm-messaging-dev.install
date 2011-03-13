@@ -16,7 +16,6 @@ usr/include/qt4/QtMessaging/QMessageId
 usr/include/qt4/QtMessaging/QMessageManager
 usr/include/qt4/QtMessaging/QMessageService
 usr/include/qt4/QtMessaging/QMessageSortOrder
-usr/include/qt4/QtMessaging/QMessageStore
 usr/include/qt4/QtMessaging/qmessage.h
 usr/include/qt4/QtMessaging/qmessageaccount.h
 usr/include/qt4/QtMessaging/qmessageaccountfilter.h

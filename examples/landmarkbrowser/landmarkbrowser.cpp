@@ -203,12 +203,27 @@ void LandmarkBrowser::on_importLandmarks_clicked()
         fileFilterString = tr("Landmark files (*.gpx *.lmx *)");
     #endif
 
+
+    QString fileName;
     QString docPath = QDesktopServices::storageLocation(QDesktopServices::DocumentsLocation);
     if (docPath.isEmpty())
         docPath = QDesktopServices::storageLocation(QDesktopServices::HomeLocation);
     if (docPath.isEmpty())
         docPath = ".";
-    QString fileName = QFileDialog::getOpenFileName(this,tr("Import File"),docPath,fileFilterString);
+
+#ifdef Q_WS_MAEMO_6
+    QFileDialog dialog(this, tr("Import File"), docPath, fileFilterString);
+    dialog.exec();
+    if (dialog.selectedFiles().length() ==0)
+        return;
+    else
+        fileName = dialog.selectedFiles().at(0);
+
+#else
+    fileName = QFileDialog::getOpenFileName(this,tr("Import File"),docPath,fileFilterString);
+#endif
+
+
     if (!fileName.isEmpty()) {
         landmarkImport->setFileName(fileName);
         landmarkImport->start();
@@ -226,12 +241,25 @@ void LandmarkBrowser::on_exportLandmarks_clicked()
         fileFilterString = tr("Landmark files (*.gpx *.lmx *)");
     #endif
 
+    QString fileName;
     QString docPath = QDesktopServices::storageLocation(QDesktopServices::DocumentsLocation);
     if (docPath.isEmpty())
         docPath = QDesktopServices::storageLocation(QDesktopServices::HomeLocation);
     if (docPath.isEmpty())
         docPath = ".";
-    QString fileName = QFileDialog::getSaveFileName(this,tr("Export File"),docPath,fileFilterString);
+#ifdef Q_WS_MAEMO_6
+    QFileDialog dialog(this, tr("Export File"), docPath, fileFilterString);
+    dialog.setAcceptMode(QFileDialog::AcceptSave);
+    dialog.exec();
+    if (dialog.selectedFiles().count() == 0)
+        return;
+    else
+        fileName = dialog.selectedFiles().at(0);
+
+#else
+    fileName = QFileDialog::getSaveFileName(this,tr("Export File"),docPath,fileFilterString);
+#endif
+
 
     if (!fileName.isEmpty()) {
         landmarkExport->setFileName(fileName);

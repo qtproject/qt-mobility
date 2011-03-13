@@ -59,15 +59,7 @@ QT_USE_NAMESPACE
     \inmodule QtMultimediaKit
     \ingroup camera
 
-    \code
-        camera = new QCamera;
-        viewFinder = new QCameraViewfinder();
-        viewFinder->show();
-        camera->setViewfinder(viewFinder);
-
-        camera->setCaptureMode(QCamera::CaptureStillImage);
-        camera->start();
-    \endcode
+    \snippet doc/src/snippets/multimedia-snippets/camera.cpp Camera
 
 The Camera API of Qt Mobility is still in \bold Technology Preview. It has
 not undergone the same level of review and testing as the rest of the APIs.

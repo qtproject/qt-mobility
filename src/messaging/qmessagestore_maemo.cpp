@@ -38,8 +38,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "qmessagestore.h"
 #include "qmessagestore_p.h"
+#include "qmessagestore_p_p.h"
 #include "modestengine_maemo_p.h"
 #include "telepathyengine_maemo_p.h"
 #include "maemohelpers_p.h"
