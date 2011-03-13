@@ -213,7 +213,7 @@ void QBluetoothTransferReplySymbian::DoCancel()
     }
     if (m_timer->isActive())
         m_timer->stop();
-    m_error = UserCancelledTransferError;
+    m_error = UserCanceledTransferError;
 }
 
 void QBluetoothTransferReplySymbian::RunL()

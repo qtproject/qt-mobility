@@ -79,7 +79,7 @@ QTM_BEGIN_NAMESPACE
     \value UnknownError     Unknown error, no better enum available
     \value FileNotFoundError Unable to open the file specified
     \value HostNotFoundError Unable to connect to the target host
-    \value UserCancelledTransferError User terminated the transfer
+    \value UserCanceledTransferError User terminated the transfer
 */
 
 
