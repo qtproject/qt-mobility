@@ -73,7 +73,7 @@ CWlanInfo::~CWlanInfo()
 
 void CWlanInfo::FreeResources()
  {
-  if (m_wlanMgmtClient)
+    if (m_wlanMgmtClient)
         m_wlanMgmtClient->CancelNotifications();
     delete m_wlanMgmtClient;
  }

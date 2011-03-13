@@ -361,41 +361,82 @@ qint64 QPulseAudioInput::read(char *data, qint64 len)
 
     size_t readBytes = 0;
 
+    if (!m_pullMode && !m_tempBuffer.isEmpty()) {
+        readBytes = qMin(static_cast<int>(len), m_tempBuffer.size());
+        memcpy(data, m_tempBuffer.constData(), readBytes);
+        m_totalTimeValue += readBytes;
+
+        if (readBytes < m_tempBuffer.size()) {
+            m_tempBuffer.remove(0, readBytes);
+            return readBytes;
+        }
+
+        m_tempBuffer.clear();
+    }
+
     while (pa_stream_readable_size(m_stream) > 0) {
-        size_t length = 0;
-        if (!m_pullMode)
-            length = len;
-        else
-            length = m_periodSize;
+        size_t readLength = 0;
+
+#ifdef DEBUG_PULSE
+        qDebug() << "QPulseAudioInput::read -- " << pa_stream_readable_size(m_stream) << " bytes available from pulse audio";
+#endif
 
         QPulseAudioEngine *pulseEngine = QPulseAudioEngine::instance();
         pa_threaded_mainloop_lock(pulseEngine->mainloop());
         const void *audioBuffer;
 
-        // Second parameter (audioBuffer) to pa_stream_peek is an output parameter, the pointer is set to point to the actual pulse audio data.
-        if (pa_stream_peek(m_stream, &audioBuffer, &length) < 0) {
+        // Second and third parameters (audioBuffer and length) to pa_stream_peek are output parameters,
+        // the audioBuffer pointer is set to point to the actual pulse audio data,
+        // and the length is set to the length of this data.
+        if (pa_stream_peek(m_stream, &audioBuffer, &readLength) < 0) {
             qWarning() << QString("pa_stream_peek() failed: %1").arg(pa_strerror(pa_context_errno(pa_stream_get_context(m_stream))));
             pa_threaded_mainloop_unlock(pulseEngine->mainloop());
             return 0;
         }
 
-        qint64 l = 0;
+        qint64 actualLength = 0;
         if (m_pullMode) {
-            l = m_audioSource->write((const char*)audioBuffer, length);
-            length = l;
+            actualLength = m_audioSource->write(static_cast<const char *>(audioBuffer), readLength);
+
+            if (actualLength < readLength) {
+                pa_threaded_mainloop_unlock(pulseEngine->mainloop());
+
+                m_errorState = QAudio::UnderrunError;
+                m_deviceState = QAudio::IdleState;
+                emit stateChanged(m_deviceState);
+
+                return actualLength;
+            }
         } else {
-            memcpy(data, audioBuffer, length);
+            actualLength = qMin(static_cast<int>(len - readBytes), static_cast<int>(readLength));
+            memcpy(data + readBytes, audioBuffer, actualLength);
         }
 
-        m_totalTimeValue += length;
-        readBytes += length;
+#ifdef DEBUG_PULSE
+        qDebug() << "QPulseAudioInput::read -- wrote " << actualLength << " to client";
+#endif
+
+        if (actualLength < readLength) {
+#ifdef DEBUG_PULSE
+            qDebug() << "QPulseAudioInput::read -- appending " << readLength - actualLength << " bytes of data to temp buffer";
+#endif
+            m_tempBuffer.append(static_cast<const char *>(audioBuffer) + actualLength, readLength - actualLength);
+            QMetaObject::invokeMethod(this, "userFeed", Qt::QueuedConnection);
+        }
+
+        m_totalTimeValue += actualLength;
+        readBytes += actualLength;
 
         pa_stream_drop(m_stream);
         pa_threaded_mainloop_unlock(pulseEngine->mainloop());
 
-        if (!m_pullMode)
+        if (!m_pullMode && readBytes >= len)
             break;
     }
+
+#ifdef DEBUG_PULSE
+    qDebug() << "QPulseAudioInput::read -- returning after reading " << readBytes << " bytes";
+#endif
 
     return readBytes;
 }
@@ -452,9 +493,8 @@ int QPulseAudioInput::notifyInterval() const
 
 qint64 QPulseAudioInput::processedUSecs() const
 {
-    qint64 result = qint64(1000000) * m_totalTimeValue /
-        (m_format.channels() * (m_format.sampleSize() / 8)) /
-        m_format.frequency();
+    pa_sample_spec spec = QPulseAudioInternal::audioFormatToSampleSpec(m_format);
+    qint64 result = pa_bytes_to_usec(m_totalTimeValue, &spec);
 
     return result;
 }
@@ -500,8 +540,10 @@ bool QPulseAudioInput::deviceReady()
         read(0,0);
     } else {
         // emits readyRead() so user will call read() on QIODevice to get some audio data
-        InputPrivate *a = qobject_cast<InputPrivate*>(m_audioSource);
-        a->trigger();
+        if (m_audioSource != 0) {
+            InputPrivate *a = qobject_cast<InputPrivate*>(m_audioSource);
+            a->trigger();
+        }
     }
     m_bytesAvailable = checkBytesReady();
 

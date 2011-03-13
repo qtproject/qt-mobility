@@ -53,17 +53,18 @@ QTM_BEGIN_NAMESPACE
 
 // constructor
 CQGeoPositionInfoSourceS60::CQGeoPositionInfoSourceS60(QObject* aParent) : QGeoPositionInfoSource(aParent),
-    mCurrentModuleId(TUid::Null()),
-    mReqModuleId(TUid::Null()),
-    mDevStatusUpdateAO(NULL),
-    mReqUpdateAO(NULL),
-    mRegUpdateAO(NULL),
-    mSupportedMethods(PositioningMethod(0)),
-    mCurrentMethod(PositioningMethod(0)),
-    mListSize(0),
-    mStartUpdates(FALSE),
-    mRegularUpdateTimedOut(FALSE),
-    mModuleFlags(0)
+        mCurrentModuleId(TUid::Null()),
+        mReqModuleId(TUid::Null()),
+        mDevStatusUpdateAO(NULL),
+        mReqUpdateAO(NULL),
+        mRegUpdateAO(NULL),
+        mSupportedMethods(PositioningMethod(0)),
+        mCurrentMethod(PositioningMethod(0)),
+        mListSize(0),
+        mMinUpdateInterval(0),
+        mStartUpdates(FALSE),
+        mRegularUpdateTimedOut(FALSE),
+        mModuleFlags(0)
 {
     memset(mList, 0 , MAX_SIZE * sizeof(CPosMethodInfo));
 }
@@ -220,10 +221,13 @@ int CQGeoPositionInfoSourceS60::minimumUpdateInterval() const
     if (mCurrentModuleId == TUid::Null())
         return 0;
 
-    TInt i = checkModule(mCurrentModuleId);
+    return mMinUpdateInterval;
+
+    /*TInt i = checkModule(mCurrentModuleId);
     if (i != -1)
-        return mList[i].mTimeToNextFix.Int64() / 1000;           //divide by 1000, to convert microsecond to milisecond
-    return 0;
+      return mList[i].mTimeToNextFix.Int64() / 1000;           //divide by 1000, to convert microsecond to milisecond
+
+    return 0;*/
 }
 
 
@@ -252,12 +256,15 @@ void CQGeoPositionInfoSourceS60::updateAvailableTypes()
 }
 
 //private function : to retrieve the index of the supplied module id from the mList array
-TInt CQGeoPositionInfoSourceS60::checkModule(TPositionModuleId aId)const
+TInt CQGeoPositionInfoSourceS60::checkModule(TPositionModuleId aId)//const
 {
+    QMutexLocker locker(&m_mutex);
     TInt i;
     for (i = 0; i < mListSize; i++)
-        if (mList[i].mUid == aId)
+        if (mList[i].mUid == aId) {
             return i;
+        }
+
     return -1;
 }
 
@@ -421,6 +428,7 @@ void CQGeoPositionInfoSourceS60::updateStatus(TPositionModuleInfo &aModInfo, TIn
         //store the correct method in use from the mCurrentModuleId retireved earlier
         if (id == mCurrentModuleId) {
             mCurrentMethod = method;
+            mMinUpdateInterval = mList[mListSize-1].mTimeToNextFix.Int64() / 1000;
         }
     } else {
         //module's status has changed
@@ -457,6 +465,7 @@ void CQGeoPositionInfoSourceS60::updateStatus(TPositionModuleInfo &aModInfo, TIn
 
             TRAPD(ret, temp = CQMLBackendAO::NewL(this, RegularUpdate,
                                                   mList[i].mUid));
+            mMinUpdateInterval = interval;
 
             if ((ret == KErrNone) && (temp != NULL)) {
                 temp->setUpdateInterval(interval);
@@ -471,6 +480,7 @@ void CQGeoPositionInfoSourceS60::updateStatus(TPositionModuleInfo &aModInfo, TIn
                     mRegUpdateAO->startUpdates();
 
                 mCurrentModuleId = mList[i].mUid;
+                mMinUpdateInterval = mList[i].mTimeToNextFix.Int64() / 1000;
 
                 mCurrentMethod = mList[i].mPosMethod;
 
@@ -521,6 +531,7 @@ void CQGeoPositionInfoSourceS60::updateStatus(TPositionModuleInfo &aModInfo, TIn
 
                     mCurrentModuleId = mList[index].mUid;
                     mCurrentMethod = mList[index].mPosMethod;
+                    mMinUpdateInterval = mList[index].mTimeToNextFix.Int64() / 1000;
 
                     mRegUpdateAO->setUpdateInterval(interval);
 
@@ -533,6 +544,7 @@ void CQGeoPositionInfoSourceS60::updateStatus(TPositionModuleInfo &aModInfo, TIn
                     //no methods available,clean up the resources
                     mRegUpdateAO = NULL;
                     mCurrentModuleId = TUid::Null();
+                    mMinUpdateInterval = interval;
                     mCurrentMethod = PositioningMethod(0);
 
                     emit updateTimeout();
@@ -810,6 +822,8 @@ void CQGeoPositionInfoSourceS60::stopUpdates()
 
 void CQGeoPositionInfoSourceS60::setPreferredPositioningMethods(PositioningMethods aMethods)
 {
+    QMutexLocker locker(&m_mutex);
+
     QGeoPositionInfoSource::setPreferredPositioningMethods(aMethods);
 
     PositioningMethods preferredMethod(PositioningMethods(0));
@@ -857,6 +871,8 @@ void CQGeoPositionInfoSourceS60::setPreferredPositioningMethods(PositioningMetho
             delete mRegUpdateAO;
         mRegUpdateAO = temp;
         mCurrentModuleId = mList[index].mUid ;
+        mMinUpdateInterval = mList[index].mTimeToNextFix.Int64() / 1000;
+
 
         index = checkModule(mCurrentModuleId);
 
@@ -878,6 +894,8 @@ void CQGeoPositionInfoSourceS60::setPreferredPositioningMethods(PositioningMetho
 
 void CQGeoPositionInfoSourceS60::setUpdateInterval(int aMilliSec)
 {
+    QMutexLocker locker(&m_mutex);
+
     if (mRegUpdateAO) {
         int interval = mRegUpdateAO->setUpdateInterval(aMilliSec);
         // as the above set value can be minimum value so
