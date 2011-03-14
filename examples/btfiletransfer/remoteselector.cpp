@@ -259,6 +259,7 @@ void RemoteSelector::displayPin(const QBluetoothAddress &address, QString pin)
 
 void RemoteSelector::displayConfirmation(const QBluetoothAddress &address, QString pin)
 {
+    Q_UNUSED(address);
     if(m_pindisplay)
         m_pindisplay->deleteLater();
     m_pindisplay = new pinDisplay(QString("Confirm this pin is the same"), pin, this);
@@ -279,6 +280,10 @@ void RemoteSelector::displayConfReject()
 
 void RemoteSelector::on_remoteDevices_currentCellChanged(int currentRow, int currentColumn, int previousRow, int previousColumn)
 {
+    Q_UNUSED(currentRow);
+    Q_UNUSED(currentColumn);
+    Q_UNUSED(previousRow);
+    Q_UNUSED(previousColumn);
 }
 
 void RemoteSelector::pairingFinished(const QBluetoothAddress &address, QBluetoothLocalDevice::Pairing status)
@@ -335,6 +340,7 @@ void RemoteSelector::pairingFinished(const QBluetoothAddress &address, QBluetoot
 
 void RemoteSelector::on_remoteDevices_cellClicked(int row, int column)
 {
+    Q_UNUSED(column);
     m_service = m_discoveredServices.value(row);
     if(!ui->fileName->text().isEmpty()) {
         ui->sendButton->setDisabled(false);
@@ -354,8 +360,8 @@ void RemoteSelector::on_remoteDevices_itemChanged(QTableWidgetItem* item)
         m_localDevice->requestPairing(m_service.device().address(), QBluetoothLocalDevice::Unpaired);
         return; // don't continue and start movie
     }
-    else if(item->checkState() == Qt::Checked && column == 3 ||
-            item->checkState() == Qt::Unchecked && column == 4){
+    else if((item->checkState() == Qt::Checked && column == 3) ||
+            (item->checkState() == Qt::Unchecked && column == 4)){
         m_localDevice->requestPairing(m_service.device().address(), QBluetoothLocalDevice::Paired);
         ui->remoteDevices->blockSignals(true);
         ui->remoteDevices->item(row, column)->setCheckState(Qt::PartiallyChecked);
