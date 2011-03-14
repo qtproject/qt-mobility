@@ -56,12 +56,12 @@ class QDeclarativeNetworkInfo : public QSystemNetworkInfo
     Q_PROPERTY(QSystemNetworkInfo::NetworkMode useMode READ useMode WRITE useThisMode)
     Q_PROPERTY(QList<QSystemNetworkInfo::NetworkMode> availableModes READ availableModes)
 
-    Q_PROPERTY(bool monitorStatusChanges READ monitorStatusChanges WRITE startStatusChanged CONSTANT)
-    Q_PROPERTY(bool monitorSignalStrengthChanges READ monitorSignalStrengthChanges WRITE startSignalStrengthChanged CONSTANT)
-    Q_PROPERTY(bool monitorNameChanges READ monitorNameChanges WRITE startNameChanged CONSTANT)
-    Q_PROPERTY(bool monitorModeChanges READ monitorModeChanges WRITE startModeChanged CONSTANT)
-    Q_PROPERTY(bool monitorCurrentMobileCountryCodeChanges READ monitorCurrentMobileCountryCodeChanges WRITE startCurrentMobileCountryCodeChanged CONSTANT)
-    Q_PROPERTY(bool monitorCurrentMobileNetworkCodeChanges READ monitorCurrentMobileNetworkCodeChanges WRITE startCurrentMobileNetworkCodeChanged CONSTANT)
+    Q_PROPERTY(bool monitorStatusChanges READ monitorStatusChanges WRITE startStatusChanged)
+    Q_PROPERTY(bool monitorSignalStrengthChanges READ monitorSignalStrengthChanges WRITE startSignalStrengthChanged)
+    Q_PROPERTY(bool monitorNameChanges READ monitorNameChanges WRITE startNameChanged)
+    Q_PROPERTY(bool monitorModeChanges READ monitorModeChanges WRITE startModeChanged)
+    Q_PROPERTY(bool monitorCurrentMobileCountryCodeChanges READ monitorCurrentMobileCountryCodeChanges WRITE startCurrentMobileCountryCodeChanged)
+    Q_PROPERTY(bool monitorCurrentMobileNetworkCodeChanges READ monitorCurrentMobileNetworkCodeChanges WRITE startCurrentMobileNetworkCodeChanged)
 
 public:
     explicit QDeclarativeNetworkInfo(QObject *parent = 0);

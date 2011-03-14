@@ -61,9 +61,9 @@ class QDeclarativeDeviceInfo : public QSystemDeviceInfo
     Q_PROPERTY(bool monitorBluetoothStateChanges READ monitorBluetoothStateChanges WRITE startBluetoothStateChanged)
 
     Q_PROPERTY(bool monitorWirelessKeyboardConnects READ monitorWirelessKeyboardConnects WRITE startWirelessKeyboardConnected)
-    Q_PROPERTY(bool monitorKeyboardFlips READ monitorKeyboardFlips WRITE startKeyboardFlipped CONSTANT)
-    Q_PROPERTY(bool monitorDeviceLocks READ monitorDeviceLocks WRITE startDeviceLocked CONSTANT)
-    Q_PROPERTY(bool monitorLockStatusChanges READ monitorLockStatusChanges WRITE startLockStatusChanged CONSTANT)
+    Q_PROPERTY(bool monitorKeyboardFlips READ monitorKeyboardFlips WRITE startKeyboardFlipped)
+    Q_PROPERTY(bool monitorDeviceLocks READ monitorDeviceLocks WRITE startDeviceLocked)
+    Q_PROPERTY(bool monitorLockStatusChanges READ monitorLockStatusChanges WRITE startLockStatusChanged)
 
     Q_PROPERTY(int messageRingtoneVolume READ messageRingtoneVolume CONSTANT)
     Q_PROPERTY(int voiceRingtoneVolume READ voiceRingtoneVolume CONSTANT)
