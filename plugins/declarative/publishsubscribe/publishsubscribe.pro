@@ -7,6 +7,7 @@ CONFIG += plugin
 TARGET  = $$qtLibraryTarget(declarative_publishsubscribe)
 TARGETPATH = QtMobility/publishsubscribe
 PLUGIN_TYPE = declarative
+DEFINES += QT_MAKEDLL
 include(../../../common.pri)
 
 # support headers/sources for dynamic properties

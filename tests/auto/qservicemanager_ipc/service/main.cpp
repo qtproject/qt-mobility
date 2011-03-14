@@ -181,6 +181,22 @@ public slots:
         m_hash = 1;
     }
     
+    void testSlotWithComplexArg(QVariantHash arg)
+    {
+        QHashIterator<QString, QVariant> i(arg);
+        QString output;
+        while (i.hasNext()) {
+            i.next();
+//            qDebug() << i.key() << ": " << i.value();
+            output += i.key();
+            output += "=";
+            output += i.value().toString();
+            output += ", ";
+        }
+        qDebug() << output;
+        m_hash = qHash(output);
+    }
+    
     void testIpcFailure()
     {
         qApp->exit(0); // exit to show failure

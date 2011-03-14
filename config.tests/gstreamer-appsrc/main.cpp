@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the QtDeclarative module of the Qt Toolkit.
+** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
@@ -39,57 +39,11 @@
 **
 ****************************************************************************/
 
-#ifndef QDECLARATIVEOPENMETAOBJECT_H
-#define QDECLARATIVEOPENMETAOBJECT_H
+#define GST_USE_UNSTABLE_API
 
-#include <qmobilityglobal.h>
-#include <QtCore/QMetaObject>
-#include <QtCore/QObject>
+#include <gst/app/gstappsrc.h>
 
-QT_USE_NAMESPACE
-
-QTM_BEGIN_NAMESPACE
-
-// Copied from qobject_p.h
-struct QAbstractDynamicMetaObject : public QMetaObject
+int main(int argc, char** argv)
 {
-    virtual ~QAbstractDynamicMetaObject() {}
-    virtual int metaCall(QMetaObject::Call, int _id, void **) { return _id; }
-    virtual int createProperty(const char *, const char *) { return -1; }
-};
-
-
-class QDeclarativeOpenMetaObjectPrivate;
-class QDeclarativeOpenMetaObject : public QAbstractDynamicMetaObject
-{
-public:
-    QDeclarativeOpenMetaObject(QObject *);
-
-    ~QDeclarativeOpenMetaObject();
-
-    virtual void getValue(int id, void **a);
-    virtual void setValue(int id, void **a);
-
-    virtual int createProperty(const char *,  const char *);
-
-    QObject *object() const;
-    void setMetaObject(const QMetaObject& metaObject);
-
-protected:
-    virtual int metaCall(QMetaObject::Call _c, int _id, void **_a);
-
-    virtual void propertyRead(int);
-    virtual void propertyWrite(int);
-    virtual void propertyWritten(int);
-
-    QAbstractDynamicMetaObject *parent() const;
-
-private:
-
-    QDeclarativeOpenMetaObjectPrivate *d;
-    friend class QDeclarativeOpenMetaObjectType;
-};
-
-QTM_END_NAMESPACE
-
-#endif // QDECLARATIVEOPENMETAOBJECT_H
+    return 0;
+}

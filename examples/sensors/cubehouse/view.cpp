@@ -99,7 +99,9 @@ View::View(QWidget *parent)
       painter(0),
       showFrameRate(false)
 {
+#if (QT_VERSION >= QT_VERSION_CHECK(4, 7, 2))
     setAttribute(Qt::WA_LockPortraitOrientation);
+#endif
 
     mainCamera = new Camera(this);
 
