@@ -163,13 +163,14 @@ void QGeoMapPixmapObject::setPixmap(const QPixmap &pixmap)
 */
 QPoint QGeoMapPixmapObject::offset() const
 {
-    QPointF pt = d_ptr->offset;
-
-    QPoint rounded;
-    rounded.setX(int(pt.x() > 0 ? pt.x() + 0.5 : pt.x() - 0.5));
-    rounded.setY(int(pt.y() > 0 ? pt.y() + 0.5 : pt.y() - 0.5));
-
-    return rounded;
+    return d_ptr->offset;
+//    QPointF pt = d_ptr->offset;
+//
+//    QPoint rounded;
+//    rounded.setX(int(pt.x() > 0 ? pt.x() + 0.5 : pt.x() - 0.5));
+//    rounded.setY(int(pt.y() > 0 ? pt.y() + 0.5 : pt.y() - 0.5));
+//
+//    return rounded;
 }
 
 void QGeoMapPixmapObject::setOffset(const QPoint &offset)

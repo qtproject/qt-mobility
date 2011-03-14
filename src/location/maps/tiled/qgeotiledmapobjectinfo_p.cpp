@@ -77,7 +77,7 @@ void QGeoTiledMapObjectInfo::init()
     if (graphicsItem) {
         graphicsItem->setZValue(mapObject()->zValue());
         graphicsItem->setVisible(mapObject()->isVisible());
-        graphicsItem->setFlag(QGraphicsItem::ItemIsSelectable);
+        //graphicsItem->setFlag(QGraphicsItem::ItemIsSelectable);
     }
     inited = true;
     if (updateAfterInit) {
