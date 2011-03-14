@@ -89,6 +89,9 @@ void QRfcommServer::close()
 {
     Q_D(QRfcommServer);
 
+    delete d->socketNotifier;
+    d->socketNotifier = 0;
+
     d->socket->close();
 }
 
