@@ -41,7 +41,7 @@
 
 #include "tpsessionchannel_p.h"
 #include "telepathyhelpers_maemo6_p.h"
-
+#include <TelepathyQt4/PendingChannelRequest>
 
 /**
  * \class TpSessionChannel
@@ -92,8 +92,7 @@
  * \param contact  Contacto to your peer to establish channel
  */
 
-
-TpSessionChannel::TpSessionChannel(Tp::ConnectionPtr conn, const Tp::ContactPtr &contact)
+TpSessionChannel::TpSessionChannel(Tp::AccountPtr acc, const Tp::ContactPtr &contact)
 {
     QDEBUG_FUNCTION_BEGIN
     QVariantMap request;
@@ -106,9 +105,8 @@ TpSessionChannel::TpSessionChannel(Tp::ConnectionPtr conn, const Tp::ContactPtr 
     request.insert(QLatin1String(TELEPATHY_INTERFACE_CHANNEL ".TargetHandle"),
                    contact->handle()[0]);
 
-    connect(conn->ensureChannel(request),
-            SIGNAL(finished(Tp::PendingOperation*)),
-            SLOT(onChannelCreated(Tp::PendingOperation*)));
+    connect(acc->ensureChannel(request), SIGNAL(finished(Tp::PendingOperation*)),
+    	    SLOT(onChannelCreated(Tp::PendingOperation*)));
 
     peerContact = contact;
 
@@ -141,21 +139,24 @@ TpSessionChannel::TpSessionChannel(Tp::TextChannelPtr ch)
 void TpSessionChannel::onChannelCreated(Tp::PendingOperation *op)
 {
     QDEBUG_FUNCTION_BEGIN
-    qDebug() << "TpSessionChannel::onOutgoingChannelCreated" ;
+
     if (op->isError()) {
         qWarning() << "Connection cannot become connected" ;
         return;
     }
-    Tp::PendingChannel *pc = qobject_cast<Tp::PendingChannel *>(op);
 
-    channel = Tp::TextChannel::create(pc->connection(), pc->objectPath(), pc->immutableProperties());
-
-    connect(channel->becomeReady(Tp::TextChannel::FeatureMessageQueue | Tp::TextChannel::FeatureMessageSentSignal),
-            SIGNAL(finished(Tp::PendingOperation*)),
-            SLOT(onChannelReady(Tp::PendingOperation*)));
+    Tp::PendingChannelRequest *pcr = qobject_cast<Tp::PendingChannelRequest *>(op);
+    if (pcr) {
+	channel = Tp::SharedPtr<Tp::TextChannel>::qObjectCast(pcr->channelRequest()->channel());
+    }
+    if (!channel.isNull()) {
+	connect(channel->becomeReady(Tp::TextChannel::FeatureMessageQueue | Tp::TextChannel::FeatureMessageSentSignal),
+		SIGNAL(finished(Tp::PendingOperation*)), SLOT(onChannelReady(Tp::PendingOperation*)));
+    }
 
     QDEBUG_FUNCTION_END
 }
+
 
 void TpSessionChannel::onChannelReady(Tp::PendingOperation *op)
 {
@@ -164,7 +165,7 @@ void TpSessionChannel::onChannelReady(Tp::PendingOperation *op)
 
     qDebug() << "TpSessionChannel::onChannelReady type=" << channel->channelType() << "path " << channel->objectPath() <<
     "initiatorContact=" << (channel->initiatorContact() ? channel->initiatorContact()->id() : "NULL") ;
-    ;
+
     connect(channel.data(),
             SIGNAL(messageReceived(const Tp::ReceivedMessage &)),
             SLOT(onMessageReceived(const Tp::ReceivedMessage &)));

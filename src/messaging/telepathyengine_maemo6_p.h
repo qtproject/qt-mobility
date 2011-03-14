@@ -90,11 +90,10 @@ signals:
 
 private slots:
     void onAMReady(Tp::PendingOperation *);
-    void onAccountCreated(const QString &);
     void onReady(Tp::PendingOperation *);
     void onAccountReady(TpSessionAccount *tpacc);
     void onMessageReceived(const Tp::ReceivedMessage &, TpSessionAccount *);
-
+    void onNewAccount(const Tp::AccountPtr &account);
 private:
     //static TelepathyEngine *m_inst;
 

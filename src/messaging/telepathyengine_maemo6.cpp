@@ -71,8 +71,8 @@ TelepathyEngine::TelepathyEngine():
     else {
         connect(m_AM->becomeReady(), SIGNAL(finished(Tp::PendingOperation *)),
                 SLOT(onAMReady(Tp::PendingOperation *)));
-        connect(m_AM.data(), SIGNAL(accountCreated(const QString &)),
-                SLOT(onAccountCreated(const QString &)));
+        connect(m_AM.data(), SIGNAL(newAccount(const Tp::AccountPtr &)),
+                SLOT(onNewAccount(const Tp::AccountPtr &)));
     }
 
 
@@ -128,32 +128,24 @@ void TelepathyEngine::onAMReady(Tp::PendingOperation *op)
         return;
     }
 
-    TpSessionAccount *tpacc;
-
-    foreach(const QString &path, m_AM->allAccountPaths()) {
-        qDebug() << __FUNCTION__ << "found account";
-        m_accounts += tpacc = new TpSessionAccount(m_AM, path);
-        connect(tpacc, SIGNAL(accountReady(TpSessionAccount*)),
+    foreach (const Tp::AccountPtr &acc, m_AM->allAccounts()) {
+	const QString path = acc->objectPath();
+        qDebug() << __FUNCTION__ << "found account" << path;
+	TpSessionAccount *tpAcc = new TpSessionAccount(m_AM, path);
+        m_accounts += tpAcc;
+        connect(tpAcc, SIGNAL(accountReady(TpSessionAccount*)),
                 SLOT(onAccountReady(TpSessionAccount *)));
-    }
-
-
-    // AccountManager is now ready
-    qDebug() << "Valid accounts:";
-    foreach(const QString &path, m_AM->validAccountPaths()) {
-        qDebug() << " path:" << path;
     }
 
     QDEBUG_FUNCTION_END
 }
 
-/******************************************************************/
-
-void TelepathyEngine::onAccountCreated(const QString &path)
+void TelepathyEngine::onNewAccount(const Tp::AccountPtr &account)
 {
     QDEBUG_FUNCTION_BEGIN
-    qWarning() << "TelepathyEngine::onAccountCreated";
-    m_accounts += new TpSessionAccount(m_AM, path);
+    m_accounts += new TpSessionAccount(account);
+    qDebug() << account->objectPath();
+    _updateImAccounts();
     QDEBUG_FUNCTION_END
 }
 
@@ -175,6 +167,7 @@ void TelepathyEngine::onAccountReady(TpSessionAccount *tpacc)
 
         emit accountReady(tpacc);
     }
+    _updateImAccounts();
     QDEBUG_FUNCTION_END
 }
 
@@ -211,8 +204,8 @@ TpSessionAccount *TelepathyEngine::getTpSessionAccount(const QString &cm, const 
 
     foreach(TpSessionAccount *tpacc, m_accounts) {
         if ((!cm.isEmpty()  && tpacc->acc->cmName() == cm)
-                || (!protocol.isEmpty() && tpacc->acc->protocol() == protocol)) {
-            qWarning() << "TelepathyEngine::getAccount found" << tpacc->acc->cmName() << " " << tpacc->acc->protocol();
+                || (!protocol.isEmpty() && tpacc->acc->protocolName() == protocol)) {
+            qWarning() << "TelepathyEngine::getAccount found" << tpacc->acc->cmName() << " " << tpacc->acc->protocolName();
             QDEBUG_FUNCTION_END return tpacc;
         }
     }
@@ -253,7 +246,8 @@ void TelepathyEngine::_updateImAccounts() const
 
 
     foreach(TpSessionAccount *tpacc, m_accounts) {
-        qDebug() << "TelepathyEngine::updateImAccounts" << tpacc->acc->cmName() << " protocol " << tpacc->acc->protocol() << " displayName " << tpacc->acc->displayName();
+	if (!tpacc->acc) continue;
+        qDebug() << "TelepathyEngine::updateImAccounts" << tpacc->acc->cmName() << " protocol " << tpacc->acc->protocolName() << " displayName " << tpacc->acc->displayName();
         bool account_ok = tpacc->acc->isEnabled() && tpacc->acc->isValidAccount();
         QString cm = tpacc->acc->cmName();
 
@@ -280,7 +274,7 @@ void TelepathyEngine::_updateImAccounts() const
                                           QMessageAddress(QMessageAddress::InstantMessage, accountAddress),
                                           QMessage::InstantMessage);
                 m_iAccounts.insert(accountId, account);
-            } else qWarning() << "Protocol " << tpacc->acc->protocol() << "with connectionmanager " << cm << "Is not yet supported";
+            } else qWarning() << "Protocol " << tpacc->acc->protocolName() << "with connectionmanager " << cm << "Is not yet supported";
 //                if (strncmp(account_name_key, default_account, strlen(default_account))) iDefaultEmailAccountId = accountId;
 
         }
@@ -299,7 +293,6 @@ QMessageAccountIdList TelepathyEngine::queryAccounts(const QMessageAccountFilter
     QMessageAccountIdList accountIds;
     m_error = QMessageManager::NoError;
 
-    _updateImAccounts();
     foreach(QMessageAccount value, m_iAccounts) {
         accountIds.append(value.id());
     }
@@ -324,7 +317,6 @@ QMessageAccount TelepathyEngine::account(const QMessageAccountId &id)
 {
     QDEBUG_FUNCTION_BEGIN
     m_error = QMessageManager::NoError;
-    _updateImAccounts();
     QDEBUG_FUNCTION_END return m_iAccounts[id.toString()];
 }
 
@@ -334,7 +326,6 @@ QMessageAccountId TelepathyEngine ::defaultAccount(QMessage::Type type)
     Q_UNUSED(type);
 
     m_error = QMessageManager::NoError;
-    _updateImAccounts();
     return m_defaultSmsAccountId;
     QDEBUG_FUNCTION_END
 }
@@ -358,9 +349,7 @@ QMessageManager::Error TelepathyEngine ::error()
 #define TELEPATHY_ENGINE_STORE_MESSAGE
 
 SendRequest::SendRequest(const QMessage &message, QMessageService *service)
-    : /*QObject(parent)
-    ,*/
-      _service(service)
+    : _service(service)
     , _message(message)
     , _pendingRequestCount(message.to().count())
     , _failCount(0)
@@ -423,6 +412,8 @@ void SendRequest::onServiceDestroyed(QObject*)
 {
     qDebug() << __PRETTY_FUNCTION__ ;
     _service = 0;
+    // To be sure that instance is deleted
+    deleteLater();
 }
 
 void SendRequest::down()
@@ -437,7 +428,6 @@ void SendRequest::down()
             }
         }
 #endif
-        //QMessageService *service = qobject_cast<QMessageService *>(parent());
         if (_service) {
             QMessageServicePrivate *privateService = QMessageServicePrivate::implementation(*_service);
 	    privateService->setFinished(success);

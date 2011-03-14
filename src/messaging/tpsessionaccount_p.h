@@ -68,6 +68,7 @@ class TpSessionAccount: public QObject
 
 public:
     TpSessionAccount(Tp::AccountManagerPtr amv, const QString &objectPath);
+    TpSessionAccount(const Tp::AccountPtr &account);
     bool sendMessage(SendRequest *sendRequest);
 
 signals:

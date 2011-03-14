@@ -91,7 +91,8 @@
  */
 TpSessionAccount::TpSessionAccount(Tp::AccountManagerPtr am, const QString &objectPath)
     : ready(false)
-    , mAcc(Tp::Account::create(am->dbusConnection(), am->busName(), objectPath))
+    , acc(0)
+    , mAcc(Tp::Account::create(am->busName(), objectPath))
 {
     QDEBUG_FUNCTION_BEGIN
     connect(mAcc->becomeReady(), SIGNAL(finished(Tp::PendingOperation *)), SLOT(onReady(Tp::PendingOperation *)));
@@ -99,6 +100,16 @@ TpSessionAccount::TpSessionAccount(Tp::AccountManagerPtr am, const QString &obje
     QDEBUG_FUNCTION_END
 }
 
+TpSessionAccount::TpSessionAccount(const Tp::AccountPtr &account)
+    : ready(false)
+    , acc(0)
+    , mAcc(account)
+{
+    QDEBUG_FUNCTION_BEGIN
+    connect(mAcc->becomeReady(), SIGNAL(finished(Tp::PendingOperation *)), SLOT(onReady(Tp::PendingOperation *)));
+    qDebug() << "TpSessionAccount::TpSessionAccount protocol=" << account->protocolName();
+    QDEBUG_FUNCTION_END
+}
 
 void TpSessionAccount::onReady(Tp::PendingOperation *op)
 {
@@ -106,17 +117,15 @@ void TpSessionAccount::onReady(Tp::PendingOperation *op)
 
     QDEBUG_FUNCTION_BEGIN
     acc = mAcc.data();
-    qDebug() << "TpSessionAccount::onReady cmName=" << acc->cmName() << "haveConnection=" << (acc->haveConnection() ? (acc->connection()->isReady() ? "Ready" : "notReady") : "no");
 
-    if (acc->haveConnection()) {
-
-        connect(acc->connection()->becomeReady(Tp::Connection::FeatureRoster | Tp::Connection::FeatureSelfContact),
+    Tp::ConnectionPtr conn = acc->connection();
+    if (!conn.isNull()) {
+        connect(conn->becomeReady(Tp::Connection::FeatureRoster | Tp::Connection::FeatureSelfContact),
                 SIGNAL(finished(Tp::PendingOperation *)),
                 SLOT(onContactsConnectionReady(Tp::PendingOperation *)));
-        if (acc->connection()->isReady() && acc->connection()->interfaces().contains(TELEPATHY_INTERFACE_CONNECTION_INTERFACE_REQUESTS)) {
+        if (conn->isReady() && conn->interfaces().contains(TELEPATHY_INTERFACE_CONNECTION_INTERFACE_REQUESTS)) {
             qDebug() << "TpSessionAccount::onReady: connecting to Connection.Interface.NewChannels";
-            connect(acc->connection()->requestsInterface(),
-                    SIGNAL(NewChannels(const Tp::ChannelDetailsList&)),
+            connect(conn->optionalInterface<Tp::Client::ConnectionInterfaceRequestsInterface>(), SIGNAL(NewChannels(const Tp::ChannelDetailsList&)),
                     SLOT(onNewChannels(const Tp::ChannelDetailsList&)));
         }
     } else { // If there is no connection, we are ready now, else we are ready when contacts connection is ready
@@ -131,17 +140,23 @@ void TpSessionAccount::onContactsConnectionReady(Tp::PendingOperation *op)
     QDEBUG_FUNCTION_BEGIN
     if (op->isError()) {
         qWarning() << "Connection cannot become ready" << acc->cmName();
+        //emit accountReady(this);
         return;
     }
 
     if (acc->connection()->interfaces().contains(TELEPATHY_INTERFACE_CONNECTION_INTERFACE_REQUESTS)) {
         qDebug() << "TpSessionAccount::onContactsConectionReady: connecting to Connection.Interface.NewChannels";
-        connect(acc->connection()->requestsInterface(),
-                SIGNAL(NewChannels(const Tp::ChannelDetailsList&)),
-                SLOT(onNewChannels(const Tp::ChannelDetailsList&)));
+	connect(acc->connection()->optionalInterface<Tp::Client::ConnectionInterfaceRequestsInterface>(), 
+		SIGNAL(NewChannels(const Tp::ChannelDetailsList&)),
+		SLOT(onNewChannels(const Tp::ChannelDetailsList&)));
+
     } else qDebug() << "TpSessionAccount::onContactsConnectionReady: does NO have CONNECTION_INTERFACE_REQUESTS";
+
     Tp::PendingReady *pr = qobject_cast<Tp::PendingReady *>(op);
-    contactsConn = Tp::ConnectionPtr(qobject_cast<Tp::Connection *>(pr->object()));
+    contactsConn = Tp::ConnectionPtr(Tp::SharedPtr<Tp::Connection>::dynamicCast(pr->object()));
+
+    if (contactsConn.isNull())
+	qDebug() << "TpSessionAccount::onContactsConnectionReady(): ERROR: contactsConn == NULL"; 
 #if 0
     connect(contactsConn->contactManager(),
             SIGNAL(presencePublicationRequested(const Tp::Contacts &)),
@@ -152,8 +167,6 @@ void TpSessionAccount::onContactsConnectionReady(Tp::PendingOperation *op)
 
     myContacts = contactsConn->contactManager()->allKnownContacts();
     foreach (const Tp::ContactPtr &contact, myContacts) {
-        qDebug() << "id=" << contact->id() << " alias=" << contact->alias() << " presence=" << contact->presenceStatus();
-
 	const QString id(contact->id());
 	bool isChannelAdded(false);
 
@@ -335,7 +348,7 @@ void TpSessionAccount::addOutgoingChannel(const Tp::ContactPtr &contact)
 
     qDebug() << "TpSessionAccount::addOutgoingChannel";
 
-    TpSessionChannel *newChannel = new TpSessionChannel(contact->manager()->connection(), contact);
+    TpSessionChannel *newChannel = new TpSessionChannel(mAcc, contact);
     connect(newChannel, SIGNAL(messageReceived(const Tp::ReceivedMessage &, TpSessionChannel *)),
             SLOT(onMessageReceived(const Tp::ReceivedMessage &, TpSessionChannel *)));
     connect(newChannel, SIGNAL(channelReady(TpSessionChannel *)),

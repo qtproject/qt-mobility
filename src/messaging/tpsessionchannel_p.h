@@ -53,13 +53,14 @@
 #include <TelepathyQt4/PendingReady>
 #include <TelepathyQt4/ContactManager>
 #include <TelepathyQt4/Connection>
+#include <TelepathyQt4/Account>
 
 class TpSessionChannel : public QObject
 {
     Q_OBJECT
 public:
     TpSessionChannel(Tp::TextChannelPtr);
-    TpSessionChannel(Tp::ConnectionPtr conn, const Tp::ContactPtr &contact);
+    TpSessionChannel(Tp::AccountPtr acc, const Tp::ContactPtr &contact);
     Tp::PendingSendMessage *sendMessage(const QString &message);
     QString peerId() const;
 signals:
