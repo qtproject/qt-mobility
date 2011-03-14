@@ -359,7 +359,7 @@ void CCntSqlDbStructure::InitializeContactsTableInfoL()
 	
 	contactTable->AddColumnToColumnInfoL(KContactTextFields(), KText(),EFalse, KNullDesC());
 	contactTable->AddColumnToColumnInfoL(KContactBinaryFields(), KBlob(),EFalse, KNullDesC());
-    contactTable->AddColumnToColumnInfoL(KContactFavoriteIndex(), KInteger(),EFalse, KNullDesC());
+    contactTable->AddColumnToColumnInfoL(KContactFavoriteIndex(), KVarchar255(),EFalse, KNullDesC());
 
 	iTables.AppendL( contactTable );
 	CleanupStack::Pop(); //contactTable
