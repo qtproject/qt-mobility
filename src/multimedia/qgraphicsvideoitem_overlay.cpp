@@ -81,6 +81,7 @@ public:
     QMediaService *service;
     QVideoWindowControl *windowControl;
     QPointer<QGraphicsView> currentView;
+    QList<QPointer<QObject> > eventFilterTargets;
     QGraphicsView::ViewportUpdateMode savedViewportUpdateMode;
 
     Qt::AspectRatioMode aspectRatioMode;
@@ -92,6 +93,7 @@ public:
     QWidget *videoWidget;
 
     bool eventFilter(QObject *object, QEvent *event);
+    void updateEventFilters();
 
     void setWidget(QWidget *widget);
     void clearService();
@@ -111,8 +113,32 @@ void QGraphicsVideoItemPrivate::_q_present()
 
 bool QGraphicsVideoItemPrivate::eventFilter(QObject *object, QEvent *event)
 {
-    if (windowControl && object == videoWidget && QEvent::WinIdChange == event->type())
+    if (windowControl && object == videoWidget && QEvent::WinIdChange == event->type()) {
         windowControl->setWinId(videoWidget->effectiveWinId());
+    } else {
+        bool updateEventFiltersRequired = false;
+        bool refreshDisplayRequired = false;
+        foreach (QPointer<QObject> target, eventFilterTargets) {
+            if (object == target.data()) {
+                switch (event->type()) {
+                case QEvent::ParentChange:
+                    updateEventFiltersRequired = true;
+                    refreshDisplayRequired = true;
+                    break;
+                case QEvent::Move:
+                case QEvent::Resize:
+                    refreshDisplayRequired = true;
+                    break;
+                }
+            }
+        }
+        if (updateEventFiltersRequired)
+            updateEventFilters();
+#ifdef Q_OS_SYMBIAN
+        if (refreshDisplayRequired && windowControl)
+            QMetaObject::invokeMethod(windowControl, "refreshDisplay");
+#endif
+    }
     return false;
 }
 
@@ -161,6 +187,23 @@ void QGraphicsVideoItemPrivate::updateRects()
 
 void QGraphicsVideoItemPrivate::updateLastFrame()
 {
+}
+
+void QGraphicsVideoItemPrivate::updateEventFilters()
+{
+    // In order to determine when the absolute screen position of the item
+    // changes, we need to receive move events sent to m_currentView
+    // or any of its ancestors.
+    foreach (QPointer<QObject> target, eventFilterTargets)
+        if (target)
+            target->removeEventFilter(this);
+    eventFilterTargets.clear();
+    QObject *target = currentView;
+    while (target) {
+        target->installEventFilter(this);
+        eventFilterTargets.append(target);
+        target = target->parent();
+    }
 }
 
 void QGraphicsVideoItemPrivate::_q_updateNativeSize()
@@ -329,6 +372,7 @@ void QGraphicsVideoItem::paint(
             d->savedViewportUpdateMode = view->viewportUpdateMode();
             view->setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
         }
+        d->updateEventFilters();
     }
 
     QColor colorKey = Qt::black;

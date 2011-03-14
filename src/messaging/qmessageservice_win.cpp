@@ -46,7 +46,7 @@
 #include "qmessagefolderid_p.h"
 #include "qmessageaccountid_p.h"
 #include "qmessage_p.h"
-#include "qmessagestore_p.h"
+#include "qmessagestore_p_p.h"
 #include "qmessagecontentcontainer_p.h"
 #include "qmessagecontentcontainerid_p.h"
 #include <QDebug>

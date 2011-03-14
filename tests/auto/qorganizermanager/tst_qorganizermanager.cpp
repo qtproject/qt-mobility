@@ -168,6 +168,7 @@ private slots:
     void update();
     void remove();
     void batch();
+    void observerDeletion();
     void signalEmission();
     void detailDefinitions();
     void detailOrders();
@@ -2456,6 +2457,20 @@ void tst_QOrganizerManager::itemValidation()
     QVERIFY(cm->saveItem(&c));
     QCOMPARE(cm->error(), QOrganizerManager::NoError);
     c.removeDetail(&d7);
+}
+
+void tst_QOrganizerManager::observerDeletion()
+{
+    QOrganizerManager *manager = new QOrganizerManager("memory");
+    QOrganizerItem c;
+    QVERIFY(manager->saveItem(&c));
+    QOrganizerItemId id = c.id();
+    QOrganizerItemObserver *observer = new QOrganizerItemObserver(manager, id);
+    Q_UNUSED(observer)
+    delete manager;
+    delete observer;
+    // Test for bug MOBILITY-2566 - that QOrganizerItemObserver doesn't crash when it is
+    // destroyed after the associated QOrganizerManager
 }
 
 void tst_QOrganizerManager::signalEmission()

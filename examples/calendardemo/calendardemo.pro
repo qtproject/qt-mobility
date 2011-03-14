@@ -6,7 +6,7 @@
 
 TEMPLATE = app
 TARGET = calendardemo
-include(../examples.pri)
+include(../mobility_examples.pri)
 DEPENDPATH += .
 CONFIG += mobility
 MOBILITY = organizer

@@ -153,14 +153,12 @@ bool S60VideoDisplay::isPaintingEnabled() const
 void S60VideoDisplay::updateContentRect()
 {
     if (isPaintingEnabled()) {
-        if (extentRect().size() != nativeSize()) {
-            const int dx = extentRect().width() - nativeSize().width();
-            const int dy = extentRect().height() - nativeSize().height();
-            QRect contentRect(QPoint(dx/2, dy/2), nativeSize());
-            if (m_contentRect != contentRect) {
-                m_contentRect = contentRect;
-                emit contentRectChanged(m_contentRect);
-            }
+        const int dx = qMax(0, extentRect().width() - nativeSize().width());
+        const int dy = qMax(0, extentRect().height() - nativeSize().height());
+        QRect contentRect(QPoint(dx/2, dy/2), nativeSize());
+        if (m_contentRect != contentRect) {
+            m_contentRect = contentRect;
+            emit contentRectChanged(m_contentRect);
         }
     }
 }

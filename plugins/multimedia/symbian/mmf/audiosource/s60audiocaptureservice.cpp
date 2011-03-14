@@ -38,6 +38,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
+#include "DebugMacros.h"
 #include <QDebug>
 
 #include "s60audiocaptureservice.h"
@@ -49,20 +51,28 @@
 
 S60AudioCaptureService::S60AudioCaptureService(QObject *parent):
     QMediaService(parent)
-{    
+{
+    DP0("S60AudioCaptureService::S60AudioCaptureService +++");
+
     m_session = new S60AudioCaptureSession(this);
     m_encoderControl = new S60AudioEncoderControl(m_session,this);
     m_recorderControl = new S60AudioMediaRecorderControl(m_session,this);
     m_endpointSelector = new S60AudioEndpointSelector(m_session,this); 
     m_containerControl = new S60AudioContainerControl(m_session, this);
+
+    DP0("S60AudioCaptureService::S60AudioCaptureService ---");
 }
 
 S60AudioCaptureService::~S60AudioCaptureService()
 {
+    DP0("S60AudioCaptureService::~S60AudioCaptureService +++");
+    DP0("S60AudioCaptureService::~S60AudioCaptureService ---");
 }
 
 QMediaControl *S60AudioCaptureService::requestControl(const char *name)
-{    
+{
+    DP0("S60AudioCaptureService::requestControl");
+
     if (qstrcmp(name,QMediaRecorderControl_iid) == 0)
         return m_recorderControl;
 
@@ -80,5 +90,9 @@ QMediaControl *S60AudioCaptureService::requestControl(const char *name)
 
 void S60AudioCaptureService::releaseControl(QMediaControl *control)
 {
+    DP0("S60AudioCaptureService::releaseControl +++");
+
     Q_UNUSED(control)
+
+    DP0("S60AudioCaptureService::releaseControl ---");
 }

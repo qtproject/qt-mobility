@@ -46,7 +46,7 @@
 #include "qmessageaccountfilter.h"
 #include "qmessageaccountfilter_p.h"
 #include "qmessagefolder_p.h"
-#include "qmessagestore_p.h"
+#include "qmessagestore_p_p.h"
 #include "qmessageservice_maemo_p.h"
 #include "qmessagecontentcontainer_maemo_p.h"
 #include <QUrl>

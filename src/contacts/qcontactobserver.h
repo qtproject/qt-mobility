@@ -43,7 +43,6 @@
 #define QCONTACTOBSERVER_H
 
 #include <QObject>
-#include <QScopedPointer>
 #include "qmobilityglobal.h"
 #include "qcontactmanager.h"
 

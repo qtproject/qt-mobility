@@ -58,7 +58,7 @@ QTM_BEGIN_NAMESPACE
 
     Compares this Bluetooth address with \a other.
 
-    Returns true if the Bluetooth addresses are not equal, otherwise returns true.
+    Returns true if the Bluetooth addresses are not equal, otherwise returns false.
 */
 
 namespace

@@ -39,22 +39,34 @@
 **
 ****************************************************************************/
 
+#include "DebugMacros.h"
+
 #include "s60radiotunerservice.h"
 
 
 S60RadioTunerService::S60RadioTunerService(QObject *parent)
     : QMediaService(parent)
 {
+    DP0("S60RadioTunerService::S60RadioTunerService +++");
+
 	m_playerControl = new S60RadioTunerControl(this);
+
+  DP0("S60RadioTunerService::S60RadioTunerService ---");
 }
 
 S60RadioTunerService::~S60RadioTunerService()
 {
+    DP0("S60RadioTunerService::~S60RadioTunerService +++");
+
 	delete m_playerControl;
+
+  DP0("S60RadioTunerService::~S60RadioTunerService ---");
 }
 
 QMediaControl *S60RadioTunerService::requestControl(const char* name)
 {
+    DP0("S60RadioTunerService::requestControl");
+
 	if (qstrcmp(name, QRadioTunerControl_iid) == 0)
 		return m_playerControl;
 
@@ -63,5 +75,9 @@ QMediaControl *S60RadioTunerService::requestControl(const char* name)
 
 void S60RadioTunerService::releaseControl(QMediaControl *control)
 {
+    DP0("S60RadioTunerService::releaseControl +++");
+
 	Q_UNUSED(control);
+
+  DP0("S60RadioTunerService::releaseControl ---");
 }

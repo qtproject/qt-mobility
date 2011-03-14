@@ -68,7 +68,7 @@ void QDeclarativeGeoMapObject::componentComplete()
     QList<QGraphicsItem*> children = childItems();
     for (int i = 0; i < children.size(); ++i) {
         QDeclarativeGeoMapMouseArea *mouseArea
-                = qobject_cast<QDeclarativeGeoMapMouseArea*>(children.at(i));
+        = qobject_cast<QDeclarativeGeoMapMouseArea*>(children.at(i));
         if (mouseArea) {
             mouseArea->setMap(map_);
             mouseAreas_.append(mouseArea);
@@ -124,23 +124,23 @@ void QDeclarativeGeoMapObject::releaseEvent(QDeclarativeGeoMapMouseEvent *event)
     }
 }
 
-//void QDeclarativeGeoMapObject::enterEvent()
-//{
-//    for (int i = 0; i < mouseAreas_.size(); ++i)
-//        mouseAreas_.at(i)->enterEvent();
-//}
+void QDeclarativeGeoMapObject::enterEvent()
+{
+    for (int i = 0; i < mouseAreas_.size(); ++i)
+        mouseAreas_.at(i)->enterEvent();
+}
 
-//void QDeclarativeGeoMapObject::exitEvent()
-//{
-//    for (int i = 0; i < mouseAreas_.size(); ++i)
-//        mouseAreas_.at(i)->exitEvent();
-//}
+void QDeclarativeGeoMapObject::exitEvent()
+{
+    for (int i = 0; i < mouseAreas_.size(); ++i)
+        mouseAreas_.at(i)->exitEvent();
+}
 
-//void QDeclarativeGeoMapObject::moveEvent(QDeclarativeGeoMapMouseEvent *event)
-//{
-//    for (int i = 0; i < mouseAreas_.size(); ++i)
-//        mouseAreas_.at(i)->moveEvent(event);
-//}
+void QDeclarativeGeoMapObject::moveEvent(QDeclarativeGeoMapMouseEvent *event)
+{
+    for (int i = 0; i < mouseAreas_.size(); ++i)
+        mouseAreas_.at(i)->moveEvent(event);
+}
 
 void QDeclarativeGeoMapObject::setMapObject(QGeoMapObject *object)
 {
@@ -277,16 +277,16 @@ void QDeclarativeGeoMapObjectView::modelRowsInserted(QModelIndex, int start, int
     Q_ASSERT(declarativeObjectList_.count() == group_.childObjects().count());
     QDeclarativeGeoMapObject* mapObject;
     for (int i = start; i <= end; ++i) {
-         mapObject = createItem(i);
-         if (!mapObject) {
-             break;
-         }
-         declarativeObjectList_.append(mapObject);
-         mapObject->setVisible(visible_);
-         mapObject->setMap(map_);
-         group_.addChildObject(mapObject->mapObject());
-         // Needed in order for mouse areas to work.
-         map_->objectMap_.insert(mapObject->mapObject(), mapObject);
+        mapObject = createItem(i);
+        if (!mapObject) {
+            break;
+        }
+        declarativeObjectList_.append(mapObject);
+        mapObject->setVisible(visible_);
+        mapObject->setMap(map_);
+        group_.addChildObject(mapObject->mapObject());
+        // Needed in order for mouse areas to work.
+        map_->objectMap_.insert(mapObject->mapObject(), mapObject);
     }
     Q_ASSERT(declarativeObjectList_.count() == group_.childObjects().count());
 }
@@ -367,15 +367,15 @@ void QDeclarativeGeoMapObjectView::repopulate()
     // level.
     QDeclarativeGeoMapObject* mapObject;
     for (int i = 0; i < model_->rowCount(); ++i) {
-         mapObject = createItem(i);
-         if (!mapObject)
-             break;
-         declarativeObjectList_.append(mapObject);
-         mapObject->setVisible(visible_);
-         mapObject->setMap(map_);
-         group_.addChildObject(mapObject->mapObject());
-         // Needed in order for mouse areas to work.
-         map_->objectMap_.insert(mapObject->mapObject(), mapObject);
+        mapObject = createItem(i);
+        if (!mapObject)
+            break;
+        declarativeObjectList_.append(mapObject);
+        mapObject->setVisible(visible_);
+        mapObject->setMap(map_);
+        group_.addChildObject(mapObject->mapObject());
+        // Needed in order for mouse areas to work.
+        map_->objectMap_.insert(mapObject->mapObject(), mapObject);
     }
 }
 

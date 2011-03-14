@@ -55,14 +55,15 @@ QTM_BEGIN_NAMESPACE
 
 // constructor
 CQGeoSatelliteInfoSourceS60::CQGeoSatelliteInfoSourceS60(QObject* aParent) : QGeoSatelliteInfoSource(aParent),
-    mCurrentModuleId(TUid::Null()),
-    mReqModuleId(TUid::Null()),
-    mDevStatusUpdateAO(NULL),
-    mReqUpdateAO(NULL),
-    mRegUpdateAO(NULL),
-    mListSize(0),
-    mStartUpdates(FALSE),
-    mModuleFlags(0)
+        mCurrentModuleId(TUid::Null()),
+        mReqModuleId(TUid::Null()),
+        mDevStatusUpdateAO(NULL),
+        mReqUpdateAO(NULL),
+        mRegUpdateAO(NULL),
+        mListSize(0),
+        mMinUpdateInterval(0),
+        mStartUpdates(FALSE),
+        mModuleFlags(0)
 {
     memset(mList, 0 , MAX_SIZE * sizeof(CSatMethodInfo));
 }
@@ -173,8 +174,9 @@ void CQGeoSatelliteInfoSourceS60::ConstructL()
 }
 
 //private function : to retrieve the index of the supplied module id from the mList array
-TInt CQGeoSatelliteInfoSourceS60::checkModule(TPositionModuleId aId)const
+TInt CQGeoSatelliteInfoSourceS60::checkModule(TPositionModuleId aId)//const
 {
+    QMutexLocker locker(&m_mutex);
     TInt i;
     for (i = 0; i < mListSize; i++)
         if (mList[i].mUid == aId)
@@ -188,10 +190,12 @@ int CQGeoSatelliteInfoSourceS60::minimumUpdateInterval() const
     if (mCurrentModuleId == TUid::Null())
         return 0;
 
-    TInt i = checkModule(mCurrentModuleId);
+    return mMinUpdateInterval;
+
+    /*TInt i = checkModule(mCurrentModuleId);
     if (i != -1)
         return mList[i].mTimeToNextFix.Int64() / 1000;           //divide by 1000, to convert microsecond to milisecond
-    return 0;
+    return 0;*/
 }
 
 //private function : get the index of the mList that supports the preferred method if
@@ -322,6 +326,8 @@ void CQGeoSatelliteInfoSourceS60::updateStatus(TPositionModuleInfo &aModInfo, TI
 
         //count on the mList array size
         mListSize++;
+
+        mMinUpdateInterval = mList[mListSize-1].mTimeToNextFix.Int64() / 1000;
     } else {
         //module's status has changed
         if (mList[i].mStatus != aStatus)
@@ -367,7 +373,7 @@ void CQGeoSatelliteInfoSourceS60::updateStatus(TPositionModuleInfo &aModInfo, TI
 
 
                 mCurrentModuleId = mList[i].mUid;
-
+                mMinUpdateInterval = mList[i].mTimeToNextFix.Int64() / 1000;
             }
         }
 
@@ -410,18 +416,19 @@ void CQGeoSatelliteInfoSourceS60::updateStatus(TPositionModuleInfo &aModInfo, TI
                     //method
                     mRegUpdateAO = temp;
 
+                    mCurrentModuleId = mList[index].mUid;
+                    mMinUpdateInterval = mList[i].mTimeToNextFix.Int64() / 1000;
+
                     mRegUpdateAO->setUpdateInterval(interval);
 
                     if (mStartUpdates)
                         mRegUpdateAO->startUpdates();
 
-
-                    mCurrentModuleId = mList[index].mUid;
-
                 } else {
                     //no methods available,clean up the resources
                     mRegUpdateAO = NULL;
                     mCurrentModuleId = TUid::Null();
+                    mMinUpdateInterval = interval;
                 }
 
             }
