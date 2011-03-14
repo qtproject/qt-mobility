@@ -57,6 +57,7 @@
 #include <QObject>
 #include <QStringList>
 #include <QTimer>
+#include <QDesktopWidget>
 
 #include "qmobilityglobal.h"
 #include "qsysteminfo.h"
@@ -161,8 +162,8 @@ protected:  //from MTelephonyInfoObserver
     void cellNetworkStatusChanged();
 
     void changedCellId(int);
-    virtual void changedNetworkStatus() ;
-    virtual void changedNetworkMode() ;
+    virtual void changedNetworkStatus();
+    virtual void changedNetworkMode();
 
 public slots:
     void wlanNetworkNameChanged();
@@ -191,8 +192,17 @@ public:
     int physicalWidth(int screen);
     QSystemDisplayInfo::BacklightState backlightStatus(int screen); //1.2
 
+Q_SIGNALS:
+    void orientationChanged(QSystemDisplayInfo::DisplayOrientation newOrientation);
+
+public slots:
+    void rotationTimeout();
+
 private:
     bool getSizeandRotation(int screen,TPixelsTwipsAndRotation& sizeAndRotation);
+
+    QSystemDisplayInfo::DisplayOrientation currentOrientation;
+    QTimer *rotationTimer;
 };
 
 //////// QSystemStorageInfo

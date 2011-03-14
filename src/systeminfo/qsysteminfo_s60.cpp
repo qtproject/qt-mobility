@@ -46,6 +46,7 @@
 #include <QRegExp>
 #include <QTimer>
 #include <QList>
+#include <QDesktopWidget>
 
 #include <sysutil.h>
 #ifdef HB_SUPPORTED
@@ -779,9 +780,18 @@ QSystemNetworkInfo::CellDataTechnology QSystemNetworkInfoPrivate::cellDataTechno
     return QSystemNetworkInfo::UnknownDataTechnology;
 }
 
+
 QSystemDisplayInfoPrivate::QSystemDisplayInfoPrivate(QObject *parent)
-    : QObject(parent)
+    : QObject(parent), rotationTimer(0)
 {
+    rotationTimer = new QTimer(this);
+    rotationTimer->setInterval(1000);
+    rotationTimer->setSingleShot(true);
+    connect(rotationTimer,SIGNAL(timeout()), this,SLOT(rotationTimeout()));
+
+    QDesktopWidget wid;
+    currentOrientation = orientation(wid.primaryScreen());
+    rotationTimer->start();
 }
 
 QSystemDisplayInfoPrivate::~QSystemDisplayInfoPrivate()
@@ -800,10 +810,24 @@ bool QSystemDisplayInfoPrivate::getSizeandRotation(int screen, TPixelsTwipsAndRo
         CleanupStack::PushL(wsScreenDevice);
         User::LeaveIfError(err = wsScreenDevice->Construct(screen));
         wsScreenDevice->GetScreenModeSizeAndRotation(screen,sizeAndRotation);
+
+        qDebug() << "rotation" << sizeAndRotation.iRotation;
+
         CleanupStack::PopAndDestroy(2, &ws);
         )
     return (wsScreenDevice != NULL && err == KErrNone);
 }
+
+void QSystemDisplayInfoPrivate::rotationTimeout()
+{
+    QSystemDisplayInfo::DisplayOrientation orientationStatus = orientation(0);
+    if (orientationStatus != currentOrientation) {
+        currentOrientation = orientationStatus;
+        Q_EMIT orientationChanged(orientationStatus);
+    }
+    rotationTimer->start();
+}
+
 
 int QSystemDisplayInfoPrivate::displayBrightness(int /*screen*/)
 {
@@ -841,27 +865,35 @@ int QSystemDisplayInfoPrivate::colorDepth(int screen)
 QSystemDisplayInfo::DisplayOrientation QSystemDisplayInfoPrivate::orientation(int screen)
 {
     QSystemDisplayInfo::DisplayOrientation orientationStatus = QSystemDisplayInfo::Unknown;
-    TPixelsTwipsAndRotation sizeAndRotation;
-    if (screen < 16 && screen > -1) {
-    bool err = getSizeandRotation(screen, sizeAndRotation);
-    if (err) {
-            CFbsBitGc::TGraphicsOrientation currentRotation = sizeAndRotation.iRotation;
-            switch (currentRotation) {
-            case 0:
-            case 360:
-                orientationStatus = QSystemDisplayInfo::Landscape;
-                break;
-            case 90:
-                orientationStatus = QSystemDisplayInfo::Portrait;
-                break;
-            case 180:
-                orientationStatus = QSystemDisplayInfo::InvertedLandscape;
-                break;
-            case 270:
-                orientationStatus = QSystemDisplayInfo::InvertedPortrait;
-                break;
-            };
-        }
+    // this doesn't seem to work, at least in emulator.
+//    TPixelsTwipsAndRotation sizeAndRotation;
+//    if (screen < 16 && screen > -1) {
+//        bool err = getSizeandRotation(screen, sizeAndRotation);
+//        if (err) {
+//            CFbsBitGc::TGraphicsOrientation currentRotation = sizeAndRotation.iRotation;
+
+//            switch (currentRotation) {
+//            case 0:
+//            case 360:
+//                orientationStatus = QSystemDisplayInfo::Landscape;
+//                break;
+//            case 90:
+//                orientationStatus = QSystemDisplayInfo::Portrait;
+//                break;
+//            case 180:
+//                orientationStatus = QSystemDisplayInfo::InvertedLandscape;
+//                break;
+//            case 270:
+//                orientationStatus = QSystemDisplayInfo::InvertedPortrait;
+//                break;
+//            };
+//        }
+//    }
+    QDesktopWidget wid;
+    if (wid.width() > wid.height()) {
+        orientationStatus = QSystemDisplayInfo::Landscape;
+    } else {
+        orientationStatus = QSystemDisplayInfo::Portrait;
     }
     return orientationStatus;
 }

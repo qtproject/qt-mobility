@@ -2,7 +2,7 @@ TEMPLATE = lib
 TARGET = QtSystemInfo
 
 
-QT+= network
+QT+= network gui
 include(../../common.pri)
 
 # Input
