@@ -73,23 +73,9 @@ QT_BEGIN_NAMESPACE
     intended to be used alone but for accessing the media recording functions
     of other media objects, like QRadioTuner, or QAudioCaptureSource.
 
-    \code
-    // Audio only recording
-    audioSource = new QAudioCaptureSource;
-    recorder = new QMediaRecorder(audioSource);
+    \snippet doc/src/snippets/multimedia-snippets/media.cpp Media recorder
 
-    QAudioEncoderSettings audioSettings;
-    audioSettings.setCodec("audio/vorbis");
-    audioSettings.setQuality(QtMultimediaKit::HighQuality);
-
-    recorder->setEncodingSettings(audioSettings);
-
-    recorder->setOutputLocation(QUrl::fromLocalFile(fileName));
-    recorder->record();
-    \endcode
-
-
-    \sa
+    \sa QAudioCaptureSource
 */
 
 namespace

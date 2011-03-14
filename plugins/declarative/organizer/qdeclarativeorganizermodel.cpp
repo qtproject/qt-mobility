@@ -153,6 +153,7 @@ QDeclarativeOrganizerModel::QDeclarativeOrganizerModel(QObject *parent) :
 
     //import vcard
     connect(&d->m_reader, SIGNAL(stateChanged(QVersitReader::State)), this, SLOT(startImport(QVersitReader::State)));
+    connect(&d->m_writer, SIGNAL(stateChanged(QVersitWriter::State)), this, SLOT(itemsExported(QVersitWriter::State)));
 }
 
 /*!

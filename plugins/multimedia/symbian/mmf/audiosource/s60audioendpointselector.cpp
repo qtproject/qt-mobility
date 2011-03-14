@@ -39,6 +39,8 @@
 **
 ****************************************************************************/
 
+#include "DebugMacros.h"
+
 #include "s60audiocapturesession.h"
 #include "s60audioendpointselector.h"
 
@@ -46,38 +48,53 @@
 
 S60AudioEndpointSelector::S60AudioEndpointSelector(QObject *session, QObject *parent)
     :QAudioEndpointSelector(parent)
-{    
+{
+    DP0("S60AudioEndpointSelector::S60AudioEndpointSelector +++");
     m_session = qobject_cast<S60AudioCaptureSession*>(session); 
 
     connect(m_session, SIGNAL(activeEndpointChanged(const QString &)), this, SIGNAL(activeEndpointChanged(const QString &)));
+
+    DP0("S60AudioEndpointSelector::S60AudioEndpointSelector ---");
 }
 
 S60AudioEndpointSelector::~S60AudioEndpointSelector()
 {
+    DP0("S60AudioEndpointSelector::~S60AudioEndpointSelector +++");
+
+    DP0("S60AudioEndpointSelector::~S60AudioEndpointSelector ---");
 }
 
 QList<QString> S60AudioEndpointSelector::availableEndpoints() const
 {
+    DP0("S60AudioEndpointSelector::availableEndpoints");
+
     return m_session->availableEndpoints();
 }
 
 QString S60AudioEndpointSelector::endpointDescription(const QString& name) const
 {
+    DP0("S60AudioEndpointSelector::endpointDescription");
 
     return m_session->endpointDescription(name);
 }
 
 QString S60AudioEndpointSelector::defaultEndpoint() const
 {
+    DP0("S60AudioEndpointSelector::defaultEndpoint");
+
     return m_session->defaultEndpoint();
 }
 
 QString S60AudioEndpointSelector::activeEndpoint() const
 {
+    DP0("S60AudioEndpointSelector::activeEndpoint");
+
     return m_session->activeEndpoint();
 }
 
 void S60AudioEndpointSelector::setActiveEndpoint(const QString& name)
 {
+   DP0("S60AudioEndpointSelector::setActiveEndpoint +++");
     m_session->setActiveEndpoint(name);
+   DP0("S60AudioEndpointSelector::setActiveEndpoint ---");
 }

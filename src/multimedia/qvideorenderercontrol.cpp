@@ -59,12 +59,9 @@ QT_BEGIN_NAMESPACE
     QAbstractVideoSurface may be set as the video render target of a
     QMediaService.
 
-    \code
-    QVideoRendererControl *rendererControl = mediaService->control<QVideoRendererControl *>();
-    rendererControl->setSurface(myVideoSurface);
-    \endcode
+    \snippet doc/src/snippets/multimedia-snippets/video.cpp Video renderer control
 
-    QVideoRendererControl is one of number of possible video output controls.
+    QVideoRendererControl is one of a number of possible video output controls.
 
     The interface name of QVideoRendererControl is \c com.nokia.Qt.QVideoRendererControl/1.0 as
     defined in QVideoRendererControl_iid.

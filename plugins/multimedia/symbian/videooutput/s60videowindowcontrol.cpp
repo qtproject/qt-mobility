@@ -157,6 +157,11 @@ QSize S60VideoWindowControl::nativeSize() const
     return m_display->nativeSize();
 }
 
+void S60VideoWindowControl::refreshDisplay()
+{
+    m_display->refreshDisplay();
+}
+
 S60VideoWindowDisplay *S60VideoWindowControl::display() const
 {
     return m_display;

@@ -2,7 +2,7 @@ TEMPLATE = app
 CONFIG += example
 
 INCLUDEPATH += ../../src/multimedia ../../src/multimedia/video
-include(../examples.pri)
+include(../mobility_examples.pri)
 
 CONFIG += mobility
 MOBILITY = multimedia

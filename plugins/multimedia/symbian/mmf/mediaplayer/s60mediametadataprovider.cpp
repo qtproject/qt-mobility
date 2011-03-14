@@ -39,59 +39,106 @@
 **
 ****************************************************************************/
 
+#include "DebugMacros.h"
+
 #include "s60mediametadataprovider.h"
 #include "s60mediaplayercontrol.h"
 #include "s60mediaplayersession.h"
 #include <QtCore/qdebug.h>
 
+/*!
+ * Typecasts the \a control object to S60MediaPlayerControl object.
+*/
 S60MediaMetaDataProvider::S60MediaMetaDataProvider(QObject *control, QObject *parent)
     : QMetaDataReaderControl(parent)
     , m_control(NULL)
 {
+    DP0("S60MediaMetaDataProvider::S60MediaMetaDataProvider +++");
+
     m_control = qobject_cast<S60MediaPlayerControl*>(control);
+
+    DP0("S60MediaMetaDataProvider::S60MediaMetaDataProvider ---");
 }
+
+/*!
+ * Destructor
+*/
 
 S60MediaMetaDataProvider::~S60MediaMetaDataProvider()
 {
+    DP0("S60MediaMetaDataProvider::~S60MediaMetaDataProvider +++");
+    DP0("S60MediaMetaDataProvider::~S60MediaMetaDataProvider ---");
 }
+
+/*!
+ * Returns TRUE if MetaData is Available or else FALSE.
+*/
 
 bool S60MediaMetaDataProvider::isMetaDataAvailable() const
 {
+    DP0("S60MediaMetaDataProvider::isMetaDataAvailable");
+
     if (m_control->session())
        return m_control->session()->isMetadataAvailable();
     return false;
 }
 
+/*!
+ * Always returns FLASE.
+*/
 bool S60MediaMetaDataProvider::isWritable() const
 {
+    DP0("S60MediaMetaDataProvider::isWritable");
+
     return false;
 }
 
+/*!
+ * Returns when \a key meta data is found in metaData.
+*/
+
 QVariant S60MediaMetaDataProvider::metaData(QtMultimediaKit::MetaData key) const
 {
+    DP0("S60MediaMetaDataProvider::metaData");
 
     if (m_control->session())
         return m_control->session()->metaData(key);
     return QVariant();
 }
 
+/*!
+ * Returns available metaData.
+*/
+
 QList<QtMultimediaKit::MetaData> S60MediaMetaDataProvider::availableMetaData() const
 {
+    DP0("S60MediaMetaDataProvider::availableMetaData");
+
     if (m_control->session())
         return m_control->session()->availableMetaData();
     return QList<QtMultimediaKit::MetaData>();
 }
 
+/*!
+ * Returns when \a key string is found in extended metaData.
+*/
+
 QVariant S60MediaMetaDataProvider::extendedMetaData(const QString &key) const
 {
+    DP0("S60MediaMetaDataProvider::extendedMetaData");
 
     if (m_control->session())
         return m_control->session()->metaData(key);
     return QVariant();
 }
 
+/*!
+ * Returns available Extended MetaData.
+*/
+
 QStringList S60MediaMetaDataProvider::availableExtendedMetaData() const
 {
+    DP0("S60MediaMetaDataProvider::availableExtendedMetaData");
 
     if (m_control->session())
         return m_control->session()->availableExtendedMetaData();

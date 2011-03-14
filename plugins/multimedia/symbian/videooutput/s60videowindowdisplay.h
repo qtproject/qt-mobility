@@ -61,6 +61,7 @@ public:
     void setDisplayRect(const QRect &rect);
     QRect displayRect() const;
     void repaint();
+    void refreshDisplay();
 
 private:
     WId m_winId;

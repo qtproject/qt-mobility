@@ -1,3 +1,3 @@
 include(../../../staticconfig.pri)
-include (../../examples.pri)
+include (../../mobility_examples.pri)
 TEMPLATE=app

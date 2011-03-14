@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 #include "qmessagemanager.h"
-#include "qmessagestore.h"
+#include "qmessagestore_p.h"
 #include <QDebug>
 
 
