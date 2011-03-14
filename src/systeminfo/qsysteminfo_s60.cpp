@@ -844,8 +844,7 @@ QSystemDisplayInfo::DisplayOrientation QSystemDisplayInfoPrivate::orientation(in
     TPixelsTwipsAndRotation sizeAndRotation;
     if (screen < 16 && screen > -1) {
     bool err = getSizeandRotation(screen, sizeAndRotation);
-    if ( err )
-        {
+    if (err) {
             CFbsBitGc::TGraphicsOrientation currentRotation = sizeAndRotation.iRotation;
             switch (currentRotation) {
             case 0:
@@ -862,7 +861,6 @@ QSystemDisplayInfo::DisplayOrientation QSystemDisplayInfoPrivate::orientation(in
                 orientationStatus = QSystemDisplayInfo::InvertedPortrait;
                 break;
             };
-        orientationStatus = QSystemDisplayInfo::Unknown;
         }
     }
     return orientationStatus;
