@@ -183,8 +183,6 @@ void QBluetoothServiceDiscoveryAgentPrivate::_q_createdDevice(QDBusPendingCallWa
 
 void QBluetoothServiceDiscoveryAgentPrivate::_q_discoveredServices(QDBusPendingCallWatcher *watcher)
 {
-    Q_Q(QBluetoothServiceDiscoveryAgent);
-
 #ifdef QTM_SERVICEDISCOVERY_DEBUG
     qDebug() << Q_FUNC_INFO;
 #endif

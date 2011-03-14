@@ -291,7 +291,7 @@ void BluetoothLinkManagerDeviceDiscoverer::setError(int errorCode)
             break;
     }
     if (errorCode == KErrCancel)
-        emit linkManagerError(QBluetoothDeviceDiscoveryAgent::Canceled);
+        emit canceled();
     else if (errorCode != KErrNone)
         emit linkManagerError(QBluetoothDeviceDiscoveryAgent::UnknownError);
 }

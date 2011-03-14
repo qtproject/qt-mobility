@@ -65,7 +65,7 @@ static inline void convertAddress(quint64 from, quint8 (&to)[6])
 }
 
 QL2capServerPrivate::QL2capServerPrivate()
-:   maxPendingConnections(1), socketNotifier(0), pending(false)
+:  pending(false), maxPendingConnections(1), socketNotifier(0)
 {
     socket = new QBluetoothSocket(QBluetoothSocket::L2capSocket);
 }

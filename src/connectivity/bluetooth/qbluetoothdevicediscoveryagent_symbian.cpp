@@ -84,6 +84,8 @@ void QBluetoothDeviceDiscoveryAgentPrivate::start()
             q, SLOT(_q_newDeviceFound(const QBluetoothDeviceInfo&)));
         QObject::connect(m_deviceDiscovery, SIGNAL(linkManagerError(QBluetoothDeviceDiscoveryAgent::Error)),
             q, SIGNAL(error(QBluetoothDeviceDiscoveryAgent::Error)));
+        QObject::connect(m_deviceDiscovery, SIGNAL(canceled()),
+            q, SIGNAL(canceled()));
         // startup the device discovery. Discovery results are obtained from signal connected above.
         if (!m_deviceDiscovery->startDiscovery(inquiryTypeToIAC()))
             setError(KErrNotReady, "Discovery is still active");

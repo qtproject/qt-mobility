@@ -143,8 +143,6 @@ void QBluetoothTransferReplyBluez::startOPP(QString filename)
     QVariantMap device;
     QStringList files;
 
-//qDebug() << "Starting obex push" << filename << m_agent_path;
-
     device.insert(QString::fromLatin1("Destination"), address.toString());
     files << filename;
 
@@ -176,7 +174,6 @@ void QBluetoothTransferReplyBluez::sendReturned(QDBusPendingCallWatcher *watcher
         // allow time for the developer to connect to the signal
         QMetaObject::invokeMethod(this, "finished", Qt::QueuedConnection, Q_ARG(QBluetoothTransferReply*, this));
     }
-//qDebug() << "Send started reply: " << sendReply.isError() << path.path() << device << files;
 }
 
 QBluetoothTransferReply::TransferError QBluetoothTransferReplyBluez::error() const
@@ -191,17 +188,15 @@ QString QBluetoothTransferReplyBluez::errorString() const
 
 void QBluetoothTransferReplyBluez::Complete(const QDBusObjectPath &in0)
 {
-//    qDebug() << "Got complete: " << in0.path();
+    Q_UNUSED(in0);
     m_transfer_path.clear();
     m_finished = true;
     m_running = false;
-    // done by Release()
-//    emit finished(this);
 }
 
 void QBluetoothTransferReplyBluez::Error(const QDBusObjectPath &in0, const QString &in1)
 {
-//    qDebug() << "Got error: " << in0.path() << in1;
+    Q_UNUSED(in0);
     m_transfer_path.clear();
     m_finished = true;
     m_running = false;
@@ -216,20 +211,18 @@ void QBluetoothTransferReplyBluez::Error(const QDBusObjectPath &in0, const QStri
 
 void QBluetoothTransferReplyBluez::Progress(const QDBusObjectPath &in0, qulonglong in1)
 {
-//    qDebug() << "Got progress: " << in0.path() << in1;
+    Q_UNUSED(in0);
     emit uploadProgress(in1, m_size);
 }
 
 void QBluetoothTransferReplyBluez::Release()
 {
-//    qDebug() << "Got release";
     if(m_errorStr.isEmpty())
         emit finished(this);
 }
 
 QString QBluetoothTransferReplyBluez::Request(const QDBusObjectPath &in0)
 {
-//    qDebug() << "Got request" << in0.path();
     m_transfer_path = in0.path();
 
     return QString();
