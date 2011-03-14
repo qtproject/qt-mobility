@@ -368,8 +368,8 @@ void QT7PlayerSession::setVolume(int volume)
 
     if (m_QTMovie != 0)
         [(QTMovie*)m_QTMovie setVolume:m_volume / 100.0f];
-    else
-        emit volumeChanged(m_volume);
+
+    emit volumeChanged(m_volume);
 }
 
 void QT7PlayerSession::setMuted(bool muted)
@@ -416,12 +416,22 @@ void QT7PlayerSession::setMedia(const QMediaContent &content, QIODevice *stream)
 
     m_resources = content;
     m_mediaStream = stream;
-    m_mediaStatus = QMediaPlayer::NoMedia;
+    QMediaPlayer::MediaStatus oldMediaStatus = m_mediaStatus;
 
     if (content.isNull()) {
+        m_mediaStatus = QMediaPlayer::NoMedia;
+        if (m_state != QMediaPlayer::StoppedState)
+            emit stateChanged(m_state = QMediaPlayer::StoppedState);
+
+        if (m_mediaStatus != oldMediaStatus)
+            emit mediaStatusChanged(m_mediaStatus);
         emit positionChanged(position());
         return;
     }
+
+    m_mediaStatus = QMediaPlayer::LoadingMedia;
+    if (m_mediaStatus != oldMediaStatus)
+        emit mediaStatusChanged(m_mediaStatus);
 
     QNetworkRequest request = content.canonicalResource().request();
 

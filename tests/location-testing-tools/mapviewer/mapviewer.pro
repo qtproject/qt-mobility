@@ -12,7 +12,7 @@ SOURCES += main.cpp \
 
 HEADERS += mainwindow.h \
            mapbox.h \
-           geomap.h 
+           geomap.h
 
 include(../../../examples/mobility_examples.pri)
 

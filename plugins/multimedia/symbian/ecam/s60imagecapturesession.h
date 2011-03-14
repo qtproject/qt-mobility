@@ -306,6 +306,7 @@ Q_SIGNALS: // Notifications
 
     void stateChanged(QCamera::State);
     void advancedSettingChanged();
+    void captureSizeChanged(const QSize&);
 
     // Error signals
     void cameraError(int, const QString&);          // For QCamera::error

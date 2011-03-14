@@ -349,6 +349,10 @@ void tst_QServiceManager_IPC::verifySharedServiceObject()
     QCOMPARE(mo->methodCount(), 23); //20 meta functions available
     //actual function presence will be tested later
     
+//    for(int i = 0; i < mo->methodCount(); i++){
+//        qDebug() << "Methods" << i << mo->method(i).signature();
+//    }
+    
     //test properties
     QCOMPARE(mo->propertyCount()-mo->propertyOffset(), 1);
     QCOMPARE(mo->propertyCount(), 2);
@@ -427,8 +431,8 @@ void tst_QServiceManager_IPC::verifySharedMethods_data()
         << QByteArray("testSlotWithArgs(QByteArray,int,QVariant)") <<  (int)( QMetaMethod::Slot) << QByteArray("");
     QTest::newRow("testSlotWithCustomArg(QServiceFilter)") 
         << QByteArray("testSlotWithCustomArg(QServiceFilter)") <<  (int)( QMetaMethod::Slot) << QByteArray("");
-    QTest::newRow("testSlotWidthComplexArg(QHash<QString, QVariant> arg)")
-            << QByteArray("testSlotWidthComplexArg(QHash<QString, QVariant> arg)") <<  (int)( QMetaMethod::Slot) << QByteArray("");
+    QTest::newRow("testSlotWidthComplexArg(QVariantHash)")
+            << QByteArray("testSlotWithComplexArg(QVariantHash)") <<  (int)( QMetaMethod::Slot) << QByteArray("");
 
     //QServiceInterfaceDescriptor has not been declared as meta type
     QTest::newRow("testSlotWithUnknownArg(QServiceInterfaceDescriptor)") 
@@ -535,9 +539,13 @@ void tst_QServiceManager_IPC::verifyUniqueServiceObject()
     QVERIFY(mo->superClass());
     QCOMPARE(mo->superClass()->className(), "QObject");
     // TODO adding the ipc failure signal seems to break these    
-    QCOMPARE(mo->methodCount()-mo-> methodOffset(), 21); // 17+1 added signal for error signal added by library
-    QCOMPARE(mo->methodCount(), 25); //21 meta functions available + 1 signal
+    QCOMPARE(mo->methodCount()-mo-> methodOffset(), 22); // 17+1 added signal for error signal added by library
+    QCOMPARE(mo->methodCount(), 26); //21 meta functions available + 1 signal
     //actual function presence will be tested later
+    
+//    for(int i = 0; i < mo->methodCount(); i++){
+//        qDebug() << "Methods" << i << mo->method(i).signature();
+//    }
 
     //test properties
     QCOMPARE(mo->propertyCount()-mo->propertyOffset(), 3);

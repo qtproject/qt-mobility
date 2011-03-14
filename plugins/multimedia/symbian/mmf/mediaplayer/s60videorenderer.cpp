@@ -39,28 +39,57 @@
 **
 ****************************************************************************/
 
+#include "DebugMacros.h"
+
 #include "s60videorenderer.h"
 
 #include <QtCore/qcoreevent.h>
 #include <QtGui/qapplication.h>
 
+/*!
+    Constructs a new video renderer media end point with the given \a parent.
+*/
+
 S60VideoRenderer::S60VideoRenderer(QObject *parent)
     : QVideoRendererControl(parent)
 {
+    DP0("S60VideoRenderer::S60VideoRenderer +++");
+
+    DP0("S60VideoRenderer::S60VideoRenderer ---");
+
 }
+
+/*!
+    Destroys a video renderer media end point.
+*/
 
 S60VideoRenderer::~S60VideoRenderer()
 {
+    DP0("S60VideoRenderer::~S60VideoRenderer +++");
+    DP0("S60VideoRenderer::~S60VideoRenderer ---");
 }
 
+/*!
+   \return the surface a video producer renders to.
+*/
 
 QAbstractVideoSurface *S60VideoRenderer::surface() const
 {
+    DP0("S60VideoRenderer::surface");
+
     return m_surface;
 }
 
+/*!
+   Sets the \a surface a video producer renders to.
+*/
+
 void S60VideoRenderer::setSurface(QAbstractVideoSurface *surface)
 {
+    DP0("S60VideoRenderer::setSurface +++");
+
     m_surface = surface;
+
+    DP0("S60VideoRenderer::setSurface ---");
 }
 

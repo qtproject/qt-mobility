@@ -163,6 +163,8 @@ signals:
     void nativeSizeChanged(QSize);
     void contentRectChanged(QRect);
     void paintingEnabledChanged(bool);
+    void beginVideoWindowNativePaint();
+    void endVideoWindowNativePaint();
 
 private slots:
     void updateContentRect();

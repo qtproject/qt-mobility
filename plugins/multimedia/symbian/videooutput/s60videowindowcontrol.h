@@ -80,6 +80,9 @@ public:
 
     S60VideoWindowDisplay *display() const;
 
+public slots:
+    void refreshDisplay();
+
 private:
     S60VideoWindowDisplay *m_display;
 };

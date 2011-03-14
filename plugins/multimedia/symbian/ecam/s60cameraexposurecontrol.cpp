@@ -173,10 +173,25 @@ bool S60CameraExposureControl::isParameterSupported(ExposureParameter parameter)
     if (m_advancedSettings) {
         switch (parameter) {
             case QCameraExposureControl::ISO:
+                if (m_advancedSettings->supportedIsoSensitivities().count() > 0)
+                    return true;
+                else
+                    return false;
             case QCameraExposureControl::Aperture:
+                if (m_advancedSettings->supportedApertures().count() > 0)
+                    return true;
+                else
+                    return false;
             case QCameraExposureControl::ShutterSpeed:
+                if (m_advancedSettings->supportedShutterSpeeds().count() > 0)
+                    return true;
+                else
+                    return false;
             case QCameraExposureControl::ExposureCompensation:
-                return true;
+                if (m_advancedSettings->supportedExposureCompensationValues().count() > 0)
+                    return true;
+                else
+                    return false;
             case QCameraExposureControl::FlashPower:
             case QCameraExposureControl::FlashCompensation:
                 return false;
@@ -216,29 +231,21 @@ QCameraExposureControl::ParameterFlags S60CameraExposureControl::exposureParamet
     QCameraExposureControl::ParameterFlags flags;
 
     /*
-     * ISO, Aperture, ShutterSpeed:
+     * ISO, ExposureCompensation:
      *  - Automatic/Manual
      *  - Read/Write
      *  - Discrete range
      *
-     * ExposureCompensation:
-     *  - Automatic/Manual
-     *  - Read/Write
-     *  - Continuous range
-     *
-     * FlashPower, FlashCompensation:
+     * Aperture, ShutterSpeed, FlashPower, FlashCompensation:
      *  - Not supported
      */
     switch (parameter) {
         case QCameraExposureControl::ISO:
-        case QCameraExposureControl::Aperture:
-        case QCameraExposureControl::ShutterSpeed:
-            flags |= QCameraExposureControl::AutomaticValue;
-            break;
         case QCameraExposureControl::ExposureCompensation:
             flags |= QCameraExposureControl::AutomaticValue;
-            flags |= QCameraExposureControl::ContinuousRange;
             break;
+        case QCameraExposureControl::Aperture:
+        case QCameraExposureControl::ShutterSpeed:
         case QCameraExposureControl::FlashPower:
         case QCameraExposureControl::FlashCompensation:
             // Do nothing - no flags
@@ -259,27 +266,23 @@ QVariantList S60CameraExposureControl::supportedParameterRange(ExposureParameter
     if (m_advancedSettings) {
         switch (parameter) {
             case QCameraExposureControl::ISO: {
-                QList<int> exposureValues = m_advancedSettings->supportedIsoSensitivities();
-                for (int i = 0; i < exposureValues.count(); ++i)
-                    valueList.append(QVariant(exposureValues[i]));
+                foreach (int iso, m_advancedSettings->supportedIsoSensitivities())
+                    valueList << QVariant(iso);
                 break;
             }
             case QCameraExposureControl::Aperture: {
-                QList<qreal> apertureValues = m_advancedSettings->supportedApertures();
-                for (int i = 0; i < apertureValues.count(); ++i)
-                    valueList.append(QVariant(apertureValues[i]));
+                foreach (qreal aperture, m_advancedSettings->supportedApertures())
+                    valueList << QVariant(aperture);
                 break;
             }
             case QCameraExposureControl::ShutterSpeed: {
-                QList<qreal> shutterSpeedValues = m_advancedSettings->supportedShutterSpeeds();
-                for (int i = 0; i < shutterSpeedValues.count(); ++i)
-                    valueList.append(QVariant(shutterSpeedValues[i]));
+                foreach (qreal shutterSpeed, m_advancedSettings->supportedShutterSpeeds())
+                    valueList << QVariant(shutterSpeed);
                 break;
             }
             case QCameraExposureControl::ExposureCompensation: {
-                QList<qreal> evValues = m_advancedSettings->supportedExposureCompensationValues();
-                for (int i = 0; i < evValues.count(); ++i)
-                    valueList.append(QVariant(evValues[i]));
+                foreach (qreal ev, m_advancedSettings->supportedExposureCompensationValues())
+                    valueList << QVariant(ev);
                 break;
             }
             case QCameraExposureControl::FlashPower:
@@ -289,7 +292,7 @@ QVariantList S60CameraExposureControl::supportedParameterRange(ExposureParameter
 
             default:
                 // Not supported in Symbian
-                return QVariantList();
+                break;
         }
     }
 
@@ -377,13 +380,11 @@ int S60CameraExposureControl::isoSensitivity() const
 
 bool S60CameraExposureControl::isIsoSensitivitySupported(const int iso) const
 {
-    if (m_advancedSettings) {
-        QList<int> supportedValues = m_advancedSettings->supportedIsoSensitivities();
-        if(supportedValues.indexOf(iso) != -1)
-            return true;
-    }
-
-    return false;
+    if (m_advancedSettings &&
+        m_advancedSettings->supportedIsoSensitivities().contains(iso))
+        return true;
+    else
+        return false;
 }
 
 bool S60CameraExposureControl::setManualIsoSensitivity(int iso)
@@ -392,27 +393,6 @@ bool S60CameraExposureControl::setManualIsoSensitivity(int iso)
         if (isIsoSensitivitySupported(iso)) {
             m_advancedSettings->setManualIsoSensitivity(iso);
             return true;
-        } else {
-            QList<int> supportedIsoValues = m_advancedSettings->supportedIsoSensitivities();
-            int minIso = supportedIsoValues.first();
-            int maxIso = supportedIsoValues.last();
-
-            if (iso < minIso) { // Smaller than minimum
-                iso = minIso;
-            } else if (iso > maxIso) { // Bigger than maximum
-                iso = maxIso;
-            } else { // Find closest
-                int indexOfClosest = 0;
-                int smallestDiff = 10000000; // Sensible max diff
-                for(int i = 0; i < supportedIsoValues.count(); ++i) {
-                    if((abs(iso - supportedIsoValues[i])) < smallestDiff) {
-                        smallestDiff = abs(iso - supportedIsoValues[i]);
-                        indexOfClosest = i;
-                    }
-                }
-                iso = supportedIsoValues[indexOfClosest];
-            }
-            m_advancedSettings->setManualIsoSensitivity(iso);
         }
     }
 

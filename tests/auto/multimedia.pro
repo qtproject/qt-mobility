@@ -11,6 +11,7 @@ SUBDIRS += \
     qmediaimageviewer \
     qmediaobject \
     qmediaplayer \
+    qmediaplayerbackend \
     qmediaplaylist \
     qmediaplaylistnavigator \
     qmediapluginloader \
