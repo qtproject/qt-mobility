@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -170,7 +170,7 @@ void QBluetoothDeviceDiscoveryAgentPrivate::_q_deviceFound(const QString &addres
         uuids.append(QBluetoothUuid(u));
     }
     device.setServiceUuids(uuids, QBluetoothDeviceInfo::DataIncomplete);
-    device.setCached(dict.value("Cached").toBool());
+    device.setCached(dict.value(QLatin1String("Cached")).toBool());
     for(int i = 0; i < discoveredDevices.size(); i++){
         if(discoveredDevices[i].address() == device.address()) {
             if(discoveredDevices[i] == device) {

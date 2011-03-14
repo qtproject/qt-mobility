@@ -76,7 +76,7 @@ public:
 
     QLlcpSocket::SocketError serverError() const;
 
-signals:
+Q_SIGNALS:
     void newConnection();
 
 private:

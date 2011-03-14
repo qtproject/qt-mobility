@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -259,6 +259,8 @@ void RemoteSelector::displayPin(const QBluetoothAddress &address, QString pin)
 
 void RemoteSelector::displayConfirmation(const QBluetoothAddress &address, QString pin)
 {
+    Q_UNUSED(address);
+
     if(m_pindisplay)
         m_pindisplay->deleteLater();
     m_pindisplay = new pinDisplay(QString("Confirm this pin is the same"), pin, this);
@@ -275,10 +277,6 @@ void RemoteSelector::displayConfAccepted()
 void RemoteSelector::displayConfReject()
 {
     m_localDevice->pairingConfirmation(false);
-}
-
-void RemoteSelector::on_remoteDevices_currentCellChanged(int currentRow, int currentColumn, int previousRow, int previousColumn)
-{
 }
 
 void RemoteSelector::pairingFinished(const QBluetoothAddress &address, QBluetoothLocalDevice::Pairing status)
@@ -335,6 +333,8 @@ void RemoteSelector::pairingFinished(const QBluetoothAddress &address, QBluetoot
 
 void RemoteSelector::on_remoteDevices_cellClicked(int row, int column)
 {
+    Q_UNUSED(column);
+
     m_service = m_discoveredServices.value(row);
     if(!ui->fileName->text().isEmpty()) {
         ui->sendButton->setDisabled(false);

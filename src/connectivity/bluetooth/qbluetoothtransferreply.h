@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -81,7 +81,7 @@ public:
 public Q_SLOTS:
     void abort();
 
-signals:
+Q_SIGNALS:
     void downloadProgress(qint64 bytesReceived, qint64 bytesTotal);
     void finished(QBluetoothTransferReply *);
     void uploadProgress(qint64 bytesSent, qint64 bytesTotal);

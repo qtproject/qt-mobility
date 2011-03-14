@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -178,7 +178,7 @@ quint64 QBluetoothAddress::toUInt64() const
 */
 QString QBluetoothAddress::toString() const
 {
-    QString s("%1:%2:%3:%4:%5:%6");
+    QString s(QLatin1String("%1:%2:%3:%4:%5:%6"));
 
     for (int i = 5; i >= 0; --i) {
         const quint8 a = (m_address >> (i*8)) & 0xff;

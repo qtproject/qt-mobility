@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -582,12 +582,12 @@ static void dumpAttributeVariant(const QVariant &var, const QString indent)
             qDebug("%sSequence", indent.toLocal8Bit().constData());
             const QBluetoothServiceInfo::Sequence *sequence = static_cast<const QBluetoothServiceInfo::Sequence *>(var.data());
             foreach (const QVariant &v, *sequence)
-                dumpAttributeVariant(v, indent + '\t');
+                dumpAttributeVariant(v, indent + QLatin1Char('\t'));
         } else if (var.userType() == qMetaTypeId<QBluetoothServiceInfo::Alternative>()) {
             qDebug("%sAlternative", indent.toLocal8Bit().constData());
             const QBluetoothServiceInfo::Alternative *alternative = static_cast<const QBluetoothServiceInfo::Alternative *>(var.data());
             foreach (const QVariant &v, *alternative)
-                dumpAttributeVariant(v, indent + '\t');
+                dumpAttributeVariant(v, indent + QLatin1Char('\t'));
         }
         break;
     default:
@@ -599,7 +599,7 @@ static void dumpAttributeVariant(const QVariant &var, const QString indent)
 QDebug operator<<(QDebug dbg, const QBluetoothServiceInfo &info)
 {
     foreach (quint16 id, info.attributes()) {
-        dumpAttributeVariant(info.attribute(id), QString("(%1)\t").arg(id));
+        dumpAttributeVariant(info.attribute(id), QString::fromLatin1("(%1)\t").arg(id));
     }
     return dbg;
 }
