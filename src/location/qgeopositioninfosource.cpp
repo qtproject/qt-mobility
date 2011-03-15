@@ -208,7 +208,7 @@ QGeoPositionInfoSource *QGeoPositionInfoSource::createDefaultSource(QObject *par
 {
 #if defined(Q_OS_SYMBIAN)
     QGeoPositionInfoSource *ret = NULL;
-    TRAPD(error, ret = CQGeoPositionInfoSourceS60::NewL(parent));
+    TRAPD(error, QT_TRYCATCH_LEAVING(ret = CQGeoPositionInfoSourceS60::NewL(parent)));
     if (error != KErrNone)
         return 0;
     return ret;
