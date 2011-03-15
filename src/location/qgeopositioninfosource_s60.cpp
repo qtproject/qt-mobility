@@ -788,6 +788,7 @@ void CQGeoPositionInfoSourceS60::requestUpdate(int aTimeout)
         TRAPD(ret, QT_TRYCATCH_LEAVING(temp = CQMLBackendAO::NewL(this, OnceUpdate, mList[index].mUid)));
 
         if ((ret == KErrNone) && (temp != NULL)) {
+            QMutexLocker lReqLocker(&m_mutex_ReqUpAO);
             //delete the old reqest update
             if (mReqUpdateAO)
                 delete mReqUpdateAO;
