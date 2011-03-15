@@ -81,6 +81,8 @@ private slots:
     void handleResourcesGranted();
     void handleResourcesLost();
 
+    void handleBusyChanged(bool);
+
 private:
     void updateSupportedResolutions(const QString &device);
 

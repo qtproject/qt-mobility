@@ -56,7 +56,7 @@ navigate through and subscribe to change notifications.
 \section1 Namespace
 
 The QtMobility APIs are placed into the \i{QtMobility} namespace. This is done
-to facilitate the future migration of Mobility APIs into Qt. See the
+to facilitate the future migration of QtMobility APIs into Qt. See the
 \l {Quickstart Example}{Quickstart guide} for an example on how the
 namespace impacts on application development.
 
@@ -136,10 +136,9 @@ The Shared Memory layer has an order of 0x10000000.
            on Windows platforms.
            The Non-volatile Registry layer has an order of 0.
     \row
-        \o ContextKit Layer
+        \o \l{ContextKit Layer}
         \o The ContextKit layer provides a non-permanent Value Space backing store using
-           ContextKit.  Publishing values to this layer via QValueSpacePublisher is currently not
-           supported.
+           ContextKit. This layer is only available on MeeGo and Maemo platforms.
            The ContextKit layer has an order of 0.
     \row
         \o \l{Symbian Settings Layer}
@@ -259,7 +258,7 @@ converted back to the original data types. The serialization/deserialization is 
 to the API user but may cause interoperatibility issues with native applications that access the same
 data directly.
 
-\section2 ContextKit Layer (Maemo6/MeeGo)
+\section2 ContextKit Layer
 
 Publish and Subscribe can be used to access both "core" and "non-core" values in the MeeGo ContextKit.
 The backend by default will look for a "core" property in the registry first (dot-separated), and then
@@ -272,8 +271,8 @@ and QValueSpacePublisher along with the path name.
 \section3 \bold{Organization and application name}
 
 ContextKit requires providers to register with a valid DBus service name in order to publish values.
-The ContextKit Layer automatically builds this name from QCoreApplication::organizationDomain() and 
-QCoreApplication::applicationName(). In order to publish, you will need to set these 
+The ContextKit Layer automatically builds this name from QCoreApplication::organizationDomain() and
+QCoreApplication::applicationName(). In order to publish, you will need to set these
 values in your application. They are not necessary if your application only subscribes and does not
 publish.
 

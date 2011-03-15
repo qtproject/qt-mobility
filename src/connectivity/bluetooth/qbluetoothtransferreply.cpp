@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -71,10 +71,28 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn QBluetoothTransferReply::abort() = 0
+    \enum QBluetoothTransferReply::TransferError
+
+    This enum describes the type of error that occurred
+
+    \value NoError          No error.
+    \value UnknownError     Unknown error, no better enum available
+    \value FileNotFoundError Unable to open the file specified
+    \value HostNotFoundError Unable to connect to the target host
+    \value UserCancelledTransferError User terminated the transfer
+*/
+
+
+
+/*!
+    \fn QBluetoothTransferReply::abort()
 
     Aborts this reply.
 */
+void QBluetoothTransferReply::abort()
+{
+
+}
 
 /*!
     \fn void QBluetoothTransferReply::downloadProgress(qint64 bytesReceived, qint64 bytesTotal)
@@ -84,9 +102,9 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn void QBluetoothTransferReply::finished()
+    \fn void QBluetoothTransferReply::finished(QBluetoothTransferReply *reply)
 
-    This signal is emitted when the transfer is complete.
+    This signal is emitted when the transfer is complete for \a reply.
 */
 
 /*!
@@ -100,7 +118,7 @@ QTM_BEGIN_NAMESPACE
     Constructs a new QBluetoothTransferReply with parent \a parent.
 */
 QBluetoothTransferReply::QBluetoothTransferReply(QObject *parent)
-:   QIODevice(parent)
+:   QObject(parent)
 {
 }
 
@@ -121,6 +139,8 @@ QVariant QBluetoothTransferReply::attribute(QBluetoothTransferRequest::Attribute
 }
 
 /*!
+   \fn bool QBluetoothTransferReply::isFinished() const
+
     Returns true if this reply has finished; otherwise returns false.
 */
 //bool QBluetoothTransferReply::isFinished() const
@@ -129,6 +149,8 @@ QVariant QBluetoothTransferReply::attribute(QBluetoothTransferRequest::Attribute
 //}
 
 /*!
+   \fn bool QBluetoothTransferReply::isRunning() const
+
     Returns true if this reply is running; otherwise returns false.
 */
 //bool QBluetoothTransferReply::isRunning() const
@@ -153,7 +175,7 @@ QBluetoothTransferManager::Operation QBluetoothTransferReply::operation() const
     return m_operation;
 }
 
-/*!
+/*
     Returns a copy of the QBluetoothTransferRequest object used to create this
     QBluetoothTransferReply.
 */
@@ -163,37 +185,31 @@ QBluetoothTransferManager::Operation QBluetoothTransferReply::operation() const
 //}
 
 /*!
-    Returns the read buffer size.
-*/
-qint64 QBluetoothTransferReply::readBufferSize() const
-{
-    return m_buffersize;
-}
-
-/*!
-    Sets the read buffer size to \a size.
-*/
-void QBluetoothTransferReply::setReadBufferSize(qint64 size)
-{
-    m_buffersize = size;
-}
-
-/*!
-    Sets the attribute associated with code \a code to \a value.
-*/
-void QBluetoothTransferReply::setAttribute(QBluetoothTransferRequest::Attribute code,
-                                           const QVariant &value)
-{
-    m_attributes.insert(code, value);
-}
-
-/*!
     Sets the operation of this QBluetoothTransferReply to \a operation.
 */
 void QBluetoothTransferReply::setOperation(QBluetoothTransferManager::Operation operation)
 {
     m_operation = operation;
 }
+
+/*!
+  \fn QBluetoothTransferReply::setAttribute(QBluetoothTransferRequest::Attribute code, const QVariant &value)
+
+    Set the attribute associated with the code \a code to the value \a value.
+*/
+
+/*!
+  \fn QBluetoothTransferReply::setManager(QBluetoothTransferManager &manager)
+
+  Set the reply's manager to manager \a manager.
+*/
+
+
+/*!
+  \fn QString QBluetoothTransferReply::errorString() const
+
+  String describing the error.  Can be displayed to the user.
+*/
 
 #include "moc_qbluetoothtransferreply.cpp"
 

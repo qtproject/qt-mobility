@@ -14,38 +14,23 @@ symbian: {
                 -letelmm
     }
     
-    contains(S60_VERSION, 3.1) {
-        
-        # In S60 3.1 we need to use TMobilePhoneBookInfoV1 instead of TMobilePhoneBookInfoV5.
-        # Note: Etel testsserver uses V5 always.
-        !contains(DEFINES, SYMBIANSIM_BACKEND_USE_ETEL_TESTSERVER) {
-            	DEFINES += SYMBIANSIM_BACKEND_PHONEBOOKINFOV1
-        }
-    }
-
     # Enable checking the existence of a contact before trying to remove it.
     # This is needed because a contact backend is supposed to give an error
     # when trying to remove a nonexistent contact, but SIM store does not
     # give an error in such situations.
-    # In S60 3.1 devices the consequences are even worse; the device will
-    # reboot when trying to remove several nonexistent contacts in a row.
-    # The first remove operation will succeed but right after the second
-    # remove operation has completed the device reboots.
     DEFINES += SYMBIANSIM_BACKEND_CHECK_BEFORE_REMOVE
     
-    contains(S60_VERSION, 3.1) | contains(S60_VERSION, 3.2) | contains(S60_VERSION, 5.0) {
-    
-       # In pre 10.1 platforms we need a small delay between requests to prevent
-       # S60 3.2 devices from rebooting and S60 5.0 devices from reporting a
-       # server busy error. Not sure if this is really needed for S60 3.1 but
-       # it does not hurt.     
+    contains(S60_VERSION, 5.0) {
+       # We need a small delay between requests to prevent S60 5.0 devices
+       # from reporting a server busy error. 
        DEFINES += SYMBIANSIM_BACKEND_USE_DELAY
        
-       # In pre 10.1 platforms we need to check extra detail support 
+       # In 5.0 platform we need to check extra detail support 
        # (nickname/additional number/email) by trying to write them to sim card. 
        # This is because when using RMobilePhoneStore::GetInfo() it does not
-       # report them correctly. There is another API for checking this but
-       # it cannot be used as it is not public on these platforms.
+       # report them correctly. 
+       # TODO: Check it in 9.2, there is another API for checking this but
+       # it is not public - could it be used?
        DEFINES += SYMBIANSIM_BACKEND_TEST_EXTRADETAILS
     }     
 }

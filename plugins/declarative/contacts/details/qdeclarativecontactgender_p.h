@@ -80,7 +80,7 @@ public:
         default:
             break;
         }
-        //qWarning
+        qmlInfo(0) << tr("Unknown field type.");
         return QString();
     }
     void setGender(const GenderType v)

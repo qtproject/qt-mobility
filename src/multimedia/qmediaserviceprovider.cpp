@@ -105,6 +105,10 @@ public:
 
     \value StreamPlayback
             The service is capable of playing QIODevice based streams.
+
+    \value VideoSurface
+            The service is capable of renderering to a QAbstractVideoSurface
+            output.
 */
 
 /*!
@@ -447,7 +451,7 @@ public:
                     qobject_cast<QMediaServiceSupportedFormatsInterface*>(obj);
 
 
-            if (flags & QMediaPlayer::LowLatency) {
+            if (flags) {
                 QMediaServiceFeaturesInterface *iface =
                         qobject_cast<QMediaServiceFeaturesInterface*>(obj);
 
@@ -463,6 +467,11 @@ public:
                     //the same for QIODevice based streams support
                     if ((flags & QMediaPlayer::StreamPlayback) &&
                         !(features & QMediaServiceProviderHint::StreamPlayback))
+                            continue;
+
+                    //the same for QAbstractVideoSurface support
+                    if ((flags & QMediaPlayer::VideoSurface) &&
+                        !(features & QMediaServiceProviderHint::VideoSurface))
                             continue;
                 }
             }

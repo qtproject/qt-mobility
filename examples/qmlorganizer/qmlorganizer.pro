@@ -38,6 +38,7 @@ OTHER_FILES += \
     contents/images/button.png \
     contents/month.js \
     contents/MonthView.qml \
+    contents/test.ics \
     contents/2010-FIFA-WorldCup.ics
 
 symbian: {

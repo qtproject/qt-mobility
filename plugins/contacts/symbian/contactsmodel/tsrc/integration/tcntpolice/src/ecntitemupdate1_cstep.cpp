@@ -32,7 +32,7 @@ CECntItemUpdate1Step::CECntItemUpdate1Step()
 	//The server name and IPC number is obtained and all messages are checked Sync
 	SR_ServerName		= _L("CNTSRV");
 	SR_MESSAGE_TYPE		=	2;
-	SR_MESSAGE_ID		= 416;
+	SR_MESSAGE_ID		= 417;
 	SR_MESSAGE_MASK		= 65536LL;
 
 	//The iServer_Panic is a unique name from Server,but always truncated to KMaxExitCategoryName

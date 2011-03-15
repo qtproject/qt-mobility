@@ -122,7 +122,7 @@ int main(int argc, char *argv[])
                 ichecklib.ParseHeader(chIncludepathlist, chFilelist);
 
                 if(!ichecklib.check(i_ichecklib, outputfile)){
-                    cout << "Folowing interface items are missing:" << endl;
+                    cout << "Following interface items are missing:" << endl;
                     QStringList errorlist = ichecklib.getErrorMsg();
                     foreach(QString msg, errorlist){
                         cout << (const char *)msg.toLatin1() << endl;

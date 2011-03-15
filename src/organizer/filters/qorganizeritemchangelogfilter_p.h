@@ -106,6 +106,20 @@ public:
         return stream;
     }
 
+#ifndef QT_NO_DEBUG_STREAM
+    QDebug& debugStreamOut(QDebug& dbg) const
+    {
+        dbg.nospace() << "QOrganizerItemChangeLogFilter(";
+        dbg.nospace() << "eventType=";
+        dbg.nospace() << static_cast<quint32>(m_eventType);
+        dbg.nospace() << ",since=";
+        dbg.nospace() << m_since;
+        dbg.nospace() << ")";
+        return dbg.maybeSpace();
+    }
+
+#endif
+
     Q_IMPLEMENT_ORGANIZERITEMFILTER_VIRTUALCTORS(QOrganizerItemChangeLogFilter, QOrganizerItemFilter::ChangeLogFilter)
 
     QOrganizerItemChangeLogFilter::EventType m_eventType;

@@ -98,7 +98,7 @@ public:
         default:
             break;
         }
-        //qWarning
+        qmlInfo(0) << tr("Unknown field type.");
         return QString();
     }
     void setAccountUri(const QString& v)
@@ -147,7 +147,7 @@ public:
                 savedList << QContactOnlineAccount::SubTypeVideoShare;
                 break;
             default:
-                //qWarning unknown subtype
+                qmlInfo(this) << tr("Unknown sub type.");
                 break;
 
             }

@@ -3,9 +3,9 @@ INCLUDEPATH += ../../../src/multimedia \
                ../../../src/multimedia/video
 INCLUDEPATH += ../../../src/global
 
-TARGET  = $$qtLibraryTarget(declarative_multimedia)
 TEMPLATE = lib
 CONFIG += plugin
+TARGET  = $$qtLibraryTarget(declarative_multimedia)
 TARGETPATH = QtMultimediaKit
 PLUGIN_TYPE = declarative
 include(../../../common.pri)

@@ -79,14 +79,26 @@ public:
 
     QCameraFocusZoneList focusZones() const;
 
+    void handleFocusMessage(GstMessage*);
+    QCamera::LockStatus focusStatus() const { return m_focusStatus; }
+
+Q_SIGNALS:
+    void _q_focusStatusChanged(QCamera::LockStatus status, QCamera::LockChangeReason reason);
+
+public Q_SLOTS:
+    void _q_startFocusing();
+    void _q_stopFocusing();
+
 private Q_SLOTS:
-    void _q_updateLockStatus(QCamera::LockType, QCamera::LockStatus, QCamera::LockChangeReason);
+    void _q_setFocusStatus(QCamera::LockStatus status, QCamera::LockChangeReason reason);
+    void _q_handleCameraStateChange(QCamera::State state);
+    void _q_handleCapturedImage();
 
 private:
     CameraBinSession *m_session;
     QCameraFocus::FocusMode m_focusMode;
+    QCamera::LockStatus m_focusStatus;
     QCameraFocusZone::FocusZoneStatus m_focusZoneStatus;
-
 };
 
 #endif // CAMERABINFOCUSCONTROL_H

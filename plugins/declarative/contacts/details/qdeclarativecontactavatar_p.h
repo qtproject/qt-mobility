@@ -95,7 +95,7 @@ public:
         default:
             break;
         }
-        //QWarning()
+        qmlInfo(0) << tr("Unknown field type.");
         return QString();
     }
 signals:

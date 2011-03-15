@@ -7,12 +7,12 @@ include (../../../common.pri)
 
 INCLUDEPATH += ../../../src/location
 
-HEADERS += ../qlocationtestutils_p.h \
-           ../testqgeopositioninfosource_p.h \
+HEADERS += ../qgeocoordinate/qlocationtestutils_p.h \
+           ../qgeopositioninfosource/testqgeopositioninfosource_p.h \
            qnmeapositioninfosourceproxyfactory.h
 
-SOURCES += ../qlocationtestutils.cpp \
-           ../testqgeopositioninfosource.cpp \
+SOURCES += ../qgeocoordinate/qlocationtestutils.cpp \
+           ../qgeopositioninfosource/testqgeopositioninfosource.cpp \
            qnmeapositioninfosourceproxyfactory.cpp \
            tst_dummynmeapositioninfosource.cpp
 

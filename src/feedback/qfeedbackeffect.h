@@ -131,7 +131,7 @@ public:
     Q_PROPERTY(int attackTime READ attackTime WRITE setAttackTime)
     Q_PROPERTY(qreal attackIntensity READ attackIntensity WRITE setAttackIntensity)
     Q_PROPERTY(int fadeTime READ fadeTime WRITE setFadeTime)
-    Q_PROPERTY(int fadeIntensity READ fadeIntensity WRITE setFadeIntensity)
+    Q_PROPERTY(qreal fadeIntensity READ fadeIntensity WRITE setFadeIntensity)
     Q_PROPERTY(int period READ period WRITE setPeriod)
     Q_PROPERTY(QFeedbackActuator* actuator READ actuator WRITE setActuator)
 

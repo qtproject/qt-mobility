@@ -29,15 +29,15 @@
 /*!
     \group modules
     \title All Modules
-    \startpage index.html Qt Mobility Reference Documentation
+    \startpage index.html QtMobility Reference Documentation
     \nextpage QtServiceFramework
-    
+
     \ingroup classlists
 
-    \brief Qt Mobility comprises several modules.
+    \brief QtMobility comprises several modules.
 
     \table 80%
-    \header \o {2,1} \bold{Modules for Mobility software development}
+    \header \o {2,1} \bold{Modules for QtMobility software development}
     \row \o \l{QtNetwork} \o Network, including Bearer Management
     \row \o \l{QtServiceFramework} \o Classes for discovery and implementation of services.
     \row \o \l{QtLocation} \o Classes for geographical information support.
@@ -64,7 +64,7 @@
     \module QtNetwork
     \title QtNetwork Module
     \ingroup modules
-    
+
     \brief The QtNetwork module controls the system's connectivity state.
 */
 
@@ -149,8 +149,7 @@
     variety of formats.
 
     QtMultimediaKit contains both the low level APIs previously found in Qt 4.6
-    and also the High level Multimedia APIs that were introduced earlier in Qt
-    Mobility.
+    and also the High level Multimedia APIs that were introduced earlier in QtMobility.
 
     \section2 Namespace
     \table 80%

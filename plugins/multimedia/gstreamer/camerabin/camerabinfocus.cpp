@@ -45,13 +45,22 @@
 #include <gst/interfaces/photography.h>
 
 #include <QDebug>
+#include <QtCore/qmetaobject.h>
+
+//#define CAMERABIN_DEBUG 1
+#define ENUM_NAME(c,e,v) (c::staticMetaObject.enumerator(c::staticMetaObject.indexOfEnumerator(e)).valueToKey((v)))
 
 CameraBinFocus::CameraBinFocus(CameraBinSession *session)
     :QCameraFocusControl(session),
      m_session(session),
      m_focusMode(QCameraFocus::AutoFocus),
+     m_focusStatus(QCamera::Unlocked),
      m_focusZoneStatus(QCameraFocusZone::Selected)
 {
+    connect(m_session, SIGNAL(stateChanged(QCamera::State)),
+            this, SLOT(_q_handleCameraStateChange(QCamera::State)));
+    connect(m_session, SIGNAL(imageCaptured(int,QImage)),
+            this, SLOT(_q_handleCapturedImage()));
 }
 
 CameraBinFocus::~CameraBinFocus()
@@ -140,23 +149,97 @@ void CameraBinFocus::setCustomFocusPoint(const QPointF &point)
     Q_UNUSED(point);
 }
 
-void CameraBinFocus::_q_updateLockStatus(QCamera::LockType lockType,
-                                         QCamera::LockStatus lockStatus,
-                                         QCamera::LockChangeReason reason)
-{
-    if (lockType == QCamera::LockFocus) {
-        QCameraFocusZone::FocusZoneStatus status =
-                lockStatus == QCamera::Locked ?
-                    QCameraFocusZone::Focused : QCameraFocusZone::Selected;
-
-        if (m_focusZoneStatus != status) {
-            m_focusZoneStatus = status;
-            emit focusZonesChanged();
-        }
-    }
-}
-
 QCameraFocusZoneList CameraBinFocus::focusZones() const
 {
     return QCameraFocusZoneList() << QCameraFocusZone(QRectF(0.35, 0.35, 0.3, 0.3), m_focusZoneStatus);
+}
+
+
+void CameraBinFocus::handleFocusMessage(GstMessage *gm)
+{
+    //it's a sync message, so it's called from non main thread
+    if (gst_structure_has_name(gm->structure, GST_PHOTOGRAPHY_AUTOFOCUS_DONE)) {
+        gint status = GST_PHOTOGRAPHY_FOCUS_STATUS_NONE;
+        gst_structure_get_int (gm->structure, "status", &status);
+        QCamera::LockStatus focusStatus = m_focusStatus;
+        QCamera::LockChangeReason reason = QCamera::UserRequest;
+
+        switch (status) {
+            case GST_PHOTOGRAPHY_FOCUS_STATUS_FAIL:
+                focusStatus = QCamera::Unlocked;
+                reason = QCamera::LockFailed;
+                break;
+            case GST_PHOTOGRAPHY_FOCUS_STATUS_SUCCESS:
+                focusStatus = QCamera::Locked;
+                break;
+            case GST_PHOTOGRAPHY_FOCUS_STATUS_NONE:
+                break;
+            case GST_PHOTOGRAPHY_FOCUS_STATUS_RUNNING:
+                focusStatus = QCamera::Searching;
+                break;
+            default:
+                break;
+        }
+
+        static int signalIndex = metaObject()->indexOfSlot(
+                    "_q_setFocusStatus(QCamera::LockStatus,QCamera::LockChangeReason)");
+        metaObject()->method(signalIndex).invoke(this,
+                                                 Qt::QueuedConnection,
+                                                 Q_ARG(QCamera::LockStatus,focusStatus),
+                                                 Q_ARG(QCamera::LockChangeReason,reason));
+    }
+}
+
+void CameraBinFocus::_q_setFocusStatus(QCamera::LockStatus status, QCamera::LockChangeReason reason)
+{
+#ifdef CAMERABIN_DEBUG
+    qDebug() << Q_FUNC_INFO << "Current:"
+                << ENUM_NAME(QCamera, "LockStatus", m_focusStatus)
+                << "New:"
+                << ENUM_NAME(QCamera, "LockStatus", status) << ENUM_NAME(QCamera, "LockChangeReason", reason);
+#endif
+
+    if (m_focusStatus != status) {
+        m_focusStatus = status;
+
+        QCameraFocusZone::FocusZoneStatus zonesStatus =
+                m_focusStatus == QCamera::Locked ?
+                    QCameraFocusZone::Focused : QCameraFocusZone::Selected;
+
+        if (m_focusZoneStatus != zonesStatus) {
+            m_focusZoneStatus = zonesStatus;
+            emit focusZonesChanged();
+        }
+
+        emit _q_focusStatusChanged(m_focusStatus, reason);
+    }
+}
+
+void CameraBinFocus::_q_handleCameraStateChange(QCamera::State state)
+{
+    if (state != QCamera::ActiveState)
+        _q_setFocusStatus(QCamera::Unlocked, QCamera::LockLost);
+}
+
+void CameraBinFocus::_q_handleCapturedImage()
+{
+#ifdef Q_WS_MAEMO_5
+    //N900 lost focus after image capture
+    if (m_focusStatus != QCamera::Unlocked) {
+        m_focusStatus = QCamera::Unlocked;
+        emit _q_focusStatusChanged(QCamera::Unlocked, QCamera::LockLost);
+    }
+#endif
+}
+
+void CameraBinFocus::_q_startFocusing()
+{
+    _q_setFocusStatus(QCamera::Searching, QCamera::UserRequest);
+    gst_photography_set_autofocus(m_session->photography(), TRUE);
+}
+
+void CameraBinFocus::_q_stopFocusing()
+{
+    gst_photography_set_autofocus(m_session->photography(), FALSE);
+    _q_setFocusStatus(QCamera::Unlocked, QCamera::UserRequest);
 }

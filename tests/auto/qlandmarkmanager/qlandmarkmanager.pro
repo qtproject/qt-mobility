@@ -5,15 +5,23 @@ TARGET=tst_qlandmarkmanager
 include (../../../common.pri)
 
 INCLUDEPATH += ../../../src/location \
-                ../../../src/location/landmarks
+                ../../../src/location/landmarks \
+                ../
+
 
 # Input
 SOURCES += tst_qlandmarkmanager.cpp
 
-!symbian {
+HEADERS += ../qlandmarkmanagerdataholder.h
+
+!symbian:!maemo6:!meego {
     QT += sql
 }
 QT += testlib
+
+maemo6|meego {
+    DEFINES+=SPARQL_BACKEND
+}
 
 RESOURCES += data.qrc
 

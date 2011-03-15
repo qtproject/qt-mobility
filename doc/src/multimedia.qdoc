@@ -28,7 +28,7 @@
 
 /*!
     \group multimedia
-    \title Mobility Multimedia
+    \title QtMobility Multimedia
     APIs to play and record media, and manage a collection of media content.
 */
 
@@ -36,24 +36,25 @@
 
 \page multimedia.html
 \title Multimedia
-\brief Provides a set of APIs to play and record media, and manage a 
+\brief Provides a set of APIs to play and record media, and manage a
 collection of media content.
 \ingroup mobility
 
 Multimedia provides a set of APIs that allow the developer to play, record
 and manage a collection of media content. It is dependent on the
-QtMultimediaKit module. This API is planned to replace Phonon at a later stage.
+QtMultimediaKit module. QtMultimediaKit is the recommended API to build multimedia
+applications using Qt. The Phonon API is no longer recommended.
 
 \tableofcontents
 
 \section1 No Special Namespace
 
-Unlike the other APIs in Qt Mobility, the Multimedia API is \i not in the
+Unlike the other APIs in QtMobility, the Multimedia API is \i not in the
 \i QtMobility namespace.
 
 \section1 Overview
 
-This API delivers an easy to use interface to multimedia functions. The 
+This API delivers an easy to use interface to multimedia functions. The
 developer can use the API to display an image, or a video, record sound or play a
 multimedia stream.
 
@@ -64,7 +65,7 @@ deal of flexibility with the media source or the generated multimedia. The
 source file does not need to be local to the device, it could be streamed from a remote location and identified by a URL. Finally, many different codecs are supported 'out
 of the box'.
 
-The supplied examples give a good idea at the ease of use of the API. When
+The supplied \l {qtmultimediakit examples}{examples} give a good idea at the ease of use of the API. When
 the supporting user interface code is ignored we can see that functionality
 is immediately available with minimal effort.
 
@@ -160,7 +161,7 @@ To manipulate the playlist there are the usual management functions (which are i
 Continuing with the example discussed for an Audio recorder/player, we can use this to show how to play video files with little change to the code.
 
 Moving from audio to video requires few changes in the sample code. To play a
-video playlist the code can be changed to include another new Mobility
+video playlist the code can be changed to include another new QtMobility
 Project class: \l{QVideoWidget}. This class enables control of a video
 resource with signals and slots for the control of brightness, contrast,
 hue, saturation and full screen mode.
@@ -179,7 +180,11 @@ hue, saturation and full screen mode.
     player->play();
 \endcode
 
-The \l {player}{Player} example does things a bit differently to our sample code. Instead of using a QVideoWidget object directly, the Player example has a \i {VideoWidget} class that inherits from QVideoWidget. This means that functions can be added to provide functions such as full screen display, either on a double click or on a particular keypress.
+The \l {player}{Player} example does things a bit differently to our sample
+code. Instead of using a QVideoWidget object directly, the Player example
+has a \i {VideoWidget} class that inherits from QVideoWidget. This means
+that functions can be added to provide functions such as full screen display,
+either on a double click or on a particular keypress.
 
 \snippet ../../demos/player/player.cpp  2
 
@@ -199,7 +204,8 @@ For the developer who wishes to extend the functionality of the Multimedia
 classes there are several classes of particular importance. The default
 classes are QMediaService, QMediaServiceProvider and QMediaControl.
 
-Basically, the idea is that to use the Multimedia API you would use these three classes or classes derived from them as follows
+Basically, the idea is that to use the Multimedia API you would use these
+three classes or classes derived from them as follows
 
     \list
     \o \l QMediaServiceProvider is used by the top level client class to request a service. The top level class knowing what kind of service it needs.
@@ -209,23 +215,42 @@ Basically, the idea is that to use the Multimedia API you would use these three 
     \o \l QMediaControl allows the control of the service using a known interface.
     \endlist
 
-Consider a developer creating, for example, a media player class called MyPlayer. It may have special
-requirements beyond ordinary media players and so may need a custom service and a custom control. We can
-subclass \l QMediaServiceProvider to create our MyServiceProvider class. Also we will create a
+Consider a developer creating, for example, a media player class called MyPlayer.
+It may have special requirements beyond ordinary media players and so may
+need a custom service and a custom control. We can subclass \l QMediaServiceProvider
+to create our MyServiceProvider class. Also we will create a
 MyMediaService, and the MyMediaControl to manipulate the media service.
 
-The MyPlayer object calls MyServiceProvider::requestService() to get an instance of MyMediaService. Then the MyPlayer object calls this service object it has just received and calling \l {QMediaService::requestControl()}{requestControl()} it will receive the control object derived from QMediaControl. Now we have all the parts necessary for our media application. We have the service provider, the service it provides and the control used to manipulate the service. Since our MyPlayer object has instances of the service and its control then it would be possible for these to be used by associated classes that could do additional actions, perhaps with their own control since the parameter to requestControl() is a c-type string, \i {const char *}, for the interface.
+The MyPlayer object calls MyServiceProvider::requestService() to get an
+instance of MyMediaService. Then the MyPlayer object calls this service
+object it has just received and calling \l {QMediaService::requestControl()}{requestControl()}
+it will receive the control object derived from QMediaControl. Now we have
+all the parts necessary for our media application. We have the service
+provider, the service it provides and the control used to manipulate the
+service. Since our MyPlayer object has instances of the service and its
+control then it would be possible for these to be used by associated classes
+that could do additional actions, perhaps with their own control since the
+parameter to requestControl() is a c-type string, \i {const char *}, for the
+interface.
 
 
 \section2 Adding a Media Service Provider
 
-The base class for creating new service providers is \l{QMediaServiceProvider}. The user must implement the \l{QMediaServiceProvider::requestService()}{requestService()} function
+The base class for creating new service providers is \l{QMediaServiceProvider}.
+The user must implement the \l{QMediaServiceProvider::requestService()}{requestService()}
+function
 
 \code
     QMediaService* requestService(const QByteArray &type, const QMediaServiceProviderHint &hint);
 \endcode
 
-The details of implementation will depend on the provider. Looking at the class \l QMediaServiceProvider for the default implementation. Notice that \l {QMediaServiceProvider::requestService()}{requestService()} uses the \l QMediaServiceProviderHint to look for the appropriate plugin and then to insert it into the plugin map. However, for a specific service provider there is probably no need for this approach, it will simply depend on what the developer wants to implement.
+The details of implementation will depend on the provider. Looking at the
+class \l QMediaServiceProvider for the default implementation. Notice that
+\l {QMediaServiceProvider::requestService()}{requestService()} uses the
+\l QMediaServiceProviderHint to look for the appropriate plugin and then to
+insert it into the plugin map. However, for a specific service provider there
+is probably no need for this approach, it will simply depend on what the
+developer wants to implement.
 
 Other methods that may be overloaded
 \code
@@ -293,8 +318,8 @@ Previously we saw code that allowed the capture of a still image. Recording
 video requires the use of a \l QMediaRecorder object and a \l
 QAudioCaptureSource for sound.
 
-To record video we need to create a camera object as before but this time as
-well as creating a viewfinder, we will also initialize a media recorder object.
+To record video we need a camera object, as before, a media recorder and a
+viewfinder object. The media recorder object will need to be initialized.
 
     \code
     camera = new QCamera;
@@ -338,15 +363,15 @@ recognition, center focus and a custom focus where the focus point can be specif
 
 
 
-\section2 Cancelling Asynchronous Operations
+\section2 Canceling Asynchronous Operations
 
 Various operations such as image capture and auto focusing occur
 asynchrously. These operations can often be cancelled by the start of a new
 operation as long as this is supported by the backend. For image capture,
 the operation can be cancelled by calling
-\l {QCameraImageCapture::cancelCapture()}{cancelCapture()}. For AutoFocus,
-autoexposure or white balance cancellation can be done by calling
-\i {QCamera::unlock(QCamera::LockFocus)}.
+\l {QCameraImageCapture::cancelCapture()}{cancelCapture()}. For \l {QCameraFocus::FocusMode}{auto-focus},
+\l {QCameraExposure::ExposureMode}{auto-exposure} or \l {QCameraImageProcessing::WhiteBalanceMode}{white balance}
+cancellation can be done by calling \l {QCamera::unlock()}{unlock}(QCamera::LockFocus).
 
 
 
@@ -380,7 +405,7 @@ autoexposure or white balance cancellation can be done by calling
 
 
 
-
+\target qtmultimediakit examples
 \section1 Examples
 
 \section2 Record a Sound Source
@@ -413,7 +438,7 @@ QVideoWidget classes.
 
 \annotatedlist multimedia-serv
 
-\section2 QML multimedia elements
+\section2 QML Elements
 \list
 \o \l {SoundEffect}{SoundEffect: Low Latency Sound Effects}
 \o \l {Audio}{Audio: Music playback}

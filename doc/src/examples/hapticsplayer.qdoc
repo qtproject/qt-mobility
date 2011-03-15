@@ -34,9 +34,9 @@
     \section1 Overview
 
     This example shows how to use various haptic effects in an application via
-    the \l{Feedback}{Qt Mobility Feedback API}.
+    the \l{Feedback}{QtMobility Feedback API}.
 
-    It provides an example of how to use the Qt Mobility libraries to:
+    It provides an example of how to use the QtMobility libraries to:
     \list
     \o play "system theme" haptic effects corresponding to certain predefined events
     \o play a dynamic custom effect, single or repeating

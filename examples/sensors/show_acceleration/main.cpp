@@ -43,6 +43,29 @@
 
 QTM_USE_NAMESPACE
 
+        namespace check{
+    static void checkRate(QSensor* sensor, int rate){
+        qDebug()<<"data rate set for sensor "<<rate;
+        if (rate == sensor->dataRate()) return;
+        if (rate!=sensor->dataRate()){
+            qrangelist rates = sensor->availableDataRates();
+            QString datarates;
+            for( int i = 0; i < rates.size(); ++i )
+            {
+                datarates.append("[");
+                QString num;
+                datarates.append(num.setNum(rates[i].first));
+                datarates.append("..");
+                datarates.append(num.setNum(rates[i].second));
+                datarates.append("] ");
+            }
+            qDebug()<<"Rate setting failed, rate must be within range "<<datarates;
+        }
+    }
+}
+
+
+
 class AccelerometerFilter : public QAccelerometerFilter
 {
 public:
@@ -53,9 +76,9 @@ public:
         stamp = reading->timestamp();
         QTextStream out(stdout);
         out << QString("Acceleration: %1 x").arg(reading->x(), 5, 'f', 1)
-            << QString(" %1 y").arg(reading->y(), 5, 'f', 1)
-            << QString(" %1 z m/s^2").arg(reading->z(), 5, 'f', 1)
-            << QString(" (%1 ms since last, %2 Hz)").arg(diff / 1000, 4).arg( 1000000.0 / diff, 5, 'f', 1) << endl;
+                << QString(" %1 y").arg(reading->y(), 5, 'f', 1)
+                << QString(" %1 z m/s^2").arg(reading->z(), 5, 'f', 1)
+                << QString(" (%1 ms since last, %2 Hz)").arg(diff / 1000, 4).arg( 1000000.0 / diff, 5, 'f', 1) << endl;
         return false; // don't store the reading in the sensor
     }
 };
@@ -72,7 +95,13 @@ int main(int argc, char **argv)
     sensor.connectToBackend();
     if (rate_val > 0) {
         sensor.setDataRate(rate_val);
+        check::checkRate(&sensor, rate_val);
     }
+
+    int buffer_place = args.indexOf("-b");
+    int bufferSize = buffer_place!=-1? args.at(buffer_place + 1).toInt():1;
+    sensor.setProperty("bufferSize",bufferSize);
+
     AccelerometerFilter filter;
     sensor.addFilter(&filter);
     sensor.start();

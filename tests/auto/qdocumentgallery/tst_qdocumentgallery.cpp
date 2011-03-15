@@ -87,13 +87,23 @@ void tst_QDocumentGallery::itemTypeProperties_data()
 
     const QStringList fileProperties = QStringList()
 #if defined(Q_WS_MAEMO_6)
+            << QDocumentGallery::author
+            << QDocumentGallery::comments
             << QDocumentGallery::copyright
+            << QDocumentGallery::description
+            << QDocumentGallery::fileExtension
             << QDocumentGallery::fileName
             << QDocumentGallery::filePath
             << QDocumentGallery::fileSize
+            << QDocumentGallery::keywords
+            << QDocumentGallery::language
             << QDocumentGallery::lastAccessed
             << QDocumentGallery::lastModified
             << QDocumentGallery::mimeType
+            << QDocumentGallery::path
+            << QDocumentGallery::rating
+            << QDocumentGallery::subject
+            << QDocumentGallery::title
             << QDocumentGallery::url;
 #elif defined(Q_OS_UNIX) && !defined(QT_NO_DBUS)
             << QDocumentGallery::copyright
@@ -122,12 +132,7 @@ void tst_QDocumentGallery::itemTypeProperties_data()
 #endif
             ;
     QTest::newRow("File") << QString(QDocumentGallery::File) << (QStringList(fileProperties)
-#if defined(Q_WS_MAEMO_6)
-            << QDocumentGallery::description
-            << QDocumentGallery::keywords
-            << QDocumentGallery::subject
-            << QDocumentGallery::title
-#elif defined(Q_OS_UNIX) && !defined(QT_NO_DBUS)
+#if !defined(Q_WS_MAEMO_6) && defined(Q_OS_UNIX) && !defined(QT_NO_DBUS)
             << QDocumentGallery::author
             << QDocumentGallery::description
             << QDocumentGallery::keywords
@@ -145,18 +150,20 @@ void tst_QDocumentGallery::itemTypeProperties_data()
             << QDocumentGallery::audioBitRate
             << QDocumentGallery::audioCodec
             << QDocumentGallery::channelCount
-            << QDocumentGallery::description
+            << QDocumentGallery::discNumber
             << QDocumentGallery::duration
             << QDocumentGallery::genre
+            << QDocumentGallery::lastPlayed
             << QDocumentGallery::lyrics
             << QDocumentGallery::playCount
             << QDocumentGallery::sampleRate
-            << QDocumentGallery::title
             << QDocumentGallery::trackNumber
-#if !defined(Q_WS_MAEMO_6)
-            << QDocumentGallery::discNumber
-            << QDocumentGallery::lastPlayed
             << QDocumentGallery::performer
+#if defined(Q_WS_MAEMO_6)
+            << QDocumentGallery::composer
+#else
+            << QDocumentGallery::description
+            << QDocumentGallery::title
 #endif
 #elif defined (Q_OS_SYMBIAN)
             << QDocumentGallery::duration
@@ -186,25 +193,16 @@ void tst_QDocumentGallery::itemTypeProperties_data()
     );
     QTest::newRow("PhotoAlbum") << QString(QDocumentGallery::PhotoAlbum) << (QStringList()
 #if defined(Q_OS_UNIX) && !defined(QT_NO_DBUS)
-                << QDocumentGallery::title
-                << QDocumentGallery::trackCount
-#if defined (Q_WS_MAEMO_6)
                 << QDocumentGallery::count
-#endif
+                << QDocumentGallery::title
 #elif defined (Q_OS_SYMBIAN)
                 << QDocumentGallery::url
-                << QDocumentGallery::fileSize
-                << QDocumentGallery::lastModified
                 << QDocumentGallery::title
-                << QDocumentGallery::mimeType
 #endif
     );    
 
 #if defined (Q_OS_SYMBIAN)
     QTest::newRow("Image") << QString(QDocumentGallery::Image) << (QStringList(fileProperties)
-            << QDocumentGallery::duration
-            << QDocumentGallery::performer
-            << QDocumentGallery::playCount
             << QDocumentGallery::width
             << QDocumentGallery::height
             << QDocumentGallery::orientation
@@ -300,7 +298,9 @@ void tst_QDocumentGallery::propertyAttributes_data()
             << QString(QDocumentGallery::albumTitle)
 #if defined(Q_OS_UNIX) && !defined(QT_NO_DBUS) || defined (Q_OS_SYMBIAN)
             << (QGalleryProperty::CanRead
+#if !defined(Q_WS_MAEMO_6)
                     | QGalleryProperty::CanWrite
+#endif
                     | QGalleryProperty::CanFilter
                     | QGalleryProperty::CanSort);
 #else

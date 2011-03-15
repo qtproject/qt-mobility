@@ -30,7 +30,7 @@
     \title ToDo Example
 
     The ToDo example shows how to organize todo items using the
-    Qt Mobility Organizer framework. 
+    QtMobility Organizer framework.
 
     \image todoexample.png
 
@@ -105,7 +105,7 @@
 
     The constructor creates the QOrganizerManager instance:
 
-    \snippet examples/todo/window.cpp 0 
+    \snippet examples/todo/window.cpp 0
 
     We here instruct that the manger should use the \c memory backend.
     This backend implements the default schema and uses the computers

@@ -48,7 +48,7 @@
 
 #define KDefaultCameraDevice            0
 #define KECamCameraPriority             0
-#define KInactivityTimerTimeout         20000   // msec
+#define KInactivityTimerTimeout         30000   // msec
 #define KSymbianFineResolutionFactor    100.0
 #define KDefaultOpticalZoom             1.0
 #define KDefaultDigitalZoom             1.0
@@ -56,6 +56,12 @@
 #define KDefaultFocusMode               QCameraFocus::AutoFocus
 
 #define KDefaultViewfinderSize          QSize(320,240)
+#define KDefaultSizePreview_Normal      TSize(640,480)
+#define KDefaultSizePreview_Wide        TSize(640,360)
+#define KDefaultSizePreview_CIF         TSize(352,288)
+#define KDefaultSizePreview_PAL         TSize(640,512)
+#define KDefaultSizePreview_NTSC        TSize(640,426)
+#define KDefaultFormatPreview           CCamera::EFormatFbsBitmapColor16MU
 #define KViewfinderFrameRate            30
 #define KMaxVFErrorsSignalled           3
 
@@ -63,11 +69,17 @@
 
 // IMAGE SETTINGS
 
-#define KDefaultImagePath               QString("c:\\Data\\Images")
-#define KDefaultImageFileName           QString("image.jpg")
-#define KDefaultImageCodec              QString("image/jpg")
+#define KDefaultImagePath               QLatin1String("c:\\Data\\Images")
+#define KDefaultImageFileName           QLatin1String("image.jpg")
+#define KDefaultImageCodec              QLatin1String("image/jpeg")
 #define KDefaultImageFormatPrimaryCam   CCamera::EFormatExif
+#ifdef SYMBIAN_3_PLATFORM
+#define KDefaultImageFormatSecondaryCam CCamera::EFormatExif
+#define KDefaultImageResolution         QSize(3264, 2448)
+#else // Pre-Symbian3 Platforms
 #define KDefaultImageFormatSecondaryCam CCamera::EFormatFbsBitmapColor64K
+#define KDefaultImageResolution         QSize(2048, 1536)
+#endif // SYMBIAN_3_PLATFORM
 #define KSymbianImageQualityCoefficient 25
 // This must be divisible by 4 and creater or equal to 8
 #define KSnapshotDownScaleFactor        8
@@ -94,21 +106,22 @@
 _LIT(KDummyVideoFile, "c:\\data\\temp");
 
 // Default container MIME type
-#define KMimeTypeDefaultContainer   QString("video/mp4")
-#define KDefaultVideoPath           QString("c:\\Data\\Videos")
-#define KDefaultVideoFileName       QString("video.mp4")
+#define KMimeTypeDefaultContainer   QLatin1String("video/mp4")
+#define KDefaultVideoPath           QLatin1String("c:\\Data\\Videos")
+#define KDefaultVideoFileName       QLatin1String("video.mp4")
+#define KDurationChangedInterval    1000 // 1 second
 
 // ==============
 // Audio Settings
 // ==============
 
 // Default audio codec MIME type
-#define KMimeTypeDefaultAudioCodec  QString("audio/aac")
+#define KMimeTypeDefaultAudioCodec  QLatin1String("audio/aac")
 
 // Default audio settings for video recording
-#define KDefaultChannelCount  2
+#define KDefaultChannelCount  -1 // Not Supported on Symbian
 #define KDefaultBitRate       32000 // 32kbps
-#define KDefaultSampleRate    16000 // 16000 Hz
+#define KDefaultSampleRate    -1 // Not Supported on Symbian
 
 // ==============
 // Video Settings
@@ -117,10 +130,10 @@ _LIT(KDummyVideoFile, "c:\\data\\temp");
 // Default video codec MIME type
 #ifdef SYMBIAN_3_PLATFORM
     // H.264: BaselineProfile Level 3.1, Max resolution: 1280x720
-    #define KMimeTypeDefaultVideoCodec QString("video/H264; profile-level-id=42801F")
+    #define KMimeTypeDefaultVideoCodec QLatin1String("video/H264; profile-level-id=42801F")
 #else
     // MPEG-4: Simple Profile, Level 4, Max resolution: 640x480
-    #define KMimeTypeDefaultVideoCodec QString("video/mp4v-es; profile-level-id=4")
+    #define KMimeTypeDefaultVideoCodec QLatin1String("video/mp4v-es; profile-level-id=4")
 #endif
 
 // Maximum resolutions for encoder MIME Types
@@ -216,7 +229,12 @@ _LIT(KDummyVideoFile, "c:\\data\\temp");
 #define KBiR_MPEG4_PLID_1   int(64000);
 #define KBiR_MPEG4_PLID_2   int(128000);
 #define KBiR_MPEG4_PLID_3   int(384000);
+// This is a workaround for a known platform bug
+#if (defined(S60_31_PLATFORM) | defined(S60_32_PLATFORM))
+#define KBiR_MPEG4_PLID_4   int(2000000);
+#else // All other platforms
 #define KBiR_MPEG4_PLID_4   int(4000000);
+#endif // S60 3.1 or 3.2
 #define KBiR_MPEG4_PLID_5   int(8000000);
 #define KBiR_MPEG4_PLID_6   int(12000000);
 #define KBiR_MPEG4_PLID_8   int(64000);

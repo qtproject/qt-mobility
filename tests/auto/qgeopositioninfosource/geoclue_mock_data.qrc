@@ -1,0 +1,6 @@
+<!DOCTYPE RCC>
+<RCC version="1.0">
+<qresource>
+    <file>data/gcmock_basic_vel_pos.journal</file>
+</qresource>
+</RCC>

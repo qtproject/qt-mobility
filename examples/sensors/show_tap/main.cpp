@@ -54,9 +54,15 @@ public:
         stamp = reading->timestamp();
         QString output;
         switch (reading->tapDirection()) {
-            case QTapReading::X:         output = "X";         break;
-            case QTapReading::Y:         output = "Y";         break;
-            case QTapReading::Z:         output = "Z";         break;
+            case QTapReading::X:
+            case QTapReading::X_Both:
+                output = "X";         break;
+            case QTapReading::Y:
+            case QTapReading::Y_Both:
+                output = "Y";         break;
+            case QTapReading::Z:
+            case QTapReading::Z_Both:  
+                output = "Z";         break;
             case QTapReading::X_Pos:     output = "X pos";     break;
             case QTapReading::Y_Pos:     output = "Y pos";     break;
             case QTapReading::Z_Pos:     output = "Z pos";     break;

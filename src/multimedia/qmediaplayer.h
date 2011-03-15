@@ -42,18 +42,21 @@
 #ifndef QMEDIAPLAYER_H
 #define QMEDIAPLAYER_H
 
+
 #include "qmediaserviceprovider.h"
 #include "qmediaobject.h"
 #include "qmediacontent.h"
+
+#include <QtNetwork/qnetworkconfiguration.h>
 
 QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
 
+class QAbstractVideoSurface;
 class QMediaPlaylist;
 class QVideoWidget;
 class QGraphicsVideoItem;
-
 
 class QMediaPlayerPrivate;
 class Q_MULTIMEDIA_EXPORT QMediaPlayer : public QMediaObject
@@ -100,7 +103,8 @@ public:
     enum Flag
     {
         LowLatency = 0x01,
-        StreamPlayback = 0x02
+        StreamPlayback = 0x02,
+        VideoSurface = 0x04
     };
     Q_DECLARE_FLAGS(Flags, Flag)
 
@@ -124,6 +128,7 @@ public:
 
     void setVideoOutput(QVideoWidget *);
     void setVideoOutput(QGraphicsVideoItem *);
+    void setVideoOutput(QAbstractVideoSurface *surface);
 
     QMediaContent media() const;
     const QIODevice *mediaStream() const;
@@ -148,6 +153,8 @@ public:
     Error error() const;
     QString errorString() const;
 
+    QNetworkConfiguration currentNetworkConfiguration() const;
+
 public Q_SLOTS:
     void play();
     void pause();
@@ -161,6 +168,8 @@ public Q_SLOTS:
 
     void setMedia(const QMediaContent &media, QIODevice *stream = 0);
     void setPlaylist(QMediaPlaylist *playlist);
+
+    void setNetworkConfigurations(const QList<QNetworkConfiguration> &configurations);
 
 Q_SIGNALS:
     void mediaChanged(const QMediaContent &media);
@@ -183,6 +192,7 @@ Q_SIGNALS:
 
     void error(QMediaPlayer::Error error);
 
+    void networkConfigurationChanged(const QNetworkConfiguration &configuration);
 public:
     virtual bool bind(QObject *);
     virtual void unbind(QObject *);

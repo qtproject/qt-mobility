@@ -54,7 +54,10 @@ public:
     QAudioDeviceInfoPrivate(const QString &r, const QByteArray &h, QAudio::Mode m):
         realm(r), handle(h), mode(m)
     {
-        info = QAudioDeviceFactory::audioDeviceInfo(realm, handle, mode);
+        if (!handle.isEmpty())
+            info = QAudioDeviceFactory::audioDeviceInfo(realm, handle, mode);
+        else
+            info = NULL;
     }
 
     QAudioDeviceInfoPrivate(const QAudioDeviceInfoPrivate &other):

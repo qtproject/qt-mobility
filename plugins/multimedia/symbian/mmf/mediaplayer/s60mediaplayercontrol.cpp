@@ -127,16 +127,21 @@ QMediaTimeRange S60MediaPlayerControl::availablePlaybackRanges() const
 
 qreal S60MediaPlayerControl::playbackRate() const
 {
-    // Playback rate retrieving is not supported in Symbian
     return m_mediaSettings.playbackRate();
 }
 
 void S60MediaPlayerControl::setPlaybackRate(qreal rate)
 {
-    // Playback rate setting is not supported in Symbian
-    m_mediaSettings.setPlaybackRate(rate);
-    emit playbackRateChanged(playbackRate());
-    
+    //getting the current playbackrate    
+    qreal currentPBrate = m_mediaSettings.playbackRate();
+    //checking if we need to change the Playback rate
+    if (!qFuzzyCompare(currentPBrate,rate))
+    {
+        if(m_session)
+            m_session->setPlaybackRate(rate);
+
+        m_mediaSettings.setPlaybackRate(rate);
+    }
 }
 
 void S60MediaPlayerControl::setPosition(qint64 pos)
@@ -168,24 +173,22 @@ void S60MediaPlayerControl::setVolume(int volume)
     int boundVolume = qBound(0, volume, 100);
     if (boundVolume == m_mediaSettings.volume())
         return;
-    
+
     m_mediaSettings.setVolume(boundVolume);
+
     if (m_session)
         m_session->setVolume(boundVolume);
-
-    emit volumeChanged(boundVolume);
 }
 
 void S60MediaPlayerControl::setMuted(bool muted)
 {
     if (m_mediaSettings.isMuted() == muted)
         return;
-    
+
     m_mediaSettings.setMuted(muted);
+
     if (m_session)
         m_session->setMuted(muted);
-    
-    emit mutedChanged(muted);
 }
 
 QMediaContent S60MediaPlayerControl::media() const
@@ -201,7 +204,14 @@ const QIODevice *S60MediaPlayerControl::mediaStream() const
 void S60MediaPlayerControl::setMedia(const QMediaContent &source, QIODevice *stream)
 {
     Q_UNUSED(stream)
-    // we don't want to set & load media again when it is already loaded    
+
+    if ((m_session && m_currentResource == source) && m_session->isStreaming())
+        {
+            m_session->load(source.canonicalUrl());
+            return;
+        }
+
+    // we don't want to set & load media again when it is already loaded
     if (m_session && m_currentResource == source)
         return;
     

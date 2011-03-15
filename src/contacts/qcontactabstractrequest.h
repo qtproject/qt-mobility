@@ -56,6 +56,7 @@ class Q_CONTACTS_EXPORT QContactAbstractRequest : public QObject
 public:
     ~QContactAbstractRequest();
 
+    Q_ENUMS(State)
     enum State {
         InactiveState = 0,   // operation not yet started
         ActiveState,         // operation started, not yet finished
@@ -70,6 +71,7 @@ public:
     bool isCanceled() const;
     QContactManager::Error error() const;
 
+    Q_ENUMS(RequestType)
     enum RequestType {
         InvalidRequest = 0,
         ContactFetchRequest,
@@ -114,7 +116,13 @@ private:
     friend class QContactManagerEngineV2;
     friend class QContactManagerEngineV2Wrapper;
     friend class QContactAbstractRequestPrivate;
+
+#ifndef QT_NO_DEBUG_STREAM
+    Q_CONTACTS_EXPORT friend QDebug operator<<(QDebug dbg, const QContactAbstractRequest& request);
+#endif
+
 };
+
 
 QTM_END_NAMESPACE
 

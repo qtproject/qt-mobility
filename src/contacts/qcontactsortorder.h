@@ -95,6 +95,10 @@ Q_CONTACTS_EXPORT QDataStream& operator<<(QDataStream& out, const QContactSortOr
 Q_CONTACTS_EXPORT QDataStream& operator>>(QDataStream& in, QContactSortOrder& sortOrder);
 #endif
 
+#ifndef QT_NO_DEBUG_STREAM
+Q_CONTACTS_EXPORT QDebug operator<<(QDebug dbg, const QContactSortOrder& sortOrder);
+#endif
+
 QTM_END_NAMESPACE
 
 Q_DECLARE_TYPEINFO(QTM_PREPEND_NAMESPACE(QContactSortOrder), Q_MOVABLE_TYPE);

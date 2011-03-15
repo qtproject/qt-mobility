@@ -42,19 +42,23 @@
 #ifndef QNEARFIELDTARGET_P_H
 #define QNEARFIELDTARGET_P_H
 
+#include <qmobilityglobal.h>
+
 #include "qnearfieldtarget.h"
 
-#include <QtCore/QUrl>
+#include <QtCore/QMap>
+#include <QtCore/QSharedData>
 
 QTM_BEGIN_NAMESPACE
 
-class QNearFieldTargetPrivate : public QSharedData
+class QNearFieldTarget::RequestIdPrivate : public QSharedData
+{
+};
+
+class QNearFieldTargetPrivate
 {
 public:
-    QByteArray uid;
-    QUrl url;
-    QNearFieldTarget::Type tagType;
-    QNearFieldTarget::AccessMethods accessMethods;
+    QMap<QNearFieldTarget::RequestId, QVariant> m_decodedResponses;
 };
 
 QTM_END_NAMESPACE

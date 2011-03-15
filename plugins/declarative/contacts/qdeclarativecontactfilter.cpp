@@ -122,7 +122,6 @@
    \qmlclass DetailFilter QDeclarativeContactDetailFilter
    \brief The \l DetailFilter element provides a filter based around a detail value criterion.
 
-   \qmlmodule contacts
    \ingroup qml-contacts
 
    This element is part of the \bold{QtMobility.contacts 1.1} module.
@@ -262,7 +261,7 @@
  */
 
 /*!
-  \qmlproperty QDeclarativeListProperty IntersectionFilter::filters
+  \qmlproperty list<Filter> IntersectionFilter::filters
 
   This property holds the list of filters which form the intersection filter.
   */
@@ -280,7 +279,7 @@
  */
 
 /*!
-  \qmlproperty QDeclarativeListProperty UnionFilter::filters
+  \qmlproperty list<Filter> UnionFilter::filters
 
   This property holds the list of filters which form the union filter.
   */

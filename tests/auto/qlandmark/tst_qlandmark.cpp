@@ -81,6 +81,22 @@ private slots:
         QVERIFY(lm.radius() == 0.0);
     }
 
+    void detach() {
+        //verify whether detaching of a landmark
+        //shared private data behaves as expected.
+        QLandmark lm1;
+        lm1.setName("lm1");
+        QLandmark lm2 = lm1;
+        QVERIFY(lm2 == lm1);
+
+        //setting the description here causes a deep copy
+        lm2.setDescription("lm2 ddescription");
+        QVERIFY(lm2 != lm1);
+
+        lm2.setDescription("");
+        QVERIFY(lm2 == lm1);
+    }
+
     /*/void settersAndGetters() {
         QFETCH(QString, name);
         QFETCH(QString, icon);

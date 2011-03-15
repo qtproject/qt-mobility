@@ -52,13 +52,13 @@ class QDeclarativeGeoMapMouseEvent : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(bool accepted READ accepted WRITE setAccepted NOTIFY acceptedChanged)
-    Q_PROPERTY(int buttons READ buttons WRITE setButtons NOTIFY buttonsChanged)
-    Q_PROPERTY(int modifiers READ modifiers WRITE setModifiers NOTIFY modifiersChanged)
-    Q_PROPERTY(bool wasHeld READ wasHeld WRITE setWasHeld NOTIFY wasHeldChanged)
-    Q_PROPERTY(int x READ x WRITE setX NOTIFY xChanged)
-    Q_PROPERTY(int y READ y WRITE setY NOTIFY yChanged)
-    Q_PROPERTY(QDeclarativeCoordinate* coordinate READ coordinate WRITE setCoordinate NOTIFY coordinateChanged)
+    Q_PROPERTY(bool accepted READ accepted WRITE setAccepted)
+    Q_PROPERTY(int button READ button)
+    Q_PROPERTY(int modifiers READ modifiers)
+//    Q_PROPERTY(bool wasHeld READ wasHeld)
+    Q_PROPERTY(int x READ x)
+    Q_PROPERTY(int y READ y)
+    Q_PROPERTY(QDeclarativeCoordinate* coordinate READ coordinate)
 
 public:
     QDeclarativeGeoMapMouseEvent(QObject *parent = 0);
@@ -67,14 +67,14 @@ public:
     void setAccepted(bool accepted);
     bool accepted() const;
 
-    void setButtons(int buttons);
-    int buttons() const;
+    void setButton(int button);
+    int button() const;
 
     void setModifiers(int modifiers);
     int modifiers() const;
 
-    void setWasHeld(bool wasHeld);
-    bool wasHeld() const;
+//    void setWasHeld(bool wasHeld);
+//    bool wasHeld() const;
 
     void setX(int x);
     int x() const;
@@ -85,28 +85,14 @@ public:
     void setCoordinate(QDeclarativeCoordinate *coordinate);
     QDeclarativeCoordinate* coordinate();
 
-Q_SIGNALS:
-    void acceptedChanged(bool accepted);
-    void buttonsChanged(int buttons);
-    void modifiersChanged(int modifiers);
-    void wasHeldChanged(bool wasHeld);
-    int xChanged(int x);
-    int yChanged(int y);
-    void coordinateChanged(QDeclarativeCoordinate *coordinate);
-
-private Q_SLOTS:
-    void coordinateLatitudeChanged(double latitude);
-    void coordinateLongitudeChanged(double longitude);
-    void coordinateAltitudeChanged(double altitude);
-
 private:
     bool accepted_;
-    int buttons_;
+    int button_;
     int modifiers_;
-    bool wasHeld_;
+//    bool wasHeld_;
     int x_;
     int y_;
-    QDeclarativeCoordinate coordinate_;
+    QDeclarativeCoordinate *coordinate_;
 };
 
 QTM_END_NAMESPACE

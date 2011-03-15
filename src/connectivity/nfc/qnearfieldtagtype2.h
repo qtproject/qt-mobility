@@ -48,21 +48,40 @@ QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
+class QNearFieldTagType2Private;
+
 class Q_CONNECTIVITY_EXPORT QNearFieldTagType2 : public QNearFieldTarget
 {
     Q_OBJECT
 
+    Q_DECLARE_PRIVATE(QNearFieldTagType2)
+
 public:
     explicit QNearFieldTagType2(QObject *parent = 0);
+    ~QNearFieldTagType2();
 
     Type type() const { return NfcTagType2; }
+
+    bool hasNdefMessage();
+    void readNdefMessages();
+    void writeNdefMessages(const QList<QNdefMessage> &messages);
 
     quint8 version();
     int memorySize();
 
-    virtual QByteArray readBlock(quint8 blockAddress);
-    virtual bool writeBlock(quint8 blockAddress, const QByteArray &data);
-    virtual bool selectSector(quint8 sector);
+    virtual RequestId readBlock(quint8 blockAddress);
+    virtual RequestId writeBlock(quint8 blockAddress, const QByteArray &data);
+    virtual RequestId selectSector(quint8 sector);
+
+    bool waitForRequestCompleted(const RequestId &id, int msecs = 5000);
+
+    void timerEvent(QTimerEvent *event);
+
+protected:
+    bool handleResponse(const QNearFieldTarget::RequestId &id, const QByteArray &response);
+
+private:
+    QNearFieldTagType2Private *d_ptr;
 };
 
 QTM_END_NAMESPACE

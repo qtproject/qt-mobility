@@ -51,6 +51,7 @@
 #include "qcontactmanagerenginefactory.h"       // manage backend instantiator
 #include "qcontact.h"                           // contact
 #include "qcontactid.h"                         // contact identifier
+#include "qcontactobserver.h"                   // contact observer
 #include "qcontactdetaildefinition.h"           // detail definition
 #include "qcontactdetailfielddefinition.h"      // field in a detail definition
 #include "qcontactdetail.h"                     // contact detail

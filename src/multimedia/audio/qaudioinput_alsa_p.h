@@ -71,6 +71,29 @@ QT_BEGIN_NAMESPACE
 
 class InputPrivate;
 
+class RingBuffer
+{
+public:
+    RingBuffer();
+
+    void resize(int size);
+
+    int bytesOfDataInBuffer() const;
+    int freeBytes() const;
+
+    const char *availableData() const;
+    int availableDataBlockSize() const;
+    void readBytes(int bytes);
+
+    void write(char *data, int len);
+
+private:
+    int m_head;
+    int m_tail;
+
+    QByteArray m_data;
+};
+
 class QAudioInputPrivate : public QAbstractAudioInput
 {
     Q_OBJECT
@@ -123,7 +146,7 @@ private:
     QTime clockStamp;
     qint64 elapsedTimeOffset;
     int intervalTime;
-    char* audioBuffer;
+    RingBuffer ringBuffer;
     int bytesAvailable;
     QByteArray m_device;
     bool pullMode;

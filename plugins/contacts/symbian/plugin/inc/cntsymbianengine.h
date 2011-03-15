@@ -169,7 +169,7 @@ private:
     QString m_managerUri;
     CntTransformContact *m_transformContact;
     CntSymbianFilter *m_contactFilter;
-#ifndef SYMBIAN_BACKEND_USE_SQLITE    
+#ifndef SYMBIAN_BACKEND_USE_CNTMODEL_V2    
     CntAbstractContactSorter *m_contactSorter;
 #endif    
     CntRelationship *m_relationship;

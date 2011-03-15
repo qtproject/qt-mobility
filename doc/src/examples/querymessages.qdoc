@@ -31,15 +31,15 @@
 
 
 
-    This simple example shows how to query messages stored in the system, 
-    using the Qt Mobility Messaging API. 
+    This simple example shows how to query messages stored in the system,
+    using the QtMobility Messaging API.
 
-    Messages are queried by using the QMessageManager interface which 
+    Messages are queried by using the QMessageManager interface which
     provides access to the message data stored in the system.  We will
-    use the \l{QMessageManager::queryMessages()}{queryMessages} function to 
-    locate messages that match a filter object which defines the 
-    properties of the messages we would like to find.  
-    
+    use the \l{QMessageManager::queryMessages()}{queryMessages} function to
+    locate messages that match a filter object which defines the
+    properties of the messages we would like to find.
+
     We define our query properties like this:
 
     \snippet    ../../examples/querymessages/main.cpp setup-query
@@ -54,7 +54,7 @@
 
     \snippet    ../../examples/querymessages/main.cpp iterate-results
 
-    For each message we located, we now generate an output element 
+    For each message we located, we now generate an output element
     corresponding to each data item requested at the command line:
 
     \snippet    ../../examples/querymessages/main.cpp generate-output

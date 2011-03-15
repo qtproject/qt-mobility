@@ -47,12 +47,15 @@
 
 QT_BEGIN_NAMESPACE
 
-class QT7ServicePlugin : public QMediaServiceProviderPlugin
+class QT7ServicePlugin : public QMediaServiceProviderPlugin, public QMediaServiceFeaturesInterface
 {
+    Q_INTERFACES(QMediaServiceFeaturesInterface)
 public:
     QStringList keys() const;
     QMediaService* create(QString const& key);
     void release(QMediaService *service);
+
+    QMediaServiceProviderHint::Features supportedFeatures(const QByteArray &service) const;
 };
 
 QT_END_NAMESPACE

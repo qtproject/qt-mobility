@@ -211,6 +211,7 @@ void QCameraFocusPrivate::initControls()
                    q, SIGNAL(maximumOpticalZoomChanged(qreal)));
         q->connect(focusControl, SIGNAL(maximumDigitalZoomChanged(qreal)),
                    q, SIGNAL(maximumDigitalZoomChanged(qreal)));
+        q->connect(focusControl, SIGNAL(focusZonesChanged()), q, SIGNAL(focusZonesChanged()));
     }
 }
 

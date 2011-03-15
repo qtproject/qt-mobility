@@ -106,7 +106,6 @@ private:
 
     QGalleryAbstractResponse *createItemListResponse(
             QGalleryTrackerResultSetArguments *arguments,
-            bool isItemType,
             bool autoUpdate,
             QGalleryTrackerChangeNotifier* notifier);
 
@@ -214,7 +213,6 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createItemResponse(QGalleryIt
     } else {
         return createItemListResponse(
                 &arguments,
-                schema.isItemType(),
                 request->autoUpdate(),
                 getChangeNotifier(schema.itemType()));
     }
@@ -271,13 +269,11 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createTypeResponse(QGalleryTy
 
 QGalleryAbstractResponse *QDocumentGalleryPrivate::createItemListResponse(
         QGalleryTrackerResultSetArguments *arguments,
-        bool isItemType,
         bool autoUpdate,
         QGalleryTrackerChangeNotifier* notifier)
 {
-    QGalleryTrackerResultSet *response = isItemType
-            ? new QGalleryTrackerEditableResultSet(arguments, metaDataInterface(), autoUpdate)
-            : new QGalleryTrackerResultSet(arguments, autoUpdate);
+    QGalleryTrackerResultSet *response = new QGalleryTrackerEditableResultSet(
+            arguments, metaDataInterface(), autoUpdate);
 
     if (autoUpdate) {
         if (notifier) {
@@ -316,7 +312,6 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createFilterResponse(
     } else {
         return createItemListResponse(
                 &arguments,
-                schema.isItemType(),
                 request->autoUpdate(),
                 getChangeNotifier(request->rootType()) );
     }

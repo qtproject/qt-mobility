@@ -2,9 +2,9 @@ INCLUDEPATH += ../../../src/publishsubscribe
 DEPENDPATH += ../../../src/publishsubscribe
 INCLUDEPATH += ../../../src/global
 
-TARGET  = $$qtLibraryTarget(declarative_publishsubscribe)
 TEMPLATE = lib
 CONFIG += plugin
+TARGET  = $$qtLibraryTarget(declarative_publishsubscribe)
 TARGETPATH = QtMobility/publishsubscribe
 PLUGIN_TYPE = declarative
 include(../../../common.pri)
@@ -16,11 +16,13 @@ QT += declarative
 
 SOURCES += publishsubscribe.cpp \
     qdeclarativevaluespacepublisher.cpp \
-    qdeclarativevaluespacepublishermetaobject.cpp
+    qdeclarativevaluespacepublishermetaobject.cpp \
+    qdeclarativevaluespacesubscriber.cpp
 
 HEADERS += \
     qdeclarativevaluespacepublisher_p.h \
-    qdeclarativevaluespacepublishermetaobject_p.h
+    qdeclarativevaluespacepublishermetaobject_p.h \
+    qdeclarativevaluespacesubscriber_p.h
 
 CONFIG += mobility
 MOBILITY += publishsubscribe

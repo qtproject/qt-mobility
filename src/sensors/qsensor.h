@@ -129,6 +129,7 @@ public:
     // Filters modify the reading
     void addFilter(QSensorFilter *filter);
     void removeFilter(QSensorFilter *filter);
+    QList<QSensorFilter*> filters() const;
 
     // The readings are exposed via this object
     QSensorReading *reading() const;
@@ -195,6 +196,9 @@ public:
 
 protected:
     explicit QSensorReading(QObject *parent, QSensorReadingPrivate *d);
+#ifdef UNIT_TEST
+    QScopedPointer<QSensorReadingPrivate> *d_ptr() { return &d; }
+#endif
     virtual void copyValuesFrom(QSensorReading *other);
 
 private:

@@ -47,6 +47,11 @@ namespace arrows{
     static const QString ARROW_UP="^", ARROW_DOWN="v", ARROW_LEFT="<",ARROW_RIGHT=">";
 }
 
+namespace orientation{
+    static const QString LANDSCAPE="landscape", PORTRAIT="portrait";
+}
+
+
 class AccelerometerFilter : public QAccelerometerFilter
 {
 public:
@@ -57,16 +62,27 @@ public:
             qDebug() << "direction:" << arrow;
             exArrow = arrow;
         }
+        QString orientation = getOrientation(reading->x(), reading->y());
+        if (orientation!=exOrientation){
+            qDebug() << "orientation:" << orientation;
+            exOrientation = orientation;
+        }
         return false; // don't store the reading in the sensor
     }
 
 private:
-    QString exArrow;
+    QString exArrow, exOrientation;
     QString getArrowKey(qreal x, qreal y){
         // axis_x: LEFT or RIGHT
         if (abs(x)>abs(y)) return x>0?(arrows::ARROW_LEFT):(arrows::ARROW_RIGHT);
         // axis_y: UP or DOWN
         return y>0?(arrows::ARROW_DOWN):(arrows::ARROW_UP);
+    }
+    QString getOrientation(qreal x, qreal y){
+        // axis_x: PORTRAIT
+        if (abs(x)>abs(y)) return orientation::PORTRAIT;
+        // axis_y: LANDSCAPE
+        return orientation::LANDSCAPE;
     }
     static qreal abs(qreal value) {return value<0?-value:value;}
 };
@@ -79,12 +95,16 @@ int main(int argc, char **argv)
         qWarning("No Accelerometer available!");
         return EXIT_FAILURE;
     }
+
+    const char* alwaysOn = "alwaysOn";
+    sensor.setProperty(alwaysOn, true);
+
     AccelerometerFilter filter;
     sensor.addFilter(&filter);
 
     qrangelist datarates = sensor.availableDataRates();
     int i = datarates.size();
-    sensor.setDataRate(datarates.at(i-1).second);
+    if (i>0) sensor.setDataRate(datarates.at(i-1).second);
     sensor.start();
 
     return app.exec();

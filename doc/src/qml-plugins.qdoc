@@ -29,20 +29,20 @@
     \page qml-plugins.html
     \group plugins
 
-    \title Mobility QML Plugins
+    \title QtMobility QML Plugins
 
     \ingroup mobility
 
-    \brief A set of QML compatible plugins for the Mobility Project.
+    \brief A set of QML compatible plugins for the QtMobility Project.
 
 
 
-    \section1 List of QML Plugins for Mobility
+    \section1 List of QML Plugins for QtMobility
     \table 80%
     \header
         \o Plugin
         \o Description
- 
+
     \row
         \o \l {Contacts QML Plugin}{Contacts}
         \o A QML plugin for the Contacts API.
@@ -66,7 +66,7 @@
         \o A QML plugin for the Publish and Subscribe API.
     \row
         \o \l {Service Framework QML Plugin}{Service Framework}
-        \o A QML plugin for the Service Framework API for 
+        \o A QML plugin for the Service Framework API for
            discovering and connecting to services.
     \row
         \o \l {Messaging QML Plugin}{Messaging}

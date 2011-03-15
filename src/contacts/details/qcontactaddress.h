@@ -99,6 +99,9 @@ public:
     void setSubTypes(const QStringList& subTypes) {setValue(FieldSubTypes, subTypes);}
     void setSubTypes(const QString& subType) {setValue(FieldSubTypes, QStringList(subType));}
     QStringList subTypes() const {return value<QStringList>(FieldSubTypes);}
+
+    // Convenience filter
+    static QContactFilter match(const QString& subString);
 };
 
 QTM_END_NAMESPACE

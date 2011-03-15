@@ -39,6 +39,10 @@ SOURCES += ../../../plugins/declarative/location/qdeclarativegeoboundingbox.cpp
 CONFIG += mobility
 MOBILITY += location
 
+maemo6|meego {
+    DEFINES+=SPARQL_BACKEND
+}
+
 symbian|wince* {
     symbian {
         TARGET.CAPABILITY = All -TCB

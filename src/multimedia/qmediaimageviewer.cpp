@@ -50,6 +50,7 @@
 #include <qmediacontent.h>
 #include <qmediaresource.h>
 #include <qvideowidget.h>
+#include <qvideosurfaceoutput_p.h>
 
 #include <QtCore/qcoreevent.h>
 #include <QtCore/qdatetime.h>
@@ -75,6 +76,7 @@ public:
     QMediaImageViewerControl *viewerControl;
     QMediaPlaylist *playlist;
     QPointer<QObject> videoOutput;
+    QVideoSurfaceOutput surfaceOutput;
     QMediaImageViewer::State state;
     int timeout;
     int pauseTime;
@@ -429,6 +431,27 @@ void QMediaImageViewer::setVideoOutput(QGraphicsVideoItem *item)
         unbind(d->videoOutput);
 
     d->videoOutput = bind(item) ? item : 0;
+}
+
+/*!
+    Sets a video \a surface as the video output of a image viewer.
+
+    If a video output has already been set on the image viewer the new surface
+    will replace it.
+*/
+
+void QMediaImageViewer::setVideoOutput(QAbstractVideoSurface *surface)
+{
+    Q_D(QMediaImageViewer);
+
+    d->surfaceOutput.setVideoSurface(surface);
+
+    if (d->videoOutput != &d->surfaceOutput) {
+        if (d->videoOutput)
+            unbind(d->videoOutput);
+
+        d->videoOutput = bind(&d->surfaceOutput) ? &d->surfaceOutput : 0;
+    }
 }
 
 /*!

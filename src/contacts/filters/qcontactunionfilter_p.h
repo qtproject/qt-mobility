@@ -100,6 +100,16 @@ public:
         return stream;
     }
 
+#ifndef QT_NO_DEBUG_STREAM
+    QDebug& debugStreamOut(QDebug& dbg) const
+    {
+        dbg.nospace() << "QContactUnionFilter(";
+        dbg.nospace() << "filters=" << m_filters;
+        dbg.nospace() << ")";
+        return dbg.maybeSpace();
+    }
+#endif
+
     Q_IMPLEMENT_CONTACTFILTER_VIRTUALCTORS(QContactUnionFilter, QContactFilter::UnionFilter)
 
     QList<QContactFilter> m_filters;

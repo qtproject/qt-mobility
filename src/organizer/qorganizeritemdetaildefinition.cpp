@@ -42,6 +42,10 @@
 #include "qorganizeritemdetaildefinition.h"
 #include "qorganizeritemdetaildefinition_p.h"
 
+#ifndef QT_NO_DEBUG_STREAM
+#include <QDebug>
+#endif
+
 QTM_BEGIN_NAMESPACE
 
 /*!
@@ -139,6 +143,29 @@ QDataStream& operator>>(QDataStream& in, QOrganizerItemDetailDefinition& definit
         in.setStatus(QDataStream::ReadCorruptData);
     }
     return in;
+}
+#endif
+
+#ifndef QT_NO_DEBUG_STREAM
+/*!
+  Outputs \a definition to the debug stream \a dbg
+ */
+QDebug operator<<(QDebug dbg, const QOrganizerItemDetailDefinition& definition)
+{
+    dbg.nospace() << "QOrganizerItemDetailDefinition(";
+    dbg.nospace() << "name=";
+    dbg.nospace() << definition.name();
+    dbg.nospace() << ",";
+    dbg.nospace() << "isUnique=";
+    dbg.nospace() << definition.isUnique();
+    dbg.nospace() << ",";
+    dbg.nospace() << "isEmpty=";
+    dbg.nospace() << definition.isEmpty();
+    dbg.nospace() << ",";
+    dbg.nospace() << "fields=";
+    dbg.nospace() << definition.fields();
+    dbg.nospace() << ")";
+    return dbg.maybeSpace();
 }
 #endif
 

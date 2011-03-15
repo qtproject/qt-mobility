@@ -71,7 +71,6 @@ QAudioInputPrivate::QAudioInputPrivate(const QByteArray &device)
     period_time = 20000;
     totalTimeValue = 0;
     intervalTime = 1000;
-    audioBuffer = 0;
     errorState = QAudio::NoError;
     deviceState = QAudio::StoppedState;
     audioSource = 0;
@@ -439,8 +438,7 @@ bool QAudioInputPrivate::open()
     snd_pcm_sw_params(handle, swparams);
 
     // Step 4: Prepare audio
-    if(audioBuffer == 0)
-        audioBuffer = new char[buffer_size];
+    ringBuffer.resize(buffer_size);
     snd_pcm_prepare( handle );
     snd_pcm_start(handle);
 
@@ -469,8 +467,6 @@ void QAudioInputPrivate::close()
         snd_pcm_drop( handle );
         snd_pcm_close( handle );
         handle = 0;
-        delete [] audioBuffer;
-        audioBuffer=0;
     }
 }
 
@@ -505,77 +501,106 @@ qint64 QAudioInputPrivate::read(char* data, qint64 len)
     if ( !handle )
         return 0;
 
-    // bytesAvaiable is saved as a side effect of checkBytesReady().
-    int bytesToRead = checkBytesReady();
+    int bytesRead = 0;
+    int bytesInRingbufferBeforeRead = ringBuffer.bytesOfDataInBuffer();
 
-    if (bytesToRead < 0) {
-        // bytesAvailable as negative is error code, try to recover from it.
-        xrun_recovery(bytesToRead);
-        bytesToRead = checkBytesReady();
+    if (ringBuffer.bytesOfDataInBuffer() < len) {
+
+        // bytesAvaiable is saved as a side effect of checkBytesReady().
+        int bytesToRead = checkBytesReady();
+
         if (bytesToRead < 0) {
-            // recovery failed must stop and set error.
-            close();
-            errorState = QAudio::IOError;
-            deviceState = QAudio::StoppedState;
-            emit stateChanged(deviceState);
-            return 0;
-        }
-    }
-
-    bytesToRead = qMin<qint64>(len, bytesToRead);
-    bytesToRead -= bytesToRead % period_size;
-    int count=0, err = 0;
-    while(count < 5) {
-        int chunks = bytesToRead/period_size;
-        int frames = chunks*period_frames;
-        if(frames > (int)buffer_frames)
-            frames = buffer_frames;
-        int readFrames = snd_pcm_readi(handle, audioBuffer, frames);
-        if (readFrames >= 0) {
-            err = snd_pcm_frames_to_bytes(handle, readFrames);
-#ifdef DEBUG_AUDIO
-            qDebug()<<QString::fromLatin1("read in bytes = %1 (frames=%2)").arg(err).arg(readFrames).toLatin1().constData();
-#endif
-            break;
-        } else if((readFrames == -EAGAIN) || (readFrames == -EINTR)) {
-            errorState = QAudio::IOError;
-            err = 0;
-            break;
-        } else {
-            if(readFrames == -EPIPE) {
-                errorState = QAudio::UnderrunError;
-                err = snd_pcm_prepare(handle);
-            } else if(readFrames == -ESTRPIPE) {
-                err = snd_pcm_prepare(handle);
-            }
-            if(err != 0) break;
-        }
-        count++;
-    }
-    if(err > 0) {
-        // got some send it onward
-#ifdef DEBUG_AUDIO
-        qDebug()<<"frames to write to QIODevice = "<<
-            snd_pcm_bytes_to_frames( handle, (int)err )<<" ("<<err<<") bytes";
-#endif
-        if(deviceState != QAudio::ActiveState && deviceState != QAudio::IdleState)
-            return 0;
-        if (pullMode) {
-            qint64 l = audioSource->write(audioBuffer,err);
-            if(l < 0) {
+            // bytesAvailable as negative is error code, try to recover from it.
+            xrun_recovery(bytesToRead);
+            bytesToRead = checkBytesReady();
+            if (bytesToRead < 0) {
+                // recovery failed must stop and set error.
                 close();
                 errorState = QAudio::IOError;
                 deviceState = QAudio::StoppedState;
                 emit stateChanged(deviceState);
-            } else if(l == 0) {
+                return 0;
+            }
+        }
+
+        bytesToRead = qMin<qint64>(len, bytesToRead);
+        bytesToRead = qMin<qint64>(ringBuffer.freeBytes(), bytesToRead);
+        bytesToRead -= bytesToRead % period_size;
+
+        int count=0;
+        int err = 0;
+        while(count < 5 && bytesToRead > 0) {
+            char buffer[bytesToRead];
+            int chunks = bytesToRead / period_size;
+            int frames = chunks * period_frames;
+            if (frames > (int)buffer_frames)
+                frames = buffer_frames;
+
+            int readFrames = snd_pcm_readi(handle, buffer, frames);
+
+            if (readFrames >= 0) {
+                bytesRead = snd_pcm_frames_to_bytes(handle, readFrames);
+                ringBuffer.write(buffer, bytesRead);
+#ifdef DEBUG_AUDIO
+                qDebug() << QString::fromLatin1("read in bytes = %1 (frames=%2)").arg(bytesRead).arg(readFrames).toLatin1().constData();
+#endif
+                break;
+            } else if((readFrames == -EAGAIN) || (readFrames == -EINTR)) {
+                errorState = QAudio::IOError;
+                err = 0;
+                break;
+            } else {
+                if(readFrames == -EPIPE) {
+                    errorState = QAudio::UnderrunError;
+                    err = snd_pcm_prepare(handle);
+                } else if(readFrames == -ESTRPIPE) {
+                    err = snd_pcm_prepare(handle);
+                }
+                if(err != 0) break;
+            }
+            count++;
+        }
+
+    }
+
+    bytesRead += bytesInRingbufferBeforeRead;
+
+    if (bytesRead > 0) {
+        // got some send it onward
+#ifdef DEBUG_AUDIO
+        qDebug() << "frames to write to QIODevice = " <<
+            snd_pcm_bytes_to_frames( handle, (int)bytesRead ) << " (" << bytesRead << ") bytes";
+#endif
+        if (deviceState != QAudio::ActiveState && deviceState != QAudio::IdleState)
+            return 0;
+
+        if (pullMode) {
+            qint64 l = 0;
+            qint64 bytesWritten = 0;
+            while (ringBuffer.bytesOfDataInBuffer() > 0) {
+                l = audioSource->write(ringBuffer.availableData(), ringBuffer.availableDataBlockSize());
+                if (l > 0) {
+                    ringBuffer.readBytes(l);
+                    bytesWritten += l;
+                } else {
+                    break;
+                }
+            }
+
+            if (l < 0) {
+                close();
+                errorState = QAudio::IOError;
+                deviceState = QAudio::StoppedState;
+                emit stateChanged(deviceState);
+            } else if (l == 0 && bytesWritten == 0) {
                 if (deviceState != QAudio::IdleState) {
                     errorState = QAudio::NoError;
                     deviceState = QAudio::IdleState;
                     emit stateChanged(deviceState);
                 }
             } else {
-                bytesAvailable -= err;
-                totalTimeValue += err;
+                bytesAvailable -= bytesWritten;
+                totalTimeValue += bytesWritten;
                 resuming = false;
                 if (deviceState != QAudio::ActiveState) {
                     errorState = QAudio::NoError;
@@ -583,21 +608,29 @@ qint64 QAudioInputPrivate::read(char* data, qint64 len)
                     emit stateChanged(deviceState);
                 }
             }
-            return l;
 
+            return bytesWritten;
         } else {
-            memcpy(data,audioBuffer,err);
-            bytesAvailable -= err;
-            totalTimeValue += err;
+            while (ringBuffer.bytesOfDataInBuffer() > 0) {
+                int size = ringBuffer.availableDataBlockSize();
+                memcpy(data, ringBuffer.availableData(), size);
+                data += size;
+                ringBuffer.readBytes(size);
+            }
+
+            bytesAvailable -= bytesRead;
+            totalTimeValue += bytesRead;
             resuming = false;
             if (deviceState != QAudio::ActiveState) {
                 errorState = QAudio::NoError;
                 deviceState = QAudio::ActiveState;
                 emit stateChanged(deviceState);
             }
-            return err;
+
+            return bytesRead;
         }
     }
+
     return 0;
 }
 
@@ -760,6 +793,71 @@ qint64 InputPrivate::writeData(const char* data, qint64 len)
 void InputPrivate::trigger()
 {
     emit readyRead();
+}
+
+RingBuffer::RingBuffer() :
+        m_head(0),
+        m_tail(0)
+{
+}
+
+void RingBuffer::resize(int size)
+{
+    m_data.resize(size);
+}
+
+int RingBuffer::bytesOfDataInBuffer() const
+{
+    if (m_head < m_tail)
+        return m_tail - m_head;
+    else if (m_tail < m_head)
+        return m_data.size() + m_tail - m_head;
+    else
+        return 0;
+}
+
+int RingBuffer::freeBytes() const
+{
+    if (m_head > m_tail)
+        return m_head - m_tail - 1;
+    else if (m_tail > m_head)
+        return m_data.size() - m_tail + m_head - 1;
+    else
+        return m_data.size() - 1;
+}
+
+const char *RingBuffer::availableData() const
+{
+    return (m_data.constData() + m_head);
+}
+
+int RingBuffer::availableDataBlockSize() const
+{
+    if (m_head > m_tail)
+        return m_data.size() - m_head;
+    else if (m_tail > m_head)
+        return m_tail - m_head;
+    else
+        return 0;
+}
+
+void RingBuffer::readBytes(int bytes)
+{
+    m_head = (m_head + bytes) % m_data.size();
+}
+
+void RingBuffer::write(char *data, int len)
+{
+    if (m_tail + len < m_data.size()) {
+        memcpy(m_data.data() + m_tail, data, len);
+        m_tail += len;
+    } else {
+        int bytesUntilEnd = m_data.size() - m_tail;
+        memcpy(m_data.data() + m_tail, data, bytesUntilEnd);
+        if (len - bytesUntilEnd > 0)
+            memcpy(m_data.data(), data + bytesUntilEnd, len - bytesUntilEnd);
+        m_tail = len - bytesUntilEnd;
+    }
 }
 
 QT_END_NAMESPACE

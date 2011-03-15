@@ -43,6 +43,29 @@
 
 QTM_USE_NAMESPACE
 
+namespace check{
+    static void checkRate(QSensor* sensor, int rate){
+        qDebug()<<"data rate set for sensor "<<rate;
+        if (rate == sensor->dataRate()) return;
+        if (rate!=sensor->dataRate()){
+            qrangelist rates = sensor->availableDataRates();
+            QString datarates;
+            for( int i = 0; i < rates.size(); ++i )
+            {
+                datarates.append("[");
+                QString num;
+                datarates.append(num.setNum(rates[i].first));
+                datarates.append("..");
+                datarates.append(num.setNum(rates[i].second));
+                datarates.append("] ");
+            }
+            qDebug()<<"Rate setting failed, rate must be within range "<<datarates;
+        }
+    }
+}
+
+
+
 class MagGeoFilter : public QMagnetometerFilter
 {
 public:
@@ -93,11 +116,16 @@ int main(int argc, char **argv)
 
     if (rate_val > 0) {
         geosensor.setDataRate(rate_val);
+        check::checkRate(&geosensor, rate_val);
     }
+
+    int buffer_place = args.indexOf("-b");
+    int bufferSize = buffer_place!=-1? args.at(buffer_place + 1).toInt():1;
+    geosensor.setProperty("bufferSize",bufferSize);
+
     MagGeoFilter geofilter;
     geosensor.setProperty("returnGeoValues", true);
     geosensor.addFilter(&geofilter);
-    qDebug() << geosensor.availableDataRates().size();
     geosensor.start();
     if (!geosensor.isActive()) {
         qWarning("Magnetometersensor (geo) didn't start!");
@@ -105,17 +133,17 @@ int main(int argc, char **argv)
     }
 
     QMagnetometer rawsensor;
+    rawsensor.connectToBackend();
     if (rate_val > 0) {
         rawsensor.setDataRate(rate_val);
+        check::checkRate(&rawsensor, rate_val);
     }
     MagRawFilter rawfilter;
     rawsensor.addFilter(&rawfilter);
-    qDebug() << rawsensor.availableDataRates().size();
     rawsensor.start();
     if (!rawsensor.isActive()) {
         qWarning("Magnetometersensor (raw) didn't start!");
         return 1;
     }
-
     return app.exec();
 }

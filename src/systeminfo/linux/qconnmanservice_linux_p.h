@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -64,11 +64,15 @@
 #include <QtDBus/QDBusObjectPath>
 #include <QtDBus/QDBusContext>
 #include <QMap>
+#include <QVariantMap>
+
+#ifndef QT_NO_BEARERMANAGEMENT
+#ifndef QT_NO_DBUS
 
 #ifndef __CONNMAN_DBUS_H
 
-#define	CONNMAN_SERVICE     "org.moblin.connman"
-#define	CONNMAN_PATH        "/org/moblin/connman"
+#define	CONNMAN_SERVICE     "net.connman"
+#define	CONNMAN_PATH        "/net/connman"
 
 #define CONNMAN_DEBUG_INTERFACE		CONNMAN_SERVICE ".Debug"
 #define CONNMAN_ERROR_INTERFACE		CONNMAN_SERVICE ".Error"
@@ -81,8 +85,6 @@
 #define CONNMAN_TASK_INTERFACE		CONNMAN_SERVICE ".Task"
 #define CONNMAN_PROFILE_INTERFACE	CONNMAN_SERVICE ".Profile"
 #define CONNMAN_SERVICE_INTERFACE	CONNMAN_SERVICE ".Service"
-#define CONNMAN_DEVICE_INTERFACE	CONNMAN_SERVICE ".Device"
-#define CONNMAN_NETWORK_INTERFACE	CONNMAN_SERVICE ".Network"
 #define CONNMAN_PROVIDER_INTERFACE	CONNMAN_SERVICE ".Provider"
 #define CONNMAN_TECHNOLOGY_INTERFACE	CONNMAN_SERVICE ".Technology"
 #endif
@@ -120,7 +122,7 @@ public:
 
     QString requestSession(const QString &bearerName);
     void releaseSession();
-    
+
       // properties
     QString getState();
     QStringList getAvailableTechnologies();
@@ -142,38 +144,6 @@ Q_SIGNALS:
     void stateChanged(const QString &);
     void propertyChangedContext(const QString &,const QString &,const QDBusVariant &);
 
-protected:
-    void connectNotify(const char *signal);
-    void disconnectNotify(const char *signal);
-    QVariant getProperty(const QString &);
-};
-
-
-class QConnmanNetworkInterface : public QDBusAbstractInterface
-{
-    Q_OBJECT
-
-public:
-
-    QConnmanNetworkInterface(const QString &dbusPathName, QObject *parent = 0);
-    ~QConnmanNetworkInterface();
-
-    QVariantMap getProperties();
-
-    //properties
-    QString getAddress();
-    QString getName();
-    bool isConnected();
-    quint8 getSignalStrength();
-    QString getDevice();
-    QString getWifiSsid();
-    QString getWifiMode();
-    QString getWifiSecurity();
-    QString getWifiPassphrase();
-
-Q_SIGNALS:
-    void propertyChanged(const QString &, const QDBusVariant &value);
-    void propertyChangedContext(const QString &,const QString &,const QDBusVariant &);
 protected:
     void connectNotify(const char *signal);
     void disconnectNotify(const char *signal);
@@ -249,6 +219,13 @@ public:
     QVariantMap getProxy();
     QVariantMap getEthernet();
 
+    QString getMethod();
+    QString getInterface();
+    QString getMacAddress();
+    quint16 getMtu();
+    quint16 getSpeed();
+    QString getDuplex();
+
     bool isOfflineMode();
     QStringList getServices();
 
@@ -276,8 +253,6 @@ public:
     QString getState();
     QString getName();
     QString getType();
-
-    QStringList getDevices();
 
 Q_SIGNALS:
     void propertyChanged(const QString &, const QDBusVariant &value);
@@ -321,61 +296,29 @@ public:
     QString getInterface();
     quint32 getReceivedByteCount();
     quint32 getTransmittedByteCount();
+    quint64 getTimeOnline();
 
 private:
     QConnmanCounterInterfacePrivate *d;
 };
 
-class QConnmanDeviceInterface : public QDBusAbstractInterface
-{
-    Q_OBJECT
+class QConnmanDBusHelper: public QObject, protected QDBusContext
+ {
+     Q_OBJECT
+ public:
+    QConnmanDBusHelper(QObject *parent = 0);
+    ~QConnmanDBusHelper();
 
-public:
-
-    QConnmanDeviceInterface(const QString &dbusPathName,QObject *parent = 0);
-    ~QConnmanDeviceInterface();
-
-    QVariantMap getProperties();
-    void scan();
-
-//properties
-    QString getAddress();
-    QString getName();
-    QString getType();
-    QString getInterface();
-    bool isPowered();
-    quint16 getScanInterval();
-    bool setScanInterval(const QString &interval);
-
-    bool isScanning();
-    QStringList getNetworks();
-    bool setEnabled(bool powered);
-    bool setProperty(const QString &name, const QDBusVariant &value);
+ public slots:
+    void propertyChanged(const QString &, const QDBusVariant &);
 
 Q_SIGNALS:
-    void propertyChanged(const QString &, const QDBusVariant &value);
     void propertyChangedContext(const QString &,const QString &,const QDBusVariant &);
-protected:
-    void connectNotify(const char *signal);
-    void disconnectNotify(const char *signal);
-    QVariant getProperty(const QString &);
-
 };
 
-//class QConnmanDBusHelper: public QObject, protected QDBusContext
-// {
-//     Q_OBJECT
-// public:
-//    QConnmanDBusHelper(QObject *parent = 0);
-//    ~QConnmanDBusHelper();
-
-// public slots:
-//    void propertyChanged(const QString &, const QDBusVariant &);
-
-//Q_SIGNALS:
-//    void propertyChangedContext(const QString &,const QString &,const QDBusVariant &);
-//};
-
 QT_END_NAMESPACE
+
+#endif // QT_NO_DBUS
+#endif // QT_NO_BEARERMANAGEMENT
 
 #endif //QCONNMANSERVICE_H

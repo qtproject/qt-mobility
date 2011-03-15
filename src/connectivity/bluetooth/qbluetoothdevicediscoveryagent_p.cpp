@@ -41,10 +41,56 @@
 
 #include "qbluetoothdevicediscoveryagent.h"
 #include "qbluetoothdevicediscoveryagent_p.h"
+#include "qbluetoothaddress.h"
+#include "qbluetoothuuid.h"
 
+#define QTM_DEVICEDISCOVERY_DEBUG
 
 QTM_BEGIN_NAMESPACE
 
-#include "moc_qbluetoothdevicediscoveryagent_p.cpp"
+QBluetoothDeviceDiscoveryAgentPrivate::QBluetoothDeviceDiscoveryAgentPrivate()
+
+{
+}
+
+QBluetoothDeviceDiscoveryAgentPrivate::~QBluetoothDeviceDiscoveryAgentPrivate()
+{
+}
+
+bool QBluetoothDeviceDiscoveryAgentPrivate::isActive() const
+{
+    return false;
+}
+
+void QBluetoothDeviceDiscoveryAgentPrivate::start()
+{
+}
+
+void QBluetoothDeviceDiscoveryAgentPrivate::stop()
+{
+}
+#ifndef QT_NO_DBUS
+void QBluetoothDeviceDiscoveryAgentPrivate::_q_deviceFound(const QString &address,
+                                                           const QVariantMap &dict)
+{
+    Q_UNUSED(address);
+    Q_UNUSED(dict);
+}
+
+void QBluetoothDeviceDiscoveryAgentPrivate::_q_propertyChanged(const QString &name,
+                                                               const QDBusVariant &value)
+{    
+    Q_UNUSED(name);
+    Q_UNUSED(value);
+}
+#endif
+
+#ifdef QTM_SYMBIAN_BLUETOOTH
+void _q_newDeviceFound(const QBluetoothDeviceInfo &device)
+{
+
+}
+#endif
+
 
 QTM_END_NAMESPACE

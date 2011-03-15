@@ -100,6 +100,9 @@ typedef enum
 #define	NM_DBUS_INTERFACE_DEVICE	        NM_DBUS_INTERFACE ".Device"
 #define NM_DBUS_INTERFACE_DEVICE_WIRED      NM_DBUS_INTERFACE_DEVICE ".Wired"
 #define NM_DBUS_INTERFACE_DEVICE_WIRELESS   NM_DBUS_INTERFACE_DEVICE ".Wireless"
+#define NM_DBUS_INTERFACE_DEVICE_GSM        NM_DBUS_INTERFACE_DEVICE ".Gsm"
+#define NM_DBUS_INTERFACE_DEVICE_CDMA       NM_DBUS_INTERFACE_DEVICE ".Cdma"
+
 #define NM_DBUS_PATH_ACCESS_POINT           NM_DBUS_PATH "/AccessPoint"
 #define NM_DBUS_INTERFACE_ACCESS_POINT      NM_DBUS_INTERFACE ".AccessPoint"
 
@@ -119,12 +122,15 @@ typedef enum
 
 QTM_BEGIN_NAMESPACE
 typedef QMap< QString, QMap<QString,QVariant> > QNmSettingsMap;
-typedef QList<quint32> ServerThing;
+typedef QMap< uint, QStringList > QMmLocationMap;
+typedef QList< QMap<QString,QString> > QMmScanResult;
 QTM_END_NAMESPACE
 
 
 Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QNmSettingsMap))
-Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(ServerThing))
+Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QMmLocationMap))
+Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QMmScanResult))
+
 
 QTM_BEGIN_NAMESPACE
 
@@ -328,6 +334,28 @@ private:
     QNmDBusHelper *nmDBusHelper;
 };
 
+class QNetworkManagerInterfaceDeviceGsmPrivate;
+class QNetworkManagerInterfaceDeviceGsm : public QObject
+{
+    Q_OBJECT
+
+public:
+
+    QNetworkManagerInterfaceDeviceGsm(const QString &ifaceDevicePath, QObject *parent = 0);
+    ~QNetworkManagerInterfaceDeviceGsm();
+
+    QDBusInterface  *connectionInterface() const;
+
+    bool setConnections();
+    bool isValid();
+
+Q_SIGNALS:
+    void propertiesChanged( const QString &, QMap<QString,QVariant>);
+private:
+    QNetworkManagerInterfaceDeviceGsmPrivate *d;
+    QNmDBusHelper *nmDBusHelper;
+};
+
 class QNetworkManagerSettingsPrivate;
 class QNetworkManagerSettings : public QObject
 {
@@ -432,7 +460,165 @@ public:
  private:
 	QNetworkManagerIp4ConfigPrivate *d;    
 };
+
+
+class MMRegistrationInfoType
+{
+public:
+    enum MMRegistrationStatus {
+        Idle = 0,
+        Home,
+        Searching,
+        Denied,
+        Unknown,
+        Roaming
+    };
+
+    MMRegistrationStatus status;
+    QString operatorCode;
+    QString operatorName;
+
+};
+
+class QModemManagerGsmNetworkInterfacePrivate;
+class QModemManagerGsmNetworkInterface : public QObject
+{
+    Q_OBJECT
+
+public:
+
+    QModemManagerGsmNetworkInterface(const QString &dbusPathName, QObject *parent = 0);
+    ~QModemManagerGsmNetworkInterface();
+
+   uint signalQuality();
+   MMRegistrationInfoType registrationStatus();
+   QString operatorName;
+   MMRegistrationInfoType info;
+   uint accessTechnology();
+   uint allowedMode();
+   bool isValid();
+   uint networkMode();
+   QMmScanResult scan();
+
+Q_SIGNALS:
+   void signalQualityChanged(uint &sig);
+   void registrationInfoChanged(MMRegistrationInfoType &rego);
+private:
+    QModemManagerGsmNetworkInterfacePrivate *d;
+};
+
+class QModemManagerModemGsmCardPrivate;
+class QModemManagerModemGsmCard : public QObject
+{
+    Q_OBJECT
+
+public:
+
+    QModemManagerModemGsmCard(const QString &dbusPathName, QObject *parent = 0);
+    ~QModemManagerModemGsmCard();
+
+enum CellModes {
+    GSM_MODE_UNKNOWN = 0x0,
+    GSM_MODE_ANY = 0x1,
+    GSM_MODE_GPRS = 0x2,
+    GSM_MODE_EDGE = 0x4,
+    GSM_MODE_UMTS = 0x8,
+    GSM_MODE_HSDPA = 0x10,
+    GSM_MODE_2G_PREFERRED = 0x20,
+    GSM_MODE_3G_PREFERRED = 0x40,
+    GSM_MODE_2G_ONLY = 0x80,
+    GSM_MODE_3G_ONLY = 0x100,
+    GSM_MODE_HSUPA = 0x200,
+    GSM_MODE_HSPA = 0x400,
+    GSM_MODE_GSM = 0x800,
+    GSM_MODE_GSM_COMPACT = 0x1000
+};
+Q_ENUMS(CellModes)
+Q_DECLARE_FLAGS(CellModesFlags, CellModes)
+
+    QString imsi();
+    QString imei();
+
+  //  CellModesFlags supportedCellModes();
+
+private:
+    QModemManagerModemGsmCardPrivate *d;
+};
+
+class QModemManagerModemLocationPrivate;
+class QModemManagerModemLocation : public QObject
+{
+    Q_OBJECT
+
+public:
+
+    QModemManagerModemLocation(const QString &dbusPathName, QObject *parent = 0);
+    ~QModemManagerModemLocation();
+
+    QMmLocationMap location();
+    bool locationEnabled();
+    bool isValid();
+    void enableLocation(bool enable,bool useSignals);
+
+private:
+    QModemManagerModemLocationPrivate *d;
+};
+
+class QModemManagerModemSimple : public QDBusAbstractInterface
+{
+    Q_OBJECT
+
+public:
+
+    QModemManagerModemSimple(const QString &dbusPathName, QObject *parent = 0);
+    ~QModemManagerModemSimple();
+
+    QVariantMap status();
+};
+
+class QModemManagerModemPrivate;
+class QModemManagerModem : public QObject
+{
+    Q_OBJECT
+
+public:
+
+    QModemManagerModem(const QString &dbusPathName, QObject *parent = 0);
+    ~QModemManagerModem();
+    QDBusInterface  *connectionInterface() const;
+    QString unlockRequired();
+    bool enabled();
+    uint type();
+    uint ipMethod();
+private:
+    QModemManagerModemPrivate *d;
+
+
+};
+
+
+class QModemManagerPrivate;
+class QModemManager : public QObject
+{
+    Q_OBJECT
+
+public:
+
+    QModemManager(QObject *parent = 0);
+    ~QModemManager();
+    QDBusInterface  *connectionInterface() const;
+    QList<QDBusObjectPath> enumerateDevices();
+
+private:
+    QModemManagerPrivate *d;
+
+
+};
+
 QTM_END_NAMESPACE
+
+Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(MMRegistrationInfoType))
+
 
 
 #endif //QNETWORKMANAGERSERVICE_H

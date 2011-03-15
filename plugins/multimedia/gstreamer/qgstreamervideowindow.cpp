@@ -143,8 +143,8 @@ void QGstreamerVideoWindow::setDisplayRect(const QRect &rect)
                                                m_displayRect.y(),
                                                m_displayRect.width(),
                                                m_displayRect.height());
+        repaint();
 #endif
-        gst_x_overlay_expose(GST_X_OVERLAY(m_videoSink));
     }
 }
 
@@ -168,7 +168,12 @@ void QGstreamerVideoWindow::setAspectRatioMode(Qt::AspectRatioMode mode)
 void QGstreamerVideoWindow::repaint()
 {
     if (m_videoSink && GST_IS_X_OVERLAY(m_videoSink)) {
-        gst_x_overlay_expose(GST_X_OVERLAY(m_videoSink));
+        //don't call gst_x_overlay_expose if the sink is in null state
+        GstState state = GST_STATE_NULL;
+        GstStateChangeReturn res = gst_element_get_state(m_videoSink, &state, NULL, 1000000);
+        if (res != GST_STATE_CHANGE_FAILURE && state != GST_STATE_NULL) {
+            gst_x_overlay_expose(GST_X_OVERLAY(m_videoSink));
+        }
     }
 }
 

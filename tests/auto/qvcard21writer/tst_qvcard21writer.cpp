@@ -86,7 +86,11 @@ void tst_QVCard21Writer::testEncodeVersitProperty()
     buffer.open(QIODevice::WriteOnly);
 
     mWriter->encodeVersitProperty(property);
-    QCOMPARE(encodedProperty, expectedResult);
+    if (encodedProperty != expectedResult) {
+        qDebug() << "Encoded: " << encodedProperty;
+        qDebug() << "Expected: " << expectedResult;
+        QVERIFY(false);
+    }
 }
 
 void tst_QVCard21Writer::testEncodeVersitProperty_data()
@@ -117,6 +121,32 @@ void tst_QVCard21Writer::testEncodeVersitProperty_data()
     property.setValueType(QVersitProperty::CompoundType);
     expectedResult = "N;ENCODING=QUOTED-PRINTABLE:La\\;st;Fi,rst;Mi:ddle;Pr=5Cefix;Suffix\r\n";
     QTest::newRow("N property") << property << expectedResult << codec;
+
+    // Structured N - there was a bug where if two fields had to be escaped,
+    // two ENCODING parameters were added
+    property.setName(QLatin1String("N"));
+    property.setValue(QStringList()
+                      << QLatin1String("La\\st")
+                      << QLatin1String("Fi\\rst")
+                      << QString()
+                      << QString()
+                      << QString());
+    property.setValueType(QVersitProperty::CompoundType);
+    expectedResult = "N;ENCODING=QUOTED-PRINTABLE:La=5Cst;Fi=5Crst;;;\r\n";
+    QTest::newRow("N property, double-encoded") << property << expectedResult << codec;
+
+    // Structured N - one field needs to be encoded in UTF-8 while the other doesn't
+    // correct behaviour is to encode the whole thing in UTF-8
+    property.setName(QLatin1String("N"));
+    property.setValue(QStringList()
+                      << QString::fromUtf8("\xE2\x82\xAC") // euro sign
+                      << QString::fromLatin1("\xA3") // pound sign (upper Latin-1)
+                      << QString()
+                      << QString()
+                      << QString());
+    property.setValueType(QVersitProperty::CompoundType);
+    expectedResult = "N;CHARSET=UTF-8;ENCODING=QUOTED-PRINTABLE:=E2=82=AC;=C2=A3;;;\r\n";
+    QTest::newRow("N property, double-encoded") << property << expectedResult << codec;
 
     // Structured CATEGORIES - escaping should happen for commas, not semicolons
     property.setName(QLatin1String("CATEGORIES"));
@@ -176,13 +206,30 @@ END:VCARD\r\n\
 
     // Characters other than ASCII:
     // Note: KATAKANA_NOKIA is defined as: QString::fromUtf8("\xe3\x83\x8e\xe3\x82\xad\xe3\x82\xa2")
-    // The expected behaviour is to convert to UTF8, then encode with quoted-printable
-    expectedResult = "ORG;CHARSET=UTF-8;ENCODING=QUOTED-PRINTABLE:=E3=83=8E=E3=82=AD=E3=82=A2\r\n";
-
+    // The expected behaviour is to convert to UTF8, then encode with quoted-printable.
+    // Because the result overflows one line, it should be split onto two lines using a
+    // quoted-printable soft line break (EQUALS-CR-LF).  (Note: Versit soft line breaks
+    // (CR-LF-SPACE) are not supported by the native Symbian vCard importers).
+    expectedResult = "ORG;CHARSET=UTF-8;ENCODING=QUOTED-PRINTABLE:=E3=83=8E=E3=82=AD=E3=82=A2=E3=\r\n"
+                     "=83=8E=E3=82=AD=E3=82=A2\r\n";
     property = QVersitProperty();
     property.setName(QLatin1String("ORG"));
-    property.setValue(KATAKANA_NOKIA);
-    QTest::newRow("non-ASCII") << property << expectedResult << codec;
+    property.setValue(KATAKANA_NOKIA + KATAKANA_NOKIA);
+    QTest::newRow("non-ASCII 1") << property << expectedResult << codec;
+
+    expectedResult = "ORG;CHARSET=UTF-8;ENCODING=QUOTED-PRINTABLE:a=E3=83=8E=E3=82=AD=E3=82=A2=E3=\r\n"
+                     "=83=8E=E3=82=AD=E3=82=A2\r\n";
+    property = QVersitProperty();
+    property.setName(QLatin1String("ORG"));
+    property.setValue("a" + KATAKANA_NOKIA + KATAKANA_NOKIA);
+    QTest::newRow("non-ASCII 2") << property << expectedResult << codec;
+
+    expectedResult = "ORG;CHARSET=UTF-8;ENCODING=QUOTED-PRINTABLE:aa=E3=83=8E=E3=82=AD=E3=82=A2=\r\n"
+                     "=E3=83=8E=E3=82=AD=E3=82=A2\r\n";
+    property = QVersitProperty();
+    property.setName(QLatin1String("ORG"));
+    property.setValue("aa" + KATAKANA_NOKIA + KATAKANA_NOKIA);
+    QTest::newRow("non-ASCII 3") << property << expectedResult << codec;
 
     // In Shift-JIS codec.
     QTextCodec* jisCodec = QTextCodec::codecForName("Shift-JIS");

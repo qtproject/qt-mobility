@@ -132,7 +132,7 @@ private:
     WAVEHDR* waveBlocks;
     volatile bool finished;
     volatile int waveFreeBlockCount;
-    int waveCurrentBlock;
+    int waveBlockOffset;
 
     QMutex mutex;
     static void QT_WIN_CALLBACK waveInProc( HWAVEIN hWaveIn, UINT uMsg,

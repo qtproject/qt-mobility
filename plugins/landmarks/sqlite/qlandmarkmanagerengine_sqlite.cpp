@@ -529,6 +529,7 @@ bool QLandmarkManagerEngineSqlite::startRequest(QLandmarkAbstractRequest* reques
         return false;
     }
 
+    QLandmarkManagerEngine::updateRequestState(request, QLandmarkAbstractRequest::ActiveState);
     QThreadPool::globalInstance()->start(queryRun);
     return true;
 }
@@ -549,7 +550,6 @@ bool QLandmarkManagerEngineSqlite::waitForRequestFinished(QLandmarkAbstractReque
 {
     //Aside: the request at least already be in the active state for this function to
     //to be called.
-
     QMutexLocker ml(&m_mutex);
     if (!m_requestRunHash.contains(request))
         return false;

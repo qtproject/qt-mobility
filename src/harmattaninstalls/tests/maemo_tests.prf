@@ -1,0 +1,43 @@
+installtests.CONFIG = recursive
+!contains(TEMPLATE, subdirs) {
+    NL = $$escape_expand(\\n\\t)
+    # see below for how test data (including plugins) are installed as part of
+    #  the DEPOYMENT rule for the unit test that uses the plugin
+    contains(TEMPLATE, app) {
+        target.path += $$[QT_INSTALL_PREFIX]/tests/qtm/$${target.path}
+        INSTALLS += target
+        installtests.commands = echo $${target.path}$${TARGET} >> \$(QTM_TEST_INSTALL_FILE)
+    }
+    # if a test is marked as insignificant(is not critical test) then add it to the black list
+    insignificant_test {
+        !isEmpty(installtests.commands) : installtests.commands += $${NL}
+        installtests.commands +=  echo  $${target.path}$${TARGET} >> \$(QTM_TEST_BLACKLIST_FILE)
+    }
+
+    # handle the deployment of test data
+    for(deployItem, $$list($$DEPLOYMENT)){
+        eval(itemPath = $${deployItem}.path)
+        eval(itemSources = $${deployItem}.sources)
+        itemPath = $$eval($$itemPath)
+        itemSources = $$eval($$itemSources)
+        origSources = $$itemSources
+        !isEmpty(itemPath):!isEmpty(itemSources){
+            # only support deployment of "data" into a relative directory in tests directory
+            !contains(itemPath, "/"){
+                # as required by packaging system simplify the relative path for deployed data
+                itemPath = $$replace(itemPath, "\\./" , "")
+                itemSources = $$basename(itemSources)
+                !isEmpty(installtests.commands) : installtests.commands += $${NL}
+                installtests.commands += echo $$[QT_INSTALL_PREFIX]/tests/qtm/$${itemPath}/$${itemSources} >> \$(QTM_TEST_INSTALL_FILE) $${NL}
+                installtests.commands += $(CHK_DIR_EXISTS) \$(INSTALL_ROOT)$$[QT_INSTALL_PREFIX]/tests/qtm/$${itemPath} || \$(MKDIR) \$(INSTALL_ROOT)$$[QT_INSTALL_PREFIX]/tests/qtm/$${itemPath} $${NL}
+                installtests.commands += $(COPY_DIR) $$origSources \$(INSTALL_ROOT)$$[QT_INSTALL_PREFIX]/tests/qtm/$${itemPath}/$${itemSources}
+            }else{
+                error(in $$__PRO_FILE__ deployment rule $$deployItem is using absolute path)
+            }
+        }
+    }
+}
+
+
+QMAKE_EXTRA_TARGETS += installtests
+

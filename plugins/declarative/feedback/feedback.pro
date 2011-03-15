@@ -1,20 +1,26 @@
 INCLUDEPATH += ../../../src/feedback
 INCLUDEPATH += ../../../src/global
 
-TARGET  = $$qtLibraryTarget(declarative_feedback)
 TEMPLATE = lib
 CONFIG += plugin
+TARGET  = $$qtLibraryTarget(declarative_feedback)
 TARGETPATH = QtMobility/feedback
 PLUGIN_TYPE = declarative
 include(../../../common.pri)
 
 QT += declarative
 
-HEADERS += qdeclarativehapticseffect.h \
-    qdeclarativefileeffect.h \
-    qdeclarativethemeeffect.h \
-    qdeclarativefeedback.h
-SOURCES += feedback.cpp
+HEADERS += qdeclarativehapticseffect_p.h \
+           qdeclarativefileeffect_p.h \
+           qdeclarativethemeeffect_p.h \
+           qdeclarativefeedbackactuator_p.h \
+           qdeclarativefeedbackeffect_p.h
+SOURCES += qdeclarativehapticseffect.cpp \
+           qdeclarativefileeffect.cpp \
+           plugin.cpp \
+           qdeclarativethemeeffect.cpp \
+           qdeclarativefeedbackactuator.cpp \
+           qdeclarativefeedbackeffect.cpp
 
 CONFIG += mobility
 MOBILITY += feedback

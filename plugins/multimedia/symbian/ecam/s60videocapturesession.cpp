@@ -41,6 +41,7 @@
 
 #include <QtCore/qstring.h>
 #include <QtCore/qdir.h>
+#include <QtCore/qtimer.h>
 
 #include "s60videocapturesession.h"
 #include "s60cameraconstants.h"
@@ -56,12 +57,13 @@ S60VideoCaptureSession::S60VideoCaptureSession(QObject *parent) :
     QObject(parent),
     m_cameraEngine(NULL),
     m_videoRecorder(NULL),
+    m_position(0),
     m_error(KErrNone),
     m_cameraStarted(false),
     m_captureState(ENotInitialized),    // Default state
     m_sink(QUrl()),
     m_requestedSink(QUrl()),
-    m_videoQuality(QtMultimediaKit::VeryHighQuality * KSymbianImageQualityCoefficient),   // Default video quality
+    m_captureSettingsSet(false),
     m_container(QString()),
     m_requestedContainer(QString()),
     m_muted(false),
@@ -77,23 +79,32 @@ S60VideoCaptureSession::S60VideoCaptureSession(QObject *parent) :
 #ifdef S60_DEVVIDEO_RECORDING_SUPPORTED
     // Populate info of supported codecs, and their resolution, etc.
     TRAPD(err, doPopulateVideoCodecsDataL());
-    setError(err, QString("Failed to gather video codec information."));
+    setError(err, tr("Failed to gather video codec information."));
 #endif // S60_DEVVIDEO_RECORDING_SUPPORTED
+
+    initializeVideoCaptureSettings();
+
+    m_durationTimer = new QTimer;
+    m_durationTimer->setInterval(KDurationChangedInterval);
+    connect(m_durationTimer, SIGNAL(timeout()), this, SLOT(durationTimerTriggered()));
 }
 
 S60VideoCaptureSession::~S60VideoCaptureSession()
 {
-    if (m_captureState >= ERecording) {
+    if (m_captureState >= ERecording)
         m_videoRecorder->Stop();
-    }
 
-    if (m_captureState >= EInitialized) {
+    if (m_captureState >= EInitialized)
         m_videoRecorder->Close();
-    }
 
     if (m_videoRecorder) {
         delete m_videoRecorder;
         m_videoRecorder = NULL;
+    }
+
+    if (m_durationTimer) {
+        delete m_durationTimer;
+        m_durationTimer = NULL;
     }
 
     // Clear all data structures
@@ -103,8 +114,8 @@ S60VideoCaptureSession::~S60VideoCaptureSession()
     }
     m_videoParametersForEncoder.clear();
 
-    m_videoCodeclist.clear();
-    m_audioCodeclist.clear();
+    m_videoCodecList.clear();
+    m_audioCodecList.clear();
 
     QList<TInt> controllers = m_videoControllerMap.keys();
     for (int i = 0; i < controllers.size(); ++i) {
@@ -133,12 +144,13 @@ void S60VideoCaptureSession::setError(const TInt error, const QString &descripti
         if (m_captureState >= ERecording)
             m_videoRecorder->Stop();
 
-        if (m_captureState >= EInitialized) {
+        if (m_captureState >= EInitialized)
             m_videoRecorder->Close();
-        }
 
         // Reset state
         if (m_captureState != ENotInitialized) {
+            if (m_durationTimer->isActive())
+                m_durationTimer->stop();
             m_captureState = ENotInitialized;
             emit stateChanged(m_captureState);
         }
@@ -148,7 +160,7 @@ void S60VideoCaptureSession::setError(const TInt error, const QString &descripti
 
     // Reset only of other than "not supported" error
     if (m_error != KErrNotSupported)
-        resetSession();
+        resetSession(true);
     else
         m_error = KErrNone; // Reset error
 }
@@ -179,69 +191,75 @@ QMediaRecorder::Error S60VideoCaptureSession::fromSymbianErrorToQtMultimediaErro
 void S60VideoCaptureSession::applyAllSettings()
 {
     switch (m_captureState) {
-        case ENotInitialized:
-            setError(KErrNotReady, QString("Cannot apply settings before camera is started."));
-            return;
-        case EInitializing:
-            m_commitSettingsWhenReady = true;
-            return;
-        case EInitialized:
-            setOutputLocation(QUrl());
-            m_prepareAfterOpenComplete = true;
-            return;
-        case EOpening:
-            m_prepareAfterOpenComplete = true;
-            return;
-        case EOpenComplete:
-            // Do nothing, ready to commit
-            break;
-        case EPreparing:
-            m_commitSettingsWhenReady = true;
-            return;
-        case EPrepared:
-            // Revert state internally, since logically applying settings means going
-            // from OpenComplete ==> Preparing ==> Prepared.
-            m_captureState = EOpenComplete;
-            break;
-        case ERecording:
-        case EPaused:
-            setError(KErrNotReady, QString("Cannot apply settings while recording."));
-            return;
+    case ENotInitialized:
+    case EInitializing:
+        m_commitSettingsWhenReady = true;
+        return;
+    case EInitialized:
+        setOutputLocation(QUrl());
+        m_prepareAfterOpenComplete = true;
+        return;
+    case EOpening:
+        m_prepareAfterOpenComplete = true;
+        return;
+    case EOpenComplete:
+        // Do nothing, ready to commit
+        break;
+    case EPreparing:
+        m_commitSettingsWhenReady = true;
+        return;
+    case EPrepared:
+        // Revert state internally, since logically applying settings means going
+        // from OpenComplete ==> Preparing ==> Prepared.
+        m_captureState = EOpenComplete;
+        break;
+    case ERecording:
+    case EPaused:
+        setError(KErrNotReady, tr("Cannot apply settings while recording."));
+        return;
 
-        default:
-            setError(KErrGeneral, QString("Unexpected camera error."));
-            return;
-    }
-
-    // Commit settings - State is now either OpenComplete or Prepared
-    commitVideoEncoderSettings();
-
-    // If capture state has been reset, a different container was requested
-    if (m_captureState == EOpening) {
+    default:
+        setError(KErrGeneral, tr("Unexpected camera error."));
         return;
     }
+
+    // Commit settings - State is now OpenComplete (possibly reverted from Prepared)
+    commitVideoEncoderSettings();
+
+    // If capture state has been changed to:
+    // * Opening: A different media container has been requested
+    // * Other: Failure during the setting committing
+    // ==> Return
+    if (m_captureState != EOpenComplete)
+        return;
 
     // Start preparing
     m_captureState = EPreparing;
     emit stateChanged(m_captureState);
 
-    if (m_cameraEngine->IsCameraReady()) {
+    if (m_cameraEngine->IsCameraReady())
         m_videoRecorder->Prepare();
-    }
 }
 
 void S60VideoCaptureSession::setCameraHandle(CCameraEngine* cameraHandle)
 {
     m_cameraEngine = cameraHandle;
 
+    // Initialize settings for the new camera
+    initializeVideoCaptureSettings();
+
     resetSession();
+}
+
+void S60VideoCaptureSession::notifySettingsSet()
+{
+    m_captureSettingsSet = true;
 }
 
 void S60VideoCaptureSession::doInitializeVideoRecorderL()
 {
-    if (m_captureState > ENotInitialized) {
+    if (m_captureState > ENotInitialized)
         resetSession();
-    }
 
     m_captureState = EInitializing;
     emit stateChanged(m_captureState);
@@ -256,14 +274,14 @@ void S60VideoCaptureSession::doInitializeVideoRecorderL()
     if (m_videoRecorder) {
         // File open completes in MvruoOpenComplete
         TRAPD(err, m_videoRecorder->OpenFileL(KDummyVideoFile, cameraHandle, controllerUid, formatUid));
-        setError(err, QString("Failed to initialize video recorder."));
+        setError(err, tr("Failed to initialize video recorder."));
         m_container = m_requestedContainer;
     } else {
-        setError(KErrNotReady, QString("Unexpected camera error."));
+        setError(KErrNotReady, tr("Unexpected camera error."));
     }
 }
 
-void S60VideoCaptureSession::resetSession()
+void S60VideoCaptureSession::resetSession(bool errorHandling)
 {
     if (m_videoRecorder) {
         delete m_videoRecorder;
@@ -271,6 +289,8 @@ void S60VideoCaptureSession::resetSession()
     }
 
     if (m_captureState != ENotInitialized) {
+        if (m_durationTimer->isActive())
+            m_durationTimer->stop();
         m_captureState = ENotInitialized;
         emit stateChanged(m_captureState);
     }
@@ -286,70 +306,125 @@ void S60VideoCaptureSession::resetSession()
     m_commitSettingsWhenReady = false;
 
     TRAPD(err, m_videoRecorder = CVideoRecorderUtility::NewL(*this));
-    setError(err, QString("Failure in creation of video recorder device."));
+    if (err) {
+        qWarning("Failed to create video recorder.");
+        if (errorHandling)
+            emit error(QMediaRecorder::ResourceError, tr("Failed to recover from video error."));
+        else
+            setError(err, tr("Failure in creation of video recorder device."));
+        return;
+    }
 
     updateVideoCaptureContainers();
 }
 
 QList<QSize> S60VideoCaptureSession::supportedVideoResolutions(bool *continuous)
 {
-    QList<QSize> list;
+    QList<QSize> resolutions;
 
-    if (m_videoParametersForEncoder.count() > 0) {
+    // Secondary Camera
+    if (m_cameraEngine->CurrentCameraIndex() != 0) {
+        TCameraInfo *info = m_cameraEngine->CameraInfo();
+        if (info) {
+            TInt videoResolutionCount = info->iNumVideoFrameSizesSupported;
+            CCamera *camera = m_cameraEngine->Camera();
+            if (camera) {
+                for (TInt i = 0; i < videoResolutionCount; ++i) {
+                    TSize checkedResolution;
+                    camera->EnumerateVideoFrameSizes(checkedResolution, i, CCamera::EFormatYUV420Planar);
+                    QSize qtResolution(checkedResolution.iWidth, checkedResolution.iHeight);
+                    if (!resolutions.contains(qtResolution))
+                        resolutions.append(qtResolution);
+                }
+            } else {
+                setError(KErrGeneral, tr("Could not query supported video resolutions."));
+            }
+        } else {
+            setError(KErrGeneral, tr("Could not query supported video resolutions."));
+        }
 
-        // Also arbitrary resolutions are supported
-        if (continuous)
-            *continuous = true;
+    // Primary Camera
+    } else {
 
-        // Append all supported resolutions to the list
-        foreach (MaxResolutionRatesAndTypes parameters, m_videoParametersForEncoder)
-            for (int i = 0; i < parameters.frameRatePictureSizePair.count(); ++i)
-                if (!list.contains(parameters.frameRatePictureSizePair[i].frameSize))
-                    list.append(parameters.frameRatePictureSizePair[i].frameSize);
+        if (m_videoParametersForEncoder.count() > 0) {
+
+            // Also arbitrary resolutions are supported
+            if (continuous)
+                *continuous = true;
+
+            // Append all supported resolutions to the list
+            foreach (MaxResolutionRatesAndTypes parameters, m_videoParametersForEncoder)
+                for (int i = 0; i < parameters.frameRatePictureSizePair.count(); ++i)
+                    if (!resolutions.contains(parameters.frameRatePictureSizePair[i].frameSize))
+                        resolutions.append(parameters.frameRatePictureSizePair[i].frameSize);
+        }
     }
 
 #ifdef Q_CC_NOKIAX86 // Emulator
-    list << QSize(160, 120);
-    list << QSize(352, 288);
-    list << QSize(640,480);
-#endif
+    resolutions << QSize(160, 120);
+    resolutions << QSize(352, 288);
+    resolutions << QSize(640,480);
+#endif // Q_CC_NOKIAX86
 
-    return list;
+    return resolutions;
 }
 
 QList<QSize> S60VideoCaptureSession::supportedVideoResolutions(const QVideoEncoderSettings &settings, bool *continuous)
 {
     QList<QSize> supportedFrameSizes;
 
-    if (settings.codec().isEmpty())
-        return supportedFrameSizes;
-
-    if (!m_videoCodeclist.contains(settings.codec(), Qt::CaseInsensitive)) {
-        return supportedFrameSizes;
-    }
-
-    // Also arbitrary resolutions are supported
-    if (continuous)
-        *continuous = true;
-
-    // Find maximum resolution (using defined framerate if set)
-    for (int i = 0; i < m_videoParametersForEncoder.count(); ++i) {
-        // Check if encoder supports the requested codec
-        if (!m_videoParametersForEncoder[i].mimeTypes.contains(settings.codec(), Qt::CaseInsensitive)) {
-            continue;
+    // Secondary Camera
+    if (m_cameraEngine->CurrentCameraIndex() != 0) {
+        TCameraInfo *info = m_cameraEngine->CameraInfo();
+        if (info) {
+            TInt videoResolutionCount = info->iNumVideoFrameSizesSupported;
+            CCamera *camera = m_cameraEngine->Camera();
+            if (camera) {
+                for (TInt i = 0; i < videoResolutionCount; ++i) {
+                    TSize checkedResolution;
+                    camera->EnumerateVideoFrameSizes(checkedResolution, i, CCamera::EFormatYUV420Planar);
+                    QSize qtResolution(checkedResolution.iWidth, checkedResolution.iHeight);
+                    if (!supportedFrameSizes.contains(qtResolution))
+                        supportedFrameSizes.append(qtResolution);
+                }
+            } else {
+                setError(KErrGeneral, tr("Could not query supported video resolutions."));
+            }
+        } else {
+            setError(KErrGeneral, tr("Could not query supported video resolutions."));
         }
 
-        foreach (SupportedFrameRatePictureSize pair, m_videoParametersForEncoder[i].frameRatePictureSizePair) {
-            if (!supportedFrameSizes.contains(pair.frameSize)) {
-                QSize maxForMime = maximumResolutionForMimeType(settings.codec());
-                if (settings.frameRate() != 0) {
-                    if(settings.frameRate() <= pair.frameRate) {
+    // Primary Camera
+    } else {
+
+        if (settings.codec().isEmpty())
+            return supportedFrameSizes;
+
+        if (!m_videoCodecList.contains(settings.codec(), Qt::CaseInsensitive))
+            return supportedFrameSizes;
+
+        // Also arbitrary resolutions are supported
+        if (continuous)
+            *continuous = true;
+
+        // Find maximum resolution (using defined framerate if set)
+        for (int i = 0; i < m_videoParametersForEncoder.count(); ++i) {
+            // Check if encoder supports the requested codec
+            if (!m_videoParametersForEncoder[i].mimeTypes.contains(settings.codec(), Qt::CaseInsensitive))
+                continue;
+
+            foreach (SupportedFrameRatePictureSize pair, m_videoParametersForEncoder[i].frameRatePictureSizePair) {
+                if (!supportedFrameSizes.contains(pair.frameSize)) {
+                    QSize maxForMime = maximumResolutionForMimeType(settings.codec());
+                    if (settings.frameRate() != 0) {
+                        if (settings.frameRate() <= pair.frameRate) {
+                            if ((pair.frameSize.width() * pair.frameSize.height()) <= (maxForMime.width() * maxForMime.height()))
+                                supportedFrameSizes.append(pair.frameSize);
+                        }
+                    } else {
                         if ((pair.frameSize.width() * pair.frameSize.height()) <= (maxForMime.width() * maxForMime.height()))
                             supportedFrameSizes.append(pair.frameSize);
                     }
-                } else {
-                    if ((pair.frameSize.width() * pair.frameSize.height()) <= (maxForMime.width() * maxForMime.height()))
-                        supportedFrameSizes.append(pair.frameSize);
                 }
             }
         }
@@ -366,11 +441,11 @@ QList<QSize> S60VideoCaptureSession::supportedVideoResolutions(const QVideoEncod
 
 QList<qreal> S60VideoCaptureSession::supportedVideoFrameRates(bool *continuous)
 {
-    QList<qreal> list;
+    QList<qreal> supportedRatesList;
 
     if (m_videoParametersForEncoder.count() > 0) {
         // Insert min and max to the list
-        list.append(1.0); // Use 1fps as sensible minimum
+        supportedRatesList.append(1.0); // Use 1fps as sensible minimum
         qreal foundMaxFrameRate(0.0);
 
         // Also arbitrary framerates are supported
@@ -386,26 +461,34 @@ QList<qreal> S60VideoCaptureSession::supportedVideoFrameRates(bool *continuous)
             }
         }
 
-        list.append(foundMaxFrameRate);
+        supportedRatesList.append(foundMaxFrameRate);
     }
 
     // Add also other standard framerates to the list
-    if (!list.isEmpty()) {
-        if (list.last() > 30)
-            list.insert(1, 30);
-        if (list.last() > 20)
-            list.insert(1, 20);
-        if (list.last() > 15)
-            list.insert(1, 15);
-        if (list.last() > 10)
-            list.insert(1, 10);
+    if (!supportedRatesList.isEmpty()) {
+        if (supportedRatesList.last() > 30.0) {
+            if (!supportedRatesList.contains(30.0))
+                supportedRatesList.insert(1, 30.0);
+        }
+        if (supportedRatesList.last() > 25.0) {
+            if (!supportedRatesList.contains(25.0))
+                supportedRatesList.insert(1, 25.0);
+        }
+        if (supportedRatesList.last() > 15.0) {
+            if (!supportedRatesList.contains(15.0))
+                supportedRatesList.insert(1, 15.0);
+        }
+        if (supportedRatesList.last() > 10.0) {
+            if (!supportedRatesList.contains(10))
+                supportedRatesList.insert(1, 10.0);
+        }
     }
 
 #ifdef Q_CC_NOKIAX86 // Emulator
-    list << 30.0 << 25.0 << 15.0 << 10.0 << 5.0;
+    supportedRatesList << 30.0 << 25.0 << 15.0 << 10.0 << 5.0;
 #endif
 
-    return list;
+    return supportedRatesList;
 }
 
 QList<qreal> S60VideoCaptureSession::supportedVideoFrameRates(const QVideoEncoderSettings &settings, bool *continuous)
@@ -414,7 +497,7 @@ QList<qreal> S60VideoCaptureSession::supportedVideoFrameRates(const QVideoEncode
 
     if (settings.codec().isEmpty())
         return supportedFrameRates;
-    if (!m_videoCodeclist.contains(settings.codec(), Qt::CaseInsensitive))
+    if (!m_videoCodecList.contains(settings.codec(), Qt::CaseInsensitive))
         return supportedFrameRates;
 
     // Also arbitrary framerates are supported
@@ -443,21 +526,30 @@ QList<qreal> S60VideoCaptureSession::supportedVideoFrameRates(const QVideoEncode
         }
     }
 
-    // Add also other standard framerates to the list if max is higher
+    // Add also other standard framerates to the list
     if (!supportedFrameRates.isEmpty()) {
-        if (supportedFrameRates.last() > 30)
-            supportedFrameRates.insert(1, 30);
-        if (supportedFrameRates.last() > 25)
-            supportedFrameRates.insert(1, 25);
-        if (supportedFrameRates.last() > 15)
-            supportedFrameRates.insert(1, 15);
-        if (supportedFrameRates.last() > 10)
-            supportedFrameRates.insert(1, 10);
+        if (supportedFrameRates.last() > 30.0) {
+            if (!supportedFrameRates.contains(30.0))
+                supportedFrameRates.insert(1, 30.0);
+        }
+        if (supportedFrameRates.last() > 25.0) {
+            if (!supportedFrameRates.contains(25.0))
+                supportedFrameRates.insert(1, 25.0);
+        }
+        if (supportedFrameRates.last() > 15.0) {
+            if (!supportedFrameRates.contains(15.0))
+                supportedFrameRates.insert(1, 15.0);
+        }
+        if (supportedFrameRates.last() > 10.0) {
+            if (!supportedFrameRates.contains(10))
+                supportedFrameRates.insert(1, 10.0);
+        }
     }
 
 #ifdef Q_CC_NOKIAX86 // Emulator
     supportedFrameRates << 30.0 << 25.0 << 15.0 << 10.0 << 5.0;
 #endif
+
     return supportedFrameRates;
 }
 
@@ -484,21 +576,21 @@ bool S60VideoCaptureSession::setOutputLocation(const QUrl &sink)
 
         case ERecording:
         case EPaused:
-            setError(KErrNotReady, QString("Cannot set file name while recording."));
+            setError(KErrNotReady, tr("Cannot set file name while recording."));
             return false;
 
         default:
-            setError(KErrGeneral, QString("Unexpected camera error."));
+            setError(KErrGeneral, tr("Unexpected camera error."));
             return false;
     }
 
     // Empty URL - Use default file name and path (C:\Data\Videos\video.mp4)
     if (sink.isEmpty()) {
+
         // Make sure default directory exists
         QDir videoDir(QDir::rootPath());
-        if (!videoDir.exists(KDefaultVideoPath)) {
+        if (!videoDir.exists(KDefaultVideoPath))
             videoDir.mkpath(KDefaultVideoPath);
-        }
         QString defaultFile = KDefaultVideoPath;
         defaultFile.append("\\");
         defaultFile.append(KDefaultVideoFileName);
@@ -516,9 +608,9 @@ bool S60VideoCaptureSession::setOutputLocation(const QUrl &sink)
             fullUrl.append("\\");
             fullUrl.append(QDir::toNativeSeparators(sink.path()));
 
-
         // Absolute URL
         } else {
+
             // Extract file name and path from the URL
             if (fullUrl == "file") {
                 fullUrl = QDir::toNativeSeparators(sink.path().right(sink.path().length() - 1));
@@ -544,9 +636,8 @@ bool S60VideoCaptureSession::setOutputLocation(const QUrl &sink)
 
         // Make sure absolute directory exists
         QDir videoDir(QDir::rootPath());
-        if (!videoDir.exists(directory)) {
+        if (!videoDir.exists(directory))
             videoDir.mkpath(directory);
-        }
 
         QString resolvedURL = directory;
         resolvedURL.append("\\");
@@ -554,15 +645,14 @@ bool S60VideoCaptureSession::setOutputLocation(const QUrl &sink)
         m_sink = QUrl(resolvedURL);
     }
 
-
     // State is either Initialized, OpenComplete or Prepared, Close previously opened file
-    if (m_videoRecorder) {
+    if (m_videoRecorder)
         m_videoRecorder->Close();
-    }
     else
-        setError(KErrNotReady, QString("Unexpected camera error."));
+        setError(KErrNotReady, tr("Unexpected camera error."));
 
     // Open file
+
     QString fileName = QDir::toNativeSeparators(m_sink.toString());
     TPtrC16 fileSink(reinterpret_cast<const TUint16*>(fileName.utf16()));
 
@@ -575,13 +665,13 @@ bool S60VideoCaptureSession::setOutputLocation(const QUrl &sink)
     if (m_videoRecorder) {
         // File open completes in MvruoOpenComplete
         TRAPD(err, m_videoRecorder->OpenFileL(fileSink, cameraHandle, controllerUid, formatUid));
-        setError(err, QString("Failed to initialize video recorder."));
+        setError(err, tr("Failed to initialize video recorder."));
         m_container = m_requestedContainer;
         m_captureState = EOpening;
         emit stateChanged(m_captureState);
     }
     else
-        setError(KErrNotReady, QString("Unexpected camera error."));
+        setError(KErrNotReady, tr("Unexpected camera error."));
 
     m_uncommittedSettings = true;
     return true;
@@ -594,14 +684,14 @@ QUrl S60VideoCaptureSession::outputLocation() const
 
 qint64 S60VideoCaptureSession::position()
 {
-    qint64 position = 0;
     // Update position only if recording is ongoing
     if ((m_captureState == ERecording) && m_videoRecorder) {
-        TRAPD(err, position = m_videoRecorder->DurationL().Int64() / 1000);
-        setError(err, QString("Cannot retrieve video position."));
+        // Signal will be automatically emitted of position changes
+        TRAPD(err, m_position = m_videoRecorder->DurationL().Int64() / 1000);
+        setError(err, tr("Cannot retrieve video position."));
     }
 
-    return position;
+    return m_position;
 }
 
 S60VideoCaptureSession::TVideoCaptureState S60VideoCaptureSession::state() const
@@ -617,8 +707,13 @@ bool S60VideoCaptureSession::isMuted() const
 void S60VideoCaptureSession::setMuted(const bool muted)
 {
     // CVideoRecorderUtility can mute/unmute only if not recording
-    if (m_captureState > EPrepared)
+    if (m_captureState > EPrepared) {
+        if (muted)
+            setError(KErrNotSupported, tr("Muting audio is not supported during recording."));
+        else
+            setError(KErrNotSupported, tr("Unmuting audio is not supported during recording."));
         return;
+    }
 
     // Check if request is already active
     if (muted == isMuted())
@@ -632,51 +727,75 @@ void S60VideoCaptureSession::setMuted(const bool muted)
 void S60VideoCaptureSession::commitVideoEncoderSettings()
 {
     if (m_captureState == EOpenComplete) {
+
         if (m_container != m_requestedContainer) {
             setOutputLocation(m_requestedSink);
             return;
         }
 
-        TRAPD(err, doSetCodecsL(m_audioSettings.codec(), m_videoSettings.codec()));
-        setError(err, QString("Failed to set audio/video codec."));
+        TRAPD(err, doSetCodecsL());
+        if (err) {
+            setError(err, tr("Failed to set audio or video codec."));
+            m_audioSettings.setCodec(KMimeTypeDefaultAudioCodec);
+            m_videoSettings.setCodec(KMimeTypeDefaultVideoCodec);
+        }
+
         doSetVideoResolution(m_videoSettings.resolution());
         doSetFrameRate(m_videoSettings.frameRate());
         doSetBitrate(m_videoSettings.bitRate());
 
-#ifndef S60_3X_PLATFORM
-        TRAP(err, m_videoRecorder->SetVideoQualityL(m_videoQuality));
-        if (err != KErrNotSupported) {
-            setError(err, QString("Setting video quality failed."));
-        }
-#endif // S60_3X_PLATFORM
-
         // Audio/Video EncodingMode are not supported in Symbian
 
-        TRAP(err, m_videoRecorder->SetAudioBitRateL((TInt)m_audioSettings.bitRate()));
-        if (err != KErrNotSupported)
-            setError(err, QString("Setting audio bitrate failed."));
-
 #ifndef S60_31_PLATFORM
-        if (m_audioSettings.sampleRate() != -1) {
+        if (m_audioSettings.sampleRate() != -1 && m_audioSettings.sampleRate() != 0) {
             TRAP(err, m_videoRecorder->SetAudioSampleRateL((TInt)m_audioSettings.sampleRate()));
-            if (err != KErrNotSupported)
-                setError(err, QString("Setting audio sample rate failed."));
+            if (err != KErrNotSupported) {
+                setError(err, tr("Setting audio sample rate failed."));
+            } else {
+                setError(err, tr("Setting audio sample rate is not supported."));
+                m_audioSettings.setSampleRate(KDefaultSampleRate); // Reset
+            }
         }
-
-        TRAP(err, m_videoRecorder->SetAudioChannelsL((TUint)m_audioSettings.channelCount()));
-        if (err != KErrNotSupported)
-            setError(err, QString("Setting audio channel count failed."));
 #endif // S60_31_PLATFORM
 
-        // Note difference between muted and isEnabled (true for the other means false for the other)
-        TBool isAudioEnabled = EFalse;
-        TRAP(err, isAudioEnabled = m_videoRecorder->AudioEnabledL());
-        setError(err, QString("Failure when checking if audio is enabled."));
-        if (m_muted == (bool)isAudioEnabled) {
-            TRAP(err, m_videoRecorder->SetAudioEnabledL((TBool)!m_muted));
+        TRAP(err, m_videoRecorder->SetAudioBitRateL((TInt)m_audioSettings.bitRate()));
+        if (err != KErrNotSupported) {
+            if (err == KErrArgument) {
+                setError(KErrNotSupported, tr("Requested audio bitrate is not supported or previously set codec is not supported with requested bitrate."));
+                int fallback = 16000;
+                TRAP(err, m_videoRecorder->SetAudioBitRateL(TInt(fallback)));
+                if (err == KErrNone)
+                    m_audioSettings.setBitRate(fallback);
+            } else {
+                setError(err, tr("Setting audio bitrate failed."));
+            }
+        }
+
+#ifndef S60_31_PLATFORM
+        if (m_audioSettings.channelCount() != -1) {
+            TRAP(err, m_videoRecorder->SetAudioChannelsL(TUint(m_audioSettings.channelCount())));
+            if (err != KErrNotSupported) {
+                setError(err, tr("Setting audio channel count failed."));
+            } else {
+                setError(err, tr("Setting audio channel count is not supported."));
+                m_audioSettings.setChannelCount(KDefaultChannelCount); // Reset
+            }
+        }
+#endif // S60_31_PLATFORM
+
+        TBool isAudioMuted = EFalse;
+        TRAP(err, isAudioMuted = !m_videoRecorder->AudioEnabledL());
+        if (err != KErrNotSupported && err != KErrNone)
+            setError(err, tr("Failure when checking if audio is enabled."));
+
+        if (m_muted != (bool)isAudioMuted) {
+            TRAP(err, m_videoRecorder->SetAudioEnabledL(TBool(!m_muted)));
             if (err) {
-                if (err != KErrNotSupported)
-                    setError(err, QString("Failed to mute/unmute audio."));
+                if (err != KErrNotSupported) {
+                    setError(err, tr("Failed to mute/unmute audio."));
+                } else {
+                    setError(err, tr("Muting/unmuting audio is not supported."));
+                }
             }
             else
                 emit mutedChanged(m_muted);
@@ -686,25 +805,238 @@ void S60VideoCaptureSession::commitVideoEncoderSettings()
     }
 }
 
-void S60VideoCaptureSession::videoEncoderSettings(QVideoEncoderSettings &videoSettings) const
+void S60VideoCaptureSession::queryAudioEncoderSettings()
 {
+    if (!m_videoRecorder)
+        return;
+
+    switch (m_captureState) {
+    case ENotInitialized:
+    case EInitializing:
+    case EOpening:
+    case EPreparing:
+        return;
+
+    // Possible to query settings from CVideoRecorderUtility
+    case EInitialized:
+    case EOpenComplete:
+    case EPrepared:
+    case ERecording:
+    case EPaused:
+        break;
+
+    default:
+        return;
+    }
+
+    TInt err = KErrNone;
+
+    // Codec
+    TFourCC audioCodec;
+    TRAP(err, audioCodec = m_videoRecorder->AudioTypeL());
+    if (err) {
+        if (err != KErrNotSupported)
+            setError(err, tr("Querying audio codec failed."));
+    }
+    QString codec = "";
+    foreach (TFourCC aCodec, m_audioCodecList) {
+        if (audioCodec == aCodec)
+            codec = m_audioCodecList.key(aCodec);
+    }
+    m_audioSettings.setCodec(codec);
+
+#ifndef S60_31_PLATFORM
+    // Samplerate
+    TInt sampleRate = -1;
+    TRAP(err, sampleRate = m_videoRecorder->AudioSampleRateL());
+    if (err) {
+        if (err != KErrNotSupported)
+            setError(err, tr("Querying audio sample rate failed."));
+    }
+    m_audioSettings.setSampleRate(int(sampleRate));
+#endif // S60_31_PLATFORM
+
+    // BitRate
+    TInt bitRate = -1;
+    TRAP(err, bitRate = m_videoRecorder->AudioBitRateL());
+    if (err) {
+        if (err != KErrNotSupported)
+            setError(err, tr("Querying audio bitrate failed."));
+    }
+    m_audioSettings.setBitRate(int(bitRate));
+
+#ifndef S60_31_PLATFORM
+    // ChannelCount
+    TUint channelCount = 0;
+    TRAP(err, channelCount = m_videoRecorder->AudioChannelsL());
+    if (err) {
+        if (err != KErrNotSupported)
+            setError(err, tr("Querying audio channel count failed."));
+    }
+    if (channelCount != 0)
+        m_audioSettings.setChannelCount(int(channelCount));
+    else
+        m_audioSettings.setChannelCount(-1);
+#endif // S60_31_PLATFORM
+
+    // EncodingMode
+    m_audioSettings.setEncodingMode(QtMultimediaKit::ConstantQualityEncoding);
+
+    // IsMuted
+    TBool isEnabled = ETrue;
+    TRAP(err, isEnabled = m_videoRecorder->AudioEnabledL());
+    if (err) {
+        if (err != KErrNotSupported)
+            setError(err, tr("Querying whether audio is muted failed."));
+    }
+    m_muted = bool(!isEnabled);
+}
+
+void S60VideoCaptureSession::queryVideoEncoderSettings()
+{
+    if (!m_videoRecorder)
+        return;
+
+    switch (m_captureState) {
+    case ENotInitialized:
+    case EInitializing:
+    case EOpening:
+    case EPreparing:
+        return;
+
+    // Possible to query settings from CVideoRecorderUtility
+    case EInitialized:
+    case EOpenComplete:
+    case EPrepared:
+    case ERecording:
+    case EPaused:
+        break;
+
+    default:
+        return;
+    }
+
+    TInt err = KErrNone;
+
+    // Codec
+    const TDesC8 &videoMimeType = m_videoRecorder->VideoFormatMimeType();
+    QString videoMimeTypeString = "";
+    if (videoMimeType.Length() > 0) {
+        // First convert the 8-bit descriptor to Unicode
+        HBufC16* videoCodec;
+        videoCodec = CnvUtfConverter::ConvertToUnicodeFromUtf8L(videoMimeType);
+        CleanupStack::PushL(videoCodec);
+
+        // Then deep copy QString from that
+        videoMimeTypeString = QString::fromUtf16(videoCodec->Ptr(), videoCodec->Length());
+        m_videoSettings.setCodec(videoMimeTypeString);
+
+        CleanupStack::PopAndDestroy(videoCodec);
+    }
+
+    // Resolution
+    TSize symbianResolution;
+    TRAP(err, m_videoRecorder->GetVideoFrameSizeL(symbianResolution));
+    if (err) {
+        if (err != KErrNotSupported)
+            setError(err, tr("Querying video resolution failed."));
+    }
+    QSize resolution = QSize(symbianResolution.iWidth, symbianResolution.iHeight);
+    m_videoSettings.setResolution(resolution);
+
+    // FrameRate
+    TReal32 frameRate = 0;
+    TRAP(err, frameRate = m_videoRecorder->VideoFrameRateL());
+    if (err) {
+        if (err != KErrNotSupported)
+            setError(err, tr("Querying video framerate failed."));
+    }
+    m_videoSettings.setFrameRate(qreal(frameRate));
+
+    // BitRate
+    TInt bitRate = -1;
+    TRAP(err, bitRate = m_videoRecorder->VideoBitRateL());
+    if (err) {
+        if (err != KErrNotSupported)
+            setError(err, tr("Querying video bitrate failed."));
+    }
+    m_videoSettings.setBitRate(int(bitRate));
+
+    // EncodingMode
+    m_audioSettings.setEncodingMode(QtMultimediaKit::ConstantQualityEncoding);
+}
+
+void S60VideoCaptureSession::videoEncoderSettings(QVideoEncoderSettings &videoSettings)
+{
+    switch (m_captureState) {
+    // CVideoRecorderUtility, return requested settings
+    case ENotInitialized:
+    case EInitializing:
+    case EInitialized:
+    case EOpening:
+    case EOpenComplete:
+    case EPreparing:
+        break;
+
+    // Possible to query settings from CVideoRecorderUtility
+    case EPrepared:
+    case ERecording:
+    case EPaused:
+        queryVideoEncoderSettings();
+        break;
+
+    default:
+        videoSettings = QVideoEncoderSettings();
+        setError(KErrGeneral, tr("Unexpected video error."));
+        return;
+    }
+
     videoSettings = m_videoSettings;
 }
 
-void S60VideoCaptureSession::audioEncoderSettings(QAudioEncoderSettings &audioSettings) const
+void S60VideoCaptureSession::audioEncoderSettings(QAudioEncoderSettings &audioSettings)
 {
+    switch (m_captureState) {
+    // CVideoRecorderUtility, return requested settings
+    case ENotInitialized:
+    case EInitializing:
+    case EInitialized:
+    case EOpening:
+    case EOpenComplete:
+    case EPreparing:
+        break;
+
+    // Possible to query settings from CVideoRecorderUtility
+    case EPrepared:
+    case ERecording:
+    case EPaused:
+        queryAudioEncoderSettings();
+        break;
+
+    default:
+        audioSettings = QAudioEncoderSettings();
+        setError(KErrGeneral, tr("Unexpected video error."));
+        return;
+    }
+
     audioSettings = m_audioSettings;
+}
+
+void S60VideoCaptureSession::validateRequestedCodecs()
+{
+    if (!m_audioCodecList.contains(m_audioSettings.codec())) {
+        m_audioSettings.setCodec(KMimeTypeDefaultAudioCodec);
+        setError(KErrNotSupported, tr("Currently selected audio codec is not supported by the platform."));
+    }
+    if (!m_videoCodecList.contains(m_videoSettings.codec())) {
+        m_videoSettings.setCodec(KMimeTypeDefaultVideoCodec);
+        setError(KErrNotSupported, tr("Currently selected video codec is not supported by the platform."));
+    }
 }
 
 void S60VideoCaptureSession::setVideoCaptureQuality(const QtMultimediaKit::EncodingQuality quality,
                                                     const VideoQualityDefinition mode)
 {
-#ifndef S60_3X_PLATFORM // S60 5.0 or later
-    Q_UNUSED(mode);
-    m_videoQuality = quality * KSymbianImageQualityCoefficient;
-    if (m_videoQuality == 0)
-        m_videoQuality = 25;
-#else // S60 3.1 or 3.2
     // Sensible presets
     switch (mode) {
         case ENoVideoQuality:
@@ -720,7 +1052,7 @@ void S60VideoCaptureSession::setVideoCaptureQuality(const QtMultimediaKit::Encod
                 m_videoSettings.setFrameRate(15);
                 m_videoSettings.setBitRate(64000);
             } else if (quality == QtMultimediaKit::NormalQuality) {
-                m_videoSettings.setResolution(QSize(160,120));
+                m_videoSettings.setResolution(QSize(176,144));
                 m_videoSettings.setFrameRate(15);
                 m_videoSettings.setBitRate(128000);
             } else if (quality == QtMultimediaKit::HighQuality) {
@@ -728,9 +1060,16 @@ void S60VideoCaptureSession::setVideoCaptureQuality(const QtMultimediaKit::Encod
                 m_videoSettings.setFrameRate(15);
                 m_videoSettings.setBitRate(384000);
             } else if (quality == QtMultimediaKit::VeryHighQuality) {
-                m_videoSettings.setResolution(QSize(640,480));
+                if (m_cameraEngine && m_cameraEngine->CurrentCameraIndex() == 0)
+                    m_videoSettings.setResolution(QSize(640,480)); // Primary camera
+                else
+                    m_videoSettings.setResolution(QSize(352,288)); // Other cameras
                 m_videoSettings.setFrameRate(15);
                 m_videoSettings.setBitRate(2000000);
+            } else {
+                m_videoSettings.setQuality(QtMultimediaKit::NormalQuality);
+                setError(KErrNotSupported, tr("Unsupported video quality."));
+                return;
             }
             break;
         case EVideoQualityAndResolution:
@@ -749,6 +1088,10 @@ void S60VideoCaptureSession::setVideoCaptureQuality(const QtMultimediaKit::Encod
             } else if (quality == QtMultimediaKit::VeryHighQuality) {
                 m_videoSettings.setFrameRate(15);
                 m_videoSettings.setBitRate(2000000);
+            } else {
+                m_videoSettings.setQuality(QtMultimediaKit::NormalQuality);
+                setError(KErrNotSupported, tr("Unsupported video quality."));
+                return;
             }
             break;
         case EVideoQualityAndFrameRate:
@@ -759,14 +1102,21 @@ void S60VideoCaptureSession::setVideoCaptureQuality(const QtMultimediaKit::Encod
                 m_videoSettings.setResolution(QSize(176,144));
                 m_videoSettings.setBitRate(64000);
             } else if (quality == QtMultimediaKit::NormalQuality) {
-                m_videoSettings.setResolution(QSize(160,120));
+                m_videoSettings.setResolution(QSize(176,144));
                 m_videoSettings.setBitRate(128000);
             } else if (quality == QtMultimediaKit::HighQuality) {
                 m_videoSettings.setResolution(QSize(352,288));
                 m_videoSettings.setBitRate(384000);
             } else if (quality == QtMultimediaKit::VeryHighQuality) {
-                m_videoSettings.setResolution(QSize(640,480));
+                if (m_cameraEngine && m_cameraEngine->CurrentCameraIndex() == 0)
+                    m_videoSettings.setResolution(QSize(640,480)); // Primary camera
+                else
+                    m_videoSettings.setResolution(QSize(352,288)); // Other cameras
                 m_videoSettings.setBitRate(2000000);
+            } else {
+                m_videoSettings.setQuality(QtMultimediaKit::NormalQuality);
+                setError(KErrNotSupported, tr("Unsupported video quality."));
+                return;
             }
             break;
         case EVideoQualityAndBitRate:
@@ -777,57 +1127,80 @@ void S60VideoCaptureSession::setVideoCaptureQuality(const QtMultimediaKit::Encod
                 m_videoSettings.setResolution(QSize(176,144));
                 m_videoSettings.setFrameRate(15);
             } else if (quality == QtMultimediaKit::NormalQuality) {
-                m_videoSettings.setResolution(QSize(160,120));
+                m_videoSettings.setResolution(QSize(176,144));
                 m_videoSettings.setFrameRate(15);
             } else if (quality == QtMultimediaKit::HighQuality) {
                 m_videoSettings.setResolution(QSize(352,288));
                 m_videoSettings.setFrameRate(15);
             } else if (quality == QtMultimediaKit::VeryHighQuality) {
-                m_videoSettings.setResolution(QSize(640,480));
+                if (m_cameraEngine && m_cameraEngine->CurrentCameraIndex() == 0)
+                    m_videoSettings.setResolution(QSize(640,480)); // Primary camera
+                else
+                    m_videoSettings.setResolution(QSize(352,288)); // Other cameras
                 m_videoSettings.setFrameRate(15);
+            } else {
+                m_videoSettings.setQuality(QtMultimediaKit::NormalQuality);
+                setError(KErrNotSupported, tr("Unsupported video quality."));
+                return;
             }
             break;
         case EVideoQualityAndResolutionAndBitRate:
-            if (quality == QtMultimediaKit::VeryLowQuality)
+            if (quality == QtMultimediaKit::VeryLowQuality) {
                 m_videoSettings.setFrameRate(10);
-            else if (quality == QtMultimediaKit::LowQuality)
+            } else if (quality == QtMultimediaKit::LowQuality) {
                 m_videoSettings.setFrameRate(15);
-            else if (quality == QtMultimediaKit::NormalQuality)
+            } else if (quality == QtMultimediaKit::NormalQuality) {
                 m_videoSettings.setFrameRate(15);
-            else if (quality == QtMultimediaKit::HighQuality)
+            } else if (quality == QtMultimediaKit::HighQuality) {
                 m_videoSettings.setFrameRate(15);
-            else if (quality == QtMultimediaKit::VeryHighQuality)
+            } else if (quality == QtMultimediaKit::VeryHighQuality) {
                 m_videoSettings.setFrameRate(15);
+            } else {
+                m_videoSettings.setQuality(QtMultimediaKit::NormalQuality);
+                setError(KErrNotSupported, tr("Unsupported video quality."));
+                return;
+            }
             break;
         case EVideoQualityAndResolutionAndFrameRate:
-            if (quality == QtMultimediaKit::VeryLowQuality)
+            if (quality == QtMultimediaKit::VeryLowQuality) {
                 m_videoSettings.setBitRate(64000);
-            else if (quality == QtMultimediaKit::LowQuality)
+            } else if (quality == QtMultimediaKit::LowQuality) {
                 m_videoSettings.setBitRate(64000);
-            else if (quality == QtMultimediaKit::NormalQuality)
+            } else if (quality == QtMultimediaKit::NormalQuality) {
                 m_videoSettings.setBitRate(128000);
-            else if (quality == QtMultimediaKit::HighQuality)
+            } else if (quality == QtMultimediaKit::HighQuality) {
                 m_videoSettings.setBitRate(384000);
-            else if (quality == QtMultimediaKit::VeryHighQuality)
+            } else if (quality == QtMultimediaKit::VeryHighQuality) {
                 m_videoSettings.setBitRate(2000000);
+            } else {
+                m_videoSettings.setQuality(QtMultimediaKit::NormalQuality);
+                setError(KErrNotSupported, tr("Unsupported video quality."));
+                return;
+            }
             break;
         case EVideoQualityAndFrameRateAndBitRate:
-            if (quality == QtMultimediaKit::VeryLowQuality)
+            if (quality == QtMultimediaKit::VeryLowQuality) {
                 m_videoSettings.setResolution(QSize(128,96));
-            else if (quality == QtMultimediaKit::LowQuality)
+            } else if (quality == QtMultimediaKit::LowQuality) {
                 m_videoSettings.setResolution(QSize(176,144));
-            else if (quality == QtMultimediaKit::NormalQuality)
-                m_videoSettings.setResolution(QSize(160,120));
-            else if (quality == QtMultimediaKit::HighQuality)
+            } else if (quality == QtMultimediaKit::NormalQuality) {
+                m_videoSettings.setResolution(QSize(176,144));
+            } else if (quality == QtMultimediaKit::HighQuality) {
                 m_videoSettings.setResolution(QSize(352,288));
-            else if (quality == QtMultimediaKit::VeryHighQuality)
-                m_videoSettings.setResolution(QSize(640,480));
+            } else if (quality == QtMultimediaKit::VeryHighQuality) {
+                if (m_cameraEngine && m_cameraEngine->CurrentCameraIndex() == 0)
+                    m_videoSettings.setResolution(QSize(640,480)); // Primary camera
+                else
+                    m_videoSettings.setResolution(QSize(352,288)); // Other cameras
+            } else {
+                m_videoSettings.setQuality(QtMultimediaKit::NormalQuality);
+                setError(KErrNotSupported, tr("Unsupported video quality."));
+                return;
+            }
             break;
     }
-#endif // S60_3X_PLATFORM
 
     m_videoSettings.setQuality(quality);
-
     m_uncommittedSettings = true;
 }
 
@@ -840,47 +1213,51 @@ void S60VideoCaptureSession::setAudioCaptureQuality(const QtMultimediaKit::Encod
             switch (quality) {
                 case QtMultimediaKit::VeryLowQuality:
                     m_audioSettings.setBitRate(16000);
-                    m_audioSettings.setSampleRate(8000);
+                    m_audioSettings.setSampleRate(-1);
                     break;
                 case QtMultimediaKit::LowQuality:
-                    m_audioSettings.setBitRate(32000);
-                    m_audioSettings.setSampleRate(16000);
+                    m_audioSettings.setBitRate(16000);
+                    m_audioSettings.setSampleRate(-1);
                     break;
                 case QtMultimediaKit::NormalQuality:
-                    m_audioSettings.setBitRate(64000);
-                    m_audioSettings.setSampleRate(22050);
+                    m_audioSettings.setBitRate(32000);
+                    m_audioSettings.setSampleRate(-1);
                     break;
                 case QtMultimediaKit::HighQuality:
-                    m_audioSettings.setBitRate(128000);
-                    m_audioSettings.setSampleRate(44100);
+                    m_audioSettings.setBitRate(64000);
+                    m_audioSettings.setSampleRate(-1);
                     break;
                 case QtMultimediaKit::VeryHighQuality:
-                    m_audioSettings.setBitRate(256000);
-                    m_audioSettings.setSampleRate(48000);
+                    m_audioSettings.setBitRate(64000);
+                    m_audioSettings.setSampleRate(-1);
                     break;
                 default:
-                    setError(KErrGeneral, QString("Unsupported quality."));
+                    m_audioSettings.setQuality(QtMultimediaKit::NormalQuality);
+                    setError(KErrNotSupported, tr("Unsupported audio quality."));
+                    return;
             }
             break;
         case EAudioQualityAndBitRate:
             switch (quality) {
                 case QtMultimediaKit::VeryLowQuality:
-                    m_audioSettings.setSampleRate(8000);
+                    m_audioSettings.setSampleRate(-1);
                     break;
                 case QtMultimediaKit::LowQuality:
-                    m_audioSettings.setSampleRate(16000);
+                    m_audioSettings.setSampleRate(-1);
                     break;
                 case QtMultimediaKit::NormalQuality:
-                    m_audioSettings.setSampleRate(22050);
+                    m_audioSettings.setSampleRate(-1);
                     break;
                 case QtMultimediaKit::HighQuality:
-                    m_audioSettings.setSampleRate(44100);
+                    m_audioSettings.setSampleRate(-1);
                     break;
                 case QtMultimediaKit::VeryHighQuality:
-                    m_audioSettings.setSampleRate(48000);
+                    m_audioSettings.setSampleRate(-1);
                     break;
                 default:
-                    setError(KErrGeneral, QString("Unsupported quality."));
+                    m_audioSettings.setQuality(QtMultimediaKit::NormalQuality);
+                    setError(KErrNotSupported, tr("Unsupported audio quality."));
+                    return;
             }
             break;
         case EAudioQualityAndSampleRate:
@@ -889,19 +1266,21 @@ void S60VideoCaptureSession::setAudioCaptureQuality(const QtMultimediaKit::Encod
                     m_audioSettings.setBitRate(16000);
                     break;
                 case QtMultimediaKit::LowQuality:
-                    m_audioSettings.setBitRate(32000);
+                    m_audioSettings.setBitRate(16000);
                     break;
                 case QtMultimediaKit::NormalQuality:
-                    m_audioSettings.setBitRate(64000);
+                    m_audioSettings.setBitRate(32000);
                     break;
                 case QtMultimediaKit::HighQuality:
-                    m_audioSettings.setBitRate(128000);
+                    m_audioSettings.setBitRate(64000);
                     break;
                 case QtMultimediaKit::VeryHighQuality:
-                    m_audioSettings.setBitRate(256000);
+                    m_audioSettings.setBitRate(64000);
                     break;
                 default:
-                    setError(KErrGeneral, QString("Unsupported quality."));
+                    m_audioSettings.setQuality(QtMultimediaKit::NormalQuality);
+                    setError(KErrNotSupported, tr("Unsupported audio quality."));
+                    return;
             }
             break;
         case ENoAudioQuality:
@@ -909,7 +1288,8 @@ void S60VideoCaptureSession::setAudioCaptureQuality(const QtMultimediaKit::Encod
             break;
 
         default:
-            setError(KErrGeneral, QString("Unexpected camera error."));
+            setError(KErrGeneral, tr("Unexpected camera error."));
+            return;
     }
 
     m_audioSettings.setQuality(quality);
@@ -918,12 +1298,11 @@ void S60VideoCaptureSession::setAudioCaptureQuality(const QtMultimediaKit::Encod
 
 int S60VideoCaptureSession::initializeVideoRecording()
 {
-    if (m_error) {
+    if (m_error)
         return m_error;
-    }
 
     TRAPD(symbianError, doInitializeVideoRecorderL());
-    setError(symbianError, QString("Failed to initialize video recorder."));
+    setError(symbianError, tr("Failed to initialize video recorder."));
 
     return symbianError;
 }
@@ -932,11 +1311,12 @@ void S60VideoCaptureSession::releaseVideoRecording()
 {
     if (m_captureState >= ERecording) {
         m_videoRecorder->Stop();
+        if (m_durationTimer->isActive())
+            m_durationTimer->stop();
     }
 
-    if (m_captureState >= EInitialized) {
+    if (m_captureState >= EInitialized)
         m_videoRecorder->Close();
-    }
 
     // Reset state
     m_captureState = ENotInitialized;
@@ -955,12 +1335,7 @@ void S60VideoCaptureSession::releaseVideoRecording()
 void S60VideoCaptureSession::startRecording()
 {
     if (m_error) {
-        setError(m_error, QString("Unexpected recording error."));
-        return;
-    }
-
-    if (!m_cameraStarted) {
-        setError(KErrNotReady, QString("Camera is not started."));
+        setError(m_error, tr("Unexpected recording error."));
         return;
     }
 
@@ -968,9 +1343,8 @@ void S60VideoCaptureSession::startRecording()
         case ENotInitialized:
         case EInitializing:
         case EInitialized:
-            if (m_captureState == EInitialized) {
+            if (m_captureState == EInitialized)
                 setOutputLocation(m_requestedSink);
-            }
             m_startAfterPrepareComplete = true;
             return;
 
@@ -981,23 +1355,16 @@ void S60VideoCaptureSession::startRecording()
             return;
         case EOpenComplete:
         case EPrepared:
-            if (m_captureState == EPrepared && !m_uncommittedSettings) {
+            if (m_captureState == EPrepared && !m_uncommittedSettings)
                 break;
-            }
 
             // Revert state internally, since logically applying settings means going
             // from OpenComplete ==> Preparing ==> Prepared.
             m_captureState = EOpenComplete;
-            commitVideoEncoderSettings();
+            m_startAfterPrepareComplete = true;
 
-            // Start preparing
-            m_captureState = EPreparing;
-            emit stateChanged(m_captureState);
-
-            if (m_cameraEngine->IsCameraReady()) {
-                m_startAfterPrepareComplete = true;
-                m_videoRecorder->Prepare();
-            }
+            // Commit settings and prepare with them
+            applyAllSettings();
             return;
         case ERecording:
             // Discard
@@ -1007,14 +1374,19 @@ void S60VideoCaptureSession::startRecording()
             break;
 
         default:
-            setError(KErrGeneral, QString("Unexpected camera error."));
+            setError(KErrGeneral, tr("Unexpected camera error."));
             return;
     }
 
     // State should now be either Prepared with no Uncommitted Settings or Paused
 
+    if (!m_cameraStarted) {
+        m_startAfterPrepareComplete = true;
+        return;
+    }
+
     if (m_cameraEngine && !m_cameraEngine->IsCameraReady()) {
-        setError(KErrNotReady, QString("Camera not ready to start video recording."));
+        setError(KErrNotReady, tr("Camera not ready to start video recording."));
         return;
     }
 
@@ -1022,9 +1394,15 @@ void S60VideoCaptureSession::startRecording()
         m_videoRecorder->Record();
         m_captureState = ERecording;
         emit stateChanged(m_captureState);
+        m_durationTimer->start();
+
+        // Reset all flags
+        m_openWhenReady = false;
+        m_prepareAfterOpenComplete = false;
+        m_startAfterPrepareComplete = false;
+    } else {
+        setError(KErrNotReady, tr("Unexpected camera error."));
     }
-    else
-        setError(KErrNotReady, QString("Unexpected camera error."));
 }
 
 void S60VideoCaptureSession::pauseRecording()
@@ -1032,13 +1410,19 @@ void S60VideoCaptureSession::pauseRecording()
     if (m_captureState == ERecording) {
         if (m_videoRecorder) {
             TRAPD(err, m_videoRecorder->PauseL());
-            setError(err, QString("Pausing video recording failed."));
+            setError(err, tr("Pausing video recording failed."));
             m_captureState = EPaused;
             emit stateChanged(m_captureState);
+            if (m_durationTimer->isActive())
+                m_durationTimer->stop();
+
+            // Notify last duration
+            TRAP(err, m_position = m_videoRecorder->DurationL().Int64() / 1000);
+            setError(err, tr("Cannot retrieve video position."));
+            emit positionChanged(m_position);
         }
         else
-            setError(KErrNotReady, QString("Unexpected camera error."));
-
+            setError(KErrNotReady, tr("Unexpected camera error."));
     }
 }
 
@@ -1051,24 +1435,30 @@ void S60VideoCaptureSession::stopRecording(const bool reInitialize)
         m_videoRecorder->Stop();
         m_videoRecorder->Close();
 
+        // Notify muting is disabled if needed
+        if (m_muted)
+            emit mutedChanged(false);
+
         m_captureState = ENotInitialized;
         emit stateChanged(m_captureState);
 
+        if (m_durationTimer->isActive())
+            m_durationTimer->stop();
+
         // VideoRecording will be re-initialized unless explicitly requested not to do so
         if (reInitialize) {
-            if (m_cameraEngine->IsCameraReady()) {
+            if (m_cameraEngine->IsCameraReady())
                 initializeVideoRecording();
-            }
         }
     }
     else
-        setError(KErrNotReady, QString("Unexpected camera error."));
+        setError(KErrNotReady, tr("Unexpected camera error."));
 }
 
 void S60VideoCaptureSession::updateVideoCaptureContainers()
 {
     TRAPD(err, doUpdateVideoCaptureContainersL());
-    setError(err, QString("Failed to gather video container information."));
+    setError(err, tr("Failed to gather video container information."));
 }
 
 void S60VideoCaptureSession::doUpdateVideoCaptureContainersL()
@@ -1113,6 +1503,7 @@ void S60VideoCaptureSession::doUpdateVideoCaptureContainersL()
 
     // Find the first controller with at least one record format available
     for (TInt index = 0; index < controllers.Count(); ++index) {
+
         m_videoControllerMap.insert(controllers[index]->Uid().iUid, QHash<TInt,VideoFormatData>());
 
         const RMMFFormatImplInfoArray& recordFormats = controllers[index]->RecordFormats();
@@ -1132,7 +1523,6 @@ void S60VideoCaptureSession::doUpdateVideoCaptureContainersL()
 
             m_videoControllerMap[controllers[index]->Uid().iUid].insert(recordFormats[j]->Uid().iUid, formatData);
         }
-
     }
 
     CleanupStack::PopAndDestroy(&controllers);
@@ -1166,12 +1556,12 @@ void S60VideoCaptureSession::selectController(const QString &format,
 
 QStringList S60VideoCaptureSession::supportedVideoCaptureCodecs()
 {
-    return m_videoCodeclist;
+    return m_videoCodecList;
 }
 
 QStringList S60VideoCaptureSession::supportedAudioCaptureCodecs()
 {
-    QStringList keys = m_audioCodeclist.keys();
+    QStringList keys = m_audioCodecList.keys();
     keys.sort();
     return keys;
 }
@@ -1182,7 +1572,7 @@ QList<int> S60VideoCaptureSession::supportedSampleRates(const QAudioEncoderSetti
 
     TRAPD(err, rates = doGetSupportedSampleRatesL(settings, continuous));
     if (err != KErrNotSupported)
-        setError(err, QString("Failed to query information of supported sample rates."));
+        setError(err, tr("Failed to query information of supported sample rates."));
 
     return rates;
 }
@@ -1196,6 +1586,7 @@ QList<int> S60VideoCaptureSession::doGetSupportedSampleRatesL(const QAudioEncode
     CleanupClosePushL(supportedSampleRates);
 
     if (!settings.codec().isEmpty()) {
+
         TFourCC currentAudioCodec;
         currentAudioCodec = m_videoRecorder->AudioTypeL();
 
@@ -1213,9 +1604,8 @@ QList<int> S60VideoCaptureSession::doGetSupportedSampleRatesL(const QAudioEncode
     else
         m_videoRecorder->GetSupportedAudioSampleRatesL(supportedSampleRates);
 
-    for (int i = 0; i < supportedSampleRates.Count(); ++i) {
-        sampleRates.append((int)supportedSampleRates[i]);
-    }
+    for (int i = 0; i < supportedSampleRates.Count(); ++i)
+        sampleRates.append(int(supportedSampleRates[i]));
 
     CleanupStack::PopAndDestroy(); // RArray<TUint> supportedSampleRates
 #else // S60 3.1 Platform
@@ -1254,22 +1644,39 @@ void S60VideoCaptureSession::setAudioChannelCount(const int channelCount)
 
 void S60VideoCaptureSession::setVideoCaptureCodec(const QString &codecName)
 {
-    if (codecName.isEmpty() || codecName == m_videoSettings.codec())
+    if (codecName == m_videoSettings.codec())
         return;
 
-    m_videoSettings.setCodec(codecName);
+    if (codecName.isEmpty())
+        m_videoSettings.setCodec(KMimeTypeDefaultVideoCodec); // Use default
+    else
+        m_videoSettings.setCodec(codecName);
 
     m_uncommittedSettings = true;
 }
 
 void S60VideoCaptureSession::setAudioCaptureCodec(const QString &codecName)
 {
-    if (codecName.isEmpty() || codecName == m_audioSettings.codec())
+    if (codecName == m_audioSettings.codec())
         return;
 
-    m_audioSettings.setCodec(codecName);
-
-    m_uncommittedSettings = true;
+    if (codecName.isEmpty()) {
+        m_audioSettings.setCodec(KMimeTypeDefaultAudioCodec); // Use default
+    } else {
+        // If information of supported codecs is already available check that
+        // given codec is supported
+        if (m_captureState >= EOpenComplete) {
+            if (m_audioCodecList.contains(codecName)) {
+                m_audioSettings.setCodec(codecName);
+                m_uncommittedSettings = true;
+            } else {
+                setError(KErrNotSupported, tr("Requested audio codec is not supported"));
+            }
+        } else {
+            m_audioSettings.setCodec(codecName);
+            m_uncommittedSettings = true;
+        }
+    }
 }
 
 QString S60VideoCaptureSession::videoCaptureCodecDescription(const QString &codecName)
@@ -1287,24 +1694,90 @@ QString S60VideoCaptureSession::videoCaptureCodecDescription(const QString &code
     return codecDescription;
 }
 
-void S60VideoCaptureSession::doSetCodecsL(const QString &aCodec, const QString &vCodec)
+void S60VideoCaptureSession::doSetCodecsL()
 {
+    // Determine Profile and Level for the video codec if needed
+    // (MimeType/Profile-level-id contains "profile" if profile/level info is available)
+    if (!m_videoSettings.codec().contains(QString("profile"), Qt::CaseInsensitive))
+        m_videoSettings.setCodec(determineProfileAndLevel());
+
     if (m_videoRecorder) {
         TPtrC16 str(reinterpret_cast<const TUint16*>(m_videoSettings.codec().utf16()));
         HBufC8* videoCodec(NULL);
         videoCodec = CnvUtfConverter::ConvertFromUnicodeToUtf8L(str);
         CleanupStack::PushL(videoCodec);
 
-        TFourCC audioCodec = m_audioCodeclist[m_audioSettings.codec()];
+        TFourCC audioCodec = m_audioCodecList[m_audioSettings.codec()];
 
-        m_videoRecorder->SetVideoTypeL(*videoCodec);
+        TInt vErr = KErrNone;
+        TInt aErr = KErrNone;
+        TRAP(vErr, m_videoRecorder->SetVideoTypeL(*videoCodec));
+        TRAP(aErr, m_videoRecorder->SetAudioTypeL(audioCodec));
 
-        m_videoRecorder->SetAudioTypeL(audioCodec);
+        User::LeaveIfError(vErr);
+        User::LeaveIfError(aErr);
 
         CleanupStack::PopAndDestroy(videoCodec);
     }
     else
-        setError(KErrNotReady, QString("Unexpected camera error."));
+        setError(KErrNotReady, tr("Unexpected camera error."));
+}
+
+QString S60VideoCaptureSession::determineProfileAndLevel()
+{
+    QString determinedMimeType = m_videoSettings.codec();
+
+    // H.263
+    if (determinedMimeType.contains(QString("video/H263-2000"), Qt::CaseInsensitive)) {
+        if ((m_videoSettings.resolution().width() * m_videoSettings.resolution().height()) > (176*144)) {
+            if (m_videoSettings.frameRate() > 15.0)
+                determinedMimeType.append("; profile=0; level=20");
+            else
+                determinedMimeType.append("; profile=0; level=40");
+        } else {
+            if (m_videoSettings.bitRate() > 64000)
+                determinedMimeType.append("; profile=0; level=45");
+            else
+                determinedMimeType.append("; profile=0; level=10");
+        }
+
+    // MPEG-4
+    } else if (determinedMimeType.contains(QString("video/mp4v-es"), Qt::CaseInsensitive)) {
+        if ((m_videoSettings.resolution().width() * m_videoSettings.resolution().height()) > (720*480)) {
+            determinedMimeType.append("; profile-level-id=6");
+        } else if ((m_videoSettings.resolution().width() * m_videoSettings.resolution().height()) > (640*480)) {
+            determinedMimeType.append("; profile-level-id=5");
+        } else if ((m_videoSettings.resolution().width() * m_videoSettings.resolution().height()) > (352*288)) {
+            determinedMimeType.append("; profile-level-id=4");
+        } else if ((m_videoSettings.resolution().width() * m_videoSettings.resolution().height()) > (176*144)) {
+            if (m_videoSettings.frameRate() > 15.0)
+                determinedMimeType.append("; profile-level-id=3");
+            else
+                determinedMimeType.append("; profile-level-id=2");
+        } else {
+            if (m_videoSettings.bitRate() > 64000)
+                determinedMimeType.append("; profile-level-id=9");
+            else
+                determinedMimeType.append("; profile-level-id=1");
+        }
+
+    // H.264
+    } else if (determinedMimeType.contains(QString("video/H264"), Qt::CaseInsensitive)) {
+        if ((m_videoSettings.resolution().width() * m_videoSettings.resolution().height()) > (640*480)) {
+            determinedMimeType.append("; profile-level-id=42801F");
+        } else if ((m_videoSettings.resolution().width() * m_videoSettings.resolution().height()) > (352*288)) {
+            determinedMimeType.append("; profile-level-id=42801E");
+        } else if ((m_videoSettings.resolution().width() * m_videoSettings.resolution().height()) > (176*144)) {
+            if (m_videoSettings.frameRate() > 15.0)
+                determinedMimeType.append("; profile-level-id=428015");
+            else
+                determinedMimeType.append("; profile-level-id=42800C");
+        } else {
+            determinedMimeType.append("; profile-level-id=42900B");
+        }
+    }
+
+    return determinedMimeType;
 }
 
 void S60VideoCaptureSession::setBitrate(const int bitrate)
@@ -1320,10 +1793,15 @@ void S60VideoCaptureSession::doSetBitrate(const int &bitrate)
         if (m_videoRecorder) {
             TRAPD(err, m_videoRecorder->SetVideoBitRateL(bitrate));
             if (err) {
-                setError(err, QString("Failed to set video bitrate."));
+                if (err == KErrNotSupported || err == KErrArgument) {
+                    setError(KErrNotSupported, tr("Requested video bitrate is not supported."));
+                    m_videoSettings.setBitRate(64000); // Reset
+                } else {
+                    setError(err, tr("Failed to set video bitrate."));
+                }
             }
         } else {
-            setError(KErrNotReady, QString("Unexpected camera error."));
+            setError(KErrNotReady, tr("Unexpected camera error."));
         }
     }
 }
@@ -1340,8 +1818,8 @@ void S60VideoCaptureSession::doSetVideoResolution(const QSize &resolution)
     TSize size((TInt)resolution.width(), (TInt)resolution.height());
 
     // Make sure resolution is not too big if main camera is not used
-    if (m_cameraEngine->currentCameraIndex() != 0) {
-        TCameraInfo *info = m_cameraEngine->cameraInfo();
+    if (m_cameraEngine->CurrentCameraIndex() != 0) {
+        TCameraInfo *info = m_cameraEngine->CameraInfo();
         if (info) {
             TInt videoResolutionCount = info->iNumVideoFrameSizesSupported;
             TSize maxCameraVideoResolution = TSize(0,0);
@@ -1358,35 +1836,37 @@ void S60VideoCaptureSession::doSetVideoResolution(const QSize &resolution)
                         maxCameraVideoResolution = checkedResolution;
                 }
                 if ((maxCameraVideoResolution.iWidth * maxCameraVideoResolution.iHeight) <
-                    (size.iWidth * size.iHeight))
+                    (size.iWidth * size.iHeight)) {
                     size = maxCameraVideoResolution;
+                    setError(KErrNotSupported, tr("Requested resolution is not supported for this camera."));
+                }
             }
             else
-                setError(KErrGeneral, QString("Could not query supported video resolutions."));
+                setError(KErrGeneral, tr("Could not query supported video resolutions."));
         }else
-            setError(KErrGeneral, QString("Could not query supported video resolutions."));
+            setError(KErrGeneral, tr("Could not query supported video resolutions."));
     }
+
     if (resolution.width() != -1 && resolution.height() != -1) {
         if (m_videoRecorder) {
             TRAPD(err, m_videoRecorder->SetVideoFrameSizeL((TSize)size));
-            if (err == KErrNotSupported) {
+            if (err == KErrNotSupported || err == KErrArgument) {
+                setError(KErrNotSupported, tr("Requested video resolution is not supported."));
                 TSize fallBack(640,480);
                 TRAPD(err, m_videoRecorder->SetVideoFrameSizeL(fallBack));
-                if (err == KErrNone)
+                if (err == KErrNone) {
                     m_videoSettings.setResolution(QSize(fallBack.iWidth,fallBack.iHeight));
-                else {
+                } else {
                     fallBack = TSize(176,144);
                     TRAPD(err, m_videoRecorder->SetVideoFrameSizeL(fallBack));
                     if (err == KErrNone)
                         m_videoSettings.setResolution(QSize(fallBack.iWidth,fallBack.iHeight));
-                    else
-                        setError(err, QString("Failed to set fallback resolution 176x144."));
                 }
+            } else {
+                setError(err, tr("Failed to set video resolution."));
             }
-            else
-                setError(err, QString("Failed to set video resolution."));
         } else {
-            setError(KErrNotReady, QString("Unexpected camera error."));
+            setError(KErrNotReady, tr("Unexpected camera error."));
         }
     }
 }
@@ -1408,23 +1888,28 @@ void S60VideoCaptureSession::doSetFrameRate(qreal rate)
             foreach (qreal fRate, list)
                 if (fRate > maxRate)
                     maxRate = fRate;
-            if (maxRate >= rate) {
+            if (maxRate >= rate && rate > 0) {
                 TRAPD(err, m_videoRecorder->SetVideoFrameRateL((TReal32)rate));
                 if (err == KErrNotSupported) {
+                    setError(KErrNotSupported, tr("Requested framerate is not supported."));
                     TReal32 fallBack = 15.0;
                     TRAPD(err, m_videoRecorder->SetVideoFrameRateL(fallBack));
                     if (err == KErrNone)
                         m_videoSettings.setFrameRate((qreal)fallBack);
-                    else
-                        setError(err, QString("Failed to set fallback framerate 15 fps."));
+                } else {
+                    if (err == KErrArgument) {
+                        setError(KErrNotSupported, tr("Requested framerate is not supported."));
+                        m_videoSettings.setFrameRate(15.0); // Reset
+                    } else {
+                        setError(err, tr("Failed to set video framerate."));
+                    }
                 }
-                else
-                    setError(err, QString("Failed to set video framerate."));
             } else {
-                setError(KErrNotSupported, QString("Framerate is not supported."));
+                setError(KErrNotSupported, tr("Requested framerate is not supported."));
+                m_videoSettings.setFrameRate(15.0); // Reset
             }
         } else {
-            setError(KErrNotReady, QString("Unexpected camera error."));
+            setError(KErrNotReady, tr("Unexpected camera error."));
         }
     }
 }
@@ -1432,7 +1917,13 @@ void S60VideoCaptureSession::doSetFrameRate(qreal rate)
 void S60VideoCaptureSession::setVideoEncodingMode(const QtMultimediaKit::EncodingMode mode)
 {
     // This has no effect as it has no support in Symbian
-    m_videoSettings.setEncodingMode(mode);
+
+    if (mode == QtMultimediaKit::ConstantQualityEncoding) {
+        m_videoSettings.setEncodingMode(mode);
+        return;
+    }
+
+    setError(KErrNotSupported, tr("Requested video encoding mode is not supported"));
 
     // m_uncommittedSettings = true;
 }
@@ -1440,70 +1931,118 @@ void S60VideoCaptureSession::setVideoEncodingMode(const QtMultimediaKit::Encodin
 void S60VideoCaptureSession::setAudioEncodingMode(const QtMultimediaKit::EncodingMode mode)
 {
     // This has no effect as it has no support in Symbian
-    m_audioSettings.setEncodingMode(mode);
+
+    if (mode == QtMultimediaKit::ConstantQualityEncoding) {
+        m_audioSettings.setEncodingMode(mode);
+        return;
+    }
+
+    setError(KErrNotSupported, tr("Requested audio encoding mode is not supported"));
 
     // m_uncommittedSettings = true;
 }
 
 void S60VideoCaptureSession::initializeVideoCaptureSettings()
 {
-    // Codecs - Use ones defined in constants if supported
-    if (m_videoCodeclist.count() > 0) {
-        if (m_videoCodeclist.contains(KMimeTypeDefaultVideoCodec, Qt::CaseInsensitive)) {
+    // Check if user has already requested some settings
+    if (m_captureSettingsSet)
+        return;
+
+    QSize resolution(-1, -1);
+    qreal frameRate(0);
+    int bitRate(-1);
+
+    if (m_cameraEngine) {
+
+        if (m_videoRecorder && m_captureState >= EInitialized) {
+
+            // Resolution
+            QList<QSize> resos = supportedVideoResolutions(NULL);
+            foreach (QSize reso, resos) {
+                if ((reso.width() * reso.height()) > (resolution.width() * resolution.height()))
+                    resolution = reso;
+            }
+
+            // Needed to query supported framerates for this codec/resolution pair
             m_videoSettings.setCodec(KMimeTypeDefaultVideoCodec);
+            m_videoSettings.setResolution(resolution);
+
+            // FrameRate
+            QList<qreal> fRates = supportedVideoFrameRates(m_videoSettings, NULL);
+            foreach (qreal rate, fRates) {
+                if (rate > frameRate)
+                    frameRate = rate;
+            }
+
+            // BitRate
+#ifdef SYMBIAN_3_PLATFORM
+            if (m_cameraEngine->CurrentCameraIndex() == 0)
+                bitRate = KBiR_H264_PLID_42801F    // 14Mbps
+            else
+                bitRate = KBiR_H264_PLID_428016    // 4Mbps
+#else // Other platforms
+            if (m_cameraEngine->CurrentCameraIndex() == 0)
+                bitRate = KBiR_MPEG4_PLID_4        // 2/4Mbps
+            else
+                bitRate = KBiR_MPEG4_PLID_3        // 384kbps
+#endif // SYMBIAN_3_PLATFORM
+
         } else {
-            if (m_videoCodeclist.size() > 0)
-                m_videoSettings.setCodec(m_videoCodeclist[m_videoCodeclist.size()-1]);
+#ifdef SYMBIAN_3_PLATFORM
+            if (m_cameraEngine->CurrentCameraIndex() == 0) {
+                // Primary camera
+                resolution = KResH264_PLID_42801F;  // 1280x720
+                frameRate = KFrR_H264_PLID_42801F;  // 30fps
+                bitRate = KBiR_H264_PLID_42801F;    // 14Mbps
+            } else {
+                // Other cameras
+                resolution = KResH264_PLID_42801E;  // 640x480
+                frameRate = KFrR_H264_PLID_428014;  // 30fps
+                bitRate = KBiR_H264_PLID_428016;    // 4Mbps
+            }
+#else // Other platforms
+            if (m_cameraEngine->CurrentCameraIndex() == 0) {
+                // Primary camera
+                resolution = KResMPEG4_PLID_4;      // 640x480
+                frameRate = KFrR_MPEG4_PLID_4;      // 15/30fps
+                bitRate = KBiR_MPEG4_PLID_4;        // 2/4Mbps
+            } else {
+                // Other cameras
+                resolution = KResMPEG4_PLID_3;      // 352x288
+                frameRate = KFrR_MPEG4;             // 15fps
+                bitRate = KBiR_MPEG4_PLID_3;        // 384kbps
+            }
+#endif // SYMBIAN_3_PLATFORM
         }
+    } else {
+#ifdef SYMBIAN_3_PLATFORM
+        resolution = KResH264_PLID_42801F;
+        frameRate = KFrR_H264_PLID_42801F;
+        bitRate = KBiR_H264_PLID_42801F;
+#else // Pre-Symbian3 Platforms
+        resolution = KResMPEG4_PLID_4;
+        frameRate = KFrR_MPEG4_PLID_4;
+        bitRate = KBiR_MPEG4_PLID_4;
+#endif // SYMBIAN_3_PLATFORM
     }
 
-    QStringList aCodecs = m_audioCodeclist.keys();
-    if (aCodecs.count() > 0) {
-        if (aCodecs.contains(KMimeTypeDefaultAudioCodec, Qt::CaseInsensitive)) {
-            m_audioSettings.setCodec(KMimeTypeDefaultAudioCodec);
-        } else {
-            if (aCodecs.size() > 0)
-                m_audioSettings.setCodec(aCodecs[0]);
-        }
-    }
+    // Set specified settings (Resolution, FrameRate and BitRate)
+    m_videoSettings.setResolution(resolution);
+    m_videoSettings.setFrameRate(frameRate);
+    m_videoSettings.setBitRate(bitRate);
 
-    // Video Settings
-    m_videoSettings.setBitRate(maximumBitRateForMimeType(m_videoSettings.codec())); // Use max supported
-    m_videoSettings.setEncodingMode(QtMultimediaKit::AverageBitRateEncoding);
+    // Video Settings: Codec, EncodingMode and Quality
+    m_videoSettings.setCodec(KMimeTypeDefaultVideoCodec);
+    m_videoSettings.setEncodingMode(QtMultimediaKit::ConstantQualityEncoding);
     m_videoSettings.setQuality(QtMultimediaKit::VeryHighQuality);
 
-    // Use maximum resolution and framerate supported
-    bool continuous = false;
-    QList<QSize> sizes = supportedVideoResolutions(m_videoSettings, &continuous);
-    QSize maxSize = QSize();
-    foreach (QSize size, sizes) {
-        if ((size.width() * size.height()) > (maxSize.width() * maxSize.height()))
-            maxSize = size;
-    }
-    m_videoSettings.setResolution(maxSize);
-
-    QList<qreal> rates = supportedVideoFrameRates(m_videoSettings, &continuous);
-    qreal maxRate = 0.0;
-    foreach (qreal rate, rates)
-        maxRate = qMax(maxRate, rate);
-    m_videoSettings.setFrameRate(maxRate);
-
     // Audio Settings
-    m_audioSettings.setEncodingMode(QtMultimediaKit::AverageBitRateEncoding);
+    m_audioSettings.setCodec(KMimeTypeDefaultAudioCodec);
     m_audioSettings.setBitRate(KDefaultBitRate);
+    m_audioSettings.setSampleRate(KDefaultSampleRate);
     m_audioSettings.setChannelCount(KDefaultChannelCount);
+    m_audioSettings.setEncodingMode(QtMultimediaKit::ConstantQualityEncoding);
     m_audioSettings.setQuality(QtMultimediaKit::VeryHighQuality);
-
-    QList<int> sampleRates = supportedSampleRates(m_audioSettings, &continuous);
-    if (sampleRates.count() > 0) {
-        if (sampleRates.indexOf(KDefaultSampleRate) != -1)
-            m_audioSettings.setSampleRate(KDefaultSampleRate);
-        else
-            m_audioSettings.setSampleRate(sampleRates[0]);
-    }
-    else
-        m_audioSettings.setSampleRate(-1); // Setting SampleRate is not supported
-
 }
 
 QSize S60VideoCaptureSession::pixelAspectRatio()
@@ -1511,9 +2050,8 @@ QSize S60VideoCaptureSession::pixelAspectRatio()
 #ifndef S60_31_PLATFORM
     TVideoAspectRatio par;
     TRAPD(err, m_videoRecorder->GetPixelAspectRatioL(par));
-    if (err) {
-        setError(err, QString("Failed to query current pixel aspect ratio."));
-    }
+    if (err)
+        setError(err, tr("Failed to query current pixel aspect ratio."));
     return QSize(par.iNumerator, par.iDenominator);
 #else // S60_31_PLATFORM
     return QSize();
@@ -1523,11 +2061,11 @@ QSize S60VideoCaptureSession::pixelAspectRatio()
 void S60VideoCaptureSession::setPixelAspectRatio(const QSize par)
 {
 #ifndef S60_31_PLATFORM
+
     const TVideoAspectRatio videoPar(par.width(), par.height());
     TRAPD(err, m_videoRecorder->SetPixelAspectRatioL(videoPar));
-    if (err) {
-        setError(err, QString("Failed to set pixel aspect ratio."));
-    }
+    if (err)
+        setError(err, tr("Failed to set pixel aspect ratio."));
 #else // S60_31_PLATFORM
     Q_UNUSED(par);
 #endif // !S60_31_PLATFORM
@@ -1539,18 +2077,16 @@ int S60VideoCaptureSession::gain()
 {
     TInt gain = 0;
     TRAPD(err, gain = m_videoRecorder->GainL());
-    if (err) {
-        setError(err, QString("Failed to query video gain."));
-    }
+    if (err)
+        setError(err, tr("Failed to query video gain."));
     return (int)gain;
 }
 
 void S60VideoCaptureSession::setGain(const int gain)
 {
     TRAPD(err, m_videoRecorder->SetGainL(gain));
-    if (err) {
-        setError(err, QString("Failed to set video gain."));
-    }
+    if (err)
+        setError(err, tr("Failed to set video gain."));
 
     m_uncommittedSettings = true;
 }
@@ -1564,7 +2100,7 @@ void S60VideoCaptureSession::setMaxClipSizeInBytes(const int size)
 {
     TRAPD(err, m_videoRecorder->SetMaxClipSizeL(size));
     if (err) {
-        setError(err, QString("Failed to set maximum video size."));
+        setError(err, tr("Failed to set maximum video size."));
     } else
         m_maxClipSize = size;
 
@@ -1580,24 +2116,28 @@ void S60VideoCaptureSession::MvruoOpenComplete(TInt aError)
         if (m_captureState == EInitializing) {
             // Dummy file open completed, initialize settings
             TRAPD(err, doPopulateAudioCodecsL());
-            setError(err, QString("Failed to gather information of supported audio codecs."));
+            setError(err, tr("Failed to gather information of supported audio codecs."));
 
             // For DevVideoRecord codecs are populated during
             // doPopulateVideoCodecsDataL()
             TRAP(err, doPopulateVideoCodecsL());
-            setError(err, QString("Failed to gather information of supported video codecs."));
+            setError(err, tr("Failed to gather information of supported video codecs."));
 #ifndef S60_DEVVIDEO_RECORDING_SUPPORTED
             // Max parameters needed to be populated, if not using DevVideoRecord
             // Otherwise done already in constructor
             doPopulateMaxVideoParameters();
-#endif
-
-            initializeVideoCaptureSettings();
+#endif // S60_DEVVIDEO_RECORDING_SUPPORTED
 
             m_captureState = EInitialized;
             emit stateChanged(m_captureState);
 
-            if (m_openWhenReady == true) {
+            // Initialize settings if not already done
+            initializeVideoCaptureSettings();
+
+            // Validate codecs to be used
+            validateRequestedCodecs();
+
+            if (m_openWhenReady || m_prepareAfterOpenComplete || m_startAfterPrepareComplete) {
                 setOutputLocation(m_requestedSink);
                 m_openWhenReady = false; // Reset
             }
@@ -1605,7 +2145,6 @@ void S60VideoCaptureSession::MvruoOpenComplete(TInt aError)
                 applyAllSettings();
                 m_commitSettingsWhenReady = false; // Reset
             }
-
             return;
 
         } else if (m_captureState == EOpening) {
@@ -1616,10 +2155,9 @@ void S60VideoCaptureSession::MvruoOpenComplete(TInt aError)
             // Prepare right away
             if (m_startAfterPrepareComplete || m_prepareAfterOpenComplete) {
                 m_prepareAfterOpenComplete = false; // Reset
-                commitVideoEncoderSettings();
-                if (m_cameraEngine->IsCameraReady()) {
-                    m_videoRecorder->Prepare();
-                }
+
+                // Commit settings and prepare with them
+                applyAllSettings();
             }
             return;
 
@@ -1629,13 +2167,16 @@ void S60VideoCaptureSession::MvruoOpenComplete(TInt aError)
             return;
 
         } else {
-            setError(KErrGeneral, QString("Unexpected camera error."));
+            setError(KErrGeneral, tr("Unexpected camera error."));
             return;
         }
     }
 
     m_videoRecorder->Close();
-    setError(aError, QString("Failure during video recorder initialization."));
+    if (aError == KErrNotFound || aError == KErrNotSupported || aError == KErrArgument)
+        setError(KErrGeneral, tr("Requested video container or controller is not supported."));
+    else
+        setError(KErrGeneral, tr("Failure during video recorder initialization."));
 }
 
 void S60VideoCaptureSession::MvruoPrepareComplete(TInt aError)
@@ -1653,6 +2194,10 @@ void S60VideoCaptureSession::MvruoPrepareComplete(TInt aError)
         m_captureState = EPrepared;
         emit stateChanged(EPrepared);
 
+        // Check the actual active settings
+        queryAudioEncoderSettings();
+        queryVideoEncoderSettings();
+
         if (m_openWhenReady == true) {
             setOutputLocation(m_requestedSink);
             m_openWhenReady = false; // Reset
@@ -1669,14 +2214,17 @@ void S60VideoCaptureSession::MvruoPrepareComplete(TInt aError)
         }
     } else {
         m_videoRecorder->Close();
-        setError(aError, QString("Failed to prepare camera for video recording."));
+        if (aError == KErrNotSupported)
+            setError(aError, tr("Camera preparation for video recording failed because of unsupported setting."));
+        else
+            setError(aError, tr("Failed to prepare camera for video recording."));
     }
 }
 
 void S60VideoCaptureSession::MvruoRecordComplete(TInt aError)
 {
     if (!m_videoRecorder) {
-        setError(KErrNotReady, QString("Unexpected camera error."));
+        setError(KErrNotReady, tr("Unexpected camera error."));
         return;
     }
 
@@ -1687,18 +2235,23 @@ void S60VideoCaptureSession::MvruoRecordComplete(TInt aError)
         if (m_captureState != ENotInitialized) {
             m_captureState = ENotInitialized;
             emit stateChanged(m_captureState);
+            if (m_durationTimer->isActive())
+                m_durationTimer->stop();
         }
 
-        if (m_cameraEngine->IsCameraReady()) {
+        if (m_cameraEngine->IsCameraReady())
             initializeVideoRecording();
-        }
     }
     m_videoRecorder->Close();
 
+    // Notify muting is disabled if needed
+    if (m_muted)
+        emit mutedChanged(false);
+
     if (aError == KErrDiskFull)
-        setError(aError, QString("Not enough space for video, recording stopped."));
+        setError(aError, tr("Not enough space for video, recording stopped."));
     else
-        setError(aError, QString("Recording stopped due to unexpected error."));
+        setError(aError, tr("Recording stopped due to unexpected error."));
 }
 
 void S60VideoCaptureSession::MvruoEvent(const TMMFEvent& aEvent)
@@ -1725,7 +2278,7 @@ void S60VideoCaptureSession::MdvroNewBuffers()
 
 void S60VideoCaptureSession::MdvroFatalError(TInt aError)
 {
-    setError(aError, QString("Unexpected camera error."));
+    setError(aError, tr("Unexpected camera error."));
 }
 
 void S60VideoCaptureSession::MdvroInitializeComplete(TInt aError)
@@ -1755,6 +2308,7 @@ void S60VideoCaptureSession::doPopulateVideoCodecsDataL()
     mDevVideoRecord->GetEncoderListL(encoders);
 
     for (int i = 0; i < encoders.Count(); ++i ) {
+
         CVideoEncoderInfo *encoderInfo = mDevVideoRecord->VideoEncoderInfoLC(encoders[i]);
 
         // Discard encoders that are not HW accelerated and do not support direct capture
@@ -1774,7 +2328,6 @@ void S60VideoCaptureSession::doPopulateVideoCodecsDataL()
         for(int x = 0; x < videoFormats.Count(); ++x) {
             QString codecMimeType = QString::fromUtf8((char *)videoFormats[x]->MimeType().Ptr(),videoFormats[x]->MimeType().Length());
 
-            //m_videoCodeclist.append(codecMimeType);
             m_videoParametersForEncoder[newIndex].mimeTypes.append(codecMimeType);
         }
 
@@ -1807,9 +2360,8 @@ QStringList S60VideoCaptureSession::supportedVideoContainers()
     for (int i = 0; i < controllers.count(); ++i) {
         foreach (VideoFormatData formatData, m_videoControllerMap[controllers[i]]) {
             for (int j = 0; j < formatData.supportedMimeTypes.count(); ++j) {
-                if (containers.contains(formatData.supportedMimeTypes[j], Qt::CaseInsensitive) == false) {
+                if (containers.contains(formatData.supportedMimeTypes[j], Qt::CaseInsensitive) == false)
                     containers.append(formatData.supportedMimeTypes[j]);
-                }
             }
         }
     }
@@ -1832,7 +2384,17 @@ void S60VideoCaptureSession::setVideoContainer(const QString &containerName)
     if (containerName == m_requestedContainer)
         return;
 
-    m_requestedContainer = containerName;
+    if (containerName.isEmpty()) {
+        m_requestedContainer = KMimeTypeDefaultContainer; // Use default
+    } else {
+        if (supportedVideoContainers().contains(containerName)) {
+            m_requestedContainer = containerName;
+        } else {
+            setError(KErrNotSupported, tr("Requested video container is not supported."));
+            m_requestedContainer = KMimeTypeDefaultContainer; // Reset to default
+        }
+    }
+
     m_uncommittedSettings = true;
 }
 
@@ -1843,32 +2405,54 @@ QString S60VideoCaptureSession::videoContainerDescription(const QString &contain
     for (int i = 0; i < encoders.count(); ++i) {
         formats = m_videoControllerMap[encoders[i]].keys();
         for (int j = 0; j < formats.count(); ++j) {
-            if (m_videoControllerMap[encoders[i]][formats[j]].supportedMimeTypes.contains(containerName, Qt::CaseInsensitive)) {
+            if (m_videoControllerMap[encoders[i]][formats[j]].supportedMimeTypes.contains(containerName, Qt::CaseInsensitive))
                 return m_videoControllerMap[encoders[i]][formats[j]].description;
-            }
         }
     }
 
     return QString();
 }
 
-
 void S60VideoCaptureSession::cameraStatusChanged(QCamera::Status status)
 {
     if (status == QCamera::ActiveStatus) {
         m_cameraStarted = true;
-        return;
-    }
-    else if (status == QCamera::UnloadedStatus)
-        releaseVideoRecording();
 
-    m_cameraStarted = false;
+        // Continue preparation or start recording if previously requested
+        if (m_captureState == EInitialized
+            && (m_openWhenReady || m_prepareAfterOpenComplete || m_startAfterPrepareComplete)) {
+            setOutputLocation(m_requestedSink);
+            m_openWhenReady = false; // Reset
+        } else if ((m_captureState == EOpenComplete || m_captureState == EPrepared)
+            && (m_prepareAfterOpenComplete || m_startAfterPrepareComplete)) {
+            startRecording();
+            m_prepareAfterOpenComplete = false; // Reset
+        }
+
+    } else if (status == QCamera::UnloadedStatus) {
+        m_cameraStarted = false;
+        releaseVideoRecording();
+    } else {
+        m_cameraStarted = false;
+    }
+}
+
+void S60VideoCaptureSession::durationTimerTriggered()
+{
+    // Update position only if recording is ongoing
+    if ((m_captureState == ERecording) && m_videoRecorder) {
+        // Signal will be automatically emitted of position changes
+        TRAPD(err, m_position = m_videoRecorder->DurationL().Int64() / 1000);
+        setError(err, tr("Cannot retrieve video position."));
+
+        emit positionChanged(m_position);
+    }
 }
 
 void S60VideoCaptureSession::doPopulateAudioCodecsL()
 {
     if (m_captureState == EInitializing) {
-        m_audioCodeclist.clear();
+        m_audioCodecList.clear();
 
         RArray<TFourCC> audioTypes;
         CleanupClosePushL(audioTypes);
@@ -1876,14 +2460,15 @@ void S60VideoCaptureSession::doPopulateAudioCodecsL()
         if (m_videoRecorder)
             m_videoRecorder->GetSupportedAudioTypesL(audioTypes);
         else
-            setError(KErrNotReady, QString("Unexpected camera error."));
+            setError(KErrNotReady, tr("Unexpected camera error."));
 
         for (TInt i = 0; i < audioTypes.Count(); i++) {
             TUint32 codec = audioTypes[i].FourCC();
+
             if (codec == KMMFFourCCCodeAMR)
-                m_audioCodeclist.insert(QString("audio/amr"), KMMFFourCCCodeAMR);
+                m_audioCodecList.insert(QString("audio/amr"), KMMFFourCCCodeAMR);
             if (codec == KMMFFourCCCodeAAC)
-                m_audioCodeclist.insert(QString("audio/aac"), KMMFFourCCCodeAAC);
+                m_audioCodecList.insert(QString("audio/aac"), KMMFFourCCCodeAAC);
         }
         CleanupStack::PopAndDestroy(&audioTypes);
     }
@@ -1892,7 +2477,7 @@ void S60VideoCaptureSession::doPopulateAudioCodecsL()
 void S60VideoCaptureSession::doPopulateVideoCodecsL()
 {
     if (m_captureState == EInitializing) {
-        m_videoCodeclist.clear();
+        m_videoCodecList.clear();
 
         CDesC8ArrayFlat* videoTypes = new (ELeave) CDesC8ArrayFlat(10);
         CleanupStack::PushL(videoTypes);
@@ -1900,7 +2485,7 @@ void S60VideoCaptureSession::doPopulateVideoCodecsL()
         if (m_videoRecorder)
             m_videoRecorder->GetSupportedVideoTypesL(*videoTypes);
         else
-            setError(KErrNotReady, QString("Unexpected camera error."));
+            setError(KErrNotReady, tr("Unexpected camera error."));
 
         for (TInt i = 0; i < videoTypes->Count(); i++) {
             TPtrC8 videoType = videoTypes->MdcaPoint(i);
@@ -1908,12 +2493,12 @@ void S60VideoCaptureSession::doPopulateVideoCodecsL()
 #ifdef S60_DEVVIDEO_RECORDING_SUPPORTED
             for (int j = 0; j < m_videoParametersForEncoder.size(); ++j) {
                 if (m_videoParametersForEncoder[j].mimeTypes.contains(codecMimeType, Qt::CaseInsensitive)) {
-                    m_videoCodeclist << codecMimeType;
+                    m_videoCodecList << codecMimeType;
                     break;
                 }
             }
 #else // CVideoRecorderUtility
-            m_videoCodeclist << codecMimeType;
+            m_videoCodecList << codecMimeType;
 #endif // S60_DEVVIDEO_RECORDING_SUPPORTED
         }
         CleanupStack::PopAndDestroy(videoTypes);
@@ -1933,10 +2518,10 @@ void S60VideoCaptureSession::doPopulateMaxVideoParameters()
     m_videoParametersForEncoder.append(MaxResolutionRatesAndTypes()); // For MPEG-4
     m_videoParametersForEncoder.append(MaxResolutionRatesAndTypes()); // For H.264
 
-    for (int i = 0; i < m_videoCodeclist.count(); ++i) {
+    for (int i = 0; i < m_videoCodecList.count(); ++i) {
 
         // Use all lower case for comparisons
-        QString codec = m_videoCodeclist[i].toLower();
+        QString codec = m_videoCodecList[i].toLower();
 
         if (codec.contains("video/h263-2000", Qt::CaseInsensitive)) {
             // H.263

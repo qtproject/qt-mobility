@@ -85,6 +85,21 @@
 */
 
 /*!
+    \enum QMessageDataComparator::LikeComparator
+
+    Defines the comparison operations that can be used to compare data elements
+    of QMessageManager objects, according to a specific relation.
+
+    LikeComparator used the same syntax as an SQL like search, namely, '_' matches
+    any single character and '%' matches zero or more characters. '\' is used to
+    escape these symbols and itself.
+
+    \value Like Represents a postive match.
+    \value NotLike Represent a negative match.
+
+*/
+
+/*!
     \enum QMessageDataComparator::MatchFlag
 
     This enum describes additional matching criteria when performing a search.

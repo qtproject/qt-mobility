@@ -1,0 +1,6 @@
+<!DOCTYPE RCC>
+<RCC version="1.0">
+<qresource>
+    <file>data/gypsymock_basic_sat.journal</file>
+</qresource>
+</RCC>

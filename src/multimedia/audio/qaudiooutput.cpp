@@ -307,9 +307,11 @@ int QAudioOutput::bytesFree() const
 }
 
 /*!
-    Returns the period size in bytes.
+    Returns the period size in bytes. This is the amount of data required each period
+    to prevent buffer underrun, and to ensure uninterrupted playback.
 
-    Note: This is the recommended write size in bytes.
+    Note: It is recommended to provide at least enough data for a full period with each
+    write operation.
 */
 
 int QAudioOutput::periodSize() const

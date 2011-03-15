@@ -144,30 +144,19 @@ void QGraphicsVideoItemPrivate::clearService()
 void QGraphicsVideoItemPrivate::updateRects()
 {
     q_ptr->prepareGeometryChange();
-
-    displayRect = rect;
-
+    QSizeF videoSize;
     if (nativeSize.isEmpty()) {
-        boundingRect = rect;
+        videoSize = rect.size();
     } else if (aspectRatioMode == Qt::IgnoreAspectRatio) {
-        boundingRect = rect;        
-    } else if (aspectRatioMode == Qt::KeepAspectRatio) {
-        QSizeF size = nativeSize;
-        size.scale(rect.size(), Qt::KeepAspectRatio);
-
-        boundingRect = QRectF(0, 0, size.width(), size.height());
-        boundingRect.moveCenter(rect.center());
-
-        displayRect = boundingRect;
-    } else if (aspectRatioMode == Qt::KeepAspectRatioByExpanding) {
-        boundingRect = rect;
-
-
-        QSizeF size = rect.size();
-        size.scale(nativeSize, Qt::KeepAspectRatioByExpanding);
-        displayRect = QRectF(0, 0, size.width(), size.height());
-        displayRect.moveCenter(rect.center());
+        videoSize = rect.size();
+    } else {
+        // KeepAspectRatio or KeepAspectRatioByExpanding
+        videoSize = nativeSize;
+        videoSize.scale(rect.size(), aspectRatioMode);
     }
+    displayRect = QRectF(QPointF(0, 0), videoSize);
+    displayRect.moveCenter(rect.center());
+    boundingRect = displayRect.intersected(rect);
 }
 
 void QGraphicsVideoItemPrivate::updateLastFrame()
@@ -248,7 +237,7 @@ bool QGraphicsVideoItem::setMediaObject(QMediaObject *object)
             if (d->windowControl != 0) {
                 connect(d->service, SIGNAL(destroyed()), SLOT(_q_serviceDestroyed()));
                 connect(d->windowControl, SIGNAL(nativeSizeChanged()), SLOT(_q_updateNativeSize()));
-
+                d->windowControl->setAspectRatioMode(Qt::IgnoreAspectRatio);
                 //d->windowControl->setProperty("colorKey", QVariant(QColor(16,7,2)));
                 d->windowControl->setProperty("autopaintColorKey", QVariant(false));
 
@@ -260,6 +249,7 @@ bool QGraphicsVideoItem::setMediaObject(QMediaObject *object)
         }
     }
 
+    d->mediaObject = 0;
     return false;
 }
 
@@ -367,13 +357,22 @@ void QGraphicsVideoItem::paint(
 
 QVariant QGraphicsVideoItem::itemChange(GraphicsItemChange change, const QVariant &value)
 {
-    if (change == ItemScenePositionHasChanged) {
+    Q_D(QGraphicsVideoItem);
+
+    switch (change) {
+    case ItemScenePositionHasChanged:
         update(boundingRect());
-    } else {
-        return QGraphicsItem::itemChange(change, value);
+        break;
+    case ItemVisibleChange:
+        //move overlay out of the screen if video item becomes invisible
+        if (d->windowControl != 0 && !value.toBool())
+            d->windowControl->setDisplayRect(QRect(-1,-1,1,1));
+        break;
+    default:
+        break;
     }
 
-    return value;
+    return QGraphicsItem::itemChange(change, value);
 }
 
 void QGraphicsVideoItem::timerEvent(QTimerEvent *event)

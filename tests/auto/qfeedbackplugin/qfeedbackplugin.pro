@@ -1,3 +1,5 @@
 TEMPLATE=subdirs
 SUBDIRS += testplugin \
-           unittest
+           unittest \
+           testplugin2 \
+           testplugin3

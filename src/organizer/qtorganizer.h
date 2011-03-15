@@ -55,6 +55,7 @@
 #include "qorganizeritemfilter.h"                     // organizer item filter
 #include "qorganizeritem.h"                           // organizer item
 #include "qorganizeritemid.h"                         // organizer item identifier
+#include "qorganizeritemobserver.h"                   // organizer item observer
 #include "qorganizermanager.h"                        // manager
 #include "qorganizermanagerengine.h"                  // manager backend
 #include "qorganizermanagerenginefactory.h"           // manage backend instantiator

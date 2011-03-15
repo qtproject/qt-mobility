@@ -64,6 +64,9 @@ public:
 
     void setTag(const QString& tag) {setValue(FieldTag, tag);}
     QString tag() const {return value(FieldTag);}
+
+    // Convenience filter
+    static QContactFilter match(const QString& subString);
 };
 
 QTM_END_NAMESPACE

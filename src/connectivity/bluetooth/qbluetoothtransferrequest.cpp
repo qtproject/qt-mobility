@@ -65,12 +65,12 @@ QTM_BEGIN_NAMESPACE
 
     Attribute codes for QBluetoothTransferRequest and QBluetoothTransferReply.
 
-    \value DescriptionAttribute A textural description of the object being transfered. May be
+    \value DescriptionAttribute A textural description of the object being transferred. May be
                                 display in the UI of the remote device.
-    \value TimeAttribute        Time attribute of the object being transfered.
-    \value TypeAttribute        MIME type of the object being transfered.
-    \value LengthAttribute      Length in bytes of the object being transfered.
-    \value NameAttribute        Name of the object being transfered. May be displayed in the UI of
+    \value TimeAttribute        Time attribute of the object being transferred.
+    \value TypeAttribute        MIME type of the object being transferred.
+    \value LengthAttribute      Length in bytes of the object being transferred.
+    \value NameAttribute        Name of the object being transferred. May be displayed in the UI of
                                 the remote device.
 */
 

@@ -171,7 +171,7 @@ class CServiceProviderServerSession : public CSession2
         void SetParent(SymbianServerEndPoint* aOwner);
         void SendServicePackageL(const QServicePackage& aPackage);
 
-        TInt HandleServicePackageL(const RMessage2& aMessage);
+        void HandleServicePackageL(const RMessage2& aMessage);
         void HandlePackageRequestL(const RMessage2& aMessage);
         void HandlePackageRequestCancelL(const RMessage2& aMessage);
 

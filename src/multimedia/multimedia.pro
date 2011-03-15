@@ -8,7 +8,12 @@ INCLUDEPATH+= .
 
 QT += network
 
-contains(QT_CONFIG, opengl): QT += opengl
+contains(QT_CONFIG, opengl): !symbian {
+   QT += opengl
+} else {
+   DEFINES += QT_NO_OPENGL
+}
+
 
 !static:DEFINES += QT_MAKEDLL
 DEFINES += QT_BUILD_MULTIMEDIA_LIB
@@ -22,7 +27,8 @@ PRIVATE_HEADERS += \
     qmediaimageviewerservice_p.h \
     qvideowidget_p.h \
     qmediapluginloader_p.h \
-    qpaintervideosurface_p.h
+    qpaintervideosurface_p.h \
+    qvideosurfaceoutput_p.h
 
 PUBLIC_HEADERS += \
     qmediacontrol.h \
@@ -64,7 +70,8 @@ PUBLIC_HEADERS += \
     qvideodevicecontrol.h \
     qgraphicsvideoitem.h \
     qvideorenderercontrol.h \
-    qmediatimerange.h
+    qmediatimerange.h \
+    qmedianetworkaccesscontrol.h
 
 SOURCES += qmediacontrol.cpp \
     qmediaobject.cpp \
@@ -105,7 +112,9 @@ SOURCES += qmediacontrol.cpp \
     qmediapluginloader.cpp \
     qpaintervideosurface.cpp \
     qvideorenderercontrol.cpp \
-    qmediatimerange.cpp
+    qmediatimerange.cpp \
+    qmedianetworkaccesscontrol.cpp \
+    qvideosurfaceoutput.cpp
 
 #Camera
 PUBLIC_HEADERS += \
@@ -158,8 +167,16 @@ maemo5 {
     LIBS += -lXv  -lX11 -lXext
 }
 
-maemo6|symbian {
+maemo6 {
     SOURCES += qgraphicsvideoitem_overlay.cpp
+}
+
+symbian {
+    contains(surfaces_s60_enabled, yes) {
+        SOURCES += qgraphicsvideoitem_symbian.cpp
+    } else {
+        SOURCES += qgraphicsvideoitem_overlay.cpp
+    }
 }
 
 !maemo*:!symbian {

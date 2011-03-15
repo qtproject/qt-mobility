@@ -40,7 +40,6 @@
 ****************************************************************************/
 
 #include "qsysteminfodata_simulator_p.h"
-
 #include <QtCore/QDataStream>
 
 QTM_BEGIN_NAMESPACE
@@ -54,6 +53,9 @@ void qt_registerSystemInfoTypes()
     qRegisterMetaTypeStreamOperators<QSystemNetworkInfoData>("QtMobility::QSystemNetworkInfoData");
     qRegisterMetaTypeStreamOperators<QSystemNetworkInfoData::NetworkInfo>("QtMobility::QSystemNetworkInfoData::NetworkInfo");
     qRegisterMetaTypeStreamOperators<QSystemDisplayInfoData>("QtMobility::QSystemDisplayInfoData");
+
+    qRegisterMetaTypeStreamOperators<QSystemBatteryInfoData>("QtMobility::QSystemBatteryInfoData");
+
 }
 
 QDataStream &operator<<(QDataStream &out, const QSystemInfoData &s)
@@ -76,19 +78,41 @@ QDataStream &operator<<(QDataStream &out, const QSystemDeviceInfoData &s)
     out << static_cast<qint32>(s.simStatus);
     out << static_cast<qint32>(s.currentProfile);
     out << static_cast<qint32>(s.currentPowerState);
+    out << static_cast<qint32>(s.keyboardTypes);
+    out << static_cast<qint32>(s.keypadType);
+
+    out << static_cast<qint32>(s.lockType);
+    out << static_cast<qint32>(s.batStatus);
+
     out << s.batteryLevel << s.deviceLocked;
+    out << s.wirelessConnected << s.keyboardFlipped << s.backLight << s.keypadLight << s.uniqueDeviceId;
+    out << s.messageRingtoneVolume << s.voiceRingtoneVolume << s.vibrationActive;
     return out;
 }
 QDataStream &operator>>(QDataStream &in, QSystemDeviceInfoData &s)
 {
     in >> s.imei >> s.imsi >> s.manufacturer >> s.model >> s.productName;
-    qint32 inputMethod, simStatus, profile, powerState;
+
+    qint32 inputMethod, simStatus, profile, powerState, keyboardTypes, keypadType, lockType, batStatus;
     in >> inputMethod >> simStatus >> profile >> powerState;
+    in >> keyboardTypes >> keypadType >> lockType >> batStatus;
+
     s.inputMethodType = static_cast<QSystemDeviceInfo::InputMethodFlags>(inputMethod);
     s.simStatus = static_cast<QSystemDeviceInfo::SimStatus>(simStatus);
     s.currentProfile = static_cast<QSystemDeviceInfo::Profile>(profile);
     s.currentPowerState = static_cast<QSystemDeviceInfo::PowerState>(powerState);
+
     in >> s.batteryLevel >> s.deviceLocked;
+    in >> s.wirelessConnected >> s.keyboardFlipped >> s.backLight >> s.keypadLight;
+
+    s.keyboardTypes = static_cast<QSystemDeviceInfo::KeyboardType>(keyboardTypes);
+    s.keypadType = static_cast<QSystemDeviceInfo::KeypadType>(keypadType);
+    s.lockType = static_cast<QSystemDeviceInfo::LockTypeFlags>(lockType);
+    s.batStatus = static_cast<QSystemDeviceInfo::BatteryStatus>(batStatus);
+
+    in >> s.uniqueDeviceId;
+    in >> s.messageRingtoneVolume >> s.voiceRingtoneVolume >> s.vibrationActive;
+
     return in;
 }
 
@@ -106,14 +130,17 @@ QDataStream &operator>>(QDataStream &in, QSystemStorageInfoData &s)
 QDataStream &operator<<(QDataStream &out, const QSystemStorageInfoData::DriveInfo &s)
 {
     out << static_cast<qint32>(s.type) << s.availableSpace << s.totalSpace;
+    out << static_cast<qint32>(s.state) << s.uri;
     return out;
 }
 QDataStream &operator>>(QDataStream &in, QSystemStorageInfoData::DriveInfo &s)
 {
-    qint32 type;
-    in >> type;
+    qint32 type, state;
+    in >> type >> state;
     s.type = static_cast<QSystemStorageInfo::DriveType>(type);
     in >> s.availableSpace >> s.totalSpace;
+    s.state = static_cast<QSystemStorageInfo::StorageState>(state);
+    in >> s.uri;
     return in;
 }
 
@@ -161,14 +188,59 @@ QDataStream &operator>>(QDataStream &in, QSystemNetworkInfoData::NetworkInfo &s)
 QDataStream &operator<<(QDataStream &out, const QSystemDisplayInfoData &s)
 {
     out << static_cast<qint32>(s.colorDepth) << static_cast<qint32>(s.displayBrightness);
+    out << static_cast<qint32>(s.dpiHeight) << static_cast<qint32>(s.dpiWidth);
+    out << static_cast<qint32>(s.physicalHeight) << static_cast<qint32>(s.physicalWidth);
+    out << static_cast<qint32>(s.orientation);
+    out << static_cast<qint32>(s.backlightStatus);
     return out;
 }
+
 QDataStream &operator>>(QDataStream &in, QSystemDisplayInfoData &s)
 {
-    qint32 depth, brightness;
+    qint32 depth, brightness, colorDepth, dpiHeight, dpiWidth, physicalHeight, physicalWidth, orientation,
+            backlightStatus;
     in >> depth >> brightness;
+    in >> colorDepth >> dpiHeight >> dpiWidth;
+    in >> physicalHeight >> physicalWidth;
+    in >> orientation;
     s.colorDepth = depth;
     s.displayBrightness = brightness;
+    s.dpiHeight = dpiHeight;
+    s.dpiWidth = dpiWidth;
+    s.dpiHeight = dpiHeight;
+    s.dpiHeight = physicalHeight;
+    s.dpiHeight = physicalWidth;
+    s.orientation = static_cast<QSystemDisplayInfo::DisplayOrientation>(orientation);
+    s.backlightStatus = static_cast<QSystemDisplayInfo::BacklightState>(backlightStatus);
+
+    return in;
+}
+
+QDataStream &operator<<(QDataStream &out, const QSystemBatteryInfoData &s)
+{
+    out << static_cast<qint32>(s.batteryStatus) << static_cast<qint32>(s.chargingState);
+    out << static_cast<qint32>(s.chargerType);
+    out << s.nominalCapacity << s.remainingCapacityPercent << s.remainingCapacity << s.voltage;
+    out << s.remainingChargingTime << s.currentFlow << s.cumulativeCurrentFlow << s.remainingCapacityBars;
+    out << s.maxBars;
+    out << s.energyMeasurementUnit;
+    return out;
+}
+
+QDataStream &operator>>(QDataStream &in, QSystemBatteryInfoData &s)
+{
+    qint32 batteryStatus, chargingState, chargerType, energyMeasurementUnit;
+    in >> batteryStatus >> chargingState >> chargerType >> energyMeasurementUnit;
+
+    s.batteryStatus = static_cast<QSystemBatteryInfo::BatteryStatus>(batteryStatus);
+    s.chargingState = static_cast<QSystemBatteryInfo::ChargingState>(chargingState);
+    s.chargerType = static_cast<QSystemBatteryInfo::ChargerType>(chargerType);
+
+    s.energyMeasurementUnit = static_cast<QSystemBatteryInfo::EnergyUnit>(energyMeasurementUnit);
+
+    in >> s.nominalCapacity >> s.remainingCapacityPercent >> s.remainingCapacity;
+    in >> s.voltage >> s.remainingChargingTime >> s.currentFlow;
+    in >> s.cumulativeCurrentFlow >> s.remainingCapacityBars >> s.maxBars;
     return in;
 }
 

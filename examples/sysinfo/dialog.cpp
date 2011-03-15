@@ -44,7 +44,7 @@
 
 Dialog::Dialog() :
     QWidget(),
-    saver(NULL), systemInfo(NULL), di(NULL), ni(NULL),sti(NULL),bi(NULL)
+    saver(NULL), systemInfo(NULL), di(NULL), ni(NULL),sti(NULL),bi(NULL),dis(NULL)
 {
     setupUi(this);
     setupGeneral();
@@ -63,6 +63,7 @@ Dialog::~Dialog()
     delete systemInfo;
     delete di;
     delete saver;
+    delete dis;
 }
 
 void Dialog::changeEvent(QEvent *e)
@@ -161,23 +162,23 @@ void Dialog::setupDevice()
 //! [inputMethod flags]
     QSystemDeviceInfo::InputMethodFlags methods = di->inputMethodType();
     QStringList inputs;
-    if((methods & QSystemDeviceInfo::Keys)){
+    if ((methods & QSystemDeviceInfo::Keys)=QSystemDeviceInfo::Keypad){
         inputs << "Keys";
     }
-    if((methods & QSystemDeviceInfo::Keypad)) {
+    if ((methods & QSystemDeviceInfo::Keypad)=QSystemDeviceInfo::Keypad) {
         inputs << "Keypad";
     }
 //! [inputMethod flags]
-    if((methods & QSystemDeviceInfo::Keyboard)) {
+    if ((methods & QSystemDeviceInfo::Keyboard)=QSystemDeviceInfo::Keyboard) {
         inputs << "Keyboard";
     }
-    if((methods & QSystemDeviceInfo::SingleTouch)) {
+    if ((methods & QSystemDeviceInfo::SingleTouch)=QSystemDeviceInfo::SingleTouch) {
         inputs << "Touch Screen";
     }
-    if((methods & QSystemDeviceInfo::MultiTouch)) {
+    if ((methods & QSystemDeviceInfo::MultiTouch)=QSystemDeviceInfo::MultiTouch) {
         inputs << "Multi touch";
     }
-    if((methods & QSystemDeviceInfo::Mouse)){
+    if ((methods & QSystemDeviceInfo::Mouse)=QSystemDeviceInfo::Mouse){
         inputs << "Mouse";
     }
 
@@ -186,8 +187,45 @@ void Dialog::setupDevice()
     bluetoothPowerLabel->setText((di->currentBluetoothPowerState() ? "On" : "Off"));
     connect(di,SIGNAL(bluetoothStateChanged(bool)), this,SLOT(bluetoothChanged(bool)));
 
-    hostIdLabel->setText(di->hostId());
+    uniqueIDLabel->setText(di->uniqueDeviceID());
 
+    updateKeyboard(di->keyboardTypes());
+
+    keyboardFlipRadioButton->setChecked(di->isKeyboardFlippedOpen());
+    connect(di,SIGNAL(keyboardFlipped(bool)),this,SLOT(keyboardFlipped(bool)));
+
+    wirelessKeyboardConnectedRadioButton->setChecked(di->isWirelessKeyboardConnected());
+
+    QString lockState;
+    QSystemDeviceInfo::LockTypeFlags lock = di->lockStatus();
+    if ((lock & QSystemDeviceInfo::PinLocked)){
+        lockState = "Pin/Password Locked";
+    } else if ((lock & QSystemDeviceInfo::TouchAndKeyboardLocked)){
+        lockState = "Touch and keyboard locked";
+    } else {
+        lockState = "Unknown";
+    }
+    lockStateLabel->setText(lockState);
+}
+
+void Dialog::updateKeyboard(QSystemDeviceInfo::KeyboardTypeFlags type)
+{
+
+    if ((type & QSystemDeviceInfo::SoftwareKeyboard)) {
+        softkeysRadioButton->setChecked(true);
+    } else if ((type & QSystemDeviceInfo::ITUKeypad)) {
+        ituRadioButton->setChecked(true);
+    } else if ((type & QSystemDeviceInfo::HalfQwertyKeyboard)) {
+        halfKeysRadioButton->setChecked(true);
+    } else if ((type & QSystemDeviceInfo::FullQwertyKeyboard)) {
+        qwertyKeysRadioButton->setChecked(true);
+    } else if ((type & QSystemDeviceInfo::WirelessKeyboard)) {
+        wirelessRadioButton->setChecked(true);
+    } else {
+        uknownKeysRadioButton->setChecked(true);
+    }
+
+    keyboardLightCheckBox->setChecked(di->keypadLightOn(QSystemDeviceInfo::PrimaryKeypad));
 }
 
 void Dialog::updateDeviceLockedState()
@@ -204,50 +242,38 @@ void Dialog::updateProfile(QSystemDeviceInfo::Profile /*profile*/)
 
 void Dialog::setupDisplay()
 {
-    QSystemDisplayInfo di;
-    brightnessLabel->setText(QString::number(di.displayBrightness(0)));
-    colorDepthLabel->setText(QString::number(di.colorDepth((0))));
+    if (!dis) {
+        dis = new QSystemDisplayInfo(this);
+        connect(dis,SIGNAL(orientationChanged(QSystemDisplayInfo::DisplayOrientation)),
+                this,SLOT(orientationChanged(QSystemDisplayInfo::DisplayOrientation )));
 
-    QSystemDisplayInfo::DisplayOrientation orientation = di.getOrientation(0);
-    QString orientStr;
-    switch(orientation) {
-    case QSystemDisplayInfo::Landscape:
-        orientStr="Landscape";
-        break;
-    case QSystemDisplayInfo::Portrait:
-        orientStr="Portrait";
-        break;
-    case QSystemDisplayInfo::InvertedLandscape:
-        orientStr="Inverted Landscape";
-        break;
-    case QSystemDisplayInfo::InvertedPortrait:
-        orientStr="Inverted Portrait";
-        break;
-    default:
-        orientStr="Orientation unknown";
-        break;
     }
+    brightnessLabel->setText(QString::number(dis->displayBrightness(0)));
+    colorDepthLabel->setText(QString::number(dis->colorDepth((0))));
 
-    orientationLabel->setText(orientStr);
+    orientationChanged(dis->orientation(0));
 
-    contrastLabel->setText(QString::number(di.contrast((0))));
+    contrastLabel->setText(QString::number(dis->contrast((0))));
 
-    dpiWidthLabel->setText(QString::number(di.getDPIWidth(0)));
-    dpiHeightLabel->setText(QString::number(di.getDPIHeight((0))));
+    dpiWidthLabel->setText(QString::number(dis->getDPIWidth(0)));
+    dpiHeightLabel->setText(QString::number(dis->getDPIHeight((0))));
 
-    physicalHeightLabel->setText(QString::number(di.physicalHeight(0)));
-    physicalWidthLabel->setText(QString::number(di.physicalWidth((0))));
+    physicalHeightLabel->setText(QString::number(dis->physicalHeight(0)));
+    physicalWidthLabel->setText(QString::number(dis->physicalWidth((0))));
 }
 
 void Dialog::setupStorage()
 {
-    if(!sti) {
+    if (!sti) {
     sti = new QSystemStorageInfo(this);
     storageTreeWidget->header()->setResizeMode(QHeaderView::ResizeToContents);
 
     connect(sti,SIGNAL(logicalDriveChanged(bool,const QString &)),
             this,SLOT(storageChanged(bool ,const QString &)));
     }
+    connect(sti,SIGNAL(storageStateChanged(const QString &,QSystemStorageInfo::StorageState)),
+            this,SLOT(storageStateChanged(const QString &, QSystemStorageInfo::StorageState)));
+
     updateStorage();
 }
 
@@ -260,24 +286,32 @@ void Dialog::updateStorage()
         QString type;
         QSystemStorageInfo::DriveType volType;
         volType = sti->typeForDrive(volName);
-        if(volType == QSystemStorageInfo::InternalDrive) {
+        if (volType == QSystemStorageInfo::InternalDrive) {
             type =  "Internal";
         }
-
-        if(volType == QSystemStorageInfo::RemovableDrive) {
+        if (volType == QSystemStorageInfo::RemovableDrive) {
             type = "Removable";
         }
-        if(volType == QSystemStorageInfo::CdromDrive) {
+        if (volType == QSystemStorageInfo::CdromDrive) {
             type =  "CDRom";
         }
-        if(volType == QSystemStorageInfo::RemoteDrive) {
+        if (volType == QSystemStorageInfo::RemoteDrive) {
             type =  "Network";
+        }
+        if (volType == QSystemStorageInfo::InternalFlashDrive) {
+            type =  "Flash";
+        }
+        if (volType == QSystemStorageInfo::RamDrive) {
+            type =  "Ram";
         }
         QStringList items;
         items << volName;
         items << type;
         items << QString::number(sti->totalDiskSpace(volName));
         items << QString::number(sti->availableDiskSpace(volName));
+        items << sti->uriForDrive(volName);
+        items << storageStateToString(sti->getStorageState(volName));
+
         QTreeWidgetItem *item = new QTreeWidgetItem(items);
         storageTreeWidget->addTopLevelItem(item);
     }
@@ -332,7 +366,7 @@ void Dialog::netStatusComboActivated(int index)
     macAddressLabel->setText(ni->macAddress((QSystemNetworkInfo::NetworkMode)reIndex));
 
     int strength = ni->networkSignalStrength((QSystemNetworkInfo::NetworkMode)reIndex);
-    if(strength < 0)
+    if (strength < 0)
         strength = 0;
     signalLevelProgressBar->setValue(strength);
 
@@ -340,7 +374,7 @@ void Dialog::netStatusComboActivated(int index)
 
     operatorNameLabel->setText(ni->networkName((QSystemNetworkInfo::NetworkMode)reIndex));
 
-    if((index == 1 || index == 2 || index == 3)
+    if ((index == 1 || index == 2 || index == 3)
         && ni->networkStatus((QSystemNetworkInfo::NetworkMode)reIndex)
                              != QSystemNetworkInfo::UndefinedStatus) {
 
@@ -442,6 +476,9 @@ void Dialog::getFeature(int index)
     case 13:
         feature = QSystemInfo::HapticsFeature;
         break;
+    case 14:
+        feature = QSystemInfo::FmTransmitterFeature;
+        break;
     };
 //! [feature test]
     QSystemInfo si;
@@ -467,16 +504,7 @@ void Dialog::setupSaver()
 
 void Dialog::setSaverEnabled(bool b)
 {
-    if (b) {
-        if (!saver) {
-            saver = new QSystemScreenSaver(this);
-        }
-       if(saver->setScreenSaverInhibit()) {
-        }
-    } else {
-        delete saver;
-        saver = NULL;
-    }
+    saver->setScreenSaverInhibited(b);
 }
 
 
@@ -515,7 +543,7 @@ void Dialog::updatePowerState(QSystemDeviceInfo::PowerState /*newState*/)
 
 void Dialog::displayBatteryStatus(QSystemBatteryInfo::BatteryStatus status)
 {
-    if(currentBatStat == status)
+    if (currentBatStat == status)
         return;
     QString msg;
         switch(status) {
@@ -570,32 +598,74 @@ void Dialog::networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode mode ,
         strength = 0;
     }
 
-    if(mode == QSystemNetworkInfo::WlanMode) {
-        if(netStatusComboBox->currentText() == "Wlan") {
+    if (mode == QSystemNetworkInfo::UnknownMode) {
+        if (netStatusComboBox->currentText() == "Unknown") {
             signalLevelProgressBar->setValue(strength);
         }
     }
 
-    if(mode == QSystemNetworkInfo::EthernetMode) {
-        if(netStatusComboBox->currentText() == "Ethernet") {
+    if (mode == QSystemNetworkInfo::GsmMode) {
+        if (netStatusComboBox->currentText() == "Gsm") {
             signalLevelProgressBar->setValue(strength);
         }
     }
 
-    if(mode == QSystemNetworkInfo::GsmMode) {
-        if(netStatusComboBox->currentText() == "Gsm") {
+    if (mode == QSystemNetworkInfo::CdmaMode) {
+        if (netStatusComboBox->currentText() == "Cdma") {
             signalLevelProgressBar->setValue(strength);
         }
     }
 
-    if(mode == QSystemNetworkInfo::CdmaMode) {
-        if(netStatusComboBox->currentText() == "Cdma") {
+    if (mode == QSystemNetworkInfo::WcdmaMode) {
+        if (netStatusComboBox->currentText() == "Wcdma") {
             signalLevelProgressBar->setValue(strength);
         }
     }
 
-    if(mode == QSystemNetworkInfo::WcdmaMode) {
-        if(netStatusComboBox->currentText() == "Wcdma") {
+    if (mode == QSystemNetworkInfo::WlanMode) {
+        if (netStatusComboBox->currentText() == "Wlan") {
+            signalLevelProgressBar->setValue(strength);
+        }
+    }
+
+    if (mode == QSystemNetworkInfo::EthernetMode) {
+        if (netStatusComboBox->currentText() == "Ethernet") {
+            signalLevelProgressBar->setValue(strength);
+        }
+    }
+
+    if (mode == QSystemNetworkInfo::BluetoothMode) {
+        if (netStatusComboBox->currentText() == "Bluetooth") {
+            signalLevelProgressBar->setValue(strength);
+        }
+    }
+
+    if (mode == QSystemNetworkInfo::WimaxMode) {
+        if (netStatusComboBox->currentText() == "Wimax") {
+            signalLevelProgressBar->setValue(strength);
+        }
+    }
+
+    if (mode == QSystemNetworkInfo::GprsMode) {
+        if (netStatusComboBox->currentText() == "Gprs") {
+            signalLevelProgressBar->setValue(strength);
+        }
+    }
+
+    if (mode == QSystemNetworkInfo::EdgeMode) {
+        if (netStatusComboBox->currentText() == "Edge") {
+            signalLevelProgressBar->setValue(strength);
+        }
+    }
+
+    if (mode == QSystemNetworkInfo::HspaMode) {
+        if (netStatusComboBox->currentText() == "Hpsa") {
+            signalLevelProgressBar->setValue(strength);
+        }
+    }
+
+    if (mode == QSystemNetworkInfo::LteMode) {
+        if (netStatusComboBox->currentText() == "Lte") {
             signalLevelProgressBar->setValue(strength);
         }
     }
@@ -604,95 +674,202 @@ void Dialog::networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode mode ,
 
 void Dialog::networkNameChanged(QSystemNetworkInfo::NetworkMode mode,const QString &text)
 {
-    if(mode == QSystemNetworkInfo::WlanMode) {
-        if(netStatusComboBox->currentText() == "Wlan") {
+    if (mode == QSystemNetworkInfo::UnknownMode) {
+        if (netStatusComboBox->currentText() == "Unknown") {
             operatorNameLabel->setText(text);
         }
     }
 
-    if(mode == QSystemNetworkInfo::EthernetMode) {
-        if(netStatusComboBox->currentText() == "Ethernet") {
+    if (mode == QSystemNetworkInfo::GsmMode) {
+        if (netStatusComboBox->currentText() == "Gsm") {
             operatorNameLabel->setText(text);
         }
     }
 
-    if(mode == QSystemNetworkInfo::GsmMode) {
-        if(netStatusComboBox->currentText() == "Gsm") {
+    if (mode == QSystemNetworkInfo::CdmaMode) {
+        if (netStatusComboBox->currentText() == "Cdma") {
             operatorNameLabel->setText(text);
         }
     }
 
-    if(mode == QSystemNetworkInfo::CdmaMode) {
-        if(netStatusComboBox->currentText() == "Cdma") {
+    if (mode == QSystemNetworkInfo::WcdmaMode) {
+        if (netStatusComboBox->currentText() == "Wcdma") {
             operatorNameLabel->setText(text);
         }
     }
 
-    if(mode == QSystemNetworkInfo::WcdmaMode) {
-        if(netStatusComboBox->currentText() == "Wcdma") {
+    if (mode == QSystemNetworkInfo::WlanMode) {
+        if (netStatusComboBox->currentText() == "Wlan") {
             operatorNameLabel->setText(text);
         }
     }
 
+    if (mode == QSystemNetworkInfo::EthernetMode) {
+        if (netStatusComboBox->currentText() == "Ethernet") {
+            operatorNameLabel->setText(text);
+        }
+    }
+
+    if (mode == QSystemNetworkInfo::BluetoothMode) {
+        if (netStatusComboBox->currentText() == "Bluetooth") {
+            operatorNameLabel->setText(text);
+        }
+    }
+
+    if (mode == QSystemNetworkInfo::WimaxMode) {
+        if (netStatusComboBox->currentText() == "Wimax") {
+            operatorNameLabel->setText(text);
+        }
+    }
+
+    if (mode == QSystemNetworkInfo::GprsMode) {
+        if (netStatusComboBox->currentText() == "Gprs") {
+            operatorNameLabel->setText(text);
+        }
+    }
+
+    if (mode == QSystemNetworkInfo::EdgeMode) {
+        if (netStatusComboBox->currentText() == "Edge") {
+            operatorNameLabel->setText(text);
+        }
+    }
+
+    if (mode == QSystemNetworkInfo::HspaMode) {
+        if (netStatusComboBox->currentText() == "Hpsa") {
+            operatorNameLabel->setText(text);
+        }
+    }
+
+    if (mode == QSystemNetworkInfo::LteMode) {
+        if (netStatusComboBox->currentText() == "Lte") {
+            operatorNameLabel->setText(text);
+        }
+    }
 }
 
 void Dialog::networkStatusChanged(QSystemNetworkInfo::NetworkMode mode , QSystemNetworkInfo::NetworkStatus status)
 {
-    if(mode == QSystemNetworkInfo::WlanMode) {
-        if(netStatusComboBox->currentText() == "Wlan") {
+
+    if (mode == QSystemNetworkInfo::UnknownMode) {
+        if (netStatusComboBox->currentText() == "Unknown") {
+            displayNetworkStatus(status);
+        }
+    }
+
+    if (mode == QSystemNetworkInfo::GsmMode) {
+        if (netStatusComboBox->currentText() == "Gsm") {
+            displayNetworkStatus(status);
+        }
+    }
+
+    if (mode == QSystemNetworkInfo::CdmaMode) {
+        if (netStatusComboBox->currentText() == "Cdma") {
+            displayNetworkStatus(status);
+        }
+    }
+
+    if (mode == QSystemNetworkInfo::WcdmaMode) {
+        if (netStatusComboBox->currentText() == "Wcdma") {
+            displayNetworkStatus(status);
+        }
+    }
+
+    if (mode == QSystemNetworkInfo::WlanMode) {
+        if (netStatusComboBox->currentText() == "Wlan") {
            displayNetworkStatus(status);
         }
     }
 
-    if(mode == QSystemNetworkInfo::EthernetMode) {
-        if(netStatusComboBox->currentText() == "Ethernet") {
+    if (mode == QSystemNetworkInfo::EthernetMode) {
+        if (netStatusComboBox->currentText() == "Ethernet") {
            displayNetworkStatus(status);
         }
     }
 
-    if(mode == QSystemNetworkInfo::GsmMode) {
-        if(netStatusComboBox->currentText() == "Gsm") {
+    if (mode == QSystemNetworkInfo::BluetoothMode) {
+        if (netStatusComboBox->currentText() == "Bluetooth") {
             displayNetworkStatus(status);
         }
     }
 
-    if(mode == QSystemNetworkInfo::CdmaMode) {
-        if(netStatusComboBox->currentText() == "Cdma") {
+    if (mode == QSystemNetworkInfo::WimaxMode) {
+        if (netStatusComboBox->currentText() == "Wimax") {
             displayNetworkStatus(status);
         }
     }
 
-    if(mode == QSystemNetworkInfo::WcdmaMode) {
-        if(netStatusComboBox->currentText() == "Wcdma") {
+    if (mode == QSystemNetworkInfo::GprsMode) {
+        if (netStatusComboBox->currentText() == "Gprs") {
             displayNetworkStatus(status);
         }
     }
 
+    if (mode == QSystemNetworkInfo::EdgeMode) {
+        if (netStatusComboBox->currentText() == "Edge") {
+            displayNetworkStatus(status);
+        }
+    }
+
+    if (mode == QSystemNetworkInfo::HspaMode) {
+        if (netStatusComboBox->currentText() == "Hspa") {
+            displayNetworkStatus(status);
+        }
+    }
+
+    if (mode == QSystemNetworkInfo::LteMode) {
+        if (netStatusComboBox->currentText() == "Lte") {
+            displayNetworkStatus(status);
+        }
+    }
 }
 
 void Dialog::networkModeChanged(QSystemNetworkInfo::NetworkMode mode)
 {
-    if(mode == QSystemNetworkInfo::WlanMode) {
-        primaryModeLabel->setText("Wlan");
+    if (mode == QSystemNetworkInfo::UnknownMode) {
+        primaryModeLabel->setText("None");
     }
 
-    if(mode == QSystemNetworkInfo::EthernetMode) {
-        primaryModeLabel->setText("Ethernet");
-    }
-
-    if(mode == QSystemNetworkInfo::GsmMode) {
+    if (mode == QSystemNetworkInfo::GsmMode) {
         primaryModeLabel->setText("Gsm");
     }
 
-    if(mode == QSystemNetworkInfo::CdmaMode) {
+    if (mode == QSystemNetworkInfo::CdmaMode) {
         primaryModeLabel->setText("Cdma");
     }
 
-    if(mode == QSystemNetworkInfo::WcdmaMode) {
+    if (mode == QSystemNetworkInfo::WcdmaMode) {
         primaryModeLabel->setText("Wcdma");
     }
-    if(mode == QSystemNetworkInfo::UnknownMode) {
-        primaryModeLabel->setText("None");
+    if (mode == QSystemNetworkInfo::WlanMode) {
+        primaryModeLabel->setText("Wlan");
+    }
+
+    if (mode == QSystemNetworkInfo::EthernetMode) {
+        primaryModeLabel->setText("Ethernet");
+    }
+
+    if (mode == QSystemNetworkInfo::BluetoothMode) {
+        primaryModeLabel->setText("Bluetooth");
+    }
+
+    if (mode == QSystemNetworkInfo::WimaxMode) {
+        primaryModeLabel->setText("Wimax");
+    }
+
+    if (mode == QSystemNetworkInfo::GprsMode) {
+        primaryModeLabel->setText("Gprs");
+    }
+
+    if (mode == QSystemNetworkInfo::EdgeMode) {
+        primaryModeLabel->setText("Edge");
+    }
+
+    if (mode == QSystemNetworkInfo::HspaMode) {
+        primaryModeLabel->setText("Hspa");
+    }
+
+    if (mode == QSystemNetworkInfo::LteMode) {
+        primaryModeLabel->setText("Lte");
     }
 }
 
@@ -735,7 +912,7 @@ void Dialog::displayNetworkStatus(QSystemNetworkInfo::NetworkStatus status)
 void Dialog::updateProfile()
 {
 
-    if(di) {
+    if (di) {
         QString profilestring;
         switch(di->currentProfile()) {
             case QSystemDeviceInfo::SilentProfile:
@@ -784,13 +961,18 @@ void Dialog::updateProfile()
             }
         };
         profileLabel->setText(profilestring);
+
+        QSystemDeviceInfo::ProfileDetails pDetails = di->activeProfileDetails();
+        messageRingtonVolumeLcdNumber->display(pDetails.messageRingtoneVolume());
+        voiceRingtoneVolumeLcdNumber->display(pDetails.voiceRingtoneVolume());
+        vibrationActiveRadioButton->setChecked(pDetails.vibrationActive());
     }
 }
 
 
 void Dialog::updateSimStatus()
 {
-    if(di) {
+    if (di) {
         QString simstring;
         switch(di->simStatus()) {
         case QSystemDeviceInfo::SimLocked:
@@ -823,7 +1005,7 @@ void Dialog::updateSimStatus()
 
 void Dialog::storageChanged(bool added,const QString &volName)
 {
-    if(added) {
+    if (added) {
         updateStorage();
     } else {
         storageTreeWidget->takeTopLevelItem( storageTreeWidget->indexOfTopLevelItem(storageTreeWidget->findItems(volName,Qt::MatchExactly).at(0)));
@@ -838,7 +1020,9 @@ void Dialog::bluetoothChanged(bool b)
 void Dialog::setupBattery()
 {
     delete bi;
+    //! [batterystatus1]
     bi = new QSystemBatteryInfo(this);
+    //! [batterystatus1]
 
     connect(bi,SIGNAL(remainingCapacityPercentChanged(int)),
             this,SLOT(updateBatteryStatus(int)));
@@ -852,15 +1036,10 @@ void Dialog::setupBattery()
     connect(bi,SIGNAL(chargerTypeChanged(QSystemBatteryInfo::ChargerType)),
             this,SLOT(chargerTypeChanged(QSystemBatteryInfo::ChargerType)));
 
-    connect(startMeasurementPushButton,SIGNAL(clicked()),
-            this,SLOT(startCurrentPushed()));
-
     connect(bi,SIGNAL(nominalCapacityChanged(int)),
             NominalCaplcdNumber,SLOT(display(int)));
     connect(bi,SIGNAL(remainingCapacityChanged(int)),
             remainCaplcdNumber,SLOT(display(int)));
-    connect(bi,SIGNAL(voltageChanged(int)),
-            voltagelcdNumber,SLOT(display(int)));
     connect(bi,SIGNAL(currentFlowChanged(int)),
             currentFLowlcdNumber,SLOT(display(int)));
     connect(bi,SIGNAL(remainingCapacityBarsChanged(int)),
@@ -868,10 +1047,11 @@ void Dialog::setupBattery()
     connect(bi,SIGNAL(remainingChargingTimeChanged(int)),
             chargeTimelcdNumber,SLOT(display(int)));
 
+    //! [batterystatus2]
     chargerTypeChanged(bi->chargerType());
 
-
     currentBatStat = bi->batteryStatus();
+    //! [batterystatus2]
 
     chargingStateChanged(bi->chargingState());
 
@@ -901,7 +1081,7 @@ void Dialog::setupBattery()
 
 void Dialog::chargingStateChanged(QSystemBatteryInfo::ChargingState chargingState)
 {
-    if(chargingState == QSystemBatteryInfo::Charging) {
+    if (chargingState == QSystemBatteryInfo::Charging) {
         chargingCheckBox->setChecked(true);
     } else {
         chargingCheckBox->setChecked(false);
@@ -912,17 +1092,17 @@ void Dialog::chargingStateChanged(QSystemBatteryInfo::ChargingState chargingStat
 
 void Dialog::chargerTypeChanged(QSystemBatteryInfo::ChargerType chargerType)
 {
-    if(chargerType == QSystemBatteryInfo::NoCharger) {
+    if (chargerType == QSystemBatteryInfo::NoCharger) {
         radioButton_2->setChecked(true);
-    } else if(chargerType == QSystemBatteryInfo::WallCharger) {
+    } else if (chargerType == QSystemBatteryInfo::WallCharger) {
         radioButton_3->setChecked(true);
-    } else if(chargerType == QSystemBatteryInfo::USBCharger) {
+    } else if (chargerType == QSystemBatteryInfo::USBCharger) {
         radioButton_4->setChecked(true);
-    } else if(chargerType == QSystemBatteryInfo::USB_500mACharger) {
+    } else if (chargerType == QSystemBatteryInfo::USB_500mACharger) {
         radioButton_5->setChecked(true);
-    } else if(chargerType == QSystemBatteryInfo::USB_100mACharger) {
+    } else if (chargerType == QSystemBatteryInfo::USB_100mACharger) {
         radioButton_6->setChecked(true);
-    } else if(chargerType == QSystemBatteryInfo::VariableCurrentCharger) {
+    } else if (chargerType == QSystemBatteryInfo::VariableCurrentCharger) {
         radioButton_7->setChecked(true);
     } else {
         radioButton->setChecked(true);
@@ -930,7 +1110,54 @@ void Dialog::chargerTypeChanged(QSystemBatteryInfo::ChargerType chargerType)
     currentChargerType = chargerType;
 }
 
-void Dialog::startCurrentPushed()
+void Dialog::orientationChanged(QSystemDisplayInfo::DisplayOrientation orientation)
 {
-    bi->startCurrentMeasurement(currentMeasurementSpinBox->value());
+    QString orientStr;
+    switch(orientation) {
+    case QSystemDisplayInfo::Landscape:
+        orientStr="Landscape";
+        break;
+    case QSystemDisplayInfo::Portrait:
+        orientStr="Portrait";
+        break;
+    case QSystemDisplayInfo::InvertedLandscape:
+        orientStr="Inverted Landscape";
+        break;
+    case QSystemDisplayInfo::InvertedPortrait:
+        orientStr="Inverted Portrait";
+        break;
+    default:
+        orientStr="Orientation unknown";
+        break;
+    }
+
+    orientationLabel->setText(orientStr);
+}
+
+
+void Dialog::keyboardFlipped(bool on)
+{
+    keyboardFlipRadioButton->setChecked(on);
+}
+
+void Dialog::storageStateChanged(const QString &vol, QSystemStorageInfo::StorageState state)
+{
+    QList<QTreeWidgetItem *>item = storageTreeWidget->findItems(vol,Qt::MatchExactly,0);
+    item.at(0)->setText(3,QString::number(sti->availableDiskSpace(item.at(0)->text(0))));
+    item.at(0)->setText(5,storageStateToString(state));
+}
+
+QString Dialog::storageStateToString(QSystemStorageInfo::StorageState state)
+{
+    QString str;
+    if (state == QSystemStorageInfo::CriticalStorageState) {
+        str = "Critical";
+    } else if (state == QSystemStorageInfo::VeryLowStorageState) {
+        str = "Very Low";
+    } else if (state == QSystemStorageInfo::LowStorageState) {
+        str = "Low";
+    } else {
+        str = "Normal";
+    }
+    return str;
 }

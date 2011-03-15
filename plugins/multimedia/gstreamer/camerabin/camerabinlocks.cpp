@@ -41,6 +41,7 @@
 
 #include "camerabinlocks.h"
 #include "camerabinsession.h"
+#include "camerabinfocus.h"
 
 #include <gst/interfaces/photography.h>
 
@@ -49,9 +50,9 @@
 CameraBinLocks::CameraBinLocks(CameraBinSession *session)
     :QCameraLocksControl(session),
      m_session(session),
-     m_focusStatus(QCamera::Unlocked)
+     m_focus(m_session->cameraFocusControl())
 {
-    connect(m_session, SIGNAL(focusStatusChanged(QCamera::LockStatus, QCamera::LockChangeReason)),
+    connect(m_focus, SIGNAL(_q_focusStatusChanged(QCamera::LockStatus, QCamera::LockChangeReason)),
             this, SLOT(updateFocusStatus(QCamera::LockStatus, QCamera::LockChangeReason)));
 }
 
@@ -66,29 +67,22 @@ QCamera::LockTypes CameraBinLocks::supportedLocks() const
 
 QCamera::LockStatus CameraBinLocks::lockStatus(QCamera::LockType lock) const
 {
-    return lock == QCamera::LockFocus ? m_focusStatus : QCamera::Unlocked;
+    return lock == QCamera::LockFocus ? m_focus->focusStatus() : QCamera::Unlocked;
 }
 
 void CameraBinLocks::searchAndLock(QCamera::LockTypes locks)
 {
-    if (locks & QCamera::LockFocus) {
-        m_focusStatus = QCamera::Searching;
-        gst_photography_set_autofocus(m_session->photography(), TRUE);
-        emit lockStatusChanged(QCamera::LockFocus, m_focusStatus, QCamera::UserRequest);
-    }
+    if (locks & QCamera::LockFocus)
+        m_focus->_q_startFocusing();
 }
 
 void CameraBinLocks::unlock(QCamera::LockTypes locks)
 {
-    if (locks & QCamera::LockFocus) {
-        m_focusStatus = QCamera::Unlocked;
-        gst_photography_set_autofocus(m_session->photography(), FALSE);
-        emit lockStatusChanged(QCamera::LockFocus, m_focusStatus, QCamera::UserRequest);
-    }
+    if (locks & QCamera::LockFocus)
+        m_focus->_q_stopFocusing();
 }
 
 void CameraBinLocks::updateFocusStatus(QCamera::LockStatus status, QCamera::LockChangeReason reason)
 {
-    if (m_focusStatus != status)
-        emit lockStatusChanged(QCamera::LockFocus, m_focusStatus = status, reason);
+    emit lockStatusChanged(QCamera::LockFocus, status, reason);
 }

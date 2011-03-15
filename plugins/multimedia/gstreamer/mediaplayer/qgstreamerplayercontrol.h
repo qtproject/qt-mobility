@@ -59,6 +59,7 @@ QT_USE_NAMESPACE
 
 class QGstreamerPlayerSession;
 class QGstreamerPlayerService;
+class PlayerResourcePolicy;
 
 class QGstreamerPlayerControl : public QMediaPlayerControl
 {
@@ -108,13 +109,13 @@ private Q_SLOTS:
     void fifoReadyWrite(int socket);
 
     void updateState(QMediaPlayer::State);
-#ifdef Q_WS_MAEMO_6
-    void resourceLost();
-#endif // Q_WS_MAEMO_6
     void processEOS();
     void setBufferProgress(int progress);
 
     void handleInvalidMedia();
+
+    void handleResourcesGranted();
+    void handleResourcesLost();
 
 private:
     bool openFifo();
@@ -135,6 +136,8 @@ private:
     int m_bufferSize;
     int m_bufferOffset;
     char m_buffer[PIPE_BUF];
+
+    PlayerResourcePolicy *m_resources;
 };
 
 #endif

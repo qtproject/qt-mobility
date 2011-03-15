@@ -45,6 +45,9 @@
 #include "qorganizermanager_p.h"
 #include "qorganizermanagerengine.h"
 
+#ifndef QT_NO_DEBUG_STREAM
+#include <QDebug>
+#endif
 
 QTM_BEGIN_NAMESPACE
 
@@ -276,6 +279,22 @@ bool QOrganizerAbstractRequest::waitForFinished(int msecs)
 
     return false; // unable to wait for operation; not in progress or no engine
 }
+
+#ifndef QT_NO_DEBUG_STREAM
+/*!
+  Outputs \a request to the debug stream \a dbg
+ */
+QDebug operator<<(QDebug dbg, const QOrganizerAbstractRequest& request)
+{
+    dbg.nospace() << "QOrganizerAbstractRequest(";
+    if (request.d_ptr)
+        request.d_ptr->debugStreamOut(dbg);
+    else
+        dbg.nospace() << "(null)";
+    dbg.nospace() << ")";
+    return dbg.maybeSpace();
+}
+#endif
 
 #include "moc_qorganizerabstractrequest.cpp"
 

@@ -39,6 +39,9 @@
 **
 ****************************************************************************/
 
+#include <QtSparql/QSparqlConnection>
+#include <QtSparqlTrackerExtensions/TrackerChangeNotifier>
+
 int main(int, char**)
 {
     return 0;

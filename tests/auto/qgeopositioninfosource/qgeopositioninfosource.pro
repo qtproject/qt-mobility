@@ -8,10 +8,11 @@ INCLUDEPATH += ../../../src/location
 DEPENDPATH += ../../../buid/Debug/bin
 
 # Input 
-HEADERS += ../qlocationtestutils_p.h \
-           ../testqgeopositioninfosource_p.h
-SOURCES += ../qlocationtestutils.cpp \
-           ../testqgeopositioninfosource.cpp \
+HEADERS += ../qgeocoordinate/qlocationtestutils_p.h \
+           testqgeopositioninfosource_p.h
+
+SOURCES += ../qgeocoordinate/qlocationtestutils.cpp \
+           testqgeopositioninfosource.cpp \
            tst_qgeopositioninfosource.cpp
 
 CONFIG += mobility
@@ -21,3 +22,5 @@ symbian {
         TARGET.CAPABILITY = ALL -TCB
 }
 
+CONFIG += middleware
+include(../../../features/deploy.pri)

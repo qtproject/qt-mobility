@@ -332,7 +332,7 @@ QMessageAccountId TelepathyEngine ::defaultAccount(QMessage::Type type)
 
 QMessageManager::Error TelepathyEngine::convertError(const Tp::PendingOperation *op)
 {
-    if (op->isError())
+    if (!op || op->isError())
         return QMessageManager::FrameworkFault ;
 
     if (!op->isValid())

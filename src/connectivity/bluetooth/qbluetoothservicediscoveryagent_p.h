@@ -42,8 +42,6 @@
 #ifndef QBLUETOOTHSERVICEDISCOVERYAGENT_P_H
 #define QBLUETOOTHSERVICEDISCOVERYAGENT_P_H
 
-#include "qobjectpriv_p.h"
-
 #include "qbluetoothaddress.h"
 #include "qbluetoothdeviceinfo.h"
 #include "qbluetoothserviceinfo.h"
@@ -51,7 +49,7 @@
 
 #include <QStack>
 
-#ifdef Q_OS_SYMBIAN
+#ifdef QTM_SYMBIAN_BLUETOOTH
 #include <btsdp.h>
 #endif
 
@@ -69,9 +67,9 @@ QTM_BEGIN_NAMESPACE
 
 class QBluetoothDeviceDiscoveryAgent;
 
-class QBluetoothServiceDiscoveryAgentPrivate : public QObjectPrivate
-#ifdef Q_OS_SYMBIAN
-, public MSdpAgentNotifier, public MSdpAttributeValueVisitor
+class QBluetoothServiceDiscoveryAgentPrivate
+#ifdef QTM_SYMBIAN_BLUETOOTH
+: public MSdpAgentNotifier, public MSdpAttributeValueVisitor
 #endif
 {
     Q_DECLARE_PUBLIC(QBluetoothServiceDiscoveryAgent)
@@ -94,14 +92,19 @@ public:
     void setDiscoveryState(DiscoveryState s) { state = s; }
     DiscoveryState discoveryState() { return state; }
 
+    void setDiscoveryMode(QBluetoothServiceDiscoveryAgent::DiscoveryMode m) { mode = m; }
+    QBluetoothServiceDiscoveryAgent::DiscoveryMode DiscoveryMode() { return mode; }
+
     // private slots
     void _q_deviceDiscoveryFinished();
+    void _q_deviceDiscovered(const QBluetoothDeviceInfo &info);
     void _q_serviceDiscoveryFinished();
 #ifndef QT_NO_DBUS
     void _q_discoveredServices(QDBusPendingCallWatcher *watcher);
+    void _q_createdDevice(QDBusPendingCallWatcher *watcher);
 #endif
 
-#ifdef Q_OS_SYMBIAN
+#ifdef QTM_SYMBIAN_BLUETOOTH
     /* MSdpAgentNotifier virtual functions */
     void NextRecordRequestComplete(TInt aError, TSdpServRecordHandle aHandle, TInt aTotalRecordsCount);
     void AttributeRequestResult(TSdpServRecordHandle aHandle, TSdpAttributeID aAttrID, CSdpAttrValue *aAttrValue);
@@ -115,10 +118,12 @@ public:
 
 private:
     void start(const QBluetoothAddress &address);
+    bool quickDiscovery(const QBluetoothAddress &address, const QBluetoothDeviceInfo &info);
     void stop();
 
-#ifdef Q_OS_SYMBIAN
-    void initAgent(const QBluetoothAddress &address);
+#ifdef QTM_SYMBIAN_BLUETOOTH
+    void startL(const QBluetoothAddress &address);
+    void initAgentL(const QBluetoothAddress &address);
 #elif !defined(QT_NO_DBUS)
     QVariant readAttributeValue(QXmlStreamReader &xml);
 #endif
@@ -136,19 +141,24 @@ private:
 
     QBluetoothDeviceDiscoveryAgent *deviceDiscoveryAgent;
 
-#ifdef Q_OS_SYMBIAN
-    CSdpAgent *sdpAgent;
-    CSdpSearchPattern *filter;
-    CSdpAttrIdMatchList *attributes;
-    QBluetoothServiceInfo serviceInfo;
-    TSdpAttributeID currentAttributeId;
+    QBluetoothServiceDiscoveryAgent::DiscoveryMode mode;
 
-    QStack<QVariant> stack;
+#ifdef QTM_SYMBIAN_BLUETOOTH
+    CSdpAgent *m_sdpAgent;
+    CSdpSearchPattern *m_filter;
+    CSdpAttrIdMatchList *m_attributes;
+    QBluetoothServiceInfo m_serviceInfo;
+    TSdpAttributeID m_currentAttributeId;
+
+    QStack<QVariant> m_stack;
 #elif !defined(QT_NO_DBUS)
     OrgBluezManagerInterface *manager;
     OrgBluezAdapterInterface *adapter;
     OrgBluezDeviceInterface *device;
 #endif
+
+protected:
+    QBluetoothServiceDiscoveryAgent *q_ptr;
 };
 
 QTM_END_NAMESPACE

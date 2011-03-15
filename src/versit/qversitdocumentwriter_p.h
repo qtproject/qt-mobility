@@ -82,6 +82,7 @@ public:
 
     void writeBytes(const QByteArray& value);
     void writeString(const QString& value);
+    void writeStringQp(const QString& value);
     void writeCrlf();
 
 protected:

@@ -60,7 +60,8 @@ QTM_USE_NAMESPACE
  */
 
 /*!
-  Sets the start date time of the event occurrence to \a startDateTime
+  Sets the start date time of the event occurrence to \a startDateTime.
+  instance).  For all-day events, the time part is meaningless.
  */
 void QOrganizerEventOccurrence::setStartDateTime(const QDateTime& startDateTime)
 {
@@ -70,7 +71,8 @@ void QOrganizerEventOccurrence::setStartDateTime(const QDateTime& startDateTime)
 }
 
 /*!
-  Returns the date time at which the event occurrence begins
+  Returns the date time at which the event occurrence begins.
+  For all-day events, the time part can be set to any valid value.
  */
 QDateTime QOrganizerEventOccurrence::startDateTime() const
 {
@@ -79,7 +81,9 @@ QDateTime QOrganizerEventOccurrence::startDateTime() const
 }
 
 /*!
-  Sets the end date time of the event occurrence to \a endDateTime
+  Sets the end date time of the event occurrence to \a endDateTime.
+  For all-day events, the time part can be set to any valid value, and the date is to be interpreted
+  as the inclusive end date.
  */
 void QOrganizerEventOccurrence::setEndDateTime(const QDateTime& endDateTime)
 {
@@ -89,7 +93,9 @@ void QOrganizerEventOccurrence::setEndDateTime(const QDateTime& endDateTime)
 }
 
 /*!
-  Returns the date time at which the event occurrence ends
+  Returns the date time at which the event occurrence ends.
+  For all-day events, the time part is meaningless, and the date is to be interpreted
+  as the inclusive end date.
  */
 QDateTime QOrganizerEventOccurrence::endDateTime() const
 {

@@ -111,7 +111,7 @@ public:
         default:
             break;
         }
-        //qWarning
+        qmlInfo(0) << tr("Unknown field type.");
         return QString();
     }
     void setStreet(const QString& v)
@@ -182,7 +182,7 @@ public:
                 savedList << QContactAddress::SubTypeInternational;
                 break;
             default:
-                //qWarning unknown type
+                qmlInfo(this) << tr("Unknown sub type.");
                 break;
 
             }

@@ -43,25 +43,27 @@
 #define QCONTACTOBSERVER_H
 
 #include <QObject>
+#include <QScopedPointer>
 #include "qmobilityglobal.h"
+#include "qcontactmanager.h"
 
 QTM_BEGIN_NAMESPACE
+class QContactObserverPrivate;
 
 class Q_CONTACTS_EXPORT QContactObserver : public QObject
 {
     Q_OBJECT
 public:
-    void emitContactChanged();
-    void emitContactRemoved();
-signals:
+    QContactObserver(QContactManager* manager, QContactLocalId localId, QObject* parent = 0);
+    ~QContactObserver();
+    QContactLocalId contactLocalId() const;
+Q_SIGNALS:
     void contactChanged();
     void contactRemoved();
 
 private:
-    QContactObserver(QObject* parent = 0);
-
     Q_DISABLE_COPY(QContactObserver)
-    friend class QContactManager;
+    QContactObserverPrivate* d;
 };
 
 QTM_END_NAMESPACE

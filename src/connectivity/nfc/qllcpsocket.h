@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -59,18 +59,20 @@ class Q_CONNECTIVITY_EXPORT QLlcpSocket : public QIODevice
     Q_OBJECT
     Q_DECLARE_PRIVATE(QLlcpSocket)
 
-public:
-    enum Error {
-        UnknownSocketError = QAbstractSocket::UnknownSocketError
-    };
+    friend class QLlcpServerPrivate;
 
-    enum State {
+public:
+    enum SocketState {
         UnconnectedState = QAbstractSocket::UnconnectedState,
         ConnectingState = QAbstractSocket::ConnectingState,
         ConnectedState = QAbstractSocket::ConnectedState,
         ClosingState = QAbstractSocket::ClosingState,
         BoundState = QAbstractSocket::BoundState,
         ListeningState = QAbstractSocket::ListeningState
+    };
+
+    enum SocketError {
+        UnknownSocketError = QAbstractSocket::UnknownSocketError
     };
 
     explicit QLlcpSocket(QObject *parent = 0);
@@ -93,8 +95,8 @@ public:
                          QNearFieldTarget *target, quint8 port);
     qint64 writeDatagram(const QByteArray &datagram, QNearFieldTarget *target, quint8 port);
 
-    Error error() const;
-    State state() const;
+    SocketError error() const;
+    SocketState state() const;
 
     qint64 bytesAvailable() const;
 
@@ -102,12 +104,13 @@ public:
     bool waitForBytesWritten(int msecs = 30000);
     virtual bool waitForConnected(int msecs = 30000);
     virtual bool waitForDisconnected(int msecs = 30000);
+    bool isSequential() const;
 
 signals:
     void connected();
     void disconnected();
-    void error(QLlcpSocket::Error socketError);
-    void stateChanged(QLlcpSocket::State socketState);
+    void error(QLlcpSocket::SocketError socketError);
+    void stateChanged(QLlcpSocket::SocketState socketState);
 
 protected:
     qint64 readData(char *data, qint64 maxlen);

@@ -440,8 +440,12 @@ QFeedbackEffect::State QFeedbackImmersion::updateImmState(const QFeedbackEffect 
     }
     case VIBE_EFFECT_STATE_NOT_PLAYING:
     default:
-        effectHandles.remove(effect);
         killTimerForHandle(effectHandle);
+        if (effectHandles.contains(effect)) {
+            effectHandles.remove(effect);
+            // because we kill the timer before it fires stateChanged, we need to emit stateChanged ourself.
+            QMetaObject::invokeMethod(const_cast<QFeedbackEffect*>(effect), "stateChanged");
+        }
         return QFeedbackEffect::Stopped;
     }
 }

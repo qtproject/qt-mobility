@@ -51,11 +51,11 @@ class TestSensorReadingPrivate;
 class TestSensorReading : public QSensorReading
 {
     Q_OBJECT
-    Q_PROPERTY(bool test READ test)
+    Q_PROPERTY(int test READ test)
     DECLARE_READING(TestSensorReading)
 public:
-    bool test() const;
-    void setTest(bool test);
+    int test() const;
+    void setTest(int test);
 };
 
 class TestSensorFilter : public QSensorFilter
@@ -70,7 +70,9 @@ class TestSensor : public QSensor
 {
     Q_OBJECT
 public:
-    explicit TestSensor(QObject *parent = 0) : QSensor(TestSensor::type, parent)
+    explicit TestSensor(QObject *parent = 0)
+        : QSensor(TestSensor::type, parent)
+        , sensorsChangedEmitted(0)
     {
         connect(this, SIGNAL(availableSensorsChanged()), this, SLOT(s_availableSensorsChanged()));
     }
@@ -79,11 +81,11 @@ public:
     static const char *type;
 
     // used by the testSensorsChangedSignal test function
-    bool sensorsChangedEmitted;
+    int sensorsChangedEmitted;
 private slots:
     void s_availableSensorsChanged()
     {
-        sensorsChangedEmitted = true;
+        sensorsChangedEmitted++;
     }
 };
 

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -58,6 +58,11 @@ public:
     virtual QByteArray processCommand(const QByteArray &command) = 0;
 
     virtual QByteArray uid() const = 0;
+
+    quint64 lastAccessTime() const { return lastAccess; }
+
+protected:
+    mutable quint64 lastAccess;
 };
 
 class NfcTagType1 : public TagBase
@@ -79,6 +84,24 @@ private:
     quint8 hr1;
 
     QByteArray memory;
+};
+
+class NfcTagType2 : public TagBase
+{
+public:
+    NfcTagType2();
+    ~NfcTagType2();
+
+    void load(QSettings *settings);
+
+    QByteArray processCommand(const QByteArray &command);
+
+    QByteArray uid() const;
+
+private:
+    QByteArray memory;
+    quint8 currentSector;
+    bool expectPacket2;
 };
 
 #endif // TARGETEMULATOR_P_H

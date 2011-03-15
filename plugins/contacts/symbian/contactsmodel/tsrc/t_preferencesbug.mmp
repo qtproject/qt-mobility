@@ -17,7 +17,7 @@
 // T_PreferencesBug.mmp
 //
 
-target          t_preferencesbug.exe
+TARGET          t_preferencesbug.exe
 targettype      EXE
 CAPABILITY   ReadUserData WriteUserData
 UID		0
@@ -27,6 +27,6 @@ APP_LAYER_SYSTEMINCLUDE_SYMBIAN
 source          T_PreferencesBug.cpp
 source          CContactViewEventQueue.cpp
 source          CContactDbEventQueue.cpp
-library         euser.lib cntmodel.lib
+LIBRARY         euser.lib cntmodel.lib
 
 SMPSAFE

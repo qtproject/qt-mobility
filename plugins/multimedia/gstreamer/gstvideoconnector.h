@@ -73,6 +73,9 @@ struct _GstVideoConnector {
 
 struct _GstVideoConnectorClass {
   GstElementClass parent_class;
+
+  /* action signal to resend new segment */
+  void (*resend_new_segment) (GstElement * element);
 };
 
 GType gst_video_connector_get_type (void);

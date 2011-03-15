@@ -31,17 +31,17 @@
 
 
 
-    This example demonstrates using the Qt Mobility Messaging API to 
+    This example demonstrates using the QtMobility Messaging API to
     create and send a simple message.
 
     \image writemessage-example.png
 
-    The writemessage application provides an interface allowing the user to 
+    The writemessage application provides an interface allowing the user to
     compose a simple message and send that message to one or more
-    recipients.  The type of message that is sent will depend on the 
+    recipients.  The type of message that is sent will depend on the
     messaging account that the user selects for transmission.
 
-    In order to know what type of message to create, our application 
+    In order to know what type of message to create, our application
     requires that the user select an account to transmit with.  We create
     a listing to present the user a choice, by populating a combo box
     with the names of the available accounts:

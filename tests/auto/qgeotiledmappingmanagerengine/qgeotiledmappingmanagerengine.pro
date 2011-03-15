@@ -9,12 +9,12 @@ INCLUDEPATH += ../../../src/location \
                 ../../../src/location/maps/tiled
 
 # Input
-HEADERS += ../qlocationtestutils_p.h \
+HEADERS += ../qgeocoordinate/qlocationtestutils_p.h \
            ../pixelindex/pixelindexengine.h
 
 SOURCES += tst_qgeotiledmappingmanagerengine.cpp \
            ../pixelindex/pixelindexengine.cpp \
-           ../qlocationtestutils.cpp
+           ../qgeocoordinate/qlocationtestutils.cpp
 
 CONFIG += mobility
 MOBILITY = location

@@ -64,7 +64,7 @@ void completeExample()
     rumble.setAttackIntensity(0.0);
     rumble.setAttackTime(250);
     rumble.setIntensity(1.0);
-    rumble.setDuration(100);
+    rumble.setDuration(1000);
     rumble.setFadeTime(250);
     rumble.setFadeIntensity(0.0);
 //! [Define a custom haptic effect]

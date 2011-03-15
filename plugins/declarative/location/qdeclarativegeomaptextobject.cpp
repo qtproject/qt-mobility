@@ -63,12 +63,15 @@ QTM_BEGIN_NAMESPACE
 
     If \l text is empty or \l coordinate is invalid nothing will be displayed.
 
-    The MapText element is part of the \bold{QtMobility.location 1.1} module.
+    An example of text item:
+    \snippet doc/src/snippets/declarative/testpolymapobjects.qml MapText
+
+    The MapText element is part of the \bold{QtMobility.location 1.2} module.
 */
 
 QDeclarativeGeoMapTextObject::QDeclarativeGeoMapTextObject(QDeclarativeItem *parent)
     : QDeclarativeGeoMapObject(parent),
-      text_(0)
+      text_(0), coordinate_(0)
 {
     text_ = new QGeoMapTextObject();
     setMapObject(text_);
@@ -92,19 +95,6 @@ QDeclarativeGeoMapTextObject::QDeclarativeGeoMapTextObject(QDeclarativeItem *par
             this,
             SIGNAL(offsetChanged(QPoint)));
 
-    connect(&coordinate_,
-            SIGNAL(latitudeChanged(double)),
-            this,
-            SLOT(coordinateLatitudeChanged(double)));
-    connect(&coordinate_,
-            SIGNAL(longitudeChanged(double)),
-            this,
-            SLOT(coordinateLongitudeChanged(double)));
-    connect(&coordinate_,
-            SIGNAL(altitudeChanged(double)),
-            this,
-            SLOT(coordinateAltitudeChanged(double)));
-
     hAlignment_ = QDeclarativeGeoMapTextObject::AlignHCenter;
     vAlignment_ = QDeclarativeGeoMapTextObject::AlignVCenter;
 }
@@ -120,35 +110,47 @@ QDeclarativeGeoMapTextObject::~QDeclarativeGeoMapTextObject()
     This property holds the coordinate at which to anchor the text.
 */
 
-void QDeclarativeGeoMapTextObject::setCoordinate(const QDeclarativeCoordinate *coordinate)
+void QDeclarativeGeoMapTextObject::setCoordinate(QDeclarativeCoordinate *coordinate)
 {
-    if (coordinate_.coordinate() == coordinate->coordinate())
+    if (!coordinate || coordinate == coordinate_)
         return;
 
-    coordinate_.setCoordinate(coordinate->coordinate());
-    text_->setCoordinate(coordinate->coordinate());
+    coordinate_ = coordinate;
+    connect(coordinate_,
+            SIGNAL(latitudeChanged(double)),
+            this,
+            SLOT(coordinateLatitudeChanged(double)));
+    connect(coordinate_,
+            SIGNAL(longitudeChanged(double)),
+            this,
+            SLOT(coordinateLongitudeChanged(double)));
+    connect(coordinate_,
+            SIGNAL(altitudeChanged(double)),
+            this,
+            SLOT(coordinateAltitudeChanged(double)));
 
-    emit coordinateChanged(&coordinate_);
+    text_->setCoordinate(coordinate->coordinate());
+    emit coordinateChanged(coordinate_);
 }
 
 QDeclarativeCoordinate* QDeclarativeGeoMapTextObject::coordinate()
 {
-    return &coordinate_;
+    return coordinate_;
 }
 
 void QDeclarativeGeoMapTextObject::coordinateLatitudeChanged(double /*latitude*/)
 {
-    text_->setCoordinate(coordinate_.coordinate());
+    text_->setCoordinate(coordinate_->coordinate());
 }
 
 void QDeclarativeGeoMapTextObject::coordinateLongitudeChanged(double /*longitude*/)
 {
-    text_->setCoordinate(coordinate_.coordinate());
+    text_->setCoordinate(coordinate_->coordinate());
 }
 
 void QDeclarativeGeoMapTextObject::coordinateAltitudeChanged(double /*altitude*/)
 {
-    text_->setCoordinate(coordinate_.coordinate());
+    text_->setCoordinate(coordinate_->coordinate());
 }
 
 /*!
@@ -383,7 +385,7 @@ void QDeclarativeGeoMapTextObject::setVerticalAlignment(QDeclarativeGeoMapTextOb
 }
 
 /*!
-    \qmlproperty int MapText::zValue
+    \qmlproperty int MapText::z
 
     This property holds the z-value of the text.
 

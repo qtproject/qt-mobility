@@ -255,7 +255,7 @@ QOrganizerItemMaemo5Engine::QOrganizerItemMaemo5Engine()
     connect(&m_waitTimer, SIGNAL(timeout()), this, SIGNAL(dataChanged()));
 
     d->m_itemTransformer.setManagerUri(managerUri());
-    d->m_asynchProcess = new OrganizerAsynchProcess(this);
+    d->m_asynchManager = new OrganizerAsynchManager(this);
 
     d->m_dbCache = new OrganizerDbCache();
     connect(databaseMonitor, SIGNAL(fileChanged(const QString &)), d->m_dbCache, SLOT(invalidate()));
@@ -283,7 +283,7 @@ void QOrganizerItemMaemo5Engine::databaseChanged()
 
 QOrganizerItemMaemo5Engine::~QOrganizerItemMaemo5Engine()
 {
-    delete d->m_asynchProcess;
+    delete d->m_asynchManager;
 }
 
 QString QOrganizerItemMaemo5Engine::managerName() const
@@ -1085,23 +1085,23 @@ bool QOrganizerItemMaemo5Engine::internalRemoveCollection(const QOrganizerCollec
 
 bool QOrganizerItemMaemo5Engine::startRequest(QOrganizerAbstractRequest* req)
 {
-    d->m_asynchProcess->addRequest(req);
+    d->m_asynchManager->startRequest(req);
     return true;
 }
 
 bool QOrganizerItemMaemo5Engine::cancelRequest(QOrganizerAbstractRequest* req)
 {
-    return d->m_asynchProcess->cancelRequest(req);
+    return d->m_asynchManager->cancelRequest(req);
 }
 
 bool QOrganizerItemMaemo5Engine::waitForRequestFinished(QOrganizerAbstractRequest* req, int msecs)
 {
-    return d->m_asynchProcess->waitForRequestFinished(req, msecs);
+    return d->m_asynchManager->waitForRequestFinished(req, msecs);
 }
 
 void QOrganizerItemMaemo5Engine::requestDestroyed(QOrganizerAbstractRequest* req)
 {
-    return d->m_asynchProcess->requestDestroyed(req);
+    return d->m_asynchManager->requestDestroyed(req);
 }
 
 bool QOrganizerItemMaemo5Engine::hasFeature(QOrganizerManager::ManagerFeature feature, const QString &itemType) const

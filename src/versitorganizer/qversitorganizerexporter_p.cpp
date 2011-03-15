@@ -174,16 +174,26 @@ void QVersitOrganizerExporterPrivate::encodeEventTimeRange(
         QSet<QString>* processedFields)
 {
     QOrganizerEventTime etr = static_cast<QOrganizerEventTime>(detail);
-    QVersitProperty property =
-        takeProperty(document, QLatin1String("DTSTART"), removedProperties);
+    bool isAllDay = etr.isAllDay();
+    QVersitProperty property = takeProperty(document, QLatin1String("DTSTART"), removedProperties);
     property.setName(QLatin1String("DTSTART"));
-    property.setValue(encodeDateTime(etr.startDateTime()));
+    if (isAllDay) {
+        property.setValue(etr.startDateTime().date().toString(QLatin1String("yyyyMMdd")));
+        property.insertParameter(QLatin1String("VALUE"), QLatin1String("DATE"));
+    } else {
+        property.setValue(encodeDateTime(etr.startDateTime()));
+    }
     *generatedProperties << property;
 
-    property =
-        takeProperty(document, QLatin1String("DTEND"), removedProperties);
+    property = takeProperty(document, QLatin1String("DTEND"), removedProperties);
     property.setName(QLatin1String("DTEND"));
-    property.setValue(encodeDateTime(etr.endDateTime()));
+    if (isAllDay) {
+        // In iCalendar, the end date is exclusive while in Qt Organizer, it is inclusive.
+        property.setValue(etr.endDateTime().date().addDays(1).toString(QLatin1String("yyyyMMdd")));
+        property.insertParameter(QLatin1String("VALUE"), QLatin1String("DATE"));
+    } else {
+        property.setValue(encodeDateTime(etr.endDateTime()));
+    }
     *generatedProperties << property;
     *processedFields << QOrganizerEventTime::FieldStartDateTime
                      << QOrganizerEventTime::FieldEndDateTime;
@@ -197,16 +207,25 @@ void QVersitOrganizerExporterPrivate::encodeTodoTimeRange(
         QSet<QString>* processedFields)
 {
     QOrganizerTodoTime ttr = static_cast<QOrganizerTodoTime>(detail);
-    QVersitProperty property =
-        takeProperty(document, QLatin1String("DTSTART"), removedProperties);
+    bool isAllDay = ttr.isAllDay();
+    QVersitProperty property = takeProperty(document, QLatin1String("DTSTART"), removedProperties);
     property.setName(QLatin1String("DTSTART"));
-    property.setValue(encodeDateTime(ttr.startDateTime()));
+    if (isAllDay) {
+        property.setValue(ttr.startDateTime().date().toString(QLatin1String("yyyyMMdd")));
+        property.insertParameter(QLatin1String("VALUE"), QLatin1String("DATE"));
+    } else {
+        property.setValue(encodeDateTime(ttr.startDateTime()));
+    }
     *generatedProperties << property;
 
-    property =
-        takeProperty(document, QLatin1String("DUE"), removedProperties);
+    property = takeProperty(document, QLatin1String("DUE"), removedProperties);
     property.setName(QLatin1String("DUE"));
-    property.setValue(encodeDateTime(ttr.dueDateTime()));
+    if (isAllDay) {
+        property.setValue(ttr.dueDateTime().date().toString(QLatin1String("yyyyMMdd")));
+        property.insertParameter(QLatin1String("VALUE"), QLatin1String("DATE"));
+    } else {
+        property.setValue(encodeDateTime(ttr.dueDateTime()));
+    }
     *generatedProperties << property;
     *processedFields << QOrganizerTodoTime::FieldStartDateTime
                      << QOrganizerTodoTime::FieldDueDateTime;
@@ -220,8 +239,7 @@ void QVersitOrganizerExporterPrivate::encodeJournalTimeRange(
         QSet<QString>* processedFields)
 {
     QOrganizerJournalTime jtr = static_cast<QOrganizerJournalTime>(detail);
-    QVersitProperty property =
-        takeProperty(document, QLatin1String("DTSTART"), removedProperties);
+    QVersitProperty property = takeProperty(document, QLatin1String("DTSTART"), removedProperties);
     property.setName(QLatin1String("DTSTART"));
     property.setValue(encodeDateTime(jtr.entryDateTime()));
     *generatedProperties << property;
@@ -236,14 +254,12 @@ void QVersitOrganizerExporterPrivate::encodeTimestamp(
         QSet<QString>* processedFields)
 {
     QOrganizerItemTimestamp timestamp = static_cast<QOrganizerItemTimestamp>(detail);
-    QVersitProperty property =
-        takeProperty(document, QLatin1String("CREATED"), removedProperties);
+    QVersitProperty property = takeProperty(document, QLatin1String("CREATED"), removedProperties);
     property.setName(QLatin1String("CREATED"));
     property.setValue(encodeDateTime(timestamp.created().toUTC()));
     *generatedProperties << property;
 
-    property =
-        takeProperty(document, QLatin1String("LAST-MODIFIED"), removedProperties);
+    property = takeProperty(document, QLatin1String("LAST-MODIFIED"), removedProperties);
     property.setName(QLatin1String("LAST-MODIFIED"));
     property.setValue(encodeDateTime(timestamp.lastModified().toUTC()));
     *generatedProperties << property;

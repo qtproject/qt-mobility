@@ -290,6 +290,7 @@ private:
 
     State m_pendingState;
     bool m_isStateSet;
+    bool m_isValid;
 };
 
 QT_END_NAMESPACE

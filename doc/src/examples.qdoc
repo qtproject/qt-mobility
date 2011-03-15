@@ -27,10 +27,10 @@
 
 /*!
     \page all-examples.html
-    \title Qt Mobility Examples
+    \title QtMobility Examples
 
     Qt Mobility comes with a variety of examples that cover the entire range of the Qt Mobility
-    APIs. Note that some examples require Qt declarative which can by obtain via \l {http://qt.gitorious.org/qt}.
+    APIs.
 
     \section2 Bearer Management
 
@@ -75,8 +75,6 @@
     \o \l{lightmaps}{LightMaps}
     \o \l{flickrdemo}{Flickr Demo}
     \o \l{landmarkbrowser}{Landmark Browser}
-    \o \l{mapviewer}{Map Viewer}
-    \o \l{geoservicedemo}{Geo Service Demo}
     \o \l{declarative-location/landmarkmap}{Landmark Map}
     \o \l{declarative-location/flickr}{Declarative Location Flickr}
     \o \l{declarative-location/mapviewer}{Declarative Map Viewer}
@@ -138,7 +136,9 @@
 
     \list
     \o \l{sensors/grueplugin}{Grue Plugin}
-    \omit \o \l{sensors/grueapp}{Grue Application} \endomit
+    \o \l{sensors/grueapp}{Grue Application}
+    \o \l{sensors/cubehouse}{Cube House}
+    \o \l{sensors/sensor_explorer}{Sensor Explorer}
     \endlist
 */
 

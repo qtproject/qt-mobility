@@ -114,6 +114,10 @@ void QGstreamerVideoInputDeviceControl::update()
     m_names.clear();
     m_descriptions.clear();
 
+#ifdef Q_WS_MAEMO_6
+    m_names << QLatin1String("primary") << QLatin1String("secondary");
+    m_descriptions << tr("Main camera") << tr("Front camera");
+#else
     QDir devDir("/dev");
     devDir.setFilter(QDir::System);
 
@@ -154,4 +158,5 @@ void QGstreamerVideoInputDeviceControl::update()
         }
         ::close(fd);
     }
+#endif
 }

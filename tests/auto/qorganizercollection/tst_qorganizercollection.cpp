@@ -63,6 +63,7 @@ private slots:
     void metaData();
     void idLessThan();
     void idHash();
+    void idStringFunctions();
     void hash();
     void datastream();
     void traits();
@@ -84,70 +85,69 @@ void tst_QOrganizerCollection::metaData()
     QVERIFY(c.metaData().isEmpty());
     c.setMetaData("test", 5);
     QVERIFY(c.metaData().contains("test"));
+    QCOMPARE(c.metaData(QString("test")).toInt(), 5);
 
     QVariantMap mdm;
     mdm.insert("test2", 6);
     c.setMetaData(mdm);
     QCOMPARE(c.metaData(), mdm);
+    QCOMPARE(c.metaData(QString("test2")).toInt(), 6);
 }
 
 class BasicCollectionLocalId : public QOrganizerCollectionEngineId
 {
 public:
-    BasicCollectionLocalId(uint id) : m_id(id) {}
+    BasicCollectionLocalId(const QString& managerUri, uint id) : m_managerUri(managerUri), m_id(id) {}
     bool isEqualTo(const QOrganizerCollectionEngineId* other) const {
-        return m_id == static_cast<const BasicCollectionLocalId*>(other)->m_id;
+        if (m_managerUri == static_cast<const BasicCollectionLocalId*>(other)->m_managerUri)
+            return m_id == static_cast<const BasicCollectionLocalId*>(other)->m_id;
+        return false;
     }
     bool isLessThan(const QOrganizerCollectionEngineId* other) const {
-        return m_id < static_cast<const BasicCollectionLocalId*>(other)->m_id;
+        if (m_managerUri == static_cast<const BasicCollectionLocalId*>(other)->m_managerUri)
+            return m_id < static_cast<const BasicCollectionLocalId*>(other)->m_id;
+        return m_managerUri < static_cast<const BasicCollectionLocalId*>(other)->m_managerUri;
     }
     QString managerUri() const {
         static const QString uri(QLatin1String("qtorganizer:basic:"));
         return uri;
     }
     QOrganizerCollectionEngineId* clone() const {
-        BasicCollectionLocalId* cloned = new BasicCollectionLocalId(m_id);
+        BasicCollectionLocalId* cloned = new BasicCollectionLocalId(m_managerUri, m_id);
         return cloned;
     }
     QDebug& debugStreamOut(QDebug& dbg) const {
-        return dbg << m_id;
+        return dbg << m_managerUri << m_id;
     }
     QString toString() const {
-        return QString::number(m_id);
+        return m_managerUri + QString("::") + QString::number(m_id);
     }
     uint hash() const {
         return m_id;
     }
 
 private:
+    QString m_managerUri;
     uint m_id;
 };
 
-QOrganizerCollectionId makeId(uint id)
+QOrganizerCollectionId makeId(const QString& managerUri, uint id)
 {
-    return QOrganizerCollectionId(new BasicCollectionLocalId(id));
+    return QOrganizerCollectionId(new BasicCollectionLocalId(managerUri, id));
 }
 
 
 void tst_QOrganizerCollection::idLessThan()
 {
     // TODO: review tests
-/*    QOrganizerCollectionId id1;
-    id1.setManagerUri("a");
-    id1.setId(makeId(1));
-    QOrganizerCollectionId id2;
-    id2.setManagerUri("a");
-    id2.setId(makeId(1));
+    QOrganizerCollectionId id1(makeId("a", 1));
+    QOrganizerCollectionId id2(makeId("a", 1));
     QVERIFY(!(id1 < id2));
     QVERIFY(!(id2 < id1));
-    QOrganizerCollectionId id3;
-    id3.setManagerUri("a");
-    id3.setId(makeId(2));
-    QOrganizerCollectionId id4;
-    id4.setManagerUri("b");
-    id4.setId(makeId(1));
-    QOrganizerCollectionId id5; // no URI
-    id5.setId(makeId(2));
+    QVERIFY(id1 == id2);
+    QOrganizerCollectionId id3(makeId("a", 2));
+    QOrganizerCollectionId id4(makeId("b", 1));
+    QOrganizerCollectionId id5(makeId(QString(), 2));
     QVERIFY(id1 < id3);
     QVERIFY(!(id3 < id1));
     QVERIFY(id1 < id4);
@@ -155,36 +155,93 @@ void tst_QOrganizerCollection::idLessThan()
     QVERIFY(id3 < id4);
     QVERIFY(!(id4 < id3));
     QVERIFY(id5 < id1);
-    QVERIFY(!(id1 < id5));*/
+    QVERIFY(!(id1 < id5));
 }
 
 void tst_QOrganizerCollection::idHash()
 {
     // TODO: review tests
-/*    QOrganizerCollectionId id1;
-    id1.setManagerUri("a");
-    id1.setId(makeId(1));
-    QOrganizerCollectionId id2;
-    id2.setManagerUri("a");
-    id2.setId(makeId(1));
-    QOrganizerCollectionId id3;
-    id3.setManagerUri("b");
-    id3.setId(makeId(1));
+    QOrganizerCollectionId id1(makeId(QString(), 1));
+    QOrganizerCollectionId id2(makeId(QString(), 1));
+    QOrganizerCollectionId id3(makeId(QString(), 2));
+    QOrganizerCollectionId id4(makeId("a", 1));
     QVERIFY(qHash(id1) == qHash(id2));
     QVERIFY(qHash(id1) != qHash(id3));
+    // note that the hash function is dependent on the id type
+    // in BasicCollectionLocalId, the hash function ignores the managerUri.
+
     QSet<QOrganizerCollectionId> set;
     set.insert(id1);
     set.insert(id2);
     set.insert(id3);
-    QCOMPARE(set.size(), 2);*/
+    set.insert(id4);
+    QCOMPARE(set.size(), 3);
+}
+
+void tst_QOrganizerCollection::idStringFunctions()
+{
+    // TODO: review test
+    QOrganizerCollectionId id1(makeId("a", 1));
+    QOrganizerCollectionId id2(makeId("a", 1));
+    QOrganizerCollectionId id3(makeId("b", 1));
+    QOrganizerCollectionId id4(makeId("a", 2));
+    QVERIFY(qHash(id1) == qHash(id2));
+    QVERIFY(qHash(id1) != qHash(id4));
+
+    // note that the toString and fromString functions are
+    // engine and id specific.  This test merely checks that
+    // the API is hooked up correctly.
+
+    QVERIFY(id1.toString() == id2.toString());
+    QVERIFY(id1.toString() != id3.toString());
+    QVERIFY(id1.toString() != id4.toString());
+    QVERIFY(id3.toString() != id4.toString());
+
+    // this should "work" -- string of the correct format
+    QString prebuiltidstring = QString("qtorganizer") + QString(":") + QString("a") + QString("::") + QString::number(2);
+    QOrganizerCollectionId rebuiltid = QOrganizerCollectionId::fromString(prebuiltidstring);
+    // QVERIFY(rebuiltid == id4); // -- this requires a working backend.
+
+    // this string has the right format and one parameter, but requires a working backend
+    prebuiltidstring = QString("qtorganizer") + QString(":") + QString("a") + QString(":") + QString("key=value") + QString(":") + QString::number(2);
+    rebuiltid = QOrganizerCollectionId::fromString(prebuiltidstring);
+    // QVERIFY(rebuiltid == id4); // -- this requires a working backend.
+
+    // this string has the right format and some parameters, but requires a working backend
+    prebuiltidstring = QString("qtorganizer") + QString(":") + QString("a") + QString(":") + QString("key=value&key2=value2") + QString(":") + QString::number(2);
+    rebuiltid = QOrganizerCollectionId::fromString(prebuiltidstring);
+    // QVERIFY(rebuiltid == id4); // -- this requires a working backend.
+
+    // this string has the right format but misses the value for a parameter
+    prebuiltidstring = QString("qtorganizer") + QString(":") + QString("a") + QString(":") + QString("key=value&key2=") + QString(":") + QString::number(2);
+    rebuiltid = QOrganizerCollectionId::fromString(prebuiltidstring);
+    // QVERIFY(rebuiltid == id4); // -- this requires a working backend.
+
+    // this string misses a field (the parameters)
+    prebuiltidstring = QString("qtorganizer") + QString(":") + QString("a") + QString(":") + QString::number(2);
+    rebuiltid = QOrganizerCollectionId::fromString(prebuiltidstring);
+    QVERIFY(rebuiltid == QOrganizerCollectionId()); // invalid so should be null.
+
+    // this string misses two fields (params plus manager uri)
+    prebuiltidstring = QString("qtorganizer") + QString(":") + QString::number(2);
+    rebuiltid = QOrganizerCollectionId::fromString(prebuiltidstring);
+    QVERIFY(rebuiltid == QOrganizerCollectionId()); // invalid so should be null.
+
+    // this string misses the prefix (qtorganizer)
+    prebuiltidstring = QString("notorganizer") + QString(":") + QString("a") + QString("::") + QString::number(2);
+    rebuiltid = QOrganizerCollectionId::fromString(prebuiltidstring);
+    QVERIFY(rebuiltid == QOrganizerCollectionId()); // invalid so should be null.
+
+    // this string misses the manager uri
+    prebuiltidstring = QString("notorganizer") + QString(":::") + QString::number(2);
+    rebuiltid = QOrganizerCollectionId::fromString(prebuiltidstring);
+    QVERIFY(rebuiltid == QOrganizerCollectionId()); // invalid so should be null.
 }
 
 void tst_QOrganizerCollection::hash()
 {
     // TODO: review tests
-/*    QOrganizerCollectionId id;
-    id.setManagerUri("a");
-    id.setId(makeId(1));
+    QOrganizerCollectionId id(makeId("a", 1));
     QOrganizerCollection c1;
     c1.setId(id);
     c1.setMetaData("key", "value");
@@ -202,7 +259,7 @@ void tst_QOrganizerCollection::hash()
     QVERIFY(qHash(c1) == qHash(c2));
     QVERIFY(qHash(c1) != qHash(c3));
     QVERIFY(qHash(c1) != qHash(c4));
-    QVERIFY(qHash(c1) == qHash(c5));*/
+    QVERIFY(qHash(c1) == qHash(c5));
 }
 
 void tst_QOrganizerCollection::datastream()

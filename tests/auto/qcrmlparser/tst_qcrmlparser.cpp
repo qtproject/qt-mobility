@@ -212,14 +212,14 @@ void tst_QCrmlParser::keyRangeNoSequence()
     QCrmlParser parser;
     QList<KeyData> keyData;
     keyData = parser.parseQCrml(testData.absoluteFilePath("test5.qcrml"));
-    QCOMPARE(keyData.count(), 65535);
+    QCOMPARE(keyData.count(), 255);
     QHash<QString,KeyData> keyHash = makeHash(keyData);
 
     quint64 repoUid = Q_UINT64_C(0x8765432100000000);
     quint32 firstAddr = 0x1;
     quint64 uidPrefix = repoUid + firstAddr;
 
-    for (int i = 0; i < 65535; ++i) {
+    for (int i = 0; i < 255; ++i) {
         QVERIFY(verifyKeyData(keyHash, QString("/MyFeature/MyNumbers/") + QString::number(i),
                         uidPrefix + i));
     }

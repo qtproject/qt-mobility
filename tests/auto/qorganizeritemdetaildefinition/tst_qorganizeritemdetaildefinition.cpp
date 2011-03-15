@@ -64,6 +64,7 @@ private slots:
     void testGetSet();
     void testEquality();
     void testEmpty();
+    void testStreaming();
     void traits();
     void fieldTraits();
 };
@@ -264,6 +265,103 @@ void tst_QOrganizerItemDetailDefinition::testEquality()
     def2.setFields(fields);
     QVERIFY(def1 == def2);
     QVERIFY(def2 == def1);
+}
+
+void tst_QOrganizerItemDetailDefinition::testStreaming()
+{
+    QMap<QString, QOrganizerItemDetailFieldDefinition> allFields;
+
+    QVariantList allowedStrings;
+    allowedStrings << QString("First") << QString("Second");
+
+    // generate some field definitions
+    QOrganizerItemDetailFieldDefinition dfd;
+    dfd.setDataType(QVariant::String);
+    dfd.setAllowableValues(allowedStrings);
+    allFields.insert("TestFieldDefinition", dfd);
+
+    dfd.setDataType(QVariant::Int);
+    dfd.setAllowableValues(QVariantList());
+    allFields.insert("TestCount", dfd);
+
+    // now create our detail definition
+    QOrganizerItemDetailDefinition dd;
+    dd.setName("TestDefinitionName");
+    dd.setUnique(true);
+    dd.setFields(allFields);
+
+    // testing streaming of field definition, with no allowable values set
+    {
+        QByteArray buffer;
+        QOrganizerItemDetailFieldDefinition fieldDefIn = allFields.value("TestCount");
+        QOrganizerItemDetailFieldDefinition fieldDefOut;
+        QDataStream stream1(&buffer, QIODevice::WriteOnly);
+        stream1 << fieldDefIn;
+        QVERIFY(buffer.size() > 0);
+        QDataStream stream2(buffer);
+        stream2 >> fieldDefOut;
+        QVERIFY(fieldDefIn == fieldDefOut);
+    }
+
+    // testing streaming of field definition, with specific allowable values set
+    {
+        QByteArray buffer;
+        QOrganizerItemDetailFieldDefinition fieldDefIn = allFields.value("TestFieldDefinition");
+        QOrganizerItemDetailFieldDefinition fieldDefOut;
+        QDataStream stream1(&buffer, QIODevice::WriteOnly);
+        stream1 << fieldDefIn;
+        QVERIFY(buffer.size() > 0);
+        QDataStream stream2(buffer);
+        stream2 >> fieldDefOut;
+        QVERIFY(fieldDefIn == fieldDefOut);
+    }
+
+    // testing streaming of detail definition
+    {
+        QByteArray buffer;
+        QOrganizerItemDetailDefinition defIn = dd;
+        QOrganizerItemDetailDefinition defOut;
+        QDataStream stream1(&buffer, QIODevice::WriteOnly);
+        stream1 << defIn;
+        QVERIFY(buffer.size() > 0);
+        QDataStream stream2(buffer);
+        stream2 >> defOut;
+        QVERIFY(defIn == defOut);
+    }
+
+    // now try inserting and removing a field, streaming again, and testing.
+    {
+        // remove the field
+        QByteArray buffer;
+        QOrganizerItemDetailDefinition defIn = dd;
+        defIn.removeField("TestCount");
+        QVERIFY(defIn != dd);
+        QOrganizerItemDetailDefinition defOut;
+        QDataStream stream1(&buffer, QIODevice::WriteOnly);
+        stream1 << defIn;
+        QVERIFY(buffer.size() > 0);
+        QDataStream stream2(buffer);
+        stream2 >> defOut;
+        QVERIFY(defIn == defOut);
+    }
+
+    {
+        // re-add the field.
+        QByteArray buffer;
+        QOrganizerItemDetailDefinition defIn = dd;
+        defIn.removeField("TestCount"); // remove and reinsert the field
+        QVERIFY(defIn != dd);
+        defIn.insertField("TestCount", dfd);
+        QVERIFY(defIn == dd);
+        QOrganizerItemDetailDefinition defOut;
+        QDataStream stream1(&buffer, QIODevice::WriteOnly);
+        stream1 << defIn;
+        QVERIFY(buffer.size() > 0);
+        QDataStream stream2(buffer);
+        stream2 >> defOut;
+        QVERIFY(defIn == defOut);
+        QVERIFY(defOut == dd); // should be equal to the original.
+    }
 }
 
 void tst_QOrganizerItemDetailDefinition::traits()

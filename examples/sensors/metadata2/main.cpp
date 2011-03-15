@@ -48,12 +48,16 @@
 #include <qrotationsensor.h>
 #include <qtapsensor.h>
 #include <QFile>
+#include <QDebug>
 
 QTM_USE_NAMESPACE
 
+const char* const MAX_BUFFER_SIZE = "maxBufferSize";
+const char* const EFFICIENT_BUFFER_SIZE = "efficientBufferSize";
 
 
-QString checkSensor( QSensor *sensor )
+
+QString checkSensor( QSensor *sensor, bool isDefault)
 {
     qrangelist sen_datarates = sensor->availableDataRates();
     QString sen_desc('"');
@@ -68,12 +72,12 @@ QString checkSensor( QSensor *sensor )
 
     for( int i = 0; i < sen_datarates.size(); ++i )
     {
-       datarates.append("[");
-       QString num;
-       datarates.append(num.setNum(sen_datarates[i].first));
-       datarates.append("..");
-       datarates.append(num.setNum(sen_datarates[i].second));
-       datarates.append("] ");
+        datarates.append("[");
+        QString num;
+        datarates.append(num.setNum(sen_datarates[i].first));
+        datarates.append("..");
+        datarates.append(num.setNum(sen_datarates[i].second));
+        datarates.append("] ");
     }
 
 
@@ -90,8 +94,16 @@ QString checkSensor( QSensor *sensor )
         outputRanges.append("] ");
     }
 
+    // bufferSizes
+    QVariant maxVariant = sensor->property(MAX_BUFFER_SIZE);
+    QString bufferSizes("[1..");
+    bufferSizes.append(QString::number(maxVariant.isValid()?maxVariant.toInt():1));
+    bufferSizes.append("],");
+    QVariant efficientVariant = sensor->property(EFFICIENT_BUFFER_SIZE);
+    bufferSizes.append(QString::number(efficientVariant.isValid()?efficientVariant.toInt():1));
 
     QString metadata(sen_ident);
+    if (isDefault) metadata.append("- default");
     metadata.append(",");
     metadata.append(sen_type);
     metadata.append(",");
@@ -100,7 +112,10 @@ QString checkSensor( QSensor *sensor )
     metadata.append(outputRanges);
     metadata.append(",");
     metadata.append(datarates);
+    metadata.append(",");
+    metadata.append(bufferSizes);
     metadata.append("\n");
+
 
     return metadata;
 }
@@ -108,12 +123,8 @@ QString checkSensor( QSensor *sensor )
 int main( int argc, char **argv )
 {
     QCoreApplication app(argc, argv);
-
     QStringList args = app.arguments();
     QString fileName = args.size()>1?args.at(1):"metadata.csv";
-    QTextStream out2(stdout);
-    out2<<fileName;
-
     QFile file(fileName);
 
     bool result = true;
@@ -122,35 +133,26 @@ int main( int argc, char **argv )
 
     QTextStream out(&file);
 
+    out <<"Identifier,Type,Description,OutputRanges,DataRates,BufferSizes,EfficientBufferSize"<<endl;
 
-//    QTextStream out(stdout);
+    QList<QByteArray> types = QSensor::sensorTypes();
+    for (int j=0, l= types.size();j<l; j++ ){
 
-    QSensor *sensors[8];
-    sensors[0] = new QAccelerometer;
-    sensors[1] = new QAmbientLightSensor;
-    sensors[2] = new QCompass;
-    sensors[3] = new QMagnetometer;
-    sensors[4] = new QOrientationSensor;
-    sensors[5] = new QProximitySensor;
-    sensors[6] = new QRotationSensor;
-    sensors[7] = new QTapSensor;
-
-
-    out <<"Identifier,Type,Description,OutputRanges,DataRates"<<endl;
-
-    for( int i = 0; i < 8; ++i )
-    {
-        if( ! sensors[i] )
+        const QByteArray type = types.at(j);
+        QList<QByteArray> ids = QSensor::sensorsForType(type);
+        QByteArray defaultSensor = QSensor::defaultSensorForType(type);        
+        for( int i = 0, ll=ids.size(); i < ll; ++i)
         {
-            out << "sensor number " << i << " unavailable" << endl;
-            continue;
-        }
-        if( ! sensors[i]->connectToBackend() )
-        {
-            out << "connectToBackend failed" << endl;
-            result = false;
-        } else {
-            out << checkSensor(sensors[i] );
+            QSensor sensor(type);
+            QByteArray id = ids.at(i);
+            sensor.setIdentifier(id);
+            if( ! sensor.connectToBackend() )
+            {
+                qDebug() << "connectToBackend failed" << id <<endl;
+                result = false;
+            } else {
+                out << checkSensor(&sensor, id==defaultSensor);
+            }
         }
     }
 

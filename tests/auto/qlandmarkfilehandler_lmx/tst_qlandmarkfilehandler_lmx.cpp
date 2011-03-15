@@ -57,6 +57,7 @@
 #include <qlandmarkmanager.h>
 #include "qlandmarkmanager_p.h"
 #include "qlandmarkfilehandler_lmx_p.h"
+#include "qlandmarkmanagerdataholder.h"
 
 QTM_USE_NAMESPACE
 
@@ -86,31 +87,43 @@ private:
     QLandmarkManager *m_manager;
     QLandmarkFileHandlerLmx *m_handler;
     QString m_exportFile;
+    QScopedPointer<QLandmarkManagerDataHolder> managerDataHolder;
 
 private slots:
 
+    void clean() {
+        QList<QLandmarkId> lmIds = m_manager->landmarkIds();
+        for(int i=0; i < lmIds.count(); ++i) {
+            QVERIFY(m_manager->removeLandmark(lmIds.at(i)));
+        }
+
+        QList<QLandmarkCategoryId> catIds = m_manager->categoryIds();
+        for (int i=0; i < catIds.count(); ++i) {
+            if (!m_manager->isReadOnly(catIds.at(i)))
+                QVERIFY(m_manager->removeCategory(catIds.at(i)));
+        }
+        QTest::qWait(20);//try ensure notifications for these
+                         //deletions are made prior to each test function.
+    }
+
     void init() {
-        QMap<QString, QString> map;
-        map["filename"] = "test.db";
         m_exportFile = "exportfile";
-        m_manager = new QLandmarkManager("com.nokia.qt.landmarks.engines.sqlite", map);
-        m_handler = new QLandmarkFileHandlerLmx();
+        m_manager = new QLandmarkManager;
+        m_handler = new QLandmarkFileHandlerLmx;
+        clean();
     }
 
     void cleanup() {
+        clean();
         delete m_handler;
         delete m_manager;
 
-        QFile file("test.db");
-        file.remove();
-        QFile::remove(m_exportFile);
+        if (QFile::exists(m_exportFile))
+            QFile::remove(m_exportFile);
     }
 
-    void cleanupTestCase() {
-        QFile file("test.db");
-        file.remove();
-        QFile::remove(m_exportFile);
-    }
+    void initTestCase();
+    void cleanupTestCase();
 
     void fileImport() {
         QFETCH(QString, fileIn);
@@ -119,16 +132,9 @@ private slots:
         QFETCH(QList<QLandmark>, landmarks);
         QFETCH(QList<QLandmarkCategory>, categories);
 
-        QLandmarkManager::Error error = QLandmarkManager::NoError;
         QHash<QString,QString> categoryNameIdHash; //name to local id
         for (int i = 0; i < categories.size(); ++i) {
-            QLandmarkCategoryId catId;
-            categories[i].setCategoryId(catId);
-
-            m_manager->saveCategory(&categories[i]);
             categoryNameIdHash.insert(categories[i].name(),categories[i].categoryId().localId());
-            error = m_manager->error();
-            QCOMPARE(error, QLandmarkManager::NoError);
         }
 
         QFile file(fileIn);
@@ -164,21 +170,11 @@ private slots:
         QFETCH(QList<QLandmark>, landmarks);
         QFETCH(QList<QLandmarkCategory>, categories);
 
-        QLandmarkManager::Error error;
-        for (int i = 0; i < categories.size(); ++i) {
-            QLandmarkCategoryId catId;
-            categories[i].setCategoryId(catId);
-            m_manager->saveCategory(&categories[i]);
-            error = m_manager->error();
-            QCOMPARE(error, QLandmarkManager::NoError);
-        }
-
         QHash<QString,QString> categoryIdNameHash;//local id to name
         foreach(const QLandmarkCategory &category, categories) {
                 categoryIdNameHash.insert(category.categoryId().localId(),category.name());
         }
 
-        m_manager->saveLandmarks(&landmarks);
         m_handler->setLandmarks(landmarks);
         m_handler->setCategoryIdNameHash(categoryIdNameHash);
 
@@ -472,9 +468,7 @@ private:
         QList<QLandmarkCategory> cats;
         QList<QLandmarkCategoryId> catIds;
 
-        QMap<QString, QString> map;
-        map["filename"] = "test.db";
-        m_manager = new QLandmarkManager("com.nokia.qt.landmarks.engines.sqlite", map);
+        m_manager = new QLandmarkManager;
 
         QLandmarkCategory cat0;
         cat0.setName("cat0");
@@ -613,6 +607,17 @@ private:
         << cats;
     }
 };
+
+void tst_QLandmarkFileHandler_Lmx::initTestCase()
+{
+    managerDataHolder.reset(new QLandmarkManagerDataHolder());
+}
+
+void tst_QLandmarkFileHandler_Lmx::cleanupTestCase() {
+    managerDataHolder.reset(0);
+    if (QFile::exists(m_exportFile))
+        QFile::remove(m_exportFile);
+}
 
 QTEST_MAIN(tst_QLandmarkFileHandler_Lmx)
 #include "tst_qlandmarkfilehandler_lmx.moc"

@@ -132,13 +132,16 @@ void tst_QNearFieldTagType1::staticMemoryModel()
 
     // readIdentification()
     {
-        const QByteArray id = target->readIdentification();
+        QNearFieldTarget::RequestId id = target->readIdentification();
+        QVERIFY(target->waitForRequestCompleted(id));
 
-        QCOMPARE(id.length(), 6);
+        const QByteArray data = target->requestResponse(id).toByteArray();
 
-        quint8 hr0 = id.at(0);
-        quint8 hr1 = id.at(1);
-        const QByteArray uid4 = id.mid(2, 4);
+        QCOMPARE(data.length(), 6);
+
+        quint8 hr0 = data.at(0);
+        quint8 hr1 = data.at(1);
+        const QByteArray uid4 = data.mid(2, 4);
 
         // verify NfcTagType1
         QVERIFY(hr0 & 0x10);
@@ -149,7 +152,10 @@ void tst_QNearFieldTagType1::staticMemoryModel()
     // readAll()
     {
         // read all reads the first 120 bytes, prepended with HR0 and HR1.
-        const QByteArray data = target->readAll();
+        QNearFieldTarget::RequestId id = target->readAll();
+        QVERIFY(target->waitForRequestCompleted(id));
+
+        const QByteArray data = target->requestResponse(id).toByteArray();
         QCOMPARE(data.length(), 122);
 
         // verify NfcTagType1.
@@ -161,10 +167,16 @@ void tst_QNearFieldTagType1::staticMemoryModel()
 
     // readByte()
     {
-        const QByteArray data = target->readAll();
+        QNearFieldTarget::RequestId id = target->readAll();
+        QVERIFY(target->waitForRequestCompleted(id));
+
+        const QByteArray data = target->requestResponse(id).toByteArray();
 
         for (int i = 0; i < 120; ++i) {
-            quint8 byte = target->readByte(i);
+            id = target->readByte(i);
+            QVERIFY(target->waitForRequestCompleted(id));
+
+            quint8 byte = target->requestResponse(id).toUInt();
 
             QCOMPARE(byte, quint8(data.at(i + 2)));
         }
@@ -173,30 +185,73 @@ void tst_QNearFieldTagType1::staticMemoryModel()
     // writeByte()
     {
         for (int i = 0; i < 8; ++i) {
-            quint8 byte = target->readByte(i);
-            QVERIFY(!target->writeByte(i, 0x55));
-            QCOMPARE(target->readByte(i), byte);
+            QNearFieldTarget::RequestId id = target->readByte(i);
+            QVERIFY(target->waitForRequestCompleted(id));
+
+            quint8 byte = target->requestResponse(id).toUInt();
+
+            id = target->writeByte(i, 0x55);
+            QVERIFY(!target->waitForRequestCompleted(id));
+
+            QVERIFY(!target->requestResponse(id).isValid());
+
+            id = target->readByte(i);
+            QVERIFY(target->waitForRequestCompleted(id));
+
+            quint8 readByte = target->requestResponse(id).toUInt();
+            QCOMPARE(readByte, byte);
         }
 
         for (int i = 8; i < 104; ++i) {
-            QVERIFY(target->writeByte(i, 0x55));
-            QCOMPARE(target->readByte(i), quint8(0x55));
+            // Write 0x55
+            QNearFieldTarget::RequestId id = target->writeByte(i, 0x55);
+            QVERIFY(target->waitForRequestCompleted(id));
+            QVERIFY(target->requestResponse(id).toBool());
 
-            QVERIFY(target->writeByte(i, 0xaa));
-            QCOMPARE(target->readByte(i), quint8(0xaa));
+            id = target->readByte(i);
+            QVERIFY(target->waitForRequestCompleted(id));
+            quint8 readByte = target->requestResponse(id).toUInt();
+            QCOMPARE(readByte, quint8(0x55));
 
-            QVERIFY(target->writeByte(i, 0x55, QNearFieldTagType1::WriteOnly));
-            QCOMPARE(target->readByte(i), quint8(0xff));
+            // Write 0xaa
+            id = target->writeByte(i, 0xaa);
+            QVERIFY(target->waitForRequestCompleted(id));
+            QVERIFY(target->requestResponse(id).toBool());
+
+            id = target->readByte(i);
+            QVERIFY(target->waitForRequestCompleted(id));
+            readByte = target->requestResponse(id).toUInt();
+            QCOMPARE(readByte, quint8(0xaa));
+
+            // Write 0x55 without erase, result should be 0xff
+            id = target->writeByte(i, 0x55, QNearFieldTagType1::WriteOnly);
+            QVERIFY(target->waitForRequestCompleted(id));
+            QVERIFY(target->requestResponse(id).toBool());
+
+            id = target->readByte(i);
+            QVERIFY(target->waitForRequestCompleted(id));
+            readByte = target->requestResponse(id).toUInt();
+            QCOMPARE(readByte, quint8(0xff));
         }
 
         for (int i = 104; i < 120; ++i) {
-            quint8 byte = target->readByte(i);
-            QVERIFY(!target->writeByte(i, 0x55));
-            QCOMPARE(target->readByte(i), byte);
+            QNearFieldTarget::RequestId id = target->readByte(i);
+            QVERIFY(target->waitForRequestCompleted(id));
+
+            quint8 byte = target->requestResponse(id).toUInt();
+
+            id = target->writeByte(i, 0x55);
+            QVERIFY(!target->waitForRequestCompleted(id));
+
+            QVERIFY(!target->requestResponse(id).isValid());
+
+            id = target->readByte(i);
+            QVERIFY(target->waitForRequestCompleted(id));
+
+            quint8 readByte = target->requestResponse(id).toUInt();
+            QCOMPARE(readByte, byte);
         }
     }
-
-
 }
 
 void tst_QNearFieldTagType1::dynamicMemoryModel()
@@ -208,13 +263,16 @@ void tst_QNearFieldTagType1::dynamicMemoryModel()
     forever {
         waitForMatchingTarget();
 
-        const QByteArray id = target->readIdentification();
-        if (seenIds.contains(id))
+        QNearFieldTarget::RequestId id = target->readIdentification();
+        QVERIFY(target->waitForRequestCompleted(id));
+
+        const QByteArray data = target->requestResponse(id).toByteArray();
+        if (seenIds.contains(data))
             break;
         else
-            seenIds.append(id);
+            seenIds.append(data);
 
-        quint8 hr0 = id.at(0);
+        quint8 hr0 = data.at(0);
         bool dynamic = (((hr0 & 0xf0) == 0x10) && ((hr0 & 0x0f) != 0x01));
 
         if (dynamic) {
@@ -222,48 +280,101 @@ void tst_QNearFieldTagType1::dynamicMemoryModel()
 
             // block 0, UID is locked
             {
-                QByteArray block = target->readBlock(0x00);
+                QNearFieldTarget::RequestId id = target->readBlock(0x00);
+                QVERIFY(target->waitForRequestCompleted(id));
+
+                const QByteArray block = target->requestResponse(id).toByteArray();
+
                 QCOMPARE(target->uid(), block.left(7));
                 QCOMPARE(quint8(block.at(7)), quint8(0x00));
-                QVERIFY(!target->writeBlock(0x00, QByteArray(8, quint8(0x55))));
+
+                id = target->writeBlock(0x00, QByteArray(8, quint8(0x55)));
+                QVERIFY(!target->waitForRequestCompleted(id));
+                QVERIFY(!target->requestResponse(id).isValid());
+
                 QCOMPARE(target->uid(), block.left(7));
                 QCOMPARE(quint8(block.at(7)), quint8(0x00));
             }
 
             // static data area
-            QByteArray segment = target->readSegment(0);
+            QNearFieldTarget::RequestId id = target->readSegment(0);
+            QVERIFY(target->waitForRequestCompleted(id));
+            QByteArray segment = target->requestResponse(id).toByteArray();
             for (int i = 1; i < 0x0d; ++i) {
-                QVERIFY(target->writeBlock(i, QByteArray(8, quint8(0x55))));
-                QCOMPARE(target->readBlock(i), QByteArray(8, quint8(0x55)));
+                // Write 0x55
+                id = target->writeBlock(i, QByteArray(8, quint8(0x55)));
+                QVERIFY(target->waitForRequestCompleted(id));
+                QVERIFY(target->requestResponse(id).toBool());
+
+                id = target->readBlock(i);
+                QVERIFY(target->waitForRequestCompleted(id));
+                QCOMPARE(target->requestResponse(id).toByteArray(), QByteArray(8, quint8(0x55)));
+
                 segment.replace(i * 8, 8, QByteArray(8, quint8(0x55)));
-                QCOMPARE(target->readSegment(0), segment);
 
-                QVERIFY(target->writeBlock(i, QByteArray(8, quint8(0xaa))));
-                QCOMPARE(target->readBlock(i), QByteArray(8, quint8(0xaa)));
+                id = target->readSegment(0);
+                QVERIFY(target->waitForRequestCompleted(id));
+                QCOMPARE(target->requestResponse(id).toByteArray(), segment);
+
+                // Write 0xaa
+                id = target->writeBlock(i, QByteArray(8, quint8(0xaa)));
+                QVERIFY(target->waitForRequestCompleted(id));
+                QVERIFY(target->requestResponse(id).toBool());
+
+                id = target->readBlock(i);
+                QVERIFY(target->waitForRequestCompleted(id));
+                QCOMPARE(target->requestResponse(id).toByteArray(), QByteArray(8, quint8(0xaa)));
+
                 segment.replace(i * 8, 8, QByteArray(8, quint8(0xaa)));
-                QCOMPARE(target->readSegment(0), segment);
 
-                QVERIFY(target->writeBlock(i, QByteArray(8, quint8(0x55)), QNearFieldTagType1::WriteOnly));
-                QCOMPARE(target->readBlock(i), QByteArray(8, quint8(0xff)));
+                id = target->readSegment(0);
+                QVERIFY(target->waitForRequestCompleted(id));
+                QCOMPARE(target->requestResponse(id).toByteArray(), segment);
+
+                // Write 0x55 without erase, result should be 0xff
+                id = target->writeBlock(i, QByteArray(8, quint8(0x55)),
+                                        QNearFieldTagType1::WriteOnly);
+                QVERIFY(target->waitForRequestCompleted(id));
+                QVERIFY(target->requestResponse(id).toBool());
+
+                id = target->readBlock(i);
+                QVERIFY(target->waitForRequestCompleted(id));
+                QCOMPARE(target->requestResponse(id).toByteArray(), QByteArray(8, quint8(0xff)));
+
                 segment.replace(i * 8, 8, QByteArray(8, quint8(0xff)));
-                QCOMPARE(target->readSegment(0), segment);
+
+                id = target->readSegment(0);
+                QVERIFY(target->waitForRequestCompleted(id));
+                QCOMPARE(target->requestResponse(id).toByteArray(), segment);
             }
 
             // static / dynamic reserved lock area
             for (int i = 0x0d; i < 0x10; ++i) {
-                QByteArray block = target->readBlock(i);
-                QVERIFY(!target->writeBlock(i, QByteArray(8, quint8(0x55))));
-                QCOMPARE(target->readBlock(i), block);
+                id = target->readBlock(i);
+                QVERIFY(target->waitForRequestCompleted(id));
+                QByteArray block = target->requestResponse(id).toByteArray();
+
+                id = target->writeBlock(i, QByteArray(8, quint8(0x55)));
+                QVERIFY(!target->waitForRequestCompleted(id));
+                QVERIFY(!target->requestResponse(id).isValid());
+
+                id = target->readBlock(i);
+                QVERIFY(target->waitForRequestCompleted(id));
+                QCOMPARE(target->requestResponse(id).toByteArray(), block);
             }
         } else {
             testedStatic = true;
 
             for (int i = 0; i < 256; ++i) {
-                QVERIFY(target->readBlock(i).isEmpty());
-                QVERIFY(!target->writeBlock(i, QByteArray(8, quint8(0x55))));
+                QNearFieldTarget::RequestId id = target->readBlock(i);
+                QVERIFY(!target->waitForRequestCompleted(id));
+
+                id = target->writeBlock(i, QByteArray(8, quint8(0x55)));
+                QVERIFY(!target->waitForRequestCompleted(id));
             }
             for (int i = 0; i < 16; ++i) {
-                QVERIFY(target->readSegment(i).isEmpty());
+                QNearFieldTarget::RequestId id = target->readSegment(i);
+                QVERIFY(!target->waitForRequestCompleted(id));
             }
         }
     }
@@ -278,15 +389,26 @@ void tst_QNearFieldTagType1::ndefMessages()
     forever {
         waitForMatchingTarget();
 
-        QByteArray id = target->readIdentification();
+        QNearFieldTarget::RequestId id = target->readIdentification();
+        QVERIFY(target->waitForRequestCompleted(id));
+
+        const QByteArray uid = target->requestResponse(id).toByteArray();
         if (firstId.isEmpty())
-            firstId = id;
-        else if (firstId == id)
+            firstId = uid;
+        else if (firstId == uid)
             break;
 
         QVERIFY(target->hasNdefMessage());
 
-        QList<QNdefMessage> ndefMessages = target->ndefMessages();
+        QSignalSpy ndefMessageReadSpy(target, SIGNAL(ndefMessageRead(QNdefMessage)));
+
+        target->readNdefMessages();
+
+        QTRY_VERIFY(!ndefMessageReadSpy.isEmpty());
+
+        QList<QNdefMessage> ndefMessages;
+        for (int i = 0; i < ndefMessageReadSpy.count(); ++i)
+            ndefMessages.append(ndefMessageReadSpy.at(i).first().value<QNdefMessage>());
 
         QList<QNdefMessage> messages;
         QNdefNfcTextRecord textRecord;
@@ -305,11 +427,22 @@ void tst_QNearFieldTagType1::ndefMessages()
 
         messages.append(message);
 
-        target->setNdefMessages(messages);
+        QSignalSpy ndefMessageWriteSpy(target, SIGNAL(ndefMessagesWritten()));
+        target->writeNdefMessages(messages);
+
+        QTRY_VERIFY(!ndefMessageWriteSpy.isEmpty());
 
         QVERIFY(target->hasNdefMessage());
 
-        QList<QNdefMessage> storedMessages = target->ndefMessages();
+        ndefMessageReadSpy.clear();
+
+        target->readNdefMessages();
+
+        QTRY_VERIFY(!ndefMessageReadSpy.isEmpty());
+
+        QList<QNdefMessage> storedMessages;
+        for (int i = 0; i < ndefMessageReadSpy.count(); ++i)
+            storedMessages.append(ndefMessageReadSpy.at(i).first().value<QNdefMessage>());
 
         QVERIFY(ndefMessages != storedMessages);
 

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,19 +39,27 @@
 **
 ****************************************************************************/
 
-#ifndef QLLCPSERVER_P_H
-#define QLLCPSERVER_P_H
+#ifndef QLLCPSERVER_SYMBIAN_P_H
+#define QLLCPSERVER_SYMBIAN_P_H
 
 #include <qmobilityglobal.h>
-
 #include "qllcpserver.h"
+#include <QList>
+#include <QPointer>
 
+class CLlcpServer;
+class CLlcpSocketType2;
+class QLlcpSocket;
+
+QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
 
 class QLlcpServerPrivate
 {
+    Q_DECLARE_PUBLIC(QLlcpServer)
 public:
     QLlcpServerPrivate(QLlcpServer *q);
+    ~QLlcpServerPrivate();
 
     bool listen(const QString &serviceUri);
     bool isListening() const;
@@ -63,13 +71,19 @@ public:
 
     bool hasPendingConnections() const;
     QLlcpSocket *nextPendingConnection();
+    QLlcpSocket::SocketError serverError() const;
 
-    QLlcpServer::Error serverError() const;
+public:
+    void invokeNewConnection();
 
 private:
+    CLlcpServer* m_symbianbackend;
     QLlcpServer *q_ptr;
+    QList<QPointer<QLlcpSocket> > m_pendingConnections;
 };
 
 QTM_END_NAMESPACE
+
+QT_END_HEADER
 
 #endif // QLLCPSERVER_P_H

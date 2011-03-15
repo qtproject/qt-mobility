@@ -45,7 +45,7 @@ import QtMobility.organizer 1.1
 Rectangle
 {
     id:dayView
-    property variant itemIds:calendar.organizer.itemIds(calendar.day)
+    property variant itemIds:calendar.organizer.itemIds(calendar.currentDate, new Date(calendar.year, calendar.month, calendar.day+1))
 
     anchors.fill: parent
 
@@ -76,7 +76,6 @@ Rectangle
                 ListElement {hour : "21:00"}
                 ListElement {hour : "22:00"}
                 ListElement {hour : "23:00"}
-                ListElement {hour : "0:00"}
             }
 
         Rectangle {
@@ -111,12 +110,7 @@ Rectangle
 
             opacity : dayView.opacity * 0.8
             itemId: modelData
-//            Component.onCompleted: {
-//                console.log ("startTime:" + startTime);
-//                console.log ("endTime:" + endTime);
-//                console.log ("height:" + height);
-//                console.log ("anchors.top:" + timePos);
-//            }
+
         }
     }
 }

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -46,6 +46,8 @@
 #include "qnearfieldmanager_simulator_p.h"
 #elif defined(Q_OS_SYMBIAN)
 #include "qnearfieldmanager_symbian_p.h"
+#elif defined(Q_WS_MAEMO_6) || defined (Q_WS_MEEGO)
+#include "qnearfieldmanager_meego_p.h"
 #else
 #include "qnearfieldmanagerimpl_p.h"
 #endif
@@ -77,9 +79,9 @@ QTM_BEGIN_NAMESPACE
     transaction occurs.
 
     NFC Forum Tags can contain one or more messages in a standardized format.  These messages are
-    encapsulated in the QNdefMessage class.  Use the registerTargetDetectedHandler() functions to
+    encapsulated in the QNdefMessage class.  Use the registerNdefMessageHandler() functions to
     register message handlers with particular criteria.  Handlers can be unregistered with the
-    unregisterTargetDetectedHandler() function.
+    unregisterNdefMessageHandler() function.
 */
 
 /*!
@@ -125,7 +127,7 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn int QNearFieldManager::registerTargetDetectedHandler(QObject *object, const char *method)
+    \fn int QNearFieldManager::registerNdefMessageHandler(QObject *object, const char *method)
 
     Registers \a object to receive notifications on \a method when a tag has been detected and has
     an NDEF record that matches template argument.  The \a method on \a object should have the
@@ -176,28 +178,34 @@ QNearFieldManager::~QNearFieldManager()
 }
 
 /*!
-    Starts detecting targets of type \a targetTypes.  Causes the targetDetected() signal to be
-    emitted when a target with a type in \a targetTypes is within proximity.  If \a targetTypes is
-    empty targets of all types will be detected.
+    Starts detecting targets of type \a targetTypes. Returns true if target detection is
+    successfully started; otherwise returns false.
+
+    Causes the targetDetected() signal to be emitted when a target with a type in \a targetTypes is
+    within proximity. If \a targetTypes is empty targets of all types will be detected.
 
     \sa stopTargetDetection()
 */
-void QNearFieldManager::startTargetDetection(const QList<QNearFieldTarget::Type> &targetTypes)
+bool QNearFieldManager::startTargetDetection(const QList<QNearFieldTarget::Type> &targetTypes)
 {
     Q_D(QNearFieldManager);
 
     if (targetTypes.isEmpty())
-        d->startTargetDetection(QList<QNearFieldTarget::Type>() << QNearFieldTarget::AnyTarget);
+        return d->startTargetDetection(QList<QNearFieldTarget::Type>() << QNearFieldTarget::AnyTarget);
     else
-        d->startTargetDetection(targetTypes);
+        return d->startTargetDetection(targetTypes);
 }
 
 /*!
     \overload
+
+    Starts detecting targets of type \a targetType. Returns true if target detection is
+    successfully started; otherwise returns false. Causes the targetDetected() signal to be emitted
+    when a target with the type \a targetType is within proximity.
 */
-void QNearFieldManager::startTargetDetection(QNearFieldTarget::Type targetType)
+bool QNearFieldManager::startTargetDetection(QNearFieldTarget::Type targetType)
 {
-    startTargetDetection(QList<QNearFieldTarget::Type>() << targetType);
+    return startTargetDetection(QList<QNearFieldTarget::Type>() << targetType);
 }
 
 /*!
@@ -258,9 +266,9 @@ static QMetaMethod methodForSignature(QObject *object, const char *method)
     \i target will be 0.
 */
 
-int QNearFieldManager::registerTargetDetectedHandler(QNdefRecord::TypeNameFormat typeNameFormat,
-                                                     const QByteArray &type,
-                                                     QObject *object, const char *method)
+int QNearFieldManager::registerNdefMessageHandler(QNdefRecord::TypeNameFormat typeNameFormat,
+                                                  const QByteArray &type,
+                                                  QObject *object, const char *method)
 {
     QMetaMethod metaMethod = methodForSignature(object, method);
     if (!metaMethod.enclosingMetaObject())
@@ -271,7 +279,7 @@ int QNearFieldManager::registerTargetDetectedHandler(QNdefRecord::TypeNameFormat
 
     Q_D(QNearFieldManager);
 
-    return d->registerTargetDetectedHandler(filter, object, metaMethod);
+    return d->registerNdefMessageHandler(filter, object, metaMethod);
 }
 
 /*!
@@ -285,7 +293,7 @@ int QNearFieldManager::registerTargetDetectedHandler(QNdefRecord::TypeNameFormat
     \note The \i target parameter of \a method may not be available on all platforms, in which case
     \i target will be 0.
 */
-int QNearFieldManager::registerTargetDetectedHandler(QObject *object, const char *method)
+int QNearFieldManager::registerNdefMessageHandler(QObject *object, const char *method)
 {
     QMetaMethod metaMethod = methodForSignature(object, method);
     if (!metaMethod.enclosingMetaObject())
@@ -293,7 +301,7 @@ int QNearFieldManager::registerTargetDetectedHandler(QObject *object, const char
 
     Q_D(QNearFieldManager);
 
-    return d->registerTargetDetectedHandler(object, metaMethod);
+    return d->registerNdefMessageHandler(object, metaMethod);
 }
 
 /*!
@@ -307,8 +315,8 @@ int QNearFieldManager::registerTargetDetectedHandler(QObject *object, const char
     \note The \i target parameter of \a method may not be available on all platforms, in which case
     \i target will be 0.
 */
-int QNearFieldManager::registerTargetDetectedHandler(const QNdefFilter &filter,
-                                                     QObject *object, const char *method)
+int QNearFieldManager::registerNdefMessageHandler(const QNdefFilter &filter,
+                                                  QObject *object, const char *method)
 {
     QMetaMethod metaMethod = methodForSignature(object, method);
     if (!metaMethod.enclosingMetaObject())
@@ -316,7 +324,7 @@ int QNearFieldManager::registerTargetDetectedHandler(const QNdefFilter &filter,
 
     Q_D(QNearFieldManager);
 
-    return d->registerTargetDetectedHandler(filter, object, metaMethod);
+    return d->registerNdefMessageHandler(filter, object, metaMethod);
 }
 
 /*!
@@ -324,11 +332,31 @@ int QNearFieldManager::registerTargetDetectedHandler(const QNdefFilter &filter,
 
     Returns true on success; otherwise returns false.
 */
-bool QNearFieldManager::unregisterTargetDetectedHandler(int handlerId)
+bool QNearFieldManager::unregisterNdefMessageHandler(int handlerId)
 {
     Q_D(QNearFieldManager);
 
-    return d->unregisterTargetDetectedHandler(handlerId);
+    return d->unregisterNdefMessageHandler(handlerId);
+}
+
+void QNearFieldManager::setTargetAccessModes(TargetAccessModes accessModes)
+{
+    Q_D(QNearFieldManager);
+
+    TargetAccessModes removedModes = ~accessModes & d->m_requestedModes;
+    if (removedModes)
+        d->releaseAccess(removedModes);
+
+    TargetAccessModes newModes = accessModes & ~d->m_requestedModes;
+    if (newModes)
+        d->requestAccess(newModes);
+}
+
+QNearFieldManager::TargetAccessModes QNearFieldManager::targetAccessModes() const
+{
+    Q_D(const QNearFieldManager);
+
+    return d->m_requestedModes;
 }
 
 #include "moc_qnearfieldmanager.cpp"

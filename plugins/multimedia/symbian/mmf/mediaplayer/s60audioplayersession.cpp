@@ -111,15 +111,16 @@ void S60AudioPlayerSession::MaloLoadingComplete()
 
 void S60AudioPlayerSession::doPlay()
 {
-// For some reason loading progress callbalck are not called on emulator
-#ifdef __WINSCW__
-    buffering();
-#endif
-    m_player->Play();
-#ifdef __WINSCW__
-    buffered();
-#endif
-
+    // For some reason loading progress callback are not called on emulator
+    // Same is the case with hardware. Will be fixed as part of QTMOBILITY-782.
+        
+    //#ifdef __WINSCW__
+        buffering();
+    //#endif
+        m_player->Play();
+    //#ifdef __WINSCW__
+        buffered();
+    //#endif
 }
 
 void S60AudioPlayerSession::doPauseL()
@@ -134,6 +135,13 @@ void S60AudioPlayerSession::doStop()
 
 void S60AudioPlayerSession::doClose()
 {
+#ifdef HAS_AUDIOROUTING
+    if (m_audioOutput) {
+        m_audioOutput->UnregisterObserver(*this);
+        delete m_audioOutput;
+        m_audioOutput = NULL;
+    }
+#endif
     m_player->Close();
 }
 
@@ -152,6 +160,7 @@ void S60AudioPlayerSession::updateMetaDataEntriesL()
     metaDataEntries().clear();
     int numberOfMetaDataEntries = 0;
 
+    //User::LeaveIfError(m_player->GetNumberOfMetaDataEntries(numberOfMetaDataEntries));
     m_player->GetNumberOfMetaDataEntries(numberOfMetaDataEntries);
 
     for (int i = 0; i < numberOfMetaDataEntries; i++) {
@@ -161,6 +170,22 @@ void S60AudioPlayerSession::updateMetaDataEntriesL()
         delete entry;
     }
     emit metaDataChanged();
+}
+
+
+void S60AudioPlayerSession::setPlaybackRate(qreal rate)
+{
+    /*Since AudioPlayerUtility doesn't support set playback rate hence
+     * setPlaybackRate emits playbackRateChanged signal for 1.0x ie normal playback.
+     * For all other playBackRates it sets and emits error signal.
+    */
+    if (rate == 1.0) {
+        emit playbackRateChanged(rate);
+        return;
+    } else {
+        int err = KErrNotSupported;
+        setAndEmitError(err);
+    }
 }
 
 int S60AudioPlayerSession::doGetBufferStatusL() const
@@ -178,6 +203,8 @@ void S60AudioPlayerSession::MapcInitComplete(TInt aError, const TTimeIntervalMic
 {
     Q_UNUSED(aDuration);
     setError(aError);
+    if (KErrNone != aError)
+        return;
 #ifdef HAS_AUDIOROUTING    
     TRAPD(err, 
         m_audioOutput = CAudioOutput::NewL(*m_player);
@@ -186,7 +213,8 @@ void S60AudioPlayerSession::MapcInitComplete(TInt aError, const TTimeIntervalMic
     setActiveEndpoint(m_audioEndpoint);
     setError(err);
 #endif //HAS_AUDIOROUTING
-    loaded();
+    if (KErrNone == aError)
+        loaded();
 }
 
 #ifdef S60_DRM_SUPPORTED
@@ -195,8 +223,10 @@ void S60AudioPlayerSession::MdapcPlayComplete(TInt aError)
 void S60AudioPlayerSession::MapcPlayComplete(TInt aError)
 #endif
 {
-    setError(aError);
-    endOfMedia();
+    if (KErrNone == aError)
+        endOfMedia();
+    else
+        setError(aError);
 }
 
 void S60AudioPlayerSession::doSetAudioEndpoint(const QString& audioEndpoint)
@@ -274,3 +304,9 @@ QString S60AudioPlayerSession::qStringFromTAudioOutputPreference(CAudioOutput::T
     return QString("Default");
 }
 #endif
+
+bool S60AudioPlayerSession::getIsSeekable() const
+{
+    return ETrue;
+}
+

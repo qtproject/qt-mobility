@@ -66,7 +66,7 @@ void CntSymbianDatabase::initializeL()
 {
     User::LeaveIfNull(m_engine);
 
-#ifdef SYMBIAN_BACKEND_USE_SQLITE
+#ifdef SYMBIAN_BACKEND_USE_CNTMODEL_V2
     // 10.x platforms do not need some of CContactDatabase's concepts, so
     // they use the optimized OpenV2 and CreateV2.
     TRAPD(err, m_contactDatabase = CContactDatabase::OpenV2L());
@@ -87,7 +87,7 @@ void CntSymbianDatabase::initializeL()
     }
 #endif
 
-#ifndef SYMBIAN_BACKEND_USE_SQLITE
+#ifndef SYMBIAN_BACKEND_USE_CNTMODEL_V2
     // In pre 10.1 platforms the AddObserverL & RemoveObserver functions are not
     // exported so we need to use CContactChangeNotifier.
     TRAP(err, m_contactChangeNotifier = CContactChangeNotifier::NewL(*m_contactDatabase, this));
@@ -110,7 +110,7 @@ void CntSymbianDatabase::initializeL()
     // EContactDbObserverEventGroupMembersAdded and 
     // EContactDbObserverEventGroupMembersRemoved need to be added to
     // MContactDbObserver.
-#ifndef SYMBIAN_BACKEND_USE_SQLITE
+#ifndef SYMBIAN_BACKEND_USE_CNTMODEL_V2
     updateGroupMembershipsL();
 #endif
 }
@@ -118,7 +118,7 @@ void CntSymbianDatabase::initializeL()
 CntSymbianDatabase::~CntSymbianDatabase()
 {
     m_engine = NULL;
-#ifndef SYMBIAN_BACKEND_USE_SQLITE
+#ifndef SYMBIAN_BACKEND_USE_CNTMODEL_V2
     delete m_contactChangeNotifier;
 #else
     if (m_contactDatabase != 0) {
@@ -347,7 +347,7 @@ void CntSymbianDatabase::HandleDatabaseEventL(TContactDbObserverEvent aEvent)
     changeSet.emitSignals(m_engine);
 }
 
-#ifdef SYMBIAN_BACKEND_USE_SQLITE  
+#ifdef SYMBIAN_BACKEND_USE_CNTMODEL_V2  
 /*!
  * Respond to a contacts database extended event, delegating this event to
  * an appropriate signal as required.

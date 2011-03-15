@@ -67,6 +67,9 @@ public:
     bool isFavorite() const {return variantValue(FieldFavorite).toBool();}
     void setIndex(int index) {setValue(FieldIndex, index);}
     int index() const {return variantValue(FieldIndex).toInt();}
+
+    // Convenience filter
+    static QContactFilter match();
 };
 
 QTM_END_NAMESPACE

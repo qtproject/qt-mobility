@@ -1495,7 +1495,7 @@ void tst_QOrganizerItemAsync::itemRemove()
 
     // remove all items
     dfil.setDetailDefinitionName(QOrganizerItemDisplayLabel::DefinitionName); // delete everything.
-    irr.setItemIds(oim->itemIds(dfil));
+    irr.setItemIds(oim->itemIds());
     
     QVERIFY(!irr.cancel()); // not started
     QVERIFY(irr.start());
@@ -1510,12 +1510,13 @@ void tst_QOrganizerItemAsync::itemRemove()
     spy.clear();
 
     // cancelling
-    QOrganizerItem temp;
+    QOrganizerTodo temp;
     QOrganizerItemDescription description;
     description.setDescription("Should not be removed");
     temp.saveDetail(&description);
     oim->saveItem(&temp);
-    irr.setItemIds(oim->itemIds(dfil));
+    QCOMPARE(oim->itemIds().size(), 1);
+    irr.setItemIds(oim->itemIds());
 
     int bailoutCount = MAX_OPTIMISTIC_SCHEDULING_LIMIT; // attempt to cancel 40 times.  If it doesn't work due to threading, bail out.
     while (true) {
@@ -1527,14 +1528,14 @@ void tst_QOrganizerItemAsync::itemRemove()
             // due to thread scheduling, async cancel might be attempted
             // after the request has already finished.. so loop and try again.
             irr.waitForFinished();
-            irr.setItemIds(oim->itemIds(dfil));
             temp.setId(QOrganizerItemId());
             if (!oim->saveItem(&temp)) {
                 QSKIP("Unable to save temporary item for remove request cancellation test!", SkipSingle);
             }
+            irr.setItemIds(oim->itemIds());
             bailoutCount -= 1;
             if (!bailoutCount) {
-//                qWarning("Unable to test cancelling due to thread scheduling!");
+//                QSKIP("Unable to test cancelling due to thread scheduling!", SkipSingle);
                 bailoutCount = MAX_OPTIMISTIC_SCHEDULING_LIMIT;
                 break;
             }
@@ -1561,9 +1562,9 @@ void tst_QOrganizerItemAsync::itemRemove()
             // due to thread scheduling, async cancel might be attempted
             // after the request has already finished.. so loop and try again.
             irr.waitForFinished();
-            irr.setItemIds(oim->itemIds(dfil));
             temp.setId(QOrganizerItemId());
             oim->saveItem(&temp);
+            irr.setItemIds(oim->itemIds());
             bailoutCount -= 1;
             if (!bailoutCount) {
 //                qWarning("Unable to test cancelling due to thread scheduling!");

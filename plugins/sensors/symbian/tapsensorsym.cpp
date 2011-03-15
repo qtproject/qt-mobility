@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include "tapsensorsym.h"
+
 /**
  * set the id of the Tap sensor
  */
@@ -55,7 +56,7 @@ CTapSensorSym* CTapSensorSym::NewL(QSensor *sensor)
     CleanupStack::PushL(self);
     self->ConstructL();
     CleanupStack::Pop();
-    return self;    
+    return self;
     }
 
 /**
@@ -72,94 +73,95 @@ CTapSensorSym::~CTapSensorSym()
  */
 CTapSensorSym::CTapSensorSym(QSensor *sensor):CSensorBackendSym(sensor)
     {
-    setReading<QTapReading>(&iReading);    
+    setReading<QTapReading>(&iReading);
     iBackendData.iSensorType = KSensrvChannelTypeIdAccelerometerDoubleTappingData;
     }
 /*
- * RecvData is used to retrieve the sensor reading from sensor server
+ * DataReceived is used to retrieve the sensor reading from sensor server
  * It is implemented here to handle tap sensor specific
  * reading data and provides conversion and utility code
- */ 
-void CTapSensorSym::RecvData(CSensrvChannel &aChannel)
+ */
+void CTapSensorSym::DataReceived(CSensrvChannel &aChannel, TInt aCount, TInt /*aDataLost*/)
     {
-    TPckg<TSensrvTappingData> tappkg( iData );
-    TInt ret = aChannel.GetData( tappkg );
-    if(KErrNone != ret)
-        {
-		// If there is no reading available, return without setting
-        return;
-        }
-	// Get a lock on the reading data
+    ProcessData(aChannel, aCount, iData);
+    }
+
+void CTapSensorSym::ProcessReading()
+    {
+    // Get a lock on the reading data
     iBackendData.iReadingLock.Wait();
-	//Mapping device tap sensor enum values to Qt tap sensor enum values
+    //Mapping device tap sensor enum values to Qt tap sensor enum values
     switch (iData.iDirection)
         {
-			// Indicates a tap on positive X axis
+            // Indicates a tap on positive X axis
         case KSensrvAccelerometerDirectionXplus:
             {
             iReading.setTapDirection(QTapReading::X_Pos);
             }
             break;
-			// Indicates a tap on negative X axis
+            // Indicates a tap on negative X axis
         case KSensrvAccelerometerDirectionXminus:
             {
             iReading.setTapDirection(QTapReading::X_Neg);
             }
             break;
-			// Indicates a tap on positive Y axis
+            // Indicates a tap on positive Y axis
         case KSensrvAccelerometerDirectionYplus:
             {
             iReading.setTapDirection(QTapReading::Y_Pos);
             }
             break;
-			// Indicates a tap on negative Y axis
+            // Indicates a tap on negative Y axis
         case KSensrvAccelerometerDirectionYminus:
             {
             iReading.setTapDirection(QTapReading::Y_Neg);
             }
-            break;    
-			// Indicates a tap on positive Z axis
+            break;
+            // Indicates a tap on positive Z axis
         case KSensrvAccelerometerDirectionZplus:
             {
             iReading.setTapDirection(QTapReading::Z_Pos);
             }
             break;
-			// Indicates a tap on negative Z axis
+            // Indicates a tap on negative Z axis
         case KSensrvAccelerometerDirectionZminus:
             {
             iReading.setTapDirection(QTapReading::Z_Neg);
             }
-            break;    
+            break;
         default:
             {
-				// Indicates a tap on X axis
+                // Indicates a tap on X axis
             if(iData.iDirection==(KSensrvAccelerometerDirectionXplus|KSensrvAccelerometerDirectionXminus))
                 {
-                iReading.setTapDirection(QTapReading::X);
+                iReading.setTapDirection(QTapReading::X_Both);
                 }
-				// Indicates a tap on Y axis
+                // Indicates a tap on Y axis
             else if(iData.iDirection==(KSensrvAccelerometerDirectionYplus|KSensrvAccelerometerDirectionYminus))
                 {
-                iReading.setTapDirection(QTapReading::Y);
+                iReading.setTapDirection(QTapReading::Y_Both);
                 }
-				// Indicates a tap on Z axis
+                // Indicates a tap on Z axis
             else if(iData.iDirection==(KSensrvAccelerometerDirectionZplus|KSensrvAccelerometerDirectionZminus))
                 {
-                iReading.setTapDirection(QTapReading::Z);
+                iReading.setTapDirection(QTapReading::Z_Both);
                 }
-				 // Undefined value
+                // Undefined value
             else
                 {
                 iReading.setTapDirection(QTapReading::Undefined);
                 }
-            }            
+            }
         }
-	//Set the type of tap to be double tap
+    //Set the type of tap to be double tap
     iReading.setDoubleTap(true);
-    iReading.setTimestamp(iData.iTimeStamp.Int64());  
-	    // Release the lock
+    iReading.setTimestamp(iData.iTimeStamp.Int64());
+    // Release the lock
     iBackendData.iReadingLock.Signal();
+    // Notify that a reading is available
+    newReadingAvailable();
     }
+
 /**
  * Second phase constructor
  * Initialize the backend resources

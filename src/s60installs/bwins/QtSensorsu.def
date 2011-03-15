@@ -425,4 +425,5 @@ EXPORTS
 	?isBackendRegistered@QSensorManager@QtMobility@@SA_NABVQByteArray@@0@Z @ 424 NONAME ; bool QtMobility::QSensorManager::isBackendRegistered(class QByteArray const &, class QByteArray const &)
 	?registerInstance@QSensor@QtMobility@@AAEXXZ @ 425 NONAME ; void QtMobility::QSensor::registerInstance(void)
 	?unregisterBackend@QSensorManager@QtMobility@@SAXABVQByteArray@@0@Z @ 426 NONAME ; void QtMobility::QSensorManager::unregisterBackend(class QByteArray const &, class QByteArray const &)
+	?filters@QSensor@QtMobility@@QBE?AV?$QList@PAVQSensorFilter@QtMobility@@@@XZ @ 427 NONAME ; class QList<class QtMobility::QSensorFilter *> QtMobility::QSensor::filters(void) const
 

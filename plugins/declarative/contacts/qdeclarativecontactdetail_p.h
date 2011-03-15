@@ -42,6 +42,7 @@
 #define QDECLARATIVECONTACTDETAIL_P_H
 
 #include <qdeclarative.h>
+#include <QtDeclarative/qdeclarativeinfo.h>
 #include "qcontact.h"
 #include "qcontactdetail.h"
 

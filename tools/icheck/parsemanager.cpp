@@ -370,7 +370,7 @@ void ParseManager::getBaseClasses(const CLASSLISTITEM* pclass
 }
 
 /**************************************************
-This function finds and creates all Elements wich
+This function finds and creates all Elements which
 are significant for MetaDatas.
 Those element will be added in the aparameter 
 lists.
@@ -631,7 +631,7 @@ bool ParseManager::checkAllMetadatas(ParseManager* pInterfaceParserManager, QStr
     }
 
     /******************************
-    Check for properies
+    Check for properties
     ******************************/
     Trace("Compare all interface MetaData properties:");
     QList<PROPERTYITEM*> missingippts = checkMetadataProperties(propertieslookuplist, functionslookuplist, ipropertieslookuplist, ifunctionslookuplist);
@@ -685,7 +685,7 @@ bool ParseManager::checkAllMetadatas(ParseManager* pInterfaceParserManager, QStr
     Trace("\n");
     Trace("### summary ###");
     if(m_errormsgs.size() > 0){
-        Trace("- Folowing interface items are missing:");
+        Trace("- Following interface items are missing:");
         foreach(QString msg, m_errormsgs)
             Trace("  - " + msg);
     }
@@ -781,7 +781,7 @@ QList<FUNCTIONITEM*> ParseManager::checkMetadataFunctions(const QList<QList<FUNC
 
 /*********************************************
 Helper function to check if a function will 
-occure in the MetaData.
+occur in the MetaData.
 *********************************************/
 bool ParseManager::isMetaObjFunction(FUNCTIONITEM* fct)
 {
@@ -980,7 +980,7 @@ void ParseManager::assignPropertyFunctions(PROPERTYITEM* prop, const QList<QList
         notifyfctname = prop->trlUnit->spell(prop->ast->notify_function_token);
         needtofind++;
     }
-    //Now iterate over all function to find all functions wich are defined in the Q_PROPERTY macro
+    //Now iterate over all function to find all functions which are defined in the Q_PROPERTY macro
     if(needtofind > 0){
         prop->foundalldefinedfct = false;
         foreach(QList<FUNCTIONITEM*> fctlist, fctlookuplist){

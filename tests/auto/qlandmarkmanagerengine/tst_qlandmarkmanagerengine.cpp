@@ -78,7 +78,7 @@ public:
     ~MockEngine() {}
 
     /* URI reporting */
-    QString managerName() {return "mock";}
+    QString managerName() const {return "mock";}
     QMap<QString, QString> managerParameters() const {return QMap<QString, QString>();}  // e.g. "filename=private.db"
     int managerVersion() const {return 1;}
 

@@ -41,8 +41,12 @@
 
 #include "s60cameraengine.h"
 #include "s60cameraengineobserver.h"
-
+#include "s60cameraconstants.h"
+#include <QtCore/qglobal.h>
 #include <fbs.h> // CFbsBitmap
+#ifdef ECAM_PREVIEW_API
+    #include <platform/ecam/camerasnapshot.h>
+#endif // ECAM_PREVIEW_API
 
 CCameraEngine::CCameraEngine()
 {
@@ -59,9 +63,12 @@ CCameraEngine::CCameraEngine(TInt aCameraHandle,
     iCameraIndex(aCameraHandle),
     iPriority(aPriority),
     iEngineState(EEngineNotReady),
+    iCaptureResolution(TSize(0,0)),
     iNew2LImplementation(false),
     iLatestImageBufferIndex(1) // Thus we start from index 0
 {
+    // Observer is mandatory
+    ASSERT(aObserver != NULL);
 }
 
 CCameraEngine::~CCameraEngine()
@@ -116,9 +123,13 @@ void CCameraEngine::ConstructL()
     // Construct CCamera object for S60 3.1 (NewL)
     iNew2LImplementation = false;
     TRAP(err, iCamera = CCamera::NewL(*this, iCameraIndex));
+    if (err)
+        User::Leave(err);
 #else // For S60 3.2 onwards - use this constructor (New2L)
     iNew2LImplementation = true;
     TRAP(err, iCamera = CCamera::New2L(*this, iCameraIndex, iPriority));
+    if (err)
+        User::Leave(err);
 #endif // S60_31_PLATFORM
 
 #ifdef S60_CAM_AUTOFOCUS_SUPPORT
@@ -149,9 +160,8 @@ void CCameraEngine::SetViewfinderObserver(MCameraViewfinderObserver* aViewfinder
 
 void CCameraEngine::ReserveAndPowerOn()
 {
-    if (!iCamera || iEngineState > EEngineNotReady) {
+    if (!iCamera || iEngineState > EEngineNotReady)
         iObserver->MceoHandleError(EErrReserve, KErrNotReady);
-    }
 
     iCamera->Reserve();
 }
@@ -159,7 +169,7 @@ void CCameraEngine::ReserveAndPowerOn()
 void CCameraEngine::ReleaseAndPowerOff()
 {
     if (iEngineState >= EEngineIdle) {
-        cancelCapture();
+        CancelCapture();
         StopViewFinder();
         FocusCancel();
         iCamera->PowerOff();
@@ -170,47 +180,48 @@ void CCameraEngine::ReleaseAndPowerOff()
 
 void CCameraEngine::StartViewFinderL(TSize& aSize)
 {
-    if (iEngineState < EEngineIdle) {
+    if (iEngineState < EEngineIdle)
         User::Leave(KErrNotReady);
-    }
 
-    if (0 == (iCameraInfo.iOptionsSupported & TCameraInfo::EViewFinderBitmapsSupported)) {
+    if (0 == (iCameraInfo.iOptionsSupported & TCameraInfo::EViewFinderBitmapsSupported))
         User::Leave(KErrNotSupported);
-    }
 
     if (!iCamera->ViewFinderActive()) {
-        if (iCameraIndex != 0) {
+        if (iCameraIndex != 0)
             iCamera->SetViewFinderMirrorL(true);
-        }
         iCamera->StartViewFinderBitmapsL(aSize);
     }
 }
 
 void CCameraEngine::StopViewFinder()
 {
-    if (iCamera && iCamera->ViewFinderActive()) {
+    if (iCamera && iCamera->ViewFinderActive())
         iCamera->StopViewFinder();
-    }
 }
 
 void CCameraEngine::StartDirectViewFinderL(RWsSession& aSession,
                             CWsScreenDevice& aScreenDevice,
                             RWindowBase& aWindow,
-                            TRect& aSize)
+                            TRect& aScreenRect,
+                            TRect& aClipRect)
 {
-    if (iEngineState < EEngineIdle) {
+    Q_UNUSED(aClipRect)
+    if (iEngineState < EEngineIdle)
         User::Leave(KErrNotReady);
-    }
 
-    if (0 == (iCameraInfo.iOptionsSupported & TCameraInfo::EViewFinderDirectSupported)) {
+    if (0 == (iCameraInfo.iOptionsSupported & TCameraInfo::EViewFinderDirectSupported))
         User::Leave(KErrNotSupported);
-    }
 
     if (!iCamera->ViewFinderActive()) {
-        if (iCameraIndex != 0) {
+
+        if (iCameraIndex != 0)
             iCamera->SetViewFinderMirrorL(true);
+        if (aScreenRect.Width() != 0 && aScreenRect.Height() != 0) {
+            iCamera->StartViewFinderDirectL(aSession, aScreenDevice, aWindow, aScreenRect);
+        } else {
+            if (iObserver)
+                iObserver->MceoHandleError(EErrViewFinderReady, KErrArgument);
         }
-        iCamera->StartViewFinderDirectL(aSession, aScreenDevice, aWindow, aSize);
     }
 }
 
@@ -239,6 +250,7 @@ void CCameraEngine::PrepareL(TSize& aCaptureSize, CCamera::TFormat aFormat)
     }
 
     iCamera->EnumerateCaptureSizes(aCaptureSize, selected, aFormat);
+    iCaptureResolution = aCaptureSize;
     iCamera->PrepareImageCaptureL(aFormat, selected);
 }
 
@@ -251,7 +263,7 @@ void CCameraEngine::CaptureL()
     iEngineState = EEngineCapturing;
 }
 
-void CCameraEngine::cancelCapture()
+void CCameraEngine::CancelCapture()
 {
     if (iEngineState == EEngineCapturing) {
         iCamera->CancelCaptureImage();
@@ -277,6 +289,13 @@ void CCameraEngine::HandleEvent(const TECAMEvent &aEvent)
         return;
     }
 
+#ifdef ECAM_PREVIEW_API
+    if (aEvent.iEventType == KUidECamEventCameraSnapshot) {
+        HandlePreview();
+        return;
+    }
+#endif // ECAM_PREVIEW_API
+
 #if !defined(Q_CC_NOKIAX86) // Not Emulator
     // Other events; Exposure, Zoom, etc. (See ecamadvancedsettings.h)
     if (iAdvancedSettingsObserver)
@@ -285,7 +304,6 @@ void CCameraEngine::HandleEvent(const TECAMEvent &aEvent)
     if (iImageCaptureObserver)
         iImageCaptureObserver->MceoHandleOtherEvent(aEvent);
 #endif // !Q_CC_NOKIAX86
-
 }
 
 void CCameraEngine::ReserveComplete(TInt aError)
@@ -326,6 +344,60 @@ void CCameraEngine::PowerOnComplete(TInt aError)
     iEngineState = EEngineIdle;
     iObserver->MceoCameraReady();
 }
+
+#ifdef ECAM_PREVIEW_API
+/**
+ * This method creates the CCameraPreview object and requests the previews to
+ * be provided during the image or video capture
+ */
+void CCameraEngine::EnablePreviewProvider(MCameraPreviewObserver *aPreviewObserver)
+{
+    // Delete old one if exists
+    if (iCameraSnapshot)
+        delete iCameraSnapshot;
+
+    iPreviewObserver = aPreviewObserver;
+
+    TInt error = KErrNone;
+
+    if (iCamera) {
+        TRAP(error, iCameraSnapshot = CCamera::CCameraSnapshot::NewL(*iCamera));
+        if (error) {
+            if (iObserver)
+                iObserver->MceoHandleError(EErrPreview, error);
+            return;
+        }
+
+        TRAP(error, iCameraSnapshot->PrepareSnapshotL(KDefaultFormatPreview, SelectPreviewResolution(), EFalse));
+        if (error) {
+            if (iObserver)
+                iObserver->MceoHandleError(EErrPreview, error);
+            return;
+        }
+
+        iCameraSnapshot->StartSnapshot();
+    } else {
+        if (iObserver)
+            iObserver->MceoHandleError(EErrPreview, KErrNotReady);
+    }
+}
+
+/**
+ * This method disables and destroys the CCameraPreview object. Thus previews
+ * will not be provided during the image or video capture.
+ */
+void CCameraEngine::DisablePreviewProvider()
+{
+    if (!iCameraSnapshot)
+        return;
+
+    iCameraSnapshot->StopSnapshot();
+
+    delete iCameraSnapshot;
+
+    iPreviewObserver = NULL;
+}
+#endif // ECAM_PREVIEW_API
 
 /*
  * MCameraObserver2:
@@ -423,7 +495,6 @@ void CCameraEngine::ReleaseImageBuffer()
  */
 void CCameraEngine::ImageBufferReady(MCameraBuffer &aCameraBuffer, TInt aError)
 {
-
     // Use the buffer that is available
     if (!iImageBuffer1) {
         iLatestImageBufferIndex = 0;
@@ -557,6 +628,52 @@ void CCameraEngine::HandleImageReady(const TInt aError, const bool isBitmap)
     }
 }
 
+#ifdef ECAM_PREVIEW_API
+void CCameraEngine::HandlePreview()
+{
+    if (!iCameraSnapshot) {
+        if (iObserver)
+            iObserver->MceoHandleError(EErrPreview, KErrGeneral);
+        return;
+    }
+
+    RArray<TInt> previewIndices;
+    CleanupClosePushL(previewIndices);
+
+    MCameraBuffer &newPreview = iCameraSnapshot->SnapshotDataL(previewIndices);
+
+    for (TInt i = 0; i < previewIndices.Count(); ++i)
+        iPreviewObserver->MceoPreviewReady(newPreview.BitmapL(0));
+
+    CleanupStack::PopAndDestroy(); // RArray<TInt> previewIndices
+}
+
+TSize CCameraEngine::SelectPreviewResolution()
+{
+    TSize currentResolution(iCaptureResolution);
+
+    TSize previewResolution(0, 0);
+    if (currentResolution == TSize(4000,2248) ||
+        currentResolution == TSize(3264,1832) ||
+        currentResolution == TSize(2592,1456) ||
+        currentResolution == TSize(1920,1080) ||
+        currentResolution == TSize(1280,720)) {
+        previewResolution = KDefaultSizePreview_Wide;
+    } else if (currentResolution == TSize(352,288) ||
+        currentResolution == TSize(176,144)) {
+        previewResolution = KDefaultSizePreview_CIF;
+    } else if (currentResolution == TSize(720,576)) {
+        previewResolution = KDefaultSizePreview_PAL;
+    } else if (currentResolution == TSize(720,480)) {
+        previewResolution = KDefaultSizePreview_NTSC;
+    } else {
+        previewResolution = KDefaultSizePreview_Normal;
+    }
+
+    return previewResolution;
+}
+#endif // ECAM_PREVIEW_API
+
 //=============================================================================
 // S60 3.1 - AutoFocus support (Other platforms, see S60CameraSettings class)
 //=============================================================================
@@ -599,7 +716,7 @@ TBool CCameraEngine::IsDirectViewFinderSupported() const
         return false;
 }
 
-TCameraInfo *CCameraEngine::cameraInfo()
+TCameraInfo *CCameraEngine::CameraInfo()
 {
     return &iCameraInfo;
 }
@@ -625,9 +742,8 @@ TBool CCameraEngine::IsAutoFocusSupported() const
  */
 void CCameraEngine::StartFocusL()
 {
-    if (iEngineState != EEngineIdle) {
+    if (iEngineState != EEngineIdle)
         return;
-    }
 
 #ifndef Q_CC_NOKIAX86  // Not Emulator
 #ifdef S60_CAM_AUTOFOCUS_SUPPORT // S60 3.1
@@ -686,9 +802,8 @@ void CCameraEngine::SetFocusRange(TInt aFocusRange)
 #ifdef S60_CAM_AUTOFOCUS_SUPPORT
     if (iAutoFocus) {
         TRAPD(focusErr, iAutoFocus->SetFocusRangeL((CCamAutoFocus::TAutoFocusRange)aFocusRange));
-        if (focusErr) {
+        if (focusErr)
             iObserver->MceoHandleError(EErrAutoFocusRange, focusErr);
-        }
     }
 #endif // S60_CAM_AUTOFOCUS_SUPPORT
 

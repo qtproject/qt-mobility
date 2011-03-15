@@ -62,6 +62,7 @@
 #include "qcontactmanager.h"
 #include "qcontactmanagerengine.h"
 #include "qcontactactionmanager_p.h"
+#include "qcontactobserver.h"
 
 QTM_USE_NAMESPACE
 QTM_BEGIN_NAMESPACE
@@ -83,14 +84,14 @@ public:
         delete m_engine;
     }
 
+
     void createEngine(const QString& managerName, const QMap<QString, QString>& parameters);
+    static QContactManagerData* get(const QContactManager* manager);
     static QContactManagerEngineV2* engine(const QContactManager* manager);
 
     QContactManagerEngineV2* m_engine;
     QContactManager::Error m_error;
     QMap<int, QContactManager::Error> m_errorMap;
-
-    QMultiHash<QContactLocalId, QContactObserver*> m_observerForContact;
 
     /* Manager plugins */
     static QHash<QString, QContactManagerEngineFactory*> m_engines;
@@ -101,6 +102,14 @@ public:
     static QStringList m_pluginPaths;
     static void loadFactories();
     static void loadStaticFactories();
+
+    // Observer stuff
+    void registerObserver(QContactObserver* observer);
+    void unregisterObserver(QContactObserver* observer);
+    void _q_contactsUpdated(const QList<QContactLocalId>& ids);
+    void _q_contactsDeleted(const QList<QContactLocalId>& ids);
+
+    QMultiHash<QContactLocalId, QContactObserver*> m_observerForContact;
 
 private:
     Q_DISABLE_COPY(QContactManagerData)

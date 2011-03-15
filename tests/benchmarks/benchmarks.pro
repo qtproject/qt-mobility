@@ -2,6 +2,7 @@ include(../../staticconfig.pri)
 
 TEMPLATE = subdirs
 
+SUBDIRS += qmalgorithms
 contains(mobility_modules,serviceframework): SUBDIRS += sampleserviceplugin  serviceframework
 contains(mobility_modules,organizer): SUBDIRS += organizer
 contains(mobility_modules,contacts): SUBDIRS += contactsoverhead contacts

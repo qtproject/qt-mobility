@@ -25,7 +25,7 @@
 */
 #ifndef __REQUESTMIX_STEP_H__
 #define __REQUESTMIX_STEP_H__
-#include <testexecutestepbase.h>
+#include <test/testexecutestepbase.h>
 #include "performancefunctionalitybase.h"
 
 class CRequestMixStep : public CPerformanceFunctionalityBase

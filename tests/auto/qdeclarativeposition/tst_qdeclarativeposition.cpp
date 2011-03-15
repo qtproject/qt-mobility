@@ -398,8 +398,13 @@ void tst_QDeclarativePosition::activism()
     QSignalSpy positioningMethodChangedSpy(source_obj, SIGNAL(positioningMethodChanged()));
     QSignalSpy activeChangedSpy(source_obj, SIGNAL(activeChanged()));
 
-    qDebug() << "1. ----- basic activity checks (setting on and off)";
+    qDebug() << "1. ----- basic activity on update";
+    source_obj->metaObject()->invokeMethod(source_obj, "update", Qt::DirectConnection);
+    QTRY_COMPARE(activeChangedSpy.count(), 2);
     QVERIFY(source_obj->property("active").toBool() == false);
+    activeChangedSpy.clear();
+
+    qDebug() << "2. ----- basic activity checks (setting on and off)";
     source_obj->setProperty("active", false);
     QVERIFY(source_obj->property("active").toBool() == false);
     source_obj->setProperty("active", true);
@@ -414,7 +419,7 @@ void tst_QDeclarativePosition::activism()
     activeChangedSpy.clear();
     positionChangedSpy.clear();
 
-    qDebug() << "2. ----- stopping during single-shot update";
+    qDebug() << "3. ----- stopping during single-shot update";
     source_obj->metaObject()->invokeMethod(source_obj, "update", Qt::DirectConnection);
     QTRY_VERIFY(!activeChangedSpy.isEmpty());
     activeChangedSpy.clear();

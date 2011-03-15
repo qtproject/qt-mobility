@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -47,6 +47,7 @@
 #include <qndefnfcurirecord.h>
 
 #include <QtCore/QUrl>
+#include <QtCore/QLocale>
 
 #include <QtGui/QGridLayout>
 #include <QtGui/QLabel>
@@ -77,15 +78,37 @@ AnnotatedUrl::~AnnotatedUrl()
 {
 }
 
+void AnnotatedUrl::targetDetected(const QNdefMessage &message, QNearFieldTarget *target)
+{
+    Q_UNUSED(target);
+
+    displayNdefMessage(message);
+}
+
 void AnnotatedUrl::targetDetected(QNearFieldTarget *target)
 {
     if (!target->hasNdefMessage())
         return;
 
-    QList<QNdefMessage> messages = target->ndefMessages();
-    if (messages.isEmpty())
-        return;
+    connect(target, SIGNAL(ndefMessageRead(QNdefMessage)),
+            this, SLOT(displayNdefMessage(QNdefMessage)));
 
+    target->readNdefMessages();
+}
+
+void AnnotatedUrl::targetLost(QNearFieldTarget *target)
+{
+    target->deleteLater();
+}
+
+void AnnotatedUrl::mouseReleaseEvent(QMouseEvent *event)
+{
+    if (rect().contains(event->pos()))
+        QDesktopServices::openUrl(QUrl(m_url->text()));
+}
+
+void AnnotatedUrl::displayNdefMessage(const QNdefMessage &message)
+{
     enum {
         MatchedNone,
         MatchedFirst,
@@ -94,23 +117,29 @@ void AnnotatedUrl::targetDetected(QNearFieldTarget *target)
         MatchedLanguageAndCountry
     } bestMatch = MatchedNone;
 
-    const QNdefMessage &message = messages.first();
+    m_title->clear();
+    m_url->clear();
+    m_image->clear();
+
+    QLocale defaultLocale;
+
     foreach (const QNdefRecord &record, message) {
         if (record.isRecordType<QNdefNfcTextRecord>()) {
             QNdefNfcTextRecord textRecord(record);
 
+            QLocale locale(textRecord.locale());
+
             // already found best match
             if (bestMatch == MatchedLanguageAndCountry) {
                 // do nothing
-            } else if (bestMatch <= MatchedLanguage && textRecord.locale() == QLocale()) {
+            } else if (bestMatch <= MatchedLanguage && locale == defaultLocale) {
                 m_title->setText(textRecord.text());
                 bestMatch = MatchedLanguageAndCountry;
             } else if (bestMatch <= MatchedEnglish &&
-                       textRecord.locale().language() == QLocale().language()) {
+                       locale.language() == defaultLocale.language()) {
                 m_title->setText(textRecord.text());
                 bestMatch = MatchedLanguage;
-            } else if (bestMatch <= MatchedFirst &&
-                       textRecord.locale().language() == QLocale::English) {
+            } else if (bestMatch <= MatchedFirst && locale.language() == QLocale::English) {
                 m_title->setText(textRecord.text());
                 bestMatch = MatchedEnglish;
             } else if (bestMatch == MatchedNone) {
@@ -124,13 +153,6 @@ void AnnotatedUrl::targetDetected(QNearFieldTarget *target)
         } else if (record.typeNameFormat() == QNdefRecord::Mime &&
                    record.type().startsWith("image/")) {
             m_image->setPixmap(QPixmap::fromImage(QImage::fromData(record.payload())));
-
         }
     }
-}
-
-void AnnotatedUrl::mouseReleaseEvent(QMouseEvent *event)
-{
-    if (rect().contains(event->pos()))
-        QDesktopServices::openUrl(QUrl(m_url->text()));
 }

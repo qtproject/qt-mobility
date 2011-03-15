@@ -43,19 +43,19 @@
 #include <QPainter>
 
 HapticButton::HapticButton(const QString &label) :
-    QWidget(0), m_label(label), m_checked(false), m_checkable(false)
+    QWidget(0), m_label(label)
 {
     setMinimumSize(100, 100);
 }
 
+void HapticButton::setLabel(const QString& label)
+{
+    m_label = label;
+}
+
 void HapticButton::mousePressEvent(QMouseEvent *)
 {
-    if (m_checkable) {
-        m_checked = !m_checked;
-        emit toggled(m_checked);
-    } else {
-        emit clicked();
-    }
+    emit clicked();
 }
 
 void HapticButton::paintEvent(QPaintEvent *)

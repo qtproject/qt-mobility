@@ -41,50 +41,103 @@
 
 #include "qbluetoothsocket.h"
 #include "qbluetoothsocket_p.h"
-#ifdef Q_OS_SYMBIAN
-#include "qbluetoothsocket_symbian_p.h"
-#else
-#include "qbluetoothsocket_bluez_p.h"
-#endif
-
-#include <qplatformdefs.h>
-
-#include <errno.h>
-#include <unistd.h>
-
-#include <QtCore/QSocketNotifier>
 
 QTM_BEGIN_NAMESPACE
 
-QBluetoothSocketPrivate::QBluetoothSocketPrivate(QBluetoothSocket *parent)
-:socketType(QBluetoothSocket::UnknownSocketType), state(QBluetoothSocket::UnconnectedState),
- socketError(QBluetoothSocket::UnknownSocketError),socket(-1),
- readNotifier(0), q(parent)
+QBluetoothSocketPrivate::QBluetoothSocketPrivate()
 {
-    connect(this, SIGNAL(readyRead()), q, SIGNAL(readyRead()));
-    connect(this, SIGNAL(connected()), q, SIGNAL(connected()));
-    connect(this, SIGNAL(disconnected()), q, SIGNAL(disconnected()));
-    connect(this, SIGNAL(error(QBluetoothSocket::SocketError)), q, SIGNAL(error(QBluetoothSocket::SocketError)));
-    connect(this, SIGNAL(stateChanged(QBluetoothSocket::SocketState)), q, SIGNAL(stateChanged(QBluetoothSocket::SocketState)));
 }
 
 QBluetoothSocketPrivate::~QBluetoothSocketPrivate()
 {
-    delete readNotifier;
-    readNotifier = 0;
 }
 
 bool QBluetoothSocketPrivate::ensureNativeSocket(QBluetoothSocket::SocketType type)
 {
-    qDebug() << "ensureNativeSocket: NOT IMPLEMENTED";
     return false;
 }
 
 void QBluetoothSocketPrivate::connectToService(const QBluetoothAddress &address, quint16 port, QIODevice::OpenMode openMode)
 {
-    qDebug() << "connectToService: NOT IMPLEMENTED";
+    Q_UNUSED(openMode);
+    Q_UNUSED(address);
+    Q_UNUSED(port);
 }
 
-#include "moc_qbluetoothsocket_p.cpp"
+void QBluetoothSocketPrivate::_q_writeNotify()
+{
+}
+
+void QBluetoothSocketPrivate::_q_readNotify()
+{
+}
+
+void QBluetoothSocketPrivate::abort()
+{
+}
+
+QString QBluetoothSocketPrivate::localName() const
+{
+    return QString();
+}
+
+QBluetoothAddress QBluetoothSocketPrivate::localAddress() const
+{
+    return QBluetoothAddress();
+}
+
+quint16 QBluetoothSocketPrivate::localPort() const
+{
+    return 0;
+}
+
+QString QBluetoothSocketPrivate::peerName() const
+{
+    return QString();
+}
+
+QBluetoothAddress QBluetoothSocketPrivate::peerAddress() const
+{
+    return QBluetoothAddress();
+}
+
+quint16 QBluetoothSocketPrivate::peerPort() const
+{
+    return 0;
+}
+
+qint64 QBluetoothSocketPrivate::writeData(const char *data, qint64 maxSize)
+{
+    Q_UNUSED(data);
+    Q_UNUSED(maxSize);
+    return 0;
+}
+
+qint64 QBluetoothSocketPrivate::readData(char *data, qint64 maxSize)
+{
+    Q_UNUSED(data);
+    Q_UNUSED(maxSize);
+    return 0;
+}
+
+void QBluetoothSocketPrivate::close()
+{
+}
+
+bool QBluetoothSocketPrivate::setSocketDescriptor(int socketDescriptor, QBluetoothSocket::SocketType socketType,
+                                           QBluetoothSocket::SocketState socketState, QBluetoothSocket::OpenMode openMode)
+{
+    Q_UNUSED(socketDescriptor);
+    Q_UNUSED(socketType)
+    Q_UNUSED(socketState);
+    Q_UNUSED(openMode);
+    return false;
+}
+
+int QBluetoothSocketPrivate::socketDescriptor() const
+{
+    return 0;
+}
+
 
 QTM_END_NAMESPACE

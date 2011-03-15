@@ -61,6 +61,7 @@
 
 #include "qorganizermanager.h"
 #include "qorganizermanagerengine.h"
+#include "qorganizeritemobserver.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -82,6 +83,7 @@ public:
     }
 
     void createEngine(const QString& managerName, const QMap<QString, QString>& parameters);
+    static QOrganizerManagerData* get(const QOrganizerManager* manager);
     static QOrganizerManagerEngineV2* engine(const QOrganizerManager* manager);
     static QOrganizerItemEngineId* createEngineItemId(const QString& managerName, const QMap<QString, QString>& parameters, const QString& engineIdString);
     static QOrganizerCollectionEngineId* createEngineCollectionId(const QString& managerName, const QMap<QString, QString>& parameters, const QString& engineIdString);
@@ -97,6 +99,14 @@ public:
     static QStringList m_pluginPaths;
     static void loadFactories();
     static void loadStaticFactories();
+
+    // Observer stuff
+    void registerObserver(QOrganizerItemObserver* observer);
+    void unregisterObserver(QOrganizerItemObserver* observer);
+    void _q_itemsUpdated(const QList<QOrganizerItemId>& ids);
+    void _q_itemsDeleted(const QList<QOrganizerItemId>& ids);
+
+    QMultiHash<QOrganizerItemId, QOrganizerItemObserver*> m_observerForItem;
 
 private:
     Q_DISABLE_COPY(QOrganizerManagerData)

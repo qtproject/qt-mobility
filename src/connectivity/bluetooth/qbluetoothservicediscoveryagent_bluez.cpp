@@ -48,13 +48,17 @@
 
 #include <QtDBus/QDBusPendingCallWatcher>
 
+//#define QTM_SERVICEDISCOVERY_DEBUG
+
+#ifdef QTM_SERVICEDISCOVERY_DEBUG
 #include <QtCore/QDebug>
+#endif
 
 QTM_BEGIN_NAMESPACE
 
 QBluetoothServiceDiscoveryAgentPrivate::QBluetoothServiceDiscoveryAgentPrivate(const QBluetoothAddress &address)
 :   error(QBluetoothServiceDiscoveryAgent::NoError), state(Inactive), deviceAddress(address),
-    deviceDiscoveryAgent(0), manager(0), device(0)
+    deviceDiscoveryAgent(0), mode(QBluetoothServiceDiscoveryAgent::MinimalDiscovery), manager(0), device(0)
 {
     qRegisterMetaType<ServiceMap>("ServiceMap");
     qDBusRegisterMetaType<ServiceMap>();
@@ -68,7 +72,11 @@ QBluetoothServiceDiscoveryAgentPrivate::~QBluetoothServiceDiscoveryAgentPrivate(
 
 void QBluetoothServiceDiscoveryAgentPrivate::start(const QBluetoothAddress &address)
 {
-    Q_Q(QBluetoothServiceDiscoveryAgent);
+    Q_Q(QBluetoothServiceDiscoveryAgent);    
+
+#ifdef QTM_SERVICEDISCOVERY_DEBUG
+    qDebug() << "Full discovery on: " << address.toString();
+#endif
 
     manager = new OrgBluezManagerInterface(QLatin1String("org.bluez"), QLatin1String("/"),
                                            QDBusConnection::systemBus());
@@ -86,13 +94,158 @@ void QBluetoothServiceDiscoveryAgentPrivate::start(const QBluetoothAddress &addr
                                            QDBusConnection::systemBus());
 
     QDBusPendingReply<QDBusObjectPath> deviceObjectPath = adapter->CreateDevice(address.toString());
+
+    QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(deviceObjectPath, q);
+    watcher->setProperty("_q_BTaddress", QVariant::fromValue(address));
+    QObject::connect(watcher, SIGNAL(finished(QDBusPendingCallWatcher*)),
+                     q, SLOT(_q_createdDevice(QDBusPendingCallWatcher*)));
+
+}
+
+bool QBluetoothServiceDiscoveryAgentPrivate::quickDiscovery(const QBluetoothAddress &address, const QBluetoothDeviceInfo &info)
+{
+    Q_Q(QBluetoothServiceDiscoveryAgent);
+
+    manager = new OrgBluezManagerInterface(QLatin1String("org.bluez"), QLatin1String("/"),
+                                           QDBusConnection::systemBus());
+
+    QDBusPendingReply<QDBusObjectPath> reply = manager->DefaultAdapter();
+    reply.waitForFinished();
+    if (reply.isError()) {
+        error = QBluetoothServiceDiscoveryAgent::UnknownError;
+        emit q->error(error);
+        _q_serviceDiscoveryFinished();
+        return false;
+    }
+
+    adapter = new OrgBluezAdapterInterface(QLatin1String("org.bluez"), reply.value().path(),
+                                           QDBusConnection::systemBus());
+
+    QDBusPendingReply<QDBusObjectPath> deviceObjectPath = adapter->FindDevice(address.toString());
     deviceObjectPath.waitForFinished();
     if (deviceObjectPath.isError()) {
+#ifdef QTM_SERVICEDISCOVERY_DEBUG
+        qDebug() << "Can't find:" << address.toString() << "Error: " << deviceObjectPath.error().message();
+#endif
+        return false;
+    }
+    device = new OrgBluezDeviceInterface(QLatin1String("org.bluez"),
+                                         deviceObjectPath.value().path(),
+                                         QDBusConnection::systemBus());
+
+    QDBusPendingReply<QVariantMap> deviceReply = device->GetProperties();
+    deviceReply.waitForFinished();
+    if(deviceReply.isError())
+        return false;
+    QVariantMap v = deviceReply.value();
+    QStringList device_uuids = v.value("UUIDs").toStringList();    
+
+//    if(address == QBluetoothAddress("D8:54:3A:7E:53:E1")){
+//        qDebug() << "*********** UID from phone" << device_uuids;
+//        return false;
+//    }
+
+    if(device_uuids.empty() && !uuidFilter.isEmpty()){
+        return false;
+    }
+
+#ifdef QTM_SERVICEDISCOVERY_DEBUG
+    qDebug() << "Quick discovery on" << address.toString();
+#endif
+
+    bool foundDevice = true;
+
+    if(!uuidFilter.isEmpty()) {
+        foundDevice = false;
+        foreach (const QBluetoothUuid &uuid, uuidFilter) {
+            foreach (const QString s, device_uuids){
+                if(QBluetoothUuid(s) == uuid){
+                    foundDevice = true;
+#ifdef QTM_SERVICEDISCOVERY_DEBUG
+                    qDebug() << "*** FOUND SERVICE ON " << address.toString() << "***";
+#endif
+                    goto done;
+                }
+            }
+        }
+    }
+
+done:
+    if(foundDevice) {
+        QBluetoothServiceInfo serviceInfo;
+
+        serviceInfo.setDevice(info);
+
+        QList<QVariant> uuids;
+
+        if(!uuidFilter.isEmpty()) {
+            foreach (const QBluetoothUuid &uuid, uuidFilter) {
+                foreach (const QString s, device_uuids){
+                    if(QBluetoothUuid(s) == uuid){
+                        uuids += QVariant::fromValue(uuid);
+                        serviceInfo.setServiceUuid(uuid);
+                    }
+                }
+            }
+        }
+        if(!uuids.empty())
+            serviceInfo.setAttribute(QBluetoothServiceInfo::ServiceClassIds,
+                                     QBluetoothServiceInfo::Sequence(uuids));
+
+        Q_Q(QBluetoothServiceDiscoveryAgent);
+
+        discoveredServices.append(serviceInfo);
+        emit q->serviceDiscovered(serviceInfo);
+#ifdef QTM_SERVICEDISCOVERY_DEBUG
+        qDebug() << "Quick: " << serviceInfo.device().address().toString() << serviceInfo.serviceName();
+#endif
+        return true;
+    }    
+
+#ifdef QTM_SERVICEDISCOVERY_DEBUG
+    qDebug() << "Device did not match UUID fitler" << address.toString() << device_uuids.count();
+#endif
+    return true; // no uuid
+}
+
+
+void QBluetoothServiceDiscoveryAgentPrivate::stop()
+{
+#ifdef QTM_SERVICEDISCOVERY_DEBUG
+    qDebug() << Q_FUNC_INFO << "Stop called";
+#endif
+    if(device){
+        QDBusPendingReply<> reply = device->CancelDiscovery();
+        reply.waitForFinished();
+
+        discoveredDevices.clear();
+        // with no more device this will stop discovery
+        startServiceDiscovery();
+//        qDebug() << "Stop done";
+    }
+}
+
+void QBluetoothServiceDiscoveryAgentPrivate::_q_createdDevice(QDBusPendingCallWatcher *watcher)
+{
+    Q_Q(QBluetoothServiceDiscoveryAgent);
+
+    const QBluetoothAddress &address = watcher->property("_q_BTaddress").value<QBluetoothAddress>();
+
+#ifdef QTM_SERVICEDISCOVERY_DEBUG
+    qDebug() << Q_FUNC_INFO << "created" << address.toString();
+#endif
+
+    QDBusPendingReply<QDBusObjectPath> deviceObjectPath = *watcher;
+    if (deviceObjectPath.isError()) {
         if (deviceObjectPath.error().name() != QLatin1String("org.bluez.Error.AlreadyExists")) {
-            error = QBluetoothServiceDiscoveryAgent::UnknownError;
-            emit q->error(error);
+            // Can't create device, maybe not present, not a fault to report
+            // since this is normal, devices aren't always present
+//            error = QBluetoothServiceDiscoveryAgent::UnknownError;
+//            emit q->error(error);
             _q_serviceDiscoveryFinished();
-            qDebug() << "Error: " << error;
+#ifdef QTM_SERVICEDISCOVERY_DEBUG
+            qDebug() << "Create device failed Error: " << error << deviceObjectPath.error().name();
+#endif
             return;
         }
 
@@ -102,7 +255,9 @@ void QBluetoothServiceDiscoveryAgentPrivate::start(const QBluetoothAddress &addr
             error = QBluetoothServiceDiscoveryAgent::DeviceDiscoveryError;
             emit q->error(error);
             _q_serviceDiscoveryFinished();
-            qDebug() << "Error: " << error;
+#ifdef QTM_SERVICEDISCOVERY_DEBUG
+            qDebug() << "Can't find device after creation Error: " << error << deviceObjectPath.error().name();
+#endif
             return;
         }
     }
@@ -111,41 +266,59 @@ void QBluetoothServiceDiscoveryAgentPrivate::start(const QBluetoothAddress &addr
                                          deviceObjectPath.value().path(),
                                          QDBusConnection::systemBus());
 
+    QDBusPendingReply<QVariantMap> deviceReply = device->GetProperties();
+    deviceReply.waitForFinished();
+    if(deviceReply.isError())
+        return;
+    QVariantMap v = deviceReply.value();
+    QStringList device_uuids = v.value("UUIDs").toStringList();
+
     QString pattern;
     foreach (const QBluetoothUuid &uuid, uuidFilter)
         pattern += uuid.toString().remove(QChar('{')).remove(QChar('}')) + QLatin1Char(' ');
 
-//    qDebug() << "Discover: " << pattern.trimmed();
+#ifdef QTM_SERVICEDISCOVERY_DEBUG
+    qDebug() << Q_FUNC_INFO << "Discover: " << pattern.trimmed();
+#endif
     QDBusPendingReply<ServiceMap> discoverReply = device->DiscoverServices(pattern.trimmed());
-    QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(discoverReply, q);
+    watcher = new QDBusPendingCallWatcher(discoverReply, q);
     QObject::connect(watcher, SIGNAL(finished(QDBusPendingCallWatcher*)),
                      q, SLOT(_q_discoveredServices(QDBusPendingCallWatcher*)));
-//    qDebug() << "Working: " << address.toString();
-}
 
-void QBluetoothServiceDiscoveryAgentPrivate::stop()
-{
-    qDebug() << Q_FUNC_INFO << "XXXXXXXXXX stop is not implemenetd";
 }
 
 void QBluetoothServiceDiscoveryAgentPrivate::_q_discoveredServices(QDBusPendingCallWatcher *watcher)
 {
     Q_Q(QBluetoothServiceDiscoveryAgent);
 
+#ifdef QTM_SERVICEDISCOVERY_DEBUG
+    qDebug() << Q_FUNC_INFO;
+#endif
+
     QDBusPendingReply<ServiceMap> reply = *watcher;
     if (reply.isError()) {
+#ifdef QTM_SERVICEDISCOVERY_DEBUG
+        qDebug() << "discoveredServices error: " << error << reply.error().message();
+#endif
         watcher->deleteLater();
         error = QBluetoothServiceDiscoveryAgent::UnknownError;
         emit q->error(error);
-        _q_serviceDiscoveryFinished();
-        qDebug() << "discoveredServices error: " << error << reply.error().message();
+        _q_serviceDiscoveryFinished();        
         return;
     }
+
+    ServiceMap map = reply.value();
+
+#ifdef QTM_SERVICEDISCOVERY_DEBUG
+    qDebug() << "Parsing xml" << discoveredDevices.at(0).address().toString() << discoveredDevices.count() << map.count();
+#endif
 
     foreach (const QString &record, reply.value()) {
         QXmlStreamReader xml(record);
 
-//        qDebug() << "Service xml" << record;
+#ifdef QTM_SERVICEDISCOVERY_DEBUG
+      //  qDebug() << "Service xml" << record;
+#endif
 
         QBluetoothServiceInfo serviceInfo;
         serviceInfo.setDevice(discoveredDevices.at(0));
@@ -172,8 +345,15 @@ void QBluetoothServiceDiscoveryAgentPrivate::_q_discoveredServices(QDBusPendingC
         Q_Q(QBluetoothServiceDiscoveryAgent);
 
         discoveredServices.append(serviceInfo);
-//        qDebug() << "Discovered service" << serviceInfo;
+#ifdef QTM_SERVICEDISCOVERY_DEBUG
+        qDebug() << "Discovered services" << discoveredDevices.at(0).address().toString();
+#endif
         emit q->serviceDiscovered(serviceInfo);
+        // could stop discovery, check for state
+        if(discoveryState() == Inactive){
+            qDebug() << "Exit discovery after stop";
+            break;
+        }
     }
 
     watcher->deleteLater();

@@ -51,6 +51,10 @@
 
 //TESTED_COMPONENT=src/multimedia
 
+#ifndef TESTDATA_DIR
+#define TESTDATA_DIR "./"
+#endif
+
 QT_USE_NAMESPACE
 class MockReadOnlyPlaylistProvider : public QMediaPlaylistProvider
 {
@@ -160,6 +164,7 @@ private slots:
     void removeMedia();
     void currentItem();
     void saveAndLoad();
+    void loadM3uFile();
     void playbackMode();
     void playbackMode_data();
     void shuffle();
@@ -469,6 +474,26 @@ void tst_QMediaPlaylist::saveAndLoad()
     QCOMPARE(playlist.media(0), playlist2.media(0));
     QCOMPARE(playlist.media(1), playlist2.media(1));
     QCOMPARE(playlist.media(3), playlist2.media(3));
+}
+
+void tst_QMediaPlaylist::loadM3uFile()
+{
+    QMediaPlaylist playlist;
+
+    playlist.load(QUrl::fromLocalFile(QLatin1String(TESTDATA_DIR "testdata/missing_file.m3u")));
+    QVERIFY(playlist.error() != QMediaPlaylist::NoError);
+
+    playlist.load(QUrl::fromLocalFile(QLatin1String(TESTDATA_DIR "testdata/test.m3u")));
+    QCOMPARE(playlist.error(), QMediaPlaylist::NoError);
+    QCOMPARE(playlist.mediaCount(), 5);
+
+    QCOMPARE(playlist.media(0).canonicalUrl(), QUrl(QLatin1String("http://test.host/path")));
+    QCOMPARE(playlist.media(1).canonicalUrl(), QUrl(QLatin1String("http://test.host/path")));
+    QCOMPARE(playlist.media(2).canonicalUrl(),
+             QUrl(QLatin1String("file://" TESTDATA_DIR "testdata/testfile")));
+    QCOMPARE(playlist.media(3).canonicalUrl(),
+             QUrl(QLatin1String("file://" TESTDATA_DIR "testdata/testdir/testfile")));
+    QCOMPARE(playlist.media(4).canonicalUrl(), QUrl(QLatin1String("file:///testdir/testfile")));
 }
 
 void tst_QMediaPlaylist::playbackMode_data()

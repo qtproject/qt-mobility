@@ -616,7 +616,7 @@ bool QMessageService::synchronize(const QMessageAccountId &id)
     d_ptr->_active = 0;
     d_ptr->_error = QMessageManager::NoError;
     d_ptr->_active = &d_ptr->_retrieval;
-    d_ptr->_retrieval.synchronize(convert(id), 0);
+    d_ptr->_retrieval.synchronize(convert(id), 1);
     return true;
 }
 

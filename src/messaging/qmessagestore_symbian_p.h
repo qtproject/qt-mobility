@@ -41,7 +41,7 @@
 #ifndef QMESSAGESTOREPRIVATE_SYMBIAN_H
 #define QMESSAGESTOREPRIVATE_SYMBIAN_H
 
-#include "qmessagestore.h"
+#include "qmessagestore_p.h"
 #include "qmessageservice.h"
 #include <QEventLoop>
 
@@ -87,6 +87,8 @@ public:
     bool removeMessages(const QMessageFilter &filter, QMessageManager::RemovalOption option);
 
     bool removeAccount(const QMessageAccountId &id);
+    void removeAccountComplete(int error);
+    void accountRemoved(const QMessageAccountId &id);
     
     QMessage message(const QMessageId& id) const;
     

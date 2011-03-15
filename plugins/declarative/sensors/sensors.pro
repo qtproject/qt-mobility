@@ -1,9 +1,9 @@
 INCLUDEPATH += ../../../src/sensors
 INCLUDEPATH += ../../../src/global
 
-TARGET  = $$qtLibraryTarget(declarative_sensors)
 TEMPLATE = lib
 CONFIG += plugin
+TARGET  = $$qtLibraryTarget(declarative_sensors)
 TARGETPATH = QtMobility/sensors
 PLUGIN_TYPE = declarative
 include(../../../common.pri)

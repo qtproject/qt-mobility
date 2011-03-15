@@ -115,6 +115,20 @@ void tst_QFeedbackActuator::enumeration()
         QCOMPARE(actuator->isCapabilitySupported(QFeedbackActuator::Period), CAPABILITY);
         QVERIFY(!actuator->name().isEmpty());
     }
+
+    // Try comparisons
+    if (actuators.count() > 1) {
+        QFeedbackActuator* a1 = actuators.at(0);
+        QFeedbackActuator* a2 = actuators.at(1);
+        QFeedbackActuator* a1b = actuators.at(0);
+        QFeedbackActuator* a2b = actuators.at(1);
+        QVERIFY(a1->id() != a2->id());
+//        QVERIFY(*a1 != *a2); // doesn't work, no operator != !!
+        QVERIFY(!(*a1 == *a2));
+
+        QVERIFY(*a1 == *a1b);
+        QVERIFY(*a2 == *a2b);
+    }
 }
 
 void tst_QFeedbackActuator::setEnabled()

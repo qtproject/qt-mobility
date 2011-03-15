@@ -87,6 +87,9 @@ public:
     QUrl presenceStateImageUrl() const {return value<QUrl>(FieldPresenceStateImageUrl);}
     void setCustomMessage(const QString& customMessage) {setValue(FieldCustomMessage, customMessage);}
     QString customMessage() const {return value(FieldCustomMessage);}
+
+    // convenience filtering functions
+    static QContactFilter match(QContactPresence::PresenceState state);
 };
 
 QTM_END_NAMESPACE

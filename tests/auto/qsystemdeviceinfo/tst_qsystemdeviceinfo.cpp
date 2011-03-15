@@ -86,8 +86,9 @@ private slots:
     void tst_isWirelessKeyboardConnected();
     void tst_isKeyboardFlipOpen();
     void tst_keypadLightOn();
-    void tst_hostId();
+    void tst_uniqueID();
     void tst_lockStatus();
+    void tst_activeProfileDetails();
 
 };
 /*
@@ -109,7 +110,7 @@ void tst_QSystemDeviceInfo::initTestCase()
     qRegisterMetaType<QSystemDeviceInfo::SimStatus>("QSystemDeviceInfo::SimStatus");
 
     qRegisterMetaType<QSystemDeviceInfo::KeyboardTypeFlags>("QSystemDeviceInfo::KeyboardTypeFlags");
-    qRegisterMetaType<QSystemDeviceInfo::LockType>("QSystemDeviceInfo::LockType");
+    qRegisterMetaType<QSystemDeviceInfo::LockTypeFlags>("QSystemDeviceInfo::LockTypeFlags");
 
 }
 
@@ -251,14 +252,19 @@ void tst_QSystemDeviceInfo::tst_currentBluetoothPowerState()
 void tst_QSystemDeviceInfo::tst_keyboardType()
 {
     QSystemDeviceInfo di;
-    QSystemDeviceInfo::KeyboardTypeFlags  flags = di.keyboardType();
+    QSystemDeviceInfo::KeyboardTypeFlags  flags = di.keyboardTypes();
 
     QVERIFY( (flags && QSystemDeviceInfo::UnknownKeyboard == QSystemDeviceInfo::UnknownKeyboard)
              || (flags && QSystemDeviceInfo::SoftwareKeyboard ==  QSystemDeviceInfo::SoftwareKeyboard)
              || (flags && QSystemDeviceInfo::ITUKeypad ==  QSystemDeviceInfo::ITUKeypad)
              || (flags && QSystemDeviceInfo::HalfQwertyKeyboard == QSystemDeviceInfo::HalfQwertyKeyboard)
-             || (flags && QSystemDeviceInfo::FullQwertyKeyboard == QSystemDeviceInfo::FullQwertyKeyboard)
-             || (flags && QSystemDeviceInfo::WirelessKeyboard ==  QSystemDeviceInfo::WirelessKeyboard));
+            || (flags && QSystemDeviceInfo::FullQwertyKeyboard == QSystemDeviceInfo::FullQwertyKeyboard));
+
+    if(di.isWirelessKeyboardConnected()) {
+        QVERIFY((flags & QSystemDeviceInfo::WirelessKeyboard));
+    } else {
+        QVERIFY((flags & ~QSystemDeviceInfo::WirelessKeyboard));
+    }
 }
 
 void tst_QSystemDeviceInfo::tst_isWirelessKeyboardConnected()
@@ -271,7 +277,7 @@ void tst_QSystemDeviceInfo::tst_isWirelessKeyboardConnected()
 void tst_QSystemDeviceInfo::tst_isKeyboardFlipOpen()
 {
     QSystemDeviceInfo di;
-    bool on = di.isKeyboardFlipOpen();
+    bool on = di.isKeyboardFlippedOpen();
     QVERIFY(on || !on);
 }
 
@@ -286,22 +292,35 @@ void tst_QSystemDeviceInfo::tst_keypadLightOn()
 
 }
 
-void tst_QSystemDeviceInfo::tst_hostId()
+void tst_QSystemDeviceInfo::tst_uniqueID()
 {
     QSystemDeviceInfo di;
-    QUuid id = di.hostId();
+    QUuid id = di.uniqueDeviceID();
     QVERIFY(id.isNull()|| !id.isNull());
 }
 
 void tst_QSystemDeviceInfo::tst_lockStatus()
 {
     QSystemDeviceInfo di;
-    QSystemDeviceInfo::LockType lock = di.lockStatus();
+    QSystemDeviceInfo::LockTypeFlags lock = di.lockStatus();
     if (di.isDeviceLocked()) {
-        QVERIFY((lock == QSystemDeviceInfo::DeviceLocked)
-                || (lock == QSystemDeviceInfo::TouchAndKeyboardLocked));
-    } else {
-        QVERIFY( lock == QSystemDeviceInfo::UnknownLock);
+        QVERIFY((lock & QSystemDeviceInfo::PinLocked)
+                || (lock & QSystemDeviceInfo::TouchAndKeyboardLocked)
+                || (lock & QSystemDeviceInfo::UnknownLock));
+    }
+}
+
+void tst_QSystemDeviceInfo::tst_activeProfileDetails()
+{
+    QSystemDeviceInfo di;
+    QSystemDeviceInfo::ProfileDetails details = di.activeProfileDetails();
+    int vol = details.messageRingtoneVolume();
+    int vol2 = details.voiceRingtoneVolume();
+    bool vib = details.vibrationActive();
+    if(di.currentProfile() != QSystemDeviceInfo::UnknownProfile) {
+        QVERIFY(vol > -1 && vol < 101);
+        QVERIFY(vol2 > -1 && vol2 < 101);
+        QVERIFY(vib || !vib);
     }
 }
 

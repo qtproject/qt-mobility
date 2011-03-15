@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -47,6 +47,8 @@
 
 #include <QtCore/QObject>
 #include <QtCore/QList>
+#include <QtCore/QMetaType>
+#include <QtCore/QSharedDataPointer>
 
 class QString;
 class QUrl;
@@ -56,10 +58,13 @@ QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
 
 class QNdefMessage;
+class QNearFieldTargetPrivate;
 
 class Q_CONNECTIVITY_EXPORT QNearFieldTarget : public QObject
 {
     Q_OBJECT
+
+    Q_DECLARE_PRIVATE(QNearFieldTarget)
 
 public:
     enum Type {
@@ -69,18 +74,50 @@ public:
         NfcTagType2,
         NfcTagType3,
         NfcTagType4,
-        MifareTag
+        MifareTag,
+        NfcForumDevice
     };
 
     enum AccessMethod {
         NdefAccess,
-        ApduAccess,
         TagTypeSpecificAccess,
         LlcpAccess
     };
     Q_DECLARE_FLAGS(AccessMethods, AccessMethod)
 
+    enum Error {
+        NoError,
+        UnsupportedError,
+        TargetOutOfRangeError,
+        NoResponseError,
+        ChecksumMismatchError,
+        InvalidParametersError,
+        NdefReadError,
+        NdefWriteError
+    };
+
+    class RequestIdPrivate;
+    class Q_CONNECTIVITY_EXPORT RequestId
+    {
+    public:
+        RequestId();
+        RequestId(const RequestId &other);
+        RequestId(RequestIdPrivate *p);
+        ~RequestId();
+
+        bool isValid() const;
+
+        int refCount() const;
+
+        bool operator<(const RequestId &other) const;
+        bool operator==(const RequestId &other) const;
+        RequestId &operator=(const RequestId &other);
+
+        QSharedDataPointer<RequestIdPrivate> d;
+    };
+
     explicit QNearFieldTarget(QObject *parent = 0);
+    virtual ~QNearFieldTarget();
 
     virtual QByteArray uid() const = 0;
     virtual QUrl url() const;
@@ -88,21 +125,39 @@ public:
     virtual Type type() const = 0;
     virtual AccessMethods accessMethods() const = 0;
 
+    bool isProcessingCommand() const;
+
     // NdefAccess
     virtual bool hasNdefMessage();
-    virtual QList<QNdefMessage> ndefMessages();
-    virtual void setNdefMessages(const QList<QNdefMessage> &messages);
-
-    // ApduAccess
-    virtual QByteArray sendApduCommand(const QByteArray &command);
-    virtual QList<QByteArray> sendApduCommands(const QList<QByteArray> &commands);
+    virtual void readNdefMessages();
+    virtual void writeNdefMessages(const QList<QNdefMessage> &messages);
 
     // TagTypeSpecificAccess
-    virtual QByteArray sendCommand(const QByteArray &command);
-    virtual QList<QByteArray> sendCommands(const QList<QByteArray> &commands);
+    virtual RequestId sendCommand(const QByteArray &command);
+    virtual RequestId sendCommands(const QList<QByteArray> &commands);
+
+    virtual bool waitForRequestCompleted(const RequestId &id, int msecs = 5000);
+
+    QVariant requestResponse(const RequestId &id);
+    void setResponseForRequest(const QNearFieldTarget::RequestId &id, const QVariant &response,
+                               bool emitRequestCompleted = true);
+
+protected:
+    Q_INVOKABLE virtual bool handleResponse(const QNearFieldTarget::RequestId &id,
+                                            const QByteArray &response);
 
 signals:
     void disconnected();
+
+    void ndefMessageRead(const QNdefMessage &message);
+    void ndefMessagesWritten();
+
+    void requestCompleted(const QNearFieldTarget::RequestId &id);
+
+    void error(QNearFieldTarget::Error error, const QNearFieldTarget::RequestId &id);
+
+private:
+    QNearFieldTargetPrivate *d_ptr;
 };
 
 Q_CONNECTIVITY_EXPORT quint16 qNfcChecksum(const char * data, uint len);
@@ -110,6 +165,9 @@ Q_CONNECTIVITY_EXPORT quint16 qNfcChecksum(const char * data, uint len);
 Q_DECLARE_OPERATORS_FOR_FLAGS(QNearFieldTarget::AccessMethods)
 
 QTM_END_NAMESPACE
+
+Q_DECLARE_METATYPE(QtMobility::QNearFieldTarget::RequestId)
+Q_DECLARE_METATYPE(QtMobility::QNearFieldTarget::Error)
 
 QT_END_HEADER
 

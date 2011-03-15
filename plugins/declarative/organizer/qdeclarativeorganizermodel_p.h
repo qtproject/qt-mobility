@@ -61,6 +61,7 @@ class QDeclarativeOrganizerModel : public QAbstractListModel, public QDeclarativ
 {
     Q_OBJECT
     Q_PROPERTY(QString manager READ manager WRITE setManager NOTIFY managerChanged)
+    Q_PROPERTY(QString managerName READ managerName  NOTIFY managerChanged)
     Q_PROPERTY(QStringList availableManagers READ availableManagers)
     Q_PROPERTY(bool autoUpdate READ autoUpdate WRITE setAutoUpdate NOTIFY autoUpdateChanged)
     Q_PROPERTY(QDateTime startPeriod READ startPeriod WRITE setStartPeriod NOTIFY startPeriodChanged)
@@ -68,16 +69,16 @@ class QDeclarativeOrganizerModel : public QAbstractListModel, public QDeclarativ
     Q_PROPERTY(QDeclarativeOrganizerItemFilter* filter READ filter WRITE setFilter NOTIFY filterChanged)
     Q_PROPERTY(QDeclarativeOrganizerItemFetchHint* fetchHint READ fetchHint WRITE setFetchHint NOTIFY fetchHintChanged)
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeOrganizerItemSortOrder> sortOrders READ sortOrders NOTIFY sortOrdersChanged)
-    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeOrganizerItem> items READ items NOTIFY itemsChanged)
-    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeOrganizerItem> occurrences READ occurrences NOTIFY itemsChanged)
-    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeOrganizerItem> events READ events NOTIFY itemsChanged)
-    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeOrganizerItem> eventOccurrences READ eventOccurrences NOTIFY itemsChanged)
-    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeOrganizerItem> todos READ todos NOTIFY itemsChanged)
-    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeOrganizerItem> todoOccurrences READ todoOccurrences NOTIFY itemsChanged)
-    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeOrganizerItem> journals READ journals NOTIFY itemsChanged)
-    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeOrganizerItem> notes READ notes NOTIFY itemsChanged)
+    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeOrganizerItem> items READ items NOTIFY modelChanged)
+    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeOrganizerItem> occurrences READ occurrences NOTIFY modelChanged)
+    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeOrganizerItem> events READ events NOTIFY modelChanged)
+    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeOrganizerItem> eventOccurrences READ eventOccurrences NOTIFY modelChanged)
+    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeOrganizerItem> todos READ todos NOTIFY modelChanged)
+    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeOrganizerItem> todoOccurrences READ todoOccurrences NOTIFY modelChanged)
+    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeOrganizerItem> journals READ journals NOTIFY modelChanged)
+    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeOrganizerItem> notes READ notes NOTIFY modelChanged)
     Q_PROPERTY(QString error READ error NOTIFY errorChanged)
-    Q_PROPERTY(int itemCount READ itemCount NOTIFY itemsChanged)
+    Q_PROPERTY(int itemCount READ itemCount NOTIFY modelChanged)
     Q_INTERFACES(QDeclarativeParserStatus)
 public:
     enum {
@@ -90,8 +91,10 @@ public:
 
     QString error() const;
     int itemCount() const;
+
     QString manager() const;
-    void setManager(const QString& managerName);
+    void setManager(const QString& managerUri);
+    QString managerName() const;
     QStringList availableManagers() const;
     QDateTime startPeriod() const;
     void setStartPeriod(const QDateTime& start);
@@ -126,9 +129,9 @@ public:
     Q_INVOKABLE void saveItem(QDeclarativeOrganizerItem* item);
     Q_INVOKABLE void fetchItems(const QList<QString>& ids);
 
-    Q_INVOKABLE bool containsItems(const QDate& start, const QDate& end = QDate());
+    Q_INVOKABLE bool containsItems(QDateTime start, QDateTime end = QDateTime());
     Q_INVOKABLE QDeclarativeOrganizerItem* item(const QString& id);
-    Q_INVOKABLE QStringList itemIds(const QDate& start, const QDate& end = QDate());
+    Q_INVOKABLE QStringList itemIds(QDateTime start=QDateTime(), QDateTime end = QDateTime());
     bool autoUpdate() const;
     void setAutoUpdate(bool autoUpdate);
 
@@ -141,7 +144,7 @@ signals:
     void availableManagersChanged();
     void filterChanged();
     void fetchHintChanged();
-    void itemsChanged();
+    void modelChanged();
     void sortOrdersChanged();
     void errorChanged();
     void startPeriodChanged();
@@ -156,6 +159,7 @@ public slots:
 private slots:
     void fetchAgain();
     void requestUpdated();
+    void doUpdate();
 
     void itemsSaved();
 
@@ -172,6 +176,8 @@ private:
     int itemIndex(const QDeclarativeOrganizerItem* item);
     void addSorted(QDeclarativeOrganizerItem* item);
     void removeItemsFromModel(const QList<QString>& ids);
+    bool itemHasReccurence(const QOrganizerItem& oi) const;
+    void fetchOccurrences(const QOrganizerItem& item);
     QDeclarativeOrganizerItem* createItem(const QOrganizerItem& item);
     static void item_append(QDeclarativeListProperty<QDeclarativeOrganizerItem> *p, QDeclarativeOrganizerItem *item);
     static int  item_count(QDeclarativeListProperty<QDeclarativeOrganizerItem> *p);

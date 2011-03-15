@@ -42,6 +42,8 @@
 #include "qdevicekitservice_linux_p.h"
 
 #include <QtDBus/QtDBus>
+#include <QVariantMap>
+
 //#include <QtDBus/QDBusConnection>
 //#include <QtDBus/QDBusError>
 //#include <QtDBus/QDBusInterface>

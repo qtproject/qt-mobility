@@ -97,10 +97,15 @@ void QVCard21Writer::encodeVersitProperty(const QVersitProperty& property)
         }
         QString replacement = QLatin1Char('\\') + separator;
         QRegExp separatorRegex = QRegExp(separator);
+
+        // Check first if any of the values need to be UTF-8 encoded (if so, all of them must be
+        // UTF-8 encoded)
+        bool forceUtf8 = requiresUtf8(values);
+
         bool first = true;
         foreach (QString value, values) {
             if (!(value.isEmpty() && property.valueType() == QVersitProperty::ListType)) {
-                encodeVersitValue(parameters, value);
+                encodeVersitValue(parameters, value, forceUtf8);
                 if (!first) {
                     renderedValue += separator;
                 }
@@ -110,9 +115,9 @@ void QVCard21Writer::encodeVersitProperty(const QVersitProperty& property)
         }
     } else if (variant.type() == QVariant::String) {
         renderedValue = variant.toString();
-        encodeVersitValue(parameters, renderedValue);
+        encodeVersitValue(parameters, renderedValue, false);
     } else if (variant.type() == QVariant::ByteArray) {
-        parameters.insert(QLatin1String("ENCODING"), QLatin1String("BASE64"));
+        parameters.replace(QLatin1String("ENCODING"), QLatin1String("BASE64"));
         if (mCodecIsAsciiCompatible) // optimize by not converting to unicode
             renderedBytes = variant.toByteArray().toBase64();
         else
@@ -129,7 +134,13 @@ void QVCard21Writer::encodeVersitProperty(const QVersitProperty& property)
         QVersitDocument embeddedDocument = variant.value<QVersitDocument>();
         encodeVersitDocument(embeddedDocument);
     } else if (variant.type() == QVariant::String || variant.type() == QVariant::StringList) {
-        writeString(renderedValue);
+        // Some devices don't support vCard-style line folding if the property is
+        // quoted-printable-encoded.  Therefore, we use QP soft linebreaks if the property is being
+        // QP-encoded, and normal vCard folding otherwise.
+        if (parameters.contains("ENCODING", QLatin1String("QUOTED-PRINTABLE")))
+            writeStringQp(renderedValue);
+        else
+            writeString(renderedValue);
     } else if (variant.type() == QVariant::ByteArray) {
         // One extra folding before the value and
         // one extra line break after the value are needed in vCard 2.1
@@ -144,21 +155,35 @@ void QVCard21Writer::encodeVersitProperty(const QVersitProperty& property)
     writeCrlf();
 }
 
-/*! Performs Quoted-Printable encoding and charset encoding on \a value as per vCard 2.1 spec.
-    Returns true if the value will need to be encoded with UTF-8, false if mCodec is sufficient. */
-void QVCard21Writer::encodeVersitValue(QMultiHash<QString,QString>& parameters, QString& value)
-{
-    // Add the CHARSET parameter, if necessary and encode in UTF-8 later
-    if (!mCodec->canEncode(value)
+/*! Returns true if and only if the current codec is incapable of encoding any of the \a values */
+bool QVCard21Writer::requiresUtf8(const QStringList& values) {
+    foreach (const QString& value, values) {
+        if (!mCodec->canEncode(value)
             // if codec is ASCII and there is a character > U+007F in value, encode it as UTF-8
             || (mCodecIsAscii && containsNonAscii(value))) {
-        parameters.insert(QLatin1String("CHARSET"), QLatin1String("UTF-8"));
+            return true;
+        }
+    }
+    return false;
+}
+
+/*! Performs Quoted-Printable encoding and charset encoding on \a value as per vCard 2.1 spec.
+    Returns true if the value will need to be encoded with UTF-8, false if mCodec is sufficient. */
+void QVCard21Writer::encodeVersitValue(QMultiHash<QString,QString>& parameters, QString& value,
+                                       bool forceUtf8)
+{
+    // Add the CHARSET parameter, if necessary and encode in UTF-8 later
+    if (forceUtf8
+            || !mCodec->canEncode(value)
+            // if codec is ASCII and there is a character > U+007F in value, encode it as UTF-8
+            || (mCodecIsAscii && containsNonAscii(value))) {
+        parameters.replace(QLatin1String("CHARSET"), QLatin1String("UTF-8"));
         value = QString::fromLatin1(utf8Encoder()->fromUnicode(value));
     }
 
     // Quoted-Printable encode the value and add Quoted-Printable parameter, if necessary
     if (quotedPrintableEncode(value))
-        parameters.insert(QLatin1String("ENCODING"), QLatin1String("QUOTED-PRINTABLE"));
+        parameters.replace(QLatin1String("ENCODING"), QLatin1String("QUOTED-PRINTABLE"));
 }
 
 int sortIndexOfTypeValue(const QString& type) {

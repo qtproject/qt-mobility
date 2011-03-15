@@ -44,24 +44,26 @@
 
 #include <QObject>
 #include "qmobilityglobal.h"
+#include "qorganizermanager.h"
 
 QTM_BEGIN_NAMESPACE
+class QOrganizerItemObserverPrivate;
 
 class Q_ORGANIZER_EXPORT QOrganizerItemObserver : public QObject
 {
     Q_OBJECT
 public:
-    void emitItemChanged();
-    void emitItemRemoved();
+    QOrganizerItemObserver(QOrganizerManager* manager, const QOrganizerItemId& itemId, QObject* parent = 0);
+    ~QOrganizerItemObserver();
+    QOrganizerItemId itemId() const;
 signals:
     void itemChanged();
     void itemRemoved();
 
 private:
-    QOrganizerItemObserver(QObject* parent = 0);
-
     Q_DISABLE_COPY(QOrganizerItemObserver)
     friend class QOrganizerManagerEngineV2;
+    QOrganizerItemObserverPrivate* d;
 };
 
 QTM_END_NAMESPACE

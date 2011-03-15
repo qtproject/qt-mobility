@@ -68,9 +68,8 @@ QTM_BEGIN_NAMESPACE
 #if defined(BACKEND_NM)
 static bool NetworkManagerAvailable()
 {
-    QDBusConnection dbusConnection = QDBusConnection::systemBus();
-    if (dbusConnection.isConnected()) {
-        QDBusConnectionInterface *dbiface = dbusConnection.interface();
+    if (QDBusConnection::systemBus().isConnected()) {
+        QDBusConnectionInterface *dbiface = QDBusConnection::systemBus().interface();
         QDBusReply<bool> reply = dbiface->isServiceRegistered("org.freedesktop.NetworkManager");
         if (reply.isValid())
             return reply.value();

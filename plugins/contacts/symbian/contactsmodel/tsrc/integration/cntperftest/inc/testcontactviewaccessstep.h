@@ -27,12 +27,12 @@
 #define TEST_CONTACT_VIEW_ACCESS_STEP_H
 
 // System Includes
-#include <testexecutestepbase.h>
+#include <test/testexecutestepbase.h>
 #include <cntdef.h>
 #include <cntviewbase.h>
 #include <cntdb.h>
 #include <e32property.h>
-#include <sbeclient.h>
+#include <connect/sbeclient.h>
 
 // User Includes
 #include "cntperfserver.h"

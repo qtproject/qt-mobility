@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -49,6 +49,7 @@ QT_FORWARD_DECLARE_CLASS(QLabel)
 
 QTM_BEGIN_NAMESPACE
 class QNearFieldTarget;
+class QNdefMessage;
 QTM_END_NAMESPACE
 
 QTM_USE_NAMESPACE
@@ -63,9 +64,14 @@ public:
 
 public slots:
     void targetDetected(QNearFieldTarget *target);
+    void targetLost(QNearFieldTarget *target);
+    void targetDetected(const QNdefMessage &message, QNearFieldTarget *target);
 
 protected:
     void mouseReleaseEvent(QMouseEvent *event);
+
+private slots:
+    void displayNdefMessage(const QNdefMessage &message);
 
 private:
     QLabel *m_image;

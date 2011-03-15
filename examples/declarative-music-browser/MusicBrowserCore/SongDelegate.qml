@@ -42,7 +42,7 @@ import Qt 4.7
 import QtMobility.gallery 1.1
 
 Item {
-    height: 32
+    height: 48
 
     Text {
         id: trackLabel
@@ -63,10 +63,10 @@ Item {
 
     Text {
         id: durationLabel
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.right: parent.right
+        anchors.top:  titleLabel.bottom
+        anchors.left: titleLabel.left
         text: Utility.formatDuration(duration)
-        color: "white"
+        color: "grey"
     }
 
     MouseArea {

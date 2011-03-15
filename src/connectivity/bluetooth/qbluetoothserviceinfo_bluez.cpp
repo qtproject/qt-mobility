@@ -70,6 +70,7 @@ static void writeAttribute(QXmlStreamWriter *stream, const QVariant &attribute)
                                unsignedFormat.arg(attribute.value<quint16>(), 4, 16,
                                                   QLatin1Char('0')));
         //stream->writeAttribute(QLatin1String("name"), foo);
+        break;
     case QMetaType::UInt:
         stream->writeEmptyElement(QLatin1String("uint32"));
         stream->writeAttribute(QLatin1String("value"),
@@ -275,6 +276,8 @@ bool QBluetoothServiceInfoPrivate::registerService() const
     stream.writeEndElement();
 
     stream.writeEndDocument();
+
+//    qDebug() << xmlServiceRecord;
 
     if (!registered) {
         QDBusPendingReply<uint> reply = service->AddRecord(xmlServiceRecord);

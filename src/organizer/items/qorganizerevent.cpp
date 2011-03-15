@@ -56,7 +56,8 @@ QTM_USE_NAMESPACE
   with it, and also exceptions to those recurrences.
  */
 
-/*! Sets the start date time of the event to \a startDateTime */
+/*! Sets the start date time of the event to \a startDateTime (for recurring events, this applies to
+ * the first instance).  For all-day events, the time part can be set to any valid value. */
 void QOrganizerEvent::setStartDateTime(const QDateTime& startDateTime)
 {
     QOrganizerEventTime etr = detail<QOrganizerEventTime>();
@@ -64,14 +65,18 @@ void QOrganizerEvent::setStartDateTime(const QDateTime& startDateTime)
     saveDetail(&etr);
 }
 
-/*! Returns the date time at which the first instance of the event starts */
+/*! Returns the date time at which the event starts (for recurring events, this applies to the first
+ * instance).  For all-day events, the time part is meaningless. */
 QDateTime QOrganizerEvent::startDateTime() const
 {
     QOrganizerEventTime etr = detail<QOrganizerEventTime>();
     return etr.startDateTime();
 }
 
-/*! Sets the end date time of the event to \a endDateTime */
+/*! Sets the end date time of the event to \a endDateTime (for recurring events, this applies to the
+  first instance).  For all-day events, the time part can be set to any valid value, and the date is
+  to be interpreted as the inclusive end date.
+  */
 void QOrganizerEvent::setEndDateTime(const QDateTime& endDateTime)
 {
     QOrganizerEventTime etr = detail<QOrganizerEventTime>();
@@ -79,7 +84,10 @@ void QOrganizerEvent::setEndDateTime(const QDateTime& endDateTime)
     saveDetail(&etr);
 }
 
-/*! Returns the date time at which the first instance of the event ends */
+/*! Returns the date time at which the event ends (for recurring events, this applies to the first
+ * instance).  For all-day events, the time part is meaningless, and the date is to be interpreted
+ * as the inclusive end date.
+ */
 QDateTime QOrganizerEvent::endDateTime() const
 {
     QOrganizerEventTime etr = detail<QOrganizerEventTime>();

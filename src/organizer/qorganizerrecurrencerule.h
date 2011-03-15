@@ -143,6 +143,9 @@ private:
 //hash functions
 Q_ORGANIZER_EXPORT uint qHash(const QOrganizerRecurrenceRule& rule);
 
+#ifndef QT_NO_DEBUG_STREAM
+Q_ORGANIZER_EXPORT QDebug operator<<(QDebug dbg, const QOrganizerRecurrenceRule& rule);
+#endif
 
 inline uint qHash(QOrganizerRecurrenceRule::Month month)
 {

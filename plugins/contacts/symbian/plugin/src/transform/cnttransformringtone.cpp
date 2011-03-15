@@ -53,14 +53,32 @@ QList<CContactItemField *> CntTransformRingtone::transformDetailL(const QContact
     const QContactRingtone &ringtone(static_cast<const QContactRingtone&>(detail));
 
     if (ringtone.audioRingtoneUrl().isValid()) {
+        QUrl ringtoneUrl = ringtone.audioRingtoneUrl();
+        QString ringtoneString;
+        if (ringtoneUrl.scheme() == QLatin1String("file")) {
+            ringtoneString = ringtoneUrl.toLocalFile();
+            ringtoneString.replace("/", "\\");  // Must be stored with backslashes in Symbian
+        } else {
+            ringtoneString = ringtoneUrl.toString();
+        }
         transformToTextFieldL(detail, fieldList,
-            ringtone.audioRingtoneUrl().toString(), KUidContactFieldRingTone,
+            ringtoneString,
+            KUidContactFieldRingTone,
             KUidContactFieldVCardMapUnknown, false);
 	}
 
     if (ringtone.videoRingtoneUrl().isValid()) {
+        QUrl ringtoneUrl = ringtone.videoRingtoneUrl();
+        QString ringtoneString;
+        if (ringtoneUrl.scheme() == QLatin1String("file")) {
+            ringtoneString = ringtoneUrl.toLocalFile();
+            ringtoneString.replace("/", "\\");  // Must be stored with backslashes in Symbian
+        } else {
+            ringtoneString = ringtoneUrl.toString();
+        }
         transformToTextFieldL(detail, fieldList,
-            ringtone.videoRingtoneUrl().toString(), KUidContactFieldVideoRingTone,
+            ringtoneString,
+            KUidContactFieldVideoRingTone,
             KUidContactFieldVCardMapUnknown, false);
     }
 
@@ -74,12 +92,13 @@ QContactDetail *CntTransformRingtone::transformItemField(const CContactItemField
 	CContactTextField* storage = field.TextStorage();
     QString ringtoneString = QString::fromUtf16(storage->Text().Ptr(), storage->Text().Length());
     	
+    QUrl ringtoneUrl = QUrl::fromUserInput(ringtoneString);
     
     if (field.ContentType().ContainsFieldType(KUidContactFieldRingTone)) {
-        ringtone->setAudioRingtoneUrl(ringtoneString);
+        ringtone->setAudioRingtoneUrl(ringtoneUrl);
 	}
     else if (field.ContentType().ContainsFieldType(KUidContactFieldVideoRingTone)) {
-        ringtone->setVideoRingtoneUrl(ringtoneString);
+        ringtone->setVideoRingtoneUrl(ringtoneUrl);
     }
 
     return ringtone;
