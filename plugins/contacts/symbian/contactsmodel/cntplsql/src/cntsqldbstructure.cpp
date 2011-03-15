@@ -253,11 +253,27 @@ void CCntSqlDbTable::MakeTableStructureCompatibleL()
     // one by one    
     TInt cnt = columnsToAdd.Count();
     
+    TBool favoriteColumnAdded = EFalse;
     for( TInt i = 0; i< cnt ; i++ )
         {
         AlterTableToAddColumnL(columnsToAdd[i]);
+        if (columnsToAdd[i]->ColumnName().CompareC(KContactFavoriteIndex()) == 0)
+            {
+            favoriteColumnAdded = ETrue;
+            }
         }    
 
+    if ((*iTableName).CompareC(KSqlContactTableName) == 0)
+        {
+        if (favoriteColumnAdded)
+            {
+            // If favorite column was added, fetch favorite info for existing contacts
+            // and fill the column.
+            FillFavoritesColumnL();
+            }
+
+        }
+    
     CleanupStack::PopAndDestroy();  //ColumnsToAdd.Close()   
     }
 /*
@@ -281,12 +297,6 @@ void CCntSqlDbTable::AlterTableToAddColumnL( CCntSqlDbTableColumn* aColInfo)
         addColStmt.Prepare( iDatabase, *sqlstmt );
         TInt err = addColStmt.Exec();
         CleanupStack::PopAndDestroy( &addColStmt );
-        
-        //if favorite column was added, fetch favorite info for existing contacts and fill the column
-        if (aColInfo->ColumnName().CompareC(KContactFavoriteIndex()) == 0)
-            {
-            FillFavoritesColumnL();
-            }
         }
     CleanupStack::PopAndDestroy(); //sqlstmt
     }
