@@ -76,7 +76,8 @@ void meegosensorbase::start()
     if (m_sensorInterface) {
         // dataRate
         int dataRate = sensor()->dataRate();
-        if (dataRate > 0) {
+        QString type = sensor()->type();
+        if (dataRate > 0 && type!="QTapSensor" && type!="QProximitySensor") {
             int interval = 1000 / dataRate;
             // for testing maximum speed
             //interval = 1;
