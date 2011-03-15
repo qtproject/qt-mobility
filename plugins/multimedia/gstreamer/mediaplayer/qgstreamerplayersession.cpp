@@ -1463,7 +1463,7 @@ void QGstreamerPlayerSession::handleMutedChange(GObject *o, GParamSpec *p, gpoin
 
 void QGstreamerPlayerSession::updateMuted()
 {
-    bool muted = false;
+    gboolean muted = false;
     g_object_get(G_OBJECT(m_playbin), "mute", &muted, NULL);
     if (m_muted != muted) {
         m_muted = muted;
