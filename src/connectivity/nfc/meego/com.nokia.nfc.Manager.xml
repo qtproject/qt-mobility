@@ -17,6 +17,7 @@
             <arg type="o" direction="in"/>
             <arg type="s" direction="in"/>
             <arg type="s" direction="in"/>
+            <arg type="s" direction="in"/>
         </method>
         <method name="UnregisterNDEFHandler">
             <arg type="s" direction="in"/>

@@ -210,7 +210,8 @@ int QNearFieldManagerPrivateImpl::registerNdefMessageHandler(const QString &filt
                                        QDBusConnection::systemBus().baseService(),
                                        QDBusObjectPath(handlerPath),
                                        QLatin1String("any"),
-                                       filter);
+                                       filter,
+                                       QCoreApplication::applicationName());
 
     if (reply.isError()) {
         delete handler;
