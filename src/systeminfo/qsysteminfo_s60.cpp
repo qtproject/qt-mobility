@@ -865,36 +865,37 @@ int QSystemDisplayInfoPrivate::colorDepth(int screen)
 QSystemDisplayInfo::DisplayOrientation QSystemDisplayInfoPrivate::orientation(int screen)
 {
     QSystemDisplayInfo::DisplayOrientation orientationStatus = QSystemDisplayInfo::Unknown;
-    // this doesn't seem to work, at least in emulator.
-//    TPixelsTwipsAndRotation sizeAndRotation;
-//    if (screen < 16 && screen > -1) {
-//        bool err = getSizeandRotation(screen, sizeAndRotation);
-//        if (err) {
-//            CFbsBitGc::TGraphicsOrientation currentRotation = sizeAndRotation.iRotation;
-
-//            switch (currentRotation) {
-//            case 0:
-//            case 360:
-//                orientationStatus = QSystemDisplayInfo::Landscape;
-//                break;
-//            case 90:
-//                orientationStatus = QSystemDisplayInfo::Portrait;
-//                break;
-//            case 180:
-//                orientationStatus = QSystemDisplayInfo::InvertedLandscape;
-//                break;
-//            case 270:
-//                orientationStatus = QSystemDisplayInfo::InvertedPortrait;
-//                break;
-//            };
-//        }
-//    }
-    QDesktopWidget wid;
-    if (wid.width() > wid.height()) {
-        orientationStatus = QSystemDisplayInfo::Landscape;
-    } else {
-        orientationStatus = QSystemDisplayInfo::Portrait;
+    TPixelsTwipsAndRotation sizeAndRotation;
+    if (screen < 16 && screen > -1) {
+    bool err = getSizeandRotation(screen, sizeAndRotation);
+    if ( err )
+        {
+            CFbsBitGc::TGraphicsOrientation currentRotation = sizeAndRotation.iRotation;
+            switch (currentRotation) {
+            case CFbsBitGc::EGraphicsOrientationRotated90:
+                orientationStatus = QSystemDisplayInfo::Landscape;
+                break;
+            case CFbsBitGc::EGraphicsOrientationNormal:
+                orientationStatus = QSystemDisplayInfo::Portrait;
+                break;
+            case CFbsBitGc::EGraphicsOrientationRotated270:
+                orientationStatus = QSystemDisplayInfo::InvertedLandscape;
+                break;
+            case CFbsBitGc::EGraphicsOrientationRotated180:
+                orientationStatus = QSystemDisplayInfo::InvertedPortrait;
+                break;
+            default:
+                orientationStatus = QSystemDisplayInfo::Unknown;
+                break;
+            };
+        }
     }
+    //QDesktopWidget wid;
+    //if (wid.width() > wid.height()) {
+    //    orientationStatus = QSystemDisplayInfo::Landscape;
+    //} else {
+    //    orientationStatus = QSystemDisplayInfo::Portrait;
+    //}
     return orientationStatus;
 }
 
@@ -1539,6 +1540,7 @@ QSystemDeviceInfo::KeyboardTypeFlags QSystemDeviceInfoPrivate::keyboardTypes()
         }
         kbType=0;
         if ( (methods & QSystemDeviceInfo::SingleTouch) || (methods & QSystemDeviceInfo::MultiTouch) ) {
+#ifdef SYMBIAN_3_PLATFORM
             //TBD:In 5.0 KAknFepVirtualKeyboardType is not defined
             if ( KErrNone == RProperty::Get(KPSUidAknFep, KAknFepVirtualKeyboardType, kbType) ) {
                 if ( 0 !=  kbType) {
@@ -1548,6 +1550,7 @@ QSystemDeviceInfo::KeyboardTypeFlags QSystemDeviceInfoPrivate::keyboardTypes()
                         keyboardFlags |= QSystemDeviceInfo::SoftwareKeyboard;
                     }
                 }
+#endif
             }
         if (isWirelessKeyboardConnected()) {
             if ( keyboardFlags == QSystemDeviceInfo::UnknownKeyboard)
