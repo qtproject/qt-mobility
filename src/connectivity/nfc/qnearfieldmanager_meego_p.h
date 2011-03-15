@@ -126,8 +126,6 @@ private slots:
     void _q_targetLost(const QString &targetPath);
 
 private:
-    int getFreeId();
-
     QDBusConnection m_connection;
     ComNokiaNfcManagerInterface *m_manager;
     ComNokiaNfcAdapterInterface *m_adapter;
