@@ -114,14 +114,14 @@ CFlipStatus::CFlipStatus() : CActive(EPriorityStandard),
 
 void CFlipStatus::ConstructL()
 {
-    TInt flipKbType;
+    TInt flipKbType = 0;
+#ifdef SYMBIAN_3_PLATFORM
     TRAP_IGNORE(
                 CRepository* repository = CRepository::NewLC( KCRUidAvkon ) ;
-                #ifdef SYMBIAN_3_PLATFORM
-                User::LeaveIfError(repository->Get( KAknKeyboardSlideOpen, flipKbType));
-                #endif
+                User::LeaveIfError(repository->Get( KAknKeyboardSlideOpen, flipKbType));          
                 CleanupStack::PopAndDestroy(repository);
             )
+#endif            
     if (flipKbType)
         m_filpKeyBoard = 1;
     else
