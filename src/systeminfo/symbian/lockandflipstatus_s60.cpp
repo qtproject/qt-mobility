@@ -118,10 +118,10 @@ void CFlipStatus::ConstructL()
 #ifdef SYMBIAN_3_PLATFORM
     TRAP_IGNORE(
                 CRepository* repository = CRepository::NewLC( KCRUidAvkon ) ;
-                User::LeaveIfError(repository->Get( KAknKeyboardSlideOpen, flipKbType));          
+                User::LeaveIfError(repository->Get( KAknKeyboardSlideOpen, flipKbType));
                 CleanupStack::PopAndDestroy(repository);
             )
-#endif            
+#endif
     if (flipKbType)
         m_filpKeyBoard = 1;
     else
