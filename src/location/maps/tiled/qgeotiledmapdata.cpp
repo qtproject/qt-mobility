@@ -60,6 +60,7 @@
 #include "qgeotiledmaprectangleobjectinfo_p.h"
 #include "qgeotiledmaprouteobjectinfo_p.h"
 #include "qgeotiledmaptextobjectinfo_p.h"
+#include "qgeotiledmapcustomobjectinfo_p.h"
 
 #include "qgeomaptextobject.h"
 
@@ -655,6 +656,8 @@ QGeoMapObjectInfo *QGeoTiledMapData::createMapObjectInfo(QGeoMapObject *mapObjec
             return  new QGeoTiledMapTextObjectInfo(this, mapObject);
         case QGeoMapObject::RouteType:
             return  new QGeoTiledMapRouteObjectInfo(this, mapObject);
+        case QGeoMapObject::CustomType:
+            return  new QGeoTiledMapCustomObjectInfo(this, mapObject);
         default:
             return 0;
     }
