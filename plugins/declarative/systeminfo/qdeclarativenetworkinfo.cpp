@@ -134,14 +134,14 @@ QDeclarativeNetworkInfo::~QDeclarativeNetworkInfo()
 }
 
 /*!
-    \qmlproperty enumeration NetworkInfo::useThisMode
+    \qmlproperty enumeration NetworkInfo::useMode
 
     Sets this NetworkInfo to use QSystemNetworkInfo::NetworkModes. Does not set the mode of the underlaying system.
 
     If not set, the default is whatever defaultMode is.
 */
 
-void QDeclarativeNetworkInfo::useThisMode(QSystemNetworkInfo::NetworkMode mode)
+void QDeclarativeNetworkInfo::useMode(QSystemNetworkInfo::NetworkMode mode)
 {
     m_mode = mode;
 }
@@ -150,6 +150,40 @@ void QDeclarativeNetworkInfo::useThisMode(QSystemNetworkInfo::NetworkMode mode)
     \qmlproperty string NetworkInfo::networkStatus
 
     Returns this NetworkInfo's network status.
+
+    The following table shows the mapping between the NetworkInfo NetworkStatus property and the QSystemNetworkInfo::NetworkStatus enum.
+
+\table
+    \header
+        \o NetworkInfo.networkStatus \o QSystemNetworkInfo::NetworkStatus
+        \row
+            \o "Undefined"
+            \o QSystemNetworkInfo::UndefinedStatus
+        \row
+            \o "No Network Available"
+            \o QSystemNetworkInfo::NoNetworkAvailable
+        \row
+            \o "Emergency Only"
+            \o  QSystemNetworkInfo::EmergencyOnly
+        \row
+            \o "Searching"
+            \o QSystemNetworkInfo::Searching
+        \row
+            \o "Busy"
+            \o QSystemNetworkInfo::Busy
+        \row
+            \o "Connected"
+            \o QSystemNetworkInfo::Connected
+        \row
+            \o "Home Network"
+            \o QSystemNetworkInfo::HomeNetwork
+        \row
+            \o "Denied"
+            \o QSystemNetworkInfo::Denied
+        \row
+            \o "Roaming"
+            \o QSystemNetworkInfo::Roaming
+ \endtable
 */
 QString QDeclarativeNetworkInfo::networkStatus()
 {
@@ -487,11 +521,11 @@ QList<QSystemNetworkInfo::NetworkMode> QDeclarativeNetworkInfo::availableModes()
 }
 
 /*!
-    \qmlmethod NetworkMode NetworkInfo::useMode()
-    This function returns the mode set by useMode(QSystemNetworkInfo::NetworkMode mode);
+    \qmlmethod NetworkMode NetworkInfo::mode()
+    This function returns the mode set by mode(QSystemNetworkInfo::NetworkMode mode);
 
 */
-QSystemNetworkInfo::NetworkMode QDeclarativeNetworkInfo::useMode()
+QSystemNetworkInfo::NetworkMode QDeclarativeNetworkInfo::mode()
 {
     return m_mode;
 }
