@@ -1045,7 +1045,18 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
             case GST_MESSAGE_LATENCY:
 #if (GST_VERSION_MAJOR >= 0) &&  (GST_VERSION_MINOR >= 10) && (GST_VERSION_MICRO >= 13)
             case GST_MESSAGE_ASYNC_START:
+                break;
             case GST_MESSAGE_ASYNC_DONE:
+            {
+                GstFormat   format = GST_FORMAT_TIME;
+                gint64      position = 0;
+                if (gst_element_query_position(m_playbin, &format, &position)) {
+                    position /= 1000000;
+                    m_lastPosition = position;
+                    emit positionChanged(position);
+                }
+                break;
+            }
 #if GST_VERSION_MICRO >= 23
             case GST_MESSAGE_REQUEST_STATE:
 #endif
