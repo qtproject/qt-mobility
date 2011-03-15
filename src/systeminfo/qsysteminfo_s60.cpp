@@ -865,37 +865,37 @@ int QSystemDisplayInfoPrivate::colorDepth(int screen)
 QSystemDisplayInfo::DisplayOrientation QSystemDisplayInfoPrivate::orientation(int screen)
 {
     QSystemDisplayInfo::DisplayOrientation orientationStatus = QSystemDisplayInfo::Unknown;
-    TPixelsTwipsAndRotation sizeAndRotation;
-    if (screen < 16 && screen > -1) {
-    bool err = getSizeandRotation(screen, sizeAndRotation);
-    if ( err )
-        {
-            CFbsBitGc::TGraphicsOrientation currentRotation = sizeAndRotation.iRotation;
-            switch (currentRotation) {
-            case CFbsBitGc::EGraphicsOrientationRotated90:
-                orientationStatus = QSystemDisplayInfo::Landscape;
-                break;
-            case CFbsBitGc::EGraphicsOrientationNormal:
-                orientationStatus = QSystemDisplayInfo::Portrait;
-                break;
-            case CFbsBitGc::EGraphicsOrientationRotated270:
-                orientationStatus = QSystemDisplayInfo::InvertedLandscape;
-                break;
-            case CFbsBitGc::EGraphicsOrientationRotated180:
-                orientationStatus = QSystemDisplayInfo::InvertedPortrait;
-                break;
-            default:
-                orientationStatus = QSystemDisplayInfo::Unknown;
-                break;
-            };
-        }
+//    TPixelsTwipsAndRotation sizeAndRotation;
+//    if (screen < 16 && screen > -1) {
+//    bool err = getSizeandRotation(screen, sizeAndRotation);
+//    if ( err )
+//        {
+//            CFbsBitGc::TGraphicsOrientation currentRotation = sizeAndRotation.iRotation;
+//            switch (currentRotation) {
+//            case CFbsBitGc::EGraphicsOrientationRotated90:
+//                orientationStatus = QSystemDisplayInfo::Landscape;
+//                break;
+//            case CFbsBitGc::EGraphicsOrientationNormal:
+//                orientationStatus = QSystemDisplayInfo::Portrait;
+//                break;
+//            case CFbsBitGc::EGraphicsOrientationRotated270:
+//                orientationStatus = QSystemDisplayInfo::InvertedLandscape;
+//                break;
+//            case CFbsBitGc::EGraphicsOrientationRotated180:
+//                orientationStatus = QSystemDisplayInfo::InvertedPortrait;
+//                break;
+//            default:
+//                orientationStatus = QSystemDisplayInfo::Unknown;
+//                break;
+//            };
+//        }
+//   }
+    QDesktopWidget wid;
+    if (wid.width() > wid.height()) {
+        orientationStatus = QSystemDisplayInfo::Landscape;
+    } else {
+        orientationStatus = QSystemDisplayInfo::Portrait;
     }
-    //QDesktopWidget wid;
-    //if (wid.width() > wid.height()) {
-    //    orientationStatus = QSystemDisplayInfo::Landscape;
-    //} else {
-    //    orientationStatus = QSystemDisplayInfo::Portrait;
-    //}
     return orientationStatus;
 }
 
