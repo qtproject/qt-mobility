@@ -75,22 +75,19 @@ void meegosensorbase::start()
 {
     if (m_sensorInterface) {
         // dataRate
-        int dataRate = sensor()->dataRate();
         QString type = sensor()->type();
-        if (dataRate > 0 && type!="QTapSensor" && type!="QProximitySensor") {
-            int interval = 1000 / dataRate;
+        if (type!="QTapSensor" && type!="QProximitySensor"){
+            int dataRate = sensor()->dataRate();
+            int interval = dataRate>0 ? 1000 / dataRate : 0;
             // for testing maximum speed
             //interval = 1;
             //dataRate = 1000;
             qDebug() << "Setting data rate" << dataRate << "Hz (interval" << interval << "ms) for" << sensor()->identifier();
             m_sensorInterface->setInterval(interval);
         }
-        
+
         // outputRange
         int currentRange = sensor()->outputRange();
-        
-        
-
         int l = sensor()->outputRanges().size();
         if (l>1){
             if (currentRange != m_prevOutputRange){
