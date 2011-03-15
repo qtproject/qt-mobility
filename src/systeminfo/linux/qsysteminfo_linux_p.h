@@ -175,8 +175,6 @@ public:
     int xErrorBase;
     int lastRotation;
 #endif
-Q_SIGNALS:
-    void orientationChanged(QSystemDisplayInfo::DisplayOrientation newOrientation);
 
 private:
     static QSystemDisplayInfoPrivate *self;

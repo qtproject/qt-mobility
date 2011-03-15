@@ -187,21 +187,16 @@ static struct fb_var_screeninfo* allocFrameBufferInfo(int screen)
     if (-1 == (fd = open(frameBufferDevicePath.toStdString().c_str(), O_RDONLY | O_NONBLOCK))) {
         qDebug() << "Failed to open the frame buffer device " << frameBufferDevicePath
                  << strerror(errno);
-        goto out;
+    } else {
+        vi = (struct fb_var_screeninfo *)calloc(1, sizeof *vi);
+        if (vi) {
+            if (-1 == ioctl(fd, FBIOGET_VSCREENINFO, vi)) {
+                qDebug() << "Failed to ioctl() the frame buffer device " << frameBufferDevicePath
+                         << strerror(errno);
+            }
+        }
     }
 
-    vi = (struct fb_var_screeninfo *)calloc(1, sizeof *vi);
-    if (!vi) {
-        goto out;
-    }
-
-    if (-1 == ioctl(fd, FBIOGET_VSCREENINFO, vi)) {
-        qDebug() << "Failed to ioctl() the frame buffer device " << frameBufferDevicePath
-                 << strerror(errno);
-        goto out;
-    }
-
-out:
     if (fd != -1) {
         close(fd);
     }
@@ -1935,11 +1930,26 @@ out:
 int QSystemDisplayInfoLinuxCommonPrivate::physicalHeight(int screen)
 {
     int height = 0;
-    struct fb_var_screeninfo *screenInfo = allocFrameBufferInfo(screen);
+#if defined(Q_WS_X11)
+    XRRScreenResources *sr;
 
-    if (screenInfo) {
-         height = screenInfo->height;
-         free(screenInfo), screenInfo = 0;
+    sr = XRRGetScreenResources(QX11Info::display(), RootWindow(QX11Info::display(), screen));
+    for (int i = 0; i < sr->noutput; ++i) {
+        XRROutputInfo *output = XRRGetOutputInfo(QX11Info::display(),sr,sr->outputs[i]);
+        if (output->crtc) {
+           height = output->mm_height;
+        }
+        XRRFreeOutputInfo(output);
+    }
+    XRRFreeScreenResources(sr);
+#endif
+    if(height == 0) {
+        struct fb_var_screeninfo *screenInfo = allocFrameBufferInfo(screen);
+
+        if (screenInfo) {
+            height = screenInfo->height;
+            free(screenInfo), screenInfo = 0;
+        }
     }
     return height;
 }
@@ -1947,18 +1957,32 @@ int QSystemDisplayInfoLinuxCommonPrivate::physicalHeight(int screen)
 int QSystemDisplayInfoLinuxCommonPrivate::physicalWidth(int screen)
 {
     int width = 0;
-    struct fb_var_screeninfo *screenInfo = allocFrameBufferInfo(screen);
+#if defined(Q_WS_X11)
+    XRRScreenResources *sr;
 
-    if (screenInfo) {
-        width = screenInfo->width;
-        free(screenInfo), screenInfo = 0;
+    sr = XRRGetScreenResources(QX11Info::display(), RootWindow(QX11Info::display(), screen));
+    for (int i = 0; i < sr->noutput; ++i) {
+        XRROutputInfo *output = XRRGetOutputInfo(QX11Info::display(),sr,sr->outputs[i]);
+        if (output->crtc) {
+            width = output->mm_width;
+        }
+        XRRFreeOutputInfo(output);
+    }
+    XRRFreeScreenResources(sr);
+#endif
+    if(width == 0) {
+        struct fb_var_screeninfo *screenInfo = allocFrameBufferInfo(screen);
+
+        if (screenInfo) {
+            width = screenInfo->width;
+            free(screenInfo), screenInfo = 0;
+        }
     }
     return width;
 }
 
 int QSystemDisplayInfoLinuxCommonPrivate::getDPIWidth(int screen)
 {
-    qDebug() << Q_FUNC_INFO;
 #if defined(Q_WS_X11)
     return QX11Info::appDpiY(screen);
 #else
