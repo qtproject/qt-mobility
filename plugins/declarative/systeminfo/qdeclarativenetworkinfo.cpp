@@ -60,7 +60,7 @@ Q_GLOBAL_STATIC(QSystemNetworkInfo, netInfo)
     Note: To use notification signals, you need to set the monitor* properties to true.
 
     To use this in a mode other than the default mode given by currentMode, set the mode with
-    \a useMode.
+    \a mode.
 
     \qml
     import Qt 4.7
@@ -70,7 +70,7 @@ Q_GLOBAL_STATIC(QSystemNetworkInfo, netInfo)
 
         NetworkInfo {
             id: wlaninfo
-            useMode: NetworkInfo.WlanMode;
+            mode: NetworkInfo.WlanMode;
             monitorNameChanges: true
             monitorSignalStrengthChanges: true
         }
@@ -134,7 +134,7 @@ QDeclarativeNetworkInfo::~QDeclarativeNetworkInfo()
 }
 
 /*!
-    \qmlproperty enumeration NetworkInfo::useThisMode
+    \qmlproperty enumeration NetworkInfo::mode
 
     Sets this NetworkInfo to use QSystemNetworkInfo::NetworkModes. Does not set the mode of the underlaying system.
 
@@ -485,13 +485,11 @@ QList<QSystemNetworkInfo::NetworkMode> QDeclarativeNetworkInfo::availableModes()
     }
     return list;
 }
-
 /*!
-    \qmlmethod NetworkMode NetworkInfo::useMode()
-    This function returns the mode set by useMode(QSystemNetworkInfo::NetworkMode mode);
-
+    \internal
 */
-QSystemNetworkInfo::NetworkMode QDeclarativeNetworkInfo::useMode()
+
+QSystemNetworkInfo::NetworkMode QDeclarativeNetworkInfo::mode()
 {
     return m_mode;
 }

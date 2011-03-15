@@ -53,7 +53,7 @@ class QDeclarativeNetworkInfo : public QSystemNetworkInfo
     Q_PROPERTY(QString networkName READ networkName NOTIFY nameChanged)
     Q_PROPERTY(int networkSignalStrength READ networkSignalStrength NOTIFY signalStrengthChanged)
     Q_PROPERTY(QString macAddress READ macAddress CONSTANT)
-    Q_PROPERTY(QSystemNetworkInfo::NetworkMode useMode READ useMode WRITE useThisMode)
+    Q_PROPERTY(QSystemNetworkInfo::NetworkMode mode READ mode WRITE useThisMode)
     Q_PROPERTY(QList<QSystemNetworkInfo::NetworkMode> availableModes READ availableModes)
 
     Q_PROPERTY(bool monitorStatusChanges READ monitorStatusChanges WRITE startStatusChanged)
@@ -70,7 +70,7 @@ public:
     QString networkName();
     QString macAddress();
     QString networkStatus();
-    QSystemNetworkInfo::NetworkMode useMode();
+    QSystemNetworkInfo::NetworkMode mode();
 
     bool monitorStatusChanges();
     void startStatusChanged(bool on);
