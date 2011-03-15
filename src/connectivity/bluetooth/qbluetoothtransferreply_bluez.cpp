@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -53,7 +53,7 @@
 #include <QFutureWatcher>
 #include <QtConcurrentRun>
 
-#define AGENT_PATH "/qt/agent"
+static const QLatin1String agentPath("/qt/agent");
 
 QTM_BEGIN_NAMESPACE
 
@@ -69,8 +69,8 @@ QBluetoothTransferReplyBluez::QBluetoothTransferReplyBluez(QIODevice *input, QOb
 //                                           QDBusConnection::sessionBus());
 
     qsrand(QTime::currentTime().msec());
-    m_agent_path = AGENT_PATH;
-    m_agent_path.append(QString("/%1").arg(qrand()));
+    m_agent_path = agentPath;
+    m_agent_path.append(QString::fromLatin1("/%1").arg(qrand()));
 
     agent = new AgentAdaptor(this);
 
@@ -201,7 +201,7 @@ void QBluetoothTransferReplyBluez::Error(const QDBusObjectPath &in0, const QStri
     m_finished = true;
     m_running = false;
     m_errorStr = in1;
-    if(in1 == QString("Could not open file for sending"))
+    if (in1 == QLatin1String("Could not open file for sending"))
         m_error = QBluetoothTransferReply::FileNotFoundError;
     else
         m_error = QBluetoothTransferReply::UnknownError;

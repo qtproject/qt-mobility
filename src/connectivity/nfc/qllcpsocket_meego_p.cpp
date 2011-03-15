@@ -55,18 +55,6 @@ using namespace com::nokia::nfc;
 
 QTM_BEGIN_NAMESPACE
 
-static void qt_ignore_sigpipe()
-{
-    // Set to ignore SIGPIPE once only.
-    static QBasicAtomicInt atom = Q_BASIC_ATOMIC_INITIALIZER(0);
-    if (atom.testAndSetRelaxed(0, 1)) {
-        struct sigaction noaction;
-        memset(&noaction, 0, sizeof(noaction));
-        noaction.sa_handler = SIG_IGN;
-        ::sigaction(SIGPIPE, &noaction, 0);
-    }
-}
-
 static QAtomicInt requestorId = 0;
 static const char * const requestorBasePath = "/com/nokia/nfc/llcpclient/";
 
@@ -76,7 +64,6 @@ QLlcpSocketPrivate::QLlcpSocketPrivate(QLlcpSocket *q)
     m_socketRequestor(0), m_readNotifier(0),
     m_state(QLlcpSocket::UnconnectedState), m_error(QLlcpSocket::UnknownSocketError)
 {
-    qt_ignore_sigpipe();
 }
 
 QLlcpSocketPrivate::QLlcpSocketPrivate(const QDBusConnection &connection, int readFd)
@@ -84,8 +71,6 @@ QLlcpSocketPrivate::QLlcpSocketPrivate(const QDBusConnection &connection, int re
     m_readFd(readFd),
     m_state(QLlcpSocket::ConnectedState), m_error(QLlcpSocket::UnknownSocketError)
 {
-    qt_ignore_sigpipe();
-
     m_readNotifier = new QSocketNotifier(m_readFd, QSocketNotifier::Read, this);
     connect(m_readNotifier, SIGNAL(activated(int)), this, SLOT(_q_readNotify()));
 }

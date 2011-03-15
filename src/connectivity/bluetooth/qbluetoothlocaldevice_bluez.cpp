@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -53,7 +53,7 @@
 
 QTM_BEGIN_NAMESPACE
 
-#define AGENT_PATH "/qt/agent"
+static const QLatin1String agentPath("/qt/agent");
 
 QBluetoothLocalDevice::QBluetoothLocalDevice(QObject *parent)
 :   QObject(parent)
@@ -85,8 +85,8 @@ QBluetoothLocalDevice::QBluetoothLocalDevice(QObject *parent)
 //            this, SIGNAL(pairingDisplayPinCode(const QBluetoothAddress &,QString)));
 
     qsrand(QTime::currentTime().msec());
-    this->d_ptr->agent_path = AGENT_PATH;
-    this->d_ptr->agent_path.append(QString("/%1").arg(qrand()));
+    this->d_ptr->agent_path = agentPath;
+    this->d_ptr->agent_path.append(QString::fromLatin1("/%1").arg(qrand()));
 
 }
 
@@ -300,7 +300,7 @@ void QBluetoothLocalDevice::requestPairing(const QBluetoothAddress &address, Pai
             QDBusPendingReply<QDBusObjectPath> reply =
                     d_ptr->adapter->CreatePairedDevice(address.toString(),
                                                        QDBusObjectPath(d_ptr->agent_path),
-                                                       QString("NoInputNoOutput"));
+                                                       QLatin1String("NoInputNoOutput"));
 
             QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(reply, this);
             connect(watcher, SIGNAL(finished(QDBusPendingCallWatcher*)), d_ptr, SLOT(pairingCompleted(QDBusPendingCallWatcher*)));
@@ -343,9 +343,9 @@ QBluetoothLocalDevice::Pairing QBluetoothLocalDevice::pairingStatus(const QBluet
 //    qDebug() << "Paired: " << map.value("Paired");
 
 
-    if(map.value("Trusted").toBool() && map.value("Paired").toBool())
+    if (map.value(QLatin1String("Trusted")).toBool() && map.value(QLatin1String("Paired")).toBool())
         return AuthorizedPaired;
-    else if(map.value("Paired").toBool())
+    else if (map.value(QLatin1String("Paired")).toBool())
             return Paired;
     else
             return Unpaired;
@@ -372,7 +372,7 @@ void QBluetoothLocalDevicePrivate::RequestConfirmation(const QDBusObjectPath &in
     setDelayedReply(true);
     msgConfirmation = message();
     msgConnection = new QDBusConnection(connection());
-    emit q->pairingDisplayConfirmation(address, QString("%1").arg(in1));
+    emit q->pairingDisplayConfirmation(address, QString::fromLatin1("%1").arg(in1));
     return;
 }
 
@@ -388,7 +388,9 @@ void QBluetoothLocalDevice::pairingConfirmation(bool confirmation)
         d_ptr->msgConnection->send(msg);
     }
     else {
-        QDBusMessage error = d_ptr->msgConfirmation.createErrorReply(QDBusError::AccessDenied, "Pairing rejected");
+        QDBusMessage error =
+            d_ptr->msgConfirmation.createErrorReply(QDBusError::AccessDenied,
+                                                    QLatin1String("Pairing rejected"));
         d_ptr->msgConnection->send(error);
     }
     delete d_ptr->msgConnection;
@@ -400,8 +402,8 @@ QString QBluetoothLocalDevicePrivate::RequestPinCode(const QDBusObjectPath &in0)
     Q_Q(QBluetoothLocalDevice);
     qDebug() << Q_FUNC_INFO << in0.path();
     // seeded in constructor, 6 digit pin
-    QString pin = QString("%1").arg(qrand()&1000000);
-    pin = QString("%1").arg(pin, 6, '0');
+    QString pin = QString::fromLatin1("%1").arg(qrand()&1000000);
+    pin = QString::fromLatin1("%1").arg(pin, 6, QLatin1Char('0'));
 
     emit q->pairingDisplayPinCode(address, pin);
     return pin;
