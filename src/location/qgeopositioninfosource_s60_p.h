@@ -280,9 +280,14 @@ private:
     /*
      * query for the status
      */
-    TPositionModuleStatusEvent mStatusEvent;
+    TPositionModuleStatusEvent  mStatusEvent;
 
-    QMutex m_mutex;
+    QMutex          m_mutex;
+    QMutex          m_mutex_interval;
+
+    QMutex          m_mutex_ReqUpAO;
+
+    QMutex          m_mutex_RegUpAO;
 
     /*
      * maintain the startUpdates status
