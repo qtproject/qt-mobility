@@ -312,6 +312,9 @@ which can usually be regenerated with the command \c update-contextkit-providers
 on Maemo, where the command should be appended to the bottom of the \c debian/postinst script
 during packaging.
 
+For more detailed information on this, please refer to
+\l{http://maemo.gitorious.org/maemo-af/contextkit/blobs/master/doc/context-providers.txt}{How to provide context properties}.
+
 \section3 \bold{Limitations}
 
 Similar to both the Symbian and Gconf backends, ContextKit supports only a limited range of QVariant data
