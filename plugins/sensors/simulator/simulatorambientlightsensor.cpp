@@ -39,30 +39,30 @@
 **
 ****************************************************************************/
 
-#include "simulatorlightsensor.h"
+#include "simulatorambientlightsensor.h"
 #include <QDebug>
 #include <QtGlobal>
 
-const char *SimulatorLightSensor::id("Simulator.LightSensor");
+const char *SimulatorAmbientLightSensor::id("Simulator.AmbientLightSensor");
 
-SimulatorLightSensor::SimulatorLightSensor(QSensor *sensor)
+SimulatorAmbientLightSensor::SimulatorAmbientLightSensor(QSensor *sensor)
     : SimulatorCommon(sensor)
 {
-    setReading<QLightReading>(&m_reading);
+    setReading<QAmbientLightReading>(&m_reading);
 }
 
-void SimulatorLightSensor::poll()
+void SimulatorAmbientLightSensor::poll()
 {
-    QLightReadingData data = get_qtLightData();
+    QAmbientLightReadingData data = get_qtAmbientLightData();
     qtimestamp newTimestamp;
     if (!data.timestamp.isValid())
         newTimestamp = QDateTime::currentDateTime().toTime_t();
     else
         newTimestamp = data.timestamp.toTime_t();
     if (m_reading.timestamp() != newTimestamp
-        || m_reading.lux() != data.lux) {
+        || m_reading.lightLevel() != data.lightLevel) {
             m_reading.setTimestamp(newTimestamp);
-            m_reading.setLux(data.lux);
+            m_reading.setLightLevel(data.lightLevel);
 
             newReadingAvailable();
     }
