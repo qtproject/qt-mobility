@@ -78,22 +78,17 @@ public:
 /*!
     \class QCamera
 
-    
+
     \brief The QCamera class provides interface for system camera devices.
 
     \inmodule QtMultimediaKit
     \ingroup camera
 
     QCamera can be used with QVideoWidget for viewfinder display,
-    QMediaRecorder for video recording and QCameraImageCapture for images taking.
+    QMediaRecorder for video recording and QCameraImageCapture for image taking.
 
     \snippet doc/src/snippets/multimedia-snippets/media.cpp Request control
 
-The Camera API of Qt Mobility is still in \bold Technology Preview. It has
-not undergone the same level of review and testing as the rest of the APIs.
-
-The API exposed by the classes in this component are not stable, and will
-undergo modification or removal prior to the final release of Qt Mobility.
 */
 
 
@@ -104,7 +99,7 @@ public:
     QCameraPrivate():
         QMediaObjectPrivate(),
         provider(0),
-        control(0),        
+        control(0),
         viewfinder(0),
         capture(0),
         state(QCamera::UnloadedState),
@@ -123,7 +118,7 @@ public:
     QMediaServiceProvider *provider;
 
     QCameraControl *control;
-    QCameraLocksControl *locksControl;    
+    QCameraLocksControl *locksControl;
 
     QCameraExposure *cameraExposure;
     QCameraFocus *cameraFocus;
@@ -649,7 +644,7 @@ QCamera::LockTypes QCamera::requestedLocks() const
     Returns the status of requested camera settings locks.
 */
 QCamera::LockStatus QCamera::lockStatus() const
-{    
+{
     return d_func()->lockStatus;
 }
 
@@ -674,7 +669,7 @@ QCamera::LockStatus QCamera::lockStatus(QCamera::LockType lockType) const
 
 /*!
     \fn void QCamera::searchAndLock(QCamera::LockTypes locks)
-    
+
     Locks the camera settings with the requested \a locks, including focusing in the single autofocus mode,
     exposure and white balance if the exposure and white balance modes are not manual.
 
