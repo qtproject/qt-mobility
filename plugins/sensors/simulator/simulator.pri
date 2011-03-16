@@ -1,5 +1,6 @@
 HEADERS += simulatorcommon.h\
            simulatoraccelerometer.h\
+           simulatorambientlightsensor.h\
            simulatorlightsensor.h\
            simulatorcompass.h\
            simulatorproximitysensor.h\
@@ -8,6 +9,7 @@ HEADERS += simulatorcommon.h\
 
 SOURCES += simulatorcommon.cpp\
            simulatoraccelerometer.cpp\
+           simulatorambientlightsensor.cpp\
            simulatorlightsensor.cpp\
            simulatorcompass.cpp\
            simulatorproximitysensor.cpp\

@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include "simulatoraccelerometer.h"
+#include "simulatorambientlightsensor.h"
 #include "simulatorlightsensor.h"
 #include "simulatorcompass.h"
 #include "simulatorproximitysensor.h"
@@ -58,7 +59,8 @@ public:
     void registerSensors()
     {
         QSensorManager::registerBackend(QAccelerometer::type, SimulatorAccelerometer::id, this);
-        QSensorManager::registerBackend(QAmbientLightSensor::type, SimulatorLightSensor::id, this);
+        QSensorManager::registerBackend(QAmbientLightSensor::type, SimulatorAmbientLightSensor::id, this);
+        QSensorManager::registerBackend(QLightSensor::type, SimulatorLightSensor::id, this);
         QSensorManager::registerBackend(QCompass::type, SimulatorCompass::id, this);
         QSensorManager::registerBackend(QProximitySensor::type, SimulatorProximitySensor::id, this);
         QSensorManager::registerBackend(QMagnetometer::type, SimulatorMagnetometer::id, this);
@@ -70,10 +72,14 @@ public:
             return new SimulatorAccelerometer(sensor);
         }
 
+        if (sensor->identifier() == SimulatorAmbientLightSensor::id) {
+            return new SimulatorAmbientLightSensor(sensor);
+        }
+
         if (sensor->identifier() == SimulatorLightSensor::id) {
             return new SimulatorLightSensor(sensor);
         }
-        
+
         if (sensor->identifier() == SimulatorProximitySensor::id) {
             return new SimulatorProximitySensor(sensor);
         }
