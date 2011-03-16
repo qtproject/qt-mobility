@@ -45,9 +45,14 @@
 #include <QtCore/QHash>
 #include <QtCore/QSocketNotifier>
 #include <QtCore/QStringList>
+#include <QtCore/QElapsedTimer>
+#include <QtCore/QCoreApplication>
 #include <QtDBus/QDBusObjectPath>
 
 #include <dbus/dbus.h>
+
+#include <sys/select.h>
+#include <errno.h>
 
 QTM_BEGIN_NAMESPACE
 
@@ -192,11 +197,14 @@ public:
     Q_INVOKABLE void sendCancelAccessRequest(const QString &adaptor, const QString &path,
                                              const QString &kind);
 
+    bool waitForDBusSignal(int msecs);
+
 private:
     bool parseAccessFailed(DBusMessage *message, SocketRequestor *socketRequestor);
     bool parseAccessGranted(DBusMessage *message, SocketRequestor *socketRequestor);
     bool parseAcceptConnectSocket(DBusMessage *message, SocketRequestor *socketRequestor,
                                   const char *member);
+    bool parseErrorDenied(DBusMessage *message, SocketRequestor *socketRequestor);
 
 private slots:
     void socketRead();
@@ -206,6 +214,7 @@ private:
     QMutex m_mutex;
     DBusConnection *m_dbusConnection;
     QHash<QString, SocketRequestor *> m_dbusObjects;
+    QMap<quint32, SocketRequestor *> m_pendingCalls;
     QList<WatchNotifier> m_watchNotifiers;
 };
 
@@ -253,36 +262,58 @@ DBusHandlerResult SocketRequestorPrivate::messageFilter(DBusConnection *connecti
     if (connection != m_dbusConnection)
         return DBUS_HANDLER_RESULT_NOT_YET_HANDLED;
 
-    QString path = QString::fromUtf8(dbus_message_get_path(message));
-
-    SocketRequestor *socketRequestor = m_dbusObjects.value(path);
-
-    if (!socketRequestor)
+    SocketRequestor *socketRequestor;
+    const QString path = QString::fromUtf8(dbus_message_get_path(message));
+    quint32 serial = dbus_message_get_reply_serial(message);
+    if (!path.isEmpty() && serial == 0)
+        socketRequestor = m_dbusObjects.value(path);
+    else if (path.isEmpty() && serial != 0)
+        socketRequestor = m_pendingCalls.take(serial);
+    else
         return DBUS_HANDLER_RESULT_NOT_YET_HANDLED;
 
-    bool handled;
+    enum {
+        NotHandled,
+        Handled,
+        HandledSendReply
+    } handled;
 
     if (dbus_message_is_method_call(message, "com.nokia.nfc.AccessRequestor", "AccessFailed"))
-        handled = parseAccessFailed(message, socketRequestor);
+        handled = parseAccessFailed(message, socketRequestor) ? HandledSendReply : NotHandled;
     else if (dbus_message_is_method_call(message, "com.nokia.nfc.AccessRequestor", "AccessGranted"))
-        handled = parseAccessGranted(message, socketRequestor);
+        handled = parseAccessGranted(message, socketRequestor) ? HandledSendReply : NotHandled;
     else if (dbus_message_is_method_call(message, "com.nokia.nfc.LLCPRequestor", "Accept"))
-        handled = parseAcceptConnectSocket(message, socketRequestor, "accept");
+        handled = parseAcceptConnectSocket(message, socketRequestor, "accept") ? HandledSendReply : NotHandled;
     else if (dbus_message_is_method_call(message, "com.nokia.nfc.LLCPRequestor", "Connect"))
-        handled = parseAcceptConnectSocket(message, socketRequestor, "connect");
+        handled = parseAcceptConnectSocket(message, socketRequestor, "connect") ? HandledSendReply : NotHandled;
     else if (dbus_message_is_method_call(message, "com.nokia.nfc.LLCPRequestor", "Socket"))
-        handled = parseAcceptConnectSocket(message, socketRequestor, "socket");
+        handled = parseAcceptConnectSocket(message, socketRequestor, "socket") ? HandledSendReply : NotHandled;
+    else if (dbus_message_is_error(message, "com.nokia.nfc.Error.Denied"))
+        handled = parseErrorDenied(message, socketRequestor) ? Handled : NotHandled;
     else
-        handled = false;
+        handled = NotHandled;
 
-    if (!handled)
+    if (handled == NotHandled)
         return DBUS_HANDLER_RESULT_NOT_YET_HANDLED;
 
-    DBusMessage *reply = dbus_message_new_method_return(message);
-    quint32 serial;
-    dbus_connection_send(connection, reply, &serial);
+    if (handled == HandledSendReply) {
+        DBusMessage *reply = dbus_message_new_method_return(message);
+        quint32 serial;
+        dbus_connection_send(connection, reply, &serial);
+    }
 
     return DBUS_HANDLER_RESULT_HANDLED;
+}
+
+bool SocketRequestorPrivate::parseErrorDenied(DBusMessage *message,
+                                              SocketRequestor *socketRequestor)
+{
+    Q_UNUSED(message);
+
+    QMetaObject::invokeMethod(socketRequestor, "accessFailed",
+                              Q_ARG(QDBusObjectPath, QDBusObjectPath()),
+                              Q_ARG(QString, QLatin1String("Access denied")));
+    return true;
 }
 
 bool SocketRequestorPrivate::parseAccessFailed(DBusMessage *message,
@@ -486,6 +517,8 @@ void SocketRequestorPrivate::sendRequestAccess(const QString &adaptor, const QSt
     dbus_connection_send(m_dbusConnection, message, &serial);
 
     dbus_message_unref(message);
+
+    m_pendingCalls.insert(serial, m_dbusObjects.value(path));
 }
 
 void SocketRequestorPrivate::sendCancelAccessRequest(const QString &adaptor, const QString &path,
@@ -524,6 +557,44 @@ void SocketRequestorPrivate::sendCancelAccessRequest(const QString &adaptor, con
     dbus_message_unref(message);
 }
 
+bool SocketRequestorPrivate::waitForDBusSignal(int msecs)
+{
+    dbus_connection_flush(m_dbusConnection);
+
+    fd_set rfds;
+    FD_ZERO(&rfds);
+
+    int nfds = -1;
+    foreach (const WatchNotifier &watchNotifier, m_watchNotifiers) {
+        FD_SET(watchNotifier.readNotifier->socket(), &rfds);
+        nfds = qMax(nfds, watchNotifier.readNotifier->socket());
+    }
+
+    timeval timeout;
+    timeout.tv_sec = msecs / 1000;
+    timeout.tv_usec = (msecs % 1000) * 1000;
+
+    // timeout can not be 0 or else select will return an error
+    if (msecs == 0)
+        timeout.tv_usec = 1000;
+
+    int result = -1;
+    // on Linux timeout will be updated by select, but _not_ on other systems
+    result = ::select(nfds + 1, &rfds, 0, 0, &timeout);
+    if (result == -1 && errno != EINTR)
+        return false;
+
+    foreach (const WatchNotifier &watchNotifier, m_watchNotifiers) {
+        if (FD_ISSET(watchNotifier.readNotifier->socket(), &rfds)) {
+            QMetaObject::invokeMethod(watchNotifier.readNotifier, "activated",
+                                      Q_ARG(int, watchNotifier.readNotifier->socket()));
+        }
+    }
+
+    return true;
+}
+
+
 SocketRequestor::SocketRequestor(const QString &adaptor, QObject *parent)
 :   QObject(parent), m_adaptor(adaptor)
 {
@@ -555,6 +626,22 @@ void SocketRequestor::cancelAccessRequest(const QString &path, const QString &ki
     QMetaObject::invokeMethod(s, "sendCancelAccessRequest", Qt::QueuedConnection,
                               Q_ARG(QString, m_adaptor), Q_ARG(QString, path),
                               Q_ARG(QString, kind));
+}
+
+bool SocketRequestor::waitForDBusSignal(int msecs)
+{
+    SocketRequestorPrivate *s = socketRequestorPrivate();
+
+    // Send queued method calls, i.e. requestAccess() and cancelAccessRequest().
+    QCoreApplication::sendPostedEvents(s, QEvent::MetaCall);
+
+    // Wait for DBus signal.
+    bool result = socketRequestorPrivate()->waitForDBusSignal(msecs);
+
+    // Send queued method calls, i.e. those from DBus.
+    QCoreApplication::sendPostedEvents(this, QEvent::MetaCall);
+
+    return result;
 }
 
 #include <moc_socketrequestor_p.cpp>

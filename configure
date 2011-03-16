@@ -627,7 +627,7 @@ fi
 # It's a lot easier to make qmake do the dependency checking...
 echo "mobility_modules = $MOBILITY_MODULES" >> "$CONFIG_IN"
 echo "contains(mobility_modules,versit): mobility_modules *= contacts" >> "$CONFIG_IN"
-echo "contains(mobility_modules,connectivity): mobility_modules *= serviceframework" >> "$CONFIG_IN"
+echo "symbian:contains(nfc_symbian_enabled,yes):contains(mobility_modules,connectivity): mobility_modules *= serviceframework" >> "$CONFIG_IN"
 echo "maemo5|maemo6:contains(maemo-icd_enabled, no): mobility_modules -= bearer" >> "$CONFIG_IN"
 # Mobility doesn't support Bearer on MeeGo -> Use Qt 4.7 Bearer instead
 echo "meego:contains(mobility_modules, bearer) { " >> "$CONFIG_IN"

@@ -72,6 +72,11 @@ private slots:
 
     void tst_clientConnection_data();
     void tst_clientConnection();
+
+    void tst_waitFor_data();
+    void tst_waitFor();
+
+    void tst_invalidServiceUri();
 };
 
 Q_DECLARE_METATYPE(tst_QLlcpSocket::ClientConnectionShutdown)
@@ -270,6 +275,103 @@ void tst_QLlcpSocket::tst_clientConnection()
                  QLlcpSocket::RemoteHostClosedError);
         QCOMPARE(socket->error(), QLlcpSocket::RemoteHostClosedError);
     }
+
+    delete socket;
+}
+
+void tst_QLlcpSocket::tst_waitFor_data()
+{
+    QTest::addColumn<ClientConnectionShutdown>("shutdown");
+
+    QTest::newRow("server disconnect") << ServerDisconnect;
+    QTest::newRow("server close") << ServerClose;
+    QTest::newRow("client disconnect") << ClientDisconnect;
+    QTest::newRow("client close") << ClientClose;
+}
+
+void tst_QLlcpSocket::tst_waitFor()
+{
+    QFETCH(ClientConnectionShutdown, shutdown);
+
+    QString service = QLatin1String("urn:nfc:sn:com.nokia.qtmobility.commandserver.stream");
+
+    /* Construction */
+    QLlcpSocket *socket = new QLlcpSocket;
+
+    QCOMPARE(socket->state(), QLlcpSocket::UnconnectedState);
+
+    /* Connection */
+    socket->connectToService(0, service);
+    QCOMPARE(socket->state(), QLlcpSocket::ConnectingState);
+    QVERIFY(socket->waitForConnected());
+    QCOMPARE(socket->state(), QLlcpSocket::ConnectedState);
+
+    /* Verify connected to correct service */
+    {
+        socket->write("URI\n");
+        QVERIFY(socket->waitForBytesWritten());
+
+        QVERIFY(socket->waitForReadyRead());
+        const QByteArray line = socket->readLine().trimmed();
+
+        QCOMPARE(line, service.toLatin1());
+    }
+
+    /* Shutdown */
+    switch (shutdown) {
+    case ServerDisconnect:
+        socket->write("DISCONNECT\n");
+        break;
+    case ServerClose:
+        socket->write("CLOSE\n");
+        break;
+    case ClientDisconnect:
+        socket->disconnectFromService();
+        QCOMPARE(socket->state(), QLlcpSocket::ClosingState);
+        break;
+    case ClientClose:
+        socket->close();
+        QCOMPARE(socket->state(), QLlcpSocket::ClosingState);
+        break;
+    }
+
+    QVERIFY(socket->waitForDisconnected());
+    QVERIFY(!socket->isOpen());
+    QCOMPARE(socket->state(), QLlcpSocket::UnconnectedState);
+
+    if (shutdown == ServerDisconnect || shutdown == ServerClose)
+        QCOMPARE(socket->error(), QLlcpSocket::RemoteHostClosedError);
+
+    delete socket;
+}
+
+void tst_QLlcpSocket::tst_invalidServiceUri()
+{
+    QLatin1String invalidServiceUri("invalid");
+
+    QLlcpSocket *socket = new QLlcpSocket;
+
+    QSignalSpy stateSpy(socket, SIGNAL(stateChanged(QLlcpSocket::SocketState)));
+    QSignalSpy errorSpy(socket, SIGNAL(error(QLlcpSocket::SocketError)));
+
+    socket->connectToService(0, invalidServiceUri);
+
+    QCOMPARE(stateSpy.count(), 1);
+    QCOMPARE(stateSpy.takeFirst().at(0).value<QLlcpSocket::SocketState>(),
+             QLlcpSocket::ConnectingState);
+    QCOMPARE(socket->state(), QLlcpSocket::ConnectingState);
+
+    QTRY_VERIFY(!errorSpy.isEmpty());
+
+    QCOMPARE(stateSpy.count(), 1);
+    QCOMPARE(stateSpy.takeFirst().at(0).value<QLlcpSocket::SocketState>(),
+             QLlcpSocket::UnconnectedState);
+    QCOMPARE(socket->state(), QLlcpSocket::UnconnectedState);
+
+    QCOMPARE(errorSpy.takeFirst().at(0).value<QLlcpSocket::SocketError>(),
+             QLlcpSocket::SocketAccessError);
+    QCOMPARE(socket->error(), QLlcpSocket::SocketAccessError);
+    QVERIFY(!socket->errorString().isEmpty());
 
     delete socket;
 }

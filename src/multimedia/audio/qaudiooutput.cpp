@@ -72,35 +72,9 @@ QT_BEGIN_NAMESPACE
     needs from the io device. So playing back an audio file is as
     simple as:
 
-    \code
-      QFile inputFile;     // class member.
-      QAudioOutput* audio; // class member.
-    \endcode
+    \snippet doc/src/snippets/multimedia-snippets/audio.cpp Audio output class members
 
-    \code
-      inputFile.setFileName("/tmp/test.raw");
-      inputFile.open(QIODevice::ReadOnly);
-
-      QAudioFormat format;
-      // Set up the format, eg.
-      format.setFrequency(8000);
-      format.setChannels(1);
-      format.setSampleSize(8);
-      format.setCodec("audio/pcm");
-      format.setByteOrder(QAudioFormat::LittleEndian);
-      format.setSampleType(QAudioFormat::UnSignedInt);
-
-      QAudioDeviceInfo info(QAudioDeviceInfo::defaultOutputDevice());
-      if (!info.isFormatSupported(format)) {
-          qWarning()<<"raw audio format not supported by backend, cannot play audio.";
-          return;
-      }
-
-      audio = new QAudioOutput(format, this);
-      connect(audio,SIGNAL(stateChanged(QAudio::State)),SLOT(finishedPlaying(QAudio::State)));
-      audio->start(&inputFile);
-
-    \endcode
+    \snippet doc/src/snippets/multimedia-snippets/audio.cpp Audio output setup
 
     The file will start playing assuming that the audio system and
     output device support it. If you run out of luck, check what's
@@ -108,16 +82,7 @@ QT_BEGIN_NAMESPACE
 
     After the file has finished playing, we need to stop the device:
 
-    \code
-      void finishedPlaying(QAudio::State state)
-      {
-        if(state == QAudio::IdleState) {
-          audio->stop();
-          inputFile.close();
-          delete audio;
-        }
-      }
-    \endcode
+    \snippet doc/src/snippets/multimedia-snippets/audio.cpp Audio output state changed
 
     At any given time, the QAudioOutput will be in one of four states:
     active, suspended, stopped, or idle. These states are described
@@ -145,18 +110,7 @@ QT_BEGIN_NAMESPACE
     You can check for errors by connecting to the stateChanged()
     signal:
 
-    \code
-        void stateChanged(QAudio::State newState)
-        {
-            switch (newState) {
-            case QAudio::StopState:
-                if (output->error() != QAudio::NoError) {
-                    // Perform error handling
-                } else {
-                    // Normal stop
-                }
-                break;
-    \endcode
+    \snippet doc/src/snippets/multimedia-snippets/audio.cpp Audio output state changed
 
     \sa QAudioInput, QAudioDeviceInfo
 */

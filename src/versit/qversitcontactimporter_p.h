@@ -106,7 +106,7 @@ private:
     QStringList extractContexts(const QVersitProperty& property) const;
     QStringList extractSubTypes(const QVersitProperty& property) const;
     QString takeFirst(QList<QString>& list) const;
-    QDateTime parseDateTime(const QString& text, const QString& format) const;
+    QDateTime parseDateTime(QString text, bool *justDate = 0) const;
     QString saveContentToFile(const QVersitProperty& property, const QByteArray& data) const;
     bool saveDataFromProperty(const QVersitProperty& property, QString* location, QByteArray* data) const;
     void saveDetailWithContext(QList<QContactDetail>* updatedDetails, QContactDetail detail, const QStringList& contexts);

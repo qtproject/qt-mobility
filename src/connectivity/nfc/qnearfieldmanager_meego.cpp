@@ -56,7 +56,10 @@ using namespace com::nokia::nfc;
 
 QTM_BEGIN_NAMESPACE
 
+static QAtomicInt handlerId = 0;
 static const char * const registeredHandlerPath = "/com/nokia/nfc/ndefhandler";
+static const char * const accessRequesterPath = "/com/nokia/nfc/accessRequester/";
+static const char * const connectionUuid = "46a15ee4-b5ce-4395-9d76-c440cc3838c6";
 
 static inline bool matchesTarget(QNearFieldTarget::Type type,
                                  const QList<QNearFieldTarget::Type> &types)
@@ -69,7 +72,8 @@ NdefHandler::NdefHandler(QNearFieldManagerPrivateImpl *manager, const QString &s
 :   m_manager(manager), m_adaptor(0), m_object(object), m_method(method),
     m_serviceName(serviceName), m_path(path)
 {
-    QDBusConnection handlerConnection = QDBusConnection::systemBus();
+    QDBusConnection handlerConnection =
+        QDBusConnection::connectToBus(QDBusConnection::SystemBus, connectionUuid);
     if (serviceName != handlerConnection.baseService()) {
         handlerConnection = QDBusConnection::connectToBus(QDBusConnection::SystemBus, serviceName);
 
@@ -112,7 +116,8 @@ void NdefHandler::NDEFData(const QDBusObjectPath &target, const QByteArray &mess
 }
 
 QNearFieldManagerPrivateImpl::QNearFieldManagerPrivateImpl()
-:   m_connection(QDBusConnection::connectToBus(QDBusConnection::SystemBus, QUuid::createUuid())),
+:   m_connection(QDBusConnection::connectToBus(QDBusConnection::SystemBus,
+                                               QLatin1String(connectionUuid))),
     m_accessAgent(0)
 {
     qDBusRegisterMetaType<QList<QByteArray> >();
@@ -193,12 +198,11 @@ int QNearFieldManagerPrivateImpl::registerNdefMessageHandler(const QString &filt
                                                              QObject *object,
                                                              const QMetaMethod &method)
 {
-    int id = getFreeId();
-
+    int id = handlerId.fetchAndAddOrdered(1);
     const QString handlerPath =
         QLatin1String(registeredHandlerPath) + QLatin1Char('/') + QString::number(id);
 
-    NdefHandler *handler = new NdefHandler(this, QDBusConnection::systemBus().baseService(),
+    NdefHandler *handler = new NdefHandler(this, m_connection.baseService(),
                                            handlerPath, object, method);
     if (!handler->isValid()) {
         delete handler;
@@ -207,10 +211,11 @@ int QNearFieldManagerPrivateImpl::registerNdefMessageHandler(const QString &filt
 
     QDBusPendingReply<> reply =
         m_manager->RegisterNDEFHandler(QLatin1String("system"),
-                                       QDBusConnection::systemBus().baseService(),
+                                       m_connection.baseService(),
                                        QDBusObjectPath(handlerPath),
                                        QLatin1String("any"),
-                                       filter);
+                                       filter,
+                                       QCoreApplication::applicationName());
 
     if (reply.isError()) {
         delete handler;
@@ -228,7 +233,7 @@ int QNearFieldManagerPrivateImpl::registerNdefMessageHandler(QObject *object,
     QFileInfo fi(qApp->applicationFilePath());
     const QString serviceName = QLatin1String("com.nokia.qtmobility.nfc.") + fi.baseName();
 
-    int id = getFreeId();
+    int id = handlerId.fetchAndAddOrdered(1);
 
     const QString handlerPath = QLatin1String(registeredHandlerPath);
 
@@ -300,12 +305,12 @@ int QNearFieldManagerPrivateImpl::registerNdefMessageHandler(const QNdefFilter &
     return registerNdefMessageHandler(matchString, object, method);
 }
 
-bool QNearFieldManagerPrivateImpl::unregisterNdefMessageHandler(int handlerId)
+bool QNearFieldManagerPrivateImpl::unregisterNdefMessageHandler(int id)
 {
-    if (handlerId < 0 || handlerId >= m_registeredHandlers.count())
+    if (id < 0)
         return false;
 
-    NdefHandler *handler = m_registeredHandlers.take(handlerId);
+    NdefHandler *handler = m_registeredHandlers.take(id);
 
     QDBusPendingReply<> reply = m_manager->UnregisterNDEFHandler(QLatin1String("system"),
                                                                  handler->serviceName(),
@@ -334,9 +339,12 @@ static QStringList accessModesToKind(QNearFieldManager::TargetAccessModes access
 
 void QNearFieldManagerPrivateImpl::requestAccess(QNearFieldManager::TargetAccessModes accessModes)
 {
+    const QString requesterPath =
+        QLatin1String(accessRequesterPath) + QString::number(quintptr(this));
+
     if (!m_accessAgent) {
         m_accessAgent = new AccessRequestorAdaptor(this);
-        if (!m_connection.registerObject(QLatin1String("/test"), this)) {
+        if (!m_connection.registerObject(requesterPath, this)) {
             delete m_accessAgent;
             m_accessAgent = 0;
             return;
@@ -344,15 +352,18 @@ void QNearFieldManagerPrivateImpl::requestAccess(QNearFieldManager::TargetAccess
     }
 
     foreach (const QString &kind, accessModesToKind(accessModes))
-        m_adapter->RequestAccess(QDBusObjectPath("/test"), kind);
+        m_adapter->RequestAccess(QDBusObjectPath(requesterPath), kind);
 
     QNearFieldManagerPrivate::requestAccess(accessModes);
 }
 
 void QNearFieldManagerPrivateImpl::releaseAccess(QNearFieldManager::TargetAccessModes accessModes)
 {
+    const QString requesterPath =
+        QLatin1String(accessRequesterPath) + QString::number(quintptr(this));
+
     foreach (const QString &kind, accessModesToKind(accessModes))
-        m_adapter->CancelAccessRequest(QDBusObjectPath("/test"), kind);
+        m_adapter->CancelAccessRequest(QDBusObjectPath(requesterPath), kind);
 
     QNearFieldManagerPrivate::releaseAccess(accessModes);
 }
@@ -425,11 +436,6 @@ void QNearFieldManagerPrivateImpl::_q_targetLost(const QString &targetPath)
 
     if (matchesTarget(nearFieldTarget->type(), m_detectTargetTypes))
         emit targetLost(nearFieldTarget);
-}
-
-int QNearFieldManagerPrivateImpl::getFreeId()
-{
-    return m_registeredHandlers.isEmpty() ? 0 : m_registeredHandlers.keys().last() + 1;
 }
 
 #include "moc_qnearfieldmanager_meego_p.cpp"

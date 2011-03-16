@@ -248,7 +248,6 @@ QBluetoothSocket::QBluetoothSocket(QObject *parent)
 */
 QBluetoothSocket::~QBluetoothSocket()
 {
-  qDebug() << "QBluetoothSocket being destoyed";
     delete d_ptr;
     d_ptr = 0;
 }

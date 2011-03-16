@@ -73,7 +73,9 @@ public:
 
     enum SocketError {
         UnknownSocketError = QAbstractSocket::UnknownSocketError,
-        RemoteHostClosedError = QAbstractSocket::RemoteHostClosedError
+        RemoteHostClosedError = QAbstractSocket::RemoteHostClosedError,
+        SocketAccessError = QAbstractSocket::SocketAccessError,
+        SocketResourceError = QAbstractSocket::SocketResourceError
     };
 
     explicit QLlcpSocket(QObject *parent = 0);
@@ -110,7 +112,7 @@ public:
     virtual bool waitForDisconnected(int msecs = 30000);
     bool isSequential() const;
 
-signals:
+Q_SIGNALS:
     void connected();
     void disconnected();
     void error(QLlcpSocket::SocketError socketError);

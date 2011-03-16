@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -48,7 +48,7 @@
 
 #include <QtDBus/QDBusPendingCallWatcher>
 
-#define QTM_SERVICEDISCOVERY_DEBUG
+//#define QTM_SERVICEDISCOVERY_DEBUG
 
 #ifdef QTM_SERVICEDISCOVERY_DEBUG
 #include <QtCore/QDebug>
@@ -85,7 +85,7 @@ void QBluetoothServiceDiscoveryAgentPrivate::start(const QBluetoothAddress &addr
     reply.waitForFinished();
     if (reply.isError()) {
         error = QBluetoothServiceDiscoveryAgent::DeviceDiscoveryError;
-        errorString = "Unable to find default adapter";
+        errorString = QBluetoothServiceDiscoveryAgent::tr("Unable to find default adapter");
         emit q->error(error);
         _q_serviceDiscoveryFinished();
         return;
@@ -165,11 +165,11 @@ void QBluetoothServiceDiscoveryAgentPrivate::_q_createdDevice(QDBusPendingCallWa
     if(deviceReply.isError())
         return;
     QVariantMap v = deviceReply.value();
-    QStringList device_uuids = v.value("UUIDs").toStringList();
+    QStringList device_uuids = v.value(QLatin1String("UUIDs")).toStringList();
 
     QString pattern;
     foreach (const QBluetoothUuid &uuid, uuidFilter)
-        pattern += uuid.toString().remove(QChar('{')).remove(QChar('}')) + QLatin1Char(' ');
+        pattern += uuid.toString().remove(QLatin1Char('{')).remove(QLatin1Char('}')) + QLatin1Char(' ');
 
 #ifdef QTM_SERVICEDISCOVERY_DEBUG
     qDebug() << Q_FUNC_INFO << "Discover: " << pattern.trimmed();
@@ -183,8 +183,6 @@ void QBluetoothServiceDiscoveryAgentPrivate::_q_createdDevice(QDBusPendingCallWa
 
 void QBluetoothServiceDiscoveryAgentPrivate::_q_discoveredServices(QDBusPendingCallWatcher *watcher)
 {
-    Q_Q(QBluetoothServiceDiscoveryAgent);
-
 #ifdef QTM_SERVICEDISCOVERY_DEBUG
     qDebug() << Q_FUNC_INFO;
 #endif

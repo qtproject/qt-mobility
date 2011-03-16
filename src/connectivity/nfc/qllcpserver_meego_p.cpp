@@ -91,10 +91,7 @@ bool QLlcpServerPrivate::listen(const QString &serviceUri)
 
         m_serviceUri = serviceUri;
     } else {
-        Q_Q(QLlcpServer);
-
-        m_error = QLlcpSocket::UnknownSocketError;
-        emit q->serverError();
+        m_error = QLlcpSocket::SocketResourceError;
 
         m_serviceUri.clear();
     }
@@ -156,12 +153,9 @@ void QLlcpServerPrivate::AccessFailed(const QDBusObjectPath &targetPath, const Q
     Q_UNUSED(targetPath);
     Q_UNUSED(error);
 
-    Q_Q(QLlcpServer);
-
     m_serviceUri.clear();
 
-    m_error = QLlcpSocket::UnknownSocketError;
-    emit q->serverError();
+    m_error = QLlcpSocket::SocketAccessError;
 }
 
 void QLlcpServerPrivate::AccessGranted(const QDBusObjectPath &targetPath,

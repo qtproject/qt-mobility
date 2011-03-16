@@ -79,38 +79,17 @@ functionality in your application.
 
 \section2 Bluetooth
 
-The Bluetooth API is under development and subject to change between the tech
-preview and its official release with QtMobility 1.2. For the technology
-preview the only functional backend is bluez.
+The Bluetooth API is a new API and the only platforms supported are
+Linux and Meego via Bluez 4, and Symbian. For the Beta release the 
+entire API is fully functional on these platforms, there are how ever
+some known bugs.
 
-\section3 What should work for Bluetooth
+\section3 Known Issues
 
-You should be able to discover devices and services, open an Rfcomm socket, or accept
-an Rfcomm connection, and transfer a file to a device using Object Push Protocol.
-
-Classes that should work:
 \list
-    \o QBluetoothAddress
-    \o QBluetoothDeviceDiscoveryAgent
-    \o QBluetoothServiceDiscoveryAgent
-    \o QBluetoothDeviceInfo
-    \o QBluetoothServiceInfo
-    \o QBluetoothSocket
-    \o \l {QBluetoothTransferManager::put()}
-    \o QBluetoothUuid
-    \o QRfcommServer
-    \o QRfcommSocket
+    \o Symbian: Connections to an L2cap socket via address and service UUID fail.
+    \o Limited Enquiry does not work on Symbian or Linux
 \endlist
-
-\section3 What is known \bold NOT to work for Bluetooth
-
-\table 60%
-    \row \o Symbian, Windows, Mac
-    \row \o QL2capServer and QL2capSocket
-    \row \o QBluetoothLocalDevice Pairing functions
-    \row \o QBluetoothLocalDevice power control and state functions
-    \row \o QBluetoothServiceDiscoveryAgent errorString
-\endtable
 
 \section1 Examples
 
@@ -137,7 +116,7 @@ Some interesting examples for the API exist.
         \o Scan for Bluetooth devices.
     \row
         \o \l{declarative-bluetooth/tennis}{QML Bluetooth Tennis}
-        \o The tennis game using a QML interface to the Bluetooth API.
+        \o The tennis game using a QML interface to the Bluetooth API.  It must connect to a non C++ Bluetooth Tennnis game to play.
     \row
         \o \l {scanner}{QML Bluetooth Scanner}
         \o A QML implementation of the Bluetooth device scanner.

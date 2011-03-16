@@ -97,6 +97,7 @@ Q_SIGNALS: // SIGNALS
     void deviceDiscoveryComplete(int aError);
     void deviceDiscovered(const QBluetoothDeviceInfo &device);
     void linkManagerError(QBluetoothDeviceDiscoveryAgent::Error error);
+    void canceled();
 
 private:
 

@@ -69,13 +69,14 @@ private slots:
     void tst_listen_data();
     void tst_listen();
 
+    void tst_secureFlags();
+
     void tst_pendingConnections_data();
     void tst_pendingConnections();
 
     void tst_receive_data();
     void tst_receive();
 
-    void tst_secureFlags();
 private:
     QBluetoothLocalDevice localDevice;
 };
@@ -142,11 +143,7 @@ void tst_QRfcommServer::tst_listen()
 
         if (!address.isNull())
             QCOMPARE(server.serverAddress(), address);
-#ifndef Q_OS_SYMBIAN
-// In Symbian there is only one bluetoothdevice per device and its address is returned always.
-        else
-            QVERIFY(!server.serverAddress().isNull());
-#endif
+
         qDebug()<<"Server Port="<<server.serverPort();
         if (port != 0)
             QCOMPARE(server.serverPort(), port);
@@ -166,7 +163,7 @@ void tst_QRfcommServer::tst_listen()
         QVERIFY(server.serverAddress().isNull());
         QVERIFY(server.serverPort() == 0);
 
-        QVERIFY(!server.hasPendingConnections());
+        QVERIFY(server.hasPendingConnections() == false);
         QVERIFY(server.nextPendingConnection() == 0);
     }
 }
@@ -266,6 +263,8 @@ void tst_QRfcommServer::tst_receive()
 
     QVERIFY(server.hasPendingConnections());
 
+    qDebug() << "Got connection";
+
     QBluetoothSocket *socket = server.nextPendingConnection();
 
     QVERIFY(socket->state() == QBluetoothSocket::ConnectedState);
@@ -289,10 +288,11 @@ void tst_QRfcommServer::tst_receive()
 void tst_QRfcommServer::tst_secureFlags()
 {
     QRfcommServer server;
-    QCOMPARE(server.securityFlags(), QBluetooth::NoSecurity);
+    qDebug() << server.securityFlags();
+    QCOMPARE(server.securityFlags(), QBluetooth::Authorization);
 
     server.setSecurityFlags(QBluetooth::Encryption);
-    QCOMPARE(server.securityFlags(), QBluetooth::Encryption);
+    QCOMPARE(server.securityFlags(), QBluetooth::Encryption|QBluetooth::Authorization);
 }
 
 QTEST_MAIN(tst_QRfcommServer)

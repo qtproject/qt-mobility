@@ -91,7 +91,7 @@ public:
 
     bool unregisterNdefMessageHandler(int handlerId);
 
-signals:
+Q_SIGNALS:
     void targetDetected(QNearFieldTarget *target);
     void targetLost(QNearFieldTarget *target);
     void transactionDetected(const QByteArray &applicationIdentifier);

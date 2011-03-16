@@ -2,7 +2,7 @@ INCLUDEPATH += $$PWD
 
 include (../../videooutput/videooutput.pri)
 
-LIBS += -lmediaclientvideo \
+LIBS *= -lmediaclientvideo \
     -lmediaclientaudio \
     -lws32 \
     -lfbscli \
@@ -12,7 +12,9 @@ LIBS += -lmediaclientvideo \
     -lbitgdi \
     -lapgrfx \
     -lapmime \
-    -lcommdb
+    -lcommdb \
+    -lbafl
+
 # If support to DRM is wanted then comment out the following line
 #CONFIG += drm_supported
 

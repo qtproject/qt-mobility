@@ -64,10 +64,10 @@ QBluetoothSocketPrivate::QBluetoothSocketPrivate()
     : socket(-1),
       socketType(QBluetoothSocket::UnknownSocketType),
       state(QBluetoothSocket::UnconnectedState),
-      connecting(false),
-      discoveryAgent(0),
       readNotifier(0),
-      connectWriteNotifier(0)
+      connectWriteNotifier(0),
+      connecting(false),
+      discoveryAgent(0)
 {
 }
 

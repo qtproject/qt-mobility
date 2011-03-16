@@ -181,7 +181,10 @@ void QBluetoothDeviceDiscoveryAgent::start()
 }
 
 /*!
-    Stops Bluetooth device discovery.
+    Stops Bluetooth device discovery.  The cancel() signal is emitted once the
+    device discovery is canceled.  start() maybe called before the cancel signal is
+    received.  Once start() has been called the cancel signal from the prior
+    discovery will be silently discarded.
 */
 void QBluetoothDeviceDiscoveryAgent::stop()
 {
@@ -204,7 +207,7 @@ QBluetoothDeviceDiscoveryAgent::Error QBluetoothDeviceDiscoveryAgent::error() co
 {
     Q_D(const QBluetoothDeviceDiscoveryAgent);
 
-    return d_ptr->lastError;
+    return d->lastError;
 }
 
 /*!
@@ -213,7 +216,7 @@ QBluetoothDeviceDiscoveryAgent::Error QBluetoothDeviceDiscoveryAgent::error() co
 QString QBluetoothDeviceDiscoveryAgent::errorString() const
 {
     Q_D(const QBluetoothDeviceDiscoveryAgent);
-    return d_ptr->errorString;
+    return d->errorString;
 }
 
 #include "moc_qbluetoothdevicediscoveryagent.cpp"

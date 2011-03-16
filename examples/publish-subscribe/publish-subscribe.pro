@@ -13,7 +13,7 @@ symbian {
     TARGET.UID3 = 0x2002AC79
 }
 
-include(../examples.pri)
+include(../mobility_examples.pri)
 
 HEADERS = publisherdialog.h \
           subscriberdialog.h

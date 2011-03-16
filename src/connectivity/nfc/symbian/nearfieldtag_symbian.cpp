@@ -51,6 +51,7 @@
 
     \ingroup connectivity-nfc
     \inmodule QtConnectivity
+    \internal
 */
 
 CNearFieldTag::CNearFieldTag(MNfcTag * aNfcTag, RNfcServer& aNfcServer) :  CActive(EPriorityStandard),

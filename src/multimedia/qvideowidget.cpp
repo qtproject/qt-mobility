@@ -589,16 +589,7 @@ void QVideoWidgetPrivate::_q_dimensionsChanged()
     to media object by passing a pointer to the QMediaObject in its
     constructor, and detached by destroying the QVideoWidget.
 
-    \code
-        player = new QMediaPlayer;
-
-        widget = new QVideoWidget;
-        widget->show();
-
-        player->setVideoOutput(widget);
-        player->setMedia(QUrl("http://example.com/movie.mp4"));
-        player->play();
-    \endcode
+    \snippet doc/src/snippets/multimedia-snippets/video.cpp Video widget
 
     \bold {Note}: Only a single display output can be attached to a media
     object at one time.
