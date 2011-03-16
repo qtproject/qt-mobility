@@ -49,20 +49,14 @@ QT_BEGIN_NAMESPACE
     \inmodule QtMultimediaKit
     \ingroup multimedia-serv
 
-    
+
     \brief The QCameraImageProcessingControl class provides an abstract class
     for controlling image processing parameters, like white balance,
     contrast, saturation, sharpening and denoising.
-    
+
     The interface name of QCameraImageProcessingControl is \c com.nokia.Qt.QCameraImageProcessingControl/1.0 as
     defined in QCameraImageProcessingControl_iid.
 
-
-The Camera API of Qt Mobility is still in \bold Technology Preview. It has not undergone
-the same level of review and testing as the rest of the APIs.
-
-The API exposed by the classes in this component are not stable, and will
-undergo modification or removal prior to the final release of Qt Mobility.
 
 
     \sa QMediaService::requestControl(), QCamera
