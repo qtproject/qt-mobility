@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,57 +39,28 @@
 **
 ****************************************************************************/
 
-#include "DebugMacros.h"
+#include <QtCore/qdebug.h>
 
-#include "s60videorenderer.h"
+#ifndef __DEBUGMACROS_H__
+#define __DEBUGMACROS_H__
 
-#include <QtCore/qcoreevent.h>
-#include <QtGui/qapplication.h>
+// MACROS
+#ifdef _DEBUG
+#define DP0(string)                                 qDebug()<<string
+#define DP1(string,arg1)                            qDebug()<<string<<arg1
+#define DP2(string,arg1,arg2)                       qDebug()<<string<<arg1<<arg2
+#define DP3(string,arg1,arg2,arg3)                  qDebug()<<string<<arg1<<arg2<<arg3
+#define DP4(string,arg1,arg2,arg3,arg4)             qDebug()<<string<<arg1<<arg2<<arg3<<arg4
+#define DP5(string,arg1,arg2,arg3,arg4,arg5)        qDebug()<<string<<arg1<<arg2<<arg3<<arg4<<arg5
+#define DP6(string,arg1,arg2,arg3,arg4,arg5,arg6)   qDebug()<<string<<arg1<<arg2<<arg3<<arg4<<arg5<<arg6
+#else
+#define DP0(string)
+#define DP1(string,arg1)
+#define DP2(string,arg1,arg2)
+#define DP3(string,arg1,arg2,arg3)
+#define DP4(string,arg1,arg2,arg3,arg4)
+#define DP5(string,arg1,arg2,arg3,arg4,arg5)
+#define DP6(string,arg1,arg2,arg3,arg4,arg5,arg6)
+#endif
 
-/*!
-    Constructs a new video renderer media end point with the given \a parent.
-*/
-
-S60VideoRenderer::S60VideoRenderer(QObject *parent)
-    : QVideoRendererControl(parent)
-{
-    DP0("S60VideoRenderer::S60VideoRenderer +++");
-
-    DP0("S60VideoRenderer::S60VideoRenderer ---");
-
-}
-
-/*!
-    Destroys a video renderer media end point.
-*/
-
-S60VideoRenderer::~S60VideoRenderer()
-{
-    DP0("S60VideoRenderer::~S60VideoRenderer +++");
-    DP0("S60VideoRenderer::~S60VideoRenderer ---");
-}
-
-/*!
-   \return the surface a video producer renders to.
-*/
-
-QAbstractVideoSurface *S60VideoRenderer::surface() const
-{
-    DP0("S60VideoRenderer::surface");
-
-    return m_surface;
-}
-
-/*!
-   Sets the \a surface a video producer renders to.
-*/
-
-void S60VideoRenderer::setSurface(QAbstractVideoSurface *surface)
-{
-    DP0("S60VideoRenderer::setSurface +++");
-
-    m_surface = surface;
-
-    DP0("S60VideoRenderer::setSurface ---");
-}
-
+#endif //__DEBUGMACROS_H__

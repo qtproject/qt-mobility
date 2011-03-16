@@ -44,6 +44,7 @@
 #define QGSTREAMERSERVICEPLUGIN_H
 
 #include <qmediaserviceproviderplugin.h>
+#include <QtCore/qset.h>
 
 QT_USE_NAMESPACE
 
@@ -52,10 +53,12 @@ class QGstreamerServicePlugin
     : public QMediaServiceProviderPlugin
     , public QMediaServiceSupportedDevicesInterface
     , public QMediaServiceFeaturesInterface
+    , public QMediaServiceSupportedFormatsInterface
 {
     Q_OBJECT
     Q_INTERFACES(QMediaServiceSupportedDevicesInterface)
     Q_INTERFACES(QMediaServiceFeaturesInterface)
+    Q_INTERFACES(QMediaServiceSupportedFormatsInterface)
 public:
     QStringList keys() const;
     QMediaService* create(QString const& key);
@@ -67,11 +70,17 @@ public:
     QString deviceDescription(const QByteArray &service, const QByteArray &device);
     QVariant deviceProperty(const QByteArray &service, const QByteArray &device, const QByteArray &property);
 
+    QtMultimediaKit::SupportEstimate hasSupport(const QString &mimeType, const QStringList& codecs) const;
+    QStringList supportedMimeTypes() const;
+
 private:
     void updateDevices() const;
 
     mutable QList<QByteArray> m_cameraDevices;
     mutable QStringList m_cameraDescriptions;
+    mutable QSet<QString> m_supportedMimeTypeSet; //for fast access
+
+    void updateSupportedMimeTypes() const;
 };
 
 #endif // QGSTREAMERSERVICEPLUGIN_H

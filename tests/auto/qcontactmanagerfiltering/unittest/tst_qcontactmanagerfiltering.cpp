@@ -50,6 +50,13 @@
 //TESTED_CLASS=
 //TESTED_FILES=
 
+// Q_ASSERT replacement, since we often run in release builds
+#define Q_FATAL_VERIFY(statement)                                         \
+do {                                                                      \
+    if (!QTest::qVerify((statement), #statement, "", __FILE__, __LINE__)) \
+        qFatal("severe failure encountered, test cannot continue");       \
+} while (0)
+
 QTM_USE_NAMESPACE
 /*
  * This test is mostly just for testing sorting and filtering -
@@ -185,7 +192,6 @@ void tst_QContactManagerFiltering::initTestCase()
 	// testing filtering instead.
     managerNames.removeAll("symbiansim");
 
-
     foreach(QString mgr, managerNames) {
         QMap<QString, QString> params;
         QString mgrUri = QContactManager::buildUri(mgr, params);
@@ -208,7 +214,7 @@ void tst_QContactManagerFiltering::initTestCase()
         if (addedContacts != contactsAddedToManagers.values(cm)) {
             qDebug() << "prepareModel returned:" << addedContacts;
             qDebug() << "contactsAdded are:    " << contactsAddedToManagers.values(cm);
-            Q_ASSERT_X(false, "prepareModel", "returned list different from saved contacts list!");
+            qFatal("returned list different from saved contacts list!");
         }
     }
 
@@ -3114,17 +3120,13 @@ QList<QContactLocalId> tst_QContactManagerFiltering::prepareModel(QContactManage
 
     qDebug() << "Generating contacts with different timestamps, please wait..";
     int originalContactCount = cm->contactIds().count();
-    bool successfulSave = cm->saveContact(&a);
-    Q_ASSERT(successfulSave);
+    Q_FATAL_VERIFY(cm->saveContact(&a));
     QTest::qSleep(napTime);
-    successfulSave = cm->saveContact(&b);
-    Q_ASSERT(successfulSave);
+    Q_FATAL_VERIFY(cm->saveContact(&b));
     QTest::qSleep(napTime);
-    successfulSave = cm->saveContact(&c);
-    Q_ASSERT(successfulSave);
+    Q_FATAL_VERIFY(cm->saveContact(&c));
     QTest::qSleep(napTime);
-    successfulSave = cm->saveContact(&d);
-    Q_ASSERT(successfulSave);
+    Q_FATAL_VERIFY(cm->saveContact(&d));
     QTest::qSleep(napTime);
 
     /* Now add some contacts specifically for multisorting */
@@ -3147,14 +3149,11 @@ QList<QContactLocalId> tst_QContactManagerFiltering::prepareModel(QContactManage
     if (!definitionDetails.value("String").first.isEmpty() && !definitionDetails.value("String").second.isEmpty())
         g.saveDetail(&string);
     g.saveDetail(&n);
-    successfulSave = cm->saveContact(&e);
-    Q_ASSERT(successfulSave);
-    successfulSave = cm->saveContact(&f);
-    Q_ASSERT(successfulSave);
-    successfulSave = cm->saveContact(&g);
-    Q_ASSERT(successfulSave);
+    Q_FATAL_VERIFY(cm->saveContact(&e));
+    Q_FATAL_VERIFY(cm->saveContact(&f));
+    Q_FATAL_VERIFY(cm->saveContact(&g));
     originalContactCount += 7;
-    Q_ASSERT(cm->contactIds().count() == originalContactCount);
+    Q_FATAL_VERIFY(cm->contactIds().count() == originalContactCount);
 
     /* Now some for the locale aware sorting */
     QContact h, i, j, k;
@@ -3177,10 +3176,10 @@ QList<QContactLocalId> tst_QContactManagerFiltering::prepareModel(QContactManage
     i = cm->compatibleContact(i);
     j = cm->compatibleContact(j);
     k = cm->compatibleContact(k);
-    Q_ASSERT(cm->saveContact(&h));
-    Q_ASSERT(cm->saveContact(&i));
-    Q_ASSERT(cm->saveContact(&j));
-    Q_ASSERT(cm->saveContact(&k));
+    Q_FATAL_VERIFY(cm->saveContact(&h));
+    Q_FATAL_VERIFY(cm->saveContact(&i));
+    Q_FATAL_VERIFY(cm->saveContact(&j));
+    Q_FATAL_VERIFY(cm->saveContact(&k));
 
     /* Ensure the last modified times are different */
     QTest::qSleep(napTime);

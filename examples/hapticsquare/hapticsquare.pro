@@ -24,4 +24,4 @@ symbian: {
      TARGET.CAPABILITY = WriteDeviceData ReadDeviceData
 }
 
-include(../examples.pri)
+include(../mobility_examples.pri)

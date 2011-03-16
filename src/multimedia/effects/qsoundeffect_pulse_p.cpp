@@ -55,8 +55,6 @@
 #include <QtNetwork>
 #include <QTime>
 
-#include "qwavedecoder_p.h"
-
 #include "qsoundeffect_pulse_p.h"
 
 #if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
@@ -258,7 +256,7 @@ private:
 }
 
 Q_GLOBAL_STATIC(PulseDaemon, daemon)
-
+Q_GLOBAL_STATIC(QSampleCache, sampleCache)
 
 namespace
 {
@@ -291,10 +289,7 @@ QSoundEffectPrivate::QSoundEffectPrivate(QObject* parent):
     m_volume(100),
     m_loopCount(1),
     m_runningCount(0),
-    m_waveDecoder(0),
-    m_sampleReadLength(0),
-    m_stream(0),
-    m_networkAccessManager(0),
+    m_sample(0) ,
     m_position(0)
 {
     pa_sample_spec_init(&m_pulseSpec);
@@ -304,7 +299,8 @@ QSoundEffectPrivate::~QSoundEffectPrivate()
 {
     unloadPulseStream();
 
-    clearTasks();
+    if (m_sample)
+        m_sample->release();
 }
 
 QStringList QSoundEffectPrivate::supportedMimeTypes()
@@ -321,13 +317,22 @@ QUrl QSoundEffectPrivate::source() const
 
 void QSoundEffectPrivate::setSource(const QUrl &url)
 {
+    Q_ASSERT(m_source != url);
 #ifdef QT_PA_DEBUG
     qDebug() << this << "setSource =" << url;
 #endif
     stop();
+    if (m_sample) {
+        if (!m_sampleReady) {
+            disconnect(m_sample, SIGNAL(error()), this, SLOT(decoderError()));
+            disconnect(m_sample, SIGNAL(ready()), this, SLOT(sampleReady()));
+        }
+        m_sample->release();
+        m_sample = 0;
+    }
+
     m_source = url;
     m_sampleReady = false;
-    clearTasks();
 
     PulseDaemonLocker locker;
     m_runningCount = 0;
@@ -343,13 +348,18 @@ void QSoundEffectPrivate::setSource(const QUrl &url)
         return;
     }
 
-    if (m_networkAccessManager == 0)
-        m_networkAccessManager = new QNetworkAccessManager(this);
-
-    m_stream = m_networkAccessManager->get(QNetworkRequest(m_source));
-    connect(m_stream, SIGNAL(error(QNetworkReply::NetworkError)), SLOT(decoderError()));
-
-    loadSample();
+    setStatus(QSoundEffect::Loading);
+    m_sample = sampleCache()->requestSample(url);
+    connect(m_sample, SIGNAL(error()), this, SLOT(decoderError()));
+    connect(m_sample, SIGNAL(ready()), this, SLOT(sampleReady()));
+    switch(m_sample->state()) {
+    case QSample::Ready:
+        sampleReady();
+        break;
+    case QSample::Error:
+        decoderError();
+        break;
+    }
 }
 
 int QSoundEffectPrivate::loopCount() const
@@ -506,9 +516,17 @@ void QSoundEffectPrivate::sampleReady()
 #ifdef QT_PA_DEBUG
     qDebug() << this << "sampleReady";
 #endif
+    disconnect(m_sample, SIGNAL(error()), this, SLOT(decoderError()));
+    disconnect(m_sample, SIGNAL(ready()), this, SLOT(sampleReady()));
+    pa_sample_spec newFormatSpec = audioFormatToSampleSpec(m_sample->format());
+
+    if (m_pulseStream && (memcmp(&m_pulseSpec, &newFormatSpec, sizeof(m_pulseSpec)) != 0)) {
+        unloadPulseStream();
+    }
+    m_pulseSpec = newFormatSpec;
+
     m_sampleReady = true;
     m_position = 0;
-    clearTasks();
 
     if (m_name.isNull())
         m_name = QString(QLatin1String("QtPulseSample-%1-%2")).arg(::getpid()).arg(quintptr(this)).toUtf8();
@@ -520,28 +538,28 @@ void QSoundEffectPrivate::sampleReady()
 #endif
 #ifdef QTM_PULSEAUDIO_DEFAULTBUFFER
         const pa_buffer_attr *bufferAttr = pa_stream_get_buffer_attr(m_pulseStream);
-        if (bufferAttr->prebuf > uint32_t(m_soundData.size())) {
+        if (bufferAttr->prebuf > uint32_t(m_sample->data().size())) {
             pa_buffer_attr newBufferAttr;
             newBufferAttr = *bufferAttr;
-            newBufferAttr.prebuf = m_soundData.size();
+            newBufferAttr.prebuf = m_sample->data().size();
             pa_stream_set_buffer_attr(m_pulseStream, &newBufferAttr, stream_adjust_prebuffer_callback, this);
         } else {
             streamReady();
         }
 #else
         const pa_buffer_attr *bufferAttr = pa_stream_get_buffer_attr(m_pulseStream);
-        if (bufferAttr->tlength < m_soundData.size() && bufferAttr->tlength < QT_PA_STREAM_BUFFER_SIZE_MAX) {
+        if (bufferAttr->tlength < m_sample->data().size() && bufferAttr->tlength < QT_PA_STREAM_BUFFER_SIZE_MAX) {
             pa_buffer_attr newBufferAttr;
             newBufferAttr.maxlength = -1;
-            newBufferAttr.tlength = qMin(m_soundData.size(), QT_PA_STREAM_BUFFER_SIZE_MAX);
+            newBufferAttr.tlength = qMin(m_sample->data().size(), QT_PA_STREAM_BUFFER_SIZE_MAX);
             newBufferAttr.minreq = bufferAttr->tlength / 2;
             newBufferAttr.prebuf = -1;
             newBufferAttr.fragsize = -1;
             pa_stream_set_buffer_attr(m_pulseStream, &newBufferAttr, stream_reset_buffer_callback, this);
-        } else if (bufferAttr->prebuf > uint32_t(m_soundData.size())) {
+        } else if (bufferAttr->prebuf > uint32_t(m_sample->data().size())) {
             pa_buffer_attr newBufferAttr;
             newBufferAttr = *bufferAttr;
-            newBufferAttr.prebuf = m_soundData.size();
+            newBufferAttr.prebuf = m_sample->data().size();
             pa_stream_set_buffer_attr(m_pulseStream, &newBufferAttr, stream_adjust_prebuffer_callback, this);
         } else {
             streamReady();
@@ -556,46 +574,10 @@ void QSoundEffectPrivate::sampleReady()
     }
 }
 
-void QSoundEffectPrivate::readSample()
-{
-#ifdef QT_PA_DEBUG
-    qDebug() << "readSample";
-#endif
-    qint64 read = m_waveDecoder->read(m_soundData.data() + m_sampleReadLength,
-                      qMin(m_waveDecoder->bytesAvailable(), qint64(m_waveDecoder->size() - m_sampleReadLength)));
-    if (read > 0) {
-        m_sampleReadLength += size_t(read);
-    }
-    if (m_sampleReadLength < m_waveDecoder->size())
-        return;
-    Q_ASSERT(m_sampleReadLength == qint64(m_soundData.size()));
-    sampleReady();
-}
-
-void QSoundEffectPrivate::decoderReady()
-{
-#ifdef QT_PA_DEBUG
-    qDebug() << "decoderReady";
-#endif
-    pa_sample_spec newFormatSpec = audioFormatToSampleSpec(m_waveDecoder->audioFormat());
-
-    if (m_pulseStream && (memcmp(&m_pulseSpec, &newFormatSpec, sizeof(m_pulseSpec)) != 0)) {
-        unloadPulseStream();
-    }
-    m_pulseSpec = newFormatSpec;
-    m_soundData.resize(m_waveDecoder->size());
-
-    m_sampleReadLength = 0;
-    qint64 read = m_waveDecoder->read(m_soundData.data(), m_waveDecoder->size());
-    if (read > 0)
-        m_sampleReadLength += size_t(read);
-    if (m_sampleReadLength >= m_waveDecoder->size())
-        sampleReady();
-}
-
 void QSoundEffectPrivate::decoderError()
 {
     qWarning("QSoundEffect(pulseaudio): Error decoding source");
+    disconnect(m_sample, SIGNAL(error()), this, SLOT(decoderError()));
     bool playingDirty = false;
     if (m_playing) {
         m_playing = false;
@@ -604,18 +586,6 @@ void QSoundEffectPrivate::decoderError()
     setStatus(QSoundEffect::Error);
     if (playingDirty)
         emit playingChanged();
-}
-
-void QSoundEffectPrivate::loadSample()
-{
-#ifdef QT_PA_DEBUG
-    qDebug() << "loadSample";
-#endif
-    m_waveDecoder = new QWaveDecoder(m_stream);
-    connect(m_waveDecoder, SIGNAL(formatKnown()), SLOT(decoderReady()));
-    connect(m_waveDecoder, SIGNAL(invalidFormat()), SLOT(decoderError()));
-    connect(m_waveDecoder, SIGNAL(readyRead()), SLOT(readSample()));
-    setStatus(QSoundEffect::Loading);
 }
 
 void QSoundEffectPrivate::unloadPulseStream()
@@ -638,20 +608,20 @@ void QSoundEffectPrivate::unloadPulseStream()
 
 void QSoundEffectPrivate::prepare()
 {
-    if (!m_pulseStream)
+    if (!m_pulseStream || !m_sampleReady)
         return;
     PulseDaemonLocker locker;
     pa_stream_set_write_callback(m_pulseStream, stream_write_callback, this);
     pa_stream_set_underflow_callback(m_pulseStream, stream_underrun_callback, this);
     m_stopping = false;
-    size_t writeBytes = size_t(qMin(m_pulseBufferSize, m_soundData.size()));
+    size_t writeBytes = size_t(qMin(m_pulseBufferSize, m_sample->data().size()));
 #ifdef QT_PA_DEBUG
     qDebug() << this << "prepare(): writable size =" << pa_stream_writable_size(m_pulseStream)
              << "actual writeBytes =" << writeBytes
              << "m_playQueued =" << m_playQueued;
 #endif
     m_position = int(writeBytes);
-    if (pa_stream_write(m_pulseStream, reinterpret_cast<void *>(m_soundData.data()), writeBytes,
+    if (pa_stream_write(m_pulseStream, reinterpret_cast<void *>(const_cast<char*>(m_sample->data().data())), writeBytes,
                         stream_write_done_callback, 0, PA_SEEK_RELATIVE) != 0) {
         qWarning("QSoundEffect(pulseaudio): pa_stream_write, error = %s", pa_strerror(pa_context_errno(daemon()->context())));
     }
@@ -673,7 +643,7 @@ void QSoundEffectPrivate::uploadSample()
 #ifdef QT_PA_DEBUG
     qDebug() << this << "uploadSample: m_runningCount =" << m_runningCount;
 #endif
-    if (m_position == m_soundData.size()) {
+    if (m_position == m_sample->data().size()) {
         m_position = 0;
         if (m_runningCount > 0)
             m_runningCount--;
@@ -684,27 +654,27 @@ void QSoundEffectPrivate::uploadSample()
 
     int writtenBytes = 0;
     int writableSize = int(pa_stream_writable_size(m_pulseStream));
-    int firstPartLength = qMin(m_soundData.size() - m_position, writableSize);
-    if (pa_stream_write(m_pulseStream, reinterpret_cast<void *>(m_soundData.data() + m_position),
+    int firstPartLength = qMin(m_sample->data().size() - m_position, writableSize);
+    if (pa_stream_write(m_pulseStream, reinterpret_cast<void *>(const_cast<char*>(m_sample->data().data()) + m_position),
                         firstPartLength, stream_write_done_callback, 0, PA_SEEK_RELATIVE) != 0) {
         qWarning("QSoundEffect(pulseaudio): pa_stream_write, error = %s", pa_strerror(pa_context_errno(daemon()->context())));
     }
     writtenBytes = firstPartLength;
     m_position += firstPartLength;
-    if (m_position == m_soundData.size()) {
+    if (m_position == m_sample->data().size()) {
         m_position = 0;
         if (m_runningCount > 0)
             m_runningCount--;
         if (m_runningCount != 0 && firstPartLength < writableSize)
         {
             while (writtenBytes < writableSize) {
-                int writeSize = qMin(writableSize - writtenBytes, m_soundData.size());
-                if (pa_stream_write(m_pulseStream, reinterpret_cast<void *>(m_soundData.data()),
+                int writeSize = qMin(writableSize - writtenBytes, m_sample->data().size());
+                if (pa_stream_write(m_pulseStream, reinterpret_cast<void *>(const_cast<char*>(m_sample->data().data())),
                                     writeSize, stream_write_done_callback, 0, PA_SEEK_RELATIVE) != 0) {
                     qWarning("QSoundEffect(pulseaudio): pa_stream_write, error = %s", pa_strerror(pa_context_errno(daemon()->context())));
                 }
                 writtenBytes += writeSize;
-                if (writeSize < m_soundData.size()) {
+                if (writeSize < m_sample->data().size()) {
                     m_position = writeSize;
                     break;
                 }
@@ -726,6 +696,7 @@ void QSoundEffectPrivate::playSample()
 #ifdef QT_PA_DEBUG
     qDebug() << this << "playSample";
 #endif
+    Q_ASSERT(m_pulseStream);
     pa_operation_unref(pa_stream_cork(m_pulseStream, 0, 0, 0));
 }
 
@@ -799,7 +770,7 @@ void QSoundEffectPrivate::createPulseStream()
 
 #ifndef QTM_PULSEAUDIO_DEFAULTBUFFER
     pa_buffer_attr bufferAttr;
-    bufferAttr.tlength = qMin(m_soundData.size(), QT_PA_STREAM_BUFFER_SIZE_MAX);
+    bufferAttr.tlength = qMin(m_sample->data().size(), QT_PA_STREAM_BUFFER_SIZE_MAX);
     bufferAttr.maxlength = -1;
     bufferAttr.minreq = bufferAttr.tlength / 2;
     bufferAttr.prebuf = -1;
@@ -821,24 +792,6 @@ void QSoundEffectPrivate::contextReady()
     disconnect(daemon(), SIGNAL(contextReady()), this, SLOT(contextReady()));
     PulseDaemonLocker locker;
     createPulseStream();
-}
-
-void QSoundEffectPrivate::clearTasks()
-{
-#ifdef QT_PA_DEBUG
-    qDebug() << "clearTasks";
-#endif
-    if (m_waveDecoder) {
-        disconnect(m_waveDecoder, SIGNAL(formatKnown()), this, SLOT(decoderReady()));
-        disconnect(m_waveDecoder, SIGNAL(invalidFormat()), this, SLOT(decoderError()));
-        disconnect(m_waveDecoder, SIGNAL(readyRead()), this, SLOT(readSample()));
-        m_waveDecoder->deleteLater();
-    }
-    m_waveDecoder = 0;
-
-    if (m_stream)
-        m_stream->deleteLater();
-    m_stream = 0;
 }
 
 void QSoundEffectPrivate::stream_write_callback(pa_stream *s, size_t length, void *userdata)
@@ -864,10 +817,10 @@ void QSoundEffectPrivate::stream_state_callback(pa_stream *s, void *userdata)
 #endif
             const pa_buffer_attr *bufferAttr = pa_stream_get_buffer_attr(self->m_pulseStream);
             self->m_pulseBufferSize = bufferAttr->tlength;
-            if (bufferAttr->prebuf > uint32_t(self->m_soundData.size())) {
+            if (bufferAttr->prebuf > uint32_t(self->m_sample->data().size())) {
                 pa_buffer_attr newBufferAttr;
                 newBufferAttr = *bufferAttr;
-                newBufferAttr.prebuf = self->m_soundData.size();
+                newBufferAttr.prebuf = self->m_sample->data().size();
                 pa_stream_set_buffer_attr(self->m_pulseStream, &newBufferAttr, stream_adjust_prebuffer_callback, userdata);
             } else {
                 QMetaObject::invokeMethod(self, "streamReady", Qt::QueuedConnection);
@@ -903,10 +856,10 @@ void QSoundEffectPrivate::stream_reset_buffer_callback(pa_stream *s, int success
 #endif
     const pa_buffer_attr *bufferAttr = pa_stream_get_buffer_attr(self->m_pulseStream);
     self->m_pulseBufferSize = bufferAttr->tlength;
-    if (bufferAttr->prebuf > uint32_t(self->m_soundData.size())) {
+    if (bufferAttr->prebuf > uint32_t(self->m_sample->data().size())) {
         pa_buffer_attr newBufferAttr;
         newBufferAttr = *bufferAttr;
-        newBufferAttr.prebuf = self->m_soundData.size();
+        newBufferAttr.prebuf = self->m_sample->data().size();
         pa_stream_set_buffer_attr(self->m_pulseStream, &newBufferAttr, stream_adjust_prebuffer_callback, userdata);
     } else {
         QMetaObject::invokeMethod(self, "streamReady", Qt::QueuedConnection);

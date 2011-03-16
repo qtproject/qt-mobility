@@ -2,7 +2,7 @@ TEMPLATE = app
 TARGET = sfw-notes
 INCLUDEPATH += ../../src/serviceframework
 
-include(../examples.pri)
+include(../mobility_examples.pri)
 
 QT += gui
 CONFIG += mobility
@@ -26,6 +26,4 @@ symbian {
     addFiles.sources = ../notesmanagerplugin/notesmanagerservice.xml
     addFiles.path = xmldata
     DEPLOYMENT += addFiles
-
-    TARGET.CAPABILITY = ALL -TCB
 }

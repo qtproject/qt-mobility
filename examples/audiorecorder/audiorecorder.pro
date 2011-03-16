@@ -2,7 +2,7 @@ TEMPLATE = app
 CONFIG += example
 
 INCLUDEPATH += ../../src/multimedia ../../src/multimedia/audio
-include(../examples.pri)
+include(../mobility_examples.pri)
 
 CONFIG += mobility
 MOBILITY = multimedia
@@ -25,5 +25,5 @@ maemo*: {
     FORMS += audiorecorder.ui
 }
 symbian: {
-    TARGET.CAPABILITY = UserEnvironment ReadDeviceData WriteDeviceData AllFiles
+    TARGET.CAPABILITY = UserEnvironment ReadDeviceData WriteDeviceData
 }

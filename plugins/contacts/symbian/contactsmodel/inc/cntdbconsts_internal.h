@@ -32,4 +32,7 @@ _LIT(KImagesFolder, "10003A73\\");
 #define KUidContactFieldCodImageValue 0x101F8841
 const TUid KUidContactFieldCodImage={KUidContactFieldCodImageValue};
 
+#define KUidContactFieldTopContactValue 0x200100E3
+const TUid KUidContactFieldTopContact={KUidContactFieldTopContactValue};
+
 #endif /* CNTDBCONSTS_INTERNAL_H_ */
