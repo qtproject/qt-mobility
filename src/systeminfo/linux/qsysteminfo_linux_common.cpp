@@ -374,10 +374,10 @@ bool QSystemInfoLinuxCommonPrivate::hasFeatureSupported(QSystemInfo::Feature fea
                      }
                  }
              }
+#endif
+#endif
          }
-#endif
-#endif
-             return ok;
+         return ok;
 #endif
  #if !defined(QT_NO_DBUS)
              QHalInterface iface;
