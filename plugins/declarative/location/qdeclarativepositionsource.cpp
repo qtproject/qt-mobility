@@ -119,21 +119,32 @@ QDeclarativePositionSource::~QDeclarativePositionSource()
 
 void QDeclarativePositionSource::setNmeaSource(const QUrl& nmeaSource)
 {
-    if (nmeaSource.toLocalFile() == m_nmeaSource.toLocalFile()) {
-        return;
+    // Strip the filename. This is clumsy but the file may be prefixed in several
+    // ways: "file:///", "qrc:///", "/", "" in platform dependant manner.
+    QString localFileName = nmeaSource.toString();
+    if (!QFile::exists(localFileName)) {
+        if (localFileName.startsWith("qrc:///")) {
+            localFileName.remove(0, 7);
+        } else if (localFileName.startsWith("file:///")) {
+            localFileName.remove(0, 7);
+        }
+        if (!QFile::exists(localFileName) && localFileName.startsWith("/")) {
+            localFileName.remove(0,1);
+        }
     }
-    // The current position source needs to be deleted in any case,
+    if (m_nmeaFileName == localFileName)
+        return;
+    m_nmeaFileName = localFileName;
+    m_nmeaSource = nmeaSource;
+    // The current position source needs to be deleted
     // because QNmeaPositionInfoSource can be bound only to a one file.
     if (m_positionSource) {
         delete m_positionSource;
         m_positionSource = 0;
     }
-    m_nmeaSource = nmeaSource;
     // Create the NMEA source based on the given data. QML has automatically set QUrl
     // type to point to correct path. If the file is not found, check if the file actually
-    // was an embedded resource file. QUrl loses the ':' so it is added here and checked if
-    // it is available.
-    QString localFileName = nmeaSource.toLocalFile();
+    // was an embedded resource file.
     delete m_nmeaFile;
     m_nmeaFile = new QFile(localFileName);
     if (!m_nmeaFile->exists()) {
@@ -153,7 +164,7 @@ void QDeclarativePositionSource::setNmeaSource(const QUrl& nmeaSource)
             QTimer::singleShot(0, this, SLOT(start()));
         }
     } else {
-        qmlInfo(this) << tr("Nmea file not found.");
+        qmlInfo(this) << tr("Nmea file not found.") << localFileName;
 #ifdef QDECLARATIVE_POSITION_DEBUG
         qDebug() << "QDeclarativePositionSource NMEA File was not found: " << localFileName;
 #endif

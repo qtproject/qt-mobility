@@ -1762,4 +1762,5 @@ EXPORTS
 	_ZNK10QtMobility29QGeoPositionInfoSourceFactory14sourcePriorityEv @ 1761 NONAME
 	_ZTIN10QtMobility29QGeoPositionInfoSourceFactoryE @ 1762 NONAME
 	_ZTVN10QtMobility29QGeoPositionInfoSourceFactoryE @ 1763 NONAME
+	_ZN10QtMobility16QGeoTiledMapData19setConnectivityModeENS_15QGraphicsGeoMap16ConnectivityModeE @ 1764 NONAME
 
