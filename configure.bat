@@ -625,6 +625,9 @@ if "%NFC_SYMBIAN%" == "auto" (
 )
 call :compileTest BTEngineConnectionManager_Symbian btengconnman_symbian
 call :compileTest BTEngineDeviceManager_Symbian btengdevman_symbian
+call :compileTest LockandFlipKeys LockandFlipPSkeys
+call :compileTest FmTxClientCheck FmTxClient
+call :compileTest DiskNotifyClientCheck DiskNotifyClient
 goto noTests
 
 :windowsTests

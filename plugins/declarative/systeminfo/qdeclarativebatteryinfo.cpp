@@ -63,9 +63,13 @@ Q_GLOBAL_STATIC(QSystemBatteryInfo, batteryInfo)
 
 
     \qml
+
+    DeviceInfo {
+    id: devinfo
         monitorChargerTypeChanges: true
         monitorChargingStateChanges: true
-    \endqml
+}
+\endqml
 
 \sa QSystemBatteryInfo
 */
