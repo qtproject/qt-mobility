@@ -248,36 +248,27 @@ bool QSystemInfoLinuxCommonPrivate::fmTransmitterAvailable()
 {
     bool available = false;
 #if defined( __LINUX_VIDEODEV2_H)
-    static const char *devices[] = {"/dev/radio",
-                                    "/dev/radio0",
-                                    0};
+    static const char *devices[] = {"/dev/radio","/dev/radio0",0};
     int fd;
     struct v4l2_capability capability;
     const char *device;
-    size_t i=0;
+    size_t i = 0;
 
     while ((device = devices[i++]) && !available) {
         memset(&capability, 0, sizeof(struct v4l2_capability));
 
-        if (-1 == (fd = open(device, O_RDWR))) {
-            goto next_device;
+        if (-1 != (fd = open(device, O_RDWR)) &&  (-1 != ioctl(fd, VIDIOC_QUERYCAP, &capability))) {
+            if ((capability.capabilities & (V4L2_CAP_RADIO | V4L2_CAP_MODULATOR)) ==
+                    (V4L2_CAP_RADIO | V4L2_CAP_MODULATOR)) {
+                available = true;
+            }
         }
 
-        if (-1 == ioctl(fd, VIDIOC_QUERYCAP, &capability)) {
-            goto next_device;
-        }
-
-        if ((capability.capabilities & (V4L2_CAP_RADIO | V4L2_CAP_MODULATOR)) ==
-                                       (V4L2_CAP_RADIO | V4L2_CAP_MODULATOR)) {
-            available = true;
-        }
-
-next_device:
         if (fd != -1) {
             close(fd), fd = -1;
         }
     }
-  #endif
+#endif
     return available;
 }
 
@@ -360,7 +351,33 @@ bool QSystemInfoLinuxCommonPrivate::hasFeatureSupported(QSystemInfo::Feature fea
      case QSystemInfo::MemcardFeature :
          {
 #if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5) && defined(UDEV_SUPPORTED)
-             return udevService.isSubsystemAvailable(UDEV_SUBSYSTEM_MEMCARD);
+         bool ok = udevService.isSubsystemAvailable(UDEV_SUBSYSTEM_MEMCARD);
+         if (!ok) {
+#if !defined(QT_NO_DBUS)
+#if !defined(QT_NO_UDISKS)
+             // try harder
+             //this only works when a drive is in
+             if (udisksAvailable()) {
+                 QUDisksInterface udisksIface;
+                 foreach (const QDBusObjectPath &device,udisksIface.enumerateDevices() ) {
+                     QUDisksDeviceInterface devIface(device.path());
+                     if (devIface.deviceIsDrive()) {
+                         if (devIface.driveMedia().contains("flash")) {
+                             return true;
+                         }
+                         // just guess
+                         if (devIface.driveCanDetach() &&
+                                 devIface.deviceIsRemovable()
+                                 && !devIface.driveIsMediaEjectable()) {
+                             return true;
+                         }
+                     }
+                 }
+             }
+         }
+#endif
+#endif
+             return ok;
 #endif
  #if !defined(QT_NO_DBUS)
              QHalInterface iface;
@@ -1895,35 +1912,41 @@ QSystemDisplayInfo::DisplayOrientation QSystemDisplayInfoLinuxCommonPrivate::ori
     XRRScreenConfiguration *sc;
     Rotation cur_rotation;
     Display *display = QX11Info::display();
-    if (!display) {
-        goto out;
-    }
-    sc = XRRGetScreenInfo(display, RootWindow(display, screen));
-    if (!sc) {
-        goto out;
-    }
-    XRRConfigRotations(sc, &cur_rotation);
 
-    if(screen < 16 && screen > -1) {
-        switch(cur_rotation) {
-        case RR_Rotate_0:
-            orientation = QSystemDisplayInfo::Landscape;
-            break;
-        case RR_Rotate_90:
-            orientation = QSystemDisplayInfo::Portrait;
-            break;
-        case RR_Rotate_180:
-            orientation = QSystemDisplayInfo::InvertedLandscape;
-            break;
-        case RR_Rotate_270:
-            orientation = QSystemDisplayInfo::InvertedPortrait;
-            break;
-        };
+    if (display && (sc = XRRGetScreenInfo(display, RootWindow(display, screen)))) {
+        XRRConfigRotations(sc, &cur_rotation);
+
+        if(screen < 16 && screen > -1) {
+            switch(cur_rotation) {
+            case RR_Rotate_0:
+                orientation = QSystemDisplayInfo::Landscape;
+                break;
+            case RR_Rotate_90:
+                orientation = QSystemDisplayInfo::Portrait;
+                break;
+            case RR_Rotate_180:
+                orientation = QSystemDisplayInfo::InvertedLandscape;
+                break;
+            case RR_Rotate_270:
+                orientation = QSystemDisplayInfo::InvertedPortrait;
+                break;
+            };
+        }
     }
-#else
-Q_UNUSED(screen)
 #endif
-out:
+    QDesktopWidget wid;
+    qDebug() << wid.width() << wid.height();
+    if (wid.width() > wid.height()) {//landscape
+        if (orientation == QSystemDisplayInfo::Unknown || orientation == QSystemDisplayInfo::Portrait) {
+            orientation = QSystemDisplayInfo::Landscape;
+            qDebug() << Q_FUNC_INFO << orientation;
+        }
+    } else { //portrait
+        if (orientation == QSystemDisplayInfo::Unknown || orientation == QSystemDisplayInfo::Landscape) {
+            orientation = QSystemDisplayInfo::Portrait;
+            qDebug() << Q_FUNC_INFO << orientation;
+        }
+    }
     return orientation;
 }
 
