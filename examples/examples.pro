@@ -43,9 +43,9 @@ contains(mobility_modules,location) {
                     mapsdemo
     }
 
-#    contains(QT_CONFIG, declarative) {
-#        SUBDIRS += declarative-location
-#    }
+    contains(QT_CONFIG, declarative) {
+        SUBDIRS += declarative-location
+    }
 }
 
 #Contacts examples
