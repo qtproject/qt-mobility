@@ -607,7 +607,9 @@ qint64 QAudioInputPrivate::elapsedUSecs() const
 
 void QAudioInputPrivate::reset()
 {
-    close();
+    stop();
+    if (period_size > 0)
+        waveFreeBlockCount = buffer_size / period_size;
 }
 
 InputPrivate::InputPrivate(QAudioInputPrivate* audio)

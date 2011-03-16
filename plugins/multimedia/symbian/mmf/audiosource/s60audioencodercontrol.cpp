@@ -228,6 +228,7 @@ void S60AudioEncoderControl::setAudioSettings(const QAudioEncoderSettings &setti
         fmt.setChannels(settings.channelCount());
     }
     m_session->setFormat(fmt);
+    m_session->setEncoderSettings(settings);
     m_settings = settings;
 
     DP0("S60AudioEncoderControl::setAudioSettings ---");
