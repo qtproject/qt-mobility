@@ -222,12 +222,6 @@ int CQGeoPositionInfoSourceS60::minimumUpdateInterval() const
         return 0;
 
     return mMinUpdateInterval;
-
-    /*TInt i = checkModule(mCurrentModuleId);
-    if (i != -1)
-      return mList[i].mTimeToNextFix.Int64() / 1000;           //divide by 1000, to convert microsecond to milisecond
-
-    return 0;*/
 }
 
 
@@ -394,10 +388,11 @@ void CQGeoPositionInfoSourceS60::updateStatus(TPositionModuleInfo &aModInfo, TIn
     //time taken for the subsequent fix
     time_to_next_fix = quality.TimeToNextFix();
 
-    QMutexLocker lLocker(&m_mutex);
+
 
     if ((i = checkModule(id)) == -1) {
         //update the properties of the module
+        QMutexLocker lLocker(&m_mutex);
 
         //TPositionModuleId of the module
         mList[mListSize].mUid = id;
@@ -431,7 +426,10 @@ void CQGeoPositionInfoSourceS60::updateStatus(TPositionModuleInfo &aModInfo, TIn
             mCurrentMethod = method;
             mMinUpdateInterval = mList[mListSize-1].mTimeToNextFix.Int64() / 1000;
         }
+        lLocker.unlock();
     } else {
+
+        QMutexLocker lLocker(&m_mutex);
         //module's status has changed
         if (mList[i].mStatus != aStatus)
             mList[i].mStatus = aStatus;
@@ -580,8 +578,9 @@ void CQGeoPositionInfoSourceS60::updateStatus(TPositionModuleInfo &aModInfo, TIn
                 if (mRegUpdateAO)
                     delete mReqUpdateAO;
                 mReqUpdateAO = NULL;
-                lReqLocker.unlock();
                 mReqModuleId = TUid::Null();
+                lReqLocker.unlock();
+
                 emit updateTimeout();
             }
 
@@ -795,9 +794,9 @@ void CQGeoPositionInfoSourceS60::requestUpdate(int aTimeout)
 
             //set the requestAO to the newly created AO
             mReqUpdateAO = temp;
-            lReqLocker.unlock();
             //set the request module ID
             mReqModuleId = mList[index].mUid;
+            lReqLocker.unlock();
 
             //start the update
             mReqUpdateAO->requestUpdate(aTimeout);
@@ -814,8 +813,8 @@ void CQGeoPositionInfoSourceS60::requestUpdate(int aTimeout)
         QMutexLocker lReqLocker(&m_mutex_ReqUpAO);
         delete mReqUpdateAO;
         mReqUpdateAO = NULL;
-        lReqLocker.unlock();
         mReqModuleId = TUid::Null();
+        lReqLocker.unlock();
     }
 
 }
@@ -899,10 +898,9 @@ void CQGeoPositionInfoSourceS60::setPreferredPositioningMethods(PositioningMetho
         if (mRegUpdateAO)
             delete mRegUpdateAO;
         mRegUpdateAO = temp;
-        lRegLocker.unlock();
 
         mCurrentModuleId = mList[index].mUid ;
-
+        lRegLocker.unlock();
 
 
         index = checkModule(mCurrentModuleId);
