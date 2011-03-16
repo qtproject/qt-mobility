@@ -40,6 +40,7 @@
 
 import Qt 4.7
 import QtMobility.connectivity 1.2
+import Controller 1.0
 
 Rectangle {
     id: bounds
@@ -122,9 +123,12 @@ Rectangle {
                console.log("Connected: " + connected);
                if(connected) {
                     statusText.text = "Connected";
+                   controller.stop();
                }
                else {
                    statusText.text = "Unconnected " + error;
+                   controller.start();
+                   controller.refresh();
        }
            }
            //onConnectedChanged: console.log("Connected changed");
@@ -168,11 +172,11 @@ Rectangle {
 
        Keys.onPressed: {
            if(event.key == Qt.Key_Up){
-               rightPaddle.y -= 20;
+               rightPaddle.paddlePos -= 20;
                event.accepted = true;
            }
            else if(event.key == Qt.Key_Down){
-               rightPaddle.y += 20;
+               rightPaddle.paddlePos += 20;
                event.accepted = true;
            }
        }
@@ -186,7 +190,7 @@ Rectangle {
            target: deviceSensor.item
            onReadingChanged: {
                 if (x >= 20 && x <= 70)
-                    rightPaddle.y = ((x - 20) / 50 * page.height) - rightPaddle.height / 2;
+                    rightPaddle.paddlePos = ((x - 20) / 50 * page.height) - rightPaddle.height / 2;
            }
        }
 
@@ -217,9 +221,9 @@ Rectangle {
                var y = mouseY-rightPaddle.height/2;
                if(y < topBumper.height)
                    y = topBumper.height;
-               if(y > page.height - bottomBumer.height - rightPaddle.height)
-                   y = page.height - bottomBumer.height - rightPaddle.height;
-               rightPaddle.y = y;
+               if(y > page.height - bottomBumper.height - rightPaddle.height)
+                   y = page.height - bottomBumper.height - rightPaddle.height;
+               rightPaddle.paddlePos = y;
            }
        }
 
@@ -296,44 +300,33 @@ Rectangle {
 
        }
 
-
-
         // Make a ball to bounce
         Rectangle {
             id: ball
 
-            x: page.width/2-width/2; width: 12; height: 12; z: 1
+            x: page.width/2-width/2;
+            y: page.height/2-height/2;
+            width: 12; height: 12; z: 1
             color: fg
         }
 
-        Rectangle {
+        Paddle {
             id: leftPaddle
-            color: fg
-            x: 0; width: 12; height: 50; y: page.height/2-height/2;
+
+            onYChanged: controller.moveLeftPaddle(y);
         }
-        Rectangle {
+
+        Paddle {
             id: rightPaddle
 
-            property bool rateLimit: false
+            x: page.width - 12;
 
-            color: fg
-            x: page.width - 12; width: 12; height: 50
-            y: page.height/2-height/2
-            Behavior on y { SpringAnimation{ damping: 0.2; spring: 4.5; velocity: 300 } }
             onYChanged: {
-                if(y < topBumper.height)
-                    y = topBumper.height;
-                if(y > page.height-bottomBumer.height-height)
-                    y = page.height-bottomBumer.height-height;
                 if(socket.state == "Connected" && !rateLimit) {
                     socket.sendStringData("r " + Math.round(rightPaddle.y-topBumper.height));
                     rateLimit = true;
                 }
-            }
-            Timer {
-                interval: 30
-                running: rightPaddle.rateLimit
-                onTriggered: rightPaddle.rateLimit = false;
+                controller.moveRightPaddle(y);
             }
 
         }
@@ -344,7 +337,7 @@ Rectangle {
             height: 12; width: page.width
         }
         Rectangle {
-            id: bottomBumer
+            id: bottomBumper
             color: fg
             x: 0; y: page.height-height
             height: 12; width: page.width
@@ -388,6 +381,60 @@ Rectangle {
 
         transform: Scale { xScale: bounds.width/page.width; yScale: bounds.height/page.height }
 
-    }
+        Controller {
+            id: controller
 
+            property bool dir: true;
+            property int lastx: page.width/2;
+
+            onMoveBall: {
+                ball.x = x-ball.width/2;
+                ball.y = y-ball.height/2;
+                if((ball.x+ball.width > rightPaddle.x) &&
+                   (ball.y+ball.width > rightPaddle.y) &&
+                   (ball.y < rightPaddle.y + rightPaddle.height)){
+                    ballCollision(4);
+
+                }
+                else if((ball.x < leftPaddle.width) &&
+                        (ball.y+ball.width > leftPaddle.y) &&
+                        (ball.y < leftPaddle.y + leftPaddle.height)){
+                    ballCollision(3);
+
+                }
+                else if(ball.x > page.width){
+                    scored(4);
+                }
+                else if(x < 0){
+                    scored(3);
+                }
+                else if(ball.y < topBumper.height){
+                    ballCollision(1);
+                }
+                else if((y + ball.height/2) > bottomBumper.y){
+                    ballCollision(2);
+                }
+                if(lastx > x){
+                    dir = true;
+                }
+                else {
+                    dir = false;
+                }
+                lastx = x;
+
+                if(!socket.connected){
+                    if(dir && ball.x < page.width/2) {
+                        leftPaddle.paddlePos = ball.y - leftPaddle.height/2;
+                    }
+                    else if(!dir && ball.x > page.width/2){
+                        rightPaddle.paddlePos = ball.y - leftPaddle.height/2;
+                    }
+                }
+            }
+            onScore: {
+                scoreLeft.text = left;
+                scoreRight.text = right;
+            }
+        }
+    }
 }

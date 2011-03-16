@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the examples of the Qt Mobility Components.
+** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:BSD$
 ** You may use this file under the terms of the BSD license as follows:
@@ -38,36 +38,66 @@
 **
 ****************************************************************************/
 
-#include <QtGui/QApplication>
-#include <QDeclarativeView>
-#include <QDeclarativeEngine>
-#include <qdeclarative.h>
+#ifndef CONTROLLER_H
+#define CONTROLLER_H
 
-#include <QDebug>
+#include <QObject>
+#include <QTimer>
+#include <QTime>
+#include "../../bttennis/board.h"
 
-#include "controller.h"
+#define TOP 1
+#define BOTTOM 2
+#define LEFT 3
+#define RIGHT 4
 
-int main(int argc, char *argv[])
+class Controller : public QObject
 {
-    QApplication application(argc, argv);
+    Q_OBJECT
+public:
+    explicit Controller(QObject *parent = 0);
 
-    qmlRegisterType<Controller>("Controller", 1, 0, "Controller");
+signals:
+    void moveBall(int x, int y);
+    void score(int left, int right);    
 
-    const QString mainQmlApp = QLatin1String("qrc:/tennis.qml");
-    QDeclarativeView view;
-    view.setSource(QUrl(mainQmlApp));
-    view.setResizeMode(QDeclarativeView::SizeRootObjectToView);
-    // Qt.quit() called in embedded .qml by default only emits
-    // quit() signal, so do this (optionally use Qt.exit()).
-    QObject::connect(view.engine(), SIGNAL(quit()), qApp, SLOT(quit()));
-#if defined(Q_OS_SYMBIAN)
-    view.showFullScreen();
-#elif defined(Q_WS_MAEMO_6)
-    view.setGeometry(QRect(0, 0, 640, 480));
-    view.showFullScreen();
-#else // Q_OS_SYMBIAN
-    view.setGeometry(QRect(100, 100, 640, 360));
-    view.show();
-#endif // Q_OS_SYMBIAN
-    return application.exec();
-}
+public slots:
+    void ballCollision(int pos);
+    void scored(int pos);
+    void resetBoard();
+    void refresh();
+
+    void moveLeftPaddle(int y);
+    void moveRightPaddle(int y);    
+
+    void start();
+    void stop();
+
+private slots:
+    void tick();
+
+private:
+    QTimer *timer;
+    QTime *elapsed;
+    QTime *elapsedPaddle;
+    int ball_x;
+    int speed_x;
+    int ball_y;
+    int speed_y;
+    int score_left;
+    int score_right;
+    int col_x;
+    int col_y;
+
+    int rightPaddleForce;
+    int leftPaddleForce;
+    int rightPaddleLast;
+    int leftPaddleLast;
+    int rightPowerUp;
+    int leftPowerUp;
+
+    void restart_ball();
+
+};
+
+#endif // CONTROLLER_H

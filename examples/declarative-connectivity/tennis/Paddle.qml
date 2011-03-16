@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -38,36 +38,30 @@
 **
 ****************************************************************************/
 
-#include <QtGui/QApplication>
-#include <QDeclarativeView>
-#include <QDeclarativeEngine>
-#include <qdeclarative.h>
+import QtQuick 1.0
+import QtMobility.connectivity 1.2
 
-#include <QDebug>
+Rectangle {
+    id: paddle
 
-#include "controller.h"
+    property int paddlePos: page.height/2;
+    property bool rateLimit: false
 
-int main(int argc, char *argv[])
-{
-    QApplication application(argc, argv);
+    color: fg
+    x: 0; width: 12; height: 50; y: parent.height/2-height/2;
 
-    qmlRegisterType<Controller>("Controller", 1, 0, "Controller");
-
-    const QString mainQmlApp = QLatin1String("qrc:/tennis.qml");
-    QDeclarativeView view;
-    view.setSource(QUrl(mainQmlApp));
-    view.setResizeMode(QDeclarativeView::SizeRootObjectToView);
-    // Qt.quit() called in embedded .qml by default only emits
-    // quit() signal, so do this (optionally use Qt.exit()).
-    QObject::connect(view.engine(), SIGNAL(quit()), qApp, SLOT(quit()));
-#if defined(Q_OS_SYMBIAN)
-    view.showFullScreen();
-#elif defined(Q_WS_MAEMO_6)
-    view.setGeometry(QRect(0, 0, 640, 480));
-    view.showFullScreen();
-#else // Q_OS_SYMBIAN
-    view.setGeometry(QRect(100, 100, 640, 360));
-    view.show();
-#endif // Q_OS_SYMBIAN
-    return application.exec();
+    Behavior on y { SpringAnimation{ damping: 0.5; spring: 4.5; velocity: 400 } }
+    onPaddlePosChanged: {
+        if(paddlePos < topBumper.height)
+            y = topBumper.height;
+        else if(paddlePos > page.height-bottomBumper.height-height)
+            y = page.height-bottomBumper.height-height;
+        else
+            y = paddlePos;
+    }
+    Timer {
+        interval: 30
+        running: paddle.rateLimit
+        onTriggered: paddle.rateLimit = false;
+    }
 }
