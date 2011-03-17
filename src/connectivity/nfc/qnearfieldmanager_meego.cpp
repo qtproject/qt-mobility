@@ -179,8 +179,14 @@ QNearFieldTarget *QNearFieldManagerPrivateImpl::targetForPath(const QString &pat
             Tag *tag = new Tag(QLatin1String("com.nokia.nfc"), path, m_connection);
 
             const QString tagTechnology = tag->technology();
-            if (tagTechnology == QLatin1String("TagType1"))
+            if (tagTechnology == QLatin1String("jewel"))
                 nearFieldTarget = new TagType1(this, target, tag);
+            else if (tagTechnology == QLatin1String("mifare-ul"))
+                nearFieldTarget = new TagType2(this, target, tag);
+            else if (tagTechnology == QLatin1String("felica"))
+                nearFieldTarget = new TagType3(this, target, tag);
+            else if (tagTechnology == QLatin1String("iso-4a"))
+                nearFieldTarget = new TagType4(this, target, tag);
             else
                 nearFieldTarget = new NearFieldTarget<QNearFieldTarget>(this, target, tag);
         } else if (type == QLatin1String("device")) {

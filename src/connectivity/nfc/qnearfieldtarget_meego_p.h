@@ -49,6 +49,9 @@
 #include <qnearfieldtarget.h>
 #include <qnearfieldtarget_p.h>
 #include <qnearfieldtagtype1.h>
+#include <qnearfieldtagtype2.h>
+#include <qnearfieldtagtype3.h>
+#include <qnearfieldtagtype4.h>
 #include <qndefmessage.h>
 
 #include "meego/adapter_interface_p.h"
@@ -107,14 +110,21 @@ public:
 
     QNearFieldTarget::Type type() const
     {
+        if (!m_tag)
+            return QNearFieldTarget::NfcForumDevice;
+
         return T::type();
     }
 
     QNearFieldTarget::AccessMethods accessMethods() const
     {
         QNearFieldTarget::AccessMethods result = QNearFieldTarget::NdefAccess;
+#ifdef MAEMO6_TAG_TYPE_SEPECIFIC_ACCESS_SUPPORTED
         if (m_tag)
             result |= QNearFieldTarget::TagTypeSpecificAccess;
+#endif
+        if (!m_tag)
+            result |= QNearFieldTarget::LlcpAccess;
 
         return result;
     }
@@ -191,15 +201,15 @@ template <>
 inline QNearFieldTarget::Type NearFieldTarget<QNearFieldTarget>::type() const
 {
     const QString tagType = m_tag->technology();
-    if (tagType == QLatin1String("TagType1"))
+    if (tagType == QLatin1String("jewel"))
         return QNearFieldTarget::NfcTagType1;
-    else if (tagType == QLatin1String("TagType2"))
+    else if (tagType == QLatin1String("mifare-ul"))
         return QNearFieldTarget::NfcTagType2;
-    else if (tagType == QLatin1String("TagType3"))
+    else if (tagType == QLatin1String("felica"))
         return QNearFieldTarget::NfcTagType3;
-    else if (tagType == QLatin1String("TagType4"))
+    else if (tagType == QLatin1String("iso-4a"))
         return QNearFieldTarget::NfcTagType4;
-    else if (tagType == QLatin1String("Mifare"))
+    else if (tagType == QLatin1String("mifare-1k"))
         return QNearFieldTarget::MifareTag;
     else
         return QNearFieldTarget::ProprietaryTag;
@@ -214,6 +224,51 @@ public:
     }
 
     ~TagType1()
+    {
+    }
+
+    int memorySize() const;
+};
+
+class TagType2 : public NearFieldTarget<QNearFieldTagType2>
+{
+public:
+    TagType2(QNearFieldManagerPrivateImpl *manager, Target *target, Tag *tag)
+    :   NearFieldTarget<QNearFieldTagType2>(manager, target, tag)
+    {
+    }
+
+    ~TagType2()
+    {
+    }
+
+    int memorySize() const;
+};
+
+class TagType3 : public NearFieldTarget<QNearFieldTagType3>
+{
+public:
+    TagType3(QNearFieldManagerPrivateImpl *manager, Target *target, Tag *tag)
+    :   NearFieldTarget<QNearFieldTagType3>(manager, target, tag)
+    {
+    }
+
+    ~TagType3()
+    {
+    }
+
+    int memorySize() const;
+};
+
+class TagType4 : public NearFieldTarget<QNearFieldTagType4>
+{
+public:
+    TagType4(QNearFieldManagerPrivateImpl *manager, Target *target, Tag *tag)
+    :   NearFieldTarget<QNearFieldTagType4>(manager, target, tag)
+    {
+    }
+
+    ~TagType4()
     {
     }
 

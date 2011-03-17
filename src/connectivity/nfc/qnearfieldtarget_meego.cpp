@@ -138,6 +138,21 @@ int TagType1::memorySize() const
     return m_tag->size();
 }
 
+int TagType2::memorySize() const
+{
+    return m_tag->size();
+}
+
+int TagType3::memorySize() const
+{
+    return m_tag->size();
+}
+
+int TagType4::memorySize() const
+{
+    return m_tag->size();
+}
+
 #include <moc_qnearfieldtarget_meego_p.cpp>
 
 QTM_END_NAMESPACE
