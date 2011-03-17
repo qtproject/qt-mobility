@@ -123,6 +123,7 @@ public:
 
     QString networkName(QSystemNetworkInfo::NetworkMode mode);
     QString macAddress(QSystemNetworkInfo::NetworkMode mode);
+    QSystemNetworkInfo::CellDataTechnology cellDataTechnology();
 
 public Q_SLOTS:
 #if !defined(QT_NO_NETWORKMANAGER)
@@ -174,8 +175,6 @@ public:
     int xErrorBase;
     int lastRotation;
 #endif
-Q_SIGNALS:
-    void orientationChanged(QSystemDisplayInfo::DisplayOrientation newOrientation);
 
 private:
     static QSystemDisplayInfoPrivate *self;

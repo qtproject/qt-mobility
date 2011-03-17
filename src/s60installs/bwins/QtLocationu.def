@@ -1699,4 +1699,5 @@ EXPORTS
 	?sourcePriority@QGeoPositionInfoSourceFactory@QtMobility@@UBEHXZ @ 1698 NONAME ; int QtMobility::QGeoPositionInfoSourceFactory::sourcePriority(void) const
 	??1QGeoPositionInfoSourceFactory@QtMobility@@UAE@XZ @ 1699 NONAME ; QtMobility::QGeoPositionInfoSourceFactory::~QGeoPositionInfoSourceFactory(void)
 	??_EQGeoPositionInfoSourceFactory@QtMobility@@UAE@I@Z @ 1700 NONAME ; QtMobility::QGeoPositionInfoSourceFactory::~QGeoPositionInfoSourceFactory(unsigned int)
+	?setConnectivityMode@QGeoTiledMapData@QtMobility@@UAEXW4ConnectivityMode@QGraphicsGeoMap@2@@Z @ 1701 NONAME ; void QtMobility::QGeoTiledMapData::setConnectivityMode(enum QtMobility::QGraphicsGeoMap::ConnectivityMode)
 

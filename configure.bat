@@ -613,6 +613,9 @@ call :compileTest MDS_25_92MCL mds_25_92mcl
 call :compileTest Symbian_NFC nfc
 call :compileTest BTEngineConnectionManager_Symbian btengconnman_symbian
 call :compileTest BTEngineDeviceManager_Symbian btengdevman_symbian
+call :compileTest LockandFlipKeys LockandFlipPSkeys
+call :compileTest FmTxClientCheck FmTxClient
+call :compileTest DiskNotifyClientCheck DiskNotifyClient
 goto noTests
 
 :windowsTests
