@@ -107,6 +107,7 @@ private:
     Q_DECLARE_PRIVATE(QGeoTiledMapData)
     Q_DISABLE_COPY(QGeoTiledMapData)
     friend class QGeoTiledMappingManagerEngine;
+    friend class QGeoTiledMapObjectInfo;
 };
 
 QTM_END_NAMESPACE

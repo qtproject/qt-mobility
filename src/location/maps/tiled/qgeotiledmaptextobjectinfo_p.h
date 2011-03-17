@@ -39,35 +39,56 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOMAPGROUPOBJECT_P_H
-#define QGEOMAPGROUPOBJECT_P_H
+#ifndef QGEOTILEDMAPTEXTOBJECT_INFO_P_H
+#define QGEOTILEDMAPTEXTOBJECT_INFO_P_H
 
-#include "qgeomapobject.h"
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
-#include <QObject>
-#include <QList>
+#include "qgeotiledmapobjectinfo_p.h"
+#include "qgeoboundingbox.h"
+
+#include <QFont>
+#include <QPen>
+#include <QBrush>
+
+class QGraphicsSimpleTextItem;
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoMapGroupObject;
+class QGeoMapTextObject;
 
-class QGeoMapGroupObjectPrivate : public QObject
+class QGeoTiledMapTextObjectInfo : public QGeoTiledMapObjectInfo
 {
     Q_OBJECT
 public:
-    QGeoMapGroupObjectPrivate(QGeoMapGroupObject *p);
-    ~QGeoMapGroupObjectPrivate();
+    QGeoTiledMapTextObjectInfo(QGeoTiledMapData *mapData, QGeoMapObject *mapObject);
+    ~QGeoTiledMapTextObjectInfo();
 
-    QList<QGeoMapObject *> children;
-    quint32 serial;
+    QGeoMapTextObject* text;
+    QGraphicsSimpleTextItem *textItem;
 
 public slots:
-    void childChangedZValue(int zValue);
+    void textChanged(const QString &text);
+    void fontChanged(const QFont &font);
+    void penChanged(const QPen &pen);
+    void brushChanged(const QBrush &brush);
+    void offsetChanged(const QPoint &offset);
+    void alignmentChanged(Qt::Alignment alignment);
 
 private:
-    QGeoMapGroupObject *q_ptr;
+    void doAlignment();
 };
 
 QTM_END_NAMESPACE
 
-#endif
+#endif //QGEOTILEDMAPTEXTOBJECT_INFO_P_H
+

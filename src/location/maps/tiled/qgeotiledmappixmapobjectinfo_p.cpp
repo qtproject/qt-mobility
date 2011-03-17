@@ -39,35 +39,53 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOMAPGROUPOBJECT_P_H
-#define QGEOMAPGROUPOBJECT_P_H
+#include "qgeotiledmappixmapobjectinfo_p.h"
 
-#include "qgeomapobject.h"
+#include "qgeotiledmapdata.h"
+#include "qgeotiledmapdata_p.h"
 
-#include <QObject>
-#include <QList>
+#include "qgeomappixmapobject.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoMapGroupObject;
-
-class QGeoMapGroupObjectPrivate : public QObject
+QGeoTiledMapPixmapObjectInfo::QGeoTiledMapPixmapObjectInfo(QGeoTiledMapData *mapData, QGeoMapObject *mapObject)
+    : QGeoTiledMapObjectInfo(mapData, mapObject)
 {
-    Q_OBJECT
-public:
-    QGeoMapGroupObjectPrivate(QGeoMapGroupObject *p);
-    ~QGeoMapGroupObjectPrivate();
+    pixmap = static_cast<QGeoMapPixmapObject*>(mapObject);
 
-    QList<QGeoMapObject *> children;
-    quint32 serial;
+    connect(pixmap,
+            SIGNAL(pixmapChanged(QPixmap)),
+            this,
+            SLOT(pixmapChanged(QPixmap)));
+    connect(pixmap,
+            SIGNAL(offsetChanged(QPoint)),
+            this,
+            SLOT(offsetChanged(QPoint)));
 
-public slots:
-    void childChangedZValue(int zValue);
+    pixmapItem = new QGraphicsPixmapItem();
+    graphicsItem = pixmapItem;
 
-private:
-    QGeoMapGroupObject *q_ptr;
-};
+    originChanged(this->pixmap->origin());
+    pixmapChanged(this->pixmap->pixmap());
+    offsetChanged(this->pixmap->offset());
+}
+
+QGeoTiledMapPixmapObjectInfo::~QGeoTiledMapPixmapObjectInfo() {}
+
+void QGeoTiledMapPixmapObjectInfo::pixmapChanged(const QPixmap &/*pixmap*/)
+{
+    pixmapItem->setPixmap(this->pixmap->pixmap());
+    pixmapItem->setScale(1.0);
+    updateItem();
+}
+
+void QGeoTiledMapPixmapObjectInfo::offsetChanged(const QPoint &/*offset*/)
+{
+    pixmapItem->setOffset(pixmap->offset());
+    updateItem();
+}
+
+#include "moc_qgeotiledmappixmapobjectinfo_p.cpp"
 
 QTM_END_NAMESPACE
 
-#endif

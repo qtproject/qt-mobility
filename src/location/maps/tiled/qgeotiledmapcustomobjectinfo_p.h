@@ -39,35 +39,47 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOMAPGROUPOBJECT_P_H
-#define QGEOMAPGROUPOBJECT_P_H
+#ifndef QGEOTILEDMAPCUSTOMOBJECT_INFO_P_H
+#define QGEOTILEDMAPCUSTOMOBJECT_INFO_P_H
 
-#include "qgeomapobject.h"
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
-#include <QObject>
-#include <QList>
+#include "qgeotiledmapobjectinfo_p.h"
+#include "qgeoboundingbox.h"
+
+#include <QPixmap>
+
+class QGraphicsPixmapItem;
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoMapGroupObject;
+class QGeoMapCustomObject;
 
-class QGeoMapGroupObjectPrivate : public QObject
+class QGeoTiledMapCustomObjectInfo : public QGeoTiledMapObjectInfo
 {
     Q_OBJECT
 public:
-    QGeoMapGroupObjectPrivate(QGeoMapGroupObject *p);
-    ~QGeoMapGroupObjectPrivate();
+    QGeoTiledMapCustomObjectInfo(QGeoTiledMapData *mapData, QGeoMapObject *mapObject);
+    ~QGeoTiledMapCustomObjectInfo();
 
-    QList<QGeoMapObject *> children;
-    quint32 serial;
+    QGeoMapCustomObject* custom;
 
 public slots:
-    void childChangedZValue(int zValue);
-
-private:
-    QGeoMapGroupObject *q_ptr;
+    void updateTriggered();
+    void graphicsItemChanged(QGraphicsItem *graphicsItem);
+    void offsetChanged(const QPoint &offset);
 };
 
 QTM_END_NAMESPACE
 
-#endif
+#endif //QGEOTILEDMAPCUSTOMOBJECT_INFO_P_H
+

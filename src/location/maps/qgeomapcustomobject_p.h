@@ -39,33 +39,25 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOMAPGROUPOBJECT_P_H
-#define QGEOMAPGROUPOBJECT_P_H
+#ifndef QGEOMAPCUSTOMOBJECT_P_H
+#define QGEOMAPCUSTOMOBJECT_P_H
 
-#include "qgeomapobject.h"
+#include "qgeocoordinate.h"
 
-#include <QObject>
-#include <QList>
+#include <QPoint>
+
+class QGraphicsItem;
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoMapGroupObject;
-
-class QGeoMapGroupObjectPrivate : public QObject
+class QGeoMapCustomObjectPrivate
 {
-    Q_OBJECT
 public:
-    QGeoMapGroupObjectPrivate(QGeoMapGroupObject *p);
-    ~QGeoMapGroupObjectPrivate();
+    QGeoMapCustomObjectPrivate();
+    ~QGeoMapCustomObjectPrivate();
 
-    QList<QGeoMapObject *> children;
-    quint32 serial;
-
-public slots:
-    void childChangedZValue(int zValue);
-
-private:
-    QGeoMapGroupObject *q_ptr;
+    QGraphicsItem *graphicsItem;
+    QPoint offset;
 };
 
 QTM_END_NAMESPACE

@@ -39,35 +39,50 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOMAPGROUPOBJECT_P_H
-#define QGEOMAPGROUPOBJECT_P_H
+#ifndef QGEOTILEDMAPPOLYLINEOBJECT_INFO_P_H
+#define QGEOTILEDMAPPOLYLINEOBJECT_INFO_P_H
 
-#include "qgeomapobject.h"
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
-#include <QObject>
-#include <QList>
+#include "qgeotiledmapobjectinfo_p.h"
+
+#include <QPen>
+#include <QPolygonF>
+
+class QGraphicsPathItem;
+class QPointF;
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoMapGroupObject;
+class QGeoMapPolylineObject;
 
-class QGeoMapGroupObjectPrivate : public QObject
+class QGeoTiledMapPolylineObjectInfo : public QGeoTiledMapObjectInfo
 {
     Q_OBJECT
 public:
-    QGeoMapGroupObjectPrivate(QGeoMapGroupObject *p);
-    ~QGeoMapGroupObjectPrivate();
+    QGeoTiledMapPolylineObjectInfo(QGeoTiledMapData *mapData, QGeoMapObject *mapObject);
+    ~QGeoTiledMapPolylineObjectInfo();
 
-    QList<QGeoMapObject *> children;
-    quint32 serial;
+    QGeoMapPolylineObject *polyline;
+    QGraphicsPathItem *pathItem;
 
 public slots:
-    void childChangedZValue(int zValue);
+    void pathChanged(const QList<QGeoCoordinate> &path);
+    void penChanged(const QPen &pen);
 
 private:
-    QGeoMapGroupObject *q_ptr;
+    void genPath();
 };
 
 QTM_END_NAMESPACE
 
-#endif
+#endif //QGEOTILEDMAPPOLYLINEOBJECT_INFO_P_H

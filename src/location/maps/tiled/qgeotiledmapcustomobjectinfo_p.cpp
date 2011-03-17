@@ -39,35 +39,62 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOMAPGROUPOBJECT_P_H
-#define QGEOMAPGROUPOBJECT_P_H
+#include "qgeotiledmapcustomobjectinfo_p.h"
 
-#include "qgeomapobject.h"
+#include "qgeotiledmapdata.h"
+#include "qgeotiledmapdata_p.h"
 
-#include <QObject>
-#include <QList>
+#include "qgeomapcustomobject.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoMapGroupObject;
-
-class QGeoMapGroupObjectPrivate : public QObject
+QGeoTiledMapCustomObjectInfo::QGeoTiledMapCustomObjectInfo(QGeoTiledMapData *mapData, QGeoMapObject *mapObject)
+    : QGeoTiledMapObjectInfo(mapData, mapObject)
 {
-    Q_OBJECT
-public:
-    QGeoMapGroupObjectPrivate(QGeoMapGroupObject *p);
-    ~QGeoMapGroupObjectPrivate();
+    custom = static_cast<QGeoMapCustomObject*>(mapObject);
 
-    QList<QGeoMapObject *> children;
-    quint32 serial;
+    connect(custom,
+            SIGNAL(triggerUpdate()),
+            this,
+            SLOT(updateTriggered()));
+    connect(custom,
+            SIGNAL(graphicsItemChanged(QGraphicsItem*)),
+            this,
+            SLOT(graphicsItemChanged(QGraphicsItem*)));
+    connect(custom,
+            SIGNAL(offsetChanged(QPoint)),
+            this,
+            SLOT(offsetChanged(QPoint)));
 
-public slots:
-    void childChangedZValue(int zValue);
+    graphicsItem = 0;
 
-private:
-    QGeoMapGroupObject *q_ptr;
-};
+    graphicsItemChanged(this->custom->graphicsItem());
+    offsetChanged(this->custom->offset());
+}
+
+QGeoTiledMapCustomObjectInfo::~QGeoTiledMapCustomObjectInfo()
+{
+    //custom->setGraphicsItem(0);
+}
+
+void QGeoTiledMapCustomObjectInfo::updateTriggered()
+{
+    updateItem();
+}
+
+void QGeoTiledMapCustomObjectInfo::graphicsItemChanged(QGraphicsItem * /*graphicsItem*/)
+{
+    graphicsItem = this->custom->graphicsItem();
+    updateItem();
+}
+
+void QGeoTiledMapCustomObjectInfo::offsetChanged(const QPoint &/*offset*/)
+{
+    graphicsItem->setPos(custom->offset());
+    updateItem();
+}
+
+#include "moc_qgeotiledmapcustomobjectinfo_p.cpp"
 
 QTM_END_NAMESPACE
 
-#endif

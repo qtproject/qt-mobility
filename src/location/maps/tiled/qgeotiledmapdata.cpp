@@ -49,6 +49,20 @@
 #include "qgeoboundingbox.h"
 #include "qgeomapoverlay.h"
 #include "projwrapper_p.h"
+#include "qgeomapobjectengine_p.h"
+
+#include "qgeotiledmapobjectinfo_p.h"
+#include "qgeotiledmapcircleobjectinfo_p.h"
+#include "qgeotiledmapgroupobjectinfo_p.h"
+#include "qgeotiledmappixmapobjectinfo_p.h"
+#include "qgeotiledmappolygonobjectinfo_p.h"
+#include "qgeotiledmappolylineobjectinfo_p.h"
+#include "qgeotiledmaprectangleobjectinfo_p.h"
+#include "qgeotiledmaprouteobjectinfo_p.h"
+#include "qgeotiledmaptextobjectinfo_p.h"
+#include "qgeotiledmapcustomobjectinfo_p.h"
+
+#include "qgeomaptextobject.h"
 
 #include <QTimer>
 #include <QImage>
@@ -56,9 +70,9 @@
 
 #include <QDebug>
 
-#define DEFAULT_ZOOMLEVEL 8
+//#define DEFAULT_ZOOMLEVEL 8
 #define PI 3.14159265
-#define HIT_DETECTION_COLOR qRgba(0, 0, 255, 127) //semi-transparent blue
+//#define HIT_DETECTION_COLOR qRgba(0, 0, 255, 127) //semi-transparent blue
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
@@ -122,9 +136,6 @@ QGeoTiledMapData::QGeoTiledMapData(QGeoMappingManagerEngine *engine)
 
     d->worldReferenceSize = (1 << qRound(tileEngine->maximumZoomLevel())) * tileEngine->tileSize();
 
-    d->scene = new QGraphicsScene(QRectF(QPointF(0.0, 0.0), d->worldReferenceSize));
-    d->scene->setItemIndexMethod(QGraphicsScene::NoIndex);
-
     // TODO get this from the engine, which should give different values depending on if this is running on a device or not
 #if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE_WM) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
     d->cache.setMaxCost(5 * 1024 * 1024);
@@ -157,8 +168,8 @@ QPointF QGeoTiledMapDataPrivate::coordinateToScreenPosition(double lon, double l
     QPoint pos(coordinateToWorldReferencePosition(lon, lat));
 
     const int x = pos.x() - worldReferenceViewportRect.left();
-    //if (x < 0)
-    //    x += worldReferenceSize.width();
+//    if (x < 0)
+//        x += worldReferenceSize.width();
 
     const int y = pos.y() - worldReferenceViewportRect.top();
 
@@ -173,10 +184,6 @@ QPointF QGeoTiledMapDataPrivate::coordinateToScreenPosition(double lon, double l
 QPointF QGeoTiledMapData::coordinateToScreenPosition(const QGeoCoordinate &coordwgs) const
 {
     Q_D(const QGeoTiledMapData);
-
-    //ProjCoordinate c(coordwgs.longitude(), coordwgs.latitude(), 0.0, d->wgs84);
-    //c.convert(d->spherical);
-
     return d->coordinateToScreenPosition(coordwgs.longitude(), coordwgs.latitude());
 }
 
@@ -316,6 +323,8 @@ void QGeoTiledMapData::setCenter(const QGeoCoordinate &center)
     d->updateMapImage();
 
     QGeoMapData::setCenter(center);
+    d->oe->invalidatePixelsForViewport();
+    d->oe->trimPixelTransforms();
 }
 
 /*!
@@ -388,6 +397,10 @@ void QGeoTiledMapData::setZoomLevel(qreal zoomLevelf)
     int zoomLevel = qRound(zoomLevelf);
 
     QGeoMapData::setZoomLevel(zoomLevel);
+
+    d->oe->invalidateZoomDependents();
+    d->oe->invalidatePixelsForViewport();
+    d->oe->trimPixelTransforms();
 
     // QGeoMapData::setZoomLevel clips the zoom level to be
     // in between the minimum and maximum zoom levels
@@ -506,6 +519,9 @@ void QGeoTiledMapData::setWindowSize(const QSizeF &size)
 
     QGeoMapData::setWindowSize(size);
 
+    d->oe->invalidatePixelsForViewport();
+    d->oe->trimPixelTransforms();
+
     d->updateScreenRect();
 
     emit windowSizeChanged(d->windowSize);
@@ -540,6 +556,8 @@ void QGeoTiledMapData::pan(int dx, int dy)
     QGeoCoordinate centerCoord = center();
 
     QGeoMapData::setCenter(centerCoord);
+    d->oe->invalidatePixelsForViewport();
+    d->oe->trimPixelTransforms();
 
     d->updateScreenRect();
 
@@ -612,7 +630,8 @@ void QGeoTiledMapData::paintMap(QPainter *painter, const QStyleOptionGraphicsIte
 */
 void QGeoTiledMapData::paintObjects(QPainter *painter, const QStyleOptionGraphicsItem *option)
 {
-    QGeoMapData::paintObjects(painter, option);
+    Q_D(QGeoTiledMapData);
+    d->paintObjects(painter, option);
 }
 
 /*!
@@ -620,9 +639,28 @@ void QGeoTiledMapData::paintObjects(QPainter *painter, const QStyleOptionGraphic
 */
 QGeoMapObjectInfo *QGeoTiledMapData::createMapObjectInfo(QGeoMapObject *mapObject)
 {
-    Q_UNUSED(mapObject);
-    qWarning("QGeoTiledMapData::createMapObjectInfo is obsolete, returning NULL");
-    return 0;
+    switch (mapObject->type()) {
+        case QGeoMapObject::GroupType:
+            return new QGeoTiledMapGroupObjectInfo(this, mapObject);
+        case QGeoMapObject::RectangleType:
+            return new QGeoTiledMapRectangleObjectInfo(this, mapObject);
+        case QGeoMapObject::CircleType:
+            return  new QGeoTiledMapCircleObjectInfo(this, mapObject);
+        case QGeoMapObject::PolylineType:
+            return  new QGeoTiledMapPolylineObjectInfo(this, mapObject);
+        case QGeoMapObject::PolygonType:
+            return  new QGeoTiledMapPolygonObjectInfo(this, mapObject);
+        case QGeoMapObject::PixmapType:
+            return  new QGeoTiledMapPixmapObjectInfo(this, mapObject);
+        case QGeoMapObject::TextType:
+            return  new QGeoTiledMapTextObjectInfo(this, mapObject);
+        case QGeoMapObject::RouteType:
+            return  new QGeoTiledMapRouteObjectInfo(this, mapObject);
+        case QGeoMapObject::CustomType:
+            return  new QGeoTiledMapCustomObjectInfo(this, mapObject);
+        default:
+            return 0;
+    }
 }
 
 void QGeoTiledMapData::processRequests()
@@ -793,7 +831,76 @@ void QGeoTiledMapData::tileError(QGeoTiledMapReply::Error error, QString errorSt
 */
 QList<QGeoMapObject*> QGeoTiledMapData::mapObjectsAtScreenPosition(const QPointF &screenPosition) const
 {
-    return QGeoMapData::mapObjectsAtScreenPosition(screenPosition);
+    if (screenPosition.isNull())
+        return QList<QGeoMapObject*>();
+
+    Q_D(const QGeoTiledMapData);
+
+    QList<QGeoMapObject*> results;
+    QSet<QGeoMapObject*> considered;
+
+    d->oe->updateTransforms();
+
+    QList<QGraphicsItem*> pixelItems;
+    pixelItems = d->oe->pixelScene->items(QRectF(screenPosition - QPointF(1,1),
+                                             screenPosition + QPointF(1,1)),
+                                      Qt::IntersectsItemShape,
+                                      Qt::AscendingOrder);
+
+    foreach (QGraphicsItem *item, pixelItems) {
+        QGeoMapObject *object = d->oe->pixelItems.value(item);
+        Q_ASSERT(object);
+
+        if (object->isVisible() && !considered.contains(object)) {
+            bool contains = false;
+
+            if (d->oe->pixelExact.contains(object)) {
+                foreach (QGraphicsItem *item, d->oe->pixelExact.values(object)) {
+                    if (item->shape().contains(screenPosition)) {
+                        contains = true;
+                        break;
+                    }
+                }
+            } else {
+                QGraphicsItem *item
+                        = d->oe->graphicsItemFromMapObject(object);
+
+                if (item) {
+                    QList<QTransform> trans = d->oe->pixelTrans.values(object);
+
+                    foreach (QTransform t, trans) {
+                        bool ok;
+                        QTransform inv = t.inverted(&ok);
+                        if (ok) {
+                            QPointF testPt = screenPosition * inv;
+
+                            // we have to special case text objects here
+                            // in order to maintain their old (1.1) behaviour
+                            QGeoMapTextObject *tobj = qobject_cast<QGeoMapTextObject*>(object);
+                            if (tobj) {
+                                if (item->boundingRect().contains(testPt)) {
+                                    contains = true;
+                                    break;
+                                }
+                            } else {
+                                if (item->shape().contains(testPt)) {
+                                    contains = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (contains)
+                results << object;
+
+            considered.insert(object);
+        }
+    }
+
+    return results;
 }
 
 /*!
@@ -801,7 +908,63 @@ QList<QGeoMapObject*> QGeoTiledMapData::mapObjectsAtScreenPosition(const QPointF
 */
 QList<QGeoMapObject*> QGeoTiledMapData::mapObjectsInScreenRect(const QRectF &screenRect) const
 {
-    return QGeoMapData::mapObjectsInScreenRect(screenRect);
+    QList<QGeoMapObject*> results;
+    QSet<QGeoMapObject*> considered;
+
+    Q_D(const QGeoTiledMapData);
+
+    d->oe->updateTransforms();
+
+    QList<QGraphicsItem*> pixelItems = d->oe->pixelScene->items(screenRect,
+                                                            Qt::IntersectsItemShape,
+                                                            Qt::AscendingOrder);
+
+    foreach (QGraphicsItem *item, pixelItems) {
+        QGeoMapObject *object = d->oe->pixelItems.value(item);
+        Q_ASSERT(object);
+
+        if (object->isVisible() && !considered.contains(object)) {
+            bool contains = false;
+
+            if (d->oe->pixelExact.contains(object)) {
+                foreach (QGraphicsItem *item, d->oe->pixelExact.values(object))
+                    if (item->shape().intersects(screenRect))
+                        contains = true;
+            } else {
+                QGraphicsItem *item
+                        = d->oe->graphicsItemFromMapObject(object);
+
+                if (item) {
+                    QList<QTransform> trans = d->oe->pixelTrans.values(object);
+
+                    foreach (QTransform t, trans) {
+                        bool ok;
+                        QTransform inv = t.inverted(&ok);
+                        if (ok) {
+                            QPolygonF testPoly = screenRect * inv;
+
+                            QPainterPath testPath;
+                            testPath.moveTo(testPoly[0]);
+                            testPath.lineTo(testPoly[1]);
+                            testPath.lineTo(testPoly[2]);
+                            testPath.lineTo(testPoly[3]);
+                            testPath.closeSubpath();
+
+                            if (item->shape().intersects(testPath))
+                                contains = true;
+                        }
+                    }
+                }
+            }
+
+            if (contains)
+                results << object;
+
+            considered.insert(object);
+        }
+    }
+
+    return results;
 }
 
 /*!
@@ -859,12 +1022,10 @@ void QGeoTiledMapData::triggerUpdateMapDisplay(const QRectF &target)
 
 QGeoTiledMapDataPrivate::QGeoTiledMapDataPrivate(QGeoTiledMapData *parent, QGeoMappingManagerEngine *engine)
     : QGeoMapDataPrivate(parent, engine),
-    zoomFactor(0),
-    spherical("+proj=latlon +ellps=sphere"),
-    wgs84("+proj=latlon +ellps=WGS84"),
-    scene(0)
-{
-}
+      oe(new QGeoMapObjectEngine(parent, this)),
+      zoomFactor(0),
+      spherical("+proj=latlon +ellps=sphere"),
+      wgs84("+proj=latlon +ellps=WGS84") {}
 
 QGeoTiledMapDataPrivate::~QGeoTiledMapDataPrivate()
 {
@@ -873,27 +1034,8 @@ QGeoTiledMapDataPrivate::~QGeoTiledMapDataPrivate()
         reply->deleteLater();
     }
 
-    //before the model(scene) is destroyed , let the info object bound to this scene
-    //be destoryed.
-
-    QList<QGraphicsItem*> keys = itemMap.keys();
-
-    foreach(QGraphicsItem * object, keys) {
-
-        QGeoMapObject* o = itemMap.value(object);
-
-        //check if we have still this info object ,
-        //since it could be already removed
-        //by previous loop in case of group object
-
-        if (o != 0) o->setMapData(0);
-    }
-
-    itemMap.clear();
-
-
-    if (scene)
-        delete scene;
+    if (oe)
+        delete oe;
 }
 
 void QGeoTiledMapDataPrivate::updateMapImage()
@@ -979,6 +1121,58 @@ void QGeoTiledMapDataPrivate::paintMap(QPainter *painter, const QStyleOptionGrap
             }
         }
     }
+}
+
+void QGeoTiledMapDataPrivate::paintObjects(QPainter *painter, const QStyleOptionGraphicsItem * option)
+{
+    painter->setRenderHint(QPainter::Antialiasing);
+
+    QRectF target = option ? option->rect : QRectF(QPointF(0,0), windowSize);
+
+    oe->updateTransforms();
+
+    QList<QGraphicsItem*> items = oe->pixelScene->items(target,
+                                                       Qt::IntersectsItemShape,
+                                                       Qt::AscendingOrder);
+    QSet<QGeoMapObject*> objsDone;
+
+    QTransform baseTrans = painter->transform();
+
+    foreach (QGraphicsItem *item, items) {
+        QGeoMapObject *object = oe->pixelItems.value(item);
+        Q_ASSERT(object);
+        if (object->isVisible() && !objsDone.contains(object)) {
+            if (oe->pixelExact.contains(object)) {
+                foreach (QGraphicsItem *it, oe->pixelExact.values(object)) {
+                    painter->setTransform(baseTrans);
+
+                    QStyleOptionGraphicsItem *style = new QStyleOptionGraphicsItem;
+                    it->paint(painter, style);
+                    delete style;
+                }
+            } else {
+                QGraphicsItem *item = oe->graphicsItemFromMapObject(object);
+                if (item) {
+                    foreach (QTransform trans, oe->pixelTrans.values(object)) {
+                        painter->setTransform(trans * baseTrans);
+
+                        QStyleOptionGraphicsItem *style = new QStyleOptionGraphicsItem;
+                        item->paint(painter, style);
+                        foreach (QGraphicsItem *child, item->children()) {
+                            painter->setTransform(child->transform() * trans * baseTrans);
+                            painter->translate(child->pos());
+                            child->paint(painter, style);
+                        }
+
+                        delete style;
+                    }
+                }
+            }
+            objsDone.insert(object);
+        }
+    }
+
+    painter->setTransform(baseTrans);
 }
 
 void QGeoTiledMapDataPrivate::cleanupCaches()
@@ -1105,6 +1299,54 @@ QList<QPair<QRect, QRect> > QGeoTiledMapDataPrivate::intersectedScreen(const QRe
     }
 
     return result;
+}
+
+// Old version, for reference
+
+//void QGeoMapDataPrivate::addObject(QGeoMapObject *object)
+//{
+//    containerObject->addChildObject(object);
+//    oe->addObject(object);
+//    emit q_ptr->updateMapDisplay();
+//}
+
+//void QGeoMapDataPrivate::removeObject(QGeoMapObject *object)
+//{
+//    containerObject->removeChildObject(object);
+//    oe->removeObject(object);
+//}
+
+void QGeoTiledMapDataPrivate::addObject(QGeoMapObject *object)
+{
+//    containerObject->addChildObject(object);
+//    oe->addObject(object);
+//    emit q_ptr->updateMapDisplay();
+
+    QGeoMapDataPrivate::addObject(object);
+    oe->addObject(object);
+}
+
+void QGeoTiledMapDataPrivate::removeObject(QGeoMapObject *object)
+{
+    QGeoMapDataPrivate::removeObject(object);
+    oe->removeObject(object);
+}
+
+void QGeoTiledMapDataPrivate::update(QObject *object)
+{
+    QGeoMapObject *obj = qobject_cast<QGeoMapObject*>(object);
+    if (obj) {
+        QGeoMapGroupObject *group = qobject_cast<QGeoMapGroupObject*>(obj);
+        if (group) {
+            oe->objectsForLatLonUpdate << group;
+            oe->objectsForPixelUpdate << group;
+            static_cast<QGeoTiledMapData*>(q_ptr)->triggerUpdateMapDisplay();
+        } else {
+            oe->invalidateObject(obj);
+        }
+    } else {
+        static_cast<QGeoTiledMapData*>(q_ptr)->triggerUpdateMapDisplay();
+    }
 }
 
 /*******************************************************************************
