@@ -72,7 +72,7 @@ Description: Qt Mobility development package that contains the headers common to
 Package: libqtm-multimedia
 Architecture: any
 Section: libs
-Depends: ${shlibs:Depends}, ${misc:Depends}
+Depends: ${shlibs:Depends}, ${misc:Depends}, meego-gstreamer0.10-interfaces
 Description: Qt Mobility Multimedia module
  Qt Mobility Project delivers a set of new APIs to Qt with features that are
  well known from the mobile device world, in particular phones. However,
@@ -94,7 +94,7 @@ Description: Qt Mobility Multimedia debugging symbols
 Package: libqtm-multimedia-dev
 Architecture: any
 Section: libs
-Depends: libqtm-multimedia (= ${binary:Version}), libqtm-common-dev (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
+Depends: libqtm-multimedia (= ${binary:Version}), libqtm-common-dev (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}, meego-gstreamer0.10-interfaces-dev
 Description: Qt Mobility Multimedia development package
  Qt Mobility Project delivers a set of new APIs to Qt with features that are
  well known from the mobile device world, in particular phones. However,

@@ -5,7 +5,7 @@ TEMPLATE=app
 
 QT += declarative network
 
-!maemo* {
+!maemo5 {
     contains(QT_CONFIG, opengl) {
         QT += opengl
     }

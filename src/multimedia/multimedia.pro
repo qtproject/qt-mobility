@@ -169,7 +169,12 @@ maemo5 {
 }
 
 maemo6 {
-    SOURCES += qgraphicsvideoitem_overlay.cpp
+    HEADERS += qeglimagetexturesurface_p.h
+    SOURCES += qeglimagetexturesurface.cpp
+
+    SOURCES += qgraphicsvideoitem_maemo6.cpp
+
+    LIBS += -lX11
 }
 
 symbian {

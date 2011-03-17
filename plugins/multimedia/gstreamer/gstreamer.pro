@@ -43,6 +43,11 @@ maemo6 {
     SOURCES += camerabuttonlistener_meego.cpp
 
     PKGCONFIG += qmsystem2 libresourceqt1
+
+    HEADERS += qgstreamergltexturerenderer.h
+    SOURCES += qgstreamergltexturerenderer.cpp
+    QT += opengl
+    LIBS += -lEGL -lgstmeegointerfaces-0.10
 }
 
 # Input
