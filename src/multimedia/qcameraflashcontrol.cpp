@@ -47,7 +47,7 @@ QT_BEGIN_NAMESPACE
 /*!
     \class QCameraFlashControl
 
-    
+
     \brief The QCameraFlashControl class supplies a camera flash control.
 
     \ingroup camera
@@ -55,11 +55,6 @@ QT_BEGIN_NAMESPACE
     The interface name of QCameraFlashControl is \c com.nokia.Qt.QCameraFlashControl/1.0 as
     defined in QCameraFlashControl_iid.
 
-The Camera API of Qt Mobility is still in \bold Technology Preview. It has not undergone
-the same level of review and testing as the rest of the APIs.
-
-The API exposed by the classes in this component are not stable, and will
-undergo modification or removal prior to the final release of Qt Mobility.
 
     \sa QCamera
 */

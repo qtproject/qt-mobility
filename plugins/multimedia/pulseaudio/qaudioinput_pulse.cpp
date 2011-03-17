@@ -569,7 +569,7 @@ qint64 QPulseAudioInput::elapsedUSecs() const
 
 void QPulseAudioInput::reset()
 {
-    close();
+    stop();
     m_bytesAvailable = 0;
 }
 

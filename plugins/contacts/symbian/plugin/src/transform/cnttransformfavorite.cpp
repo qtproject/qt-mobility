@@ -42,6 +42,7 @@
 #ifdef SYMBIAN_BACKEND_USE_CNTMODEL_V2
 
 #include "cnttransformfavorite.h"
+#include "cntmodelextuids.h"
 
 QList<CContactItemField *> CntTransformFavorite::transformDetailL(const QContactDetail &detail)
 {
@@ -58,9 +59,11 @@ QList<CContactItemField *> CntTransformFavorite::transformDetailL(const QContact
 	    return fieldList;
 	}
 	
-    CContactItemField* itemField = CContactItemField::NewLC(KStorageTypeContactItemId, KUidContactFieldFavourite);
-    itemField->AgentStorage()->SetAgentId(favorite.index());
-    itemField->SetMapping(KUidContactFieldVCardMapFavourite);
+    CContactItemField* itemField = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldTopContact);
+    QString favoriteStr = QString::number(favorite.index());
+    TPtrC fieldText(reinterpret_cast<const TUint16*>(favoriteStr.utf16()));
+    itemField->TextStorage()->SetTextL(fieldText);
+    itemField->SetMapping(KUidContactFieldVCardMapUnknown);
     fieldList.append(itemField);
     CleanupStack::Pop(itemField);
 
@@ -71,10 +74,17 @@ QContactDetail *CntTransformFavorite::transformItemField(const CContactItemField
 {
 	Q_UNUSED(contact);
 
-	CContactAgentField* storage = field.AgentStorage();
-	QContactFavorite *favoriteDetail = new QContactFavorite();
+	CContactTextField* storage = field.TextStorage();
+	QContactFavorite* favoriteDetail = new QContactFavorite();
 	favoriteDetail->setFavorite(true);
-	favoriteDetail->setIndex(storage->Value());
+	QString favoriteStr = QString::fromUtf16(storage->Text().Ptr(), storage->Text().Length());
+	bool conversionOk = false;
+	int favoriteInt = favoriteStr.toInt(&conversionOk);
+	if (conversionOk) {
+	    favoriteDetail->setIndex(favoriteInt);
+	} else {
+	    favoriteDetail->setIndex(0);
+	}
 	return favoriteDetail;
 }
 
@@ -89,14 +99,14 @@ bool CntTransformFavorite::supportsDetail(QString detailName) const
 
 QList<TUid> CntTransformFavorite::supportedFields() const
 {
-    return QList<TUid>() << KUidContactFieldFavourite;
+    return QList<TUid>() << KUidContactFieldTopContact;
 }
 
 QList<TUid> CntTransformFavorite::supportedSortingFieldTypes(QString detailFieldName) const
 {
     QList<TUid> uids;
     if (detailFieldName == QContactFavorite::FieldFavorite) {
-        uids << KUidContactFieldFavourite;
+        uids << KUidContactFieldTopContact;
     }
     return uids;
 }
@@ -122,7 +132,7 @@ bool CntTransformFavorite::supportsSubType(const QString& subType) const
 quint32 CntTransformFavorite::getIdForField(const QString& fieldName) const
 {
    if (QContactFavorite::FieldFavorite == fieldName) {
-       return KUidContactFieldFavourite.iUid;
+       return KUidContactFieldTopContact.iUid;
    }
    else {
        return 0;
