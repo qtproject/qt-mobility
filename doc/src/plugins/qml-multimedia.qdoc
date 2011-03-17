@@ -41,13 +41,13 @@
 
     \section1 Overview
 
-    The Multimedia API in the QtMobility Project gives developers a simplified way to use audio and video playback. The Multimedia QML Plugin provides a QML friendly interface to these features.
+    The Multimedia API in the QtMobility Project gives developers a simplified way to use audio and video playback, and access camera functionality. The Multimedia QML Plugin provides a QML friendly interface to these features.
 
     \section1 Elements
 
     \section2 Audio
 
-    The \l {Audio}{audio} element is an easy way to add audio playback to a Qt Quick
+    The \l Audio element is an easy way to add audio playback to a Qt Quick
     scene. QtMobility provides properties for control, methods (functions) and signals.
 
     The code extract below shows the creation and use of an audio element.
@@ -70,7 +70,7 @@
 
     The snippet above shows how the inclusion of \i playMusic enables audio features on the element that contains it. So that when the parent's MouseArea is clicked the \l {Audio::play()}{play()} method of the audio element is run. Other typical audio control methods are available such as \l {Audio::pause}{pause()} and \l {Audio::stop()}{stop()}.
 
-    Much of the getting / setting of \l {Audio}{audio} parameters is done through properties. These include
+    Much of the getting / setting of \l Audio parameters is done through properties. These include
     \table 70%
         \header
             \o Property
@@ -177,6 +177,44 @@
 
     Most of the differences will obviously be about video control and information. There are many properties associated with the \l {Video} element, most of them deal with meta-data, control of the video media and aspects of presentation.
 
+    \section2 SoundEffect
+
+    The \l SoundEffect element provides a way to play short sound effects, like in video games. Multiple sound effect instances can be played simultaneously.
+    You should use the \l Audio element for music playback.
+
+    \code
+    import Qt 4.7
+    import QtMultimediaKit 1.1
+    ...
+    
+    In the above sample the sound effect will be played when the MouseArea is clicked.
+
+    For a complete description of this element, see \l SoundEffect
+
+    \section2 Camera
+
+    Adding access to the camera viewfinder, and capturing images is possible by using the  \l Camera element.  You can adjust capture settings
+    including white balance, exposure compensation and flash mode, and control zoom.
+
+    \qml
+    import Qt 4.7
+    import QtMultimediaKit 1.1
+
+    Camera {
+        focus : visible // to receive focus and capture key events when visible
+
+        flashMode: Camera.FlashRedEyeReduction
+        whiteBalanceMode: Camera.WhiteBalanceFlash
+        exposureCompensation: -1.0
+
+        onImageCaptured : {
+            photoPreview.source = preview  // Show the preview in an Image element
+        }
+
+    }
+    \endqml
+
+    For a complete description of this element, see \l Camera, and look at the \l {declarative-camera}{QML Camera Example}.
 
     \annotatedlist qml-multimedia
 */

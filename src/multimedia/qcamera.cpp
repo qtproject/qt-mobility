@@ -88,20 +88,7 @@ public:
     QCamera can be used with QVideoWidget for viewfinder display,
     QMediaRecorder for video recording and QCameraImageCapture for images taking.
 
-    \code
-        camera = new QCamera;
-
-        viewfinder = new QCameraViewfinder();
-        viewfinder->show();
-
-        camera->setViewfinder(viewfinder);
-
-        recorder = new QMediaRecorder(camera);
-        imageCapture = new QCameraImageCapture(camera);
-
-        camera->setCaptureMode(QCamera::CaptureStillImage);
-        camera->start();
-    \endcode
+    \snippet doc/src/snippets/multimedia-snippets/media.cpp Request control
 
 The Camera API of Qt Mobility is still in \bold Technology Preview. It has
 not undergone the same level of review and testing as the rest of the APIs.

@@ -67,6 +67,12 @@ struct QAmbientLightReadingData
     QDateTime timestamp;
 };
 
+struct QLightReadingData
+{
+    double lux;
+    QDateTime timestamp;
+};
+
 struct QAccelerometerReadingData
 {
     double x;
@@ -102,6 +108,7 @@ void qt_registerSensorTypes();
 QTM_END_NAMESPACE
 
 Q_DECLARE_METATYPE(QtMobility::QAmbientLightReadingData)
+Q_DECLARE_METATYPE(QtMobility::QLightReadingData)
 Q_DECLARE_METATYPE(QtMobility::QAccelerometerReadingData)
 Q_DECLARE_METATYPE(QtMobility::QMagnetometerReadingData)
 Q_DECLARE_METATYPE(QtMobility::QCompassReadingData)

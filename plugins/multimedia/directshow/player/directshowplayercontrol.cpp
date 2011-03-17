@@ -239,6 +239,7 @@ void DirectShowPlayerControl::setMedia(const QMediaContent &media, QIODevice *st
 
     m_service->load(media, stream);
 
+    emit mediaChanged(m_media);
     emitPropertyChanges();
 }
 

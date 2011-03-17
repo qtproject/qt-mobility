@@ -297,8 +297,8 @@ void InputTest::readMore()
     if(!m_audioInput)
         return;
     qint64 len = m_audioInput->bytesReady();
-    if(len > 4096)
-        len = 4096;
+    if(len > BufferSize)
+        len = BufferSize;
     qint64 l = m_input->read(m_buffer.data(), len);
     if(l > 0) {
         m_audioInfo->write(m_buffer.constData(), l);

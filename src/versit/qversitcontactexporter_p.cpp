@@ -89,7 +89,7 @@ QVersitContactExporterPrivate::QVersitContactExporterPrivate(const QStringList& 
     int versitPropertyCount =
         sizeof(versitContactDetailMappings)/sizeof(VersitDetailMapping);
     // Put them in in reverse order so the entries at the top of the list take precedence
-    for (int i=versitPropertyCount; i >= 0; i--) {
+    for (int i = versitPropertyCount-1; i >= 0; i--) {
         mPropertyMappings.insert(
                 QLatin1String(versitContactDetailMappings[i].detailDefinitionName),
                 QLatin1String(versitContactDetailMappings[i].versitPropertyName));
@@ -446,7 +446,15 @@ void QVersitContactExporterPrivate::encodeBirthDay(
     QContactBirthday bday = static_cast<QContactBirthday>(detail);
     QVersitProperty property;
     property.setName(mPropertyMappings.value(detail.definitionName()));
-    QString value = bday.date().toString(Qt::ISODate);
+    QVariant variant = bday.variantValue(QContactBirthday::FieldBirthday);
+    QString value;
+    if (variant.type() == QVariant::Date) {
+        value = variant.toDate().toString(Qt::ISODate);
+    } else if (variant.type() == QVariant::DateTime) {
+        value = variant.toDateTime().toString(Qt::ISODate);
+    } else {
+        return;
+    }
     property.setValue(value);
     *generatedProperties << property;
     *processedFields << QContactBirthday::FieldBirthday;

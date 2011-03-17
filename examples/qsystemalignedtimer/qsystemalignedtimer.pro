@@ -1,9 +1,3 @@
-#-------------------------------------------------
-#
-# Project created by QtCreator 2010-10-15T11:08:04
-#
-#-------------------------------------------------
-
 QT       += core gui
 
 TARGET = qsystemalignedtimer
@@ -17,7 +11,7 @@ HEADERS  += mainwindow.h
 
 FORMS    += mainwindow.ui
 
-include(../examples.pri)
+include(../mobility_examples.pri)
 CONFIG += mobility console
 MOBILITY = systeminfo
 
