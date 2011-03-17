@@ -50,6 +50,8 @@ void tst_QMediaRecorder_mmf::initTestCase()
     captureSource = new QAudioCaptureSource;
     audiocapture = new QMediaRecorder(captureSource);
 
+    QVERIFY(captureSource->service());
+
     audioEndpoint = qobject_cast<QAudioEndpointSelector*>(captureSource->service()->requestControl(QAudioEndpointSelector_iid));
     audioEncoder = qobject_cast<QAudioEncoderControl*>(captureSource->service()->requestControl(QAudioEncoderControl_iid));
 }
