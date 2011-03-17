@@ -114,6 +114,7 @@ CFlipStatus::CFlipStatus() : CActive(EPriorityStandard),
         m_flipStatus = status;
         m_gripenabled = true;
         m_FlipProperty.Attach(KPSUidHWRM,  KHWRMGripStatus);
+        m_filpKeyBoard = 1;
      }
 
     // In 5.0 devices KHWRMFlipStatus is used for getting flip open/closed state
@@ -122,27 +123,28 @@ CFlipStatus::CFlipStatus() : CActive(EPriorityStandard),
         m_flipStatus = status;
         m_flipenabled = true;
         m_FlipProperty.Attach(KPSUidHWRM,  KHWRMFlipStatus);
+        m_filpKeyBoard = 1;
      }
 
     startMonitoring();
 
 }
 
-void CFlipStatus::ConstructL()
-{
-    TInt flipKbType = 0;
-#ifdef SYMBIAN_3_PLATFORM
-    TRAP_IGNORE(
-                CRepository* repository = CRepository::NewLC( KCRUidAvkon ) ;
-                User::LeaveIfError(repository->Get( KAknKeyboardSlideOpen, flipKbType));
-                CleanupStack::PopAndDestroy(repository);
-            )
-#endif
-    if (flipKbType)
-        m_filpKeyBoard = 1;
-    else
-        m_filpKeyBoard = 0;
-}
+//void CFlipStatus::ConstructL()
+//{
+//    TInt flipKbType = 0;
+//#ifdef SYMBIAN_3_PLATFORM
+//    TRAP_IGNORE(
+//                CRepository* repository = CRepository::NewLC( KCRUidAvkon ) ;
+//                User::LeaveIfError(repository->Get( KAknKeyboardSlideOpen, flipKbType));
+//                CleanupStack::PopAndDestroy(repository);
+//            )
+//#endif
+//    if (flipKbType)
+//        m_filpKeyBoard = 1;
+//    else
+//        m_filpKeyBoard = 0;
+//}
 
 CFlipStatus::~CFlipStatus()
 {
@@ -197,7 +199,8 @@ bool CFlipStatus::getFlipStatus()
 
 bool CFlipStatus::IsFlipSupported()
 {
-   return (m_filpKeyBoard  == 1);
+   //TBD: Need to find a way how to find the flipkeyboard presence
+   return (m_filpKeyBoard == 1);
 }
 
 

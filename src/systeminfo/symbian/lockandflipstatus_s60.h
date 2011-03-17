@@ -92,7 +92,6 @@ class CFlipStatus : public CActive
 public:
     CFlipStatus();
     ~CFlipStatus();
-    void ConstructL();
     TInt flipStatus() const;
 
     void addObserver(MFlipStatusObserver *observer);
