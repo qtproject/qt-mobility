@@ -126,7 +126,9 @@ CFlipStatus::CFlipStatus() : CActive(EPriorityStandard),
         m_filpKeyBoard = 1;
      }
 
-    startMonitoring();
+    if ( m_flipenabled || m_gripenabled ) {
+     startMonitoring();
+    }
 
 }
 
