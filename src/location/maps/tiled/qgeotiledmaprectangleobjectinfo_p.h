@@ -39,35 +39,52 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOMAPGROUPOBJECT_P_H
-#define QGEOMAPGROUPOBJECT_P_H
+#ifndef QGEOTILEDMAPRECTANGLEOBJECT_INFO_P_H
+#define QGEOTILEDMAPRECTANGLEOBJECT_INFO_P_H
 
-#include "qgeomapobject.h"
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
-#include <QObject>
-#include <QList>
+#include "qgeotiledmapobjectinfo_p.h"
+
+#include <QPen>
+#include <QBrush>
+
+class QGraphicsPolygonItem;
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoMapGroupObject;
+class QGeoMapRectangleObject;
 
-class QGeoMapGroupObjectPrivate : public QObject
+class QGeoTiledMapRectangleObjectInfo : public QGeoTiledMapObjectInfo
 {
     Q_OBJECT
 public:
-    QGeoMapGroupObjectPrivate(QGeoMapGroupObject *p);
-    ~QGeoMapGroupObjectPrivate();
+    QGeoTiledMapRectangleObjectInfo(QGeoTiledMapData *mapData, QGeoMapObject *mapObject);
+    ~QGeoTiledMapRectangleObjectInfo();
 
-    QList<QGeoMapObject *> children;
-    quint32 serial;
+    QGeoMapRectangleObject* rectangle;
+    QGraphicsPolygonItem *polygonItem;
 
 public slots:
-    void childChangedZValue(int zValue);
+    void topLeftChanged(const QGeoCoordinate &topLeft);
+    void bottomRightChanged(const QGeoCoordinate &bottomRight);
+    void penChanged(const QPen &pen);
+    void brushChanged(const QBrush &brush);
 
 private:
-    QGeoMapGroupObject *q_ptr;
+    void regenPolygon();
 };
 
 QTM_END_NAMESPACE
 
-#endif
+#endif //QGEOTILEDMAPRECTANGLEOBJECT_INFO_P_H
+

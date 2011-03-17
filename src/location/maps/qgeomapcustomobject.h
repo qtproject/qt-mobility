@@ -39,33 +39,50 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOMAPGROUPOBJECT_P_H
-#define QGEOMAPGROUPOBJECT_P_H
+#ifndef QGEOMAPCUSTOMOBJECT_H
+#define QGEOMAPCUSTOMOBJECT_H
 
 #include "qgeomapobject.h"
+#include "qgeocoordinate.h"
 
-#include <QObject>
-#include <QList>
+#include <QPoint>
+
+#include <QGraphicsItem>
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoMapGroupObject;
+class QGeoMapCustomObjectPrivate;
 
-class QGeoMapGroupObjectPrivate : public QObject
+class Q_LOCATION_EXPORT QGeoMapCustomObject : public QGeoMapObject
 {
     Q_OBJECT
+    Q_PROPERTY(QGraphicsItem* graphicsItem READ graphicsItem WRITE setGraphicsItem NOTIFY graphicsItemChanged)
+    Q_PROPERTY(QPoint offset READ offset WRITE setOffset NOTIFY offsetChanged)
+
 public:
-    QGeoMapGroupObjectPrivate(QGeoMapGroupObject *p);
-    ~QGeoMapGroupObjectPrivate();
+    QGeoMapCustomObject();
+    QGeoMapCustomObject(const QGeoCoordinate &coordinate, const QPoint &offset = QPoint(0, 0));
+    ~QGeoMapCustomObject();
 
-    QList<QGeoMapObject *> children;
-    quint32 serial;
+    QGeoMapObject::Type type() const;
 
-public slots:
-    void childChangedZValue(int zValue);
+    void update();
+
+    QGraphicsItem* graphicsItem() const;
+    void setGraphicsItem(QGraphicsItem *graphicsItem);
+
+    QPoint offset() const;
+    void setOffset(const QPoint &offset);
+
+Q_SIGNALS:
+    void triggerUpdate();
+    void graphicsItemChanged(QGraphicsItem *graphicsItem);
+    void offsetChanged(const QPoint &offset);
 
 private:
-    QGeoMapGroupObject *q_ptr;
+    QGeoMapCustomObjectPrivate *d_ptr;
+    Q_DECLARE_PRIVATE(QGeoMapCustomObject)
+    Q_DISABLE_COPY(QGeoMapCustomObject)
 };
 
 QTM_END_NAMESPACE

@@ -39,33 +39,38 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOMAPGROUPOBJECT_P_H
-#define QGEOMAPGROUPOBJECT_P_H
+#ifndef QGEOMAPOBJECTINFO_P_H
+#define QGEOMAPOBJECTINFO_P_H
 
-#include "qgeomapobject.h"
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
-#include <QObject>
-#include <QList>
+#include "qmobilityglobal.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoMapGroupObject;
+class QGeoMapObject;
+class QGeoMapData;
 
-class QGeoMapGroupObjectPrivate : public QObject
+class QGeoMapObjectInfoPrivate
 {
-    Q_OBJECT
 public:
-    QGeoMapGroupObjectPrivate(QGeoMapGroupObject *p);
-    ~QGeoMapGroupObjectPrivate();
+    QGeoMapObjectInfoPrivate(QGeoMapData *mapData, QGeoMapObject *mapObject);
+    virtual ~QGeoMapObjectInfoPrivate();
 
-    QList<QGeoMapObject *> children;
-    quint32 serial;
-
-public slots:
-    void childChangedZValue(int zValue);
+    QGeoMapData* mapData;
+    QGeoMapObject* mapObject;
 
 private:
-    QGeoMapGroupObject *q_ptr;
+    Q_DISABLE_COPY(QGeoMapObjectInfoPrivate)
 };
 
 QTM_END_NAMESPACE
