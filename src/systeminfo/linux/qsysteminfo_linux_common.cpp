@@ -1795,17 +1795,30 @@ QSystemNetworkInfo::CellDataTechnology QSystemNetworkInfoLinuxCommonPrivate::cel
 
 
 QSystemDisplayInfoLinuxCommonPrivate::QSystemDisplayInfoLinuxCommonPrivate(QObject *parent)
-    : QObject(parent)
+    : QObject(parent), wid(0)
 {
     halIsAvailable = halAvailable();
+    wid = new QDesktopWidget();
 }
 
 QSystemDisplayInfoLinuxCommonPrivate::~QSystemDisplayInfoLinuxCommonPrivate()
 {
+    delete wid;
+}
+
+bool QSystemDisplayInfoLinuxCommonPrivate::isScreenValid(int screen)
+{
+    if (screen > wid->screenCount() || screen < 0) {
+        return false;
+    }
+    return true;
 }
 
 int QSystemDisplayInfoLinuxCommonPrivate::colorDepth(int screen)
 {
+    if (!isScreenValid(screen)) {
+        return -1;
+    }
 #if defined(Q_WS_MAEMO_6) || defined(Q_WS_MEEGO)
     struct fb_var_screeninfo *screenInfo = allocFrameBufferInfo(screen);
     if (screenInfo) {
@@ -1816,8 +1829,7 @@ int QSystemDisplayInfoLinuxCommonPrivate::colorDepth(int screen)
 #endif
 
 #ifdef Q_WS_X11
-    QDesktopWidget wid;
-    return wid.screen(screen)->x11Info().depth();
+    return wid->screen(screen)->x11Info().depth();
 #endif
 
     /* as a last resort, use the default depth */
@@ -1826,7 +1838,9 @@ int QSystemDisplayInfoLinuxCommonPrivate::colorDepth(int screen)
 
 int QSystemDisplayInfoLinuxCommonPrivate::displayBrightness(int screen)
 {
-    Q_UNUSED(screen);
+    if (!isScreenValid(screen)) {
+        return -1;
+    }
 
 #if !defined(QT_NO_DBUS)
     if (halIsAvailable) {
@@ -1901,7 +1915,9 @@ int QSystemDisplayInfoLinuxCommonPrivate::displayBrightness(int screen)
 
 QSystemDisplayInfo::BacklightState  QSystemDisplayInfoLinuxCommonPrivate::backlightStatus(int screen)
 {
-    Q_UNUSED(screen)
+    if (!isScreenValid(screen)) {
+        return  QSystemDisplayInfo::BacklightStateUnknown;
+    }
     return QSystemDisplayInfo::BacklightStateUnknown;
 }
 
@@ -1934,17 +1950,14 @@ QSystemDisplayInfo::DisplayOrientation QSystemDisplayInfoLinuxCommonPrivate::ori
         }
     }
 #endif
-    QDesktopWidget wid;
-    qDebug() << wid.width() << wid.height();
-    if (wid.width() > wid.height()) {//landscape
+
+    if (wid->width() > wid->height()) {//landscape
         if (orientation == QSystemDisplayInfo::Unknown || orientation == QSystemDisplayInfo::Portrait) {
             orientation = QSystemDisplayInfo::Landscape;
-            qDebug() << Q_FUNC_INFO << orientation;
         }
     } else { //portrait
         if (orientation == QSystemDisplayInfo::Unknown || orientation == QSystemDisplayInfo::Landscape) {
             orientation = QSystemDisplayInfo::Portrait;
-            qDebug() << Q_FUNC_INFO << orientation;
         }
     }
     return orientation;
@@ -1952,6 +1965,9 @@ QSystemDisplayInfo::DisplayOrientation QSystemDisplayInfoLinuxCommonPrivate::ori
 
 int QSystemDisplayInfoLinuxCommonPrivate::physicalHeight(int screen)
 {
+    if (!isScreenValid(screen)) {
+        return -1;
+    }
     int height = 0;
 #if defined(Q_WS_X11)
     XRRScreenResources *sr;
@@ -1979,6 +1995,9 @@ int QSystemDisplayInfoLinuxCommonPrivate::physicalHeight(int screen)
 
 int QSystemDisplayInfoLinuxCommonPrivate::physicalWidth(int screen)
 {
+    if (!isScreenValid(screen)) {
+        return -1;
+    }
     int width = 0;
 #if defined(Q_WS_X11)
     XRRScreenResources *sr;
@@ -2006,6 +2025,9 @@ int QSystemDisplayInfoLinuxCommonPrivate::physicalWidth(int screen)
 
 int QSystemDisplayInfoLinuxCommonPrivate::getDPIWidth(int screen)
 {
+    if (!isScreenValid(screen)) {
+        return -1;
+    }
 #if defined(Q_WS_X11)
     return QX11Info::appDpiY(screen);
 #else
@@ -2015,6 +2037,9 @@ int QSystemDisplayInfoLinuxCommonPrivate::getDPIWidth(int screen)
 
 int QSystemDisplayInfoLinuxCommonPrivate::getDPIHeight(int screen)
 {
+    if (!isScreenValid(screen)) {
+        return -1;
+    }
 #if defined(Q_WS_X11)
     return QX11Info::appDpiX(screen);
 #else
