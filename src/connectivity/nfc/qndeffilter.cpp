@@ -47,7 +47,7 @@ QTM_BEGIN_NAMESPACE
 
 /*!
     \class QNdefFilter
-    \brief The QNdefFilter class provides a filter for match NDEF messages.
+    \brief The QNdefFilter class provides a filter for matching NDEF messages.
 
     \ingroup connectivity-nfc
     \inmodule QtConnectivity
