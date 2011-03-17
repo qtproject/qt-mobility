@@ -271,8 +271,9 @@ QGeoSatelliteInfoSource *QGeoSatelliteInfoSource::createDefaultSource(QObject *p
 #if defined(Q_OS_SYMBIAN)
     CQGeoSatelliteInfoSourceS60 *ret = NULL;
     TRAPD(error, QT_TRYCATCH_LEAVING(ret = CQGeoSatelliteInfoSourceS60::NewL(parent)));
-    if (error == KErrNone)
-        return ret;
+    if (error != KErrNone)
+        return 0;
+    return ret;
 #elif defined(Q_OS_WINCE)
     return new QGeoSatelliteInfoSourceWinCE(parent);
 #elif (defined(Q_WS_MAEMO_6)) || (defined(Q_WS_MAEMO_5))
