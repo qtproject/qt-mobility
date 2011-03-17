@@ -125,7 +125,7 @@ QGeoMapData::~QGeoMapData()
     constructed.
 
     Any subclasses which override this function should make sure that
-    QGeoMapData::init() is called within the body of the overridding function.
+    QGeoMapData::init() is called within the body of the overriding function.
 */
 void QGeoMapData::init()
 {
