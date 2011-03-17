@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QNEARFIELDMANAGER_MEEGO_P_H
-#define QNEARFIELDMANAGER_MEEGO_P_H
+#ifndef QNEARFIELDMANAGER_MAEMO6_P_H
+#define QNEARFIELDMANAGER_MAEMO6_P_H
 
 #include "qnearfieldmanager_p.h"
 #include "qnearfieldmanager.h"
@@ -142,4 +142,4 @@ private:
 
 QTM_END_NAMESPACE
 
-#endif // QNEARFIELDMANAGER_MEEGO_P_H
+#endif // QNEARFIELDMANAGER_MAEMO6_P_H

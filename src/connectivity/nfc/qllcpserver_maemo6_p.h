@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QLLCPSERVER_MEEGO_P_H
-#define QLLCPSERVER_MEEGO_P_H
+#ifndef QLLCPSERVER_MAEMO6_P_H
+#define QLLCPSERVER_MAEMO6_P_H
 
 #include <qmobilityglobal.h>
 
@@ -107,4 +107,4 @@ private:
 
 QTM_END_NAMESPACE
 
-#endif // QLLCPSERVER_MEEGO_P_H
+#endif // QLLCPSERVER_MAEMO6_P_H

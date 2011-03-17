@@ -39,12 +39,12 @@
 **
 ****************************************************************************/
 
-#ifndef QNEARFIELDTARGET_MEEGO_P_H
-#define QNEARFIELDTARGET_MEEGO_P_H
+#ifndef QNEARFIELDTARGET_MAEMO6_P_H
+#define QNEARFIELDTARGET_MAEMO6_P_H
 
 #include <qmobilityglobal.h>
 
-#include "qnearfieldmanager_meego_p.h"
+#include "qnearfieldmanager_maemo6_p.h"
 
 #include <qnearfieldtarget.h>
 #include <qnearfieldtarget_p.h>
@@ -54,9 +54,9 @@
 #include <qnearfieldtagtype4.h>
 #include <qndefmessage.h>
 
-#include "meego/adapter_interface_p.h"
-#include "meego/target_interface_p.h"
-#include "meego/tag_interface_p.h"
+#include "maemo6/adapter_interface_p.h"
+#include "maemo6/target_interface_p.h"
+#include "maemo6/tag_interface_p.h"
 
 #include <QtDBus/QDBusPendingReply>
 
@@ -277,4 +277,4 @@ public:
 
 QTM_END_NAMESPACE
 
-#endif // QNEARFIELDTARGET_MEEGO_P_H
+#endif // QNEARFIELDTARGET_MAEMO6_P_H

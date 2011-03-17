@@ -39,12 +39,12 @@
 **
 ****************************************************************************/
 
-#include "qnearfieldmanager_meego_p.h"
-#include "qnearfieldtarget_meego_p.h"
+#include "qnearfieldmanager_maemo6_p.h"
+#include "qnearfieldtarget_maemo6_p.h"
 #include "manager_interface.h"
-#include "meego/adapter_interface_p.h"
-#include "meego/target_interface_p.h"
-#include "meego/tag_interface_p.h"
+#include "maemo6/adapter_interface_p.h"
+#include "maemo6/target_interface_p.h"
+#include "maemo6/tag_interface_p.h"
 #include "ndefhandler_adaptor.h"
 #include "accessrequestor_adaptor.h"
 
@@ -444,6 +444,6 @@ void QNearFieldManagerPrivateImpl::_q_targetLost(const QString &targetPath)
         emit targetLost(nearFieldTarget);
 }
 
-#include "moc_qnearfieldmanager_meego_p.cpp"
+#include "moc_qnearfieldmanager_maemo6_p.cpp"
 
 QTM_END_NAMESPACE

@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "qnearfieldtarget_meego_p.h"
+#include "qnearfieldtarget_maemo6_p.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -153,7 +153,7 @@ int TagType4::memorySize() const
     return m_tag->size();
 }
 
-#include <moc_qnearfieldtarget_meego_p.cpp>
+#include <moc_qnearfieldtarget_maemo6_p.cpp>
 
 QTM_END_NAMESPACE
 

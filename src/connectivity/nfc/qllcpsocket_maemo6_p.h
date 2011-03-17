@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QLLCPSOCKET_MEEGO_P_H
-#define QLLCPSOCKET_MEEGO_P_H
+#ifndef QLLCPSOCKET_MAEMO6_P_H
+#define QLLCPSOCKET_MAEMO6_P_H
 
 #include <qmobilityglobal.h>
 
@@ -137,4 +137,4 @@ private:
 
 QTM_END_NAMESPACE
 
-#endif // QLLCPSOCKET_MEEGO_P_H
+#endif // QLLCPSOCKET_MAEMO6_P_H

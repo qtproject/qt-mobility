@@ -47,7 +47,7 @@
 #elif defined(Q_OS_SYMBIAN)
 #include "qnearfieldmanager_symbian_p.h"
 #elif defined(Q_WS_MAEMO_6) || defined (Q_WS_MEEGO)
-#include "qnearfieldmanager_meego_p.h"
+#include "qnearfieldmanager_maemo6_p.h"
 #else
 #include "qnearfieldmanagerimpl_p.h"
 #endif

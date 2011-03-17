@@ -39,12 +39,12 @@
 **
 ****************************************************************************/
 
-#include "qllcpserver_meego_p.h"
+#include "qllcpserver_maemo6_p.h"
 
 #include "manager_interface.h"
-#include "meego/adapter_interface_p.h"
-#include "qllcpsocket_meego_p.h"
-#include "meego/socketrequestor_p.h"
+#include "maemo6/adapter_interface_p.h"
+#include "qllcpsocket_maemo6_p.h"
+#include "maemo6/socketrequestor_p.h"
 
 using namespace com::nokia::nfc;
 
@@ -197,6 +197,6 @@ void QLlcpServerPrivate::Socket(const QDBusVariant &lsap, const QDBusVariant &rs
     Q_UNUSED(properties);
 }
 
-#include "moc_qllcpserver_meego_p.cpp"
+#include "moc_qllcpserver_maemo6_p.cpp"
 
 QTM_END_NAMESPACE

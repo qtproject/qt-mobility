@@ -39,11 +39,11 @@
 **
 ****************************************************************************/
 
-#include "qllcpsocket_meego_p.h"
+#include "qllcpsocket_maemo6_p.h"
 
 #include "manager_interface.h"
-#include "meego/adapter_interface_p.h"
-#include "meego/socketrequestor_p.h"
+#include "maemo6/adapter_interface_p.h"
+#include "maemo6/socketrequestor_p.h"
 
 #include <QtCore/QSocketNotifier>
 #include <QtCore/QAtomicInt>
@@ -515,6 +515,6 @@ void QLlcpSocketPrivate::setSocketError(QLlcpSocket::SocketError socketError)
     emit q->error(m_error);
 }
 
-#include "moc_qllcpsocket_meego_p.cpp"
+#include "moc_qllcpsocket_maemo6_p.cpp"
 
 QTM_END_NAMESPACE
