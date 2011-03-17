@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -67,7 +67,6 @@ QTM_BEGIN_NAMESPACE
     Indicates all possible error conditions found during Bluetooth device discovery.
 
     \value NoError          No error has occurred.
-    \value Canceled         Device discovery was canceled by a call to stop().
     \value PoweredOff       Bluetooth adaptor is powered off, power it on before doing discovery.
     \value IOFailure        Writing or reading from device resulted in an error.
     \value UnknownError     An unknown error has occurred.    
@@ -106,9 +105,15 @@ QTM_BEGIN_NAMESPACE
 /*!
     \fn void QBluetoothDeviceDiscoveryAgent::error(QBluetoothDeviceDiscoveryAgent::Error error)
 
-    This signal is emiited when an \a error occurs during Bluetooth device discovery.
+    This signal is emitted when an \a error occurs during Bluetooth device discovery.
 
     \sa error(), errorString()
+*/
+
+/*!
+    \fn void QBluetoothDeviceDiscoveryAgent::canceled()
+
+    This signal is emitted when device discovery is aborted by a call to stop().
 */
 
 /*!

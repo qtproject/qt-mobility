@@ -71,6 +71,9 @@ QTM_BEGIN_NAMESPACE
 
     \value UnknownSocketError       An unidentified error has occurred.
     \value RemoteHostClosedError    The remote host closed the connection.
+    \value SocketAccessError        The socket operation failed because the application lacked the
+                                    required privileges.
+    \value SocketResourceError      The local system ran out of resources (e.g., too many sockets).
 */
 
 /*!
