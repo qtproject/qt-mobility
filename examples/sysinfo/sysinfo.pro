@@ -12,7 +12,7 @@ RESOURCES = examples.qrc
 
 INCLUDEPATH += ../../src/systeminfo
 
-include(../examples.pri)
+include(../mobility_examples.pri)
 CONFIG += mobility
 MOBILITY = systeminfo
 

@@ -48,21 +48,21 @@ const char *SimulatorLightSensor::id("Simulator.LightSensor");
 SimulatorLightSensor::SimulatorLightSensor(QSensor *sensor)
     : SimulatorCommon(sensor)
 {
-    setReading<QAmbientLightReading>(&m_reading);
+    setReading<QLightReading>(&m_reading);
 }
 
 void SimulatorLightSensor::poll()
 {
-    QAmbientLightReadingData data = get_qtAmbientLightData();
+    QLightReadingData data = get_qtLightData();
     qtimestamp newTimestamp;
     if (!data.timestamp.isValid())
         newTimestamp = QDateTime::currentDateTime().toTime_t();
     else
         newTimestamp = data.timestamp.toTime_t();
     if (m_reading.timestamp() != newTimestamp
-        || m_reading.lightLevel() != data.lightLevel) {
+        || m_reading.lux() != data.lux) {
             m_reading.setTimestamp(newTimestamp);
-            m_reading.setLightLevel(data.lightLevel);
+            m_reading.setLux(data.lux);
 
             newReadingAvailable();
     }

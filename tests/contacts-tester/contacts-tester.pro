@@ -4,6 +4,8 @@ DEPENDPATH += .
 INCLUDEPATH += .
 
 include(../../common.pri)
+#not really a test case but deployment happens same way
+CONFIG += testcase
 
 CONFIG += mobility
 MOBILITY += contacts

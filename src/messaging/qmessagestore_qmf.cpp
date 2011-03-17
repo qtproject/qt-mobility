@@ -38,7 +38,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "qmessagestore.h"
+#include "qmessagestore_p.h"
 #include "qmessagemanager.h"
 #include "qmfhelpers_p.h"
 

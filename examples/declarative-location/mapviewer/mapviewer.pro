@@ -1,9 +1,12 @@
 QT += declarative network
 SOURCES += $$PWD/qmlmapviewer.cpp
 include($$PWD/../declarative-location.pri)
-RESOURCES=mapviewer.qrc
+RESOURCES += mapviewer.qrc
 
 TARGET = qml_mapviewer
+
+OTHER_FILES += \
+    mapviewer.qml
 
 symbian {
     TARGET.CAPABILITY = NetworkServices Location ReadUserData WriteUserData

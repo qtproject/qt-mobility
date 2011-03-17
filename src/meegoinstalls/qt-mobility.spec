@@ -854,7 +854,6 @@ find %{buildroot}%{_libdir}/qtmobility -type f -perm /u+x,g+x,o+x \( -false \
 %{_includedir}/QtMessaging/QMessageManager
 %{_includedir}/QtMessaging/QMessageService
 %{_includedir}/QtMessaging/QMessageSortOrder
-%{_includedir}/QtMessaging/QMessageStore
 %{_includedir}/QtMobility/*.h
 %{_includedir}/QtMobility/QLatin1Constant
 %{_includedir}/QtMultimediaKit/*.h

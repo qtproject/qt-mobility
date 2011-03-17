@@ -76,7 +76,7 @@ public: // Methods
     // Zoom
     qreal opticalZoomFactorL() const;
     void setOpticalZoomFactorL(const qreal zoomFactor);
-    QList<qreal> *supportedDigitalZoomFactors();
+    QList<qreal> supportedDigitalZoomFactors() const;
     qreal digitalZoomFactorL() const;
     void setDigitalZoomFactorL(const qreal zoomFactor);
 
@@ -170,7 +170,7 @@ private: // Data
     CCamera::CCameraImageProcessing     *m_imageProcessingSettings;
 #endif // S60_31_PLATFORM
     CCameraEngine                       *m_cameraEngine;
-    QList<qreal>                        m_supportedDigitalZoomFactors;
+    QList<int>                          m_supportedSymbianDigitalZoomFactors;
     bool                                m_continuousFocusing;
 };
 

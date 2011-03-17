@@ -57,6 +57,7 @@ public:
 
     bool isVideoEnabled() const;
     bool isGranted() const;
+    bool isRequested() const;
 
 Q_SIGNALS:
     void resourcesDenied();

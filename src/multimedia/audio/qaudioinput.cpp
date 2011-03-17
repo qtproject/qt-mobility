@@ -76,37 +76,9 @@ QT_BEGIN_NAMESPACE
     with a QIODevice opened for writing. For instance, to record to a
     file, you can:
 
-    \code
-      QFile outputFile;   // class member.
-      QAudioInput* audio; // class member.
-    \endcode
+    \snippet doc/src/snippets/multimedia-snippets/audio.cpp Audio input class members
 
-    \code
-    {
-      outputFile.setFileName("/tmp/test.raw");
-      outputFile.open( QIODevice::WriteOnly | QIODevice::Truncate );
-
-      QAudioFormat format;
-      // set up the format you want, eg.
-      format.setFrequency(8000);
-      format.setChannels(1);
-      format.setSampleSize(8);
-      format.setCodec("audio/pcm");
-      format.setByteOrder(QAudioFormat::LittleEndian);
-      format.setSampleType(QAudioFormat::UnSignedInt);
-
-      QAudioDeviceInfo info = QAudioDeviceInfo::defaultInputDevice();
-      if (!info.isFormatSupported(format)) {
-          qWarning()<<"default format not supported try to use nearest";
-          format = info.nearestFormat(format);
-      }
-
-      audio = new QAudioInput(format, this);
-      QTimer::singleShot(3000, this, SLOT(stopRecording()));
-      audio->start(&outputFile);
-      // Records audio for 3000ms
-    }
-    \endcode
+    \snippet doc/src/snippets/multimedia-snippets/audio.cpp Audio input setup
 
     This will start recording if the format specified is supported by
     the input device (you can check this with
@@ -114,14 +86,7 @@ QT_BEGIN_NAMESPACE
     snags, use the error() function to check what went wrong. We stop
     recording in the \c stopRecording() slot.
 
-    \code
-    void stopRecording()
-    {
-      audio->stop();
-      outputFile->close();
-      delete audio;
-    }
-    \endcode
+    \snippet doc/src/snippets/multimedia-snippets/audio.cpp Audio input stop recording
 
     At any point in time, QAudioInput will be in one of four states:
     active, suspended, stopped, or idle. These states are specified by
@@ -143,18 +108,7 @@ QT_BEGIN_NAMESPACE
     an error is encountered.  Connect to the stateChanged() signal to
     handle the error:
 
-    \code
-        void stateChanged(QAudio::State newState)
-        {
-            switch(newState) {
-            case QAudio::StopState:
-                if (input->error() != QAudio::NoError) {
-                    // Error handling
-                } else {
-
-                }
-                break;
-    \endcode
+    \snippet doc/src/snippets/multimedia-snippets/audio.cpp Audio input state changed
 
     \sa QAudioOutput, QAudioDeviceInfo
 
