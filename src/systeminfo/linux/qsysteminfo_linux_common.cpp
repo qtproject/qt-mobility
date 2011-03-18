@@ -142,6 +142,7 @@
 #define STORAGEPOLL 2 * 60 *1000 // 2 minutes for maemo/meego
 #endif
 
+
 bool halIsAvailable;
 bool udisksIsAvailable;
 bool connmanIsAvailable;
@@ -1790,6 +1791,17 @@ QString QSystemNetworkInfoLinuxCommonPrivate::homeMobileNetworkCode()
 
 QSystemNetworkInfo::CellDataTechnology QSystemNetworkInfoLinuxCommonPrivate::cellDataTechnology()
 {
+#if !defined(QT_NO_CONNMAN)
+    if (ofonoIsAvailable) {
+        QString modem = ofonoManager->currentModem().path();
+        if (!modem.isEmpty()) {
+            QOfonoConnectionManagerInterface cmInterface(modem,this);
+            QString bearer = cmInterface.bearer();
+            return ofonoTechToCDT(bearer);
+        }
+    }
+#endif
+
     return QSystemNetworkInfo::UnknownDataTechnology;
 }
 

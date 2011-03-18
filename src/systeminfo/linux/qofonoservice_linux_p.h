@@ -76,16 +76,12 @@
 #define OFONO_SIM_MANAGER_INTERFACE              "org.ofono.SimManager"
 #define OFONO_DATA_CONTEXT_INTERFACE             "org.ofono.PrimaryDataContext"
 
-#define OFONO_SMS_MANAGER_INTERFACE              "org.ofono.SmsManager"
+#define OFONO_MESSAGE_MANAGER_INTERFACE          "org.ofono.MessageManager"
 #define OFONO_PHONEBOOK_INTERFACE                "org.ofono.Phonebook"
 #define OFONO_MESSAGE_WAITING_INTERFACE          "org.ofono.MessageWaiting"
 
-
-
-QT_BEGIN_NAMESPACE
-
-QT_END_NAMESPACE
-
+#define OFONO_MESSAGE_MANAGER_INTERFACE          "org.ofono.MessageManager"
+#define OFONO_CONNECTION_MANAGER_INTERFACE       "org.ofono.ConnectionManager"
 
 QT_BEGIN_NAMESPACE
 
@@ -317,14 +313,14 @@ protected:
     bool setProp(const QString &, const QVariant &var);
 };
 
-class QOfonoSmsInterface : public QDBusAbstractInterface
+class QOfonoMessageManagerInterface : public QDBusAbstractInterface
 {
     Q_OBJECT
 
 public:
 
-    QOfonoSmsInterface(const QString &dbusModemPathName, QObject *parent = 0);
-    ~QOfonoSmsInterface();
+    QOfonoMessageManagerInterface(const QString &dbusModemPathName, QObject *parent = 0);
+    ~QOfonoMessageManagerInterface();
 
     QVariantMap getProperties();
     void sendMessage(const QString &to, const QString &message);
@@ -344,6 +340,29 @@ Q_SIGNALS:
     void propertyChangedContext(const QString &,const QString &,const QDBusVariant &);
     void immediateMessage(const QString &message, const QVariantMap &info);
     void incomingMessage(const QString &message, const QVariantMap &info);
+};
+
+class QOfonoConnectionManagerInterface : public QDBusAbstractInterface
+{
+    Q_OBJECT
+
+public:
+
+    QOfonoConnectionManagerInterface(const QString &dbusModemPathName, QObject *parent = 0);
+    ~QOfonoConnectionManagerInterface();
+
+    QVariantMap getProperties();
+    QString bearer();
+
+Q_SIGNALS:
+    void propertyChanged(const QString &, const QDBusVariant &value);
+    void propertyChangedContext(const QString &,const QString &,const QDBusVariant &);
+
+protected:
+    void connectNotify(const char *signal);
+    void disconnectNotify(const char *signal);
+    QVariant getProperty(const QString &);
+
 };
 
 #endif //QOFONOSERVICE_H

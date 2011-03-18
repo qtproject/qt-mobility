@@ -307,6 +307,8 @@ static void test_systemnetworkinfo(void)
   X(networkinfo.homeMobileCountryCode());
   X(networkinfo.homeMobileNetworkCode());
   X(networkinfo.locationAreaCode());
+  X(networkinfo.cellDataTechnology());
+
 
   for(const symbol_t *sym = NetworkMode_lut; sym->key; ++sym) {
     QtMobility::QSystemNetworkInfo::NetworkMode mode =

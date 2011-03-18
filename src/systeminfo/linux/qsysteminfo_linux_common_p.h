@@ -61,13 +61,13 @@
 #include <QVariantMap>
 #include <QDesktopWidget>
 
-#include "../qsysteminfo.h"
-#include "../qsystemdeviceinfo.h"
-#include "../qsystemdisplayinfo.h"
-#include "../qsystemnetworkinfo.h"
-#include "../qsystemscreensaver.h"
-#include "../qsystemstorageinfo.h"
-#include "../qsystembatteryinfo.h"
+#include "qsysteminfo.h"
+#include "qsystemdeviceinfo.h"
+#include "qsystemdisplayinfo.h"
+#include "qsystemnetworkinfo.h"
+#include "qsystemscreensaver.h"
+#include "qsystemstorageinfo.h"
+#include "qsystembatteryinfo.h"
 
 #include <qmobilityglobal.h>
 
