@@ -27,7 +27,6 @@ symbian {
     DEPLOYMENT += xmlautoimport
 
     TARGET.EPOCALLOWDLLDATA = 1
-    TARGET.CAPABILITY = ALL -TCB
 }
 
 xml.path = $$QT_MOBILITY_EXAMPLES/xmldata

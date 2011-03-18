@@ -24,6 +24,10 @@
 
 #include "cntsqldbstructure.h"
 #include "dbsqlconstants.h"
+#include "cntpersistenceutility.h"
+#include "cntdbconsts_internal.h"
+#include "cntfldst.h"
+#include "pplcontactitemmanager.h"
 #include <sqldb.h>
 
 const TInt KSqlStatementSize = 1024;
@@ -127,9 +131,9 @@ CCntSqlDbTableColumn::~CCntSqlDbTableColumn()
 Factory method to create an instance of the class
 */
 
-CCntSqlDbTable* CCntSqlDbTable::NewLC( const TDesC&  aTableName, RSqlDatabase& aDbInstance )
+CCntSqlDbTable* CCntSqlDbTable::NewLC( const TDesC&  aTableName, RSqlDatabase& aDbInstance, CPplContactItemManager& aItemManager )
 	{
-	CCntSqlDbTable* self = new (ELeave) CCntSqlDbTable( aDbInstance );
+	CCntSqlDbTable* self = new (ELeave) CCntSqlDbTable( aDbInstance, aItemManager );
 	CleanupStack::PushL( self );
 	self->ConstructL( aTableName );	
 	return self;	
@@ -139,8 +143,9 @@ CCntSqlDbTable* CCntSqlDbTable::NewLC( const TDesC&  aTableName, RSqlDatabase& a
 Private Constructor
 */
 
-CCntSqlDbTable::CCntSqlDbTable( RSqlDatabase& aDbInstance )
-: iDatabase( aDbInstance )
+CCntSqlDbTable::CCntSqlDbTable( RSqlDatabase& aDbInstance, CPplContactItemManager& aItemManager )
+    : iDatabase( aDbInstance ),
+      iItemManager( aItemManager )
 	{	
 	}
 
@@ -248,11 +253,27 @@ void CCntSqlDbTable::MakeTableStructureCompatibleL()
     // one by one    
     TInt cnt = columnsToAdd.Count();
     
+    TBool favoriteColumnAdded = EFalse;
     for( TInt i = 0; i< cnt ; i++ )
         {
         AlterTableToAddColumnL(columnsToAdd[i]);
+        if (columnsToAdd[i]->ColumnName().CompareC(KContactFavoriteIndex()) == 0)
+            {
+            favoriteColumnAdded = ETrue;
+            }
         }    
 
+    if ((*iTableName).CompareC(KSqlContactTableName) == 0)
+        {
+        if (favoriteColumnAdded)
+            {
+            // If favorite column was added, fetch favorite info for existing contacts
+            // and fill the column.
+            FillFavoritesColumnL();
+            }
+
+        }
+    
     CleanupStack::PopAndDestroy();  //ColumnsToAdd.Close()   
     }
 /*
@@ -279,6 +300,73 @@ void CCntSqlDbTable::AlterTableToAddColumnL( CCntSqlDbTableColumn* aColInfo)
         }
     CleanupStack::PopAndDestroy(); //sqlstmt
     }
+
+/*
+ * Updates favorite column with the information from the text blob for 
+ * all contacts.
+ */
+void CCntSqlDbTable::FillFavoritesColumnL()
+    {
+    //fetch all contact ids
+    TInt err = KErrNone;
+    _LIT(KContactFetchIdsQuery, "SELECT contact_id FROM contact");
+    _LIT(KContactUpdateFavoriteColumnQuery, "UPDATE contact SET favorite_index = %S WHERE contact_id = %d");
+    RArray<TInt> contactIds;
+    CleanupClosePushL(contactIds);
+    RSqlStatement fetchIdsStmt;
+    CleanupClosePushL(fetchIdsStmt);
+    User::LeaveIfError(fetchIdsStmt.Prepare(iDatabase, KContactFetchIdsQuery));
+    while ((err = fetchIdsStmt.Next()) == KSqlAtRow)
+        {
+        if (fetchIdsStmt.ColumnInt(0) != 0)
+            {
+            contactIds.AppendL(fetchIdsStmt.ColumnInt(0));
+            }
+        }
+    if (err != KSqlAtEnd)
+        {
+        User::Leave(err);
+        }
+    CleanupStack::PopAndDestroy(&fetchIdsStmt);
+
+    CContactItemViewDef* vDef = CContactItemViewDef::NewLC(CContactItemViewDef::EIncludeFields,
+            CContactItemViewDef::EIncludeHiddenFields);
+    vDef->AddL(KUidContactFieldMatchAll);
+    
+    //go through all contacts and update new favorite column with values from the text blob
+    CContactItem* templateContact = iItemManager.ReadLC(0, *vDef, 0, 0, EFalse);
+    TInt count = contactIds.Count();
+    for (TInt i = 0; i < count; i++)
+        {
+        //create contact item to keep info from the text blob. 
+        //item type can be any since it's not saved to the db.
+        CContactItem* item = CContactItem::NewLC(KUidContactCard);
+        item->SetId(contactIds[i]);
+        TCntPersistenceUtility::ReadTextBlobL(*item, *vDef, templateContact, iDatabase);
+        TInt indexFavField = item->CardFields().Find(KUidContactFieldTopContact);
+        if ( indexFavField >= KErrNone)
+            {
+            const CContactItemField& field = item->CardFields()[indexFavField];
+            HBufC* updateQuery = HBufC::NewLC(KContactUpdateFavoriteColumnQuery().Length() + 
+                    field.TextStorage()->Text().Length() + MAX_INT_LEN); 
+            updateQuery->Des().Format(KContactUpdateFavoriteColumnQuery,
+                    &(field.TextStorage()->Text()), contactIds[i]);
+            
+            err = iDatabase.Exec(*updateQuery);
+            if (err != KSqlAtRow)
+                {
+                User::LeaveIfError(err);
+                }
+            
+            CleanupStack::PopAndDestroy(updateQuery);
+            }
+        CleanupStack::PopAndDestroy(item);
+        }
+    CleanupStack::PopAndDestroy(templateContact);
+    CleanupStack::PopAndDestroy(vDef);
+    CleanupStack::PopAndDestroy(&contactIds);    
+    }
+
 /*
  * Adds a column to the table info.
  */
@@ -313,9 +401,9 @@ void CCntSqlDbTable::ConstructL(const TDesC& aTableName)
 /*
  * Factory method to return instance of CCntSqlDbStructure. 
  */
-CCntSqlDbStructure* CCntSqlDbStructure::NewL( RSqlDatabase& aDbInstance)
+CCntSqlDbStructure* CCntSqlDbStructure::NewL( RSqlDatabase& aDbInstance, CPplContactItemManager& aItemManager)
     {   
-    return new ( ELeave ) CCntSqlDbStructure( aDbInstance );
+    return new ( ELeave ) CCntSqlDbStructure( aDbInstance, aItemManager );
     }
 /*
  * Initialises the table with table and columns
@@ -338,7 +426,7 @@ void CCntSqlDbStructure::InitializeL()
  */
 void CCntSqlDbStructure::InitializeContactsTableInfoL()
 	{
-	CCntSqlDbTable * contactTable = CCntSqlDbTable::NewLC( KSqlContactTableName(), iDatabase );
+	CCntSqlDbTable * contactTable = CCntSqlDbTable::NewLC( KSqlContactTableName(), iDatabase, iItemManager );
 	
 	contactTable->AddColumnToColumnInfoL(KContactId(), KInteger(),ETrue, KAutoIncrement);
 	contactTable->AddColumnToColumnInfoL(KContactTemplateId(), KInteger(),EFalse, KNullDesC());
@@ -359,7 +447,7 @@ void CCntSqlDbStructure::InitializeContactsTableInfoL()
 	
 	contactTable->AddColumnToColumnInfoL(KContactTextFields(), KText(),EFalse, KNullDesC());
 	contactTable->AddColumnToColumnInfoL(KContactBinaryFields(), KBlob(),EFalse, KNullDesC());
-    contactTable->AddColumnToColumnInfoL(KContactFavoriteIndex(), KInteger(),EFalse, KNullDesC());
+    contactTable->AddColumnToColumnInfoL(KContactFavoriteIndex(), KVarchar255(),EFalse, KNullDesC());
 
 	iTables.AppendL( contactTable );
 	CleanupStack::Pop(); //contactTable
@@ -370,7 +458,7 @@ void CCntSqlDbStructure::InitializeContactsTableInfoL()
  */
 void CCntSqlDbStructure::InitializeGroupsTableInfoL()
 	{
-	CCntSqlDbTable * groupTable = CCntSqlDbTable::NewLC( KSqlContactGroupTableName(), iDatabase );
+	CCntSqlDbTable * groupTable = CCntSqlDbTable::NewLC( KSqlContactGroupTableName(), iDatabase, iItemManager );
 
 	groupTable->AddColumnToColumnInfoL(KGroupId(), KInteger(),ETrue, KAutoIncrement());
 	groupTable->AddColumnToColumnInfoL(KGroupContactGroupId(), KInteger(),ETrue, KNullDesC());
@@ -385,7 +473,7 @@ void CCntSqlDbStructure::InitializeGroupsTableInfoL()
  */
 void CCntSqlDbStructure::InitializeCommAddrTableInfoL()
 	{
-	CCntSqlDbTable * commAddrTable = CCntSqlDbTable::NewLC( KSqlContactCommAddrTableName(), iDatabase );
+	CCntSqlDbTable * commAddrTable = CCntSqlDbTable::NewLC( KSqlContactCommAddrTableName(), iDatabase, iItemManager );
 	
     commAddrTable->AddColumnToColumnInfoL(KCommAddrId(), KInteger(),ETrue, KAutoIncrement());
     commAddrTable->AddColumnToColumnInfoL(KCommAddrType(), KInteger(),ETrue, KNullDesC());
@@ -434,7 +522,8 @@ const RPointerArray<CCntSqlDbTable>& CCntSqlDbStructure::Tables()
 /*
  * Constructor
  */
-CCntSqlDbStructure::CCntSqlDbStructure( RSqlDatabase& aDbInstance)
-	: iDatabase( aDbInstance )
+CCntSqlDbStructure::CCntSqlDbStructure( RSqlDatabase& aDbInstance, CPplContactItemManager& aItemManager)
+	: iDatabase( aDbInstance ),
+	  iItemManager( aItemManager )
 	{
 	}

@@ -58,9 +58,13 @@
 #include <w32std.h>
 #include <mmf/common/mmferrors.h>
 #include <mmf/common/mmfcontrollerframeworkbase.h>
+#include <MMFROPCustomCommandConstants.h>
 
 const QString DefaultAudioEndpoint = QLatin1String("Default");
 const TUid KHelixUID = {0x101F8514};
+
+//Hard-coding the command to support older versions.
+const TInt KMMFROPControllerEnablePausedLoadingStatus = 7;
 
 /*!
     Constructs the CVideoPlayerUtility2 object with given \a service and \a object.
@@ -538,6 +542,9 @@ void S60VideoPlayerSession::MvpuoOpenComplete(TInt aError)
     setError(aError);
     if (KErrNone == aError)
         m_player->Prepare();
+
+    const TMMFMessageDestinationPckg dest( KUidInterfaceMMFROPController );
+    TRAP_IGNORE(m_player->CustomCommandSync(dest, KMMFROPControllerEnablePausedLoadingStatus, KNullDesC8, KNullDesC8));
 
     DP0("S60VideoPlayerSession::MvpuoOpenComplete ---");
 }

@@ -768,6 +768,7 @@ find %{buildroot}%{_libdir}/qtmobility -type f -perm /u+x,g+x,o+x \( -false \
 %{_includedir}/QtLocation/QGeoCoordinate
 %{_includedir}/QtLocation/QGeoManeuver
 %{_includedir}/QtLocation/QGeoMapCircleObject
+%{_includedir}/QtLocation/QGeoMapCustomObject
 %{_includedir}/QtLocation/QGeoMapData
 %{_includedir}/QtLocation/QGeoMapGroupObject
 %{_includedir}/QtLocation/QGeoMapObject
