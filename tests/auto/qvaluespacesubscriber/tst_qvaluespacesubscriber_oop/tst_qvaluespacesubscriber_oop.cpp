@@ -46,7 +46,7 @@
 #include <QObject>
 #include <QProcess>
 #include <QCoreApplication>
-#include <QTest>
+#include <QtTest>
 #include <QFile>
 QTM_USE_NAMESPACE
 
@@ -57,11 +57,19 @@ class ShutdownControl : public QObject
 public:
     ShutdownControl(QProcess* process)
     {
-        connect(process,SIGNAL(finished(int,QProcess::ExitStatus)),
+        connect(process, SIGNAL(finished(int,QProcess::ExitStatus)),
                 this, SLOT(shutDown(int, QProcess::ExitStatus)));
+        connect(process, SIGNAL(error(QProcess::ProcessError)),
+                this, SLOT(handleProcessError(QProcess::ProcessError)));
     }
 
 private slots:
+    void handleProcessError(QProcess::ProcessError error)
+    {
+        qDebug() << "Error happens in the client process: " << error;
+        qApp->exit(1);
+    }
+
     void shutDown(int, QProcess::ExitStatus)
     {
         qApp->quit();
