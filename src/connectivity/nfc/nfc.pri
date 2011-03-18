@@ -45,12 +45,12 @@ maemo6|meego {
     QT *= dbus
 
     DBUS_INTERFACES += \
-        nfc/meego/com.nokia.nfc.Manager.xml \
-        nfc/meego/com.nokia.nfc.Device.xml
+        nfc/maemo6/com.nokia.nfc.Manager.xml \
+        nfc/maemo6/com.nokia.nfc.Device.xml
 
     DBUS_ADAPTORS += \
-        nfc/meego/com.nokia.nfc.AccessRequestor.xml \
-        nfc/meego/com.nokia.nfc.NDEFHandler.xml
+        nfc/maemo6/com.nokia.nfc.AccessRequestor.xml \
+        nfc/maemo6/com.nokia.nfc.NDEFHandler.xml
 
     # work around bug in Qt
     dbus_interface_source.depends = ${QMAKE_FILE_OUT_BASE}.h
@@ -62,32 +62,32 @@ maemo6|meego {
     PKGCONFIG += dbus-1
 
     PRIVATE_HEADERS += \
-        nfc/qnearfieldmanager_meego_p.h \
-        nfc/qnearfieldtarget_meego_p.h \
-        nfc/qllcpsocket_meego_p.h \
-        nfc/qllcpserver_meego_p.h \
-        nfc/meego/adapter_interface_p.h \
-        nfc/meego/target_interface_p.h \
-        nfc/meego/tag_interface_p.h \
-        nfc/meego/socketrequestor_p.h
+        nfc/qnearfieldmanager_maemo6_p.h \
+        nfc/qnearfieldtarget_maemo6_p.h \
+        nfc/qllcpsocket_maemo6_p.h \
+        nfc/qllcpserver_maemo6_p.h \
+        nfc/maemo6/adapter_interface_p.h \
+        nfc/maemo6/target_interface_p.h \
+        nfc/maemo6/tag_interface_p.h \
+        nfc/maemo6/socketrequestor_p.h
 
     SOURCES += \
-        nfc/qnearfieldmanager_meego.cpp \
-        nfc/qnearfieldtarget_meego.cpp \
-        nfc/qllcpsocket_meego_p.cpp \
-        nfc/qllcpserver_meego_p.cpp \
-        nfc/meego/adapter_interface.cpp \
-        nfc/meego/target_interface.cpp \
-        nfc/meego/tag_interface.cpp \
-        nfc/meego/socketrequestor.cpp
+        nfc/qnearfieldmanager_maemo6.cpp \
+        nfc/qnearfieldtarget_maemo6.cpp \
+        nfc/qllcpsocket_maemo6_p.cpp \
+        nfc/qllcpserver_maemo6_p.cpp \
+        nfc/maemo6/adapter_interface.cpp \
+        nfc/maemo6/target_interface.cpp \
+        nfc/maemo6/tag_interface.cpp \
+        nfc/maemo6/socketrequestor.cpp
 
     OTHER_FILES += \
         $$DBUS_INTERFACES \
         $$DBUS_ADAPTORS \
-        nfc/meego/com.nokia.nfc.Adapter.xml \
-        nfc/meego/com.nokia.nfc.Target.xml \
-        nfc/meego/com.nokia.nfc.Tag.xml \
-        nfc/meego/com.nokia.nfc.LLCPRequestor.xml
+        nfc/maemo6/com.nokia.nfc.Adapter.xml \
+        nfc/maemo6/com.nokia.nfc.Target.xml \
+        nfc/maemo6/com.nokia.nfc.Tag.xml \
+        nfc/maemo6/com.nokia.nfc.LLCPRequestor.xml
 
     # Add OUT_PWD to INCLUDEPATH so that creator picks up headers for generated files
     # This is not needed for the build otherwise.

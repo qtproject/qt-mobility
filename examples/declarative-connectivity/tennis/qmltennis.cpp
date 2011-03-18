@@ -39,14 +39,20 @@
 ****************************************************************************/
 
 #include <QtGui/QApplication>
-#include <QtDeclarative/QDeclarativeView>
-#include <QtDeclarative/QDeclarativeEngine>
+#include <QDeclarativeView>
+#include <QDeclarativeEngine>
+#include <qdeclarative.h>
 
 #include <QDebug>
+
+#include "controller.h"
 
 int main(int argc, char *argv[])
 {
     QApplication application(argc, argv);
+
+    qmlRegisterType<Controller>("Controller", 1, 0, "Controller");
+
     const QString mainQmlApp = QLatin1String("qrc:/tennis.qml");
     QDeclarativeView view;
     view.setSource(QUrl(mainQmlApp));

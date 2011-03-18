@@ -1,5 +1,12 @@
 QT += declarative network
-SOURCES += $$PWD/qmltennis.cpp
+
+SOURCES += \
+    qmltennis.cpp \
+    controller.cpp
+
+HEADERS += \
+    controller.h
+
 include($$PWD/../declarative-connectivity.pri)
 include($$PWD/deployment.pri)
 
@@ -15,4 +22,5 @@ RESOURCES += \
 
 OTHER_FILES += \
     sensor.qml \
-    Handover.qml
+    Handover.qml \
+    Paddle.qml

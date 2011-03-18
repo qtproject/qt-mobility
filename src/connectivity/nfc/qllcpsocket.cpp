@@ -46,7 +46,7 @@
 #elif defined(Q_OS_SYMBIAN)
 #include "qllcpsocket_symbian_p.h"
 #elif defined(Q_WS_MAEMO_6) || defined(Q_WS_MEEGO)
-#include "qllcpsocket_meego_p.h"
+#include "qllcpsocket_maemo6_p.h"
 #else
 #include "qllcpsocket_p.h"
 #endif
@@ -71,6 +71,9 @@ QTM_BEGIN_NAMESPACE
 
     \value UnknownSocketError       An unidentified error has occurred.
     \value RemoteHostClosedError    The remote host closed the connection.
+    \value SocketAccessError        The socket operation failed because the application lacked the
+                                    required privileges.
+    \value SocketResourceError      The local system ran out of resources (e.g., too many sockets).
 */
 
 /*!

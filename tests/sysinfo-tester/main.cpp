@@ -125,9 +125,6 @@ static const symbol_t NetworkMode_lut[] =
   SYM(QSystemNetworkInfo::EthernetMode),
   SYM(QSystemNetworkInfo::BluetoothMode),
   SYM(QSystemNetworkInfo::WimaxMode),
-  SYM(QSystemNetworkInfo::GprsMode),
-  SYM(QSystemNetworkInfo::EdgeMode),
-  SYM(QSystemNetworkInfo::HspaMode),
   SYM(QSystemNetworkInfo::LteMode),
   {0,0}
 };
@@ -191,7 +188,13 @@ static void test_systemdeviceinfo(void)
   X(deviceinfo.simStatus());
   X(deviceinfo.lockStatus());
   X(deviceinfo.uniqueDeviceID());
-//  X(deviceinfo.activeProfileDetails());
+
+  X(deviceinfo.keypadLightOn(QSystemDeviceInfo::PrimaryKeypad));
+  X(deviceinfo.keypadLightOn(QSystemDeviceInfo::SecondaryKeypad));
+
+  X(deviceinfo.activeProfileDetails().messageRingtoneVolume());
+  X(deviceinfo.activeProfileDetails().voiceRingtoneVolume());
+  X(deviceinfo.activeProfileDetails().vibrationActive());
 }
 
 /* ------------------------------------------------------------------------- *

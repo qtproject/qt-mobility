@@ -223,24 +223,13 @@ QGeoMapObject::~QGeoMapObject()
 }
 
 /*!
-    Causes the QGeoMapData containing this object to be updated.
-*/
-void QGeoMapObject::update()
-{
-    if (!d_ptr->mapData || !d_ptr->mapData->d_ptr)
-        return;
-
-    d_ptr->mapData->d_ptr->update(this);
-}
-
-/*!
     Returns the type of this map object.
 */
 QGeoMapObject::Type QGeoMapObject::type() const
 {
-    if (d_ptr->graphicsItem)
-        return QGeoMapObject::CustomType;
-    else
+//    if (d_ptr->graphicsItem)
+//        return QGeoMapObject::CustomType;
+//    else
         return QGeoMapObject::NullType;
 }
 
@@ -258,14 +247,7 @@ void QGeoMapObject::setZValue(int zValue)
 {
     if (d_ptr->zValue != zValue) {
         d_ptr->zValue = zValue;
-        if (d_ptr->graphicsItem)
-            d_ptr->graphicsItem->setZValue(zValue);
         emit zValueChanged(d_ptr->zValue);
-        update();
-        if (d_ptr->mapData && d_ptr->mapData->d_ptr->oe) {
-            QGeoMapObjectEngine *e = d_ptr->mapData->d_ptr->oe;
-            e->rebuildScenes();
-        }
     }
 }
 
@@ -285,10 +267,7 @@ void QGeoMapObject::setVisible(bool visible)
 {
     if (d_ptr->isVisible != visible) {
         d_ptr->isVisible = visible;
-        if (d_ptr->graphicsItem)
-            d_ptr->graphicsItem->setVisible(visible);
         emit visibleChanged(d_ptr->isVisible);
-        update();
     }
 }
 
@@ -306,7 +285,6 @@ void QGeoMapObject::setSelected(bool selected)
     if (d_ptr->isSelected != selected) {
         d_ptr->isSelected = selected;
         emit selectedChanged(d_ptr->isSelected);
-        update();
     }
 }
 
@@ -318,86 +296,30 @@ bool QGeoMapObject::isSelected() const
 /*!
     Returns a bounding box which contains this map object.
 
-    Subclasses may override this if they wish; otherwise this function
-    uses the set \a graphicsItem to calculate the bounds.
-
     The default implementation requires the object to be added to a map
     before this function returns a valid bounding box.
 */
 QGeoBoundingBox QGeoMapObject::boundingBox() const
 {
-    if (!d_ptr->graphicsItem || !d_ptr->mapData)
+    if (!d_ptr->info)
         return QGeoBoundingBox();
 
-    QGeoMapObjectEngine *e = d_ptr->mapData->d_ptr->oe;
-
-    e->updateTransforms();
-    QTransform trans = e->latLonTrans.value(this);
-
-    QRectF bounds = d_ptr->graphicsItem->boundingRect();
-    QPolygonF poly = bounds * trans;
-
-    QRectF latLonBounds = poly.boundingRect();
-    QPointF topLeft = latLonBounds.bottomLeft();
-    if (topLeft.x() > 180.0 * 3600.0)
-        topLeft.setX(topLeft.x() - 360.0 * 3600.0);
-    if (topLeft.x() < -180.0 * 3600.0)
-        topLeft.setX(topLeft.x() + 360.0 * 3600.0);
-
-    QPointF bottomRight = latLonBounds.topRight();
-    if (bottomRight.x() > 180.0 * 3600.0)
-        bottomRight.setX(bottomRight.x() - 360.0 * 3600.0);
-    if (bottomRight.x() < -180.0 * 3600.0)
-        bottomRight.setX(bottomRight.x() + 360.0 * 3600.0);
-
-    QGeoCoordinate tlc(topLeft.y() / 3600.0, topLeft.x() / 3600.0);
-    QGeoCoordinate brc(bottomRight.y() / 3600.0, bottomRight.x() / 3600.0);
-
-    return QGeoBoundingBox(tlc, brc);
+    return d_ptr->info->boundingBox();
 }
 
 /*!
     Returns whether \a coordinate is contained with the boundary of this
     map object.
 
-    Subclasses may override this if they wish; otherwise this function
-    uses the set \a graphicsItem to calculate the boundary.
-
     In the default implementation, if this object has not been added to a
     map yet, \a contains will always return \a false.
 */
 bool QGeoMapObject::contains(const QGeoCoordinate &coordinate) const
 {
-    if (!d_ptr->graphicsItem || !d_ptr->mapData)
+    if (!d_ptr->info)
         return false;
 
-    QGeoMapObjectEngine *e = d_ptr->mapData->d_ptr->oe;
-
-    e->updateTransforms();
-    QPointF latLonPoint(coordinate.longitude()*3600.0, coordinate.latitude()*3600.0);
-
-    if (e->latLonExact.contains(this)) {
-        QList<QGraphicsItem*> items = e->latLonExact.values(this);
-        foreach (QGraphicsItem *item, items) {
-            if (item->contains(latLonPoint))
-                return true;
-        }
-        return false;
-    } else {
-        QList<QTransform> transList = e->latLonTrans.values(this);
-        foreach (QTransform trans, transList) {
-            bool ok;
-            QTransform inv = trans.inverted(&ok);
-            if (!ok)
-                continue;
-
-            QPointF localPoint = latLonPoint * inv;
-
-            if (d_ptr->graphicsItem->contains(localPoint))
-                return true;
-        }
-        return false;
-    }
+    return d_ptr->info->contains(coordinate);
 }
 
 /*!
@@ -430,9 +352,59 @@ void QGeoMapObject::setMapData(QGeoMapData *mapData)
     if (d_ptr->mapData == mapData)
         return;
 
+    if (d_ptr->info) {
+        delete d_ptr->info;
+        d_ptr->info = 0;
+    }
+
     d_ptr->mapData = mapData;
     if (!d_ptr->mapData)
         return;
+
+    d_ptr->info = mapData->createMapObjectInfo(this);
+
+    if (!d_ptr->info)
+        return;
+
+    connect(d_ptr->mapData,
+            SIGNAL(windowSizeChanged(QSizeF)),
+            d_ptr->info,
+            SLOT(windowSizeChanged(QSizeF)));
+    connect(d_ptr->mapData,
+            SIGNAL(zoomLevelChanged(qreal)),
+            d_ptr->info,
+            SLOT(zoomLevelChanged(qreal)));
+    connect(d_ptr->mapData,
+            SIGNAL(centerChanged(QGeoCoordinate)),
+            d_ptr->info,
+            SLOT(centerChanged(QGeoCoordinate)));
+
+    connect(this,
+            SIGNAL(zValueChanged(int)),
+            d_ptr->info,
+            SLOT(zValueChanged(int)));
+    connect(this,
+            SIGNAL(visibleChanged(bool)),
+            d_ptr->info,
+            SLOT(visibleChanged(bool)));
+    connect(this,
+            SIGNAL(selectedChanged(bool)),
+            d_ptr->info,
+            SLOT(selectedChanged(bool)));
+    connect(this,
+            SIGNAL(originChanged(QGeoCoordinate)),
+            d_ptr->info,
+            SLOT(originChanged(QGeoCoordinate)));
+    connect(this,
+            SIGNAL(transformTypeChanged(QGeoMapObject::TransformType)),
+            d_ptr->info,
+            SLOT(transformTypeChanged(QGeoMapObject::TransformType)));
+    connect(this,
+            SIGNAL(unitsChanged(QGeoMapObject::CoordinateUnit)),
+            d_ptr->info,
+            SLOT(unitsChanged(QGeoMapObject::CoordinateUnit)));
+
+    d_ptr->info->init();
 }
 
 /*!
@@ -445,44 +417,16 @@ QGeoMapData* QGeoMapObject::mapData() const
     return d_ptr->mapData;
 }
 
+/*!
+    Returns the QGeoMapObjectInfo instance which implements the
+    QGeoMapData specific behaviours of this map object.
+
+    This will mostly be useful when implementing custom QGeoMapData
+    subclasses.
+*/
 QGeoMapObjectInfo *QGeoMapObject::info() const
 {
-    qWarning("QGeoMapObject::info() is deprecated, returning null");
-    return NULL;
-}
-
-/*!
-    \property QGeoMapObject::graphicsItem
-    \brief This property holds the GraphicsItem that will be drawn on the map.
-
-    \since 1.2
-
-    The GraphicsItem's coordinates are in the units specified by the
-    QGeoMapObject::units property.
-
-    To offset the coordinates of the GraphicsItem (for items that can only
-    be constructed about their parent position), use the QGraphicsItem::setTransform
-    method with a QTransform containing the desired translation.
-
-    Note that setting this property will cause the QGeoMapObject to take
-    ownership of the GraphicsItem. Before taking ownership of the new item,
-    it will first relinquish ownership of its predecessor (if any).
-*/
-QGraphicsItem *QGeoMapObject::graphicsItem() const
-{
-    return d_ptr->graphicsItem;
-}
-
-void QGeoMapObject::setGraphicsItem(QGraphicsItem *item)
-{
-    if (item == d_ptr->graphicsItem)
-        return;
-
-    d_ptr->graphicsItem = item;
-    if (item)
-        item->setZValue(this->zValue());
-    emit graphicsItemChanged(item);
-    update();
+    return d_ptr->info;
 }
 
 /*!
@@ -500,8 +444,12 @@ QGeoMapObject::TransformType QGeoMapObject::transformType() const
 
 void QGeoMapObject::setTransformType(const TransformType &type)
 {
+    if (type == d_ptr->transType)
+        return;
+
     d_ptr->transType = type;
-    update();
+
+    emit transformTypeChanged(type);
 }
 
 /*!
@@ -524,8 +472,8 @@ void QGeoMapObject::setOrigin(const QGeoCoordinate &origin)
         return;
 
     d_ptr->origin = origin;
+
     emit originChanged(origin);
-    update();
 }
 
 /*!
@@ -547,6 +495,9 @@ QGeoMapObject::CoordinateUnit QGeoMapObject::units() const
 
 void QGeoMapObject::setUnits(const CoordinateUnit &unit)
 {
+    if (unit == d_ptr->units)
+        return;
+
     d_ptr->units = unit;
 
     if (unit == QGeoMapObject::PixelUnit)
@@ -554,7 +505,7 @@ void QGeoMapObject::setUnits(const CoordinateUnit &unit)
     else
         setTransformType(QGeoMapObject::BilinearTransform);
 
-    update();
+    emit unitsChanged(unit);
 }
 
 /*!
@@ -589,18 +540,18 @@ void QGeoMapObject::setUnits(const CoordinateUnit &unit)
 
 QGeoMapObjectPrivate::QGeoMapObjectPrivate()
     : zValue(0),
+      serial(0),
       isVisible(true),
       isSelected(false),
-      units(QGeoMapObject::PixelUnit),
-      transType(QGeoMapObject::ExactTransform),
       mapData(0),
-      serial(0),
-      graphicsItem(0) {}
+      info(0),
+      units(QGeoMapObject::PixelUnit),
+      transType(QGeoMapObject::ExactTransform){}
 
 QGeoMapObjectPrivate::~QGeoMapObjectPrivate()
 {
-    if (graphicsItem)
-        delete graphicsItem;
+    if (info)
+        delete info;
 }
 
 /*******************************************************************************

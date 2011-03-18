@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -114,14 +114,14 @@ CFlipStatus::CFlipStatus() : CActive(EPriorityStandard),
 
 void CFlipStatus::ConstructL()
 {
-    TInt flipKbType;
+    TInt flipKbType = 0;
+#ifdef SYMBIAN_3_PLATFORM
     TRAP_IGNORE(
                 CRepository* repository = CRepository::NewLC( KCRUidAvkon ) ;
-                #ifdef SYMBIAN_3_PLATFORM
                 User::LeaveIfError(repository->Get( KAknKeyboardSlideOpen, flipKbType));
-                #endif
                 CleanupStack::PopAndDestroy(repository);
             )
+#endif
     if (flipKbType)
         m_filpKeyBoard = 1;
     else
@@ -172,7 +172,7 @@ bool CFlipStatus::getFlipStatus()
 return (m_flipStatus  == EPSHWRMGripOpen);
 }
 
-bool CFlipStatus::getKeyboardStatus()
+bool CFlipStatus::IsFlipSupported()
 {
 return (m_filpKeyBoard  == 1);
 }
