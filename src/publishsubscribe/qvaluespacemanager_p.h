@@ -64,8 +64,7 @@ class QM_AUTOTEST_EXPORT QValueSpaceManager
 public:
     QValueSpaceManager();
 
-    void initServer();
-    void init();
+    void init(QAbstractValueSpaceLayer::Type type);
     bool isServer() const;
 
     void install(QAbstractValueSpaceLayer * layer);
@@ -75,9 +74,6 @@ public:
     static QValueSpaceManager *instance();
 
 private:
-    void commonInit(QAbstractValueSpaceLayer::Type);
-    bool initLayer(QAbstractValueSpaceLayer* layer);
-
     enum { Uninit, Server, Client } type;
     QList<QAbstractValueSpaceLayer *> layers;
     QList<QValueSpace::LayerCreateFunc> funcs;
