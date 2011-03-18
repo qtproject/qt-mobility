@@ -176,6 +176,9 @@ Note that timestamps on this platform come from the system clock.
 Applications need to handle shifts in time caused by the user manually setting the clock or
 from the automatic time synchronization feature setting the clock.
 
+The ambient light sensor can only detect changes. Unlike all other sensors, it cannot report the "current value"
+so it is not possible to determine the current ambient light level.
+
 \section2 Maemo 5
 
 The N900 represents a unique device for the Sensors API. Unlike the Symbian and MeeGo platforms, sensor data is
@@ -245,7 +248,9 @@ accelerometer->setProperty("alwaysOn", true);
 accelerometer->start();
 \endcode
 
-
+Unlike Symbian and N900, MeeGo does not currently provide initial readings. Thus, certain sensors must detect
+a change in value before a value can be reported. Examples include the orientation sensor and ambient light
+sensor.
 
 \section1 Front end, back end
 
