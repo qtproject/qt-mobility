@@ -230,7 +230,7 @@
 #include <qmessagefolderid.h>
 #include <qmessagecontentcontainer.h>
 #include <qmessagemanager.h>
-#include <qmessagestore.h>
+#include <qmessagestore_p.h>
 #include <qmessagesortorder.h>
 #include <qmessageid.h>
 

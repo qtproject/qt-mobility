@@ -54,6 +54,7 @@
 //
 
 #include "qgeomapobject.h"
+#include "qgeomapobjectinfo.h"
 #include "qgeocoordinate.h"
 
 class QGraphicsItem;
@@ -73,11 +74,12 @@ public:
     quint32 serial;
     bool isVisible;
     bool isSelected;
-    QGeoMapObject::CoordinateUnit units;
-    QGeoMapObject::TransformType transType;
 
     QGeoMapData *mapData;
-    QGraphicsItem *graphicsItem;
+    mutable QGeoMapObjectInfo *info;
+
+    QGeoMapObject::CoordinateUnit units;
+    QGeoMapObject::TransformType transType;
     QGeoCoordinate origin;
 
     Q_DISABLE_COPY(QGeoMapObjectPrivate)

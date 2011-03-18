@@ -155,7 +155,7 @@ void QGeoPositionInfoSourceGeoclueMaster::velocityUpdateSucceeded(double speed)
         qDebug() << "QGeoPositionInfoSourceGeoclueMaster velocity update succeeded, speed: " << speed;
 #endif
     // Store the velocity and mark it as fresh. Simple but hopefully adequate.
-    m_lastVelocity = speed;
+    m_lastVelocity = speed * 0.514444; // convert knots to m/s
     m_lastVelocityIsFresh = true;
 }
 
@@ -245,7 +245,6 @@ bool QGeoPositionInfoSourceGeoclueMaster::tryGPS()
     } else {
         // Check if the device exists (does nothing if a bluetooth address)
         if (deviceName.trimmed().at(0) == '/' && QFile::exists(deviceName.trimmed())) {
-            qDebug() << "QGeoPositionInfoSourceGeoclueMaster GPS device: " << deviceName;
             return true;
         }
         return false;
@@ -268,7 +267,6 @@ int QGeoPositionInfoSourceGeoclueMaster::init()
             return configurePositionSource();
         }
     } else {
-        qDebug("QGeoPositionInfoSourceGeoclueMaster: GPS device not set (gconftool-2).");
         return configurePositionSource();
     }
 }

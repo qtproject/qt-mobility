@@ -58,10 +58,7 @@ QT_BEGIN_NAMESPACE
     You can query these inputs and select one to use.
 
     A typical implementation example:
-    \code
-        QAudioCaptureSource* audiocapturesource = new QAudioCaptureSource;
-        QMediaRecorder* capture = new QMediaRecorder(audiocapturesource);
-    \endcode
+    \snippet doc/src/snippets/multimedia-snippets/media.cpp Audio capture source
 
     The audiocapturesource interface is then used to:
 

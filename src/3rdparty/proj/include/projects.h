@@ -80,9 +80,10 @@ extern "C" {
 #define MAX_PATH_FILENAME 1024
 #endif
 	/* prototype hypot for systems where absent */
-#ifndef _WIN32
-extern double hypot(double, double);
-#endif
+// Causes trouble on Symbian, can't find a platform where this is needed.
+//#ifndef _WIN32
+//extern double hypot(double, double);
+//#endif
 
 #ifdef _WIN32_WCE
 #  include <wce_stdlib.h>

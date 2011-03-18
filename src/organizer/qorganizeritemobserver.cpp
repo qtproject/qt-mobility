@@ -48,6 +48,7 @@ class QOrganizerItemObserverPrivate
 {
     public:
         QOrganizerItemId m_id;
+        QWeakPointer<QOrganizerManager> m_manager;
         QOrganizerManagerData* m_managerPrivate;
 };
 QTM_END_NAMESPACE
@@ -73,6 +74,7 @@ QOrganizerItemObserver::QOrganizerItemObserver(QOrganizerManager* manager,
       d(new QOrganizerItemObserverPrivate)
 {
     d->m_id = itemId;
+    d->m_manager = manager;
     d->m_managerPrivate = QOrganizerManagerData::get(manager);
     d->m_managerPrivate->registerObserver(this);
 }
@@ -82,6 +84,9 @@ QOrganizerItemObserver::QOrganizerItemObserver(QOrganizerManager* manager,
  */
 QOrganizerItemObserver::~QOrganizerItemObserver()
 {
+    if (d->m_manager.data()) {
+        d->m_managerPrivate->unregisterObserver(this);
+    }
     delete d;
 }
 

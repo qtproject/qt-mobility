@@ -44,8 +44,10 @@
 #include "testhelper.h"
 
 #include "qgeomapobject.h"
+#include "qgeomapcustomobject.h"
 #include "qgraphicsgeomap.h"
 #include "qgeocoordinate.h"
+#include <QGraphicsItem>
 #include <QGraphicsRectItem>
 #include <QPointer>
 #include <QGraphicsTextItem>
@@ -70,7 +72,6 @@ private slots:
 
     // basic property tests
     void holdsGraphicsItem();
-    void ownsGraphicsItem();
     void type();
     void holdsVisible();
     void holdsOrigin();
@@ -92,6 +93,7 @@ private:
 void tst_QGeoMapObject::initTestCase()
 {
     qRegisterMetaType<QGeoCoordinate>();
+    qRegisterMetaType<QGraphicsItem*>();
 }
 
 void tst_QGeoMapObject::init()
@@ -109,19 +111,9 @@ void tst_QGeoMapObject::cleanup()
     m_helper = 0;
 }
 
-void tst_QGeoMapObject::ownsGraphicsItem()
-{
-    QPointer<QGeoMapObject> obj = new QGeoMapObject;
-    QPointer<QGraphicsTextItem> ri = new QGraphicsTextItem;
-    obj->setGraphicsItem(ri);
-
-    delete obj;
-    QVERIFY(!ri);
-}
-
 void tst_QGeoMapObject::holdsGraphicsItem()
 {
-    QGeoMapObject *obj = new QGeoMapObject;
+    QGeoMapCustomObject *obj = new QGeoMapCustomObject;
 
     QVERIFY(!obj->graphicsItem());
 
@@ -196,9 +188,11 @@ static int centredEllipseRadius(const QPixmap &pxmap)
     return r;
 }
 
+// only useful once we add custom graphics items back into the mix
+
 void tst_QGeoMapObject::findsPixelEllipse()
 {
-    QGeoMapObject *obj = new QGeoMapObject;
+    QGeoMapCustomObject *obj = new QGeoMapCustomObject;
 
     QGraphicsEllipseItem *el = new QGraphicsEllipseItem;
     el->setRect(-10, -10, 20, 20);
@@ -242,7 +236,7 @@ void tst_QGeoMapObject::findsPixelEllipse()
 
 void tst_QGeoMapObject::drawsPixelEllipse()
 {
-    QGeoMapObject *obj = new QGeoMapObject;
+    QGeoMapCustomObject *obj = new QGeoMapCustomObject;
 
     QGraphicsEllipseItem *el = new QGraphicsEllipseItem;
     el->setRect(-10, -10, 20, 20);
@@ -294,7 +288,7 @@ void tst_QGeoMapObject::drawsPixelEllipse()
 
 void tst_QGeoMapObject::drawsBilinearEllipse()
 {
-    QGeoMapObject *obj = new QGeoMapObject;
+    QGeoMapCustomObject *obj = new QGeoMapCustomObject;
 
     QGraphicsEllipseItem *el = new QGraphicsEllipseItem;
     el->setRect(-100, -100, 200, 200);
@@ -340,7 +334,7 @@ void tst_QGeoMapObject::drawsBilinearEllipse()
 
 void tst_QGeoMapObject::drawsExactEllipse()
 {
-    QGeoMapObject *obj = new QGeoMapObject;
+    QGeoMapCustomObject *obj = new QGeoMapCustomObject;
 
     QGraphicsEllipseItem *el = new QGraphicsEllipseItem;
     el->setRect(-1000, -1000, 2000, 2000);
@@ -400,7 +394,7 @@ void tst_QGeoMapObject::drawsExactEllipse()
 
 void tst_QGeoMapObject::pixelChildren()
 {
-    QGeoMapObject *obj = new QGeoMapObject;
+    QGeoMapCustomObject *obj = new QGeoMapCustomObject;
 
     QGraphicsEllipseItem *el = new QGraphicsEllipseItem;
     el->setRect(-40, -40, 80, 80);
@@ -434,7 +428,7 @@ void tst_QGeoMapObject::pixelChildren()
 
 void tst_QGeoMapObject::bilinearChildren()
 {
-    QGeoMapObject *obj = new QGeoMapObject;
+    QGeoMapCustomObject *obj = new QGeoMapCustomObject;
 
     QGraphicsEllipseItem *el = new QGraphicsEllipseItem;
     el->setRect(-200, -200, 400, 400);
@@ -481,6 +475,11 @@ void tst_QGeoMapObject::bilinearChildren()
     double ratio = rChild;
     ratio /= rParent;
     QVERIFY(ratio >= 0.49 && ratio <= 0.51);
+
+    for (int i=0; i < 2; i++) {
+        delete p[i];
+        delete px[i];
+    }
 }
 
 static void malteseCross(QPainterPath &path, const qreal &width,
@@ -561,7 +560,7 @@ static struct Cross findCross(QGraphicsGeoMap *map)
 
 void tst_QGeoMapObject::autoUpdate()
 {
-    QGeoMapObject *obj = new QGeoMapObject;
+    QGeoMapCustomObject *obj = new QGeoMapCustomObject;
 
     QGraphicsPathItem *item = new QGraphicsPathItem;
     obj->setGraphicsItem(item);
@@ -626,10 +625,10 @@ void tst_QGeoMapObject::type()
 
     QGraphicsRectItem *ri = new QGraphicsRectItem;
 
-    obj->setGraphicsItem(ri);
-    QCOMPARE(obj->type(), QGeoMapObject::CustomType);
+//    obj->setGraphicsItem(ri);
+//    QCOMPARE(obj->type(), QGeoMapObject::CustomType);
 
-    obj->setGraphicsItem(0);
+//    obj->setGraphicsItem(0);
     delete ri;
     delete obj;
 }

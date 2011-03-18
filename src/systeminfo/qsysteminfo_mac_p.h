@@ -154,7 +154,7 @@ public:
     QString getDefaultInterface();
     QSystemNetworkInfo::NetworkMode currentMode();
     void ethernetChanged();
-
+    QSystemNetworkInfo::CellDataTechnology cellDataTechnology();
 
 Q_SIGNALS:
    void networkStatusChanged(QSystemNetworkInfo::NetworkMode, QSystemNetworkInfo::NetworkStatus);

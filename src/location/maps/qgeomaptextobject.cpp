@@ -65,7 +65,6 @@ QTM_BEGIN_NAMESPACE
 QGeoMapTextObject::QGeoMapTextObject()
     : d_ptr(new QGeoMapTextObjectPrivate())
 {
-    setGraphicsItem(d_ptr->item);
     setUnits(QGeoMapObject::PixelUnit);
 }
 
@@ -84,12 +83,10 @@ QGeoMapTextObject::QGeoMapTextObject(const QGeoCoordinate &coordinate,
     : d_ptr(new QGeoMapTextObjectPrivate())
 {
     setOrigin(coordinate);
-    d_ptr->item->setText(text);
-    d_ptr->item->setFont(font);
+    d_ptr->text = text;
+    d_ptr->font = font;
     d_ptr->offset = offset;
     d_ptr->alignment = alignment;
-    d_ptr->doAlignment();
-    setGraphicsItem(d_ptr->item);
     setUnits(QGeoMapObject::PixelUnit);
 }
 
@@ -144,16 +141,14 @@ void QGeoMapTextObject::setCoordinate(const QGeoCoordinate &coordinate)
 */
 QString QGeoMapTextObject::text() const
 {
-    return d_ptr->item->text();
+    return d_ptr->text;
 }
 
 void QGeoMapTextObject::setText(const QString &text)
 {
-    if (d_ptr->item->text() != text) {
-        d_ptr->item->setText(text);
-        d_ptr->doAlignment();
+    if (d_ptr->text != text) {
+        d_ptr->text = text;
         emit textChanged(text);
-        update();
     }
 }
 
@@ -170,16 +165,14 @@ void QGeoMapTextObject::setText(const QString &text)
 */
 QFont QGeoMapTextObject::font() const
 {
-    return d_ptr->item->font();
+    return d_ptr->font;
 }
 
 void QGeoMapTextObject::setFont(const QFont &font)
 {
-    if (d_ptr->item->font() != font) {
-        d_ptr->item->setFont(font);
-        d_ptr->doAlignment();
+    if (d_ptr->font != font) {
+        d_ptr->font = font;
         emit fontChanged(font);
-        update();
     }
 }
 
@@ -195,7 +188,7 @@ void QGeoMapTextObject::setFont(const QFont &font)
 */
 QPen QGeoMapTextObject::pen() const
 {
-    return d_ptr->item->pen();
+    return d_ptr->pen;
 }
 
 void QGeoMapTextObject::setPen(const QPen &pen)
@@ -203,13 +196,11 @@ void QGeoMapTextObject::setPen(const QPen &pen)
     QPen newPen = pen;
     newPen.setCosmetic(true);
 
-    if (d_ptr->item->pen() == newPen)
+    if (d_ptr->pen == newPen)
         return;
 
-    d_ptr->item->setPen(newPen);
-    d_ptr->doAlignment();
+    d_ptr->pen = newPen;
     emit penChanged(pen);
-    update();
 }
 
 /*!
@@ -223,16 +214,14 @@ void QGeoMapTextObject::setPen(const QPen &pen)
 */
 QBrush QGeoMapTextObject::brush() const
 {
-    return d_ptr->item->brush();
+    return d_ptr->brush;
 }
 
 void QGeoMapTextObject::setBrush(const QBrush &brush)
 {
-    if (d_ptr->item->brush() != brush) {
-        d_ptr->item->setBrush(brush);
-        d_ptr->doAlignment();
+    if (d_ptr->brush != brush) {
+        d_ptr->brush = brush;
         emit brushChanged(brush);
-        update();
     }
 }
 
@@ -252,11 +241,9 @@ QPoint QGeoMapTextObject::offset() const
 void QGeoMapTextObject::setOffset(const QPoint &off)
 {
     QPointF offset = off;
-    if (d_ptr->offset != offset) {
-        d_ptr->offset = offset;
-        d_ptr->doAlignment();
+    if (d_ptr->offset != off) {
+        d_ptr->offset = off;
         emit offsetChanged(off);
-        update();
     }
 }
 
@@ -282,9 +269,7 @@ void QGeoMapTextObject::setAlignment(Qt::Alignment alignment)
 {
     if (d_ptr->alignment != alignment) {
         d_ptr->alignment = alignment;
-        d_ptr->doAlignment();
         emit alignmentChanged(d_ptr->alignment);
-        update();
     }
 }
 
@@ -354,44 +339,10 @@ void QGeoMapTextObject::setAlignment(Qt::Alignment alignment)
 *******************************************************************************/
 
 QGeoMapTextObjectPrivate::QGeoMapTextObjectPrivate() :
-    item(new QGraphicsSimpleTextItem),
     offset(0, 0)
 {
-    QPen pen = item->pen();
     pen.setCosmetic(true);
-    item->setPen(pen);
-    item->setBrush(QBrush());
-
     alignment = Qt::AlignCenter;
-}
-
-void QGeoMapTextObjectPrivate::doAlignment()
-{
-    Qt::Alignment align = alignment;
-    QTransform trans;
-    item->setTransform(trans);
-
-    QRectF rect = item->boundingRect();
-    QPointF center = rect.center();
-
-    if (align & Qt::AlignVCenter) {
-        trans.translate(0, -1 * center.y());
-    } else if (align & Qt::AlignTop) {
-        trans.translate(0, -1 * rect.top());
-    } else if (align & Qt::AlignBottom) {
-        trans.translate(0, -1 * rect.bottom());
-    }
-    if (align & Qt::AlignHCenter) {
-        trans.translate(-1 * center.x(), 0);
-    } else if (align & Qt::AlignLeft) {
-        trans.translate(-1 * rect.left(), 0);
-    } else if (align & Qt::AlignRight) {
-        trans.translate(-1 * rect.right(), 0);
-    }
-
-    trans.translate(offset.x(), offset.y());
-    item->setTransform(trans);
-
 }
 
 QGeoMapTextObjectPrivate::~QGeoMapTextObjectPrivate() {}

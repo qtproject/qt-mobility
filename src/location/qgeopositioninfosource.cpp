@@ -364,8 +364,8 @@ QGeoPositionInfoSource::PositioningMethods QGeoPositionInfoSource::preferredPosi
 
 QGeoPositionInfoSource *QGeoPositionInfoSource::createDefaultSource(QObject *parent)
 {
-    QSettings settings(QSettings::SystemScope, QLatin1String("Nokia"), QLatin1String("QtLocationPosAndSat"));
-    QVariant value = settings.value("position.plugin.operator.whitelist");
+    QSettings pluginSettings(QSettings::SystemScope, QLatin1String("Nokia"), QLatin1String("QtLocationPosAndSat"));
+    QVariant value = pluginSettings.value("position.plugin.operator.whitelist");
     if (value.isValid()) {
         QStringList parts = value.toString().split(",");
         if (parts.size() == 4) {
@@ -377,7 +377,7 @@ QGeoPositionInfoSource *QGeoPositionInfoSource::createDefaultSource(QObject *par
 
 #if defined(Q_OS_SYMBIAN)
     QGeoPositionInfoSource *ret = NULL;
-    TRAPD(error, ret = CQGeoPositionInfoSourceS60::NewL(parent));
+    TRAPD(error, QT_TRYCATCH_LEAVING(ret = CQGeoPositionInfoSourceS60::NewL(parent)));
     if (error == KErrNone)
         return ret;
 #elif defined(QT_SIMULATOR)
@@ -393,13 +393,14 @@ QGeoPositionInfoSource *QGeoPositionInfoSource::createDefaultSource(QObject *par
         delete source;
 #elif defined(Q_WS_MEEGO)
     // Use Maemo6 backend if its available, otherwise use Geoclue backend
-    if (!settings.value("maemo6positioningavailable").isValid()) {
+    QSettings maemo6Settings(QSettings::UserScope, QLatin1String("Nokia"), QLatin1String("QtLocationPosAndSatMaemo6"));
+    if (!maemo6Settings.value("maemo6positioningavailable").isValid()) {
         QGeoPositionInfoSourceMaemo* maemo6Source = new QGeoPositionInfoSourceMaemo(parent);
         int status = maemo6Source->init();
         if (status == -1) {
             delete maemo6Source;
             maemo6Source = 0;
-            settings.setValue("maemo6positioningavailable", false);
+            maemo6Settings.setValue("maemo6positioningavailable", false);
         } else {
             return maemo6Source;
         }

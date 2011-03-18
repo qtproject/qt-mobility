@@ -256,6 +256,7 @@ Q_SIGNALS: // Notification Signals
     void stateChanged(S60VideoCaptureSession::TVideoCaptureState);
     void positionChanged(qint64);
     void mutedChanged(bool);
+    void captureSizeChanged(const QSize&);
     void error(int, const QString&);
 
 private Q_SLOTS: // Internal Slots
