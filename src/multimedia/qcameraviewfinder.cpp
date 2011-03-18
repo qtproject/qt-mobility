@@ -54,20 +54,12 @@ QT_USE_NAMESPACE
     \class QCameraViewfinder
 
 
-    \brief The QCameraViewfinder class provides camera viewfinder widget.
+    \brief The QCameraViewfinder class provides a camera viewfinder widget.
 
     \inmodule QtMultimediaKit
     \ingroup camera
 
-    \code
-        camera = new QCamera;
-        viewFinder = new QCameraViewfinder();
-        viewFinder->show();
-        camera->setViewfinder(viewFinder);
-
-        camera->setCaptureMode(QCamera::CaptureStillImage);
-        camera->start();
-    \endcode
+    \snippet doc/src/snippets/multimedia-snippets/camera.cpp Camera
 
 */
 

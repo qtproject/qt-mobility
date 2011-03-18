@@ -62,7 +62,6 @@ QT_BEGIN_NAMESPACE
     defined in QCameraLocksControl_iid.
 
 
-
     \sa QMediaService::requestControl(), QCamera
 */
 

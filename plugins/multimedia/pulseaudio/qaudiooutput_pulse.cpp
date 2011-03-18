@@ -387,6 +387,7 @@ qint64 QPulseAudioOutput::write(const char *data, qint64 len)
     QPulseAudioEngine *pulseEngine = QPulseAudioEngine::instance();
 
     pa_threaded_mainloop_lock(pulseEngine->mainloop());
+    len = qMin(len, static_cast<qint64>(pa_stream_writable_size(m_stream)));
     pa_stream_write(m_stream, data, len, 0, 0, PA_SEEK_RELATIVE);
     pa_threaded_mainloop_unlock(pulseEngine->mainloop());
     m_totalTimeValue += len;

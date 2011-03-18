@@ -51,6 +51,13 @@ QTM_BEGIN_NAMESPACE
     \inmodule QtLocation
 
     \ingroup landmarks-filter
+
+    Please note that different platforms support different capabilities with the attribute filter.
+    \list
+        \o The S60 3.1, 3.2 and 5.0 platforms do not support the MatchContains flag while the Symbian
+    platform does.
+        \o Note also that MatchContains is supported using the sparql and sqlite \l {Landmark Managers and Plugins} {managers}.
+    \endlist
 */
 
 Q_IMPLEMENT_LANDMARKFILTER_PRIVATE(QLandmarkNameFilter)

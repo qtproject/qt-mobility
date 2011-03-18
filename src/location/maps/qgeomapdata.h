@@ -162,6 +162,7 @@ private:
     Q_DISABLE_COPY(QGeoMapData)
 
     friend class QGeoMapObject;
+    friend class QGeoMapObjectInfo;
     friend class QGeoMapGroupObject;
 };
 

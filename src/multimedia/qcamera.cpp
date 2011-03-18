@@ -86,22 +86,9 @@ public:
     \ingroup camera
 
     QCamera can be used with QVideoWidget for viewfinder display,
-    QMediaRecorder for video recording and QCameraImageCapture for images taking.
+    QMediaRecorder for video recording and QCameraImageCapture for image taking.
 
-    \code
-        camera = new QCamera;
-
-        viewfinder = new QCameraViewfinder();
-        viewfinder->show();
-
-        camera->setViewfinder(viewfinder);
-
-        recorder = new QMediaRecorder(camera);
-        imageCapture = new QCameraImageCapture(camera);
-
-        camera->setCaptureMode(QCamera::CaptureStillImage);
-        camera->start();
-    \endcode
+    \snippet doc/src/snippets/multimedia-snippets/media.cpp Request control
 
 */
 

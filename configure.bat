@@ -594,7 +594,8 @@ call :compileTest Symbian_Hb hb_symbian
 call :compileTest Audiorouting_s60 audiorouting_s60
 call :compileTest Tunerlibrary_for_3.1 tunerlib_s60
 call :compileTest RadioUtility_for_post_3.1 radioutility_s60
-call :compileTest OpenMaxAl_support openmaxal_symbian
+REM Currently not being supported
+REM call :compileTest OpenMaxAl_support openmaxal_symbian
 call :compileTest Surfaces_s60 surfaces_s60
 call :compileTest Symbian_Messaging_Freestyle messaging_freestyle
 call :compileTest Symbian_Messaging_Freestyle_MAPI12 messaging_freestyle_mapi12
@@ -612,6 +613,9 @@ call :compileTest MDS_25_92MCL mds_25_92mcl
 call :compileTest Symbian_NFC nfc
 call :compileTest BTEngineConnectionManager_Symbian btengconnman_symbian
 call :compileTest BTEngineDeviceManager_Symbian btengdevman_symbian
+call :compileTest LockandFlipKeys LockandFlipPSkeys
+call :compileTest FmTxClientCheck FmTxClient
+call :compileTest DiskNotifyClientCheck DiskNotifyClient
 goto noTests
 
 :windowsTests

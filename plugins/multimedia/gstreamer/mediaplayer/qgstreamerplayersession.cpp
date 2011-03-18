@@ -50,6 +50,7 @@
 #include <QtCore/qdatetime.h>
 #include <QtCore/qdebug.h>
 #include <QtCore/qsize.h>
+#include <QtCore/qtimer.h>
 #include <QtCore/qdebug.h>
 
 #if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6) || (GST_VERSION_MICRO > 20)
@@ -95,7 +96,8 @@ QGstreamerPlayerSession::QGstreamerPlayerSession(QObject *parent)
      m_videoAvailable(false),
      m_seekable(false),
      m_lastPosition(0),
-     m_duration(-1)
+     m_duration(-1),
+     m_durationQueries(0)
 {
 #ifdef USE_PLAYBIN2
     m_playbin = gst_element_factory_make("playbin2", NULL);
@@ -159,7 +161,7 @@ QGstreamerPlayerSession::QGstreamerPlayerSession(QObject *parent)
 
         g_signal_connect(G_OBJECT(m_playbin), "notify::volume", G_CALLBACK(handleVolumeChange), this);
         if (m_usePlaybin2)
-            g_signal_connect(G_OBJECT(m_playbin), "notify::mute", G_CALLBACK(handleVolumeChange), this);
+            g_signal_connect(G_OBJECT(m_playbin), "notify::mute", G_CALLBACK(handleMutedChange), this);
     }
 }
 
@@ -571,7 +573,12 @@ void QGstreamerPlayerSession::finishVideoOutputChange()
 #endif
     //it's necessary to send a new segment event just before
     //the first buffer pushed to the new sink
-    GST_VIDEO_CONNECTOR(m_videoIdentity)->relinked = true;
+    g_signal_emit_by_name(m_videoIdentity,
+                          "resend-new-segment",
+                          true //emit connection-failed signal
+                               //to have a chance to insert colorspace element
+                          );
+
 
     GstState state;
 
@@ -623,7 +630,10 @@ void QGstreamerPlayerSession::insertColorSpaceElement(GstElement *element, gpoin
 #endif
     //it's necessary to send a new segment event just before
     //the first buffer pushed to the new sink
-    GST_VIDEO_CONNECTOR(session->m_videoIdentity)->relinked = true;
+    g_signal_emit_by_name(session->m_videoIdentity,
+                          "resend-new-segment",
+                          false // don't emit connection-failed signal
+                          );
 
     gst_element_unlink(session->m_videoIdentity, session->m_videoSink);
     gst_bin_add(GST_BIN(session->m_videoOutputBin), session->m_colorSpace);
@@ -704,6 +714,7 @@ void QGstreamerPlayerSession::stop()
         finishVideoOutputChange();
 
         //we have to do it here, since gstreamer will not emit bus messages any more
+        setSeekable(false);
         if (oldState != m_state)
             emit stateChanged(m_state);
     }
@@ -868,6 +879,8 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
             //qDebug() << m_tags;
 
             emit tagsChanged();
+        } else if (GST_MESSAGE_TYPE(gm) == GST_MESSAGE_DURATION) {
+            updateDuration();
         }
 
         bool handlePlaybin2 = false;
@@ -913,6 +926,12 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
                         if (oldState == GST_STATE_READY) {
                             getStreamsInfo();
                             updateVideoResolutionTag();
+
+                            //gstreamer doesn't give a reliable indication the duration
+                            //information is ready, GST_MESSAGE_DURATION is not sent by most elements
+                            //the duration is queried up to 5 times with increasing delay
+                            m_durationQueries = 5;
+                            updateDuration();
 
                             /*
                                 //gst_element_seek_simple doesn't work reliably here, have to find a better solution
@@ -1023,24 +1042,21 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
                 break;
             case GST_MESSAGE_SEGMENT_DONE:
                 break;
-            case GST_MESSAGE_DURATION:
-                {
-                    GstFormat   format = GST_FORMAT_TIME;
-                    gint64      duration = 0;
-
-                    if (gst_element_query_duration(m_playbin, &format, &duration)) {
-                        int newDuration = duration / 1000000;
-                        if (m_duration != newDuration) {
-                            m_duration = newDuration;
-                            emit durationChanged(m_duration);
-                        }
-                    }
-                }
-                break;
             case GST_MESSAGE_LATENCY:
 #if (GST_VERSION_MAJOR >= 0) &&  (GST_VERSION_MINOR >= 10) && (GST_VERSION_MICRO >= 13)
             case GST_MESSAGE_ASYNC_START:
+                break;
             case GST_MESSAGE_ASYNC_DONE:
+            {
+                GstFormat   format = GST_FORMAT_TIME;
+                gint64      position = 0;
+                if (gst_element_query_position(m_playbin, &format, &position)) {
+                    position /= 1000000;
+                    m_lastPosition = position;
+                    emit positionChanged(position);
+                }
+                break;
+            }
 #if GST_VERSION_MICRO >= 23
             case GST_MESSAGE_REQUEST_STATE:
 #endif
@@ -1135,17 +1151,6 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
 
 void QGstreamerPlayerSession::getStreamsInfo()
 {
-    GstFormat   format = GST_FORMAT_TIME;
-    gint64      duration = 0;
-
-    if (gst_element_query_duration(m_playbin, &format, &duration)) {
-        int newDuration = duration / 1000000;
-        if (m_duration != newDuration) {
-            m_duration = newDuration;
-            emit durationChanged(m_duration);
-        }
-    }
-
     //check if video is available:
     bool haveAudio = false;
     bool haveVideo = false;
@@ -1326,6 +1331,31 @@ void QGstreamerPlayerSession::updateVideoResolutionTag()
     }
 }
 
+void QGstreamerPlayerSession::updateDuration()
+{
+    GstFormat format = GST_FORMAT_TIME;
+    gint64 gstDuration = 0;
+    int duration = -1;
+
+    if (m_playbin && gst_element_query_duration(m_playbin, &format, &gstDuration))
+        duration = gstDuration / 1000000;
+
+    if (m_duration != duration) {
+        m_duration = duration;
+        emit durationChanged(m_duration);
+    }
+
+    if (m_duration > 0)
+        m_durationQueries = 0;
+
+    if (m_durationQueries > 0) {
+        //increase delay between duration requests
+        int delay = 25 << (5 - m_durationQueries);
+        QTimer::singleShot(delay, this, SLOT(updateDuration()));
+        m_durationQueries--;
+    }
+}
+
 void QGstreamerPlayerSession::playbinNotifySource(GObject *o, GParamSpec *p, gpointer d)
 {
     Q_UNUSED(p);
@@ -1398,17 +1428,48 @@ void QGstreamerPlayerSession::updateVolume()
 {
     double volume = 1.0;
     g_object_get(m_playbin, "volume", &volume, NULL);
-    if (m_volume != int(volume*100)) {
-        m_volume = int(volume*100);
-        emit volumeChanged(m_volume);
+
+    //special case for playbin1 volume changes in muted state
+    //playbin1 has no separate muted state,
+    //it's emulated with volume value saved and set to 0
+    //this change should not be reported to user
+    if (!m_usePlaybin2 && m_muted) {
+        if (volume > 0.001) {
+            //volume is changed, player in not muted any more
+            m_muted = false;
+            emit mutedStateChanged(m_muted = false);
+        } else {
+            //don't emit volume changed to 0 when player is muted
+            return;
+        }
     }
 
-    if (m_usePlaybin2) {
-        bool muted = false;
-        g_object_get(G_OBJECT(m_playbin), "mute", &muted, NULL);
-        if (m_muted != muted) {
-            m_muted = muted;
-            emit mutedStateChanged(muted);
-        }
+    if (m_volume != int(volume*100)) {
+        m_volume = int(volume*100);
+#ifdef DEBUG_PLAYBIN
+        qDebug() << Q_FUNC_INFO << m_muted;
+#endif
+        emit volumeChanged(m_volume);
+    }
+}
+
+void QGstreamerPlayerSession::handleMutedChange(GObject *o, GParamSpec *p, gpointer d)
+{
+    Q_UNUSED(o);
+    Q_UNUSED(p);
+    QGstreamerPlayerSession *session = reinterpret_cast<QGstreamerPlayerSession *>(d);
+    QMetaObject::invokeMethod(session, "updateMuted", Qt::QueuedConnection);
+}
+
+void QGstreamerPlayerSession::updateMuted()
+{
+    gboolean muted = false;
+    g_object_get(G_OBJECT(m_playbin), "mute", &muted, NULL);
+    if (m_muted != muted) {
+        m_muted = muted;
+#ifdef DEBUG_PLAYBIN
+        qDebug() << Q_FUNC_INFO << m_muted;
+#endif
+        emit mutedStateChanged(muted);
     }
 }

@@ -49,6 +49,7 @@
 #include "qdeclarativebatteryinfo_p.h"
 #include "qdeclarativedisplayinfo_p.h"
 #include "qdeclarativealignedtimer_p.h"
+#include "qsystemdeviceinfo.h"
 
 #include "qsysteminfo.h"
 QT_BEGIN_NAMESPACE

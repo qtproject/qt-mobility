@@ -113,6 +113,10 @@ S60CameraControl::S60CameraControl(S60VideoCaptureSession *videosession,
     connect(this, SIGNAL(cameraReadyChanged(bool)), m_imageSession, SIGNAL(readyForCaptureChanged(bool)));
     connect(m_viewfinderEngine, SIGNAL(error(int, const QString&)), this, SIGNAL(error(int,const QString&)));
     connect(m_imageSession, SIGNAL(cameraError(int, const QString&)), this, SIGNAL(error(int, const QString&)));
+    connect(m_imageSession, SIGNAL(captureSizeChanged(const QSize&)),
+        m_viewfinderEngine, SLOT(handleContentAspectRatioChange(const QSize&)));
+    connect(m_videoSession, SIGNAL(captureSizeChanged(const QSize&)),
+        m_viewfinderEngine, SLOT(handleContentAspectRatioChange(const QSize&)));
 
     setCameraHandles();
 }

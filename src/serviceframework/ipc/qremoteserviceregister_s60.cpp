@@ -273,11 +273,12 @@ QObject* QRemoteServiceRegisterPrivate::proxyForService(const QRemoteServiceRegi
 }
 
 RServiceSession::RServiceSession(QString address) 
-: iSize(0), iListener(0)
+: iSize(0), iListener(0), iDataSizes(KIpcBufferMinimumSize)
 {
 #ifdef QT_SFW_SYMBIAN_IPC_DEBUG
     qDebug() << "RServiceSession() for address: " << address;
 #endif
+    qt_symbian_throwIfError(iMessageFromServer.Create(KIpcBufferMinimumSize));
     iServerAddress = address;
 }
 
@@ -285,6 +286,7 @@ RServiceSession::~RServiceSession()
 {
     delete iListener;
     Close();
+    iMessageFromServer.Close();
 }
 
 void RServiceSession::setListener(ServiceMessageListener *listener)
@@ -356,6 +358,11 @@ void RServiceSession::SendServicePackage(const QServicePackage& aPackage)
     }
 }
 
+void RServiceSession::addDataSize(TInt dataSize)
+{
+    iDataSizes.addSample(dataSize);
+}
+
 // StartServer() checks if the service is already published by someone (i.e. can be found
 // from Kernel side). If not, it will start the process that provides the service.
 TInt RServiceSession::StartServer()
@@ -419,11 +426,52 @@ TInt RServiceSession::StartServer()
     return ret;
 }
 
+/* Since the average size will not change in the middle of a fragmented message
+ * trasnfer actual updates to buffer size will happen only when a new message
+ * arrives */
+void RServiceSession::updateIpcBufferSize()
+{
+   TInt weightedAvg = iDataSizes.averageWeighted();
+
+#ifdef QT_SFW_SYMBIAN_IPC_DEBUG          
+   qDebug() << "updateIpcBufferSize(): current weighted average of data size is: "<<weightedAvg;
+   qDebug() << "Current IPC Buffer size is: "<<iMessageFromServer.MaxLength();
+#endif
+   TInt newSize = iMessageFromServer.MaxLength();
+   if(weightedAvg > iMessageFromServer.MaxLength()){
+       newSize = iMessageFromServer.MaxLength()*2;
+   }
+   else if(weightedAvg < iMessageFromServer.MaxLength()/2){
+
+         newSize = iMessageFromServer.MaxLength()/2;
+#ifdef QT_SFW_SYMBIAN_IPC_DEBUG          
+   qDebug() << "updateIpcBufferSize(): current weighted average of data size is:(2) "<<weightedAvg<<" max/2";
+#endif
+   }
+   
+   if(newSize < KIpcBufferMinimumSize)
+       newSize = KIpcBufferMinimumSize;
+   else if(newSize > KIpcBufferMaximumSize)
+       newSize = KIpcBufferMaximumSize;
+
+
+   if(newSize != iMessageFromServer.MaxLength()) {
+
+        iMessageFromServer.SetLength(0);
+        //If realloc fails the old descriptor is left unchanged.
+        iMessageFromServer.ReAlloc(newSize); 
+#ifdef QT_SFW_SYMBIAN_IPC_DEBUG          
+       qDebug() << "updateIpcBufferSize():  New Size of IPC Buffer: "<<newSize;
+#endif
+   }
+}
+
 void RServiceSession::ListenForPackages(TRequestStatus& aStatus)
 {    
 #ifdef QT_SFW_SYMBIAN_IPC_DEBUG
     qDebug() << "GTR RServiceSession::ListenForPackages(), iSize: " << iSize();
 #endif
+    updateIpcBufferSize();
     iArgs.Set(0, &iMessageFromServer);
     // Total Size of returned messaage,which might differ from the amount of data in iMessageFromServer
     iArgs.Set(1, &iSize); 
@@ -780,6 +828,11 @@ void ServiceMessageListener::RunL()
           // normally because it tried to write more bytes 
           // than were in the TDes
           User::Leave(KErrTooBig); 
+        }
+
+        if(!iByteArray.length()){
+            /* Helps client session to calculate an optimum IPC buffer size */
+            iClientSession->addDataSize(iClientSession->iSize());
         }
                 
         iByteArray.append((const char*)iClientSession->iMessageFromServer.Ptr(),

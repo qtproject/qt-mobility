@@ -66,6 +66,7 @@ namespace Simulator
 
     private slots:
         void setAmbientLightData(const QtMobility::QAmbientLightReadingData &);
+        void setLightData(const QtMobility::QLightReadingData &);
         void setAccelerometerData(const QtMobility::QAccelerometerReadingData &);
         void setMagnetometerData(const QtMobility::QMagnetometerReadingData &);
         void setCompassData(const QtMobility::QCompassReadingData &);
@@ -95,6 +96,7 @@ private:
 QAccelerometerReadingData get_qtAccelerometerData();
 QMagnetometerReadingData get_qtMagnetometerData();
 QAmbientLightReadingData get_qtAmbientLightData();
+QLightReadingData get_qtLightData();
 QCompassReadingData get_qtCompassData();
 QProximityReadingData get_qtProximityData();
 

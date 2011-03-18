@@ -38,51 +38,76 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QMESSAGESTOREPRIVATE_H
-#define QMESSAGESTOREPRIVATE_H
-#include "qmessagestore.h"
-#ifdef Q_OS_WIN
-QT_BEGIN_NAMESPACE
-class QMutex;
-QT_END_NAMESPACE
-#endif
+#ifndef QMESSAGESTORE_H
+#define QMESSAGESTORE_H
+#include <QObject>
+#include <QSet>
+#include <QMetaType>
+
+#include <qmessageglobal.h>
+#include <qmessagefilter.h>
+#include <qmessagesortorder.h>
+#include <qmessagefoldersortorder.h>
+#include <qmessageaccountsortorder.h>
+#include <qmessage.h>
+#include <qmessagefolder.h>
+#include <qmessageaccount.h>
+#include <qmessagemanager.h>
+
 
 QTM_BEGIN_NAMESPACE
 
-class QMessageStorePrivatePlatform;
+class QMessageStorePrivate;
 
-class QMessageStorePrivate
+class QMessageStore : public QObject
 {
-    Q_DECLARE_PUBLIC(QMessageStore)
+    Q_OBJECT
+
+    friend class QMessageStorePrivate;
 
 public:
-    QMessageStorePrivate();
-    ~QMessageStorePrivate();
+    QMessageManager::Error error() const;
 
-    void initialize(QMessageStore *store);
+    QMessageIdList queryMessages(const QMessageFilter &filter = QMessageFilter(), const QMessageSortOrder &sortOrder = QMessageSortOrder(), uint limit = 0, uint offset = 0) const;
+    QMessageIdList queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags = 0, const QMessageSortOrder &sortOrder = QMessageSortOrder(), uint limit = 0, uint offset = 0) const;
 
-    QMessageStore *q_ptr;
-    QMessageStorePrivatePlatform *p_ptr;
+    QMessageFolderIdList queryFolders(const QMessageFolderFilter &filter = QMessageFolderFilter(), const QMessageFolderSortOrder &sortOrder = QMessageFolderSortOrder(), uint limit = 0, uint offset = 0) const;
 
-#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
-    enum NotificationType
-    {
-        Added,
-        Updated,
-        Removed
-    };
-    void messageNotification(QMessageStorePrivate::NotificationType type, const QMessageId& id,
-                             const QMessageManager::NotificationFilterIdSet &matchingFilters);
-#endif
-#ifdef Q_WS_MAEMO_6
-    mutable QMessageManager::Error error;
-#endif
-#ifdef Q_OS_WIN
-    static QMutex* mutex(QMessageStore*);
-    static QMutex* mutex(QMessageManager&);
-#endif
+    QMessageAccountIdList queryAccounts(const QMessageAccountFilter &filter = QMessageAccountFilter(), const QMessageAccountSortOrder &sortOrder = QMessageAccountSortOrder(), uint limit = 0, uint offset = 0) const;
 
+    int countMessages(const QMessageFilter &filter = QMessageFilter()) const;
+    int countFolders(const QMessageFolderFilter &filter = QMessageFolderFilter()) const;
+    int countAccounts(const QMessageAccountFilter &filter = QMessageAccountFilter()) const;
+
+    bool addMessage(QMessage *m);
+    bool updateMessage(QMessage *m);
+    bool removeMessage(const QMessageId &id, QMessageManager::RemovalOption option = QMessageManager::RemoveOnOriginatingServer);
+    bool removeMessages(const QMessageFilter &filter, QMessageManager::RemovalOption option = QMessageManager::RemoveOnOriginatingServer);
+
+    bool removeAccount(const QMessageAccountId &id);
+
+    QMessage message(const QMessageId &id) const;
+    QMessageFolder folder(const QMessageFolderId &id) const;
+    QMessageAccount account(const QMessageAccountId &id) const;
+
+    QMessageManager::NotificationFilterId registerNotificationFilter(const QMessageFilter &filter);
+    void unregisterNotificationFilter(QMessageManager::NotificationFilterId filterId);
+
+    static QMessageStore* instance();
+
+Q_SIGNALS:
+    void messageAdded(const QMessageId &id, const QMessageManager::NotificationFilterIdSet &matchingFilterIds);
+    void messageRemoved(const QMessageId &id, const QMessageManager::NotificationFilterIdSet &matchingFilterIds);
+    void messageUpdated(const QMessageId &id, const QMessageManager::NotificationFilterIdSet &matchingFilterIds);
+
+    void accountRemoved(const QMessageAccountId &id);
+private:
+    friend class QGlobalStaticDeleter<QMessageStore>;
+    QMessageStore(QObject *parent = 0);
+    virtual ~QMessageStore();
+
+    QMessageStorePrivate *d_ptr;
 };
-
 QTM_END_NAMESPACE
+
 #endif

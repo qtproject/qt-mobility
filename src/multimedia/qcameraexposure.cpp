@@ -141,6 +141,9 @@ void QCameraExposurePrivate::_q_exposureParameterChanged(int parameter)
     case QCameraExposureControl::ShutterSpeed:
         emit q->shutterSpeedChanged(q->shutterSpeed());
         break;
+    case QCameraExposureControl::ExposureCompensation:
+        emit q->exposureCompensationChanged(q->exposureCompensation());
+        break;
     }
 }
 

@@ -126,6 +126,7 @@ private slots:
     void handleVisibilityChange(const bool isVisible);
     void handleWindowChange(RWindow *handle);
     void handleDesktopResize(int screen);
+    void handleContentAspectRatioChange(const QSize& newSize);
 
 private: // Enums
 
@@ -168,6 +169,7 @@ private: // Data
     // Actual viewfinder size, which may differ from requested
     // (m_viewfinderSize), if the size/aspect ratio was not supported.
     QSize                   m_actualViewFinderSize;
+    qreal                   m_viewfinderAspectRatio;
     ViewfinderOutputType    m_viewfinderType;
     NativeViewFinderType    m_viewfinderNativeType;
     QVideoSurfaceFormat     m_surfaceFormat; // Used only by QVideoRendererControl
