@@ -219,24 +219,10 @@ ability of the timer to fire, readings will be missed. There are no queues so ap
 they process the readings promptly (possibly saving them into a buffer for later processing if required).
 
 \section2 MeeGo
-<div>The implementation of the API builds on top of the MeeGo Sensor Framework 
-that provides all the sensors specified in 1.2 API version.
-If HW sensor is missing, the configuration file "Sensors.conf" 
-must be updated and sensor removed, the file
-has a following format:
 
-[Default]
-QAccelerometer=meego.accelerometer
-QAmbientLightSensor=meego.als
+The data rates offered by MeeGo are not tied to how fast the hardware runs.
 
-It lists sensor types and type's default implementation by giving the sensor id. 
-If the type is omitted then the backend does not support it in this device; this
-gives a way of controlling and differentiating the supported sensor set. 
-</div> 
-	
-<div>The data rates offered by MeeGo are not tied to how fast the hardware runs.
-The default data rate for a sensor is likely to be low when compared to Symbian 
-or Maemo 5. Applications should
+The default data rate for a sensor is likely to be low when compared to Symbian or Maemo 5. Applications should
 request a suitable data rate, taking care to avoid selecting invalid rates on other devices.
 
 Sensors may be suspended by the system in order to save power. Applications can avoid this by setting a property
@@ -509,6 +495,34 @@ These elements represent specific types of sensors.
 The data from a sensor comes through a reading class.
 
 \annotatedlist qml-sensors_reading
+
+*/
+
+/*!
+\page meego-integration-notes.html
+\title MeeGo Integration Notes
+\ingroup sensors_backend_topics
+
+\section1 MeeGo Integration Notes
+
+The implementation of the API builds on top of the MeeGo Sensor Framework 
+that provides all the sensors specified in 1.2 API version.
+
+\section2 Available sensors
+
+If HW sensor is missing, the configuration file "Sensors.conf" 
+must be updated and sensor removed. The file
+has the following format:
+
+\code
+[Default]
+QAccelerometer=meego.accelerometer
+QAmbientLightSensor=meego.als
+\endcode
+
+It lists sensor types and type's default implementation by giving the sensor id. 
+If the type is omitted then the backend does not support it in this device; this
+gives a way of controlling and differentiating the supported sensor set. 
 
 */
 
