@@ -72,7 +72,6 @@
 #define OFONO_MODEM_INTERFACE                    "org.ofono.Modem"
 #define OFONO_NETWORK_REGISTRATION_INTERFACE     "org.ofono.NetworkRegistration"
 #define OFONO_NETWORK_OPERATOR_INTERFACE         "org.ofono.NetworkOperator"
-#define OFONO_DATA_CONNECTION_MANAGER_INTERFACE  "org.ofono.DataConnectionManager"
 #define OFONO_SIM_MANAGER_INTERFACE              "org.ofono.SimManager"
 #define OFONO_DATA_CONTEXT_INTERFACE             "org.ofono.PrimaryDataContext"
 
@@ -257,14 +256,14 @@ protected:
 };
 
 
-class QOfonoDataConnectionManagerInterface : public QDBusAbstractInterface
+class QOfonoConnectionManagerInterface : public QDBusAbstractInterface
 {
     Q_OBJECT
 
 public:
 
-    QOfonoDataConnectionManagerInterface(const QString &dbusPathName, QObject *parent = 0);
-    ~QOfonoDataConnectionManagerInterface();
+    QOfonoConnectionManagerInterface(const QString &dbusPathName, QObject *parent = 0);
+    ~QOfonoConnectionManagerInterface();
 
     QVariantMap getProperties();
 
@@ -273,8 +272,13 @@ public:
     bool isAttached();
     bool isRoamingAllowed();
     bool isPowered();
+    QString bearer();
 
     bool setPower(bool on);
+
+Q_SIGNALS:
+    void propertyChanged(const QString &, const QDBusVariant &value);
+    void propertyChangedContext(const QString &,const QString &,const QDBusVariant &);
 
 protected:
     void connectNotify(const char *signal);
@@ -342,27 +346,27 @@ Q_SIGNALS:
     void incomingMessage(const QString &message, const QVariantMap &info);
 };
 
-class QOfonoConnectionManagerInterface : public QDBusAbstractInterface
-{
-    Q_OBJECT
+//class QOfonoConnectionManagerInterface : public QDBusAbstractInterface
+//{
+//    Q_OBJECT
 
-public:
+//public:
 
-    QOfonoConnectionManagerInterface(const QString &dbusModemPathName, QObject *parent = 0);
-    ~QOfonoConnectionManagerInterface();
+//    QOfonoConnectionManagerInterface(const QString &dbusModemPathName, QObject *parent = 0);
+//    ~QOfonoConnectionManagerInterface();
 
-    QVariantMap getProperties();
-    QString bearer();
+//    QVariantMap getProperties();
+//    QString bearer();
 
-Q_SIGNALS:
-    void propertyChanged(const QString &, const QDBusVariant &value);
-    void propertyChangedContext(const QString &,const QString &,const QDBusVariant &);
+//Q_SIGNALS:
+//    void propertyChanged(const QString &, const QDBusVariant &value);
+//    void propertyChangedContext(const QString &,const QString &,const QDBusVariant &);
 
-protected:
-    void connectNotify(const char *signal);
-    void disconnectNotify(const char *signal);
-    QVariant getProperty(const QString &);
+//protected:
+//    void connectNotify(const char *signal);
+//    void disconnectNotify(const char *signal);
+//    QVariant getProperty(const QString &);
 
-};
+//};
 
 #endif //QOFONOSERVICE_H
