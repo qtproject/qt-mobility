@@ -71,17 +71,193 @@ QTM_BEGIN_NAMESPACE
     enters communications range.  Communications can be initiated from the slot connected to this
     signal.
 
-    NFC Forum devices generally operate as the master in master/slave communications.  Some devices
-    are capable of operate as the slave, so called Card Emulation mode.  In this mode the local NFC
-    device emulates a NFC Forum Tag or Contactless Card and can be used to perform transactions.
-    The transaction happens entirely within a secure element on the device and only a notification
-    of the transaction is provided.  The transactionDetected() signal is emitted whenever a
-    transaction occurs.
+    NFC Forum devices generally operate as the master in master/slave communications. Some devices
+    are also capable of operating as the slave, so called Card Emulation mode. In this mode the
+    local NFC device emulates a NFC Forum Tag or Contactless Card and can be used to perform
+    transactions. The transaction happens entirely within a secure element on the device and only a
+    notification of the transaction is provided. The transactionDetected() signal is emitted
+    whenever a transaction occurs.
 
-    NFC Forum Tags can contain one or more messages in a standardized format.  These messages are
-    encapsulated in the QNdefMessage class.  Use the registerNdefMessageHandler() functions to
-    register message handlers with particular criteria.  Handlers can be unregistered with the
+    NFC Forum Tags can contain one or more messages in a standardized format. These messages are
+    encapsulated by the QNdefMessage class. Use the registerNdefMessageHandler() functions to
+    register message handlers with particular criteria. Handlers can be unregistered with the
     unregisterNdefMessageHandler() function.
+
+    Applications can connect to the targetDetected() and targetLost() signals to get notified when
+    an NFC Forum Device or NFC Forum Tag enters or leaves proximity. Before these signals are
+    emitted target detection must be started with the startTargetDetection() function, which takes
+    a parameter to limit the type of device or tags detected. Target detection can be stopped with
+    the stopTargetDetection() function.
+
+    \section2 Automatically launching NDEF message handlers
+
+    It is possible to pre-register an application to recieve NDEF messages matching a given
+    criteria. This is useful to get the system to automatically launch your application when a
+    matching NDEF message is recieved. This removes the need to have the user manually launch NDEF
+    handling applications, prior to touching a tag, or to have those applications always running
+    and using system resources.
+
+    The process of registering the handler is different on each platform. The platform specifics
+    are documented in the sections below.
+
+    Once the application has been registered as an NDEF message handler, the application only needs
+    to call the registerNdefMessageHandler() function:
+
+    \code
+        QNearFieldManager *manager = new QNearFieldManager;
+        manager->registerNdefMessageHandler(this,
+                                            SLOT(handleNdefMessage(QNdefMessage,QNearFieldTarget)));
+    \endcode
+
+    \section3 Symbian^3
+
+    On Symbian^3 an xml file needs to be created and installed into a particular directory on the
+    device. The format of the xml is given below.
+
+    \code
+        <?xml version="1.0" encoding="UTF-8"?>
+        <SFW version="1.1">
+            <service>
+                <name>%APPNAME%</name>
+                <ipcaddress>%APPNAME%</ipcaddress>
+                <description>NFC NDEF Message handler</description>
+                <interface>
+                    <name>com.nokia.qtmobility.nfc.NdefMessageHandler</name>
+                    <version>1.0</version>
+                    <description>nfc service provider</description>
+                    <capabilities></capabilities>
+                    <customproperty key="datatype">urn:nfc:ext:com.example:f</customproperty>
+                </interface>
+            </service>
+        </SFW>
+    \endcode
+
+    The \i name and \i ipcaddress tags need to be changed to match the name of the application. The
+    \i description tags should be used to describe the application, however these values are not
+    used. The \i customproperty tag must be set with the NDEF record type to match. For example the
+    following would be used to match NDEF messages that contain a RTD-URI record:
+
+    \code
+        <customproperty key="datatype">urn:nfc:wkt:U</customproperty>
+    \endcode
+
+    The following would be used to match NDEF messages that contain a custom type
+    urn:nfc:ext:example.com:f:
+
+    \code
+        <customproperty key="datatype">urn:nfc:ext:com.example:f</customproperty>
+    \endcode
+
+    The value of the \i customproperty tag can be set to any valid match string supported by the
+    Symbian^3 platform.
+
+    It is recommended to name the xml file after the application package name. For example
+    myapplication.xml. To install the above xml file into the correct location the following should
+    be added to the application .pro file:
+
+    \code
+        symbian {
+            ndefhandler.sources = myapplication.xml
+            ndefhandler.path = /private/2002AC7F/import/
+            DEPLOYMENT += ndefhandler
+        }
+    \endcode
+
+    \section3 Maemo6
+
+    On Maemo6 the NDEF message handler notifications are passed over D-Bus. Registration of the
+    NDEF message match criteria is done via a D-Bus call. The application must also ensure that it
+    has registered a D-Bus service name so that the application can be automatically launched when
+    a notification message is sent to the registered service.
+
+    To register the D-Bus service the two files need to be created and installed into particular
+    directories on the device. The first file is the D-Bus bus configuration file:
+
+    \code
+        <busconfig>
+            <!-- we trust that no one else is going to squat on our service -->
+            <policy context="default">
+                <allow own="com.nokia.qtmobility.nfc.%APPNAME%"/>
+            </policy>
+        </busconfig>
+    \endcode
+
+    The \i {%APPNAME%} string must be replaced with the name of your application binary.
+
+    The second file is a D-Bus service file which is used by the D-Bus daemon to launch your
+    application.
+
+    \code
+        [D-BUS Service]
+        Name=com.nokia.qtmobility.nfc.%APPNAME%
+        Exec=/path/to/application/binary
+        User=user
+    \endcode
+
+    The \i {%APPNAME%} string must be replace with the name of your application binary. The
+    \i Exec value must be replaced with the path to your installed application binary.
+
+    It is recommended to name these files after the application package name. For example
+    myapplication.conf and myapplication.service. To install the above files into the correct
+    location the following should be added to the application .pro file:
+
+    \code
+        maemo6 {
+            ndefhandler_conf.sources = myapplication.conf
+            ndefhandler_conf.path = /etc/dbus-1/system.d/
+
+            ndefhandler_service.sources = myapplication.service
+            ndefhandler_service.path = /usr/share/dbus-1/system-services/
+
+            DEPLOYMENT += ndefhandler_conf ndefhandler_service
+        }
+    \endcode
+
+    The NDEF message handler is registered with the following D-Bus command. Applications should
+    ensure that the following command (or similar) is executed once at installation time. For
+    example in the packages post-installation script.
+
+    \code
+        dbus-send --system --type=method_call --dest=com.nokia.nfc / \
+            com.nokia.nfc.Manager.RegisterNDEFHandler \
+                string:system \
+                string:com.nokia.qtmobility.nfc.%APPNAME% \
+                objpath:/com/nokia/nfc/ndefhandler \
+                string:any \
+                string:"%DATATYPE%[1:*];" \
+                string:%APPNAME%
+    \endcode
+
+    The \i {%APPNAME%} string must be replaced with the name of the application binary. The
+    \i {%DATATYPE%} string must be replaced with the NDEF record type to match. For example the
+    following would be used to match NDEF messages that contain a RTD-URI record:
+
+    \code
+        string:"urn:nfc:wkt:U[1:*];"
+    \endcode
+
+    The following would be used to match NDEF messages that contain a custom type
+    urn:nfc:ext:example.com:f:
+
+    \code
+        string:"urn:nfc:ext:example.com:f[1:*];"
+    \endcode
+
+    The value of the datatype string argument can be set to any valid match string supported by the
+    Maemo6 platform.
+
+    The NDEF message handler should be unregistered at uninstallation time. For example in the
+    packages pre-removal script.
+
+    \code
+        dbus-send --system --type=method_call --dest=com.nokia.nfc / \
+            com.nokia.nfc.Manager.UnregisterNDEFHandler \
+                string:system \
+                string:com.nokia.qtmobility.nfc.%APPNAME% \
+                objpath:/com/nokia/nfc/ndefhandler
+    \endcode
+
+    The \i {%APPNAME%} string must be replace with the name of the application binary.
 */
 
 /*!
@@ -269,7 +445,7 @@ static QMetaMethod methodForSignature(QObject *object, const char *method)
 
 /*!
     Registers \a object to receive notifications on \a method when a tag has been detected and has
-    an NDEF record that matchings \a typeNameFormat and \a type.  The \a method on \a object should
+    an NDEF record that matches \a typeNameFormat and \a type.  The \a method on \a object should
     have the prototype
     'void targetDetected(const QNdefMessage &message, QNearFieldTarget *target)'.
 
@@ -298,11 +474,16 @@ int QNearFieldManager::registerNdefMessageHandler(QNdefRecord::TypeNameFormat ty
 
 /*!
     Registers \a object to receive notifications on \a method when a tag has been detected and has
-    an NDEF message.  The \a method on \a object should have the prototype
+    an NDEF message that matches a pre-registered message format. The \a method on \a object should
+    have the prototype
     'void targetDetected(const QNdefMessage &message, QNearFieldTarget *target)'.
 
     Returns an identifier, which can be used to unregister the handler, on success; otherwise
     returns -1.
+
+    This function is used to register a QNearFieldManager instance to receive notifications when a
+    NDEF message matching a pre-registered message format is received. See the section on
+    \l {Automatically launching NDEF message handlers}.
 
     \note The \i target parameter of \a method may not be available on all platforms, in which case
     \i target will be 0.
