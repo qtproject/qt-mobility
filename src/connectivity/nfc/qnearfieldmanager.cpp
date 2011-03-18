@@ -87,7 +87,13 @@ QTM_BEGIN_NAMESPACE
     an NFC Forum Device or NFC Forum Tag enters or leaves proximity. Before these signals are
     emitted target detection must be started with the startTargetDetection() function, which takes
     a parameter to limit the type of device or tags detected. Target detection can be stopped with
-    the stopTargetDetection() function.
+    the stopTargetDetection() function. Before a detected target can be accessed it is necessary to
+    request access rights. This must be done before the target device is touched. The
+    setTargetAccessModes() function is used to set the types of access the application wants to
+    perform on the detected target. When access is no longer required the target access modes
+    should be set to NoTargetAccess as other applications may be blocked from accessing targets.
+    The current target access modes can be retried with the targetAccessModes() function.
+
 
     \section2 Automatically launching NDEF message handlers
 
