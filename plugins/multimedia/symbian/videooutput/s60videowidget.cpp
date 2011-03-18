@@ -145,6 +145,11 @@ void S60VideoWidget::setTopWinId(WId id)
 {
     m_topWinId = id;
     updateOrdinalPosition();
+#ifdef VIDEOOUTPUT_GRAPHICS_SURFACES
+    // This function may be called from a paint event, so defer any window
+    // manipulation until painting is complete.
+    QMetaObject::invokeMethod(this, "setWindowsNonFading", Qt::QueuedConnection);
+#endif
 }
 
 void S60VideoWidget::setOrdinalPosition(int ordinalPosition)
@@ -181,6 +186,13 @@ void S60VideoWidget::queueReactivateWindow()
 void S60VideoWidget::reactivateWindow(QWidget *widget)
 {
     widget->activateWindow();
+}
+
+void S60VideoWidget::setWindowsNonFading()
+{
+    winId()->DrawableWindow()->SetNonFading(ETrue);
+    if (m_topWinId)
+        m_topWinId->DrawableWindow()->SetNonFading(ETrue);
 }
 
 void S60VideoWidget::beginNativePaintEvent(const QRect &rect)

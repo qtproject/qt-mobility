@@ -83,6 +83,7 @@ private:
 
 private slots:
     void reactivateWindow(QWidget *window);
+    void setWindowsNonFading();
 
 private:
     const QPixmap *m_pixmap;
