@@ -57,6 +57,7 @@
 #include <e32std.h>
 #include <e32base.h>
 #include <lbs.h>
+#include <qmutex.h>
 #include "qgeopositioninfosource.h"
 #include "qmlbackendao_s60_p.h"
 #include "notificationcallback_s60_p.h"
@@ -98,7 +99,7 @@ public:
  *
  */
 class CQGeoPositionInfoSourceS60 : public INotificationCallback,
-            public QGeoPositionInfoSource
+        public QGeoPositionInfoSource
 
 {
 public:
@@ -145,6 +146,10 @@ public:
     PositioningMethods supportedPositioningMethods() const {
         return mSupportedMethods;
     }
+
+
+    //Applications using qt api's should avoid calling below methods as it is
+    //used internally by CQGeoPositionInfoSourceS60 for maintaining different states
 
     /**
      * Notification methods from active object.
@@ -209,7 +214,7 @@ private:
     void updateAvailableTypes(void);
 
     //get the index of the module in the List array
-    TInt checkModule(TPositionModuleId aId) const;
+    TInt checkModule(TPositionModuleId aId) ;//const;
 
     //get the index of the position module based on the preferred methods
     TInt getIndexPositionModule(TUint8 aBits, PositioningMethods aPosMethods = AllPositioningMethods) const;
@@ -270,10 +275,22 @@ private:
      */
     int mListSize;
 
+    int mMinUpdateInterval;
+
     /*
      * query for the status
      */
     TPositionModuleStatusEvent  mStatusEvent;
+
+    // mutex for making thread safe
+    QMutex          m_mutex;
+    QMutex          m_mutex_interval;
+
+    // mutex for ReqUpdate Active Ojbect
+    QMutex          m_mutex_ReqUpAO;
+
+    // mutex for RegUpdate Active Ojbect
+    QMutex          m_mutex_RegUpAO;
 
     /*
      * maintain the startUpdates status
@@ -285,7 +302,7 @@ private:
     /*
      * flags for the modules
      */
-    TUint8  mModuleFlags;
+    TUint8 mModuleFlags;
 };
 
 QTM_END_NAMESPACE

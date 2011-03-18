@@ -129,6 +129,7 @@ void tst_QGeoMapRouteObject::qgeomaprouteobject()
 
     QCOMPARE((int)object->detailLevel(), 6);
     QPen pen(Qt::black);
+    pen.setCosmetic(true);
     QCOMPARE(object->pen(), pen);
     QCOMPARE(object->route().path(),QGeoRoute().path());
     QCOMPARE(object->zValue(), 0);

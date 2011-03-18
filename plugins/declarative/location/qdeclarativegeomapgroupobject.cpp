@@ -87,7 +87,7 @@ void QDeclarativeGeoMapGroupObject::componentComplete()
     QList<QGraphicsItem*> children = childItems();
     for (int i = 0; i < children.size(); ++i) {
         QDeclarativeGeoMapObject *mapObject
-            = qobject_cast<QDeclarativeGeoMapObject*>(children.at(i));
+        = qobject_cast<QDeclarativeGeoMapObject*>(children.at(i));
         if (mapObject) {
             group_->addChildObject(mapObject->mapObject());
             objects_.append(mapObject);
@@ -188,35 +188,35 @@ void QDeclarativeGeoMapGroupObject::releaseEvent(QDeclarativeGeoMapMouseEvent *e
     QDeclarativeGeoMapObject::releaseEvent(event);
 }
 
-//void QDeclarativeGeoMapGroupObject::enterEvent()
-//{
-//    for (int i = objects_.size() - 1; i >= 0; --i)
-//        objects_.at(i)->enterEvent();
+void QDeclarativeGeoMapGroupObject::enterEvent()
+{
+    for (int i = objects_.size() - 1; i >= 0; --i)
+        objects_.at(i)->enterEvent();
 
-//    QDeclarativeGeoMapObject::enterEvent();
-//}
+    QDeclarativeGeoMapObject::enterEvent();
+}
 
-//void QDeclarativeGeoMapGroupObject::exitEvent()
-//{
-//    for (int i = objects_.size() - 1; i >= 0; --i)
-//        objects_.at(i)->exitEvent();
+void QDeclarativeGeoMapGroupObject::exitEvent()
+{
+    for (int i = objects_.size() - 1; i >= 0; --i)
+        objects_.at(i)->exitEvent();
 
-//    QDeclarativeGeoMapObject::exitEvent();
-//}
+    QDeclarativeGeoMapObject::exitEvent();
+}
 
-//void QDeclarativeGeoMapGroupObject::moveEvent(QDeclarativeGeoMapMouseEvent *event)
-//{
-//    if (event->accepted())
-//        return;
+void QDeclarativeGeoMapGroupObject::moveEvent(QDeclarativeGeoMapMouseEvent *event)
+{
+    if (event->accepted())
+        return;
 
-//    for (int i = objects_.size() - 1; i >= 0; --i) {
-//        objects_.at(i)->moveEvent(event);
-//        if (event->accepted())
-//            return;
-//    }
+    for (int i = objects_.size() - 1; i >= 0; --i) {
+        objects_.at(i)->moveEvent(event);
+        if (event->accepted())
+            return;
+    }
 
-//    QDeclarativeGeoMapObject::moveEvent(event);
-//}
+    QDeclarativeGeoMapObject::moveEvent(event);
+}
 
 /*!
     \qmlproperty int MapGroup::zValue

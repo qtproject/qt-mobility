@@ -60,13 +60,13 @@
 #include <QTimer>
 #include <QVariantMap>
 
-#include "qsysteminfo.h"
-#include "qsystemdeviceinfo.h"
-#include "qsystemdisplayinfo.h"
-#include "qsystemnetworkinfo.h"
-#include "qsystemscreensaver.h"
-#include "qsystemstorageinfo.h"
-#include "qsystembatteryinfo.h"
+#include "../qsysteminfo.h"
+#include "../qsystemdeviceinfo.h"
+#include "../qsystemdisplayinfo.h"
+#include "../qsystemnetworkinfo.h"
+#include "../qsystemscreensaver.h"
+#include "../qsystemstorageinfo.h"
+#include "../qsystembatteryinfo.h"
 
 #include <qmobilityglobal.h>
 
@@ -156,11 +156,11 @@ public:
     QNetworkInterface interfaceForMode(QSystemNetworkInfo::NetworkMode mode);
     QSystemNetworkInfo::NetworkMode currentMode();
 
+    QSystemNetworkInfo::CellDataTechnology cellDataTechnology();
+
 #if !defined(QT_NO_CONNMAN)
     QSystemNetworkInfo::NetworkStatus getOfonoStatus(QSystemNetworkInfo::NetworkMode mode);
 #endif
-//public Q_SLOTS:
-//    void getPrimaryMode();
 
 Q_SIGNALS:
    void networkStatusChanged(QSystemNetworkInfo::NetworkMode, QSystemNetworkInfo::NetworkStatus);
@@ -171,6 +171,7 @@ Q_SIGNALS:
    void networkModeChanged(QSystemNetworkInfo::NetworkMode);
 
    void cellIdChanged(int); //1.2
+   void cellDataTechnologyChanged(QSystemNetworkInfo::CellDataTechnology); //1.2
 
 protected:
 #if !defined(QT_NO_DBUS)
@@ -206,11 +207,14 @@ private Q_SLOTS:
     void ofonoNetworkPropertyChangedContext(const QString &path,const QString &item, const QDBusVariant &value);
     void ofonoModemPropertyChangedContext(const QString &path,const QString &item, const QDBusVariant &value);
 #endif
-
+private:
     QSystemNetworkInfo::NetworkStatus getBluetoothNetStatus();
 
     void connectNotify(const char *signal);
     void disconnectNotify(const char *signal);
+#if !defined(QT_NO_CONNMAN)
+    QSystemNetworkInfo::CellDataTechnology ofonoTechToCDT(const QString &tech);
+#endif
 };
 
 class QSystemDisplayInfoLinuxCommonPrivate : public QObject

@@ -51,6 +51,8 @@
 #include <qproximitysensor.h>
 #include <qrotationsensor.h>
 #include <qtapsensor.h>
+#include <qlightsensor.h>
+#include <qgyroscope.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -66,29 +68,37 @@ public:
 
         qmlRegisterType<QSensorReading>();
 
-        qmlRegisterType<QAccelerometer>("QtMobility.sensors", 1, 1, "Accelerometer");
-        qmlRegisterType<QAccelerometerReading>("QtMobility.sensors", 1, 1, "AccelerometerReading");
+        for (int minor = 1; minor <= 2; minor++) {
+            qmlRegisterType<QAccelerometer>("QtMobility.sensors", 1, minor, "Accelerometer");
+            qmlRegisterType<QAccelerometerReading>("QtMobility.sensors", 1, minor, "AccelerometerReading");
 
-        qmlRegisterType<QAmbientLightSensor>("QtMobility.sensors", 1, 1, "AmbientLightSensor");
-        qmlRegisterType<QAmbientLightReading>("QtMobility.sensors", 1, 1, "AmbientLightReading");
+            qmlRegisterType<QAmbientLightSensor>("QtMobility.sensors", 1, minor, "AmbientLightSensor");
+            qmlRegisterType<QAmbientLightReading>("QtMobility.sensors", 1, minor, "AmbientLightReading");
 
-        qmlRegisterType<QCompass>("QtMobility.sensors", 1, 1, "Compass");
-        qmlRegisterType<QCompassReading>("QtMobility.sensors", 1, 1, "CompassReading");
+            qmlRegisterType<QCompass>("QtMobility.sensors", 1, minor, "Compass");
+            qmlRegisterType<QCompassReading>("QtMobility.sensors", 1, minor, "CompassReading");
 
-        qmlRegisterType<QMagnetometer>("QtMobility.sensors", 1, 1, "Magnetometer");
-        qmlRegisterType<QMagnetometerReading>("QtMobility.sensors", 1, 1, "MagnetometerReading");
+            qmlRegisterType<QMagnetometer>("QtMobility.sensors", 1, minor, "Magnetometer");
+            qmlRegisterType<QMagnetometerReading>("QtMobility.sensors", 1, minor, "MagnetometerReading");
 
-        qmlRegisterType<QOrientationSensor>("QtMobility.sensors", 1, 1, "OrientationSensor");
-        qmlRegisterType<QOrientationReading>("QtMobility.sensors", 1, 1, "OrientationReading");
+            qmlRegisterType<QOrientationSensor>("QtMobility.sensors", 1, minor, "OrientationSensor");
+            qmlRegisterType<QOrientationReading>("QtMobility.sensors", 1, minor, "OrientationReading");
 
-        qmlRegisterType<QProximitySensor>("QtMobility.sensors", 1, 1, "ProximitySensor");
-        qmlRegisterType<QProximityReading>("QtMobility.sensors", 1, 1, "ProximityReading");
+            qmlRegisterType<QProximitySensor>("QtMobility.sensors", 1, minor, "ProximitySensor");
+            qmlRegisterType<QProximityReading>("QtMobility.sensors", 1, minor, "ProximityReading");
 
-        qmlRegisterType<QRotationSensor>("QtMobility.sensors", 1, 1, "RotationSensor");
-        qmlRegisterType<QRotationReading>("QtMobility.sensors", 1, 1, "RotationReading");
+            qmlRegisterType<QRotationSensor>("QtMobility.sensors", 1, minor, "RotationSensor");
+            qmlRegisterType<QRotationReading>("QtMobility.sensors", 1, minor, "RotationReading");
 
-        qmlRegisterType<QTapSensor>("QtMobility.sensors", 1, 1, "TapSensor");
-        qmlRegisterType<QTapReading>("QtMobility.sensors", 1, 1, "TapReading");
+            qmlRegisterType<QTapSensor>("QtMobility.sensors", 1, minor, "TapSensor");
+            qmlRegisterType<QTapReading>("QtMobility.sensors", 1, minor, "TapReading");
+        }
+
+        qmlRegisterType<QLightSensor>("QtMobility.sensors", 1, 2, "LightSensor");
+        qmlRegisterType<QLightReading>("QtMobility.sensors", 1, 2, "LightReading");
+
+        qmlRegisterType<QGyroscope>("QtMobility.sensors", 1, 2, "Gyroscope");
+        qmlRegisterType<QGyroscopeReading>("QtMobility.sensors", 1, 2, "GyroscopeReading");
     }
 };
 
@@ -258,5 +268,45 @@ Q_EXPORT_PLUGIN2(qsensorsdeclarativemodule, QT_PREPEND_NAMESPACE(QSensorsDeclara
     This element is part of the \bold{QtMobility.sensors 1.1} module.
 
     \sa QTapSensor, QTapReading, {Sensors QML Limitations}
+*/
+
+/*!
+    \qmlclass LightSensor QLightSensor
+    \brief The LightSensor element wraps the QLightSensor class.
+    \ingroup qml-sensors_type
+
+    This element is part of the \bold{QtMobility.sensors 1.1} module.
+
+    \sa QLightSensor, QLightReading, {Sensors QML Limitations}
+*/
+
+/*!
+    \qmlclass LightReading QLightReading
+    \brief The LightReading element wraps the QLightReading class.
+    \ingroup qml-sensors_reading
+
+    This element is part of the \bold{QtMobility.sensors 1.1} module.
+
+    \sa QLightSensor, QLightReading, {Sensors QML Limitations}
+*/
+
+/*!
+    \qmlclass Gyroscope QGyroscope
+    \brief The Gyroscope element wraps the QGyroscope class.
+    \ingroup qml-sensors_type
+
+    This element is part of the \bold{QtMobility.sensors 1.1} module.
+
+    \sa QGyroscope, QGyroscopeReading, {Sensors QML Limitations}
+*/
+
+/*!
+    \qmlclass GyroscopeReading QGyroscopeReading
+    \brief The GyroscopeReading element wraps the QGyroscopeReading class.
+    \ingroup qml-sensors_reading
+
+    This element is part of the \bold{QtMobility.sensors 1.1} module.
+
+    \sa QGyroscope, QGyroscopeReading, {Sensors QML Limitations}
 */
 

@@ -59,7 +59,6 @@ public:
     ~QGeoMapGroupObjectPrivate();
 
     QList<QGeoMapObject *> children;
-
     quint32 serial;
 
 public slots:

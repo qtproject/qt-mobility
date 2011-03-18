@@ -125,3 +125,8 @@ void S60VideoWindowDisplay::repaint()
     // TODO
 }
 
+void S60VideoWindowDisplay::refreshDisplay()
+{
+    emit displayRectChanged(extentRect(), clipRect());
+}
+

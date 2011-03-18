@@ -493,7 +493,7 @@ find %{buildroot}%{_libdir}/qtmobility -type f -perm /u+x,g+x,o+x \( -false \
 -o -name \*.sci \
 -o -name qmldir \
 -o -name \*.txt \
-\) | xargs chmod -x
+\) -exec chmod -x \{\} +
 # Fix duplicate files
 %fdupes %{buildroot}%{_includedir}
 %fdupes %{buildroot}%{_libdir}/qtmobility
@@ -768,6 +768,7 @@ find %{buildroot}%{_libdir}/qtmobility -type f -perm /u+x,g+x,o+x \( -false \
 %{_includedir}/QtLocation/QGeoCoordinate
 %{_includedir}/QtLocation/QGeoManeuver
 %{_includedir}/QtLocation/QGeoMapCircleObject
+%{_includedir}/QtLocation/QGeoMapCustomObject
 %{_includedir}/QtLocation/QGeoMapData
 %{_includedir}/QtLocation/QGeoMapGroupObject
 %{_includedir}/QtLocation/QGeoMapObject
@@ -854,7 +855,6 @@ find %{buildroot}%{_libdir}/qtmobility -type f -perm /u+x,g+x,o+x \( -false \
 %{_includedir}/QtMessaging/QMessageManager
 %{_includedir}/QtMessaging/QMessageService
 %{_includedir}/QtMessaging/QMessageSortOrder
-%{_includedir}/QtMessaging/QMessageStore
 %{_includedir}/QtMobility/*.h
 %{_includedir}/QtMobility/QLatin1Constant
 %{_includedir}/QtMultimediaKit/*.h

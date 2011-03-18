@@ -66,7 +66,6 @@ QTM_BEGIN_NAMESPACE
 QGeoMapPolygonObject::QGeoMapPolygonObject()
     : d_ptr(new QGeoMapPolygonObjectPrivate())
 {
-    setGraphicsItem(d_ptr->item);
     setUnits(QGeoMapObject::RelativeArcSecondUnit);
     setTransformType(QGeoMapObject::ExactTransform);
 }
@@ -107,9 +106,7 @@ void QGeoMapPolygonObject::setPath(const QList<QGeoCoordinate> &path)
     if (d_ptr->path != path) {
         d_ptr->path = path;
         setOrigin(path.at(0));
-        d_ptr->genPoly();
         emit pathChanged(emit d_ptr->path);
-        update();
     }
 }
 
@@ -134,17 +131,16 @@ void QGeoMapPolygonObject::setPen(const QPen &pen)
     QPen newPen = pen;
     newPen.setCosmetic(true);
 
-    if (d_ptr->item->pen() == newPen)
+    if (d_ptr->pen == newPen)
         return;
 
-    d_ptr->item->setPen(pen);
+    d_ptr->pen = pen;
     emit penChanged(pen);
-    update();
 }
 
 QPen QGeoMapPolygonObject::pen() const
 {
-    return d_ptr->item->pen();
+    return d_ptr->pen;
 }
 
 /*!
@@ -158,15 +154,15 @@ QPen QGeoMapPolygonObject::pen() const
 */
 void QGeoMapPolygonObject::setBrush(const QBrush &brush)
 {
-    if (d_ptr->item->brush() != brush) {
-        d_ptr->item->setBrush(brush);
+    if (d_ptr->brush != brush) {
+        d_ptr->brush = brush;
         emit brushChanged(brush);
     }
 }
 
 QBrush QGeoMapPolygonObject::brush() const
 {
-    return d_ptr->item->brush();
+    return d_ptr->brush;
 }
 
 /*!
@@ -199,34 +195,12 @@ QBrush QGeoMapPolygonObject::brush() const
 /*******************************************************************************
 *******************************************************************************/
 
-QGeoMapPolygonObjectPrivate::QGeoMapPolygonObjectPrivate() :
-    item(new QGraphicsPolygonItem)
+QGeoMapPolygonObjectPrivate::QGeoMapPolygonObjectPrivate()
 {
-    QPen pen = item->pen();
     pen.setCosmetic(true);
-    item->setPen(pen);
 }
 
 QGeoMapPolygonObjectPrivate::~QGeoMapPolygonObjectPrivate() {}
-
-void QGeoMapPolygonObjectPrivate::genPoly()
-{
-    QPolygonF poly;
-
-    QGeoCoordinate origin = path.at(0);
-    double ox = origin.longitude() * 3600.0;
-    double oy = origin.latitude() * 3600.0;
-
-    poly << QPointF(0,0);
-    for (int i = 0; i < path.size(); ++i) {
-        QGeoCoordinate pt = path.at(i);
-        double x = pt.longitude() * 3600.0 - ox;
-        double y = pt.latitude() * 3600.0 - oy;
-        poly << QPointF(x, y);
-    }
-
-    item->setPolygon(poly);
-}
 
 #include "moc_qgeomappolygonobject.cpp"
 

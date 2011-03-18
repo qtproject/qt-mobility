@@ -60,17 +60,17 @@ Q_GLOBAL_STATIC(QSystemNetworkInfo, netInfo)
     Note: To use notification signals, you need to set the monitor* properties to true.
 
     To use this in a mode other than the default mode given by currentMode, set the mode with
-    \a useMode.
+    \a mode.
 
     \qml
     import Qt 4.7
-    import QtMobility.systeminfo 1.0
+    import QtMobility.systeminfo 1.1
 
     Rectangle {
 
         NetworkInfo {
             id: wlaninfo
-            useMode: NetworkInfo.WlanMode;
+            mode: NetworkInfo.WlanMode;
             monitorNameChanges: true
             monitorSignalStrengthChanges: true
         }
@@ -134,14 +134,14 @@ QDeclarativeNetworkInfo::~QDeclarativeNetworkInfo()
 }
 
 /*!
-    \qmlproperty enumeration NetworkInfo::useThisMode
+    \qmlproperty enumeration NetworkInfo::mode
 
     Sets this NetworkInfo to use QSystemNetworkInfo::NetworkModes. Does not set the mode of the underlaying system.
 
     If not set, the default is whatever defaultMode is.
 */
 
-void QDeclarativeNetworkInfo::useThisMode(QSystemNetworkInfo::NetworkMode mode)
+void QDeclarativeNetworkInfo::useMode(QSystemNetworkInfo::NetworkMode mode)
 {
     m_mode = mode;
 }
@@ -150,6 +150,40 @@ void QDeclarativeNetworkInfo::useThisMode(QSystemNetworkInfo::NetworkMode mode)
     \qmlproperty string NetworkInfo::networkStatus
 
     Returns this NetworkInfo's network status.
+
+    The following table shows the mapping between the NetworkInfo NetworkStatus property and the QSystemNetworkInfo::NetworkStatus enum.
+
+\table
+    \header
+        \o NetworkInfo.networkStatus \o QSystemNetworkInfo::NetworkStatus
+        \row
+            \o "Undefined"
+            \o QSystemNetworkInfo::UndefinedStatus
+        \row
+            \o "No Network Available"
+            \o QSystemNetworkInfo::NoNetworkAvailable
+        \row
+            \o "Emergency Only"
+            \o  QSystemNetworkInfo::EmergencyOnly
+        \row
+            \o "Searching"
+            \o QSystemNetworkInfo::Searching
+        \row
+            \o "Busy"
+            \o QSystemNetworkInfo::Busy
+        \row
+            \o "Connected"
+            \o QSystemNetworkInfo::Connected
+        \row
+            \o "Home Network"
+            \o QSystemNetworkInfo::HomeNetwork
+        \row
+            \o "Denied"
+            \o QSystemNetworkInfo::Denied
+        \row
+            \o "Roaming"
+            \o QSystemNetworkInfo::Roaming
+ \endtable
 */
 QString QDeclarativeNetworkInfo::networkStatus()
 {
@@ -420,12 +454,6 @@ QString QDeclarativeNetworkInfo::modeToString(QSystemNetworkInfo::NetworkMode mo
         return QLatin1String("Bluetooth");
     case QSystemNetworkInfo::WimaxMode:
         return QLatin1String("Wimax");
-    case QSystemNetworkInfo::GprsMode:
-        return QLatin1String("Gprs");
-    case QSystemNetworkInfo::EdgeMode:
-        return QLatin1String("Edge");
-    case QSystemNetworkInfo::HspaMode:
-        return QLatin1String("Hspa");
     case QSystemNetworkInfo::LteMode:
         return QLatin1String("Lte");
     };
@@ -491,13 +519,11 @@ QList<QSystemNetworkInfo::NetworkMode> QDeclarativeNetworkInfo::availableModes()
     }
     return list;
 }
-
 /*!
-    \qmlmethod NetworkMode NetworkInfo::useMode()
-    This function returns the mode set by useMode(QSystemNetworkInfo::NetworkMode mode);
-
+    \internal
 */
-QSystemNetworkInfo::NetworkMode QDeclarativeNetworkInfo::useMode()
+
+QSystemNetworkInfo::NetworkMode QDeclarativeNetworkInfo::mode()
 {
     return m_mode;
 }

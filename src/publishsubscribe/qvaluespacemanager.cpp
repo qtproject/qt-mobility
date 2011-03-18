@@ -98,28 +98,8 @@ void QValueSpaceManager::install(QAbstractValueSpaceLayer * layer)
 {
     Q_ASSERT(Uninit == type);
     Q_ASSERT(layer);
-    unsigned int cOrder = layer->order();
-    int inserted = -1;
-    for(int ii = 0; !inserted && ii < layers.count(); ++ii) {
-        unsigned int lOrder = layers.at(ii)->order();
-        Q_ASSERT(layer != layers.at(ii));
-        if(lOrder < cOrder) {
-            // Do nothing
-        } else if(lOrder == cOrder) {
-            if(layers.at(ii)->id() > layer->id()) {
-                layers.insert(ii, layer);
-                inserted = ii;
-            }
-        } else if(lOrder > cOrder) {
-            layers.insert(ii, layer);
-            inserted = ii;
-        }
-    }
 
-    if(-1 == inserted) {
-        inserted = layers.count();
-        layers.append(layer);
-    }
+    layers.append(layer);
 }
 
 void QValueSpaceManager::install(QValueSpace::LayerCreateFunc func)

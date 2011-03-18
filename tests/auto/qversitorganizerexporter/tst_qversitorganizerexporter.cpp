@@ -733,4 +733,31 @@ QList<QVersitProperty> tst_QVersitOrganizerExporter::findPropertiesByName(
     return retval;
 }
 
+void tst_QVersitOrganizerExporter::testEmptyItemShouldNotBeExported()
+{
+    QVersitOrganizerExporter exporter;
+    QList<QOrganizerItem> items;
+
+    QOrganizerEvent ev;
+    QVERIFY(ev.isEmpty());
+    QOrganizerItem item1;
+    QVERIFY(item1.isEmpty());
+    items << static_cast<QOrganizerItem>(ev)<<item1;
+
+    QVERIFY(!exporter.exportItems(items));
+    QVERIFY(!exporter.errorMap().isEmpty());
+
+    QVersitOrganizerExporter::Error errorCode = exporter.errorMap().value(0);
+    QVERIFY2(errorCode == QVersitOrganizerExporter::EmptyOrganizerError,
+             QString("exporter.errorMap().value(0) == "
+                     + QString::number(errorCode)).toStdString().c_str());
+    errorCode = exporter.errorMap().value(1);
+    QVERIFY2(errorCode == QVersitOrganizerExporter::EmptyOrganizerError
+             || errorCode == QVersitOrganizerExporter::UnknownComponentTypeError,
+             QString("exporter.errorMap().value(1) == "
+                     + QString::number(errorCode)).toStdString().c_str() );
+    items.clear();
+    exporter.errorMap().clear();
+}
+
 QTEST_MAIN(tst_QVersitOrganizerExporter)

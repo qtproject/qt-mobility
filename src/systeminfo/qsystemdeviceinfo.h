@@ -75,7 +75,6 @@ class  Q_SYSINFO_EXPORT QSystemDeviceInfo : public QObject
     Q_PROPERTY(bool isWirelessKeyboardConnected READ isWirelessKeyboardConnected NOTIFY wirelessKeyboardConnected)//1.2
     Q_PROPERTY(bool isKeyboardFlippedOpen READ isKeyboardFlippedOpen NOTIFY keyboardFlipped)//1.2
     Q_PROPERTY(QSystemDeviceInfo::LockTypeFlags lockStatus READ lockStatus NOTIFY lockStatusChanged)
-//    Q_PROPERTY(QSystemDeviceInfo::PowerState currentPowerState READ currentPowerState NOTIFY powerStateChanged)
 
     Q_ENUMS(BatteryStatus)
     Q_ENUMS(PowerState)
@@ -155,9 +154,15 @@ public:
        PrimaryKeypad = 0,
        SecondaryKeypad
     }; //1.2
+//    enum KeypadType {
+//       PrimaryKeypad = 0x0000001,
+//       SecondaryKeypad = 0x0000002
+//    }; //1.2
+//    Q_DECLARE_FLAGS(KeypadTypeFlags, KeypadType)//1.2
+
 
     enum LockType {
-        UnknownLock = 0xfffffff,
+        UnknownLock = 0,
         PinLocked = 0x0000001,
         TouchAndKeyboardLocked = 0x0000002
     }; //1.2
@@ -184,7 +189,8 @@ public:
     bool isWirelessKeyboardConnected(); //1.2
     bool isKeyboardFlippedOpen();//1.2
 
-    Q_INVOKABLE bool keypadLightOn(QSystemDeviceInfo::KeypadType type); //1.2`
+    Q_INVOKABLE bool keypadLightOn(QSystemDeviceInfo::KeypadType type); //1.2
+//    QSystemDeviceInfo::KeypadTypeFlags keypadLightsOn(); //1.2
     QUuid uniqueDeviceID(); //1.2
     QSystemDeviceInfo::LockTypeFlags lockStatus(); //1.2
 

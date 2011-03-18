@@ -60,6 +60,7 @@ QTM_BEGIN_NAMESPACE
 QDeclarativeGeoMapMouseEvent::QDeclarativeGeoMapMouseEvent(QObject *parent)
     : QObject(parent),
       accepted_(false),
+      button_(Qt::NoButton),
       coordinate_(0)
 {
 }

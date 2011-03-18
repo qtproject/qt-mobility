@@ -82,6 +82,7 @@ S60CameraViewfinderEngine::S60CameraViewfinderEngine(S60CameraControl *control,
     m_vfState(EVFNotConnectedNotStarted),
     m_viewfinderSize(KDefaultViewfinderSize),
     m_actualViewFinderSize(KDefaultViewfinderSize),
+    m_viewfinderAspectRatio(0.0),
     m_viewfinderType(OutputTypeNotSet),
     m_viewfinderNativeType(EBitmapViewFinder), // Default type
     m_isViewFinderVisible(true), // True by default (only QVideoWidgetControl supports being hidden)
@@ -481,11 +482,15 @@ void S60CameraViewfinderEngine::startViewfinder(const bool internalStart)
             }
 
             m_actualViewFinderSize = QSize(extentRectSymbian.Size().iWidth, extentRectSymbian.Size().iHeight);
+            m_viewfinderAspectRatio = qreal(m_actualViewFinderSize.width()) / qreal(m_actualViewFinderSize.height());
 
         } else { // Bitmap ViewFinder
             TSize size = TSize(m_viewfinderSize.width(), m_viewfinderSize.height());
 
             if( m_viewfinderType == OutputTypeRenderer && m_viewfinderSurface) {
+                if (!m_surfaceFormat.isValid())
+                    return;
+
                 // Start rendering to surface with correct size and format
                 if (m_viewfinderSurface->isFormatSupported(m_surfaceFormat))
                     m_viewfinderSurface->start(m_surfaceFormat);
@@ -506,6 +511,8 @@ void S60CameraViewfinderEngine::startViewfinder(const bool internalStart)
             }
 
             m_actualViewFinderSize = QSize(size.iWidth, size.iHeight);
+            m_viewfinderAspectRatio = qreal(m_actualViewFinderSize.width()) / qreal(m_actualViewFinderSize.height());
+
             if (m_viewfinderDisplay)
                 m_viewfinderDisplay->setNativeSize(m_actualViewFinderSize);
         }
@@ -616,6 +623,7 @@ void S60CameraViewfinderEngine::resetViewfinderDisplay()
             // Nothing to do
             break;
         case OutputTypeRenderer: {
+            // New surface has been set
             S60VideoRendererControl* viewFinderRenderControl =
                 qobject_cast<S60VideoRendererControl*>(m_viewfinderOutput);
             m_viewfinderSurface = viewFinderRenderControl->surface();
@@ -624,6 +632,27 @@ void S60CameraViewfinderEngine::resetViewfinderDisplay()
                 stopViewfinder(); // Stop viewfinder
                 return;
             }
+
+            if (!m_viewfinderSurface->nativeResolution().isEmpty()) {
+                if (m_viewfinderSurface->nativeResolution() != m_viewfinderSize)
+                    resetViewfinderSize(m_viewfinderSurface->nativeResolution());
+            }
+
+            connect(m_viewfinderSurface, SIGNAL(nativeResolutionChanged(const QSize&)),
+                this, SLOT(resetViewfinderSize(QSize)));
+
+            // Set Surface Properties
+            if (m_viewfinderSurface->supportedPixelFormats().contains(QVideoFrame::Format_RGB32))
+                m_surfaceFormat = QVideoSurfaceFormat(m_actualViewFinderSize, QVideoFrame::Format_RGB32);
+            else if (m_viewfinderSurface->supportedPixelFormats().contains(QVideoFrame::Format_ARGB32))
+                m_surfaceFormat = QVideoSurfaceFormat(m_actualViewFinderSize, QVideoFrame::Format_ARGB32);
+            else
+                return;
+
+            m_surfaceFormat.setFrameRate(KViewfinderFrameRate);
+            m_surfaceFormat.setYCbCrColorSpace(QVideoSurfaceFormat::YCbCr_Undefined); // EColor16MU (compatible with EColor16MA)
+            m_surfaceFormat.setPixelAspectRatio(1,1); // PAR 1:1
+
             connect(this, SIGNAL(viewFinderFrameReady(const CFbsBitmap &)),
                 this, SLOT(viewFinderBitmapReady(const CFbsBitmap &)));
         }
@@ -740,6 +769,27 @@ void S60CameraViewfinderEngine::checkAndRotateCamera()
         m_cameraControl->resetCameraOrientation();
     }
     m_uiLandscape = isUiNowLandscape;
+}
+
+void S60CameraViewfinderEngine::handleContentAspectRatioChange(const QSize& newSize)
+{
+    qreal newAspectRatio = qreal(newSize.width()) / qreal(newSize.height());
+    // Check if aspect ratio changed
+    if (qFuzzyCompare(newAspectRatio, m_viewfinderAspectRatio))
+        return;
+
+    // Resize viewfinder by reducing either width or height to comply with the new aspect ratio
+    QSize newNativeResolution;
+    if (newAspectRatio > m_viewfinderAspectRatio) { // New AspectRatio is wider => Reduce height
+        newNativeResolution = QSize(m_actualViewFinderSize.width(), (m_actualViewFinderSize.width() / newAspectRatio));
+    } else { // New AspectRatio is higher => Reduce width
+        newNativeResolution = QSize((m_actualViewFinderSize.height() * newAspectRatio), m_actualViewFinderSize.height());
+    }
+
+    // Notify aspect ratio change (use actual content size to notify that)
+    // This triggers item size/position re-calculation
+    if (m_viewfinderDisplay)
+        m_viewfinderDisplay->setNativeSize(newNativeResolution);
 }
 
 // End of file
