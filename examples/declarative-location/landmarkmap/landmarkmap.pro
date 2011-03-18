@@ -1,7 +1,7 @@
 include(../../mobility_examples.pri)
 
 QT += declarative network
-SOURCES += $$PWD/qmllandmarkmap.cpp
+SOURCES += qmllandmarkmap.cpp
 
 
 TARGET = qml_landmarkmap

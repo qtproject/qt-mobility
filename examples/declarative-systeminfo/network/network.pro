@@ -1,9 +1,8 @@
-include($$PWD/deployment.pri)
-include($$PWD/../declarative-systeminfo.pri)
-
+include(../../mobility_examples.pri)
 QT += declarative
-SOURCES += $$PWD/qmlnetwork.cpp
+SOURCES += qmlnetwork.cpp
 TARGET = qml_networkinfo
+TEMPLATE = app
 
 win32 {
     #required by Qt SDK to resolve Mobility libraries
