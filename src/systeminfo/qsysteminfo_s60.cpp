@@ -395,6 +395,7 @@ QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate(QObject *parent)
         this, SLOT(wlanNetworkSignalStrengthChanged()));
     connect(DeviceInfo::instance()->wlanInfo(), SIGNAL(wlanNetworkStatusChanged()),
         this, SLOT(wlanNetworkStatusChanged()));
+    DeviceInfo::instance()->subscriberInfo();
 }
 
 QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate()
@@ -402,6 +403,7 @@ QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate()
     DeviceInfo::instance()->cellSignalStrenghtInfo()->removeObserver(this);
     DeviceInfo::instance()->cellNetworkInfo()->removeObserver(this);
     DeviceInfo::instance()->cellNetworkRegistrationInfo()->removeObserver(this);
+    DeviceInfo::instance()->wlanInfo()->FreeResources();
 }
 
 QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSystemNetworkInfo::NetworkMode mode)
@@ -900,6 +902,8 @@ QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QObject *parent)
     DeviceInfo::instance()->batteryInfo()->addObserver(this);
     DeviceInfo::instance()->chargingStatus()->addObserver(this);
     m_previousBatteryStatus = QSystemDeviceInfo::NoBatteryLevel;
+    DeviceInfo::instance()->phoneInfo();
+    DeviceInfo::instance()->subscriberInfo();
 }
 
 QSystemDeviceInfoPrivate::~QSystemDeviceInfoPrivate()

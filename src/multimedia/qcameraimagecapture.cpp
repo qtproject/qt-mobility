@@ -66,26 +66,9 @@ QT_BEGIN_NAMESPACE
     It's not intended to be used alone but for accessing the media
     recording functions of other media objects, like QCamera.
 
-    \code
-        camera = new QCamera;
-        viewFinder = new QCameraViewfinder;
-        camera->setViewfinder(viewFinder);
-        viewFinder->show();
+    \snippet doc/src/snippets/multimedia-snippets/camera.cpp Camera
 
-        imageCapture = new QCameraImageCapture(camera);
-
-        camera->setCaptureMode(QCamera::CaptureStillImage);
-        camera->start();
-
-        //on half pressed shutter button
-        camera->searchAndLock();
-
-        //on shutter button pressed
-        imageCapture->capture();
-
-        //on shutter button released
-        camera->unlock();
-    \endcode
+    \snippet doc/src/snippets/multimedia-snippets/camera.cpp Camera keys
 
     \sa QCamera
 */

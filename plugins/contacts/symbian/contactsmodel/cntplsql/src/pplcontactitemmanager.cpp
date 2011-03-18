@@ -789,7 +789,7 @@ void CPplContactItemManager::SetCardTemplatePrefIdL(TInt aCardTemplatePrefId)
 void CPplContactItemManager::MakeDatabaseCompatibleL()
     {
     //check compatibility
-    CCntSqlDbStructure* tblStructure = CCntSqlDbStructure::NewL( iDatabase );   
+    CCntSqlDbStructure* tblStructure = CCntSqlDbStructure::NewL( iDatabase, *this );   
     CleanupStack::PushL(tblStructure);
     tblStructure->MakeDatabaseCompatibleL();
     CleanupStack::PopAndDestroy(); //tblStructure

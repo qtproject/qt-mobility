@@ -29,6 +29,7 @@ PKGCONFIG += \
     gstreamer-video-0.10
 
 maemo*:PKGCONFIG +=gstreamer-plugins-bad-0.10
+contains(gstreamer-appsrc_enabled, yes): PKGCONFIG += gstreamer-app-0.10
 
 maemo5 {
   HEADERS += camerabuttonlistener_maemo.h

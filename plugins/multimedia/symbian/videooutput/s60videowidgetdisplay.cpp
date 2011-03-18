@@ -54,8 +54,8 @@ S60VideoWidgetDisplay::S60VideoWidgetDisplay(QObject *parent)
     connect(this, SIGNAL(fullScreenChanged(bool)), m_widget, SLOT(setFullScreen(bool)));
     connect(this, SIGNAL(contentRectChanged(const QRect&)), m_widget, SLOT(setContentRect(const QRect &)));
 #ifndef VIDEOOUTPUT_GRAPHICS_SURFACES
-    connect(m_widget, SIGNAL(beginVideoWindowNativePaint()), this, SIGNAL(beginVideoWindowNativePaint()));
-    connect(m_widget, SIGNAL(endVideoWindowNativePaint()), this, SIGNAL(endVideoWindowNativePaint()));
+    connect(m_widget, SIGNAL(beginVideoWidgetNativePaint()), this, SIGNAL(beginVideoWindowNativePaint()));
+    connect(m_widget, SIGNAL(endVideoWidgetNativePaint()), this, SIGNAL(endVideoWindowNativePaint()));
 #endif
     m_widget->installEventFilter(this);
     m_widget->setPaintingEnabled(false);
@@ -172,4 +172,3 @@ void S60VideoWidgetDisplay::setExplicitExtentRect(const QRect &rect)
         emit displayRectChanged(extentRect(), clipRect());
     }
 }
-

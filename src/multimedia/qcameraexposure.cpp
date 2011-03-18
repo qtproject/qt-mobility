@@ -54,17 +54,12 @@ QT_BEGIN_NAMESPACE
 /*!
     \class QCameraExposure
 
-    
+
     \brief The QCameraExposure class provides interface for exposure related camera settings.
 
     \inmodule QtMultimediaKit
     \ingroup camera
 
-The Camera API of Qt Mobility is still in \bold Technology Preview. It has
-not undergone the same level of review and testing as the rest of the APIs.
-
-The API exposed by the classes in this component are not stable, and will
-undergo modification or removal prior to the final release of Qt Mobility.
 */
 
 //#define DEBUG_EXPOSURE_CHANGES 1
@@ -145,6 +140,9 @@ void QCameraExposurePrivate::_q_exposureParameterChanged(int parameter)
         break;
     case QCameraExposureControl::ShutterSpeed:
         emit q->shutterSpeedChanged(q->shutterSpeed());
+        break;
+    case QCameraExposureControl::ExposureCompensation:
+        emit q->exposureCompensationChanged(q->exposureCompensation());
         break;
     }
 }

@@ -297,6 +297,7 @@ For more details see the \l {Landmark Examples} {Landmark Examples} page for:
     \o \l {Exporting landmarks}
 \endlist
 
+\target Landmark Managers and Plugins
 \section3 Managers and plugins
 Landmark managers are identified by their manager name.  Each manager name corresponds to a specific plugin/backend
 that implements the manager functionality.  The manager name is typically a reverse domain  string such as
@@ -339,9 +340,9 @@ as the \i {sparql manager}.
 The behaviour of some parts of the Landmarks API varies between platforms.  A few of the major ones are mentioned below
 
 \list
-\o The symbian manager does not support MatchContains in the name or attribute filters.  The symbian manager also does not
-support multiple attributes with AND operation type in an attribute filter.  See the documentation on the attribute 
-filter for more details.
+\o The symbian manager does not support the MatchContains flag in the attribute filters.  The symbian manager also does not
+support multiple attributes with an AND operation type in an attribute filter.  Some versions of s60 do not support the
+MatchContains flag in name filters. See the documentation on the attribute and name filters for more details.
 \o The sparql manager as of 1.1.1 does not support the countryCode, county and district fields of QGeoAddress.  These
 fields are ignored when a landmark is saved.
 \endlist
