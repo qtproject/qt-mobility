@@ -42,6 +42,7 @@
 #define S60VIDEOOUTPUTUTILS_H
 
 #include <QtCore/qglobal.h>
+#include <QtGui/qwindowdefs.h>
 
 QT_FORWARD_DECLARE_CLASS(QWidget)
 
@@ -54,11 +55,13 @@ namespace S60VideoOutputUtils
 enum NativePaintMode
 {
     Default,
-    ZeroFill
+    ZeroFill,
+    BlitWriteAlpha
 };
 
 void setIgnoreFocusChanged(QWidget *widget);
 void setNativePaintMode(QWidget *widget, NativePaintMode mode);
+void setNativePaintMode(WId wid, NativePaintMode mode);
 void setReceiveNativePaintEvents(QWidget *widget, bool enabled);
 
 } // namespace S60VideoOutputUtils

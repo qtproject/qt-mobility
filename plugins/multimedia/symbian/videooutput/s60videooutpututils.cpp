@@ -43,6 +43,7 @@
 
 #ifdef PRIVATE_QTGUI_HEADERS_AVAILABLE
 #if QT_VERSION >= 0x040601 && !defined(__WINSCW__)
+#include <QtGui/private/qt_s60_p.h>
 #include <QtGui/private/qwidget_p.h>
 #define USE_PRIVATE_QTGUI_APIS
 #endif // QT_VERSION >= 0x040601 && !defined(__WINSCW__)
@@ -75,10 +76,26 @@ void setNativePaintMode(QWidget *widget, NativePaintMode mode)
     case ZeroFill:
         widgetMode = QWExtra::ZeroFill;
         break;
+    case BlitWriteAlpha:
+#if QT_VERSION >= 0x040704
+        widgetMode = QWExtra::BlitWriteAlpha;
+#endif
+        break;
     }
     widgetPrivate->extraData()->nativePaintMode = widgetMode;
 #else
     Q_UNUSED(widget)
+    Q_UNUSED(mode)
+#endif
+}
+
+void setNativePaintMode(WId wid, NativePaintMode mode)
+{
+#ifdef USE_PRIVATE_QTGUI_APIS
+    QWidget *window = static_cast<QSymbianControl *>(wid)->widget()->window();
+    setNativePaintMode(window, mode);
+#else
+    Q_UNUSED(wid)
     Q_UNUSED(mode)
 #endif
 }
