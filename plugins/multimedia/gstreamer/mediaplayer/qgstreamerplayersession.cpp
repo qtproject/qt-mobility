@@ -1084,7 +1084,9 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
                         err->code == GST_RESOURCE_ERROR_READ ||
                         err->code == GST_RESOURCE_ERROR_SEEK ||
                         err->code == GST_RESOURCE_ERROR_SYNC)) {
-                            emit error(int(QMediaPlayer::NetworkError), QString::fromUtf8(err->message));
+                        emit error(int(QMediaPlayer::NetworkError), QString::fromUtf8(err->message));
+                    } else {
+                        emit error(int(QMediaPlayer::ResourceError), QString::fromUtf8(err->message));
                     }
                 }
                 else
