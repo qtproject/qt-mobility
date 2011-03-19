@@ -195,7 +195,7 @@ QValueSpacePublisherPrivate::QValueSpacePublisherPrivate(const QString &_path, c
 QValueSpacePublisher::QValueSpacePublisher(const QString &path, QObject *parent)
 :   QObject(parent), d(new QValueSpacePublisherPrivate(path))
 {
-    QValueSpaceManager::instance()->init();
+    QValueSpaceManager::instance()->init(QAbstractValueSpaceLayer::Client);
 }
 
 /*!
@@ -217,7 +217,7 @@ QValueSpacePublisher::QValueSpacePublisher(QValueSpace::LayerOptions filter,
                                            QObject *parent)
 :   QObject(parent), d(new QValueSpacePublisherPrivate(path, filter))
 {
-    QValueSpaceManager::instance()->init();
+    QValueSpaceManager::instance()->init(QAbstractValueSpaceLayer::Client);
 }
 
 /*!
@@ -236,7 +236,7 @@ QValueSpacePublisher::QValueSpacePublisher(QValueSpace::LayerOptions filter,
 QValueSpacePublisher::QValueSpacePublisher(const QUuid &uuid, const QString &path, QObject *parent)
 :   QObject(parent), d(new QValueSpacePublisherPrivate(path, uuid))
 {
-    QValueSpaceManager::instance()->init();
+    QValueSpaceManager::instance()->init(QAbstractValueSpaceLayer::Client);
 }
 
 /*!

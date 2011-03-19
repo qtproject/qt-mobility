@@ -374,7 +374,7 @@ void QAbstractValueSpaceLayer::emitInterestChanged(QValueSpacePublisher *publish
 */
 void QValueSpace::initValueSpaceServer()
 {
-    QValueSpaceManager::instance()->initServer();
+    QValueSpaceManager::instance()->init(QAbstractValueSpaceLayer::Server);
 }
 
 /*!
