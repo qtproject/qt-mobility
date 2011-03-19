@@ -1571,7 +1571,8 @@ bool QSystemDeviceInfoPrivate::isKeyboardFlippedOpen()
 {
 #ifdef LOCKANDFLIP_SUPPORTED
     // It is functional only for the Grip open devices
-    return ( (DeviceInfo::instance()->flipStatus()->IsFlipSupported()) && (DeviceInfo::instance()->flipStatus()->getFlipStatus()) );
+    // TBD Remove : (DeviceInfo::instance()->flipStatus()->IsFlipSupported())
+    return ( DeviceInfo::instance()->flipStatus()->getFlipStatus() );
 #else
     return false;
 #endif
@@ -1659,9 +1660,10 @@ void QSystemDeviceInfoPrivate::keylockStatusChanged(TInt aLockType)
         }
 }
 
-void QSystemDeviceInfoPrivate::flipStatusChanged(TInt aFlipType , TInt aFilpKeyBoard)
+void QSystemDeviceInfoPrivate::flipStatusChanged(TInt aFlipType , TInt /*aFilpKeyBoard*/)
 {
-    emit keyboardFlipped((aFlipType ==  EPSHWRMGripOpen) && (aFilpKeyBoard == 1));
+    //TBD: (aFilpKeyBoard == 1)
+    emit keyboardFlipped((aFlipType ==  EPSHWRMGripOpen) || (aFlipType ==  EPSHWRMFlipOpen));
 }
 #endif
 
