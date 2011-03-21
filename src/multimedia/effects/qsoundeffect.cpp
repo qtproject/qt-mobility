@@ -79,6 +79,9 @@ QT_BEGIN_NAMESPACE
         }
     }
     \endqml
+
+    Note: Currently changing the volume has no effect on Mac OS X and Symbian due to their implementation using QSound,
+          which has no volume API. The default volume will be the system volume.
 */
 
 /*!
@@ -99,6 +102,7 @@ QT_BEGIN_NAMESPACE
     \qmlproperty qreal SoundEffect::volume
 
     This property holds the volume of the playback, from 0.0 (silent) to 1.0 (maximum volume).
+    Note: Currently this has no effect on Mac OS X and Symbian.
 */
 
 /*!
