@@ -104,6 +104,7 @@ usr/include/qt4/QtMultimediaKit/qmediacontainercontrol.h
 usr/include/qt4/QtMultimediaKit/qmediacontent.h
 usr/include/qt4/QtMultimediaKit/qmediacontrol.h
 usr/include/qt4/QtMultimediaKit/qmediaencodersettings.h
+usr/include/qt4/QtMultimediaKit/qmediaenumdebug.h
 usr/include/qt4/QtMultimediaKit/qmediaimageviewer.h
 usr/include/qt4/QtMultimediaKit/qmedianetworkaccesscontrol.h
 usr/include/qt4/QtMultimediaKit/qmediaobject.h
