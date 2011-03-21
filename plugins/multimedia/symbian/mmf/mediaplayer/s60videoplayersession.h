@@ -44,6 +44,7 @@
 
 #include "s60mediaplayersession.h"
 #include "s60mediaplayeraudioendpointselector.h"
+#include "s60videodisplay.h"
 
 #ifdef VIDEOOUTPUT_GRAPHICS_SURFACES
 #include <videoplayer2.h>
@@ -123,6 +124,7 @@ private slots:
     void windowHandleChanged();
     void displayRectChanged();
     void aspectRatioChanged();
+    void rotationChanged();
 #ifndef VIDEOOUTPUT_GRAPHICS_SURFACES
     void suspendDirectScreenAccess();
     void resumeDirectScreenAccess();
@@ -167,7 +169,8 @@ private:
     enum Parameter {
         WindowHandle = 0x1,
         DisplayRect  = 0x2,
-        ScaleFactors = 0x4
+        ScaleFactors = 0x4,
+        Rotation     = 0x8
     };
     QFlags<Parameter> m_pendingChanges;
     bool m_backendInitiatedPause;
