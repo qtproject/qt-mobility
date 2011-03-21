@@ -49,6 +49,10 @@
 #include <qmediaplayer.h>
 #include <qmediastreamscontrol.h>
 
+#if defined(HAVE_GST_APPSRC)
+#include "qgstappsrc.h"
+#endif
+
 #include <gst/gst.h>
 
 class QGstreamerBusHelper;
@@ -100,9 +104,14 @@ public:
 
     bool processSyncMessage(const QGstreamerMessage &message);
 
-public slots:
-    void load(const QNetworkRequest &url);
+#if defined(HAVE_GST_APPSRC)
+    QGstAppSrc *appsrc() const { return m_appSrc; }
+    static void configureAppSrcElement(GObject*, GObject*, GParamSpec*,QGstreamerPlayerSession* _this);
+#endif
 
+public slots:
+    void loadFromUri(const QNetworkRequest &url);
+    void loadFromStream(const QNetworkRequest &url, QIODevice *stream);
     bool play();
     bool pause();
     void stop();
@@ -138,10 +147,13 @@ private slots:
     void updateVideoRenderer();
     void updateVideoResolutionTag();
     void updateVolume();
+    void updateMuted();
+    void updateDuration();
 
 private:
     static void playbinNotifySource(GObject *o, GParamSpec *p, gpointer d);
     static void handleVolumeChange(GObject *o, GParamSpec *p, gpointer d);
+    static void handleMutedChange(GObject *o, GParamSpec *p, gpointer d);
     static void insertColorSpaceElement(GstElement *element, gpointer data);
 
     QNetworkRequest m_request;
@@ -163,6 +175,10 @@ private:
     QObject *m_videoOutput;
     QGstreamerVideoRendererInterface *m_renderer;
 
+#if defined(HAVE_GST_APPSRC)
+    QGstAppSrc *m_appSrc;
+#endif
+
     QMap<QByteArray, QVariant> m_tags;
     QList< QMap<QtMultimediaKit::MetaData,QVariant> > m_streamProperties;
     QList<QMediaStreamsControl::StreamType> m_streamTypes;
@@ -178,6 +194,7 @@ private:
 
     qint64 m_lastPosition;
     qint64 m_duration;
+    int m_durationQueries;
 };
 
 #endif // QGSTREAMERPLAYERSESSION_H

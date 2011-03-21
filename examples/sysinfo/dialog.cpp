@@ -41,6 +41,8 @@
 #include "dialog.h"
 #include <QMessageBox>
 #include <QTimer>
+#include <math.h>
+
 
 Dialog::Dialog() :
     QWidget(),
@@ -260,6 +262,8 @@ void Dialog::setupDisplay()
 
     physicalHeightLabel->setText(QString::number(dis->physicalHeight(0)));
     physicalWidthLabel->setText(QString::number(dis->physicalWidth((0))));
+
+    backlightTotext(dis->backlightStatus(0));
 }
 
 void Dialog::setupStorage()
@@ -307,16 +311,46 @@ void Dialog::updateStorage()
         QStringList items;
         items << volName;
         items << type;
-        items << QString::number(sti->totalDiskSpace(volName));
-        items << QString::number(sti->availableDiskSpace(volName));
+        items << sizeToString(sti->totalDiskSpace(volName));
+        items << sizeToString(sti->availableDiskSpace(volName));
         items << sti->uriForDrive(volName);
         items << storageStateToString(sti->getStorageState(volName));
 
         QTreeWidgetItem *item = new QTreeWidgetItem(items);
+
+        for (int i = 0; i < 5; i++) {
+            item->setBackground( i ,brushForStorageState( sti->getStorageState(volName)));
+        }
         storageTreeWidget->addTopLevelItem(item);
     }
 }
 
+QBrush Dialog::brushForStorageState(QSystemStorageInfo::StorageState state)
+{
+    if (state == QSystemStorageInfo::CriticalStorageState) {
+        return  QBrush(Qt::red);
+    }
+    if (state== QSystemStorageInfo::VeryLowStorageState) {
+        return  QBrush(Qt::magenta);
+    }
+    if (state == QSystemStorageInfo::LowStorageState) {
+        return  QBrush(Qt::yellow);
+    }
+    return  QBrush();
+}
+
+QString Dialog:: sizeToString(qlonglong size)
+{
+    float fSize = size;
+    int i = 0;
+    const char* units[] = {"B", "kB", "MB", "GB", "TB"};
+    while (fSize > 1024) {
+        fSize /= 1024.0;
+        i++;
+    }
+    fSize = round((fSize)*100)/100;
+    return QString::number(fSize)+" "+ units[i];
+}
 
 void Dialog::setupNetwork()
 {
@@ -342,6 +376,8 @@ void Dialog::setupNetwork()
     connect(ni,SIGNAL(networkModeChanged(QSystemNetworkInfo::NetworkMode)),
             this,SLOT(networkModeChanged(QSystemNetworkInfo::NetworkMode)));
 
+    connect(ni,SIGNAL(cellDataTechnologyChanged(QSystemNetworkInfo::CellDataTechnology)),
+            this,SLOT(dataTechnologyChanged(QSystemNetworkInfo::CellDataTechnology)));
 
     networkModeChanged(ni->currentMode());
     netStatusComboBox->setCurrentIndex((int)ni->currentMode());
@@ -355,6 +391,8 @@ void Dialog::setupNetwork()
     homeMCCLabel->setText(ni->homeMobileCountryCode());
 
     homeMNCLabel->setText(ni->homeMobileNetworkCode());
+
+    dataTechnologyChanged(ni->cellDataTechnology());
 }
 void Dialog::netStatusComboActivated(int index)
 {
@@ -646,24 +684,6 @@ void Dialog::networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode mode ,
         }
     }
 
-    if (mode == QSystemNetworkInfo::GprsMode) {
-        if (netStatusComboBox->currentText() == "Gprs") {
-            signalLevelProgressBar->setValue(strength);
-        }
-    }
-
-    if (mode == QSystemNetworkInfo::EdgeMode) {
-        if (netStatusComboBox->currentText() == "Edge") {
-            signalLevelProgressBar->setValue(strength);
-        }
-    }
-
-    if (mode == QSystemNetworkInfo::HspaMode) {
-        if (netStatusComboBox->currentText() == "Hpsa") {
-            signalLevelProgressBar->setValue(strength);
-        }
-    }
-
     if (mode == QSystemNetworkInfo::LteMode) {
         if (netStatusComboBox->currentText() == "Lte") {
             signalLevelProgressBar->setValue(strength);
@@ -722,24 +742,6 @@ void Dialog::networkNameChanged(QSystemNetworkInfo::NetworkMode mode,const QStri
         }
     }
 
-    if (mode == QSystemNetworkInfo::GprsMode) {
-        if (netStatusComboBox->currentText() == "Gprs") {
-            operatorNameLabel->setText(text);
-        }
-    }
-
-    if (mode == QSystemNetworkInfo::EdgeMode) {
-        if (netStatusComboBox->currentText() == "Edge") {
-            operatorNameLabel->setText(text);
-        }
-    }
-
-    if (mode == QSystemNetworkInfo::HspaMode) {
-        if (netStatusComboBox->currentText() == "Hpsa") {
-            operatorNameLabel->setText(text);
-        }
-    }
-
     if (mode == QSystemNetworkInfo::LteMode) {
         if (netStatusComboBox->currentText() == "Lte") {
             operatorNameLabel->setText(text);
@@ -749,7 +751,6 @@ void Dialog::networkNameChanged(QSystemNetworkInfo::NetworkMode mode,const QStri
 
 void Dialog::networkStatusChanged(QSystemNetworkInfo::NetworkMode mode , QSystemNetworkInfo::NetworkStatus status)
 {
-
     if (mode == QSystemNetworkInfo::UnknownMode) {
         if (netStatusComboBox->currentText() == "Unknown") {
             displayNetworkStatus(status);
@@ -798,24 +799,6 @@ void Dialog::networkStatusChanged(QSystemNetworkInfo::NetworkMode mode , QSystem
         }
     }
 
-    if (mode == QSystemNetworkInfo::GprsMode) {
-        if (netStatusComboBox->currentText() == "Gprs") {
-            displayNetworkStatus(status);
-        }
-    }
-
-    if (mode == QSystemNetworkInfo::EdgeMode) {
-        if (netStatusComboBox->currentText() == "Edge") {
-            displayNetworkStatus(status);
-        }
-    }
-
-    if (mode == QSystemNetworkInfo::HspaMode) {
-        if (netStatusComboBox->currentText() == "Hspa") {
-            displayNetworkStatus(status);
-        }
-    }
-
     if (mode == QSystemNetworkInfo::LteMode) {
         if (netStatusComboBox->currentText() == "Lte") {
             displayNetworkStatus(status);
@@ -854,18 +837,6 @@ void Dialog::networkModeChanged(QSystemNetworkInfo::NetworkMode mode)
 
     if (mode == QSystemNetworkInfo::WimaxMode) {
         primaryModeLabel->setText("Wimax");
-    }
-
-    if (mode == QSystemNetworkInfo::GprsMode) {
-        primaryModeLabel->setText("Gprs");
-    }
-
-    if (mode == QSystemNetworkInfo::EdgeMode) {
-        primaryModeLabel->setText("Edge");
-    }
-
-    if (mode == QSystemNetworkInfo::HspaMode) {
-        primaryModeLabel->setText("Hspa");
     }
 
     if (mode == QSystemNetworkInfo::LteMode) {
@@ -1143,7 +1114,7 @@ void Dialog::keyboardFlipped(bool on)
 void Dialog::storageStateChanged(const QString &vol, QSystemStorageInfo::StorageState state)
 {
     QList<QTreeWidgetItem *>item = storageTreeWidget->findItems(vol,Qt::MatchExactly,0);
-    item.at(0)->setText(3,QString::number(sti->availableDiskSpace(item.at(0)->text(0))));
+    item.at(0)->setText(3,sizeToString(sti->availableDiskSpace(item.at(0)->text(0))));
     item.at(0)->setText(5,storageStateToString(state));
 }
 
@@ -1161,3 +1132,50 @@ QString Dialog::storageStateToString(QSystemStorageInfo::StorageState state)
     }
     return str;
 }
+
+
+void Dialog::backlightTotext(QSystemDisplayInfo::BacklightState state)
+{
+    QString blState;
+
+    switch(state) {
+    case QSystemDisplayInfo::BacklightStateUnknown:
+        blState = "Unknown";
+        break;
+    case QSystemDisplayInfo::BacklightStateOff:
+        blState = "Off";
+        break;
+    case QSystemDisplayInfo::BacklightStateDimmed:
+        blState = "Dimmed";
+        break;
+    case QSystemDisplayInfo::BacklightStateOn:
+        blState = "On";
+        break;
+    };
+    backlightStatusLabel->setText(blState);
+}
+
+
+void Dialog::dataTechnologyChanged(QSystemNetworkInfo::CellDataTechnology tech)
+{
+    QString techString;
+    switch(tech) {
+    case QSystemNetworkInfo::UnknownDataTechnology:
+        techString = "Unknown";
+        break;
+    case QSystemNetworkInfo::GprsDataTechnology:
+        techString = "Gprs";
+        break;
+    case QSystemNetworkInfo::EdgeDataTechnology:
+        techString = "Edge";
+        break;
+    case QSystemNetworkInfo::UmtsDataTechnology:
+        techString = "Umts";
+        break;
+    case QSystemNetworkInfo::HspaDataTechnology:
+        techString = "Hspa";
+        break;
+    };
+    dataTechnologyLabel->setText(techString);
+}
+

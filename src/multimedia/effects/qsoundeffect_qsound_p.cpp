@@ -190,6 +190,7 @@ QSoundEffect::Status QSoundEffectPrivate::status() const
 
 void QSoundEffectPrivate::timerEvent(QTimerEvent *event)
 {
+    Q_UNUSED(event);
     setPlaying(!m_sound->isFinished());
     if (isPlaying())
         return;

@@ -53,6 +53,7 @@ void qt_registerSystemInfoTypes()
     qRegisterMetaTypeStreamOperators<QSystemNetworkInfoData>("QtMobility::QSystemNetworkInfoData");
     qRegisterMetaTypeStreamOperators<QSystemNetworkInfoData::NetworkInfo>("QtMobility::QSystemNetworkInfoData::NetworkInfo");
     qRegisterMetaTypeStreamOperators<QSystemDisplayInfoData>("QtMobility::QSystemDisplayInfoData");
+    qRegisterMetaTypeStreamOperators<QSystemScreenSaverData>("QtMobility::QSystemScreenSaverData");
 
     qRegisterMetaTypeStreamOperators<QSystemBatteryInfoData>("QtMobility::QSystemBatteryInfoData");
 
@@ -188,8 +189,6 @@ QDataStream &operator>>(QDataStream &in, QSystemNetworkInfoData::NetworkInfo &s)
 QDataStream &operator<<(QDataStream &out, const QSystemDisplayInfoData &s)
 {
     out << static_cast<qint32>(s.colorDepth) << static_cast<qint32>(s.displayBrightness);
-    out << static_cast<qint32>(s.dpiHeight) << static_cast<qint32>(s.dpiWidth);
-    out << static_cast<qint32>(s.physicalHeight) << static_cast<qint32>(s.physicalWidth);
     out << static_cast<qint32>(s.orientation);
     out << static_cast<qint32>(s.backlightStatus);
     return out;
@@ -197,19 +196,13 @@ QDataStream &operator<<(QDataStream &out, const QSystemDisplayInfoData &s)
 
 QDataStream &operator>>(QDataStream &in, QSystemDisplayInfoData &s)
 {
-    qint32 depth, brightness, colorDepth, dpiHeight, dpiWidth, physicalHeight, physicalWidth, orientation,
+    qint32 depth, brightness, colorDepth, orientation,
             backlightStatus;
     in >> depth >> brightness;
-    in >> colorDepth >> dpiHeight >> dpiWidth;
-    in >> physicalHeight >> physicalWidth;
+    in >> colorDepth;
     in >> orientation;
     s.colorDepth = depth;
     s.displayBrightness = brightness;
-    s.dpiHeight = dpiHeight;
-    s.dpiWidth = dpiWidth;
-    s.dpiHeight = dpiHeight;
-    s.dpiHeight = physicalHeight;
-    s.dpiHeight = physicalWidth;
     s.orientation = static_cast<QSystemDisplayInfo::DisplayOrientation>(orientation);
     s.backlightStatus = static_cast<QSystemDisplayInfo::BacklightState>(backlightStatus);
 
@@ -241,6 +234,18 @@ QDataStream &operator>>(QDataStream &in, QSystemBatteryInfoData &s)
     in >> s.nominalCapacity >> s.remainingCapacityPercent >> s.remainingCapacity;
     in >> s.voltage >> s.remainingChargingTime >> s.currentFlow;
     in >> s.cumulativeCurrentFlow >> s.remainingCapacityBars >> s.maxBars;
+    return in;
+}
+
+QDataStream &operator<<(QDataStream &out, const QSystemScreenSaverData &s)
+{
+    out << s.inhibitedCount;
+    return out;
+}
+
+QDataStream &operator>>(QDataStream &in, QSystemScreenSaverData &s)
+{
+    in >> s.inhibitedCount;
     return in;
 }
 

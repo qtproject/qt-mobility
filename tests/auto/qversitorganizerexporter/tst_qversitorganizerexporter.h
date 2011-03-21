@@ -70,6 +70,8 @@ private slots:
     void testExportTodoDetails();
     void testExportTodoDetails_data();
 
+    void testEmptyItemShouldNotBeExported();
+
     static QList<QVersitProperty> findPropertiesByName(const QVersitDocument &document, const QString &propertyName);
 };
 

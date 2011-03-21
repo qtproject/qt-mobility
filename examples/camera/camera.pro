@@ -2,7 +2,7 @@ TEMPLATE = app
 TARGET = camera
 
 INCLUDEPATH+=../../src/multimedia
-include(../examples.pri)
+include(../mobility_examples.pri)
 
 CONFIG += mobility
 MOBILITY = multimedia

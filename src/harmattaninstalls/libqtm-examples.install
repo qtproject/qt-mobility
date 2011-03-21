@@ -118,6 +118,7 @@ usr/lib/qtmobility/examples/publish-subscribe
 usr/lib/qtmobility/examples/qml_battery
 usr/lib/qtmobility/examples/qml_battery2
 usr/lib/qtmobility/examples/qml_camera
+usr/lib/qtmobility/examples/qml_device
 usr/lib/qtmobility/examples/qmldialer
 usr/lib/qtmobility/examples/qml_landmarkmap
 usr/lib/qtmobility/examples/qml_location_flickr

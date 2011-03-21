@@ -634,6 +634,13 @@ void tst_QVersitContactExporter::testEncodeBirthDay()
     QVERIFY(!property.isEmpty());
     QCOMPARE(property.parameters().count(), 0);
     QCOMPARE(property.value(), QLatin1String("2009-01-01"));
+
+    birthDay.setDateTime(QDateTime(QDate(2009, 1, 1), QTime(1, 2, 3)));
+    contact.saveDetail(&birthDay);
+    QVERIFY(mExporter->exportContacts(QList<QContact>() << contact, QVersitDocument::VCard30Type));
+    document = mExporter->documents().first();
+    property = findPropertyByName(document, QLatin1String("BDAY"));
+    QCOMPARE(property.value(), QLatin1String("2009-01-01T01:02:03"));
 }
 
 void tst_QVersitContactExporter::testEncodeNote()

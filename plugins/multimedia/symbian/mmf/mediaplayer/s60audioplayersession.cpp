@@ -39,24 +39,46 @@
 **
 ****************************************************************************/
 
+#include "DebugMacros.h"
+
 #include "s60audioplayersession.h"
 #include <QtCore/qdebug.h>
 #include <QtCore/qvariant.h>
+
+/*!
+    Constructs the CMdaAudioPlayerUtility object with given \a parent QObject.
+
+    And Registers for Audio Loading Notifications.
+
+*/
 
 S60AudioPlayerSession::S60AudioPlayerSession(QObject *parent)
     : S60MediaPlayerSession(parent)
     , m_player(0)
     , m_audioEndpoint("Default")
 {
+    DP0("S60AudioPlayerSession::S60AudioPlayerSession +++");
+
 #ifdef HAS_AUDIOROUTING
     m_audioOutput = 0;
 #endif //HAS_AUDIOROUTING    
     QT_TRAP_THROWING(m_player = CAudioPlayer::NewL(*this, 0, EMdaPriorityPreferenceNone));
     m_player->RegisterForAudioLoadingNotification(*this);
+
+    DP0("S60AudioPlayerSession::S60AudioPlayerSession ---");
 }
+
+
+/*!
+   Destroys the CMdaAudioPlayerUtility object.
+
+    And Unregister the observer.
+
+*/
 
 S60AudioPlayerSession::~S60AudioPlayerSession()
 {
+    DP0("S60AudioPlayerSession::~S60AudioPlayerSession +++");
 #ifdef HAS_AUDIOROUTING
     if (m_audioOutput)
         m_audioOutput->UnregisterObserver(*this);
@@ -64,10 +86,20 @@ S60AudioPlayerSession::~S60AudioPlayerSession()
 #endif
     m_player->Close();
     delete m_player;
+
+    DP0("S60AudioPlayerSession::~S60AudioPlayerSession ---");
 }
+
+/*!
+
+   Opens the a file from \a path.
+
+*/
 
 void S60AudioPlayerSession::doLoadL(const TDesC &path)
 {
+    DP0("S60AudioPlayerSession::doLoadL +++");
+
 #ifdef HAS_AUDIOROUTING
     // m_audioOutput needs to be reinitialized after MapcInitComplete
     if (m_audioOutput)
@@ -76,41 +108,97 @@ void S60AudioPlayerSession::doLoadL(const TDesC &path)
     m_audioOutput = NULL;
 #endif //HAS_AUDIOROUTING
     m_player->OpenFileL(path);
+
+    DP0("S60AudioPlayerSession::doLoadL ---");
 }
+
+/*!
+
+  Returns the duration of the audio sample in microseconds.
+
+*/
 
 qint64 S60AudioPlayerSession::doGetDurationL() const
 {
+ //  DP0("S60AudioPlayerSession::doGetDurationL");
+
     return m_player->Duration().Int64() / qint64(1000);
 }
 
+/*!
+ *  Returns the current playback position in microseconds from the start of the clip.
+
+*/
+
 qint64 S60AudioPlayerSession::doGetPositionL() const
 {
+  //  DP0("S60AudioPlayerSession::doGetPositionL");
+
     TTimeIntervalMicroSeconds ms = 0;
     m_player->GetPosition(ms);
     return ms.Int64() / qint64(1000);
 }
 
+/*!
+   Returns TRUE if Video available or else FALSE
+ */
+
 bool S60AudioPlayerSession::isVideoAvailable()
 {
+    DP0("S60AudioPlayerSession::isVideoAvailable");
+
     return false;
 }
+
+/*!
+   Returns TRUE if Audio available or else FALSE
+ */
 bool S60AudioPlayerSession::isAudioAvailable()
 {
+    DP0("S60AudioPlayerSession::isAudioAvailable");
+
     return true; // this is a bit happy scenario, but we do emit error that we can't play
 }
 
+/*!
+   Starts loading Media and sets media status to Buffering.
+
+ */
+
 void S60AudioPlayerSession::MaloLoadingStarted()
 {
+    DP0("S60AudioPlayerSession::MaloLoadingStarted +++");
+
     buffering();
+
+    DP0("S60AudioPlayerSession::MaloLoadingStarted ---");
 }
+
+
+/*!
+   Indicates loading Media is completed.
+
+   And sets media status to Buffered.
+
+ */
 
 void S60AudioPlayerSession::MaloLoadingComplete()
 {
+    DP0("S60AudioPlayerSession::MaloLoadingComplete +++");
+
     buffered();
+
+    DP0("S60AudioPlayerSession::MaloLoadingComplete ---");
 }
+
+/*!
+    Start or resume playing the current source.
+*/
 
 void S60AudioPlayerSession::doPlay()
 {
+    DP0("S60AudioPlayerSession::doPlay +++");
+
     // For some reason loading progress callback are not called on emulator
     // Same is the case with hardware. Will be fixed as part of QTMOBILITY-782.
         
@@ -121,20 +209,48 @@ void S60AudioPlayerSession::doPlay()
     //#ifdef __WINSCW__
         buffered();
     //#endif
+
+    DP0("S60AudioPlayerSession::doPlay ---");
 }
+
+
+/*!
+    Pause playing the current source.
+*/
+
 
 void S60AudioPlayerSession::doPauseL()
 {
+    DP0("S60AudioPlayerSession::doPauseL +++");
+
     m_player->Pause();
+
+    DP0("S60AudioPlayerSession::doPauseL ---");
 }
+
+
+/*!
+
+    Stop playing, and reset the play position to the beginning.
+*/
 
 void S60AudioPlayerSession::doStop()
 {
+    DP0("S60AudioPlayerSession::doStop +++");
+
     m_player->Stop();
+
+    DP0("S60AudioPlayerSession::doStop ---");
 }
+
+/*!
+    Closes the current audio clip (allowing another clip to be opened)
+*/
 
 void S60AudioPlayerSession::doClose()
 {
+    DP0("S60AudioPlayerSession::doClose +++");
+
 #ifdef HAS_AUDIOROUTING
     if (m_audioOutput) {
         m_audioOutput->UnregisterObserver(*this);
@@ -143,20 +259,50 @@ void S60AudioPlayerSession::doClose()
     }
 #endif
     m_player->Close();
+
+    DP0("S60AudioPlayerSession::doClose ---");
 }
+
+/*!
+
+    Changes the current playback volume to specified \a value.
+*/
 
 void S60AudioPlayerSession::doSetVolumeL(int volume)
 {
+    DP0("S60AudioPlayerSession::doSetVolumeL +++");
+
+    DP1("S60AudioPlayerSession::doSetVolumeL, Volume:", volume);
+
     m_player->SetVolume(volume * m_player->MaxVolume() / 100);
+
+    DP0("S60AudioPlayerSession::doSetVolumeL ---");
 }
+
+/*!
+    Sets the current playback position to \a microSeconds from the start of the clip.
+*/
 
 void S60AudioPlayerSession::doSetPositionL(qint64 microSeconds)
 {
+    DP0("S60AudioPlayerSession::doSetPositionL +++");
+
+    DP1("S60AudioPlayerSession::doSetPositionL, Microseconds:", microSeconds);
+
     m_player->SetPosition(TTimeIntervalMicroSeconds(microSeconds));
+
+    DP0("S60AudioPlayerSession::doSetPositionL ---");
 }
+
+/*!
+
+    Updates meta data entries in the current audio clip.
+*/
 
 void S60AudioPlayerSession::updateMetaDataEntriesL()
 {
+    DP0("S60AudioPlayerSession::updateMetaDataEntriesL +++");
+
     metaDataEntries().clear();
     int numberOfMetaDataEntries = 0;
 
@@ -170,11 +316,18 @@ void S60AudioPlayerSession::updateMetaDataEntriesL()
         delete entry;
     }
     emit metaDataChanged();
+
+    DP0("S60AudioPlayerSession::updateMetaDataEntriesL ---");
 }
 
+/*!
+    Sets the playbackRate with \a rate.
+*/
 
 void S60AudioPlayerSession::setPlaybackRate(qreal rate)
 {
+    DP0("S60AudioPlayerSession::setPlaybackRate +++");
+    DP1("S60AudioPlayerSession::setPlaybackRate, Rate:", rate);
     /*Since AudioPlayerUtility doesn't support set playback rate hence
      * setPlaybackRate emits playbackRateChanged signal for 1.0x ie normal playback.
      * For all other playBackRates it sets and emits error signal.
@@ -186,14 +339,35 @@ void S60AudioPlayerSession::setPlaybackRate(qreal rate)
         int err = KErrNotSupported;
         setAndEmitError(err);
     }
+    DP0("S60AudioPlayerSession::setPlaybackRate ---");
 }
+
+/*!
+
+    Returns the percentage of the audio clip loaded.
+*/
 
 int S60AudioPlayerSession::doGetBufferStatusL() const
 {
+    DP0("S60AudioPlayerSession::doGetBufferStatusL +++");
+
     int progress = 0;
     m_player->GetAudioLoadingProgressL(progress);
+
+    DP0("S60AudioPlayerSession::doGetBufferStatusL ---");
+
     return progress;
 }
+
+/*!
+
+    Defines required client behaviour when an attempt to open and initialise an audio sample has completed,
+    successfully or not.
+
+    \a aError if KErrNone the sample is ready to play or else system wide error.
+
+    \a aDuration The duration of the audio sample.
+*/
 
 #ifdef S60_DRM_SUPPORTED
 void S60AudioPlayerSession::MdapcInitComplete(TInt aError, const TTimeIntervalMicroSeconds& aDuration)
@@ -201,6 +375,10 @@ void S60AudioPlayerSession::MdapcInitComplete(TInt aError, const TTimeIntervalMi
 void S60AudioPlayerSession::MapcInitComplete(TInt aError, const TTimeIntervalMicroSeconds& aDuration)
 #endif
 {
+    DP0("S60AudioPlayerSession::MdapcInitComplete +++");
+
+    DP1("S60AudioPlayerSession::MdapcInitComplete - aError", aError);
+
     Q_UNUSED(aDuration);
     setError(aError);
     if (KErrNone != aError)
@@ -215,7 +393,17 @@ void S60AudioPlayerSession::MapcInitComplete(TInt aError, const TTimeIntervalMic
 #endif //HAS_AUDIOROUTING
     if (KErrNone == aError)
         loaded();
+
+    DP0("S60AudioPlayerSession::MdapcInitComplete ---");
 }
+
+/*!
+    Defines required client behaviour when an attempt to playback an audio sample has completed,
+    successfully or not.
+
+    \a aError if KErrNone the playback completed or else system wide error.
+*/
+
 
 #ifdef S60_DRM_SUPPORTED
 void S60AudioPlayerSession::MdapcPlayComplete(TInt aError)
@@ -223,19 +411,44 @@ void S60AudioPlayerSession::MdapcPlayComplete(TInt aError)
 void S60AudioPlayerSession::MapcPlayComplete(TInt aError)
 #endif
 {
+    DP0("S60AudioPlayerSession::MdapcPlayComplete +++");
+
+    DP1("S60AudioPlayerSession::MdapcPlayComplete", aError);
+
     if (KErrNone == aError)
         endOfMedia();
     else
         setError(aError);
+
+    DP0("S60AudioPlayerSession::MdapcPlayComplete ---");
 }
+
+/*!
+    Defiens which Audio End point to use.
+
+    \a audioEndpoint audioEndpoint name.
+*/
 
 void S60AudioPlayerSession::doSetAudioEndpoint(const QString& audioEndpoint)
 {
+    DP0("S60AudioPlayerSession::doSetAudioEndpoint +++");
+
+    DP1("S60AudioPlayerSession::doSetAudioEndpoint - ", audioEndpoint);
+
     m_audioEndpoint = audioEndpoint;
+
+    DP0("S60AudioPlayerSession::doSetAudioEndpoint ---");
 }
+
+/*!
+
+    Returns audioEndpoint name.
+*/
 
 QString S60AudioPlayerSession::activeEndpoint() const
 {
+    DP0("S60AudioPlayerSession::activeEndpoint +++");
+
     QString outputName = QString("Default");
 #ifdef HAS_AUDIOROUTING
     if (m_audioOutput) {
@@ -243,11 +456,20 @@ QString S60AudioPlayerSession::activeEndpoint() const
         outputName = qStringFromTAudioOutputPreference(output);
     }
 #endif
+    DP1("S60AudioPlayerSession::activeEndpoint is :", outputName);
+
+    DP0("S60AudioPlayerSession::activeEndpoint ---");
     return outputName;
 }
 
+/*!
+ *  Returns default Audio End point in use.
+*/
+
 QString S60AudioPlayerSession::defaultEndpoint() const
 {
+    DP0("S60AudioPlayerSession::defaultEndpoint +++");
+
     QString outputName = QString("Default");
 #ifdef HAS_AUDIOROUTING
     if (m_audioOutput) {
@@ -255,11 +477,22 @@ QString S60AudioPlayerSession::defaultEndpoint() const
         outputName = qStringFromTAudioOutputPreference(output);
     }
 #endif
+    DP1("S60AudioPlayerSession::defaultEndpoint is :", outputName);
+
+    DP0("S60AudioPlayerSession::defaultEndpoint ---");
     return outputName;
 }
 
+/*!
+   Sets active end \a name as an Audio End point.
+*/
+
 void S60AudioPlayerSession::setActiveEndpoint(const QString& name)
 {
+    DP0("S60AudioPlayerSession::setActiveEndpoint +++");
+
+    DP1("S60AudioPlayerSession::setActiveEndpoint - ", name);
+
 #ifdef HAS_AUDIOROUTING
     CAudioOutput::TAudioOutputPreference output = CAudioOutput::ENoPreference;
 
@@ -279,18 +512,44 @@ void S60AudioPlayerSession::setActiveEndpoint(const QString& name)
         setError(err);
     }
 #endif
+
+    DP0("S60AudioPlayerSession::setActiveEndpoint ---");
 }
+
+/*!
+    The default audio output has been changed.
+
+    \a aAudioOutput Audio Output object.
+
+    \a aNewDefault is CAudioOutput::TAudioOutputPreference.
+*/
+
+
 #ifdef HAS_AUDIOROUTING
 void S60AudioPlayerSession::DefaultAudioOutputChanged(CAudioOutput& aAudioOutput,
                                         CAudioOutput::TAudioOutputPreference aNewDefault)
 {
+    DP0("S60AudioPlayerSession::DefaultAudioOutputChanged +++");
+
     // Emit already implemented in setActiveEndpoint function
     Q_UNUSED(aAudioOutput)
     Q_UNUSED(aNewDefault)
+
+    DP0("S60AudioPlayerSession::DefaultAudioOutputChanged ---");
 }
+
+
+/*!
+    Converts CAudioOutput::TAudioOutputPreference enum to QString.
+
+    \a output is  CAudioOutput::TAudioOutputPreference enum value.
+
+*/
 
 QString S60AudioPlayerSession::qStringFromTAudioOutputPreference(CAudioOutput::TAudioOutputPreference output) const
 {
+    DP0("S60AudioPlayerSession::qStringFromTAudioOutputPreference");
+
     if (output == CAudioOutput::ENoPreference)
         return QString("Default");
     else if (output == CAudioOutput::EAll)
@@ -305,8 +564,14 @@ QString S60AudioPlayerSession::qStringFromTAudioOutputPreference(CAudioOutput::T
 }
 #endif
 
+/*!
+    Return True if its Seekable or else False.
+*/
+
 bool S60AudioPlayerSession::getIsSeekable() const
 {
+    DP0("S60AudioPlayerSession::getIsSeekable");
+
     return ETrue;
 }
 

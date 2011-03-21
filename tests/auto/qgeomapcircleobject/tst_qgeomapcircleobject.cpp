@@ -713,6 +713,10 @@ void tst_QGeoMapCircleObject::qtmobility1255()
 // QTMOBILITY-1199: Result of QGraphicsGeoMap::mapObjectsInViewport is zoom level dependent
 void tst_QGeoMapCircleObject::qtmobility1199()
 {
+#if QTM_VERSION < 0x010200
+    QSKIP("Mobility 1.1 fails qtmobility-1199", SkipAll);
+#endif
+
     QGeoCoordinate seattle(47.609722,-122.333056,0);
     QGeoCoordinate seattle2(47.60981194,-122.33185897);
     QGeoCoordinate seattle3(47.60972200, -122.33332201);
@@ -737,9 +741,13 @@ void tst_QGeoMapCircleObject::qtmobility1199()
     map->addMapObject(obj2);
     map->addMapObject(pobj);
 
-    for (qreal z = 18.0; z >= 0.0; z -= 1.0) {
-        QPointF coord = map->coordinateToScreenPosition(seattle);
+    QTest::qWait(10);
 
+    for (qreal z = 18.0; z >= 0.0; z -= 1.0) {
+        map->setZoomLevel(z);
+        QTest::qWait(10);
+
+        QPointF coord = map->coordinateToScreenPosition(seattle);
         QList<QGeoMapObject*> list;
 
         list = map->mapObjectsAtScreenPosition(coord);

@@ -62,8 +62,10 @@ QGstreamerPlayerControl::QGstreamerPlayerControl(QGstreamerPlayerSession *sessio
     , m_session(session)
     , m_state(QMediaPlayer::StoppedState)
     , m_mediaStatus(QMediaPlayer::NoMedia)
+    , m_blockStatusChangedSignal(false)
     , m_bufferProgress(-1)
     , m_seekToStartPending(false)
+    , m_pendingSeekPosition(-1)
     , m_stream(0)
     , m_fifoNotifier(0)
     , m_fifoCanWrite(false)
@@ -101,6 +103,8 @@ QGstreamerPlayerControl::QGstreamerPlayerControl(QGstreamerPlayerSession *sessio
             this, SLOT(handleInvalidMedia()));
     connect(m_session, SIGNAL(playbackRateChanged(qreal)),
             this, SIGNAL(playbackRateChanged(qreal)));
+    connect(m_session, SIGNAL(seekableChanged(bool)),
+            this, SLOT(applyPendingSeek(bool)));
 
     connect(m_resources, SIGNAL(resourcesGranted()), SLOT(handleResourcesGranted()));
     connect(m_resources, SIGNAL(resourcesDenied()), SLOT(handleResourcesLost()));
@@ -184,11 +188,16 @@ void QGstreamerPlayerControl::setPosition(qint64 pos)
 {
     if (m_mediaStatus == QMediaPlayer::EndOfMedia) {
         m_mediaStatus = QMediaPlayer::LoadedMedia;
+        m_seekToStartPending = true;
         emit mediaStatusChanged(m_mediaStatus);
     }
 
-    if (m_session->seek(pos))
+    if (m_session->isSeekable() && m_session->seek(pos)) {
         m_seekToStartPending = false;
+        m_pendingSeekPosition = -1;
+    } else {
+        m_pendingSeekPosition = pos;
+    }
 }
 
 void QGstreamerPlayerControl::play()
@@ -209,33 +218,35 @@ void QGstreamerPlayerControl::playOrPause(QMediaPlayer::State newState)
     QMediaPlayer::State oldState = m_state;
     QMediaPlayer::MediaStatus oldMediaStatus = m_mediaStatus;
 
-    if (m_mediaStatus == QMediaPlayer::EndOfMedia)
+    if (m_mediaStatus == QMediaPlayer::EndOfMedia) {
         m_mediaStatus = QMediaPlayer::BufferedMedia;
-
-    if (m_seekToStartPending) {
-        m_session->pause();
-        if (!m_session->seek(0)) {
-            m_bufferProgress = -1;
-            m_session->stop();
-            m_mediaStatus = QMediaPlayer::LoadingMedia;
-        }
-        m_seekToStartPending = false;
+        m_seekToStartPending = true;
     }
 
-    bool ok = false;
-    if (newState == QMediaPlayer::PlayingState) {
+    if (!m_resources->isGranted() && !m_resources->isRequested())
         m_resources->acquire();
-        if (m_resources->isGranted())
+
+    if (m_resources->isGranted()) {
+        if (m_seekToStartPending) {
+            m_session->pause();
+            if (!m_session->seek(0)) {
+                m_bufferProgress = -1;
+                m_session->stop();
+                m_mediaStatus = QMediaPlayer::LoadingMedia;
+            }
+            m_seekToStartPending = false;
+        }
+
+        bool ok = false;
+
+        if (newState == QMediaPlayer::PlayingState)
             ok = m_session->play();
         else
-            ok = true;
-    } else {
-        m_resources->release();
-        ok = m_session->pause();
-    }
+            ok = m_session->pause();
 
-    if (!ok)
-        return;
+        if (!ok)
+            newState = QMediaPlayer::StoppedState;
+    }
 
     if (m_mediaStatus == QMediaPlayer::InvalidMedia)
         m_mediaStatus = QMediaPlayer::LoadingMedia;
@@ -254,22 +265,23 @@ void QGstreamerPlayerControl::playOrPause(QMediaPlayer::State newState)
     if (m_mediaStatus != oldMediaStatus)
         emit mediaStatusChanged(m_mediaStatus);
 
+    emit positionChanged(position());
 }
 
 void QGstreamerPlayerControl::stop()
 {
     if (m_state != QMediaPlayer::StoppedState) {
         m_state = QMediaPlayer::StoppedState;
-        m_session->pause();
-        m_seekToStartPending = true;
-        updateState(m_session->state());
-        emit positionChanged(0);
-        emit stateChanged(m_state);
+        if (m_resources->isGranted())
+            m_session->pause();
 
-        //do not release the resource if player
-        //state was chaged to playing from slots connected to stateChanged
-        if (m_state != QMediaPlayer::PlayingState)
-            m_resources->release();
+        updateState(m_session->state());
+
+        if (m_mediaStatus != QMediaPlayer::EndOfMedia) {
+            m_seekToStartPending = true;
+            emit positionChanged(position());
+        }
+        emit stateChanged(m_state);
     }
 }
 
@@ -296,8 +308,36 @@ const QIODevice *QGstreamerPlayerControl::mediaStream() const
 void QGstreamerPlayerControl::setMedia(const QMediaContent &content, QIODevice *stream)
 {
     QMediaPlayer::State oldState = m_state;
-    m_state = QMediaPlayer::StoppedState;    
+    m_state = QMediaPlayer::StoppedState;
+    QMediaContent oldMedia = m_currentResource;
+    m_pendingSeekPosition = -1;
+
+    if (!content.isNull() || stream) {
+        if (!m_resources->isRequested() && !m_resources->isGranted())
+            m_resources->acquire();
+
+        if (!m_resources->isGranted()) {
+            m_currentResource = content;
+            m_stream = stream;
+
+            QMediaPlayer::MediaStatus oldStatus = m_mediaStatus;
+            m_state = QMediaPlayer::StoppedState;
+            m_mediaStatus = QMediaPlayer::LoadingMedia;
+            if (m_currentResource != oldMedia)
+                emit mediaChanged(m_currentResource);
+            if (m_state != oldState && !m_blockStatusChangedSignal)
+                emit stateChanged(m_state);
+            if (m_mediaStatus != oldStatus && !m_blockStatusChangedSignal)
+                emit mediaStatusChanged(m_mediaStatus);
+            return;
+        }
+    } else {
+        m_resources->release();
+    }
+
     m_session->stop();
+
+    bool userStreamValid = false;
 
     if (m_bufferProgress != -1) {
         m_bufferProgress = -1;
@@ -341,20 +381,45 @@ void QGstreamerPlayerControl::setMedia(const QMediaContent &content, QIODevice *
     QNetworkRequest request;
 
     if (m_stream) {
+#if !defined(HAVE_GST_APPSRC)
         if (m_stream->isReadable() && openFifo()) {
             request = QNetworkRequest(QUrl(QString(QLatin1String("fd://%1")).arg(m_fifoFd[0])));
         }
+#else
+        userStreamValid = stream->isOpen() && m_stream->isReadable();
+        request = content.canonicalRequest();
+#endif
     } else if (!content.isNull()) {
         request = content.canonicalRequest();
     }
 
-    m_session->load(request);    
+#if !defined(HAVE_GST_APPSRC)
+    m_session->loadFromUri(request);
+#else
+    if (m_stream) {
+        if (userStreamValid){
+            m_session->loadFromStream(request, m_stream);
+        } else {
+            m_mediaStatus = QMediaPlayer::InvalidMedia;
+            emit mediaStatusChanged(m_mediaStatus);
+            if (m_state != oldState)
+                emit stateChanged(m_state);
+            emit error(QMediaPlayer::FormatError, tr("Attempting to play invalid user stream"));
+            if (m_state != QMediaPlayer::PlayingState)
+                m_resources->release();
+            return;
+        }
+    } else
+        m_session->loadFromUri(request);
+#endif
 
+#if !defined(HAVE_GST_APPSRC)
     if (m_fifoFd[1] >= 0) {
         m_fifoCanWrite = true;
 
         writeFifo();
     }
+#endif
 
     if (!request.url().isEmpty()) {
         if (m_mediaStatus != QMediaPlayer::LoadingMedia)
@@ -366,11 +431,15 @@ void QGstreamerPlayerControl::setMedia(const QMediaContent &content, QIODevice *
         setBufferProgress(0);
     }
 
-    emit mediaChanged(m_currentResource);
-    if (m_state != oldState)
+    if (m_currentResource != oldMedia)
+        emit mediaChanged(m_currentResource);
+
+    if (m_state != oldState && !m_blockStatusChangedSignal)
         emit stateChanged(m_state);
 
-    if (m_state != QMediaPlayer::PlayingState)
+    emit positionChanged(position());
+
+    if (content.isNull() && !stream)
         m_resources->release();
 }
 
@@ -421,15 +490,16 @@ void QGstreamerPlayerControl::updateState(QMediaPlayer::State state)
     if (oldStatus == QMediaPlayer::EndOfMedia)
         m_mediaStatus = QMediaPlayer::EndOfMedia;
 
-    if (m_state != oldState)
+    if (m_state != oldState && !m_blockStatusChangedSignal)
         emit stateChanged(m_state);
-    if (m_mediaStatus != oldStatus)
+    if (m_mediaStatus != oldStatus && !m_blockStatusChangedSignal)
         emit mediaStatusChanged(m_mediaStatus);
 }
 
 void QGstreamerPlayerControl::processEOS()
 {
     m_mediaStatus = QMediaPlayer::EndOfMedia;
+    emit positionChanged(position());
     stop();
     emit mediaStatusChanged(m_mediaStatus);
 }
@@ -554,6 +624,12 @@ void QGstreamerPlayerControl::closeFifo()
     }
 }
 
+void QGstreamerPlayerControl::applyPendingSeek(bool isSeekable)
+{
+    if (isSeekable && m_pendingSeekPosition != -1)
+        setPosition(m_pendingSeekPosition);
+}
+
 void QGstreamerPlayerControl::handleInvalidMedia()
 {
     bool emitMediaStateChanged = false;
@@ -571,14 +647,46 @@ void QGstreamerPlayerControl::handleInvalidMedia()
 
 void QGstreamerPlayerControl::handleResourcesGranted()
 {
-    if (m_state == QMediaPlayer::PlayingState)
-        m_session->play();
+    QMediaPlayer::State state = m_state;
+
+    //preserve m_pendingSeekPosition, it's reset on setMedia
+    qint64 pos = m_pendingSeekPosition;
+
+    //don't emit state changed to stopped at this stage
+    m_blockStatusChangedSignal = true;
+    setMedia(m_currentResource, m_stream);
+    m_blockStatusChangedSignal = false;
+
+    if (pos != -1)
+        setPosition(pos);
+
+    if (state != QMediaPlayer::StoppedState)
+        playOrPause(state);
+    else
+        updateState(m_session->state());
 }
 
 void QGstreamerPlayerControl::handleResourcesLost()
 {
-    if (m_state == QMediaPlayer::PlayingState)
-        m_session->pause();
+    //on resource lost the pipeline should be stopped
+    //player status is changed to paused
 
-    updateState(m_session->state());
+    QMediaPlayer::State oldState = m_state;
+    QMediaPlayer::MediaStatus oldMediaStatus = m_mediaStatus;
+    qint64 pos = m_session->position();
+
+    m_blockStatusChangedSignal = true;
+    m_session->stop();
+    m_blockStatusChangedSignal = false;
+
+    m_pendingSeekPosition = pos;
+
+    if (oldState != QMediaPlayer::StoppedState )
+        m_state = QMediaPlayer::PausedState;
+
+    if (m_state != oldState)
+        emit stateChanged(m_state);
+
+    if (m_mediaStatus != oldMediaStatus)
+        emit mediaStatusChanged(m_mediaStatus);
 }

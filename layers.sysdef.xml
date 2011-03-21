@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<!DOCTYPE SystemDefinition SYSTEM "sysdef_1_5_1.dtd" [
+  <!ENTITY layer_real_source_path "sf/mw/qtmobility" >
+]>
+
+<SystemDefinition name="qtmobility" schema="1.5.1">
+  <systemModel>
+    <layer name="tools_layer">
+      <module name="qtmobilityconf">
+        <unit name="qtmobilityconf" unitID="qtmobility.qtmobilityconf" mrp="" bldFile="&layer_real_source_path;/src/s60installs/deviceconfiguration"/>
+      </module>
+    </layer>
+    <layer name="mw_layer">
+      <module name="qtmobility">
+        <unit name="qtmobility" unitID="qtmobility" bldFile="&layer_real_source_path;" mrp="" proFile="qtmobility.pro" qmakeArgs="-r"/>
+      </module>
+    </layer>
+    <layer name="app_layer">
+      <module name="qtmobilitydemos">
+        <unit name="qtmobilitydemos" unitID="qtmobility.qtmobilitydemos" bldFile="&layer_real_source_path;/demos" mrp="" proFile="demos.pro" qmakeArgs="-r" filter="qtmobilitydemos"/>
+      </module>
+      <module name="qtmobilityexamples">
+        <unit name="qtmobilityexamples" unitID="qtmobility.qtmobilitysexamples" bldFile="&layer_real_source_path;/examples" mrp="" proFile="examples.pro" qmakeArgs="-r" filter="qtmobilityexamples"/>
+      </module>
+      <module name="qtmobilitytests">
+        <unit name="qtmobilitytests" unitID="qtmobility.qtmobilitytests" bldFile="&layer_real_source_path;/tests" mrp="" proFile="tests.pro" qmakeArgs="-r" filter="qtmobilitytests"/>
+      </module>
+    </layer>
+  </systemModel>
+</SystemDefinition>

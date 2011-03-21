@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>750</width>
-    <height>444</height>
+    <height>460</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -646,6 +646,9 @@
          <property name="text">
           <string>keyboard flip open</string>
          </property>
+         <property name="autoExclusive">
+          <bool>false</bool>
+         </property>
         </widget>
        </item>
        <item row="7" column="0">
@@ -655,6 +658,9 @@
          </property>
          <property name="text">
           <string>Wireless Keyboard connected</string>
+         </property>
+         <property name="autoExclusive">
+          <bool>false</bool>
          </property>
         </widget>
        </item>
@@ -954,6 +960,9 @@
             </property>
             <property name="text">
              <string>Vibration active</string>
+            </property>
+            <property name="autoExclusive">
+             <bool>false</bool>
             </property>
            </widget>
           </item>
@@ -1468,6 +1477,24 @@
          </item>
         </layout>
        </item>
+       <item row="4" column="0">
+        <layout class="QHBoxLayout" name="horizontalLayout_4">
+         <item>
+          <widget class="QLabel" name="label_3">
+           <property name="text">
+            <string>Backlight Status</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="backlightStatusLabel">
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
       </layout>
      </widget>
      <widget class="QWidget" name="page_7">
@@ -1556,21 +1583,6 @@
          <item>
           <property name="text">
            <string>Wimax</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Gprs</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Edge</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Hspa</string>
           </property>
          </item>
          <item>
@@ -1666,6 +1678,12 @@
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
+           <property name="frameShape">
+            <enum>QFrame::StyledPanel</enum>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Sunken</enum>
+           </property>
            <property name="text">
             <string>.</string>
            </property>
@@ -1695,6 +1713,12 @@
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
+           </property>
+           <property name="frameShape">
+            <enum>QFrame::StyledPanel</enum>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Sunken</enum>
            </property>
            <property name="text">
             <string>.</string>
@@ -1740,6 +1764,42 @@
         </layout>
        </item>
        <item row="6" column="0">
+        <layout class="QHBoxLayout" name="horizontalLayout_11">
+         <item>
+          <widget class="QLabel" name="label_17">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>Cell Data Technology</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="dataTechnologyLabel">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="frameShape">
+            <enum>QFrame::StyledPanel</enum>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Sunken</enum>
+           </property>
+           <property name="text">
+            <string>.</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="7" column="1">
         <spacer name="verticalSpacer_27">
          <property name="orientation">
           <enum>Qt::Vertical</enum>

@@ -47,15 +47,15 @@
 ****************************************************************************/
 
 #include "qgeomapreply_nokia.h"
+#include <QNetworkAccessManager>
+#include <QNetworkCacheMetaData>
+#include <QDateTime>
 
 QGeoMapReplyNokia::QGeoMapReplyNokia(QNetworkReply *reply, const QGeoTiledMapRequest &request, QObject *parent)
         : QGeoTiledMapReply(request, parent),
         m_reply(reply)
 {
     m_reply->setParent(this);
-    QVariant fromCache = m_reply->attribute(QNetworkRequest::SourceIsFromCacheAttribute);
-    setCached(fromCache.toBool());
-
     connect(m_reply,
             SIGNAL(finished()),
             this,
@@ -99,8 +99,21 @@ void QGeoMapReplyNokia::networkFinished()
     if (!m_reply)
         return;
 
-    if (m_reply->error() != QNetworkReply::NoError) {
+    if (m_reply->error() != QNetworkReply::NoError)
         return;
+
+    QVariant fromCache = m_reply->attribute(QNetworkRequest::SourceIsFromCacheAttribute);
+    setCached(fromCache.toBool());
+
+    if (!isCached()) {
+        QAbstractNetworkCache *cache = m_reply->manager()->cache();
+        if (cache) {
+            QNetworkCacheMetaData metaData = cache->metaData(m_reply->url());
+            QDateTime exp = QDateTime::currentDateTime();
+            exp = exp.addDays(14);
+            metaData.setExpirationDate(exp);
+            cache->updateMetaData(metaData);
+        }
     }
 
     setMapImageData(m_reply->readAll());
@@ -118,6 +131,7 @@ void QGeoMapReplyNokia::networkError(QNetworkReply::NetworkError error)
 
     if (error != QNetworkReply::OperationCanceledError)
         setError(QGeoTiledMapReply::CommunicationError, m_reply->errorString());
+    setFinished(true);
     m_reply->deleteLater();
     m_reply = 0;
 }

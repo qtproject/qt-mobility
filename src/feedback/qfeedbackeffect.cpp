@@ -75,7 +75,8 @@ QTM_BEGIN_NAMESPACE
     state an effect is in, and setState() to receive state change
     requests. The start(), pause(), and stop() slots calls
     setState() with the corresponding new \l{QFeedbackEffect::}{State}.  Changes
-    in state are reported through the stateChanged() signal.
+    in state are reported through the stateChanged() signal and may happen
+    asynchronously some time after the state change request.
 
     A system often has a set of standard feedback effects for user
     interface interaction (e.g., button clicks). The

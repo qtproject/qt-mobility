@@ -338,7 +338,7 @@ void tst_QDeclarativeBatteryInfo::tst_currentFlow()
     QDeclarativeBatteryInfo bi;
     int flow = bi.currentFlow();
     if (bi.batteryStatus() == QSystemBatteryInfo::BatteryUnknown) {
-        QVERIFY(flow == 0);
+        QVERIFY(flow == -1);
     } else {
         QVERIFY(flow != -1);
     }

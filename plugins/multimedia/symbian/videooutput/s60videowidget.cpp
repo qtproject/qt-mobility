@@ -186,14 +186,14 @@ void S60VideoWidget::reactivateWindow(QWidget *widget)
 void S60VideoWidget::beginNativePaintEvent(const QRect &rect)
 {
     Q_UNUSED(rect)
-    emit beginVideoWidgetNativePaintEvent();
+    emit beginVideoWidgetNativePaint();
 }
 
 void S60VideoWidget::endNativePaintEvent(const QRect &rect)
 {
     Q_UNUSED(rect)
     CCoeEnv::Static()->WsSession().Flush();
-    emit endVideoWidgetNativePaintEvent();
+    emit endVideoWidgetNativePaint();
 }
 
 void S60VideoWidget::setPaintingEnabled(bool enabled)

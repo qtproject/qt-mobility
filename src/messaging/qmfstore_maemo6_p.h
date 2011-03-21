@@ -44,7 +44,7 @@
 #include <qmobilityglobal.h>
 #include <qmailstore.h>
 #include "qmfhelpers_maemo6_p.h"
-#include "qmessagestore.h"
+#include "qmessagestore_p.h"
 
 QTM_BEGIN_NAMESPACE
 

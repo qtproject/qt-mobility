@@ -136,7 +136,7 @@ Some interesting examples for the API exist.
         \o \l{btscanner}{Bluetooth Scanner}
         \o Scan for Bluetooth devices.
     \row
-        \o \l{tennis}{QML Bluetooth Tennis}
+        \o \l{declarative-bluetooth/tennis}{QML Bluetooth Tennis}
         \o The tennis game using a QML interface to the Bluetooth API.
     \row
         \o \l {scanner}{QML Bluetooth Scanner}

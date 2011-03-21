@@ -272,7 +272,9 @@ QPulseAudioEngine::QPulseAudioEngine(QObject *parent)
 QPulseAudioEngine::~QPulseAudioEngine()
 {
     if (m_context) {
+        pa_threaded_mainloop_lock(m_mainLoop);
         pa_context_disconnect(m_context);
+        pa_threaded_mainloop_unlock(m_mainLoop);
         m_context = 0;
     }
 

@@ -55,19 +55,14 @@ Rectangle {
 
         NetworkInfo {
             id: wlaninfo
-            useMode: wlan.mode;
+            mode: wlan.mode;
             property string img : getImage(networkStatus);
 
             function getImage(newStatus) {
                 if(newStatus == "Connected") {
                     return "images/wlan.svg";
                 }
-                if(newStatus == "Searching") {
-                    //                    return "images/wlan.svg";
-                }
-                if(newStatus == "No Network Available") {
-                    return "images/wlan-noavail.svg";
-                }
+                return "images/wlan-noavail.svg";
             }
 
             onStatusChanged : {
@@ -133,16 +128,14 @@ Rectangle {
 
         NetworkInfo {
             id: ethinfo
-            useMode: ethernet.mode;
+            mode: ethernet.mode;
             property string img : getImage(networkStatus);
 
             function getImage(newStatus) {
                 if(newStatus == "Connected") {
                     return "images/lan.svg";
                 }
-                if(newStatus == "No Network Available") {
-                    return "images/lan-noavail.svg";
-                }
+                return "images/lan-noavail.svg";
             }
 
             onStatusChanged : {

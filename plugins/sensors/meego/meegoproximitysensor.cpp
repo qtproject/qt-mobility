@@ -49,6 +49,7 @@ meegoproximitysensor::meegoproximitysensor(QSensor *sensor)
 {
     initSensor<ProximitySensorChannelInterface>(m_initDone);
     setReading<QProximityReading>(&m_reading);
+    addDataRate(10,10); //TODO: fix this when we know better
 }
 
 void meegoproximitysensor::slotDataAvailable(const Unsigned& data)

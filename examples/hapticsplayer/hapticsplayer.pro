@@ -19,7 +19,7 @@ FORMS += hapticsplayer.ui
 CONFIG += mobility
 MOBILITY = feedback
 
-include(../examples.pri)
+include(../mobility_examples.pri)
 
 symbian: {
     TARGET.CAPABILITY = WriteDeviceData ReadDeviceData

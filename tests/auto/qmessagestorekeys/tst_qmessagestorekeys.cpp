@@ -45,7 +45,7 @@
 #include <QTest>
 #include <QDebug>
 
-#include "qmessagestore.h"
+#include "qmessagestore_p.h"
 #include "../support/support.h"
 
 #if (defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6))
@@ -344,6 +344,8 @@ void tst_QMessageStoreKeys::initTestCase()
                              ("type", "sms")
 #endif
                              ("to", "SuperMegaLightningBabe")
+                             ("cc", "Valued Customer")
+                             ("bcc", "People of the world")
                              ("from", "Frozone")
                              ("subject", "Ice to meet you")
                              ("text", "Shall I compare thee to a summers day")
@@ -3224,6 +3226,76 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
         << caseSensitive2
         << ( QMessageIdList() << messageIds[4] )
         << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[2] << messageIds[3] )
+        << "";
+
+    QMessageFilter senderLike1(QMessageFilter::bySubject("Free beer", QMessageDataComparator::Like));
+    QTest::newRow("senderLike1")
+        << senderLike1
+        << ( QMessageIdList() << messageIds[4] )
+        << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[2] << messageIds[3] )
+        << "";
+
+    QMessageFilter senderLike2(QMessageFilter::bySubject("%ee%", QMessageDataComparator::Like));
+    QTest::newRow("senderLike2")
+        << senderLike2
+        << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[4] )
+        << ( QMessageIdList() << messageIds[2] << messageIds[3] )
+        << "";
+
+    QMessageFilter senderLike3(QMessageFilter::bySubject("%age%", QMessageDataComparator::Like));
+    QTest::newRow("senderLike3")
+        << senderLike3
+        << ( QMessageIdList() << messageIds[1] << messageIds[2] )
+        << ( QMessageIdList() << messageIds[0] << messageIds[3] << messageIds[4] )
+        << "";
+
+    QMessageFilter senderLike4(QMessageFilter::bySubject("%a____a%", QMessageDataComparator::Like));
+    QTest::newRow("senderLike4")
+        << senderLike4
+        << ( QMessageIdList() << messageIds[1] << messageIds[2] )
+        << ( QMessageIdList() << messageIds[0] << messageIds[3] << messageIds[4] )
+        << "";
+
+    QMessageFilter senderLike5(QMessageFilter::bySubject("Free b\\\\eer", QMessageDataComparator::Like));
+    QTest::newRow("senderLike5")
+        << senderLike5
+        << ( QMessageIdList() )
+        << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[2] << messageIds[3] << messageIds[4] )
+        << "";
+
+    QMessageFilter senderNotLike(QMessageFilter::bySubject("Free beer", QMessageDataComparator::NotLike));
+    QTest::newRow("senderNotLike")
+        << senderNotLike
+        << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[2] << messageIds[3] )
+        << ( QMessageIdList() << messageIds[4] )
+        << "";
+
+    QMessageFilter recipientsLike1(QMessageFilter::byRecipients("Super%B_b_", QMessageDataComparator::Like));
+    QTest::newRow("recipientsLike1")
+        << recipientsLike1
+        << ( QMessageIdList() << messageIds[0] )
+        << ( QMessageIdList() << messageIds[1] << messageIds[2] << messageIds[3] << messageIds[4] )
+        << "";
+
+    QMessageFilter toLike1(QMessageFilter::byTo("Super%B_b_", QMessageDataComparator::Like));
+    QTest::newRow("toLike1")
+        << toLike1
+        << ( QMessageIdList() << messageIds[0] )
+        << ( QMessageIdList() << messageIds[1] << messageIds[2] << messageIds[3] << messageIds[4] )
+        << "";
+
+    QMessageFilter ccLike1(QMessageFilter::byCc("Valued%Customer", QMessageDataComparator::Like));
+    QTest::newRow("ccLike1")
+        << ccLike1
+        << ( QMessageIdList() << messageIds[0] )
+        << ( QMessageIdList() << messageIds[1] << messageIds[2] << messageIds[3] << messageIds[4] )
+        << "";
+
+    QMessageFilter bccLike1(QMessageFilter::byBcc("%of%", QMessageDataComparator::Like));
+    QTest::newRow("bccLike1")
+        << bccLike1
+        << ( QMessageIdList() << messageIds[0] )
+        << ( QMessageIdList() << messageIds[1] << messageIds[2] << messageIds[3] << messageIds[4] )
         << "";
 }
 

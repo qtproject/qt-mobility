@@ -63,20 +63,6 @@
 #if !defined(QT_NO_DBUS)
 #include "linux/qhalservice_linux_p.h"
 
-typedef enum
-{
-    NM_DEVICE_STATE_UNKNOWN = 0,
-    NM_DEVICE_STATE_UNMANAGED,
-    NM_DEVICE_STATE_UNAVAILABLE,
-    NM_DEVICE_STATE_DISCONNECTED,
-    NM_DEVICE_STATE_PREPARE,
-    NM_DEVICE_STATE_CONFIG,
-    NM_DEVICE_STATE_NEED_AUTH,
-    NM_DEVICE_STATE_IP_CONFIG,
-    NM_DEVICE_STATE_ACTIVATED,
-    NM_DEVICE_STATE_FAILED
-} NMDeviceState;
-
 struct ProfileDataValue {
     QString key;
     QString val;
@@ -128,6 +114,8 @@ public:
     QSystemNetworkInfoPrivate(QSystemNetworkInfoLinuxCommonPrivate *parent = 0);
     virtual ~QSystemNetworkInfoPrivate();
 
+    QMap<QString,QVariant> queryCsdProperties(const QString& service, const QString& servicePath, const QString& interface);
+
     QSystemNetworkInfo::NetworkStatus networkStatus(QSystemNetworkInfo::NetworkMode mode);
     qint32 networkSignalStrength(QSystemNetworkInfo::NetworkMode mode);
     int cellId();
@@ -144,6 +132,7 @@ public:
     QNetworkInterface interfaceForMode(QSystemNetworkInfo::NetworkMode mode);
     QSystemNetworkInfo::NetworkMode currentMode();
     void setWlanSignalStrengthCheckEnabled(bool enabled);
+    QSystemNetworkInfo::CellDataTechnology cellDataTechnology();
 
 protected:
 
@@ -157,6 +146,7 @@ private Q_SLOTS:
     void slotOperatorNameChanged(const QString &name);
     void slotRegistrationChanged(const QString &status);
     void slotCellChanged(const QString &type, int id, int lac);
+    void slotCellDataTechnologyChanged(const QString &tech);
 #endif
 
 #if defined(Q_WS_MAEMO_5)
@@ -201,6 +191,9 @@ private:
     QTimer *wlanSignalStrengthTimer;
 
     QMap<QString,int> csStatusMaemo6;
+
+    QSystemNetworkInfo::CellDataTechnology currentCellDataTechnology;
+    QSystemNetworkInfo::CellDataTechnology csdtToCellDataTechnology(const QString &tech);
 };
 
 class QSystemDisplayInfoPrivate : public QSystemDisplayInfoLinuxCommonPrivate
@@ -256,6 +249,7 @@ public:
     bool vibrationActive();//1.2
 
     QSystemDeviceInfo::LockTypeFlags lockStatus();//1.2
+    QSystemDeviceInfo::KeyboardTypeFlags keyboardTypes(); //1.2
 
 Q_SIGNALS:
     void keyboardFlipped(bool open);

@@ -61,6 +61,7 @@
 #include <QString>
 #include <QMetaEnum>
 #include <QtNetwork/QLocalSocket>
+#include <QtGui/QDesktopWidget>
 
 #include <locale.h>
 
@@ -523,10 +524,6 @@ void QSystemDisplayInfoPrivate::setInitialData()
     setColorDepth(32);
     setOrientation(QSystemDisplayInfo::InvertedLandscape);
     setContrast(0.3);
-    setDPIHeight(123);
-    setDPIWidth(123);
-    setPhysicalHeight(456);
-    setPhysicalWidth(456);
 }
 
 void QSystemDisplayInfoPrivate::setColorDepth(int depth)
@@ -554,35 +551,6 @@ void QSystemDisplayInfoPrivate::setContrast(float v)
 {
     if (data.contrast != v) {
         data.contrast = v;
-    }
-}
-
-void QSystemDisplayInfoPrivate::setDPIHeight(int v)
-{
-    if (data.dpiHeight != v) {
-        data.dpiHeight = v;
-    }
-}
-
-void QSystemDisplayInfoPrivate::setDPIWidth(int v)
-{
-    if (data.dpiWidth != v) {
-        data.dpiWidth = v;
-    }
-
-}
-
-void QSystemDisplayInfoPrivate::setPhysicalHeight(int v)
-{
-    if (data.physicalHeight != v) {
-        data.physicalHeight = v;
-    }
-}
-
-void QSystemDisplayInfoPrivate::setPhysicalWidth(int v)
-{
-    if (data.physicalWidth != v) {
-        data.physicalWidth = v;
     }
 }
 
@@ -1025,24 +993,35 @@ QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QObject *parent)
         : QObject(parent)
         , didInhibit(false)
 {
+    // TODO: Sync with simulator
+    data.inhibitedCount = 0;
 }
 
 QSystemScreenSaverPrivate::~QSystemScreenSaverPrivate()
 {
+    setScreenSaverInhibited(false);
 }
 
 bool QSystemScreenSaverPrivate::screenSaverInhibited()
 {
-    return true;
+    return data.inhibitedCount > 0;
 }
 
 void QSystemScreenSaverPrivate::setScreenSaverInhibited(bool on)
 {
-    Q_UNUSED(on)
+    if (didInhibit && !on) {
+        didInhibit = false;
+        --data.inhibitedCount;
+    } else if (!didInhibit && on) {
+        didInhibit = true;
+        ++data.inhibitedCount;
+    }
+    // TODO: Sync with simulator
 }
 
 bool QSystemScreenSaverPrivate::setScreenSaverInhibit()
 {
+    setScreenSaverInhibited(true);
     return true;
 }
 
@@ -1176,6 +1155,33 @@ void QSystemBatteryInfoPrivate::setMaxBars(int v)
 
 //}
 
+int QtMobility::QSystemDisplayInfoPrivate::getDPIHeight(int screen) const
+{
+    Q_UNUSED(screen)
+    QDesktopWidget *desktop = new QDesktopWidget();
+    return desktop->logicalDpiY();
+}
+
+int QtMobility::QSystemDisplayInfoPrivate::getDPIWidth(int screen) const
+{
+    Q_UNUSED(screen)
+    QDesktopWidget *desktop = new QDesktopWidget();
+    return desktop->logicalDpiX();
+}
+
+int QtMobility::QSystemDisplayInfoPrivate::physicalHeight(int screen) const
+{
+    Q_UNUSED(screen)
+    QDesktopWidget *desktop = new QDesktopWidget();
+    return desktop->height() / desktop->logicalDpiY() * 25.4;
+}
+
+int QtMobility::QSystemDisplayInfoPrivate::physicalWidth(int screen) const
+{
+    Q_UNUSED(screen)
+    QDesktopWidget *desktop = new QDesktopWidget();
+    return desktop->width() / desktop->logicalDpiX() * 25.4;
+}
 
 #include "moc_qsysteminfo_simulator_p.cpp"
 

@@ -87,6 +87,10 @@ private:
 
     QString storageStateToString(QSystemStorageInfo::StorageState state);
 
+    QString sizeToString(qlonglong size);
+    QBrush brushForStorageState(QSystemStorageInfo::StorageState state);
+
+
 private slots:
     void tabChanged(int index);
     void getVersion(int index);
@@ -118,6 +122,9 @@ private slots:
     void keyboardFlipped(bool);
 
     void storageStateChanged(const QString &vol, QSystemStorageInfo::StorageState state);
+
+    void backlightTotext(QSystemDisplayInfo::BacklightState);
+    void dataTechnologyChanged(QSystemNetworkInfo::CellDataTechnology tech);
 
 
 };

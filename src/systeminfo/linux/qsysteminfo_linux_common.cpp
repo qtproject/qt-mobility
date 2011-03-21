@@ -70,6 +70,7 @@
 #include <sys/vfs.h>
 #include <mntent.h>
 #include <sys/stat.h>
+#include <errno.h>
 
 #ifdef Q_WS_X11
 #include <QX11Info>
@@ -95,6 +96,13 @@
 #include <sys/inotify.h>
 
 #include <linux/videodev2.h>
+
+#if !defined(Q_WS_MAEMO_6)
+#if !defined V4L2_CAP_MODULATOR
+#define V4L2_CAP_MODULATOR 0x00080000
+#endif
+#endif
+
 #include <linux/fb.h>
 #include <fcntl.h>
 
@@ -134,30 +142,6 @@
 #define STORAGEPOLL 2 * 60 *1000 // 2 minutes for maemo/meego
 #endif
 
-static QString sysinfodValueForKey(const QString& key)
-{
-    QString value = "";
-#if !defined(QT_NO_DBUS)
-    QDBusInterface connectionInterface("com.nokia.SystemInfo",
-                                       "/com/nokia/SystemInfo",
-                                       "com.nokia.SystemInfo",
-                                       QDBusConnection::systemBus());
-    QDBusReply<QByteArray> reply = connectionInterface.call("GetConfigValue", key);
-    if (reply.isValid()) {
-        /*
-         * sysinfod automatically terminates after some idle time (no D-Bus traffic).
-         * Therefore, we cannot use isServiceRegistered() to determine if sysinfod is available.
-         *
-         * Thus, make a query to sysinfod and if we got back a valid reply, sysinfod
-         * is available.
-         */
-        value = reply.value();
-    }
-#endif
-    return value;
-}
-
-//#endif
 
 bool halIsAvailable;
 bool udisksIsAvailable;
@@ -193,6 +177,31 @@ static bool btHasPower() {
      }
 #endif
      return false;
+}
+
+static struct fb_var_screeninfo* allocFrameBufferInfo(int screen)
+{
+    QString frameBufferDevicePath = QString("/dev/fb%1").arg(screen);
+    int fd;
+    struct fb_var_screeninfo *vi = 0;
+
+    if (-1 == (fd = open(frameBufferDevicePath.toStdString().c_str(), O_RDONLY | O_NONBLOCK))) {
+        qDebug() << "Failed to open the frame buffer device " << frameBufferDevicePath
+                 << strerror(errno);
+    } else {
+        vi = (struct fb_var_screeninfo *)calloc(1, sizeof *vi);
+        if (vi) {
+            if (-1 == ioctl(fd, FBIOGET_VSCREENINFO, vi)) {
+                qDebug() << "Failed to ioctl() the frame buffer device " << frameBufferDevicePath
+                         << strerror(errno);
+            }
+        }
+    }
+
+    if (fd != -1) {
+        close(fd);
+    }
+    return vi;
 }
 
 QTM_BEGIN_NAMESPACE
@@ -240,36 +249,27 @@ bool QSystemInfoLinuxCommonPrivate::fmTransmitterAvailable()
 {
     bool available = false;
 #if defined( __LINUX_VIDEODEV2_H)
-    static const char *devices[] = {"/dev/radio",
-                                    "/dev/radio0",
-                                    0};
+    static const char *devices[] = {"/dev/radio","/dev/radio0",0};
     int fd;
     struct v4l2_capability capability;
     const char *device;
-    size_t i=0;
+    size_t i = 0;
 
     while ((device = devices[i++]) && !available) {
         memset(&capability, 0, sizeof(struct v4l2_capability));
 
-        if (-1 == (fd = open(device, O_RDWR))) {
-            goto next_device;
+        if (-1 != (fd = open(device, O_RDWR)) &&  (-1 != ioctl(fd, VIDIOC_QUERYCAP, &capability))) {
+            if ((capability.capabilities & (V4L2_CAP_RADIO | V4L2_CAP_MODULATOR)) ==
+                    (V4L2_CAP_RADIO | V4L2_CAP_MODULATOR)) {
+                available = true;
+            }
         }
 
-        if (-1 == ioctl(fd, VIDIOC_QUERYCAP, &capability)) {
-            goto next_device;
-        }
-
-        if ((capability.capabilities & (V4L2_CAP_RADIO | V4L2_CAP_MODULATOR)) ==
-                                       (V4L2_CAP_RADIO | V4L2_CAP_MODULATOR)) {
-            available = true;
-        }
-
-next_device:
         if (fd != -1) {
             close(fd), fd = -1;
         }
     }
-  #endif
+#endif
     return available;
 }
 
@@ -352,7 +352,33 @@ bool QSystemInfoLinuxCommonPrivate::hasFeatureSupported(QSystemInfo::Feature fea
      case QSystemInfo::MemcardFeature :
          {
 #if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5) && defined(UDEV_SUPPORTED)
-             return udevService.isSubsystemAvailable(UDEV_SUBSYSTEM_MEMCARD);
+         bool ok = udevService.isSubsystemAvailable(UDEV_SUBSYSTEM_MEMCARD);
+         if (!ok) {
+#if !defined(QT_NO_DBUS)
+#if !defined(QT_NO_UDISKS)
+             // try harder
+             //this only works when a drive is in
+             if (udisksAvailable()) {
+                 QUDisksInterface udisksIface;
+                 foreach (const QDBusObjectPath &device,udisksIface.enumerateDevices() ) {
+                     QUDisksDeviceInterface devIface(device.path());
+                     if (devIface.deviceIsDrive()) {
+                         if (devIface.driveMedia().contains("flash")) {
+                             return true;
+                         }
+                         // just guess
+                         if (devIface.driveCanDetach() &&
+                                 devIface.deviceIsRemovable()
+                                 && !devIface.driveIsMediaEjectable()) {
+                             return true;
+                         }
+                     }
+                 }
+             }
+#endif
+#endif
+         }
+         return ok;
 #endif
  #if !defined(QT_NO_DBUS)
              QHalInterface iface;
@@ -522,10 +548,6 @@ bool QSystemInfoLinuxCommonPrivate::hasFeatureSupported(QSystemInfo::Feature fea
      case QSystemInfo::Firmware :
      {
 #if !defined(QT_NO_DBUS)
-         QString sysinfodValue = sysinfodValueForKey("/device/sw-release-ver");
-         if (!sysinfodValue.isEmpty()) {
-             return sysinfodValue;
-         }
          QHalDeviceInterface iface(QLatin1String("/org/freedesktop/Hal/devices/computer"));
          QString str;
          if (iface.isValid()) {
@@ -557,7 +579,7 @@ bool QSystemInfoLinuxCommonPrivate::hasFeatureSupported(QSystemInfo::Feature fea
             QProcess syscall;
             QString program = "/usr/bin/lsb_release";
             QStringList arguments;
-            arguments << "-d";
+            arguments << "-r";
             syscall.start(program, arguments);
             syscall.waitForFinished();
             QString desc = syscall.readAllStandardOutput();
@@ -1448,14 +1470,8 @@ QSystemNetworkInfo::NetworkMode QSystemNetworkInfoLinuxCommonPrivate::ofonoTechT
     if (ofonoTech == "gsm") {
         return QSystemNetworkInfo::GsmMode;
     }
-    if (ofonoTech == "edge"){
-        return QSystemNetworkInfo::EdgeMode;
-    }
     if (ofonoTech == "umts"){
         return QSystemNetworkInfo::WcdmaMode;
-    }
-    if (ofonoTech == "hspa"){
-         return QSystemNetworkInfo::HspaMode;
     }
     if (ofonoTech == "lte"){
         return QSystemNetworkInfo::LteMode;
@@ -1586,6 +1602,10 @@ void QSystemNetworkInfoLinuxCommonPrivate::ofonoPropertyChangedContext(const QSt
             }
         }
     }
+    if (item == "Bearer") {
+        Q_EMIT cellDataTechnologyChanged(ofonoTechToCDT(value.variant().toString()));
+    }
+
 }
 
 void QSystemNetworkInfoLinuxCommonPrivate::ofonoNetworkPropertyChangedContext(const QString &path,const QString &item, const QDBusVariant &value)
@@ -1596,7 +1616,6 @@ void QSystemNetworkInfoLinuxCommonPrivate::ofonoNetworkPropertyChangedContext(co
         Q_EMIT networkSignalStrengthChanged(ofonoTechToMode(netiface.getTechnology()),value.variant().toInt());
     }
     if (item == "Status") {
-
        Q_EMIT networkStatusChanged(ofonoTechToMode(netiface.getTechnology()), ofonoStatusToStatus(value.variant().toString()));
     }
     if (item == "LocationAreaCode") {
@@ -1616,6 +1635,20 @@ void QSystemNetworkInfoLinuxCommonPrivate::ofonoNetworkPropertyChangedContext(co
 
 void QSystemNetworkInfoLinuxCommonPrivate::ofonoModemPropertyChangedContext(const QString &/*path*/,const QString &/*item*/, const QDBusVariant &/*value*/)
 {
+}
+
+QSystemNetworkInfo::CellDataTechnology QSystemNetworkInfoLinuxCommonPrivate::ofonoTechToCDT(const QString &tech)
+{
+    if (tech == "gsm") {
+        return QSystemNetworkInfo::GprsDataTechnology;
+    } else if (tech == "edge") {
+        return QSystemNetworkInfo::EdgeDataTechnology;
+    } else if (tech == "umts") {
+        return QSystemNetworkInfo::UmtsDataTechnology;
+    } else if (tech == "hspa" || tech == "hsdpa" || tech == "hsupa") {// big lump
+        return QSystemNetworkInfo::HspaDataTechnology;
+    }
+    return QSystemNetworkInfo::UnknownDataTechnology;
 }
 
 #endif
@@ -1756,33 +1789,70 @@ QString QSystemNetworkInfoLinuxCommonPrivate::homeMobileNetworkCode()
     return QString();
 }
 
+QSystemNetworkInfo::CellDataTechnology QSystemNetworkInfoLinuxCommonPrivate::cellDataTechnology()
+{
+#if !defined(QT_NO_CONNMAN)
+    if (ofonoIsAvailable) {
+        QString modem = ofonoManager->currentModem().path();
+        if (!modem.isEmpty()) {
+            QOfonoConnectionManagerInterface cmInterface(modem,this);
+            QString bearer = cmInterface.bearer();
+            return ofonoTechToCDT(bearer);
+        }
+    }
+#endif
+
+    return QSystemNetworkInfo::UnknownDataTechnology;
+}
+
 
 QSystemDisplayInfoLinuxCommonPrivate::QSystemDisplayInfoLinuxCommonPrivate(QObject *parent)
-    : QObject(parent)
+    : QObject(parent), wid(0)
 {
     halIsAvailable = halAvailable();
+    wid = new QDesktopWidget();
 }
 
 QSystemDisplayInfoLinuxCommonPrivate::~QSystemDisplayInfoLinuxCommonPrivate()
 {
+    delete wid;
+}
+
+bool QSystemDisplayInfoLinuxCommonPrivate::isScreenValid(int screen)
+{
+    if (screen > wid->screenCount() || screen < 0) {
+        return false;
+    }
+    return true;
 }
 
 int QSystemDisplayInfoLinuxCommonPrivate::colorDepth(int screen)
 {
-#if !defined(Q_WS_MAEMO_6)  && !defined(Q_WS_MEEGO)
+    if (!isScreenValid(screen)) {
+        return -1;
+    }
+#if defined(Q_WS_MAEMO_6) || defined(Q_WS_MEEGO)
+    struct fb_var_screeninfo *screenInfo = allocFrameBufferInfo(screen);
+    if (screenInfo) {
+       int colorDepth = screenInfo->bits_per_pixel;
+       free(screenInfo), screenInfo = 0;
+       return colorDepth;
+    }
+#endif
+
 #ifdef Q_WS_X11
-    QDesktopWidget wid;
-    return wid.screen(screen)->x11Info().depth();
-#else
+    return wid->screen(screen)->x11Info().depth();
 #endif
-#endif
+
+    /* as a last resort, use the default depth */
     return QPixmap::defaultDepth();
 }
 
-
 int QSystemDisplayInfoLinuxCommonPrivate::displayBrightness(int screen)
 {
-    Q_UNUSED(screen);
+    if (!isScreenValid(screen)) {
+        return -1;
+    }
 
 #if !defined(QT_NO_DBUS)
     if (halIsAvailable) {
@@ -1857,7 +1927,9 @@ int QSystemDisplayInfoLinuxCommonPrivate::displayBrightness(int screen)
 
 QSystemDisplayInfo::BacklightState  QSystemDisplayInfoLinuxCommonPrivate::backlightStatus(int screen)
 {
-    Q_UNUSED(screen)
+    if (!isScreenValid(screen)) {
+        return  QSystemDisplayInfo::BacklightStateUnknown;
+    }
     return QSystemDisplayInfo::BacklightStateUnknown;
 }
 
@@ -1868,84 +1940,106 @@ QSystemDisplayInfo::DisplayOrientation QSystemDisplayInfoLinuxCommonPrivate::ori
     XRRScreenConfiguration *sc;
     Rotation cur_rotation;
     Display *display = QX11Info::display();
-    if (!display) {
-        goto out;
-    }
-    sc = XRRGetScreenInfo(display, RootWindow(display, screen));
-    if (!sc) {
-        goto out;
-    }
-    XRRConfigRotations(sc, &cur_rotation);
 
-    if(screen < 16 && screen > -1) {
-        switch(cur_rotation) {
-        case RR_Rotate_0:
-            orientation = QSystemDisplayInfo::Landscape;
-            break;
-        case RR_Rotate_90:
-            orientation = QSystemDisplayInfo::Portrait;
-            break;
-        case RR_Rotate_180:
-            orientation = QSystemDisplayInfo::InvertedLandscape;
-            break;
-        case RR_Rotate_270:
-            orientation = QSystemDisplayInfo::InvertedPortrait;
-            break;
-        };
+    if (display && (sc = XRRGetScreenInfo(display, RootWindow(display, screen)))) {
+        XRRConfigRotations(sc, &cur_rotation);
+
+        if(screen < 16 && screen > -1) {
+            switch(cur_rotation) {
+            case RR_Rotate_0:
+                orientation = QSystemDisplayInfo::Landscape;
+                break;
+            case RR_Rotate_90:
+                orientation = QSystemDisplayInfo::Portrait;
+                break;
+            case RR_Rotate_180:
+                orientation = QSystemDisplayInfo::InvertedLandscape;
+                break;
+            case RR_Rotate_270:
+                orientation = QSystemDisplayInfo::InvertedPortrait;
+                break;
+            };
+        }
     }
-#else
-Q_UNUSED(screen)
 #endif
-out:
+
+    if (wid->width() > wid->height()) {//landscape
+        if (orientation == QSystemDisplayInfo::Unknown || orientation == QSystemDisplayInfo::Portrait) {
+            orientation = QSystemDisplayInfo::Landscape;
+        }
+    } else { //portrait
+        if (orientation == QSystemDisplayInfo::Unknown || orientation == QSystemDisplayInfo::Landscape) {
+            orientation = QSystemDisplayInfo::Portrait;
+        }
+    }
     return orientation;
 }
 
 int QSystemDisplayInfoLinuxCommonPrivate::physicalHeight(int screen)
 {
-    QString frameBufferDevicePath = QString("/dev/fb%1").arg(screen);
+    if (!isScreenValid(screen)) {
+        return -1;
+    }
     int height = 0;
-    int fd;
-    struct fb_var_screeninfo vi;
+#if defined(Q_WS_X11)
+    XRRScreenResources *sr;
 
-    if (-1 == (fd = open(frameBufferDevicePath.toStdString().c_str(), O_RDONLY | O_NONBLOCK))) {
-        goto out;
+    sr = XRRGetScreenResources(QX11Info::display(), RootWindow(QX11Info::display(), screen));
+    for (int i = 0; i < sr->noutput; ++i) {
+        XRROutputInfo *output = XRRGetOutputInfo(QX11Info::display(),sr,sr->outputs[i]);
+        if (output->crtc) {
+           height = output->mm_height;
+        }
+        XRRFreeOutputInfo(output);
     }
-    if (-1 == ioctl(fd, FBIOGET_VSCREENINFO, &vi)) {
-        goto out;
-    }
-    height = vi.height;
-out:
-    if (fd != -1) {
-        close(fd);
+    XRRFreeScreenResources(sr);
+#endif
+    if(height == 0) {
+        struct fb_var_screeninfo *screenInfo = allocFrameBufferInfo(screen);
+
+        if (screenInfo) {
+            height = screenInfo->height;
+            free(screenInfo), screenInfo = 0;
+        }
     }
     return height;
 }
 
 int QSystemDisplayInfoLinuxCommonPrivate::physicalWidth(int screen)
 {
-    QString frameBufferDevicePath = QString("/dev/fb%1").arg(screen);
+    if (!isScreenValid(screen)) {
+        return -1;
+    }
     int width = 0;
-    int fd;
-    struct fb_var_screeninfo vi;
+#if defined(Q_WS_X11)
+    XRRScreenResources *sr;
 
-    if (-1 == (fd = open(frameBufferDevicePath.toStdString().c_str(), O_RDONLY | O_NONBLOCK))) {
-        goto out;
+    sr = XRRGetScreenResources(QX11Info::display(), RootWindow(QX11Info::display(), screen));
+    for (int i = 0; i < sr->noutput; ++i) {
+        XRROutputInfo *output = XRRGetOutputInfo(QX11Info::display(),sr,sr->outputs[i]);
+        if (output->crtc) {
+            width = output->mm_width;
+        }
+        XRRFreeOutputInfo(output);
     }
-    if (-1 == ioctl(fd, FBIOGET_VSCREENINFO, &vi)) {
-        goto out;
-    }
-    width = vi.width;
-out:
-    if (fd != -1) {
-        close(fd);
+    XRRFreeScreenResources(sr);
+#endif
+    if(width == 0) {
+        struct fb_var_screeninfo *screenInfo = allocFrameBufferInfo(screen);
+
+        if (screenInfo) {
+            width = screenInfo->width;
+            free(screenInfo), screenInfo = 0;
+        }
     }
     return width;
 }
 
-
 int QSystemDisplayInfoLinuxCommonPrivate::getDPIWidth(int screen)
 {
-    qDebug() << Q_FUNC_INFO;
+    if (!isScreenValid(screen)) {
+        return -1;
+    }
 #if defined(Q_WS_X11)
     return QX11Info::appDpiY(screen);
 #else
@@ -1955,6 +2049,9 @@ int QSystemDisplayInfoLinuxCommonPrivate::getDPIWidth(int screen)
 
 int QSystemDisplayInfoLinuxCommonPrivate::getDPIHeight(int screen)
 {
+    if (!isScreenValid(screen)) {
+        return -1;
+    }
 #if defined(Q_WS_X11)
     return QX11Info::appDpiX(screen);
 #else
@@ -2178,64 +2275,48 @@ QSystemStorageInfo::DriveType QSystemStorageInfoLinuxCommonPrivate::typeForDrive
 #endif
 #endif
     }
-    if (halIsAvailable) {
-#if !defined(QT_NO_DBUS)
-        QStringList mountedVol;
-        QHalInterface iface;
-        const QStringList list = iface.findDeviceByCapability("volume");
-        if (!list.isEmpty()) {
-            foreach (const QString &vol, list) {
-                QHalDeviceInterface ifaceDevice(vol);
-                if (mountEntriesMap.value(driveVolume) == ifaceDevice.getPropertyString("block.device")) {
-                    QHalDeviceInterface ifaceDeviceParent(ifaceDevice.getPropertyString("info.parent"), this);
 
-                    if (ifaceDeviceParent.getPropertyBool("storage.removable")
-                        ||  ifaceDeviceParent.getPropertyString("storage.drive_type") != "disk") {
-                        return QSystemStorageInfo::RemovableDrive;
-                        break;
-                    } else {
-                         return QSystemStorageInfo::InternalDrive;
-                    }
-                }
-            }
-        }
-#endif
+    // manually read sys file for block device
+    // not perfect, more complete than hal
+
+    QString dmFile;
+
+    if (mountEntriesMap.value(driveVolume).contains("mapper")) {
+        struct stat stat_buf;
+        stat( mountEntriesMap.value(driveVolume).toLatin1(), &stat_buf);
+
+        dmFile = QString("/sys/block/dm-%1/removable").arg(stat_buf.st_rdev & 0377);
+
     } else {
-        //no hal need to manually read sys file for block device
-        QString dmFile;
 
-        if (mountEntriesMap.value(driveVolume).contains("mapper")) {
-            struct stat stat_buf;
-            stat( mountEntriesMap.value(driveVolume).toLatin1(), &stat_buf);
+        dmFile = mountEntriesMap.value(driveVolume).section("/",2,3);
 
-            dmFile = QString("/sys/block/dm-%1/removable").arg(stat_buf.st_rdev & 0377);
-
-        } else {
-
-            dmFile = mountEntriesMap.value(driveVolume).section("/",2,3);
-            if (dmFile.left(3) == "mmc") { //assume this dev is removable sd/mmc card.
-                return QSystemStorageInfo::RemovableDrive;
-            }
-
-            if (dmFile.length() > 3) { //if device has number, we need the 'parent' device
-                dmFile.chop(1);
-                if (dmFile.right(1) == "p") //get rid of partition number
-                    dmFile.chop(1);
-            }
-            dmFile = "/sys/block/"+dmFile+"/removable";
+        if (dmFile.left(3) == "mmc") { //assume this dev is removable sd/mmc card.
+            return QSystemStorageInfo::RemovableDrive;
+        }
+        if (dmFile.left(3) == "ram") {
+            return QSystemStorageInfo::RamDrive;
         }
 
-        QFile file(dmFile);
-        if (!file.open(QIODevice::ReadOnly)) {
-            qDebug() << "Could not open sys file";
-        } else {
-            QTextStream sysinfo(&file);
-            QString line = sysinfo.readAll();
-            if (line.contains("1")) {
-                return QSystemStorageInfo::RemovableDrive;
-            }
+        if (dmFile.length() > 3) { //if device has number, we need the 'parent' device
+            dmFile.chop(1);
+            if (dmFile.right(1) == "p") //get rid of partition number
+                dmFile.chop(1);
+        }
+        dmFile = "/sys/block/"+dmFile+"/removable";
+    }
+
+    QFile file(dmFile);
+    if (!file.open(QIODevice::ReadOnly)) {
+        qDebug() << "Could not open sys file";
+    } else {
+        QTextStream sysinfo(&file);
+        QString line = sysinfo.readAll();
+        if (line.contains("1")) {
+            return QSystemStorageInfo::RemovableDrive;
         }
     }
+
     if (driveVolume.left(2) == "//") {
         return QSystemStorageInfo::RemoteDrive;
     }
@@ -3252,12 +3333,6 @@ QSystemDeviceInfo::LockTypeFlags QSystemDeviceInfoLinuxCommonPrivate::lockStatus
 
 QString QSystemDeviceInfoLinuxCommonPrivate::model()
 {
-#if !defined(QT_NO_DBUS)
-    QString productName = sysinfodValueForKey("/component/product-name");
-    if (!productName.isEmpty()) {
-        return productName.split("/").at(0);
-    }
-#endif
     if (halAvailable()) {
 #if !defined(QT_NO_DBUS)
         QHalDeviceInterface iface("/org/freedesktop/Hal/devices/computer", this);
@@ -3290,12 +3365,6 @@ QString QSystemDeviceInfoLinuxCommonPrivate::model()
 
 QString QSystemDeviceInfoLinuxCommonPrivate::productName()
 {
-#if !defined(QT_NO_DBUS)
-    QString productName = sysinfodValueForKey("/component/product-name");
-    if (!productName.isEmpty()) {
-        return productName;
-    }
-#endif
     if (halAvailable()) {
 #if !defined(QT_NO_DBUS)
         QHalDeviceInterface iface("/org/freedesktop/Hal/devices/computer", this);
@@ -3642,16 +3711,23 @@ void QSystemBatteryInfoLinuxCommonPrivate::halChanged(int count,QVariantList map
 
             if (mapS == "battery.rechargeable.is_charging") {
 
+                QSystemBatteryInfo::ChargingState bState;
                 if (ifaceDevice.getPropertyBool("battery.rechargeable.is_charging")) {
-                    curChargeState = QSystemBatteryInfo::Charging;
+                    bState = QSystemBatteryInfo::Charging;
                 } else {
-                    curChargeState = QSystemBatteryInfo::NotCharging;
+                    bState = QSystemBatteryInfo::NotCharging;
                 }
-                Q_EMIT chargingStateChanged(curChargeState);
+                if(curChargeState != bState) {
+                    curChargeState = bState;
+                    Q_EMIT chargingStateChanged(curChargeState);
+                }
             }
             if (mapS == "battery.rechargeable.is_discharging") {
-                curChargeState = QSystemBatteryInfo::NotCharging;
-                Q_EMIT chargingStateChanged(curChargeState);
+                QSystemBatteryInfo::ChargingState bState = QSystemBatteryInfo::NotCharging;
+                if (curChargeState != bState) {
+                    curChargeState = bState;
+                    Q_EMIT chargingStateChanged(curChargeState);
+                }
             }
 
             if (mapS == "battery.voltage.current") {
@@ -3929,10 +4005,24 @@ QSystemBatteryInfo::EnergyUnit QSystemBatteryInfoLinuxCommonPrivate::energyMeasu
 #endif
 #if !defined(QT_NO_DBUS)
     if (halIsAvailable && batteryIsPresent) {
-        return QSystemBatteryInfo::UnitmWh;
+        QHalInterface iface;
+        const QStringList list = iface.findDeviceByCapability("battery");
+        if (!list.isEmpty()) {
+            foreach (const QString &dev, list) {
+                QHalDeviceInterface ifaceDevice(dev);
+                if (ifaceDevice.isValid()) {
+                    const QString unit = ifaceDevice.getPropertyString("battery.reporting.unit");
+                    if (unit == "mAh") {
+                        return QSystemBatteryInfo::UnitmAh;
+                    } else if (unit == "mWh") {
+                        return QSystemBatteryInfo::UnitmWh;
+                    }
+                }
+            }
+        }
     }
 #endif
-    return QSystemBatteryInfo::UnitUnknown;
+return QSystemBatteryInfo::UnitUnknown;
 }
 
 int QSystemBatteryInfoLinuxCommonPrivate::batteryLevel() const
@@ -4022,7 +4112,7 @@ void QSystemBatteryInfoLinuxCommonPrivate::uPowerPropertyChanged(const QString &
 {
  //   qDebug() << __FUNCTION__ << prop << v;
 
-     if (prop == QLatin1String("Energy")) {
+   if (prop == QLatin1String("Energy")) {
         remainingEnergy = (v.toDouble() /  battery->voltage()) * 1000;
         emit remainingCapacityChanged(remainingEnergy);
     } else if (prop == QLatin1String("EnergyRate")) {
@@ -4062,12 +4152,16 @@ void QSystemBatteryInfoLinuxCommonPrivate::uPowerPropertyChanged(const QString &
             break;
         case 2: //discharging
         case 3: //empty
-        case 4: //fully charged
         case 5: //pending charge
         case 6: //pending discharge
             curChargeState = QSystemBatteryInfo::NotCharging;
             curChargeType = QSystemBatteryInfo::NoCharger;
             break;
+        case 4: //fully charged
+            curChargeState = QSystemBatteryInfo::NotCharging;
+            curChargeType = QSystemBatteryInfo::WallCharger;
+            break;
+
         default:
             curChargeState = QSystemBatteryInfo::ChargingError;
             break;

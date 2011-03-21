@@ -444,15 +444,9 @@ bool QVersitContactImporterPrivate::createTimeStamp(
     Q_UNUSED(contact)
     QContactTimestamp timeStamp;
     QString value(property.value());
-    bool utc = value.endsWith(QLatin1Char('Z'), Qt::CaseInsensitive);
-    if (utc)
-        value.chop(1); // take away z from end;
-
-    QDateTime dateTime = parseDateTime(value,QLatin1String("yyyyMMddThhmmss"));
+    QDateTime dateTime = parseDateTime(value);
     if (!dateTime.isValid())
         return false;
-    if (utc)
-        dateTime.setTimeSpec(Qt::UTC);
     timeStamp.setLastModified(dateTime);
     saveDetailWithContext(updatedDetails, timeStamp, extractContexts(property));
     return true;
@@ -468,10 +462,14 @@ bool QVersitContactImporterPrivate::createAnniversary(
 {
     Q_UNUSED(contact)
     QContactAnniversary anniversary;
-    QDateTime dateTime = parseDateTime(property.value(), QLatin1String("yyyyMMdd"));
+    bool justDate = false;
+    QDateTime dateTime = parseDateTime(property.value(), &justDate);
     if (!dateTime.isValid())
         return false;
-    anniversary.setOriginalDate(dateTime.date());
+    if (justDate)
+        anniversary.setOriginalDate(dateTime.date());
+    else
+        anniversary.setOriginalDateTime(dateTime);
     saveDetailWithContext(updatedDetails, anniversary, extractContexts(property));
     return true;
 }
@@ -486,10 +484,14 @@ bool QVersitContactImporterPrivate::createBirthday(
 {
     Q_UNUSED(contact)
     QContactBirthday bday;
-    QDateTime dateTime = parseDateTime(property.value(), QLatin1String("yyyyMMdd"));
+    bool justDate = false;
+    QDateTime dateTime = parseDateTime(property.value(), &justDate);
     if (!dateTime.isValid())
         return false;
-    bday.setDate(dateTime.date());
+    if (justDate)
+        bday.setDate(dateTime.date());
+    else
+        bday.setDateTime(dateTime);
     saveDetailWithContext(updatedDetails, bday, extractContexts(property));
     return true;
 }
@@ -807,16 +809,36 @@ QString QVersitContactImporterPrivate::takeFirst(QList<QString>& list) const
 /*!
  * Parses a date and time from text
  */
-QDateTime QVersitContactImporterPrivate::parseDateTime(
-    const QString& value,
-    const QString& format) const
+QDateTime QVersitContactImporterPrivate::parseDateTime(QString value, bool *justDate) const
 {
+    bool hasTime = false;
+    bool utc = value.endsWith(QLatin1Char('Z'), Qt::CaseInsensitive);
+    if (utc)
+        value.chop(1); // take away z from end;
+
     QDateTime dateTime;
     if (value.contains(QLatin1Char('-'))) {
         dateTime = QDateTime::fromString(value,Qt::ISODate);
+        hasTime = dateTime.isValid() && value.contains(QLatin1Char('T'));
     } else {
-        dateTime = QDateTime::fromString(value, format);
+        switch (value.length()) {
+        case 8:
+            dateTime = QDateTime::fromString(value, QLatin1String("yyyyMMdd"));
+            break;
+        case 15:
+            dateTime = QDateTime::fromString(value, QLatin1String("yyyyMMddThhmmss"));
+            hasTime = true;
+            break;
+        // default: return invalid
+        }
     }
+
+    if (utc)
+        dateTime.setTimeSpec(Qt::UTC);
+
+    if (justDate)
+        *justDate = !hasTime && !utc; // UTC implies a time of midnight
+
     return dateTime;
 }
 
