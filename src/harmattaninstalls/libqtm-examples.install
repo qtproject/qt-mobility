@@ -77,6 +77,7 @@ usr/lib/qtmobility/examples/xmldata/voipdialerservice.xml
 usr/lib/qtmobility/examples/xmldata/filemanagerservice.xml
 usr/lib/qtmobility/examples/battery-subscriber/battery-subscriber.qml
 usr/lib/qtmobility/examples/battery-subscriber/content/bubble.png
+usr/lib/qtmobility/examples/qml_messages
 usr/lib/qtmobility/demos/serviceactions
 usr/lib/qtmobility/demos/qmlcontacts
 usr/lib/qtmobility/demos/lightmaps_with_location

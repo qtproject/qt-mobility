@@ -21,6 +21,7 @@
         <for path="/usr/lib/qtmobility/examples/writemessage" />
         <for path="/usr/lib/qtmobility/examples/querymessages" />
         <for path="/usr/lib/qtmobility/examples/keepintouch" />
+        <for path="/usr/lib/qtmobility/examples/qml_messages" />
     </request>
     <request>
         <credential name="Location" />
