@@ -87,6 +87,10 @@ private:
 
     QString storageStateToString(QSystemStorageInfo::StorageState state);
 
+    QString sizeToString(qlonglong size);
+    QBrush brushForStorageState(QSystemStorageInfo::StorageState state);
+
+
 private slots:
     void tabChanged(int index);
     void getVersion(int index);

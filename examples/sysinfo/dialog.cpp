@@ -41,6 +41,8 @@
 #include "dialog.h"
 #include <QMessageBox>
 #include <QTimer>
+#include <math.h>
+
 
 Dialog::Dialog() :
     QWidget(),
@@ -309,16 +311,46 @@ void Dialog::updateStorage()
         QStringList items;
         items << volName;
         items << type;
-        items << QString::number(sti->totalDiskSpace(volName));
-        items << QString::number(sti->availableDiskSpace(volName));
+        items << sizeToString(sti->totalDiskSpace(volName));
+        items << sizeToString(sti->availableDiskSpace(volName));
         items << sti->uriForDrive(volName);
         items << storageStateToString(sti->getStorageState(volName));
 
         QTreeWidgetItem *item = new QTreeWidgetItem(items);
+
+        for (int i = 0; i < 5; i++) {
+            item->setBackground( i ,brushForStorageState( sti->getStorageState(volName)));
+        }
         storageTreeWidget->addTopLevelItem(item);
     }
 }
 
+QBrush Dialog::brushForStorageState(QSystemStorageInfo::StorageState state)
+{
+    if (state == QSystemStorageInfo::CriticalStorageState) {
+        return  QBrush(Qt::red);
+    }
+    if (state== QSystemStorageInfo::VeryLowStorageState) {
+        return  QBrush(Qt::magenta);
+    }
+    if (state == QSystemStorageInfo::LowStorageState) {
+        return  QBrush(Qt::yellow);
+    }
+    return  QBrush();
+}
+
+QString Dialog:: sizeToString(qlonglong size)
+{
+    float fSize = size;
+    int i = 0;
+    const char* units[] = {"B", "kB", "MB", "GB", "TB"};
+    while (fSize > 1024) {
+        fSize /= 1024.0;
+        i++;
+    }
+    fSize = round((fSize)*100)/100;
+    return QString::number(fSize)+" "+ units[i];
+}
 
 void Dialog::setupNetwork()
 {
