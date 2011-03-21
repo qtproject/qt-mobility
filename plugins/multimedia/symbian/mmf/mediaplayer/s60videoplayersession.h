@@ -100,6 +100,9 @@ public Q_SLOTS:
     void setActiveEndpoint(const QString& name);
 
 protected:
+    // QObject
+    bool eventFilter(QObject *watched, QEvent *event);
+
     // From S60MediaPlayerSession
     void doLoadL(const TDesC &path);
     void doLoadUrlL(const TDesC &path);
@@ -167,6 +170,7 @@ private:
         ScaleFactors = 0x4
     };
     QFlags<Parameter> m_pendingChanges;
+    bool m_backendInitiatedPause;
 };
 
 #endif
