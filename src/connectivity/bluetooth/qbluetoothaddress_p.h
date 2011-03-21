@@ -39,50 +39,26 @@
 **
 ****************************************************************************/
 
-#ifndef QBLUETOOTHADDRESS_H
-#define QBLUETOOTHADDRESS_H
+#ifndef QBLUETOOTHADDRESS_P_H
+#define QBLUETOOTHADDRESS_P_H
 
-#include <qmobilityglobal.h>
-
-#include <QtCore/QByteArray>
-#include <QtCore/QString>
-#include <QtCore/QMetaType>
+#include "qbluetoothaddress.h"
 
 QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
-class QBluetoothAddressPrivate;
-
-class Q_CONNECTIVITY_EXPORT QBluetoothAddress
+class QBluetoothAddressPrivate
 {
 public:
-    QBluetoothAddress();
-    explicit QBluetoothAddress(quint64 address);
-    explicit QBluetoothAddress(const QString &address);
-    QBluetoothAddress(const QBluetoothAddress &other);
+    QBluetoothAddressPrivate();
 
-    QBluetoothAddress &operator=(const QBluetoothAddress &other);
 
-    bool isNull() const;
+    quint64 m_address;
 
-    void clear();
-
-    bool operator<(const QBluetoothAddress &other) const;
-    bool operator==(const QBluetoothAddress &other) const;
-    inline bool operator!=(const QBluetoothAddress &other) const { return !operator==(other); }
-
-    quint64 toUInt64() const;
-    QString toString() const;
-
-private:
-    Q_DECLARE_PRIVATE(QBluetoothAddress)
-    QBluetoothAddressPrivate *d_ptr;
 };
 
 QTM_END_NAMESPACE
-
-Q_DECLARE_METATYPE(QtMobility::QBluetoothAddress)
 
 QT_END_HEADER
 

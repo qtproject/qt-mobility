@@ -170,22 +170,6 @@ Rectangle {
     //   }
 
 
-       Keys.onPressed: {
-           if(event.key == Qt.Key_Up){
-               rightPaddle.paddlePos -= 20;
-               event.accepted = true;
-           }
-           else if(event.key == Qt.Key_Down){
-               rightPaddle.paddlePos += 20;
-               event.accepted = true;
-           }
-       }
-
-       Loader {
-           id: deviceSensor
-           source: "sensor.qml"
-       }
-
        Connections {
            target: deviceSensor.item
            onReadingChanged: {
@@ -227,77 +211,11 @@ Rectangle {
            }
        }
 
-       Image {
+       ConnectButton {
            id: connectButton
 
-           property bool enabled: true
-           property int roRotation
-
-           source: "icons/connect.png"
-           width: 100
-           height: 100
-           x: 440
-           y: 220
-           smooth: true
-           opacity: 1.0
-
-           NumberAnimation {
-               id: connectRotation
-
-               target:  connectButton
-               property: "rotation"
-               from: 0
-               to: 360
-               loops: -1
-               duration: 1000
-               running: myModel.discovery
-
-               onRunningChanged: if(!running) { connectStop.running = true; }
-
-           }
-
-           NumberAnimation {
-               id: connectStop
-
-               target: connectButton
-               property: "rotation"
-               loops: 1
-               from: connectButton.roRotation
-               to: 0
-               duration: 1000*connectButton.roRotation/360
-               running: false
-           }
-
-           onRotationChanged: if(!connectStop.running) roRotation = rotation;
-
-           MouseArea {
-               anchors.fill: connectButton
-               enabled: connectButton.state != "disabled"
-               hoverEnabled: true
-               onClicked: {
-                   myModel.discovery = !myModel.discovery;
-//                   connectStop.running = true;
-               }
-           }
-
-           states: [
-               State {
-                   name: "disabled"
-//                   when: socket.state == "Connected"
-                   when: socket.connected
-                   PropertyChanges { target: connectButton; opacity: 0.0; }
-               }
-           ]
-
-           transitions: [
-               Transition {
-                   from: "*"
-                   to: "disabled"
-                   reversible: true
-                   NumberAnimation { target: connectButton; property: "opacity"; duration: 750 }
-               }
-           ]
-
+           mymodel: myModel
+           socket: socket
        }
 
         // Make a ball to bounce
@@ -313,7 +231,7 @@ Rectangle {
         Paddle {
             id: leftPaddle
 
-            onYChanged: controller.moveLeftPaddle(y);
+            onPaddleMoved: controller.moveLeftPaddle(y);
         }
 
         Paddle {
@@ -321,51 +239,32 @@ Rectangle {
 
             x: page.width - 12;
 
-            onYChanged: {
-                if(socket.state == "Connected" && !rateLimit) {
+            onPaddleMoved:  {
+                if(socket.state == "Connected")
                     socket.sendStringData("r " + Math.round(rightPaddle.y-topBumper.height));
-                    rateLimit = true;
-                }
                 controller.moveRightPaddle(y);
             }
 
         }
-        Rectangle {
+        Bumper {
             id: topBumper
-            color: fg
-            x: 0; y: 0
-            height: 12; width: page.width
         }
-        Rectangle {
+        Bumper {
             id: bottomBumper
-            color: fg
-            x: 0; y: page.height-height
-            height: 12; width: page.width
+            y: page.height-height
         }
-        Text {
+        Score {
             id: scoreLeft
-            font.family: "Old English"
-            font.pixelSize: 50; font.bold: true
-            color: fg
-            text:  "0"
-            y: 50
-            x: page.width/4-paintedWidth/2
         }
-        Text {
+        Score {
             id: scoreRight
-            font: scoreLeft.font
-            text:  "0"
-            color: fg
-            y: 50
             x: 3*page.width/4-paintedWidth/2
         }
 
-        // The rest, to make it look realistic, if neither ever scores...
         Repeater {
             model: page.height / 8
             Rectangle { color: fg; x: page.width/2; y: index * 8; width: 2; height: 5 }
         }
-
 
         Text {
             id: statusText
@@ -377,6 +276,22 @@ Rectangle {
             x: 24
 
             onTextChanged: NumberAnimation { target: statusText; property: "opacity"; easing.type: Easing.InOutSine; from: 1; to: 0; duration: 2000 }
+        }
+
+        Keys.onPressed: {
+            if(event.key == Qt.Key_Up){
+                rightPaddle.paddlePos -= 20;
+                event.accepted = true;
+            }
+            else if(event.key == Qt.Key_Down){
+                rightPaddle.paddlePos += 20;
+                event.accepted = true;
+            }
+        }
+
+        Loader {
+            id: deviceSensor
+            source: "sensor.qml"
         }
 
         transform: Scale { xScale: bounds.width/page.width; yScale: bounds.height/page.height }

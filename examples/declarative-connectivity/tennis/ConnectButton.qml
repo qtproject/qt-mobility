@@ -38,36 +38,79 @@
 **
 ****************************************************************************/
 
+
 import QtQuick 1.0
 import QtMobility.connectivity 1.2
 
-Rectangle {
-    id: paddle
+Image {
+    id: connectButton
 
-    property int paddlePos: page.height/2
-    property bool rateLimit: false
+    property bool enabled: true
+    property int roRotation
+    property BluetoothDiscoveryModel mymodel
+    property BluetoothSocket socket
 
-    signal paddleMoved(int postion)
+    source: "icons/connect.png"
+    width: 100
+    height: 100
+    x: 440
+    y: 220
+    smooth: true
+    opacity: 1.0
 
-    color: fg
-    x: 0; width: 12; height: 50; y: parent.height/2-height/2;
+    NumberAnimation {
+        id: connectRotation
 
-    Behavior on y { SpringAnimation{ damping: 0.5; spring: 4.5; velocity: 400 } }
-    onPaddlePosChanged: {
-        if(paddlePos < topBumper.height)
-            y = topBumper.height;
-        else if(paddlePos > page.height-bottomBumper.height-height)
-            y = page.height-bottomBumper.height-height;
-        else
-            y = paddlePos;
+        target:  connectButton
+        property: "rotation"
+        from: 0
+        to: 360
+        loops: -1
+        duration: 1000
+        running: mymodel.discovery
+
+        onRunningChanged: if(!running) { connectStop.running = true; }
+
     }
-    onYChanged: {
-        if(!rateLimit) { paddleMoved(y); rateLimit = true; }
+
+    NumberAnimation {
+        id: connectStop
+
+        target: connectButton
+        property: "rotation"
+        loops: 1
+        from: connectButton.roRotation
+        to: 0
+        duration: 1000*connectButton.roRotation/360
+        running: false
     }
 
-    Timer {
-        interval: 30
-        running: parent.rateLimit
-        onTriggered: paddle.rateLimit = false;
+    onRotationChanged: if(!connectStop.running) roRotation = rotation;
+
+    MouseArea {
+        anchors.fill: connectButton
+        enabled: connectButton.state != "disabled"
+        hoverEnabled: true
+        onClicked: {
+            mymodel.discovery = !mymodel.discovery;
+        }
     }
+
+    states: [
+        State {
+            name: "disabled"
+            when: socket.connected
+            PropertyChanges { target: connectButton; opacity: 0.0; }
+        }
+    ]
+
+    transitions: [
+        Transition {
+            from: "*"
+            to: "disabled"
+            reversible: true
+            NumberAnimation { target: connectButton; property: "opacity"; duration: 750 }
+        }
+    ]
+
 }
