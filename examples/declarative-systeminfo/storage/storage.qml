@@ -55,24 +55,24 @@ Rectangle {
 
     function getTotalSizeText(name) {
         var totalSpace = storageinfo.totalDiskSpace(name);
-        if(totalSpace/1000 < 1000) {
-            return Math.round(totalSpace/1000)+" kb avail.";
-        } else if(totalSpace/1000/1000 < 1000) {
-            return Math.round(totalSpace/1000/1000)+" Mb avail.";
-        } else if(totalSpace/1000/1000/1000 < 1000) {
-            return Math.round(totalSpace/1000/1000/1000)+" Gb avail.";
+        if(totalSpace/1024 < 1024) {
+            return Math.round((totalSpace/1024)*100)/100+" kb avail.";
+        } else if(totalSpace/1024/1024 < 1024) {
+            return Math.round((totalSpace/1024/1024)*100)/100+" Mb avail.";
+        } else if(totalSpace/1024/1024/1024 < 1024) {
+            return Math.round((totalSpace/1024/1024/1024)*100)/100+" Gb avail.";
         }
         return "";
     }
 
     function getAvailableSizeText(name) {
         var dspace = storageinfo.availableDiskSpace(name);
-        if(dspace/1000 < 1000) {
-            return Math.round(dspace/1000)+" kb / ";
-        } else if(dspace/1000/1000 < 1000) {
-            return Math.round(dspace/1000/1000)+" Mb / ";
-        } else if(dspace/1000/1000/1000 < 1000) {
-            return Math.round(dspace/1000/1000/1000)+" Gb / ";
+        if(dspace/1024 < 1000) {
+            return Math.round((dspace/1024)*100)/100+" kb / ";
+        } else if(dspace/1024/1024 < 1024) {
+            return Math.round((dspace/1024/1024)*100)/100+" Mb / ";
+        } else if(dspace/1024/1024/1024 < 1024) {
+            return Math.round((dspace/1024/1024/1024)*100)/100+" Gb / ";
         }
         return "";
     }
