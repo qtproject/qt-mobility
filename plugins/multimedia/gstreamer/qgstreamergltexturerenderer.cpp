@@ -321,6 +321,22 @@ void QGstreamerGLTextureRenderer::renderGLFrame(int frame)
     if (m_context)
         m_context->makeCurrent();
 
+    //don't try to render the frame if state is changed to NULL or READY
+    GstState pendingState = GST_STATE_NULL;
+    GstState newState = GST_STATE_NULL;
+    GstStateChangeReturn res = gst_element_get_state(m_videoSink,
+                                                     &newState,
+                                                     &pendingState,
+                                                     0);//don't block and return immediately
+
+    if (res == GST_STATE_CHANGE_FAILURE ||
+            newState == GST_STATE_NULL ||
+            pendingState == GST_STATE_NULL) {
+        stopRenderer();
+        m_renderCondition.wakeAll();
+        return;
+    }
+
     if (!m_surface->isActive()) {
         //find the native video size
         GstPad *pad = gst_element_get_static_pad(m_videoSink,"sink");
@@ -376,6 +392,10 @@ bool QGstreamerGLTextureRenderer::isReady() const
 
 void QGstreamerGLTextureRenderer::handleBusMessage(GstMessage* gm)
 {
+#ifdef GL_TEXTURE_SINK_DEBUG
+    qDebug() << Q_FUNC_INFO << GST_MESSAGE_TYPE_NAME(gm);
+#endif
+
     if (GST_MESSAGE_TYPE(gm) == GST_MESSAGE_STATE_CHANGED) {
         GstState oldState;
         GstState newState;
@@ -386,10 +406,7 @@ void QGstreamerGLTextureRenderer::handleBusMessage(GstMessage* gm)
 #endif
 
         if (newState == GST_STATE_READY || newState == GST_STATE_NULL) {
-            if (m_surface && m_surface->isActive())
-                m_surface->stop();
-            m_nativeSize = QSize();
-            emit nativeSizeChanged();
+            stopRenderer();
         }
 
         if (oldState == GST_STATE_READY && newState == GST_STATE_PAUSED) {
@@ -416,6 +433,21 @@ void QGstreamerGLTextureRenderer::precessNewStream()
 
         GstPad *pad = gst_element_get_static_pad(m_videoSink,"sink");
         m_bufferProbeId = gst_pad_add_buffer_probe(pad, G_CALLBACK(padBufferProbe), this);
+    }
+}
+
+void QGstreamerGLTextureRenderer::stopRenderer()
+{
+#ifdef GL_TEXTURE_SINK_DEBUG
+    qDebug() << Q_FUNC_INFO;
+#endif
+
+    if (m_surface && m_surface->isActive())
+        m_surface->stop();
+
+    if (!m_nativeSize.isEmpty()) {
+        m_nativeSize = QSize();
+        emit nativeSizeChanged();
     }
 }
 

@@ -78,6 +78,7 @@ public:
     void handleBusMessage(GstMessage* gm);
     void handleSyncMessage(GstMessage* gm);
     void precessNewStream();
+    void stopRenderer();
 
     int framebufferNumber() const;
 

@@ -706,6 +706,9 @@ bool QGstreamerPlayerSession::pause()
 void QGstreamerPlayerSession::stop()
 {
     if (m_playbin) {
+        if (m_renderer)
+            m_renderer->stopRenderer();
+
         gst_element_set_state(m_playbin, GST_STATE_NULL);
 
         QMediaPlayer::State oldState = m_state;
