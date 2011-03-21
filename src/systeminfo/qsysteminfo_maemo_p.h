@@ -63,20 +63,6 @@
 #if !defined(QT_NO_DBUS)
 #include "linux/qhalservice_linux_p.h"
 
-typedef enum
-{
-    NM_DEVICE_STATE_UNKNOWN = 0,
-    NM_DEVICE_STATE_UNMANAGED,
-    NM_DEVICE_STATE_UNAVAILABLE,
-    NM_DEVICE_STATE_DISCONNECTED,
-    NM_DEVICE_STATE_PREPARE,
-    NM_DEVICE_STATE_CONFIG,
-    NM_DEVICE_STATE_NEED_AUTH,
-    NM_DEVICE_STATE_IP_CONFIG,
-    NM_DEVICE_STATE_ACTIVATED,
-    NM_DEVICE_STATE_FAILED
-} NMDeviceState;
-
 struct ProfileDataValue {
     QString key;
     QString val;
