@@ -272,7 +272,6 @@ void  tst_QSystemNetworkInfo::tst_locationAreaCode()
 void  tst_QSystemNetworkInfo::tst_currentMobileCountryCode()
 {
     QSystemNetworkInfo ni;
-<<<<<<< HEAD
     QSystemNetworkInfo::NetworkMode mode = ni.currentMode();
     QSystemNetworkInfo::NetworkStatus status = ni.networkStatus(mode);
 
@@ -285,7 +284,6 @@ void  tst_QSystemNetworkInfo::tst_currentMobileCountryCode()
             && (QSystemNetworkInfo::HomeNetwork == status
                 || QSystemNetworkInfo::Connected == status
                 || QSystemNetworkInfo::Roaming == status)) {
-=======
 //    qDebug() << ni.currentMobileCountryCode();
     if(QSystemNetworkInfo::HomeNetwork == ni.networkStatus(QSystemNetworkInfo::GsmMode)
         || QSystemNetworkInfo::HomeNetwork == ni.networkStatus(QSystemNetworkInfo::CdmaMode)
@@ -295,7 +293,6 @@ void  tst_QSystemNetworkInfo::tst_currentMobileCountryCode()
         || QSystemNetworkInfo::Roaming == ni.networkStatus(QSystemNetworkInfo::WcdmaMode)
         || QSystemNetworkInfo::Roaming == ni.networkStatus(QSystemNetworkInfo::LteMode)
         ) {
->>>>>>> master
         QVERIFY(!ni.currentMobileCountryCode().isEmpty());
         bool ok;
          ni.currentMobileCountryCode().toInt(&ok);
@@ -309,7 +306,6 @@ void  tst_QSystemNetworkInfo::tst_currentMobileCountryCode()
 void  tst_QSystemNetworkInfo::tst_currentMobileNetworkCode()
 {
     QSystemNetworkInfo ni;
-<<<<<<< HEAD
     QSystemNetworkInfo::NetworkMode mode = ni.currentMode();
     QSystemNetworkInfo::NetworkStatus status = ni.networkStatus(mode);
 
@@ -322,7 +318,6 @@ void  tst_QSystemNetworkInfo::tst_currentMobileNetworkCode()
             && (QSystemNetworkInfo::HomeNetwork == status
                 || QSystemNetworkInfo::Connected == status
                 || QSystemNetworkInfo::Roaming == status)) {
-=======
     if(QSystemNetworkInfo::HomeNetwork == ni.networkStatus(QSystemNetworkInfo::GsmMode)
         || QSystemNetworkInfo::HomeNetwork == ni.networkStatus(QSystemNetworkInfo::CdmaMode)
         || QSystemNetworkInfo::HomeNetwork == ni.networkStatus(QSystemNetworkInfo::WcdmaMode)
@@ -331,7 +326,6 @@ void  tst_QSystemNetworkInfo::tst_currentMobileNetworkCode()
         || QSystemNetworkInfo::Roaming == ni.networkStatus(QSystemNetworkInfo::WcdmaMode)
       || QSystemNetworkInfo::Roaming == ni.networkStatus(QSystemNetworkInfo::LteMode)
         ) {
->>>>>>> master
         QVERIFY(!ni.currentMobileNetworkCode().isEmpty());
         bool ok;
         ni.currentMobileCountryCode().toInt(&ok);
@@ -368,7 +362,6 @@ void  tst_QSystemNetworkInfo::tst_homeMobileCountryCode()
 void  tst_QSystemNetworkInfo::tst_homeMobileNetworkCode()
 {
     QSystemNetworkInfo ni;
-<<<<<<< HEAD
     QSystemNetworkInfo::NetworkMode mode = ni.currentMode();
     QSystemNetworkInfo::NetworkStatus status = ni.networkStatus(mode);
 
@@ -381,7 +374,6 @@ void  tst_QSystemNetworkInfo::tst_homeMobileNetworkCode()
             && (QSystemNetworkInfo::HomeNetwork == status
                 || QSystemNetworkInfo::Connected == status
                 || QSystemNetworkInfo::Roaming == status)) {
-=======
     if(QSystemNetworkInfo::HomeNetwork == ni.networkStatus(QSystemNetworkInfo::GsmMode)
         || QSystemNetworkInfo::HomeNetwork == ni.networkStatus(QSystemNetworkInfo::CdmaMode)
         || QSystemNetworkInfo::HomeNetwork == ni.networkStatus(QSystemNetworkInfo::WcdmaMode)
@@ -391,7 +383,6 @@ void  tst_QSystemNetworkInfo::tst_homeMobileNetworkCode()
 
         || QSystemNetworkInfo::Roaming == ni.networkStatus(QSystemNetworkInfo::LteMode)
         ) {
->>>>>>> master
         QVERIFY(!ni.homeMobileNetworkCode().isEmpty());
         bool ok;
         ni.currentMobileCountryCode().toInt(&ok);
@@ -410,7 +401,6 @@ void  tst_QSystemNetworkInfo::tst_networkName_data()
 
 void  tst_QSystemNetworkInfo::tst_networkName()
 {
-<<<<<<< HEAD
     {
         QFETCH(QSystemNetworkInfo::NetworkMode, mode);
         QSystemNetworkInfo ni;
@@ -422,7 +412,6 @@ void  tst_QSystemNetworkInfo::tst_networkName()
         } else {
             ni.networkName(mode).isEmpty();
         }
-=======
     QSystemNetworkInfo ni;
     QList<QSystemNetworkInfo::NetworkMode> modeList;
     modeList << QSystemNetworkInfo::GsmMode;
@@ -438,7 +427,6 @@ void  tst_QSystemNetworkInfo::tst_networkName()
     foreach(QSystemNetworkInfo::NetworkMode mode, modeList) {
         QVERIFY(!ni.networkName(mode).isEmpty()
                 ||ni.networkName(mode).isEmpty());
->>>>>>> master
     }
 }
 
@@ -467,7 +455,6 @@ void tst_QSystemNetworkInfo::tst_interfaceForMode()
 {
     QFETCH(QSystemNetworkInfo::NetworkMode, mode);
     QSystemNetworkInfo ni;
-<<<<<<< HEAD
     QSystemNetworkInfo::NetworkStatus status = ni.networkStatus(mode);
     if ((mode == ni.currentMode()) && (mode == QSystemNetworkInfo::WlanMode
             || mode == QSystemNetworkInfo::EthernetMode
@@ -475,7 +462,6 @@ void tst_QSystemNetworkInfo::tst_interfaceForMode()
         QVERIFY(!ni.interfaceForMode(mode).name().isEmpty());
     } else {
         QVERIFY(!ni.interfaceForMode(mode).isValid());
-=======
     QList<QSystemNetworkInfo::NetworkMode> modeList;
     modeList << QSystemNetworkInfo::GsmMode;
     modeList << QSystemNetworkInfo::CdmaMode;
@@ -490,7 +476,6 @@ void tst_QSystemNetworkInfo::tst_interfaceForMode()
     foreach(QSystemNetworkInfo::NetworkMode mode, modeList) {
         QVERIFY(!ni.interfaceForMode(mode).name().isEmpty()
             || !ni.interfaceForMode(mode).isValid());
->>>>>>> master
     }
 }
 
