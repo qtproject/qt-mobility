@@ -60,6 +60,8 @@ public:
     QNearFieldManagerPrivateImpl();
     ~QNearFieldManagerPrivateImpl();
 
+    bool isAvailable() const;
+
     void reset();
 
 private slots:

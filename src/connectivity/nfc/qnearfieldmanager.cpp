@@ -374,6 +374,16 @@ QNearFieldManager::~QNearFieldManager()
 }
 
 /*!
+    Returns true if NFC functionality is available; otherwise returns false.
+*/
+bool QNearFieldManager::isAvailable() const
+{
+    Q_D(const QNearFieldManager);
+
+    return d->isAvailable();
+}
+
+/*!
     Starts detecting targets of type \a targetTypes. Returns true if target detection is
     successfully started; otherwise returns false.
 

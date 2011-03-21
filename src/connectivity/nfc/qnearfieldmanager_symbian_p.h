@@ -88,6 +88,8 @@ public:
     QNearFieldManagerPrivateImpl();
     ~QNearFieldManagerPrivateImpl();
 
+    bool isAvailable() const;
+
     int registerNdefMessageHandler(QObject *object, const QMetaMethod &method);
     int registerNdefMessageHandler(const QNdefFilter &filter,
                                    QObject *object, const QMetaMethod &method);

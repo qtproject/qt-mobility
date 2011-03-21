@@ -175,6 +175,11 @@ QNearFieldManagerPrivateImpl::~QNearFieldManagerPrivateImpl()
     delete nfcConnection;
 }
 
+bool QNearFieldManagerPrivateImpl::isAvailable() const
+{
+    return true;
+}
+
 void QNearFieldManagerPrivateImpl::targetEnteringProximity(const QByteArray &uid)
 {
     QNearFieldTarget *target = m_targets.value(uid);

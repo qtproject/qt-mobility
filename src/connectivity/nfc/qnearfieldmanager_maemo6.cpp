@@ -144,6 +144,11 @@ QNearFieldManagerPrivateImpl::~QNearFieldManagerPrivateImpl()
     delete m_adapter;
 }
 
+bool QNearFieldManagerPrivateImpl::isAvailable() const
+{
+    return m_manager->isValid();
+}
+
 bool QNearFieldManagerPrivateImpl::startTargetDetection(const QList<QNearFieldTarget::Type> &targetTypes)
 {
     m_detectTargetTypes = targetTypes;

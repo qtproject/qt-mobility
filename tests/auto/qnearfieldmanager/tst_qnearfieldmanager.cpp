@@ -65,6 +65,8 @@ public:
     tst_QNearFieldManager();
 
 private slots:
+    void initTestCase();
+
     void targetDetected_data();
     void targetDetected();
 
@@ -87,6 +89,14 @@ tst_QNearFieldManager::tst_QNearFieldManager()
 
     qRegisterMetaType<QNdefMessage>("QNdefMessage");
     qRegisterMetaType<QNearFieldTarget *>("QNearFieldTarget*");
+}
+
+void tst_QNearFieldManager::initTestCase()
+{
+    QNearFieldManagerPrivateImpl *emulatorBackend = new QNearFieldManagerPrivateImpl;
+    QNearFieldManager manager(emulatorBackend, 0);
+
+    QVERIFY(manager.isAvailable());
 }
 
 void tst_QNearFieldManager::targetDetected_data()

@@ -107,6 +107,11 @@ QNearFieldManagerPrivateImpl::~QNearFieldManagerPrivateImpl()
     END
 }
 
+bool QNearFieldManagerPrivateImpl::isAvailable() const
+{
+    return m_symbianbackend;
+}
+
 /*
     Helper function to get the free handler id.
 */

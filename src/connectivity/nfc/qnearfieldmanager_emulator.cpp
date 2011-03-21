@@ -61,16 +61,15 @@ QNearFieldManagerPrivateImpl::~QNearFieldManagerPrivateImpl()
 {
 }
 
+bool QNearFieldManagerPrivateImpl::isAvailable() const
+{
+    return true;
+}
+
 void QNearFieldManagerPrivateImpl::reset()
 {
     TagActivator::instance()->reset();
 }
-
-
-
-
-
-
 
 void QNearFieldManagerPrivateImpl::tagActivated(TagBase *tag)
 {

@@ -60,6 +60,8 @@ public:
     QNearFieldManagerPrivateImpl();
     ~QNearFieldManagerPrivateImpl();
 
+    bool isAvailable() const;
+
 private slots:
     void targetEnteringProximity(const QByteArray &uid);
     void targetLeavingProximity(const QByteArray &uid);
