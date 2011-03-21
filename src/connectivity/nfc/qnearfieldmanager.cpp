@@ -97,9 +97,9 @@ QTM_BEGIN_NAMESPACE
 
     \section2 Automatically launching NDEF message handlers
 
-    It is possible to pre-register an application to recieve NDEF messages matching a given
+    It is possible to pre-register an application to receive NDEF messages matching a given
     criteria. This is useful to get the system to automatically launch your application when a
-    matching NDEF message is recieved. This removes the need to have the user manually launch NDEF
+    matching NDEF message is received. This removes the need to have the user manually launch NDEF
     handling applications, prior to touching a tag, or to have those applications always running
     and using system resources.
 
