@@ -1114,7 +1114,7 @@ void Dialog::keyboardFlipped(bool on)
 void Dialog::storageStateChanged(const QString &vol, QSystemStorageInfo::StorageState state)
 {
     QList<QTreeWidgetItem *>item = storageTreeWidget->findItems(vol,Qt::MatchExactly,0);
-    item.at(0)->setText(3,QString::number(sti->availableDiskSpace(item.at(0)->text(0))));
+    item.at(0)->setText(3,sizeToString(sti->availableDiskSpace(item.at(0)->text(0))));
     item.at(0)->setText(5,storageStateToString(state));
 }
 
