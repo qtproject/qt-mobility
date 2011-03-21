@@ -961,7 +961,13 @@ void QDeclarativeOrganizerModel::itemsRemoved(const QList<QOrganizerItemId>& ids
 
 QVariant QDeclarativeOrganizerModel::data(const QModelIndex &index, int role) const
 {
-    QDeclarativeOrganizerItem* di = d->m_items.value(index.row());
+    //check if QList index is valid, it should be between 0 and count - 1
+    if (index.row() < 0 || index.row() >= d->m_items.count()) {
+        return QVariant();
+    }
+
+    QDeclarativeOrganizerItem* di = d->m_items.at(index.row());
+    Q_ASSERT(di);
     QOrganizerItem item = di->item();
     switch(role) {
         case Qt::DisplayRole:
