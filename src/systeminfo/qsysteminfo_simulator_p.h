@@ -119,6 +119,7 @@ public:
     QString homeMobileCountryCode() const { return data.homeMobileCountryCode; }
     QString homeMobileNetworkCode() const { return data.homeMobileNetworkCode; }
     QSystemNetworkInfo::NetworkMode currentMode() const { return data.currentMode; }
+    QSystemNetworkInfo::CellDataTechnology cellDataTechnology() { return data.cellData; };
 
     QString networkName(QSystemNetworkInfo::NetworkMode m) const;
     QString macAddress(QSystemNetworkInfo::NetworkMode m) const;
@@ -133,6 +134,7 @@ public:
     void setHomeMobileCountryCode(const QString &code);
     void setHomeMobileNetworkCode(const QString &code);
     void setCurrentMode(QSystemNetworkInfo::NetworkMode m);
+    void setCellDataTechnology(QSystemNetworkInfo::CellDataTechnology  cd);
 
     void setNetworkName(QSystemNetworkInfo::NetworkMode m, const QString &name);
     void setNetworkMacAddress(QSystemNetworkInfo::NetworkMode m, const QString &mac);
@@ -149,6 +151,7 @@ signals:
     void networkNameChanged(QSystemNetworkInfo::NetworkMode, const QString &) const;
     void networkModeChanged(QSystemNetworkInfo::NetworkMode) const;
     void cellIdChanged(int);
+    void cellDataTechnologyChanged(QSystemNetworkInfo::CellDataTechnology); //1.2
 
 private:
     QSystemNetworkInfoData data;

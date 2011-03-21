@@ -101,6 +101,8 @@ struct QSystemNetworkInfoData
     QString homeMobileCountryCode;
     QString homeMobileNetworkCode;
     QSystemNetworkInfo::NetworkMode currentMode;
+    QSystemNetworkInfo::CellDataTechnology cellData;
+
 };
 
 struct QSystemDisplayInfoData

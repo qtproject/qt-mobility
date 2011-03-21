@@ -378,6 +378,15 @@ QNetworkInterface QSystemNetworkInfoPrivate::interfaceForMode(QSystemNetworkInfo
     return data.networkInfo[static_cast<int>(m)].interface;
 }
 
+void QSystemNetworkInfoPrivate::setCellDataTechnology(QSystemNetworkInfo::CellDataTechnology  cd)
+{
+    if (data.cellData != cd) {
+        data.cellData = cd;
+        emit cellDataTechnologyChanged(cd);
+    }
+}
+
+
 void QSystemNetworkInfoPrivate::setCellId(int id)
 {
     if (data.cellId != id) {
@@ -708,7 +717,7 @@ void QSystemDeviceInfoPrivate::setUniqueDeviceId(const QUuid &v)
 void QSystemDeviceInfoPrivate::setTypeOfLock(QSystemDeviceInfo::LockTypeFlags v)
 {
     bool lockTypeChanged = false;
-    bool deviceLockChanged = false;
+   // bool deviceLockChanged = false;
     if (data.lockType != v) {
         data.lockType = v;
         lockTypeChanged = true;
