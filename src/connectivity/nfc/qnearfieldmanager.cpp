@@ -67,7 +67,7 @@ QTM_BEGIN_NAMESPACE
     NFC Forum devices support two modes of communications.  The first mode, peer-to-peer
     communications, is used to communicate between two NFC Forum devices.  The second mode,
     master/slave communications, is used to communicate between an NFC Forum device and an NFC
-    Forum Tag or Contactess Card.  The targetDetected() signal is emitted when a target device
+    Forum Tag or Contactless Card.  The targetDetected() signal is emitted when a target device
     enters communications range.  Communications can be initiated from the slot connected to this
     signal.
 
@@ -104,7 +104,36 @@ QTM_BEGIN_NAMESPACE
     and using system resources.
 
     The process of registering the handler is different on each platform. The platform specifics
-    are documented in the sections below.
+    are documented in the sections below. Qt Mobility provides a tool, \c {ndefhandlergen}, to
+    generate the platform specific registration files. The output of \c {ndefhandlergen -help} is
+    reproduced here for convenience:
+
+    \code
+        Generate platform specific NFC message handler registration files.
+        Usage: nfcxmlgen [options]
+
+            -template TEMPLATE    Template to use.
+            -appname APPNAME      Name of the application.
+            -apppath APPPATH      Path to installed application binary.
+            -datatype DATATYPE    URN of the NDEF message type to match.
+            -match MATCHSTRING    Platform specific match string.
+
+        The -datatype and -match options are mutually exclusive.
+
+        Available templates: maemo6, symbian
+    \endcode
+
+    A typical invocation of the \c ndefhandlergen tool for Symbian^3 target:
+
+    \code
+        ndefhandlergen -template symbian -appname myapplication -datatype urn:nfc:ext:com.example:f
+    \endcode
+
+    and for Maemo6 target:
+
+    \code
+        ndefhandlergen -template maemo6 -appname myapplication -apppath /usr/bin/myapplication -datatype urn:nfc:ext:com.example:f
+    \endcode
 
     Once the application has been registered as an NDEF message handler, the application only needs
     to call the registerNdefMessageHandler() function:
@@ -120,28 +149,12 @@ QTM_BEGIN_NAMESPACE
     On Symbian^3 an xml file needs to be created and installed into a particular directory on the
     device. The format of the xml is given below.
 
-    \code
-        <?xml version="1.0" encoding="UTF-8"?>
-        <SFW version="1.1">
-            <service>
-                <name>%APPNAME%</name>
-                <ipcaddress>%APPNAME%</ipcaddress>
-                <description>NFC NDEF Message handler</description>
-                <interface>
-                    <name>com.nokia.qtmobility.nfc.NdefMessageHandler</name>
-                    <version>1.0</version>
-                    <description>nfc service provider</description>
-                    <capabilities></capabilities>
-                    <customproperty key="datatype">urn:nfc:ext:com.example:f</customproperty>
-                </interface>
-            </service>
-        </SFW>
-    \endcode
+    \quotefile tools/ndefhandlergen/templates/symbian/symbian.xml
 
-    The \i name and \i ipcaddress tags need to be changed to match the name of the application. The
-    \i description tags should be used to describe the application, however these values are not
-    used. The \i customproperty tag must be set with the NDEF record type to match. For example the
-    following would be used to match NDEF messages that contain a RTD-URI record:
+    The \i {%APPNAME%} tags need to be changed to match the name of the application. The
+    \i description xml tags should be used to describe the application, however these values are
+    not used. The \i {%DATATYPE%} tag must be set with the NDEF record type to match  For example
+    the following would be used to match NDEF messages that contain a RTD-URI record:
 
     \code
         <customproperty key="datatype">urn:nfc:wkt:U</customproperty>
@@ -154,8 +167,8 @@ QTM_BEGIN_NAMESPACE
         <customproperty key="datatype">urn:nfc:ext:com.example:f</customproperty>
     \endcode
 
-    The value of the \i customproperty tag can be set to any valid match string supported by the
-    Symbian^3 platform.
+    The value of the \i customproperty xml tag can be set to any valid match string supported by
+    the Symbian^3 platform.
 
     It is recommended to name the xml file after the application package name. For example
     myapplication.xml. To install the above xml file into the correct location the following should
@@ -179,29 +192,17 @@ QTM_BEGIN_NAMESPACE
     To register the D-Bus service the two files need to be created and installed into particular
     directories on the device. The first file is the D-Bus bus configuration file:
 
-    \code
-        <busconfig>
-            <!-- we trust that no one else is going to squat on our service -->
-            <policy context="default">
-                <allow own="com.nokia.qtmobility.nfc.%APPNAME%"/>
-            </policy>
-        </busconfig>
-    \endcode
+    \quotefile tools/ndefhandlergen/templates/maemo6/maemo6.conf
 
-    The \i {%APPNAME%} string must be replaced with the name of your application binary.
+    The \i {%APPNAME%} tag must be replaced with the name of your application binary.
 
     The second file is a D-Bus service file which is used by the D-Bus daemon to launch your
     application.
 
-    \code
-        [D-BUS Service]
-        Name=com.nokia.qtmobility.nfc.%APPNAME%
-        Exec=/path/to/application/binary
-        User=user
-    \endcode
+    \quotefile tools/ndefhandlergen/templates/maemo6/maemo6.service
 
-    The \i {%APPNAME%} string must be replace with the name of your application binary. The
-    \i Exec value must be replaced with the path to your installed application binary.
+    The \i {%APPNAME%} tag must be replace with the name of your application binary and the
+    \i {%APPPATH%} tag must be replaced with the path to your installed application binary.
 
     It is recommended to name these files after the application package name. For example
     myapplication.conf and myapplication.service. To install the above files into the correct
@@ -223,16 +224,7 @@ QTM_BEGIN_NAMESPACE
     ensure that the following command (or similar) is executed once at installation time. For
     example in the packages post-installation script.
 
-    \code
-        dbus-send --system --type=method_call --dest=com.nokia.nfc / \
-            com.nokia.nfc.Manager.RegisterNDEFHandler \
-                string:system \
-                string:com.nokia.qtmobility.nfc.%APPNAME% \
-                objpath:/com/nokia/nfc/ndefhandler \
-                string:any \
-                string:"%DATATYPE%[1:*];" \
-                string:%APPNAME%
-    \endcode
+    \quotefile tools/ndefhandlergen/templates/maemo6/maemo6.postinst
 
     The \i {%APPNAME%} string must be replaced with the name of the application binary. The
     \i {%DATATYPE%} string must be replaced with the NDEF record type to match. For example the
@@ -249,19 +241,14 @@ QTM_BEGIN_NAMESPACE
         string:"urn:nfc:ext:example.com:f[1:*];"
     \endcode
 
-    The value of the datatype string argument can be set to any valid match string supported by the
-    Maemo6 platform.
+    Note that \c {[1:*]} indicates one or more records of the specified type must be in the NDEF
+    message. The value of the datatype string argument can be set to any valid match string
+    supported by the Maemo6 platform.
 
     The NDEF message handler should be unregistered at uninstallation time. For example in the
     packages pre-removal script.
 
-    \code
-        dbus-send --system --type=method_call --dest=com.nokia.nfc / \
-            com.nokia.nfc.Manager.UnregisterNDEFHandler \
-                string:system \
-                string:com.nokia.qtmobility.nfc.%APPNAME% \
-                objpath:/com/nokia/nfc/ndefhandler
-    \endcode
+    \quotefile tools/ndefhandlergen/templates/maemo6/maemo6.prerm
 
     The \i {%APPNAME%} string must be replace with the name of the application binary.
 */
