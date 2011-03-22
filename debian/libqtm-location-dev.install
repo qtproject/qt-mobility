@@ -6,6 +6,7 @@ usr/include/qt4/QtLocation/QGeoBoundingCircle
 usr/include/qt4/QtLocation/QGeoCoordinate
 usr/include/qt4/QtLocation/QGeoManeuver
 usr/include/qt4/QtLocation/QGeoMapCircleObject
+usr/include/qt4/QtLocation/QGeoMapCustomObject
 usr/include/qt4/QtLocation/QGeoMapData
 usr/include/qt4/QtLocation/QGeoMapGroupObject
 usr/include/qt4/QtLocation/QGeoMapObject
