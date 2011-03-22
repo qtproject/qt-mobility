@@ -1,8 +1,23 @@
 qt-mobility (1.2.0~git20110322) unstable; urgency=low
 
-  *
+  * Fixes: NB#214642
+  * Fixes: NB#225304
+  * Fixes: NB#228981
+  * Fixes: NB#231517
+  * Fixes: NB#227945
+  * Fixes: NB#171536
+  * Fixes: NB#227809
+  * Fixes: NB#222904
+  * Fixes: NB#220391
+  * Fixes: NB#236535
+  * Fixes: NB#201280
+  * Fixes: NB#217488
+  * Fixes: NB#218428
+  * Fixes: NB#228853
+  * Fixes: NB#220661
+  * Fixes: NB#228065
 
- -- Sunil Thaha <sunil.thaha@nokia.com>  Tue, 22 Mar 2011 13:59:48 +1000
+ -- Janne Hamalainen <janne.a.hamalainen@nokia.com>  Tue, 22 Mar 2011 13:59:48 +1000
 
 qt-mobility (1.2.0~git20110314) unstable; urgency=low
 
