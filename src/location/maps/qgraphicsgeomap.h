@@ -123,6 +123,8 @@ public:
     void setConnectivityMode(ConnectivityMode connectivityMode);
     ConnectivityMode connectivityMode() const;
 
+    bool supportsCustomMapObjects() const;
+
     QList<QGeoMapObject*> mapObjects() const;
     void addMapObject(QGeoMapObject *mapObject);
     void removeMapObject(QGeoMapObject *mapObject);

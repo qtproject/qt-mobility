@@ -159,6 +159,21 @@ void QGeoMapCustomObject::setOffset(const QPoint &offset)
     The new value will be \a offset.
 */
 
+void QGeoMapCustomObject::setOrigin(const QGeoCoordinate &origin)
+{
+    QGeoMapObject::setOrigin(origin);
+}
+
+void QGeoMapCustomObject::setUnits(const CoordinateUnit &unit)
+{
+    QGeoMapObject::setUnits(unit);
+}
+
+void QGeoMapCustomObject::setTransformType(const TransformType &type)
+{
+    QGeoMapObject::setTransformType(type);
+}
+
 /*******************************************************************************
 *******************************************************************************/
 

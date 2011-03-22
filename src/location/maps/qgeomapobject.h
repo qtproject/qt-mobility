@@ -123,12 +123,12 @@ public:
     QGeoMapObjectInfo *info() const;
 
     QGeoCoordinate origin() const;
-    void setOrigin(const QGeoCoordinate &origin);
-
     CoordinateUnit units() const;
-    void setUnits(const CoordinateUnit &unit);
-
     TransformType transformType() const;
+
+protected:
+    void setOrigin(const QGeoCoordinate &origin);
+    void setUnits(const CoordinateUnit &unit);
     void setTransformType(const TransformType &type);
 
 Q_SIGNALS:
