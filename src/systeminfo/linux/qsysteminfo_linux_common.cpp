@@ -831,6 +831,15 @@ QString QSystemNetworkInfoLinuxCommonPrivate::networkName(QSystemNetworkInfo::Ne
             QConnmanServiceInterface service(path.path(),this);
             if (service.isValid()) {
                 netname = service.getName();
+                if (netname.isEmpty()) {
+                    netname = service.getAPN();
+                }
+                if (netname.isEmpty()) {
+                    netname = service.getDomains().join(" ");
+                }
+                if (netname.isEmpty()) {
+                    netname = service.getMacAddress();
+                }
             }
         }
     }
@@ -920,8 +929,18 @@ QString QSystemNetworkInfoLinuxCommonPrivate::macAddress(QSystemNetworkInfo::Net
         foreach (const QString &servicePath, connmanManager->getServices()) {
             QConnmanServiceInterface *serviceIface;
             serviceIface = new QConnmanServiceInterface(servicePath,this);
+
             if(serviceIface->getType() == modeToTechnology(mode)) {
-                return QNetworkInterface::interfaceFromName(serviceIface->getInterface()).hardwareAddress();
+                if( mode ==  QSystemNetworkInfo::WlanMode
+                        || mode == QSystemNetworkInfo::EthernetMode
+                        || mode == QSystemNetworkInfo::BluetoothMode) {
+                    return QNetworkInterface::interfaceFromName(serviceIface->getInterface()).hardwareAddress();
+                } else {
+                    QOfonoConnectionContextInterface context(servicePath);
+                  //  if (context.active()) {
+                       return QNetworkInterface::interfaceFromName(context.interface()).hardwareAddress();
+                 //   }
+                }
             }
         }
     }
@@ -3824,12 +3843,12 @@ void QSystemBatteryInfoLinuxCommonPrivate::getBatteryStats()
                 cVoltage = powerDevice.voltage();
                 cEnergy = (powerDevice.energyDischargeRate() / cVoltage) * 1000;
                 cLevel = powerDevice.percentLeft();
-                capacity = (powerDevice.energyWhenFull() / cVoltage) * 1000;
+                capacity = (powerDevice.energyWhenFull()) * 1000;
                 cTime = powerDevice.timeToFull();
                 if (cState != QSystemBatteryInfo::Charging) {
                     cTime = -1;
                 }
-                rEnergy = (powerDevice.currentEnergy() / cVoltage) * 1000;
+                rEnergy = (powerDevice.currentEnergy()) * 1000;
                 cVoltage =  powerDevice.voltage() * 1000; // mV
                 break;
             }
@@ -4113,7 +4132,7 @@ void QSystemBatteryInfoLinuxCommonPrivate::uPowerPropertyChanged(const QString &
  //   qDebug() << __FUNCTION__ << prop << v;
 
    if (prop == QLatin1String("Energy")) {
-        remainingEnergy = (v.toDouble() /  battery->voltage()) * 1000;
+        remainingEnergy = (v.toDouble()) * 1000;
         emit remainingCapacityChanged(remainingEnergy);
     } else if (prop == QLatin1String("EnergyRate")) {
         dischargeRate = (v.toDouble() / battery->voltage()) * 1000;
