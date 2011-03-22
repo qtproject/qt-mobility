@@ -40,15 +40,21 @@
 
 import Qt 4.7
 import QtMobility.systeminfo 1.1
+import Qt.labs.particles 1.0
 
 Rectangle {
     id: screen
     width: 360
-    height: 360
-
+    height: 640
+    property alias batlevel: batinfo.battlevel;
+    property int speed: level2Speed(batlevel);
 
     BatteryInfo {
         id: batinfo;
+
+        property int battlevel: remainingCapacityPercent;
+        property string oldstate;
+
         monitorChargerTypeChanges: true
         monitorChargingStateChanges: true
         monitorBatteryStatusChanges: true
@@ -82,15 +88,7 @@ Rectangle {
         }
 
         onChargingStateChanged: {
-            if(batinfo.chargingState == -1) {
-                chargeState.text = "Charging State: Not Charging / Error"
-            }
-            if(batinfo.chargingState == 0) {
-                chargeState.text = "Charging State: Not Charging"
-            }
-            if(batinfo.chargingState == 1) {
-                chargeState.text = "Charging State: Charging"
-            }
+            getPowerState();
         }
         onBatteryStatusChanged: {
             if(batinfo.batteryStatus == -1) {
@@ -107,6 +105,7 @@ Rectangle {
             }
             if(batinfo.batteryStatus == 3) {
                 batStat.text = "Battery Low"
+                img.width = 20; img.height = 20;
             }
             if(batinfo.batteryStatus == 4) {
                 batStat.text = "Battery Ok"
@@ -115,45 +114,109 @@ Rectangle {
                 batStat.text = "Battery Full"
             }
         }
-        onRemainingCapacityPercentChanged: { leveltext.text = "Level: "+ remainingCapacityPercent }
-        onRemainingCapacityChanged: { remCap.text = "Remaining Capacity: "+ batinfo.remainingCapacity; }
+        onRemainingCapacityPercentChanged: doBatteryLevelChange(level)
 
-        onRemainingChargingTimeChanged: { chargeTime.text = "Charge time: "+ batinfo.remainingChargingTime; }
-        onCurrentFlowChanged: { curFLow.text = "Current Energy: "+ batinfo.currentFlow; }
-    property alias batState : batinfo.chargingState
+        onRemainingCapacityChanged: { remCap.text = "Remaining Capacity: "+ batinfo.remainingCapacity+" "+getEnergyUnit(); }
+
+        onRemainingChargingTimeChanged: { chargeTime.text = "Time to full: "+ (batinfo.remainingChargingTime/60.00) +" minutes"; }
+        onCurrentFlowChanged: {
+            curFLow.text = "Current Energy: "+ batinfo.currentFlow +" "+ getEnergyUnit();
+        }
+        property alias batState : batinfo.chargingState
+
+        Component.onCompleted: getPowerState();
+    }
+
+    function level2Speed(level) {
+        if(level > 90) {
+            return 1000;
+        } else if(level > 70) {
+            return 1500;
+        } else if(level > 60) {
+            return 2000;
+        } else if(level > 50) {
+            return 2500;
+        } else if(level > 40) {
+            return 3000;
+        } else if(level > 10) {
+            return 3500;
+        } else if(level < 11) {
+            return 4000;
+        }
+    }
+
+    function doBatteryLevelChange(level) {
+        leveltext.text = "Level: "+ level +"%"
+        floorParticles.burst(level);
+        batlevel = level;
+        batinfo.oldstate = img.state;
+        img.state = "levelchange"
+        img.state = batinfo.oldstate;
+        getPowerState();
+    }
+
+    function getPowerState() {
+        if (batinfo.chargingState == 0) {
+            chargeState.text = "Charging State: Not Charging"
+            if (batinfo.chargerType == 0) {
+                img.state = "Battery"
+                batinfo.oldstate = img.state;
+            } else {
+                img.state = "WallPower"
+                batinfo.oldstate = img.state;
+            }
+        }
+        if(batinfo.chargingState == 1) {
+            chargeState.text = "Charging State: Charging"
+            img.state = "Charging"
+            batinfo.oldstate = img.state;
+        }
     }
 
     Text {
         id: leveltext
         anchors.centerIn: parent
-        text: "Level "+batinfo.remainingCapacityPercent
+        text: "Level: "+batinfo.remainingCapacityPercent +"%"
     }
     Text {
         id: voltagetext
         anchors{ horizontalCenter: leveltext.horizontalCenter; top: leveltext.bottom}
-        text: "Voltage: "+ batinfo.voltage
+        text: "Voltage: "+ batinfo.voltage +" mV"
     }
     Text {
         id: nomCap
         anchors{ horizontalCenter: leveltext.horizontalCenter; top: voltagetext.bottom}
-        text: "Nominal Capacity: "+ batinfo.nominalCapacity
+        text: "Nominal Capacity: "+ batinfo.nominalCapacity +" mAh"
     }
     Text {
         id: remCap
         anchors{ horizontalCenter: leveltext.horizontalCenter; top: nomCap.bottom}
-        text: "Remaining Capacity: "+ batinfo.remainingCapacity
+        text: "Remaining Capacity: "+ batinfo.remainingCapacity +" "+getEnergyUnit()
     }
     Text {
         id: chargeTime
         anchors{ horizontalCenter: leveltext.horizontalCenter; top: remCap.bottom}
-        text: "Charge time: "+ batinfo.remainingChargingTime;
+        text: "Time to full: "+ (batinfo.remainingChargingTime/60.00) +" minutes";
 
     }
     Text {
         id: curFLow
         anchors{ horizontalCenter: leveltext.horizontalCenter; top: chargeTime.bottom}
-        text: "Current Energy: "+ batinfo.currentFlow
+        text: "Current Energy: "+ batinfo.currentFlow +" "+getEnergyUnit()
     }
+
+    function getEnergyUnit() {
+        if (batinfo.energyMeasurementUnit == -1) {
+            return "Unknown energy unit"
+        }
+        if (batinfo.energyMeasurementUnit == 0) {
+            return "mAh"
+        }
+        if (batinfo.energyMeasurementUnit == 1) {
+            return "mWh"
+        }
+    }
+
     Text {
         id: batStat
         anchors{ horizontalCenter: leveltext.horizontalCenter; top: curFLow.bottom}
@@ -183,24 +246,8 @@ Rectangle {
     }
 
     Text {
-        id: energyUnit
-        anchors{ horizontalCenter: leveltext.horizontalCenter; top: batStat.bottom}
-        text: {
-            if(batinfo.energyMeasurementUnit == -1) {
-                energyUnit.text = "Unknown energy unit"
-            }
-            if(batinfo.energyMeasurementUnit == 0) {
-                energyUnit.text = "mAh"
-            }
-            if(batinfo.energyMeasurementUnit == 1) {
-                energyUnit.text = "mWh"
-            }
-        }
-    }
-
-    Text {
         id: chargertype
-        anchors{ horizontalCenter: leveltext.horizontalCenter; top: energyUnit.bottom}
+        anchors{ horizontalCenter: leveltext.horizontalCenter; top: batStat.bottom}
         text: {
             if(batinfo.chargerType == -1) {
                 chargertype.text = "Unknown Charger"
@@ -233,14 +280,158 @@ Rectangle {
                 chargeState.text = "Charging Unknown"
             }
             if(batinfo.chargingState == 0) {
-                chargeState.text = "Discharging"
+                chargeState.text = "Not Charging"
             }
             if(batinfo.chargingState == 1) {
                 chargeState.text = "Charging"
             }
         }
     }
+/////////////////////////
 
+    Particles {
+        id: floorParticles
+        anchors { horizontalCenter: screen.horizontalCenter; }
+        y: screen.height
+        width: 1
+        height: 1
+        source: "images/blueStar.png"
+        lifeSpan: 1000
+        count: batlevel
+        angle: 270
+        angleDeviation: 45
+        velocity: 50
+        velocityDeviation: 60
+        ParticleMotionGravity {
+            yattractor: 1000
+            xattractor: 0
+            acceleration: 5
+        }
+    }
+
+    function particleState() {
+        if(img.state == "Battery") {
+            particles.burst(50,200);
+        }
+    }
+
+
+    Image {
+        id: img;
+        source: "images/blueStone.png"
+        smooth: true
+        width: batinfo.battlevel; height: batinfo.battlevel;
+        anchors {
+            horizontalCenter: screen.horizontalCenter;
+        }
+        y: screen.height - img.height;
+        Particles {
+            id: particles
+            width:1; height:1; anchors.centerIn: parent;
+            emissionRate: 0;
+            lifeSpan: 700; lifeSpanDeviation: 300;
+            angle: 0; angleDeviation: 360;
+            velocity: 100; velocityDeviation:30;
+            source:"images/blueStar.png";
+        }
+
+        states: [
+        State {
+            name: "WallPower"
+            when: deviceinfo.currentPowerState == 2
+            StateChangeScript { script: particles.burst(50); }
+            PropertyChanges {
+                target: img; opacity: 1; source : "images/blueStone.png";
+                anchors.horizontalCenter: undefined
+                y: 0;  x: (screen.width / 2) - (img.width / 2)
+            }
+            PropertyChanges { target: floorParticles; count:0 }
+
+        },
+        State {
+            name: "Charging"
+            when: deviceinfo.currentPowerState == 3
+            StateChangeScript { script: particles.burst(50); }
+            PropertyChanges { target: img; y:screen.height
+            }
+            PropertyChanges {
+                target: img; opacity: 1; source : "images/yellowStone.png";
+                anchors.horizontalCenter: parent.horizontalCenter;
+            }
+            PropertyChanges { target: floorParticles; count:0 }
+        },
+
+        State {
+            name: "Battery"
+            when: deviceinfo.currentPowerState == 1
+            StateChangeScript { script: particles.burst(50); }
+            PropertyChanges {
+                target: img; source : "images/redStone.png";
+                anchors.horizontalCenter: parent.horizontalCenter;
+            }
+            PropertyChanges { target: floorParticles; count: batlevel }
+
+        },
+        State {
+            name: "levelchange"
+            PropertyChanges {
+                target: yAnim
+                running: false;
+            }
+
+            PropertyChanges {
+                target: bubblebounceanim
+                from: screen.height
+                to: screen.height - (screen.height * (batlevel / 100 ))
+            }
+            PropertyChanges {
+                target: yAnim
+                running: true;
+            }
+        }
+        ]
+
+
+        transitions: [
+        Transition {
+            from: "*"
+            to: "WallPower"
+            NumberAnimation{ property: "y"; to: 0; duration: 750; easing.type: Easing.InOutQuad; }
+        },
+        Transition {
+            from: "WallPower"
+            to: "*"
+            NumberAnimation{ property: "y"; to: screen.height; duration: 2000; easing.type: Easing.InOutQuad; }
+        }
+        ]
+
+        SequentialAnimation on y {
+            id: yAnim
+            loops: Animation.Infinite
+            running: img.state != "WallPower"
+            NumberAnimation {
+                id: bubblebounceanim;
+                from: screen.height; to: screen.height - (screen.height * (batlevel / 100 ))
+                easing.type: Easing.OutBounce; duration: speed
+            }
+            ScriptAction { script: particleState() }
+            PauseAnimation { duration: 750 }
+        }
+
+        SequentialAnimation on x {
+            running: img.state == "WallPower"
+            loops: Animation.Infinite
+            id: xanim
+            NumberAnimation { target: img; property: "x"; to: screen.width - img.width; duration: 1500;
+                easing.type: Easing.InOutQuad;  }
+            NumberAnimation { target: img; property: "x"; to: 0; duration: 1500;
+                easing.type: Easing.InOutQuad;}
+        }
+    }
+
+
+
+    /////////////////////////////////
     MouseArea {
         anchors.fill: parent
         onClicked: {

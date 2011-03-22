@@ -2616,7 +2616,7 @@ void QSystemBatteryInfoPrivate::getBatteryInfo()
             cTime = 0;
         }
         if (cTime != timeToFull) {
-            timeToFull = cTime;
+            timeToFull = cTime * 60;
             Q_EMIT remainingChargingTimeChanged(timeToFull);
         }
         capacity = [[(NSDictionary*)batDoctionary objectForKey:@"MaxCapacity"] intValue];
