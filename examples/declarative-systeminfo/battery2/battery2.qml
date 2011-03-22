@@ -189,7 +189,7 @@ Rectangle {
     Text {
         id: nomCap
         anchors{ horizontalCenter: leveltext.horizontalCenter; top: voltagetext.bottom}
-        text: "Nominal Capacity: "+ batinfo.nominalCapacity +" mAh"
+        text: "Nominal Capacity: "+ batinfo.nominalCapacity +" "+getEnergyUnit()
     }
     Text {
         id: remCap
@@ -205,7 +205,7 @@ Rectangle {
     Text {
         id: curFLow
         anchors{ horizontalCenter: leveltext.horizontalCenter; top: chargeTime.bottom}
-        text: "Current Energy: "+ batinfo.currentFlow +" "+getEnergyUnit()
+        text: "Current Energy: "+ batinfo.currentFlow +" mA"
     }
 
     function getEnergyUnit() {

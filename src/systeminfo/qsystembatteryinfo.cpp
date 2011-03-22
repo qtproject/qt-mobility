@@ -209,7 +209,7 @@ QSystemBatteryInfo::ChargingState QSystemBatteryInfo::chargingState() const
   \property QSystemBatteryInfo::nominalCapacity
   \brief The nominal battery capacity.
 
-    Returns the nominal (maximum) capacity of the battery, in milliampere-hours (mAh).
+    Returns the nominal (maximum) capacity of the battery, in QSystemBatteryInfo::EnergyUnit.
     If no battery is found, -1.
 */
 int QSystemBatteryInfo::nominalCapacity() const

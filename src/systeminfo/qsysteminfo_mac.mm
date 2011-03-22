@@ -2511,7 +2511,7 @@ QSystemBatteryInfo::BatteryStatus QSystemBatteryInfoPrivate::batteryStatus() con
 
 QSystemBatteryInfo::EnergyUnit QSystemBatteryInfoPrivate::energyMeasurementUnit()
 {
-    return QSystemBatteryInfo::UnitmWh;
+    return QSystemBatteryInfo::UnitmAh;
 }
 
 void QSystemBatteryInfoPrivate::getBatteryInfo()
@@ -2604,8 +2604,9 @@ void QSystemBatteryInfoPrivate::getBatteryInfo()
             currentVoltage = cVoltage;
         }
 
-        int amp = [[legacyDict objectForKey:@"Current"] intValue];
-        cEnergy = currentVoltage * amp / 1000;
+        int amp = /*[[legacyDict objectForKey:@"Current"] intValue];
+        capacity =*/ [[(NSDictionary*)batDoctionary objectForKey:@"Current"] intValue];
+        cEnergy = /*currentVoltage * */amp /*/ 1000*/;
         if (cEnergy != curChargeState ) {
             dischargeRate = cEnergy;
             Q_EMIT currentFlowChanged(dischargeRate);
