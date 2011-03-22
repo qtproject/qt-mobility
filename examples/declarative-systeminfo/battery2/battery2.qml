@@ -116,13 +116,8 @@ Rectangle {
             }
         }
         onRemainingCapacityPercentChanged: doBatteryLevelChange(level)
-
-        onRemainingCapacityChanged: { remCap.text = "Remaining Capacity: "+ batinfo.remainingCapacity+" "+getEnergyUnit(); }
-
         onRemainingChargingTimeChanged: { chargeTime.text = "Time to full: "+ minutesToFull() +" minutes"; }
-        onCurrentFlowChanged: {
-            curFLow.text = "Current Energy: "+ batinfo.currentFlow +" "+ getEnergyUnit();
-        }
+
         property alias batState : batinfo.chargingState
 
         Component.onCompleted: getPowerState();
