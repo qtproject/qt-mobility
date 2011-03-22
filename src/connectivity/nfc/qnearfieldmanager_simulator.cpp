@@ -182,7 +182,7 @@ bool QNearFieldManagerPrivateImpl::isAvailable() const
 
 void QNearFieldManagerPrivateImpl::targetEnteringProximity(const QByteArray &uid)
 {
-    QNearFieldTarget *target = m_targets.value(uid);
+    QNearFieldTarget *target = m_targets.value(uid).data();
     if (!target) {
         target = new Simulator::TagType1(uid, this);
         m_targets.insert(uid, target);
@@ -193,7 +193,7 @@ void QNearFieldManagerPrivateImpl::targetEnteringProximity(const QByteArray &uid
 
 void QNearFieldManagerPrivateImpl::targetLeavingProximity(const QByteArray &uid)
 {
-    QNearFieldTarget *target = m_targets.value(uid);
+    QNearFieldTarget *target = m_targets.value(uid).data();
     if (!target) {
         m_targets.remove(uid);
         return;
