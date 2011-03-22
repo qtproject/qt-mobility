@@ -42,8 +42,14 @@
 #include <QMessageBox>
 #include <QTimer>
 #include <math.h>
-
-
+#ifndef Q_CC_MINGW
+#ifdef Q_OS_WIN
+// silly MS
+inline float round(float x) {
+      return floor(x+0.5);
+   }
+#endif
+#endif
 Dialog::Dialog() :
     QWidget(),
     saver(NULL), systemInfo(NULL), di(NULL), ni(NULL),sti(NULL),bi(NULL),dis(NULL)
