@@ -164,7 +164,6 @@ void QGeoMapGroupObject::addChildObject(QGeoMapObject *childObject)
                                                     childObject,
                                                     mapObjectLessThan);
     d_ptr->children.insert(i, childObject);
-    update();
 
     connect(childObject, SIGNAL(zValueChanged(int)),
             d_ptr, SLOT(childChangedZValue(int)));
@@ -190,14 +189,14 @@ void QGeoMapGroupObject::removeChildObject(QGeoMapObject *childObject)
         emit childRemoved(childObject);
         childObject->setMapData(0);
 
-        if (this->mapData()) {
-            QGeoMapObjectEngine *oe = this->mapData()->d_ptr->oe;
-            if (oe)
-                oe->removeObject(childObject);
-        }
+//        if (this->mapData()) {
+//            QGeoMapObjectEngine *oe = this->mapData()->d_ptr->oe;
+//            if (oe)
+//                oe->removeObject(childObject);
+//        }
     }
 
-    update();
+//    update();
 }
 
 /*!
@@ -215,22 +214,13 @@ QList<QGeoMapObject*> QGeoMapGroupObject::childObjects() const
 */
 void QGeoMapGroupObject::clearChildObjects()
 {
-    for (int i = 0; i < d_ptr->children.size(); ++i) {
-        emit childRemoved(d_ptr->children[i]);
-        d_ptr->children[i]->setMapData(0);
-
-        if (this->mapData()) {
-            QGeoMapObjectEngine *oe = this->mapData()->d_ptr->oe;
-            if (oe)
-                oe->removeObject(d_ptr->children[i]);
-        }
-
-        delete d_ptr->children[i];
+    for (int i = d_ptr->children.size() - 1; i >=0; --i) {
+        QGeoMapObject* child = d_ptr->children[i];
+        removeChildObject(child);
+        delete child;
     }
 
     d_ptr->children.clear();
-
-    update();
 }
 
 /*!
@@ -242,8 +232,6 @@ void QGeoMapGroupObject::setVisible(bool visible)
         d_ptr->children[i]->setVisible(visible);
 
     QGeoMapObject::setVisible(visible);
-
-    update();
 }
 
 /*!
@@ -302,7 +290,7 @@ void QGeoMapGroupObjectPrivate::childChangedZValue(int zValue)
                                                         child,
                                                         mapObjectLessThan);
         children.insert(i, child);
-        q_ptr->update();
+        emit q_ptr->childUpdated(child);
     }
 }
 

@@ -46,7 +46,6 @@
 
 #include <QList>
 #include <QPen>
-#include <QGraphicsPathItem>
 
 QTM_BEGIN_NAMESPACE
 
@@ -57,9 +56,7 @@ public:
     ~QGeoMapPolylineObjectPrivate();
 
     QList<QGeoCoordinate> path;
-    QGraphicsPathItem *item;
-
-    void genPath();
+    QPen pen;
 };
 
 QTM_END_NAMESPACE

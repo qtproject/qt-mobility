@@ -533,7 +533,7 @@ void tst_QGeoMapPixmapObject::contains()
 
     QPointF point = map->coordinateToScreenPosition(coordinate);
 
-    bool contains = map->mapObjectsAtScreenPosition(point).size() == 1;
+    bool contains = (map->mapObjectsAtScreenPosition(point).size() == 1);
 
     QCOMPARE(object->contains(coordinate), contains);
 

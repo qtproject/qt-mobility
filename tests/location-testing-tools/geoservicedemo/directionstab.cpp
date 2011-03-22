@@ -278,12 +278,30 @@ void DirectionsTab::getDirections()
 
 void DirectionsTab::searchStartFinished()
 {
-    if (m_startReply->error() == QGeoSearchReply::NoError) {
-        QList<QGeoPlace> places = m_startReply->places();
-        m_start = places[0];
+    if (m_endReply && m_endReply->isFinished() &&
+        (m_startReply->places().isEmpty() || m_endReply->places().isEmpty())) {
 
-        if (m_endReply && m_endReply->isFinished())
-            getDirections();
+        m_resultList->clear();
+        if (m_startReply->places().isEmpty())
+            m_resultList->addItem("\nError! Start place search returned 0 results\n");
+        if (m_endReply->places().isEmpty())
+            m_resultList->addItem("\nError! End place search returned 0 results\n");
+
+        m_startReply->deleteLater();
+        m_startReply = 0;
+        m_endReply->deleteLater();
+        m_endReply = 0;
+        return;
+    }
+
+    if (m_startReply->error() == QGeoSearchReply::NoError) {
+        if (!m_startReply->places().isEmpty()) {
+            QList<QGeoPlace> places = m_startReply->places();
+            m_start = places[0];
+
+            if (m_endReply && m_endReply->isFinished())
+                getDirections();
+        }
     } else {
         m_startReply->deleteLater();
         m_startReply = 0;
@@ -292,17 +310,34 @@ void DirectionsTab::searchStartFinished()
 
 void DirectionsTab::searchEndFinished()
 {
+    if (m_startReply && m_startReply->isFinished() &&
+        (m_startReply->places().isEmpty() || m_endReply->places().isEmpty())) {
+
+        m_resultList->clear();
+        if (m_startReply->places().isEmpty())
+            m_resultList->addItem("\nError! Start place search returned 0 results\n");
+        if (m_endReply->places().isEmpty())
+            m_resultList->addItem("\nError! End place search returned 0 results\n");
+
+        m_startReply->deleteLater();
+        m_startReply = 0;
+        m_endReply->deleteLater();
+        m_endReply = 0;
+        return;
+    }
+
     if (m_endReply->error() == QGeoSearchReply::NoError) {
-        QList<QGeoPlace> places = m_endReply->places();
-        m_end = places[0];
-           
-        if (m_startReply && m_startReply->isFinished())
-            getDirections();
+        if (!m_endReply->places().isEmpty()) {
+            QList<QGeoPlace> places = m_endReply->places();
+            m_end = places[0];
+
+            if (m_startReply && m_startReply->isFinished())
+                getDirections();
+        }
     } else {
         m_endReply->deleteLater();
         m_endReply = 0;
     }
-    
 }
 
 void DirectionsTab::addDirection(const QString& icon, const QString& text, const QColor& color)

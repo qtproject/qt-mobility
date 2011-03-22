@@ -53,6 +53,7 @@ QTM_BEGIN_NAMESPACE
 using namespace QtSimulatorPrivate;
 
 Q_GLOBAL_STATIC(QAmbientLightReadingData, qtAmbientLightData)
+Q_GLOBAL_STATIC(QLightReadingData, qtLightData)
 Q_GLOBAL_STATIC(QAccelerometerReadingData, qtAccelerometerData)
 Q_GLOBAL_STATIC(QMagnetometerReadingData, qtMagnetometerData)
 Q_GLOBAL_STATIC(QCompassReadingData, qtCompassData)
@@ -88,6 +89,11 @@ namespace Simulator
     void SensorsConnection::setAmbientLightData(const QAmbientLightReadingData &data)
     {
         *qtAmbientLightData() = data;
+    }
+
+    void SensorsConnection::setLightData(const QLightReadingData &data)
+    {
+        *qtLightData() = data;
     }
 
     void SensorsConnection::setAccelerometerData(const QAccelerometerReadingData &data)
@@ -177,6 +183,11 @@ QMagnetometerReadingData get_qtMagnetometerData()
 QAmbientLightReadingData get_qtAmbientLightData()
 {
     return *qtAmbientLightData();
+}
+
+QLightReadingData get_qtLightData()
+{
+    return *qtLightData();
 }
 
 QCompassReadingData get_qtCompassData()

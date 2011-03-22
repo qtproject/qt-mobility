@@ -13,7 +13,7 @@ PKGCONFIG += \
     gstreamer-base-0.10 \
     gstreamer-interfaces-0.10 \
     gstreamer-audio-0.10 \
-    gstreamer-video-0.10
+    gstreamer-video-0.10 \
+    gstreamer-app-0.10
 
-LIBS += -lgstapp-0.10
 

@@ -13,7 +13,6 @@ INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
 SOURCES += main.cpp
 
     LIBS += -lcommdb \
-            -lapsettingshandlerui \
             -lconnmon \
             -lcentralrepository \
             -lesock \

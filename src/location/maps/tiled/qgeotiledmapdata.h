@@ -70,6 +70,8 @@ public:
 
     void setMapType(QGraphicsGeoMap::MapType mapType);
 
+    void setConnectivityMode(QGraphicsGeoMap::ConnectivityMode connectivityMode);
+
     virtual QGeoBoundingBox viewport() const;
     virtual void fitInViewport(const QGeoBoundingBox &bounds, bool preserveViewportCenter = false);
 
@@ -105,6 +107,7 @@ private:
     Q_DECLARE_PRIVATE(QGeoTiledMapData)
     Q_DISABLE_COPY(QGeoTiledMapData)
     friend class QGeoTiledMappingManagerEngine;
+    friend class QGeoTiledMapObjectInfo;
 };
 
 QTM_END_NAMESPACE

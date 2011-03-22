@@ -113,6 +113,22 @@ corresponding values that can be assigned to \c MOBILITY.
     \o feedback
 \endtable
 
+In addition the Mobility version and installed modules can be checked from within qmake project files. The associated module name for such tests is the same as above:
+
+\code
+    load(mobilityconfig)
+    contains(MOBILITY_VERSION, 1.1.1) {
+        message(Mobility 1.1.1 detected)
+    }
+    contains(MOBILITY_CONFIG, contacts) {
+        message(Contacts API available)
+        CONFIG+=mobility
+        MOBILITY+=contacts
+    } else {
+        message(Contacts API not available)
+    }
+\endcode
+
 When developing on Symbian we will also need to add the required capabilites to the project file in order to satisfy the Symbian security model.
 This can be achieved with a line such as the following:
 
