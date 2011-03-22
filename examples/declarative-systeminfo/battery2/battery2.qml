@@ -48,6 +48,7 @@ Rectangle {
     height: 640
     property alias batlevel: batinfo.battlevel;
     property int speed: level2Speed(batlevel);
+    property bool hasBattery: (batinfo.batteryStatus != -1)
 
     BatteryInfo {
         id: batinfo;
@@ -118,13 +119,20 @@ Rectangle {
 
         onRemainingCapacityChanged: { remCap.text = "Remaining Capacity: "+ batinfo.remainingCapacity+" "+getEnergyUnit(); }
 
-        onRemainingChargingTimeChanged: { chargeTime.text = "Time to full: "+ (batinfo.remainingChargingTime/60.00) +" minutes"; }
+        onRemainingChargingTimeChanged: { chargeTime.text = "Time to full: "+ minutesToFull() +" minutes"; }
         onCurrentFlowChanged: {
             curFLow.text = "Current Energy: "+ batinfo.currentFlow +" "+ getEnergyUnit();
         }
         property alias batState : batinfo.chargingState
 
         Component.onCompleted: getPowerState();
+    }
+
+    function minutesToFull() {
+        if (batinfo.remainingChargingTime > 0) {
+          return (batinfo.remainingChargingTime/60.00)
+        }
+        return 0;
     }
 
     function level2Speed(level) {
@@ -196,7 +204,7 @@ Rectangle {
     Text {
         id: chargeTime
         anchors{ horizontalCenter: leveltext.horizontalCenter; top: remCap.bottom}
-        text: "Time to full: "+ (batinfo.remainingChargingTime/60.00) +" minutes";
+        text: "Time to full: "+ minutesToFull() +" minutes";
 
     }
     Text {
