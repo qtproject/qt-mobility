@@ -44,6 +44,8 @@
 
 #include "qnearfieldmanagervirtualbase_p.h"
 
+#include <QtCore/QWeakPointer>
+
 QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
@@ -68,7 +70,7 @@ private slots:
 
 private:
     Simulator::NfcConnection *nfcConnection;
-    QMap<QByteArray, QNearFieldTarget *> m_targets;
+    QMap<QByteArray, QWeakPointer<QNearFieldTarget> > m_targets;
 };
 
 QTM_END_NAMESPACE

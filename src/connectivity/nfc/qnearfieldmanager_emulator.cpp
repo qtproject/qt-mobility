@@ -73,7 +73,7 @@ void QNearFieldManagerPrivateImpl::reset()
 
 void QNearFieldManagerPrivateImpl::tagActivated(TagBase *tag)
 {
-    QNearFieldTarget *target = m_targets.value(tag);
+    QNearFieldTarget *target = m_targets.value(tag).data();
     if (!target) {
         if (dynamic_cast<NfcTagType1 *>(tag))
             target = new TagType1(tag, this);
@@ -90,9 +90,11 @@ void QNearFieldManagerPrivateImpl::tagActivated(TagBase *tag)
 
 void QNearFieldManagerPrivateImpl::tagDeactivated(TagBase *tag)
 {
-    QNearFieldTarget *target = m_targets.value(tag);
-    if (!target)
+    QNearFieldTarget *target = m_targets.value(tag).data();
+    if (!target) {
+        m_targets.remove(tag);
         return;
+    }
 
     targetDeactivated(target);
 }

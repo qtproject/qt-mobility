@@ -194,8 +194,10 @@ void QNearFieldManagerPrivateImpl::targetEnteringProximity(const QByteArray &uid
 void QNearFieldManagerPrivateImpl::targetLeavingProximity(const QByteArray &uid)
 {
     QNearFieldTarget *target = m_targets.value(uid);
-    if (!target)
+    if (!target) {
+        m_targets.remove(uid);
         return;
+    }
 
     targetDeactivated(target);
 }

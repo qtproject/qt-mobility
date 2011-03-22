@@ -102,14 +102,17 @@ void tst_QNearFieldManager::initTestCase()
 void tst_QNearFieldManager::targetDetected_data()
 {
     QTest::addColumn<QNearFieldTarget::Type>("type");
+    QTest::addColumn<bool>("deleteTarget");
 
-    QTest::newRow("AnyTarget") << QNearFieldTarget::AnyTarget;
-    QTest::newRow("NfcTagType1") << QNearFieldTarget::NfcTagType1;
+    QTest::newRow("AnyTarget") << QNearFieldTarget::AnyTarget << false;
+    QTest::newRow("NfcTagType1") << QNearFieldTarget::NfcTagType1 << false;
+    QTest::newRow("Delete Target") << QNearFieldTarget::AnyTarget << true;
 }
 
 void tst_QNearFieldManager::targetDetected()
 {
     QFETCH(QNearFieldTarget::Type, type);
+    QFETCH(bool, deleteTarget);
 
     QNearFieldManagerPrivateImpl *emulatorBackend = new QNearFieldManagerPrivateImpl;
     QNearFieldManager manager(emulatorBackend, 0);
@@ -129,13 +132,23 @@ void tst_QNearFieldManager::targetDetected()
 
     QVERIFY(!target->uid().isEmpty());
 
-    QTRY_VERIFY(!targetLostSpy.isEmpty());
+    if (!deleteTarget) {
+        QTRY_VERIFY(!targetLostSpy.isEmpty());
 
-    QNearFieldTarget *lostTarget = targetLostSpy.first().at(0).value<QNearFieldTarget *>();
+        QNearFieldTarget *lostTarget = targetLostSpy.first().at(0).value<QNearFieldTarget *>();
 
-    QCOMPARE(target, lostTarget);
+        QCOMPARE(target, lostTarget);
 
-    QVERIFY(!disconnectedSpy.isEmpty());
+        QVERIFY(!disconnectedSpy.isEmpty());
+    } else {
+        delete target;
+
+        // wait for another targetDetected() without a targetLost() signal in between.
+        targetDetectedSpy.clear();
+        targetLostSpy.clear();
+
+        QTRY_VERIFY(targetLostSpy.isEmpty() && !targetDetectedSpy.isEmpty());
+    }
 
     manager.stopTargetDetection();
 }
