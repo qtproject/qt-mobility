@@ -60,7 +60,7 @@ S60MediaPlayerSession::S60MediaPlayerSession(QObject *parent)
     , m_muted(false)
     , m_volume(0)
     , m_state(QMediaPlayer::StoppedState)
-    , m_mediaStatus(QMediaPlayer::UnknownMediaStatus)
+    , m_mediaStatus(QMediaPlayer::NoMedia)
     , m_progressTimer(new QTimer(this))
     , m_stalledTimer(new QTimer(this))
     , m_error(KErrNone)
@@ -110,6 +110,8 @@ void S60MediaPlayerSession::setVolume(int volume)
         return;
     
     m_volume = volume;
+    emit volumeChanged(m_volume);
+
     // Dont set symbian players volume until media loaded.
     // Leaves with KerrNotReady although documentation says otherwise.
     if (!m_muted && 
@@ -119,11 +121,7 @@ void S60MediaPlayerSession::setVolume(int volume)
         || mediaStatus() == QMediaPlayer::BufferedMedia
         || mediaStatus() == QMediaPlayer::EndOfMedia)) {
         TRAPD(err, doSetVolumeL(m_volume));
-
-        if (KErrNone == err)
-            emit volumeChanged(m_volume);
-        else
-            setError(err);
+        setError(err);
     }
     DP0("S60MediaPlayerSession::setVolume ---");
 }
@@ -242,11 +240,13 @@ void S60MediaPlayerSession::play()
 {
     DP0("S60MediaPlayerSession::play +++");
 
-    if (state() == QMediaPlayer::PlayingState
+    if ( (state() == QMediaPlayer::PlayingState && m_play_requested == false)
         || mediaStatus() == QMediaPlayer::UnknownMediaStatus
         || mediaStatus() == QMediaPlayer::NoMedia
         || mediaStatus() == QMediaPlayer::InvalidMedia)
         return;
+
+    setState(QMediaPlayer::PlayingState);
 
     if (mediaStatus() == QMediaPlayer::LoadingMedia ||
        (mediaStatus() == QMediaPlayer::StalledMedia &&
@@ -260,7 +260,6 @@ void S60MediaPlayerSession::play()
     m_duration = duration();
     setVolume(m_volume);
     setMuted(m_muted);
-    setState(QMediaPlayer::PlayingState);
     startProgressTimer();
     doPlay();
 
@@ -331,6 +330,7 @@ void S60MediaPlayerSession::reset()
     stopStalledTimer();
     doStop();
     doClose();
+    setPosition(0);
     setState(QMediaPlayer::StoppedState);
     setMediaStatus(QMediaPlayer::UnknownMediaStatus);
 
@@ -530,17 +530,15 @@ void S60MediaPlayerSession::setMuted(bool muted)
     DP1("S60MediaPlayerSession::setMuted - ", muted);
 
     m_muted = muted;
-    
+    emit mutedChanged(m_muted);
+
     if(   m_mediaStatus == QMediaPlayer::LoadedMedia 
        || (m_mediaStatus == QMediaPlayer::StalledMedia && state() != QMediaPlayer::StoppedState)
        || m_mediaStatus == QMediaPlayer::BufferingMedia
        || m_mediaStatus == QMediaPlayer::BufferedMedia
        || m_mediaStatus == QMediaPlayer::EndOfMedia) {
         TRAPD(err, doSetVolumeL((m_muted)?0:m_volume));
-        if (KErrNone == err)
-            emit mutedChanged(m_muted);
-        else
-            setError(err);
+        setError(err);
     }
     DP0("S60MediaPlayerSession::setMuted ---");
 }
@@ -610,7 +608,11 @@ void S60MediaPlayerSession::setPosition(qint64 pos)
     TRAPD(err, doSetPositionL(pos * 1000));
     setError(err);
 
-    if (err == KErrNotSupported) {
+    if (err == KErrNone) {
+        if (mediaStatus() == QMediaPlayer::EndOfMedia)
+            setMediaStatus(QMediaPlayer::LoadedMedia);
+    }
+    else if (err == KErrNotSupported) {
         m_seekable = false;
         emit seekableChanged(m_seekable);
     }
