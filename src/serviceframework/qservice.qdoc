@@ -28,6 +28,7 @@
 /*!
     \namespace QService
     \ingroup servicefw
+    \inmodule QtServiceFramework
 
     \brief The QService namespace contains miscellaneous identifiers used throughout the
     Qt Service framework library.
