@@ -251,7 +251,7 @@ private: // Internal
     qreal maximumFrameRateForMimeType(const QString &mimeType) const;
     int maximumBitRateForMimeType(const QString &mimeType) const;
 
-Q_SIGNALS: // Notification Signals
+signals: // Notification Signals
 
     void stateChanged(S60VideoCaptureSession::TVideoCaptureState);
     void positionChanged(qint64);
@@ -259,7 +259,7 @@ Q_SIGNALS: // Notification Signals
     void captureSizeChanged(const QSize&);
     void error(int, const QString&);
 
-private Q_SLOTS: // Internal Slots
+private slots: // Internal Slots
 
     void cameraStatusChanged(QCamera::Status);
     void durationTimerTriggered();

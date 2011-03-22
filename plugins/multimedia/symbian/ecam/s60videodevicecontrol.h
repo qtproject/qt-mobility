@@ -75,7 +75,7 @@ public: // QVideoDeviceControl
     int defaultDevice() const;
     int selectedDevice() const;
 
-public Q_SLOTS: // QVideoDeviceControl
+public slots: // QVideoDeviceControl
 
     void setSelectedDevice(int index);
 
