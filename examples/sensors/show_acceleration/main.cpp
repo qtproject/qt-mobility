@@ -70,15 +70,33 @@ class AccelerometerFilter : public QAccelerometerFilter
 {
 public:
     qtimestamp stamp;
+    qreal sum, varianceSum;
+    int i, dataRate;
+
+    AccelerometerFilter(int fq):sum(0),i(0),dataRate(fq), varianceSum(0){}
+
     bool filter(QAccelerometerReading *reading)
     {
         int diff = ( reading->timestamp() - stamp );
         stamp = reading->timestamp();
         QTextStream out(stdout);
+        qreal fq = 1000000.0 / diff;
         out << QString("Acceleration: %1 x").arg(reading->x(), 5, 'f', 1)
                 << QString(" %1 y").arg(reading->y(), 5, 'f', 1)
                 << QString(" %1 z m/s^2").arg(reading->z(), 5, 'f', 1)
-                << QString(" (%1 ms since last, %2 Hz)").arg(diff / 1000, 4).arg( 1000000.0 / diff, 5, 'f', 1) << endl;
+                << QString(" (%1 ms since last, %2 Hz)").arg(diff / 1000, 4).arg( fq, 5, 'f', 1) << endl;
+
+        if (dataRate>0){
+            if (qAbs(dataRate-fq)<(fq/4)){
+                sum +=fq;
+                i++;
+                if (i>1){
+                    qreal average = sum/i;
+                    varianceSum += (fq-average)*(fq-average);
+                    out<<" amount "<<i<< " average = "<<average<<" variance = "<<varianceSum/i<<endl;
+                }
+            }
+        }
         return false; // don't store the reading in the sensor
     }
 };
@@ -93,6 +111,8 @@ int main(int argc, char **argv)
         rate_val = args.at(rate_place + 1).toInt();
     QAccelerometer sensor;
     sensor.connectToBackend();
+    sensor.setProperty("alwaysOn",true);
+
     if (rate_val > 0) {
         sensor.setDataRate(rate_val);
         check::checkRate(&sensor, rate_val);
@@ -102,7 +122,9 @@ int main(int argc, char **argv)
     int bufferSize = buffer_place!=-1? args.at(buffer_place + 1).toInt():1;
     sensor.setProperty("bufferSize",bufferSize);
 
-    AccelerometerFilter filter;
+    sensor.setProperty("bufferInOneShot",args.indexOf("-bb")>-1);
+
+    AccelerometerFilter filter(rate_val);
     sensor.addFilter(&filter);
     sensor.start();
     if (!sensor.isActive()) {
