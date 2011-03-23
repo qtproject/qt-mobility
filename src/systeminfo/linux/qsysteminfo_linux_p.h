@@ -166,18 +166,6 @@ public:
     float contrast(int screen);
 
     QSystemDisplayInfo::BacklightState backlightStatus(int screen); //1.2
-
-    static QSystemDisplayInfoPrivate *instance() {return self;}
-
-#if !defined(Q_WS_MAEMO_6) && defined(Q_WS_X11)  && !defined(Q_WS_MEEGO)
-    void emitOrientationChanged(int curRotation);
-    int xEventBase;
-    int xErrorBase;
-    int lastRotation;
-#endif
-
-private:
-    static QSystemDisplayInfoPrivate *self;
 };
 
 class QSystemStorageInfoPrivate : public QSystemStorageInfoLinuxCommonPrivate

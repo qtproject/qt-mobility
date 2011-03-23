@@ -240,12 +240,22 @@ public:
     int physicalHeight(int screen);
     int physicalWidth(int screen);
     QSystemDisplayInfo::BacklightState backlightStatus(int screen); //1.2
+    static QSystemDisplayInfoLinuxCommonPrivate *instance() {return self;}
+
+#if defined(Q_WS_X11)
+    void emitOrientationChanged(int curRotation);
+    int xEventBase;
+    int xErrorBase;
+    int lastRotation;
+#endif
+
 Q_SIGNALS:
     void orientationChanged(QSystemDisplayInfo::DisplayOrientation newOrientation);
 
 private:
     bool isScreenValid(int screen);
     QDesktopWidget *wid;
+    static QSystemDisplayInfoLinuxCommonPrivate *self;
 };
 
 class QSystemStorageInfoLinuxCommonPrivate : public QObject

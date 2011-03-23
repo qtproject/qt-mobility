@@ -1824,18 +1824,79 @@ QSystemNetworkInfo::CellDataTechnology QSystemNetworkInfoLinuxCommonPrivate::cel
     return QSystemNetworkInfo::UnknownDataTechnology;
 }
 
+QSystemDisplayInfoLinuxCommonPrivate *QSystemDisplayInfoLinuxCommonPrivate::self = 0;
 
+#if defined(Q_WS_X11)
+bool q_XEventFilter(void *message)
+{
+    XEvent *xev = (XEvent *)message;
+    if (xev->type == QTM_NAMESPACE::QSystemDisplayInfoLinuxCommonPrivate::instance()->xEventBase + RRScreenChangeNotify) {
+        int rot = QTM_NAMESPACE::QSystemDisplayInfoLinuxCommonPrivate::instance()->lastRotation;
+
+        XRRScreenChangeNotifyEvent *rrev = (XRRScreenChangeNotifyEvent *)(xev);
+        if (rrev->rotation != rot) {
+            rot  =  rrev->rotation;
+            QTM_NAMESPACE::QSystemDisplayInfoLinuxCommonPrivate::instance()->emitOrientationChanged(rot);
+            QTM_NAMESPACE::QSystemDisplayInfoLinuxCommonPrivate::instance()->lastRotation = rot;
+        }
+        return true;
+    }
+    return false;
+}
+#endif
 QSystemDisplayInfoLinuxCommonPrivate::QSystemDisplayInfoLinuxCommonPrivate(QObject *parent)
     : QObject(parent), wid(0)
 {
     halIsAvailable = halAvailable();
     wid = new QDesktopWidget();
+    if(!self)
+        self = this;
+#if defined(Q_WS_X11)
+    QAbstractEventDispatcher::instance()->setEventFilter(q_XEventFilter);
+    Display *display = QX11Info::display();
+    if (display) {
+        XRRQueryExtension(display, &xEventBase, &xErrorBase);
+
+        Window desktopWindow = QX11Info::appRootWindow(0);
+        XRRSelectInput(display, desktopWindow,0);
+        XRRSelectInput(display, desktopWindow, RRScreenChangeNotifyMask);
+
+        XRRScreenConfiguration *sc;
+        Rotation cur_rotation;
+        sc = XRRGetScreenInfo(display, RootWindow(display, 0));
+        if (sc) {
+            XRRConfigRotations(sc, &cur_rotation);
+            lastRotation = cur_rotation;
+        }
+    }
+#endif
 }
 
 QSystemDisplayInfoLinuxCommonPrivate::~QSystemDisplayInfoLinuxCommonPrivate()
 {
     delete wid;
 }
+
+#if defined(Q_WS_X11)
+void QSystemDisplayInfoLinuxCommonPrivate::emitOrientationChanged(int curRotation)
+{
+    switch(curRotation) {
+    case 1:
+        Q_EMIT orientationChanged(QSystemDisplayInfo::Landscape);
+        break;
+    case 2:
+        Q_EMIT orientationChanged(QSystemDisplayInfo::Portrait);
+        break;
+    case 4:
+        Q_EMIT orientationChanged(QSystemDisplayInfo::InvertedLandscape);
+        break;
+    case 8:
+        Q_EMIT orientationChanged(QSystemDisplayInfo::InvertedPortrait);
+        break;
+    };
+}
+#endif
+
 
 bool QSystemDisplayInfoLinuxCommonPrivate::isScreenValid(int screen)
 {
