@@ -447,7 +447,9 @@ bool QMessageService::send(QMessage &message)
                 d_ptr->_error = QMessageManager::InvalidId;
                 qDebug() << __FUNCTION__ << "Cannot obtain default account";
                 retVal = false;
-            }
+            } else {
+		message.setParentAccountId(accountId);
+	    }
         }
     }
 
@@ -473,13 +475,6 @@ bool QMessageService::send(QMessage &message)
     }
 
     if (retVal) {
-        QMessage outgoing(message);
-
-        // Set default account if unset
-        if (!outgoing.parentAccountId().isValid()) {
-            outgoing.setParentAccountId(accountId);
-        }
-
         if (account.messageTypes() & QMessage::Sms) {
 	    retVal = TelepathyEngine::instance()->sendMessage(message, this);
         } else if (account.messageTypes() & QMessage::InstantMessage) {

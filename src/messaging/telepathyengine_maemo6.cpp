@@ -38,45 +38,44 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include <QDebug>
 
-#include <TelepathyQt4/Debug>
+#include "telepathyengine_maemo6_p.h"
+#include "telepathyhelpers_maemo6_p.h"
+#include "maemo6helpers_p.h"
 
-#include "qmessageglobal.h"
-#include "qmessagemanager.h"
 #include "qmessageaccount.h"
-#include "qmessageaccountid.h"
 #include "qmessageaccount_p.h"
 #include "qmessageaccountfilter.h"
-#include "qmessageaccountfilter_p.h"
-#include "qmessageservice.h"
 #include "qmessageservice_maemo6_p.h"
 #include "qmessage_p.h"
-#include "telepathyengine_maemo6_p.h"
-#include "maemo6helpers_p.h"
-#include "telepathyhelpers_maemo6_p.h"
+
+#include <TelepathyQt4/Debug>
+#include <TelepathyQt4/Account>
+#include <TelepathyQt4/PendingReady>
+#include <TelepathyQt4/TextChannel>
+
+#include <QDebug>
 
 Q_GLOBAL_STATIC(TelepathyEngine, telepathyEngine);
 
-TelepathyEngine::TelepathyEngine():
-        m_sync(true), m_error(QMessageManager::NoError)
+TelepathyEngine::TelepathyEngine()
+    : m_sync(true)
+    , m_error(QMessageManager::NoError)
 {
     QDEBUG_FUNCTION_BEGIN
+ 
     Tp::registerTypes();
     Tp::enableDebug(false);
     Tp::enableWarnings(true);
 
-    if (!(m_AM = Tp::AccountManager::create()))
-        qWarning() << __FUNCTION__ << "Cannot create Account Manager (m_am)";
-    else {
-        connect(m_AM->becomeReady(), SIGNAL(finished(Tp::PendingOperation *)),
-                SLOT(onAMReady(Tp::PendingOperation *)));
-        connect(m_AM.data(), SIGNAL(newAccount(const Tp::AccountPtr &)),
-                SLOT(onNewAccount(const Tp::AccountPtr &)));
+    m_AM = Tp::AccountManager::create();
+    if (!m_AM) {
+	qWarning() << __FUNCTION__ << "Cannot create Account Manager (m_am)";
+	return;
     }
 
-
-    m_CMName = CM_NAME_DEFAULT;
+    connect(m_AM->becomeReady(), SIGNAL(finished(Tp::PendingOperation *)),
+	    SLOT(onAMReady(Tp::PendingOperation *)));
 
     if (m_sync)
         m_loop.exec(); // Loop locally untill accounts are initialized
@@ -84,39 +83,16 @@ TelepathyEngine::TelepathyEngine():
     QDEBUG_FUNCTION_END
 }
 
-/*
-bool TelepathyEngine::initialize()
-{
-    QDEBUG_FUNCTION_BEGIN
-    bool ret = false;
-
-    if (m_AM)
-    {
-        QObject::connect(m_AM->becomeReady(),SIGNAL(finished(Tp::PendingOperation *)),
-            this, SLOT(onAMReady(Tp::PendingOperation *)));
-        QObject::connect(m_AM.data(), SIGNAL(accountCreated(const QString &)),
-            this, SLOT(onAccountCreated(const QString &)));
-        ret = true;
-    }
-
-    QDEBUG_FUNCTION_END return ret;
-}
-*/
 TelepathyEngine::~TelepathyEngine()
 {
 
 }
 
-TelepathyEngine* TelepathyEngine::instance()
+TelepathyEngine *TelepathyEngine::instance()
 {
-    TelepathyEngine* te = telepathyEngine();
-
-    return te;
+    return telepathyEngine();
 }
 
-/******************************************************************/
-/*                 PRIVATE SLOTS                                  */
-/******************************************************************/
 void TelepathyEngine::onAMReady(Tp::PendingOperation *op)
 {
     QDEBUG_FUNCTION_BEGIN
@@ -124,92 +100,111 @@ void TelepathyEngine::onAMReady(Tp::PendingOperation *op)
     m_error = convertError(op);
 
     if (op && op->isError()) {
+	syncDone();
         qWarning() << "Account manager cannot become ready:" << op->errorName() << "-" << op->errorMessage();
         return;
     }
 
-    foreach (const Tp::AccountPtr &acc, m_AM->allAccounts()) {
-	const QString path = acc->objectPath();
-        qDebug() << __FUNCTION__ << "found account" << path;
-	TpSessionAccount *tpAcc = new TpSessionAccount(m_AM, path);
-        m_accounts += tpAcc;
-        connect(tpAcc, SIGNAL(accountReady(TpSessionAccount*)),
-                SLOT(onAccountReady(TpSessionAccount *)));
+    QVariantMap filter;
+    filter.insert(QLatin1String("cmName"), QLatin1String("ring"));
+    filter.insert(QLatin1String("protocolName"), QLatin1String("tel"));
+    filter.insert(QLatin1String("enabled"), true);
+     
+    m_accountSet = m_AM->filterAccounts(filter);
+
+    connect(m_accountSet.data(), SIGNAL(accountAdded(const Tp::AccountPtr &)),
+	    this, SLOT(onAccountAdded(const Tp::AccountPtr &)));
+    connect(m_accountSet.data(), SIGNAL(accountRemoved(const Tp::AccountPtr &)),
+	    this, SLOT(onAccountRemoved(const Tp::AccountPtr &)));
+    
+    m_initList.clear();
+    foreach (const Tp::AccountPtr &acc, m_accountSet->accounts()) {
+	connect(acc->becomeReady(), SIGNAL(finished(Tp::PendingOperation *)),
+		this, SLOT(onAccountReady(Tp::PendingOperation *)));
+	m_initList.append(acc->uniqueIdentifier());
     }
 
     QDEBUG_FUNCTION_END
 }
 
-void TelepathyEngine::onNewAccount(const Tp::AccountPtr &account)
+void TelepathyEngine::onAccountAdded(const Tp::AccountPtr &account)
 {
-    QDEBUG_FUNCTION_BEGIN
-    m_accounts += new TpSessionAccount(account);
-    qDebug() << account->objectPath();
-    _updateImAccounts();
+    QDEBUG_FUNCTION_BEGIN;
+
+    connect(account->becomeReady(), SIGNAL(finished(Tp::PendingOperation *)),
+	    this, SLOT(onAccountReady(Tp::PendingOperation *)));
+
     QDEBUG_FUNCTION_END
 }
 
-/******************************************************************/
-
-void TelepathyEngine::onAccountReady(TpSessionAccount *tpacc)
+void TelepathyEngine::onAccountRemoved(const Tp::AccountPtr &account)
 {
     QDEBUG_FUNCTION_BEGIN
-    qDebug() << "TpSession::onAccountReady:Account " << tpacc->acc->cmName() << "is Ready";
 
-    connect(tpacc, SIGNAL(messageReceived(const Tp::ReceivedMessage &, TpSessionAccount *)),
-            SLOT(onMessageReceived(const Tp::ReceivedMessage &, TpSessionAccount *)));
-
-    if (!m_CMName.isEmpty() && tpacc->acc->cmName() == m_CMName) {
-        if (m_sync) {
-            m_sync = false;
-            m_loop.quit();
-        }
-
-        emit accountReady(tpacc);
+    foreach (const AccountPair &pair, m_accounts) {
+	if (pair.first->cmName() == account->cmName() &&
+	    pair.first->protocolName() == account->protocolName()) {
+	    m_accounts.remove(pair.second.id().toString());
+	}
     }
-    _updateImAccounts();
+
     QDEBUG_FUNCTION_END
 }
 
-/******************************************************************/
-
-void TelepathyEngine::onReady(Tp::PendingOperation *op)
+void TelepathyEngine::onAccountReady(Tp::PendingOperation *op)
 {
     QDEBUG_FUNCTION_BEGIN
-    m_error = convertError(op);
-    QDEBUG_FUNCTION_END
-};
 
-/******************************************************************/
+    Tp::AccountPtr account = Tp::AccountPtr(Tp::SharedPtr<Tp::Account>::dynamicCast(op->object()));
 
-void TelepathyEngine::onMessageReceived(const Tp::ReceivedMessage &msg, TpSessionAccount *acc)
-{
-    QDEBUG_FUNCTION_BEGIN
-    qDebug() << msg.text() << "from " << msg.sender()->id();
-
-    emit messageReceived(msg, acc);
-    QDEBUG_FUNCTION_END
-}
-
-/**
- * Returns pointer to TpSessionAccout object with specified connection manager or protocol, returns NULL if no match found
- *
- * \param cm  Name of the connection manager, if left empty matches every entry
- * \param protocol Name of the protocol manager, if left empty matches every entry
- */
-TpSessionAccount *TelepathyEngine::getTpSessionAccount(const QString &cm, const QString &protocol)
-{
-    QDEBUG_FUNCTION_BEGIN
-    qWarning() << "TelepathyEngine::getAccount" << cm << " " << protocol;
-
-    foreach(TpSessionAccount *tpacc, m_accounts) {
-        if ((!cm.isEmpty()  && tpacc->acc->cmName() == cm)
-                || (!protocol.isEmpty() && tpacc->acc->protocolName() == protocol)) {
-            qWarning() << "TelepathyEngine::getAccount found" << tpacc->acc->cmName() << " " << tpacc->acc->protocolName();
-            QDEBUG_FUNCTION_END return tpacc;
-        }
+    if (op->isError()) {
+        qWarning() << "Account cannot become ready:" << op->errorName() << "-" << op->errorMessage();
+    } else {
+	addAccount(account);
     }
-    QDEBUG_FUNCTION_END return NULL;
+    
+    if (m_sync) {
+	m_initList.removeOne(account->uniqueIdentifier());
+	if (m_initList.isEmpty())
+	    syncDone();
+    }
+
+    QDEBUG_FUNCTION_END
+}
+
+
+void TelepathyEngine::syncDone()
+{    
+    QDEBUG_FUNCTION_BEGIN
+
+    if (m_loop.isRunning())
+	m_loop.quit();
+    m_sync = false;
+
+    QDEBUG_FUNCTION_END
+}
+ 
+void TelepathyEngine::addAccount(const Tp::AccountPtr &acc)
+{
+    QDEBUG_FUNCTION_BEGIN
+
+    const QString cm = acc->cmName();
+
+    if (cm == "ring") { // Ring connection manager for cellular telephony
+	QString accountId = acc->uniqueIdentifier();
+	QString accountName = "SMS";
+	QString accountAddress = "";
+	QMessageAccount account = QMessageAccountPrivate::from(QMessageAccountId(accountId),
+							       accountName,
+							       QMessageAddress(QMessageAddress::Phone, accountAddress),
+							       QMessage::Sms);
+	m_accounts.insert(accountId, AccountPair(acc, account));
+	qDebug() << "SMS account Id:" << accountId << "cmname:" << acc->cmName()  << "protocol:" << acc->protocolName() << "servicename" << acc->serviceName(); 
+    } else { 
+	qWarning() << "Protocol " << acc->protocolName() << "with connectionmanager " << cm << "Is not yet supported";
+    }
+
+    QDEBUG_FUNCTION_END
 }
 
 bool TelepathyEngine::sendMessage(QMessage &message, QMessageService *service)
@@ -217,73 +212,39 @@ bool TelepathyEngine::sendMessage(QMessage &message, QMessageService *service)
     QDEBUG_FUNCTION_BEGIN
 
     bool retVal(false);	
-    QMessage::Type type = message.type();
-    QString cm = (type == QMessage::Sms) ? "ring" : (type == QMessage::InstantMessage) ? "gabble" : "";
 
-    QMessageAccountId accountId = message.parentAccountId();
+    QString id = message.parentAccountId().toString();
+    qDebug() << __FUNCTION__ << "accountId: " << id;
 
-    qDebug() << __FUNCTION__ << "accountId: " << accountId.toString();
-
-    if (!cm.isEmpty()) {
-	if (TpSessionAccount *sessionAccount = getTpSessionAccount(cm)) {
-	    SendRequest *request = new SendRequest(message, service);
-	    retVal = sessionAccount->sendMessage(request);
-	    if (!retVal) delete request;
+    if (m_accounts.contains(id)) {
+	Tp::AccountPtr acc = m_accounts[id].first;
+	SendRequest *request = new SendRequest(message, service);
+	foreach (const QString &contactIdentifier, request->to()) {
+	    Tp::ContactMessengerPtr messenger = Tp::ContactMessenger::create(acc, contactIdentifier);
+	    if (messenger) {
+		Tp::PendingSendMessage *pendingMessage = messenger->sendMessage(request->text());
+		connect(pendingMessage, SIGNAL(finished(Tp::PendingOperation *)),
+			request, SLOT(finished(Tp::PendingOperation *)));
+		request->addMessenger(messenger);
+	    } else {
+		request->setFinished(contactIdentifier, false);
+	    }
 	}
+	if (request->requestCount())
+	    retVal = true;
+	else
+	    delete request;
     } else {
-        qWarning() << "TelepathyEngine::sendMessage : unsupported message type :" << type;
+        qWarning() << "TelepathyEngine::sendMessage : unsupported message type :" << message.type();
     }
-
+    
     QDEBUG_FUNCTION_END
     
     return retVal;	
 }
 
-void TelepathyEngine::_updateImAccounts() const
-{
-    QDEBUG_FUNCTION_BEGIN
-    m_iAccounts.clear();
-
-
-    foreach(TpSessionAccount *tpacc, m_accounts) {
-	if (!tpacc->acc) continue;
-        qDebug() << "TelepathyEngine::updateImAccounts" << tpacc->acc->cmName() << " protocol " << tpacc->acc->protocolName() << " displayName " << tpacc->acc->displayName();
-        bool account_ok = tpacc->acc->isEnabled() && tpacc->acc->isValidAccount();
-        QString cm = tpacc->acc->cmName();
-
-        qDebug() << "TelepathyEngine::updateImAccounts account_ok: " << account_ok << " isEnabled: " << tpacc->acc->isEnabled() << " isValidAccount: " << tpacc->acc->isValidAccount();
-
-        if (account_ok) {
-            if (cm == "ring") { // Ring connection manager for cellular telephony
-                QString accountId = tpacc->acc->uniqueIdentifier();
-                QString accountName = "SMS";
-                QString accountAddress = "";
-                QMessageAccount account = QMessageAccountPrivate::from(QMessageAccountId(accountId),
-                                          accountName,
-                                          QMessageAddress(QMessageAddress::Phone, accountAddress),
-                                          QMessage::Sms);
-                m_iAccounts.insert(accountId, account);
-                m_defaultSmsAccountId = accountId;
-                qDebug() << __FUNCTION__ << " Setting m_defaultSmsAccountId: " << m_defaultSmsAccountId.toString() << endl;
-            } else if (cm == "gabble") { // Gabble for googletalk
-                QString accountId = tpacc->acc->uniqueIdentifier();
-                QString accountName = tpacc->acc->normalizedName();
-                QString accountAddress = tpacc->acc->normalizedName();
-                QMessageAccount account = QMessageAccountPrivate::from(QMessageAccountId(accountId),
-                                          accountName,
-                                          QMessageAddress(QMessageAddress::InstantMessage, accountAddress),
-                                          QMessage::InstantMessage);
-                m_iAccounts.insert(accountId, account);
-            } else qWarning() << "Protocol " << tpacc->acc->protocolName() << "with connectionmanager " << cm << "Is not yet supported";
-//                if (strncmp(account_name_key, default_account, strlen(default_account))) iDefaultEmailAccountId = accountId;
-
-        }
-    }
-    QDEBUG_FUNCTION_END
-}
-
 QMessageAccountIdList TelepathyEngine::queryAccounts(const QMessageAccountFilter &filter, const QMessageAccountSortOrder &sortOrder,
-        uint limit, uint offset, bool &isFiltered, bool &isSorted)
+						     uint limit, uint offset, bool &isFiltered, bool &isSorted)
 {
     QDEBUG_FUNCTION_BEGIN
     Q_UNUSED(sortOrder);
@@ -293,8 +254,8 @@ QMessageAccountIdList TelepathyEngine::queryAccounts(const QMessageAccountFilter
     QMessageAccountIdList accountIds;
     m_error = QMessageManager::NoError;
 
-    foreach(QMessageAccount value, m_iAccounts) {
-        accountIds.append(value.id());
+    foreach (const AccountPair &pair, m_accounts) {
+        accountIds.append(pair.second.id());
     }
 
     MessagingHelper::filterAccounts(accountIds, filter);
@@ -316,18 +277,37 @@ int TelepathyEngine::countAccounts(const QMessageAccountFilter &filter)
 QMessageAccount TelepathyEngine::account(const QMessageAccountId &id)
 {
     QDEBUG_FUNCTION_BEGIN
-    m_error = QMessageManager::NoError;
-    QDEBUG_FUNCTION_END return m_iAccounts[id.toString()];
+
+    QMessageAccount result;
+   
+    const QString accountId = id.toString();
+    if (m_accounts.contains(accountId)) {
+	result = m_accounts[accountId].second;
+    }
+
+    QDEBUG_FUNCTION_END
+
+    return result;
 }
 
-QMessageAccountId TelepathyEngine ::defaultAccount(QMessage::Type type)
+QMessageAccountId TelepathyEngine::defaultAccount(QMessage::Type type)
 {
     QDEBUG_FUNCTION_BEGIN
-    Q_UNUSED(type);
+
+    QMessageAccountId result;	
+    
+    foreach (const AccountPair &pair, m_accounts) {
+	if (pair.second.messageTypes() & type) {
+	    result = pair.second.id();
+	    break;
+	}
+    }
 
     m_error = QMessageManager::NoError;
-    return m_defaultSmsAccountId;
+
     QDEBUG_FUNCTION_END
+	
+    return result;
 }
 
 QMessageManager::Error TelepathyEngine::convertError(const Tp::PendingOperation *op)
@@ -341,7 +321,7 @@ QMessageManager::Error TelepathyEngine::convertError(const Tp::PendingOperation 
     return QMessageManager::NoError;
 }
 
-QMessageManager::Error TelepathyEngine ::error()
+QMessageManager::Error TelepathyEngine::error() const
 {
     return m_error;
 }
@@ -372,7 +352,7 @@ SendRequest::~SendRequest()
 QStringList SendRequest::to() const
 {
     QStringList result;
-    
+
     foreach (const QMessageAddress &address, _message.to()) {
 	result << address.addressee();
     }
@@ -391,11 +371,12 @@ void SendRequest::setFinished(const QString &address, bool success)
 	_failCount++;
 	qWarning() << "SendRequest::setFinished() : sending message to" << address << "failed";
     }
-    down();
+    QTimer::singleShot(0, this, SLOT(down()));
 }
 
 void SendRequest::finished(Tp::PendingOperation *operation, bool processLater)
 {
+    QDEBUG_FUNCTION_BEGIN
     if (operation->isError()) {
 	_failCount++;
 	qWarning() << "SendRequest::finished() : " << operation->errorName() << ":" << operation->errorMessage(); 
@@ -406,6 +387,7 @@ void SendRequest::finished(Tp::PendingOperation *operation, bool processLater)
     } else {
 	down();
     }
+    QDEBUG_FUNCTION_END
 }
 
 void SendRequest::onServiceDestroyed(QObject*)
@@ -437,3 +419,12 @@ void SendRequest::down()
     }
 }
 
+void SendRequest::addMessenger(const Tp::ContactMessengerPtr &messenger)
+{
+    _messengerList.append(messenger);
+}
+
+int SendRequest::requestCount() const
+{
+    return _messengerList.count();
+}
