@@ -89,6 +89,7 @@ S60VideoPlayerSession::S60VideoPlayerSession(QMediaService *service, S60MediaNet
 #endif
     , m_audioEndpoint(DefaultAudioEndpoint)
     , m_pendingChanges(0)
+    , m_backendInitiatedPause(false)
 {
     DP0("S60VideoPlayerSession::S60VideoPlayerSession +++");
 
@@ -127,7 +128,7 @@ S60VideoPlayerSession::S60VideoPlayerSession(QMediaService *service, S60MediaNet
     m_dsaActive = true;
     m_player->RegisterForVideoLoadingNotification(*this);
 #endif // VIDEOOUTPUT_GRAPHICS_SURFACES
-
+    QCoreApplication::instance()->installEventFilter(this);
     DP0("S60VideoPlayerSession::S60VideoPlayerSession ---");
 }
 
@@ -150,6 +151,22 @@ S60VideoPlayerSession::~S60VideoPlayerSession()
     delete m_player;
 
     DP0("S60VideoPlayerSession::~S60VideoPlayerSession ---");
+}
+
+bool S60VideoPlayerSession::eventFilter(QObject *watched, QEvent *event)
+{
+    if (watched == QCoreApplication::instance()) {
+        if (QEvent::ApplicationDeactivate == event->type() &&
+            QMediaPlayer::PlayingState == state()) {
+            m_backendInitiatedPause = true;
+            pause();
+        } else if (QEvent::ApplicationActivate == event->type() &&
+                   m_backendInitiatedPause) {
+            m_backendInitiatedPause = false;
+            play();
+        }
+    }
+    return false;
 }
 
 /*!
