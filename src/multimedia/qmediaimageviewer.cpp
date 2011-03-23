@@ -145,13 +145,7 @@ void QMediaImageViewerPrivate::_q_playlistDestroyed()
     QVideoWidget to present an image.  A display object is attached to the
     image viewer by means of the bind function.
 
-    \code
-    viewer = new QMediaImageViewer(this);
-
-    display = new QVideoWidget;
-    viewer->bind(display);
-    display->show();
-    \endcode
+    \snippet doc/src/snippets/multimedia-snippets/media.cpp Binding
 
     QMediaImageViewer can be paired with a QMediaPlaylist to create a slide
     show of images. Constructing a QMediaPlaylist with a pointer to an
@@ -164,17 +158,7 @@ void QMediaImageViewerPrivate::_q_playlistDestroyed()
     \l elapsedTime property holds how the duration the current image has
     been displayed for.
 
-    \code
-    playlist = new QMediaPlaylist(this);
-    playlist->setPlaybackMode(QMediaPlaylist::Loop);
-    playlist->addMedia(image1);
-    playlist->addMedia(image2);
-    playlist->addMedia(image3);
-
-    viewer->setPlaylist(playlist);
-    viewer->setTimeout(5000);
-    viewer->play();
-    \endcode
+    \snippet doc/src/snippets/multimedia-snippets/media.cpp Playlist
 */
 
 /*!

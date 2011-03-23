@@ -266,11 +266,11 @@ void tst_QGeoTiledMapData::panTest_data()
                                           center << pxCenter << pan << dist << pxFinal;
 
     center = QGeoCoordinate(0.0, 0.0);
-    pan = QPoint(-30, 0);
+    pan = QPoint(30, 0);
     pxFinal = pxCenter - pan;
     dist = 4700e3;
     makeFixtures(gmd, obj, center, center, 1.0, targetPixmap, mgr, window, target);
-    QTest::newRow("At 0,0, pan -ve x") << mgr << gmd << obj <<
+    QTest::newRow("At 0,0, pan +ve x") << mgr << gmd << obj <<
                                           center << pxCenter << pan << dist << pxFinal;
 
     window = QSize(200, 200);

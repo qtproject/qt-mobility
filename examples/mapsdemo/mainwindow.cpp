@@ -57,10 +57,13 @@ MainWindow::MainWindow() :
     tracking(true),
     firstUpdate(true)
 {
+    // our actual maps widget is the centre of the mainwindow
     mapsWidget = new MapsWidget;
     setCentralWidget(mapsWidget);
 
+    // set up the menus
     QMenuBar *mbar = new QMenuBar(this);
+    mbar->addAction("Quit", qApp, SLOT(quit()));
     mbar->addAction("My Location", this, SLOT(goToMyLocation()));
 
     QMenu *searchMenu = new QMenu("Search");
@@ -74,9 +77,27 @@ MainWindow::MainWindow() :
     navigateMenu->addAction("From here to address", this, SLOT(showNavigateDialog()));
 
     setMenuBar(mbar);
-
-    initialize();
     setWindowTitle("Maps Demo");
+
+    // now begin the process of opening the network link
+    netConfigManager = new QNetworkConfigurationManager;
+    connect(netConfigManager, SIGNAL(updateCompleted()),
+            this, SLOT(openNetworkSession()));
+    netConfigManager->updateConfigurations();
+}
+
+void MainWindow::openNetworkSession()
+{
+    // use the default network configuration and make sure that
+    // the link is open
+    session = new QNetworkSession(netConfigManager->defaultConfiguration());
+    if (session->isOpen()) {
+        initialize();
+    } else {
+        connect(session, SIGNAL(opened()),
+                this, SLOT(initialize()));
+        session->open();
+    }
 }
 
 MainWindow::~MainWindow()
@@ -91,6 +112,7 @@ MainWindow::~MainWindow()
 void MainWindow::goToMyLocation()
 {
     mapsWidget->animatedPanTo(markerManager->myLocation());
+    mapsWidget->map()->setFocus();
     tracking = true;
 }
 
@@ -98,6 +120,8 @@ void MainWindow::initialize()
 {
     if (serviceProvider)
         delete serviceProvider;
+
+    // check we have a valid default provider
 
     QList<QString> providers = QGeoServiceProvider::availableServiceProviders();
     if (providers.size() < 1) {
@@ -107,13 +131,31 @@ void MainWindow::initialize()
         return;
     }
 
-    serviceProvider = new QGeoServiceProvider(providers[0]);
+    foreach (QString provider, providers) {
+        serviceProvider = new QGeoServiceProvider(provider);
+        if (serviceProvider->mappingManager() &&
+                serviceProvider->searchManager() &&
+                serviceProvider->routingManager())
+            break;
+    }
+
     if (serviceProvider->error() != QGeoServiceProvider::NoError) {
         QMessageBox::information(this, tr("Maps Demo"),
-                                 tr("Error loading geoservice plugin: %1").arg(providers[0]));
+                                 tr("Error loading geoservice plugin"));
         QCoreApplication::quit();
         return;
     }
+
+    if (!serviceProvider->mappingManager() ||
+            !serviceProvider->searchManager() ||
+            !serviceProvider->routingManager()) {
+        QMessageBox::information(this, tr("Maps Demo"),
+                                 tr("No geoservice found with mapping/search/routing"));
+        QCoreApplication::quit();
+        return;
+    }
+
+    // start initialising things (maps, searching, routing)
 
     mapsWidget->initialize(serviceProvider->mappingManager());
 
@@ -125,18 +167,21 @@ void MainWindow::initialize()
     connect(markerManager, SIGNAL(searchError(QGeoSearchReply::Error,QString)),
             this, SLOT(showErrorMessage(QGeoSearchReply::Error,QString)));
     connect(mapsWidget, SIGNAL(markerClicked(Marker*)),
-            this, SLOT(on_markerClicked(Marker*)));
+            this, SLOT(showMarkerDialog(Marker*)));
     connect(mapsWidget, SIGNAL(mapPanned()),
             this, SLOT(disableTracking()));
 
     if (positionSource)
         delete positionSource;
 
+    // set up position feeds (eg GPS)
+
     positionSource = QGeoPositionInfoSource::createDefaultSource(this);
 
     if (!positionSource) {
         mapsWidget->statusBar()->showText("Could not open GPS", 5000);
         mapsWidget->setMyLocation(QGeoCoordinate(-27.5796, 153.1));
+        //mapsWidget->setMyLocation(QGeoCoordinate(21.1813, -86.8455));
     } else {
         positionSource->setUpdateInterval(1000);
         connect(positionSource, SIGNAL(positionUpdated(QGeoPositionInfo)),
@@ -157,11 +202,11 @@ void MainWindow::updateMyPosition(QGeoPositionInfo info)
         mapsWidget->setMyLocation(info.coordinate(), false);
         if (tracking)
             mapsWidget->animatedPanTo(info.coordinate());
+        if (firstUpdate)
+            mapsWidget->statusBar()->showText("Receiving from GPS");
     }
-    if (firstUpdate) {
-        mapsWidget->statusBar()->showText("Receiving from GPS");
-        firstUpdate = false;
-    }
+    
+    firstUpdate = false;
 }
 
 void MainWindow::showNavigateDialog()
@@ -173,6 +218,8 @@ void MainWindow::showNavigateDialog()
 
             req.setTravelModes(nd.travelMode());
 
+            // tell the old navigator instance to delete itself
+            // so that its map objects will disappear
             if (lastNavigator)
                 lastNavigator->deleteLater();
 
@@ -195,6 +242,8 @@ void MainWindow::showNavigateDialog()
 
             connect(nvg, SIGNAL(finished()),
                     mapsWidget->statusBar(), SLOT(hide()));
+
+            mapsWidget->map()->setFocus();
         }
     }
 }
@@ -206,26 +255,32 @@ void MainWindow::showSearchDialog()
         if (markerManager) {
             markerManager->removeSearchMarkers();
             markerManager->search(sd.searchTerms(), sd.radius());
+            mapsWidget->map()->setFocus();
         }
     }
 }
 
 void MainWindow::showErrorMessage(QGeoSearchReply::Error err, QString msg)
 {
+    Q_UNUSED(err)
     QMessageBox::critical(this, tr("Error"), msg);
     mapsWidget->statusBar()->hide();
+    mapsWidget->map()->setFocus();
 }
 
 void MainWindow::showErrorMessage(QGeoRouteReply::Error err, QString msg)
 {
+    Q_UNUSED(err)
     QMessageBox::critical(this, tr("Error"), msg);
     mapsWidget->statusBar()->hide();
+    mapsWidget->map()->setFocus();
 }
 
-void MainWindow::on_markerClicked(Marker *marker)
+void MainWindow::showMarkerDialog(Marker *marker)
 {
     MarkerDialog md(marker);
     if (md.exec() == QDialog::Accepted) {
         md.updateMarker();
+        mapsWidget->map()->setFocus();
     }
 }

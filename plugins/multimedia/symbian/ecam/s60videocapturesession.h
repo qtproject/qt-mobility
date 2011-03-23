@@ -224,9 +224,10 @@ private: // Internal
     void queryAudioEncoderSettings();
     void queryVideoEncoderSettings();
     void validateRequestedCodecs();
-    void resetSession();
+    void resetSession(bool errorHandling = false);
 
-    void doSetCodecsL(const QString &aCodec, const QString &vCodec);
+    void doSetCodecsL();
+    QString determineProfileAndLevel();
     void doSetVideoResolution(const QSize &resolution);
     void doSetFrameRate(qreal rate);
     void doSetBitrate(const int &bitrate);
@@ -255,6 +256,7 @@ Q_SIGNALS: // Notification Signals
     void stateChanged(S60VideoCaptureSession::TVideoCaptureState);
     void positionChanged(qint64);
     void mutedChanged(bool);
+    void captureSizeChanged(const QSize&);
     void error(int, const QString&);
 
 private Q_SLOTS: // Internal Slots

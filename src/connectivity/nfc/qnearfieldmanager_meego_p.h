@@ -46,7 +46,7 @@
 #include "qnearfieldmanager.h"
 #include "qnearfieldtarget.h"
 
-#include <QtCore/QPointer>
+#include <QtCore/QWeakPointer>
 #include <QtCore/QMap>
 #include <QtCore/QPair>
 #include <QtCore/QMetaMethod>
@@ -70,17 +70,24 @@ class NdefHandler : public QObject
     Q_OBJECT
 
 public:
-    NdefHandler(QNearFieldManagerPrivateImpl *manager, NDEFHandlerAdaptor *adaptor,
-                QObject *object, const QMetaMethod &method);
+    NdefHandler(QNearFieldManagerPrivateImpl *manager, const QString &serviceName,
+                const QString &path, QObject *object, const QMetaMethod &method);
     ~NdefHandler();
 
+    bool isValid() const;
+
+    QString serviceName() const;
+    QString path() const;
+
 private:
-    Q_INVOKABLE void NDEFDetected(const QDBusObjectPath &target, const QByteArray &message);
+    Q_INVOKABLE void NDEFData(const QDBusObjectPath &target, const QByteArray &message);
 
     QNearFieldManagerPrivateImpl *m_manager;
     NDEFHandlerAdaptor *m_adaptor;
     QObject *m_object;
     QMetaMethod m_method;
+    QString m_serviceName;
+    QString m_path;
 };
 
 class QNearFieldManagerPrivateImpl : public QNearFieldManagerPrivate
@@ -96,12 +103,12 @@ public:
 
     QNearFieldTarget *targetForPath(const QString &path);
 
-    int registerTargetDetectedHandler(const QString &filter,
-                                      QObject *object, const QMetaMethod &method);
-    int registerTargetDetectedHandler(QObject *object, const QMetaMethod &method);
-    int registerTargetDetectedHandler(const QNdefFilter &filter,
-                                      QObject *object, const QMetaMethod &method);
-    bool unregisterTargetDetectedHandler(int handlerId);
+    int registerNdefMessageHandler(const QString &filter,
+                                   QObject *object, const QMetaMethod &method);
+    int registerNdefMessageHandler(QObject *object, const QMetaMethod &method);
+    int registerNdefMessageHandler(const QNdefFilter &filter,
+                                   QObject *object, const QMetaMethod &method);
+    bool unregisterNdefMessageHandler(int handlerId);
 
     void requestAccess(QNearFieldManager::TargetAccessModes accessModes);
     void releaseAccess(QNearFieldManager::TargetAccessModes accessModes);
@@ -126,12 +133,11 @@ private:
     ComNokiaNfcAdapterInterface *m_adapter;
 
     QList<QNearFieldTarget::Type> m_detectTargetTypes;
-    QMap<QString, QPointer<QNearFieldTarget> > m_targets;
+    QMap<QString, QWeakPointer<QNearFieldTarget> > m_targets;
 
     AccessRequestorAdaptor *m_accessAgent;
 
-    QList<NdefHandler *> m_registeredHandlers;
-    QList<int> m_freeIds;
+    QMap<int, NdefHandler *> m_registeredHandlers;
 
     QMap<QString, QBasicTimer> m_pendingDetectedTargets;
 };

@@ -135,13 +135,13 @@ Q_SIGNALS:
     void chargingStateChanged(QSystemBatteryInfo::ChargingState chargingState);
     void chargerTypeChanged(QSystemBatteryInfo::ChargerType chargerType);
 
-    void nominalCapacityChanged(int);
-    void remainingCapacityPercentChanged(int);
-    void remainingCapacityChanged(int);
+    void nominalCapacityChanged(int cap);
+    void remainingCapacityPercentChanged(int level);
+    void remainingCapacityChanged(int level);
 
-    void currentFlowChanged(int);
-    void remainingCapacityBarsChanged(int);
-    void remainingChargingTimeChanged(int);
+    void currentFlowChanged(int level);
+    void remainingCapacityBarsChanged(int bars);
+    void remainingChargingTimeChanged(int time);
 
 private:
     QSystemBatteryInfoPrivate *d;

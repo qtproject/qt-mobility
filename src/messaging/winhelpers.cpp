@@ -81,7 +81,7 @@
 #include "qmessageaccount_p.h"
 #include "qmessageaccountfilter_p.h"
 #include "qmessageaccountsortorder_p.h"
-#include "qmessagestore_p.h"
+#include "qmessagestore_p_p.h"
 #include "messagingutil_p.h"
 
 #include <QCoreApplication>

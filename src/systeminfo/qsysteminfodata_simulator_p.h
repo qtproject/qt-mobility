@@ -101,6 +101,8 @@ struct QSystemNetworkInfoData
     QString homeMobileCountryCode;
     QString homeMobileNetworkCode;
     QSystemNetworkInfo::NetworkMode currentMode;
+    QSystemNetworkInfo::CellDataTechnology cellData;
+
 };
 
 struct QSystemDisplayInfoData
@@ -110,10 +112,6 @@ struct QSystemDisplayInfoData
 
     QSystemDisplayInfo::DisplayOrientation orientation;
     float contrast;
-    int dpiHeight;
-    int dpiWidth;
-    int physicalHeight;
-    int physicalWidth;
     QSystemDisplayInfo::BacklightState backlightStatus;
 
 };
@@ -169,7 +167,7 @@ struct QSystemDeviceInfoData
 
 struct QSystemScreenSaverData
 {
-    unsigned screenSaverInhibited;
+    int inhibitedCount;
 };
 
 struct QSystemBatteryInfoData

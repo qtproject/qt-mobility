@@ -88,7 +88,7 @@ void dummycommon::timerEvent(QTimerEvent * /*event*/)
     poll();
 }
 
-qtimestamp getTimestamp()
+quint64 dummycommon::getTimestamp()
 {
 #ifdef Q_OS_WINCE
     // This implementation is based on code found here:
@@ -101,9 +101,16 @@ qtimestamp getTimestamp()
     uli.LowPart = userTime.dwLowDateTime;
     uli.HighPart = userTime.dwHighDateTime;
     ULONGLONG systemTimeInMS = uli.QuadPart/10000;
-    return static_cast<qtimestamp>(systemTimeInMS);
+    return static_cast<quint64>(systemTimeInMS);
 #else
-    return clock();
+    struct timespec tv;
+    int ok;
+
+    ok = clock_gettime(CLOCK_MONOTONIC, &tv);
+    Q_ASSERT(ok == 0);
+
+    quint64 result = (tv.tv_sec * 1000000ULL) + (tv.tv_nsec * 0.001); // scale to microseconds
+    return result;
 #endif
 }
 

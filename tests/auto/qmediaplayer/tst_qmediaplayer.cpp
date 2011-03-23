@@ -46,6 +46,37 @@
 #include <qgraphicsvideoitem.h>
 #include <QtNetwork/qnetworkconfigmanager.h>
 
+// Encouraging successful diversity through copy and paste.
+#ifndef QTRY_COMPARE
+#define QTRY_COMPARE(__expr, __expected) \
+    do { \
+        const int __step = 50; \
+        const int __timeout = 5000; \
+        if ((__expr) != (__expected)) { \
+            QTest::qWait(0); \
+        } \
+        for (int __i = 0; __i < __timeout && ((__expr) != (__expected)); __i+=__step) { \
+            QTest::qWait(__step); \
+        } \
+        QCOMPARE(__expr, __expected); \
+    } while(0)
+#endif
+
+#ifndef QTRY_VERIFY
+#define QTRY_VERIFY(__expr) \
+    do { \
+        const int __step = 50; \
+        const int __timeout = 5000; \
+        if (!(__expr)) { \
+            QTest::qWait(0); \
+        } \
+        for (int __i = 0; __i < __timeout && !(__expr); __i+=__step) { \
+            QTest::qWait(__step); \
+        } \
+        QVERIFY(__expr); \
+    } while(0)
+#endif
+
 QT_USE_NAMESPACE
 
 void tst_QMediaPlayer::initTestCase_data()
@@ -788,6 +819,27 @@ void tst_QMediaPlayer::testPlaylist()
 
     QVERIFY(player->playlist() == 0);
     QCOMPARE(player->media(), QMediaContent());
+
+    // Test when the player service encounters an invalid media, the player moves onto
+    // the next item without stopping
+    {
+        QSignalSpy ss(player, SIGNAL(stateChanged(QMediaPlayer::State)));
+        QSignalSpy ms(player, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)));
+
+        player->setPlaylist(playlist);
+        player->play();
+        QCOMPARE(ss.count(), 1);
+
+        mockService->setState(QMediaPlayer::StoppedState, QMediaPlayer::InvalidMedia);
+        QCOMPARE(player->state(), QMediaPlayer::PlayingState);
+        QCOMPARE(player->mediaStatus(), QMediaPlayer::InvalidMedia);
+        QCOMPARE(ss.count(), 1);
+        QCOMPARE(ms.count(), 1);
+
+        // NOTE: status should begin transitioning through to BufferedMedia.
+        QCOMPARE(player->media(), content2);
+    }
+
 }
 
 void tst_QMediaPlayer::testNetworkAccess()
@@ -945,14 +997,12 @@ void tst_QMediaPlayer::testPositionPropertyWatch()
     QSignalSpy positionSpy(player, SIGNAL(positionChanged(qint64)));
     playlist->next();
     QCOMPARE(player->state(), QMediaPlayer::PlayingState);
-    QTest::qWait(50);
-    QVERIFY(positionSpy.count() > 0);
+    QTRY_VERIFY(positionSpy.count() > 0);
 
     playlist->next();
     QCOMPARE(player->state(), QMediaPlayer::StoppedState);
 
     positionSpy.clear();
-    QTest::qWait(50);
-    QCOMPARE(positionSpy.count(), 0);
+    QTRY_COMPARE(positionSpy.count(), 0);
 }
 

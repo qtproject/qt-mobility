@@ -63,9 +63,13 @@ Q_GLOBAL_STATIC(QSystemBatteryInfo, batteryInfo)
 
 
     \qml
+
+    DeviceInfo {
+    id: devinfo
         monitorChargerTypeChanges: true
         monitorChargingStateChanges: true
-    \endqml
+}
+\endqml
 
 \sa QSystemBatteryInfo
 */
@@ -330,7 +334,7 @@ This signal is emitted when the charger type has changed, such as when a phone g
  \sa QSystemBatteryInfo::remainingCapacityPercent
 */
 /*!
-    \qmlsignal BatteryInfo::remainingCapacityChanged
+    \qmlsignal BatteryInfo::remainingCapacityChanged(QSystemBatteryInfo::EnergyUnit)
   This signal is emitted when battery capacity has changed, reported in QSystemBatteryInfo::EnergyUnit.
 
  \sa QSystemBatteryInfo::remainingCapacity

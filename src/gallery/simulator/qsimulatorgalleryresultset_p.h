@@ -47,6 +47,7 @@
 #include "qgalleryqueryrequest.h"
 #include "qgalleryitemrequest.h"
 #include <QtCore/QObject>
+#include <QtCore/QFileInfo>
 #include <QtGui/QImage>
 
 QTM_BEGIN_NAMESPACE
@@ -81,6 +82,8 @@ signals:
 public slots:
 
 private:
+    QFileInfo currentFileInfo() const;
+
     Simulator::DocGalleryConnection* connection;
     QGalleryQueryRequest* queryRequest;
     QGalleryItemRequest* itemRequest;

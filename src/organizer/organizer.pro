@@ -15,6 +15,8 @@ include(requests/requests.pri)
 include(filters/filters.pri)
 include(engines/engines.pri)
 
+QT+=core
+
 # Input
 PUBLIC_HEADERS += \
     qorganizercollection.h \

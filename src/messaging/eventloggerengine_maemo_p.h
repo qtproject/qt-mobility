@@ -52,7 +52,7 @@
 #include "qmessage.h"
 #include "qmessagemanager.h"
 #include "maemohelpers_p.h"
-#include "qmessagestore_p.h"
+#include "qmessagestore_p_p.h"
 #include "qmessage_p.h"
 #include "qmessagefilter.h"
 #include "qmessagefilter_p.h"

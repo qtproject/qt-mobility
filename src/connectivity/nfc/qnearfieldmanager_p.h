@@ -81,22 +81,22 @@ public:
     {
     }
 
-    virtual int registerTargetDetectedHandler(QObject *object, const QMetaMethod &/*method*/)
+    virtual int registerNdefMessageHandler(QObject *object, const QMetaMethod &/*method*/)
     {
         Q_UNUSED(object);
 
         return -1;
     }
 
-    virtual int registerTargetDetectedHandler(const QNdefFilter &/*filter*/,
-                                              QObject *object, const QMetaMethod &/*method*/)
+    virtual int registerNdefMessageHandler(const QNdefFilter &/*filter*/,
+                                           QObject *object, const QMetaMethod &/*method*/)
     {
         Q_UNUSED(object);
 
         return -1;
     }
 
-    virtual bool unregisterTargetDetectedHandler(int handlerId)
+    virtual bool unregisterNdefMessageHandler(int handlerId)
     {
         Q_UNUSED(handlerId);
 

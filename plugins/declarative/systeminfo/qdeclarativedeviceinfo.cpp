@@ -300,11 +300,11 @@ void QDeclarativeDeviceInfo::startWirelessKeyboardConnected(bool on)
 {
     monitoringWirelessKeyboard = on;
     if(on) {
-        connect(deviceInfo(),SIGNAL(wirelessKeyboardConnected(bool connected)),
-                this,SIGNAL(wirelessKeyboardConnected(bool connected)),Qt::UniqueConnection);
+        connect(deviceInfo(),SIGNAL(wirelessKeyboardConnected(bool)),
+                this,SIGNAL(wirelessKeyboardConnected(bool)),Qt::UniqueConnection);
     } else {
-        disconnect(deviceInfo(),SIGNAL(wirelessKeyboardConnected(bool connected)),
-                this,SIGNAL(wirelessKeyboardConnected(bool connected)));
+        disconnect(deviceInfo(),SIGNAL(wirelessKeyboardConnected(bool)),
+                this,SIGNAL(wirelessKeyboardConnected(bool)));
     }
 }
 
@@ -328,11 +328,11 @@ void QDeclarativeDeviceInfo::startKeyboardFlipped(bool on)
 {
     monitoringKeyboardFlipped = on;
     if(on) {
-        connect(deviceInfo(),SIGNAL(keyboardFlipped(bool open)),
-                this,SIGNAL(keyboardFlipped(bool open)),Qt::UniqueConnection);
+        connect(deviceInfo(),SIGNAL(keyboardFlipped(bool)),
+                this,SIGNAL(keyboardFlipped(bool)),Qt::UniqueConnection);
     } else {
-        disconnect(deviceInfo(),SIGNAL(keyboardFlipped(bool open)),
-                this,SIGNAL(keyboardFlipped(bool open)));
+        disconnect(deviceInfo(),SIGNAL(keyboardFlipped(bool)),
+                this,SIGNAL(keyboardFlipped(bool)));
     }
 }
 
@@ -356,11 +356,11 @@ void QDeclarativeDeviceInfo::startDeviceLocked(bool on)
 {
     monitoringDeviceLocked = on;
     if(on) {
-        connect(deviceInfo(),SIGNAL(deviceLocked(bool isLocked)),
-                this,SIGNAL(deviceLocked(bool isLocked)),Qt::UniqueConnection);
+        connect(deviceInfo(),SIGNAL(deviceLocked(bool)),
+                this,SIGNAL(deviceLocked(bool)),Qt::UniqueConnection);
     } else {
-        disconnect(deviceInfo(),SIGNAL(deviceLocked(bool isLocked)),
-                this,SIGNAL(deviceLocked(bool isLocked)));
+        disconnect(deviceInfo(),SIGNAL(deviceLocked(bool)),
+                this,SIGNAL(deviceLocked(bool)));
     }
 }
 
@@ -429,6 +429,35 @@ QString QDeclarativeDeviceInfo::uniqueID()
 {
     return deviceInfo()->uniqueDeviceID().toString();
 }
+
+/*!
+  \qmlproperty bool DeviceInfo::primaryKeypadLightOn()
+
+    Returns the whether he primary keypad  or keyboard light is on.
+  */
+/*!
+  Returns true if the primary key pad light is on, otherwise false;
+  */
+bool QDeclarativeDeviceInfo::primaryKeypadLightOn()
+{
+    return deviceInfo()->keypadLightOn(QSystemDeviceInfo::PrimaryKeypad);
+}
+
+/*!
+  \qmlproperty bool DeviceInfo::secondaryKeypadLightOn()
+
+    Returns the whether he secondary keypad or keyboard light is on.
+  */
+/*!
+  Returns true if the key pad light is on, otherwise false;
+  */
+bool QDeclarativeDeviceInfo::secondaryKeypadLightOn()
+{
+    return deviceInfo()->keypadLightOn(QSystemDeviceInfo::SecondaryKeypad);
+
+}
+
+
 
 /*!
   \qmlproperty QString DeviceInfo::imei
@@ -511,10 +540,6 @@ Gets the current bluetooth power state.
   */
 
 
-/*!
-  \qmlmethod bool DeviceInfo::keypadLightOn(QSystemDeviceInfo::KeypadType type)
-  Returns true if the key pad, indicated by \a type, light is on, otherwise false;
-  */
 
 /*!
   \qmlproperty string DeviceInfo::uniqueID

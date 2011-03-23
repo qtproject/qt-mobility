@@ -50,6 +50,7 @@
 #define USE_BUFFERS 1
 #endif
 
+//! [smoothed]
 class smoothedaccelerometerfilter : public QObject, public QAccelerometerFilter
 {
     qreal prevX;
@@ -90,6 +91,7 @@ public:
         return true;
     }
 };
+//! [smoothed]
 
 View::View(QWidget *parent)
     : QGLWidget(parent),
@@ -97,15 +99,21 @@ View::View(QWidget *parent)
       painter(0),
       showFrameRate(false)
 {
+#if (QT_VERSION >= QT_VERSION_CHECK(4, 7, 2))
+    setAttribute(Qt::WA_LockPortraitOrientation);
+#endif
+
     mainCamera = new Camera(this);
 
     roomCamera = new Camera(this);
     roomCamera->setAdjustForAspectRatio(false);
 
+//! [accelerometer]
     sensor = new QAccelerometer(this);
     connect(sensor, SIGNAL(readingChanged()), this, SLOT(accelerometerTimeout()));
     sensor->addFilter(new smoothedaccelerometerfilter(this));
     sensor->start();
+//! [accelerometer]
 
     time.start();
 
@@ -261,6 +269,7 @@ void View::paintGL()
 #endif
 }
 
+//! [accelerometer2]
 void View::accelerometerTimeout()
 {
     QVector3D g = gravity();
@@ -279,3 +288,4 @@ QVector3D View::gravity() const
 
     return QVector3D(x, y, z);
 }
+//! [accelerometer2]

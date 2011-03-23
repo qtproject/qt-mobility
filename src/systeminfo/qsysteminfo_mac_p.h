@@ -154,7 +154,7 @@ public:
     QString getDefaultInterface();
     QSystemNetworkInfo::NetworkMode currentMode();
     void ethernetChanged();
-
+    QSystemNetworkInfo::CellDataTechnology cellDataTechnology();
 
 Q_SIGNALS:
    void networkStatusChanged(QSystemNetworkInfo::NetworkMode, QSystemNetworkInfo::NetworkStatus);
@@ -340,6 +340,7 @@ public:
 
     bool screenSaverInhibited();
     bool setScreenSaverInhibit();
+    void setScreenSaverInhibited(bool on);
 
 private:
     QString screenPath;

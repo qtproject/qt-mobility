@@ -16,7 +16,7 @@
 */
 
 
-target          t_view.exe
+TARGET          t_view.exe
 targettype      EXE
 CAPABILITY   ReadUserData WriteUserData
 UID		0x1000007a
@@ -29,6 +29,6 @@ userinclude ../inc
 
 source          T_VIEW.CPP
 
-library         euser.lib  cntmodel.lib	cnttutil.lib efsrv.lib pimtestclient.lib
+LIBRARY         euser.lib  cntmodel.lib	cnttutil.lib efsrv.lib pimtestclient.lib
 
 SMPSAFE

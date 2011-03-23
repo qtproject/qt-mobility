@@ -27,6 +27,7 @@ usr/include/qt4/QtOrganizer/QOrganizerItemDetailRangeFilter
 usr/include/qt4/QtOrganizer/QOrganizerItemDisplayLabel
 usr/include/qt4/QtOrganizer/QOrganizerItemEmailReminder
 usr/include/qt4/QtOrganizer/QOrganizerItemEngineId
+usr/include/qt4/QtOrganizer/QOrganizerItemFetchByIdRequest
 usr/include/qt4/QtOrganizer/QOrganizerItemFetchForExportRequest
 usr/include/qt4/QtOrganizer/QOrganizerItemFetchHint
 usr/include/qt4/QtOrganizer/QOrganizerItemFetchRequest
@@ -38,6 +39,7 @@ usr/include/qt4/QtOrganizer/QOrganizerItemIdFilter
 usr/include/qt4/QtOrganizer/QOrganizerItemIntersectionFilter
 usr/include/qt4/QtOrganizer/QOrganizerItemInvalidFilter
 usr/include/qt4/QtOrganizer/QOrganizerItemLocation
+usr/include/qt4/QtOrganizer/QOrganizerItemObserver
 usr/include/qt4/QtOrganizer/QOrganizerItemOccurrenceFetchRequest
 usr/include/qt4/QtOrganizer/QOrganizerItemParent
 usr/include/qt4/QtOrganizer/QOrganizerItemPriority
@@ -55,6 +57,7 @@ usr/include/qt4/QtOrganizer/QOrganizerJournal
 usr/include/qt4/QtOrganizer/QOrganizerJournalTime
 usr/include/qt4/QtOrganizer/QOrganizerManager
 usr/include/qt4/QtOrganizer/QOrganizerManagerEngine
+usr/include/qt4/QtOrganizer/QOrganizerManagerEngineV2
 usr/include/qt4/QtOrganizer/QOrganizerManagerEngineFactory
 usr/include/qt4/QtOrganizer/QOrganizerNote
 usr/include/qt4/QtOrganizer/QOrganizerRecurrenceRule
@@ -92,6 +95,7 @@ usr/include/qt4/QtOrganizer/qorganizeritemdetails.h
 usr/include/qt4/QtOrganizer/qorganizeritemdisplaylabel.h
 usr/include/qt4/QtOrganizer/qorganizeritememailreminder.h
 usr/include/qt4/QtOrganizer/qorganizeritemengineid.h
+usr/include/qt4/QtOrganizer/qorganizeritemfetchbyidrequest.h
 usr/include/qt4/QtOrganizer/qorganizeritemfetchforexportrequest.h
 usr/include/qt4/QtOrganizer/qorganizeritemfetchhint.h
 usr/include/qt4/QtOrganizer/qorganizeritemfetchrequest.h
@@ -104,6 +108,7 @@ usr/include/qt4/QtOrganizer/qorganizeritemidfilter.h
 usr/include/qt4/QtOrganizer/qorganizeritemintersectionfilter.h
 usr/include/qt4/QtOrganizer/qorganizeriteminvalidfilter.h
 usr/include/qt4/QtOrganizer/qorganizeritemlocation.h
+usr/include/qt4/QtOrganizer/qorganizeritemobserver.h
 usr/include/qt4/QtOrganizer/qorganizeritemoccurrencefetchrequest.h
 usr/include/qt4/QtOrganizer/qorganizeritemparent.h
 usr/include/qt4/QtOrganizer/qorganizeritempriority.h
@@ -133,3 +138,4 @@ usr/include/qt4/QtOrganizer/qorganizertodotime.h
 usr/include/qt4/QtOrganizer/qtorganizer.h
 usr/include/qt4/QtOrganizer/qtorganizerglobal.h
 usr/lib/libQtOrganizer.so
+usr/lib/pkgconfig/QtOrganizer.pc

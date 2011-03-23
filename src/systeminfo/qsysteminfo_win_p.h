@@ -135,6 +135,7 @@ public:
    void emitNetworkStatusChanged(QSystemNetworkInfo::NetworkMode, QSystemNetworkInfo::NetworkStatus);
    void emitNetworkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode,int);
    QSystemNetworkInfo::NetworkMode currentMode();
+   QSystemNetworkInfo::CellDataTechnology cellDataTechnology();
 
 
    static QSystemNetworkInfoPrivate *instance();
@@ -189,6 +190,8 @@ public:
 private:
     HDC deviceContextHandle;
     int getMonitorCaps(int caps, int screen);
+Q_SIGNALS:
+    void orientationChanged(QSystemDisplayInfo::DisplayOrientation newOrientation);
 
 };
 
@@ -328,6 +331,9 @@ public:
     bool screenSaverInhibited();
     bool setScreenSaverInhibit();
     bool screenSaverSecureEnabled();
+
+    void setScreenSaverInhibited(bool on);
+
 private:
     QString screenPath;
     QString settingsPath;

@@ -41,6 +41,8 @@
 
 int MainWindow::m_doubleCounter = 0;
 int MainWindow::m_singleCounter = 0;
+long MainWindow::m_lastDouble = 0;
+long MainWindow::m_lastSingle = 0;
 
 MainWindow::MainWindow(QWidget *parent) :
         QMainWindow(parent),
@@ -75,8 +77,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(ui->singleCheckBox, SIGNAL(stateChanged(int)), this, SLOT(changeSingleState(int)));
     connect(ui->doubleCheckBox, SIGNAL(stateChanged(int)), this, SLOT(changeDoubleState(int)));
-    connect(filter, SIGNAL(singleHappened(QString)), this, SLOT(singleHappened(QString)));
-    connect(filter, SIGNAL(doubleHappened(QString)), this, SLOT(doubleHappened(QString)));
+    connect(filter, SIGNAL(singleHappened(QString,long)), this, SLOT(singleHappened(QString,long)));
+    connect(filter, SIGNAL(doubleHappened(QString,long)), this, SLOT(doubleHappened(QString,long)));
 
     resize();
 }
@@ -99,16 +101,30 @@ void MainWindow::changeDoubleState(int state){
     else doublesensor->start();
 }
 
-void MainWindow::singleHappened(QString direction){
+void MainWindow::singleHappened(QString direction, long timestamp){
     ui->singleLCD->display(++m_singleCounter);
     ui->singleDirection->setText(direction);
     ui->singleTime->setText(QTime::currentTime().toString());
+    long diff = timestamp -m_lastSingle;
+    QString frequency(QString::number(diff/1000));
+    frequency.append("ms ");
+    frequency.append(QString::number(1000000/diff));
+    frequency.append(" Hz");
+    ui->singleFrequency->setText(frequency);
+    m_lastSingle = timestamp;
 }
 
-void MainWindow::doubleHappened(QString direction){
+void MainWindow::doubleHappened(QString direction, long timestamp){
     ui->doubleLCD->display(++m_doubleCounter);
     ui->doubleDirection->setText(direction);
     ui->doubleTime->setText(QTime::currentTime().toString());
+    long diff = timestamp - m_lastDouble;
+    QString frequency(QString::number(diff/1000));
+    frequency.append("ms ");
+    frequency.append(QString::number(1000000/diff));
+    frequency.append(" Hz");
+    ui->doubleFrequency->setText(frequency);
+    m_lastDouble = timestamp;
 }
 
 void MainWindow::resize(){
@@ -123,6 +139,8 @@ void MainWindow::resize(){
     widgets.append(ui->singlePcs);
     widgets.append(ui->lastDouble);
     widgets.append(ui->lastSingle);
+    widgets.append(ui->doubleFrequency);
+    widgets.append(ui->singleFrequency);
     widgets.append(ui->horizontalLayoutWidget);
     widgets.append(ui->horizontalLayoutWidget_2);
     int gain = 50;

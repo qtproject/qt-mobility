@@ -42,8 +42,14 @@
 #include "qgeomapgroupobject.h"
 #include "qgeomapgroupobject_p.h"
 
+#include "qgeomapobject_p.h"
+#include "qgeomapobjectengine_p.h"
+
 #include "qgeocoordinate.h"
 #include "qgeoboundingbox.h"
+
+#include "qgeomapdata.h"
+#include "qgeomapdata_p.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -74,7 +80,7 @@ QTM_BEGIN_NAMESPACE
     Constructs a new group object.
 */
 QGeoMapGroupObject::QGeoMapGroupObject()
-    : d_ptr(new QGeoMapGroupObjectPrivate()) {}
+    : d_ptr(new QGeoMapGroupObjectPrivate(this)) {}
 
 /*!
     Destroys this group object.
@@ -150,6 +156,7 @@ void QGeoMapGroupObject::addChildObject(QGeoMapObject *childObject)
         return;
 
     childObject->setMapData(mapData());
+    childObject->d_func()->serial = d_func()->serial++;
 
     //binary search
     QList<QGeoMapObject*>::iterator i = qUpperBound(d_ptr->children.begin(),
@@ -157,6 +164,10 @@ void QGeoMapGroupObject::addChildObject(QGeoMapObject *childObject)
                                                     childObject,
                                                     mapObjectLessThan);
     d_ptr->children.insert(i, childObject);
+    update();
+
+    connect(childObject, SIGNAL(zValueChanged(int)),
+            d_ptr, SLOT(childChangedZValue(int)));
 
     emit childAdded(childObject);
 }
@@ -172,9 +183,21 @@ void QGeoMapGroupObject::removeChildObject(QGeoMapObject *childObject)
         return;
 
     if (d_ptr->children.removeAll(childObject) > 0) {
+
+        disconnect(childObject, SIGNAL(zValueChanged(int)),
+                   d_ptr, SLOT(childChangedZValue(int)));
+
         emit childRemoved(childObject);
         childObject->setMapData(0);
+
+        if (this->mapData()) {
+            QGeoMapObjectEngine *oe = this->mapData()->d_ptr->oe;
+            if (oe)
+                oe->removeObject(childObject);
+        }
     }
+
+    update();
 }
 
 /*!
@@ -195,10 +218,32 @@ void QGeoMapGroupObject::clearChildObjects()
     for (int i = 0; i < d_ptr->children.size(); ++i) {
         emit childRemoved(d_ptr->children[i]);
         d_ptr->children[i]->setMapData(0);
+
+        if (this->mapData()) {
+            QGeoMapObjectEngine *oe = this->mapData()->d_ptr->oe;
+            if (oe)
+                oe->removeObject(d_ptr->children[i]);
+        }
+
         delete d_ptr->children[i];
     }
 
     d_ptr->children.clear();
+
+    update();
+}
+
+/*!
+    \reimp
+*/
+void QGeoMapGroupObject::setVisible(bool visible)
+{
+    for (int i = 0; i < d_ptr->children.size(); ++i)
+        d_ptr->children[i]->setVisible(visible);
+
+    QGeoMapObject::setVisible(visible);
+
+    update();
 }
 
 /*!
@@ -233,14 +278,36 @@ void QGeoMapGroupObject::setMapData(QGeoMapData *mapData)
 /*******************************************************************************
 *******************************************************************************/
 
-QGeoMapGroupObjectPrivate::QGeoMapGroupObjectPrivate() {}
+QGeoMapGroupObjectPrivate::QGeoMapGroupObjectPrivate(QGeoMapGroupObject *p) :
+    QObject(p),
+    serial(1),
+    q_ptr(p)
+{}
 
 QGeoMapGroupObjectPrivate::~QGeoMapGroupObjectPrivate()
 {
     qDeleteAll(children);
 }
 
+void QGeoMapGroupObjectPrivate::childChangedZValue(int zValue)
+{
+    Q_UNUSED(zValue);
+    QGeoMapObject *child = qobject_cast<QGeoMapObject*>(sender());
+    if (!child)
+        return;
+
+    if (children.removeAll(child) > 0) {
+        QList<QGeoMapObject*>::iterator i = qUpperBound(children.begin(),
+                                                        children.end(),
+                                                        child,
+                                                        mapObjectLessThan);
+        children.insert(i, child);
+        q_ptr->update();
+    }
+}
+
 #include "moc_qgeomapgroupobject.cpp"
+#include "moc_qgeomapgroupobject_p.cpp"
 
 QTM_END_NAMESPACE
 

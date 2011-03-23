@@ -1,9 +1,14 @@
 TARGET = bttennis
 
-INCLUDEPATH += ../../src/connectivity/bluetooth
-DEPENDPATH += ../../src/connectivity/bluetooth
+INCLUDEPATH += \
+    ../../src/connectivity/bluetooth \
+    ../../src/connectivity/nfc
 
-include(../examples.pri)
+DEPENDPATH += \
+    ../../src/connectivity/bluetooth \
+    ../../src/connectivity/nfc
+
+include(../mobility_examples.pri)
 
 CONFIG += mobility
 MOBILITY = connectivity
@@ -15,7 +20,8 @@ SOURCES = \
     controller.cpp \
     tennisserver.cpp \
     tennisclient.cpp \
-    tennisview.cpp
+    tennisview.cpp \
+    handover.cpp
 
 HEADERS = \
     board.h \
@@ -23,7 +29,8 @@ HEADERS = \
     controller.h \
     tennisserver.h \
     tennisclient.h \
-    tennisview.h
+    tennisview.h \
+    handover.h
 
 FORMS = \
     tennis.ui

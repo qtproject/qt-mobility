@@ -42,6 +42,7 @@
 
 #include <QObject>
 #include <QDateTime>
+#include <QDebug>
 #include <limits.h>
 #include "qgeopositioninfosource_s60_p.h"
 #include "qgeosatelliteinfosource_s60_p.h"
@@ -60,6 +61,7 @@ CQGeoSatelliteInfoSourceS60::CQGeoSatelliteInfoSourceS60(QObject* aParent) : QGe
         mReqUpdateAO(NULL),
         mRegUpdateAO(NULL),
         mListSize(0),
+        mMinUpdateInterval(0),
         mStartUpdates(FALSE),
         mModuleFlags(0)
 {
@@ -92,6 +94,12 @@ CQGeoSatelliteInfoSourceS60* CQGeoSatelliteInfoSourceS60::NewLC(QObject* aParent
 // static function NewL
 CQGeoSatelliteInfoSourceS60* CQGeoSatelliteInfoSourceS60::NewL(QObject * aParent)
 {
+    RProcess thisProcess;
+    if (!thisProcess.HasCapability(ECapabilityLocation)) {
+        qWarning() << "QGeoSatelliteInfoSource::createDefaultSource() requires the Symbian Location capability to succeed on the Symbian platform.";
+        return 0;
+    }
+
     CQGeoSatelliteInfoSourceS60* self = CQGeoSatelliteInfoSourceS60::NewLC(aParent);
     CleanupStack::Pop();
 
@@ -166,8 +174,9 @@ void CQGeoSatelliteInfoSourceS60::ConstructL()
 }
 
 //private function : to retrieve the index of the supplied module id from the mList array
-TInt CQGeoSatelliteInfoSourceS60::checkModule(TPositionModuleId aId)const
+TInt CQGeoSatelliteInfoSourceS60::checkModule(TPositionModuleId aId)//const
 {
+    QMutexLocker locker(&m_mutex);
     TInt i;
     for (i = 0; i < mListSize; i++)
         if (mList[i].mUid == aId)
@@ -181,10 +190,12 @@ int CQGeoSatelliteInfoSourceS60::minimumUpdateInterval() const
     if (mCurrentModuleId == TUid::Null())
         return 0;
 
-    TInt i = checkModule(mCurrentModuleId);
+    return mMinUpdateInterval;
+
+    /*TInt i = checkModule(mCurrentModuleId);
     if (i != -1)
         return mList[i].mTimeToNextFix.Int64() / 1000;           //divide by 1000, to convert microsecond to milisecond
-    return 0;
+    return 0;*/
 }
 
 //private function : get the index of the mList that supports the preferred method if
@@ -315,6 +326,8 @@ void CQGeoSatelliteInfoSourceS60::updateStatus(TPositionModuleInfo &aModInfo, TI
 
         //count on the mList array size
         mListSize++;
+
+        mMinUpdateInterval = mList[mListSize-1].mTimeToNextFix.Int64() / 1000;
     } else {
         //module's status has changed
         if (mList[i].mStatus != aStatus)
@@ -360,7 +373,7 @@ void CQGeoSatelliteInfoSourceS60::updateStatus(TPositionModuleInfo &aModInfo, TI
 
 
                 mCurrentModuleId = mList[i].mUid;
-
+                mMinUpdateInterval = mList[i].mTimeToNextFix.Int64() / 1000;
             }
         }
 
@@ -403,18 +416,19 @@ void CQGeoSatelliteInfoSourceS60::updateStatus(TPositionModuleInfo &aModInfo, TI
                     //method
                     mRegUpdateAO = temp;
 
+                    mCurrentModuleId = mList[index].mUid;
+                    mMinUpdateInterval = mList[i].mTimeToNextFix.Int64() / 1000;
+
                     mRegUpdateAO->setUpdateInterval(interval);
 
                     if (mStartUpdates)
                         mRegUpdateAO->startUpdates();
 
-
-                    mCurrentModuleId = mList[index].mUid;
-
                 } else {
                     //no methods available,clean up the resources
                     mRegUpdateAO = NULL;
                     mCurrentModuleId = TUid::Null();
+                    mMinUpdateInterval = interval;
                 }
 
             }
@@ -551,6 +565,11 @@ void CQGeoSatelliteInfoSourceS60::requestUpdate(int aTimeout)
 
     CQMLBackendAO *temp = NULL;
 
+    if (mRegUpdateAO == NULL || mCurrentModuleId == TUid::Null()) {
+        emit requestTimeout();
+        return;
+    }
+
     //requestupdate
     //return if already a request update is pending
     if (mReqUpdateAO && mReqUpdateAO->isRequestPending())
@@ -576,8 +595,8 @@ void CQGeoSatelliteInfoSourceS60::requestUpdate(int aTimeout)
         //if the selected module for request update is same as the previous one reuse the request
         if (mList[index].mUid == mReqModuleId) {
             if (mReqUpdateAO) {
-            	mReqUpdateAO->requestUpdate(aTimeout);
-            	return;
+                mReqUpdateAO->requestUpdate(aTimeout);
+                return;
             }
         }
 
@@ -616,6 +635,11 @@ void CQGeoSatelliteInfoSourceS60::requestUpdate(int aTimeout)
 // starts the regular updates
 void CQGeoSatelliteInfoSourceS60::startUpdates()
 {
+    if (mRegUpdateAO == NULL || mCurrentModuleId == TUid::Null()) {
+        emit requestTimeout();
+        return;
+    }
+
     if (mRegUpdateAO && ((receivers(SIGNAL(satellitesInViewUpdated(const QList<QGeoSatelliteInfo>&))) > 0) ||
                          (receivers(SIGNAL(satellitesInUseUpdated(const QList<QGeoSatelliteInfo>&))) > 0)))
         mRegUpdateAO->startUpdates();
@@ -627,6 +651,12 @@ void CQGeoSatelliteInfoSourceS60::startUpdates()
 void CQGeoSatelliteInfoSourceS60::stopUpdates()
 {
     mStartUpdates = false;
+
+    if (mRegUpdateAO == NULL || mCurrentModuleId == TUid::Null()) {
+        emit requestTimeout();
+        return;
+    }
+
     if (mReqUpdateAO)
         mRegUpdateAO->cancelUpdate();
 }

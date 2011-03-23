@@ -91,7 +91,7 @@ bool QGalleryTrackerEditableResultSet::setMetaData(int key, const QVariant &valu
     if (!d->currentRow || key < d->valueOffset || key >= d->columnCount)
         return false;
     else if (key >= d->aliasOffset)
-        key = d->aliasColumns.at(key - d->aliasOffset);
+        key = d->aliasColumns.at(key - d->aliasOffset) + d->valueOffset;
 
     if (key >= d->compositeOffset)
         return false;

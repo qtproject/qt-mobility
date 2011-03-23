@@ -1067,29 +1067,29 @@ EXPORT_C void CContactItemField::RestoreTextL(HBufC *aTextStream,TInt aTextField
 @internalTechnology 
 */
 EXPORT_C TBool CContactItemField::RestoreIfMatchL(RReadStream& aStream,const CContactItemFieldDef *aFieldDef, const CContactItemFieldSet *aSystemTemplateFields,HBufC *aTextStream,TInt aTextIndex)
-	{
-	TStreamId nestedId;
-	nestedId=RestoreFieldTypesL(aStream,aSystemTemplateFields);
-	TBool match=EFalse;
-	if (aFieldDef==NULL)
-		match=ETrue;
-	else
-		{
-		for(TInt loop=0;loop<aFieldDef->Count();loop++)
-			{
-			TUid fieldType=(*aFieldDef)[loop];
-			if (fieldType==KUidContactFieldMatchAll || iContentType->ContainsFieldType(fieldType))
-				{
-				match=ETrue;
-				break;
-				}
-			}
-		}
-	if (match && iStorageType==KStorageTypeText)
-		RestoreTextL(aTextStream,aTextIndex);
-	return match;
-	}
-	        
+    {
+    TStreamId nestedId;
+    nestedId=RestoreFieldTypesL(aStream,aSystemTemplateFields);
+    TBool match=EFalse;
+    if (aFieldDef==NULL)
+        match=ETrue;
+    else
+        {
+        for(TInt loop=0;loop<aFieldDef->Count();loop++)
+            {
+            TUid fieldType=(*aFieldDef)[loop];
+            if (fieldType==KUidContactFieldMatchAll || iContentType->ContainsFieldType(fieldType))
+                {
+                match=ETrue;
+                break;
+                }
+            }
+        }
+    if (match && iStorageType==KStorageTypeText)
+        RestoreTextL(aTextStream,aTextIndex);
+    return match;
+    }
+
 TBool CContactItemField::RestoreIfMatchL(RReadStream& aRootStream,TFieldType aFieldType, const CContactItemFieldSet *aSystemTemplateFields,HBufC *aTextStream,TInt aTextIndex)
 	{
 	CContactItemFieldDef* fieldDef=new(ELeave) CContactItemFieldDef();

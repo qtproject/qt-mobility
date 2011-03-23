@@ -65,8 +65,8 @@ public:
 private slots:
     void changeSingleState(int);
     void changeDoubleState(int);
-    void singleHappened(QString);
-    void doubleHappened(QString);
+    void singleHappened(QString,long);
+    void doubleHappened(QString,long);
 
 private:
     Ui::MainWindow *ui;
@@ -75,6 +75,7 @@ private:
     TapSensorFilter* filter;
     void resize();
     static int m_singleCounter, m_doubleCounter;
+    static long m_lastSingle, m_lastDouble;
 
 };
 

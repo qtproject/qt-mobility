@@ -81,6 +81,7 @@ public:
     QMediaService *service;
     QVideoWindowControl *windowControl;
     QPointer<QGraphicsView> currentView;
+    QList<QPointer<QObject> > eventFilterTargets;
     QGraphicsView::ViewportUpdateMode savedViewportUpdateMode;
 
     Qt::AspectRatioMode aspectRatioMode;
@@ -92,6 +93,7 @@ public:
     QWidget *videoWidget;
 
     bool eventFilter(QObject *object, QEvent *event);
+    void updateEventFilters();
 
     void setWidget(QWidget *widget);
     void clearService();
@@ -111,8 +113,32 @@ void QGraphicsVideoItemPrivate::_q_present()
 
 bool QGraphicsVideoItemPrivate::eventFilter(QObject *object, QEvent *event)
 {
-    if (windowControl && object == videoWidget && QEvent::WinIdChange == event->type())
+    if (windowControl && object == videoWidget && QEvent::WinIdChange == event->type()) {
         windowControl->setWinId(videoWidget->effectiveWinId());
+    } else {
+        bool updateEventFiltersRequired = false;
+        bool refreshDisplayRequired = false;
+        foreach (QPointer<QObject> target, eventFilterTargets) {
+            if (object == target.data()) {
+                switch (event->type()) {
+                case QEvent::ParentChange:
+                    updateEventFiltersRequired = true;
+                    refreshDisplayRequired = true;
+                    break;
+                case QEvent::Move:
+                case QEvent::Resize:
+                    refreshDisplayRequired = true;
+                    break;
+                }
+            }
+        }
+        if (updateEventFiltersRequired)
+            updateEventFilters();
+#ifdef Q_OS_SYMBIAN
+        if (refreshDisplayRequired && windowControl)
+            QMetaObject::invokeMethod(windowControl, "refreshDisplay");
+#endif
+    }
     return false;
 }
 
@@ -144,34 +170,40 @@ void QGraphicsVideoItemPrivate::clearService()
 void QGraphicsVideoItemPrivate::updateRects()
 {
     q_ptr->prepareGeometryChange();
-
-    displayRect = rect;
-
+    QSizeF videoSize;
     if (nativeSize.isEmpty()) {
-        boundingRect = rect;
+        videoSize = rect.size();
     } else if (aspectRatioMode == Qt::IgnoreAspectRatio) {
-        boundingRect = rect;        
-    } else if (aspectRatioMode == Qt::KeepAspectRatio) {
-        QSizeF size = nativeSize;
-        size.scale(rect.size(), Qt::KeepAspectRatio);
-
-        boundingRect = QRectF(0, 0, size.width(), size.height());
-        boundingRect.moveCenter(rect.center());
-
-        displayRect = boundingRect;
-    } else if (aspectRatioMode == Qt::KeepAspectRatioByExpanding) {
-        boundingRect = rect;
-
-
-        QSizeF size = rect.size();
-        size.scale(nativeSize, Qt::KeepAspectRatioByExpanding);
-        displayRect = QRectF(0, 0, size.width(), size.height());
-        displayRect.moveCenter(rect.center());
+        videoSize = rect.size();
+    } else {
+        // KeepAspectRatio or KeepAspectRatioByExpanding
+        videoSize = nativeSize;
+        videoSize.scale(rect.size(), aspectRatioMode);
     }
+    displayRect = QRectF(QPointF(0, 0), videoSize);
+    displayRect.moveCenter(rect.center());
+    boundingRect = displayRect.intersected(rect);
 }
 
 void QGraphicsVideoItemPrivate::updateLastFrame()
 {
+}
+
+void QGraphicsVideoItemPrivate::updateEventFilters()
+{
+    // In order to determine when the absolute screen position of the item
+    // changes, we need to receive move events sent to m_currentView
+    // or any of its ancestors.
+    foreach (QPointer<QObject> target, eventFilterTargets)
+        if (target)
+            target->removeEventFilter(this);
+    eventFilterTargets.clear();
+    QObject *target = currentView;
+    while (target) {
+        target->installEventFilter(this);
+        eventFilterTargets.append(target);
+        target = target->parent();
+    }
 }
 
 void QGraphicsVideoItemPrivate::_q_updateNativeSize()
@@ -248,7 +280,7 @@ bool QGraphicsVideoItem::setMediaObject(QMediaObject *object)
             if (d->windowControl != 0) {
                 connect(d->service, SIGNAL(destroyed()), SLOT(_q_serviceDestroyed()));
                 connect(d->windowControl, SIGNAL(nativeSizeChanged()), SLOT(_q_updateNativeSize()));
-
+                d->windowControl->setAspectRatioMode(Qt::IgnoreAspectRatio);
                 //d->windowControl->setProperty("colorKey", QVariant(QColor(16,7,2)));
                 d->windowControl->setProperty("autopaintColorKey", QVariant(false));
 
@@ -340,6 +372,7 @@ void QGraphicsVideoItem::paint(
             d->savedViewportUpdateMode = view->viewportUpdateMode();
             view->setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
         }
+        d->updateEventFilters();
     }
 
     QColor colorKey = Qt::black;

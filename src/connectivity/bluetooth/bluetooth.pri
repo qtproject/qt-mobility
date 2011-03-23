@@ -106,7 +106,8 @@ symbian {
     include(bluez/bluez.pri)
 
     PRIVATE_HEADERS += \
-        bluetooth/qbluetoothtransferreply_bluez_p.h
+        bluetooth/qbluetoothtransferreply_bluez_p.h \
+        bluetooth/qbluetoothlocaldevice_p.h
 
     SOURCES += \
         bluetooth/qbluetoothserviceinfo_bluez.cpp \

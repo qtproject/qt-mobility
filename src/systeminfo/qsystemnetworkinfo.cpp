@@ -207,7 +207,7 @@ int QSystemNetworkInfo::locationAreaCode()
   \brief The current MCC.
 
    Returns the current Mobile Country Code. In the case of a Desktop computer, an empty string is returned.
-/*/
+*/
 QString QSystemNetworkInfo::currentMobileCountryCode()
 {
    return netInfoPrivate()->currentMobileCountryCode();
@@ -390,6 +390,19 @@ void QSystemNetworkInfo::disconnectNotify(const char *signal)
                 this,SIGNAL(networkStatusChanged(QSystemNetworkInfo::NetworkMode,QSystemNetworkInfo::NetworkStatus)));
     }
 
+}
+
+/*!
+ \property QSystemNetworkInfo::cellDataTechnology
+
+    Returns the current active cell data technology.
+    If no data technology is active, returns QSystemNetworkInfo::NoDataTechnology. If data technology is not supported, this will return
+    QSystemNetworkInfo::UnknownDataTechnology
+
+  */
+QSystemNetworkInfo::CellDataTechnology QSystemNetworkInfo::cellDataTechnology()
+{
+    return netInfoPrivate()->cellDataTechnology();
 }
 
 

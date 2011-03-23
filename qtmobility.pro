@@ -46,7 +46,9 @@ contains(QT_MAJOR_VERSION, 4):lessThan(QT_MINOR_VERSION, 6) {
     } else {
         system(cat $${sourcePath} >> $$PRF_OUTPUT)
     }
-
+    
+    # Remember to update staticconfig.pri binary version statement
+    # and pregenerated files under src/s60installs for Symbian RnD release
     PRF_CONFIG=$${QT_MOBILITY_BUILD_TREE}/features/mobilityconfig.prf
     system(echo MOBILITY_CONFIG=$${mobility_modules} > $$PRF_CONFIG)
     system(echo MOBILITY_VERSION = 1.2.0 >> $$PRF_CONFIG)
@@ -207,6 +209,9 @@ contains(build_demos, yes):SUBDIRS+=demos
         INSTALLS += qtmheaderconnectivity
     }
 } else {
+    # following needs to be set because symbian-abld or symbian-sbsv2 is not yet
+    # defined in platform_paths.prf and the prj_export gets confused about paths.
+    epocroot_prefix = /
     #absolute path does not work and 
     #include <QtMyLibrary/class.h> style does not work either
     qtmGlobalHeaders = include/QtMobility/*

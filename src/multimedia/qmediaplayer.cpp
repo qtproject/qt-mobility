@@ -76,31 +76,12 @@ QT_BEGIN_NAMESPACE
     main or canonical URL with addition information attached. When provided
     with a QMediaContent playback may be able to commence.
 
-    \code
-        player = new QMediaPlayer;
-        connect(player, SIGNAL(positionChanged(qint64)), this, SLOT(positionChanged(qint64)));
-        player->setMedia(QUrl::fromLocalFile("/Users/me/Music/coolsong.mp3"));
-        player->setVolume(50);
-        player->play();
-    \endcode
+    \snippet doc/src/snippets/multimedia-snippets/media.cpp Player
 
     QVideoWidget can be used with QMediaPlayer for video rendering and QMediaPlaylist
     for accessing playlist functionality.
 
-    \code
-        playlist = new QMediaPlaylist;
-        playlist->append(QUrl("http://example.com/movie1.mp4"));
-        playlist->append(QUrl("http://example.com/movie2.mp4"));
-
-        player = new QMediaPlayer;
-        player->setPlaylist(playlist);
-
-        widget = new QVideoWidget;
-        player->setVideoOutput(widget);
-        widget->show();
-
-        player->play();
-    \endcode
+    \snippet doc/src/snippets/multimedia-snippets/media.cpp Movie playlist
 
     \sa QMediaObject, QMediaService, QVideoWidget, QMediaPlaylist
 */
@@ -163,7 +144,8 @@ void QMediaPlayerPrivate::_q_stateChanged(QMediaPlayer::State ps)
 
     if (playlist
             && ps != state && ps == QMediaPlayer::StoppedState
-            && control->mediaStatus() == QMediaPlayer::EndOfMedia) {
+            && (control->mediaStatus() == QMediaPlayer::EndOfMedia ||
+                control->mediaStatus() == QMediaPlayer::InvalidMedia)) {
         playlist->next();
         ps = control->state();
     }

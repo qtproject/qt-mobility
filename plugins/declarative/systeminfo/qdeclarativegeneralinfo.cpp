@@ -64,10 +64,12 @@ Q_GLOBAL_STATIC(QSystemInfo, generalInfo)
 
 
     \qml
-        Component.onCompleted: {
-            generalInfo.startCurrentLanguageChanged();
+
+        Component.onCompleted {
+            generalInfo.startCurrentLanguageChanged()
         }
-    \endqml
+
+\endqml
 
 \sa QSystemInfo
 */
@@ -86,8 +88,8 @@ QDeclarativeGeneralInfo::QDeclarativeGeneralInfo(QObject *parent) :
 
 void QDeclarativeGeneralInfo::startCurrentLanguageChanged()
 {
-    connect(generalInfo(),SIGNAL(startCurrentLanguageChanged(const QString &)),
-            this,SLOT(declarativeCurrentLanguageChanged(const QString &)),Qt::UniqueConnection);
+    connect(generalInfo(),SIGNAL(currentLanguageChanged(QString)),
+            this,SLOT(declarativeCurrentLanguageChanged(QString)),Qt::UniqueConnection);
 }
 
 void QDeclarativeGeneralInfo::declarativeCurrentLanguageChanged(const QString &language)

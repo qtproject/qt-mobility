@@ -76,6 +76,7 @@ Chat::Chat(QWidget *parent)
     connect(server, SIGNAL(clientDisconnected(QString)), this, SLOT(clientDisconnected(QString)));
     connect(server, SIGNAL(messageReceived(QString,QString)),
             this, SLOT(showMessage(QString,QString)));
+    connect(this, SIGNAL(sendMessage(QString)), server, SLOT(sendMessage(QString)));
     server->startServer();
     //! [Create Chat Server]
 

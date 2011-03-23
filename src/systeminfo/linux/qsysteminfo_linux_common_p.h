@@ -59,6 +59,7 @@
 #include <QHash>
 #include <QTimer>
 #include <QVariantMap>
+#include <QDesktopWidget>
 
 #include "qsysteminfo.h"
 #include "qsystemdeviceinfo.h"
@@ -139,28 +140,28 @@ public:
     QSystemNetworkInfoLinuxCommonPrivate(QObject *parent = 0);
     virtual ~QSystemNetworkInfoLinuxCommonPrivate();
 
-    virtual QSystemNetworkInfo::NetworkStatus networkStatus(QSystemNetworkInfo::NetworkMode mode);
+    QSystemNetworkInfo::NetworkStatus networkStatus(QSystemNetworkInfo::NetworkMode mode);
     qint32 networkSignalStrength(QSystemNetworkInfo::NetworkMode mode);
-    virtual qint32 cellId();
-    virtual int locationAreaCode();
+    qint32 cellId();
+    int locationAreaCode();
 
-    virtual QString currentMobileCountryCode();
-    virtual QString currentMobileNetworkCode();
+    QString currentMobileCountryCode();
+    QString currentMobileNetworkCode();
 
-    virtual QString homeMobileCountryCode();
-    virtual QString homeMobileNetworkCode();
+    QString homeMobileCountryCode();
+    QString homeMobileNetworkCode();
 
-    virtual QString networkName(QSystemNetworkInfo::NetworkMode mode);
-    virtual QString macAddress(QSystemNetworkInfo::NetworkMode mode);
+    QString networkName(QSystemNetworkInfo::NetworkMode mode);
+    QString macAddress(QSystemNetworkInfo::NetworkMode mode);
 
-    virtual QNetworkInterface interfaceForMode(QSystemNetworkInfo::NetworkMode mode);
-    virtual QSystemNetworkInfo::NetworkMode currentMode();
+    QNetworkInterface interfaceForMode(QSystemNetworkInfo::NetworkMode mode);
+    QSystemNetworkInfo::NetworkMode currentMode();
+
+    QSystemNetworkInfo::CellDataTechnology cellDataTechnology();
 
 #if !defined(QT_NO_CONNMAN)
     QSystemNetworkInfo::NetworkStatus getOfonoStatus(QSystemNetworkInfo::NetworkMode mode);
 #endif
-//public Q_SLOTS:
-//    void getPrimaryMode();
 
 Q_SIGNALS:
    void networkStatusChanged(QSystemNetworkInfo::NetworkMode, QSystemNetworkInfo::NetworkStatus);
@@ -171,6 +172,7 @@ Q_SIGNALS:
    void networkModeChanged(QSystemNetworkInfo::NetworkMode);
 
    void cellIdChanged(int); //1.2
+   void cellDataTechnologyChanged(QSystemNetworkInfo::CellDataTechnology); //1.2
 
 protected:
 #if !defined(QT_NO_DBUS)
@@ -196,6 +198,7 @@ protected:
 #endif
 
 private Q_SLOTS:
+
 #if !defined(QT_NO_CONNMAN)
     void connmanPropertyChangedContext(const QString &path,const QString &item, const QDBusVariant &value);
     void connmanTechnologyPropertyChangedContext(const QString &path,const QString &item, const QDBusVariant &value);
@@ -207,10 +210,15 @@ private Q_SLOTS:
     void ofonoModemPropertyChangedContext(const QString &path,const QString &item, const QDBusVariant &value);
 #endif
 
-    QSystemNetworkInfo::NetworkStatus getBluetoothNetStatus();
+private:
 
+    QSystemNetworkInfo::NetworkStatus getBluetoothNetStatus();
     void connectNotify(const char *signal);
     void disconnectNotify(const char *signal);
+
+#if !defined(QT_NO_CONNMAN)
+    QSystemNetworkInfo::CellDataTechnology ofonoTechToCDT(const QString &tech);
+#endif
 };
 
 class QSystemDisplayInfoLinuxCommonPrivate : public QObject
@@ -227,11 +235,27 @@ public:
 
     QSystemDisplayInfo::DisplayOrientation orientation(int screen);
     float contrast(int /*screen*/) {return 0.0;};
-    int getDPIWidth(int /*screen*/){return 0;};
-    int getDPIHeight(int /*screen*/){return 0;};
+    int getDPIWidth(int screen);
+    int getDPIHeight(int screen);
     int physicalHeight(int screen);
     int physicalWidth(int screen);
     QSystemDisplayInfo::BacklightState backlightStatus(int screen); //1.2
+    static QSystemDisplayInfoLinuxCommonPrivate *instance() {return self;}
+
+#if defined(Q_WS_X11)
+    void emitOrientationChanged(int curRotation);
+    int xEventBase;
+    int xErrorBase;
+    int lastRotation;
+#endif
+
+Q_SIGNALS:
+    void orientationChanged(QSystemDisplayInfo::DisplayOrientation newOrientation);
+
+private:
+    bool isScreenValid(int screen);
+    QDesktopWidget *wid;
+    static QSystemDisplayInfoLinuxCommonPrivate *self;
 };
 
 class QSystemStorageInfoLinuxCommonPrivate : public QObject
@@ -281,6 +305,8 @@ private Q_SLOTS:
 private Q_SLOTS:
     void deviceChanged();
     void inotifyActivated();
+    void checkFilesystem();
+
 protected:
     void connectNotify(const char *signal);
     void disconnectNotify(const char *signal);
@@ -296,8 +322,8 @@ public:
     QSystemDeviceInfoLinuxCommonPrivate(QObject *parent = 0);
     virtual ~QSystemDeviceInfoLinuxCommonPrivate();
 
-    QString imei() {return QString();}
-    QString imsi() {return QString();}
+    QString imei();
+    QString imsi();
     QString manufacturer();
     QString model();
     QString productName();
@@ -306,7 +332,7 @@ public:
 
     int  batteryLevel() const ;
 
-    QSystemDeviceInfo::SimStatus simStatus() {return QSystemDeviceInfo::SimNotAvailable;}
+    QSystemDeviceInfo::SimStatus simStatus();
     bool isDeviceLocked() {return false;}
     QSystemDeviceInfo::Profile currentProfile() {return QSystemDeviceInfo::UnknownProfile;}
 
@@ -322,7 +348,6 @@ public:
     void keyboardConnected(bool connect);//1.2
     bool keypadLightOn(QSystemDeviceInfo::KeypadType type); //1.2
     QUuid uniqueDeviceID(); //1.2
-    QSystemDeviceInfo::LockTypeFlags lockStatus(); //1.2
 
 Q_SIGNALS:
     void batteryLevelChanged(int);
@@ -408,6 +433,7 @@ public:
     QSystemBatteryInfo::BatteryStatus batteryStatus() const;
     QSystemBatteryInfo::EnergyUnit energyMeasurementUnit() const;
     bool batteryIsPresent;
+    QSystemBatteryInfo::ChargerType curChargeType;
 
 Q_SIGNALS:
     void batteryStatusChanged(QSystemBatteryInfo::BatteryStatus batteryStatus);
@@ -435,20 +461,21 @@ protected:
     QHalDeviceInterface *halIfaceDevice;
     QUDisksInterface *udisksIface;
 
+    QSystemBatteryInfo::ChargerType currentChargerType();
+
 private Q_SLOTS:
     void setConnection();
     virtual void halChanged(int,QVariantList);
     void getBatteryStats();
     void timeout();
 #if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5)
-    void propertyChanged(const QString &, const QVariant &);
+    void uPowerPropertyChanged(const QString &, const QVariant &);
 #endif
 #endif
 private:
 
     QSystemBatteryInfo::BatteryStatus currentBatStatus;
     QSystemBatteryInfo::ChargingState curChargeState;
-    QSystemBatteryInfo::ChargerType curChargeType;
     QVariantMap pMap;
 
     int currentBatLevelPercent;

@@ -66,6 +66,9 @@ private slots:
 
     void tst_lessThan_data();
     void tst_lessThan();
+
+    void tst_clear_data();
+    void tst_clear();
 };
 
 tst_QBluetoothAddress::tst_QBluetoothAddress()
@@ -220,6 +223,23 @@ void tst_QBluetoothAddress::tst_lessThan()
     QFETCH(bool, result);
 
     QCOMPARE(address1 < address2, result);
+}
+
+void tst_QBluetoothAddress::tst_clear_data()
+{
+    QTest::addColumn<QString>("addressS17");
+
+    QTest::newRow("FF:00:F3:25:00:00") << QString("FF:00:F3:25:00:00");
+}
+
+void tst_QBluetoothAddress::tst_clear()
+{
+    QFETCH(QString, addressS17);
+
+    QBluetoothAddress address(addressS17);
+    QVERIFY(!address.isNull());
+    address.clear();
+    QVERIFY(address.toString() == QString("00:00:00:00:00:00"));
 }
 
 QTEST_MAIN(tst_QBluetoothAddress)

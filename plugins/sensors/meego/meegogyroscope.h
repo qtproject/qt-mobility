@@ -45,7 +45,7 @@
 #include "meegosensorbase.h"
 #include <qgyroscope.h>
 #include <datatypes/xyz.h>
-//#include <gyroscopesensor_i.h>
+#include <gyroscopesensor_i.h>
 
 
 QTM_USE_NAMESPACE
@@ -60,6 +60,8 @@ public:
 protected:
     virtual bool doConnect();
     virtual const QString sensorName();
+    virtual const qreal correctionFactor();
+
 
 private:
     QGyroscopeReading m_reading;

@@ -25,7 +25,7 @@
 */
 #if (!defined __TIMEOUT_STEP_H__)
 #define __TIMEOUT_STEP_H__
-#include <testexecutestepbase.h>
+#include <test/testexecutestepbase.h>
 #include "timeoutbasestep.h"
 
 class CTimeoutStep : public CTimeoutBaseStep

@@ -125,6 +125,10 @@ Some devices running S60 3.2 support a newer native API and therefore support mo
 
 More information about these platforms can be found \l{http://wiki.forum.nokia.com/index.php/Nokia_Sensor_APIs}{here}.
 
+Note that timestamps on this platform come from the system clock.
+Applications need to handle shifts in time caused by the user manually setting the clock or
+from the automatic time synchronization feature setting the clock.
+
 \section2 Symbian
 
 Most Symbian devices have their sensor data read via the Sensor Framework API. Some limitations
@@ -134,10 +138,43 @@ Only specific data rates can be selected. Setting an invalid data rate has no ef
 that need to influence the used data rate should connect to the sensor, check the available data rates
 and select one as appropriate.
 
-Applications must be extremely careful not to use too much CPU time or sensor readings will
-not be delivered in a timely manner.
+Readings are delivered to the application via a queue. If the application blocks the event loop or otherwise
+interferes with the ability of the system to deliver readings (eg. by using up too much CPU time), they can
+get blocked in this queue. Since delayed readings are not useful, the system will drop readings as needed
+so that the application is always dealing with the most recent reading available. The application can tweak
+the policy by setting properties on the sensor.
+
+The default policy is to accept up to 100 readings from the system at once and to discard all but the last one.
+
+\code
+QAccelerometer sensor;
+sensor.setProperty("maximumReadingCount", 100);
+sensor.setProperty("processAllReadings", false);
+\endcode
+
+Applications that desire the original behaviour can set the maximumReadingCount to 1. Note that this does not
+guarantee that readings will not be dropped by the system. If the queue fills up, readings will be dropped.
+
+\code
+QAccelerometer sensor;
+sensor.setProperty("maximumReadingCount", 1);
+\endcode
+
+Larger maximumReadingCount values reduce the need for the lower-priority sensor daemon to get CPU timeslices.
+If the application is using lots of CPU but is still able to process readings quickly, it can request that
+all the fetched readings are processed.
+
+\code
+QAccelerometer sensor;
+sensor.setProperty("maximumReadingCount", 10);
+sensor.setProperty("processAllReadings", true);
+\endcode
 
 More information about the native API can be found \l{http://wiki.forum.nokia.com/index.php/Nokia_Sensor_APIs}{here}.
+
+Note that timestamps on this platform come from the system clock.
+Applications need to handle shifts in time caused by the user manually setting the clock or
+from the automatic time synchronization feature setting the clock.
 
 \section2 Maemo 5
 
@@ -169,7 +206,7 @@ int main(int argc, char **argv)
 {
     qputenv("N900_PORTRAIT_SENSORS", "1");
     ...
-\code
+\endcode
 
 Despite hardware that allows for multiple data rates and output ranges, the Sensors API does not allow access to
 these due to permissions issues.
@@ -179,10 +216,24 @@ ability of the timer to fire, readings will be missed. There are no queues so ap
 they process the readings promptly (possibly saving them into a buffer for later processing if required).
 
 \section2 MeeGo
+<div>The implementation of the API builds on top of the MeeGo Sensor Framework 
+that provides all the sensors specified in 1.2 API version.
+If HW sensor is missing, the configuration file "Sensors.conf" 
+must be updated and sensor removed, the file
+has a following format:
 
-The data rates offered by MeeGo are not tied to how fast the hardware runs.
+[Default]
+QAccelerometer=meego.accelerometer
+QAmbientLightSensor=meego.als
 
-The default data rate for a sensor is likely to be low when compared to Symbian or Maemo 5. Applications should
+It lists sensor types and type's default implementation by giving the sensor id. 
+If the type is omitted then the backend does not support it in this device; this
+gives a way of controlling and differentiating the supported sensor set. 
+</div> 
+	
+<div>The data rates offered by MeeGo are not tied to how fast the hardware runs.
+The default data rate for a sensor is likely to be low when compared to Symbian 
+or Maemo 5. Applications should
 request a suitable data rate, taking care to avoid selecting invalid rates on other devices.
 
 Sensors may be suspended by the system in order to save power. Applications can avoid this by setting a property
@@ -193,6 +244,8 @@ QAccelerometer *accelerometer = new QAccelerometer(this);
 accelerometer->setProperty("alwaysOn", true);
 accelerometer->start();
 \endcode
+
+
 
 \section1 Front end, back end
 

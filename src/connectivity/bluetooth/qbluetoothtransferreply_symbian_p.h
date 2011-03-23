@@ -59,6 +59,7 @@
 
 #include <QTemporaryFile>
 #include <QIODevice>
+#include <QTimer>
 
 QT_BEGIN_HEADER
 
@@ -112,6 +113,8 @@ private slots:
     void serviceDiscovered(const QBluetoothServiceInfo &info);
     void serviceDiscoveryFinished();
 
+    void updateProgress();
+
 private:
     QIODevice *m_source;
     QTemporaryFile *m_tempfile;
@@ -132,6 +135,7 @@ private:
     qint64 m_fileSize;
     int m_port;
 
+    QTimer *m_timer;
 };
 
 QTM_END_NAMESPACE

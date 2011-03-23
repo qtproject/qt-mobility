@@ -61,6 +61,7 @@ bool QRfcommServer::listen(const QBluetoothAddress &address, quint16 port)
 {
     Q_UNUSED(address);
     Q_UNUSED(port);
+    return false;
 }
 
 void QRfcommServer::setMaxPendingConnections(int numConnections)
@@ -119,6 +120,16 @@ void QRfcommServerPrivate::HandleShutdownCompleteL(TInt aErr)
 {
 }
 #endif
+
+void QRfcommServer::setSecurityFlags(QBluetooth::SecurityFlags security)
+{
+}
+
+QBluetooth::SecurityFlags QRfcommServer::securityFlags() const
+{
+    return QBluetooth::NoSecurity;
+}
+
 
 
 QTM_END_NAMESPACE

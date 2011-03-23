@@ -78,6 +78,13 @@ AnnotatedUrl::~AnnotatedUrl()
 {
 }
 
+void AnnotatedUrl::targetDetected(const QNdefMessage &message, QNearFieldTarget *target)
+{
+    Q_UNUSED(target);
+
+    displayNdefMessage(message);
+}
+
 void AnnotatedUrl::targetDetected(QNearFieldTarget *target)
 {
     if (!target->hasNdefMessage())

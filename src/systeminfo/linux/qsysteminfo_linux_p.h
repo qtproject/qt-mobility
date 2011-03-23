@@ -62,6 +62,10 @@
 #include "qsysteminfo.h"
 #include <qmobilityglobal.h>
 
+#ifndef QT_NO_NETWORKMANAGER
+#include "linux/qnetworkmanagerservice_linux_p.h"
+#endif
+
 QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
@@ -113,6 +117,13 @@ public:
     QString homeMobileCountryCode();
     QString homeMobileNetworkCode();
     QSystemNetworkInfo::NetworkMode currentMode();
+    QSystemNetworkInfo::NetworkStatus networkStatus(QSystemNetworkInfo::NetworkMode mode);
+
+    qint32 networkSignalStrength(QSystemNetworkInfo::NetworkMode mode);
+
+    QString networkName(QSystemNetworkInfo::NetworkMode mode);
+    QString macAddress(QSystemNetworkInfo::NetworkMode mode);
+  //  QSystemNetworkInfo::CellDataTechnology cellDataTechnology();
 
 public Q_SLOTS:
 #if !defined(QT_NO_NETWORKMANAGER)
@@ -125,6 +136,8 @@ private:
     QNetworkManagerInterfaceDeviceWired * devWiredIface;
     QNetworkManagerInterfaceDeviceWireless *devWirelessIface;
     QNetworkManagerInterfaceAccessPoint *accessPointIface;
+    QNetworkManagerInterfaceDeviceGsm *devGsmIface;
+
 
     void setupNmConnections();
     bool isDefaultConnectionPath(const QString &path);
@@ -147,29 +160,12 @@ class QSystemDisplayInfoPrivate : public QSystemDisplayInfoLinuxCommonPrivate
     Q_OBJECT
 
 public:
-    float contrast(int screen);
-    int getDPIWidth(int screen);
-    int getDPIHeight(int screen);
-    int physicalHeight(int screen);
-    int physicalWidth(int screen);
-    QSystemDisplayInfo::BacklightState backlightStatus(int screen); //1.2
-
     QSystemDisplayInfoPrivate(QSystemDisplayInfoLinuxCommonPrivate *parent = 0);
     virtual ~QSystemDisplayInfoPrivate();
 
-    static QSystemDisplayInfoPrivate *instance() {return self;}
+    float contrast(int screen);
 
-#if !defined(Q_WS_MAEMO_6) && defined(Q_WS_X11)  && !defined(Q_WS_MEEGO)
-    void emitOrientationChanged(int curRotation);
-    int xEventBase;
-    int xErrorBase;
-    int lastRotation;
-#endif
-Q_SIGNALS:
-    void orientationChanged(QSystemDisplayInfo::DisplayOrientation newOrientation);
-
-private:
-    static QSystemDisplayInfoPrivate *self;
+    QSystemDisplayInfo::BacklightState backlightStatus(int screen); //1.2
 };
 
 class QSystemStorageInfoPrivate : public QSystemStorageInfoLinuxCommonPrivate
@@ -193,7 +189,6 @@ public:
 
     QString imei();
     QString imsi();
-    QSystemDeviceInfo::SimStatus simStatus();
     bool isDeviceLocked();
     QSystemDeviceInfo::Profile currentProfile();
     void setConnection();
@@ -203,10 +198,11 @@ public:
     int messageRingtoneVolume();//1.2
     int voiceRingtoneVolume();//1.2
     bool vibrationActive();//1.2
-
+    QSystemDeviceInfo::SimStatus simStatus();
 //    QSystemDeviceInfo::KeyboardTypeFlags keyboardTypes(); //1.2
 //    bool isWirelessKeyboardConnected(); //1.2
 //    bool isKeyboardFlippedOpen();//1.2
+    QSystemDeviceInfo::LockTypeFlags lockStatus(); //1.2
 
 
 private:
@@ -232,6 +228,8 @@ public:
     bool setScreenSaverInhibit();
     bool isScreenLockEnabled();
     bool isScreenSaverActive();
+
+    void setScreenSaverInhibited(bool on);
 
 private:
     QString screenPath;

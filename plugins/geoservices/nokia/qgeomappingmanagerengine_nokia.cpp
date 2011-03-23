@@ -57,24 +57,48 @@
 #include <QNetworkProxy>
 #include <QSize>
 #include <QDir>
-#include <QDateTime>
-
-#include <QDebug>
+#include <QUrl>
 
 #define LARGE_TILE_DIMENSION 256
 
-// TODO: Tweak the max size or create something better
-#if defined(Q_OS_SYMBIAN)
-#define DISK_CACHE_MAX_SIZE 10*1024*1024  //10MB
-#else
 #define DISK_CACHE_MAX_SIZE 50*1024*1024  //50MB
-#endif
 
-#if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE_WM) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+#if defined(Q_OS_WINCE_WM) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
 #undef DISK_CACHE_ENABLED
 #else
 #define DISK_CACHE_ENABLED 1
 #endif
+
+#if defined(Q_OS_SYMBIAN)
+#include <f32file.h>
+QChar QGeoMappingManagerEngineNokia::findFirstInternalFlashDrive()
+{
+    QChar flashDrive;
+    RFs fsSession;
+    // if something leaves just return an empty QChar
+    TRAP_IGNORE(
+        User::LeaveIfError(fsSession.Connect());
+        CleanupClosePushL(fsSession);
+        TDriveList drivelist;
+        User::LeaveIfError(fsSession.DriveList(drivelist));
+        for (int i = 0; i < KMaxDrives; ++i) {
+            if (drivelist[i] != 0) {
+                TChar driveChar;
+                User::LeaveIfError(RFs::DriveToChar(i, driveChar));
+                TDriveInfo driveInfo;
+                if (fsSession.Drive(driveInfo, i) != KErrNone)
+                    continue;
+                if ((driveInfo.iDriveAtt & KDriveAttInternal) && driveInfo.iType == EMediaHardDisk) {
+                    flashDrive = QChar(driveChar);
+                    break;
+                }
+            }
+        }
+        CleanupStack::PopAndDestroy(&fsSession);
+    )
+    return flashDrive;
+}
+#endif //Q_OS_SYMBIAN
 
 QGeoMappingManagerEngineNokia::QGeoMappingManagerEngineNokia(const QMap<QString, QVariant> &parameters, QGeoServiceProvider::Error *error, QString *errorString)
         : QGeoTiledMappingManagerEngine(parameters),
@@ -104,8 +128,16 @@ QGeoMappingManagerEngineNokia::QGeoMappingManagerEngineNokia(const QMap<QString,
 
     if (parameters.contains("mapping.proxy")) {
         QString proxy = parameters.value("mapping.proxy").toString();
-        if (!proxy.isEmpty())
-            m_networkManager->setProxy(QNetworkProxy(QNetworkProxy::HttpProxy, proxy, 8080));
+        if (!proxy.isEmpty()) {
+            QUrl proxyUrl(proxy);
+            if (proxyUrl.isValid()) {
+                m_networkManager->setProxy(QNetworkProxy(QNetworkProxy::HttpProxy,
+                    proxyUrl.host(),
+                    proxyUrl.port(8080),
+                    proxyUrl.userName(),
+                    proxyUrl.password()));
+            }
+        }
     }
 
     if (parameters.contains("mapping.host")) {
@@ -124,34 +156,42 @@ QGeoMappingManagerEngineNokia::QGeoMappingManagerEngineNokia(const QMap<QString,
     else if (parameters.contains("token")) {
         m_token = parameters.value("token").toString();
     }
-
-
 #ifdef DISK_CACHE_ENABLED
-    m_cache = new QNetworkDiskCache(this);
+    QString cacheDir;
+    if (parameters.contains("mapping.cache.directory"))
+        cacheDir = parameters.value("mapping.cache.directory").toString();
 
-    QDir dir = QDir::temp();
-    dir.mkdir("maptiles");
-    dir.cd("maptiles");
-
-    m_cache->setCacheDirectory(dir.path());
-
-    if (parameters.contains("mapping.cache.directory")) {
-        QString cacheDir = parameters.value("mapping.cache.directory").toString();
-        if (!cacheDir.isEmpty())
-            m_cache->setCacheDirectory(cacheDir);
+    if (cacheDir.isEmpty()) {
+#if defined(Q_OS_SYMBIAN)
+        QChar driveLetter(findFirstInternalFlashDrive());
+        if (!driveLetter.isNull()) {
+            cacheDir = driveLetter;
+            cacheDir += ":/data/nokia/maptiles";
+        }
+#else
+        cacheDir = QDir::temp().path()+"/maptiles";
+#endif
     }
+    if (!cacheDir.isEmpty()) {
+        m_cache = new QNetworkDiskCache(this);
+        QDir dir;
+        dir.mkpath(cacheDir);
+        dir.setPath(cacheDir);
 
-    if (parameters.contains("mapping.cache.size")) {
-        bool ok = false;
-        qint64 cacheSize = parameters.value("mapping.cache.size").toString().toLongLong(&ok);
-        if (ok)
-            m_cache->setMaximumCacheSize(cacheSize);
+        m_cache->setCacheDirectory(dir.path());
+
+        if (parameters.contains("mapping.cache.size")) {
+            bool ok = false;
+            qint64 cacheSize = parameters.value("mapping.cache.size").toString().toLongLong(&ok);
+            if (ok)
+                m_cache->setMaximumCacheSize(cacheSize);
+        }
+
+        if (m_cache->maximumCacheSize() > DISK_CACHE_MAX_SIZE)
+            m_cache->setMaximumCacheSize(DISK_CACHE_MAX_SIZE);
+
+        m_networkManager->setCache(m_cache);
     }
-
-    if (m_cache->maximumCacheSize() > DISK_CACHE_MAX_SIZE)
-        m_cache->setMaximumCacheSize(DISK_CACHE_MAX_SIZE);
-
-    m_networkManager->setCache(m_cache);
 #endif
 }
 
@@ -177,7 +217,6 @@ QGeoTiledMapReply* QGeoMappingManagerEngineNokia::getTileImage(const QGeoTiledMa
 
 #ifdef DISK_CACHE_ENABLED
     netRequest.setAttribute(QNetworkRequest::CacheLoadControlAttribute, QNetworkRequest::PreferCache);
-    m_cache->metaData(netRequest.url()).setLastModified(QDateTime::currentDateTime());
 #endif
 
     QNetworkReply* netReply = m_networkManager->get(netRequest);

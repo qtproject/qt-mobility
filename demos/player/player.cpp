@@ -42,7 +42,6 @@
 
 #include "playercontrols.h"
 #include "playlistmodel.h"
-#include "videowidget.h"
 
 #include <qmediaservice.h>
 #include <qmediaplaylist.h>
@@ -387,15 +386,29 @@ void Player::showColorDialog()
         connect(saturationSlider, SIGNAL(sliderMoved(int)), videoWidget, SLOT(setSaturation(int)));
         connect(videoWidget, SIGNAL(saturationChanged(int)), saturationSlider, SLOT(setValue(int)));
 
+#if defined(Q_OS_SYMBIAN)
+        QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok);
+#endif
         QFormLayout *layout = new QFormLayout;
         layout->addRow(tr("Brightness"), brightnessSlider);
         layout->addRow(tr("Contrast"), contrastSlider);
         layout->addRow(tr("Hue"), hueSlider);
         layout->addRow(tr("Saturation"), saturationSlider);
+#if defined(Q_OS_SYMBIAN)
+        layout->addWidget(buttonBox);
+#endif
+
+        QPushButton *button = new QPushButton(tr("Close"));
+        layout->addRow(button);
 
         colorDialog = new QDialog(this);
+#if defined(Q_OS_SYMBIAN)
+        connect(buttonBox, SIGNAL(clicked(QAbstractButton*)), colorDialog, SLOT(hide()));
+#endif
         colorDialog->setWindowTitle(tr("Color Options"));
         colorDialog->setLayout(layout);
+
+        connect(button, SIGNAL(clicked()), colorDialog, SLOT(close()));
     }
     colorDialog->show();
 }

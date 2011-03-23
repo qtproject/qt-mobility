@@ -29,7 +29,6 @@
     \group qml-location
     \title QML Location Plugin
     QML Support for the QtMobility Project Location API.
-
 */
 
 /*!
@@ -82,11 +81,8 @@
     by the Plugin element associated with the Map.
 
     Various map objects can be added to the map.  These map objects are
-    specified in terms of coordinates and metres.
+    specified in terms of coordinates and meters.
 
-    \note At the time of the QtMobility 1.1 release the QML support for
-    the Maps and Navigation API is incomplete and likely to be refined and
-    improved in the next patch release.
 
     \section2 Map Elements
 

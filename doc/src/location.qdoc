@@ -30,7 +30,7 @@
 
 /*!
     \group location
-    \title Location API
+    \title Location Classes
 
     The Location API provides a library for location positioning, landmark
     management, and mapping and navigation.
@@ -39,7 +39,8 @@
 /*!
 \page location-overview.html
 
-\title Location
+\title Location API
+
 \brief The Location API provides a library for location positioning, landmark management
 and mapping and navigation.
 
@@ -244,6 +245,11 @@ that is received by \c ClientApplication.
 Before running the example, make sure you have done both \tt make
 and \tt {make install}.
 
+\section2 QML Elements
+
+For details on the QML support provided for the Location API see the documentation for the
+\l {Location QML Plugin}.
+
 \section2 Examples
 
 \section3 \bold{Flickr Demo}
@@ -259,9 +265,25 @@ weather for the current location.
 The \l{lightmaps}{Light Maps demo} uses Location display a street map for
 the current location.
 
+\section2 QML Example
+
+Examples using the Location QML Plugin demonstrate how to use the QML/C++
+bindings to easily access the Location API features.
+
+\section3 \bold{Flickr QML Example}
+The Flickr example now in the form of a QML application. This also displays
+in the form of a mobile application.
+
+
 \section2 Location classes
 
 \annotatedlist location
+
+
+
+
+
+
 
 \target Landmarks
 \section1 Landmarks
@@ -339,9 +361,11 @@ as the \i {sparql manager}.
 The behaviour of some parts of the Landmarks API varies between platforms.  A few of the major ones are mentioned below
 
 \list
-\o The symbian manager does not support MatchContains in the name or attribute filters.
-\o The sparql manager as of 1.1.1 does not support the countryCode, county and district
-fields of QGeoAddress.  These fields are ignored when a landmark is saved.
+\o The symbian manager does not support MatchContains in the name or attribute filters.  The symbian manager also does not
+support multiple attributes with AND operation type in an attribute filter.  See the documentation on the attribute 
+filter for more details.
+\o The sparql manager as of 1.1.1 does not support the countryCode, county and district fields of QGeoAddress.  These
+fields are ignored when a landmark is saved.
 \endlist
 
 
@@ -536,6 +560,69 @@ The Ovi services plugin can be loaded by using the plugin key "nokia".
 
 Note that accepting the terms and conditions only applies those terms and conditions to the use of the Ovi Maps Services plugin and does not limit the use of the other maps and navigation API plugins that may be included with the QtMobility package.
 
+On Symbian platforms the applications using the Nokia plugin will need NetworkServices capability to access the online services.
+
+The following table lists optional parameters that can be passed to the Nokia plugin.
+\table
+\header
+    \o Parameter
+    \o Description
+\row
+    \o mapping.proxy
+    \o Proxy server URL used by mapping manager.
+\row
+    \o mapping.host
+    \o Map tile service URL used by mapping manager.
+\row
+    \o mapping.referer
+    \o Referer for the mapping token used for authentication by mapping manager.
+\row
+    \o mapping.token
+    \o Client token for the service used for authentication by mapping manager.
+\row
+    \o mapping.cache.directory
+    \o Map tile cache directory used as network disk cache.
+
+    Default place for the cache is "maptiles" directory in system temp.
+
+    On Symbian platform by default the cache is placed into internal mass memory drive directory "/data/nokia/maptiles".
+
+    If no internal mass memory is present on Symbian device caching is not used by default.
+
+    Changing the cache directory on Symbian may cause additional capability needs depending on where the new directory is placed.
+
+    Map tile caching is disabled on Maemo, Meego and Windows CE platforms. Using the parameter on these platforms will have no effect.
+
+    Map tiles will expire and are refetched 14 days after download.
+\row
+    \o mapping.cache.size
+    \o Map tile cache size. Maximum size of the cache is 50MB.
+\row
+    \o routing.proxy
+    \o Proxy server URL used by routing manager.
+\row
+    \o routing.host
+    \o Routing service URL used by routing manager.
+\row
+    \o routing.referer
+    \o Referer for the routing token used for authentication by routing manager.
+\row
+    \o routing.token
+    \o Client token for the service used for authentication by routing manager.
+\row
+    \o places.proxy
+    \o Proxy server URL used by search manager.
+\row
+    \o places.host
+    \o Search service URL used by search manager.
+\row
+    \o places.referer
+    \o Referer for the places token used for authentication by search manager.
+\row
+    \o places.token
+    \o Client token for the service used for authentication by search manager.
+\endtable
+
 \section2 Implementing plugins
 
 A plugin implementer needs to subclass QGeoServiceProviderFactory and as
@@ -564,7 +651,6 @@ If the Mercator projection and the most common tile addressing scheme is used th
 
 For details on the QML support provided for the Location API see the documentation for the \l {Location QML Plugin}.
 
-\note At the time of the QtMobility 1.1.0 release the QML support for the Maps and Navigation API was incomplete and likely to be refined and improved in the next patch release.
 */
 
 

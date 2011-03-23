@@ -60,6 +60,11 @@ QTM_BEGIN_NAMESPACE
 
     Note that sensor timestamps from different sensors may not be directly
     comparable (as they may choose different fixed points for their reference).
+
+    \bold{Note that some platforms do not deliver timestamps correctly}.
+    Applications should be prepared for occasional issues that cause timestamps to jump
+    forwards or backwards. The \l{sensors-api.html#platform-notes}{platform notes} have
+    more details.
 */
 
 /*!
@@ -181,6 +186,8 @@ static int qoutputrangelist_id = qRegisterMetaType<QtMobility::qoutputrangelist>
     \endlist
 
     The sensor data is delivered via QSensorData and its sub-classes.
+
+    \sa QSensorReading
 */
 
 /*!
@@ -316,8 +323,15 @@ bool QSensor::isBusy() const
 /*!
     \fn QSensor::busyChanged()
 
-    This signal is emitted when the busy state changes. This can
-    be used to grab a sensor when it becomes available.
+    This signal is emitted when the sensor is no longer busy.
+    This can be used to grab a sensor when it becomes available.
+
+    \code
+    sensor.start();
+    if (sensor.isBusy()) {
+        // need to wait for busyChanged signal and try again
+    }
+    \endcode
 */
 
 /*!
@@ -472,7 +486,7 @@ bool QSensor::start()
 */
 void QSensor::stop()
 {
-    if (!isActive() || !isConnectedToBackend())
+    if (!isConnectedToBackend() || !isActive())
         return;
     d->active = false;
     d->backend->stop();
@@ -864,6 +878,12 @@ void QSensorReading::copyValuesFrom(QSensorReading *other)
     /* Do a direct copy of the private class */
     *(my_ptr) = *(other_ptr);
 }
+
+/*!
+    \fn QSensorReading::d_ptr()
+    \internal
+    No longer used. Exists to keep the winscw build happy.
+*/
 
 /*!
     \macro DECLARE_READING(classname)

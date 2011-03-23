@@ -81,26 +81,9 @@ void QDeclarativeMessageFilterBase::setNegated(bool n)
     The following example creates a filter which filters for messages
     less than 1024 bytes in size from \c martin.
 
-    \qml
-    model: MessageModel {
-        sortBy: MessageModel.Timestamp
-        sortOrder: MessageModel.DescendingOrder
-        filter: MessageIntersectionFilter {
-            MessageFilter {
-                type: MessageFilter.Size
-                value: 1024
-                comparator: MessageFilter.LessThan
-            }
-            MessageFilter {
-                type: MessageFilter.Sender
-                value: "martin"
-                comparator: MessageFilter.Includes
-            }
-        }
-    }
-    \endqml
+    \snippet doc/src/snippets/messaging/messagemodel-size.qml model
 
-    \sa MessageUnionFilter
+    \sa MessageUnionFilter, MessageFilter
 */
 
 /*!
@@ -156,26 +139,9 @@ QMessageFilter QDeclarativeMessageIntersectionFilter::filter()
     The following example creates a filter which filters for messages
     from \c martin or \c don.
 
-    \qml
-    model: MessageModel {
-        sortBy: MessageModel.Timestamp
-        sortOrder: MessageModel.DescendingOrder
-        filter: MessageUnionFilter {
-            MessageFilter {
-                type: MessageFilter.Sender
-                value: "martin"
-                comparator: MessageFilter.Includes
-            }
-            MessageFilter {
-                type: MessageFilter.Sender
-                value: "don"
-                comparator: MessageFilter.Includes
-            }
-        }
-    }
-    \endqml
+    \snippet doc/src/snippets/messaging/messagemodel-names.qml model
 
-    \sa MessageIntersectionFilter
+    \sa MessageIntersectionFilter, MessageFilter
 */
 
 /*!
@@ -248,39 +214,9 @@ public:
     \c martin or \c don, excluding replies from \c martin.  The
     messages will be sorted by descending timestamp.
 
-    \qml
-    model: MessageModel {
-        sortBy: MessageModel.Timestamp
-        sortOrder: MessageModel.DescendingOrder
-        filter: MessageIntersectionFilter {
-            MessageFilter {
-                type: MessageFilter.Size
-                value: 1024
-                comparator: MessageFilter.LessThan
-            }
-            MessageUnionFilter {
-                MessageIntersectionFilter {
-                    MessageFilter {
-                        type: MessageFilter.Sender
-                        value: "martin"
-                        comparator: MessageFilter.Includes
-                    }
-                    MessageFilter {
-                        negated: true
-                        type: MessageFilter.Subject
-                        value: "re:"
-                        comparator: MessageFilter.Includes
-                    }
-                }
-                MessageFilter {
-                    type: MessageFilter.Sender
-                    value: "don"
-                    comparator: MessageFilter.Includes
-                }
-            }
-        }
-    }
-    \endqml
+    \snippet doc/src/snippets/messaging/messagemodel-filter.qml model
+
+    \sa MessageUnionFilter, MessageIntersectionFilter
 */
 QDeclarativeMessageFilter::QDeclarativeMessageFilter(QObject *parent)
     : QDeclarativeMessageFilterBase(parent), d(new QDeclarativeMessageFilterPrivate)

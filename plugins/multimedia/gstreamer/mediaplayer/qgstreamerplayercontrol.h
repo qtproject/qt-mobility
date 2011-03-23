@@ -111,6 +111,7 @@ private Q_SLOTS:
     void updateState(QMediaPlayer::State);
     void processEOS();
     void setBufferProgress(int progress);
+    void applyPendingSeek(bool isSeekable);
 
     void handleInvalidMedia();
 
@@ -126,8 +127,10 @@ private:
     QGstreamerPlayerSession *m_session;
     QMediaPlayer::State m_state;
     QMediaPlayer::MediaStatus m_mediaStatus;
+    bool m_blockStatusChangedSignal;
     int m_bufferProgress;
     bool m_seekToStartPending;
+    qint64 m_pendingSeekPosition;
     QMediaContent m_currentResource;
     QIODevice *m_stream;
     QSocketNotifier *m_fifoNotifier;

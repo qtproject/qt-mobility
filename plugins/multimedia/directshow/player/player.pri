@@ -17,8 +17,7 @@ HEADERS += \
         $$PWD/directshowsamplescheduler.h \
         $$PWD/directshowvideorenderercontrol.h \
         $$PWD/mediasamplevideobuffer.h \
-        $$PWD/videosurfacefilter.h \
-        $$PWD/vmr9videowindowcontrol.h
+        $$PWD/videosurfacefilter.h
 
 SOURCES += \
         $$PWD/directshowaudioendpointcontrol.cpp \
@@ -34,8 +33,15 @@ SOURCES += \
         $$PWD/directshowsamplescheduler.cpp \
         $$PWD/directshowvideorenderercontrol.cpp \
         $$PWD/mediasamplevideobuffer.cpp \
-        $$PWD/videosurfacefilter.cpp \
+        $$PWD/videosurfacefilter.cpp
+
+!simulator {
+HEADERS += \
+        $$PWD/vmr9videowindowcontrol.h
+
+SOURCES += \
         $$PWD/vmr9videowindowcontrol.cpp
+}
 
 LIBS += -lstrmiids -ldmoguids -luuid -lmsdmo -lole32 -loleaut32
 

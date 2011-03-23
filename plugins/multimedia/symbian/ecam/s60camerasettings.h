@@ -70,12 +70,13 @@ public: // Methods
     QCameraFocus::FocusMode focusMode();
     void setFocusMode(QCameraFocus::FocusMode mode);
     QCameraFocus::FocusModes supportedFocusModes();
+    void startFocusing();
     void cancelFocusing();
 
     // Zoom
     qreal opticalZoomFactorL() const;
     void setOpticalZoomFactorL(const qreal zoomFactor);
-    QList<qreal> *supportedDigitalZoomFactors();
+    QList<qreal> supportedDigitalZoomFactors() const;
     qreal digitalZoomFactorL() const;
     void setDigitalZoomFactorL(const qreal zoomFactor);
 
@@ -104,8 +105,8 @@ public: // Methods
     QList<qreal> supportedApertures();
 
     // Shutter Speed
-    TInt shutterSpeed();
-    void setManualShutterSpeed(TInt speed);
+    qreal shutterSpeed();
+    void setManualShutterSpeed(qreal speed);
     QList<qreal> supportedShutterSpeeds();
 
     // ExposureCompensation
@@ -130,6 +131,7 @@ Q_SIGNALS: // Notifications
     void apertureRangeChanged();
     void shutterSpeedChanged();
     void isoSensitivityChanged();
+    void evChanged();
 
     // For QCameraLocksControl
     void exposureStatusChanged(QCamera::LockStatus, QCamera::LockChangeReason);
@@ -168,7 +170,8 @@ private: // Data
     CCamera::CCameraImageProcessing     *m_imageProcessingSettings;
 #endif // S60_31_PLATFORM
     CCameraEngine                       *m_cameraEngine;
-    QList<qreal>                        m_supportedDigitalZoomFactors;
+    QList<int>                          m_supportedSymbianDigitalZoomFactors;
+    bool                                m_continuousFocusing;
 };
 
 #endif // S60CAMERASETTINGS_H

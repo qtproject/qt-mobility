@@ -92,8 +92,8 @@ int QNearFieldManagerPrivateImpl::getFreeId()
     return m_registeredHandlers.count() - 1;
 }
 
-int QNearFieldManagerPrivateImpl::registerTargetDetectedHandler(QObject *object,
-                                                                const QMetaMethod &method)
+int QNearFieldManagerPrivateImpl::registerNdefMessageHandler(QObject *object,
+                                                             const QMetaMethod &method)
 {
     int id = getFreeId();
 
@@ -106,9 +106,9 @@ int QNearFieldManagerPrivateImpl::registerTargetDetectedHandler(QObject *object,
     return id;
 }
 
-int QNearFieldManagerPrivateImpl::registerTargetDetectedHandler(const QNdefFilter &filter,
-                                                                QObject *object,
-                                                                const QMetaMethod &method)
+int QNearFieldManagerPrivateImpl::registerNdefMessageHandler(const QNdefFilter &filter,
+                                                             QObject *object,
+                                                             const QMetaMethod &method)
 {
     int id = getFreeId();
 
@@ -121,7 +121,7 @@ int QNearFieldManagerPrivateImpl::registerTargetDetectedHandler(const QNdefFilte
     return id;
 }
 
-bool QNearFieldManagerPrivateImpl::unregisterTargetDetectedHandler(int id)
+bool QNearFieldManagerPrivateImpl::unregisterNdefMessageHandler(int id)
 {
     if (id < 0 || id >= m_registeredHandlers.count())
         return false;

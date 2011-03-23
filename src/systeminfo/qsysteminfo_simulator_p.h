@@ -119,6 +119,7 @@ public:
     QString homeMobileCountryCode() const { return data.homeMobileCountryCode; }
     QString homeMobileNetworkCode() const { return data.homeMobileNetworkCode; }
     QSystemNetworkInfo::NetworkMode currentMode() const { return data.currentMode; }
+    QSystemNetworkInfo::CellDataTechnology cellDataTechnology() { return data.cellData; };
 
     QString networkName(QSystemNetworkInfo::NetworkMode m) const;
     QString macAddress(QSystemNetworkInfo::NetworkMode m) const;
@@ -133,6 +134,7 @@ public:
     void setHomeMobileCountryCode(const QString &code);
     void setHomeMobileNetworkCode(const QString &code);
     void setCurrentMode(QSystemNetworkInfo::NetworkMode m);
+    void setCellDataTechnology(QSystemNetworkInfo::CellDataTechnology  cd);
 
     void setNetworkName(QSystemNetworkInfo::NetworkMode m, const QString &name);
     void setNetworkMacAddress(QSystemNetworkInfo::NetworkMode m, const QString &mac);
@@ -149,6 +151,7 @@ signals:
     void networkNameChanged(QSystemNetworkInfo::NetworkMode, const QString &) const;
     void networkModeChanged(QSystemNetworkInfo::NetworkMode) const;
     void cellIdChanged(int);
+    void cellDataTechnologyChanged(QSystemNetworkInfo::CellDataTechnology); //1.2
 
 private:
     QSystemNetworkInfoData data;
@@ -166,10 +169,10 @@ public:
 
     QSystemDisplayInfo::DisplayOrientation orientation(int screen) const { Q_UNUSED(screen); return data.orientation; }
     float contrast(int screen) const { Q_UNUSED(screen); return data.contrast;}
-    int getDPIHeight(int screen) const { Q_UNUSED(screen); return data.dpiHeight; }
-    int getDPIWidth(int screen) const { Q_UNUSED(screen); return data.dpiWidth; }
-    int physicalHeight(int screen) const { Q_UNUSED(screen); return data.physicalHeight; }
-    int physicalWidth(int screen) const { Q_UNUSED(screen); return data.physicalWidth; }
+    int getDPIHeight(int screen) const;
+    int getDPIWidth(int screen) const;
+    int physicalHeight(int screen) const;
+    int physicalWidth(int screen) const;
 
     QSystemDisplayInfo::BacklightState backlightStatus(int screen) { Q_UNUSED(screen); return data.backlightStatus; }
 
@@ -178,10 +181,6 @@ public:
 
     void setOrientation(QSystemDisplayInfo::DisplayOrientation v);
     void setContrast(float v);
-    void setDPIHeight(int v);
-    void setDPIWidth(int v) ;
-    void setPhysicalHeight(int v);
-    void setPhysicalWidth(int v);
     void setBacklightStatus(QSystemDisplayInfo::BacklightState v);
 
     void setInitialData();
@@ -333,10 +332,12 @@ public:
 
     bool screenSaverInhibited();
     bool setScreenSaverInhibit();
+    void setScreenSaverInhibited(bool on);
     bool isScreenLockOn();
 
 private:
     bool didInhibit;
+    QSystemScreenSaverData data;
 };
 
 

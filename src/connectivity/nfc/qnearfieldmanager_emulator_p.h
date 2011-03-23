@@ -65,11 +65,11 @@ public:
     bool startTargetDetection(const QList<QNearFieldTarget::Type> &targetTypes);
     void stopTargetDetection();
 
-    int registerTargetDetectedHandler(QObject *object, const QMetaMethod &method);
-    int registerTargetDetectedHandler(const QNdefFilter &filter,
-                                      QObject *object, const QMetaMethod &method);
+    int registerNdefMessageHandler(QObject *object, const QMetaMethod &method);
+    int registerNdefMessageHandler(const QNdefFilter &filter,
+                                   QObject *object, const QMetaMethod &method);
 
-    bool unregisterTargetDetectedHandler(int id);
+    bool unregisterNdefMessageHandler(int id);
 
 private slots:
     void tagActivated(TagBase *tag);

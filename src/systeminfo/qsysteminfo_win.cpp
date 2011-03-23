@@ -1301,6 +1301,11 @@ QSystemNetworkInfo::NetworkMode QSystemNetworkInfoPrivate::currentMode()
     return QSystemNetworkInfo::UnknownMode;
 }
 
+QSystemNetworkInfo::CellDataTechnology QSystemNetworkInfoPrivate::cellDataTechnology()
+{
+    return QSystemNetworkInfo::UnknownDataTechnology;
+}
+
 QSystemDisplayInfoPrivate::QSystemDisplayInfoPrivate(QObject *parent)
         : QObject(parent),deviceContextHandle(0)
 {
@@ -2168,6 +2173,7 @@ bool QSystemDeviceInfoPrivate::vibrationActive()
 {
     return false;
 }
+
 QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QObject *parent)
         : QObject(parent)
 {
@@ -2219,6 +2225,16 @@ QSystemBatteryInfoPrivate::QSystemBatteryInfoPrivate(QObject *parent)
     getBatteryStatus();
 
 }
+
+void QSystemScreenSaverPrivate::setScreenSaverInhibited(bool on)
+{
+    if (on) {
+        setScreenSaverInhibit();
+    } else {
+
+    }
+}
+
 
 QSystemBatteryInfoPrivate::~QSystemBatteryInfoPrivate()
 {

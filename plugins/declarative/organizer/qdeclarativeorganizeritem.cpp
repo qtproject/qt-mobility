@@ -545,8 +545,7 @@ void QDeclarativeOrganizerEvent::setAllDay(bool allDay)
 bool QDeclarativeOrganizerEvent::isAllDay() const
 {
     QDeclarativeOrganizerEventTime* time = d->detail<QDeclarativeOrganizerEventTime>();
-        return time->isAllDay();
-    return false;
+    return time->isAllDay();
 }
 
 /*!
@@ -668,8 +667,7 @@ void QDeclarativeOrganizerEventOccurrence::setStartDateTime(const QDateTime& dat
 QDateTime QDeclarativeOrganizerEventOccurrence::startDateTime() const
 {
     QDeclarativeOrganizerEventTime* time = d->detail<QDeclarativeOrganizerEventTime>();
-        return time->startDateTime();
-    return QDateTime();
+    return time->startDateTime();
 }
 
 /*!
@@ -707,8 +705,7 @@ void QDeclarativeOrganizerEventOccurrence::setEndDateTime(const QDateTime& datet
 QDateTime QDeclarativeOrganizerEventOccurrence::endDateTime() const
 {
     QDeclarativeOrganizerEventTime* time = d->detail<QDeclarativeOrganizerEventTime>();
-        return time->endDateTime();
-    return QDateTime();
+    return time->endDateTime();
 }
 
 /*!
