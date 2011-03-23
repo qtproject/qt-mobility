@@ -84,8 +84,7 @@ information is locked to the service name.
 
 More info about VID and SID can be found from:
 \list
-    \o \l {http://developer.symbian.org/wiki/index.php/Platform_Security_%28Fundamentals_of_Symbian_C%2B%2B%29#VendorID}{VendorID}
-    \o \l {http://developer.symbian.org/wiki/index.php/Platform_Security_%28Fundamentals_of_Symbian_C%2B%2B%29#SecureID}{SecureID}
+    \o \l {http://wiki.forum.nokia.com/index.php/Platform_Security}{Platform security}
 \endlist
 
 \section2 ROM build registration

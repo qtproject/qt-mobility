@@ -122,7 +122,7 @@ This can be achieved with a line such as the following:
 
 CAPABILITY_A and CAPABILITY_B are place holders for the appropriate Symbian capabilities. A complete list of all Symbian
 capabilities and their availability to application developers can be found in the
-\l {http://developer.symbian.org/wiki/index.php/Capabilities_(Symbian_Signed)}{Symbian capability documentation}.
+\l {http://wiki.forum.nokia.com/index.php/Capabilities_(Symbian_Signed)}{Symbian capability documentation}.
 
 When developing on Harmattan we will need to list the required security tokens in the application's aegis manifest file.
 Please refer to the SDK documentation for the aegis file syntax and its integration with debian packaging.
@@ -190,7 +190,7 @@ on which parts of an API is utilized by an application.
     \o No token requirements known at this stage.
 \endtable
 
-The complete list of all Symbian capabilities and how they can be obtained can be found in the \l {http://developer.symbian.org/wiki/index.php/Capabilities_(Symbian_Signed)#Which_capabilities_can_I_access.3F}{Symbian developer documentation}.
+The complete list of all Symbian capabilities and how they can be obtained can be found in the \l {http://wiki.forum.nokia.com/index.php/Capabilities_(Symbian_Signed)#Which_capabilities_can_I_access.3F}{Symbian developer documentation}.
 
 And we're done.  If you are using the command line simply
 enter:
@@ -217,7 +217,7 @@ To make a release build and SIS package for a device run:
 \endcode
 
 For further details on how to build applications for
-Symbian see \l {http://qt.nokia.com/doc/4.6/symbian-with-qt-introduction.html}
-{The Symbian Platform - Introduction to Qt} and \l {http://developer.symbian.org/wiki/index.php/Qt_Quick_Start}
-{Qt Quick Start}
+Symbian see \l {http://doc.qt.nokia.com/latest/symbian-with-qt-introduction.html}
+{The Symbian Platform - Introduction to Qt} and \l {http://www.forum.nokia.com/Develop/Qt/}
+{Qt Getting started}
 */
