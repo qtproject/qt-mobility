@@ -69,7 +69,7 @@ S60ImageCaptureDecoder::~S60ImageCaptureDecoder()
 {
     if (m_imageDecoder) {
         delete m_imageDecoder;
-        m_imageDecoder = NULL;
+        m_imageDecoder = 0;
     }
 }
 
@@ -79,7 +79,7 @@ S60ImageCaptureDecoder *S60ImageCaptureDecoder::FileNewL(S60ImageCaptureSession 
 {
     S60ImageCaptureDecoder* self = new (ELeave) S60ImageCaptureDecoder(imageSession,
                                                                        fileSystemAccess,
-                                                                       NULL,
+                                                                       0,
                                                                        fileName);
     CleanupStack::PushL(self);
     self->ConstructL(true);
@@ -94,7 +94,7 @@ S60ImageCaptureDecoder *S60ImageCaptureDecoder::DataNewL(S60ImageCaptureSession 
     S60ImageCaptureDecoder* self = new (ELeave) S60ImageCaptureDecoder(imageSession,
                                                                        fileSystemAccess,
                                                                        data,
-                                                                       NULL);
+                                                                       0);
     CleanupStack::PushL(self);
     self->ConstructL(false);
     CleanupStack::Pop(self);
@@ -131,7 +131,7 @@ TFrameInfo *S60ImageCaptureDecoder::frameInfo()
         return &m_frameInfo;
     }
     else
-        return NULL;
+        return 0;
 }
 
 void S60ImageCaptureDecoder::RunL()
@@ -170,11 +170,11 @@ S60ImageCaptureEncoder::~S60ImageCaptureEncoder()
 {
     if (m_frameImageData) {
         delete m_frameImageData;
-        m_frameImageData = NULL;
+        m_frameImageData = 0;
     }
     if (m_imageEncoder) {
         delete m_imageEncoder;
-        m_imageEncoder = NULL;
+        m_imageEncoder = 0;
     }
 }
 
@@ -252,14 +252,14 @@ TInt S60ImageCaptureEncoder::RunError(TInt aError)
 
 S60ImageCaptureSession::S60ImageCaptureSession(QObject *parent) :
     QObject(parent),
-    m_cameraEngine(NULL),
-    m_advancedSettings(NULL),
-    m_cameraInfo(NULL),
-    m_previewBitmap(NULL),
-    m_activeScheduler(NULL),
-    m_fileSystemAccess(NULL),
-    m_imageDecoder(NULL),
-    m_imageEncoder(NULL),
+    m_cameraEngine(0),
+    m_advancedSettings(0),
+    m_cameraInfo(0),
+    m_previewBitmap(0),
+    m_activeScheduler(0),
+    m_fileSystemAccess(0),
+    m_imageDecoder(0),
+    m_imageEncoder(0),
     m_error(KErrNone),
     m_activeDeviceIndex(KDefaultCameraDevice),
     m_cameraStarted(false),
@@ -298,24 +298,24 @@ S60ImageCaptureSession::~S60ImageCaptureSession()
     if (m_imageDecoder) {
         m_imageDecoder->Cancel();
         delete m_imageDecoder;
-        m_imageDecoder = NULL;
+        m_imageDecoder = 0;
     }
     if (m_imageEncoder) {
         m_imageEncoder->Cancel();
         delete m_imageEncoder;
-        m_imageEncoder = NULL;
+        m_imageEncoder = 0;
     }
 
     if (m_previewBitmap) {
         delete m_previewBitmap;
-        m_previewBitmap = NULL;
+        m_previewBitmap = 0;
     }
 
     // Uninstall ActiveScheduler if needed
     if (m_activeScheduler) {
-        CActiveScheduler::Install(NULL);
+        CActiveScheduler::Install(0);
         delete m_activeScheduler;
-        m_activeScheduler = NULL;
+        m_activeScheduler = 0;
     }
 }
 
@@ -346,7 +346,7 @@ void S60ImageCaptureSession::deleteAdvancedSettings()
 {
     if (m_advancedSettings) {
         delete m_advancedSettings;
-        m_advancedSettings = NULL;
+        m_advancedSettings = 0;
         emit advancedSettingChanged();
     }
 }
@@ -390,14 +390,14 @@ void S60ImageCaptureSession::resetSession(bool errorHandling)
     int err = KErrNone;
     m_advancedSettings = S60CameraSettings::New(err, this, m_cameraEngine);
     if (err == KErrNotSupported) {
-        m_advancedSettings = NULL;
+        m_advancedSettings = 0;
 #ifndef S60_31_PLATFORM // Post S60 3.1 Platform
         // Adv. settings may not be supported for other than the Primary Camera
         if (m_cameraEngine->CurrentCameraIndex() == 0)
             setError(err, tr("Unexpected camera error."));
 #endif // !S60_31_PLATFORM
     } else if (err != KErrNone) { // Other errors
-        m_advancedSettings = NULL;
+        m_advancedSettings = 0;
         qWarning("Failed to create camera settings handler.");
         if (errorHandling)
             emit cameraError(QCamera::ServiceMissingError, tr("Failed to recover from error."));
@@ -730,21 +730,21 @@ void S60ImageCaptureSession::MceoCapturedBitmapReady(CFbsBitmap* aBitmap)
         // Delete old instances if needed
         if (m_imageDecoder) {
             delete m_imageDecoder;
-            m_imageDecoder = NULL;
+            m_imageDecoder = 0;
         }
         if (m_previewBitmap) {
             delete m_previewBitmap;
-            m_previewBitmap = NULL;
+            m_previewBitmap = 0;
         }
 #endif // ECAM_CAMERA_API
         if (m_imageEncoder) {
             delete m_imageEncoder;
-            m_imageEncoder = NULL;
+            m_imageEncoder = 0;
         }
         if (m_fileSystemAccess) {
             m_fileSystemAccess->Close();
             delete m_fileSystemAccess;
-            m_fileSystemAccess = NULL;
+            m_fileSystemAccess = 0;
         }
 
         TInt saveError = KErrNone;
@@ -804,7 +804,7 @@ TFileName S60ImageCaptureSession::convertImagePath()
  */
 void S60ImageCaptureSession::saveImageL(TDesC8 *aData, TFileName &aPath)
 {
-    if (aData == NULL)
+    if (aData == 0)
         setError(KErrGeneral, tr("Captured image data is not available."), true);
 
     if (aPath.Size() > 0) {
@@ -817,17 +817,17 @@ void S60ImageCaptureSession::saveImageL(TDesC8 *aData, TFileName &aPath)
         // Delete old instances if needed
         if (m_imageDecoder) {
             delete m_imageDecoder;
-            m_imageDecoder = NULL;
+            m_imageDecoder = 0;
         }
         if (m_previewBitmap) {
             delete m_previewBitmap;
-            m_previewBitmap = NULL;
+            m_previewBitmap = 0;
         }
 #endif // ECAM_PREVIEW_API
         if (m_fileSystemAccess) {
             m_fileSystemAccess->Close();
             delete m_fileSystemAccess;
-            m_fileSystemAccess = NULL;
+            m_fileSystemAccess = 0;
         }
 
         RFs *fileSystemAccess = new (ELeave) RFs;
@@ -1755,12 +1755,12 @@ void S60ImageCaptureSession::handleImageDecoded(int error)
     // Delete unneeded objects
     if (m_imageDecoder) {
         delete m_imageDecoder;
-        m_imageDecoder = NULL;
+        m_imageDecoder = 0;
     }
     if (m_fileSystemAccess) {
         m_fileSystemAccess->Close();
         delete m_fileSystemAccess;
-        m_fileSystemAccess = NULL;
+        m_fileSystemAccess = 0;
     }
 
     // Check status of decoding
@@ -1768,7 +1768,7 @@ void S60ImageCaptureSession::handleImageDecoded(int error)
         if (m_previewBitmap) {
             m_previewBitmap->Reset();
             delete m_previewBitmap;
-            m_previewBitmap = NULL;
+            m_previewBitmap = 0;
         }
         releaseImageBuffer();
         if (m_previewInWaitLoop) {
@@ -1787,7 +1787,7 @@ void S60ImageCaptureSession::handleImageDecoded(int error)
     if (m_previewBitmap) {
         m_previewBitmap->Reset();
         delete m_previewBitmap;
-        m_previewBitmap = NULL;
+        m_previewBitmap = 0;
     }
 
     QT_TRYCATCH_LEAVING( emit imageCaptured(m_currentImageId, preview) );
@@ -1818,7 +1818,7 @@ void S60ImageCaptureSession::handleImageEncoded(int error)
 
     if (m_imageEncoder) {
         delete m_imageEncoder;
-        m_imageEncoder = NULL;
+        m_imageEncoder = 0;
     }
 
 #ifndef ECAM_PREVIEW_API

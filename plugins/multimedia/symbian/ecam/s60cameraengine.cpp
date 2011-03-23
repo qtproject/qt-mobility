@@ -57,9 +57,6 @@ CCameraEngine::CCameraEngine(TInt aCameraHandle,
                              MCameraEngineObserver* aObserver) :
     // CBase initializes member variables to NULL
     iObserver(aObserver),
-    iImageCaptureObserver(NULL),
-    iAdvancedSettingsObserver(NULL),
-    iViewfinderObserver(NULL),
     iCameraIndex(aCameraHandle),
     iPriority(aPriority),
     iEngineState(EEngineNotReady),
