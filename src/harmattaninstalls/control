@@ -11,7 +11,7 @@ Build-Depends: libqt4-dev (>= 4.7.0), cdbs, debhelper (>= 5), quilt, aegis-build
  libxrandr-dev, libxv-dev, osso-wlan-dev, x11proto-video-dev, libqmf-dev, libqttracker-dev,
  libmessagingif-dev, libcommhistory-dev, libblkid-dev, pulseaudio-dev, libimmvibe-dev[armel], libqtsparql-dev,
  libmkcal-dev, libkcalcoren-dev, libresourceqt-dev, libqmsystem2-dev, libqtsparql-tracker-extensions-dev,
- libudev-dev, libiphb-dev
+ libudev-dev, libiphb-dev, meego-gstreamer0.10-interfaces-dev
 Standards-Version: 3.8.0
 
 Package: libqtm-examples
@@ -72,7 +72,7 @@ Description: Qt Mobility development package that contains the headers common to
 Package: libqtm-multimedia
 Architecture: any
 Section: libs
-Depends: ${shlibs:Depends}, ${misc:Depends}, meego-gstreamer0.10-interfaces
+Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: Qt Mobility Multimedia module
  Qt Mobility Project delivers a set of new APIs to Qt with features that are
  well known from the mobile device world, in particular phones. However,
@@ -94,7 +94,7 @@ Description: Qt Mobility Multimedia debugging symbols
 Package: libqtm-multimedia-dev
 Architecture: any
 Section: libs
-Depends: libqtm-multimedia (= ${binary:Version}), libqtm-common-dev (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}, meego-gstreamer0.10-interfaces-dev
+Depends: libqtm-multimedia (= ${binary:Version}), libqtm-common-dev (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
 Description: Qt Mobility Multimedia development package
  Qt Mobility Project delivers a set of new APIs to Qt with features that are
  well known from the mobile device world, in particular phones. However,
