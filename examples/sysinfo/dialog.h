@@ -90,6 +90,8 @@ private:
     QString sizeToString(qlonglong size);
     QBrush brushForStorageState(QSystemStorageInfo::StorageState state);
 
+    QString lockStateToString(QSystemDeviceInfo::LockTypeFlags);
+    QSystemDeviceInfo::LockTypeFlags oldLockStatus;
 
 private slots:
     void tabChanged(int index);
@@ -125,6 +127,9 @@ private slots:
 
     void backlightTotext(QSystemDisplayInfo::BacklightState);
     void dataTechnologyChanged(QSystemNetworkInfo::CellDataTechnology tech);
+
+    void lockStatusChanged(QSystemDeviceInfo::LockTypeFlags);
+
 
 
 };

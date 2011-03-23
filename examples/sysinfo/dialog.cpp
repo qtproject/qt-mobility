@@ -204,16 +204,13 @@ void Dialog::setupDevice()
 
     wirelessKeyboardConnectedRadioButton->setChecked(di->isWirelessKeyboardConnected());
 
-    QString lockState;
-    QSystemDeviceInfo::LockTypeFlags lock = di->lockStatus();
-    if ((lock & QSystemDeviceInfo::PinLocked)){
-        lockState = "Pin/Password Locked";
-    } else if ((lock & QSystemDeviceInfo::TouchAndKeyboardLocked)){
-        lockState = "Touch and keyboard locked";
-    } else {
-        lockState = "Unknown";
-    }
-    lockStateLabel->setText(lockState);
+    lockStateLabel->setText(lockStateToString(di->lockStatus()));
+    oldLockStatus = QSystemDeviceInfo::UnknownLock;
+    lockStateLabel_2->setText(lockStateToString(oldLockStatus));
+    oldLockStatus = di->lockStatus();
+    connect(di,SIGNAL(lockStatusChanged(QSystemDeviceInfo::LockTypeFlags)),
+            this,SLOT(lockStatusChanged(QSystemDeviceInfo::LockTypeFlags)));
+
 }
 
 void Dialog::updateKeyboard(QSystemDeviceInfo::KeyboardTypeFlags type)
@@ -1183,5 +1180,25 @@ void Dialog::dataTechnologyChanged(QSystemNetworkInfo::CellDataTechnology tech)
         break;
     };
     dataTechnologyLabel->setText(techString);
+}
+
+QString Dialog::lockStateToString(QSystemDeviceInfo::LockTypeFlags lock)
+{
+    if ((lock & QSystemDeviceInfo::PinLocked)){
+        return "Pin/Password Locked";
+    } else if ((lock & QSystemDeviceInfo::TouchAndKeyboardLocked)){
+        return "Touch and keyboard locked";
+    }
+    return "Unknown";
+}
+
+void Dialog::lockStatusChanged(QSystemDeviceInfo::LockTypeFlags locktype)
+{
+    if (locktype != oldLockStatus) {
+        oldLockStatus = locktype;
+        lockStateLabel_2->setText(lockStateToString(oldLockStatus));
+        Q_EMIT lockStatusChanged(locktype);
+        lockStateLabel->setText(lockStateToString(di->lockStatus()));
+    }
 }
 
