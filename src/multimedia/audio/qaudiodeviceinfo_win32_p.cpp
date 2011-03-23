@@ -406,42 +406,43 @@ QList<QByteArray> QAudioDeviceInfoInternal::availableDevices(QAudio::Mode mode)
 
     unsigned long iNumDevs = mode == QAudio::AudioOutput ? waveOutGetNumDevs() : waveInGetNumDevs();
     if (SUCCEEDED(hr)) {
-        // Create the enumerator for the video capture category
-        hr = pDevEnum->CreateClassEnumerator(
+        // Create the enumerator for the audio input/output category
+        if (pDevEnum->CreateClassEnumerator(
              mode == QAudio::AudioOutput ? CLSID_AudioRendererCategory : CLSID_AudioInputDeviceCategory,
-             &pEnum, 0);
-        pEnum->Reset();
-        // go through and find all video capture devices
-        IMoniker *pMoniker = NULL;
-        while (pEnum->Next(1, &pMoniker, NULL) == S_OK) {
-            IPropertyBag *pPropBag;
-            hr = pMoniker->BindToStorage(0,0,IID_IPropertyBag,
-                 reinterpret_cast<void **>(&pPropBag));
-            if (FAILED(hr)) {
-                pMoniker->Release();
-                continue; // skip this one
-            }
-            // Find if it is a wave device
-            VARIANT var;
-            VariantInit(&var);
-            hr = pPropBag->Read(mode == QAudio::AudioOutput ? L"WaveOutID" : L"WaveInID", &var, 0);
-            if (SUCCEEDED(hr)) {
-                LONG waveID = var.lVal;
-                if (waveID >= 0 && waveID < LONG(iNumDevs)) {
-                    VariantClear(&var);
-                    // Find the description
-                    hr = pPropBag->Read(L"FriendlyName", &var, 0);
-                    if (SUCCEEDED(hr)) {
-                        QByteArray  device;
-                        QDataStream ds(&device, QIODevice::WriteOnly);
-                        ds << quint32(waveID) << QString::fromWCharArray(var.bstrVal);
-                        devices.append(device);
+             &pEnum, 0) == S_OK) {
+            pEnum->Reset();
+            // go through and find all audio devices
+            IMoniker *pMoniker = NULL;
+            while (pEnum->Next(1, &pMoniker, NULL) == S_OK) {
+                IPropertyBag *pPropBag;
+                hr = pMoniker->BindToStorage(0,0,IID_IPropertyBag,
+                     reinterpret_cast<void **>(&pPropBag));
+                if (FAILED(hr)) {
+                    pMoniker->Release();
+                    continue; // skip this one
+                }
+                // Find if it is a wave device
+                VARIANT var;
+                VariantInit(&var);
+                hr = pPropBag->Read(mode == QAudio::AudioOutput ? L"WaveOutID" : L"WaveInID", &var, 0);
+                if (SUCCEEDED(hr)) {
+                    LONG waveID = var.lVal;
+                    if (waveID >= 0 && waveID < LONG(iNumDevs)) {
+                        VariantClear(&var);
+                        // Find the description
+                        hr = pPropBag->Read(L"FriendlyName", &var, 0);
+                        if (SUCCEEDED(hr)) {
+                            QByteArray  device;
+                            QDataStream ds(&device, QIODevice::WriteOnly);
+                            ds << quint32(waveID) << QString::fromWCharArray(var.bstrVal);
+                            devices.append(device);
+                        }
                     }
                 }
-            }
 
-            pPropBag->Release();
-            pMoniker->Release();
+                pPropBag->Release();
+                pMoniker->Release();
+            }
         }
     }
     CoUninitialize();

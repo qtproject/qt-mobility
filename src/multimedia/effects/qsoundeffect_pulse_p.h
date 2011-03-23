@@ -60,14 +60,11 @@
 #include <QtCore/qdatetime.h>
 #include <qmediaplayer.h>
 #include <pulse/pulseaudio.h>
+#include "qsamplecache_p.h"
 
 QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
-
-class QNetworkReply;
-class QNetworkAccessManager;
-class QWaveDecoder;
 
 class QSoundEffectPrivate : public QObject
 {
@@ -102,24 +99,20 @@ Q_SIGNALS:
     void statusChanged();
 
 private Q_SLOTS:
-    void decoderReady();
     void decoderError();
+    void sampleReady();
     void uploadSample();
     void contextReady();
     void underRun();
     void prepare();
     void streamReady();
-    void sampleReady();
-    void readSample();
     void emptyComplete();
     void updateVolume();
     void updateMuted();
 
 private:
-    void loadSample();
     void playSample();
 
-    void clearTasks();
     void emptyStream();
     void createPulseStream();
     void unloadPulseStream();
@@ -155,12 +148,8 @@ private:
     int     m_runningCount;
     QUrl    m_source;
     QByteArray m_name;
-    QWaveDecoder *m_waveDecoder;
-    size_t m_sampleReadLength;
-    QIODevice *m_stream;
-    QNetworkAccessManager *m_networkAccessManager;
 
-    QByteArray m_soundData;
+    QSample *m_sample;
     int m_position;
 };
 
