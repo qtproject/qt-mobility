@@ -124,53 +124,70 @@ CAPABILITY_A and CAPABILITY_B are place holders for the appropriate Symbian capa
 capabilities and their availability to application developers can be found in the
 \l {http://developer.symbian.org/wiki/index.php/Capabilities_(Symbian_Signed)}{Symbian capability documentation}.
 
-The subsequent table provides an overview of possibily required capabilities for each QtMobility library.
-Note that not all capabilities are always required when using a particular API. The exact list depends
+When developing on Harmattan we will need to list the required security tokens in the application's aegis manifest file.
+Please refer to the SDK documentation for the aegis file syntax and its integration with debian packaging.
+
+The subsequent table provides an overview of possibily required security tokens for each QtMobility library.
+Note that not all tokens are always required when using a particular API. The exact list depends
 on which parts of an API is utilized by an application.
 
 \table
 \header
     \o Domain
     \o Symbian Capabilities
+    \o Harmattan Tokens
 \row
     \o \l {Bearer Management}
     \o ReadUserData NetworkServices (NetworkControl for QNetworkSession::stop())
+    \o No token requirements known at this stage.
 \row
     \o \l {Contacts}
     \o ReadUserData WriteUserData
+    \o TrackerReadAccess TrackerWriteAccess
 \row
     \o \l {Location}
     \o Location LocalServices ReadUserData WriteUserData ReadDeviceData WriteDeviceData NetworkServices
+    \o Location TrackerReadAccess TrackerWriteAccess
 \row
     \o \l {Multimedia}
     \o UserEnvironment ReadUserData WriteUserData ReadDeviceData WriteDeviceData
+    \o No token requirements known at this stage.
 \row
     \o \l {Messaging}
     \o LocalServices ReadUserData WriteUserData NetworkServices UserEnvironment ReadDeviceData WriteDeviceData
+    \o Cellular TrackerReadAccess
 \row
     \o \l {Publish And Subscribe}
     \o Capability depends on P&S value being read/written. API itself doesn't require any capability.
+    \o No token requirements known at this stage.
 \row
     \o \l {Qt Service Framework} {Service Framework}
     \o No capabilities requried by itself, the plugins may have capability requirements.
+    \o No token requirements known at this stage.
 \row
     \o \l {Sensor}
     \o ReadDeviceData
+    \o No token requirements known at this stage.
 \row
     \o \l {System Information}
     \o LocalServices ReadUserData WriteUserData NetworkServices UserEnvironment Location ReadDeviceData
+    \o mce::TKLockControl mce::DeviceModeControl
 \row
     \o \l {Versit}
     \o No additional capabilities required.
+    \o No token requirements known at this stage.
 \row
     \o \l {Document Gallery}
     \o No capabilities at this stage.
+    \o No token requirements known at this stage.
 \row
     \o \l {Organizer}
     \o ReadUserData WriteUserData
+    \o No token requirements known at this stage.
 \row
     \o \l {Feedback}{Tactile Feedback}
     \o No capabilities at this stage.
+    \o No token requirements known at this stage.
 \endtable
 
 The complete list of all Symbian capabilities and how they can be obtained can be found in the \l {http://developer.symbian.org/wiki/index.php/Capabilities_(Symbian_Signed)#Which_capabilities_can_I_access.3F}{Symbian developer documentation}.
