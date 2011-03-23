@@ -2161,6 +2161,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactRingtone::FieldVideoRingtoneUrl, "VideoRingtone
 
 /*!
    \variable QContactRingtone::FieldVibrationRingtoneUrl
+   \internal
 
    The field key constant for the value of the URL for a vibration ringtone.
    \sa setVibrationRingtoneUrl(), vibrationRingtoneUrl()
@@ -2195,12 +2196,14 @@ Q_DEFINE_LATIN1_CONSTANT(QContactRingtone::FieldVibrationRingtoneUrl, "Vibration
 
 /*!
   \fn QContactRingtone::vibrationRingtoneUrl() const
+  \internal
 
   Returns the uri of the vibration ringtone stored in the ringtone detail.
  */
 
 /*!
   \fn QContactRingtone::setVibrationRingtoneUrl(const QUrl& vibrationRingtoneUrl)
+  \internal
 
   Sets the uri of the vibration ringtone stored in the ringtone detail
   to \a vibrationRingtoneUrl.
