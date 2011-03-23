@@ -1,9 +1,16 @@
+include(../../mobility_examples.pri)
+
 QT += declarative network
-SOURCES += $$PWD/qmltennis.cpp
-include($$PWD/../declarative-bluetooth.pri)
-include($$PWD/deployment.pri)
+SOURCES += qmltennis.cpp
 
 TARGET = qml_tennis
+TEMPLATE = app
+
+win32 {
+    #required by Qt SDK to resolve Mobility libraries
+    CONFIG+=mobility
+    MOBILITY+=connectivity
+}
 
 symbian {
     TARGET.CAPABILITY = LocalServices NetworkServices Location ReadUserData WriteUserData WriteDeviceData ReadDeviceData
@@ -12,6 +19,3 @@ symbian {
 
 RESOURCES += \
     tennis.qrc
-
-OTHER_FILES += \
-    sensor.qml
