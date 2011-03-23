@@ -76,6 +76,10 @@
 #include "storagedisknotifier_s60.h"
 #endif
 
+#ifdef THERMALSTATUS_SUPPORTED
+#include "thermalstatus_s60.h"
+#endif
+
 QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
@@ -250,6 +254,9 @@ class QSystemDeviceInfoPrivate : public QObject,
     ,public MKeylockStatusObserver,
     public MFlipStatusObserver
 #endif
+#ifdef THERMALSTATUS_SUPPORTED
+    ,public MThermalStatusObserver
+#endif
 {
     Q_OBJECT
 
@@ -333,6 +340,11 @@ protected:
 
     //from MFlipStatusObserver
     void flipStatusChanged(TInt aFlipType , TInt aFilpKeyBoard );
+#endif
+
+#ifdef THERMALSTATUS_SUPPORTED
+    //from MThermalStatusObserver
+    void NotiftythermalStateChanged(TUint8 aThermalStatus);
 #endif
 private:
     QSystemDeviceInfo::Profile s60ProfileIdToProfile(TInt profileId) const;
@@ -480,6 +492,17 @@ public:
     }
 #endif
 
+#ifdef THERMALSTATUS_SUPPORTED
+    CThermalStatus *thermalStatus()
+        {
+           if (!m_thermalStatus)
+            {
+             m_thermalStatus = new CThermalStatus;
+            }
+            return m_thermalStatus;
+        }
+#endif
+
     CBatteryCommonInfo *batteryCommonInfo ()
     {
         if (!m_batteryCommonInfo) {
@@ -502,6 +525,9 @@ private:
         m_cellSignalStrengthInfo(NULL), m_wlanInfo(NULL), m_mmcStorageStatus(NULL), m_batteryCommonInfo(NULL), m_networkInfo(NULL)
 #ifdef SYMBIAN_3_PLATFORM
         ,m_keylockStatus(NULL),m_flipStatus(NULL),m_storagedisknotifier(NULL)
+#endif
+#ifdef THERMALSTATUS_SUPPORTED
+        ,m_thermalStatus(NULL)
 #endif
     {
         m_telephony = CTelephony::NewL();
@@ -526,6 +552,10 @@ private:
         delete m_flipStatus;
         delete m_storagedisknotifier;
 #endif
+
+#ifdef THERMALSTATUS_SUPPORTED
+        delete m_thermalStatus;
+#endif
     }
 
     DeviceInfo(const DeviceInfo &);
@@ -548,6 +578,10 @@ private:
     CKeylockStatus *m_keylockStatus;
     CFlipStatus *m_flipStatus;
     CStorageDiskNotifier* m_storagedisknotifier;
+#endif
+
+#ifdef THERMALSTATUS_SUPPORTED
+    CThermalStatus* m_thermalStatus;
 #endif
 };
 

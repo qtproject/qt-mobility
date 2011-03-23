@@ -267,6 +267,12 @@ unix:!simulator {
             message("ETELMM enabled")
             }
 
+        contains(thermalstatus_symbian_enabled,yes){
+            DEFINES += THERMALSTATUS_SUPPORTED
+            SOURCES += thermalstatus_s60.cpp
+            HEADERS += thermalstatus_s60.h
+            message("Thermalstatus enabled")
+            }
 
         contains(hb_symbian_enabled,yes) {
                 CONFIG += qt hb
