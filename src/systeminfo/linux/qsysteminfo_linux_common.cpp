@@ -1874,7 +1874,6 @@ QSystemDisplayInfoLinuxCommonPrivate::QSystemDisplayInfoLinuxCommonPrivate(QObje
 
 QSystemDisplayInfoLinuxCommonPrivate::~QSystemDisplayInfoLinuxCommonPrivate()
 {
-    delete wid;
 }
 
 #if defined(Q_WS_X11)
