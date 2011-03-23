@@ -936,9 +936,9 @@ QString QSystemNetworkInfoLinuxCommonPrivate::macAddress(QSystemNetworkInfo::Net
                         || mode == QSystemNetworkInfo::BluetoothMode) {
                     return QNetworkInterface::interfaceFromName(serviceIface->getInterface()).hardwareAddress();
                 } else {
-                    QOfonoConnectionContextInterface context(servicePath);
+                  //  QOfonoConnectionContextInterface context(servicePath);
                   //  if (context.active()) {
-                       return QNetworkInterface::interfaceFromName(context.interface()).hardwareAddress();
+                  //     return QNetworkInterface::interfaceFromName(context.interface()).hardwareAddress();
                  //   }
                 }
             }
