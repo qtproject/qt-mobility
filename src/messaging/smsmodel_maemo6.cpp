@@ -41,10 +41,10 @@
 
 #include <CommHistory/eventmodel_p.h>
 #include <CommHistory/eventsquery.h>
+#include <QDebug>
 #include "smsmodel_maemo6_p.h"
 
 using namespace CommHistory;
-using namespace SopranoLive;
 
 class SMSModelPrivate : public EventModelPrivate {
 public:
