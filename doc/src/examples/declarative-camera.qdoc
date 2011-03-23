@@ -26,11 +26,16 @@
 ****************************************************************************/
 
 /*!
-    \example declarative-camera
-    \title Camera QML Example
+\example declarative-camera
+\title QML Camera Example
 
-    \image qml-camera.png
+\brief  The Camera Example shows how to use the API to capture a still image
+or video.
 
-    This example demonstrates the basic use of Camera QML elements.
+\image qml-camera.png
+
+This example demonstrates the basic use of Camera QML elements.
+
+
 
 */

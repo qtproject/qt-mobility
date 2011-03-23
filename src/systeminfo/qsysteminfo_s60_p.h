@@ -490,8 +490,6 @@ public:
     {
         if (!m_flipStatus) {
             m_flipStatus = new CFlipStatus;
-            TRAP_IGNORE(m_flipStatus->ConstructL();
-            )
         }
         return m_flipStatus;
     }

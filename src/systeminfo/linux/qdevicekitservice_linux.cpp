@@ -60,7 +60,6 @@ QUDisksInterface::QUDisksInterface( QObject *parent)
                                  UDISKS_SERVICE,
                                  QDBusConnection::systemBus(), parent)
 {
-    qDebug() << Q_FUNC_INFO;
 }
 
 QUDisksInterface::~QUDisksInterface()
@@ -251,6 +250,17 @@ QString QUDisksDeviceInterface::uuid()
 
   return this->getProperty("IdUuid").toString();
 }
+
+bool QUDisksDeviceInterface::driveIsMediaEjectable()
+{
+     return this->getProperty("DriveIsMediaEjectable").toBool();
+}
+
+bool QUDisksDeviceInterface::driveCanDetach()
+{
+    return this->getProperty("DriveCanDetach").toBool();
+}
+
 
 QVariantMap QUDisksDeviceInterface::getProperties()
 {
