@@ -62,10 +62,11 @@ QTM_USE_NAMESPACE
 typedef QMap<int,QVariant> tst_QBluetoothTransferManager_QParameterMap;
 Q_DECLARE_METATYPE(tst_QBluetoothTransferManager_QParameterMap)
 
-//char BTADDRESS[] = "00:00:00:00:00:00";
 #ifdef Q_OS_SYMBIAN
 char BTADDRESS[] = "00:09:DD:50:93:DD";
 static const QString testfile("c:\\data\\testdata.txt");
+#else
+char BTADDRESS[] = "00:00:00:00:00:00";
 #endif
 
 static const int MaxConnectTime = 60 * 1000;   // 1 minute in ms

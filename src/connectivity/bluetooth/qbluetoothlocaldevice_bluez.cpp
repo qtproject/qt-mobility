@@ -165,6 +165,7 @@ void QBluetoothLocalDevice::setHostMode(QBluetoothLocalDevice::HostMode mode)
         return;
 
     switch (mode) {
+    case HostDiscoverableLimitedInquiry:
     case HostDiscoverable:
         d_ptr->adapter->SetProperty(QLatin1String("Powered"), QDBusVariant(QVariant::fromValue(true)));
         d_ptr->adapter->SetProperty(QLatin1String("Discoverable"),

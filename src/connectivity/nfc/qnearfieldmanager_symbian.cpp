@@ -90,7 +90,7 @@ void ContentHandlerInterface::handleMessage(const QByteArray& btArray)
 QNearFieldManagerPrivateImpl::QNearFieldManagerPrivateImpl(): m_symbianbackend(NULL),m_target(NULL),m_serviceRegister(NULL)
 {
     BEGIN
-    QT_TRAP_THROWING(m_symbianbackend = CNearFieldManager::NewL(*this));
+    TRAPD(err, m_symbianbackend = CNearFieldManager::NewL(*this));
     END
 }
 
@@ -105,6 +105,11 @@ QNearFieldManagerPrivateImpl::~QNearFieldManagerPrivateImpl()
     delete m_serviceRegister;
     delete m_symbianbackend;
     END
+}
+
+bool QNearFieldManagerPrivateImpl::isAvailable() const
+{
+    return m_symbianbackend;
 }
 
 /*
@@ -185,6 +190,9 @@ int QNearFieldManagerPrivateImpl::registerNdefMessageHandler(const QNdefFilter &
                                                              QObject *object,
                                                              const QMetaMethod &method)
 {
+    if (!m_symbianbackend)
+        return -1;
+
     BEGIN
     int id = getFreeId();
 
@@ -222,6 +230,9 @@ int QNearFieldManagerPrivateImpl::registerNdefMessageHandler(const QNdefFilter &
 */
 bool QNearFieldManagerPrivateImpl::unregisterNdefMessageHandler(int id)
 {
+    if (!m_symbianbackend)
+        return false;
+
     BEGIN
      if ( 0xffff == id )
         {
@@ -250,19 +261,23 @@ bool QNearFieldManagerPrivateImpl::unregisterNdefMessageHandler(int id)
 }
 
 bool QNearFieldManagerPrivateImpl::startTargetDetection(const QList<QNearFieldTarget::Type> &targetTypes)
-    {
+{
+    if (!m_symbianbackend)
+        return false;
+
     BEGIN
     TRAPD(err, m_symbianbackend->StartTargetDetectionL(targetTypes));
     END
     return err == KErrNone;
-    }
+}
 
 void QNearFieldManagerPrivateImpl::stopTargetDetection()
-    {
+{
     BEGIN
-    m_symbianbackend->stopTargetDetection();
+    if (m_symbianbackend)
+        m_symbianbackend->stopTargetDetection();
     END
-    }
+}
 
 struct VerifyRecord
 {

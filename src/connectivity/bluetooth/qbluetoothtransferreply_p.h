@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,36 +39,31 @@
 **
 ****************************************************************************/
 
-#ifndef QBLUETOOTHUUID_P_H
-#define QBLUETOOTHUUID_P_H
+#ifndef QBLUETOOTHTRANSFERREPLY_P_H
+#define QBLUETOOTHTRANSFERREPLY_P_H
 
-#include "qbluetoothuuid.h"
+#include "qbluetoothtransferreply.h"
 
 QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
-class QBluetoothUuidPrivate
+class Q_CONNECTIVITY_EXPORT QBluetoothTransferReplyPrivate
 {
 public:
-    enum UuidType {
-        NullUuid,
-        Uuid16,
-        Uuid32,
-        Uuid128,
-    };
+    QBluetoothTransferReplyPrivate();
 
-    UuidType uuidType;
+    QBluetoothTransferManager *m_manager;
+    QBluetoothTransferManager::Operation m_operation;
+    QMap<int, QVariant> m_attributes;
+    qint64 m_buffersize;
 
-    union {
-        quint16 uuid16;
-        quint32 uuid32;
-        quint128 uuid128;
-    };
+    QBluetoothTransferReply *q_ptr;
+
 };
 
 QTM_END_NAMESPACE
 
 QT_END_HEADER
 
-#endif
+#endif // QBLUETOOTHTRANSFERREPLY_H

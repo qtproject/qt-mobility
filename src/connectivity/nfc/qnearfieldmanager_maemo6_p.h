@@ -98,6 +98,8 @@ public:
     QNearFieldManagerPrivateImpl();
     ~QNearFieldManagerPrivateImpl();
 
+    bool isAvailable() const;
+
     bool startTargetDetection(const QList<QNearFieldTarget::Type> &targetTypes);
     void stopTargetDetection();
 

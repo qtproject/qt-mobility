@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,40 +39,27 @@
 **
 ****************************************************************************/
 
-#ifndef QNEARFIELDMANAGER_EMULATOR_H
-#define QNEARFIELDMANAGER_EMULATOR_H
+#ifndef QBLUETOOTHADDRESS_P_H
+#define QBLUETOOTHADDRESS_P_H
 
-#include "qnearfieldmanagervirtualbase_p.h"
-#include "qnearfieldtarget.h"
-#include "qndeffilter.h"
+#include "qbluetoothaddress.h"
 
-#include <QtCore/QObject>
-#include <QtCore/QWeakPointer>
+QT_BEGIN_HEADER
 
-QTM_USE_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
-class TagBase;
-class QNearFieldManagerPrivateImpl : public QNearFieldManagerPrivateVirtualBase
+class QBluetoothAddressPrivate
 {
-    Q_OBJECT
-
 public:
-    QNearFieldManagerPrivateImpl();
-    ~QNearFieldManagerPrivateImpl();
+    QBluetoothAddressPrivate();
 
-    bool isAvailable() const;
 
-    void reset();
-
-private slots:
-    void tagActivated(TagBase *tag);
-    void tagDeactivated(TagBase *tag);
-
-private:
-    void ndefReceived(const QNdefMessage &message, QNearFieldTarget *target);
-
-    QMap<TagBase *, QWeakPointer<QNearFieldTarget> > m_targets;
+    quint64 m_address;
 
 };
 
-#endif // QNEARFIELDMANAGER_EMULATOR_H
+QTM_END_NAMESPACE
+
+QT_END_HEADER
+
+#endif

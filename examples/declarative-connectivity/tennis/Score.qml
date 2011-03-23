@@ -41,33 +41,12 @@
 import QtQuick 1.0
 import QtMobility.connectivity 1.2
 
-Rectangle {
-    id: paddle
-
-    property int paddlePos: page.height/2
-    property bool rateLimit: false
-
-    signal paddleMoved(int postion)
-
+Text {
+    id: score
+    font.family: "Old English"
+    font.pixelSize: 50; font.bold: true
     color: fg
-    x: 0; width: 12; height: 50; y: parent.height/2-height/2;
-
-    Behavior on y { SpringAnimation{ damping: 0.5; spring: 4.5; velocity: 400 } }
-    onPaddlePosChanged: {
-        if(paddlePos < topBumper.height)
-            y = topBumper.height;
-        else if(paddlePos > page.height-bottomBumper.height-height)
-            y = page.height-bottomBumper.height-height;
-        else
-            y = paddlePos;
-    }
-    onYChanged: {
-        if(!rateLimit) { paddleMoved(y); rateLimit = true; }
-    }
-
-    Timer {
-        interval: 30
-        running: parent.rateLimit
-        onTriggered: paddle.rateLimit = false;
-    }
+    text:  "0"
+    y: 50
+    x: page.width/4-paintedWidth/2
 }

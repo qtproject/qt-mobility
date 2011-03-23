@@ -70,6 +70,11 @@ public:
     {
     }
 
+    virtual bool isAvailable() const
+    {
+        return false;
+    }
+
     virtual bool startTargetDetection(const QList<QNearFieldTarget::Type> &targetTypes)
     {
         Q_UNUSED(targetTypes);

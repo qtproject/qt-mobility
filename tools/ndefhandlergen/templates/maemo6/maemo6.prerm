@@ -1,0 +1,7 @@
+#!/bin/sh
+
+dbus-send --system --type=method_call --dest=com.nokia.nfc / \
+    com.nokia.nfc.Manager.UnregisterNDEFHandler \
+        string:system \
+        string:com.nokia.qtmobility.nfc.%APPNAME% \
+        objpath:/com/nokia/nfc/ndefhandler

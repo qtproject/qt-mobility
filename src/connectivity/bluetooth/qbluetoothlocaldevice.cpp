@@ -95,6 +95,13 @@ QTM_BEGIN_NAMESPACE
                                 address. This powers up the device if it was powered off.
     \value HostDiscoverable     Remote Bluetooth devices can discover the presence of the local
                                 Bluetooth device.  The device will also be connectable, and powered on.
+    \value HostDiscoverableLimitedInquiry Remote Bluetooth devices can discover the presence of the local
+                                Bluetooth device when performing a limited inquiry.  This should be used for
+                                locating services that are only made discoverable for a limited period of time.
+                                This can speed up discovery between games for example, since service
+                                discovery can be skipped on devices not in limited enquiry more.  This
+                                is not supported on all platforms. The device will also be connectable, and powered on.
+
 */
 
 namespace
@@ -143,13 +150,13 @@ bool QBluetoothLocalDevice::isValid() const
 /*!
     \fn QBluetoothLocalDevice::name() const
 
-    Returns the name of this local Bluetooth device.
+    Returns the name assgined by the user to this Bluetooth device.
 */
 
 /*!
     \fn QBluetoothLocalDevice::address() const
 
-    Returns the address of this local Bluetooth device.
+    Returns the MAC address of this Bluetooth device.
 */
 
 /*!
@@ -159,9 +166,9 @@ bool QBluetoothLocalDevice::isValid() const
 */
 
 /*!
-  \fn void QBluetoothLocalDevice::powerOn()
+  \fn QBluetoothLocalDevice::powerOn()
 
-  Powers the device on returning it to the hostMode() state is was in when powered down
+  Powers on the device on returning it to the hostMode() state is was in when powered down
 */
 
 /*!
@@ -177,12 +184,13 @@ bool QBluetoothLocalDevice::isValid() const
 /*!
   \fn QBluetoothLocalDevice::pairingStatus(const QBluetoothAddress &address) const
 
-  Returns the status of \a address and if it's unpaired, paired, or paired and authorized.
+  Returns the current bluetooth pairing status of \a address, if it's unpaired, paired, or paired and authorized.
 */
 
 
 /*!
   \fn QBluetoothLocalDevice::pairingDisplayConfirmation(const QBluetoothAddress &address, QString pin)
+
   Signal by some platforms to display a pairing confirmation dialog for \a address.  The user
   is asked to confirm the \a pin is the same on both devices.  QBluetoothLocalDevice::pairingConfirmation(bool)
   must be called to indicate if the user accepts or rejects the displayed pin.
@@ -190,18 +198,21 @@ bool QBluetoothLocalDevice::isValid() const
 
 /*!
   \fn QBluetoothLocalDevice::pairingConfirmation(bool accept)
+
   To be called after getting a pairingDisplayConfirmation().  The \a accept parameter either
   accepts the pairing or rejects it.
 */
 
 /*!
   \fn QBluetoothLocalDevice::pairingDisplayPinCode(const QBluetoothAddress &address, QString pin)
+
   Signal by some platforms to display the \a pin to the user for \a address.  The pin is automatically
   generated, and does not need to be confirmed.
 */
 
 /*!
   \fn QBluetoothLocalDevice::requestPairing(const QBluetoothAddress &address, Pairing pairing)
+
   Set the \a pairing status with \a address.  The results are returned via
   the signal pairingFinished().  Caution: creating a pairing may take minutes, and can require
   the user to acknowledge dialogs.
@@ -209,6 +220,7 @@ bool QBluetoothLocalDevice::isValid() const
 
 /*!
     \fn QBluetoothLocalDevice::pairingFinished(const QBluetoothAddress &address, QBluetoothLocalDevice::Pairing pairing)
+
   Pairing has completed with \a address. Current pairing status is in \a pairing.
 */
 

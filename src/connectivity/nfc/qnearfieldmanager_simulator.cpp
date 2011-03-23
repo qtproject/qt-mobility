@@ -175,9 +175,14 @@ QNearFieldManagerPrivateImpl::~QNearFieldManagerPrivateImpl()
     delete nfcConnection;
 }
 
+bool QNearFieldManagerPrivateImpl::isAvailable() const
+{
+    return true;
+}
+
 void QNearFieldManagerPrivateImpl::targetEnteringProximity(const QByteArray &uid)
 {
-    QNearFieldTarget *target = m_targets.value(uid);
+    QNearFieldTarget *target = m_targets.value(uid).data();
     if (!target) {
         target = new Simulator::TagType1(uid, this);
         m_targets.insert(uid, target);
@@ -188,9 +193,11 @@ void QNearFieldManagerPrivateImpl::targetEnteringProximity(const QByteArray &uid
 
 void QNearFieldManagerPrivateImpl::targetLeavingProximity(const QByteArray &uid)
 {
-    QNearFieldTarget *target = m_targets.value(uid);
-    if (!target)
+    QNearFieldTarget *target = m_targets.value(uid).data();
+    if (!target) {
+        m_targets.remove(uid);
         return;
+    }
 
     targetDeactivated(target);
 }

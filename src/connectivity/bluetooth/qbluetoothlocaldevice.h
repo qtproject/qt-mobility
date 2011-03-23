@@ -95,7 +95,8 @@ public:
     enum HostMode {        
         HostPoweredOff,
         HostConnectable,
-        HostDiscoverable
+        HostDiscoverable,
+        HostDiscoverableLimitedInquiry
     };
 
     enum Error {

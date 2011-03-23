@@ -23,4 +23,7 @@ RESOURCES += \
 OTHER_FILES += \
     sensor.qml \
     Handover.qml \
-    Paddle.qml
+    Paddle.qml \
+    Bumper.qml \
+    Score.qml \
+    ConnectButton.qml
