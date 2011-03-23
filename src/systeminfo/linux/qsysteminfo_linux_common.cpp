@@ -3765,11 +3765,7 @@ void QSystemBatteryInfoLinuxCommonPrivate::halChanged(int count,QVariantList map
             }
 
             if (mapS == "battery.reporting.current") {
-              //  if(ifaceDevice.getPropertyBool("battery.rechargeable.is_charging")) {
-                    remainingEnergy = ifaceDevice.getPropertyInt("battery.reporting.current");
-               // } else {
-                //    remainingEnergy = -1;
-               // }
+                remainingEnergy = ifaceDevice.getPropertyInt("battery.reporting.current");
                 Q_EMIT remainingCapacityChanged(remainingEnergy);
             }
 
@@ -3883,14 +3879,13 @@ void QSystemBatteryInfoLinuxCommonPrivate::getBatteryStats()
 
                     cLevel = ifaceDevice.getPropertyInt("battery.charge_level.percentage");
 
-                    rEnergy = ifaceDevice.getPropertyInt("battery.charge_level.current");
+                    rEnergy = ifaceDevice.getPropertyInt("battery.reporting.current");
                     if(rEnergy == 0)
-                        rEnergy = ifaceDevice.getPropertyInt("battery.reporting.current");
+                        rEnergy = ifaceDevice.getPropertyInt("battery.charge_level.current");
 
-
-                    capacity = ifaceDevice.getPropertyInt("battery.charge_level.last_full");
+                    capacity =  ifaceDevice.getPropertyInt("battery.reporting.last_full");
                     if(capacity == 0)
-                        capacity =  ifaceDevice.getPropertyInt("battery.reporting.last_full");
+                        capacity = ifaceDevice.getPropertyInt("battery.charge_level.last_full");
                     if(capacity == 0)
                         capacity = ifaceDevice.getPropertyInt("battery.reporting.design");
 
