@@ -58,6 +58,7 @@ QBluetoothServiceDiscoveryAgentPrivate::QBluetoothServiceDiscoveryAgentPrivate(c
     , m_sdpAgent(NULL)
     , m_filter(NULL)
     , m_attributes(NULL)
+    , singleDevice(false)
 {
 
 }
