@@ -27,6 +27,12 @@
 
 /*!
     \page tutorials-mapsdemo.html
+
+    \example tutorials/mapsdemo
+
+    \contentspage Maps Demo Tutorial
+    \startpage Maps Demo Tutorial
+
     \title Maps Demo Tutorial
 
     \brief An introduction to the Location API, showing how to develop a simple
@@ -59,6 +65,12 @@
 
 /*!
     \page tutorials-mapsdemo-part1.html
+
+    \previouspage tutorials/mapsdemo
+    \contentspage {tutorials/mapsdemo} {Contents}
+    \nextpage tutorials/mapsdemo/part2
+    \startpage tutorials/mapsdemo
+
     \example tutorials/mapsdemo/part1
     \title Part 1 - The Map Widget
 
@@ -384,12 +396,16 @@ geoMap->addMapObject(me);
 
     Next, we'll add a basic GUI around the map widget, and the ability
     to search for locations like addresses.
-    
-    Continue to \l{tutorials/mapsdemo/part2}{Part 2 - Searching for locations}
 */
 
 /*!
     \page tutorials-mapsdemo-part2.html
+
+    \previouspage tutorials/mapsdemo/part1
+    \contentspage {tutorials/mapsdemo} {Contents}
+    \nextpage tutorials/mapsdemo/part3
+    \startpage tutorials/mapsdemo
+
     \example tutorials/mapsdemo/part2
     \title Part 2 - Searching for locations
 
@@ -1021,12 +1037,16 @@ void MarkerManager::reverseReplyFinished(QGeoSearchReply *reply)
     as GPS, and in part 4 we will add the ability to fetch directions to a given
     destination. Finally, in part 5 we will cover a number of points about 
     means for achieving a better user experience on mobile platforms.
-    
-    Continue to \l{tutorials/mapsdemo/part3}{Part 3 - Listening to satellites}
 */
 
 /*!
     \page tutorials-mapsdemo-part3.html
+ 
+    \previouspage tutorials/mapsdemo/part2
+    \contentspage {tutorials/mapsdemo} {Contents}
+    \nextpage tutorials/mapsdemo/part4
+    \startpage tutorials/mapsdemo
+
     \example tutorials/mapsdemo/part3
     \title Part 3 - Listening to satellites
 
@@ -1501,13 +1521,16 @@ void MainWindow::updateMyPosition(QGeoPositionInfo info)
     
     And now we have the simple location tracking functionality we set out to
     implement.
-    
-    Continue to \l{tutorials/mapsdemo/part4}{Part 4 - Stopping for Directions}
-
 */
 
 /*!
     \page tutorials-mapsdemo-part4.html
+
+    \previouspage tutorials/mapsdemo/part3
+    \contentspage {tutorials/mapsdemo} {Contents}
+    \nextpage tutorials/mapsdemo/part5
+    \startpage tutorials/mapsdemo
+
     \example tutorials/mapsdemo/part4
     \title Part 4 - Stopping for directions
 
@@ -1790,12 +1813,15 @@ void MainWindow::showNavigateDialog()
     In the final part of this tutorial, we will optimise the maps
     demo so far for mobile platforms in order to deploy it to a
     phone.
-    
-    Continue to \l{tutorials/mapsdemo/part5}{Part 5 - Tuning for mobile devices}
 */
 
 /*!
     \page tutorials-mapsdemo-part5.html
+ 
+    \previouspage tutorials/mapsdemo/part4
+    \contentspage {tutorials/mapsdemo} {Contents}
+    \startpage tutorials/mapsdemo
+
     \example tutorials/mapsdemo/part5
     \title Part 5 - Tuning for mobile devices
 

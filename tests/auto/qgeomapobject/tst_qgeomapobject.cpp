@@ -652,7 +652,7 @@ void tst_QGeoMapObject::holdsVisible()
 
 void tst_QGeoMapObject::holdsOrigin()
 {
-    QGeoMapObject *obj = new QGeoMapObject;
+    QGeoMapCustomObject *obj = new QGeoMapCustomObject;
 
     QCOMPARE(obj->origin(), QGeoCoordinate());
 

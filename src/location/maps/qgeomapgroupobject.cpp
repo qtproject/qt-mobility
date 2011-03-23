@@ -224,7 +224,7 @@ void QGeoMapGroupObject::clearChildObjects()
 }
 
 /*!
-    \reimp
+    Sets whether this group of objects is visible to \a visible.
 */
 void QGeoMapGroupObject::setVisible(bool visible)
 {
@@ -254,6 +254,13 @@ void QGeoMapGroupObject::setMapData(QGeoMapData *mapData)
 
     This signal will be emitted when the map object \a childObject
     is added to the group.
+*/
+
+/*!
+\fn void QGeoMapGroupObject::childUpdated(QGeoMapObject *childObject)
+
+    This signal will be emitted when the map object \a childObject
+    belonging to the group is updated.
 */
 
 /*!
