@@ -2546,6 +2546,12 @@ void tst_QContactAsync::addManagers(QStringList stringlist)
         managers.removeAll("testdummy");
     if (!stringlist.contains("symbiansim"))
         managers.removeAll("symbiansim"); // SIM backend does not support all the required details for tests to pass.
+    if (!stringlist.contains("social"))
+        managers.removeAll("social");
+    if (!stringlist.contains("simcard"))
+        managers.removeAll("simcard");
+    if (!stringlist.contains("com.nokia.messaging.contacts.engines.mail.contactslookup"))
+        managers.removeAll("com.nokia.messaging.contacts.engines.mail.contactslookup");
 
     foreach(QString mgr, managers) {
         QMap<QString, QString> params;
