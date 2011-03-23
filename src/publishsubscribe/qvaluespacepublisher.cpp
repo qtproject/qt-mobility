@@ -203,12 +203,10 @@ QValueSpacePublisher::QValueSpacePublisher(const QString &path, QObject *parent)
     \a path.  The \a filter parameter is used to limit which layer this QValueSpacePublisher will
     access.
 
-    The constructed Value Space publisher will access the QAbstractValueSpaceLayer layer with
-    the highest order (QAbstractValueSpaceLayer::order()) that matches \a filter and for which
-    \a path is a valid path.
+    The constructed Value Space publisher will access the layer with the highest order that matches
+    \a filter and for which \a path is a valid path.
 
-    If no suitable QAbstractValueSpaceLayer layer is found, the constructed
-    QValueSpacePublisher will be unconnected.
+    If no suitable layer is found, the constructed QValueSpacePublisher will be unconnected.
 
     \sa isConnected()
 */
@@ -224,8 +222,8 @@ QValueSpacePublisher::QValueSpacePublisher(QValueSpace::LayerOptions filter,
     Constructs a QValueSpacePublisher with the specified \a parent that publishes values under
     \a path.  Only the layer identified by \a uuid will be accessed by this publisher.
 
-    Use of this constructor is not platform agnostic.  If possible use one of the constructors that
-    take a QAbstractValueSpaceLayer::LayerOptions parameter instead.
+    Use of this constructor is not platform agnostic. If possible use one of the constructors that
+    take a QValueSpace::LayerOptions parameter instead.
 
     If a layer with a matching \a uuid is not found, the constructed QValueSpacePublisher will be
     unconnected.

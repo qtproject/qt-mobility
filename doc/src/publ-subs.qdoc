@@ -339,6 +339,12 @@ charge level for the animation to represent.
 
 \section1 Namespaces and Classes
 
+\section2 C++ Classes
+
 \annotatedlist publishsubscribe
+
+\section2 QML Elements
+
+\annotatedlist qml-publishsubscribe
 
 */
