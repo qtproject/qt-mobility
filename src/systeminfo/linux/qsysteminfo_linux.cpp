@@ -948,6 +948,10 @@ QSystemDeviceInfo::SimStatus QSystemDeviceInfoPrivate::simStatus()
      return QSystemDeviceInfo::SimNotAvailable;
 }
 
+QSystemDeviceInfo::LockTypeFlags QSystemDeviceInfoPrivate::lockStatus()
+{
+    return QSystemDeviceInfo::UnknownLock;
+}
 
 int QSystemDeviceInfoPrivate::messageRingtoneVolume()
 {

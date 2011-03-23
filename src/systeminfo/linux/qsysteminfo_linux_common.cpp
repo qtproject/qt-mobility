@@ -3345,11 +3345,6 @@ QUuid QSystemDeviceInfoLinuxCommonPrivate::uniqueDeviceID()
     return QUuid(QString::number(gethostid()));
 }
 
-QSystemDeviceInfo::LockTypeFlags QSystemDeviceInfoLinuxCommonPrivate::lockStatus()
-{
-    return QSystemDeviceInfo::UnknownLock;
-}
-
 QString QSystemDeviceInfoLinuxCommonPrivate::model()
 {
     if (halAvailable()) {

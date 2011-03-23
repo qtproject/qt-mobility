@@ -285,6 +285,7 @@ private:
     QSystemDeviceInfo::BatteryStatus currentBatStatus;
 
     QSystemDeviceInfo::PowerState previousPowerState;
+    QSystemDeviceInfo::LockTypeFlags  currentLockType;
 #endif
      QSocketNotifier *notifier;
      int gpioFD;

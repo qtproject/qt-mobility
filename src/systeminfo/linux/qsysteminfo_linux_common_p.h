@@ -337,7 +337,6 @@ public:
     void keyboardConnected(bool connect);//1.2
     bool keypadLightOn(QSystemDeviceInfo::KeypadType type); //1.2
     QUuid uniqueDeviceID(); //1.2
-    QSystemDeviceInfo::LockTypeFlags lockStatus(); //1.2
 
 Q_SIGNALS:
     void batteryLevelChanged(int);

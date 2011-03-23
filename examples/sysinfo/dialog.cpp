@@ -204,12 +204,15 @@ void Dialog::setupDevice()
 
     wirelessKeyboardConnectedRadioButton->setChecked(di->isWirelessKeyboardConnected());
 
-    lockStateLabel->setText(lockStateToString(di->lockStatus()));
+    QSystemDeviceInfo::LockTypeFlags locktype = di->lockStatus();
+    lockStateLabel->setText(lockStateToString(locktype));
+
     oldLockStatus = QSystemDeviceInfo::UnknownLock;
     lockStateLabel_2->setText(lockStateToString(oldLockStatus));
-    oldLockStatus = di->lockStatus();
+    oldLockStatus = locktype;
+
     connect(di,SIGNAL(lockStatusChanged(QSystemDeviceInfo::LockTypeFlags)),
-            this,SLOT(lockStatusChanged(QSystemDeviceInfo::LockTypeFlags)));
+            this,SLOT(lockStatusChanged(QSystemDeviceInfo::LockTypeFlags)),Qt::UniqueConnection);
 
 }
 
@@ -1195,10 +1198,9 @@ QString Dialog::lockStateToString(QSystemDeviceInfo::LockTypeFlags lock)
 void Dialog::lockStatusChanged(QSystemDeviceInfo::LockTypeFlags locktype)
 {
     if (locktype != oldLockStatus) {
-        oldLockStatus = locktype;
         lockStateLabel_2->setText(lockStateToString(oldLockStatus));
-        Q_EMIT lockStatusChanged(locktype);
-        lockStateLabel->setText(lockStateToString(di->lockStatus()));
+        oldLockStatus = locktype;
+        lockStateLabel->setText(lockStateToString(locktype));
     }
 }
 

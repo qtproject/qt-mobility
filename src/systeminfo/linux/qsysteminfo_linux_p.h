@@ -214,6 +214,7 @@ public:
 //    QSystemDeviceInfo::KeyboardTypeFlags keyboardTypes(); //1.2
 //    bool isWirelessKeyboardConnected(); //1.2
 //    bool isKeyboardFlippedOpen();//1.2
+    QSystemDeviceInfo::LockTypeFlags lockStatus(); //1.2
 
 
 private:
