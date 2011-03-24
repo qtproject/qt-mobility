@@ -35,14 +35,26 @@ HEADERS += \
     qdeclarativebtimageprovider_p.h \
     qdeclarativebluetoothservice_p.h \
     qdeclarativebluetoothsocket_p.h \
-    qdeclarativenearfieldsocket_p.h
+    qdeclarativenearfieldsocket_p.h \
+    qdeclarativenearfield_p.h \
+    qdeclarativendefmessage_p.h \
+    qdeclarativendeffilter_p.h \
+    qdeclarativendeftextrecord_p.h \
+    qdeclarativendefurirecord_p.h \
+    qdeclarativendefmimerecord_p.h
 
 SOURCES += plugin.cpp \ 
     qdeclarativebtdiscoverymodel.cpp \
     qdeclarativebtimageprovider.cpp \
     qdeclarativebluetoothservice.cpp \
     qdeclarativebluetoothsocket.cpp \
-    qdeclarativenearfieldsocket.cpp
+    qdeclarativenearfieldsocket.cpp \
+    qdeclarativenearfield.cpp \
+    qdeclarativendefmessage.cpp \
+    qdeclarativendeffilter.cpp \
+    qdeclarativendeftextrecord.cpp \
+    qdeclarativendefurirecord.cpp \
+    qdeclarativendefmimerecord.cpp
 
 RESOURCES += connectivity.qrc
 
