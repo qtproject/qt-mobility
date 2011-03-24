@@ -123,14 +123,12 @@ Item {
             }
             onPositionChanged: {
                 console.log(mouse.button)
-                if (mouse.button == Qt.LeftMouseButton) {
-//                if (mouseDown) {
+                if (mouseDown) {
                     var dx = mouse.x - lastX
                     var dy = mouse.y - lastY
                     map.pan(-dx, -dy)
                     lastX = mouse.x
                     lastY = mouse.y
-                    map.center = mouse.coordinate
                 }
             }
             onDoubleClicked: {
