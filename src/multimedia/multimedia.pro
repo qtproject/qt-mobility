@@ -131,7 +131,9 @@ PUBLIC_HEADERS += \
     qcameraexposurecontrol.h \
     qcamerafocuscontrol.h \
     qcameraflashcontrol.h \
-    qcameraimageprocessingcontrol.h
+    qcameraimageprocessingcontrol.h \
+    qcameracapturedestinationcontrol.h \
+    qcameracapturebufferformatcontrol.h
 
 SOURCES += \
     qcamera.cpp \
@@ -146,7 +148,9 @@ SOURCES += \
     qcameraexposurecontrol.cpp \
     qcamerafocuscontrol.cpp \
     qcameraflashcontrol.cpp \
-    qcameraimageprocessingcontrol.cpp
+    qcameraimageprocessingcontrol.cpp \
+    qcameracapturedestinationcontrol.cpp \
+    qcameracapturebufferformatcontrol.cpp
 
 include(audio/audio.pri)
 include(video/video.pri)

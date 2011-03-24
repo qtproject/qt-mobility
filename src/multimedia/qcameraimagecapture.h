@@ -45,6 +45,7 @@
 #include <qmediaobject.h>
 #include <qmediaencodersettings.h>
 #include <qmediabindableinterface.h>
+#include <qvideoframe.h>
 
 #include <qmediaenumdebug.h>
 
@@ -62,6 +63,7 @@ class Q_MULTIMEDIA_EXPORT QCameraImageCapture : public QObject, public QMediaBin
     Q_OBJECT
     Q_INTERFACES(QMediaBindableInterface)
     Q_ENUMS(Error)
+    Q_ENUMS(CaptureDestination)
     Q_PROPERTY(bool readyForCapture READ isReadyForCapture NOTIFY readyForCaptureChanged)
 public:
     enum Error
@@ -78,6 +80,13 @@ public:
     {
         SingleImageCapture
     };
+
+    enum CaptureDestination
+    {
+        CaptureToFile = 0x01,
+        CaptureToBuffer = 0x02
+    };
+    Q_DECLARE_FLAGS(CaptureDestinations, CaptureDestination)
 
     QCameraImageCapture(QMediaObject *mediaObject, QObject *parent = 0);
     ~QCameraImageCapture();
@@ -101,6 +110,14 @@ public:
     QImageEncoderSettings encodingSettings() const;
     void setEncodingSettings(const QImageEncoderSettings& settings);
 
+    QList<QVideoFrame::PixelFormat> supportedBufferFormats() const;
+    QVideoFrame::PixelFormat bufferFormat() const;
+    void setBufferFormat(QVideoFrame::PixelFormat format);
+
+    bool isCaptureDestinationSupported(CaptureDestinations destination) const;
+    CaptureDestinations captureDestination() const;
+    void setCaptureDestination(CaptureDestinations destination);
+
 public Q_SLOTS:
     int capture(const QString &location = QString());
     void cancelCapture();
@@ -109,9 +126,12 @@ Q_SIGNALS:
     void error(int id, QCameraImageCapture::Error error, const QString &errorString);
 
     void readyForCaptureChanged(bool);
+    void bufferFormatChanged(QVideoFrame::PixelFormat);
+    void captureDestinationChanged(QCameraImageCapture::CaptureDestinations);
 
     void imageExposed(int id);
     void imageCaptured(int id, const QImage &preview);
+    void imageAvailable(int id, const QVideoFrame &image);
     void imageSaved(int id, const QString &fileName);
 
 protected:
@@ -125,11 +145,16 @@ private:
     Q_PRIVATE_SLOT(d_func(), void _q_readyChanged(bool))
 };
 
+Q_DECLARE_OPERATORS_FOR_FLAGS(QCameraImageCapture::CaptureDestinations)
+
 QT_END_NAMESPACE
 
 Q_DECLARE_METATYPE(QCameraImageCapture::Error)
+Q_DECLARE_METATYPE(QCameraImageCapture::CaptureDestination)
+Q_DECLARE_METATYPE(QCameraImageCapture::CaptureDestinations)
 
 Q_MEDIA_ENUM_DEBUG(QCameraImageCapture, Error)
+Q_MEDIA_ENUM_DEBUG(QCameraImageCapture, CaptureDestination)
 
 #endif
 

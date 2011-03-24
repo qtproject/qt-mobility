@@ -136,6 +136,11 @@ QCameraImageCaptureControl::~QCameraImageCaptureControl()
     has been captured and a \a preview is available.
 */
 
+/*!
+    \fn QCameraImageCaptureControl::imageAvailable(int requestId, const QVideoFrame &buffer)
+
+    Signals that a captured \a buffer with a \a requestId is available.
+*/
 
 /*!
     \fn QCameraImageCaptureControl::imageSaved(int requestId, const QString &fileName)

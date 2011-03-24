@@ -53,6 +53,8 @@
 #include <qcameraimagecapturecontrol.h>
 #include <qimageencodercontrol.h>
 #include <qcameraimageprocessingcontrol.h>
+#include <qcameracapturebufferformatcontrol.h>
+#include <qcameracapturedestinationcontrol.h>
 #include <qmediaservice.h>
 #include <qcamera.h>
 #include <qcameraimagecapture.h>
@@ -290,6 +292,74 @@ private:
     int m_captureRequest;
     bool m_ready;
     bool m_captureCanceled;
+};
+
+class MockCaptureDestinationControl : public QCameraCaptureDestinationControl
+{
+    Q_OBJECT
+public:
+    MockCaptureDestinationControl(QObject *parent = 0):
+            QCameraCaptureDestinationControl(parent),
+            m_destination(QCameraImageCapture::CaptureToFile)
+    {
+    }
+
+    bool isCaptureDestinationSupported(QCameraImageCapture::CaptureDestinations destination) const
+    {
+        return destination == QCameraImageCapture::CaptureToBuffer ||
+               destination == QCameraImageCapture::CaptureToFile;
+    }
+
+    QCameraImageCapture::CaptureDestinations captureDestination() const
+    {
+        return m_destination;
+    }
+
+    void setCaptureDestination(QCameraImageCapture::CaptureDestinations destination)
+    {
+        if (isCaptureDestinationSupported(destination) && destination != m_destination) {
+            m_destination = destination;
+            emit captureDestinationChanged(m_destination);
+        }
+    }
+
+private:
+    QCameraImageCapture::CaptureDestinations m_destination;
+};
+
+class MockCaptureBufferFormatControl : public QCameraCaptureBufferFormatControl
+{
+    Q_OBJECT
+public:
+    MockCaptureBufferFormatControl(QObject *parent = 0):
+            QCameraCaptureBufferFormatControl(parent),
+            m_format(QVideoFrame::Format_Jpeg)
+    {
+    }
+
+    QList<QVideoFrame::PixelFormat> supportedBufferFormats() const
+    {
+        return QList<QVideoFrame::PixelFormat>()
+                << QVideoFrame::Format_Jpeg
+                << QVideoFrame::Format_RGB32
+                << QVideoFrame::Format_AdobeDng;
+    }
+
+    QVideoFrame::PixelFormat bufferFormat() const
+    {
+        return m_format;
+    }
+
+    void setBufferFormat(QVideoFrame::PixelFormat format)
+    {
+        if (format != m_format && supportedBufferFormats().contains(format)) {
+            m_format = format;
+            emit bufferFormatChanged(m_format);
+        }
+    }
+
+private:
+    QVideoFrame::PixelFormat m_format;
 };
 
 class MockCameraExposureControl : public QCameraExposureControl
@@ -808,6 +878,8 @@ public:
         mockFlashControl = new MockCameraFlashControl(this);
         mockFocusControl = new MockCameraFocusControl(this);
         mockCaptureControl = new MockCaptureControl(mockControl, this);
+        mockCaptureBufferControl = new MockCaptureBufferFormatControl(this);
+        mockCaptureDestinationControl = new MockCaptureDestinationControl(this);
         mockImageProcessingControl = new MockImageProcessingControl(this);
         mockImageEncoderControl = new MockImageEncoderControl(this);
         rendererControl = new MockVideoRendererControl(this);
@@ -840,6 +912,12 @@ public:
         if (qstrcmp(iid, QCameraImageCaptureControl_iid) == 0)
             return mockCaptureControl;
 
+        if (qstrcmp(iid, QCameraCaptureBufferFormatControl_iid) == 0)
+            return mockCaptureBufferControl;
+
+        if (qstrcmp(iid, QCameraCaptureDestinationControl_iid) == 0)
+            return mockCaptureDestinationControl;
+
         if (qstrcmp(iid, QCameraImageProcessingControl_iid) == 0)
             return mockImageProcessingControl;
 
@@ -871,6 +949,8 @@ public:
     MockCameraControl *mockControl;
     MockCameraLocksControl *mockLocksControl;
     MockCaptureControl *mockCaptureControl;
+    MockCaptureBufferFormatControl *mockCaptureBufferControl;
+    MockCaptureDestinationControl *mockCaptureDestinationControl;
     MockCameraExposureControl *mockExposureControl;
     MockCameraFlashControl *mockFlashControl;
     MockCameraFocusControl *mockFocusControl;
@@ -914,6 +994,8 @@ private slots:
     void testSimpleCameraFocus();
     void testSimpleCameraCapture();
     void testSimpleCameraLock();
+    void testSimpleCaptureDestination();
+    void testSimpleCaptureFormat();
 
     void testCameraWhiteBalance();
     void testCameraExposure();
@@ -923,6 +1005,9 @@ private slots:
     void testCameraLock();
     void testCameraLockCancel();
     void testCameraEncodingProperyChange();
+    void testCaptureDestination();
+    void testCaptureFormat();
+
 
     void testSetVideoOutput();
     void testSetVideoOutputNoService();
@@ -1159,6 +1244,86 @@ void tst_QCamera::testSimpleCameraLock()
     QCOMPARE(lockFailedSignal.count(), 0);
     QCOMPARE(lockStatusChangedSignal.count(), 1);
 }
+
+void tst_QCamera::testSimpleCaptureDestination()
+{
+    QCamera camera(0, provider);
+    QCameraImageCapture imageCapture(&camera);
+
+    QVERIFY(imageCapture.isCaptureDestinationSupported(QCameraImageCapture::CaptureToFile));
+    QVERIFY(!imageCapture.isCaptureDestinationSupported(QCameraImageCapture::CaptureToBuffer));
+    QVERIFY(!imageCapture.isCaptureDestinationSupported(
+                QCameraImageCapture::CaptureToBuffer | QCameraImageCapture::CaptureToFile));
+
+    QCOMPARE(imageCapture.captureDestination(), QCameraImageCapture::CaptureToFile);
+    imageCapture.setCaptureDestination(QCameraImageCapture::CaptureToBuffer);
+    QCOMPARE(imageCapture.captureDestination(), QCameraImageCapture::CaptureToFile);
+}
+
+void tst_QCamera::testSimpleCaptureFormat()
+{
+    QCamera camera(0, provider);
+    QCameraImageCapture imageCapture(&camera);
+
+    QCOMPARE(imageCapture.bufferFormat(), QVideoFrame::Format_Invalid);
+    QVERIFY(imageCapture.supportedBufferFormats().isEmpty());
+
+    imageCapture.setBufferFormat(QVideoFrame::Format_AdobeDng);
+    QCOMPARE(imageCapture.bufferFormat(), QVideoFrame::Format_Invalid);
+}
+
+void tst_QCamera::testCaptureDestination()
+{
+    MockCameraService service;
+    provider->service = &service;
+    QCamera camera(0, provider);
+    QCameraImageCapture imageCapture(&camera);
+
+    QVERIFY(imageCapture.isCaptureDestinationSupported(QCameraImageCapture::CaptureToFile));
+    QVERIFY(imageCapture.isCaptureDestinationSupported(QCameraImageCapture::CaptureToBuffer));
+    QVERIFY(!imageCapture.isCaptureDestinationSupported(
+                QCameraImageCapture::CaptureToBuffer | QCameraImageCapture::CaptureToFile));
+
+    QSignalSpy destinationChangedSignal(&imageCapture, SIGNAL(captureDestinationChanged(QCameraImageCapture::CaptureDestinations)));
+
+    QCOMPARE(imageCapture.captureDestination(), QCameraImageCapture::CaptureToFile);
+    imageCapture.setCaptureDestination(QCameraImageCapture::CaptureToBuffer);
+    QCOMPARE(imageCapture.captureDestination(), QCameraImageCapture::CaptureToBuffer);
+    QCOMPARE(destinationChangedSignal.size(), 1);
+    QCOMPARE(destinationChangedSignal.first().first().value<QCameraImageCapture::CaptureDestinations>(),
+             QCameraImageCapture::CaptureToBuffer);
+
+    //not supported combination
+    imageCapture.setCaptureDestination(QCameraImageCapture::CaptureToBuffer | QCameraImageCapture::CaptureToFile);
+    QCOMPARE(imageCapture.captureDestination(), QCameraImageCapture::CaptureToBuffer);
+    QCOMPARE(destinationChangedSignal.size(), 1);
+}
+
+void tst_QCamera::testCaptureFormat()
+{
+    MockCameraService service;
+    provider->service = &service;
+    QCamera camera(0, provider);
+    QCameraImageCapture imageCapture(&camera);
+
+    QSignalSpy formatChangedSignal(&imageCapture, SIGNAL(bufferFormatChanged(QVideoFrame::PixelFormat)));
+
+    QCOMPARE(imageCapture.bufferFormat(), QVideoFrame::Format_Jpeg);
+    QCOMPARE(imageCapture.supportedBufferFormats().size(), 3);
+
+    imageCapture.setBufferFormat(QVideoFrame::Format_AdobeDng);
+    QCOMPARE(imageCapture.bufferFormat(), QVideoFrame::Format_AdobeDng);
+
+    QCOMPARE(formatChangedSignal.size(), 1);
+    QCOMPARE(formatChangedSignal.first().first().value<QVideoFrame::PixelFormat>(),
+             QVideoFrame::Format_AdobeDng);
+
+    imageCapture.setBufferFormat(QVideoFrame::Format_Y16);
+    QCOMPARE(imageCapture.bufferFormat(), QVideoFrame::Format_AdobeDng);
+
+    QCOMPARE(formatChangedSignal.size(), 1);
+}
+
 
 void tst_QCamera::testCameraCapture()
 {

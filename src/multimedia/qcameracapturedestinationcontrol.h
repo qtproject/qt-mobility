@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,51 +39,35 @@
 **
 ****************************************************************************/
 
-#ifndef QCAMERAIMAGECAPTURECONTROL_H
-#define QCAMERAIMAGECAPTURECONTROL_H
+#ifndef QCAMERACAPTUREDESTINATIONCONTROL_H
+#define QCAMERACAPTUREDESTINATIONCONTROL_H
 
 #include <qmediacontrol.h>
 #include <qcameraimagecapture.h>
 
 QT_BEGIN_NAMESPACE
-class QImage;
-QT_END_NAMESPACE
 
-QT_BEGIN_NAMESPACE
-
-class Q_MULTIMEDIA_EXPORT QCameraImageCaptureControl : public QMediaControl
+class Q_MULTIMEDIA_EXPORT QCameraCaptureDestinationControl : public QMediaControl
 {
     Q_OBJECT
-
 public:
-    ~QCameraImageCaptureControl();
+    ~QCameraCaptureDestinationControl();
 
-    virtual bool isReadyForCapture() const = 0;
-
-    virtual QCameraImageCapture::DriveMode driveMode() const = 0;
-    virtual void setDriveMode(QCameraImageCapture::DriveMode mode) = 0;
-
-    virtual int capture(const QString &fileName) = 0;
-    virtual void cancelCapture() = 0;
+    virtual bool isCaptureDestinationSupported(QCameraImageCapture::CaptureDestinations destination) const = 0;
+    virtual QCameraImageCapture::CaptureDestinations captureDestination() const = 0;
+    virtual void setCaptureDestination(QCameraImageCapture::CaptureDestinations destination) = 0;
 
 Q_SIGNALS:
-    void readyForCaptureChanged(bool);
-
-    void imageExposed(int id);
-    void imageCaptured(int id, const QImage &preview);
-    void imageAvailable(int id, const QVideoFrame &buffer);
-    void imageSaved(int id, const QString &fileName);
-
-    void error(int id, int error, const QString &errorString);
+    void captureDestinationChanged(QCameraImageCapture::CaptureDestinations);
 
 protected:
-    QCameraImageCaptureControl(QObject* parent = 0);
+    QCameraCaptureDestinationControl(QObject* parent = 0);
 };
 
-#define QCameraImageCaptureControl_iid "com.nokia.Qt.QCameraImageCaptureControl/1.0"
-Q_MEDIA_DECLARE_CONTROL(QCameraImageCaptureControl, QCameraImageCaptureControl_iid)
+#define QCameraCaptureDestinationControl_iid "com.nokia.Qt.QCameraCaptureDestinationControl/1.0"
+Q_MEDIA_DECLARE_CONTROL(QCameraCaptureDestinationControl, QCameraCaptureDestinationControl_iid)
 
 QT_END_NAMESPACE
 
-#endif  // QCAMERAIMAGECAPTURECONTROL_H
+#endif
 
