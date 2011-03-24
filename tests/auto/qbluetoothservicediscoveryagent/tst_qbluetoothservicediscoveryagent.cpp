@@ -43,6 +43,7 @@
 
 #include <QDebug>
 #include <QVariant>
+#include <QStringList>
 
 #include <qbluetoothaddress.h>
 #include <qbluetoothdevicediscoveryagent.h>
@@ -93,6 +94,7 @@ tst_QBluetoothServiceDiscoveryAgent::tst_QBluetoothServiceDiscoveryAgent()
     qRegisterMetaType<QList<QBluetoothUuid> >("QList<QBluetoothUuid>");
     qRegisterMetaType<QBluetoothServiceDiscoveryAgent::Error>("QBluetoothServiceDiscoveryAgent::Error");
     qRegisterMetaType<QBluetoothDeviceDiscoveryAgent::Error>("QBluetoothDeviceDiscoveryAgent::Error");
+
 }
 
 tst_QBluetoothServiceDiscoveryAgent::~tst_QBluetoothServiceDiscoveryAgent()
@@ -291,7 +293,7 @@ void tst_QBluetoothServiceDiscoveryAgent::tst_serviceDiscovery()
     }
 
     if(discoveryAgent.error() && expected_failures++ < 2){
-        qDebug() << "Device failed to respond to SDP, skipping device";
+        qDebug() << "Device failed to respond to SDP, skipping device" << discoveryAgent.error() << discoveryAgent.errorString();
         return;
     }
 
@@ -302,8 +304,9 @@ void tst_QBluetoothServiceDiscoveryAgent::tst_serviceDiscovery()
     QVERIFY(finishedSpy.count() == 1);
     QVERIFY(errorSpy.isEmpty());
 
-    if(discoveryAgent.discoveredServices().count() && expected_failures++ <2){
-        qDebug() << "Device failed to return any results, skipping device";
+    //if(discoveryAgent.discoveredServices().count() && expected_failures++ <2){
+    if(discoveredSpy.isEmpty() && expected_failures++ < 2){
+        qDebug() << "Device failed to return any results, skipping device" << discoveryAgent.discoveredServices().count();
         return;
     }
 

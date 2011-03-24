@@ -12,3 +12,7 @@ include(../../../common.pri)
 CONFIG += mobility
 MOBILITY = connectivity
 symbian: TARGET.CAPABILITY =  LocalServices NetworkControl
+
+OTHER_FILES += \
+    README.txt
+
