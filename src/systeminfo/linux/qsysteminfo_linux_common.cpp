@@ -936,9 +936,9 @@ QString QSystemNetworkInfoLinuxCommonPrivate::macAddress(QSystemNetworkInfo::Net
                         || mode == QSystemNetworkInfo::BluetoothMode) {
                     return QNetworkInterface::interfaceFromName(serviceIface->getInterface()).hardwareAddress();
                 } else {
-                    QOfonoConnectionContextInterface context(servicePath);
+ //                   QOfonoConnectionContextInterface context(servicePath);
                   //  if (context.active()) {
-                       return QNetworkInterface::interfaceFromName(context.interface()).hardwareAddress();
+   //                    return QNetworkInterface::interfaceFromName(context.interface()).hardwareAddress();
                  //   }
                 }
             }
@@ -3350,14 +3350,13 @@ bool QSystemDeviceInfoLinuxCommonPrivate::keypadLightOn(QSystemDeviceInfo::Keypa
 
 QByteArray QSystemDeviceInfoLinuxCommonPrivate::uniqueDeviceID()
 {
-
+    QCryptographicHash hash(QCryptographicHash::Sha1);
 #if !defined(QT_NO_DBUS)
     if (halIsAvailable) {
         QHalDeviceInterface iface("/org/freedesktop/Hal/devices/computer", this);
         QString id;
         if (iface.isValid()) {
             id = iface.getPropertyString("system.hardware.uuid");
-            QCryptographicHash hash(QCryptographicHash::Sha1);
             hash.addData(id.toLocal8Bit());
             return hash.result().toHex();
         }
@@ -3373,12 +3372,10 @@ QByteArray QSystemDeviceInfoLinuxCommonPrivate::uniqueDeviceID()
 
     QDBusReply< QString > reply = connectionInterface.call("GetMachineId");
     QString uid = reply.value();
-    QCryptographicHash hash(QCryptographicHash::Sha1);
     hash.addData(uid.toLocal8Bit());
     return hash.result().toHex();
 #endif
 #endif
-    QCryptographicHash hash(QCryptographicHash::Sha1);
     hash.addData(QString::number(gethostid()).toLocal8Bit());
     return hash.result().toHex();
 }
