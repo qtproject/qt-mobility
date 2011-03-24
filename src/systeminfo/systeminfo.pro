@@ -292,15 +292,6 @@ unix:!simulator {
             message("Thermalstatus enabled")
             }
 
-        contains(hb_symbian_enabled,yes) {
-                CONFIG += qt hb
-                DEFINES += HB_SUPPORTED
-                message("s60_HbKeymap enabled")
-                LIBS += -lhbcore
-        } else {
-            LIBS += -lptiengine
-        }
-
         TARGET.CAPABILITY = ALL -TCB
 #        TARGET.CAPABILITY = LocalServices NetworkServices ReadUserData UserEnvironment Location ReadDeviceData TrustedUI
 
