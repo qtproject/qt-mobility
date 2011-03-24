@@ -169,6 +169,7 @@ namespace Simulator
         s->setSimStatus(data.simStatus);
         s->setCurrentProfile(data.currentProfile);
         s->setCurrentPowerState(data.currentPowerState);
+        s->setCurrentThermalState(data.currentThermalState);
 
         s->setBatteryLevel(data.batteryLevel);
         s->setDeviceLocked(data.deviceLocked);
@@ -538,6 +539,7 @@ void QSystemDeviceInfoPrivate::setInitialData()
 {
     setCurrentProfile(QSystemDeviceInfo::NormalProfile);
     setCurrentPowerState(QSystemDeviceInfo::WallPower);
+    setCurrentThermalState(QSystemDeviceInfo::NormalThermal);
     setSimStatus(QSystemDeviceInfo::SimNotAvailable);
     setInputMethodType(
            static_cast<QSystemDeviceInfo::InputMethod>(static_cast<int>(
@@ -586,6 +588,14 @@ void QSystemDeviceInfoPrivate::setCurrentPowerState(QSystemDeviceInfo::PowerStat
     if (data.currentPowerState != v) {
         data.currentPowerState = v;
         emit powerStateChanged(v);
+    }
+}
+
+void QSystemDeviceInfoPrivate::setCurrentThermalState(QSystemDeviceInfo::ThermalState v)
+{
+    if (data.currentThermalState != v) {
+        data.currentThermalState = v;
+        emit thermalStateChanged(v);
     }
 }
 

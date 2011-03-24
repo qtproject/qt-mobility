@@ -142,6 +142,7 @@ struct QSystemDeviceInfoData
     QSystemDeviceInfo::SimStatus simStatus;
     QSystemDeviceInfo::Profile currentProfile;
     QSystemDeviceInfo::PowerState currentPowerState;
+    QSystemDeviceInfo::ThermalState currentThermalState;
 
     QSystemDeviceInfo::KeyboardTypeFlags keyboardTypes;
     QSystemDeviceInfo::KeypadType keypadType;

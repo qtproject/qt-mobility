@@ -239,6 +239,7 @@ public:
     bool isDeviceLocked();
     QSystemDeviceInfo::Profile currentProfile();
     QSystemDeviceInfo::PowerState currentPowerState();
+    QSystemDeviceInfo::ThermalState currentThermalState();
     QString model();
     QString productName();
     bool isKeyboardFlippedOpen();//1.2

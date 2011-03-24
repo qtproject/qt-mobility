@@ -80,6 +80,8 @@ private slots:
 
     void tst_currentPowerState();
 
+    void tst_currentThermalState();
+
     void tst_currentBluetoothPowerState();
 
     void tst_keyboardType();
@@ -239,6 +241,17 @@ void tst_QSystemDeviceInfo::tst_currentPowerState()
              || state == QSystemDeviceInfo::BatteryPower
              || state == QSystemDeviceInfo::WallPower
              || state == QSystemDeviceInfo::WallPowerChargingBattery);
+}
+
+void tst_QSystemDeviceInfo::tst_currentThermalState()
+{
+    QSystemDeviceInfo di;
+    QSystemDeviceInfo::ThermalState state = di.currentThermalState();
+    QVERIFY( state == QSystemDeviceInfo::UnknownThermal
+             || state == QSystemDeviceInfo::NormalThermal
+             || state == QSystemDeviceInfo::WarningThermal
+             || state == QSystemDeviceInfo::AlertThermal
+             || state == QSystemDeviceInfo::ErrorThermal);
 }
 
 void tst_QSystemDeviceInfo::tst_currentBluetoothPowerState()

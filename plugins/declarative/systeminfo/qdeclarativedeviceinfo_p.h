@@ -59,6 +59,7 @@ class QDeclarativeDeviceInfo : public QSystemDeviceInfo
     Q_PROPERTY(bool monitorPowerStateChanges READ monitorPowerStateChanges WRITE startPowerStateChanged)
     Q_PROPERTY(bool monitorCurrentProfileChanges READ monitorCurrentProfileChanges WRITE startCurrentProfileChanged)
     Q_PROPERTY(bool monitorBluetoothStateChanges READ monitorBluetoothStateChanges WRITE startBluetoothStateChanged)
+    Q_PROPERTY(bool monitorThermalStateChanges READ monitorThermalStateChanges WRITE startThermalStateChanged)
 
     Q_PROPERTY(bool monitorWirelessKeyboardConnects READ monitorWirelessKeyboardConnects WRITE startWirelessKeyboardConnected)
     Q_PROPERTY(bool monitorKeyboardFlips READ monitorKeyboardFlips WRITE startKeyboardFlipped)
@@ -90,6 +91,8 @@ public:
     bool monitorBluetoothStateChanges();
     void startBluetoothStateChanged(bool on);
 
+    bool monitorThermalStateChanges();
+    void startThermalStateChanged(bool on);
 
     bool monitorWirelessKeyboardConnects();
     void startWirelessKeyboardConnected(bool on);
@@ -118,6 +121,7 @@ public:
     bool monitoringPowerState;
     bool monitoringCurrentProfile;
     bool monitorBluetoothState;
+    bool monitorThermalState;
 
     bool monitoringWirelessKeyboard;
     bool monitoringKeyboardFlipped;

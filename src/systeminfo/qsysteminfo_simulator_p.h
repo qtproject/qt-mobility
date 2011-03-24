@@ -198,6 +198,7 @@ public:
 
     QSystemDeviceInfo::Profile currentProfile() const { return data.currentProfile; }
     QSystemDeviceInfo::PowerState currentPowerState() const { return data.currentPowerState; }
+    QSystemDeviceInfo::ThermalState currentThermalState() const { return data.currentThermalState; }
     QSystemDeviceInfo::SimStatus simStatus() const { return data.simStatus; }
     QSystemDeviceInfo::InputMethodFlags inputMethodType() const { return data.inputMethodType; }
 
@@ -231,6 +232,7 @@ public:
 
     void setCurrentProfile(QSystemDeviceInfo::Profile v);
     void setCurrentPowerState(QSystemDeviceInfo::PowerState v);
+    void setCurrentThermalState(QSystemDeviceInfo::ThermalState v);
     void setSimStatus(QSystemDeviceInfo::SimStatus v);
     void setInputMethodType(QSystemDeviceInfo::InputMethodFlags v);
 
@@ -267,6 +269,7 @@ Q_SIGNALS:
     void batteryLevelChanged(int) const;
     void batteryStatusChanged(QSystemDeviceInfo::BatteryStatus) const;
     void powerStateChanged(QSystemDeviceInfo::PowerState) const;
+    void thermalStateChanged(QSystemDeviceInfo::ThermalState) const;
     void currentProfileChanged(QSystemDeviceInfo::Profile) const;
     void bluetoothStateChanged(bool) const;
 

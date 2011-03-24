@@ -106,6 +106,7 @@ private slots:
     void displayBatteryStatus(QSystemBatteryInfo::BatteryStatus);
     void updateProfile(QSystemDeviceInfo::Profile profile);
     void updateSimStatus();
+    void updateThermalState();
     void updateProfile();
 
      void displayNetworkStatus(QSystemNetworkInfo::NetworkStatus);
