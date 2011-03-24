@@ -115,6 +115,9 @@ Some interesting examples for the API exist.
     \row
         \o \l {scanner}{QML Bluetooth Scanner}
         \o A QML implementation of the Bluetooth device scanner.
+    \row
+        \o \l {poster}{QML Poster}
+        \o A QML implementation of the NFC Annotated URL example.
 \endtable
 
 \section1 Main Classes

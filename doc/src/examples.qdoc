@@ -50,6 +50,7 @@
         \o \l{ndefeditor}{NDEF Editor}
         \o \l{declarative-bluetooth/tennis}{QML Bluetooth Tennis}
         \o \l{scanner}{QML Bluetooth Scanner}
+        \o \l{poster}{QML Poster}
     \endlist
 
     \section2 Contacts
