@@ -83,11 +83,11 @@ private:
     int col_y;
 
     int rightPaddleForce;
-    int rightPaddleLast;
     int leftPaddleForce;
+    int rightPaddleLast;
     int leftPaddleLast;
-    int leftPowerUp;
     int rightPowerUp;
+    int leftPowerUp;
 
     void restart_ball();
 

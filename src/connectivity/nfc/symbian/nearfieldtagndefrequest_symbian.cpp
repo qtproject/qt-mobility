@@ -41,9 +41,10 @@
 
 #include "nearfieldtagndefrequest_symbian.h"
 #include "nearfieldutility_symbian.h"
+#include "nearfieldtagimplcommon_symbian.h"
 #include "debug.h"
 
-NearFieldTagNdefRequest::NearFieldTagNdefRequest(MNearFieldTargetOperation& aOperator) : MNearFieldTagAsyncRequest(aOperator)
+NearFieldTagNdefRequest::NearFieldTagNdefRequest(QNearFieldTagImplCommon& aOperator) : MNearFieldTagAsyncRequest(aOperator)
 {
 }
 
@@ -65,7 +66,7 @@ void NearFieldTagNdefRequest::IssueRequest()
     LOG(iType);
     switch(iType)
     {
-        case EReadRequest: 
+        case EReadRequest:
         {
             iOperator.DoReadNdefMessages(this);
             break;
@@ -129,7 +130,7 @@ void NearFieldTagNdefRequest::ProcessEmitSignal(TInt aError)
         if (EReadRequest == iType)
         {
             // since there is no error, iReadMessages can't be NULL.
-            
+
             LOG("message count is "<<iReadMessages.count());
             for(int i = 0; i < iReadMessages.count(); ++i)
             {
@@ -152,7 +153,7 @@ void NearFieldTagNdefRequest::ProcessTimeout()
         if (iWait->IsStarted())
         {
             if (iRequestIssued)
-            {    
+            {
                 iOperator.DoCancelNdefAccess();
                 iRequestIssued = EFalse;
             }

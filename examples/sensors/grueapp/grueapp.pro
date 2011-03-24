@@ -1,6 +1,6 @@
 TEMPLATE=app
 TARGET=grueapp
-include(../../examples.pri)
+include(../../mobility_examples.pri)
 QT=core
 CONFIG+=mobility
 MOBILITY+=sensors

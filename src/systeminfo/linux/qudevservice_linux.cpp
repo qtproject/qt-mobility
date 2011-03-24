@@ -61,15 +61,13 @@ bool QUdevService::isSubsystemAvailable(const char *subsystem)
 {
     bool available = false;
     struct udev_enumerate *enumerate = 0;
-
-    if (!context) goto CLEAN;
-    if (!(enumerate = udev_enumerate_new(context))) goto CLEAN;
-    if (0 != udev_enumerate_add_match_subsystem(enumerate, subsystem)) goto CLEAN;
-    if (0 != udev_enumerate_scan_devices(enumerate)) goto CLEAN;
-
-    available = (0 != udev_enumerate_get_list_entry(enumerate)); 
-
-    CLEAN:
+    if (context) {
+        if ((enumerate = udev_enumerate_new(context))
+                && (0 == udev_enumerate_add_match_subsystem(enumerate, subsystem))
+                &&  (0 == udev_enumerate_scan_devices(enumerate))) {
+            available = (0 != udev_enumerate_get_list_entry(enumerate));
+        }
+    }
 
     if (enumerate) {
         udev_enumerate_unref(enumerate);
@@ -81,15 +79,13 @@ bool QUdevService::isPropertyAvailable(const char *property, const char *value)
 {
     bool available = false;
     struct udev_enumerate *enumerate = 0;
-
-    if (!context) goto CLEAN;
-    if (!(enumerate = udev_enumerate_new(context))) goto CLEAN;
-    if (0 != udev_enumerate_add_match_property(enumerate, property, value)) goto CLEAN;
-    if (0 != udev_enumerate_scan_devices(enumerate)) goto CLEAN;
-
-    available = (0 != udev_enumerate_get_list_entry(enumerate));
-
-    CLEAN:
+    if (context) {
+        if ((enumerate = udev_enumerate_new(context))
+                && (0 == udev_enumerate_add_match_property(enumerate, property, value))
+                &&  (0 == udev_enumerate_scan_devices(enumerate))) {
+            available = (0 != udev_enumerate_get_list_entry(enumerate));
+        }
+    }
 
     if (enumerate) {
         udev_enumerate_unref(enumerate);

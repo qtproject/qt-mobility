@@ -129,6 +129,7 @@ private:
     QTime m_clockStamp;
     QByteArray m_streamName;
     QByteArray m_device;
+    QByteArray m_tempBuffer;
 };
 
 class InputPrivate : public QIODevice

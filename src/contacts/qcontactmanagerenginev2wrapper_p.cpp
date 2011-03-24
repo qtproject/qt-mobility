@@ -297,6 +297,7 @@ bool PartialSaveRequestController::start()
 {
     // The first step is to fetch the existing contacts.
     QList<QContactLocalId> existingContactIds;
+    QList<int> newContactIndices;
 
     // First, remove the contacts that aren't from this manager
     QList<QContact> contacts(request()->contacts());
@@ -309,24 +310,49 @@ bool PartialSaveRequestController::start()
                 m_existingIdMap.insert(i, existingContactIds.count());
                 existingContactIds.append(c.localId());
             } else {
-                // Strange. it's just a new contact
+                // Strange. it's just a new contact (with a managerUri set?)
+                newContactIndices.append(i);
             }
         } else if (!c.id().managerUri().isEmpty() || c.localId() != 0) {
             // Hmm, error (wrong manager)
             m_errorMap.insert(i, QContactManager::DoesNotExistError);
-        } // else new contact
+        } else {
+            newContactIndices.append(i);
+        }
     }
 
-    // Now do the fetch and wait for the result in handleFinishedSubRequest
-    QContactFetchByIdRequest* cfbir = new QContactFetchByIdRequest;
-    cfbir->setLocalIds(existingContactIds);
-    // normally, you'd set the manager, but in this case, we only have a bare engine:
-    QContactManagerEngineV2Wrapper::setEngineOfRequest(cfbir, m_v2wrapper);
-    m_currentSubRequest.reset(cfbir);
-    connect(cfbir, SIGNAL(stateChanged(QContactAbstractRequest::State)),
-            this, SLOT(handleUpdatedSubRequest(QContactAbstractRequest::State)),
-            Qt::QueuedConnection);
-    return cfbir->start();
+    if (!existingContactIds.isEmpty()) {
+        // Now do the fetch and wait for the result in handleFinishedSubRequest
+        QContactFetchByIdRequest* cfbir = new QContactFetchByIdRequest;
+        cfbir->setLocalIds(existingContactIds);
+        // normally, you'd set the manager, but in this case, we only have a bare engine:
+        QContactManagerEngineV2Wrapper::setEngineOfRequest(cfbir, m_v2wrapper);
+        m_currentSubRequest.reset(cfbir);
+        connect(cfbir, SIGNAL(stateChanged(QContactAbstractRequest::State)),
+                this, SLOT(handleUpdatedSubRequest(QContactAbstractRequest::State)),
+                Qt::QueuedConnection);
+        return cfbir->start();
+    } else {
+        // Special case for the case where every contact is new - we don't need to bother fetching
+        // any existing contacts - just prune them down to the mask and do the save request.
+        QList<QContact> contactsToSave;
+        QSet<QString> mask(request()->definitionMask().toSet());
+        for (int i = 0; i < newContactIndices.count(); i++) {
+            QContact contactToSave;
+            partiallyCopyDetails(&contactToSave, contacts[newContactIndices[i]], mask);
+            m_savedToOriginalMap.append(i);
+            contactsToSave.append(contactToSave);
+        }
+        QContactSaveRequest* csr = new QContactSaveRequest;
+        csr->setContacts(contactsToSave);
+        // normally, you'd set the manager, but in this case, we only have a bare engine:
+        QContactManagerEngineV2Wrapper::setEngineOfRequest(csr, m_engine);
+        m_currentSubRequest.reset(csr);
+        connect(csr, SIGNAL(stateChanged(QContactAbstractRequest::State)),
+                this, SLOT(handleUpdatedSubRequest(QContactAbstractRequest::State)),
+                Qt::QueuedConnection);
+        return csr->start();
+    }
 }
 
 /* One of our subrequests has finished.  Go to the next step. */
@@ -360,18 +386,7 @@ void PartialSaveRequestController::handleFinishedSubRequest(QContactAbstractRequ
                 continue;
             } // else new contact
 
-            // Now copy in the details from the arguments
-            const QContact& c = contacts.at(i);
-
-            // Perhaps this could do this directly rather than through saveDetail
-            // but that would duplicate the checks for display label etc
-            foreach (const QString& name, mask) {
-                QList<QContactDetail> details = c.details(name);
-                foreach(QContactDetail detail, details) {
-                    contactToSave.saveDetail(&detail);
-                }
-            }
-
+            partiallyCopyDetails(&contactToSave, contacts.at(i), mask);
             m_savedToOriginalMap.append(i);
             contactsToSave.append(contactToSave);
         }
@@ -416,3 +431,15 @@ void PartialSaveRequestController::handleFinishedSubRequest(QContactAbstractRequ
     }
 }
 
+/* Copy details specified in \a mask from contact \a from to contact \a to */
+void PartialSaveRequestController::partiallyCopyDetails(QContact* to, const QContact& from,
+                                                        const QSet<QString>& mask) {
+    // Perhaps this could do this directly rather than through saveDetail
+    // but that would duplicate the checks for display label etc
+    foreach (const QString& name, mask) {
+        QList<QContactDetail> details = from.details(name);
+        foreach(QContactDetail detail, details) {
+            to->saveDetail(&detail);
+        }
+    }
+}

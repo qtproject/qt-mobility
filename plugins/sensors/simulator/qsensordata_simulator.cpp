@@ -48,6 +48,7 @@ QTM_BEGIN_NAMESPACE
 void qt_registerSensorTypes()
 {
     qRegisterMetaTypeStreamOperators<QAmbientLightReadingData>("QtMobility::QAmbientLightReadingData");
+    qRegisterMetaTypeStreamOperators<QLightReadingData>("QtMobility::QLightReadingData");
     qRegisterMetaTypeStreamOperators<QAccelerometerReadingData>("QtMobility::QAccelerometerReadingData");
     qRegisterMetaTypeStreamOperators<QCompassReadingData>("QtMobility::QCompassReadingData");
     qRegisterMetaTypeStreamOperators<QProximityReadingData>("QtMobility::QProximityReadingData");
@@ -65,6 +66,18 @@ QDataStream &operator>>(QDataStream &in, QAmbientLightReadingData &s)
     qint32 lightLevel;
     in >> lightLevel >> s.timestamp;
     s.lightLevel = static_cast<QAmbientLightReading::LightLevel>(lightLevel);
+    return in;
+}
+
+QDataStream &operator<<(QDataStream &out, const QLightReadingData &s)
+{
+    out << s.lux << s.timestamp;
+    return out;
+}
+
+QDataStream &operator>>(QDataStream &in, QLightReadingData &s)
+{
+    in >> s.lux >> s.timestamp;
     return in;
 }
 

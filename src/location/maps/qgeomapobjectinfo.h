@@ -43,6 +43,7 @@
 #define QGEOMAPOBJECTINFO_H
 
 #include "qmobilityglobal.h"
+#include "qgeomapobject.h"
 
 #include <QObject>
 #include <QSizeF>
@@ -55,9 +56,6 @@ class QGeoBoundingBox;
 class QGeoMapData;
 class QGeoMapObject;
 class QGeoMapObjectInfoPrivate;
-
-/* This class is only here for binary compatibility reasons and
-  is no longer in actual use. */
 
 class Q_LOCATION_EXPORT QGeoMapObjectInfo : public QObject
 {
@@ -80,9 +78,14 @@ public slots:
     virtual void visibleChanged(bool visible);
     virtual void selectedChanged(bool selected);
 
+    virtual void originChanged(const QGeoCoordinate &origin);
+    virtual void unitsChanged(QGeoMapObject::CoordinateUnit units);
+    virtual void transformTypeChanged(QGeoMapObject::TransformType transformType);
+
 protected:
     QGeoMapData* mapData();
     QGeoMapObject* mapObject();
+    QGeoMapObject* mapObject() const;
 
 private:
     QGeoMapObjectInfoPrivate *d_ptr;
@@ -91,4 +94,4 @@ private:
 
 QTM_END_NAMESPACE
 
-#endif // QGEOMAPOBJECTINFO_H
+#endif

@@ -76,20 +76,7 @@ Q_GLOBAL_STATIC_WITH_ARGS(QMediaPluginLoader, playlistIOLoader,
     QMediaPlaylist allows to access the service intrinsic playlist functionality
     if available, otherwise it provides the the local memory playlist implementation.
 
-\code
-    player = new QMediaPlayer;
-
-    playlist = new QMediaPlaylist;
-    playlist->append(QUrl("http://example.com/movie1.mp4"));
-    playlist->append(QUrl("http://example.com/movie2.mp4"));
-    playlist->append(QUrl("http://example.com/movie3.mp4"));
-
-    playlist->setCurrentIndex(1);
-
-    player->setPlaylist(playlist);
-
-    player->play();
-\endcode
+    \snippet doc/src/snippets/multimedia-snippets/media.cpp Movie playlist
 
     Depending on playlist source implementation, most of the playlist mutating
     operations can be asynchronous.

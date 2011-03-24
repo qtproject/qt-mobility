@@ -39,8 +39,8 @@
  **
  ****************************************************************************/
 
-#ifndef NEARFIELDTAG_H
-#define NEARFIELDTAG_H
+#ifndef NEARFIELDTAG_SYMBIAN_H
+#define NEARFIELDTAG_SYMBIAN_H
 #include <nfcserver.h>
 #include <e32base.h>
 #include <iso14443connection.h>
@@ -73,7 +73,6 @@ public:
 
     void SetTagOperationCallback(MNearFieldTagOperationCallback * const aCallback);
 
-    void SetTag4() { iIsTag4 = ETrue; }
 private:
     // C++ constructor
     CNearFieldTag(MNfcTag * aNfcTag, RNfcServer& aNfcServer);
@@ -92,4 +91,4 @@ private:
     TBool iIsTag4;
     };
 
-#endif // NEARFIELDTAG_H
+#endif // NEARFIELDTAG_SYMBIAN_H

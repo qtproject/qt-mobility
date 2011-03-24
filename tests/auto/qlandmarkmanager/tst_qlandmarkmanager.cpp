@@ -86,10 +86,10 @@
 #include <QList>
 #include <QPair>
 #include <QVariant>
+#include <QSysInfo>
 
 #ifdef Q_OS_SYMBIAN
 #include <EPos_CPosLmDatabaseManager.h>
-//#define SYMBIAN_SAVE_WORKAROUND
 #elif defined(SPARQL_BACKEND)
 //no special includes needed for sparql backend.
 #else
@@ -146,8 +146,6 @@
 #define SAVE_CATEGORY_STRESS
 #define REMOVE_CATEGORY_STRESS
 #define SIMPLE_TEST
-
-//#define WORKAROUND
 
 #include <float.h>
 
@@ -255,13 +253,20 @@ private:
             QLandmarkCategoryFetchByIdRequest fetchRequest(m_manager);
             QSignalSpy spy(&fetchRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
             fetchRequest.setCategoryIds(ids);
-            fetchRequest.start();
+
+            bool requestStarted = fetchRequest.start();
+            if (!requestStarted) {
+                qWarning() << "Request could not be started"
+                        << "\n error: " << fetchRequest.error()
+                        << "\n errorString: " << fetchRequest.errorString();
+            }
+
             bool waitResult = waitForAsync(spy, &fetchRequest,expectedError);
             if (!waitResult)
                 qWarning("Wait for async failed for category fetch");
 
             *cats = fetchRequest.categories();
-            result = result && waitResult;
+            result = result && requestStarted && waitResult ;
         } else {
             qFatal("Unknown test row type");
         }
@@ -292,11 +297,18 @@ private:
             fetchRequest.setLimit(limit);
             fetchRequest.setOffset(offset);
             fetchRequest.setSorting(nameSort);
-            fetchRequest.start();
+
+            bool requestStarted = fetchRequest.start();
+            if (!requestStarted) {
+                qWarning() << "Request could not be started"
+                        << "\n error: " << fetchRequest.error()
+                        << "\n errorString: " << fetchRequest.errorString();
+            }
+
             bool waitResult = waitForAsync(spy, &fetchRequest,error);
             if (!waitResult)
                     qWarning("Wait for async failed for category fetch");
-            result = waitResult;
+            result = requestStarted && waitResult;
             *cats = fetchRequest.categories();
 
             QLandmarkCategoryIdFetchRequest idFetchRequest(m_manager);
@@ -304,7 +316,14 @@ private:
             idFetchRequest.setLimit(limit);
             idFetchRequest.setOffset(offset);
             idFetchRequest.setSorting(nameSort);
-            idFetchRequest.start();
+
+            bool requestIdStarted = idFetchRequest.start();
+            if (!requestIdStarted) {
+                qWarning() << "request for category ids could not be started"
+                        << "\n error: " << idFetchRequest.error()
+                        << "\n errorstring: " << idFetchRequest.errorString();
+            }
+
             bool waitIdResult = waitForAsync(spyId, &idFetchRequest,error);
             if (!waitIdResult)
                 qWarning("Wait for async failed for category id fetch");
@@ -312,7 +331,7 @@ private:
             bool checkIdsResult = checkIds(*cats, catIds);
             if (!checkIdsResult)
                 qWarning("async category id fetch failed to match async category fetch");
-            result = result && waitIdResult && checkIdsResult;
+            result = result && requestIdStarted && waitIdResult && checkIdsResult;
         } else {
             qFatal("Unknown test row type");
         }
@@ -355,7 +374,14 @@ private:
             fetchRequest.setLimit(limit);
             fetchRequest.setOffset(offset);
             fetchRequest.setSorting(sortOrder);
-            fetchRequest.start();
+
+            bool requestStarted = fetchRequest.start();
+            if (!requestStarted) {
+                qWarning() << "Request for landmarks could not be started"
+                        << "\n error: " << fetchRequest.error()
+                        << "\n errorstring: " << fetchRequest.errorString();
+            }
+
             bool waitResult;
 #if defined(SPARQL_BACKEND)
             waitResult = waitForAsync(spy, &fetchRequest, error,8000);
@@ -364,7 +390,7 @@ private:
 #endif
             if (!waitResult)
                     qWarning("Wait for async failed for landmark fetch");
-            result = waitResult;
+            result = requestStarted && waitResult;
             *lms = fetchRequest.landmarks();
             QLandmarkIdFetchRequest idFetchRequest(m_manager);
             QSignalSpy spyId(&idFetchRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
@@ -372,7 +398,13 @@ private:
             idFetchRequest.setLimit(limit);
             idFetchRequest.setOffset(offset);
             idFetchRequest.setSorting(sortOrder);
-            idFetchRequest.start();
+            bool requestIdStarted = idFetchRequest.start();
+            if (!requestIdStarted) {
+                qWarning() << "Request by id could not be started"
+                        << "\n error: " << idFetchRequest.error()
+                        << "\n errorString: " << idFetchRequest.errorString();
+            }
+
 #if defined(SPARQL_BACKEND)
             waitResult = waitForAsync(spyId, &idFetchRequest, error,8000);
 #else
@@ -384,7 +416,7 @@ private:
             bool checkIdsResult = checkIds(*lms, lmIds);
             if (!checkIdsResult)
                 qWarning("async landmark id fetch failed to match async landmark fetch");
-            result = result && waitResult && checkIdsResult;
+            result = result && requestIdStarted && waitResult && checkIdsResult;
         } else {
             qFatal("Unknown test row type");
         }
@@ -401,8 +433,17 @@ private:
             QLandmarkFetchByIdRequest fetchRequest(m_manager);
             QSignalSpy spy(&fetchRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
             fetchRequest.setLandmarkIds(lmIds);
-            fetchRequest.start();
-            result = waitForAsync(spy, &fetchRequest,error);
+            bool requestStarted = fetchRequest.start();
+            if (!requestStarted) {
+                qWarning() << "Fetch landmarks by id request could not be started"
+                        << "\n error:" << fetchRequest.error()
+                        << "\n errorString: " << fetchRequest.errorString();
+            }
+
+            bool waitResult = waitForAsync(spy, &fetchRequest,error);
+            if (!waitResult)
+                qWarning() << "wait for async failed for landmark fetch by id";
+            result = requestStarted && waitResult;
             *lms = fetchRequest.landmarks();
         } else {
             qFatal("Unknown test row type");
@@ -432,15 +473,22 @@ private:
              QSignalSpy spy(&catSaveRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
              QSignalSpy resultsAvailableSpy(&catSaveRequest, SIGNAL(resultsAvailable()));
              catSaveRequest.setCategory(*category);
-             catSaveRequest.start();
-             result = waitForAsync(spy, &catSaveRequest,error);
-             if (!result) {
-                 qWarning() << "Wait for asynchronous request failed";
+
+             bool requestStarted = catSaveRequest.start();
+             if (!requestStarted) {
+                 qWarning() << "request could not be started"
+                         << "\n error: "<< catSaveRequest.error()
+                         << "\n errorstring:" << catSaveRequest.errorString();
+             }
+
+             bool waitResult = waitForAsync(spy, &catSaveRequest,error);
+             if (!waitResult) {
+                 qWarning() << "Wait for asynchronous request failed for category save request";
              }
 
              QMap<int, QLandmarkManager::Error> errorMap;
              errorMap = catSaveRequest.errorMap();
-             result = result && (catSaveRequest.categories().count() ==1);
+             result = requestStarted && waitResult && (catSaveRequest.categories().count() ==1);
 
              if (error == QLandmarkManager::NoError) {
                  result = result && (errorMap.count() ==0);
@@ -478,9 +526,19 @@ private:
              QSignalSpy spy(&lmSaveRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
              QSignalSpy resultsAvailableSpy(&lmSaveRequest, SIGNAL(resultsAvailable()));
              lmSaveRequest.setLandmark(*landmark);
-             lmSaveRequest.start();
-             result = waitForAsync(spy, &lmSaveRequest,error);
-             result = result && (resultsAvailableSpy.count()==1);
+
+             bool requestStarted = lmSaveRequest.start();
+             if (!requestStarted) {
+                 qWarning() << "landmark save request could not be started"
+                           << "\n error=" << lmSaveRequest.error()
+                           << "\n errorString=" << lmSaveRequest.errorString();
+             }
+
+             bool waitResult = waitForAsync(spy, &lmSaveRequest,error);
+             if (!waitResult) {
+                 qWarning() << "wait for async failed for single landmark save";
+             }
+             result = requestStarted && waitResult && (resultsAvailableSpy.count()==1);
              QMap<int, QLandmarkManager::Error> errorMap;
              errorMap = lmSaveRequest.errorMap();
              result = result && (lmSaveRequest.landmarks().count() ==1);
@@ -520,8 +578,19 @@ private:
              QLandmarkSaveRequest saveRequest(m_manager);
              QSignalSpy spy(&saveRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
              saveRequest.setLandmarks(*lms);
-             saveRequest.start();
-             result = waitForAsync(spy, &saveRequest,error);
+
+             bool requestStarted = saveRequest.start();
+             if (!requestStarted) {
+                 qWarning() << "landmark save request could not be started"
+                         << "\n error: " << saveRequest.error()
+                         << "\n errorString:  " << saveRequest.errorString();
+             }
+
+             bool waitResult = waitForAsync(spy, &saveRequest,error);
+             if (!waitResult)
+                qWarning() << "wait for async failed for landmark save";
+
+             result = requestStarted && waitResult;
              if (errorMap)
                 *errorMap = saveRequest.errorMap();
              *lms = saveRequest.landmarks();
@@ -553,14 +622,22 @@ private:
              QSignalSpy spy(&catRemoveRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
              QSignalSpy resultsAvailableSpy(&catRemoveRequest, SIGNAL(resultsAvailable()));
              catRemoveRequest.setCategoryId(categoryId);
-             catRemoveRequest.start();
-             result = waitForAsync(spy, &catRemoveRequest,error);
 
-             bool alreadyWarned = false;
-             if (!result) {
-                 qWarning() << "Wait for asynchronous request failed";
-                 alreadyWarned = true;
+             bool requestStarted = catRemoveRequest.start();
+             if (!requestStarted) {
+                 qWarning() << "request for category remove could not be started"
+                         << "\n error: " << catRemoveRequest.error()
+                         << "\n errorString: " << catRemoveRequest.errorString();
              }
+
+             bool waitResult = waitForAsync(spy, &catRemoveRequest,error);
+             if (!waitResult)
+                qWarning() << "Wait for async request failed for category remove request";
+
+             result = requestStarted && waitResult;
+             bool alreadyWarned = false;
+             if (!result)
+                 alreadyWarned = true;
 
              QMap<int, QLandmarkManager::Error> errorMap;
              errorMap = catRemoveRequest.errorMap();
@@ -612,14 +689,22 @@ private:
              QSignalSpy spy(&lmRemoveRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
              QSignalSpy resultsAvailableSpy(&lmRemoveRequest, SIGNAL(resultsAvailable()));
              lmRemoveRequest.setLandmarkId(landmarkId);
-             lmRemoveRequest.start();
-             result = waitForAsync(spy, &lmRemoveRequest,error);
+             bool requestStarted = lmRemoveRequest.start();
+             if (!requestStarted) {
+                 qWarning() << "request for single landmark removal could not be started"
+                         << "\n error: " << lmRemoveRequest.error()
+                         << "\n errorString: " << lmRemoveRequest.errorString();
+
+             }
+
+             bool waitResult = waitForAsync(spy, &lmRemoveRequest,error);
+             if (!waitResult)
+                qWarning() << "wait for async for single landmark removal failed";
+             result = requestStarted && waitResult;
 
              bool alreadyWarned = false;
-             if (!result) {
-                 qWarning() << "Wait for asynchronous request failed";
+             if (!result)
                  alreadyWarned = true;
-             }
 
              QMap<int, QLandmarkManager::Error> errorMap;
              errorMap = lmRemoveRequest.errorMap();
@@ -667,8 +752,18 @@ private:
              QLandmarkRemoveRequest removeRequest(m_manager);
              QSignalSpy spy(&removeRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
              removeRequest.setLandmarkIds(lmIds);
-             removeRequest.start();
-             result = waitForAsync(spy, &removeRequest,error);
+             bool requestStarted = removeRequest.start();
+             if (!requestStarted) {
+                 qWarning() << "request could not be started for landmark removal"
+                         << "\n error: " << removeRequest.error()
+                         << "\n errorString: " << removeRequest.errorString();
+             }
+
+             bool waitResult = waitForAsync(spy, &removeRequest,error);
+             if (!waitResult)
+                 qWarning() << "wait for async request failed for landmark removal";
+
+             result =requestStarted && waitResult;
              if (errorMap)
                  *errorMap = removeRequest.errorMap();
          } else {
@@ -718,11 +813,22 @@ private:
             importRequest.setFormat(format);
             importRequest.setTransferOption(transferOption);
             importRequest.setCategoryId(catId);
-            importRequest.start();
+            bool requestStarted = importRequest.start();
+            if (!requestStarted) {
+                qWarning() << "request for import could not be started"
+                        << "\n error: " << importRequest.error()
+                        << "\n errorstring: " << importRequest.errorString();
+            }
+
+            bool waitResult = waitForAsync(spy, &importRequest,error);
+            if (!waitResult) {
+                qWarning() << "wait for async for import failed";
+            }
+
+            result = requestStarted && waitResult;
+
             if (lmIds != NULL)
                 *lmIds = importRequest.landmarkIds();
-
-            result = waitForAsync(spy, &importRequest,error);
         } else {
             qFatal("Unknown test row type");
         }
@@ -775,9 +881,19 @@ private:
         idFetchRequest.setOffset(offset);
 
         QSignalSpy spyId(&idFetchRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
-        idFetchRequest.start();
 
-        if (!waitForAsync(spyId, &idFetchRequest))
+        bool requestStarted = idFetchRequest.start();
+        if (!requestStarted) {
+            qWarning() << "request for ids of landmarks could not be started"
+                    << "\n error: " << idFetchRequest.error()
+                    << "\n errorstring: " << idFetchRequest.errorString();
+        }
+
+        bool waitResult = waitForAsync(spyId, &idFetchRequest);
+        if (!waitResult)
+            qWarning() << "wait for async failed for fetching landmark ids";
+
+        if (!requestStarted || !waitResult)
             return false;
         QList<QLandmarkId> lmIds = idFetchRequest.landmarkIds();
         if (lmIds.count() != lms.count())
@@ -804,8 +920,17 @@ private:
         QLandmarkCategoryIdFetchRequest catIdFetchRequest(m_manager);
         catIdFetchRequest.setSorting(nameSort);
         QSignalSpy spyCatId(&catIdFetchRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
-        catIdFetchRequest.start();
-        if (!waitForAsync(spyCatId, &catIdFetchRequest))
+        bool requestStarted = catIdFetchRequest.start();
+        if (!requestStarted) {
+            qWarning() << "Request category ids could not be started"
+                    << "\n error: " << catIdFetchRequest.error()
+                    << "\n error: " << catIdFetchRequest.errorString();
+        }
+
+        bool waitResult = waitForAsync(spyCatId, &catIdFetchRequest);
+        if (!waitResult)
+            qWarning() << "wait for async failed for fetching category ids";
+        if (!requestStarted || !waitResult)
             return false;
          QList<QLandmarkCategoryId> catIds = catIdFetchRequest.categoryIds();
          if (catIds.count() != cats.count())
@@ -901,7 +1026,6 @@ private:
     }
 
     void clearDb() {
-        QFile file;
         QList<QLandmarkId> lmIds = m_manager->landmarkIds();
         for(int i=0; i < lmIds.count(); ++i) {
             QVERIFY(m_manager->removeLandmark(lmIds.at(i)));
@@ -920,17 +1044,6 @@ private:
         #else
             QTest::qWait(20);
         #endif
-
-        delete m_manager;
-        m_manager = 0;
-
-        delete m_listener;
-        m_listener =0;
-
-        QFile::remove(exportFile);
-        file.setFileName("nopermfile");
-        file.setPermissions(QFile::WriteOwner | QFile::WriteUser | QFile::WriteOther);
-        file.remove();
     }
 
 #if !(defined(Q_OS_SYMBIAN)||defined(SPARQL_BACKEND))
@@ -1212,19 +1325,37 @@ void testViewport_data();
 void tst_QLandmarkManager::initTestCase() {
     m_manager = 0;
     m_listener = 0;
+#ifdef PRESERVE_EXISTING_LANDMARKS
     managerDataHolder.reset(new QLandmarkManagerDataHolder());
+#endif
 }
 
 void tst_QLandmarkManager::init() {
     createDb();
+    clearDb();
+
 }
 
 void tst_QLandmarkManager::cleanup() {
     clearDb();
+
+    delete m_manager;
+    m_manager = 0;
+
+    delete m_listener;
+    m_listener =0;
+
+    QFile::remove(exportFile);
+    QFile file;
+    file.setFileName("nopermfile");
+    file.setPermissions(QFile::WriteOwner | QFile::WriteUser | QFile::WriteOther);
+    file.remove();
 }
 
 void tst_QLandmarkManager::cleanupTestCase() {
+#ifdef PRESERVE_EXISTING_LANDMARKS
     managerDataHolder.reset(0);
+#endif
     QFile::remove(exportFile);
     if (QFile::exists("nopermfile"))
         QFile::remove("nopermfile");
@@ -3844,6 +3975,7 @@ void tst_QLandmarkManager::categories()
     nameSort.setDirection(Qt::AscendingOrder);
     QVERIFY(doCategoryFetch(type, -1, 0, nameSort, &cats, QLandmarkManager::NoError));
 
+
 #if (defined(Q_OS_SYMBIAN) || defined(SPARQL_BACKEND))
     removeGlobalCategories(&cats);
 #endif
@@ -4185,11 +4317,27 @@ void tst_QLandmarkManager::filterLandmarksName() {
     //test contains
     nameFilter.setName("err");
     nameFilter.setMatchFlags(QLandmarkFilter::MatchContains);
-    QVERIFY(doFetch(type,nameFilter, &lms,QLandmarkManager::NoError));
-    QCOMPARE(lms.count(),3);
-    QCOMPARE(lms.at(0), lm5);
-    QCOMPARE(lms.at(1), lm6);
-    QCOMPARE(lms.at(2), lm8);
+
+#ifdef Q_OS_SYMBIAN
+    if (QSysInfo::s60Version() == QSysInfo::SV_S60_3_1
+        || QSysInfo::s60Version() == QSysInfo::SV_S60_3_2
+        || QSysInfo::s60Version() == QSysInfo::SV_S60_5_0) {
+        QVERIFY(doFetch(type,nameFilter, &lms,QLandmarkManager::NotSupportedError));
+        QCOMPARE(lms.count(),0);
+    } else {
+        QVERIFY(doFetch(type,nameFilter, &lms,QLandmarkManager::NoError));
+        QCOMPARE(lms.count(),3);
+        QCOMPARE(lms.at(0), lm5);
+        QCOMPARE(lms.at(1), lm6);
+        QCOMPARE(lms.at(2), lm8);
+    }
+#else
+        QVERIFY(doFetch(type,nameFilter, &lms,QLandmarkManager::NoError));
+        QCOMPARE(lms.count(),3);
+        QCOMPARE(lms.at(0), lm5);
+        QCOMPARE(lms.at(1), lm6);
+        QCOMPARE(lms.at(2), lm8);
+#endif
 
     //test fixed string
     nameFilter.setName("adel");
@@ -4215,7 +4363,17 @@ void tst_QLandmarkManager::filterLandmarksName() {
     //test no match
     nameFilter.setName("Washington");
     nameFilter.setMatchFlags(QLandmarkFilter::MatchContains);
+#ifdef Q_OS_SYMBIAN
+    if (QSysInfo::s60Version() == QSysInfo::SV_S60_3_1
+        || QSysInfo::s60Version() == QSysInfo::SV_S60_3_2
+        || QSysInfo::s60Version() == QSysInfo::SV_S60_5_0) {
+        QVERIFY(doFetch(type,nameFilter, &lms,QLandmarkManager::NotSupportedError));
+    } else {
+        QVERIFY(doFetch(type,nameFilter, &lms,QLandmarkManager::NoError));
+    }
+#else
     QVERIFY(doFetch(type,nameFilter, &lms,QLandmarkManager::NoError));
+#endif
     QCOMPARE(lms.count(),0);
 
     //TODO: symbian change the state of the request to finished
@@ -4270,6 +4428,28 @@ void tst_QLandmarkManager::filterLandmarksName() {
 
     //try contains empty string
     nameFilter.setMatchFlags(QLandmarkFilter::MatchContains);
+#ifdef Q_OS_SYMBIAN
+    if (QSysInfo::s60Version() == QSysInfo::SV_S60_3_1
+        || QSysInfo::s60Version() == QSysInfo::SV_S60_3_2
+        || QSysInfo::s60Version() == QSysInfo::SV_S60_5_0) {
+        QVERIFY(doFetch(type,nameFilter, &lms, QLandmarkManager::NotSupportedError));
+        QCOMPARE(lms.count(),0);
+    } else {
+        QVERIFY(doFetch(type,nameFilter, &lms, QLandmarkManager::NoError));
+        QCOMPARE(lms.count(),11);
+        QCOMPARE(lms.at(0), lm1);
+        QCOMPARE(lms.at(1), lm2);
+        QCOMPARE(lms.at(2), lm3);
+        QCOMPARE(lms.at(3), lm4);
+        QCOMPARE(lms.at(4), lm5);
+        QCOMPARE(lms.at(5), lm6);
+        QCOMPARE(lms.at(6), lm7);
+        QCOMPARE(lms.at(7), lm8);
+        QCOMPARE(lms.at(8), lm9);
+        QCOMPARE(lms.at(9), lmNoName1);
+        QCOMPARE(lms.at(10), lmNoName2);
+    }
+#else
     QVERIFY(doFetch(type,nameFilter, &lms, QLandmarkManager::NoError));
     QCOMPARE(lms.count(),11);
     QCOMPARE(lms.at(0), lm1);
@@ -4283,6 +4463,7 @@ void tst_QLandmarkManager::filterLandmarksName() {
     QCOMPARE(lms.at(8), lm9);
     QCOMPARE(lms.at(9), lmNoName1);
     QCOMPARE(lms.at(10), lmNoName2);
+#endif
 
     //try ends with an empty string
     nameFilter.setMatchFlags(QLandmarkFilter::MatchEndsWith);
@@ -6064,8 +6245,10 @@ void tst_QLandmarkManager::filterAttribute() {
     attributeFilter.setAttribute("city", "adelai", QLandmarkFilter::MatchStartsWith);
     attributeFilter.setAttribute("description", "The description", QLandmarkFilter::MatchStartsWith);
 #ifdef Q_OS_SYMBIAN
-    QVERIFY(doFetch(type,attributeFilter,&lms,QLandmarkManager::NotSupportedError));
+    QVERIFY(doFetch(type,attributeFilter, &lms, QLandmarkManager::NotSupportedError));
+    QCOMPARE(lms.count(), 0);
 #else
+    QVERIFY(doFetch(type,attributeFilter,&lms));
     QCOMPARE(lms.count(), 1);
     QCOMPARE(lms.at(0), lm1);
 #endif
@@ -6075,6 +6258,23 @@ void tst_QLandmarkManager::filterAttribute() {
     attributeFilter.setOperationType(QLandmarkAttributeFilter::OrOperation);
     attributeFilter.setAttribute("city", "adel", QLandmarkFilter::MatchFixedString);
     attributeFilter.setAttribute("description", "the summary", QLandmarkFilter::MatchStartsWith);
+
+#ifdef Q_OS_SYMBIAN
+    if (QSysInfo::s60Version() == QSysInfo::SV_S60_3_1
+        || QSysInfo::s60Version() == QSysInfo::SV_S60_3_2
+        || QSysInfo::s60Version() == QSysInfo::SV_S60_5_0) {
+        QVERIFY(doFetch(type,attributeFilter,&lms, QLandmarkManager::NotSupportedError));
+        QCOMPARE(lms.count(), 0);
+    } else {
+        QVERIFY(doFetch(type,attributeFilter,&lms));
+        QCOMPARE(lms.count(), 4);
+
+        QVERIFY(lms.contains(lm2));
+        QVERIFY(lms.contains(lm4));
+        QVERIFY(lms.contains(lm7));
+        QVERIFY(lms.contains(lm9));
+    }
+#else
     QVERIFY(doFetch(type,attributeFilter,&lms));
     QCOMPARE(lms.count(), 4);
 
@@ -6082,6 +6282,7 @@ void tst_QLandmarkManager::filterAttribute() {
     QVERIFY(lms.contains(lm4));
     QVERIFY(lms.contains(lm7));
     QVERIFY(lms.contains(lm9));
+#endif
 
 /*Undefined behaviour for empty QVariants
     //try an single empty qvariant for and and or
@@ -6150,7 +6351,6 @@ void tst_QLandmarkManager::filterAttribute() {
     lm10.setAddress(address);
     QVERIFY(m_manager->saveLandmark(&lm10));
 
-
     //try searching with empty strings
     attributeFilter.clearAttributes();
     attributeFilter.setOperationType(QLandmarkAttributeFilter::AndOperation);
@@ -6159,13 +6359,12 @@ void tst_QLandmarkManager::filterAttribute() {
     attributeFilter.setAttribute("country", "", QLandmarkFilter::MatchFixedString);
 
 #ifdef Q_OS_SYMBIAN
-    QVERIFY(doFetch(type,attributeFilter,&lms, QLandmarkManager::BadArgumentError));
+    QVERIFY(doFetch(type,attributeFilter,&lms, QLandmarkManager::NotSupportedError));
 #else
     QVERIFY(doFetch(type,attributeFilter,&lms));
-#endif
-
     QEXPECT_FAIL("", "bug covered in MOBILITY-1720", Continue);
     QCOMPARE(lms.count(), 1);
+#endif
 }
 
 void tst_QLandmarkManager::filterAttribute_data()
@@ -6589,7 +6788,6 @@ void tst_QLandmarkManager::filterAttribute3()
 
     QList<QLandmark> lms;
 #ifdef Q_OS_SYMBIAN
-    QEXPECT_FAIL("", "MOBILITY-2283: symbian does not support MatchContains", Continue);
     QCOMPARE(m_manager->filterSupportLevel(attributeFilter), QLandmarkManager::NoSupport);
     QVERIFY(doFetch(type, attributeFilter, &lms,QLandmarkManager::NotSupportedError));
 #else
@@ -6875,41 +7073,53 @@ void tst_QLandmarkManager::importKml()
     QVERIFY(m_manager->removeCategory(cat3.categoryId()));
 
     QList<QLandmarkId> lmIds;
-    QVERIFY(doImport(type,
-                     "data/test.kml",
-                     QLandmarkManager::NoError,
-                     &lmIds,inputType,
-                     QLandmarkManager::Kml,
-                     transferOption,
-                     cat2.categoryId()));
-    QList<QLandmark> lms = m_manager->landmarks();
-    QLandmark lm1;
-    lm1.setName("w0");
-    lm1.setDescription("Test data");
-    lm1.setCoordinate(QGeoCoordinate(2.0,1.0,3));
+    if (QSysInfo::s60Version() == QSysInfo::SV_S60_3_1
+        || QSysInfo::s60Version() == QSysInfo::SV_S60_3_2
+        || QSysInfo::s60Version() == QSysInfo::SV_S60_5_0) {
+        QVERIFY(doImport(type,
+                         "data/test.kml",
+                         QLandmarkManager::NotSupportedError,
+                         &lmIds,inputType,
+                         QLandmarkManager::Kml,
+                         transferOption,
+                         cat2.categoryId()));
+    } else {
+        QVERIFY(doImport(type,
+                         "data/test.kml",
+                         QLandmarkManager::NoError,
+                         &lmIds,inputType,
+                         QLandmarkManager::Kml,
+                         transferOption,
+                         cat2.categoryId()));
+        QList<QLandmark> lms = m_manager->landmarks();
+        QLandmark lm1;
+        lm1.setName("w0");
+        lm1.setDescription("Test data");
+        lm1.setCoordinate(QGeoCoordinate(2.0,1.0,3));
 
-    QLandmark lm2;
-    lm2.setName("w1");
-    lm2.setCoordinate(QGeoCoordinate(1.0, 2.0,3));
+        QLandmark lm2;
+        lm2.setName("w1");
+        lm2.setCoordinate(QGeoCoordinate(1.0, 2.0,3));
 
-    QLandmark lm3;
-    lm3.setName("w2");
-    lm3.setDescription("Test data1");
-    lm3.setCoordinate(QGeoCoordinate(2.0,3.0,1));
+        QLandmark lm3;
+        lm3.setName("w2");
+        lm3.setDescription("Test data1");
+        lm3.setCoordinate(QGeoCoordinate(2.0,3.0,1));
 
-    if (transferOption == QLandmarkManager::AttachSingleCategory) {
-        lm1.addCategoryId(cat2.categoryId());
-        lm2.addCategoryId(cat2.categoryId());
-        lm3.addCategoryId(cat2.categoryId());
+        if (transferOption == QLandmarkManager::AttachSingleCategory) {
+            lm1.addCategoryId(cat2.categoryId());
+            lm2.addCategoryId(cat2.categoryId());
+            lm3.addCategoryId(cat2.categoryId());
+        }
+
+        for (int i=0; i < lms.count(); ++i) {
+            lms[i].setLandmarkId(QLandmarkId());
+        }
+
+        QVERIFY(lms.contains(lm1));
+        QVERIFY(lms.contains(lm2));
+        QVERIFY(lms.contains(lm3));
     }
-
-    for (int i=0; i < lms.count(); ++i) {
-        lms[i].setLandmarkId(QLandmarkId());
-    }
-
-    QVERIFY(lms.contains(lm1));
-    QVERIFY(lms.contains(lm2));
-    QVERIFY(lms.contains(lm3));
 
     static bool errorTestsDone = false;
     if (!errorTestsDone) {
@@ -6948,12 +7158,24 @@ void tst_QLandmarkManager::importKml()
 
         //malformed file
         QVERIFY(!m_manager->importLandmarks("data/malformed.kml", QLandmarkManager::Kml));
-        QCOMPARE(m_manager->error(), QLandmarkManager::ParsingError);
+        if (QSysInfo::s60Version() == QSysInfo::SV_S60_3_1
+            || QSysInfo::s60Version() == QSysInfo::SV_S60_3_2
+            || QSysInfo::s60Version() == QSysInfo::SV_S60_5_0) {
+            QCOMPARE(m_manager->error(), QLandmarkManager::NotSupportedError);
+        } else {
+            QCOMPARE(m_manager->error(), QLandmarkManager::ParsingError);
+        }
 
         importRequest.setFormat(QLandmarkManager::Kml);
         importRequest.setFileName("data/malformed.kml");
         importRequest.start();
-        QVERIFY(waitForAsync(spy, &importRequest, QLandmarkManager::ParsingError));
+        if (QSysInfo::s60Version() == QSysInfo::SV_S60_3_1
+            || QSysInfo::s60Version() == QSysInfo::SV_S60_3_2
+            || QSysInfo::s60Version() == QSysInfo::SV_S60_5_0) {
+            QVERIFY(waitForAsync(spy, &importRequest, QLandmarkManager::NotSupportedError));
+        } else {
+            QVERIFY(waitForAsync(spy, &importRequest, QLandmarkManager::ParsingError));
+        }
 
         errorTestsDone = true;
     }
@@ -7002,40 +7224,52 @@ void tst_QLandmarkManager::importKmz()
     QVERIFY(m_manager->removeCategory(cat3.categoryId()));
 
     QList<QLandmarkId> lmIds;
-    QVERIFY(doImport(type,
-                     "data/test.kmz",
-                     QLandmarkManager::NoError,
-                     &lmIds,inputType,
-                     QLandmarkManager::Kmz,
-                     transferOption,
-                     cat2.categoryId()));
-    QList<QLandmark> lms = m_manager->landmarks();
-    QLandmark lm1;
-    lm1.setName("w0");
-    lm1.setCoordinate(QGeoCoordinate(2.0,1.0,3));
 
-    QLandmark lm2;
-    lm2.setName("w1");
-    lm2.setCoordinate(QGeoCoordinate(1.0, 2.0,3));
+    if (QSysInfo::s60Version() == QSysInfo::SV_S60_3_1
+        || QSysInfo::s60Version() == QSysInfo::SV_S60_3_2
+        || QSysInfo::s60Version() == QSysInfo::SV_S60_5_0) {
+        QVERIFY(doImport(type,
+                         "data/test.kmz",
+                         QLandmarkManager::NotSupportedError,
+                         &lmIds,inputType,
+                         QLandmarkManager::Kmz,
+                         transferOption,
+                         cat2.categoryId()));
+    } else {
+        QVERIFY(doImport(type,
+                         "data/test.kmz",
+                         QLandmarkManager::NoError,
+                         &lmIds,inputType,
+                         QLandmarkManager::Kmz,
+                         transferOption,
+                         cat2.categoryId()));
+        QList<QLandmark> lms = m_manager->landmarks();
+        QLandmark lm1;
+        lm1.setName("w0");
+        lm1.setCoordinate(QGeoCoordinate(2.0,1.0,3));
 
-    QLandmark lm3;
-    lm3.setName("w2");
-    lm3.setCoordinate(QGeoCoordinate(2.0,3.0,1));
+        QLandmark lm2;
+        lm2.setName("w1");
+        lm2.setCoordinate(QGeoCoordinate(1.0, 2.0,3));
 
-    if (transferOption == QLandmarkManager::AttachSingleCategory) {
-        lm1.addCategoryId(cat2.categoryId());
-        lm2.addCategoryId(cat2.categoryId());
-        lm3.addCategoryId(cat2.categoryId());
+        QLandmark lm3;
+        lm3.setName("w2");
+        lm3.setCoordinate(QGeoCoordinate(2.0,3.0,1));
+
+        if (transferOption == QLandmarkManager::AttachSingleCategory) {
+            lm1.addCategoryId(cat2.categoryId());
+            lm2.addCategoryId(cat2.categoryId());
+            lm3.addCategoryId(cat2.categoryId());
+        }
+
+        for (int i=0; i < lms.count(); ++i) {
+            lms[i].setLandmarkId(QLandmarkId());
+        }
+
+        QVERIFY(lms.contains(lm1));
+        QVERIFY(lms.contains(lm2));
+        QVERIFY(lms.contains(lm3));
     }
-
-    for (int i=0; i < lms.count(); ++i) {
-        lms[i].setLandmarkId(QLandmarkId());
-    }
-
-    QVERIFY(lms.contains(lm1));
-    QVERIFY(lms.contains(lm2));
-    QVERIFY(lms.contains(lm3));
-
     static bool errorTestsDone = false;
     if (!errorTestsDone) {
         //no io device
@@ -7073,12 +7307,25 @@ void tst_QLandmarkManager::importKmz()
 
         //malformed file
         QVERIFY(!m_manager->importLandmarks("data/malformed.kmz", QLandmarkManager::Kmz));
-        QCOMPARE(m_manager->error(), QLandmarkManager::ParsingError);
+
+        if (QSysInfo::s60Version() == QSysInfo::SV_S60_3_1
+            || QSysInfo::s60Version() == QSysInfo::SV_S60_3_2
+            || QSysInfo::s60Version() == QSysInfo::SV_S60_5_0) {
+            QCOMPARE(m_manager->error(), QLandmarkManager::NotSupportedError);
+        } else {
+            QCOMPARE(m_manager->error(), QLandmarkManager::ParsingError);
+        }
 
         importRequest.setFormat(QLandmarkManager::Kmz);
         importRequest.setFileName("data/malformed.kmz");
         importRequest.start();
-        QVERIFY(waitForAsync(spy, &importRequest, QLandmarkManager::ParsingError)); //does not exist
+        if (QSysInfo::s60Version() == QSysInfo::SV_S60_3_1
+            || QSysInfo::s60Version() == QSysInfo::SV_S60_3_2
+            || QSysInfo::s60Version() == QSysInfo::SV_S60_5_0) {
+            QVERIFY(waitForAsync(spy, &importRequest, QLandmarkManager::NotSupportedError));
+        } else {
+            QVERIFY(waitForAsync(spy, &importRequest, QLandmarkManager::ParsingError));
+        }
 
         errorTestsDone = true;
     }
@@ -8347,16 +8594,29 @@ void tst_QLandmarkManager::fetchWaitForFinished()
     prefix = ":";
 #endif
     int fileLandmarksCount = 187;
-    QVERIFY(m_manager->importLandmarks(prefix + "data/AUS-PublicToilet-AustralianCapitalTerritory.gpx"));
-    QVERIFY(m_manager->importLandmarks(prefix + "data/AUS-PublicToilet-AustralianCapitalTerritory.gpx"));
-    QVERIFY(m_manager->importLandmarks(prefix + "data/AUS-PublicToilet-AustralianCapitalTerritory.gpx"));
-    QVERIFY(m_manager->importLandmarks(prefix + "data/AUS-PublicToilet-AustralianCapitalTerritory.gpx"));
-    QVERIFY(m_manager->importLandmarks(prefix + "data/AUS-PublicToilet-AustralianCapitalTerritory.gpx"));
-    QVERIFY(m_manager->importLandmarks(prefix + "data/AUS-PublicToilet-AustralianCapitalTerritory.gpx"));
-    QVERIFY(m_manager->importLandmarks(prefix + "data/AUS-PublicToilet-AustralianCapitalTerritory.gpx"));
-    QVERIFY(m_manager->importLandmarks(prefix + "data/AUS-PublicToilet-AustralianCapitalTerritory.gpx"));
+    int expectedLandmarksCount = 0;
+    int numImports = 8;
+    bool lowLandmarkNumber = false;
 
-    int expectedLandmarksCount = fileLandmarksCount * 8;
+#ifdef Q_OS_SYMBIAN
+    if (QSysInfo::s60Version() == QSysInfo::SV_S60_3_1
+        || QSysInfo::s60Version() == QSysInfo::SV_S60_3_2
+        || QSysInfo::s60Version() == QSysInfo::SV_S60_5_0) {
+#ifdef MOBILITY_2664
+        numImports= 12;
+        lowLandmarkNumber = false;
+#else
+        numImports=2;
+        lowLandmarkNumber = true;
+#endif
+    }
+#endif
+
+    for (int i=0; i < numImports ; ++i) {
+        QVERIFY(m_manager->importLandmarks(prefix + "data/AUS-PublicToilet-AustralianCapitalTerritory.gpx"));
+    }
+
+    expectedLandmarksCount = fileLandmarksCount * numImports;
 
     QLandmarkFetchRequest fetchRequest(m_manager);
     QSignalSpy spy(&fetchRequest,SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
@@ -8389,7 +8649,8 @@ void tst_QLandmarkManager::fetchWaitForFinished()
 
 #ifdef Q_OS_SYMBIAN
      QList<QLandmarkId> ids = m_manager->landmarkIds();
-     QEXPECT_FAIL("", "MOBILITY-2275: Removal of a large number of landmarks results in DatabaseLockedError", Continue);
+     if (!lowLandmarkNumber)
+        QEXPECT_FAIL("", "MOBILITY-2275: Removal of a large number of landmarks results in DatabaseLockedError", Continue);
      QVERIFY(m_manager->removeLandmarks(ids));
 
      //need to workaround deletion of these landmarks for symbian
@@ -8419,11 +8680,20 @@ void tst_QLandmarkManager::supportedFormats() {
     QVERIFY(formats.at(0) == QLandmarkManager::Lmx);
 
     formats = m_manager->supportedFormats(QLandmarkManager::ImportOperation);
-    QCOMPARE(formats.count(), 4);
-    QVERIFY(formats.contains(QLandmarkManager::Gpx));
-    QVERIFY(formats.contains(QLandmarkManager::Lmx));
-    QVERIFY(formats.contains(QLandmarkManager::Kml));
-    QVERIFY(formats.contains(QLandmarkManager::Kmz));
+    if (QSysInfo::s60Version() == QSysInfo::SV_S60_3_1
+        || QSysInfo::s60Version() == QSysInfo::SV_S60_3_2) {
+        QCOMPARE(formats.count(), 1);
+        QVERIFY(formats.contains(QLandmarkManager::Lmx));
+    } else if (QSysInfo::s60Version() == QSysInfo::SV_S60_5_0) {
+        QCOMPARE(formats.count(), 2);
+        QVERIFY(formats.contains(QLandmarkManager::Lmx));
+        QVERIFY(formats.contains(QLandmarkManager::Gpx));
+    } else { //must be s60 5.2
+        QCOMPARE(formats.count(), 4);
+        QVERIFY(formats.contains(QLandmarkManager::Gpx));
+        QVERIFY(formats.contains(QLandmarkManager::Kml));
+        QVERIFY(formats.contains(QLandmarkManager::Kmz));
+    }
 #endif
 }
 
@@ -8439,7 +8709,17 @@ void tst_QLandmarkManager::filterSupportLevel() {
     QCOMPARE(m_manager->filterSupportLevel(nameFilter), QLandmarkManager::NativeSupport);
 
     nameFilter.setMatchFlags(QLandmarkFilter::MatchContains);
+#ifdef Q_OS_SYMBIAN
+    if (QSysInfo::s60Version() == QSysInfo::SV_S60_3_1
+        || QSysInfo::s60Version() == QSysInfo::SV_S60_3_2
+        || QSysInfo::s60Version() == QSysInfo::SV_S60_5_0) {
+        QCOMPARE(m_manager->filterSupportLevel(nameFilter), QLandmarkManager::NoSupport);
+    } else {
+        QCOMPARE(m_manager->filterSupportLevel(nameFilter), QLandmarkManager::NativeSupport);
+    }
+#else
     QCOMPARE(m_manager->filterSupportLevel(nameFilter), QLandmarkManager::NativeSupport);
+#endif
 
     nameFilter.setMatchFlags(QLandmarkFilter::MatchEndsWith);
     QCOMPARE(m_manager->filterSupportLevel(nameFilter), QLandmarkManager::NativeSupport);
@@ -8555,8 +8835,14 @@ void tst_QLandmarkManager::filterSupportLevel() {
     //manager attributes that exist
     QLandmarkAttributeFilter attributeFilter;
     attributeFilter.setAttribute("name", "jack");
-    attributeFilter.setAttribute("description", "colonel");
     QCOMPARE(m_manager->filterSupportLevel(attributeFilter), QLandmarkManager::NativeSupport);
+
+    attributeFilter.setAttribute("description", "colonel");
+#ifdef Q_OS_SYMBIAN
+    QCOMPARE(m_manager->filterSupportLevel(attributeFilter), QLandmarkManager::NoSupport);
+#else
+    QCOMPARE(m_manager->filterSupportLevel(attributeFilter), QLandmarkManager::NativeSupport);
+#endif
 
     //try a manager attribute that doesn't exist
     attributeFilter.setAttribute("weapon", "staff");
@@ -8579,7 +8865,11 @@ void tst_QLandmarkManager::filterSupportLevel() {
     //try see if other match flags will give native support
     attributeFilter.setAttribute("description", "desc");
     attributeFilter.setAttribute("street", "abydos", QLandmarkFilter::MatchStartsWith);
+#ifdef Q_OS_SYMBIAN
+    QCOMPARE(m_manager->filterSupportLevel(attributeFilter), QLandmarkManager::NoSupport);
+#else
     QCOMPARE(m_manager->filterSupportLevel(attributeFilter), QLandmarkManager::NativeSupport);
+#endif
 
     attributeFilter.clearAttributes();
     attributeFilter.setAttribute("street", "e", QLandmarkFilter::MatchContains);

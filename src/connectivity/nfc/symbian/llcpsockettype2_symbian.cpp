@@ -44,7 +44,7 @@
 
 #include "debug.h"
 
-/*!
+/*
     CLlcpSocketType2::ContructL()
 */
 void CLlcpSocketType2::ConstructL()
@@ -56,7 +56,7 @@ void CLlcpSocketType2::ConstructL()
     END
     }
 
-/*!
+/*
     CLlcpSocketType2::CLlcpSocketType2()
 */
 CLlcpSocketType2::CLlcpSocketType2(MLlcpConnOrientedTransporter* aTransporter, QtMobility::QLlcpSocketPrivate* aCallback)
@@ -89,7 +89,7 @@ CLlcpSocketType2* CLlcpSocketType2::NewL(MLlcpConnOrientedTransporter* aTranspor
     return self;
     }
 
-/*!
+/*
     Destroys the LLCP socket.
 */
 CLlcpSocketType2::~CLlcpSocketType2()
@@ -108,7 +108,7 @@ CLlcpSocketType2::~CLlcpSocketType2()
     END
     }
 
-/*!
+/*
     Connects to the service identified by the URI \a serviceUri (on \a target).
 */
 void CLlcpSocketType2::ConnectToServiceL( const QString &serviceUri)
@@ -134,7 +134,7 @@ void CLlcpSocketType2::ConnectToServiceL( const TDesC8& aServiceName)
     END
     }
 
-/*!
+/*
     Disconnects the socket.
 */
 
@@ -172,7 +172,7 @@ TInt CLlcpSocketType2::DisconnectFromService()
     return KErrNone;
     }
 
-/*!
+/*
     Sends the datagram at aData  to the service that this socket is connected to.
     Returns the number of bytes sent on success; otherwise return -1;
 */
@@ -354,13 +354,13 @@ void CLlcpSocketType2::AttachCallbackHandler(QtMobility::QLlcpSocketPrivate* aCa
                 return;
                 }
             }
-        if (iReceiver->StartReceiveDatagram() != KErrNone)
-            {
-            Error(QtMobility::QLlcpSocket::UnknownSocketError);
-            }
         if (!iConnecter)
             {
             TRAP_IGNORE(iConnecter = CLlcpConnecterAO::NewL( *iTransporter, *this ));
+            }
+        if (iReceiver->StartReceiveDatagram() != KErrNone)
+            {
+            Error(QtMobility::QLlcpSocket::UnknownSocketError);
             }
         }
     END
@@ -489,7 +489,7 @@ CLlcpConnecterAO::CLlcpConnecterAO( MLlcpConnOrientedTransporter& aConnection, C
       iConnState( ENotConnected )
     {
     }
-/*!
+/*
     ConstructL
 */
 void CLlcpConnecterAO::ConstructL()
@@ -507,7 +507,7 @@ void CLlcpConnecterAO::ConstructL()
     END
     }
 
-/*!
+/*
  * Destructor.
  */
 CLlcpConnecterAO::~CLlcpConnecterAO()
@@ -520,7 +520,7 @@ CLlcpConnecterAO::~CLlcpConnecterAO()
         }
     END
     }
-/*!
+/*
  * Connect to remote peer as given service uri.
  */
 void CLlcpConnecterAO::ConnectL(const TDesC8& /*aServiceName*/)
@@ -538,7 +538,7 @@ void CLlcpConnecterAO::ConnectL(const TDesC8& /*aServiceName*/)
     END
     }
 
-/*!
+/*
  * Disconnect with remote peer.
  */
 void CLlcpConnecterAO::Disconnect()
@@ -662,7 +662,7 @@ CLlcpSenderAO::CLlcpSenderAO( MLlcpConnOrientedTransporter& aConnection, CLlcpSo
       iSocket( aSocket )
     {
     }
-/*!
+/*
     ConstructL
 */
 void CLlcpSenderAO::ConstructL()
@@ -672,7 +672,7 @@ void CLlcpSenderAO::ConstructL()
     END
     }
 
-/*!
+/*
  * Destructor.
  */
 CLlcpSenderAO::~CLlcpSenderAO()
@@ -681,27 +681,53 @@ CLlcpSenderAO::~CLlcpSenderAO()
     Cancel();
     iSendBuf0.Close();
     iSendBuf1.Close();
+    //todo
+    iCurrentSendBuf.Close();
     END
     }
-/*!
+/*
  * Transfer given data to remote device.
  */
 TInt CLlcpSenderAO::Send( const TDesC8& aData )
     {
     BEGIN
     TInt error = KErrNone;
+    if (aData.Length() == 0)
+        {
+        END
+        return KErrArgument;
+        }
+    TInt supportedDataLength = iConnection.SupportedDataLength();
+    if (supportedDataLength <= 0)
+        {
+        END
+        return KErrNotReady;
+        }
     if ( !IsActive() )
         {
         // Copying data to internal buffer.
         iSendBuf0.Zero();
+        iCurrentPos = 0;
         error = iSendBuf0.ReAlloc( aData.Length() );
 
         if ( error == KErrNone )
           {
           iSendBuf0.Append( aData );
 
+          if (iSendBuf0.Length() > supportedDataLength)
+              {
+              iCurrentSendPtr.Set(iSendBuf0.Ptr(), supportedDataLength);
+              }
+          else
+              {
+              iCurrentSendPtr.Set(iSendBuf0.Ptr(), iSendBuf0.Length());
+              }
           // Sending data
-          iConnection.Transmit( iStatus, iSendBuf0 );
+          //TODO defect in NFC server
+          iCurrentSendBuf.Close();
+          iCurrentSendBuf.Create(iCurrentSendPtr);
+          iConnection.Transmit( iStatus, iCurrentSendBuf );
+//          iConnection.Transmit( iStatus, iCurrentSendPtr );
           SetActive();
           iCurrentBuffer = EBuffer0;
           }
@@ -729,39 +755,111 @@ TInt CLlcpSenderAO::Send( const TDesC8& aData )
     return error;
     }
 
+void CLlcpSenderAO::SendRestDataAndSwitchBuffer(RBuf8& aWorkingBuffer, RBuf8& aNextBuffer)
+    {
+    BEGIN
+    TInt supportedDataLength = iConnection.SupportedDataLength();
+    if (iCurrentPos == aWorkingBuffer.Length())
+        {
+        LOG("Current working buffer write finished");
+
+        aWorkingBuffer.Zero();
+        if(aNextBuffer.Length() > 0)
+            {
+
+            if (&aNextBuffer == &iSendBuf0)
+                {
+                iCurrentBuffer = EBuffer0;
+                LOG("Start switch to buffer 0");
+                }
+            else
+                {
+                iCurrentBuffer = EBuffer1;
+                LOG("Start switch to buffer 1");
+                }
+
+            iCurrentPos = 0;
+
+            if (supportedDataLength > 0)
+                {
+                if (aNextBuffer.Length() > supportedDataLength)
+                    {
+                    iCurrentSendPtr.Set(aNextBuffer.Ptr(), supportedDataLength);
+                    }
+                else
+                    {
+                    iCurrentSendPtr.Set(aNextBuffer.Ptr(), aNextBuffer.Length());
+                    }
+                //TODO
+                iCurrentSendBuf.Close();
+                iCurrentSendBuf.Create(iCurrentSendPtr);
+                iConnection.Transmit( iStatus, iCurrentSendBuf );
+//              iConnection.Transmit( iStatus, iCurrentSendPtr );
+                SetActive();
+                }
+            else
+                {
+                LOG("SupportedDataLength is invalid, value="<<supportedDataLength);
+                iSendBuf0.Zero();
+                iSendBuf1.Zero();
+                iCurrentBuffer = EBuffer0;
+                iSocket.Error(QtMobility::QLlcpSocket::UnknownSocketError);
+                }
+            }
+        }
+    else //means current working buffer still have data need to be sent
+        {
+        LOG("Current working buffer still has data need to be sent");
+        if (supportedDataLength > 0)
+            {
+            if (aWorkingBuffer.Length() - iCurrentPos > supportedDataLength)
+                {
+                iCurrentSendPtr.Set(aWorkingBuffer.Ptr() + iCurrentPos, supportedDataLength);
+                }
+            else
+                {
+                iCurrentSendPtr.Set(aWorkingBuffer.Ptr() + iCurrentPos, aWorkingBuffer.Length() - iCurrentPos);
+                }
+            // Sending data
+            //TODO
+            iCurrentSendBuf.Close();
+            iCurrentSendBuf.Create(iCurrentSendPtr);
+            iConnection.Transmit( iStatus, iCurrentSendBuf );
+
+//                    iConnection.Transmit( iStatus, iCurrentSendPtr );
+            SetActive();
+            }
+        else
+            {
+            LOG("SupportedDataLength is invalid, value="<<supportedDataLength);
+            iSendBuf0.Zero();
+            iSendBuf1.Zero();
+            iCurrentBuffer = EBuffer0;
+            iSocket.Error(QtMobility::QLlcpSocket::UnknownSocketError);
+            }
+        }
+    END
+    }
 void CLlcpSenderAO::RunL()
     {
     BEGIN
     TInt error = iStatus.Int();
     if ( error == KErrNone )
         {
+        TInt bytesWritten = iCurrentSendPtr.Length();
+
+        iCurrentPos += iCurrentSendPtr.Length();
         if (iCurrentBuffer == EBuffer0)
             {
-            LOG("Buffer0 write finished");
-            iSocket.BytesWritten(iSendBuf0.Length());
-            iSendBuf0.Zero();
-            if(iSendBuf1.Length() > 0)
-                {
-                LOG("Start send buffer1 after buffer0 write finished");
-                iCurrentBuffer = EBuffer1;
-                iConnection.Transmit( iStatus, iSendBuf1 );
-                SetActive();
-                }
-            }
-        else //buffer1
+            SendRestDataAndSwitchBuffer(iSendBuf0, iSendBuf1);
+            }//if (iCurrentBuffer == EBuffer0)
+        else //current working buffer is buffer1
             {
-            LOG("Buffer1 write finished");
-            iSocket.BytesWritten(iSendBuf1.Length());
-            iSendBuf1.Zero();
-            if(iSendBuf0.Length() > 0)
-                {
-                LOG("Start send buffer0 after buffer1 write finished");
-                iCurrentBuffer = EBuffer0;
-                iConnection.Transmit( iStatus, iSendBuf0 );
-                SetActive();
-                }
+            SendRestDataAndSwitchBuffer(iSendBuf1, iSendBuf0);
             }
-        }
+        //emit BytesWritten signal
+        iSocket.BytesWritten(bytesWritten);
+        }//if ( error == KErrNone )
     else
         {
         LOG("iStatus.Int() = "<<error);
@@ -797,7 +895,7 @@ CLlcpReceiverAO::CLlcpReceiverAO( MLlcpConnOrientedTransporter& aConnection, CLl
       iSocket( aSocket )
     {
     }
-/*!
+/*
     ConstructL
 */
 void CLlcpReceiverAO::ConstructL()
@@ -807,7 +905,7 @@ void CLlcpReceiverAO::ConstructL()
     END
     }
 
-/*!
+/*
  * Destructor.
  */
 CLlcpReceiverAO::~CLlcpReceiverAO()
@@ -839,6 +937,7 @@ TInt CLlcpReceiverAO::StartReceiveDatagram()
     else
         {
         // if length is 0 or negative, LLCP link is destroyed.
+        LOG("Error: length is"<<length);
         error = KErrNotReady;
         }
     END

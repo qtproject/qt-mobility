@@ -102,7 +102,11 @@ QM_AUTOTEST_EXPORT QDataStream &operator<<(QDataStream &, const ServiceMetaDataR
 QM_AUTOTEST_EXPORT QDataStream &operator>>(QDataStream &, ServiceMetaDataResults &);
 #endif
 
-class QM_AUTOTEST_EXPORT ServiceMetaData
+#ifdef IGNORE_SERVICEMETADATA_EXPORT
+  class ServiceMetaData
+#else
+  class QM_AUTOTEST_EXPORT ServiceMetaData
+#endif
 {
 public:
 

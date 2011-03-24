@@ -48,6 +48,7 @@ QTM_USE_NAMESPACE
 
 class n900filebasedsensor : public QSensorBackend
 {
+    Q_OBJECT
 public:
     n900filebasedsensor(QSensor *sensor);
     virtual ~n900filebasedsensor();
@@ -56,6 +57,12 @@ public:
     virtual void stop();
     virtual void poll() = 0;
     void timerEvent(QTimerEvent * /*event*/);
+
+protected:
+    quint64 getTimestamp();
+
+private Q_SLOTS:
+    void pollnow();
 
 private:
     int m_timerid;

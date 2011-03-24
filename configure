@@ -111,6 +111,8 @@ QMKSPEC=
 OS="other"
 # By default, all modules are requested.  Reset this later if -modules is supplied
 ORGANIZER_REQUESTED=yes
+NFC_SYMBIAN=auto
+MAC_DEPLOY=
 
 usage() 
 {
@@ -161,9 +163,12 @@ usage()
     echo "                    (default is empty)"
     echo "-qmake-exec <name>  Sets custom binary name for qmake binary"
     echo "                    (default: qmake)"
+    echo "-no-nfc-symbian     Disables the NFC Sybmian backend."
 #    echo "-staticconfig <name>"
 #    echo "                    Avoids running of configuration tests. The default"
 #    echo "                    values are sourced from features/platformconfig/<name>.pri"
+    echo "-mac-deploy ....    Use this option for deploying QtMobility into Qt for use with macdeployqt tool"
+    echo "                    This overrides any -prefix that may be set."
     echo
     
     rm -f "$CONFIG_IN"
@@ -288,6 +293,13 @@ while [ "$#" -gt 0 ]; do
             LANGUAGES=$2
             shift
             ;;
+        -no-nfc-symbian)
+            NFC_SYMBIAN=no
+            ;;
+        -mac-deploy)
+            MAC_DEPLOY='yes'
+            shift
+            ;;
         *)
             echo "Unknown option: $1"
             usage
@@ -295,6 +307,16 @@ while [ "$#" -gt 0 ]; do
     esac
     shift
 done
+
+if [ -z "$RELEASEMODE" ]; then
+    RELEASEMODE="debug"
+fi
+echo "CONFIG += $RELEASEMODE" > "$CONFIG_IN"
+
+
+if [ -n "$BUILD_SILENT" ]; then
+    echo "CONFIG += silent"  >> "$CONFIG_IN"
+fi
 
 checkostype()
 {
@@ -306,20 +328,7 @@ checkostype()
     fi
 }
 
-findframeworks()
-{
-# figure out if Qt was built with frameworks
-# if so, install in the correct place.
-# and fix rpath
-    echo "contains(QT_CONFIG,qt_framework):message(1)" > 1.pro
-    SOMETHING=`$QMAKE_EXEC -spec macx-g++ 1.pro 2>&1`
-        if [ "$SOMETHING" = "Project MESSAGE: 1" ]; then
-            LIB_PATH="Library/Frameworks"
-            BIN_PATH="Applications"
-        fi
-    rm 1.pro
-}
-
+checkostype
 
 findUniversal()
 {
@@ -337,24 +346,10 @@ findUniversal()
     fi
 }
 
-checkostype
-
-if [ "$OS" = "darwin" ] ; then
-    findframeworks
-fi
-
-if [ -n "$BUILD_SILENT" ]; then
-    echo "CONFIG += silent"  > "$CONFIG_IN"
-fi
-
 if [ "$OS" = "darwin" ] ; then
     findUniversal
 fi
 
-if [ -z "$RELEASEMODE" ]; then
-    RELEASEMODE="debug"
-fi
-echo "CONFIG += $RELEASEMODE" >> "$CONFIG_IN"
 
 #do we build for Maemo?
 if [ -n "$LINUX_TARGET" ]; then
@@ -366,6 +361,25 @@ if [ -n "$LINUX_TARGET" ]; then
         echo "CONFIG+=meego" >> "$CONFIG_IN"
     fi
 fi
+
+
+if [ -n "$MAC_DEPLOY" ]; then
+    QT_MOBILITY_PREFIX=`$QMAKE_EXEC -query QT_INSTALL_PREFIX`
+    echo "QT_MOBILITY_PREFIX = $QT_MOBILITY_PREFIX" >> "$CONFIG_IN"
+    QT_MOBILITY_INCLUDE=`$QMAKE_EXEC -query QT_INSTALL_HEADERS`
+    echo "QT_MOBILITY_INCLUDE = $QT_MOBILITY_INCLUDE" >> "$CONFIG_IN"
+    QT_MOBILITY_LIB=`$QMAKE_EXEC -query QT_INSTALL_LIBS`
+    echo "QT_MOBILITY_LIB = $QT_MOBILITY_LIB" >> "$CONFIG_IN"
+    QT_MOBILITY_BIN=`$QMAKE_EXEC -query QT_INSTALL_BINS`
+    echo "QT_MOBILITY_BIN = $QT_MOBILITY_BIN" >> "$CONFIG_IN"
+    QT_MOBILITY_PLUGINS=`$QMAKE_EXEC -query QT_INSTALL_PLUGINS`
+    echo "QT_MOBILITY_PLUGINS = $QT_MOBILITY_PLUGINS" >> "$CONFIG_IN"
+    QT_MOBILITY_EXAMPLES=`$QMAKE_EXEC -query QT_INSTALL_EXAMPLES`
+    echo "QT_MOBILITY_EXAMPLES = $QT_MOBILITY_EXAMPLES" >> "$CONFIG_IN"
+    QT_MOBILITY_DEMOS=`$QMAKE_EXEC -query QT_INSTALL_DEMOS`
+    echo "QT_MOBILITY_DEMOS = $QT_MOBILITY_DEMOS" >> "$CONFIG_IN"
+
+else
 
 #process PREFIX
 QT_MOBILITY_PREFIX=`absPath $QT_MOBILITY_PREFIX $LINUX_TARGET`
@@ -440,7 +454,7 @@ else
     fi
 fi
 echo "QT_MOBILITY_DEMOS = $QT_MOBILITY_DEMOS" >> "$CONFIG_IN"
-
+fi
 
 echo "QT_MOBILITY_SOURCE_TREE = $relpath" >> "$QMAKE_CACHE"
 echo "QT_MOBILITY_BUILD_TREE = $shadowpath" >> "$QMAKE_CACHE"
@@ -583,11 +597,17 @@ if [ -z "$PLATFORM_CONFIG" ]; then
     compileTest "Bluez" bluez
     compileTest "Proj.4" proj
     compileTest "Gstreamer Photography" gstreamer-photography
+    compileTest "Gstreamer AppSrc" gstreamer-appsrc
     compileTest "Blkid" blkid
     compileTest "Pulse Audio" pulseaudio
     compileTest "udev" udev
     compileTest "iphb" iphb
-    compileTest "Symbian NFC" nfc
+
+    if [ "$NFC_SYMBIAN" = auto ]; then
+        compileTest "Symbian NFC" nfc_symbian
+    else
+        echo "nfc_symbian_enabled = no" >> "$CONFIG_IN"
+    fi
 
     if [ "$LINUX_TARGET" = maemo6 ] || [ "$LINUX_TARGET" = meego ]; then
         compileTest sensord sensord
@@ -616,7 +636,7 @@ fi
 # It's a lot easier to make qmake do the dependency checking...
 echo "mobility_modules = $MOBILITY_MODULES" >> "$CONFIG_IN"
 echo "contains(mobility_modules,versit): mobility_modules *= contacts" >> "$CONFIG_IN"
-echo "contains(mobility_modules,connectivity): mobility_modules *= serviceframework" >> "$CONFIG_IN"
+echo "symbian:contains(nfc_symbian_enabled,yes):contains(mobility_modules,connectivity): mobility_modules *= serviceframework" >> "$CONFIG_IN"
 echo "maemo5|maemo6:contains(maemo-icd_enabled, no): mobility_modules -= bearer" >> "$CONFIG_IN"
 # Mobility doesn't support Bearer on MeeGo -> Use Qt 4.7 Bearer instead
 echo "meego:contains(mobility_modules, bearer) { " >> "$CONFIG_IN"
@@ -720,6 +740,15 @@ echo "Running $QMAKE_EXEC..."
 if $QMAKE_EXEC -makefile $QMKSPEC -recursive "$relpath/qtmobility.pro"; then
     echo ""
     echo "configure has finished. You may run make or gmake to build the project now."
+    echo ""
+    echo "QT_MOBILITY_PREFIX = $QT_MOBILITY_PREFIX"
+    echo "QT_MOBILITY_INCLUDE = $QT_MOBILITY_INCLUDE"
+    echo "QT_MOBILITY_LIB = $QT_MOBILITY_LIB"
+    echo "QT_MOBILITY_BIN = $QT_MOBILITY_BIN"
+    echo "QT_MOBILITY_PLUGINS = $QT_MOBILITY_PLUGINS"
+    echo "QT_MOBILITY_EXAMPLES = $QT_MOBILITY_EXAMPLES"
+    echo "QT_MOBILITY_DEMOS = $QT_MOBILITY_DEMOS"
+
 else
     echo ""
     echo "configure failed."

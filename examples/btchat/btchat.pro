@@ -3,7 +3,7 @@ TARGET = btchat
 INCLUDEPATH += ../../src/connectivity/bluetooth
 DEPENDPATH += ../../src/connectivity/bluetooth
 
-include(../examples.pri)
+include(../mobility_examples.pri)
 
 CONFIG += mobility
 MOBILITY = connectivity

@@ -145,12 +145,12 @@ EXPORTS
 	?setProperties@QVersitDocument@QtMobility@@QAEXABV?$QList@VQVersitProperty@QtMobility@@@@@Z @ 144 NONAME ; void QtMobility::QVersitDocument::setProperties(class QList<class QtMobility::QVersitProperty> const &)
 	??0QVersitContactExporter@QtMobility@@QAE@ABVQStringList@@@Z @ 145 NONAME ; QtMobility::QVersitContactExporter::QVersitContactExporter(class QStringList const &)
 	??1QVersitContactExporterDetailHandlerV2@QtMobility@@UAE@XZ @ 146 NONAME ; QtMobility::QVersitContactExporterDetailHandlerV2::~QVersitContactExporterDetailHandlerV2(void)
-	??0QVersitResourceHandler@QtMobility@@QAE@XZ @ 147 NONAME ; QtMobility::QVersitResourceHandler::QVersitResourceHandler(void)
+	??0QVersitResourceHandler@QtMobility@@QAE@XZ @ 147 NONAME ABSENT ; QtMobility::QVersitResourceHandler::QVersitResourceHandler(void)
 	??_EQVersitContactHandler@QtMobility@@UAE@I@Z @ 148 NONAME ; QtMobility::QVersitContactHandler::~QVersitContactHandler(unsigned int)
 	??_EQVersitContactHandlerFactory@QtMobility@@UAE@I@Z @ 149 NONAME ; QtMobility::QVersitContactHandlerFactory::~QVersitContactHandlerFactory(unsigned int)
-	??_EQVersitProperty@QtMobility@@QAE@I@Z @ 150 NONAME ; QtMobility::QVersitProperty::~QVersitProperty(unsigned int)
+	??_EQVersitProperty@QtMobility@@QAE@I@Z @ 150 NONAME ABSENT ; QtMobility::QVersitProperty::~QVersitProperty(unsigned int)
 	?componentType@QVersitDocument@QtMobility@@QBE?AVQString@@XZ @ 151 NONAME ; class QString QtMobility::QVersitDocument::componentType(void) const
-	??_EQVersitDocument@QtMobility@@QAE@I@Z @ 152 NONAME ; QtMobility::QVersitDocument::~QVersitDocument(unsigned int)
+	??_EQVersitDocument@QtMobility@@QAE@I@Z @ 152 NONAME ABSENT ; QtMobility::QVersitDocument::~QVersitDocument(unsigned int)
 	?setComponentType@QVersitDocument@QtMobility@@QAEXVQString@@@Z @ 153 NONAME ; void QtMobility::QVersitDocument::setComponentType(class QString)
 	?setDetailHandler@QVersitContactExporter@QtMobility@@QAEXPAVQVersitContactExporterDetailHandlerV2@2@@Z @ 154 NONAME ; void QtMobility::QVersitContactExporter::setDetailHandler(class QtMobility::QVersitContactExporterDetailHandlerV2 *)
 

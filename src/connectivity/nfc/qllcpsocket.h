@@ -72,7 +72,10 @@ public:
     };
 
     enum SocketError {
-        UnknownSocketError = QAbstractSocket::UnknownSocketError
+        UnknownSocketError = QAbstractSocket::UnknownSocketError,
+        RemoteHostClosedError = QAbstractSocket::RemoteHostClosedError,
+        SocketAccessError = QAbstractSocket::SocketAccessError,
+        SocketResourceError = QAbstractSocket::SocketResourceError
     };
 
     explicit QLlcpSocket(QObject *parent = 0);
@@ -80,6 +83,8 @@ public:
 
     void connectToService(QNearFieldTarget *target, const QString &serviceUri);
     void disconnectFromService();
+
+    void close();
 
     bool bind(quint8 port);
 
@@ -99,6 +104,7 @@ public:
     SocketState state() const;
 
     qint64 bytesAvailable() const;
+    bool canReadLine() const;
 
     bool waitForReadyRead(int msecs = 30000);
     bool waitForBytesWritten(int msecs = 30000);
@@ -106,7 +112,7 @@ public:
     virtual bool waitForDisconnected(int msecs = 30000);
     bool isSequential() const;
 
-signals:
+Q_SIGNALS:
     void connected();
     void disconnected();
     void error(QLlcpSocket::SocketError socketError);

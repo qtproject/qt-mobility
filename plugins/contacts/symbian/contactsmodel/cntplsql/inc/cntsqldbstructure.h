@@ -31,7 +31,9 @@
 
 #include <e32base.h>
 #include <sqldb.h>
- 
+
+class CPplContactItemManager;
+
 /*
 * Class provide information about columns in a table
 */
@@ -105,7 +107,7 @@ private:
 NONSHARABLE_CLASS(CCntSqlDbTable) : public CBase
     {
 public:
-     static CCntSqlDbTable* NewLC (const TDesC& aTableName,  RSqlDatabase& aDbInstance);
+     static CCntSqlDbTable* NewLC (const TDesC& aTableName,  RSqlDatabase& aDbInstance, CPplContactItemManager& aItemManager);
 public:
     /*
     * Returns the table name
@@ -137,16 +139,17 @@ protected:
     void ConstructL(const TDesC& aTableName);
 
 private:
-    CCntSqlDbTable(RSqlDatabase& aDbInstance);
+    CCntSqlDbTable(RSqlDatabase& aDbInstance, CPplContactItemManager& aItemManager);
     void GetMissingColumns(RPointerArray<CCntSqlDbTableColumn>& aColumnsToAdd);
     void GetExistingColumnsFromDatabaseL(RPointerArray<CCntSqlDbTableColumn>& aExistingColumnsFromOldDb);
     void AlterTableToAddColumnL( CCntSqlDbTableColumn* aColInfo);
+    void FillFavoritesColumnL();
 
 protected:
     HBufC* iTableName; // holds the table name, own
     RPointerArray<CCntSqlDbTableColumn> iColumnInfo;  // own,List of columns this table should have
     RSqlDatabase& iDatabase; // not own
-    
+    CPplContactItemManager& iItemManager; //not own
     };
 
 /*
@@ -156,7 +159,7 @@ protected:
 NONSHARABLE_CLASS(CCntSqlDbStructure) : public CBase
     {
 public:
-    static CCntSqlDbStructure* NewL( RSqlDatabase& aDbInstance);
+    static CCntSqlDbStructure* NewL( RSqlDatabase& aDbInstance, CPplContactItemManager& aItemManager);
     ~CCntSqlDbStructure();    
     /*
     *  Checks the database and verifies if all tables and columns are present. If not,
@@ -170,7 +173,7 @@ public:
     const RPointerArray<CCntSqlDbTable>& Tables();
 
 private:
-    CCntSqlDbStructure( RSqlDatabase& aDbInstance);
+    CCntSqlDbStructure( RSqlDatabase& aDbInstance, CPplContactItemManager& aItemManager);
     void InitializeL();
     void InitializeContactsTableInfoL();
     void InitializeGroupsTableInfoL();
@@ -179,6 +182,6 @@ private:
 private:
     RPointerArray<CCntSqlDbTable> iTables;  //own, list of tables
     RSqlDatabase& iDatabase; // not own, handle to the database
-    
+    CPplContactItemManager& iItemManager; //not own
     };
 #endif //__CNTSQLDBSTRUCTURE_H__

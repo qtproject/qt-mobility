@@ -42,7 +42,6 @@
 #ifndef TEST_SENSOR2_H
 #define TEST_SENSOR2_H
 
-#define UNIT_TEST
 #include "qsensor.h"
 
 QTM_BEGIN_NAMESPACE

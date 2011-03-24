@@ -48,7 +48,11 @@ int main(int argc, char *argv[])
     QmlApplicationViewer viewer;
     viewer.setOrientation(QmlApplicationViewer::Auto);
     viewer.setMainQmlFile(QLatin1String("qrc:/organizer.qml"));
+#if defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_SIMULATOR)
+    viewer.showFullScreen();
+#else
     viewer.show();
+#endif
 
     return app.exec();
 }

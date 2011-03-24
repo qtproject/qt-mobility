@@ -223,6 +223,8 @@ private slots:
 
     void threadDelivery();
     void threadDelivery_data() { addManagers(QStringList(QString("maliciousplugin"))); }
+    void testDebugStreamOut();
+
 protected slots:
     void resultsAvailableReceived();
     void deleteRequest();
@@ -269,7 +271,7 @@ void tst_QOrganizerItemAsync::cleanupTestCase()
 bool tst_QOrganizerItemAsync::compareItemLists(QList<QOrganizerItem> lista, QList<QOrganizerItem> listb)
 {
     // NOTE: This compare is item order insensitive.
-    
+
     // Remove matching items
     foreach (QOrganizerItem a, lista) {
         foreach (QOrganizerItem b, listb) {
@@ -279,17 +281,17 @@ bool tst_QOrganizerItemAsync::compareItemLists(QList<QOrganizerItem> lista, QLis
                 break;
             }
         }
-    }    
+    }
     return (lista.count() == 0 && listb.count() == 0);
 }
 
 bool tst_QOrganizerItemAsync::compareItems(QOrganizerItem ca, QOrganizerItem cb)
 {
     // NOTE: This compare is item detail order insensitive.
-    
+
     if (ca.id() != cb.id())
         return false;
-    
+
     QList<QOrganizerItemDetail> aDetails = ca.details();
     QList<QOrganizerItemDetail> bDetails = cb.details();
 
@@ -301,7 +303,7 @@ bool tst_QOrganizerItemAsync::compareItems(QOrganizerItem ca, QOrganizerItem cb)
                 cb.removeDetail(&bd);
                 break;
             }
-            
+
             // Special handling for timestamp
             if (ad.definitionName() == QOrganizerItemTimestamp::DefinitionName &&
                 bd.definitionName() == QOrganizerItemTimestamp::DefinitionName) {
@@ -313,8 +315,8 @@ bool tst_QOrganizerItemAsync::compareItems(QOrganizerItem ca, QOrganizerItem cb)
                     cb.removeDetail(&bd);
                     break;
                 }
-                    
-            }            
+
+            }
         }
     }
     return (ca == cb);
@@ -1496,7 +1498,7 @@ void tst_QOrganizerItemAsync::itemRemove()
     // remove all items
     dfil.setDetailDefinitionName(QOrganizerItemDisplayLabel::DefinitionName); // delete everything.
     irr.setItemIds(oim->itemIds());
-    
+
     QVERIFY(!irr.cancel()); // not started
     QVERIFY(irr.start());
 
@@ -2206,7 +2208,7 @@ void tst_QOrganizerItemAsync::definitionSave()
 
        QSKIP("This item manager does not support mutable definitions, can't save a definition!", SkipSingle);
     }
-    
+
     QOrganizerItemDetailDefinitionSaveRequest dsr;
     QVERIFY(dsr.type() == QOrganizerAbstractRequest::DetailDefinitionSaveRequest);
     QVERIFY(dsr.itemType() == QString(QLatin1String(QOrganizerItemType::TypeNote))); // ensure ctor sets item type correctly
@@ -2874,6 +2876,441 @@ void tst_QOrganizerItemAsync::threadDelivery()
     QCOMPARE(m_mainThreadId, m_resultsAvailableSlotThreadId);
     delete req;
 }
+
+void tst_QOrganizerItemAsync::testDebugStreamOut()
+{
+    QOrganizerItemFetchHint fetchHint;
+
+    // Testing the empty case
+    QTest::ignoreMessage(QtDebugMsg, "QOrganizerItemFetchHint(detailDefinitionsHint=() ,optimizationHints=0)");
+    qDebug() << fetchHint;
+
+    // Testing the completely filled case
+    fetchHint.setDetailDefinitionsHint(QStringList(QOrganizerItemDescription::DefinitionName));
+    fetchHint.setOptimizationHints(QOrganizerItemFetchHint::NoBinaryBlobs);
+    QTest::ignoreMessage(QtDebugMsg, "QOrganizerItemFetchHint(detailDefinitionsHint=(\"Description\") ,optimizationHints=4)");
+    qDebug() << fetchHint;
+
+
+
+    // Testing QOrganizerItemSaveRequest
+
+    QOrganizerItemSaveRequest isr;
+
+    // Testing the empty case
+    QTest::ignoreMessage(QtDebugMsg, "QOrganizerAbstractRequest(QOrganizerItemSaveRequest(\n* items=() ,\n* definitionMask=() ,\n* errorMap=QMap() \n))");
+    qDebug() << isr;
+
+    // Testing the filled-in case
+    isr.setDefinitionMask(QStringList("BadDetail"));
+    QTest::ignoreMessage(QtDebugMsg, "QOrganizerAbstractRequest(QOrganizerItemSaveRequest(\n* items=() ,\n* definitionMask=(\"BadDetail\") ,\n* errorMap=QMap() \n))");
+    qDebug() << isr;
+
+
+     // Testing QOrganizerItemSaveRequest
+
+     QOrganizerItemFetchRequest ifr;
+
+    // Testing the empty case
+    QTest::ignoreMessage(QtDebugMsg, "QOrganizerAbstractRequest(QOrganizerItemFetchRequest(\n* items=() ,\n* filter=QOrganizerItemFilter((null)),\n* sorting=() ,\n* startDate=QDateTime(\"\") ,\n* endDate=QDateTime(\"\") ,\n* fetchHint=QOrganizerItemFetchHint(detailDefinitionsHint=() ,optimizationHints=0),\n* maxCount=-1\n))");
+    qDebug() << ifr;
+
+    // Testing the filled-in case
+    QOrganizerItemFilter fil;
+    ifr.setFilter(fil);
+    QOrganizerItemSortOrder sortOrder;
+    sortOrder.setDetailDefinitionName(QOrganizerItemPriority::DefinitionName, QOrganizerItemPriority::FieldPriority);
+    QList<QOrganizerItemSortOrder> sorting;
+    sorting.append(sortOrder);
+    ifr.setSorting(sorting);
+    fetchHint.setDetailDefinitionsHint(QStringList(QOrganizerItemDescription::DefinitionName));
+    ifr.setFetchHint(fetchHint);
+    QTest::ignoreMessage(QtDebugMsg, "QOrganizerAbstractRequest(QOrganizerItemFetchRequest(\n* items=() ,\n* filter=QOrganizerItemFilter((null)),\n* sorting=(QOrganizerItemSortOrder(detailDefinitionName=\"Priority\",detailFieldName=\"Priority\",blankPolicy=1,direction=0,caseSensitivity=1)) ,\n* startDate=QDateTime(\"\") ,\n* endDate=QDateTime(\"\") ,\n* fetchHint=QOrganizerItemFetchHint(detailDefinitionsHint=(\"Description\") ,optimizationHints=4),\n* maxCount=-1\n))");
+    qDebug() << ifr;
+
+
+
+    // Testing QOrganizerItemFetchForExportRequest
+
+    QOrganizerItemFetchForExportRequest ifer;
+
+    // Testing the empty case
+    QTest::ignoreMessage(QtDebugMsg, "QOrganizerAbstractRequest(QOrganizerItemFetchForExportRequest(\n* items=() ,\n* filter=QOrganizerItemFilter((null)),\n* sorting=() ,\n* startDate=QDateTime(\"\") ,\n* endDate=QDateTime(\"\") ,\n* fetchHint=QOrganizerItemFetchHint(detailDefinitionsHint=() ,optimizationHints=0)\n))");
+    qDebug() << ifer;
+
+    // Testing the filled-in case
+    ifer.setFilter(fil);
+    ifer.setSorting(sorting);
+    ifer.setStartDate(QDateTime());
+    ifer.setEndDate(QDateTime());
+    QTest::ignoreMessage(QtDebugMsg, "QOrganizerAbstractRequest(QOrganizerItemFetchForExportRequest(\n* items=() ,\n* filter=QOrganizerItemFilter((null)),\n* sorting=(QOrganizerItemSortOrder(detailDefinitionName=\"Priority\",detailFieldName=\"Priority\",blankPolicy=1,direction=0,caseSensitivity=1)) ,\n* startDate=QDateTime(\"\") ,\n* endDate=QDateTime(\"\") ,\n* fetchHint=QOrganizerItemFetchHint(detailDefinitionsHint=() ,optimizationHints=0)\n))");
+    qDebug() << ifer;
+
+
+    // Testing QOrganizerItemFetchByIdRequest
+    QOrganizerItemFetchByIdRequest ifbidr;
+
+    // Testing the empty case
+    QTest::ignoreMessage(QtDebugMsg, "QOrganizerAbstractRequest(QOrganizerItemFetchByIdRequest(\n* items=() ,\n* ids=() ,\n* fetchHint=QOrganizerItemFetchHint(detailDefinitionsHint=() ,optimizationHints=0),\n* errorMap=QMap() \n))");
+    qDebug() << ifbidr;
+
+    // Test the filled-in case
+    fetchHint.setDetailDefinitionsHint(QStringList(QOrganizerItemDescription::DefinitionName));
+    ifbidr.setFetchHint(fetchHint);
+    QTest::ignoreMessage(QtDebugMsg, "QOrganizerAbstractRequest(QOrganizerItemFetchByIdRequest(\n* items=() ,\n* ids=() ,\n* fetchHint=QOrganizerItemFetchHint(detailDefinitionsHint=(\"Description\") ,optimizationHints=4),\n* errorMap=QMap() \n))");
+    qDebug() << ifbidr;
+
+
+
+    // Testing     QOrganizerItemOccurrenceFetchRequest
+
+    QOrganizerItemOccurrenceFetchRequest iofr;
+
+    // Testing the empty case
+    QTest::ignoreMessage(QtDebugMsg, "QOrganizerAbstractRequest(QOrganizerItemOccurrenceFetchRequest(\n* itemOccurrences=() ,\n* parentItem=QOrganizerItem(QOrganizerItemId((null))) in collection(QOrganizerCollectionId((null))) \n QOrganizerItemDetail(name=\"Type\", key=201754, \"Type\"=QVariant(QString, \"Note\") ),\n* startDate=QDateTime(\"\") ,\n* endDate=QDateTime(\"\") ,\n* fetchHint=QOrganizerItemFetchHint(detailDefinitionsHint=() ,optimizationHints=0),\n* maxOccurrences=-1\n))");
+    qDebug() << iofr;
+
+    // Testing the filled-in case
+    QOrganizerItem parent;
+    iofr.setParentItem(parent);
+    iofr.setFetchHint(fetchHint);
+    QTest::ignoreMessage(QtDebugMsg, "QOrganizerAbstractRequest(QOrganizerItemOccurrenceFetchRequest(\n* itemOccurrences=() ,\n* parentItem=QOrganizerItem(QOrganizerItemId((null))) in collection(QOrganizerCollectionId((null))) \n QOrganizerItemDetail(name=\"Type\", key=201756, \"Type\"=QVariant(QString, \"Note\") ),\n* startDate=QDateTime(\"\") ,\n* endDate=QDateTime(\"\") ,\n* fetchHint=QOrganizerItemFetchHint(detailDefinitionsHint=(\"Description\") ,optimizationHints=4),\n* maxOccurrences=-1\n))");
+    qDebug() << iofr;
+
+
+    // Testing QOrganizerItemRemoveRequest
+
+    QOrganizerItemRemoveRequest irr;
+
+    // Testing the empty case
+    QTest::ignoreMessage(QtDebugMsg, "QOrganizerAbstractRequest(QOrganizerItemRemoveRequest(itemIds=() ,errorMap=QMap() \n))");
+    qDebug() << irr;
+
+    // Testing the filled-in case
+    QString mgr = "memory";
+    QMap<QString, QString> params;
+    params.insert("id", "tst_QOrganizerManager");
+    QString uri = QOrganizerManager::buildUri(mgr, params);
+    QScopedPointer<QOrganizerManager> oim(prepareModel(uri));
+
+    qRegisterMetaType<QList<QOrganizerItemId> >("QList<QOrganizerItemId>");
+
+    QVERIFY(irr.type() == QOrganizerAbstractRequest::ItemRemoveRequest);
+
+    // initial state - not started, no manager.
+    QVERIFY(!irr.isActive());
+    QVERIFY(!irr.isFinished());
+    QVERIFY(!irr.start());
+    QVERIFY(!irr.cancel());
+    QVERIFY(!irr.waitForFinished());
+
+    // fill manager with test data
+
+    QOrganizerTodo testTodo1;
+    QOrganizerItemDisplayLabel label;
+    label.setLabel("Test todo 1");
+    testTodo1.saveDetail(&label);
+    QVERIFY(oim->saveItem(&testTodo1));
+
+    testTodo1.setId(QOrganizerItemId());
+    label.setLabel("Test todo 2");
+    testTodo1.saveDetail(&label);
+    QOrganizerItemComment comment;
+    comment.setComment("todo comment");
+    testTodo1.saveDetail(&comment);
+    QVERIFY(oim->saveItem(&testTodo1));
+
+    QList<QOrganizerItemId> allIds(oim->itemIds());
+    QVERIFY(!allIds.isEmpty());
+    QOrganizerItemId removableId(allIds.first());
+
+    // specific item set
+    irr.setItemId(removableId);
+    QVERIFY(irr.itemIds() == QList<QOrganizerItemId>() << removableId);
+
+    QTest::ignoreMessage(QtDebugMsg, "QOrganizerAbstractRequest(QOrganizerItemRemoveRequest(itemIds=(QOrganizerItemId(QOrganizerItemMemoryEngineId(1, 2,\"qtorganizer:memory:id=tst_QOrganizerManager\"))) ,errorMap=QMap() \n))");
+    qDebug() << irr;
+
+
+
+    // Testing ItemIdFetchRequest
+
+    // Testing the empty case
+    QOrganizerItemIdFetchRequest iidfr;
+    QVERIFY(iidfr.type() == QOrganizerAbstractRequest::ItemIdFetchRequest);
+
+    // initial state - not started, no manager.
+    QVERIFY(!iidfr.isActive());
+    QVERIFY(!iidfr.isFinished());
+    QVERIFY(!iidfr.start());
+    QVERIFY(!iidfr.cancel());
+    QVERIFY(!iidfr.waitForFinished());
+
+    QTest::ignoreMessage(QtDebugMsg, "QOrganizerAbstractRequest(QOrganizerItemIdFetchRequest(\n* itemIds=() ,\n* filter=QOrganizerItemFilter((null)),\n* sorting=() ,\n* startDate=QDateTime(\"\") ,\n* endDate=QDateTime(\"\") \n))");
+    qDebug() << iidfr;
+
+    // Testing the filled-in case
+
+    // "all items" retrieval
+    iidfr.setManager(oim.data());
+    QCOMPARE(iidfr.manager(), oim.data());
+    QVERIFY(!iidfr.isActive());
+    QVERIFY(!iidfr.isFinished());
+    QVERIFY(!iidfr.cancel());
+    QVERIFY(!iidfr.waitForFinished());
+    qRegisterMetaType<QOrganizerItemIdFetchRequest*>("QOrganizerItemIdFetchRequest*");
+
+    QThreadSignalSpy spy(&iidfr, SIGNAL(stateChanged(QOrganizerAbstractRequest::State)));
+    iidfr.setFilter(fil);
+    QCOMPARE(iidfr.filter(), fil);
+    QVERIFY(!iidfr.cancel()); // not started
+    QVERIFY(iidfr.start());
+
+    QTest::ignoreMessage(QtDebugMsg, "QOrganizerAbstractRequest(QOrganizerItemIdFetchRequest(\n* itemIds=(QOrganizerItemId(QOrganizerItemMemoryEngineId(1, 2,\"qtorganizer:memory:id=tst_QOrganizerManager\")), QOrganizerItemId(QOrganizerItemMemoryEngineId(1, 3,\"qtorganizer:memory:id=tst_QOrganizerManager\")), QOrganizerItemId(QOrganizerItemMemoryEngineId(1, 4,\"qtorganizer:memory:id=tst_QOrganizerManager\")), QOrganizerItemId(QOrganizerItemMemoryEngineId(1, 5,\"qtorganizer:memory:id=tst_QOrganizerManager\")), QOrganizerItemId(QOrganizerItemMemoryEngineId(1, 6,\"qtorganizer:memory:id=tst_QOrganizerManager\"))) ,\n* filter=QOrganizerItemFilter((null)),\n* sorting=() ,\n* startDate=QDateTime(\"\") ,\n* endDate=QDateTime(\"\") \n))");
+    qDebug() << iidfr;
+
+
+    // Testing QOrganizerItemDetailDefinitionFetchRequest
+
+    // Testing the empty case
+    QOrganizerItemDetailDefinitionFetchRequest dfr;
+    QVERIFY(dfr.type() == QOrganizerAbstractRequest::DetailDefinitionFetchRequest);
+    QVERIFY(dfr.itemType() == QString(QLatin1String(QOrganizerItemType::TypeNote))); // ensure ctor sets item type correctly.
+    dfr.setItemType(QOrganizerItemType::TypeEvent);
+    QVERIFY(dfr.itemType() == QString(QLatin1String(QOrganizerItemType::TypeEvent)));
+
+    // initial state - not started, no manager.
+    QVERIFY(!dfr.isActive());
+    QVERIFY(!dfr.isFinished());
+    QVERIFY(!dfr.start());
+    QVERIFY(!dfr.cancel());
+    QVERIFY(!dfr.waitForFinished());
+
+    QTest::ignoreMessage(QtDebugMsg, "QOrganizerAbstractRequest(QOrganizerItemDetailDefinitionFetchRequest(\n* definitionNames=() ,\n* definitions=QMap() ,\n* itemType=\"Event\",\n* errorMap=QMap() \n))");
+    qDebug() << dfr;
+
+    // Note: testing of the filled-in case has been removed due to issues (expected-message string gets truncated after 1000 characters)
+
+    qDebug() << dfr;
+
+
+    // Testing QOrganizerItemDetailDefinitionSaveRequest
+
+    // Testing the empty case
+    QOrganizerItemDetailDefinitionSaveRequest dsr;
+    QVERIFY(dsr.type() == QOrganizerAbstractRequest::DetailDefinitionSaveRequest);
+    QVERIFY(dsr.itemType() == QString(QLatin1String(QOrganizerItemType::TypeNote))); // ensure ctor sets item type correctly
+    dsr.setItemType(QOrganizerItemType::TypeEvent);
+    QVERIFY(dsr.itemType() == QString(QLatin1String(QOrganizerItemType::TypeEvent)));
+
+    // initial state - not started, no manager.
+    QVERIFY(!dsr.isActive());
+    QVERIFY(!dsr.isFinished());
+    QVERIFY(!dsr.start());
+    QVERIFY(!dsr.cancel());
+    QVERIFY(!dsr.waitForFinished());
+
+    QTest::ignoreMessage(QtDebugMsg, "QOrganizerAbstractRequest(QOrganizerItemDetailDefinitionSaveRequest(\n* definitions=() ,\n* itemType=\"Event\",\n* errorMap=QMap() \n))");
+    qDebug() << dsr;
+
+    // Testing the filled-in case
+
+    // save a new detail definition
+    int originalCount = oim->detailDefinitions(QOrganizerItemType::TypeEvent).keys().size();
+    QOrganizerItemDetailDefinition testDef;
+    testDef.setName("TestDefinitionId");
+    QMap<QString, QOrganizerItemDetailFieldDefinition> fields;
+    QOrganizerItemDetailFieldDefinition f;
+    f.setDataType(QVariant::String);
+    fields.insert("TestDefinitionField", f);
+    testDef.setFields(fields);
+    QList<QOrganizerItemDetailDefinition> saveList;
+    saveList << testDef;
+    dsr.setManager(oim.data());
+    QCOMPARE(dsr.manager(), oim.data());
+    QVERIFY(!dsr.isActive());
+    QVERIFY(!dsr.isFinished());
+    QVERIFY(!dsr.cancel());
+    QVERIFY(!dsr.waitForFinished());
+    qRegisterMetaType<QOrganizerItemDetailDefinitionSaveRequest*>("QOrganizerItemDetailDefinitionSaveRequest*");
+    dsr.setDefinition(testDef);
+    QCOMPARE(dsr.definitions(), saveList);
+    QVERIFY(!dsr.cancel()); // not started
+    QVERIFY(dsr.start());
+
+
+    QVERIFY((dsr.isActive() && dsr.state() == QOrganizerAbstractRequest::ActiveState) || dsr.isFinished());
+    //QVERIFY(dsr.isFinished() || !dsr.start());  // already started. // thread scheduling means this is untestable
+    QVERIFY(dsr.waitForFinished());
+    QVERIFY(dsr.isFinished());
+    QVERIFY(spy.count() >= 1); // active + finished progress signals
+    spy.clear();
+
+    QList<QOrganizerItemDetailDefinition> expected;
+    expected << oim->detailDefinition("TestDefinitionId", QOrganizerItemType::TypeEvent);
+    QList<QOrganizerItemDetailDefinition> result = dsr.definitions();
+    QCOMPARE(expected, result);
+    QVERIFY(expected.contains(testDef));
+    QCOMPARE(oim->detailDefinitions(QOrganizerItemType::TypeEvent).values().size(), originalCount + 1);
+
+    QTest::ignoreMessage(QtDebugMsg, "QOrganizerAbstractRequest(QOrganizerItemDetailDefinitionSaveRequest(\n* definitions=(QOrganizerItemDetailDefinition(name=\"TestDefinitionId\",isUnique=false,isEmpty=false,fields=QMap((\"TestDefinitionField\", QOrganizerItemDetailFieldDefinition(dataType=10,allowableValues=() ))) )) ,\n* itemType=\"Event\",\n* errorMap=QMap() \n))");
+    qDebug() << dsr;
+
+
+    // Testing QOrganizerItemDetailDefinitionRemoveRequest
+
+    // Testing the empty case
+    QOrganizerItemDetailDefinitionRemoveRequest drr;
+    QVERIFY(drr.type() == QOrganizerAbstractRequest::DetailDefinitionRemoveRequest);
+    QVERIFY(drr.itemType() == QString(QLatin1String(QOrganizerItemType::TypeNote))); // ensure ctor sets item type correctly.
+    drr.setItemType(QOrganizerItemType::TypeEvent);
+    drr.setDefinitionNames(QStringList());
+    QVERIFY(drr.itemType() == QString(QLatin1String(QOrganizerItemType::TypeEvent)));
+
+    // initial state - not started, no manager.
+    QVERIFY(!drr.isActive());
+    QVERIFY(!drr.isFinished());
+    QVERIFY(!drr.start());
+    QVERIFY(!drr.cancel());
+    QVERIFY(!drr.waitForFinished());
+
+    QTest::ignoreMessage(QtDebugMsg, "QOrganizerAbstractRequest(QOrganizerItemDetailDefinitionRemoveRequest(\n* definitionNames=() ,\n* itemType=\"Event\",\n* errorMap=QMap() \n))");
+    qDebug() << drr;
+
+
+    // Testing the filled-in case
+
+    // specific definition removal
+    QStringList removeIds;
+    removeIds << oim->detailDefinitions(QOrganizerItemType::TypeEvent).keys().first();
+    drr.setDefinitionName(oim->detailDefinitions(QOrganizerItemType::TypeEvent).keys().first());
+    drr.setManager(oim.data());
+    QCOMPARE(drr.manager(), oim.data());
+    QVERIFY(!drr.isActive());
+    QVERIFY(!drr.isFinished());
+    QVERIFY(!drr.cancel());
+    QVERIFY(!drr.waitForFinished());
+    qRegisterMetaType<QOrganizerItemDetailDefinitionRemoveRequest*>("QOrganizerItemDetailDefinitionRemoveRequest*");
+    QVERIFY(drr.definitionNames() == removeIds);
+    QVERIFY(!drr.cancel()); // not started
+    QVERIFY(drr.start());
+
+    QTest::ignoreMessage(QtDebugMsg, "QOrganizerAbstractRequest(QOrganizerItemDetailDefinitionRemoveRequest(\n* definitionNames=(\"AudibleReminder\") ,\n* itemType=\"Event\",\n* errorMap=QMap() \n))");
+    qDebug() << drr;
+
+
+    // Testing QOrganizerCollectionFetchRequest
+
+    // Testing the empty case
+    QOrganizerCollectionFetchRequest cfr;
+    QVERIFY(cfr.type() == QOrganizerAbstractRequest::CollectionFetchRequest);
+
+    // initial state - not started, no manager.
+    QVERIFY(!cfr.isActive());
+    QVERIFY(!cfr.isFinished());
+    QVERIFY(!cfr.start());
+    QVERIFY(!cfr.cancel());
+    QVERIFY(!cfr.waitForFinished());
+
+    QTest::ignoreMessage(QtDebugMsg, "QOrganizerAbstractRequest(QOrganizerCollectionFetchRequest(collections=() ))");
+    qDebug() << cfr;
+
+    // Testing the filled-in case
+
+    // retrieve all collections.
+    cfr.setManager(oim.data());
+    QCOMPARE(cfr.manager(), oim.data());
+    QVERIFY(!cfr.isActive());
+    QVERIFY(!cfr.isFinished());
+    QVERIFY(!cfr.cancel());
+    QVERIFY(!cfr.waitForFinished());
+    qRegisterMetaType<QOrganizerCollectionFetchRequest*>("QOrganizerCollectionFetchRequest*");
+    QVERIFY(!cfr.cancel()); // not started
+
+    QTest::ignoreMessage(QtDebugMsg, "QOrganizerAbstractRequest(QOrganizerCollectionFetchRequest(collections=() ))");
+    qDebug() << cfr;
+
+
+    // Testing QOrganizerCollectionRemoveRequest
+
+    // Testing the empty case
+    QOrganizerCollectionRemoveRequest crr;
+    QVERIFY(crr.type() == QOrganizerAbstractRequest::CollectionRemoveRequest);
+
+    // initial state - not started, no manager.
+    QVERIFY(!crr.isActive());
+    QVERIFY(!crr.isFinished());
+    QVERIFY(!crr.start());
+    QVERIFY(!crr.cancel());
+    QVERIFY(!crr.waitForFinished());
+
+    QTest::ignoreMessage(QtDebugMsg, "QOrganizerAbstractRequest(QOrganizerCollectionRemoveRequest(collectionIds=() ,errorMap=QMap() ))");
+    qDebug() << crr;
+
+    //Testing the filled-in case
+
+    // specific collection set
+    QOrganizerCollectionId removeId = oim->collections().last().id();
+    crr.setCollectionId(removeId);
+    QVERIFY(crr.collectionIds() == QList<QOrganizerCollectionId>() << removeId);
+    crr.setManager(oim.data());
+    QCOMPARE(crr.manager(), oim.data());
+    QVERIFY(!crr.isActive());
+    QVERIFY(!crr.isFinished());
+    QVERIFY(!crr.cancel());
+    QVERIFY(!crr.waitForFinished());
+    qRegisterMetaType<QOrganizerCollectionRemoveRequest*>("QOrganizerCollectionRemoveRequest*");
+    QVERIFY(!crr.cancel()); // not started
+    QVERIFY(crr.start());
+    QVERIFY((crr.isActive() &&crr.state() == QOrganizerAbstractRequest::ActiveState) || crr.isFinished());
+    //QVERIFY(crr.isFinished() || !crr.start());  // already started. // thread scheduling means this is untestable
+    QVERIFY(crr.waitForFinished());
+    QVERIFY(crr.isFinished());
+
+    QTest::ignoreMessage(QtDebugMsg, "QOrganizerAbstractRequest(QOrganizerCollectionRemoveRequest(collectionIds=(QOrganizerCollectionId(QOrganizerCollectionMemoryEngineId(2,\"qtorganizer:memory:id=tst_QOrganizerManager\"))) ,errorMap=QMap() ))");
+    qDebug() << crr;
+
+
+
+    // Testing QOrganizerCollectionSaveRequest
+
+    // Testing the empty case
+    QOrganizerCollectionSaveRequest csr;
+    QVERIFY(csr.type() == QOrganizerAbstractRequest::CollectionSaveRequest);
+
+    // initial state - not started, no manager.
+    QVERIFY(!csr.isActive());
+    QVERIFY(!csr.isFinished());
+    QVERIFY(!csr.start());
+    QVERIFY(!csr.cancel());
+    QVERIFY(!csr.waitForFinished());
+
+    QTest::ignoreMessage(QtDebugMsg, "QOrganizerAbstractRequest(QOrganizerCollectionSaveRequest(collections=() ,errorMap=QMap() ))");
+    qDebug() << csr;
+
+    // Testing the filled-in case
+
+    // save a new item
+    QOrganizerCollection testCollection;
+    testCollection.setMetaData("description", "test description");
+    testCollection.setMetaData(QOrganizerCollection::KeyName, "New collection");
+    //saveList << testCollection;
+    csr.setManager(oim.data());
+    QCOMPARE(csr.manager(), oim.data());
+    QVERIFY(!csr.isActive());
+    QVERIFY(!csr.isFinished());
+    QVERIFY(!csr.cancel());
+    QVERIFY(!csr.waitForFinished());
+    qRegisterMetaType<QOrganizerCollectionSaveRequest*>("QOrganizerCollectionSaveRequest*");
+    csr.setCollection(testCollection);
+
+    QTest::ignoreMessage(QtDebugMsg, "QOrganizerAbstractRequest(QOrganizerCollectionSaveRequest(collections=(QOrganizerCollection(id=QOrganizerCollectionId((null)), \"Name\"=QVariant(QString, \"New collection\") , \"description\"=QVariant(QString, \"test description\") )) ,errorMap=QMap() ))");
+    qDebug() << csr;
+}
+
+
+
+
 
 void tst_QOrganizerItemAsync::resultsAvailableReceived()
 {

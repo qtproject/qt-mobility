@@ -75,33 +75,34 @@ void meegosensorbase::start()
 {
     if (m_sensorInterface) {
         // dataRate
-        int dataRate = sensor()->dataRate();
-        if (dataRate > 0) {
-            int interval = 1000 / dataRate;
+        QString type = sensor()->type();
+        if (type!="QTapSensor" && type!="QProximitySensor"){
+            int dataRate = sensor()->dataRate();
+            int interval = dataRate>0 ? 1000 / dataRate : 0;
             // for testing maximum speed
             //interval = 1;
             //dataRate = 1000;
             qDebug() << "Setting data rate" << dataRate << "Hz (interval" << interval << "ms) for" << sensor()->identifier();
             m_sensorInterface->setInterval(interval);
         }
-        
+
         // outputRange
         int currentRange = sensor()->outputRange();
-        
-        
         int l = sensor()->outputRanges().size();
         if (l>1){
             if (currentRange != m_prevOutputRange){
+#ifdef Q_WS_MAEMO6
+                bool isOk = m_sensorInterface->setDataRangeIndex(currentRange); //NOTE THAT THE CHANGE MIGHT NOT SUCCEED, FIRST COME FIRST SERVED
+                if (!isOk) sensorError(KErrInUse);
+                else m_prevOutputRange = currentRange;
+#else
+                // TODO: remove when sensord integrated, in MeeGo env there is a delay
                 qoutputrange range = sensor()->outputRanges().at(currentRange);
                 qreal correction = 1/correctionFactor();
                 DataRange range1(range.minimum*correction, range.maximum*correction, range.accuracy*correction);
                 m_sensorInterface->requestDataRange(range1);
                 m_prevOutputRange = currentRange;
-
-                //TODO - uncomment when functionality available in sensord
-//                bool isOk = m_sensorInterface->setDataRangeIndex(currentRange); //NOTE THAT THE CHANGE MIGHT NOT SUCCEED, FIRST COME FIRST SERVED
-//                if (!isOk) sensorError(KErrInUse);
-//                else m_prevOutputRange = currentRange;
+#endif
             }
         }
         

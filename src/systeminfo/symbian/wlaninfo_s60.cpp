@@ -63,17 +63,20 @@ CWlanInfo::CWlanInfo(QObject *parent) : QObject(parent)
             m_timer = new QTimer(this);
             connect(m_timer, SIGNAL(timeout()), this, SLOT(checkWlanInfo()));
             m_timer->setInterval(5000);
-            m_timer->start();
        }
 #endif
 }
 
 CWlanInfo::~CWlanInfo()
 {
+}
+
+void CWlanInfo::FreeResources()
+ {
     if (m_wlanMgmtClient)
         m_wlanMgmtClient->CancelNotifications();
     delete m_wlanMgmtClient;
-}
+ }
 
 QString CWlanInfo::wlanNetworkName() const
 {

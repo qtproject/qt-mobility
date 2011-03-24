@@ -128,8 +128,12 @@ QLandmarkAttributeFilterPrivate::~QLandmarkAttributeFilterPrivate()
     \endtable
 
         Please note that different platforms support different capabilities with the attribute filter.
-        The S60 3.1, 3.2 and 5.0 platforms do not support an OR type attribute filter.
-        The S60 3.1, 3.2, 5.0 and Symbian platforms do not support the MatchContains flag.
+        \list
+            \o The S60 3.1, 3.2 and 5.0 platforms do not support an OR type attribute filter.
+            \o The S60 3.1, 3.2, 5.0 and Symbian platforms do not support the MatchContains flag.
+            \o The S60 3.1, 3.2, 5.0 and Symbian platforms do not support multiple attributes with an
+	AND type attribute filter(using a single attribute however is supported).
+        \endlist
 */
 Q_IMPLEMENT_LANDMARKFILTER_PRIVATE(QLandmarkAttributeFilter);
 

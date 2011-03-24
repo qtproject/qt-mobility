@@ -180,6 +180,7 @@ private slots:
     void update();
     void remove();
     void batch();
+    void observerDeletion();
     void signalEmission();
     void detailDefinitions();
     void displayName();
@@ -2171,6 +2172,20 @@ void tst_QContactManager::contactValidation()
     c.removeDetail(&d7);
 }
 
+void tst_QContactManager::observerDeletion()
+{
+    QContactManager *manager = new QContactManager("memory");
+    QContact c;
+    QVERIFY(manager->saveContact(&c));
+    QContactLocalId id = c.localId();
+    QContactObserver *observer = new QContactObserver(manager, id);
+    Q_UNUSED(observer)
+    delete manager;
+    delete observer;
+    // Test for bug MOBILITY-2566 - that QContactObserver doesn't crash when it is
+    // destroyed after the associated QContactManager
+}
+
 void tst_QContactManager::signalEmission()
 {
     QTest::qWait(500); // clear the signal queue
@@ -3615,6 +3630,7 @@ void tst_QContactManager::partialSave()
     // 5) new contact, some details in the mask
     // 6) Have a bad manager uri in the middle
     // 7) Have a non existing contact in the middle
+    // 8) A list entirely of new contacts
 
     QContactPhoneNumber pn;
     pn.setNumber("111111");
@@ -3701,6 +3717,46 @@ void tst_QContactManager::partialSave()
     QCOMPARE(errorMap.count(), 2);
     QCOMPARE(errorMap[4], QContactManager::DoesNotExistError);
     QCOMPARE(errorMap[5], QContactManager::InvalidDetailError);
+
+    // 8 - New contact, no details in the mask
+    newContact = originalContacts[3];
+    QCOMPARE(newContact.details<QContactOrganization>().count(), 1);
+    QCOMPARE(newContact.details<QContactName>().count(), 1);
+    newContact.setId(QContactId());
+    QList<QContact> contacts2;
+    contacts2.append(newContact);
+    QVERIFY(cm->saveContacts(&contacts2, QStringList(QContactEmailAddress::DefinitionName), &errorMap));
+    QVERIFY(errorMap.isEmpty());
+    QVERIFY(contacts2[0].localId() != 0); // Saved
+    b = cm->contact(contacts2[0].localId());
+    QVERIFY(b.details<QContactOrganization>().count() == 0); // not saved
+    QVERIFY(b.details<QContactName>().count() == 0); // not saved
+
+    // 9 - A list with only a new contact, with some details in the mask
+    newContact = originalContacts[2];
+    newContact.setId(QContactId());
+    contacts2.clear();
+    contacts2.append(newContact);
+    QVERIFY(cm->saveContacts(&contacts2, QStringList(QContactEmailAddress::DefinitionName), &errorMap));
+    QVERIFY(errorMap.isEmpty());
+    QVERIFY(contacts2[0].localId() != 0); // Saved
+    b = cm->contact(contacts2[0].localId());
+    QVERIFY(b.details<QContactEmailAddress>().count() == 1);
+    QVERIFY(b.details<QContactName>().count() == 0); // not saved
+
+    // 10 - A list with new a contact for the wrong manager, followed by a new contact with an
+    // invalid detail
+    newContact = originalContacts[2];
+    newContact.setId(QContactId());
+    contacts2.clear();
+    contacts2.append(newContact);
+    contacts2.append(newContact);
+    contacts2[0].setId(badId);
+    contacts2[1].saveDetail(&badDetail);
+    QVERIFY(!cm->saveContacts(&contacts2, QStringList("BadDetail"), &errorMap));
+    QCOMPARE(errorMap.count(), 2);
+    QCOMPARE(errorMap[0], QContactManager::DoesNotExistError);
+    QCOMPARE(errorMap[1], QContactManager::InvalidDetailError);
 }
 #endif
 

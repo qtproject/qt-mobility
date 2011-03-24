@@ -144,7 +144,7 @@ protected:
         if (name=="gyroscopesensor") return;          // SensorFW returns DSPs, plugin milliDSPs
 
 
-        setDescription(m_sensorInterface->property("description").toString());
+        setDescription(m_sensorInterface->description());
 
         if (name=="tapsensor") return;
         setRanges();

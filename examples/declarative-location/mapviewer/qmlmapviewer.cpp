@@ -45,7 +45,7 @@
 int main(int argc, char *argv[])
 {
     QApplication application(argc, argv);
-    const QString mainQmlApp = QLatin1String("mapviewer.qml");
+    const QString mainQmlApp = QLatin1String("qrc:///mapviewer.qml");
     QDeclarativeView view;
     view.setSource(QUrl(mainQmlApp));
     view.setResizeMode(QDeclarativeView::SizeRootObjectToView);

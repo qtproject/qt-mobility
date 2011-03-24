@@ -104,6 +104,7 @@ private:
     PositioningMethod m_positioningMethod;
     QDeclarativePosition m_position;
     QFile* m_nmeaFile;
+    QString m_nmeaFileName;
     QUrl m_nmeaSource;
     bool m_active;
     bool m_singleUpdate;

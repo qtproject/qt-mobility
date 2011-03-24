@@ -2,7 +2,7 @@ TARGET = dialer_service
 INCLUDEPATH += ../../../src/serviceframework
 DEPENDPATH += ../../../src/serviceframework
 
-include(../../examples.pri)
+include(../../mobility_examples.pri)
 
 QT = core
 TEMPLATE = app
@@ -15,10 +15,6 @@ contains(QT_CONFIG, declarative):DEFINES += DECLARATIVE
 HEADERS += remotedialer.h
 SOURCES += remotedialer.cpp \
            main.cpp     
-
-symbian {
-    TARGET.CAPABILITY = ALL -TCB
-}
 
 wince*|symbian*: {
     addFiles.sources = remotedialerservice.xml

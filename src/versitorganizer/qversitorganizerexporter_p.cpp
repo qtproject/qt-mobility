@@ -79,6 +79,10 @@ bool QVersitOrganizerExporterPrivate::exportItem(
     QVersitDocument* document,
     QVersitOrganizerExporter::Error* error)
 {
+    if (item.isEmpty()) {
+        *error = QVersitOrganizerExporter::EmptyOrganizerError;
+        return false;
+    }
     if (item.type() == QOrganizerItemType::TypeEvent
         || item.type() == QOrganizerItemType::TypeEventOccurrence) {
         document->setComponentType(QLatin1String("VEVENT"));
