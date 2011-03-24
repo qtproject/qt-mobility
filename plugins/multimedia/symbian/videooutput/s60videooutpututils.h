@@ -1,5 +1,4 @@
-/****************************************************************************
-**
+/**
 ** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
@@ -39,59 +38,33 @@
 **
 ****************************************************************************/
 
-#ifndef S60VIDEOWIDGET_H
-#define S60VIDEOWIDGET_H
+#ifndef S60VIDEOOUTPUTUTILS_H
+#define S60VIDEOOUTPUTUTILS_H
 
-#include <QtGui/QWidget>
+#include <QtCore/qglobal.h>
+#include <QtGui/qwindowdefs.h>
 
-QT_USE_NAMESPACE
+QT_FORWARD_DECLARE_CLASS(QWidget)
 
-class S60VideoWidget : public QWidget
+/*
+ * Helper functions used by video output.
+ */
+namespace S60VideoOutputUtils
 {
-    Q_OBJECT
-public:
-    S60VideoWidget(QWidget *parent = 0);
-    ~S60VideoWidget();
 
-    // QWidget
-    bool event(QEvent *event);
-    void paintEvent(QPaintEvent *event);
-    void setVisible(bool visible);
-
-    WId videoWinId() const;
-    void setPixmap(const QPixmap *pixmap);
-    void setWindowBackgroundColor();
-    void setTopWinId(WId id);
-    WId topWinId() const;
-    void setOrdinalPosition(int ordinalPosition);
-    int ordinalPosition() const;
-
-public slots:
-    void beginNativePaintEvent(const QRect &rect);
-    void endNativePaintEvent(const QRect &rect);
-    void setPaintingEnabled(bool enabled);
-    void setFullScreen(bool enabled);
-    void setContentRect(const QRect &rect);
-
-signals:
-    void beginVideoWidgetNativePaint();
-    void endVideoWidgetNativePaint();
-
-private:
-    void updateOrdinalPosition();
-    void queueReactivateWindow();
-
-private slots:
-    void reactivateWindow(QWidget *window);
-    void setWindowsNonFading();
-
-private:
-    const QPixmap *m_pixmap;
-    QRect m_contentRect;
-    bool m_paintingEnabled;
-    WId m_topWinId;
-    int m_ordinalPosition;
+enum NativePaintMode
+{
+    Default,
+    ZeroFill,
+    BlitWriteAlpha
 };
 
-#endif // S60VIDEOWIDGET_H
+void setIgnoreFocusChanged(QWidget *widget);
+void setNativePaintMode(QWidget *widget, NativePaintMode mode);
+void setNativePaintMode(WId wid, NativePaintMode mode);
+void setReceiveNativePaintEvents(QWidget *widget, bool enabled);
+
+} // namespace S60VideoOutputUtils
+
+#endif // S60VIDEOOUTPUTUTILS_H
 
