@@ -59,7 +59,7 @@ QImage BluetoothThumbnailImageProvider::requestImage(const QString &id, QSize *s
     }
 
     /* url format:
-        image://thumbnail/{hosttype}
+        image://bluetoothicons/{hosttype}
      */
 
 

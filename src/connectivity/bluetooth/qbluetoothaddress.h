@@ -52,6 +52,8 @@ QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
+class QBluetoothAddressPrivate;
+
 class Q_CONNECTIVITY_EXPORT QBluetoothAddress
 {
 public:
@@ -74,7 +76,8 @@ public:
     QString toString() const;
 
 private:
-    quint64 m_address;
+    Q_DECLARE_PRIVATE(QBluetoothAddress)
+    QBluetoothAddressPrivate *d_ptr;
 };
 
 QTM_END_NAMESPACE

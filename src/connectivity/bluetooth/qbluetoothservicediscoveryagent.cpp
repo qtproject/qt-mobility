@@ -202,11 +202,9 @@ void QBluetoothServiceDiscoveryAgent::start(DiscoveryMode mode)
     if (d->discoveryState() == QBluetoothServiceDiscoveryAgentPrivate::Inactive) {
         d->setDiscoveryMode(mode);
         if (d->deviceAddress.isNull()) {
-//            qDebug() << "Doing device discovery";
             d->startDeviceDiscovery();
         } else {
             d->discoveredDevices << QBluetoothDeviceInfo(d->deviceAddress, QString(), 0);
-//            qDebug() << "Doing service discovery" << d->discoveredDevices.count();
             d->startServiceDiscovery();
         }
     }
@@ -269,7 +267,8 @@ QBluetoothServiceDiscoveryAgent::Error QBluetoothServiceDiscoveryAgent::error() 
 */
 QString QBluetoothServiceDiscoveryAgent::errorString() const
 {
-    return QString();
+    Q_D(const QBluetoothServiceDiscoveryAgent);
+    return d->errorString;
 }
 
 /*!
@@ -313,11 +312,9 @@ void QBluetoothServiceDiscoveryAgentPrivate::stopDeviceDiscovery()
 */
 void QBluetoothServiceDiscoveryAgentPrivate::_q_deviceDiscoveryFinished()
 {
-//    qDebug() << "XXXXXXXXXXX Finished";
     if (deviceDiscoveryAgent->error() != QBluetoothDeviceDiscoveryAgent::NoError) {
         error = QBluetoothServiceDiscoveryAgent::DeviceDiscoveryError;
 
-        qDebug() << "Device Discovery Error" << error;
         setDiscoveryState(Inactive);
         Q_Q(QBluetoothServiceDiscoveryAgent);
         emit q->finished();
@@ -329,19 +326,12 @@ void QBluetoothServiceDiscoveryAgentPrivate::_q_deviceDiscoveryFinished()
     delete deviceDiscoveryAgent;
     deviceDiscoveryAgent = 0;
 
-    qDebug() << "Start Service Discovery";
-
     startServiceDiscovery();
 }
 
 void QBluetoothServiceDiscoveryAgentPrivate::_q_deviceDiscovered(const QBluetoothDeviceInfo &info)
 {
-//    discoveredDevices.append(info);
-//    if(info.address() != QBluetoothAddress("00:21:86:E8:0F:8D"))
-//        return;
-
     if(mode == QBluetoothServiceDiscoveryAgent::FullDiscovery) {
-//        qDebug() << "Full service dsicovery on" << info.address().toString();
         // look for duplicates, and cached entries
         for(int i = 0; i < discoveredDevices.count(); i++){
             if(discoveredDevices.at(i).address() == info.address()){
@@ -351,17 +341,12 @@ void QBluetoothServiceDiscoveryAgentPrivate::_q_deviceDiscovered(const QBluetoot
         discoveredDevices.prepend(info);
     }
     else {
-        quickDiscovery(info.address(), info);
-//      qDebug() << "Must do full discovery on" << info.address().toString();
-        // look for duplicates, and cached entries
-        if(info.rssi()) {
-            for(int i = 0; i < discoveredDevices.count(); i++){
-                if(discoveredDevices.at(i).address() == info.address()){
-                    discoveredDevices.removeAt(i);
-                }
+        for(int i = 0; i < discoveredDevices.count(); i++){
+            if(discoveredDevices.at(i).address() == info.address()){
+                discoveredDevices.removeAt(i);
             }
-            discoveredDevices.prepend(info);
         }
+        discoveredDevices.prepend(info);
     }
 }
 
@@ -376,7 +361,6 @@ void QBluetoothServiceDiscoveryAgentPrivate::startServiceDiscovery()
 
     if (discoveredDevices.isEmpty()) {
         setDiscoveryState(Inactive);
-        qDebug() << Q_FUNC_INFO<< "Finished";
         emit q->finished();
         return;
     }
@@ -398,7 +382,6 @@ void QBluetoothServiceDiscoveryAgentPrivate::stopServiceDiscovery()
 void QBluetoothServiceDiscoveryAgentPrivate::_q_serviceDiscoveryFinished()
 {
     if(!discoveredDevices.isEmpty()) {
-//        qDebug() << "Deleting: " << discoveredDevices.at(0).address().toString();
         discoveredDevices.removeFirst();
     }
 

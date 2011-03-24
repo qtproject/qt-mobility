@@ -53,14 +53,14 @@
 #include "../qllcpsocket_symbian_p.h"
 #include "../qllcpsocket.h"
 
-/*!
+/*
  *   FORWARD DECLARATIONS
  */
 class CLlcpConnecterAO;
 class CLlcpSenderAO;
 class CLlcpReceiverAO;
 class CLlcpTimer;
-/*!
+/*
  *  CLASS DECLARATION for CLlcpSocketType2 (ConnectOriented Transportation).
  */
 class CLlcpSocketType2 : public CBase
@@ -109,13 +109,13 @@ private:
     void StopWaitNow(TWaitStatus aWaitStatus);
 private:
     friend class CLlcpReceiverAO;
-    /*!
+    /*
     * Handle to NFC-server.
     * Own.
     */
     RNfcServer iNfcServer;
 
-    /*!
+    /*
     * Pointer to CLlcpProvider object.
     * Own.
     */
@@ -145,12 +145,12 @@ public:
     ~CLlcpConnecterAO();
 
 public:
-    /*!
+    /*
     * Disonnect with remote peer .
     */
     void Disconnect();
 
-    /*!
+    /*
     * Connect to remote peer as given service uri.
     */
     void ConnectL(const TDesC8& aServiceName);
@@ -172,12 +172,12 @@ private:
         EConnecting,
         EConnected
         };
-    /*!
+    /*
           Pointer to MLlcpConnOrientedTransporter object.
      */
     MLlcpConnOrientedTransporter& iConnection;//Not Own
     CLlcpSocketType2& iSocket;
-    /*!
+    /*
           State of LLCP connection object.
      */
     TConnectionState iConnState;
@@ -189,7 +189,7 @@ public:
    ~CLlcpSenderAO();
 
 public:
-    /*!
+    /*
     Transfer given data to remote device.
     */
     TInt Send( const TDesC8& aData );
@@ -203,9 +203,11 @@ private:
     CLlcpSenderAO( MLlcpConnOrientedTransporter& aConnection, CLlcpSocketType2& aSocket );
     // Second phase constructor
     void ConstructL();
+private:
+    void SendRestDataAndSwitchBuffer(RBuf8& aWorkingBuffer, RBuf8& aNextBuffer);
 
 private:
-    /*!
+    /*
     Pointer to MLlcpConnOrientedTransporter object.
     */
     MLlcpConnOrientedTransporter& iConnection; //Not Own
@@ -216,12 +218,15 @@ private:
         EBuffer0,
         EBuffer1
         };
-    /*!
+    /*
     * Buffered data for sending data.
     */
     RBuf8 iSendBuf0;
     RBuf8 iSendBuf1;
     TSendBuffer iCurrentBuffer;
+    TPtrC8 iCurrentSendPtr;
+    TInt iCurrentPos;
+    RBuf8 iCurrentSendBuf;
 };
 class CLlcpReceiverAO : public CActive
 {
@@ -230,7 +235,7 @@ public:
     ~CLlcpReceiverAO();
 
 public:
-    /*!
+    /*
     Receive data from remote device.
     */
     TInt StartReceiveDatagram();
@@ -246,13 +251,13 @@ private:
     void ConstructL();
 private:
 
-    /*!
+    /*
     * Pointer to MLlcpConnOrientedTransporter object.
     */
     MLlcpConnOrientedTransporter& iConnection; //Not Own
 
     CLlcpSocketType2& iSocket;
-   /*!
+   /*
     * Buffered data for receiving data.
     */
     RBuf8 iReceiveBuf;

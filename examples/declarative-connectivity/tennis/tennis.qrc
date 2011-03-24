@@ -1,0 +1,14 @@
+<RCC>
+    <qresource prefix="/">
+        <file>tennis.qml</file>
+        <file>sensor.qml</file>
+        <file>Handover.qml</file>
+        <file>Paddle.qml</file>
+        <file>Bumper.qml</file>
+        <file>Score.qml</file>
+        <file>ConnectButton.qml</file>
+    </qresource>
+    <qresource prefix="/icons">
+        <file>connect.png</file>
+    </qresource>
+</RCC>
