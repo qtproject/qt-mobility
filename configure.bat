@@ -66,6 +66,7 @@ set VC_TEMPLATE_OPTION=
 set QT_PATH=
 set QMAKE_CACHE=%BUILD_PATH%\.qmake.cache
 set PLATFORM_CONFIG=
+set NFC_SYMBIAN=auto
 
 REM By default, all modules are requested.  Reset this later if -modules is supplied
 set ORGANIZER_REQUESTED=yes
@@ -106,6 +107,7 @@ if "%1" == "--help"             goto usage
 if "%1" == "-symbian-unfrozen"  goto unfrozenTag
 if "%1" == "-staticconfig"      goto staticConfigTag
 if "%1" == "-languages"         goto languagesTag
+if "%1" == "-no-nfc-symbian"    goto noNfcSymbianTag
 
 echo Unknown option: "%1"
 goto usage
@@ -150,6 +152,7 @@ echo Usage: configure.bat [-prefix (dir)] [headerdir (dir)] [libdir (dir)]
     echo -vc ............... Generate Visual Studio make files
     echo -languages ........ Languages/translations to be installed (e.g.: ar de ko)
     echo                     (default is empty)
+    echo -no-nfc-symbian ... Disables the NFC Symbian backend.
 
 
 if exist "%PROJECT_CONFIG%" del %PROJECT_CONFIG%
@@ -159,6 +162,11 @@ goto exitTag
 shift
 set QT_PATH=%1\
 shift
+goto cmdline_parsing
+
+:noNfcSymbianTag
+shift
+set NFC_SYMBIAN=no
 goto cmdline_parsing
 
 :languagesTag
@@ -610,7 +618,11 @@ call :compileTest CHWRMHaptics chwrmhaptics
 call :compileTest MDS mds
 call :compileTest MDS_25 mds_25
 call :compileTest MDS_25_92MCL mds_25_92mcl
-call :compileTest Symbian_NFC nfc
+if "%NFC_SYMBIAN%" == "auto" (
+    call :compileTest Symbian_NFC nfc_symbian
+) else (
+    echo nfc_symbian_enabled = no >> %PROJECT_CONFIG%
+)
 call :compileTest BTEngineConnectionManager_Symbian btengconnman_symbian
 call :compileTest BTEngineDeviceManager_Symbian btengdevman_symbian
 call :compileTest LockandFlipKeys LockandFlipPSkeys

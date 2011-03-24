@@ -89,7 +89,7 @@ public:
                                  WriteMode mode = EraseAndWrite);
 
 protected:
-    bool handleResponse(const RequestId &id, const QByteArray &response);
+    bool handleResponse(const QNearFieldTarget::RequestId &id, const QByteArray &response);
 
 private:
     QNearFieldTagType1Private *d_ptr;

@@ -81,6 +81,7 @@ public:
     qint64 writeData(const char *data, qint64 len);
 
     qint64 bytesAvailable() const;
+    bool canReadLine() const;
 
     bool waitForReadyRead(int msecs);
     bool waitForBytesWritten(int msecs);
