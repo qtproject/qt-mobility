@@ -41,6 +41,7 @@
 
 #include "qbluetoothsocket_p.h"
 #include "qbluetoothsocket.h"
+#include "qbluetoothlocaldevice_p.h"
 #include "symbian/utils_symbian_p.h"
 
 #include <QCoreApplication>
@@ -138,18 +139,39 @@ void QBluetoothSocketPrivate::ensureBlankNativeSocket()
 
 void QBluetoothSocketPrivate::startReceive()
 {
-
     if (receiving)
         return;
 
     Q_Q(QBluetoothSocket);
-    if (!iBlankSocket) {
+    if (!iSocket) {
         emit q->error(QBluetoothSocket::UnknownSocketError);
         return;
     }
     receiving = true;
 
-    rxDescriptor.Set(reinterpret_cast<unsigned char *>(buffer.reserve(QBLUETOOTHDEVICE_BUFFERSIZE)), 0,  QBLUETOOTHDEVICE_BUFFERSIZE);
+    rxDescriptor.Set(reinterpret_cast<unsigned char *>(buffer.reserve(QPRIVATELINEARBUFFER_BUFFERSIZE)), 0,  QPRIVATELINEARBUFFER_BUFFERSIZE);
+    if (socketType == QBluetoothSocket::RfcommSocket) {
+        if (iSocket->RecvOneOrMore(rxDescriptor, 0, rxLength) != KErrNone) {
+            socketError = QBluetoothSocket::UnknownSocketError;
+            emit q->error(socketError);
+        }
+    } else if (socketType == QBluetoothSocket::L2capSocket) {
+        if (iSocket->Recv(rxDescriptor, 0, rxLength) != KErrNone) {
+            socketError = QBluetoothSocket::UnknownSocketError;
+            emit q->error(socketError);
+        }
+    }
+}
+
+void QBluetoothSocketPrivate::startServerSideReceive()
+{
+    Q_Q(QBluetoothSocket);
+    if (!iBlankSocket) {
+        emit q->error(QBluetoothSocket::UnknownSocketError);
+        return;
+    }
+
+    rxDescriptor.Set(reinterpret_cast<unsigned char *>(buffer.reserve(QPRIVATELINEARBUFFER_BUFFERSIZE)), 0,  QPRIVATELINEARBUFFER_BUFFERSIZE);
     if (socketType == QBluetoothSocket::RfcommSocket) {
         if (iBlankSocket->RecvOneOrMore(rxDescriptor, 0, rxLength) != KErrNone) {
             socketError = QBluetoothSocket::UnknownSocketError;
@@ -212,8 +234,8 @@ void QBluetoothSocketPrivate::HandleReceiveCompleteL(TInt aErr)
             emit q->disconnected();
             return;
         }
-
-        buffer.chop(QBLUETOOTHDEVICE_BUFFERSIZE - (rxDescriptor.Length()));
+               
+        buffer.chop(QPRIVATELINEARBUFFER_BUFFERSIZE - (rxDescriptor.Length()));
 
         emit q->readyRead();
 
@@ -269,7 +291,7 @@ QSocketServerPrivate::~QSocketServerPrivate()
 
 QString QBluetoothSocketPrivate::localName() const
 {
-    return localAddress().toString();
+    return QBluetoothLocalDevicePrivate::name();
 }
 
 QBluetoothAddress QBluetoothSocketPrivate::localAddress() const
@@ -288,7 +310,41 @@ quint16 QBluetoothSocketPrivate::localPort() const
 
 QString QBluetoothSocketPrivate::peerName() const
 {
-    return peerAddress().toString();
+	RHostResolver resolver;
+	
+  TInt err = resolver.Open(getSocketServer()->socketServer, KBTAddrFamily, KBTLinkManager);
+  if (err==KErrNone)
+      {
+      TNameEntry nameEntry;
+      TBTSockAddr sockAddr;
+      if(iBlankSocket)
+          iBlankSocket->RemoteName(sockAddr);
+      else
+          iSocket->RemoteName(sockAddr);
+      TInquirySockAddr address(sockAddr);
+      address.SetBTAddr(sockAddr.BTAddr());
+      address.SetAction(KHostResName|KHostResIgnoreCache); // ignore name stored in cache
+      err = resolver.GetByAddress(address, nameEntry);
+      if(err == KErrNone)
+      	{
+      	TNameRecord name = nameEntry();
+      	QString qString((QChar*)name.iName.Ptr(),name.iName.Length());
+      	m_peerName = qString;
+      	}
+      }
+  resolver.Close();
+
+  if(err != KErrNone)
+      {
+	  	// What is best? return an empty string or return the MAC address?
+	  	// In Symbian if we can't get the remote name we usually replace it with the MAC address
+	  	// but since Bluez implementation return an empty string we do the same here.
+	  	// return peerAdress().toString();
+      qDebug() << "peerName not available " << err;
+	  return QString();
+      }
+
+  	return m_peerName;
 }
 
 QBluetoothAddress QBluetoothSocketPrivate::peerAddress() const
@@ -372,6 +428,11 @@ bool QBluetoothSocketPrivate::setSocketDescriptor(int socketDescriptor, QBluetoo
 void QBluetoothSocketPrivate::_q_startReceive()
 {
     startReceive();
+}
+
+qint64 QBluetoothSocketPrivate::bytesAvailable() const
+{
+    return buffer.size();
 }
 
 QTM_END_NAMESPACE

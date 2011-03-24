@@ -26,6 +26,4 @@ symbian {
     addFiles.sources = ../notesmanagerplugin/notesmanagerservice.xml
     addFiles.path = xmldata
     DEPLOYMENT += addFiles
-
-    TARGET.CAPABILITY = ALL -TCB
 }

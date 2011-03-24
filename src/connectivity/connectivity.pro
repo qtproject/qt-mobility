@@ -7,8 +7,8 @@ DEFINES += QT_BUILD_CONNECTIVITY_LIB QT_MAKEDLL
 
 QT = core
 
+include(connectivity.pri)
 include(nfc/nfc.pri)
-
 include(bluetooth/bluetooth.pri)
 
 HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
@@ -31,3 +31,4 @@ simulator {
 }
 CONFIG += middleware
 include(../../features/deploy.pri)
+

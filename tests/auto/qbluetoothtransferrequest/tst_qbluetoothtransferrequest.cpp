@@ -81,7 +81,6 @@ tst_QBluetoothTransferRequest::~tst_QBluetoothTransferRequest()
 
 void tst_QBluetoothTransferRequest::initTestCase()
 {
-    qRegisterMetaType<QBluetoothAddress>("QBluetoothAddress");
     // start Bluetooth if not started
     QBluetoothLocalDevice *device = new QBluetoothLocalDevice();
     device->powerOn();

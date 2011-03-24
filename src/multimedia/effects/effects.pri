@@ -21,8 +21,12 @@ unix:!mac:!symbian {
 
 PRIVATE_HEADERS += \
         effects/qsoundeffect_p.h \
-        effects/qwavedecoder_p.h
+        effects/qwavedecoder_p.h \
+        effects/qsamplecache_p.h
 
 SOURCES += \
     effects/qsoundeffect.cpp \
-    effects/qwavedecoder_p.cpp
+    effects/qwavedecoder_p.cpp \
+    effects/qsamplecache_p.cpp
+
+HEADERS +=

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -94,7 +94,6 @@ private slots:
     void on_fileSelectPB_clicked();
     void on_sendButton_clicked();
     void on_stopButton_clicked();
-    void on_remoteDevices_currentCellChanged(int currentRow, int currentColumn, int previousRow, int previousColumn);
 
     void pairingFinished(const QBluetoothAddress &address,QBluetoothLocalDevice::Pairing pairing);
     void displayPin(const QBluetoothAddress &address, QString pin);

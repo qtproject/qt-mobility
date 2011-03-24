@@ -58,3 +58,4 @@ usr/include/qt4/QtConnectivity/qrfcommserver.h
 usr/include/qt4/QtConnectivity/qrfcommsocket.h
 usr/lib/libQtConnectivity.so
 usr/lib/pkgconfig/QtConnectivity.pc
+usr/bin/ndefhandlergen

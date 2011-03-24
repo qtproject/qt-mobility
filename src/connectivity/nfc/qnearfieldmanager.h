@@ -73,6 +73,8 @@ public:
     explicit QNearFieldManager(QNearFieldManagerPrivate *backend, QObject *parent = 0);
     ~QNearFieldManager();
 
+    bool isAvailable() const;
+
     void setTargetAccessModes(TargetAccessModes accessModes);
     TargetAccessModes targetAccessModes() const;
 
@@ -91,7 +93,7 @@ public:
 
     bool unregisterNdefMessageHandler(int handlerId);
 
-signals:
+Q_SIGNALS:
     void targetDetected(QNearFieldTarget *target);
     void targetLost(QNearFieldTarget *target);
     void transactionDetected(const QByteArray &applicationIdentifier);

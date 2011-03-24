@@ -915,7 +915,7 @@ static const QGalleryItemProperty qt_galleryImagePropertyList[] =
 //    QT_GALLERY_ITEM_PROPERTY(""                , "Image:Software"       , String    , QGalleryProperty::Attributes()),
     QT_GALLERY_ITEM_PROPERTY("cameraManufacturer", "Image:CameraMake"     , String    , CanRead | CanWrite | CanSort | CanFilter),
     QT_GALLERY_ITEM_PROPERTY("cameraModel"       , "Image:CameraModel"    , String    , CanRead | CanWrite | CanSort | CanFilter),
-    QT_GALLERY_ITEM_PROPERTY("orientation"       , "Image:Orientation"    , String    , CanRead | CanWrite | CanSort | CanFilter),
+    QT_GALLERY_ITEM_PROPERTY("orientation"       , "Image:Orientation"    , Int       , CanRead | CanWrite | CanSort | CanFilter),
     QT_GALLERY_ITEM_PROPERTY("exposureProgram"   , "Image:ExposureProgram", String    , CanRead | CanWrite | CanSort | CanFilter),
     QT_GALLERY_ITEM_PROPERTY("exposureTime"      , "Image:ExposureTime"   , String    , CanRead | CanWrite | CanSort | CanFilter),
     QT_GALLERY_ITEM_PROPERTY("fNumber"           , "Image:FNumber"        , Double    , CanRead | CanWrite | CanSort | CanFilter),

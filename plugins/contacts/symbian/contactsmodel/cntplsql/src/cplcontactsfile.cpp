@@ -79,25 +79,25 @@ CPplContactsFile* CPplContactsFile::NewL(CLplContactProperties& aProps, MContact
 CPplContactsFile ConstructL.
 */	
 void CPplContactsFile::ConstructL()
-	{
+    {
     // Do this first since the contacts table created by the
     // iItemManager will need to know if the directory exists.
-   TCntImageRescaleUtility::CreateImageDirectoryL();
-    
-	iItemManager = CPplContactItemManager::NewL(iDatabase, *this, iContactProperties, iIccContactStore);
-	iContactProperties.SetContactItemManagerL(*iItemManager);
-	
-	iConfigureStr = NULL;
-	if(KContactsModelSqliteDbCacheSize > 0)
-		{
-		//Create configure string to be used when creating/opening database
-		iConfigureStr = HBufC8::NewL(KSqliteCacheSize().Length() + KCacheDataSize);
-		TPtr8 ptrConfigureStr = iConfigureStr->Des();
-		ptrConfigureStr.Format(KSqliteCacheSize(), KContactsModelSqliteDbCacheSize);
-		}
-	}
-	
-	
+    TRAP_IGNORE(TCntImageRescaleUtility::CreateImageDirectoryL());
+
+    iItemManager = CPplContactItemManager::NewL(iDatabase, *this, iContactProperties, iIccContactStore);
+    iContactProperties.SetContactItemManagerL(*iItemManager);
+
+    iConfigureStr = NULL;
+    if(KContactsModelSqliteDbCacheSize > 0)
+        {
+        //Create configure string to be used when creating/opening database
+        iConfigureStr = HBufC8::NewL(KSqliteCacheSize().Length() + KCacheDataSize);
+        TPtr8 ptrConfigureStr = iConfigureStr->Des();
+        ptrConfigureStr.Format(KSqliteCacheSize(), KContactsModelSqliteDbCacheSize);
+        }
+    }
+
+
 /**
 CPplContactsFile constructor.
 */
@@ -291,52 +291,52 @@ public:
 Create a new database.
 */
 EXPORT_C void CPplContactsFile::CreateL(const TDesC& aFileName, TPlCreateMode aMode)
-	{
-	TFileName fileName;
-	GetPhysicalFileNameL(fileName, aFileName); 
+    {
+    TFileName fileName;
+    GetPhysicalFileNameL(fileName, aFileName); 
 
-	TUint attVal;
-	LocalFsL();
-	TInt err = iLocalFs.Att(fileName, attVal);
-	TBool fileExists = (err == KErrNone);
-	
-	if (fileExists)
-		{
-		switch (aMode)
-			{
-			case EPlLeaveIfExist:
-				User::Leave(KErrAlreadyExists);
-				break;
-				
-			case EPlOverwrite:
-				err = iLocalFs.Delete(fileName);
-				break;
-			}
-		}
-	
-	// If the database is not created propertly delete the database file using
-	// the cleanup item.
-	TFileCleanup cleanupData(iDatabase, iLocalFs, fileName);
-	CleanupStack::PushL(TCleanupItem(TFileCleanup::Cleanup,&cleanupData)); 
+    TUint attVal;
+    LocalFsL();
+    TInt err = iLocalFs.Att(fileName, attVal);
+    TBool fileExists = (err == KErrNone);
 
-	if ((err != KErrNone) && (err != KErrNotFound)) 
-		{
-		User::LeaveIfError(err);
-		}
-	
-	User::LeaveIfError(iDatabase.Create(fileName, iConfigureStr));
-  	iItemManager->CreateTablesL();
-  	
-  	// If the folder exists recreate it since the database is new
-  	TRAP_IGNORE(TCntImageRescaleUtility::DeleteImageDirectoryL());
-  	TCntImageRescaleUtility::CreateImageDirectoryL();
-  	
-  	iContactProperties.SystemTemplateManager().RecreateSystemTemplateL();
+    if (fileExists)
+        {
+        switch (aMode)
+            {
+            case EPlLeaveIfExist:
+                User::Leave(KErrAlreadyExists);
+                break;
+                
+            case EPlOverwrite:
+                err = iLocalFs.Delete(fileName);
+                break;
+            }
+        }
 
-	CleanupStack::Pop(); // The TCleanupItem.
-	
-	iDatabase.Close();  
-	}
+    // If the database is not created propertly delete the database file using
+    // the cleanup item.
+    TFileCleanup cleanupData(iDatabase, iLocalFs, fileName);
+    CleanupStack::PushL(TCleanupItem(TFileCleanup::Cleanup,&cleanupData)); 
+
+    if ((err != KErrNone) && (err != KErrNotFound)) 
+        {
+        User::LeaveIfError(err);
+        }
+
+    User::LeaveIfError(iDatabase.Create(fileName, iConfigureStr));
+    iItemManager->CreateTablesL();
+
+    // If the folder exists recreate it since the database is new
+    TRAP_IGNORE(TCntImageRescaleUtility::DeleteImageDirectoryL());
+    TRAP_IGNORE(TCntImageRescaleUtility::CreateImageDirectoryL());
+    
+    iContactProperties.SystemTemplateManager().RecreateSystemTemplateL();
+
+    CleanupStack::Pop(); // The TCleanupItem.
+
+    iDatabase.Close();  
+    }
 
 
 /**

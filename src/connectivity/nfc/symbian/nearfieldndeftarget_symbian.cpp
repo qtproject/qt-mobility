@@ -80,8 +80,15 @@ CNearFieldNdefTarget::~CNearFieldNdefTarget()
     // when connection is closed, cancel for each specific connection will be done.
     if (iNdefConnection)
         {
+        if (iNdefConnection->IsActivated())
+            {
+            CloseConnection();
+            }
         delete iNdefConnection;
         }
+
+    // when Ndef target has a tag connection, iNfcTag ownership
+    // will transfer to tag connection.
     if (iTagConnection)
         {
         delete iTagConnection;
@@ -92,9 +99,9 @@ CNearFieldNdefTarget::~CNearFieldNdefTarget()
         }
     END
     }
-    
+
 void CNearFieldNdefTarget::Cancel()
-{
+    {
     BEGIN
     if (ERead == iCurrentOperation)
     {
@@ -104,10 +111,10 @@ void CNearFieldNdefTarget::Cancel()
     {
         iNdefConnection->CancelWrite();
     }
-    
+
     iCurrentOperation = ENull;
     END
-}
+    }
 
 CNearFieldTag * CNearFieldNdefTarget::CastToTag()
     {
@@ -134,7 +141,7 @@ CNearFieldNdefTarget * CNearFieldNdefTarget::CastToNdefTarget()
             iTagConnection->CloseConnection();
             }
         }
-    
+
     if (!IsConnectionOpened())
         {
         LOG("Open ndef connection")
@@ -187,7 +194,7 @@ void CNearFieldNdefTarget::ReadComplete( CNdefMessage* aMessage )
             err = iMessages->Append(aMessage);
             LOG("append message, err = "<<err);
             }
-        
+
         TInt errIgnore = KErrNone;
         QT_TRYCATCH_ERROR(errIgnore, iCallback->ReadComplete(err, iMessages));
         //TODO: consider it carefully
@@ -219,7 +226,7 @@ void CNearFieldNdefTarget::HandleError( TInt aError )
     if (iCallback)
         {
         LOG(iCurrentOperation);
-        
+
         if (ERead == iCurrentOperation)
             {
             iCallback->ReadComplete(aError, iMessages);
@@ -228,11 +235,11 @@ void CNearFieldNdefTarget::HandleError( TInt aError )
             {
             iCallback->WriteComplete(aError);
             }
-        //TODO: consider it carefully 
+        //TODO: consider it carefully
         //iMessages = 0;
         }
     END
-    }   
+    }
 
 TInt CNearFieldNdefTarget::ndefMessages(RPointerArray<CNdefMessage>& aMessages)
     {
@@ -287,7 +294,7 @@ TInt CNearFieldNdefTarget::setNdefMessages(const RPointerArray<CNdefMessage>& aM
                 }
             if (KErrNone == error)
                 {
-                LOG("begin to write message"); 
+                LOG("begin to write message");
                 error = iNdefConnection->WriteMessage(*message);
                 LOG("write message err = "<<error);
                 iCurrentOperation = (KErrNone == error) ? EWrite : ENull;

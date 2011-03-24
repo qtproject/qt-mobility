@@ -40,7 +40,6 @@
 ****************************************************************************/
 
 #include "qbluetoothuuid.h"
-#include "qbluetoothuuid_p.h"
 
 #include <QStringList>
 
