@@ -265,7 +265,7 @@ void S60VideoCaptureSession::doInitializeVideoRecorderL()
     emit stateChanged(m_captureState);
 
     // Open Dummy file to be able to query supported settings
-    int cameraHandle = m_cameraEngine->Camera()->Handle();
+    int cameraHandle = m_cameraEngine->Camera() ? m_cameraEngine->Camera()->Handle() : 0;
 
     TUid controllerUid;
     TUid formatUid;
@@ -656,7 +656,7 @@ bool S60VideoCaptureSession::setOutputLocation(const QUrl &sink)
     QString fileName = QDir::toNativeSeparators(m_sink.toString());
     TPtrC16 fileSink(reinterpret_cast<const TUint16*>(fileName.utf16()));
 
-    int cameraHandle = m_cameraEngine->Camera()->Handle();
+    int cameraHandle = m_cameraEngine->Camera() ? m_cameraEngine->Camera()->Handle() : 0;
 
     TUid controllerUid;
     TUid formatUid;

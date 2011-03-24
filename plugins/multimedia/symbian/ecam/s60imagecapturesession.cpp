@@ -988,9 +988,11 @@ QList<QSize> S60ImageCaptureSession::supportedCaptureSizesForCodec(const QString
 
         CCamera *camera = m_cameraEngine->Camera();
         TSize imageSize;
-        for (int i = 0; i < m_cameraInfo->iNumImageSizesSupported; i++) {
-            camera->EnumerateCaptureSizes(imageSize, i, format);
-            list << QSize(imageSize.iWidth, imageSize.iHeight); // Add resolution to the list
+        if (camera) {
+            for (int i = 0; i < m_cameraInfo->iNumImageSizesSupported; i++) {
+                camera->EnumerateCaptureSizes(imageSize, i, format);
+                list << QSize(imageSize.iWidth, imageSize.iHeight); // Add resolution to the list
+            }
         }
     }
 
@@ -1339,7 +1341,7 @@ void S60ImageCaptureSession::setFlashMode(QCameraExposure::FlashModes mode)
 
 void S60ImageCaptureSession::doSetFlashModeL(QCameraExposure::FlashModes mode)
 {
-    if (m_cameraEngine) {
+    if (m_cameraEngine && m_cameraEngine->Camera()) {
         CCamera *camera = m_cameraEngine->Camera();
         switch(mode) {
             case QCameraExposure::FlashOff:
@@ -1362,14 +1364,14 @@ void S60ImageCaptureSession::doSetFlashModeL(QCameraExposure::FlashModes mode)
                 setError(KErrNotSupported, tr("Requested flash mode is not suported"));
                 break;
         }
-    }
-    else
+    } else {
         setError(KErrNotReady, tr("Unexpected camera error."));
+    }
 }
 
 QCameraExposure::FlashMode S60ImageCaptureSession::flashMode()
 {
-    if (m_cameraEngine) {
+    if (m_cameraEngine && m_cameraEngine->Camera()) {
         CCamera *camera = m_cameraEngine->Camera();
         switch(camera->Flash()) {
             case CCamera::EFlashAuto:
@@ -1386,9 +1388,9 @@ QCameraExposure::FlashMode S60ImageCaptureSession::flashMode()
             default:
                 return QCameraExposure::FlashAuto; // Most probable default
         }
-    }
-    else
+    } else {
         setError(KErrNotReady, tr("Unexpected camera error."));
+    }
 
     return QCameraExposure::FlashOff;
 }
@@ -1420,7 +1422,7 @@ QCameraExposure::FlashModes S60ImageCaptureSession::supportedFlashModes()
 
 QCameraExposure::ExposureMode S60ImageCaptureSession::exposureMode()
 {
-    if (m_cameraEngine) {
+    if (m_cameraEngine && m_cameraEngine->Camera()) {
         CCamera* camera = m_cameraEngine->Camera();
         switch(camera->Exposure()) {
             case CCamera::EExposureManual:
@@ -1503,7 +1505,7 @@ void S60ImageCaptureSession::setExposureMode(QCameraExposure::ExposureMode mode)
 
 void S60ImageCaptureSession::doSetExposureModeL( QCameraExposure::ExposureMode mode)
 {
-    if (m_cameraEngine) {
+    if (m_cameraEngine && m_cameraEngine->Camera()) {
         CCamera *camera = m_cameraEngine->Camera();
         switch(mode) {
             case QCameraExposure::ExposureManual:
@@ -1536,14 +1538,14 @@ void S60ImageCaptureSession::doSetExposureModeL( QCameraExposure::ExposureMode m
                 setError(KErrNotSupported, tr("Requested exposure mode is not suported"));
                 break;
         }
-    }
-    else
+    } else {
         setError(KErrNotReady, tr("Unexpected camera error."));
+    }
 }
 
 int S60ImageCaptureSession::contrast() const
 {
-    if (m_cameraEngine) {
+    if (m_cameraEngine && m_cameraEngine->Camera()) {
         return m_cameraEngine->Camera()->Contrast();
     } else {
         return 0;
@@ -1552,17 +1554,17 @@ int S60ImageCaptureSession::contrast() const
 
 void S60ImageCaptureSession::setContrast(int value)
 {
-    if (m_cameraEngine) {
+    if (m_cameraEngine && m_cameraEngine->Camera()) {
         TRAPD(err, m_cameraEngine->Camera()->SetContrastL(value));
         setError(err, tr("Failed to set contrast."));
-    }
-    else
+    } else {
         setError(KErrNotReady, tr("Unexpected camera error."));
+    }
 }
 
 int S60ImageCaptureSession::brightness() const
 {
-    if (m_cameraEngine) {
+    if (m_cameraEngine && m_cameraEngine->Camera()) {
         return m_cameraEngine->Camera()->Brightness();
     } else {
         return 0;
@@ -1571,17 +1573,17 @@ int S60ImageCaptureSession::brightness() const
 
 void S60ImageCaptureSession::setBrightness(int value)
 {
-    if (m_cameraEngine) {
+    if (m_cameraEngine && m_cameraEngine->Camera()) {
         TRAPD(err, m_cameraEngine->Camera()->SetBrightnessL(value));
         setError(err, tr("Failed to set brightness."));
-    }
-    else
+    } else {
         setError(KErrNotReady, tr("Unexpected camera error."));
+    }
 }
 
  QCameraImageProcessing::WhiteBalanceMode S60ImageCaptureSession::whiteBalanceMode()
 {
-    if (m_cameraEngine) {
+    if (m_cameraEngine && m_cameraEngine->Camera()) {
         CCamera::TWhiteBalance mode = m_cameraEngine->Camera()->WhiteBalance();
         switch(mode) {
             case CCamera::EWBAuto:
@@ -1619,7 +1621,7 @@ void S60ImageCaptureSession::setWhiteBalanceMode( QCameraImageProcessing::WhiteB
 
 void S60ImageCaptureSession::doSetWhiteBalanceModeL( QCameraImageProcessing::WhiteBalanceMode mode)
 {
-    if (m_cameraEngine) {
+    if (m_cameraEngine && m_cameraEngine->Camera()) {
         CCamera* camera = m_cameraEngine->Camera();
         switch(mode) {
             case  QCameraImageProcessing::WhiteBalanceAuto:
@@ -1654,9 +1656,9 @@ void S60ImageCaptureSession::doSetWhiteBalanceModeL( QCameraImageProcessing::Whi
                 setError(KErrNotSupported, tr("Requested white balance mode is not suported"));
                 break;
         }
-    }
-    else
+    } else {
         setError(KErrNotReady, tr("Unexpected camera error."));
+    }
 }
 
 bool S60ImageCaptureSession::isWhiteBalanceModeSupported(QCameraImageProcessing::WhiteBalanceMode mode) const
