@@ -310,7 +310,41 @@ quint16 QBluetoothSocketPrivate::localPort() const
 
 QString QBluetoothSocketPrivate::peerName() const
 {
-    return peerAddress().toString();
+	RHostResolver resolver;
+	
+  TInt err = resolver.Open(getSocketServer()->socketServer, KBTAddrFamily, KBTLinkManager);
+  if (err==KErrNone)
+      {
+      TNameEntry nameEntry;
+      TBTSockAddr sockAddr;
+      if(iBlankSocket)
+          iBlankSocket->RemoteName(sockAddr);
+      else
+          iSocket->RemoteName(sockAddr);
+      TInquirySockAddr address(sockAddr);
+      address.SetBTAddr(sockAddr.BTAddr());
+      address.SetAction(KHostResName|KHostResIgnoreCache); // ignore name stored in cache
+      err = resolver.GetByAddress(address, nameEntry);
+      if(err == KErrNone)
+      	{
+      	TNameRecord name = nameEntry();
+      	QString qString((QChar*)name.iName.Ptr(),name.iName.Length());
+      	m_peerName = qString;
+      	}
+      }
+  resolver.Close();
+
+  if(err != KErrNone)
+      {
+	  	// What is best? return an empty string or return the MAC address?
+	  	// In Symbian if we can't get the remote name we usually replace it with the MAC address
+	  	// but since Bluez implementation return an empty string we do the same here.
+	  	// return peerAdress().toString();
+      qDebug() << "peerName not available " << err;
+	  return QString();
+      }
+
+  	return m_peerName;
 }
 
 QBluetoothAddress QBluetoothSocketPrivate::peerAddress() const

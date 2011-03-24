@@ -450,10 +450,10 @@ void CQGeoPositionInfoSourceS60::updateStatus(TPositionModuleInfo &aModInfo, TIn
         if (mList[i].mTimeToNextFix != time_to_next_fix)
             mList[i].mTimeToFirstFix = time_to_next_fix;
 
-        lLocker.unlock();
-
         //update the supported source types based on the device status
         updateAvailableTypes();
+
+        lLocker.unlock();
 
         //if the mCurrentModuleId is NULL, try updating the reg update with the available
         //positioning method

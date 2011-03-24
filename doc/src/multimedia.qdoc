@@ -425,6 +425,15 @@ image attributes using the Color Options button.
 The \l{slideshow}{Slide Show} shows the use of the QMediaImageViewer and
 QVideoWidget classes.
 
+\section2 Camera Example
+
+The \l{Camera Example} shows how use the QtMultimediaKit API to quickly
+write a camera application in C++.
+
+\section2 QML Camera Example
+
+The \l {QML Camera Example} demonstrates still image capture and controls
+using the QML plugin. Video recording is not currently available.
 
 
 \section1 Reference documentation

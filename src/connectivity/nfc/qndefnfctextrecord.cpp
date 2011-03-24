@@ -127,7 +127,7 @@ QString QNdefNfcTextRecord::text() const
 void QNdefNfcTextRecord::setText(const QString text)
 {
     if (payload().isEmpty())
-        setLocale(QLocale::system().name());
+        setLocale(QLocale().name());
 
     QByteArray p = payload();
 

@@ -123,7 +123,7 @@ public:
 
     QString networkName(QSystemNetworkInfo::NetworkMode mode);
     QString macAddress(QSystemNetworkInfo::NetworkMode mode);
-    QSystemNetworkInfo::CellDataTechnology cellDataTechnology();
+  //  QSystemNetworkInfo::CellDataTechnology cellDataTechnology();
 
 public Q_SLOTS:
 #if !defined(QT_NO_NETWORKMANAGER)

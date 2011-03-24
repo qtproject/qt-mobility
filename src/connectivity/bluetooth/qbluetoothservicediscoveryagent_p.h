@@ -143,6 +143,8 @@ private:
 
     QBluetoothServiceDiscoveryAgent::DiscoveryMode mode;
 
+    bool singleDevice;
+
 #ifdef QTM_SYMBIAN_BLUETOOTH
     CSdpAgent *m_sdpAgent;
     CSdpSearchPattern *m_filter;

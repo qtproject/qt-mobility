@@ -43,6 +43,8 @@
 
 #include <QDebug>
 
+ #include <QProcessEnvironment>
+
 #include <qbluetoothsocket.h>
 #include <qbluetoothdeviceinfo.h>
 #include <qbluetoothserviceinfo.h>
@@ -132,31 +134,43 @@ void tst_QBluetoothSocket::initTestCase()
     device->powerOn();
     delete device;
 
-    // Go find an echo server for BTADDRESS
-    QBluetoothServiceDiscoveryAgent *sda = new QBluetoothServiceDiscoveryAgent(this);
-    connect(sda, SIGNAL(serviceDiscovered(QBluetoothServiceInfo)), this, SLOT(serviceDiscovered(QBluetoothServiceInfo)));
-    connect(sda, SIGNAL(error(QBluetoothServiceDiscoveryAgent::Error)), this, SLOT(error(QBluetoothServiceDiscoveryAgent::Error)));
-    connect(sda, SIGNAL(finished()), this, SLOT(finished()));
-
-    qDebug() << "Starting discovery";
-    done_discovery = false;
-    memset(BTADDRESS, 0, 18);
-
-    sda->setUuidFilter(QBluetoothUuid(QString(ECHO_SERVICE_UUID)));
-    sda->start(QBluetoothServiceDiscoveryAgent::MinimalDiscovery);
-
-    int connectTime = MaxConnectTime;
-    while (!done_discovery) {
-        QTest::qWait(1000);
-        connectTime -= 1000;
+    QProcessEnvironment pe = QProcessEnvironment::systemEnvironment();
+    QLatin1String t("TESTSERVER");
+    if(pe.contains(t)){
+        qDebug() << pe.value(t);
+        strcpy(BTADDRESS, pe.value(t).toAscii());
     }
 
-    sda->stop();
+    if(QBluetoothAddress(BTADDRESS).isNull()){
+        // Go find an echo server for BTADDRESS
+        QBluetoothServiceDiscoveryAgent *sda = new QBluetoothServiceDiscoveryAgent(this);
+        connect(sda, SIGNAL(serviceDiscovered(QBluetoothServiceInfo)), this, SLOT(serviceDiscovered(QBluetoothServiceInfo)));
+        connect(sda, SIGNAL(error(QBluetoothServiceDiscoveryAgent::Error)), this, SLOT(error(QBluetoothServiceDiscoveryAgent::Error)));
+        connect(sda, SIGNAL(finished()), this, SLOT(finished()));
 
-    if(BTADDRESS[0] == 0){
-        QFAIL("Unable to find test service");
+
+        qDebug() << "Starting discovery";
+        done_discovery = false;
+        memset(BTADDRESS, 0, 18);
+
+        sda->setUuidFilter(QBluetoothUuid(QString(ECHO_SERVICE_UUID)));
+        sda->start(QBluetoothServiceDiscoveryAgent::MinimalDiscovery);
+
+        int connectTime = MaxConnectTime;
+        while (!done_discovery) {
+            QTest::qWait(1000);
+            connectTime -= 1000;
+        }
+
+        sda->stop();
+
+        if(QBluetoothAddress(BTADDRESS).isNull()){
+            QFAIL("Unable to find test service");
+        }
+        delete sda;
+        sda = 0x0;
     }
-    delete sda;
+
 }
 
 void tst_QBluetoothSocket::error(QBluetoothServiceDiscoveryAgent::Error error)

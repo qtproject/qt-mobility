@@ -139,7 +139,7 @@ bool genericalssensor::filter(QLightReading *reading)
 
     //qDebug() << "lightLevel" << light_level(lightLevel) << "lux" << lux;
 
-    if (static_cast<int>(m_reading.lightLevel()) != lightLevel) {
+    if (static_cast<int>(m_reading.lightLevel()) != lightLevel || m_reading.timestamp() == 0) {
         m_reading.setTimestamp(reading->timestamp());
         m_reading.setLightLevel(static_cast<QAmbientLightReading::LightLevel>(lightLevel));
 

@@ -103,8 +103,8 @@ private:
     QSharedDataPointer<QNdefRecordPrivate> d;
 };
 
-#define Q_DECLARE_NDEF_RECORD(className, typeNameFormat, type) \
-    className() : QNdefRecord(typeNameFormat, type) { } \
+#define Q_DECLARE_NDEF_RECORD(className, typeNameFormat, type, initialPayload) \
+    className() : QNdefRecord(typeNameFormat, type) { setPayload(initialPayload); } \
     className(const QNdefRecord &other) : QNdefRecord(other, typeNameFormat, type) { }
 
 #define Q_DECLARE_ISRECORDTYPE_FOR_NDEF_RECORD(className, typeNameFormat_, type_) \

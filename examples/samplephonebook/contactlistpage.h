@@ -86,6 +86,8 @@ private slots:
     void contactsRemoved(const QList<QContactLocalId>& ids);
     void contactsChanged(const QList<QContactLocalId>& ids);
     void dataChanged();
+    //ContactsAdd() timer expired invoke function, it gets the contact list and updates the view list
+    void rebuildList ();
 
 private:
     // elements of the contact list "page"
@@ -103,6 +105,9 @@ private:
     QList<QContact> m_contacts;
     QContactFilter m_currentFilter;
     QMap<QString, QString> m_availableManagers;
+
+    //flag for contact add check, false means timer is set and fetching is going on
+    bool m_needsFresh;
 };
 
 #endif // CONTACTLISTPAGE_H
