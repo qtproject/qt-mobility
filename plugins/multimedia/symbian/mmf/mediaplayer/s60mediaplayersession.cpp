@@ -707,6 +707,10 @@ void S60MediaPlayerSession::buffering()
     startStalledTimer();
     setMediaStatus(QMediaPlayer::BufferingMedia);
 
+//Buffering cannot happen in stopped state. Hence update the state
+    if (state() == QMediaPlayer::StoppedState)
+        setState(QMediaPlayer::PausedState);
+
     DP0("S60MediaPlayerSession::buffering ---");
 }
 

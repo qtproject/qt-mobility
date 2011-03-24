@@ -312,8 +312,7 @@ bool QValueSpaceSubscriberPrivate::disconnect(QValueSpaceSubscriber * space)
 /*!
     Constructs a QValueSpaceSubscriber with the specified \a parent that refers to the root path.
 
-    The constructed Value Space subscriber will access all available
-    QAbstractValueSpaceLayer layers.
+    The constructed Value Space subscriber will access all available layers.
 */
 QValueSpaceSubscriber::QValueSpaceSubscriber(QObject *parent)
 :   QObject(parent)
@@ -324,8 +323,7 @@ QValueSpaceSubscriber::QValueSpaceSubscriber(QObject *parent)
 /*!
     Constructs a QValueSpaceSubscriber with the specified \a parent that refers to \a path.
 
-    The constructed Value Space subscriber will access all available
-    QAbstractValueSpaceLayer layers.
+    The constructed Value Space subscriber will access all available layers.
 */
 QValueSpaceSubscriber::QValueSpaceSubscriber(const QString &path, QObject *parent)
 :   QObject(parent)
@@ -355,12 +353,12 @@ QValueSpaceSubscriber::QValueSpaceSubscriber(QValueSpace::LayerOptions filter,
     QValueSpaceSubscriber will only use the layer identified by \a uuid.
 
     Use of this constructor is not platform agnostic.  If possible use one of the constructors that
-    take a QAbstractValueSpaceLayer::LayerOptions parameter instead.
+    take a QValueSpace::LayerOptions parameter instead.
 
     If a layer with a matching \a uuid is not found, the constructed QValueSpaceSubscriber will be
     unconnected.
 
-    \sa QAbstractValueSpaceLayer::id(), QValueSpace, isConnected()
+    \sa QValueSpace, isConnected()
 */
 QValueSpaceSubscriber::QValueSpaceSubscriber(const QUuid &uuid,
                                              const QString &path,

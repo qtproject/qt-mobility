@@ -51,38 +51,29 @@ QValueSpaceManager *QValueSpaceManager::instance()
 }
 
 QValueSpaceManager::QValueSpaceManager()
-: type(Uninit)
+    : type(Uninit)
 {
 }
 
-void QValueSpaceManager::initServer()
+void QValueSpaceManager::init(QAbstractValueSpaceLayer::Type type)
 {
-    Q_ASSERT(Uninit == type);
+    if (Uninit != this->type
+        && type == QAbstractValueSpaceLayer::Client) {
+        // Clients may call this function multiple times
+        return;
+    }
 
-    commonInit(QAbstractValueSpaceLayer::Server);
-}
-
-void QValueSpaceManager::init()
-{
-    if(Uninit != type)
-        return; // Already initialized
-
-    commonInit(QAbstractValueSpaceLayer::Client);
-}
-
-void QValueSpaceManager::commonInit(QAbstractValueSpaceLayer::Type vsltype)
-{
-    Q_ASSERT(Uninit == type);
+    Q_ASSERT(Uninit == this->type);
 
     // Install all the dormant layers
-    for(int ii = 0; ii < funcs.count(); ++ii)
+    for (int ii = 0; ii < funcs.count(); ++ii)
         install(funcs[ii]());
     funcs.clear();
 
-    type = (vsltype == QAbstractValueSpaceLayer::Server)?Server:Client;
+    this->type = (type == QAbstractValueSpaceLayer::Server) ? Server : Client;
 
-    for(int ii = 0; ii < layers.count(); ++ii) {
-        if(!initLayer(layers.at(ii))) {
+    for (int ii = 0; ii < layers.count(); ++ii) {
+        if (!layers.at(ii)->startup(type)) {
             layers.removeAt(ii);
             --ii;
         }
@@ -98,28 +89,8 @@ void QValueSpaceManager::install(QAbstractValueSpaceLayer * layer)
 {
     Q_ASSERT(Uninit == type);
     Q_ASSERT(layer);
-    unsigned int cOrder = layer->order();
-    int inserted = -1;
-    for(int ii = 0; !inserted && ii < layers.count(); ++ii) {
-        unsigned int lOrder = layers.at(ii)->order();
-        Q_ASSERT(layer != layers.at(ii));
-        if(lOrder < cOrder) {
-            // Do nothing
-        } else if(lOrder == cOrder) {
-            if(layers.at(ii)->id() > layer->id()) {
-                layers.insert(ii, layer);
-                inserted = ii;
-            }
-        } else if(lOrder > cOrder) {
-            layers.insert(ii, layer);
-            inserted = ii;
-        }
-    }
 
-    if(-1 == inserted) {
-        inserted = layers.count();
-        layers.append(layer);
-    }
+    layers.append(layer);
 }
 
 void QValueSpaceManager::install(QValueSpace::LayerCreateFunc func)
@@ -130,17 +101,9 @@ void QValueSpaceManager::install(QValueSpace::LayerCreateFunc func)
 
 QList<QAbstractValueSpaceLayer *> const & QValueSpaceManager::getLayers()
 {
-    init(); // Fallback init
+    init(QAbstractValueSpaceLayer::Client); // Fallback init
 
     return layers;
-}
-
-bool QValueSpaceManager::initLayer(QAbstractValueSpaceLayer* layer)
-{
-    Q_ASSERT(Uninit != type);
-
-    return layer->startup((type==Client)?QAbstractValueSpaceLayer::Client:
-                                         QAbstractValueSpaceLayer::Server);
 }
 
 QTM_END_NAMESPACE

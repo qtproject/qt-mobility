@@ -47,7 +47,6 @@
 #include <QList>
 #include <QPen>
 #include <QBrush>
-#include <QGraphicsPolygonItem>
 
 QTM_BEGIN_NAMESPACE
 
@@ -58,9 +57,8 @@ public:
     ~QGeoMapPolygonObjectPrivate();
 
     QList<QGeoCoordinate> path;
-    QGraphicsPolygonItem *item;
-
-    void genPoly();
+    QPen pen;
+    QBrush brush;
 };
 
 QTM_END_NAMESPACE

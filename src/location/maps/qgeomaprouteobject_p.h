@@ -45,7 +45,6 @@
 #include "qgeoroute.h"
 
 #include <QPen>
-#include <QGraphicsPathItem>
 
 QTM_BEGIN_NAMESPACE
 
@@ -55,10 +54,8 @@ public:
     QGeoMapRouteObjectPrivate();
     ~QGeoMapRouteObjectPrivate();
 
-    void regenPath();
-
     QGeoRoute route;
-    QGraphicsPathItem *item;
+    QPen pen;
     quint32 detailLevel;
 };
 

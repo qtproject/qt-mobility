@@ -351,7 +351,7 @@ bool CntSymbianEngine::doSaveContact(QContact* contact, QContactChangeSet& chang
         contact->removeDetail(&details.first());
     }
     
-    if(!validateContact(*contact, error)) {
+    if (!validateContact(*contact, error)) {
         return false;
     }
 

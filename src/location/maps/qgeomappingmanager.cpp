@@ -213,6 +213,18 @@ qreal QGeoMappingManager::maximumTilt() const
 }
 
 /*!
+    Returns whether custom map objects are supported by this engine.
+
+    Custom map objects are map objects based on QGraphicsItem instances, which
+    are hard to support in cases where the map rendering is not being
+    performed by the Qt Graphics View framwork.
+*/
+bool QGeoMappingManager::supportsCustomMapObjects() const
+{
+    return d_ptr->engine->supportsCustomMapObjects();
+}
+
+/*!
     Sets the locale to be used by the this manager to \a locale.
 
     If this mapping manager supports returning map labels

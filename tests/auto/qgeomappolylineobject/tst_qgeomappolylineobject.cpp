@@ -123,6 +123,7 @@ void tst_QGeoMapPolylineObject::qgeomappolylineobject()
 
     QCOMPARE(object->path(), QList<QGeoCoordinate>());
     QPen pen(Qt::black);
+    pen.setCosmetic(true);
     QCOMPARE(object->pen(), pen);
     QCOMPARE(object->zValue(), 0);
     QCOMPARE(object->isSelected(),false);

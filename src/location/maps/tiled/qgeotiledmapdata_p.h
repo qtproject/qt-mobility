@@ -72,6 +72,7 @@ class QGeoTiledMapData;
 class QGeoTiledMapRequest;
 class QGeoTiledMapReply;
 class QGeoTiledMapObjectInfo;
+class QGeoMapObjectEngine;
 
 class QGeoTiledMapDataPrivate : public QGeoMapDataPrivate
 {
@@ -83,6 +84,7 @@ public:
     void clearRequests();
 
     void paintMap(QPainter *painter, const QStyleOptionGraphicsItem *option);
+    void paintObjects(QPainter *painter, const QStyleOptionGraphicsItem *option);
 
     void cleanupCaches();
 
@@ -98,6 +100,13 @@ public:
     virtual QPoint screenPositionToWorldReferencePosition(const QPointF &screenPosition) const;
     virtual QPoint coordinateToWorldReferencePosition(double lon, double lat) const;
     virtual QPointF coordinateToScreenPosition(double lon, double lat) const;
+
+    virtual void addObject(QGeoMapObject *object);
+    virtual void removeObject(QGeoMapObject *object);
+
+    virtual void update(QObject *object);
+
+    QGeoMapObjectEngine *oe;
 
     int zoomFactor;
 
@@ -120,13 +129,8 @@ public:
     ProjCoordinateSystem spherical;
     ProjCoordinateSystem wgs84;
 
-
     Q_DECLARE_PUBLIC(QGeoTiledMapData)
 private:
-    QGraphicsScene *scene;
-
-    QHash<QGraphicsItem*, QGeoMapObject*> itemMap;
-
     Q_DISABLE_COPY(QGeoTiledMapDataPrivate)
 };
 
