@@ -65,6 +65,8 @@
 #include <QBasicTimer>
 #include <QtCore/qlibrary.h>
 #include <QSysInfo>
+#include <QUuid>
+#include <QCryptographicHash>
 
 #include <qabstracteventdispatcher.h>
 
@@ -2145,7 +2147,11 @@ QByteArray QSystemDeviceInfoPrivate::uniqueDeviceID()
     wHelper->setClassName("Win32_ComputerSystemProduct");
     wHelper->setClassProperty(QStringList() << "UUID");
 
-    return  wHelper->getWMIData().toString();
+    QCryptographicHash hash(QCryptographicHash::Sha1);
+    QString id = wHelper->getWMIData().toString();
+    hash.addData(id.toLocal8Bit());
+
+    return  hash.result().toHex();
 }
 
 QSystemDeviceInfo::LockTypeFlags QSystemDeviceInfoPrivate::lockStatus()
