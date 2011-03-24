@@ -223,4 +223,6 @@ EXPORTS
 	?wokeUp@QSystemAlignedTimer@QtMobility@@QAEXXZ @ 222 NONAME ; void QtMobility::QSystemAlignedTimer::wokeUp(void)
 	?staticMetaObject@QSystemAlignedTimer@QtMobility@@2UQMetaObject@@B @ 223 NONAME ; struct QMetaObject const QtMobility::QSystemAlignedTimer::staticMetaObject
 	?staticMetaObject@QSystemBatteryInfo@QtMobility@@2UQMetaObject@@B @ 224 NONAME ; struct QMetaObject const QtMobility::QSystemBatteryInfo::staticMetaObject
+	?currentThermalState@QSystemDeviceInfo@QtMobility@@QAE?AW4ThermalState@12@XZ @ 225 NONAME ; enum QtMobility::QSystemDeviceInfo::ThermalState QtMobility::QSystemDeviceInfo::currentThermalState(void)
+	?thermalStateChanged@QSystemDeviceInfo@QtMobility@@IAEXW4ThermalState@12@@Z @ 226 NONAME ; void QtMobility::QSystemDeviceInfo::thermalStateChanged(enum QtMobility::QSystemDeviceInfo::ThermalState)
 

@@ -226,4 +226,6 @@ EXPORTS
 	_ZTIN10QtMobility19QSystemAlignedTimerE @ 225 NONAME ; #<TI>#
 	_ZTVN10QtMobility18QSystemBatteryInfoE @ 226 NONAME ; #<VT>#
 	_ZTVN10QtMobility19QSystemAlignedTimerE @ 227 NONAME ; #<VT>#
+	_ZN10QtMobility17QSystemDeviceInfo19currentThermalStateEv @ 228 NONAME
+	_ZN10QtMobility17QSystemDeviceInfo19thermalStateChangedENS0_12ThermalStateE @ 229 NONAME
 
