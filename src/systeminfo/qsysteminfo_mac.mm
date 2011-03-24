@@ -60,6 +60,7 @@
 #include <QNetworkInterface>
 #include <QString>
 #include <QHostInfo>
+#include <QCryptographicHash>
 
 #include <locale.h>
 
@@ -2360,13 +2361,15 @@ QByteArray QSystemDeviceInfoPrivate::uniqueDeviceID()
     CFStringRef uuidKey = CFSTR(kIOPlatformUUIDKey);
     io_service_t ioService = IOServiceGetMatchingService(kIOMasterPortDefault,
                                                          IOServiceMatching("IOPlatformExpertDevice"));
-
+    QCryptographicHash hash(QCryptographicHash::Sha1);
     if (ioService) {
         CFTypeRef cfStringKey = IORegistryEntryCreateCFProperty(ioService, uuidKey, kCFAllocatorDefault, 0);
 
-        return QUuid(stringFromCFString((const __CFString*)cfStringKey));
+        hash.addData(stringFromCFString((const __CFString*)cfStringKey).toLocal8Bit());
+        return hash.result().toHex();
     }
-    return QUuid(QString::number(gethostid()));
+    hash.addData(QString::number(gethostid()).toLocal8Bit());
+    return hash.result().toHex();
 }
 
 QSystemDeviceInfo::LockTypeFlags QSystemDeviceInfoPrivate::lockStatus()
