@@ -66,6 +66,22 @@ const TUid KHelixUID = {0x101F8514};
 //Hard-coding the command to support older versions.
 const TInt KMMFROPControllerEnablePausedLoadingStatus = 7;
 
+TVideoRotation videoRotation(qreal angle)
+{
+    // Convert to clockwise
+    angle = 360.0f - angle;
+    while (angle >= 360.0f)
+        angle -= 360.0f;
+    TVideoRotation result = EVideoRotationNone;
+    if (angle >= 45.0f && angle < 135.0f)
+        result = EVideoRotationClockwise90;
+    else if (angle >= 135.0f && angle < 225.0f)
+        result = EVideoRotationClockwise180;
+    else if (angle >= 225.0f && angle < 315.0f)
+        result = EVideoRotationClockwise270;
+    return result;
+}
+
 /*!
     Constructs the CVideoPlayerUtility2 object with given \a service and \a object.
     And Registers for Video Loading Notifications.
@@ -291,6 +307,7 @@ void S60VideoPlayerSession::setVideoRenderer(QObject *videoOutput)
             connect(m_videoOutputDisplay, SIGNAL(windowHandleChanged(RWindow *)), this, SLOT(windowHandleChanged()));
             connect(m_videoOutputDisplay, SIGNAL(displayRectChanged(QRect, QRect)), this, SLOT(displayRectChanged()));
             connect(m_videoOutputDisplay, SIGNAL(aspectRatioModeChanged(Qt::AspectRatioMode)), this, SLOT(aspectRatioChanged()));
+            connect(m_videoOutputDisplay, SIGNAL(rotationChanged(qreal)), this, SLOT(rotationChanged()));
 #ifndef VIDEOOUTPUT_GRAPHICS_SURFACES
             connect(m_videoOutputDisplay, SIGNAL(beginVideoWindowNativePaint()), this, SLOT(suspendDirectScreenAccess()));
             connect(m_videoOutputDisplay, SIGNAL(endVideoWindowNativePaint()), this, SLOT(resumeDirectScreenAccess()));
@@ -360,13 +377,16 @@ void S60VideoPlayerSession::applyPendingChanges(bool force)
 
 #endif // VIDEOOUTPUT_GRAPHICS_SURFACES
         if (KErrNone == error && (m_pendingChanges & ScaleFactors) && m_displayWindow && m_videoOutputDisplay) {
+            const TVideoRotation rotation = videoRotation(m_videoOutputDisplay->rotation());
+            const bool swap = (rotation == EVideoRotationClockwise90 || rotation == EVideoRotationClockwise270);
+            const QSize extentSize = swap ? QSize(extentRect.height(), extentRect.width()) : extentRect.size();
             QSize scaled = m_nativeSize;
             if (m_videoOutputDisplay->aspectRatioMode() == Qt::IgnoreAspectRatio)
-                scaled.scale(extentRect.size(), Qt::IgnoreAspectRatio);
+                scaled.scale(extentSize, Qt::IgnoreAspectRatio);
             else if (m_videoOutputDisplay->aspectRatioMode() == Qt::KeepAspectRatio)
-                scaled.scale(extentRect.size(), Qt::KeepAspectRatio);
+                scaled.scale(extentSize, Qt::KeepAspectRatio);
             else if (m_videoOutputDisplay->aspectRatioMode() == Qt::KeepAspectRatioByExpanding)
-                scaled.scale(extentRect.size(), Qt::KeepAspectRatioByExpanding);
+                scaled.scale(extentSize, Qt::KeepAspectRatioByExpanding);
             const qreal width = qreal(scaled.width()) / qreal(m_nativeSize.width()) * qreal(100);
             const qreal height = qreal(scaled.height()) / qreal(m_nativeSize.height()) * qreal(100);
 #ifdef VIDEOOUTPUT_GRAPHICS_SURFACES
@@ -376,6 +396,15 @@ void S60VideoPlayerSession::applyPendingChanges(bool force)
             TRAP(error, m_player->SetScaleFactorL(width, height, antialias));
 #endif // VIDEOOUTPUT_GRAPHICS_SURFACES
             m_pendingChanges ^= ScaleFactors;
+        }
+        if (KErrNone == error && (m_pendingChanges && Rotation) && m_displayWindow && m_videoOutputDisplay) {
+            const TVideoRotation rotation = videoRotation(m_videoOutputDisplay->rotation());
+#ifdef VIDEOOUTPUT_GRAPHICS_SURFACES
+            TRAP(error, m_player->SetRotationL(*m_displayWindow, rotation));
+#else
+            TRAP(error, m_player->SetRotationL(rotation));
+#endif // VIDEOOUTPUT_GRAPHICS_SURFACES
+            m_pendingChanges ^= Rotation;
         }
         setError(error);
     }
@@ -727,6 +756,13 @@ void S60VideoPlayerSession::aspectRatioChanged()
     applyPendingChanges();
 
     DP0("S60VideoPlayerSession::aspectRatioChanged ---");
+}
+
+void S60VideoPlayerSession::rotationChanged()
+{
+    m_pendingChanges |= ScaleFactors;
+    m_pendingChanges |= Rotation;
+    applyPendingChanges();
 }
 
 #ifndef VIDEOOUTPUT_GRAPHICS_SURFACES

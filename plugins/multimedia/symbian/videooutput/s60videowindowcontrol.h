@@ -51,6 +51,14 @@ QT_USE_NAMESPACE
 class S60VideoWindowControl : public QVideoWindowControl
 {
     Q_OBJECT
+
+    /**
+     * Rotation to be applied to video.
+     * Angle is measured in degrees, with positive values counter-clockwise.
+     * Zero is at 12 o'clock.
+     */
+    Q_PROPERTY(qreal rotation READ rotation WRITE setRotation)
+
 public:
     S60VideoWindowControl(QObject *parent);
     ~S60VideoWindowControl();
@@ -79,6 +87,9 @@ public:
     void setSaturation(int saturation);
 
     S60VideoWindowDisplay *display() const;
+
+    qreal rotation() const;
+    void setRotation(qreal value);
 
 public slots:
     void refreshDisplay();
