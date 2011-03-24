@@ -61,14 +61,8 @@ QTM_BEGIN_NAMESPACE
     can be used to contain and manage information concerning what a particular
     QGraphicsGeoMap is viewing.
 
-    The functions
-    setSupportedMapTypes(const QList<QGraphicsGeoMap::MapType> &mapTypes),
-    setSupportedConnectivityModes(const QList<QGraphicsGeoMap::ConnectivityMode> &connectivityModes),
-    setMinimumZoomLevel(qreal minimumZoom) and
-    setMaximumZoomLevel(qreal maximumZoom)
-    configure the reported capabilities of the engine.
-
-    It is important that this is done before createMapData() or any of the
+    Most of the other functions configure the reported capabilities of the engine.
+    It is important that these functions are called before createMapData() or any of the
     capability reporting functions are used to prevent incorrect or
     inconsistent behaviour.
 */
@@ -285,7 +279,7 @@ bool QGeoMappingManagerEngine::supportsTilting() const
 }
 
 /*!
-    Returns minimum tilt supported by this engine.
+    Returns the minimum tilt supported by this engine.
 
     Value in degrees where 0 is equivalent to 90 degrees between view and earth's
     surface i.e. looking straight down to earth.
@@ -297,7 +291,7 @@ qreal QGeoMappingManagerEngine::minimumTilt() const
 }
 
 /*!
-    Returns maximum tilt supported by this engine.
+    Returns the maximum tilt supported by this engine.
 
     Value in degrees where 0 is equivalent to 90 degrees between view and earth's
     surface i.e. looking straight down to earth.
@@ -369,6 +363,32 @@ void QGeoMappingManagerEngine::setSupportsTilting(bool supportsTilting)
 }
 
 /*!
+    Returns whether custom map objects are supported by this engine.
+
+    Custom map objects are map objects based on QGraphicsItem instances, which
+    are hard to support in cases where the map rendering is not being
+    performed by the Qt Graphics View framwork.
+*/
+bool QGeoMappingManagerEngine::supportsCustomMapObjects() const
+{
+    Q_D(const QGeoMappingManagerEngine);
+    return d_ptr->supportsCustomMapObjects;
+}
+
+/*!
+    Sets whether custom map objects are supported by this engine to \a supportsCustomMapObjects.
+
+    Custom map objects are map objects based on QGraphicsItem instances, which
+    are hard to support in cases where the map rendering is not being
+    performed by the Qt Graphics View framwork.
+*/
+void QGeoMappingManagerEngine::setSupportsCustomMapObjects(bool supportsCustomMapObjects)
+{
+    Q_D(QGeoMappingManagerEngine);
+    d_ptr->supportsCustomMapObjects = supportsCustomMapObjects;
+}
+
+/*!
     Sets the locale to be used by the this manager to \a locale.
 
     If this mapping manager supports returning map labels
@@ -400,7 +420,8 @@ QGeoMappingManagerEnginePrivate::QGeoMappingManagerEnginePrivate()
     supportsBearing(false),
     supportsTilting(false),
     minimumTilt(0.0),
-    maximumTilt(0.0) {}
+    maximumTilt(0.0),
+    supportsCustomMapObjects(false) {}
 
 QGeoMappingManagerEnginePrivate::~QGeoMappingManagerEnginePrivate() {}
 

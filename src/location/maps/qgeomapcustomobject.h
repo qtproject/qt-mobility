@@ -74,6 +74,10 @@ public:
     QPoint offset() const;
     void setOffset(const QPoint &offset);
 
+    void setOrigin(const QGeoCoordinate &origin);
+    void setUnits(const CoordinateUnit &unit);
+    void setTransformType(const TransformType &type);
+
 Q_SIGNALS:
     void triggerUpdate();
     void graphicsItemChanged(QGraphicsItem *graphicsItem);
