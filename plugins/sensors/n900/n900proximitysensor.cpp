@@ -82,7 +82,7 @@ void n900proximitysensor::poll()
         close = false;
     }
 
-    if (close != m_reading.close()) {
+    if (close != m_reading.close() || m_reading.timestamp() == 0) {
         m_reading.setTimestamp(getTimestamp());
         m_reading.setClose(close);
         newReadingAvailable();

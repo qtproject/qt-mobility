@@ -600,6 +600,10 @@ void QDeclarativeDocumentGalleryModel::classBegin()
 
     This property holds the properties the results of a query should be sorted
     on.
+
+    Prefixing a property name with the '+' character indicates it should be sorted
+    in ascending order, and a '-' character prefix indicates a descending order. If
+    there is no prefix ascending order is assumed.
 */
 
 /*!

@@ -21,4 +21,3 @@ unix:!symbian:!maemo6:!maemo5:!meego {
            qmallocpool \
            qpacketprotocol
 }
-

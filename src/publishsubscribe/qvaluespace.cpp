@@ -71,6 +71,8 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
+    \internal
+
     \macro QVALUESPACE_AUTO_INSTALL_LAYER(className)
 
     \relates QAbstractValueSpaceLayer
@@ -375,10 +377,12 @@ void QAbstractValueSpaceLayer::emitInterestChanged(QValueSpacePublisher *publish
 */
 void QValueSpace::initValueSpaceServer()
 {
-    QValueSpaceManager::instance()->initServer();
+    QValueSpaceManager::instance()->init(QAbstractValueSpaceLayer::Server);
 }
 
 /*!
+    \internal
+
     Used by Value Space layer implementations to install themselves into the system.  \a layer
     should be a pointer to the layer to install.
 

@@ -59,14 +59,15 @@
 #include <QHash>
 #include <QTimer>
 #include <QVariantMap>
+#include <QDesktopWidget>
 
-#include "../qsysteminfo.h"
-#include "../qsystemdeviceinfo.h"
-#include "../qsystemdisplayinfo.h"
-#include "../qsystemnetworkinfo.h"
-#include "../qsystemscreensaver.h"
-#include "../qsystemstorageinfo.h"
-#include "../qsystembatteryinfo.h"
+#include "qsysteminfo.h"
+#include "qsystemdeviceinfo.h"
+#include "qsystemdisplayinfo.h"
+#include "qsystemnetworkinfo.h"
+#include "qsystemscreensaver.h"
+#include "qsystemstorageinfo.h"
+#include "qsystembatteryinfo.h"
 
 #include <qmobilityglobal.h>
 
@@ -197,6 +198,7 @@ protected:
 #endif
 
 private Q_SLOTS:
+
 #if !defined(QT_NO_CONNMAN)
     void connmanPropertyChangedContext(const QString &path,const QString &item, const QDBusVariant &value);
     void connmanTechnologyPropertyChangedContext(const QString &path,const QString &item, const QDBusVariant &value);
@@ -207,11 +209,13 @@ private Q_SLOTS:
     void ofonoNetworkPropertyChangedContext(const QString &path,const QString &item, const QDBusVariant &value);
     void ofonoModemPropertyChangedContext(const QString &path,const QString &item, const QDBusVariant &value);
 #endif
-private:
-    QSystemNetworkInfo::NetworkStatus getBluetoothNetStatus();
 
+private:
+
+    QSystemNetworkInfo::NetworkStatus getBluetoothNetStatus();
     void connectNotify(const char *signal);
     void disconnectNotify(const char *signal);
+
 #if !defined(QT_NO_CONNMAN)
     QSystemNetworkInfo::CellDataTechnology ofonoTechToCDT(const QString &tech);
 #endif
@@ -239,6 +243,9 @@ public:
 Q_SIGNALS:
     void orientationChanged(QSystemDisplayInfo::DisplayOrientation newOrientation);
 
+private:
+    bool isScreenValid(int screen);
+    QDesktopWidget *wid;
 };
 
 class QSystemStorageInfoLinuxCommonPrivate : public QObject
