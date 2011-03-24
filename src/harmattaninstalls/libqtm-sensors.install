@@ -1,5 +1,5 @@
 etc/xdg/Nokia/Sensors.conf
-usr/lib/libQtSensors.so.1.1.2
+usr/lib/libQtSensors.so.1.1.3
 usr/lib/libQtSensors.so.1.1
 usr/lib/libQtSensors.so.1
 usr/lib/qt4/imports/QtMobility/sensors/libdeclarative_sensors.so
