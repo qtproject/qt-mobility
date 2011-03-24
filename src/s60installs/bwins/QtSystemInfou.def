@@ -209,18 +209,18 @@ EXPORTS
 	?trUtf8@QSystemAlignedTimer@QtMobility@@SA?AVQString@@PBD0H@Z @ 208 NONAME ; class QString QtMobility::QSystemAlignedTimer::trUtf8(char const *, char const *, int)
 	?trUtf8@QSystemBatteryInfo@QtMobility@@SA?AVQString@@PBD0@Z @ 209 NONAME ; class QString QtMobility::QSystemBatteryInfo::trUtf8(char const *, char const *)
 	?trUtf8@QSystemBatteryInfo@QtMobility@@SA?AVQString@@PBD0H@Z @ 210 NONAME ; class QString QtMobility::QSystemBatteryInfo::trUtf8(char const *, char const *, int)
-	?uniqueDeviceID@QSystemDeviceInfo@QtMobility@@QAE?AUQUuid@@XZ @ 211 NONAME ; struct QUuid QtMobility::QSystemDeviceInfo::uniqueDeviceID(void)
-	?uriForDrive@QSystemStorageInfo@QtMobility@@QAE?AVQString@@ABV3@@Z @ 212 NONAME ; class QString QtMobility::QSystemStorageInfo::uriForDrive(class QString const &)
-	?vibrationActive@ProfileDetails@QSystemDeviceInfo@QtMobility@@QBE_NXZ @ 213 NONAME ; bool QtMobility::QSystemDeviceInfo::ProfileDetails::vibrationActive(void) const
-	?voiceRingtoneVolume@ProfileDetails@QSystemDeviceInfo@QtMobility@@QBEHXZ @ 214 NONAME ; int QtMobility::QSystemDeviceInfo::ProfileDetails::voiceRingtoneVolume(void) const
-	?voltage@QSystemBatteryInfo@QtMobility@@QBEHXZ @ 215 NONAME ; int QtMobility::QSystemBatteryInfo::voltage(void) const
-	?wirelessKeyboardConnected@QSystemDeviceInfo@QtMobility@@IAEX_N@Z @ 216 NONAME ; void QtMobility::QSystemDeviceInfo::wirelessKeyboardConnected(bool)
-	?wokeUp@QSystemAlignedTimer@QtMobility@@QAEXXZ @ 217 NONAME ; void QtMobility::QSystemAlignedTimer::wokeUp(void)
-	?staticMetaObject@QSystemAlignedTimer@QtMobility@@2UQMetaObject@@B @ 218 NONAME ; struct QMetaObject const QtMobility::QSystemAlignedTimer::staticMetaObject
-	?staticMetaObject@QSystemBatteryInfo@QtMobility@@2UQMetaObject@@B @ 219 NONAME ; struct QMetaObject const QtMobility::QSystemBatteryInfo::staticMetaObject
-	?isActive@QSystemAlignedTimer@QtMobility@@QBE_NXZ @ 220 NONAME ; bool QtMobility::QSystemAlignedTimer::isActive(void) const
-	?orientationChanged@QSystemDisplayInfo@QtMobility@@IAEXW4DisplayOrientation@12@@Z @ 221 NONAME ; void QtMobility::QSystemDisplayInfo::orientationChanged(enum QtMobility::QSystemDisplayInfo::DisplayOrientation)
-	?setScreenSaverInhibited@QSystemScreenSaver@QtMobility@@QAEX_N@Z @ 222 NONAME ; void QtMobility::QSystemScreenSaver::setScreenSaverInhibited(bool)
-	?cellDataTechnology@QSystemNetworkInfo@QtMobility@@QAE?AW4CellDataTechnology@12@XZ @ 223 NONAME ; enum QtMobility::QSystemNetworkInfo::CellDataTechnology QtMobility::QSystemNetworkInfo::cellDataTechnology(void)
-	?cellDataTechnologyChanged@QSystemNetworkInfo@QtMobility@@IAEXW4CellDataTechnology@12@@Z @ 224 NONAME ; void QtMobility::QSystemNetworkInfo::cellDataTechnologyChanged(enum QtMobility::QSystemNetworkInfo::CellDataTechnology)
+	?cellDataTechnology@QSystemNetworkInfo@QtMobility@@QAE?AW4CellDataTechnology@12@XZ @ 211 NONAME ; enum QtMobility::QSystemNetworkInfo::CellDataTechnology QtMobility::QSystemNetworkInfo::cellDataTechnology(void)
+	?cellDataTechnologyChanged@QSystemNetworkInfo@QtMobility@@IAEXW4CellDataTechnology@12@@Z @ 212 NONAME ; void QtMobility::QSystemNetworkInfo::cellDataTechnologyChanged(enum QtMobility::QSystemNetworkInfo::CellDataTechnology)
+	?isActive@QSystemAlignedTimer@QtMobility@@QBE_NXZ @ 213 NONAME ; bool QtMobility::QSystemAlignedTimer::isActive(void) const
+	?orientationChanged@QSystemDisplayInfo@QtMobility@@IAEXW4DisplayOrientation@12@@Z @ 214 NONAME ; void QtMobility::QSystemDisplayInfo::orientationChanged(enum QtMobility::QSystemDisplayInfo::DisplayOrientation)
+	?setScreenSaverInhibited@QSystemScreenSaver@QtMobility@@QAEX_N@Z @ 215 NONAME ; void QtMobility::QSystemScreenSaver::setScreenSaverInhibited(bool)
+	?uniqueDeviceID@QSystemDeviceInfo@QtMobility@@QAE?AVQByteArray@@XZ @ 216 NONAME ; class QByteArray QtMobility::QSystemDeviceInfo::uniqueDeviceID(void)
+	?uriForDrive@QSystemStorageInfo@QtMobility@@QAE?AVQString@@ABV3@@Z @ 217 NONAME ; class QString QtMobility::QSystemStorageInfo::uriForDrive(class QString const &)
+	?vibrationActive@ProfileDetails@QSystemDeviceInfo@QtMobility@@QBE_NXZ @ 218 NONAME ; bool QtMobility::QSystemDeviceInfo::ProfileDetails::vibrationActive(void) const
+	?voiceRingtoneVolume@ProfileDetails@QSystemDeviceInfo@QtMobility@@QBEHXZ @ 219 NONAME ; int QtMobility::QSystemDeviceInfo::ProfileDetails::voiceRingtoneVolume(void) const
+	?voltage@QSystemBatteryInfo@QtMobility@@QBEHXZ @ 220 NONAME ; int QtMobility::QSystemBatteryInfo::voltage(void) const
+	?wirelessKeyboardConnected@QSystemDeviceInfo@QtMobility@@IAEX_N@Z @ 221 NONAME ; void QtMobility::QSystemDeviceInfo::wirelessKeyboardConnected(bool)
+	?wokeUp@QSystemAlignedTimer@QtMobility@@QAEXXZ @ 222 NONAME ; void QtMobility::QSystemAlignedTimer::wokeUp(void)
+	?staticMetaObject@QSystemAlignedTimer@QtMobility@@2UQMetaObject@@B @ 223 NONAME ; struct QMetaObject const QtMobility::QSystemAlignedTimer::staticMetaObject
+	?staticMetaObject@QSystemBatteryInfo@QtMobility@@2UQMetaObject@@B @ 224 NONAME ; struct QMetaObject const QtMobility::QSystemBatteryInfo::staticMetaObject
 
