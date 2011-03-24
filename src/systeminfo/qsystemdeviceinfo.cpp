@@ -567,9 +567,9 @@ bool QSystemDeviceInfo::keypadLightOn(QSystemDeviceInfo::KeypadType type)
   Returns a unique identifier for the machine.
 
   Depending on security enforcement on platform, this may return a non unique number, or 0.
-    This will be a unique ID constant to this device.
+    This will be a 160 bit hex QByteArray unique ID constant to this device.
   */
-QUuid QSystemDeviceInfo::uniqueDeviceID()
+QByteArray QSystemDeviceInfo::uniqueDeviceID()
 {
     return deviceInfoPrivate()->uniqueDeviceID();
 }

@@ -156,7 +156,7 @@ struct QSystemDeviceInfoData
     bool keyboardFlipped;
     bool backLight;
     bool keypadLight;
-    QUuid uniqueDeviceId;
+    QByteArray uniqueDeviceId;
 
     int messageRingtoneVolume;
     int voiceRingtoneVolume;

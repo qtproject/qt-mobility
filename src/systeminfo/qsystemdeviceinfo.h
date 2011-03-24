@@ -43,7 +43,6 @@
 #define QSYSTEMDEVICEINFO_H
 
 #include <QObject>
-#include <QUuid>
 #include <QExplicitlySharedDataPointer>
 
 #include "qmobilityglobal.h"
@@ -75,6 +74,8 @@ class  Q_SYSINFO_EXPORT QSystemDeviceInfo : public QObject
     Q_PROPERTY(bool isWirelessKeyboardConnected READ isWirelessKeyboardConnected NOTIFY wirelessKeyboardConnected)//1.2
     Q_PROPERTY(bool isKeyboardFlippedOpen READ isKeyboardFlippedOpen NOTIFY keyboardFlipped)//1.2
     Q_PROPERTY(QSystemDeviceInfo::LockTypeFlags lockStatus READ lockStatus NOTIFY lockStatusChanged)
+
+    Q_PROPERTY(QByteArray uniqueDeviceID READ uniqueDeviceID CONSTANT)
 
     Q_ENUMS(BatteryStatus)
     Q_ENUMS(PowerState)
@@ -191,7 +192,7 @@ public:
 
     Q_INVOKABLE bool keypadLightOn(QSystemDeviceInfo::KeypadType type); //1.2
 //    QSystemDeviceInfo::KeypadTypeFlags keypadLightsOn(); //1.2
-    QUuid uniqueDeviceID(); //1.2
+    QByteArray uniqueDeviceID(); //1.2
     QSystemDeviceInfo::LockTypeFlags lockStatus(); //1.2
 
     class  Q_SYSINFO_EXPORT ProfileDetails  {

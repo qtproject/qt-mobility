@@ -64,7 +64,6 @@
 #include <QTimer>
 #include <QBasicTimer>
 #include <QtCore/qlibrary.h>
-#include <QUuid>
 #include <QSysInfo>
 
 #include <qabstracteventdispatcher.h>
@@ -2138,7 +2137,7 @@ bool QSystemDeviceInfoPrivate::keypadLightOn(QSystemDeviceInfo::KeypadType type)
     return false;
 }
 
-QUuid QSystemDeviceInfoPrivate::uniqueDeviceID()
+QByteArray QSystemDeviceInfoPrivate::uniqueDeviceID()
 {
     WMIHelper *wHelper;
     wHelper = new WMIHelper(this);
@@ -2146,7 +2145,7 @@ QUuid QSystemDeviceInfoPrivate::uniqueDeviceID()
     wHelper->setClassName("Win32_ComputerSystemProduct");
     wHelper->setClassProperty(QStringList() << "UUID");
 
-    return  QUuid(wHelper->getWMIData().toString());
+    return  wHelper->getWMIData().toString();
 }
 
 QSystemDeviceInfo::LockTypeFlags QSystemDeviceInfoPrivate::lockStatus()

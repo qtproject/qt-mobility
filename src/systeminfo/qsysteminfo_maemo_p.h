@@ -250,6 +250,8 @@ public:
 
     QSystemDeviceInfo::LockTypeFlags lockStatus();//1.2
     QSystemDeviceInfo::KeyboardTypeFlags keyboardTypes(); //1.2
+    QByteArray uniqueDeviceID(); //1.2
+
 
 Q_SIGNALS:
     void keyboardFlipped(bool open);

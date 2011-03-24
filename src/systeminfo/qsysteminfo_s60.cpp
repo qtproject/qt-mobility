@@ -1599,7 +1599,7 @@ bool QSystemDeviceInfoPrivate::keypadLightOn(QSystemDeviceInfo::KeypadType type)
     return (status == CHWRMLight::ELightOn);
 }
 
-QUuid QSystemDeviceInfoPrivate::uniqueDeviceID()
+QByteArray QSystemDeviceInfoPrivate::uniqueDeviceID()
 {
     TInt driveNum = 25; //3.1 doesnot have support for systemDrive, defaulting to Z:
  #ifndef SYMBIAN_3_1
@@ -1619,7 +1619,7 @@ QUuid QSystemDeviceInfoPrivate::uniqueDeviceID()
     hash.addData(bytes);
     hash.addData(romDriveUID);
     rfs.Close();
-    return QUuid(QString(hash.result().toHex()));
+    return hash.result().toHex();
 }
 
 QSystemDeviceInfo::LockTypeFlags QSystemDeviceInfoPrivate::lockStatus()

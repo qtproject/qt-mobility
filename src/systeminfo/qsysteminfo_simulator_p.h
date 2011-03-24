@@ -219,7 +219,7 @@ public:
 
     bool keypadLightOn(QSystemDeviceInfo::KeypadType type)const { Q_UNUSED(type);return data.keypadLight; }
     bool backLightOn()const { return data.backLight; }
-    QUuid uniqueDeviceID(){ return data.uniqueDeviceId; }
+    QByteArray uniqueDeviceID(){ return data.uniqueDeviceId; }
     QSystemDeviceInfo::LockTypeFlags lockStatus()const { return data.lockType; }
 
     QSystemDeviceInfo::BatteryStatus batteryStatus() const;
@@ -253,7 +253,7 @@ public:
 
     void setKeypadLightOn(bool v);
     void setBackLightOn(bool v);
-    void setUniqueDeviceId(const QUuid &v);
+    void setUniqueDeviceId(const QByteArray &v);
     void setTypeOfLock(QSystemDeviceInfo::LockTypeFlags v);
 
     void setMessageRingtoneVolume(int v);

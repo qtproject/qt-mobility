@@ -3348,39 +3348,18 @@ bool QSystemDeviceInfoLinuxCommonPrivate::keypadLightOn(QSystemDeviceInfo::Keypa
     return false;
 }
 
-QUuid QSystemDeviceInfoLinuxCommonPrivate::uniqueDeviceID()
+QByteArray QSystemDeviceInfoLinuxCommonPrivate::uniqueDeviceID()
 {
-#if defined(Q_WS_MAEMO_6)
-    // create one from imei and uuid of /
-    QByteArray driveuid;
-    if (halIsAvailable) {
-        QHalInterface iface;
-        QStringList list = iface.findDeviceByCapability("volume");
-        if (!list.isEmpty()) {
-            QString lastdev;
-            foreach (const QString &dev, list) {
-                halIfaceDevice = new QHalDeviceInterface(dev, this);
-                if (halIfaceDevice->isValid() && (halIfaceDevice->getPropertyString("volume.mount_point") == "/")) {
-                    driveuid = halIfaceDevice->getPropertyString("volume.uuid").toLocal8Bit();
-                    break;
-                }
-            }
-        }
-    }
-    QByteArray bytes = imei().toLocal8Bit();
-    QCryptographicHash hash(QCryptographicHash::Sha1);
 
-    hash.addData(bytes);
-    hash.addData(driveuid);
-    return QUuid(QString(hash.result().toHex()));
-#endif
 #if !defined(QT_NO_DBUS)
     if (halIsAvailable) {
         QHalDeviceInterface iface("/org/freedesktop/Hal/devices/computer", this);
         QString id;
         if (iface.isValid()) {
             id = iface.getPropertyString("system.hardware.uuid");
-            return QUuid(id);
+            QCryptographicHash hash(QCryptographicHash::Sha1);
+            hash.addData(id.toLocal8Bit());
+            return hash.result().toHex();
         }
     }
 #if defined(Q_WS_MEEGO)
@@ -3394,15 +3373,14 @@ QUuid QSystemDeviceInfoLinuxCommonPrivate::uniqueDeviceID()
 
     QDBusReply< QString > reply = connectionInterface.call("GetMachineId");
     QString uid = reply.value();
-// grrrrrr PolicyKit returns a malformed uuid
-    uid.insert(8,"-");
-    uid.insert(13,"-");
-    uid.insert(18,"-");
-    uid.insert(23,"-");
-    return uid;
+    QCryptographicHash hash(QCryptographicHash::Sha1);
+    hash.addData(uid.toLocal8Bit());
+    return hash.result().toHex();
 #endif
 #endif
-    return QUuid(QString::number(gethostid()));
+    QCryptographicHash hash(QCryptographicHash::Sha1);
+    hash.addData(QString::number(gethostid()).toLocal8Bit());
+    return hash.result().toHex();
 }
 
 QString QSystemDeviceInfoLinuxCommonPrivate::model()
@@ -3499,12 +3477,6 @@ QString QSystemDeviceInfoLinuxCommonPrivate::productName()
             }
         }
     }
-    return QString();
-}
-
-QString QSystemDeviceInfoLinuxCommonPrivate::imei()
-{
-
     return QString();
 }
 

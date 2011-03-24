@@ -707,7 +707,7 @@ void QSystemDeviceInfoPrivate::setBackLightOn(bool v)
     }
 }
 
-void QSystemDeviceInfoPrivate::setUniqueDeviceId(const QUuid &v)
+void QSystemDeviceInfoPrivate::setUniqueDeviceId(const QByteArray &v)
 {
     if (data.uniqueDeviceId != v) {
         data.uniqueDeviceId = v;

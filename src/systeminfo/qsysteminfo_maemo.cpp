@@ -1730,6 +1730,26 @@ void QSystemDeviceInfoPrivate::touchAndKeyboardStateChanged(const QString& state
     }
 }
 
+QByteArray QSystemDeviceInfoPrivate::uniqueDeviceID()
+{
+#if defined(Q_WS_MAEMO_6)
+    // create one from imei and mac addersses of bt and wlan interfaces
+    QSystemNetworkInfo netinfo;
+    QString wlanmac = netinfo.macAddress(QSystemNetworkInfo::WlanMode);
+    QString btmac = netinfo.macAddress(QSystemNetworkInfo::BluetoothMode);
+
+    QByteArray bytes = imei().toLocal8Bit();
+    QCryptographicHash hash(QCryptographicHash::Sha1);
+
+    hash.addData(bytes);
+    hash.addData(wlanmac.toLocal8Bit());
+    hash.addData(btmac.toLocal8Bit());
+    qDebug() << Q_FUNC_INFO << hash.result().toHex();
+
+    return hash.result().toHex();
+#endif
+}
+
 //////////////
 ///////
 QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QObject *parent)

@@ -399,12 +399,6 @@ bool QDeclarativeDeviceInfo::vibrationActive()
     return deviceInfo()->activeProfileDetails().vibrationActive();
 }
 
-
-QString QDeclarativeDeviceInfo::uniqueID()
-{
-    return deviceInfo()->uniqueDeviceID().toString();
-}
-
 /*!
   \qmlproperty bool DeviceInfo::primaryKeypadLightOn()
 

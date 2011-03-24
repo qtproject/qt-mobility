@@ -322,7 +322,7 @@ public:
     QSystemDeviceInfoLinuxCommonPrivate(QObject *parent = 0);
     virtual ~QSystemDeviceInfoLinuxCommonPrivate();
 
-    QString imei();
+
     QString imsi();
     QString manufacturer();
     QString model();
@@ -346,7 +346,7 @@ public:
 
     void keyboardConnected(bool connect);//1.2
     bool keypadLightOn(QSystemDeviceInfo::KeypadType type); //1.2
-    QUuid uniqueDeviceID(); //1.2
+    QByteArray uniqueDeviceID(); //1.2
 
 Q_SIGNALS:
     void batteryLevelChanged(int);
