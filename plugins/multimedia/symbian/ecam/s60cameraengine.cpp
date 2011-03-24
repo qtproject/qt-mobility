@@ -213,7 +213,7 @@ void CCameraEngine::StartDirectViewFinderL(RWsSession& aSession,
 
         if (iCameraIndex != 0)
             iCamera->SetViewFinderMirrorL(true);
-        if (aScreenRect.Width() != 0 && aScreenRect.Height() != 0) {
+        if (aScreenRect.Width() > 0 && aScreenRect.Height() > 0) {
             iCamera->StartViewFinderDirectL(aSession, aScreenDevice, aWindow, aScreenRect);
         } else {
             if (iObserver)
