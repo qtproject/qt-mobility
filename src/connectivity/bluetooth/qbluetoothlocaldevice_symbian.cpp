@@ -279,7 +279,7 @@ void QBluetoothLocalDevicePrivate::requestPairing(const QBluetoothAddress &addre
         q, SLOT(_q_pairingFinished(const QBluetoothAddress&,QBluetoothLocalDevice::Pairing)));
     // if there are pairing errors, emit them
     QObject::connect(registryAdapter, SIGNAL(registryHandlingError(int)),
-        q, SLOT((_q_registryError(int))));
+        q, SLOT(_q_registryError(int)));
     QObject::connect(pairingAdapter, SIGNAL(pairingError(int)),
         q, SLOT(_q_pairingError(int)));
 
@@ -291,7 +291,8 @@ void QBluetoothLocalDevicePrivate::requestPairing(const QBluetoothAddress &addre
     case QBluetoothLocalDevice::Paired:
     case QBluetoothLocalDevice::AuthorizedPaired:
         // this is async method
-        // TODO: check whether paring succeed
+        // Note:  currently Symbian pairing function puts up a user dialog to confirm authorization;  
+        // due to this, we cannot be sure if authorization is done or not, since it depends on user response
         pairingAdapter->startPairing(pairing);
         break;
     default:

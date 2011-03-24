@@ -46,6 +46,7 @@
 
 #include <qbluetoothaddress.h>
 #include <qbluetoothlocaldevice.h>
+
 QTM_USE_NAMESPACE
 
 #define WAIT_FOR_CONDITION(a,e)            \
@@ -108,11 +109,18 @@ void tst_QBluetoothLocalDevice::tst_pairDevice_data()
     QTest::addColumn<QBluetoothAddress>("deviceAddress");
     QTest::addColumn<QBluetoothLocalDevice::Pairing>("pairingExpected");
 
-    QTest::newRow("UnPaired Device: DUMMY") << QBluetoothAddress("11:00:00:00:00:00") << QBluetoothLocalDevice::Unpaired;
-    //QTest::newRow("UnPaired Device: DUMMY") << QBluetoothAddress("11:00:00:00:00:00") << QBluetoothLocalDevice::Paired;
+    QTest::newRow("UnPaired Device: DUMMY") << QBluetoothAddress("11:00:00:00:00:00") 
+            << QBluetoothLocalDevice::Unpaired;
 #ifdef Q_OS_SYMBIAN
-    QTest::newRow("UNPAIR Device: BH-604") << QBluetoothAddress("00:0d:3c:b0:77:1c") << QBluetoothLocalDevice::Unpaired;
-    QTest::newRow("PAIR Device: TESTMACHINE") << QBluetoothAddress("00:09:DD:50:93:DD") << QBluetoothLocalDevice::Paired;
+    
+    QTest::newRow("unPAIRED Device: J X6") << QBluetoothAddress("d8:75:33:6a:82:85") 
+            << QBluetoothLocalDevice::Unpaired;
+    QTest::newRow("AuthPAIRED Device: J X6") << QBluetoothAddress("d8:75:33:6a:82:85") 
+            << QBluetoothLocalDevice::AuthorizedPaired;
+    QTest::newRow("PAIRED Device: J C-7-1") << QBluetoothAddress("6c:9b:02:0c:91:ca") 
+            << QBluetoothLocalDevice::Paired;
+    
+
 #endif // Q_OS_SYMBIAN
 }
 
@@ -121,10 +129,13 @@ void tst_QBluetoothLocalDevice::tst_pairingStatus_data()
     QTest::addColumn<QBluetoothAddress>("deviceAddress");
     QTest::addColumn<QBluetoothLocalDevice::Pairing>("pairingExpected");
 
-    QTest::newRow("UnPaired Device: DUMMY") << QBluetoothAddress("11:00:00:00:00:00") << QBluetoothLocalDevice::Unpaired;
+    QTest::newRow("UnPaired Device: DUMMY") << QBluetoothAddress("11:00:00:00:00:00") 
+            << QBluetoothLocalDevice::Unpaired;
 #ifdef Q_OS_SYMBIAN
-    QTest::newRow("UNPAIR Device: BH-604") << QBluetoothAddress("00:0d:3c:b0:77:1c") << QBluetoothLocalDevice::Unpaired;
-    QTest::newRow("Paired Device: TESTMACHINE") << QBluetoothAddress("00:09:DD:50:93:DD") << QBluetoothLocalDevice::Paired;
+    QTest::newRow("PAIRED Device: J X6") << QBluetoothAddress("d8:75:33:6a:82:85") 
+            << QBluetoothLocalDevice::Paired;
+    QTest::newRow("AuthPAIRED Device: J C-7-1") << QBluetoothAddress("6c:9b:02:0c:91:ca") 
+            << QBluetoothLocalDevice::AuthorizedPaired;
 #endif // Q_OS_SYMBIAN
 }
 
@@ -232,6 +243,9 @@ void tst_QBluetoothLocalDevice::tst_pairDevice()
 {
     QFETCH(QBluetoothAddress, deviceAddress);
     QFETCH(QBluetoothLocalDevice::Pairing, pairingExpected);
+    
+    qDebug() << "tst_pairDevice(): address=" << deviceAddress.toString() << "pairingModeExpected=" 
+            << static_cast<int>(pairingExpected);
 
     QBluetoothLocalDevice localDevice;
     //powerOn if not already
@@ -262,6 +276,9 @@ void tst_QBluetoothLocalDevice::tst_pairingStatus()
     QFETCH(QBluetoothAddress, deviceAddress);
     QFETCH(QBluetoothLocalDevice::Pairing, pairingExpected);
 
+    qDebug() << "tst_pairingStatus(): address=" << deviceAddress.toString() << "pairingModeExpected=" 
+            << static_cast<int>(pairingExpected);
+    
     QBluetoothLocalDevice localDevice;
     QCOMPARE(pairingExpected, localDevice.pairingStatus(deviceAddress));
 }

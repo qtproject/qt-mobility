@@ -47,6 +47,8 @@
 #include <qstring.h>
 #include <btdevice.h>
 #include "utils_symbian_p.h"
+#include "bluetoothsymbianregistryadapter.h"
+#include <QDebug>
 
 QTM_BEGIN_NAMESPACE
 
@@ -129,16 +131,25 @@ void BluetoothSymbianPairingAdapter::PairingComplete( TBTDevAddr& aAddr, TInt aE
     m_pairingOngoing = false;
 
     switch (aErr) {
-        case KErrNone:
-            // TODO: Paired or authorizedpaired, not known at this stage.
-            emit pairingFinished(qTBTDevAddrToQBluetoothAddress(aAddr),QBluetoothLocalDevice::Paired);
+        case KErrNone: {
+                // need to figure out if authorized or not
+                QBluetoothLocalDevice::Pairing pairingStatus = QBluetoothLocalDevice::Paired; 
+                BluetoothSymbianRegistryAdapter *registryAdapter = new BluetoothSymbianRegistryAdapter(
+                        qTBTDevAddrToQBluetoothAddress(aAddr),NULL);
+                if (registryAdapter) {
+                    pairingStatus = registryAdapter->pairingStatus();
+                    delete registryAdapter;
+                }
+                qDebug() << "pairingStatus = " << static_cast<int>(pairingStatus);
+                emit pairingFinished(qTBTDevAddrToQBluetoothAddress(aAddr),pairingStatus);
+            }   
             break;
         case BTKErrRemoteDeviceIndicatedNoBonding:
             m_pairingErrorString.append("Dedicated bonding attempt failure when the remote device responds with No-Bonding");
             break;
         default:
             m_pairingErrorString.append("Symbian pairing error=") + aErr;
-        break;
+            break;
     }
     if (aErr != KErrNone)
         emit pairingError(aErr);
