@@ -46,7 +46,17 @@ contains(QT_MAJOR_VERSION, 4):lessThan(QT_MINOR_VERSION, 6) {
     } else {
         system(cat $${sourcePath} >> $$PRF_OUTPUT)
     }
-    
+
+    symbian:contains(nfc_symbian_enabled,yes) {
+        contains(QMAKE_HOST.os,Windows) {
+            system(echo $$LITERAL_HASH Connectivity depends on service framework on Symbian >> $$PRF_OUTPUT)
+            system(echo contains(MOBILITY, connectivity):MOBILITY += serviceframework >> $$PRF_OUTPUT)
+        } else {
+            system(echo \\$$LITERAL_HASH Connectivity depends on service framework on Symbian >> $$PRF_OUTPUT)
+            system(echo contains\\(MOBILITY, connectivity\\):MOBILITY += serviceframework >> $$PRF_OUTPUT)
+        }
+    }
+
     # Remember to update staticconfig.pri binary version statement
     # and pregenerated files under src/s60installs for Symbian RnD release
     PRF_CONFIG=$${QT_MOBILITY_BUILD_TREE}/features/mobilityconfig.prf

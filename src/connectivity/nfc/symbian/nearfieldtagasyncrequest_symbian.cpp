@@ -40,6 +40,7 @@
  ****************************************************************************/
 #include "nearfieldtagasyncrequest_symbian.h"
 #include "nearfieldutility_symbian.h"
+#include "nearfieldtagimplcommon_symbian.h"
 #include <e32std.h>
 #include "debug.h"
 
@@ -52,7 +53,7 @@ TInt MNearFieldTagAsyncRequest::TimeoutCallback(TAny * aObj)
     return KErrNone;
 }
 
-MNearFieldTagAsyncRequest::MNearFieldTagAsyncRequest(MNearFieldTargetOperation& aOperator) : iOperator(aOperator)
+MNearFieldTagAsyncRequest::MNearFieldTagAsyncRequest(QNearFieldTagImplCommon& aOperator) : iOperator(aOperator)
 {
     iWait = 0;
     iTimer = 0;
@@ -90,7 +91,7 @@ void MNearFieldTagAsyncRequest::SetRequestId(QNearFieldTarget::RequestId aId)
     iId = aId;
     END
 }
-    
+
 QNearFieldTarget::RequestId MNearFieldTagAsyncRequest::RequestID()
 {
     BEGIN
@@ -122,7 +123,7 @@ bool MNearFieldTagAsyncRequest::WaitRequestCompleted(int aMsecs)
     {
         LOG("cancel previous timer");
         iTimer->Cancel();
-    } 
+    }
     else
     {
         LOG("create a new timer");
@@ -143,7 +144,7 @@ bool MNearFieldTagAsyncRequest::WaitRequestCompleted(int aMsecs)
     END
     return result;
 }
-        
+
 int MNearFieldTagAsyncRequest::WaitRequestCompletedNoSignal(int aMsecs)
 {
     BEGIN
@@ -170,7 +171,7 @@ int MNearFieldTagAsyncRequest::WaitRequestCompletedNoSignal(int aMsecs)
     {
         LOG("cancel previous timer");
         iTimer->Cancel();
-    } 
+    }
     else
     {
         LOG("create a new timer");
@@ -199,10 +200,10 @@ void MNearFieldTagAsyncRequest::ProcessResponse(TInt aError)
     LOG("Error is "<<aError);
 
     iOperator.IssueNextRequest(iId);
-    
+
     HandleResponse(aError);
 
-    if (iWait) 
+    if (iWait)
     {
         ProcessWaitRequestCompleted(aError);
     }
@@ -210,14 +211,14 @@ void MNearFieldTagAsyncRequest::ProcessResponse(TInt aError)
     {
         ProcessEmitSignal(aError);
     }
-   
-    LOG("remove the request from queue"); 
+
+    LOG("remove the request from queue");
     iOperator.RemoveRequestFromQueue(iId);
     LOG("delete the request");
     iRequestIssued = EFalse;
     delete this;
     END
-} 
+}
 
 void MNearFieldTagAsyncRequest::ProcessWaitRequestCompleted(TInt aError)
 {
@@ -228,7 +229,7 @@ void MNearFieldTagAsyncRequest::ProcessWaitRequestCompleted(TInt aError)
         {
             (*iCurrentRequestResult) = (KErrNone == aError);
         }
-            
+
         iCurrentRequestResult = 0;
         if (iTimer)
         {
@@ -252,7 +253,7 @@ void MNearFieldTagAsyncRequest::ProcessWaitRequestCompleted(TInt aError)
         if (iRequestResult)
         {
             (*iRequestResult) = aError;
-        }  
+        }
 
         iRequestResult = 0;
         if (iTimer)

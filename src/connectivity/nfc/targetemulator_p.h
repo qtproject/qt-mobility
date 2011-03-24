@@ -59,10 +59,10 @@ public:
 
     virtual QByteArray uid() const = 0;
 
-    quint64 lastAccessTime() const { return lastAccess; }
+    qint64 lastAccessTime() const { return lastAccess; }
 
 protected:
-    mutable quint64 lastAccess;
+    mutable qint64 lastAccess;
 };
 
 class NfcTagType1 : public TagBase

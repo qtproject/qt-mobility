@@ -83,7 +83,7 @@ public:
             EDisconnecting
         };
 
-    QBluetoothTransferReplySymbian(QIODevice *input, QObject *parent = 0);
+    QBluetoothTransferReplySymbian(QIODevice *input, QBluetoothTransferManager::Operation, QObject *parent = 0);
     ~QBluetoothTransferReplySymbian();
 
     void abort();

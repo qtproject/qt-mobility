@@ -50,6 +50,7 @@
 #include <QtCore/QObject>
 #include <QtCore/QMetaMethod>
 #include <QPointer>
+#include <QList>
 #include <qremoteserviceregister.h>
 
 class CNearFieldManager;
@@ -87,6 +88,8 @@ public:
     QNearFieldManagerPrivateImpl();
     ~QNearFieldManagerPrivateImpl();
 
+    bool isAvailable() const;
+
     int registerNdefMessageHandler(QObject *object, const QMetaMethod &method);
     int registerNdefMessageHandler(const QNdefFilter &filter,
                                    QObject *object, const QMetaMethod &method);
@@ -122,6 +125,7 @@ private:
     CNearFieldManager* m_symbianbackend;
 
     QPointer<QNearFieldTarget> m_target;
+    QList<QPointer<QNearFieldTarget> > m_targetList;
     //For content handler purpose;
     QObject *m_chobject;
     QMetaMethod m_chmethod;

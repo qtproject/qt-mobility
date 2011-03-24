@@ -90,11 +90,7 @@ private:
     QBluetoothLocalDevice::Pairing remoteDevicePairingStatus();
     CBTDeviceArray* createDeviceArrayL() const;
 
-public Q_SLOTS:
-    void setRemoteDevicePairingStatusFromRegistry();
-
 Q_SIGNALS: // SIGNALS
-    void operationFinished(const QBluetoothAddress &address);
     void registryHandlingError(int errorCode);
     void pairingStatusChanged(const QBluetoothAddress &address, QBluetoothLocalDevice::Pairing pairing);
 private:

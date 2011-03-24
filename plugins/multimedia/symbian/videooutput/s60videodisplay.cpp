@@ -51,6 +51,7 @@ S60VideoDisplay::S60VideoDisplay(QObject *parent)
 ,   m_visible(true)
 ,   m_aspectRatioMode(Qt::KeepAspectRatio)
 ,   m_paintingEnabled(false)
+,   m_rotation(0.0f)
 {
     connect(this, SIGNAL(displayRectChanged(QRect, QRect)),
             this, SLOT(updateContentRect()));
@@ -148,6 +149,19 @@ void S60VideoDisplay::setPaintingEnabled(bool enabled)
 bool S60VideoDisplay::isPaintingEnabled() const
 {
     return m_paintingEnabled;
+}
+
+void S60VideoDisplay::setRotation(qreal value)
+{
+    if (value != m_rotation) {
+        m_rotation = value;
+        emit rotationChanged(m_rotation);
+    }
+}
+
+qreal S60VideoDisplay::rotation() const
+{
+    return m_rotation;
 }
 
 void S60VideoDisplay::updateContentRect()
