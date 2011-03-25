@@ -142,4 +142,8 @@ Some interesting examples for the API exist.
 
 \annotatedlist connectivity-bluetooth
 
+\section2 Qt Quick Elements
+
+\annotatedlist connectivity-qml
+
 */

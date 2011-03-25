@@ -1,10 +1,10 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the QtDeclarative module of the Qt Toolkit.
+** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
@@ -58,7 +58,9 @@
 /*!
    \qmlclass BluetoothSocket QDeclarativeBluetoothSocket
    \brief The BluetoothSocket element represents a single bluetooth client socket.
-   \ingroup qml-connectivity
+
+   \ingroup connectivity-qml
+   \inmodule QtConnectivity
 
    \sa QBluetoothSocket
    \sa QDataStream
