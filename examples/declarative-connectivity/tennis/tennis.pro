@@ -8,7 +8,6 @@ HEADERS += \
     controller.h
 
 include($$PWD/../declarative-connectivity.pri)
-include($$PWD/deployment.pri)
 
 TARGET = qml_tennis
 

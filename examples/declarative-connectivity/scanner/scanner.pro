@@ -1,7 +1,6 @@
 QT += declarative network
 SOURCES += $$PWD/qmlscanner.cpp
 include($$PWD/../declarative-connectivity.pri)
-include($$PWD/deployment.pri)
 
 TARGET = qml_scanner
 
