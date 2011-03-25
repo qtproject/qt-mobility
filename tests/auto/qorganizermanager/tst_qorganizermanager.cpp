@@ -3357,13 +3357,66 @@ void tst_QOrganizerManager::itemFetch()
     QCOMPARE(eventOccurrenceCount, 3);
 }
 
-// This is just a copy of itemFetch(), but for todos
+// This is mostly a copy of itemFetch(), but for todos
 void tst_QOrganizerManager::todoItemFetch()
 {
     QFETCH(QString, uri);
     QScopedPointer<QOrganizerManager> cm(QOrganizerManager::fromUri(uri));
+    QList<QOrganizerItem> items;
 
     cm->removeItems(cm->itemIds()); // empty the calendar to prevent the previous test from interfering this one
+
+    QOrganizerTodo todoStartDueDate;
+    todoStartDueDate.setDisplayLabel("todo startdue");
+    todoStartDueDate.setStartDateTime(QDateTime(QDate(2011, 3, 27), QTime(11, 0, 0)));
+    todoStartDueDate.setDueDateTime(QDateTime(QDate(2011, 3, 29), QTime(11, 30, 0)));
+    QVERIFY(cm->saveItem(&todoStartDueDate));
+
+    QOrganizerTodo todoStartDate;
+    todoStartDate.setDisplayLabel("todo start");
+    todoStartDate.setStartDateTime(QDateTime(QDate(2011, 3, 25), QTime(11, 0, 0)));
+    QVERIFY(cm->saveItem(&todoStartDate));
+
+    QOrganizerTodo todoDueDate;
+    todoDueDate.setDisplayLabel("todo due");
+    todoDueDate.setDueDateTime(QDateTime(QDate(2011, 3, 25), QTime(11, 30, 0)));
+    QVERIFY(cm->saveItem(&todoDueDate));
+
+    QOrganizerTodo todoNoDate;
+    todoNoDate.setDisplayLabel("todo nodate");
+    QVERIFY(cm->saveItem(&todoNoDate));
+
+    items = cm->items();
+    QCOMPARE(items.count(), 4);
+
+    items = cm->items(QDateTime(), QDateTime(QDate(2011, 3, 25), QTime(13, 0, 0)));
+    QCOMPARE(items.count(), 2);
+
+    items = cm->items(QDateTime(), QDateTime(QDate(2011, 3, 25), QTime(11, 15, 0)));
+    QCOMPARE(items.count(), 1);
+
+    items = cm->items(QDateTime(QDate(2011, 3, 27), QTime(10, 0, 0)), QDateTime());
+    QCOMPARE(items.count(), 1);
+
+    items = cm->items(QDateTime(QDate(2011, 3, 29), QTime(13, 0, 0)), QDateTime());
+    QCOMPARE(items.count(), 0);
+
+    items = cm->items(QDateTime(QDate(2011, 3, 26), QTime(11, 0, 0)),
+                      QDateTime(QDate(2011, 3, 28), QTime(11, 0, 0)));
+    QEXPECT_FAIL("mgr='mkcal'", "Needs NB#238116 fixed", Continue);
+    QCOMPARE(items.count(), 1);
+
+    items = cm->items(QDateTime(QDate(2011, 3, 28), QTime(11, 0, 0)),
+                      QDateTime(QDate(2011, 3, 30), QTime(11, 0, 0)));
+    QCOMPARE(items.count(), 1);
+
+    items = cm->items(QDateTime(QDate(2011, 3, 28), QTime(11, 0, 0)),
+                      QDateTime(QDate(2011, 3, 28), QTime(11, 0, 0)));
+    QEXPECT_FAIL("mgr='mkcal'", "Needs NB#238116 fixed", Continue);
+    QCOMPARE(items.count(), 1);
+
+
+    cm->removeItems(cm->itemIds());
 
     QOrganizerTodo todo;
     todo.setDisplayLabel("todo");
@@ -3382,8 +3435,8 @@ void tst_QOrganizerManager::todoItemFetch()
     QVERIFY(cm->saveItem(&recTodo));
 
     //fetch all recurrences
-    QList<QOrganizerItem> items = cm->items(QDateTime(QDate(2010, 9, 8)),
-                                            QDateTime(QDate(2010, 9, 12)));
+    items = cm->items(QDateTime(QDate(2010, 9, 8)),
+                      QDateTime(QDate(2010, 9, 12)));
     QCOMPARE(items.count(), 4); // should return todo + 3 x occurrencesOfRecTodo
 
     //fetch only the originating items
