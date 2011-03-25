@@ -38,14 +38,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef TELEPATHYENGINE_MAEMO_H
-#define TELEPATHYENGINE_MAEMO_H
-
-#include <TelepathyQt4/Types>
-#include <TelepathyQt4/PendingOperation>
-#include <TelepathyQt4/AccountManager>
-
-#include "tpsessionaccount_p.h"
+#ifndef TELEPATHYENGINE_MAEMO6_H
+#define TELEPATHYENGINE_MAEMO6_H
 
 #include "qmessageglobal.h"
 #include "qmessagemanager.h"
@@ -54,23 +48,23 @@
 #include "qmessage.h"
 #include "qmessageservice.h"
 
+#include <TelepathyQt4/Types>
+#include <TelepathyQt4/PendingOperation>
+#include <TelepathyQt4/AccountManager>
+#include <TelepathyQt4/AccountSet>
+#include <TelepathyQt4/ContactMessenger>
+
 QTM_USE_NAMESPACE
-
-
-#define CM_NAME_DEFAULT "ring"
-#define RING_ACCOUNT "/org/freedesktop/Telepathy/Account/ring/tel/ring"
 
 class  TelepathyEngine : public QObject
 {
     Q_OBJECT
+    Q_DISABLE_COPY(TelepathyEngine)
 public:
-    static TelepathyEngine* instance();
+    static TelepathyEngine *instance();
 
     TelepathyEngine();
     ~TelepathyEngine();
-
-    //bool initialize();
-
 
     QMessageAccountIdList queryAccounts(const QMessageAccountFilter &filter, const QMessageAccountSortOrder &sortOrder,
                                         uint limit, uint offset, bool &isFiltered, bool &isSorted);
@@ -79,38 +73,30 @@ public:
     QMessageAccountId defaultAccount(QMessage::Type type);
 
     bool sendMessage(QMessage &message, QMessageService *service);
-    QMessageManager::Error error();
-    static QMessageManager::Error convertError(const Tp::PendingOperation *op);
+    QMessageManager::Error error() const;
 
-signals:
-    //void amReady(TpSession *);
-    void accountReady(TpSessionAccount *);
-    void channeReady(TpSessionAccount *);
-    void messageReceived(const Tp::ReceivedMessage &, TpSessionAccount *);
-
-private slots:
+private Q_SLOTS:
     void onAMReady(Tp::PendingOperation *);
-    void onAccountCreated(const QString &);
-    void onReady(Tp::PendingOperation *);
-    void onAccountReady(TpSessionAccount *tpacc);
-    void onMessageReceived(const Tp::ReceivedMessage &, TpSessionAccount *);
+    void onAccountReady(Tp::PendingOperation *);
+    void onAccountAdded(const Tp::AccountPtr &account);
+    void onAccountRemoved(const Tp::AccountPtr &account);
 
 private:
-    //static TelepathyEngine *m_inst;
+    void syncDone();
+    void addAccount(const Tp::AccountPtr &acc);
+    QMessageManager::Error convertError(const Tp::PendingOperation *op);
 
-    void _updateImAccounts() const;
-    TpSessionAccount *getTpSessionAccount(const QString &cm, const QString &protocol = QString());
-
-    mutable QMessageAccountId m_defaultSmsAccountId;
-    mutable QHash<QString, QMessageAccount> m_iAccounts;
-    QEventLoop m_loop;
+    typedef QPair<Tp::AccountPtr, QMessageAccount> AccountPair;
+    QMap<QString, AccountPair> m_accounts;
 
     Tp::AccountManagerPtr m_AM;
-    QVector<TpSessionAccount*> m_accounts;
-    QString m_CMName;
-    QString m_reqMsg;
-    QString m_reqAddress;
-    bool m_sync;  // Synchronous initialization
+    Tp::AccountSetPtr m_accountSet;
+
+    // Synchronous initialization
+    bool m_sync;
+    QEventLoop m_loop;
+    QStringList m_initList;
+
     QMessageManager::Error m_error;
 };
 
@@ -118,26 +104,30 @@ class SendRequest : public QObject
 {
     Q_OBJECT
 public:
-    SendRequest(const QMessage &message, QMessageService *parent);
+    SendRequest(const QMessage &message, QMessageService *service);
     ~SendRequest();
 
     QStringList to() const;
     QString text() const;	  
 
     void setFinished(const QString &address, bool success);
+    void addMessenger(const Tp::ContactMessengerPtr &);
+    int requestCount() const;
 
 public slots:
     void finished(Tp::PendingOperation *operation, bool processLater = false);
+    void onServiceDestroyed(QObject*);
 
 private slots:
     friend class QTimer;
     void down();
 
 private:
+    QMessageService *_service;
     QMessage _message;
     int _pendingRequestCount;
     int _failCount;
-
+    QList<Tp::ContactMessengerPtr> _messengerList;
 };
 
 #endif // TELEPATHYENGINE_MAEMO_P_H

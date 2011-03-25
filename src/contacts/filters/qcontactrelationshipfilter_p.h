@@ -113,6 +113,18 @@ public:
         return stream;
     }
 
+#ifndef QT_NO_DEBUG_STREAM
+    QDebug& debugStreamOut(QDebug& dbg) const
+    {
+        dbg.nospace() << "QContactRelationshipFilter(";
+        dbg.nospace() << "relationshipType=" << m_relationshipType << ","
+                      << "relatedContactId=" << m_relatedContactId << ","
+                      << "relatedContactRole=" << static_cast<quint32>(m_relatedContactRole);
+        dbg.nospace() << ")";
+        return dbg.maybeSpace();
+    }
+#endif
+
     Q_IMPLEMENT_CONTACTFILTER_VIRTUALCTORS(QContactRelationshipFilter, QContactFilter::RelationshipFilter)
 
     QString m_relationshipType;

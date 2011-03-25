@@ -40,25 +40,57 @@
 ****************************************************************************/
 
 #include "test_sensorimpl.h"
+#include "test_sensor2impl.h"
 #include <qsensorplugin.h>
 #include <qsensorbackend.h>
 #include <qsensormanager.h>
 #include <QFile>
 #include <QDebug>
-#include "dummyaccelerometer.h"
+#include <QTest>
 
 QTM_USE_NAMESPACE
 
-class TestSensorPlugin : public QObject, public QSensorPluginInterface, public QSensorBackendFactory
+class TestSensorPlugin : public QObject,
+                         public QSensorPluginInterface,
+                         public QSensorChangesInterface,
+                         public QSensorBackendFactory
 {
     Q_OBJECT
-    Q_INTERFACES(QtMobility::QSensorPluginInterface)
+    Q_INTERFACES(QtMobility::QSensorPluginInterface QtMobility::QSensorChangesInterface)
 public:
     void registerSensors()
     {
+        static bool recursive = false;
+        QVERIFY2(!recursive, "Recursively called TestSensorPlugin::registerSensors!");
+        if (recursive) return;
+        recursive = true;
+
+        // This is bad code. It caused a crash due to recursively calling
+        // loadPlugins() in qsensormanager.cpp (because loadPlugins() did
+        // not set the pluginsLoaded flag soon enough).
+        (void)QSensor::defaultSensorForType(TestSensor::type);
+
         QSensorManager::registerBackend(TestSensor::type, testsensorimpl::id, this);
         QSensorManager::registerBackend(TestSensor::type, "test sensor 2", this);
-        QSensorManager::registerBackend(QAccelerometer::type, dummyaccelerometer::id, this);
+        QSensorManager::registerBackend(TestSensor2::type, testsensor2impl::id, this);
+    }
+
+    void sensorsChanged()
+    {
+        // Register a new type on initial load
+        // This is testing the "don't emit availableSensorsChanged() too many times" functionality.
+        if (!QSensorManager::isBackendRegistered(TestSensor::type, "test sensor 3"))
+            QSensorManager::registerBackend(TestSensor::type, "test sensor 3", this);
+
+        // When a sensor of type "a random type" is registered, register another sensor.
+        // This is testing the "don't emit availableSensorsChanged() too many times" functionality.
+        if (!QSensor::defaultSensorForType("a random type").isEmpty()) {
+            if (!QSensorManager::isBackendRegistered("a random type 2", "random.dynamic"))
+                QSensorManager::registerBackend("a random type 2", "random.dynamic", this);
+        } else {
+            if (QSensorManager::isBackendRegistered("a random type 2", "random.dynamic"))
+                QSensorManager::unregisterBackend("a random type 2", "random.dynamic");
+        }
     }
 
     QSensorBackend *createBackend(QSensor *sensor)
@@ -66,8 +98,8 @@ public:
         if (sensor->identifier() == testsensorimpl::id) {
             return new testsensorimpl(sensor);
         }
-        if (sensor->identifier() == dummyaccelerometer::id) {
-            return new dummyaccelerometer(sensor);
+        if (sensor->identifier() == testsensor2impl::id) {
+            return new testsensor2impl(sensor);
         }
 
         qWarning() << "Can't create backend" << sensor->identifier();
@@ -75,7 +107,18 @@ public:
     }
 };
 
-REGISTER_STATIC_PLUGIN(TestSensorPlugin)
+REGISTER_STATIC_PLUGIN_V2(TestSensorPlugin)
+
+class LegacySensorPlugin : public QSensorPluginInterface
+{
+public:
+    void registerSensors()
+    {
+        qWarning() << "Loaded the LegacySensorPlugin";
+    }
+};
+
+REGISTER_STATIC_PLUGIN_V1(LegacySensorPlugin)
 
 #include "test_sensorplugin.moc"
 

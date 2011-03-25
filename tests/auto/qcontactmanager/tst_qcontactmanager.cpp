@@ -180,6 +180,7 @@ private slots:
     void update();
     void remove();
     void batch();
+    void observerDeletion();
     void signalEmission();
     void detailDefinitions();
     void displayName();
@@ -621,11 +622,17 @@ void tst_QContactManager::ctors()
     QContactManager cm3(defaultStore, QMap<QString, QString>());
     QContactManager cm4(cm.managerUri()); // should fail
 
+    QContactManager cm9b(0); // QObject* ctor, should be same as cm2 etc
+    QContactManager cm9c(&parent); // same as cm2 etc.
+
     QScopedPointer<QContactManager> cm5(QContactManager::fromUri(QContactManager::buildUri(defaultStore, QMap<QString, QString>())));
     QScopedPointer<QContactManager> cm6(QContactManager::fromUri(cm.managerUri())); // uri is not a name; should fail.
     QScopedPointer<QContactManager> cm9(QContactManager::fromUri(QString(), &parent));
 
     QVERIFY(cm9->parent() == &parent);
+    QVERIFY(cm9b.parent() == 0);
+    QVERIFY(cm9c.parent() == &parent);
+
 
     /* OLD TEST WAS THIS: */
     //QCOMPARE(cm.managerUri(), cm2.managerUri());
@@ -639,6 +646,8 @@ void tst_QContactManager::ctors()
     QCOMPARE(cm.managerName(), cm5->managerName());
     QCOMPARE(cm.managerName(), cm6->managerName());
     QCOMPARE(cm.managerName(), cm9->managerName());
+    QCOMPARE(cm.managerName(), cm9b.managerName());
+    QCOMPARE(cm.managerName(), cm9c.managerName());
 
     QVERIFY(cm.managerUri() != cm4.managerUri()); // don't pass a uri to the ctor
 
@@ -2163,6 +2172,20 @@ void tst_QContactManager::contactValidation()
     c.removeDetail(&d7);
 }
 
+void tst_QContactManager::observerDeletion()
+{
+    QContactManager *manager = new QContactManager("memory");
+    QContact c;
+    QVERIFY(manager->saveContact(&c));
+    QContactLocalId id = c.localId();
+    QContactObserver *observer = new QContactObserver(manager, id);
+    Q_UNUSED(observer)
+    delete manager;
+    delete observer;
+    // Test for bug MOBILITY-2566 - that QContactObserver doesn't crash when it is
+    // destroyed after the associated QContactManager
+}
+
 void tst_QContactManager::signalEmission()
 {
     QTest::qWait(500); // clear the signal queue
@@ -2200,7 +2223,7 @@ void tst_QContactManager::signalEmission()
     QVERIFY(arg.count() == 1);
     QCOMPARE(QContactLocalId(arg.at(0)), cid);
 
-    QSharedPointer<QContactObserver> c1Observer = m1->observeContact(cid);
+    QScopedPointer<QContactObserver> c1Observer(new QContactObserver(m1.data(), cid));
     QScopedPointer<QSignalSpy> spyCOM1(new QSignalSpy(c1Observer.data(), SIGNAL(contactChanged())));
     QScopedPointer<QSignalSpy> spyCOR1(new QSignalSpy(c1Observer.data(), SIGNAL(contactRemoved())));
 
@@ -2248,8 +2271,8 @@ void tst_QContactManager::signalEmission()
 
     spyCOM1->clear();
     spyCOR1->clear();
-    QSharedPointer<QContactObserver> c2Observer = m1->observeContact(c2.localId());
-    QSharedPointer<QContactObserver> c3Observer = m1->observeContact(c3.localId());
+    QScopedPointer<QContactObserver> c2Observer(new QContactObserver(m1.data(), c2.localId()));
+    QScopedPointer<QContactObserver> c3Observer(new QContactObserver(m1.data(), c3.localId()));
     QScopedPointer<QSignalSpy> spyCOM2(new QSignalSpy(c2Observer.data(), SIGNAL(contactChanged())));
     QScopedPointer<QSignalSpy> spyCOM3(new QSignalSpy(c3Observer.data(), SIGNAL(contactChanged())));
     QScopedPointer<QSignalSpy> spyCOR2(new QSignalSpy(c2Observer.data(), SIGNAL(contactRemoved())));
@@ -2306,9 +2329,9 @@ void tst_QContactManager::signalEmission()
     QTRY_WAIT( while(spyCA.size() > 0) {sigids += spyCA.takeFirst().at(0).value<QList<QContactLocalId> >(); }, sigids.contains(c.localId()) && sigids.contains(c2.localId()) && sigids.contains(c3.localId()));
     QTRY_COMPARE(spyCM.count(), 0);
 
-    c1Observer = m1->observeContact(c.localId());
-    c2Observer = m1->observeContact(c2.localId());
-    c3Observer = m1->observeContact(c3.localId());
+    c1Observer.reset(new QContactObserver(m1.data(), c.localId()));
+    c2Observer.reset(new QContactObserver(m1.data(), c2.localId()));
+    c3Observer.reset(new QContactObserver(m1.data(), c3.localId()));
     spyCOM1.reset(new QSignalSpy(c1Observer.data(), SIGNAL(contactChanged())));
     spyCOM2.reset(new QSignalSpy(c2Observer.data(), SIGNAL(contactChanged())));
     spyCOM3.reset(new QSignalSpy(c3Observer.data(), SIGNAL(contactChanged())));
@@ -2864,6 +2887,8 @@ void tst_QContactManager::changeSet()
 
 void tst_QContactManager::fetchHint()
 {
+    // This just tests the accessors and mutators (API).
+    // See tst_qcontactmanagerfiltering for the "backend support" test.
     QContactFetchHint hint;
     hint.setOptimizationHints(QContactFetchHint::NoBinaryBlobs);
     QCOMPARE(hint.optimizationHints(), QContactFetchHint::NoBinaryBlobs);
@@ -2871,6 +2896,17 @@ void tst_QContactManager::fetchHint()
     rels << QString(QLatin1String(QContactRelationship::HasMember));
     hint.setRelationshipTypesHint(rels);
     QCOMPARE(hint.relationshipTypesHint(), rels);
+    QStringList defs;
+    defs << QString(QLatin1String(QContactName::DefinitionName))
+         << QString(QLatin1String(QContactPhoneNumber::DefinitionName));
+    hint.setDetailDefinitionsHint(defs);
+    QCOMPARE(hint.detailDefinitionsHint(), defs);
+    QSize prefImageSize(33, 33);
+    hint.setPreferredImageSize(prefImageSize);
+    QCOMPARE(hint.preferredImageSize(), prefImageSize);
+    int limit = 15;
+    hint.setMaxCountHint(limit);
+    QCOMPARE(hint.maxCountHint(), limit);
 }
 
 void tst_QContactManager::selfContactId()
@@ -3594,6 +3630,7 @@ void tst_QContactManager::partialSave()
     // 5) new contact, some details in the mask
     // 6) Have a bad manager uri in the middle
     // 7) Have a non existing contact in the middle
+    // 8) A list entirely of new contacts
 
     QContactPhoneNumber pn;
     pn.setNumber("111111");
@@ -3680,6 +3717,46 @@ void tst_QContactManager::partialSave()
     QCOMPARE(errorMap.count(), 2);
     QCOMPARE(errorMap[4], QContactManager::DoesNotExistError);
     QCOMPARE(errorMap[5], QContactManager::InvalidDetailError);
+
+    // 8 - New contact, no details in the mask
+    newContact = originalContacts[3];
+    QCOMPARE(newContact.details<QContactOrganization>().count(), 1);
+    QCOMPARE(newContact.details<QContactName>().count(), 1);
+    newContact.setId(QContactId());
+    QList<QContact> contacts2;
+    contacts2.append(newContact);
+    QVERIFY(cm->saveContacts(&contacts2, QStringList(QContactEmailAddress::DefinitionName), &errorMap));
+    QVERIFY(errorMap.isEmpty());
+    QVERIFY(contacts2[0].localId() != 0); // Saved
+    b = cm->contact(contacts2[0].localId());
+    QVERIFY(b.details<QContactOrganization>().count() == 0); // not saved
+    QVERIFY(b.details<QContactName>().count() == 0); // not saved
+
+    // 9 - A list with only a new contact, with some details in the mask
+    newContact = originalContacts[2];
+    newContact.setId(QContactId());
+    contacts2.clear();
+    contacts2.append(newContact);
+    QVERIFY(cm->saveContacts(&contacts2, QStringList(QContactEmailAddress::DefinitionName), &errorMap));
+    QVERIFY(errorMap.isEmpty());
+    QVERIFY(contacts2[0].localId() != 0); // Saved
+    b = cm->contact(contacts2[0].localId());
+    QVERIFY(b.details<QContactEmailAddress>().count() == 1);
+    QVERIFY(b.details<QContactName>().count() == 0); // not saved
+
+    // 10 - A list with new a contact for the wrong manager, followed by a new contact with an
+    // invalid detail
+    newContact = originalContacts[2];
+    newContact.setId(QContactId());
+    contacts2.clear();
+    contacts2.append(newContact);
+    contacts2.append(newContact);
+    contacts2[0].setId(badId);
+    contacts2[1].saveDetail(&badDetail);
+    QVERIFY(!cm->saveContacts(&contacts2, QStringList("BadDetail"), &errorMap));
+    QCOMPARE(errorMap.count(), 2);
+    QCOMPARE(errorMap[0], QContactManager::DoesNotExistError);
+    QCOMPARE(errorMap[1], QContactManager::InvalidDetailError);
 }
 #endif
 

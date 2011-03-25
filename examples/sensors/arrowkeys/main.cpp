@@ -47,6 +47,11 @@ namespace arrows{
     static const QString ARROW_UP="^", ARROW_DOWN="v", ARROW_LEFT="<",ARROW_RIGHT=">";
 }
 
+namespace orientation{
+    static const QString LANDSCAPE="landscape", PORTRAIT="portrait";
+}
+
+
 class AccelerometerFilter : public QAccelerometerFilter
 {
 public:
@@ -88,7 +93,7 @@ int main(int argc, char **argv)
 
     qrangelist datarates = sensor.availableDataRates();
     int i = datarates.size();
-    sensor.setDataRate(datarates.at(i-1).second);
+    if (i>0) sensor.setDataRate(datarates.at(i-1).second);
     sensor.start();
 
     return app.exec();

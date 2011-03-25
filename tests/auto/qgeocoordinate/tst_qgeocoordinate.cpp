@@ -41,7 +41,7 @@
 
 //TESTED_COMPONENT=src/location
 
-#include "../qlocationtestutils_p.h"
+#include "qlocationtestutils_p.h"
 
 #include <qgeocoordinate.h>
 #include <qtest.h>
@@ -510,55 +510,6 @@ private slots:
                 << NORTH_POLE << SOUTH_POLE << qreal(180.0);
     }
 
-/*
-    void atDistance()
-    {
-        QFETCH(QGeoCoordinate, origin);
-        QFETCH(qreal, distanceNorth);
-        QFETCH(qreal, distanceEast);
-        QFETCH(QGeoCoordinate, result);
-
-        QCOMPARE(result, origin.atDistance(distanceNorth, distanceEast));
-    }
-
-    void atDistance_data()
-    {
-        QTest::addColumn<QGeoCoordinate>("origin");
-        QTest::addColumn<qreal>("distanceNorth");
-        QTest::addColumn<qreal>("distanceEast");
-        QTest::addColumn<QGeoCoordinate>("result");
-
-        QTest::newRow("invalid coord")
-            << QGeoCoordinate() 
-            << qreal(1000.0) 
-            << qreal(1000.0) 
-            << QGeoCoordinate();
-
-        qWarning() << BRISBANE.toString()
-                    << " "
-                    << MELBOURNE.toString();
-
-        QTest::newRow("brisbane -> melbourne")
-            << BRISBANE 
-            << qreal(-1150000.0)
-            << qreal(-795700.0)
-            << MELBOURNE;
-
-
-        QTest::newRow("london -> new york")
-            << LONDON
-            << qreal(0.0)
-            << qreal(0.0)
-            << NEW_YORK;
-
-        QTest::newRow("north pole -> south pole")
-            << NORTH_POLE
-            << qreal(0.0)
-            << qreal(0.0)
-            << SOUTH_POLE;
-    }
-*/
-
     void atDistanceAndAzimuth()
     {
         QFETCH(QGeoCoordinate, origin);
@@ -585,17 +536,32 @@ private slots:
             << BRISBANE 
             << qreal(1374820.1618767744)
             << qreal(211.1717286649)
+// the following platforms use float for qreal
+#if !defined(QT_NO_FPU) && !defined(QT_ARCH_ARM) && !defined(QT_ARCH_WINDOWSCE) && !defined(QT_ARCH_SYMBIAN) 
             << MELBOURNE;
+#else
+            << QGeoCoordinate(-37.8142515084775, 144.963170622944);
+#endif
         QTest::newRow("london -> new york")
             << LONDON
             << qreal(5570538.4987236429)
             << qreal(288.3388804508)
+// the following platforms use float for qreal
+#if !defined(QT_NO_FPU) && !defined(QT_ARCH_ARM) && !defined(QT_ARCH_WINDOWSCE) && !defined(QT_ARCH_SYMBIAN) 
             << NEW_YORK;
+#else
+            << QGeoCoordinate(40.7145220608416, -74.0071216045375);
+#endif
         QTest::newRow("north pole -> south pole")
             << NORTH_POLE
             << qreal(20015109.4154876769)
             << qreal(180.0)
+// the following platforms use float for qreal
+#if !defined(QT_NO_FPU) && !defined(QT_ARCH_ARM) && !defined(QT_ARCH_WINDOWSCE) && !defined(QT_ARCH_SYMBIAN) 
             << SOUTH_POLE;
+#else
+            << QGeoCoordinate(-89.9999947369857, -90.0);
+#endif
     }
 
     void degreesToString()

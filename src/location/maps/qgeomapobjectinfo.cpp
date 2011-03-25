@@ -166,6 +166,39 @@ void QGeoMapObjectInfo::selectedChanged(bool selected)
 }
 
 /*!
+    This function is run when the origin of the object changes to
+    \a origin.
+
+    The default implementation does nothing.
+*/
+void QGeoMapObjectInfo::originChanged(const QGeoCoordinate &origin)
+{
+    Q_UNUSED(origin);
+}
+
+/*!
+    This function is run when the coordinate units of the object changes to
+    \a units.
+
+    The default implementation does nothing.
+*/
+void QGeoMapObjectInfo::unitsChanged(QGeoMapObject::CoordinateUnit units)
+{
+    Q_UNUSED(units);
+}
+
+/*!
+    This function is run when the transform type of the object changes to
+    \a transformType.
+
+    The default implementation does nothing.
+*/
+void QGeoMapObjectInfo::transformTypeChanged(QGeoMapObject::TransformType transformType)
+{
+    Q_UNUSED(transformType);
+}
+
+/*!
     Returns a bounding box which contains this map object.
 
     The default implementation returns an invalid bounding box.
@@ -195,10 +228,20 @@ QGeoMapData* QGeoMapObjectInfo::mapData()
     return d_ptr->mapData;
 }
 
+// Need to keep this for BC, otherwise would probably replace with const
+// version
 /*!
     Returns the QGeoMapObject instance associated with this info object.
 */
 QGeoMapObject* QGeoMapObjectInfo::mapObject()
+{
+    return d_ptr->mapObject;
+}
+
+/*!
+    Returns the QGeoMapObject instance associated with this info object.
+*/
+QGeoMapObject* QGeoMapObjectInfo::mapObject() const
 {
     return d_ptr->mapObject;
 }

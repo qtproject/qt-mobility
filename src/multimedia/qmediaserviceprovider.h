@@ -60,7 +60,8 @@ public:
     enum Feature {
         LowLatencyPlayback = 0x01,
         RecordingSupport = 0x02,
-        StreamPlayback = 0x04
+        StreamPlayback = 0x04,
+        VideoSurface = 0x08
     };
     Q_DECLARE_FLAGS(Features, Feature)
 
@@ -92,6 +93,8 @@ public:
 private:
     QSharedDataPointer<QMediaServiceProviderHintPrivate> d;
 };
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(QMediaServiceProviderHint::Features)
 
 class Q_MULTIMEDIA_EXPORT QMediaServiceProvider : public QObject
 {

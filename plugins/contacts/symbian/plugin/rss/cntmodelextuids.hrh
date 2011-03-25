@@ -73,7 +73,7 @@
  * Phonebook custom Field value.
  * Video ringtone field type.
  */
-#define KUidContactFieldVideoRingToneValue	0x200100E5
+#define KUidContactFieldVideoRingToneValue	0x200100E6
 
 /**
  * Phonebook custom Field value.

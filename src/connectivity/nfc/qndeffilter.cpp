@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -47,13 +47,13 @@ QTM_BEGIN_NAMESPACE
 
 /*!
     \class QNdefFilter
-    \brief The QNdefFilter class provides a filter for match NDEF messages.
+    \brief The QNdefFilter class provides a filter for matching NDEF messages.
 
     \ingroup connectivity-nfc
     \inmodule QtConnectivity
 
     The QNdefFilter encapsulates the structure of an NDEF message and is used by
-    QNearFieldManager::registerTargetDetectHandler() to match NDEF message that have a particular
+    QNearFieldManager::registerNdefMessageHandler() to match NDEF message that have a particular
     structure.
 
     The following filter matches NDEF messages that contain a single smart poster record:

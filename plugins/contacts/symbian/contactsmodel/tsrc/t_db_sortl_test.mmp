@@ -16,7 +16,7 @@
 */
 
 
-target		t_db_sortl_test.exe
+TARGET		t_db_sortl_test.exe
 targettype	EXE
 CAPABILITY	ReadUserData WriteUserData ReadDeviceData WriteDeviceData AllFiles
 

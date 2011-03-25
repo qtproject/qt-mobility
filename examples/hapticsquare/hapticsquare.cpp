@@ -50,7 +50,7 @@ HapticSquare::HapticSquare()
     m_rumble.setAttackIntensity(0.1);
     m_rumble.setAttackTime(250);
     m_rumble.setIntensity(1.0);
-    m_rumble.setDuration(100);
+    m_rumble.setDuration(1000);
     m_rumble.setFadeTime(250);
     m_rumble.setFadeIntensity(0.1);
 //! [0]
@@ -68,7 +68,6 @@ HapticSquare::HapticSquare()
 //! [2]
     m_btnRumble = new HapticButton(tr("Rumble!"));
     m_btnOcean = new HapticButton(tr("Ocean"));
-    m_btnOcean->setCheckable(true);
     m_btnButtonClick = new HapticButton(tr("Click"));
     m_btnNegativeEffect = new HapticButton(tr("Oops!"));
     QGridLayout *topLayout = new QGridLayout(this);
@@ -78,7 +77,7 @@ HapticSquare::HapticSquare()
     topLayout->addWidget(m_btnNegativeEffect, 1, 1);
 
     connect(m_btnRumble, SIGNAL(clicked()), this, SLOT(playRumble()));
-    connect(m_btnOcean, SIGNAL(toggled(bool)), this, SLOT(playOcean(bool)));
+    connect(m_btnOcean, SIGNAL(clicked()), this, SLOT(playOcean()));
     connect(m_btnButtonClick, SIGNAL(clicked()), this, SLOT(playButtonClick()));
     connect(m_btnNegativeEffect, SIGNAL(clicked()), this, SLOT(playNegativeEffect()));
 }
@@ -98,12 +97,13 @@ void HapticSquare::playRumble()
     m_rumble.start();
 }
 
-void HapticSquare::playOcean(bool toggleState)
+void HapticSquare::playOcean()
 {
-    if (toggleState)
+    if (m_ocean.state() == QFeedbackEffect::Stopped) {
         m_ocean.start();
-    else
+    } else {
         m_ocean.stop();
+    }
 }
 //! [3]
 

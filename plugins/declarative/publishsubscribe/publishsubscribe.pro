@@ -2,11 +2,12 @@ INCLUDEPATH += ../../../src/publishsubscribe
 DEPENDPATH += ../../../src/publishsubscribe
 INCLUDEPATH += ../../../src/global
 
-TARGET  = $$qtLibraryTarget(declarative_publishsubscribe)
 TEMPLATE = lib
 CONFIG += plugin
+TARGET  = $$qtLibraryTarget(declarative_publishsubscribe)
 TARGETPATH = QtMobility/publishsubscribe
 PLUGIN_TYPE = declarative
+DEFINES += QT_MAKEDLL
 include(../../../common.pri)
 
 # support headers/sources for dynamic properties
@@ -16,11 +17,13 @@ QT += declarative
 
 SOURCES += publishsubscribe.cpp \
     qdeclarativevaluespacepublisher.cpp \
-    qdeclarativevaluespacepublishermetaobject.cpp
+    qdeclarativevaluespacepublishermetaobject.cpp \
+    qdeclarativevaluespacesubscriber.cpp
 
 HEADERS += \
     qdeclarativevaluespacepublisher_p.h \
-    qdeclarativevaluespacepublishermetaobject_p.h
+    qdeclarativevaluespacepublishermetaobject_p.h \
+    qdeclarativevaluespacesubscriber_p.h
 
 CONFIG += mobility
 MOBILITY += publishsubscribe

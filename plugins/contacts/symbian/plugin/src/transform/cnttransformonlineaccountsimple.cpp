@@ -38,7 +38,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef SYMBIAN_BACKEND_USE_SQLITE
+#ifndef SYMBIAN_BACKEND_USE_CNTMODEL_V2
 
 #include "cnttransformonlineaccountsimple.h"
 
@@ -211,4 +211,4 @@ void CntTransformOnlineAccount::detailDefinitions(QMap<QString, QContactDetailDe
     }
 }
 
-#endif // SYMBIAN_BACKEND_USE_SQLITE
+#endif // SYMBIAN_BACKEND_USE_CNTMODEL_V2

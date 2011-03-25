@@ -57,6 +57,8 @@ class  Q_SYSINFO_EXPORT QSystemNetworkInfo : public QObject
     Q_OBJECT
     Q_ENUMS(NetworkStatus)
     Q_ENUMS(NetworkMode)
+    Q_ENUMS(CellDataTechnology)
+
     Q_PROPERTY(int cellId READ cellId NOTIFY cellIdChanged)
     Q_PROPERTY(int locationAreaCode READ locationAreaCode)
     Q_PROPERTY(QString currentMobileCountryCode READ currentMobileCountryCode NOTIFY currentMobileCountryCodeChanged)
@@ -64,6 +66,7 @@ class  Q_SYSINFO_EXPORT QSystemNetworkInfo : public QObject
     Q_PROPERTY(QString homeMobileCountryCode READ homeMobileCountryCode CONSTANT)
     Q_PROPERTY(QString homeMobileNetworkCode READ homeMobileNetworkCode CONSTANT)
     Q_PROPERTY(QSystemNetworkInfo::NetworkMode currentMode READ currentMode CONSTANT)
+    Q_PROPERTY(QSystemNetworkInfo::CellDataTechnology cellDataTechnology READ cellDataTechnology NOTIFY cellDataTechnologyChanged)
 
 public:
 
@@ -91,11 +94,16 @@ public:
         EthernetMode,
         BluetoothMode,
         WimaxMode,
-        GprsMode, //1.2
-        EdgeMode, //1.2
-        HspaMode, //1.2
         LteMode //1.2
     };
+
+    enum CellDataTechnology {
+        UnknownDataTechnology = 0,
+        GprsDataTechnology,
+        EdgeDataTechnology,
+        UmtsDataTechnology,
+        HspaDataTechnology,
+    }; //1.2
 
     Q_INVOKABLE QSystemNetworkInfo::NetworkStatus networkStatus(QSystemNetworkInfo::NetworkMode mode);
     Q_INVOKABLE static int networkSignalStrength(QSystemNetworkInfo::NetworkMode mode);
@@ -110,7 +118,8 @@ public:
     QString homeMobileCountryCode();
     QString homeMobileNetworkCode();
     Q_INVOKABLE static QString networkName(QSystemNetworkInfo::NetworkMode mode);
-    QNetworkInterface interfaceForMode(QSystemNetworkInfo::NetworkMode mode);
+    Q_INVOKABLE QNetworkInterface interfaceForMode(QSystemNetworkInfo::NetworkMode mode);
+    QSystemNetworkInfo::CellDataTechnology cellDataTechnology();
 
 
 Q_SIGNALS:
@@ -122,6 +131,7 @@ Q_SIGNALS:
    void networkModeChanged(QSystemNetworkInfo::NetworkMode);
 
    void cellIdChanged(int); //1.2
+   void cellDataTechnologyChanged(QSystemNetworkInfo::CellDataTechnology); //1.2
 
 protected:
     virtual void connectNotify(const char *signal);

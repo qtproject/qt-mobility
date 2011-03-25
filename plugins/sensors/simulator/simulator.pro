@@ -6,8 +6,8 @@ include(version.pri)
 include(simulator.pri)
 
 TEMPLATE = lib
-TARGET = $$qtLibraryTarget(qtsensors_simulator)
 CONFIG += plugin
+TARGET = $$qtLibraryTarget(qtsensors_simulator)
 include(../../../common.pri)
 qtAddLibrary(QtMobilitySimulator)
 symbian:TARGET.EPOCALLOWDLLDATA = 1

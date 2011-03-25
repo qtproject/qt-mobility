@@ -56,8 +56,7 @@
 #include "qgeomapdata_p.h"
 #include "qgeomapobject.h"
 #include "qgeomapobject_p.h"
-
-#include "qgeotiledmapobjectinfo_p.h"
+#include "projwrapper_p.h"
 
 #include <QRectF>
 #include <QHash>
@@ -73,6 +72,7 @@ class QGeoTiledMapData;
 class QGeoTiledMapRequest;
 class QGeoTiledMapReply;
 class QGeoTiledMapObjectInfo;
+class QGeoMapObjectEngine;
 
 class QGeoTiledMapDataPrivate : public QGeoMapDataPrivate
 {
@@ -97,11 +97,16 @@ public:
     bool intersectsScreen(const QRect &rect) const;
     QList<QPair<QRect, QRect> > intersectedScreen(const QRect &rect, bool translateToScreen = true) const;
 
-    void removeObjectInfo(QGeoTiledMapObjectInfo* object);
+    virtual QPoint screenPositionToWorldReferencePosition(const QPointF &screenPosition) const;
+    virtual QPoint coordinateToWorldReferencePosition(double lon, double lat) const;
+    virtual QPointF coordinateToScreenPosition(double lon, double lat) const;
 
-    void addObjectInfo(QGeoTiledMapObjectInfo* object);
+    virtual void addObject(QGeoMapObject *object);
+    virtual void removeObject(QGeoMapObject *object);
 
-    QPoint screenPositionToWorldReferencePosition(const QPointF &screenPosition) const;
+    virtual void update(QObject *object);
+
+    QGeoMapObjectEngine *oe;
 
     int zoomFactor;
 
@@ -121,13 +126,11 @@ public:
     QCache<QGeoTiledMapRequest, QImage> cache;
     QCache<QGeoTiledMapRequest, QPixmap> zoomCache;
 
+    ProjCoordinateSystem spherical;
+    ProjCoordinateSystem wgs84;
 
     Q_DECLARE_PUBLIC(QGeoTiledMapData)
 private:
-    QGraphicsScene *scene;
-
-    QHash<QGraphicsItem*, QGeoMapObject*> itemMap;
-
     Q_DISABLE_COPY(QGeoTiledMapDataPrivate)
 };
 

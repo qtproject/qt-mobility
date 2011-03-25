@@ -71,23 +71,12 @@ public:
     QGeoTiledMapPixmapObjectInfo(QGeoTiledMapData *mapData, QGeoMapObject *mapObject);
     ~QGeoTiledMapPixmapObjectInfo();
 
-    QGeoBoundingBox boundingBox() const;
-
     QGeoMapPixmapObject* pixmap;
-    QGraphicsPixmapItem *pixmapItem1;
-    QGraphicsPixmapItem *pixmapItem2;
-
-    void updateValidity();
+    QGraphicsPixmapItem *pixmapItem;
 
 public slots:
-    void coordinateChanged(const QGeoCoordinate &coordinate);
     void pixmapChanged(const QPixmap &pixmap);
     void offsetChanged(const QPoint &offset);
-    void zoomLevelChanged(qreal zoomLevel);
-private:
-    void update();
-
-    QGeoBoundingBox boundingBox_;
 };
 
 QTM_END_NAMESPACE

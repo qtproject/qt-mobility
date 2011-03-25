@@ -74,16 +74,16 @@ supported by an engine by calling QContactManager::supportedContactTypes().
 
 \section2 Provided Engines
 
-The Contacts module of the Qt Mobility project includes several backends already, some of which
+The Contacts module of the QtMobility project includes several backends already, some of which
 are designed to interface with the default addressbook on their particular platform.
 
 \section3 \bold{In-Memory Example Engine}
 
 The in-memory engine identifies itself as the "memory" engine.  It is available on all platforms
-which are supported by the Qt Mobility project.
+which are supported by the QtMobility project.
 
 The in-memory engine supports the default schema, and provides all functionality available through
-the Qt Mobility Contacts API; however, all data is stored in-memory and is not persisted in any
+the QtMobility Contacts API; however, all data is stored in-memory and is not persisted in any
 way.
 
 \section3 \bold{Symbian Engine}
@@ -352,7 +352,7 @@ implemented in a similar manner to the (provided) memory engine's naive implemen
 
 \section2 Example Implementation
 
-There are several implementations of QContactManagerEngine available in the Qt Mobility
+There are several implementations of QContactManagerEngine available in the QtMobility
 source code repository.  In particular, the "memory" engine provides an implementation of
 an in-memory, anonymous datastore which supports every feature in the API, and therefore
 is useful for demonstration purposes.  Be aware, however, that the implementation of all

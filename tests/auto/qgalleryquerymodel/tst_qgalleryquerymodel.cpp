@@ -88,6 +88,7 @@ private Q_SLOTS:
     void metaDataChanged();
     void invalidIndex();
     void hierarchy();
+    void setGallery();
 
 private:
     void populateGallery(QtTestGallery *gallery) const;
@@ -1763,6 +1764,48 @@ void tst_QGalleryQueryModel::hierarchy()
     QCOMPARE(model.index( 5, 2, index).isValid(), false);
     QCOMPARE(model.index( 5, 3, index).isValid(), false);
     QCOMPARE(model.index( 5, 4, index).isValid(), false);
+}
+
+void tst_QGalleryQueryModel::setGallery()
+{
+    QtTestGallery gallery;
+    populateGallery(&gallery);
+
+    QModelIndex index;
+
+    QGalleryQueryModel model;
+    model.addColumn(albumProperties);
+    model.addColumn(titleProperties);
+    model.addColumn(QLatin1String("duration"), Qt::DisplayRole);
+    model.addColumn(QLatin1String("rating"), Qt::DisplayRole);
+    model.addColumn(QLatin1String("turtle"), Qt::DisplayRole);
+
+    QVERIFY(model.gallery() == 0);
+    model.execute();
+
+    index = model.index(0, 0);
+    QCOMPARE(index.isValid(), false);
+
+    model.setGallery(&gallery);
+    QVERIFY(model.gallery() == &gallery);
+    model.execute();
+
+    index = model.index(0, 0);
+    QCOMPARE(index.isValid(), true);
+    QCOMPARE(model.itemId(index), QVariant(3));
+    QCOMPARE(model.itemUrl(index), QUrl(QLatin1String("file:///music/interlude.mp3")));
+    QCOMPARE(model.itemType(index), QString::fromLatin1("Audio"));
+    QCOMPARE(index.data(Qt::DisplayRole), QVariant(QLatin1String("Greatest Hits")));
+    QCOMPARE(index.data(Qt::EditRole), QVariant());
+    QCOMPARE(index.data(Qt::UserRole), QVariant(QLatin1String("Self Titled")));
+    QCOMPARE(index.data(Qt::UserRole + 1), QVariant(QLatin1String("album:SelfTitled:GreatestHits")));
+
+    model.setGallery(0);
+    QVERIFY(model.gallery() == 0);
+    model.execute();
+
+    index = model.index(0, 0);
+    QCOMPARE(index.isValid(), false);
 }
 
 QTEST_MAIN(tst_QGalleryQueryModel)

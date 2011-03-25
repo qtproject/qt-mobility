@@ -48,7 +48,7 @@
 #include <limits.h>
 #include <float.h>
 
-#include "../qlocationtestutils_p.h"
+#include "../qgeocoordinate/qlocationtestutils_p.h"
 #include "qgeoareamonitor.h"
 #include "qgeopositioninfo.h"
 #include "qgeopositioninfosource.h"

@@ -45,6 +45,8 @@
 
 #include <qbluetoothaddress.h>
 #include <qbluetoothdeviceinfo.h>
+#include <qbluetoothlocaldevice.h>
+#include <qbluetoothuuid.h>
 
 QTM_USE_NAMESPACE
 
@@ -67,6 +69,12 @@ private slots:
 
     void tst_assignment_data();
     void tst_assignment();
+
+    void tst_serviceUuids();
+
+    void tst_cached();
+
+    void tst_manufacturerSpecificData();
 };
 
 tst_QBluetoothDeviceInfo::tst_QBluetoothDeviceInfo()
@@ -79,9 +87,12 @@ tst_QBluetoothDeviceInfo::~tst_QBluetoothDeviceInfo()
 
 void tst_QBluetoothDeviceInfo::initTestCase()
 {
-    qRegisterMetaType<QBluetoothAddress>("QBluetoothAddress");
     qRegisterMetaType<QBluetoothDeviceInfo::ServiceClasses>("QBluetoothDeviceInfo::ServiceClasses");
     qRegisterMetaType<QBluetoothDeviceInfo::MajorDeviceClass>("QBluetoothDeviceInfo::MajorDeviceClass");
+    // start Bluetooth if not started
+    QBluetoothLocalDevice *device = new QBluetoothLocalDevice();
+    device->powerOn();
+    delete device;
 }
 
 void tst_QBluetoothDeviceInfo::tst_construction_data()
@@ -312,6 +323,7 @@ void tst_QBluetoothDeviceInfo::tst_assignment()
 
         QVERIFY(copyInfo1.isValid());
         QVERIFY(copyInfo2.isValid());
+        QVERIFY(!(QBluetoothDeviceInfo() == copyInfo1));
 
         QCOMPARE(copyInfo1.address(), address);
         QCOMPARE(copyInfo2.address(), address);
@@ -324,6 +336,53 @@ void tst_QBluetoothDeviceInfo::tst_assignment()
         QCOMPARE(copyInfo1.minorDeviceClass(), minorDeviceClass);
         QCOMPARE(copyInfo2.minorDeviceClass(), minorDeviceClass);
     }
+
+    {
+        QBluetoothDeviceInfo testDeviceInfo;
+        QVERIFY(testDeviceInfo == QBluetoothDeviceInfo());
+    }
+}
+
+void tst_QBluetoothDeviceInfo::tst_serviceUuids()
+{
+    QBluetoothDeviceInfo deviceInfo;
+    QBluetoothDeviceInfo copyInfo = deviceInfo;
+
+    QList<QBluetoothUuid> servicesList;
+    servicesList.append(QBluetoothUuid::L2cap);
+    servicesList.append(QBluetoothUuid::Rfcomm);
+    QVERIFY(servicesList.count() > 0);
+
+    deviceInfo.setServiceUuids(servicesList, QBluetoothDeviceInfo::DataComplete);
+    QVERIFY(deviceInfo.serviceUuids().count() > 0);
+    QVERIFY(!(deviceInfo == copyInfo));
+
+    QVERIFY(deviceInfo.serviceUuidsCompleteness() == QBluetoothDeviceInfo::DataComplete);
+}
+
+void tst_QBluetoothDeviceInfo::tst_cached()
+{
+    QBluetoothDeviceInfo deviceInfo(QBluetoothAddress("AABBCCDDEEFF"),
+        QString("My Bluetooth Device"), quint32(0x002000));
+    QBluetoothDeviceInfo copyInfo = deviceInfo;
+
+    QVERIFY(!deviceInfo.isCached());
+    deviceInfo.setCached(true);
+    QVERIFY(deviceInfo.isCached());
+    QVERIFY(!(deviceInfo == copyInfo));
+
+    deviceInfo.setCached(false);
+    QVERIFY(!(deviceInfo.isCached()));
+}
+
+void tst_QBluetoothDeviceInfo::tst_manufacturerSpecificData()
+{
+    QBluetoothDeviceInfo deviceInfo;
+    QByteArray data;
+    bool available;
+    data = deviceInfo.manufacturerSpecificData(&available);
+    // Current API implementation returns only empty QByteArray()
+    QCOMPARE(data, QByteArray());
 }
 
 QTEST_MAIN(tst_QBluetoothDeviceInfo)

@@ -49,10 +49,11 @@
 #include <qmediaplayer.h>
 #include <qmediastreamscontrol.h>
 
+#if defined(HAVE_GST_APPSRC)
+#include "qgstappsrc.h"
+#endif
+
 #include <gst/gst.h>
-#ifdef Q_WS_MAEMO_6
-#include <policy/resource-set.h>
-#endif // Q_WS_MAEMO_6
 
 class QGstreamerBusHelper;
 class QGstreamerMessage;
@@ -103,9 +104,14 @@ public:
 
     bool processSyncMessage(const QGstreamerMessage &message);
 
-public slots:
-    void load(const QNetworkRequest &url);
+#if defined(HAVE_GST_APPSRC)
+    QGstAppSrc *appsrc() const { return m_appSrc; }
+    static void configureAppSrcElement(GObject*, GObject*, GParamSpec*,QGstreamerPlayerSession* _this);
+#endif
 
+public slots:
+    void loadFromUri(const QNetworkRequest &url);
+    void loadFromStream(const QNetworkRequest &url, QIODevice *stream);
     bool play();
     bool pause();
     void stop();
@@ -119,9 +125,6 @@ signals:
     void durationChanged(qint64 duration);
     void positionChanged(qint64 position);
     void stateChanged(QMediaPlayer::State state);
-#ifdef Q_WS_MAEMO_6
-    void resourceLost();
-#endif // Q_WS_MAEMO_6
     void volumeChanged(int volume);
     void mutedStateChanged(bool muted);
     void audioAvailableChanged(bool audioAvailable);
@@ -143,19 +146,15 @@ private slots:
     void finishVideoOutputChange();
     void updateVideoRenderer();
     void updateVideoResolutionTag();
-
-    bool doPlay();
-
-#ifdef Q_WS_MAEMO_6
-    // resource policy awareness
-    void acquireResources();
-    void resourceAcquiredHandler(const QList<ResourcePolicy::ResourceType>& /*grantedOptionalResList*/);
-    void resourceReleasedHandler();
-    void resourceLostHandler();
-#endif // Q_WS_MAEMO_6
+    void updateVolume();
+    void updateMuted();
+    void updateDuration();
 
 private:
     static void playbinNotifySource(GObject *o, GParamSpec *p, gpointer d);
+    static void handleVolumeChange(GObject *o, GParamSpec *p, gpointer d);
+    static void handleMutedChange(GObject *o, GParamSpec *p, gpointer d);
+    static void insertColorSpaceElement(GstElement *element, gpointer data);
 
     QNetworkRequest m_request;
     QMediaPlayer::State m_state;
@@ -176,6 +175,10 @@ private:
     QObject *m_videoOutput;
     QGstreamerVideoRendererInterface *m_renderer;
 
+#if defined(HAVE_GST_APPSRC)
+    QGstAppSrc *m_appSrc;
+#endif
+
     QMap<QByteArray, QVariant> m_tags;
     QList< QMap<QtMultimediaKit::MetaData,QVariant> > m_streamProperties;
     QList<QMediaStreamsControl::StreamType> m_streamTypes;
@@ -191,19 +194,7 @@ private:
 
     qint64 m_lastPosition;
     qint64 m_duration;
-
-#ifdef Q_WS_MAEMO_6
-    // resource policy awareness
-    ResourcePolicy::ResourceSet *m_resourceSet;
-    ResourcePolicy::AudioResource *m_audioResource;
-
-    enum ResourceState {
-        NoResourceState = 0,
-        PendingResourceState,
-        HasResourceState
-    };
-    ResourceState m_resourceState;
-#endif // Q_WS_MAEMO_6
+    int m_durationQueries;
 };
 
 #endif // QGSTREAMERPLAYERSESSION_H

@@ -50,6 +50,13 @@
 //TESTED_CLASS=
 //TESTED_FILES=
 
+// Q_ASSERT replacement, since we often run in release builds
+#define Q_FATAL_VERIFY(statement)                                         \
+do {                                                                      \
+    if (!QTest::qVerify((statement), #statement, "", __FILE__, __LINE__)) \
+        qFatal("severe failure encountered, test cannot continue");       \
+} while (0)
+
 QTM_USE_NAMESPACE
 /*
  * This test is mostly just for testing sorting and filtering -
@@ -161,6 +168,9 @@ private slots:
 
     void allFiltering_data();
     void allFiltering();
+
+    void fetchHint_data();
+    void fetchHint();
 };
 
 tst_QContactManagerFiltering::tst_QContactManagerFiltering()
@@ -188,7 +198,6 @@ void tst_QContactManagerFiltering::initTestCase()
 	// testing filtering instead.
     managerNames.removeAll("symbiansim");
 
-
     foreach(QString mgr, managerNames) {
         QMap<QString, QString> params;
         QString mgrUri = QContactManager::buildUri(mgr, params);
@@ -211,7 +220,7 @@ void tst_QContactManagerFiltering::initTestCase()
         if (addedContacts != contactsAddedToManagers.values(cm)) {
             qDebug() << "prepareModel returned:" << addedContacts;
             qDebug() << "contactsAdded are:    " << contactsAddedToManagers.values(cm);
-            Q_ASSERT_X(false, "prepareModel", "returned list different from saved contacts list!");
+            qFatal("returned list different from saved contacts list!");
         }
     }
 
@@ -2798,6 +2807,92 @@ void tst_QContactManagerFiltering::allFiltering()
     QCOMPARE_UNSORTED(output, expected);
 }
 
+void tst_QContactManagerFiltering::fetchHint_data()
+{
+    QTest::addColumn<QContactManager*>("cm");
+
+    for (int i = 0; i < managers.size(); i++) {
+        QContactManager *manager = managers.at(i);
+        QTest::newRow(manager->managerName().toAscii().constData()) << manager;
+    }
+}
+
+void tst_QContactManagerFiltering::fetchHint()
+{
+    QFETCH(QContactManager*, cm);
+
+    // if no fetch hint is provided, the manager should return all data
+    // if a fetch hint is provided, it should have a clearly defined effect,
+    // unless it is ignored by the manager, in which case the result should
+    // be equivalent to not providing a fetch hint.
+
+    // we use a defined sort order for the retrieval of contacts to make comparison simple.
+    // We sort on name, because we include name details in the fetch hint.
+    QList<QContactSortOrder> nameSort;
+    QContactSortOrder firstNameSort, middleNameSort, lastNameSort;
+    firstNameSort.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldFirstName);
+    middleNameSort.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldMiddleName);
+    lastNameSort.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldLastName);
+    nameSort << lastNameSort << middleNameSort << firstNameSort;
+
+    // fetch all contacts from the manager.
+    QList<QContact> allContacts = cm->contacts(nameSort);
+
+    // define some maximum count limit, and some list of detail definitions to retrieve.
+    int countLimit = (allContacts.size() / 2) + 1;
+    QStringList defs;
+    defs << QString(QLatin1String(QContactName::DefinitionName))
+         << QString(QLatin1String(QContactPhoneNumber::DefinitionName));
+
+    // test that the manager doesn't incorrectly implement fetch hints.
+    // we test max count limit, and detail definition limits.
+    // XXX TODO: other hints!
+    QContactFetchHint mclh; // max count limited hint
+    QContactFetchHint ddh;  // detail definitions hint
+    mclh.setMaxCountHint(countLimit);
+    ddh.setDetailDefinitionsHint(defs);
+
+    // the next part of the test requires some contacts to be saved in the manager.
+    if (allContacts.size() == 0) {
+        QSKIP("No contacts in manager; skipping fetch hint limit test.", SkipSingle);
+    }
+
+    // test with a hint which sets a maximum count limit for retrieved contacts.
+    QList<QContact> mclhContacts = cm->contacts(nameSort, mclh);
+    QVERIFY(allContacts.size() >= mclhContacts.size());
+    if (allContacts.size() > mclh.maxCountHint()) {
+        // shouldn't return an arbitrarily smaller amount of contacts.
+        QVERIFY(mclhContacts.size() == mclh.maxCountHint()
+                || mclhContacts.size() == allContacts.size());
+    }
+    for (int i = 0; i < mclhContacts.size(); ++i) {
+        // the sort order should still be defined.
+        QVERIFY(mclhContacts.at(i) == allContacts.at(i));
+    }
+
+    // now test with a hint which describes which details the client is interested in.
+    QList<QContact> ddhContacts = cm->contacts(nameSort, ddh);
+    QCOMPARE(ddhContacts.size(), allContacts.size());
+    for (int i = 0; i < allContacts.size(); ++i) {
+        QContact a = allContacts.at(i);
+        QContact b = ddhContacts.at(i);
+
+        // since we're sorting on a detail which should exist (since it was included in the hint)
+        // the order of the contacts returned shouldn't have changed.
+        QVERIFY(a.id() == b.id());
+
+        // check that the hint didn't remove names or phones.
+        QCOMPARE(a.details(QContactName::DefinitionName).size(),
+                 b.details(QContactName::DefinitionName).size());
+        QCOMPARE(a.details(QContactPhoneNumber::DefinitionName).size(),
+                 b.details(QContactPhoneNumber::DefinitionName).size());
+
+        // other details are not necessarily returned.
+        QVERIFY(a.details().size() >= b.details().size());
+    }
+}
+
+
 void tst_QContactManagerFiltering::changelogFiltering_data()
 {
     QTest::addColumn<QContactManager *>("cm");
@@ -3341,7 +3436,7 @@ QList<QContactLocalId> tst_QContactManagerFiltering::prepareModel(QContactManage
     successfulSave = cm->saveContact(&contactG);
     Q_ASSERT(successfulSave);
     originalContactCount += 7;
-    Q_ASSERT(cm->contactIds().count() == originalContactCount);
+    Q_FATAL_VERIFY(cm->contactIds().count() == originalContactCount);
 
     /* Now some for the locale aware sorting */
     QContact contactH, contactI, contactJ, contactK;

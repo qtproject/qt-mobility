@@ -43,7 +43,7 @@
 #define QDECLARATIVEORGANIZERITEMDETAIL_H
 
 #include <QtDeclarative>
-
+#include <QtDeclarative/qdeclarativeinfo.h>
 #include <QVariant>
 #include "qorganizeritemdetail.h"
 #include "qorganizeritemdetails.h"
@@ -142,8 +142,10 @@ public:
         return ok;
     }
 
+    static QString detailName(ItemDetailType type) ;
     static QString definitionName(ItemDetailType type) ;
-    static ItemDetailType detailType(const QString& definitionName) ;
+    static ItemDetailType detailTypeByDefinitionName(const QString& definitionName) ;
+    static ItemDetailType detailTypeByDetailName(const QString& definitionName) ;
     static QString fieldName(ItemDetailType detailType, int fieldType);
 
 signals:
@@ -187,19 +189,19 @@ public:
     void setStartDateTime(const QDateTime& datetime)
     {
          if (datetime != startDateTime() && !readOnly()) {
-            m_detail.setValue(QOrganizerEventTime::FieldStartDateTime, datetime);
+            m_detail.setValue(QOrganizerEventTime::FieldStartDateTime, datetime.toUTC());
             emit valueChanged();
          }
     }
-    QDateTime startDateTime() const {return m_detail.value<QDateTime>(QOrganizerEventTime::FieldStartDateTime);}
+    QDateTime startDateTime() const {return m_detail.value<QDateTime>(QOrganizerEventTime::FieldStartDateTime).toLocalTime();}
     void setEndDateTime(const QDateTime& datetime)
     {
         if (datetime != endDateTime() && !readOnly()) {
-            m_detail.setValue(QOrganizerEventTime::FieldEndDateTime, datetime);
+            m_detail.setValue(QOrganizerEventTime::FieldEndDateTime, datetime.toUTC());
             emit valueChanged();
         }
     }
-    QDateTime endDateTime() const {return m_detail.value<QDateTime>(QOrganizerEventTime::FieldEndDateTime);}
+    QDateTime endDateTime() const {return m_detail.value<QDateTime>(QOrganizerEventTime::FieldEndDateTime).toLocalTime();}
     void setAllDay(bool allDay)
     {
         if (allDay != isAllDay() && !readOnly()) {
@@ -369,7 +371,7 @@ QML_DECLARE_TYPE(QDeclarativeOrganizerItemGuid)
 class QDeclarativeOrganizerItemParent : public QDeclarativeOrganizerItemDetail
 {
     Q_OBJECT
-    Q_PROPERTY(uint parentId READ parentId WRITE setParentId NOTIFY valueChanged)
+    Q_PROPERTY(QString parentId READ parentId WRITE setParentId NOTIFY valueChanged)
     Q_PROPERTY(QDate originalDate READ originalDate WRITE setOriginalDate NOTIFY valueChanged)
 
     Q_ENUMS(FieldType)
@@ -393,16 +395,16 @@ public:
         return QDeclarativeOrganizerItemDetail::Parent;
     }
 
-    void setParentId(uint newParentId)
+    void setParentId(const QString& newParentId)
     {
         if (newParentId != parentId() && !readOnly()) {
-            m_detail.setValue(QOrganizerItemParent::FieldParentId, newParentId);
+            m_detail.setValue(QOrganizerItemParent::FieldParentId, QVariant::fromValue(QOrganizerItemId::fromString(newParentId)));
             emit valueChanged();
         }
     }
-    uint parentId() const
+    QString parentId() const
     {
-        return m_detail.variantValue(QOrganizerItemParent::FieldParentId).toInt();
+        return m_detail.variantValue(QOrganizerItemParent::FieldParentId).value<QOrganizerItemId>().toString();
     }
 
 
@@ -636,10 +638,10 @@ QML_DECLARE_TYPE(QDeclarativeOrganizerItemRecurrence)
 class QDeclarativeOrganizerItemReminder : public QDeclarativeOrganizerItemDetail
 {
     Q_OBJECT
-    Q_PROPERTY(ReminderType reminderType READ reminderType NOTIFY valueChanged)
-    Q_PROPERTY(int secondsBeforeStart READ secondsBeforeStart WRITE setSecondsBeforeStart NOTIFY valueChanged)
-    Q_PROPERTY(int repetitionCount READ repetitionCount WRITE setRepetitionCount NOTIFY valueChanged)
-    Q_PROPERTY(int repetitionDelay READ repetitionDelay WRITE setRepetitionDelay NOTIFY valueChanged)
+    Q_PROPERTY(ReminderType reminderType READ reminderType NOTIFY reminderChanged)
+    Q_PROPERTY(int secondsBeforeStart READ secondsBeforeStart WRITE setSecondsBeforeStart NOTIFY reminderChanged)
+    Q_PROPERTY(int repetitionCount READ repetitionCount WRITE setRepetitionCount NOTIFY reminderChanged)
+    Q_PROPERTY(int repetitionDelay READ repetitionDelay WRITE setRepetitionDelay NOTIFY reminderChanged)
     Q_ENUMS(ReminderType)
     Q_ENUMS(FieldType)
 public:
@@ -664,7 +666,7 @@ public:
         :QDeclarativeOrganizerItemDetail(parent)
     {
         setDetail(QOrganizerItemReminder());
-        connect(this, SIGNAL(valueChanged()), SIGNAL(detailChanged()));
+        connect(this, SIGNAL(reminderChanged()), SIGNAL(detailChanged()));
     }
 
     virtual ItemDetailType type() const
@@ -689,7 +691,7 @@ public:
     {
         if (seconds != secondsBeforeStart() && !readOnly()) {
             m_detail.setValue(QOrganizerItemReminder::FieldSecondsBeforeStart, seconds);
-            emit valueChanged();
+            emit reminderChanged();
         }
     }
     int secondsBeforeStart() const {return m_detail.value<int>(QOrganizerItemReminder::FieldSecondsBeforeStart);}
@@ -698,21 +700,21 @@ public:
     {
         if (delaySeconds != repetitionDelay() && !readOnly()) {
             m_detail.setValue(QOrganizerItemReminder::FieldRepetitionDelay, delaySeconds);
-            emit valueChanged();
+            emit reminderChanged();
         }
     }
     void setRepetitionCount(int count)
     {
         if (count != repetitionCount() && !readOnly()) {
             m_detail.setValue(QOrganizerItemReminder::FieldRepetitionCount, count);
-            emit valueChanged();
+            emit reminderChanged();
         }
     }
     int repetitionDelay() const {return m_detail.value<int>(QOrganizerItemReminder::FieldRepetitionDelay);}
     int repetitionCount() const {return m_detail.value<int>(QOrganizerItemReminder::FieldRepetitionCount);}
 
 signals:
-    void valueChanged();
+    void reminderChanged();
 };
 QML_DECLARE_TYPE(QDeclarativeOrganizerItemReminder)
 
@@ -901,19 +903,19 @@ public:
     void setLastModified(const QDateTime& timestamp)
     {
         if (timestamp != lastModified() && !readOnly()) {
-            m_detail.setValue(QOrganizerItemTimestamp::FieldModificationTimestamp, timestamp);
+            m_detail.setValue(QOrganizerItemTimestamp::FieldModificationTimestamp, timestamp.toUTC());
             emit valueChanged();
         }
     }
-    QDateTime lastModified() const {return m_detail.value<QDateTime>(QOrganizerItemTimestamp::FieldModificationTimestamp);}
+    QDateTime lastModified() const {return m_detail.value<QDateTime>(QOrganizerItemTimestamp::FieldModificationTimestamp).toLocalTime();}
     void setCreated(const QDateTime& timestamp)
     {
         if (timestamp != created() && !readOnly()) {
-            m_detail.setValue(QOrganizerItemTimestamp::FieldCreationTimestamp, timestamp);
+            m_detail.setValue(QOrganizerItemTimestamp::FieldCreationTimestamp, timestamp.toUTC());
             emit valueChanged();
         }
     }
-    QDateTime created() const {return m_detail.value<QDateTime>(QOrganizerItemTimestamp::FieldCreationTimestamp);}
+    QDateTime created() const {return m_detail.value<QDateTime>(QOrganizerItemTimestamp::FieldCreationTimestamp).toLocalTime();}
 
 signals:
     void valueChanged();
@@ -977,7 +979,7 @@ public:
                 m_detail.setValue(QOrganizerItemType::FieldType, QOrganizerItemType::TypeJournal);
                 break;
             default:
-                qWarning() << "I don't known how to set the customized item type name here!";
+                qmlInfo(this) << tr("I don't known how to set the customized item type name here!");
                 break;
             }
             emit valueChanged();
@@ -998,7 +1000,7 @@ public:
             return Note;
         else if (typeString == QOrganizerItemType::TypeJournal)
             return Journal;
-        qWarning() << "Unknown organizer item type: " << typeString;
+        qmlInfo(this) << tr("Unknown organizer item type: ") << typeString;
         return Customized;
     }
 
@@ -1033,11 +1035,11 @@ public:
     void setEntryDateTime(const QDateTime& datetime)
     {
         if (datetime != entryDateTime() && !readOnly()) {
-            m_detail.setValue(QOrganizerJournalTime::FieldEntryDateTime, datetime);
+            m_detail.setValue(QOrganizerJournalTime::FieldEntryDateTime, datetime.toUTC());
             emit valueChanged();
         }
     }
-    QDateTime entryDateTime() const {return m_detail.value<QDateTime>(QOrganizerJournalTime::FieldEntryDateTime);}
+    QDateTime entryDateTime() const {return m_detail.value<QDateTime>(QOrganizerJournalTime::FieldEntryDateTime).toLocalTime();}
 signals:
     void valueChanged();
 };
@@ -1082,11 +1084,11 @@ public:
     void setFinishedDateTime(const QDateTime& datetime)
     {
         if (datetime != finishedDateTime() && !readOnly()) {
-            m_detail.setValue(QOrganizerTodoProgress::FieldFinishedDateTime, datetime);
+            m_detail.setValue(QOrganizerTodoProgress::FieldFinishedDateTime, datetime.toUTC());
             emit valueChanged();
         }
     }
-    QDateTime finishedDateTime() const {return m_detail.value<QDateTime>(QOrganizerTodoProgress::FieldFinishedDateTime);}
+    QDateTime finishedDateTime() const {return m_detail.value<QDateTime>(QOrganizerTodoProgress::FieldFinishedDateTime).toLocalTime();}
 
     void setPercentageComplete(int percentage)
     {
@@ -1095,7 +1097,7 @@ public:
                 m_detail.setValue(QOrganizerTodoProgress::FieldPercentageComplete, percentage);
                 emit valueChanged();
             } else {
-                qWarning() << "Trying to set an invalid percentage value:" << percentage;
+                qmlInfo(this) << tr("Trying to set an invalid percentage value:") << percentage;
             }
         }
     }
@@ -1147,19 +1149,19 @@ public:
     void setStartDateTime(const QDateTime& datetime)
     {
         if (datetime != startDateTime() && !readOnly()) {
-            m_detail.setValue(QOrganizerTodoTime::FieldStartDateTime, datetime);
+            m_detail.setValue(QOrganizerTodoTime::FieldStartDateTime, datetime.toUTC());
             emit valueChanged();
         }
     }
-    QDateTime startDateTime() const {return m_detail.value<QDateTime>(QOrganizerTodoTime::FieldStartDateTime);}
+    QDateTime startDateTime() const {return m_detail.value<QDateTime>(QOrganizerTodoTime::FieldStartDateTime).toLocalTime();}
     void setDueDateTime(const QDateTime& dateTime)
     {
         if (dateTime != dueDateTime() && !readOnly()) {
-            m_detail.setValue(QOrganizerTodoTime::FieldDueDateTime, dateTime);
+            m_detail.setValue(QOrganizerTodoTime::FieldDueDateTime, dateTime.toUTC());
             emit valueChanged();
         }
     }
-    QDateTime dueDateTime() const {return m_detail.value<QDateTime>(QOrganizerTodoTime::FieldDueDateTime);}
+    QDateTime dueDateTime() const {return m_detail.value<QDateTime>(QOrganizerTodoTime::FieldDueDateTime).toLocalTime();}
 
     void setAllDay(bool allDay)
     {

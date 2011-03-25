@@ -49,6 +49,7 @@ class HapticButton : public QWidget
     Q_OBJECT
 public:
     explicit HapticButton(const QString &label);
+    void setLabel(const QString& label);
 
 protected:
     void mousePressEvent(QMouseEvent *e);
@@ -56,16 +57,9 @@ protected:
 
 private:
     QString m_label;
-    bool m_checked;
-    bool m_checkable;
 
 signals:
     void clicked();
-    void toggled(bool on);
-
-public slots:
-    void setCheckable(bool isCheckable) { m_checkable=isCheckable; }
-
 };
 
 #endif // HAPTICBUTTON_H

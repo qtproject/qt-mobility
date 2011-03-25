@@ -81,7 +81,7 @@ public:
     ~QDeclarativeGeoMapTextObject();
 
     QDeclarativeCoordinate* coordinate();
-    void setCoordinate(const QDeclarativeCoordinate *coordinate);
+    void setCoordinate(QDeclarativeCoordinate *coordinate);
 
     QString text() const;
     void setText(const QString &text);
@@ -117,7 +117,7 @@ private Q_SLOTS:
 
 private:
     QGeoMapTextObject* text_;
-    QDeclarativeCoordinate coordinate_;
+    QDeclarativeCoordinate *coordinate_;
     QColor color_;
     HorizontalAlignment hAlignment_;
     VerticalAlignment vAlignment_;

@@ -98,7 +98,7 @@ public:
         default:
             break;
         }
-        //qWarning
+        qmlInfo(0) << tr("Unknown field type.");
         return QString();
     }
     void setNumber(const QString& v)
@@ -155,7 +155,7 @@ public:
                     savedList << QContactPhoneNumber::SubTypeDtmfMenu;
                     break;
                 default:
-                    //qWarning unknown type
+                    qmlInfo(this) << tr("Unknown sub type.");
                     break;
 
                 }

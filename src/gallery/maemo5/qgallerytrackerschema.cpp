@@ -915,15 +915,15 @@ static const QGalleryItemProperty qt_galleryImagePropertyList[] =
 //    QT_GALLERY_ITEM_PROPERTY(""                , "Image:Software"       , String    , QGalleryProperty::Attributes()),
     QT_GALLERY_ITEM_PROPERTY("cameraManufacturer", "Image:CameraMake"     , String    , CanRead | CanWrite | CanSort | CanFilter),
     QT_GALLERY_ITEM_PROPERTY("cameraModel"       , "Image:CameraModel"    , String    , CanRead | CanWrite | CanSort | CanFilter),
-    QT_GALLERY_ITEM_PROPERTY("orientation"       , "Image:Orientation"    , String    , CanRead | CanWrite | CanSort | CanFilter),
+    QT_GALLERY_ITEM_PROPERTY("orientation"       , "Image:Orientation"    , Int       , CanRead | CanWrite | CanSort | CanFilter),
     QT_GALLERY_ITEM_PROPERTY("exposureProgram"   , "Image:ExposureProgram", String    , CanRead | CanWrite | CanSort | CanFilter),
     QT_GALLERY_ITEM_PROPERTY("exposureTime"      , "Image:ExposureTime"   , String    , CanRead | CanWrite | CanSort | CanFilter),
-    QT_GALLERY_ITEM_PROPERTY("fNumber"           , "Image:FNumber"        , Int       , CanRead | CanWrite | CanSort | CanFilter),
+    QT_GALLERY_ITEM_PROPERTY("fNumber"           , "Image:FNumber"        , Double    , CanRead | CanWrite | CanSort | CanFilter),
     QT_GALLERY_ITEM_PROPERTY("flashEnabled"      , "Image:Flash"          , String    , CanRead | CanWrite | CanSort | CanFilter),
     QT_GALLERY_ITEM_PROPERTY("focalLength"       , "Image:FocalLength"    , Double    , CanRead | CanWrite | CanSort | CanFilter),
 //    QT_GALLERY_ITEM_PROPERTY(""                , "Image:ISOSpeed"       , Double    , QGalleryProperty::Attributes()),
     QT_GALLERY_ITEM_PROPERTY("meteringMode"      , "Image:MeteringMode"   , String    , CanRead | CanWrite | CanSort | CanFilter),
-    QT_GALLERY_ITEM_PROPERTY("whiteBalance"      , "Image:WhiteBalance"   , Double    , CanRead | CanWrite | CanSort | CanFilter),
+    QT_GALLERY_ITEM_PROPERTY("whiteBalance"      , "Image:WhiteBalance"   , String    , CanRead | CanWrite | CanSort | CanFilter),
     QT_GALLERY_ITEM_PROPERTY("rating"            , "Image:Rating"         , Int       , CanRead | CanWrite | CanSort | CanFilter),
 //    QT_GALLERY_ITEM_PROPERTY(""                , "Image:Location"       , String    , QGalleryProperty::Attributes()),
 //    QT_GALLERY_ITEM_PROPERTY(""                , "Image:Sublocation"    , String    , QGalleryProperty::Attributes()),
@@ -1151,7 +1151,7 @@ static const QGalleryItemProperty qt_galleryPhotoAlbumPropertyList[] =
 
 static const QGalleryAggregateProperty qt_galleryPhotoAlbumAggregateList[] =
 {
-    QT_GALLERY_AGGREGATE_PROPERTY("trackCount", "*", "COUNT", Int)
+    QT_GALLERY_AGGREGATE_PROPERTY("count", "*", "COUNT", Int)
 };
 
 static void qt_writePhotoAlbumIdCondition(QDocumentGallery::Error *, QXmlStreamWriter *xml, const QStringRef &itemId)

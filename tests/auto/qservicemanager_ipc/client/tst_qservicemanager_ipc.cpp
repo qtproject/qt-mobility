@@ -51,6 +51,25 @@
 #include <qservice.h>
 #include <qremoteserviceregister.h>
 
+#ifndef QT_NO_DBUS
+#include <QtDBus/QtDBus>
+
+inline QDBusArgument &operator<<(QDBusArgument &arg, const QVariantHash &map)
+{
+    arg.beginMap(QVariant::String, qMetaTypeId<QDBusVariant>());
+    QVariantHash::ConstIterator it = map.constBegin();
+    QVariantHash::ConstIterator end = map.constEnd();
+    for ( ; it != end; ++it) {
+        arg.beginMapEntry();
+        arg << it.key() << QDBusVariant(it.value());
+        arg.endMapEntry();
+    }
+    arg.endMap();
+    return arg;
+}
+#endif
+
+
 #define QTRY_VERIFY(a)                       \
     for (int _i = 0; _i < 5000; _i += 100) {    \
         if (a) break;                  \
@@ -62,6 +81,7 @@ QTM_USE_NAMESPACE
 Q_DECLARE_METATYPE(QServiceFilter);
 Q_DECLARE_METATYPE(QVariant);
 Q_DECLARE_METATYPE(QList<QString>);
+Q_DECLARE_METATYPE(QVariantHash);
 
 class tst_QServiceManager_IPC: public QObject
 {
@@ -136,6 +156,12 @@ void tst_QServiceManager_IPC::initTestCase()
     qRegisterMetaTypeStreamOperators<QServiceFilter>("QServiceFilter");
     qRegisterMetaType<QList<QString> >("QList<QString>");
     qRegisterMetaTypeStreamOperators<QList<QString> >("QList<QString>");
+    qRegisterMetaTypeStreamOperators<QVariantHash>("QVariantHash");
+    qRegisterMetaType<QVariantHash>("QVariantHash");
+#ifndef QT_NO_DBUS
+    qDBusRegisterMetaType<QVariantHash>();
+#endif
+
 
     QServiceManager* manager = new QServiceManager(this);
 
@@ -193,6 +219,7 @@ void tst_QServiceManager_IPC::initTestCase()
 
 void tst_QServiceManager_IPC::ipcError(QService::UnrecoverableIPCError err)
 {  
+    Q_UNUSED(err);
     ipcfailure = true;  
 }
 
@@ -318,9 +345,13 @@ void tst_QServiceManager_IPC::verifySharedServiceObject()
     QCOMPARE(mo->className(), "SharedTestService");
     QVERIFY(mo->superClass());
     QCOMPARE(mo->superClass()->className(), "QObject");
-    QCOMPARE(mo->methodCount()-mo-> methodOffset(), 18);
-    QCOMPARE(mo->methodCount(), 22); //20 meta functions available
+    QCOMPARE(mo->methodCount()-mo-> methodOffset(), 19);
+    QCOMPARE(mo->methodCount(), 23); //20 meta functions available
     //actual function presence will be tested later
+    
+//    for(int i = 0; i < mo->methodCount(); i++){
+//        qDebug() << "Methods" << i << mo->method(i).signature();
+//    }
     
     //test properties
     QCOMPARE(mo->propertyCount()-mo->propertyOffset(), 1);
@@ -400,6 +431,8 @@ void tst_QServiceManager_IPC::verifySharedMethods_data()
         << QByteArray("testSlotWithArgs(QByteArray,int,QVariant)") <<  (int)( QMetaMethod::Slot) << QByteArray("");
     QTest::newRow("testSlotWithCustomArg(QServiceFilter)") 
         << QByteArray("testSlotWithCustomArg(QServiceFilter)") <<  (int)( QMetaMethod::Slot) << QByteArray("");
+    QTest::newRow("testSlotWidthComplexArg(QVariantHash)")
+            << QByteArray("testSlotWithComplexArg(QVariantHash)") <<  (int)( QMetaMethod::Slot) << QByteArray("");
 
     //QServiceInterfaceDescriptor has not been declared as meta type
     QTest::newRow("testSlotWithUnknownArg(QServiceInterfaceDescriptor)") 
@@ -506,9 +539,13 @@ void tst_QServiceManager_IPC::verifyUniqueServiceObject()
     QVERIFY(mo->superClass());
     QCOMPARE(mo->superClass()->className(), "QObject");
     // TODO adding the ipc failure signal seems to break these    
-    QCOMPARE(mo->methodCount()-mo-> methodOffset(), 21); // 17+1 added signal for error signal added by library
-    QCOMPARE(mo->methodCount(), 25); //21 meta functions available + 1 signal
+    QCOMPARE(mo->methodCount()-mo-> methodOffset(), 22); // 17+1 added signal for error signal added by library
+    QCOMPARE(mo->methodCount(), 26); //21 meta functions available + 1 signal
     //actual function presence will be tested later
+    
+//    for(int i = 0; i < mo->methodCount(); i++){
+//        qDebug() << "Methods" << i << mo->method(i).signature();
+//    }
 
     //test properties
     QCOMPARE(mo->propertyCount()-mo->propertyOffset(), 3);
@@ -969,6 +1006,30 @@ void tst_QServiceManager_IPC::testSlotInvokation()
     QMetaObject::invokeMethod(service, "slotConfirmation",
                               Q_RETURN_ARG(uint, hash));
     QCOMPARE(hash, expectedHash);
+
+    // Test slot with QHash<QString, QVariant>
+    QHash<QString, QVariant> hashv;
+    hashv["test"] = QVariant::fromValue(1);
+    hashv["test2"] = QVariant::fromValue(QString("test2 string"));
+    hashv["test3"] = QVariant::fromValue(true);
+    QHashIterator<QString, QVariant> i(hashv);
+    output.clear();
+    while (i.hasNext()) {
+        i.next();
+        output += i.key();
+        output += "=";
+        output += i.value().toString();
+        output += ", ";
+    }
+    expectedHash = qHash(output);
+
+    QMetaObject::invokeMethod(serviceUnique, "testSlotWithComplexArg",
+                              Q_ARG(QVariantHash, hashv));
+    QMetaObject::invokeMethod(service, "slotConfirmation",
+                              Q_RETURN_ARG(uint, hash));
+    QCOMPARE(hash, expectedHash);
+
+
 }
 
 void tst_QServiceManager_IPC::verifyServiceClass()

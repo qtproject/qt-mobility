@@ -33,7 +33,7 @@
 \brief Landmarks allows management of landmark data, these examples show
 how it is done.
 
-The Landmarks portion of the Location API facilitates the creation,
+The Landmarks portion of the Location API enables the creation,
 retrieval, updating and deletion of landmarks from arbitrary data stores.
 The following page demonstrates how to perform these operations.
 
@@ -42,7 +42,7 @@ The following page demonstrates how to perform these operations.
 \section1 Namespace
 
 The QtMobility APIs are placed into the \i{QtMobility} namespace. This is done
-to facilitate the future migration of Mobility APIs into Qt. See the
+to facilitate the future migration of QtMobility APIs into Qt. See the
 \l {Quickstart Example}{Quickstart guide} for an example on how the
 namespace impacts on application development.
 
@@ -103,7 +103,7 @@ We may reuse the QLandmarkSaveRequest by setting another landmark and running \l
 To retrieve categories we simply make the appropriate call to the QLandmarkManager:
 \snippet snippets/qtlandmarksdocsample/qtlandmarksdocsample.cpp Retrieve categories synchronously
 
-When retrieiving categories we may do so by the category ids.  When the category data is needed
+When retrieving categories we may do so by the category ids.  When the category data is needed
 we may use the id to retrieve a category object:
 \snippet snippets/qtlandmarksdocsample/qtlandmarksdocsample.cpp Retrieve categories synchronously by id
 
@@ -160,7 +160,7 @@ To remove a category we simply pass the category id to a QLandmarkManager.
 
 \section3 \bold{Deleting a landmark}
 
-To remove a landmark we simply passs the landmark id to a QLandmarkManager.
+To remove a landmark we simply pass the landmark id to a QLandmarkManager.
 
 \snippet snippets/qtlandmarksdocsample/qtlandmarksdocsample.cpp Remove landmark synchronously
 
@@ -200,12 +200,19 @@ We may reuse the QLandmarkRemoveRequest by setting another landmark id and runni
 
 \section2 Synchronous
 
-To import landmarks from a file we can simply provide the filename to the manager (the manager will try to automatically
-detect the file format).  If we know the format we can provide one of the \l {QLandmarkManager::Gpx} {format strings}
-as a parameter.  Using a QLandmarkManager::TransferOption, we  can choose to include category data that comes with the landmarks(default),
-exclude category data meaning that the landmarks will not be associated with any categories or we can attach the landmarks to a single
-category meaning all the imported landmarks will be assigned to the given category. Typically an import operation
-will take a long time to execute, it is therefore recommended that landmarks be imported asynchronously rather than synchronously.
+To import landmarks from a file we can simply provide the filename to the manager
+(the manager will try to automatically detect the file format).  If we know
+the format we can provide one of the \l {QLandmarkManager::Gpx} {format strings}
+as a parameter.  Using a QLandmarkManager::TransferOption, an option for
+controlling import/export behavior, we  can choose to include category data
+that comes with the landmarks(default), exclude category data meaning that
+the landmarks will not be associated with any categories or we can attach the
+landmarks to a single category meaning all the imported landmarks will be
+assigned to the given category.
+
+\note Typically an import operation will take a long time to execute, it is therefore
+recommended that landmarks be imported asynchronously rather than synchronously.
+
 \snippet snippets/qtlandmarksdocsample/qtlandmarksdocsample.cpp Import landmarks sync complex
 
 \section2 Asynchronous
@@ -255,5 +262,27 @@ We may reuse the QLandmarkExportRequest by setting another filename and/or forma
 {start()} again.
 
 \snippet snippets/qtlandmarksdocsample/qtlandmarksdocsample.cpp Export landmarks asynchronously handler
+
+\section1 C++ Examples
+
+There are no C++ only, documented examples of the Landmarks API. However, there
+is the \l {Maps Demo Tutorial} which is C++ only, though being a tutorial it is
+longer and more complicated than an example.
+
+\section1 QML Examples
+
+\section2 \bold{Landmark Map QML Example}
+
+The \l {Landmark Map Example} shows how a mobile application might display
+some map information which includes landmark information imported from a landmark
+file.
+
+\section2 \bold{Map Viewer QML Example}
+
+The \l {Declarative Map Viewer Example}{Map Viewer example} displays a map of
+the current location or failing that a hard-coded default location to display
+a typical map navigation application in form typical of a mobile phone.
+
+
 
 */

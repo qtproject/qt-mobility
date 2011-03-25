@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include <QtTest/QtTest>
+#include <QUuid>
 
 #include <QDebug>
 
@@ -47,7 +48,10 @@
 
 #include <arpa/inet.h>
 #include <netinet/in.h>
-
+#ifdef Q_OS_SYMBIAN
+//needed for symbian uuid conversion test
+#include <bttypes.h>
+#endif
 QTM_USE_NAMESPACE
 
 Q_DECLARE_METATYPE(quint128)
@@ -69,6 +73,10 @@ private slots:
     void tst_conversion();
     void tst_comparison_data();
     void tst_comparison();
+#ifdef Q_OS_SYMBIAN
+    void tst_symbian_uuid_tranformation_data();
+    void tst_symbian_uuid_tranformation();
+#endif
 };
 
 tst_QBluetoothUuid::tst_QBluetoothUuid()
@@ -112,6 +120,44 @@ void tst_QBluetoothUuid::tst_construction()
         QBluetoothUuid copy(uuid);
 
         QCOMPARE(uuid.toUInt16(), copy.toUInt16());
+    }
+
+    {
+        QBluetoothUuid uuid(QBluetoothUuid::L2cap);
+
+        QVERIFY(!uuid.isNull());
+
+        bool ok;
+        quint16 uuid16;
+
+        uuid16 = uuid.toUInt16(&ok);
+
+        QVERIFY(ok);
+        QCOMPARE(uuid16, static_cast<quint16>(QBluetoothUuid::L2cap));
+    }
+
+    {
+        QUuid uuid(0x67c8770b, 0x44f1, 0x410a, 0xab, 0x9a, 0xf9, 0xb5, 0x44, 0x6f, 0x13, 0xee);
+        QBluetoothUuid btUuid(uuid);
+        QVERIFY(!btUuid.isNull());
+
+        QString uuidString(btUuid.toString());
+        QVERIFY(!uuidString.isEmpty());
+        QCOMPARE(uuidString, QString("{67c8770b-44f1-410a-ab9a-f9b5446f13ee}"));
+    }
+
+    {
+        QBluetoothUuid btUuid(QString("67c8770b-44f1-410a-ab9a-f9b5446f13ee"));
+        QVERIFY(!btUuid.isNull());
+
+        QString uuidString(btUuid.toString());
+        QVERIFY(!uuidString.isEmpty());
+        QCOMPARE(uuidString, QString("{67c8770b-44f1-410a-ab9a-f9b5446f13ee}"));
+    }
+
+    {
+        QBluetoothUuid btUuid(QString("XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX"));
+        QVERIFY(btUuid.isNull());
     }
 }
 
@@ -314,7 +360,9 @@ void tst_QBluetoothUuid::tst_comparison()
         QBluetoothUuid quuid32(uuid32);
         QBluetoothUuid quuid128(uuid128);
 
-        QVERIFY(quuid16 == quuid16);
+        QVERIFY(quuid16.toUInt16() == uuid16);
+        QVERIFY(quuid16.toUInt32() == uuid32);
+
         QVERIFY(quuid16 == quuid32);
         QVERIFY(quuid16 == quuid128);
 
@@ -326,7 +374,7 @@ void tst_QBluetoothUuid::tst_comparison()
         QBluetoothUuid quuid32(uuid32);
         QBluetoothUuid quuid128(uuid128);
 
-        QVERIFY(quuid32 == quuid32);
+        QVERIFY(quuid32.toUInt32() == uuid32);
         QVERIFY(quuid32 == quuid128);
 
         QVERIFY(quuid128 == quuid32);
@@ -335,10 +383,56 @@ void tst_QBluetoothUuid::tst_comparison()
     if (constructUuid128) {
         QBluetoothUuid quuid128(uuid128);
 
-        QVERIFY(quuid128 == quuid128);
+        for (int var = 0; var < 16; ++var) {
+            QVERIFY(quuid128.toUInt128().data[var] == uuid128.data[var]);
+        }
     }
 }
+#ifdef Q_OS_SYMBIAN
+void tst_QBluetoothUuid::tst_symbian_uuid_tranformation_data()
+{
+    tst_conversion_data();
+}
 
+void tst_QBluetoothUuid::tst_symbian_uuid_tranformation()
+{
+    QFETCH(quint128, uuid128);
+
+    QBluetoothUuid quuid128(uuid128);
+
+    for (int var = 0; var < 16; ++var) {
+        QVERIFY(quuid128.toUInt128().data[var] == uuid128.data[var]);
+    }
+
+    if (quuid128.minimumSize() == 2) {
+        TUUID sUuid(quuid128.toUInt16());
+        QBluetoothUuid fromSymbianUuid(ntohs(*reinterpret_cast<const quint16 *>(sUuid.Des().Ptr())));
+        QCOMPARE(quuid128, fromSymbianUuid);
+        //qDebug()<<"sUuid size  ="<<sUuid.Des().Length() ;
+    } else if (quuid128.minimumSize() == 4) {
+        TUUID sUuid(quuid128.toUInt32());
+        QBluetoothUuid fromSymbianUuid(ntohl(*reinterpret_cast<const quint32 *>(sUuid.Des().Ptr())));
+        QCOMPARE(quuid128, fromSymbianUuid);
+        //qDebug()<<"sUuid size  ="<<sUuid.Des().Length() ;
+    } else if (quuid128.minimumSize()==16) {
+
+        TUint32 *dataPointer = (TUint32*)quuid128.toUInt128().data;
+        TUint32 hH = qToBigEndian<quint32>(*(dataPointer++));
+        TUint32 hL = qToBigEndian<quint32>(*(dataPointer++));
+        TUint32 lH = qToBigEndian<quint32>(*(dataPointer++));
+        TUint32 lL = qToBigEndian<quint32>(*(dataPointer));
+        TUUID sUuid(hH, hL, lH, lL);
+        //qDebug()<<"sUuid size      ="<<sUuid.Des().Length() ;
+        //qDebug()<<"sUuid longsize  ="<<sUuid.LongForm().Length() ;
+
+        for (int var = 0; var < sUuid.Des().Length(); ++var) {
+            //qDebug()<<"sUuid at    ="<<var<<"="<<sUuid.Des()[var] ;
+            //qDebug()<<"quuid128 at ="<<var<<"="<<quuid128.toUInt128().data[var] ;
+            QVERIFY(quuid128.toUInt128().data[var] == sUuid.Des()[var]);
+        }
+    }
+}
+#endif //Q_OS_SYMBIAN
 QTEST_MAIN(tst_QBluetoothUuid)
 
 #include "tst_qbluetoothuuid.moc"

@@ -41,6 +41,8 @@
 
 #include "qgeotiledmaprectangleobjectinfo_p.h"
 
+#include <QGraphicsPolygonItem>
+
 #include "qgeotiledmapdata.h"
 #include "qgeotiledmapdata_p.h"
 
@@ -51,8 +53,7 @@
 QTM_BEGIN_NAMESPACE
 
 QGeoTiledMapRectangleObjectInfo::QGeoTiledMapRectangleObjectInfo(QGeoTiledMapData *mapData, QGeoMapObject *mapObject)
-    : QGeoTiledMapObjectInfo(mapData, mapObject),
-      rectangleItem2(0)
+    : QGeoTiledMapObjectInfo(mapData, mapObject)
 {
     rectangle = static_cast<QGeoMapRectangleObject*>(mapObject);
 
@@ -73,125 +74,67 @@ QGeoTiledMapRectangleObjectInfo::QGeoTiledMapRectangleObjectInfo(QGeoTiledMapDat
             this,
             SLOT(brushChanged(QBrush)));
 
-    rectangleItem1 = new QGraphicsRectItem();
-    graphicsItem = rectangleItem1;
+    polygonItem = new QGraphicsPolygonItem();
+    graphicsItem = polygonItem;
 
+    topLeftChanged(rectangle->topLeft());
+    bottomRightChanged(rectangle->bottomRight());
     penChanged(rectangle->pen());
     brushChanged(rectangle->brush());
-
-    updateValidity();
-    if (valid())
-        update();
 }
 
 QGeoTiledMapRectangleObjectInfo::~QGeoTiledMapRectangleObjectInfo() {}
 
-void QGeoTiledMapRectangleObjectInfo::updateValidity()
+void QGeoTiledMapRectangleObjectInfo::topLeftChanged(const QGeoCoordinate &/*topLeft*/)
 {
-    setValid((rectangle->topLeft().isValid() && rectangle->bottomRight().isValid()));
-}
-
-void QGeoTiledMapRectangleObjectInfo::topLeftChanged(const QGeoCoordinate &topLeft)
-{
-    updateValidity();
-    if (valid())
-        update();
-}
-
-void QGeoTiledMapRectangleObjectInfo::bottomRightChanged(const QGeoCoordinate &bottomRight)
-{
-    updateValidity();
-    if (valid())
-        update();
-}
-
-void QGeoTiledMapRectangleObjectInfo::penChanged(const QPen &pen)
-{
-    rectangleItem1->setPen(pen);
-    if (rectangleItem2)
-        rectangleItem2->setPen(pen);
+    regenPolygon();
     updateItem();
 }
 
-void QGeoTiledMapRectangleObjectInfo::brushChanged(const QBrush &brush)
+void QGeoTiledMapRectangleObjectInfo::bottomRightChanged(const QGeoCoordinate &/*bottomRight*/)
 {
-    rectangleItem1->setBrush(brush);
-    if (rectangleItem2)
-        rectangleItem2->setBrush(brush);
+    regenPolygon();
     updateItem();
 }
 
-void QGeoTiledMapRectangleObjectInfo::update()
+void QGeoTiledMapRectangleObjectInfo::penChanged(const QPen &/*pen*/)
 {
-#if 1
-    QGeoCoordinate coord1 = rectangle->bounds().topLeft();
-    QGeoCoordinate coord2 = rectangle->bounds().bottomRight();
-
-    const qreal lng1 = coord1.longitude();
-    const qreal lng2 = coord2.longitude();
-
-    // is the dateline crossed = different sign AND gap is large enough
-    const bool crossesDateline = lng1 * lng2 < 0 && abs(lng1 - lng2) > 180;
-    // is the shortest route east = dateline crossed XOR longitude is east by simple comparison
-    const bool goesEast = crossesDateline != (lng2 > lng1);
-
-    // calculate base points
-    QPointF point1 = tiledMapData->coordinateToWorldReferencePosition(coord1);
-    QPointF point2 = tiledMapData->coordinateToWorldReferencePosition(coord2);
-
-    QRectF bounds1 = QRectF(point1, point2).normalized();
-    QRectF bounds2;
-
-    // if the dateline is crossed, draw "around" the map over the chosen pole
-    if (crossesDateline && goesEast) {
-        // direction = positive if east, negative otherwise
-        const qreal dir = goesEast ? 1 : -1;
-
-        int width = tiledMapData->worldReferenceSize().width();
-
-        // lastPoint on the other side
-        QPointF point1_ = point1 - QPointF(width * dir, 0);
-
-        // point on this side
-        QPointF point2_ = point2 + QPointF(width * dir, 0);
-
-        bounds1 = QRectF(point1_, point2).normalized();
-        bounds2 = QRectF(point1, point2_).normalized();
-    }
-
-#else
-    // Old code, to be removed.
-    QPoint topLeft = mapData->q_ptr->coordinateToWorldPixel(rectangle->bounds.topLeft());
-    QPoint bottomRight = mapData->q_ptr->coordinateToWorldPixel(rectangle->bounds.bottomRight());
-
-    bounds = QRectF(topLeft, bottomRight);
-
-    QRectF bounds1 = bounds;
-    QRectF bounds2;
-
-    if (bounds1.right() < bounds1.left()) {
-        bounds1.setRight(bounds1.right() + tiledMapDataPrivate->maxZoomSize.width());
-        bounds2 = bounds1.translated(-tiledMapDataPrivate->maxZoomSize.width(), 0);
-    }
-#endif
-
-    if (bounds2.isValid()) {
-        if (!rectangleItem2)
-            rectangleItem2 = new QGraphicsRectItem(rectangleItem1);
-            rectangleItem2->setPen(rectangle->pen());
-            rectangleItem2->setBrush(rectangle->brush());
-    } else {
-        if (rectangleItem2) {
-            delete rectangleItem2;
-            rectangleItem2 = 0;
-        }
-    }
-
-    rectangleItem1->setRect(bounds1);
-    if (rectangleItem2)
-        rectangleItem2->setRect(bounds2);
-
+    polygonItem->setPen(rectangle->pen());
     updateItem();
+}
+
+void QGeoTiledMapRectangleObjectInfo::brushChanged(const QBrush &/*brush*/)
+{
+    polygonItem->setBrush(rectangle->brush());
+    updateItem();
+}
+
+void QGeoTiledMapRectangleObjectInfo::regenPolygon()
+{
+    QPolygonF poly;
+
+    const QGeoCoordinate tl = rectangle->bounds().topLeft();
+    if (!tl.isValid())
+        return;
+
+    const QGeoCoordinate tr = rectangle->bounds().topRight();
+    if (!tr.isValid())
+        return;
+
+    const QGeoCoordinate br = rectangle->bounds().bottomRight();
+    if (!br.isValid())
+        return;
+
+    const QGeoCoordinate bl = rectangle->bounds().bottomLeft();
+    if (!bl.isValid())
+        return;
+
+    poly << QPointF(tl.longitude()*3600.0, tl.latitude()*3600.0);
+    poly << QPointF(tr.longitude()*3600.0, tr.latitude()*3600.0);
+    poly << QPointF(br.longitude()*3600.0, br.latitude()*3600.0);
+    poly << QPointF(bl.longitude()*3600.0, bl.latitude()*3600.0);
+
+    polygonItem->setPolygon(poly);
 }
 
 #include "moc_qgeotiledmaprectangleobjectinfo_p.cpp"

@@ -16,7 +16,7 @@
 */
 
 
-target          t_iccentry.exe
+TARGET          t_iccentry.exe
 targettype      EXE
 CAPABILITY   ReadUserData WriteUserData
 UID		0x1000007a
@@ -30,7 +30,7 @@ userinclude ../tsrc/TestSyncPlugIn
 
 source          t_iccentry.cpp ../tsrc/TestSyncPlugIn/cnttestsync.cpp
 
-library         euser.lib cntmodel.lib cnttutil.lib cntsyncchecker.lib bafl.lib 
+LIBRARY         euser.lib cntmodel.lib cnttutil.lib cntsyncchecker.lib bafl.lib 
 
 LIBRARY			ecom.lib
 

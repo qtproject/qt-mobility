@@ -42,6 +42,10 @@
 #include "qorganizeritemsortorder.h"
 #include "qorganizeritemsortorder_p.h"
 
+#ifndef QT_NO_DEBUG_STREAM
+#include <QDebug>
+#endif
+
 QTM_BEGIN_NAMESPACE
 
 /*!
@@ -167,6 +171,32 @@ QDataStream& operator>>(QDataStream& in, QOrganizerItemSortOrder& sortOrder)
         in.setStatus(QDataStream::ReadCorruptData);
     }
     return in;
+}
+#endif
+
+#ifndef QT_NO_DEBUG_STREAM
+/*!
+  Outputs \a sortOrder to the debug stream \a dbg
+ */
+QDebug operator<<(QDebug dbg, const QOrganizerItemSortOrder& sortOrder)
+{
+    dbg.nospace() << "QOrganizerItemSortOrder(";
+    dbg.nospace() << "detailDefinitionName=";
+    dbg.nospace() << sortOrder.detailDefinitionName();
+    dbg.nospace() << ",";
+    dbg.nospace() << "detailFieldName=";
+    dbg.nospace() << sortOrder.detailFieldName();
+    dbg.nospace() << ",";
+    dbg.nospace() << "blankPolicy=";
+    dbg.nospace() << static_cast<quint32>(sortOrder.blankPolicy());
+    dbg.nospace() << ","; 
+    dbg.nospace() << "direction=";
+    dbg.nospace() << static_cast<quint32>(sortOrder.direction());
+    dbg.nospace() << ",";
+    dbg.nospace() << "caseSensitivity=";
+    dbg.nospace() << static_cast<quint32>(sortOrder.caseSensitivity());
+    dbg.nospace() << ")";
+    return dbg.maybeSpace();
 }
 #endif
 

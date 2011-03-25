@@ -16,12 +16,12 @@
 */
 
 
-target cntsimplesortplugin.dll
+TARGET cntsimplesortplugin.dll
 targettype plugin
 CAPABILITY   All -TCB
 
 // ECom Dll recognition UID followed by the unique UID for this dll
-UID 0x10009D8D 0x10200FBC
+UID 0x10009D8D 0x10200fbc
 VENDORID 0x70000001
 
 APP_LAYER_SYSTEMINCLUDE_SYMBIAN
@@ -31,10 +31,10 @@ source		cntsimplesortplugin.cpp
 
 
 start resource 10200FBC.rss
-target cntsimplesortplugin.rsc
+TARGET cntsimplesortplugin.rsc
 end
 
-library euser.lib ecom.lib cntmodel.lib
+LIBRARY euser.lib ecom.lib cntmodel.lib
 
 SMPSAFE
 

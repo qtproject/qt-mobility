@@ -1,5 +1,8 @@
 INCLUDEPATH += $$PWD
-LIBS += -lmediaclientvideo \
+
+include (../../videooutput/videooutput.pri)
+
+LIBS *= -lmediaclientvideo \
     -lmediaclientaudio \
     -lws32 \
     -lfbscli \
@@ -9,6 +12,8 @@ LIBS += -lmediaclientvideo \
     -lbitgdi \
     -lapgrfx \
     -lapmime \
+    -lcommdb \
+    -lbafl
 
 # If support to DRM is wanted then comment out the following line
 #CONFIG += drm_supported
@@ -30,13 +35,12 @@ HEADERS += \
     $$PWD/s60mediametadataprovider.h \
     $$PWD/s60videoplayersession.h \
     $$PWD/s60videosurface.h \
-    $$PWD/s60videooverlay.h \
     $$PWD/s60mediarecognizer.h \
     $$PWD/s60audioplayersession.h \
     $$PWD/ms60mediaplayerresolver.h \
-    $$PWD/s60videowidget.h \
     $$PWD/s60mediaplayeraudioendpointselector.h \
-    $$PWD/s60mediastreamcontrol.h
+    $$PWD/s60mediastreamcontrol.h \
+    $$PWD/s60medianetworkaccesscontrol.h
 
 SOURCES += \
     $$PWD/s60mediaplayercontrol.cpp \
@@ -45,22 +49,15 @@ SOURCES += \
     $$PWD/s60mediametadataprovider.cpp \
     $$PWD/s60videoplayersession.cpp \
     $$PWD/s60videosurface.cpp \
-    $$PWD/s60videooverlay.cpp \
     $$PWD/s60mediarecognizer.cpp \
     $$PWD/s60audioplayersession.cpp \
-    $$PWD/s60videowidget.cpp \
     $$PWD/s60mediaplayeraudioendpointselector.cpp \
-    $$PWD/s60mediastreamcontrol.cpp
+    $$PWD/s60mediastreamcontrol.cpp \
+    $$PWD/s60medianetworkaccesscontrol.cpp
 
 contains(DEFINES, HAS_VIDEORENDERERCONTROL_IN_VIDEOPLAYER) {
     HEADERS += $$PWD/s60videorenderer.h
     SOURCES += $$PWD/s60videorenderer.cpp
-}
-
-
-contains(surfaces_s60_enabled,yes) {
-    DEFINES += MMF_VIDEO_SURFACES_SUPPORTED
-    message("Surfaces_s60 enabled")
 }
 
 contains(S60_VERSION, 3.1) {
@@ -84,7 +81,12 @@ contains(S60_VERSION, 3.1) {
 
 }
 
-exists($$[QT_INSTALL_HEADERS]/QtGui/private/qwidget_p.h) {
-    DEFINES += USE_PRIVATE_QWIDGET_METHODS
-    message("Enabling use of private QWidget methods")
+contains(S60_VERSION, 3.1) {
+	DEFINES += PLAY_RATE_NOT_SUPPORTED
+	message("S60 version 3.1 does not support setplaybackrate")
 }
+contains(S60_VERSION, 3.2) {
+	DEFINES += PLAY_RATE_NOT_SUPPORTED
+	message("S60 version 3.2 does not support setplaybackrate")
+}
+

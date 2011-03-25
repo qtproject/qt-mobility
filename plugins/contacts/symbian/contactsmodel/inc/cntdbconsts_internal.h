@@ -22,10 +22,17 @@
 const TInt KMaxImageSize = 100000; // 100KB
 
 // Internal folder to store contact thumbnail images
+#ifdef UNIT_TEST
+_LIT(KImagesFolder, "imagerescale_test\\");
+#else
 _LIT(KImagesFolder, "10003A73\\");
+#endif
 
 // S60 specific contact field type containing image call object data
 #define KUidContactFieldCodImageValue 0x101F8841
 const TUid KUidContactFieldCodImage={KUidContactFieldCodImageValue};
+
+#define KUidContactFieldTopContactValue 0x200100E3
+const TUid KUidContactFieldTopContact={KUidContactFieldTopContactValue};
 
 #endif /* CNTDBCONSTS_INTERNAL_H_ */

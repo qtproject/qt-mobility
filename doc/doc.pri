@@ -10,7 +10,7 @@ win32:!win32-g++ {
 LINE_SEP=$$escape_expand(\\n\\t)
 GENERATOR = $$[QT_INSTALL_BINS]/qhelpgenerator
 QDOC = $$[QT_INSTALL_BINS]/qdoc3
-MOBILITY_DOCUMENTATION = $$QDOC -creator $${QT_MOBILITY_SOURCE_TREE}/doc/src/qtmobility.qdocconf $$LINE_SEP \
+MOBILITY_DOCUMENTATION = $$QDOC $${QT_MOBILITY_SOURCE_TREE}/doc/config/qtmobility.qdocconf $$LINE_SEP \
                          cd $${QT_MOBILITY_SOURCE_TREE} && \
                           $$GENERATOR doc/html/qtmobility.qhp -o doc/qch/qtmobility.qch
 

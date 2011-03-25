@@ -10,8 +10,10 @@ qtAddLibrary(QtMultimediaKit)
 include(mediaplayer/mediaplayer_s60.pri)
 include(radio/radio.pri)
 
+QT += network
+
 # we include mmf audiorecording only if we are not building openmaxal based backend
-contains(openmaxal_symbian_enabled, no) {
+!contains(openmaxal_symbian_enabled, yes) {
     message("Enabling mmf mediarecording backend")
     include(audiosource/audiosource_s60.pri)
 }
@@ -22,12 +24,15 @@ INCLUDEPATH += . \
     $${SOURCE_DIR}/src/multimedia \
     $${SOURCE_DIR}/src/multimedia/audio \
     $${SOURCE_DIR}/src/multimedia/video \
+    $${SOURCE_DIR}/plugins/multimedia/symbian/mmf/inc \
     $${SOURCE_DIR}
 
 
-HEADERS += s60mediaserviceplugin.h
+HEADERS += s60mediaserviceplugin.h \
+    s60formatsupported.h
 
-SOURCES += s60mediaserviceplugin.cpp
+SOURCES += s60mediaserviceplugin.cpp \
+    s60formatsupported.cpp
 
 contains(S60_VERSION, 3.2)|contains(S60_VERSION, 3.1) {
     DEFINES += PRE_S60_50_PLATFORM
@@ -42,7 +47,7 @@ MMP_RULES += EXPORTUNFROZEN
 #make a sis package from plugin + api + stub (plugin)
 pluginDep.sources = $${TARGET}.dll
 pluginDep.path = $${QT_PLUGINS_BASE_DIR}/$${PLUGIN_TYPE}
-DEPLOYMENT += pluginDep      
+DEPLOYMENT += pluginDep
 
 #Media API spesific deployment
 QtMediaDeployment.sources = QtMultimediaKit.dll

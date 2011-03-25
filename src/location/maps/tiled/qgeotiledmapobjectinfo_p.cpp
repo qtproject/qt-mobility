@@ -44,6 +44,7 @@
 #include "qgeotiledmapdata.h"
 #include "qgeotiledmapdata_p.h"
 #include "qgeoboundingbox.h"
+#include "qgeomapobjectengine_p.h"
 
 #include <QGraphicsScene>
 
@@ -56,8 +57,8 @@ QTM_BEGIN_NAMESPACE
 QGeoTiledMapObjectInfo::QGeoTiledMapObjectInfo(QGeoTiledMapData *mapData, QGeoMapObject *mapObject)
     : QGeoMapObjectInfo(mapData, mapObject),
       graphicsItem(0),
-      isValid(true),
-      isVisible(true)
+      inited(false),
+      updateAfterInit(false)
 {
     tiledMapData = mapData;
     tiledMapDataPrivate = static_cast<QGeoTiledMapDataPrivate*>(mapData->d_ptr);
@@ -65,9 +66,6 @@ QGeoTiledMapObjectInfo::QGeoTiledMapObjectInfo(QGeoTiledMapData *mapData, QGeoMa
 
 QGeoTiledMapObjectInfo::~QGeoTiledMapObjectInfo()
 {
-
-    tiledMapDataPrivate->removeObjectInfo(this);
-
     if (graphicsItem) {
         delete graphicsItem;
         graphicsItem = 0;
@@ -77,11 +75,20 @@ QGeoTiledMapObjectInfo::~QGeoTiledMapObjectInfo()
 void QGeoTiledMapObjectInfo::init()
 {
     if (graphicsItem) {
-        tiledMapDataPrivate->addObjectInfo(this);
         graphicsItem->setZValue(mapObject()->zValue());
-        graphicsItem->setVisible(mapObject()->isVisible() && isValid);
-        graphicsItem->setFlag(QGraphicsItem::ItemIsSelectable);
+        graphicsItem->setVisible(mapObject()->isVisible());
+        //graphicsItem->setFlag(QGraphicsItem::ItemIsSelectable);
     }
+    inited = true;
+    if (updateAfterInit) {
+        tiledMapData->updateMapDisplay();
+        updateAfterInit = false;
+    }
+}
+
+QGeoMapObject* QGeoTiledMapObjectInfo::mapObject() const
+{
+    return QGeoMapObjectInfo::mapObject();
 }
 
 void QGeoTiledMapObjectInfo::zValueChanged(int zValue)
@@ -89,19 +96,20 @@ void QGeoTiledMapObjectInfo::zValueChanged(int zValue)
     if (graphicsItem) {
         graphicsItem->setZValue(zValue);
         updateItem();
+        if (tiledMapDataPrivate && tiledMapDataPrivate->oe)
+            tiledMapDataPrivate->oe->rebuildScenes();
     }
 }
 
 void QGeoTiledMapObjectInfo::visibleChanged(bool visible)
 {
-    isVisible = visible;
     if (graphicsItem) {
-        graphicsItem->setVisible((isVisible && isValid));
+        graphicsItem->setVisible(visible);
         updateItem();
     }
 }
 
-void QGeoTiledMapObjectInfo::selectedChanged(bool selected)
+void QGeoTiledMapObjectInfo::selectedChanged(bool /*selected*/)
 {
     // don't want to draw the selection box
 //    if (graphicsItem) {
@@ -110,125 +118,139 @@ void QGeoTiledMapObjectInfo::selectedChanged(bool selected)
 //    }
 }
 
+void QGeoTiledMapObjectInfo::originChanged(const QGeoCoordinate &origin)
+{
+    if (graphicsItem)
+        updateItem();
+}
+
+void QGeoTiledMapObjectInfo::unitsChanged(QGeoMapObject::CoordinateUnit units)
+{
+    if (graphicsItem)
+        updateItem();
+}
+
+void QGeoTiledMapObjectInfo::transformTypeChanged(QGeoMapObject::TransformType transformType)
+{
+    if (graphicsItem)
+        updateItem();
+}
+
 QGeoBoundingBox QGeoTiledMapObjectInfo::boundingBox() const
 {
-    if (!graphicsItem)
+    if (!graphicsItem || !tiledMapData)
         return QGeoBoundingBox();
 
-    QRectF rect1 = graphicsItem->boundingRect();
-    QGeoCoordinate topLeft1 = tiledMapData->worldReferencePositionToCoordinate(rect1.topLeft().toPoint());
-    QGeoCoordinate bottomRight1 = tiledMapData->worldReferencePositionToCoordinate(rect1.bottomRight().toPoint());
+    QGeoMapObjectEngine *e = tiledMapDataPrivate->oe;
 
-    QGeoBoundingBox box1 = QGeoBoundingBox(topLeft1, bottomRight1);
+    QGeoMapObject *object = mapObject();
 
-    return box1;
-}
+    e->updateTransforms();
 
-bool QGeoTiledMapObjectInfo::contains(const QGeoCoordinate &coord) const
-{
-    QPoint point = tiledMapData->coordinateToWorldReferencePosition(coord);
+    if (e->latLonExact.contains(object)) {
+        QList<QGraphicsItem*> items = e->latLonExact.values(object);
+        QGeoBoundingBox box;
+        foreach (QGraphicsItem *item, items) {
+            QRectF latLonBounds = item->boundingRect();
+            QPointF topLeft = latLonBounds.bottomLeft();
+            if (topLeft.x() > 180.0 * 3600.0)
+                topLeft.setX(topLeft.x() - 360.0 * 3600.0);
+            if (topLeft.x() < -180.0 * 3600.0)
+                topLeft.setX(topLeft.x() + 360.0 * 3600.0);
 
-    if (!graphicsItem)
-        return false;
+            QPointF bottomRight = latLonBounds.topRight();
+            if (bottomRight.x() > 180.0 * 3600.0)
+                bottomRight.setX(bottomRight.x() - 360.0 * 3600.0);
+            if (bottomRight.x() < -180.0 * 3600.0)
+                bottomRight.setX(bottomRight.x() + 360.0 * 3600.0);
 
-    return graphicsItem->mapToParent(graphicsItem->shape()).contains(point);
-}
+            QGeoCoordinate tlc(topLeft.y() / 3600.0, topLeft.x() / 3600.0);
+            QGeoCoordinate brc(bottomRight.y() / 3600.0, bottomRight.x() / 3600.0);
 
-void QGeoTiledMapObjectInfo::setValid(bool valid)
-{
-    isValid = valid;
-    if (graphicsItem) {
-        graphicsItem->setVisible(isVisible && isValid);
-        updateItem();
+            return QGeoBoundingBox(tlc, brc);
+
+            // it looks like the following is overkill
+//            if (box.isValid()) {
+//                box |= QGeoBoundingBox(tlc, brc);
+//            } else {
+//                box = QGeoBoundingBox(tlc, brc);
+//            }
+        }
+        return box;
+    } else {
+        QTransform trans = e->latLonTrans.value(object);
+
+        QRectF bounds = graphicsItem->boundingRect();
+        QPolygonF poly = bounds * trans;
+
+        QRectF latLonBounds = poly.boundingRect();
+        QPointF topLeft = latLonBounds.bottomLeft();
+        if (topLeft.x() > 180.0 * 3600.0)
+            topLeft.setX(topLeft.x() - 360.0 * 3600.0);
+        if (topLeft.x() < -180.0 * 3600.0)
+            topLeft.setX(topLeft.x() + 360.0 * 3600.0);
+
+        QPointF bottomRight = latLonBounds.topRight();
+        if (bottomRight.x() > 180.0 * 3600.0)
+            bottomRight.setX(bottomRight.x() - 360.0 * 3600.0);
+        if (bottomRight.x() < -180.0 * 3600.0)
+            bottomRight.setX(bottomRight.x() + 360.0 * 3600.0);
+
+        QGeoCoordinate tlc(topLeft.y() / 3600.0, topLeft.x() / 3600.0);
+        QGeoCoordinate brc(bottomRight.y() / 3600.0, bottomRight.x() / 3600.0);
+
+        return QGeoBoundingBox(tlc, brc);
     }
 }
 
-bool QGeoTiledMapObjectInfo::valid() const
+bool QGeoTiledMapObjectInfo::contains(const QGeoCoordinate &coordinate) const
 {
-    return isValid;
+    if (!graphicsItem || !tiledMapData)
+        return false;
+
+    QGeoMapObjectEngine *e = tiledMapDataPrivate->oe;
+
+    e->updateTransforms();
+    QPointF latLonPoint(coordinate.longitude()*3600.0, coordinate.latitude()*3600.0);
+
+    QGeoMapObject *object = mapObject();
+
+    if (e->latLonExact.contains(object)) {
+        QList<QGraphicsItem*> items = e->latLonExact.values(object);
+        foreach (QGraphicsItem *item, items) {
+            if (item->contains(latLonPoint))
+                return true;
+        }
+    } else {
+        QList<QTransform> transList = e->latLonTrans.values(object);
+        foreach (QTransform trans, transList) {
+            bool ok;
+            QTransform inv = trans.inverted(&ok);
+            if (!ok)
+                continue;
+
+            QPointF localPoint = latLonPoint * inv;
+
+            if (graphicsItem->contains(localPoint))
+                return true;
+        }
+    }
+
+    return false;
 }
 
 void QGeoTiledMapObjectInfo::updateItem(const QRectF& target)
 {
-    if (graphicsItem)
-        tiledMapData->triggerUpdateMapDisplay(target);
-}
-
-QPolygonF QGeoTiledMapObjectInfo::createPolygon(const QList<QGeoCoordinate> &path,
-        QGeoTiledMapData *tiledMapData,
-        bool closedPath,
-        qreal ypole)
-{
-    QPolygonF points;
-
-    if (path.isEmpty())
-        return points;
-
-    QGeoCoordinate lastCoord = closedPath ? path.last() : path.first();
-    QPointF lastPoint = tiledMapData->coordinateToWorldReferencePosition(lastCoord);
-
-    int width = tiledMapData->worldReferenceSize().width();
-
-    for (int i = 0; i < path.size(); ++i) {
-        const QGeoCoordinate &coord = path.at(i);
-
-        if (!coord.isValid())
-            continue;
-
-        const qreal lng = coord.longitude();
-        const qreal lastLng = lastCoord.longitude();
-
-        // is the dateline crossed = different sign AND gap is large enough
-        const bool crossesDateline = lastLng * lng < 0 && abs(lastLng - lng) > 180;
-
-        // calculate base point
-        QPointF point = tiledMapData->coordinateToWorldReferencePosition(coord);
-
-        // if the dateline is crossed, draw "around" the map over the chosen pole
-        if (crossesDateline) {
-            // is the shortest route east = dateline crossed XOR longitude is east by simple comparison
-            const bool goesEast = crossesDateline != (lng > lastLng);
-            // direction = positive if east, negative otherwise
-            const qreal dir = goesEast ? 1 : -1;
-
-            // lastPoint on this side
-            const QPointF & L = lastPoint;
-
-            // point on the other side
-            const QPointF & P = point;
-
-            // lastPoint on the other side
-            QPointF L_ = L - QPointF(width * dir, 0);
-
-            // point on this side
-            QPointF P_ = P + QPointF(width * dir, 0);
-
-            // TODO: make a better algorithm to make sure the off-screen points P' and L' are far enough from the dateline so the lines to the poles don't flicker through.
-            // this works for now :)
-            L_ += (L_ - P) * 7;
-            P_ += (P_ - L) * 7;
-
-            // pole point on this side
-            QPointF O1 = QPointF(P_.x(), ypole);
-            // pole point on the other side
-            QPointF O2 = QPointF(L_.x(), ypole);
-
-            //points.append(L); // implicit
-            points.append(P_); // P'
-            points.append(O1);
-            points.append(O2);
-            points.append(L_); // L'
-            points.append(P);
-        } else {
-            // add point to polygon
-            points.append(point);
-        }
-
-        lastCoord = coord;
-        lastPoint = point;
+    if (!inited) {
+        updateAfterInit = true;
+        return;
     }
 
-    return points;
+    QGeoMapObject *object = mapObject();
+    if (object)
+        tiledMapDataPrivate->update(object);
+    if (graphicsItem)
+        tiledMapData->triggerUpdateMapDisplay(target);
 }
 
 #include "moc_qgeotiledmapobjectinfo_p.cpp"

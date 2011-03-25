@@ -87,7 +87,7 @@ bool genericorientationsensor::filter(QAccelerometerReading *reading)
     else if (reading->z() < -7.35)
         o = QOrientationReading::FaceDown;
 
-    if (o != m_reading.orientation()) {
+    if (o != m_reading.orientation() || m_reading.timestamp() == 0) {
         m_reading.setTimestamp(reading->timestamp());
         m_reading.setOrientation(o);
         newReadingAvailable();

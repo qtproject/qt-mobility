@@ -99,6 +99,15 @@ public:
         return stream;
     }
 
+#ifndef QT_NO_DEBUG_STREAM
+    QDebug& debugStreamOut(QDebug& dbg) const
+    {
+        dbg.nospace() << "QContactActionFilter(";
+        dbg.nospace() << "action=" << m_action;
+        dbg.nospace() << ")";
+        return dbg.maybeSpace();
+    }
+#endif
 
     Q_IMPLEMENT_CONTACTFILTER_VIRTUALCTORS(QContactActionFilter, QContactFilter::ActionFilter)
 

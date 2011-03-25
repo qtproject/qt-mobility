@@ -6,15 +6,17 @@ include (../../../common.pri)
 
 QT += sql
 
-INCLUDEPATH += ../../../src/location
-INCLUDEPATH += ../../../src/location/landmarks
-INCLUDEPATH += ../../../plugins/landmarks/sqlite/
+INCLUDEPATH += ../../../src/location \
+               ../../../src/location/landmarks \
+               ../../../plugins/landmarks/common \
+               ../
 
 # Input 
 SOURCES += tst_qlandmarkfilehandler_gpx.cpp \
-           ../../../plugins/landmarks/sqlite/qlandmarkfilehandler_gpx.cpp
+           ../../../plugins/landmarks/common/qlandmarkfilehandler_gpx.cpp
 
-HEADERS += ../../../plugins/landmarks/sqlite/qlandmarkfilehandler_gpx_p.h
+HEADERS += ../../../plugins/landmarks/common/qlandmarkfilehandler_gpx_p.h \
+           ../qlandmarkmanagerdataholder.h
 
 RESOURCES += data.qrc
 

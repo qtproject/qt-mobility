@@ -42,7 +42,6 @@
 #include "n900lightsensor.h"
 #include <QFile>
 #include <QDebug>
-#include <time.h>
 
 char const * const n900lightsensor::id("n900.light");
 char const * const n900lightsensor::filename("/sys/class/i2c-adapter/i2c-2/2-0029/lux");
@@ -81,8 +80,8 @@ void n900lightsensor::poll()
     fclose(fd);
     if (rs != 1) return;
 
-    if (m_reading.lux() != lux) {
-        m_reading.setTimestamp(clock());
+    if (m_reading.lux() != lux || m_reading.timestamp() == 0) {
+        m_reading.setTimestamp(getTimestamp());
         m_reading.setLux(lux);
 
         newReadingAvailable();

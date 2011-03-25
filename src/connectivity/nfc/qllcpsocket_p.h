@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -55,6 +55,8 @@ class QLlcpSocketPrivate
 public:
     QLlcpSocketPrivate(QLlcpSocket *q);
 
+    ~QLlcpSocketPrivate();
+    
     void connectToService(QNearFieldTarget *target, const QString &serviceUri);
     void disconnectFromService();
 
@@ -72,13 +74,14 @@ public:
                          QNearFieldTarget *target, quint8 port);
     qint64 writeDatagram(const QByteArray &datagram, QNearFieldTarget *target, quint8 port);
 
-    QLlcpSocket::Error error() const;
-    QLlcpSocket::State state() const;
+    QLlcpSocket::SocketError error() const;
+    QLlcpSocket::SocketState state() const;
 
     qint64 readData(char *data, qint64 maxlen);
     qint64 writeData(const char *data, qint64 len);
 
     qint64 bytesAvailable() const;
+    bool canReadLine() const;
 
     bool waitForReadyRead(int msecs);
     bool waitForBytesWritten(int msecs);

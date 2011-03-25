@@ -97,6 +97,10 @@ Q_ORGANIZER_EXPORT QDataStream& operator<<(QDataStream& out, const QOrganizerIte
 Q_ORGANIZER_EXPORT QDataStream& operator>>(QDataStream& in, QOrganizerItemSortOrder& sortOrder);
 #endif
 
+#ifndef QT_NO_DEBUG_STREAM
+Q_ORGANIZER_EXPORT QDebug operator<<(QDebug dbg, const QOrganizerItemSortOrder& sortOrder);
+#endif
+
 QTM_END_NAMESPACE
 
 Q_DECLARE_TYPEINFO(QTM_PREPEND_NAMESPACE(QOrganizerItemSortOrder), Q_MOVABLE_TYPE);

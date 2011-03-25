@@ -42,7 +42,7 @@
 #ifndef CNT_SYMBIAN_FILTER_SQL_H
 #define CNT_SYMBIAN_FILTER_SQL_H
 
-#ifdef SYMBIAN_BACKEND_USE_SQLITE
+#ifdef SYMBIAN_BACKEND_USE_CNTMODEL_V2
 
 #include "cntabstractcontactfilter.h"
 #include "qcontactmanagerengine.h"
@@ -82,6 +82,6 @@ private:
 
 };
 
-#endif /* SYMBIAN_BACKEND_USE_SQLITE */
+#endif /* SYMBIAN_BACKEND_USE_CNTMODEL_V2 */
 
 #endif /* CNT_SYMBIAN_FILTER_SQL_H */

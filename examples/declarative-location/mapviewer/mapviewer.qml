@@ -39,7 +39,7 @@
 ****************************************************************************/
 
 import Qt 4.7
-import QtMobility.location 1.1
+import QtMobility.location 1.2
 
 Item {
     width: 500
@@ -49,6 +49,7 @@ Item {
 
     Map {
         id: map
+        z : 1
         plugin : Plugin {
                             name : "nokia"
                         }
@@ -57,32 +58,91 @@ Item {
         zoomLevel: 7
         center: Coordinate {
                     latitude: -27
-                    longitude: 179
+                    longitude: 153
                 }
 
-        objects: [
+
             MapCircle {
+                id : circle
                 center : Coordinate {
+                    //latitude: 0
+                    //longitude: 0
                                     latitude : -27
-                                    longitude : 179
+                                    longitude : 153
                                     }
+                color : "red"
                 radius : 1000.0
                 MapMouseArea {
-                    onEntered : { console.log('entered circle') }
-                    onExited : { console.log('exited circle') }
-                    onPositionChanged : { console.log('moved in circle') }
-                    onClicked : { console.log('clicked in circle') }
-                    onDoubleClicked : { console.log('double clicked in circle') }
-                    onPressed: { console.log('pressed in circle') }
-                    onReleased: { console.log('released in circle') }
+//                    onClicked : { console.log('clicked in circle') }
+//                    onDoubleClicked : { console.log('double clicked in circle') }
+//                    onPressed: {console.log('pressed in circle') }
+//                    onReleased: { console.log('released in circle') }
+//                    onPositionChanged: { console.log('moved in circle') }
+
+                    property bool mouseDown : false
+                    property int lastX : -1
+                    property int lastY : -1
+
+                    hoverEnabled : true
+
+                    onPressed : {
+                        mouseDown = true
+                        lastX = mouse.x
+                        lastY = mouse.y
+                    }
+                    onReleased : {
+                        mouseDown = false
+                        lastX = -1
+                        lastY = -1
+                    }
+                    onPositionChanged: {
+                        if (mouseDown) {
+                            circle.center = mouse.coordinate
+                        }
+                    }
                 }
             }
-        ]
-    }
 
+
+        MapMouseArea {
+            property bool mouseDown : false
+            property int lastX : -1
+            property int lastY : -1
+
+            hoverEnabled : true
+
+            onPressed : {
+                mouseDown = true
+                lastX = mouse.x
+                lastY = mouse.y
+            }
+            onReleased : {
+                mouseDown = false
+                lastX = -1
+                lastY = -1
+            }
+            onPositionChanged: {
+                console.log(mouse.button)
+                if (mouse.button == Qt.LeftMouseButton) {
+//                if (mouseDown) {
+                    var dx = mouse.x - lastX
+                    var dy = mouse.y - lastY
+                    map.pan(-dx, -dy)
+                    lastX = mouse.x
+                    lastY = mouse.y
+                    map.center = mouse.coordinate
+                }
+            }
+            onDoubleClicked: {
+                map.center = mouse.coordinate
+                map.zoomLevel += 1
+            }
+        }
+    }
 /*
     MouseArea {
 
+        z : 0
         anchors.fill : parent
 
         property bool mouseDown : false
@@ -115,7 +175,6 @@ Item {
         }
     }
 */
-
     Keys.onPressed: {
         if (event.key == Qt.Key_Plus) {
             map.zoomLevel += 1

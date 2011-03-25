@@ -57,7 +57,8 @@ QTM_USE_NAMESPACE
 QLandmarkManagerPrivate::QLandmarkManagerPrivate()
         : engine(0),
         errorCode(QLandmarkManager::NoError),
-        isConnected(false)
+        isConnected(false),
+        q_ptr(0)
 {
 }
 
@@ -158,7 +159,6 @@ void QLandmarkManagerPrivate::loadStaticFactories(QHash<QString, QLandmarkManage
             QString name = f->managerName();
 
 #if !defined QT_NO_DEBUG
-            const bool showDebug = qgetenv("QT_DEBUG_PLUGINS").toInt() > 0;
             if (showDebug)
                 qDebug() << "Static: found an engine plugin with name" << name;
 #endif

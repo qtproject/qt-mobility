@@ -110,7 +110,18 @@ public:
         }
         return stream;
     }
-
+#ifndef QT_NO_DEBUG_STREAM
+    QDebug& debugStreamOut(QDebug& dbg) const
+    {
+        dbg.nospace() << "QContactDetailFilter(";
+        dbg.nospace() << "detailDefinitionName=" << m_defId << ","
+                      << "detailFieldName=" << m_fieldId << ","
+                      << "value=" << m_exactValue << ","
+                      << "matchFlags=" << static_cast<quint32>(m_flags);
+        dbg.nospace() << ")";
+        return dbg.maybeSpace();
+    }
+#endif
     Q_IMPLEMENT_CONTACTFILTER_VIRTUALCTORS(QContactDetailFilter, QContactFilter::ContactDetailFilter)
 
     QString m_defId;

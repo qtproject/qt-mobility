@@ -41,6 +41,8 @@
 
 #include "qgeomaprouteobject.h"
 #include "qgeomaprouteobject_p.h"
+#include "qgeocoordinate.h"
+#include "qgeoroutesegment.h"
 
 #define DEFAULT_ROUTE_DETAIL_LEVEL 6
 
@@ -70,7 +72,11 @@ QTM_BEGIN_NAMESPACE
     Constructs a new route object.
 */
 QGeoMapRouteObject::QGeoMapRouteObject()
-    : d_ptr(new QGeoMapRouteObjectPrivate()) {}
+    : d_ptr(new QGeoMapRouteObjectPrivate())
+{
+    setUnits(QGeoMapObject::AbsoluteArcSecondUnit);
+    setTransformType(QGeoMapObject::ExactTransform);
+}
 
 /*!
     Constructs a new route object for the route \a route.
@@ -79,6 +85,8 @@ QGeoMapRouteObject::QGeoMapRouteObject(const QGeoRoute &route)
     : d_ptr(new QGeoMapRouteObjectPrivate())
 {
     d_ptr->route = route;
+    setUnits(QGeoMapObject::AbsoluteArcSecondUnit);
+    setTransformType(QGeoMapObject::ExactTransform);
 }
 
 /*!
@@ -113,10 +121,8 @@ QGeoRoute QGeoMapRouteObject::route() const
 
 void QGeoMapRouteObject::setRoute(const QGeoRoute &route)
 {
-    //if (d_ptr->route != route) {
     d_ptr->route = route;
     emit routeChanged(d_ptr->route);
-    //}
 }
 
 /*!
@@ -142,7 +148,7 @@ void QGeoMapRouteObject::setPen(const QPen &pen)
         return;
 
     d_ptr->pen = newPen;
-    emit penChanged(d_ptr->pen);
+    emit penChanged(newPen);
 }
 
 /*!
@@ -206,7 +212,7 @@ void QGeoMapRouteObject::setDetailLevel(quint32 detailLevel)
 QGeoMapRouteObjectPrivate::QGeoMapRouteObjectPrivate()
 {
     detailLevel = DEFAULT_ROUTE_DETAIL_LEVEL;
-    pen.setCosmetic(false);
+    pen.setCosmetic(true);
 }
 
 QGeoMapRouteObjectPrivate::~QGeoMapRouteObjectPrivate() {}

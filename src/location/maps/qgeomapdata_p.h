@@ -55,18 +55,22 @@
 
 #include "qgeomapgroupobject.h"
 
+#include <QGraphicsScene>
+#include <QGraphicsItem>
 #include "qgeocoordinate.h"
+#include "qgraphicsgeomap.h"
+#include "projwrapper_p.h"
 #include <QList>
 
 QTM_BEGIN_NAMESPACE
 
 class QGeoMappingManagerEngine;
-
-class QGeoMapObjectInfo;
+class QGeoMapObjectEngine;
 class QGeoMapOverlay;
 
-class QGeoMapDataPrivate
+class QGeoMapDataPrivate : public QObject
 {
+    Q_OBJECT
 public:
     QGeoMapDataPrivate(QGeoMapData *parent, QGeoMappingManagerEngine *engine);
     virtual ~QGeoMapDataPrivate();
@@ -75,6 +79,9 @@ public:
     QGeoMapGroupObject* containerObject;
 
     qreal zoomLevel;
+    QPointF shiftSinceLastInval;
+    qreal bearing;
+    qreal tilt;
     QGeoCoordinate center;
     QSizeF windowSize;
     QGraphicsGeoMap::MapType mapType;
@@ -83,6 +90,14 @@ public:
     QList<QGeoMapOverlay*> overlays;
 
     bool blockPropertyChangeSignals;
+
+    virtual void addObject(QGeoMapObject *object);
+    virtual void removeObject(QGeoMapObject *object);
+    void clearObjects();
+
+    virtual QPointF coordinateToScreenPosition(double lon, double lat) const;
+
+    void emitUpdateMapDisplay(const QRectF &target = QRectF());
 
     QGeoMapData *q_ptr;
     Q_DECLARE_PUBLIC(QGeoMapData)

@@ -55,31 +55,23 @@ Rectangle {
 
         NetworkInfo {
             id: wlaninfo
-            useMode: wlan.mode;
+            mode: wlan.mode;
             property string img : getImage(networkStatus);
 
             function getImage(newStatus) {
                 if(newStatus == "Connected") {
                     return "images/wlan.svg";
                 }
-                if(newStatus == "Searching") {
-                    //                    return "images/wlan.svg";
-                }
-                if(newStatus == "No Network Available") {
-                    return "images/wlan-noavail.svg";
-                }
+                return "images/wlan-noavail.svg";
             }
 
             onStatusChanged : {
                 img = getImage(newStatus)
             }
-        }
-
-        Component.onCompleted: {
-            wlaninfo.startNameChanged();
-            wlaninfo.startSignalStrengthChanged();
-            wlaninfo.startStatusChanged();
-            wlaninfo.startModeChanged();
+            monitorNameChanges: true;
+            monitorSignalStrengthChanges: true
+            monitorStatusChanges: true
+            monitorModeChanges: true
         }
 
         Image {
@@ -136,28 +128,23 @@ Rectangle {
 
         NetworkInfo {
             id: ethinfo
-            useMode: ethernet.mode;
+            mode: ethernet.mode;
             property string img : getImage(networkStatus);
 
             function getImage(newStatus) {
                 if(newStatus == "Connected") {
                     return "images/lan.svg";
                 }
-                if(newStatus == "No Network Available") {
-                    return "images/lan-noavail.svg";
-                }
+                return "images/lan-noavail.svg";
             }
 
             onStatusChanged : {
                 img = getImage(newStatus)
             }
-        }
-
-        Component.onCompleted: {
-            ethinfo.startNameChanged();
-            ethinfo.startSignalStrengthChanged();
-            ethinfo.startStatusChanged();
-            ethinfo.startModeChanged();
+            monitorNameChanges: true;
+            monitorSignalStrengthChanges: true
+            monitorStatusChanges: true
+            monitorModeChanges: true
         }
 
         Image {

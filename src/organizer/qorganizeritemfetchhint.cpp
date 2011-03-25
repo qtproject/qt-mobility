@@ -44,6 +44,10 @@
 
 #include <QStringList>
 
+#ifndef QT_NO_DEBUG_STREAM
+#include <QDebug>
+#endif
+
 QTM_BEGIN_NAMESPACE
 
 /*!
@@ -192,5 +196,21 @@ QDataStream& operator>>(QDataStream& in, QOrganizerItemFetchHint& hint)
 }
 #endif
 
+#ifndef QT_NO_DEBUG_STREAM
+/*!
+  Outputs \a hint to the debug stream \a dbg
+ */
+QDebug operator<<(QDebug dbg, const QOrganizerItemFetchHint& hint)
+{
+    dbg.nospace() << "QOrganizerItemFetchHint(";
+    dbg.nospace() << "detailDefinitionsHint=";
+    dbg.nospace() << hint.detailDefinitionsHint();
+    dbg.nospace() << ",";
+    dbg.nospace() << "optimizationHints=";
+    dbg.nospace() << static_cast<quint32>(hint.optimizationHints());
+    dbg.nospace() << ")";
+    return dbg.maybeSpace();
+}
+#endif
 
 QTM_END_NAMESPACE

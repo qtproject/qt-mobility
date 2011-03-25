@@ -66,7 +66,7 @@ public:
     ~QDeclarativeGeoMapCircleObject();
 
     QDeclarativeCoordinate* center();
-    void setCenter(const QDeclarativeCoordinate *center);
+    void setCenter(QDeclarativeCoordinate *center);
 
     qreal radius() const;
     void setRadius(qreal radius);
@@ -90,7 +90,7 @@ private Q_SLOTS:
 
 private:
     QGeoMapCircleObject* circle_;
-    QDeclarativeCoordinate center_;
+    QDeclarativeCoordinate *center_;
     QColor color_;
     QDeclarativeGeoMapObjectBorder border_;
 };

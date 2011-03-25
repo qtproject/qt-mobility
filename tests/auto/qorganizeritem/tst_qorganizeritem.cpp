@@ -69,6 +69,7 @@ private slots:
     void emptiness();
     void idLessThan();
     void idHash();
+    void idStringFunctions();
     void hash();
     void datastream();
     void traits();
@@ -82,6 +83,7 @@ private slots:
     void note();
     void eventOccurrence();
     void todoOccurrence();
+    void testDebugStreamOut();
 };
 
 tst_QOrganizerItem::tst_QOrganizerItem()
@@ -582,59 +584,55 @@ void tst_QOrganizerItem::emptiness()
 class BasicItemLocalId : public QOrganizerItemEngineId
 {
 public:
-    BasicItemLocalId(uint id) : m_id(id) {}
+    BasicItemLocalId(const QString& managerUri, uint id) : m_managerUri(managerUri), m_id(id) {}
     bool isEqualTo(const QOrganizerItemEngineId* other) const {
-        return m_id == static_cast<const BasicItemLocalId*>(other)->m_id;
+        if (m_managerUri == static_cast<const BasicItemLocalId*>(other)->m_managerUri)
+            return m_id == static_cast<const BasicItemLocalId*>(other)->m_id;
+        return false;
     }
     bool isLessThan(const QOrganizerItemEngineId* other) const {
-        return m_id < static_cast<const BasicItemLocalId*>(other)->m_id;
+        if (m_managerUri == static_cast<const BasicItemLocalId*>(other)->m_managerUri)
+            return m_id < static_cast<const BasicItemLocalId*>(other)->m_id;
+        return m_managerUri < static_cast<const BasicItemLocalId*>(other)->m_managerUri;
     }
     QString managerUri() const {
-        static const QString uri(QLatin1String("qtorganizer:basicid:"));
+        static const QString uri(QLatin1String("qtorganizer:basic:"));
         return uri;
     }
     QOrganizerItemEngineId* clone() const {
-        BasicItemLocalId* cloned = new BasicItemLocalId(m_id);
+        BasicItemLocalId* cloned = new BasicItemLocalId(m_managerUri, m_id);
         return cloned;
     }
     QDebug& debugStreamOut(QDebug& dbg) const {
-        return dbg << m_id;
+        return dbg << m_managerUri << m_id;
     }
     QString toString() const {
-        return QString::number(m_id);
+        return m_managerUri + QString("::") + QString::number(m_id);
     }
     uint hash() const {
         return m_id;
     }
 
 private:
+    QString m_managerUri;
     uint m_id;
 };
 
-QOrganizerItemId makeId(uint id)
+QOrganizerItemId makeId(const QString& managerUri, uint id)
 {
-    return QOrganizerItemId(new BasicItemLocalId(id));
+    return QOrganizerItemId(new BasicItemLocalId(managerUri, id));
 }
 
 void tst_QOrganizerItem::idLessThan()
 {
     // TODO: review test
-/*    QOrganizerItemId id1;
-    id1.setManagerUri("a");
-    id1.setLocalId(makeId(1));
-    QOrganizerItemId id2;
-    id2.setManagerUri("a");
-    id2.setLocalId(makeId(1));
+    QOrganizerItemId id1(makeId("a", 1));
+    QOrganizerItemId id2(makeId("a", 1));
     QVERIFY(!(id1 < id2));
     QVERIFY(!(id2 < id1));
-    QOrganizerItemId id3;
-    id3.setManagerUri("a");
-    id3.setLocalId(makeId(2));
-    QOrganizerItemId id4;
-    id4.setManagerUri("b");
-    id4.setLocalId(makeId(1));
-    QOrganizerItemId id5; // no URI
-    id5.setLocalId(makeId(2));
+    QOrganizerItemId id3(makeId("a", 2));
+    QOrganizerItemId id4(makeId("b", 1));
+    QOrganizerItemId id5(makeId(QString(), 2)); // no Uri specified.
     QVERIFY(id1 < id3);
     QVERIFY(!(id3 < id1));
     QVERIFY(id1 < id4);
@@ -642,36 +640,93 @@ void tst_QOrganizerItem::idLessThan()
     QVERIFY(id3 < id4);
     QVERIFY(!(id4 < id3));
     QVERIFY(id5 < id1);
-    QVERIFY(!(id1 < id5));*/
+    QVERIFY(!(id1 < id5));
 }
 
 void tst_QOrganizerItem::idHash()
 {
     // TODO: review test
-/*    QOrganizerItemId id1;
-    id1.setManagerUri("a");
-    id1.setLocalId(makeId(1));
-    QOrganizerItemId id2;
-    id2.setManagerUri("a");
-    id2.setLocalId(makeId(1));
-    QOrganizerItemId id3;
-    id3.setManagerUri("b");
-    id3.setLocalId(makeId(1));
+    QOrganizerItemId id1(makeId("a", 1));
+    QOrganizerItemId id2(makeId("a", 1));
+    QOrganizerItemId id3(makeId("b", 1));
+    QOrganizerItemId id4(makeId("a", 2));
     QVERIFY(qHash(id1) == qHash(id2));
-    QVERIFY(qHash(id1) != qHash(id3));
+    QVERIFY(qHash(id1) != qHash(id4));
+    // note that the hash function is dependent on the id type
+    // in BasicCollectionLocalId, the hash function ignores the managerUri.
+
     QSet<QOrganizerItemId> set;
     set.insert(id1);
     set.insert(id2);
     set.insert(id3);
-    QCOMPARE(set.size(), 2);*/
+    set.insert(id4);
+    QCOMPARE(set.size(), 3);
+}
+
+void tst_QOrganizerItem::idStringFunctions()
+{
+    // TODO: review test
+    QOrganizerItemId id1(makeId("a", 1));
+    QOrganizerItemId id2(makeId("a", 1));
+    QOrganizerItemId id3(makeId("b", 1));
+    QOrganizerItemId id4(makeId("a", 2));
+    QVERIFY(qHash(id1) == qHash(id2));
+    QVERIFY(qHash(id1) != qHash(id4));
+
+    // note that the toString and fromString functions are
+    // engine and id specific.  This test merely checks that
+    // the API is hooked up correctly.
+
+    QVERIFY(id1.toString() == id2.toString());
+    QVERIFY(id1.toString() != id3.toString());
+    QVERIFY(id1.toString() != id4.toString());
+    QVERIFY(id3.toString() != id4.toString());
+
+    // this should "work" -- string of the correct format
+    QString prebuiltidstring = QString("qtorganizer") + QString(":") + QString("a") + QString("::") + QString::number(2);
+    QOrganizerItemId rebuiltid = QOrganizerItemId::fromString(prebuiltidstring);
+    // QVERIFY(rebuiltid == id4); // -- this requires a working backend.
+
+    // this string has the right format and one parameter, but requires a working backend
+    prebuiltidstring = QString("qtorganizer") + QString(":") + QString("a") + QString(":") + QString("key=value") + QString(":") + QString::number(2);
+    rebuiltid = QOrganizerItemId::fromString(prebuiltidstring);
+    // QVERIFY(rebuiltid == id4); // -- this requires a working backend.
+
+    // this string has the right format and some parameters, but requires a working backend
+    prebuiltidstring = QString("qtorganizer") + QString(":") + QString("a") + QString(":") + QString("key=value&key2=value2") + QString(":") + QString::number(2);
+    rebuiltid = QOrganizerItemId::fromString(prebuiltidstring);
+    // QVERIFY(rebuiltid == id4); // -- this requires a working backend.
+
+    // this string has the right format but misses the value for a parameter
+    prebuiltidstring = QString("qtorganizer") + QString(":") + QString("a") + QString(":") + QString("key=value&key2=") + QString(":") + QString::number(2);
+    rebuiltid = QOrganizerItemId::fromString(prebuiltidstring);
+    // QVERIFY(rebuiltid == id4); // -- this requires a working backend.
+
+    // this string misses a field (the parameters)
+    prebuiltidstring = QString("qtorganizer") + QString(":") + QString("a") + QString(":") + QString::number(2);
+    rebuiltid = QOrganizerItemId::fromString(prebuiltidstring);
+    QVERIFY(rebuiltid == QOrganizerItemId()); // invalid so should be null.
+
+    // this string misses two fields (params plus manager uri)
+    prebuiltidstring = QString("qtorganizer") + QString(":") + QString::number(2);
+    rebuiltid = QOrganizerItemId::fromString(prebuiltidstring);
+    QVERIFY(rebuiltid == QOrganizerItemId()); // invalid so should be null.
+
+    // this string misses the prefix (qtorganizer)
+    prebuiltidstring = QString("notorganizer") + QString(":") + QString("a") + QString("::") + QString::number(2);
+    rebuiltid = QOrganizerItemId::fromString(prebuiltidstring);
+    QVERIFY(rebuiltid == QOrganizerItemId()); // invalid so should be null.
+
+    // this string misses the manager uri
+    prebuiltidstring = QString("notorganizer") + QString(":::") + QString::number(2);
+    rebuiltid = QOrganizerItemId::fromString(prebuiltidstring);
+    QVERIFY(rebuiltid == QOrganizerItemId()); // invalid so should be null.
 }
 
 void tst_QOrganizerItem::hash()
 {
     // TODO: review test
-/*    QOrganizerItemId id;
-    id.setManagerUri("a");
-    id.setLocalId(makeId(1));
+    QOrganizerItemId id(makeId("a", 1));
     QOrganizerItem oi1;
     oi1.setId(id);
     QOrganizerItemDetail detail1("definition");
@@ -693,7 +748,7 @@ void tst_QOrganizerItem::hash()
     QVERIFY(qHash(oi1) == qHash(oi2));
     QVERIFY(qHash(oi1) != qHash(oi3));
     QVERIFY(qHash(oi1) != qHash(oi4));
-    QVERIFY(qHash(oi1) == qHash(oi5));*/
+    QVERIFY(qHash(oi1) == qHash(oi5));
 }
 
 void tst_QOrganizerItem::datastream()
@@ -1169,6 +1224,43 @@ void tst_QOrganizerItem::todoOccurrence()
     testTodoOccurrence.setOriginalDate(originalDateTime.date());
     QCOMPARE(testTodoOccurrence.originalDate(), originalDateTime.date());
 }
+
+
+
+void tst_QOrganizerItem::testDebugStreamOut()
+{
+    QOrganizerRecurrenceRule rrule;
+    // Testing the empty case
+    QTest::ignoreMessage(QtDebugMsg, "QOrganizerRecurrenceRule(frequency=0,interval=1,no limit,daysOfWeek=\"\",daysOfMonth=\"\",daysOfYear=\"\",monthsOfYear=\"\",positions=\"\",firstDayOfWeek=1)");
+    qDebug() << rrule;
+
+    // Testing a completely filled case
+    rrule.setLimit(1);
+    rrule.setFrequency(QOrganizerRecurrenceRule::Weekly);
+    rrule.setInterval(10);
+    rrule.setLimit(20);
+    QSet<Qt::DayOfWeek> days;
+    days << Qt::Thursday << Qt::Friday;
+    rrule.setDaysOfWeek(days);
+    QSet<int> daysM;
+    daysM << 1 << 2 << 3;
+    rrule.setDaysOfMonth(daysM);
+    QSet<int> daysY;
+    daysY << 5 << 6 << 7 << 8;
+    rrule.setDaysOfYear(daysY);
+    QSet<QOrganizerRecurrenceRule::Month> months;
+    months << QOrganizerRecurrenceRule::January << QOrganizerRecurrenceRule::February;
+    rrule.setMonthsOfYear(months);
+    QSet<int> pos;
+    pos << -1;
+    rrule.setPositions(pos);
+    Qt::DayOfWeek firstDay;
+    firstDay = Qt::Tuesday;
+    rrule.setFirstDayOfWeek(firstDay);
+    QTest::ignoreMessage(QtDebugMsg, "QOrganizerRecurrenceRule(frequency=2,interval=10,limitCount=20,daysOfWeek=\"4 5 \",daysOfMonth=\"1 2 3 \",daysOfYear=\"5 6 7 8 \",monthsOfYear=\"1 2 \",positions=\"-1 \",firstDayOfWeek=2)");
+    qDebug() << rrule;
+}
+
 
 QTEST_MAIN(tst_QOrganizerItem)
 #include "tst_qorganizeritem.moc"

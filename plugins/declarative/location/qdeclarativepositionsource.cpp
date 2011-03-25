@@ -39,6 +39,7 @@
 **
 ****************************************************************************/
 
+#include <QtDeclarative/qdeclarativeinfo.h>
 #include "qdeclarativepositionsource_p.h"
 #include "qdeclarativeposition_p.h"
 #include "qdeclarative.h"
@@ -46,6 +47,9 @@
 #include <QFile>
 #include <QTimer>
 #include <QApplication>
+#if defined(Q_OS_SYMBIAN)
+#include <e32std.h>
+#endif
 
 QTM_BEGIN_NAMESPACE
 
@@ -83,14 +87,21 @@ QTM_BEGIN_NAMESPACE
 */
 
 QDeclarativePositionSource::QDeclarativePositionSource()
-        : m_positionSource(0), m_positioningMethod(QDeclarativePositionSource::NoPositioningMethod),
-        m_nmeaFile(0), m_active(false), m_singleUpdate(false), m_updateInterval(0)
+    : m_positionSource(0), m_positioningMethod(QDeclarativePositionSource::NoPositioningMethod),
+      m_nmeaFile(0), m_active(false), m_singleUpdate(false), m_updateInterval(0)
 {
     m_positionSource = QGeoPositionInfoSource::createDefaultSource(this);
     if (m_positionSource) {
         connect(m_positionSource, SIGNAL(positionUpdated(QGeoPositionInfo)),
                 this, SLOT(positionUpdateReceived(QGeoPositionInfo)));
         m_positioningMethod = positioningMethod();
+#if defined(Q_OS_SYMBIAN)
+    } else {
+        RProcess thisProcess;
+        if (!thisProcess.HasCapability(ECapabilityLocation)) {
+            qmlInfo(this) << tr("PositionSource requires the Symbian Location capability to succeed on the Symbian platform.");
+        }
+#endif
     }
 #ifdef QDECLARATIVE_POSITION_DEBUG
     if (m_positionSource)
@@ -108,21 +119,32 @@ QDeclarativePositionSource::~QDeclarativePositionSource()
 
 void QDeclarativePositionSource::setNmeaSource(const QUrl& nmeaSource)
 {
-    if (nmeaSource.toLocalFile() == m_nmeaSource.toLocalFile()) {
-        return;
+    // Strip the filename. This is clumsy but the file may be prefixed in several
+    // ways: "file:///", "qrc:///", "/", "" in platform dependant manner.
+    QString localFileName = nmeaSource.toString();
+    if (!QFile::exists(localFileName)) {
+        if (localFileName.startsWith("qrc:///")) {
+            localFileName.remove(0, 7);
+        } else if (localFileName.startsWith("file:///")) {
+            localFileName.remove(0, 7);
+        }
+        if (!QFile::exists(localFileName) && localFileName.startsWith("/")) {
+            localFileName.remove(0,1);
+        }
     }
-    // The current position source needs to be deleted in any case,
+    if (m_nmeaFileName == localFileName)
+        return;
+    m_nmeaFileName = localFileName;
+    m_nmeaSource = nmeaSource;
+    // The current position source needs to be deleted
     // because QNmeaPositionInfoSource can be bound only to a one file.
     if (m_positionSource) {
         delete m_positionSource;
         m_positionSource = 0;
     }
-    m_nmeaSource = nmeaSource;
     // Create the NMEA source based on the given data. QML has automatically set QUrl
     // type to point to correct path. If the file is not found, check if the file actually
-    // was an embedded resource file. QUrl loses the ':' so it is added here and checked if
-    // it is available.
-    QString localFileName = nmeaSource.toLocalFile();
+    // was an embedded resource file.
     delete m_nmeaFile;
     m_nmeaFile = new QFile(localFileName);
     if (!m_nmeaFile->exists()) {
@@ -142,6 +164,7 @@ void QDeclarativePositionSource::setNmeaSource(const QUrl& nmeaSource)
             QTimer::singleShot(0, this, SLOT(start()));
         }
     } else {
+        qmlInfo(this) << tr("Nmea file not found.") << localFileName;
 #ifdef QDECLARATIVE_POSITION_DEBUG
         qDebug() << "QDeclarativePositionSource NMEA File was not found: " << localFileName;
 #endif
@@ -273,13 +296,15 @@ void QDeclarativePositionSource::start()
 void QDeclarativePositionSource::update()
 {
     if (m_positionSource) {
-        // Use default timeout value
-        m_positionSource->requestUpdate();
         if (!m_active) {
             m_active = true;
             m_singleUpdate = true;
             emit activeChanged();
         }
+        // Use default timeout value. Set active before calling the
+        // update request because on some platforms there may
+        // be results immediately.
+        m_positionSource->requestUpdate();
     }
 }
 
@@ -373,7 +398,15 @@ void QDeclarativePositionSource::positionUpdateReceived(const QGeoPositionInfo& 
         if (update.hasAttribute(QGeoPositionInfo::GroundSpeed)) {
             m_position.setSpeed(update.attribute(QGeoPositionInfo::GroundSpeed));
         }
+        if (update.hasAttribute(QGeoPositionInfo::HorizontalAccuracy)) {
+            m_position.setHorizontalAccuracy(update.attribute(QGeoPositionInfo::HorizontalAccuracy));
+        }
+        if (update.hasAttribute(QGeoPositionInfo::VerticalAccuracy)) {
+            m_position.setVerticalAccuracy(update.attribute(QGeoPositionInfo::VerticalAccuracy));
+        }
         emit positionChanged();
+    } else {
+        m_position.invalidate();
     }
     if (m_singleUpdate && m_active) {
         m_active = false;

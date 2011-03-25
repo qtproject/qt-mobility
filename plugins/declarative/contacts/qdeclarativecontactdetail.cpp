@@ -1202,6 +1202,7 @@ QString QDeclarativeContactDetail::fieldName(ContactDetailType detailType, int f
    \o SyncTarget.SyncTarget
    \endlist
 
+  \sa QContactSyncTarget
   This element is part of the \bold{QtMobility.contacts 1.1} module.
  */
 /*!
@@ -1220,7 +1221,7 @@ QString QDeclarativeContactDetail::fieldName(ContactDetailType detailType, int f
    \list
    \o Tag.Tag
    \endlist
-
+  \sa QContactTag
   This element is part of the \bold{QtMobility.contacts 1.1} module.
  */
 /*!

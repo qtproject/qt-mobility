@@ -11,7 +11,9 @@ SUBDIRS += \
     qorganizeritemdetails \
     qorganizeritemdetaildefinition \
     qorganizeritemfilter \
-    qorganizermanager
+    qorganizermanager \
+    qorganizermanagerdetails \
+    qmalgorithms
 
 #contains(QT_CONFIG, declarative) {
 #    SUBDIRS += qdeclarativeorganizer

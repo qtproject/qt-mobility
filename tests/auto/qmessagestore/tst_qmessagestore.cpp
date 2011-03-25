@@ -49,7 +49,7 @@
 #include <QEventLoop>
 #include <QFile>
 
-#include "qmessagestore.h"
+#include "qmessagestore_p.h"
 #include "../support/support.h"
 
 #if (defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6))
@@ -550,19 +550,19 @@ void tst_QMessageStore::testMessage_data()
 
 void tst_QMessageStore::testRemoveAccount()
 {
-    QVERIFY(QMessageManager().queryAccounts(QMessageAccountFilter::byName("Mr. Temp")).empty());
+    QVERIFY(manager->queryAccounts(QMessageAccountFilter::byName("Mr. Temp")).empty());
 
     Support::Parameters p;
     p.insert("name", "Mr. Temp");
     p.insert("fromAddress", "anaddress@example.com");
     QMessageAccountId id(Support::addAccount(p));
     QVERIFY(id.isValid());
+    QTest::qWait(200); // Updating EmailClientApi mailbox cache is asynchronous operation so wait is needed.
+    
+    QVERIFY(!manager->queryAccounts(QMessageAccountFilter::byName("Mr. Temp")).empty());
+    QVERIFY(manager->removeAccount(id)); // This is synchronous function
 
-    QVERIFY(!QMessageManager().queryAccounts(QMessageAccountFilter::byName("Mr. Temp")).empty());
-    QVERIFY(QMessageManager().removeAccount(id));
-
-    QTest::qWait(4000);
-    QVERIFY(QMessageManager().queryAccounts(QMessageAccountFilter::byName("Mr. Temp")).empty());
+    QVERIFY(manager->queryAccounts(QMessageAccountFilter::byName("Mr. Temp")).empty());
 }
 
 void tst_QMessageStore::testMessage()
@@ -1023,7 +1023,7 @@ void tst_QMessageStore::testMessage()
 #if !defined(Q_OS_SYMBIAN) || defined(FREESTYLEMAILUSED)
     QCOMPARE(removeCatcher.removed.count(), 1);
     QCOMPARE(removeCatcher.removed.first().first, messageId);
-#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)|| defined(FREESTYLEMAILUSED)
+#if defined(Q_WS_MAEMO_5) || defined(FREESTYLEMAILUSED)
     QCOMPARE(removeCatcher.removed.first().second.count(), 2);
     QCOMPARE(removeCatcher.removed.first().second, QSet<QMessageManager::NotificationFilterId>() << filter2->id << filter3->id);
 #else

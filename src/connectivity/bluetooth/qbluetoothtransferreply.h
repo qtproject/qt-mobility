@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -51,7 +51,9 @@ QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
-class Q_CONNECTIVITY_EXPORT QBluetoothTransferReply : public QIODevice
+class QBluetoothTransferReplyPrivate;
+
+class Q_CONNECTIVITY_EXPORT QBluetoothTransferReply : public QObject
 {
     Q_OBJECT
 
@@ -60,13 +62,13 @@ public:
         NoError = 0,
         UnknownError,
         FileNotFoundError,
-        HostNotFoundError
+        HostNotFoundError,
+        UserCanceledTransferError
     };
 
 
     ~QBluetoothTransferReply();
 
-    virtual void abort() = 0;
     QVariant attribute(QBluetoothTransferRequest::Attribute code) const;
     virtual bool isFinished() const = 0;
     virtual bool isRunning() const = 0;
@@ -75,15 +77,13 @@ public:
 
     QBluetoothTransferManager::Operation operation() const;
 
-//    QBluetoothTransferRequest request() const;
-
-    qint64 readBufferSize() const;
-    virtual void setReadBufferSize(qint64 size);
-
     virtual TransferError error() const = 0;
     virtual QString errorString() const = 0;
 
-signals:
+public Q_SLOTS:
+    void abort();
+
+Q_SIGNALS:
     void downloadProgress(qint64 bytesReceived, qint64 bytesTotal);
     void finished(QBluetoothTransferReply *);
     void uploadProgress(qint64 bytesSent, qint64 bytesTotal);
@@ -92,20 +92,20 @@ protected:
     explicit QBluetoothTransferReply(QObject *parent = 0);
     void setAttribute(QBluetoothTransferRequest::Attribute code, const QVariant &value);
     void setOperation(QBluetoothTransferManager::Operation operation);
-    void setManager(QBluetoothTransferManager &manager);
+    void setManager(QBluetoothTransferManager *manager);
 //    void setRequest(QBluetoothTransferRequest *request);
 
-private:
-    QBluetoothTransferManager *m_manager;
-    QBluetoothTransferManager::Operation m_operation;
-    QMap<int, QVariant> m_attributes;
-//    QBluetoothTransferRequest *m_request;
-    qint64 m_buffersize;
+protected:
+    QBluetoothTransferReplyPrivate *d_ptr;
 
+private:
+    Q_DECLARE_PRIVATE(QBluetoothTransferReply)
 
 };
 
 QTM_END_NAMESPACE
+
+Q_DECLARE_METATYPE(QtMobility::QBluetoothTransferReply *);
 
 QT_END_HEADER
 

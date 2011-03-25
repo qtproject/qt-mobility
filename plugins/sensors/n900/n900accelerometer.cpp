@@ -42,13 +42,14 @@
 #include "n900accelerometer.h"
 #include <QFile>
 #include <QDebug>
-#include <time.h>
 #include <stdio.h>
 
 char const * const n900accelerometer::id("n900.accelerometer");
 char const * const n900accelerometer::filename("/sys/class/i2c-adapter/i2c-3/3-001d/coord");
 char const * const n900accelerometer::range("/sys/class/i2c-adapter/i2c-3/3-001d/scale");
 char const * const n900accelerometer::rate("/sys/class/i2c-adapter/i2c-3/3-001d/rate");
+
+extern bool portraitOrientation;
 
 n900accelerometer::n900accelerometer(QSensor *sensor)
     : n900filebasedsensor(sensor)
@@ -91,9 +92,14 @@ void n900accelerometer::poll()
     qreal ay = y * -0.00980665;
     qreal az = z * -0.00980665;
 
-    m_reading.setTimestamp(clock());
-    m_reading.setX(ax);
-    m_reading.setY(ay);
+    m_reading.setTimestamp(getTimestamp());
+    if (portraitOrientation) {
+        m_reading.setX(ay);
+        m_reading.setY(-ax);
+    } else {
+        m_reading.setX(ax);
+        m_reading.setY(ay);
+    }
     m_reading.setZ(az);
 
     newReadingAvailable();

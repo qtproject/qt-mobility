@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -70,6 +70,7 @@ static void writeAttribute(QXmlStreamWriter *stream, const QVariant &attribute)
                                unsignedFormat.arg(attribute.value<quint16>(), 4, 16,
                                                   QLatin1Char('0')));
         //stream->writeAttribute(QLatin1String("name"), foo);
+        break;
     case QMetaType::UInt:
         stream->writeEmptyElement(QLatin1String("uint32"));
         stream->writeAttribute(QLatin1String("value"),
@@ -98,8 +99,8 @@ static void writeAttribute(QXmlStreamWriter *stream, const QVariant &attribute)
     case QMetaType::QString:
         stream->writeEmptyElement(QLatin1String("text"));
         if (/* require hex encoding */ false) {
-            stream->writeAttribute(QLatin1String("value"),
-                                   attribute.value<QString>().toUtf8().toHex());
+            stream->writeAttribute(QLatin1String("value"), QString::fromLatin1(
+                                       attribute.value<QString>().toUtf8().toHex().constData()));
             stream->writeAttribute(QLatin1String("encoding"), QLatin1String("hex"));
         } else {
             stream->writeAttribute(QLatin1String("value"), attribute.value<QString>());
@@ -275,6 +276,8 @@ bool QBluetoothServiceInfoPrivate::registerService() const
     stream.writeEndElement();
 
     stream.writeEndDocument();
+
+//    qDebug() << xmlServiceRecord;
 
     if (!registered) {
         QDBusPendingReply<uint> reply = service->AddRecord(xmlServiceRecord);

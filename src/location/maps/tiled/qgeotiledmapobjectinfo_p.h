@@ -75,38 +75,29 @@ public:
     QGeoTiledMapObjectInfo(QGeoTiledMapData *mapData, QGeoMapObject *mapObject);
     ~QGeoTiledMapObjectInfo();
 
-    static QPolygonF createPolygon(const QList<QGeoCoordinate> & path,
-                                   QGeoTiledMapData *tiledMapData,
-                                   bool closedPath,
-                                   qreal ypole = -100);
-
     virtual void init();
 
-    QGeoBoundingBox boundingBox() const;
-    bool contains(const QGeoCoordinate &coord) const;
+    QGeoMapObject* mapObject() const;
 
-    void setValid(bool valid);
-    bool valid() const;
+    QGeoBoundingBox boundingBox() const;
+    bool contains(const QGeoCoordinate &coordinate) const;
 
     void updateItem(const QRectF &target = QRectF());
 
-    QRectF bounds;
+    bool inited;
+    bool updateAfterInit;
 
     QGraphicsItem *graphicsItem;
     QGeoTiledMapData *tiledMapData;
-
-    bool isValid;
-    bool isVisible;
-
-    QGeoMapObject* mapObject() {
-        return QGeoMapObjectInfo::mapObject();
-    }
-
 
 public slots:
     virtual void zValueChanged(int zValue);
     virtual void visibleChanged(bool visible);
     virtual void selectedChanged(bool selected);
+
+    virtual void originChanged(const QGeoCoordinate &origin);
+    virtual void unitsChanged(QGeoMapObject::CoordinateUnit units);
+    virtual void transformTypeChanged(QGeoMapObject::TransformType transformType);
 
 protected:
     QGeoTiledMapDataPrivate *tiledMapDataPrivate;

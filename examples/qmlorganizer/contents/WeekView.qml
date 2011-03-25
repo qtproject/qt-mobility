@@ -45,8 +45,6 @@ Rectangle
 {
     id:weekView
     anchors.fill: parent
-    property int day:calendar.day.getDay()
-
     ListView {
         id : dayList
         anchors.fill: parent
@@ -60,10 +58,8 @@ Rectangle
         keyNavigationWraps : true
         Component.onCompleted : positionViewAtIndex(currentIndex, ListView.Beginning)
         onOpacityChanged: {
-            //when back to week view, select the current day.
-            if (opacity != 0)
-                currentIndex = calendar.day.getDay();
-        }
+                currentIndex = calendar.weekDay;
+         }
 
         model : ListModel {
                 ListElement {day : "Sunday"}
@@ -96,9 +92,12 @@ Rectangle
 
                         Repeater {
                             focus: true
-                            model:calendar.organizer.itemIds(new Date(calendar.day.getFullYear(),
-                                                                                                            calendar.day.getMonth(),
-                                                                                                            index - calendar.day.getDay() + calendar.day.getDate()))
+                            model:calendar.organizer.itemIds(new Date(calendar.year,
+                                                                      calendar.month,
+                                                                      index - calendar.weekDay + calendar.day),
+                                                             new Date(calendar.year,
+                                                                      calendar.month,
+                                                                      index - calendar.weekDay + calendar.day + 1))
 
                             Text {
                                 clip: true
@@ -117,7 +116,7 @@ Rectangle
                     anchors.fill: parent
                     onClicked: {
                         dayList.currentIndex = index
-                        calendar.day = new Date(calendar.day.getFullYear(), calendar.day.getMonth(), calendar.day.getDate() + dayList.currentIndex - weekView.day);
+                        calendar.currentDate = new Date(calendar.year, calendar.month, calendar.day + dayList.currentIndex - calendar.weekDay);
                         calendar.state = "DayView"
                     }
                 }

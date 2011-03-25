@@ -14,10 +14,6 @@ License:    LGPLv2.1 with exception or GPLv3
 URL:        http://qt.gitorious.org/qt-mobility
 Source0:    http://get.qt.nokia.com/qt/add-ons/%{name}-opensource-src-%{version}.tar.gz
 Source100:  qt-mobility.yaml
-Patch0:     no_rpath.patch
-Patch1:     fix_translations_install_path.patch
-Patch2:     enable_pkgconfig_support.patch
-Patch3:     enable_camerabin_with_meego_target.patch
 Requires:   libqtconnectivity1 = %{version}
 Requires:   libqtcontacts1 = %{version}
 Requires:   libqtfeedback1 = %{version}
@@ -44,7 +40,10 @@ BuildRequires:  pkgconfig(geoclue)
 BuildRequires:  pkgconfig(gstreamer-plugins-bad-free-0.10)
 BuildRequires:  pkgconfig(gstreamer-plugins-base-0.10)
 BuildRequires:  pkgconfig(gypsy)
+BuildRequires:  pkgconfig(libiphb)
 BuildRequires:  pkgconfig(libpulse)
+BuildRequires:  pkgconfig(libmkcal)
+BuildRequires:  pkgconfig(meegotouch)
 BuildRequires:  pkgconfig(qttracker)
 BuildRequires:  pkgconfig(qmfclient)
 BuildRequires:  pkgconfig(sensord)
@@ -54,6 +53,8 @@ BuildRequires:  pkgconfig(xext)
 BuildRequires:  pkgconfig(xrandr)
 BuildRequires:  pkgconfig(xrender)
 BuildRequires:  pkgconfig(xv)
+BuildRequires:  pkgconfig(QtSparql)
+BuildRequires:  pkgconfig(QtSparqlTrackerExtensions)
 BuildRequires:  qt-devel-tools
 BuildRequires:  fdupes
 
@@ -399,6 +400,17 @@ Qt Mobility delivers a set of new APIs for mobile device functionality.
 This package contains the System Information QML plugin for QtDeclarative.
 
 
+%package -n libdeclarative-connectivity
+Summary:    Qt Mobility Connectivity QML plugin
+Group:      System/Libraries
+Requires:   %{name} = %{version}-%{release}
+
+%description -n libdeclarative-connectivity
+Qt Mobility delivers a set of new APIs for mobile device functionality.
+
+This package contains the Connectivity QML plugin for QtDeclarative.
+
+
 %package -n servicefw
 Summary:    Qt Mobility Service Framework tool
 Group:      Development/Tools
@@ -437,14 +449,6 @@ This package contains Qt Mobility translations.
 %prep
 %setup -q -n %{name}-opensource-src-%{version}
 
-# no_rpath.patch
-%patch0 -p1
-# fix_translations_install_path.patch
-%patch1 -p1
-# enable_pkgconfig_support.patch
-%patch2 -p1
-# enable_camerabin_with_meego_target.patch
-%patch3 -p1
 # >> setup
 # << setup
 
@@ -461,6 +465,7 @@ export QMF_LIBDIR=%{_libdir}
 -plugindir "%{_libdir}/qt4/plugins" \
 -demosdir "%{_libdir}/qtmobility/demos" \
 -examplesdir "%{_libdir}/qtmobility/examples" \
+-languages "ar cs da de es fr he hu ja pl pt ru sk sl sv zh_CN zh_TW" \
 -examples \
 -demos \
 -modules "location contacts multimedia publishsubscribe versit messaging systeminfo serviceframework sensors gallery organizer feedback connectivity" \
@@ -486,7 +491,9 @@ find %{buildroot}%{_libdir}/pkgconfig -type f -name '*.pc' \
 find %{buildroot}%{_libdir}/qtmobility -type f -perm /u+x,g+x,o+x \( -false \
 -o -name \*.qml \
 -o -name \*.sci \
-\) | xargs chmod -x
+-o -name qmldir \
+-o -name \*.txt \
+\) -exec chmod -x \{\} +
 # Fix duplicate files
 %fdupes %{buildroot}%{_includedir}
 %fdupes %{buildroot}%{_libdir}/qtmobility
@@ -613,6 +620,9 @@ find %{buildroot}%{_libdir}/qtmobility -type f -perm /u+x,g+x,o+x \( -false \
 
 
 
+
+
+
 %files
 %defattr(-,root,root,-)
 # >> files
@@ -623,10 +633,41 @@ find %{buildroot}%{_libdir}/qtmobility -type f -perm /u+x,g+x,o+x \( -false \
 %defattr(-,root,root,-)
 # >> files devel
 %{_bindir}/icheck
+%{_bindir}/ndefhandlergen
 %{_bindir}/qcrmlgen
 %{_bindir}/servicedbgen
 %{_bindir}/servicexmlgen
 %{_bindir}/vsexplorer
+%{_includedir}/QtConnectivity/*.h
+%{_includedir}/QtConnectivity/QBluetoothAddress
+%{_includedir}/QtConnectivity/QBluetoothDeviceDiscoveryAgent
+%{_includedir}/QtConnectivity/QBluetoothDeviceInfo
+%{_includedir}/QtConnectivity/QBluetoothHostInfo
+%{_includedir}/QtConnectivity/QBluetoothLocalDevice
+%{_includedir}/QtConnectivity/QBluetoothServiceDiscoveryAgent
+%{_includedir}/QtConnectivity/QBluetoothServiceInfo
+%{_includedir}/QtConnectivity/QBluetoothSocket
+%{_includedir}/QtConnectivity/QBluetoothTransferManager
+%{_includedir}/QtConnectivity/QBluetoothTransferReply
+%{_includedir}/QtConnectivity/QBluetoothTransferRequest
+%{_includedir}/QtConnectivity/QBluetoothUuid
+%{_includedir}/QtConnectivity/QL2capServer
+%{_includedir}/QtConnectivity/QL2capSocket
+%{_includedir}/QtConnectivity/QLlcpServer
+%{_includedir}/QtConnectivity/QLlcpSocket
+%{_includedir}/QtConnectivity/QNdefFilter
+%{_includedir}/QtConnectivity/QNdefMessage
+%{_includedir}/QtConnectivity/QNdefNfcTextRecord
+%{_includedir}/QtConnectivity/QNdefNfcUriRecord
+%{_includedir}/QtConnectivity/QNdefRecord
+%{_includedir}/QtConnectivity/QNearFieldManager
+%{_includedir}/QtConnectivity/QNearFieldTagType1
+%{_includedir}/QtConnectivity/QNearFieldTagType2
+%{_includedir}/QtConnectivity/QNearFieldTagType3
+%{_includedir}/QtConnectivity/QNearFieldTagType4
+%{_includedir}/QtConnectivity/QNearFieldTarget
+%{_includedir}/QtConnectivity/QRfcommServer
+%{_includedir}/QtConnectivity/QRfcommSocket
 %{_includedir}/QtContacts/*.h
 %{_includedir}/QtContacts/QContact
 %{_includedir}/QtContacts/QContactAbstractRequest
@@ -728,6 +769,7 @@ find %{buildroot}%{_libdir}/qtmobility -type f -perm /u+x,g+x,o+x \( -false \
 %{_includedir}/QtLocation/QGeoCoordinate
 %{_includedir}/QtLocation/QGeoManeuver
 %{_includedir}/QtLocation/QGeoMapCircleObject
+%{_includedir}/QtLocation/QGeoMapCustomObject
 %{_includedir}/QtLocation/QGeoMapData
 %{_includedir}/QtLocation/QGeoMapGroupObject
 %{_includedir}/QtLocation/QGeoMapObject
@@ -744,6 +786,7 @@ find %{buildroot}%{_libdir}/qtmobility -type f -perm /u+x,g+x,o+x \( -false \
 %{_includedir}/QtLocation/QGeoPlace
 %{_includedir}/QtLocation/QGeoPositionInfo
 %{_includedir}/QtLocation/QGeoPositionInfoSource
+%{_includedir}/QtLocation/QGeoPositionInfoSourceFactory
 %{_includedir}/QtLocation/QGeoRoute
 %{_includedir}/QtLocation/QGeoRouteReply
 %{_includedir}/QtLocation/QGeoRouteRequest
@@ -813,7 +856,6 @@ find %{buildroot}%{_libdir}/qtmobility -type f -perm /u+x,g+x,o+x \( -false \
 %{_includedir}/QtMessaging/QMessageManager
 %{_includedir}/QtMessaging/QMessageService
 %{_includedir}/QtMessaging/QMessageSortOrder
-%{_includedir}/QtMessaging/QMessageStore
 %{_includedir}/QtMobility/*.h
 %{_includedir}/QtMobility/QLatin1Constant
 %{_includedir}/QtMultimediaKit/*.h
@@ -889,6 +931,7 @@ find %{buildroot}%{_libdir}/qtmobility -type f -perm /u+x,g+x,o+x \( -false \
 %{_includedir}/QtMultimediaKit/QVideoWidget
 %{_includedir}/QtMultimediaKit/QVideoWidgetControl
 %{_includedir}/QtMultimediaKit/QVideoWindowControl
+%{_includedir}/QtMultimediaKit/QMediaNetworkAccessControl
 %{_includedir}/QtOrganizer/*.h
 %{_includedir}/QtOrganizer/QOrganizerAbstractRequest
 %{_includedir}/QtOrganizer/QOrganizerCollection
@@ -899,12 +942,9 @@ find %{buildroot}%{_libdir}/qtmobility -type f -perm /u+x,g+x,o+x \( -false \
 %{_includedir}/QtOrganizer/QOrganizerCollectionRemoveRequest
 %{_includedir}/QtOrganizer/QOrganizerCollectionSaveRequest
 %{_includedir}/QtOrganizer/QOrganizerEvent
-%{_includedir}/QtOrganizer/QOrganizerEventAttendee
 %{_includedir}/QtOrganizer/QOrganizerEventOccurrence
-%{_includedir}/QtOrganizer/QOrganizerEventRsvp
 %{_includedir}/QtOrganizer/QOrganizerEventTime
 %{_includedir}/QtOrganizer/QOrganizerItem
-%{_includedir}/QtOrganizer/QOrganizerItemAttachment
 %{_includedir}/QtOrganizer/QOrganizerItemAudibleReminder
 %{_includedir}/QtOrganizer/QOrganizerItemChangeLogFilter
 %{_includedir}/QtOrganizer/QOrganizerItemChangeSet
@@ -1003,9 +1043,7 @@ find %{buildroot}%{_libdir}/qtmobility -type f -perm /u+x,g+x,o+x \( -false \
 %{_includedir}/QtSensors/QTapFilter
 %{_includedir}/QtSensors/QTapReading
 %{_includedir}/QtSensors/QTapSensor
-%{_includedir}/QtSensors/qtimestamp
 %{_includedir}/QtServiceFramework/*.h
-%{_includedir}/QtServiceFramework/Entry
 %{_includedir}/QtServiceFramework/QAbstractSecuritySession
 %{_includedir}/QtServiceFramework/QRemoteServiceRegister
 %{_includedir}/QtServiceFramework/QService
@@ -1015,6 +1053,7 @@ find %{buildroot}%{_libdir}/qtmobility -type f -perm /u+x,g+x,o+x \( -false \
 %{_includedir}/QtServiceFramework/QServiceManager
 %{_includedir}/QtServiceFramework/QServicePluginInterface
 %{_includedir}/QtSystemInfo/*.h
+%{_includedir}/QtSystemInfo/QSystemAlignedTimer
 %{_includedir}/QtSystemInfo/QSystemBatteryInfo
 %{_includedir}/QtSystemInfo/QSystemDeviceInfo
 %{_includedir}/QtSystemInfo/QSystemDisplayInfo
@@ -1073,8 +1112,18 @@ find %{buildroot}%{_libdir}/qtmobility -type f -perm /u+x,g+x,o+x \( -false \
 %{_libdir}/libQtVersit.so
 %{_libdir}/libQtVersitOrganizer.prl
 %{_libdir}/libQtVersitOrganizer.so
+%{_libdir}/pkgconfig/QtConnectivity.pc
 %{_libdir}/pkgconfig/QtContacts.pc
+%{_libdir}/pkgconfig/QtFeedback.pc
+%{_libdir}/pkgconfig/QtGallery.pc
 %{_libdir}/pkgconfig/QtLocation.pc
+%{_libdir}/pkgconfig/QtMessaging.pc
+%{_libdir}/pkgconfig/QtMultimediaKit.pc
+%{_libdir}/pkgconfig/QtOrganizer.pc
+%{_libdir}/pkgconfig/QtPublishSubscribe.pc
+%{_libdir}/pkgconfig/QtSensors.pc
+%{_libdir}/pkgconfig/QtServiceFramework.pc
+%{_libdir}/pkgconfig/QtSystemInfo.pc
 %{_libdir}/pkgconfig/QtVersit.pc
 %{_libdir}/pkgconfig/QtVersitOrganizer.pc
 %{_datadir}/qt4/mkspecs/features/mobility.prf
@@ -1098,6 +1147,7 @@ find %{buildroot}%{_libdir}/qtmobility -type f -perm /u+x,g+x,o+x \( -false \
 %defattr(-,root,root,-)
 # >> files libqtfeedback1
 %{_libdir}/libQtFeedback.so.*
+%{_libdir}/qt4/plugins/feedback/libqtfeedback_meegotouch.so
 %{_libdir}/qt4/plugins/feedback/libqtfeedback_mmk.so
 # << files libqtfeedback1
 
@@ -1112,7 +1162,7 @@ find %{buildroot}%{_libdir}/qtmobility -type f -perm /u+x,g+x,o+x \( -false \
 # >> files libqtlocation1
 %{_libdir}/libQtLocation.so.*
 %{_libdir}/qt4/plugins/geoservices/libqtgeoservices_nokia.so
-%{_libdir}/qt4/plugins/landmarks/libqtlandmarks_sqlite.so
+%{_libdir}/qt4/plugins/landmarks/libqtlandmarks_qsparql.so
 # << files libqtlocation1
 
 %files -n libqtmessaging1
@@ -1135,7 +1185,7 @@ find %{buildroot}%{_libdir}/qtmobility -type f -perm /u+x,g+x,o+x \( -false \
 %defattr(-,root,root,-)
 # >> files libqtorganizer1
 %{_libdir}/libQtOrganizer.so.*
-%{_libdir}/qt4/plugins/organizer/libqtorganizer_skeleton.so
+%{_libdir}/qt4/plugins/organizer/libqtorganizer_mkcal.so
 # << files libqtorganizer1
 
 %files -n libqtpublishsubscribe1
@@ -1150,7 +1200,7 @@ find %{buildroot}%{_libdir}/qtmobility -type f -perm /u+x,g+x,o+x \( -false \
 %config %{_sysconfdir}/xdg/Nokia/Sensors.conf
 %{_libdir}/libQtSensors.so.*
 %{_libdir}/qt4/plugins/sensors/libqtsensors_generic.so
-%{_libdir}/qt4/plugins/sensors/libqtsensors_maemo6.so
+%{_libdir}/qt4/plugins/sensors/libqtsensors_meego.so
 # << files libqtsensors1
 
 %files -n libqtserviceframework1
@@ -1255,6 +1305,13 @@ find %{buildroot}%{_libdir}/qtmobility -type f -perm /u+x,g+x,o+x \( -false \
 %{_libdir}/qt4/imports/QtMobility/systeminfo/libdeclarative_systeminfo.so
 %{_libdir}/qt4/imports/QtMobility/systeminfo/qmldir
 # << files libdeclarative-systeminfo
+
+%files -n libdeclarative-connectivity
+%defattr(-,root,root,-)
+# >> files libdeclarative-connectivity
+%{_libdir}/qt4/imports/QtMobility/connectivity/libdeclarative_connectivity.so
+%{_libdir}/qt4/imports/QtMobility/connectivity/qmldir
+# << files libdeclarative-connectivity
 
 %files -n servicefw
 %defattr(-,root,root,-)

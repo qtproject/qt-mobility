@@ -61,6 +61,10 @@
 #include <QPointer>
 #include <QMutex>
 
+#ifndef QT_NO_DEBUG_STREAM
+#include <QDebug>
+#endif
+
 QTM_BEGIN_NAMESPACE
 
 class QOrganizerAbstractRequestPrivate
@@ -96,6 +100,11 @@ public:
             }
         }
     }
+
+#ifndef QT_NO_DEBUG_STREAM
+    // NOTE: on platforms where Qt is built without debug streams enabled, vtable will differ!
+    virtual QDebug& debugStreamOut(QDebug& dbg) const = 0;
+#endif
 
     QOrganizerManager::Error m_error;
     QOrganizerAbstractRequest::State m_state;

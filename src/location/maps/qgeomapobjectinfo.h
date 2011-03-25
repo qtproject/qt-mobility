@@ -43,6 +43,7 @@
 #define QGEOMAPOBJECTINFO_H
 
 #include "qmobilityglobal.h"
+#include "qgeomapobject.h"
 
 #include <QObject>
 #include <QSizeF>
@@ -77,9 +78,14 @@ public slots:
     virtual void visibleChanged(bool visible);
     virtual void selectedChanged(bool selected);
 
+    virtual void originChanged(const QGeoCoordinate &origin);
+    virtual void unitsChanged(QGeoMapObject::CoordinateUnit units);
+    virtual void transformTypeChanged(QGeoMapObject::TransformType transformType);
+
 protected:
     QGeoMapData* mapData();
     QGeoMapObject* mapObject();
+    QGeoMapObject* mapObject() const;
 
 private:
     QGeoMapObjectInfoPrivate *d_ptr;

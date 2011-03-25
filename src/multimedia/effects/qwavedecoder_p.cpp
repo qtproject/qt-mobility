@@ -51,11 +51,12 @@ QWaveDecoder::QWaveDecoder(QIODevice *s, QObject *parent):
     haveFormat(false),
     dataSize(0),
     remaining(0),
-    source(s)
+    source(s),
+    state(QWaveDecoder::InitialState)
 {
     open(QIODevice::ReadOnly | QIODevice::Unbuffered);
 
-    if (source->bytesAvailable() >= qint64(sizeof(CombinedHeader) + sizeof(DATAHeader) + sizeof(quint16)))
+    if (enoughDataAvailable())
         QTimer::singleShot(0, this, SLOT(handleData()));
     else
         connect(source, SIGNAL(readyRead()), SLOT(handleData()));
@@ -105,55 +106,125 @@ qint64 QWaveDecoder::writeData(const char *data, qint64 len)
 
 void QWaveDecoder::handleData()
 {
-    if (source->bytesAvailable() < qint64(sizeof(CombinedHeader) + sizeof(DATAHeader) + sizeof(quint16)))
-        return;
+    if (state == QWaveDecoder::InitialState) {
+        if (source->bytesAvailable() < qint64(sizeof(RIFFHeader)))
+            return;
 
-    source->disconnect(SIGNAL(readyRead()), this, SLOT(handleData()));
-    source->read((char*)&header, sizeof(CombinedHeader));
+        RIFFHeader riff;
+        source->read(reinterpret_cast<char *>(&riff), sizeof(RIFFHeader));
 
-    if (qstrncmp(header.riff.descriptor.id, "RIFF", 4) != 0 ||
-        qstrncmp(header.riff.type, "WAVE", 4) != 0 ||
-        qstrncmp(header.wave.descriptor.id, "fmt ", 4) != 0 ||
-        (header.wave.audioFormat != 0 && header.wave.audioFormat != 1)) {
+        if (qstrncmp(riff.descriptor.id, "RIFF", 4) != 0 ||
+            qstrncmp(riff.type, "WAVE", 4) != 0) {
+            source->disconnect(SIGNAL(readyRead()), this, SLOT(handleData()));
+            emit invalidFormat();
 
-        emit invalidFormat();
-    }
-    else {
-        if (qFromLittleEndian<quint32>(header.wave.descriptor.size) > sizeof(WAVEHeader)) {
-            // Extended data available
-            quint16 extraFormatBytes;
-            source->peek((char*)&extraFormatBytes, sizeof(quint16));
-            extraFormatBytes = qFromLittleEndian<quint16>(extraFormatBytes);
-            source->read(sizeof(quint16) + extraFormatBytes);   // dump it all
+            return;
+        } else {
+            state = QWaveDecoder::WaitingForFormatState;
         }
+    }
 
-        int bps = qFromLittleEndian<quint16>(header.wave.bitsPerSample);
+    if (state == QWaveDecoder::WaitingForFormatState) {
+        if (findChunk("fmt ")) {
+            chunk descriptor;
+            source->peek(reinterpret_cast<char *>(&descriptor), sizeof(chunk));
 
-        format.setCodec(QLatin1String("audio/pcm"));
-        format.setSampleType(bps == 8 ? QAudioFormat::UnSignedInt : QAudioFormat::SignedInt);
-        format.setByteOrder(QAudioFormat::LittleEndian);
-        format.setFrequency(qFromLittleEndian<quint32>(header.wave.sampleRate));
-        format.setSampleSize(bps);
-        format.setChannels(qFromLittleEndian<quint16>(header.wave.numChannels));
+            if (source->bytesAvailable() < qint64(descriptor.size + sizeof(chunk)))
+                return;
 
-        bool haveData = false;
-        chunk descriptor;
-        while(!haveData) {
-            source->read((char*)&descriptor, sizeof(chunk));
+            WAVEHeader wave;
+            source->read(reinterpret_cast<char *>(&wave), sizeof(WAVEHeader));
+            if (descriptor.size > sizeof(WAVEHeader))
+                discardBytes(descriptor.size - sizeof(WAVEHeader));
 
-            if(qstrncmp(descriptor.id, "data", 4) != 0) {
-                source->read(qFromLittleEndian<quint32>(descriptor.size)); // dump chunk contents
+            if (wave.audioFormat != 0 && wave.audioFormat != 1) {
+                source->disconnect(SIGNAL(readyRead()), this, SLOT(handleData()));
+                emit invalidFormat();
+
+                return;
             } else {
-                haveData = true;
+                int bps = qFromLittleEndian<quint16>(wave.bitsPerSample);
+
+                format.setCodec(QLatin1String("audio/pcm"));
+                format.setSampleType(bps == 8 ? QAudioFormat::UnSignedInt : QAudioFormat::SignedInt);
+                format.setByteOrder(QAudioFormat::LittleEndian);
+                format.setFrequency(qFromLittleEndian<quint32>(wave.sampleRate));
+                format.setSampleSize(bps);
+                format.setChannels(qFromLittleEndian<quint16>(wave.numChannels));
+
+                state = QWaveDecoder::WaitingForDataState;
             }
         }
-
-        dataSize = qFromLittleEndian<quint32>(descriptor.size);
-
-        haveFormat = true;
-        connect(source, SIGNAL(readyRead()), SIGNAL(readyRead()));
-        emit formatKnown();
     }
+
+    if (state == QWaveDecoder::WaitingForDataState) {
+        if (findChunk("data")) {
+            source->disconnect(SIGNAL(readyRead()), this, SLOT(handleData()));
+
+            chunk descriptor;
+            source->read(reinterpret_cast<char *>(&descriptor), sizeof(chunk));
+            dataSize = descriptor.size;
+
+            haveFormat = true;
+            connect(source, SIGNAL(readyRead()), SIGNAL(readyRead()));
+            emit formatKnown();
+
+            return;
+        }
+    }
+
+    if (source->atEnd()) {
+        source->disconnect(SIGNAL(readyRead()), this, SLOT(handleData()));
+        emit invalidFormat();
+
+        return;
+    }
+
+}
+
+bool QWaveDecoder::enoughDataAvailable()
+{
+    if (source->bytesAvailable() < qint64(sizeof(chunk)))
+        return false;
+
+    chunk descriptor;
+    source->peek(reinterpret_cast<char *>(&descriptor), sizeof(chunk));
+
+    if (source->bytesAvailable() < qint64(sizeof(chunk) + descriptor.size))
+        return false;
+
+    return true;
+}
+
+bool QWaveDecoder::findChunk(const char *chunkId)
+{
+    if (source->bytesAvailable() < qint64(sizeof(chunk)))
+        return false;
+
+    chunk descriptor;
+    source->peek(reinterpret_cast<char *>(&descriptor), sizeof(chunk));
+
+    if (qstrncmp(descriptor.id, chunkId, 4) == 0)
+        return true;
+
+    while (source->bytesAvailable() >= qint64(sizeof(chunk) + descriptor.size)) {
+        discardBytes(sizeof(chunk) + descriptor.size);
+
+        source->peek(reinterpret_cast<char *>(&descriptor), sizeof(chunk));
+
+        if (qstrncmp(descriptor.id, chunkId, 4) == 0)
+            return true;
+    }
+
+    return false;
+}
+
+void QWaveDecoder::discardBytes(qint64 numBytes)
+{
+    if (source->isSequential())
+        source->read(numBytes);
+    else
+        source->seek(source->pos() + numBytes);
 }
 
 QT_END_NAMESPACE

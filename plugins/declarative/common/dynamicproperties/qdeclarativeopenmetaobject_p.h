@@ -42,12 +42,13 @@
 #ifndef QDECLARATIVEOPENMETAOBJECT_H
 #define QDECLARATIVEOPENMETAOBJECT_H
 
+#include <qmobilityglobal.h>
 #include <QtCore/QMetaObject>
 #include <QtCore/QObject>
 
-QT_BEGIN_HEADER
+QT_USE_NAMESPACE
 
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 // Copied from qobject_p.h
 struct QAbstractDynamicMetaObject : public QMetaObject
@@ -89,8 +90,6 @@ private:
     friend class QDeclarativeOpenMetaObjectType;
 };
 
-QT_END_NAMESPACE
-
-QT_END_HEADER
+QTM_END_NAMESPACE
 
 #endif // QDECLARATIVEOPENMETAOBJECT_H

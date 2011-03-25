@@ -78,6 +78,14 @@ public:
     qreal minimumZoomLevel() const;
     qreal maximumZoomLevel() const;
 
+    bool supportsBearing() const;
+
+    bool supportsTilting() const;
+    qreal minimumTilt() const;
+    qreal maximumTilt() const;
+
+    bool supportsCustomMapObjects() const;
+
     void setLocale(const QLocale &locale);
     QLocale locale() const;
 

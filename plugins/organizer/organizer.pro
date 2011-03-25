@@ -9,7 +9,12 @@ symbian {
     SUBDIRS += symbian
     contains(build_unit_tests, yes):SUBDIRS += symbian/tsrc
 }
-maemo6:SUBDIRS += mkcal
+
+# perhaps this should just use the configure test
+maemo6|meego {
+    SUBDIRS += mkcal
+}
+
 maemo5 {
     contains(maemo5-calendar_enabled, yes) {
         SUBDIRS += maemo5
@@ -20,5 +25,5 @@ maemo5 {
 }
 simulator:SUBDIRS += simulator
 
-# To start with
-SUBDIRS += skeleton
+# Only compile this for tests (to make sure it compiles).. don't deploy this
+contains(build_unit_tests, yes):SUBDIRS+=skeleton

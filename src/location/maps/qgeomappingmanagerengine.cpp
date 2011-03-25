@@ -61,14 +61,8 @@ QTM_BEGIN_NAMESPACE
     can be used to contain and manage information concerning what a particular
     QGraphicsGeoMap is viewing.
 
-    The functions
-    setSupportedMapTypes(const QList<QGraphicsGeoMap::MapType> &mapTypes),
-    setSupportedConnectivityModes(const QList<QGraphicsGeoMap::ConnectivityMode> &connectivityModes),
-    setMinimumZoomLevel(qreal minimumZoom) and
-    setMaximumZoomLevel(qreal maximumZoom)
-    configure the reported capabilities of the engine.
-
-    It is important that this is done before createMapData() or any of the
+    Most of the other functions configure the reported capabilities of the engine.
+    It is important that these functions are called before createMapData() or any of the
     capability reporting functions are used to prevent incorrect or
     inconsistent behaviour.
 */
@@ -267,6 +261,134 @@ void QGeoMappingManagerEngine::setMaximumZoomLevel(qreal maximumZoom)
 }
 
 /*!
+    Return whether bearing is supported by this engine.
+*/
+bool QGeoMappingManagerEngine::supportsBearing() const
+{
+    Q_D(const QGeoMappingManagerEngine);
+    return d->supportsBearing;
+}
+
+/*!
+    Return whether tilting is supported by this engine.
+*/
+bool QGeoMappingManagerEngine::supportsTilting() const
+{
+    Q_D(const QGeoMappingManagerEngine);
+    return d->supportsTilting;
+}
+
+/*!
+    Returns the minimum tilt supported by this engine.
+
+    Value in degrees where 0 is equivalent to 90 degrees between view and earth's
+    surface i.e. looking straight down to earth.
+*/
+qreal QGeoMappingManagerEngine::minimumTilt() const
+{
+    Q_D(const QGeoMappingManagerEngine);
+    return d->minimumTilt;
+}
+
+/*!
+    Returns the maximum tilt supported by this engine.
+
+    Value in degrees where 0 is equivalent to 90 degrees between view and earth's
+    surface i.e. looking straight down to earth.
+*/
+qreal QGeoMappingManagerEngine::maximumTilt() const
+{
+    Q_D(const QGeoMappingManagerEngine);
+    return d->maximumTilt;
+}
+
+/*!
+    Sets the minimum tilt supported by this engine to \a minimumTilt.
+
+    Value in degrees where 0 is equivalent to 90 degrees between view and earth's
+    surface i.e. looking straight down to earth.
+
+    Subclasses of QGeoMappingManagerEngine should use this function to ensure
+    minimumTilt() provides accurate information. If no minimum value is set
+    by the subclass the value of 0 is used.
+*/
+void QGeoMappingManagerEngine::setMinimumTilt(qreal minimumTilt)
+{
+    Q_D(QGeoMappingManagerEngine);
+    d->minimumTilt = minimumTilt;
+}
+
+/*!
+    Sets the maximum tilt supported by this engine to \a maximumTilt.
+
+    Value in degrees where 0 is equivalent to 90 degrees between view and earth's
+    surface i.e. looking straight down to earth.
+
+    Subclasses of QGeoMappingManagerEngine should use this function to ensure
+    maximumTilt() provides accurate information. If no maximum value is set
+    by the subclass the value of 0 is used.
+*/
+void QGeoMappingManagerEngine::setMaximumTilt(qreal maximumTilt)
+{
+    Q_D(QGeoMappingManagerEngine);
+    d->maximumTilt = maximumTilt;
+}
+
+/*!
+    Sets whether bearing is supported by this engine to \a supportsBearing.
+
+    Subclasses of QGeoMappingManagerEngine should use this function to ensure
+    supportsBearing() provides accurate information. If no value is set
+    by the subclass then bearing support is disabled and supportsBearing set
+    to false.
+*/
+void QGeoMappingManagerEngine::setSupportsBearing(bool supportsBearing)
+{
+    Q_D(QGeoMappingManagerEngine);
+    d->supportsBearing = supportsBearing;
+}
+
+/*!
+    Sets whether tilting is supported by this engine to \a supportsTilting.
+
+    Subclasses of QGeoMappingManagerEngine should use this function to ensure
+    supportsTilting() provides accurate information. If no value is set
+    by the subclass then tilting support is disabled and supportsTilting set
+    to false.
+*/
+void QGeoMappingManagerEngine::setSupportsTilting(bool supportsTilting)
+{
+    Q_D(QGeoMappingManagerEngine);
+    d->supportsTilting = supportsTilting;
+}
+
+/*!
+    Returns whether custom map objects are supported by this engine.
+
+    Custom map objects are map objects based on QGraphicsItem instances, which
+    are hard to support in cases where the map rendering is not being
+    performed by the Qt Graphics View framwork.
+*/
+bool QGeoMappingManagerEngine::supportsCustomMapObjects() const
+{
+    Q_D(const QGeoMappingManagerEngine);
+    return d_ptr->supportsCustomMapObjects;
+}
+
+/*!
+    Sets whether custom map objects are supported by this engine to \a supportsCustomMapObjects.
+
+    Custom map objects are map objects based on QGraphicsItem instances, which
+    are hard to support in cases where the map rendering is not being
+    performed by the Qt Graphics View framwork.
+*/
+void QGeoMappingManagerEngine::setSupportsCustomMapObjects(bool supportsCustomMapObjects)
+{
+    Q_D(QGeoMappingManagerEngine);
+    d_ptr->supportsCustomMapObjects = supportsCustomMapObjects;
+}
+
+/*!
     Sets the locale to be used by the this manager to \a locale.
 
     If this mapping manager supports returning map labels
@@ -292,7 +414,14 @@ QLocale QGeoMappingManagerEngine::locale() const
 *******************************************************************************/
 
 QGeoMappingManagerEnginePrivate::QGeoMappingManagerEnginePrivate()
-    : managerVersion(-1) {}
+    : managerVersion(-1),
+    minimumZoomLevel(0.0),
+    maximumZoomLevel(0.0),
+    supportsBearing(false),
+    supportsTilting(false),
+    minimumTilt(0.0),
+    maximumTilt(0.0),
+    supportsCustomMapObjects(false) {}
 
 QGeoMappingManagerEnginePrivate::~QGeoMappingManagerEnginePrivate() {}
 

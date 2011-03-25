@@ -60,9 +60,12 @@ class Q_CONNECTIVITY_EXPORT QBluetoothDeviceDiscoveryAgent : public QObject
     Q_PROPERTY(QBluetoothDeviceDiscoveryAgent::InquiryType inquiryType READ inquiryType WRITE setInquiryType)
 
 public:
+    // FIXME: add more errors
+    // FIXME: add bluez error handling
     enum Error {
         NoError,
-        Canceled,
+        IOFailure,
+        PoweredOff,
         UnknownError = 100
     };
 
@@ -72,6 +75,7 @@ public:
     };
 
     QBluetoothDeviceDiscoveryAgent(QObject *parent = 0);
+    ~QBluetoothDeviceDiscoveryAgent();
 
     QBluetoothDeviceDiscoveryAgent::InquiryType inquiryType() const;
     void setInquiryType(QBluetoothDeviceDiscoveryAgent::InquiryType type);
@@ -91,11 +95,20 @@ signals:
     void deviceDiscovered(const QBluetoothDeviceInfo &info);
     void finished();
     void error(QBluetoothDeviceDiscoveryAgent::Error error);
+    void canceled();
 
 private:
-    QBluetoothDeviceDiscoveryAgentPrivate *d;
-    
-    friend class QBluetoothDeviceDiscoveryAgentPrivate;
+    Q_DECLARE_PRIVATE(QBluetoothDeviceDiscoveryAgent)
+    QBluetoothDeviceDiscoveryAgentPrivate *d_ptr;
+
+#ifndef QT_NO_DBUS
+    Q_PRIVATE_SLOT(d_func(), void _q_deviceFound(const QString &address, const QVariantMap &dict));
+    Q_PRIVATE_SLOT(d_func(), void _q_propertyChanged(const QString &name, const QDBusVariant &value));
+#endif
+
+#ifdef QTM_SYMBIAN_BLUETOOTH
+    Q_PRIVATE_SLOT(d_func(), void _q_newDeviceFound(const QBluetoothDeviceInfo &device))
+#endif // QTM_SYMBIAN_BLUETOOTH
 };
 
 QTM_END_NAMESPACE

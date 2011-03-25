@@ -85,6 +85,8 @@ private slots:
 
     void sortObject(); // should perhaps be in a different test :)
     void sortTraits();
+    void testDebugStreamOut();
+    void testDebugStreamOut_data();
 };
 
 class BasicItemLocalId : public QOrganizerItemEngineId
@@ -1346,6 +1348,254 @@ void tst_QOrganizerItemFilter::sortTraits()
     QVERIFY(!ti.isLarge);
     QVERIFY(!ti.isPointer);
     QVERIFY(!ti.isDummy);
+}
+
+void tst_QOrganizerItemFilter::testDebugStreamOut()
+{
+    QFETCH(QOrganizerItemFilter, filterIn);
+    QFETCH(QString, messageExpected);
+
+    QTest::ignoreMessage(QtDebugMsg, messageExpected.toUtf8());
+    qDebug() << filterIn;
+
+    QOrganizerItemSortOrder sortorder;
+    QTest::ignoreMessage(QtDebugMsg, "QOrganizerItemSortOrder(detailDefinitionName=\"\",detailFieldName=\"\",blankPolicy=1,direction=0,caseSensitivity=1)");
+    qDebug() << sortorder;
+}
+
+void tst_QOrganizerItemFilter::testDebugStreamOut_data()
+{
+    QTest::addColumn<QOrganizerItemFilter>("filterIn");
+    QTest::addColumn<QString>("messageExpected");
+
+    {
+        QOrganizerItemFilter filter;
+        QTest::newRow("default") << filter << "QOrganizerItemFilter((null))";
+    }
+
+    {
+        QOrganizerItemChangeLogFilter filter;
+        filter.setEventType(QOrganizerItemChangeLogFilter::EventAdded);
+        filter.setSince(QDateTime(QDate(2010, 6, 1), QTime(1, 2, 3)));
+        QTest::newRow("changelog") << (QOrganizerItemFilter)filter << "QOrganizerItemFilter(QOrganizerItemChangeLogFilter(eventType=0,since=QDateTime(\"Tue Jun 1 01:02:03 2010\") ))";
+    }
+
+    {
+        QOrganizerItemCollectionFilter filter;
+        QOrganizerCollectionId id1 = makeCId(5);
+        QOrganizerCollectionId id2 = makeCId(6);
+        QOrganizerCollectionId id3 = makeCId(7);
+        QOrganizerCollectionId id4 = makeCId(12);
+        QSet<QOrganizerCollectionId> ids;
+        ids << id1 << id2 << id3;
+        filter.setCollectionIds(ids);
+        // Testing method setCollectionIds
+        QTest::newRow("collection") << (QOrganizerItemFilter)filter << "QOrganizerItemFilter(QOrganizerItemCollectionFilter(collectionIds=QSet(QOrganizerCollectionId(5), QOrganizerCollectionId(6), QOrganizerCollectionId(7)) ))";
+
+        filter.setCollectionId(id2);
+        // Testing method setCollectionId (and the related clearing of the collection)
+        QTest::newRow("collection") << (QOrganizerItemFilter)filter << "QOrganizerItemFilter(QOrganizerItemCollectionFilter(collectionIds=QSet(QOrganizerCollectionId(6)) ))";
+        filter.setCollectionId(id4);
+        // Testing again method setCollectionId (and the related clearing of the collection)
+        QTest::newRow("collection") << (QOrganizerItemFilter)filter << "QOrganizerItemFilter(QOrganizerItemCollectionFilter(collectionIds=QSet(QOrganizerCollectionId(12)) ))";
+        ids.clear();
+        ids << id4;
+        // Testing again method setCollectionIds
+        QTest::newRow("collection") << (QOrganizerItemFilter)filter << "QOrganizerItemFilter(QOrganizerItemCollectionFilter(collectionIds=QSet(QOrganizerCollectionId(12)) ))";
+
+        QOrganizerItemCollectionFilter filter2;
+        filter2 = filter;
+        // Testing again method setCollectionIds on the copied filter
+        QTest::newRow("collection") << (QOrganizerItemFilter)filter2 << "QOrganizerItemFilter(QOrganizerItemCollectionFilter(collectionIds=QSet(QOrganizerCollectionId(12)) ))";
+
+        QOrganizerItemFilter fil;
+        fil = filter;
+        // Testing that the assignment/conversion went fine
+        QTest::newRow("collection") << (QOrganizerItemFilter)fil << "QOrganizerItemFilter(QOrganizerItemCollectionFilter(collectionIds=QSet(QOrganizerCollectionId(12)) ))";
+
+        QOrganizerItemCollectionFilter filter3(fil);
+        QTest::newRow("collection") << (QOrganizerItemFilter)filter3 << "QOrganizerItemFilter(QOrganizerItemCollectionFilter(collectionIds=QSet(QOrganizerCollectionId(12)) ))";
+    }
+
+    {
+        QOrganizerItemDetailFilter filter;
+        filter.setDetailDefinitionName("detail", "field");
+        filter.setMatchFlags(QOrganizerItemFilter::MatchEndsWith);
+        filter.setValue("ski");
+        QTest::newRow("detail") << (QOrganizerItemFilter)filter << "QOrganizerItemFilter(QOrganizerItemDetailFilter(detailDefinitionName=\"detail\",detailFieldName=\"field\",value=QVariant(QString, \"ski\") ,matchFlags=3))";
+    }
+
+    {
+        QOrganizerItemDetailRangeFilter filter;
+        // Testing the empty fields
+        QTest::newRow("detailRange") << (QOrganizerItemFilter)filter << "QOrganizerItemFilter(QOrganizerItemDetailRangeFilter(detailDefinitionName=\"\",detailFieldName=\"\",minValue=QVariant(, ) ,maxValue=QVariant(, ) ,matchFlags=0,rangeFlags=0))";
+
+
+        // Testing the method setDetailDefinitionName (fieldname not assigned)
+        filter.setDetailDefinitionName("Definition");
+        QTest::newRow("detailRange") << (QOrganizerItemFilter)filter << "QOrganizerItemFilter(QOrganizerItemDetailRangeFilter(detailDefinitionName=\"Definition\",detailFieldName=\"\",minValue=QVariant(, ) ,maxValue=QVariant(, ) ,matchFlags=0,rangeFlags=0))";
+
+        // Testing the method setDetailDefinitionName
+        filter.setDetailDefinitionName("Definition", "Field");
+        QTest::newRow("detailRange") << (QOrganizerItemFilter)filter << "QOrganizerItemFilter(QOrganizerItemDetailRangeFilter(detailDefinitionName=\"Definition\",detailFieldName=\"Field\",minValue=QVariant(, ) ,maxValue=QVariant(, ) ,matchFlags=0,rangeFlags=0))";
+
+        // Testing the method rangeFlags
+        filter.setMatchFlags(QOrganizerItemFilter::MatchExactly);
+        QTest::newRow("detailRange") << (QOrganizerItemFilter)filter << "QOrganizerItemFilter(QOrganizerItemDetailRangeFilter(detailDefinitionName=\"Definition\",detailFieldName=\"Field\",minValue=QVariant(, ) ,maxValue=QVariant(, ) ,matchFlags=0,rangeFlags=0))";
+
+        // Testing the method matchFlags
+        filter.setMatchFlags(QOrganizerItemFilter::MatchCaseSensitive);
+        QTest::newRow("detailRange") << (QOrganizerItemFilter)filter << "QOrganizerItemFilter(QOrganizerItemDetailRangeFilter(detailDefinitionName=\"Definition\",detailFieldName=\"Field\",minValue=QVariant(, ) ,maxValue=QVariant(, ) ,matchFlags=16,rangeFlags=0))";
+
+        // Contains is not allowed
+        filter.setMatchFlags(QOrganizerItemFilter::MatchCaseSensitive | QOrganizerItemFilter::MatchContains);
+        QTest::newRow("detailRange") << (QOrganizerItemFilter)filter << "QOrganizerItemFilter(QOrganizerItemDetailRangeFilter(detailDefinitionName=\"Definition\",detailFieldName=\"Field\",minValue=QVariant(, ) ,maxValue=QVariant(, ) ,matchFlags=16,rangeFlags=0))";
+        filter.setMatchFlags(QOrganizerItemFilter::MatchEndsWith);
+        QTest::newRow("detailRange") << (QOrganizerItemFilter)filter << "QOrganizerItemFilter(QOrganizerItemDetailRangeFilter(detailDefinitionName=\"Definition\",detailFieldName=\"Field\",minValue=QVariant(, ) ,maxValue=QVariant(, ) ,matchFlags=0,rangeFlags=0))";
+
+        // Testing the minValue and maxValue
+        filter.setRange(5, 10);
+        QTest::newRow("detailRange") << (QOrganizerItemFilter)filter << "QOrganizerItemFilter(QOrganizerItemDetailRangeFilter(detailDefinitionName=\"Definition\",detailFieldName=\"Field\",minValue=QVariant(int, 5) ,maxValue=QVariant(int, 10) ,matchFlags=0,rangeFlags=0))";
+
+        // Testing the setRange
+        filter.setRange(QVariant(), 11);
+        QTest::newRow("detailRange") << (QOrganizerItemFilter)filter << "QOrganizerItemFilter(QOrganizerItemDetailRangeFilter(detailDefinitionName=\"Definition\",detailFieldName=\"Field\",minValue=QVariant(, ) ,maxValue=QVariant(int, 11) ,matchFlags=0,rangeFlags=0))";
+
+        filter.setRange(6, QVariant());
+        QTest::newRow("detailRange") << (QOrganizerItemFilter)filter << "QOrganizerItemFilter(QOrganizerItemDetailRangeFilter(detailDefinitionName=\"Definition\",detailFieldName=\"Field\",minValue=QVariant(int, 6) ,maxValue=QVariant(, ) ,matchFlags=0,rangeFlags=0))";
+
+        filter.setRange(QVariant(), QVariant());
+        QTest::newRow("detailRange") << (QOrganizerItemFilter)filter << "QOrganizerItemFilter(QOrganizerItemDetailRangeFilter(detailDefinitionName=\"Definition\",detailFieldName=\"Field\",minValue=QVariant(, ) ,maxValue=QVariant(, ) ,matchFlags=0,rangeFlags=0))";
+
+        filter.setRange(5, 10, QOrganizerItemDetailRangeFilter::ExcludeLower);
+        QTest::newRow("detailRange") << (QOrganizerItemFilter)filter << "QOrganizerItemFilter(QOrganizerItemDetailRangeFilter(detailDefinitionName=\"Definition\",detailFieldName=\"Field\",minValue=QVariant(int, 5) ,maxValue=QVariant(int, 10) ,matchFlags=0,rangeFlags=2))";  // *
+
+        filter.setRange(QVariant(), 11, QOrganizerItemDetailRangeFilter::IncludeUpper);
+        QTest::newRow("detailRange") << (QOrganizerItemFilter)filter << "QOrganizerItemFilter(QOrganizerItemDetailRangeFilter(detailDefinitionName=\"Definition\",detailFieldName=\"Field\",minValue=QVariant(, ) ,maxValue=QVariant(int, 11) ,matchFlags=0,rangeFlags=1))";
+
+        filter.setRange(6, QVariant(), QOrganizerItemDetailRangeFilter::ExcludeLower | QOrganizerItemDetailRangeFilter::IncludeUpper);
+        QTest::newRow("detailRange") << (QOrganizerItemFilter)filter << "QOrganizerItemFilter(QOrganizerItemDetailRangeFilter(detailDefinitionName=\"Definition\",detailFieldName=\"Field\",minValue=QVariant(int, 6) ,maxValue=QVariant(, ) ,matchFlags=0,rangeFlags=3))";
+
+    filter.setRange(QVariant(), QVariant(), QOrganizerItemDetailRangeFilter::ExcludeUpper | QOrganizerItemDetailRangeFilter::IncludeLower);
+        QTest::newRow("detailRange") << (QOrganizerItemFilter)filter << "QOrganizerItemFilter(QOrganizerItemDetailRangeFilter(detailDefinitionName=\"Definition\",detailFieldName=\"Field\",minValue=QVariant(, ) ,maxValue=QVariant(, ) ,matchFlags=0,rangeFlags=0))";
+
+    // Test op=
+    QOrganizerItemFilter f = filter;
+    QTest::newRow("detailRange") << (QOrganizerItemFilter)f << "QOrganizerItemFilter(QOrganizerItemDetailRangeFilter(detailDefinitionName=\"Definition\",detailFieldName=\"Field\",minValue=QVariant(, ) ,maxValue=QVariant(, ) ,matchFlags=0,rangeFlags=0))";
+
+    QOrganizerItemDetailRangeFilter filter2 = f;
+    QTest::newRow("detailRange") << (QOrganizerItemFilter)filter2 << "QOrganizerItemFilter(QOrganizerItemDetailRangeFilter(detailDefinitionName=\"Definition\",detailFieldName=\"Field\",minValue=QVariant(, ) ,maxValue=QVariant(, ) ,matchFlags=0,rangeFlags=0))";
+
+    filter2 = filter;
+    QTest::newRow("detailRange") << (QOrganizerItemFilter)filter2 << "QOrganizerItemFilter(QOrganizerItemDetailRangeFilter(detailDefinitionName=\"Definition\",detailFieldName=\"Field\",minValue=QVariant(, ) ,maxValue=QVariant(, ) ,matchFlags=0,rangeFlags=0))";
+
+    // Self assignment should do nothing
+    filter2 = filter2;
+    QTest::newRow("detailRange") << (QOrganizerItemFilter)filter2 << "QOrganizerItemFilter(QOrganizerItemDetailRangeFilter(detailDefinitionName=\"Definition\",detailFieldName=\"Field\",minValue=QVariant(, ) ,maxValue=QVariant(, ) ,matchFlags=0,rangeFlags=0))";
+    }
+
+    {
+        // Testing creation of an empty filter
+        QOrganizerItemIdFilter filter;
+        QTest::newRow("Id") << (QOrganizerItemFilter)filter << "QOrganizerItemFilter(QOrganizerItemIdFilter(ids=() ))";
+
+        // Testing the method setIds
+        QList<QOrganizerItemId> ids;
+        ids << makeId(5) << makeId(6) << makeId(17);
+        filter.setIds(ids);
+        QTest::newRow("Id") << (QOrganizerItemFilter)filter << "QOrganizerItemFilter(QOrganizerItemIdFilter(ids=(QOrganizerItemId(5), QOrganizerItemId(6), QOrganizerItemId(17)) ))";
+
+        // Resetting the list of Ids
+        filter.setIds(QList<QOrganizerItemId>());
+        QTest::newRow("Id") << (QOrganizerItemFilter)filter << "QOrganizerItemFilter(QOrganizerItemIdFilter(ids=() ))";
+
+        // Testing the method insert
+        QOrganizerItemId singleId = makeId(12);
+        filter.insert(singleId);
+        QTest::newRow("Id") << (QOrganizerItemFilter)filter << "QOrganizerItemFilter(QOrganizerItemIdFilter(ids=(QOrganizerItemId(12)) ))";
+
+        // Testing the method remove
+        filter.remove(singleId);
+        QTest::newRow("Id") << (QOrganizerItemFilter)filter << "QOrganizerItemFilter(QOrganizerItemIdFilter(ids=() ))";
+
+        QList<QOrganizerItemId> allIds = filter.ids();
+        filter.remove(singleId); // remove again
+        filter.clear();
+        filter.setIds(allIds);
+        QTest::newRow("Id") << (QOrganizerItemFilter)filter << "QOrganizerItemFilter(QOrganizerItemIdFilter(ids=() ))";
+
+        // Test op=
+        filter.setIds(ids);
+        QOrganizerItemFilter f = filter;
+        QTest::newRow("Id") << (QOrganizerItemFilter)f << "QOrganizerItemFilter(QOrganizerItemIdFilter(ids=(QOrganizerItemId(5), QOrganizerItemId(6), QOrganizerItemId(17)) ))";
+        QOrganizerItemIdFilter filter2 = f;
+        QTest::newRow("Id") << (QOrganizerItemFilter)filter2 << "QOrganizerItemFilter(QOrganizerItemIdFilter(ids=(QOrganizerItemId(5), QOrganizerItemId(6), QOrganizerItemId(17)) ))";
+        filter2 = filter;
+        QTest::newRow("Id") << (QOrganizerItemFilter)filter2 << "QOrganizerItemFilter(QOrganizerItemIdFilter(ids=(QOrganizerItemId(5), QOrganizerItemId(6), QOrganizerItemId(17)) ))";
+
+        // Self assignment should do nothing
+        filter2 = filter2;
+        QTest::newRow("Id") << (QOrganizerItemFilter)filter2 << "QOrganizerItemFilter(QOrganizerItemIdFilter(ids=(QOrganizerItemId(5), QOrganizerItemId(6), QOrganizerItemId(17)) ))";
+
+        QOrganizerItemDetailFilter dfil;
+        QOrganizerItemIdFilter filter3(dfil);
+        QTest::newRow("Id") << (QOrganizerItemFilter)filter3 << "QOrganizerItemFilter(QOrganizerItemIdFilter(ids=() ))";
+
+        QOrganizerItemIdFilter filter4(filter);
+        QTest::newRow("Id") << (QOrganizerItemFilter)filter4 << "QOrganizerItemFilter(QOrganizerItemIdFilter(ids=(QOrganizerItemId(5), QOrganizerItemId(6), QOrganizerItemId(17)) ))";
+        filter = dfil; // now assign.
+        QTest::newRow("Id") << (QOrganizerItemFilter)filter << "QOrganizerItemFilter(QOrganizerItemIdFilter(ids=() ))";
+        QTest::newRow("Id") << (QOrganizerItemFilter)filter << "QOrganizerItemFilter(QOrganizerItemIdFilter(ids=() ))";
+        filter = filter3;
+        filter.setIds(ids); // force a detach
+        QTest::newRow("Id") << (QOrganizerItemFilter)filter << "QOrganizerItemFilter(QOrganizerItemIdFilter(ids=(QOrganizerItemId(5), QOrganizerItemId(6), QOrganizerItemId(17)) ))";
+    }
+
+    {
+
+        // Test empty filter
+        QOrganizerItemIntersectionFilter filter;
+        QTest::newRow("intersection") << (QOrganizerItemFilter)filter << "QOrganizerItemFilter(QOrganizerItemIntersectionFilter(filters=() ))";
+
+        // Test boolean ops
+        QOrganizerItemDetailFilter filter1;
+        filter1.setDetailDefinitionName("Frog");
+
+        QOrganizerItemDetailFilter filter2;
+        filter2.setDetailDefinitionName("Toad");
+
+        QOrganizerItemDetailFilter filter3;
+        filter3.setDetailDefinitionName("Hippopotamus");
+
+        filter << filter1 << filter2;
+        QTest::newRow("intersection") << (QOrganizerItemFilter)filter << "QOrganizerItemFilter(QOrganizerItemIntersectionFilter(filters=(QOrganizerItemFilter(QOrganizerItemDetailFilter(detailDefinitionName=\"Frog\",detailFieldName=\"\",value=QVariant(, ) ,matchFlags=0)), QOrganizerItemFilter(QOrganizerItemDetailFilter(detailDefinitionName=\"Toad\",detailFieldName=\"\",value=QVariant(, ) ,matchFlags=0))) ))";
+    }
+
+    {
+        QOrganizerItemInvalidFilter filter;
+        QTest::newRow("invalid") << (QOrganizerItemFilter)filter << "QOrganizerItemFilter(QOrganizerItemInvalidFilter())";
+    }
+
+    {
+        QOrganizerItemUnionFilter filter;
+        QTest::newRow("union") << (QOrganizerItemFilter)filter << "QOrganizerItemFilter(QOrganizerItemUnionFilter(filters=() ))";
+
+        // Test boolean ops
+        QOrganizerItemDetailFilter df;
+        df.setDetailDefinitionName("Frog");
+
+        QOrganizerItemDetailFilter df2;
+        df2.setDetailDefinitionName("Toad");
+
+        QOrganizerItemDetailFilter df3;
+        df3.setDetailDefinitionName("Hippopotamus");
+
+
+        QOrganizerItemUnionFilter bf;
+        bf << df << df2;
+        QTest::newRow("union") << (QOrganizerItemFilter)bf << "QOrganizerItemFilter(QOrganizerItemUnionFilter(filters=(QOrganizerItemFilter(QOrganizerItemDetailFilter(detailDefinitionName=\"Frog\",detailFieldName=\"\",value=QVariant(, ) ,matchFlags=0)), QOrganizerItemFilter(QOrganizerItemDetailFilter(detailDefinitionName=\"Toad\",detailFieldName=\"\",value=QVariant(, ) ,matchFlags=0))) ))";
+    }
+
 }
 
 

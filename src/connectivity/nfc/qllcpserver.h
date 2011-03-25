@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -44,14 +44,14 @@
 
 #include <qmobilityglobal.h>
 
+#include <qllcpsocket.h>
+
 #include <QtCore/QObject>
-#include <QtNetwork/QAbstractSocket>
 
 QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
-class QLlcpSocket;
 class QLlcpServerPrivate;
 
 class Q_CONNECTIVITY_EXPORT QLlcpServer : public QObject
@@ -60,10 +60,6 @@ class Q_CONNECTIVITY_EXPORT QLlcpServer : public QObject
     Q_DECLARE_PRIVATE(QLlcpServer)
 
 public:
-    enum Error {
-        UnknownSocketError = QAbstractSocket::UnknownSocketError
-    };
-
     explicit QLlcpServer(QObject *parent = 0);
     virtual ~QLlcpServer();
 
@@ -78,9 +74,9 @@ public:
     virtual bool hasPendingConnections() const;
     virtual QLlcpSocket *nextPendingConnection();
 
-    Error serverError() const;
+    QLlcpSocket::SocketError serverError() const;
 
-signals:
+Q_SIGNALS:
     void newConnection();
 
 private:

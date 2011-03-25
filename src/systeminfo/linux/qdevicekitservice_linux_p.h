@@ -57,6 +57,7 @@
 #include <QtDBus/QDBusInterface>
 #include <QtDBus/QDBusMessage>
 #include <QtDBus/QDBusReply>
+#include <QVariantMap>
 
 
 #define	UDISKS_SERVICE     "org.freedesktop.UDisks"
@@ -133,6 +134,9 @@ public:
     qulonglong partitionSize();
 
     QString uuid();
+
+    bool driveIsMediaEjectable();
+    bool driveCanDetach();
 
 Q_SIGNALS:
     void changed(const QString &);

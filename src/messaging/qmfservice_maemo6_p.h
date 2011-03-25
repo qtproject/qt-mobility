@@ -77,6 +77,9 @@ public:
     bool exportUpdates(const QMessageAccountId &id);
     QMessageService::State state() const;
 
+    bool moveMessages(const QMessageIdList &messageIds, const QMessageFolderId &toFolderId);
+    bool synchronize(const QMessageAccountId &id);
+
 public slots:
     void cancel();
 
@@ -84,6 +87,7 @@ protected slots:
     void transmitActivityChanged(QMailServiceAction::Activity a);
     void retrievalActivityChanged(QMailServiceAction::Activity a);
     void statusChanged(const QMailServiceAction::Status &s);
+    void storageActivityChanged(QMailServiceAction::Activity a);
     void completed();
     void reportMatchingIds();
     void reportMatchingCount();
@@ -105,6 +109,7 @@ private:
     QTimer *m_timer;
     QMailTransmitAction m_transmit;
     QMailRetrievalAction m_retrieval;
+    QMailStorageAction m_storage;
     QMailServiceAction *m_active;
     bool m_activeStoreAction;
 

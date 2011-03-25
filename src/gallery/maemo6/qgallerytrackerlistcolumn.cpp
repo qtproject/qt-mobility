@@ -135,4 +135,29 @@ QGalleryTrackerCompositeColumn *QGalleryTrackerFilePathColumn::create(const QVec
     return new QGalleryTrackerFilePathColumn;
 }
 
+QVariant QGalleryTrackerPathColumn::value(QVector<QVariant>::const_iterator row) const
+{
+    QString filePath = QUrl((row + QGALLERYTRACKERFILEURLCOLUMN_DEFAULT_COL)->toString()).path();
+    return filePath.section(QLatin1Char('/'), 0, -2);
+}
+
+QGalleryTrackerCompositeColumn *QGalleryTrackerPathColumn::create(const QVector<int> &)
+{
+    return new QGalleryTrackerPathColumn;
+}
+
+QVariant QGalleryTrackerFileExtensionColumn::value(QVector<QVariant>::const_iterator row) const
+{
+    QString fileName = (row + m_column)->toString();
+    const int index = fileName.lastIndexOf(QLatin1Char('.'));
+    return index > fileName.lastIndexOf(QLatin1Char('/'))
+            ? QVariant(fileName.mid(index + 1))
+            : QVariant();
+}
+
+QGalleryTrackerCompositeColumn *QGalleryTrackerFileExtensionColumn::create(const QVector<int> &)
+{
+    return new QGalleryTrackerFileExtensionColumn(QGALLERYTRACKERFILEURLCOLUMN_DEFAULT_COL);
+}
+
 QTM_END_NAMESPACE

@@ -57,6 +57,21 @@
 #define SRCDIR ""
 #endif
 
+#ifndef QTRY_VERIFY2
+#define QTRY_VERIFY2(__expr,__msg) \
+    do { \
+        const int __step = 50; \
+        const int __timeout = 5000; \
+        if (!(__expr)) { \
+            QTest::qWait(0); \
+        } \
+        for (int __i = 0; __i < __timeout && !(__expr); __i+=__step) { \
+            QTest::qWait(__step); \
+        } \
+        QVERIFY2(__expr,__msg); \
+    } while(0)
+#endif
+
 Q_DECLARE_METATYPE(QAudioFormat)
 
 class tst_QAudioOutput : public QObject
@@ -308,9 +323,8 @@ void tst_QAudioOutput::invalidFormat()
     QVERIFY2((audioOutput.error() == QAudio::NoError), "error() was not set to QAudio::NoError before start()");
 
     audioOutput.start();
-
     // Check that error is raised
-    QVERIFY2((audioOutput.error() == QAudio::OpenError),"error() was not set to QAudio::OpenError after start()");
+    QTRY_VERIFY2((audioOutput.error() == QAudio::OpenError),"error() was not set to QAudio::OpenError after start()");
 }
 
 void tst_QAudioOutput::bufferSize()
@@ -478,9 +492,8 @@ void tst_QAudioOutput::pull()
         audioFiles.at(i)->seek(WavHeader::headerLength());
 
         audioOutput.start(audioFiles.at(i));
-
         // Check that QAudioOutput immediately transitions to ActiveState
-        QVERIFY2((stateSignal.count() == 1),
+        QTRY_VERIFY2((stateSignal.count() == 1),
                 QString("didn't emit signal on start(), got %1 signals instead").arg(stateSignal.count()).toLocal8Bit().constData());
         QVERIFY2((audioOutput.state() == QAudio::ActiveState), "didn't transition to ActiveState after start()");
         QVERIFY2((audioOutput.error() == QAudio::NoError), "error state is not equal to QAudio::NoError after start()");
@@ -539,9 +552,8 @@ void tst_QAudioOutput::pullSuspendResume()
         audioFiles.at(i)->seek(WavHeader::headerLength());
 
         audioOutput.start(audioFiles.at(i));
-
         // Check that QAudioOutput immediately transitions to ActiveState
-        QVERIFY2((stateSignal.count() == 1),
+        QTRY_VERIFY2((stateSignal.count() == 1),
                 QString("didn't emit signal on start(), got %1 signals instead").arg(stateSignal.count()).toLocal8Bit().constData());
         QVERIFY2((audioOutput.state() == QAudio::ActiveState), "didn't transition to ActiveState after start()");
         QVERIFY2((audioOutput.error() == QAudio::NoError), "error state is not equal to QAudio::NoError after start()");
@@ -630,7 +642,7 @@ void tst_QAudioOutput::push()
         QIODevice* feed = audioOutput.start();
 
         // Check that QAudioOutput immediately transitions to IdleState
-        QVERIFY2((stateSignal.count() == 1),
+        QTRY_VERIFY2((stateSignal.count() == 1),
                 QString("didn't emit signal on start(), got %1 signals instead").arg(stateSignal.count()).toLocal8Bit().constData());
         QVERIFY2((audioOutput.state() == QAudio::IdleState), "didn't transition to IdleState after start()");
         QVERIFY2((audioOutput.error() == QAudio::NoError), "error state is not equal to QAudio::NoError after start()");
@@ -644,13 +656,13 @@ void tst_QAudioOutput::push()
 
         qint64 written = 0;
         bool firstBuffer = true;
-        char buffer[AUDIO_BUFFER];
+        QByteArray buffer(AUDIO_BUFFER, 0);
 
         while (written < audioFiles.at(i)->size()-WavHeader::headerLength()) {
 
-            if (audioOutput.bytesFree() > audioOutput.periodSize()) {
-                qint64 len = audioFiles.at(i)->read(buffer,audioOutput.periodSize());
-                written += feed->write(buffer, len);
+            if (audioOutput.bytesFree() >= audioOutput.periodSize()) {
+                qint64 len = audioFiles.at(i)->read(buffer.data(),audioOutput.periodSize());
+                written += feed->write(buffer.constData(), len);
 
                 if (firstBuffer) {
                     // Check for transition to ActiveState when data is provided
@@ -716,7 +728,7 @@ void tst_QAudioOutput::pushSuspendResume()
         QIODevice* feed = audioOutput.start();
 
         // Check that QAudioOutput immediately transitions to IdleState
-        QVERIFY2((stateSignal.count() == 1),
+        QTRY_VERIFY2((stateSignal.count() == 1),
                 QString("didn't emit signal on start(), got %1 signals instead").arg(stateSignal.count()).toLocal8Bit().constData());
         QVERIFY2((audioOutput.state() == QAudio::IdleState), "didn't transition to IdleState after start()");
         QVERIFY2((audioOutput.error() == QAudio::NoError), "error state is not equal to QAudio::NoError after start()");
@@ -730,14 +742,14 @@ void tst_QAudioOutput::pushSuspendResume()
 
         qint64 written = 0;
         bool firstBuffer = true;
-        char buffer[AUDIO_BUFFER];
+        QByteArray buffer(AUDIO_BUFFER, 0);
 
         // Play half of the clip
         while (written < (audioFiles.at(i)->size()-WavHeader::headerLength())/2) {
 
-            if (audioOutput.bytesFree() > audioOutput.periodSize()) {
-                qint64 len = audioFiles.at(i)->read(buffer,audioOutput.periodSize());
-                written += feed->write(buffer, len);
+            if (audioOutput.bytesFree() >= audioOutput.periodSize()) {
+                qint64 len = audioFiles.at(i)->read(buffer.data(),audioOutput.periodSize());
+                written += feed->write(buffer.constData(), len);
 
                 if (firstBuffer) {
                     // Check for transition to ActiveState when data is provided
@@ -787,8 +799,8 @@ void tst_QAudioOutput::pushSuspendResume()
         // Play rest of the clip
         while (!audioFiles.at(i)->atEnd()) {
             if (audioOutput.bytesFree() >= audioOutput.periodSize()) {
-                qint64 len = audioFiles.at(i)->read(buffer,audioOutput.periodSize());
-                written += feed->write(buffer, len);
+                qint64 len = audioFiles.at(i)->read(buffer.data(),audioOutput.periodSize());
+                written += feed->write(buffer.constData(), len);
             } else
                 QTest::qWait(20);
         }
@@ -842,7 +854,7 @@ void tst_QAudioOutput::pushUnderrun()
         QIODevice* feed = audioOutput.start();
 
         // Check that QAudioOutput immediately transitions to IdleState
-        QVERIFY2((stateSignal.count() == 1),
+        QTRY_VERIFY2((stateSignal.count() == 1),
                 QString("didn't emit signal on start(), got %1 signals instead").arg(stateSignal.count()).toLocal8Bit().constData());
         QVERIFY2((audioOutput.state() == QAudio::IdleState), "didn't transition to IdleState after start()");
         QVERIFY2((audioOutput.error() == QAudio::NoError), "error state is not equal to QAudio::NoError after start()");
@@ -856,14 +868,14 @@ void tst_QAudioOutput::pushUnderrun()
 
         qint64 written = 0;
         bool firstBuffer = true;
-        char buffer[AUDIO_BUFFER];
+        QByteArray buffer(AUDIO_BUFFER, 0);
 
         // Play half of the clip
         while (written < (audioFiles.at(i)->size()-WavHeader::headerLength())/2) {
 
-            if (audioOutput.bytesFree() > audioOutput.periodSize()) {
-                qint64 len = audioFiles.at(i)->read(buffer,audioOutput.periodSize());
-                written += feed->write(buffer, len);
+            if (audioOutput.bytesFree() >= audioOutput.periodSize()) {
+                qint64 len = audioFiles.at(i)->read(buffer.data(),audioOutput.periodSize());
+                written += feed->write(buffer.constData(), len);
 
                 if (firstBuffer) {
                     // Check for transition to ActiveState when data is provided
@@ -893,8 +905,8 @@ void tst_QAudioOutput::pushUnderrun()
         // Play rest of the clip
         while (!audioFiles.at(i)->atEnd()) {
             if (audioOutput.bytesFree() >= audioOutput.periodSize()) {
-                qint64 len = audioFiles.at(i)->read(buffer,audioOutput.periodSize());
-                written += feed->write(buffer, len);
+                qint64 len = audioFiles.at(i)->read(buffer.data(),audioOutput.periodSize());
+                written += feed->write(buffer.constData(), len);
                 if (firstBuffer) {
                     // Check for transition to ActiveState when data is provided
                     QVERIFY2((stateSignal.count() == 1),

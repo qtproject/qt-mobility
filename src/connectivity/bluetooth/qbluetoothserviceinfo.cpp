@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -109,6 +109,7 @@ QTM_BEGIN_NAMESPACE
     \value BrowseGroupList          List of browse groups the service is in.
     \value ServiceAvailability      Value indicating the availability of the service.
     \value PrimaryLanguageBase      Base index for primary language text descriptors.
+    \value ServiceRecordHandle      Specifies a service record from which attributes can be retrieved
     \value ServiceName              Name of the Bluetooth service in the primary language.
     \value ServiceDescription       Description of the Bluetooth service in the primary language.
     \value ServiceProvider          Name of the company / entity that provides the Bluetooth
@@ -137,7 +138,8 @@ QTM_BEGIN_NAMESPACE
 
     Registers this service with the platforms service discovery protocol (SDP) implementation,
     making it findable by other devices when they perform service discovery.  Returns true if the
-    service is successfully registered, otherwise returns false.
+    service is successfully registered, otherwise returns false.  Once registered changes to the record
+    cannot be made.  The service must be unregistered and registered.
 */
 
 /*!
@@ -302,6 +304,7 @@ QTM_BEGIN_NAMESPACE
 QBluetoothServiceInfo::QBluetoothServiceInfo()
 : d_ptr(new QBluetoothServiceInfoPrivate)
 {
+    d_ptr->q_ptr = this;
 }
 
 /*!
@@ -310,6 +313,7 @@ QBluetoothServiceInfo::QBluetoothServiceInfo()
 QBluetoothServiceInfo::QBluetoothServiceInfo(const QBluetoothServiceInfo &other)
 : d_ptr(new QBluetoothServiceInfoPrivate)
 {
+    d_ptr->q_ptr = this;
     *this = other;
 }
 
@@ -498,6 +502,8 @@ QBluetoothServiceInfo::Sequence QBluetoothServiceInfo::protocolDescriptor(QBluet
 
     foreach (const QVariant &v, attribute(QBluetoothServiceInfo::ProtocolDescriptorList).value<QBluetoothServiceInfo::Sequence>()) {
         QBluetoothServiceInfo::Sequence parameters = v.value<QBluetoothServiceInfo::Sequence>();
+        if(parameters.empty())
+            continue;
         if (parameters.at(0).userType() == qMetaTypeId<QBluetoothUuid>()) {
             if (parameters.at(0).value<QBluetoothUuid>() == protocol)
                 return parameters;
@@ -576,12 +582,12 @@ static void dumpAttributeVariant(const QVariant &var, const QString indent)
             qDebug("%sSequence", indent.toLocal8Bit().constData());
             const QBluetoothServiceInfo::Sequence *sequence = static_cast<const QBluetoothServiceInfo::Sequence *>(var.data());
             foreach (const QVariant &v, *sequence)
-                dumpAttributeVariant(v, indent + '\t');
+                dumpAttributeVariant(v, indent + QLatin1Char('\t'));
         } else if (var.userType() == qMetaTypeId<QBluetoothServiceInfo::Alternative>()) {
             qDebug("%sAlternative", indent.toLocal8Bit().constData());
             const QBluetoothServiceInfo::Alternative *alternative = static_cast<const QBluetoothServiceInfo::Alternative *>(var.data());
             foreach (const QVariant &v, *alternative)
-                dumpAttributeVariant(v, indent + '\t');
+                dumpAttributeVariant(v, indent + QLatin1Char('\t'));
         }
         break;
     default:
@@ -593,7 +599,7 @@ static void dumpAttributeVariant(const QVariant &var, const QString indent)
 QDebug operator<<(QDebug dbg, const QBluetoothServiceInfo &info)
 {
     foreach (quint16 id, info.attributes()) {
-        dumpAttributeVariant(info.attribute(id), QString("(%1)\t").arg(id));
+        dumpAttributeVariant(info.attribute(id), QString::fromLatin1("(%1)\t").arg(id));
     }
     return dbg;
 }

@@ -42,6 +42,10 @@
 #include "qcontactsortorder.h"
 #include "qcontactsortorder_p.h"
 
+#ifndef QT_NO_DEBUG_STREAM
+#include <QDebug>
+#endif
+
 QTM_BEGIN_NAMESPACE
 
 /*!
@@ -170,6 +174,23 @@ QDataStream& operator>>(QDataStream& in, QContactSortOrder& sortOrder)
         in.setStatus(QDataStream::ReadCorruptData);
     }
     return in;
+}
+#endif
+
+#ifndef QT_NO_DEBUG_STREAM
+/*!
+  Outputs \a sortOrder to the debug stream \a dbg
+ */
+QDebug operator<<(QDebug dbg, const QContactSortOrder& sortOrder)
+{
+    dbg.nospace() << "QContactSortOrder("
+                  << "detailDefinitionName=" << sortOrder.detailDefinitionName() << ","
+                  << "detailFieldName=" << sortOrder.detailFieldName() << ","
+                  << "blankPolicy=" << static_cast<quint32>(sortOrder.blankPolicy()) << ","
+                  << "direction=" << static_cast<quint32>(sortOrder.direction()) << ","
+                  << "caseSensitivity=" << static_cast<quint32>(sortOrder.caseSensitivity())
+                  << ")";
+    return dbg.maybeSpace();
 }
 #endif
 

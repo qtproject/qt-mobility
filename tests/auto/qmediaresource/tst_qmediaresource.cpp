@@ -321,6 +321,16 @@ void tst_QMediaResource::equality()
             QUrl(QString::fromLatin1("http://test.com/test.mp3")),
             QString::fromLatin1("audio/mpeg"));
 
+    QNetworkRequest request(QUrl("http://test.com/test.mp3"));
+    QString requestMimeType("audio/mp3");
+
+    QMediaResource requestResource1(request, requestMimeType);
+    QMediaResource requestResource2(request, requestMimeType);
+
+    QCOMPARE(requestResource1 == requestResource2, true);
+    QCOMPARE(requestResource1 != requestResource2, false);
+    QCOMPARE(requestResource1 != resource5, true);
+
     QCOMPARE(resource1 == resource2, true);
     QCOMPARE(resource1 != resource2, false);
 

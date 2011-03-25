@@ -43,7 +43,6 @@
 #include <QFile>
 #include <QDebug>
 #include <string.h>
-#include <time.h>
 
 char const * const n900proximitysensor::id("n900.proximity");
 char const * const n900proximitysensor::filename("/sys/bus/platform/devices/proximity/state");
@@ -83,8 +82,8 @@ void n900proximitysensor::poll()
         close = false;
     }
 
-    if (close != m_reading.close()) {
-        m_reading.setTimestamp(clock());
+    if (close != m_reading.close() || m_reading.timestamp() == 0) {
+        m_reading.setTimestamp(getTimestamp());
         m_reading.setClose(close);
         newReadingAvailable();
     }

@@ -288,7 +288,47 @@ QOrganizerCollectionEngineId* QOrganizerManagerData::createEngineCollectionId(co
     return engineFactory ? engineFactory->createCollectionEngineId(parameters, engineIdString) : NULL;
 }
 
-// trampoline for private classes
+// Observer stuff
+
+void QOrganizerManagerData::registerObserver(QOrganizerItemObserver* observer)
+{
+    m_observerForItem.insert(observer->itemId(), observer);
+}
+
+void QOrganizerManagerData::unregisterObserver(QOrganizerItemObserver* observer)
+{
+    QOrganizerItemId key = m_observerForItem.key(observer);
+    if (!key.isNull()) {
+        m_observerForItem.remove(key, observer);
+    }
+}
+
+void QOrganizerManagerData::_q_itemsUpdated(const QList<QOrganizerItemId>& ids)
+{
+    foreach (QOrganizerItemId id, ids) {
+        QList<QOrganizerItemObserver*> observers = m_observerForItem.values(id);
+        foreach (QOrganizerItemObserver* observer, observers) {
+            QMetaObject::invokeMethod(observer, "itemChanged");
+        }
+    }
+}
+
+void QOrganizerManagerData::_q_itemsDeleted(const QList<QOrganizerItemId>& ids)
+{
+    foreach (QOrganizerItemId id, ids) {
+        QList<QOrganizerItemObserver*> observers = m_observerForItem.values(id);
+        foreach (QOrganizerItemObserver* observer, observers) {
+            QMetaObject::invokeMethod(observer, "itemRemoved");
+        }
+    }
+}
+
+// trampolines for private classes
+QOrganizerManagerData* QOrganizerManagerData::get(const QOrganizerManager* manager)
+{
+    return manager->d;
+}
+
 QOrganizerManagerEngineV2* QOrganizerManagerData::engine(const QOrganizerManager* manager)
 {
     if (manager)

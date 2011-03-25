@@ -77,7 +77,7 @@ public:
 
     void setVolume(int volume) { m_volume = volume; }
     void setMuted(bool muted) { m_muted = muted; }
-    void setPlaybackRate(int rate) { m_playbackRate = rate; }
+    void setPlaybackRate(qreal rate) { m_playbackRate = rate; }
     void setMediaStatus(QMediaPlayer::MediaStatus status) {m_mediaStatus=status;}
     void setAudioEndpoint(const QString& audioEndpoint) { m_audioEndpoint = audioEndpoint; }
     void setMediaType(S60MediaSettings::TMediaType type) { m_mediaType = type; }

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -56,6 +56,8 @@
 
 #include <QObject>
 #include <QStringList>
+#include <QTimer>
+#include <QDesktopWidget>
 
 #include "qmobilityglobal.h"
 #include "qsysteminfo.h"
@@ -65,11 +67,25 @@
 #include "chargingstatus_s60.h"
 #include "wlaninfo_s60.h"
 #include "storagestatus_s60.h"
+#include <w32std.h>
+#include "batterystatus_s60.h"
+#include "networkinfo_s60.h"
+#include <ProfileEngineSDKCRKeys.h>
+#include <hwrmvibrasdkcrkeys.h>
+
+#ifdef LOCKANDFLIP_SUPPORTED
+#include "lockandflipstatus_s60.h"
+#endif
+
+#ifdef DISKNOTIFY_SUPPORTED
+#include "storagedisknotifier_s60.h"
+#endif
 
 QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
+const int KMaxBatteryBars = 7; //Max number of battery bars (7 is fixed for all symbian devices now)
 
 //////// QSystemInfo
 class QSystemInfoPrivate : public QObject
@@ -97,7 +113,7 @@ private:
 };
 
 //////// QSystemNetworkInfo
-class QSystemNetworkInfoPrivate : public QObject, public MTelephonyInfoObserver
+class QSystemNetworkInfoPrivate : public QObject, public MTelephonyInfoObserver, public MNetworkInfoObserver
 {
     Q_OBJECT
 
@@ -123,6 +139,8 @@ public:
     QNetworkInterface interfaceForMode(QSystemNetworkInfo::NetworkMode mode);
     QSystemNetworkInfo::NetworkMode currentMode();
 
+    QSystemNetworkInfo::CellDataTechnology cellDataTechnology();
+
 Q_SIGNALS:
     void networkStatusChanged(QSystemNetworkInfo::NetworkMode, QSystemNetworkInfo::NetworkStatus);
     void networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode, int);
@@ -143,6 +161,10 @@ protected:  //from MTelephonyInfoObserver
     void cellNetworkSignalStrengthChanged();
     void cellNetworkStatusChanged();
 
+    void changedCellId(int);
+    virtual void changedNetworkStatus();
+    virtual void changedNetworkMode();
+
 public slots:
     void wlanNetworkNameChanged();
     void wlanNetworkSignalStrengthChanged();
@@ -162,21 +184,38 @@ public:
     static int displayBrightness(int screen);
     static int colorDepth(int screen);
 
-    QSystemDisplayInfo::DisplayOrientation getOrientation(int screen);
+    QSystemDisplayInfo::DisplayOrientation orientation(int screen);
     float contrast(int screen);
     int getDPIWidth(int screen);
     int getDPIHeight(int screen);
     int physicalHeight(int screen);
     int physicalWidth(int screen);
     QSystemDisplayInfo::BacklightState backlightStatus(int screen); //1.2
+
+Q_SIGNALS:
+    void orientationChanged(QSystemDisplayInfo::DisplayOrientation newOrientation);
+
+public slots:
+    void rotationTimeout();
+
+private:
+    bool getSizeandRotation(int screen,TPixelsTwipsAndRotation& sizeAndRotation);
+
+    QSystemDisplayInfo::DisplayOrientation currentOrientation;
+    QTimer *rotationTimer;
 };
 
 //////// QSystemStorageInfo
 class QSystemStorageInfoPrivate : public QObject,
     public MStorageStatusObserver
+#ifdef DISKNOTIFY_SUPPORTED
+    ,public MStorageSpaceNotifyObserver
+#endif
 {
     Q_OBJECT
 
+private:
+    QSystemStorageInfo::StorageState CheckDiskSpaceThresholdLimit(const QString &);
 public:
     QSystemStorageInfoPrivate(QObject *parent = 0);
     virtual ~QSystemStorageInfoPrivate();
@@ -190,6 +229,10 @@ public:
 
 protected: // from MStorageStatusObserver
     void storageStatusChanged(bool, const QString &);
+#ifdef DISKNOTIFY_SUPPORTED
+    // from MStorageSpaceNotifyObserver
+    void DiskSpaceChanged(const QString &);
+#endif
 
 private:
     RFs iFs;
@@ -219,6 +262,9 @@ class QSystemDeviceInfoPrivate : public QObject,
     public MProEngProfileActivationObserver,
     public MCenRepNotifyHandlerCallback,
     public MChargingStatusObserver
+#ifdef LOCKANDFLIP_SUPPORTED
+    ,public MKeylockStatusObserver,public MFlipStatusObserver
+#endif
 {
     Q_OBJECT
 
@@ -247,14 +293,17 @@ public:
 
     bool currentBluetoothPowerState();
 
-    QSystemDeviceInfo::KeyboardTypeFlags keyboardType(); //1.2
+    QSystemDeviceInfo::KeyboardTypeFlags keyboardTypes(); //1.2
     bool isWirelessKeyboardConnected(); //1.2
-    bool isKeyboardFlipOpen();//1.2
+    bool isKeyboardFlippedOpen();//1.2
     void keyboardConnected(bool connect);//1.2
-    bool keypadLightOn(QSystemDeviceInfo::keypadType type); //1.2
-    QUuid hostId(); //1.2
-    QSystemDeviceInfo::LockType lockStatus(); //1.2
+    bool keypadLightOn(QSystemDeviceInfo::KeypadType type); //1.2
+    QUuid uniqueDeviceID(); //1.2
+    QSystemDeviceInfo::LockTypeFlags lockStatus(); //1.2
 
+    int messageRingtoneVolume();//1.2
+    int voiceRingtoneVolume();//1.2
+    bool vibrationActive();//1.2
 Q_SIGNALS:
     void batteryLevelChanged(int);
     void batteryStatusChanged(QSystemDeviceInfo::BatteryStatus);
@@ -263,9 +312,9 @@ Q_SIGNALS:
     void powerStateChanged(QSystemDeviceInfo::PowerState);
 
     void wirelessKeyboardConnected(bool connected);//1.2
-    void keyboardFlip(bool open);//1.2
+    void keyboardFlipped(bool open);//1.2
     void deviceLocked(bool isLocked); // 1.2
-    void lockStatusChanged(QSystemDeviceInfo::LockType); //1.2
+    void lockStatusChanged(QSystemDeviceInfo::LockTypeFlags); //1.2
 
 protected:
     //From QObject
@@ -283,6 +332,7 @@ protected:
     void networkCodeChanged(){};
     void networkNameChanged(){};
     void networkModeChanged(){};
+    void changedCellId(int){};
 
     void cellNetworkSignalStrengthChanged(){};
     void cellNetworkStatusChanged(){};
@@ -290,6 +340,13 @@ protected:
     //from MChargingStatusObserver
     void chargingStatusChanged();
 
+#ifdef LOCKANDFLIP_SUPPORTED
+    //from MKeylockStatusObserver
+    void keylockStatusChanged(TInt aLockType);
+
+    //from MFlipStatusObserver
+    void flipStatusChanged(TInt aFlipType , TInt aFilpKeyBoard );
+#endif
 private:
     QSystemDeviceInfo::Profile s60ProfileIdToProfile(TInt profileId) const;
 
@@ -302,6 +359,7 @@ private:
 
     bool hasWirelessKeyboardConnected;
 
+    QSystemDeviceInfo::BatteryStatus m_previousBatteryStatus;
 };
 
 //////// QSystemScreenSaver
@@ -314,12 +372,14 @@ public:
 
     bool screenSaverInhibited();
     bool setScreenSaverInhibit();
+    void setScreenSaverInhibited(bool on);
 
 private Q_SLOTS:
     void resetInactivityTime();
 
 private:    //data
     bool m_screenSaverInhibited;
+    QTimer *timer;
 };
 
 //////// DeviceInfo (singleton)
@@ -407,10 +467,60 @@ public:
         return m_mmcStorageStatus;
     }
 
+#ifdef DISKNOTIFY_SUPPORTED
+    CStorageDiskNotifier *storagedisknotifier()
+    {
+        if (!m_storagedisknotifier) {
+            TRAP_IGNORE(m_storagedisknotifier = CStorageDiskNotifier::NewL();)
+        }
+        return m_storagedisknotifier;
+    }
+#endif
+
+#ifdef LOCKANDFLIP_SUPPORTED
+    CKeylockStatus *keylockStatus()
+    {
+        if (!m_keylockStatus) {
+            m_keylockStatus = new CKeylockStatus;
+        }
+        return m_keylockStatus;
+    }
+
+    CFlipStatus *flipStatus()
+    {
+        if (!m_flipStatus) {
+            m_flipStatus = new CFlipStatus;
+        }
+        return m_flipStatus;
+    }
+#endif
+
+    CBatteryCommonInfo *batteryCommonInfo ()
+    {
+        if (!m_batteryCommonInfo) {
+            m_batteryCommonInfo = new CBatteryCommonInfo();
+        }
+        return m_batteryCommonInfo;
+    }
+
+    CNetworkInfo* networkInfo ()
+    {
+        if (!m_networkInfo) {
+           m_networkInfo = new  CNetworkInfo();
+        }
+        return m_networkInfo;
+    }
+
 private:
     DeviceInfo() : m_phoneInfo(NULL), m_subscriberInfo(NULL), m_chargingStatus(NULL),
         m_batteryInfo(NULL), m_cellNetworkInfo(NULL), m_cellNetworkRegistrationInfo(NULL),
-        m_cellSignalStrengthInfo(NULL), m_wlanInfo(NULL), m_mmcStorageStatus(NULL)
+        m_cellSignalStrengthInfo(NULL), m_wlanInfo(NULL), m_mmcStorageStatus(NULL), m_batteryCommonInfo(NULL), m_networkInfo(NULL)
+#ifdef LOCKANDFLIP_SUPPORTED
+        ,m_keylockStatus(NULL),m_flipStatus(NULL)
+#endif
+#ifdef DISKNOTIFY_SUPPORTED
+        ,m_storagedisknotifier(NULL)
+#endif
     {
         m_telephony = CTelephony::NewL();
     };
@@ -427,7 +537,18 @@ private:
         delete m_telephony;
         delete m_wlanInfo;
         delete m_mmcStorageStatus;
+        delete m_batteryCommonInfo;
+        delete m_networkInfo;
+#ifdef LOCKANDFLIP_SUPPORTED
+        delete m_keylockStatus;
+        delete m_flipStatus;
+#endif
+#ifdef DISKNOTIFY_SUPPORTED
+        delete m_storagedisknotifier;
+#endif
     }
+
+    DeviceInfo(const DeviceInfo &);
 
     static DeviceInfo *m_instance;
 
@@ -441,9 +562,18 @@ private:
     CCellSignalStrengthInfo *m_cellSignalStrengthInfo;
     CWlanInfo* m_wlanInfo;
     CMMCStorageStatus* m_mmcStorageStatus;
+    CBatteryCommonInfo* m_batteryCommonInfo;
+    CNetworkInfo* m_networkInfo;
+#ifdef LOCKANDFLIP_SUPPORTED
+    CKeylockStatus *m_keylockStatus;
+    CFlipStatus *m_flipStatus;
+#endif
+#ifdef DISKNOTIFY_SUPPORTED
+    CStorageDiskNotifier* m_storagedisknotifier;
+#endif
 };
 
-class QSystemBatteryInfoPrivate : public QObject
+class QSystemBatteryInfoPrivate : public QObject, public MBatteryInfoObserver, public MBatteryHWRMObserver
 {
     Q_OBJECT
 public:
@@ -464,7 +594,6 @@ public:
     int maxBars() const;
     QSystemBatteryInfo::BatteryStatus batteryStatus() const;
     QSystemBatteryInfo::EnergyUnit energyMeasurementUnit() const;
-    qint32 startCurrentMeasurement(int rate);
 
 Q_SIGNALS:
     void batteryLevelChanged(qint32 level);
@@ -478,8 +607,6 @@ Q_SIGNALS:
     void remainingCapacityPercentChanged(int);
     void remainingCapacitymAhChanged(int);
     void batteryCurrentFlowChanged(int);
-    void voltageChanged(int);
-
     void currentFlowChanged(int);
     void cumulativeCurrentFlowChanged(int);
     void remainingCapacityBarsChanged(int);
@@ -487,6 +614,15 @@ Q_SIGNALS:
 protected:
     void connectNotify(const char *signal);
     void disconnectNotify(const char *signal);
+    void changedBatteryStatus() ;
+    void changedChargingState() ;
+    void changedChargerType() ;
+    void changedRemainingCapacityBars();
+    void changedCurrentFlow(int);
+
+private :
+    CBatteryHWRM *m_batteryHWRM;
+    QSystemBatteryInfo::ChargerType m_charger, m_previousChagrger;
 };
 
 QTM_END_NAMESPACE

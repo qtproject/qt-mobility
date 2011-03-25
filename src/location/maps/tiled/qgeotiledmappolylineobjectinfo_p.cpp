@@ -74,34 +74,39 @@ QGeoTiledMapPolylineObjectInfo::QGeoTiledMapPolylineObjectInfo(QGeoTiledMapData 
 
 QGeoTiledMapPolylineObjectInfo::~QGeoTiledMapPolylineObjectInfo() {}
 
-void QGeoTiledMapPolylineObjectInfo::pathChanged(const QList<QGeoCoordinate> &path)
+void QGeoTiledMapPolylineObjectInfo::pathChanged(const QList<QGeoCoordinate> &/*path*/)
 {
-    points = createPolygon(polyline->path(), tiledMapData, false);
-    if (points.size() >= 2) {
-        QPainterPath painterPath;
-        painterPath.addPolygon(points);
-        pathItem->setPath(painterPath);
-        setValid(true);
-    } else {
-        setValid(false);
+    genPath();
+    updateItem();
+}
+
+void QGeoTiledMapPolylineObjectInfo::penChanged(const QPen &/*pen*/)
+{
+    pathItem->setPen(polyline->pen());
+    updateItem();
+}
+
+void QGeoTiledMapPolylineObjectInfo::genPath()
+{
+    QPainterPath p;
+
+    QList<QGeoCoordinate> path = polyline->path();
+
+    if (path.size() > 0) {
+        QGeoCoordinate origin = path.at(0);
+        double ox = origin.longitude() * 3600.0;
+        double oy = origin.latitude() * 3600.0;
+
+        p.moveTo(0, 0);
+        for (int i = 0; i < path.size(); ++i) {
+            QGeoCoordinate pt = path.at(i);
+            double x = pt.longitude() * 3600.0 - ox;
+            double y = pt.latitude() * 3600.0 - oy;
+            p.lineTo(x, y);
+        }
     }
-    updateItem();
-}
 
-void QGeoTiledMapPolylineObjectInfo::zoomLevelChanged(qreal zoomLevel)
-{
-    QPen p = polyline->pen();
-    p.setWidth(p.width() * tiledMapData->zoomFactor());
-    pathItem->setPen(p);
-    updateItem();
-}
-
-void QGeoTiledMapPolylineObjectInfo::penChanged(const QPen &pen)
-{
-    QPen p = polyline->pen();
-    p.setWidth(p.width() * tiledMapData->zoomFactor());
-    pathItem->setPen(p);
-    updateItem();
+    pathItem->setPath(p);
 }
 
 #include "moc_qgeotiledmappolylineobjectinfo_p.cpp"

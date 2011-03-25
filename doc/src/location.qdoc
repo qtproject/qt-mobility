@@ -30,7 +30,7 @@
 
 /*!
     \group location
-    \title Location API
+    \title Location Classes
 
     The Location API provides a library for location positioning, landmark
     management, and mapping and navigation.
@@ -39,7 +39,8 @@
 /*!
 \page location-overview.html
 
-\title Location
+\title Location API
+
 \brief The Location API provides a library for location positioning, landmark management
 and mapping and navigation.
 
@@ -53,7 +54,7 @@ and mapping and navigation.
 \section1 Namespace
 
 The QtMobility APIs are placed into the \i{QtMobility} namespace. This is done
-to facilitate the future migration of Mobility APIs into Qt. See the
+to facilitate the future migration of QtMobility APIs into Qt. See the
 \l {Quickstart Example}{Quickstart guide} for an example on how the
 namespace impacts on application development.
 
@@ -237,12 +238,17 @@ Here are the key methods in the class implementation:
     \printuntil /^\}/
 
 
-The example includes a \c ClientApplication class that requests updates
+The \l {Log File Position Source Example}{example} includes a \c ClientApplication class that requests updates
 from the \c LogFilePositionSource class. Run the example to see the data
 that is received by \c ClientApplication.
 
 Before running the example, make sure you have done both \tt make
 and \tt {make install}.
+
+\section2 QML Elements
+
+For details on the QML support provided for the Location API see the documentation for the
+\l {Location QML Plugin}.
 
 \section2 Examples
 
@@ -259,9 +265,25 @@ weather for the current location.
 The \l{lightmaps}{Light Maps demo} uses Location display a street map for
 the current location.
 
+\section2 QML Example
+
+Examples using the Location QML Plugin demonstrate how to use the QML/C++
+bindings to easily access the Location API features.
+
+\section3 \bold{Flickr QML Example}
+The Flickr example now in the form of a QML application. This also displays
+in the form of a mobile application.
+
+
 \section2 Location classes
 
 \annotatedlist location
+
+
+
+
+
+
 
 \target Landmarks
 \section1 Landmarks
@@ -297,13 +319,14 @@ For more details see the \l {Landmark Examples} {Landmark Examples} page for:
     \o \l {Exporting landmarks}
 \endlist
 
-\section3 Managers and plugins.
+\target Landmark Managers and Plugins
+\section3 Managers and plugins
 Landmark managers are identified by their manager name.  Each manager name corresponds to a specific plugin/backend
 that implements the manager functionality.  The manager name is typically a reverse domain  string such as
 "com.nokia.qt.landmarks.engines.symbian".  Typically a developer does not need to deal with the manager name
 as the default manager will be used when instantiating a QLandmarkManager without construction parameters.
 
-To implment your own plugin, you need to subclass QLandmarkManagerEngine and provide the implmementations
+To implement your own plugin, you need to subclass QLandmarkManagerEngine and provide the implmementations
 for the virtual functions, and then create a QLandmarkMangerEngineFactory subclass that will instantiate
 your particular engine implementation.
 
@@ -323,7 +346,7 @@ The following table shows names of the default managers for each platform and wh
     \o Landmarks are stored in an SQLite database.
 \row
     \o com.nokia.qt.landmarks.engines.qsparql
-    \o Harmattan
+    \o Harmattan,Meego
     \o Landmarks are stored in Tracker using SPARQL queries.
 \endtable
 
@@ -333,8 +356,19 @@ sources.
 
 For convenience, this documentations refers to the manager corresponding to \c com.nokia.qt.landmarks.engines.symbian as the \i {symbian manager},
 the manager corresponding to \c com.nokia.qt.landmarks.engines.sqlite as the \i{sqlite manager}, and the manager corresponding to \c com.nokia.qt.landmarks.engines.sparql
-as the \i {sparql manager}.  (Please note that there are several known issues with the sparql manager that are outlined in
-bug report for QTMOBILITY-744 at http://bugreports.qt.nokia.com)
+as the \i {sparql manager}.
+
+\section3 Variations between platforms/managers
+The behaviour of some parts of the Landmarks API varies between platforms.  A few of the major ones are mentioned below
+
+\list
+\o The symbian manager does not support the MatchContains flag in the attribute filters.  The symbian manager also does not
+support multiple attributes with an AND operation type in an attribute filter.  Some versions of s60 do not support the
+MatchContains flag in name filters. See the documentation on the attribute and name filters for more details.
+\o The sparql manager as of 1.1.1 does not support the countryCode, county and district fields of QGeoAddress.  These
+fields are ignored when a landmark is saved.
+\endlist
+
 
 \section3 Importing and Exporting Landmarks
 The landmarks API supports import and exporting of landmarks.  The file formats that are supported depends on the particular manager.
@@ -435,7 +469,7 @@ other services, the plugins are used to group the functionality per
 service provider.
 
 The plugins are accessed via QGeoServiceProvider, and a Nokia based plugin
-is part of Qt Mobility.  See the section \l{The Nokia plugin} for more details.
+is part of QtMobility.  See the section \l{The Nokia plugin} for more details.
 
 \code
     QGeoMappingManager *mappingManager = 0;
@@ -509,7 +543,7 @@ search for places.
 
 The free-text search will attempt to geocode text that looks like an
 address while simultaneously searching any landmark databases that the
-service pro.
+service provides.
 It is even possibly to add additional QLandmarkManager instances to
 the soures of data, so that users can search online databases alongside
 their personal offline landmarks store.
@@ -518,14 +552,77 @@ their personal offline landmarks store.
 
 \section2 The Nokia plugin
 
-Qt Mobility ships with a Maps and Navigation API plugin which accesses
+QtMobility ships with a Maps and Navigation API plugin which accesses
 the relevant Ovi services provided Nokia.  The use of these services
-is governed by the terms and conditions available in the file
+is governed by the terms and conditions available inedi.ntcn the file
 plugins/geoservices/nokia/OVI_SERVICES_TERMS_AND_CONDITIONS.txt.
 
 The Ovi services plugin can be loaded by using the plugin key "nokia".
 
-Note that accepting the terms and conditions only applies those terms and conditions to the use of the Ovi Maps Services plugin and does not limit the use of the other maps and navigation API plugins that may be included with the Qt Mobility package.
+Note that accepting the terms and conditions only applies those terms and conditions to the use of the Ovi Maps Services plugin and does not limit the use of the other maps and navigation API plugins that may be included with the QtMobility package.
+
+On Symbian platforms the applications using the Nokia plugin will need NetworkServices capability to access the online services.
+
+The following table lists optional parameters that can be passed to the Nokia plugin.
+\table
+\header
+    \o Parameter
+    \o Description
+\row
+    \o mapping.proxy
+    \o Proxy server URL used by mapping manager.
+\row
+    \o mapping.host
+    \o Map tile service URL used by mapping manager.
+\row
+    \o mapping.referer
+    \o Referer for the mapping token used for authentication by mapping manager.
+\row
+    \o mapping.token
+    \o Client token for the service used for authentication by mapping manager.
+\row
+    \o mapping.cache.directory
+    \o Map tile cache directory used as network disk cache.
+
+    Default place for the cache is "maptiles" directory in system temp.
+
+    On Symbian platform by default the cache is placed into internal mass memory drive directory "/data/nokia/maptiles".
+
+    If no internal mass memory is present on Symbian device caching is not used by default.
+
+    Changing the cache directory on Symbian may cause additional capability needs depending on where the new directory is placed.
+
+    Map tile caching is disabled on Maemo, Meego and Windows CE platforms. Using the parameter on these platforms will have no effect.
+
+    Map tiles will expire and are refetched 14 days after download.
+\row
+    \o mapping.cache.size
+    \o Map tile cache size. Maximum size of the cache is 50MB.
+\row
+    \o routing.proxy
+    \o Proxy server URL used by routing manager.
+\row
+    \o routing.host
+    \o Routing service URL used by routing manager.
+\row
+    \o routing.referer
+    \o Referer for the routing token used for authentication by routing manager.
+\row
+    \o routing.token
+    \o Client token for the service used for authentication by routing manager.
+\row
+    \o places.proxy
+    \o Proxy server URL used by search manager.
+\row
+    \o places.host
+    \o Search service URL used by search manager.
+\row
+    \o places.referer
+    \o Referer for the places token used for authentication by search manager.
+\row
+    \o places.token
+    \o Client token for the service used for authentication by search manager.
+\endtable
 
 \section2 Implementing plugins
 
@@ -555,6 +652,7 @@ If the Mercator projection and the most common tile addressing scheme is used th
 
 For details on the QML support provided for the Location API see the documentation for the \l {Location QML Plugin}.
 
-\note At the time of the Qt Mobility 1.1.0 release the QML support for the Maps and Navigation API is incomplete and likely to be refined and improved in the next patch release.
 */
+
+
 

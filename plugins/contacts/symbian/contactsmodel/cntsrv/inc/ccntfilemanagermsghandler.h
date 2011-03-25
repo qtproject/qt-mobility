@@ -67,7 +67,6 @@ public:
 	void FetchTemplateIdsL(const RMessage2& aMessage);
 	void FetchGroupIdListsL(const RMessage2& aMessage);
 	void FetchSearchResultsL(const RMessage2& aMessage); 
-	void FetchPredictiveSearchResultsL(const RMessage2& aMessage);
 	
 	// Non-CRUD file operations
 	void RecoverDbL(const RMessage2& aMessage);

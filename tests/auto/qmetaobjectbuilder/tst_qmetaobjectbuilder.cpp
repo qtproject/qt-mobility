@@ -41,10 +41,12 @@
 
 //TESTED_COMPONENT=src/serviceframework
 
+#include <qmobilityglobal.h>
 #include <QtTest/QtTest>
 #include <QtCore/qlocale.h>
 #include <qmetaobjectbuilder_p.h>
 
+QTM_USE_NAMESPACE
 
 class tst_QMetaObjectBuilder : public QObject
 {

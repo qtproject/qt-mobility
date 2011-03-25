@@ -115,6 +115,9 @@ protected:
     Q_ORGANIZER_EXPORT friend QDataStream& operator<<(QDataStream& out, const QOrganizerItemFilter& filter);
     Q_ORGANIZER_EXPORT friend QDataStream& operator>>(QDataStream& in, QOrganizerItemFilter& filter);
 #endif
+#ifndef QT_NO_DEBUG_STREAM
+    Q_ORGANIZER_EXPORT friend QDebug operator<<(QDebug dbg, const QOrganizerItemFilter& filter);
+#endif
     QSharedDataPointer<QOrganizerItemFilterPrivate> d_ptr;
 };
 

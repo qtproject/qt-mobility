@@ -45,8 +45,8 @@ PRIVATE_HEADERS += addresshelper_p.h \
     qmessagefoldersortorder_p.h \
     qmessagefilter_p.h \
     qmessagesortorder_p.h \
-    qmessagestore.h \
     qmessagestore_p.h \
+    qmessagestore_p_p.h \
     messagingutil_p.h
 SOURCES += qmessageid.cpp \
     qmessagecontentcontainerid.cpp \
@@ -145,12 +145,15 @@ symbian|win32|maemo6|maemo5|mac {
         contains(messaging_freestyle_enabled, yes) {
         CONFIG += FREESTYLEMAIL
         DEFINES += FREESTYLEMAILUSED
-        DEFINES += FREESTYLEMAILBOXOBSERVERUSED
+        }
+        contains(messaging_freestyle_mapi12_enabled, yes) {
+        CONFIG += FREESTYLEMAILMAPI12
+        DEFINES += FREESTYLEMAILMAPI12USED
         }
         contains(messaging_ncnlist_enabled, no) {
         DEFINES += NCNLISTREMOVED
         }
-        HEADERS -= qmessagestore_p.h \
+        HEADERS -= qmessagestore_p_p.h \
             qmessagecontentcontainer_p.h \
             qmessage_p.h
         HEADERS += qmtmengine_symbian_p.h \

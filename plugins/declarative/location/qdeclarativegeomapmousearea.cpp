@@ -47,28 +47,145 @@
 
 QTM_BEGIN_NAMESPACE
 
+/*!
+    \qmlclass MapMouseArea QDeclarativeGeoMapMouseArea
+
+    \brief The MapMouseArea item enables simple mouse handling.
+
+    \ingroup qml-location-maps
+
+   A MapMouseArea is an invisible item that is typically used in conjunction
+   with a visible map object or map item in order to provide mouse handling.
+   By effectively acting as a proxy, the logic for mouse handling can be
+   contained within a MapMouseArea item.
+
+   The \l enabled property is used to enable and disable mouse handling for
+   the proxied item. When disabled, the mouse area becomes transparent to
+   mouse events.
+
+   The \l pressed read-only property indicates whether or not the user is
+   holding down a mouse button over the mouse area. This property is often
+   used in bindings between properties in a user interface.
+
+   Information about the mouse position and button clicks are provided via
+   signals for which event handler properties are defined. The most commonly
+   used involved handling mouse presses and clicks: onClicked, onDoubleClicked,
+   onPressed and onReleased.
+
+   MapMouseArea items only report mouse clicks and not changes to the
+   position of the mouse cursor.
+
+    \sa MapMouseEvent
+*/
+
 QDeclarativeGeoMapMouseArea::QDeclarativeGeoMapMouseArea(QDeclarativeItem *parent)
-    : QDeclarativeItem(parent)
-{
-}
+    : QDeclarativeItem(parent),
+      enabled_(true),
+      hoverEnabled_(false) {}
 
 QDeclarativeGeoMapMouseArea::~QDeclarativeGeoMapMouseArea()
 {
 }
 
-void QDeclarativeGeoMapMouseArea::setContainsMouse(bool containsMouse)
+void QDeclarativeGeoMapMouseArea::setMap(QDeclarativeGraphicsGeoMap *map)
 {
-    if (containsMouse_ == containsMouse)
-        return;
-
-    containsMouse_ = containsMouse;
-
-    emit containsMouseChanged(containsMouse_);
+    map_ = map;
 }
 
-bool QDeclarativeGeoMapMouseArea::containsMouse() const
+QDeclarativeGraphicsGeoMap* QDeclarativeGeoMapMouseArea::map() const
 {
-    return containsMouse_;
+    return map_;
+}
+
+/*!
+    \qmlproperty qreal MapMouseArea::mouseX
+    \qmlproperty qreal MapMouseArea::mouseY
+
+    These properties hold the screen coordinates of the mouse cursor.
+
+    These properties will only be valid while a button is pressed, and will
+    remain valid as long as the button is held down even if the mouse is moved
+    outside the area.
+
+    The screen coordinates are relative to the MouseArea.
+*/
+
+qreal QDeclarativeGeoMapMouseArea::mouseX() const
+{
+    return mouseX_;
+}
+
+qreal QDeclarativeGeoMapMouseArea::mouseY() const
+{
+    return mouseY_;
+}
+
+bool QDeclarativeGeoMapMouseArea::hovered() const
+{
+    return hovered_;
+}
+
+void QDeclarativeGeoMapMouseArea::setHovered(bool hovered)
+{
+    if (hovered_ == hovered)
+        return;
+
+    hovered_ = hovered;
+
+    emit hoveredChanged(hovered_);
+
+    if (hovered_)
+        emit entered();
+    else
+        emit exited();
+}
+
+/*!
+    \qmlproperty bool MapMouseArea::pressed
+    This property holds whether the mouse area is currently pressed.
+*/
+
+bool QDeclarativeGeoMapMouseArea::pressed() const
+{
+    return pressed_;
+}
+
+bool QDeclarativeGeoMapMouseArea::setPressed(bool pressed, QDeclarativeGeoMapMouseEvent *event)
+{
+    if (pressed_ == pressed)
+        return false;
+
+    bool isClick = pressed_ && !pressed;// && hovered_;
+
+    pressed_ = pressed;
+
+    if (pressed_) {
+        if (!doubleClick_)
+            emit QDeclarativeGeoMapMouseArea::pressed(event);
+    } else {
+        emit released(event);
+        // TODO set saved position in event?
+        if (isClick && !longPress_ && !doubleClick_) {
+            emit clicked(event);
+
+        }
+    }
+
+    emit pressedChanged(pressed_);
+
+    return event->accepted();
+}
+
+/*!
+    \qmlproperty bool MapMouseArea::enabled
+    This property holds whether the item accepts mouse events.
+
+    By default, this property is true.
+*/
+
+bool QDeclarativeGeoMapMouseArea::isEnabled() const
+{
+    return enabled_;
 }
 
 void QDeclarativeGeoMapMouseArea::setEnabled(bool enabled)
@@ -81,70 +198,46 @@ void QDeclarativeGeoMapMouseArea::setEnabled(bool enabled)
     emit enabledChanged(enabled_);
 }
 
-bool QDeclarativeGeoMapMouseArea::enabled() const
+/*!
+    \qmlproperty MouseButton MapMouseArea::pressedButton
+    This property holds the mouse button currently pressed.
+
+    It is one of:
+    \list
+    \o Qt.LeftButton
+    \o Qt.RightButton
+    \o Qt.MiddleButton
+    \endlist
+
+    \sa acceptedButtons
+*/
+
+Qt::MouseButton QDeclarativeGeoMapMouseArea::pressedButton() const
 {
-    return enabled_;
+    return pressedButton_;
 }
 
-void QDeclarativeGeoMapMouseArea::setHoverEnabled(bool hoverEnabled)
-{
-    if (hoverEnabled_ == hoverEnabled)
-        return;
 
-    hoverEnabled_ = hoverEnabled;
+/*!
+    \qmlproperty Qt::MouseButtons MapMouseArea::acceptedButtons
+    This property holds the mouse buttons that the mouse area reacts to.
 
-    emit hoverEnabledChanged(hoverEnabled_);
-}
+    The available buttons are:
+    \list
+    \o Qt.LeftButton
+    \o Qt.RightButton
+    \o Qt.MiddleButton
+    \endlist
 
-bool QDeclarativeGeoMapMouseArea::hoverEnabled() const
-{
-    return hoverEnabled_;
-}
+    To accept more than one button the flags can be combined with the
+    "|" (or) operator:
 
-void QDeclarativeGeoMapMouseArea::setMouseX(qreal mouseX)
-{
-    if (mouseX_ == mouseX)
-        return;
+    \code
+    MapMouseArea { acceptedButtons: Qt.LeftButton | Qt.RightButton }
+    \endcode
 
-    mouseX_ = mouseX;
-
-    emit mouseXChanged(mouseX);
-}
-
-qreal QDeclarativeGeoMapMouseArea::mouseX() const
-{
-    return mouseX_;
-}
-
-void QDeclarativeGeoMapMouseArea::setMouseY(qreal mouseY)
-{
-    if (mouseY_ == mouseY)
-        return;
-
-    mouseY_ = mouseY;
-
-    emit mouseYChanged(mouseY_);
-}
-
-qreal QDeclarativeGeoMapMouseArea::mouseY() const
-{
-    return mouseY_;
-}
-
-void QDeclarativeGeoMapMouseArea::setPressed(bool pressed)
-{
-    if (pressed_ == pressed)
-        return;
-
-    pressed_ = pressed;
-
-    emit pressedChanged(pressed_);
-}
-
-bool QDeclarativeGeoMapMouseArea::pressed() const
-{
-    return pressed_;
-}
+    The default value is \c Qt.LeftButton.
+*/
 
 void QDeclarativeGeoMapMouseArea::setAcceptedButtons(Qt::MouseButtons acceptedButtons)
 {
@@ -161,55 +254,167 @@ Qt::MouseButtons QDeclarativeGeoMapMouseArea::acceptedButtons() const
     return acceptedButtons_;
 }
 
-void QDeclarativeGeoMapMouseArea::setPressedButtons(Qt::MouseButtons pressedButtons)
+bool QDeclarativeGeoMapMouseArea::hoverEnabled() const
 {
-    if (pressedButtons_ == pressedButtons)
+    return hoverEnabled_;
+}
+
+void QDeclarativeGeoMapMouseArea::setHoverEnabled(bool hoverEnabled)
+{
+    if (hoverEnabled == hoverEnabled_)
         return;
 
-    pressedButtons_ = pressedButtons;
-
-    emit pressedButtonsChanged(pressedButtons_);
+    hoverEnabled_ = hoverEnabled;
+    setAcceptsHoverEvents(hoverEnabled_);
+    setAcceptHoverEvents(hoverEnabled_);
+    setAcceptedMouseButtons(Qt::LeftButton);
+    emit hoverEnabledChanged(hoverEnabled_);
+    // TODO update hovered property
 }
 
-Qt::MouseButtons QDeclarativeGeoMapMouseArea::pressedButtons() const
-{
-    return pressedButtons_;
-}
 
-void QDeclarativeGeoMapMouseArea::clickEvent(QDeclarativeGeoMapMouseEvent *event)
-{
-    emit clicked(event);
-}
+
+
+
+
 
 void QDeclarativeGeoMapMouseArea::doubleClickEvent(QDeclarativeGeoMapMouseEvent *event)
 {
+    if (!enabled_) {
+        //TODO QDeclarativeItem::mouseDoubleClickEvent(convert event to regular event here)
+        return;
+    }
+    // TODO check this properly
+    bool doubleClickConnected = true;
+
+    if (doubleClickConnected)
+        doubleClick_ = true;
+    // TODO save event
+    event->setAccepted(doubleClickConnected);
     emit doubleClicked(event);
+    // TODO QDeclarativeItem::mouseDoubleClickEvent(convert event to regular event here)
 }
 
 void QDeclarativeGeoMapMouseArea::pressEvent(QDeclarativeGeoMapMouseEvent *event)
 {
-    emit pressed(event);
+    if (!enabled_) {
+        //TODO QDeclarativeItem::mousePressEvent(convert event to regular event here)
+        return;
+    }
+
+    event->setAccepted(true);
+
+    longPress_ = false;
+    // TODO save event
+    mouseX_ = event->x();
+    mouseY_ = event->y();
+    pressedButton_ = Qt::MouseButton(event->button());
+    modifiers_ = Qt::KeyboardModifiers(event->modifiers());
+
+    //setHovered(true);
+    // TODO setup long press timer
+    event->setAccepted(setPressed(true, event));
+
+    if (event->accepted())
+        map_->setActiveMouseArea(this);
 }
 
 void QDeclarativeGeoMapMouseArea::releaseEvent(QDeclarativeGeoMapMouseEvent *event)
 {
-    emit released(event);
+    if (!enabled_) {
+        //TODO QDeclarativeItem::mouseReleaseEvent(convert event to regular event here)
+        return;
+    }
+
+    // save event
+    setPressed(false, event);
+    doubleClick_ = false;
 }
 
 void QDeclarativeGeoMapMouseArea::enterEvent()
 {
+    if (!enabled_ || !hoverEnabled())
+        return;
+
+    setHovered(true);
+
     emit entered();
 }
 
 void QDeclarativeGeoMapMouseArea::exitEvent()
 {
+    if (!enabled_ || !hoverEnabled())
+        return;
+
+    setHovered(false);
+
     emit exited();
 }
 
 void QDeclarativeGeoMapMouseArea::moveEvent(QDeclarativeGeoMapMouseEvent *event)
 {
+    if (!enabled_)
+        return;
+
     emit positionChanged(event);
 }
+
+/*!
+  \qmlsignal MapMouseArea::onPressed(MapMouseEvent mouse)
+
+    This handler is called when there is a press.
+
+    The \l {MapMouseEvent}{mouse} parameter provides information about the
+    press, including the x and y position and which button was pressed.
+
+    The \l accepted property of the MapMouseEvent parameter determines whether
+    this MapMouseArea will handle the press and all future mouse events until
+    release.  The default is to accept the event and not allow other
+    MapMouseArea beneath this one to handle the event.  If \l accepted
+    is set to false, no further events will be sent to this MapMouseArea until
+    the button is next pressed.
+*/
+
+/*!
+  \qmlsignal MapMouseArea::onReleased(MapMouseEvent mouse)
+
+    This handler is called when there is a release.
+    The \l {MapMouseEvent}{mouse} parameter provides information about the
+    click, including the x and y position of the release of the click.
+
+    The \l accepted property of the MapMouseEvent parameter is ignored
+    in this handler.
+*/
+
+/*!
+  \qmlsignal MapMouseArea::onClicked(MapMouseEvent mouse)
+
+    This handler is called when there is a click. A click is defined as a
+    press followed by a release, both inside the MapMouseArea (pressing,
+    moving outside the MapMouseArea, and then moving back inside and
+    releasing is also considered a click).
+
+    The \l {MapMouseEvent}{mouse} parameter provides information about the
+    click, including the x and y position of the release of the click.
+
+    The \l accepted property of the MapMouseEvent parameter is ignored in
+    this handler.
+*/
+
+/*!
+  \qmlsignal MapMouseArea::onDoubleClicked(MapMouseEvent mouse)
+
+    This handler is called when there is a double-click (a press followed
+    by a release followed by a press).
+
+    The \l {MapMouseEvent}{mouse} parameter provides information about the
+    click, including the x and y position of the release of the click.
+
+    If the \l accepted property of the \l {MapMouseEvent}{mouse} parameter is
+    set to false in the handler, the onPressed/onReleased/onClicked handlers
+    will be called for the second click; otherwise they are suppressed.
+    The accepted property defaults to true.
+*/
 
 #include "moc_qdeclarativegeomapmousearea_p.cpp"
 

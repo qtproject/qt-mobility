@@ -131,13 +131,8 @@ private:
 
 private:
     QContactManager* m_cm;
-#ifdef SYMBIANSIM_BACKEND_PHONEBOOKINFOV1
-    RMobilePhoneBookStore::TMobilePhoneBookInfoV1 m_etelStoreInfo;
-    RMobilePhoneBookStore::TMobilePhoneBookInfoV1Pckg m_etelStoreInfoPckg;
-#else
     RMobilePhoneBookStore::TMobilePhoneBookInfoV5 m_etelStoreInfo;
     RMobilePhoneBookStore::TMobilePhoneBookInfoV5Pckg m_etelStoreInfoPckg;
-#endif
 };
 
 tst_SimCM::tst_SimCM() :
@@ -1725,9 +1720,6 @@ void tst_SimCM::dumpStoreInfo()
         << "\nLocation                     " << m_etelStoreInfo.iLocation
         << "\nChangeCounter                " << m_etelStoreInfo.iChangeCounter
         << "\nIdentity                     " << QString::fromUtf8((const char*)identity.Ptr(), identity.Length())
-#ifdef SYMBIANSIM_BACKEND_PHONEBOOKINFOV1
-        ;
-#else
         << "\nMaxSecondNames               " << m_etelStoreInfo.iMaxSecondNames
         << "\nMaxTextLengthSecondName      " << m_etelStoreInfo.iMaxTextLengthSecondName
         << "\nMaxAdditionalNumbers         " << m_etelStoreInfo.iMaxAdditionalNumbers
@@ -1737,7 +1729,6 @@ void tst_SimCM::dumpStoreInfo()
         << "\nMaxTextLengthGroupName       " << m_etelStoreInfo.iMaxTextLengthGroupName
         << "\nMaxEmailAddr                 " << m_etelStoreInfo.iMaxEmailAddr
         << "\nMaxTextLengthEmailAddr       " << m_etelStoreInfo.iMaxTextLengthEmailAddr;    
-#endif
 }
 
 bool tst_SimCM::compareContactLists(QList<QContact> lista, QList<QContact> listb)

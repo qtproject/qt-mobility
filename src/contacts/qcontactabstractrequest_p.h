@@ -61,6 +61,10 @@
 #include <QPointer>
 #include <QMutex>
 
+#ifndef QT_NO_DEBUG_STREAM
+#include <QDebug>
+#endif
+
 QTM_BEGIN_NAMESPACE
 
 class QContactAbstractRequestPrivate
@@ -103,6 +107,11 @@ public:
     QPointer<QContactManagerEngine> m_engine;
 
     mutable QMutex m_mutex;
+
+#ifndef QT_NO_DEBUG_STREAM
+    // NOTE: on platforms where Qt is built without debug streams enabled, vtable will differ!
+    virtual QDebug& debugStreamOut(QDebug& dbg) const = 0;
+#endif
 };
 
 QTM_END_NAMESPACE

@@ -52,6 +52,10 @@ RemoteSelector::RemoteSelector(QWidget *parent)
 {
     ui->setupUi(this);
 
+#if defined (Q_OS_SYMBIAN) || defined(Q_OS_WINCE) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+    setWindowState(Qt::WindowFullScreen);
+#endif
+
     connect(m_discoveryAgent, SIGNAL(serviceDiscovered(QBluetoothServiceInfo)),
             this, SLOT(serviceDiscovered(QBluetoothServiceInfo)));
     connect(m_discoveryAgent, SIGNAL(finished()), this, SLOT(discoveryFinished()));
@@ -75,6 +79,13 @@ void RemoteSelector::startDiscovery(const QBluetoothUuid &uuid)
     ui->status->setText(tr("Scanning..."));
 }
 
+void RemoteSelector::stopDiscovery()
+{
+    if(m_discoveryAgent){
+        m_discoveryAgent->stop();
+    }
+}
+
 QBluetoothServiceInfo RemoteSelector::service() const
 {
     return m_service;
@@ -94,6 +105,13 @@ void RemoteSelector::serviceDiscovered(const QBluetoothServiceInfo &serviceInfo)
              << serviceInfo.protocolServiceMultiplexer();
     qDebug() << "\tRFCOMM server channel:" << serviceInfo.serverChannel();
 #endif
+    QMapIterator<QListWidgetItem *, QBluetoothServiceInfo> i(m_discoveredServices);
+    while(i.hasNext()){
+        i.next();
+        if(serviceInfo.device().address() == i.value().device().address()){
+            return;
+        }
+    }
 
     QString remoteName;
     if (serviceInfo.device().name().isEmpty())
@@ -103,7 +121,7 @@ void RemoteSelector::serviceDiscovered(const QBluetoothServiceInfo &serviceInfo)
 
     QListWidgetItem *item =
         new QListWidgetItem(QString::fromLatin1("%1 %2").arg(remoteName,
-                                                             serviceInfo.serviceName()));
+                                                             serviceInfo.serviceName()));    
 
     m_discoveredServices.insert(item, serviceInfo);
     ui->remoteDevices->addItem(item);
@@ -120,4 +138,9 @@ void RemoteSelector::on_remoteDevices_itemActivated(QListWidgetItem *item)
     m_service = m_discoveredServices.value(item);
 
     accept();
+}
+
+void RemoteSelector::on_cancelButton_clicked()
+{
+    reject();
 }

@@ -65,6 +65,7 @@ public:
     ~RemoteSelector();
 
     void startDiscovery(const QBluetoothUuid &uuid);
+    void stopDiscovery();
     QBluetoothServiceInfo service() const;
 
 private:
@@ -78,6 +79,7 @@ private slots:
     void serviceDiscovered(const QBluetoothServiceInfo &serviceInfo);
     void discoveryFinished();
     void on_remoteDevices_itemActivated(QListWidgetItem *item);
+    void on_cancelButton_clicked();
 };
 
 #endif // REMOTESELECTOR_H

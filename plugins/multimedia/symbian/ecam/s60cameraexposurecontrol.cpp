@@ -58,11 +58,7 @@ S60CameraExposureControl::S60CameraExposureControl(S60ImageCaptureSession *sessi
     m_exposureMode(QCameraExposure::ExposureAuto),
     m_meteringMode(QCameraExposure::MeteringMatrix)
 {
-    if (session)
-        m_session = session;
-    else
-        Q_ASSERT(true);
-    // From now on it is safe to assume session exists
+    m_session = session;
 
     connect(m_session, SIGNAL(advancedSettingChanged()), this, SLOT(resetAdvancedSetting()));
     m_advancedSettings = m_session->advancedSettings();
@@ -72,6 +68,7 @@ S60CameraExposureControl::S60CameraExposureControl(S60ImageCaptureSession *sessi
         connect(m_advancedSettings, SIGNAL(apertureRangeChanged()), this, SLOT(apertureRangeChanged()));
         connect(m_advancedSettings, SIGNAL(shutterSpeedChanged()), this, SLOT(shutterSpeedChanged()));
         connect(m_advancedSettings, SIGNAL(isoSensitivityChanged()), this, SLOT(isoSensitivityChanged()));
+        connect(m_advancedSettings, SIGNAL(evChanged()), this, SLOT(evChanged()));
     }
 }
 
@@ -88,6 +85,7 @@ void S60CameraExposureControl::resetAdvancedSetting()
         connect(m_advancedSettings, SIGNAL(apertureRangeChanged()), this, SLOT(apertureRangeChanged()));
         connect(m_advancedSettings, SIGNAL(shutterSpeedChanged()), this, SLOT(shutterSpeedChanged()));
         connect(m_advancedSettings, SIGNAL(isoSensitivityChanged()), this, SLOT(isoSensitivityChanged()));
+        connect(m_advancedSettings, SIGNAL(evChanged()), this, SLOT(evChanged()));
     }
 }
 
@@ -111,6 +109,11 @@ void S60CameraExposureControl::isoSensitivityChanged()
     emit exposureParameterChanged(QCameraExposureControl::ISO);
 }
 
+void S60CameraExposureControl::evChanged()
+{
+    emit exposureParameterChanged(QCameraExposureControl::ExposureCompensation);
+}
+
 QCameraExposure::ExposureMode S60CameraExposureControl::exposureMode() const
 {
     return m_session->exposureMode();
@@ -124,23 +127,21 @@ void S60CameraExposureControl::setExposureMode(QCameraExposure::ExposureMode mod
         return;
     }
 
-    m_session->setError(KErrNotSupported, QString("Requested exposure mode is not supported."));
+    m_session->setError(KErrNotSupported, tr("Requested exposure mode is not supported."));
 }
 
 bool S60CameraExposureControl::isExposureModeSupported(QCameraExposure::ExposureMode mode) const
 {
-    if (m_session->isExposureModeSupported(mode)) {
+    if (m_session->isExposureModeSupported(mode))
         return true;
-    }
 
     return false;
 }
 
 QCameraExposure::MeteringMode S60CameraExposureControl::meteringMode() const
 {
-    if (m_advancedSettings) {
+    if (m_advancedSettings)
         return m_advancedSettings->meteringMode();
-    }
 
     return QCameraExposure::MeteringMode();
 }
@@ -155,14 +156,13 @@ void S60CameraExposureControl::setMeteringMode(QCameraExposure::MeteringMode mod
         }
     }
 
-    m_session->setError(KErrNotSupported, QString("Requested metering mode is not supported."));
+    m_session->setError(KErrNotSupported, tr("Requested metering mode is not supported."));
 }
 
 bool S60CameraExposureControl::isMeteringModeSupported(QCameraExposure::MeteringMode mode) const
 {
-    if (m_advancedSettings) {
+    if (m_advancedSettings)
         return m_advancedSettings->isMeteringModeSupported(mode);
-    }
 
     return false;
 }
@@ -173,10 +173,25 @@ bool S60CameraExposureControl::isParameterSupported(ExposureParameter parameter)
     if (m_advancedSettings) {
         switch (parameter) {
             case QCameraExposureControl::ISO:
+                if (m_advancedSettings->supportedIsoSensitivities().count() > 0)
+                    return true;
+                else
+                    return false;
             case QCameraExposureControl::Aperture:
+                if (m_advancedSettings->supportedApertures().count() > 0)
+                    return true;
+                else
+                    return false;
             case QCameraExposureControl::ShutterSpeed:
+                if (m_advancedSettings->supportedShutterSpeeds().count() > 0)
+                    return true;
+                else
+                    return false;
             case QCameraExposureControl::ExposureCompensation:
-                return true;
+                if (m_advancedSettings->supportedExposureCompensationValues().count() > 0)
+                    return true;
+                else
+                    return false;
             case QCameraExposureControl::FlashPower:
             case QCameraExposureControl::FlashCompensation:
                 return false;
@@ -216,29 +231,21 @@ QCameraExposureControl::ParameterFlags S60CameraExposureControl::exposureParamet
     QCameraExposureControl::ParameterFlags flags;
 
     /*
-     * ISO, Aperture, ShutterSpeed:
+     * ISO, ExposureCompensation:
      *  - Automatic/Manual
      *  - Read/Write
      *  - Discrete range
      *
-     * ExposureCompensation:
-     *  - Automatic/Manual
-     *  - Read/Write
-     *  - Continuous range
-     *
-     * FlashPower, FlashCompensation:
+     * Aperture, ShutterSpeed, FlashPower, FlashCompensation:
      *  - Not supported
      */
     switch (parameter) {
         case QCameraExposureControl::ISO:
-        case QCameraExposureControl::Aperture:
-        case QCameraExposureControl::ShutterSpeed:
-            flags |= QCameraExposureControl::AutomaticValue;
-            break;
         case QCameraExposureControl::ExposureCompensation:
             flags |= QCameraExposureControl::AutomaticValue;
-            flags |= QCameraExposureControl::ContinuousRange;
             break;
+        case QCameraExposureControl::Aperture:
+        case QCameraExposureControl::ShutterSpeed:
         case QCameraExposureControl::FlashPower:
         case QCameraExposureControl::FlashCompensation:
             // Do nothing - no flags
@@ -259,31 +266,23 @@ QVariantList S60CameraExposureControl::supportedParameterRange(ExposureParameter
     if (m_advancedSettings) {
         switch (parameter) {
             case QCameraExposureControl::ISO: {
-                QList<int> exposureValues = m_advancedSettings->supportedIsoSensitivities();
-                for (int i = 0; i < exposureValues.count(); ++i) {
-                    valueList.append(QVariant(exposureValues[i]));
-                }
+                foreach (int iso, m_advancedSettings->supportedIsoSensitivities())
+                    valueList << QVariant(iso);
                 break;
             }
             case QCameraExposureControl::Aperture: {
-                QList<qreal> apertureValues = m_advancedSettings->supportedApertures();
-                for (int i = 0; i < apertureValues.count(); ++i) {
-                    valueList.append(QVariant(apertureValues[i]));
-                }
+                foreach (qreal aperture, m_advancedSettings->supportedApertures())
+                    valueList << QVariant(aperture);
                 break;
             }
             case QCameraExposureControl::ShutterSpeed: {
-                QList<qreal> shutterSpeedValues = m_advancedSettings->supportedShutterSpeeds();
-                for (int i = 0; i < shutterSpeedValues.count(); ++i) {
-                    valueList.append(QVariant(shutterSpeedValues[i]));
-                }
+                foreach (qreal shutterSpeed, m_advancedSettings->supportedShutterSpeeds())
+                    valueList << QVariant(shutterSpeed);
                 break;
             }
             case QCameraExposureControl::ExposureCompensation: {
-                QList<qreal> evValues = m_advancedSettings->supportedExposureCompensationValues();
-                for (int i = 0; i < evValues.count(); ++i) {
-                    valueList.append(QVariant(evValues[i]));
-                }
+                foreach (qreal ev, m_advancedSettings->supportedExposureCompensationValues())
+                    valueList << QVariant(ev);
                 break;
             }
             case QCameraExposureControl::FlashPower:
@@ -293,7 +292,7 @@ QVariantList S60CameraExposureControl::supportedParameterRange(ExposureParameter
 
             default:
                 // Not supported in Symbian
-                return QVariantList();
+                break;
         }
     }
 
@@ -330,7 +329,7 @@ bool S60CameraExposureControl::setExposureParameter(ExposureParameter parameter,
                 return false;
             }
             else
-                return setManualIsoSensitivity(value.toFloat());
+                return setManualShutterSpeed(value.toFloat());
 
         case QCameraExposureControl::ExposureCompensation:
             if (useDefaultValue) {
@@ -355,17 +354,17 @@ QString S60CameraExposureControl::extendedParameterName(ExposureParameter parame
 {
     switch (parameter) {
         case QCameraExposureControl::ISO:
-            return QString("ISO Sensitivity");
+            return QLatin1String("ISO Sensitivity");
         case QCameraExposureControl::Aperture:
-            return QString("Aperture");
+            return QLatin1String("Aperture");
         case QCameraExposureControl::ShutterSpeed:
-            return QString("Shutter Speed");
+            return QLatin1String("Shutter Speed");
         case QCameraExposureControl::ExposureCompensation:
-            return QString("Exposure Compensation");
+            return QLatin1String("Exposure Compensation");
         case QCameraExposureControl::FlashPower:
-            return QString("Flash Power");
+            return QLatin1String("Flash Power");
         case QCameraExposureControl::FlashCompensation:
-            return QString("Flash Compensation");
+            return QLatin1String("Flash Compensation");
 
         default:
             return QString();
@@ -381,13 +380,11 @@ int S60CameraExposureControl::isoSensitivity() const
 
 bool S60CameraExposureControl::isIsoSensitivitySupported(const int iso) const
 {
-    if (m_advancedSettings) {
-        QList<int> supportedValues = m_advancedSettings->supportedIsoSensitivities();
-        if(supportedValues.indexOf(iso) != -1)
-            return true;
-    }
-
-    return false;
+    if (m_advancedSettings &&
+        m_advancedSettings->supportedIsoSensitivities().contains(iso))
+        return true;
+    else
+        return false;
 }
 
 bool S60CameraExposureControl::setManualIsoSensitivity(int iso)
@@ -396,27 +393,6 @@ bool S60CameraExposureControl::setManualIsoSensitivity(int iso)
         if (isIsoSensitivitySupported(iso)) {
             m_advancedSettings->setManualIsoSensitivity(iso);
             return true;
-        } else {
-            QList<int> supportedIsoValues = m_advancedSettings->supportedIsoSensitivities();
-            int minIso = supportedIsoValues.first();
-            int maxIso = supportedIsoValues.last();
-
-            if (iso < minIso) { // Smaller than minimum
-                iso = minIso;
-            } else if (iso > maxIso) { // Bigger than maximum
-                iso = maxIso;
-            } else { // Find closest
-                int indexOfClosest = 0;
-                int smallestDiff = 10000000; // Sensible max diff
-                for(int i = 0; i < supportedIsoValues.count(); ++i) {
-                    if((abs(iso - supportedIsoValues[i])) < smallestDiff) {
-                        smallestDiff = abs(iso - supportedIsoValues[i]);
-                        indexOfClosest = i;
-                    }
-                }
-                iso = supportedIsoValues[indexOfClosest];
-            }
-            m_advancedSettings->setManualIsoSensitivity(iso);
         }
     }
 
@@ -428,7 +404,6 @@ void S60CameraExposureControl::setAutoIsoSensitivity()
     if (m_advancedSettings)
         m_advancedSettings->setAutoIsoSensitivity();
 }
-
 
 qreal S60CameraExposureControl::aperture() const
 {

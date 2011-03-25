@@ -57,11 +57,9 @@
 
 #include "qgeoroute.h"
 
-#include <QList>
 #include <QPen>
 
 class QGraphicsPathItem;
-class QPointF;
 
 QTM_BEGIN_NAMESPACE
 
@@ -77,21 +75,13 @@ public:
     QGeoMapRouteObject *route;
     QGraphicsPathItem *pathItem;
 
-    QList<QPointF> points;
-    QList<QPointF> distanceFilteredPoints;
-
 public slots:
     void routeChanged(const QGeoRoute &route);
     void penChanged(const QPen &pen);
     void detailLevelChanged(quint32 detailLevel);
 
-    void zoomLevelChanged(qreal zoomLevel);
-    void windowSizeChanged(const QSizeF &windowSize);
-    void centerChanged(const QGeoCoordinate &coordinate);
-
 private:
-    void updateData();
-    void updateVisible();
+    void regenPath();
 };
 
 QTM_END_NAMESPACE

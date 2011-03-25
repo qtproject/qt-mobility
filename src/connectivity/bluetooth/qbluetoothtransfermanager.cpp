@@ -47,7 +47,7 @@ QTM_BEGIN_NAMESPACE
 /*!
     \class QBluetoothTransferManager
     \brief The QBluetoothTransferManager class allows the application to send data objects to other
-           devices.
+           devices.  Currently implemented using OPP.
 
     \ingroup connectivity-bluetooth
     \inmodule QtConnectivity
@@ -60,9 +60,18 @@ QTM_BEGIN_NAMESPACE
 
     This enum describes the type of operation that a transfer request is for.
 
-    \value GetOperation     The get operation is used to retrieve an object from a remote device.
+    \value GetOperation     The get operation is used to retrieve an object from a remote device. Not implemented.
     \value PutOperation     The put operation is used to send an object to a remote device.
 */
+
+/*!
+    \fn QBluetoothTransferReply *QBluetoothTransferManager::put(const QBluetoothTransferRequest &request, QIODevice *data)
+
+    Sends the contents of \a data to the remote device \a request and returns a new
+    QBluetoothTransferReply, that can be used to track the request's progress.
+*/
+
+
 
 /*!
     \fn void QBluetoothTransferManager::finished(QBluetoothTransferReply *reply)

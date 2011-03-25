@@ -48,6 +48,10 @@
 
 #include "qcontactmanager.h"
 
+#ifndef QT_NO_DEBUG_STREAM
+#include <QDebug>
+#endif
+
 /*!
   \class QContactFilter
   \brief The QContactFilter class is used to select contacts made available
@@ -220,6 +224,22 @@ QDataStream& operator>>(QDataStream& in, QContactFilter& filter)
     return in;
 }
 
+#endif
+
+#ifndef QT_NO_DEBUG_STREAM
+/*!
+  Outputs \a filter to the debug stream \a dbg
+ */
+QDebug operator<<(QDebug dbg, const QContactFilter& filter)
+{
+    dbg.nospace() << "QContactFilter(";
+    if (filter.d_ptr)
+        filter.d_ptr->debugStreamOut(dbg);
+    else
+        dbg.nospace() << "(null)";
+    dbg.nospace() << ")";
+    return dbg.maybeSpace();
+}
 #endif
 
 /*!

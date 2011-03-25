@@ -76,7 +76,7 @@ LineReader::LineReader(QIODevice* device, QTextCodec *codec)
     : mDevice(device),
     mCodec(codec),
     mIsCodecUtf8Compatible(false),
-    mChunkSize(1000),
+    mChunkSize(10000), // Read 10kB at a time
     mOdometer(0),
     mSearchFrom(0)
 {
@@ -330,6 +330,9 @@ bool LineReader::tryReadLine(LByteArray *cursor, bool atEnd)
         if (crlfPos == -1) {
             // No CRLF found.
             cursor->mEnd = cursor->mData.size();
+            // Next time, continue searching from here.
+            // The largest CRLF will have a size of 8 bytes, so we should backtrack 8 bytes
+            mSearchFrom = qMax(mSearchFrom, cursor->mEnd-8);
             return false;
         }
     }

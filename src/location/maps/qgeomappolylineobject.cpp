@@ -64,7 +64,11 @@ QTM_BEGIN_NAMESPACE
     Constructs a new polyline object.
 */
 QGeoMapPolylineObject::QGeoMapPolylineObject()
-    : d_ptr(new QGeoMapPolylineObjectPrivate()) {}
+    : d_ptr(new QGeoMapPolylineObjectPrivate())
+{
+    setUnits(QGeoMapObject::RelativeArcSecondUnit);
+    setTransformType(QGeoMapObject::ExactTransform);
+}
 
 /*!
     Destroys this polyline object.
@@ -100,6 +104,7 @@ void QGeoMapPolylineObject::setPath(const QList<QGeoCoordinate> &path)
 {
     if (d_ptr->path != path) {
         d_ptr->path = path;
+        setOrigin(path.at(0));
         emit pathChanged(d_ptr->path);
     }
 }
@@ -126,8 +131,8 @@ void QGeoMapPolylineObject::setPen(const QPen &pen)
     if (d_ptr->pen == newPen)
         return;
 
-    d_ptr->pen = newPen;
-    emit penChanged(d_ptr->pen);
+    d_ptr->pen = pen;
+    emit penChanged(pen);
 }
 
 QPen QGeoMapPolylineObject::pen() const
@@ -158,7 +163,7 @@ QPen QGeoMapPolylineObject::pen() const
 
 QGeoMapPolylineObjectPrivate::QGeoMapPolylineObjectPrivate()
 {
-    pen.setCosmetic(false);
+    pen.setCosmetic(true);
 }
 
 QGeoMapPolylineObjectPrivate::~QGeoMapPolylineObjectPrivate() {}

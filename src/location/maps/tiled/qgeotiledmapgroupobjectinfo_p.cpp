@@ -48,6 +48,8 @@
 #include "qgeomapobject.h"
 #include "qgeomapgroupobject.h"
 
+#include "qgeomapobjectengine_p.h"
+
 #include <QGraphicsItem>
 #include <QGraphicsScene>
 #include <QGraphicsPathItem>
@@ -64,6 +66,10 @@ QGeoTiledMapGroupObjectInfo::QGeoTiledMapGroupObjectInfo(QGeoTiledMapData *mapDa
             SIGNAL(childAdded(QGeoMapObject*)),
             this,
             SLOT(childAdded(QGeoMapObject*)));
+    connect(group,
+            SIGNAL(childUpdated(QGeoMapObject*)),
+            this,
+            SLOT(childUpdated(QGeoMapObject*)));
     connect(group,
             SIGNAL(childRemoved(QGeoMapObject*)),
             this,
@@ -91,18 +97,37 @@ QGeoTiledMapGroupObjectInfo::~QGeoTiledMapGroupObjectInfo()
 
 void QGeoTiledMapGroupObjectInfo::childAdded(QGeoMapObject *childObject)
 {
+    if (!childObject)
+        return;
+
     QGeoTiledMapObjectInfo* info = static_cast<QGeoTiledMapObjectInfo*>(childObject->info());
     if (info && info->graphicsItem) {
+        // the child's z value will get updated in QGeoTiledMapGroupObjectInfo::childUpdated
+        // we do this in order to keep the same order of operations that we had previously
+        childObject->disconnect(childObject, SIGNAL(zValueChanged(int)), info, SLOT(zValueChanged(int)));
         info->graphicsItem->setParentItem(graphicsItem);
-        updateItem();
+        tiledMapDataPrivate->update(mapObject());
+        //tiledMapDataPrivate->update(childObject);
+    }
+}
+
+void QGeoTiledMapGroupObjectInfo::childUpdated(QGeoMapObject *childObject)
+{
+    if (!childObject)
+        return;
+
+    QGeoTiledMapObjectInfo* info = static_cast<QGeoTiledMapObjectInfo*>(childObject->info());
+    if (info && info->graphicsItem) {
+        //info->graphicsItem->setParentItem(graphicsItem);
+        tiledMapDataPrivate->update(mapObject());
+        info->zValueChanged(childObject->zValue());
     }
 }
 
 void QGeoTiledMapGroupObjectInfo::childRemoved(QGeoMapObject *childObject)
 {
-    QGeoTiledMapObjectInfo* info = static_cast<QGeoTiledMapObjectInfo*>(childObject->info());
-    if (info && info->graphicsItem) {
-        tiledMapDataPrivate->removeObjectInfo(info);
+    if (childObject && tiledMapDataPrivate->oe) {
+        tiledMapDataPrivate->oe->removeObject(childObject);
         updateItem();
     }
 }

@@ -23,7 +23,7 @@
 */
 
 #include <e32panic.h>
-#include <testexecutelog.h>
+#include <test/testexecutelog.h>
 #include <cntfldst.h>
 #include "unifiedsingular.h"
 #include "clientserver.h"

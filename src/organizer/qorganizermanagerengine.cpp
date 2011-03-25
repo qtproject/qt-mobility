@@ -79,6 +79,19 @@ QTM_BEGIN_NAMESPACE
   More information on writing an organizer engine plugin is available in
   the \l{Qt Organizer Manager Engines} documentation.
 
+  Engines that support the QOrganizerManagerEngine interface but not the
+  QOrganizerManagerEngineV2 interface will be wrapped by the QOrganizerManager
+  by a class that emulates the extra functionality of the
+  QOrganizerManagerEngineV2 interface.
+
+  The additional features of a V2 engine compared to the original QOrganizerManagerEngine are:
+  \list
+  \o The items function which takes a \i{maxCount} parameter
+  \o The result of the items functions must be sorted by date according to the sort order defined by
+     \l itemLessThan
+  \o The corresponding changes to QOrganizerItemFetchRequest
+  \endlist
+
   \sa QOrganizerManager, QOrganizerManagerEngineFactory
  */
 
@@ -1510,200 +1523,7 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerManagerE
         return retnSchema;
     }
 
-    if (version == 2) {
-        // we added EventAttendee, EventRsvp and ItemAttachment in Mobility 1.2
-
-        // EVENT
-        retn.clear();
-        retn = retnSchema.value(QOrganizerItemType::TypeEvent);
-
-        // attachment
-        d.setName(QOrganizerItemAttachment::DefinitionName);
-        fields.clear();
-        f.setDataType(QVariant::String);
-        f.setAllowableValues(QVariantList());
-        fields.insert(QOrganizerItemAttachment::FieldDescription, f);
-        fields.insert(QOrganizerItemAttachment::FieldAttachmentMimeType, f);
-        f.setDataType(QVariant::ByteArray);
-        fields.insert(QOrganizerItemAttachment::FieldAttachmentData, f);
-        d.setFields(fields);
-        d.setUnique(false); // can have multiple attachments per item.
-        retn.insert(d.name(), d);
-
-        // attendee
-        d.setName(QOrganizerEventAttendee::DefinitionName);
-        fields.clear();
-        f.setDataType(QVariant::String);
-        f.setAllowableValues(QVariantList());
-        fields.insert(QOrganizerEventAttendee::FieldName, f);
-        fields.insert(QOrganizerEventAttendee::FieldEmailAddress, f);
-        fields.insert(QOrganizerEventAttendee::FieldContactId, f);
-        f.setDataType(QVariant::Int);
-        fields.insert(QOrganizerEventAttendee::FieldParticipationRole, f);
-        fields.insert(QOrganizerEventAttendee::FieldParticipationStatus, f);
-        d.setFields(fields);
-        d.setUnique(false); // can have multiple attendees at a single event
-        retn.insert(d.name(), d);
-
-        // rsvp
-        d.setName(QOrganizerEventRsvp::DefinitionName);
-        fields.clear();
-        f.setDataType(QVariant::String);
-        f.setAllowableValues(QVariantList());
-        fields.insert(QOrganizerEventRsvp::FieldOrganizerName, f);
-        fields.insert(QOrganizerEventRsvp::FieldOrganizerEmail, f);
-        f.setDataType(QVariant::Int);
-        fields.insert(QOrganizerEventRsvp::FieldParticipationRole, f);
-        fields.insert(QOrganizerEventRsvp::FieldParticipationStatus, f);
-        fields.insert(QOrganizerEventRsvp::FieldResponseRequirement, f);
-        f.setDataType(QVariant::Date);
-        fields.insert(QOrganizerEventRsvp::FieldResponseDeadline, f);
-        fields.insert(QOrganizerEventRsvp::FieldResponseDate, f);
-        d.setFields(fields);
-        d.setUnique(true); // the RSVP detail is for the user of the calendar; unique per event.
-        retn.insert(d.name(), d);
-
-        retnSchema.insert(QOrganizerItemType::TypeEvent, retn); // replace insert
-
-
-        // EVENT OCCURRENCE
-        retn.clear();
-        retn = retnSchema.value(QOrganizerItemType::TypeEventOccurrence);
-
-        // attachment
-        d.setName(QOrganizerItemAttachment::DefinitionName);
-        fields.clear();
-        f.setDataType(QVariant::String);
-        f.setAllowableValues(QVariantList());
-        fields.insert(QOrganizerItemAttachment::FieldDescription, f);
-        fields.insert(QOrganizerItemAttachment::FieldAttachmentMimeType, f);
-        f.setDataType(QVariant::ByteArray);
-        fields.insert(QOrganizerItemAttachment::FieldAttachmentData, f);
-        d.setFields(fields);
-        d.setUnique(false); // can have multiple attachments per item.
-        retn.insert(d.name(), d);
-
-        // attendee
-        d.setName(QOrganizerEventAttendee::DefinitionName);
-        fields.clear();
-        f.setDataType(QVariant::String);
-        f.setAllowableValues(QVariantList());
-        fields.insert(QOrganizerEventAttendee::FieldName, f);
-        fields.insert(QOrganizerEventAttendee::FieldEmailAddress, f);
-        fields.insert(QOrganizerEventAttendee::FieldContactId, f);
-        f.setDataType(QVariant::Int);
-        fields.insert(QOrganizerEventAttendee::FieldParticipationRole, f);
-        fields.insert(QOrganizerEventAttendee::FieldParticipationStatus, f);
-        d.setFields(fields);
-        d.setUnique(false); // can have multiple attendees at a single event
-        retn.insert(d.name(), d);
-
-        // rsvp
-        d.setName(QOrganizerEventRsvp::DefinitionName);
-        fields.clear();
-        f.setDataType(QVariant::String);
-        f.setAllowableValues(QVariantList());
-        fields.insert(QOrganizerEventRsvp::FieldOrganizerName, f);
-        fields.insert(QOrganizerEventRsvp::FieldOrganizerEmail, f);
-        f.setDataType(QVariant::Int);
-        fields.insert(QOrganizerEventRsvp::FieldParticipationRole, f);
-        fields.insert(QOrganizerEventRsvp::FieldParticipationStatus, f);
-        fields.insert(QOrganizerEventRsvp::FieldResponseRequirement, f);
-        f.setDataType(QVariant::Date);
-        fields.insert(QOrganizerEventRsvp::FieldResponseDeadline, f);
-        fields.insert(QOrganizerEventRsvp::FieldResponseDate, f);
-        d.setFields(fields);
-        d.setUnique(true); // the RSVP detail is for the user of the calendar; unique per event.
-        retn.insert(d.name(), d);
-
-        retnSchema.insert(QOrganizerItemType::TypeEventOccurrence, retn); // replace insert
-
-
-        // TODO
-        retn.clear();
-        retn = retnSchema.value(QOrganizerItemType::TypeTodo);
-
-        // attachment
-        d.setName(QOrganizerItemAttachment::DefinitionName);
-        fields.clear();
-        f.setDataType(QVariant::String);
-        f.setAllowableValues(QVariantList());
-        fields.insert(QOrganizerItemAttachment::FieldDescription, f);
-        fields.insert(QOrganizerItemAttachment::FieldAttachmentMimeType, f);
-        f.setDataType(QVariant::ByteArray);
-        fields.insert(QOrganizerItemAttachment::FieldAttachmentData, f);
-        d.setFields(fields);
-        d.setUnique(false); // can have multiple attachments per item.
-        retn.insert(d.name(), d);
-
-        retnSchema.insert(QOrganizerItemType::TypeTodo, retn); // replace insert
-
-
-        // TODO OCCURRENCE
-        retn.clear();
-        retn = retnSchema.value(QOrganizerItemType::TypeTodoOccurrence);
-
-        // attachment
-        d.setName(QOrganizerItemAttachment::DefinitionName);
-        fields.clear();
-        f.setDataType(QVariant::String);
-        f.setAllowableValues(QVariantList());
-        fields.insert(QOrganizerItemAttachment::FieldDescription, f);
-        fields.insert(QOrganizerItemAttachment::FieldAttachmentMimeType, f);
-        f.setDataType(QVariant::ByteArray);
-        fields.insert(QOrganizerItemAttachment::FieldAttachmentData, f);
-        d.setFields(fields);
-        d.setUnique(false); // can have multiple attachments per item.
-        retn.insert(d.name(), d);
-
-        retnSchema.insert(QOrganizerItemType::TypeTodoOccurrence, retn); // replace insert
-
-
-        // JOURNAL
-        retn.clear();
-        retn = retnSchema.value(QOrganizerItemType::TypeJournal);
-
-        // attachment
-        d.setName(QOrganizerItemAttachment::DefinitionName);
-        fields.clear();
-        f.setDataType(QVariant::String);
-        f.setAllowableValues(QVariantList());
-        fields.insert(QOrganizerItemAttachment::FieldDescription, f);
-        fields.insert(QOrganizerItemAttachment::FieldAttachmentMimeType, f);
-        f.setDataType(QVariant::ByteArray);
-        fields.insert(QOrganizerItemAttachment::FieldAttachmentData, f);
-        d.setFields(fields);
-        d.setUnique(false); // can have multiple attachments per item.
-        retn.insert(d.name(), d);
-
-        retnSchema.insert(QOrganizerItemType::TypeJournal, retn); // replace insert
-
-
-        // NOTE
-        retn.clear();
-        retn = retnSchema.value(QOrganizerItemType::TypeNote);
-
-        // attachment
-        d.setName(QOrganizerItemAttachment::DefinitionName);
-        fields.clear();
-        f.setDataType(QVariant::String);
-        f.setAllowableValues(QVariantList());
-        fields.insert(QOrganizerItemAttachment::FieldDescription, f);
-        fields.insert(QOrganizerItemAttachment::FieldAttachmentMimeType, f);
-        f.setDataType(QVariant::ByteArray);
-        fields.insert(QOrganizerItemAttachment::FieldAttachmentData, f);
-        d.setFields(fields);
-        d.setUnique(false); // can have multiple attachments per item.
-        retn.insert(d.name(), d);
-
-        retnSchema.insert(QOrganizerItemType::TypeNote, retn); // replace insert
-
-
-        // return the modified schema.
-        return retnSchema;
-    }
-
-    // the most recent version of the schema is version 2.
+    // the most recent version of the schema is version 1.
     QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > empty;
     return empty;
 }
@@ -2551,7 +2371,6 @@ bool QOrganizerManagerEngine::testFilter(const QOrganizerItemFilter &filter, con
                     return true;
                 return false;
             }
-            break;
     }
     return false;
 }
@@ -3167,41 +2986,6 @@ void QOrganizerManagerEngine::updateCollectionSaveRequest(QOrganizerCollectionSa
 }
 
 /*!
-  \class QOrganizerManagerEngine
-  \brief The QOrganizerManagerEngine class provides the interface for all
-  implementations of the organizer item manager backend functionality.
-
-  \inmodule QtOrganizer
-  \ingroup organizer-backends
-
-  Instances of this class are usually provided by a
-  \l QOrganizerManagerEngineFactory, which is loaded from a plugin.
-
-  The default implementation of this interface provides a basic
-  level of functionality for some functions so that specific engines
-  can simply implement the functionality that is supported by
-  the specific organizer items engine that is being adapted.
-
-  More information on writing an organizer engine plugin is available in
-  the \l{Qt Organizer Manager Engines} documentation.
-
-  Engines that support the QOrganizerManagerEngine interface but not the
-  QOrganizerManagerEngineV2 interface will be wrapped by the QOrganizerManager
-  by a class that emulates the extra functionality of the
-  QOrganizerManagerEngineV2 interface.
-
-  The additional features of a V2 engine compared to the original QOrganizerManagerEngine are:
-  \list
-  \o The items function which takes a \code{maxCount} parameter
-  \o The result of the items functions must be sorted by date according to the sort order defined by
-     \l itemLessThan
-  \o The corresponding changes to QOrganizerItemFetchRequest
-  \endlist
-
-  \sa QOrganizerManager, QOrganizerManagerEngineFactory
- */
-
-/*!
   Returns the list of organizer items which match the given \a filter stored in the manager sorted
   according to the given list of \a sortOrders, for any item or item occurrence which occurs in the
   range specified by the given \a startDate and \a endDate.  A default-constructed (invalid) \a
@@ -3480,21 +3264,6 @@ void QOrganizerManagerEngineV2::updateItemFetchByIdRequest(QOrganizerItemFetchBy
     }
 }
 
-/*!
-  \fn virtual QSharedPointer<QOrganizerItemObserver> observeItem(QOrganizerItemId itemId) = 0;
-
-  Returns an observer object for the item with id \a itemId.
-
-  \sa QOrganizerItemObserver
- */
-
-/*!
-  Factory function to construct a QOrganizerItemObserver with given \a parent.
- */
-QOrganizerItemObserver* QOrganizerManagerEngineV2::createOrganizerItemObserver(QObject* parent)
-{
-    return new QOrganizerItemObserver(parent);
-}
 
 #include "moc_qorganizermanagerengine.cpp"
 

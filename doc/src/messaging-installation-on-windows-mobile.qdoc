@@ -31,15 +31,15 @@
 \title Messaging Installation On Windows Mobile
 \tableofcontents
 
-\section1 Get Qt Mobility and Qt packages
+\section1 Get QtMobility and Qt packages
 
-Get the Qt Mobility Package from \l {http://get.qt.nokia.com}
+Get the QtMobility Package from \l {http://get.qt.nokia.com}
 
 Get Qt 4.5.2 (or newer) Embedded for Windows Mobile package \l {http://get.qt.nokia.com/qt/source/qt-embedded-wince-opensource-src-4.5.3.zip} {download here}.
 
 \section1 Install pre-requisites
 
-A perl interpreter such as \l {http://www.activestate.com/activeperl} {ActivePerl} must be installed and available in the environment path. 
+A perl interpreter such as \l {http://www.activestate.com/activeperl} {ActivePerl} must be installed and available in the environment path.
 
 Visual Studio 2009 or newer must be installed.
 
@@ -82,7 +82,7 @@ Windows Mobile 6 Standard SDK (including ActiveSync) must be installed \l {http:
         nmake
  \endcode
 
-\section1 Build Mobility Messaging
+\section1 Build QtMobility Messaging
 
  Open a new Visual Studio cmd shell
 
@@ -135,7 +135,7 @@ Windows Mobile 6 Standard SDK (including ActiveSync) must be installed \l {http:
 \section1 Deploy
 
  Before running a debug instance, ensure that the QtMessaging.dll is a deployment dependency for the examples and tests.
- 
+
  Right click properties on project e.g. serviceactions. Under deployment->addition files add:
  \code
         "QtMessaging.dll|$(TargetDir)|%CSIDL_PROGRAM_FILES%\serviceactions|0"

@@ -52,6 +52,9 @@
 #include "accelerometersym.h"
 #include "rotationsensorsym.h"
 #include "tapsensorsym.h"
+#ifdef ENABLE_LIGHT_SENSOR
+#include "lightsensorsym.h"
+#endif
 
 // QT Utility headers
 #include <QDebug>
@@ -72,6 +75,9 @@ public:
         QSensorManager::registerBackend(QAccelerometer::type, CAccelerometerSensorSym::id, this);
         QSensorManager::registerBackend(QRotationSensor::type, CRotationSensorSym::id, this);
         QSensorManager::registerBackend(QTapSensor::type, CTapSensorSym::id, this);
+#ifdef ENABLE_LIGHT_SENSOR
+        QSensorManager::registerBackend(QLightSensor::type, CLightSensorSym::id, this);
+#endif
         }
 
     QSensorBackend *createBackend(QSensor *sensor)
@@ -80,50 +86,121 @@ public:
             {
             CProximitySensorSym *self = NULL;
             TRAPD(err,self = CProximitySensorSym::NewL(sensor));
-            return self;
+            if(!err)
+                {
+                return self;
+                }
+            else
+                {
+                return 0;
+                }
             }
         if (sensor->identifier() == CAmbientLightSensorSym::id)
             {
             CAmbientLightSensorSym *self = NULL;
             TRAPD(err,self = CAmbientLightSensorSym::NewL(sensor));
-            return self;
+            if(!err)
+                {
+                return self;
+                }
+            else
+                {
+                return 0;
+                }
             }
         if (sensor->identifier() == CMagnetometerSensorSym::id)
             {
             CMagnetometerSensorSym *self = NULL;
             TRAPD(err,self = CMagnetometerSensorSym::NewL(sensor));
-            return self;
+            if(!err)
+                {
+                return self;
+                }
+            else
+                {
+                return 0;
+                }
             }
         if (sensor->identifier() == CCompassSym::id)
             {
             CCompassSym *self = NULL;
             TRAPD(err,self = CCompassSym::NewL(sensor));
-            return self;
+            if(!err)
+                {
+                return self;
+                }
+            else
+                {
+                return 0;
+                }
             }
         if (sensor->identifier() == COrientationSensorSym::id)
             {
             COrientationSensorSym *self = NULL;
             TRAPD(err,self = COrientationSensorSym::NewL(sensor));
-            return self;
+            if(!err)
+                {
+                return self;
+                }
+            else
+                {
+                return 0;
+                }
             }
         if (sensor->identifier() == CAccelerometerSensorSym::id)
             {
             CAccelerometerSensorSym *self = NULL;
             TRAPD(err,self = CAccelerometerSensorSym::NewL(sensor));
-            return self;
+            if(!err)
+                {
+                return self;
+                }
+            else
+                {
+                return 0;
+                }
             }
         if (sensor->identifier() == CRotationSensorSym::id)
             {
             CRotationSensorSym *self = NULL;
             TRAPD(err,self = CRotationSensorSym::NewL(sensor));
-            return self;
+            if(!err)
+                {
+                return self;
+                }
+            else
+                {
+                return 0;
+                }
             }
         if (sensor->identifier() == CTapSensorSym::id)
             {
             CTapSensorSym *self = NULL;
             TRAPD(err,self = CTapSensorSym::NewL(sensor));
-            return self;
+            if(!err)
+                {
+                return self;
+                }
+            else
+                {
+                return 0;
+                }
             }
+#ifdef ENABLE_LIGHT_SENSOR
+        if (sensor->identifier() == CLightSensorSym::id)
+            {
+            CLightSensorSym *self = NULL;
+            TRAPD(err,self = CLightSensorSym::NewL(sensor));
+            if(!err)
+                {
+                return self;
+                }
+            else
+                {
+                return 0;
+                }
+            }
+#endif
         return 0;
         }
     };

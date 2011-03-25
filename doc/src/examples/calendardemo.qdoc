@@ -34,7 +34,7 @@
     \section1 Overview
 
     This example shows how to write a simple calendar application using
-    the \l{Organizer}{Qt Mobility Organizer API}.
+    the \l{Organizer}{QtMobility Organizer API}.
 
     \section2 Use Case
 

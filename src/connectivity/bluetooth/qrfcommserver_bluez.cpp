@@ -50,6 +50,8 @@
 #include <bluetooth/bluetooth.h>
 #include <bluetooth/rfcomm.h>
 
+#include <errno.h>
+
 QTM_BEGIN_NAMESPACE
 
 static inline void convertAddress(quint64 from, quint8 (&to)[6])
@@ -86,6 +88,9 @@ void QRfcommServerPrivate::_q_newConnection()
 void QRfcommServer::close()
 {
     Q_D(QRfcommServer);
+
+    delete d->socketNotifier;
+    d->socketNotifier = 0;
 
     d->socket->close();
 }
@@ -184,5 +189,64 @@ quint16 QRfcommServer::serverPort() const
 
     return d->socket->localPort();
 }
+
+void QRfcommServer::setSecurityFlags(QBluetooth::SecurityFlags security)
+{
+    Q_D(QRfcommServer);
+
+    int lm = 0;
+    if(security == QBluetooth::NoSecurity){
+        lm = 0;
+    }
+    if(security.testFlag(QBluetooth::Authorization)){
+        lm |= RFCOMM_LM_AUTH;
+    }
+    if(security.testFlag(QBluetooth::Authentication)) {
+        lm |= RFCOMM_LM_TRUSTED;
+    }
+    if(security.testFlag(QBluetooth::Encryption)){
+        lm |= RFCOMM_LM_ENCRYPT;
+    }
+    if(security.testFlag(QBluetooth::Secure)){
+        lm |= RFCOMM_LM_SECURE;
+    }
+
+    qDebug() << hex << "Setting lm to" << lm << security;
+
+    if(setsockopt(d->socket->socketDescriptor(), SOL_RFCOMM, RFCOMM_LM, &lm, sizeof(lm)) < 0){
+        qWarning() << "Failed to set socket option, closing socket for safety" << errno;
+        qWarning() << "Error: " << strerror(errno);
+        d->socket->close();
+    }
+}
+
+QBluetooth::SecurityFlags QRfcommServer::securityFlags() const
+{
+    Q_D(const QRfcommServer);
+
+    int lm = 0;
+    int len = sizeof(lm);
+    int security = QBluetooth::NoSecurity;
+
+    if(getsockopt(d->socket->socketDescriptor(), SOL_RFCOMM, RFCOMM_LM, &lm, (socklen_t *)&len) < 0) {
+        qWarning() << "Failed to get security flags" << strerror(errno);
+        return QBluetooth::NoSecurity;
+    }
+
+    if(lm & RFCOMM_LM_SECURE)
+        security |= QBluetooth::Secure;
+
+    if(lm & RFCOMM_LM_ENCRYPT)
+        security |= QBluetooth::Encryption;
+
+    if(lm & RFCOMM_LM_TRUSTED)
+        security |= QBluetooth::Authentication;
+
+    if(lm & RFCOMM_LM_AUTH)
+        security |= QBluetooth::Authorization;
+
+    return static_cast<QBluetooth::Security>(security);
+}
+
 
 QTM_END_NAMESPACE

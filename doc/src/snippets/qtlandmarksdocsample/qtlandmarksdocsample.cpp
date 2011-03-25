@@ -318,7 +318,7 @@ void addLandmarkAndCategory(QLandmarkManager *lmManager)
     //! [Add landmark synchronously]
 
     {
-    QLandmarkManager *landmarkManager;
+    QLandmarkManager *landmarkManager = new QLandmarkManager;
     //! [Add landmark synchronously simple]
     QLandmark monks;
     monks.setName("Monk's cafe");
@@ -345,7 +345,7 @@ void categoryFetch(QLandmarkManager *lmManager)
     //! [Retrieve categories synchronously]
 
     {
-    QLandmarkManager *landmarkManager;
+    QLandmarkManager *landmarkManager = new QLandmarkManager;
     //! [Retrieve categories synchronously simple]
     QList<QLandmarkCategory> categories = landmarkManager->categories();
     //! [Retrieve categories synchronously simple]
@@ -386,7 +386,7 @@ void landmarkFetch(QLandmarkManager *lmManager)
 
     {
 
-        QLandmarkManager *landmarkManager;
+        QLandmarkManager *landmarkManager = new QLandmarkManager;
         QLandmarkCategory category;
         //! [Retrieve landmarks by category synchronously]
         QLandmarkCategoryFilter filter;
@@ -461,7 +461,7 @@ void deleteLandmarkAndCategory(QLandmarkManager *lmManager)
     //! [Remove landmark synchronously]
 
     {
-    QLandmarkManager *landmarkManager;
+    QLandmarkManager *landmarkManager = new QLandmarkManager;
     //! [Remove landmark synchronously simple]
     landmarkManager->removeLandmark(landmark);
     //! [Remove landmark synchronously simple]
@@ -469,7 +469,7 @@ void deleteLandmarkAndCategory(QLandmarkManager *lmManager)
 }
 
 void importExportLandmark() {
-    QLandmarkManager *landmarkManager;
+    QLandmarkManager *landmarkManager = new QLandmarkManager;
     //! [ImportExport landmark simple]
     landmarkManager->importLandmarks("places.gpx");
 

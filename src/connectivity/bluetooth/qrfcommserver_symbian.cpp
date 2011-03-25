@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -43,8 +43,8 @@
 #include "qrfcommserver_p.h"
 #include "qbluetoothsocket.h"
 #include "qbluetoothsocket_p.h"
-#include "qbluetoothsocket_symbian_p.h"
-#include "utils_symbian_p.h"
+#include "qbluetoothlocaldevice.h"
+#include "symbian/utils_symbian_p.h"
 
 #include <QTimer>
 #include <QCoreApplication>
@@ -54,17 +54,15 @@
 QTM_BEGIN_NAMESPACE
 
 QRfcommServerPrivate::QRfcommServerPrivate()
-: maxPendingConnections(1), pendingSocket(0)
+: pendingSocket(0), maxPendingConnections(1), securityFlags(QBluetooth::NoSecurity)
 {
     socket = new QBluetoothSocket(QBluetoothSocket::RfcommSocket);
-    ds = qobject_cast<QBluetoothSocketSymbianPrivate *>(socket->d);
-    ds->socket->SetNotifier(*this);
+    ds = socket->d_ptr;
+    ds->iSocket->SetNotifier(*this);
 }
 
 QRfcommServerPrivate::~QRfcommServerPrivate()
 {
-    delete pendingSocket;
-
     delete socket;
 }
 
@@ -83,26 +81,44 @@ bool QRfcommServer::listen(const QBluetoothAddress &address, quint16 port)
     Q_D(QRfcommServer);
 
     TRfcommSockAddr addr;
-// TODO: isValid() is missing...
-//    if (address.isValid())
-//        addr.SetBTAddr(TBTDevAddr(address.toUInt64()));
+    if (!address.isNull())
+        addr.SetBTAddr(TBTDevAddr(address.toUInt64()));
+    else
+        addr.SetBTAddr(TBTDevAddr(Q_UINT64_C(0)));
+
     if (port == 0)
         addr.SetPort(KRfcommPassiveAutoBind);
     else
         addr.SetPort(port);
 
     TBTServiceSecurity security;
+    switch (d->securityFlags) {
+        case QBluetooth::Authentication:
+            security.SetAuthentication(ETrue);
+            break;
+        case QBluetooth::Authorization:
+            security.SetAuthorisation(ETrue);
+            break;
+        case QBluetooth::Encryption:
+            security.SetEncryption(ETrue);
+            break;
+        case QBluetooth::NoSecurity:
+        default:
+            break;
+    }
     addr.SetSecurity(security);
-    d->ds->socket->Bind(addr);
+    d->ds->iSocket->Bind(addr);
     d->socket->setSocketState(QBluetoothSocket::BoundState);
 
-    d->ds->socket->Listen(d->maxPendingConnections);
+    d->ds->iSocket->Listen(d->maxPendingConnections);
 
-    d->pendingSocket = new QBluetoothSocket;
-    
-    QBluetoothSocketSymbianPrivate *pd = qobject_cast<QBluetoothSocketSymbianPrivate *>(d->pendingSocket->d);
+    d->pendingSocket = new QBluetoothSocket(QBluetoothSocket::RfcommSocket, this);
+
+    QBluetoothSocketPrivate *pd = d->pendingSocket->d_ptr;
+
     pd->ensureBlankNativeSocket();
-    if (d->ds->socket->Accept(*pd->socket) == KErrNone)
+
+    if (d->ds->iSocket->Accept(*pd->iBlankSocket) == KErrNone)
         d->socket->setSocketState(QBluetoothSocket::ListeningState);
     else
         d->socket->close();
@@ -125,10 +141,7 @@ QBluetoothAddress QRfcommServer::serverAddress() const
     if (d->socket->state() == QBluetoothSocket::UnconnectedState)
         return QBluetoothAddress();
 
-    TBTSockAddr address;
-    d->ds->socket->LocalName(address);
-
-    return qTBTDevAddrToQBluetoothAddress(address.BTAddr());
+    return d->ds->localAddress();
 }
 
 quint16 QRfcommServer::serverPort() const
@@ -138,7 +151,7 @@ quint16 QRfcommServer::serverPort() const
     if (d->socket->state() == QBluetoothSocket::UnconnectedState)
         return 0;
 
-    return d->ds->socket->LocalPort();
+    return d->ds->iSocket->LocalPort();
 }
 
 bool QRfcommServer::hasPendingConnections() const
@@ -156,9 +169,9 @@ QBluetoothSocket *QRfcommServer::nextPendingConnection()
         return 0;
 
     QBluetoothSocket *next = d->activeSockets.takeFirst();
-    QBluetoothSocketSymbianPrivate *n = qobject_cast<QBluetoothSocketSymbianPrivate *>(next->d);
+    QBluetoothSocketPrivate *n = next->d_ptr;
 
-    n->startReceive();
+    n->startServerSideReceive();
 
     return next;
 }
@@ -171,10 +184,9 @@ void QRfcommServerPrivate::HandleAcceptCompleteL(TInt aErr)
         pendingSocket->setSocketState(QBluetoothSocket::ConnectedState);
         activeSockets.append(pendingSocket);
 
-        pendingSocket = new QBluetoothSocket;
-        QBluetoothSocketSymbianPrivate *pd = qobject_cast<QBluetoothSocketSymbianPrivate *>(pendingSocket->d);
-        pd->socket->Accept(*pd->socket);
+        QBluetoothSocketPrivate *pd = pendingSocket->d_ptr;
 
+        pd->iSocket->Accept(*pd->iBlankSocket);
         emit q->newConnection();
     } else if (aErr == KErrCancel) {
         // server is closing
@@ -219,5 +231,20 @@ void QRfcommServerPrivate::HandleShutdownCompleteL(TInt aErr)
     else
         qDebug() << __PRETTY_FUNCTION__ << aErr;
 }
+
+void QRfcommServer::setSecurityFlags(QBluetooth::SecurityFlags security)
+{
+    Q_D(QRfcommServer);
+
+    d->securityFlags = security;
+}
+
+QBluetooth::SecurityFlags QRfcommServer::securityFlags() const
+{
+    Q_D(const QRfcommServer);
+
+    return d->securityFlags;
+}
+
 
 QTM_END_NAMESPACE

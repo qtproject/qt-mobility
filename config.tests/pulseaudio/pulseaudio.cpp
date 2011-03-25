@@ -45,9 +45,6 @@
 #if !defined(PA_API_VERSION) || PA_API_VERSION-0 != 12
 # error "Incompatible PulseAudio API version"
 #endif
-#if !PA_CHECK_VERSION(0,9,0)
-# error "PulseAudio version too old"
-#endif
 
 int main(int, char **)
 {

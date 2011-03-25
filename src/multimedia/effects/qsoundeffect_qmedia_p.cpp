@@ -72,6 +72,8 @@ QSoundEffectPrivate::QSoundEffectPrivate(QObject* parent):
     connect(m_player, SIGNAL(stateChanged(QMediaPlayer::State)), SLOT(stateChanged(QMediaPlayer::State)));
     connect(m_player, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)), SLOT(mediaStatusChanged(QMediaPlayer::MediaStatus)));
     connect(m_player, SIGNAL(error(QMediaPlayer::Error)), SLOT(error(QMediaPlayer::Error)));
+    connect(m_player, SIGNAL(mutedChanged(bool)), SIGNAL(mutedChanged()));
+    connect(m_player, SIGNAL(volumeChanged(int)), SIGNAL(volumeChanged()));
 }
 
 QSoundEffectPrivate::~QSoundEffectPrivate()

@@ -74,7 +74,7 @@ public:
     ~QDeclarativeGeoMapPixmapObject();
 
     QDeclarativeCoordinate* coordinate();
-    void setCoordinate(const QDeclarativeCoordinate *coordinate);
+    void setCoordinate(QDeclarativeCoordinate *coordinate);
 
     QUrl source() const;
     void setSource(const QUrl &source);
@@ -102,7 +102,7 @@ private:
     void load();
 
     QGeoMapPixmapObject* pixmap_;
-    QDeclarativeCoordinate coordinate_;
+    QDeclarativeCoordinate *coordinate_;
     QUrl source_;
     QNetworkReply *reply_;
     Status status_;

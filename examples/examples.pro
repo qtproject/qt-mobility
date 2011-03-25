@@ -26,9 +26,7 @@ contains(mobility_modules,bearer) {
 
 #Location examples
 contains(mobility_modules,location) {
-    SUBDIRS += logfilepositionsource \
-               satellitedialog 
-
+    SUBDIRS += logfilepositionsource
     !wince* {
         SUBDIRS += landmarkbrowser
     }
@@ -36,15 +34,11 @@ contains(mobility_modules,location) {
     equals(QT_MAJOR_VERSION, 4):lessThan(QT_MINOR_VERSION, 7) {
         contains(mobility_modules,bearer) {
     	    SUBDIRS +=  flickrdemo \
-                        geoservicedemo \
-                        mapsnavigator \
-                        mapviewer
+                        mapsdemo
         }
     } else {
         SUBDIRS +=  flickrdemo \
-                    geoservicedemo \
-                    mapsnavigator \
-                    mapviewer
+                    mapsdemo
     }
 
     contains(QT_CONFIG, declarative) {
@@ -71,7 +65,8 @@ contains(mobility_modules,publishsubscribe) {
 
 #System Information
 contains(mobility_modules,systeminfo) {
- SUBDIRS += sysinfo
+ SUBDIRS += sysinfo \
+            qsystemalignedtimer
    contains(QT_CONFIG, declarative) {
         SUBDIRS += declarative-systeminfo
    }
@@ -109,6 +104,11 @@ contains(qmf_enabled,yes)|wince*|win32|symbian|maemo5|maemo6 {
 
             # MessagingEx lives in tests for some reason
             maemo5|maemo6:SUBDIRS += ../tests/messagingex
+
+            contains(QT_CONFIG, declarative) {
+                SUBDIRS += \
+                    declarative-messages
+            }
          }
     }
 }
@@ -145,13 +145,16 @@ contains(mobility_modules, feedback) {
 }
 
 # Connectivity
-contains(mobility_modules,connectivity) {
-    SUBDIRS += connectivity
-}
+contains(mobility_modules,connectivity):!win32 {
+    SUBDIRS += \
+        annotatedurl \
+        btchat \
+        btfiletransfer \
+        btscanner \
+        bttennis \
+        ndefeditor
 
-# Connectivity
-contains(mobility_modules,connectivity) {
-    !win32:SUBDIRS += btscanner btchat
+    contains(QT_CONFIG, declarative):SUBDIRS += declarative-connectivity
 }
 
 sources.path = $$QT_MOBILITY_EXAMPLES

@@ -43,6 +43,40 @@
 
 #include "tst_qmediaplayer.h"
 
+#include <qgraphicsvideoitem.h>
+#include <QtNetwork/qnetworkconfigmanager.h>
+
+// Encouraging successful diversity through copy and paste.
+#ifndef QTRY_COMPARE
+#define QTRY_COMPARE(__expr, __expected) \
+    do { \
+        const int __step = 50; \
+        const int __timeout = 5000; \
+        if ((__expr) != (__expected)) { \
+            QTest::qWait(0); \
+        } \
+        for (int __i = 0; __i < __timeout && ((__expr) != (__expected)); __i+=__step) { \
+            QTest::qWait(__step); \
+        } \
+        QCOMPARE(__expr, __expected); \
+    } while(0)
+#endif
+
+#ifndef QTRY_VERIFY
+#define QTRY_VERIFY(__expr) \
+    do { \
+        const int __step = 50; \
+        const int __timeout = 5000; \
+        if (!(__expr)) { \
+            QTest::qWait(0); \
+        } \
+        for (int __i = 0; __i < __timeout && !(__expr); __i+=__step) { \
+            QTest::qWait(__step); \
+        } \
+        QVERIFY(__expr); \
+    } while(0)
+#endif
+
 QT_USE_NAMESPACE
 
 void tst_QMediaPlayer::initTestCase_data()
@@ -785,4 +819,190 @@ void tst_QMediaPlayer::testPlaylist()
 
     QVERIFY(player->playlist() == 0);
     QCOMPARE(player->media(), QMediaContent());
+
+    // Test when the player service encounters an invalid media, the player moves onto
+    // the next item without stopping
+    {
+        QSignalSpy ss(player, SIGNAL(stateChanged(QMediaPlayer::State)));
+        QSignalSpy ms(player, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)));
+
+        player->setPlaylist(playlist);
+        player->play();
+        QCOMPARE(ss.count(), 1);
+
+        mockService->setState(QMediaPlayer::StoppedState, QMediaPlayer::InvalidMedia);
+        QCOMPARE(player->state(), QMediaPlayer::PlayingState);
+        QCOMPARE(player->mediaStatus(), QMediaPlayer::InvalidMedia);
+        QCOMPARE(ss.count(), 1);
+        QCOMPARE(ms.count(), 1);
+
+        // NOTE: status should begin transitioning through to BufferedMedia.
+        QCOMPARE(player->media(), content2);
+    }
+
 }
+
+void tst_QMediaPlayer::testNetworkAccess()
+{
+    QNetworkConfigurationManager manager;
+    QList<QNetworkConfiguration> configs = manager.allConfigurations();
+
+    if (configs.count() >= 1) {
+        QSignalSpy spy(player, SIGNAL(networkConfigurationChanged(QNetworkConfiguration)));
+        int index = qFloor((configs.count())/2);
+        player->setNetworkConfigurations(configs);
+        mockService->selectCurrentConfiguration(configs.at(index));
+
+        QVERIFY(spy.count() == 1);
+        QList<QVariant> args = spy.takeFirst();
+        QNetworkConfiguration config = args.at(0).value<QNetworkConfiguration>();
+        QCOMPARE(config.identifier() , configs.at(index).identifier());
+        QCOMPARE(player->currentNetworkConfiguration().identifier() , config.identifier());
+    }
+
+    // invalidate current network configuration
+    QSignalSpy spy(player, SIGNAL(networkConfigurationChanged(QNetworkConfiguration)));
+    mockService->selectCurrentConfiguration(QNetworkConfiguration());
+    QVERIFY(spy.count() == 1);
+    QList<QVariant> args = spy.takeFirst();
+    QNetworkConfiguration config = args.at(0).value<QNetworkConfiguration>();
+    QVERIFY(config.isValid() == false);
+    QVERIFY(player->currentNetworkConfiguration().isValid() == false);
+}
+
+void tst_QMediaPlayer::testSetVideoOutput()
+{
+    QVideoWidget widget;
+    QGraphicsVideoItem item;
+    MockVideoSurface surface;
+
+    MockPlayerService service;
+    MockProvider provider(&service);
+    provider.deleteServiceOnRelease = false;
+    QMediaPlayer player(0, 0, &provider);
+
+    player.setVideoOutput(&widget);
+    QVERIFY(widget.mediaObject() == &player);
+
+    player.setVideoOutput(&item);
+    QVERIFY(widget.mediaObject() == 0);
+    QVERIFY(item.mediaObject() == &player);
+
+    player.setVideoOutput(reinterpret_cast<QVideoWidget *>(0));
+    QVERIFY(item.mediaObject() == 0);
+
+    player.setVideoOutput(&widget);
+    QVERIFY(widget.mediaObject() == &player);
+
+    player.setVideoOutput(reinterpret_cast<QGraphicsVideoItem *>(0));
+    QVERIFY(widget.mediaObject() == 0);
+
+    player.setVideoOutput(&surface);
+    QVERIFY(service.rendererControl->surface() == &surface);
+
+    player.setVideoOutput(reinterpret_cast<QAbstractVideoSurface *>(0));
+    QVERIFY(service.rendererControl->surface() == 0);
+
+    player.setVideoOutput(&surface);
+    QVERIFY(service.rendererControl->surface() == &surface);
+
+    player.setVideoOutput(&widget);
+    QVERIFY(service.rendererControl->surface() == 0);
+    QVERIFY(widget.mediaObject() == &player);
+
+    player.setVideoOutput(&surface);
+    QVERIFY(service.rendererControl->surface() == &surface);
+    QVERIFY(widget.mediaObject() == 0);
+}
+
+
+void tst_QMediaPlayer::testSetVideoOutputNoService()
+{
+    QVideoWidget widget;
+    QGraphicsVideoItem item;
+    MockVideoSurface surface;
+
+    MockProvider provider(0);
+    QMediaPlayer player(0, 0, &provider);
+
+    player.setVideoOutput(&widget);
+    QVERIFY(widget.mediaObject() == 0);
+
+    player.setVideoOutput(&item);
+    QVERIFY(item.mediaObject() == 0);
+
+    player.setVideoOutput(&surface);
+    // Nothing we can verify here other than it doesn't assert.
+}
+
+void tst_QMediaPlayer::testSetVideoOutputNoControl()
+{
+    QVideoWidget widget;
+    QGraphicsVideoItem item;
+    MockVideoSurface surface;
+
+    MockPlayerService service;
+    service.rendererRef = 1;
+    service.windowRef = 1;
+
+    MockProvider provider(&service);
+    provider.deleteServiceOnRelease = false;
+    QMediaPlayer player(0, 0, &provider);
+
+    player.setVideoOutput(&widget);
+    QVERIFY(widget.mediaObject() == 0);
+
+    player.setVideoOutput(&item);
+    QVERIFY(item.mediaObject() == 0);
+
+    player.setVideoOutput(&surface);
+    QVERIFY(service.rendererControl->surface() == 0);
+}
+
+void tst_QMediaPlayer::testSetVideoOutputDestruction()
+{
+    MockVideoSurface surface;
+
+    MockPlayerService service;
+    MockProvider provider(&service);
+    provider.deleteServiceOnRelease = false;
+
+    {
+        QMediaPlayer player(0, 0, &provider);
+        player.setVideoOutput(&surface);
+        QVERIFY(service.rendererControl->surface() == &surface);
+        QCOMPARE(service.rendererRef, 1);
+    }
+    QVERIFY(service.rendererControl->surface() == 0);
+    QCOMPARE(service.rendererRef, 0);
+}
+
+void tst_QMediaPlayer::testPositionPropertyWatch()
+{
+    QMediaContent content0(QUrl(QLatin1String("test://audio/song1.mp3")));
+    QMediaContent content1(QUrl(QLatin1String("test://audio/song2.mp3")));
+
+    mockService->setIsValid(true);
+    mockService->setState(QMediaPlayer::StoppedState, QMediaPlayer::NoMedia);
+
+    QMediaPlaylist *playlist = new QMediaPlaylist;
+
+    playlist->addMedia(content0);
+    playlist->addMedia(content1);
+
+    player->setPlaylist(playlist);
+    player->setNotifyInterval(5);
+
+    player->play();
+    QSignalSpy positionSpy(player, SIGNAL(positionChanged(qint64)));
+    playlist->next();
+    QCOMPARE(player->state(), QMediaPlayer::PlayingState);
+    QTRY_VERIFY(positionSpy.count() > 0);
+
+    playlist->next();
+    QCOMPARE(player->state(), QMediaPlayer::StoppedState);
+
+    positionSpy.clear();
+    QTRY_COMPARE(positionSpy.count(), 0);
+}
+

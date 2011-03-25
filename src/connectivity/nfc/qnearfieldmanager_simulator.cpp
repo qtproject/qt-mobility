@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -41,11 +41,14 @@
 
 #include "qnearfieldmanager_simulator_p.h"
 #include "qnearfieldmanager.h"
+#include "qnearfieldtarget_p.h"
 #include "qnearfieldtagtype1.h"
 #include "qndefmessage.h"
 
 #include <mobilityconnection_p.h>
 #include <QtGui/private/qsimulatordata_p.h>
+
+#include <QtCore/QCoreApplication>
 
 QTM_BEGIN_NAMESPACE
 
@@ -57,13 +60,14 @@ class TagType1 : public QNearFieldTagType1
 {
 public:
     TagType1(const QByteArray &uid, QObject *parent);
-    virtual ~TagType1();
+    ~TagType1();
 
     QByteArray uid() const;
 
     AccessMethods accessMethods() const;
 
-    QByteArray sendCommand(const QByteArray &command);
+    RequestId sendCommand(const QByteArray &command);
+    bool waitForRequestCompleted(const RequestId &id, int msecs = 5000);
 
 private:
     QByteArray m_uid;
@@ -88,27 +92,45 @@ QNearFieldTarget::AccessMethods TagType1::accessMethods() const
     return NdefAccess | TagTypeSpecificAccess;
 }
 
-QByteArray TagType1::sendCommand(const QByteArray &command)
+QNearFieldTarget::RequestId TagType1::sendCommand(const QByteArray &command)
 {
-    if (command.isEmpty())
-        return QByteArray();
-
     quint16 crc = qNfcChecksum(command.constData(), command.length());
+
+    RequestId id(new RequestIdPrivate);
 
     MobilityConnection *connection = MobilityConnection::instance();
     QByteArray response =
         RemoteMetacall<QByteArray>::call(connection->sendSocket(), WaitSync, "nfcSendCommand",
                                          command + char(crc & 0xff) + char(crc >> 8));
 
-    if (response.isEmpty())
-        return QByteArray();
+    if (response.isEmpty()) {
+        QMetaObject::invokeMethod(this, "error", Qt::QueuedConnection,
+                                  Q_ARG(QNearFieldTarget::Error, NoResponseError),
+                                  Q_ARG(QNearFieldTarget::RequestId, id));
+        return id;
+    }
 
     // check crc
-    if (qNfcChecksum(response.constData(), response.length()) != 0)
-        return QByteArray();
+    if (qNfcChecksum(response.constData(), response.length()) != 0) {
+        QMetaObject::invokeMethod(this, "error", Qt::QueuedConnection,
+                                  Q_ARG(QNearFieldTarget::Error, ChecksumMismatchError),
+                                  Q_ARG(QNearFieldTarget::RequestId, id));
+        return id;
+    }
 
     response.chop(2);
-    return response;
+
+    QMetaObject::invokeMethod(this, "handleResponse", Qt::QueuedConnection,
+                              Q_ARG(QNearFieldTarget::RequestId, id), Q_ARG(QByteArray, response));
+
+    return id;
+}
+
+bool TagType1::waitForRequestCompleted(const RequestId &id, int msecs)
+{
+    QCoreApplication::sendPostedEvents(this, QEvent::MetaCall);
+
+    return QNearFieldTagType1::waitForRequestCompleted(id, msecs);
 }
 
 class NfcConnection : public QObject
@@ -120,7 +142,8 @@ public:
     virtual ~NfcConnection();
 
 signals:
-    void targetInRange(const QByteArray &uid);
+    void targetEnteringProximity(const QByteArray &uid);
+    void targetLeavingProximity(const QByteArray &uid);
 };
 
 NfcConnection::NfcConnection()
@@ -141,8 +164,10 @@ NfcConnection::~NfcConnection()
 QNearFieldManagerPrivateImpl::QNearFieldManagerPrivateImpl()
 :   nfcConnection(new Simulator::NfcConnection)
 {
-    QObject::connect(nfcConnection, SIGNAL(targetInRange(QByteArray)),
-                     this, SLOT(targetInRange(QByteArray)));
+    connect(nfcConnection, SIGNAL(targetEnteringProximity(QByteArray)),
+            this, SLOT(targetEnteringProximity(QByteArray)));
+    connect(nfcConnection, SIGNAL(targetLeavingProximity(QByteArray)),
+            this, SLOT(targetLeavingProximity(QByteArray)));
 }
 
 QNearFieldManagerPrivateImpl::~QNearFieldManagerPrivateImpl()
@@ -150,23 +175,31 @@ QNearFieldManagerPrivateImpl::~QNearFieldManagerPrivateImpl()
     delete nfcConnection;
 }
 
-void QNearFieldManagerPrivateImpl::startTargetDetection(const QList<QNearFieldTarget::Type> &targetTypes)
+bool QNearFieldManagerPrivateImpl::isAvailable() const
 {
-    detectTargetTypes = targetTypes;
+    return true;
 }
 
-void QNearFieldManagerPrivateImpl::stopTargetDetection()
+void QNearFieldManagerPrivateImpl::targetEnteringProximity(const QByteArray &uid)
 {
-    detectTargetTypes.clear();
-}
-
-void QNearFieldManagerPrivateImpl::targetInRange(const QByteArray &uid)
-{
-    if (detectTargetTypes.contains(QNearFieldTarget::NfcTagType1) ||
-        detectTargetTypes.contains(QNearFieldTarget::AnyTarget)) {
-        Simulator::TagType1 *target = new Simulator::TagType1(uid, this);
-        emit targetDetected(target);
+    QNearFieldTarget *target = m_targets.value(uid).data();
+    if (!target) {
+        target = new Simulator::TagType1(uid, this);
+        m_targets.insert(uid, target);
     }
+
+    targetActivated(target);
+}
+
+void QNearFieldManagerPrivateImpl::targetLeavingProximity(const QByteArray &uid)
+{
+    QNearFieldTarget *target = m_targets.value(uid).data();
+    if (!target) {
+        m_targets.remove(uid);
+        return;
+    }
+
+    targetDeactivated(target);
 }
 
 #include "qnearfieldmanager_simulator.moc"

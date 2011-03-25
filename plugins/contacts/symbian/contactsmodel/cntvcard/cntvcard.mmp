@@ -18,11 +18,11 @@
 
 
 CAPABILITY   All -TCB
-target cntvcard.dll
+TARGET cntvcard.dll
 targettype plugin
 UID		0x10009D8D 0x102035F8
 
-start resource 102035F8.RSS
+start resource 102035f8.rss
 target cntvcard.rsc
 end
 
@@ -39,7 +39,7 @@ APP_LAYER_SYSTEMINCLUDE_SYMBIAN
 source cntvcardstd.cpp cntvcardconverter.cpp
 source cntvcardimport.cpp cntvcardexport.cpp
 
-library         euser.lib  versit.lib  vcard.lib bafl.lib  cntmodel.lib conarc.lib estor.lib
+LIBRARY         euser.lib  versit.lib  vcard.lib bafl.lib  cntmodel.lib conarc.lib estor.lib
 
 LIBRARY			ecom.lib
 

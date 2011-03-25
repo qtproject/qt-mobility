@@ -61,6 +61,7 @@ void printServicePackage(const QServicePackage& package)
     qDebug() << "QServicePackage packageType  : " << package.d->packageType;
     qDebug() << "QServicePackage QUuid        : " << package.d->messageId;
     qDebug() << "QServicePackage responseType : " << package.d->responseType;
+    qDebug() << "QServicePackage value        : " << package.d->payload;
   }
   else {
     qDebug() << "Invalid ServicePackage" << " LEAVING"; 
@@ -94,7 +95,8 @@ public:
     void PackageReceived(QServicePackage package)
     {
 #ifdef QT_SFW_SYMBIAN_IPC_DEBUG
-        qDebug() << "PackageReceived. Enqueueing and emiting ReadyRead()";
+        qDebug() << "SymbianClientEndPoint::PackageReceived. Enqueueing and emiting ReadyRead()";
+        printServicePackage(package);
 #endif
         incoming.enqueue(package);
         emit readyRead();
@@ -143,7 +145,8 @@ public:
     void packageReceived(QServicePackage package)
     {
 #ifdef QT_SFW_SYMBIAN_IPC_DEBUG      
-        qDebug() << "GTR SymbianServerEndPoint::packageReceived, putting to queue and emiting readyread.";
+        qDebug() << "SymbianServerEndPoint::packageReceived, putting to queue and emiting readyread.";
+        printServicePackage(package);
 #endif        
         incoming.enqueue(package);
         emit readyRead();
@@ -270,11 +273,12 @@ QObject* QRemoteServiceRegisterPrivate::proxyForService(const QRemoteServiceRegi
 }
 
 RServiceSession::RServiceSession(QString address) 
-: iSize(0), iListener(0)
+: iSize(0), iListener(0), iDataSizes(KIpcBufferMinimumSize)
 {
 #ifdef QT_SFW_SYMBIAN_IPC_DEBUG
     qDebug() << "RServiceSession() for address: " << address;
 #endif
+    qt_symbian_throwIfError(iMessageFromServer.Create(KIpcBufferMinimumSize));
     iServerAddress = address;
 }
 
@@ -282,6 +286,7 @@ RServiceSession::~RServiceSession()
 {
     delete iListener;
     Close();
+    iMessageFromServer.Close();
 }
 
 void RServiceSession::setListener(ServiceMessageListener *listener)
@@ -353,6 +358,11 @@ void RServiceSession::SendServicePackage(const QServicePackage& aPackage)
     }
 }
 
+void RServiceSession::addDataSize(TInt dataSize)
+{
+    iDataSizes.addSample(dataSize);
+}
+
 // StartServer() checks if the service is already published by someone (i.e. can be found
 // from Kernel side). If not, it will start the process that provides the service.
 TInt RServiceSession::StartServer()
@@ -416,11 +426,52 @@ TInt RServiceSession::StartServer()
     return ret;
 }
 
+/* Since the average size will not change in the middle of a fragmented message
+ * trasnfer actual updates to buffer size will happen only when a new message
+ * arrives */
+void RServiceSession::updateIpcBufferSize()
+{
+   TInt weightedAvg = iDataSizes.averageWeighted();
+
+#ifdef QT_SFW_SYMBIAN_IPC_DEBUG          
+   qDebug() << "updateIpcBufferSize(): current weighted average of data size is: "<<weightedAvg;
+   qDebug() << "Current IPC Buffer size is: "<<iMessageFromServer.MaxLength();
+#endif
+   TInt newSize = iMessageFromServer.MaxLength();
+   if(weightedAvg > iMessageFromServer.MaxLength()){
+       newSize = iMessageFromServer.MaxLength()*2;
+   }
+   else if(weightedAvg < iMessageFromServer.MaxLength()/2){
+
+         newSize = iMessageFromServer.MaxLength()/2;
+#ifdef QT_SFW_SYMBIAN_IPC_DEBUG          
+   qDebug() << "updateIpcBufferSize(): current weighted average of data size is:(2) "<<weightedAvg<<" max/2";
+#endif
+   }
+   
+   if(newSize < KIpcBufferMinimumSize)
+       newSize = KIpcBufferMinimumSize;
+   else if(newSize > KIpcBufferMaximumSize)
+       newSize = KIpcBufferMaximumSize;
+
+
+   if(newSize != iMessageFromServer.MaxLength()) {
+
+        iMessageFromServer.SetLength(0);
+        //If realloc fails the old descriptor is left unchanged.
+        iMessageFromServer.ReAlloc(newSize); 
+#ifdef QT_SFW_SYMBIAN_IPC_DEBUG          
+       qDebug() << "updateIpcBufferSize():  New Size of IPC Buffer: "<<newSize;
+#endif
+   }
+}
+
 void RServiceSession::ListenForPackages(TRequestStatus& aStatus)
 {    
 #ifdef QT_SFW_SYMBIAN_IPC_DEBUG
     qDebug() << "GTR RServiceSession::ListenForPackages(), iSize: " << iSize();
 #endif
+    updateIpcBufferSize();
     iArgs.Set(0, &iMessageFromServer);
     // Total Size of returned messaage,which might differ from the amount of data in iMessageFromServer
     iArgs.Set(1, &iSize); 
@@ -597,7 +648,7 @@ void CServiceProviderServerSession::ServiceL(const RMessage2 &aMessage)
     switch (aMessage.Function()) 
     {
     case EServicePackage:
-        User::LeaveIfError(HandleServicePackageL(aMessage));
+        HandleServicePackageL(aMessage);
         aMessage.Complete(KErrNone);
         break;
     case EPackageRequest:
@@ -609,16 +660,16 @@ void CServiceProviderServerSession::ServiceL(const RMessage2 &aMessage)
     }
 }
 
-TInt CServiceProviderServerSession::HandleServicePackageL(const RMessage2& aMessage)
+void CServiceProviderServerSession::HandleServicePackageL(const RMessage2& aMessage)
 {
-    TInt ret = KErrNone;
     // Reproduce the serialized data.
     HBufC8* servicePackageBuf8 = HBufC8::New(aMessage.GetDesLength(0));
     if (!servicePackageBuf8) {
-        return KErrNoMemory;
+        User::Leave( KErrNoMemory );
     }
 
     TPtr8 ptrToBuf(servicePackageBuf8->Des());
+    TInt ret = KErrNone;
     TRAP(ret, aMessage.ReadL(0, ptrToBuf));
     if (ret != KErrNone) {
         // TODO: is this error handleing correct
@@ -628,7 +679,7 @@ TInt CServiceProviderServerSession::HandleServicePackageL(const RMessage2& aMess
         //iDb->lastError().setError(DBError::UnknownError);
         //aMessage.Write(1, LastErrorCode());
         delete servicePackageBuf8;
-        return ret;
+        User::Leave( ret );
     }
 
     QByteArray byteArray((const char*)ptrToBuf.Ptr(), ptrToBuf.Length());
@@ -641,7 +692,7 @@ TInt CServiceProviderServerSession::HandleServicePackageL(const RMessage2& aMess
     printServicePackage(results);
 #endif
     iOwner->packageReceived(results);
-    return ret;
+    delete servicePackageBuf8;
 }
 
 void CServiceProviderServerSession::SetParent(SymbianServerEndPoint *aOwner)
@@ -777,6 +828,11 @@ void ServiceMessageListener::RunL()
           // normally because it tried to write more bytes 
           // than were in the TDes
           User::Leave(KErrTooBig); 
+        }
+
+        if(!iByteArray.length()){
+            /* Helps client session to calculate an optimum IPC buffer size */
+            iClientSession->addDataSize(iClientSession->iSize());
         }
                 
         iByteArray.append((const char*)iClientSession->iMessageFromServer.Ptr(),

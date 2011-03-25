@@ -297,6 +297,28 @@ void tst_QVersitOrganizerExporter::testExportEventDetails_data()
 
     {
         QList<QVersitProperty> properties;
+        QVersitProperty dtstart;
+        dtstart.setName(QLatin1String("DTSTART"));
+        dtstart.setValue(QLatin1String("20100102"));
+        dtstart.insertParameter(QLatin1String("VALUE"), QLatin1String("DATE"));
+        properties << dtstart;
+        QVersitProperty dtend;
+        dtend.setName(QLatin1String("DTEND"));
+        // Note: in iCalendar, the end date is exclusive while in Qt Organizer, it is inclusive.
+        // Hence, this is an event that occurs all day on 2 January (not including 3 January)
+        dtend.setValue(QLatin1String("20100103"));
+        dtend.insertParameter(QLatin1String("VALUE"), QLatin1String("DATE"));
+        properties << dtend;
+        QOrganizerEventTime etr;
+        etr.setStartDateTime(QDateTime(QDate(2010, 1, 2), QTime(3, 4, 5)));
+        etr.setEndDateTime(QDateTime(QDate(2010, 1, 2), QTime(3, 4, 6)));
+        etr.setAllDay(true);
+        QTest::newRow("all day event") << (QList<QOrganizerItemDetail>() << etr)
+            << properties;
+    }
+
+    {
+        QList<QVersitProperty> properties;
         QVersitProperty created;
         created.setName(QLatin1String("CREATED"));
         created.setValue(QDateTime(QDate(2010, 1, 2), QTime(3, 4, 5)).toUTC().toString(
@@ -634,6 +656,26 @@ void tst_QVersitOrganizerExporter::testExportTodoDetails_data()
     QTest::addColumn<QList<QVersitProperty> >("expectedProperties");
 
     {
+        QList<QVersitProperty> properties;
+        QVersitProperty dtstart;
+        dtstart.setName(QLatin1String("DTSTART"));
+        dtstart.setValue(QLatin1String("20100102"));
+        dtstart.insertParameter(QLatin1String("VALUE"), QLatin1String("DATE"));
+        properties << dtstart;
+        QVersitProperty due;
+        due.setName(QLatin1String("DUE"));
+        due.setValue(QLatin1String("20100103"));
+        due.insertParameter(QLatin1String("VALUE"), QLatin1String("DATE"));
+        properties << due;
+        QOrganizerTodoTime todoTime;
+        todoTime.setStartDateTime(QDateTime(QDate(2010, 1, 2), QTime(3, 4, 5)));
+        todoTime.setDueDateTime(QDateTime(QDate(2010, 1, 3), QTime(3, 4, 6)));
+        todoTime.setAllDay(true);
+        QTest::newRow("all day todo") << (QList<QOrganizerItemDetail>() << todoTime)
+            << properties;
+    }
+
+    {
         QVersitProperty property;
         property.setName(QLatin1String("STATUS"));
         property.setValue(QLatin1String("COMPLETED"));
@@ -689,6 +731,33 @@ QList<QVersitProperty> tst_QVersitOrganizerExporter::findPropertiesByName(
             retval << property;
     }
     return retval;
+}
+
+void tst_QVersitOrganizerExporter::testEmptyItemShouldNotBeExported()
+{
+    QVersitOrganizerExporter exporter;
+    QList<QOrganizerItem> items;
+
+    QOrganizerEvent ev;
+    QVERIFY(ev.isEmpty());
+    QOrganizerItem item1;
+    QVERIFY(item1.isEmpty());
+    items << static_cast<QOrganizerItem>(ev)<<item1;
+
+    QVERIFY(!exporter.exportItems(items));
+    QVERIFY(!exporter.errorMap().isEmpty());
+
+    QVersitOrganizerExporter::Error errorCode = exporter.errorMap().value(0);
+    QVERIFY2(errorCode == QVersitOrganizerExporter::EmptyOrganizerError,
+             QString("exporter.errorMap().value(0) == "
+                     + QString::number(errorCode)).toStdString().c_str());
+    errorCode = exporter.errorMap().value(1);
+    QVERIFY2(errorCode == QVersitOrganizerExporter::EmptyOrganizerError
+             || errorCode == QVersitOrganizerExporter::UnknownComponentTypeError,
+             QString("exporter.errorMap().value(1) == "
+                     + QString::number(errorCode)).toStdString().c_str() );
+    items.clear();
+    exporter.errorMap().clear();
 }
 
 QTEST_MAIN(tst_QVersitOrganizerExporter)

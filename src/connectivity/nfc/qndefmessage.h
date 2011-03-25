@@ -46,6 +46,8 @@
 
 #include <qndefrecord.h>
 
+#include <QtCore/QVector>
+#include <QtCore/QSet>
 #include <QtCore/QList>
 #include <QtCore/QMetaType>
 

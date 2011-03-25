@@ -74,6 +74,11 @@ public:
     QList<QGraphicsGeoMap::ConnectivityMode> supportedConnectivityModes;
     qreal minimumZoomLevel;
     qreal maximumZoomLevel;
+    bool supportsBearing;
+    bool supportsTilting;
+    qreal minimumTilt;
+    qreal maximumTilt;
+    bool supportsCustomMapObjects;
 
     QLocale locale;
 

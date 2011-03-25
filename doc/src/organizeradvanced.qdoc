@@ -156,17 +156,17 @@ QOrganizerManager::supportedItemTypes().
 
 \section2 Provided Engines
 
-The Organizer module of the Qt Mobility project includes several backends
+The Organizer module of the QtMobility project includes several backends
 already, some of which are designed to interface with the default calendar on
 their particular platform.
 
 \section3 In-Memory Example Engine
 
 The in-memory engine identifies itself as the "memory" engine. It is available
-on all platforms which are supported by the Qt Mobility project.
+on all platforms which are supported by the QtMobility project.
 
 The in-memory engine supports the default schema, and provides almost all
-functionality available through the Qt Mobility Organizer API; however, all data
+functionality available through the QtMobility Organizer API; however, all data
 is stored in-memory and is not persisted in any way.
 
 \section3 Symbian Engine

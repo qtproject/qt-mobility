@@ -53,8 +53,10 @@ QSystemNetworkInfoPrivate *getSystemNetworkInfoPrivate() { return netInfoPrivate
 /*!
    \class QSystemNetworkInfo
    \ingroup systeminfo
-
   \inmodule QtSystemInfo
+
+  \brief The QSystemNetworkInfo class provides access to various networking status and signals.
+
 
 */
 
@@ -86,6 +88,10 @@ QSystemNetworkInfoPrivate *getSystemNetworkInfoPrivate() { return netInfoPrivate
             \value EthernetMode            Wired Local Area network.
             \value BluetoothMode           Bluetooth network.
             \value WimaxMode               Wimax network.
+            \value GprsMode                Gprs network
+            \value EdgeMode                Edge network.
+            \value HspaMode                Hspa network.
+            \value LteMode                 Lte network.
           */
 
 
@@ -122,10 +128,16 @@ QSystemNetworkInfoPrivate *getSystemNetworkInfoPrivate() { return netInfoPrivate
         */
 
         /*!
-          \fn void QSystemNetworkInfo::networkModeChanged(QSystemNetworkInfo::NetworkMode mode)
+          \fn void QSystemNetworkInfo::cellIdChanged(int cellId)
 
-          This signal is emitted whenever the network mode changes, specified by \a mode.
+          This signal is emitted whenever the network cell changes, specified by \a cellId.
         */
+
+/*!
+  \fn void QSystemNetworkInfo::networkModeChanged(QSystemNetworkInfo::NetworkMode mode)
+
+  This signal is emitted whenever the network mode changes, specified by \a mode.
+*/
 
 /*!
     Constructs a QSystemNetworkInfo with the given \a parent.
@@ -195,7 +207,7 @@ int QSystemNetworkInfo::locationAreaCode()
   \brief The current MCC.
 
    Returns the current Mobile Country Code. In the case of a Desktop computer, an empty string is returned.
-/*/
+*/
 QString QSystemNetworkInfo::currentMobileCountryCode()
 {
    return netInfoPrivate()->currentMobileCountryCode();
@@ -378,6 +390,19 @@ void QSystemNetworkInfo::disconnectNotify(const char *signal)
                 this,SIGNAL(networkStatusChanged(QSystemNetworkInfo::NetworkMode,QSystemNetworkInfo::NetworkStatus)));
     }
 
+}
+
+/*!
+ \property QSystemNetworkInfo::cellDataTechnology
+
+    Returns the current active cell data technology.
+    If no data technology is active, returns QSystemNetworkInfo::NoDataTechnology. If data technology is not supported, this will return
+    QSystemNetworkInfo::UnknownDataTechnology
+
+  */
+QSystemNetworkInfo::CellDataTechnology QSystemNetworkInfo::cellDataTechnology()
+{
+    return netInfoPrivate()->cellDataTechnology();
 }
 
 

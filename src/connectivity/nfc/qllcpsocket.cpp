@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,13 +39,14 @@
 **
 ****************************************************************************/
 
-
 #include "qllcpsocket.h"
 
 #if defined(QT_SIMULATOR)
 #include "qllcpsocket_simulator_p.h"
 #elif defined(Q_OS_SYMBIAN)
 #include "qllcpsocket_symbian_p.h"
+#elif defined(Q_WS_MAEMO_6) || defined(Q_WS_MEEGO)
+#include "qllcpsocket_maemo6_p.h"
 #else
 #include "qllcpsocket_p.h"
 #endif
@@ -59,20 +60,24 @@ QTM_BEGIN_NAMESPACE
     \ingroup connectivity-nfc
     \inmodule QtConnectivity
 
-    NFC LLCP protocol is a peer-to-peer communication protocol between two NFC complient devices.
+    NFC LLCP protocol is a peer-to-peer communication protocol between two NFC compliant devices.
 */
 
 /*!
-    \enum QLlcpSocket::Error
+    \enum QLlcpSocket::SocketError
 
     This enum describes the errors that can occur. The most recent error can be retrieved through a
     call to error().
 
-    \value UnknownSocketError   An unidentified error has occurred.
+    \value UnknownSocketError       An unidentified error has occurred.
+    \value RemoteHostClosedError    The remote host closed the connection.
+    \value SocketAccessError        The socket operation failed because the application lacked the
+                                    required privileges.
+    \value SocketResourceError      The local system ran out of resources (e.g., too many sockets).
 */
 
 /*!
-    \enum QLlcpSocket::State
+    \enum QLlcpSocket::SocketState
 
     This enum describes the different state in which a socket can be.
 
@@ -102,13 +107,13 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn QLlcpSocket::error(QLlcpSocket::Error socketError)
+    \fn QLlcpSocket::error(QLlcpSocket::SocketError socketError)
 
     This signal is emitted when an error occurs. The \a socketError parameter describes the error.
 */
 
 /*!
-    \fn QLlcpSocket::stateChanged(QLlcpSocket::State socketState)
+    \fn QLlcpSocket::stateChanged(QLlcpSocket::SocketState socketState)
 
     This signal is emitted when the state of the socket changes. The \a socketState parameter
     describes the new state.
@@ -120,6 +125,7 @@ QTM_BEGIN_NAMESPACE
 QLlcpSocket::QLlcpSocket(QObject *parent)
 :   QIODevice(parent), d_ptr(new QLlcpSocketPrivate(this))
 {
+    setOpenMode(QIODevice::NotOpen);
 }
 
 /*!
@@ -128,6 +134,7 @@ QLlcpSocket::QLlcpSocket(QObject *parent)
 QLlcpSocket::QLlcpSocket(QLlcpSocketPrivate *d, QObject *parent)
 :   QIODevice(parent), d_ptr(d)
 {
+    setOpenMode(QIODevice::ReadWrite);
     d_ptr->q_ptr = this;
 }
 
@@ -155,6 +162,18 @@ void QLlcpSocket::connectToService(QNearFieldTarget *target, const QString &serv
 void QLlcpSocket::disconnectFromService()
 {
     Q_D(QLlcpSocket);
+
+    d->disconnectFromService();
+}
+
+/*!
+    Disconnects the socket.
+*/
+void QLlcpSocket::close()
+{
+    Q_D(QLlcpSocket);
+
+    QIODevice::close();
 
     d->disconnectFromService();
 }
@@ -204,6 +223,16 @@ qint64 QLlcpSocket::writeDatagram(const char *data, qint64 size)
     Q_D(QLlcpSocket);
 
     return d->writeDatagram(data, size);
+}
+
+/*!
+    \reimp
+
+    Always returns true.
+*/
+bool QLlcpSocket::isSequential() const
+{
+	return true;
 }
 
 /*!
@@ -268,7 +297,7 @@ qint64 QLlcpSocket::writeDatagram(const QByteArray &datagram, QNearFieldTarget *
 /*!
     Returns the type of error that last occurred.
 */
-QLlcpSocket::Error QLlcpSocket::error() const
+QLlcpSocket::SocketError QLlcpSocket::error() const
 {
     Q_D(const QLlcpSocket);
 
@@ -278,7 +307,7 @@ QLlcpSocket::Error QLlcpSocket::error() const
 /*!
     Returns the state of the socket.
 */
-QLlcpSocket::State QLlcpSocket::state() const
+QLlcpSocket::SocketState QLlcpSocket::state() const
 {
     Q_D(const QLlcpSocket);
 
@@ -293,6 +322,16 @@ qint64 QLlcpSocket::bytesAvailable() const
     Q_D(const QLlcpSocket);
 
     return d->bytesAvailable() + QIODevice::bytesAvailable();
+}
+
+/*!
+    \reimp
+*/
+bool QLlcpSocket::canReadLine() const
+{
+    Q_D(const QLlcpSocket);
+
+    return d->canReadLine() || QIODevice::canReadLine();
 }
 
 /*!

@@ -74,7 +74,7 @@ public:
         default:
             break;
         }
-        //qWarning
+        qmlInfo(0) << tr("Unknown field type.");
         return QString();
     }
     void setBirthday(const QDateTime& v)

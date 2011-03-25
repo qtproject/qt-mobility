@@ -38,7 +38,6 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-
 #include <QtTest/QtTest>
 
 #include "qtorganizer.h"
@@ -48,6 +47,7 @@
 //TESTED_FILES=
 
 QTM_USE_NAMESPACE
+
 class tst_QOrganizerItemDetailDefinition: public QObject
 {
 Q_OBJECT
@@ -64,8 +64,10 @@ private slots:
     void testGetSet();
     void testEquality();
     void testEmpty();
+    void testStreaming();
     void traits();
     void fieldTraits();
+    void testDebugStreamOut();
 };
 
 tst_QOrganizerItemDetailDefinition::tst_QOrganizerItemDetailDefinition()
@@ -266,6 +268,103 @@ void tst_QOrganizerItemDetailDefinition::testEquality()
     QVERIFY(def2 == def1);
 }
 
+void tst_QOrganizerItemDetailDefinition::testStreaming()
+{
+    QMap<QString, QOrganizerItemDetailFieldDefinition> allFields;
+
+    QVariantList allowedStrings;
+    allowedStrings << QString("First") << QString("Second");
+
+    // generate some field definitions
+    QOrganizerItemDetailFieldDefinition dfd;
+    dfd.setDataType(QVariant::String);
+    dfd.setAllowableValues(allowedStrings);
+    allFields.insert("TestFieldDefinition", dfd);
+
+    dfd.setDataType(QVariant::Int);
+    dfd.setAllowableValues(QVariantList());
+    allFields.insert("TestCount", dfd);
+
+    // now create our detail definition
+    QOrganizerItemDetailDefinition dd;
+    dd.setName("TestDefinitionName");
+    dd.setUnique(true);
+    dd.setFields(allFields);
+
+    // testing streaming of field definition, with no allowable values set
+    {
+        QByteArray buffer;
+        QOrganizerItemDetailFieldDefinition fieldDefIn = allFields.value("TestCount");
+        QOrganizerItemDetailFieldDefinition fieldDefOut;
+        QDataStream stream1(&buffer, QIODevice::WriteOnly);
+        stream1 << fieldDefIn;
+        QVERIFY(buffer.size() > 0);
+        QDataStream stream2(buffer);
+        stream2 >> fieldDefOut;
+        QVERIFY(fieldDefIn == fieldDefOut);
+    }
+
+    // testing streaming of field definition, with specific allowable values set
+    {
+        QByteArray buffer;
+        QOrganizerItemDetailFieldDefinition fieldDefIn = allFields.value("TestFieldDefinition");
+        QOrganizerItemDetailFieldDefinition fieldDefOut;
+        QDataStream stream1(&buffer, QIODevice::WriteOnly);
+        stream1 << fieldDefIn;
+        QVERIFY(buffer.size() > 0);
+        QDataStream stream2(buffer);
+        stream2 >> fieldDefOut;
+        QVERIFY(fieldDefIn == fieldDefOut);
+    }
+
+    // testing streaming of detail definition
+    {
+        QByteArray buffer;
+        QOrganizerItemDetailDefinition defIn = dd;
+        QOrganizerItemDetailDefinition defOut;
+        QDataStream stream1(&buffer, QIODevice::WriteOnly);
+        stream1 << defIn;
+        QVERIFY(buffer.size() > 0);
+        QDataStream stream2(buffer);
+        stream2 >> defOut;
+        QVERIFY(defIn == defOut);
+    }
+
+    // now try inserting and removing a field, streaming again, and testing.
+    {
+        // remove the field
+        QByteArray buffer;
+        QOrganizerItemDetailDefinition defIn = dd;
+        defIn.removeField("TestCount");
+        QVERIFY(defIn != dd);
+        QOrganizerItemDetailDefinition defOut;
+        QDataStream stream1(&buffer, QIODevice::WriteOnly);
+        stream1 << defIn;
+        QVERIFY(buffer.size() > 0);
+        QDataStream stream2(buffer);
+        stream2 >> defOut;
+        QVERIFY(defIn == defOut);
+    }
+
+    {
+        // re-add the field.
+        QByteArray buffer;
+        QOrganizerItemDetailDefinition defIn = dd;
+        defIn.removeField("TestCount"); // remove and reinsert the field
+        QVERIFY(defIn != dd);
+        defIn.insertField("TestCount", dfd);
+        QVERIFY(defIn == dd);
+        QOrganizerItemDetailDefinition defOut;
+        QDataStream stream1(&buffer, QIODevice::WriteOnly);
+        stream1 << defIn;
+        QVERIFY(buffer.size() > 0);
+        QDataStream stream2(buffer);
+        stream2 >> defOut;
+        QVERIFY(defIn == defOut);
+        QVERIFY(defOut == dd); // should be equal to the original.
+    }
+}
+
 void tst_QOrganizerItemDetailDefinition::traits()
 {
     QCOMPARE(sizeof(QOrganizerItemDetailDefinition), sizeof(void *));
@@ -288,6 +387,56 @@ void tst_QOrganizerItemDetailDefinition::fieldTraits()
     QVERIFY(!ti.isDummy);
 }
 
+
+void tst_QOrganizerItemDetailDefinition::testDebugStreamOut()
+{
+    // Testing QOrganizerItemDetailDefinition
+
+    QOrganizerItemDetailDefinition def;
+
+    // Test the empty case
+    QVERIFY(def.isEmpty());
+    QVERIFY(def.name().isEmpty());
+    QVERIFY(def.fields().isEmpty());
+    QVERIFY(def.isUnique() == false);
+    QTest::ignoreMessage(QtDebugMsg, "QOrganizerItemDetailDefinition(name=\"\",isUnique=false,isEmpty=true,fields=QMap() )");
+    qDebug() << def;
+
+
+    // Test the completely filled-in case
+    QMap<QString, QOrganizerItemDetailFieldDefinition> map;
+    QOrganizerItemDetailFieldDefinition currField;
+    currField.setAllowableValues(QVariantList() << "One" << "Two" << "Three");
+    currField.setDataType(QVariant::String);
+    map.insert("string", currField);
+    currField.setDataType(QVariant::DateTime);
+    map.insert("datetime", currField);
+    def.setName("Test ID");
+    def.setUnique(true);
+    def.setFields(map);
+    QTest::ignoreMessage(QtDebugMsg, "QOrganizerItemDetailDefinition(name=\"Test ID\",isUnique=true,isEmpty=false,fields=QMap((\"datetime\", QOrganizerItemDetailFieldDefinition(dataType=16,allowableValues=(QVariant(QString, \"One\") ,  QVariant(QString, \"Two\") ,  QVariant(QString, \"Three\") )  ))(\"string\", QOrganizerItemDetailFieldDefinition(dataType=10,allowableValues=(QVariant(QString, \"One\") ,  QVariant(QString, \"Two\") ,  QVariant(QString, \"Three\") )  ))) )");
+    qDebug() << def;
+
+    // Testing QOrganizerItemDetailFieldDefinition
+
+    QOrganizerItemDetailFieldDefinition f;
+
+    // Test the empty case
+    QTest::ignoreMessage(QtDebugMsg, "QOrganizerItemDetailFieldDefinition(dataType=0,allowableValues=() )");
+    qDebug() << f;
+
+    // Test the completely filled case
+    QMap<QString, QOrganizerItemDetailFieldDefinition> allFields;
+    QVariantList allowedStrings;
+    allowedStrings << QString("First") << QString("Second");
+    QOrganizerItemDetailFieldDefinition dfd;
+    dfd.setDataType(QVariant::String);
+    dfd.setAllowableValues(allowedStrings);
+    allFields.insert("TestFieldDefinition", dfd);
+    QTest::ignoreMessage(QtDebugMsg, "QOrganizerItemDetailFieldDefinition(dataType=10,allowableValues=(QVariant(QString, \"First\") ,  QVariant(QString, \"Second\") )  )");
+    qDebug() << dfd;
+
+}
 
 QTEST_MAIN(tst_QOrganizerItemDetailDefinition)
 #include "tst_qorganizeritemdetaildefinition.moc"

@@ -74,7 +74,6 @@ class S60ImageCaptureSession;
  */
 class S60ImageCaptureDecoder : public CActive
 {
-
 public: // Static Contructor & Destructor
 
     static S60ImageCaptureDecoder* FileNewL(S60ImageCaptureSession *imageSession = 0,
@@ -124,7 +123,6 @@ private: // Data
  */
 class S60ImageCaptureEncoder : public CActive
 {
-
 public: // Static Contructor & Destructor
 
     static S60ImageCaptureEncoder* NewL(S60ImageCaptureSession *imageSession = 0,
@@ -168,6 +166,9 @@ private: // Data
  * Session handling all image capture activities.
  */
 class S60ImageCaptureSession : public QObject,
+#ifdef ECAM_PREVIEW_API
+                               public MCameraPreviewObserver,
+#endif // ECAM_PREVIEW_API
                                public MCameraEngineImageCaptureObserver
 {
     Q_OBJECT
@@ -194,6 +195,7 @@ public: // Methods
     bool isDeviceReady();
     void setCameraHandle(CCameraEngine* camerahandle);
     void setCurrentDevice(TInt deviceindex);
+    void notifySettingsSet();
 
     // Ecam Advanced Settings
     S60CameraSettings* advancedSettings();
@@ -201,6 +203,7 @@ public: // Methods
 
     // Controls
     int prepareImageCapture();
+    void releaseImageCapture();
     int capture(const QString &fileName);
     void cancelCapture();
     void releaseImageBuffer();
@@ -270,12 +273,18 @@ protected: // MCameraEngineObserver
     void MceoCapturedBitmapReady(CFbsBitmap* aBitmap);
     void MceoHandleError(TCameraEngineError aErrorType, TInt aError);
 
+#ifdef ECAM_PREVIEW_API
+protected: // MCameraPreviewObserver
+
+    void MceoPreviewReady(CFbsBitmap& aPreview);
+#endif // ECAM_PREVIEW_API
+
 private: // Internal
 
     QCameraImageCapture::Error fromSymbianErrorToQtMultimediaError(int aError);
 
     void initializeImageCaptureSettings();
-    void resetSession();
+    void resetSession(bool errorHandling = false);
 
     CCamera::TFormat selectFormatForCodec(const QString &codec);
     CCamera::TFormat defaultImageFormat();
@@ -297,6 +306,7 @@ Q_SIGNALS: // Notifications
 
     void stateChanged(QCamera::State);
     void advancedSettingChanged();
+    void captureSizeChanged(const QSize&);
 
     // Error signals
     void cameraError(int, const QString&);          // For QCamera::error
@@ -334,6 +344,7 @@ private: // Data
     CCamera::TFormat        m_currentFormat;
     QSize                   m_captureSize;
     int                     m_symbianImageQuality;
+    bool                    m_captureSettingsSet;
     QString                 m_stillCaptureFileName;
     QString                 m_requestedStillCaptureFileName;
     mutable int             m_currentImageId;

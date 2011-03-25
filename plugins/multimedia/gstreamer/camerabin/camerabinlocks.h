@@ -49,6 +49,7 @@
 #include <glib.h>
 
 class CameraBinSession;
+class CameraBinFocus;
 
 QT_USE_NAMESPACE
 
@@ -72,7 +73,7 @@ private slots:
 
 private:
     CameraBinSession *m_session;
-    QCamera::LockStatus m_focusStatus;
+    CameraBinFocus *m_focus;
 };
 
 #endif

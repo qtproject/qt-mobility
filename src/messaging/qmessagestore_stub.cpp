@@ -38,8 +38,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "qmessagestore.h"
 #include "qmessagestore_p.h"
+#include "qmessagestore_p_p.h"
 
 
 QTM_BEGIN_NAMESPACE

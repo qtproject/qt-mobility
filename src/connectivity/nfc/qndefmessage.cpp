@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -51,7 +51,13 @@ QTM_BEGIN_NAMESPACE
     \ingroup connectivity-nfc
     \inmodule QtConnectivity
 
-    A QNdefMessage is a collection of 0 or more QNdefRecords.
+    A QNdefMessage is a collection of 0 or more QNdefRecords. QNdefMessage inherits from
+    QList<QNdefRecord> and therefore the standard QList functions can be used to manipulate the
+    NDEF records in the message.
+
+    NDEF messages can be parsed from a byte array conforming to the NFC Data Exchange Format
+    technical specification by using the fromByteArray() static function. Conversely QNdefMessages
+    can be converted into a byte array with the toByteArray() function.
 */
 
 /*!
@@ -81,8 +87,8 @@ QTM_BEGIN_NAMESPACE
 /*!
     Returns an NDEF message parsed from the contents of \a message.
 
-    The \a message paramater is interpreted as the raw message format defined in the NFC
-    Specifications.
+    The \a message parameter is interpreted as the raw message format defined in the NFC Data
+    Exchange Format technical specification.
 
     If a parse error occurs an empty NDEF message is returned.
 */
@@ -97,7 +103,7 @@ QNdefMessage QNdefMessage::fromByteArray(const QByteArray &message)
     QNdefRecord record;
 
     QByteArray::const_iterator i = message.begin();
-    while (i != message.end()) {
+    while (i < message.constEnd()) {
         quint8 flags = *i;
 
         bool messageBegin = flags & 0x80;
@@ -111,13 +117,29 @@ QNdefMessage QNdefMessage::fromByteArray(const QByteArray &message)
         if (messageBegin && seenMessageBegin) {
             qWarning("Got message begin but already parsed some records");
             return QNdefMessage();
+        } else if (!messageBegin && !seenMessageBegin) {
+            qWarning("Haven't got message begin yet");
+            return QNdefMessage();
+        } else if (messageBegin && !seenMessageBegin) {
+            seenMessageBegin = true;
         }
         if (messageEnd && seenMessageEnd) {
             qWarning("Got message end but already parsed final record");
             return QNdefMessage();
+        } else if (messageEnd && !seenMessageEnd) {
+            seenMessageEnd = true;
         }
         if (cf && (typeNameFormat != 0x06) && !partialChunk.isEmpty()) {
             qWarning("partial chunk not empty or typeNameFormat not 0x06 as expected");
+            return QNdefMessage();
+        }
+
+        int headerLength = 1;
+        headerLength += (sr) ? 1 : 4;
+        headerLength += (il) ? 1 : 0;
+
+        if (i + headerLength >= message.constEnd()) {
+            qWarning("Unexpected end of message");
             return QNdefMessage();
         }
 
@@ -143,6 +165,12 @@ QNdefMessage QNdefMessage::fromByteArray(const QByteArray &message)
             idLength = *(++i);
         else
             idLength = 0;
+
+        int contentLength = typeLength + payloadLength + idLength;
+        if (i + contentLength >= message.constEnd()) {
+            qWarning("Unexpected end of message");
+            return QNdefMessage();
+        }
 
         if ((typeNameFormat == 0x06) && (idLength != 0)) {
             qWarning("Invalid chunked data, IL != 0");
@@ -186,8 +214,16 @@ QNdefMessage QNdefMessage::fromByteArray(const QByteArray &message)
         if (!cf)
             result.append(record);
 
+        if (!cf && seenMessageEnd)
+            break;
+
         // move to start of next record
         ++i;
+    }
+
+    if (!seenMessageBegin && !seenMessageEnd) {
+        qWarning("Malformed NDEF Message, missing begin or end.");
+        return QNdefMessage();
     }
 
     return result;
@@ -195,6 +231,9 @@ QNdefMessage QNdefMessage::fromByteArray(const QByteArray &message)
 
 /*!
     Returns true if this NDEF message is equivalent to \a other; otherwise returns false.
+
+    An empty message (i.e. isEmpty() returns true) is equivalent to a NDEF message containing a
+    single record of type QNdefRecord::Empty.
 */
 bool QNdefMessage::operator==(const QNdefMessage &other) const
 {
@@ -221,6 +260,9 @@ bool QNdefMessage::operator==(const QNdefMessage &other) const
 
 /*!
     Returns the NDEF message as a byte array.
+
+    The return value of this function conforms to the format defined in the NFC Data Exchange
+    Format technical specification.
 */
 QByteArray QNdefMessage::toByteArray() const
 {

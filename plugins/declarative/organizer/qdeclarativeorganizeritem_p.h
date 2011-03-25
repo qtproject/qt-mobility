@@ -67,6 +67,8 @@ class QDeclarativeOrganizerItem : public QObject
     Q_PROPERTY (bool modified READ modified NOTIFY itemChanged)
     Q_PROPERTY(QDateTime itemStartTime READ itemStartTime NOTIFY itemChanged)
     Q_PROPERTY(QDateTime itemEndTime READ itemEndTime NOTIFY itemChanged)
+    Q_PROPERTY(bool isOccurrence READ isOccurrence)
+    Q_PROPERTY(bool isFloatingTime READ isFloatingTime)
     Q_ENUMS(OrganizerItemType)
     Q_CLASSINFO("DefaultProperty", "details")
 
@@ -91,6 +93,8 @@ public:
     QString manager() const;
     bool modified() const;
 
+    bool isFloatingTime() const;
+
     QDateTime itemStartTime() const;
     QDateTime itemEndTime() const;
     void setItem(const QOrganizerItem& c);
@@ -105,7 +109,7 @@ public:
     Q_INVOKABLE QVariant details(const QString& name);
     Q_INVOKABLE void addComment(const QString& comment);
     Q_INVOKABLE bool removeDetail(QDeclarativeOrganizerItemDetail* detail);
-
+    Q_INVOKABLE bool addDetail(QDeclarativeOrganizerItemDetail* detail);
     QString type() const;
     QString displayLabel() const;
     void setDisplayLabel(const QString& label);
@@ -113,6 +117,7 @@ public:
     void setDescription(const QString& description);
     QString guid() const;
     void setGuid(const QString& guid);
+    bool isOccurrence() const;
 
 public slots:
     void save();

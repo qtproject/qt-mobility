@@ -9,11 +9,11 @@ INCLUDEPATH += . \
     ../../../src/versit \
     ../../../src/versitorganizer
 
-TARGET = $$qtLibraryTarget(declarative_organizer)
-TARGETPATH = QtMobility/organizer
-
 TEMPLATE = lib
 CONFIG += plugin
+TARGET = $$qtLibraryTarget(declarative_organizer)
+TARGETPATH = QtMobility/organizer
+DEFINES += QT_MAKEDLL
 PLUGIN_TYPE = declarative
 
 include(../../../common.pri)

@@ -220,14 +220,14 @@ void QMessageServicePrivate::setFinished(bool successful)
             _error = QMessageManager::RequestIncomplete;
         }
 
-        _state = QMessageService::FinishedState;
-        emit q_ptr->stateChanged(_state);
+        stateChanged(QMessageService::FinishedState);
         _active = false;
     }
 }
 
 void QMessageServicePrivate::stateChanged(QMessageService::State state)
 {
+    qDebug() << __PRETTY_FUNCTION__ << "emitting stateChanged(" << state << ")";
     _state = state;
     emit q_ptr->stateChanged(state);
 }
@@ -447,7 +447,9 @@ bool QMessageService::send(QMessage &message)
                 d_ptr->_error = QMessageManager::InvalidId;
                 qDebug() << __FUNCTION__ << "Cannot obtain default account";
                 retVal = false;
-            }
+            } else {
+		message.setParentAccountId(accountId);
+	    }
         }
     }
 
@@ -473,13 +475,6 @@ bool QMessageService::send(QMessage &message)
     }
 
     if (retVal) {
-        QMessage outgoing(message);
-
-        // Set default account if unset
-        if (!outgoing.parentAccountId().isValid()) {
-            outgoing.setParentAccountId(accountId);
-        }
-
         if (account.messageTypes() & QMessage::Sms) {
 	    retVal = TelepathyEngine::instance()->sendMessage(message, this);
         } else if (account.messageTypes() & QMessage::InstantMessage) {
@@ -612,6 +607,45 @@ bool QMessageService::exportUpdates(const QMessageAccountId &id)
 	d_ptr->_active = false;
 
     return retVal;
+}
+
+bool QMessageService::moveMessages(const QMessageIdList &messageIds, const QMessageFolderId &toFolderId)
+{
+    bool result = false;
+
+    if (!d_ptr->_active) {
+        QMessageIdList qmfIds;
+        foreach(QMessageId id, messageIds) {
+            if (id.isValid() && id.toString().startsWith("QMF_"))
+                qmfIds.append(id);
+        }
+
+        if (qmfIds.count())
+            result = d_ptr->_qmfService->moveMessages(qmfIds, toFolderId);
+        else
+            d_ptr->_error = QMessageManager::InvalidId;
+    }
+    else
+        d_ptr->_error = QMessageManager::Busy;
+
+    return result;
+}
+
+bool QMessageService::synchronize(const QMessageAccountId &id)
+{
+    bool result = false;
+
+    if (!d_ptr->_active) {
+        if (id.isValid() && id.toString().startsWith("QMF_")) {
+            result = d_ptr->_qmfService->synchronize(id);
+        }
+        else
+            d_ptr->_error = QMessageManager::InvalidId;
+    }
+    else
+        d_ptr->_error = QMessageManager::Busy;
+
+    return result;
 }
 
 QMessageService::State QMessageService::state() const

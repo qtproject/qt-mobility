@@ -82,7 +82,7 @@ CntSymbianEngine::CntSymbianEngine(const QMap<QString, QString>& parameters, QCo
       m_srvConnection(0),
       m_transformContact(0),
       m_contactFilter(0),
-#ifndef SYMBIAN_BACKEND_USE_SQLITE
+#ifndef SYMBIAN_BACKEND_USE_CNTMODEL_V2
       m_contactSorter(0),
 #endif
       m_relationship(0),
@@ -97,7 +97,7 @@ CntSymbianEngine::CntSymbianEngine(const QMap<QString, QString>& parameters, QCo
         m_managerUri = QContactManager::buildUri(CNT_SYMBIAN_MANAGER_NAME, parameters);
         m_transformContact = new CntTransformContact;
         m_srvConnection    = new CntSymbianSrvConnection(this);
-#ifdef SYMBIAN_BACKEND_USE_SQLITE
+#ifdef SYMBIAN_BACKEND_USE_CNTMODEL_V2
         m_contactFilter    = new CntSymbianFilter(*this, *m_dataBase->contactDatabase(), *m_srvConnection, *m_transformContact);
 #else
         m_contactFilter    = new CntSymbianFilter(*m_dataBase->contactDatabase());
@@ -105,9 +105,7 @@ CntSymbianEngine::CntSymbianEngine(const QMap<QString, QString>& parameters, QCo
 #endif
         m_relationship     = new CntRelationship(m_dataBase->contactDatabase(), m_managerUri);
         m_displayLabel     = new CntDisplayLabel();
-#ifdef SYMBIAN_BACKEND_USE_SQLITE
         connect(m_displayLabel, SIGNAL(displayLabelChanged()), this, SIGNAL(dataChanged()));
-#endif
     }
 }
 
@@ -117,7 +115,7 @@ CntSymbianEngine::~CntSymbianEngine()
     delete m_dataBase;
     delete m_srvConnection;
     delete m_transformContact;
-#ifndef SYMBIAN_BACKEND_USE_SQLITE
+#ifndef SYMBIAN_BACKEND_USE_CNTMODEL_V2
     delete m_contactSorter;
 #endif    
     delete m_relationship;
@@ -140,7 +138,7 @@ QList<QContactLocalId> CntSymbianEngine::contactIds(
     bool filterSupported(true);
     result = m_contactFilter->contacts(filter, sortOrders, filterSupported, error);
             
-#ifdef SYMBIAN_BACKEND_USE_SQLITE
+#ifdef SYMBIAN_BACKEND_USE_CNTMODEL_V2
     
         // Remove possible false positives
         if(!filterSupported && *error == QContactManager::NotSupportedError)
@@ -195,8 +193,8 @@ QList<QContact> CntSymbianEngine::contacts(const QContactFilter& filter, const Q
     QList<QContact> contacts;
     QList<QContactLocalId> contactIds = this->contactIds(filter, sortOrders, error);
     
-    if (fh.maxCount() > 0) {
-        contactIds = contactIds.mid(0, fh.maxCount());
+    if (fh.maxCountHint() > 0) {
+        contactIds = contactIds.mid(0, fh.maxCountHint());
     }
     
     if (*error == QContactManager::NoError ) {
@@ -353,7 +351,7 @@ bool CntSymbianEngine::doSaveContact(QContact* contact, QContactChangeSet& chang
         contact->removeDetail(&details.first());
     }
     
-    if(!validateContact(*contact, error)) {
+    if (!validateContact(*contact, error)) {
         return false;
     }
 
@@ -463,6 +461,8 @@ bool CntSymbianEngine::addContact(QContact& contact, QContactChangeSet& changeSe
         changeSet.insertAddedContact(id);
         m_dataBase->appendContactEmitted(id);
     }
+#else
+    Q_UNUSED(id)
 #endif
     CntSymbianTransformError::transformError(err, qtError);
     return (err==KErrNone);
@@ -637,17 +637,6 @@ void CntSymbianEngine::removeContactL(QContactLocalId id)
     //TODO: add code to remove all relationships.
 
     m_dataBase->contactDatabase()->DeleteContactL(cId);
-#ifdef SYMBIAN_BACKEND_S60_VERSION_32
-    // In S60 3.2 hardware (observerd with N96) there is a problem when saving and 
-    // deleting contacts in quick successive manner. At some point the database
-    // starts leaving with KErrNotReady (-18). This happens randomly at either
-    // DeleteContactL() or AddNewContactL(). The only only thing that seems to
-    // help is to compress the database after deleting a contact. 
-    // 
-    // Needles to say that this will have a major negative effect on performance!
-    // TODO: A better solution must be found.
-    m_dataBase->contactDatabase()->CompactL();
-#endif
 }
 
 bool CntSymbianEngine::removeContact(const QContactLocalId& contactId, QContactManager::Error* error)
@@ -693,7 +682,7 @@ bool CntSymbianEngine::removeContacts(const QList<QContactLocalId>& contactIds, 
     QContactManager::Error selfContactError;
     QContactLocalId selfCntId = selfContactId(&selfContactError); // selfContactError ignored
 
-#ifdef SYMBIAN_BACKEND_USE_SQLITE
+#ifdef SYMBIAN_BACKEND_USE_CNTMODEL_V2
     // try to batch remove all contacts
     TRAPD(err,
         CContactIdArray* idList = CContactIdArray::NewLC();
@@ -842,7 +831,8 @@ QMap<QString, QContactDetailDefinition> CntSymbianEngine::detailDefinitions(cons
     *error = QContactManager::NoError;
 
     // First get the default definitions
-    QMap<QString, QMap<QString, QContactDetailDefinition> > schemaDefinitions = QContactManagerEngine::schemaDefinitions();
+	int schemaVersion = 2;
+    QMap<QString, QMap<QString, QContactDetailDefinition> > schemaDefinitions = QContactManagerEngine::schemaDefinitions(schemaVersion);
 
     // And then ask contact transformer to do the modifications required
     QMap<QString, QContactDetailDefinition> schemaForType = schemaDefinitions.value(contactType);
@@ -1103,9 +1093,9 @@ void CntSymbianEngine::performAsynchronousOperation()
             for (int i = 0; i < contactsToRemove.size(); i++) {
                 QContactManager::Error tempError;
                 removeContact(contactsToRemove.at(i), changeSet, &tempError);
-
-                errorMap.insert(i, tempError);                
+                
                 if (tempError != QContactManager::NoError) {
+                    errorMap.insert(i, tempError);
                     operationError = tempError;
                 }
             }
@@ -1129,8 +1119,8 @@ void CntSymbianEngine::performAsynchronousOperation()
                 QContactDetailDefinition current = detailDefinition(names.at(i), r->contactType(), &tempError);
                 requestedDefinitions.insert(names.at(i), current);
 
-                errorMap.insert(i, tempError);              
                 if (tempError != QContactManager::NoError) {
+                    errorMap.insert(i, tempError); 
                     operationError = tempError;
                 }
             }
@@ -1187,8 +1177,8 @@ void CntSymbianEngine::performAsynchronousOperation()
                 QContactManager::Error tempError;
                 removeRelationship(relationshipsToRemove.at(i), &tempError);
 
-                errorMap.insert(i, tempError);
                 if (tempError != QContactManager::NoError) {
+                    errorMap.insert(i, tempError);
                     operationError = tempError;
                 }
             }
@@ -1205,15 +1195,16 @@ void CntSymbianEngine::performAsynchronousOperation()
             QList<QContactRelationship> requestRelationships = r->relationships();
             QList<QContactRelationship> savedRelationships;
 
-            QContactManager::Error tempError;
             for (int i = 0; i < requestRelationships.size(); i++) {
+                QContactManager::Error tempError;
                 QContactRelationship current = requestRelationships.at(i);
                 saveRelationship(&current, &tempError);
-                savedRelationships.append(current);
 
-                errorMap.insert(i, tempError);
                 if (tempError != QContactManager::NoError) {
+                    errorMap.insert(i, tempError);
                     operationError = tempError;
+                } else {
+                    savedRelationships.append(current);
                 }
             }
 

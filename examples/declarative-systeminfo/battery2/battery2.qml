@@ -49,6 +49,13 @@ Rectangle {
 
     BatteryInfo {
         id: batinfo;
+        monitorChargerTypeChanges: true
+        monitorChargingStateChanges: true
+        monitorBatteryStatusChanges: true
+        monitorRemainingCapacityPercentChanges: true
+        monitorRemainingCapacityChanges: true
+        monitorRemainingChargingTimeChanges: true
+        monitorCurrentFlowChanges: true
 
         onChargerTypeChanged:  {
             if(batinfo.chargerType == -1) {
@@ -108,7 +115,6 @@ Rectangle {
                 batStat.text = "Battery Full"
             }
         }
-        onVoltageChanged: { voltagetext.text = "Voltage: "+ voltage}
         onRemainingCapacityPercentChanged: { leveltext.text = "Level: "+ remainingCapacityPercent }
         onRemainingCapacityChanged: { remCap.text = "Remaining Capacity: "+ batinfo.remainingCapacity; }
 
@@ -233,12 +239,6 @@ Rectangle {
                 chargeState.text = "Charging"
             }
         }
-    }
-
-    Component.onCompleted: {
-        batinfo.startRemainingCapacityPercentChanged();
-        batinfo.startChargingStateChanged();
-        batinfo.startRemainingChargingTimeChanged;
     }
 
     MouseArea {

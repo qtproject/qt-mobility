@@ -60,15 +60,11 @@
 #include <QtCore/qdatetime.h>
 #include <qmediaplayer.h>
 #include <pulse/pulseaudio.h>
-
+#include "qsamplecache_p.h"
 
 QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
-
-class QNetworkReply;
-class QNetworkAccessManager;
-class QWaveDecoder;
 
 class QSoundEffectPrivate : public QObject
 {
@@ -103,51 +99,58 @@ Q_SIGNALS:
     void statusChanged();
 
 private Q_SLOTS:
-    void decoderReady();
     void decoderError();
-    void checkPlayTime();
+    void sampleReady();
     void uploadSample();
     void contextReady();
+    void underRun();
+    void prepare();
+    void streamReady();
+    void emptyComplete();
+    void updateVolume();
+    void updateMuted();
 
 private:
-    void loadSample();
-    void unloadSample();
     void playSample();
 
-    void timerEvent(QTimerEvent *event);
-
-    void clearTasks();
+    void emptyStream();
     void createPulseStream();
+    void unloadPulseStream();
 
     void setPlaying(bool playing);
     void setStatus(QSoundEffect::Status status);
 
     static void stream_write_callback(pa_stream *s, size_t length, void *userdata);
     static void stream_state_callback(pa_stream *s, void *userdata);
-    static void play_callback(pa_context *c, int success, void *userdata);
+    static void stream_underrun_callback(pa_stream *s, void *userdata);
+    static void stream_cork_callback(pa_stream *s, int success, void *userdata);
+    static void stream_flush_callback(pa_stream *s, int success, void *userdata);
+    static void stream_write_done_callback(void *p);
+    static void stream_adjust_prebuffer_callback(pa_stream *s, int success, void *userdata);
+    static void stream_reset_buffer_callback(pa_stream *s, int success, void *userdata);
+    static void setvolume_callback(pa_context *c, int success, void *userdata);
+    static void setmuted_callback(pa_context *c, int success, void *userdata);
 
     pa_stream *m_pulseStream;
-    pa_stream *m_writeCallbackPulseStream;
-    int     m_timerID;
+    int        m_sinkInputId;
+    pa_sample_spec m_pulseSpec;
+    int        m_pulseBufferSize;
 
+    bool    m_emptying;
+    bool    m_sampleReady;
     bool    m_playing;
     QSoundEffect::Status  m_status;
-    bool    m_retry;
     bool    m_muted;
     bool    m_playQueued;
-    bool    m_sampleLoaded;
+    bool    m_stopping;
     int     m_volume;
-    int     m_duration;
-    int     m_dataUploaded;
     int     m_loopCount;
     int     m_runningCount;
     QUrl    m_source;
-    QTime  m_playbackTime;
     QByteArray m_name;
-    QNetworkReply *m_reply;
-    QWaveDecoder *m_waveDecoder;
-    QIODevice *m_stream;
-    QNetworkAccessManager *m_networkAccessManager;
+
+    QSample *m_sample;
+    int m_position;
 };
 
 QT_END_NAMESPACE

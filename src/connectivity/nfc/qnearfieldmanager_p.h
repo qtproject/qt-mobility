@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -42,6 +42,7 @@
 #ifndef QNEARFIELDMANAGER_P_H
 #define QNEARFIELDMANAGER_P_H
 
+#include "qnearfieldmanager.h"
 #include "qnearfieldtarget.h"
 #include "qndefrecord.h"
 
@@ -69,40 +70,60 @@ public:
     {
     }
 
-    virtual void startTargetDetection(const QList<QNearFieldTarget::Type> &targetTypes)
+    virtual bool isAvailable() const
+    {
+        return false;
+    }
+
+    virtual bool startTargetDetection(const QList<QNearFieldTarget::Type> &targetTypes)
     {
         Q_UNUSED(targetTypes);
+
+        return false;
     }
 
     virtual void stopTargetDetection()
     {
     }
 
-    virtual int registerTargetDetectedHandler(QObject *object, const QMetaMethod &/*method*/)
+    virtual int registerNdefMessageHandler(QObject *object, const QMetaMethod &/*method*/)
     {
         Q_UNUSED(object);
 
         return -1;
     }
 
-    virtual int registerTargetDetectedHandler(const QNdefFilter &/*filter*/,
-                                              QObject *object, const QMetaMethod &/*method*/)
+    virtual int registerNdefMessageHandler(const QNdefFilter &/*filter*/,
+                                           QObject *object, const QMetaMethod &/*method*/)
     {
         Q_UNUSED(object);
 
         return -1;
     }
 
-    virtual bool unregisterTargetDetectedHandler(int handlerId)
+    virtual bool unregisterNdefMessageHandler(int handlerId)
     {
         Q_UNUSED(handlerId);
 
         return false;
     }
 
+    virtual void requestAccess(QNearFieldManager::TargetAccessModes accessModes)
+    {
+        m_requestedModes |= accessModes;
+    }
+
+    virtual void releaseAccess(QNearFieldManager::TargetAccessModes accessModes)
+    {
+        m_requestedModes &= ~accessModes;
+    }
+
 signals:
     void targetDetected(QNearFieldTarget *target);
     void targetLost(QNearFieldTarget *target);
+
+public:
+    QNearFieldManager::TargetAccessModes m_requestedModes;
 };
 
 QTM_END_NAMESPACE

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -46,8 +46,6 @@
 
 #include <qndefrecord.h>
 
-#include <QtCore/QLocale>
-
 QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
@@ -57,8 +55,8 @@ class Q_CONNECTIVITY_EXPORT QNdefNfcTextRecord : public QNdefRecord
 public:
     Q_DECLARE_NDEF_RECORD(QNdefNfcTextRecord, QNdefRecord::NfcRtd, "T")
 
-    QLocale locale() const;
-    void setLocale(const QLocale &locale);
+    QString locale() const;
+    void setLocale(const QString &locale);
 
     QString text() const;
     void setText(const QString text);

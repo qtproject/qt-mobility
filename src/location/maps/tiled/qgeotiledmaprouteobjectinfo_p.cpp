@@ -73,117 +73,52 @@ QGeoTiledMapRouteObjectInfo::QGeoTiledMapRouteObjectInfo(QGeoTiledMapData *mapDa
     pathItem = new QGraphicsPathItem();
     graphicsItem = pathItem;
 
+    routeChanged(route->route());
     penChanged(route->pen());
     routeChanged(route->route());
 }
 
 QGeoTiledMapRouteObjectInfo::~QGeoTiledMapRouteObjectInfo() {}
 
-void QGeoTiledMapRouteObjectInfo::routeChanged(const QGeoRoute &route)
+void QGeoTiledMapRouteObjectInfo::routeChanged(const QGeoRoute &/*route*/)
 {
-    //QListIterator<QGeoRouteSegment> segIt(this->route->route().routeSegments());
-    //while (segIt.hasNext()) {
-    //    QListIterator<QGeoCoordinate> coordIt(segIt.next().path());
-    QGeoRouteSegment segment = this->route->route().firstRouteSegment();
+    regenPath();
+    updateItem();
+}
+
+void QGeoTiledMapRouteObjectInfo::penChanged(const QPen &/*pen*/)
+{
+    pathItem->setPen(route->pen());
+    updateItem();
+}
+
+void QGeoTiledMapRouteObjectInfo::detailLevelChanged(quint32 /*detailLevel*/)
+{
+    updateItem();
+}
+
+void QGeoTiledMapRouteObjectInfo::regenPath()
+{
+    QList<QGeoCoordinate> path;
+
+    QGeoRouteSegment segment = route->route().firstRouteSegment();
     while (segment.isValid()) {
-        QListIterator<QGeoCoordinate> coordIt(segment.path());
-        while (coordIt.hasNext()) {
-            QGeoCoordinate coord = coordIt.next();
-
-            if (!coord.isValid())
-                continue;
-
-            points.append(tiledMapData->coordinateToWorldReferencePosition(coord));
-        }
+        path.append(segment.path());
         segment = segment.nextRouteSegment();
     }
 
-    updateData();
-}
+    QPainterPath pth;
 
-void QGeoTiledMapRouteObjectInfo::penChanged(const QPen &pen)
-{
-    QPen p = route->pen();
-    p.setWidth(p.width() * tiledMapData->zoomFactor());
-    pathItem->setPen(p);
-    updateItem();
-}
-
-void QGeoTiledMapRouteObjectInfo::detailLevelChanged(quint32 detailLevel)
-{
-    updateData();
-}
-
-void QGeoTiledMapRouteObjectInfo::zoomLevelChanged(qreal zoomLevel)
-{
-    QPen p = route->pen();
-    p.setWidth(p.width() * tiledMapData->zoomFactor());
-    pathItem->setPen(p);
-    updateData();
-}
-
-void QGeoTiledMapRouteObjectInfo::updateData()
-{
-    distanceFilteredPoints.clear();
-
-    if (!points.isEmpty()) {
-        QPointF lastPoint = points.at(0);
-        distanceFilteredPoints.append(points.at(0));
-        for (int i = 1; i < points.size() - 1; ++i) {
-            if ((lastPoint - points.at(i)).manhattanLength() >= route->detailLevel() * tiledMapData->zoomFactor()) {
-                distanceFilteredPoints.append(points.at(i));
-                lastPoint = points.at(i);
-            }
-        }
-
-        distanceFilteredPoints.append(points.at(points.size() - 1));
-    }
-    setValid((distanceFilteredPoints.size() >= 2));
-
-    if (valid())
-        updateVisible();
-}
-
-void QGeoTiledMapRouteObjectInfo::windowSizeChanged(const QSizeF &windowSize)
-{
-    if (valid())
-        updateVisible();
-}
-
-void QGeoTiledMapRouteObjectInfo::centerChanged(const QGeoCoordinate &coordinate)
-{
-    if (valid())
-        updateVisible();
-}
-
-void QGeoTiledMapRouteObjectInfo::updateVisible()
-{
-    QPainterPath painterPath;
-
-    bool offScreen = true;
-
-    for (int i = 0; i < distanceFilteredPoints.size(); ++i) {
-        if (!offScreen)
-            painterPath.lineTo(distanceFilteredPoints.at(i));
-
-        bool wasOffScreen = offScreen;
-
-        QPointF point1 = distanceFilteredPoints.at(i);
-        QPointF point2 = distanceFilteredPoints.at(i + 1 < distanceFilteredPoints.size() ? i + 1 : i);
-        QPointF midpoint = (point1 + point2) / 2.0;
-
-        QRect maxZoomScreenRect = tiledMapData->worldReferenceViewportRect();
-
-        offScreen = !(maxZoomScreenRect.contains(point1.toPoint())
-                      || maxZoomScreenRect.contains(point2.toPoint())
-                      || maxZoomScreenRect.contains(midpoint.toPoint()));
-
-        if (wasOffScreen && !offScreen)
-            painterPath.moveTo(distanceFilteredPoints.at(i));
+    for (int i = 0; i < path.size(); ++i) {
+        double x = path.at(i).longitude() * 3600.0;
+        double y = path.at(i).latitude() * 3600.0;
+        if (i == 0)
+            pth.moveTo(x, y);
+        else
+            pth.lineTo(x, y);
     }
 
-    pathItem->setPath(painterPath);
-    updateItem();
+    pathItem->setPath(pth);
 }
 
 #include "moc_qgeotiledmaprouteobjectinfo_p.cpp"

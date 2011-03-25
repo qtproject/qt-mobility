@@ -25,6 +25,8 @@ isEmpty(QT_LIBINFIX):symbian {
     epoc32 = $$(EPOCROOT32)
     epoc50 = $$(EPOCROOT50)
     epoc51 = $$(EPOCROOT51)
+    epocS3PS1 = $$(EPOCROOT_S3PS1)
+    epocS3PS2 = $$(EPOCROOT_S3PS2)
 
     # default to EPOCROOT if EPOCROOTxy not defined
     isEmpty(epoc31) {
@@ -48,6 +50,16 @@ isEmpty(QT_LIBINFIX):symbian {
     } else {
         EPOCROOT51 = $$(EPOCROOT51)
     }
+    isEmpty(epocS3PS1) {
+        EPOCROOT_S3PS1 = $${EPOCROOT}
+    } else {
+        EPOCROOT_S3PS1 = $$(EPOCROOT_S3PS1)
+    }
+    isEmpty(epocS3PS2) {
+        EPOCROOT_S3PS2 = $${EPOCROOT}
+    } else {
+        EPOCROOT_S3PS2 = $$(EPOCROOT_S3PS2)
+    }
 
     #Symbian^3 and beyond requires special package flags
     #we cannot use S60_VERSION == 5.2 as Qt 4.6.x does not define it yet
@@ -57,9 +69,48 @@ isEmpty(QT_LIBINFIX):symbian {
         qtmobilitydeployment.pkg_prerules += "$${LITERAL_HASH}{\"QtMobility\"},(0x2002AC89),$${pkg_version},TYPE=SA,RU,NR"
     }
 
-    contains(mobility_modules, messaging): qtmobilitydeployment.sources += \
+    contains(mobility_modules, messaging) {
+        qtmobilitydeployment.sources += \
         $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtMessaging.dll
+
+        contains(QT_CONFIG, declarative): {
+            qtmobilitydeployment.sources += \
+            $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/declarative_messaging.dll
+            pluginstubs += \
+            "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\declarative\\messaging\\qmakepluginstubs\\declarative_messaging.qtplugin\"  - \"!:\\resource\\qt\\imports\\QtMobility\\messaging\\declarative_messaging.qtplugin\""
+            qmldirs += \
+            "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\declarative\\messaging\\qmldir\"  - \"!:\\resource\\qt\\imports\\QtMobility\\messaging\\qmldir\""
+        }
+    }
     
+    contains(mobility_modules, connectivity) {
+        # QtConnectivity needs to be built and deployed to each Symbian version differently. This
+        # is because NFC support is only available from Symbian^3 PS2 onwards. There are also some
+        # differences with Bluetooth, hence the Symbian^1 variants.
+        #
+        # - PS2 build has NFC and Bluetooth support, requires Symbian^3 device with PS2 firmware
+        # - PS1 build has Bluetooth support only (NFC is a stub), requires Symbian^3 device with
+        #   PS1 firmware
+        #   Installing Qt Mobility on a Symbian^3 PS1 device then upgrading device firmware to PS2
+        #   will leave Qt Mobility NFC support disabled until Qt Mobility is reinstalled/upgraded.
+        # - S60 5.0 build has Bluetooth support only (NFC is a stub)
+        # - S60 3.1 and 3.2 build only produces a stub library.
+        connectivity = \
+            "IF package(0x20022E6D) AND exists(\"z:\\sys\\bin\\nfc.dll\")" \
+            "    \"$${EPOCROOT_S3PS2}epoc32/release/$(PLATFORM)/$(TARGET)/QtConnectivity.dll\" - \"!:\\sys\\bin\\QtConnectivity.dll\"" \
+            "ELSEIF package(0x20022E6D)" \
+            "    \"$${EPOCROOT_S3PS1}epoc32/release/$(PLATFORM)/$(TARGET)/QtConnectivity.dll\" - \"!:\\sys\\bin\\QtConnectivity.dll\"" \
+            "ELSEIF package(0x1028315F)" \
+            "    \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtConnectivity.dll\" - \"!:\\sys\\bin\\QtConnectivity.dll\"" \
+            "ELSEIF package(0x102752AE) OR package(0x102032BE)" \
+            "    \"$${EPOCROOT32}epoc32/release/$(PLATFORM)/$(TARGET)/QtConnectivity.dll\" - \"!:\\sys\\bin\\QtConnectivity.dll\"" \
+            "ELSE" \
+            "    \"$${EPOCROOT}epoc32/release/$(PLATFORM)/$(TARGET)/QtConnectivity.dll\" - \"!:\\sys\\bin\\QtConnectivity.dll\"" \
+            "ENDIF"
+
+        qtmobilitydeployment.pkg_postrules += connectivity
+    }
+
     contains(mobility_modules, serviceframework) { 
         qtmobilitydeployment.sources += \
         $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtServiceFramework.dll \

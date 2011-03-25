@@ -47,6 +47,18 @@ contains(QT_MAJOR_VERSION, 4):lessThan(QT_MINOR_VERSION, 6) {
         system(cat $${sourcePath} >> $$PRF_OUTPUT)
     }
 
+    symbian:contains(nfc_symbian_enabled,yes) {
+        contains(QMAKE_HOST.os,Windows) {
+            system(echo $$LITERAL_HASH Connectivity depends on service framework on Symbian >> $$PRF_OUTPUT)
+            system(echo contains(MOBILITY, connectivity):MOBILITY += serviceframework >> $$PRF_OUTPUT)
+        } else {
+            system(echo \\$$LITERAL_HASH Connectivity depends on service framework on Symbian >> $$PRF_OUTPUT)
+            system(echo contains\\(MOBILITY, connectivity\\):MOBILITY += serviceframework >> $$PRF_OUTPUT)
+        }
+    }
+
+    # Remember to update staticconfig.pri binary version statement
+    # and pregenerated files under src/s60installs for Symbian RnD release
     PRF_CONFIG=$${QT_MOBILITY_BUILD_TREE}/features/mobilityconfig.prf
     system(echo MOBILITY_CONFIG=$${mobility_modules} > $$PRF_CONFIG)
     system(echo MOBILITY_VERSION = 1.2.0 >> $$PRF_CONFIG)
@@ -200,7 +212,16 @@ contains(build_demos, yes):SUBDIRS+=demos
         qtmheadersgallery.files = $${QT_MOBILITY_BUILD_TREE}/include/QtGallery/*
         INSTALLS += qtmheadersgallery
     }
+
+    contains(mobility_modules,connectivity) {
+        qtmheaderconnectivity.path = $${QT_MOBILITY_INCLUDE}/QtConnectivity
+        qtmheaderconnectivity.files = $${QT_MOBILITY_BUILD_TREE}/include/QtConnectivity/*
+        INSTALLS += qtmheaderconnectivity
+    }
 } else {
+    # following needs to be set because symbian-abld or symbian-sbsv2 is not yet
+    # defined in platform_paths.prf and the prj_export gets confused about paths.
+    epocroot_prefix = /
     #absolute path does not work and 
     #include <QtMyLibrary/class.h> style does not work either
     qtmGlobalHeaders = include/QtMobility/*
@@ -218,7 +239,7 @@ contains(build_demos, yes):SUBDIRS+=demos
     qtmAppHeaders = include/QtContacts/* \
                        include/QtVersit/* \
                        include/QtVersitOrganizer/* \
-                       include/Organizer/*
+                       include/QtOrganizer/*
 
     qtmMwHeaders = include/QtBearer/* \
                        include/QtLocation/* \
@@ -229,7 +250,8 @@ contains(build_demos, yes):SUBDIRS+=demos
                        include/QtSystemInfo/* \
                        include/QtSensors/* \
                        include/QtFeedback/* \
-                       include/QtGallery/*
+                       include/QtGallery/* \
+                       include/QtConnectivity/*
 
     contains(mobility_modules,contacts|versit|organizer) {
         for(api, qtmAppHeaders) {
@@ -249,7 +271,7 @@ contains(build_demos, yes):SUBDIRS+=demos
         }
     }
 
-    contains(mobility_modules,serviceframework|location|bearer|publishsubscribe|systeminfo|multimedia|messaging|feedback|sensors|gallery) {
+    contains(mobility_modules,serviceframework|location|bearer|publishsubscribe|systeminfo|multimedia|messaging|feedback|sensors|gallery|connectivity) {
         for(api, qtmMwHeaders) {
             INCLUDEFILES=$$files($$api);
 

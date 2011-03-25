@@ -73,16 +73,10 @@ public:
     QGeoTiledMapTextObjectInfo(QGeoTiledMapData *mapData, QGeoMapObject *mapObject);
     ~QGeoTiledMapTextObjectInfo();
 
-    QGeoBoundingBox boundingBox() const;
-
-    void updateValidity();
-
     QGeoMapTextObject* text;
-    QGraphicsSimpleTextItem *textItem1;
-    QGraphicsSimpleTextItem *textItem2;
+    QGraphicsSimpleTextItem *textItem;
 
 public slots:
-    void coordinateChanged(const QGeoCoordinate &coordinate);
     void textChanged(const QString &text);
     void fontChanged(const QFont &font);
     void penChanged(const QPen &pen);
@@ -90,12 +84,8 @@ public slots:
     void offsetChanged(const QPoint &offset);
     void alignmentChanged(Qt::Alignment alignment);
 
-    void zoomLevelChanged(qreal zoomLevel);
-
 private:
-    void update();
-
-    QGeoBoundingBox boundingBox_;
+    void doAlignment();
 };
 
 QTM_END_NAMESPACE

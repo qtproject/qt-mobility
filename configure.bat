@@ -59,12 +59,14 @@ set BUILD_EXAMPLES=no
 set BUILD_DEMOS=no
 set BUILD_DOCS=yes
 set BUILD_TOOLS=yes
+set LANGUAGES_CONFIG=
 set MOBILITY_MODULES=bearer location contacts systeminfo publishsubscribe versit messaging sensors serviceframework multimedia gallery organizer feedback connectivity
 set MOBILITY_MODULES_UNPARSED=
 set VC_TEMPLATE_OPTION=
 set QT_PATH=
 set QMAKE_CACHE=%BUILD_PATH%\.qmake.cache
 set PLATFORM_CONFIG=
+set NFC_SYMBIAN=auto
 
 REM By default, all modules are requested.  Reset this later if -modules is supplied
 set ORGANIZER_REQUESTED=yes
@@ -103,7 +105,9 @@ if "%1" == "-h"                 goto usage
 if "%1" == "-help"              goto usage
 if "%1" == "--help"             goto usage
 if "%1" == "-symbian-unfrozen"  goto unfrozenTag
-if "%1" == "-staticconfig"     goto staticConfigTag
+if "%1" == "-staticconfig"      goto staticConfigTag
+if "%1" == "-languages"         goto languagesTag
+if "%1" == "-no-nfc-symbian"    goto noNfcSymbianTag
 
 echo Unknown option: "%1"
 goto usage
@@ -146,6 +150,9 @@ echo Usage: configure.bat [-prefix (dir)] [headerdir (dir)] [libdir (dir)]
     echo                     by double quotation. If a selected module depends on other modules
     echo                     those modules (and their dependencies) will automatically be enabled.
     echo -vc ............... Generate Visual Studio make files
+    echo -languages ........ Languages/translations to be installed (e.g.: ar de ko)
+    echo                     (default is empty)
+    echo -no-nfc-symbian ... Disables the NFC Symbian backend.
 
 
 if exist "%PROJECT_CONFIG%" del %PROJECT_CONFIG%
@@ -154,6 +161,34 @@ goto exitTag
 :qtTag
 shift
 set QT_PATH=%1\
+shift
+goto cmdline_parsing
+
+:noNfcSymbianTag
+shift
+set NFC_SYMBIAN=no
+goto cmdline_parsing
+
+:languagesTag
+shift
+:: %1 can have leading/trailing quotes, so we can't use if "%1" == ""
+if xx%1xx == xxxx (
+    echo. >&2
+    echo >&2The -languages option requires a list of languages.
+    echo. >&2
+    goto usage
+)
+
+:: Remove leading/trailing quotes, if we have them
+set MOBILITY_LANGUAGES_UNPARSED=xxx%1xxx
+set MOBILITY_LANGUAGES_UNPARSED=%MOBILITY_LANGUAGES_UNPARSED:"xxx=%
+set MOBILITY_LANGUAGES_UNPARSED=%MOBILITY_LANGUAGES_UNPARSED:xxx"=%
+set MOBILITY_LANGUAGES_UNPARSED=%MOBILITY_LANGUAGES_UNPARSED:xxx=%
+
+REM for now we don't check the languages for their validity
+set LANGUAGES_CONFIG=
+set LANGUAGES_CONFIG= %MOBILITY_LANGUAGES_UNPARSED%
+echo Selected Languages: %LANGUAGES_CONFIG%
 shift
 goto cmdline_parsing
 
@@ -406,8 +441,11 @@ echo isEmpty($$QT_MOBILITY_PLUGINS):QT_MOBILITY_PLUGINS=$$QT_MOBILITY_PREFIX/plu
 echo isEmpty($$QT_MOBILITY_EXAMPLES):QT_MOBILITY_EXAMPLES=$$QT_MOBILITY_PREFIX/bin >> %PROJECT_CONFIG%
 echo isEmpty($$QT_MOBILITY_DEMOS):QT_MOBILITY_DEMOS=$$QT_MOBILITY_PREFIX/bin >> %PROJECT_CONFIG%
 
+echo selected_languages = %LANGUAGES_CONFIG% >> %PROJECT_CONFIG%
+
 echo mobility_modules = %MOBILITY_MODULES%  >> %PROJECT_CONFIG%
 echo contains(mobility_modules,versit): mobility_modules *= contacts >> %PROJECT_CONFIG%
+echo contains(mobility_modules,connectivity): mobility_modules *= serviceframework >> %PROJECT_CONFIG%
 
 echo Checking available Qt
 call %QT_PATH%qmake -v >> %PROJECT_LOG% 2>&1
@@ -559,22 +597,37 @@ call :compileTest SymbianContactModel symbiancntmodel
 call :compileTest SymbianContactModelv2 symbiancntmodelv2
 call :compileTest S60_Sensor_API sensors_s60_31
 call :compileTest Symbian_Sensor_Framework sensors_symbian
+call :compileTest Sensor_Framework_Light sensors_symbian_light
 call :compileTest Symbian_Hb hb_symbian
 call :compileTest Audiorouting_s60 audiorouting_s60
 call :compileTest Tunerlibrary_for_3.1 tunerlib_s60
 call :compileTest RadioUtility_for_post_3.1 radioutility_s60
-call :compileTest OpenMaxAl_support openmaxal_symbian
+REM Currently not being supported
+REM call :compileTest OpenMaxAl_support openmaxal_symbian
 call :compileTest Surfaces_s60 surfaces_s60
 call :compileTest Symbian_Messaging_Freestyle messaging_freestyle
+call :compileTest Symbian_Messaging_Freestyle_MAPI12 messaging_freestyle_mapi12
 call :compileTest callinformation_symbian callinformation_symbian
 call :compileTest IMMERSION immersion
 call :compileTest Symbian_CamAutoFocus_31 symbian_camera_camautofocus
 call :compileTest Symbian_ECamAdvancedSettings_Post31 symbian_camera_ecamadvsettings
 call :compileTest Symbian_DevVideoRecord symbian_camera_devvideorecord
+call :compileTest Symbian_SnapShotAPI symbian_camera_snapshot
 call :compileTest AdvancedTouchFeedback advancedtouchfeedback
+call :compileTest CHWRMHaptics chwrmhaptics
 call :compileTest MDS mds
 call :compileTest MDS_25 mds_25
 call :compileTest MDS_25_92MCL mds_25_92mcl
+if "%NFC_SYMBIAN%" == "auto" (
+    call :compileTest Symbian_NFC nfc_symbian
+) else (
+    echo nfc_symbian_enabled = no >> %PROJECT_CONFIG%
+)
+call :compileTest BTEngineConnectionManager_Symbian btengconnman_symbian
+call :compileTest BTEngineDeviceManager_Symbian btengdevman_symbian
+call :compileTest LockandFlipKeys LockandFlipPSkeys
+call :compileTest FmTxClientCheck FmTxClient
+call :compileTest DiskNotifyClientCheck DiskNotifyClient
 goto noTests
 
 :windowsTests
@@ -672,6 +725,8 @@ if %FIRST% == bearer (
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtConnectivity %SOURCE_PATH%\src\connectivity
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtConnectivity %SOURCE_PATH%\src\connectivity\nfc
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtConnectivity %SOURCE_PATH%\src\connectivity\bluetooth
+    REM connectivity/nfc implies sfw
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtServiceFramework %SOURCE_PATH%\src\serviceframework
 )
 
 if "%REMAINING%" == "" (
@@ -721,6 +776,7 @@ set QT_MOBILITY_EXAMPLES=
 set QT_MOBILITY_DEMOS=
 set ORGANIZER_REQUESTED=
 set PLATFORM_CONFIG=
+set LANGUAGES_CONFIG=
 exit /b 1
 
 :exitTag
@@ -742,4 +798,5 @@ set QT_MOBILITY_EXAMPLES=
 set QT_MOBILITY_DEMOS=
 set ORGANIZER_REQUESTED=
 set PLATFORM_CONFIG=
+set LANGUAGES_CONFIG=
 exit /b 0

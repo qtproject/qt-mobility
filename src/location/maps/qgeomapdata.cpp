@@ -42,15 +42,26 @@
 #include "qgeomapdata.h"
 #include "qgeomapdata_p.h"
 
+#include <QGraphicsScene>
+#include <QGraphicsItem>
+#include <QGraphicsPolygonItem>
+#include <QGraphicsLineItem>
+#include <QGraphicsEllipseItem>
+#include <QGraphicsPathItem>
+
 #include "qgeoboundingbox.h"
 #include "qgeocoordinate.h"
 #include "qgraphicsgeomap.h"
 #include "qgeomapobject.h"
+#include "qgeomappixmapobject.h"
 #include "qgeomapgroupobject.h"
+#include "qgeomaptextobject.h"
 #include "qgeomappingmanagerengine.h"
 #include "qgeomapoverlay.h"
 
+#include "qgeomapobjectengine_p.h"
 #include "qgeomapobject_p.h"
+#include "projwrapper_p.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -204,6 +215,122 @@ qreal QGeoMapData::zoomLevel() const
 }
 
 /*!
+    \property QGeoMapData::supportsBearing
+
+    Returns whether bearing is supported by this engine.
+*/
+bool QGeoMapData::supportsBearing() const
+{
+    return d_ptr->engine->supportsBearing();
+}
+
+/*!
+    Sets the bearing of the map to \a bearing.
+
+    Value in degrees in the range of 0-360. 0 being equivalent to 0 degrees from
+    north.
+*/
+void QGeoMapData::setBearing(qreal bearing)
+{
+    if (!supportsBearing())
+        return;
+
+    bearing = qMin(bearing, qreal(360.0));
+    bearing = qMax(bearing, qreal(0.0));
+
+    if (d_ptr->bearing == bearing)
+        return;
+
+    d_ptr->bearing = bearing;
+
+    if (!d_ptr->blockPropertyChangeSignals)
+        emit bearingChanged(d_ptr->bearing);
+}
+
+/*!
+    \property QGeoMapData::bearing
+
+    Returns the current bearing of the map.
+
+    Value in degrees in the range of 0-360. 0 being equivalent to 0 degrees from
+    north.
+*/
+qreal QGeoMapData::bearing() const
+{
+    return d_ptr->bearing;
+}
+
+/*!
+    \property QGeoMapData::supportsTilting
+
+    Returns whether tilting is supported by this engine.
+*/
+bool QGeoMapData::supportsTilting() const
+{
+    return d_ptr->engine->supportsTilting();
+}
+
+/*!
+    \property QGeoMapData::minimumTilt
+
+    Returns minimum tilt supported by this engine.
+*/
+qreal QGeoMapData::minimumTilt() const
+{
+    return d_ptr->engine->minimumTilt();
+}
+
+/*!
+    \property QGeoMapData::maximumTilt
+
+    Returns maximum tilt supported by this engine.
+*/
+qreal QGeoMapData::maximumTilt() const
+{
+    return d_ptr->engine->maximumTilt();
+}
+
+/*!
+    Sets the tilt of the map to \a tilt.
+
+    Value in degrees where 0 is equivalent to 90 degrees between view and earth's
+    surface i.e. looking straight down to earth.
+
+    If \a tilt is less than minimumTilt() then minimumTilt()
+    will be used, and if \a tilt is  larger than
+    maximumTilt() then maximumTilt() will be used.
+*/
+void QGeoMapData::setTilt(qreal tilt)
+{
+    if (!supportsTilting())
+        return;
+
+    tilt = qMin(tilt, d_ptr->engine->maximumTilt());
+    tilt = qMax(tilt, d_ptr->engine->minimumTilt());
+
+    if (d_ptr->tilt == tilt)
+        return;
+
+    d_ptr->tilt = tilt;
+
+    if (!d_ptr->blockPropertyChangeSignals)
+        emit tiltChanged(d_ptr->tilt);
+}
+
+/*!
+    \property QGeoMapData::tilt
+
+    Returns the current tilt of the map.
+
+    Value in degrees where 0 is equivalent to 90 degrees between view and earth's
+    surface i.e. looking straight down to earth.
+*/
+qreal QGeoMapData::tilt() const
+{
+    return d_ptr->tilt;
+}
+
+/*!
     Pans the map view \a dx pixels in the x direction and \a dy pixels
     in the y direction.
 
@@ -311,7 +438,7 @@ QList<QGeoMapObject*> QGeoMapData::mapObjects() const
 */
 void QGeoMapData::addMapObject(QGeoMapObject *mapObject)
 {
-    d_ptr->containerObject->addChildObject(mapObject);
+    d_ptr->addObject(mapObject);
 }
 
 /*!
@@ -320,7 +447,7 @@ void QGeoMapData::addMapObject(QGeoMapObject *mapObject)
 */
 void QGeoMapData::removeMapObject(QGeoMapObject *mapObject)
 {
-    d_ptr->containerObject->removeChildObject(mapObject);
+    d_ptr->removeObject(mapObject);
 }
 
 /*!
@@ -330,7 +457,7 @@ void QGeoMapData::removeMapObject(QGeoMapObject *mapObject)
 */
 void QGeoMapData::clearMapObjects()
 {
-    d_ptr->containerObject->clearChildObjects();
+    d_ptr->clearObjects();
 }
 
 /*!
@@ -364,7 +491,6 @@ QList<QGeoMapObject*> QGeoMapData::mapObjectsAtScreenPosition(const QPointF &scr
     QList<QGeoMapObject*> results;
 
     QGeoCoordinate coord = screenPositionToCoordinate(screenPosition);
-
     int childObjectCount = d_ptr->containerObject->childObjects().count();
     for (int i = 0; i < childObjectCount; ++i) {
         QGeoMapObject *object = d_ptr->containerObject->childObjects().at(i);
@@ -404,10 +530,10 @@ QList<QGeoMapObject*> QGeoMapData::mapObjectsInScreenRect(const QRectF &screenRe
 */
 QList<QGeoMapObject*> QGeoMapData::mapObjectsInViewport() const
 {
-    return mapObjectsInScreenRect(QRectF(0.0,
-                                         0.0,
-                                         d_ptr->windowSize.width(),
-                                         d_ptr->windowSize.height()));
+    return this->mapObjectsInScreenRect(QRectF(0.0,
+                                               0.0,
+                                               d_ptr->windowSize.width(),
+                                               d_ptr->windowSize.height()));
 }
 
 /*!
@@ -467,7 +593,12 @@ void QGeoMapData::paintMap(QPainter *painter, const QStyleOptionGraphicsItem *op
 /*!
     Paints the map objects on \a painter, using the options \a option.
 
-    The default implementation does not paint anything.
+    The default implementation makes use of the coordinateToScreenPosition
+    implemented by the subclass to perform object positioning and rendering.
+
+    This implementation should suffice for most common use cases, and supports
+    the full range of coordinate systems and transforms available to a
+    QGeoMapObject.
 */
 void QGeoMapData::paintObjects(QPainter *painter, const QStyleOptionGraphicsItem *option)
 {
@@ -495,6 +626,18 @@ void QGeoMapData::paintProviderNotices(QPainter *painter, const QStyleOptionGrap
 {
     Q_UNUSED(painter)
     Q_UNUSED(option)
+}
+
+/*!
+    Creates a QGeoMapObjectInfo instance which implements the behaviours o
+    the map object \a object which are specific to this QGeoMapData.
+
+    The default implementation returns 0.
+*/
+QGeoMapObjectInfo *QGeoMapData::createMapObjectInfo(QGeoMapObject *object)
+{
+    Q_UNUSED(object);
+    return 0;
 }
 
 /*!
@@ -545,17 +688,6 @@ void QGeoMapData::clearMapOverlays()
     d_ptr->overlays.clear();
 }
 
-/*!
-    Creates a QGeoMapObjectInfo instance which implements the behaviours of
-    the map object \a object which are specific to this QGeoMapData.
-
-    The default implementation returns 0.
-*/
-QGeoMapObjectInfo* QGeoMapData::createMapObjectInfo(QGeoMapObject *object)
-{
-    Q_UNUSED(object)
-    return 0;
-}
 
 /*!
     Sets whether changes to properties will trigger their corresponding signals to \a block.
@@ -563,7 +695,7 @@ QGeoMapObjectInfo* QGeoMapData::createMapObjectInfo(QGeoMapObject *object)
     By default the QGeoMapData implementations of the property functions are used
     which cause the property notification signals to be emitted immediately.
 
-    Calling this function with \a block set to false will prevent these
+    Calling this function with \a block set to true will prevent these
     signals from being called, which will allow a subclass to defer the
     emission of the signal until a later time.
 
@@ -590,6 +722,22 @@ void QGeoMapData::setBlockPropertyChangeSignals(bool block)
     This signal is emitted when the zoom level of the map has changed.
 
     The new value is \a zoomLevel.
+*/
+
+/*!
+\fn void QGeoMapData::bearingChanged(qreal bearing)
+
+    This signal is emitted when the bearing of the map has changed.
+
+    The new value is \a bearing.
+*/
+
+/*!
+\fn void QGeoMapData::tiltChanged(qreal tilt)
+
+    This signal is emitted when the tilt of the map has changed.
+
+    The new value is \a tilt.
 */
 
 /*!
@@ -631,11 +779,17 @@ void QGeoMapData::setBlockPropertyChangeSignals(bool block)
 *******************************************************************************/
 
 QGeoMapDataPrivate::QGeoMapDataPrivate(QGeoMapData *parent, QGeoMappingManagerEngine *engine)
-    : q_ptr(parent),
+    : QObject(0),
       engine(engine),
       containerObject(0),
       zoomLevel(-1.0),
-      blockPropertyChangeSignals(false) {}
+      shiftSinceLastInval(0, 0),
+      windowSize(0, 0),
+      bearing(0.0),
+      tilt(0.0),
+      blockPropertyChangeSignals(false),
+      q_ptr(parent)
+{}
 
 QGeoMapDataPrivate::~QGeoMapDataPrivate()
 {
@@ -644,6 +798,38 @@ QGeoMapDataPrivate::~QGeoMapDataPrivate()
     qDeleteAll(overlays);
 }
 
+void QGeoMapDataPrivate::addObject(QGeoMapObject *object)
+{
+    containerObject->addChildObject(object);
+    //emit q_ptr->updateMapDisplay();
+}
+
+void QGeoMapDataPrivate::removeObject(QGeoMapObject *object)
+{
+    containerObject->removeChildObject(object);
+}
+
+void QGeoMapDataPrivate::clearObjects()
+{
+    foreach (QGeoMapObject *obj, containerObject->childObjects()) {
+        this->removeObject(obj);
+        delete obj;
+    }
+}
+
+QPointF QGeoMapDataPrivate::coordinateToScreenPosition(double lon, double lat) const
+{
+    QGeoCoordinate c(lon, lat);
+    return q_ptr->coordinateToScreenPosition(c);
+}
+
+void QGeoMapDataPrivate::emitUpdateMapDisplay(const QRectF &target)
+{
+    emit q_ptr->updateMapDisplay(target);
+}
+
+
 #include "moc_qgeomapdata.cpp"
+#include "moc_qgeomapdata_p.cpp"
 
 QTM_END_NAMESPACE

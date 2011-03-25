@@ -44,7 +44,7 @@
 #include <qmobilityglobal.h>
 #include <qmailstore.h>
 #include "qmfhelpers_maemo6_p.h"
-#include "qmessagestore.h"
+#include "qmessagestore_p.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -93,6 +93,10 @@ signals:
     void messageAdded(const QMessageId &id, const QMessageManager::NotificationFilterIdSet &matchingFilterIds);
     void messageRemoved(const QMessageId &id, const QMessageManager::NotificationFilterIdSet &matchingFilterIds);
     void messageUpdated(const QMessageId &id, const QMessageManager::NotificationFilterIdSet &matchingFilterIds);
+    void accountRemoved(const QMessageAccountId &id);
+
+protected slots:
+    void emitAccountRemoved();
 
 private:
     friend class QGlobalStaticDeleter<QMFStore>;
@@ -100,6 +104,7 @@ private:
     virtual ~QMFStore();
 
     QMFStorePrivate *d_ptr;
+    QMessageAccountId *m_ptrRemovedAccountId;
 };
 
 

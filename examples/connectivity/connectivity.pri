@@ -1,4 +1,4 @@
-include($$PWD/../examples.pri)
+include($$PWD/../mobility_examples.pri)
 CONFIG += mobility strict_flags
 INCLUDEPATH += $$PWD/../../src/connectivity/nfc
 DEPENDPATH += $$PWD/../../src/connectivity/nfc

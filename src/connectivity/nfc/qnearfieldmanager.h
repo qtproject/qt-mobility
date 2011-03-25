@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -61,26 +61,39 @@ class Q_CONNECTIVITY_EXPORT QNearFieldManager : public QObject
     Q_DECLARE_PRIVATE(QNearFieldManager)
 
 public:
+    enum TargetAccessMode {
+        NoTargetAccess = 0x00,
+        NdefReadTargetAccess = 0x01,
+        NdefWriteTargetAccess = 0x02,
+        TagTypeSpecificTargetAccess = 0x04,
+    };
+    Q_DECLARE_FLAGS(TargetAccessModes, TargetAccessMode)
+
     explicit QNearFieldManager(QObject *parent = 0);
     explicit QNearFieldManager(QNearFieldManagerPrivate *backend, QObject *parent = 0);
     ~QNearFieldManager();
 
-    void startTargetDetection(const QList<QNearFieldTarget::Type> &targetTypes);
-    void startTargetDetection(QNearFieldTarget::Type targetType = QNearFieldTarget::AnyTarget);
+    bool isAvailable() const;
+
+    void setTargetAccessModes(TargetAccessModes accessModes);
+    TargetAccessModes targetAccessModes() const;
+
+    bool startTargetDetection(const QList<QNearFieldTarget::Type> &targetTypes);
+    bool startTargetDetection(QNearFieldTarget::Type targetType = QNearFieldTarget::AnyTarget);
     void stopTargetDetection();
 
     template<typename T>
-    int registerTargetDetectedHandler(QObject *object, const char *method);
-    int registerTargetDetectedHandler(QObject *object, const char *method);
-    int registerTargetDetectedHandler(QNdefRecord::TypeNameFormat typeNameFormat,
-                                      const QByteArray &type,
-                                      QObject *object, const char *method);
-    int registerTargetDetectedHandler(const QNdefFilter &filter,
-                                      QObject *object, const char *method);
+    int registerNdefMessageHandler(QObject *object, const char *method);
+    int registerNdefMessageHandler(QObject *object, const char *method);
+    int registerNdefMessageHandler(QNdefRecord::TypeNameFormat typeNameFormat,
+                                   const QByteArray &type,
+                                   QObject *object, const char *method);
+    int registerNdefMessageHandler(const QNdefFilter &filter,
+                                   QObject *object, const char *method);
 
-    bool unregisterTargetDetectedHandler(int handlerId);
+    bool unregisterNdefMessageHandler(int handlerId);
 
-signals:
+Q_SIGNALS:
     void targetDetected(QNearFieldTarget *target);
     void targetLost(QNearFieldTarget *target);
     void transactionDetected(const QByteArray &applicationIdentifier);
@@ -90,13 +103,15 @@ private:
 };
 
 template<typename T>
-int QNearFieldManager::registerTargetDetectedHandler(QObject *object, const char *method)
+int QNearFieldManager::registerNdefMessageHandler(QObject *object, const char *method)
 {
     T record;
 
-    return registerTargetDetectedHandler(record.userTypeNameFormat(), record.type(),
+    return registerNdefMessageHandler(record.userTypeNameFormat(), record.type(),
                                          object, method);
 }
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(QNearFieldManager::TargetAccessModes)
 
 QTM_END_NAMESPACE
 

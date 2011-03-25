@@ -48,6 +48,7 @@
 #include <QUrl>
 #include <QList>
 #include <QHash>
+#include <QMap>
 #include "qaudioformat.h"
 #include <qmediarecorder.h>
 
@@ -56,6 +57,10 @@
 #include <mda/client/utility.h>
 #include <mdaaudiosampleeditor.h>
 #include <mmf/common/mmfutilities.h>
+
+#ifdef AUDIOINPUT_ROUTING
+#include <audioinput.h>
+#endif //AUDIOINPUT_ROUTING
 
 QT_BEGIN_NAMESPACE
 struct ControllerData
@@ -97,6 +102,8 @@ public:
 
     QAudioFormat format() const;
     bool setFormat(const QAudioFormat &format);
+    QAudioEncoderSettings settings() const;
+    bool setEncoderSettings(const QAudioEncoderSettings &setting);
     QStringList supportedAudioCodecs() const;
     QString codecDescription(const QString &codecName);
     bool setAudioCodec(const QString &codecName);
@@ -115,6 +122,16 @@ public:
     void mute(bool muted);
     bool muted();
 
+    QString activeEndpoint() const;
+    QString defaultEndpoint() const;
+    QList<QString> availableEndpoints() const;
+    QString endpointDescription(const QString& name) const;
+
+#ifdef AUDIOINPUT_ROUTING
+    static const QString microPhone;
+    static const QString voiceCall;
+    static const QString fmRadio;
+#endif //AUDIOINPUT_ROUTING
 private:
     void initializeSessionL();
     void setError(TInt aError);
@@ -132,28 +149,45 @@ private:
     void MoscoStateChangeEventL(CBase* aObject, TInt aPreviousState,
             TInt aCurrentState, TInt aErrorCode);
 
-public slots:
-    void setCaptureDevice(const QString &deviceName);
+#ifdef AUDIOINPUT_ROUTING
+    QString qStringFromTAudioInputPreference(CAudioInput::TAudioInputPreference input) const;
+    void initAudioInputs();
+    void doSetAudioInputL(const QString& name);
+#endif //AUDIOINPUT_ROUTING
+
+public Q_SLOTS:
+    void setActiveEndpoint(const QString& audioEndpoint);
+
 
 Q_SIGNALS:
     void stateChanged(S60AudioCaptureSession::TAudioCaptureState);
     void positionChanged(qint64 position);
     void error(int error, const QString &errorString);
-
+    void activeEndpointChanged(const QString &audioEndpoint);
 private:
     QString m_container;
-    QString m_captureDevice;
     QUrl m_sink;
     TTimeIntervalMicroSeconds m_pausedPosition;
     CMdaAudioRecorderUtility *m_recorderUtility;
     TAudioCaptureState m_captureState;
     QAudioFormat m_format;
+    QAudioEncoderSettings m_audioEncoderSettings;
     QHash<QString, ControllerData> m_controllerIdMap;
     QHash<QString, CodecData>  m_audioCodeclist;
     QList<int> m_supportedSampleRates;
     int m_error;
     bool m_isMuted;
     RFs m_fsSession;
+
+#ifdef AUDIOINPUT_ROUTING
+    bool m_setActiveEndPoint;
+    CAudioInput *m_audioInput;
+
+#endif //AUDIOINPUT_ROUTING
+    QMap<QString, QString> m_audioInputs;
+    QString m_audioEndpoint;
+
+
 };
 
 #endif // S60AUDIOCAPTURESESSION_H

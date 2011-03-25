@@ -111,6 +111,25 @@ public:
         return stream;
     }
 
+#ifndef QT_NO_DEBUG_STREAM
+    QDebug& debugStreamOut(QDebug& dbg) const
+    {
+        dbg.nospace() << "QOrganizerItemDetailFilter(";
+        dbg.nospace() << "detailDefinitionName=";
+        dbg.nospace() << m_defId;
+        dbg.nospace() << ",";
+        dbg.nospace() << "detailFieldName=";
+        dbg.nospace() << m_fieldId;
+        dbg.nospace() << ",";
+        dbg.nospace() << "value=";
+        dbg.nospace() << m_exactValue;
+        dbg.nospace() << ",";
+        dbg.nospace() << "matchFlags=";
+        dbg.nospace() << static_cast<quint32>(m_flags);
+        dbg.nospace() << ")";
+        return dbg.maybeSpace();
+    }
+#endif
 
     Q_IMPLEMENT_ORGANIZERITEMFILTER_VIRTUALCTORS(QOrganizerItemDetailFilter, QOrganizerItemFilter::OrganizerItemDetailFilter)
 

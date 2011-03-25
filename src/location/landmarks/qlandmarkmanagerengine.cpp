@@ -211,7 +211,7 @@ int QLandmarkManagerEngine::managerVersion() const
  */
 QList<QLandmarkId> QLandmarkManagerEngine::landmarkIds(const QLandmarkFilter& /*filter*/,
         int /*limit*/, int /*offset*/, const QList<QLandmarkSortOrder>& /*sortOrders*/, QLandmarkManager::Error* /*error*/,
-        QString *errorString) const
+        QString */* errorString */) const
 {
     return QList<QLandmarkId>();
 }
@@ -1357,8 +1357,6 @@ bool QLandmarkManagerEngine::testFilter(const QLandmarkFilter& filter, const QLa
                 }
                 return false;
             }
-            //should not be reachable
-            return false;
         }
     }
     return false;

@@ -592,6 +592,7 @@ void QDeclarativeDocumentGalleryModel::classBegin()
     \qmlproperty QStringList DocumentGalleryModel::properties
 
     This property holds the item properties a query should return values for.
+    All supported properties are listed \l QDocumentGallery.
 */
 
 /*!
@@ -599,6 +600,10 @@ void QDeclarativeDocumentGalleryModel::classBegin()
 
     This property holds the properties the results of a query should be sorted
     on.
+
+    Prefixing a property name with the '+' character indicates it should be sorted
+    in ascending order, and a '-' character prefix indicates a descending order. If
+    there is no prefix ascending order is assumed.
 */
 
 /*!
@@ -696,30 +701,6 @@ void QDeclarativeDocumentGalleryModel::setRootType(QDeclarativeDocumentGallery::
     \qmlmethod DocumentGalleryModel::clear()
 
     Clears the results of a query.
-*/
-
-/*!
-    \qmlsignal DocumentGalleryModel::onSucceeded()
-
-    Signals that a query has finished successfully.
-*/
-
-/*!
-    \qmlsignal DocumentGalleryModel::onCanceled()
-
-    Signals that a query was canceled.
-*/
-
-/*!
-    \qmlsignal DocumentGalleryModel::onFailed(error)
-
-    Signals that a query failed with the given \a error.
-*/
-
-/*!
-    \qmlsignal DocumentGalleryModel::onFinished(result)
-
-    Signals that a query finished with the given \a result.
 */
 
 /*!

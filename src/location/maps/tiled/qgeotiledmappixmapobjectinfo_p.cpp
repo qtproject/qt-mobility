@@ -49,15 +49,10 @@
 QTM_BEGIN_NAMESPACE
 
 QGeoTiledMapPixmapObjectInfo::QGeoTiledMapPixmapObjectInfo(QGeoTiledMapData *mapData, QGeoMapObject *mapObject)
-    : QGeoTiledMapObjectInfo(mapData, mapObject),
-      pixmapItem2(0)
+    : QGeoTiledMapObjectInfo(mapData, mapObject)
 {
     pixmap = static_cast<QGeoMapPixmapObject*>(mapObject);
 
-    connect(pixmap,
-            SIGNAL(coordinateChanged(QGeoCoordinate)),
-            this,
-            SLOT(coordinateChanged(QGeoCoordinate)));
     connect(pixmap,
             SIGNAL(pixmapChanged(QPixmap)),
             this,
@@ -67,102 +62,26 @@ QGeoTiledMapPixmapObjectInfo::QGeoTiledMapPixmapObjectInfo(QGeoTiledMapData *map
             this,
             SLOT(offsetChanged(QPoint)));
 
-    pixmapItem1 = new QGraphicsPixmapItem();
-    graphicsItem = pixmapItem1;
+    pixmapItem = new QGraphicsPixmapItem();
+    graphicsItem = pixmapItem;
 
+    originChanged(this->pixmap->origin());
     pixmapChanged(this->pixmap->pixmap());
-    coordinateChanged(this->pixmap->coordinate());
+    offsetChanged(this->pixmap->offset());
 }
 
 QGeoTiledMapPixmapObjectInfo::~QGeoTiledMapPixmapObjectInfo() {}
 
-QGeoBoundingBox QGeoTiledMapPixmapObjectInfo::boundingBox() const
+void QGeoTiledMapPixmapObjectInfo::pixmapChanged(const QPixmap &/*pixmap*/)
 {
-    return boundingBox_;
+    pixmapItem->setPixmap(this->pixmap->pixmap());
+    pixmapItem->setScale(1.0);
+    updateItem();
 }
 
-void QGeoTiledMapPixmapObjectInfo::updateValidity()
+void QGeoTiledMapPixmapObjectInfo::offsetChanged(const QPoint &/*offset*/)
 {
-    setValid((pixmap->coordinate().isValid() && !pixmap->pixmap().isNull()));
-}
-
-void QGeoTiledMapPixmapObjectInfo::coordinateChanged(const QGeoCoordinate &coordinate)
-{
-    updateValidity();
-    if (valid())
-        update();
-}
-
-void QGeoTiledMapPixmapObjectInfo::pixmapChanged(const QPixmap &pixmap)
-{
-    updateValidity();
-    if (!this->pixmap->pixmap().isNull()) {
-        pixmapItem1->setPixmap(this->pixmap->pixmap());
-        if (pixmapItem2)
-            pixmapItem2->setPixmap(this->pixmap->pixmap());
-    }
-    if (valid())
-        updateItem();
-}
-
-void QGeoTiledMapPixmapObjectInfo::offsetChanged(const QPoint &offset)
-{
-    if (valid())
-        update();
-}
-
-void QGeoTiledMapPixmapObjectInfo::zoomLevelChanged(qreal zoomLevel)
-{
-    if (valid())
-        update();
-}
-
-void QGeoTiledMapPixmapObjectInfo::update()
-{
-    int zoomFactor = tiledMapData->zoomFactor();
-    
-    QPointF pos = tiledMapData->coordinateToWorldReferencePosition(pixmap->coordinate());
-
-    QPointF offset = pixmap->offset();
-    offset *= zoomFactor;
-    pos += offset;
-
-    int width = tiledMapData->worldReferenceSize().width();
-    int x = pos.x();
-
-    if (x > width)
-        x -= width;
-    if (x < 0)
-        x += width;
-
-    pos.setX(x);
-
-    int rightBound = pos.x() + pixmap->pixmap().width() * zoomFactor;
-    int bottomBound = pos.y() + pixmap->pixmap().height() * zoomFactor;
-
-    boundingBox_ = QGeoBoundingBox(tiledMapData->worldReferencePositionToCoordinate(pos.toPoint()),
-                                   tiledMapData->worldReferencePositionToCoordinate(QPoint(rightBound, bottomBound)));
-
-    QPointF pos2 = QPointF(-1.0 * static_cast<qreal>(width / zoomFactor), 0);
-
-    if (rightBound > width ) {
-        if (!pixmapItem2) {
-            pixmapItem2 = new QGraphicsPixmapItem(pixmapItem1);
-            pixmapItem2->setPixmap(pixmap->pixmap());
-        }
-    } else {
-        if (pixmapItem2) {
-            delete pixmapItem2;
-            pixmapItem2 = 0;
-        }
-    }
-
-    pixmapItem1->setScale(zoomFactor);
-
-    pixmapItem1->setPos(pos);
-    if (pixmapItem2)
-        pixmapItem2->setPos(pos2);
-
+    pixmapItem->setOffset(pixmap->offset());
     updateItem();
 }
 

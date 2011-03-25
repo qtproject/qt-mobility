@@ -38,7 +38,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifdef SYMBIAN_BACKEND_USE_SQLITE
+#ifdef SYMBIAN_BACKEND_USE_CNTMODEL_V2
 
 #include "cnttransformpresence.h"
 #include "cntmodelextuids.h"
@@ -256,6 +256,6 @@ QContactPresence::PresenceState CntTransformPresence::decodePresence(QString pre
         return QContactPresence::PresenceUnknown;
 }
 
-#endif // SYMBIAN_BACKEND_USE_SQLITE
+#endif // SYMBIAN_BACKEND_USE_CNTMODEL_V2
 
 // End of file

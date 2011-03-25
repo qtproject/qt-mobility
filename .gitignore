@@ -34,8 +34,11 @@ bin/sysinfo*
 bin/qcrmlgen*
 bin/icheck*
 bin/servicedbgen*
+bin/BearerEx
+bin/contacts-tester
 install/*
 lib/*
+doc/src/snippets/connectivity/connectivity
 doc/src/snippets/qtlandmarksdocsample/qtlandmarksdocsample
 doc/src/snippets/qtorganizerdocsample/qtorganizerdocsample
 doc/src/snippets/sensors/sensorsdocsnippet
@@ -51,8 +54,16 @@ examples/audiorecorder/audiorecorder
 examples/battery-charge/battery-publisher/battery-publisher
 examples/bearercloud/bearercloud
 examples/bearermonitor/bearermonitor
+examples/btchat/btchat
+examples/btfiletransfer/btfiletransfer
+examples/btscanner/btscanner
+examples/bttennis/bttennis
 examples/calendardemo/calendardemo
 examples/camera/camera
+examples/connectivity/annotatedurl/annotatedurl
+examples/connectivity/ndefeditor/ndefeditor
+examples/declarative-bluetooth/scanner/qml_scanner
+examples/declarative-bluetooth/tennis/qml_tennis
 examples/declarative-camera/qml_camera
 examples/declarative-location/flickr/qml_location_flickr
 examples/declarative-location/landmarkmap/qml_landmarkmap
@@ -62,6 +73,7 @@ examples/declarative-sfw-dialer/declarative-sfw-dialer/qmldialer
 examples/declarative-sfw-dialer/remotedialer/dialer_service
 examples/declarative-sfw-notes/qmlnotes
 examples/declarative-systeminfo/battery/qml_battery
+examples/declarative-systeminfo/battery2/qml_battery2
 examples/declarative-systeminfo/network/qml_networkinfo
 examples/declarative-systeminfo/storage/qml_storageinfo
 examples/documentproperties/documentproperties
@@ -74,9 +86,12 @@ examples/hapticsquare/hapticsquare
 examples/landmarkbrowser/landmarkbrowser
 examples/logfilepositionsource/logfilepositionsource
 examples/mapviewer/MapViewer
+examples/mapsdemo/mapsdemo
 examples/mediabrowser/mediabrowser
 examples/publish-subscribe/publish-subscribe
 examples/qgeoapiui/geoapiui
+examples/qmlorganizer/qmlorganizer
+examples/qsystemalignedtimer/qsystemalignedtimer
 examples/radio/radio
 examples/samplephonebook/samplephonebook
 examples/satellitedialog/satellitedialog
@@ -92,6 +107,8 @@ examples/sensors/sensor_explorer/sensor_explorer
 examples/sensors/show_acceleration/show_acceleration
 examples/sensors/show_als/show_als
 examples/sensors/show_compass/show_compass
+examples/sensors/show_gyroscope/show_gyroscope
+examples/sensors/show_light/show_light
 examples/sensors/show_magneticflux/show_magneticflux
 examples/sensors/show_orientation/show_orientation
 examples/sensors/show_proximity/show_proximity
@@ -108,11 +125,16 @@ examples/telephony/dialer/dialer
 examples/todo/todo
 examples/videographicsitem/videographicsitem
 examples/videowidget/videowidget
+tests/auto/maketestselftest/checktest/checktest
+tests/auto/maketestselftest/test/tst_maketestselftest
+tests/btclient/btclient
+tests/location-testing-tools/geoservicedemo/GeoServiceDemo
 *.app
 config.tests/networkmanager/networkmanager
 config.tests/qmf/qmf
 config.tests/maemo5-contacts/maemo5-contacts
 config.tests/bluez/bluez
+
 .qmake.cache
 translations/qtmobility_untranslated.ts
 translations/qtmobility_*.qm
@@ -148,4 +170,8 @@ plugin_commonU.def
 =======
 *.pro.user*
 *~
+
+# Failed patch
+*.orig
+*.rej
 

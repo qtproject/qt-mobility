@@ -52,11 +52,7 @@ S60ImageEncoderControl::S60ImageEncoderControl(QObject *parent) :
 S60ImageEncoderControl::S60ImageEncoderControl(S60ImageCaptureSession *session, QObject *parent) :
     QImageEncoderControl(parent)
 {
-    if (session)
-        m_session = session;
-    else
-        Q_ASSERT(true);
-    // From now on it is safe to assume session is valid
+    m_session = session;
 }
 
 S60ImageEncoderControl::~S60ImageEncoderControl()
@@ -96,9 +92,13 @@ QImageEncoderSettings S60ImageEncoderControl::imageSettings() const
 }
 void S60ImageEncoderControl::setImageSettings(const QImageEncoderSettings &settings)
 {
+    // Notify that settings have been implicitly set and there's no need to
+    // initialize them in case camera is changed
+    m_session->notifySettingsSet();
+
     if (!settings.isNull()) {
         if (!settings.codec().isEmpty()) {
-            if (settings.resolution() != QSize()) { // Codec, Resolution & Quality
+            if (settings.resolution() != QSize(-1,-1)) { // Codec, Resolution & Quality
                 m_session->setImageCaptureCodec(settings.codec());
                 m_session->setCaptureSize(settings.resolution());
                 m_session->setCaptureQuality(settings.quality());
@@ -107,7 +107,7 @@ void S60ImageEncoderControl::setImageSettings(const QImageEncoderSettings &setti
                 m_session->setCaptureQuality(settings.quality());
             }
         } else {
-            if (settings.resolution() != QSize()) { // Resolution & Quality
+            if (settings.resolution() != QSize(-1,-1)) { // Resolution & Quality
                 m_session->setCaptureSize(settings.resolution());
                 m_session->setCaptureQuality(settings.quality());
             }
@@ -119,9 +119,9 @@ void S60ImageEncoderControl::setImageSettings(const QImageEncoderSettings &setti
         int prepareSuccess = m_session->prepareImageCapture();
 
         // Preparation fails with KErrNotReady if camera has not been started.
-		// That can be ignored since settings are set internally in that case.
+        // That can be ignored since settings are set internally in that case.
         if (prepareSuccess != KErrNotReady && prepareSuccess != KErrNone)
-            m_session->setError(prepareSuccess, QString("Failure in preparation of image capture."));
+            m_session->setError(prepareSuccess, tr("Failure in preparation of image capture."));
     }
 }
 

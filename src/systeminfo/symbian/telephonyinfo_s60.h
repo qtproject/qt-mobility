@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010-2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -61,6 +61,7 @@ public:
 
     virtual void cellNetworkSignalStrengthChanged() = 0;
     virtual void cellNetworkStatusChanged() = 0;
+    virtual void changedCellId(int) = 0;
 };
 
 class CTelephonyInfo : public CActive
@@ -142,7 +143,7 @@ private:
 
     CTelephony::TBatteryInfoV1 m_batteryInfoV1;
     CTelephony::TBatteryInfoV1Pckg m_batteryInfoV1Pckg;
-    
+
     int m_batteryLevel;
     int m_previousBatteryLevel;
 };
@@ -159,11 +160,12 @@ protected:
 
 public:
     int cellId() const;
-	int locationAreaCode() const;
+    int locationAreaCode() const;
 
     QString countryCode() const;
     QString networkCode() const;
     QString networkName() const;
+    QString homeNetworkCode();
     CTelephony::TNetworkMode networkMode() const;
 
 private:
@@ -173,6 +175,7 @@ private:
     CTelephony::TNetworkInfoV1 m_networkInfoV1;
 
     int m_cellId;
+    int m_previouscellId;
     int m_locationAreaCode;
 
     QString m_networkId;
@@ -180,10 +183,10 @@ private:
 
     QString m_countryCode;
     QString m_previousCountryCode;
-    
+
     QString m_networkName;
     QString m_previousNetworkName;
-    
+
     CTelephony::TNetworkMode m_networkMode;
     CTelephony::TNetworkMode m_previousNetworkMode;
 

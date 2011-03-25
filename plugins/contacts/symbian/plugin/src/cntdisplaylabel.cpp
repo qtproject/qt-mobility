@@ -48,10 +48,8 @@
 
 CntDisplayLabel::CntDisplayLabel()
 {
-#ifdef SYMBIAN_BACKEND_USE_SQLITE
-    m_settings = new CntCenrep(KCntNameOrdering, *this);
+    m_settings = new CntCenrep(*this);
     m_nameOrder = m_settings->getValue();
-#endif
     setDisplayLabelDetails();
 }
 
@@ -60,9 +58,7 @@ CntDisplayLabel::CntDisplayLabel()
  */
 CntDisplayLabel::~CntDisplayLabel()
 {
-#ifdef SYMBIAN_BACKEND_USE_SQLITE
     delete m_settings;
-#endif
 }
 
 /*! 
@@ -86,12 +82,10 @@ void CntDisplayLabel::setDisplayLabelDetails()
     QLatin1String firstLatin(QContactName::FieldFirstName);
     QLatin1String secondLatin(QContactName::FieldLastName);
     
-#ifdef SYMBIAN_BACKEND_USE_SQLITE    
     if (m_nameOrder == CntOrderLastFirst || m_nameOrder == CntOrderLastCommaFirst) {
         firstLatin = QLatin1String(QContactName::FieldLastName);
         secondLatin = QLatin1String(QContactName::FieldFirstName);
     }
-#endif
     
     contactPrefferedDisplayLabelDetails.append(qMakePair(QLatin1String(QContactName::DefinitionName), firstLatin));
     contactPrefferedDisplayLabelDetails.append(qMakePair(QLatin1String(QContactName::DefinitionName), secondLatin));
@@ -114,13 +108,11 @@ QString CntDisplayLabel::synthesizedDisplayLabel(const QContact& contact, QConta
     QString displayLabel;
     *error = QContactManager::NoError;
     
-#ifdef SYMBIAN_BACKEND_USE_SQLITE
     int value = m_settings->getValue();
     if (value != -1 && value != m_nameOrder) {
         m_nameOrder = value;
         setDisplayLabelDetails();
     }
-#endif
     //contact
     if(contact.type() == QContactType::TypeContact) {
         displayLabel = generateDisplayLabel(contact, m_contactDisplayLabelDetails);    
@@ -169,11 +161,10 @@ QString CntDisplayLabel::generateDisplayLabel( const QContact &contact, const QL
                 
                 if(!label.isEmpty())
                 {
-#ifdef SYMBIAN_BACKEND_USE_SQLITE
                     // Inlcude a comma if needed in the display label
                     if (m_nameOrder == CntOrderLastCommaFirst)
                         displayLabel.append(comma());
-#endif
+
                     displayLabel.append(delimiter());                        
                     displayLabel.append(label);
                 }  
@@ -196,6 +187,8 @@ QString CntDisplayLabel::delimiter() const
 
 /*!
  * Returns the details to be used for contact filtering
+ * first value: detail definition
+ * second value: field definition
  */
 QList<QPair<QLatin1String, QLatin1String> > CntDisplayLabel::contactFilterDetails() const
 {
@@ -204,6 +197,8 @@ QList<QPair<QLatin1String, QLatin1String> > CntDisplayLabel::contactFilterDetail
 
 /*!
  * Returns the details to be used for group filtering
+ * first value: detail definition
+ * second value: field definition
  */
 QList<QPair<QLatin1String, QLatin1String> > CntDisplayLabel::groupFilterDetails() const
 {
@@ -219,18 +214,16 @@ QString CntDisplayLabel::comma() const
     return ",";
 }
 
-#ifdef SYMBIAN_BACKEND_USE_SQLITE
-
 void CntDisplayLabel::updateNameOrdering()
 {
     emit displayLabelChanged();
 }
 
-CntCenrep::CntCenrep(const TUint32 aKey, CntDisplayLabel& aDisplayLabel) :
+CntCenrep::CntCenrep(MDisplayLabel& aDisplayLabel) :
     CActive(EPriorityStandard),
     iCenrep(NULL),
-    iDisplayLabel(&aDisplayLabel),
-    iKey(aKey)
+    iDisplayLabel(aDisplayLabel),
+    iKey(KCntNameOrdering)
 {   
     TRAPD(error, iCenrep = CRepository::NewL(KCRCntSettings));
     
@@ -239,7 +232,16 @@ CntCenrep::CntCenrep(const TUint32 aKey, CntDisplayLabel& aDisplayLabel) :
         
         // initial subscription and process current property value
         iCenrep->NotifyRequest(iKey, iStatus );
-        SetActive();
+        SetActive();	
+    } else {
+        TRAPD(error, iCenrep = CRepository::NewL(KCRUidPhonebook));
+        if ( error == KErrNone ) {
+            CActiveScheduler::Add(this);
+            
+            iKey = KPhonebookNameOrdering;
+            iCenrep->NotifyRequest(iKey, iStatus );
+            SetActive();
+        }	
     }
     
     iValue = getValue();
@@ -281,8 +283,6 @@ void CntCenrep::RunL()
     int value = getValue();
     if (value != -1 && value != iValue) {
         iValue = value;
-        iDisplayLabel->updateNameOrdering();
+        iDisplayLabel.updateNameOrdering();
     }
 }
-
-#endif

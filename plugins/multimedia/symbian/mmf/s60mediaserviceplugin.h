@@ -46,17 +46,24 @@
 #include <QtCore/qobject.h>
 #include <qmediaservice.h>
 #include <qmediaserviceproviderplugin.h>
+#include "s60formatsupported.h"
 
 QT_USE_NAMESPACE
 
-class S60MediaServicePlugin : public QMediaServiceProviderPlugin
+class S60MediaServicePlugin : public QMediaServiceProviderPlugin,public QMediaServiceSupportedFormatsInterface
 {
     Q_OBJECT
+    Q_INTERFACES(QMediaServiceSupportedFormatsInterface)
 public:
 
     QStringList keys() const;
     QMediaService* create(QString const& key);
     void release(QMediaService *service);
+
+    QtMultimediaKit::SupportEstimate hasSupport(const QString &mimeType, const QStringList& codecs) const;
+    QStringList supportedMimeTypes() const;
+private:
+    mutable QStringList m_supportedmimetypes;
 };
 
 #endif // S60SERVICEPLUGIN_H

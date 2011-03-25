@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -66,9 +66,10 @@ QTM_BEGIN_NAMESPACE
 
     Indicates all possible error conditions found during Bluetooth device discovery.
 
-    \value NoError          No error has occured.
-    \value Canceled         Device discovery was canceled by a call to stop().
-    \value UnknownError     An unknown error has occured.
+    \value NoError          No error has occurred.
+    \value PoweredOff       Bluetooth adaptor is powered off, power it on before doing discovery.
+    \value IOFailure        Writing or reading from device resulted in an error.
+    \value UnknownError     An unknown error has occurred.    
 */
 
 /*!
@@ -81,7 +82,12 @@ QTM_BEGIN_NAMESPACE
     \value LimitedInquiry           A limited inquiry. Only discovers devices that are in limited
                                     inquiry mode. Not all platforms support limited inquiry. If
                                     limited inquiry is requested on a platform that does not
-                                    support it general unlimited inquiry we be used instead.
+                                    support it general unlimited inquiry we be used instead. Setting
+                                    LimitedInquiry is useful for 2 games that wish to find each other
+                                    quickly.  The phone scans for devices in LimitedInquiry and
+                                    Service Discovery is only done on one or two devices speeding up the
+                                    service scan.  After the game has connected the device returns to
+                                    GeneralUnilimitedInquiry
 */
 
 /*!
@@ -99,9 +105,15 @@ QTM_BEGIN_NAMESPACE
 /*!
     \fn void QBluetoothDeviceDiscoveryAgent::error(QBluetoothDeviceDiscoveryAgent::Error error)
 
-    This signal is emiited when an \a error occurs during Bluetooth device discovery.
+    This signal is emitted when an \a error occurs during Bluetooth device discovery.
 
     \sa error(), errorString()
+*/
+
+/*!
+    \fn void QBluetoothDeviceDiscoveryAgent::canceled()
+
+    This signal is emitted when device discovery is aborted by a call to stop().
 */
 
 /*!
@@ -110,15 +122,21 @@ QTM_BEGIN_NAMESPACE
     Returns true if the agent is currently discovering Bluetooth devices, other returns false.
 */
 
-
-
 /*!
     Constructs a new Bluetooth device discovery agent with parent \a parent.
 */
 QBluetoothDeviceDiscoveryAgent::QBluetoothDeviceDiscoveryAgent(QObject *parent)
-: QObject(parent)
+: QObject(parent), d_ptr(new QBluetoothDeviceDiscoveryAgentPrivate)
 {
-  d = QBluetoothDeviceDiscoveryAgentPrivate::constructPrivateObject(this);
+    d_ptr->q_ptr = this;
+}
+
+/*!
+  Destructor for ~QBluetoothDeviceDiscoveryAgent()
+*/
+QBluetoothDeviceDiscoveryAgent::~QBluetoothDeviceDiscoveryAgent()
+{
+    delete d_ptr;
 }
 
 /*!
@@ -135,11 +153,13 @@ QBluetoothDeviceDiscoveryAgent::QBluetoothDeviceDiscoveryAgent(QObject *parent)
 */
 QBluetoothDeviceDiscoveryAgent::InquiryType QBluetoothDeviceDiscoveryAgent::inquiryType() const
 {
+    Q_D(const QBluetoothDeviceDiscoveryAgent);
     return d->inquiryType;
 }
 
 void QBluetoothDeviceDiscoveryAgent::setInquiryType(QBluetoothDeviceDiscoveryAgent::InquiryType type)
 {
+    Q_D(QBluetoothDeviceDiscoveryAgent);
     d->inquiryType = type;
 }
 
@@ -148,6 +168,7 @@ void QBluetoothDeviceDiscoveryAgent::setInquiryType(QBluetoothDeviceDiscoveryAge
 */
 QList<QBluetoothDeviceInfo> QBluetoothDeviceDiscoveryAgent::discoveredDevices() const
 {
+    Q_D(const QBluetoothDeviceDiscoveryAgent);
     return d->discoveredDevices;
 }
 
@@ -159,31 +180,39 @@ QList<QBluetoothDeviceInfo> QBluetoothDeviceDiscoveryAgent::discoveredDevices() 
 */
 void QBluetoothDeviceDiscoveryAgent::start()
 {
+    Q_D(QBluetoothDeviceDiscoveryAgent);
     if (!isActive())
         d->start();
 }
 
 /*!
-    Stops Bluetooth device discovery.
+    Stops Bluetooth device discovery.  The cancel() signal is emitted once the
+    device discovery is canceled.  start() maybe called before the cancel signal is
+    received.  Once start() has been called the cancel signal from the prior
+    discovery will be silently discarded.
 */
 void QBluetoothDeviceDiscoveryAgent::stop()
 {
+    Q_D(QBluetoothDeviceDiscoveryAgent);
     if (isActive())
         d->stop();
 }
 
 bool QBluetoothDeviceDiscoveryAgent::isActive() const
 {
+    Q_D(const QBluetoothDeviceDiscoveryAgent);
     return d->isActive();
 }
 
 
 /*!
-    Returns the last error which has occured.
+    Returns the last error which has occurred.
 */
 QBluetoothDeviceDiscoveryAgent::Error QBluetoothDeviceDiscoveryAgent::error() const
 {
-    return NoError;
+    Q_D(const QBluetoothDeviceDiscoveryAgent);
+
+    return d->lastError;
 }
 
 /*!
@@ -191,7 +220,8 @@ QBluetoothDeviceDiscoveryAgent::Error QBluetoothDeviceDiscoveryAgent::error() co
 */
 QString QBluetoothDeviceDiscoveryAgent::errorString() const
 {
-    return QString();
+    Q_D(const QBluetoothDeviceDiscoveryAgent);
+    return d->errorString;
 }
 
 #include "moc_qbluetoothdevicediscoveryagent.cpp"

@@ -978,9 +978,18 @@ void tst_QMediaImageViewer::rendererControl()
 void tst_QMediaImageViewer::setVideoOutput()
 {
     QMediaImageViewer imageViewer;
+    imageViewer.setMedia(QMediaContent(imageUrl("image.png")));
+
+    connect(&imageViewer, SIGNAL(mediaStatusChanged(QMediaImageViewer::MediaStatus)),
+            &QTestEventLoop::instance(), SLOT(exitLoop()));
+    QTestEventLoop::instance().enterLoop(2);
+
+    if (imageViewer.mediaStatus() != QMediaImageViewer::LoadedMedia)
+        QSKIP("failed to load test image", SkipSingle);
 
     QVideoWidget widget;
     QGraphicsVideoItem item;
+    QtTestVideoSurface surface;
 
     imageViewer.setVideoOutput(&widget);
     QVERIFY(widget.mediaObject() == &imageViewer);
@@ -996,6 +1005,23 @@ void tst_QMediaImageViewer::setVideoOutput()
     QVERIFY(widget.mediaObject() == &imageViewer);
 
     imageViewer.setVideoOutput(reinterpret_cast<QGraphicsVideoItem *>(0));
+    QVERIFY(widget.mediaObject() == 0);
+
+    imageViewer.setVideoOutput(&surface);
+    QVERIFY(surface.isActive());
+
+    imageViewer.setVideoOutput(reinterpret_cast<QAbstractVideoSurface *>(0));
+    QVERIFY(!surface.isActive());
+
+    imageViewer.setVideoOutput(&surface);
+    QVERIFY(surface.isActive());
+
+    imageViewer.setVideoOutput(&widget);
+    QVERIFY(!surface.isActive());
+    QVERIFY(widget.mediaObject() == &imageViewer);
+
+    imageViewer.setVideoOutput(&surface);
+    QVERIFY(surface.isActive());
     QVERIFY(widget.mediaObject() == 0);
 }
 

@@ -2049,6 +2049,7 @@ void tst_QMessageService::testQueryCountData()
         << "";
 #endif
 
+#if !defined(Q_WS_MAEMO_6)
     QMessageFilter caseSensitive1(QMessageFilter::bySubject("free beer", QMessageDataComparator::Equal));
     caseSensitive1.setMatchFlags(QMessageDataComparator::MatchCaseSensitive);
     QTest::newRow("options:caseSensitive 1")
@@ -2064,6 +2065,7 @@ void tst_QMessageService::testQueryCountData()
         << ( QMessageIdList() << messageIds[4] )
         << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[2] << messageIds[3] )
         << "";
+#endif
 }
 
 void tst_QMessageService::testQueryMessages_data()

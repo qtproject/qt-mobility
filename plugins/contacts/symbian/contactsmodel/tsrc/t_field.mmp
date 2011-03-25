@@ -16,7 +16,7 @@
 */
 
 
-target          t_field.exe
+TARGET          t_field.exe
 targettype      EXE
 CAPABILITY   ReadUserData WriteUserData
 UID		0x1000007a
@@ -29,6 +29,6 @@ userinclude ../inc ../tsrc/TestSyncPlugIn
 
 source          T_FIELD.CPP
 
-library         euser.lib  cntmodel.lib	estor.lib	cnttutil.lib cntsyncchecker.lib
+LIBRARY         euser.lib  cntmodel.lib	estor.lib	cnttutil.lib cntsyncchecker.lib
 
 SMPSAFE

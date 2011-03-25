@@ -58,7 +58,7 @@
 #include <QPen>
 #include <QBrush>
 
-class QGraphicsRectItem;
+class QGraphicsPolygonItem;
 
 QTM_BEGIN_NAMESPACE
 
@@ -72,10 +72,7 @@ public:
     ~QGeoTiledMapRectangleObjectInfo();
 
     QGeoMapRectangleObject* rectangle;
-    QGraphicsRectItem *rectangleItem1;
-    QGraphicsRectItem *rectangleItem2;
-
-    void updateValidity();
+    QGraphicsPolygonItem *polygonItem;
 
 public slots:
     void topLeftChanged(const QGeoCoordinate &topLeft);
@@ -84,7 +81,7 @@ public slots:
     void brushChanged(const QBrush &brush);
 
 private:
-    void update();
+    void regenPolygon();
 };
 
 QTM_END_NAMESPACE

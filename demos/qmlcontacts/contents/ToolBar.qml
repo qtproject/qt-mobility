@@ -44,23 +44,27 @@ import Qt 4.7
 Item {
     id: toolbar
 
-    property alias button1Label: button1.text
-    property alias button2Label: button2.text
-    signal button1Clicked
-    signal button2Clicked
+    property variant labels
+    signal buttonClicked(int index)
 
-    BorderImage { source: "images/titlebar.sci"; width: parent.width; height: parent.height + 14; y: -7 }
-
-    Button {
-        id: button1
-        anchors.left: parent.left; anchors.leftMargin: 5; y: 3; width: 140; height: 32
-        onClicked: toolbar.button1Clicked()
+    BorderImage {
+        source: "images/titlebar.sci"
+        width: parent.width
+        height: parent.height + 14
+        y: -7
     }
 
-    Button {
-        id: button2
-        anchors.right: parent.right; anchors.rightMargin: 5; y: 3; width: 140; height: 32
-        onClicked: toolbar.button2Clicked()
+    Row {
+        y: 3
+        anchors.horizontalCenter: parent.horizontalCenter
+        Repeater {
+            model: toolbar.labels
+            delegate:
+                Button {
+                    text: modelData
+                    onClicked: toolbar.buttonClicked(model.index)
+                }
+        }
     }
 
 }

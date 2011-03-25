@@ -42,14 +42,13 @@
 #ifndef QBLUETOOTHSERVICEINFO_P_H
 #define QBLUETOOTHSERVICEINFO_P_H
 
-#include "qbluetoothserviceinfo.h"
 #include "qbluetoothuuid.h"
 #include "qbluetoothdeviceinfo.h"
 
 #include <QMap>
 #include <QVariant>
 
-#ifdef Q_OS_SYMBIAN
+#ifdef QTM_SYMBIAN_BLUETOOTH
 #include <btsdp.h>
 #endif
 
@@ -59,8 +58,11 @@ QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
+class QBluetoothServiceInfo;
+
 class QBluetoothServiceInfoPrivate
 {
+    Q_DECLARE_PUBLIC(QBluetoothServiceInfo)
 public:
     QBluetoothServiceInfoPrivate();
     ~QBluetoothServiceInfoPrivate();
@@ -77,7 +79,11 @@ public:
     QBluetoothDeviceInfo deviceInfo;
     QMap<quint16, QVariant> attributes;
 
-#ifdef Q_OS_SYMBIAN
+#ifdef QTM_SYMBIAN_BLUETOOTH
+private:
+    void setRegisteredAttributeL(quint16 attributeId, const QVariant &value) const;
+
+public:
     mutable RSdp sdpSession;
     mutable RSdpDatabase sdpDatabase;
     mutable TSdpServRecordHandle serviceRecord;
@@ -88,6 +94,9 @@ public:
     mutable quint32 serviceRecord;
     mutable bool registered;
 #endif
+    
+private:
+    QBluetoothServiceInfo *q_ptr;
 };
 
 QTM_END_NAMESPACE

@@ -44,6 +44,7 @@
 #define QDECLARATIVEORGANIZERITEMRECURRENCERULE_H
 
 #include <QtDeclarative>
+#include <QtDeclarative/qdeclarativeinfo.h>
 #include "qorganizerrecurrencerule.h"
 
 
@@ -109,20 +110,21 @@ public:
 
     void setLimit(const QVariant& value)
     {
-        if (value.userType() == QVariant::Date) {
+        if (value.type() == QVariant::Date) {
             QDate v = value.value<QDate>();
             if (v != m_rule.limitDate()) {
                 m_rule.setLimit(v);
                 emit recurrenceRuleChanged();
             }
-        }  else if (value.type() == QVariant::Int) {
+        }  else if ((value.type() == QVariant::Int) || (value.type() == QVariant::Double)) {
             int v = value.value<int>();
             if (v != m_rule.limitCount()) {
                 m_rule.setLimit(v);
                 emit recurrenceRuleChanged();
             }
         } else {
-            qWarning() << "Invalid recurrence rule limit value:" << value;
+            // TODO throw an error event
+            qmlInfo(this) << tr("Invalid recurrence rule limit; value ,") <<  value << tr(", did not match one of the types: date, integer or double");
         }
     }
 

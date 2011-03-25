@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -42,17 +42,17 @@
 #ifndef QNEARFIELDMANAGER_EMULATOR_H
 #define QNEARFIELDMANAGER_EMULATOR_H
 
-#include "qnearfieldmanager_p.h"
+#include "qnearfieldmanagervirtualbase_p.h"
 #include "qnearfieldtarget.h"
 #include "qndeffilter.h"
 
 #include <QtCore/QObject>
-#include <QtCore/QMetaMethod>
+#include <QtCore/QWeakPointer>
 
 QTM_USE_NAMESPACE
 
 class TagBase;
-class QNearFieldManagerPrivateImpl : public QtMobility::QNearFieldManagerPrivate
+class QNearFieldManagerPrivateImpl : public QNearFieldManagerPrivateVirtualBase
 {
     Q_OBJECT
 
@@ -60,35 +60,19 @@ public:
     QNearFieldManagerPrivateImpl();
     ~QNearFieldManagerPrivateImpl();
 
+    bool isAvailable() const;
+
     void reset();
-
-    void startTargetDetection(const QList<QNearFieldTarget::Type> &targetTypes);
-    void stopTargetDetection();
-
-    int registerTargetDetectedHandler(QObject *object, const QMetaMethod &method);
-    int registerTargetDetectedHandler(const QNdefFilter &filter,
-                                      QObject *object, const QMetaMethod &method);
-
-    bool unregisterTargetDetectedHandler(int id);
 
 private slots:
     void tagActivated(TagBase *tag);
     void tagDeactivated(TagBase *tag);
 
 private:
-    struct Callback {
-        QNdefFilter filter;
+    void ndefReceived(const QNdefMessage &message, QNearFieldTarget *target);
 
-        QObject *object;
-        QMetaMethod method;
-    };
+    QMap<TagBase *, QWeakPointer<QNearFieldTarget> > m_targets;
 
-    int getFreeId();
-
-    QList<Callback> m_registeredHandlers;
-    QList<int> m_freeIds;
-    QMap<TagBase *, QNearFieldTarget *> m_targets;
-    QList<QNearFieldTarget::Type> m_detectTargetTypes;
 };
 
 #endif // QNEARFIELDMANAGER_EMULATOR_H

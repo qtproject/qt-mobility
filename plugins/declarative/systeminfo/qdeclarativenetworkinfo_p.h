@@ -56,6 +56,13 @@ class QDeclarativeNetworkInfo : public QSystemNetworkInfo
     Q_PROPERTY(QSystemNetworkInfo::NetworkMode mode READ mode WRITE useMode)
     Q_PROPERTY(QList<QSystemNetworkInfo::NetworkMode> availableModes READ availableModes)
 
+    Q_PROPERTY(bool monitorStatusChanges READ monitorStatusChanges WRITE startStatusChanged)
+    Q_PROPERTY(bool monitorSignalStrengthChanges READ monitorSignalStrengthChanges WRITE startSignalStrengthChanged)
+    Q_PROPERTY(bool monitorNameChanges READ monitorNameChanges WRITE startNameChanged)
+    Q_PROPERTY(bool monitorModeChanges READ monitorModeChanges WRITE startModeChanged)
+    Q_PROPERTY(bool monitorCurrentMobileCountryCodeChanges READ monitorCurrentMobileCountryCodeChanges WRITE startCurrentMobileCountryCodeChanged)
+    Q_PROPERTY(bool monitorCurrentMobileNetworkCodeChanges READ monitorCurrentMobileNetworkCodeChanges WRITE startCurrentMobileNetworkCodeChanged)
+
 public:
     explicit QDeclarativeNetworkInfo(QObject *parent = 0);
     virtual ~QDeclarativeNetworkInfo();
@@ -64,16 +71,30 @@ public:
     QString macAddress();
     QString networkStatus();
     QSystemNetworkInfo::NetworkMode mode();
+
+    bool monitorStatusChanges();
+    void startStatusChanged(bool on);
+
+    bool monitorSignalStrengthChanges();
+    void startSignalStrengthChanged(bool on);
+
+    bool monitorNameChanges();
+    void startNameChanged(bool on);
+
+    bool monitorModeChanges();
+    void startModeChanged(bool on);
+
+    bool monitorCurrentMobileCountryCodeChanges();
+    void startCurrentMobileCountryCodeChanged(bool on);
+
+    bool monitorCurrentMobileNetworkCodeChanges();
+    void startCurrentMobileNetworkCodeChanged(bool on);
+
+    void useMode(QSystemNetworkInfo::NetworkMode curmode);
+
 public slots:
 
-    Q_INVOKABLE void useMode(QSystemNetworkInfo::NetworkMode curmode);
     QNetworkInterface interfaceForMode();
-    void startStatusChanged();
-    void startSignalStrengthChanged();
-    void startNameChanged();
-    void startModeChanged();
-    void startCurrentMobileCountryCodeChanged();
-    void startCurrentMobileNetworkCodeChanged();
     QList<QSystemNetworkInfo::NetworkMode> availableModes();
 
 Q_SIGNALS:
@@ -88,6 +109,13 @@ private:
     QSystemNetworkInfo::NetworkMode m_mode;
     QString statusToString(QSystemNetworkInfo::NetworkStatus);
     QString modeToString(QSystemNetworkInfo::NetworkMode);
+
+    bool monitoringStatusChanges;
+    bool monitoringSignalStrengthChanges;
+    bool monitoringNameChanges;
+    bool monitoringModeChanges;
+    bool monitoringCurrentMobileCountryCodeChanges;
+    bool monitoringCurrentMobileNetworkCodeChanges;
 
 private slots:
     void networkStatusChanged(QSystemNetworkInfo::NetworkMode, QSystemNetworkInfo::NetworkStatus);

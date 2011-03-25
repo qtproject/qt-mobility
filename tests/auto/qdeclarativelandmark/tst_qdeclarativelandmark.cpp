@@ -178,6 +178,7 @@ private:
     void removeCategoryFromDb(QLandmarkCategoryId categoryId);
     bool modelContainsItem(QDeclarativeLandmarkCategoryModel* model, QLandmarkCategoryId categoryId);
     bool modelContainsItem(QDeclarativeLandmarkModel* model, QLandmarkId landmarkId);
+    void removeGlobalCategories(QList<QLandmarkCategory> *cats);
 
 private:
     // Engine is needed for instantiating declarative components
@@ -204,7 +205,7 @@ void tst_QDeclarativeLandmark::initTestCase()
         populateTypicalDb();
     }
     // Delete possibly existing default database to avoid any problems
-#ifndef Q_OS_SYMBIAN
+#if !(defined(Q_OS_SYMBIAN) || defined(SPARQL_BACKEND))
     QString dbFileName;
     QSettings settings(QSettings::IniFormat, QSettings::UserScope,
                        QLatin1String("Nokia"), QLatin1String("QtLandmarks"));
@@ -217,8 +218,8 @@ void tst_QDeclarativeLandmark::initTestCase()
         QFile::remove(dbFileName);
     }
 #else
-    // On Symbian we can't just go about and delete the databasefile. Empty it manually instead.
-    m_manager = new QLandmarkManager("com.nokia.qt.landmarks.engines.symbian");
+    // Using the symbian or sparql backend we can't just go about and delete the databasefile. Empty it manually instead.
+    m_manager = new QLandmarkManager();
     if (m_manager) {
         m_manager->removeLandmarks(m_manager->landmarkIds());
         QList<QLandmarkCategoryId> catIds = m_manager->categoryIds();
@@ -255,8 +256,8 @@ void tst_QDeclarativeLandmark::createDb(QString fileName)
         delete m_manager;
         m_manager = 0;
     }
-#ifdef Q_OS_SYMBIAN
-    m_manager = new QLandmarkManager("com.nokia.qt.landmarks.engines.symbian", map);
+#if (defined(Q_OS_SYMBIAN) || defined(SPARQL_BACKEND))
+    m_manager = new QLandmarkManager();
 #else
     m_manager = new QLandmarkManager("com.nokia.qt.landmarks.engines.sqlite", map);
 #endif
@@ -264,7 +265,7 @@ void tst_QDeclarativeLandmark::createDb(QString fileName)
 
 void tst_QDeclarativeLandmark::deleteDb(QString fileName)
 {
-#ifdef Q_OS_SYMBIAN
+#if (defined(Q_OS_SYMBIAN) || defined(SPARQL_BACKEND))
     // On Symbian we can't just go about and delete the databasefile. Empty it manually instead.
     if (m_manager) {
         m_manager->removeLandmarks(m_manager->landmarkIds());
@@ -814,7 +815,7 @@ void tst_QDeclarativeLandmark::categoriesOfLandmarkFetch()
     source_obj = createComponent("import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel { autoUpdate:true;}");
     QDeclarativeLandmarkModel* landmarkModel = static_cast<QDeclarativeLandmarkModel*>(source_obj);
     landmarkModel->setDbFileName(DB_FILENAME);
-    QTest::qWait(50);
+    QTest::qWait(1000);
 
     // Iterate through landmarks in the landmark model. Match against interesting landmarknames.
     // Upon such, set the item as the 'landmark' in the category model, and verify that
@@ -863,7 +864,7 @@ void tst_QDeclarativeLandmark::landmarksOfCategoriesFetch()
     source_obj = createComponent("import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkCategoryModel { autoUpdate:true;}");
     QDeclarativeLandmarkCategoryModel* categoryModel = static_cast<QDeclarativeLandmarkCategoryModel*>(source_obj);
     categoryModel->setDbFileName(DB_FILENAME);
-    QTest::qWait(50);
+    QTest::qWait(1000);
 
     // Iterate through categories in the category model. Match against interesting categorynames
     // (the categories with which the landmarks should be filtered). Create filters based for those items
@@ -1004,6 +1005,8 @@ void tst_QDeclarativeLandmark::update_data()
 
 void tst_QDeclarativeLandmark::databaseChanges()
 {
+    int originalCategoryCount = m_manager->categoryIds().count();
+
     // Test adding and removing of categories
     QDeclarativeLandmarkCategoryModel* categoryModel = static_cast<QDeclarativeLandmarkCategoryModel*>(createComponent("import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkCategoryModel {autoUpdate:true;}"));
     categoryModel->setDbFileName(DB_FILENAME);
@@ -1013,7 +1016,7 @@ void tst_QDeclarativeLandmark::databaseChanges()
     QLandmarkCategoryId categoryId1 = addCategoryToDb();
     QTRY_COMPARE(categoryModelChangedSpy.count(), 1);
     QTRY_COMPARE(categoryCountChangedSpy.count(), 1);
-    QTRY_COMPARE(categoryModel->property("count").toInt(), 1);
+    QTRY_COMPARE(categoryModel->property("count").toInt(), originalCategoryCount + 1);
     QVERIFY(modelContainsItem(categoryModel, categoryId1));
 
     // Add second category
@@ -1022,7 +1025,7 @@ void tst_QDeclarativeLandmark::databaseChanges()
     QLandmarkCategoryId categoryId2 = addCategoryToDb();
     QTRY_COMPARE(categoryModelChangedSpy.count(), 1);
     QTRY_COMPARE(categoryCountChangedSpy.count(), 1);
-    QTRY_COMPARE(categoryModel->property("count").toInt(), 2);
+    QTRY_COMPARE(categoryModel->property("count").toInt(), originalCategoryCount + 2);
     QVERIFY(modelContainsItem(categoryModel, categoryId1));
     QVERIFY(modelContainsItem(categoryModel, categoryId2));
     // Remove first category
@@ -1031,7 +1034,7 @@ void tst_QDeclarativeLandmark::databaseChanges()
     removeCategoryFromDb(categoryId1);
     QTRY_COMPARE(categoryModelChangedSpy.count(), 1);
     QTRY_COMPARE(categoryCountChangedSpy.count(), 1);
-    QTRY_COMPARE(categoryModel->property("count").toInt(), 1);
+    QTRY_COMPARE(categoryModel->property("count").toInt(), originalCategoryCount + 1);
     QVERIFY(!modelContainsItem(categoryModel, categoryId1));
     QVERIFY(modelContainsItem(categoryModel, categoryId2));
     // Clear the remaining category
@@ -1139,9 +1142,14 @@ void tst_QDeclarativeLandmark::declarativeLandmarkList()
     // Count()
     QTRY_COMPARE(QDeclarativeLandmarkModel::landmarks_count(&declarativeList), model->count());
     // At()
+    QSet<QString> declarativeListNames;
+    QSet<QString> modelListNames;
     for (int i = 0; i < model->count(); i++) {
-        QCOMPARE(QDeclarativeLandmarkModel::landmarks_at(&declarativeList, i)->name(), model->landmarkList().at(i).name());
+        declarativeListNames.insert(QDeclarativeLandmarkModel::landmarks_at(&declarativeList, i)->name());
+        modelListNames.insert(model->landmarkList().at(i).name());
     }
+    QCOMPARE(declarativeListNames, modelListNames);
+
     // Append() (not supported but should not crash)
     qDebug("Following warning is OK (testing that unsupported feature does not crash).");
     QDeclarativeLandmarkModel::landmarks_append(&declarativeList, 0);
@@ -1190,6 +1198,7 @@ void tst_QDeclarativeLandmark::sort()
     if (componentString.contains("LandmarkCategoryModel")) {
         QDeclarativeLandmarkCategoryModel* landmarkCategoryModel = static_cast<QDeclarativeLandmarkCategoryModel*>(model);
         QList<QLandmarkCategory> categories = landmarkCategoryModel->categoryList();
+        removeGlobalCategories(&categories);
         for (int i = 0; i < names.count(); i++) {
             QCOMPARE(categories.at(i).name(), names.at(i));
         }
@@ -1267,6 +1276,15 @@ bool tst_QDeclarativeLandmark::modelContainsItem(QDeclarativeLandmarkModel* mode
             return true;
     }
     return false;
+}
+
+void tst_QDeclarativeLandmark::removeGlobalCategories(QList<QLandmarkCategory> *cats)
+{
+    for (int i=cats->count() -1; i >=0; --i) {
+        if (m_manager->isReadOnly(cats->at(i).categoryId())) {
+            cats->removeOne(cats->at(i));
+        }
+    }
 }
 
 void tst_QDeclarativeLandmark::filterContentChange()

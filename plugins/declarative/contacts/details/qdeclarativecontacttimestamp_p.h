@@ -73,7 +73,7 @@ public:
         default:
             break;
         }
-        //qWarning
+        qmlInfo(0) << tr("Unknown field type.");
         return QString();
     }
     QDeclarativeContactTimestamp(QObject* parent = 0)

@@ -47,7 +47,11 @@
 #include <QPixmap>
 #include <QImage>
 
+#ifdef SYMBIAN_USE_SMALL_THUMBNAILS
 const TSize KMaxThumbnailSize(80, 96);
+#else
+const TSize KMaxThumbnailSize(150, 150);
+#endif
 
 CntTransformThumbnail::CntTransformThumbnail() :
     m_thumbnailCreator(0)
@@ -79,7 +83,7 @@ QList<CContactItemField *> CntTransformThumbnail::transformDetailL(const QContac
         // toSymbianCFbsBitmap may generate a duplicate of the bitmap data
         // Note: scaling to thumbnail may take some time if the image is big
         // TODO: aspect ratio?
-        QPixmap scaled = QPixmap::fromImage(thumbnail.thumbnail().scaled(KMaxThumbnailSize.iWidth, KMaxThumbnailSize.iHeight));
+        QPixmap scaled = QPixmap::fromImage(thumbnail.thumbnail().scaled(KMaxThumbnailSize.iWidth, KMaxThumbnailSize.iHeight, Qt::KeepAspectRatio, Qt::SmoothTransformation));
         CFbsBitmap* bitmap = scaled.toSymbianCFbsBitmap();
         CleanupStack::PushL(bitmap);
 

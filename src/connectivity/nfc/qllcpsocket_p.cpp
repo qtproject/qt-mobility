@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -46,6 +46,11 @@ QTM_BEGIN_NAMESPACE
 QLlcpSocketPrivate::QLlcpSocketPrivate(QLlcpSocket *q)
 :   q_ptr(q)
 {
+}
+
+QLlcpSocketPrivate::~QLlcpSocketPrivate()
+{
+  
 }
 
 void QLlcpSocketPrivate::connectToService(QNearFieldTarget *target, const QString &serviceUri)
@@ -122,12 +127,12 @@ qint64 QLlcpSocketPrivate::writeDatagram(const QByteArray &datagram,
     return -1;
 }
 
-QLlcpSocket::Error QLlcpSocketPrivate::error() const
+QLlcpSocket::SocketError QLlcpSocketPrivate::error() const
 {
     return QLlcpSocket::UnknownSocketError;
 }
 
-QLlcpSocket::State QLlcpSocketPrivate::state() const
+QLlcpSocket::SocketState QLlcpSocketPrivate::state() const
 {
     return QLlcpSocket::UnconnectedState;
 }
@@ -151,6 +156,11 @@ qint64 QLlcpSocketPrivate::writeData(const char *data, qint64 len)
 qint64 QLlcpSocketPrivate::bytesAvailable() const
 {
     return 0;
+}
+
+bool QLlcpSocketPrivate::canReadLine() const
+{
+    return false;
 }
 
 bool QLlcpSocketPrivate::waitForReadyRead(int msecs)

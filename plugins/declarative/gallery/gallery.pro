@@ -3,11 +3,11 @@ INCLUDEPATH += . \
     ../../../include \
     ../../../src/gallery
 
+TEMPLATE = lib
+CONFIG += plugin
 TARGET = $$qtLibraryTarget(declarative_gallery)
 TARGETPATH = QtMobility/gallery
 
-TEMPLATE = lib
-CONFIG += plugin
 PLUGIN_TYPE = declarative
 
 include(../../../common.pri)

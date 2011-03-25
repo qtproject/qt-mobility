@@ -2,14 +2,14 @@ TEMPLATE = app
 CONFIG += example
 
 INCLUDEPATH += ../../src/multimedia ../../src/multimedia/video
-include(../examples.pri)
+include(../mobility_examples.pri)
 
 CONFIG += mobility
 MOBILITY = multimedia
 
 QMAKE_RPATHDIR += $$DESTDIR
 
-contains(QT_CONFIG, opengl): QT += opengl
+!symbian:contains(QT_CONFIG, opengl): QT += opengl
 
 HEADERS   += videoplayer.h \
              videoitem.h

@@ -58,6 +58,7 @@ public:
     QGeoBoundingCircle circle;
     QPen pen;
     QBrush brush;
+    quint32 pointCount;
 };
 
 QTM_END_NAMESPACE

@@ -43,10 +43,12 @@
 #include "qbluetoothserviceinfo_p.h"
 
 #include <QUrl>
+#include <QtEndian>
 
 #include <QDebug>
 
 QTM_BEGIN_NAMESPACE
+
 
 QBluetoothServiceInfoPrivate::QBluetoothServiceInfoPrivate()
 :serviceRecord(0)
@@ -55,6 +57,8 @@ QBluetoothServiceInfoPrivate::QBluetoothServiceInfoPrivate()
 
 QBluetoothServiceInfoPrivate::~QBluetoothServiceInfoPrivate()
 {
+    // Closing the database session will cause all
+    // registered services removed from the SDP database.
     if (sdpDatabase.SubSessionHandle() != 0)
         sdpDatabase.Close();
 
@@ -62,7 +66,7 @@ QBluetoothServiceInfoPrivate::~QBluetoothServiceInfoPrivate()
         sdpSession.Close();
 }
 
-static void convert(MSdpElementBuilder *list, const QList<QVariant> &vList)
+static void convertL(MSdpElementBuilder *list, const QList<QVariant> &vList)
 {
     list->StartListL();
 
@@ -109,16 +113,20 @@ static void convert(MSdpElementBuilder *list, const QList<QVariant> &vList)
                     list->BuildUUIDL(uuid.toUInt32());
                     break;
                 case 16: {
-                    quint128 uuid128 = uuid.toUInt128();
-                    quint32 *data = reinterpret_cast<quint32 *>(uuid128.data);
-                    list->BuildUUIDL(TUUID(data[0], data[1], data[2], data[3]));
+                    TUint32 *dataPointer = (TUint32*)uuid.toUInt128().data;
+                    TUint32 hH = qToBigEndian<quint32>(*(dataPointer++));
+                    TUint32 hL = qToBigEndian<quint32>(*(dataPointer++));
+                    TUint32 lH = qToBigEndian<quint32>(*(dataPointer++));
+                    TUint32 lL = qToBigEndian<quint32>(*(dataPointer));
+                    TUUID sUuid(hH, hL, lH, lL);
+                    list->BuildUUIDL(sUuid);
                     break;
                 }
                 }
             } else if (v.userType() == qMetaTypeId<QBluetoothServiceInfo::Sequence>()) {
-                convert(list->BuildDESL(), v.value<QBluetoothServiceInfo::Sequence>());
+                convertL(list->BuildDESL(), v.value<QBluetoothServiceInfo::Sequence>());
             } else if (v.userType() == qMetaTypeId<QBluetoothServiceInfo::Alternative>()) {
-                convert(list->BuildDEAL(), v.value<QBluetoothServiceInfo::Alternative>());
+                convertL(list->BuildDEAL(), v.value<QBluetoothServiceInfo::Alternative>());
             }
             break;
         default:
@@ -130,6 +138,14 @@ static void convert(MSdpElementBuilder *list, const QList<QVariant> &vList)
 }
 
 void QBluetoothServiceInfoPrivate::setRegisteredAttribute(quint16 attributeId, const QVariant &value) const
+{
+    TRAPD(err, setRegisteredAttributeL(attributeId, value));
+    if (err != KErrNone) {
+        qWarning("Could not set attributes SDP session (error %d).", err);
+    }
+}
+
+void QBluetoothServiceInfoPrivate::setRegisteredAttributeL(quint16 attributeId, const QVariant &value) const
 {
     CSdpAttrValue *sdpValue = 0;
 
@@ -175,20 +191,28 @@ void QBluetoothServiceInfoPrivate::setRegisteredAttribute(quint16 attributeId, c
                 sdpValue = CSdpAttrValueUUID::NewUUIDL(uuid.toUInt32());
                 break;
             case 16: {
-                quint128 uuid128 = uuid.toUInt128();
-                quint32 *data = reinterpret_cast<quint32 *>(uuid128.data);
-                sdpValue = CSdpAttrValueUUID::NewUUIDL(TUUID(data[0], data[1], data[2], data[3]));
+                TUint32 *dataPointer = (TUint32*)uuid.toUInt128().data;
+                TUint32 hH = qToBigEndian<quint32>(*(dataPointer++));
+                TUint32 hL = qToBigEndian<quint32>(*(dataPointer++));
+                TUint32 lH = qToBigEndian<quint32>(*(dataPointer++));
+                TUint32 lL = qToBigEndian<quint32>(*(dataPointer));
+                TUUID sUuid(hH, hL, lH, lL);
+                sdpValue = CSdpAttrValueUUID::NewUUIDL(sUuid);
                 break;
             }
             }
         } else if (value.userType() == qMetaTypeId<QBluetoothServiceInfo::Sequence>()) {
             CSdpAttrValueDES *sequence = CSdpAttrValueDES::NewDESL(0);
-            convert(sequence, value.value<QBluetoothServiceInfo::Sequence>());
+            CleanupStack::PushL(sequence);
+            convertL(sequence, value.value<QBluetoothServiceInfo::Sequence>());
             sdpValue = sequence;
+            CleanupStack::Pop(sequence);
         } else if (value.userType() == qMetaTypeId<QBluetoothServiceInfo::Alternative>()) {
             CSdpAttrValueDEA *alternative = CSdpAttrValueDEA::NewDEAL(0);
-            convert(alternative, value.value<QBluetoothServiceInfo::Alternative>());
+            CleanupStack::PushL(alternative);
+            convertL(alternative, value.value<QBluetoothServiceInfo::Alternative>());
             sdpValue = alternative;
+            CleanupStack::Pop(alternative);
         }
         break;
     default:
@@ -196,14 +220,18 @@ void QBluetoothServiceInfoPrivate::setRegisteredAttribute(quint16 attributeId, c
     }
 
     if (sdpValue) {
+        CleanupStack::PushL(sdpValue);
         sdpDatabase.UpdateAttributeL(serviceRecord, attributeId, *sdpValue);
-        delete sdpValue;
+        CleanupStack::PopAndDestroy(sdpValue);
     }
 }
 
 void QBluetoothServiceInfoPrivate::removeRegisteredAttribute(quint16 attributeId) const
 {
-    sdpDatabase.DeleteAttributeL(serviceRecord, attributeId);
+    TRAPD(err, sdpDatabase.DeleteAttributeL(serviceRecord, attributeId));
+    if (err != KErrNone) {
+        qWarning("Could not remove registered attribute (error %d).", err);
+    }
 }
 
 bool QBluetoothServiceInfoPrivate::ensureSdpConnection() const
@@ -231,20 +259,29 @@ bool QBluetoothServiceInfo::isRegistered() const
 {
     Q_D(const QBluetoothServiceInfo);
 
-    return d->sdpDatabase.SubSessionHandle() != 0;
+    return d->serviceRecord != 0;
 }
 
 bool QBluetoothServiceInfo::registerService() const
 {
     Q_D(const QBluetoothServiceInfo);
 
+    if (d->serviceRecord != 0)
+        return false;
+
     if (!d->ensureSdpConnection())
         return false;
 
-    d->sdpDatabase.CreateServiceRecordL(0, d->serviceRecord);
+    TRAPD(err, d->sdpDatabase.CreateServiceRecordL(0, d->serviceRecord));
+    if (err != KErrNone)
+        return false;
 
-    foreach (quint16 id, d->attributes.keys())
-        d->setRegisteredAttribute(id, d->attributes[id]);
+    foreach (quint16 id, d->attributes.keys()) {
+        // Changing service record handle causes serious problems
+        // on Symbian devices. Hence passing the value update.
+        if (id != ServiceRecordHandle)
+            d->setRegisteredAttribute(id, d->attributes[id]);
+    }
 
     return true;
 }
@@ -256,8 +293,11 @@ bool QBluetoothServiceInfo::unregisterService() const
     if (!d->ensureSdpConnection())
         return false;
 
-    d->sdpDatabase.DeleteRecordL(d->serviceRecord);
+    TRAPD(err, d->sdpDatabase.DeleteRecordL(d->serviceRecord));
+    if (err != KErrNone)
+        return false;
 
+    d->serviceRecord = 0;
     return true;
 }
 

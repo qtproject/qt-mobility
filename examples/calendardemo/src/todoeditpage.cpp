@@ -270,25 +270,32 @@ void TodoEditPage::showEvent(QShowEvent *event)
 
 void TodoEditPage::handleAlarmIndexChanged(const QString time)
 {
-    QOrganizerItemVisualReminder reminder;
-    reminder.setMessage(m_subjectEdit->text());
+    bool noVisualReminders = m_manager->detailDefinition(QOrganizerItemVisualReminder::DefinitionName, m_organizerTodo.type()).isEmpty();
 
+        QScopedPointer<QOrganizerItemReminder> reminder;
+        if (noVisualReminders) {
+            reminder.reset(new QOrganizerItemReminder());
+        } else {
+            reminder.reset(new QOrganizerItemVisualReminder());
+            static_cast<QOrganizerItemVisualReminder *>(reminder.data())->setMessage(m_subjectEdit->text());
+        }
+    
     if (time == "None") {
-         QOrganizerItemVisualReminder fetchedReminder = m_organizerTodo.detail(QOrganizerItemVisualReminder::DefinitionName);
-         m_organizerTodo.removeDetail(&fetchedReminder);
+        QOrganizerItemVisualReminder fetchedReminder = m_organizerTodo.detail(QOrganizerItemVisualReminder::DefinitionName);
+        m_organizerTodo.removeDetail(&fetchedReminder);
         return;
     } else if (time == "0 minutes before") {
-        reminder.setSecondsBeforeStart(0);
+        reminder->setSecondsBeforeStart(0);
     } else if (time == "5 minutes before") {
-        reminder.setSecondsBeforeStart(5*60);
+        reminder->setSecondsBeforeStart(5*60);
     } else if (time == "15 minutes before") {
-        reminder.setSecondsBeforeStart(15*60);
+        reminder->setSecondsBeforeStart(15*60);
     } else if (time == "30 minutes before") {
-        reminder.setSecondsBeforeStart(30*60);
+        reminder->setSecondsBeforeStart(30*60);
     } else if (time == "1 hour before") {
-        reminder.setSecondsBeforeStart(60*60);
+        reminder->setSecondsBeforeStart(60*60);
     }
 
-    m_organizerTodo.saveDetail(&reminder);
+    m_organizerTodo.saveDetail(reminder.data());
 }
 

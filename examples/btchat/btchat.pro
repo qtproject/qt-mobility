@@ -3,7 +3,7 @@ TARGET = btchat
 INCLUDEPATH += ../../src/connectivity/bluetooth
 DEPENDPATH += ../../src/connectivity/bluetooth
 
-include(../examples.pri)
+include(../mobility_examples.pri)
 
 CONFIG += mobility
 MOBILITY = connectivity
@@ -26,5 +26,5 @@ FORMS = \
     remoteselector.ui
 
 symbian {
-    TARGET.CAPABILITY = LocalServices UserEnvironment ReadUserData WriteUserData NetworkServices
+    TARGET.CAPABILITY = LocalServices UserEnvironment ReadUserData WriteUserData NetworkServices NetworkControl ReadDeviceData WriteDeviceData SwEvent
 }

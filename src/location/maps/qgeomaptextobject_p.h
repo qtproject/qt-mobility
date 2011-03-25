@@ -57,7 +57,6 @@ public:
     QGeoMapTextObjectPrivate();
     ~QGeoMapTextObjectPrivate();
 
-    QGeoCoordinate coordinate;
     QString text;
     QFont font;
     QPen pen;

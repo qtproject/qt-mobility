@@ -48,9 +48,6 @@
 #include <qaudio.h>
 #include <qsoundeffect_p.h>
 
-#if defined(Q_OS_SYMBIAN)
-#define SRCDIR ""
-#endif
 
 class tst_QSoundEffect : public QObject
 {
@@ -70,10 +67,17 @@ private slots:
 
 private:
     QSoundEffect* sound;
+    QUrl url;
 };
 
 void tst_QSoundEffect::initTestCase()
 {
+#ifdef QT_QSOUNDEFFECT_USEAPPLICATIONPATH
+    url = QUrl::fromLocalFile(QCoreApplication::applicationDirPath() + QString("/test.wav"));
+#else
+    url = QUrl::fromLocalFile(QString(SRCDIR "test.wav"));
+#endif
+
     sound = new QSoundEffect(this);
 
     QVERIFY(sound->source().isEmpty());
@@ -86,7 +90,6 @@ void tst_QSoundEffect::testSource()
 {
     QSignalSpy readSignal(sound, SIGNAL(sourceChanged()));
 
-    QUrl url = QUrl::fromLocalFile(QString(QLatin1String("%1%2")).arg(QLatin1String(SRCDIR)).arg(QLatin1String("test.wav")));
     sound->setSource(url);
 
     QCOMPARE(sound->source(),url);
@@ -138,7 +141,6 @@ void tst_QSoundEffect::testPlaying()
 {
     sound->setLoopCount(QSoundEffect::Infinite);
     //valid source
-    QUrl url = QUrl::fromLocalFile(QString(QLatin1String("%1%2")).arg(QLatin1String(SRCDIR)).arg(QLatin1String("test.wav")));
     sound->setSource(url);
     QTestEventLoop::instance().enterLoop(1);
     sound->play();
@@ -147,16 +149,14 @@ void tst_QSoundEffect::testPlaying()
     sound->stop();
 
     //empty source
-    url = QUrl();
-    sound->setSource(url);
+    sound->setSource(QUrl());
     QTestEventLoop::instance().enterLoop(1);
     sound->play();
     QTestEventLoop::instance().enterLoop(1);
     QCOMPARE(sound->isPlaying(), false);
 
     //invalid source
-    url = QUrl((QLatin1String("invalid source")));
-    sound->setSource(url);
+    sound->setSource(QUrl((QLatin1String("invalid source"))));
     QTestEventLoop::instance().enterLoop(1);
     sound->play();
     QTestEventLoop::instance().enterLoop(1);
@@ -167,28 +167,24 @@ void tst_QSoundEffect::testPlaying()
 
 void tst_QSoundEffect::testStatus()
 {
-    QUrl url = QUrl();
-    sound->setSource(url);
+    sound->setSource(QUrl());
     QCOMPARE(sound->status(), QSoundEffect::Null);
 
     //valid source
-    url = QUrl::fromLocalFile(QString(QLatin1String("%1%2")).arg(QLatin1String(SRCDIR)).arg(QLatin1String("test.wav")));
     sound->setSource(url);
 
     QTestEventLoop::instance().enterLoop(1);
     QCOMPARE(sound->status(), QSoundEffect::Ready);
 
     //empty source
-    url = QUrl();
-    sound->setSource(url);
+    sound->setSource(QUrl());
     QTestEventLoop::instance().enterLoop(1);
     QCOMPARE(sound->status(), QSoundEffect::Null);
 
     //invalid source
     sound->setLoopCount(QSoundEffect::Infinite);
-    url = QUrl(QLatin1String("invalid source"));
 
-    sound->setSource(url);
+    sound->setSource(QUrl(QLatin1String("invalid source")));
     QTestEventLoop::instance().enterLoop(1);
     QCOMPARE(sound->status(), QSoundEffect::Error);
 }

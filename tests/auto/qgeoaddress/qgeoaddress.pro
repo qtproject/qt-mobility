@@ -9,9 +9,9 @@ INCLUDEPATH += ../../../src/location
 
 # Input
 HEADERS += tst_qgeoaddress.h \
-           ../qlocationtestutils_p.h
+           ../qgeocoordinate/qlocationtestutils_p.h
 SOURCES += tst_qgeoaddress.cpp \
-           ../qlocationtestutils.cpp
+           ../qgeocoordinate/qlocationtestutils.cpp
 
 CONFIG += mobility
 MOBILITY = location

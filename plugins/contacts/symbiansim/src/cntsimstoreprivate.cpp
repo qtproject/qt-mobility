@@ -112,6 +112,9 @@ void CntSimStorePrivate::ConstructL()
         User::LeaveIfError(m_etelStore.Open(m_etelPhone, storeName));        
     }
 
+    // Create store info dispatcher
+    m_storeInfoDispatcher = CStoreInfoDispatcher::NewL(m_etelStore, m_etelOnStore);
+    
     // Update store info
     updateStoreInfoL();
     
@@ -133,6 +136,7 @@ CntSimStorePrivate::~CntSimStorePrivate()
     m_etelOnStore.Close();
     m_etelPhone.Close();
     m_etelServer.Close();
+    delete m_storeInfoDispatcher;
 }
 
 void CntSimStorePrivate::convertStoreNameL(TDes &storeName)
@@ -783,24 +787,11 @@ void CntSimStorePrivate::removeL(int index)
 
 void CntSimStorePrivate::updateStoreInfoL()
 {
-#ifdef SYMBIANSIM_BACKEND_PHONEBOOKINFOV1
-    TRequestStatus status;
-    RMobilePhoneBookStore::TMobilePhoneBookInfoV1 info;
-    RMobilePhoneBookStore::TMobilePhoneBookInfoV1Pckg infoPckg(info);
-    m_etelStore.GetInfo(status, infoPckg);
-    User::WaitForRequest(status);
-    User::LeaveIfError(status.Int());
-    m_storeInfo.m_totalEntries = info.iTotalEntries;
-    m_storeInfo.m_usedEntries  = info.iUsedEntries;
-#else
     // Get info
-    TRequestStatus status;
     if (m_storeInfo.m_storeName == KParameterValueSimStoreNameOn) {
         RMobileONStore::TMobileONStoreInfoV1 onInfo;
         RMobileONStore::TMobileONStoreInfoV1Pckg onInfoPckg(onInfo);
-        m_etelOnStore.GetInfo(status, onInfoPckg);
-        User::WaitForRequest(status);
-        User::LeaveIfError(status.Int());
+        m_storeInfoDispatcher->DispatchL(onInfoPckg);
 
         // Update entry counts
         m_storeInfo.m_totalEntries = onInfo.iTotalEntries;
@@ -809,15 +800,12 @@ void CntSimStorePrivate::updateStoreInfoL()
     else {
         RMobilePhoneBookStore::TMobilePhoneBookInfoV5 info;
         RMobilePhoneBookStore::TMobilePhoneBookInfoV5Pckg infoPckg(info);
-        m_etelStore.GetInfo(status, infoPckg);
-        User::WaitForRequest(status);
-        User::LeaveIfError(status.Int());
+        m_storeInfoDispatcher->DispatchL(infoPckg);
 
         // Update entry counts
         m_storeInfo.m_totalEntries = info.iTotalEntries;
         m_storeInfo.m_usedEntries  = info.iUsedEntries;
     }
-#endif
 
 #ifdef SYMBIANSIM_BACKEND_TEST_EXTRADETAILS
     // Check if store supports the extra details
@@ -903,4 +891,159 @@ void CntSimStorePrivate::updateStoreInfoL()
         << "\nAdditional name supported :" << m_storeInfo.m_additionalNumberSupported
         << "\nEmail supported           :" << m_storeInfo.m_emailSupported;
     */
+}
+
+CDispatcherTimer* CDispatcherTimer::NewL(MDispatcherTimeOut& aCallback)
+{
+    CDispatcherTimer* self = 
+        new(ELeave) CDispatcherTimer(aCallback);
+    CleanupStack::PushL( self );
+    self->ConstructL();
+    CleanupStack::Pop(self);
+    return self;
+}
+
+CDispatcherTimer::CDispatcherTimer(MDispatcherTimeOut& aCallback)
+    : CTimer(EPriorityHigh), iCallback(aCallback)
+{
+}
+
+CDispatcherTimer::~CDispatcherTimer()
+{
+}
+
+void CDispatcherTimer::ConstructL()
+{
+    CTimer::ConstructL();
+    CActiveScheduler::Add(this);
+}
+
+void CDispatcherTimer::RunL()
+{
+    iCallback.TimerExpired();
+}
+
+TInt CDispatcherTimer::RunError(TInt /*aError*/)
+{
+    return KErrNone;
+}
+
+CStoreInfoDispatcher* CStoreInfoDispatcher::NewL(RMobilePhoneBookStore& aEtelStore, RMobileONStore& aEtelOnStore)
+{
+    CStoreInfoDispatcher* self = 
+        new(ELeave) CStoreInfoDispatcher(aEtelStore, aEtelOnStore);
+    CleanupStack::PushL( self );
+    self->ConstructL();
+    CleanupStack::Pop(self);
+    return self;
+}
+
+CStoreInfoDispatcher::CStoreInfoDispatcher(RMobilePhoneBookStore& aEtelStore, RMobileONStore& aEtelOnStore)
+    : CActive(EPriorityHigh),
+      iEtelStore(aEtelStore),
+      iEtelOnStore(aEtelOnStore),
+      iError(KErrNone)
+{
+}
+
+void CStoreInfoDispatcher::ConstructL()
+{
+    iTimer = CDispatcherTimer::NewL(*this);
+    iWait = new( ELeave ) CActiveSchedulerWait();
+    CActiveScheduler::Add(this);
+}
+
+CStoreInfoDispatcher::~CStoreInfoDispatcher()
+{
+    Cancel();
+    delete iTimer;
+    delete iWait;
+}
+
+void CStoreInfoDispatcher::DispatchL(RMobilePhoneBookStore::TMobilePhoneBookInfoV1Pckg& aInfoPckg)
+{
+    // GetInfo from Etel Store
+    iRequestMode = EEtelStore;
+    iEtelStore.GetInfo(iStatus, aInfoPckg);
+    SetActive();
+    
+    // Start timeout timer
+    iTimer->After(2000000); // 2 seconds timeout
+    
+    // wait loop is finished in RunL when store info is fetched
+    iWait->Start();
+    User::LeaveIfError(iError);
+}
+
+void CStoreInfoDispatcher::DispatchL(RMobilePhoneBookStore::TMobilePhoneBookInfoV5Pckg& aInfoPckg)
+{
+    // GetInfo from Etel Store
+    iRequestMode = EEtelStore;
+    iEtelStore.GetInfo(iStatus, aInfoPckg);
+    SetActive();
+    
+    // Start timeout timer
+    iTimer->After(2000000); // 2 seconds timeout
+    
+    // wait loop is finished in RunL when store info is fetched
+    iWait->Start();
+    User::LeaveIfError(iError);
+}
+
+void CStoreInfoDispatcher::DispatchL(RMobileONStore::TMobileONStoreInfoV1Pckg& aOnInfoPckg)
+{
+    // GetInfo from Etel Store
+    iRequestMode = EEtelOnStore;
+    iEtelOnStore.GetInfo(iStatus, aOnInfoPckg);
+    SetActive();
+    
+    // Start timeout timer
+    iTimer->After(2000000); // 2 seconds timeout
+    
+    // wait loop is finished in RunL when store info is fetched
+    iWait->Start();
+    User::LeaveIfError(iError);
+}
+
+void CStoreInfoDispatcher::TimerExpired()
+{
+    // Cancel request
+    Cancel();
+}
+
+void CStoreInfoDispatcher::DoCancel()
+{
+    // Cancel outstanding requests
+    if(iRequestMode == EEtelStore) {
+        iEtelStore.CancelAsyncRequest(EMobilePhoneStoreGetInfo);
+    }
+    else if(iRequestMode == EEtelOnStore) {
+        iEtelOnStore.CancelAsyncRequest(EMobilePhoneStoreGetInfo);
+    }
+    
+    // Cancel timeout timer
+    iTimer->Cancel();
+    
+    iError = KErrNotSupported;
+    StopWait();
+}
+
+void CStoreInfoDispatcher::RunL()
+{
+    // Cancel timeout timer
+    iTimer->Cancel();
+    iError = iStatus.Int();
+    StopWait();
+}
+
+void CStoreInfoDispatcher::StopWait()
+{    
+    if (iWait && iWait->IsStarted()) {
+        iWait->AsyncStop();
+    }
+}
+
+TInt CStoreInfoDispatcher::RunError(TInt /*aError*/)
+{
+    return KErrNone;
 }

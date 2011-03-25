@@ -60,13 +60,19 @@ class QSensorManagerPrivate : public QObject
 
     Q_OBJECT
 public:
+    enum PluginLoadingState {
+        NotLoaded,
+        Loading,
+        Loaded
+    };
     QSensorManagerPrivate()
-        : pluginsLoaded(false)
+        : pluginLoadingState(NotLoaded)
         , sensorsChanged(false)
     {
     }
 
-    bool pluginsLoaded;
+    PluginLoadingState pluginLoadingState;
+    void loadPlugins();
 
     QList<CreatePluginFunc> staticRegistrations;
 
@@ -86,7 +92,7 @@ public Q_SLOTS:
     void emitSensorsChanged()
     {
         static bool alreadyRunning = false;
-        if (!pluginsLoaded || alreadyRunning) {
+        if (pluginLoadingState != QSensorManagerPrivate::Loaded || alreadyRunning) {
             // We're busy.
             // Just note that a registration changed and exit.
             // Someone up the call stack will deal with this.
@@ -120,7 +126,7 @@ Q_GLOBAL_STATIC(QSensorManagerPrivate, sensorManagerPrivate)
 // The unit test needs to change the behaviour of the library. It does this
 // through an exported but undocumented function.
 static void initPlugin(QObject *plugin);
-static bool settings_use_user_scope = false;
+static QSettings::Scope settings_scope = QSettings::SystemScope;
 static bool load_external_plugins = true;
 Q_SENSORS_EXPORT void sensors_unit_test_hook(int index)
 {
@@ -128,13 +134,13 @@ Q_SENSORS_EXPORT void sensors_unit_test_hook(int index)
 
     switch (index) {
     case 0:
-        Q_ASSERT(d->pluginsLoaded == false);
-        settings_use_user_scope = true;
+        Q_ASSERT(d->pluginLoadingState == QSensorManagerPrivate::NotLoaded);
+        settings_scope = QSettings::UserScope;
         load_external_plugins = false;
         break;
     case 1:
         Q_ASSERT(load_external_plugins == false);
-        Q_ASSERT(d->pluginsLoaded == true);
+        Q_ASSERT(d->pluginLoadingState == QSensorManagerPrivate::Loaded);
         SENSORLOG() << "initializing plugins";
         Q_FOREACH (QObject *plugin, pluginLoader()->plugins()) {
             initPlugin(plugin);
@@ -150,22 +156,32 @@ static void initPlugin(QObject *o)
     if (!o) return;
     QSensorManagerPrivate *d = sensorManagerPrivate();
 
-    QSensorPluginInterface *plugin = qobject_cast<QSensorPluginInterface*>(o);
-    if (plugin)
-        plugin->registerSensors();
     QSensorChangesInterface *changes = qobject_cast<QSensorChangesInterface*>(o);
     if (changes)
         d->changeListeners << changes;
+
+    QSensorPluginInterface *plugin = qobject_cast<QSensorPluginInterface*>(o);
+    if (plugin)
+        plugin->registerSensors();
 }
 
-static void loadPlugins()
+void QSensorManagerPrivate::loadPlugins()
 {
-    QSensorManagerPrivate *d = sensorManagerPrivate();
+    QSensorManagerPrivate *d = this;
+    if (d->pluginLoadingState != QSensorManagerPrivate::NotLoaded) return;
+    d->pluginLoadingState = QSensorManagerPrivate::Loading;
 
-    SENSORLOG() << "initializing static plugins";
+    SENSORLOG() << "initializing legacy static plugins";
+    // Legacy static plugins
     Q_FOREACH (CreatePluginFunc func, d->staticRegistrations) {
         QSensorPluginInterface *plugin = func();
         plugin->registerSensors();
+    }
+
+    SENSORLOG() << "initializing static plugins";
+    // Qt-style static plugins
+    Q_FOREACH (QObject *plugin, QPluginLoader::staticInstances()) {
+        initPlugin(plugin);
     }
 
     if (load_external_plugins) {
@@ -175,7 +191,7 @@ static void loadPlugins()
         }
     }
 
-    d->pluginsLoaded = true;
+    d->pluginLoadingState = QSensorManagerPrivate::Loaded;
 
     if (d->sensorsChanged) {
         // Notify the app that the available sensor list has changed.
@@ -205,9 +221,15 @@ static void loadPlugins()
 */
 void QSensorManager::registerBackend(const QByteArray &type, const QByteArray &identifier, QSensorBackendFactory *factory)
 {
+    Q_ASSERT(type.count());
+    Q_ASSERT(identifier.count());
+    Q_ASSERT(factory);
     QSensorManagerPrivate *d = sensorManagerPrivate();
     if (!d->backendsByType.contains(type)) {
         (void)d->backendsByType[type];
+        d->firstIdentifierForType[type] = identifier;
+    } else if (d->firstIdentifierForType[type].startsWith("generic.")) {
+        // Don't let a generic backend be the default when some other backend exists!
         d->firstIdentifierForType[type] = identifier;
     }
     FactoryForIdentifierMap &factoryByIdentifier = d->backendsByType[type];
@@ -245,10 +267,21 @@ void QSensorManager::unregisterBackend(const QByteArray &type, const QByteArray 
 
     (void)factoryByIdentifier.take(identifier); // we don't own this pointer anyway
     if (d->firstIdentifierForType[type] == identifier) {
-        if (factoryByIdentifier.count())
-            d->firstIdentifierForType[type] == factoryByIdentifier.begin().key();
-        else
+        if (factoryByIdentifier.count()) {
+            d->firstIdentifierForType[type] = factoryByIdentifier.begin().key();
+            if (d->firstIdentifierForType[type].startsWith("generic.")) {
+                // Don't let a generic backend be the default when some other backend exists!
+                for (FactoryForIdentifierMap::const_iterator it = factoryByIdentifier.begin()++; it != factoryByIdentifier.end(); it++) {
+                    const QByteArray &identifier(it.key());
+                    if (!identifier.startsWith("generic.")) {
+                        d->firstIdentifierForType[type] = identifier;
+                        break;
+                    }
+                }
+            }
+        } else {
             (void)d->firstIdentifierForType.take(type);
+        }
     }
     if (!factoryByIdentifier.count())
         (void)d->backendsByType.take(type);
@@ -275,8 +308,7 @@ QSensorBackend *QSensorManager::createBackend(QSensor *sensor)
     Q_ASSERT(sensor);
 
     QSensorManagerPrivate *d = sensorManagerPrivate();
-    if (!d->pluginsLoaded)
-        loadPlugins();
+    d->loadPlugins();
 
     SENSORLOG() << "QSensorManager::createBackend" << "type" << sensor->type() << "identifier" << sensor->identifier();
 
@@ -336,8 +368,7 @@ QSensorBackend *QSensorManager::createBackend(QSensor *sensor)
 bool QSensorManager::isBackendRegistered(const QByteArray &type, const QByteArray &identifier)
 {
     QSensorManagerPrivate *d = sensorManagerPrivate();
-    if (!d->pluginsLoaded)
-        loadPlugins();
+    d->loadPlugins();
 
     if (!d->backendsByType.contains(type))
         return false;
@@ -357,8 +388,7 @@ bool QSensorManager::isBackendRegistered(const QByteArray &type, const QByteArra
 QList<QByteArray> QSensor::sensorTypes()
 {
     QSensorManagerPrivate *d = sensorManagerPrivate();
-    if (!d->pluginsLoaded)
-        loadPlugins();
+    d->loadPlugins();
 
     return d->backendsByType.keys();
 }
@@ -370,8 +400,7 @@ QList<QByteArray> QSensor::sensorTypes()
 QList<QByteArray> QSensor::sensorsForType(const QByteArray &type)
 {
     QSensorManagerPrivate *d = sensorManagerPrivate();
-    if (!d->pluginsLoaded)
-        loadPlugins();
+    d->loadPlugins();
 
     // no sensors of that type exist
     if (!d->backendsByType.contains(type))
@@ -386,21 +415,24 @@ QList<QByteArray> QSensor::sensorsForType(const QByteArray &type)
     If no default is available the system will return the first registered
     sensor for \a type.
 
+    Note that there is special case logic to prevent the generic plugin's backends from becoming the
+    default when another backend is registered for the same type. This logic means that a backend
+    identifier starting with \c{generic.} will only be the default if no other backends have been
+    registered for that type or if it is specified in \c{Sensors.conf}.
+
     \sa {Determining the default sensor for a type}
 */
 QByteArray QSensor::defaultSensorForType(const QByteArray &type)
 {
     QSensorManagerPrivate *d = sensorManagerPrivate();
-    if (!d->pluginsLoaded)
-        loadPlugins();
+    d->loadPlugins();
 
     // no sensors of that type exist
     if (!d->backendsByType.contains(type))
         return QByteArray();
 
     // The unit test needs to modify Sensors.conf but it can't access the system directory
-    QSettings::Scope scope = settings_use_user_scope ? QSettings::UserScope : QSettings::SystemScope;
-    QSettings settings(scope, QLatin1String("Nokia"), QLatin1String("Sensors"));
+    QSettings settings(settings_scope, QLatin1String("Nokia"), QLatin1String("Sensors"));
     QVariant value = settings.value(QString(QLatin1String("Default/%1")).arg(QString::fromLatin1(type)));
     if (!value.isNull()) {
         QByteArray defaultIdentifier = value.toByteArray();

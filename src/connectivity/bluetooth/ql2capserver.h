@@ -89,6 +89,11 @@ protected:
 
 private:
     Q_DECLARE_PRIVATE(QL2capServer)
+
+#ifndef QT_NO_DBUS
+    Q_PRIVATE_SLOT(d_func(), void _q_newConnection())
+#endif
+
 };
 
 QTM_END_NAMESPACE

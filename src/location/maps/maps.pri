@@ -6,6 +6,7 @@ include(tiled/tiled.pri)
 PUBLIC_HEADERS += \
                     maps/qgeomaneuver.h \
                     maps/qgeomapcircleobject.h \
+                    maps/qgeomapcustomobject.h \
                     maps/qgeomapdata.h \
                     maps/qgeomapgroupobject.h \
                     maps/qgeomapobject.h \
@@ -35,6 +36,7 @@ PUBLIC_HEADERS += \
 PRIVATE_HEADERS += \
                     maps/qgeomaneuver_p.h \
                     maps/qgeomapcircleobject_p.h \
+                    maps/qgeomapcustomobject_p.h \
                     maps/qgeomapdata_p.h \
                     maps/qgeomapgroupobject_p.h \
                     maps/qgeomapobject_p.h \
@@ -58,15 +60,16 @@ PRIVATE_HEADERS += \
                     maps/qgeosearchmanagerengine_p.h \
                     maps/qgeosearchreply_p.h \
                     maps/qgeoserviceprovider_p.h \
-                    maps/qgraphicsgeomap_p.h
+                    maps/qgraphicsgeomap_p.h \
+                    maps/qgeomapobjectengine_p.h
 
 SOURCES += \
             maps/qgeomaneuver.cpp \
             maps/qgeomapcircleobject.cpp \
+            maps/qgeomapcustomobject.cpp \
             maps/qgeomapdata.cpp \
             maps/qgeomapgroupobject.cpp \
             maps/qgeomapobject.cpp \
-            maps/qgeomapobjectinfo.cpp \
             maps/qgeomapoverlay.cpp \
             maps/qgeomappingmanager.cpp \
             maps/qgeomappingmanagerengine.cpp \
@@ -87,5 +90,6 @@ SOURCES += \
             maps/qgeosearchreply.cpp \
             maps/qgeoserviceprovider.cpp \
             maps/qgeoserviceproviderfactory.cpp \
-            maps/qgraphicsgeomap.cpp
-
+            maps/qgraphicsgeomap.cpp \
+            maps/qgeomapobjectinfo.cpp \
+            maps/qgeomapobjectengine_p.cpp

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QBLUETOOTHTRANSFERREPLYPRIVATE_H
-#define QBLUETOOTHTRANSFERREPLYPRIVATE_H
+#ifndef QBLUETOOTHTRANSFERREPLY_P_H
+#define QBLUETOOTHTRANSFERREPLY_P_H
 
 #include "qbluetoothtransferreply.h"
 
@@ -48,22 +48,22 @@ QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
-class QBluetoothTransferReplyPrivate : public QObject
+class Q_CONNECTIVITY_EXPORT QBluetoothTransferReplyPrivate
 {
-    Q_OBJECT
-
 public:
-    QBluetoothTransferReplyPrivate(QBluetoothTransferReply *parent);
-    virtual ~QBluetoothTransferReplyPrivate();
+    QBluetoothTransferReplyPrivate();
 
-public:
-    QBluetoothTransferReply *q;
-    QMap<int, QVariant> m_parameters;
-    QBluetoothTransferManager::Operation operation;
+    QBluetoothTransferManager *m_manager;
+    QBluetoothTransferManager::Operation m_operation;
+    QMap<int, QVariant> m_attributes;
+    qint64 m_buffersize;
+
+    QBluetoothTransferReply *q_ptr;
+
 };
 
 QTM_END_NAMESPACE
 
 QT_END_HEADER
 
-#endif // QBLUETOOTHTRANSFERREPLYPRIVATE_H
+#endif // QBLUETOOTHTRANSFERREPLY_H

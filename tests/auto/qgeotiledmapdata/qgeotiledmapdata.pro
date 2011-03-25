@@ -8,12 +8,12 @@ INCLUDEPATH += ../../../src/location \
 	       ../../../src/location/maps \
                ../../../src/location/maps/tiled
 
-HEADERS += ../qlocationtestutils_p.h \
+HEADERS += ../qgeocoordinate/qlocationtestutils_p.h \
            ../pixelindex/pixelindexengine.h
 
 SOURCES += tst_qgeotiledmapdata.cpp \
            ../pixelindex/pixelindexengine.cpp \
-           ../qlocationtestutils.cpp
+           ../qgeocoordinate/qlocationtestutils.cpp
 
 CONFIG += mobility
 MOBILITY = location

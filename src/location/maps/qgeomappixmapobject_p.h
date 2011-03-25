@@ -55,7 +55,6 @@ public:
     QGeoMapPixmapObjectPrivate();
     ~QGeoMapPixmapObjectPrivate();
 
-    QGeoCoordinate coordinate;
     QPixmap pixmap;
     QPoint offset;
 };

@@ -75,12 +75,13 @@ public:
     QGeoMapPolygonObject *polygon;
     QGraphicsPolygonItem *polygonItem;
 
-    QPolygonF points;
-
 public slots:
     void pathChanged(const QList<QGeoCoordinate> &path);
     void penChanged(const QPen &pen);
     void brushChanged(const QBrush &brush);
+
+private:
+    void genPoly();
 };
 
 QTM_END_NAMESPACE

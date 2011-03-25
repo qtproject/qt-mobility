@@ -60,6 +60,7 @@
 
 QT_BEGIN_NAMESPACE
 
+class QAbstractVideoSurface;
 class QVideoWidget;
 class QGraphicsVideoItem;
 
@@ -157,6 +158,7 @@ public:
 
     void setViewfinder(QVideoWidget *viewfinder);
     void setViewfinder(QGraphicsVideoItem *viewfinder);
+    void setViewfinder(QAbstractVideoSurface *surface);
 
     Error error() const;
     QString errorString() const;
@@ -212,6 +214,7 @@ QT_END_NAMESPACE
 Q_DECLARE_METATYPE(QCamera::State)
 Q_DECLARE_METATYPE(QCamera::Status)
 Q_DECLARE_METATYPE(QCamera::Error)
+Q_DECLARE_METATYPE(QCamera::CaptureMode)
 Q_DECLARE_METATYPE(QCamera::LockType)
 Q_DECLARE_METATYPE(QCamera::LockStatus)
 Q_DECLARE_METATYPE(QCamera::LockChangeReason)

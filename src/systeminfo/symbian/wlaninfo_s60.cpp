@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009-2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009-2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -62,18 +62,21 @@ CWlanInfo::CWlanInfo(QObject *parent) : QObject(parent)
             m_wlanMgmtClient->ActivateNotificationsL(*this);
             m_timer = new QTimer(this);
             connect(m_timer, SIGNAL(timeout()), this, SLOT(checkWlanInfo()));
-            m_timer->setInterval(1000);
-            m_timer->start();
+            m_timer->setInterval(5000);
        }
 #endif
 }
 
 CWlanInfo::~CWlanInfo()
 {
+}
+
+void CWlanInfo::FreeResources()
+ {
     if (m_wlanMgmtClient)
         m_wlanMgmtClient->CancelNotifications();
     delete m_wlanMgmtClient;
-}
+ }
 
 QString CWlanInfo::wlanNetworkName() const
 {
@@ -95,27 +98,9 @@ void CWlanInfo::checkWlanInfo()
 #ifndef __WINSCW__
     if(!m_wlanMgmtClient)
         return;
-    TWlanConnectionMode connectionMode;
-    TInt err = m_wlanMgmtClient->GetConnectionMode(connectionMode);
-    if (err == KErrNone && connectionMode != EWlanConnectionModeNotConnected) {
-        m_wlanStatus = true;
-        emit wlanNetworkStatusChanged();
-    } else {
-        stopPolling();
-        return;
-    }
-
-    TWlanSsid ssid;
-    err = m_wlanMgmtClient->GetConnectionSsid(ssid);
-    ssid.ZeroTerminate();
-    if (err == KErrNone && m_wlanSsid != (char*)ssid.Ptr()) {
-        m_wlanSsid = (char*)ssid.Ptr();
-        emit wlanNetworkNameChanged();
-    }
 
     TInt32 signalQuality;
-    err = m_wlanMgmtClient->GetConnectionSignalQuality(signalQuality);
-
+    TInt err = m_wlanMgmtClient->GetConnectionSignalQuality(signalQuality);
     if (err == KErrNone && m_wlanSignalStrength != signalQuality) {
         if (signalQuality <= KWlanInfoSignalStrengthMax && signalQuality >= 0)
             m_wlanSignalStrength = 100;
@@ -132,9 +117,23 @@ void CWlanInfo::checkWlanInfo()
 
 void CWlanInfo::ConnectionStateChanged(TWlanConnectionMode aNewState)
 {
-    if (aNewState == EWlanConnectionModeNotConnected)
+    TWlanSsid ssid;
+    TInt err;
+    if (aNewState == EWlanConnectionModeNotConnected) {
         stopPolling();
+    }
     else {
+        if (m_wlanStatus == false) {
+            m_wlanStatus = true;
+            emit wlanNetworkStatusChanged();
+
+            err = m_wlanMgmtClient->GetConnectionSsid(ssid);
+
+            if (err == KErrNone && m_wlanSsid != QString::fromAscii((char*)ssid.Ptr(), ssid.Length())) {
+                m_wlanSsid = QString::fromAscii((char*)ssid.Ptr(), ssid.Length());
+                emit wlanNetworkNameChanged();
+            }
+        }
         m_timer->start();
         checkWlanInfo();
     }

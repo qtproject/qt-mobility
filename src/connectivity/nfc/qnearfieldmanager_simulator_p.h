@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -42,7 +42,9 @@
 #ifndef QNEARFIELDMANAGER_SIMULATOR_P_H
 #define QNEARFIELDMANAGER_SIMULATOR_P_H
 
-#include "qnearfieldmanager_p.h"
+#include "qnearfieldmanagervirtualbase_p.h"
+
+#include <QtCore/QWeakPointer>
 
 QT_BEGIN_HEADER
 
@@ -52,7 +54,7 @@ namespace Simulator {
 class NfcConnection;
 }
 
-class QNearFieldManagerPrivateImpl : public QNearFieldManagerPrivate
+class QNearFieldManagerPrivateImpl : public QNearFieldManagerPrivateVirtualBase
 {
     Q_OBJECT
 
@@ -60,15 +62,15 @@ public:
     QNearFieldManagerPrivateImpl();
     ~QNearFieldManagerPrivateImpl();
 
-    void startTargetDetection(const QList<QNearFieldTarget::Type> &targetTypes);
-    void stopTargetDetection();
+    bool isAvailable() const;
 
 private slots:
-    void targetInRange(const QByteArray &uid);
+    void targetEnteringProximity(const QByteArray &uid);
+    void targetLeavingProximity(const QByteArray &uid);
 
 private:
     Simulator::NfcConnection *nfcConnection;
-    QList<QNearFieldTarget::Type> detectTargetTypes;
+    QMap<QByteArray, QWeakPointer<QNearFieldTarget> > m_targets;
 };
 
 QTM_END_NAMESPACE

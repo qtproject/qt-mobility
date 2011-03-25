@@ -64,7 +64,11 @@ QTM_BEGIN_NAMESPACE
     Constructs a new polygon object.
 */
 QGeoMapPolygonObject::QGeoMapPolygonObject()
-    : d_ptr(new QGeoMapPolygonObjectPrivate()) {}
+    : d_ptr(new QGeoMapPolygonObjectPrivate())
+{
+    setUnits(QGeoMapObject::RelativeArcSecondUnit);
+    setTransformType(QGeoMapObject::ExactTransform);
+}
 
 /*!
     Destroys this polygon object.
@@ -101,6 +105,7 @@ void QGeoMapPolygonObject::setPath(const QList<QGeoCoordinate> &path)
 {
     if (d_ptr->path != path) {
         d_ptr->path = path;
+        setOrigin(path.at(0));
         emit pathChanged(emit d_ptr->path);
     }
 }
@@ -129,8 +134,8 @@ void QGeoMapPolygonObject::setPen(const QPen &pen)
     if (d_ptr->pen == newPen)
         return;
 
-    d_ptr->pen = newPen;
-    emit penChanged(d_ptr->pen);
+    d_ptr->pen = pen;
+    emit penChanged(pen);
 }
 
 QPen QGeoMapPolygonObject::pen() const
@@ -151,7 +156,7 @@ void QGeoMapPolygonObject::setBrush(const QBrush &brush)
 {
     if (d_ptr->brush != brush) {
         d_ptr->brush = brush;
-        emit brushChanged(d_ptr->brush);
+        emit brushChanged(brush);
     }
 }
 

@@ -81,8 +81,8 @@ public:
     OptimizationHints optimizationHints() const;
     void setOptimizationHints(OptimizationHints hints);
 
-    int maxCount() const;
-    void setMaxCount(int count);
+    int maxCountHint() const;
+    void setMaxCountHint(int count);
 
 private:
     QSharedDataPointer<QContactFetchHintPrivate> d;
@@ -91,6 +91,10 @@ private:
 #ifndef QT_NO_DATASTREAM
 Q_CONTACTS_EXPORT QDataStream& operator<<(QDataStream& out, const QContactFetchHint& hint);
 Q_CONTACTS_EXPORT QDataStream& operator>>(QDataStream& in, QContactFetchHint& hint);
+#endif
+
+#ifndef QT_NO_DEBUG_STREAM
+Q_CONTACTS_EXPORT QDebug operator<<(QDebug dbg, const QContactFetchHint& hint);
 #endif
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(QContactFetchHint::OptimizationHints);

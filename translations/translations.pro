@@ -2,7 +2,9 @@ include(../staticconfig.pri)
 
 # most of this is shamelessly copied from Qt Creator
 
-LANGUAGES =
+# honour configures translation selection
+!isEmpty(selected_languages):LANGUAGES=$$selected_languages
+else LANGUAGES=
 
 LUPDATE_ARGS = \
     -I../include \

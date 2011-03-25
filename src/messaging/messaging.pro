@@ -41,9 +41,9 @@ PRIVATE_HEADERS += addresshelper_p.h \
     qmessagefoldersortorder_p.h \
     qmessagefilter_p.h \
     qmessagesortorder_p.h \
-    qmessagestore.h \
+    qmessagestore_p.h \
     messagingutil_p.h \
-    qmessagestore_p.h
+    qmessagestore_p_p.h
 SOURCES += qmessageid.cpp \
     qmessagecontentcontainerid.cpp \
     qmessagefolderid.cpp \
@@ -130,10 +130,7 @@ symbian|win32|maemo6|maemo5|mac:!simulator {
             modest-dbus-client-1.0 \
             TpSession \
             TelepathyQt4
-        pkgconfig.path = $$QT_MOBILITY_LIB/pkgconfig
-        pkgconfig.files = QtMessaging.pc
-        INSTALLS += pkgconfig \
-            documentation
+        INSTALLS += documentation
         LIBS += -lgconf-2 \
             -lrtcom-eventlogger \
             -lmodest-dbus-client-1.0 \
@@ -163,8 +160,6 @@ symbian|win32|maemo6|maemo5|mac:!simulator {
         PRIVATE_HEADERS += qmfhelpers_maemo6_p.h \
             telepathyhelpers_maemo6_p.h \
             telepathyengine_maemo6_p.h \
-            tpsessionaccount_p.h \
-            tpsessionchannel_p.h \
             qmfservice_maemo6_p.h \
             qmfstore_maemo6_p.h \
             qmessageservice_maemo6_p.h \
@@ -193,15 +188,12 @@ symbian|win32|maemo6|maemo5|mac:!simulator {
             storageengine_maemo6.cpp \
             smsmodel_maemo6.cpp \
             qmfstore_maemo6.cpp \
-            qmfservice_maemo6.cpp \
-            tpsessionaccount.cpp \
-            tpsessionchannel.cpp
+            qmfservice_maemo6.cpp
         documentation.path = $$QT_MOBILITY_PREFIX/doc
         documentation.files = doc/html
         PKGCONFIG += glib-2.0 \
             dbus-glib-1 \
             gconf-2.0 \
-            libosso \
             TelepathyQt4 \
             qmfclient \
             commhistory \
@@ -213,24 +205,23 @@ symbian|win32|maemo6|maemo5|mac:!simulator {
         QMAKE_PKGCONFIG_REQUIRES = glib-2.0 \
             dbus-glib-1 \
             gconf-2.0 \
-            osso \            
             TelepathyQt4 \
             qmfclient \
             commhistory \
             meegotouch \
             qttracker \
             messagingif0
-        pkgconfig.path = $$QT_MOBILITY_LIB/pkgconfig
-        pkgconfig.files = QtMessaging.pc
-        INSTALLS += pkgconfig \
-            documentation
+        INSTALLS += documentation
     }
     symbian { 
         INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
 	contains(messaging_freestyle_enabled, yes) {
    	CONFIG += FREESTYLEMAIL
 	DEFINES += FREESTYLEMAILUSED
-	DEFINES += FREESTYLEMAILBOXOBSERVERUSED
+	}
+	contains(messaging_freestyle_mapi12_enabled, yes) {
+	CONFIG += FREESTYLEMAILMAPI12
+	DEFINES += FREESTYLEMAILMAPI12USED
 	}
 	contains(messaging_ncnlist_enabled, no) {
 	DEFINES += NCNLISTREMOVED
@@ -239,7 +230,7 @@ symbian|win32|maemo6|maemo5|mac:!simulator {
             CONFIG += QTHIGHWAY
             DEFINES += QTHIGHWAYUSED
         }
-        HEADERS -= qmessagestore_p.h \
+        HEADERS -= qmessagestore_p_p.h \
             qmessagecontentcontainer_p.h \
             qmessage_p.h
         HEADERS += qmtmengine_symbian_p.h \

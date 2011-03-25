@@ -59,7 +59,7 @@
 #include <QPen>
 #include <QBrush>
 
-class QGraphicsPolygonItem;
+class QGraphicsEllipseItem;
 
 QTM_BEGIN_NAMESPACE
 
@@ -73,20 +73,12 @@ public:
     ~QGeoTiledMapCircleObjectInfo();
 
     QGeoMapCircleObject* circle;
-    QGraphicsPolygonItem *polygonItem;
-
-    QPolygonF points;
-
-    void updateValidity();
+    QGraphicsEllipseItem *ellipseItem;
 
 public slots:
-    void centerChanged(const QGeoCoordinate &center);
     void radiusChanged(qreal radius);
     void penChanged(const QPen &pen);
     void brushChanged(const QBrush &brush);
-
-private:
-    void update();
 };
 
 QTM_END_NAMESPACE

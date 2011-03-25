@@ -54,13 +54,14 @@
 //
 
 #include  <qlandmarkmanagerengine.h>
-#include "databasefilewatcher_p.h"
+#include "databaseoperations_p.h"
 
 #include <QSqlDatabase>
 #include <QHash>
 #include <QSet>
 #include <QMutex>
-#include "databaseoperations_p.h"
+#include <QtSparqlTrackerExtensions/TrackerChangeNotifier>
+#include <qsharedmemory.h>
 
 QTM_USE_NAMESPACE
 
@@ -207,14 +208,8 @@ public slots:
     void updateRequestState(QLandmarkAbstractRequest *req, QLandmarkAbstractRequest::State state, unsigned int id);
 
 private slots:
-    void databaseChanged();
-    void dataChanging();
-    void landmarksAdding(QList<QLandmarkId> ids);
-    void landmarksChanging(QList<QLandmarkId> ids);
-    void landmarksRemoving(QList<QLandmarkId> ids);
-    void categoriesAdding(QList<QLandmarkCategoryId> ids);
-    void categoriesChanging(QList<QLandmarkCategoryId> ids);
-    void categoriesRemoving(QList<QLandmarkCategoryId> ids);
+    void landmarksNotified(QList<TrackerChangeNotifier::Quad> deletes, QList<TrackerChangeNotifier::Quad> inserts);
+    void categoriesNotified(QList<TrackerChangeNotifier::Quad> deletes, QList<TrackerChangeNotifier::Quad> inserts);
 
 public:
     static QList<QLandmarkId> sortLandmarks(const QList<QLandmark>& landmarks, const QList<QLandmarkSortOrder> &sortOrders) {
@@ -227,17 +222,22 @@ protected:
 
 private:
     bool m_changeNotificationsEnabled;
-    void touchWatcherFile();
+    bool m_signalsPrevented;
+    QHash<QString, QString> m_landmarkHash;
+    QHash<QString, QString> m_categoryHash;
     void setChangeNotificationsEnabled(bool enabled);
-    QString m_dbWatcherFilename;
+    QString m_filename;
     QString m_dbConnectionName;
-    DatabaseFileWatcher *m_dbWatcher;
+    TrackerChangeNotifier *m_landmarkNotifier;
+    TrackerChangeNotifier *m_categoryNotifier;
     QHash<QLandmarkAbstractRequest *, QueryRun *> m_requestRunHash;
     QHash<QLandmarkAbstractRequest *, unsigned int> m_activeRequestsRunIdHash;
     bool m_isCustomAttributesEnabled;
     DatabaseOperations m_databaseOperations;
     friend class QueryRun;
     QMutex m_mutex;//protects m_requestRunHash and m_activeRequests
+    QSharedMemory sharedMemory;
+    QString m_timeStamp;
 };
 
 #endif // QLANDMARKMANAGERENGINE_QSPARQL_P_H

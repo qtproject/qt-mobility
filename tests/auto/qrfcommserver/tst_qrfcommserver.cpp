@@ -45,8 +45,10 @@
 
 #include <qrfcommserver.h>
 #include <qbluetoothsocket.h>
+#include <qbluetoothlocaldevice.h>
 
 QTM_USE_NAMESPACE
+Q_DECLARE_METATYPE(QBluetooth::SecurityFlags);
 
 // Max time to wait for connection
 static const int MaxConnectTime = 60 * 1000;   // 1 minute in ms
@@ -67,15 +69,21 @@ private slots:
     void tst_listen_data();
     void tst_listen();
 
+    void tst_secureFlags();
+
     void tst_pendingConnections_data();
     void tst_pendingConnections();
 
     void tst_receive_data();
     void tst_receive();
+
+private:
+    QBluetoothLocalDevice localDevice;
 };
 
 tst_QRfcommServer::tst_QRfcommServer()
 {
+    localDevice.powerOn();
 }
 
 tst_QRfcommServer::~tst_QRfcommServer()
@@ -84,6 +92,7 @@ tst_QRfcommServer::~tst_QRfcommServer()
 
 void tst_QRfcommServer::initTestCase()
 {
+    qRegisterMetaType<QBluetooth::SecurityFlags>("QBluetooth::SecurityFlags");
 }
 
 void tst_QRfcommServer::tst_construction()
@@ -106,9 +115,16 @@ void tst_QRfcommServer::tst_listen_data()
     QTest::addColumn<quint16>("port");
 
     QTest::newRow("default") << QBluetoothAddress() << quint16(0);
+#ifdef Q_OS_SYMBIAN
+    //use localdevice address for listen address.
+    QTest::newRow("specified address") << localDevice.address() << quint16(0);
+    QTest::newRow("specified port") << QBluetoothAddress() << quint16(20);
+    QTest::newRow("specified address/port") << localDevice.address() << quint16(21);
+#else
     QTest::newRow("specified address") << QBluetoothAddress("00:11:B1:08:AD:B8") << quint16(0);
     QTest::newRow("specified port") << QBluetoothAddress() << quint16(10);
     QTest::newRow("specified address/port") << QBluetoothAddress("00:11:B1:08:AD:B8") << quint16(10);
+#endif
 }
 
 void tst_QRfcommServer::tst_listen()
@@ -120,15 +136,15 @@ void tst_QRfcommServer::tst_listen()
         QRfcommServer server;
 
         bool result = server.listen(address, port);
+        QTest::qWait(1000);
 
         QVERIFY(result);
         QVERIFY(server.isListening());
 
         if (!address.isNull())
             QCOMPARE(server.serverAddress(), address);
-        else
-            QVERIFY(!server.serverAddress().isNull());
 
+        qDebug()<<"Server Port="<<server.serverPort();
         if (port != 0)
             QCOMPARE(server.serverPort(), port);
         else
@@ -140,13 +156,14 @@ void tst_QRfcommServer::tst_listen()
         QVERIFY(server.nextPendingConnection() == 0);
 
         server.close();
+        QTest::qWait(500);
 
         QVERIFY(!server.isListening());
 
         QVERIFY(server.serverAddress().isNull());
         QVERIFY(server.serverPort() == 0);
 
-        QVERIFY(!server.hasPendingConnections());
+        QVERIFY(server.hasPendingConnections() == false);
         QVERIFY(server.nextPendingConnection() == 0);
     }
 }
@@ -246,6 +263,8 @@ void tst_QRfcommServer::tst_receive()
 
     QVERIFY(server.hasPendingConnections());
 
+    qDebug() << "Got connection";
+
     QBluetoothSocket *socket = server.nextPendingConnection();
 
     QVERIFY(socket->state() == QBluetoothSocket::ConnectedState);
@@ -264,6 +283,16 @@ void tst_QRfcommServer::tst_receive()
     const QByteArray data = socket->readAll();
 
     QCOMPARE(data, expected);
+}
+
+void tst_QRfcommServer::tst_secureFlags()
+{
+    QRfcommServer server;
+    qDebug() << server.securityFlags();
+    QCOMPARE(server.securityFlags(), QBluetooth::Authorization);
+
+    server.setSecurityFlags(QBluetooth::Encryption);
+    QCOMPARE(server.securityFlags(), QBluetooth::Encryption|QBluetooth::Authorization);
 }
 
 QTEST_MAIN(tst_QRfcommServer)

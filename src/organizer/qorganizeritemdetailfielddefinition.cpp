@@ -42,6 +42,10 @@
 #include "qorganizeritemdetailfielddefinition.h"
 #include "qorganizeritemdetailfielddefinition_p.h"
 
+#ifndef QT_NO_DEBUG_STREAM
+#include <QDebug>
+#endif
+
 QTM_BEGIN_NAMESPACE
 
 /*!
@@ -165,6 +169,23 @@ QDataStream& operator>>(QDataStream& in, QOrganizerItemDetailFieldDefinition& de
         in.setStatus(QDataStream::ReadCorruptData);
     }
     return in;
+}
+#endif
+
+#ifndef QT_NO_DEBUG_STREAM
+/*!
+  Outputs \a definition to the debug stream \a dbg
+ */
+QDebug operator<<(QDebug dbg, const QOrganizerItemDetailFieldDefinition& definition)
+{
+    dbg.nospace() << "QOrganizerItemDetailFieldDefinition(";
+    dbg.nospace() << "dataType=";
+    dbg.nospace() << static_cast<qint32>(definition.dataType());
+    dbg.nospace() << ",";
+    dbg.nospace() << "allowableValues=";
+    dbg.nospace() << definition.allowableValues();
+    dbg.nospace() << ")";
+    return dbg.maybeSpace();
 }
 #endif
 

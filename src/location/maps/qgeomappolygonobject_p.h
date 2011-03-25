@@ -50,8 +50,6 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoCoordinate;
-
 class QGeoMapPolygonObjectPrivate
 {
 public:

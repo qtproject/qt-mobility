@@ -12,7 +12,7 @@ TARGET = serviceframework_notesmanagerplugin
 
 contains(QT_CONFIG, declarative):DEFINES += DECLARATIVE
 
-include(../examples.pri)
+include(../mobility_examples.pri)
 CONFIG += mobility
 MOBILITY = serviceframework
 
@@ -27,7 +27,6 @@ symbian {
     DEPLOYMENT += xmlautoimport
 
     TARGET.EPOCALLOWDLLDATA = 1
-    TARGET.CAPABILITY = ALL -TCB
 }
 
 xml.path = $$QT_MOBILITY_EXAMPLES/xmldata

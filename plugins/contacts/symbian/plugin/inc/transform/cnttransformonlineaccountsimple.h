@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#ifndef SYMBIAN_BACKEND_USE_SQLITE
+#ifndef SYMBIAN_BACKEND_USE_CNTMODEL_V2
 
 #ifndef TRANSFORMONLINEACCOUNTSIMPLE_H
 #define TRANSFORMONLINEACCOUNTSIMPLE_H
@@ -63,4 +63,4 @@ protected:
 
 #endif // TRANSFORMONLINEACCOUNT_H
 
-#endif // SYMBIAN_BACKEND_USE_SQLITE
+#endif // SYMBIAN_BACKEND_USE_CNTMODEL_V2

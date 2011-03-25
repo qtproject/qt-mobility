@@ -41,7 +41,7 @@
 
 //TESTED_COMPONENT=src/location
 
-#include "../qlocationtestutils_p.h"
+#include "../qgeocoordinate/qlocationtestutils_p.h"
 
 #include <qgeocoordinate.h>
 #include <qgraphicsgeomap.h>
@@ -87,6 +87,7 @@ void tst_QGeoTiledMappingManagerEngine::initTestCase()
     QMap<QString, QVariant> params;
     QGeoMappingManagerEngine *mgr = new PixelIndexEngine(params);
     gmd = mgr->createMapData();
+    gmd->init();
 }
 
 void tst_QGeoTiledMappingManagerEngine::cleanupTestCase()

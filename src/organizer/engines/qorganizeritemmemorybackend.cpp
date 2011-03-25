@@ -504,23 +504,25 @@ void QOrganizerItemMemoryEngine::inferMissingCriteria(QOrganizerRecurrenceRule* 
  */
 bool QOrganizerItemMemoryEngine::inMultipleOfInterval(const QDate& date, const QDate& initialDate, QOrganizerRecurrenceRule::Frequency frequency, int interval, Qt::DayOfWeek firstDayOfWeek, int maxCount) const
 {
+    qulonglong maxDelta = maxCount * interval;
+    Q_ASSERT(date >= initialDate);
     switch (frequency) {
         case QOrganizerRecurrenceRule::Yearly: {
-            int yearsDelta = date.year() - initialDate.year();
-            if (maxCount && maxCount * interval <= yearsDelta)
+            uint yearsDelta = date.year() - initialDate.year();
+            if (maxCount && maxDelta <= yearsDelta)
                 return false;
             return (yearsDelta % interval == 0);
         }
         case QOrganizerRecurrenceRule::Monthly: {
-            int monthsDelta = date.month() - initialDate.month() + (12 * (date.year() - initialDate.year()));
-            if (maxCount && maxCount * interval <= monthsDelta)
+            uint monthsDelta = date.month() - initialDate.month() + (12 * (date.year() - initialDate.year()));
+            if (maxCount && maxDelta <= monthsDelta)
                 return false;
             return (monthsDelta % interval == 0);
         }
         case QOrganizerRecurrenceRule::Weekly: {
             // we need to adjust for the week start specified by the client if the interval is greater than 1
             // ie, every time we hit the day specified, we increment the week count.
-            int weekCount = 0;
+            uint weekCount = 0;
             QDate tempDate = initialDate;
             while (tempDate < date) {
                 tempDate = tempDate.addDays(1);
@@ -528,13 +530,13 @@ bool QOrganizerItemMemoryEngine::inMultipleOfInterval(const QDate& date, const Q
                     weekCount += 1;
                 }
             }
-            if (maxCount && maxCount * interval <= weekCount)
+            if (maxCount && maxDelta <= weekCount)
                 return false;
             return (weekCount % interval == 0);
         }
         case QOrganizerRecurrenceRule::Daily: {
-            int daysDelta = initialDate.daysTo(date);
-            if (maxCount && maxCount * interval <= daysDelta)
+            uint daysDelta = initialDate.daysTo(date);
+            if (maxCount && maxDelta <= daysDelta)
                 return false;
             return (daysDelta % interval == 0);
         }
@@ -890,9 +892,7 @@ QList<QOrganizerItem> QOrganizerItemMemoryEngine::internalItems(const QDateTime&
                     if (!parentsAdded.contains(parentId)) {
                         parentsAdded.insert(parentId);
                         QOrganizerManagerEngine::addSorted(&sorted, item(parentId), sortOrders);
-
                     }
-
                 }
             }
         }
@@ -1189,9 +1189,9 @@ bool QOrganizerItemMemoryEngine::typesAreRelated(const QString& occurrenceType, 
 /*! \reimp */
 bool QOrganizerItemMemoryEngine::saveItems(QList<QOrganizerItem>* organizeritems, QMap<int, QOrganizerManager::Error>* errorMap, QOrganizerManager::Error* error)
 {
-    if(errorMap) {
-        errorMap->clear();
-    }
+    Q_ASSERT(errorMap);
+
+    errorMap->clear();
 
     if (!organizeritems) {
         *error = QOrganizerManager::BadArgumentError;
@@ -1255,6 +1255,8 @@ bool QOrganizerItemMemoryEngine::removeItem(const QOrganizerItemId& organizerite
 /*! \reimp */
 bool QOrganizerItemMemoryEngine::removeItems(const QList<QOrganizerItemId>& organizeritemIds, QMap<int, QOrganizerManager::Error>* errorMap, QOrganizerManager::Error* error)
 {
+    Q_ASSERT(errorMap);
+
     if (organizeritemIds.count() == 0) {
         *error = QOrganizerManager::BadArgumentError;
         return false;
@@ -1267,8 +1269,7 @@ bool QOrganizerItemMemoryEngine::removeItems(const QList<QOrganizerItemId>& orga
         current = organizeritemIds.at(i);
         if (!removeItem(current, changeSet, error)) {
             operationError = *error;
-            if (errorMap)
-                errorMap->insert(i, operationError);
+            errorMap->insert(i, operationError);
         }
     }
 
@@ -1387,7 +1388,8 @@ bool QOrganizerItemMemoryEngine::removeCollection(const QOrganizerCollectionId& 
         if (d->m_organizerCollectionIds.at(i) == collectionId) {
             // found the collection to remove.  remove the items in the collection.
             if (!itemsToRemove.isEmpty()) {
-                if (!removeItems(itemsToRemove, 0, error)) {
+                QMap<int, QOrganizerManager::Error> errorMap;
+                if (!removeItems(itemsToRemove, &errorMap, error)) {
                     // without transaction support, we can't back out.  but the operation should fail.
                     return false;
                 }

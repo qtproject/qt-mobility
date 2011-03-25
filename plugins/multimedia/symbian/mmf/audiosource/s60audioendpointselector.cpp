@@ -39,6 +39,8 @@
 **
 ****************************************************************************/
 
+#include "DebugMacros.h"
+
 #include "s60audiocapturesession.h"
 #include "s60audioendpointselector.h"
 
@@ -46,62 +48,53 @@
 
 S60AudioEndpointSelector::S60AudioEndpointSelector(QObject *session, QObject *parent)
     :QAudioEndpointSelector(parent)
-{    
+{
+    DP0("S60AudioEndpointSelector::S60AudioEndpointSelector +++");
     m_session = qobject_cast<S60AudioCaptureSession*>(session); 
-    update();    
-    m_audioInput = defaultEndpoint();
+
+    connect(m_session, SIGNAL(activeEndpointChanged(const QString &)), this, SIGNAL(activeEndpointChanged(const QString &)));
+
+    DP0("S60AudioEndpointSelector::S60AudioEndpointSelector ---");
 }
 
 S60AudioEndpointSelector::~S60AudioEndpointSelector()
 {
+    DP0("S60AudioEndpointSelector::~S60AudioEndpointSelector +++");
+
+    DP0("S60AudioEndpointSelector::~S60AudioEndpointSelector ---");
 }
 
 QList<QString> S60AudioEndpointSelector::availableEndpoints() const
 {
-    return m_names;
+    DP0("S60AudioEndpointSelector::availableEndpoints");
+
+    return m_session->availableEndpoints();
 }
 
 QString S60AudioEndpointSelector::endpointDescription(const QString& name) const
 {
-    QString desc;
-    for(int i = 0; i < m_names.count(); i++) {
-        if (m_names.at(i).compare(name) == 0) {
-            desc = m_descriptions.at(i);
-            break;
-        }
-    }
-    return desc;
+    DP0("S60AudioEndpointSelector::endpointDescription");
+
+    return m_session->endpointDescription(name);
 }
 
 QString S60AudioEndpointSelector::defaultEndpoint() const
 {
-    return QAudioDeviceInfo(QAudioDeviceInfo::defaultInputDevice()).deviceName();
+    DP0("S60AudioEndpointSelector::defaultEndpoint");
+
+    return m_session->defaultEndpoint();
 }
 
 QString S60AudioEndpointSelector::activeEndpoint() const
 {
-    return m_audioInput;
+    DP0("S60AudioEndpointSelector::activeEndpoint");
+
+    return m_session->activeEndpoint();
 }
 
 void S60AudioEndpointSelector::setActiveEndpoint(const QString& name)
 {
-    if (m_audioInput.compare(name) != 0) {
-        m_audioInput = name;    
-        m_session->setCaptureDevice(name);
-        emit activeEndpointChanged(name);
-    }
-}
-
-void S60AudioEndpointSelector::update()
-{
-    m_names.clear();
-    m_descriptions.clear();    
-    QList<QAudioDeviceInfo> devices;
-    devices = QAudioDeviceInfo::availableDevices(QAudio::AudioInput);
-    for(int i = 0; i < devices.size(); ++i) {
-        m_names.append(devices.at(i).deviceName());
-        m_descriptions.append(devices.at(i).deviceName());
-    }
-    if (m_names.isEmpty())
-        m_names.append("MMF");
+   DP0("S60AudioEndpointSelector::setActiveEndpoint +++");
+    m_session->setActiveEndpoint(name);
+   DP0("S60AudioEndpointSelector::setActiveEndpoint ---");
 }

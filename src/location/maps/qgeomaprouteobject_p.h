@@ -54,8 +54,8 @@ public:
     QGeoMapRouteObjectPrivate();
     ~QGeoMapRouteObjectPrivate();
 
-    QPen pen;
     QGeoRoute route;
+    QPen pen;
     quint32 detailLevel;
 };
 

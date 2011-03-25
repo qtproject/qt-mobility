@@ -33,7 +33,6 @@ symbian: {
                qnetworksession_s60_p.cpp
                
     LIBS += -lcommdb \
-            -lapsettingshandlerui \
             -lconnmon \
             -lcentralrepository \
             -lesock \
@@ -70,12 +69,9 @@ symbian: {
 
         PKGCONFIG += glib-2.0 dbus-glib-1 gconf-2.0 osso-ic conninet
 
-        CONFIG += create_pc create_prl
         QMAKE_PKGCONFIG_REQUIRES = glib-2.0 dbus-glib-1 gconf-2.0 osso-ic conninet
-        pkgconfig.path = $$QT_MOBILITY_LIB/pkgconfig
-        pkgconfig.files = QtBearer.pc
 
-        INSTALLS += pkgconfig documentation
+        INSTALLS += documentation
 
     } else {
 
