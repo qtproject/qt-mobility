@@ -60,11 +60,8 @@ void meegoproximitysensor::slotDataAvailable(const Unsigned& data)
 }
 
 bool meegoproximitysensor::doConnect(){
-    if (!(QObject::connect(m_sensorInterface, SIGNAL(dataAvailable(const Unsigned&)),
-                           this, SLOT(slotDataAvailable(const Unsigned&))))){
-        return false;
-    }
-    return true;
+    return (QObject::connect(m_sensorInterface, SIGNAL(dataAvailable(const Unsigned&)),
+                           this, SLOT(slotDataAvailable(const Unsigned&))));
 }
 
 
