@@ -53,6 +53,27 @@
 #include <bluetooth/ql2capserver.h>
 #include <bluetooth/qrfcommserver.h>
 
+/* ==================== QDeclarativeBluetoothSocket ======================= */
+
+/*!
+   \qmlclass BluetoothSocket QDeclarativeBluetoothSocket
+   \brief The BluetoothSocket element represents a single bluetooth client socket.
+   \ingroup qml-connectivity
+
+   \sa QBluetoothSocket
+   \sa QDataStream
+
+    The BluetoothSocket element is part of the \bold{QtMobility.connectivity 1.2} module.
+
+    It allows a QML class easily connect to another bluetooth device and send
+    and received QString's from the device. Data is sent and received via a
+    QDataStream allowing type safe transfer of string data.  QDataStream is a well known
+    format and maybe decoded by non-Qt applications.
+
+    Connections to remove devices can be over rfcomm or l2cap.  Either the remote port
+    or service UUID is required.  This is specified by creating a BluetoothService,
+    or passing in the service return from BluetoothDiscoveryModel.
+ */
 
 class QDeclarativeBluetoothSocketPrivate
 {
@@ -77,11 +98,15 @@ public:
     {
         Q_ASSERT(m_service);
         qDebug() << "Connecting to: " << m_service->serviceInfo()->device().address().toString();
-
         m_error = QLatin1String("No Error");
 
         if(m_socket)
-            m_socket->deleteLater();
+            m_socket->deleteLater();/*!
+  \qmlproperty string ContactDetail::definitionName
+
+  This property holds the string constant for the definition name of the detail.
+  This property is read only.
+  */
 //        delete m_socket;
         m_socket = new QBluetoothSocket();
         m_socket->connectToService(*m_service->serviceInfo());
@@ -136,6 +161,15 @@ void QDeclarativeBluetoothSocket::componentComplete()
         setListening(true);
 }
 
+/*!
+  \qmlproperty BluetoothService BluetoothSocket::service
+
+  This property holds the details of the remote service to connect too. It can be
+  set to a static BluetoothService with a fixed description, or a service returned
+  by service discovery.
+  */
+
+
 QDeclarativeBluetoothService *QDeclarativeBluetoothSocket::service()
 {
     return d->m_service;
@@ -152,6 +186,17 @@ void QDeclarativeBluetoothSocket::setService(QDeclarativeBluetoothService *servi
         d->connect();
     emit serviceChanged();
 }
+
+/*!
+  \qmlproperty bool BluetoothSocket::connected
+
+  This property holds the connection state of the socket. If the socket is
+  connected to peer it returns true. It can be set true of false to control the
+  connection. When set true the property will not return true until the
+  connection is established.
+
+  */
+
 
 bool QDeclarativeBluetoothSocket::connected()
 {
@@ -177,6 +222,14 @@ void QDeclarativeBluetoothSocket::setConnected(bool connected)
         d->m_socket->close();
     }
 }
+
+/*!
+  \qmlproperty string BluetoothSocket::error
+
+  This property holds the string for the last reported error
+  This property is read only.
+  */
+
 
 QString QDeclarativeBluetoothSocket::error()
 {
@@ -245,6 +298,12 @@ QString QDeclarativeBluetoothSocket::state()
     return d->m_state;
 }
 
+/*!
+  \qmlproperty bool BluetoothSocket:listening
+
+  This property allows the socket to listen for incoming connections.  This is not supported in 1.2.
+  */
+
 bool QDeclarativeBluetoothSocket::listening()
 {
     if(d->m_rfcomm || d->m_l2cap)
@@ -305,6 +364,17 @@ void QDeclarativeBluetoothSocket::socket_readyRead()
 {
     emit dataAvailable();
 }
+
+/*!
+  \qmlproperty string BluetoothSocket::stringData
+
+  This property receives or sends data to remote bluetooth device. Arrival of
+  data is signaled through the dataAvailable signal and can be read by
+  stringData. Calling sendStringData will transmit the string to the far side.
+  If excessive amounts of data are sent the function may block. Reading will
+  never block.
+  */
+
 
 QString QDeclarativeBluetoothSocket::stringData()
 {

@@ -49,30 +49,22 @@
 #include "qdeclarativebluetoothservice_p.h"
 
 /*!
-    \qmlclass ContactModel QDeclarativeBluetoothDiscoveryModel
-    \brief The ContactModel element provides access to contacts from the contacts store.
-    \ingroup qml-contacts
+    \qmlclass BluetoothDiscoveryModel QDeclarativeBluetoothDiscoveryModel
+    \brief The BluetoothDisoceryModel element provides access device and service scanning
+    \ingroup qml-connectivity
 
-    This element is part of the \bold{QtMobility.contacts 1.1} module.
+    This element is part of the \bold{QtMobility.connectivity 1.1} module.
 
-    ContactModel provides a model of contacts from the contacts store.
-    The contents of the model can be specified with \l filter, \l sortOrders and \l fetchHint properties.
-    Whether the model is automatically updated when the store or \l contacts changes, can be
-    controlled with \l ContactModel::autoUpdate property.
+    BluetoothDiscoveryModel provides a model of connectable services. The
+    contents of the model can be filtered by UUID allowing discovery to be
+    limited to a single service such as a game.
 
-    There are two ways of accessing the contact data: via model by using views and delegates,
-    or alternatively via \l contacts list property. Of the two, the model access is preferred.
-    Direct list access (i.e. non-model) is not guaranteed to be in order set by \l sortOrder.
+    The model roles provided by BluetoothDiscoveryModel are display, decoration and \c Service.
+    Through the \c Service role the BluetoothService maybe accessed for more details.
 
-    At the moment the model roles provided by ContactModel are display, decoration and \c contact.
-    Through the \c contact role can access any data provided by the Contact element.
+    \sa QBluetoothServiceDiscoveryAgent
 
-    \sa RelationshipModel, Contact, {QContactManager}
 */
-
-
-
-
 
 class QDeclarativeBluetoothDiscoveryModelPrivate
 {
@@ -128,6 +120,13 @@ void QDeclarativeBluetoothDiscoveryModel::componentComplete()
     setDiscovery(d->m_discovery);
 }
 
+/*!
+  \qmlproperty bool BluetoothSocket::discovery
+
+  This property starts or stops discovery.
+
+  */
+
 void QDeclarativeBluetoothDiscoveryModel::setDiscovery(bool discovery_)
 {
     d->m_discovery = discovery_;
@@ -166,9 +165,9 @@ void QDeclarativeBluetoothDiscoveryModel::errorDiscovery(QBluetoothServiceDiscov
 }
 
 /*!
-  \qmlproperty string ContactModel::error
+  \qmlproperty string BluetoothDiscoveryModel::error
 
-  This property holds the latest error code returned by the contact manager.
+  This property holds the last error reported by discovery.
 
   This property is read only.
   */
@@ -214,6 +213,12 @@ QVariant QDeclarativeBluetoothDiscoveryModel::data(const QModelIndex &index, int
     return QVariant();
 }
 
+/*!
+  \qmlsignal BluetoothDiscoveryModel::newServiceDiscovered
+
+  This handler is called when a new service is discovered.
+  */
+
 void QDeclarativeBluetoothDiscoveryModel::serviceDiscovered(const QBluetoothServiceInfo &service)
 {
     QDeclarativeBluetoothService *bs = new QDeclarativeBluetoothService(service, this);
@@ -231,12 +236,28 @@ void QDeclarativeBluetoothDiscoveryModel::serviceDiscovered(const QBluetoothServ
     emit newServiceDiscovered(bs);
 }
 
+/*!
+    \qmlsignal BluetoothDiscoveryModel::discoveryChanged
+
+    This handler is called when discovery has completed and no
+    furthur results will be generated.
+*/
+
 void QDeclarativeBluetoothDiscoveryModel::finishedDiscovery()
 {
     qDebug() << "Done!";
     d->m_working = false;
     emit discoveryChanged();
 }
+
+
+/*!
+  \qmlproperty bool BluetoothDiscoveryModel::minimalDiscovery
+
+  This property controls minimalDiscovery, which is faster than full discocvery but it
+  only guarantees the device and UUID information to be correct.
+
+  */
 
 bool QDeclarativeBluetoothDiscoveryModel::minimalDiscovery()
 {
@@ -253,6 +274,18 @@ bool QDeclarativeBluetoothDiscoveryModel::discovery()
 {
     return d->m_working;
 }
+
+/*!
+  \qmlproperty string BluetoothDiscoveryModel::uuidFilter
+
+  This property holds an optional UUID filter.  A UUID can be used to return only
+  matching services.  16 bit, 32 bit or 128 bit UUIDs maybe used.  The string format
+  is the same format as QUuid.
+
+  \sa QBluetoothUuid
+  \sa QUuid
+  */
+
 
 QString QDeclarativeBluetoothDiscoveryModel::uuidFilter() const
 {

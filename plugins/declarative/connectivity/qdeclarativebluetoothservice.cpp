@@ -44,6 +44,23 @@
 #include <bluetooth/qbluetoothdeviceinfo.h>
 #include <bluetooth/qbluetoothaddress.h>
 
+/* ==================== QDeclarativeBluetoothService ======================= */
+
+/*!
+   \qmlclass BluetoothSocket QDeclarativeBluetoothService
+   \brief The BluetoothService element contains all the information available for a single bluetooth service.\.
+   \ingroup qml-connectivity
+
+   \sa QBluetoothAddress
+   \sa QBluetoothSocket
+
+    The BluetoothService element is part of the \bold{QtMobility.connectivity 1.2} module.
+
+    It allows a QML project to get information about a remote service, or describe a service
+    for a BluetoothSocket to connect to.
+ */
+
+
 class QDeclarativeBluetoothServicePrivate
 {
 public:
@@ -97,6 +114,13 @@ void QDeclarativeBluetoothService::componentComplete()
         setRegistered(true);
 }
 
+
+/*!
+  \qmlproperty string BluetoothService::deviceName
+
+  This property holds the name of the remote device.
+  */
+
 QString QDeclarativeBluetoothService::deviceName() const
 {
     if(!d->m_service)
@@ -104,6 +128,13 @@ QString QDeclarativeBluetoothService::deviceName() const
 
     return d->m_service->device().name();
 }
+
+/*!
+  \qmlproperty string BluetoothService::deviceAddress
+
+  This property holds the remote device MAc address. Must be valid if you to
+  connect to a remote device with a BluetoothSocket.
+  */
 
 QString QDeclarativeBluetoothService::deviceAddress() const
 {
@@ -123,6 +154,12 @@ void QDeclarativeBluetoothService::setDeviceAddress(QString address)
     d->m_service->setDevice(device);
 }
 
+/*!
+  \qmlproperty string BluetoothService::serviceName
+
+  This property holds the name of the remote service if available.
+  */
+
 QString QDeclarativeBluetoothService::serviceName() const
 {
     if(!d->m_service)
@@ -139,6 +176,12 @@ void QDeclarativeBluetoothService::setServiceName(QString name)
     d->m_name = name;
 }
 
+
+/*!
+  \qmlproperty string BluetoothService::serviceDescription
+
+  This property holds the description provided by the remote service.
+  */
 QString QDeclarativeBluetoothService::serviceDescription() const
 {
     if(!d->m_service)
@@ -155,6 +198,13 @@ void QDeclarativeBluetoothService::setServiceDescription(QString description)
     d->m_description = description;
     emit detailsChanged();
 }
+
+/*!
+  \qmlproperty string BluetoothService::serviceProtocol
+
+  This property holds the protocol used for the service. Can be the string
+  "l2cap" or "rfcomm"
+  */
 
 QString QDeclarativeBluetoothService::serviceProtocol() const
 {
@@ -181,6 +231,15 @@ void QDeclarativeBluetoothService::setServiceProtocol(QString protocol)
     emit detailsChanged();
 }
 
+/*!
+  \qmlproperty string BluetoothService::serviceUuid
+
+  This property holds the UUID of the remote service. Service UUID or port, as
+  well as the address must be set to connect to a remote service. If UUID and
+  port are set, the port is used. The UUID takes longer to connect since
+  service discovery must be initiated to discover the port value.
+  */
+
 QString QDeclarativeBluetoothService::serviceUuid() const
 {
     if(!d->m_uuid.isEmpty())
@@ -202,7 +261,13 @@ void QDeclarativeBluetoothService::setServiceUuid(QString uuid)
     emit detailsChanged();
 }
 
+/*!
+  \qmlproperty int BluetoothService::servicePort
 
+  This property holds the port value for the remote service. Bluetooth does not
+  use well defined port values, so port values should not be stored and used
+  later without care. Connecting via UUID is much more consistent.
+  */
 qint32 QDeclarativeBluetoothService::servicePort() const
 {
     if(d->m_port > 0)
@@ -228,6 +293,13 @@ void QDeclarativeBluetoothService::setServicePort(qint32 port)
         emit detailsChanged();
     }
 }
+
+/*!
+  \qmlproperty string BluetoothService::isRegistered
+
+  This property holds the registration/publication status of the service.  If true the service
+  is published via service discovery.  Not implemented in 1.2.
+  */
 
 bool QDeclarativeBluetoothService::isRegistered() const
 {
