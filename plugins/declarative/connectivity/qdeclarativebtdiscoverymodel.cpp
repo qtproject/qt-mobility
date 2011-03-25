@@ -55,7 +55,7 @@
     \ingroup connectivity-qml
     \inmodule QtConnectivity
 
-    This element is part of the \bold{QtMobility.connectivity 1.1} module.
+    This element is part of the \bold{QtMobility.connectivity 1.2} module.
 
     BluetoothDiscoveryModel provides a model of connectable services. The
     contents of the model can be filtered by UUID allowing discovery to be
@@ -216,7 +216,7 @@ QVariant QDeclarativeBluetoothDiscoveryModel::data(const QModelIndex &index, int
 }
 
 /*!
-  \qmlsignal BluetoothDiscoveryModel::newServiceDiscovered
+  \qmlsignal BluetoothDiscoveryModel::newServiceDiscovered()
 
   This handler is called when a new service is discovered.
   */
@@ -239,7 +239,7 @@ void QDeclarativeBluetoothDiscoveryModel::serviceDiscovered(const QBluetoothServ
 }
 
 /*!
-    \qmlsignal BluetoothDiscoveryModel::discoveryChanged
+    \qmlsignal BluetoothDiscoveryModel::discoveryChanged()
 
     This handler is called when discovery has completed and no
     furthur results will be generated.

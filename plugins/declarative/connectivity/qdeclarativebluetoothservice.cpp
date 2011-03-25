@@ -297,7 +297,7 @@ void QDeclarativeBluetoothService::setServicePort(qint32 port)
 }
 
 /*!
-  \qmlproperty string BluetoothService::isRegistered
+  \qmlproperty string BluetoothService::registered
 
   This property holds the registration/publication status of the service.  If true the service
   is published via service discovery.  Not implemented in 1.2.
