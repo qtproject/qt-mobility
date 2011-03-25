@@ -193,6 +193,10 @@ bool QCameraImageCapture::setMediaObject(QMediaObject *mediaObject)
                        this, SIGNAL(imageCaptured(int,QImage)));
             disconnect(d->control, SIGNAL(imageAvailable(int,QVideoFrame)),
                        this, SIGNAL(imageAvailable(int,QVideoFrame)));
+            disconnect(d->control, SIGNAL(imageMetadataAvailable(int,QtMultimediaKit::MetaData,QVariant)),
+                       this, SIGNAL(imageMetadataAvailable(int,QtMultimediaKit::MetaData,QVariant)));
+            disconnect(d->control, SIGNAL(imageMetadataAvailable(int,QString,QVariant)),
+                       this, SIGNAL(imageMetadataAvailable(int,QString,QVariant)));
             disconnect(d->control, SIGNAL(imageSaved(int,QString)),
                        this, SIGNAL(imageSaved(int,QString)));
             disconnect(d->control, SIGNAL(readyForCaptureChanged(bool)),
@@ -239,6 +243,10 @@ bool QCameraImageCapture::setMediaObject(QMediaObject *mediaObject)
                         this, SIGNAL(imageExposed(int)));
                 connect(d->control, SIGNAL(imageCaptured(int,QImage)),
                         this, SIGNAL(imageCaptured(int,QImage)));
+                connect(d->control, SIGNAL(imageMetadataAvailable(int,QtMultimediaKit::MetaData,QVariant)),
+                        this, SIGNAL(imageMetadataAvailable(int,QtMultimediaKit::MetaData,QVariant)));
+                connect(d->control, SIGNAL(imageMetadataAvailable(int,QString,QVariant)),
+                        this, SIGNAL(imageMetadataAvailable(int,QString,QVariant)));
                 connect(d->control, SIGNAL(imageAvailable(int,QVideoFrame)),
                         this, SIGNAL(imageAvailable(int,QVideoFrame)));
                 connect(d->control, SIGNAL(imageSaved(int, QString)),
@@ -591,6 +599,25 @@ void QCameraImageCapture::cancelCapture()
     Signal emitted when the frame with request \a id was captured, but not processed and saved yet.
     Frame \a preview can be displayed to user.
 */
+
+/*!
+    \fn QCameraImageCapture::imageMetadataAvailable(int id, QtMultimediaKit::MetaData key, const QVariant &value)
+
+    Signals that a metadata for an image with request \a id is available.
+    This signal is emited for metadata \a value with a \a key listed in QtMultimediaKit::MetaData enum.
+
+    This signal is emited between imageExposed and imageSaved signals.
+*/
+
+/*!
+    \fn QCameraImageCapture::imageMetadataAvailable(int id, const QString &key, const QVariant &value)
+
+    Signals that a metadata for an image with request \a id is available.
+    This signal is emited for extended metadata \a value with a \a key not listed in QtMultimediaKit::MetaData enum.
+
+    This signal is emited between imageExposed and imageSaved signals.
+*/
+
 
 /*!
     \fn QCameraImageCapture::imageAvailable(int id, const QVideoFrame &buffer)

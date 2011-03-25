@@ -66,6 +66,8 @@
 QT_USE_NAMESPACE
 class MockCaptureControl;
 
+Q_DECLARE_METATYPE(QtMultimediaKit::MetaData)
+
 class MockCameraControl : public QCameraControl
 {
     friend class MockCaptureControl;
@@ -274,8 +276,21 @@ public:
 private Q_SLOTS:
     void captured()
     {
-        if (!m_captureCanceled)
+        if (!m_captureCanceled) {
             emit imageCaptured(m_captureRequest, QImage());
+
+            emit imageMetadataAvailable(m_captureRequest,
+                                        QtMultimediaKit::FocalLengthIn35mmFilm,
+                                        QVariant(50));
+
+            emit imageMetadataAvailable(m_captureRequest,
+                                        QtMultimediaKit::DateTimeOriginal,
+                                        QVariant(QDateTime::currentDateTime()));
+
+            emit imageMetadataAvailable(m_captureRequest,
+                                        QLatin1String("Answer to the Ultimate Question of Life, the Universe, and Everything"),
+                                        QVariant(42));
+        }
 
         if (!m_ready)
             emit readyForCaptureChanged(m_ready = true);
@@ -1001,6 +1016,7 @@ private slots:
     void testCameraExposure();
     void testCameraFocus();
     void testCameraCapture();
+    void testCameraCaptureMetadata();
     void testImageSettings();
     void testCameraLock();
     void testCameraLockCancel();
@@ -1026,6 +1042,7 @@ void tst_QCamera::initTestCase()
     provider = new MockProvider;
     mockSimpleCameraService = new MockSimpleCameraService;
     provider->service = mockSimpleCameraService;
+    qRegisterMetaType<QtMultimediaKit::MetaData>("QtMultimediaKit::MetaData");
 }
 
 void tst_QCamera::cleanupTestCase()
@@ -1357,6 +1374,45 @@ void tst_QCamera::testCameraCapture()
     QCOMPARE(capturedSignal.size(), 1);
     QCOMPARE(errorSignal.size(), 0);
     QCOMPARE(imageCapture.error(), QCameraImageCapture::NoError);
+}
+
+void tst_QCamera::testCameraCaptureMetadata()
+{
+    MockCameraService service;
+    provider->service = &service;
+    QCamera camera(0, provider);
+    QCameraImageCapture imageCapture(&camera);
+
+    QSignalSpy metadataSignal(&imageCapture, SIGNAL(imageMetadataAvailable(int,QtMultimediaKit::MetaData,QVariant)));
+    QSignalSpy extendedMetadataSignal(&imageCapture, SIGNAL(imageMetadataAvailable(int,QString,QVariant)));
+    QSignalSpy savedSignal(&imageCapture, SIGNAL(imageSaved(int,QString)));
+
+    camera.start();
+    int id = imageCapture.capture(QString::fromLatin1("/dev/null"));
+
+    for (int i=0; i<100 && savedSignal.isEmpty(); i++)
+        QTest::qWait(10);
+
+    QCOMPARE(savedSignal.size(), 1);
+
+    QCOMPARE(metadataSignal.size(), 2);
+
+    QVariantList metadata = metadataSignal[0];
+    QCOMPARE(metadata[0].toInt(), id);
+    QCOMPARE(metadata[1].value<QtMultimediaKit::MetaData>(), QtMultimediaKit::FocalLengthIn35mmFilm);
+    QCOMPARE(metadata[2].value<QVariant>().toInt(), 50);
+
+    metadata = metadataSignal[1];
+    QCOMPARE(metadata[0].toInt(), id);
+    QCOMPARE(metadata[1].value<QtMultimediaKit::MetaData>(), QtMultimediaKit::DateTimeOriginal);
+    QDateTime captureTime = metadata[2].value<QVariant>().value<QDateTime>();
+    QVERIFY(qAbs(captureTime.secsTo(QDateTime::currentDateTime()) < 5)); //it should not takes more than 5 seconds for signal to arrive here
+
+    QCOMPARE(extendedMetadataSignal.size(), 1);
+    metadata = extendedMetadataSignal.first();
+    QCOMPARE(metadata[0].toInt(), id);
+    QCOMPARE(metadata[1].toString(), QLatin1String("Answer to the Ultimate Question of Life, the Universe, and Everything"));
+    QCOMPARE(metadata[2].value<QVariant>().toInt(), 42);
 }
 
 
