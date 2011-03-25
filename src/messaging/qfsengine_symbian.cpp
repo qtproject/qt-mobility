@@ -898,9 +898,17 @@ void CFSEngine::updateMessageL(QMessage* message)
         if (!messageBody.isEmpty()) {
             MEmailMessageContent* content = fsMessage->ContentL();
             MEmailTextContent* textContent = content->AsTextContentOrNull();
-            textContent->SetTextL(MEmailTextContent::EPlainText, TPtrC(reinterpret_cast<const TUint16*>(message->textContent().utf16())));
-            // TODO:
+            if (textContent) {
+                QByteArray type = message->contentType();
+                QByteArray subType = message->contentSubType();
+                if (type == "text" && subType == "plain")
+                    textContent->SetTextL(MEmailTextContent::EPlainText, TPtrC(reinterpret_cast<const TUint16*>(message->textContent().utf16())));
+                else if (type == "text" && subType == "html")
+                    textContent->SetTextL(MEmailTextContent::EHtmlText, TPtrC(reinterpret_cast<const TUint16*>(message->textContent().utf16())));
+            } else {
+                fsMessage->SetPlainTextBodyL(TPtrC(reinterpret_cast<const TUint16*>(message->textContent().utf16())));
             }
+        }
     } else {
         // Message contains body and attachments
         QMessageContentContainerIdList contentIds = message->contentIds();
@@ -912,13 +920,15 @@ void CFSEngine::updateMessageL(QMessage* message)
                 if (!container.textContent().isEmpty()) {
                     MEmailMessageContent* content = fsMessage->ContentL();
                     MEmailTextContent* textContent = content->AsTextContentOrNull();
-                    QByteArray type = container.contentType();
-                    QByteArray subType = container.contentSubType();
-                    if (type == "text" && subType == "plain") {
-                        textContent->SetTextL(MEmailTextContent::EPlainText, TPtrC(reinterpret_cast<const TUint16*>(container.textContent().utf16())));
-                    }
-                    else if (type == "text" && subType == "html") {
-                        textContent->SetTextL(MEmailTextContent::EHtmlText, TPtrC(reinterpret_cast<const TUint16*>(container.textContent().utf16())));
+                    if (textContent) {
+                        QByteArray type = container.contentType();
+                        QByteArray subType = container.contentSubType();
+                        if (type == "text" && subType == "plain")
+                            textContent->SetTextL(MEmailTextContent::EPlainText, TPtrC(reinterpret_cast<const TUint16*>(container.textContent().utf16())));
+                        else if (type == "text" && subType == "html")
+                            textContent->SetTextL(MEmailTextContent::EHtmlText, TPtrC(reinterpret_cast<const TUint16*>(container.textContent().utf16())));
+                    } else {
+                        fsMessage->SetPlainTextBodyL(TPtrC(reinterpret_cast<const TUint16*>(container.textContent().utf16())));
                     }
                 }
             } else {
