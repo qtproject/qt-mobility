@@ -199,8 +199,9 @@ void QGstreamerPlayerSession::loadFromStream(const QNetworkRequest &request, QIO
     m_request = request;
     m_duration = -1;
 
-    if (!m_appSrc)
-        m_appSrc = new QGstAppSrc(this);
+    if (m_appSrc)
+        m_appSrc->deleteLater();
+    m_appSrc = new QGstAppSrc(this);
     m_appSrc->setStream(appSrcStream);
 
     if (m_playbin) {
