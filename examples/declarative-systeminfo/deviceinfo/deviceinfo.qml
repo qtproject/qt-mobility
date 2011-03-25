@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -38,26 +38,42 @@
 **
 ****************************************************************************/
 
-#include <QtGui/QApplication>
-#include <QtDeclarative/QDeclarativeView>
-#include <QtDeclarative/QDeclarativeEngine>
+import Qt 4.7
+import QtMobility.systeminfo 1.1
 
-int main(int argc, char *argv[])
-{
-    QApplication application(argc, argv);
-    const QString mainQmlApp = QLatin1String("qrc:/battery2.qml");
-    QDeclarativeView view;
-    view.setSource(QUrl(mainQmlApp));
-    view.setResizeMode(QDeclarativeView::SizeRootObjectToView);
-    // Qt.quit() called in embedded .qml by default only emits
-    // quit() signal, so do this (optionally use Qt.exit()).
-    QObject::connect(view.engine(), SIGNAL(quit()), qApp, SLOT(quit()));
-#if defined(Q_OS_SYMBIAN)
-    view.showFullScreen();
-#else // Q_OS_SYMBIAN
-    view.setGeometry(QRect(100, 100, 360, 640));
-    view.show();
-#endif // Q_OS_SYMBIAN
-    view.resize(360,640);
-    return application.exec();
+Rectangle{
+    id: screen
+    color: "gray"
+
+    DeviceInfo {
+        id: deviceinfo;
+        onThermalStateChanged: updateThermalState()
+        monitorThermalStateChanges: true
+    }
+
+    Text {
+        id: thermal
+        text: updateThermalState()
+        color: "white";
+    }
+
+    function updateThermalState() {
+        state = deviceinfo.currentThermalState
+        if (state == DeviceInfo.UnknownThermal) {
+            thermal.text = "ThermalState: UnknownThermal";
+        } else if (state == DeviceInfo.NormalThermal) {
+            thermal.text = "ThermalState: NormalThermal";
+        } else if (state == DeviceInfo.WarningThermal) {
+            thermal.text = "ThermalState: WarningThermal";
+        } else if (state == DeviceInfo.AlertThermal) {
+            thermal.text = "ThermalState: AlertThermal";
+        } else if (state == DeviceInfo.ErrorThermal) {
+            thermal.text = "ThermalState: ErrorThermal";
+        }
+    }
+
+    MouseArea {
+        anchors.fill: parent
+        onClicked: { Qt.quit() }
+    }
 }

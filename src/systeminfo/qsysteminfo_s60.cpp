@@ -1222,6 +1222,10 @@ QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QObject *parent)
     DeviceInfo::instance()->keylockStatus()->addObserver(this);
     DeviceInfo::instance()->flipStatus()->addObserver(this);
 #endif
+
+#ifdef THERMALSTATUS_SUPPORTED
+    DeviceInfo::instance()->thermalStatus()->addObserver(this);
+#endif
     DeviceInfo::instance()->phoneInfo();
     DeviceInfo::instance()->subscriberInfo();
 }
@@ -1233,6 +1237,9 @@ QSystemDeviceInfoPrivate::~QSystemDeviceInfoPrivate()
 #ifdef LOCKANDFLIP_SUPPORTED
     DeviceInfo::instance()->keylockStatus()->removeObserver(this);
     DeviceInfo::instance()->flipStatus()->removeObserver(this);
+#endif
+#ifdef THERMALSTATUS_SUPPORTED
+    DeviceInfo::instance()->thermalStatus()->removeObserver(this);
 #endif
     if (m_proEngNotifyHandler) {
         m_proEngNotifyHandler->CancelProfileActivationNotifications();
@@ -1377,6 +1384,53 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoPrivate::currentPowerState()
         return QSystemDeviceInfo::UnknownPower;
     }
 }
+
+QSystemDeviceInfo::ThermalState QSystemDeviceInfoPrivate::currentThermalState()
+{
+#ifdef THERMALSTATUS_SUPPORTED
+    TUint8 thermalstate = DeviceInfo::instance()->thermalStatus()->getThermalStatus();
+    switch ( thermalstate ) {
+      case ENormal:
+       return QSystemDeviceInfo::NormalThermal;
+
+      case EThermalWarning:
+       return QSystemDeviceInfo::WarningThermal;
+
+      case EAlert:
+      case EFatal:
+       return QSystemDeviceInfo::AlertThermal;
+
+      case KThermalerror:
+       return QSystemDeviceInfo::ErrorThermal;
+     }
+#endif
+    return QSystemDeviceInfo::UnknownThermal;
+}
+
+#ifdef THERMALSTATUS_SUPPORTED
+void QSystemDeviceInfoPrivate::NotiftythermalStateChanged(TUint8 thermalstate)
+ {
+  switch ( thermalstate ) {
+      case ENormal:
+       emit thermalStateChanged(QSystemDeviceInfo::NormalThermal);
+       return;
+
+      case EThermalWarning:
+       emit thermalStateChanged(QSystemDeviceInfo::WarningThermal);
+       return;
+
+      case EAlert:
+      case EFatal:
+       emit thermalStateChanged(QSystemDeviceInfo::AlertThermal);
+       return;
+
+      case KThermalerror:
+       emit thermalStateChanged(QSystemDeviceInfo::ErrorThermal);
+       return;
+     }
+  return;
+ }
+#endif
 
 QString QSystemDeviceInfoPrivate::imei()
 {
@@ -1599,7 +1653,7 @@ bool QSystemDeviceInfoPrivate::keypadLightOn(QSystemDeviceInfo::KeypadType type)
     return (status == CHWRMLight::ELightOn);
 }
 
-QUuid QSystemDeviceInfoPrivate::uniqueDeviceID()
+QByteArray QSystemDeviceInfoPrivate::uniqueDeviceID()
 {
     TInt driveNum = 25; //3.1 doesnot have support for systemDrive, defaulting to Z:
  #ifndef SYMBIAN_3_1
@@ -1619,7 +1673,7 @@ QUuid QSystemDeviceInfoPrivate::uniqueDeviceID()
     hash.addData(bytes);
     hash.addData(romDriveUID);
     rfs.Close();
-    return QUuid(QString(hash.result().toHex()));
+    return hash.result().toHex();
 }
 
 QSystemDeviceInfo::LockTypeFlags QSystemDeviceInfoPrivate::lockStatus()

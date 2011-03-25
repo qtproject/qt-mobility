@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -45,9 +45,7 @@
 int main(int argc, char *argv[])
 {
     QApplication application(argc, argv);
-    const QString mainQmlApp = QLatin1String("qrc:/battery2.qml");
-    QDeclarativeView view;
-    view.setSource(QUrl(mainQmlApp));
+    QDeclarativeView view(QUrl("qrc:/deviceinfo.qml"));
     view.setResizeMode(QDeclarativeView::SizeRootObjectToView);
     // Qt.quit() called in embedded .qml by default only emits
     // quit() signal, so do this (optionally use Qt.exit()).
@@ -58,6 +56,5 @@ int main(int argc, char *argv[])
     view.setGeometry(QRect(100, 100, 360, 640));
     view.show();
 #endif // Q_OS_SYMBIAN
-    view.resize(360,640);
     return application.exec();
 }
