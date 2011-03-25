@@ -773,6 +773,8 @@ QMediaPlayer::Error S60MediaPlayerSession::fromSymbianErrorToMultimediaError(int
         case KErrServerBusy:
         case KErrCompletion:  
         case KErrBadPower:    
+        case KErrMMInvalidProtocol:
+        case KErrMMInvalidURL:
             return QMediaPlayer::ResourceError;
         
         case KErrMMPartialPlayback:   
@@ -791,8 +793,6 @@ QMediaPlayer::Error S60MediaPlayerSession::fromSymbianErrorToMultimediaError(int
         case KErrMMServerSocket:
         case KErrMMServerNotSupported:
         case KErrMMUDPReceive:
-        case KErrMMInvalidProtocol:
-        case KErrMMInvalidURL:
         case KErrMMMulticast:
         case KErrMMProxyServer:
         case KErrMMProxyServerNotSupported:
