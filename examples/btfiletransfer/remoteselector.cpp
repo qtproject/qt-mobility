@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -57,15 +57,11 @@
 
 QTM_USE_NAMESPACE
 
-Q_DECLARE_METATYPE(QBluetoothTransferReply *);
-
 RemoteSelector::RemoteSelector(QWidget *parent)
 :   QDialog(parent), ui(new Ui::RemoteSelector),
     m_discoveryAgent(new QBluetoothServiceDiscoveryAgent), m_localDevice(new QBluetoothLocalDevice), m_pindisplay(0)
 {
-    ui->setupUi(this);
-
-    qRegisterMetaType<QBluetoothTransferReply*>("QBluetoothTransferReply");
+    ui->setupUi(this);    
 
     connect(m_discoveryAgent, SIGNAL(serviceDiscovered(QBluetoothServiceInfo)),
             this, SLOT(serviceDiscovered(QBluetoothServiceInfo)));
@@ -84,6 +80,10 @@ RemoteSelector::RemoteSelector(QWidget *parent)
     ui->pairingBusy->setMovie(new QMovie(":/icons/pairing.gif"));
     ui->pairingBusy->hide();
 
+    ui->remoteDevices->clearContents();
+    ui->remoteDevices->setRowCount(0);
+
+
 }
 
 RemoteSelector::~RemoteSelector()
@@ -98,9 +98,6 @@ void RemoteSelector::startDiscovery(const QBluetoothUuid &uuid)
     ui->stopButton->setDisabled(false);
     if (m_discoveryAgent->isActive())
         m_discoveryAgent->stop();
-
-    ui->remoteDevices->clearContents();
-    ui->remoteDevices->setRowCount(0);
 
     m_discoveryAgent->setUuidFilter(uuid);
     m_discoveryAgent->start();
@@ -262,6 +259,8 @@ void RemoteSelector::displayPin(const QBluetoothAddress &address, QString pin)
 
 void RemoteSelector::displayConfirmation(const QBluetoothAddress &address, QString pin)
 {
+    Q_UNUSED(address);
+
     if(m_pindisplay)
         m_pindisplay->deleteLater();
     m_pindisplay = new pinDisplay(QString("Confirm this pin is the same"), pin, this);
@@ -278,10 +277,6 @@ void RemoteSelector::displayConfAccepted()
 void RemoteSelector::displayConfReject()
 {
     m_localDevice->pairingConfirmation(false);
-}
-
-void RemoteSelector::on_remoteDevices_currentCellChanged(int currentRow, int currentColumn, int previousRow, int previousColumn)
-{
 }
 
 void RemoteSelector::pairingFinished(const QBluetoothAddress &address, QBluetoothLocalDevice::Pairing status)
@@ -338,6 +333,8 @@ void RemoteSelector::pairingFinished(const QBluetoothAddress &address, QBluetoot
 
 void RemoteSelector::on_remoteDevices_cellClicked(int row, int column)
 {
+    Q_UNUSED(column);
+
     m_service = m_discoveredServices.value(row);
     if(!ui->fileName->text().isEmpty()) {
         ui->sendButton->setDisabled(false);
@@ -357,8 +354,8 @@ void RemoteSelector::on_remoteDevices_itemChanged(QTableWidgetItem* item)
         m_localDevice->requestPairing(m_service.device().address(), QBluetoothLocalDevice::Unpaired);
         return; // don't continue and start movie
     }
-    else if(item->checkState() == Qt::Checked && column == 3 ||
-            item->checkState() == Qt::Unchecked && column == 4){
+    else if((item->checkState() == Qt::Checked && column == 3) ||
+            (item->checkState() == Qt::Unchecked && column == 4)){
         m_localDevice->requestPairing(m_service.device().address(), QBluetoothLocalDevice::Paired);
         ui->remoteDevices->blockSignals(true);
         ui->remoteDevices->item(row, column)->setCheckState(Qt::PartiallyChecked);

@@ -150,8 +150,8 @@ void CQGeoSatelliteInfoSourceS60::ConstructL()
             index = getIndexPositionModule(bits);
 
             if (index >= 0) {
-                TRAPD(ret, temp = CQMLBackendAO::NewL(this, RegularUpdate,
-                                                      mList[index].mUid));
+                TRAPD(ret, QT_TRYCATCH_LEAVING(temp = CQMLBackendAO::NewL(this, RegularUpdate,
+                                                      mList[index].mUid)));
 
                 if ((ret == KErrNone) && (temp != NULL))
                     break;
@@ -305,6 +305,7 @@ void CQGeoSatelliteInfoSourceS60::updateStatus(TPositionModuleInfo &aModInfo, TI
 
     if ((i = checkModule(id)) == -1) {
         //update the properties of the module
+        QMutexLocker lLocker(&m_mutex);
 
         //TPositionModuleId of the module
         mList[mListSize].mUid = id;
@@ -328,7 +329,11 @@ void CQGeoSatelliteInfoSourceS60::updateStatus(TPositionModuleInfo &aModInfo, TI
         mListSize++;
 
         mMinUpdateInterval = mList[mListSize-1].mTimeToNextFix.Int64() / 1000;
+        lLocker.unlock();
     } else {
+
+        QMutexLocker lLocker(&m_mutex);
+
         //module's status has changed
         if (mList[i].mStatus != aStatus)
             mList[i].mStatus = aStatus;
@@ -349,6 +354,8 @@ void CQGeoSatelliteInfoSourceS60::updateStatus(TPositionModuleInfo &aModInfo, TI
         if (mList[i].mTimeToNextFix != time_to_next_fix)
             mList[i].mTimeToFirstFix = time_to_next_fix;
 
+        lLocker.unlock();
+
         //if the mCurrentModuleId is NULL, try updating the reg update with the available
         //positioning method
         if (mCurrentModuleId == TUid::Null() && (available == TRUE) &&
@@ -356,12 +363,13 @@ void CQGeoSatelliteInfoSourceS60::updateStatus(TPositionModuleInfo &aModInfo, TI
                 (aStatus != TPositionModuleStatus::EDeviceError)) {
             TInt interval = 0;
 
-            TRAPD(ret, temp = CQMLBackendAO::NewL(this, RegularUpdate,
-                                                  mList[i].mUid));
+            TRAPD(ret, QT_TRYCATCH_LEAVING(temp = CQMLBackendAO::NewL(this, RegularUpdate,
+                                                  mList[i].mUid)));
 
             if ((ret == KErrNone) && (temp != NULL)) {
                 temp->setUpdateInterval(interval);
 
+                QMutexLocker lRegLocker(&m_mutex_RegUpAO);
                 if (mRegUpdateAO)
                     delete mRegUpdateAO;
                 mRegUpdateAO = temp;
@@ -374,6 +382,8 @@ void CQGeoSatelliteInfoSourceS60::updateStatus(TPositionModuleInfo &aModInfo, TI
 
                 mCurrentModuleId = mList[i].mUid;
                 mMinUpdateInterval = mList[i].mTimeToNextFix.Int64() / 1000;
+                lRegLocker.unlock();
+
             }
         }
 
@@ -389,8 +399,10 @@ void CQGeoSatelliteInfoSourceS60::updateStatus(TPositionModuleInfo &aModInfo, TI
 
                 TUint8 bits;
 
+                QMutexLocker lRegLocker1(&m_mutex_RegUpAO);
                 if (mRegUpdateAO)
                     delete  mRegUpdateAO;
+                lRegLocker1.unlock();
 
                 bits = mModuleFlags;
 
@@ -400,8 +412,8 @@ void CQGeoSatelliteInfoSourceS60::updateStatus(TPositionModuleInfo &aModInfo, TI
                     index = getIndexPositionModule(bits);
 
                     if (index >= 0) {
-                        TRAPD(ret, temp = CQMLBackendAO::NewL(this, RegularUpdate,
-                                                              mList[index].mUid));
+                        TRAPD(ret, QT_TRYCATCH_LEAVING(temp = CQMLBackendAO::NewL(this, RegularUpdate,
+                                                              mList[index].mUid)));
 
                         if ((ret == KErrNone) && (temp != NULL))
                             break;
@@ -414,10 +426,12 @@ void CQGeoSatelliteInfoSourceS60::updateStatus(TPositionModuleInfo &aModInfo, TI
                 if (temp != NULL) {
                     //successful in creating the subsession for the required
                     //method
+                    QMutexLocker lRegLocker2(&m_mutex_RegUpAO);
                     mRegUpdateAO = temp;
 
                     mCurrentModuleId = mList[index].mUid;
                     mMinUpdateInterval = mList[i].mTimeToNextFix.Int64() / 1000;
+                    lRegLocker2.unlock();
 
                     mRegUpdateAO->setUpdateInterval(interval);
 
@@ -426,19 +440,23 @@ void CQGeoSatelliteInfoSourceS60::updateStatus(TPositionModuleInfo &aModInfo, TI
 
                 } else {
                     //no methods available,clean up the resources
+                    QMutexLocker lRegLocker3(&m_mutex_RegUpAO);
                     mRegUpdateAO = NULL;
                     mCurrentModuleId = TUid::Null();
                     mMinUpdateInterval = interval;
+                    lRegLocker3.unlock();
                 }
 
             }
 
             //check if device status of the request update module changed
             if (id == mReqModuleId) {
+                QMutexLocker lReqLocker(&m_mutex_ReqUpAO);
                 if (mRegUpdateAO)
                     delete mReqUpdateAO;
                 mReqUpdateAO = NULL;
                 mReqModuleId = TUid::Null();
+                lReqLocker.unlock();
                 emit requestTimeout();
             }
 
@@ -600,9 +618,11 @@ void CQGeoSatelliteInfoSourceS60::requestUpdate(int aTimeout)
             }
         }
 
-        TRAPD(ret, temp = CQMLBackendAO::NewL(this, OnceUpdate, mList[index].mUid));
+        TRAPD(ret, QT_TRYCATCH_LEAVING(temp = CQMLBackendAO::NewL(this, OnceUpdate, mList[index].mUid)));
 
         if ((ret == KErrNone) && (temp != NULL)) {
+
+            QMutexLocker lReqLocker(&m_mutex_ReqUpAO);
             //delete the old reqest update
             if (mReqUpdateAO)
                 delete mReqUpdateAO;
@@ -612,6 +632,7 @@ void CQGeoSatelliteInfoSourceS60::requestUpdate(int aTimeout)
 
             //set the request module ID
             mReqModuleId = mList[index].mUid;
+            lReqLocker.unlock();
 
             //start the update
             mReqUpdateAO->requestUpdate(aTimeout);
@@ -625,8 +646,10 @@ void CQGeoSatelliteInfoSourceS60::requestUpdate(int aTimeout)
 
     //cleanup resources if the invalid requpdate is still stored
     if (mReqUpdateAO) {
+        QMutexLocker lReqLocker(&m_mutex_ReqUpAO);
         delete mReqUpdateAO;
         mReqUpdateAO = NULL;
+        lReqLocker.unlock();
         mReqModuleId = TUid::Null();
     }
 

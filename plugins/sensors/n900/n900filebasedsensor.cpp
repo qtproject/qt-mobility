@@ -41,6 +41,7 @@
 
 #include "n900filebasedsensor.h"
 #include <time.h>
+#include <QTimer>
 
 n900filebasedsensor::n900filebasedsensor(QSensor *sensor)
     : QSensorBackend(sensor)
@@ -70,6 +71,10 @@ void n900filebasedsensor::start()
 
     if (interval)
         m_timerid = startTimer(interval);
+
+    // Don't poll now because Symbian/MeeGo can't do anything till we hit the event loop
+    // Emulate this behaviour for consistency
+    QTimer::singleShot(0, this, SLOT(pollnow()));
 }
 
 void n900filebasedsensor::stop()
@@ -95,5 +100,10 @@ quint64 n900filebasedsensor::getTimestamp()
 
     quint64 result = (tv.tv_sec * 1000000ULL) + (tv.tv_nsec * 0.001); // scale to microseconds
     return result;
+}
+
+void n900filebasedsensor::pollnow()
+{
+    poll();
 }
 

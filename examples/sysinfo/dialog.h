@@ -87,6 +87,12 @@ private:
 
     QString storageStateToString(QSystemStorageInfo::StorageState state);
 
+    QString sizeToString(qlonglong size);
+    QBrush brushForStorageState(QSystemStorageInfo::StorageState state);
+
+    QString lockStateToString(QSystemDeviceInfo::LockTypeFlags);
+    QSystemDeviceInfo::LockTypeFlags oldLockStatus;
+
 private slots:
     void tabChanged(int index);
     void getVersion(int index);
@@ -100,6 +106,7 @@ private slots:
     void displayBatteryStatus(QSystemBatteryInfo::BatteryStatus);
     void updateProfile(QSystemDeviceInfo::Profile profile);
     void updateSimStatus();
+    void updateThermalState();
     void updateProfile();
 
      void displayNetworkStatus(QSystemNetworkInfo::NetworkStatus);
@@ -118,6 +125,12 @@ private slots:
     void keyboardFlipped(bool);
 
     void storageStateChanged(const QString &vol, QSystemStorageInfo::StorageState state);
+
+    void backlightTotext(QSystemDisplayInfo::BacklightState);
+    void dataTechnologyChanged(QSystemNetworkInfo::CellDataTechnology tech);
+
+    void lockStatusChanged(QSystemDeviceInfo::LockTypeFlags);
+
 
 
 };

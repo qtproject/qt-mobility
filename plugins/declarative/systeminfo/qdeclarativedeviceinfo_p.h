@@ -59,17 +59,19 @@ class QDeclarativeDeviceInfo : public QSystemDeviceInfo
     Q_PROPERTY(bool monitorPowerStateChanges READ monitorPowerStateChanges WRITE startPowerStateChanged)
     Q_PROPERTY(bool monitorCurrentProfileChanges READ monitorCurrentProfileChanges WRITE startCurrentProfileChanged)
     Q_PROPERTY(bool monitorBluetoothStateChanges READ monitorBluetoothStateChanges WRITE startBluetoothStateChanged)
+    Q_PROPERTY(bool monitorThermalStateChanges READ monitorThermalStateChanges WRITE startThermalStateChanged)
 
     Q_PROPERTY(bool monitorWirelessKeyboardConnects READ monitorWirelessKeyboardConnects WRITE startWirelessKeyboardConnected)
-    Q_PROPERTY(bool monitorKeyboardFlips READ monitorKeyboardFlips WRITE startKeyboardFlipped CONSTANT)
-    Q_PROPERTY(bool monitorDeviceLocks READ monitorDeviceLocks WRITE startDeviceLocked CONSTANT)
-    Q_PROPERTY(bool monitorLockStatusChanges READ monitorLockStatusChanges WRITE startLockStatusChanged CONSTANT)
+    Q_PROPERTY(bool monitorKeyboardFlips READ monitorKeyboardFlips WRITE startKeyboardFlipped)
+    Q_PROPERTY(bool monitorDeviceLocks READ monitorDeviceLocks WRITE startDeviceLocked)
+    Q_PROPERTY(bool monitorLockStatusChanges READ monitorLockStatusChanges WRITE startLockStatusChanged)
 
     Q_PROPERTY(int messageRingtoneVolume READ messageRingtoneVolume CONSTANT)
     Q_PROPERTY(int voiceRingtoneVolume READ voiceRingtoneVolume CONSTANT)
     Q_PROPERTY(bool vibrationActive READ vibrationActive CONSTANT)
 
-    Q_PROPERTY(QString uniqueID READ uniqueID CONSTANT)
+    Q_PROPERTY(bool primaryKeypadLightOn READ primaryKeypadLightOn CONSTANT);
+    Q_PROPERTY(bool secondaryKeypadLightOn READ secondaryKeypadLightOn CONSTANT);
 
 public:
     explicit QDeclarativeDeviceInfo(QObject *parent = 0);
@@ -89,6 +91,8 @@ public:
     bool monitorBluetoothStateChanges();
     void startBluetoothStateChanged(bool on);
 
+    bool monitorThermalStateChanges();
+    void startThermalStateChanged(bool on);
 
     bool monitorWirelessKeyboardConnects();
     void startWirelessKeyboardConnected(bool on);
@@ -106,7 +110,8 @@ public:
     int voiceRingtoneVolume();
     bool vibrationActive();
 
-    QString uniqueID();
+    bool primaryKeypadLightOn();
+    bool secondaryKeypadLightOn();
 
 
  protected:
@@ -116,6 +121,7 @@ public:
     bool monitoringPowerState;
     bool monitoringCurrentProfile;
     bool monitorBluetoothState;
+    bool monitorThermalState;
 
     bool monitoringWirelessKeyboard;
     bool monitoringKeyboardFlipped;

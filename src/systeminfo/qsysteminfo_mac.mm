@@ -60,6 +60,7 @@
 #include <QNetworkInterface>
 #include <QString>
 #include <QHostInfo>
+#include <QCryptographicHash>
 
 #include <locale.h>
 
@@ -77,6 +78,8 @@
 #include <DiskArbitration/DiskArbitration.h>
 #include <ApplicationServices/ApplicationServices.h>
 #include <DiskArbitration/DASession.h>
+
+#include <mach/mach.h>
 
 #include <dns_sd.h>
 
@@ -955,7 +958,6 @@ void QBluetoothListenerThread::doWork()
 
 void QBluetoothListenerThread::setupConnectNotify()
 {
-    qDebug() << Q_FUNC_INFO;
     btConnListener = [[QtBtConnectListener alloc] init];
 }
 
@@ -1469,6 +1471,11 @@ void QSystemNetworkInfoPrivate::wifiNetworkChanged(const QString &notification, 
 QSystemNetworkInfo::NetworkMode QSystemNetworkInfoPrivate::currentMode()
 {
     return modeForInterface(getDefaultInterface());
+}
+
+QSystemNetworkInfo::CellDataTechnology QSystemNetworkInfoPrivate::cellDataTechnology()
+{
+    return QSystemNetworkInfo::UnknownDataTechnology;
 }
 
 
@@ -1997,11 +2004,16 @@ void powerInfoChanged(void* context)
         sys->batteryLevel();
         sys->currentPowerState();
     }
+}
+
+void batteryInfoChanged(void* context)
+{
     QSystemBatteryInfoPrivate *bat = reinterpret_cast<QSystemBatteryInfoPrivate *>(context);
     if(bat) {
         bat->getBatteryInfo();
     }
 }
+
 
 QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QObject *parent)
         : QObject(parent), btThreadOk(0) ,btThread(0),hasWirelessKeyboardConnected(0)
@@ -2014,9 +2026,10 @@ QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QObject *parent)
 
 QSystemDeviceInfoPrivate::~QSystemDeviceInfoPrivate()
 {
-    if( btThreadOk && btThread->keepRunning)
+    if( btThreadOk && btThread->keepRunning) {
         btThread->stop();
-    delete btThread;
+        delete btThread;
+    }
 }
 
 QSystemDeviceInfoPrivate *QSystemDeviceInfoPrivate::instance()
@@ -2028,28 +2041,35 @@ void QSystemDeviceInfoPrivate::connectNotify(const char *signal)
 {
     if (QLatin1String(signal) == SIGNAL(bluetoothStateChanged(bool))
         || QLatin1String(signal) == SIGNAL(wirelessKeyboardConnected(bool))) {
+
         if(!btThread) {
             btThread = new QBluetoothListenerThread();
             btThreadOk = true;
         }
+        btThread->doWork();
+
         if (QLatin1String(signal) == SIGNAL(bluetoothStateChanged(bool))) {
-            connect(btThread,SIGNAL(bluetoothPower(bool)), this, SIGNAL(bluetoothStateChanged(bool)));
-            btThread->doWork();
+            connect(btThread,SIGNAL(bluetoothPower(bool)), this, SIGNAL(bluetoothStateChanged(bool)),Qt::UniqueConnection);
         }
         if( QLatin1String(signal) == SIGNAL(wirelessKeyboardConnected(bool))) {
             btThread->setupConnectNotify();
         }
     }
 
-    if (QLatin1String(signal) == SIGNAL(powerStateChanged(QSystemDeviceInfo::PowerState))) {
+    if (QLatin1String(signal) == SIGNAL(powerStateChanged(QSystemDeviceInfo::PowerState))
+            || QLatin1String(signal) == SIGNAL(batteryLevelChanged(int))
+            || QLatin1String(signal) == SIGNAL(batteryStatusChanged(QSystemDeviceInfo::BatteryStatus))
+            ) {
+
         NSAutoreleasePool *autoreleasepool = [[NSAutoreleasePool alloc] init];
 
+//        if(!runLoopSource)
         CFRunLoopSourceRef runLoopSource = (CFRunLoopSourceRef)IOPSNotificationCreateRunLoopSource(powerInfoChanged, this);
         if (runLoopSource) {
             CFRunLoopAddSource(CFRunLoopGetCurrent(), runLoopSource, kCFRunLoopDefaultMode);
-            CFRelease(runLoopSource);
         }
         [autoreleasepool release];
+        CFRelease(runLoopSource);
     }
 }
 
@@ -2130,6 +2150,11 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoPrivate::currentPowerState()
     }
     [autoreleasepool release];
     return state;
+}
+
+QSystemDeviceInfo::ThermalState QSystemDeviceInfoPrivate::currentThermalState()
+{
+    return QSystemDeviceInfo::UnknownThermal;
 }
 
 QString QSystemDeviceInfoPrivate::imei()
@@ -2294,23 +2319,57 @@ void QSystemDeviceInfoPrivate::keyboardConnected(bool connect)
     Q_EMIT wirelessKeyboardConnected(connect);
 }
 
-bool QSystemDeviceInfoPrivate::keypadLightOn(QSystemDeviceInfo::KeypadType /*type*/)
+bool QSystemDeviceInfoPrivate::keypadLightOn(QSystemDeviceInfo::KeypadType type)
 {
+    if(type == QSystemDeviceInfo::PrimaryKeypad) {
+         static io_connect_t dataPort = 0;
+
+         kern_return_t kreturn;
+         io_service_t ioService;
+
+         ioService = IOServiceGetMatchingService(kIOMasterPortDefault, IOServiceMatching("AppleLMUController"));
+         if (!ioService) {
+             qDebug() << "AppleLMUController error";
+             return false;
+         }
+
+         kreturn = IOServiceOpen(ioService, mach_task_self(), 0, &dataPort);
+         IOObjectRelease(ioService);
+         if (kreturn != KERN_SUCCESS) {
+             qDebug() << "IOServiceOpen "<< kreturn;
+             return false;
+         }
+
+         uint64_t inputValues[1] = {0};
+
+         uint32_t outputCount = 1;
+         uint64_t outputValues[1];
+
+         kreturn = IOConnectCallScalarMethod(dataPort,1,inputValues,1,outputValues,&outputCount);
+         if (kreturn != KERN_SUCCESS) {
+             qDebug() << "keyboard error";
+             return false;
+         }
+
+         if(outputValues[0] > 0) return true;
+     }
     return false;
 }
 
-QUuid QSystemDeviceInfoPrivate::uniqueDeviceID()
+QByteArray QSystemDeviceInfoPrivate::uniqueDeviceID()
 {
     CFStringRef uuidKey = CFSTR(kIOPlatformUUIDKey);
     io_service_t ioService = IOServiceGetMatchingService(kIOMasterPortDefault,
                                                          IOServiceMatching("IOPlatformExpertDevice"));
-
+    QCryptographicHash hash(QCryptographicHash::Sha1);
     if (ioService) {
         CFTypeRef cfStringKey = IORegistryEntryCreateCFProperty(ioService, uuidKey, kCFAllocatorDefault, 0);
 
-        return QUuid(stringFromCFString((const __CFString*)cfStringKey));
+        hash.addData(stringFromCFString((const __CFString*)cfStringKey).toLocal8Bit());
+        return hash.result().toHex();
     }
-    return QUuid(QString::number(gethostid()));
+    hash.addData(QString::number(gethostid()).toLocal8Bit());
+    return hash.result().toHex();
 }
 
 QSystemDeviceInfo::LockTypeFlags QSystemDeviceInfoPrivate::lockStatus()
@@ -2390,7 +2449,7 @@ QSystemBatteryInfoPrivate::QSystemBatteryInfoPrivate(QObject *parent)
 
     NSAutoreleasePool *autoreleasepool = [[NSAutoreleasePool alloc] init];
 
-    CFRunLoopSourceRef runLoopSource = (CFRunLoopSourceRef)IOPSNotificationCreateRunLoopSource(powerInfoChanged, this);
+    CFRunLoopSourceRef runLoopSource = (CFRunLoopSourceRef)IOPSNotificationCreateRunLoopSource(batteryInfoChanged, this);
     if (runLoopSource) {
         CFRunLoopAddSource(CFRunLoopGetCurrent(), runLoopSource, kCFRunLoopDefaultMode);
         CFRelease(runLoopSource);
@@ -2460,7 +2519,7 @@ QSystemBatteryInfo::BatteryStatus QSystemBatteryInfoPrivate::batteryStatus() con
 
 QSystemBatteryInfo::EnergyUnit QSystemBatteryInfoPrivate::energyMeasurementUnit()
 {
-    return QSystemBatteryInfo::UnitmWh;
+    return QSystemBatteryInfo::UnitmAh;
 }
 
 void QSystemBatteryInfoPrivate::getBatteryInfo()
@@ -2553,8 +2612,9 @@ void QSystemBatteryInfoPrivate::getBatteryInfo()
             currentVoltage = cVoltage;
         }
 
-        int amp = [[legacyDict objectForKey:@"Current"] intValue];
-        cEnergy = currentVoltage * amp / 1000;
+        int amp = /*[[legacyDict objectForKey:@"Current"] intValue];
+        capacity =*/ [[(NSDictionary*)batDoctionary objectForKey:@"Current"] intValue];
+        cEnergy = /*currentVoltage * */amp /*/ 1000*/;
         if (cEnergy != curChargeState ) {
             dischargeRate = cEnergy;
             Q_EMIT currentFlowChanged(dischargeRate);
@@ -2565,7 +2625,7 @@ void QSystemBatteryInfoPrivate::getBatteryInfo()
             cTime = 0;
         }
         if (cTime != timeToFull) {
-            timeToFull = cTime;
+            timeToFull = cTime * 60;
             Q_EMIT remainingChargingTimeChanged(timeToFull);
         }
         capacity = [[(NSDictionary*)batDoctionary objectForKey:@"MaxCapacity"] intValue];

@@ -48,8 +48,6 @@
 #include <qbluetoothlocaldevice.h>
 QTM_USE_NAMESPACE
 
-Q_DECLARE_METATYPE(QBluetoothLocalDevice::Pairing)
-
 #define WAIT_FOR_CONDITION(a,e)            \
     for (int _i = 0; _i < 5000; _i += 1) {  \
         if ((a) == (e)) break;             \
@@ -64,13 +62,12 @@ public:
     ~tst_QBluetoothLocalDevice();
 
 private slots:
-    void initTestCase();
-
     void tst_powerOn();
     void tst_powerOff();
     void tst_hostModes();
     void tst_hostModes_data();
     void tst_address();
+    void tst_name();
     void tst_isValid();
     void tst_allDevices();
     void tst_construction();
@@ -82,8 +79,6 @@ private slots:
 
 tst_QBluetoothLocalDevice::tst_QBluetoothLocalDevice()
 {
-    qRegisterMetaType<QBluetoothLocalDevice::Pairing>("QBluetoothLocalDevice::Pairing");
-    qRegisterMetaType<QBluetoothAddress>("QBluetoothAddress");
     // start with host powered off
     QBluetoothLocalDevice *device = new QBluetoothLocalDevice();
     device->setHostMode(QBluetoothLocalDevice::HostPoweredOff);
@@ -95,11 +90,6 @@ tst_QBluetoothLocalDevice::tst_QBluetoothLocalDevice()
 
 tst_QBluetoothLocalDevice::~tst_QBluetoothLocalDevice()
 {
-}
-
-void tst_QBluetoothLocalDevice::initTestCase()
-{
-    qRegisterMetaType<QBluetoothLocalDevice::Pairing>("QBluetoothLocalDevice::Pairing");
 }
 
 void tst_QBluetoothLocalDevice::tst_hostModes_data()
@@ -199,6 +189,11 @@ void tst_QBluetoothLocalDevice::tst_hostModes()
         WAIT_FOR_CONDITION(hostModeSpy.count(),1);
         QVERIFY(hostModeSpy.count() > 0);
     }
+    // test the actual signal values.
+    QList<QVariant> arguments = hostModeSpy.takeFirst();
+    QBluetoothLocalDevice::HostMode hostMode = qvariant_cast<QBluetoothLocalDevice::HostMode>(arguments.at(0));
+    QCOMPARE(hostModeExpected, hostMode);
+    // test actual
     QCOMPARE(hostModeExpected, localDevice.hostMode());
 }
 
@@ -206,6 +201,11 @@ void tst_QBluetoothLocalDevice::tst_address()
 {
     QBluetoothLocalDevice localDevice;
     QVERIFY(!localDevice.address().toString().isEmpty());
+}
+void tst_QBluetoothLocalDevice::tst_name()
+{
+    QBluetoothLocalDevice localDevice;
+    QVERIFY(!localDevice.name().isEmpty());
 }
 void tst_QBluetoothLocalDevice::tst_isValid()
 {
@@ -245,6 +245,14 @@ void tst_QBluetoothLocalDevice::tst_pairDevice()
     // async, wait for it
     WAIT_FOR_CONDITION(pairingSpy.count(),1);
     QVERIFY(pairingSpy.count() > 0);
+
+    // test the actual signal values.
+    QList<QVariant> arguments = pairingSpy.takeFirst();
+    QBluetoothAddress address = qvariant_cast<QBluetoothAddress>(arguments.at(0));
+    QBluetoothLocalDevice::Pairing pairingResult = qvariant_cast<QBluetoothLocalDevice::Pairing>(arguments.at(1));
+    QCOMPARE(deviceAddress, address);
+    QCOMPARE(pairingExpected, pairingResult);
+
     QCOMPARE(pairingExpected, localDevice.pairingStatus(deviceAddress));
 
 }

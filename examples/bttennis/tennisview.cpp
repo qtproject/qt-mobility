@@ -51,6 +51,7 @@ TennisView::TennisView(QWidget *parent) :
 void TennisView::mousePressEvent(QMouseEvent *event)
 {
     QPointF p = mapToScene(event->x(), event->y());
+    emit mousePress(p.x(), p.y());
     emit mouseMove(p.x(), p.y());
     last_y = p.y();
 }
@@ -60,7 +61,7 @@ void TennisView::mouseMoveEvent(QMouseEvent *event)
     if(event->buttons()) {
         QPointF p = mapToScene(event->x(), event->y());
         if(10 < abs(last_y - event->y())) {
-            emit mouseMove(p.x(), p.y());
+//            emit mouseMove(p.x(), p.y());
             last_y = p.y();
         }
     }

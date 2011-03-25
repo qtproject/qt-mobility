@@ -46,6 +46,7 @@
 #include <QRegExp>
 #include <QTimer>
 #include <QList>
+#include <QDesktopWidget>
 
 #include <sysutil.h>
 #ifdef HB_SUPPORTED
@@ -73,12 +74,14 @@
 #define RD_STARTUP_CHANGE
 #include <startupdomainpskeys.h>
 #include <hwrmlight.h>
-#ifdef SYMBIAN_3_PLATFORM
-#include <hwrmfmtx.h>
-#include <avkondomainpskeys.h>
-#include <hwrmdomainpskeys.h>
-#include <AvkonInternalCRKeys.h>
-#include <AknFepInternalPSKeys.h>
+#ifdef FMTXCLIENT_SUPPORTED
+ #include <hwrmfmtx.h>
+#endif
+#ifdef LOCKANDFLIP_SUPPORTED
+ #include <avkondomainpskeys.h>
+ #include <hwrmdomainpskeys.h>
+ #include <AvkonInternalCRKeys.h>
+ #include <AknFepInternalPSKeys.h>
 #endif
 #include <e32debug.h>
 #include <QCryptographicHash>
@@ -384,7 +387,7 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
         }
         case QSystemInfo::FmTransmitterFeature:
         {
-#ifdef SYMBIAN_3_PLATFORM
+#ifdef FMTXCLIENT_SUPPORTED
             TRAPD(err,
                 //Leaves with KErrNotSupported if device doesn't support FmTransmitter feature.
                 CHWRMFmTx *fmTX = CHWRMFmTx::NewL();
@@ -449,9 +452,6 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSyst
         case QSystemNetworkInfo::GsmMode:
         case QSystemNetworkInfo::CdmaMode:
         case QSystemNetworkInfo::WcdmaMode:
-        case QSystemNetworkInfo::GprsMode:
-        case QSystemNetworkInfo::EdgeMode:
-        case QSystemNetworkInfo::HspaMode:
         case QSystemNetworkInfo::LteMode:
         {
         #ifndef ETELMM_SUPPORTED
@@ -775,9 +775,23 @@ QSystemNetworkInfo::NetworkMode QSystemNetworkInfoPrivate::currentMode()
     return mode;
 }
 
-QSystemDisplayInfoPrivate::QSystemDisplayInfoPrivate(QObject *parent)
-    : QObject(parent)
+QSystemNetworkInfo::CellDataTechnology QSystemNetworkInfoPrivate::cellDataTechnology()
 {
+    return QSystemNetworkInfo::UnknownDataTechnology;
+}
+
+
+QSystemDisplayInfoPrivate::QSystemDisplayInfoPrivate(QObject *parent)
+    : QObject(parent), rotationTimer(0)
+{
+    rotationTimer = new QTimer(this);
+    rotationTimer->setInterval(1000);
+    rotationTimer->setSingleShot(true);
+    connect(rotationTimer,SIGNAL(timeout()), this,SLOT(rotationTimeout()));
+
+    QDesktopWidget wid;
+    currentOrientation = orientation(wid.primaryScreen());
+    rotationTimer->start();
 }
 
 QSystemDisplayInfoPrivate::~QSystemDisplayInfoPrivate()
@@ -796,10 +810,24 @@ bool QSystemDisplayInfoPrivate::getSizeandRotation(int screen, TPixelsTwipsAndRo
         CleanupStack::PushL(wsScreenDevice);
         User::LeaveIfError(err = wsScreenDevice->Construct(screen));
         wsScreenDevice->GetScreenModeSizeAndRotation(screen,sizeAndRotation);
+
+        qDebug() << "rotation" << sizeAndRotation.iRotation;
+
         CleanupStack::PopAndDestroy(2, &ws);
         )
     return (wsScreenDevice != NULL && err == KErrNone);
 }
+
+void QSystemDisplayInfoPrivate::rotationTimeout()
+{
+    QSystemDisplayInfo::DisplayOrientation orientationStatus = orientation(0);
+    if (orientationStatus != currentOrientation) {
+        currentOrientation = orientationStatus;
+        Q_EMIT orientationChanged(orientationStatus);
+    }
+    rotationTimer->start();
+}
+
 
 int QSystemDisplayInfoPrivate::displayBrightness(int /*screen*/)
 {
@@ -837,29 +865,36 @@ int QSystemDisplayInfoPrivate::colorDepth(int screen)
 QSystemDisplayInfo::DisplayOrientation QSystemDisplayInfoPrivate::orientation(int screen)
 {
     QSystemDisplayInfo::DisplayOrientation orientationStatus = QSystemDisplayInfo::Unknown;
-    TPixelsTwipsAndRotation sizeAndRotation;
-    if (screen < 16 && screen > -1) {
-    bool err = getSizeandRotation(screen, sizeAndRotation);
-    if ( err )
-        {
-            CFbsBitGc::TGraphicsOrientation currentRotation = sizeAndRotation.iRotation;
-            switch (currentRotation) {
-            case 0:
-            case 360:
-                orientationStatus = QSystemDisplayInfo::Landscape;
-                break;
-            case 90:
-                orientationStatus = QSystemDisplayInfo::Portrait;
-                break;
-            case 180:
-                orientationStatus = QSystemDisplayInfo::InvertedLandscape;
-                break;
-            case 270:
-                orientationStatus = QSystemDisplayInfo::InvertedPortrait;
-                break;
-            };
-        orientationStatus = QSystemDisplayInfo::Unknown;
-        }
+//    TPixelsTwipsAndRotation sizeAndRotation;
+//    if (screen < 16 && screen > -1) {
+//    bool err = getSizeandRotation(screen, sizeAndRotation);
+//    if ( err )
+//        {
+//            CFbsBitGc::TGraphicsOrientation currentRotation = sizeAndRotation.iRotation;
+//            switch (currentRotation) {
+//            case CFbsBitGc::EGraphicsOrientationRotated90:
+//                orientationStatus = QSystemDisplayInfo::Landscape;
+//                break;
+//            case CFbsBitGc::EGraphicsOrientationNormal:
+//                orientationStatus = QSystemDisplayInfo::Portrait;
+//                break;
+//            case CFbsBitGc::EGraphicsOrientationRotated270:
+//                orientationStatus = QSystemDisplayInfo::InvertedLandscape;
+//                break;
+//            case CFbsBitGc::EGraphicsOrientationRotated180:
+//                orientationStatus = QSystemDisplayInfo::InvertedPortrait;
+//                break;
+//            default:
+//                orientationStatus = QSystemDisplayInfo::Unknown;
+//                break;
+//            };
+//        }
+//   }
+    QDesktopWidget wid;
+    if (wid.width() > wid.height()) {
+        orientationStatus = QSystemDisplayInfo::Landscape;
+    } else {
+        orientationStatus = QSystemDisplayInfo::Portrait;
     }
     return orientationStatus;
 }
@@ -984,7 +1019,7 @@ QSystemStorageInfoPrivate::QSystemStorageInfoPrivate(QObject *parent)
     iFs.Connect();
     DeviceInfo::instance()->mmcStorageStatus()->addObserver(this);
 
-#ifdef SYMBIAN_3_PLATFORM
+#ifdef DISKNOTIFY_SUPPORTED
     CStorageDiskNotifier* storageNotifier = DeviceInfo::instance()->storagedisknotifier();
     if (storageNotifier != NULL){
         storageNotifier->AddObserver(this);
@@ -996,7 +1031,7 @@ QSystemStorageInfoPrivate::~QSystemStorageInfoPrivate()
 {
     iFs.Close();
     DeviceInfo::instance()->mmcStorageStatus()->removeObserver(this);
-#ifdef SYMBIAN_3_PLATFORM
+#ifdef DISKNOTIFY_SUPPORTED
     CStorageDiskNotifier* storageNotifier = DeviceInfo::instance()->storagedisknotifier();
     if (storageNotifier != NULL){
         storageNotifier->RemoveObserver(this);
@@ -1107,7 +1142,7 @@ void QSystemStorageInfoPrivate::storageStatusChanged(bool added, const QString &
     emit logicalDriveChanged(added, aDriveVolume);
 };
 
-#ifdef SYMBIAN_3_PLATFORM
+#ifdef DISKNOTIFY_SUPPORTED
 void QSystemStorageInfoPrivate::DiskSpaceChanged(const QString &aDriveVolume)
 {
     QSystemStorageInfo::StorageState state = CheckDiskSpaceThresholdLimit(aDriveVolume);
@@ -1183,9 +1218,13 @@ QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QObject *parent)
     DeviceInfo::instance()->batteryInfo()->addObserver(this);
     DeviceInfo::instance()->chargingStatus()->addObserver(this);
     m_previousBatteryStatus = QSystemDeviceInfo::NoBatteryLevel;
-#ifdef SYMBIAN_3_PLATFORM
+#ifdef LOCKANDFLIP_SUPPORTED
     DeviceInfo::instance()->keylockStatus()->addObserver(this);
     DeviceInfo::instance()->flipStatus()->addObserver(this);
+#endif
+
+#ifdef THERMALSTATUS_SUPPORTED
+    DeviceInfo::instance()->thermalStatus()->addObserver(this);
 #endif
     DeviceInfo::instance()->phoneInfo();
     DeviceInfo::instance()->subscriberInfo();
@@ -1195,9 +1234,12 @@ QSystemDeviceInfoPrivate::~QSystemDeviceInfoPrivate()
 {
     DeviceInfo::instance()->chargingStatus()->removeObserver(this);
     DeviceInfo::instance()->batteryInfo()->removeObserver(this);
-#ifdef SYMBIAN_3_PLATFORM
+#ifdef LOCKANDFLIP_SUPPORTED
     DeviceInfo::instance()->keylockStatus()->removeObserver(this);
     DeviceInfo::instance()->flipStatus()->removeObserver(this);
+#endif
+#ifdef THERMALSTATUS_SUPPORTED
+    DeviceInfo::instance()->thermalStatus()->removeObserver(this);
 #endif
     if (m_proEngNotifyHandler) {
         m_proEngNotifyHandler->CancelProfileActivationNotifications();
@@ -1343,6 +1385,53 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoPrivate::currentPowerState()
     }
 }
 
+QSystemDeviceInfo::ThermalState QSystemDeviceInfoPrivate::currentThermalState()
+{
+#ifdef THERMALSTATUS_SUPPORTED
+    TUint8 thermalstate = DeviceInfo::instance()->thermalStatus()->getThermalStatus();
+    switch ( thermalstate ) {
+      case ENormal:
+       return QSystemDeviceInfo::NormalThermal;
+
+      case EThermalWarning:
+       return QSystemDeviceInfo::WarningThermal;
+
+      case EAlert:
+      case EFatal:
+       return QSystemDeviceInfo::AlertThermal;
+
+      case KThermalerror:
+       return QSystemDeviceInfo::ErrorThermal;
+     }
+#endif
+    return QSystemDeviceInfo::UnknownThermal;
+}
+
+#ifdef THERMALSTATUS_SUPPORTED
+void QSystemDeviceInfoPrivate::NotiftythermalStateChanged(TUint8 thermalstate)
+ {
+  switch ( thermalstate ) {
+      case ENormal:
+       emit thermalStateChanged(QSystemDeviceInfo::NormalThermal);
+       return;
+
+      case EThermalWarning:
+       emit thermalStateChanged(QSystemDeviceInfo::WarningThermal);
+       return;
+
+      case EAlert:
+      case EFatal:
+       emit thermalStateChanged(QSystemDeviceInfo::AlertThermal);
+       return;
+
+      case KThermalerror:
+       emit thermalStateChanged(QSystemDeviceInfo::ErrorThermal);
+       return;
+     }
+  return;
+ }
+#endif
+
 QString QSystemDeviceInfoPrivate::imei()
 {
     return DeviceInfo::instance()->phoneInfo()->imei();
@@ -1474,7 +1563,7 @@ QSystemDeviceInfo::KeyboardTypeFlags QSystemDeviceInfoPrivate::keyboardTypes()
     QSystemDeviceInfo::InputMethodFlags methods = inputMethodType();
     QSystemDeviceInfo::KeyboardTypeFlags keyboardFlags = QSystemDeviceInfo::UnknownKeyboard;
 
-#ifdef SYMBIAN_3_PLATFORM
+#ifdef LOCKANDFLIP_SUPPORTED
     TInt kbType = 0;
     if (methods & QSystemDeviceInfo::Keyboard ) {
     TRAP_IGNORE(
@@ -1495,7 +1584,7 @@ QSystemDeviceInfo::KeyboardTypeFlags QSystemDeviceInfoPrivate::keyboardTypes()
         default:
                 break;
                 }
-        bool filpKbStatus = DeviceInfo::instance()->flipStatus()->getKeyboardStatus();
+        bool filpKbStatus = DeviceInfo::instance()->flipStatus()->IsFlipSupported();
         if ( filpKbStatus ) {
              if ( keyboardFlags == QSystemDeviceInfo::UnknownKeyboard)
                 keyboardFlags = QSystemDeviceInfo::FlipKeyboard;
@@ -1505,6 +1594,7 @@ QSystemDeviceInfo::KeyboardTypeFlags QSystemDeviceInfoPrivate::keyboardTypes()
         }
         kbType=0;
         if ( (methods & QSystemDeviceInfo::SingleTouch) || (methods & QSystemDeviceInfo::MultiTouch) ) {
+#ifdef SYMBIAN_3_PLATFORM
             //TBD:In 5.0 KAknFepVirtualKeyboardType is not defined
             if ( KErrNone == RProperty::Get(KPSUidAknFep, KAknFepVirtualKeyboardType, kbType) ) {
                 if ( 0 !=  kbType) {
@@ -1514,6 +1604,7 @@ QSystemDeviceInfo::KeyboardTypeFlags QSystemDeviceInfoPrivate::keyboardTypes()
                         keyboardFlags |= QSystemDeviceInfo::SoftwareKeyboard;
                     }
                 }
+#endif
             }
         if (isWirelessKeyboardConnected()) {
             if ( keyboardFlags == QSystemDeviceInfo::UnknownKeyboard)
@@ -1532,9 +1623,10 @@ bool QSystemDeviceInfoPrivate::isWirelessKeyboardConnected()
 
 bool QSystemDeviceInfoPrivate::isKeyboardFlippedOpen()
 {
-#ifdef SYMBIAN_3_PLATFORM
+#ifdef LOCKANDFLIP_SUPPORTED
     // It is functional only for the Grip open devices
-    return ( (DeviceInfo::instance()->flipStatus()->getFlipStatus()) && (DeviceInfo::instance()->flipStatus()->getKeyboardStatus())  );
+    // TBD Remove : (DeviceInfo::instance()->flipStatus()->IsFlipSupported())
+    return ( DeviceInfo::instance()->flipStatus()->getFlipStatus() );
 #else
     return false;
 #endif
@@ -1561,7 +1653,7 @@ bool QSystemDeviceInfoPrivate::keypadLightOn(QSystemDeviceInfo::KeypadType type)
     return (status == CHWRMLight::ELightOn);
 }
 
-QUuid QSystemDeviceInfoPrivate::uniqueDeviceID()
+QByteArray QSystemDeviceInfoPrivate::uniqueDeviceID()
 {
     TInt driveNum = 25; //3.1 doesnot have support for systemDrive, defaulting to Z:
  #ifndef SYMBIAN_3_1
@@ -1581,14 +1673,14 @@ QUuid QSystemDeviceInfoPrivate::uniqueDeviceID()
     hash.addData(bytes);
     hash.addData(romDriveUID);
     rfs.Close();
-    return QUuid(QString(hash.result().toHex()));
+    return hash.result().toHex();
 }
 
 QSystemDeviceInfo::LockTypeFlags QSystemDeviceInfoPrivate::lockStatus()
 {
     QSystemDeviceInfo::LockTypeFlags status = QSystemDeviceInfo::UnknownLock;
 
-#ifdef SYMBIAN_3_PLATFORM
+#ifdef LOCKANDFLIP_SUPPORTED
     int value = DeviceInfo::instance()->keylockStatus()->getLockStatus();
     switch ( value ){
              /*case EKeyguardNotActive:
@@ -1608,7 +1700,7 @@ QSystemDeviceInfo::LockTypeFlags QSystemDeviceInfoPrivate::lockStatus()
     return status;
 }
 
-#ifdef SYMBIAN_3_PLATFORM
+#ifdef LOCKANDFLIP_SUPPORTED
 void QSystemDeviceInfoPrivate::keylockStatusChanged(TInt aLockType)
 {
     if (aLockType == EKeyguardLocked){
@@ -1622,9 +1714,10 @@ void QSystemDeviceInfoPrivate::keylockStatusChanged(TInt aLockType)
         }
 }
 
-void QSystemDeviceInfoPrivate::flipStatusChanged(TInt aFlipType , TInt aFilpKeyBoard)
+void QSystemDeviceInfoPrivate::flipStatusChanged(TInt aFlipType , TInt /*aFilpKeyBoard*/)
 {
-    emit keyboardFlipped((aFlipType ==  EPSHWRMGripOpen) && (aFilpKeyBoard == 1));
+    //TBD: (aFilpKeyBoard == 1)
+    emit keyboardFlipped((aFlipType ==  EPSHWRMGripOpen) || (aFlipType ==  EPSHWRMFlipOpen));
 }
 #endif
 

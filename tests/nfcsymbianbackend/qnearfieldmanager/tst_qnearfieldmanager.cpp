@@ -113,7 +113,8 @@ void tst_QNearFieldManager::targetDetected()
     QSignalSpy targetLostSpy(&nfcManager, SIGNAL(targetLost(QNearFieldTarget*)));
 
     nfcManager.startTargetDetection(type);
-    QNfcTestUtil::ShowMessage(hint);
+
+    QNfcTestUtil::ShowAutoMsg(hint, &targetDetectedSpy, 1);
     QTRY_VERIFY(!targetDetectedSpy.isEmpty());
 
     QNearFieldTarget *target = targetDetectedSpy.at(targetDetectedSpy.count()-1).at(0).value<QNearFieldTarget *>();
@@ -121,14 +122,13 @@ void tst_QNearFieldManager::targetDetected()
     QSignalSpy disconnectedSpy(target, SIGNAL(disconnected()));
     QVERIFY(target);
 
-    if (type != QNearFieldTarget::AnyTarget)
+    if (type != QNearFieldTarget::NfcForumDevice)
     {
         QVERIFY(!target->uid().isEmpty());
         QCOMPARE(target->type(), type);
     }
 
-    QNfcTestUtil::ShowMessage("please remove the target");
-
+    QNfcTestUtil::ShowAutoMsg("please remove the target", &disconnectedSpy, 1);
     QTRY_VERIFY(!targetLostSpy.isEmpty());
 
     QNearFieldTarget *lostTarget = targetLostSpy.first().at(0).value<QNearFieldTarget *>();
@@ -144,7 +144,7 @@ void tst_QNearFieldManager::targetDetected_data()
 {
     QTest::addColumn<QNearFieldTarget::Type>("type");
     QTest::addColumn<QString>("hint");
-    QTest::newRow("llcp device") << QNearFieldTarget::AnyTarget << "Please touch llcp device";
+    QTest::newRow("llcp device") << QNearFieldTarget::NfcForumDevice << "Please touch llcp device";
     QTest::newRow("NfcTagType1") << QNearFieldTarget::NfcTagType1 << "Please touch tag type1";
     QTest::newRow("NfcTagType2") << QNearFieldTarget::NfcTagType2 << "Please touch tag type2";
     QTest::newRow("NfcTagType3") << QNearFieldTarget::NfcTagType3 << "Please touch tag type3";
@@ -215,6 +215,11 @@ void tst_QNearFieldManager::registerNdefMessageHandler_filter_data()
     filter.appendRecord<QNdefNfcUriRecord>(1, 1);
     QTest::newRow("URI") << filter << "Please touch a tag with 'URI' NDef message";
 
+    filter.clear();
+    filter.setOrderMatch(true);
+    filter.appendRecord<QNdefNfcUriRecord>(1, 1);
+    QTest::newRow("URI") << filter << "Please touch a tag with only one 'URI' NDef record";
+
 }
 
 /*!
@@ -239,7 +244,7 @@ void tst_QNearFieldManager::registerNdefMessageHandler_filter()
 
     QVERIFY(id != -1);
 
-    QNfcTestUtil::ShowMessage(hint);
+    QNfcTestUtil::ShowAutoMsg(hint, &messageSpy, 1);
 
     QTRY_VERIFY(!messageSpy.isEmpty());
 
@@ -248,6 +253,29 @@ void tst_QNearFieldManager::registerNdefMessageHandler_filter()
     QNearFieldTarget *target = messageSpy.first().at(1).value<QNearFieldTarget *>();
 
     QVERIFY(target == NULL);//symbain backend always return NULL target
+    QCOMPARE(filter.recordCount(), message.count());
+    qDebug()<<"message.count()="<<message.count();
+    for (int i = 0; i < filter.recordCount(); ++i)
+        {
+        if (filter.orderMatch())
+            {
+            QCOMPARE(filter.recordAt(i).typeNameFormat, message.at(i).typeNameFormat());
+            QCOMPARE(filter.recordAt(i).type, message.at(i).type());
+            }
+        else
+            {
+            bool matched = false;
+            for (int j = 0; j < filter.recordCount(); ++j)
+                {
+                if (message.at(i).typeNameFormat() == filter.recordAt(i).typeNameFormat && message.at(i).type() == filter.recordAt(i).type)
+                    {
+                    matched = true;
+                    break;
+                    }
+                }
+            QVERIFY(matched);
+            }
+        }
 
     QVERIFY(manager.unregisterNdefMessageHandler(id));
 }
@@ -289,7 +317,7 @@ void tst_QNearFieldManager::registerNdefMessageHandler_filter_negtive()
 
     QVERIFY(id != -1);
 
-    QNfcTestUtil::ShowMessage(hint);
+    QNfcTestUtil::ShowAutoMsg(hint);
 
     QTRY_VERIFY(messageSpy.isEmpty());
     QVERIFY(manager.unregisterNdefMessageHandler(id));

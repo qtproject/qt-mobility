@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -57,6 +57,7 @@
 #include <QObject>
 #include <QStringList>
 #include <QTimer>
+#include <QDesktopWidget>
 
 #include "qmobilityglobal.h"
 #include "qsysteminfo.h"
@@ -72,9 +73,16 @@
 #include <ProfileEngineSDKCRKeys.h>
 #include <hwrmvibrasdkcrkeys.h>
 
-#ifdef SYMBIAN_3_PLATFORM
+#ifdef LOCKANDFLIP_SUPPORTED
 #include "lockandflipstatus_s60.h"
+#endif
+
+#ifdef DISKNOTIFY_SUPPORTED
 #include "storagedisknotifier_s60.h"
+#endif
+
+#ifdef THERMALSTATUS_SUPPORTED
+#include "thermalstatus_s60.h"
 #endif
 
 QT_BEGIN_HEADER
@@ -135,6 +143,8 @@ public:
     QNetworkInterface interfaceForMode(QSystemNetworkInfo::NetworkMode mode);
     QSystemNetworkInfo::NetworkMode currentMode();
 
+    QSystemNetworkInfo::CellDataTechnology cellDataTechnology();
+
 Q_SIGNALS:
     void networkStatusChanged(QSystemNetworkInfo::NetworkMode, QSystemNetworkInfo::NetworkStatus);
     void networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode, int);
@@ -156,8 +166,8 @@ protected:  //from MTelephonyInfoObserver
     void cellNetworkStatusChanged();
 
     void changedCellId(int);
-    virtual void changedNetworkStatus() ;
-    virtual void changedNetworkMode() ;
+    virtual void changedNetworkStatus();
+    virtual void changedNetworkMode();
 
 public slots:
     void wlanNetworkNameChanged();
@@ -186,14 +196,23 @@ public:
     int physicalWidth(int screen);
     QSystemDisplayInfo::BacklightState backlightStatus(int screen); //1.2
 
+Q_SIGNALS:
+    void orientationChanged(QSystemDisplayInfo::DisplayOrientation newOrientation);
+
+public slots:
+    void rotationTimeout();
+
 private:
     bool getSizeandRotation(int screen,TPixelsTwipsAndRotation& sizeAndRotation);
+
+    QSystemDisplayInfo::DisplayOrientation currentOrientation;
+    QTimer *rotationTimer;
 };
 
 //////// QSystemStorageInfo
 class QSystemStorageInfoPrivate : public QObject,
     public MStorageStatusObserver
-#ifdef SYMBIAN_3_PLATFORM
+#ifdef DISKNOTIFY_SUPPORTED
     ,public MStorageSpaceNotifyObserver
 #endif
 {
@@ -214,7 +233,7 @@ public:
 
 protected: // from MStorageStatusObserver
     void storageStatusChanged(bool, const QString &);
-#ifdef SYMBIAN_3_PLATFORM
+#ifdef DISKNOTIFY_SUPPORTED
     // from MStorageSpaceNotifyObserver
     void DiskSpaceChanged(const QString &);
 #endif
@@ -247,9 +266,11 @@ class QSystemDeviceInfoPrivate : public QObject,
     public MProEngProfileActivationObserver,
     public MCenRepNotifyHandlerCallback,
     public MChargingStatusObserver
-#ifdef SYMBIAN_3_PLATFORM
-    ,public MKeylockStatusObserver,
-    public MFlipStatusObserver
+#ifdef LOCKANDFLIP_SUPPORTED
+    ,public MKeylockStatusObserver,public MFlipStatusObserver
+#endif
+#ifdef THERMALSTATUS_SUPPORTED
+    ,public MThermalStatusObserver
 #endif
 {
     Q_OBJECT
@@ -276,6 +297,7 @@ public:
     QSystemDeviceInfo::Profile currentProfile();
 
     QSystemDeviceInfo::PowerState currentPowerState();
+    QSystemDeviceInfo::ThermalState currentThermalState();
 
     bool currentBluetoothPowerState();
 
@@ -284,7 +306,7 @@ public:
     bool isKeyboardFlippedOpen();//1.2
     void keyboardConnected(bool connect);//1.2
     bool keypadLightOn(QSystemDeviceInfo::KeypadType type); //1.2
-    QUuid uniqueDeviceID(); //1.2
+    QByteArray uniqueDeviceID(); //1.2
     QSystemDeviceInfo::LockTypeFlags lockStatus(); //1.2
 
     int messageRingtoneVolume();//1.2
@@ -296,6 +318,7 @@ Q_SIGNALS:
     void bluetoothStateChanged(bool);
     void currentProfileChanged(QSystemDeviceInfo::Profile);
     void powerStateChanged(QSystemDeviceInfo::PowerState);
+    void thermalStateChanged(QSystemDeviceInfo::ThermalState);
 
     void wirelessKeyboardConnected(bool connected);//1.2
     void keyboardFlipped(bool open);//1.2
@@ -326,12 +349,17 @@ protected:
     //from MChargingStatusObserver
     void chargingStatusChanged();
 
-#ifdef SYMBIAN_3_PLATFORM
+#ifdef LOCKANDFLIP_SUPPORTED
     //from MKeylockStatusObserver
     void keylockStatusChanged(TInt aLockType);
 
     //from MFlipStatusObserver
     void flipStatusChanged(TInt aFlipType , TInt aFilpKeyBoard );
+#endif
+
+#ifdef THERMALSTATUS_SUPPORTED
+    //from MThermalStatusObserver
+    void NotiftythermalStateChanged(TUint8 aThermalStatus);
 #endif
 private:
     QSystemDeviceInfo::Profile s60ProfileIdToProfile(TInt profileId) const;
@@ -453,7 +481,7 @@ public:
         return m_mmcStorageStatus;
     }
 
-#ifdef SYMBIAN_3_PLATFORM
+#ifdef DISKNOTIFY_SUPPORTED
     CStorageDiskNotifier *storagedisknotifier()
     {
         if (!m_storagedisknotifier) {
@@ -461,7 +489,9 @@ public:
         }
         return m_storagedisknotifier;
     }
+#endif
 
+#ifdef LOCKANDFLIP_SUPPORTED
     CKeylockStatus *keylockStatus()
     {
         if (!m_keylockStatus) {
@@ -474,11 +504,20 @@ public:
     {
         if (!m_flipStatus) {
             m_flipStatus = new CFlipStatus;
-            TRAP_IGNORE(m_flipStatus->ConstructL();
-            )
         }
         return m_flipStatus;
     }
+#endif
+
+#ifdef THERMALSTATUS_SUPPORTED
+    CThermalStatus *thermalStatus()
+        {
+           if (!m_thermalStatus)
+            {
+             m_thermalStatus = new CThermalStatus;
+            }
+            return m_thermalStatus;
+        }
 #endif
 
     CBatteryCommonInfo *batteryCommonInfo ()
@@ -501,8 +540,14 @@ private:
     DeviceInfo() : m_phoneInfo(NULL), m_subscriberInfo(NULL), m_chargingStatus(NULL),
         m_batteryInfo(NULL), m_cellNetworkInfo(NULL), m_cellNetworkRegistrationInfo(NULL),
         m_cellSignalStrengthInfo(NULL), m_wlanInfo(NULL), m_mmcStorageStatus(NULL), m_batteryCommonInfo(NULL), m_networkInfo(NULL)
-#ifdef SYMBIAN_3_PLATFORM
-        ,m_keylockStatus(NULL),m_flipStatus(NULL),m_storagedisknotifier(NULL)
+#ifdef LOCKANDFLIP_SUPPORTED
+        ,m_keylockStatus(NULL),m_flipStatus(NULL)
+#endif
+#ifdef DISKNOTIFY_SUPPORTED
+        ,m_storagedisknotifier(NULL)
+#endif
+#ifdef THERMALSTATUS_SUPPORTED
+        ,m_thermalStatus(NULL)
 #endif
     {
         m_telephony = CTelephony::NewL();
@@ -522,10 +567,16 @@ private:
         delete m_mmcStorageStatus;
         delete m_batteryCommonInfo;
         delete m_networkInfo;
-#ifdef SYMBIAN_3_PLATFORM
+#ifdef LOCKANDFLIP_SUPPORTED
         delete m_keylockStatus;
         delete m_flipStatus;
+#endif
+#ifdef DISKNOTIFY_SUPPORTED
         delete m_storagedisknotifier;
+#endif
+
+#ifdef THERMALSTATUS_SUPPORTED
+        delete m_thermalStatus;
 #endif
     }
 
@@ -545,10 +596,16 @@ private:
     CMMCStorageStatus* m_mmcStorageStatus;
     CBatteryCommonInfo* m_batteryCommonInfo;
     CNetworkInfo* m_networkInfo;
-#ifdef SYMBIAN_3_PLATFORM
+#ifdef LOCKANDFLIP_SUPPORTED
     CKeylockStatus *m_keylockStatus;
     CFlipStatus *m_flipStatus;
+#endif
+#ifdef DISKNOTIFY_SUPPORTED
     CStorageDiskNotifier* m_storagedisknotifier;
+#endif
+
+#ifdef THERMALSTATUS_SUPPORTED
+    CThermalStatus* m_thermalStatus;
 #endif
 };
 

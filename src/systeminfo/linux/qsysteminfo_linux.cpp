@@ -612,50 +612,16 @@ QString QSystemNetworkInfoPrivate::macAddress(QSystemNetworkInfo::NetworkMode mo
 
 }
 
-#if !defined(Q_WS_MAEMO_6) && defined(Q_WS_X11)  && !defined(Q_WS_MEEGO)
-bool q_XEventFilter(void *message)
-{
-    XEvent *xev = (XEvent *)message;
-    if (xev->type == QTM_NAMESPACE::QSystemDisplayInfoPrivate::instance()->xEventBase + RRScreenChangeNotify) {
-        int rot = QTM_NAMESPACE::QSystemDisplayInfoPrivate::instance()->lastRotation;
+//QSystemNetworkInfo::CellDataTechnology QSystemNetworkInfoPrivate::cellDataTechnology()
+//{
+//    return QSystemNetworkInfo::UnknownDataTechnology;
+//}
 
-        XRRScreenChangeNotifyEvent *rrev = (XRRScreenChangeNotifyEvent *)(xev);
-        if (rrev->rotation != rot) {
-            rot  =  rrev->rotation;
-            QTM_NAMESPACE::QSystemDisplayInfoPrivate::instance()->emitOrientationChanged(rot);
-            QTM_NAMESPACE::QSystemDisplayInfoPrivate::instance()->lastRotation = rot;
-        }
-        return true;
-    }
-    return false;
-}
-#endif
-QSystemDisplayInfoPrivate *QSystemDisplayInfoPrivate::self = 0;
+
 
 QSystemDisplayInfoPrivate::QSystemDisplayInfoPrivate(QSystemDisplayInfoLinuxCommonPrivate *parent)
         : QSystemDisplayInfoLinuxCommonPrivate(parent)
-{    if(!self)
-        self = this;
-
-#if !defined(Q_WS_MAEMO_6) && defined(Q_WS_X11)  && !defined(Q_WS_MEEGO)
-    QAbstractEventDispatcher::instance()->setEventFilter(q_XEventFilter);
-    Display *display = QX11Info::display();
-    if (display) {
-        XRRQueryExtension(display, &xEventBase, &xErrorBase);
-
-        Window desktopWindow = QX11Info::appRootWindow(0);
-        XRRSelectInput(display, desktopWindow,0);
-        XRRSelectInput(display, desktopWindow, RRScreenChangeNotifyMask);
-
-        XRRScreenConfiguration *sc;
-        Rotation cur_rotation;
-        sc = XRRGetScreenInfo(display, RootWindow(display, 0));
-        if (sc) {
-            XRRConfigRotations(sc, &cur_rotation);
-            lastRotation = cur_rotation;
-        }
-    }
-#endif
+{
 }
 
 QSystemDisplayInfoPrivate::~QSystemDisplayInfoPrivate()
@@ -669,25 +635,6 @@ float QSystemDisplayInfoPrivate::contrast(int screen)
     return 0.0;
 }
 
-#if !defined(Q_WS_MAEMO_6) && defined(Q_WS_X11)  && !defined(Q_WS_MEEGO)
-void QSystemDisplayInfoPrivate::emitOrientationChanged(int curRotation)
-{
-    switch(curRotation) {
-    case 1:
-        Q_EMIT orientationChanged(QSystemDisplayInfo::Landscape);
-        break;
-    case 2:
-        Q_EMIT orientationChanged(QSystemDisplayInfo::Portrait);
-        break;
-    case 4:
-        Q_EMIT orientationChanged(QSystemDisplayInfo::InvertedLandscape);
-        break;
-    case 8:
-        Q_EMIT orientationChanged(QSystemDisplayInfo::InvertedPortrait);
-        break;
-    };
-}
-#endif
 
 QSystemDisplayInfo::BacklightState  QSystemDisplayInfoPrivate::backlightStatus(int screen)
 {
@@ -943,6 +890,10 @@ QSystemDeviceInfo::SimStatus QSystemDeviceInfoPrivate::simStatus()
      return QSystemDeviceInfo::SimNotAvailable;
 }
 
+QSystemDeviceInfo::LockTypeFlags QSystemDeviceInfoPrivate::lockStatus()
+{
+    return QSystemDeviceInfo::UnknownLock;
+}
 
 int QSystemDeviceInfoPrivate::messageRingtoneVolume()
 {
@@ -960,7 +911,11 @@ bool QSystemDeviceInfoPrivate::vibrationActive()
 }
 
 QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QSystemScreenSaverLinuxCommonPrivate *parent)
-         : QSystemScreenSaverLinuxCommonPrivate(parent), currentPid(0),kdeIsRunning(0),gnomeIsRunning(0),meegoIsRunning(0)
+         : QSystemScreenSaverLinuxCommonPrivate(parent),
+           currentPid(0),
+           kdeIsRunning(0),
+           meegoIsRunning(0),
+           gnomeIsRunning(0)
  {
      whichWMRunning();
  }

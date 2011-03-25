@@ -11,6 +11,12 @@ QT += declarative network
     }
 }
 
+win32 {
+    #required by Qt SDK to resolve Mobility libraries
+    CONFIG+=mobility
+    MOBILITY+=multimedia
+}
+
 SOURCES += $$PWD/qmlcamera.cpp
 !mac:TARGET = qml_camera
 else:TARGET = QmlCamera

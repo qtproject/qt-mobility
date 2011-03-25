@@ -64,8 +64,9 @@
 #include <QTimer>
 #include <QBasicTimer>
 #include <QtCore/qlibrary.h>
-#include <QUuid>
 #include <QSysInfo>
+#include <QUuid>
+#include <QCryptographicHash>
 
 #include <qabstracteventdispatcher.h>
 
@@ -1301,6 +1302,11 @@ QSystemNetworkInfo::NetworkMode QSystemNetworkInfoPrivate::currentMode()
     return QSystemNetworkInfo::UnknownMode;
 }
 
+QSystemNetworkInfo::CellDataTechnology QSystemNetworkInfoPrivate::cellDataTechnology()
+{
+    return QSystemNetworkInfo::UnknownDataTechnology;
+}
+
 QSystemDisplayInfoPrivate::QSystemDisplayInfoPrivate(QObject *parent)
         : QObject(parent),deviceContextHandle(0)
 {
@@ -1893,6 +1899,11 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoPrivate::currentPowerState()
     return state;
 }
 
+QSystemDeviceInfo::ThermalState QSystemDeviceInfoPrivate::currentThermalState()
+{
+    return QSystemDeviceInfo::UnknownThermal;
+}
+
 QString QSystemDeviceInfoPrivate::imei()
 {
         return "";
@@ -2133,7 +2144,7 @@ bool QSystemDeviceInfoPrivate::keypadLightOn(QSystemDeviceInfo::KeypadType type)
     return false;
 }
 
-QUuid QSystemDeviceInfoPrivate::uniqueDeviceID()
+QByteArray QSystemDeviceInfoPrivate::uniqueDeviceID()
 {
     WMIHelper *wHelper;
     wHelper = new WMIHelper(this);
@@ -2141,7 +2152,11 @@ QUuid QSystemDeviceInfoPrivate::uniqueDeviceID()
     wHelper->setClassName("Win32_ComputerSystemProduct");
     wHelper->setClassProperty(QStringList() << "UUID");
 
-    return  QUuid(wHelper->getWMIData().toString());
+    QCryptographicHash hash(QCryptographicHash::Sha1);
+    QString id = wHelper->getWMIData().toString();
+    hash.addData(id.toLocal8Bit());
+
+    return  hash.result().toHex();
 }
 
 QSystemDeviceInfo::LockTypeFlags QSystemDeviceInfoPrivate::lockStatus()

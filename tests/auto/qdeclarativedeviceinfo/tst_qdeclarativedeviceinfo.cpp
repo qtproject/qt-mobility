@@ -291,7 +291,7 @@ void tst_QDeclarativeDeviceInfo::tst_keypadLightOn()
 void tst_QDeclarativeDeviceInfo::tst_uniqueID()
 {
     QDeclarativeDeviceInfo di;
-    QUuid id = di.uniqueDeviceID();
+    QByteArray id = di.uniqueDeviceID();
     QVERIFY(id.isNull()|| !id.isNull());
 }
 

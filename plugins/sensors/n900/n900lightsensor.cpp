@@ -80,7 +80,7 @@ void n900lightsensor::poll()
     fclose(fd);
     if (rs != 1) return;
 
-    if (m_reading.lux() != lux) {
+    if (m_reading.lux() != lux || m_reading.timestamp() == 0) {
         m_reading.setTimestamp(getTimestamp());
         m_reading.setLux(lux);
 

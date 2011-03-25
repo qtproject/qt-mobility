@@ -167,3 +167,12 @@ S60VideoWindowDisplay *S60VideoWindowControl::display() const
     return m_display;
 }
 
+qreal S60VideoWindowControl::rotation() const
+{
+    return m_display->rotation();
+}
+
+void S60VideoWindowControl::setRotation(qreal value)
+{
+    m_display->setRotation(value);
+}

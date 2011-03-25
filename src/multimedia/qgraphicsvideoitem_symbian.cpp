@@ -419,6 +419,8 @@ void QGraphicsVideoItemPrivate::updateGeometry()
         setWithinViewBounds(!widgetGeometry.size().isEmpty());
         widget->setGeometry(widgetGeometry);
         m_widgetControl->setProperty("extentRect", QVariant::fromValue<QRect>(extent));
+        const qreal angle = m_transform.map(QLineF(0, 0, 1, 0)).angle();
+        m_widgetControl->setProperty("rotation", QVariant::fromValue<qreal>(angle));
     }
 }
 

@@ -60,6 +60,68 @@ class CntSimStore;
 class CntSymbianSimEngine;
 class CntSimStoreEventListener;
 
+class MDispatcherTimeOut
+{
+public:
+    virtual void TimerExpired() =0;
+};
+
+class CDispatcherTimer : public CTimer
+{
+public:
+    static CDispatcherTimer* NewL(MDispatcherTimeOut& aCallback);
+    ~CDispatcherTimer();
+
+protected:
+    void RunL();
+    TInt RunError(TInt aError);
+
+private:
+    CDispatcherTimer(MDispatcherTimeOut& aCallback);
+    void ConstructL();
+
+private:
+    MDispatcherTimeOut& iCallback;
+};
+
+class CStoreInfoDispatcher : public CActive, public MDispatcherTimeOut
+{
+public:
+    enum TRequestMode
+        {
+        EEtelStore   = 1,
+        EEtelOnStore
+        };
+
+    static CStoreInfoDispatcher* NewL(RMobilePhoneBookStore& aEtelStore, RMobileONStore& aEtelOnStore);
+    ~CStoreInfoDispatcher();
+    void DispatchL(RMobilePhoneBookStore::TMobilePhoneBookInfoV1Pckg & aInfoPckg);
+    void DispatchL(RMobilePhoneBookStore::TMobilePhoneBookInfoV5Pckg& aInfoPckg);
+    void DispatchL(RMobileONStore::TMobileONStoreInfoV1Pckg& aOnInfoPckg);
+       
+public: // From MDispatcherTimeOut
+    void TimerExpired();
+   
+protected: // From CActive
+    void DoCancel();
+    void RunL();
+    TInt RunError(TInt aError);
+   
+private:
+    CStoreInfoDispatcher(RMobilePhoneBookStore& aEtelStore, RMobileONStore& aEtelOnStore);
+    void ConstructL();
+    void StopWait();
+    
+private:
+    RMobilePhoneBookStore& iEtelStore;
+    RMobileONStore& iEtelOnStore;
+    CActiveSchedulerWait* iWait;
+    CDispatcherTimer* iTimer;
+    TInt iError;
+    TInt32 iRequestMode;
+};
+
+
 class CntSimStorePrivate : public CActive
 {
 public:
@@ -114,6 +176,7 @@ private:
     CntSimStoreEventListener* m_listener;
     TInt m_asyncError;
     bool m_extraDetailsChecked;
+    CStoreInfoDispatcher* m_storeInfoDispatcher;
 };
 
 #endif // CNTSIMSTOREPRIVATE_H_

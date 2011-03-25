@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SFW version="1.1">
+    <service>
+        <name>%APPNAME%</name>
+        <ipcaddress>%APPNAME%</ipcaddress>
+        <description>NFC NDEF message handler for %APPNAME%</description>
+        <interface>
+            <name>com.nokia.symbian.NdefMessageHandler</name>
+            <version>1.0</version>
+            <description>NFC NDEF message handler for %APPNAME%</description>
+            <capabilities></capabilities>
+            <customproperty key="datatype">%DATATYPE%</customproperty>
+        </interface>
+    </service>
+</SFW>

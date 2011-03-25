@@ -44,41 +44,38 @@
 
 #include <e32base.h>
 #include <nfcserver.h>                      // RNfcServer
-#include <llcpprovider.h>                   // CLlcpProvider
-#include <llcpconnlesstransporter.h>        // MLlcpConnLessTransporter
-#include <llcpconnorientedtransporter.h>    // MLlcpConnOrientedTransporter
 #include <llcpconnlesslistener.h>           // MLlcpConnLessListener
-#include <llcpconnorientedlistener.h>       // MLlcpConnOrientedListener
-#include <llcplinklistener.h>               // MLlcpLinkListener
 
-/*!
+/*
  *   FORWARD DECLARATIONS
  */
 class COwnLlcpConnectionWrapper;
 class CLlcpSenderType1;
 class CLlcpReceiverType1;
 class CLlcpTimer;
+class CLlcpProvider;
+class MLlcpConnLessTransporter;
 
 #include <qmobilityglobal.h>
 #include "../qllcpsocket_symbian_p.h"
 
 class MLlcpReadWriteCb
-    {  
+    {
 public:
 
-    /**
+    /*
      * Empty Destructor.
      */
     virtual ~MLlcpReadWriteCb() {};
-    
-    /**
-     * Called 
+
+    /*
+     * Called
      */
     virtual void ReceiveComplete(TInt aError) = 0;
-    virtual void WriteComplete( TInt aError, TInt aSize) = 0;   
-    };      
+    virtual void WriteComplete(TInt aError, TInt aSize) = 0;
+    };
 
-/*!
+/*
  *  CLASS DECLARATION for CLlcpSocketType1 (ConnectLess Tran).
  */
 class CLlcpSocketType1 : public CBase,
@@ -86,85 +83,85 @@ class CLlcpSocketType1 : public CBase,
                          public MLlcpReadWriteCb
    {
 public:
-   /*!
+   /*
     * Creates a new CLlcpSocketType1 object.
     */
    static CLlcpSocketType1* NewL(QtMobility::QLlcpSocketPrivate&);
-   
-   /*!
+
+   /*
     * Creates a new CLlcpSocketType1 object.
     */
    static CLlcpSocketType1* NewLC(QtMobility::QLlcpSocketPrivate&);
-   
-   /*!
+
+   /*
     * Destructor
     */
    ~CLlcpSocketType1();
-   
-public:    
+
+public:
    TInt StartWriteDatagram(const TDesC8& aData,TUint8 portNum);
    TInt ReadDatagram(TDes8& aData);
    TInt ReadDatagram(TDes8& aData, TUint8& aRemotePortNum);
    TBool Bind(TUint8 portNum);
-   
-   /*!
+
+   /*
        Returns true if at least one datagram is waiting to be read;
        otherwise returns false.
    */
    TBool HasPendingDatagrams() const;
    TInt64 PendingDatagramSize() const;
    TBool WaitForBytesWritten(TInt aMilliSeconds);
- 
+
 private:
    enum TWaitStatus
        {
        ENone,
        EWaitForBytesWritten
        };
-   
+
 private:
-   TBool WaitForOperationReady(TWaitStatus aWaitStatus,TInt aMilliSeconds);  
+   TBool WaitForOperationReady(TWaitStatus aWaitStatus,TInt aMilliSeconds);
    void StopWaitNow(TWaitStatus aWaitStatus);
 
 private:  // from  MLlcpReadWriteCb
-     void ReceiveComplete(TInt aError );
-     void WriteComplete( TInt aError, TInt aSize);
-     
+     void ReceiveComplete(TInt aError);
+     void WriteComplete(TInt aError, TInt aSize);
+
 private: // From MLlcpConnLessListener
-    void FrameReceived( MLlcpConnLessTransporter* aConnection );
-     
+    void FrameReceived(MLlcpConnLessTransporter* aConnection);
+
 private:
     // Constructor
     CLlcpSocketType1(QtMobility::QLlcpSocketPrivate&);
-    
+
     // Second phase constructor
-    void ConstructL();  
-    void Cleanup();   
-    
+    void ConstructL();
+    void Cleanup();
+
     TInt CreateConnection(TUint8 portNum);
     TInt StartTransportAndReceive(MLlcpConnLessTransporter* aConnection);
-    
+
 private:
-   /*!
+   /*
     * Handle to NFC-server.
     * Own.
-    */ 
+    */
    RNfcServer iNfcServer;
-   
-   /*!
+
+   /*
     * Pointer to CLlcpProvider object.
     * Own.
     */
    CLlcpProvider* iLlcp;   // Own
-   
-   /*!
+
+   /*
     * Pointer to MLlcpConnLessTransporter object.
     * Own.
     *
     * This is used to send data to local device.
-    */ 
-   COwnLlcpConnectionWrapper* iConnection;  // Own
-  
+    */
+   COwnLlcpConnectionWrapper* iConnectionWrapper;  // Own
+
    CActiveSchedulerWait * iWait;  //Own
    CLlcpTimer * iTimer;  // Own
    TWaitStatus iWaitStatus;
@@ -172,43 +169,45 @@ private:
    bool iPortBinded;
    TUint8 iLocalPort;
    TUint8 iRemotePort;
-   
+
    QtMobility::QLlcpSocketPrivate& iCallback;
    };
 
-/*!
+/*
  *  CLASS DECLARATION for COwnLlcpConnectionWrapper.
  *
- */   
+ */
 class COwnLlcpConnectionWrapper : public CBase
     {
 public:
 
-   /*!
+   /*
     * Creates a new COwnLlcpConnection object.
     */
-   static COwnLlcpConnectionWrapper* NewL( MLlcpConnLessTransporter*);
-   
-   /*!
+   static COwnLlcpConnectionWrapper* NewL(MLlcpConnLessTransporter* aTransporter
+                                          , MLlcpReadWriteCb& aCallBack);
+
+   /*
     * Creates a new COwnLlcpConnection object.
     */
-   static COwnLlcpConnectionWrapper* NewLC(MLlcpConnLessTransporter*);
-   
-   /*!
+   static COwnLlcpConnectionWrapper* NewLC(MLlcpConnLessTransporter* aTransporter
+                                           , MLlcpReadWriteCb& aCallBack);
+
+   /*
     * Destructor.
     */
    ~COwnLlcpConnectionWrapper();
 
-public: 
-   /*!
+public:
+   /*
     * Transfer given data to remote device.
     */
-   TInt TransferL(MLlcpReadWriteCb&, const TDesC8& aData );  
-   bool TransferQueued(MLlcpReadWriteCb& aLlcpSendCb); 
+   TInt TransferL(const TDesC8& aData);
+   bool TransferQueued();
    void TransferCancel();
-   TInt Receive(MLlcpReadWriteCb&);
+   TInt Receive();
 
-   /*!
+   /*
     * Cancels COwnLlcpConnection::Receive() request.
     */
    void ReceiveCancel();
@@ -221,81 +220,86 @@ public:
 private:
 
     // Constructor
-    COwnLlcpConnectionWrapper( MLlcpConnLessTransporter*);
+    COwnLlcpConnectionWrapper(MLlcpConnLessTransporter* aConnection);
     // Second phase constructor
-    void ConstructL();
-  
+    void ConstructL(MLlcpReadWriteCb& aCallBack);
+
 private:
-    MLlcpConnLessTransporter* iConnection;  
+    MLlcpConnLessTransporter* iConnection;
     CLlcpSenderType1*      iSenderAO;
-    CLlcpReceiverType1*    iReceiverAO;  
+    CLlcpReceiverType1*    iReceiverAO;
     RPointerArray<HBufC8> iSendBufArray;
     };
 
-    
+
 class CLlcpSenderType1 : public CActive
     {
 public:
-     static CLlcpSenderType1* NewL(MLlcpConnLessTransporter* aConnection);
+     static CLlcpSenderType1* NewL(MLlcpConnLessTransporter& aConnection, MLlcpReadWriteCb& aCallBack);
     ~CLlcpSenderType1();
 
-public:    
-    /*!
+public:
+    /*
      * Transfer given data to remote device.
      */
-    TInt Transfer(MLlcpReadWriteCb&, const TDesC8& aData );
-    
-    /*!
+    TInt Transfer(const TDesC8& aData);
+
+    /*
      * Cancels COwnLlcpConnection::Transfer() request.
-     */ 
-    void TransferCancel();   
- 
+     */
+    void TransferCancel();
+
 public: // From CActive
     void RunL();
     void DoCancel();
- 
+
 private:
-    CLlcpSenderType1(MLlcpConnLessTransporter* aConnection);
-private: 
-    /*!
+    CLlcpSenderType1(MLlcpConnLessTransporter& aConnection, MLlcpReadWriteCb& aCallBack);
+private:
+    /*
          Buffered data for transmitting data.
-     */ 
+     */
+    MLlcpConnLessTransporter& iConnection;
+    MLlcpReadWriteCb& iSendObserver;
     RBuf8 iTransmitBuf;
-    MLlcpReadWriteCb* iSendObserver; // not own
-    MLlcpConnLessTransporter* iConnection; // not own
+    // Symbian have limitaion for sending buffer in one send,
+    // The variable used to record how many buffer have been sent so far
+    TInt   iCurrentSendBufPos;
+    TPtrC8 iCurrentSendBufPtr;
+    RBuf8  iTempSendBuf; // Temp workround to avoid NFC server's bug, if use ptr, it will crash
     };
 
 class CLlcpReceiverType1 : public CActive
     {
 public:
-    static CLlcpReceiverType1* NewL(MLlcpConnLessTransporter* aConnection);  
+    static CLlcpReceiverType1* NewL(MLlcpConnLessTransporter& aConnection, MLlcpReadWriteCb& aCallBack);
     ~CLlcpReceiverType1();
-        
-public:   
-    /*!
+
+public:
+    /*
      * Starts receive data from ConnLess.
      */
-    TInt Receive(MLlcpReadWriteCb&);
-    
-    /*!
+    TInt Receive();
+
+    /*
      * Cancels COwnLlcpConnection::Receive() request.
-     */ 
+     */
     void ReceiveCancel();
     TInt ReceiveDataFromBuf(TDes8& aData);
-    
+
     bool HasPendingDatagrams() const;
-    TInt64 PendingDatagramSize() const;    
-    
+    TInt64 PendingDatagramSize() const;
+
 public: // From CActive
     void RunL();
-    void DoCancel();      
-    
+    void DoCancel();
+
 private:
-     CLlcpReceiverType1(MLlcpConnLessTransporter* aConnection);    
-    
+     CLlcpReceiverType1(MLlcpConnLessTransporter& aConnection, MLlcpReadWriteCb& aCallBack);
+
 private:
     RBuf8 iReceiveBuf;
-    MLlcpReadWriteCb* iReceiveObserver; // not own
-    MLlcpConnLessTransporter* iConnection; // not own
+    MLlcpConnLessTransporter& iConnection;
+    MLlcpReadWriteCb&         iReceiveObserver;
     };
 #endif /* LLCPSOCKETTYPE1_SYMBIAN_H_ */
