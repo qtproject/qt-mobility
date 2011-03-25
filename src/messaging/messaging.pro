@@ -160,8 +160,6 @@ symbian|win32|maemo6|maemo5|mac:!simulator {
         PRIVATE_HEADERS += qmfhelpers_maemo6_p.h \
             telepathyhelpers_maemo6_p.h \
             telepathyengine_maemo6_p.h \
-            tpsessionaccount_p.h \
-            tpsessionchannel_p.h \
             qmfservice_maemo6_p.h \
             qmfstore_maemo6_p.h \
             qmessageservice_maemo6_p.h \
@@ -190,9 +188,7 @@ symbian|win32|maemo6|maemo5|mac:!simulator {
             storageengine_maemo6.cpp \
             smsmodel_maemo6.cpp \
             qmfstore_maemo6.cpp \
-            qmfservice_maemo6.cpp \
-            tpsessionaccount.cpp \
-            tpsessionchannel.cpp
+            qmfservice_maemo6.cpp
         documentation.path = $$QT_MOBILITY_PREFIX/doc
         documentation.files = doc/html
         PKGCONFIG += glib-2.0 \
