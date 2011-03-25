@@ -111,7 +111,7 @@ Some interesting examples for the API exist.
         \o The classic game of \l {http://en.wikipedia.org/wiki/Pong}{Pong}. Supports multiplayer
            over Bluetooth and touch-to-play functionality on devices that support NFC.
     \row
-        \o \l {btfiletransfer}{Bluetooth File Transfer}
+        \o \l{btfiletransfer}{Bluetooth File Transfer}
         \o Transfer files between Bluetooth devices.
     \row
         \o \l{btscanner}{Bluetooth Scanner}
@@ -121,14 +121,14 @@ Some interesting examples for the API exist.
         \o Create NDEF messages using the NDEF records supported by the Connectivity API and save
            them to supported NFC Forum tags.
     \row
-        \o \l{declarative-bluetooth/tennis}{QML Bluetooth Tennis}
+        \o \l{declarative-connectivity/tennis}{QML Bluetooth Tennis}
         \o The tennis game using a QML interface to the Bluetooth API. It must connect to an
            instance of the C++ \l{bttennis}{Bluetooth Tennis} game to play.
     \row
-        \o \l {scanner}{QML Bluetooth Scanner}
+        \o \l{declarative-connectivity/scanner}{QML Bluetooth Scanner}
         \o A QML implementation of the Bluetooth device scanner.
     \row
-        \o \l {poster}{QML Poster}
+        \o \l{declarative-connectivity/poster}{QML Poster}
         \o A QML implementation of the NFC Annotated URL example.
 \endtable
 
