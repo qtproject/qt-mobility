@@ -47,8 +47,7 @@
 #include <QtDeclarative/QDeclarativeParserStatus>
 
 #include <qnearfieldmanager.h>
-
-#include "qdeclarativendefmessage_p.h"
+#include <qdeclarativendefrecord.h>
 
 class QDeclarativeNdefFilter;
 
