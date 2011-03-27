@@ -685,7 +685,7 @@ int QSystemDeviceInfo::ProfileDetails::messageRingtoneVolume() const
   */
 int QSystemDeviceInfo::ProfileDetails::voiceRingtoneVolume() const
 {
-    return deviceInfoPrivate()->messageRingtoneVolume();
+    return deviceInfoPrivate()->voiceRingtoneVolume();
 }
 
 /*!
