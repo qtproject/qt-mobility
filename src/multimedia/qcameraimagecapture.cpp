@@ -604,18 +604,18 @@ void QCameraImageCapture::cancelCapture()
     \fn QCameraImageCapture::imageMetadataAvailable(int id, QtMultimediaKit::MetaData key, const QVariant &value)
 
     Signals that a metadata for an image with request \a id is available.
-    This signal is emited for metadata \a value with a \a key listed in QtMultimediaKit::MetaData enum.
+    This signal is emitted for metadata \a value with a \a key listed in QtMultimediaKit::MetaData enum.
 
-    This signal is emited between imageExposed and imageSaved signals.
+    This signal is emitted between imageExposed and imageSaved signals.
 */
 
 /*!
     \fn QCameraImageCapture::imageMetadataAvailable(int id, const QString &key, const QVariant &value)
 
     Signals that a metadata for an image with request \a id is available.
-    This signal is emited for extended metadata \a value with a \a key not listed in QtMultimediaKit::MetaData enum.
+    This signal is emitted for extended metadata \a value with a \a key not listed in QtMultimediaKit::MetaData enum.
 
-    This signal is emited between imageExposed and imageSaved signals.
+    This signal is emitted between imageExposed and imageSaved signals.
 */
 
 

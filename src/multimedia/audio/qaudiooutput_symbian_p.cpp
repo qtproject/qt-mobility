@@ -229,7 +229,7 @@ void QAudioOutputPrivate::resume()
             }
             m_devSound->start();
 #else
-//defined in else part of macro to enable compatability of previous code
+//defined in else part of macro to enable compatibility of previous code
             m_devSound->resume();
 #endif
             } else {
