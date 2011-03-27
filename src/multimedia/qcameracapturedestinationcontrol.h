@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,57 +39,35 @@
 **
 ****************************************************************************/
 
-#ifndef S60VIDEODEVICECONTROL_H
-#define S60VIDEODEVICECONTROL_H
+#ifndef QCAMERACAPTUREDESTINATIONCONTROL_H
+#define QCAMERACAPTUREDESTINATIONCONTROL_H
 
-#include "qvideodevicecontrol.h"
+#include <qmediacontrol.h>
+#include <qcameraimagecapture.h>
 
-QT_USE_NAMESPACE
+QT_BEGIN_NAMESPACE
 
-class S60CameraControl;
-class QString;
-class QIcon;
-
-/*
- * Control for providing information of the video device (r. camera) and to
- * enable other camera device (e.g. secondary camera if one exists).
- */
-class S60VideoDeviceControl : public QVideoDeviceControl
+class Q_MULTIMEDIA_EXPORT QCameraCaptureDestinationControl : public QMediaControl
 {
     Q_OBJECT
+public:
+    ~QCameraCaptureDestinationControl();
 
-public: // Constructors & Destructor
+    virtual bool isCaptureDestinationSupported(QCameraImageCapture::CaptureDestinations destination) const = 0;
+    virtual QCameraImageCapture::CaptureDestinations captureDestination() const = 0;
+    virtual void setCaptureDestination(QCameraImageCapture::CaptureDestinations destination) = 0;
 
-    S60VideoDeviceControl(QObject *parent);
-    S60VideoDeviceControl(S60CameraControl *control, QObject *parent = 0);
-    virtual ~S60VideoDeviceControl();
-
-public: // QVideoDeviceControl
-
-    int deviceCount() const;
-
-    QString deviceName(int index) const;
-    QString deviceDescription(int index) const;
-    QIcon deviceIcon(int index) const;
-
-    int defaultDevice() const;
-    int selectedDevice() const;
-
-public slots: // QVideoDeviceControl
-
-    void setSelectedDevice(int index);
-
-/*
 Q_SIGNALS:
-void selectedDeviceChanged(int index);
-void selectedDeviceChanged(const QString &deviceName);
-void devicesChanged();
-*/
+    void captureDestinationChanged(QCameraImageCapture::CaptureDestinations);
 
-private: // Data
-
-    S60CameraControl    *m_control;
-    int                 m_selectedDevice;
+protected:
+    QCameraCaptureDestinationControl(QObject* parent = 0);
 };
 
-#endif // S60VIDEODEVICECONTROL_H
+#define QCameraCaptureDestinationControl_iid "com.nokia.Qt.QCameraCaptureDestinationControl/1.0"
+Q_MEDIA_DECLARE_CONTROL(QCameraCaptureDestinationControl, QCameraCaptureDestinationControl_iid)
+
+QT_END_NAMESPACE
+
+#endif
+

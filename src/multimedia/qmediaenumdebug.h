@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,57 +39,38 @@
 **
 ****************************************************************************/
 
-#ifndef S60VIDEODEVICECONTROL_H
-#define S60VIDEODEVICECONTROL_H
+#ifndef QMEDIAENUMDEBUG_H
+#define QMEDIAENUMDEBUG_H
 
-#include "qvideodevicecontrol.h"
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API. It exists purely as an
+// implementation detail. This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
 
-QT_USE_NAMESPACE
+#include <QtCore/qmetaobject.h>
+#include <QtCore/qdebug.h>
 
-class S60CameraControl;
-class QString;
-class QIcon;
+#ifndef QT_NO_DEBUG_STREAM
 
-/*
- * Control for providing information of the video device (r. camera) and to
- * enable other camera device (e.g. secondary camera if one exists).
- */
-class S60VideoDeviceControl : public QVideoDeviceControl
-{
-    Q_OBJECT
+#define Q_MEDIA_ENUM_DEBUG(Class,Enum) \
+inline QDebug operator<<(QDebug dbg, Class::Enum value) \
+{ \
+    int index = Class::staticMetaObject.indexOfEnumerator(#Enum); \
+    dbg.nospace() << #Class << "::" << Class::staticMetaObject.enumerator(index).valueToKey(value); \
+    return dbg.space(); \
+}
 
-public: // Constructors & Destructor
+#else
 
-    S60VideoDeviceControl(QObject *parent);
-    S60VideoDeviceControl(S60CameraControl *control, QObject *parent = 0);
-    virtual ~S60VideoDeviceControl();
+#define Q_MEDIA_ENUM_DEBUG(Class,Enum)
 
-public: // QVideoDeviceControl
+#endif //QT_NO_DEBUG_STREAM
 
-    int deviceCount() const;
 
-    QString deviceName(int index) const;
-    QString deviceDescription(int index) const;
-    QIcon deviceIcon(int index) const;
+#endif
 
-    int defaultDevice() const;
-    int selectedDevice() const;
-
-public slots: // QVideoDeviceControl
-
-    void setSelectedDevice(int index);
-
-/*
-Q_SIGNALS:
-void selectedDeviceChanged(int index);
-void selectedDeviceChanged(const QString &deviceName);
-void devicesChanged();
-*/
-
-private: // Data
-
-    S60CameraControl    *m_control;
-    int                 m_selectedDevice;
-};
-
-#endif // S60VIDEODEVICECONTROL_H

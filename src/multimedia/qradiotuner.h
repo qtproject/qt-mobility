@@ -46,6 +46,7 @@
 
 #include "qmediaobject.h"
 #include "qmediaserviceprovider.h"
+#include <qmediaenumdebug.h>
 
 #include <QPair>
 
@@ -141,5 +142,10 @@ Q_DECLARE_METATYPE(QRadioTuner::State)
 Q_DECLARE_METATYPE(QRadioTuner::Band)
 Q_DECLARE_METATYPE(QRadioTuner::Error)
 Q_DECLARE_METATYPE(QRadioTuner::StereoMode)
+
+Q_MEDIA_ENUM_DEBUG(QRadioTuner, State)
+Q_MEDIA_ENUM_DEBUG(QRadioTuner, Band)
+Q_MEDIA_ENUM_DEBUG(QRadioTuner, Error)
+Q_MEDIA_ENUM_DEBUG(QRadioTuner, StereoMode)
 
 #endif  // QRADIOPLAYER_H

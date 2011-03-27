@@ -77,7 +77,7 @@ public: // QCameraImageProcessingControl
     QVariant processingParameter(QCameraImageProcessingControl::ProcessingParameter parameter) const;
     void setProcessingParameter(QCameraImageProcessingControl::ProcessingParameter parameter, QVariant value);
 
-private Q_SLOTS: // Internal Slots
+private slots: // Internal Slots
 
     void resetAdvancedSetting();
 

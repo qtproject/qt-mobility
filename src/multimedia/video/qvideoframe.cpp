@@ -52,6 +52,19 @@
 
 QT_BEGIN_NAMESPACE
 
+namespace
+{
+class QVideoFramePrivateRegisterMetaTypes
+{
+public:
+    QVideoFramePrivateRegisterMetaTypes()
+    {
+        qRegisterMetaType<QVideoFrame::PixelFormat>("QVideoFrame::PixelFormat");
+    }
+} _registerMetaTypes;
+}
+
+
 class QVideoFramePrivate : public QSharedData
 {
 public:
@@ -240,6 +253,15 @@ private:
  
     \value Format_Y16
     The frame is stored using a 16-bit linear greyscale format.  Little endian.
+
+    \value Format_Jpeg
+    The frame is stored in compressed Jpeg format.
+
+    \value Format_CameraRaw
+    The frame is stored using device specific camera raw format.
+
+    \value Format_AdobeDng
+    The frame is stored using raw Adobe Digital Negative (DNG) format.
 
     \value Format_User
     Start value for user defined pixel formats.
@@ -732,6 +754,9 @@ QImage::Format QVideoFrame::imageFormatFromPixelFormat(PixelFormat format)
     case Format_IMC4:
     case Format_Y8:
     case Format_Y16:
+    case Format_Jpeg:
+    case Format_CameraRaw:
+    case Format_AdobeDng:
         return QImage::Format_Invalid;
     case Format_User:
         return QImage::Format_Invalid;

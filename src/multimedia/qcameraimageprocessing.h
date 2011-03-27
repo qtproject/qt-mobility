@@ -51,6 +51,7 @@
 #include <qmediacontrol.h>
 #include <qmediaobject.h>
 #include <qmediaservice.h>
+#include <qmediaenumdebug.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -60,8 +61,9 @@ class QCameraImageProcessingPrivate;
 class Q_MULTIMEDIA_EXPORT QCameraImageProcessing : public QObject
 {
     Q_OBJECT
+    Q_ENUMS(WhiteBalanceMode)
 public:
-    enum WhiteBalanceMode {        
+    enum WhiteBalanceMode {
         WhiteBalanceAuto = 0,
         WhiteBalanceManual = 1,
         WhiteBalanceSunlight = 2,
@@ -108,5 +110,9 @@ private:
 };
 
 QT_END_NAMESPACE
+
+Q_DECLARE_METATYPE(QCameraImageProcessing::WhiteBalanceMode)
+
+Q_MEDIA_ENUM_DEBUG(QCameraImageProcessing, WhiteBalanceMode)
 
 #endif  // QCAMERAIMAGEPROCESSING_H
