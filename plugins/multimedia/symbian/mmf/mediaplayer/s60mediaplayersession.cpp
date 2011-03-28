@@ -330,9 +330,9 @@ void S60MediaPlayerSession::reset()
     stopStalledTimer();
     doStop();
     doClose();
-    setPosition(0);
     setState(QMediaPlayer::StoppedState);
     setMediaStatus(QMediaPlayer::UnknownMediaStatus);
+    setPosition(0);
 
     DP0("S60MediaPlayerSession::reset ---");
 }
