@@ -1,5 +1,6 @@
 qt-mobility (1.2.0~git20110328) unstable; urgency=low
 
+  * Fixes: NB#238905
   * Fixes: NB#214642
   * Fixes: NB#225304
   * Fixes: NB#228981
