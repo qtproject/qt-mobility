@@ -2,7 +2,8 @@ INCLUDEPATH += . \
                ../../../src/global \
                ../../../include \
                ../../../src/connectivity \
-               ../../../src/connectivity/bluetooth
+               ../../../src/connectivity/bluetooth \
+               ../../../src/connectivity/nfc
 
 DEPENDPATH += ../../../src/connectivity
 
@@ -33,13 +34,15 @@ HEADERS += \
     qdeclarativebtdiscoverymodel_p.h \
     qdeclarativebtimageprovider_p.h \
     qdeclarativebluetoothservice_p.h \
-    qdeclarativebluetoothsocket_p.h
+    qdeclarativebluetoothsocket_p.h \
+    qdeclarativenearfieldsocket_p.h
 
 SOURCES += plugin.cpp \ 
     qdeclarativebtdiscoverymodel.cpp \
     qdeclarativebtimageprovider.cpp \
     qdeclarativebluetoothservice.cpp \
-    qdeclarativebluetoothsocket.cpp
+    qdeclarativebluetoothsocket.cpp \
+    qdeclarativenearfieldsocket.cpp
 
 RESOURCES += connectivity.qrc
 

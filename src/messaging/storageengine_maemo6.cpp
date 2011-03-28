@@ -189,13 +189,14 @@ StorageEngine::StorageEngine(QObject *parent)
     QDEBUG_FUNCTION_BEGIN
 
     m_SMSModel.setQueryMode(EventModel::AsyncQuery);
-    connect(&m_SMSModel, SIGNAL(modelReady()), SLOT(onModelReady()));
+    connect(&m_SMSModel, SIGNAL(modelReady(bool)), SLOT(onModelReady(bool)));
 
-    connect(&m_SMSModel, SIGNAL(eventsAdded(const QList<CommHistory::Event> &)),
-	    this, SLOT(eventsAdded(const QList<CommHistory::Event> &)));
-    connect(&m_SMSModel, SIGNAL(eventsUpdated(const QList<CommHistory::Event> &)),
-	    this, SLOT(eventsUpdated(const QList<CommHistory::Event> &)));
-    connect(&m_SMSModel, SIGNAL(eventDeleted(int)), this, SLOT(eventDeleted(int)));
+    connect(&m_SMSModel, SIGNAL(rowsInserted(const QModelIndex &, int, int)),
+            this, SLOT(onRowsInserted(const QModelIndex &, int, int)));
+    connect(&m_SMSModel, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)),
+            this, SLOT(onDataChanged(const QModelIndex &, const QModelIndex &)));
+    connect(&m_SMSModel, SIGNAL(rowsAboutToBeRemoved(const QModelIndex &, int, int)),
+            this, SLOT(onRowsRemoved(const QModelIndex &, int, int)));
     
     if (m_SMSModel.getEvents() && m_sync)
 	m_loop.exec();
@@ -528,11 +529,13 @@ bool StorageEngine::queryMessages(QMessageService *service, const QMessageFilter
 /**
  * Slot that is called when m_SMSModel is ready.
  */
-void StorageEngine::onModelReady()
+void StorageEngine::onModelReady(bool successful)
 {
     QDEBUG_FUNCTION_BEGIN;
 
-    m_ready = true;
+    if (successful)
+        m_ready = true;
+
     if (m_sync) {
         m_sync = false;
         m_loop.quit();
@@ -719,25 +722,33 @@ QMessageFolderIdList StorageEngine::queryFolders(const QMessageFolderFilter &fil
     return result;
 }
 
+QList<CommHistory::Event> StorageEngine::eventsListFromModelRows(const int start, const int end)
+{
+    QList<CommHistory::Event> events;
+
+    for (int row = start; row <= end; ++row) {
+        QModelIndex index = m_SMSModel.index(row, 0);
+
+        if (index.isValid())
+            events.append(m_SMSModel.event(index));
+    }
+
+    return events;
+}
 
 /*!
   Internal slot for events addition
   */
-void StorageEngine::eventsAdded(const QList<CommHistory::Event> &events)
+void StorageEngine::onRowsInserted(const QModelIndex & parent, int start, int end)
 {
-    qDebug() << "StorageEngine::eventsAdded";
-    processFilters(events, &StorageEngine::messageAdded);
+    QDEBUG_FUNCTION_BEGIN
+    if (m_ready)
+        processFilters(eventsListFromModelRows(start, end), &StorageEngine::messageAdded);
+    QDEBUG_FUNCTION_END
 }
 
-/*!
-  Internal slot for events update
-  */
-void StorageEngine::eventsUpdated(const QList<CommHistory::Event> &events)
-{
-    qDebug() << "StorageEngine::eventsUpdated";
-    processFilters(events, &StorageEngine::messageUpdated);
-}
-
+//TODO: remove this old commented code after testing of SMS removing
+/*
 void StorageEngine::eventDeleted(int id)
 {
     QMessageId messageId("SMS_" + QString::number(id));
@@ -745,13 +756,32 @@ void StorageEngine::eventDeleted(int id)
 
     NotificationFilterMap::const_iterator it = m_filters.begin(), end = m_filters.end();
     for (; it != end; ++it) {
-	const QMessageFilter &filter = it.value();
-	if (filter.isEmpty())
-	    idSet.insert(it.key());
+        const QMessageFilter &filter = it.value();
+        if (filter.isEmpty())
+            idSet.insert(it.key());
     }
 
     if (!idSet.isEmpty())
-	emit messageRemoved(messageId, idSet);
+        emit messageRemoved(messageId, idSet);
+}
+*/
+void StorageEngine::onRowsRemoved(const QModelIndex & parent, int start, int end)
+{
+    QDEBUG_FUNCTION_BEGIN
+    if (m_ready)
+        processFilters(eventsListFromModelRows(start, end), &StorageEngine::messageRemoved);
+    QDEBUG_FUNCTION_END
+}
+
+/*!
+  Internal slot for events update
+  */
+void StorageEngine::onDataChanged(const QModelIndex & topLeft, const QModelIndex & bottomRight)
+{
+    QDEBUG_FUNCTION_BEGIN
+    if (m_ready)
+        processFilters(eventsListFromModelRows(topLeft.row(), bottomRight.row()), &StorageEngine::messageUpdated);
+    QDEBUG_FUNCTION_END
 }
 
 /*!
@@ -772,12 +802,17 @@ void StorageEngine::unregisterNotificationFilter(QMessageManager::NotificationFi
 
 void StorageEngine::processFilters(const QList<CommHistory::Event> &events, void (StorageEngine::*signal)(const QMessageId &, const QMessageManager::NotificationFilterIdSet &))
 {
+    if (events.count() == 0) {
+        qDebug() << __PRETTY_FUNCTION__ << "No events to process";
+        return;
+    }
+
     QMap<QMessageId, QMessageManager::NotificationFilterIdSet> matches;
     
     QList<QMessage> messages;
     foreach (const Event &event, events) {
 	messages << messageFromEvent(event);
-	qDebug() << "StorageEngine::processFilters:" << "added/updated" << event.id();
+        qDebug() << "StorageEngine::processFilters:" << "added/updated/removed" << event.id();
     }
 
     NotificationFilterMap::const_iterator it = m_filters.begin(), end = m_filters.end();

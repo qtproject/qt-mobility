@@ -302,7 +302,7 @@ private: // Internal
     void processFileName(const QString &fileName);
     TFileName convertImagePath();
 
-Q_SIGNALS: // Notifications
+signals: // Notifications
 
     void stateChanged(QCamera::State);
     void advancedSettingChanged();
@@ -321,7 +321,7 @@ Q_SIGNALS: // Notifications
     // Focus notifications
     void focusStatusChanged(QCamera::LockStatus, QCamera::LockChangeReason);
 
-private Q_SLOTS: // Internal Slots
+private slots: // Internal Slots
 
     void cameraStatusChanged(QCamera::Status);
 

@@ -63,20 +63,6 @@
 #if !defined(QT_NO_DBUS)
 #include "linux/qhalservice_linux_p.h"
 
-typedef enum
-{
-    NM_DEVICE_STATE_UNKNOWN = 0,
-    NM_DEVICE_STATE_UNMANAGED,
-    NM_DEVICE_STATE_UNAVAILABLE,
-    NM_DEVICE_STATE_DISCONNECTED,
-    NM_DEVICE_STATE_PREPARE,
-    NM_DEVICE_STATE_CONFIG,
-    NM_DEVICE_STATE_NEED_AUTH,
-    NM_DEVICE_STATE_IP_CONFIG,
-    NM_DEVICE_STATE_ACTIVATED,
-    NM_DEVICE_STATE_FAILED
-} NMDeviceState;
-
 struct ProfileDataValue {
     QString key;
     QString val;
@@ -253,6 +239,7 @@ public:
     bool isDeviceLocked();
     QSystemDeviceInfo::Profile currentProfile();
     QSystemDeviceInfo::PowerState currentPowerState();
+    QSystemDeviceInfo::ThermalState currentThermalState();
     QString model();
     QString productName();
     bool isKeyboardFlippedOpen();//1.2
@@ -264,6 +251,8 @@ public:
 
     QSystemDeviceInfo::LockTypeFlags lockStatus();//1.2
     QSystemDeviceInfo::KeyboardTypeFlags keyboardTypes(); //1.2
+    QByteArray uniqueDeviceID(); //1.2
+
 
 Q_SIGNALS:
     void keyboardFlipped(bool open);
@@ -299,6 +288,7 @@ private:
     QSystemDeviceInfo::BatteryStatus currentBatStatus;
 
     QSystemDeviceInfo::PowerState previousPowerState;
+    QSystemDeviceInfo::LockTypeFlags  currentLockType;
 #endif
      QSocketNotifier *notifier;
      int gpioFD;

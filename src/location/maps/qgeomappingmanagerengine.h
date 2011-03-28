@@ -85,6 +85,8 @@ public:
     qreal minimumTilt() const;
     qreal maximumTilt() const;
 
+    bool supportsCustomMapObjects() const;
+
     void setLocale(const QLocale &locale);
     QLocale locale() const;
 
@@ -102,6 +104,8 @@ protected:
 
     void setSupportsBearing(bool supportsBearing);
     void setSupportsTilting(bool supportsTilting);
+
+    void setSupportsCustomMapObjects(bool supportsCustomMapObjects);
 
     QGeoMappingManagerEnginePrivate* d_ptr;
 

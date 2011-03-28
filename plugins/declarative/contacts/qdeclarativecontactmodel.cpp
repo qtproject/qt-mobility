@@ -715,7 +715,13 @@ void QDeclarativeContactModel::contactsRemoved()
 
 QVariant QDeclarativeContactModel::data(const QModelIndex &index, int role) const
 {
+    //Check if QList itme's index is valid before access it, index should be between 0 and count - 1
+    if (index.row() < 0 || index.row() >= d->m_contacts.count()) {
+        return QVariant();
+    }
+
     QDeclarativeContact* dc = d->m_contacts.value(index.row());
+    Q_ASSERT(dc);
     QContact c = dc->contact();
 
     switch(role) {

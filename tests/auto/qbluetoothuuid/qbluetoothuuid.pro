@@ -11,3 +11,6 @@ include(../../../common.pri)
 
 CONFIG += mobility
 MOBILITY = connectivity
+symbian: {
+    LIBS *= -lbluetooth
+}

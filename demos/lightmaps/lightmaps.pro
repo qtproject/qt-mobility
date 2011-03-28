@@ -1,17 +1,16 @@
 TEMPLATE = app
 TARGET = lightmaps_with_location
 
-HEADERS = ../../examples/satellitedialog/satellitedialog.h \
+HEADERS = satellitedialog.h \
             ../../examples/flickrdemo/connectivityhelper.h
 SOURCES = lightmaps.cpp \
-            ../../examples/satellitedialog/satellitedialog.cpp \
+            satellitedialog.cpp \
             ../../examples/flickrdemo/connectivityhelper.cpp
 
 QT += network
 
 INCLUDEPATH += ../../src/global \
                 ../../src/location \
-                ../../examples/satellitedialog \
                 ../../examples/flickrdemo
 
 include(../demos.pri)

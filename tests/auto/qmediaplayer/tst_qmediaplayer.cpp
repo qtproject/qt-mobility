@@ -1006,3 +1006,14 @@ void tst_QMediaPlayer::testPositionPropertyWatch()
     QTRY_COMPARE(positionSpy.count(), 0);
 }
 
+void tst_QMediaPlayer::debugEnums()
+{
+    QTest::ignoreMessage(QtDebugMsg, "QMediaPlayer::PlayingState ");
+    qDebug() << QMediaPlayer::PlayingState;
+    QTest::ignoreMessage(QtDebugMsg, "QMediaPlayer::NoMedia ");
+    qDebug() << QMediaPlayer::NoMedia;
+    QTest::ignoreMessage(QtDebugMsg, "QMediaPlayer::NetworkError ");
+    qDebug() << QMediaPlayer::NetworkError;
+}
+
+

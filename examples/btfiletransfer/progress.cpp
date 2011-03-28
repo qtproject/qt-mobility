@@ -86,9 +86,12 @@ void Progress::uploadProgress(qint64 bytesSent, qint64 bytesTotal)
 
     ui->progressBar->setMaximum(bytesTotal);
     ui->progressBar->setValue(bytesSent);
-    if (bytesSent && bytesTotal) {
+    if (bytesSent && bytesTotal &&
+            (start.elapsed() > 1000) &&
+            (bytesSent > start.elapsed()/1000)) {
+
         ui->statusLabel->setText(tr("Transferring...ETA: %1s")
-                .arg(((bytesTotal-bytesSent)/(bytesSent/start.elapsed()))/1000));
+                .arg(((bytesTotal-bytesSent)/(bytesSent/(start.elapsed()/1000)))));
     }
 }
 

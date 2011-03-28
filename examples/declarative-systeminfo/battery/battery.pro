@@ -1,9 +1,16 @@
-include($$PWD/deployment.pri)
-include($$PWD/../declarative-systeminfo.pri)
+include(../../mobility_examples.pri)
 
 QT += declarative
-SOURCES += $$PWD/qmlbattery.cpp
+SOURCES += qmlbattery.cpp
 TARGET = qml_battery
+TEMPLATE = app
+
+win32 {
+    #required by Qt SDK to resolve Mobility libraries
+    CONFIG+=mobility
+    MOBILITY+=systeminfo
+}
+
 
 symbian {
     TARGET.CAPABILITY = ReadUserData

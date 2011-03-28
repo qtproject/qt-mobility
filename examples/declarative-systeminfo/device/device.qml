@@ -52,7 +52,7 @@ Rectangle {
     }
     Text {
         id: textinfo2
-        text: devinfo.uniqueID
+        text: devinfo.uniqueDeviceID
         anchors{ top: textinfo.bottom}
     }
     Text {

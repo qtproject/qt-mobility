@@ -285,6 +285,13 @@ unix:!simulator {
             message("ETELMM enabled")
             }
 
+        contains(thermalstatus_symbian_enabled,yes){
+            DEFINES += THERMALSTATUS_SUPPORTED
+            SOURCES += thermalstatus_s60.cpp
+            HEADERS += thermalstatus_s60.h
+            message("Thermalstatus enabled")
+            }
+
         TARGET.CAPABILITY = ALL -TCB
 #        TARGET.CAPABILITY = LocalServices NetworkServices ReadUserData UserEnvironment Location ReadDeviceData TrustedUI
 

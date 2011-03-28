@@ -326,10 +326,8 @@ public:
         m_session = new QNetworkSession(cfg1, this);
 
         m_connectivityHelper = new ConnectivityHelper(m_session, this);
-        m_session->open();
         connect(m_session, SIGNAL(opened()), this, SLOT(networkSessionOpened()));
         connect(m_connectivityHelper, SIGNAL(networkingCancelled()), qApp, SLOT(quit()));
-
         m_session->open();
     }
 

@@ -51,7 +51,13 @@ QTM_BEGIN_NAMESPACE
     \ingroup connectivity-nfc
     \inmodule QtConnectivity
 
-    A QNdefMessage is a collection of 0 or more QNdefRecords.
+    A QNdefMessage is a collection of 0 or more QNdefRecords. QNdefMessage inherits from
+    QList<QNdefRecord> and therefore the standard QList functions can be used to manipulate the
+    NDEF records in the message.
+
+    NDEF messages can be parsed from a byte array conforming to the NFC Data Exchange Format
+    technical specification by using the fromByteArray() static function. Conversely QNdefMessages
+    can be converted into a byte array with the toByteArray() function.
 */
 
 /*!
@@ -81,8 +87,8 @@ QTM_BEGIN_NAMESPACE
 /*!
     Returns an NDEF message parsed from the contents of \a message.
 
-    The \a message parameter is interpreted as the raw message format defined in the NFC
-    Specifications.
+    The \a message parameter is interpreted as the raw message format defined in the NFC Data
+    Exchange Format technical specification.
 
     If a parse error occurs an empty NDEF message is returned.
 */
@@ -225,6 +231,9 @@ QNdefMessage QNdefMessage::fromByteArray(const QByteArray &message)
 
 /*!
     Returns true if this NDEF message is equivalent to \a other; otherwise returns false.
+
+    An empty message (i.e. isEmpty() returns true) is equivalent to a NDEF message containing a
+    single record of type QNdefRecord::Empty.
 */
 bool QNdefMessage::operator==(const QNdefMessage &other) const
 {
@@ -251,6 +260,9 @@ bool QNdefMessage::operator==(const QNdefMessage &other) const
 
 /*!
     Returns the NDEF message as a byte array.
+
+    The return value of this function conforms to the format defined in the NFC Data Exchange
+    Format technical specification.
 */
 QByteArray QNdefMessage::toByteArray() const
 {

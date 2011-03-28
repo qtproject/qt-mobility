@@ -480,12 +480,26 @@ bool DevSoundWrapper::start()
 bool DevSoundWrapper::pause()
 {
     Q_ASSERT(StateInitialized == m_state);
+#ifndef PRE_S60_52_PLATFORM
+    if (m_mode == QAudio::AudioOutput ) {
+        m_devsound->Pause();
+        return true;
+      } else {
+      const bool canPause = isResumeSupported();
+      if (canPause)
+          m_devsound->Pause();
+      else
+          stop();
+      return canPause;
+      }
+#else
     const bool canPause = isResumeSupported();
     if (canPause)
         m_devsound->Pause();
     else
         stop();
     return canPause;
+#endif
 }
 
 void DevSoundWrapper::resume()
@@ -636,7 +650,12 @@ void DevSoundWrapper::DeviceMessage(TUid aMessageType, const TDesC8 &aMsg)
     // Ignore this callback.
 }
 
-
+#ifndef PRE_S60_52_PLATFORM
+int DevSoundWrapper::flush()
+    {
+    return m_devsound->EmptyBuffers();
+    }
+#endif
 } // namespace SymbianAudio
 
 QT_END_NAMESPACE

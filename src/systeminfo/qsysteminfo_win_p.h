@@ -274,6 +274,7 @@ public:
     QTM_PREPEND_NAMESPACE(QSystemDeviceInfo::Profile) currentProfile();
 
     QTM_PREPEND_NAMESPACE(QSystemDeviceInfo::PowerState) currentPowerState();
+    QTM_PREPEND_NAMESPACE(QSystemDeviceInfo::ThermalState) currentThermalState();
     void setConnection();
     static QSystemDeviceInfoPrivate *instance() {return self;}
 
@@ -285,7 +286,7 @@ public:
 
     void keyboardConnected(bool connect);//1.2
     bool keypadLightOn(QSystemDeviceInfo::KeypadType type); //1.2
-    QUuid uniqueDeviceID(); //1.2
+    QByteArray uniqueDeviceID(); //1.2
     QSystemDeviceInfo::LockTypeFlags lockStatus(); //1.2
 
     int messageRingtoneVolume();//1.2
@@ -297,6 +298,7 @@ Q_SIGNALS:
     void batteryStatusChanged(QSystemDeviceInfo::BatteryStatus );
 
     void powerStateChanged(QSystemDeviceInfo::PowerState);
+    void thermalStateChanged(QSystemDeviceInfo::ThermalState);
     void currentProfileChanged(QSystemDeviceInfo::Profile);
     void bluetoothStateChanged(bool);
 

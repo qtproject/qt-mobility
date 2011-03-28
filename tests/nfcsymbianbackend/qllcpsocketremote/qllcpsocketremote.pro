@@ -12,5 +12,7 @@ TEMPLATE = app
 
 INCLUDEPATH += ../../../src/connectivity/nfc
 INCLUDEPATH += ../common
-SOURCES += tst_qllcpsocketremote.cpp
+HEADERS += ../common/qautomsgbox.h
+SOURCES += tst_qllcpsocketremote.cpp \
+        ../common/qautomsgbox.cpp
 symbian:TARGET.CAPABILITY = ALL -TCB

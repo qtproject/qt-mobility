@@ -52,6 +52,10 @@
 #include "qgstreamervideowindow.h"
 #include "qgstreamervideorenderer.h"
 
+#if defined(Q_WS_MAEMO_6) && defined(__arm__)
+#include "qgstreamergltexturerenderer.h"
+#endif
+
 #include "qgstreamervideowidget.h"
 #include "qgstreamerstreamscontrol.h"
 
@@ -70,7 +74,12 @@ QGstreamerPlayerService::QGstreamerPlayerService(QObject *parent):
     m_metaData = new QGstreamerMetaDataProvider(m_session, this);
     m_streamsControl = new QGstreamerStreamsControl(m_session,this);
 
+#if defined(Q_WS_MAEMO_6) && defined(__arm__)
+    m_videoRenderer = new QGstreamerGLTextureRenderer(this);
+#else
     m_videoRenderer = new QGstreamerVideoRenderer(this);
+#endif
+
 #if defined(Q_WS_X11) && !defined(QT_NO_XVIDEO)
 
 #ifdef Q_WS_MAEMO_6

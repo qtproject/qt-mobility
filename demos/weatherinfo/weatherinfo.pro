@@ -1,10 +1,10 @@
 TEMPLATE = app
 TARGET = weatherinfo_with_location
 
-HEADERS = ../../examples/satellitedialog/satellitedialog.h \
+HEADERS = ../lightmaps/satellitedialog.h \
             ../../examples/flickrdemo/connectivityhelper.h
 SOURCES = weatherinfo.cpp \
-            ../../examples/satellitedialog/satellitedialog.cpp \
+            ../lightmaps/satellitedialog.cpp \
             ../../examples/flickrdemo/connectivityhelper.cpp
 
 RESOURCES = weatherinfo.qrc
@@ -25,7 +25,7 @@ equals(QT_MAJOR_VERSION, 4):lessThan(QT_MINOR_VERSION, 7) {
 
 INCLUDEPATH += ../../src/global \
                 ../../src/location \
-                ../../examples/satellitedialog \
+                ../lightmaps \
                 ../../examples/flickrdemo
 
 symbian {

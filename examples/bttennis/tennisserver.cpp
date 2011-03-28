@@ -47,7 +47,7 @@
 #include <QDebug>
 
 TennisServer::TennisServer(QObject *parent)
-:   QObject(parent), l2capServer(0), stream(0), clientSocket(0), lagReplyTimeout(0)
+:   QObject(parent), l2capServer(0), clientSocket(0), stream(0), lagReplyTimeout(0)
 {    
     elapsed.start();
     ballElapsed.start();
@@ -201,8 +201,6 @@ void TennisServer::readSocket()
         QString s = args.takeFirst();
 
         if(s == "r" && args.count() == 1){
-            int y;
-
             emit moveRightPaddle(args.at(0).toInt());
         }
         else if(s == "e" && args.count() == 1){
