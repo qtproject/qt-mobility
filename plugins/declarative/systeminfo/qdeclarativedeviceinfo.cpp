@@ -119,6 +119,11 @@ Q_GLOBAL_STATIC(QSystemDeviceInfo, deviceInfo)
     This signal is emitted whenever the lock state changes
 */
 
+/*!
+    \qmlsignal DeviceInfo::thermalStateChanged(DeviceInfo::ThermalState)
+
+    This handler is called when thermal state has changed.
+*/
 
 QDeclarativeDeviceInfo::QDeclarativeDeviceInfo(QObject *parent) :
     QSystemDeviceInfo(parent)

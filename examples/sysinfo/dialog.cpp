@@ -391,6 +391,8 @@ void Dialog::setupNetwork()
     netStatusComboActivated((int)ni->currentMode());
 
     cellIdLabel->setText(QString::number(ni->cellId()));
+    connect(ni,SIGNAL(cellIdChanged(int)),this,SLOT(cellIdChanged(int)));
+
     locationAreaCodeLabel->setText(QString::number(ni->locationAreaCode()));
     currentMCCLabel->setText(ni->currentMobileCountryCode());
     currentMNCLabel->setText(ni->currentMobileNetworkCode());
@@ -1236,5 +1238,10 @@ void Dialog::lockStatusChanged(QSystemDeviceInfo::LockTypeFlags locktype)
         oldLockStatus = locktype;
         lockStateLabel->setText(lockStateToString(locktype));
     }
+}
+
+void Dialog::cellIdChanged(int id)
+{
+    cellIdLabel->setText(QString::number(id));
 }
 
