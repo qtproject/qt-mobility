@@ -20,6 +20,7 @@ RESOURCES += \
     tennis.qrc
 
 OTHER_FILES += \
+    tennis.qml \
     sensor.qml \
     Handover.qml \
     Paddle.qml \
