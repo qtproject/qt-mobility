@@ -224,15 +224,14 @@ void QAudioOutputPrivate::resume()
         if (SymbianAudio::SuspendedPausedState == m_internalState) {
 #ifndef PRE_S60_52_PLATFORM
             setState(SymbianAudio::ActiveState);
-            if (m_devSoundBuffer!=0) {
-            devsoundBufferToBeFilled(m_devSoundBuffer);
-            }
+            if (m_devSoundBuffer != 0)
+                devsoundBufferToBeFilled(m_devSoundBuffer);
             m_devSound->start();
 #else
 //defined in else part of macro to enable compatibility of previous code
             m_devSound->resume();
 #endif
-            } else {
+        } else {
             startPlayback();
         }
     }
@@ -395,12 +394,11 @@ void QAudioOutputPrivate::devsoundBufferToBeFilled(CMMFBuffer *bufferBase)
     // Will be returned to DevSoundWrapper by bufferProcessed().
     m_devSoundBuffer = static_cast<CMMFDataBuffer*>(bufferBase);
 #ifndef PRE_S60_52_PLATFORM
-    if (m_externalState == QAudio::SuspendedState)
-        {
+    if (m_externalState == QAudio::SuspendedState) {
         // This condition occurs when buffertobefilled callback is received after
         // pause command is processed.
         return;
-        }
+     }
 #endif
 
     if (!m_devSoundBufferSize)
