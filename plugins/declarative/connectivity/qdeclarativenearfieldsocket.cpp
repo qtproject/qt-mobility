@@ -43,6 +43,60 @@
 
 #include <qllcpserver.h>
 
+/*!
+    \qmlclass NearFieldSocket QDeclarativeNearFieldSocket
+    \brief The NearFieldSocket element represents an LLCP socket.
+
+    \ingroup connectivity-qml
+    \inmodule QtConnectivity
+
+    \sa QLlcpSocket
+    \sa QLlcpServer
+
+    The NearFieldSocket element is part of the \bold {QtMobility.connectivity 1.2} module.
+
+    The NearFieldSocket element can be used to create a peer-to-peer connection over NFC LLCP
+    sockets.  NearfieldSocket can be used for both client and server side sockets.
+*/
+
+/*!
+    \qmlproperty string NearFieldSocket::uri
+
+    This property hold the URI of the socket.  The URI uniquely identifies a remote service (for
+    client sockets) or to register a service (for server sockets).
+*/
+
+/*!
+    \qmlproperty bool NearFieldSocket::connected
+
+    This property holds the connected state of the socket.
+*/
+
+/*!
+    \qmlproperty string NearFieldSocket::error
+
+    This property holds the last error that occured.
+*/
+
+/*!
+    \qmlproperty string NearFieldSocket::state
+
+    This property holds the state of the socket.
+*/
+
+/*!
+    \qmlproperty bool NearFieldSocket::listening
+
+    This property holds whether the socket is listening for incoming connections.
+*/
+
+/*!
+    \qmlproperty string NearFieldSocket::stringData
+
+    This property returns the available string data read from the socket.  Seting this property
+    sends the data to the remote socket.
+*/
+
 class QDeclarativeNearFieldSocketPrivate
 {
     Q_DECLARE_PUBLIC(QDeclarativeNearFieldSocket)

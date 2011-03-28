@@ -41,6 +41,28 @@
 
 #include "qdeclarativendefmimerecord_p.h"
 
+/*!
+    \qmlclass NdefMimeRecord QDeclarativeNdefMimeRecord
+    \brief The NdefMimeRecord element represents an NFC MIME record.
+
+    \ingroup connectivity-nfc
+    \inmodule QtConnectivity
+
+    \inherits NdefRecord
+
+    The NdefMimeRecord element is part of the \bold {QtMobility.connectivity 1.2} module.
+
+    The NdefMimeRecord element can contain data with an associated MIME type.  The data is
+    accessible from the uri in the \l {NdefMimeRecord::uri}{uri} property.
+*/
+
+/*!
+    \qmlproperty string NdefMimeRecord::uri
+
+    This property hold the URI from which the MIME data can be fetched from.  Currently this
+    property returns a data url.
+*/
+
 Q_DECLARE_NDEFRECORD(QDeclarativeNdefMimeRecord, QNdefRecord::Mime, ".*")
 
 static inline QNdefRecord createMimeRecord()

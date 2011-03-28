@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
+**
 ** GNU Lesser General Public License Usage
-** This file may be used under the terms of the GNU Lesser General Public
-** License version 2.1 as published by the Free Software Foundation and
-** appearing in the file LICENSE.LGPL included in the packaging of this
-** file. Please review the following information to ensure the GNU Lesser
-** General Public License version 2.1 requirements will be met:
-** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** Alternatively, this file may be used under the terms of the GNU Lesser
+** General Public License version 2.1 as published by the Free Software
+** Foundation and appearing in the file LICENSE.LGPL included in the
+** packaging of this file.  Please review the following information to
+** ensure the GNU Lesser General Public License version 2.1 requirements
+** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights. These rights are described in the Nokia Qt LGPL Exception
+** rights.  These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU General
-** Public License version 3.0 as published by the Free Software Foundation
-** and appearing in the file LICENSE.GPL included in the packaging of this
-** file. Please review the following information to ensure the GNU General
-** Public License version 3.0 requirements will be met:
-** http://www.gnu.org/copyleft/gpl.html.
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
 **
-** Other Usage
-** Alternatively, this file may be used in accordance with the terms and
-** conditions contained in a signed written agreement between you and Nokia.
+**
+**
 **
 **
 **
@@ -45,6 +45,93 @@
 #include <QtCore/QRegExp>
 
 QTM_BEGIN_NAMESPACE
+
+/*!
+    \class QDeclarativeNdefRecord
+    \brief The QDeclarativeNdefRecord class implements the NdefRecord element in QML.
+
+    \ingroup connectivity-nfc
+    \inmodule QtConnectivity
+
+    \sa NdefRecord
+
+    The QDeclarativeNdefRecord class is the base class for all NdefRecord elements in QML.  To
+    support a new NDEF record type in QML subclass this class and expose new properties, member
+    functions and signals appropriate for the new record type.  The following must be done to
+    create a new NDEF record type in QML:
+
+    \list
+        \o The subclass must have a Q_OBJECT macro in its declaration.
+        \o The subclass must have an \l {Q_INVOKABLE}{invokable} constructor that takes a
+           QNdefRecord and a QObject pointer.
+        \o The subclass must be declared as an NDEF record by expanding the Q_DECLARE_NDEFRECORD()
+           macro in the implementation file of the subclass.
+        \o The subclass must be registered with QML.
+    \endlist
+
+    For example the declaration of such a class may look like the following.
+
+    \snippet snippets/connectivity/foorecord.h Foo declaration
+
+    Within the implementation file the Q_DECLARE_NDEFRECORD() macro is expanded:
+
+    \snippet snippets/connectivity/foorecord.cpp Declare foo record
+
+    Finially the application or plugin code calls qmlRegisterType():
+
+    \code
+        qmlRegisterType<QDeclarativeNdefFooRecord>(uri, 1, 0, "NdefFooRecord");
+    \endcode
+*/
+
+/*!
+    \qmlclass NdefRecord QDeclarativeNdefRecord
+    \brief The NdefRecord element represents a record in an NDEF message.
+
+    \ingroup connectivity-qml
+    \inmodule QtConnectivity
+
+    \sa NdefFilter
+    \sa NearField
+
+    \sa QNdefRecord
+
+    The NdefRecord element is the base element for all NDEF record elements in QML.  It contains
+    a single property holding the type of record.
+
+    This class is not intended to be used directly, but extended from C++.
+
+    \sa QDeclarativeNdefRecord
+*/
+
+/*!
+    \qmlproperty string NdefRecord::recordType
+
+    This property holds the fully qualified record type of the NDEF record.  The fully qualified
+    record type includes the NIS and NSS prefixes.
+*/
+
+/*!
+    \fn void QDeclarativeNdefRecord::recordTypeChanged()
+
+    This signal is emitted when the record type changes.
+*/
+
+/*!
+    \property QDeclarativeNdefRecord::recordType
+
+    This property hold the record type of the NDEF record that this class represents.
+*/
+
+/*!
+    \macro Q_DECLARE_NDEFRECORD(className, typeNameFormat, type)
+    \relates QDeclarativeNdefRecord
+
+    This macro ensures that \a className is declared as the class implementing the NDEF record
+    identified by \a typeNameFormat and \a type.
+
+    This macro should be expanded in the implementation file for \a className.
+*/
 
 static QMap<QString, const QMetaObject *> registeredNdefRecordTypes;
 
@@ -68,6 +155,9 @@ static QString urnForRecordType(QNdefRecord::TypeNameFormat typeNameFormat, cons
     }
 }
 
+/*!
+    \internal
+*/
 void qRegisterNdefRecordTypeHelper(const QMetaObject *metaObject,
                                    QNdefRecord::TypeNameFormat typeNameFormat,
                                    const QByteArray &type)
@@ -75,6 +165,9 @@ void qRegisterNdefRecordTypeHelper(const QMetaObject *metaObject,
     registeredNdefRecordTypes.insert(urnForRecordType(typeNameFormat, type), metaObject);
 }
 
+/*!
+    \internal
+*/
 QDeclarativeNdefRecord *qNewDeclarativeNdefRecordForNdefRecord(const QNdefRecord &record)
 {
     const QString urn = urnForRecordType(record.typeNameFormat(), record.type());
@@ -98,17 +191,28 @@ QDeclarativeNdefRecord *qNewDeclarativeNdefRecordForNdefRecord(const QNdefRecord
     return new QDeclarativeNdefRecord(record);
 }
 
+/*!
+    Constructs a new empty QDeclarativeNdefRecord with \a parent.
+*/
 QDeclarativeNdefRecord::QDeclarativeNdefRecord(QObject *parent)
 :   QObject(parent), d_ptr(new QDeclarativeNdefRecordPrivate)
 {
 }
 
+/*!
+   Constructs a new QDeclarativeNdefRecord representing \a record.  The parent of the newly
+   constructed object will be set to \a parent.
+*/
 QDeclarativeNdefRecord::QDeclarativeNdefRecord(const QNdefRecord &record, QObject *parent)
 :   QObject(parent), d_ptr(new QDeclarativeNdefRecordPrivate)
 {
     d_ptr->record = record;
 }
 
+/*!
+    Returns the fully qualified record type of the record.  The fully qualified record type
+    includes both the NIS and NSS prefixes.
+*/
 QString QDeclarativeNdefRecord::recordType() const
 {
     Q_D(const QDeclarativeNdefRecord);
@@ -119,6 +223,10 @@ QString QDeclarativeNdefRecord::recordType() const
     return urnForRecordType(d->record.typeNameFormat(), d->record.type());
 }
 
+/*!
+    Sets the record type to \a type if it is not currently equal to \a type; otherwise does
+    nothing.  If the record type is set the recordTypeChanged() signal will be emitted.
+*/
 void QDeclarativeNdefRecord::setRecordType(const QString &type)
 {
     if (type == recordType())
@@ -142,6 +250,9 @@ void QDeclarativeNdefRecord::setRecordType(const QString &type)
     emit recordTypeChanged();
 }
 
+/*!
+    Returns a copy of the record.
+*/
 QNdefRecord QDeclarativeNdefRecord::record() const
 {
     Q_D(const QDeclarativeNdefRecord);
@@ -149,6 +260,9 @@ QNdefRecord QDeclarativeNdefRecord::record() const
     return d->record;
 }
 
+/*!
+    Sets the record to \a record.
+*/
 void QDeclarativeNdefRecord::setRecord(const QNdefRecord &record)
 {
     Q_D(QDeclarativeNdefRecord);
