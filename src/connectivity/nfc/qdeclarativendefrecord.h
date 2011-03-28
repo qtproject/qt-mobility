@@ -80,9 +80,6 @@ private:
 void Q_CONNECTIVITY_EXPORT qRegisterNdefRecordTypeHelper(const QMetaObject *metaObject,
                                                          QNdefRecord::TypeNameFormat typeNameFormat,
                                                          const QByteArray &type);
-void Q_CONNECTIVITY_EXPORT qRegisterNdefRecordTypeHelper(const QMetaObject *metaObject,
-                                                         QNdefRecord::TypeNameFormat typeNameFormat,
-                                                         const QRegExp &regex);
 
 Q_CONNECTIVITY_EXPORT QDeclarativeNdefRecord *qNewDeclarativeNdefRecordForNdefRecord(const QNdefRecord &record);
 
