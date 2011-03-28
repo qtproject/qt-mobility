@@ -694,7 +694,7 @@ int QSystemDeviceInfo::ProfileDetails::voiceRingtoneVolume() const
   */
 bool QSystemDeviceInfo::ProfileDetails::vibrationActive() const
 {
-    return deviceInfoPrivate()->messageRingtoneVolume();
+    return deviceInfoPrivate()->vibrationActive();
 }
 
 #include "moc_qsystemdeviceinfo.cpp"
