@@ -168,15 +168,13 @@ void CameraBinAudioEncoder::resetActualSettings()
 GstElement *CameraBinAudioEncoder::createEncoder()
 {
     QString codec = m_audioSettings.codec();
-
-    GstBin * encoderBin = GST_BIN(gst_bin_new("audio-encoder-bin"));
-    Q_ASSERT(encoderBin);
-
-    GstElement *capsFilter = gst_element_factory_make("capsfilter", NULL);
     QByteArray encoderElementName = m_elementNames.value(codec);
     GstElement *encoderElement = gst_element_factory_make(encoderElementName.constData(), NULL);
+    if (!encoderElement)
+        return 0;
 
-    Q_ASSERT(encoderElement);
+    GstBin * encoderBin = GST_BIN(gst_bin_new("audio-encoder-bin"));
+    GstElement *capsFilter = gst_element_factory_make("capsfilter", NULL);
 
     gst_bin_add(encoderBin, capsFilter);
     gst_bin_add(encoderBin, encoderElement);

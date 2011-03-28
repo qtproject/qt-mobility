@@ -162,14 +162,13 @@ void QGstreamerAudioEncode::setAudioSettings(const QAudioEncoderSettings &settin
 GstElement *QGstreamerAudioEncode::createEncoder()
 {
     QString codec = m_audioSettings.codec();
+    GstElement *encoderElement = gst_element_factory_make(m_elementNames.value(codec).constData(), NULL);
+    if (!encoderElement)
+        return 0;
 
     GstBin * encoderBin = GST_BIN(gst_bin_new("audio-encoder-bin"));
-    Q_ASSERT(encoderBin);
 
     GstElement *capsFilter = gst_element_factory_make("capsfilter", NULL);
-    GstElement *encoderElement = gst_element_factory_make(m_elementNames.value(codec).constData(), NULL);
-
-    Q_ASSERT(encoderElement);
 
     gst_bin_add(encoderBin, capsFilter);
     gst_bin_add(encoderBin, encoderElement);
