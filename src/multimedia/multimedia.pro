@@ -71,7 +71,8 @@ PUBLIC_HEADERS += \
     qgraphicsvideoitem.h \
     qvideorenderercontrol.h \
     qmediatimerange.h \
-    qmedianetworkaccesscontrol.h
+    qmedianetworkaccesscontrol.h \
+    qmediaenumdebug.h
 
 SOURCES += qmediacontrol.cpp \
     qmediaobject.cpp \
@@ -130,7 +131,9 @@ PUBLIC_HEADERS += \
     qcameraexposurecontrol.h \
     qcamerafocuscontrol.h \
     qcameraflashcontrol.h \
-    qcameraimageprocessingcontrol.h
+    qcameraimageprocessingcontrol.h \
+    qcameracapturedestinationcontrol.h \
+    qcameracapturebufferformatcontrol.h
 
 SOURCES += \
     qcamera.cpp \
@@ -145,7 +148,9 @@ SOURCES += \
     qcameraexposurecontrol.cpp \
     qcamerafocuscontrol.cpp \
     qcameraflashcontrol.cpp \
-    qcameraimageprocessingcontrol.cpp
+    qcameraimageprocessingcontrol.cpp \
+    qcameracapturedestinationcontrol.cpp \
+    qcameracapturebufferformatcontrol.cpp
 
 include(audio/audio.pri)
 include(video/video.pri)
@@ -168,7 +173,16 @@ maemo5 {
 }
 
 maemo6 {
-    SOURCES += qgraphicsvideoitem_overlay.cpp
+    isEqual(QT_ARCH,armv6) {
+        HEADERS += qeglimagetexturesurface_p.h
+        SOURCES += qeglimagetexturesurface.cpp
+
+        SOURCES += qgraphicsvideoitem_maemo6.cpp
+
+        LIBS += -lX11
+    } else {
+        SOURCES += qgraphicsvideoitem.cpp
+    }
 }
 
 symbian {
@@ -186,6 +200,9 @@ symbian {
 HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
 
 symbian {
+contains(S60_VERSION, 5.1) |contains (S60_VERSION, 3.2) | contains(S60_VERSION, 3.1) {
+        DEFINES += PRE_S60_52_PLATFORM
+        }
     load(data_caging_paths)
     QtMediaDeployment.sources = QtMultimediaKit.dll
     QtMediaDeployment.path = /sys/bin

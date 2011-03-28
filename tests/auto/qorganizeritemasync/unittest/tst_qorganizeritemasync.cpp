@@ -3091,8 +3091,6 @@ void tst_QOrganizerItemAsync::testDebugStreamOut()
 
     // Note: testing of the filled-in case has been removed due to issues (expected-message string gets truncated after 1000 characters)
 
-    qDebug() << dfr;
-
 
     // Testing QOrganizerItemDetailDefinitionSaveRequest
 

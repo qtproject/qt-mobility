@@ -73,7 +73,7 @@ Examples:
 The createpackage command creates a self signed symbian installer package. The -i parameter in createpackage command installs the example to your device connected to Nokia Ovi Suite.
 
 How to sign the packages that can be selfsigned? Easy, use createpackage as demonstrated in the installation instructions.
-What about the ones that require heavier signing? See http://www.forum.nokia.com/testing or http://developer.symbian.org/wiki/index.php/Complete_Guide_To_Symbian_Signed
+What about the ones that require heavier signing? http://wiki.forum.nokia.com/index.php/Complete_Guide_To_Symbian_Signed
 
 
 Followup and support for QtMobility

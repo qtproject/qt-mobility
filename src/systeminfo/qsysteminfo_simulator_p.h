@@ -119,6 +119,7 @@ public:
     QString homeMobileCountryCode() const { return data.homeMobileCountryCode; }
     QString homeMobileNetworkCode() const { return data.homeMobileNetworkCode; }
     QSystemNetworkInfo::NetworkMode currentMode() const { return data.currentMode; }
+    QSystemNetworkInfo::CellDataTechnology cellDataTechnology() { return data.cellData; };
 
     QString networkName(QSystemNetworkInfo::NetworkMode m) const;
     QString macAddress(QSystemNetworkInfo::NetworkMode m) const;
@@ -133,6 +134,7 @@ public:
     void setHomeMobileCountryCode(const QString &code);
     void setHomeMobileNetworkCode(const QString &code);
     void setCurrentMode(QSystemNetworkInfo::NetworkMode m);
+    void setCellDataTechnology(QSystemNetworkInfo::CellDataTechnology  cd);
 
     void setNetworkName(QSystemNetworkInfo::NetworkMode m, const QString &name);
     void setNetworkMacAddress(QSystemNetworkInfo::NetworkMode m, const QString &mac);
@@ -149,6 +151,7 @@ signals:
     void networkNameChanged(QSystemNetworkInfo::NetworkMode, const QString &) const;
     void networkModeChanged(QSystemNetworkInfo::NetworkMode) const;
     void cellIdChanged(int);
+    void cellDataTechnologyChanged(QSystemNetworkInfo::CellDataTechnology); //1.2
 
 private:
     QSystemNetworkInfoData data;
@@ -195,6 +198,7 @@ public:
 
     QSystemDeviceInfo::Profile currentProfile() const { return data.currentProfile; }
     QSystemDeviceInfo::PowerState currentPowerState() const { return data.currentPowerState; }
+    QSystemDeviceInfo::ThermalState currentThermalState() const { return data.currentThermalState; }
     QSystemDeviceInfo::SimStatus simStatus() const { return data.simStatus; }
     QSystemDeviceInfo::InputMethodFlags inputMethodType() const { return data.inputMethodType; }
 
@@ -216,7 +220,7 @@ public:
 
     bool keypadLightOn(QSystemDeviceInfo::KeypadType type)const { Q_UNUSED(type);return data.keypadLight; }
     bool backLightOn()const { return data.backLight; }
-    QUuid uniqueDeviceID(){ return data.uniqueDeviceId; }
+    QByteArray uniqueDeviceID(){ return data.uniqueDeviceId; }
     QSystemDeviceInfo::LockTypeFlags lockStatus()const { return data.lockType; }
 
     QSystemDeviceInfo::BatteryStatus batteryStatus() const;
@@ -228,6 +232,7 @@ public:
 
     void setCurrentProfile(QSystemDeviceInfo::Profile v);
     void setCurrentPowerState(QSystemDeviceInfo::PowerState v);
+    void setCurrentThermalState(QSystemDeviceInfo::ThermalState v);
     void setSimStatus(QSystemDeviceInfo::SimStatus v);
     void setInputMethodType(QSystemDeviceInfo::InputMethodFlags v);
 
@@ -250,7 +255,7 @@ public:
 
     void setKeypadLightOn(bool v);
     void setBackLightOn(bool v);
-    void setUniqueDeviceId(const QUuid &v);
+    void setUniqueDeviceId(const QByteArray &v);
     void setTypeOfLock(QSystemDeviceInfo::LockTypeFlags v);
 
     void setMessageRingtoneVolume(int v);
@@ -264,6 +269,7 @@ Q_SIGNALS:
     void batteryLevelChanged(int) const;
     void batteryStatusChanged(QSystemDeviceInfo::BatteryStatus) const;
     void powerStateChanged(QSystemDeviceInfo::PowerState) const;
+    void thermalStateChanged(QSystemDeviceInfo::ThermalState) const;
     void currentProfileChanged(QSystemDeviceInfo::Profile) const;
     void bluetoothStateChanged(bool) const;
 

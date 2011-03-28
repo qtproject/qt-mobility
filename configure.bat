@@ -628,6 +628,7 @@ call :compileTest BTEngineDeviceManager_Symbian btengdevman_symbian
 call :compileTest LockandFlipKeys LockandFlipPSkeys
 call :compileTest FmTxClientCheck FmTxClient
 call :compileTest DiskNotifyClientCheck DiskNotifyClient
+call :compileTest ThermalStatus_Symbian thermalstatus_symbian
 goto noTests
 
 :windowsTests

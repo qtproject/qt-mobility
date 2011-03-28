@@ -81,6 +81,10 @@
 #include "storagedisknotifier_s60.h"
 #endif
 
+#ifdef THERMALSTATUS_SUPPORTED
+#include "thermalstatus_s60.h"
+#endif
+
 QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
@@ -265,6 +269,9 @@ class QSystemDeviceInfoPrivate : public QObject,
 #ifdef LOCKANDFLIP_SUPPORTED
     ,public MKeylockStatusObserver,public MFlipStatusObserver
 #endif
+#ifdef THERMALSTATUS_SUPPORTED
+    ,public MThermalStatusObserver
+#endif
 {
     Q_OBJECT
 
@@ -290,6 +297,7 @@ public:
     QSystemDeviceInfo::Profile currentProfile();
 
     QSystemDeviceInfo::PowerState currentPowerState();
+    QSystemDeviceInfo::ThermalState currentThermalState();
 
     bool currentBluetoothPowerState();
 
@@ -298,7 +306,7 @@ public:
     bool isKeyboardFlippedOpen();//1.2
     void keyboardConnected(bool connect);//1.2
     bool keypadLightOn(QSystemDeviceInfo::KeypadType type); //1.2
-    QUuid uniqueDeviceID(); //1.2
+    QByteArray uniqueDeviceID(); //1.2
     QSystemDeviceInfo::LockTypeFlags lockStatus(); //1.2
 
     int messageRingtoneVolume();//1.2
@@ -310,6 +318,7 @@ Q_SIGNALS:
     void bluetoothStateChanged(bool);
     void currentProfileChanged(QSystemDeviceInfo::Profile);
     void powerStateChanged(QSystemDeviceInfo::PowerState);
+    void thermalStateChanged(QSystemDeviceInfo::ThermalState);
 
     void wirelessKeyboardConnected(bool connected);//1.2
     void keyboardFlipped(bool open);//1.2
@@ -346,6 +355,11 @@ protected:
 
     //from MFlipStatusObserver
     void flipStatusChanged(TInt aFlipType , TInt aFilpKeyBoard );
+#endif
+
+#ifdef THERMALSTATUS_SUPPORTED
+    //from MThermalStatusObserver
+    void NotiftythermalStateChanged(TUint8 aThermalStatus);
 #endif
 private:
     QSystemDeviceInfo::Profile s60ProfileIdToProfile(TInt profileId) const;
@@ -495,6 +509,17 @@ public:
     }
 #endif
 
+#ifdef THERMALSTATUS_SUPPORTED
+    CThermalStatus *thermalStatus()
+        {
+           if (!m_thermalStatus)
+            {
+             m_thermalStatus = new CThermalStatus;
+            }
+            return m_thermalStatus;
+        }
+#endif
+
     CBatteryCommonInfo *batteryCommonInfo ()
     {
         if (!m_batteryCommonInfo) {
@@ -521,6 +546,9 @@ private:
 #ifdef DISKNOTIFY_SUPPORTED
         ,m_storagedisknotifier(NULL)
 #endif
+#ifdef THERMALSTATUS_SUPPORTED
+        ,m_thermalStatus(NULL)
+#endif
     {
         m_telephony = CTelephony::NewL();
     };
@@ -546,6 +574,10 @@ private:
 #ifdef DISKNOTIFY_SUPPORTED
         delete m_storagedisknotifier;
 #endif
+
+#ifdef THERMALSTATUS_SUPPORTED
+        delete m_thermalStatus;
+#endif
     }
 
     DeviceInfo(const DeviceInfo &);
@@ -570,6 +602,10 @@ private:
 #endif
 #ifdef DISKNOTIFY_SUPPORTED
     CStorageDiskNotifier* m_storagedisknotifier;
+#endif
+
+#ifdef THERMALSTATUS_SUPPORTED
+    CThermalStatus* m_thermalStatus;
 #endif
 };
 

@@ -63,7 +63,7 @@ public: // S60VideoRendererControl
     QAbstractVideoSurface *surface() const;
     void setSurface(QAbstractVideoSurface *surface);
 
-Q_SIGNALS: // Internal Signals
+signals: // Internal Signals
 
     void viewFinderSurfaceSet();
 

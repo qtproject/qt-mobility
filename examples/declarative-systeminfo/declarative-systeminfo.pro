@@ -3,5 +3,6 @@ SUBDIRS += battery \
 		 network \
 		 storage \
          battery2 \
-         device
+         device \
+         deviceinfo
 
