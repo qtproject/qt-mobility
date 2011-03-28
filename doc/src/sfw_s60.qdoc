@@ -45,7 +45,7 @@ Symbian provides 3 different methods to register services.
 \section2 Automatic registration
 
 Registration phase is a little different compared to other platforms because of the
-authenticity of the provider is done during (un)registering phase based on the verification 
+authenticity of the provider is done during (un)registering phase based on the verification
 of VID/SID (vendor ID or secure ID). Durring automatic registration the VID/SID is set to 0.  This method
 is suitable for services that aren't security critical.
 
@@ -68,7 +68,7 @@ Or in a symbian .pkg file by:
 
 For security registration a tiny installer application can be implemented by the service provider.
 The installer application can then provide a VID/PID and is responsible for the registering (and the unregistering)
-of the service. The example code for the installer is shown below. The whole installer project can be found under 
+of the service. The example code for the installer is shown below. The whole installer project can be found under
 \c {examples/serviceinstaller_sfw_symbian}.
 
 \snippet examples/serviceinstaller_sfw_symbian/exampleinstaller/exampleinstaller.cpp 0
@@ -82,10 +82,10 @@ registered the service is only allowed to remove it. VID/SID is left to the data
 unregistered. This prevents the exactly same way named services to be installed afterwards because the VID/SID
 information is locked to the service name.
 
-More info about VID and SID can be found from:
+More info about VID and SID can be found from
 \list
-    \o \l {http://developer.symbian.org/wiki/index.php/Platform_Security_%28Fundamentals_of_Symbian_C%2B%2B%29#VendorID}{VendorID}
-    \o \l {http://developer.symbian.org/wiki/index.php/Platform_Security_%28Fundamentals_of_Symbian_C%2B%2B%29#SecureID}{SecureID}
+    \o \l {http://wiki.forum.nokia.com/index.php/Symbian_Platform_Security_Model}
+    \o \l {http://wiki.forum.nokia.com/index.php/Symbian_Signed_Test_Criteria_V4_Wiki_version}
 \endlist
 
 \section2 ROM build registration

@@ -153,12 +153,13 @@ QDataStream &operator<<(QDataStream &out, const QSystemNetworkInfoData &s)
     qint32 currentMode = static_cast<qint32>(s.currentMode);
     out << currentMode;
     out << s.networkInfo;
+    out << s.cellData;
     return out;
 }
 QDataStream &operator>>(QDataStream &in, QSystemNetworkInfoData &s)
 {
-    qint32 cellid, loc;
-    in >> cellid >> loc;
+    qint32 cellid, loc, cellData;
+    in >> cellid >> loc >> cellData;
     s.cellId = cellid;
     s.locationAreaCode = loc;
     in >> s.currentMobileCountryCode >> s.currentMobileNetworkCode;
@@ -167,6 +168,7 @@ QDataStream &operator>>(QDataStream &in, QSystemNetworkInfoData &s)
     in >> currentMode;
     s.currentMode = static_cast<QSystemNetworkInfo::NetworkMode>(currentMode);
     in >> s.networkInfo;
+    s.cellData =  static_cast<QSystemNetworkInfo::CellDataTechnology>(cellData);
     return in;
 }
 

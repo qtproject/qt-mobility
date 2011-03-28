@@ -844,10 +844,13 @@ void CameraBinSession::busMessage(const QGstreamerMessage &message)
                 qWarning() << "CameraBin error:" << message;
             }
 
-            if (message.isEmpty())
-                message = tr("Camera error");
+            //only report error messager from camerabin
+            if (GST_MESSAGE_SRC(gm) == GST_OBJECT_CAST(m_pipeline)) {
+                if (message.isEmpty())
+                    message = tr("Camera error");
 
-            emit error(int(QMediaRecorder::ResourceError), message);
+                emit error(int(QMediaRecorder::ResourceError), message);
+            }
 
             if (err)
                 g_error_free (err);

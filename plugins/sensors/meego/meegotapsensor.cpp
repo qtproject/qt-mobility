@@ -97,11 +97,8 @@ void meegotapsensor::slotDataAvailable(const Tap& data)
 
 
 bool meegotapsensor::doConnect(){
-    if (!(QObject::connect(m_sensorInterface, SIGNAL(dataAvailable(const Tap&)),
-                           this, SLOT(slotDataAvailable(const Tap&))))){
-        return false;
-    }
-    return true;
+    return QObject::connect(m_sensorInterface, SIGNAL(dataAvailable(const Tap&)),
+                            this, SLOT(slotDataAvailable(const Tap&)));
 }
 
 

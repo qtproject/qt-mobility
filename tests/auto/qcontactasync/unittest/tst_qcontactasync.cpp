@@ -1279,6 +1279,61 @@ void tst_QContactAsync::contactPartialSave()
     QCOMPARE(errorMap.count(), 2);
     QCOMPARE(errorMap[3], QContactManager::DoesNotExistError);
     QCOMPARE(errorMap[4], QContactManager::InvalidDetailError);
+
+    // 8) A list entirely of new contacts, with no details in the mask
+    QList<QContact> contacts2;
+    QVERIFY(newContact.localId() == 0);
+    QVERIFY(newContact.details<QContactEmailAddress>().count() == 1);
+    QVERIFY(newContact.details<QContactPhoneNumber>().count() == 1);
+    contacts2.append(newContact);
+    csr.setContacts(contacts2);
+    csr.setDefinitionMask(QStringList(QContactOrganization::DefinitionName));
+    QVERIFY(csr.start());
+    QVERIFY(csr.waitForFinished());
+    QCOMPARE(csr.error(), QContactManager::NoError);
+    QVERIFY(csr.errorMap().isEmpty());
+    contacts2 = csr.contacts();
+    QCOMPARE(contacts2.size(), 1);
+    contacts2[0] = cm->contact(contacts2[0].localId());
+    QCOMPARE(contacts2[0].details<QContactEmailAddress>().count(), 0); // not saved
+    QCOMPARE(contacts2[0].details<QContactPhoneNumber>().count(), 0); // saved
+
+    // 9) A list entirely of new contacts, with some details in the mask
+    contacts2.clear();
+    QVERIFY(newContact.localId() == 0);
+    QVERIFY(newContact.details<QContactEmailAddress>().count() == 1);
+    QVERIFY(newContact.details<QContactPhoneNumber>().count() == 1);
+    contacts2.append(newContact);
+    csr.setContacts(contacts2);
+    csr.setDefinitionMask(QStringList(QContactPhoneNumber::DefinitionName));
+    QVERIFY(csr.start());
+    QVERIFY(csr.waitForFinished());
+    QCOMPARE(csr.error(), QContactManager::NoError);
+    QVERIFY(csr.errorMap().isEmpty());
+    contacts2 = csr.contacts();
+    QCOMPARE(contacts2.size(), 1);
+    contacts2[0] = cm->contact(contacts2[0].localId());
+    QCOMPARE(contacts2[0].details<QContactEmailAddress>().count(), 0); // not saved
+    QCOMPARE(contacts2[0].details<QContactPhoneNumber>().count(), 1); // saved
+
+    // 10) A list entirely of new contacts, with some details in the mask
+    contacts2.clear();
+    QVERIFY(newContact.localId() == 0);
+    QVERIFY(newContact.details<QContactEmailAddress>().count() == 1);
+    QVERIFY(newContact.details<QContactPhoneNumber>().count() == 1);
+    contacts2.append(newContact);
+    contacts2.append(newContact);
+    contacts2[0].setId(badId);
+    contacts2[1].saveDetail(&badDetail);
+    csr.setContacts(contacts2);
+    csr.setDefinitionMask(QStringList("BadDetail"));
+    QVERIFY(csr.start());
+    QVERIFY(csr.waitForFinished());
+    QVERIFY(csr.error() != QContactManager::NoError);
+    errorMap = csr.errorMap();
+    QCOMPARE(errorMap.count(), 2);
+    QCOMPARE(errorMap[0], QContactManager::DoesNotExistError);
+    QCOMPARE(errorMap[1], QContactManager::InvalidDetailError);
 }
 
 void tst_QContactAsync::contactPartialSaveAsync()
@@ -2491,6 +2546,12 @@ void tst_QContactAsync::addManagers(QStringList stringlist)
         managers.removeAll("testdummy");
     if (!stringlist.contains("symbiansim"))
         managers.removeAll("symbiansim"); // SIM backend does not support all the required details for tests to pass.
+    if (!stringlist.contains("social"))
+        managers.removeAll("social");
+    if (!stringlist.contains("simcard"))
+        managers.removeAll("simcard");
+    if (!stringlist.contains("com.nokia.messaging.contacts.engines.mail.contactslookup"))
+        managers.removeAll("com.nokia.messaging.contacts.engines.mail.contactslookup");
 
     foreach(QString mgr, managers) {
         QMap<QString, QString> params;

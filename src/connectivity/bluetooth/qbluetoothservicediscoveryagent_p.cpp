@@ -58,14 +58,6 @@ void QBluetoothServiceDiscoveryAgentPrivate::start(const QBluetoothAddress &addr
     Q_UNUSED(address);
 }
 
-bool QBluetoothServiceDiscoveryAgentPrivate::quickDiscovery(const QBluetoothAddress &address, const QBluetoothDeviceInfo &info)
-{
-    Q_UNUSED(address);
-    Q_UNUSED(info);
-    return false;
-}
-
-
 void QBluetoothServiceDiscoveryAgentPrivate::stop()
 {
 }

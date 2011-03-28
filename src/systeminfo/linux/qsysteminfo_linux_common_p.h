@@ -59,14 +59,15 @@
 #include <QHash>
 #include <QTimer>
 #include <QVariantMap>
+#include <QDesktopWidget>
 
-#include "../qsysteminfo.h"
-#include "../qsystemdeviceinfo.h"
-#include "../qsystemdisplayinfo.h"
-#include "../qsystemnetworkinfo.h"
-#include "../qsystemscreensaver.h"
-#include "../qsystemstorageinfo.h"
-#include "../qsystembatteryinfo.h"
+#include "qsysteminfo.h"
+#include "qsystemdeviceinfo.h"
+#include "qsystemdisplayinfo.h"
+#include "qsystemnetworkinfo.h"
+#include "qsystemscreensaver.h"
+#include "qsystemstorageinfo.h"
+#include "qsystembatteryinfo.h"
 
 #include <qmobilityglobal.h>
 
@@ -197,6 +198,7 @@ protected:
 #endif
 
 private Q_SLOTS:
+
 #if !defined(QT_NO_CONNMAN)
     void connmanPropertyChangedContext(const QString &path,const QString &item, const QDBusVariant &value);
     void connmanTechnologyPropertyChangedContext(const QString &path,const QString &item, const QDBusVariant &value);
@@ -207,11 +209,13 @@ private Q_SLOTS:
     void ofonoNetworkPropertyChangedContext(const QString &path,const QString &item, const QDBusVariant &value);
     void ofonoModemPropertyChangedContext(const QString &path,const QString &item, const QDBusVariant &value);
 #endif
-private:
-    QSystemNetworkInfo::NetworkStatus getBluetoothNetStatus();
 
+private:
+
+    QSystemNetworkInfo::NetworkStatus getBluetoothNetStatus();
     void connectNotify(const char *signal);
     void disconnectNotify(const char *signal);
+
 #if !defined(QT_NO_CONNMAN)
     QSystemNetworkInfo::CellDataTechnology ofonoTechToCDT(const QString &tech);
 #endif
@@ -236,9 +240,22 @@ public:
     int physicalHeight(int screen);
     int physicalWidth(int screen);
     QSystemDisplayInfo::BacklightState backlightStatus(int screen); //1.2
+    static QSystemDisplayInfoLinuxCommonPrivate *instance() {return self;}
+
+#if defined(Q_WS_X11)
+    void emitOrientationChanged(int curRotation);
+    int xEventBase;
+    int xErrorBase;
+    int lastRotation;
+#endif
+
 Q_SIGNALS:
     void orientationChanged(QSystemDisplayInfo::DisplayOrientation newOrientation);
 
+private:
+    bool isScreenValid(int screen);
+    QDesktopWidget *wid;
+    static QSystemDisplayInfoLinuxCommonPrivate *self;
 };
 
 class QSystemStorageInfoLinuxCommonPrivate : public QObject
@@ -305,7 +322,7 @@ public:
     QSystemDeviceInfoLinuxCommonPrivate(QObject *parent = 0);
     virtual ~QSystemDeviceInfoLinuxCommonPrivate();
 
-    QString imei();
+
     QString imsi();
     QString manufacturer();
     QString model();
@@ -320,6 +337,7 @@ public:
     QSystemDeviceInfo::Profile currentProfile() {return QSystemDeviceInfo::UnknownProfile;}
 
     QSystemDeviceInfo::PowerState currentPowerState();
+    QSystemDeviceInfo::ThermalState currentThermalState();
     void setConnection();
     bool currentBluetoothPowerState();
 
@@ -329,14 +347,14 @@ public:
 
     void keyboardConnected(bool connect);//1.2
     bool keypadLightOn(QSystemDeviceInfo::KeypadType type); //1.2
-    QUuid uniqueDeviceID(); //1.2
-    QSystemDeviceInfo::LockTypeFlags lockStatus(); //1.2
+    QByteArray uniqueDeviceID(); //1.2
 
 Q_SIGNALS:
     void batteryLevelChanged(int);
     void batteryStatusChanged(QSystemDeviceInfo::BatteryStatus );
 
     void powerStateChanged(QSystemDeviceInfo::PowerState);
+    void thermalStateChanged(QSystemDeviceInfo::ThermalState);
     void currentProfileChanged(QSystemDeviceInfo::Profile);
     void bluetoothStateChanged(bool);
 

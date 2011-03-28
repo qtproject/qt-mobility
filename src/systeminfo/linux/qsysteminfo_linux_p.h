@@ -123,7 +123,7 @@ public:
 
     QString networkName(QSystemNetworkInfo::NetworkMode mode);
     QString macAddress(QSystemNetworkInfo::NetworkMode mode);
-    QSystemNetworkInfo::CellDataTechnology cellDataTechnology();
+  //  QSystemNetworkInfo::CellDataTechnology cellDataTechnology();
 
 public Q_SLOTS:
 #if !defined(QT_NO_NETWORKMANAGER)
@@ -166,18 +166,6 @@ public:
     float contrast(int screen);
 
     QSystemDisplayInfo::BacklightState backlightStatus(int screen); //1.2
-
-    static QSystemDisplayInfoPrivate *instance() {return self;}
-
-#if !defined(Q_WS_MAEMO_6) && defined(Q_WS_X11)  && !defined(Q_WS_MEEGO)
-    void emitOrientationChanged(int curRotation);
-    int xEventBase;
-    int xErrorBase;
-    int lastRotation;
-#endif
-
-private:
-    static QSystemDisplayInfoPrivate *self;
 };
 
 class QSystemStorageInfoPrivate : public QSystemStorageInfoLinuxCommonPrivate
@@ -214,6 +202,7 @@ public:
 //    QSystemDeviceInfo::KeyboardTypeFlags keyboardTypes(); //1.2
 //    bool isWirelessKeyboardConnected(); //1.2
 //    bool isKeyboardFlippedOpen();//1.2
+    QSystemDeviceInfo::LockTypeFlags lockStatus(); //1.2
 
 
 private:

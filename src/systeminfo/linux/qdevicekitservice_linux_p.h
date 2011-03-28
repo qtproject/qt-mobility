@@ -135,6 +135,9 @@ public:
 
     QString uuid();
 
+    bool driveIsMediaEjectable();
+    bool driveCanDetach();
+
 Q_SIGNALS:
     void changed(const QString &);
 protected:

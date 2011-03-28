@@ -58,5 +58,6 @@ int main(int argc, char *argv[])
     view.setGeometry(QRect(100, 100, 360, 640));
     view.show();
 #endif // Q_OS_SYMBIAN
+    view.resize(360,640);
     return application.exec();
 }

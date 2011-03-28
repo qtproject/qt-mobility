@@ -633,6 +633,7 @@ find %{buildroot}%{_libdir}/qtmobility -type f -perm /u+x,g+x,o+x \( -false \
 %defattr(-,root,root,-)
 # >> files devel
 %{_bindir}/icheck
+%{_bindir}/ndefhandlergen
 %{_bindir}/qcrmlgen
 %{_bindir}/servicedbgen
 %{_bindir}/servicexmlgen

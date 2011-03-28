@@ -1207,9 +1207,15 @@ QSystemDeviceInfoPrivate::~QSystemDeviceInfoPrivate()
 void QSystemDeviceInfoPrivate::connectNotify(const char *signal)
 {
     if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(lockStatusChanged(QSystemDeviceInfo::LockTypeFlags))))) {
-        QDBusConnection::systemBus().connect("com.nokia.mce", "/com/nokia/mce/signal", "com.nokia.mce.signal", "tklock_mode_ind",
+        QDBusConnection::systemBus().connect("com.nokia.mce",
+                                             "/com/nokia/mce/signal",
+                                             "com.nokia.mce.signal",
+                                             "tklock_mode_ind",
                                              this, SLOT(touchAndKeyboardStateChanged(const QString&)));
-        QDBusConnection::systemBus().connect("com.nokia.devicelock", "/request", "com.nokia.devicelock", "stateChanged",
+        QDBusConnection::systemBus().connect("com.nokia.devicelock",
+                                             "/request",
+                                             "com.nokia.devicelock",
+                                             "stateChanged",
                                              this, SLOT(deviceStateChanged(int,int)));
     }
     if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(currentProfileChanged(QSystemDeviceInfo::Profile))))) {
@@ -1418,6 +1424,34 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoPrivate::currentPowerState()
         }
 #endif
     return QSystemDeviceInfo::UnknownPower;
+}
+
+QSystemDeviceInfo::ThermalState QSystemDeviceInfoPrivate::currentThermalState()
+{
+#if !defined(QT_NO_DBUS)
+    QString dBusService = "com.nokia.thermalmanager";
+    QDBusReply<QString> thermalStateReply = QDBusConnection::systemBus().call
+            (QDBusMessage::createMethodCall("com.nokia.thermalmanager",
+                                            "/com/nokia/thermalmanager",
+                                            "com.nokia.thermalmanager",
+                                            "get_thermal_state"));
+    if (thermalStateReply.isValid()){
+        if (thermalStateReply.value() == "normal"){
+            return QSystemDeviceInfo::NormalThermal;
+        }
+        if (thermalStateReply.value() == "warning"){
+            return QSystemDeviceInfo::WarningThermal;
+        }
+        if (thermalStateReply.value() == "alert"){
+            return QSystemDeviceInfo::AlertThermal;
+        }
+        if (thermalStateReply.value() == "unknown"){
+            return QSystemDeviceInfo::UnknownThermal;
+        } else {
+            return QSystemDeviceInfo::ErrorThermal;
+        }
+    }
+#endif
 }
 
 #if !defined(QT_NO_DBUS)
@@ -1672,9 +1706,11 @@ QSystemDeviceInfo::LockTypeFlags QSystemDeviceInfoPrivate::lockStatus()
         QString tkLockMode = mceReply.value();
         if (tkLockMode != "unlocked" && tkLockMode != "silent-unlocked") {
             lockFlags |= QSystemDeviceInfo::TouchAndKeyboardLocked;
+             currentLockType = lockFlags;
         }
     }
 #endif
+
     return lockFlags;
 }
 
@@ -1693,8 +1729,16 @@ void QSystemDeviceInfoPrivate::deviceStateChanged(int device, int state)
     QSystemDeviceInfo::LockTypeFlags lockFlags;
     if (device == 1 && state != 0) {
         lockFlags |= QSystemDeviceInfo::PinLocked;
+        currentLockType |= lockFlags;
+        emit lockStatusChanged(lockFlags);
+    } else {
+        if (currentLockType & QSystemDeviceInfo::PinLocked) {
+            currentLockType &= ~QSystemDeviceInfo::PinLocked;
+        }
+        lockFlags |= QSystemDeviceInfo::UnknownLock;
+        currentLockType |= lockFlags;
+        emit lockStatusChanged(lockFlags);
     }
-    emit lockStatusChanged(lockFlags);
 }
 
 void QSystemDeviceInfoPrivate::touchAndKeyboardStateChanged(const QString& state)
@@ -1702,8 +1746,36 @@ void QSystemDeviceInfoPrivate::touchAndKeyboardStateChanged(const QString& state
     QSystemDeviceInfo::LockTypeFlags lockFlags;
     if (state != "unlocked" && state != "silent-unlocked") {
         lockFlags |= QSystemDeviceInfo::TouchAndKeyboardLocked;
+        currentLockType |= lockFlags;
+        emit lockStatusChanged(lockFlags);
+    } else {
+        if (currentLockType & QSystemDeviceInfo::TouchAndKeyboardLocked) {
+            currentLockType &= ~QSystemDeviceInfo::TouchAndKeyboardLocked;
+        }
+        lockFlags |= QSystemDeviceInfo::UnknownLock;
+        currentLockType |= lockFlags;
+        emit lockStatusChanged(lockFlags);
     }
-    emit lockStatusChanged(lockFlags);
+}
+
+QByteArray QSystemDeviceInfoPrivate::uniqueDeviceID()
+{
+#if defined(Q_WS_MAEMO_6)
+    // create one from imei and mac addersses of bt and wlan interfaces
+    QSystemNetworkInfo netinfo;
+    QString wlanmac = netinfo.macAddress(QSystemNetworkInfo::WlanMode);
+    QString btmac = netinfo.macAddress(QSystemNetworkInfo::BluetoothMode);
+
+    QByteArray bytes = imei().toLocal8Bit();
+    QCryptographicHash hash(QCryptographicHash::Sha1);
+
+    hash.addData(bytes);
+    hash.addData(wlanmac.toLocal8Bit());
+    hash.addData(btmac.toLocal8Bit());
+    qDebug() << Q_FUNC_INFO << hash.result().toHex();
+
+    return hash.result().toHex();
+#endif
 }
 
 //////////////

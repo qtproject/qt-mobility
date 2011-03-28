@@ -18,7 +18,7 @@ PUBLIC_HEADERS += \
     bluetooth/qbluetoothtransferreply.h
 
 PRIVATE_HEADERS += \
-    bluetooth/qbluetoothuuid_p.h\
+    bluetooth/qbluetoothaddress_p.h\
     bluetooth/qbluetoothdeviceinfo_p.h\
     bluetooth/qbluetoothserviceinfo_p.h\
     bluetooth/qbluetoothdevicediscoveryagent_p.h\
@@ -26,6 +26,7 @@ PRIVATE_HEADERS += \
     bluetooth/qbluetoothsocket_p.h\
     bluetooth/qrfcommserver_p.h \
     bluetooth/ql2capserver_p.h \
+    bluetooth/qbluetoothtransferreply_p.h \
     bluetooth/qbluetoothtransferrequest_p.h
 
 SOURCES += \
