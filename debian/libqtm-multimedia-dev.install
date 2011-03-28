@@ -23,6 +23,8 @@ usr/include/qt4/QtMultimediaKit/QCameraFocusControl
 usr/include/qt4/QtMultimediaKit/QCameraFocusZone
 usr/include/qt4/QtMultimediaKit/QCameraImageCapture
 usr/include/qt4/QtMultimediaKit/QCameraImageCaptureControl
+usr/include/qt4/QtMultimediaKit/QCameraCaptureBufferFormatControl
+usr/include/qt4/QtMultimediaKit/QCameraCaptureDestinationControl
 usr/include/qt4/QtMultimediaKit/QCameraImageProcessing
 usr/include/qt4/QtMultimediaKit/QCameraImageProcessingControl
 usr/include/qt4/QtMultimediaKit/QCameraLocksControl
@@ -92,6 +94,8 @@ usr/include/qt4/QtMultimediaKit/qcamerafocus.h
 usr/include/qt4/QtMultimediaKit/qcamerafocuscontrol.h
 usr/include/qt4/QtMultimediaKit/qcameraimagecapture.h
 usr/include/qt4/QtMultimediaKit/qcameraimagecapturecontrol.h
+usr/include/qt4/QtMultimediaKit/qcameracapturedestinationcontrol.h
+usr/include/qt4/QtMultimediaKit/qcameracapturebufferformatcontrol.h
 usr/include/qt4/QtMultimediaKit/qcameraimageprocessing.h
 usr/include/qt4/QtMultimediaKit/qcameraimageprocessingcontrol.h
 usr/include/qt4/QtMultimediaKit/qcameralockscontrol.h
@@ -104,6 +108,7 @@ usr/include/qt4/QtMultimediaKit/qmediacontainercontrol.h
 usr/include/qt4/QtMultimediaKit/qmediacontent.h
 usr/include/qt4/QtMultimediaKit/qmediacontrol.h
 usr/include/qt4/QtMultimediaKit/qmediaencodersettings.h
+usr/include/qt4/QtMultimediaKit/qmediaenumdebug.h
 usr/include/qt4/QtMultimediaKit/qmediaimageviewer.h
 usr/include/qt4/QtMultimediaKit/qmedianetworkaccesscontrol.h
 usr/include/qt4/QtMultimediaKit/qmediaobject.h
