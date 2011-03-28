@@ -131,6 +131,8 @@ private slots:
 
     void lockStatusChanged(QSystemDeviceInfo::LockTypeFlags);
 
+    void cellIdChanged(int);
+
 
 
 };
