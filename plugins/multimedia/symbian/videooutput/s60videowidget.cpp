@@ -42,7 +42,6 @@
 #include "s60videowidget.h"
 #include "s60videooutpututils.h"
 
-#include <QtCore/QDebug>
 #include <QtCore/QVariant>
 #include <QtCore/QEvent>
 #include <QtGui/QApplication>
@@ -88,7 +87,7 @@ void S60VideoWidget::paintEvent(QPaintEvent *event)
     if (m_paintingEnabled && m_pixmap) {
         QPainter painter(this);
         if (m_pixmap->size() != m_contentRect.size())
-            qWarning() << "pixmap size does not match expected value";
+            qWarning("pixmap size does not match expected value");
         painter.drawPixmap(m_contentRect.topLeft(), *m_pixmap);
     }
 }
