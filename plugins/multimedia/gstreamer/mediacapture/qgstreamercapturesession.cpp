@@ -121,40 +121,48 @@ void QGstreamerCaptureSession::setCaptureMode(CaptureMode mode)
 
 GstElement *QGstreamerCaptureSession::buildEncodeBin()
 {
-    bool ok = true;
-
     GstElement *encodeBin = gst_bin_new("encode-bin");
 
     GstElement *muxer = gst_element_factory_make( m_mediaContainerControl->formatElementName().constData(), "muxer");
     if (!muxer) {
+        qWarning() << "Could not create a media muxer element:" << m_mediaContainerControl->formatElementName();
         gst_object_unref(encodeBin);
-        encodeBin = 0;
         return 0;
     }
 
     GstElement *fileSink = gst_element_factory_make("filesink", "filesink");
-
     g_object_set(G_OBJECT(fileSink), "location", m_sink.toString().toLocal8Bit().constData(), NULL);
-
     gst_bin_add_many(GST_BIN(encodeBin), muxer, fileSink,  NULL);
-    ok &= gst_element_link(muxer, fileSink);
+
+    if (!gst_element_link(muxer, fileSink)) {
+        gst_object_unref(encodeBin);
+        return 0;
+    }
 
     if (m_captureMode & Audio) {
         GstElement *audioConvert = gst_element_factory_make("audioconvert", "audioconvert");
         GstElement *audioQueue = gst_element_factory_make("queue", "audio-encode-queue");
         m_audioVolume = gst_element_factory_make("volume", "volume");
+        gst_bin_add_many(GST_BIN(encodeBin), audioConvert, audioQueue, m_audioVolume, NULL);
+
         GstElement *audioEncoder = m_audioEncodeControl->createEncoder();
+        if (!audioEncoder) {
+            gst_object_unref(encodeBin);
+            qWarning() << "Could not create an audio encoder element:" << m_audioEncodeControl->audioSettings().codec();
+            return 0;
+        }
 
-        ok &= audioEncoder != 0;
+        gst_bin_add(GST_BIN(encodeBin), audioEncoder);
 
-        gst_bin_add_many(GST_BIN(encodeBin), audioConvert, audioQueue, m_audioVolume, audioEncoder,  NULL);
+        if (!gst_element_link_many(audioConvert, audioQueue, m_audioVolume, audioEncoder, muxer, NULL)) {
+            gst_object_unref(encodeBin);
+            return 0;
+        }
 
-        ok &= gst_element_link_many(audioConvert, audioQueue, m_audioVolume, audioEncoder, muxer, NULL);
         g_object_set(G_OBJECT(m_audioVolume), "volume", (m_muted ? 0.0 : 1.0), NULL);
 
         // add ghostpads
         GstPad *pad = gst_element_get_static_pad(audioConvert, "sink");
-        Q_ASSERT(pad);
         gst_element_add_pad(GST_ELEMENT(encodeBin), gst_ghost_pad_new("audiosink", pad));
         gst_object_unref(GST_OBJECT(pad));
     }
@@ -163,24 +171,26 @@ GstElement *QGstreamerCaptureSession::buildEncodeBin()
         GstElement *videoQueue = gst_element_factory_make("queue", "video-encode-queue");
         GstElement *colorspace = gst_element_factory_make("ffmpegcolorspace", "ffmpegcolorspace-encoder");
         GstElement *videoscale = gst_element_factory_make("videoscale","videoscale-encoder");
+        gst_bin_add_many(GST_BIN(encodeBin), videoQueue, colorspace, videoscale, NULL);
 
         GstElement *videoEncoder = m_videoEncodeControl->createEncoder();
+        if (!videoEncoder) {
+            gst_object_unref(encodeBin);
+            qWarning() << "Could not create a video encoder element:" << m_videoEncodeControl->videoSettings().codec();
+            return 0;
+        }
 
-        ok &= videoEncoder != 0;
+        gst_bin_add(GST_BIN(encodeBin), videoEncoder);
 
-        gst_bin_add_many(GST_BIN(encodeBin), videoQueue, colorspace, videoscale, videoEncoder, NULL);
-        ok &= gst_element_link_many(videoQueue, colorspace, videoscale, videoEncoder, muxer, NULL);
+        if (!gst_element_link_many(videoQueue, colorspace, videoscale, videoEncoder, muxer, NULL)) {
+            gst_object_unref(encodeBin);
+            return 0;
+        }
 
         // add ghostpads
         GstPad *pad = gst_element_get_static_pad(videoQueue, "sink");
-        Q_ASSERT(pad);
         gst_element_add_pad(GST_ELEMENT(encodeBin), gst_ghost_pad_new("videosink", pad));
         gst_object_unref(GST_OBJECT(pad));
-    }
-
-    if (!ok) {
-        gst_object_unref(encodeBin);
-        encodeBin = 0;
     }
 
     return encodeBin;
