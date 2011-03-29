@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>795</width>
-    <height>485</height>
+    <width>949</width>
+    <height>618</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -69,6 +69,11 @@
      <item>
       <property name="text">
        <string>Screen Saver</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Aligned Timer</string>
       </property>
      </item>
     </widget>
@@ -2179,6 +2184,186 @@
           <size>
            <width>714</width>
            <height>261</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="page">
+      <layout class="QGridLayout" name="gridLayout_15">
+       <item row="0" column="1">
+        <widget class="QLabel" name="label_20">
+         <property name="text">
+          <string>Minimum </string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="3">
+        <widget class="QLabel" name="label_21">
+         <property name="text">
+          <string>Maximum </string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="label_22">
+         <property name="text">
+          <string>Timer 1</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QSpinBox" name="min1spinBox">
+         <property name="maximum">
+          <number>9999</number>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="3">
+        <widget class="QSpinBox" name="max1spinBox">
+         <property name="maximum">
+          <number>9999</number>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="4">
+        <widget class="QCheckBox" name="checkBox_1">
+         <property name="text">
+          <string>Single Shot</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="5">
+        <widget class="QPushButton" name="startButton">
+         <property name="text">
+          <string>Start</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="6">
+        <widget class="QPushButton" name="stopButton">
+         <property name="text">
+          <string>Stop</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="label_23">
+         <property name="text">
+          <string>Timer 2</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QSpinBox" name="min2spinBox">
+         <property name="maximum">
+          <number>9999</number>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="3">
+        <widget class="QSpinBox" name="max2spinBox">
+         <property name="maximum">
+          <number>9999</number>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="4">
+        <widget class="QCheckBox" name="checkBox_2">
+         <property name="text">
+          <string>Single Shot</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="5">
+        <widget class="QPushButton" name="startButton_2">
+         <property name="text">
+          <string>Start</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="6">
+        <widget class="QPushButton" name="stopButton_2">
+         <property name="text">
+          <string>Stop</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="7">
+        <spacer name="horizontalSpacer_14">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>358</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="label_24">
+         <property name="text">
+          <string>Timer 3</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <widget class="QSpinBox" name="min3spinBox">
+         <property name="maximum">
+          <number>9999</number>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="3">
+        <widget class="QSpinBox" name="max3spinBox">
+         <property name="maximum">
+          <number>9999</number>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="4">
+        <widget class="QCheckBox" name="checkBox_3">
+         <property name="text">
+          <string>Single Shot</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="5">
+        <widget class="QPushButton" name="startButton_3">
+         <property name="text">
+          <string>Start</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="6">
+        <widget class="QPushButton" name="stopButton_3">
+         <property name="text">
+          <string>Stop</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0" colspan="2">
+        <widget class="QLabel" name="timeLabel">
+         <property name="text">
+          <string>All time is in seconds</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="0" colspan="7">
+        <widget class="QTextEdit" name="textEdit"/>
+       </item>
+       <item row="6" column="2">
+        <spacer name="verticalSpacer_3">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>176</height>
           </size>
          </property>
         </spacer>
