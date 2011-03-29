@@ -83,6 +83,7 @@ private slots:
     void note();
     void eventOccurrence();
     void todoOccurrence();
+    void testDebugStreamOut();
 };
 
 tst_QOrganizerItem::tst_QOrganizerItem()
@@ -1223,6 +1224,43 @@ void tst_QOrganizerItem::todoOccurrence()
     testTodoOccurrence.setOriginalDate(originalDateTime.date());
     QCOMPARE(testTodoOccurrence.originalDate(), originalDateTime.date());
 }
+
+
+
+void tst_QOrganizerItem::testDebugStreamOut()
+{
+    QOrganizerRecurrenceRule rrule;
+    // Testing the empty case
+    QTest::ignoreMessage(QtDebugMsg, "QOrganizerRecurrenceRule(frequency=0,interval=1,no limit,daysOfWeek=\"\",daysOfMonth=\"\",daysOfYear=\"\",monthsOfYear=\"\",positions=\"\",firstDayOfWeek=1)");
+    qDebug() << rrule;
+
+    // Testing a completely filled case
+    rrule.setLimit(1);
+    rrule.setFrequency(QOrganizerRecurrenceRule::Weekly);
+    rrule.setInterval(10);
+    rrule.setLimit(20);
+    QSet<Qt::DayOfWeek> days;
+    days << Qt::Thursday << Qt::Friday;
+    rrule.setDaysOfWeek(days);
+    QSet<int> daysM;
+    daysM << 1 << 2 << 3;
+    rrule.setDaysOfMonth(daysM);
+    QSet<int> daysY;
+    daysY << 5 << 6 << 7 << 8;
+    rrule.setDaysOfYear(daysY);
+    QSet<QOrganizerRecurrenceRule::Month> months;
+    months << QOrganizerRecurrenceRule::January << QOrganizerRecurrenceRule::February;
+    rrule.setMonthsOfYear(months);
+    QSet<int> pos;
+    pos << -1;
+    rrule.setPositions(pos);
+    Qt::DayOfWeek firstDay;
+    firstDay = Qt::Tuesday;
+    rrule.setFirstDayOfWeek(firstDay);
+    QTest::ignoreMessage(QtDebugMsg, "QOrganizerRecurrenceRule(frequency=2,interval=10,limitCount=20,daysOfWeek=\"4 5 \",daysOfMonth=\"1 2 3 \",daysOfYear=\"5 6 7 8 \",monthsOfYear=\"1 2 \",positions=\"-1 \",firstDayOfWeek=2)");
+    qDebug() << rrule;
+}
+
 
 QTEST_MAIN(tst_QOrganizerItem)
 #include "tst_qorganizeritem.moc"

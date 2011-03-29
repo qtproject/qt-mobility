@@ -44,6 +44,7 @@
 
 #include "qmediaobject.h"
 #include "qmediacontent.h"
+#include <qmediaenumdebug.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -124,5 +125,11 @@ private:
 };
 
 QT_END_NAMESPACE
+
+Q_DECLARE_METATYPE(QMediaImageViewer::State)
+Q_DECLARE_METATYPE(QMediaImageViewer::MediaStatus)
+
+Q_MEDIA_ENUM_DEBUG(QMediaImageViewer, State)
+Q_MEDIA_ENUM_DEBUG(QMediaImageViewer, MediaStatus)
 
 #endif

@@ -45,6 +45,7 @@
 
 #include <QCoreApplication>
 #include <QEvent>
+#include <QTimer>
 
 #include "qmfstore_maemo6_p.h"
 #include "qmessage_p.h"
@@ -269,10 +270,29 @@ bool QMFStore::removeMessages(const QMessageFilter& filter, QMessageManager::Rem
     return d_ptr->_store->removeMessages(convert(filter), convert(option));
 }
 
+void QMFStore::emitAccountRemoved()
+{
+    if (m_ptrRemovedAccountId && m_ptrRemovedAccountId->isValid()) {
+        //QMessageAccountId id(*m_ptrRemovedAccountId);
+        emit accountRemoved(*m_ptrRemovedAccountId);
+        delete m_ptrRemovedAccountId;
+        m_ptrRemovedAccountId = 0;
+    }
+}
+
 bool QMFStore::removeAccount(const QMessageAccountId &id, QMessageManager::Error &error)
 {
+    bool result = false;
     error = QMessageManager::NoError;
-    return d_ptr->_store->removeAccount(convert(id));
+    result =  d_ptr->_store->removeAccount(convert(id));
+
+    if (result && m_ptrRemovedAccountId == 0) {
+        m_ptrRemovedAccountId = new QMessageAccountId(id);
+        QTimer::singleShot(0, this, SLOT(emitAccountRemoved()));
+    }
+
+
+    return result;
 }
 
 struct TextPartLocator

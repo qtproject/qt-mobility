@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -38,50 +38,42 @@
 **
 ****************************************************************************/
 
-#include <QApplication>
-#include <QMainWindow>
-#include <QMessageBox>
-#include <QTimer>
-#include <qgeopositioninfosource.h>
-#include <qgeosatelliteinfosource.h>
+import Qt 4.7
+import QtMobility.systeminfo 1.1
 
-#include "satellitedialog.h"
+Rectangle{
+    id: screen
+    color: "gray"
 
-int main(int argc, char* argv[])
-{
-    QApplication app(argc, argv);
-
-    SatelliteDialog *dialog = new SatelliteDialog(0,
-            30,
-            SatelliteDialog::ExitOnCancel,
-            SatelliteDialog::OrderByPrnNumber,
-            SatelliteDialog::ScaleToMaxPossible);
-
-    QGeoPositionInfoSource *posSource = QGeoPositionInfoSource::createDefaultSource(0);
-    QGeoSatelliteInfoSource *satSource = QGeoSatelliteInfoSource::createDefaultSource(0);
-
-    if ((posSource == 0) || (satSource == 0)) {
-        QMessageBox::critical(0, "SatelliteDialog", "This examples requires a valid location source and no valid location sources are available on this platform.");
-        return -1;
+    DeviceInfo {
+        id: deviceinfo;
+        onThermalStateChanged: updateThermalState()
+        monitorThermalStateChanges: true
     }
 
-    posSource->setUpdateInterval(5000);
+    Text {
+        id: thermal
+        text: updateThermalState()
+        color: "white";
+    }
 
-    dialog->connectSources(posSource, satSource);
+    function updateThermalState() {
+        state = deviceinfo.currentThermalState
+        if (state == DeviceInfo.UnknownThermal) {
+            thermal.text = "ThermalState: UnknownThermal";
+        } else if (state == DeviceInfo.NormalThermal) {
+            thermal.text = "ThermalState: NormalThermal";
+        } else if (state == DeviceInfo.WarningThermal) {
+            thermal.text = "ThermalState: WarningThermal";
+        } else if (state == DeviceInfo.AlertThermal) {
+            thermal.text = "ThermalState: AlertThermal";
+        } else if (state == DeviceInfo.ErrorThermal) {
+            thermal.text = "ThermalState: ErrorThermal";
+        }
+    }
 
-    posSource->startUpdates();
-    satSource->startUpdates();
-
-    QTimer::singleShot(1, dialog, SLOT(show()));
-
-    int result = app.exec();
-
-    posSource->stopUpdates();
-    satSource->stopUpdates();
-
-    delete posSource;
-    delete satSource;
-    delete dialog;
-
-    return result;
+    MouseArea {
+        anchors.fill: parent
+        onClicked: { Qt.quit() }
+    }
 }

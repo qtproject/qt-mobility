@@ -51,6 +51,8 @@ QTM_BEGIN_NAMESPACE
 
   \inmodule QtLocation
 
+  \ingroup location
+
   Implementers must provide a unique combination of sourceName() and
   sourceVersion() per plugin.
 
@@ -77,17 +79,17 @@ QTM_BEGIN_NAMESPACE
 /*!
   \fn QGeoPositionInfoSource *QGeoPositionInfoSourceFactory::positionInfoSource(QObject *parent)
 
-  Returns a new QGeoPositionInfoSource associated with this plugin. Can
-  also return 0, in which case the factory with the next highest priority
-  will be used instead.
+  Returns a new QGeoPositionInfoSource associated with this plugin
+  with parent \a parent . Can also return 0, in which case the factory
+  with the next highest priority will be used instead.
   */
 
 /*!
   \fn QGeoSatelliteInfoSource *QGeoPositionInfoSourceFactory::satelliteInfoSource(QObject *parent)
 
-  Returns a new QGeoSatelliteInfoSource associated with this plugin. Can
-  also return 0, in which case the factory with the next highest priority
-  will be used instead.
+  Returns a new QGeoSatelliteInfoSource associated with this plugin
+  with parent \a parent. Can also return 0, in which case the factory
+  with the next highest priority will be used instead.
   */
 
 /*!
@@ -119,6 +121,9 @@ int QGeoPositionInfoSourceFactory::sourcePriority() const
     return 0;
 }
 
+/*!
+    Destroys the position info source factory.
+*/
 QGeoPositionInfoSourceFactory::~QGeoPositionInfoSourceFactory()
 {}
 

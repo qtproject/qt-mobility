@@ -26,9 +26,7 @@ contains(mobility_modules,bearer) {
 
 #Location examples
 contains(mobility_modules,location) {
-    SUBDIRS += logfilepositionsource \
-               satellitedialog 
-
+    SUBDIRS += logfilepositionsource
     !wince* {
         SUBDIRS += landmarkbrowser
     }

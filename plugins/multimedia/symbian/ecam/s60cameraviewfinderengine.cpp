@@ -71,14 +71,14 @@ S60CameraViewfinderEngine::S60CameraViewfinderEngine(S60CameraControl *control,
                                                      QObject *parent):
     QObject(parent),
     m_cameraEngine(engine),
-    m_cameraControl(NULL),
-    m_viewfinderOutput(NULL),
+    m_cameraControl(0),
+    m_viewfinderOutput(0),
     m_viewfinderDisplay(0),
-    m_viewfinderSurface(NULL),
+    m_viewfinderSurface(0),
     m_wsSession(CCoeEnv::Static()->WsSession()),
     m_screenDevice(*CCoeEnv::Static()->ScreenDevice()),
-    m_window(NULL),
-    m_desktopWidget(NULL),
+    m_window(0),
+    m_desktopWidget(0),
     m_vfState(EVFNotConnectedNotStarted),
     m_viewfinderSize(KDefaultViewfinderSize),
     m_actualViewFinderSize(KDefaultViewfinderSize),
@@ -125,8 +125,8 @@ S60CameraViewfinderEngine::~S60CameraViewfinderEngine()
     // Engine has stopped it already
     // Surface will be stopped by VideoRendererControl
 
-    m_viewfinderOutput = NULL;
-    m_viewfinderSurface = NULL;
+    m_viewfinderOutput = 0;
+    m_viewfinderSurface = 0;
 }
 
 void S60CameraViewfinderEngine::setNewCameraEngine(CCameraEngine *engine)

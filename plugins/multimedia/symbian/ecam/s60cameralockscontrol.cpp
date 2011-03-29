@@ -57,10 +57,10 @@ S60CameraLocksControl::S60CameraLocksControl(S60CameraService *service,
                                              S60ImageCaptureSession *session,
                                              QObject *parent) :
     QCameraLocksControl(parent),
-    m_session(NULL),
-    m_service(NULL),
-    m_advancedSettings(NULL),
-    m_focusControl(NULL),
+    m_session(0),
+    m_service(0),
+    m_advancedSettings(0),
+    m_focusControl(0),
     m_focusStatus(QCamera::Unlocked),
     m_exposureStatus(QCamera::Unlocked),
     m_whiteBalanceStatus(QCamera::Unlocked)
@@ -89,7 +89,7 @@ S60CameraLocksControl::S60CameraLocksControl(S60CameraService *service,
 
 S60CameraLocksControl::~S60CameraLocksControl()
 {
-    m_advancedSettings = NULL;
+    m_advancedSettings = 0;
 }
 
 QCamera::LockTypes S60CameraLocksControl::supportedLocks() const

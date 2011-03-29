@@ -482,9 +482,9 @@ void tst_QGraphicsVideoItem::nativeSize()
     object.testService->rendererControl->surface()->stop();
 
     QCoreApplication::processEvents();
-    QCOMPARE(item.nativeSize(), QSizeF(0, 0));
+    QVERIFY(item.nativeSize().isEmpty());
     QCOMPARE(spy.count(), 2);
-    QCOMPARE(spy.last().first().toSizeF(), QSizeF(0, 0));
+    QVERIFY(spy.last().first().toSizeF().isEmpty());
 }
 
 void tst_QGraphicsVideoItem::boundingRect_data()
@@ -639,7 +639,8 @@ void tst_QGraphicsVideoItem::paint()
 
     QPainterVideoSurface *surface = qobject_cast<QPainterVideoSurface *>(
             object.testService->rendererControl->surface());
-    QVERIFY(surface != 0);
+    if (!surface)
+        QSKIP("QGraphicsVideoItem is not QPainterVideoSurface based", SkipAll);
 
     QVideoSurfaceFormat format(QSize(2, 2), QVideoFrame::Format_RGB32);
 

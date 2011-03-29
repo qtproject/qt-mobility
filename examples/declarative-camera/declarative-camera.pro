@@ -5,10 +5,16 @@ TEMPLATE=app
 
 QT += declarative network
 
-!maemo* {
+!maemo5 {
     contains(QT_CONFIG, opengl) {
         QT += opengl
     }
+}
+
+win32 {
+    #required by Qt SDK to resolve Mobility libraries
+    CONFIG+=mobility
+    MOBILITY+=multimedia
 }
 
 SOURCES += $$PWD/qmlcamera.cpp

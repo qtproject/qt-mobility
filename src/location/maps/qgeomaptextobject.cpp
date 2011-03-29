@@ -257,6 +257,27 @@ void QGeoMapTextObject::setOffset(const QPoint &off)
     QGeoMapTextObject::offset pixels away from the position of
     QGeoMapTextObject::coordinate on the screen.
 
+    Using
+    \code
+    textObject->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+    \endcode
+    will place the text so that the point halway up the left edge of
+    the text is at the anchor point defined by
+    QGeoMapTextObject::offset and QGeoMapTextObject::coordinate.
+
+    The alignment property is a flag, so using
+    \code
+    textObject->setAlignment(Qt::AlignLeft);
+    \endcode
+    may alter the vertical alignment as well.
+
+    The Qt::AlignVertical_Mask and Qt::AlignHorizontal_Mask enum
+    values can be used to alter one component of the alignment
+    independent of the other.
+    \code
+    textObject->setAlignment(Qt::AlignLeft | (textObject->alignment() & Qt::AlignVertical_Mask));
+    \endcode
+
     The alignment does not take the width of QGeoMapTextObject::pen into
     consideration.
 */

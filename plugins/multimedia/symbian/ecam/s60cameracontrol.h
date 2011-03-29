@@ -119,7 +119,7 @@ public: // Internal
                         const S60CameraViewfinderEngine::ViewfinderOutputType type);
     void releaseVideoOutput(const S60CameraViewfinderEngine::ViewfinderOutputType type);
 
-private Q_SLOTS: // Internal Slots
+private slots: // Internal Slots
 
     void videoStateChanged(const S60VideoCaptureSession::TVideoCaptureState state);
     // Needed to detect image capture completion when trying to rotate the camera
@@ -149,7 +149,7 @@ private: // Internal
     void resetCamera(bool errorHandling = false);
     void setCameraHandles();
 
-Q_SIGNALS: // Internal Signals
+signals: // Internal Signals
 
     void cameraReadyChanged(bool);
     void devicesChanged();

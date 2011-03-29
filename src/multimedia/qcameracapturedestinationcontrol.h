@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,43 +39,35 @@
 **
 ****************************************************************************/
 
-#ifndef TPSESSIONCHANNEL_H
-#define TPSESSIONCHANNEL_H
+#ifndef QCAMERACAPTUREDESTINATIONCONTROL_H
+#define QCAMERACAPTUREDESTINATIONCONTROL_H
 
-#include <QObject>
-#include <TelepathyQt4/Types>
-#include <TelepathyQt4/Types>
-#include <TelepathyQt4/Message>
-#include <TelepathyQt4/PendingChannel>
-#include <TelepathyQt4/ChannelRequest>
-#include <TelepathyQt4/Channel>
-#include <TelepathyQt4/TextChannel>
-#include <TelepathyQt4/PendingReady>
-#include <TelepathyQt4/ContactManager>
-#include <TelepathyQt4/Connection>
+#include <qmediacontrol.h>
+#include <qcameraimagecapture.h>
 
-class TpSessionChannel : public QObject
+QT_BEGIN_NAMESPACE
+
+class Q_MULTIMEDIA_EXPORT QCameraCaptureDestinationControl : public QMediaControl
 {
     Q_OBJECT
 public:
-    TpSessionChannel(Tp::TextChannelPtr);
-    TpSessionChannel(Tp::ConnectionPtr conn, const Tp::ContactPtr &contact);
-    Tp::PendingSendMessage *sendMessage(const QString &message);
-    QString peerId() const;
-signals:
-    void channelReady(TpSessionChannel *);
-    void channelDestroyed(TpSessionChannel *);
-    void messageReceived(const Tp::ReceivedMessage &, TpSessionChannel *);
-    void messageSent(const Tp::Message &, Tp::MessageSendingFlags, const QString &, TpSessionChannel *);
-public slots:
-    void onChannelCreated(Tp::PendingOperation *op);
-    void onChannelReady(Tp::PendingOperation *op);
-    void onChannelDestroyed(QObject *);
-    void onMessageReceived(const Tp::ReceivedMessage &);
-    void onMessageSent(const Tp::Message &, Tp::MessageSendingFlags, const QString &);
-public:
-    Tp::ContactPtr peerContact;
-    Tp::TextChannelPtr channel;
+    ~QCameraCaptureDestinationControl();
+
+    virtual bool isCaptureDestinationSupported(QCameraImageCapture::CaptureDestinations destination) const = 0;
+    virtual QCameraImageCapture::CaptureDestinations captureDestination() const = 0;
+    virtual void setCaptureDestination(QCameraImageCapture::CaptureDestinations destination) = 0;
+
+Q_SIGNALS:
+    void captureDestinationChanged(QCameraImageCapture::CaptureDestinations);
+
+protected:
+    QCameraCaptureDestinationControl(QObject* parent = 0);
 };
 
-#endif // TPSESSIONCHANNEL_H
+#define QCameraCaptureDestinationControl_iid "com.nokia.Qt.QCameraCaptureDestinationControl/1.0"
+Q_MEDIA_DECLARE_CONTROL(QCameraCaptureDestinationControl, QCameraCaptureDestinationControl_iid)
+
+QT_END_NAMESPACE
+
+#endif
+

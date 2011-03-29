@@ -240,12 +240,22 @@ public:
     int physicalHeight(int screen);
     int physicalWidth(int screen);
     QSystemDisplayInfo::BacklightState backlightStatus(int screen); //1.2
+    static QSystemDisplayInfoLinuxCommonPrivate *instance() {return self;}
+
+#if defined(Q_WS_X11)
+    void emitOrientationChanged(int curRotation);
+    int xEventBase;
+    int xErrorBase;
+    int lastRotation;
+#endif
+
 Q_SIGNALS:
     void orientationChanged(QSystemDisplayInfo::DisplayOrientation newOrientation);
 
 private:
     bool isScreenValid(int screen);
     QDesktopWidget *wid;
+    static QSystemDisplayInfoLinuxCommonPrivate *self;
 };
 
 class QSystemStorageInfoLinuxCommonPrivate : public QObject
@@ -312,7 +322,7 @@ public:
     QSystemDeviceInfoLinuxCommonPrivate(QObject *parent = 0);
     virtual ~QSystemDeviceInfoLinuxCommonPrivate();
 
-    QString imei();
+
     QString imsi();
     QString manufacturer();
     QString model();
@@ -327,6 +337,7 @@ public:
     QSystemDeviceInfo::Profile currentProfile() {return QSystemDeviceInfo::UnknownProfile;}
 
     QSystemDeviceInfo::PowerState currentPowerState();
+    QSystemDeviceInfo::ThermalState currentThermalState();
     void setConnection();
     bool currentBluetoothPowerState();
 
@@ -336,14 +347,14 @@ public:
 
     void keyboardConnected(bool connect);//1.2
     bool keypadLightOn(QSystemDeviceInfo::KeypadType type); //1.2
-    QUuid uniqueDeviceID(); //1.2
-    QSystemDeviceInfo::LockTypeFlags lockStatus(); //1.2
+    QByteArray uniqueDeviceID(); //1.2
 
 Q_SIGNALS:
     void batteryLevelChanged(int);
     void batteryStatusChanged(QSystemDeviceInfo::BatteryStatus );
 
     void powerStateChanged(QSystemDeviceInfo::PowerState);
+    void thermalStateChanged(QSystemDeviceInfo::ThermalState);
     void currentProfileChanged(QSystemDeviceInfo::Profile);
     void bluetoothStateChanged(bool);
 

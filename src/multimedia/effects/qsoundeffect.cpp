@@ -80,6 +80,7 @@ QT_BEGIN_NAMESPACE
     \qmlproperty qreal SoundEffect::volume
 
     This property holds the volume of the playback, from 0.0 (silent) to 1.0 (maximum volume).
+    Note: Currently this has no effect on Mac OS X and Symbian.
 */
 
 /*!

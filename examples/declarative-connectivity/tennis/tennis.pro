@@ -1,3 +1,5 @@
+include(../../mobility_examples.pri)
+
 QT += declarative network
 
 SOURCES += \
@@ -7,9 +9,15 @@ SOURCES += \
 HEADERS += \
     controller.h
 
-include($$PWD/../declarative-connectivity.pri)
 
 TARGET = qml_tennis
+TEMPLATE = app
+
+win32 {
+    #required by Qt SDK to resolve Mobility libraries
+    CONFIG+=mobility
+    MOBILITY+=connectivity
+}
 
 symbian {
     TARGET.CAPABILITY = LocalServices NetworkServices Location ReadUserData WriteUserData WriteDeviceData ReadDeviceData

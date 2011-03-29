@@ -41,7 +41,15 @@
 #include "dialog.h"
 #include <QMessageBox>
 #include <QTimer>
-
+#include <math.h>
+#ifndef Q_CC_MINGW
+#ifdef Q_OS_WIN
+// silly MS
+inline float round(float x) {
+      return floor(x+0.5);
+   }
+#endif
+#endif
 Dialog::Dialog() :
     QWidget(),
     saver(NULL), systemInfo(NULL), di(NULL), ni(NULL),sti(NULL),bi(NULL),dis(NULL)
@@ -153,6 +161,7 @@ void Dialog::setupDevice()
     deviceLockPushButton->setChecked(di->isDeviceLocked());
 
     updateSimStatus();
+    updateThermalState();
     updateProfile();
 
     connect(di, SIGNAL(currentProfileChanged(QSystemDeviceInfo::Profile)),
@@ -196,16 +205,16 @@ void Dialog::setupDevice()
 
     wirelessKeyboardConnectedRadioButton->setChecked(di->isWirelessKeyboardConnected());
 
-    QString lockState;
-    QSystemDeviceInfo::LockTypeFlags lock = di->lockStatus();
-    if ((lock & QSystemDeviceInfo::PinLocked)){
-        lockState = "Pin/Password Locked";
-    } else if ((lock & QSystemDeviceInfo::TouchAndKeyboardLocked)){
-        lockState = "Touch and keyboard locked";
-    } else {
-        lockState = "Unknown";
-    }
-    lockStateLabel->setText(lockState);
+    QSystemDeviceInfo::LockTypeFlags locktype = di->lockStatus();
+    lockStateLabel->setText(lockStateToString(locktype));
+
+    oldLockStatus = QSystemDeviceInfo::UnknownLock;
+    lockStateLabel_2->setText(lockStateToString(oldLockStatus));
+    oldLockStatus = locktype;
+
+    connect(di,SIGNAL(lockStatusChanged(QSystemDeviceInfo::LockTypeFlags)),
+            this,SLOT(lockStatusChanged(QSystemDeviceInfo::LockTypeFlags)),Qt::UniqueConnection);
+
 }
 
 void Dialog::updateKeyboard(QSystemDeviceInfo::KeyboardTypeFlags type)
@@ -309,16 +318,46 @@ void Dialog::updateStorage()
         QStringList items;
         items << volName;
         items << type;
-        items << QString::number(sti->totalDiskSpace(volName));
-        items << QString::number(sti->availableDiskSpace(volName));
+        items << sizeToString(sti->totalDiskSpace(volName));
+        items << sizeToString(sti->availableDiskSpace(volName));
         items << sti->uriForDrive(volName);
         items << storageStateToString(sti->getStorageState(volName));
 
         QTreeWidgetItem *item = new QTreeWidgetItem(items);
+
+        for (int i = 0; i < 5; i++) {
+            item->setBackground( i ,brushForStorageState( sti->getStorageState(volName)));
+        }
         storageTreeWidget->addTopLevelItem(item);
     }
 }
 
+QBrush Dialog::brushForStorageState(QSystemStorageInfo::StorageState state)
+{
+    if (state == QSystemStorageInfo::CriticalStorageState) {
+        return  QBrush(Qt::red);
+    }
+    if (state== QSystemStorageInfo::VeryLowStorageState) {
+        return  QBrush(Qt::magenta);
+    }
+    if (state == QSystemStorageInfo::LowStorageState) {
+        return  QBrush(Qt::yellow);
+    }
+    return  QBrush();
+}
+
+QString Dialog:: sizeToString(qlonglong size)
+{
+    float fSize = size;
+    int i = 0;
+    const char* units[] = {"B", "kB", "MB", "GB", "TB"};
+    while (fSize > 1024) {
+        fSize /= 1024.0;
+        i++;
+    }
+    fSize = round((fSize)*100)/100;
+    return QString::number(fSize)+" "+ units[i];
+}
 
 void Dialog::setupNetwork()
 {
@@ -352,6 +391,8 @@ void Dialog::setupNetwork()
     netStatusComboActivated((int)ni->currentMode());
 
     cellIdLabel->setText(QString::number(ni->cellId()));
+    connect(ni,SIGNAL(cellIdChanged(int)),this,SLOT(cellIdChanged(int)));
+
     locationAreaCodeLabel->setText(QString::number(ni->locationAreaCode()));
     currentMCCLabel->setText(ni->currentMobileCountryCode());
     currentMNCLabel->setText(ni->currentMobileNetworkCode());
@@ -927,7 +968,6 @@ void Dialog::updateSimStatus()
         case QSystemDeviceInfo::SingleSimAvailable:
             {
                 simstring = "Single Sim Available";
-
             }
             break;
         case QSystemDeviceInfo::DualSimAvailable:
@@ -941,6 +981,40 @@ void Dialog::updateSimStatus()
     }
 }
 
+void Dialog::updateThermalState()
+{
+    if(di) {
+        QString thermalState;
+        switch (di->currentThermalState()) {
+        case QSystemDeviceInfo::UnknownThermal:
+            {
+                thermalState = "Unknown";
+            }
+            break;
+        case QSystemDeviceInfo::NormalThermal:
+            {
+                thermalState = "Normal";
+            }
+            break;
+        case QSystemDeviceInfo::WarningThermal:
+            {
+                thermalState = "Warning";
+            }
+            break;
+        case QSystemDeviceInfo::AlertThermal:
+            {
+                thermalState = "Alert";
+            }
+            break;
+        case QSystemDeviceInfo::ErrorThermal:
+            {
+                thermalState = "Error";
+            }
+            break;
+        };
+        thermalStateLabel->setText(thermalState);
+    }
+}
 
 void Dialog::storageChanged(bool added,const QString &volName)
 {
@@ -1082,7 +1156,7 @@ void Dialog::keyboardFlipped(bool on)
 void Dialog::storageStateChanged(const QString &vol, QSystemStorageInfo::StorageState state)
 {
     QList<QTreeWidgetItem *>item = storageTreeWidget->findItems(vol,Qt::MatchExactly,0);
-    item.at(0)->setText(3,QString::number(sti->availableDiskSpace(item.at(0)->text(0))));
+    item.at(0)->setText(3,sizeToString(sti->availableDiskSpace(item.at(0)->text(0))));
     item.at(0)->setText(5,storageStateToString(state));
 }
 
@@ -1145,5 +1219,29 @@ void Dialog::dataTechnologyChanged(QSystemNetworkInfo::CellDataTechnology tech)
         break;
     };
     dataTechnologyLabel->setText(techString);
+}
+
+QString Dialog::lockStateToString(QSystemDeviceInfo::LockTypeFlags lock)
+{
+    if ((lock & QSystemDeviceInfo::PinLocked)){
+        return "Pin/Password Locked";
+    } else if ((lock & QSystemDeviceInfo::TouchAndKeyboardLocked)){
+        return "Touch and keyboard locked";
+    }
+    return "Unknown";
+}
+
+void Dialog::lockStatusChanged(QSystemDeviceInfo::LockTypeFlags locktype)
+{
+    if (locktype != oldLockStatus) {
+        lockStateLabel_2->setText(lockStateToString(oldLockStatus));
+        oldLockStatus = locktype;
+        lockStateLabel->setText(lockStateToString(locktype));
+    }
+}
+
+void Dialog::cellIdChanged(int id)
+{
+    cellIdLabel->setText(QString::number(id));
 }
 

@@ -52,9 +52,9 @@ S60CameraExposureControl::S60CameraExposureControl(QObject *parent) :
 
 S60CameraExposureControl::S60CameraExposureControl(S60ImageCaptureSession *session, QObject *parent) :
     QCameraExposureControl(parent),
-    m_session(NULL),
-    m_service(NULL),
-    m_advancedSettings(NULL),
+    m_session(0),
+    m_service(0),
+    m_advancedSettings(0),
     m_exposureMode(QCameraExposure::ExposureAuto),
     m_meteringMode(QCameraExposure::MeteringMatrix)
 {
@@ -74,7 +74,7 @@ S60CameraExposureControl::S60CameraExposureControl(S60ImageCaptureSession *sessi
 
 S60CameraExposureControl::~S60CameraExposureControl()
 {
-    m_advancedSettings = NULL;
+    m_advancedSettings = 0;
 }
 
 void S60CameraExposureControl::resetAdvancedSetting()

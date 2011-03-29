@@ -41,6 +41,8 @@
 #include <qcameraimagecapture.h>
 #include <qcameraimagecapturecontrol.h>
 #include <qmediaencodersettings.h>
+#include <qcameracapturedestinationcontrol.h>
+#include <qcameracapturebufferformatcontrol.h>
 
 #include <qimageencodercontrol.h>
 #include <qmediaobject_p.h>
@@ -81,6 +83,8 @@ public:
     MediaRecorderRegisterMetaTypes()
     {
         qRegisterMetaType<QCameraImageCapture::Error>("QCameraImageCapture::Error");
+        qRegisterMetaType<QCameraImageCapture::CaptureDestination>("QCameraImageCapture::CaptureDestination");
+        qRegisterMetaType<QCameraImageCapture::CaptureDestinations>("QCameraImageCapture::CaptureDestinations");
     }
 } _registerRecorderMetaTypes;
 }
@@ -96,6 +100,8 @@ public:
 
     QCameraImageCaptureControl *control;
     QImageEncoderControl *encoderControl;
+    QCameraCaptureDestinationControl *captureDestinationControl;
+    QCameraCaptureBufferFormatControl *bufferFormatControl;
 
     QCameraImageCapture::Error error;
     QString errorString;
@@ -112,6 +118,8 @@ QCameraImageCapturePrivate::QCameraImageCapturePrivate():
      mediaObject(0),
      control(0),
      encoderControl(0),
+     captureDestinationControl(0),
+     bufferFormatControl(0),
      error(QCameraImageCapture::NoError)
 {
 }
@@ -183,6 +191,12 @@ bool QCameraImageCapture::setMediaObject(QMediaObject *mediaObject)
                        this, SIGNAL(imageExposed(int)));
             disconnect(d->control, SIGNAL(imageCaptured(int,QImage)),
                        this, SIGNAL(imageCaptured(int,QImage)));
+            disconnect(d->control, SIGNAL(imageAvailable(int,QVideoFrame)),
+                       this, SIGNAL(imageAvailable(int,QVideoFrame)));
+            disconnect(d->control, SIGNAL(imageMetadataAvailable(int,QtMultimediaKit::MetaData,QVariant)),
+                       this, SIGNAL(imageMetadataAvailable(int,QtMultimediaKit::MetaData,QVariant)));
+            disconnect(d->control, SIGNAL(imageMetadataAvailable(int,QString,QVariant)),
+                       this, SIGNAL(imageMetadataAvailable(int,QString,QVariant)));
             disconnect(d->control, SIGNAL(imageSaved(int,QString)),
                        this, SIGNAL(imageSaved(int,QString)));
             disconnect(d->control, SIGNAL(readyForCaptureChanged(bool)),
@@ -190,10 +204,24 @@ bool QCameraImageCapture::setMediaObject(QMediaObject *mediaObject)
             disconnect(d->control, SIGNAL(error(int,int,QString)),
                        this, SLOT(_q_error(int,int,QString)));
 
+            if (d->captureDestinationControl) {
+                disconnect(d->captureDestinationControl, SIGNAL(captureDestinationChanged(QCameraImageCapture::CaptureDestinations)),
+                           this, SIGNAL(captureDestinationChanged(QCameraImageCapture::CaptureDestinations)));
+            }
+
+            if (d->bufferFormatControl) {
+                disconnect(d->bufferFormatControl, SIGNAL(bufferFormatChanged(QVideoFrame::PixelFormat)),
+                           this, SIGNAL(bufferFormatChanged(QVideoFrame::PixelFormat)));
+            }
+
             QMediaService *service = d->mediaObject->service();
             service->releaseControl(d->control);
             if (d->encoderControl)
                 service->releaseControl(d->encoderControl);
+            if (d->captureDestinationControl)
+                service->releaseControl(d->captureDestinationControl);
+            if (d->bufferFormatControl)
+                service->releaseControl(d->bufferFormatControl);
         }
     }
 
@@ -203,19 +231,40 @@ bool QCameraImageCapture::setMediaObject(QMediaObject *mediaObject)
         QMediaService *service = mediaObject->service();
         if (service) {
             d->control = qobject_cast<QCameraImageCaptureControl*>(service->requestControl(QCameraImageCaptureControl_iid));
-            d->encoderControl = qobject_cast<QImageEncoderControl *>(service->requestControl(QImageEncoderControl_iid));
 
             if (d->control) {
+                d->encoderControl = qobject_cast<QImageEncoderControl *>(service->requestControl(QImageEncoderControl_iid));
+                d->captureDestinationControl = qobject_cast<QCameraCaptureDestinationControl *>(
+                    service->requestControl(QCameraCaptureDestinationControl_iid));
+                d->bufferFormatControl = qobject_cast<QCameraCaptureBufferFormatControl *>(
+                    service->requestControl(QCameraCaptureBufferFormatControl_iid));
+
                 connect(d->control, SIGNAL(imageExposed(int)),
                         this, SIGNAL(imageExposed(int)));
                 connect(d->control, SIGNAL(imageCaptured(int,QImage)),
                         this, SIGNAL(imageCaptured(int,QImage)));
+                connect(d->control, SIGNAL(imageMetadataAvailable(int,QtMultimediaKit::MetaData,QVariant)),
+                        this, SIGNAL(imageMetadataAvailable(int,QtMultimediaKit::MetaData,QVariant)));
+                connect(d->control, SIGNAL(imageMetadataAvailable(int,QString,QVariant)),
+                        this, SIGNAL(imageMetadataAvailable(int,QString,QVariant)));
+                connect(d->control, SIGNAL(imageAvailable(int,QVideoFrame)),
+                        this, SIGNAL(imageAvailable(int,QVideoFrame)));
                 connect(d->control, SIGNAL(imageSaved(int, QString)),
                         this, SIGNAL(imageSaved(int, QString)));
                 connect(d->control, SIGNAL(readyForCaptureChanged(bool)),
                         this, SLOT(_q_readyChanged(bool)));
                 connect(d->control, SIGNAL(error(int,int,QString)),
                         this, SLOT(_q_error(int,int,QString)));
+
+                if (d->captureDestinationControl) {
+                    connect(d->captureDestinationControl, SIGNAL(captureDestinationChanged(QCameraImageCapture::CaptureDestinations)),
+                            this, SIGNAL(captureDestinationChanged(QCameraImageCapture::CaptureDestinations)));
+                }
+
+                if (d->bufferFormatControl) {
+                    connect(d->bufferFormatControl, SIGNAL(bufferFormatChanged(QVideoFrame::PixelFormat)),
+                            this, SIGNAL(bufferFormatChanged(QVideoFrame::PixelFormat)));
+                }
 
                 return true;
             }
@@ -226,6 +275,8 @@ bool QCameraImageCapture::setMediaObject(QMediaObject *mediaObject)
     d->mediaObject = 0;
     d->control = 0;
     d->encoderControl = 0;
+    d->captureDestinationControl = 0;
+    d->bufferFormatControl = 0;
 
     return false;
 }
@@ -352,6 +403,82 @@ void QCameraImageCapture::setEncodingSettings(const QImageEncoderSettings &setti
 }
 
 /*!
+    Returns the list of supported buffer image capture formats.
+
+    \sa bufferFormat() setBufferFormat()
+*/
+QList<QVideoFrame::PixelFormat> QCameraImageCapture::supportedBufferFormats() const
+{
+    if (d_func()->bufferFormatControl)
+        return d_func()->bufferFormatControl->supportedBufferFormats();
+    else
+        return QList<QVideoFrame::PixelFormat>();
+}
+
+/*!
+    Returns the buffer image capture format being used.
+
+    \sa supportedBufferCaptureFormats() setBufferCaptureFormat()
+*/
+QVideoFrame::PixelFormat QCameraImageCapture::bufferFormat() const
+{
+    if (d_func()->bufferFormatControl)
+        return d_func()->bufferFormatControl->bufferFormat();
+    else
+        return QVideoFrame::Format_Invalid;
+}
+
+/*!
+    Sets the buffer image capture format to be used.
+
+    \sa bufferCaptureFormat() supportedBufferCaptureFormats() captureDestination()
+*/
+void QCameraImageCapture::setBufferFormat(const QVideoFrame::PixelFormat format)
+{
+    if (d_func()->bufferFormatControl)
+        d_func()->bufferFormatControl->setBufferFormat(format);
+}
+
+/*!
+    Returns true if the image capture \a destination is supported; otherwise returns false.
+
+    \sa captureDestination() setCaptureDestination()
+*/
+bool QCameraImageCapture::isCaptureDestinationSupported(QCameraImageCapture::CaptureDestinations destination) const
+{
+    if (d_func()->captureDestinationControl)
+        return d_func()->captureDestinationControl->isCaptureDestinationSupported(destination);
+    else
+        return destination == CaptureToFile;
+}
+
+/*!
+    Returns the image capture destination being used.
+
+    \sa isCaptureDestinationSupported() setCaptureDestination()
+*/
+QCameraImageCapture::CaptureDestinations QCameraImageCapture::captureDestination() const
+{
+    if (d_func()->captureDestinationControl)
+        return d_func()->captureDestinationControl->captureDestination();
+    else
+        return CaptureToFile;
+}
+
+/*!
+    Sets the capture \a destination to be used.
+
+    \sa isCaptureDestinationSupported() captureDestination()
+*/
+void QCameraImageCapture::setCaptureDestination(QCameraImageCapture::CaptureDestinations destination)
+{
+    Q_D(QCameraImageCapture);
+
+    if (d->captureDestinationControl)
+        d->captureDestinationControl->setCaptureDestination(destination);
+}
+
+/*!
   \property QCameraImageCapture::readyForCapture
    Indicates the service is ready to capture a an image immediately.
 */
@@ -448,6 +575,17 @@ void QCameraImageCapture::cancelCapture()
     and \a errorString description.
 */
 
+/*!
+    \fn QCameraImageCapture::bufferFormatChanged(QVideoFrame::PixelFormat format)
+
+    Signal emitted when the buffer \a format for the buffer image capture has changed.
+*/
+
+/*!
+    \fn QCameraImageCapture::captureDestinationChanged(CaptureDestinations destination)
+
+    Signal emitted when the capture \a destination has changed.
+*/
 
 /*!
     \fn QCameraImageCapture::imageExposed(int id)
@@ -460,6 +598,31 @@ void QCameraImageCapture::cancelCapture()
 
     Signal emitted when the frame with request \a id was captured, but not processed and saved yet.
     Frame \a preview can be displayed to user.
+*/
+
+/*!
+    \fn QCameraImageCapture::imageMetadataAvailable(int id, QtMultimediaKit::MetaData key, const QVariant &value)
+
+    Signals that a metadata for an image with request \a id is available.
+    This signal is emitted for metadata \a value with a \a key listed in QtMultimediaKit::MetaData enum.
+
+    This signal is emitted between imageExposed and imageSaved signals.
+*/
+
+/*!
+    \fn QCameraImageCapture::imageMetadataAvailable(int id, const QString &key, const QVariant &value)
+
+    Signals that a metadata for an image with request \a id is available.
+    This signal is emitted for extended metadata \a value with a \a key not listed in QtMultimediaKit::MetaData enum.
+
+    This signal is emitted between imageExposed and imageSaved signals.
+*/
+
+
+/*!
+    \fn QCameraImageCapture::imageAvailable(int id, const QVideoFrame &buffer)
+
+    Signal emitted when the frame with request \a id is available as \a buffer.
 */
 
 /*!

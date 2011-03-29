@@ -147,9 +147,9 @@ QNetworkConfigurationManagerPrivate::~QNetworkConfigurationManagerPrivate()
         priv->manager = 0;
     }
 
+    delete ipAccessPointsAvailabilityScanner;
     iConnectionMonitor.CancelNotifications();
     iConnectionMonitor.Close();
-    delete ipAccessPointsAvailabilityScanner;
 
     // CCommsDatabase destructor and RCmManager.Close() use cleanup stack. Since QNetworkConfigurationManager
     // is a global static, but the time we are here, E32Main() has been exited already and

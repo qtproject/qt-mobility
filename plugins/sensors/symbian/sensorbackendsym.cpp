@@ -284,9 +284,9 @@ void CSensorBackendSym::StartListeningL()
         // Start listening to the sensor
         // Before calling this api the channel should be found and opened
         iBackendData.iSensorChannel->StartDataListeningL( this,
-                m_desiredReadingCount,
+                KDesiredReadingCount,
                 m_maximumReadingCount,
-                m_bufferingPeriod );
+                KDefaultBufferingPeriod );
         }
     // start property listening if required         //put it above
     if ( iBackendData.iPropertyListening )
@@ -614,19 +614,6 @@ void CSensorBackendSym::start()
     var = sensor()->property("processAllReadings");
     if (var.isValid())
         m_processAllReadings = var.toBool();
-    m_desiredReadingCount = KDesiredReadingCount;
-    var = sensor()->property("desiredReadingCount");
-    if (var.isValid()) {
-        m_desiredReadingCount = var.toInt();
-        if (m_desiredReadingCount > 1) {
-            // If we're asking for buffering, we want to process everything
-            m_processAllReadings = true;
-        }
-    }
-    m_bufferingPeriod = KDefaultBufferingPeriod;
-    var = sensor()->property("bufferingPeriod");
-    if (var.isValid())
-        m_bufferingPeriod = var.toInt();
     // Start listening to sensor, after this call DataRecieved will be called
     // when data is available
     TRAPD(err,StartListeningL())

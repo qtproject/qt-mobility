@@ -51,6 +51,10 @@
 
 #include "qgraphicsvideoitem.h"
 
+#ifdef Q_OS_SYMBIAN
+#define QGRAPHICSVIDEOITEM_ROTATION_SUPPORT
+#endif
+
 #include <qmediaobject.h>
 #include <qmediaservice.h>
 #include <qvideowindowcontrol.h>
@@ -392,6 +396,10 @@ void QGraphicsVideoItem::paint(
         }
 
         colorKey = d->windowControl->property("colorKey").value<QColor>();
+#ifdef QGRAPHICSVIDEOITEM_ROTATION_SUPPORT
+        const qreal angle = transform.map(QLineF(0, 0, 1, 0)).angle();
+        d->windowControl->setProperty("rotation", QVariant::fromValue<qreal>(angle));
+#endif
     }
 
     if (colorKey.alpha() != 255)
