@@ -82,11 +82,10 @@ class QDeclarativeBluetoothSocketPrivate
 public:
     QDeclarativeBluetoothSocketPrivate(QDeclarativeBluetoothSocket *bs)
         : m_dbs(bs), m_service(0), m_socket(0),
-          m_l2cap(0), m_rfcomm(0),
           m_error(QLatin1String("No Error")),
           m_state(QLatin1String("No Service Set")),
           m_componentCompleted(false),
-          m_connected(false), m_listen(false)
+          m_connected(false)
     {
 
     }
@@ -103,12 +102,8 @@ public:
         m_error = QLatin1String("No Error");
 
         if(m_socket)
-            m_socket->deleteLater();/*!
-  \qmlproperty string ContactDetail::definitionName
+            m_socket->deleteLater();
 
-  This property holds the string constant for the definition name of the detail.
-  This property is read only.
-  */
 //        delete m_socket;
         m_socket = new QBluetoothSocket();
         m_socket->connectToService(*m_service->serviceInfo());
@@ -124,14 +119,11 @@ public:
     QDeclarativeBluetoothSocket *m_dbs;
     QDeclarativeBluetoothService *m_service;
     QBluetoothSocket *m_socket;
-    QL2capServer *m_l2cap;
-    QRfcommServer *m_rfcomm;
     QString m_error;
     QString m_state;
     bool m_componentCompleted;
     bool m_connected;
     QDataStream *m_stream;
-    bool m_listen;
 
 };
 
@@ -148,6 +140,26 @@ QDeclarativeBluetoothSocket::QDeclarativeBluetoothSocket(QDeclarativeBluetoothSe
     d->m_service = service;
 }
 
+QDeclarativeBluetoothSocket::QDeclarativeBluetoothSocket(QBluetoothSocket *socket, QDeclarativeBluetoothService *service, QObject *parent)
+    : QObject(parent)
+{
+    d = new QDeclarativeBluetoothSocketPrivate(this);
+    d->m_service = service;
+    d->m_socket = socket;
+    d->m_connected = true;
+    d->m_componentCompleted = true;
+
+    QObject::connect(socket, SIGNAL(connected()), this, SLOT(socket_connected()));
+    QObject::connect(socket, SIGNAL(disconnected()), this, SLOT(socket_disconnected()));
+    QObject::connect(socket, SIGNAL(error(QBluetoothSocket::SocketError)), this, SLOT(socket_error(QBluetoothSocket::SocketError)));
+    QObject::connect(socket, SIGNAL(stateChanged(QBluetoothSocket::SocketState)), this, SLOT(socket_state(QBluetoothSocket::SocketState)));
+    QObject::connect(socket, SIGNAL(readyRead()), this, SLOT(socket_readyRead()));
+
+    d->m_stream = new QDataStream(socket);
+
+}
+
+
 QDeclarativeBluetoothSocket::~QDeclarativeBluetoothSocket()
 {
     delete d;
@@ -159,8 +171,6 @@ void QDeclarativeBluetoothSocket::componentComplete()
 
     if(d->m_connected && d->m_service)
         d->connect();
-    else if(d->m_listen)
-        setListening(true);
 }
 
 /*!
@@ -300,68 +310,6 @@ QString QDeclarativeBluetoothSocket::state()
     return d->m_state;
 }
 
-/*!
-  \qmlproperty bool BluetoothSocket:listening
-
-  This property allows the socket to listen for incoming connections.  This is not supported in 1.2.
-  */
-
-bool QDeclarativeBluetoothSocket::listening()
-{
-    if(d->m_rfcomm || d->m_l2cap)
-        return true;
-
-    return false;
-}
-
-void QDeclarativeBluetoothSocket::setListening(bool listen)
-{
-    if(listen == false && (d->m_rfcomm || d->m_l2cap)) {
-        qWarning() << "Once socket is in listening state, can not be returned to client socket";
-        return;
-    }
-
-    if(!d->m_componentCompleted){
-        d->m_listen = listen;
-        return;
-    }
-
-    if(!d->m_service){
-        qWarning() << "Can not put socket into listening state without an assigned service";
-        return;
-    }
-
-    if(d->m_service->serviceProtocol() == "l2cap") {
-        d->m_l2cap = new QL2capServer();
-
-        d->m_l2cap->setMaxPendingConnections(1);
-        qint32 port = d->m_service->servicePort();
-        if(port== -1)
-            port = 0;
-        d->m_l2cap->listen(QBluetoothAddress(), port);
-
-        if(!port)
-            d->m_service->setServicePort(d->m_l2cap->serverPort());
-
-        connect(d->m_l2cap, SIGNAL(newConnection()), this, SLOT(l2cap_connection()));
-    }
-    else if(d->m_service->serviceProtocol() == "rfcomm") {
-        d->m_rfcomm = new QRfcommServer();
-
-        d->m_rfcomm->setMaxPendingConnections(1);
-        qint32 port = d->m_service->servicePort();
-        if(port== -1)
-            port = 0;
-        d->m_rfcomm->listen(QBluetoothAddress(), port);
-
-        if(!port)
-            d->m_service->setServicePort(d->m_rfcomm->serverPort());
-        connect(d->m_rfcomm, SIGNAL(newConnection()), this, SLOT(rfcomm_connection()));
-    }
-
-    emit listeningChanged();
-}
-
 void QDeclarativeBluetoothSocket::socket_readyRead()
 {
     emit dataAvailable();
@@ -401,51 +349,27 @@ void QDeclarativeBluetoothSocket::sendStringData(QString data)
     d->m_socket->write(b);
 }
 
-void QDeclarativeBluetoothSocket::l2cap_connection()
+void QDeclarativeBluetoothSocket::newSocket(QBluetoothSocket *socket, QDeclarativeBluetoothService *service)
 {
-
-    QBluetoothSocket *socket = d->m_l2cap->nextPendingConnection();
-    if (!socket)
-        return;
-
-    if(d->m_socket) {
-        socket->close();
-        return;
+    if(d->m_socket){
+        delete d->m_socket;
     }
 
+    d->m_service = service;
     d->m_socket = socket;
+    d->m_connected = true;
+    d->m_componentCompleted = true;
+    d->m_error = QLatin1String("No Error");
 
-    connect(socket, SIGNAL(disconnected()), this, SLOT(socket_disconnected()));
-    connect(socket, SIGNAL(error(QBluetoothSocket::SocketError)), this, SLOT(socket_error(QBluetoothSocket::SocketError)));
-    connect(socket, SIGNAL(stateChanged(QBluetoothSocket::SocketState)), this, SLOT(socket_state(QBluetoothSocket::SocketState)));
-    connect(socket, SIGNAL(readyRead()), this, SLOT(socket_readyRead()));
+    QObject::connect(socket, SIGNAL(connected()), this, SLOT(socket_connected()));
+    QObject::connect(socket, SIGNAL(disconnected()), this, SLOT(socket_disconnected()));
+    QObject::connect(socket, SIGNAL(error(QBluetoothSocket::SocketError)), this, SLOT(socket_error(QBluetoothSocket::SocketError)));
+    QObject::connect(socket, SIGNAL(stateChanged(QBluetoothSocket::SocketState)), this, SLOT(socket_state(QBluetoothSocket::SocketState)));
+    QObject::connect(socket, SIGNAL(readyRead()), this, SLOT(socket_readyRead()));
 
     d->m_stream = new QDataStream(socket);
 
-    void connectedChanged();
-}
+    socket_state(socket->state());
 
-void QDeclarativeBluetoothSocket::rfcomm_connection()
-{
-
-    QBluetoothSocket *socket = d->m_rfcomm->nextPendingConnection();
-    if (!socket)
-        return;
-
-    if(d->m_socket) {
-        socket->close();
-        return;
-    }
-
-    d->m_socket = socket;
-
-    connect(socket, SIGNAL(disconnected()), this, SLOT(socket_disconnected()));
-    connect(socket, SIGNAL(error(QBluetoothSocket::SocketError)), this, SLOT(socket_error(QBluetoothSocket::SocketError)));
-    connect(socket, SIGNAL(stateChanged(QBluetoothSocket::SocketState)), this, SLOT(socket_state(QBluetoothSocket::SocketState)));
-    connect(socket, SIGNAL(readyRead()), this, SLOT(socket_readyRead()));
-
-
-    d->m_stream = new QDataStream(socket);
-
-    void connectedChanged();
+    emit connectedChanged();
 }

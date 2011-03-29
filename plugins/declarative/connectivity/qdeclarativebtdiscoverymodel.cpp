@@ -113,6 +113,7 @@ QDeclarativeBluetoothDiscoveryModel::QDeclarativeBluetoothDiscoveryModel(QObject
     d->m_agent = new QBluetoothServiceDiscoveryAgent(this);
     connect(d->m_agent, SIGNAL(serviceDiscovered(const QBluetoothServiceInfo&)), this, SLOT(serviceDiscovered(const QBluetoothServiceInfo&)));
     connect(d->m_agent, SIGNAL(finished()), this, SLOT(finishedDiscovery()));
+    connect(d->m_agent, SIGNAL(canceled()), this, SLOT(finishedDiscovery()));
     connect(d->m_agent, SIGNAL(error(QBluetoothServiceDiscoveryAgent::Error)), this, SLOT(errorDiscovery(QBluetoothServiceDiscoveryAgent::Error)));
 
 }
@@ -251,7 +252,6 @@ void QDeclarativeBluetoothDiscoveryModel::finishedDiscovery()
     d->m_working = false;
     emit discoveryChanged();
 }
-
 
 /*!
   \qmlproperty bool BluetoothDiscoveryModel::minimalDiscovery

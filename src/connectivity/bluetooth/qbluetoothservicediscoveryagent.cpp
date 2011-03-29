@@ -319,7 +319,7 @@ void QBluetoothServiceDiscoveryAgentPrivate::stopDeviceDiscovery()
     setDiscoveryState(Inactive);
 
     Q_Q(QBluetoothServiceDiscoveryAgent);
-    emit q->finished();
+    emit q->canceled();
 }
 
 /*!
