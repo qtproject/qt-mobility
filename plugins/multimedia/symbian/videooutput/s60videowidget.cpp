@@ -160,7 +160,8 @@ int S60VideoWidget::ordinalPosition() const
 void S60VideoWidget::updateOrdinalPosition()
 {
     if ((m_ordinalPosition != NullOrdinalPosition) && m_topWinId) {
-        if (WId wid = effectiveWinId()) {
+        if (parentWidget() && effectiveWinId()) {
+            WId wid = effectiveWinId();
             int topOrdinalPosition = m_topWinId->DrawableWindow()->OrdinalPosition();
             queueReactivateWindow();
             wid->DrawableWindow()->SetOrdinalPosition(m_ordinalPosition + topOrdinalPosition);
