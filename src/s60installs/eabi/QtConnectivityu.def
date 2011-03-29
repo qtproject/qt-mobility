@@ -586,4 +586,5 @@ EXPORTS
 	_ZNK10QtMobility22QDeclarativeNdefRecord6recordEv @ 585 NONAME
 	_ZTIN10QtMobility22QDeclarativeNdefRecordE @ 586 NONAME
 	_ZTVN10QtMobility22QDeclarativeNdefRecordE @ 587 NONAME
+	_ZN10QtMobility31QBluetoothServiceDiscoveryAgent8canceledEv @ 588 NONAME
 

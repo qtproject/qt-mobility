@@ -636,4 +636,5 @@ EXPORTS
 	?d_func@QDeclarativeNdefRecord@QtMobility@@ABEPBVQDeclarativeNdefRecordPrivate@2@XZ @ 635 NONAME ; class QtMobility::QDeclarativeNdefRecordPrivate const * QtMobility::QDeclarativeNdefRecord::d_func(void) const
 	?tr@QDeclarativeNdefRecord@QtMobility@@SA?AVQString@@PBD0@Z @ 636 NONAME ; class QString QtMobility::QDeclarativeNdefRecord::tr(char const *, char const *)
 	?d_func@QDeclarativeNdefRecord@QtMobility@@AAEPAVQDeclarativeNdefRecordPrivate@2@XZ @ 637 NONAME ; class QtMobility::QDeclarativeNdefRecordPrivate * QtMobility::QDeclarativeNdefRecord::d_func(void)
+	?canceled@QBluetoothServiceDiscoveryAgent@QtMobility@@IAEXXZ @ 638 NONAME ; void QtMobility::QBluetoothServiceDiscoveryAgent::canceled(void)
 
