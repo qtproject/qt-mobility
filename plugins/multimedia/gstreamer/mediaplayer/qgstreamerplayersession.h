@@ -192,7 +192,7 @@ private:
     bool m_videoAvailable;
     bool m_seekable;
 
-    qint64 m_lastPosition;
+    mutable qint64 m_lastPosition;
     qint64 m_duration;
     int m_durationQueries;
 };
