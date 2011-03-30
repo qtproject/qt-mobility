@@ -230,10 +230,6 @@ void CLplAnalyserProxy::DeleteMultipleContactsL(const CContactIdArray* aIdArray,
     // Delegate delete to generic proxy.
     CLplGenericProxy::DeleteMultipleContactsL(aIdArray, aSessionId, aEventType); 
     
-    // Notify observers of the change.
-    NotifyObserverL(EContactDbObserverEventNull, KNullContactId, 0,
-            EContactDbObserverEventV2ContactsOrGroupsDeleted, aIdArray);
-
     // If an item with a speed dial is deleted then update the speed
     // dials.
     for (TInt i = 0; i < aIdArray->Count(); i++)
@@ -246,6 +242,10 @@ void CLplAnalyserProxy::DeleteMultipleContactsL(const CContactIdArray* aIdArray,
         {
         iProperties.SetOwnCardIdL(KNullContactId);
         }
+    
+    // Notify observers of the change.
+    NotifyObserverL(EContactDbObserverEventNull, KNullContactId, 0,
+            EContactDbObserverEventV2ContactsOrGroupsDeleted, aIdArray);
     }
 
 /**

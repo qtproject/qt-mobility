@@ -548,4 +548,5 @@ EXPORTS
 	?ImageDirectoryL@TCntImageRescaleUtility@@SA?AV?$TBuf@$0BAA@@@XZ @ 547 NONAME ; class TBuf<256> TCntImageRescaleUtility::ImageDirectoryL(void)
 	?UpdateImageNameL@TCntImageRescaleUtility@@SAXABVCContactItem@@@Z @ 548 NONAME ; void TCntImageRescaleUtility::UpdateImageNameL(class CContactItem const &)
 	?DeleteImageDirectoryL@TCntImageRescaleUtility@@SAXXZ @ 549 NONAME ; void TCntImageRescaleUtility::DeleteImageDirectoryL(void)
+	?ObserverV2@CContactLocalView@@QBEAAVMContactDbObserverV2@@XZ @ 550 NONAME ; class MContactDbObserverV2 & CContactLocalView::ObserverV2(void) const
 
