@@ -887,6 +887,12 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
             updateDuration();
         }
 
+        if (GST_MESSAGE_TYPE(gm) == GST_MESSAGE_BUFFERING) {
+            int progress = 0;
+            gst_message_parse_buffering(gm, &progress);
+            emit bufferingProgressChanged(progress);
+        }
+
         bool handlePlaybin2 = false;
         if (GST_MESSAGE_SRC(gm) == GST_OBJECT_CAST(m_playbin)) {
             switch (GST_MESSAGE_TYPE(gm))  {
@@ -1020,12 +1026,6 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
 #endif
                 break;
             case GST_MESSAGE_BUFFERING:
-                {
-                    int progress = 0;
-                    gst_message_parse_buffering(gm, &progress);
-                    emit bufferingProgressChanged(progress);
-                }
-                break;
             case GST_MESSAGE_STATE_DIRTY:
             case GST_MESSAGE_STEP_DONE:
             case GST_MESSAGE_CLOCK_PROVIDE:

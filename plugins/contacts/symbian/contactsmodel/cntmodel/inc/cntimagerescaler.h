@@ -74,6 +74,7 @@ class CImageRescaler : public CActive
         void EncodeL();
         void ScaleL();
         void StopWait();
+        void Reset();
 
     private:
         CFbsBitmap* iBitmap; // decoded image
