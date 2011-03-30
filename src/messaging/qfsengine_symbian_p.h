@@ -351,6 +351,7 @@ public:
     ~CFSContentFetchOperation();
 
     bool fetch();
+    void cancelFetch();
 
 protected: // From MEmailFetchObserver
     void DataFetchedL(const TInt aResult);

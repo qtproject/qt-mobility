@@ -178,6 +178,11 @@ CMTMEngine::~CMTMEngine()
 
 void CMTMEngine::cleanupMTMBackend()
 {
+    foreach (CAsynchronousMTMOperation* operation, m_mtmOperations) {
+        delete operation;
+    }
+    m_mtmOperations.clear();
+
     iCmsvEntryPoolFree.ResetAndDestroy();
     iCmsvEntryPoolInUse.ResetAndDestroy();
 
@@ -1122,6 +1127,7 @@ void CMTMEngine::retrieveL(QMessageServicePrivate& privateService, const QMessag
 
     if (pMTMOperation) {
         if (!pMTMOperation->retrieveMessageAttachments(msgId)) {
+            deleteAsynchronousMTMOperation(pMTMOperation);
             User::Leave(KErrAccessDenied);
         }
     } else {
@@ -1160,6 +1166,7 @@ void CMTMEngine::retrieveBodyL(QMessageServicePrivate& privateService, const QMe
 
     if (pMTMOperation) {
         if (!pMTMOperation->retrieveMessageBody(msgId)) {
+            deleteAsynchronousMTMOperation(pMTMOperation);
             User::Leave(KErrAccessDenied);
         }
     } else {
@@ -1198,6 +1205,7 @@ void CMTMEngine::retrieveHeaderL(QMessageServicePrivate& privateService, const Q
     
     if (pMTMOperation) {
         if (!pMTMOperation->retrieveMessageHeader(msgId)) {
+            deleteAsynchronousMTMOperation(pMTMOperation);
             User::Leave(KErrAccessDenied);
         }
     } else {
@@ -1683,6 +1691,11 @@ void CMTMEngine::cancel(QMessageServicePrivate& privateService)
         if (iMessageQueries[i].privateService == &privateService) {
             iMessageQueries[i].canceled = true;
         }
+    }
+
+    CAsynchronousMTMOperation* op = m_mtmOperations.take(&privateService);
+    if (op) {
+        delete op;
     }
 }
 
@@ -4343,6 +4356,12 @@ QMessage CMTMEngine::emailMessageL(CMsvEntry& receivedEntry, long int messageId,
            int attachmentSize = pAttachment->Size();
            size += attachmentSize;
            QMessageContentContainer attachment = QMessageContentContainerPrivate::from(messageId, pAttachment->Id(), name, mimeType, mimeSubType, attachmentSize);
+           QMessageContentContainerPrivate *attachmentContainer = QMessageContentContainerPrivate::implementation(attachment);
+           if (pAttachment->Complete()) {
+               attachmentContainer->_available = true;
+           } else {
+               attachmentContainer->_available = false;
+           }
            appendAttachmentToMessage(message, attachment);
            CleanupStack::PopAndDestroy(pAttachment);
         }
@@ -5207,11 +5226,13 @@ CAsynchronousMTMOperation* CMTMEngine::createAsynchronousMTMOperation(QMessageSe
                                                                    mtm,
                                                                    serviceId,
                                                                    operationId);
+    m_mtmOperations.insert(&privateService, op);
     return op;
 }
 
 void CMTMEngine::deleteAsynchronousMTMOperation(CAsynchronousMTMOperation *apOperation)
 {
+    m_mtmOperations.take(apOperation->ipPrivateService);
     delete apOperation;
 }
 

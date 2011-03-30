@@ -1673,8 +1673,10 @@ void CFSEngine::cancel(QMessageServicePrivate& privateService)
             m_messageQueries[i].canceled = true;
         }
     }
-    CFSContentFetchOperation* op = m_fetchOperations.value(&privateService);
+
+    CFSContentFetchOperation* op = m_fetchOperations.take(&privateService);
     if (op) {
+        op->cancelFetch();
         delete op;
     }
     
@@ -3072,6 +3074,11 @@ CFSContentFetchOperation::~CFSContentFetchOperation()
     if (m_message) {
         m_message->Release();
     }
+}
+
+void CFSContentFetchOperation::cancelFetch()
+{
+    m_content->CancelFetch();
 }
 
 bool CFSContentFetchOperation::fetch()
