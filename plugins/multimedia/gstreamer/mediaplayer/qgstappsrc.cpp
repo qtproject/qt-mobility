@@ -89,8 +89,12 @@ bool QGstAppSrc::setup(GstElement* appsrc)
 
 void QGstAppSrc::setStream(QIODevice *stream)
 {
-    if (m_stream)
+    if (stream == 0)
+        return;
+    if (m_stream) {
         disconnect(m_stream, SIGNAL(readyRead()), this, SLOT(onDataReady()));
+        disconnect(m_stream, SIGNAL(destroyed()), this, SLOT(streamDestroyed()));
+    }
     if (m_appSrc)
         gst_object_unref(G_OBJECT(m_appSrc));
 
@@ -98,9 +102,11 @@ void QGstAppSrc::setStream(QIODevice *stream)
     m_dataRequested = false;
     m_enoughData = false;
     m_forceData = false;
+    m_maxBytes = 0;
 
     m_appSrc = 0;
     m_stream = stream;
+    connect(m_stream, SIGNAL(destroyed()), SLOT(streamDestroyed()));
     connect(m_stream, SIGNAL(readyRead()), this, SLOT(onDataReady()));
     m_sequential = m_stream->isSequential();
     m_setup = false;
@@ -124,9 +130,17 @@ void QGstAppSrc::onDataReady()
     }
 }
 
+void QGstAppSrc::streamDestroyed()
+{
+    if (sender() == m_stream) {
+        m_stream = 0;
+        sendEOS();
+    }
+}
+
 void QGstAppSrc::pushDataToAppSrc()
 {
-    if (!m_stream || !m_setup)
+    if (!isStreamValid() || !m_setup)
         return;
 
     if (m_dataRequested && !m_enoughData) {
@@ -160,17 +174,21 @@ void QGstAppSrc::pushDataToAppSrc()
 
 bool QGstAppSrc::doSeek(qint64 value)
 {
-     return stream()->seek(value);
+    if (isStreamValid())
+        return stream()->seek(value);
+    return false;
 }
 
 
 gboolean QGstAppSrc::on_seek_data(GstAppSrc *element, guint64 arg0, gpointer userdata)
 {
     QGstAppSrc *self = reinterpret_cast<QGstAppSrc*>(userdata);
-    if (self && self->stream() ) {
+    if (self && self->isStreamValid()) {
         if (!self->stream()->isSequential())
             QMetaObject::invokeMethod(self, "doSeek", Qt::AutoConnection, Q_ARG(qint64, arg0));
     }
+    else
+        return false;
 
     return true;
 }
@@ -201,6 +219,6 @@ void QGstAppSrc::destroy_notify(gpointer data)
 void QGstAppSrc::sendEOS()
 {
     gst_app_src_end_of_stream(GST_APP_SRC(m_appSrc));
-    if (!stream()->isSequential())
+    if (isStreamValid() && !stream()->isSequential())
         stream()->reset();
 }
