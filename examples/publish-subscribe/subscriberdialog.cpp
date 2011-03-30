@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -58,11 +58,8 @@
 
 #include <QDebug>
 
-SubscriberDialog::SubscriberDialog(QWidget *parent) :
-        QDialog(parent),
-        ui(new Ui::SubscriberDialog),
-        subscriber(0),
-        tableWidget(0), listWidget(0)
+SubscriberDialog::SubscriberDialog(QWidget *parent)
+:   QMainWindow(parent), ui(new Ui::SubscriberDialog), subscriber(0), tableWidget(0), listWidget(0)
 {
     ui->setupUi(this);
 
@@ -119,7 +116,7 @@ SubscriberDialog::~SubscriberDialog()
 
 void SubscriberDialog::changeEvent(QEvent *e)
 {
-    QDialog::changeEvent(e);
+    QMainWindow::changeEvent(e);
     switch (e->type()) {
     case QEvent::LanguageChange:
         ui->retranslateUi(this);
