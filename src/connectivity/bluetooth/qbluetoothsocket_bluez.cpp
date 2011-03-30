@@ -418,14 +418,51 @@ quint16 QBluetoothSocketPrivate::peerPort() const
 qint64 QBluetoothSocketPrivate::writeData(const char *data, qint64 maxSize)
 {
     Q_Q(QBluetoothSocket);
-    if (::write(socket, data, maxSize) != maxSize) {
+    if (q->openMode() & QIODevice::Unbuffered) {
+        if (::write(socket, data, maxSize) != maxSize) {
+            socketError = QBluetoothSocket::NetworkError;
+            emit q->error(socketError);
+        }
+
+        emit q->bytesWritten(maxSize);
+
+        return maxSize;
+    }
+    else {
+        if(txBuffer.size() == 0)
+            QMetaObject::invokeMethod(q, "_q_transmitData", Qt::QueuedConnection);
+
+        char *txbuf = txBuffer.reserve(maxSize);
+        memcpy(txbuf, data, maxSize);
+
+        return maxSize;
+    }
+}
+
+void QBluetoothSocketPrivate::_q_transmitData()
+{
+
+    char buf[1024];
+    Q_Q(QBluetoothSocket);
+
+    int size = txBuffer.read(buf, 1024);
+
+    if (::write(socket, buf, size) != size) {
+        qDebug() << "failed" << size;
         socketError = QBluetoothSocket::NetworkError;
         emit q->error(socketError);
     }
+    else {
+        emit q->bytesWritten(size);
+    }
 
-    emit q->bytesWritten(maxSize);
+    if (txBuffer.size()) {
+        QMetaObject::invokeMethod(q, "_q_transmitData", Qt::QueuedConnection);
+    }
+    else if (state == QBluetoothSocket::ClosingState) {
+        this->close();
+    }
 
-    return maxSize;
 }
 
 qint64 QBluetoothSocketPrivate::readData(char *data, qint64 maxSize)
@@ -440,21 +477,28 @@ qint64 QBluetoothSocketPrivate::readData(char *data, qint64 maxSize)
 
 void QBluetoothSocketPrivate::close()
 {
-    ::close(socket);
-
-    delete readNotifier;
-    readNotifier = 0;
-    delete connectWriteNotifier;
-    connectWriteNotifier = 0;
     Q_Q(QBluetoothSocket);
 
     // Only go through closing if the socket was fully opened
     if(state == QBluetoothSocket::ConnectedState)
         q->setSocketState(QBluetoothSocket::ClosingState);
 
-    // We are disconnected now, so go to unconnected.
-    q->setSocketState(QBluetoothSocket::UnconnectedState);
-    emit q->disconnected();
+    if(txBuffer.size() > 0 &&
+       state == QBluetoothSocket::ClosingState){
+        _q_transmitData();
+    }
+    else {
+
+        delete readNotifier;
+        readNotifier = 0;
+        delete connectWriteNotifier;
+        connectWriteNotifier = 0;
+
+        // We are disconnected now, so go to unconnected.
+        q->setSocketState(QBluetoothSocket::UnconnectedState);
+        emit q->disconnected();
+        ::close(socket);
+    }
 
 }
 

@@ -278,7 +278,7 @@ qint64 QBluetoothSocket::bytesAvailable() const
 qint64 QBluetoothSocket::bytesToWrite() const
 {
     Q_D(const QBluetoothSocket);
-    return d->txBuffer.length();
+    return d->txBuffer.size();
 }
 
 /*!
