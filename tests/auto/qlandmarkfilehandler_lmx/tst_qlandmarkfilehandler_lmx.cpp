@@ -369,6 +369,26 @@ private slots:
         << "The element \"category\" did not expect a child element named \"invalid\" at this point (unknown child element or child element out of order).";
     }
 
+    void absoluteURI() {
+        QFETCH(QString, uri);
+        QFETCH(bool, expectedResult);
+
+        QCOMPARE(isURIAbsolute(uri), expectedResult);
+    }
+
+    void absoluteURI_data() {
+        QTest::addColumn<QString>("uri");
+        QTest::addColumn<bool>("expectedResult");
+
+        QTest::newRow("Valid input: uri") << "http://www.ics.uci.edu/pub/ietf/uri/#Related" << true;
+        QTest::newRow("Valid input: uri") << "http://www.test.com" << true;
+        QTest::newRow("Valid input: ftp") << "ftp://www.test.com" << true;
+        QTest::newRow("Valid input: empty") << "" << true;
+        QTest::newRow("Invalid: scheme-specific part only") << "www.invalid.com" << false;
+        QTest::newRow("Invalid input: scheme only") << "http:" << false;
+        QTest::newRow("Invalid input: scheme part only w/ : ") << ":www.invalid.com" << false;
+    }
+
 /* TODO: exports
     void dataExportErrors() {
         QFETCH(QLandmarkCategoryId, catId);
