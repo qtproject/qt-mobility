@@ -523,14 +523,20 @@ void QGstreamerPlayerControl::setBufferProgress(int progress)
     if (m_state == QMediaPlayer::StoppedState) {
         m_mediaStatus = QMediaPlayer::LoadedMedia;
     } else {
-        if (m_bufferProgress < 100) {
+        if (m_bufferProgress < 30) {
             m_mediaStatus = QMediaPlayer::StalledMedia;
-            m_session->pause();
-        } else {
-            m_mediaStatus = QMediaPlayer::BufferedMedia;
-            if (m_state == QMediaPlayer::PlayingState && m_resources->isGranted())
-                m_session->play();
+            if (m_session->state() == QMediaPlayer::PlayingState)
+                m_session->pause();
+        } else if (m_bufferProgress > 90) {
+            m_mediaStatus = QMediaPlayer::BufferingMedia;
+            if (m_state == QMediaPlayer::PlayingState &&
+                m_resources->isGranted() &&
+                m_session->state() != QMediaPlayer::PlayingState)
+                    m_session->play();
         }
+
+        if (m_bufferProgress == 100)
+            m_mediaStatus = QMediaPlayer::BufferedMedia;
     }
 
     if (m_mediaStatus != oldStatus)
