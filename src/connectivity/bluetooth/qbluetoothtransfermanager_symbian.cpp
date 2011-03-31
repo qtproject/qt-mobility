@@ -49,7 +49,8 @@ QTM_BEGIN_NAMESPACE
 QBluetoothTransferReply *QBluetoothTransferManager::put(const QBluetoothTransferRequest &request,
                                                         QIODevice *data)
 {
-    QBluetoothTransferReplySymbian *reply = new QBluetoothTransferReplySymbian(data);
+    QBluetoothTransferReplySymbian *reply = 
+        new QBluetoothTransferReplySymbian(data, QBluetoothTransferManager::PutOperation);
 
     reply->setAddress(request.address());
 

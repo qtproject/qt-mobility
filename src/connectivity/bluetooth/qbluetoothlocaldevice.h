@@ -95,7 +95,8 @@ public:
     enum HostMode {        
         HostPoweredOff,
         HostConnectable,
-        HostDiscoverable
+        HostDiscoverable,
+        HostDiscoverableLimitedInquiry
     };
 
     enum Error {
@@ -138,12 +139,16 @@ private:
     QBluetoothLocalDevicePrivate *d_ptr;
 #ifdef QTM_SYMBIAN_BLUETOOTH
     Q_PRIVATE_SLOT(d_func(), void _q_pairingFinished(const QBluetoothAddress &, QBluetoothLocalDevice::Pairing))
+    Q_PRIVATE_SLOT(d_func(), void _q_registryError(int error))
+    Q_PRIVATE_SLOT(d_func(), void _q_pairingError(int error))
 #endif //QTM_SYMBIAN_BLUETOOTH
 };
 
 QTM_END_NAMESPACE
 
 Q_DECLARE_METATYPE(QtMobility::QBluetoothLocalDevice::HostMode)
+Q_DECLARE_METATYPE(QtMobility::QBluetoothLocalDevice::Pairing)
+Q_DECLARE_METATYPE(QtMobility::QBluetoothLocalDevice::Error)
 
 QT_END_HEADER
 

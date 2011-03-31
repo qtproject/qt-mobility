@@ -68,12 +68,12 @@ public:
 
 private slots:
     void handleNewConnection();
-
-    void readRemote();
     void remoteDisconnected();
 
-    void clientConnected();
     void clientDisconnected();
+
+    void readBluetoothService();
+    void sendBluetoothService();
 
 signals:
     void bluetoothServiceChanged();

@@ -46,6 +46,7 @@
 #include <qmediaserviceprovider.h>
 #include <qmediaencodersettings.h>
 #include <qmediabindableinterface.h>
+#include <qmediaenumdebug.h>
 
 #include <QtCore/qpair.h>
 
@@ -182,5 +183,8 @@ QT_END_NAMESPACE
 
 Q_DECLARE_METATYPE(QMediaRecorder::State)
 Q_DECLARE_METATYPE(QMediaRecorder::Error)
+
+Q_MEDIA_ENUM_DEBUG(QMediaRecorder, State)
+Q_MEDIA_ENUM_DEBUG(QMediaRecorder, Error)
 
 #endif  // QMEDIARECORDER_H

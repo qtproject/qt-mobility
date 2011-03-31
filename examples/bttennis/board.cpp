@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -135,6 +135,8 @@ void Board::setRightPaddle(int y)
 
 void Board::sceneChanged(const QList<QRectF> &region)
 {
+    Q_UNUSED(region);
+
     QList<QGraphicsItem *>items = scene->collidingItems(ball);
     while(!items.empty()) {
         QGraphicsItem *i = items.takeFirst();

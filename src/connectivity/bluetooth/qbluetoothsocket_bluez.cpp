@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -64,10 +64,10 @@ QBluetoothSocketPrivate::QBluetoothSocketPrivate()
     : socket(-1),
       socketType(QBluetoothSocket::UnknownSocketType),
       state(QBluetoothSocket::UnconnectedState),
-      connecting(false),
-      discoveryAgent(0),
       readNotifier(0),
-      connectWriteNotifier(0)
+      connectWriteNotifier(0),
+      connecting(false),
+      discoveryAgent(0)
 {
 }
 
@@ -156,7 +156,6 @@ void QBluetoothSocketPrivate::connectToService(const QBluetoothAddress &address,
 void QBluetoothSocketPrivate::_q_writeNotify()
 {
     Q_Q(QBluetoothSocket);
-    qDebug() << Q_FUNC_INFO << "woke up!";
     if(connecting && q->state() == QBluetoothSocket::ConnectingState){
         int errorno, len;
         len = sizeof(errorno);
@@ -190,9 +189,9 @@ void QBluetoothSocketPrivate::_q_writeNotify()
 void QBluetoothSocketPrivate::_q_readNotify()
 {
     Q_Q(QBluetoothSocket);
-    char *writePointer = buffer.reserve(QBLUETOOTHDEVICE_BUFFERSIZE);
-//    qint64 readFromDevice = q->readData(writePointer, QBLUETOOTHDEVICE_BUFFERSIZE);
-    int readFromDevice = ::read(socket, writePointer, QBLUETOOTHDEVICE_BUFFERSIZE);
+    char *writePointer = buffer.reserve(QPRIVATELINEARBUFFER_BUFFERSIZE);
+//    qint64 readFromDevice = q->readData(writePointer, QPRIVATELINEARBUFFER_BUFFERSIZE);
+    int readFromDevice = ::read(socket, writePointer, QPRIVATELINEARBUFFER_BUFFERSIZE);
     if(readFromDevice <= 0){
         int errsv = errno;
         // TODO: Something seems wrong here
@@ -206,11 +205,11 @@ void QBluetoothSocketPrivate::_q_readNotify()
         else
             emit q->error(QBluetoothSocket::UnknownSocketError);
 
-        q->setSocketState(QBluetoothSocket::UnconnectedState);
         q->disconnectFromService();
+        q->setSocketState(QBluetoothSocket::UnconnectedState);        
     }
     else {
-        buffer.chop(QBLUETOOTHDEVICE_BUFFERSIZE - (readFromDevice < 0 ? 0 : readFromDevice));
+        buffer.chop(QPRIVATELINEARBUFFER_BUFFERSIZE - (readFromDevice < 0 ? 0 : readFromDevice));
 
         emit q->readyRead();
     }
@@ -448,7 +447,15 @@ void QBluetoothSocketPrivate::close()
     delete connectWriteNotifier;
     connectWriteNotifier = 0;
     Q_Q(QBluetoothSocket);
+
+    // Only go through closing if the socket was fully opened
+    if(state == QBluetoothSocket::ConnectedState)
+        q->setSocketState(QBluetoothSocket::ClosingState);
+
+    // We are disconnected now, so go to unconnected.
+    q->setSocketState(QBluetoothSocket::UnconnectedState);
     emit q->disconnected();
+
 }
 
 bool QBluetoothSocketPrivate::setSocketDescriptor(int socketDescriptor, QBluetoothSocket::SocketType socketType_,
@@ -478,6 +485,11 @@ bool QBluetoothSocketPrivate::setSocketDescriptor(int socketDescriptor, QBluetoo
 int QBluetoothSocketPrivate::socketDescriptor() const
 {
     return socket;
+}
+
+qint64 QBluetoothSocketPrivate::bytesAvailable() const
+{
+    return buffer.size();
 }
 
 

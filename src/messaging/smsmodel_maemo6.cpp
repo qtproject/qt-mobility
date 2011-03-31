@@ -40,13 +40,11 @@
 ****************************************************************************/
 
 #include <CommHistory/eventmodel_p.h>
-#include <CommHistory/trackerio.h>
-#include <QtTracker/Tracker>
-#include <QtTracker/ontologies/nmo.h>
+#include <CommHistory/eventsquery.h>
+#include <QDebug>
 #include "smsmodel_maemo6_p.h"
 
 using namespace CommHistory;
-using namespace SopranoLive;
 
 class SMSModelPrivate : public EventModelPrivate {
 public:
@@ -88,22 +86,10 @@ bool SMSModel::getEvents()
     reset();
     d->clearEvents();
 
-    RDFSelect query;
+    CommHistory::EventsQuery query(d->propertyMask);
 
-    RDFVariable message = RDFVariable::fromType<nmo::SMSMessage>();
-
-    // Do not delete these commented lines
-    //message.property<nmo::isSent>(LiteralValue(false));
-    //message.property<nmo::isDraft>(LiteralValue(false));
-    //message.property<nmo::isDeleted>(LiteralValue(false));
-
-    query.addColumn("message", message);
-    RDFVariable date = message.property<nmo::receivedDate>();
-
-    query.addColumn("date", date);
-    query.orderBy(date, false);
-
-    TrackerIO::prepareMessageQuery(query, message, d->propertyMask);
+    query.addPattern(QLatin1String("%1 rdf:type nmo:SMSMessage ."))
+            .variable(Event::Id);
 
     return d->executeQuery(query);
 }

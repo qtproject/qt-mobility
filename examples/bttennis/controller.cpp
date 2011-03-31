@@ -65,10 +65,6 @@ Controller::Controller(QObject *parent) :
 
 void Controller::tick()
 {
-    static int i;
-    static int ttf = 0;
-    static int dev = 0;
-
     if(col_x)
         col_x--;
     if(col_y)

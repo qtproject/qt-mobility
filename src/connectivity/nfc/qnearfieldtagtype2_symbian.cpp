@@ -45,8 +45,20 @@
 
 QTM_BEGIN_NAMESPACE
 
+#define SYMBIAN_NEED_CRC
+#define SYMBIAN_RETURN_CRC
+#define SYMBIAN_RETURN_NO_ACK
+
+static void OutputByteArray(const QByteArray& data)
+{
+    for(int i = 0; i < data.count(); ++i)
+    {
+        LOG("data ["<<i<<"] = "<<((quint16)(data.at(i))));
+    }
+}
+
 QNearFieldTagType2Symbian::QNearFieldTagType2Symbian(CNearFieldNdefTarget *tag, QObject *parent)
-                                : QNearFieldTagType2(parent), QNearFieldTagImpl(tag)
+                                : QNearFieldTagType2(parent), QNearFieldTagImpl(tag), mCurrentSector(0)
 {
 }
 
@@ -59,17 +71,42 @@ QNearFieldTagType2Symbian::~QNearFieldTagType2Symbian()
 QVariant QNearFieldTagType2Symbian::decodeResponse(const QByteArray& command, const QByteArray& response)
 {
     BEGIN
-    Q_UNUSED(command);
-    if (!response.isEmpty())
+    OutputByteArray(response);
+
+    QVariant result;
+    switch(command.at(0))
     {
-        END
-        return quint8(response.at(0)) == 0x0a;
+        case 0x30:
+        {
+            // read command
+#ifdef SYMBIAN_RETURN_CRC
+            result = response.left(16);
+#else
+            result = response;
+#endif
+            break;
+        }
+        case 0xA2:
+        {
+#ifdef SYMBIAN_RETURN_NO_ACK
+            result = true;
+#else
+            // write command
+            result = (response.at(0) == 0x0A);
+#endif
+            break;
+        }
+        default:
+        {
+#ifdef SYMBIAN_RETURN_CRC
+            result = response.left(16);
+#else
+            result = response;
+#endif
+        }
     }
-    else
-    {
-        END
-        return response;
-    }
+    END
+    return result;
 }
 
 QNearFieldTarget::RequestId QNearFieldTagType2Symbian::readBlock(quint8 blockAddress)
@@ -78,11 +115,13 @@ QNearFieldTarget::RequestId QNearFieldTagType2Symbian::readBlock(quint8 blockAdd
     QByteArray command;
     command.append(char(0x30));         // READ
     command.append(char(blockAddress)); // Block address
-    // Hardware will append CRC bytes. The CRC value appended 
-    // to the command will be ignored.
-    command.append(char(0x00)); // CRC1
-    command.append(char(0x00)); // CRC2
 
+#ifdef SYMBIAN_NEED_CRC
+    // append CRC
+    quint16 crc = qNfcChecksum(command.constData(), command.count());
+    command.append((unsigned char)(crc&0xFF));
+    command.append((unsigned char)((crc>>8)&0xFF));
+#endif
     END
     return sendCommand(command);
 }
@@ -91,17 +130,21 @@ QNearFieldTarget::RequestId QNearFieldTagType2Symbian::writeBlock(quint8 blockAd
 {
     BEGIN
     if (data.length() != 4)
+    {
+        END
         return QNearFieldTarget::RequestId();
-
+    }
     QByteArray command;
     command.append(char(0xa2));         // WRITE
     command.append(char(blockAddress)); // Block address
     command.append(data);               // Data
 
-    // Hardware will append CRC bytes. The CRC value appended 
-    // to the command will be ignored.
-    command.append(char(0x00)); // CRC1
-    command.append(char(0x00)); // CRC2
+#ifdef SYMBIAN_NEED_CRC
+    // append CRC
+    quint16 crc = qNfcChecksum(command.constData(), command.count());
+    command.append((unsigned char)(crc&0xFF));
+    command.append((unsigned char)((crc>>8)&0xFF));
+#endif
 
     END
     return sendCommand(command);
@@ -114,25 +157,31 @@ QNearFieldTarget::RequestId QNearFieldTagType2Symbian::selectSector(quint8 secto
     command.append(char(0xc2));     // SECTOR SELECT (Command Packet 1)
     command.append(char(0xff));
 
-    // Hardware will append CRC bytes. The CRC value appended 
-    // to the command will be ignored.
-    command.append(char(0x00)); // CRC1
-    command.append(char(0x00)); // CRC2
+#ifdef SYMBIAN_NEED_CRC
+    // append CRC
+    quint16 crc = qNfcChecksum(command.constData(), command.count());
+    command.append((unsigned char)(crc&0xFF));
+    command.append((unsigned char)((crc>>8)&0xFF));
+#endif
 
     RequestId id = sendCommand(command);
 
-    if (_waitForRequestCompletedNoSignal(id, 1) != KErrNone)
+    if (!_waitForRequestCompletedNoSignal(id, 1))
     {
         END
         return QNearFieldTarget::RequestId();
     }
     else
-    { 
+    {
         command.clear();
         command.append(char(sector));               // Sector number
         command.append(QByteArray(3, char(0x00)));  // RFU
-        command.append(char(0x00)); // CRC1
-        command.append(char(0x00)); // CRC2
+#ifdef SYMBIAN_NEED_CRC
+    // append CRC
+    quint16 crc = qNfcChecksum(command.constData(), command.count());
+    command.append((unsigned char)(crc&0xFF));
+    command.append((unsigned char)((crc>>8)&0xFF));
+#endif
         END
         return sendCommand(command);
     }
@@ -154,8 +203,6 @@ QNearFieldTarget::RequestId QNearFieldTagType2Symbian::sendCommands(const QList<
 
 bool QNearFieldTagType2Symbian::hasNdefMessage()
 {
-    BEGIN
-    END
     return _hasNdefMessage();
 }
 
@@ -180,12 +227,12 @@ QByteArray QNearFieldTagType2Symbian::uid() const
     return _uid();
 }
 
-void QNearFieldTagType2Symbian::handleTagOperationResponse(const RequestId &id, const QByteArray &command, const QByteArray &response)
+void QNearFieldTagType2Symbian::handleTagOperationResponse(const RequestId &id, const QByteArray &command, const QByteArray &response, bool emitRequestCompleted)
 {
     BEGIN
     Q_UNUSED(command);
     QVariant decodedResponse = decodeResponse(command, response);
-    setResponseForRequest(id, decodedResponse);
+    setResponseForRequest(id, decodedResponse, emitRequestCompleted);
     END
 }
 

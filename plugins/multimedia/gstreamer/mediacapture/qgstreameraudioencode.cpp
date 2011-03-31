@@ -52,27 +52,31 @@ QGstreamerAudioEncode::QGstreamerAudioEncode(QObject *parent)
 {
     QList<QByteArray> codecCandidates;
 
-#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+#if defined(Q_WS_MAEMO_5)
     codecCandidates << "audio/PCM"; //<< "audio/AMR" << "audio/AMR-WB" << "audio/speex";
+#elif defined(Q_WS_MAEMO_6)
+    codecCandidates << "audio/AAC" << "audio/mpeg" << "audio/vorbis" << "audio/speex" << "audio/GSM"
+                    << "audio/PCM" << "audio/AMR" << "audio/AMR-WB" << "audio/FLAC";
 #else
     codecCandidates << "audio/mpeg" << "audio/vorbis" << "audio/speex" << "audio/GSM"
-                    << "audio/PCM" << "audio/AMR" << "audio/AMR-WB";
+                    << "audio/PCM" << "audio/AMR" << "audio/AMR-WB" << "audio/FLAC";
 #endif
 
 #if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
-    m_elementNames["audio/PCM"] = "audioresample";
     m_elementNames["audio/AMR"] = "nokiaamrnbenc";
     m_elementNames["audio/AMR-WB"] = "nokiaamrwbenc";
-    m_elementNames["audio/speex"] = "speexenc";
+    m_elementNames["audio/AAC"] = "nokiaaacenc";
 #else
     m_elementNames["audio/mpeg"] = "lamemp3enc";
-    m_elementNames["audio/vorbis"] = "vorbisenc";
-    m_elementNames["audio/speex"] = "speexenc";
-    m_elementNames["audio/GSM"] = "gsmenc";
-    m_elementNames["audio/PCM"] = "audioresample";
     m_elementNames["audio/AMR"] = "amrnbenc";
     m_elementNames["audio/AMR-WB"] = "amrwbenc";
 #endif
+
+    m_elementNames["audio/vorbis"] = "vorbisenc";
+    m_elementNames["audio/speex"] = "speexenc";
+    m_elementNames["audio/PCM"] = "audioresample";
+    m_elementNames["audio/FLAC"] = "flacenc";
+    m_elementNames["audio/GSM"] = "gsmenc";
 
     m_codecOptions["audio/vorbis"] = QStringList() << "min-bitrate" << "max-bitrate";
     m_codecOptions["audio/mpeg"] = QStringList() << "mode";
@@ -158,14 +162,13 @@ void QGstreamerAudioEncode::setAudioSettings(const QAudioEncoderSettings &settin
 GstElement *QGstreamerAudioEncode::createEncoder()
 {
     QString codec = m_audioSettings.codec();
+    GstElement *encoderElement = gst_element_factory_make(m_elementNames.value(codec).constData(), NULL);
+    if (!encoderElement)
+        return 0;
 
     GstBin * encoderBin = GST_BIN(gst_bin_new("audio-encoder-bin"));
-    Q_ASSERT(encoderBin);
 
     GstElement *capsFilter = gst_element_factory_make("capsfilter", NULL);
-    GstElement *encoderElement = gst_element_factory_make(m_elementNames.value(codec).constData(), NULL);
-
-    Q_ASSERT(encoderElement);
 
     gst_bin_add(encoderBin, capsFilter);
     gst_bin_add(encoderBin, encoderElement);

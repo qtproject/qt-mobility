@@ -97,12 +97,27 @@ void QGeoTiledMapPolylineObjectInfo::genPath()
         double ox = origin.longitude() * 3600.0;
         double oy = origin.latitude() * 3600.0;
 
+        double oldx = ox;
+        double oldy = oy;
+
         p.moveTo(0, 0);
-        for (int i = 0; i < path.size(); ++i) {
+        for (int i = 1; i < path.size(); ++i) {
             QGeoCoordinate pt = path.at(i);
-            double x = pt.longitude() * 3600.0 - ox;
-            double y = pt.latitude() * 3600.0 - oy;
-            p.lineTo(x, y);
+            double x = pt.longitude() * 3600.0;
+            double y = pt.latitude() * 3600.0;
+
+            if (qAbs(x - oldx) > 180.0 * 3600.0) {
+                if (x > oldx) {
+                    x -= 360.0 * 3600.0;
+                } else if (x < oldx) {
+                    x += 360.0 * 3600.0;
+                }
+            }
+
+            p.lineTo(x - ox, y - oy);
+
+            oldx = x;
+            oldy = y;
         }
     }
 

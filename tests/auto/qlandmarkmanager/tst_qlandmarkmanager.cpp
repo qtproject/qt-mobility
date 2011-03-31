@@ -1320,6 +1320,8 @@ void testViewport_data();
     void testConvenienceFunctions();
     void filterSortComparison();
 #endif
+
+    void mobility_1914();
 };
 
 void tst_QLandmarkManager::initTestCase() {
@@ -10171,6 +10173,37 @@ void tst_QLandmarkManager::simpleTest()
     }
 }
 #endif
+
+void tst_QLandmarkManager::mobility_1914()
+{
+    //test is only relevant for sparql and sqlite managers
+    //we are testing to see that if a url is not absolute
+    //then it is not exported to keep in line with the lmx specification 1.0 (urls must be absolute)
+    if (m_manager->managerName() == "com.nokia.qt.landmarks.engines.sqlite"
+        || m_manager->managerName() == "com.nokia.qt.landmarks.engines.qsparql") {
+        QLandmark lm;
+        lm.setName("Lm");
+        lm.setUrl(QUrl("www.test.com"));  //try a relative uri
+        m_manager->saveLandmark(&lm);
+        QVERIFY(m_manager->exportLandmarks(exportFile, QLandmarkManager::Lmx));
+        QFile file(exportFile);
+        file.open(QFile::ReadOnly);
+        QString fileContents = file.readAll();
+        QVERIFY(!fileContents.contains("<url>"));
+        QVERIFY(!fileContents.contains("<mediaLink>"));
+        file.close();
+
+        lm.setUrl(QUrl("http://www.test.com"));  //try an absolute uri
+        QVERIFY(m_manager->saveLandmark(&lm));
+        QVERIFY(m_manager->exportLandmarks(exportFile, QLandmarkManager::Lmx));
+        file.open(QFile::ReadOnly);
+        fileContents = file.readAll();
+        file.close();
+        file.remove();
+        QVERIFY(fileContents.contains("<url>"));
+        QVERIFY(fileContents.contains("<mediaLink>"));
+    }
+}
 
 QTEST_MAIN(tst_QLandmarkManager)
 #include "tst_qlandmarkmanager.moc"

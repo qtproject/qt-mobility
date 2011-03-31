@@ -74,7 +74,7 @@ void ContentHandlerInterface::handleMessage(const QByteArray& btArray)
 
 
 }
-/*!
+/*
     \class QNearFieldManagerPrivateImpl
     \brief The QNearFieldManagerPrivateImpl class provides symbian backend access to NFC service.
 
@@ -84,29 +84,35 @@ void ContentHandlerInterface::handleMessage(const QByteArray& btArray)
   A Qt-Symbian wrapper implementation class to support symbian NFC backend.
 */
 
-/*!
+/*
     Constructs a new near field manager private implementation.
 */
 QNearFieldManagerPrivateImpl::QNearFieldManagerPrivateImpl(): m_symbianbackend(NULL),m_target(NULL),m_serviceRegister(NULL)
 {
     BEGIN
-    QT_TRAP_THROWING(m_symbianbackend = CNearFieldManager::NewL(*this));
+    TRAPD(err, m_symbianbackend = CNearFieldManager::NewL(*this));
     END
 }
 
-/*!
+/*
     Destroys the near field manager private implementation.
 */
 QNearFieldManagerPrivateImpl::~QNearFieldManagerPrivateImpl()
 {
     BEGIN
     delete m_target;
+    qDeleteAll(m_targetList);
     delete m_serviceRegister;
     delete m_symbianbackend;
     END
 }
 
-/*!
+bool QNearFieldManagerPrivateImpl::isAvailable() const
+{
+    return m_symbianbackend;
+}
+
+/*
     Helper function to get the free handler id.
 */
 int QNearFieldManagerPrivateImpl::getFreeId()
@@ -120,7 +126,7 @@ int QNearFieldManagerPrivateImpl::getFreeId()
     return m_registeredHandlers.count() - 1;
 }
 
-/*!
+/*
     Registers \a object to receive notifications on \a method when a tag with a tag type of
     \a targetType has been detected and has an NDEF message is detected. The
     \a method on \a object should have the prototype
@@ -132,7 +138,7 @@ int QNearFieldManagerPrivateImpl::getFreeId()
 int QNearFieldManagerPrivateImpl::registerNdefMessageHandler(QObject *object,
                                                              const QMetaMethod &method)
 {
-    QServiceFilter filter("com.nokia.symbian.NdefMessageHandler");
+    QServiceFilter filter("com.nokia.qtmobility.nfc.NdefMessageHandler");
     QCoreApplication* app = QCoreApplication::instance();
     //The appfile path will return something like \sys\bin\nfcspserviceprovider.exe
     //but we only need nfcspserviceprovider as service name
@@ -158,7 +164,7 @@ int QNearFieldManagerPrivateImpl::registerNdefMessageHandler(QObject *object,
             m_serviceRegister = new QRemoteServiceRegister();
             QRemoteServiceRegister::Entry entry =
                     m_serviceRegister->createEntry<ContentHandlerInterface>(servicename,
-                                                                         "com.nokia.symbian.NdefMessageHandler",
+                                                                         "com.nokia.qtmobility.nfc.NdefMessageHandler",
                                                                          "1.0");
             entry.setInstantiationType(QRemoteServiceRegister::PrivateInstance);
             m_serviceRegister->publishEntries(servicename);
@@ -171,7 +177,7 @@ int QNearFieldManagerPrivateImpl::registerNdefMessageHandler(QObject *object,
     }
 }
 
-/*!
+/*
     Registers \a object to receive notifications on \a method when a tag with a tag type of
     \a targetType has been detected and has an NDEF message that matches \a filter is detected. The
     \a method on \a object should have the prototype
@@ -184,6 +190,9 @@ int QNearFieldManagerPrivateImpl::registerNdefMessageHandler(const QNdefFilter &
                                                              QObject *object,
                                                              const QMetaMethod &method)
 {
+    if (!m_symbianbackend)
+        return -1;
+
     BEGIN
     int id = getFreeId();
 
@@ -214,13 +223,16 @@ int QNearFieldManagerPrivateImpl::registerNdefMessageHandler(const QNdefFilter &
     return id;
 }
 
-/*!
+/*
     Unregisters the target detect handler identified by \a id.
 
     Returns true on success; otherwise returns false.
 */
 bool QNearFieldManagerPrivateImpl::unregisterNdefMessageHandler(int id)
 {
+    if (!m_symbianbackend)
+        return false;
+
     BEGIN
      if ( 0xffff == id )
         {
@@ -249,19 +261,23 @@ bool QNearFieldManagerPrivateImpl::unregisterNdefMessageHandler(int id)
 }
 
 bool QNearFieldManagerPrivateImpl::startTargetDetection(const QList<QNearFieldTarget::Type> &targetTypes)
-    {
+{
+    if (!m_symbianbackend)
+        return false;
+
     BEGIN
     TRAPD(err, m_symbianbackend->StartTargetDetectionL(targetTypes));
-    return err == KErrNone;
     END
-    }
+    return err == KErrNone;
+}
 
 void QNearFieldManagerPrivateImpl::stopTargetDetection()
-    {
+{
     BEGIN
-    m_symbianbackend->stopTargetDetection();
+    if (m_symbianbackend)
+        m_symbianbackend->stopTargetDetection();
     END
-    }
+}
 
 struct VerifyRecord
 {
@@ -269,7 +285,7 @@ struct VerifyRecord
     unsigned int count;
 };
 
-/*!
+/*
     Callback function when symbian NFC backend found the NFC \a target.
 */
 void QNearFieldManagerPrivateImpl::targetFound(QNearFieldTarget *target)
@@ -279,8 +295,7 @@ void QNearFieldManagerPrivateImpl::targetFound(QNearFieldTarget *target)
         return;
     }
     if (m_target){
-        delete m_target;
-        m_target = NULL;
+        m_targetList.append(m_target);
     }
     m_target = target;
     emit targetDetected(target);
@@ -296,7 +311,7 @@ void QNearFieldManagerPrivateImpl::_q_privateHandleMessageSlot(QNdefMessage aMsg
     m_chmethod.invoke(m_chobject, Q_ARG(QNdefMessage, aMsg), Q_ARG(QNearFieldTarget* , NULL));
     }
 
-/*!
+/*
     Helper function to invoke the filtered TargetDetectedHandler for a found \a target.
 */
 
@@ -355,7 +370,7 @@ void QNearFieldManagerPrivateImpl::invokeNdefMessageHandler(const QNdefMessage m
     END
 }
 
-/*!
+/*
     Callback function when symbian NFC backend lost the NFC \a target.
 */
 void QNearFieldManagerPrivateImpl::targetDisconnected()

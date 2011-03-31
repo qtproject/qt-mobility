@@ -118,18 +118,18 @@ public:
 
 private:
     void start(const QBluetoothAddress &address);
-    bool quickDiscovery(const QBluetoothAddress &address, const QBluetoothDeviceInfo &info);
     void stop();
 
 #ifdef QTM_SYMBIAN_BLUETOOTH
     void startL(const QBluetoothAddress &address);
-    void initAgentL(const QBluetoothAddress &address);
+    void initL(const QBluetoothAddress &address);
 #elif !defined(QT_NO_DBUS)
     QVariant readAttributeValue(QXmlStreamReader &xml);
 #endif
 
 public:
     QBluetoothServiceDiscoveryAgent::Error error;
+    QString errorString;
 
     QList<QBluetoothServiceInfo> discoveredServices;
     QList<QBluetoothDeviceInfo> discoveredDevices;
@@ -142,6 +142,8 @@ private:
     QBluetoothDeviceDiscoveryAgent *deviceDiscoveryAgent;
 
     QBluetoothServiceDiscoveryAgent::DiscoveryMode mode;
+
+    bool singleDevice;
 
 #ifdef QTM_SYMBIAN_BLUETOOTH
     CSdpAgent *m_sdpAgent;

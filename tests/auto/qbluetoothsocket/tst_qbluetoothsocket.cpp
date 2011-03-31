@@ -43,6 +43,8 @@
 
 #include <QDebug>
 
+ #include <QProcessEnvironment>
+
 #include <qbluetoothsocket.h>
 #include <qbluetoothdeviceinfo.h>
 #include <qbluetoothserviceinfo.h>
@@ -60,6 +62,9 @@ Q_DECLARE_METATYPE(QBluetoothSocket::SocketType)
 
 //#define BTADDRESS "00:1A:9F:92:9E:5A"
 char BTADDRESS[] = "00:00:00:00:00:00";
+#ifdef Q_OS_SYMBIAN
+static const QString peerNameSymbian("Patagonia_bluetooth_client");
+#endif
 
 // Max time to wait for connection
 
@@ -99,6 +104,8 @@ private slots:
     void tst_localPeer_data();
     void tst_localPeer();
 
+    void tst_error();
+
 public slots:
     void serviceDiscovered(const QBluetoothServiceInfo &info);
     void finished();
@@ -127,31 +134,42 @@ void tst_QBluetoothSocket::initTestCase()
     device->powerOn();
     delete device;
 
-    // Go find an echo server for BTADDRESS
-    QBluetoothServiceDiscoveryAgent *sda = new QBluetoothServiceDiscoveryAgent(this);
-    connect(sda, SIGNAL(serviceDiscovered(QBluetoothServiceInfo)), this, SLOT(serviceDiscovered(QBluetoothServiceInfo)));
-    connect(sda, SIGNAL(error(QBluetoothServiceDiscoveryAgent::Error)), this, SLOT(error(QBluetoothServiceDiscoveryAgent::Error)));
-    connect(sda, SIGNAL(finished()), this, SLOT(finished()));
-
-    qDebug() << "Starting discovery";
-    done_discovery = false;
-    memset(BTADDRESS, 0, 18);
-
-    sda->setUuidFilter(QBluetoothUuid(QString(ECHO_SERVICE_UUID)));
-    sda->start(QBluetoothServiceDiscoveryAgent::MinimalDiscovery);
-
-    int connectTime = MaxConnectTime;
-    while (!done_discovery) {
-        QTest::qWait(1000);
-        connectTime -= 1000;
+    QProcessEnvironment pe = QProcessEnvironment::systemEnvironment();
+    QLatin1String t("TESTSERVER");
+    if(pe.contains(t)){
+        qDebug() << pe.value(t);
+        strcpy(BTADDRESS, pe.value(t).toAscii());
     }
 
-    sda->stop();
+    if(QBluetoothAddress(BTADDRESS).isNull()){
+        // Go find an echo server for BTADDRESS
+        QBluetoothServiceDiscoveryAgent *sda = new QBluetoothServiceDiscoveryAgent(this);
+        connect(sda, SIGNAL(serviceDiscovered(QBluetoothServiceInfo)), this, SLOT(serviceDiscovered(QBluetoothServiceInfo)));
+        connect(sda, SIGNAL(error(QBluetoothServiceDiscoveryAgent::Error)), this, SLOT(error(QBluetoothServiceDiscoveryAgent::Error)));
+        connect(sda, SIGNAL(finished()), this, SLOT(finished()));
 
-    if(BTADDRESS[0] == 0){
-        QFAIL("Unable to find test service");
+
+        qDebug() << "Starting discovery";
+        done_discovery = false;
+        memset(BTADDRESS, 0, 18);
+
+        sda->setUuidFilter(QBluetoothUuid(QString(ECHO_SERVICE_UUID)));
+        sda->start(QBluetoothServiceDiscoveryAgent::MinimalDiscovery);
+
+        int connectTime = MaxConnectTime;
+        while (!done_discovery) {
+            QTest::qWait(1000);
+            connectTime -= 1000;
+        }
+
+        sda->stop();
+
+        if(QBluetoothAddress(BTADDRESS).isNull()){
+            QFAIL("Unable to find test service");
+        }
+        delete sda;
+        sda = 0x0;
     }
-    delete sda;
 
 }
 
@@ -665,6 +683,7 @@ void tst_QBluetoothSocket::tst_localPeer()
     QFETCH(QBluetoothAddress, peerAddress);
     QFETCH(quint16, peerPort);
 
+#ifndef Q_OS_SYMBIAN
     QStringList args;
     args << "name" << peerAddress.toString();
     QProcess *hcitool = new QProcess();
@@ -673,6 +692,7 @@ void tst_QBluetoothSocket::tst_localPeer()
     QString peerNameHCI = hcitool->readLine().trimmed();
     hcitool->close();
     delete hcitool;
+#endif
 
 
     /* Construction */
@@ -717,7 +737,11 @@ void tst_QBluetoothSocket::tst_localPeer()
     QCOMPARE(socket->localName(), list[2]);
     QCOMPARE(socket->localAddress(), QBluetoothAddress(list[3]));
     QCOMPARE(socket->localPort(), list[4].toUShort());
+#ifndef Q_OS_SYMBIAN
     QCOMPARE(socket->peerName(), peerNameHCI);
+#else
+    QCOMPARE(socket->peerName(), peerNameSymbian);
+#endif
 
     /* Disconnection */
     QSignalSpy disconnectedSpy(socket, SIGNAL(disconnected()));
@@ -736,6 +760,22 @@ void tst_QBluetoothSocket::tst_localPeer()
     QCOMPARE(qvariant_cast<QBluetoothSocket::SocketState>(stateSpy.takeFirst().at(0)), QBluetoothSocket::UnconnectedState);
 
     delete socket;
+}
+
+void tst_QBluetoothSocket::tst_error()
+{
+    QBluetoothSocket socket;
+    QSignalSpy errorSpy(&socket, SIGNAL(error(QBluetoothSocket::SocketError)));
+    QCOMPARE(errorSpy.count(), 0);
+
+    QVERIFY(socket.error() != (QBluetoothSocket::ConnectionRefusedError ||
+        QBluetoothSocket::HostNotFoundError ||
+        QBluetoothSocket::NetworkError ||
+        QBluetoothSocket::RemoteHostClosedError ||
+        QBluetoothSocket::ServiceNotFoundError ||
+        QBluetoothSocket::UnknownSocketError));
+
+    QVERIFY(socket.errorString() == QString());
 }
 
 QTEST_MAIN(tst_QBluetoothSocket)
