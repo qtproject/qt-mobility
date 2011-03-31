@@ -335,8 +335,12 @@ void QSystemNetworkInfo::connectNotify(const char *signal)
     }
     if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
             cellIdChanged(int))))) {
-        connect(d,SIGNAL(cellIdChanged(int)),
-                this,SIGNAL(cellIdChanged(int)));
+        connect(d,SIGNAL(cellIdChanged(int)),this,SIGNAL(cellIdChanged(int)));
+    }
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            cellIdChanged(int))))) {
+        connect(d,SIGNAL(cellDataTechnologyChanged(QSystemNetworkInfo::CellDataTechnology)),
+                this,SIGNAL(cellDataTechnologyChanged(QSystemNetworkInfo::CellDataTechnology)));
     }
 }
 
@@ -389,7 +393,15 @@ void QSystemNetworkInfo::disconnectNotify(const char *signal)
         disconnect(d,SIGNAL(networkStatusChanged(QSystemNetworkInfo::NetworkMode,QSystemNetworkInfo::NetworkStatus)),
                 this,SIGNAL(networkStatusChanged(QSystemNetworkInfo::NetworkMode,QSystemNetworkInfo::NetworkStatus)));
     }
-
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            cellIdChanged(int))))) {
+        disconnect(d,SIGNAL(cellIdChanged(int)),this,SIGNAL(cellIdChanged(int)));
+    }
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            cellIdChanged(int))))) {
+        disconnect(d,SIGNAL(cellDataTechnologyChanged(QSystemNetworkInfo::CellDataTechnology)),
+                this,SIGNAL(cellDataTechnologyChanged(QSystemNetworkInfo::CellDataTechnology)));
+    }
 }
 
 /*!

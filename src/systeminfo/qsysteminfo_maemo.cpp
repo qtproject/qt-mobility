@@ -691,37 +691,7 @@ void QSystemNetworkInfoPrivate::setupNetworkInfo()
         currentCellNetworkStatus = csStatusMaemo6.value(status, -1);
 
         /* CSD: data technology */
-        QMap<QString,QVariant> csdRadioAccess = queryCsdProperties(service, servicePath, "com.nokia.csd.CSNet.RadioAccess");
-
-        QVariant dataTechnology = csdRadioAccess.value("DataTechnology", "");
-        QString dt = dataTechnology.isValid() ? dataTechnology.value<QString>() : "";
-        currentCellDataTechnology = csdtToCellDataTechnology(dt);
-
-        /* Signal handlers */
-        if (!systemDbusConnection.connect(service, servicePath, "com.nokia.csd.CSNet.SignalStrength", "SignalStrengthChanged",
-                                         this, SLOT(slotSignalStrengthChanged(int, int)))) {
-            qDebug() << "unable to connect SignalStrengthChanged";
-        }
-        if (!systemDbusConnection.connect(service, servicePath, "com.nokia.csd.CSNet.NetworkOperator", "OperatorChanged",
-                                         this, SLOT(slotOperatorChanged(const QString&,const QString&)))) {
-            qDebug() << "unable to connect (OperatorChanged";
-        }
-        if (!systemDbusConnection.connect(service, servicePath, "com.nokia.csd.CSNet.NetworkOperator", "OperatorNameChanged",
-                                         this, SLOT(slotOperatorNameChanged(const QString&)))) {
-            qDebug() << "unable to connect OperatorNameChanged";
-        }
-        if (!systemDbusConnection.connect(service, servicePath, "com.nokia.csd.CSNet.NetworkRegistration", "RegistrationChanged",
-                                         this, SLOT(slotRegistrationChanged(const QString&)))) {
-            qDebug() << "unable to connect RegistrationChanged";
-        }
-        if (!systemDbusConnection.connect(service, servicePath, "com.nokia.csd.CSNet.NetworkCell", "CellChanged",
-                                         this, SLOT(slotCellChanged(const QString&,int,int)))) {
-            qDebug() << "unable to connect CellChanged";
-        }
-        if (!systemDbusConnection.connect(service, servicePath, "com.nokia.csd.CSNet.RadioAccess", "DataTechnologyChanged",
-                                         this, SLOT(slotCellDataTechnologyChanged(const QString&)))) {
-            qDebug() << "unable to connect DataTechnologyChanged";
-        }
+        currentCellDataTechnology = cellDataTechnology();
 
     #else
     /* Maemo 5 */
@@ -838,6 +808,134 @@ void QSystemNetworkInfoPrivate::setupNetworkInfo()
 #endif
 }
 
+void QSystemNetworkInfoPrivate::connectNotify(const char *signal)
+{
+#if !defined(QT_NO_DBUS)
+#if defined(Q_WS_MAEMO_6)
+    const QString service = "com.nokia.csd.CSNet";
+    const QString servicePath = "/com/nokia/csd/csnet";
+
+    if ((QLatin1String(signal)
+         == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode, int)))))) {
+        if (!QDBusConnection::systemBus().connect(service, servicePath, "com.nokia.csd.CSNet.SignalStrength", "SignalStrengthChanged",
+                                                  this, SLOT(slotSignalStrengthChanged(int, int)))) {
+            qDebug() << "unable to connect SignalStrengthChanged";
+        }
+    }
+
+    if ((QLatin1String(signal)
+         == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(currentMobileCountryCodeChanged(const QString &)))))
+            || (QLatin1String(signal)
+                == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(currentMobileNetworkCodeChanged(const QString &))))) ) {
+        if (!QDBusConnection::systemBus().connect(service, servicePath, "com.nokia.csd.CSNet.NetworkOperator", "OperatorChanged",
+                                                  this, SLOT(slotOperatorChanged(const QString&,const QString&)))) {
+            qDebug() << "unable to connect (OperatorChanged";
+        }
+    }
+
+    if ((QLatin1String(signal)
+         == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(networkNameChanged(QSystemNetworkInfo::NetworkMode,const QString &)))))) {
+        if (!QDBusConnection::systemBus().connect(service, servicePath, "com.nokia.csd.CSNet.NetworkOperator", "OperatorNameChanged",
+                                                  this, SLOT(slotOperatorNameChanged(const QString&)))) {
+            qDebug() << "unable to connect OperatorNameChanged";
+        }
+    }
+
+
+    if ((QLatin1String(signal)
+         == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(networkStatusChanged(QSystemNetworkInfo::NetworkMode, QSystemNetworkInfo::NetworkStatus)))))) {
+        if (!QDBusConnection::systemBus().connect(service, servicePath, "com.nokia.csd.CSNet.NetworkRegistration", "RegistrationChanged",
+                                                  this, SLOT(slotRegistrationChanged(const QString&)))) {
+            qDebug() << "unable to connect RegistrationChanged";
+        }
+    }
+
+    if ((QLatin1String(signal)
+         == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(cellIdChanged(int)))))) {
+        if (!QDBusConnection::systemBus().connect(service, servicePath, "com.nokia.csd.CSNet.NetworkCell", "CellChanged",
+                                          this, SLOT(slotCellChanged(const QString&,int,int)))) {
+            qDebug() << "unable to connect CellChanged";
+        }
+    }
+
+    if ((QLatin1String(signal)
+         == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(cellDataTechnologyChanged(QSystemNetworkInfo::CellDataTechnology)))))) {
+        if (!QDBusConnection::systemBus().connect(service, servicePath, "com.nokia.csd.CSNet.RadioAccess", "DataTechnologyChanged",
+                                          this, SLOT(slotCellDataTechnologyChanged(const QString&)))) {
+            qDebug() << "unable to connect DataTechnologyChanged";
+        }
+    }
+
+#else //maemo5
+
+#endif
+#endif
+}
+
+void QSystemNetworkInfoPrivate::disconnectNotify(const char *signal)
+{
+#if !defined(QT_NO_DBUS)
+#if defined(Q_WS_MAEMO_6)
+    const QString service = "com.nokia.csd.CSNet";
+    const QString servicePath = "/com/nokia/csd/csnet";
+    if ((QLatin1String(signal)
+         == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode, int)))))) {
+        if (!QDBusConnection::systemBus().disconnect(service, servicePath, "com.nokia.csd.CSNet.SignalStrength", "SignalStrengthChanged",
+                                                  this, SLOT(slotSignalStrengthChanged(int, int)))) {
+            qDebug() << "unable to disconnect SignalStrengthChanged";
+        }
+    }
+
+    if ((QLatin1String(signal)
+         == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(currentMobileCountryCodeChanged(const QString &)))))
+            || (QLatin1String(signal)
+                == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(currentMobileNetworkCodeChanged(const QString &))))) ) {
+        if (!QDBusConnection::systemBus().disconnect(service, servicePath, "com.nokia.csd.CSNet.NetworkOperator", "OperatorChanged",
+                                                  this, SLOT(slotOperatorChanged(const QString&,const QString&)))) {
+            qDebug() << "unable to disconnect (OperatorChanged";
+        }
+    }
+
+    if ((QLatin1String(signal)
+         == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(networkNameChanged(QSystemNetworkInfo::NetworkMode,const QString &)))))) {
+        if (!QDBusConnection::systemBus().disconnect(service, servicePath, "com.nokia.csd.CSNet.NetworkOperator", "OperatorNameChanged",
+                                                  this, SLOT(slotOperatorNameChanged(const QString&)))) {
+            qDebug() << "unable to disconnect OperatorNameChanged";
+        }
+    }
+
+
+    if ((QLatin1String(signal)
+         == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(networkStatusChanged(QSystemNetworkInfo::NetworkMode, QSystemNetworkInfo::NetworkStatus)))))) {
+        if (!QDBusConnection::systemBus().disconnect(service, servicePath, "com.nokia.csd.CSNet.NetworkRegistration", "RegistrationChanged",
+                                                  this, SLOT(slotRegistrationChanged(const QString&)))) {
+            qDebug() << "unable to disconnect RegistrationChanged";
+        }
+    }
+
+    if ((QLatin1String(signal)
+         == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(cellIdChanged(int)))))) {
+        if (!QDBusConnection::systemBus().disconnect(service, servicePath, "com.nokia.csd.CSNet.NetworkCell", "CellChanged",
+                                          this, SLOT(slotCellChanged(const QString&,int,int)))) {
+            qDebug() << "unable to disconnect CellChanged";
+        }
+    }
+
+    if ((QLatin1String(signal)
+         == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(cellDataTechnologyChanged(QSystemNetworkInfo::CellDataTechnology)))))) {
+        if (!QDBusConnection::systemBus().disconnect(service, servicePath, "com.nokia.csd.CSNet", "ActivityChanged",
+                                          this, SLOT(slotCellDataTechnologyChanged(const QString&)))) {
+            qDebug() << "unable to disconnect DataTechnologyChanged";
+        }
+    }
+
+#else //maemo5
+
+#endif
+#endif
+}
+
+
 #if defined(Q_WS_MAEMO_6)
 // Slots only available in Maemo6
 
@@ -915,10 +1013,10 @@ void QSystemNetworkInfoPrivate::slotCellChanged(const QString &type, int id, int
 
 void QSystemNetworkInfoPrivate::slotCellDataTechnologyChanged(const QString &tech)
 {
-    QSystemNetworkInfo::CellDataTechnology cdt = csdtToCellDataTechnology(tech);
-    if (cdt != currentCellDataTechnology) {
-        currentCellDataTechnology = cdt;
-        emit cellDataTechnologyChanged(cdt);
+    QSystemNetworkInfo::CellDataTechnology oldcdt = currentCellDataTechnology;
+
+    if (oldcdt != cellDataTechnology()) {
+        emit cellDataTechnologyChanged(currentCellDataTechnology);
     }
 }
 
@@ -1119,7 +1217,24 @@ void QSystemNetworkInfoPrivate::setWlanSignalStrengthCheckEnabled(bool enabled)
 
 QSystemNetworkInfo::CellDataTechnology QSystemNetworkInfoPrivate::cellDataTechnology()
 {
-    return QSystemNetworkInfo::UnknownDataTechnology;
+    const QString service = "com.nokia.csd.CSNet";
+    const QString servicePath = "/com/nokia/csd/csnet";
+    QDBusInterface ifc5(service, servicePath, "com.nokia.csd.CSNet.RadioAccess", QDBusConnection::systemBus());
+
+    QDBusInterface ifc51(service, servicePath, "com.nokia.csd.CSNet", QDBusConnection::systemBus());
+    QString activity = ifc51.property("Activity").toString();
+    QVariant dataTechnology;
+
+    if ( activity == "PacketData") {
+        dataTechnology = ifc5.property("DataTechnology");
+    } else {
+        dataTechnology = ifc5.property("Technology");
+    }
+
+    QString dt = dataTechnology.isValid() ? dataTechnology.value<QString>() : "";
+    currentCellDataTechnology = csdtToCellDataTechnology(dt);
+
+    return currentCellDataTechnology;
 }
 
 QSystemDisplayInfoPrivate::QSystemDisplayInfoPrivate(QSystemDisplayInfoLinuxCommonPrivate *parent)
@@ -1187,13 +1302,26 @@ QSystemStorageInfoPrivate::~QSystemStorageInfoPrivate()
 {
 }
 QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QSystemDeviceInfoLinuxCommonPrivate *parent)
-        : QSystemDeviceInfoLinuxCommonPrivate(parent), flightMode(0),gpioFD(-1)
+        : QSystemDeviceInfoLinuxCommonPrivate(parent), gpioFD(-1)
 {
-
- #if !defined(QT_NO_DBUS)
     previousPowerState = QSystemDeviceInfo::UnknownPower;
-    setupProfile();
-#endif
+
+    m_profileName                    = "";
+    m_flightMode                     = false;
+    m_silentProfile                  = false;
+    m_vibratingAlertEnabled          = false;
+    m_beepProfile                    = false;
+    m_ringingAlertVolume             = 0;
+    m_smsAlertVolume                 = 0;
+
+    m_flightModeQueried              = false;
+    m_profileNameQueried             = false;
+    m_ringingAlertTypeQueried        = false;
+    m_vibratingAlertEnabledQueried   = false;
+    m_ringingAlertVolumeQueried      = false;
+    m_smsAlertVolumeQueried          = false;
+
+    m_profileDataMetaTypesRegistered = false;
 }
 
 QSystemDeviceInfoPrivate::~QSystemDeviceInfoPrivate()
@@ -1202,6 +1330,20 @@ QSystemDeviceInfoPrivate::~QSystemDeviceInfoPrivate()
         ::close(gpioFD);
         gpioFD = -1;
     }
+}
+
+void QSystemDeviceInfoPrivate::registerProfileDataMetaTypes()
+{
+    if (m_profileDataMetaTypesRegistered) {
+        return;
+    }
+
+#if !defined(QT_NO_DBUS)
+    qDBusRegisterMetaType<ProfileDataValue>();
+    qDBusRegisterMetaType<QList<ProfileDataValue> >();
+#endif
+
+    m_profileDataMetaTypesRegistered = true;
 }
 
 void QSystemDeviceInfoPrivate::connectNotify(const char *signal)
@@ -1219,6 +1361,8 @@ void QSystemDeviceInfoPrivate::connectNotify(const char *signal)
                                              this, SLOT(deviceStateChanged(int,int)));
     }
     if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(currentProfileChanged(QSystemDeviceInfo::Profile))))) {
+        registerProfileDataMetaTypes();
+
         if (! QDBusConnection::systemBus().connect("com.nokia.mce",
                                "/com/nokia/mce/signal",
                                "com.nokia.mce.signal",
@@ -1319,16 +1463,16 @@ void QSystemDeviceInfoPrivate::halChanged(int,QVariantList map)
 QSystemDeviceInfo::Profile QSystemDeviceInfoPrivate::currentProfile()
 {
 #if !defined(QT_NO_DBUS)
-    if (flightMode)
+    if (flightMode())
         return QSystemDeviceInfo::OfflineProfile;
 
-    if (silentProfile)
-        return vibratingAlertEnabled ? QSystemDeviceInfo::VibProfile : QSystemDeviceInfo::SilentProfile;
+    if (silentProfile())
+        return vibrationActive() ? QSystemDeviceInfo::VibProfile : QSystemDeviceInfo::SilentProfile;
 
-    if (beepProfile)
+    if (beepProfile())
         return QSystemDeviceInfo::BeepProfile;
 
-    if (ringingAlertVolume > 75)
+    if (voiceRingtoneVolume() > 75)
         return QSystemDeviceInfo::LoudProfile;
 
     return QSystemDeviceInfo::NormalProfile;
@@ -1452,6 +1596,7 @@ QSystemDeviceInfo::ThermalState QSystemDeviceInfoPrivate::currentThermalState()
         }
     }
 #endif
+     return QSystemDeviceInfo::UnknownThermal;
 }
 
 #if !defined(QT_NO_DBUS)
@@ -1486,105 +1631,118 @@ QSystemDeviceInfo::ThermalState QSystemDeviceInfoPrivate::currentThermalState()
 #endif
 
 #if !defined(QT_NO_DBUS)
- void QSystemDeviceInfoPrivate::bluezPropertyChanged(const QString&, QDBusVariant v)
- {
-     //qDebug() << str << v.variant().toBool();
-     emit bluetoothStateChanged(v.variant().toBool());
- }
+void QSystemDeviceInfoPrivate::bluezPropertyChanged(const QString &name, QDBusVariant value)
+{
+    if (name == "Powered")
+        emit bluetoothStateChanged(value.variant().toBool());
+}
 #endif
 
 #if !defined(QT_NO_DBUS)
 
-void QSystemDeviceInfoPrivate::setupProfile()
+void QSystemDeviceInfoPrivate::queryRingingAlertType()
 {
-    QDBusReply<quint32> radioStatesReply = QDBusConnection::systemBus().call(
-                                                       QDBusMessage::createMethodCall("com.nokia.mce",  "/com/nokia/mce/request",
-                                                                                      "com.nokia.mce.request", "get_radio_states"));
-    if (radioStatesReply.isValid()) {
-        quint32 radioStateFlags = radioStatesReply.value();
-#define MCE_RADIO_STATE_WLAN            (1 << 2)
-#define MCE_RADIO_STATE_BLUETOOTH       (1 << 3)
-
-        flightMode = !(radioStateFlags & ~(MCE_RADIO_STATE_WLAN | MCE_RADIO_STATE_BLUETOOTH));
-    }
-
-    QDBusReply<QString> profileNameReply = QDBusConnection::sessionBus().call(
-                                                       QDBusMessage::createMethodCall("com.nokia.profiled", "/com/nokia/profiled",
-                                                                                      "com.nokia.profiled", "get_profile"));
-
-    if (profileNameReply.isValid()) {
-        profileName = profileNameReply.value();
+    if (m_ringingAlertTypeQueried) {
+        return;
     }
 
     QDBusMessage ringingAlertTypeMsg = QDBusMessage::createMethodCall("com.nokia.profiled", "/com/nokia/profiled",
                                                                       "com.nokia.profiled", "get_value");
-    ringingAlertTypeMsg << profileName;
+    ringingAlertTypeMsg << profileName();
     ringingAlertTypeMsg << "ringing.alert.type";
 
     QDBusReply<QString> ringingAlertTypeReply = QDBusConnection::sessionBus().call(ringingAlertTypeMsg);
 
     if (ringingAlertTypeReply.isValid()) {
-        silentProfile = QString::compare(ringingAlertTypeReply.value(), "silent", Qt::CaseInsensitive) == 0;
-        beepProfile = QString::compare(ringingAlertTypeReply.value(), "beep", Qt::CaseInsensitive) == 0;
+        m_silentProfile = QString::compare(ringingAlertTypeReply.value(), "silent", Qt::CaseInsensitive) == 0;
+        m_beepProfile = QString::compare(ringingAlertTypeReply.value(), "beep", Qt::CaseInsensitive) == 0;
+        m_ringingAlertTypeQueried = true;
+    }
+}
+
+bool QSystemDeviceInfoPrivate::flightMode()
+{
+   if (m_flightModeQueried) {
+       return m_flightMode;
+   }
+
+   QDBusReply<quint32> radioStatesReply = QDBusConnection::systemBus().call(
+                QDBusMessage::createMethodCall("com.nokia.mce",  "/com/nokia/mce/request",
+                                               "com.nokia.mce.request", "get_radio_states"));
+    if (radioStatesReply.isValid()) {
+        quint32 radioStateFlags = radioStatesReply.value();
+#define MCE_RADIO_STATE_WLAN            (1 << 2)
+#define MCE_RADIO_STATE_BLUETOOTH       (1 << 3)
+
+        m_flightMode = !(radioStateFlags & ~(MCE_RADIO_STATE_WLAN | MCE_RADIO_STATE_BLUETOOTH));
+        m_flightModeQueried = true;
+    }
+    return m_flightMode;
+}
+
+QString QSystemDeviceInfoPrivate::profileName()
+{
+    if (m_profileNameQueried) {
+        return m_profileName;
     }
 
-    QDBusMessage vibratingAlertMsg = QDBusMessage::createMethodCall("com.nokia.profiled", "/com/nokia/profiled",
-                                                                    "com.nokia.profiled", "get_value");
-    vibratingAlertMsg << profileName;
-    vibratingAlertMsg << "vibrating.alert.enabled";
+    QDBusReply<QString> profileNameReply = QDBusConnection::sessionBus().call(
+                QDBusMessage::createMethodCall("com.nokia.profiled", "/com/nokia/profiled",
+                                               "com.nokia.profiled", "get_profile"));
 
-    QDBusReply<QString> vibratingAlertEnabledReply = QDBusConnection::sessionBus().call(vibratingAlertMsg);
-    if (vibratingAlertEnabledReply.isValid()) {
-        vibratingAlertEnabled = QString::compare(vibratingAlertEnabledReply.value(), "On", Qt::CaseInsensitive) == 0;
+    if (profileNameReply.isValid()) {
+        m_profileName = profileNameReply.value();
+        m_profileNameQueried = true;
     }
+    return m_profileName;
+}
 
-    QDBusMessage ringingAlertVolumeMsg = QDBusMessage::createMethodCall("com.nokia.profiled", "/com/nokia/profiled",
-                                                                        "com.nokia.profiled", "get_value");
-    ringingAlertVolumeMsg << profileName;
-    ringingAlertVolumeMsg << "ringing.alert.volume";
-
-    QDBusReply<QString> ringingAlertVolumeReply = QDBusConnection::sessionBus().call(ringingAlertVolumeMsg);
-    if (ringingAlertVolumeReply.isValid()) {
-        ringingAlertVolume = ringingAlertVolumeReply.value().toInt();
+bool QSystemDeviceInfoPrivate::silentProfile()
+{
+    if (!m_ringingAlertTypeQueried) {
+        queryRingingAlertType();
     }
+    return m_silentProfile;
+}
 
-    QDBusMessage smsAlertVolumeMsg = QDBusMessage::createMethodCall("com.nokia.profiled", "/com/nokia/profiled",
-                                                                    "com.nokia.profiled", "get_value");
-    smsAlertVolumeMsg << profileName;
-    smsAlertVolumeMsg << "sms.alert.volume";
-
-    QDBusReply<QString> smsAlertVolumeReply = QDBusConnection::sessionBus().call(smsAlertVolumeMsg);
-    if (smsAlertVolumeReply.isValid()) {
-        smsAlertVolume = smsAlertVolumeReply.value().toInt();
+bool QSystemDeviceInfoPrivate::beepProfile()
+{
+    if (!m_ringingAlertTypeQueried) {
+        queryRingingAlertType();
     }
-
-    qDBusRegisterMetaType<ProfileDataValue>();
-    qDBusRegisterMetaType<QList<ProfileDataValue> >();
+    return m_beepProfile;
 }
 
 void QSystemDeviceInfoPrivate::deviceModeChanged(QString newMode)
 {
-    bool previousFlightMode = flightMode;
-    flightMode = newMode == "flight";
-    if (previousFlightMode != flightMode)
+    bool previousFlightMode = m_flightMode;
+    m_flightMode = newMode == "flight";
+    m_flightModeQueried = true;
+    if (previousFlightMode != m_flightMode)
         emit currentProfileChanged(currentProfile());
 }
 
 void QSystemDeviceInfoPrivate::profileChanged(bool changed, bool active, QString profile, QList<ProfileDataValue> values)
 {
     if (active) {
-        profileName = profile;
+        m_profileName = profile;
+        m_profileNameQueried = true;
+
         foreach (const ProfileDataValue &value, values) {
             if (value.key == "ringing.alert.type") {
-                silentProfile = QString::compare(value.val, "silent", Qt::CaseInsensitive) == 0;
-                beepProfile = QString::compare(value.val, "beep", Qt::CaseInsensitive) == 0;
+                m_silentProfile = QString::compare(value.val, "silent", Qt::CaseInsensitive) == 0;
+                m_beepProfile = QString::compare(value.val, "beep", Qt::CaseInsensitive) == 0;
+                m_ringingAlertTypeQueried = true;
+            } else if (value.key == "vibrating.alert.enabled") {
+                m_vibratingAlertEnabled = QString::compare(value.val, "On", Qt::CaseInsensitive) == 0;
+                m_vibratingAlertEnabledQueried = true;
+            } else if (value.key == "ringing.alert.volume") {
+                m_ringingAlertVolume = value.val.toInt();
+                m_ringingAlertVolumeQueried = true;
+            } else if (value.key == "sms.alert.volume") {
+                m_smsAlertVolume = value.val.toInt();
+                m_smsAlertVolumeQueried = true;
             }
-            else if (value.key == "vibrating.alert.enabled")
-                vibratingAlertEnabled = QString::compare(value.val, "On", Qt::CaseInsensitive) == 0;
-            else if (value.key == "ringing.alert.volume")
-                ringingAlertVolume = value.val.toInt();
-            else if (value.key == "sms.alert.volume")
-                smsAlertVolume = value.val.toInt();
         }
         if (changed)
             emit currentProfileChanged(currentProfile());
@@ -1666,17 +1824,59 @@ bool QSystemDeviceInfoPrivate::keypadLightOn(QSystemDeviceInfo::KeypadType type)
 
 int QSystemDeviceInfoPrivate::messageRingtoneVolume()
 {
-    return smsAlertVolume;
+    if (m_smsAlertVolumeQueried) {
+        return m_smsAlertVolume;
+    }
+
+    QDBusMessage smsAlertVolumeMsg = QDBusMessage::createMethodCall("com.nokia.profiled", "/com/nokia/profiled",
+                                                                    "com.nokia.profiled", "get_value");
+    smsAlertVolumeMsg << profileName();
+    smsAlertVolumeMsg << "sms.alert.volume";
+
+    QDBusReply<QString> smsAlertVolumeReply = QDBusConnection::sessionBus().call(smsAlertVolumeMsg);
+    if (smsAlertVolumeReply.isValid()) {
+        m_smsAlertVolume = smsAlertVolumeReply.value().toInt();
+        m_smsAlertVolumeQueried = true;
+    }
+    return m_smsAlertVolume;
 }
 
 int QSystemDeviceInfoPrivate::voiceRingtoneVolume()
 {
-    return ringingAlertVolume;
+    if (m_ringingAlertVolumeQueried) {
+        return m_ringingAlertVolume;
+    }
+
+    QDBusMessage ringingAlertVolumeMsg = QDBusMessage::createMethodCall("com.nokia.profiled", "/com/nokia/profiled",
+                                                                        "com.nokia.profiled", "get_value");
+    ringingAlertVolumeMsg << profileName();
+    ringingAlertVolumeMsg << "ringing.alert.volume";
+
+    QDBusReply<QString> ringingAlertVolumeReply = QDBusConnection::sessionBus().call(ringingAlertVolumeMsg);
+    if (ringingAlertVolumeReply.isValid()) {
+        m_ringingAlertVolume = ringingAlertVolumeReply.value().toInt();
+        m_ringingAlertVolumeQueried = true;
+    }
+    return m_ringingAlertVolume;
 }
 
 bool QSystemDeviceInfoPrivate::vibrationActive()
 {
-    return vibratingAlertEnabled;
+    if (m_vibratingAlertEnabledQueried) {
+        return m_vibratingAlertEnabled;
+    }
+
+    QDBusMessage vibratingAlertMsg = QDBusMessage::createMethodCall("com.nokia.profiled", "/com/nokia/profiled",
+                                                                    "com.nokia.profiled", "get_value");
+    vibratingAlertMsg << profileName();
+    vibratingAlertMsg << "vibrating.alert.enabled";
+
+    QDBusReply<QString> vibratingAlertEnabledReply = QDBusConnection::sessionBus().call(vibratingAlertMsg);
+    if (vibratingAlertEnabledReply.isValid()) {
+        m_vibratingAlertEnabled = QString::compare(vibratingAlertEnabledReply.value(), "On", Qt::CaseInsensitive) == 0;
+        m_vibratingAlertEnabledQueried = true;
+    }
+    return m_vibratingAlertEnabled;
 }
 
 QSystemDeviceInfo::LockTypeFlags QSystemDeviceInfoPrivate::lockStatus()
