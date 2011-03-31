@@ -691,13 +691,7 @@ void QSystemNetworkInfoPrivate::setupNetworkInfo()
         currentCellNetworkStatus = csStatusMaemo6.value(status, -1);
 
         /* CSD: data technology */
-        QMap<QString,QVariant> csdRadioAccess = queryCsdProperties(service, servicePath, "com.nokia.csd.CSNet.RadioAccess");
-
-        QVariant dataTechnology = csdRadioAccess.value("DataTechnology", "");
-        QString dt = dataTechnology.isValid() ? dataTechnology.value<QString>() : "";
-        currentCellDataTechnology = csdtToCellDataTechnology(dt);
-
-
+        currentCellDataTechnology = cellDataTechnology();
 
     #else
     /* Maemo 5 */
@@ -929,7 +923,7 @@ void QSystemNetworkInfoPrivate::disconnectNotify(const char *signal)
 
     if ((QLatin1String(signal)
          == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(cellDataTechnologyChanged(QSystemNetworkInfo::CellDataTechnology)))))) {
-        if (!QDBusConnection::systemBus().disconnect(service, servicePath, "com.nokia.csd.CSNet.RadioAccess", "DataTechnologyChanged",
+        if (!QDBusConnection::systemBus().disconnect(service, servicePath, "com.nokia.csd.CSNet", "ActivityChanged",
                                           this, SLOT(slotCellDataTechnologyChanged(const QString&)))) {
             qDebug() << "unable to disconnect DataTechnologyChanged";
         }
@@ -1019,11 +1013,10 @@ void QSystemNetworkInfoPrivate::slotCellChanged(const QString &type, int id, int
 
 void QSystemNetworkInfoPrivate::slotCellDataTechnologyChanged(const QString &tech)
 {
-    qDebug() << Q_FUNC_INFO << tech;
-    QSystemNetworkInfo::CellDataTechnology cdt = csdtToCellDataTechnology(tech);
-    if (cdt != currentCellDataTechnology) {
-        currentCellDataTechnology = cdt;
-        emit cellDataTechnologyChanged(cdt);
+    QSystemNetworkInfo::CellDataTechnology oldcdt = currentCellDataTechnology;
+
+    if (oldcdt != cellDataTechnology()) {
+        emit cellDataTechnologyChanged(currentCellDataTechnology);
     }
 }
 
@@ -1224,15 +1217,19 @@ void QSystemNetworkInfoPrivate::setWlanSignalStrengthCheckEnabled(bool enabled)
 
 QSystemNetworkInfo::CellDataTechnology QSystemNetworkInfoPrivate::cellDataTechnology()
 {
-  //  qDebug() << Q_FUNC_INFO;
     const QString service = "com.nokia.csd.CSNet";
     const QString servicePath = "/com/nokia/csd/csnet";
     QDBusInterface ifc5(service, servicePath, "com.nokia.csd.CSNet.RadioAccess", QDBusConnection::systemBus());
 
-//    QVariant dataTechnology = ifc5.property("DataTechnology");
-//    QVariant radioIdle = ifc5.property("RadioIdle");
+    QDBusInterface ifc51(service, servicePath, "com.nokia.csd.CSNet", QDBusConnection::systemBus());
+    QString activity = ifc51.property("Activity").toString();
+    QVariant dataTechnology;
 
-//    qDebug() << radioIdle.toBool() << ifc5.property("AllocatedHSDPA").toBool() << ifc5.property("AllocatedHSUPA").toBool();
+    if ( activity == "PacketData") {
+        dataTechnology = ifc5.property("DataTechnology");
+    } else {
+        dataTechnology = ifc5.property("Technology");
+    }
 
     QString dt = dataTechnology.isValid() ? dataTechnology.value<QString>() : "";
     currentCellDataTechnology = csdtToCellDataTechnology(dt);
