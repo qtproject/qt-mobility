@@ -392,6 +392,8 @@ private:
     void initBatteryStatus();
     int currentBatLevel;
     QSystemDeviceInfo::PowerState curPowerState;
+    bool currentBatStatusInitialized;
+    bool currentBatLevelInitialized;
 };
 
 

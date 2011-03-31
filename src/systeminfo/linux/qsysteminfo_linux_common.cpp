@@ -2601,7 +2601,10 @@ QSystemDeviceInfoLinuxCommonPrivate::QSystemDeviceInfoLinuxCommonPrivate(QObject
     currentPowerState();
 #endif
 #endif
-   initBatteryStatus();
+   currentBatStatus            = QSystemDeviceInfo::NoBatteryLevel;
+   currentBatLevel             = 0;
+   currentBatStatusInitialized = false;
+   currentBatLevelInitialized  = false;
 }
 
 QSystemDeviceInfoLinuxCommonPrivate::~QSystemDeviceInfoLinuxCommonPrivate()
@@ -2610,21 +2613,28 @@ QSystemDeviceInfoLinuxCommonPrivate::~QSystemDeviceInfoLinuxCommonPrivate()
 
 void QSystemDeviceInfoLinuxCommonPrivate::initBatteryStatus()
 {
-    const int level = batteryLevel();
-    currentBatLevel = level;
-
-    QSystemDeviceInfo::BatteryStatus stat = QSystemDeviceInfo::NoBatteryLevel;
-
-    if (level < 4) {
-        stat = QSystemDeviceInfo::BatteryCritical;
-    } else if (level < 11) {
-        stat = QSystemDeviceInfo::BatteryVeryLow;
-    } else if (level < 41) {
-        stat =  QSystemDeviceInfo::BatteryLow;
-    } else if (level > 40) {
-        stat = QSystemDeviceInfo::BatteryNormal;
+    if (!currentBatLevelInitialized) {
+        const int level = batteryLevel();
+        currentBatLevel = level;
+        currentBatLevelInitialized = true;
     }
-    currentBatStatus = stat;
+
+    if (!currentBatStatusInitialized) {
+        const int level = currentBatLevel;
+        QSystemDeviceInfo::BatteryStatus stat = QSystemDeviceInfo::NoBatteryLevel;
+
+        if (level < 4) {
+            stat = QSystemDeviceInfo::BatteryCritical;
+        } else if (level < 11) {
+            stat = QSystemDeviceInfo::BatteryVeryLow;
+        } else if (level < 41) {
+            stat =  QSystemDeviceInfo::BatteryLow;
+        } else if (level > 40) {
+           stat = QSystemDeviceInfo::BatteryNormal;
+        }
+        currentBatStatus = stat;
+        currentBatStatusInitialized = true;
+    }
 }
 
 void QSystemDeviceInfoLinuxCommonPrivate::connectNotify(const char *signal)
@@ -2743,6 +2753,7 @@ void QSystemDeviceInfoLinuxCommonPrivate::halChanged(int,QVariantList map)
             const int level = batteryLevel();
             if(currentBatLevel != level) {
                 currentBatLevel = level;
+                currentBatLevelInitialized = true;
                 emit batteryLevelChanged(level);
             }
             QSystemDeviceInfo::BatteryStatus stat = QSystemDeviceInfo::NoBatteryLevel;
@@ -2758,6 +2769,7 @@ void QSystemDeviceInfoLinuxCommonPrivate::halChanged(int,QVariantList map)
             }
             if (currentBatStatus != stat) {
                 currentBatStatus = stat;
+                currentBatStatusInitialized = true;
                 Q_EMIT batteryStatusChanged(stat);
             }
         }
