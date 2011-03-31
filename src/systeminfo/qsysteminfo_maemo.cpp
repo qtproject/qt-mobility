@@ -1302,12 +1302,28 @@ QSystemStorageInfoPrivate::~QSystemStorageInfoPrivate()
 {
 }
 QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QSystemDeviceInfoLinuxCommonPrivate *parent)
-        : QSystemDeviceInfoLinuxCommonPrivate(parent), flightMode(0),gpioFD(-1)
+        : QSystemDeviceInfoLinuxCommonPrivate(parent), gpioFD(-1)
 {
+    previousPowerState = QSystemDeviceInfo::UnknownPower;
+
+    m_profileName                    = "";
+    m_flightMode                     = false;
+    m_silentProfile                  = false;
+    m_vibratingAlertEnabled          = false;
+    m_beepProfile                    = false;
+    m_ringingAlertVolume             = 0;
+    m_smsAlertVolume                 = 0;
+
+    m_flightModeQueried              = false;
+    m_profileNameQueried             = false;
+    m_ringingAlertTypeQueried        = false;
+    m_vibratingAlertEnabledQueried   = false;
+    m_ringingAlertVolumeQueried      = false;
+    m_smsAlertVolumeQueried          = false;
 
  #if !defined(QT_NO_DBUS)
-    previousPowerState = QSystemDeviceInfo::UnknownPower;
-    setupProfile();
+    qDBusRegisterMetaType<ProfileDataValue>();
+    qDBusRegisterMetaType<QList<ProfileDataValue> >();
 #endif
 }
 
@@ -1434,16 +1450,16 @@ void QSystemDeviceInfoPrivate::halChanged(int,QVariantList map)
 QSystemDeviceInfo::Profile QSystemDeviceInfoPrivate::currentProfile()
 {
 #if !defined(QT_NO_DBUS)
-    if (flightMode)
+    if (flightMode())
         return QSystemDeviceInfo::OfflineProfile;
 
-    if (silentProfile)
-        return vibratingAlertEnabled ? QSystemDeviceInfo::VibProfile : QSystemDeviceInfo::SilentProfile;
+    if (silentProfile())
+        return vibrationActive() ? QSystemDeviceInfo::VibProfile : QSystemDeviceInfo::SilentProfile;
 
-    if (beepProfile)
+    if (beepProfile())
         return QSystemDeviceInfo::BeepProfile;
 
-    if (ringingAlertVolume > 75)
+    if (voiceRingtoneVolume() > 75)
         return QSystemDeviceInfo::LoudProfile;
 
     return QSystemDeviceInfo::NormalProfile;
@@ -1611,9 +1627,33 @@ QSystemDeviceInfo::ThermalState QSystemDeviceInfoPrivate::currentThermalState()
 
 #if !defined(QT_NO_DBUS)
 
-void QSystemDeviceInfoPrivate::setupProfile()
+void QSystemDeviceInfoPrivate::queryRingingAlertType()
 {
-    QDBusReply<quint32> radioStatesReply = QDBusConnection::systemBus().call(
+    if (m_ringingAlertTypeQueried) {
+        return;
+    }
+
+    QDBusMessage ringingAlertTypeMsg = QDBusMessage::createMethodCall("com.nokia.profiled", "/com/nokia/profiled",
+                                                                      "com.nokia.profiled", "get_value");
+    ringingAlertTypeMsg << profileName();
+    ringingAlertTypeMsg << "ringing.alert.type";
+
+    QDBusReply<QString> ringingAlertTypeReply = QDBusConnection::sessionBus().call(ringingAlertTypeMsg);
+
+    if (ringingAlertTypeReply.isValid()) {
+        m_silentProfile = QString::compare(ringingAlertTypeReply.value(), "silent", Qt::CaseInsensitive) == 0;
+        m_beepProfile = QString::compare(ringingAlertTypeReply.value(), "beep", Qt::CaseInsensitive) == 0;
+        m_ringingAlertTypeQueried = true;
+    }
+}
+
+bool QSystemDeviceInfoPrivate::flightMode()
+{
+   if (m_flightModeQueried) {
+       return m_flightMode;
+   }
+
+   QDBusReply<quint32> radioStatesReply = QDBusConnection::systemBus().call(
                 QDBusMessage::createMethodCall("com.nokia.mce",  "/com/nokia/mce/request",
                                                "com.nokia.mce.request", "get_radio_states"));
     if (radioStatesReply.isValid()) {
@@ -1621,7 +1661,16 @@ void QSystemDeviceInfoPrivate::setupProfile()
 #define MCE_RADIO_STATE_WLAN            (1 << 2)
 #define MCE_RADIO_STATE_BLUETOOTH       (1 << 3)
 
-        flightMode = !(radioStateFlags & ~(MCE_RADIO_STATE_WLAN | MCE_RADIO_STATE_BLUETOOTH));
+        m_flightMode = !(radioStateFlags & ~(MCE_RADIO_STATE_WLAN | MCE_RADIO_STATE_BLUETOOTH));
+        m_flightModeQueried = true;
+    }
+    return m_flightMode;
+}
+
+QString QSystemDeviceInfoPrivate::profileName()
+{
+    if (m_profileNameQueried) {
+        return m_profileName;
     }
 
     QDBusReply<QString> profileNameReply = QDBusConnection::sessionBus().call(
@@ -1629,78 +1678,58 @@ void QSystemDeviceInfoPrivate::setupProfile()
                                                "com.nokia.profiled", "get_profile"));
 
     if (profileNameReply.isValid()) {
-        profileName = profileNameReply.value();
+        m_profileName = profileNameReply.value();
+        m_profileNameQueried = true;
     }
+    return m_profileName;
+}
 
-    QDBusMessage ringingAlertTypeMsg = QDBusMessage::createMethodCall("com.nokia.profiled", "/com/nokia/profiled",
-                                                                      "com.nokia.profiled", "get_value");
-    ringingAlertTypeMsg << profileName;
-    ringingAlertTypeMsg << "ringing.alert.type";
-
-    QDBusReply<QString> ringingAlertTypeReply = QDBusConnection::sessionBus().call(ringingAlertTypeMsg);
-
-    if (ringingAlertTypeReply.isValid()) {
-        silentProfile = QString::compare(ringingAlertTypeReply.value(), "silent", Qt::CaseInsensitive) == 0;
-        beepProfile = QString::compare(ringingAlertTypeReply.value(), "beep", Qt::CaseInsensitive) == 0;
+bool QSystemDeviceInfoPrivate::silentProfile()
+{
+    if (!m_ringingAlertTypeQueried) {
+        queryRingingAlertType();
     }
+    return m_silentProfile;
+}
 
-    QDBusMessage vibratingAlertMsg = QDBusMessage::createMethodCall("com.nokia.profiled", "/com/nokia/profiled",
-                                                                    "com.nokia.profiled", "get_value");
-    vibratingAlertMsg << profileName;
-    vibratingAlertMsg << "vibrating.alert.enabled";
-
-    QDBusReply<QString> vibratingAlertEnabledReply = QDBusConnection::sessionBus().call(vibratingAlertMsg);
-    if (vibratingAlertEnabledReply.isValid()) {
-        vibratingAlertEnabled = QString::compare(vibratingAlertEnabledReply.value(), "On", Qt::CaseInsensitive) == 0;
+bool QSystemDeviceInfoPrivate::beepProfile()
+{
+    if (!m_ringingAlertTypeQueried) {
+        queryRingingAlertType();
     }
-
-    QDBusMessage ringingAlertVolumeMsg = QDBusMessage::createMethodCall("com.nokia.profiled", "/com/nokia/profiled",
-                                                                        "com.nokia.profiled", "get_value");
-    ringingAlertVolumeMsg << profileName;
-    ringingAlertVolumeMsg << "ringing.alert.volume";
-
-    QDBusReply<QString> ringingAlertVolumeReply = QDBusConnection::sessionBus().call(ringingAlertVolumeMsg);
-    if (ringingAlertVolumeReply.isValid()) {
-        ringingAlertVolume = ringingAlertVolumeReply.value().toInt();
-    }
-
-    QDBusMessage smsAlertVolumeMsg = QDBusMessage::createMethodCall("com.nokia.profiled", "/com/nokia/profiled",
-                                                                    "com.nokia.profiled", "get_value");
-    smsAlertVolumeMsg << profileName;
-    smsAlertVolumeMsg << "sms.alert.volume";
-
-    QDBusReply<QString> smsAlertVolumeReply = QDBusConnection::sessionBus().call(smsAlertVolumeMsg);
-    if (smsAlertVolumeReply.isValid()) {
-        smsAlertVolume = smsAlertVolumeReply.value().toInt();
-    }
-
-    qDBusRegisterMetaType<ProfileDataValue>();
-    qDBusRegisterMetaType<QList<ProfileDataValue> >();
+    return m_beepProfile;
 }
 
 void QSystemDeviceInfoPrivate::deviceModeChanged(QString newMode)
 {
-    bool previousFlightMode = flightMode;
-    flightMode = newMode == "flight";
-    if (previousFlightMode != flightMode)
+    bool previousFlightMode = m_flightMode;
+    m_flightMode = newMode == "flight";
+    m_flightModeQueried = true;
+    if (previousFlightMode != m_flightMode)
         emit currentProfileChanged(currentProfile());
 }
 
 void QSystemDeviceInfoPrivate::profileChanged(bool changed, bool active, QString profile, QList<ProfileDataValue> values)
 {
     if (active) {
-        profileName = profile;
+        m_profileName = profile;
+        m_profileNameQueried = true;
+
         foreach (const ProfileDataValue &value, values) {
             if (value.key == "ringing.alert.type") {
-                silentProfile = QString::compare(value.val, "silent", Qt::CaseInsensitive) == 0;
-                beepProfile = QString::compare(value.val, "beep", Qt::CaseInsensitive) == 0;
+                m_silentProfile = QString::compare(value.val, "silent", Qt::CaseInsensitive) == 0;
+                m_beepProfile = QString::compare(value.val, "beep", Qt::CaseInsensitive) == 0;
+                m_ringingAlertTypeQueried = true;
+            } else if (value.key == "vibrating.alert.enabled") {
+                m_vibratingAlertEnabled = QString::compare(value.val, "On", Qt::CaseInsensitive) == 0;
+                m_vibratingAlertEnabledQueried = true;
+            } else if (value.key == "ringing.alert.volume") {
+                m_ringingAlertVolume = value.val.toInt();
+                m_ringingAlertVolumeQueried = true;
+            } else if (value.key == "sms.alert.volume") {
+                m_smsAlertVolume = value.val.toInt();
+                m_smsAlertVolumeQueried = true;
             }
-            else if (value.key == "vibrating.alert.enabled")
-                vibratingAlertEnabled = QString::compare(value.val, "On", Qt::CaseInsensitive) == 0;
-            else if (value.key == "ringing.alert.volume")
-                ringingAlertVolume = value.val.toInt();
-            else if (value.key == "sms.alert.volume")
-                smsAlertVolume = value.val.toInt();
         }
         if (changed)
             emit currentProfileChanged(currentProfile());
@@ -1782,17 +1811,59 @@ bool QSystemDeviceInfoPrivate::keypadLightOn(QSystemDeviceInfo::KeypadType type)
 
 int QSystemDeviceInfoPrivate::messageRingtoneVolume()
 {
-    return smsAlertVolume;
+    if (m_smsAlertVolumeQueried) {
+        return m_smsAlertVolume;
+    }
+
+    QDBusMessage smsAlertVolumeMsg = QDBusMessage::createMethodCall("com.nokia.profiled", "/com/nokia/profiled",
+                                                                    "com.nokia.profiled", "get_value");
+    smsAlertVolumeMsg << profileName();
+    smsAlertVolumeMsg << "sms.alert.volume";
+
+    QDBusReply<QString> smsAlertVolumeReply = QDBusConnection::sessionBus().call(smsAlertVolumeMsg);
+    if (smsAlertVolumeReply.isValid()) {
+        m_smsAlertVolume = smsAlertVolumeReply.value().toInt();
+        m_smsAlertVolumeQueried = true;
+    }
+    return m_smsAlertVolume;
 }
 
 int QSystemDeviceInfoPrivate::voiceRingtoneVolume()
 {
-    return ringingAlertVolume;
+    if (m_ringingAlertVolumeQueried) {
+        return m_ringingAlertVolume;
+    }
+
+    QDBusMessage ringingAlertVolumeMsg = QDBusMessage::createMethodCall("com.nokia.profiled", "/com/nokia/profiled",
+                                                                        "com.nokia.profiled", "get_value");
+    ringingAlertVolumeMsg << profileName();
+    ringingAlertVolumeMsg << "ringing.alert.volume";
+
+    QDBusReply<QString> ringingAlertVolumeReply = QDBusConnection::sessionBus().call(ringingAlertVolumeMsg);
+    if (ringingAlertVolumeReply.isValid()) {
+        m_ringingAlertVolume = ringingAlertVolumeReply.value().toInt();
+        m_ringingAlertVolumeQueried = true;
+    }
+    return m_ringingAlertVolume;
 }
 
 bool QSystemDeviceInfoPrivate::vibrationActive()
 {
-    return vibratingAlertEnabled;
+    if (m_vibratingAlertEnabledQueried) {
+        return m_vibratingAlertEnabled;
+    }
+
+    QDBusMessage vibratingAlertMsg = QDBusMessage::createMethodCall("com.nokia.profiled", "/com/nokia/profiled",
+                                                                    "com.nokia.profiled", "get_value");
+    vibratingAlertMsg << profileName();
+    vibratingAlertMsg << "vibrating.alert.enabled";
+
+    QDBusReply<QString> vibratingAlertEnabledReply = QDBusConnection::sessionBus().call(vibratingAlertMsg);
+    if (vibratingAlertEnabledReply.isValid()) {
+        m_vibratingAlertEnabled = QString::compare(vibratingAlertEnabledReply.value(), "On", Qt::CaseInsensitive) == 0;
+        m_vibratingAlertEnabledQueried = true;
+    }
+    return m_vibratingAlertEnabled;
 }
 
 QSystemDeviceInfo::LockTypeFlags QSystemDeviceInfoPrivate::lockStatus()

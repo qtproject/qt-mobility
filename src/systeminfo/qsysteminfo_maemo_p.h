@@ -267,7 +267,6 @@ protected:
     QHalInterface *halIface;
     QHalDeviceInterface *halIfaceDevice;
     void setupBluetooth();
-    void setupProfile();
 
 private Q_SLOTS:
     void halChanged(int,QVariantList);
@@ -282,13 +281,30 @@ private:
     void connectNotify(const char *signal);
     void disconnectNotify(const char *signal);
 
-    bool flightMode;
-    QString profileName;
-    bool silentProfile;
-    bool vibratingAlertEnabled;
-    bool beepProfile;
-    int ringingAlertVolume;
-    int smsAlertVolume;
+    // profile data
+    bool m_flightMode;
+    QString m_profileName;
+    bool m_silentProfile;
+    bool m_vibratingAlertEnabled;
+    bool m_beepProfile;
+    int m_ringingAlertVolume;
+    int m_smsAlertVolume;
+
+    // profile data lazy-loading status
+    bool m_flightModeQueried;
+    bool m_profileNameQueried;
+    bool m_ringingAlertTypeQueried;
+    bool m_vibratingAlertEnabledQueried;
+    bool m_ringingAlertVolumeQueried;
+    bool m_smsAlertVolumeQueried;
+
+    // profile data accessors
+    void queryRingingAlertType();
+    bool flightMode();
+    QString profileName();
+    bool silentProfile();
+    bool beepProfile();
+
     QSystemDeviceInfo::BatteryStatus currentBatStatus;
 
     QSystemDeviceInfo::PowerState previousPowerState;
@@ -297,7 +313,6 @@ private:
      QSocketNotifier *notifier;
      int gpioFD;
      int currentBatteryLevel;
-
 };
 
 
