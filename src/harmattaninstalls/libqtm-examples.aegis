@@ -1,6 +1,11 @@
 <aegis>
     <request>
         <credential name="TrackerReadAccess" />
+        <for path="/usr/lib/qtmobility/examples/declarative-music-browser" />
+        <for path="/usr/lib/qtmobility/examples/documentproperties" />
+    </request>
+    <request>
+        <credential name="TrackerReadAccess" />
         <credential name="TrackerWriteAccess" />
         <for path="/usr/lib/qtmobility/examples/samplephonebook" />
         <for path="/usr/lib/qtmobility/demos/qmlcontacts" />
