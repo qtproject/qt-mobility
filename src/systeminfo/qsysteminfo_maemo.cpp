@@ -1631,11 +1631,11 @@ QSystemDeviceInfo::ThermalState QSystemDeviceInfoPrivate::currentThermalState()
 #endif
 
 #if !defined(QT_NO_DBUS)
- void QSystemDeviceInfoPrivate::bluezPropertyChanged(const QString&, QDBusVariant v)
- {
-     //qDebug() << str << v.variant().toBool();
-     emit bluetoothStateChanged(v.variant().toBool());
- }
+void QSystemDeviceInfoPrivate::bluezPropertyChanged(const QString &name, QDBusVariant value)
+{
+    if (name == "Powered")
+        emit bluetoothStateChanged(value.variant().toBool());
+}
 #endif
 
 #if !defined(QT_NO_DBUS)
