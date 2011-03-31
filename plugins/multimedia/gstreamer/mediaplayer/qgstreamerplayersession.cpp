@@ -44,6 +44,7 @@
 
 #include "qgstreamervideorendererinterface.h"
 #include "gstvideoconnector.h"
+#include "qgstutils.h"
 
 #include <gst/gstvalue.h>
 
@@ -771,66 +772,6 @@ void QGstreamerPlayerSession::setMuted(bool muted)
     }
 }
 
-static void addTagToMap(const GstTagList *list,
-                        const gchar *tag,
-                        gpointer user_data)
-{
-    QMap<QByteArray, QVariant> *map = reinterpret_cast<QMap<QByteArray, QVariant>* >(user_data);
-
-    GValue val;
-    val.g_type = 0;
-    gst_tag_list_copy_value(&val,list,tag);
-
-    switch( G_VALUE_TYPE(&val) ) {
-        case G_TYPE_STRING:
-        {
-            const gchar *str_value = g_value_get_string(&val);
-            map->insert(QByteArray(tag), QString::fromUtf8(str_value));
-            break;
-        }
-        case G_TYPE_INT:
-            map->insert(QByteArray(tag), g_value_get_int(&val));
-            break;
-        case G_TYPE_UINT:
-            map->insert(QByteArray(tag), g_value_get_uint(&val));
-            break;
-        case G_TYPE_LONG:
-            map->insert(QByteArray(tag), qint64(g_value_get_long(&val)));
-            break;
-        case G_TYPE_BOOLEAN:
-            map->insert(QByteArray(tag), g_value_get_boolean(&val));
-            break;
-        case G_TYPE_CHAR:
-            map->insert(QByteArray(tag), g_value_get_char(&val));
-            break;
-        case G_TYPE_DOUBLE:
-            map->insert(QByteArray(tag), g_value_get_double(&val));
-            break;
-        default:
-            // GST_TYPE_DATE is a function, not a constant, so pull it out of the switch
-            if (G_VALUE_TYPE(&val) == GST_TYPE_DATE) {
-                const GDate *date = gst_value_get_date(&val);
-                if (g_date_valid(date)) {
-                    int year = g_date_get_year(date);
-                    int month = g_date_get_month(date);
-                    int day = g_date_get_day(date);
-                    map->insert(QByteArray(tag), QDate(year,month,day));
-                    if (!map->contains("year"))
-                        map->insert("year", year);
-                }
-            } else if (G_VALUE_TYPE(&val) == GST_TYPE_FRACTION) {
-                int nom = gst_value_get_fraction_numerator(&val);
-                int denom = gst_value_get_fraction_denominator(&val);
-
-                if (denom > 0) {
-                    map->insert(QByteArray(tag), double(nom)/denom);
-                }
-            }
-            break;
-    }
-
-    g_value_unset(&val);
-}
 
 void QGstreamerPlayerSession::setSeekable(bool seekable)
 {
@@ -877,7 +818,7 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
             //qDebug() << "tag message";
             GstTagList *tag_list;
             gst_message_parse_tag(gm, &tag_list);
-            gst_tag_list_foreach(tag_list, addTagToMap, &m_tags);
+            m_tags.unite(QGstUtils::gstTagListToMap(tag_list));
 
             //qDebug() << m_tags;
 

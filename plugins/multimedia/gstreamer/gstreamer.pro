@@ -64,7 +64,8 @@ HEADERS += \
     qvideosurfacegstsink.h \
     qgstreamervideoinputdevicecontrol.h \
     gstvideoconnector.h \
-    qabstractgstbufferpool.h
+    qabstractgstbufferpool.h \
+    qgstutils.h
 
 SOURCES += \
     qgstreamermessage.cpp \
@@ -76,7 +77,8 @@ SOURCES += \
     qgstvideobuffer.cpp \
     qvideosurfacegstsink.cpp \
     qgstreamervideoinputdevicecontrol.cpp \
-    gstvideoconnector.c
+    gstvideoconnector.c \
+    qgstutils.cpp
 
 
 !win32:!embedded:!mac:!symbian:!simulator:!contains(QT_CONFIG, qpa) {
