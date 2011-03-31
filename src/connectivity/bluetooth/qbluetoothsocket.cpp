@@ -247,7 +247,7 @@ QBluetoothSocket::QBluetoothSocket(QObject *parent)
     Destroys the Bluetooth socket.
 */
 QBluetoothSocket::~QBluetoothSocket()
-{
+{    
     delete d_ptr;
     d_ptr = 0;
 }

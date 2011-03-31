@@ -144,8 +144,5 @@ qint64 QBluetoothSocketPrivate::bytesAvailable() const
     return 0;
 }
 
-void QBluetoothSocketPrivate::_q_transmitData()
-{
-}
 
 QTM_END_NAMESPACE

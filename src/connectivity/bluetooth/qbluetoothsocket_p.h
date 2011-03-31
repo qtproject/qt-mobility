@@ -169,7 +169,6 @@ public:
     void _q_writeNotify();
     void _q_serviceDiscovered(const QBluetoothServiceInfo &service);
     void _q_discoveryFinished();
-    void _q_transmitData();
 
 protected:
     QBluetoothSocket *q_ptr;
