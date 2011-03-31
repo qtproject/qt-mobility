@@ -46,6 +46,7 @@ Item {
     height: 500
 
     focus : true
+    TitleBar { id: titleBar; z: 5; width: parent.width; height: 40; opacity: 0.9 }
 
     Map {
         id: map
