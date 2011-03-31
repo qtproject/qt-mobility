@@ -198,9 +198,11 @@ void QGstreamerPlayerSession::loadFromStream(const QNetworkRequest &request, QIO
 #if defined(HAVE_GST_APPSRC)
     m_request = request;
     m_duration = -1;
+    m_lastPosition = 0;
 
-    if (!m_appSrc)
-        m_appSrc = new QGstAppSrc(this);
+    if (m_appSrc)
+        m_appSrc->deleteLater();
+    m_appSrc = new QGstAppSrc(this);
     m_appSrc->setStream(appSrcStream);
 
     if (m_playbin) {
@@ -224,6 +226,7 @@ void QGstreamerPlayerSession::loadFromUri(const QNetworkRequest &request)
 {
     m_request = request;
     m_duration = -1;
+    m_lastPosition = 0;
 
     if (m_playbin) {
         m_tags.clear();
@@ -251,9 +254,9 @@ qint64 QGstreamerPlayerSession::position() const
     gint64      position = 0;
 
     if ( m_playbin && gst_element_query_position(m_playbin, &format, &position))
-        return position / 1000000;
-    else
-        return 0;
+        m_lastPosition = position / 1000000;
+
+    return m_lastPosition;
 }
 
 qreal QGstreamerPlayerSession::playbackRate() const
@@ -706,8 +709,12 @@ bool QGstreamerPlayerSession::pause()
 void QGstreamerPlayerSession::stop()
 {
     if (m_playbin) {
+        if (m_renderer)
+            m_renderer->stopRenderer();
+
         gst_element_set_state(m_playbin, GST_STATE_NULL);
 
+        m_lastPosition = 0;
         QMediaPlayer::State oldState = m_state;
         m_pendingState = m_state = QMediaPlayer::StoppedState;
 
@@ -724,15 +731,20 @@ bool QGstreamerPlayerSession::seek(qint64 ms)
 {
     //seek locks when the video output sink is changing and pad is blocked
     if (m_playbin && !m_pendingVideoSink && m_state != QMediaPlayer::StoppedState) {
-        gint64  position = qMax(ms,qint64(0)) * 1000000;
-        return gst_element_seek(m_playbin,
-                                m_playbackRate,
-                                GST_FORMAT_TIME,
-                                GstSeekFlags(GST_SEEK_FLAG_ACCURATE | GST_SEEK_FLAG_FLUSH),
-                                GST_SEEK_TYPE_SET,
-                                position,
-                                GST_SEEK_TYPE_NONE,
-                                0);
+        ms = qMax(ms,qint64(0));
+        gint64  position = ms * 1000000;
+        bool isSeeking = gst_element_seek(m_playbin,
+                                          m_playbackRate,
+                                          GST_FORMAT_TIME,
+                                          GstSeekFlags(GST_SEEK_FLAG_ACCURATE | GST_SEEK_FLAG_FLUSH),
+                                          GST_SEEK_TYPE_SET,
+                                          position,
+                                          GST_SEEK_TYPE_NONE,
+                                          0);
+        if (isSeeking)
+            m_lastPosition = ms;
+
+        return isSeeking;
     }
 
     return false;
@@ -860,15 +872,7 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
 {
     GstMessage* gm = message.rawMessage();
 
-    if (gm == 0) {
-        // Null message, query current position
-        quint32 newPos = position();
-
-        if (newPos/1000 != m_lastPosition) {
-            m_lastPosition = newPos/1000;
-            emit positionChanged(newPos);
-        }
-    } else {
+    if (gm) {
         //tag message comes from elements inside playbin, not from playbin itself
         if (GST_MESSAGE_TYPE(gm) == GST_MESSAGE_TAG) {
             //qDebug() << "tag message";
@@ -1095,7 +1099,9 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
                         err->code == GST_RESOURCE_ERROR_READ ||
                         err->code == GST_RESOURCE_ERROR_SEEK ||
                         err->code == GST_RESOURCE_ERROR_SYNC)) {
-                            emit error(int(QMediaPlayer::NetworkError), QString::fromUtf8(err->message));
+                        emit error(int(QMediaPlayer::NetworkError), QString::fromUtf8(err->message));
+                    } else {
+                        emit error(int(QMediaPlayer::ResourceError), QString::fromUtf8(err->message));
                     }
                 }
                 else

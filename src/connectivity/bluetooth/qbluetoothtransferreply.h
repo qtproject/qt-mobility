@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -51,6 +51,8 @@ QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
+class QBluetoothTransferReplyPrivate;
+
 class Q_CONNECTIVITY_EXPORT QBluetoothTransferReply : public QObject
 {
     Q_OBJECT
@@ -61,7 +63,7 @@ public:
         UnknownError,
         FileNotFoundError,
         HostNotFoundError,
-        UserCancelledTransferError
+        UserCanceledTransferError
     };
 
 
@@ -81,7 +83,7 @@ public:
 public Q_SLOTS:
     void abort();
 
-signals:
+Q_SIGNALS:
     void downloadProgress(qint64 bytesReceived, qint64 bytesTotal);
     void finished(QBluetoothTransferReply *);
     void uploadProgress(qint64 bytesSent, qint64 bytesTotal);
@@ -90,20 +92,20 @@ protected:
     explicit QBluetoothTransferReply(QObject *parent = 0);
     void setAttribute(QBluetoothTransferRequest::Attribute code, const QVariant &value);
     void setOperation(QBluetoothTransferManager::Operation operation);
-    void setManager(QBluetoothTransferManager &manager);
+    void setManager(QBluetoothTransferManager *manager);
 //    void setRequest(QBluetoothTransferRequest *request);
 
-private:
-    QBluetoothTransferManager *m_manager;
-    QBluetoothTransferManager::Operation m_operation;
-    QMap<int, QVariant> m_attributes;
-//    QBluetoothTransferRequest *m_request;
-    qint64 m_buffersize;
+protected:
+    QBluetoothTransferReplyPrivate *d_ptr;
 
+private:
+    Q_DECLARE_PRIVATE(QBluetoothTransferReply)
 
 };
 
 QTM_END_NAMESPACE
+
+Q_DECLARE_METATYPE(QtMobility::QBluetoothTransferReply *);
 
 QT_END_HEADER
 

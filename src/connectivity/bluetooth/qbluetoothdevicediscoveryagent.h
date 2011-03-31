@@ -64,7 +64,6 @@ public:
     // FIXME: add bluez error handling
     enum Error {
         NoError,
-        Canceled,
         IOFailure,
         PoweredOff,
         UnknownError = 100
@@ -96,6 +95,7 @@ signals:
     void deviceDiscovered(const QBluetoothDeviceInfo &info);
     void finished();
     void error(QBluetoothDeviceDiscoveryAgent::Error error);
+    void canceled();
 
 private:
     Q_DECLARE_PRIVATE(QBluetoothDeviceDiscoveryAgent)

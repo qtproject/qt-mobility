@@ -47,6 +47,7 @@
 
 #include <qcameraexposure.h>
 #include <qcamera.h>
+#include <qmediaenumdebug.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -106,6 +107,8 @@ protected:
 Q_MEDIA_DECLARE_CONTROL(QCameraExposureControl, QCameraExposureControl_iid)
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(QCameraExposureControl::ParameterFlags)
+
+Q_MEDIA_ENUM_DEBUG(QCameraExposureControl, ExposureParameter)
 
 QT_END_NAMESPACE
 

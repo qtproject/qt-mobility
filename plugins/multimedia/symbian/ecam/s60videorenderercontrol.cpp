@@ -45,7 +45,7 @@
 
 S60VideoRendererControl::S60VideoRendererControl(QObject *parent) :
     QVideoRendererControl(parent),
-    m_surface(NULL)
+    m_surface(0)
 {
 }
 
@@ -64,7 +64,7 @@ QAbstractVideoSurface *S60VideoRendererControl::surface() const
 
 void S60VideoRendererControl::setSurface(QAbstractVideoSurface *surface)
 {
-    if (surface == NULL) {
+    if (surface == 0) {
         // Stop current surface if needed
         if (m_surface)
             if (m_surface->isActive())

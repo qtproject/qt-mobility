@@ -42,17 +42,17 @@
 #ifndef QNEARFIELDMANAGER_EMULATOR_H
 #define QNEARFIELDMANAGER_EMULATOR_H
 
-#include "qnearfieldmanager_p.h"
+#include "qnearfieldmanagervirtualbase_p.h"
 #include "qnearfieldtarget.h"
 #include "qndeffilter.h"
 
 #include <QtCore/QObject>
-#include <QtCore/QMetaMethod>
+#include <QtCore/QWeakPointer>
 
 QTM_USE_NAMESPACE
 
 class TagBase;
-class QNearFieldManagerPrivateImpl : public QtMobility::QNearFieldManagerPrivate
+class QNearFieldManagerPrivateImpl : public QNearFieldManagerPrivateVirtualBase
 {
     Q_OBJECT
 
@@ -60,36 +60,19 @@ public:
     QNearFieldManagerPrivateImpl();
     ~QNearFieldManagerPrivateImpl();
 
+    bool isAvailable() const;
+
     void reset();
-
-    bool startTargetDetection(const QList<QNearFieldTarget::Type> &targetTypes);
-    void stopTargetDetection();
-
-    int registerNdefMessageHandler(QObject *object, const QMetaMethod &method);
-    int registerNdefMessageHandler(const QNdefFilter &filter,
-                                   QObject *object, const QMetaMethod &method);
-
-    bool unregisterNdefMessageHandler(int id);
 
 private slots:
     void tagActivated(TagBase *tag);
     void tagDeactivated(TagBase *tag);
 
 private:
-    struct Callback {
-        QNdefFilter filter;
-
-        QObject *object;
-        QMetaMethod method;
-    };
-
-    int getFreeId();
     void ndefReceived(const QNdefMessage &message, QNearFieldTarget *target);
 
-    QList<Callback> m_registeredHandlers;
-    QList<int> m_freeIds;
-    QMap<TagBase *, QNearFieldTarget *> m_targets;
-    QList<QNearFieldTarget::Type> m_detectTargetTypes;
+    QMap<TagBase *, QWeakPointer<QNearFieldTarget> > m_targets;
+
 };
 
 #endif // QNEARFIELDMANAGER_EMULATOR_H

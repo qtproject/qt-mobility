@@ -95,6 +95,9 @@ private:
     QBluetoothDeviceDiscoveryAgent::Error lastError;
     QString errorString;
 
+    bool pendingCancel;
+    bool pendingStart;
+
 #if !defined(QT_NO_DBUS)
     OrgBluezManagerInterface *manager;
     OrgBluezAdapterInterface *adapter;

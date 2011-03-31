@@ -113,26 +113,29 @@ void QGeoTiledMapRectangleObjectInfo::regenPolygon()
 {
     QPolygonF poly;
 
-    const QGeoCoordinate tl = rectangle->bounds().topLeft();
-    if (!tl.isValid())
+    if (!rectangle->bounds().isValid())
         return;
 
-    const QGeoCoordinate tr = rectangle->bounds().topRight();
-    if (!tr.isValid())
+    const QGeoCoordinate tl = rectangle->bounds().topLeft();
+    if (!tl.isValid())
         return;
 
     const QGeoCoordinate br = rectangle->bounds().bottomRight();
     if (!br.isValid())
         return;
 
-    const QGeoCoordinate bl = rectangle->bounds().bottomLeft();
-    if (!bl.isValid())
-        return;
+    double left = tl.longitude() * 3600.0;
+    double right = br.longitude() * 3600.0;
+    double top = tl.latitude() * 3600.0;
+    double bottom = br.latitude() * 3600.0;
 
-    poly << QPointF(tl.longitude()*3600.0, tl.latitude()*3600.0);
-    poly << QPointF(tr.longitude()*3600.0, tr.latitude()*3600.0);
-    poly << QPointF(br.longitude()*3600.0, br.latitude()*3600.0);
-    poly << QPointF(bl.longitude()*3600.0, bl.latitude()*3600.0);
+    if (left > right)
+        right += 360.0 * 3600.0;
+
+    poly << QPointF(left, top);
+    poly << QPointF(right, top);
+    poly << QPointF(right, bottom);
+    poly << QPointF(left, bottom);
 
     polygonItem->setPolygon(poly);
 }

@@ -109,13 +109,30 @@ void QGeoTiledMapRouteObjectInfo::regenPath()
 
     QPainterPath pth;
 
-    for (int i = 0; i < path.size(); ++i) {
-        double x = path.at(i).longitude() * 3600.0;
-        double y = path.at(i).latitude() * 3600.0;
-        if (i == 0)
-            pth.moveTo(x, y);
-        else
-            pth.lineTo(x, y);
+    if (path.size() > 0) {
+        double oldx = 0.0;
+        double oldy = 0.0;
+
+        for (int i = 0; i < path.size(); ++i) {
+            double x = path.at(i).longitude() * 3600.0;
+            double y = path.at(i).latitude() * 3600.0;
+            if (i == 0) {
+                pth.moveTo(x, y);
+            } else {
+                if (qAbs(x - oldx) > 180.0 * 3600.0) {
+                    if (x > oldx) {
+                        x -= 360.0 * 3600.0;
+                    } else if (x < oldx) {
+                        x += 360.0 * 3600.0;
+                    }
+                }
+
+                pth.lineTo(x, y);
+            }
+
+            oldx = x;
+            oldy = y;
+        }
     }
 
     pathItem->setPath(pth);

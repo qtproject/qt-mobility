@@ -111,6 +111,7 @@ QMKSPEC=
 OS="other"
 # By default, all modules are requested.  Reset this later if -modules is supplied
 ORGANIZER_REQUESTED=yes
+NFC_SYMBIAN=auto
 MAC_DEPLOY=
 
 usage() 
@@ -162,6 +163,7 @@ usage()
     echo "                    (default is empty)"
     echo "-qmake-exec <name>  Sets custom binary name for qmake binary"
     echo "                    (default: qmake)"
+    echo "-no-nfc-symbian     Disables the NFC Sybmian backend."
 #    echo "-staticconfig <name>"
 #    echo "                    Avoids running of configuration tests. The default"
 #    echo "                    values are sourced from features/platformconfig/<name>.pri"
@@ -290,6 +292,9 @@ while [ "$#" -gt 0 ]; do
         -languages)
             LANGUAGES=$2
             shift
+            ;;
+        -no-nfc-symbian)
+            NFC_SYMBIAN=no
             ;;
         -mac-deploy)
             MAC_DEPLOY='yes'
@@ -597,7 +602,12 @@ if [ -z "$PLATFORM_CONFIG" ]; then
     compileTest "Pulse Audio" pulseaudio
     compileTest "udev" udev
     compileTest "iphb" iphb
-    compileTest "Symbian NFC" nfc
+
+    if [ "$NFC_SYMBIAN" = auto ]; then
+        compileTest "Symbian NFC" nfc_symbian
+    else
+        echo "nfc_symbian_enabled = no" >> "$CONFIG_IN"
+    fi
 
     if [ "$LINUX_TARGET" = maemo6 ] || [ "$LINUX_TARGET" = meego ]; then
         compileTest sensord sensord
@@ -626,7 +636,7 @@ fi
 # It's a lot easier to make qmake do the dependency checking...
 echo "mobility_modules = $MOBILITY_MODULES" >> "$CONFIG_IN"
 echo "contains(mobility_modules,versit): mobility_modules *= contacts" >> "$CONFIG_IN"
-echo "contains(mobility_modules,connectivity): mobility_modules *= serviceframework" >> "$CONFIG_IN"
+echo "symbian:contains(nfc_symbian_enabled,yes):contains(mobility_modules,connectivity): mobility_modules *= serviceframework" >> "$CONFIG_IN"
 echo "maemo5|maemo6:contains(maemo-icd_enabled, no): mobility_modules -= bearer" >> "$CONFIG_IN"
 # Mobility doesn't support Bearer on MeeGo -> Use Qt 4.7 Bearer instead
 echo "meego:contains(mobility_modules, bearer) { " >> "$CONFIG_IN"

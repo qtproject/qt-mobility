@@ -73,7 +73,6 @@ private slots:
 
 tst_QBluetoothAddress::tst_QBluetoothAddress()
 {
-    qRegisterMetaType<QBluetoothAddress>("QBluetoothAddress");
 }
 
 tst_QBluetoothAddress::~tst_QBluetoothAddress()

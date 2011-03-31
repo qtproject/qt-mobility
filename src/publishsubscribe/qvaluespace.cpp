@@ -305,6 +305,7 @@ void QAbstractValueSpaceLayer::emitInterestChanged(QValueSpacePublisher *publish
     \brief The QValueSpace namespace contains miscellaneous identifiers used throughtout the
            Publish and Subscribe API.
     \ingroup publishsubscribe
+    \inmodule QtPublishSubscribe
 */
 
 /*!

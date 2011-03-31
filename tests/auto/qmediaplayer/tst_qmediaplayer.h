@@ -424,6 +424,7 @@ private slots:
     void testSetVideoOutputNoControl();
     void testSetVideoOutputDestruction();
     void testPositionPropertyWatch();
+    void debugEnums();
 
 private:
     MockProvider *mockProvider;

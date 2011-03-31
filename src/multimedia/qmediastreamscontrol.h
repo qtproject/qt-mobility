@@ -46,13 +46,14 @@
 #include "qmediacontrol.h"
 #include "qtmedianamespace.h"
 #include "qmobilityglobal.h"
+#include <qmediaenumdebug.h>
 
 QT_BEGIN_NAMESPACE
 
 class Q_MULTIMEDIA_EXPORT QMediaStreamsControl : public QMediaControl
 {
     Q_OBJECT
-
+    Q_ENUMS(SteamType)
 public:
     enum StreamType { UnknownStream, VideoStream, AudioStream, SubPictureStream, DataStream };
 
@@ -78,6 +79,10 @@ protected:
 Q_MEDIA_DECLARE_CONTROL(QMediaStreamsControl, QMediaStreamsControl_iid)
 
 QT_END_NAMESPACE
+
+Q_DECLARE_METATYPE(QMediaStreamsControl::StreamType)
+
+Q_MEDIA_ENUM_DEBUG(QMediaStreamsControl, StreamType)
 
 #endif // QMEDIASTREAMSCONTROL_H
 
