@@ -70,11 +70,18 @@ public:
     bool& dataRequested() { return m_dataRequested; }
     unsigned int& dataRequestSize() { return m_dataRequestSize; }
 
+    bool isStreamValid() const
+    {
+        return m_stream != 0 &&
+               m_stream->isOpen();
+    }
+
 private slots:
     void pushDataToAppSrc();
     bool doSeek(qint64);
     void onDataReady();
 
+    void streamDestroyed();
 private:
     static gboolean on_seek_data(GstAppSrc *element, guint64 arg0, gpointer userdata);
     static void on_enough_data(GstAppSrc *element, gpointer userdata);

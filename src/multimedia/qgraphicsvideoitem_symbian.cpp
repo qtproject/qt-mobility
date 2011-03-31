@@ -465,8 +465,8 @@ void QGraphicsVideoItemPrivate::_q_present()
 
 void QGraphicsVideoItemPrivate::_q_updateNativeSize()
 {
-    const QSize size = m_widgetControl->property("nativeSize").value<QSize>();
-    if (m_nativeSize != size) {
+    const QSize size = m_widgetControl ? m_widgetControl->property("nativeSize").value<QSize>() : QSize();
+    if (!size.isEmpty() && m_nativeSize != size) {
         m_nativeSize = size;
         updateGeometry();
         emit q_ptr->nativeSizeChanged(m_nativeSize);

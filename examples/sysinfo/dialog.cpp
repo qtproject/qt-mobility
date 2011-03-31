@@ -42,6 +42,8 @@
 #include <QMessageBox>
 #include <QTimer>
 #include <math.h>
+#include <QDateTime>
+
 #ifndef Q_CC_MINGW
 #ifdef Q_OS_WIN
 // silly MS
@@ -52,7 +54,8 @@ inline float round(float x) {
 #endif
 Dialog::Dialog() :
     QWidget(),
-    saver(NULL), systemInfo(NULL), di(NULL), ni(NULL),sti(NULL),bi(NULL),dis(NULL)
+    saver(NULL), systemInfo(NULL), di(NULL), ni(NULL),sti(NULL),bi(NULL),dis(NULL),
+    alt1(0),alt2(0),alt3(0)
 {
     setupUi(this);
     setupGeneral();
@@ -60,10 +63,6 @@ Dialog::Dialog() :
     connect(comboBox,SIGNAL(activated(int)),this,SLOT(tabChanged(int)));
     connect(versionComboBox,SIGNAL(activated(int)), this,SLOT(getVersion(int)));
     connect(featureComboBox,SIGNAL(activated(int)), this,SLOT(getFeature(int)));
-    updateDeviceLockedState();
-    QTimer *timer = new QTimer(this);
-    connect(timer, SIGNAL(timeout()), this, SLOT(updateDeviceLockedState()));
-    timer->start(1000);
 }
 
 Dialog::~Dialog()
@@ -73,6 +72,18 @@ Dialog::~Dialog()
     delete saver;
     delete dis;
 }
+
+void Dialog::parseArguments()
+{
+    bool ok;
+    int tab = qApp->arguments().at(1).toInt(&ok);
+    if (ok) {
+        comboBox->setCurrentIndex(tab);
+        stackedWidget->setCurrentIndex(tab);
+        tabChanged(tab);
+    }
+}
+
 
 void Dialog::changeEvent(QEvent *e)
 {
@@ -123,6 +134,9 @@ void Dialog::tabChanged(int index)
         break;
     case 10:
         setupSaver();
+        break;
+    case 11:
+        setupAlignedTimers();
         break;
     };
 
@@ -214,7 +228,10 @@ void Dialog::setupDevice()
 
     connect(di,SIGNAL(lockStatusChanged(QSystemDeviceInfo::LockTypeFlags)),
             this,SLOT(lockStatusChanged(QSystemDeviceInfo::LockTypeFlags)),Qt::UniqueConnection);
-
+    updateDeviceLockedState();
+    QTimer *timer = new QTimer(this);
+    connect(timer, SIGNAL(timeout()), this, SLOT(updateDeviceLockedState()));
+    timer->start(1000);
 }
 
 void Dialog::updateKeyboard(QSystemDeviceInfo::KeyboardTypeFlags type)
@@ -391,6 +408,8 @@ void Dialog::setupNetwork()
     netStatusComboActivated((int)ni->currentMode());
 
     cellIdLabel->setText(QString::number(ni->cellId()));
+    connect(ni,SIGNAL(cellIdChanged(int)),this,SLOT(cellIdChanged(int)));
+
     locationAreaCodeLabel->setText(QString::number(ni->locationAreaCode()));
     currentMCCLabel->setText(ni->currentMobileCountryCode());
     currentMNCLabel->setText(ni->currentMobileNetworkCode());
@@ -1238,3 +1257,161 @@ void Dialog::lockStatusChanged(QSystemDeviceInfo::LockTypeFlags locktype)
     }
 }
 
+void Dialog::cellIdChanged(int id)
+{
+    cellIdLabel->setText(QString::number(id));
+}
+
+void  Dialog::setupAlignedTimer()
+{
+    connect(startButton,SIGNAL(clicked()),this,SLOT(startAlignedTimers()));
+}
+
+void Dialog::setupAlignedTimers()
+{
+    QSystemAlignedTimer alignedtimer;
+    if(alignedtimer.lastError() == QSystemAlignedTimer::AlignedTimerNotSupported) {
+        min1spinBox->setEnabled(false);
+        max1spinBox->setEnabled(false);
+
+        min2spinBox->setEnabled(false);
+        max2spinBox->setEnabled(false);
+
+        min3spinBox->setEnabled(false);
+        max3spinBox->setEnabled(false);
+
+        startButton->setEnabled(false);
+
+        checkBox_1->setEnabled(false);
+        checkBox_2->setEnabled(false);
+        checkBox_3->setEnabled(false);
+
+        timeLabel->setText("Aligned Timer is not supported on this platform");
+        return;
+    }
+
+    if (!alt1) {
+        alt1 = new QSystemAlignedTimer(this);
+
+        connect(alt1,SIGNAL(error(QSystemAlignedTimer::AlignedTimerError)),
+                this,SLOT(timerError(QSystemAlignedTimer::AlignedTimerError)));
+        connect(alt1,SIGNAL(timeout()),this,SLOT(timeout1()));
+    }
+    if (!alt2) {
+        alt2 = new QSystemAlignedTimer(this);
+
+        connect(alt2,SIGNAL(error(QSystemAlignedTimer::AlignedTimerError)),
+                this,SLOT(timerError(QSystemAlignedTimer::AlignedTimerError)));
+        connect(alt2,SIGNAL(timeout()),this,SLOT(timeout2()));
+    }
+    if (!alt3) {
+        alt3 = new QSystemAlignedTimer(this);
+
+        connect(alt3,SIGNAL(error(QSystemAlignedTimer::AlignedTimerError)),
+                this,SLOT(timerError(QSystemAlignedTimer::AlignedTimerError)));
+        connect(alt3,SIGNAL(timeout()),this,SLOT(timeout3()));
+    }
+
+    connect(startButton,SIGNAL(clicked()),this,SLOT(startAlignedTimers()),Qt::UniqueConnection);
+    connect(stopButton,SIGNAL(clicked()),this,SLOT(stopAlignedTimers()),Qt::UniqueConnection);
+
+    connect(startButton_2,SIGNAL(clicked()),this,SLOT(startAlignedTimers()),Qt::UniqueConnection);
+    connect(stopButton_2,SIGNAL(clicked()),this,SLOT(stopAlignedTimers()),Qt::UniqueConnection);
+
+    connect(startButton_3,SIGNAL(clicked()),this,SLOT(startAlignedTimers()),Qt::UniqueConnection);
+    connect(stopButton_3,SIGNAL(clicked()),this,SLOT(stopAlignedTimers()),Qt::UniqueConnection);
+}
+
+void Dialog::startAlignedTimers()
+{
+    QPushButton *button = qobject_cast<QPushButton*>(sender());
+
+    if (button == startButton) {
+        if (checkBox_1->isChecked()) {
+            QSystemAlignedTimer::singleShot(min1spinBox->value(),max1spinBox->value(),
+                                            this,SLOT(timeout1()));
+        } else {
+            alt1->setMinimumInterval(min1spinBox->value());
+            alt1->setMaximumInterval(max1spinBox->value());
+            alt1->start();
+        }
+        if(alt1->lastError() == QSystemAlignedTimer::NoError)
+            textEdit->append("<b>Timer 1:  Start: </b>" + QDateTime::currentDateTime().toString("yyyy MMM ddd hh:mm:ss"));
+    } else if (button == startButton_2) {
+        if (checkBox_2->isChecked()) {
+            QSystemAlignedTimer::singleShot(min2spinBox->value(),max2spinBox->value(),
+                                            this,SLOT(timeout2()));
+        } else {
+            alt2->start(min2spinBox->value(),max2spinBox->value());
+        }
+        if(alt2->lastError() == QSystemAlignedTimer::NoError)
+            textEdit->append("<b>Timer 2: Start: </b>" + QDateTime::currentDateTime().toString("yyyy MMM ddd hh:mm:ss"));
+    } else if (button == startButton_3) {
+        if (checkBox_3->isChecked()) {
+            QSystemAlignedTimer::singleShot(min3spinBox->value(),max3spinBox->value(),
+                                            this,SLOT(timeout3()));
+        } else {
+            if(alt3->lastError() == QSystemAlignedTimer::NoError)
+                alt3->start(min3spinBox->value(),max3spinBox->value());
+        }
+        textEdit->append("<b>Timer 3:  Start: </b>" + QDateTime::currentDateTime().toString("yyyy MMM ddd hh:mm:ss"));
+    }
+}
+
+void Dialog::timeout1()
+{
+    textEdit->append("<b>Timer 1: </b>" + QDateTime::currentDateTime().toString("yyyy MMM ddd hh:mm:ss"));
+}
+
+void Dialog::timeout2()
+{
+    textEdit->append("<b>Timer 2: </b>" + QDateTime::currentDateTime().toString("yyyy MMM ddd hh:mm:ss"));
+}
+
+void Dialog::timeout3()
+{
+    textEdit->append("<b>Timer 3: </b>" + QDateTime::currentDateTime().toString("yyyy MMM ddd hh:mm:ss"));
+}
+
+void Dialog::stopAlignedTimers()
+{
+    QPushButton *button = qobject_cast<QPushButton*>(sender());
+    if(button->objectName() == stopButton->objectName()) {
+        alt1->stop();
+        textEdit->append("<b>Timer 1:  Stop: </b>" + QDateTime::currentDateTime().toString("yyyy MMM ddd hh:mm:ss"));
+    } else if(button == stopButton_2) {
+        alt2->stop();
+        textEdit->append("<b>Timer 2:  Stop: </b>" + QDateTime::currentDateTime().toString("yyyy MMM ddd hh:mm:ss"));
+    } else if(button == stopButton_3) {
+        alt3->stop();
+        textEdit->append("<b>Timer 3:  Stop: </b>" + QDateTime::currentDateTime().toString("yyyy MMM ddd hh:mm:ss"));
+    }
+}
+
+void Dialog::timerError(QSystemAlignedTimer::AlignedTimerError error)
+{
+    QString errorStr;
+    QSystemAlignedTimer *timer = qobject_cast<QSystemAlignedTimer*>(sender());
+    if (timer == alt1) {
+        errorStr = "<b>Timer 1: </b> ";
+    } if (timer == alt2) {
+        errorStr = "<b>Timer 2: </b> ";
+    } if (timer == alt3) {
+        errorStr = "<b>Timer 3: </b> ";
+    }
+    switch( error) {
+    case QSystemAlignedTimer::AlignedTimerNotSupported:
+        errorStr += "Timer Not Supported";
+        break;
+    case QSystemAlignedTimer::InvalidArgument:
+        errorStr += "Invalid Argument";
+        break;
+    case QSystemAlignedTimer::TimerFailed:
+        errorStr += "Timer Failed";
+        break;
+    case QSystemAlignedTimer::InternalError:
+        errorStr += "Internal Error";
+        break;
+    };
+    textEdit->append(errorStr);
+}

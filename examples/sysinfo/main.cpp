@@ -52,5 +52,8 @@ int main(int argc, char *argv[])
     w.show();
 #endif
 
+    if(qApp->argc() > 1 ) {
+        w.parseArguments();
+    }
     return a.exec();
 }
