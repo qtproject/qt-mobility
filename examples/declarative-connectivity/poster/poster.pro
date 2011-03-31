@@ -1,8 +1,12 @@
+include(../../mobility_examples.pri)
+
 QT += declarative network
-SOURCES += $$PWD/qmlposter.cpp
-include($$PWD/../declarative-connectivity.pri)
+
+SOURCES += \
+    qmlposter.cpp
 
 TARGET = qml_poster
+TEMPLATE = app
 
 symbian {
     TARGET.CAPABILITY = LocalServices
