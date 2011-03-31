@@ -697,31 +697,7 @@ void QSystemNetworkInfoPrivate::setupNetworkInfo()
         QString dt = dataTechnology.isValid() ? dataTechnology.value<QString>() : "";
         currentCellDataTechnology = csdtToCellDataTechnology(dt);
 
-        /* Signal handlers */
-        if (!systemDbusConnection.connect(service, servicePath, "com.nokia.csd.CSNet.SignalStrength", "SignalStrengthChanged",
-                                         this, SLOT(slotSignalStrengthChanged(int, int)))) {
-            qDebug() << "unable to connect SignalStrengthChanged";
-        }
-        if (!systemDbusConnection.connect(service, servicePath, "com.nokia.csd.CSNet.NetworkOperator", "OperatorChanged",
-                                         this, SLOT(slotOperatorChanged(const QString&,const QString&)))) {
-            qDebug() << "unable to connect (OperatorChanged";
-        }
-        if (!systemDbusConnection.connect(service, servicePath, "com.nokia.csd.CSNet.NetworkOperator", "OperatorNameChanged",
-                                         this, SLOT(slotOperatorNameChanged(const QString&)))) {
-            qDebug() << "unable to connect OperatorNameChanged";
-        }
-        if (!systemDbusConnection.connect(service, servicePath, "com.nokia.csd.CSNet.NetworkRegistration", "RegistrationChanged",
-                                         this, SLOT(slotRegistrationChanged(const QString&)))) {
-            qDebug() << "unable to connect RegistrationChanged";
-        }
-        if (!systemDbusConnection.connect(service, servicePath, "com.nokia.csd.CSNet.NetworkCell", "CellChanged",
-                                         this, SLOT(slotCellChanged(const QString&,int,int)))) {
-            qDebug() << "unable to connect CellChanged";
-        }
-        if (!systemDbusConnection.connect(service, servicePath, "com.nokia.csd.CSNet.RadioAccess", "DataTechnologyChanged",
-                                         this, SLOT(slotCellDataTechnologyChanged(const QString&)))) {
-            qDebug() << "unable to connect DataTechnologyChanged";
-        }
+
 
     #else
     /* Maemo 5 */
@@ -838,6 +814,134 @@ void QSystemNetworkInfoPrivate::setupNetworkInfo()
 #endif
 }
 
+void QSystemNetworkInfoPrivate::connectNotify(const char *signal)
+{
+#if !defined(QT_NO_DBUS)
+#if defined(Q_WS_MAEMO_6)
+    const QString service = "com.nokia.csd.CSNet";
+    const QString servicePath = "/com/nokia/csd/csnet";
+
+    if ((QLatin1String(signal)
+         == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode, int)))))) {
+        if (!QDBusConnection::systemBus().connect(service, servicePath, "com.nokia.csd.CSNet.SignalStrength", "SignalStrengthChanged",
+                                                  this, SLOT(slotSignalStrengthChanged(int, int)))) {
+            qDebug() << "unable to connect SignalStrengthChanged";
+        }
+    }
+
+    if ((QLatin1String(signal)
+         == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(currentMobileCountryCodeChanged(const QString &)))))
+            || (QLatin1String(signal)
+                == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(currentMobileNetworkCodeChanged(const QString &))))) ) {
+        if (!QDBusConnection::systemBus().connect(service, servicePath, "com.nokia.csd.CSNet.NetworkOperator", "OperatorChanged",
+                                                  this, SLOT(slotOperatorChanged(const QString&,const QString&)))) {
+            qDebug() << "unable to connect (OperatorChanged";
+        }
+    }
+
+    if ((QLatin1String(signal)
+         == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(networkNameChanged(QSystemNetworkInfo::NetworkMode,const QString &)))))) {
+        if (!QDBusConnection::systemBus().connect(service, servicePath, "com.nokia.csd.CSNet.NetworkOperator", "OperatorNameChanged",
+                                                  this, SLOT(slotOperatorNameChanged(const QString&)))) {
+            qDebug() << "unable to connect OperatorNameChanged";
+        }
+    }
+
+
+    if ((QLatin1String(signal)
+         == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(networkStatusChanged(QSystemNetworkInfo::NetworkMode, QSystemNetworkInfo::NetworkStatus)))))) {
+        if (!QDBusConnection::systemBus().connect(service, servicePath, "com.nokia.csd.CSNet.NetworkRegistration", "RegistrationChanged",
+                                                  this, SLOT(slotRegistrationChanged(const QString&)))) {
+            qDebug() << "unable to connect RegistrationChanged";
+        }
+    }
+
+    if ((QLatin1String(signal)
+         == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(cellIdChanged(int)))))) {
+        if (!QDBusConnection::systemBus().connect(service, servicePath, "com.nokia.csd.CSNet.NetworkCell", "CellChanged",
+                                          this, SLOT(slotCellChanged(const QString&,int,int)))) {
+            qDebug() << "unable to connect CellChanged";
+        }
+    }
+
+    if ((QLatin1String(signal)
+         == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(cellDataTechnologyChanged(QSystemNetworkInfo::CellDataTechnology)))))) {
+        if (!QDBusConnection::systemBus().connect(service, servicePath, "com.nokia.csd.CSNet.RadioAccess", "DataTechnologyChanged",
+                                          this, SLOT(slotCellDataTechnologyChanged(const QString&)))) {
+            qDebug() << "unable to connect DataTechnologyChanged";
+        }
+    }
+
+#else //maemo5
+
+#endif
+#endif
+}
+
+void QSystemNetworkInfoPrivate::disconnectNotify(const char *signal)
+{
+#if !defined(QT_NO_DBUS)
+#if defined(Q_WS_MAEMO_6)
+    const QString service = "com.nokia.csd.CSNet";
+    const QString servicePath = "/com/nokia/csd/csnet";
+    if ((QLatin1String(signal)
+         == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode, int)))))) {
+        if (!QDBusConnection::systemBus().disconnect(service, servicePath, "com.nokia.csd.CSNet.SignalStrength", "SignalStrengthChanged",
+                                                  this, SLOT(slotSignalStrengthChanged(int, int)))) {
+            qDebug() << "unable to disconnect SignalStrengthChanged";
+        }
+    }
+
+    if ((QLatin1String(signal)
+         == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(currentMobileCountryCodeChanged(const QString &)))))
+            || (QLatin1String(signal)
+                == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(currentMobileNetworkCodeChanged(const QString &))))) ) {
+        if (!QDBusConnection::systemBus().disconnect(service, servicePath, "com.nokia.csd.CSNet.NetworkOperator", "OperatorChanged",
+                                                  this, SLOT(slotOperatorChanged(const QString&,const QString&)))) {
+            qDebug() << "unable to disconnect (OperatorChanged";
+        }
+    }
+
+    if ((QLatin1String(signal)
+         == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(networkNameChanged(QSystemNetworkInfo::NetworkMode,const QString &)))))) {
+        if (!QDBusConnection::systemBus().disconnect(service, servicePath, "com.nokia.csd.CSNet.NetworkOperator", "OperatorNameChanged",
+                                                  this, SLOT(slotOperatorNameChanged(const QString&)))) {
+            qDebug() << "unable to disconnect OperatorNameChanged";
+        }
+    }
+
+
+    if ((QLatin1String(signal)
+         == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(networkStatusChanged(QSystemNetworkInfo::NetworkMode, QSystemNetworkInfo::NetworkStatus)))))) {
+        if (!QDBusConnection::systemBus().disconnect(service, servicePath, "com.nokia.csd.CSNet.NetworkRegistration", "RegistrationChanged",
+                                                  this, SLOT(slotRegistrationChanged(const QString&)))) {
+            qDebug() << "unable to disconnect RegistrationChanged";
+        }
+    }
+
+    if ((QLatin1String(signal)
+         == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(cellIdChanged(int)))))) {
+        if (!QDBusConnection::systemBus().disconnect(service, servicePath, "com.nokia.csd.CSNet.NetworkCell", "CellChanged",
+                                          this, SLOT(slotCellChanged(const QString&,int,int)))) {
+            qDebug() << "unable to disconnect CellChanged";
+        }
+    }
+
+    if ((QLatin1String(signal)
+         == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(cellDataTechnologyChanged(QSystemNetworkInfo::CellDataTechnology)))))) {
+        if (!QDBusConnection::systemBus().disconnect(service, servicePath, "com.nokia.csd.CSNet.RadioAccess", "DataTechnologyChanged",
+                                          this, SLOT(slotCellDataTechnologyChanged(const QString&)))) {
+            qDebug() << "unable to disconnect DataTechnologyChanged";
+        }
+    }
+
+#else //maemo5
+
+#endif
+#endif
+}
+
+
 #if defined(Q_WS_MAEMO_6)
 // Slots only available in Maemo6
 
@@ -915,6 +1019,7 @@ void QSystemNetworkInfoPrivate::slotCellChanged(const QString &type, int id, int
 
 void QSystemNetworkInfoPrivate::slotCellDataTechnologyChanged(const QString &tech)
 {
+    qDebug() << Q_FUNC_INFO << tech;
     QSystemNetworkInfo::CellDataTechnology cdt = csdtToCellDataTechnology(tech);
     if (cdt != currentCellDataTechnology) {
         currentCellDataTechnology = cdt;
@@ -1119,7 +1224,20 @@ void QSystemNetworkInfoPrivate::setWlanSignalStrengthCheckEnabled(bool enabled)
 
 QSystemNetworkInfo::CellDataTechnology QSystemNetworkInfoPrivate::cellDataTechnology()
 {
-    return QSystemNetworkInfo::UnknownDataTechnology;
+  //  qDebug() << Q_FUNC_INFO;
+    const QString service = "com.nokia.csd.CSNet";
+    const QString servicePath = "/com/nokia/csd/csnet";
+    QDBusInterface ifc5(service, servicePath, "com.nokia.csd.CSNet.RadioAccess", QDBusConnection::systemBus());
+
+//    QVariant dataTechnology = ifc5.property("DataTechnology");
+//    QVariant radioIdle = ifc5.property("RadioIdle");
+
+//    qDebug() << radioIdle.toBool() << ifc5.property("AllocatedHSDPA").toBool() << ifc5.property("AllocatedHSUPA").toBool();
+
+    QString dt = dataTechnology.isValid() ? dataTechnology.value<QString>() : "";
+    currentCellDataTechnology = csdtToCellDataTechnology(dt);
+
+    return currentCellDataTechnology;
 }
 
 QSystemDisplayInfoPrivate::QSystemDisplayInfoPrivate(QSystemDisplayInfoLinuxCommonPrivate *parent)
@@ -1452,6 +1570,7 @@ QSystemDeviceInfo::ThermalState QSystemDeviceInfoPrivate::currentThermalState()
         }
     }
 #endif
+     return QSystemDeviceInfo::UnknownThermal;
 }
 
 #if !defined(QT_NO_DBUS)
@@ -1498,8 +1617,8 @@ QSystemDeviceInfo::ThermalState QSystemDeviceInfoPrivate::currentThermalState()
 void QSystemDeviceInfoPrivate::setupProfile()
 {
     QDBusReply<quint32> radioStatesReply = QDBusConnection::systemBus().call(
-                                                       QDBusMessage::createMethodCall("com.nokia.mce",  "/com/nokia/mce/request",
-                                                                                      "com.nokia.mce.request", "get_radio_states"));
+                QDBusMessage::createMethodCall("com.nokia.mce",  "/com/nokia/mce/request",
+                                               "com.nokia.mce.request", "get_radio_states"));
     if (radioStatesReply.isValid()) {
         quint32 radioStateFlags = radioStatesReply.value();
 #define MCE_RADIO_STATE_WLAN            (1 << 2)
@@ -1509,8 +1628,8 @@ void QSystemDeviceInfoPrivate::setupProfile()
     }
 
     QDBusReply<QString> profileNameReply = QDBusConnection::sessionBus().call(
-                                                       QDBusMessage::createMethodCall("com.nokia.profiled", "/com/nokia/profiled",
-                                                                                      "com.nokia.profiled", "get_profile"));
+                QDBusMessage::createMethodCall("com.nokia.profiled", "/com/nokia/profiled",
+                                               "com.nokia.profiled", "get_profile"));
 
     if (profileNameReply.isValid()) {
         profileName = profileNameReply.value();

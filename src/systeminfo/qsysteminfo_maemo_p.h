@@ -194,6 +194,10 @@ private:
 
     QSystemNetworkInfo::CellDataTechnology currentCellDataTechnology;
     QSystemNetworkInfo::CellDataTechnology csdtToCellDataTechnology(const QString &tech);
+
+    void connectNotify(const char *signal);
+    void disconnectNotify(const char *signal);
+
 };
 
 class QSystemDisplayInfoPrivate : public QSystemDisplayInfoLinuxCommonPrivate

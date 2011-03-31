@@ -2597,7 +2597,9 @@ QSystemDeviceInfoLinuxCommonPrivate::QSystemDeviceInfoLinuxCommonPrivate(QObject
 #if !defined(QT_NO_DBUS)
 
     halIsAvailable = halAvailable();
+#if !defined(Q_WS_MAEMO_6)
     currentPowerState();
+#endif
 #endif
    initBatteryStatus();
 }
