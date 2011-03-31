@@ -1321,10 +1321,7 @@ QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QSystemDeviceInfoLinuxCommonP
     m_ringingAlertVolumeQueried      = false;
     m_smsAlertVolumeQueried          = false;
 
- #if !defined(QT_NO_DBUS)
-    qDBusRegisterMetaType<ProfileDataValue>();
-    qDBusRegisterMetaType<QList<ProfileDataValue> >();
-#endif
+    m_profileDataMetaTypesRegistered = false;
 }
 
 QSystemDeviceInfoPrivate::~QSystemDeviceInfoPrivate()
@@ -1333,6 +1330,20 @@ QSystemDeviceInfoPrivate::~QSystemDeviceInfoPrivate()
         ::close(gpioFD);
         gpioFD = -1;
     }
+}
+
+void QSystemDeviceInfoPrivate::registerProfileDataMetaTypes()
+{
+    if (m_profileDataMetaTypesRegistered) {
+        return;
+    }
+
+#if !defined(QT_NO_DBUS)
+    qDBusRegisterMetaType<ProfileDataValue>();
+    qDBusRegisterMetaType<QList<ProfileDataValue> >();
+#endif
+
+    m_profileDataMetaTypesRegistered = true;
 }
 
 void QSystemDeviceInfoPrivate::connectNotify(const char *signal)
@@ -1350,6 +1361,8 @@ void QSystemDeviceInfoPrivate::connectNotify(const char *signal)
                                              this, SLOT(deviceStateChanged(int,int)));
     }
     if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(currentProfileChanged(QSystemDeviceInfo::Profile))))) {
+        registerProfileDataMetaTypes();
+
         if (! QDBusConnection::systemBus().connect("com.nokia.mce",
                                "/com/nokia/mce/signal",
                                "com.nokia.mce.signal",

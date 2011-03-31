@@ -280,6 +280,7 @@ private Q_SLOTS:
 private:
     void connectNotify(const char *signal);
     void disconnectNotify(const char *signal);
+    void registerProfileDataMetaTypes();
 
     // profile data
     bool m_flightMode;
@@ -297,6 +298,7 @@ private:
     bool m_vibratingAlertEnabledQueried;
     bool m_ringingAlertVolumeQueried;
     bool m_smsAlertVolumeQueried;
+    bool m_profileDataMetaTypesRegistered;
 
     // profile data accessors
     void queryRingingAlertType();
