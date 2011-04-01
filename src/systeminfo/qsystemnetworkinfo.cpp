@@ -414,13 +414,13 @@ void QSystemNetworkInfo::disconnectNotify(const char *signal)
 }
 
 /*!
- \property QSystemNetworkInfo::cellDataTechnology
+    \property QSystemNetworkInfo::cellDataTechnology
 
     Returns the current active cell data technology.
-    If no data technology is active, returns QSystemNetworkInfo::NoDataTechnology. If data technology is not supported, this will return
-    QSystemNetworkInfo::UnknownDataTechnology
 
-  */
+    If no data technology is active, or data technology is not supported, QSystemNetworkInfo::UnknownDataTechnology
+    is returned.
+*/
 QSystemNetworkInfo::CellDataTechnology QSystemNetworkInfo::cellDataTechnology()
 {
     return netInfoPrivate()->cellDataTechnology();
