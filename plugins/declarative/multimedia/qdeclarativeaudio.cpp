@@ -50,6 +50,8 @@ QT_BEGIN_NAMESPACE
     \qmlclass Audio QDeclarativeAudio
     \brief The Audio element allows you to add audio playback to a scene.
 
+    \ingroup qml-multimedia
+
     This element is part of the \bold{QtMultimediaKit 1.1} module.
 
     \qml
