@@ -59,14 +59,14 @@ Item {
         topLeft: map.toCoordinate(Qt.point(0,0))
         bottomRight: map.toCoordinate(Qt.point(page.width, page.height))
     }
-    
+
      LandmarkProximityFilter {
          id: proximityFilter
          center: myPositionSource.position.coordinate
 	 //center: Coordinate {latitude: -27; longitude: 153}
          radius: 500000
      }
-       
+
     LandmarkModel {
         id: landmarkModelAll
         autoUpdate: true
@@ -76,7 +76,8 @@ Item {
             console.log("All landmark model changed, landmark count: " + count)
         }
     }
-    
+
+    //! [LandmarkModel proximity filter]
     LandmarkModel {
         id: landmarkModelNear
         autoUpdate: true
@@ -86,7 +87,8 @@ Item {
             console.log("Near landmark model changed, landmark count: " + count)
         }
     }
-    
+    //! [LandmarkModel proximity filter]
+
     Rectangle {
         id: dataArea
         anchors.fill: parent
@@ -100,7 +102,7 @@ Item {
             size.width: parent.width
             size.height: parent.height
             zoomLevel: 10
-            
+
             MapObjectView {
 	        id: allLandmarks
 		model: landmarkModelAll
@@ -110,7 +112,7 @@ Item {
 			radius: 1000
 		        center: Coordinate {
 	                    latitude: landmark.coordinate.latitude
-		            longitude: landmark.coordinate.longitude 
+		            longitude: landmark.coordinate.longitude
 	                }
 	            }
 	        }
@@ -140,10 +142,10 @@ Item {
 	            }
 		}
 	    }
-	    
+
             // center: Coordinate {latitude: -27; longitude: 153}
 	    center: myPositionSource.position.coordinate
-	    
+
             onZoomLevelChanged: {
                 console.log("Zoom changed")
                 updateFilters();
