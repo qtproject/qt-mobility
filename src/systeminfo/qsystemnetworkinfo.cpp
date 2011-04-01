@@ -76,23 +76,32 @@ QSystemNetworkInfoPrivate *getSystemNetworkInfoPrivate() { return netInfoPrivate
             \value Roaming                On Roaming network.
 
           */
-        /*!
-            \enum QSystemNetworkInfo::NetworkMode
-            This enum describes the type of network:
 
-            \value UnknownMode             Unknown network, or network error.
-            \value GsmMode                 Global System for Mobile (GSM) network.
-            \value CdmaMode                Code division multiple access (CDMA) network.
-            \value WcdmaMode               Wideband Code Division Multiple Access (W-CDMA) network.
-            \value WlanMode                Wireless Local Area Network (WLAN) network.
-            \value EthernetMode            Wired Local Area network.
-            \value BluetoothMode           Bluetooth network.
-            \value WimaxMode               Wimax network.
-            \value GprsMode                Gprs network
-            \value EdgeMode                Edge network.
-            \value HspaMode                Hspa network.
-            \value LteMode                 Lte network.
-          */
+/*!
+    \enum QSystemNetworkInfo::NetworkMode
+    This enum describes the type of network:
+
+    \value UnknownMode             Unknown network, or network error.
+    \value GsmMode                 Global System for Mobile (GSM) network.
+    \value CdmaMode                Code division multiple access (CDMA) network.
+    \value WcdmaMode               Wideband Code Division Multiple Access (W-CDMA) network.
+    \value WlanMode                Wireless Local Area Network (WLAN) network.
+    \value EthernetMode            Wired Local Area network.
+    \value BluetoothMode           Bluetooth network.
+    \value WimaxMode               Wimax network.
+    \value LteMode                 Lte network.
+*/
+
+/*!
+    \enum QSystemNetworkInfo::CellDataTechnology
+    This enum describes the type of cellular technology:
+
+    \value UnknownDataTechnology   Unknown cellular technology, or error.
+    \value GprsDataTechnology      General Packet Radio Service (GPRS) data service.
+    \value EdgeDataTechnology      Enhanced Data Rates for GSM Evolution (EDGE) data service.
+    \value UmtsDataTechnology      Universal Mobile Telecommunications System (UMTS) data service.
+    \value HspaDataTechnology      High Speed Packet Access (HSPA) data service.
+*/
 
 
 
