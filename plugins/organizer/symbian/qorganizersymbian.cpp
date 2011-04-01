@@ -379,6 +379,12 @@ QList<QOrganizerItem> QOrganizerItemSymbianEngine::itemOccurrencesL(
 {
     Q_UNUSED(fetchHint)
 
+    //check maxCount
+    if (0 == maxCount)
+    {
+        return QList<QOrganizerItem>(); // return an empty occurrence list if maxCount is 0
+    }
+
     // Verify that parent item exists
     QOrganizerManager::Error error;
     QOrganizerItem parentItem = this->item(parentItemId, QOrganizerItemFetchHint(), &error);
@@ -496,6 +502,8 @@ void QOrganizerItemSymbianEngine::toItemOccurrencesL(
 {
     quint64 localCollectionIdValue = m_collections[collectionId].calCollectionId();
 
+    // Count the found match items
+    int count = 0;
     // Transform all the instances to QOrganizerItems
     for(int i(0); i < calInstanceList.Count(); i++) {
         QOrganizerItem itemOccurrence;
@@ -506,8 +514,10 @@ void QOrganizerItemSymbianEngine::toItemOccurrencesL(
         if (!parentItem.isEmpty() && parentItem.guid() != itemOccurrence.guid())
             continue;
 
+        // Find one match item
+        count++;
         // Check if maxCount limit is reached
-        if(maxCount > 0 && i >= maxCount)
+        if(maxCount > 0 && count > maxCount)
             break;
 
         // Set local id if this is either an exceptional item or a non-recurring item
