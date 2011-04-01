@@ -45,8 +45,8 @@
 
 #include <qdeclarativendefrecord.h>
 
-#include "qdeclarativebtdiscoverymodel_p.h"
-#include "qdeclarativebtimageprovider_p.h"
+#include "qdeclarativebluetoothdiscoverymodel_p.h"
+#include "qdeclarativebluetoothimageprovider_p.h"
 #include "qdeclarativebluetoothservice_p.h"
 #include "qdeclarativebluetoothsocket_p.h"
 #include "qdeclarativenearfieldsocket_p.h"

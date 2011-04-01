@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "qdeclarativebtdiscoverymodel_p.h"
+#include "qdeclarativebluetoothdiscoverymodel_p.h"
 
 #include <QPixmap>
 

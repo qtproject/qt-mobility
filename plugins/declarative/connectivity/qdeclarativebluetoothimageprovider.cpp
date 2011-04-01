@@ -44,7 +44,7 @@
 
 #include <qdeclarativeengine.h>
 #include <qdeclarative.h>
-#include "qdeclarativebtimageprovider_p.h"
+#include "qdeclarativebluetoothimageprovider_p.h"
 
 
 QTM_USE_NAMESPACE
