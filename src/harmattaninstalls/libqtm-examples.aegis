@@ -2,6 +2,7 @@
     <request>
         <credential name="TrackerReadAccess" />
         <credential name="TrackerWriteAccess" />
+        <credential name="GRP::metadata-users"/>
         <for path="/usr/lib/qtmobility/examples/samplephonebook" />
         <for path="/usr/lib/qtmobility/demos/qmlcontacts" />
     </request>
