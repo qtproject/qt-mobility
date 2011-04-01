@@ -4110,9 +4110,9 @@ QMessage CMTMEngine::mmsMessageL(CMsvEntry& receivedEntry, long int messageId, b
                 textAdded = ETrue;
                 RFile file = pStore->AttachmentManagerL().GetAttachmentFileL(i);
                 CleanupClosePushL(file);
-                TInt fileSize;
-                size += fileSize;
+                TInt fileSize = 0;
                 file.Size(fileSize);
+                size += fileSize;
                 HBufC8* pFileContent = HBufC8::NewLC(fileSize);
                 TPtr8 fileContent(pFileContent->Des());
                 file.Read(fileContent);

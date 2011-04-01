@@ -345,9 +345,12 @@ void QGstreamerPlayerControl::setMedia(const QMediaContent &content, QIODevice *
     }
 
     if (m_stream) {
+#if !defined(HAVE_GST_APPSRC)
         closeFifo();
 
         disconnect(m_stream, SIGNAL(readyRead()), this, SLOT(writeFifo()));
+#endif
+
         if (m_ownStream)
             delete m_stream;
         m_stream = 0;
@@ -421,7 +424,11 @@ void QGstreamerPlayerControl::setMedia(const QMediaContent &content, QIODevice *
     }
 #endif
 
+#if defined(HAVE_GST_APPSRC)
+    if (!request.url().isEmpty() || userStreamValid) {
+#else
     if (!request.url().isEmpty()) {
+#endif
         if (m_mediaStatus != QMediaPlayer::LoadingMedia)
             emit mediaStatusChanged(m_mediaStatus = QMediaPlayer::LoadingMedia);
         m_session->pause();
@@ -516,14 +523,20 @@ void QGstreamerPlayerControl::setBufferProgress(int progress)
     if (m_state == QMediaPlayer::StoppedState) {
         m_mediaStatus = QMediaPlayer::LoadedMedia;
     } else {
-        if (m_bufferProgress < 100) {
+        if (m_bufferProgress < 30) {
             m_mediaStatus = QMediaPlayer::StalledMedia;
-            m_session->pause();
-        } else {
-            m_mediaStatus = QMediaPlayer::BufferedMedia;
-            if (m_state == QMediaPlayer::PlayingState && m_resources->isGranted())
-                m_session->play();
+            if (m_session->state() == QMediaPlayer::PlayingState)
+                m_session->pause();
+        } else if (m_bufferProgress > 90) {
+            m_mediaStatus = QMediaPlayer::BufferingMedia;
+            if (m_state == QMediaPlayer::PlayingState &&
+                m_resources->isGranted() &&
+                m_session->state() != QMediaPlayer::PlayingState)
+                    m_session->play();
         }
+
+        if (m_bufferProgress == 100)
+            m_mediaStatus = QMediaPlayer::BufferedMedia;
     }
 
     if (m_mediaStatus != oldStatus)

@@ -45,6 +45,9 @@
 #include <QObject>
 #include <qdeclarative.h>
 #include <bluetooth/qbluetoothserviceinfo.h>
+#include <qdeclarativebluetoothsocket_p.h>
+
+class QDeclarativeBluetoothSocket;
 
 QTM_USE_NAMESPACE
 
@@ -60,7 +63,7 @@ class QDeclarativeBluetoothService : public QObject, public QDeclarativeParserSt
     Q_PROPERTY(QString serviceUuid READ serviceUuid WRITE setServiceUuid NOTIFY detailsChanged)
     Q_PROPERTY(QString serviceProtocol READ serviceProtocol WRITE setServiceProtocol NOTIFY detailsChanged)
     Q_PROPERTY(qint32 servicePort READ servicePort WRITE setServicePort NOTIFY detailsChanged)
-    Q_PROPERTY(bool registered READ isRegistered WRITE setRegistered NOTIFY registeredChanged)
+    Q_PROPERTY(bool registered READ isRegistered WRITE setRegistered NOTIFY registeredChanged)    
 
     Q_INTERFACES(QDeclarativeParserStatus)
 
@@ -79,7 +82,10 @@ public:
     qint32 servicePort() const;
     bool isRegistered() const;
 
-    QBluetoothServiceInfo *serviceInfo() const;
+    QBluetoothServiceInfo *serviceInfo() const;    
+
+    Q_INVOKABLE QDeclarativeBluetoothSocket *nextClient();
+    Q_INVOKABLE void assignNextClient(QDeclarativeBluetoothSocket *dbs);
 
     // From QDeclarativeParserStatus
     void classBegin() {}
@@ -88,6 +94,7 @@ public:
 signals:
     void detailsChanged();
     void registeredChanged();
+    void newClient();
 
 public slots:
     void setServiceName(QString name);
@@ -97,6 +104,10 @@ public slots:
     void setServiceProtocol(QString protocol);
     void setServicePort(qint32 port);
     void setRegistered(bool registered);
+
+
+private slots:
+    void new_connection();
 
 private:
     QDeclarativeBluetoothServicePrivate* d;

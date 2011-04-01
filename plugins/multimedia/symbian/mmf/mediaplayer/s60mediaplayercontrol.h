@@ -68,7 +68,7 @@ public:
         : m_volume(30)
         , m_muted(false)
         , m_playbackRate(0)
-        , m_mediaStatus(QMediaPlayer::UnknownMediaStatus)
+        , m_mediaStatus(QMediaPlayer::NoMedia)
         , m_audioEndpoint(QString("Default"))
     {
     }

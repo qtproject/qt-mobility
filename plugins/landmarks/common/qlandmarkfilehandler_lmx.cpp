@@ -59,6 +59,16 @@
 
 QTM_USE_NAMESPACE
 
+bool isURIAbsolute(const QString &uri)
+{
+    QRegExp regExp("^.+:.+$");
+    int result = regExp.indexIn(uri);
+    if (result != -1 || uri.isEmpty())
+        return true;
+    else
+        return false;
+}
+
 QLandmarkFileHandlerLmx::QLandmarkFileHandlerLmx(const volatile bool  * cancel)
     : QObject(),
     m_writer(0),
@@ -896,9 +906,13 @@ bool QLandmarkFileHandlerLmx::writeAddressInfo(const QLandmark &landmark)
 
 bool QLandmarkFileHandlerLmx::writeMediaLink(const QLandmark &landmark)
 {
-    m_writer->writeStartElement(m_ns, "mediaLink");
-    m_writer->writeTextElement(m_ns, "url", landmark.url().toString());
-    m_writer->writeEndElement();
+    //only write out URIs which are absolute in accordance the specification
+    //for lmx 1.0
+    if (isURIAbsolute(landmark.url().toString())) {
+        m_writer->writeStartElement(m_ns, "mediaLink");
+        m_writer->writeTextElement(m_ns, "url", landmark.url().toString());
+        m_writer->writeEndElement();
+    }
 
     return true;
 }

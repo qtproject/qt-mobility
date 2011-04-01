@@ -48,8 +48,9 @@
         \o \l{btfiletransfer}{Bluetooth File Transfer}
         \o \l{btscanner}{Bluetooth Scanner}
         \o \l{ndefeditor}{NDEF Editor}
-        \o \l{declarative-bluetooth/tennis}{QML Bluetooth Tennis}
-        \o \l{scanner}{QML Bluetooth Scanner}
+        \o \l{declarative-connectivity/tennis}{QML Bluetooth Tennis}
+        \o \l{declarative-connectivity/scanner}{QML Bluetooth Scanner}
+        \o \l{declarative-connectivity/poster}{QML Poster}
     \endlist
 
     \section2 Contacts
@@ -81,6 +82,7 @@
     \o \l{lightmaps}{LightMaps}
     \o \l{flickrdemo}{Flickr Demo}
     \o \l{landmarkbrowser}{Landmark Browser}
+    \o \l{Maps Demo Tutorial}{Maps Demo}
     \o \l{declarative-location/landmarkmap}{Landmark Map}
     \o \l{declarative-location/flickr}{Declarative Location Flickr}
     \o \l{declarative-location/mapviewer}{Declarative Map Viewer}

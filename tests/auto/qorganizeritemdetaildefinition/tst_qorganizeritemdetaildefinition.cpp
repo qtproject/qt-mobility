@@ -38,7 +38,6 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-
 #include <QtTest/QtTest>
 
 #include "qtorganizer.h"
@@ -48,6 +47,7 @@
 //TESTED_FILES=
 
 QTM_USE_NAMESPACE
+
 class tst_QOrganizerItemDetailDefinition: public QObject
 {
 Q_OBJECT
@@ -67,6 +67,7 @@ private slots:
     void testStreaming();
     void traits();
     void fieldTraits();
+    void testDebugStreamOut();
 };
 
 tst_QOrganizerItemDetailDefinition::tst_QOrganizerItemDetailDefinition()
@@ -386,6 +387,56 @@ void tst_QOrganizerItemDetailDefinition::fieldTraits()
     QVERIFY(!ti.isDummy);
 }
 
+
+void tst_QOrganizerItemDetailDefinition::testDebugStreamOut()
+{
+    // Testing QOrganizerItemDetailDefinition
+
+    QOrganizerItemDetailDefinition def;
+
+    // Test the empty case
+    QVERIFY(def.isEmpty());
+    QVERIFY(def.name().isEmpty());
+    QVERIFY(def.fields().isEmpty());
+    QVERIFY(def.isUnique() == false);
+    QTest::ignoreMessage(QtDebugMsg, "QOrganizerItemDetailDefinition(name=\"\",isUnique=false,isEmpty=true,fields=QMap() )");
+    qDebug() << def;
+
+
+    // Test the completely filled-in case
+    QMap<QString, QOrganizerItemDetailFieldDefinition> map;
+    QOrganizerItemDetailFieldDefinition currField;
+    currField.setAllowableValues(QVariantList() << "One" << "Two" << "Three");
+    currField.setDataType(QVariant::String);
+    map.insert("string", currField);
+    currField.setDataType(QVariant::DateTime);
+    map.insert("datetime", currField);
+    def.setName("Test ID");
+    def.setUnique(true);
+    def.setFields(map);
+    QTest::ignoreMessage(QtDebugMsg, "QOrganizerItemDetailDefinition(name=\"Test ID\",isUnique=true,isEmpty=false,fields=QMap((\"datetime\", QOrganizerItemDetailFieldDefinition(dataType=16,allowableValues=(QVariant(QString, \"One\") ,  QVariant(QString, \"Two\") ,  QVariant(QString, \"Three\") )  ))(\"string\", QOrganizerItemDetailFieldDefinition(dataType=10,allowableValues=(QVariant(QString, \"One\") ,  QVariant(QString, \"Two\") ,  QVariant(QString, \"Three\") )  ))) )");
+    qDebug() << def;
+
+    // Testing QOrganizerItemDetailFieldDefinition
+
+    QOrganizerItemDetailFieldDefinition f;
+
+    // Test the empty case
+    QTest::ignoreMessage(QtDebugMsg, "QOrganizerItemDetailFieldDefinition(dataType=0,allowableValues=() )");
+    qDebug() << f;
+
+    // Test the completely filled case
+    QMap<QString, QOrganizerItemDetailFieldDefinition> allFields;
+    QVariantList allowedStrings;
+    allowedStrings << QString("First") << QString("Second");
+    QOrganizerItemDetailFieldDefinition dfd;
+    dfd.setDataType(QVariant::String);
+    dfd.setAllowableValues(allowedStrings);
+    allFields.insert("TestFieldDefinition", dfd);
+    QTest::ignoreMessage(QtDebugMsg, "QOrganizerItemDetailFieldDefinition(dataType=10,allowableValues=(QVariant(QString, \"First\") ,  QVariant(QString, \"Second\") )  )");
+    qDebug() << dfd;
+
+}
 
 QTEST_MAIN(tst_QOrganizerItemDetailDefinition)
 #include "tst_qorganizeritemdetaildefinition.moc"

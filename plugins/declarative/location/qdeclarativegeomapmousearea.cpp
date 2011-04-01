@@ -367,10 +367,10 @@ void QDeclarativeGeoMapMouseArea::moveEvent(QDeclarativeGeoMapMouseEvent *event)
     The \l {MapMouseEvent}{mouse} parameter provides information about the
     press, including the x and y position and which button was pressed.
 
-    The \l accepted property of the MapMouseEvent parameter determines whether
+    The \l {MapMouseEvent}{accepted} property of the MapMouseEvent parameter determines whether
     this MapMouseArea will handle the press and all future mouse events until
     release.  The default is to accept the event and not allow other
-    MapMouseArea beneath this one to handle the event.  If \l accepted
+    MapMouseArea beneath this one to handle the event.  If \l {MapMouseEvent}{accepted}
     is set to false, no further events will be sent to this MapMouseArea until
     the button is next pressed.
 */
@@ -382,7 +382,7 @@ void QDeclarativeGeoMapMouseArea::moveEvent(QDeclarativeGeoMapMouseEvent *event)
     The \l {MapMouseEvent}{mouse} parameter provides information about the
     click, including the x and y position of the release of the click.
 
-    The \l accepted property of the MapMouseEvent parameter is ignored
+    The \l {MapMouseEvent}{accepted} property of the MapMouseEvent parameter is ignored
     in this handler.
 */
 
@@ -397,7 +397,7 @@ void QDeclarativeGeoMapMouseArea::moveEvent(QDeclarativeGeoMapMouseEvent *event)
     The \l {MapMouseEvent}{mouse} parameter provides information about the
     click, including the x and y position of the release of the click.
 
-    The \l accepted property of the MapMouseEvent parameter is ignored in
+    The \l {MapMouseEvent}{accepted} property of the MapMouseEvent parameter is ignored in
     this handler.
 */
 
@@ -410,7 +410,7 @@ void QDeclarativeGeoMapMouseArea::moveEvent(QDeclarativeGeoMapMouseEvent *event)
     The \l {MapMouseEvent}{mouse} parameter provides information about the
     click, including the x and y position of the release of the click.
 
-    If the \l accepted property of the \l {MapMouseEvent}{mouse} parameter is
+    If the \l {MapMouseEvent}{accepted} property of the \l {MapMouseEvent}{mouse} parameter is
     set to false in the handler, the onPressed/onReleased/onClicked handlers
     will be called for the second click; otherwise they are suppressed.
     The accepted property defaults to true.

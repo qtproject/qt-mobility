@@ -101,6 +101,8 @@ struct QSystemNetworkInfoData
     QString homeMobileCountryCode;
     QString homeMobileNetworkCode;
     QSystemNetworkInfo::NetworkMode currentMode;
+    QSystemNetworkInfo::CellDataTechnology cellData;
+
 };
 
 struct QSystemDisplayInfoData
@@ -140,6 +142,7 @@ struct QSystemDeviceInfoData
     QSystemDeviceInfo::SimStatus simStatus;
     QSystemDeviceInfo::Profile currentProfile;
     QSystemDeviceInfo::PowerState currentPowerState;
+    QSystemDeviceInfo::ThermalState currentThermalState;
 
     QSystemDeviceInfo::KeyboardTypeFlags keyboardTypes;
     QSystemDeviceInfo::KeypadType keypadType;
@@ -154,7 +157,7 @@ struct QSystemDeviceInfoData
     bool keyboardFlipped;
     bool backLight;
     bool keypadLight;
-    QUuid uniqueDeviceId;
+    QByteArray uniqueDeviceId;
 
     int messageRingtoneVolume;
     int voiceRingtoneVolume;

@@ -249,7 +249,7 @@ void QBluetoothSocketPrivate::HandleSendCompleteL(TInt aErr)
 {
     Q_Q(QBluetoothSocket);
     if (aErr == KErrNone) {
-        qint64 writeSize = txBuffer.length();
+        qint64 writeSize = txBuffer.size();
         txBuffer.clear();
         emit q->bytesWritten(writeSize);
 
@@ -400,9 +400,10 @@ qint64 QBluetoothSocketPrivate::writeData(const char *data, qint64 maxSize)
     if (!txBuffer.isEmpty())
         return 0;
 
-    txBuffer = QByteArray(data, maxSize);
+    char *buf = txBuffer.reserve(maxSize);
+    memcpy(buf, data, maxSize);
 
-    if (iSocket->Send(TPtrC8(reinterpret_cast<const unsigned char *>(txBuffer.constData()), txBuffer.length()), 0) != KErrNone) {
+    if (iSocket->Send(TPtrC8(reinterpret_cast<const unsigned char *>(buf), maxSize), 0) != KErrNone) {
         socketError = QBluetoothSocket::UnknownSocketError;
         Q_Q(QBluetoothSocket);
         emit q->error(socketError);
@@ -434,6 +435,7 @@ qint64 QBluetoothSocketPrivate::bytesAvailable() const
 {
     return buffer.size();
 }
+
 
 QTM_END_NAMESPACE
 
