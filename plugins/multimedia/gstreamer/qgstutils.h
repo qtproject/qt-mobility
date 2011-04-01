@@ -39,68 +39,21 @@
 **
 ****************************************************************************/
 
-#ifndef QGSTAPPSRC_H
-#define QGSTAPPSRC_H
+#ifndef QGSTUTILS_H
+#define QGSTUTILS_H
 
-#include <QtCore/qobject.h>
-#include <QtCore/qiodevice.h>
-
+#include <QtCore/qmap.h>
 #include <gst/gst.h>
-#include <gst/app/gstappsrc.h>
-#include <gst/app/gstappbuffer.h>
 
-class QGstAppSrc  : public QObject
-{
-    Q_OBJECT
-public:
-    QGstAppSrc(QObject *parent = 0);
-    ~QGstAppSrc();
+class QSize;
+class QVariant;
+class QByteArray;
 
-    bool setup(GstElement *);
-    bool isReady() const { return m_setup; }
+namespace QGstUtils {
+    QMap<QByteArray, QVariant> gstTagListToMap(const GstTagList *list);
 
-    void setStream(QIODevice *);
-    QIODevice *stream() const;
-
-    GstAppSrc *element();
-
-    qint64 queueSize() const { return m_maxBytes; }
-
-    bool& enoughData() { return m_enoughData; }
-    bool& dataRequested() { return m_dataRequested; }
-    unsigned int& dataRequestSize() { return m_dataRequestSize; }
-
-    bool isStreamValid() const
-    {
-        return m_stream != 0 &&
-               m_stream->isOpen();
-    }
-
-private slots:
-    void pushDataToAppSrc();
-    bool doSeek(qint64);
-    void onDataReady();
-
-    void streamDestroyed();
-private:
-    static gboolean on_seek_data(GstAppSrc *element, guint64 arg0, gpointer userdata);
-    static void on_enough_data(GstAppSrc *element, gpointer userdata);
-    static void on_need_data(GstAppSrc *element, uint arg0, gpointer userdata);
-    static void destroy_notify(gpointer data);
-
-    void sendEOS();
-
-    QIODevice *m_stream;
-    GstAppSrc *m_appSrc;
-    bool m_sequential;
-    GstAppStreamType m_streamType;
-    GstAppSrcCallbacks m_callbacks;
-    qint64 m_maxBytes;
-    bool m_setup;
-    unsigned int m_dataRequestSize;
-    bool m_dataRequested;
-    bool m_enoughData;
-    bool m_forceData;
-};
+    QSize capsResolution(const GstCaps *caps);
+    QSize capsCorrectedResolution(const GstCaps *caps);
+}
 
 #endif

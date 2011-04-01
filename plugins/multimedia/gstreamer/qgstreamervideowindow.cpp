@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include "qgstreamervideowindow.h"
+#include "qgstutils.h"
 
 #include <QtCore/qdebug.h>
 
@@ -316,6 +317,7 @@ void QGstreamerVideoWindow::padBufferProbe(GstPad *pad, GstBuffer *buffer, gpoin
 void QGstreamerVideoWindow::updateNativeVideoSize()
 {
     const QSize oldSize = m_nativeSize;
+    m_nativeSize = QSize();
 
     if (m_videoSink) {
         //find video native size to update video widget size hint
@@ -323,28 +325,13 @@ void QGstreamerVideoWindow::updateNativeVideoSize()
         GstCaps *caps = gst_pad_get_negotiated_caps(pad);
 
         if (caps) {
-            GstStructure *str;
-            gint width, height;
-
-            if ((str = gst_caps_get_structure (caps, 0))) {
-                if (gst_structure_get_int (str, "width", &width) && gst_structure_get_int (str, "height", &height)) {
-                    gint aspectNum = 0;
-                    gint aspectDenum = 0;
-                    if (gst_structure_get_fraction(str, "pixel-aspect-ratio", &aspectNum, &aspectDenum)) {
-                        if (aspectDenum > 0)
-                            width = width*aspectNum/aspectDenum;
-                    }
-                    m_nativeSize = QSize(width, height);
-                }
-            }
+            m_nativeSize = QGstUtils::capsCorrectedResolution(caps);
             gst_caps_unref(caps);
         }
-    } else {
-        m_nativeSize = QSize();
     }
 
     if (m_nativeSize != oldSize)
-            emit nativeSizeChanged();
+        emit nativeSizeChanged();
 }
 
 GstElement *QGstreamerVideoWindow::videoSink()

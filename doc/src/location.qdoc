@@ -415,10 +415,9 @@ landmarks which have NaN latitude and longitude values.  If you try to export al
 are skipped over.  However if you provide a list of ids of landmarks to export, the export operation will fail if any one
 of those landmarks have NaN latitude or longitude values.
 
-Also note that when exporting landmarks in lmx format, the url of the landmark should be a valid URI
-as defined by RFC 2396 as amended by RFC 2732.  The managers differ in behaviour with the symbian manager
-ignoring the url field during export if the URI is invalid while the sqlite and sparql manager will export the url
-and subsequently create an invalid lmx file (this issue is intended to be resolved in a future release).
+Also note that when exporting landmarks in lmx format, the url of the landmark should be a valid absolute URI
+as specified in the Landmark Exchange Format Specification 1.0.  If the URI is relative, then the url of
+that landmark is not exported.
 
 \section2 Landmark classes
 
