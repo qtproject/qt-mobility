@@ -40,9 +40,12 @@
 ****************************************************************************/
 
 #include "s60videowindowdisplay.h"
+#include "s60videooutpututils.h"
 #include <QtCore/QVariant>
 #include <coecntrl.h>
 #include <w32std.h>
+
+using namespace S60VideoOutputUtils;
 
 S60VideoWindowDisplay::S60VideoWindowDisplay(QObject *parent)
 :   S60VideoDisplay(parent)
@@ -96,8 +99,13 @@ void S60VideoWindowDisplay::setWinId(WId id)
 {
     if (m_winId != id) {
         m_winId = id;
-        if (m_winId)
+        if (m_winId) {
             static_cast<RWindow *>(m_winId->DrawableWindow())->SetBackgroundColor(TRgb(0, 0, 0, 0));
+#ifndef VIDEOOUTPUT_GRAPHICS_SURFACES
+            if (QSysInfo::s60Version() >= QSysInfo::SV_S60_5_0)
+                S60VideoOutputUtils::setNativePaintMode(m_winId, BlitWriteAlpha);
+#endif // !VIDEOOUTPUT_GRAPHICS_SURFACES
+        }
         emit windowHandleChanged(windowHandle());
     }
 }
@@ -123,5 +131,10 @@ QRect S60VideoWindowDisplay::displayRect() const
 void S60VideoWindowDisplay::repaint()
 {
     // TODO
+}
+
+void S60VideoWindowDisplay::refreshDisplay()
+{
+    emit displayRectChanged(extentRect(), clipRect());
 }
 

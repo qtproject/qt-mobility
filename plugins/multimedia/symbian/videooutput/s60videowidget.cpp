@@ -40,20 +40,19 @@
 ****************************************************************************/
 
 #include "s60videowidget.h"
-
-#ifdef USE_PRIVATE_QWIDGET_METHODS
-#if QT_VERSION >= 0x040601 && !defined(__WINSCW__)
-#define USE_QWIDGET_NATIVE_PAINT_MODE
-#endif // >= Qt 4.6.1 and not Emulator
-#include <QtGui/private/qwidget_p.h>
-#include <QtGui/private/qt_s60_p.h>
-#endif // USE_PRIVATE_QWIDGET_METHODS
+#include "s60videooutpututils.h"
 
 #include <QtCore/QDebug>
+#include <QtCore/QVariant>
+#include <QtCore/QEvent>
+#include <QtGui/QApplication>
+#include <QtGui/QPainter>
 
 #include <coemain.h>    // CCoeEnv
 #include <coecntrl.h>   // CCoeControl
 #include <w32std.h>
+
+using namespace S60VideoOutputUtils;
 
 const int NullOrdinalPosition = -1;
 
@@ -69,12 +68,7 @@ S60VideoWidget::S60VideoWidget(QWidget *parent)
     setAutoFillBackground(false);
     if (!parent)
         setProperty("_q_DummyWindowSurface", true);
-#ifdef USE_PRIVATE_QWIDGET_METHODS
-    // Warning: if this flag is not set, the application may crash due to
-    // CGraphicsContext being called from within the context of
-    // QGraphicsVideoItem::paint(), when the video widget is shown.
-    static_cast<QSymbianControl *>(winId())->setIgnoreFocusChanged(true);
-#endif
+    S60VideoOutputUtils::setIgnoreFocusChanged(this);
 }
 
 S60VideoWidget::~S60VideoWidget()
@@ -145,6 +139,11 @@ void S60VideoWidget::setTopWinId(WId id)
 {
     m_topWinId = id;
     updateOrdinalPosition();
+#ifdef VIDEOOUTPUT_GRAPHICS_SURFACES
+    // This function may be called from a paint event, so defer any window
+    // manipulation until painting is complete.
+    QMetaObject::invokeMethod(this, "setWindowsNonFading", Qt::QueuedConnection);
+#endif
 }
 
 void S60VideoWidget::setOrdinalPosition(int ordinalPosition)
@@ -183,45 +182,42 @@ void S60VideoWidget::reactivateWindow(QWidget *widget)
     widget->activateWindow();
 }
 
+void S60VideoWidget::setWindowsNonFading()
+{
+    winId()->DrawableWindow()->SetNonFading(ETrue);
+    if (m_topWinId)
+        m_topWinId->DrawableWindow()->SetNonFading(ETrue);
+}
+
 void S60VideoWidget::beginNativePaintEvent(const QRect &rect)
 {
     Q_UNUSED(rect)
-    emit beginVideoWidgetNativePaintEvent();
+    emit beginVideoWidgetNativePaint();
 }
 
 void S60VideoWidget::endNativePaintEvent(const QRect &rect)
 {
     Q_UNUSED(rect)
     CCoeEnv::Static()->WsSession().Flush();
-    emit endVideoWidgetNativePaintEvent();
+    emit endVideoWidgetNativePaint();
 }
 
 void S60VideoWidget::setPaintingEnabled(bool enabled)
 {
-#ifdef USE_QWIDGET_NATIVE_PAINT_MODE
-    qt_widget_private(this)->createExtra();
-#endif // USE_QWIDGET_NATIVE_PAINT_MODE
     if (enabled) {
 #ifndef VIDEOOUTPUT_GRAPHICS_SURFACES
         setAttribute(Qt::WA_OpaquePaintEvent, false);
         setAttribute(Qt::WA_NoSystemBackground, false);
-#endif // VIDEOOUTPUT_GRAPHICS_SURFACES
-#ifdef USE_QWIDGET_NATIVE_PAINT_MODE
-        qt_widget_private(this)->extraData()->nativePaintMode = QWExtra::Default;
-#endif // USE_QWIDGET_NATIVE_PAINT_MODE
+        S60VideoOutputUtils::setReceiveNativePaintEvents(this, false);
+        S60VideoOutputUtils::setNativePaintMode(this, Default);
+#endif // !VIDEOOUTPUT_GRAPHICS_SURFACES
     } else {
 #ifndef VIDEOOUTPUT_GRAPHICS_SURFACES
         setAttribute(Qt::WA_OpaquePaintEvent, true);
         setAttribute(Qt::WA_NoSystemBackground, true);
+        S60VideoOutputUtils::setReceiveNativePaintEvents(this, true);
+        S60VideoOutputUtils::setNativePaintMode(this, ZeroFill);
 #endif // !VIDEOOUTPUT_GRAPHICS_SURFACES
-#ifdef USE_QWIDGET_NATIVE_PAINT_MODE
-#ifdef VIDEOOUTPUT_GRAPHICS_SURFACES
-        qt_widget_private(this)->extraData()->nativePaintMode = QWExtra::Disable;
-#else // VIDEOOUTPUT_GRAPHICS_SURFACES
-        qt_widget_private(this)->extraData()->nativePaintMode = QWExtra::ZeroFill;
-        qt_widget_private(this)->extraData()->receiveNativePaintEvents = true;
-#endif // VIDEOOUTPUT_GRAPHICS_SURFACES
-#endif // USE_QWIDGET_NATIVE_PAINT_MODE
         winId(); // Create native window handle
     }
     m_paintingEnabled = enabled;

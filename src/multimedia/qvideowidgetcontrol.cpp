@@ -58,10 +58,7 @@ QT_BEGIN_NAMESPACE
     video widget implemented by the control's media service.  This widget is
     owned by the media service and so care should be taken not to delete it.
 
-    \code
-    QVideoWidgetControl *widgetControl = mediaService->requestControl<QVideoWidgetControl *>();
-    layout->addWidget(widgetControl->widget());
-    \endcode
+    \snippet doc/src/snippets/multimedia-snippets/video.cpp Video widget control
 
     QVideoWidgetControl is one of number of possible video output controls.
 

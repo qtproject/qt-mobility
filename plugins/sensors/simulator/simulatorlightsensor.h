@@ -43,7 +43,7 @@
 #define SIMULATORLIGHTSENSOR_H
 
 #include "simulatorcommon.h"
-#include <qambientlightsensor.h>
+#include <qlightsensor.h>
 
 QTM_USE_NAMESPACE
 
@@ -56,7 +56,7 @@ public:
 
     void poll();
 private:
-    QAmbientLightReading m_reading;
+    QLightReading m_reading;
 };
 
 #endif

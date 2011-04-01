@@ -39,6 +39,8 @@
 **
 ****************************************************************************/
 
+#include "DebugMacros.h"
+
 #include "s60mediarecognizer.h"
 #include <e32def.h>
 #include <e32cmn.h>
@@ -52,19 +54,41 @@ static const TInt KMimeTypePrefixLength = 6; // "audio/" or "video/"
 _LIT(KMimeTypePrefixAudio, "audio/");
 _LIT(KMimeTypePrefixVideo, "video/");
 
+/*!
+    Construct a media Recognizer with the given \a parent.
+*/
+
 S60MediaRecognizer::S60MediaRecognizer(QObject *parent) : QObject(parent)
 {
+    DP0("S60MediaRecognizer::S60MediaRecognizer +++");
+    DP0("S60MediaRecognizer::S60MediaRecognizer ---");
 }
+
+/*!
+    Destroys a media Recognizer.
+*/
 
 S60MediaRecognizer::~S60MediaRecognizer()
 {
+    DP0("S60MediaRecognizer::~S60MediaRecognizer +++");
+
     m_file.Close();
     m_fileServer.Close();
     m_recognizer.Close();
+
+    DP0("S60MediaRecognizer::~S60MediaRecognizer ---");
 }
+
+/*!
+ * \return media type of \a url.
+ * \a url may be a streaming link or a local file.
+ * If \a url is local file then identifies the media type and returns it.
+*/
 
 S60MediaRecognizer::MediaType S60MediaRecognizer::mediaType(const QUrl &url)
 {
+    DP0("S60MediaRecognizer::mediaType");
+
     bool isStream = (url.scheme() == "file")?false:true;
 
     if (isStream)
@@ -73,8 +97,16 @@ S60MediaRecognizer::MediaType S60MediaRecognizer::mediaType(const QUrl &url)
         return identifyMediaType(url.toLocalFile());
 }
 
+/*!
+ * \return Media type of \a file name by recognizing its mimetype whether its audio or video.
+*/
+
 S60MediaRecognizer::MediaType S60MediaRecognizer::identifyMediaType(const QString& fileName)
 {
+    DP0("S60MediaRecognizer::identifyMediaType +++");
+
+    DP1("S60MediaRecognizer::identifyMediaType - ", fileName);
+
     S60MediaRecognizer::MediaType result = Video; // default to videoplayer
     bool recognizerOpened = false;
 
@@ -113,11 +145,20 @@ S60MediaRecognizer::MediaType S60MediaRecognizer::identifyMediaType(const QStrin
             }
         }
     }
+
+    DP0("S60MediaRecognizer::identifyMediaType ---");
+
     return result;
 }
 
+/*!
+ * \return Symbian modifiable pointer descriptor from a QString \a string.
+ */
+
 TPtrC S60MediaRecognizer::QString2TPtrC( const QString& string )
 {
+    DP1("S60MediaRecognizer::QString2TPtrC - ", string);
+
     // Returned TPtrC is valid as long as the given parameter is valid and unmodified
     return TPtrC16(static_cast<const TUint16*>(string.utf16()), string.length());
 }

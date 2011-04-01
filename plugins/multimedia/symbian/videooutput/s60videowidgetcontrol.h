@@ -81,6 +81,13 @@ class S60VideoWidgetControl : public QVideoWidgetControl
      */
     Q_PROPERTY(QSize nativeSize READ nativeSize)
 
+    /**
+     * Rotation to be applied to video.
+     * Angle is measured in degrees, with positive values counter-clockwise.
+     * Zero is at 12 o'clock.
+     */
+    Q_PROPERTY(qreal rotation READ rotation WRITE setRotation)
+
 public:
     S60VideoWidgetControl(QObject *parent);
     ~S60VideoWidgetControl();
@@ -110,6 +117,8 @@ public:
     const QRect &extentRect() const;
     void setExtentRect(const QRect &rect);
     QSize nativeSize() const;
+    qreal rotation() const;
+    void setRotation(qreal value);
 
 signals:
     void nativeSizeChanged();

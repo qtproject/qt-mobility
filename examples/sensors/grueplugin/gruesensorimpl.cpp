@@ -109,7 +109,7 @@ void gruesensorimpl::lightChanged()
     }
 
     // Only send an update if the value has changed.
-    if (chance != m_reading.chanceOfBeingEaten()) {
+    if (chance != m_reading.chanceOfBeingEaten() || m_reading.timestamp() == 0) {
         m_reading.setTimestamp(timer.elapsed());
         m_reading.setChanceOfBeingEaten(chance);
 

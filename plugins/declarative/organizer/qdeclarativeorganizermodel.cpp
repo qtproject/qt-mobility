@@ -153,6 +153,7 @@ QDeclarativeOrganizerModel::QDeclarativeOrganizerModel(QObject *parent) :
 
     //import vcard
     connect(&d->m_reader, SIGNAL(stateChanged(QVersitReader::State)), this, SLOT(startImport(QVersitReader::State)));
+    connect(&d->m_writer, SIGNAL(stateChanged(QVersitWriter::State)), this, SLOT(itemsExported(QVersitWriter::State)));
 }
 
 /*!
@@ -960,7 +961,13 @@ void QDeclarativeOrganizerModel::itemsRemoved(const QList<QOrganizerItemId>& ids
 
 QVariant QDeclarativeOrganizerModel::data(const QModelIndex &index, int role) const
 {
-    QDeclarativeOrganizerItem* di = d->m_items.value(index.row());
+    //Check if QList itme's index is valid before access it, index should be between 0 and count - 1
+    if (index.row() < 0 || index.row() >= d->m_items.count()) {
+        return QVariant();
+    }
+
+    QDeclarativeOrganizerItem* di = d->m_items.at(index.row());
+    Q_ASSERT(di);
     QOrganizerItem item = di->item();
     switch(role) {
         case Qt::DisplayRole:

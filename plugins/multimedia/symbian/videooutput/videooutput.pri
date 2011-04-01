@@ -10,13 +10,14 @@ contains(surfaces_s60_enabled, yes) {
 }
 
 exists($$[QT_INSTALL_HEADERS]/QtGui/private/qwidget_p.h) {
-    DEFINES += USE_PRIVATE_QWIDGET_METHODS
-    message("VideoOutput: enabling use of private QWidget methods")
+    DEFINES += PRIVATE_QTGUI_HEADERS_AVAILABLE
+    message("VideoOutput: private QtGui headers are available")
 } else {
-    message("VideoOutput: private QWidget headers not available - video and viewfinder may not be rendered correctly")
+    message("VideoOutput: private QtGui headers not available - video and viewfinder may not be rendered correctly")
 }
 
 HEADERS += $$PWD/s60videodisplay.h         \
+           $$PWD/s60videooutpututils.h     \
            $$PWD/s60videowidget.h          \
            $$PWD/s60videowidgetcontrol.h   \
            $$PWD/s60videowidgetdisplay.h   \
@@ -24,6 +25,7 @@ HEADERS += $$PWD/s60videodisplay.h         \
            $$PWD/s60videowindowdisplay.h
 
 SOURCES += $$PWD/s60videodisplay.cpp       \
+           $$PWD/s60videooutpututils.cpp   \
            $$PWD/s60videowidget.cpp        \
            $$PWD/s60videowidgetcontrol.cpp \
            $$PWD/s60videowidgetdisplay.cpp \

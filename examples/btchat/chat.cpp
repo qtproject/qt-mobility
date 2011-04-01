@@ -62,7 +62,7 @@ Chat::Chat(QWidget *parent)
     ui->setupUi(this);
 
 #if defined (Q_OS_SYMBIAN) || defined(Q_OS_WINCE) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
-    setWindowState(Qt::WindowMaximized);
+    setWindowState(Qt::WindowFullScreen);
 #endif
 
     connect(ui->quitButton, SIGNAL(clicked()), this, SLOT(accept()));

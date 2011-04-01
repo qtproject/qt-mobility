@@ -761,6 +761,8 @@ void QAudioInputPrivate::reset()
 {
     if(handle)
         snd_pcm_reset(handle);
+    stop();
+    bytesAvailable = 0;
 }
 
 void QAudioInputPrivate::drain()

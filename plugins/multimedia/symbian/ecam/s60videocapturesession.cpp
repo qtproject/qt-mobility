@@ -2191,6 +2191,8 @@ void S60VideoCaptureSession::MvruoPrepareComplete(TInt aError)
             return;
         }
 
+        emit captureSizeChanged(m_videoSettings.resolution());
+
         m_captureState = EPrepared;
         emit stateChanged(EPrepared);
 

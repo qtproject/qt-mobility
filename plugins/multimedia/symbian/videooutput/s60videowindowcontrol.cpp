@@ -157,8 +157,22 @@ QSize S60VideoWindowControl::nativeSize() const
     return m_display->nativeSize();
 }
 
+void S60VideoWindowControl::refreshDisplay()
+{
+    m_display->refreshDisplay();
+}
+
 S60VideoWindowDisplay *S60VideoWindowControl::display() const
 {
     return m_display;
 }
 
+qreal S60VideoWindowControl::rotation() const
+{
+    return m_display->rotation();
+}
+
+void S60VideoWindowControl::setRotation(qreal value)
+{
+    m_display->setRotation(value);
+}

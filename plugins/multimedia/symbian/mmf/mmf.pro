@@ -13,7 +13,7 @@ include(radio/radio.pri)
 QT += network
 
 # we include mmf audiorecording only if we are not building openmaxal based backend
-contains(openmaxal_symbian_enabled, no) {
+!contains(openmaxal_symbian_enabled, yes) {
     message("Enabling mmf mediarecording backend")
     include(audiosource/audiosource_s60.pri)
 }
@@ -24,6 +24,7 @@ INCLUDEPATH += . \
     $${SOURCE_DIR}/src/multimedia \
     $${SOURCE_DIR}/src/multimedia/audio \
     $${SOURCE_DIR}/src/multimedia/video \
+    $${SOURCE_DIR}/plugins/multimedia/symbian/mmf/inc \
     $${SOURCE_DIR}
 
 

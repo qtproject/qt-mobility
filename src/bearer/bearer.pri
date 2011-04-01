@@ -33,7 +33,6 @@ symbian: {
                qnetworksession_s60_p.cpp
                
     LIBS += -lcommdb \
-            -lapsettingshandlerui \
             -lconnmon \
             -lcentralrepository \
             -lesock \

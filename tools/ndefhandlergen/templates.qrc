@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/">
+        <file>templates/maemo6/maemo6.conf</file>
+        <file>templates/maemo6/maemo6.postinst</file>
+        <file>templates/maemo6/maemo6.prerm</file>
+        <file>templates/maemo6/maemo6.service</file>
+        <file>templates/symbian/symbian.xml</file>
+    </qresource>
+</RCC>

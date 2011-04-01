@@ -41,6 +41,7 @@
 #ifndef S60VIDEODISPLAY_H
 #define S60VIDEODISPLAY_H
 
+#include <QtCore/QMetaType>
 #include <QtCore/QObject>
 #include <QtCore/QRect>
 #include <QtCore/QSize>
@@ -139,6 +140,9 @@ public:
     void setPaintingEnabled(bool enabled);
     bool isPaintingEnabled() const;
 
+    void setRotation(qreal value);
+    qreal rotation() const;
+
 public slots:
     void setNativeSize(const QSize &size);
 
@@ -163,6 +167,9 @@ signals:
     void nativeSizeChanged(QSize);
     void contentRectChanged(QRect);
     void paintingEnabledChanged(bool);
+    void rotationChanged(qreal);
+    void beginVideoWindowNativePaint();
+    void endVideoWindowNativePaint();
 
 private slots:
     void updateContentRect();
@@ -174,6 +181,7 @@ private:
     Qt::AspectRatioMode m_aspectRatioMode;
     QSize m_nativeSize;
     bool m_paintingEnabled;
+    qreal m_rotation;
 };
 
 #endif // S60VIDEODISPLAY_H

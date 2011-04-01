@@ -201,6 +201,8 @@ QVersitWriter::Error QVersitWriter::error() const
  * Returns false if the output device has not been set or opened or if there is another asynchronous
  * write operation already pending.  Signal \l stateChanged() is emitted with parameter
  * FinishedState when the writing has finished.
+ *
+ * The device must be already open.  The client is responsible for closing it when finished.
  */
 bool QVersitWriter::startWriting(const QList<QVersitDocument>& input)
 {
@@ -215,6 +217,8 @@ bool QVersitWriter::startWriting(const QList<QVersitDocument>& input)
  * Returns false if the output device has not been set or opened or if there is another asynchronous
  * write operation already pending.  Signal \l stateChanged() is emitted with parameter
  * FinishedState when the writing has finished.
+ *
+ * The device must be already open.  The client is responsible for closing it when finished.
  */
 bool QVersitWriter::startWriting(const QList<QVersitDocument>& input, QVersitDocument::VersitType type)
 {
@@ -241,6 +245,8 @@ bool QVersitWriter::startWriting(const QList<QVersitDocument>& input, QVersitDoc
  * Returns false if the output device has not been set or opened or if there is another asynchronous
  * write operation already pending.  Signal \l stateChanged() is emitted with parameter
  * FinishedState when the writing has finished.
+ *
+ * The device must be already open.  The client is responsible for closing it when finished.
  */
 bool QVersitWriter::startWriting(const QVersitDocument& input)
 {
@@ -255,6 +261,8 @@ bool QVersitWriter::startWriting(const QVersitDocument& input)
  * Returns false if the output device has not been set or opened or if there is another asynchronous
  * write operation already pending.  Signal \l stateChanged() is emitted with parameter
  * FinishedState when the writing has finished.
+ *
+ * The device must be already open.  The client is responsible for closing it when finished.
  */
 bool QVersitWriter::startWriting(const QVersitDocument& input, QVersitDocument::VersitType type)
 {

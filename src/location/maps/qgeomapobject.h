@@ -67,10 +67,9 @@ class Q_LOCATION_EXPORT QGeoMapObject : public QObject
     Q_PROPERTY(int zValue READ zValue WRITE setZValue NOTIFY zValueChanged)
     Q_PROPERTY(bool visible READ isVisible WRITE setVisible NOTIFY visibleChanged)
     Q_PROPERTY(bool selected READ isSelected WRITE setSelected NOTIFY selectedChanged)
-    Q_PROPERTY(QGeoCoordinate origin READ origin WRITE setOrigin NOTIFY originChanged)
-    Q_PROPERTY(CoordinateUnit units READ units WRITE setUnits)
-    Q_PROPERTY(QGraphicsItem* graphicsItem READ graphicsItem WRITE setGraphicsItem NOTIFY graphicsItemChanged)
-    Q_PROPERTY(TransformType transformType READ transformType WRITE setTransformType)
+    Q_PROPERTY(QGeoCoordinate origin READ origin NOTIFY originChanged)
+    Q_PROPERTY(CoordinateUnit units READ units NOTIFY unitsChanged)
+    Q_PROPERTY(TransformType transformType READ transformType NOTIFY transformTypeChanged)
 
 public:
     enum Type {
@@ -124,26 +123,22 @@ public:
     QGeoMapObjectInfo *info() const;
 
     QGeoCoordinate origin() const;
-    void setOrigin(const QGeoCoordinate &origin);
-
     CoordinateUnit units() const;
-    void setUnits(const CoordinateUnit &unit);
-
-    QGraphicsItem *graphicsItem() const;
-    void setGraphicsItem(QGraphicsItem *item);
-
     TransformType transformType() const;
-    void setTransformType(const TransformType &type);
 
-public Q_SLOTS:
-    void update();
+protected:
+    void setOrigin(const QGeoCoordinate &origin);
+    void setUnits(const CoordinateUnit &unit);
+    void setTransformType(const TransformType &type);
 
 Q_SIGNALS:
     void zValueChanged(int zValue);
     void visibleChanged(bool visible);
     void selectedChanged(bool selected);
+
     void originChanged(QGeoCoordinate origin);
-    void graphicsItemChanged(QGraphicsItem *item);
+    void unitsChanged(QGeoMapObject::CoordinateUnit units);
+    void transformTypeChanged(QGeoMapObject::TransformType transformType);
 
 private:
     QGeoMapObjectPrivate *d_ptr;

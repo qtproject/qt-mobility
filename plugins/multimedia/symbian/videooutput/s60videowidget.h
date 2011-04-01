@@ -74,8 +74,8 @@ public slots:
     void setContentRect(const QRect &rect);
 
 signals:
-    void beginVideoWidgetNativePaintEvent();
-    void endVideoWidgetNativePaintEvent();
+    void beginVideoWidgetNativePaint();
+    void endVideoWidgetNativePaint();
 
 private:
     void updateOrdinalPosition();
@@ -83,6 +83,7 @@ private:
 
 private slots:
     void reactivateWindow(QWidget *window);
+    void setWindowsNonFading();
 
 private:
     const QPixmap *m_pixmap;

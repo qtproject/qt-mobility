@@ -73,6 +73,7 @@ public:
 
 Q_SIGNALS:
     void childAdded(QGeoMapObject *childObject);
+    void childUpdated(QGeoMapObject *childObject);
     void childRemoved(QGeoMapObject *childObject);
 
 private:

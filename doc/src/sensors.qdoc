@@ -176,6 +176,9 @@ Note that timestamps on this platform come from the system clock.
 Applications need to handle shifts in time caused by the user manually setting the clock or
 from the automatic time synchronization feature setting the clock.
 
+The ambient light sensor can only detect changes. Unlike all other sensors, it cannot report the "current value"
+so it is not possible to determine the current ambient light level.
+
 \section2 Maemo 5
 
 The N900 represents a unique device for the Sensors API. Unlike the Symbian and MeeGo platforms, sensor data is
@@ -230,6 +233,10 @@ QAccelerometer *accelerometer = new QAccelerometer(this);
 accelerometer->setProperty("alwaysOn", true);
 accelerometer->start();
 \endcode
+
+Unlike Symbian and N900, MeeGo does not currently provide initial readings. Thus, certain sensors must detect
+a change in value before a value can be reported. Examples include the orientation sensor and ambient light
+sensor.
 
 \section1 Front end, back end
 
@@ -488,6 +495,34 @@ These elements represent specific types of sensors.
 The data from a sensor comes through a reading class.
 
 \annotatedlist qml-sensors_reading
+
+*/
+
+/*!
+\page meego-integration-notes.html
+\title MeeGo Integration Notes
+\ingroup sensors_backend_topics
+
+\section1 MeeGo Integration Notes
+
+The implementation of the API builds on top of the MeeGo Sensor Framework 
+that provides all the sensors specified in 1.2 API version.
+
+\section2 Available sensors
+
+If HW sensor is missing, the configuration file "Sensors.conf" 
+must be updated and sensor removed. The file
+has the following format:
+
+\code
+[Default]
+QAccelerometer=meego.accelerometer
+QAmbientLightSensor=meego.als
+\endcode
+
+It lists sensor types and type's default implementation by giving the sensor id. 
+If the type is omitted then the backend does not support it in this device; this
+gives a way of controlling and differentiating the supported sensor set. 
 
 */
 

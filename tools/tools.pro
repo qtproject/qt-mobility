@@ -12,3 +12,7 @@ contains(mobility_modules,serviceframework) {
 contains(mobility_modules,publishsubscribe) {
     SUBDIRS += vsexplorer qcrmlgen      #P&S API
 }
+
+contains(mobility_modules,connectivity) {
+    SUBDIRS += ndefhandlergen
+}

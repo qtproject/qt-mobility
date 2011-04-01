@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -62,7 +62,6 @@ class CKeylockStatus : public CActive
 public:
     CKeylockStatus();
     ~CKeylockStatus();
-    TAknKeyguardStatus keylockStatus() const;
 
     void addObserver(MKeylockStatusObserver *observer);
     void removeObserver(MKeylockStatusObserver *observer);
@@ -78,7 +77,7 @@ private:
 
 private:
     RProperty m_keylockProperty;
-    TAknKeyguardStatus m_currentStatus;
+    TInt m_currentStatus;
     QList<MKeylockStatusObserver *> m_observers;
 };
 
@@ -93,13 +92,12 @@ class CFlipStatus : public CActive
 public:
     CFlipStatus();
     ~CFlipStatus();
-    void ConstructL();
-    EPSHWRMGripStatus flipStatus() const;
+    TInt flipStatus() const;
 
     void addObserver(MFlipStatusObserver *observer);
     void removeObserver(MFlipStatusObserver *observer);
     bool getFlipStatus();
-    bool getKeyboardStatus();
+    bool IsFlipSupported();
 
 protected:  //from CActive
     void DoCancel();
@@ -110,9 +108,12 @@ private:
 
 private:
     RProperty m_FlipProperty;
-    EPSHWRMGripStatus m_flipStatus;
+    TInt m_flipStatus;
     QList<MFlipStatusObserver *> m_observers;
     TInt m_filpKeyBoard ;
+    //Added flags to distinguish flip handling in 5.0 and symbain3 devices
+    bool m_flipenabled ;
+    bool m_gripenabled ;
 };
 
 #endif //LOCKANDFLIPSTATUS_S60_H

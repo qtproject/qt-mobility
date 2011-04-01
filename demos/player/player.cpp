@@ -92,6 +92,7 @@ Player::Player(QWidget *parent)
     slider = new QSlider(Qt::Horizontal, this);
     slider->setRange(0, player->duration() / 1000);
 
+    labelDuration = new QLabel(this);
     connect(slider, SIGNAL(sliderMoved(int)), this, SLOT(seek(int)));
     
 
@@ -146,7 +147,10 @@ Player::Player(QWidget *parent)
 
     QBoxLayout *layout = new QVBoxLayout;
     layout->addLayout(displayLayout);
-    layout->addWidget(slider);
+    QHBoxLayout *hLayout = new QHBoxLayout;
+    hLayout->addWidget(slider);
+    hLayout->addWidget(labelDuration);
+    layout->addLayout(hLayout);
     layout->addLayout(controlLayout);
 
     setLayout(layout);
@@ -210,6 +214,7 @@ void Player::addToPlaylist(const QStringList& fileNames)
 
 void Player::durationChanged(qint64 duration)
 {
+    this->duration = duration/1000;
     slider->setMaximum(duration / 1000);
 }
 
@@ -218,6 +223,7 @@ void Player::positionChanged(qint64 progress)
     if (!slider->isSliderDown()) {
         slider->setValue(progress / 1000);
     }
+    updateDurationInfo(progress / 1000);
 }
 
 void Player::metaDataChanged()
@@ -354,9 +360,22 @@ void Player::setStatusInfo(const QString &info)
 void Player::displayErrorMessage()
 {
     setStatusInfo(player->errorString());
-
-
 }
+
+void Player::updateDurationInfo(qint64 currentInfo)
+{
+    QString tStr;
+    if (currentInfo || duration) {
+        QTime currentTime((currentInfo/3600)%60, (currentInfo/60)%60, currentInfo%60, (currentInfo*1000)%1000);
+        QTime totalTime((duration/3600)%60, (duration/60)%60, duration%60, (duration*1000)%1000);
+        QString format = "mm:ss";
+        if (duration > 3600)
+            format = "hh:mm:ss";
+        tStr = currentTime.toString(format) + " / " + totalTime.toString(format);
+    }
+    labelDuration->setText(tStr);
+}
+
 
 #ifndef PLAYER_NO_COLOROPTIONS
 void Player::showColorDialog()
@@ -386,16 +405,25 @@ void Player::showColorDialog()
         connect(saturationSlider, SIGNAL(sliderMoved(int)), videoWidget, SLOT(setSaturation(int)));
         connect(videoWidget, SIGNAL(saturationChanged(int)), saturationSlider, SLOT(setValue(int)));
 
+#if defined(Q_OS_SYMBIAN)
+        QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok);
+#endif
         QFormLayout *layout = new QFormLayout;
         layout->addRow(tr("Brightness"), brightnessSlider);
         layout->addRow(tr("Contrast"), contrastSlider);
         layout->addRow(tr("Hue"), hueSlider);
         layout->addRow(tr("Saturation"), saturationSlider);
+#if defined(Q_OS_SYMBIAN)
+        layout->addWidget(buttonBox);
+#endif
 
         QPushButton *button = new QPushButton(tr("Close"));
         layout->addRow(button);
 
         colorDialog = new QDialog(this);
+#if defined(Q_OS_SYMBIAN)
+        connect(buttonBox, SIGNAL(clicked(QAbstractButton*)), colorDialog, SLOT(hide()));
+#endif
         colorDialog->setWindowTitle(tr("Color Options"));
         colorDialog->setLayout(layout);
 
