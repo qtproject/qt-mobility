@@ -142,6 +142,56 @@
             \o Called when the specified error occurs.
     \endtable
 
+    \section2 Camera
+
+    The \l Camera element in the plugin enables still image capture using
+    QML. The element has methods for starting and stopping the camera, capturing
+    the image, camera settings and many signals indicating critical events.
+
+    The follow code is taken from the \l {QML Camera Example}. This snippet
+    shows the setting up of the \l Camera element
+
+    \qml
+
+    Camera {
+        id: camera
+        x : 0
+        y : 0
+        width : 640
+        height : 480
+        focus : visible //to receive focus and capture key events
+        //captureResolution : "640x480"
+
+        flashMode: stillControls.flashMode
+        whiteBalanceMode: stillControls.whiteBalance
+        exposureCompensation: stillControls.exposureCompensation
+
+        onImageCaptured : {
+            photoPreview.source = preview
+            stillControls.previewAvailable = true
+            cameraUI.state = "PhotoPreview"
+        }
+    }
+
+    \endqml
+
+    Notice that the slot for the \l {Camera::imageCaptured()}{imageCaptured()}
+    signal is implemented in \i onImageCaptured. However, this code only
+    changes some state information to allow previewing.
+
+    The capture call itself is part of the implementation of the button
+    that the user presses to take the image. It uses a call to
+    \l {Camera::captureImage()}{captureImage()}:
+
+    \qml
+
+    CameraButton {
+        text: "Capture"
+        onClicked: camera.captureImage()
+    }
+
+    \endqml
+
 
     \section2 Video
 
@@ -177,6 +227,8 @@
 
     Most of the differences will obviously be about video control and information. There are many properties associated with the \l {Video} element, most of them deal with meta-data, control of the video media and aspects of presentation.
 
+
+    \section1 Multimedia QML Elements
 
     \annotatedlist qml-multimedia
 */
