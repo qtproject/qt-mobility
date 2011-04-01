@@ -243,7 +243,7 @@ void QDeclarativeBluetoothDiscoveryModel::serviceDiscovered(const QBluetoothServ
     \qmlsignal BluetoothDiscoveryModel::discoveryChanged()
 
     This handler is called when discovery has completed and no
-    furthur results will be generated.
+    further results will be generated.
 */
 
 void QDeclarativeBluetoothDiscoveryModel::finishedDiscovery()
