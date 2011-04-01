@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the examples of the Qt Mobility Components.
+** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:BSD$
 ** You may use this file under the terms of the BSD license as follows:
@@ -38,80 +38,25 @@
 **
 ****************************************************************************/
 
+#include <QtGui/QApplication>
+#include <QtDeclarative/QDeclarativeView>
+#include <QtDeclarative/QDeclarativeEngine>
 
-import QtQuick 1.0
-import QtMobility.connectivity 1.2
-
-Image {
-    id: connectButton
-
-    property bool enabled: true
-    property int roRotation
-    property BluetoothDiscoveryModel mymodel
-    property BluetoothSocket socket
-    property BluetoothSocket server_socket
-
-    source: "icons/connect.png"
-    width: 100
-    height: 100
-    x: 440
-    y: 220
-    smooth: true
-    opacity: 1.0
-
-    NumberAnimation {
-        id: connectRotation
-
-        target:  connectButton
-        property: "rotation"
-        from: 0
-        to: 360
-        loops: -1
-        duration: 1000
-        running: mymodel.discovery
-
-        onRunningChanged: if(!running) { connectStop.running = true; }
-
-    }
-
-    NumberAnimation {
-        id: connectStop
-
-        target: connectButton
-        property: "rotation"
-        loops: 1
-        from: connectButton.roRotation
-        to: 0
-        duration: 1000*connectButton.roRotation/360
-        running: false
-    }
-
-    onRotationChanged: if(!connectStop.running) roRotation = rotation;
-
-    MouseArea {
-        anchors.fill: connectButton
-        enabled: connectButton.state != "disabled"
-        hoverEnabled: true
-        onClicked: {
-            mymodel.discovery = !mymodel.discovery;
-        }
-    }
-
-    states: [
-        State {
-            name: "disabled"
-            when: socket.connected || server_socket.connected
-            PropertyChanges { target: connectButton; opacity: 0.0; }
-        }
-    ]
-
-    transitions: [
-        Transition {
-            from: "*"
-            to: "disabled"
-            reversible: true
-            NumberAnimation { target: connectButton; property: "opacity"; duration: 750 }
-        }
-    ]
-
+int main(int argc, char *argv[])
+{
+    QApplication application(argc, argv);
+    const QString mainQmlApp = QLatin1String("qrc:/poster.qml");
+    QDeclarativeView view;
+    view.setSource(QUrl(mainQmlApp));
+    view.setResizeMode(QDeclarativeView::SizeRootObjectToView);
+    // Qt.quit() called in embedded .qml by default only emits
+    // quit() signal, so do this (optionally use Qt.exit()).
+    QObject::connect(view.engine(), SIGNAL(quit()), qApp, SLOT(quit()));
+#if defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_6) || defined(Q_WS_SIMULATOR)
+    view.showFullScreen();
+#else // Q_OS_SYMBIAN
+    view.setGeometry(QRect(100, 100, 640, 360));
+    view.show();
+#endif // Q_OS_SYMBIAN
+    return application.exec();
 }

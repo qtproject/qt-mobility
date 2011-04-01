@@ -19,3 +19,6 @@ symbian {
 
 RESOURCES += \
     scanner.qrc
+
+OTHER_FILES += \
+    scanner.qml

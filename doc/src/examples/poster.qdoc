@@ -26,12 +26,13 @@
 ****************************************************************************/
 
 /*!
-    \example declarative-connectivity/tennis
-    \title QML Bluetooth Tennis Example
+\example declarative-connectivity/poster
+\title QML Poster Example
 
-    The Bluetooth Tennis example shows how to use QML and the Qt Connectivity Bluetooth API
-    to implement real-time data transfer for an interactive application.
+The QML Poster example displays the contents of specifically formated NDEF messages read from an
+NFC Tag. The NDEF message should contain a URI record, an optional image/* MIME record and one
+or more localized Text records.
 
-    \image qml-bttennis-example.png
+\image qml-poster-example.png
 
 */

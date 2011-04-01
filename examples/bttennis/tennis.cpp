@@ -58,6 +58,7 @@
 #include <qbluetoothdeviceinfo.h>
 #include <qbluetoothsocket.h>
 #include <qbluetoothservicediscoveryagent.h>
+#include <qbluetoothlocaldevice.h>
 
 #include <qnearfieldmanager.h>
 #include <qllcpserver.h>
@@ -67,6 +68,12 @@ Tennis::Tennis(QWidget *parent)
 : QDialog(parent), ui(new Ui_Tennis), board(new Board), controller(new Controller), socket(0),
   m_discoveryAgent(new QBluetoothServiceDiscoveryAgent)
 {
+    // start Bluetooth if not started
+    QBluetoothLocalDevice *device = new QBluetoothLocalDevice();
+    device->powerOn();
+    delete device;
+    device = 0;
+
     //! [Construct UI]
     ui->setupUi(this);
 

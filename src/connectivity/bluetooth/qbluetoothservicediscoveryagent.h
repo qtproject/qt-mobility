@@ -64,7 +64,6 @@ class Q_CONNECTIVITY_EXPORT QBluetoothServiceDiscoveryAgent : public QObject
 public:
     enum Error {
         NoError,
-        Canceled,
         DeviceDiscoveryError,
         UnknownError = 100
     };
@@ -97,6 +96,7 @@ public slots:
 signals:
     void serviceDiscovered(const QBluetoothServiceInfo &info);
     void finished();
+    void canceled();
     void error(QBluetoothServiceDiscoveryAgent::Error error);
 
 private:

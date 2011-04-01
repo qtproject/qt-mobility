@@ -26,3 +26,12 @@ symbian {
 
 RESOURCES += \
     tennis.qrc
+
+OTHER_FILES += \
+    tennis.qml \
+    sensor.qml \
+    Handover.qml \
+    Paddle.qml \
+    Bumper.qml \
+    Score.qml \
+    ConnectButton.qml
