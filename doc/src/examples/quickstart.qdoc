@@ -157,7 +157,7 @@ on which parts of an API is utilized by an application.
 \row
     \o \l {Contacts}
     \o ReadUserData WriteUserData
-    \o TrackerReadAccess TrackerWriteAccess
+    \o TrackerReadAccess TrackerWriteAccess GRP::metadata-users
 \row
     \o \l {Location}
     \o Location LocalServices ReadUserData WriteUserData ReadDeviceData WriteDeviceData NetworkServices
