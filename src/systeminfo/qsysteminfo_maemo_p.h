@@ -134,9 +134,24 @@ public:
     void setWlanSignalStrengthCheckEnabled(bool enabled);
     qint32 networkSignalStrength(QSystemNetworkInfo::NetworkMode mode);
 
+#if defined(Q_WS_MAEMO_6)
+protected:
+    void connectNotify(const char *signal);
+    void disconnectNotify(const char *signal);
+#endif // Q_WS_MAEMO_6
+
 private Q_SLOTS:
     void bluetoothNetworkStatusCheck(QString device);
-    void setupNetworkInfo();
+    void icdStatusChanged(QString,QString,QString,QString);
+    void usbCableAction();
+    void wlanSignalStrengthCheck();
+
+#if defined(Q_WS_MAEMO_5)
+    void cellNetworkSignalStrengthChanged(uchar,uchar);
+    void networkModeChanged(int);
+    void operatorNameChanged(uchar,QString,QString,uint,uint);
+    void registrationStatusChanged(uchar,ushort,uint,uint,uint,uchar,uchar);
+#endif // Q_WS_MAEMO_5
 
 #if defined(Q_WS_MAEMO_6)
     void slotSignalStrengthChanged(int percent, int dbm);
@@ -147,28 +162,9 @@ private Q_SLOTS:
     void slotCellDataTechnologyChanged(const QString &tech);
 #endif // Q_WS_MAEMO_6
 
-#if defined(Q_WS_MAEMO_5)
-    void cellNetworkSignalStrengthChanged(uchar,uchar);
-    void networkModeChanged(int);
-    void operatorNameChanged(uchar,QString,QString,uint,uint);
-    void registrationStatusChanged(uchar,ushort,uint,uint,uint,uchar,uchar);
-#endif // Q_WS_MAEMO_5
-
-    void icdStatusChanged(QString,QString,QString,QString);
-    void usbCableAction();
-    void wlanSignalStrengthCheck();
-    void networkModeChangeCheck();
-
 private:
-    // The index of wanted argument in the QDBusMessage which is received as a
-    // reply to the sent get_registration_status message via interface Phone.Net
-    enum {                // In the received QDBusMessage..
-        STATUS_INDEX = 0, // the original type of status argument is byte
-        LAC_INDEX,        // the original type of lac argument is uint16
-        CELLID_INDEX,     // the original type of cellId argument is uint32
-        MNC_INDEX,        // the original type of mnc argument is uint32
-        MCC_INDEX         // the original type of mcc argument is uint32
-    };
+    void setupNetworkInfo();
+    void networkModeChangeCheck();
 
     int cellSignalStrength;
     QSystemNetworkInfo::NetworkStatus currentBluetoothNetworkStatus;
@@ -187,15 +183,26 @@ private:
     int iWlanStrengthCheckEnabled;
     QTimer *wlanSignalStrengthTimer;
 
-    QMap<QString,int> csStatusMaemo6;
-
     QSystemNetworkInfo::CellDataTechnology currentCellDataTechnology;
     QSystemNetworkInfo::CellDataTechnology csdtToCellDataTechnology(const QString &tech);
 
+#if defined(Q_WS_MAEMO_5)
+    // The index of wanted argument in the QDBusMessage which is received as a
+    // reply to the sent get_registration_status message via interface Phone.Net
+    enum {                // In the received QDBusMessage..
+        STATUS_INDEX = 0, // the original type of status argument is byte
+        LAC_INDEX,        // the original type of lac argument is uint16
+        CELLID_INDEX,     // the original type of cellId argument is uint32
+        MNC_INDEX,        // the original type of mnc argument is uint32
+        MCC_INDEX         // the original type of mcc argument is uint32
+    };
+#endif // Q_WS_MAEMO_5
+
+#if defined(Q_WS_MAEMO_6)
     QMap<QString, QVariant> queryCsdProperties(const QString &service, const QString &servicePath, const QString &interface);
 
-    void connectNotify(const char *signal);
-    void disconnectNotify(const char *signal);
+    static QMap<QString, int> CellularServiceStatus;
+#endif // Q_WS_MAEMO_6
 };
 
 class QSystemDisplayInfoPrivate : public QSystemDisplayInfoLinuxCommonPrivate

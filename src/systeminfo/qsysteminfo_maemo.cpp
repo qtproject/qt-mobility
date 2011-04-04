@@ -265,19 +265,27 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
     return featureSupported;
 }
 
+#if defined(Q_WS_MAEMO_6)
+QMap<QString, int> QSystemNetworkInfoPrivate::CellularServiceStatus;
+#endif // Q_WS_MAEMO_6
+
 QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate(QSystemNetworkInfoLinuxCommonPrivate *parent)
     : QSystemNetworkInfoLinuxCommonPrivate(parent)
 {
-    csStatusMaemo6["Unknown"]    = -1;  // Current registration status is unknown.
-    csStatusMaemo6["Home"]       = 0;   // Registered with the home network.
-    csStatusMaemo6["Roaming"]    = 1;   // Registered with a roaming network.
-    csStatusMaemo6["Offline"]    = 3;   // Not registered.
-    csStatusMaemo6["Searching"]  = 4;   // Offline, but currently searching for network.
-    csStatusMaemo6["NoSim"]      = 6;   // Offline because no SIM is present.
-    csStatusMaemo6["PowerOff"]   = 8;   // Offline because the CS is powered off.
-    csStatusMaemo6["PowerSave"]  = 9;   // Offline and in power save mode.
-    csStatusMaemo6["NoCoverage"] = 10;  // Offline and in power save mode because of poor coverage.
-    csStatusMaemo6["Rejected"]   = 11;  // Offline because SIM was rejected by the network.
+#if defined(Q_WS_MAEMO_6)
+    if (CellularServiceStatus.isEmpty()) {
+        CellularServiceStatus["Unknown"]    = -1;  // Current registration status is unknown.
+        CellularServiceStatus["Home"]       = 0;   // Registered with the home network.
+        CellularServiceStatus["Roaming"]    = 1;   // Registered with a roaming network.
+        CellularServiceStatus["Offline"]    = 3;   // Not registered.
+        CellularServiceStatus["Searching"]  = 4;   // Offline, but currently searching for network.
+        CellularServiceStatus["NoSim"]      = 6;   // Offline because no SIM is present.
+        CellularServiceStatus["PowerOff"]   = 8;   // Offline because the CS is powered off.
+        CellularServiceStatus["PowerSave"]  = 9;   // Offline and in power save mode.
+        CellularServiceStatus["NoCoverage"] = 10;  // Offline and in power save mode because of poor coverage.
+        CellularServiceStatus["Rejected"]   = 11;  // Offline because SIM was rejected by the network.
+    }
+#endif // Q_WS_MAEMO_6
 
     setupNetworkInfo();
 }
@@ -557,6 +565,7 @@ QString QSystemNetworkInfoPrivate::macAddress(QSystemNetworkInfo::NetworkMode mo
     return QString();
 }
 
+#if defined(Q_WS_MAEMO_6)
 QMap<QString, QVariant> QSystemNetworkInfoPrivate::queryCsdProperties(const QString &service, const QString &path, const QString &interface)
 {
     QMap<QString, QVariant> properties;
@@ -575,6 +584,7 @@ QMap<QString, QVariant> QSystemNetworkInfoPrivate::queryCsdProperties(const QStr
 
     return properties;
 }
+#endif // Q_WS_MAEMO_6
 
 void QSystemNetworkInfoPrivate::setupNetworkInfo()
 {
@@ -660,7 +670,7 @@ void QSystemNetworkInfoPrivate::setupNetworkInfo()
 
     value = properties.value("RegistrationStatus");
     if (value.isValid())
-        currentCellNetworkStatus = csStatusMaemo6.value(value.toString(), -1);
+        currentCellNetworkStatus = CellularServiceStatus.value(value.toString(), -1);
 
     // CSD: data technology
     currentCellDataTechnology = cellDataTechnology();
@@ -786,10 +796,10 @@ void QSystemNetworkInfoPrivate::setupNetworkInfo()
 #endif // QT_NO_DBUS
 }
 
-void QSystemNetworkInfoPrivate::connectNotify(const char *signal)
-{
 #if !defined(QT_NO_DBUS)
 #if defined(Q_WS_MAEMO_6)
+void QSystemNetworkInfoPrivate::connectNotify(const char *signal)
+{
     const QString service("com.nokia.csd.CSNet");
     const QString path("/com/nokia/csd/csnet");
 
@@ -825,14 +835,10 @@ void QSystemNetworkInfoPrivate::connectNotify(const char *signal)
             qDebug() << "unable to connect DataTechnologyChanged";
         }
     }
-#endif // Q_WS_MAEMO_6
-#endif // QT_NO_DBUS
 }
 
 void QSystemNetworkInfoPrivate::disconnectNotify(const char *signal)
 {
-#if !defined(QT_NO_DBUS)
-#if defined(Q_WS_MAEMO_6)
     const QString service("com.nokia.csd.CSNet");
     const QString path("/com/nokia/csd/csnet");
 
@@ -868,9 +874,9 @@ void QSystemNetworkInfoPrivate::disconnectNotify(const char *signal)
             qDebug() << "unable to disconnect DataTechnologyChanged";
         }
     }
+}
 #endif // Q_WS_MAEMO_6
 #endif // QT_NO_DBUS
-}
 
 #if defined(Q_WS_MAEMO_6)
 void QSystemNetworkInfoPrivate::slotSignalStrengthChanged(int signalStrength, int /*dbm*/)
@@ -908,7 +914,7 @@ void QSystemNetworkInfoPrivate::slotOperatorNameChanged(const QString &name)
 
 void QSystemNetworkInfoPrivate::slotRegistrationChanged(const QString &status)
 {
-    int newCellNetworkStatus = csStatusMaemo6.value(status, -1);
+    int newCellNetworkStatus = CellularServiceStatus.value(status, -1);
 
     if (currentCellNetworkStatus != newCellNetworkStatus) {
         currentCellNetworkStatus = newCellNetworkStatus;
