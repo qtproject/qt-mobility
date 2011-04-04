@@ -110,7 +110,7 @@ public:
     QSystemNetworkInfo::NetworkMode currentMode();
 
     QSystemNetworkInfo::NetworkStatus networkStatus(QSystemNetworkInfo::NetworkMode mode);
-    qint32 networkSignalStrength(QSystemNetworkInfo::NetworkMode mode);
+    int networkSignalStrength(QSystemNetworkInfo::NetworkMode mode);
     QString networkName(QSystemNetworkInfo::NetworkMode mode);
 
 #if !defined(QT_NO_NETWORKMANAGER)

@@ -1008,7 +1008,7 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoLinuxCommonPrivate::getBluet
     return QSystemNetworkInfo::UndefinedStatus;
 }
 
-qint32 QSystemNetworkInfoLinuxCommonPrivate::networkSignalStrength(QSystemNetworkInfo::NetworkMode mode)
+int QSystemNetworkInfoLinuxCommonPrivate::networkSignalStrength(QSystemNetworkInfo::NetworkMode mode)
 {
 #if !defined(QT_NO_CONNMAN)
     if (connmanIsAvailable) {
@@ -1521,7 +1521,7 @@ QSystemNetworkInfo::NetworkMode QSystemNetworkInfoLinuxCommonPrivate::currentMod
     return QSystemNetworkInfo::UnknownMode;
 }
 
-qint32 QSystemNetworkInfoLinuxCommonPrivate::cellId()
+int QSystemNetworkInfoLinuxCommonPrivate::cellId()
 {
 #if !defined(QT_NO_CONNMAN)
     if (ofonoIsAvailable) {
@@ -1532,7 +1532,7 @@ qint32 QSystemNetworkInfoLinuxCommonPrivate::cellId()
         }
     }
 #endif
-    return 0;
+    return -1;
 }
 
 int QSystemNetworkInfoLinuxCommonPrivate::locationAreaCode()
@@ -1546,7 +1546,7 @@ int QSystemNetworkInfoLinuxCommonPrivate::locationAreaCode()
         }
     }
 #endif
-    return 0;
+    return -1;
 }
 
 QString QSystemNetworkInfoLinuxCommonPrivate::currentMobileCountryCode()

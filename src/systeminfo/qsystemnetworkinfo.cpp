@@ -174,8 +174,8 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfo::networkStatus(QSystemNetwo
 }
 
 /*!
-    Returns the strength of the network signal, per network \a mode , 0 - 100 linear scaling,
-    or -1 in the case of unknown network mode or error.
+    Returns the strength of the network signal, per network \a mode , 0 - 100 linear scaling. In case of
+    unknown network mode or error, -1 is returned.
 
     In the case of QSystemNetworkInfo::EthernetMode, it will either be 100 for carrier active, or 0 for when
     there is no carrier or cable connected.
@@ -183,7 +183,9 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfo::networkStatus(QSystemNetwo
 int QSystemNetworkInfo::networkSignalStrength(QSystemNetworkInfo::NetworkMode mode)
 {
     QSystemNetworkInfo::NetworkStatus info = netInfoPrivate()->networkStatus(mode);
-    if (info == QSystemNetworkInfo::UndefinedStatus || info == QSystemNetworkInfo::NoNetworkAvailable)
+    if (info == QSystemNetworkInfo::UndefinedStatus)
+        return -1;
+    else if (info == QSystemNetworkInfo::NoNetworkAvailable)
         return 0;
 
     return netInfoPrivate()->networkSignalStrength(mode);
@@ -193,7 +195,8 @@ int QSystemNetworkInfo::networkSignalStrength(QSystemNetworkInfo::NetworkMode mo
     \property QSystemNetworkInfo::cellId
     \brief The devices Cell ID
 
-    Returns the Cell ID of the connected tower or based station, or 0 if not connected.
+    Returns the Cell ID of the connected tower or based station. -1 is returned if not available or on error.
+    returned on error.
 */
 int QSystemNetworkInfo::cellId()
 {
@@ -204,7 +207,8 @@ int QSystemNetworkInfo::cellId()
     \property QSystemNetworkInfo::locationAreaCode
     \brief The LAC.
 
-    Returns the Location Area Code. In the case of a Desktop computer, 0 is returned.
+    Returns the location area code of the current cellular radio network. -1 is returned if not available
+    or on error.
 */
 int QSystemNetworkInfo::locationAreaCode()
 {
@@ -215,7 +219,7 @@ int QSystemNetworkInfo::locationAreaCode()
     \property QSystemNetworkInfo::currentMobileCountryCode
     \brief The current MCC.
 
-    Returns the current Mobile Country Code. In the case of a Desktop computer, an empty string is returned.
+    Returns the current Mobile Country Code. An empty string is returned if not available or on error.
 */
 QString QSystemNetworkInfo::currentMobileCountryCode()
 {
@@ -226,7 +230,7 @@ QString QSystemNetworkInfo::currentMobileCountryCode()
     \property QSystemNetworkInfo::currentMobileNetworkCode
     \brief The current MNC.
 
-    Returns the current Mobile Network Code. In the case of a Desktop computer, an empty string is returned.
+    Returns the current Mobile Network Code. An empty string is returned if not available or on error.
 */
 QString QSystemNetworkInfo::currentMobileNetworkCode()
 {
@@ -237,7 +241,7 @@ QString QSystemNetworkInfo::currentMobileNetworkCode()
     \property QSystemNetworkInfo::homeMobileCountryCode
     \brief The home MNC.
 
-    Returns the home Mobile Country Code. In the case of a Desktop computer, an empty string is returned.
+    Returns the home Mobile Country Code. An empty string is returned if not available or on error.
 */
 QString QSystemNetworkInfo::homeMobileCountryCode()
 {
@@ -248,9 +252,7 @@ QString QSystemNetworkInfo::homeMobileCountryCode()
     \property QSystemNetworkInfo::homeMobileNetworkCode
     \brief The home MCC.
 
-    Returns the home Mobile Network Code. In the case of a Desktop computer, an empty string is returned.
-    Note: Some platforms don't support retrieving this info. In this case the Network Code is
-    returned only when the device is registered on home network.
+    Returns the home Mobile Network Code. An empty string is returned if not available or on error.
 */
 QString QSystemNetworkInfo::homeMobileNetworkCode()
 {
@@ -258,8 +260,10 @@ QString QSystemNetworkInfo::homeMobileNetworkCode()
 }
 
 /*!
-    Returns the name of the operator for the network \a mode.  For wlan this returns the network's current SSID.
-    In the case of a Desktop computer, an empty string is returned.
+    Returns the name of the operator for the network \a mode. An empty string is returned if not
+    available or on error.
+
+    For WLAN this returns the network's current SSID.
 */
 QString QSystemNetworkInfo::networkName(QSystemNetworkInfo::NetworkMode mode)
 {
@@ -267,7 +271,8 @@ QString QSystemNetworkInfo::networkName(QSystemNetworkInfo::NetworkMode mode)
 }
 
 /*!
-    Returns the MAC address for the interface servicing the network \a mode.
+    Returns the MAC address for the interface servicing the network \a mode. An empty string is
+    returned if not available or on error.
 */
 QString QSystemNetworkInfo::macAddress(QSystemNetworkInfo::NetworkMode mode)
 {
@@ -286,7 +291,7 @@ QNetworkInterface QSystemNetworkInfo::interfaceForMode(QSystemNetworkInfo::Netwo
 /*!
     \property QSystemNetworkInfo::currentMode
 
-    Returns the current active mode. If more than one mode is active, returns the
+    Returns the current active network mode. If more than one mode is active, returns the
     default or preferred mode. If no modes are active, returns UnknownMode.
 */
 QSystemNetworkInfo::NetworkMode QSystemNetworkInfo::currentMode()

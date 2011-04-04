@@ -586,7 +586,7 @@ void QSystemNetworkInfoPrivate::setupNetworkInfo()
     currentWlanSignalStrength = networkSignalStrength(QSystemNetworkInfo::WlanMode);
     currentLac = -1;
     currentCellId = -1;
-    cellSignalStrength = 0;
+    cellSignalStrength = -1;
     radioAccessTechnology = 0;
     iWlanStrengthCheckEnabled = 0;
     currentNetworkMode = currentMode();

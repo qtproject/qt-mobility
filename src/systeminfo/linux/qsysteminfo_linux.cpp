@@ -378,7 +378,7 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSyst
     return QSystemNetworkInfoLinuxCommonPrivate::networkStatus(mode);
 }
 
-qint32 QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::NetworkMode mode)
+int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::NetworkMode mode)
 {
 #if !defined(QT_NO_NETWORKMANAGER)
     switch (mode) {
