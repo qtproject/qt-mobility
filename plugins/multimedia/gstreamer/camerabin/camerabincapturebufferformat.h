@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,43 +39,34 @@
 **
 ****************************************************************************/
 
+#ifndef CAMERABINCAPTUREBUFFERFORMAT_H
+#define CAMERABINCAPTUREBUFFERFORMAT_H
 
-#ifndef CAMERABINIMAGECAPTURECONTROL_H
-#define CAMERABINIMAGECAPTURECONTROL_H
+#include <qcamera.h>
+#include <qcameracapturebufferformatcontrol.h>
 
-#include <qcameraimagecapturecontrol.h>
-#include "camerabinsession.h"
+#include <gst/gst.h>
+#include <glib.h>
+
+class CameraBinSession;
 
 QT_USE_NAMESPACE
 
-class CameraBinImageCapture : public QCameraImageCaptureControl
+class Q_MULTIMEDIA_EXPORT CameraBinCaptureBufferFormat : public QCameraCaptureBufferFormatControl
 {
     Q_OBJECT
 public:
-    CameraBinImageCapture(CameraBinSession *session);
-    virtual ~CameraBinImageCapture();
+    CameraBinCaptureBufferFormat(CameraBinSession *session);
+    virtual ~CameraBinCaptureBufferFormat();
 
-    QCameraImageCapture::DriveMode driveMode() const { return QCameraImageCapture::SingleImageCapture; }
-    void setDriveMode(QCameraImageCapture::DriveMode) {}
+    QList<QVideoFrame::PixelFormat> supportedBufferFormats() const;
 
-    bool isReadyForCapture() const;
-    int capture(const QString &fileName);
-    void cancelCapture();
-
-private slots:
-    void updateState();
-    void handleBusMessage(const QGstreamerMessage &message);
+    QVideoFrame::PixelFormat bufferFormat() const;
+    void setBufferFormat(QVideoFrame::PixelFormat format);
 
 private:
-    static gboolean uncompressedBufferProbe(GstPad *pad, GstBuffer *buffer, CameraBinImageCapture *);
-    static gboolean jpegBufferProbe(GstPad *pad, GstBuffer *buffer, CameraBinImageCapture *);
-    static gboolean handleImageSaved(GstElement *camera, const gchar *filename, CameraBinImageCapture *);
-
     CameraBinSession *m_session;
-    bool m_ready;
-    int m_requestId;
-    GstElement *m_jpegEncoderElement;
-    GstElement *m_metadataMuxerElement;
+    QVideoFrame::PixelFormat m_format;
 };
 
-#endif // CAMERABINCAPTURECORNTROL_H
+#endif

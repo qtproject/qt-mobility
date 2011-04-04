@@ -49,6 +49,8 @@
 #include "camerabinfocus.h"
 #include "camerabinimageprocessing.h"
 #include "camerabinlocks.h"
+#include "camerabincapturedestination.h"
+#include "camerabincapturebufferformat.h"
 #include "qgstreamerbushelper.h"
 #include "qgstreamervideorendererinterface.h"
 #include <qmediarecorder.h>
@@ -137,8 +139,6 @@
 #define USE_READY_STATE_ON_LOADED
 #endif
 
-static gboolean imgCaptured(GstElement *camera, const gchar *filename, gpointer user_data);
-
 CameraBinSession::CameraBinSession(QObject *parent)
     :QObject(parent),
      m_state(QCamera::UnloadedState),
@@ -166,8 +166,6 @@ CameraBinSession::CameraBinSession(QObject *parent)
      m_muxer(0)
 {
     m_pipeline = gst_element_factory_make("camerabin", "camerabin");
-
-    g_signal_connect(G_OBJECT(m_pipeline), IMAGE_DONE_SIGNAL, G_CALLBACK(imgCaptured), this);
     g_signal_connect(G_OBJECT(m_pipeline), "notify::idle", G_CALLBACK(updateBusyStatus), this);
 
     gstRef(m_pipeline);
@@ -176,7 +174,7 @@ CameraBinSession::CameraBinSession(QObject *parent)
 
     m_busHelper = new QGstreamerBusHelper(m_bus, this);
     m_busHelper->installSyncEventFilter(this);
-    connect(m_busHelper, SIGNAL(message(QGstreamerMessage)), SLOT(busMessage(QGstreamerMessage)));
+    connect(m_busHelper, SIGNAL(message(QGstreamerMessage)), SLOT(handleBusMessage(QGstreamerMessage)));
     m_audioEncodeControl = new CameraBinAudioEncoder(this);
     m_videoEncodeControl = new CameraBinVideoEncoder(this);
     m_imageEncodeControl = new CameraBinImageEncoder(this);
@@ -187,6 +185,8 @@ CameraBinSession::CameraBinSession(QObject *parent)
     m_cameraFocusControl = new CameraBinFocus(this);
     m_imageProcessingControl = new CameraBinImageProcessing(this);
     m_cameraLocksControl = new CameraBinLocks(this);
+    m_captureDestinationControl = new CameraBinCaptureDestination(this);
+    m_captureBufferFormatControl = new CameraBinCaptureBufferFormat(this);
 }
 
 CameraBinSession::~CameraBinSession()
@@ -827,7 +827,7 @@ bool CameraBinSession::processSyncMessage(const QGstreamerMessage &message)
     return false;
 }
 
-void CameraBinSession::busMessage(const QGstreamerMessage &message)
+void CameraBinSession::handleBusMessage(const QGstreamerMessage &message)
 {
     GstMessage* gm = message.rawMessage();
 
@@ -929,32 +929,10 @@ void CameraBinSession::busMessage(const QGstreamerMessage &message)
 
         if (GST_MESSAGE_SRC(gm) == GST_OBJECT_CAST(m_viewfinderElement))
             m_viewfinderInterface->handleBusMessage(gm);
+
+        emit busMessage(message);
     }
 }
-
-void CameraBinSession::processSavedImage(const QString &filename)
-{
-    static int signalIndex = metaObject()->indexOfSignal("imageSaved(int,QString)");
-    metaObject()->method(signalIndex).invoke(this,
-                                             Qt::QueuedConnection,
-                                             Q_ARG(int,m_requestId),
-                                             Q_ARG(QString,filename));
-}
-
-static gboolean imgCaptured(GstElement *camera,
-                        const gchar *filename,
-                        gpointer user_data)
-{
-#if CAMERABIN_DEBUG
-    qDebug() << "Image saved" << filename;
-#endif
-
-    Q_UNUSED(camera);
-    CameraBinSession *session = (CameraBinSession *)user_data;
-    session->processSavedImage(QString::fromUtf8(filename));
-    return true;
-}
-
 
 void CameraBinSession::recordVideo()
 {

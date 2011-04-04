@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,43 +39,40 @@
 **
 ****************************************************************************/
 
-
-#ifndef CAMERABINIMAGECAPTURECONTROL_H
-#define CAMERABINIMAGECAPTURECONTROL_H
-
-#include <qcameraimagecapturecontrol.h>
+#include "camerabincapturebufferformat.h"
 #include "camerabinsession.h"
 
-QT_USE_NAMESPACE
-
-class CameraBinImageCapture : public QCameraImageCaptureControl
+CameraBinCaptureBufferFormat::CameraBinCaptureBufferFormat(CameraBinSession *session)
+    :QCameraCaptureBufferFormatControl(session)
+     , m_session(session)
+     , m_format(QVideoFrame::Format_Jpeg)
 {
-    Q_OBJECT
-public:
-    CameraBinImageCapture(CameraBinSession *session);
-    virtual ~CameraBinImageCapture();
+}
 
-    QCameraImageCapture::DriveMode driveMode() const { return QCameraImageCapture::SingleImageCapture; }
-    void setDriveMode(QCameraImageCapture::DriveMode) {}
+CameraBinCaptureBufferFormat::~CameraBinCaptureBufferFormat()
+{
+}
 
-    bool isReadyForCapture() const;
-    int capture(const QString &fileName);
-    void cancelCapture();
+QList<QVideoFrame::PixelFormat> CameraBinCaptureBufferFormat::supportedBufferFormats() const
+{
+    //the exact YUV format is unknown with camerabin until the first capture is requested
+    return QList<QVideoFrame::PixelFormat>()
+            << QVideoFrame::Format_Jpeg
+#ifdef Q_WS_MAEMO_6
+            << QVideoFrame::Format_UYVY
+#endif
+            ;
+}
 
-private slots:
-    void updateState();
-    void handleBusMessage(const QGstreamerMessage &message);
+QVideoFrame::PixelFormat CameraBinCaptureBufferFormat::bufferFormat() const
+{
+    return m_format;
+}
 
-private:
-    static gboolean uncompressedBufferProbe(GstPad *pad, GstBuffer *buffer, CameraBinImageCapture *);
-    static gboolean jpegBufferProbe(GstPad *pad, GstBuffer *buffer, CameraBinImageCapture *);
-    static gboolean handleImageSaved(GstElement *camera, const gchar *filename, CameraBinImageCapture *);
-
-    CameraBinSession *m_session;
-    bool m_ready;
-    int m_requestId;
-    GstElement *m_jpegEncoderElement;
-    GstElement *m_metadataMuxerElement;
-};
-
-#endif // CAMERABINCAPTURECORNTROL_H
+void CameraBinCaptureBufferFormat::setBufferFormat(QVideoFrame::PixelFormat format)
+{
+    if (m_format != format) {
+        m_format = format;
+        emit bufferFormatChanged(format);
+    }
+}
