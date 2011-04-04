@@ -52,6 +52,7 @@ meegoals::meegoals(QSensor *sensor)
     // metadata
     setDescription(QLatin1String("ambient light intensity given as 5 pre-defined levels"));
     addOutputRange(0, 5, 1);
+    addDataRate(10,10);
 }
 
 void meegoals::slotDataAvailable(const Unsigned& data)
