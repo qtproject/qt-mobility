@@ -281,12 +281,12 @@ QString QSystemNetworkInfo::macAddress(QSystemNetworkInfo::NetworkMode mode)
 }
 
 /*!
- Returns the first found QNetworkInterface for type \a mode, or an invalid QNetworkInterface, if none is found.
-
- */
+    Returns the first found QNetworkInterface for type \a mode. If none is found, or it can't be represented
+    by QNetworkInterface (e.g. Bluetooth), an invalid QNetworkInterface object is returned.
+*/
 QNetworkInterface QSystemNetworkInfo::interfaceForMode(QSystemNetworkInfo::NetworkMode mode)
 {
-   return netInfoPrivate()->interfaceForMode(mode);
+    return netInfoPrivate()->interfaceForMode(mode);
 }
 
 /*!
