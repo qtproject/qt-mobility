@@ -60,6 +60,8 @@ public:
 protected:
     virtual bool doConnect();
     virtual const QString sensorName();
+    virtual void start();
+    static QOrientationReading::Orientation getOrientation(int orientation);
 
 private:
     QOrientationReading m_reading;
