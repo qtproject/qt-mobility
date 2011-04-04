@@ -1125,6 +1125,7 @@ void QGeoTiledMapDataPrivate::paintMap(QPainter *painter, const QStyleOptionGrap
 
 void QGeoTiledMapDataPrivate::paintObjects(QPainter *painter, const QStyleOptionGraphicsItem * option)
 {
+    painter->save();
     painter->setRenderHint(QPainter::Antialiasing);
 
     QRectF target = option ? option->rect : QRectF(QPointF(0,0), windowSize);
@@ -1187,7 +1188,7 @@ void QGeoTiledMapDataPrivate::paintObjects(QPainter *painter, const QStyleOption
         }
     }
 
-    painter->setTransform(baseTrans);
+    painter->restore();
 
     delete style;
 }
