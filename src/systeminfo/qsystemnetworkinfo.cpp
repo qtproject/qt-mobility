@@ -149,6 +149,12 @@ QSystemNetworkInfoPrivate *getSystemNetworkInfoPrivate() { return netInfoPrivate
 */
 
 /*!
+    \fn void QSystemNetworkInfo::cellDataTechnologyChanged(QSystemNetworkInfo::CellDataTechnology cellTech)
+
+    This signal is emitted whenever the cellular technology changes, specified by \a cellTech.
+*/
+
+/*!
     Constructs a QSystemNetworkInfo with the given \a parent.
 */
 QSystemNetworkInfo::QSystemNetworkInfo(QObject *parent)
