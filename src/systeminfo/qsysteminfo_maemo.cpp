@@ -265,26 +265,34 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
     return featureSupported;
 }
 
+#if defined(Q_WS_MAEMO_6)
+QMap<QString, int> QSystemNetworkInfoPrivate::CellularServiceStatus;
+#endif // Q_WS_MAEMO_6
+
 QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate(QSystemNetworkInfoLinuxCommonPrivate *parent)
-        : QSystemNetworkInfoLinuxCommonPrivate(parent)
+    : QSystemNetworkInfoLinuxCommonPrivate(parent)
 {
-    csStatusMaemo6["Unknown"]    = -1;  // Current registration status is unknown.
-    csStatusMaemo6["Home"]       = 0;   // Registered with the home network.
-    csStatusMaemo6["Roaming"]    = 1;   // Registered with a roaming network.
-    csStatusMaemo6["Offline"]    = 3;   // Not registered.
-    csStatusMaemo6["Searching"]  = 4;   // Offline, but currently searching for network.
-    csStatusMaemo6["NoSim"]      = 6;   // Offline because no SIM is present.
-    csStatusMaemo6["PowerOff"]   = 8;   // Offline because the CS is powered off.
-    csStatusMaemo6["PowerSave"]  = 9;   // Offline and in power save mode.
-    csStatusMaemo6["NoCoverage"] = 10;  // Offline and in power save mode because of poor coverage.
-    csStatusMaemo6["Rejected"]   = 11;  // Offline because SIM was rejected by the network.
+#if defined(Q_WS_MAEMO_6)
+    if (CellularServiceStatus.isEmpty()) {
+        CellularServiceStatus["Unknown"]    = -1;  // Current registration status is unknown.
+        CellularServiceStatus["Home"]       = 0;   // Registered with the home network.
+        CellularServiceStatus["Roaming"]    = 1;   // Registered with a roaming network.
+        CellularServiceStatus["Offline"]    = 3;   // Not registered.
+        CellularServiceStatus["Searching"]  = 4;   // Offline, but currently searching for network.
+        CellularServiceStatus["NoSim"]      = 6;   // Offline because no SIM is present.
+        CellularServiceStatus["PowerOff"]   = 8;   // Offline because the CS is powered off.
+        CellularServiceStatus["PowerSave"]  = 9;   // Offline and in power save mode.
+        CellularServiceStatus["NoCoverage"] = 10;  // Offline and in power save mode because of poor coverage.
+        CellularServiceStatus["Rejected"]   = 11;  // Offline because SIM was rejected by the network.
+    }
+#endif // Q_WS_MAEMO_6
 
     setupNetworkInfo();
 }
 
 QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate()
 {
-    if(wlanSignalStrengthTimer && wlanSignalStrengthTimer->isActive())
+    if (wlanSignalStrengthTimer && wlanSignalStrengthTimer->isActive())
         wlanSignalStrengthTimer->stop();
 }
 
@@ -294,47 +302,44 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSyst
     case QSystemNetworkInfo::GsmMode:
     case QSystemNetworkInfo::CdmaMode:
     case QSystemNetworkInfo::WcdmaMode:
-        {
-            // radioAccessTechnology: 1 = GSM, 2 = WCDMA
-            if((radioAccessTechnology == 1 && mode != QSystemNetworkInfo::GsmMode) ||
-               (radioAccessTechnology == 2 && mode != QSystemNetworkInfo::WcdmaMode)) {
-                return QSystemNetworkInfo::NoNetworkAvailable;
-            }
-
-            switch(currentCellNetworkStatus) {
-                case 0: return QSystemNetworkInfo::HomeNetwork; // CS is registered to home network
-                case 1: return QSystemNetworkInfo::Roaming; // CS is registered to some other network than home network
-                case 2: return QSystemNetworkInfo::Roaming; // CS is registered to non-home system in a non-home area
-                case 3: return QSystemNetworkInfo::NoNetworkAvailable; // CS is not in service
-                case 4: return QSystemNetworkInfo::Searching; // CS is not in service, but is currently searching for service
-                case 5: return QSystemNetworkInfo::NoNetworkAvailable; // CS is not in service and it is not currently searching for service
-                case 6: return QSystemNetworkInfo::NoNetworkAvailable; // CS is not in service due to missing SIM or missing subscription
-                case 8: return QSystemNetworkInfo::NoNetworkAvailable; // CS is in power off state
-                case 9: return QSystemNetworkInfo::NoNetworkAvailable; // CS is in No Service Power Save State (currently not listening to any cell)
-                case 10: return QSystemNetworkInfo::NoNetworkAvailable; // CS is in No Service Power Save State (CS is entered to this state
-                                                                        // because there is no network coverage)
-                case 11: return QSystemNetworkInfo::Denied; // CS is not in service due to missing subscription
-                default:
-                    break;
-            };
-        }
-        break;
-    case QSystemNetworkInfo::EthernetMode:
-        if(currentEthernetState == "up") {
-            return QSystemNetworkInfo::Connected;
-        } else {
+        // radioAccessTechnology: 1 = GSM, 2 = WCDMA
+        if ((radioAccessTechnology == 1 && mode != QSystemNetworkInfo::GsmMode)
+            || (radioAccessTechnology == 2 && mode != QSystemNetworkInfo::WcdmaMode)) {
             return QSystemNetworkInfo::NoNetworkAvailable;
         }
+
+        switch (currentCellNetworkStatus) {
+        case  0: return QSystemNetworkInfo::HomeNetwork;        // CS is registered to home network
+        case  1: return QSystemNetworkInfo::Roaming;            // CS is registered to some other network than home network
+        case  2: return QSystemNetworkInfo::Roaming;            // CS is registered to non-home system in a non-home area
+        case  3: return QSystemNetworkInfo::NoNetworkAvailable; // CS is not in service
+        case  4: return QSystemNetworkInfo::Searching;          // CS is not in service, but is currently searching for service
+        case  5: return QSystemNetworkInfo::NoNetworkAvailable; // CS is not in service and it is not currently searching for service
+        case  6: return QSystemNetworkInfo::NoNetworkAvailable; // CS is not in service due to missing SIM or missing subscription
+        case  8: return QSystemNetworkInfo::NoNetworkAvailable; // CS is in power off state
+        case  9: return QSystemNetworkInfo::NoNetworkAvailable; // CS is in No Service Power Save State (currently not listening to any cell)
+        case 10: return QSystemNetworkInfo::NoNetworkAvailable; // CS is in No Service Power Save State (CS is entered to this state
+                                                                // because there is no network coverage)
+        case 11: return QSystemNetworkInfo::Denied;             // CS is not in service due to missing subscription
+        default:
+            break;
+        };
         break;
-    case QSystemNetworkInfo::WlanMode:
-    case QSystemNetworkInfo::BluetoothMode:
-        {
-            return QSystemNetworkInfoLinuxCommonPrivate::networkStatus(mode);
-        }
-        break;
+
+    case QSystemNetworkInfo::EthernetMode:
+        if (currentEthernetState == "up")
+            return QSystemNetworkInfo::Connected;
+        else
+            return QSystemNetworkInfo::NoNetworkAvailable;
+
+//    case QSystemNetworkInfo::WlanMode:
+//    case QSystemNetworkInfo::BluetoothMode:
+//    case QSystemNetworkInfo::WimaxMode:
+//    case QSystemNetworkInfo::LteMode:
     default:
-        break;
+        return QSystemNetworkInfoLinuxCommonPrivate::networkStatus(mode);
     };
+
     return QSystemNetworkInfo::UndefinedStatus;
 }
 
@@ -344,43 +349,40 @@ qint32 QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::Netw
     case QSystemNetworkInfo::GsmMode:
     case QSystemNetworkInfo::CdmaMode:
     case QSystemNetworkInfo::WcdmaMode:
-    {
-            // radioAccessTechnology: 1 = GSM, 2 = WCDMA
-            if((radioAccessTechnology == 1 && mode != QSystemNetworkInfo::GsmMode) ||
-               (radioAccessTechnology == 2 && mode != QSystemNetworkInfo::WcdmaMode)) {
-                return -1;
-            }
+        // radioAccessTechnology: 1 = GSM, 2 = WCDMA
+        if ((radioAccessTechnology == 1 && mode != QSystemNetworkInfo::GsmMode)
+            || (radioAccessTechnology == 2 && mode != QSystemNetworkInfo::WcdmaMode)) {
+            return -1;
+        }
+        return cellSignalStrength;
 
-            return cellSignalStrength;
-    }
     case QSystemNetworkInfo::EthernetMode: {
         QString result;
-        QString baseSysDir = "/sys/class/net/";
+        QString baseSysDir("/sys/class/net/");
         QString interface = QSystemNetworkInfoLinuxCommonPrivate::interfaceForMode(mode).humanReadableName();
         if (interface == "usb0") {
             QString dir = QSystemNetworkInfoLinuxCommonPrivate::interfaceForMode(mode).name();
             QString devFile = baseSysDir + dir;
             QFileInfo fi(devFile + "/carrier");
-            if(fi.exists()) {
+            if (fi.exists()) {
                 QFile rx(fi.absoluteFilePath());
-                if(rx.exists() && rx.open(QIODevice::ReadOnly | QIODevice::Text)) {
+                if (rx.exists() && rx.open(QIODevice::ReadOnly | QIODevice::Text)) {
                     QTextStream stream(&rx);
                     stream >> result;
                     rx.close();
                     return result.toInt() * 100;
-                    break;
                 }
             }
         }
         return QSystemNetworkInfoLinuxCommonPrivate::networkSignalStrength(mode);
-        break;
     }
-    case QSystemNetworkInfo::WlanMode:
-    case QSystemNetworkInfo::BluetoothMode:
-        return QSystemNetworkInfoLinuxCommonPrivate::networkSignalStrength(mode);
-        break;
+
+//    case QSystemNetworkInfo::WlanMode:
+//    case QSystemNetworkInfo::BluetoothMode:
+//    case QSystemNetworkInfo::WimaxMode:
+//    case QSystemNetworkInfo::LteMode:
     default:
-        break;
+        return QSystemNetworkInfoLinuxCommonPrivate::networkSignalStrength(mode);
     };
 
     return -1;
@@ -398,9 +400,8 @@ int QSystemNetworkInfoPrivate::locationAreaCode()
 
 QString QSystemNetworkInfoPrivate::currentMobileCountryCode()
 {
-    if (!currentMCC.isEmpty()) {
+    if (!currentMCC.isEmpty())
         return currentMCC;
-    }
 
     // Don't have a cached MCC value, let's query it
     QDBusMessage message = QDBusMessage::createMethodCall("com.nokia.csd.CSNet",
@@ -410,9 +411,9 @@ QString QSystemNetworkInfoPrivate::currentMobileCountryCode()
     message << "com.nokia.csd.CSNet.NetworkOperator";
     message << "OperatorMCC";
 
-    QDBusReply<QDBusVariant> mccReply = QDBusConnection::systemBus().call(message);
-    if (mccReply.isValid()) {
-        QDBusVariant v = mccReply.value();
+    QDBusReply<QDBusVariant> reply = QDBusConnection::systemBus().call(message);
+    if (reply.isValid()) {
+        QDBusVariant v = reply.value();
         return v.variant().toString();
     }
 
@@ -421,9 +422,8 @@ QString QSystemNetworkInfoPrivate::currentMobileCountryCode()
 
 QString QSystemNetworkInfoPrivate::currentMobileNetworkCode()
 {
-    if (!currentMNC.isEmpty()) {
+    if (!currentMNC.isEmpty())
         return currentMNC;
-    }
 
     // Don't have a cached MNC value, let's query it
     QDBusMessage message = QDBusMessage::createMethodCall("com.nokia.csd.CSNet",
@@ -433,9 +433,9 @@ QString QSystemNetworkInfoPrivate::currentMobileNetworkCode()
     message << "com.nokia.csd.CSNet.NetworkOperator";
     message << "OperatorMNC";
 
-    QDBusReply<QDBusVariant> mncReply = QDBusConnection::systemBus().call(message);
-    if (mncReply.isValid()) {
-        QDBusVariant v = mncReply.value();
+    QDBusReply<QDBusVariant> reply = QDBusConnection::systemBus().call(message);
+    if (reply.isValid()) {
+        QDBusVariant v = reply.value();
         return v.variant().toString();
     }
 
@@ -446,16 +446,16 @@ QString QSystemNetworkInfoPrivate::homeMobileCountryCode()
 {
     QSystemDeviceInfoPrivate d;
     QString imsi = d.imsi();
-    if (imsi.length() >= 3) {
+    if (imsi.length() >= 3)
         return imsi.left(3);
-    }
-    return "";
+
+    return QString();
 }
 
 QString QSystemNetworkInfoPrivate::homeMobileNetworkCode()
 {
 #if !defined(QT_NO_DBUS)
-    #if defined(Q_WS_MAEMO_6)
+#if defined(Q_WS_MAEMO_6)
     QDBusInterface connectionInterface("com.nokia.csd.SIM",
                                        "/com/nokia/csd/sim",
                                        "com.nokia.csd.SIM.Identity",
@@ -464,12 +464,10 @@ QString QSystemNetworkInfoPrivate::homeMobileNetworkCode()
     if (reply.errorName().isEmpty()) {
         QList<QVariant> args = reply.arguments();
         // The first attribute should be MCC and the 2nd one MNC
-        if (args.size() == 2) {
+        if (args.size() == 2)
             return args.at(1).toString();
-        }
     }
-    #else
-    /* Maemo 5 */
+#else // Q_WS_MAEMO_6
     QDBusInterface connectionInterface("com.nokia.phone.SIM",
                                        "/com/nokia/phone/SIM",
                                        "Phone.Sim",
@@ -484,7 +482,6 @@ QString QSystemNetworkInfoPrivate::homeMobileNetworkCode()
     // The MNC can be 2 or 3 digits long. If it is 2 digits long, it ends with 0xF.
     // The order of the Hex numbers in the reply is:
     // mcc2 mcc1 mnc3 mcc3 mnc2 mnc1
-
     QString homeMobileNetworkCode;
     if (reply.isValid()) {
         QString temp = reply.value().toHex();
@@ -493,57 +490,49 @@ QString QSystemNetworkInfoPrivate::homeMobileNetworkCode()
         QString mnc2 = temp.right(1);
         temp.chop(2);
         QString mnc3 = temp.right(1);
-        if (mnc3 != "f") {
+        if (mnc3 != "f")
             homeMobileNetworkCode.prepend(mnc3);
-        }
         homeMobileNetworkCode.prepend(mnc2);
         homeMobileNetworkCode.prepend(mnc1);
         return homeMobileNetworkCode;
     }
-    #endif
-#endif
-    return "";
+#endif // Q_WS_MAEMO_6
+#endif // QT_NO_DBUS
+
+    return QString();
 }
 
 QString QSystemNetworkInfoPrivate::networkName(QSystemNetworkInfo::NetworkMode mode)
 {
-    QString netname = "";
-
     switch(mode) {
-
     case QSystemNetworkInfo::CdmaMode:
     case QSystemNetworkInfo::GsmMode:
-    case QSystemNetworkInfo::WcdmaMode: {
+    case QSystemNetworkInfo::WcdmaMode:
         // radioAccessTechnology: 1 = GSM, 2 = WCDMA
-        if((radioAccessTechnology == 1 && mode != QSystemNetworkInfo::GsmMode) ||
-           (radioAccessTechnology == 2 && mode != QSystemNetworkInfo::WcdmaMode)) {
+        if ((radioAccessTechnology == 1 && mode != QSystemNetworkInfo::GsmMode)
+            || (radioAccessTechnology == 2 && mode != QSystemNetworkInfo::WcdmaMode)) {
             break;
         }
-
         return currentOperatorName;
-        break;
-    }
-    case QSystemNetworkInfo::WimaxMode:
-        break;
+
+//    case QSystemNetworkInfo::WlanMode:
+//    case QSystemNetworkInfo::EthernetMode:
+//    case QSystemNetworkInfo::BluetoothMode:
+//    case QSystemNetworkInfo::WimaxMode:
+//    case QSystemNetworkInfo::LteMode:
     default:
         return QSystemNetworkInfoLinuxCommonPrivate::networkName(mode);
-        break;
     };
-    return netname;
+
+    return QString();
 }
 
 QString QSystemNetworkInfoPrivate::macAddress(QSystemNetworkInfo::NetworkMode mode)
 {
     switch(mode) {
-
-    case QSystemNetworkInfo::CdmaMode:
-    case QSystemNetworkInfo::GsmMode:
-    case QSystemNetworkInfo::WcdmaMode:
-    case QSystemNetworkInfo::WimaxMode:
-        break;
     case QSystemNetworkInfo::EthernetMode: {
         QString address;
-        QString baseSysDir = "/sys/class/net/";
+        QString baseSysDir("/sys/class/net/");
         QString interface = QSystemNetworkInfoLinuxCommonPrivate::interfaceForMode(mode).humanReadableName();
         if (interface == "usb0") {
             QString dir = QSystemNetworkInfoLinuxCommonPrivate::interfaceForMode(mode).name();
@@ -551,61 +540,51 @@ QString QSystemNetworkInfoPrivate::macAddress(QSystemNetworkInfo::NetworkMode mo
             QFileInfo fi(devFile + "/address");
             if(fi.exists()) {
                 QFile rx(fi.absoluteFilePath());
-                if(rx.exists() && rx.open(QIODevice::ReadOnly | QIODevice::Text)) {
+                if (rx.exists() && rx.open(QIODevice::ReadOnly | QIODevice::Text)) {
                     QTextStream stream(&rx);
                     stream >> address;
                     rx.close();
                     return address;
-                    break;
                 }
             }
         }
         return QSystemNetworkInfoLinuxCommonPrivate::macAddress(mode);
-        break;
     }
+
+//    case QSystemNetworkInfo::CdmaMode:
+//    case QSystemNetworkInfo::GsmMode:
+//    case QSystemNetworkInfo::WcdmaMode:
+//    case QSystemNetworkInfo::WimaxMode:
+//    case QSystemNetworkInfo::WlanMode:
+//    case QSystemNetworkInfo::BluetoothMode:
+//    case QSystemNetworkInfo::LteMode:
     default:
         return QSystemNetworkInfoLinuxCommonPrivate::macAddress(mode);
-        break;
     };
+
     return QString();
 }
 
-QNetworkInterface QSystemNetworkInfoPrivate::interfaceForMode(QSystemNetworkInfo::NetworkMode mode)
+#if defined(Q_WS_MAEMO_6)
+QMap<QString, QVariant> QSystemNetworkInfoPrivate::queryCsdProperties(const QString &service, const QString &path, const QString &interface)
 {
-#if !defined(QT_NO_DBUS)
-    switch(mode) {
-    case QSystemNetworkInfo::CdmaMode:
-    case QSystemNetworkInfo::GsmMode:
-    case QSystemNetworkInfo::WcdmaMode:
-    case QSystemNetworkInfo::WimaxMode:
-        break;
-    default:
-        return QSystemNetworkInfoLinuxCommonPrivate::interfaceForMode(mode);
-        break;
-    };
-#endif
-    return QNetworkInterface();
-}
+    QMap<QString, QVariant> properties;
 
-QMap<QString,QVariant> QSystemNetworkInfoPrivate::queryCsdProperties(const QString& service, const QString& servicePath, const QString& interface)
-{
-    QMap<QString,QVariant> props;
 #if !defined(QT_NO_DBUS)
-    const QString dBusProps = "org.freedesktop.DBus.Properties";
-
     QDBusMessage message = QDBusMessage::createMethodCall(service,
-                                                          servicePath,
-                                                          dBusProps,
+                                                          path,
+                                                          "org.freedesktop.DBus.Properties",
                                                           "GetAll");
     message << interface;
-    QDBusReply< QMap<QString, QVariant> > csdReply = QDBusConnection::systemBus().call(message);
+    QDBusReply<QMap<QString, QVariant> > reply = QDBusConnection::systemBus().call(message);
 
-    if (csdReply.isValid()) {
-        props = csdReply.value();
-    }
+    if (reply.isValid())
+        properties = reply.value();
 #endif
-    return props;
+
+    return properties;
 }
+#endif // Q_WS_MAEMO_6
 
 void QSystemNetworkInfoPrivate::setupNetworkInfo()
 {
@@ -617,17 +596,15 @@ void QSystemNetworkInfoPrivate::setupNetworkInfo()
     currentWlanSignalStrength = networkSignalStrength(QSystemNetworkInfo::WlanMode);
     currentLac = -1;
     currentCellId = -1;
-    currentMCC = "";
-    currentMNC = "";
-    cellSignalStrength = 0;
-    currentOperatorName = "";
+    cellSignalStrength = -1;
     radioAccessTechnology = 0;
     iWlanStrengthCheckEnabled = 0;
-    wlanSignalStrengthTimer = new QTimer(this);
+    currentNetworkMode = currentMode();
 
+    wlanSignalStrengthTimer = new QTimer(this);
     connect(wlanSignalStrengthTimer, SIGNAL(timeout()), this, SLOT(wlanSignalStrengthCheck()));
 
-    QString devFile = "/sys/class/net/usb0/operstate";
+    QString devFile("/sys/class/net/usb0/operstate");
     QFileInfo fi(devFile);
     if (fi.exists()) {
         QFile rx(fi.absoluteFilePath());
@@ -638,63 +615,66 @@ void QSystemNetworkInfoPrivate::setupNetworkInfo()
         }
     }
 
-    currentNetworkMode = currentMode();
 
 #if !defined(QT_NO_DBUS)
     QDBusConnection systemDbusConnection = QDBusConnection::systemBus();
 
-    #if defined(Q_WS_MAEMO_6)
-        const QString service = "com.nokia.csd.CSNet";
-        const QString servicePath = "/com/nokia/csd/csnet";
+#if defined(Q_WS_MAEMO_6)
+    const QString service("com.nokia.csd.CSNet");
+    const QString path("/com/nokia/csd/csnet");
 
-        /* CSD: network cell */
-        QMap<QString,QVariant> csdNetworkCell = queryCsdProperties(service, servicePath, "com.nokia.csd.CSNet.NetworkCell");
+    // CSD: network cell
+    QMap<QString, QVariant> properties = queryCsdProperties(service, path, "com.nokia.csd.CSNet.NetworkCell");
 
-        QVariant cellLac = csdNetworkCell.value("CellLac", -1);
-        currentLac = cellLac.isValid() ? cellLac.value<int>() : -1;
+    QVariant value = properties.value("CellLac");
+    if (value.isValid())
+        currentLac = value.toInt();
 
-        QVariant cellId = csdNetworkCell.value("CellId", -1);
-        currentCellId =  cellId.isValid() ? cellId.value<int>() : -1;
+    value = properties.value("CellId");
+    if (value.isValid())
+        currentCellId = value.toInt();
 
-        QVariant cellType = csdNetworkCell.value("CellType", "");
-        QString currentCellType = cellType.isValid() ? cellType.value<QString>() : "";
-
+    value = properties.value("CellType");
+    if (value.isValid()) {
+        QString currentCellType = value.toString();
         if (currentCellType == "GSM")
             radioAccessTechnology = 1;
         else if (currentCellType == "WCDMA")
             radioAccessTechnology = 2;
+    }
 
-        /* CSD: network operator */
-        QMap<QString,QVariant> csdNetworkOperator = queryCsdProperties(service, servicePath, "com.nokia.csd.CSNet.NetworkOperator");
+    // CSD: network operator
+    properties = queryCsdProperties(service, path, "com.nokia.csd.CSNet.NetworkOperator");
 
-        QVariant mcc = csdNetworkOperator.value("OperatorMCC", "");
-        currentMCC = mcc.isValid() ? mcc.value<QString>() : "";
+    value = properties.value("OperatorMCC");
+    if (value.isValid())
+        currentMCC = value.toString();
 
-        QVariant mnc = csdNetworkOperator.value("OperatorMNC", "");
-        currentMNC = mnc.isValid() ? mnc.value<QString>() : "";
+    value = properties.value("OperatorMNC");
+    if (value.isValid())
+        currentMNC = value.toString();
 
-        QVariant operatorName = csdNetworkOperator.value("OperatorName", "");
-        currentOperatorName = operatorName.isValid() ? operatorName.value<QString>() : "";
+    value = properties.value("OperatorName");
+    if (value.isValid())
+        currentOperatorName = value.toString();
 
-        /* CSD: signal strength */
-        QMap<QString,QVariant> csdSignalStrength = queryCsdProperties(service, servicePath, "com.nokia.csd.CSNet.SignalStrength");
+    // CSD: signal strength
+    properties = queryCsdProperties(service, path, "com.nokia.csd.CSNet.SignalStrength");
 
-        QVariant signalStrength = csdSignalStrength.value("SignalPercent", -1);
-        cellSignalStrength = signalStrength.isValid() ? signalStrength.value<int>() : -1;
+    value = properties.value("SignalPercent");
+    if (value.isValid())
+        cellSignalStrength = value.toInt();
 
-        /* CSD: network registration */
-        QMap<QString,QVariant> csdNetworkRegistration = queryCsdProperties(service, servicePath, "com.nokia.csd.CSNet.NetworkRegistration");
+    // CSD: network registration
+    properties = queryCsdProperties(service, path, "com.nokia.csd.CSNet.NetworkRegistration");
 
-        QVariant registrationStatus = csdNetworkRegistration.value("RegistrationStatus", "");
-        QString status = registrationStatus.isValid() ? registrationStatus.value<QString>() : "";
+    value = properties.value("RegistrationStatus");
+    if (value.isValid())
+        currentCellNetworkStatus = CellularServiceStatus.value(value.toString(), -1);
 
-        currentCellNetworkStatus = csStatusMaemo6.value(status, -1);
-
-        /* CSD: data technology */
-        currentCellDataTechnology = cellDataTechnology();
-
-    #else
-    /* Maemo 5 */
+    // CSD: data technology
+    currentCellDataTechnology = cellDataTechnology();
+#else // Q_WS_MAEMO_6
     QDBusInterface connectionInterface("com.nokia.phone.net",
                                        "/com/nokia/phone/net",
                                        "Phone.Net",
@@ -703,6 +683,7 @@ void QSystemNetworkInfoPrivate::setupNetworkInfo()
         qDebug() << "setupNetworkInfo(): interface not valid";
         return;
     }
+
     QDBusMessage reply = connectionInterface.call(QLatin1String("get_registration_status"));
     if (reply.type() == QDBusMessage::ReplyMessage) {
         QList<QVariant> argList = reply.arguments();
@@ -714,13 +695,15 @@ void QSystemNetworkInfoPrivate::setupNetworkInfo()
     } else {
         qDebug() << reply.errorMessage();
     }
+
     if (!systemDbusConnection.connect("com.nokia.phone.net",
-                       "/com/nokia/phone/net",
-                       "Phone.Net",
-                       "registration_status_change",
-                       this, SLOT(registrationStatusChanged(uchar,ushort,uint,uint,uint,uchar,uchar)))) {
+                                      "/com/nokia/phone/net",
+                                      "Phone.Net",
+                                      "registration_status_change",
+                                      this, SLOT(registrationStatusChanged(uchar,ushort,uint,uint,uint,uchar,uchar)))) {
         qDebug() << "unable to connect to registration_status_change";
     }
+
     reply = connectionInterface.call(QLatin1String("get_signal_strength"));
     if (reply.type() == QDBusMessage::ReplyMessage) {
         QList<QVariant> argList = reply.arguments();
@@ -728,29 +711,32 @@ void QSystemNetworkInfoPrivate::setupNetworkInfo()
     } else {
         qDebug() << reply.errorMessage();
     }
+
     if (!systemDbusConnection.connect("com.nokia.phone.net",
-                       "/com/nokia/phone/net",
-                       "Phone.Net",
-                       "signal_strength_change",
-                       this, SLOT(cellNetworkSignalStrengthChanged(uchar,uchar)))) {
+                                      "/com/nokia/phone/net",
+                                      "Phone.Net",
+                                      "signal_strength_change",
+                                      this, SLOT(cellNetworkSignalStrengthChanged(uchar,uchar)))) {
         qDebug() << "unable to connect to signal_strength_change";
     }
+
     uchar type = 0;
     QList<QVariant> argumentList;
     argumentList << qVariantFromValue(type) << qVariantFromValue(currentMNC.toUInt()) << qVariantFromValue(currentMCC.toUInt());
-    reply = connectionInterface.callWithArgumentList(QDBus::Block, QLatin1String("get_operator_name"), argumentList);
 
+    reply = connectionInterface.callWithArgumentList(QDBus::Block, QLatin1String("get_operator_name"), argumentList);
     if (reply.type() == QDBusMessage::ReplyMessage) {
         QList<QVariant> argList = reply.arguments();
         currentOperatorName = argList.at(0).toString();
     } else {
         qDebug() << reply.errorMessage();
     }
+
     if (!systemDbusConnection.connect("com.nokia.phone.net",
-                       "/com/nokia/phone/net",
-                       "Phone.Net",
-                       "operator_name_change",
-                       this, SLOT(operatorNameChanged(uchar,QString,QString,uint,uint)))) {
+                                      "/com/nokia/phone/net",
+                                      "Phone.Net",
+                                      "operator_name_change",
+                                      this, SLOT(operatorNameChanged(uchar,QString,QString,uint,uint)))) {
         qDebug() << "unable to connect to operator_name_change";
     }
 
@@ -761,251 +747,202 @@ void QSystemNetworkInfoPrivate::setupNetworkInfo()
     } else {
         qDebug() << reply.errorMessage();
     }
+
     if (!systemDbusConnection.connect("com.nokia.phone.net",
-                       "/com/nokia/phone/net",
-                       "Phone.Net",
-                       "radio_access_technology_change",
-                       this, SLOT(networkModeChanged(int)))) {
+                                      "/com/nokia/phone/net",
+                                      "Phone.Net",
+                                      "radio_access_technology_change",
+                                      this, SLOT(networkModeChanged(int)))) {
         qDebug() << "unable to connect to radio_access_technology_change";
     }
+
     if(!systemDbusConnection.connect("com.nokia.bme",
-                              "/com/nokia/bme/signal",
-                              "com.nokia.bme.signal",
-                              QLatin1String("charger_connected"),
-                              this, SLOT(usbCableAction())) ) {
+                                     "/com/nokia/bme/signal",
+                                     "com.nokia.bme.signal",
+                                     QLatin1String("charger_connected"),
+                                     this, SLOT(usbCableAction())) ) {
         qDebug() << "unable to connect to usbCableAction (connect)";
     }
+
     if(!systemDbusConnection.connect("com.nokia.bme",
-                              "/com/nokia/bme/signal",
-                              "com.nokia.bme.signal",
-                              QLatin1String("charger_disconnected"),
-                              this, SLOT(usbCableAction())) ) {
+                                     "/com/nokia/bme/signal",
+                                     "com.nokia.bme.signal",
+                                     QLatin1String("charger_disconnected"),
+                                     this, SLOT(usbCableAction())) ) {
         qDebug() << "unable to connect to usbCableAction (disconnect)";
     }
-    #endif /* Maemo 5 */
-
-    if(!systemDbusConnection.connect("com.nokia.icd",
-                              "/com/nokia/icd",
-                              "com.nokia.icd",
-                              QLatin1String("status_changed"),
-                              this, SLOT(icdStatusChanged(QString,QString,QString,QString))) ) {
+#endif // Q_WS_MAEMO_6
+    if (!systemDbusConnection.connect("com.nokia.icd",
+                                      "/com/nokia/icd",
+                                      "com.nokia.icd",
+                                      QLatin1String("status_changed"),
+                                      this, SLOT(icdStatusChanged(QString,QString,QString,QString))) ) {
         qDebug() << "unable to connect to icdStatusChanged";
     }
-    if(!systemDbusConnection.connect("org.freedesktop.Hal",
-                              "/org/freedesktop/Hal/Manager",
-                              "org.freedesktop.Hal.Manager",
-                              QLatin1String("DeviceAdded"),
-                              this, SLOT(bluetoothNetworkStatusCheck(QString))) ) {
+    if (!systemDbusConnection.connect("org.freedesktop.Hal",
+                                      "/org/freedesktop/Hal/Manager",
+                                      "org.freedesktop.Hal.Manager",
+                                      QLatin1String("DeviceAdded"),
+                                      this, SLOT(bluetoothNetworkStatusCheck(QString))) ) {
         qDebug() << "unable to connect to bluetoothNetworkStatusCheck (1)";
     }
-    if(!systemDbusConnection.connect("org.freedesktop.Hal",
-                              "/org/freedesktop/Hal/Manager",
-                              "org.freedesktop.Hal.Manager",
-                              QLatin1String("DeviceRemoved"),
-                              this, SLOT(bluetoothNetworkStatusCheck(QString))) ) {
+    if (!systemDbusConnection.connect("org.freedesktop.Hal",
+                                      "/org/freedesktop/Hal/Manager",
+                                      "org.freedesktop.Hal.Manager",
+                                      QLatin1String("DeviceRemoved"),
+                                      this, SLOT(bluetoothNetworkStatusCheck(QString))) ) {
         qDebug() << "unable to connect to bluetoothNetworkStatusCheck (2)";
     }
-#endif
+#endif // QT_NO_DBUS
 }
 
-void QSystemNetworkInfoPrivate::connectNotify(const char *signal)
-{
 #if !defined(QT_NO_DBUS)
 #if defined(Q_WS_MAEMO_6)
-    const QString service = "com.nokia.csd.CSNet";
-    const QString servicePath = "/com/nokia/csd/csnet";
+void QSystemNetworkInfoPrivate::connectNotify(const char *signal)
+{
+    const QString service("com.nokia.csd.CSNet");
+    const QString path("/com/nokia/csd/csnet");
 
-    if ((QLatin1String(signal)
-         == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode, int)))))) {
-        if (!QDBusConnection::systemBus().connect(service, servicePath, "com.nokia.csd.CSNet.SignalStrength", "SignalStrengthChanged",
-                                                  this, SLOT(slotSignalStrengthChanged(int, int)))) {
+    if ((QLatin1String(signal) == SIGNAL(networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode,int)))) {
+        if (!QDBusConnection::systemBus().connect(service, path, "com.nokia.csd.CSNet.SignalStrength", "SignalStrengthChanged",
+                                                  this, SLOT(slotSignalStrengthChanged(int,int)))) {
             qDebug() << "unable to connect SignalStrengthChanged";
         }
-    }
-
-    if ((QLatin1String(signal)
-         == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(currentMobileCountryCodeChanged(const QString &)))))
-            || (QLatin1String(signal)
-                == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(currentMobileNetworkCodeChanged(const QString &))))) ) {
-        if (!QDBusConnection::systemBus().connect(service, servicePath, "com.nokia.csd.CSNet.NetworkOperator", "OperatorChanged",
-                                                  this, SLOT(slotOperatorChanged(const QString&,const QString&)))) {
+    } else if ((QLatin1String(signal) == SIGNAL(currentMobileCountryCodeChanged(QString)))
+               || (QLatin1String(signal) == SIGNAL(currentMobileNetworkCodeChanged(QString)))) {
+        if (!QDBusConnection::systemBus().connect(service, path, "com.nokia.csd.CSNet.NetworkOperator", "OperatorChanged",
+                                                  this, SLOT(slotOperatorChanged(QString,QString)))) {
             qDebug() << "unable to connect (OperatorChanged";
         }
-    }
-
-    if ((QLatin1String(signal)
-         == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(networkNameChanged(QSystemNetworkInfo::NetworkMode,const QString &)))))) {
-        if (!QDBusConnection::systemBus().connect(service, servicePath, "com.nokia.csd.CSNet.NetworkOperator", "OperatorNameChanged",
-                                                  this, SLOT(slotOperatorNameChanged(const QString&)))) {
+    } else if ((QLatin1String(signal) == SIGNAL(networkNameChanged(QSystemNetworkInfo::NetworkMode,QString)))) {
+        if (!QDBusConnection::systemBus().connect(service, path, "com.nokia.csd.CSNet.NetworkOperator", "OperatorNameChanged",
+                                                  this, SLOT(slotOperatorNameChanged(QString)))) {
             qDebug() << "unable to connect OperatorNameChanged";
         }
-    }
-
-
-    if ((QLatin1String(signal)
-         == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(networkStatusChanged(QSystemNetworkInfo::NetworkMode, QSystemNetworkInfo::NetworkStatus)))))) {
-        if (!QDBusConnection::systemBus().connect(service, servicePath, "com.nokia.csd.CSNet.NetworkRegistration", "RegistrationChanged",
-                                                  this, SLOT(slotRegistrationChanged(const QString&)))) {
+    } else if ((QLatin1String(signal) == SIGNAL(networkStatusChanged(QSystemNetworkInfo::NetworkMode,QSystemNetworkInfo::NetworkStatus)))) {
+        if (!QDBusConnection::systemBus().connect(service, path, "com.nokia.csd.CSNet.NetworkRegistration", "RegistrationChanged",
+                                                  this, SLOT(slotRegistrationChanged(QString)))) {
             qDebug() << "unable to connect RegistrationChanged";
         }
-    }
-
-    if ((QLatin1String(signal)
-         == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(cellIdChanged(int)))))) {
-        if (!QDBusConnection::systemBus().connect(service, servicePath, "com.nokia.csd.CSNet.NetworkCell", "CellChanged",
-                                          this, SLOT(slotCellChanged(const QString&,int,int)))) {
+    } else if ((QLatin1String(signal) == SIGNAL(cellIdChanged(int)))) {
+        if (!QDBusConnection::systemBus().connect(service, path, "com.nokia.csd.CSNet.NetworkCell", "CellChanged",
+                                                  this, SLOT(slotCellChanged(QString,int,int)))) {
             qDebug() << "unable to connect CellChanged";
         }
-    }
-
-    if ((QLatin1String(signal)
-         == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(cellDataTechnologyChanged(QSystemNetworkInfo::CellDataTechnology)))))) {
-        if (!QDBusConnection::systemBus().connect(service, servicePath, "com.nokia.csd.CSNet.RadioAccess", "DataTechnologyChanged",
-                                          this, SLOT(slotCellDataTechnologyChanged(const QString&)))) {
+    } else if ((QLatin1String(signal) == SIGNAL(cellDataTechnologyChanged(QSystemNetworkInfo::CellDataTechnology)))) {
+        if (!QDBusConnection::systemBus().connect(service, path, "com.nokia.csd.CSNet.RadioAccess", "DataTechnologyChanged",
+                                                  this, SLOT(slotCellDataTechnologyChanged(QString)))) {
             qDebug() << "unable to connect DataTechnologyChanged";
         }
     }
-
-#else //maemo5
-
-#endif
-#endif
 }
 
 void QSystemNetworkInfoPrivate::disconnectNotify(const char *signal)
 {
-#if !defined(QT_NO_DBUS)
-#if defined(Q_WS_MAEMO_6)
-    const QString service = "com.nokia.csd.CSNet";
-    const QString servicePath = "/com/nokia/csd/csnet";
-    if ((QLatin1String(signal)
-         == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode, int)))))) {
-        if (!QDBusConnection::systemBus().disconnect(service, servicePath, "com.nokia.csd.CSNet.SignalStrength", "SignalStrengthChanged",
-                                                  this, SLOT(slotSignalStrengthChanged(int, int)))) {
+    const QString service("com.nokia.csd.CSNet");
+    const QString path("/com/nokia/csd/csnet");
+
+    if ((QLatin1String(signal) == SIGNAL(networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode,int)))) {
+        if (!QDBusConnection::systemBus().disconnect(service, path, "com.nokia.csd.CSNet.SignalStrength", "SignalStrengthChanged",
+                                                     this, SLOT(slotSignalStrengthChanged(int,int)))) {
             qDebug() << "unable to disconnect SignalStrengthChanged";
         }
-    }
-
-    if ((QLatin1String(signal)
-         == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(currentMobileCountryCodeChanged(const QString &)))))
-            || (QLatin1String(signal)
-                == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(currentMobileNetworkCodeChanged(const QString &))))) ) {
-        if (!QDBusConnection::systemBus().disconnect(service, servicePath, "com.nokia.csd.CSNet.NetworkOperator", "OperatorChanged",
-                                                  this, SLOT(slotOperatorChanged(const QString&,const QString&)))) {
+    } else if ((QLatin1String(signal) == SIGNAL(currentMobileCountryCodeChanged(QString)))
+            || (QLatin1String(signal) == SIGNAL(currentMobileNetworkCodeChanged(QString)))) {
+        if (!QDBusConnection::systemBus().disconnect(service, path, "com.nokia.csd.CSNet.NetworkOperator", "OperatorChanged",
+                                                     this, SLOT(slotOperatorChanged(QString,QString)))) {
             qDebug() << "unable to disconnect (OperatorChanged";
         }
-    }
-
-    if ((QLatin1String(signal)
-         == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(networkNameChanged(QSystemNetworkInfo::NetworkMode,const QString &)))))) {
-        if (!QDBusConnection::systemBus().disconnect(service, servicePath, "com.nokia.csd.CSNet.NetworkOperator", "OperatorNameChanged",
-                                                  this, SLOT(slotOperatorNameChanged(const QString&)))) {
+    } else if ((QLatin1String(signal) == SIGNAL(networkNameChanged(QSystemNetworkInfo::NetworkMode,QString)))) {
+        if (!QDBusConnection::systemBus().disconnect(service, path, "com.nokia.csd.CSNet.NetworkOperator", "OperatorNameChanged",
+                                                     this, SLOT(slotOperatorNameChanged(QString)))) {
             qDebug() << "unable to disconnect OperatorNameChanged";
         }
-    }
-
-
-    if ((QLatin1String(signal)
-         == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(networkStatusChanged(QSystemNetworkInfo::NetworkMode, QSystemNetworkInfo::NetworkStatus)))))) {
-        if (!QDBusConnection::systemBus().disconnect(service, servicePath, "com.nokia.csd.CSNet.NetworkRegistration", "RegistrationChanged",
-                                                  this, SLOT(slotRegistrationChanged(const QString&)))) {
+    } else if ((QLatin1String(signal) == SIGNAL(networkStatusChanged(QSystemNetworkInfo::NetworkMode,QSystemNetworkInfo::NetworkStatus)))) {
+        if (!QDBusConnection::systemBus().disconnect(service, path, "com.nokia.csd.CSNet.NetworkRegistration", "RegistrationChanged",
+                                                     this, SLOT(slotRegistrationChanged(QString)))) {
             qDebug() << "unable to disconnect RegistrationChanged";
         }
-    }
-
-    if ((QLatin1String(signal)
-         == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(cellIdChanged(int)))))) {
-        if (!QDBusConnection::systemBus().disconnect(service, servicePath, "com.nokia.csd.CSNet.NetworkCell", "CellChanged",
-                                          this, SLOT(slotCellChanged(const QString&,int,int)))) {
+    } else if ((QLatin1String(signal) == SIGNAL(cellIdChanged(int)))) {
+        if (!QDBusConnection::systemBus().disconnect(service, path, "com.nokia.csd.CSNet.NetworkCell", "CellChanged",
+                                                     this, SLOT(slotCellChanged(QString,int,int)))) {
             qDebug() << "unable to disconnect CellChanged";
         }
-    }
-
-    if ((QLatin1String(signal)
-         == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(cellDataTechnologyChanged(QSystemNetworkInfo::CellDataTechnology)))))) {
-        if (!QDBusConnection::systemBus().disconnect(service, servicePath, "com.nokia.csd.CSNet", "ActivityChanged",
-                                          this, SLOT(slotCellDataTechnologyChanged(const QString&)))) {
+    } else if ((QLatin1String(signal) == SIGNAL(cellDataTechnologyChanged(QSystemNetworkInfo::CellDataTechnology)))) {
+        if (!QDBusConnection::systemBus().disconnect(service, path, "com.nokia.csd.CSNet", "ActivityChanged",
+                                          this, SLOT(slotCellDataTechnologyChanged(QString)))) {
             qDebug() << "unable to disconnect DataTechnologyChanged";
         }
     }
-
-#else //maemo5
-
-#endif
-#endif
 }
-
+#endif // Q_WS_MAEMO_6
+#endif // QT_NO_DBUS
 
 #if defined(Q_WS_MAEMO_6)
-// Slots only available in Maemo6
-
-void QSystemNetworkInfoPrivate::slotSignalStrengthChanged(int percent, int /*dbm*/)
+void QSystemNetworkInfoPrivate::slotSignalStrengthChanged(int signalStrength, int /*dbm*/)
 {
-    QSystemNetworkInfo::NetworkMode mode = QSystemNetworkInfo::UnknownMode;
-    cellSignalStrength = percent;
+    cellSignalStrength = signalStrength;
 
     if (radioAccessTechnology == 1)
-        mode = QSystemNetworkInfo::GsmMode;
-    if (radioAccessTechnology == 2)
-        mode = QSystemNetworkInfo::WcdmaMode;
-
-    if (mode != QSystemNetworkInfo::UnknownMode)
-        emit networkSignalStrengthChanged(mode, cellSignalStrength);
+        Q_EMIT networkSignalStrengthChanged(QSystemNetworkInfo::GsmMode, cellSignalStrength);
+    else if (radioAccessTechnology == 2)
+        Q_EMIT networkSignalStrengthChanged(QSystemNetworkInfo::WcdmaMode, cellSignalStrength);
 }
 
 void QSystemNetworkInfoPrivate::slotOperatorChanged(const QString &mnc, const QString &mcc)
 {
     if (currentMCC != mcc) {
         currentMCC = mcc;
-        emit currentMobileCountryCodeChanged(currentMCC);
+        Q_EMIT currentMobileCountryCodeChanged(currentMCC);
     }
+
     if (currentMNC != mnc) {
         currentMNC = mnc;
-        emit currentMobileNetworkCodeChanged(currentMNC);
+        Q_EMIT currentMobileNetworkCodeChanged(currentMNC);
     }
 }
 
 void QSystemNetworkInfoPrivate::slotOperatorNameChanged(const QString &name)
 {
     currentOperatorName = name;
+
     if (radioAccessTechnology == 1)
-        emit networkNameChanged(QSystemNetworkInfo::GsmMode, currentOperatorName);
-    if (radioAccessTechnology == 2)
-        emit networkNameChanged(QSystemNetworkInfo::WcdmaMode, currentOperatorName);
+        Q_EMIT networkNameChanged(QSystemNetworkInfo::GsmMode, currentOperatorName);
+    else if (radioAccessTechnology == 2)
+        Q_EMIT networkNameChanged(QSystemNetworkInfo::WcdmaMode, currentOperatorName);
 }
 
 void QSystemNetworkInfoPrivate::slotRegistrationChanged(const QString &status)
 {
-    int newCellNetworkStatus = csStatusMaemo6.value(status, -1);
+    int newCellNetworkStatus = CellularServiceStatus.value(status, -1);
 
     if (currentCellNetworkStatus != newCellNetworkStatus) {
         currentCellNetworkStatus = newCellNetworkStatus;
         if (radioAccessTechnology == 1)
-            emit networkStatusChanged(QSystemNetworkInfo::GsmMode,
-                                      networkStatus(QSystemNetworkInfo::GsmMode));
-        if (radioAccessTechnology == 2)
-            emit networkStatusChanged(QSystemNetworkInfo::WcdmaMode,
-                                      networkStatus(QSystemNetworkInfo::WcdmaMode));
+            Q_EMIT networkStatusChanged(QSystemNetworkInfo::GsmMode, networkStatus(QSystemNetworkInfo::GsmMode));
+        else if (radioAccessTechnology == 2)
+            Q_EMIT networkStatusChanged(QSystemNetworkInfo::WcdmaMode, networkStatus(QSystemNetworkInfo::WcdmaMode));
     }
 }
 
 void QSystemNetworkInfoPrivate::slotCellChanged(const QString &type, int id, int lac)
 {
     int newRadioAccessTechnology = 0;
-    if (type == "GSM") {
+    if (type == "GSM")
         newRadioAccessTechnology = 1;
-    } else if (type == "WCDMA") {
+    else if (type == "WCDMA")
         newRadioAccessTechnology = 2;
-    }
 
     if (newRadioAccessTechnology != radioAccessTechnology) {
         radioAccessTechnology = newRadioAccessTechnology;
         networkModeChangeCheck();
     }
+
     if (currentCellId != id) {
         currentCellId = id;
-        emit cellIdChanged(currentCellId);
+        Q_EMIT cellIdChanged(currentCellId);
     }
+
     if (currentLac != lac) {
         currentLac = lac;
     }
@@ -1013,46 +950,22 @@ void QSystemNetworkInfoPrivate::slotCellChanged(const QString &type, int id, int
 
 void QSystemNetworkInfoPrivate::slotCellDataTechnologyChanged(const QString &tech)
 {
-    QSystemNetworkInfo::CellDataTechnology oldcdt = currentCellDataTechnology;
+    QSystemNetworkInfo::CellDataTechnology oldTech = currentCellDataTechnology;
 
-    if (oldcdt != cellDataTechnology()) {
-        emit cellDataTechnologyChanged(currentCellDataTechnology);
-    }
+    if (oldTech != cellDataTechnology())
+        Q_EMIT cellDataTechnologyChanged(currentCellDataTechnology);
 }
-
-#endif /* Maemo 6 */
-
-inline QSystemNetworkInfo::CellDataTechnology QSystemNetworkInfoPrivate::csdtToCellDataTechnology(const QString &tech)
-{
-    QSystemNetworkInfo::CellDataTechnology cdt = QSystemNetworkInfo::UnknownDataTechnology;
-    if (tech == "GPRS") {
-        cdt = QSystemNetworkInfo::GprsDataTechnology;
-    } else if (tech == "EGPRS") {
-        cdt = QSystemNetworkInfo::EdgeDataTechnology;
-    } else if (tech == "UMTS") {
-        cdt = QSystemNetworkInfo::UmtsDataTechnology;
-    } else if (tech == "HSPA") {
-        cdt = QSystemNetworkInfo::HspaDataTechnology;
-    }
-    return cdt;
-}
-
+#endif // Q_WS_MAEMO_6
 
 #if defined(Q_WS_MAEMO_5)
-// Slots only available in Maemo5
-
 void QSystemNetworkInfoPrivate::cellNetworkSignalStrengthChanged(uchar var1, uchar)
 {
-    QSystemNetworkInfo::NetworkMode mode = QSystemNetworkInfo::UnknownMode;
     cellSignalStrength = var1;
 
     if (radioAccessTechnology == 1)
-        mode = QSystemNetworkInfo::GsmMode;
-    if (radioAccessTechnology == 2)
-        mode = QSystemNetworkInfo::WcdmaMode;
-
-    if (mode != QSystemNetworkInfo::UnknownMode)
-        emit networkSignalStrengthChanged(mode, cellSignalStrength);
+        Q_EMIT networkSignalStrengthChanged(QSystemNetworkInfo::GsmMode, cellSignalStrength);
+    else if (radioAccessTechnology == 2)
+        Q_EMIT networkSignalStrengthChanged(QSystemNetworkInfo::WcdmaMode, cellSignalStrength);
 }
 
 void QSystemNetworkInfoPrivate::networkModeChanged(int newRadioAccessTechnology)
@@ -1064,10 +977,11 @@ void QSystemNetworkInfoPrivate::networkModeChanged(int newRadioAccessTechnology)
 void QSystemNetworkInfoPrivate::operatorNameChanged(uchar, QString name, QString, uint, uint)
 {
     currentOperatorName = name;
+
     if (radioAccessTechnology == 1)
-        emit networkNameChanged(QSystemNetworkInfo::GsmMode, currentOperatorName);
-    if (radioAccessTechnology == 2)
-        emit networkNameChanged(QSystemNetworkInfo::WcdmaMode, currentOperatorName);
+        Q_EMIT networkNameChanged(QSystemNetworkInfo::GsmMode, currentOperatorName);
+    else if (radioAccessTechnology == 2)
+        Q_EMIT networkNameChanged(QSystemNetworkInfo::WcdmaMode, currentOperatorName);
 }
 
 void QSystemNetworkInfoPrivate::registrationStatusChanged(uchar var1, ushort var2, uint var3, uint var4, uint var5, uchar, uchar)
@@ -1083,40 +997,39 @@ void QSystemNetworkInfoPrivate::registrationStatusChanged(uchar var1, ushort var
     if (currentCellNetworkStatus != newCellNetworkStatus) {
         currentCellNetworkStatus = newCellNetworkStatus;
         if (radioAccessTechnology == 1)
-            emit networkStatusChanged(QSystemNetworkInfo::GsmMode,
-                                      networkStatus(QSystemNetworkInfo::GsmMode));
-        if (radioAccessTechnology == 2)
-            emit networkStatusChanged(QSystemNetworkInfo::WcdmaMode,
-                                      networkStatus(QSystemNetworkInfo::WcdmaMode));
+            Q_EMIT networkStatusChanged(QSystemNetworkInfo::GsmMode, networkStatus(QSystemNetworkInfo::GsmMode));
+        else if (radioAccessTechnology == 2)
+            Q_EMIT networkStatusChanged(QSystemNetworkInfo::WcdmaMode, networkStatus(QSystemNetworkInfo::WcdmaMode));
     }
-    if (currentLac != newLac) {
+
+    if (currentLac != newLac)
         currentLac = newLac;
-    }
+
     if (currentCellId != newCellId) {
         currentCellId = newCellId;
-        emit cellIdChanged(newCellId);
+        Q_EMIT cellIdChanged(newCellId);
     }
+
     if (currentMCC != newMobileCountryCode) {
         currentMCC = newMobileCountryCode;
-        emit currentMobileCountryCodeChanged(currentMCC);
+        Q_EMIT currentMobileCountryCodeChanged(currentMCC);
     }
+
     if (currentMNC != newMobileNetworkCode) {
         currentMNC = newMobileNetworkCode;
-        emit currentMobileNetworkCodeChanged(currentMNC);
+        Q_EMIT currentMobileNetworkCodeChanged(currentMNC);
     }
 }
-
-#endif /* Maemo 5 */
+#endif // Q_WS_MAEMO_5
 
 void QSystemNetworkInfoPrivate::icdStatusChanged(QString, QString var2, QString, QString)
 {
     if (var2 == "WLAN_INFRA") {
-        QSystemNetworkInfo::NetworkStatus newWlanNetworkStatus =
-                networkStatus(QSystemNetworkInfo::WlanMode);
+        QSystemNetworkInfo::NetworkStatus newWlanNetworkStatus = networkStatus(QSystemNetworkInfo::WlanMode);
 
         if (currentWlanNetworkStatus != newWlanNetworkStatus) {
             currentWlanNetworkStatus = newWlanNetworkStatus;
-            emit networkStatusChanged(QSystemNetworkInfo::WlanMode, currentWlanNetworkStatus);
+            Q_EMIT networkStatusChanged(QSystemNetworkInfo::WlanMode, currentWlanNetworkStatus);
             networkModeChangeCheck();
         }
     }
@@ -1126,11 +1039,11 @@ void QSystemNetworkInfoPrivate::usbCableAction()
 {
     if (currentEthernetSignalStrength != networkSignalStrength(QSystemNetworkInfo::EthernetMode)) {
         currentEthernetSignalStrength = networkSignalStrength(QSystemNetworkInfo::EthernetMode);
-        emit networkSignalStrengthChanged(QSystemNetworkInfo::EthernetMode,
-                                  currentEthernetSignalStrength);
+        Q_EMIT networkSignalStrengthChanged(QSystemNetworkInfo::EthernetMode, currentEthernetSignalStrength);
     }
+
     QString newEthernetState;
-    QString devFile = "/sys/class/net/usb0/operstate";
+    QString devFile("/sys/class/net/usb0/operstate");
     QFileInfo fi(devFile);
     if (fi.exists()) {
         QFile rx(fi.absoluteFilePath());
@@ -1143,8 +1056,7 @@ void QSystemNetworkInfoPrivate::usbCableAction()
 
     if (currentEthernetState != newEthernetState) {
         currentEthernetState = newEthernetState;
-        emit networkStatusChanged(QSystemNetworkInfo::EthernetMode,
-                                  networkStatus(QSystemNetworkInfo::EthernetMode));
+        Q_EMIT networkStatusChanged(QSystemNetworkInfo::EthernetMode, networkStatus(QSystemNetworkInfo::EthernetMode));
     }
 
     networkModeChangeCheck();
@@ -1152,15 +1064,15 @@ void QSystemNetworkInfoPrivate::usbCableAction()
 
 QSystemNetworkInfo::NetworkMode QSystemNetworkInfoPrivate::currentMode()
 {
-    if(networkStatus(QSystemNetworkInfo::EthernetMode) == QSystemNetworkInfo::Connected) {
+    if (networkStatus(QSystemNetworkInfo::EthernetMode) == QSystemNetworkInfo::Connected)
         return QSystemNetworkInfo::EthernetMode;
-    }
-    if(networkStatus(QSystemNetworkInfo::WlanMode) == QSystemNetworkInfo::Connected) {
+
+    if (networkStatus(QSystemNetworkInfo::WlanMode) == QSystemNetworkInfo::Connected)
         return QSystemNetworkInfo::WlanMode;
-    }
 
     if (radioAccessTechnology == 1)
         return QSystemNetworkInfo::GsmMode;
+
     if (radioAccessTechnology == 2)
         return QSystemNetworkInfo::WcdmaMode;
 
@@ -1170,10 +1082,9 @@ QSystemNetworkInfo::NetworkMode QSystemNetworkInfoPrivate::currentMode()
 void QSystemNetworkInfoPrivate::networkModeChangeCheck()
 {
     QSystemNetworkInfo::NetworkMode newNetworkMode = currentMode();
-    if (currentNetworkMode != newNetworkMode)
-    {
+    if (currentNetworkMode != newNetworkMode) {
         currentNetworkMode = newNetworkMode;
-        emit networkModeChanged(currentNetworkMode);
+        Q_EMIT networkModeChanged(currentNetworkMode);
     }
 }
 
@@ -1183,7 +1094,7 @@ void QSystemNetworkInfoPrivate::wlanSignalStrengthCheck()
     strength =  networkSignalStrength(QSystemNetworkInfo::WlanMode);
     if (currentWlanSignalStrength != strength) {
         currentWlanSignalStrength = strength;
-        emit networkSignalStrengthChanged(QSystemNetworkInfo::WlanMode, currentWlanSignalStrength);
+        Q_EMIT networkSignalStrengthChanged(QSystemNetworkInfo::WlanMode, currentWlanSignalStrength);
     }
 }
 
@@ -1194,7 +1105,7 @@ void QSystemNetworkInfoPrivate::bluetoothNetworkStatusCheck(QString device)
     } else {
         if (currentBluetoothNetworkStatus != networkStatus(QSystemNetworkInfo::BluetoothMode)) {
             currentBluetoothNetworkStatus = networkStatus(QSystemNetworkInfo::BluetoothMode);
-            emit networkStatusChanged(QSystemNetworkInfo::BluetoothMode, currentBluetoothNetworkStatus);
+            Q_EMIT networkStatusChanged(QSystemNetworkInfo::BluetoothMode, currentBluetoothNetworkStatus);
         }
     }
 }
@@ -1209,27 +1120,40 @@ void QSystemNetworkInfoPrivate::setWlanSignalStrengthCheckEnabled(bool enabled)
     } else {
         iWlanStrengthCheckEnabled--;
         if (iWlanStrengthCheckEnabled <= 0) {
-            if(wlanSignalStrengthTimer->isActive())
+            if (wlanSignalStrengthTimer->isActive())
                 wlanSignalStrengthTimer->stop();
         }
     }
 }
 
+inline QSystemNetworkInfo::CellDataTechnology QSystemNetworkInfoPrivate::csdtToCellDataTechnology(const QString &tech)
+{
+    QSystemNetworkInfo::CellDataTechnology cdt = QSystemNetworkInfo::UnknownDataTechnology;
+    if (tech == "GPRS")
+        cdt = QSystemNetworkInfo::GprsDataTechnology;
+    else if (tech == "EGPRS")
+        cdt = QSystemNetworkInfo::EdgeDataTechnology;
+    else if (tech == "UMTS")
+        cdt = QSystemNetworkInfo::UmtsDataTechnology;
+    else if (tech == "HSPA")
+        cdt = QSystemNetworkInfo::HspaDataTechnology;
+    return cdt;
+}
+
 QSystemNetworkInfo::CellDataTechnology QSystemNetworkInfoPrivate::cellDataTechnology()
 {
-    const QString service = "com.nokia.csd.CSNet";
-    const QString servicePath = "/com/nokia/csd/csnet";
-    QDBusInterface ifc5(service, servicePath, "com.nokia.csd.CSNet.RadioAccess", QDBusConnection::systemBus());
+    const QString service("com.nokia.csd.CSNet");
+    const QString path("/com/nokia/csd/csnet");
 
-    QDBusInterface ifc51(service, servicePath, "com.nokia.csd.CSNet", QDBusConnection::systemBus());
-    QString activity = ifc51.property("Activity").toString();
+    QDBusInterface csnetInterface(service, path, "com.nokia.csd.CSNet", QDBusConnection::systemBus());
+    QString activity = csnetInterface.property("Activity").toString();
+
     QVariant dataTechnology;
-
-    if ( activity == "PacketData") {
-        dataTechnology = ifc5.property("DataTechnology");
-    } else {
-        dataTechnology = ifc5.property("Technology");
-    }
+    QDBusInterface radioAccessInterface(service, path, "com.nokia.csd.CSNet.RadioAccess", QDBusConnection::systemBus());
+    if (activity == "PacketData")
+        dataTechnology = radioAccessInterface.property("DataTechnology");
+    else
+        dataTechnology = radioAccessInterface.property("Technology");
 
     QString dt = dataTechnology.isValid() ? dataTechnology.value<QString>() : "";
     currentCellDataTechnology = csdtToCellDataTechnology(dt);

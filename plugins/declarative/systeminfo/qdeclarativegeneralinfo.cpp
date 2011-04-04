@@ -43,6 +43,7 @@
 #include "qdeclarativegeneralinfo_p.h"
 #include "qsystemgeneralinfo.h"
 #include <QMetaType>
+#include <QDebug>
 
 QT_BEGIN_NAMESPACE
 
@@ -96,3 +97,44 @@ void QDeclarativeGeneralInfo::declarativeCurrentLanguageChanged(const QString &l
 {
     Q_EMIT currentLanguageChanged(language);
 }
+
+/*!
+  \qmlproperty string QDeclarativeGeneralInfo::osVersion
+
+   Returns the version of the Operating System.
+*/
+QString QDeclarativeGeneralInfo::osVersion()
+{
+    return generalInfo()->version(QSystemInfo::Os);
+}
+
+/*!
+  \qmlproperty string QDeclarativeGeneralInfo::qtCoreVersion
+
+   Returns the version of the installed Qt Core library.
+*/
+QString QDeclarativeGeneralInfo::qtCoreVersion()
+{
+    return generalInfo()->version(QSystemInfo::QtCore);
+}
+
+/*!
+  \qmlproperty string QDeclarativeGeneralInfo::firmwareVersion
+
+   Returns the version of the firmware as a whole.
+*/
+QString QDeclarativeGeneralInfo::firmwareVersion()
+{
+    return generalInfo()->version(QSystemInfo::Firmware);
+}
+
+/*!
+  \qmlproperty string QDeclarativeGeneralInfo::qtMobilityVersion
+
+   Returns the version of the installed Qt Mobility library.
+*/
+QString QDeclarativeGeneralInfo::qtMobilityVersion()
+{
+    return generalInfo()->version(QSystemInfo::QtMobility);
+}
+
