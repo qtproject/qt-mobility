@@ -65,7 +65,7 @@ QString getTestFileFolder()
 {
     QString ret;
     ret = TESTDATA_DIR;
-    ret += "/testdata";
+    ret += "testdata";
     QDir qdir(ret);
     if(!qdir.exists())
         ret = "";
