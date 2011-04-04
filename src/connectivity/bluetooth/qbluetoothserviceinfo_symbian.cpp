@@ -43,6 +43,7 @@
 #include "qbluetoothserviceinfo_p.h"
 
 #include <QUrl>
+#include <QtEndian>
 
 #include <QDebug>
 
@@ -112,9 +113,13 @@ static void convertL(MSdpElementBuilder *list, const QList<QVariant> &vList)
                     list->BuildUUIDL(uuid.toUInt32());
                     break;
                 case 16: {
-                    quint128 uuid128 = uuid.toUInt128();
-                    quint32 *data = reinterpret_cast<quint32 *>(uuid128.data);
-                    list->BuildUUIDL(TUUID(data[0], data[1], data[2], data[3]));
+                    TUint32 *dataPointer = (TUint32*)uuid.toUInt128().data;
+                    TUint32 hH = qToBigEndian<quint32>(*(dataPointer++));
+                    TUint32 hL = qToBigEndian<quint32>(*(dataPointer++));
+                    TUint32 lH = qToBigEndian<quint32>(*(dataPointer++));
+                    TUint32 lL = qToBigEndian<quint32>(*(dataPointer));
+                    TUUID sUuid(hH, hL, lH, lL);
+                    list->BuildUUIDL(sUuid);
                     break;
                 }
                 }
@@ -186,9 +191,13 @@ void QBluetoothServiceInfoPrivate::setRegisteredAttributeL(quint16 attributeId, 
                 sdpValue = CSdpAttrValueUUID::NewUUIDL(uuid.toUInt32());
                 break;
             case 16: {
-                quint128 uuid128 = uuid.toUInt128();
-                quint32 *data = reinterpret_cast<quint32 *>(uuid128.data);
-                sdpValue = CSdpAttrValueUUID::NewUUIDL(TUUID(data[0], data[1], data[2], data[3]));
+                TUint32 *dataPointer = (TUint32*)uuid.toUInt128().data;
+                TUint32 hH = qToBigEndian<quint32>(*(dataPointer++));
+                TUint32 hL = qToBigEndian<quint32>(*(dataPointer++));
+                TUint32 lH = qToBigEndian<quint32>(*(dataPointer++));
+                TUint32 lL = qToBigEndian<quint32>(*(dataPointer));
+                TUUID sUuid(hH, hL, lH, lL);
+                sdpValue = CSdpAttrValueUUID::NewUUIDL(sUuid);
                 break;
             }
             }

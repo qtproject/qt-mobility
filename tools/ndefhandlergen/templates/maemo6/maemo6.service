@@ -1,0 +1,4 @@
+[D-BUS Service]
+Name=com.nokia.qtmobility.nfc.%APPNAME%
+Exec=%APPPATH%
+User=user

@@ -221,4 +221,6 @@ EXPORTS
 	?isActive@QSystemAlignedTimer@QtMobility@@QBE_NXZ @ 220 NONAME ; bool QtMobility::QSystemAlignedTimer::isActive(void) const
 	?orientationChanged@QSystemDisplayInfo@QtMobility@@IAEXW4DisplayOrientation@12@@Z @ 221 NONAME ; void QtMobility::QSystemDisplayInfo::orientationChanged(enum QtMobility::QSystemDisplayInfo::DisplayOrientation)
 	?setScreenSaverInhibited@QSystemScreenSaver@QtMobility@@QAEX_N@Z @ 222 NONAME ; void QtMobility::QSystemScreenSaver::setScreenSaverInhibited(bool)
+	?cellDataTechnology@QSystemNetworkInfo@QtMobility@@QAE?AW4CellDataTechnology@12@XZ @ 223 NONAME ; enum QtMobility::QSystemNetworkInfo::CellDataTechnology QtMobility::QSystemNetworkInfo::cellDataTechnology(void)
+	?cellDataTechnologyChanged@QSystemNetworkInfo@QtMobility@@IAEXW4CellDataTechnology@12@@Z @ 224 NONAME ; void QtMobility::QSystemNetworkInfo::cellDataTechnologyChanged(enum QtMobility::QSystemNetworkInfo::CellDataTechnology)
 

@@ -84,6 +84,8 @@ public:
     qreal minimumTilt() const;
     qreal maximumTilt() const;
 
+    bool supportsCustomMapObjects() const;
+
     void setLocale(const QLocale &locale);
     QLocale locale() const;
 

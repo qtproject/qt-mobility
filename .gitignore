@@ -171,3 +171,7 @@ plugin_commonU.def
 *.pro.user*
 *~
 
+# Failed patch
+*.orig
+*.rej
+

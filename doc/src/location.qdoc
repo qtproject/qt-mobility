@@ -319,6 +319,7 @@ For more details see the \l {Landmark Examples} {Landmark Examples} page for:
     \o \l {Exporting landmarks}
 \endlist
 
+\target Landmark Managers and Plugins
 \section3 Managers and plugins
 Landmark managers are identified by their manager name.  Each manager name corresponds to a specific plugin/backend
 that implements the manager functionality.  The manager name is typically a reverse domain  string such as
@@ -361,9 +362,9 @@ as the \i {sparql manager}.
 The behaviour of some parts of the Landmarks API varies between platforms.  A few of the major ones are mentioned below
 
 \list
-\o The symbian manager does not support MatchContains in the name or attribute filters.  The symbian manager also does not
-support multiple attributes with AND operation type in an attribute filter.  See the documentation on the attribute 
-filter for more details.
+\o The symbian manager does not support the MatchContains flag in the attribute filters.  The symbian manager also does not
+support multiple attributes with an AND operation type in an attribute filter.  Some versions of s60 do not support the
+MatchContains flag in name filters. See the documentation on the attribute and name filters for more details.
 \o The sparql manager as of 1.1.1 does not support the countryCode, county and district fields of QGeoAddress.  These
 fields are ignored when a landmark is saved.
 \endlist
@@ -414,10 +415,9 @@ landmarks which have NaN latitude and longitude values.  If you try to export al
 are skipped over.  However if you provide a list of ids of landmarks to export, the export operation will fail if any one
 of those landmarks have NaN latitude or longitude values.
 
-Also note that when exporting landmarks in lmx format, the url of the landmark should be a valid URI
-as defined by RFC 2396 as amended by RFC 2732.  The managers differ in behaviour with the symbian manager
-ignoring the url field during export if the URI is invalid while the sqlite and sparql manager will export the url
-and subsequently create an invalid lmx file (this issue is intended to be resolved in a future release).
+Also note that when exporting landmarks in lmx format, the url of the landmark should be a valid absolute URI
+as specified in the Landmark Exchange Format Specification 1.0.  If the URI is relative, then the url of
+that landmark is not exported.
 
 \section2 Landmark classes
 

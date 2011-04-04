@@ -612,6 +612,11 @@ QString QSystemNetworkInfoPrivate::macAddress(QSystemNetworkInfo::NetworkMode mo
 
 }
 
+//QSystemNetworkInfo::CellDataTechnology QSystemNetworkInfoPrivate::cellDataTechnology()
+//{
+//    return QSystemNetworkInfo::UnknownDataTechnology;
+//}
+
 #if !defined(Q_WS_MAEMO_6) && defined(Q_WS_X11)  && !defined(Q_WS_MEEGO)
 bool q_XEventFilter(void *message)
 {
@@ -960,7 +965,11 @@ bool QSystemDeviceInfoPrivate::vibrationActive()
 }
 
 QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QSystemScreenSaverLinuxCommonPrivate *parent)
-         : QSystemScreenSaverLinuxCommonPrivate(parent), currentPid(0),kdeIsRunning(0),gnomeIsRunning(0),meegoIsRunning(0)
+         : QSystemScreenSaverLinuxCommonPrivate(parent),
+           currentPid(0),
+           kdeIsRunning(0),
+           meegoIsRunning(0),
+           gnomeIsRunning(0)
  {
      whichWMRunning();
  }

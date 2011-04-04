@@ -240,7 +240,8 @@ QDebug operator<<(QDebug dbg, const QGeoSatelliteInfo &info)
 
     Writes the given \a info to the specified \a stream.
 
-    \sa {Format of the QDataStream Operators}
+    \sa \link datastreamformat.html Format of the QDataStream operators \endlink
+
 */
 
 QDataStream &operator<<(QDataStream &stream, const QGeoSatelliteInfo &info)
@@ -260,7 +261,7 @@ QDataStream &operator<<(QDataStream &stream, const QGeoSatelliteInfo &info)
     Reads satellite information from the specified \a stream into the given
     \a info.
 
-    \sa {Format of the QDataStream Operators}
+    \sa \link datastreamformat.html Format of the QDataStream operators \endlink
 */
 
 QDataStream &operator>>(QDataStream &stream, QGeoSatelliteInfo &info)

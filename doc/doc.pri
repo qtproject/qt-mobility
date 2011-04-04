@@ -14,29 +14,18 @@ MOBILITY_DOCUMENTATION = $$QDOC $${QT_MOBILITY_SOURCE_TREE}/doc/config/qtmobilit
                          cd $${QT_MOBILITY_SOURCE_TREE} && \
                           $$GENERATOR doc/html/qtmobility.qhp -o doc/qch/qtmobility.qch
 
-# Sensors uses .dia files which must be compiled into .png for the docs
-unix {
-    LOGNAME=$$(LOGNAME)
-    equals(LOGNAME,lramsay) {
-        # Only do this on Unix when logged in as me
-        MOBILITY_DOCUMENTATION=\
-            @( cd "$$PWD/src";\
-            for file in *.dia; do\
-                destfile="images/\$$(echo "\$$file" | sed 's/dia\$$/png/')";\
-                if [ ! -f "\$$destfile" -o "\$$file" -nt "\$$destfile" ]; then\
-                    dia -e "\$$destfile" "\$$file";\
-                fi;\
-            done ) || true\
-            $$LINE_SEP $$MOBILITY_DOCUMENTATION
-    }
-}
+ONLINE_MOBILITY_DOCUMENTATION = $$QDOC $${QT_MOBILITY_SOURCE_TREE}/doc/config/qtmobility-online.qdocconf $$LINE_SEP \
+                         cd $${QT_MOBILITY_SOURCE_TREE} && \
+                          $$GENERATOR doc/html/qtmobility.qhp -o doc/qch/qtmobility.qch
 
 contains(unixstyle, false):MOBILITY_DOCUMENTATION = $$replace(MOBILITY_DOCUMENTATION, "/", "\\")
 
 # Build rules
 qch_docs.commands = $$MOBILITY_DOCUMENTATION
+qch_onlinedocs.commands = $$ONLINE_MOBILITY_DOCUMENTATION
 
 docs.depends = qch_docs
+onlinedocs.depends = qch_onlinedocs
 
 
-QMAKE_EXTRA_TARGETS += qch_docs docs
+QMAKE_EXTRA_TARGETS += qch_docs qch_onlinedocs docs onlinedocs

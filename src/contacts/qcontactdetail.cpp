@@ -435,7 +435,11 @@ QDataStream& operator>>(QDataStream& in, QContactDetail& detail)
 #endif
 
 /*!
-    Returns true if no values are contained in this detail.  Note that context is stored as a value; hence, if a context is set, this function will return false.
+    Returns true if no values are contained in this detail.  Note that context
+    is stored as a value; hence, if a context is set, this function will return false.
+
+    An empty value (for example, the string "") is still a value contained in this
+    detail, so this function will return false.
  */
 bool QContactDetail::isEmpty() const
 {

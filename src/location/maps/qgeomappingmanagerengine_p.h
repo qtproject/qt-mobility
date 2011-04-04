@@ -78,6 +78,7 @@ public:
     bool supportsTilting;
     qreal minimumTilt;
     qreal maximumTilt;
+    bool supportsCustomMapObjects;
 
     QLocale locale;
 

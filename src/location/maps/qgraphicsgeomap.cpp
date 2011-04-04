@@ -503,6 +503,21 @@ QGraphicsGeoMap::ConnectivityMode QGraphicsGeoMap::connectivityMode() const
 }
 
 /*!
+    Returns whether custom map objects are supported by this engine.
+
+    Custom map objects are map objects based on QGraphicsItem instances, which
+    are hard to support in cases where the map rendering is not being
+    performed by the Qt Graphics View framwork.
+*/
+bool QGraphicsGeoMap::supportsCustomMapObjects() const
+{
+    if (d_ptr->manager)
+        return d_ptr->manager->supportsCustomMapObjects();
+
+    return false;
+}
+
+/*!
     Returns the map objects associated with this map.
 */
 QList<QGeoMapObject*> QGraphicsGeoMap::mapObjects() const
@@ -521,10 +536,16 @@ QList<QGeoMapObject*> QGraphicsGeoMap::mapObjects() const
     object immediately.
 
     The map will take ownership of the \a mapObject.
+
+    If supportsCustomMapObject() returns false and \a mapObject is a custom map
+    object then \a mapObject will not be added to the map.
 */
 void QGraphicsGeoMap::addMapObject(QGeoMapObject *mapObject)
 {
     if (!mapObject || !d_ptr->mapData)
+        return;
+
+    if ((mapObject->type() == QGeoMapObject::CustomType) && !supportsCustomMapObjects())
         return;
 
     d_ptr->mapData->addMapObject(mapObject);

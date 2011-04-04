@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -56,12 +56,12 @@ class CLlcpServer : public CBase,
                     public MLlcpConnOrientedListener
    {
 public:
-   /*!
+   /*
     * Creates a new CLlcpServer object.
     */
    static CLlcpServer* NewL(QtMobility::QLlcpServerPrivate&);
 
-   /*!
+   /*
     * Destructor
     */
    ~CLlcpServer();
@@ -88,13 +88,13 @@ private:
 
     RPointerArray<CLlcpSocketType2>  iLlcpSocketArray;
 
-   /*!
+   /*
     * Handle to NFC-server.
     * Own.
     */
    RNfcServer iNfcServer;
 
-   /*!
+   /*
     * Pointer to CLlcpProvider object.
     * Own.
     */

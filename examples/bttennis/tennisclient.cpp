@@ -93,7 +93,7 @@ void TennisClient::stopClient()
     delete stream;
     stream = 0;
 
-    delete socket;
+    socket->deleteLater();
     socket = 0;
 }
 //! [stopClient]
@@ -101,6 +101,7 @@ void TennisClient::stopClient()
 //! [socketDisconnected]
 void TennisClient::socketDisconnected()
 {
+    qDebug() << "Got socketDisconnected";
     stopClient();
 }
 //! [socketDisconnected]
@@ -166,16 +167,15 @@ void TennisClient::moveRightPaddle(int y)
 
 //! [connected]
 void TennisClient::connected()
-{
+{  
     stream = new QDataStream(socket);
     emit connected(socket->peerName());
 }
 //! [connected]
 
 void TennisClient::error(QBluetoothSocket::SocketError err)
-{
-    printf("Got err: %d\n", err);
-    qDebug() << Q_FUNC_INFO << "error" << err;
+{   
+    qDebug() << "Got socket error" <<Q_FUNC_INFO << "error" << err;
     emit disconnected();
 }
 

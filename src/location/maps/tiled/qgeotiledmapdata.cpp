@@ -1125,9 +1125,23 @@ void QGeoTiledMapDataPrivate::paintMap(QPainter *painter, const QStyleOptionGrap
 
 void QGeoTiledMapDataPrivate::paintObjects(QPainter *painter, const QStyleOptionGraphicsItem * option)
 {
+    painter->save();
     painter->setRenderHint(QPainter::Antialiasing);
 
     QRectF target = option ? option->rect : QRectF(QPointF(0,0), windowSize);
+
+    qreal offsetX = ((windowSize.width() * zoomFactor) - worldReferenceViewportRect.width()) / 2.0;
+    if (offsetX < 0.0)
+        offsetX = 0.0;
+    offsetX /= zoomFactor;
+    qreal offsetY = ((windowSize.height() * zoomFactor) - worldReferenceViewportRect.height()) / 2.0;
+    if (offsetY < 0.0)
+        offsetY = 0.0;
+    offsetY /= zoomFactor;
+
+    target.adjust(offsetX, offsetY, -1.0 * offsetX, -1.0 * offsetY);
+
+    painter->setClipRect(target);
 
     oe->updateTransforms();
 
@@ -1138,6 +1152,8 @@ void QGeoTiledMapDataPrivate::paintObjects(QPainter *painter, const QStyleOption
 
     QTransform baseTrans = painter->transform();
 
+    QStyleOptionGraphicsItem *style = new QStyleOptionGraphicsItem;
+
     foreach (QGraphicsItem *item, items) {
         QGeoMapObject *object = oe->pixelItems.value(item);
         Q_ASSERT(object);
@@ -1146,9 +1162,9 @@ void QGeoTiledMapDataPrivate::paintObjects(QPainter *painter, const QStyleOption
                 foreach (QGraphicsItem *it, oe->pixelExact.values(object)) {
                     painter->setTransform(baseTrans);
 
-                    QStyleOptionGraphicsItem *style = new QStyleOptionGraphicsItem;
+//                    QStyleOptionGraphicsItem *style = new QStyleOptionGraphicsItem;
                     it->paint(painter, style);
-                    delete style;
+//                    delete style;
                 }
             } else {
                 QGraphicsItem *item = oe->graphicsItemFromMapObject(object);
@@ -1156,7 +1172,7 @@ void QGeoTiledMapDataPrivate::paintObjects(QPainter *painter, const QStyleOption
                     foreach (QTransform trans, oe->pixelTrans.values(object)) {
                         painter->setTransform(trans * baseTrans);
 
-                        QStyleOptionGraphicsItem *style = new QStyleOptionGraphicsItem;
+//                        QStyleOptionGraphicsItem *style = new QStyleOptionGraphicsItem;
                         item->paint(painter, style);
                         foreach (QGraphicsItem *child, item->children()) {
                             painter->setTransform(child->transform() * trans * baseTrans);
@@ -1164,7 +1180,7 @@ void QGeoTiledMapDataPrivate::paintObjects(QPainter *painter, const QStyleOption
                             child->paint(painter, style);
                         }
 
-                        delete style;
+//                        delete style;
                     }
                 }
             }
@@ -1172,7 +1188,9 @@ void QGeoTiledMapDataPrivate::paintObjects(QPainter *painter, const QStyleOption
         }
     }
 
-    painter->setTransform(baseTrans);
+    painter->restore();
+
+    delete style;
 }
 
 void QGeoTiledMapDataPrivate::cleanupCaches()
@@ -1236,8 +1254,11 @@ QRect QGeoTiledMapDataPrivate::screenRectForZoomFactor(int factor)
 
     int y = worldReferenceViewportCenter.y() - (height / 2);
 
-    if (height == worldReferenceSize.height())
+    if (y < 0)
         y = 0;
+
+    if ((y + height) >= worldReferenceSize.height())
+        y = worldReferenceSize.height() - height;
 
     return QRect(x, y, width, height);
 }

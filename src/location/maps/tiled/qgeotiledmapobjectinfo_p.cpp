@@ -146,28 +146,61 @@ QGeoBoundingBox QGeoTiledMapObjectInfo::boundingBox() const
     QGeoMapObject *object = mapObject();
 
     e->updateTransforms();
-    QTransform trans = e->latLonTrans.value(object);
 
-    QRectF bounds = graphicsItem->boundingRect();
-    QPolygonF poly = bounds * trans;
+    if (e->latLonExact.contains(object)) {
+        QList<QGraphicsItem*> items = e->latLonExact.values(object);
+        QGeoBoundingBox box;
+        foreach (QGraphicsItem *item, items) {
+            QRectF latLonBounds = item->boundingRect();
+            QPointF topLeft = latLonBounds.bottomLeft();
+            if (topLeft.x() > 180.0 * 3600.0)
+                topLeft.setX(topLeft.x() - 360.0 * 3600.0);
+            if (topLeft.x() < -180.0 * 3600.0)
+                topLeft.setX(topLeft.x() + 360.0 * 3600.0);
 
-    QRectF latLonBounds = poly.boundingRect();
-    QPointF topLeft = latLonBounds.bottomLeft();
-    if (topLeft.x() > 180.0 * 3600.0)
-        topLeft.setX(topLeft.x() - 360.0 * 3600.0);
-    if (topLeft.x() < -180.0 * 3600.0)
-        topLeft.setX(topLeft.x() + 360.0 * 3600.0);
+            QPointF bottomRight = latLonBounds.topRight();
+            if (bottomRight.x() > 180.0 * 3600.0)
+                bottomRight.setX(bottomRight.x() - 360.0 * 3600.0);
+            if (bottomRight.x() < -180.0 * 3600.0)
+                bottomRight.setX(bottomRight.x() + 360.0 * 3600.0);
 
-    QPointF bottomRight = latLonBounds.topRight();
-    if (bottomRight.x() > 180.0 * 3600.0)
-        bottomRight.setX(bottomRight.x() - 360.0 * 3600.0);
-    if (bottomRight.x() < -180.0 * 3600.0)
-        bottomRight.setX(bottomRight.x() + 360.0 * 3600.0);
+            QGeoCoordinate tlc(topLeft.y() / 3600.0, topLeft.x() / 3600.0);
+            QGeoCoordinate brc(bottomRight.y() / 3600.0, bottomRight.x() / 3600.0);
 
-    QGeoCoordinate tlc(topLeft.y() / 3600.0, topLeft.x() / 3600.0);
-    QGeoCoordinate brc(bottomRight.y() / 3600.0, bottomRight.x() / 3600.0);
+            return QGeoBoundingBox(tlc, brc);
 
-    return QGeoBoundingBox(tlc, brc);
+            // it looks like the following is overkill
+//            if (box.isValid()) {
+//                box |= QGeoBoundingBox(tlc, brc);
+//            } else {
+//                box = QGeoBoundingBox(tlc, brc);
+//            }
+        }
+        return box;
+    } else {
+        QTransform trans = e->latLonTrans.value(object);
+
+        QRectF bounds = graphicsItem->boundingRect();
+        QPolygonF poly = bounds * trans;
+
+        QRectF latLonBounds = poly.boundingRect();
+        QPointF topLeft = latLonBounds.bottomLeft();
+        if (topLeft.x() > 180.0 * 3600.0)
+            topLeft.setX(topLeft.x() - 360.0 * 3600.0);
+        if (topLeft.x() < -180.0 * 3600.0)
+            topLeft.setX(topLeft.x() + 360.0 * 3600.0);
+
+        QPointF bottomRight = latLonBounds.topRight();
+        if (bottomRight.x() > 180.0 * 3600.0)
+            bottomRight.setX(bottomRight.x() - 360.0 * 3600.0);
+        if (bottomRight.x() < -180.0 * 3600.0)
+            bottomRight.setX(bottomRight.x() + 360.0 * 3600.0);
+
+        QGeoCoordinate tlc(topLeft.y() / 3600.0, topLeft.x() / 3600.0);
+        QGeoCoordinate brc(bottomRight.y() / 3600.0, bottomRight.x() / 3600.0);
+
+        return QGeoBoundingBox(tlc, brc);
+    }
 }
 
 bool QGeoTiledMapObjectInfo::contains(const QGeoCoordinate &coordinate) const

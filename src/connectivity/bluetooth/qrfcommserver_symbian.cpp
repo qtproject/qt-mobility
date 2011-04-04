@@ -63,8 +63,6 @@ QRfcommServerPrivate::QRfcommServerPrivate()
 
 QRfcommServerPrivate::~QRfcommServerPrivate()
 {
-    delete pendingSocket;
-
     delete socket;
 }
 
@@ -114,7 +112,7 @@ bool QRfcommServer::listen(const QBluetoothAddress &address, quint16 port)
 
     d->ds->iSocket->Listen(d->maxPendingConnections);
 
-    d->pendingSocket = new QBluetoothSocket(QBluetoothSocket::RfcommSocket);
+    d->pendingSocket = new QBluetoothSocket(QBluetoothSocket::RfcommSocket, this);
 
     QBluetoothSocketPrivate *pd = d->pendingSocket->d_ptr;
 
@@ -173,7 +171,7 @@ QBluetoothSocket *QRfcommServer::nextPendingConnection()
     QBluetoothSocket *next = d->activeSockets.takeFirst();
     QBluetoothSocketPrivate *n = next->d_ptr;
 
-    n->startReceive();
+    n->startServerSideReceive();
 
     return next;
 }
@@ -187,9 +185,6 @@ void QRfcommServerPrivate::HandleAcceptCompleteL(TInt aErr)
         activeSockets.append(pendingSocket);
 
         QBluetoothSocketPrivate *pd = pendingSocket->d_ptr;
-
-        if (!pd->iBlankSocket)
-            pd->ensureBlankNativeSocket();
 
         pd->iSocket->Accept(*pd->iBlankSocket);
         emit q->newConnection();

@@ -188,7 +188,7 @@ exactly what has changed without the need for a bulkier change notification prot
 Publish and Subscribe API can be used to access Symbian OS' Properties (RProperty) as well as
 Central Repository files (CRepository).
 
-\section3 \bold{Declaring Value Space Paths}
+\section3 \bold{Declaring Value Space Paths Using QCRML}
 
 Since Publish and Subscribe API is based on Value Space that is accessed via textual path we need
 to somehow specify how particular paths are turned into RPropery or CRepository key definitions.
@@ -237,7 +237,7 @@ symbian {
 }
 \endcode
 
-\section3 \bold{Limitations}
+\section3 \bold{Limitations of Symbian Settings Layer}
 
 The underlying Symbian APIs limit the data types that can be stored natively in available backing stores.
 In practice this is not a problem since the unsupported data types are automatically serialized in
@@ -249,7 +249,7 @@ that access the same data directly. The maximum size of the bytearray is 65535 f
 
 Publish and Subscribe API can be used to access the GConf configuration system.
 
-\section3 \bold{Limitations}
+\section3 \bold{Limitations of GConf Layer}
 
 GConf can natively store only a limited set of QVariant data types. These types are Bool, Int, Double,
 String, StringList and List. When publishing other data types the values are automatically serialized
@@ -282,7 +282,7 @@ QCoreApplication::setApplicationName("Test Application");
 // will register with 'com.example.Test-Application'
 \endcode
 
-\section3 \bold{Declaring Value Space Paths}
+\section3 \bold{Declaring Value Space Paths Using Property Declaration Files}
 
 ContextKit also requires that an entry be present in the ContextKit Registry on the system before
 subscribers will be able to find an advertised property. The Registry is a set of XML files, normally
@@ -312,7 +312,10 @@ which can usually be regenerated with the command \c update-contextkit-providers
 on Maemo, where the command should be appended to the bottom of the \c debian/postinst script
 during packaging.
 
-\section3 \bold{Limitations}
+For more detailed information on this, please refer to
+\l{http://maemo.gitorious.org/maemo-af/contextkit/blobs/master/doc/context-providers.txt}{How to provide context properties}.
+
+\section3 \bold{Limitations of ContextKit Layer}
 
 Similar to both the Symbian and Gconf backends, ContextKit supports only a limited range of QVariant data
 types. Types not supported are serialized in a manner transparent to the API user, but interoperatibility
@@ -336,6 +339,12 @@ charge level for the animation to represent.
 
 \section1 Namespaces and Classes
 
+\section2 C++ Classes
+
 \annotatedlist publishsubscribe
+
+\section2 QML Elements
+
+\annotatedlist qml-publishsubscribe
 
 */
