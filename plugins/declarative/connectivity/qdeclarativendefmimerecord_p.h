@@ -1,10 +1,10 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the QtDeclarative module of the Qt Toolkit.
+** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
@@ -39,59 +39,28 @@
 **
 ****************************************************************************/
 
-#include <QDebug>
-#include <qdeclarativeextensionplugin.h>
+#ifndef QDECLARATIVENDEFMIMERECORD_P_H
+#define QDECLARATIVENDEFMIMERECORD_P_H
 
-#include <qdeclarativeengine.h>
-#include <qdeclarative.h>
-#include "qdeclarativebtimageprovider_p.h"
-
+#include <qdeclarativendefrecord.h>
 
 QTM_USE_NAMESPACE
 
-// This is run in a low priority thread.
-QImage BluetoothThumbnailImageProvider::requestImage(const QString &id, QSize *size, const QSize &req_size)
+class QDeclarativeNdefMimeRecord : public QDeclarativeNdefRecord
 {
-    if (m_thumbnails.contains(id)) {
-        if (size)
-            *size = req_size;
-        return m_thumbnails.value(id).scaled(req_size);
-    }
+    Q_OBJECT
 
-    /* url format:
-        image://bluetoothicons/{hosttype}
-     */
+    Q_PROPERTY(QString uri READ uri NOTIFY uriChanged)
 
+public:
+    explicit QDeclarativeNdefMimeRecord(QObject *parent = 0);
+    Q_INVOKABLE QDeclarativeNdefMimeRecord(const QNdefRecord &record, QObject *parent = 0);
+    ~QDeclarativeNdefMimeRecord();
 
-    QImage image(
-            req_size.width() > 0 ? req_size.width() : 100,
-            req_size.height() > 0 ? req_size.height() : 50,
-            QImage::Format_RGB32);
+    QString uri() const;
 
-    QString imageUrl;
+signals:
+    void uriChanged();
+};
 
-    if(id == "default")
-        imageUrl = QLatin1String(":/default.svg");
-
-    imageUrl = imageUrl.isEmpty() ? QLatin1String(":/default.svg") : imageUrl;
-    image.load(imageUrl);
-
-    if (size)
-        *size = image.size();
-
-    m_thumbnails.insert(id, image);
-
-    return image;
-}
-
-BluetoothThumbnailImageProvider::BluetoothThumbnailImageProvider()
-    :QDeclarativeImageProvider(QDeclarativeImageProvider::Image)
-{
-
-}
-
-BluetoothThumbnailImageProvider::~BluetoothThumbnailImageProvider()
-{
-}
-
-
+#endif // QDECLARATIVENDEFMIMERECORD_P_H
