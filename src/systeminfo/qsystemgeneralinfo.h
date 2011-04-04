@@ -95,9 +95,9 @@ public:
         LocationFeature,
         VideoOutFeature,
         HapticsFeature
-	};
+    };
 
-    bool hasFeatureSupported(QSystemInfo::Feature feature);
+    Q_INVOKABLE bool hasFeatureSupported(QSystemInfo::Feature feature);
 
 Q_SIGNALS:
     void currentLanguageChanged(const QString &);
