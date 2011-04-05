@@ -181,7 +181,20 @@ bool ProjCoordinate::convert(const ProjCoordinateSystem &system)
 
 QGeoCoordinate ProjCoordinate::toGeoCoordinate() const
 {
-    return QGeoCoordinate(d->y, d->x, d->z);
+    double x = d->x;
+    double y = d->y;
+
+    if (x < -180.0)
+        x = -180.0;
+    if (x > 180.0)
+        x = 180.0;
+
+    if (y < -90.0)
+        y = -90.0;
+    if (y > 90.0)
+        y = 90.0;
+
+    return QGeoCoordinate(y, x, d->z);
 }
 
 class ProjPolygonPrivate
