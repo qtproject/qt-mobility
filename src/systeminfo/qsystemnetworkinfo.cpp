@@ -174,8 +174,8 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfo::networkStatus(QSystemNetwo
 }
 
 /*!
-    Returns the strength of the network signal, per network \a mode , 0 - 100 linear scaling. In case of
-    unknown network mode or error, -1 is returned.
+    Returns the strength of the network signal, per network \a mode , 0 - 100 linear scaling. -1 is returned
+    if not available or on error.
 
     In the case of QSystemNetworkInfo::EthernetMode, it will either be 100 for carrier active, or 0 for when
     there is no carrier or cable connected.
@@ -183,10 +183,8 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfo::networkStatus(QSystemNetwo
 int QSystemNetworkInfo::networkSignalStrength(QSystemNetworkInfo::NetworkMode mode)
 {
     QSystemNetworkInfo::NetworkStatus info = netInfoPrivate()->networkStatus(mode);
-    if (info == QSystemNetworkInfo::UndefinedStatus)
+    if (info == QSystemNetworkInfo::UndefinedStatus || info == QSystemNetworkInfo::NoNetworkAvailable)
         return -1;
-    else if (info == QSystemNetworkInfo::NoNetworkAvailable)
-        return 0;
 
     return netInfoPrivate()->networkSignalStrength(mode);
 }
@@ -196,7 +194,6 @@ int QSystemNetworkInfo::networkSignalStrength(QSystemNetworkInfo::NetworkMode mo
     \brief The devices Cell ID
 
     Returns the Cell ID of the connected tower or based station. -1 is returned if not available or on error.
-    returned on error.
 */
 int QSystemNetworkInfo::cellId()
 {
@@ -310,11 +307,11 @@ void QSystemNetworkInfo::connectNotify(const char *signal)
 
     //check for networkSignalStrengthChanged() signal connect notification
     //This is not required on all platforms
-#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+#if defined(Q_WS_MAEMO_5)
     if (QLatin1String(signal) == SIGNAL(networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode,int))) {
         netInfoPrivate()->setWlanSignalStrengthCheckEnabled(true);
     } else
-#endif // Q_WS_MAEMO_5 || Q_WS_MAEMO_6
+#endif // Q_WS_MAEMO_5
     if (QLatin1String(signal) == SIGNAL(currentMobileCountryCodeChanged(QString))) {
         connect(d, SIGNAL(currentMobileCountryCodeChanged(QString)),
                 this, SIGNAL(currentMobileCountryCodeChanged(QString)));
@@ -353,11 +350,11 @@ void QSystemNetworkInfo::disconnectNotify(const char *signal)
 
     //check for networkSignalStrengthChanged() signal disconnect notification
     //This is not required on all platforms
-#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+#if defined(Q_WS_MAEMO_5)
     if (QLatin1String(signal) == SIGNAL(networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode,int))) {
         netInfoPrivate()->setWlanSignalStrengthCheckEnabled(false);
     } else
-#endif // Q_WS_MAEMO_5 || Q_WS_MAEMO_6
+#endif // Q_WS_MAEMO_5
     if (QLatin1String(signal) == SIGNAL(currentMobileCountryCodeChanged(QString))) {
         disconnect(d, SIGNAL(currentMobileCountryCodeChanged(QString)),
                    this, SIGNAL(currentMobileCountryCodeChanged(QString)));
