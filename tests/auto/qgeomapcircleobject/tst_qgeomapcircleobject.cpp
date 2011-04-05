@@ -643,7 +643,6 @@ void tst_QGeoMapCircleObject::contains()
 // public QGeoBoundingBox boundingBox() const
 void tst_QGeoMapCircleObject::boundingBox()
 {
-
     QGeoCoordinate center(0, 0, 0);
 
     QGeoMapCircleObject* object = new QGeoMapCircleObject(center, 1000);
@@ -659,6 +658,28 @@ void tst_QGeoMapCircleObject::boundingBox()
     QVERIFY2(object->boundingBox().width()>0,"no bounding box");
     QVERIFY2(object->boundingBox().height()>0,"no bounding box");
 
+    double width = object->boundingBox().width();
+    double height = object->boundingBox().height();
+
+    double top = object->boundingBox().topLeft().latitude();
+    double bottom = object->boundingBox().bottomRight().latitude();
+
+    QVERIFY(object->boundingBox().topLeft().longitude() < object->boundingBox().bottomRight().longitude());
+
+    QGeoCoordinate dateline(0.0, 180.0, 0.0);
+
+    object->setCenter(dateline);
+
+    QVERIFY2(object->boundingBox().width()!=0,"no bounding box");
+    QVERIFY2(object->boundingBox().height()!=0,"no bounding box");
+
+    QCOMPARE(object->boundingBox().width(), width);
+    QCOMPARE(object->boundingBox().height(), height);
+
+    QVERIFY(object->boundingBox().topLeft().latitude() == top);
+    QVERIFY(object->boundingBox().bottomRight().latitude() == bottom);
+
+    QVERIFY(object->boundingBox().topLeft().longitude() > object->boundingBox().bottomRight().longitude());
 }
 
 // QTMOBILITY-1255: Changing z value of map object causes it to break insertion order
