@@ -113,7 +113,6 @@ public:
     QSystemNetworkInfoPrivate(QSystemNetworkInfoLinuxCommonPrivate *parent = 0);
     virtual ~QSystemNetworkInfoPrivate();
 
-
     int cellId();
     QSystemNetworkInfo::CellDataTechnology cellDataTechnology();
 

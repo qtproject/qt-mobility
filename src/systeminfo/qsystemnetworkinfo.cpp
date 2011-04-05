@@ -304,6 +304,10 @@ QSystemNetworkInfo::NetworkMode QSystemNetworkInfo::currentMode()
 */
 void QSystemNetworkInfo::connectNotify(const char *signal)
 {
+    // connect only once
+    if (receivers(signal) > 1)
+        return;
+
     //check for networkSignalStrengthChanged() signal connect notification
     //This is not required on all platforms
 #if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
@@ -343,6 +347,10 @@ void QSystemNetworkInfo::connectNotify(const char *signal)
 */
 void QSystemNetworkInfo::disconnectNotify(const char *signal)
 {
+    // disconnect only when there's no connections
+    if (receivers(signal) == 0)
+        return;
+
     //check for networkSignalStrengthChanged() signal disconnect notification
     //This is not required on all platforms
 #if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
