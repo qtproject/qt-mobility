@@ -148,36 +148,6 @@ bool udisksIsAvailable;
 bool connmanIsAvailable;
 bool ofonoIsAvailable;
 
-static bool btHasPower() {
-#if !defined(QT_NO_DBUS)
-     QDBusInterface *connectionInterface;
-     connectionInterface = new QDBusInterface("org.bluez",
-                                              "/",
-                                              "org.bluez.Manager",
-                                              QDBusConnection::systemBus());
-     if (connectionInterface->isValid()) {
-         QDBusReply<  QDBusObjectPath > reply = connectionInterface->call("DefaultAdapter");
-         if (reply.isValid()) {
-             QDBusInterface *adapterInterface;
-             adapterInterface = new QDBusInterface("org.bluez",
-                                                   reply.value().path(),
-                                                   "org.bluez.Adapter",
-                                                   QDBusConnection::systemBus());
-             if (adapterInterface->isValid()) {
-                 QDBusReply<QVariantMap > reply =  adapterInterface->call(QLatin1String("GetProperties"));
-                 QVariant var;
-                 QString property="Powered";
-                 QVariantMap map = reply.value();
-                 if (map.contains(property)) {
-                     return map.value(property ).toBool();
-                 }
-             }
-         }
-     }
-#endif
-     return false;
-}
-
 static struct fb_var_screeninfo* allocFrameBufferInfo(int screen)
 {
     QString frameBufferDevicePath = QString("/dev/fb%1").arg(screen);
@@ -775,11 +745,7 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoLinuxCommonPrivate::getOfono
 QString QSystemNetworkInfoLinuxCommonPrivate::networkName(QSystemNetworkInfo::NetworkMode mode)
 {
     QString name;
-    if (networkStatus(mode) != QSystemNetworkInfo::Connected
-        && networkStatus(mode) != QSystemNetworkInfo::Roaming
-        && networkStatus(mode) != QSystemNetworkInfo::HomeNetwork) {
-        return name;
-    }
+
 #if !defined(QT_NO_CONNMAN)
     QString tech = modeToTechnology(mode);
     if (tech.contains("cellular")) {
@@ -942,7 +908,7 @@ QString QSystemNetworkInfoLinuxCommonPrivate::macAddress(QSystemNetworkInfo::Net
         QString result;
         const QString baseSysDir("/sys/class/net/");
         const QDir eDir(baseSysDir);
-        const QStringList dirs = eDir.entryList(QStringList() << "eth*", QDir::Dirs | QDir::NoDotAndDotDot);
+        const QStringList dirs = eDir.entryList(QStringList() << "eth*" << "usb*", QDir::Dirs | QDir::NoDotAndDotDot);
         foreach (const QString dir, dirs) {
             const QString devFile = baseSysDir + dir;
             const QFileInfo fi(devFile + "/address");
@@ -979,7 +945,7 @@ QString QSystemNetworkInfoLinuxCommonPrivate::macAddress(QSystemNetworkInfo::Net
 QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoLinuxCommonPrivate::getBluetoothNetStatus()
 {
 #ifdef BLUEZ_SUPPORTED
-    int ctl = socket(PF_BLUETOOTH,SOCK_RAW,BTPROTO_BNEP);
+    int ctl = socket(PF_BLUETOOTH, SOCK_RAW, BTPROTO_BNEP);
     if (ctl < 0) {
         qDebug() << "Cannot open bnep socket";
         return QSystemNetworkInfo::UndefinedStatus;
@@ -991,7 +957,7 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoLinuxCommonPrivate::getBluet
     req.ci = info;
     req.cnum = 36;
 
-    if (ioctl(ctl,BNEPGETCONNLIST,&req) < 0) {
+    if (ioctl(ctl, BNEPGETCONNLIST, &req) < 0) {
         qDebug() << "Cannot get bnep connection list.";
         return QSystemNetworkInfo::UndefinedStatus;
     }
@@ -1067,7 +1033,7 @@ int QSystemNetworkInfoLinuxCommonPrivate::networkSignalStrength(QSystemNetworkIn
         QString result;
         const QString baseSysDir("/sys/class/net/");
         const QDir eDir(baseSysDir);
-        const QStringList dirs = eDir.entryList(QStringList() << "eth*", QDir::Dirs | QDir::NoDotAndDotDot);
+        const QStringList dirs = eDir.entryList(QStringList() << "eth*" << "usb*", QDir::Dirs | QDir::NoDotAndDotDot);
         foreach (const QString dir, dirs) {
             const QString devFile = baseSysDir + dir;
             const QFileInfo fi(devFile + "/carrier");
@@ -1264,20 +1230,16 @@ int QSystemNetworkInfoLinuxCommonPrivate::getBluetoothRssi()
 
 QString QSystemNetworkInfoLinuxCommonPrivate::getBluetoothInfo(const QString &file)
 {
-    if (btHasPower()) {
-        const QString sysPath("/sys/class/bluetooth/");
-        const QDir sysDir(sysPath);
-        QStringList filters;
-        filters << "*";
-        const QStringList sysList = sysDir.entryList(filters, QDir::Dirs | QDir::NoDotAndDotDot, QDir::Name);
-        foreach (const QString &dir, sysList) {
-            QFile btFile(sysPath + dir + "/" + file);
-            if (btFile.exists()) {
-                if (btFile.open(QIODevice::ReadOnly)) {
-                    QTextStream btFileStream(&btFile);
-                    QString line = btFileStream.readAll();
-                    return line.simplified();
-                }
+    const QString sysPath("/sys/class/bluetooth/");
+    const QDir sysDir(sysPath);
+    const QStringList sysList = sysDir.entryList(QStringList(), QDir::Dirs | QDir::NoDotAndDotDot, QDir::Name);
+    foreach (const QString &dir, sysList) {
+        QFile btFile(sysPath + dir + "/" + file);
+        if (btFile.exists()) {
+            if (btFile.open(QIODevice::ReadOnly)) {
+                QTextStream btFileStream(&btFile);
+                QString line = btFileStream.readAll();
+                return line.simplified();
             }
         }
     }

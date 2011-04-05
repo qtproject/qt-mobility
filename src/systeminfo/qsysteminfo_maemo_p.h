@@ -113,7 +113,6 @@ public:
     QSystemNetworkInfoPrivate(QSystemNetworkInfoLinuxCommonPrivate *parent = 0);
     virtual ~QSystemNetworkInfoPrivate();
 
-
     int cellId();
     QSystemNetworkInfo::CellDataTechnology cellDataTechnology();
 
@@ -125,14 +124,13 @@ public:
     QString homeMobileNetworkCode();
 
     QString networkName(QSystemNetworkInfo::NetworkMode mode);
-    QString macAddress(QSystemNetworkInfo::NetworkMode mode);
-
     QSystemNetworkInfo::NetworkMode currentMode();
-
     QSystemNetworkInfo::NetworkStatus networkStatus(QSystemNetworkInfo::NetworkMode mode);
 
+#if defined(Q_WS_MAEMO_5)
     void setWlanSignalStrengthCheckEnabled(bool enabled);
-    qint32 networkSignalStrength(QSystemNetworkInfo::NetworkMode mode);
+#endif // Q_WS_MAEMO_5
+    int networkSignalStrength(QSystemNetworkInfo::NetworkMode mode);
 
 #if defined(Q_WS_MAEMO_6)
 protected:
@@ -141,10 +139,10 @@ protected:
 #endif // Q_WS_MAEMO_6
 
 private Q_SLOTS:
-    void bluetoothNetworkStatusCheck(QString device);
+    void updateAttachedDevices(QString device);
     void icdStatusChanged(QString,QString,QString,QString);
-    void usbCableAction();
-    void wlanSignalStrengthCheck();
+    void updateUsbCableStatus();
+    void checkWlanSignalStrength();
 
 #if defined(Q_WS_MAEMO_5)
     void cellNetworkSignalStrengthChanged(uchar,uchar);
@@ -153,6 +151,7 @@ private Q_SLOTS:
     void registrationStatusChanged(uchar,ushort,uint,uint,uint,uchar,uchar);
 #endif // Q_WS_MAEMO_5
 
+#if !defined(QT_NO_DBUS)
 #if defined(Q_WS_MAEMO_6)
     void slotSignalStrengthChanged(int percent, int dbm);
     void slotOperatorChanged(const QString &mnc, const QString &mcc);
@@ -161,30 +160,32 @@ private Q_SLOTS:
     void slotCellChanged(const QString &type, int id, int lac);
     void slotCellDataTechnologyChanged(const QString &tech);
 #endif // Q_WS_MAEMO_6
+#endif // QT_NO_DBUS
 
 private:
     void setupNetworkInfo();
-    void networkModeChangeCheck();
+    void checkNetworkMode();
+    QSystemNetworkInfo::CellDataTechnology csdtToCellDataTechnology(const QString &tech);
 
-    int cellSignalStrength;
     QSystemNetworkInfo::NetworkStatus currentBluetoothNetworkStatus;
-    QSystemNetworkInfo::NetworkStatus currentWlanNetworkStatus;
-    QSystemNetworkInfo::NetworkMode currentNetworkMode;
-    int currentCellId;
     int currentCellNetworkStatus;
+    QSystemNetworkInfo::NetworkStatus currentWlanNetworkStatus;
+
+    QSystemNetworkInfo::NetworkMode currentNetworkMode;
+
+    int currentCellSignalStrength;
     int currentEthernetSignalStrength;
+    int currentWlanSignalStrength;
+
+    int currentCellId;
     int currentLac;
-    QString currentEthernetState;
+    int radioAccessTechnology;
+    QSystemNetworkInfo::CellDataTechnology currentCellDataTechnology;
     QString currentMCC;
     QString currentMNC;
     QString currentOperatorName;
-    int currentWlanSignalStrength;
-    int radioAccessTechnology;
-    int iWlanStrengthCheckEnabled;
-    QTimer *wlanSignalStrengthTimer;
 
-    QSystemNetworkInfo::CellDataTechnology currentCellDataTechnology;
-    QSystemNetworkInfo::CellDataTechnology csdtToCellDataTechnology(const QString &tech);
+    QTimer *wlanSignalStrengthTimer;
 
 #if defined(Q_WS_MAEMO_5)
     // The index of wanted argument in the QDBusMessage which is received as a
@@ -196,6 +197,8 @@ private:
         MNC_INDEX,        // the original type of mnc argument is uint32
         MCC_INDEX         // the original type of mcc argument is uint32
     };
+
+    int iWlanStrengthCheckEnabled;
 #endif // Q_WS_MAEMO_5
 
 #if defined(Q_WS_MAEMO_6)
