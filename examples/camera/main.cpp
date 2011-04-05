@@ -46,18 +46,19 @@ int main(int argc, char *argv[])
 {
 #if defined (Q_OS_SYMBIAN)
     QApplication::setGraphicsSystem("raster");
-#endif
-
     QApplication app(argc, argv);
-
-    Camera camera;
-#ifdef Q_OS_SYMBIAN
-    // lock orientation
+    // lock orientation before constructing camera
     CAknAppUi* appUi = dynamic_cast<CAknAppUi*>(CEikonEnv::Static()->AppUi());
     if(appUi){
         QT_TRAP_THROWING(appUi ->SetOrientationL(CAknAppUi::EAppUiOrientationLandscape));
     }
+#else
+    QApplication app(argc, argv);
+#endif
 
+    Camera camera;
+
+#ifdef Q_OS_SYMBIAN
     camera.showMaximized();
 #else
     camera.show();
