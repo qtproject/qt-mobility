@@ -93,6 +93,7 @@ void QDeclarativeGeneralInfo::startCurrentLanguageChanged()
             this,SLOT(declarativeCurrentLanguageChanged(QString)),Qt::UniqueConnection);
 }
 
+
 void QDeclarativeGeneralInfo::declarativeCurrentLanguageChanged(const QString &language)
 {
     Q_EMIT currentLanguageChanged(language);
