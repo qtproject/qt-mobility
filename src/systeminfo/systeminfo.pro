@@ -230,7 +230,7 @@ unix:!simulator {
         } else {
             LIBS += -lptiengine \
         }
-        
+
         contains(symbianflextimer_enabled,yes) {
             message("SymbianFlexTimer enabled")
             SOURCES += qsystemalignedtimer_symbian.cpp \
