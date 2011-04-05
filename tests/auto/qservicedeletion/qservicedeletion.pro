@@ -1,4 +1,4 @@
-TARGET = tst_qservice-deletion
+TARGET = tst_qservicedeletion
 INCLUDEPATH += ../../../src/serviceframework
 
 CONFIG += testcase

@@ -102,7 +102,7 @@ private:
 
 static int sigs = 0;
 
-class tst_QServiceManagerSimulConn: public QObject
+class tst_QServiceDeletion: public QObject
 {
     Q_OBJECT
 
@@ -122,17 +122,17 @@ public slots:
 
 };
 
-void tst_QServiceManagerSimulConn::initTestCase()
+void tst_QServiceDeletion::initTestCase()
 {
 
 }
 
-void tst_QServiceManagerSimulConn::cleanupTestCase()
+void tst_QServiceDeletion::cleanupTestCase()
 {
 
 }
 
-void tst_QServiceManagerSimulConn::publishService()
+void tst_QServiceDeletion::publishService()
 {
     QRemoteServiceRegister *serviceRegister = new QRemoteServiceRegister(this);
 
@@ -191,7 +191,7 @@ void tst_QServiceManagerSimulConn::publishService()
     delete conn1;
 }
 
-QObject *tst_QServiceManagerSimulConn::connectToService(const QString &serviceName)
+QObject *tst_QServiceDeletion::connectToService(const QString &serviceName)
 {
     QServiceManager manager;
     QList<QServiceInterfaceDescriptor> list = manager.findInterfaces(serviceName);
@@ -215,17 +215,17 @@ QObject *tst_QServiceManagerSimulConn::connectToService(const QString &serviceNa
     return service;
 }
 
-void tst_QServiceManagerSimulConn::error(QService::UnrecoverableIPCError)
+void tst_QServiceDeletion::error(QService::UnrecoverableIPCError)
 {
     qDebug() << "Error received from IPC";
 }
 
-void tst_QServiceManagerSimulConn::timeChanged()
+void tst_QServiceDeletion::timeChanged()
 {    
     qDebug() << "time chagned";
     sigs++;
 }
 
-QTEST_MAIN(tst_QServiceManagerSimulConn)
+QTEST_MAIN(tst_QServiceDeletion)
 
 #include "tst_qservicedeletion.moc"
