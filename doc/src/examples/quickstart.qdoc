@@ -161,6 +161,10 @@ on which parts of an API is utilized by an application.
     \o LocalServices
     \o No token requirements known at this stage.
 \row
+    \o \l {Connectivity}{Connectivity - Bluetooth} 
+    \o LocalServices NetworkServices (ReadDeviceData WriteDeviceData for Pairing control)
+    \o No token requirements known at this stage.
+\row
     \o \l {Contacts}
     \o ReadUserData WriteUserData
     \o TrackerReadAccess TrackerWriteAccess
