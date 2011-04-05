@@ -266,24 +266,23 @@ bool CameraBinSession::setupCameraBin()
         m_videoInputHasChanged = false;
     }
 
-    if (m_viewfinderInterface) {
-        if (m_viewfinderHasChanged) {
-            if (m_viewfinderElement)
-                gst_object_unref(GST_OBJECT(m_viewfinderElement));
 
-            m_viewfinderElement = m_viewfinderInterface->videoSink();
+    if (m_viewfinderHasChanged) {
+        if (m_viewfinderElement)
+            gst_object_unref(GST_OBJECT(m_viewfinderElement));
+
+        m_viewfinderElement = m_viewfinderInterface ? m_viewfinderInterface->videoSink() : 0;
 #if CAMERABIN_DEBUG
-            qDebug() << Q_FUNC_INFO << "Viewfinder changed, reconfigure.";
+        qDebug() << Q_FUNC_INFO << "Viewfinder changed, reconfigure.";
 #endif
-            m_viewfinderHasChanged = false;
-            if (!m_viewfinderElement) {
-                qWarning() << "Staring camera without viewfinder available";
-                m_viewfinderElement = gst_element_factory_make("fakesink", NULL);
-            }
-            gst_object_ref(GST_OBJECT(m_viewfinderElement));
-            gst_element_set_state(m_pipeline, GST_STATE_NULL);
-            g_object_set(G_OBJECT(m_pipeline), VIEWFINDER_SINK_PROPERTY, m_viewfinderElement, NULL);
+        m_viewfinderHasChanged = false;
+        if (!m_viewfinderElement) {
+            qWarning() << "Staring camera without viewfinder available";
+            m_viewfinderElement = gst_element_factory_make("fakesink", NULL);
         }
+        gst_object_ref(GST_OBJECT(m_viewfinderElement));
+        gst_element_set_state(m_pipeline, GST_STATE_NULL);
+        g_object_set(G_OBJECT(m_pipeline), VIEWFINDER_SINK_PROPERTY, m_viewfinderElement, NULL);
     }
 
     GstCaps *previewCaps = gst_caps_from_string(PREVIEW_CAPS_4_3);
@@ -529,7 +528,8 @@ void CameraBinSession::setVideoInput(QGstreamerElementFactory *videoInput)
 
 bool CameraBinSession::isReady() const
 {
-    return m_viewfinderInterface && m_viewfinderInterface->isReady();
+    //it's possible to use QCamera without any viewfinder attached
+    return !m_viewfinderInterface || m_viewfinderInterface->isReady();
 }
 
 void CameraBinSession::setViewfinder(QObject *viewfinder)
@@ -820,7 +820,7 @@ bool CameraBinSession::processSyncMessage(const QGstreamerMessage &message)
         if (gst_structure_has_name(gm->structure, GST_PHOTOGRAPHY_AUTOFOCUS_DONE))
             m_cameraFocusControl->handleFocusMessage(gm);
 
-        if (GST_MESSAGE_SRC(gm) == GST_OBJECT_CAST(m_viewfinderElement))
+        if (m_viewfinderInterface && GST_MESSAGE_SRC(gm) == GST_OBJECT_CAST(m_viewfinderElement))
             m_viewfinderInterface->handleSyncMessage(gm);
     }
 
@@ -927,7 +927,7 @@ void CameraBinSession::handleBusMessage(const QGstreamerMessage &message)
             //qDebug() << "New session state:" << ENUM_NAME(CameraBinSession,"State",m_state);
         }
 
-        if (GST_MESSAGE_SRC(gm) == GST_OBJECT_CAST(m_viewfinderElement))
+        if (m_viewfinderInterface && GST_MESSAGE_SRC(gm) == GST_OBJECT_CAST(m_viewfinderElement))
             m_viewfinderInterface->handleBusMessage(gm);
 
         emit busMessage(message);

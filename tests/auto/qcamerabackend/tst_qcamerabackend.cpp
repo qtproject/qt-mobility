@@ -194,9 +194,6 @@ void tst_QCamera::testCameraStates()
 {
     QCamera camera;
     QCameraImageCapture imageCapture(&camera);
-    //camerabin backend requires viewfinder to start, QTMOBILITY-1479
-    QVideoWidget videoWidget;
-    camera.setViewfinder(&videoWidget);
 
     QSignalSpy errorSignal(&camera, SIGNAL(error(QCamera::Error)));
     QSignalSpy stateChangedSignal(&camera, SIGNAL(stateChanged(QCamera::State)));
@@ -246,8 +243,6 @@ void tst_QCamera::testCameraCapture()
 {
     QCamera camera;
     QCameraImageCapture imageCapture(&camera);
-    QVideoWidget videoWidget;
-    camera.setViewfinder(&videoWidget);
     //prevents camera to flash during the test
     camera.exposure()->setFlashMode(QCameraExposure::FlashOff);
 
@@ -300,8 +295,6 @@ void tst_QCamera::testCaptureToBuffer()
 {
     QCamera camera;
     QCameraImageCapture imageCapture(&camera);
-    QVideoWidget videoWidget;
-    camera.setViewfinder(&videoWidget);
     camera.exposure()->setFlashMode(QCameraExposure::FlashOff);
 
     camera.load();
