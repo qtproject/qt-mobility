@@ -52,6 +52,15 @@ meegoproximitysensor::meegoproximitysensor(QSensor *sensor)
     addDataRate(10,10); //TODO: fix this when we know better
 }
 
+void meegoproximitysensor::start(){
+    Unsigned data(((ProximitySensorChannelInterface*)m_sensorInterface)->proximity());
+    m_reading.setClose(data.x()? true: false);
+    m_reading.setTimestamp(data.UnsignedData().timestamp_);
+    newReadingAvailable();
+    meegosensorbase::start();
+}
+
+
 void meegoproximitysensor::slotDataAvailable(const Unsigned& data)
 {
     m_reading.setClose(data.x()? true: false);
