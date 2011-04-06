@@ -3292,16 +3292,6 @@ QSystemDeviceInfo::SimStatus QSystemDeviceInfoLinuxCommonPrivate::simStatus()
     return QSystemDeviceInfo::SimNotAvailable;
 }
 
-QSystemScreenSaverLinuxCommonPrivate::QSystemScreenSaverLinuxCommonPrivate(QObject *parent)
-    : QObject(parent)
-{
-}
-
-QSystemScreenSaverLinuxCommonPrivate::~QSystemScreenSaverLinuxCommonPrivate()
-{
-}
-
-
 QSystemBatteryInfoLinuxCommonPrivate::QSystemBatteryInfoLinuxCommonPrivate(QObject *parent)
 : QObject(parent), batteryIsPresent(0)
 {

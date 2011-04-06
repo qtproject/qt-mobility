@@ -1861,30 +1861,30 @@ QByteArray QSystemDeviceInfoPrivate::uniqueDeviceID()
 }
 
 QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QObject *parent)
-    : QSystemScreenSaverLinuxCommonPrivate(parent)
-    , isInhibited(0)
+    : QObject(parent)
+    , isInhibited(false)
+    , ssTimer(0)
 {
-    ssTimer = new QTimer(this);
 #if !defined(QT_NO_DBUS)
     mceConnectionInterface = new QDBusInterface("com.nokia.mce",
                                                 "/com/nokia/mce/request",
                                                 "com.nokia.mce.request",
-                                                QDBusConnection::systemBus());
+                                                QDBusConnection::systemBus(), this);
 #endif // QT_NO_DBUS
 }
 
 QSystemScreenSaverPrivate::~QSystemScreenSaverPrivate()
 {
     setScreenSaverInhibited(false);
-
-#if !defined(QT_NO_DBUS)
-    delete mceConnectionInterface;
-#endif // QT_NO_DBUS
 }
 
 bool QSystemScreenSaverPrivate::setScreenSaverInhibit()
 {
     wakeUpDisplay();
+
+    if (!ssTimer)
+        ssTimer = new QTimer(this);
+
     if (!ssTimer->isActive()) {
         connect(ssTimer, SIGNAL(timeout()), this, SLOT(wakeUpDisplay()));
         // Set a wake up interval of 30 seconds.
@@ -1895,6 +1895,7 @@ bool QSystemScreenSaverPrivate::setScreenSaverInhibit()
     } else {
         isInhibited = false;
     }
+
     return screenSaverInhibited();
 }
 
@@ -1943,6 +1944,7 @@ bool QSystemScreenSaverPrivate::screenSaverInhibited()
         displayOn = ("on" == reply.value());
     }
 #endif // QT_NO_DBUS
+
     return ((displayOn && isBlankingInhibited) || (displayOn && isInhibited));
 }
 
@@ -1951,7 +1953,7 @@ void QSystemScreenSaverPrivate::setScreenSaverInhibited(bool on)
     if (on) {
         setScreenSaverInhibit();
     } else {
-        if (ssTimer->isActive()) {
+        if (ssTimer && ssTimer->isActive()) {
             ssTimer->stop();
             isInhibited = false;
         }

@@ -60,12 +60,7 @@ QTM_BEGIN_NAMESPACE
 QSystemScreenSaver::QSystemScreenSaver(QObject *parent)
     : QObject(parent)
 {
-#if defined(Q_OS_LINUX) && !defined(QT_SIMULATOR)
-    d = new QSystemScreenSaverPrivate(static_cast<QSystemScreenSaverLinuxCommonPrivate*>(parent));
-#else
     d = new QSystemScreenSaverPrivate(parent);
-#endif
-    screenSaverIsInhibited = screenSaverInhibited();
 }
 
 /*!

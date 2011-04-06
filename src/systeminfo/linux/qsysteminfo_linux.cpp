@@ -751,8 +751,8 @@ bool QSystemDeviceInfoPrivate::vibrationActive()
     return false;
 }
 
-QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QSystemScreenSaverLinuxCommonPrivate *parent)
-    : QSystemScreenSaverLinuxCommonPrivate(parent)
+QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QObject *parent)
+    : QObject(parent)
     , currentPid(0)
     , kdeIsRunning(0)
     , meegoIsRunning(0)

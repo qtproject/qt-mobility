@@ -66,7 +66,7 @@ public:
     void setScreenSaverInhibited(bool on);
 
 private:
-    bool screenSaverIsInhibited;
+    bool screenSaverIsInhibited; // not used, should be removed
     QSystemScreenSaverPrivate *d;
 };
 

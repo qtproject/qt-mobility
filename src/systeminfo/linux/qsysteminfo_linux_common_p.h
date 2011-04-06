@@ -378,22 +378,6 @@ private:
     bool currentBatLevelInitialized;
 };
 
-
-class QSystemScreenSaverLinuxCommonPrivate : public QObject
-{
-    Q_OBJECT
-
-public:
-    QSystemScreenSaverLinuxCommonPrivate(QObject *parent = 0);
-    virtual ~QSystemScreenSaverLinuxCommonPrivate();
-
-//    bool screenSaverInhibited() {return false;}
-//    bool setScreenSaverInhibit() {return false;}
-//    bool isScreenLockEnabled() {return false;}
-//    bool isScreenSaverActive() {return false;}
-};
-
-
 class QSystemBatteryInfoLinuxCommonPrivate : public QObject
 {
     Q_OBJECT
