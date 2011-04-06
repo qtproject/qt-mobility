@@ -379,10 +379,11 @@ QList<QOrganizerItem> QOrganizerItemSymbianEngine::itemOccurrencesL(
 {
     Q_UNUSED(fetchHint)
 
-    //check maxCount
+    //Verify maximum number of items requested
     if (0 == maxCount)
     {
-        return QList<QOrganizerItem>(); // return an empty occurrence list if maxCount is 0
+        //Return an empty occurrence list if maxCount is 0
+        return QList<QOrganizerItem>();
     }
 
     // Verify that parent item exists
@@ -502,7 +503,7 @@ void QOrganizerItemSymbianEngine::toItemOccurrencesL(
 {
     quint64 localCollectionIdValue = m_collections[collectionId].calCollectionId();
 
-    // Count the found match items
+    // Counter for the found match items
     int count = 0;
     // Transform all the instances to QOrganizerItems
     for(int i(0); i < calInstanceList.Count(); i++) {
@@ -514,7 +515,7 @@ void QOrganizerItemSymbianEngine::toItemOccurrencesL(
         if (!parentItem.isEmpty() && parentItem.guid() != itemOccurrence.guid())
             continue;
 
-        // Find one match item
+        // Found one match item
         count++;
         // Check if maxCount limit is reached
         if(maxCount > 0 && count > maxCount)
