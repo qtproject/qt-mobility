@@ -177,12 +177,12 @@ int meegosensorbase::bufferSize() const{
     
     // otherwise check validity
     if (bufferSize<1){
-        qWarning()<<"bufferSize cannot be "<<bufferSize<<", must be a positive number";
-        return m_bufferSize>0?m_bufferSize:1;
+        qWarning()<<"bufferSize cannot be "<<bufferSize<<", must be a positive number >= 1";
+        return 1;
     }
     if (bufferSize>m_maxBufferSize){
         qWarning()<<"bufferSize cannot be "<<bufferSize<<", MAX value is "<<m_maxBufferSize;
-        return m_bufferSize>0?m_bufferSize:1;
+        return m_maxBufferSize;
     }
     return bufferSize;
 }
