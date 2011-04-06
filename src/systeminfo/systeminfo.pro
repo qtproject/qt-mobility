@@ -231,7 +231,7 @@ unix:!simulator {
             LIBS += -lptiengine \
         }
 
-        contains(symbianflextimer_enabled,yes) {
+        contains(symbianflextimer_enabled,no) { #disabled until test crash is fixed
             message("SymbianFlexTimer enabled")
             SOURCES += qsystemalignedtimer_symbian.cpp \
                  heartbeattimer_s60.cpp
