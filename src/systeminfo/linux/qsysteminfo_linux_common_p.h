@@ -261,24 +261,18 @@ Q_SIGNALS:
     void storageStateChanged(const QString &vol, QSystemStorageInfo::StorageState state); //1.2
 
 private:
-    bool storageChanged;
-    int mtabWatchA;
-    int inotifyFD;
-    QMap<QString, QString> mountEntriesMap;
-    QMap<QString, QSystemStorageInfo::StorageState> stateMap;
+    int inotifyWatcher;
+    int inotifyFileDescriptor;
+    QMap<QString, QString> mountedEntries;
+    QMap<QString, QSystemStorageInfo::StorageState> storageStates;
     QTimer *storageTimer;
 
-    void checkAvailableStorage();
-    void mountEntries();
+    void updateMountedEntries();
     QString getUuid(const QString &vol);
 
 #if !defined(QT_NO_DBUS)
-    QHalInterface *halIface;
-    QHalDeviceInterface *halIfaceDevice;
-
 #if !defined(QT_NO_UDISKS)
     QUDisksInterface *udisksIface;
-    QUDisksDeviceInterface *udisksDeviceIface;
 
 private Q_SLOTS:
     void udisksDeviceChanged(const QDBusObjectPath &);
@@ -288,7 +282,7 @@ private Q_SLOTS:
 private Q_SLOTS:
     void deviceChanged();
     void inotifyActivated();
-    void checkFilesystem();
+    void updateStorageStates();
 
 protected:
     void connectNotify(const char *signal);

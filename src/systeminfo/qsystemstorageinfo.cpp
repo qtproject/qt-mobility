@@ -109,12 +109,14 @@ QSystemStorageInfo::QSystemStorageInfo(QObject *parent)
     qRegisterMetaType<QSystemStorageInfo::DriveType>("QSystemStorageInfo::DriveType");
     qRegisterMetaType<QSystemStorageInfo::StorageState>("QSystemStorageInfo::StorageState");
 
+    // should be moved to connectNotify() and disconnectNotify()
     connect(d, SIGNAL(logicalDriveChanged(bool,QString)),
             this, SIGNAL(logicalDriveChanged(bool,QString)),
             Qt::UniqueConnection);
 
     connect(d, SIGNAL(storageStateChanged(QString,QSystemStorageInfo::StorageState)),
-            this, SIGNAL(storageStateChanged(QString,QSystemStorageInfo::StorageState)));
+            this, SIGNAL(storageStateChanged(QString,QSystemStorageInfo::StorageState)),
+            Qt::UniqueConnection);
 }
 
 /*!
