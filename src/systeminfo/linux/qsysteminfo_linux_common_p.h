@@ -240,59 +240,53 @@ private:
     static QSystemDisplayInfoLinuxCommonPrivate *self;
 };
 
-class QSystemStorageInfoLinuxCommonPrivate : public QObject
+class QSystemStorageInfoPrivate : public QObject
 {
     Q_OBJECT
 
 public:
+    QSystemStorageInfoPrivate(QObject *parent = 0);
+    virtual ~QSystemStorageInfoPrivate();
 
-    QSystemStorageInfoLinuxCommonPrivate(QObject *parent = 0);
-    virtual ~QSystemStorageInfoLinuxCommonPrivate();
-
-    qint64 availableDiskSpace(const QString &driveVolume);
-    qint64 totalDiskSpace(const QString &driveVolume);
+    qlonglong availableDiskSpace(const QString &driveVolume);
+    qlonglong totalDiskSpace(const QString &driveVolume);
     QStringList logicalDrives();
     QSystemStorageInfo::DriveType typeForDrive(const QString &driveVolume);
 
-    QString uriForDrive(const QString &driveVolume);//1.2
-    QSystemStorageInfo::StorageState getStorageState(const QString &volume);//1.2
+    QString uriForDrive(const QString &driveVolume); //1.2
+    QSystemStorageInfo::StorageState getStorageState(const QString &volume); //1.2
 
 Q_SIGNALS:
-    void logicalDriveChanged(bool, const QString &);
+    void logicalDriveChanged(bool added, const QString &vol);
     void storageStateChanged(const QString &vol, QSystemStorageInfo::StorageState state); //1.2
 
 private:
-    bool storageChanged;
-     QMap<QString, QString> mountEntriesMap;
-     QMap<QString, QSystemStorageInfo::StorageState> stateMap;
-     void mountEntries();
-     int mtabWatchA;
-     int inotifyFD;
-     void checkAvailableStorage();
-     QString getUuid(const QString &vol);
+    int inotifyWatcher;
+    int inotifyFileDescriptor;
+    QMap<QString, QString> mountedEntries;
+    QMap<QString, QSystemStorageInfo::StorageState> storageStates;
+    QTimer *storageTimer;
 
-     QTimer *storageTimer;
+    void updateMountedEntries();
+    QString getUuid(const QString &vol);
 
 #if !defined(QT_NO_DBUS)
-    QHalInterface *halIface;
-    QHalDeviceInterface *halIfaceDevice;
-
+#if !defined(QT_NO_UDISKS)
     QUDisksInterface *udisksIface;
-    QUDisksDeviceInterface *udisksDeviceIface;
 
 private Q_SLOTS:
     void udisksDeviceChanged(const QDBusObjectPath &);
-#endif
+#endif // QT_NO_UDISKS
+#endif // QT_NO_DBUS
 
 private Q_SLOTS:
     void deviceChanged();
     void inotifyActivated();
-    void checkFilesystem();
+    void updateStorageStates();
 
 protected:
     void connectNotify(const char *signal);
     void disconnectNotify(const char *signal);
-
 };
 
 class QSystemDeviceInfoLinuxCommonPrivate : public QObject
@@ -377,22 +371,6 @@ private:
     bool currentBatStatusInitialized;
     bool currentBatLevelInitialized;
 };
-
-
-class QSystemScreenSaverLinuxCommonPrivate : public QObject
-{
-    Q_OBJECT
-
-public:
-    QSystemScreenSaverLinuxCommonPrivate(QObject *parent = 0);
-    virtual ~QSystemScreenSaverLinuxCommonPrivate();
-
-//    bool screenSaverInhibited() {return false;}
-//    bool setScreenSaverInhibit() {return false;}
-//    bool isScreenLockEnabled() {return false;}
-//    bool isScreenSaverActive() {return false;}
-};
-
 
 class QSystemBatteryInfoLinuxCommonPrivate : public QObject
 {

@@ -225,17 +225,6 @@ Q_SIGNALS:
 
 };
 
-class QSystemStorageInfoPrivate : public QSystemStorageInfoLinuxCommonPrivate
-{
-    Q_OBJECT
-
-public:
-
-    QSystemStorageInfoPrivate(QSystemStorageInfoLinuxCommonPrivate *parent = 0);
-    virtual ~QSystemStorageInfoPrivate();
-
-};
-
 class QSystemDeviceInfoPrivate : public QSystemDeviceInfoLinuxCommonPrivate
 {
     Q_OBJECT
@@ -326,7 +315,7 @@ private:
 };
 
 
-class QSystemScreenSaverPrivate : public QSystemScreenSaverLinuxCommonPrivate
+class QSystemScreenSaverPrivate : public QObject
 {
     Q_OBJECT
 
@@ -336,18 +325,19 @@ public:
 
     bool screenSaverInhibited();
     bool setScreenSaverInhibit();
-    bool isInhibited;
     void setScreenSaverInhibited(bool on);
 
 private Q_SLOTS:
     void wakeUpDisplay();
 
 private:
+    bool isInhibited;
     QTimer *ssTimer;
 #if !defined(QT_NO_DBUS)
     QDBusInterface *mceConnectionInterface;
 #endif
 };
+
 class QSystemBatteryInfoPrivate : public QSystemBatteryInfoLinuxCommonPrivate
 {
     Q_OBJECT
