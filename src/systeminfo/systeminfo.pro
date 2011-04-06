@@ -213,7 +213,7 @@ unix:!simulator {
              LIBS += -lhwrmfmtxclient
         }
 
-        contains(DiskNotifyClient_enabled,yes){
+        contains(DiskNotifyClient_tenabled,yes){
              message("DiskNotiferClient available")
              DEFINES += DISKNOTIFY_SUPPORTED
              LIBS += -ldisknotifyhandler
@@ -231,7 +231,7 @@ unix:!simulator {
             LIBS += -lptiengine \
         }
 
-        contains(symbianflextimer_enabled,no) { #disabled until test crash is fixed
+        contains(symbianflextimer_tenabled,yes) { #disabled until test crash is fixed
             message("SymbianFlexTimer enabled")
             SOURCES += qsystemalignedtimer_symbian.cpp \
                  heartbeattimer_s60.cpp
