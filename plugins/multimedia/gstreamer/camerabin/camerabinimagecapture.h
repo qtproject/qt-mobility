@@ -67,6 +67,7 @@ private slots:
     void handleBusMessage(const QGstreamerMessage &message);
 
 private:
+    static gboolean metadataEventProbe(GstPad *pad, GstEvent *event, CameraBinImageCapture *);
     static gboolean uncompressedBufferProbe(GstPad *pad, GstBuffer *buffer, CameraBinImageCapture *);
     static gboolean jpegBufferProbe(GstPad *pad, GstBuffer *buffer, CameraBinImageCapture *);
     static gboolean handleImageSaved(GstElement *camera, const gchar *filename, CameraBinImageCapture *);

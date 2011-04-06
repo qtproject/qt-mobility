@@ -157,6 +157,47 @@ gboolean CameraBinImageCapture::handleImageSaved(GstElement *camera,
     return true;
 }
 
+gboolean CameraBinImageCapture::metadataEventProbe(GstPad *pad, GstEvent *event, CameraBinImageCapture *self)
+{
+
+    if (GST_EVENT_TYPE(event) == GST_EVENT_TAG) {
+        GstTagList *gstTags;
+        gst_event_parse_tag(event, &gstTags);
+        QMap<QByteArray, QVariant> extendedTags = QGstUtils::gstTagListToMap(gstTags);
+
+#ifdef DEBUG_CAPTURE
+        qDebug() << QString(gst_structure_to_string(gst_event_get_structure(event))).right(768);
+        qDebug() << "Capture event probe" << extendedTags;
+#endif
+
+        QMap<QtMultimediaKit::MetaData, QVariant> tags;
+        tags[QtMultimediaKit::ISOSpeedRatings] = extendedTags.value("capturing-iso-speed");
+        tags[QtMultimediaKit::DigitalZoomRatio] = extendedTags.value("capturing-digital-zoom-ratio");
+        tags[QtMultimediaKit::ExposureTime] = extendedTags.value("capturing-shutter-speed");
+        tags[QtMultimediaKit::WhiteBalance] = extendedTags.value("capturing-white-balance");
+        tags[QtMultimediaKit::Flash] = extendedTags.value("capturing-flash-fired");
+        tags[QtMultimediaKit::FocalLengthIn35mmFilm] = extendedTags.value("capturing-focal-length");
+        tags[QtMultimediaKit::MeteringMode] = extendedTags.value("capturing-metering-mode");
+        tags[QtMultimediaKit::ExposureMode] = extendedTags.value("capturing-exposure-mode");
+        tags[QtMultimediaKit::FNumber] = extendedTags.value("capturing-focal-ratio");
+        tags[QtMultimediaKit::ExposureMode] = extendedTags.value("capturing-exposure-mode");
+
+        QMapIterator<QtMultimediaKit::MetaData, QVariant> i(tags);
+        while (i.hasNext()) {
+            i.next();
+            if (i.value().isValid()) {
+                QMetaObject::invokeMethod(self, "imageMetadataAvailable",
+                                          Qt::QueuedConnection,
+                                          Q_ARG(int, self->m_requestId),
+                                          Q_ARG(QtMultimediaKit::MetaData, i.key()),
+                                          Q_ARG(QVariant, i.value()));
+            }
+        }
+    }
+
+    return true;
+}
+
 gboolean CameraBinImageCapture::uncompressedBufferProbe(GstPad *pad, GstBuffer *buffer, CameraBinImageCapture *self)
 {
     Q_UNUSED(pad);
@@ -241,7 +282,7 @@ gboolean CameraBinImageCapture::jpegBufferProbe(GstPad *pad, GstBuffer *buffer, 
 
 void CameraBinImageCapture::handleBusMessage(const QGstreamerMessage &message)
 {
-    //Install buffer probes
+    //Install metadata event and buffer probes
 
     //The image capture pipiline is built dynamically,
     //it's necessary to wait until jpeg encoder is added to pipeline
@@ -262,6 +303,15 @@ void CameraBinImageCapture::handleBusMessage(const QGstreamerMessage &message)
             if (elementName.contains("jpegenc") && element != m_jpegEncoderElement) {
                 m_jpegEncoderElement = element;
                 GstPad *sinkpad = gst_element_get_static_pad(element, "sink");
+
+                //metadata event probe is installed before jpeg encoder
+                //to emit metadata available signal as soon as possible.
+#ifdef DEBUG_CAPTURE
+                qDebug() << "install metadata probe";
+#endif
+                gst_pad_add_event_probe(sinkpad,
+                                        G_CALLBACK(CameraBinImageCapture::metadataEventProbe),
+                                        this);
 
 #ifdef DEBUG_CAPTURE
                 qDebug() << "install uncompressed buffer probe";

@@ -139,6 +139,7 @@ private slots:
     void testCameraStates();
     void testCameraCapture();
     void testCaptureToBuffer();
+    void testCameraCaptureMetadata();
 private:
 };
 
@@ -426,6 +427,29 @@ void tst_QCamera::testCaptureToBuffer()
         QString fileName = savedSignal.first().last().toString();
         QVERIFY(QFileInfo(fileName).exists());
     }
+}
+
+void tst_QCamera::testCameraCaptureMetadata()
+{
+#ifndef Q_WS_MAEMO_6
+    QSKIP("Capture metadata is supported only on harmattan", SkipAll);
+#endif
+
+    QCamera camera;
+    QCameraImageCapture imageCapture(&camera);
+    camera.exposure()->setFlashMode(QCameraExposure::FlashOff);
+
+    QSignalSpy metadataSignal(&imageCapture, SIGNAL(imageMetadataAvailable(int,QtMultimediaKit::MetaData,QVariant)));
+    QSignalSpy savedSignal(&imageCapture, SIGNAL(imageSaved(int,QString)));
+
+    camera.start();
+
+    QTRY_VERIFY(imageCapture.isReadyForCapture());
+
+    int id = imageCapture.capture(QString::fromLatin1("/dev/null"));
+    QTRY_VERIFY(!savedSignal.isEmpty());
+    QVERIFY(!metadataSignal.isEmpty());
+    QCOMPARE(metadataSignal.first().first().toInt(), id);
 }
 
 QTEST_MAIN(tst_QCamera)
