@@ -55,6 +55,7 @@ Q_DECLARE_METATYPE(QList<QString>);
 
 #ifndef QT_NO_DBUS
 #include <QtDBus/QtDBus>
+#if QT_VERSION < 0x040800
 inline QDBusArgument &operator<<(QDBusArgument &arg, const QVariantHash &map)
 {
     arg.beginMap(QVariant::String, qMetaTypeId<QDBusVariant>());
@@ -68,6 +69,7 @@ inline QDBusArgument &operator<<(QDBusArgument &arg, const QVariantHash &map)
     arg.endMap();
     return arg;
 }
+#endif
 #endif
 
 class SharedTestService : public QObject 
