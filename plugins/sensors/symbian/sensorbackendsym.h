@@ -272,6 +272,8 @@ class CSensorBackendSym : public CBase, public QSensorBackend, public MSensrvDat
         TSensorBackendDataSym iBackendData;
         int m_maximumReadingCount;
         bool m_processAllReadings;
+        int m_desiredReadingCount;
+        int m_bufferingPeriod;
     };
 
 #endif //SENSORBACKENDSYM_H
