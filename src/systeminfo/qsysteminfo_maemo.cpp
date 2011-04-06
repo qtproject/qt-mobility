@@ -1860,10 +1860,9 @@ QByteArray QSystemDeviceInfoPrivate::uniqueDeviceID()
 #endif
 }
 
-//////////////
-///////
 QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QObject *parent)
-        : QSystemScreenSaverLinuxCommonPrivate(parent),isInhibited(0)
+    : QSystemScreenSaverLinuxCommonPrivate(parent)
+    , isInhibited(0)
 {
     ssTimer = new QTimer(this);
 #if !defined(QT_NO_DBUS)
@@ -1871,7 +1870,7 @@ QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QObject *parent)
                                                 "/com/nokia/mce/request",
                                                 "com.nokia.mce.request",
                                                 QDBusConnection::systemBus());
-#endif
+#endif // QT_NO_DBUS
 }
 
 QSystemScreenSaverPrivate::~QSystemScreenSaverPrivate()
@@ -1879,8 +1878,8 @@ QSystemScreenSaverPrivate::~QSystemScreenSaverPrivate()
     setScreenSaverInhibited(false);
 
 #if !defined(QT_NO_DBUS)
-    delete mceConnectionInterface, mceConnectionInterface = 0;
-#endif
+    delete mceConnectionInterface;
+#endif // QT_NO_DBUS
 }
 
 bool QSystemScreenSaverPrivate::setScreenSaverInhibit()
@@ -1896,7 +1895,7 @@ bool QSystemScreenSaverPrivate::setScreenSaverInhibit()
     } else {
         isInhibited = false;
     }
-     return screenSaverInhibited();
+    return screenSaverInhibited();
 }
 
 void QSystemScreenSaverPrivate::wakeUpDisplay()
@@ -1908,7 +1907,7 @@ void QSystemScreenSaverPrivate::wakeUpDisplay()
         msg = mceConnectionInterface->call("req_display_blanking_pause");
         qDebug() << msg.errorName() << msg.errorMessage();
     }
-#endif
+#endif // QT_NO_DBUS
 }
 
 bool QSystemScreenSaverPrivate::screenSaverInhibited()
@@ -1920,15 +1919,15 @@ bool QSystemScreenSaverPrivate::screenSaverInhibited()
        2 - inhibit blank with charger (display still dims)
        3 - inhibit dim (always)
        4 - inhibit blank (always; display still dims)
-*/
+    */
     int blankingItem = screenBlankItem.value().toInt();
 
     bool isBlankingInhibited = false;
     QSystemDeviceInfo devInfo(this);
     QSystemDeviceInfo::PowerState batState = devInfo.currentPowerState();
 
-    if( ((batState == QSystemDeviceInfo::WallPower || batState == QSystemDeviceInfo::WallPowerChargingBattery)
-       && blankingItem == 2) || blankingItem == 4) {
+    if (((batState == QSystemDeviceInfo::WallPower || batState == QSystemDeviceInfo::WallPowerChargingBattery) && blankingItem == 2)
+        || blankingItem == 4) {
         isBlankingInhibited = true;
     }
 
@@ -1943,7 +1942,7 @@ bool QSystemScreenSaverPrivate::screenSaverInhibited()
         QDBusReply<QString> reply = mceConnectionInterface->call("get_display_status");
         displayOn = ("on" == reply.value());
     }
-#endif
+#endif // QT_NO_DBUS
     return ((displayOn && isBlankingInhibited) || (displayOn && isInhibited));
 }
 

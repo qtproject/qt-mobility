@@ -44,20 +44,18 @@
 
 QTM_BEGIN_NAMESPACE
 
-/////
- /*!
-   \class QSystemScreenSaver
-   \ingroup systeminfo
-   \inmodule QtSystemInfo
-
+/*!
+    \class QSystemScreenSaver
+    \ingroup systeminfo
+    \inmodule QtSystemInfo
     \brief The QSystemScreenSaver class provides access to screen saver and blanking.
 
-   On platforms where there is no one default screensaver mechanism, such as Linux, this class
-   may not be available.
+    On platforms where there is no one default screensaver mechanism, such as Linux, this class
+    may not be available.
 */
 
 /*!
-   Constructs a QSystemScreenSaver object with the given \a parent.
+    Constructs a QSystemScreenSaver object with the given \a parent.
  */
 QSystemScreenSaver::QSystemScreenSaver(QObject *parent)
     : QObject(parent)
@@ -71,25 +69,15 @@ QSystemScreenSaver::QSystemScreenSaver(QObject *parent)
 }
 
 /*!
-  Destroys the QSystemScreenSaver object.
- */
+    Destroys the QSystemScreenSaver object, and sets the screen saver to a non-inhibited state.
+*/
 QSystemScreenSaver::~QSystemScreenSaver()
 {
     delete d;
 }
 
 /*!
-  \brief Set the screensaver to be inhibited.
-
-   Temporarily inhibits the screensaver.
-
-   The screensaver will be set to a non inhibited state only when this QSystemScreenSaver object gets destroyed.
-
-   This is a non blocking function that will return true if the inhibit procedure was successful, otherwise false.
-
-
-    On platforms that support it, if screensaver is secure by policy, the policy will be honored
-    and this will fail.
+    Set the screensaver to be inhibited.
 */
 bool QSystemScreenSaver::setScreenSaverInhibit()
 {
@@ -97,22 +85,24 @@ bool QSystemScreenSaver::setScreenSaverInhibit()
 }
 
 /*!
-  \property QSystemScreenSaver::screenSaverInhibited
-  \brief Screensaver inhibited.
+    \property QSystemScreenSaver::screenSaverInhibited
+    \brief Screensaver inhibited.
 
-   Returns true if the screensaver is inhibited, otherwise false.
+    Returns true if the screensaver is inhibited, otherwise false.
 */
 bool QSystemScreenSaver::screenSaverInhibited()
 {
     return d->screenSaverInhibited();
 }
 
+/*!
+    Set the inhibition of the screensaver to be \a on.
+*/
 void QSystemScreenSaver::setScreenSaverInhibited(bool on)
 {
-     d->setScreenSaverInhibited(on);
+    d->setScreenSaverInhibited(on);
 }
 
 #include "moc_qsystemscreensaver.cpp"
-
 
 QTM_END_NAMESPACE

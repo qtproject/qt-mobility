@@ -205,7 +205,6 @@ public:
     bool setScreenSaverInhibit();
     bool isScreenLockEnabled();
     bool isScreenSaverActive();
-
     void setScreenSaverInhibited(bool on);
 
 private:

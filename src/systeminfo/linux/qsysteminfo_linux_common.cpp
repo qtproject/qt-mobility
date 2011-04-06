@@ -3295,7 +3295,6 @@ QSystemDeviceInfo::SimStatus QSystemDeviceInfoLinuxCommonPrivate::simStatus()
 QSystemScreenSaverLinuxCommonPrivate::QSystemScreenSaverLinuxCommonPrivate(QObject *parent)
     : QObject(parent)
 {
-
 }
 
 QSystemScreenSaverLinuxCommonPrivate::~QSystemScreenSaverLinuxCommonPrivate()

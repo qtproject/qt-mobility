@@ -48,16 +48,15 @@
 QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
 
-
 class QSystemScreenSaverPrivate;
-class  Q_SYSINFO_EXPORT QSystemScreenSaver : public QObject
+class Q_SYSINFO_EXPORT QSystemScreenSaver : public QObject
 {
     Q_OBJECT
+
     Q_ENUMS(ScreenSaverState)
     Q_PROPERTY(bool screenSaverInhibited READ screenSaverInhibited WRITE setScreenSaverInhibited)
 
 public:
-
     explicit QSystemScreenSaver(QObject *parent = 0);
     ~QSystemScreenSaver();
 
@@ -71,9 +70,7 @@ private:
     QSystemScreenSaverPrivate *d;
 };
 
-
 QTM_END_NAMESPACE
-
 QT_END_HEADER
 
 #endif // QSYSTEMSCREENSAVER_H

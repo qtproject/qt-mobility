@@ -336,18 +336,19 @@ public:
 
     bool screenSaverInhibited();
     bool setScreenSaverInhibit();
-    bool isInhibited;
     void setScreenSaverInhibited(bool on);
 
 private Q_SLOTS:
     void wakeUpDisplay();
 
 private:
+    bool isInhibited;
     QTimer *ssTimer;
 #if !defined(QT_NO_DBUS)
     QDBusInterface *mceConnectionInterface;
 #endif
 };
+
 class QSystemBatteryInfoPrivate : public QSystemBatteryInfoLinuxCommonPrivate
 {
     Q_OBJECT
