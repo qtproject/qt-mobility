@@ -518,7 +518,7 @@ void QOrganizerItemSymbianEngine::toItemOccurrencesL(
         // Found one match item
         count++;
         // Check if maxCount limit is reached
-        if(maxCount > 0 && count > maxCount)
+        if (maxCount > 0 && count > maxCount)
             break;
 
         // Set local id if this is either an exceptional item or a non-recurring item
