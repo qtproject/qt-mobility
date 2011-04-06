@@ -635,8 +635,14 @@ void QT7PlayerSession::processLoadStateChange()
         newStatus = isPlaying ? QMediaPlayer::BufferedMedia : QMediaPlayer::LoadedMedia;
     } else if (state >= kMovieLoadStatePlayable)
         newStatus = isPlaying ? QMediaPlayer::BufferingMedia : QMediaPlayer::LoadingMedia;
-    else if (state >= kMovieLoadStateLoading)
-        newStatus = isPlaying ? QMediaPlayer::StalledMedia : QMediaPlayer::LoadingMedia;
+    else if (state >= kMovieLoadStateLoading) {
+        if (!isPlaying)
+            newStatus = QMediaPlayer::LoadingMedia;
+        else if (m_mediaStatus >= QMediaPlayer::LoadedMedia)
+            newStatus = QMediaPlayer::StalledMedia;
+        else
+            newStatus = QMediaPlayer::LoadingMedia;
+    }
 
     if (state >= kMovieLoadStatePlayable &&
         m_state == QMediaPlayer::PlayingState &&
