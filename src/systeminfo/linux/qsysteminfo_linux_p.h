@@ -145,16 +145,6 @@ public:
     QSystemDisplayInfo::BacklightState backlightStatus(int screen); //1.2
 };
 
-class QSystemStorageInfoPrivate : public QSystemStorageInfoLinuxCommonPrivate
-{
-    Q_OBJECT
-
-public:
-
-    QSystemStorageInfoPrivate(QSystemStorageInfoLinuxCommonPrivate *parent = 0);
-    virtual ~QSystemStorageInfoPrivate();
-};
-
 class QSystemDeviceInfoPrivate : public QSystemDeviceInfoLinuxCommonPrivate
 {
     Q_OBJECT

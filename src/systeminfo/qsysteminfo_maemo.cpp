@@ -1175,14 +1175,6 @@ QSystemDisplayInfo::BacklightState QSystemDisplayInfoPrivate::backlightStatus(in
     return backlightState;
 }
 
-QSystemStorageInfoPrivate::QSystemStorageInfoPrivate(QSystemStorageInfoLinuxCommonPrivate *parent)
-        : QSystemStorageInfoLinuxCommonPrivate(parent)
-{
-}
-
-QSystemStorageInfoPrivate::~QSystemStorageInfoPrivate()
-{
-}
 QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QSystemDeviceInfoLinuxCommonPrivate *parent)
         : QSystemDeviceInfoLinuxCommonPrivate(parent), gpioFD(-1)
 {

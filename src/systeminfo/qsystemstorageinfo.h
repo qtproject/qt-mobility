@@ -50,16 +50,15 @@ QTM_BEGIN_NAMESPACE
 
 class QSystemStorageInfoPrivate;
 
-class  Q_SYSINFO_EXPORT QSystemStorageInfo : public QObject
+class Q_SYSINFO_EXPORT QSystemStorageInfo : public QObject
 {
     Q_OBJECT
+
     Q_PROPERTY(QStringList logicalDrives READ logicalDrives NOTIFY logicalDriveChanged)
     Q_ENUMS(DriveType)
-
     Q_ENUMS(StorageState)
 
 public:
-
     explicit QSystemStorageInfo(QObject *parent = 0);
     ~QSystemStorageInfo();
 
@@ -81,15 +80,14 @@ public:
         CriticalStorageState, //2%
     }; //1.2
 
-
     Q_INVOKABLE qlonglong totalDiskSpace(const QString &driveVolume);
     Q_INVOKABLE qlonglong availableDiskSpace(const QString &driveVolume);
     static QStringList logicalDrives();
 
     Q_INVOKABLE QSystemStorageInfo::DriveType typeForDrive(const QString &driveVolume);
 
-    Q_INVOKABLE QString uriForDrive(const QString &driveVolume);//1.2
-    Q_INVOKABLE QSystemStorageInfo::StorageState getStorageState(const QString &volume);//1.2
+    Q_INVOKABLE QString uriForDrive(const QString &driveVolume); //1.2
+    Q_INVOKABLE QSystemStorageInfo::StorageState getStorageState(const QString &volume); //1.2
 
 Q_SIGNALS:
     void logicalDriveChanged(bool added,const QString &vol);
@@ -100,7 +98,6 @@ private:
 };
 
 QTM_END_NAMESPACE
-
 QT_END_HEADER
 
 #endif // QSYSTEMSTORAGEINFO_H
