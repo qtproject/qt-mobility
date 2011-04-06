@@ -107,6 +107,10 @@ QTM_BEGIN_NAMESPACE
 
     \warning On Windows CE it is not possible to detect if a device is GPS enabled.
     The default position source on a Windows CE device without GPS support will never provide any position data.
+
+    \warning On Symbian it is currently only possible to instantiate and use the position sources in the main thread
+    of the application.
+
 */
 
 /*!
