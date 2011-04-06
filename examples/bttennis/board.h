@@ -43,17 +43,18 @@
 
 #include <QObject>
 #include <QGraphicsScene>
+#include <QGraphicsView>
 #include <QGraphicsPixmapItem>
 #include <QPixmap>
 #include <QPropertyAnimation>
 
-class Board : public QObject
+class Board : public QGraphicsView
 {
     Q_OBJECT
     Q_PROPERTY(int connectRotation READ connectRotation WRITE setConnectRotation)
     Q_PROPERTY(qreal connectOpacity READ connectOpacity WRITE setConnectOpacity)
 public:
-    explicit Board(QObject *parent = 0);
+    explicit Board(QWidget *parent = 0);
 
     enum Edge {
         Top = 1,
@@ -118,7 +119,7 @@ private:
     QGraphicsPixmapItem *connectIcon;
     QPropertyAnimation *connectAnimation;
 
-    void checkBall();
+    void checkBall(int x, int y);
 };
 
 #endif // BOARD_H
