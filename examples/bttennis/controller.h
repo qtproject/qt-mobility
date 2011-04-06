@@ -54,7 +54,8 @@ public:
 
 signals:
     void moveBall(int x, int y);
-    void score(int left, int right);    
+    void score(int left, int right);
+    void fps(const QString &str);
 
 public slots:
     void ballCollision(Board::Edge pos);
@@ -73,6 +74,8 @@ public slots:
 private:
     QTimer *timer;
     QTime *elapsed;
+    QTime *fpscntr;
+    int frames;
     int ball_x;
     int speed_x;
     int ball_y;
