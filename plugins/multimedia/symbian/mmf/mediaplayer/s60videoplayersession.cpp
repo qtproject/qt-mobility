@@ -51,6 +51,7 @@
 #include <QtCore/QTimer>
 #include <QtGui/QApplication>
 #include <QtGui/QDesktopWidget>
+#include <QtGui/QSymbianEvent>
 #include <QtGui/QWidget>
 
 #include <coecntrl.h>
@@ -80,6 +81,69 @@ TVideoRotation videoRotation(qreal angle)
     else if (angle >= 225.0f && angle < 315.0f)
         result = EVideoRotationClockwise270;
     return result;
+}
+
+S60VideoPlayerEventHandler *S60VideoPlayerEventHandler::m_instance = 0;
+QCoreApplication::EventFilter S60VideoPlayerEventHandler::m_eventFilter = 0;
+QList<ApplicationFocusObserver *> S60VideoPlayerEventHandler::m_applicationFocusObservers;
+
+S60VideoPlayerEventHandler *S60VideoPlayerEventHandler::instance()
+{
+    if (!m_instance)
+        m_instance = new S60VideoPlayerEventHandler();
+    return m_instance;
+}
+
+S60VideoPlayerEventHandler::S60VideoPlayerEventHandler()
+{
+    m_eventFilter = QCoreApplication::instance()->setEventFilter(filterEvent);
+}
+
+S60VideoPlayerEventHandler::~S60VideoPlayerEventHandler()
+{
+    QCoreApplication::instance()->setEventFilter(m_eventFilter);
+}
+
+void S60VideoPlayerEventHandler::addApplicationFocusObserver(ApplicationFocusObserver *observer)
+{
+    m_applicationFocusObservers.append(observer);
+}
+
+void S60VideoPlayerEventHandler::removeApplicationFocusObserver(ApplicationFocusObserver *observer)
+{
+    m_applicationFocusObservers.removeAt(m_applicationFocusObservers.indexOf(observer));
+    if (m_applicationFocusObservers.count() == 0) {
+        delete m_instance;
+        m_instance = 0;
+    }
+}
+
+bool S60VideoPlayerEventHandler::filterEvent(void *message, long *result)
+{
+    if (const QSymbianEvent *symbianEvent = reinterpret_cast<const QSymbianEvent*>(message)) {
+        switch (symbianEvent->type()) {
+        case QSymbianEvent::WindowServerEvent:
+            {
+                const TWsEvent *wsEvent = symbianEvent->windowServerEvent();
+                if (EEventFocusLost == wsEvent->Type() || EEventFocusGained == wsEvent->Type()) {
+                    for (QList<ApplicationFocusObserver *>::const_iterator it = m_applicationFocusObservers.constBegin();
+                         it != m_applicationFocusObservers.constEnd(); ++it) {
+                        if (EEventFocusLost == wsEvent->Type())
+                            (*it)->applicationLostFocus();
+                        else if (EEventFocusGained == wsEvent->Type())
+                            (*it)->applicationGainedFocus();
+                    }
+                }
+            }
+            break;
+        default:
+            break;
+        }
+    }
+    bool ret = false;
+    if (m_eventFilter)
+        ret = m_eventFilter(message, result);
+    return ret;
 }
 
 /*!
@@ -144,7 +208,7 @@ S60VideoPlayerSession::S60VideoPlayerSession(QMediaService *service, S60MediaNet
     m_dsaActive = true;
     m_player->RegisterForVideoLoadingNotification(*this);
 #endif // VIDEOOUTPUT_GRAPHICS_SURFACES
-    QCoreApplication::instance()->installEventFilter(this);
+    S60VideoPlayerEventHandler::instance()->addApplicationFocusObserver(this);
     DP0("S60VideoPlayerSession::S60VideoPlayerSession ---");
 }
 
@@ -157,7 +221,7 @@ S60VideoPlayerSession::S60VideoPlayerSession(QMediaService *service, S60MediaNet
 S60VideoPlayerSession::~S60VideoPlayerSession()
 {
     DP0("S60VideoPlayerSession::~S60VideoPlayerSession +++");
-
+    S60VideoPlayerEventHandler::instance()->removeApplicationFocusObserver(this);
 #ifdef HAS_AUDIOROUTING_IN_VIDEOPLAYER
     if (m_audioOutput)
         m_audioOutput->UnregisterObserver(*this);
@@ -169,20 +233,22 @@ S60VideoPlayerSession::~S60VideoPlayerSession()
     DP0("S60VideoPlayerSession::~S60VideoPlayerSession ---");
 }
 
-bool S60VideoPlayerSession::eventFilter(QObject *watched, QEvent *event)
+void S60VideoPlayerSession::applicationGainedFocus()
 {
-    if (watched == QCoreApplication::instance()) {
-        if (QEvent::ApplicationDeactivate == event->type() &&
-            QMediaPlayer::PlayingState == state()) {
-            m_backendInitiatedPause = true;
-            pause();
-        } else if (QEvent::ApplicationActivate == event->type() &&
-                   m_backendInitiatedPause) {
-            m_backendInitiatedPause = false;
-            play();
-        }
+    if (m_backendInitiatedPause) {
+        m_backendInitiatedPause = false;
+        play();
     }
-    return false;
+    if (QMediaPlayer::PausedState == state())
+       m_player->RefreshFrameL();
+}
+
+void S60VideoPlayerSession::applicationLostFocus()
+{
+    if (QMediaPlayer::PlayingState == state()) {
+        m_backendInitiatedPause = true;
+        pause();
+    }
 }
 
 /*!
