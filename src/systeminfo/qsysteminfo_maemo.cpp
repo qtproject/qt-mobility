@@ -135,7 +135,7 @@ const QDBusArgument &operator>>(const QDBusArgument &argument, ProfileDataValue 
 QTM_BEGIN_NAMESPACE
 
 QSystemInfoPrivate::QSystemInfoPrivate(QSystemInfoLinuxCommonPrivate *parent)
- : QSystemInfoLinuxCommonPrivate(parent)
+    : QSystemInfoLinuxCommonPrivate(parent)
 {
 }
 
@@ -149,17 +149,17 @@ QStringList QSystemInfoPrivate::availableLanguages() const
 
 #if defined(Q_WS_MAEMO_6)
     QDir langDir("/etc/meego-supported-languages");
-    languages = langDir.entryList(QStringList() <<"??",QDir::Files | QDir::NoDotAndDotDot, QDir::Name);
-#else
+    languages = langDir.entryList(QStringList() << "??", QDir::Files | QDir::NoDotAndDotDot, QDir::Name);
+#else // Q_WS_MAEMO_6
     GConfItem languagesItem("/meegotouch/inputmethods/languages");
     const QStringList locales = languagesItem.value().toStringList();
 
-    foreach(const QString &locale, locales) {
-        languages << locale.mid(0,2);
-    }
+    foreach (const QString &locale, locales)
+        languages << locale.mid(0, 2);
+
     languages << currentLanguage();
     languages.removeDuplicates();
-#endif
+#endif // Q_WS_MAEMO_6
 
     return languages;
 }
@@ -169,107 +169,96 @@ QString QSystemInfoPrivate::currentLanguage() const
 #if defined(Q_WS_MAEMO_6)
     GConfItem langItem("/meegotouch/i18n/language");
     QString lang = langItem.value().toString();
-    if(lang.count() > 2) lang = lang.left(2);
-    if (lang.isEmpty()) {
+    if (lang.count() > 2)
+        lang = lang.left(2);
+    if (lang.isEmpty())
         lang = QString::fromLocal8Bit(qgetenv("LANG")).left(2);
-    }
     return lang;
-#else
+#else // Q_WS_MAEMO_6
     return QSystemInfoLinuxCommonPrivate::currentLanguage();
-#endif
+#endif // Q_WS_MAEMO_6
 }
-
 
 QString QSystemInfoPrivate::currentCountryCode() const
 {
 #if defined(Q_WS_MAEMO_6)
     GConfItem langItem("/meegotouch/i18n/region");
-     QString langCC = langItem.value().toString().section("_",1,1);
-     if (langCC.isEmpty()) {
-         langCC = QString::fromLocal8Bit(qgetenv("LANG")).section("_",1,1);
-         langCC = langCC.remove(".UTF-8",Qt::CaseSensitive);
-         return langCC;
-     }
+    QString langCC = langItem.value().toString().section("_", 1, 1);
+    if (langCC.isEmpty()) {
+        langCC = QString::fromLocal8Bit(qgetenv("LANG")).section("_", 1, 1);
+        langCC = langCC.remove(".UTF-8", Qt::CaseSensitive);
+        return langCC;
+    }
 #endif
     return QSystemInfoLinuxCommonPrivate::currentCountryCode();
 }
 
-QString QSystemInfoPrivate::version(QSystemInfo::Version type,const QString &parameter)
+QString QSystemInfoPrivate::version(QSystemInfo::Version type, const QString &parameter)
 {
-    QString errorStr = "Not Available";
-
     switch(type) {
-    case QSystemInfo::Os :
-    {
-        QString sysinfodValue = sysinfodValueForKey("/device/sw-release-ver");//("/device/content-ver");
+    case QSystemInfo::Os: {
+        QString sysinfodValue = sysinfodValueForKey("/device/sw-release-ver"); //("/device/content-ver");
         if (!sysinfodValue.isEmpty()) {
-           sysinfodValue =  sysinfodValue.section("_",2,4);
+            sysinfodValue =  sysinfodValue.section("_", 2, 4);
             return sysinfodValue;
         }
     }
-        break;
-    case QSystemInfo::Firmware :
-    {
+
+    case QSystemInfo::Firmware: {
         QString sysinfodValue = sysinfodValueForKey("/device/sw-release-ver");
-        if (!sysinfodValue.isEmpty()) {
+        if (!sysinfodValue.isEmpty())
             return sysinfodValue;
-        }
     }
 
     default:
         return QSystemInfoLinuxCommonPrivate::version(type, parameter);
-        break;
     };
-    return errorStr;
 }
 
 bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
 {
     bool featureSupported = false;
+
     switch (feature) {
-    case QSystemInfo::SimFeature :
-        {
-            QSystemDeviceInfoPrivate d;
-            featureSupported = (d.simStatus() != QSystemDeviceInfo::SimNotAvailable);
-        }
+    case QSystemInfo::SimFeature: {
+        QSystemDeviceInfoPrivate d;
+        featureSupported = (d.simStatus() != QSystemDeviceInfo::SimNotAvailable);
         break;
-    case QSystemInfo::LocationFeature :
-        {
+    }
+
+    case QSystemInfo::LocationFeature: {
 #if defined(Q_WS_MAEMO_6)
-            GConfItem satellitePositioning("/system/osso/location/settings/satellitePositioning");
-            GConfItem networkPositioning("/system/osso/location/settings/networkPositioning");
+        GConfItem satellitePositioning("/system/osso/location/settings/satellitePositioning");
+        GConfItem networkPositioning("/system/osso/location/settings/networkPositioning");
 
-            bool satellitePositioningAvailable = satellitePositioning.value(false).toBool();
-            bool networkPositioningAvailable   = networkPositioning.value(false).toBool();
+        bool satellitePositioningAvailable = satellitePositioning.value(false).toBool();
+        bool networkPositioningAvailable = networkPositioning.value(false).toBool();
 
-            featureSupported = (satellitePositioningAvailable || networkPositioningAvailable);
-#else /* Maemo 5 */
-            GConfItem locationValues("/system/nokia/location");
-            const QStringList locationKeys = locationValues.listEntries();
-            if(locationKeys.count()) {
-                featureSupported = true;
-            }
-#endif /* Maemo 5 */
-        }
+        featureSupported = (satellitePositioningAvailable || networkPositioningAvailable);
+#else // Q_WS_MAEMO_6
+        GConfItem locationValues("/system/nokia/location");
+        const QStringList locationKeys = locationValues.listEntries();
+        if (locationKeys.count())
+            featureSupported = true;
+#endif // Q_WS_MAEMO_6
         break;
-    case QSystemInfo::HapticsFeature:
-        {
-           // if(halIsAvailable) {
-                QHalInterface iface;
-                const QStringList touchSupport =
-                        iface.findDeviceByCapability("input.touchpad");
-                if(touchSupport.count()) {
-                    featureSupported = true;
-                } else {
-                    featureSupported = false;
-                }
-            }
-      //  }
+    }
+
+    case QSystemInfo::HapticsFeature: {
+        QHalInterface iface;
+        const QStringList touchSupport(iface.findDeviceByCapability("input.touchpad"));
+        if (touchSupport.count())
+            featureSupported = true;
+        else
+            featureSupported = false;
         break;
+    }
+
     default:
         featureSupported = QSystemInfoLinuxCommonPrivate::hasFeatureSupported(feature);
         break;
     };
+
     return featureSupported;
 }
 

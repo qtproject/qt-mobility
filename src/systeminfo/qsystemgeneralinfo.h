@@ -44,11 +44,6 @@
 #include "qmobilityglobal.h"
 
 #include <QObject>
-#include <QSize>
-#include <QPair>
-#include <QString>
-#include <QStringList>
-#include <QFileSystemWatcher>
 
 QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
@@ -58,6 +53,7 @@ class QSystemInfoPrivate;
 class Q_SYSINFO_EXPORT QSystemInfo : public QObject
 {
     Q_OBJECT
+
     Q_PROPERTY(QString currentLanguage READ currentLanguage NOTIFY currentLanguageChanged)
     Q_PROPERTY(QStringList availableLanguages READ availableLanguages)
     Q_PROPERTY(QString currentCountryCode READ currentCountryCode)
@@ -65,13 +61,13 @@ class Q_SYSINFO_EXPORT QSystemInfo : public QObject
     Q_ENUMS(Feature)
 
 public:
-
     QSystemInfo(QObject *parent = 0);
-     virtual ~QSystemInfo();
+    virtual ~QSystemInfo();
 
     QString currentLanguage(); // 2 letter ISO 639-1 //signal
     QStringList availableLanguages(); // 2 letter ISO 639-1
     QString currentCountryCode(); //2 letter ISO 3166-1
+
     enum Version {
         Os = 1,
         QtCore,
@@ -82,7 +78,7 @@ public:
     QString version(QSystemInfo::Version type, const QString &parameter = QString());
 
     enum Feature {
-        BluetoothFeature=0,
+        BluetoothFeature = 0,
         CameraFeature,
         FmradioFeature,
         IrFeature,
@@ -101,19 +97,17 @@ public:
     Q_INVOKABLE bool hasFeatureSupported(QSystemInfo::Feature feature);
 
 Q_SIGNALS:
-    void currentLanguageChanged(const QString &);
+    void currentLanguageChanged(const QString &lang);
+
 private:
     QSystemInfoPrivate *d;
+
 protected:
     void connectNotify(const char *signal);
     void disconnectNotify(const char *signal);
 };
 
 QTM_END_NAMESPACE
-
 QT_END_HEADER
 
-#endif /*QSYSTEMSGENERALINFO_H*/
-
-// End of file
-
+#endif // QSYSTEMGENERALINFO_H

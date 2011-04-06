@@ -39,58 +39,45 @@
 **
 ****************************************************************************/
 
-#include "qmobilityglobal.h"
 #include "qsystemgeneralinfo.h"
 #include "qsysteminfocommon_p.h"
 
-#include <QStringList>
-#include <QSize>
-#include <QFile>
-#include <QTextStream>
-#include <QLocale>
-#include <QLibraryInfo>
-#include <QApplication>
-#include <QDesktopWidget>
-#include <QDebug>
-#include <QFileSystemWatcher>
-#include <QMetaType>
-
-#include <locale.h>
-
 QTM_BEGIN_NAMESPACE
 
-  /*!
+Q_GLOBAL_STATIC(QSystemInfoPrivate, sysinfoPrivate)
+
+#ifdef QT_SIMULATOR
+QSystemInfoPrivate *getSystemInfoPrivate() { return sysinfoPrivate(); }
+#endif // QT_SIMULATOR
+
+/*!
     \class QSystemInfo
-
     \ingroup systeminfo
-   \inmodule QtSystemInfo
-
+    \inmodule QtSystemInfo
     \brief The QSystemInfo class provides access to various general information from the system.
+    \bold NOTE: In the future, parts of the QtSystemInfo API may be moved and renamed into an existing Qt class that provides similiar functionality.
 
-   \bold NOTE: In the future, parts of the QtSystemInfo API may be moved and renamed into an existing Qt class that provides similiar functionality.
+    \table
+        \header
+            \o Class
+        \row
+            \o QSystemInfo::currentLanguage
+        \row
+            \o QSystemInfo::availableLanguages
+        \row
+            \o QSystemInfo::currentCountryCode
+        \row
+            \o QSystemDisplayInfo::displayBrightness
+        \row
+            \o QSystemDisplayInfo::colorDepth
+        \row
+            \o QSystemScreenSaver::screenSaverInhibited
+        \row
+            \o QSystemScreenSaver::setScreenSaverInhibit
+    \endtable
 
-\table
-\header
-    \o Class
-\row
-    \o QSystemInfo::currentLanguage
-\row
-    \o QSystemInfo::availableLanguages
-\row
-    \o QSystemInfo::currentCountryCode
-\row
-    \o QSystemDisplayInfo::displayBrightness
-\row
-    \o QSystemDisplayInfo::colorDepth
-\row
-    \o QSystemScreenSaver::screenSaverInhibited
-\row
-    \o QSystemScreenSaver::setScreenSaverInhibit
-\endtable
-
-    Platform notes
-    Some functionality may or may not be supported on various platforms. Depending on if there
-is a reliable way to gather such information.
+    Platform notes: Some functionality may or may not be supported on various platforms, depending on if there
+    is a reliable way to gather such information.
 */
 
 /*!
@@ -101,8 +88,8 @@ is a reliable way to gather such information.
     \value QtCore                Qt library version.
     \value Firmware              Version of (flashable) system as a whole.
     \value QtMobility            QtMobility library version.
+*/
 
-  */
 /*!
     \enum QSystemInfo::Feature
     This enum describes the features of the device or computer.
@@ -121,40 +108,28 @@ is a reliable way to gather such information.
     \value VideoOutFeature        Video out feature available.
     \value HapticsFeature         Haptics feature available.
     \value FmTransmitterFeature   FM Radio transmitter available.
-  */
-
-
-
+*/
 
 /*!
-  \fn void QSystemInfo::currentLanguageChanged(const QString &lang)
+    \fn void QSystemInfo::currentLanguageChanged(const QString &lang)
 
-  This signal is emitted whenever the current language changes, specified by \a lang,
-  which is in 2 letter, ISO 639-1 specification form.
-  */
-
-
-
-Q_GLOBAL_STATIC(QSystemInfoPrivate, sysinfoPrivate)
-
-#ifdef QT_SIMULATOR
-QSystemInfoPrivate *getSystemInfoPrivate() { return sysinfoPrivate(); }
-#endif
+    This signal is emitted whenever the current language changes, specified by \a lang,
+    which is in 2 letter, ISO 639-1 specification form.
+*/
 
 /*!
-\fn QSystemInfo::QSystemInfo(QObject *parent)
-   Constructs a QSystemInfo object with the given \a parent.
- */
-
+    Constructs a QSystemInfo object with the given \a parent.
+*/
 QSystemInfo::QSystemInfo(QObject *parent)
-    : QObject(parent), d(sysinfoPrivate())
+    : QObject(parent)
+    , d(sysinfoPrivate())
 {
     qRegisterMetaType<QSystemInfo::Version>("QSystemInfo::Version");
     qRegisterMetaType<QSystemInfo::Feature>("QSystemInfo::Feature");
 }
 
 /*!
-  Destroys the QSystemInfo object
+    Destroys the QSystemInfo object
 */
 QSystemInfo::~QSystemInfo()
 {
@@ -162,40 +137,31 @@ QSystemInfo::~QSystemInfo()
 
 /*!
     \internal
-
-    This function is called when the client connects to signals.
-
-    \sa connectNotify()
 */
-
 void QSystemInfo::connectNotify(const char *signal)
 {
-    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
-            currentLanguageChanged(QString))))) {
-        connect(d,SIGNAL(currentLanguageChanged(QString)),
-                this,SIGNAL(currentLanguageChanged(QString)),Qt::UniqueConnection);
+    if (QLatin1String(signal) == SIGNAL(currentLanguageChanged(QString))) {
+        connect(d, SIGNAL(currentLanguageChanged(QString)),
+                this, SIGNAL(currentLanguageChanged(QString)),
+                Qt::UniqueConnection);
     }
 }
 
 /*!
     \internal
-
-    This function is called when the client disconnects from the signals.
-
-    \sa connectNotify()
 */
 void QSystemInfo::disconnectNotify(const char *signal)
 {
-    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
-            currentLanguageChanged(QString))))) {
-        disconnect(d,SIGNAL(currentLanguageChanged(QString)),
-                   this,SIGNAL(currentLanguageChanged(QString)));
+    if (QLatin1String(signal) == SIGNAL(currentLanguageChanged(QString))) {
+        disconnect(d, SIGNAL(currentLanguageChanged(QString)),
+                   this, SIGNAL(currentLanguageChanged(QString)));
     }
 }
 
 /*!
-  \property QSystemInfo::currentLanguage
-  \brief The current Language
+    \property QSystemInfo::currentLanguage
+    \brief The current Language
+
     Returns the current language in 2 letter ISO 639-1 format.
  */
 QString QSystemInfo::currentLanguage()
@@ -203,40 +169,40 @@ QString QSystemInfo::currentLanguage()
     return sysinfoPrivate()->currentLanguage();
 }
 /*!
-  \property  QSystemInfo::availableLanguages
-  \brief List of available languages.
+    \property QSystemInfo::availableLanguages
+    \brief List of available languages.
 
     Returns a QStringList of available Qt language translations in 2 letter ISO 639-1 format.
     If the Qt translations cannot be found, returns the current system language.
-  */
+*/
 QStringList QSystemInfo::availableLanguages()
 {
     return sysinfoPrivate()->availableLanguages();
 }
 
 /*!
-  Returns the version of QSystemInfo::Version \a type,
-  with optional platform dependent \a parameter as a string.
+    Returns the version of QSystemInfo::Version \a type,
+    with optional platform dependent \a parameter as a string.
 
-  Version will be returned in "major.minor.build" form.
+    Version will be returned in "major.minor.build" form.
 
-  In case a particular version does not use the "build" part, it is set to 0.
-  If a particular element is not available at all, an error "Not Installed" will be returned by
-  the API.
+    In case a particular version does not use the "build" part, it is set to 0.
+    If a particular element is not available at all, an error "Not Installed" will be returned by
+    the API.
 */
 QString QSystemInfo::version(QSystemInfo::Version type, const QString &parameter)
 {
     switch(type) {
-        case QSystemInfo::QtMobility:
-            return QLatin1String(QTM_VERSION_STR);
-        default:
-            return sysinfoPrivate()->version(type, parameter);
+    case QSystemInfo::QtMobility:
+        return QLatin1String(QTM_VERSION_STR);
+    default:
+        return sysinfoPrivate()->version(type, parameter);
     }
 }
 
 /*!
-  \property  QSystemInfo::currentCountryCode
-  \brief The current locale country code.
+    \property  QSystemInfo::currentCountryCode
+    \brief The current locale country code.
 
     Returns the 2 letter ISO 3166-1 for the current country code.
 */
@@ -248,12 +214,10 @@ QString QSystemInfo::currentCountryCode()
 /*!
     Returns true if the QSystemInfo::Feature \a feature is supported, otherwise false.
 */
-
 bool QSystemInfo::hasFeatureSupported(QSystemInfo::Feature feature)
 {
     return sysinfoPrivate()->hasFeatureSupported(feature);
 }
-
 
 #include "moc_qsystemgeneralinfo.cpp"
 

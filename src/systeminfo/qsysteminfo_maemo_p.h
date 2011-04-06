@@ -96,9 +96,9 @@ class QSystemInfoPrivate : public QSystemInfoLinuxCommonPrivate
     Q_OBJECT
 
 public:
-
     QSystemInfoPrivate(QSystemInfoLinuxCommonPrivate *parent = 0);
     virtual ~QSystemInfoPrivate();
+
     QStringList availableLanguages() const;
     QString version(QSystemInfo::Version,  const QString &parameter = QString());
     QString currentLanguage() const;
