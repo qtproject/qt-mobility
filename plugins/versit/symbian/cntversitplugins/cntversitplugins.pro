@@ -22,9 +22,9 @@
 
 TEMPLATE = subdirs
 
-SUBDIRS += cntversitprefplugin
 SUBDIRS += cntversitfavoriteplugin
 SUBDIRS += cntversitlandlineplugin
 SUBDIRS += cntversitmycardplugin
+SUBDIRS += cntversitprefplugin
 
 CONFIG += ordered

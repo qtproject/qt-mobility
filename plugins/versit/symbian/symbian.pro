@@ -22,6 +22,6 @@
 
 TEMPLATE = subdirs
 
-SUBDIRS = versitplugins
+SUBDIRS = cntversitplugins
 
 CONFIG += ordered
