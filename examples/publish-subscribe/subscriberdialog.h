@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -42,7 +42,7 @@
 #define SUBSCRIBERDIALOG_H
 
 #include <qmobilityglobal.h>
-#include <QDialog>
+#include <QtGui/QMainWindow>
 
 QTM_BEGIN_NAMESPACE
 class QValueSpaceSubscriber;
@@ -59,7 +59,7 @@ class QTableWidget;
 class QListWidget;
 QT_END_NAMESPACE
 
-class SubscriberDialog : public QDialog
+class SubscriberDialog : public QMainWindow
 {
     Q_OBJECT
 

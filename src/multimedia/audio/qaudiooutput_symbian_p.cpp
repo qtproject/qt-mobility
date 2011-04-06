@@ -179,10 +179,16 @@ void QAudioOutputPrivate::stop()
 
 void QAudioOutputPrivate::reset()
 {
+#ifndef PRE_S60_52_PLATFORM
+    int err =  m_devSound->flush();
+    if (err != 0)
+        setError(QAudio::FatalError);
+#else
     m_totalSamplesPlayed += getSamplesPlayed();
     m_devSound->stop();
     m_bytesPadding = 0;
     startPlayback();
+#endif
 }
 
 void QAudioOutputPrivate::suspend()
@@ -193,8 +199,10 @@ void QAudioOutputPrivate::suspend()
         const qint64 samplesWritten = SymbianAudio::Utils::bytesToSamples(
                                           m_format, m_bytesWritten);
         const qint64 samplesPlayed = getSamplesPlayed();
+#ifdef PRE_S60_52_PLATFORM
         m_totalSamplesPlayed += samplesPlayed;
         m_bytesWritten = 0;
+#endif
         const bool paused = m_devSound->pause();
         if (paused) {
             setState(SymbianAudio::SuspendedPausedState);
@@ -213,10 +221,19 @@ void QAudioOutputPrivate::suspend()
 void QAudioOutputPrivate::resume()
 {
     if (QAudio::SuspendedState == m_externalState) {
-        if (SymbianAudio::SuspendedPausedState == m_internalState)
+        if (SymbianAudio::SuspendedPausedState == m_internalState) {
+#ifndef PRE_S60_52_PLATFORM
+            setState(SymbianAudio::ActiveState);
+            if (m_devSoundBuffer != 0)
+                devsoundBufferToBeFilled(m_devSoundBuffer);
+            m_devSound->start();
+#else
+//defined in else part of macro to enable compatibility of previous code
             m_devSound->resume();
-        else
+#endif
+        } else {
             startPlayback();
+        }
     }
 }
 
@@ -280,10 +297,16 @@ qint64 QAudioOutputPrivate::processedUSecs() const
     // Protect against division by zero
     Q_ASSERT_X(m_format.frequency() > 0, Q_FUNC_INFO, "Invalid frequency");
 
+#ifndef PRE_S60_52_PLATFORM
+    const qint64 devSoundSamplesPlayed(m_devSound->samplesProcessed());
+    const qint64 result = qint64(1000000) *
+                          (devSoundSamplesPlayed)
+                        / m_format.frequency();
+#else
     const qint64 result = qint64(1000000) *
                           (samplesPlayed + m_totalSamplesPlayed)
                         / m_format.frequency();
-
+#endif
     return result;
 }
 
@@ -342,6 +365,9 @@ void QAudioOutputPrivate::underflowTimerExpired()
     const TInt samplesPlayed = getSamplesPlayed();
     if (m_samplesPlayed && (samplesPlayed == m_samplesPlayed)) {
         setError(QAudio::UnderrunError);
+#ifndef PRE_S60_52_PLATFORM
+        m_underflowTimer->stop();
+#endif
     } else {
         m_samplesPlayed = samplesPlayed;
         m_underflowTimer->start();
@@ -367,6 +393,13 @@ void QAudioOutputPrivate::devsoundBufferToBeFilled(CMMFBuffer *bufferBase)
 
     // Will be returned to DevSoundWrapper by bufferProcessed().
     m_devSoundBuffer = static_cast<CMMFDataBuffer*>(bufferBase);
+#ifndef PRE_S60_52_PLATFORM
+    if (m_externalState == QAudio::SuspendedState) {
+        // This condition occurs when buffertobefilled callback is received after
+        // pause command is processed.
+        return;
+     }
+#endif
 
     if (!m_devSoundBufferSize)
         m_devSoundBufferSize = m_devSoundBuffer->Data().MaxLength();

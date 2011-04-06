@@ -198,6 +198,11 @@ void tst_QContactManagerFiltering::initTestCase()
 	// testing filtering instead.
     managerNames.removeAll("symbiansim");
 
+    // Some internal engines on Maemo6
+    managerNames.removeAll("social");
+    managerNames.removeAll("simcard");
+    managerNames.removeAll("com.nokia.messaging.contacts.engines.mail.contactslookup");
+
     foreach(QString mgr, managerNames) {
         QMap<QString, QString> params;
         QString mgrUri = QContactManager::buildUri(mgr, params);

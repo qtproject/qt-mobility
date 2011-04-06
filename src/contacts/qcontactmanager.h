@@ -203,8 +203,8 @@ private:
 
     Q_DISABLE_COPY(QContactManager)
 
-    Q_PRIVATE_SLOT(d, void _q_contactsUpdated(const QList<QContactLocalId>& ids));
-    Q_PRIVATE_SLOT(d, void _q_contactsDeleted(const QList<QContactLocalId>& ids));
+    Q_PRIVATE_SLOT(d, void _q_contactsUpdated(const QList<QContactLocalId>& ids))
+    Q_PRIVATE_SLOT(d, void _q_contactsDeleted(const QList<QContactLocalId>& ids))
 
     // private data pointer
     QContactManagerData* d;

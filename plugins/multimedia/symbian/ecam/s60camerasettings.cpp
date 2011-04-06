@@ -58,8 +58,8 @@
 S60CameraSettings::S60CameraSettings(QObject *parent, CCameraEngine *engine) :
     QObject(parent),
 #ifndef S60_31_PLATFORM // Post S60 3.1 Platforms
-    m_advancedSettings(NULL),
-    m_imageProcessingSettings(NULL),
+    m_advancedSettings(0),
+    m_imageProcessingSettings(0),
 #endif // S60_31_PLATFORM
     m_cameraEngine(engine),
     m_continuousFocusing(false)
@@ -71,12 +71,12 @@ S60CameraSettings::~S60CameraSettings()
 #ifdef POST_31_PLATFORM
     if (m_advancedSettings) {
         delete m_advancedSettings;
-        m_advancedSettings = NULL;
+        m_advancedSettings = 0;
     }
 
     if (m_imageProcessingSettings) {
         delete m_imageProcessingSettings;
-        m_imageProcessingSettings = NULL;
+        m_imageProcessingSettings = 0;
     }
 #endif // POST_31_PLATFORM
 }
@@ -92,16 +92,16 @@ S60CameraSettings* S60CameraSettings::New(int &error, QObject *parent, CCameraEn
     S60CameraSettings* self = new S60CameraSettings(parent, engine);
     if (!self) {
         error = KErrNoMemory;
-        return NULL;
+        return 0;
     }
 
     TRAPD(err, self->ConstructL());
     if (err) {
         // Clean created object
         delete self;
-        self = NULL;
+        self = 0;
         error = err;
-        return NULL;
+        return 0;
     }
 
     error = KErrNone;
@@ -126,7 +126,7 @@ void S60CameraSettings::ConstructL()
         CleanupStack::PushL(m_imageProcessingSettings);
     } else {
         if (err == KErrNotSupported)
-            m_imageProcessingSettings = NULL;
+            m_imageProcessingSettings = 0;
         else {
             // Leave with error
             if (!m_imageProcessingSettings)

@@ -44,6 +44,7 @@
 
 #include "qgstreamervideorendererinterface.h"
 #include "gstvideoconnector.h"
+#include "qgstutils.h"
 
 #include <gst/gstvalue.h>
 
@@ -198,9 +199,11 @@ void QGstreamerPlayerSession::loadFromStream(const QNetworkRequest &request, QIO
 #if defined(HAVE_GST_APPSRC)
     m_request = request;
     m_duration = -1;
+    m_lastPosition = 0;
 
-    if (!m_appSrc)
-        m_appSrc = new QGstAppSrc(this);
+    if (m_appSrc)
+        m_appSrc->deleteLater();
+    m_appSrc = new QGstAppSrc(this);
     m_appSrc->setStream(appSrcStream);
 
     if (m_playbin) {
@@ -224,6 +227,7 @@ void QGstreamerPlayerSession::loadFromUri(const QNetworkRequest &request)
 {
     m_request = request;
     m_duration = -1;
+    m_lastPosition = 0;
 
     if (m_playbin) {
         m_tags.clear();
@@ -251,9 +255,9 @@ qint64 QGstreamerPlayerSession::position() const
     gint64      position = 0;
 
     if ( m_playbin && gst_element_query_position(m_playbin, &format, &position))
-        return position / 1000000;
-    else
-        return 0;
+        m_lastPosition = position / 1000000;
+
+    return m_lastPosition;
 }
 
 qreal QGstreamerPlayerSession::playbackRate() const
@@ -706,8 +710,12 @@ bool QGstreamerPlayerSession::pause()
 void QGstreamerPlayerSession::stop()
 {
     if (m_playbin) {
+        if (m_renderer)
+            m_renderer->stopRenderer();
+
         gst_element_set_state(m_playbin, GST_STATE_NULL);
 
+        m_lastPosition = 0;
         QMediaPlayer::State oldState = m_state;
         m_pendingState = m_state = QMediaPlayer::StoppedState;
 
@@ -724,15 +732,20 @@ bool QGstreamerPlayerSession::seek(qint64 ms)
 {
     //seek locks when the video output sink is changing and pad is blocked
     if (m_playbin && !m_pendingVideoSink && m_state != QMediaPlayer::StoppedState) {
-        gint64  position = qMax(ms,qint64(0)) * 1000000;
-        return gst_element_seek(m_playbin,
-                                m_playbackRate,
-                                GST_FORMAT_TIME,
-                                GstSeekFlags(GST_SEEK_FLAG_ACCURATE | GST_SEEK_FLAG_FLUSH),
-                                GST_SEEK_TYPE_SET,
-                                position,
-                                GST_SEEK_TYPE_NONE,
-                                0);
+        ms = qMax(ms,qint64(0));
+        gint64  position = ms * 1000000;
+        bool isSeeking = gst_element_seek(m_playbin,
+                                          m_playbackRate,
+                                          GST_FORMAT_TIME,
+                                          GstSeekFlags(GST_SEEK_FLAG_ACCURATE | GST_SEEK_FLAG_FLUSH),
+                                          GST_SEEK_TYPE_SET,
+                                          position,
+                                          GST_SEEK_TYPE_NONE,
+                                          0);
+        if (isSeeking)
+            m_lastPosition = ms;
+
+        return isSeeking;
     }
 
     return false;
@@ -768,66 +781,6 @@ void QGstreamerPlayerSession::setMuted(bool muted)
     }
 }
 
-static void addTagToMap(const GstTagList *list,
-                        const gchar *tag,
-                        gpointer user_data)
-{
-    QMap<QByteArray, QVariant> *map = reinterpret_cast<QMap<QByteArray, QVariant>* >(user_data);
-
-    GValue val;
-    val.g_type = 0;
-    gst_tag_list_copy_value(&val,list,tag);
-
-    switch( G_VALUE_TYPE(&val) ) {
-        case G_TYPE_STRING:
-        {
-            const gchar *str_value = g_value_get_string(&val);
-            map->insert(QByteArray(tag), QString::fromUtf8(str_value));
-            break;
-        }
-        case G_TYPE_INT:
-            map->insert(QByteArray(tag), g_value_get_int(&val));
-            break;
-        case G_TYPE_UINT:
-            map->insert(QByteArray(tag), g_value_get_uint(&val));
-            break;
-        case G_TYPE_LONG:
-            map->insert(QByteArray(tag), qint64(g_value_get_long(&val)));
-            break;
-        case G_TYPE_BOOLEAN:
-            map->insert(QByteArray(tag), g_value_get_boolean(&val));
-            break;
-        case G_TYPE_CHAR:
-            map->insert(QByteArray(tag), g_value_get_char(&val));
-            break;
-        case G_TYPE_DOUBLE:
-            map->insert(QByteArray(tag), g_value_get_double(&val));
-            break;
-        default:
-            // GST_TYPE_DATE is a function, not a constant, so pull it out of the switch
-            if (G_VALUE_TYPE(&val) == GST_TYPE_DATE) {
-                const GDate *date = gst_value_get_date(&val);
-                if (g_date_valid(date)) {
-                    int year = g_date_get_year(date);
-                    int month = g_date_get_month(date);
-                    int day = g_date_get_day(date);
-                    map->insert(QByteArray(tag), QDate(year,month,day));
-                    if (!map->contains("year"))
-                        map->insert("year", year);
-                }
-            } else if (G_VALUE_TYPE(&val) == GST_TYPE_FRACTION) {
-                int nom = gst_value_get_fraction_numerator(&val);
-                int denom = gst_value_get_fraction_denominator(&val);
-
-                if (denom > 0) {
-                    map->insert(QByteArray(tag), double(nom)/denom);
-                }
-            }
-            break;
-    }
-
-    g_value_unset(&val);
-}
 
 void QGstreamerPlayerSession::setSeekable(bool seekable)
 {
@@ -860,27 +813,25 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
 {
     GstMessage* gm = message.rawMessage();
 
-    if (gm == 0) {
-        // Null message, query current position
-        quint32 newPos = position();
-
-        if (newPos/1000 != m_lastPosition) {
-            m_lastPosition = newPos/1000;
-            emit positionChanged(newPos);
-        }
-    } else {
+    if (gm) {
         //tag message comes from elements inside playbin, not from playbin itself
         if (GST_MESSAGE_TYPE(gm) == GST_MESSAGE_TAG) {
             //qDebug() << "tag message";
             GstTagList *tag_list;
             gst_message_parse_tag(gm, &tag_list);
-            gst_tag_list_foreach(tag_list, addTagToMap, &m_tags);
+            m_tags.unite(QGstUtils::gstTagListToMap(tag_list));
 
             //qDebug() << m_tags;
 
             emit tagsChanged();
         } else if (GST_MESSAGE_TYPE(gm) == GST_MESSAGE_DURATION) {
             updateDuration();
+        }
+
+        if (GST_MESSAGE_TYPE(gm) == GST_MESSAGE_BUFFERING) {
+            int progress = 0;
+            gst_message_parse_buffering(gm, &progress);
+            emit bufferingProgressChanged(progress);
         }
 
         bool handlePlaybin2 = false;
@@ -1016,12 +967,6 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
 #endif
                 break;
             case GST_MESSAGE_BUFFERING:
-                {
-                    int progress = 0;
-                    gst_message_parse_buffering(gm, &progress);
-                    emit bufferingProgressChanged(progress);
-                }
-                break;
             case GST_MESSAGE_STATE_DIRTY:
             case GST_MESSAGE_STEP_DONE:
             case GST_MESSAGE_CLOCK_PROVIDE:

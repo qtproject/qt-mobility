@@ -136,45 +136,49 @@ class QSystemNetworkInfoLinuxCommonPrivate : public QObject
     Q_OBJECT
 
 public:
-
     QSystemNetworkInfoLinuxCommonPrivate(QObject *parent = 0);
     virtual ~QSystemNetworkInfoLinuxCommonPrivate();
 
-    QSystemNetworkInfo::NetworkStatus networkStatus(QSystemNetworkInfo::NetworkMode mode);
-    qint32 networkSignalStrength(QSystemNetworkInfo::NetworkMode mode);
-    qint32 cellId();
-    int locationAreaCode();
+    int cellId();
+    QSystemNetworkInfo::CellDataTechnology cellDataTechnology();
 
     QString currentMobileCountryCode();
     QString currentMobileNetworkCode();
-
     QString homeMobileCountryCode();
     QString homeMobileNetworkCode();
 
+    int locationAreaCode();
+
+    QSystemNetworkInfo::NetworkMode currentMode();
+    QNetworkInterface interfaceForMode(QSystemNetworkInfo::NetworkMode mode);
+
+    QSystemNetworkInfo::NetworkStatus networkStatus(QSystemNetworkInfo::NetworkMode mode);
+    int networkSignalStrength(QSystemNetworkInfo::NetworkMode mode);
     QString networkName(QSystemNetworkInfo::NetworkMode mode);
     QString macAddress(QSystemNetworkInfo::NetworkMode mode);
 
-    QNetworkInterface interfaceForMode(QSystemNetworkInfo::NetworkMode mode);
-    QSystemNetworkInfo::NetworkMode currentMode();
-
-    QSystemNetworkInfo::CellDataTechnology cellDataTechnology();
-
-#if !defined(QT_NO_CONNMAN)
-    QSystemNetworkInfo::NetworkStatus getOfonoStatus(QSystemNetworkInfo::NetworkMode mode);
-#endif
-
 Q_SIGNALS:
-   void networkStatusChanged(QSystemNetworkInfo::NetworkMode, QSystemNetworkInfo::NetworkStatus);
-   void networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode,int);
-   void currentMobileCountryCodeChanged(const QString &);
-   void currentMobileNetworkCodeChanged(const QString &);
-   void networkNameChanged(QSystemNetworkInfo::NetworkMode, const QString &);
-   void networkModeChanged(QSystemNetworkInfo::NetworkMode);
+    void cellIdChanged(int cellId); //1.2
+    void cellDataTechnologyChanged(QSystemNetworkInfo::CellDataTechnology cellTech); //1.2
+    void currentMobileCountryCodeChanged(const QString &mcc);
+    void currentMobileNetworkCodeChanged(const QString &mnc);
+    void networkStatusChanged(QSystemNetworkInfo::NetworkMode mode, QSystemNetworkInfo::NetworkStatus status);
+    void networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode mode, int strength);
+    void networkNameChanged(QSystemNetworkInfo::NetworkMode mode, const QString &name);
+    void networkModeChanged(QSystemNetworkInfo::NetworkMode mode);
 
-   void cellIdChanged(int); //1.2
-   void cellDataTechnologyChanged(QSystemNetworkInfo::CellDataTechnology); //1.2
+private Q_SLOTS:
+#if !defined(QT_NO_CONNMAN)
+    void connmanPropertyChangedContext(const QString &path, const QString &item, const QDBusVariant &value);
+    void connmanServicePropertyChangedContext(const QString &path, const QString &item, const QDBusVariant &value);
 
-protected:
+    void ofonoPropertyChangedContext(const QString &path, const QString &item, const QDBusVariant &value);
+    void ofonoNetworkPropertyChangedContext(const QString &path, const QString &item, const QDBusVariant &value);
+#endif // QT_NO_CONNMAN
+
+private:
+    QSystemNetworkInfo::NetworkStatus getBluetoothNetStatus();
+
 #if !defined(QT_NO_DBUS)
     int getBluetoothRssi();
     QString getBluetoothInfo(const QString &file);
@@ -183,6 +187,8 @@ protected:
 #if !defined(QT_NO_CONNMAN)
     QConnmanManagerInterface *connmanManager;
     QOfonoManagerInterface *ofonoManager;
+    QStringList knownModems;
+
     void initConnman();
     void initOfono();
     void initModem(const QString &path);
@@ -191,34 +197,10 @@ protected:
     QSystemNetworkInfo::NetworkMode typeToMode(const QString &type);
     QSystemNetworkInfo::NetworkMode ofonoTechToMode(const QString &tech);
     QSystemNetworkInfo::NetworkStatus ofonoStatusToStatus(const QString &state);
-
-    QStringList knownModems;
-#endif
-
-#endif
-
-private Q_SLOTS:
-
-#if !defined(QT_NO_CONNMAN)
-    void connmanPropertyChangedContext(const QString &path,const QString &item, const QDBusVariant &value);
-    void connmanTechnologyPropertyChangedContext(const QString &path,const QString &item, const QDBusVariant &value);
-    void connmanDevicePropertyChangedContext(const QString &path,const QString &item, const QDBusVariant &value);
-    void connmanServicePropertyChangedContext(const QString &path,const QString &item, const QDBusVariant &value);
-
-    void ofonoPropertyChangedContext(const QString &path,const QString &item, const QDBusVariant &value);
-    void ofonoNetworkPropertyChangedContext(const QString &path,const QString &item, const QDBusVariant &value);
-    void ofonoModemPropertyChangedContext(const QString &path,const QString &item, const QDBusVariant &value);
-#endif
-
-private:
-
-    QSystemNetworkInfo::NetworkStatus getBluetoothNetStatus();
-    void connectNotify(const char *signal);
-    void disconnectNotify(const char *signal);
-
-#if !defined(QT_NO_CONNMAN)
+    QSystemNetworkInfo::NetworkStatus getOfonoStatus(QSystemNetworkInfo::NetworkMode mode);
     QSystemNetworkInfo::CellDataTechnology ofonoTechToCDT(const QString &tech);
-#endif
+#endif // QT_NO_CONNMAN
+#endif // QT_NO_DBUS
 };
 
 class QSystemDisplayInfoLinuxCommonPrivate : public QObject
@@ -240,12 +222,22 @@ public:
     int physicalHeight(int screen);
     int physicalWidth(int screen);
     QSystemDisplayInfo::BacklightState backlightStatus(int screen); //1.2
+    static QSystemDisplayInfoLinuxCommonPrivate *instance() {return self;}
+
+#if defined(Q_WS_X11)
+    void emitOrientationChanged(int curRotation);
+    int xEventBase;
+    int xErrorBase;
+    int lastRotation;
+#endif
+
 Q_SIGNALS:
     void orientationChanged(QSystemDisplayInfo::DisplayOrientation newOrientation);
 
 private:
     bool isScreenValid(int screen);
     QDesktopWidget *wid;
+    static QSystemDisplayInfoLinuxCommonPrivate *self;
 };
 
 class QSystemStorageInfoLinuxCommonPrivate : public QObject
@@ -312,7 +304,7 @@ public:
     QSystemDeviceInfoLinuxCommonPrivate(QObject *parent = 0);
     virtual ~QSystemDeviceInfoLinuxCommonPrivate();
 
-    QString imei();
+
     QString imsi();
     QString manufacturer();
     QString model();
@@ -327,6 +319,7 @@ public:
     QSystemDeviceInfo::Profile currentProfile() {return QSystemDeviceInfo::UnknownProfile;}
 
     QSystemDeviceInfo::PowerState currentPowerState();
+    QSystemDeviceInfo::ThermalState currentThermalState();
     void setConnection();
     bool currentBluetoothPowerState();
 
@@ -336,14 +329,14 @@ public:
 
     void keyboardConnected(bool connect);//1.2
     bool keypadLightOn(QSystemDeviceInfo::KeypadType type); //1.2
-    QUuid uniqueDeviceID(); //1.2
-    QSystemDeviceInfo::LockTypeFlags lockStatus(); //1.2
+    QByteArray uniqueDeviceID(); //1.2
 
 Q_SIGNALS:
     void batteryLevelChanged(int);
     void batteryStatusChanged(QSystemDeviceInfo::BatteryStatus );
 
     void powerStateChanged(QSystemDeviceInfo::PowerState);
+    void thermalStateChanged(QSystemDeviceInfo::ThermalState);
     void currentProfileChanged(QSystemDeviceInfo::Profile);
     void bluetoothStateChanged(bool);
 
@@ -381,6 +374,8 @@ private:
     void initBatteryStatus();
     int currentBatLevel;
     QSystemDeviceInfo::PowerState curPowerState;
+    bool currentBatStatusInitialized;
+    bool currentBatLevelInitialized;
 };
 
 

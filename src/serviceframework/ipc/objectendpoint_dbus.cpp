@@ -93,6 +93,7 @@ struct ClientInstance {
     QString clientId;
     QRemoteServiceRegister::Entry entry;
     QUuid instanceId;
+    int ref;
 };
 
 class ObjectEndPointPrivate
@@ -166,13 +167,15 @@ void ObjectEndPoint::disconnected(const QString& clientId, const QString& instan
     for (int i=d->clientList.size()-1; i>=0; i--) {
         // Find right client process
         if (d->clientList[i].clientId == clientId) {
-            QRemoteServiceRegister::Entry entry = d->clientList[i].entry;
-            QUuid instance = d->clientList[i].instanceId;
+            if (d->clientList[i].ref-- == 1) {
+                QRemoteServiceRegister::Entry entry = d->clientList[i].entry;
+                QUuid instance = d->clientList[i].instanceId;
 
-            if (instance.toString() == instanceId) {
-                // Remove an instance from the InstanceManager and local list
-                InstanceManager::instance()->removeObjectInstance(entry, instance);
-                d->clientList.removeAt(i);
+                if (instance.toString() == instanceId) {
+                    // Remove an instance from the InstanceManager and local list
+                    InstanceManager::instance()->removeObjectInstance(entry, instance);
+                    d->clientList.removeAt(i);
+                }
             }
         }
     }
@@ -212,7 +215,7 @@ QObject* ObjectEndPoint::constructProxy(const QRemoteServiceRegister::Entry& ent
     dispatch->writePackage(p);
     waitForResponse(p.d->messageId);
 
-    // Get the proxy bsaed on the meta object
+    // Get the proxy based on the meta object
     if (response->isFinished) {
         if (response->result == 0)
             qWarning() << "Request for remote service failed";
@@ -368,13 +371,30 @@ void ObjectEndPoint::objectRequest(const QServicePackage& p)
 
         QServiceMetaObjectDBus *serviceDBus = new QServiceMetaObjectDBus(service);
         QDBusConnection::sessionBus().registerObject(objPath, serviceDBus, QDBusConnection::ExportAllContents);
-       
-        // Add new instance to client ownership list
-        ClientInstance c;
-        c.clientId = p.d->payload.toString();
-        c.entry = p.d->entry;
-        c.instanceId = d->serviceInstanceId;
-        d->clientList << c;
+
+        QString clientId = p.d->payload.toString();
+
+        int exists = 0;
+        for (int i=d->clientList.size()-1; i>=0; i--) {
+            // Find right client process
+            if (d->clientList[i].clientId == clientId) {
+                d->clientList[i].ref++;
+                exists = 1;
+                break;
+            }
+        }
+
+        if (!exists) {
+            // Add new instance to client ownership list
+            ClientInstance c;
+            c.clientId = clientId;
+            c.entry = p.d->entry;
+            c.instanceId = d->serviceInstanceId;
+            c.ref = 1;
+            d->clientList << c;
+        }
+
+
 
 #ifdef DEBUG
         qDebug() << "Service Interface ObjectPath:" << objPath;
@@ -509,7 +529,7 @@ QVariant ObjectEndPoint::invokeRemoteProperty(int metaIndex, const QVariant& arg
             QVariantList retList = msg.arguments();
             return retList[0];
         } else {
-            qWarning() << "Service property read call failed";
+            qWarning() << "Service property read call failed" << msg.errorMessage();
         }
     } else {
         qWarning() << "Invalid property call";

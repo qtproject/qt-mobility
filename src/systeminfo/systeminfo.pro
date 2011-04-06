@@ -231,6 +231,19 @@ unix:!simulator {
             LIBS += -lptiengine \
         }
 
+        contains(symbianflextimer_enabled,yes) {
+            message("SymbianFlexTimer enabled")
+            SOURCES += qsystemalignedtimer_symbian.cpp \
+                 heartbeattimer_s60.cpp
+            HEADERS += qsystemalignedtimer_symbian_p.h \
+                 heartbeattimer_s60.h
+            DEFINES += ALIGNEDTIMER_SYMBIAN
+            LIBS += -lflextimerclient
+        } else {
+            SOURCES += qsystemalignedtimer_stub.cpp
+            HEADERS += qsystemalignedtimer_stub_p.h
+        }
+
         INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
         DEPENDPATH += symbian
 
@@ -241,8 +254,7 @@ unix:!simulator {
             storagestatus_s60.cpp \
             pubandsubkey_s60.cpp \
             batterystatus_s60.cpp \
-            networkinfo_s60.cpp \
-            qsystemalignedtimer_stub.cpp
+            networkinfo_s60.cpp
 
         HEADERS += qsysteminfo_s60_p.h \
             telephonyinfo_s60.h \
@@ -251,8 +263,7 @@ unix:!simulator {
             storagestatus_s60.h \
             pubandsubkey_s60.h \
             batterystatus_s60.h \
-            networkinfo_s60.h \
-            qsystemalignedtimer_stub_p.h
+            networkinfo_s60.h
 
         LIBS += -lprofileengine \
             -letel3rdparty \
@@ -266,7 +277,6 @@ unix:!simulator {
             -lcone \
             -lws32 \
             -lcentralrepository \
-            -lprofileengine \
             -lbluetooth \
             -lgdi \
             -lecom \
@@ -283,6 +293,13 @@ unix:!simulator {
             LIBS += -letelmm
             DEFINES += ETELMM_SUPPORTED
             message("ETELMM enabled")
+            }
+
+        contains(thermalstatus_symbian_enabled,yes){
+            DEFINES += THERMALSTATUS_SUPPORTED
+            SOURCES += thermalstatus_s60.cpp
+            HEADERS += thermalstatus_s60.h
+            message("Thermalstatus enabled")
             }
 
         TARGET.CAPABILITY = ALL -TCB

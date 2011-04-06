@@ -77,6 +77,7 @@ IMPLEMENT_READING(QMagnetometerReading)
     The accuracy of each reading is measured as a number from 0 to 1.
     A value of 1 is the highest level that the device can support and 0 is
     the worst.
+    \sa {http://wiki.forum.nokia.com/index.php/CS001671_-_Calibrating_the_magnetometer_sensor}{CS001671 - Calibrating the magnetometer sensor}
 */
 
 /*!
@@ -150,7 +151,7 @@ void QMagnetometerReading::setZ(qreal z)
 
     Note that this only changes when measuring geomagnetic flux density.
     Raw magnetic flux readings will always have a value of 1.
-    \sa {QMagnetometerReading Units}
+    \sa {QMagnetometerReading Units}, {http://wiki.forum.nokia.com/index.php/CS001671_-_Calibrating_the_magnetometer_sensor}{CS001671 - Calibrating the magnetometer sensor}
 */
 
 qreal QMagnetometerReading::calibrationLevel() const

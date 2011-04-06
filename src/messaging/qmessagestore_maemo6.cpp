@@ -109,6 +109,9 @@ QMessageStore::QMessageStore(QObject *parent)
  //   d_ptr->initialize(this);
     qDebug() << "QMessageStore::QMessageStore exit";
 
+    connect(QMFStore::instance(), SIGNAL(accountRemoved(const QMessageAccountId &)),
+            this, SIGNAL(accountRemoved(const QMessageAccountId &)));
+
     connect(QMFStore::instance(), SIGNAL(messageAdded(const QMessageId &, const QMessageManager::NotificationFilterIdSet)), 
 	    this, SIGNAL(messageAdded(const QMessageId &, const QMessageManager::NotificationFilterIdSet)));
     connect(QMFStore::instance(), SIGNAL(messageUpdated(const QMessageId &, const QMessageManager::NotificationFilterIdSet &)),

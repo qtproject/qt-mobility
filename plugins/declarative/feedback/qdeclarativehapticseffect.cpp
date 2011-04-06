@@ -206,7 +206,7 @@ void QDeclarativeHapticsEffect::setActuator(QDeclarativeFeedbackActuator *actuat
          || !m_actuator
          || !(*(actuator->feedbackActuator()) == *(m_actuator->feedbackActuator()))) {
             m_actuator = actuator;
-            d->setActuator(m_actuator->feedbackActuator());
+            d->setActuator(m_actuator ? m_actuator->feedbackActuator() : 0);
             emit actuatorChanged();
         }
     }

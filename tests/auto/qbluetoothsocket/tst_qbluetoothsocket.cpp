@@ -340,7 +340,7 @@ void tst_QBluetoothSocket::tst_clientConnection()
 // TODO: no buffereing, all data is sent on write
         if (!data.isEmpty()) {
             // Check that pending write did not complete.
-            QEXPECT_FAIL("", "TODO: need to implement write buffering", Continue);
+//            QEXPECT_FAIL("", "TODO: need to implement write buffering", Continue);
             QCOMPARE(bytesWrittenSpy.count(), 0);
         }
 
@@ -542,7 +542,7 @@ void tst_QBluetoothSocket::tst_clientCommunication()
 
             socket->write(line.toUtf8());
 
-            QEXPECT_FAIL("", "TODO: need to implement write buffering", Continue);
+//            QEXPECT_FAIL("", "TODO: need to implement write buffering", Continue);
             QCOMPARE(socket->bytesToWrite(), qint64(line.length()));
 
             int readWriteTime = MaxReadWriteTime;
@@ -613,7 +613,7 @@ void tst_QBluetoothSocket::tst_clientCommunication()
         QString joined = data.join(QString());
         socket->write(joined.toUtf8());
 
-        QEXPECT_FAIL("", "TODO: need to implement write buffering", Continue);
+//        QEXPECT_FAIL("", "TODO: need to implement write buffering", Continue);
         QCOMPARE(socket->bytesToWrite(), qint64(joined.length()));
 
         int readWriteTime = MaxReadWriteTime;

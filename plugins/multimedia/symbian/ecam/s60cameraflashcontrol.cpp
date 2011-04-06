@@ -52,9 +52,9 @@ S60CameraFlashControl::S60CameraFlashControl(QObject *parent) :
 
 S60CameraFlashControl::S60CameraFlashControl(S60ImageCaptureSession *session, QObject *parent) :
     QCameraFlashControl(parent),
-    m_session(NULL),
-    m_service(NULL),
-    m_advancedSettings(NULL),
+    m_session(0),
+    m_service(0),
+    m_advancedSettings(0),
     m_flashMode(QCameraExposure::FlashOff)
 {
     m_session = session;
@@ -68,7 +68,7 @@ S60CameraFlashControl::S60CameraFlashControl(S60ImageCaptureSession *session, QO
 
 S60CameraFlashControl::~S60CameraFlashControl()
 {
-    m_advancedSettings = NULL;
+    m_advancedSettings = 0;
 }
 
 void S60CameraFlashControl::resetAdvancedSetting()

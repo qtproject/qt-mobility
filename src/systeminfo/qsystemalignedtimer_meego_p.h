@@ -91,7 +91,7 @@ private:
     iphb_t m_iphbdHandler;
     QSocketNotifier *m_notifier;
     QObject *m_singleShotReceiver;
-    const char *m_singleShotMember;
+    QByteArray m_singleShotMember;
 
 public Q_SLOTS:
     void start(int minimumTime, int maximumTime);

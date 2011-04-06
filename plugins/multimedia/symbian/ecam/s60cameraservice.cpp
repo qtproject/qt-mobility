@@ -220,7 +220,7 @@ QMediaControl *S60CameraService::requestControl(const char *name)
 
 void S60CameraService::releaseControl(QMediaControl *control)
 {
-    if (control == NULL)
+    if (control == 0)
         return;
 
     // Release viewfinder output

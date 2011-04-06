@@ -131,6 +131,9 @@ public:
 
     void stop();
     void bufferProcessed();
+#ifndef PRE_S60_52_PLATFORM
+    int flush();
+#endif
 
 public:
     // MDevSoundObserver

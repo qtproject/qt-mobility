@@ -119,6 +119,11 @@ Q_GLOBAL_STATIC(QSystemDeviceInfo, deviceInfo)
     This signal is emitted whenever the lock state changes
 */
 
+/*!
+    \qmlsignal DeviceInfo::thermalStateChanged(DeviceInfo::ThermalState)
+
+    This handler is called when thermal state has changed.
+*/
 
 QDeclarativeDeviceInfo::QDeclarativeDeviceInfo(QObject *parent) :
     QSystemDeviceInfo(parent)
@@ -253,6 +258,31 @@ void QDeclarativeDeviceInfo::startBluetoothStateChanged(bool on)
 bool QDeclarativeDeviceInfo::monitorBluetoothStateChanges()
 {
    return monitorBluetoothState;
+}
+
+/*!
+   This function starts the thermalStateChanged notification
+
+*/
+void QDeclarativeDeviceInfo::startThermalStateChanged(bool on)
+{
+    monitorThermalState = on;
+    if (on) {
+    connect(deviceInfo(), SIGNAL(thermalStateChanged(QSystemDeviceInfo::ThermalState)),
+            this, SIGNAL(thermalStateChanged(QSystemDeviceInfo::ThermalState)), Qt::UniqueConnection);
+    } else {
+        disconnect(deviceInfo(), SIGNAL(thermalStateChanged(QSystemDeviceInfo::ThermalState)),
+                this, SIGNAL(thermalStateChanged(QSystemDeviceInfo::ThermalState)));
+    }
+}
+
+/*!
+    \qmlproperty bool DeviceInfo::monitorThermalStateChanges
+    Use the thermalStateChanges signal.
+  */
+bool QDeclarativeDeviceInfo::monitorThermalStateChanges()
+{
+   return monitorThermalState;
 }
 
 /*!
@@ -397,12 +427,6 @@ int QDeclarativeDeviceInfo::voiceRingtoneVolume()
 bool QDeclarativeDeviceInfo::vibrationActive()
 {
     return deviceInfo()->activeProfileDetails().vibrationActive();
-}
-
-
-QString QDeclarativeDeviceInfo::uniqueID()
-{
-    return deviceInfo()->uniqueDeviceID().toString();
 }
 
 /*!

@@ -613,4 +613,28 @@ EXPORTS
 	?trUtf8@QNearFieldTagType3@QtMobility@@SA?AVQString@@PBD0@Z @ 612 NONAME ; class QString QtMobility::QNearFieldTagType3::trUtf8(char const *, char const *)
 	??9QBluetoothTransferRequest@QtMobility@@QBE_NABV01@@Z @ 613 NONAME ; bool QtMobility::QBluetoothTransferRequest::operator!=(class QtMobility::QBluetoothTransferRequest const &) const
 	??1QLlcpSocket@QtMobility@@UAE@XZ @ 614 NONAME ; QtMobility::QLlcpSocket::~QLlcpSocket(void)
+	?isAvailable@QNearFieldManager@QtMobility@@QBE_NXZ @ 615 NONAME ; bool QtMobility::QNearFieldManager::isAvailable(void) const
+	?getStaticMetaObject@QDeclarativeNdefRecord@QtMobility@@SAABUQMetaObject@@XZ @ 616 NONAME ; struct QMetaObject const & QtMobility::QDeclarativeNdefRecord::getStaticMetaObject(void)
+	?qt_metacast@QDeclarativeNdefRecord@QtMobility@@UAEPAXPBD@Z @ 617 NONAME ; void * QtMobility::QDeclarativeNdefRecord::qt_metacast(char const *)
+	?qRegisterNdefRecordTypeHelper@QtMobility@@YAXPBUQMetaObject@@W4TypeNameFormat@QNdefRecord@1@ABVQByteArray@@@Z @ 618 NONAME ; void QtMobility::qRegisterNdefRecordTypeHelper(struct QMetaObject const *, enum QtMobility::QNdefRecord::TypeNameFormat, class QByteArray const &)
+	?tr@QDeclarativeNdefRecord@QtMobility@@SA?AVQString@@PBD0H@Z @ 619 NONAME ; class QString QtMobility::QDeclarativeNdefRecord::tr(char const *, char const *, int)
+	??0QDeclarativeNdefRecord@QtMobility@@QAE@PAVQObject@@@Z @ 620 NONAME ; QtMobility::QDeclarativeNdefRecord::QDeclarativeNdefRecord(class QObject *)
+	?record@QDeclarativeNdefRecord@QtMobility@@QBE?AVQNdefRecord@2@XZ @ 621 NONAME ; class QtMobility::QNdefRecord QtMobility::QDeclarativeNdefRecord::record(void) const
+	?setRecord@QDeclarativeNdefRecord@QtMobility@@QAEXABVQNdefRecord@2@@Z @ 622 NONAME ; void QtMobility::QDeclarativeNdefRecord::setRecord(class QtMobility::QNdefRecord const &)
+	?qNewDeclarativeNdefRecordForNdefRecord@QtMobility@@YAPAVQDeclarativeNdefRecord@1@ABVQNdefRecord@1@@Z @ 623 NONAME ; class QtMobility::QDeclarativeNdefRecord * QtMobility::qNewDeclarativeNdefRecordForNdefRecord(class QtMobility::QNdefRecord const &)
+	??1QDeclarativeNdefRecord@QtMobility@@UAE@XZ @ 624 NONAME ; QtMobility::QDeclarativeNdefRecord::~QDeclarativeNdefRecord(void)
+	?trUtf8@QDeclarativeNdefRecord@QtMobility@@SA?AVQString@@PBD0@Z @ 625 NONAME ; class QString QtMobility::QDeclarativeNdefRecord::trUtf8(char const *, char const *)
+	?staticMetaObject@QDeclarativeNdefRecord@QtMobility@@2UQMetaObject@@B @ 626 NONAME ; struct QMetaObject const QtMobility::QDeclarativeNdefRecord::staticMetaObject
+	?qt_metacall@QDeclarativeNdefRecord@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 627 NONAME ; int QtMobility::QDeclarativeNdefRecord::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?recordTypeChanged@QDeclarativeNdefRecord@QtMobility@@IAEXXZ @ 628 NONAME ; void QtMobility::QDeclarativeNdefRecord::recordTypeChanged(void)
+	?setRecordType@QDeclarativeNdefRecord@QtMobility@@QAEXABVQString@@@Z @ 629 NONAME ; void QtMobility::QDeclarativeNdefRecord::setRecordType(class QString const &)
+	?trUtf8@QDeclarativeNdefRecord@QtMobility@@SA?AVQString@@PBD0H@Z @ 630 NONAME ; class QString QtMobility::QDeclarativeNdefRecord::trUtf8(char const *, char const *, int)
+	??_EQDeclarativeNdefRecord@QtMobility@@UAE@I@Z @ 631 NONAME ; QtMobility::QDeclarativeNdefRecord::~QDeclarativeNdefRecord(unsigned int)
+	?recordType@QDeclarativeNdefRecord@QtMobility@@QBE?AVQString@@XZ @ 632 NONAME ; class QString QtMobility::QDeclarativeNdefRecord::recordType(void) const
+	??0QDeclarativeNdefRecord@QtMobility@@QAE@ABVQNdefRecord@1@PAVQObject@@@Z @ 633 NONAME ; QtMobility::QDeclarativeNdefRecord::QDeclarativeNdefRecord(class QtMobility::QNdefRecord const &, class QObject *)
+	?metaObject@QDeclarativeNdefRecord@QtMobility@@UBEPBUQMetaObject@@XZ @ 634 NONAME ; struct QMetaObject const * QtMobility::QDeclarativeNdefRecord::metaObject(void) const
+	?d_func@QDeclarativeNdefRecord@QtMobility@@ABEPBVQDeclarativeNdefRecordPrivate@2@XZ @ 635 NONAME ; class QtMobility::QDeclarativeNdefRecordPrivate const * QtMobility::QDeclarativeNdefRecord::d_func(void) const
+	?tr@QDeclarativeNdefRecord@QtMobility@@SA?AVQString@@PBD0@Z @ 636 NONAME ; class QString QtMobility::QDeclarativeNdefRecord::tr(char const *, char const *)
+	?d_func@QDeclarativeNdefRecord@QtMobility@@AAEPAVQDeclarativeNdefRecordPrivate@2@XZ @ 637 NONAME ; class QtMobility::QDeclarativeNdefRecordPrivate * QtMobility::QDeclarativeNdefRecord::d_func(void)
+	?canceled@QBluetoothServiceDiscoveryAgent@QtMobility@@IAEXXZ @ 638 NONAME ; void QtMobility::QBluetoothServiceDiscoveryAgent::canceled(void)
 

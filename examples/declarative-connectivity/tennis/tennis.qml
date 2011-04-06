@@ -129,7 +129,7 @@ Rectangle {
                    statusText.text = "Unconnected " + error;
                    controller.start();
                    controller.refresh();
-       }
+               }
            }
            //onConnectedChanged: console.log("Connected changed");
            onDataAvailable: parse(socket.stringData);
@@ -139,36 +139,80 @@ Rectangle {
            id: lagTimer
 
            function sendEcho() {
-               var s = "E " + new Date().getTime();
-               socket.sendStringData(s);
+               if(socket.connected){
+                    var s = "E " + new Date().getTime();
+                    socket.sendStringData(s);
+               }
+               if(server_socket.connected){
+                   var s = "e " + new Date().getTime();
+                   server_socket.sendStringData(s);
+               }
            }
 
            interval: 1000
            repeat: true
-           running: socket.connected
+           running: socket.connected || server_socket.connected
            onTriggered: sendEcho();
        }
 
 
        // server side, not implemented
 
-    //   BluetoothService {
-    //        id: btserver
+       BluetoothService {
+            id: btserver
 
-    //        serviceName: "bttennis"
-    //        serviceDescription: "QML Tennis Service"
-    //        serviceProtocol: "l2cap"
-    //        serviceUuid: "e8e10f95-1a70-4b27-9ccf-02010264e9c9"
-    //        registered: true
-    //   }
+            serviceName: "bttennis"
+            serviceDescription: "QML Tennis Service"
+            serviceProtocol: "l2cap"
+            serviceUuid: "e8e10f95-1a70-4b27-9ccf-02010264e9c9"
+            registered: true
+            onNewClient: {
+                console.log("Got a new connections!");
+                if (!server_socket.connected) {
+                    assignNextClient(server_socket);
+                } else {
+                    nextClient().connected = false;
+                }
+            }
+       }
 
-    //   BluetoothSocket {
-    //       id: socket_listen
+       BluetoothSocket {
+           id: server_socket
 
-    //       service: btserver
-    //       listening: true
-    //   }
+           function parse(s){
+               var args  = s.split(" ");
 
+               if(args[0] == "r"){
+                   rightPaddle.y = Number(args[1])+topBumper.height;
+               }
+               else if(args[0] == "E"){ // echo packet, check for RTT
+                   sendStringData(s);
+               }
+               else if(args[0] == "E"){
+                   var d = new Date();
+
+                   var lag = d.getTime() - args[1];
+                   if(lag > 250){
+                       statusText.text = "LAG! " + lag + "ms";
+                   }
+               }
+           }
+
+           onStateChanged: console.log("SERVER: New socket state " + state);
+           onErrorChanged: { console.log("SERVER: error: " + error); statusText.text = error; }
+           onServiceChanged: console.log("SERVER: New service");
+           onConnectedChanged: {
+               console.log("SERVER Connected: " + connected);
+               if(connected) {
+                    statusText.text = "Server Connected";
+                    controller.refresh();
+               }
+               else {
+                   statusText.text = "Server Unconnected " + error;
+               }
+           }
+           onDataAvailable: parse(stringData);
+       }
 
        Connections {
            target: deviceSensor.item
@@ -203,11 +247,13 @@ Rectangle {
 
            onMousePositionChanged: {
                var y = mouseY-rightPaddle.height/2;
+               var p = server_socket.connected ? leftPaddle : rightPaddle;
+
                if(y < topBumper.height)
                    y = topBumper.height;
                if(y > page.height - bottomBumper.height - rightPaddle.height)
                    y = page.height - bottomBumper.height - rightPaddle.height;
-               rightPaddle.paddlePos = y;
+               p.paddlePos = y;
            }
        }
 
@@ -216,6 +262,7 @@ Rectangle {
 
            mymodel: myModel
            socket: socket
+           server_socket: server_socket
        }
 
         // Make a ball to bounce
@@ -231,7 +278,19 @@ Rectangle {
         Paddle {
             id: leftPaddle
 
-            onPaddleMoved: controller.moveLeftPaddle(y);
+            property int lastsent: 0
+
+            onPaddleMoved: {
+                controller.moveLeftPaddle(y);
+                if (server_socket.connected) {
+                    var c = Math.round(y-topBumper.height);
+                    if (c == lastsent){
+                        return;
+                    }
+                    lastsent = c;
+                    server_socket.sendStringData("l " + c);
+                }
+            }
         }
 
         Paddle {
@@ -240,7 +299,7 @@ Rectangle {
             x: page.width - 12;
 
             onPaddleMoved:  {
-                if(socket.state == "Connected")
+                if(socket.connected)
                     socket.sendStringData("r " + Math.round(rightPaddle.y-topBumper.height));
                 controller.moveRightPaddle(y);
             }
@@ -279,12 +338,14 @@ Rectangle {
         }
 
         Keys.onPressed: {
+            var p = server_socket.connected ? leftPaddle : rightPaddle;
+
             if(event.key == Qt.Key_Up){
-                rightPaddle.paddlePos -= 20;
+                p.paddlePos -= 20;
                 event.accepted = true;
             }
             else if(event.key == Qt.Key_Down){
-                rightPaddle.paddlePos += 20;
+                p.paddlePos += 20;
                 event.accepted = true;
             }
         }
@@ -337,7 +398,7 @@ Rectangle {
                 }
                 lastx = x;
 
-                if(!socket.connected){
+                if (!socket.connected && !server_socket.connected){
                     if(dir && ball.x < page.width/2) {
                         leftPaddle.paddlePos = ball.y - leftPaddle.height/2;
                     }
@@ -345,10 +406,20 @@ Rectangle {
                         rightPaddle.paddlePos = ball.y - leftPaddle.height/2;
                     }
                 }
+
+                if (server_socket.connected){
+                    var s = "m " + ball.x + " " + ball.y;
+                    server_socket.sendStringData(s);
+                }
             }
             onScore: {
                 scoreLeft.text = left;
                 scoreRight.text = right;
+
+                if (server_socket.connected) {
+                    var s = "s " + left + " " + right;
+                    server_socket.sendStringData(s);
+                }
             }
         }
     }

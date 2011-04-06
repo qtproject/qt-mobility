@@ -101,6 +101,11 @@ public:
         Format_Y8,
         Format_Y16,
 
+        Format_Jpeg,
+
+        Format_CameraRaw,
+        Format_AdobeDng,
+
         Format_User = 1000
     };
 

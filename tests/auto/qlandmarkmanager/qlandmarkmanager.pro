@@ -32,7 +32,7 @@ symbian {
         load(data_caging_paths)
         INCLUDEPATH += $$MW_LAYER_SYSTEMINCLUDE
         TARGET.EPOCALLOWDLLDATA = 1
-        TARGET.CAPABILITY = ALL -TCB
+        TARGET.CAPABILITY = LocalServices ReadUserData WriteUserData ReadDeviceData WriteDeviceData NetworkServices
         LIBS += -leposlmdbmanlib
         addFiles.sources += data/moreplaces.lmx
         addFiles.sources += data/test.gpx
@@ -42,6 +42,7 @@ symbian {
         addFiles.sources += data/AUS-PublicToilet-NewSouthWales.lmx
         addFiles.sources += data/AUS-PublicToilet-NewSouthWales.gpx
         addFiles.sources += data/AUS-PublicToilet-AustralianCapitalTerritory.gpx
+        addFiles.sources += data/AUS-PublicToilet-AustralianCapitalTerritory.lmx
         addFiles.sources += data/places.gpx
         addFiles.sources += data/test.kml
         addFiles.sources += data/malformed.kml
