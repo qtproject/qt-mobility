@@ -124,6 +124,7 @@ public:
     void _q_startReceive();
     void startReceive();
     void startServerSideReceive();
+    void receive();
     void ensureBlankNativeSocket();
 
     /* MBluetoothSocketNotifier virtual functions */
@@ -160,8 +161,11 @@ public:
     CBluetoothSocket *iSocket;
     CBluetoothSocket *iBlankSocket;
     TPtr8 rxDescriptor;
+    TPtrC8 txDescriptor;
     TSockXfrLength rxLength;
     bool receiving;
+    TInt recvMTU;
+    QByteArray txTempBuffer;
 #endif
 
     // private slots
