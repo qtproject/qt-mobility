@@ -20,15 +20,22 @@ CONFIG += plugin
 TARGET = $$qtLibraryTarget(cntversitmycardplugin)
 PLUGIN_TYPE = versit
 
+include(../../../../../common.pri)
+
+INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE		   
+
+INCLUDEPATH += inc
+INCLUDEPATH += $$SOURCE_DIR/contacts
+INCLUDEPATH += $$SOURCE_DIR/contacts/details
+INCLUDEPATH += $$SOURCE_DIR/contacts/filters
+INCLUDEPATH += $$SOURCE_DIR/contacts/requests
+
 HEADERS += inc/cntversitmycardplugin.h \
            inc/cntversitmycardpluginfactory.h
            
 SOURCES += src/cntversitmycardplugin.cpp \
            src/cntversitmycardpluginfactory.cpp
-
-INCLUDEPATH += ../../../inc
-INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
-
+           
 CONFIG += mobility
 MOBILITY = versit \
 					 contacts

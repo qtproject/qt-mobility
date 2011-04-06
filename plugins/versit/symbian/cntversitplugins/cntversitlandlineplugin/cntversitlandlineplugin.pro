@@ -13,12 +13,22 @@ TEMPLATE = lib
 CONFIG += plugin
 TARGET = $$qtLibraryTarget(cntversitlandlineplugin)
 PLUGIN_TYPE = versit
+
+include(../../../../../common.pri)
+
+INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE		   
+
+INCLUDEPATH += inc
+INCLUDEPATH += $$SOURCE_DIR/contacts
+INCLUDEPATH += $$SOURCE_DIR/contacts/details
+INCLUDEPATH += $$SOURCE_DIR/contacts/filters
+INCLUDEPATH += $$SOURCE_DIR/contacts/requests
+
 HEADERS += inc/cntversitlandlineplugin.h \
            inc/cntversitlandlinepluginfactory.h
 SOURCES += src/cntversitlandlineplugin.cpp \
            src/cntversitlandlinepluginfactory.cpp
-INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
-INCLUDEPATH += ../../../inc
+           
 CONFIG += mobility
 MOBILITY = versit \
            contacts

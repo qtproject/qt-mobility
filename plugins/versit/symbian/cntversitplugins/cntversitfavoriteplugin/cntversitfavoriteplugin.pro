@@ -21,13 +21,21 @@ CONFIG += plugin
 TARGET = $$qtLibraryTarget(cntversitfavoriteplugin)
 PLUGIN_TYPE = versit
 
+include(../../../../../common.pri)
+
+INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE		   
+
+INCLUDEPATH += inc
+INCLUDEPATH += $$SOURCE_DIR/contacts
+INCLUDEPATH += $$SOURCE_DIR/contacts/details
+INCLUDEPATH += $$SOURCE_DIR/contacts/filters
+INCLUDEPATH += $$SOURCE_DIR/contacts/requests
+
 HEADERS += inc/cntversitfavoriteplugin.h \
            inc/cntversitfavoritepluginfactory.h
 SOURCES += src/cntversitfavoriteplugin.cpp \
            src/cntversitfavoritepluginfactory.cpp
 
-INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE		   
-INCLUDEPATH += ../../../inc
 CONFIG += mobility
 MOBILITY = versit contacts
 
