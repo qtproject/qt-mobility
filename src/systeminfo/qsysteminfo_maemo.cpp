@@ -1846,7 +1846,6 @@ QByteArray QSystemDeviceInfoPrivate::uniqueDeviceID()
     hash.addData(bytes);
     hash.addData(wlanmac.toLocal8Bit());
     hash.addData(btmac.toLocal8Bit());
-    qDebug() << Q_FUNC_INFO << hash.result().toHex();
 
     return hash.result().toHex();
 #endif
