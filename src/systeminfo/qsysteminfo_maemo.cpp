@@ -167,12 +167,18 @@ QStringList QSystemInfoPrivate::availableLanguages() const
 QString QSystemInfoPrivate::currentLanguage() const
 {
 #if defined(Q_WS_MAEMO_6)
-    GConfItem langItem("/meegotouch/i18n/language");
-    QString lang = langItem.value().toString();
-    if (lang.count() > 2)
-        lang = lang.left(2);
-    if (lang.isEmpty())
-        lang = QString::fromLocal8Bit(qgetenv("LANG")).left(2);
+    QString lang;
+    if (currentLang.isEmpty()) {
+        GConfItem langItem("/meegotouch/i18n/language");
+        lang = langItem.value().toString();
+        if (lang.count() > 2)
+            lang = lang.left(2);
+        if (lang.isEmpty())
+            lang = QString::fromLocal8Bit(qgetenv("LANG")).left(2);
+    } else {
+        lang = currentLang;
+    }
+
     return lang;
 #else // Q_WS_MAEMO_6
     return QSystemInfoLinuxCommonPrivate::currentLanguage();

@@ -140,6 +140,10 @@ QSystemInfo::~QSystemInfo()
 */
 void QSystemInfo::connectNotify(const char *signal)
 {
+    // connect only once
+    if (receivers(signal) > 1)
+        return;
+
     if (QLatin1String(signal) == SIGNAL(currentLanguageChanged(QString))) {
         connect(d, SIGNAL(currentLanguageChanged(QString)),
                 this, SIGNAL(currentLanguageChanged(QString)),
@@ -152,6 +156,10 @@ void QSystemInfo::connectNotify(const char *signal)
 */
 void QSystemInfo::disconnectNotify(const char *signal)
 {
+    // disconnect only when there's no connections
+    if (receivers(signal) > 0)
+        return;
+
     if (QLatin1String(signal) == SIGNAL(currentLanguageChanged(QString))) {
         disconnect(d, SIGNAL(currentLanguageChanged(QString)),
                    this, SIGNAL(currentLanguageChanged(QString)));

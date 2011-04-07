@@ -177,38 +177,54 @@ QTM_BEGIN_NAMESPACE
 
 QSystemInfoLinuxCommonPrivate::QSystemInfoLinuxCommonPrivate(QObject *parent)
     : QObject(parent)
+    , langTimer(0)
 {
-    langCached = currentLanguage();
 }
 
 QSystemInfoLinuxCommonPrivate::~QSystemInfoLinuxCommonPrivate()
 {
 }
 
-void QSystemInfoLinuxCommonPrivate::startLanguagePolling()
+void QSystemInfoLinuxCommonPrivate::connectNotify(const char *signal)
 {
-    QString checkLang = QString::fromLocal8Bit(qgetenv("LANG"));
-    if (langCached.isEmpty())
-        currentLanguage();
-    checkLang = checkLang.left(2);
-    if (checkLang != langCached) {
-        emit currentLanguageChanged(checkLang);
-        langCached = checkLang;
+    if (QLatin1String(signal) == SIGNAL(currentLanguageChanged(QString))) {
+        if (!langTimer) {
+            currentLang = currentLanguage();
+            langTimer = new QTimer(this);
+            connect(langTimer, SIGNAL(timeout()), this, SLOT(pollCurrentLanguage()));
+            langTimer->start(5000);
+        }
     }
-    langTimer = new QTimer(this);
-    QTimer::singleShot(5000, this, SLOT(startLanguagePolling()));
+}
+
+void QSystemInfoLinuxCommonPrivate::disconnectNotify(const char *signal)
+{
+    if (QLatin1String(signal) == SIGNAL(currentLanguageChanged(QString))) {
+        currentLang.clear();
+        langTimer->stop();
+    }
+}
+
+void QSystemInfoLinuxCommonPrivate::pollCurrentLanguage()
+{
+    QString oldLang = currentLang;
+    currentLang = currentLanguage();
+    if (oldLang != currentLang)
+        Q_EMIT currentLanguageChanged(currentLang);
 }
 
 QString QSystemInfoLinuxCommonPrivate::currentLanguage() const
 {
     QString lang;
-    if (langCached.isEmpty()) {
-        lang  = QLocale::system().name().left(2);
+
+    if (currentLang.isEmpty()) {
+        QString lang = QLocale::system().name().left(2);
         if (lang.isEmpty() || lang == QLatin1String("C"))
             lang = QLatin1String("en");
     } else {
-        lang = langCached;
+        lang = currentLang;
     }
+
     return lang;
 }
 
