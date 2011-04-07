@@ -78,15 +78,79 @@
 
     The Map element can be used be used to display a map of the world.  The
     bulk of the functionality is provided by a mapping plugin described
-    by the Plugin element associated with the Map.
+    by the plugin element associated with the Map.
 
-    Various map objects can be added to the map.  These map objects are
-    specified in terms of coordinates and meters.
+    \section2 Landmarks
 
+    Most maps have landmarks. Useful markers identified in the landscape either as destinations
+    or things that are noteworthy. In QtMobility the QML Location plugin supports
+    Landmarks on maps using the Location API. Landmarks can be imported into
+    the application and populate the map with associated position data, meta-data
+    and icon representations.
 
-    \section2 Map Elements
+    The main element is \l Landmark. Using \l Landmark we can specify the name,
+    phone number, some descriptive text, the radius of the landmark, the URL
+    for the representative icon and a URL for the real landmark.
 
-    \annotatedlist qml-location-maps
+    This is simple but insufficient. We also need to be able to search for
+    landmarks, to categorize them, and importantly navigate to them.
+
+    Other plugin elements now come to our aid.
+
+    In order to search for Landmarks we need to set up filters that can be
+    used to define our search criteria.
+
+    For example, we can set up a filter to locate a particular landmark by
+    name using the \l LandmarkNameFilter
+
+    \snippet doc/src/snippets/declarative/declarative-landmark.qml   Landmark name filter
+
+    We can also search by proximity. That is, are we within a defined range
+    of any landmarks? Here is an example that uses a filter tied into the
+    current device location
+
+    \snippet doc/src/snippets/declarative/declarative-landmark.qml  Landmark proximity filter
+
+    \l PositionSource refreshes the coordinate once per second (1000 milliseconds)
+    and this new location is used to determine if the coordinate is within a
+    given radius of any landmark coordinate during the search. The result would
+    be a list of landmarks that are within the given radius, 1500 meters,
+    of our location.
+
+    If we want to combine filters the API gives us elements that can be combined
+    in a set-like way to create unions (logical OR) and intersections (logical AND)
+    of the results of different filters. In the examples above we had a
+    \l LandmarkNameFilter and we had a \l LandmarkProximityFilter. If we want
+    to combine them so that the result would show when the device is within
+    the desired radius then we use a \l LandmarkUnionFilter to combine the
+    two previous filters
+
+    \snippet doc/src/snippets/declarative/declarative-landmark.qml  LandmarkModel union filter
+
+    Generating a list of results for a filter is done by means of a \l LandmarkModel
+    element. This encapsulates the list of results and gives us desirable
+    features such as control over the sortOrder and sortBy functionality. Here
+    is a sample use of the element to provide a list of up to 50 items found
+    to be within a specified distance defined in the \i proximityFilter
+
+    \snippet doc/src/snippets/declarative/declarative-map.qml  LandmarkModel proximity filter
+
+    \note The \l {LandmarkAbstractModel::autoUpdate}{autoUpdate} property is
+    a boolean. It enables the model to be updated if any signals are
+    emitted that would change the model. For instance, a change in the
+    contents of a filter.
+
+    Landmarks can be organized into categories similar to tagging. New categories
+    cannot be defined at the QML level, they are either supplied by the backend database
+    or new ones are defined at the C++ layer. Landmarks are associated with
+    various categories by using the \l LandmarkCategoryModel element. This
+    element contains a Landmark element and a list of \l LandmarkCategory instances.
+
+    Searches can be made using a \l LandmarkCategoryFilter. The
+    \l LandmarkCategoryModel is first used to specify which \l Landmark we
+    are interested in, then the \l {LandmarkCategoryModel::categories}{categories}
+    property is populated with the categories associated with that landmark.
+
 
 */
 

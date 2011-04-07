@@ -298,6 +298,7 @@ QMediaPlayer::QMediaPlayer(QObject *parent, QMediaPlayer::Flags flags, QMediaSer
             connect(d->control, SIGNAL(mutedChanged(bool)), SIGNAL(mutedChanged(bool)));
             connect(d->control, SIGNAL(seekableChanged(bool)), SIGNAL(seekableChanged(bool)));
             connect(d->control, SIGNAL(playbackRateChanged(qreal)), SIGNAL(playbackRateChanged(qreal)));
+            connect(d->control, SIGNAL(bufferStatusChanged(int)), SIGNAL(bufferStatusChanged(int)));
 
             if (d->control->state() == PlayingState)
                 addPropertyWatch("position");

@@ -136,45 +136,49 @@ class QSystemNetworkInfoLinuxCommonPrivate : public QObject
     Q_OBJECT
 
 public:
-
     QSystemNetworkInfoLinuxCommonPrivate(QObject *parent = 0);
     virtual ~QSystemNetworkInfoLinuxCommonPrivate();
 
-    QSystemNetworkInfo::NetworkStatus networkStatus(QSystemNetworkInfo::NetworkMode mode);
-    qint32 networkSignalStrength(QSystemNetworkInfo::NetworkMode mode);
-    qint32 cellId();
-    int locationAreaCode();
+    int cellId();
+    QSystemNetworkInfo::CellDataTechnology cellDataTechnology();
 
     QString currentMobileCountryCode();
     QString currentMobileNetworkCode();
-
     QString homeMobileCountryCode();
     QString homeMobileNetworkCode();
 
+    int locationAreaCode();
+
+    QSystemNetworkInfo::NetworkMode currentMode();
+    QNetworkInterface interfaceForMode(QSystemNetworkInfo::NetworkMode mode);
+
+    QSystemNetworkInfo::NetworkStatus networkStatus(QSystemNetworkInfo::NetworkMode mode);
+    int networkSignalStrength(QSystemNetworkInfo::NetworkMode mode);
     QString networkName(QSystemNetworkInfo::NetworkMode mode);
     QString macAddress(QSystemNetworkInfo::NetworkMode mode);
 
-    QNetworkInterface interfaceForMode(QSystemNetworkInfo::NetworkMode mode);
-    QSystemNetworkInfo::NetworkMode currentMode();
-
-    QSystemNetworkInfo::CellDataTechnology cellDataTechnology();
-
-#if !defined(QT_NO_CONNMAN)
-    QSystemNetworkInfo::NetworkStatus getOfonoStatus(QSystemNetworkInfo::NetworkMode mode);
-#endif
-
 Q_SIGNALS:
-   void networkStatusChanged(QSystemNetworkInfo::NetworkMode, QSystemNetworkInfo::NetworkStatus);
-   void networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode,int);
-   void currentMobileCountryCodeChanged(const QString &);
-   void currentMobileNetworkCodeChanged(const QString &);
-   void networkNameChanged(QSystemNetworkInfo::NetworkMode, const QString &);
-   void networkModeChanged(QSystemNetworkInfo::NetworkMode);
+    void cellIdChanged(int cellId); //1.2
+    void cellDataTechnologyChanged(QSystemNetworkInfo::CellDataTechnology cellTech); //1.2
+    void currentMobileCountryCodeChanged(const QString &mcc);
+    void currentMobileNetworkCodeChanged(const QString &mnc);
+    void networkStatusChanged(QSystemNetworkInfo::NetworkMode mode, QSystemNetworkInfo::NetworkStatus status);
+    void networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode mode, int strength);
+    void networkNameChanged(QSystemNetworkInfo::NetworkMode mode, const QString &name);
+    void networkModeChanged(QSystemNetworkInfo::NetworkMode mode);
 
-   void cellIdChanged(int); //1.2
-   void cellDataTechnologyChanged(QSystemNetworkInfo::CellDataTechnology); //1.2
+private Q_SLOTS:
+#if !defined(QT_NO_CONNMAN)
+    void connmanPropertyChangedContext(const QString &path, const QString &item, const QDBusVariant &value);
+    void connmanServicePropertyChangedContext(const QString &path, const QString &item, const QDBusVariant &value);
 
-protected:
+    void ofonoPropertyChangedContext(const QString &path, const QString &item, const QDBusVariant &value);
+    void ofonoNetworkPropertyChangedContext(const QString &path, const QString &item, const QDBusVariant &value);
+#endif // QT_NO_CONNMAN
+
+private:
+    QSystemNetworkInfo::NetworkStatus getBluetoothNetStatus();
+
 #if !defined(QT_NO_DBUS)
     int getBluetoothRssi();
     QString getBluetoothInfo(const QString &file);
@@ -183,6 +187,8 @@ protected:
 #if !defined(QT_NO_CONNMAN)
     QConnmanManagerInterface *connmanManager;
     QOfonoManagerInterface *ofonoManager;
+    QStringList knownModems;
+
     void initConnman();
     void initOfono();
     void initModem(const QString &path);
@@ -191,34 +197,10 @@ protected:
     QSystemNetworkInfo::NetworkMode typeToMode(const QString &type);
     QSystemNetworkInfo::NetworkMode ofonoTechToMode(const QString &tech);
     QSystemNetworkInfo::NetworkStatus ofonoStatusToStatus(const QString &state);
-
-    QStringList knownModems;
-#endif
-
-#endif
-
-private Q_SLOTS:
-
-#if !defined(QT_NO_CONNMAN)
-    void connmanPropertyChangedContext(const QString &path,const QString &item, const QDBusVariant &value);
-    void connmanTechnologyPropertyChangedContext(const QString &path,const QString &item, const QDBusVariant &value);
-    void connmanDevicePropertyChangedContext(const QString &path,const QString &item, const QDBusVariant &value);
-    void connmanServicePropertyChangedContext(const QString &path,const QString &item, const QDBusVariant &value);
-
-    void ofonoPropertyChangedContext(const QString &path,const QString &item, const QDBusVariant &value);
-    void ofonoNetworkPropertyChangedContext(const QString &path,const QString &item, const QDBusVariant &value);
-    void ofonoModemPropertyChangedContext(const QString &path,const QString &item, const QDBusVariant &value);
-#endif
-
-private:
-
-    QSystemNetworkInfo::NetworkStatus getBluetoothNetStatus();
-    void connectNotify(const char *signal);
-    void disconnectNotify(const char *signal);
-
-#if !defined(QT_NO_CONNMAN)
+    QSystemNetworkInfo::NetworkStatus getOfonoStatus(QSystemNetworkInfo::NetworkMode mode);
     QSystemNetworkInfo::CellDataTechnology ofonoTechToCDT(const QString &tech);
-#endif
+#endif // QT_NO_CONNMAN
+#endif // QT_NO_DBUS
 };
 
 class QSystemDisplayInfoLinuxCommonPrivate : public QObject
@@ -258,59 +240,53 @@ private:
     static QSystemDisplayInfoLinuxCommonPrivate *self;
 };
 
-class QSystemStorageInfoLinuxCommonPrivate : public QObject
+class QSystemStorageInfoPrivate : public QObject
 {
     Q_OBJECT
 
 public:
+    QSystemStorageInfoPrivate(QObject *parent = 0);
+    virtual ~QSystemStorageInfoPrivate();
 
-    QSystemStorageInfoLinuxCommonPrivate(QObject *parent = 0);
-    virtual ~QSystemStorageInfoLinuxCommonPrivate();
-
-    qint64 availableDiskSpace(const QString &driveVolume);
-    qint64 totalDiskSpace(const QString &driveVolume);
+    qlonglong availableDiskSpace(const QString &driveVolume);
+    qlonglong totalDiskSpace(const QString &driveVolume);
     QStringList logicalDrives();
     QSystemStorageInfo::DriveType typeForDrive(const QString &driveVolume);
 
-    QString uriForDrive(const QString &driveVolume);//1.2
-    QSystemStorageInfo::StorageState getStorageState(const QString &volume);//1.2
+    QString uriForDrive(const QString &driveVolume); //1.2
+    QSystemStorageInfo::StorageState getStorageState(const QString &volume); //1.2
 
 Q_SIGNALS:
-    void logicalDriveChanged(bool, const QString &);
+    void logicalDriveChanged(bool added, const QString &vol);
     void storageStateChanged(const QString &vol, QSystemStorageInfo::StorageState state); //1.2
 
 private:
-    bool storageChanged;
-     QMap<QString, QString> mountEntriesMap;
-     QMap<QString, QSystemStorageInfo::StorageState> stateMap;
-     void mountEntries();
-     int mtabWatchA;
-     int inotifyFD;
-     void checkAvailableStorage();
-     QString getUuid(const QString &vol);
+    int inotifyWatcher;
+    int inotifyFileDescriptor;
+    QMap<QString, QString> mountedEntries;
+    QMap<QString, QSystemStorageInfo::StorageState> storageStates;
+    QTimer *storageTimer;
 
-     QTimer *storageTimer;
+    void updateMountedEntries();
+    QString getUuid(const QString &vol);
 
 #if !defined(QT_NO_DBUS)
-    QHalInterface *halIface;
-    QHalDeviceInterface *halIfaceDevice;
-
+#if !defined(QT_NO_UDISKS)
     QUDisksInterface *udisksIface;
-    QUDisksDeviceInterface *udisksDeviceIface;
 
 private Q_SLOTS:
     void udisksDeviceChanged(const QDBusObjectPath &);
-#endif
+#endif // QT_NO_UDISKS
+#endif // QT_NO_DBUS
 
 private Q_SLOTS:
     void deviceChanged();
     void inotifyActivated();
-    void checkFilesystem();
+    void updateStorageStates();
 
 protected:
     void connectNotify(const char *signal);
     void disconnectNotify(const char *signal);
-
 };
 
 class QSystemDeviceInfoLinuxCommonPrivate : public QObject
@@ -392,23 +368,9 @@ private:
     void initBatteryStatus();
     int currentBatLevel;
     QSystemDeviceInfo::PowerState curPowerState;
+    bool currentBatStatusInitialized;
+    bool currentBatLevelInitialized;
 };
-
-
-class QSystemScreenSaverLinuxCommonPrivate : public QObject
-{
-    Q_OBJECT
-
-public:
-    QSystemScreenSaverLinuxCommonPrivate(QObject *parent = 0);
-    virtual ~QSystemScreenSaverLinuxCommonPrivate();
-
-//    bool screenSaverInhibited() {return false;}
-//    bool setScreenSaverInhibit() {return false;}
-//    bool isScreenLockEnabled() {return false;}
-//    bool isScreenSaverActive() {return false;}
-};
-
 
 class QSystemBatteryInfoLinuxCommonPrivate : public QObject
 {

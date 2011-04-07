@@ -120,6 +120,7 @@ private:
     QMessageIdList filterAndSearchInternalList(const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags);
     void processFilters(const QList<CommHistory::Event> &events, void (StorageEngine::*signal)(const QMessageId &, const QMessageManager::NotificationFilterIdSet &));
     QList<CommHistory::Event> eventsListFromModelRows(const int start, const int end);
+    void unlockEventModifiers(const QList<CommHistory::Event> &events);
 
     template <typename Func>
     void foreachEvent(Func &f) const;
@@ -134,6 +135,7 @@ private:
 
     typedef QMap<QMessageManager::NotificationFilterId, QMessageFilter> NotificationFilterMap;
     NotificationFilterMap m_filters;
+    int m_updatedEventId;
 
 };
 

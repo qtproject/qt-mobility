@@ -104,55 +104,32 @@ class QSystemNetworkInfoPrivate : public QSystemNetworkInfoLinuxCommonPrivate
     Q_OBJECT
 
 public:
-
     QSystemNetworkInfoPrivate(QSystemNetworkInfoLinuxCommonPrivate *parent = 0);
     virtual ~QSystemNetworkInfoPrivate();
 
-    int cellId();
-    int locationAreaCode();
-
-    QString currentMobileCountryCode();
-    QString currentMobileNetworkCode();
-
-    QString homeMobileCountryCode();
-    QString homeMobileNetworkCode();
     QSystemNetworkInfo::NetworkMode currentMode();
+
     QSystemNetworkInfo::NetworkStatus networkStatus(QSystemNetworkInfo::NetworkMode mode);
-
-    qint32 networkSignalStrength(QSystemNetworkInfo::NetworkMode mode);
-
+    int networkSignalStrength(QSystemNetworkInfo::NetworkMode mode);
     QString networkName(QSystemNetworkInfo::NetworkMode mode);
-    QString macAddress(QSystemNetworkInfo::NetworkMode mode);
-  //  QSystemNetworkInfo::CellDataTechnology cellDataTechnology();
 
-public Q_SLOTS:
 #if !defined(QT_NO_NETWORKMANAGER)
-        void primaryModeChanged();
-#endif
+private Q_SLOTS:
+    void nmPropertiesChanged(const QString &path, QMap<QString, QVariant> map);
+    void nmAPPropertiesChanged(const QString &path, QMap<QString, QVariant> map);
 
 private:
-#if !defined(QT_NO_NETWORKMANAGER)
     QNetworkManagerInterface *iface;
-    QNetworkManagerInterfaceDeviceWired * devWiredIface;
+    QNetworkManagerInterfaceDeviceWired *devWiredIface;
     QNetworkManagerInterfaceDeviceWireless *devWirelessIface;
     QNetworkManagerInterfaceAccessPoint *accessPointIface;
     QNetworkManagerInterfaceDeviceGsm *devGsmIface;
-
+    QMap<QString, QString> activePaths;
 
     void setupNmConnections();
-    bool isDefaultConnectionPath(const QString &path);
-    QMap <QString, QString> activePaths;
     void updateActivePaths();
     inline QSystemNetworkInfo::NetworkMode deviceTypeToMode(quint32 type);
-#endif
-
-    QString getSysNetName(QSystemNetworkInfo::NetworkMode mode);
-
-private Q_SLOTS:
-#if !defined(QT_NO_NETWORKMANAGER)
-    void nmPropertiesChanged( const QString &, QMap<QString,QVariant>);
-    void nmAPPropertiesChanged( const QString &, QMap<QString,QVariant>);
-#endif
+#endif // QT_NO_NETWORKMANAGER
 };
 
 class QSystemDisplayInfoPrivate : public QSystemDisplayInfoLinuxCommonPrivate
@@ -166,16 +143,6 @@ public:
     float contrast(int screen);
 
     QSystemDisplayInfo::BacklightState backlightStatus(int screen); //1.2
-};
-
-class QSystemStorageInfoPrivate : public QSystemStorageInfoLinuxCommonPrivate
-{
-    Q_OBJECT
-
-public:
-
-    QSystemStorageInfoPrivate(QSystemStorageInfoLinuxCommonPrivate *parent = 0);
-    virtual ~QSystemStorageInfoPrivate();
 };
 
 class QSystemDeviceInfoPrivate : public QSystemDeviceInfoLinuxCommonPrivate
@@ -216,19 +183,18 @@ private Q_SLOTS:
 };
 
 
-class QSystemScreenSaverPrivate : public QSystemScreenSaverLinuxCommonPrivate
+class QSystemScreenSaverPrivate : public QObject
 {
     Q_OBJECT
 
 public:
-    QSystemScreenSaverPrivate(QSystemScreenSaverLinuxCommonPrivate *parent = 0);
+    QSystemScreenSaverPrivate(QObject *parent = 0);
     ~QSystemScreenSaverPrivate();
 
     bool screenSaverInhibited();
     bool setScreenSaverInhibit();
     bool isScreenLockEnabled();
     bool isScreenSaverActive();
-
     void setScreenSaverInhibited(bool on);
 
 private:
