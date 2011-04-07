@@ -345,7 +345,7 @@ void QSystemNetworkInfo::connectNotify(const char *signal)
 void QSystemNetworkInfo::disconnectNotify(const char *signal)
 {
     // disconnect only when there's no connections
-    if (receivers(signal) == 0)
+    if (receivers(signal) > 0)
         return;
 
     //check for networkSignalStrengthChanged() signal disconnect notification
