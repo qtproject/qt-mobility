@@ -62,6 +62,44 @@ testcase = {
        ));
     },
 
+    third_party_position_source: function()
+    {
+        //test case for QTMOBILITY-873: Allow 3rd party position sources
+        prompt(twiki('---+++ Position is detected via cusom plugin
+    Note that GPS and internet connection is required for this test case
+    | *Step* | *Verification* |
+    | Run the testQtLocation application (this is part of BlueWeel project, sources are in git@scm.dev.nokia.troll.no:qtmobility/qtmobility-tests.git | |
+    | Select the Custom Service | Verify that no "Unable to register location service" and "Not valid interface." messages appear |
+    | Press the Update Map button | Verify that map was loaded and correct current position is displayed |
+        ));
+    },
+
+    shift_to_the_given_offset: function()
+    {
+        //test case for QTMOBILITY-658: Add a method to QGeoCoordinate which takes an offset and returns another QGeoCoordinate
+        prompt(twiki('---+++ New coordinats are calculated
+    Note that significand precision should be taken into account during comparing real numbers, that is why we consider 5.48417e-16 value equal to zero
+    | *Step* | *Verification* |
+    | Run the testQtLocation application | |
+    | Select the MapNavigation | |
+    | Fill in "0" in to Start Latitude field | |
+    | Fill in "100" in to Start Longitude field | |
+    | Select Distance/Bearing from *Pre-defined* dropdown list | |
+    | Fill "1000000, 90" in to the given field | |
+    | Press the Ok button | Verify that Destination fields are updated with 5.48417e-16 latitude and 108.9932 longitude | |
+    | Fill in "60" in to Start Latitude field | |
+    | Fill in "100" in to Start Longitude field | |
+    | Select Distance/Bearing from *Pre-defined* dropdown list | |
+    | Fill "1000000, 180" in to the given field | |
+    | Press the Ok button | Verify that Destination fields are updated with 51.0068 latitude and 100 longitude | |
+    | Fill in "60" in to Start Latitude field | |
+    | Fill in "100" in to Start Longitude field | |
+    | Select Distance/Bearing from *Pre-defined* dropdown list | |
+    | Fill "1000000, 20" in to the given field | |
+    | Press the Ok button | Verify that Destination fields are updated with 68.2523 latitude and 108.296 longitude | |
+        ));
+    },
+
     // Landmarks
 
     store_and_load_a_landmark_data: {
@@ -89,6 +127,7 @@ testcase = {
     negative_store_and_load_a_landmark: function(name, latitude, longitude)
     {
         startApplication("landmarkbrowser");
+                   ));
         select("Add Landmark");
         enter("Latitude", latitude);
         enter("Longitude", longitude);
@@ -140,6 +179,27 @@ testcase = {
         prompt(twiki('Wait until the route is calculated (should be less than 10 seconds)'));
         prompt(twiki('Verify the instructions for segments 1 and 2 indicate to Head towards Sedgebrook st and Turn right onto Sedgebrook st'));
         compare(getText("distance"), distance2);
+    },
+
+    pixmap_object_zooming: function()
+    {
+        //test case for QTMOBILITY-757: Be able to prevent a QGeoMapPixmapObject from being scaled when zooming occurs
+        //test case for QTMOBILITY-701: Add a QGraphicsItem based map object.
+        //Test application testqtLocation covers just one use case meanwhile we have 8 different situation
+        //depending on what units and transforms are in use (we have 4 types of units (PixelUnit, MeterUnit, RelativeArcSecondUnit, AbsoluteArcSecondUnit)
+        //and 2 types of transforms (BilinearTransform, ExactTransform)). New set of tests has to be created as soon as testqtLocation is improved.
+        prompt(twiki('---+++ Pixmap object is not scaled during zooming
+    Note that GPS and internet connection is required for this test case
+    | *Step* | *Verification* |
+    | Run the testQtLocation application | |
+    | Select the MapNavigation | |
+    | Go to Map tab | Verify that map is loaded for current position |
+    | Swith to MapObject mode | |
+    | Tap on the screen to create pixmap object | Verify that blue square appears on the screen in place of touch |
+    | Switch to Pan/Zoom mode | |
+    | Increase zoom level | Verify that the blue square is not scaled |
+    | Decrease zoom level | Verify that the blue square is not scaled |
+        ));
     },
 
     request_landmarks_for_given_coordinate_with_reverse_geocoding: function()
