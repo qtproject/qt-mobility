@@ -123,7 +123,7 @@ QT_USE_NAMESPACE
 Q_DECLARE_METATYPE(QtMultimediaKit::MetaData)
 Q_DECLARE_METATYPE(QVideoFrame)
 
-class tst_QCamera: public QObject
+class tst_QCameraBackend: public QObject
 {
     Q_OBJECT
 
@@ -143,7 +143,7 @@ private slots:
 private:
 };
 
-void tst_QCamera::initTestCase()
+void tst_QCameraBackend::initTestCase()
 {
     qRegisterMetaType<QtMultimediaKit::MetaData>("QtMultimediaKit::MetaData");
 
@@ -152,17 +152,17 @@ void tst_QCamera::initTestCase()
         QSKIP("Camera is not available", SkipAll);
 }
 
-void tst_QCamera::cleanupTestCase()
+void tst_QCameraBackend::cleanupTestCase()
 {
 }
 
-void tst_QCamera::testAvailableDevices()
+void tst_QCameraBackend::testAvailableDevices()
 {
     int deviceCount = QMediaServiceProvider::defaultServiceProvider()->devices(QByteArray(Q_MEDIASERVICE_CAMERA)).count();
     QCOMPARE(QCamera::availableDevices().count(), deviceCount);
 }
 
-void tst_QCamera::testDeviceDescription()
+void tst_QCameraBackend::testDeviceDescription()
 {
     int deviceCount = QMediaServiceProvider::defaultServiceProvider()->devices(QByteArray(Q_MEDIASERVICE_CAMERA)).count();
 
@@ -174,7 +174,7 @@ void tst_QCamera::testDeviceDescription()
     }
 }
 
-void tst_QCamera::testCtorWithDevice()
+void tst_QCameraBackend::testCtorWithDevice()
 {
     int deviceCount = QMediaServiceProvider::defaultServiceProvider()->devices(QByteArray(Q_MEDIASERVICE_CAMERA)).count();
     QCamera *camera = 0;
@@ -191,7 +191,7 @@ void tst_QCamera::testCtorWithDevice()
     delete camera;
 }
 
-void tst_QCamera::testCameraStates()
+void tst_QCameraBackend::testCameraStates()
 {
     QCamera camera;
     QCameraImageCapture imageCapture(&camera);
@@ -240,7 +240,7 @@ void tst_QCamera::testCameraStates()
     QCOMPARE(errorSignal.count(), 0);
 }
 
-void tst_QCamera::testCameraCapture()
+void tst_QCameraBackend::testCameraCapture()
 {
     QCamera camera;
     QCameraImageCapture imageCapture(&camera);
@@ -292,7 +292,7 @@ void tst_QCamera::testCameraCapture()
 }
 
 
-void tst_QCamera::testCaptureToBuffer()
+void tst_QCameraBackend::testCaptureToBuffer()
 {
     QCamera camera;
     QCameraImageCapture imageCapture(&camera);
@@ -429,7 +429,7 @@ void tst_QCamera::testCaptureToBuffer()
     }
 }
 
-void tst_QCamera::testCameraCaptureMetadata()
+void tst_QCameraBackend::testCameraCaptureMetadata()
 {
 #ifndef Q_WS_MAEMO_6
     QSKIP("Capture metadata is supported only on harmattan", SkipAll);
@@ -452,6 +452,6 @@ void tst_QCamera::testCameraCaptureMetadata()
     QCOMPARE(metadataSignal.first().first().toInt(), id);
 }
 
-QTEST_MAIN(tst_QCamera)
+QTEST_MAIN(tst_QCameraBackend)
 
 #include "tst_qcamerabackend.moc"
