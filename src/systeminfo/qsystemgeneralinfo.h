@@ -42,7 +42,8 @@
 #define QSYSTEMGENERALINFO_H
 
 #include "qmobilityglobal.h"
-
+#include <QString>
+#include <QStringList>
 #include <QObject>
 
 QT_BEGIN_HEADER

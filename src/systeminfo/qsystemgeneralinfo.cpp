@@ -42,6 +42,8 @@
 #include "qsystemgeneralinfo.h"
 #include "qsysteminfocommon_p.h"
 
+#include <QMetaType>
+
 QTM_BEGIN_NAMESPACE
 
 Q_GLOBAL_STATIC(QSystemInfoPrivate, sysinfoPrivate)
