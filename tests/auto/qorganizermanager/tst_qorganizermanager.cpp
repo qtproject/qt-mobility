@@ -193,6 +193,7 @@ private slots:
     void changeSet();
     void fetchHint();
     void testFilterFunction();
+    void testItemOccurrences();
 
     /* Special test with special data */
     void uriParsing_data();
@@ -225,6 +226,7 @@ private slots:
     void idComparison_data() {addManagers();}
     void emptyItemManipulation_data() {addManagers();}
     void partialSave_data() {addManagers();}
+    void testItemOccurrences_data(){addManagers();}
 };
 
 class BasicItemLocalId : public QOrganizerItemEngineId
@@ -1145,6 +1147,112 @@ void tst_QOrganizerManager::addExceptions()
     QCOMPARE(thirdEvent.startDateTime(), QDateTime(QDate(2010, 1, 15), QTime(13, 0, 0)));
     QCOMPARE(thirdEvent.endDateTime(), QDateTime(QDate(2010, 1, 15), QTime(14, 0, 0)));
     QVERIFY(!thirdEvent.id().isNull());
+}
+
+/*test ItemOccurrences function maxCount parameters*/
+void tst_QOrganizerManager::testItemOccurrences()
+{
+    //Get the uri value
+    QFETCH (QString, uri);
+    //Create the QOrganizerManager
+    QScopedPointer<QOrganizerManager> cm (QOrganizerManager::fromUri (uri));
+
+    //Create the weekly recurrence event data that is used by the test
+    QOrganizerEvent event;
+    event.setDisplayLabel (QLatin1String ("meeting"));
+    event.setStartDateTime (QDateTime (QDate (2010, 1, 1), QTime (11, 0, 0)));
+    event.setEndDateTime (QDateTime (QDate (2010, 1, 1), QTime (12, 0, 0)));
+
+    //Create weekly recurrence rule and count limit is 3
+    QOrganizerRecurrenceRule rrule;
+    rrule.setFrequency (QOrganizerRecurrenceRule::Weekly);
+    rrule.setLimit (3);
+    event.setRecurrenceRule (rrule);
+
+    //Save the event
+    QVERIFY (cm->saveItem (&event));
+
+    //Varify the event data guid
+    QVERIFY (!event.id().isNull ());
+    event = cm->item (event.id ());
+    //The guid(Globally unique identifier) must be set so when it is exported to iCalendar, the relationship can be represented
+    QVERIFY (!event.guid().isEmpty ());
+
+    //Use default parameter value to fetch
+    QList<QOrganizerItem> items = cm->itemOccurrences(
+                                            event,     //parantItem
+                                            QDateTime (QDate (2010, 1, 1), QTime (0, 0, 0)), //start date
+                                            QDateTime (QDate (2010, 2, 1), QTime (0, 0, 0))  //end date
+                                            );
+    //The result should be same as rrule's limitation 3
+    QCOMPARE(items.size(), 3);
+
+    //Assign maxCount negative value to get same result as default value
+    QList<QOrganizerItem> items2 = cm->itemOccurrences(
+                                            event,     //parantItem
+                                            QDateTime (QDate (2010, 1, 1), QTime (0, 0, 0)), //start date
+                                            QDateTime (QDate (2010, 2, 1), QTime (0, 0, 0)), //end date
+                                            -5   //maxCount
+                                            );
+    //The result should be same as rrule's limitation
+    QCOMPARE(items2.size(), 3);
+
+    //Assign maxCount bigger value to get same result as default value
+    QList<QOrganizerItem> items3 = cm->itemOccurrences(
+                                            event,
+                                            QDateTime (QDate (2010, 1, 1), QTime (0, 0, 0)),
+                                            QDateTime (QDate (2010, 2, 1), QTime (0, 0, 0)),
+                                            4
+                                            );
+    //The result should be same as rrule's limitation since the maxCount is bigger than the actually data
+    QCOMPARE(items3.size(), 3);
+
+/*------------------------------------------------------------------------
+    Create 2nd Daily event data, now We have Weekly and Daily 2 different events and make the situation more complex.
+    maxCount is also smaller than the actual item data.
+*/
+    //Create 2nd Daily event data and limitation is 20
+    QOrganizerEvent event2;
+    event2.setDisplayLabel (QLatin1String ("meeting2"));
+    event2.setStartDateTime (QDateTime (QDate (2010, 1, 1), QTime (11, 0, 0)));
+    event2.setEndDateTime (QDateTime (QDate (2010, 1, 1), QTime (12, 0, 0)));
+    rrule.setFrequency (QOrganizerRecurrenceRule::Daily);
+    rrule.setLimit (20);
+    event2.setRecurrenceRule (rrule);
+    QVERIFY (cm->saveItem (&event2));
+    event2 = cm->item (event2.id ());
+    // The guid must be set so when it is exported to iCalendar, the relationship can be represented
+    QVERIFY (!event2.guid().isEmpty ());
+
+    //Use default maxCount parameter value to fetch
+    QList<QOrganizerItem> items4 = cm->itemOccurrences(
+                                            event2,
+                                            QDateTime (QDate (2010, 1, 1), QTime (0, 0, 0)),
+                                            QDateTime (QDate (2010, 2, 1), QTime (0, 0, 0))
+                                            );
+
+    //The result should be same as rrule's limitation 20
+    QCOMPARE (items4.size (), 20);
+
+    //Normal daily event items fetch with 5 max count limitation
+    QList<QOrganizerItem> items5 = cm->itemOccurrences(
+                                            event2,
+                                            QDateTime (QDate (2010, 1, 1), QTime (0, 0, 0)),
+                                            QDateTime (QDate (2010, 2, 1), QTime (0, 0, 0)),
+                                            5
+                                            );
+    //The result should be same as maxCount 5 which is smaller than event rrule's limitation 20
+    QCOMPARE (items5.size (), 5);
+
+    //Normal daily event items fetch with 0 max count limitation
+    QList<QOrganizerItem> items6 = cm->itemOccurrences(
+                                            event2,
+                                            QDateTime (QDate (2010, 1, 1), QTime (0, 0, 0)),
+                                            QDateTime (QDate (2010, 2, 1), QTime (0, 0, 0)),
+                                            0
+                                            );
+    //The result should be 0
+    QCOMPARE (items6.size (), 0);
 }
 
 void tst_QOrganizerManager::addExceptionsWithGuid()
@@ -3357,13 +3465,66 @@ void tst_QOrganizerManager::itemFetch()
     QCOMPARE(eventOccurrenceCount, 3);
 }
 
-// This is just a copy of itemFetch(), but for todos
+// This is mostly a copy of itemFetch(), but for todos
 void tst_QOrganizerManager::todoItemFetch()
 {
     QFETCH(QString, uri);
     QScopedPointer<QOrganizerManager> cm(QOrganizerManager::fromUri(uri));
+    QList<QOrganizerItem> items;
 
     cm->removeItems(cm->itemIds()); // empty the calendar to prevent the previous test from interfering this one
+
+    QOrganizerTodo todoStartDueDate;
+    todoStartDueDate.setDisplayLabel("todo startdue");
+    todoStartDueDate.setStartDateTime(QDateTime(QDate(2011, 3, 27), QTime(11, 0, 0)));
+    todoStartDueDate.setDueDateTime(QDateTime(QDate(2011, 3, 29), QTime(11, 30, 0)));
+    QVERIFY(cm->saveItem(&todoStartDueDate));
+
+    QOrganizerTodo todoStartDate;
+    todoStartDate.setDisplayLabel("todo start");
+    todoStartDate.setStartDateTime(QDateTime(QDate(2011, 3, 25), QTime(11, 0, 0)));
+    QVERIFY(cm->saveItem(&todoStartDate));
+
+    QOrganizerTodo todoDueDate;
+    todoDueDate.setDisplayLabel("todo due");
+    todoDueDate.setDueDateTime(QDateTime(QDate(2011, 3, 25), QTime(11, 30, 0)));
+    QVERIFY(cm->saveItem(&todoDueDate));
+
+    QOrganizerTodo todoNoDate;
+    todoNoDate.setDisplayLabel("todo nodate");
+    QVERIFY(cm->saveItem(&todoNoDate));
+
+    items = cm->items();
+    QCOMPARE(items.count(), 4);
+
+    items = cm->items(QDateTime(), QDateTime(QDate(2011, 3, 25), QTime(13, 0, 0)));
+    QCOMPARE(items.count(), 2);
+
+    items = cm->items(QDateTime(), QDateTime(QDate(2011, 3, 25), QTime(11, 15, 0)));
+    QCOMPARE(items.count(), 1);
+
+    items = cm->items(QDateTime(QDate(2011, 3, 27), QTime(10, 0, 0)), QDateTime());
+    QCOMPARE(items.count(), 1);
+
+    items = cm->items(QDateTime(QDate(2011, 3, 29), QTime(13, 0, 0)), QDateTime());
+    QCOMPARE(items.count(), 0);
+
+    items = cm->items(QDateTime(QDate(2011, 3, 26), QTime(11, 0, 0)),
+                      QDateTime(QDate(2011, 3, 28), QTime(11, 0, 0)));
+    QEXPECT_FAIL("mgr='mkcal'", "Needs NB#238116 fixed", Continue);
+    QCOMPARE(items.count(), 1);
+
+    items = cm->items(QDateTime(QDate(2011, 3, 28), QTime(11, 0, 0)),
+                      QDateTime(QDate(2011, 3, 30), QTime(11, 0, 0)));
+    QCOMPARE(items.count(), 1);
+
+    items = cm->items(QDateTime(QDate(2011, 3, 28), QTime(11, 0, 0)),
+                      QDateTime(QDate(2011, 3, 28), QTime(11, 0, 0)));
+    QEXPECT_FAIL("mgr='mkcal'", "Needs NB#238116 fixed", Continue);
+    QCOMPARE(items.count(), 1);
+
+
+    cm->removeItems(cm->itemIds());
 
     QOrganizerTodo todo;
     todo.setDisplayLabel("todo");
@@ -3382,8 +3543,8 @@ void tst_QOrganizerManager::todoItemFetch()
     QVERIFY(cm->saveItem(&recTodo));
 
     //fetch all recurrences
-    QList<QOrganizerItem> items = cm->items(QDateTime(QDate(2010, 9, 8)),
-                                            QDateTime(QDate(2010, 9, 12)));
+    items = cm->items(QDateTime(QDate(2010, 9, 8)),
+                      QDateTime(QDate(2010, 9, 12)));
     QCOMPARE(items.count(), 4); // should return todo + 3 x occurrencesOfRecTodo
 
     //fetch only the originating items

@@ -60,12 +60,16 @@ public:
 protected:
     virtual bool doConnect();
     virtual const QString sensorName();
+    virtual void start();
+
 
 private:
     QAmbientLightReading m_reading;
     static bool m_initDone;
 private slots:
     void slotDataAvailable(const Unsigned& data);
+    static QAmbientLightReading::LightLevel getLightLevel(int lux);
+
 };
 
 #endif

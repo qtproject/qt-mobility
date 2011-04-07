@@ -293,6 +293,8 @@ void QDeclarativeGeoMapMouseArea::doubleClickEvent(QDeclarativeGeoMapMouseEvent 
     event->setAccepted(doubleClickConnected);
     emit doubleClicked(event);
     // TODO QDeclarativeItem::mouseDoubleClickEvent(convert event to regular event here)
+
+    map_->setActiveMouseArea(0);
 }
 
 void QDeclarativeGeoMapMouseArea::pressEvent(QDeclarativeGeoMapMouseEvent *event)
@@ -328,6 +330,8 @@ void QDeclarativeGeoMapMouseArea::releaseEvent(QDeclarativeGeoMapMouseEvent *eve
 
     // save event
     setPressed(false, event);
+    pressedButton_ = Qt::NoButton;
+    modifiers_ = Qt::NoModifier;
     doubleClick_ = false;
 }
 
@@ -355,6 +359,9 @@ void QDeclarativeGeoMapMouseArea::moveEvent(QDeclarativeGeoMapMouseEvent *event)
 {
     if (!enabled_)
         return;
+
+    event->setButton(pressedButton_);
+    event->setModifiers(modifiers_);
 
     emit positionChanged(event);
 }

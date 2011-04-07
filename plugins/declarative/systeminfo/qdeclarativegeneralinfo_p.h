@@ -52,12 +52,22 @@ QTM_USE_NAMESPACE
 class QDeclarativeGeneralInfo : public QSystemInfo
 {
     Q_OBJECT
+    Q_PROPERTY(QString osVersion READ osVersion CONSTANT)
+    Q_PROPERTY(QString qtCoreVersion READ qtCoreVersion CONSTANT)
+    Q_PROPERTY(QString firmwareVersion READ firmwareVersion CONSTANT)
+    Q_PROPERTY(QString qtMobilityVersion READ qtMobilityVersion CONSTANT)
+
 public:
     explicit QDeclarativeGeneralInfo(QObject *parent = 0);
 
 
 public slots:
     void startCurrentLanguageChanged();
+
+    QString osVersion();
+    QString qtCoreVersion();
+    QString firmwareVersion();
+    QString qtMobilityVersion();
 
 Q_SIGNALS:
    void currentLanguageChanged(const QString &language);

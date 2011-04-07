@@ -7364,6 +7364,22 @@ void tst_QLandmarkManager::importGpx() {
 #else
     prefix = ":";
 #endif
+#ifdef Q_OS_SYMBIAN
+    if (QSysInfo::s60Version() == QSysInfo::SV_S60_3_1
+        || QSysInfo::s60Version() == QSysInfo::SV_S60_3_2) {
+        QVERIFY(!m_manager->importLandmarks( prefix  + "data/AUS-PublicToilet-AustralianCapitalTerritory.gpx", QLandmarkManager::Gpx));
+        QCOMPARE(m_manager->error(), QLandmarkManager::NotSupportedError);
+
+        QLandmarkImportRequest importRequest(m_manager);
+        QSignalSpy spy(&importRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
+        importRequest.setFileName(prefix + "data/AUS-PublicToilet-AustralianCapitalTerritory.gpx");
+        importRequest.setFormat(QLandmarkManager::Gpx);
+        importRequest.start();
+        QVERIFY(waitForAsync(spy, &importRequest, QLandmarkManager::NotSupportedError));
+        return;
+    }
+#endif
+
     int originalCategoryCount = m_manager->categoryIds().count();
 
     QSignalSpy spyAdd(m_manager, SIGNAL(landmarksAdded(QList<QLandmarkId>)));
@@ -7850,7 +7866,7 @@ void tst_QLandmarkManager::importLmx() {
 #if defined(SPARQL_BACKEND)
     QTest::qWait(2000);
 #else
-    QTest::qWait(10);
+    QTest::qWait(50);
 #endif
 #if (defined(Q_OS_SYMBIAN))
         QCOMPARE(spyRemove.count(), 0);
@@ -8045,9 +8061,22 @@ void tst_QLandmarkManager::importFile()
 
     QFETCH(QString, type);
     //try a gpx file
-    QVERIFY(doImport(type, prefix + "data/places.gpx"));
-    QCOMPARE(m_manager->landmarks().count(), 14);
-    QCOMPARE(m_manager->landmarks().count(), 14);
+    bool gpxSupported = true;
+#ifdef Q_OS_SYMBIAN
+    if (QSysInfo::s60Version() == QSysInfo::SV_S60_3_1
+        || QSysInfo::s60Version() == QSysInfo::SV_S60_3_2) {
+        gpxSupported = false;
+    }
+#endif
+
+    if (!gpxSupported) {
+        QVERIFY(doImport(type, prefix + "data/places.gpx",QLandmarkManager::NotSupportedError));
+        QCOMPARE(m_manager->landmarks().count(), 0);
+    } else {
+        QVERIFY(doImport(type, prefix + "data/places.gpx"));
+        QCOMPARE(m_manager->landmarks().count(), 14);
+    }
+
     QVERIFY(m_manager->removeLandmarks(m_manager->landmarkIds()));
     QCOMPARE(m_manager->landmarks().count(), 0);
 
@@ -8521,7 +8550,7 @@ void tst_QLandmarkManager::exportLmx_data()
 #ifdef SIMPLE_WAIT_FOR_FINISHED
 void tst_QLandmarkManager::simpleWaitForFinished()
 {
-    QVERIFY(m_manager->importLandmarks(prefix + "data/places.gpx"));
+    QVERIFY(m_manager->importLandmarks(prefix + "data/moreplaces.lmx"));
     QLandmarkFetchRequest fetchRequest(m_manager);
     QSignalSpy spy(&fetchRequest,SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
 
@@ -8545,9 +8574,9 @@ void tst_QLandmarkManager::importWaitForFinished()
     QLandmarkImportRequest importRequest(m_manager);
     QSignalSpy spy(&importRequest,SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
     //try wait for finished with default arguments to block
-    importRequest.setFileName(prefix + "data/AUS-PublicToilet-AustralianCapitalTerritory.gpx");
-    importRequest.setFormat(QLandmarkManager::Gpx);
-    importRequest.start();
+    importRequest.setFileName(prefix + "data/AUS-PublicToilet-AustralianCapitalTerritory.lmx");
+    importRequest.setFormat(QLandmarkManager::Lmx);
+    QVERIFY(importRequest.start());
     QVERIFY(waitForActive(spy, &importRequest,100));
 #ifdef Q_OS_SYMBIAN
     QVERIFY(!importRequest.waitForFinished());
@@ -8559,8 +8588,8 @@ void tst_QLandmarkManager::importWaitForFinished()
     QCOMPARE(m_manager->landmarkIds().count(), fileLandmarkCount);
     //try wait for finished but providing a time period less than the time needed
     //to finish the operation
-    importRequest.setFileName(prefix + "data/AUS-PublicToilet-AustralianCapitalTerritory.gpx");
-    importRequest.setFormat(QLandmarkManager::Gpx);
+    importRequest.setFileName(prefix + "data/AUS-PublicToilet-AustralianCapitalTerritory.lmx");
+    importRequest.setFormat(QLandmarkManager::Lmx);
     importRequest.start();
     QVERIFY(waitForActive(spy, &importRequest,100));
     QVERIFY(!importRequest.waitForFinished(5));
@@ -8573,8 +8602,8 @@ void tst_QLandmarkManager::importWaitForFinished()
     spy.clear();
     //try wait for finished with a time period greater than the amount of time
     //needed to complete the operation
-    importRequest.setFileName(prefix + "data/AUS-PublicToilet-AustralianCapitalTerritory.gpx");
-    importRequest.setFormat(QLandmarkManager::Gpx);
+    importRequest.setFileName(prefix + "data/AUS-PublicToilet-AustralianCapitalTerritory.lmx");
+    importRequest.setFormat(QLandmarkManager::Lmx);
     importRequest.start();
     QVERIFY(waitForActive(spy, &importRequest,100));
 #ifdef SPARQL_BACKEND
@@ -8615,7 +8644,7 @@ void tst_QLandmarkManager::fetchWaitForFinished()
 #endif
 
     for (int i=0; i < numImports ; ++i) {
-        QVERIFY(m_manager->importLandmarks(prefix + "data/AUS-PublicToilet-AustralianCapitalTerritory.gpx"));
+        QVERIFY(m_manager->importLandmarks(prefix + "data/AUS-PublicToilet-AustralianCapitalTerritory.lmx"));
     }
 
     expectedLandmarksCount = fileLandmarksCount * numImports;
@@ -9677,7 +9706,7 @@ void tst_QLandmarkManager::testSignals()
 #if defined(SPARQL_BACKEND)
     QTest::qWait(2000);
 #else
-    QTest::qWait(10);
+    QTest::qWait(50);
 #endif
     QCOMPARE(spyAdd.count(), 0);
     QCOMPARE(spyChange.count(), 1);
@@ -9703,7 +9732,7 @@ void tst_QLandmarkManager::testSignals()
     QSignalSpy spyCatRemove2(&manager2, SIGNAL(categoriesRemoved(QList<QLandmarkCategoryId>)));
     QSignalSpy spyDataChanged2(&manager2, SIGNAL(dataChanged()));
 
-    m_manager->importLandmarks("data/places.gpx");
+    QVERIFY(m_manager->importLandmarks("data/moreplaces.lmx"));
 
     QTest::qWait(10);
     QCOMPARE(spyAdd2.count(), 0);
@@ -9724,7 +9753,7 @@ void tst_QLandmarkManager::testSignals()
     QList<QLandmark> lms;
     lms << lmAlpha << lmBeta;
     m_manager->saveLandmarks(&lms);
-    QTest::qWait(10);
+    QTest::qWait(50);
 
     QCOMPARE(spyAdd2.count(), 2); //we receive two signals separate signals because
                                   //they're from another client(we'd receive 1 signal 2 ids for the same client)
@@ -9784,10 +9813,10 @@ void tst_QLandmarkManager::testDestruction()
     prefix = ":";
 #endif
 
-    QVERIFY(m_manager->importLandmarks(prefix + "data/places.gpx"));
-    QVERIFY(m_manager->importLandmarks(prefix + "data/places.gpx"));
-    QVERIFY(m_manager->importLandmarks(prefix + "data/places.gpx"));
-    QVERIFY(m_manager->importLandmarks(prefix + "data/places.gpx"));
+    QVERIFY(m_manager->importLandmarks(prefix + "data/moreplaces.lmx"));
+    QVERIFY(m_manager->importLandmarks(prefix + "data/moreplaces.lmx"));
+    QVERIFY(m_manager->importLandmarks(prefix + "data/moreplaces.lmx"));
+    QVERIFY(m_manager->importLandmarks(prefix + "data/moreplaces.lmx"));
     qDebug() << "testDestruction(): Finished Importing";
     QLandmarkFetchRequest *fetchRequest = new QLandmarkFetchRequest(m_manager);
     fetchRequest->start();
@@ -9942,7 +9971,6 @@ void tst_QLandmarkManager::removeStress_data()
 #ifdef SAVE_STRESS
 void tst_QLandmarkManager::saveStress()
 {
-
     QLandmarkCategory cat1;
     cat1.setName("cat1");
     QVERIFY(m_manager->saveCategory(&cat1));
@@ -10013,6 +10041,30 @@ void tst_QLandmarkManager::saveStress()
         QCOMPARE(lmSaveRequest.error(), QLandmarkManager::NoError);
     }
     QCOMPARE(m_manager->landmarkIds().count(),100);
+#ifdef Q_OS_SYMBIAN
+    if (QSysInfo::s60Version() == QSysInfo::SV_S60_3_1
+        || QSysInfo::s60Version() == QSysInfo::SV_S60_3_2) {
+        //When dealing with the deletion of about 100 landmarks
+        //it seems there are issues on 3rd edition devices.
+        // 5th edition and symbian^3 devices seem to handle this number fine
+        //(but will have issues for larger numbers).  This ifdef can be removed once the problem is fixed.
+        QList<QLandmarkId> ids = m_manager->landmarkIds();
+
+        bool removeSuccess = m_manager->removeLandmarks(ids);
+        if (m_manager->error() != QLandmarkManager::NoError) {
+            qWarning() << "landmark removal error code =" << m_manager->error();
+            qWarning() << "landmark removal error string =" << m_manager->errorString();
+        }
+
+        QEXPECT_FAIL("", "MOBILITY-2275: Removal of a large number of landmarks results in DatabaseLockedError", Continue);
+        QVERIFY(removeSuccess);
+
+        //need to workaround deletion of these landmarks for symbian
+        for (int i=0; i < 20; ++i) {
+            m_manager->removeLandmarks(ids);
+       }
+    }
+#endif
 }
 
 void tst_QLandmarkManager::saveStress_data()

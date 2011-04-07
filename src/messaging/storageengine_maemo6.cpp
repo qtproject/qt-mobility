@@ -182,13 +182,15 @@ StorageEngine* StorageEngine::instance()
 //! constructor
 StorageEngine::StorageEngine(QObject *parent) 
 	: QObject(parent)
-	, m_sync(true)
+        , m_sync(true)
         , m_ready(false)
 	, m_error(QMessageManager::NoError)
+        , m_updatedEventId(0)
 {
     QDEBUG_FUNCTION_BEGIN
 
     m_SMSModel.setQueryMode(EventModel::AsyncQuery);
+
     connect(&m_SMSModel, SIGNAL(modelReady(bool)), SLOT(onModelReady(bool)));
 
     connect(&m_SMSModel, SIGNAL(rowsInserted(const QModelIndex &, int, int)),
@@ -544,6 +546,33 @@ void StorageEngine::onModelReady(bool successful)
     QDEBUG_FUNCTION_END
 }
 
+void StorageEngine::unlockEventModifiers(const QList<CommHistory::Event> &events)
+{
+    QDEBUG_FUNCTION_BEGIN;
+
+    if (!m_ready && m_updatedEventId != 0) {
+        bool foundRequiredId  = (m_updatedEventId == -1);
+
+        if (!foundRequiredId) {
+            foreach(CommHistory::Event event, events) {
+                if (event.id() == m_updatedEventId) {
+                    foundRequiredId = true;
+                    break;
+                }
+            }
+        }
+
+        if (foundRequiredId){
+            qDebug() << __PRETTY_FUNCTION__ << "Quitting the loop. Event id" << m_updatedEventId;
+            m_updatedEventId = 0;
+            m_ready = true;
+            m_loop.quit();
+        }
+     }
+
+    QDEBUG_FUNCTION_END
+}
+
 /*!
  *
  * Returns message from m_SMSModel by id. Sync call.
@@ -636,13 +665,21 @@ bool StorageEngine::updateMessage(QMessage &message)
     bool ret = false;
     QMessageId id(message.id());
 
-    if (id.isValid()) {
-	Event event = eventFromMessage(message);
-	ret = m_SMSModel.modifyEvent(event);
-	m_error = ret ? QMessageManager::NoError : QMessageManager::FrameworkFault;
-    } else {
-	m_error = QMessageManager::InvalidId;
-    }
+    if (!m_ready)
+        m_error = QMessageManager::Busy;
+    else
+        if (id.isValid()) {
+            Event event = eventFromMessage(message);
+            m_ready = false;
+            m_updatedEventId = event.id();
+            ret = m_SMSModel.modifyEvent(event);
+            // waiting for onDataChanged() signal from m_SMSModel
+            m_loop.exec();
+
+            m_error = ret ? QMessageManager::NoError : QMessageManager::FrameworkFault;
+        } else {
+            m_error = QMessageManager::InvalidId;
+        }
 
     QDEBUG_FUNCTION_END
     return ret;
@@ -742,6 +779,7 @@ QList<CommHistory::Event> StorageEngine::eventsListFromModelRows(const int start
 void StorageEngine::onRowsInserted(const QModelIndex & parent, int start, int end)
 {
     QDEBUG_FUNCTION_BEGIN
+    Q_UNUSED(parent);
     if (m_ready)
         processFilters(eventsListFromModelRows(start, end), &StorageEngine::messageAdded);
     QDEBUG_FUNCTION_END
@@ -768,6 +806,7 @@ void StorageEngine::eventDeleted(int id)
 void StorageEngine::onRowsRemoved(const QModelIndex & parent, int start, int end)
 {
     QDEBUG_FUNCTION_BEGIN
+    Q_UNUSED(parent);
     if (m_ready)
         processFilters(eventsListFromModelRows(start, end), &StorageEngine::messageRemoved);
     QDEBUG_FUNCTION_END
@@ -779,8 +818,12 @@ void StorageEngine::onRowsRemoved(const QModelIndex & parent, int start, int end
 void StorageEngine::onDataChanged(const QModelIndex & topLeft, const QModelIndex & bottomRight)
 {
     QDEBUG_FUNCTION_BEGIN
+    QList<CommHistory::Event> events = eventsListFromModelRows(topLeft.row(), bottomRight.row());
+
+    unlockEventModifiers(events);
+
     if (m_ready)
-        processFilters(eventsListFromModelRows(topLeft.row(), bottomRight.row()), &StorageEngine::messageUpdated);
+        processFilters(events, &StorageEngine::messageUpdated);
     QDEBUG_FUNCTION_END
 }
 

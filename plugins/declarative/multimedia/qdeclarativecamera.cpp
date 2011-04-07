@@ -214,8 +214,9 @@ void QDeclarativeCamera::_q_captureFailed(int id, QCameraImageCapture::Error err
 
 /*!
     \qmlclass Camera QDeclarativeCamera
-    \since 1.1
-    \brief The Camera element allows you to add a camera viewfinder to a scene.
+    \since 4.7
+    \brief The Camera element allows you to add camera viewfinder to a scene.
+    \ingroup qml-multimedia
     \inherits Item
 
     This element is part of the \bold{QtMultimediaKit 1.1} module.
@@ -245,7 +246,6 @@ void QDeclarativeCamera::_q_captureFailed(int id, QCameraImageCapture::Error err
 */
 
 /*!
-    \internal
     \class QDeclarativeCamera
     \brief The QDeclarativeCamera class provides a camera item that you can add to a QDeclarativeView.
 */
@@ -477,6 +477,7 @@ void QDeclarativeCamera::searchAndLock()
 
 /*!
     \qmlmethod Camera::unlock()
+
     Unlock focus.
 
     If the camera has keyboard focus, unlock() is called automatically
@@ -899,6 +900,129 @@ void QDeclarativeCamera::setManualWhiteBalance(int colorTemp) const
 
     \sa onImageCaptured
 */
+
+
+/*!
+    \fn void QDeclarativeCamera::lockStatusChanged()
+
+    \qmlsignal Camera::lockStatusChanged()
+*/
+
+/*!
+    \fn void QDeclarativeCamera::stateChanged(QDeclarativeCamera::State)
+
+    \qmlsignal Camera::stateChanged(Camera::State)
+*/
+
+/*!
+    \fn void QDeclarativeCamera::imageCaptured(const QString &)
+
+    \qmlsignal Camera::imageCaptured(string)
+*/
+
+/*!
+    \fn void QDeclarativeCamera::imageSaved(const QString &)
+
+    \qmlsignal Camera::imageSaved(string)
+*/
+
+/*!
+    \fn void QDeclarativeCamera::error(QDeclarativeCamera::Error , const QString &)
+
+    \qmlsignal Camera::error(Camera::Error, string)
+*/
+
+/*!
+    \fn void QDeclarativeCamera::errorChanged()
+
+    \qmlsignal Camera::errorChanged()
+*/
+
+/*!
+    \fn void QDeclarativeCamera::isoSensitivityChanged(int)
+
+    \qmlsignal Camera::isoSensitivityChanged(int)
+*/
+
+/*!
+    \fn void QDeclarativeCamera::apertureChanged(qreal)
+
+    \qmlsignal Camera::apertureChanged(real)
+*/
+
+/*!
+    \fn void QDeclarativeCamera::shutterSpeedChanged(qreal)
+
+    \qmlsignal Camera::shutterSpeedChanged(real)
+*/
+
+/*!
+    \fn void QDeclarativeCamera::exposureCompensationChanged(qreal)
+
+    \qmlsignal Camera::exposureCompensationChanged(real)
+*/
+
+/*!
+    \fn void QDeclarativeCamera:opticalZoomChanged(qreal)
+
+    \qmlsignal Camera::opticalZoomChanged(real)
+*/
+
+/*!
+    \fn void QDeclarativeCamera::digitalZoomChanged(qreal)
+
+    \qmlsignal Camera::digitalZoomChanged(real)
+*/
+
+/*!
+    \fn void QDeclarativeCamera::maximumOpticalZoomChanged(qreal)
+
+    \qmlsignal Camera::maximumOpticalZoomChanged(real)
+*/
+
+/*!
+    \fn void QDeclarativeCamera::maximumDigitalZoomChanged(qreal)
+
+    \qmlsignal Camera::maximumDigitalZoomChanged(real)
+*/
+
+/*!
+    \fn void QDeclarativeCamera::captureFailed(const QString &)
+
+    \qmlsignal Camera::captureFailed(string)
+*/
+
+/*!
+    \fn void QDeclarativeCamera::exposureModeChanged(QDeclarativeCamera::ExposureMode)
+
+    \qmlsignal Camera::exposureModeChanged(Camera::ExposureMode)
+*/
+
+/*!
+    \fn void QDeclarativeCamera::flashModeChanged(int)
+
+    \qmlsignal Camera::flashModeChanged(int)
+*/
+
+/*!
+    \fn void QDeclarativeCamera::whiteBalanceModeChanged(QDeclarativeCamera::WhiteBalanceMode) const
+
+    \qmlsignal Camera::whiteBalanceModeChanged(Camera::WhiteBalanceMode)
+*/
+
+/*!
+    \fn void QDeclarativeCamera::manualWhiteBalanceChanged(int) const
+
+    \qmlsignal Camera::manualWhiteBalanceChanged(int)
+*/
+
+/*!
+    \fn void QDeclarativeCamera::captureResolutionChanged(const QSize &)
+
+    \qmlsignal Camera::captureResolutionChanged(Item)
+*/
+
+
 
 QT_END_NAMESPACE
 
