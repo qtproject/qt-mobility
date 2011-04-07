@@ -72,7 +72,7 @@ class QOrganizerManagerData
 public:
     QOrganizerManagerData()
         : m_engine(0),
-        m_error(QOrganizerManager::NoError)
+        m_lastError(QOrganizerManager::NoError)
     {
     }
 
@@ -87,8 +87,8 @@ public:
     static QOrganizerCollectionEngineId* createEngineCollectionId(const QString& managerName, const QMap<QString, QString>& parameters, const QString& engineIdString);
 
     QOrganizerManagerEngine* m_engine;
-    QOrganizerManager::Error m_error;
-    QMap<int, QOrganizerManager::Error> m_errorMap;
+    QOrganizerManager::Error m_lastError;
+    QMap<int, QOrganizerManager::Error> m_lastErrorMap;
 
     /* Manager plugins */
     static QHash<QString, QOrganizerManagerEngineFactory*> m_engines;
@@ -98,10 +98,41 @@ public:
     static void loadFactories();
     static void loadStaticFactories();
 
+    static QOrganizerManagerData* managerData(const QOrganizerManager*m) {return m->d;}
+
 private:
     Q_DISABLE_COPY(QOrganizerManagerData)
 };
 
+/*
+    Helper to hold the error state of a synchronous operation - when destructed, updates the
+    manager's last error variables to the result of this operation.  This means that during
+    callbacks the error state can't be modified behind the engines back. and it's more conceptually
+    correct.
+ */
+class QOrganizerManagerSyncOpErrorHolder
+{
+public:
+    QOrganizerManagerSyncOpErrorHolder(const QOrganizerManager* m, QMap<int, QOrganizerManager::Error> *pUserError = 0)
+        : error(QOrganizerManager::NoError),
+        data(QOrganizerManagerData::managerData(m)),
+        userError(pUserError)
+    {
+    }
+
+    ~QOrganizerManagerSyncOpErrorHolder()
+    {
+        data->m_lastError = error;
+        data->m_lastErrorMap = errorMap;
+        if (userError)
+            *userError = errorMap;
+    }
+
+    QOrganizerManager::Error error;
+    QOrganizerManagerData* data;
+    QMap<int, QOrganizerManager::Error> errorMap;
+    QMap<int, QOrganizerManager::Error> *userError;
+};
 
 QTM_END_NAMESPACE
 
