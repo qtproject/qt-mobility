@@ -242,14 +242,16 @@ void tst_QRemoteServiceRegister::tst_instanceClosed()
 
     serviceRegister->setSecurityFilter(alwaysPass);
     QSignalSpy spy(serviceRegister,SIGNAL(instanceClosed(QRemoteServiceRegister::Entry)));
+    QSignalSpy spyAll(serviceRegister,SIGNAL(allInstancesClosed()));
 
     QObject *o = connectToService("RSRExampleService");
     QVERIFY(o);
 
     delete o;
 
-    qDebug() << "Spy Count-------- " << spy.count();
-    QVERIFY (spy.count() > 0);
+    QCOMPARE(spy.count(), 1);
+    QCOMPARE(spyAll.count(), 1);
+
 }
 
 QObject *tst_QRemoteServiceRegister::connectToService(const QString &serviceName)
