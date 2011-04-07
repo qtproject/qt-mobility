@@ -295,15 +295,12 @@ while [ "$#" -gt 0 ]; do
             LANGUAGES=$2
             shift
             ;;
-<<<<<<< HEAD
         -test-sim)
             TEST_USE_SIMULATOR="yes"
             ;; 
-=======
         -no-nfc-symbian)
             NFC_SYMBIAN=no
             ;;
->>>>>>> master
         -mac-deploy)
             MAC_DEPLOY='yes'
             shift
