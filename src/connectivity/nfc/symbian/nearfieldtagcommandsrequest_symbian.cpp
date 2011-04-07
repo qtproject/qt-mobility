@@ -40,11 +40,12 @@
 ****************************************************************************/
 #include "nearfieldtagcommandsrequest_symbian.h"
 #include "nearfieldutility_symbian.h"
+#include "nearfieldtagimplcommon_symbian.h"
 #include "debug.h"
 
 QTM_USE_NAMESPACE
 
-NearFieldTagCommandsRequest::NearFieldTagCommandsRequest(MNearFieldTargetOperation& aOperator) : MNearFieldTagAsyncRequest(aOperator)
+NearFieldTagCommandsRequest::NearFieldTagCommandsRequest(QNearFieldTagImplCommon& aOperator) : MNearFieldTagAsyncRequest(aOperator)
 {
     iCurrentCommand = 0;
     iRequestCancelled = EFalse;
@@ -72,7 +73,7 @@ void NearFieldTagCommandsRequest::IssueRequest()
         if (iWait && (iCurrentCommand == 0))
         {
             if (iWait->IsStarted() && !iTimer->IsActive())
-            {    
+            {
                 // start timer here
                 LOG("Start timer");
                 TCallBack callback(MNearFieldTagAsyncRequest::TimeoutCallback, this);
@@ -108,7 +109,7 @@ void NearFieldTagCommandsRequest::ProcessResponse(TInt aError)
         LOG("result is "<<result);
         LOG("clear the buffer");
         iResponse->Zero();
-        iDecodedResponses.append(iOperator.decodeResponse(iCommands.at(iCurrentCommand - 1), result)); 
+        iDecodedResponses.append(iOperator.decodeResponse(iCommands.at(iCurrentCommand - 1), result));
     }
     else
     {
@@ -167,7 +168,7 @@ void NearFieldTagCommandsRequest::ProcessTimeout()
         if (iWait->IsStarted())
         {
             if (iRequestIssued)
-            {    
+            {
                 iOperator.DoCancelSendCommand();
                 iRequestCancelled = ETrue;
                 iRequestIssued = EFalse;

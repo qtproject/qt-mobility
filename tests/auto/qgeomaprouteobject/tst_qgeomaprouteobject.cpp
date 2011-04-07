@@ -129,6 +129,7 @@ void tst_QGeoMapRouteObject::qgeomaprouteobject()
 
     QCOMPARE((int)object->detailLevel(), 6);
     QPen pen(Qt::black);
+    pen.setCosmetic(true);
     QCOMPARE(object->pen(), pen);
     QCOMPARE(object->route().path(),QGeoRoute().path());
     QCOMPARE(object->zValue(), 0);
@@ -671,6 +672,19 @@ void tst_QGeoMapRouteObject::boundingBox()
     route.setFirstRouteSegment(segment);
     route.setPath(path);
 
+    QList<QGeoCoordinate> datelinePath;
+
+    datelinePath << QGeoCoordinate(2.0, 179.0, 0);
+    datelinePath << QGeoCoordinate(2.0, -179.0, 0);
+    datelinePath << QGeoCoordinate(-2.0, -179.0, 0);
+    datelinePath << QGeoCoordinate(-2.0, 179.0, 0);
+
+    QGeoRoute datelineRoute;
+    QGeoRouteSegment datelineSegment;
+    datelineSegment.setPath(datelinePath);
+    datelineRoute.setFirstRouteSegment(datelineSegment);
+    datelineRoute.setPath(datelinePath);
+
     QGeoMapRouteObject* object = new QGeoMapRouteObject();
     object->setRoute(route);
 
@@ -683,9 +697,47 @@ void tst_QGeoMapRouteObject::boundingBox()
 
     QVERIFY(list.at(0)==object);
 
-    QVERIFY2(object->boundingBox().width()>0,"no bounding box");
-    QVERIFY2(object->boundingBox().height()>0,"no bounding box");
+    QGeoBoundingBox box1 = object->boundingBox();
 
+    QVERIFY2(box1.width()>0,"no bounding box");
+    QVERIFY2(box1.height()>0,"no bounding box");
+    
+    double width = object->boundingBox().width();
+    double height = object->boundingBox().height();
+
+    double top = object->boundingBox().topLeft().latitude();
+    double bottom = object->boundingBox().bottomRight().latitude();
+
+    QVERIFY(object->boundingBox().topLeft().longitude() < object->boundingBox().bottomRight().longitude());
+
+    object->setRoute(datelineRoute);
+
+    QVERIFY2(object->boundingBox().width()!=0,"no bounding box");
+    QVERIFY2(object->boundingBox().height()!=0,"no bounding box");
+
+    QVERIFY(object->boundingBox().width() == width);
+    QVERIFY(object->boundingBox().height() == height);
+
+    QVERIFY(object->boundingBox().topLeft().latitude() == top);
+    QVERIFY(object->boundingBox().bottomRight().latitude() == bottom);
+
+    QVERIFY(object->boundingBox().topLeft().longitude() > object->boundingBox().bottomRight().longitude());
+
+    object->setRoute(route);
+
+    map->setZoomLevel(10);
+    map->setCenter(QGeoCoordinate(30.0, 0.0, 0.0));
+
+    list = map->mapObjects();
+
+    QVERIFY(list.at(0)==object);
+
+    QGeoBoundingBox box2 = object->boundingBox();
+
+    QVERIFY2(box2.width()>0,"no bounding box");
+    QVERIFY2(box2.height()>0,"no bounding box");
+
+    QVERIFY(box1 == box2);
 }
 
 QTEST_MAIN(tst_QGeoMapRouteObject)

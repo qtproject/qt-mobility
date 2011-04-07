@@ -50,6 +50,13 @@
 //TESTED_CLASS=
 //TESTED_FILES=
 
+// Q_ASSERT replacement, since we often run in release builds
+#define Q_FATAL_VERIFY(statement)                                         \
+do {                                                                      \
+    if (!QTest::qVerify((statement), #statement, "", __FILE__, __LINE__)) \
+        qFatal("severe failure encountered, test cannot continue");       \
+} while (0)
+
 QTM_USE_NAMESPACE
 /*
  * This test is mostly just for testing sorting and filtering -
@@ -191,6 +198,10 @@ void tst_QContactManagerFiltering::initTestCase()
 	// testing filtering instead.
     managerNames.removeAll("symbiansim");
 
+    // Some internal engines on Maemo6
+    managerNames.removeAll("social");
+    managerNames.removeAll("simcard");
+    managerNames.removeAll("com.nokia.messaging.contacts.engines.mail.contactslookup");
 
     foreach(QString mgr, managerNames) {
         QMap<QString, QString> params;
@@ -214,7 +225,7 @@ void tst_QContactManagerFiltering::initTestCase()
         if (addedContacts != contactsAddedToManagers.values(cm)) {
             qDebug() << "prepareModel returned:" << addedContacts;
             qDebug() << "contactsAdded are:    " << contactsAddedToManagers.values(cm);
-            Q_ASSERT_X(false, "prepareModel", "returned list different from saved contacts list!");
+            qFatal("returned list different from saved contacts list!");
         }
     }
 
@@ -3430,7 +3441,7 @@ QList<QContactLocalId> tst_QContactManagerFiltering::prepareModel(QContactManage
     successfulSave = cm->saveContact(&contactG);
     Q_ASSERT(successfulSave);
     originalContactCount += 7;
-    Q_ASSERT(cm->contactIds().count() == originalContactCount);
+    Q_FATAL_VERIFY(cm->contactIds().count() == originalContactCount);
 
     /* Now some for the locale aware sorting */
     QContact contactH, contactI, contactJ, contactK;

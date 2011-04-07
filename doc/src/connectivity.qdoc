@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -31,86 +31,65 @@
 \brief The Connectivity API facilitates communication with local devices.
 \ingroup mobility
 
-The Connectivity API provides a set of APIs for communicating with local devices.
-
 \tableofcontents
 
 \section1 Overview
 
-The Connectivity API includes Bluetooth and NFC features. At this stage Bluetooth is
-well supported but NFC support for hardware backends is minimal.
+The Connectivity API provides a set of APIs for communicating with local devices.
 
-\section2 NFC
+The current version of the Connectivity API includes support for Bluetooth and Near Field
+Communication (NFC) technologies. Bluetooth is a short-range (less than 100 meters) wireless
+technology. It has a reasonably high data transfer rate of 2.1 Mbit/s, which makes it ideal for
+transfering data between devices.
 
-Unfortunately there currently are no functional backends for real hardware. An emulator backend is
-available, however, which is used by both the unit tests and the Qt Simulator backend. Use the \i {master} branch of Qt Simulator at \l {http://qt.gitorious.org/qt-labs/simulator}.
+The Bluetooth API provides classes for controlling the local Bluetooth device, discovering devices
+in the local vacinity, discovering services provided by those devices, publishing services and both
+server and client sockets for L2CAP and RFCOMM protocols.
 
-The \l {QtMobility Examples#Connectivity}{Connectivity examples} demonstrate how to use NFC
-functionality in your application.
+NFC is an extremely short-range (approx. 1 centimeter) wireless techonology and has a maximum
+transfer rate of 424 kbit/s. NFC is ideal for transfer small packets of data when two devices are
+touched together.
 
-\section3 What should work for NFC
-\list
-    \o NDEF record and message parsing
-    \o NDEF record and message creation
-    \o NDEF message notification
-\endlist
+The NFC API provides APIs for interacting with NFC Forum Tags and NFC Forum Devices, including
+target detection and loss, registering NDEF message handlers, reading and writing NDEF messages to
+NFC Forum Tags, send tag specific commands. The API also provides client and server LLCP sockets.
 
-\list
-    \o NFC Tag Type 1 tags are supported
-    \list
-        \o NDEF reading
-        \o NDEF writing
-        \o Tag specific commands
-        \o Supports both static and dynamic memory models
-    \endlist
-\endlist
-
-\section3 What is known \bold NOT to work for NFC
-
-\table 60%
-    \row \o Backends for real hardware i.e. Symbian, MeeGo
-    \row \o LLCP Sockets
-    \row \o Other common tag technologies
-    \row \o NFC Tag Type 2
-    \row \o NFC Tag Type 3
-    \row \o NFC Tag Type 4
-    \row \o Mifare
-\endtable
+\section1 Known Issues and Limitations
 
 \section2 Bluetooth
 
-The Bluetooth API is under development and subject to change between the tech
-preview and its official release with QtMobility 1.2. For the technology
-preview the only functional backend is bluez.
+The Bluetooth API is only supported on Linux (including Maemo6 and Meego) via Bluez 4, S60 5.0 and
+Symbian^3. For the Beta release the entire API is fully functional on these platforms, there are
+however some known bugs.
 
-\section3 What should work for Bluetooth
-
-You should be able to discover devices and services, open an Rfcomm socket, or accept
-an Rfcomm connection, and transfer a file to a device using Object Push Protocol.
-
-Classes that should work:
 \list
-    \o QBluetoothAddress
-    \o QBluetoothDeviceDiscoveryAgent
-    \o QBluetoothServiceDiscoveryAgent
-    \o QBluetoothDeviceInfo
-    \o QBluetoothServiceInfo
-    \o QBluetoothSocket
-    \o \l {QBluetoothTransferManager::put()}
-    \o QBluetoothUuid
-    \o QRfcommServer
-    \o QRfcommSocket
+    \o Symbian: Connections to an L2cap socket via address and service UUID fail.
+    \o Limited Enquiry does not work on Symbian or Linux
+    \o Symbian: The Symbian^1/S60 5.0 SDK can not compile connectivity.
 \endlist
 
-\section3 What is known \bold NOT to work for Bluetooth
+\section2 Bluetooth and S60 5.0/Symbian^1
 
-\table 60%
-    \row \o Symbian, Windows, Mac
-    \row \o QL2capServer and QL2capSocket
-    \row \o QBluetoothLocalDevice Pairing functions
-    \row \o QBluetoothLocalDevice power control and state functions
-    \row \o QBluetoothServiceDiscoveryAgent errorString
-\endtable
+The S60 5.0 SDK as shipped by Nokia does not include all the required header
+files and libraries to compile the bluetooth backend for Symbian. It contains a
+subset of the requires bluetooth library. There is a Bluetooth plugin available
+for the S60 3.2 SDK but it cannot be used since it will overwrite and damage
+part of the bluetooth support already present in the 5.0 SDK. As such,
+compiling QtMobility for Symbian/S60 5.0 not recommended until Nokia
+releases a S60 5.0/Symbian^1 bluetooth plugin.  A bug has been opened
+about this issue: \l https://qtrequirements.apac.nokia.com/browse/MOBILITY-2528
+
+\section2 NFC
+
+The NFC API is only supported on Maemo6 and Symbian^3 and the Qt Simulator. On Symbian^3 the API is
+fully functional. On the Qt Simulator only target detection and loss and tag access are support. On
+Maemo6 the following features are \bold NOT supported:
+
+\list
+    \o Connectionless LLCP sockets (both client and server).
+    \o Tag type specific access.
+\endlist
+
 
 \section1 Examples
 
@@ -122,25 +101,35 @@ Some interesting examples for the API exist.
         \o Description
     \row
         \o \l{annotatedurl}{NFC Annotated URL}
-        \o Displays information from an NFC tag.
+        \o Displays URL along with caption text and an image from from an NFC tag containing a
+           specially formated NDEF message.
     \row
         \o \l{btchat}{Bluetooth Chat}
         \o A chat server and client using bluetooth.
     \row
         \o \l{bttennis}{Bluetooth Tennis}
-        \o The classic game of \l {http://en.wikipedia.org/wiki/Pong}{Pong}.
+        \o The classic game of \l {http://en.wikipedia.org/wiki/Pong}{Pong}. Supports multiplayer
+           over Bluetooth and touch-to-play functionality on devices that support NFC.
     \row
-        \o \l {btfiletransfer}{Bluetooth File Transfer}
+        \o \l{btfiletransfer}{Bluetooth File Transfer}
         \o Transfer files between Bluetooth devices.
     \row
         \o \l{btscanner}{Bluetooth Scanner}
         \o Scan for Bluetooth devices.
     \row
-        \o \l{declarative-bluetooth/tennis}{QML Bluetooth Tennis}
-        \o The tennis game using a QML interface to the Bluetooth API.
+        \o \l{ndefeditor}{NDEF Editor}
+        \o Create NDEF messages using the NDEF records supported by the Connectivity API and save
+           them to supported NFC Forum tags.
     \row
-        \o \l {scanner}{QML Bluetooth Scanner}
+        \o \l{declarative-connectivity/tennis}{QML Bluetooth Tennis}
+        \o The tennis game using a QML interface to the Bluetooth API. It must connect to an
+           instance of the C++ \l{bttennis}{Bluetooth Tennis} game to play.
+    \row
+        \o \l{declarative-connectivity/scanner}{QML Bluetooth Scanner}
         \o A QML implementation of the Bluetooth device scanner.
+    \row
+        \o \l{declarative-connectivity/poster}{QML Poster}
+        \o A QML implementation of the NFC Annotated URL example.
 \endtable
 
 \section1 Main Classes
@@ -152,5 +141,9 @@ Some interesting examples for the API exist.
 \section2 Bluetooth Classes
 
 \annotatedlist connectivity-bluetooth
+
+\section2 Qt Quick Elements
+
+\annotatedlist connectivity-qml
 
 */

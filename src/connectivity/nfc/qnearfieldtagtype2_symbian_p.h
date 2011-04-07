@@ -58,7 +58,7 @@ public:
     explicit QNearFieldTagType2Symbian(CNearFieldNdefTarget * tag, QObject *parent = 0);
 
     ~QNearFieldTagType2Symbian();
-    
+
     QByteArray uid() const;
 
     RequestId readBlock(quint8 blockAddress);
@@ -82,12 +82,15 @@ public:
     {
         return _accessMethods();
     }
-    
-    void handleTagOperationResponse(const RequestId &id, const QByteArray &command, const QByteArray &response);
+
+    void handleTagOperationResponse(const RequestId &id, const QByteArray &command, const QByteArray &response, bool emitRequestCompleted);
     QVariant decodeResponse(const QByteArray &command, const QByteArray &response);
 
     bool waitForRequestCompleted(const RequestId &id, int msecs = 5000);
     friend class QNearFieldTagImpl<QNearFieldTagType2Symbian>;
+
+private:
+    quint8 mCurrentSector;
 };
 
 QTM_END_NAMESPACE

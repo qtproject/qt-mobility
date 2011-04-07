@@ -419,6 +419,8 @@ void QGraphicsVideoItemPrivate::updateGeometry()
         setWithinViewBounds(!widgetGeometry.size().isEmpty());
         widget->setGeometry(widgetGeometry);
         m_widgetControl->setProperty("extentRect", QVariant::fromValue<QRect>(extent));
+        const qreal angle = m_transform.map(QLineF(0, 0, 1, 0)).angle();
+        m_widgetControl->setProperty("rotation", QVariant::fromValue<qreal>(angle));
     }
 }
 
@@ -463,8 +465,8 @@ void QGraphicsVideoItemPrivate::_q_present()
 
 void QGraphicsVideoItemPrivate::_q_updateNativeSize()
 {
-    const QSize size = m_widgetControl->property("nativeSize").value<QSize>();
-    if (m_nativeSize != size) {
+    const QSize size = m_widgetControl ? m_widgetControl->property("nativeSize").value<QSize>() : QSize();
+    if (!size.isEmpty() && m_nativeSize != size) {
         m_nativeSize = size;
         updateGeometry();
         emit q_ptr->nativeSizeChanged(m_nativeSize);

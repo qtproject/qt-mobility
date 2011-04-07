@@ -24,6 +24,13 @@
    <item>
     <widget class="QListWidget" name="remoteDevices"/>
    </item>
+   <item>
+    <widget class="QPushButton" name="cancelButton">
+     <property name="text">
+      <string>Cancel</string>
+     </property>
+    </widget>
+   </item>
   </layout>
  </widget>
  <resources/>

@@ -46,8 +46,6 @@
 
 #include <QPixmap>
 #include <QPoint>
-#include <QGraphicsItem>
-#include <QGraphicsPixmapItem>
 
 QTM_BEGIN_NAMESPACE
 
@@ -57,7 +55,8 @@ public:
     QGeoMapPixmapObjectPrivate();
     ~QGeoMapPixmapObjectPrivate();
 
-    QGraphicsPixmapItem *item;
+    QPixmap pixmap;
+    QPoint offset;
 };
 
 QTM_END_NAMESPACE

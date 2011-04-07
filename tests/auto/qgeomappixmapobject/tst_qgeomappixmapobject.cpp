@@ -533,7 +533,7 @@ void tst_QGeoMapPixmapObject::contains()
 
     QPointF point = map->coordinateToScreenPosition(coordinate);
 
-    bool contains = map->mapObjectsAtScreenPosition(point).size() == 1;
+    bool contains = (map->mapObjectsAtScreenPosition(point).size() == 1);
 
     QCOMPARE(object->contains(coordinate), contains);
 
@@ -550,7 +550,7 @@ void tst_QGeoMapPixmapObject::boundingBox()
 
     QPixmap image(100, 100);
 
-    QGeoMapPixmapObject* object = new QGeoMapPixmapObject(center, QPoint(0, 0), image);
+    QGeoMapPixmapObject* object = new QGeoMapPixmapObject(center, QPoint(-50, -50), image);
 
     QGraphicsGeoMap* map = m_helper->map();
 
@@ -563,6 +563,29 @@ void tst_QGeoMapPixmapObject::boundingBox()
 
     QVERIFY2(object->boundingBox().width()!=0,"no bounding box");
     QVERIFY2(object->boundingBox().height()!=0,"no bounding box");
+
+    double width = object->boundingBox().width();
+    double height = object->boundingBox().height();
+
+    double top = object->boundingBox().topLeft().latitude();
+    double bottom = object->boundingBox().bottomRight().latitude();
+
+    QVERIFY(object->boundingBox().topLeft().longitude() < object->boundingBox().bottomRight().longitude());
+
+    QGeoCoordinate dateline(0.0, 180.0, 0.0);
+
+    object->setCoordinate(dateline);
+
+    QVERIFY2(object->boundingBox().width()!=0,"no bounding box");
+    QVERIFY2(object->boundingBox().height()!=0,"no bounding box");
+
+    QVERIFY(object->boundingBox().width() == width);
+    QVERIFY(object->boundingBox().height() == height);
+
+    QVERIFY(object->boundingBox().topLeft().latitude() == top);
+    QVERIFY(object->boundingBox().bottomRight().latitude() == bottom);
+
+    QVERIFY(object->boundingBox().topLeft().longitude() > object->boundingBox().bottomRight().longitude());
 
 }
 

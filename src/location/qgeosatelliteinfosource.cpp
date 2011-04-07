@@ -270,7 +270,7 @@ QGeoSatelliteInfoSource *QGeoSatelliteInfoSource::createDefaultSource(QObject *p
 
 #if defined(Q_OS_SYMBIAN)
     CQGeoSatelliteInfoSourceS60 *ret = NULL;
-    TRAPD(error, ret = CQGeoSatelliteInfoSourceS60::NewL(parent));
+    TRAPD(error, QT_TRYCATCH_LEAVING(ret = CQGeoSatelliteInfoSourceS60::NewL(parent)));
     if (error == KErrNone)
         return ret;
 #elif defined(Q_OS_WINCE)

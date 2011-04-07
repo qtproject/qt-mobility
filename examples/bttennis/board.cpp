@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -50,12 +50,11 @@
 const QColor fg = Qt::white;
 const QColor bg = Qt::black;
 
-Board::Board(QObject *parent) :
-    QObject(parent)
+Board::Board(QWidget *parent) :
+    QGraphicsView(parent)
 {
     scene = new QGraphicsScene(QRect(0, 0, 640, 360), this);
-
-    scene->setItemIndexMethod(QGraphicsScene::NoIndex);
+    
     scene->setBackgroundBrush(QBrush(bg));
 
     ball = scene->addRect(-6, -6, 12, 12, QPen(Qt::SolidLine), QBrush(fg));
@@ -110,17 +109,16 @@ Board::Board(QObject *parent) :
     connectAnimation->setStartValue(0);
     connectAnimation->setEndValue(360);
 
+    setCacheMode(QGraphicsView::CacheBackground);
+    setViewportUpdateMode(QGraphicsView::BoundingRectViewportUpdate);
+
 //    connect(scene, SIGNAL(changed(QList<QRectF>)), this, SLOT(sceneChanged(QList<QRectF>)));
 
 }
 void Board::setBall(int x, int y)
 {
     ball->setPos(x, y);
-    if(x > 640)
-        emit scored(Right);
-    if(x < 0)
-        emit scored(Left);
-    checkBall();
+    checkBall(x, y);
 }
 
 void Board::setLeftPaddle(int y)
@@ -135,6 +133,8 @@ void Board::setRightPaddle(int y)
 
 void Board::sceneChanged(const QList<QRectF> &region)
 {
+    Q_UNUSED(region);
+
     QList<QGraphicsItem *>items = scene->collidingItems(ball);
     while(!items.empty()) {
         QGraphicsItem *i = items.takeFirst();
@@ -150,21 +150,28 @@ void Board::sceneChanged(const QList<QRectF> &region)
 
 }
 
-void Board::checkBall()
+void Board::checkBall(int x, int y)
 {
-    QList<QGraphicsItem *>items = scene->collidingItems(ball);
-    while(!items.empty()) {
-        QGraphicsItem *i = items.takeFirst();
-        if(i == topWall)
-            emit ballCollision(Top);
-        if(i == bottomWall)
-            emit ballCollision(Bottom);
-        if(i == leftPaddle)
-            emit ballCollision(Left);
-        if(i == rightPaddle)
-            emit ballCollision(Right);
-    }
-
+  int ly = leftPaddle->y();
+  int ry = rightPaddle->y();
+  
+  if (x > 640)
+      emit scored(Right);
+  else if (x < 0)
+      emit scored(Left);
+  
+  if (y < 12)
+      emit ballCollision(Top);
+  else if (y > 360-12)
+      emit ballCollision(Bottom);
+  else if ((x < 12) && 
+          (y > ly) &&
+          (y < ly+Paddle))
+      emit ballCollision(Left);
+  else if ((x > 640-12) &&
+          (y > ry) &&
+          (y < ry+Paddle))
+      emit ballCollision(Right);
 }
 
 void Board::setScore(int l, int r)

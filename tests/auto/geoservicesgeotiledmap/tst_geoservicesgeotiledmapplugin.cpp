@@ -596,10 +596,10 @@ void tst_GeoServicesGeoTiledMapPlugin::connectivityMode_data()
     QTest::addColumn<int>("signalcount");
     QTest::newRow("Not supported-NoConnectivity") << QGraphicsGeoMap::NoConnectivity
         << QGraphicsGeoMap::OfflineMode << 0;
-    QTest::newRow("OnlineMode") << QGraphicsGeoMap::OnlineMode << QGraphicsGeoMap::OnlineMode << 0;
+    QTest::newRow("OnlineMode") << QGraphicsGeoMap::OnlineMode << QGraphicsGeoMap::OnlineMode << 1;
     QTest::newRow("OfflineMode") << QGraphicsGeoMap::OfflineMode << QGraphicsGeoMap::OfflineMode
-        << 0;
-    QTest::newRow("HybridMode") << QGraphicsGeoMap::HybridMode << QGraphicsGeoMap::HybridMode << 0;
+        << 1;
+    QTest::newRow("HybridMode") << QGraphicsGeoMap::HybridMode << QGraphicsGeoMap::HybridMode << 1;
     QTest::newRow("set HybridMode again") << QGraphicsGeoMap::HybridMode
         << QGraphicsGeoMap::HybridMode << 0;
 }

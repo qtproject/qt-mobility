@@ -522,23 +522,15 @@ void CPplContactTable::WriteContactItemL(const CContactItem& aItem, TCntSqlState
 		User::LeaveIfError(stmnt.ParameterIndex(KContactIdParam() ) ), aItem.Id() ) );
 
 	//bind favorite index
-	TInt indexFavField = aItem.CardFields().Find(KUidContactFieldFavourite);
+	TInt indexFavField = aItem.CardFields().Find(KUidContactFieldTopContact);
 	if (indexFavField >= KErrNone)
 	    {
 	    const CContactItemField& field = aItem.CardFields()[indexFavField];
-	    if (field.StorageType() == KStorageTypeContactItemId)
-	        {
-	        if (aItem.Type() == KUidContactTemplate)
-	            {
-	            //save invalid contact id in this field for the system template contact
-	            field.AgentStorage()->SetAgentId(KNullContactId);
-	            }
-
-	        User::LeaveIfError(stmnt.BindInt(
-	            User::LeaveIfError(stmnt.ParameterIndex(KContactFavoriteIndexParam() ) ),
-	                field.AgentStorage()->Value() ) );
-	        }
+        User::LeaveIfError(stmnt.BindText(
+            User::LeaveIfError(stmnt.ParameterIndex(KContactFavoriteIndexParam() ) ),
+                field.TextStorage()->Text() ) );
 	    }
+
 	
 	// build the clob/blob parts of the update statement
 	RSqlParamWriteStream textHeader;
@@ -822,7 +814,7 @@ void CPplContactTable::DeleteMultipleContactsL(const CContactIdArray* aIdArray)
         }
     
     // The contact assigned to own card is being deleted, so set cached own card id to "not found"
-    if (aIdArray->Find(iOwnCardId) > 0)
+    if (aIdArray->Find(iOwnCardId) != KErrNotFound)
         {
         iOwnCardId = KErrNotFound;
         }

@@ -54,11 +54,13 @@ class Dialog : public QWidget, public Ui_Dialog
 public:
     Dialog();
     ~Dialog();
+    void parseArguments();
 
 protected:
     void changeEvent(QEvent *e);
 
 private:
+
     void setupGeneral();
     void setupDevice();
     void setupDisplay();
@@ -66,6 +68,7 @@ private:
     void setupNetwork();
     void setupSaver();
     void setupBattery();
+    void setupAlignedTimer();
 
     QSystemScreenSaver *saver;
     QSystemInfo *systemInfo;
@@ -74,6 +77,8 @@ private:
     QSystemStorageInfo *sti;
     QSystemBatteryInfo *bi;
     QSystemDisplayInfo *dis;
+
+    QSystemAlignedTimer*alt;
 
     void updateStorage();
 
@@ -90,6 +95,12 @@ private:
     QString sizeToString(qlonglong size);
     QBrush brushForStorageState(QSystemStorageInfo::StorageState state);
 
+    QString lockStateToString(QSystemDeviceInfo::LockTypeFlags);
+    QSystemDeviceInfo::LockTypeFlags oldLockStatus;
+
+    QSystemAlignedTimer*alt1;
+    QSystemAlignedTimer*alt2;
+    QSystemAlignedTimer*alt3;
 
 private slots:
     void tabChanged(int index);
@@ -104,6 +115,7 @@ private slots:
     void displayBatteryStatus(QSystemBatteryInfo::BatteryStatus);
     void updateProfile(QSystemDeviceInfo::Profile profile);
     void updateSimStatus();
+    void updateThermalState();
     void updateProfile();
 
      void displayNetworkStatus(QSystemNetworkInfo::NetworkStatus);
@@ -126,7 +138,23 @@ private slots:
     void backlightTotext(QSystemDisplayInfo::BacklightState);
     void dataTechnologyChanged(QSystemNetworkInfo::CellDataTechnology tech);
 
+    void lockStatusChanged(QSystemDeviceInfo::LockTypeFlags);
 
+    void cellIdChanged(int);
+
+    void startAlignedTimers();
+    void stopAlignedTimers();
+
+    void setupAlignedTimers();
+
+    void timeout1();
+    void timeout2();
+    void timeout3();
+
+    void timerError(QSystemAlignedTimer::AlignedTimerError error);
+
+private:
+    int lastTab;
 };
 
 #endif // DIALOG_H

@@ -26,11 +26,44 @@
 ****************************************************************************/
 
 /*!
-    \example declarative-camera
-    \title Camera QML Example
+\example declarative-camera
+\title QML Camera Example
 
-    \image qml-camera.png
+\brief  The Camera Example shows how to use the API to capture a still image
+or video.
 
-    This example demonstrates the basic use of Camera QML elements.
+\image qml-camera.png
+
+This example demonstrates the basic use of the Camera QML Plugin elements. The
+plugin provides access to the API functionality for camera settings and
+capturing an image.
+
+Most of the QML code supports the user interface for this application with the
+Camera elements being mostly found in \i {declarative-camera.qml} and
+\i {CaptureControls.qml}.
+
+In \i {declarative-camera.qml} the Camera element is initialized with an id
+of \i {camera }, a photo preview is setup, states are implemented for image
+preview or capture and a CaptureControls element is initialized. The initial
+\i state is \i PhotoCapture. The camera element includes a handler, \i onImageCaptured,
+for the \l {imageCaptured} signal. The handler sets up the application to process
+the preview including a change in the user interface state. The PhotoPreview
+element now becomes visible with any key press being picked up by the handler
+in PhotoPreview and returning the state to \i PhotoCapture.
+
+The \i CaptureControls element, which is implemented in \i {CaptureControls.qml},
+generates a column on the right hand side of the screen which includes control
+buttons for \i focus (not initially visible), \i {capture}, \i {flash modes},
+\i {white balance}, \i {exposure compensation}, and if a preview is
+available a \i {preview} button. The last button exits from the application.
+
+When the Capture button is pressed the \i onClicked handler calls
+\l {Camera::captureImage()}{captureImage()}
+
+
+
+
+
+
 
 */

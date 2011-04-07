@@ -46,7 +46,7 @@
 #elif defined(Q_OS_SYMBIAN)
 #include "qllcpserver_symbian_p.h"
 #elif defined(Q_WS_MAEMO_6) || defined(Q_WS_MEEGO)
-#include "qllcpserver_meego_p.h"
+#include "qllcpserver_maemo6_p.h"
 #else
 #include "qllcpserver_p.h"
 #endif

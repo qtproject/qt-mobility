@@ -102,6 +102,8 @@ private slots:
     void push();
     void pushSuspendResume();
 
+    void reset();
+
     void cleanupTestCase();
 
 private:
@@ -762,6 +764,38 @@ void tst_QAudioInput::pushSuspendResume()
 
         WavHeader::writeDataLength(*audioFiles.at(i),audioFiles.at(i)->pos()-WavHeader::headerLength());
         audioFiles.at(i)->close();
+    }
+}
+
+void tst_QAudioInput::reset()
+{
+    for(int i=0; i<audioFiles.count(); i++) {
+        QAudioInput audioInput(testFormats.at(i), this);
+
+        audioInput.setNotifyInterval(100);
+
+        QSignalSpy notifySignal(&audioInput, SIGNAL(notify()));
+        QSignalSpy stateSignal(&audioInput, SIGNAL(stateChanged(QAudio::State)));
+
+        // Check that we are in the default state before calling start
+        QVERIFY2((audioInput.state() == QAudio::StoppedState), "state() was not set to StoppedState before start()");
+        QVERIFY2((audioInput.error() == QAudio::NoError), "error() was not set to QAudio::NoError before start()");
+        QVERIFY2((audioInput.elapsedUSecs() == qint64(0)),"elapsedUSecs() not zero on creation");
+
+        audioInput.start();
+        // Check that QAudioInput immediately transitions to IdleState
+        QTRY_VERIFY2((stateSignal.count() == 1),"didn't emit IdleState signal on start()");
+        QVERIFY2((audioInput.state() == QAudio::IdleState), "didn't transition to IdleState after start()");
+        QVERIFY2((audioInput.error() == QAudio::NoError), "error state is not equal to QAudio::NoError after start()");
+        QVERIFY(audioInput.periodSize() > 0);
+        QTest::qWait(500);
+        QVERIFY(audioInput.bytesReady() > 0);
+        stateSignal.clear();
+
+        audioInput.reset();
+        QTRY_VERIFY2((stateSignal.count() == 1),"didn't emit StoppedState signal after reset()");
+        QVERIFY2((audioInput.state() == QAudio::StoppedState), "didn't transitions to StoppedState after reset()");
+        QVERIFY2((audioInput.bytesReady() == 0), "buffer not cleared after reset()");
     }
 }
 

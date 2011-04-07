@@ -52,27 +52,21 @@ meegoals::meegoals(QSensor *sensor)
     // metadata
     setDescription(QLatin1String("ambient light intensity given as 5 pre-defined levels"));
     addOutputRange(0, 5, 1);
+    addDataRate(10,10);
 }
+
+void meegoals::start(){
+    Unsigned data(((ALSSensorChannelInterface*)m_sensorInterface)->lux());
+    m_reading.setLightLevel(getLightLevel(data.x()));
+    m_reading.setTimestamp(data.UnsignedData().timestamp_);
+    newReadingAvailable();
+    meegosensorbase::start();
+}
+
 
 void meegoals::slotDataAvailable(const Unsigned& data)
 {
-    // Convert from integer to fixed levels
-    // TODO: verify levels
-    QAmbientLightReading::LightLevel level;
-    int x = data.x();
-    if (x < 0) {
-        level = QAmbientLightReading::Undefined;
-    } else if (x < 10) {
-        level = QAmbientLightReading::Dark;
-    } else if (x < 50) {
-        level = QAmbientLightReading::Twilight;
-    } else if (x < 100) {
-        level = QAmbientLightReading::Light;
-    } else if (x < 150) {
-        level = QAmbientLightReading::Bright;
-    } else {
-        level = QAmbientLightReading::Sunny;
-    }
+    QAmbientLightReading::LightLevel level = getLightLevel(data.x());
     if (level != m_reading.lightLevel()) {
         m_reading.setLightLevel(level);
         m_reading.setTimestamp(data.UnsignedData().timestamp_);
@@ -91,4 +85,23 @@ bool meegoals::doConnect(){
 
 const QString meegoals::sensorName(){
     return "alssensor";
+}
+
+
+QAmbientLightReading::LightLevel meegoals::getLightLevel(int lux){
+    // Convert from integer to fixed levels
+    if (lux < 0) {
+        return QAmbientLightReading::Undefined;
+    } else if (lux < 10) {
+        return QAmbientLightReading::Dark;
+    } else if (lux < 50) {
+        return QAmbientLightReading::Twilight;
+    } else if (lux < 100) {
+        return QAmbientLightReading::Light;
+    } else if (lux < 150) {
+        return QAmbientLightReading::Bright;
+    } else {
+        return QAmbientLightReading::Sunny;
+    }
+
 }

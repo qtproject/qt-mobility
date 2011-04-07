@@ -108,16 +108,19 @@ signals:
     void messageUpdated(const QMessageId &id, const QMessageManager::NotificationFilterIdSet &matchingFilterIds);
 
 private slots:
-    void onModelReady();
-    void eventsAdded(const QList<CommHistory::Event> &events);
-    void eventsUpdated(const QList<CommHistory::Event> &events);
-    void eventDeleted(int id);
+    void onModelReady(bool successful);
+
+    void onRowsInserted(const QModelIndex & parent, int start, int end);
+    void onRowsRemoved(const QModelIndex & parent, int start, int end);
+    void onDataChanged(const QModelIndex & topLeft, const QModelIndex & bottomRight);
 
 private:
 
     QMessageIdList filterInternalList(const QMessageFilter &filter);
     QMessageIdList filterAndSearchInternalList(const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags);
     void processFilters(const QList<CommHistory::Event> &events, void (StorageEngine::*signal)(const QMessageId &, const QMessageManager::NotificationFilterIdSet &));
+    QList<CommHistory::Event> eventsListFromModelRows(const int start, const int end);
+    void unlockEventModifiers(const QList<CommHistory::Event> &events);
 
     template <typename Func>
     void foreachEvent(Func &f) const;
@@ -132,6 +135,7 @@ private:
 
     typedef QMap<QMessageManager::NotificationFilterId, QMessageFilter> NotificationFilterMap;
     NotificationFilterMap m_filters;
+    int m_updatedEventId;
 
 };
 

@@ -70,7 +70,7 @@ class Handover;
 class Tennis : public QDialog
 {
     Q_OBJECT
-    Q_PROPERTY(int paddlePos READ paddlePos WRITE setPaddlePos);
+    Q_PROPERTY(int paddlePos READ paddlePos WRITE setPaddlePos)
 
 public:
     Tennis(QWidget *parent = 0);
@@ -105,6 +105,8 @@ private slots:
     void lagReport(int ms);
 
     void nearFieldHandover();
+    
+    void fps(const QString &f);
 
 private:
 

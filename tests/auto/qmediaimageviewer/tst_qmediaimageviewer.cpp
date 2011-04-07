@@ -83,6 +83,7 @@ private slots:
     void elapsedTime();
     void rendererControl();
     void setVideoOutput();
+    void debugEnums();
 
 public:
     tst_QMediaImageViewer() : m_network(0) {}
@@ -96,9 +97,6 @@ private:
     QtTestNetworkAccessManager *m_network;
     QString m_fileProtocol;
 };
-
-Q_DECLARE_METATYPE(QMediaImageViewer::State)
-Q_DECLARE_METATYPE(QMediaImageViewer::MediaStatus)
 
 class QtTestVideoSurface : public QAbstractVideoSurface
 {
@@ -1023,6 +1021,14 @@ void tst_QMediaImageViewer::setVideoOutput()
     imageViewer.setVideoOutput(&surface);
     QVERIFY(surface.isActive());
     QVERIFY(widget.mediaObject() == 0);
+}
+
+void tst_QMediaImageViewer::debugEnums()
+{
+    QTest::ignoreMessage(QtDebugMsg, "QMediaImageViewer::PlayingState ");
+    qDebug() << QMediaImageViewer::PlayingState;
+    QTest::ignoreMessage(QtDebugMsg, "QMediaImageViewer::NoMedia ");
+    qDebug() << QMediaImageViewer::NoMedia;
 }
 
 QTEST_MAIN(tst_QMediaImageViewer)

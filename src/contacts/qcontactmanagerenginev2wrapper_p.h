@@ -192,6 +192,7 @@ protected:
     void handleFinishedSubRequest(QContactAbstractRequest* req);
 
 private:
+    void partiallyCopyDetails(QContact* to, const QContact& from, const QSet<QString>& mask);
     QContactSaveRequest* request() { return static_cast<QContactSaveRequest*>(m_request.data()); }
 
     QContactManagerEngine* m_engine;

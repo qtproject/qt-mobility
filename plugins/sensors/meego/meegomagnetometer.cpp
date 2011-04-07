@@ -69,9 +69,9 @@ void meegomagnetometer::start(){
 void meegomagnetometer::slotDataAvailable(const MagneticField& data)
 {
     //nanoTeslas given, divide with 10^9 to get Teslas
-    m_reading.setX( NANO * m_isGeoMagnetometer?data.x():data.rx());
-    m_reading.setY( NANO * m_isGeoMagnetometer?data.y():data.ry());
-    m_reading.setZ( NANO * m_isGeoMagnetometer?data.z():data.rz());
+    m_reading.setX( NANO * (m_isGeoMagnetometer?data.x():data.rx()));
+    m_reading.setY( NANO * (m_isGeoMagnetometer?data.y():data.ry()));
+    m_reading.setZ( NANO * (m_isGeoMagnetometer?data.z():data.rz()));
     m_reading.setCalibrationLevel( m_isGeoMagnetometer?((float) data.level()) / 3.0 :1);
     m_reading.setTimestamp(data.timestamp());
     newReadingAvailable();

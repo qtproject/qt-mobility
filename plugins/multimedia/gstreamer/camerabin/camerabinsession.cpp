@@ -192,6 +192,9 @@ CameraBinSession::CameraBinSession(QObject *parent)
 CameraBinSession::~CameraBinSession()
 {
     if (m_pipeline) {
+        if (m_viewfinderInterface)
+            m_viewfinderInterface->stopRenderer();
+
         gst_element_set_state(m_pipeline, GST_STATE_NULL);
         gst_element_get_state(m_pipeline, NULL, NULL, GST_CLOCK_TIME_NONE);
         gstUnref(m_pipeline);
@@ -531,6 +534,9 @@ bool CameraBinSession::isReady() const
 
 void CameraBinSession::setViewfinder(QObject *viewfinder)
 {
+    if (m_viewfinderInterface)
+        m_viewfinderInterface->stopRenderer();
+
     m_viewfinderInterface = qobject_cast<QGstreamerVideoRendererInterface*>(viewfinder);
     if (!m_viewfinderInterface)
         viewfinder = 0;
@@ -590,6 +596,9 @@ void CameraBinSession::setState(QCamera::State newState)
         if (m_recordingActive)
             stopVideoRecording();
 
+        if (m_viewfinderInterface)
+            m_viewfinderInterface->stopRenderer();
+
         gst_element_set_state(m_pipeline, GST_STATE_NULL);
         m_state = newState;
         if (m_busy)
@@ -602,6 +611,9 @@ void CameraBinSession::setState(QCamera::State newState)
             stopVideoRecording();
 
         if (m_videoInputHasChanged) {
+            if (m_viewfinderInterface)
+                m_viewfinderInterface->stopRenderer();
+
             gst_element_set_state(m_pipeline, GST_STATE_NULL);
             m_videoSrc = buildVideoSrc();
             g_object_set(m_pipeline, VIDEO_SOURCE_PROPERTY, m_videoSrc, NULL);
@@ -612,6 +624,8 @@ void CameraBinSession::setState(QCamera::State newState)
         gst_element_set_state(m_pipeline, GST_STATE_READY);
 #else
         m_state = QCamera::LoadedState;
+        if (m_viewfinderInterface)
+            m_viewfinderInterface->stopRenderer();
         gst_element_set_state(m_pipeline, GST_STATE_NULL);
         emit stateChanged(m_state);
 #endif
@@ -830,10 +844,13 @@ void CameraBinSession::busMessage(const QGstreamerMessage &message)
                 qWarning() << "CameraBin error:" << message;
             }
 
-            if (message.isEmpty())
-                message = tr("Camera error");
+            //only report error messager from camerabin
+            if (GST_MESSAGE_SRC(gm) == GST_OBJECT_CAST(m_pipeline)) {
+                if (message.isEmpty())
+                    message = tr("Camera error");
 
-            emit error(int(QMediaRecorder::ResourceError), message);
+                emit error(int(QMediaRecorder::ResourceError), message);
+            }
 
             if (err)
                 g_error_free (err);

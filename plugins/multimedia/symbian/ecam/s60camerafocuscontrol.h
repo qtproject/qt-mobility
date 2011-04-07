@@ -95,7 +95,7 @@ Q_SIGNALS: // QCameraFocusControl
     void focusZonesChanged();
 */
 
-private Q_SLOTS: // Internal Slots
+private slots: // Internal Slots
 
     void resetAdvancedSetting();
 

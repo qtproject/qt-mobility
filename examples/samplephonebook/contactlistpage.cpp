@@ -54,6 +54,7 @@ ContactListPage::ContactListPage(QMainWindow *mainWindow, QWidget *parent)
 {
     m_manager = 0;
     m_currentFilter = QContactFilter();
+    m_needsFresh = true;
 
     m_backendsCombo = new QComboBox(this);
     QStringList availableManagers = QContactManager::availableManagers();
@@ -200,7 +201,8 @@ void ContactListPage::backendSelected()
             this, SLOT(contactsRemoved(const QList<QContactLocalId>&)));
     connect(m_manager, SIGNAL(contactsChanged(const QList<QContactLocalId>&)),
             this, SLOT(contactsChanged(const QList<QContactLocalId>&)));
-
+    connect(m_manager, SIGNAL(dataChanged()),
+            this, SLOT(rebuildList()));
     // signal that the manager has changed.
     emit managerChanged(m_manager);
 
@@ -210,12 +212,17 @@ void ContactListPage::backendSelected()
 
 void ContactListPage::rebuildList(const QContactFilter& filter)
 {
+    //updating is going on
+    m_needsFresh = false;
+
     m_currentFilter = QContactManagerEngine::canonicalizedFilter(filter);
 
     m_filterActiveLabel->setVisible(m_currentFilter != QContactFilter());
 
     m_contactsList->clear();
     m_contacts = m_manager->contacts(m_currentFilter);
+    //set the flag so new request would not be lost during view list updating
+    m_needsFresh = true;
     foreach (QContact contact, m_contacts) {
         QListWidgetItem *currItem = new QListWidgetItem;
         currItem->setData(Qt::DisplayRole, contact.displayLabel());
@@ -224,14 +231,28 @@ void ContactListPage::rebuildList(const QContactFilter& filter)
     }
 }
 
+//contactsAdded is called when new contact datas are added into database
 void ContactListPage::contactsAdded(const QList<QContactLocalId>& ids)
 {
-    QContactIntersectionFilter qcif;
-    QContactLocalIdFilter qclif;
-    qclif.setIds(ids);
-    qcif.append(qclif);
-    qcif.append(m_currentFilter);
-    m_contacts = m_manager->contacts(qcif);
+    Q_UNUSED(ids);
+    //skip update this time if updating is going on,
+    if (m_needsFresh)
+    {
+        //updating is going on
+        m_needsFresh = false;
+        //set timer to update the view list and avoid multi times fetch
+        QTimer::singleShot(0, this, SLOT(rebuildList()));
+    }
+}
+
+//ContactsAdd() singleShot timer expired function, it gets contacts list and updates the view list
+void ContactListPage::rebuildList ()
+{
+    m_contactsList->clear();
+    m_contacts = m_manager->contacts(m_currentFilter);
+    //set the flag so new request would not be lost during view list updating
+    m_needsFresh = true;
+    //update the whole view list
     foreach (QContact contact, m_contacts) {
         QListWidgetItem *currItem = new QListWidgetItem;
         currItem->setData(Qt::DisplayRole, contact.displayLabel());

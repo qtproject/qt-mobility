@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -42,8 +42,15 @@
     \section2 Connectivity
 
     \list
-    \o \l{btchat}{Bluetooth Chat}
-    \o \l{annotatedurl}{Annotated URL}
+        \o \l{annotatedurl}{NFC Annotated URL}
+        \o \l{btchat}{Bluetooth Chat}
+        \o \l{bttennis}{Bluetooth Tennis}
+        \o \l{btfiletransfer}{Bluetooth File Transfer}
+        \o \l{btscanner}{Bluetooth Scanner}
+        \o \l{ndefeditor}{NDEF Editor}
+        \o \l{declarative-connectivity/tennis}{QML Bluetooth Tennis}
+        \o \l{declarative-connectivity/scanner}{QML Bluetooth Scanner}
+        \o \l{declarative-connectivity/poster}{QML Poster}
     \endlist
 
     \section2 Contacts
@@ -75,6 +82,7 @@
     \o \l{lightmaps}{LightMaps}
     \o \l{flickrdemo}{Flickr Demo}
     \o \l{landmarkbrowser}{Landmark Browser}
+    \o \l{Maps Demo Tutorial}{Maps Demo}
     \o \l{declarative-location/landmarkmap}{Landmark Map}
     \o \l{declarative-location/flickr}{Declarative Location Flickr}
     \o \l{declarative-location/mapviewer}{Declarative Map Viewer}

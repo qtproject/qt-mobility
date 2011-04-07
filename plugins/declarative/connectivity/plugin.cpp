@@ -1,10 +1,10 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the QtDeclarative module of the Qt Toolkit.
+** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
@@ -40,18 +40,26 @@
 ****************************************************************************/
 
 
-#include <QApplication>
-#include <QtDeclarative>
-#include <QDeclarativeExtensionPlugin>
-#include <QDebug>
-#include "qdeclarativebtdiscoverymodel_p.h"
-#include "qdeclarativebtimageprovider_p.h"
+#include <QtDeclarative/QDeclarativeEngine>
+#include <QtDeclarative/QDeclarativeExtensionPlugin>
+
+#include <qdeclarativendefrecord.h>
+
+#include "qdeclarativebluetoothdiscoverymodel_p.h"
+#include "qdeclarativebluetoothimageprovider_p.h"
 #include "qdeclarativebluetoothservice_p.h"
 #include "qdeclarativebluetoothsocket_p.h"
+#include "qdeclarativenearfieldsocket_p.h"
+#include "qdeclarativenearfield_p.h"
+#include "qdeclarativendeffilter_p.h"
+#include "qdeclarativendeftextrecord_p.h"
+#include "qdeclarativendefurirecord_p.h"
+#include "qdeclarativendefmimerecord_p.h"
 
 QT_USE_NAMESPACE
 
 QTM_USE_NAMESPACE
+
 class QConnectivityQmlPlugin : public QDeclarativeExtensionPlugin
 {
     Q_OBJECT
@@ -59,17 +67,24 @@ public:
     void registerTypes(const char *uri)
     {
         Q_ASSERT(uri == QLatin1String("QtMobility.connectivity"));
-        //qRegisterMetaType<QContactLocalId>("QContactLocalId");
+
         qmlRegisterType<QDeclarativeBluetoothDiscoveryModel>(uri, 1, 2, "BluetoothDiscoveryModel");
         qmlRegisterType<QDeclarativeBluetoothService>(uri, 1, 2, "BluetoothService");
         qmlRegisterType<QDeclarativeBluetoothSocket>(uri, 1, 2, "BluetoothSocket");
 
-        //details
+        qmlRegisterType<QDeclarativeNearFieldSocket>(uri, 1, 2, "NearFieldSocket");
+
+        qmlRegisterType<QDeclarativeNearField>(uri, 1, 2, "NearField");
+        qmlRegisterType<QDeclarativeNdefFilter>(uri, 1, 2, "NdefFilter");
+        qmlRegisterType<QDeclarativeNdefRecord>(uri, 1, 2, "NdefRecord");
+        qmlRegisterType<QDeclarativeNdefTextRecord>(uri, 1, 2, "NdefTextRecord");
+        qmlRegisterType<QDeclarativeNdefUriRecord>(uri, 1, 2, "NdefUriRecord");
+        qmlRegisterType<QDeclarativeNdefMimeRecord>(uri, 1, 2, "NdefMimeRecord");
     }
 
     void initializeEngine(QDeclarativeEngine *engine, const char *uri) {
         Q_UNUSED(uri);
-        engine->addImageProvider("thumbnail", new BluetoothThumbnailImageProvider);
+        engine->addImageProvider("bluetoothicons", new BluetoothThumbnailImageProvider);
     }
 };
 

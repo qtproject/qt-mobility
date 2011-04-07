@@ -146,7 +146,7 @@ protected:
     Q_INVOKABLE virtual bool handleResponse(const QNearFieldTarget::RequestId &id,
                                             const QByteArray &response);
 
-signals:
+Q_SIGNALS:
     void disconnected();
 
     void ndefMessageRead(const QNdefMessage &message);
