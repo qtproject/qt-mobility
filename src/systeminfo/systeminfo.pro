@@ -76,6 +76,9 @@ unix:!simulator {
     PRIVATE_HEADERS += linux/qsysteminfo_dbus_p.h
 
         contains(build_unit_tests, yes):contains(test_use_sim, yes) {
+            ## for using simulator backend to test frontend signals
+            ## configure with -test-sim -tests
+
             SOURCES += qsysteminfo_simulator.cpp qsysteminfodata_simulator.cpp
             HEADERS += qsysteminfo_simulator_p.h qsysteminfodata_simulator_p.h
             DEFINES += TESTR QT_SIMULATOR
