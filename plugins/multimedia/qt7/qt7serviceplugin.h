@@ -47,12 +47,24 @@
 
 QT_BEGIN_NAMESPACE
 
-class QT7ServicePlugin : public QMediaServiceProviderPlugin
+class QT7ServicePlugin
+    : public QMediaServiceProviderPlugin
+    , public QMediaServiceSupportedFormatsInterface
 {
 public:
+    QT7ServicePlugin();
+
     QStringList keys() const;
     QMediaService* create(QString const& key);
     void release(QMediaService *service);
+
+    QtMultimediaKit::SupportEstimate hasSupport(const QString &mimeType, const QStringList& codecs) const;
+    QStringList supportedMimeTypes() const;
+
+private:
+    void buildSupportedTypes();
+
+    QStringList m_supportedMimeTypes;
 };
 
 QT_END_NAMESPACE
