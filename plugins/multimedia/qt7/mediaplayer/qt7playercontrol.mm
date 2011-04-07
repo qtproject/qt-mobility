@@ -117,12 +117,7 @@ bool QT7PlayerControl::isSeekable() const
 
 QMediaTimeRange QT7PlayerControl::availablePlaybackRanges() const
 {
-    QMediaTimeRange result;
-
-    if (isSeekable())
-        result.addInterval(0, duration());
-
-    return result;
+    return m_session->availablePlaybackRanges();
 }
 
 qreal QT7PlayerControl::playbackRate() const

@@ -263,6 +263,44 @@ bool QT7PlayerSession::isSeekable() const
     return true;
 }
 
+#ifndef QUICKTIME_C_API_AVAILABLE
+@interface QTMovie(QtExtensions)
+- (NSArray*)loadedRanges;
+- (QTTime)maxTimeLoaded;
+@end
+#endif
+
+QMediaTimeRange QT7PlayerSession::availablePlaybackRanges() const
+{
+    QTMovie *movie = (QTMovie*)m_QTMovie;
+#ifndef QUICKTIME_C_API_AVAILABLE
+    AutoReleasePool pool;
+    if ([movie respondsToSelector:@selector(loadedRanges)]) {
+        QMediaTimeRange rc;
+        NSArray *r = [movie loadedRanges];
+        for (NSValue *tr in r) {
+            QTTimeRange timeRange = [tr QTTimeRangeValue];
+            qint64 startTime = qint64(float(timeRange.time.timeValue) / timeRange.time.timeScale * 1000.0);
+            rc.addInterval(startTime, startTime + qint64(float(timeRange.duration.timeValue) / timeRange.duration.timeScale * 1000.0));
+        }
+        return rc;
+    }
+    else if ([movie respondsToSelector:@selector(maxTimeLoaded)]) {
+        QTTime loadedTime = [movie maxTimeLoaded];
+        return QMediaTimeRange(0, qint64(float(loadedTime.timeValue) / loadedTime.timeScale * 1000.0));
+    }
+#else
+    TimeValue loadedTime;
+    TimeScale scale;
+    Movie m = [movie quickTimeMovie];
+    if (GetMaxLoadedTimeInMovie(m, &loadedTime) == noErr) {
+        scale = GetMovieTimeScale(m);
+        return QMediaTimeRange(0, qint64(float(loadedTime) / scale * 1000.0f));
+    }
+#endif
+    return QMediaTimeRange(0, duration());
+}
+
 qreal QT7PlayerSession::playbackRate() const
 {
     return m_rate;
