@@ -166,7 +166,6 @@ usage()
     echo "                    (default: qmake)"
     echo "-test-sim           Use simulator backend for testing"
     echo "-no-nfc-symbian     Disables the NFC Sybmian backend."
->>>>>>> master
 #    echo "-staticconfig <name>"
 #    echo "                    Avoids running of configuration tests. The default"
 #    echo "                    values are sourced from features/platformconfig/<name>.pri"
