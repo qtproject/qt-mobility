@@ -187,10 +187,11 @@ QString QSystemInfoPrivate::currentCountryCode() const
     if (langCC.isEmpty()) {
         langCC = QString::fromLocal8Bit(qgetenv("LANG")).section("_", 1, 1);
         langCC = langCC.remove(".UTF-8", Qt::CaseSensitive);
-        return langCC;
     }
-#endif
+    return langCC;
+#else // Q_WS_MAEMO_6
     return QSystemInfoLinuxCommonPrivate::currentCountryCode();
+#endif // Q_WS_MAEMO_6
 }
 
 QString QSystemInfoPrivate::version(QSystemInfo::Version type, const QString &parameter)
