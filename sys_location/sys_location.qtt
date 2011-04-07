@@ -127,7 +127,6 @@ testcase = {
     negative_store_and_load_a_landmark: function(name, latitude, longitude)
     {
         startApplication("landmarkbrowser");
-                   ));
         select("Add Landmark");
         enter("Latitude", latitude);
         enter("Longitude", longitude);
