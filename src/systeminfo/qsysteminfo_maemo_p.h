@@ -74,6 +74,13 @@ Q_DECLARE_METATYPE(QList<ProfileDataValue>)
 
 #endif
 
+extern "C" {
+#include "bme/bmeipc.h"
+}
+
+#include <mqueue.h>
+
+
 QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
@@ -338,6 +345,10 @@ private:
 #endif
 };
 
+class EmIpc;
+class EmEvents;
+class EmCurrentMeasurement;
+
 class QSystemBatteryInfoPrivate : public QSystemBatteryInfoLinuxCommonPrivate
 {
     Q_OBJECT
@@ -345,10 +356,31 @@ public:
     QSystemBatteryInfoPrivate(QSystemBatteryInfoLinuxCommonPrivate *parent = 0);
     ~QSystemBatteryInfoPrivate();
 
+    int currentFlow() const;
+
 private Q_SLOTS:
 #if !defined(QT_NO_DBUS)
     void halChangedMaemo(int,QVariantList);
 #endif
+    void onMeasurement(int socket);
+
+private:
+    void connectNotify(const char *signal);
+    void disconnectNotify(const char *signal);
+
+    mutable bmestat_t bmeStat;
+    mutable bool isDataActual;
+    mutable QDateTime cacheExpire;
+
+    mutable int coloumbCounterOffset;
+    mutable int prevColoumbCounterRestartCount;
+
+    void startMeasurements();
+    void stopMeasurements();
+
+    QScopedPointer<EmIpc> emIpc;
+    QScopedPointer<EmEvents> emEvents;
+    QScopedPointer<EmCurrentMeasurement> emCurrentMeasurements;
 };
 
 

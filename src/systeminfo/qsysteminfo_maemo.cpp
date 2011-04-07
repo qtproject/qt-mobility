@@ -82,6 +82,14 @@
 #endif
 
 #include <QDBusInterface>
+extern "C" {
+#include <errno.h>
+#include <time.h>
+#include "bme/bmeipc.h"
+#include "bme/bmemsg.h"
+#include "bme/em_isi.h"
+}
+
 static QString sysinfodValueForKey(const QString& key)
 {
     QString value = "";
@@ -1952,8 +1960,273 @@ void QSystemScreenSaverPrivate::setScreenSaverInhibited(bool on)
     }
 }
 
+
+////////////
+// from QmSystem remove if/when QmSystem can be a dependency.
+
+template <typename T>
+class EmHandle
+{
+public:
+    EmHandle() { }
+
+    virtual ~EmHandle() { close(); }
+
+    bool open()
+    {
+        T *self = static_cast<T*>(this);
+        if (!self->is_opened()) {
+            self->open_();
+        }
+
+        if (!self->is_opened()) {
+            qCritical() << "EM: error opening: " << strerror(errno);
+        }
+        return self->is_opened();
+    }
+
+    void close()
+    {
+        T *self = static_cast<T*>(this);
+        if (self->is_opened()) {
+            self->close_();
+        }
+    }
+
+};
+
+#define BMEIPC_MAX_TRIES 2
+
+class EmIpc : public EmHandle<EmIpc>
+{
+    friend class EmHandle<EmIpc>;
+public:
+
+    EmIpc() : EmHandle<EmIpc>(), sd_(-1), restart_count_(0) {}
+
+    bool query(const void *msg1, int len1, void *msg2 = NULL, int len2 = -1)
+    {
+        if (!is_opened()) {
+            qCritical() << "EM: not open";
+            return false;
+        }
+
+        int tries = 0;
+        while (true) {
+            tries++;
+            if (::bmeipc_query(sd_, msg1, len1, msg2, len2) >= 0)
+                return true;
+            if (errno == EIO)
+                restart_count_++;
+            if (tries >= BMEIPC_MAX_TRIES)  {
+                qCritical() << "EM: Query failed: " << strerror(errno);
+                return false;
+            }
+            qWarning() << "EM:" << strerror(errno) << "(trying to reopen)";
+            close();
+            if (!open())
+                return false;
+        }
+    }
+
+    bool is_opened() { return sd_ >= 0; }
+    int restart_count() { return restart_count_; }
+
+private:
+
+    inline void open_()
+    {
+        sd_ = ::bmeipc_open();
+    }
+
+    inline void close_()
+    {
+        ::bmeipc_close(sd_);
+        sd_ = -1;
+    }
+
+
+    int sd_;
+    int restart_count_;
+};
+
+
+class EmEvents : public EmHandle<EmEvents>
+{
+    friend class EmHandle<EmEvents>;
+
+public:
+    EmEvents(int mask = -1)
+        : EmHandle<EmEvents>(),
+          sd_(-1),
+          mask_(mask)
+    { }
+
+    int read()
+    {
+        if (!is_opened()) {
+            return BMEVENT_ERROR;
+        }
+
+        int res = ::bmeipc_eread(sd_);
+        if (res == BMEVENT_ERROR) {
+            qDebug() << "bmeipc_eread returned error" << strerror(errno);
+        }
+        return res;
+    }
+
+    inline bool is_opened() { return sd_ >= 0; }
+
+    QSocketNotifier const* notifier() const { return notifier_.data(); }
+
+private:
+
+    inline void open_()
+    {
+        sd_ = ::bmeipc_eopen(mask_);
+        if (is_opened())
+            notifier_.reset(new QSocketNotifier(sd_, QSocketNotifier::Read));
+    }
+
+    inline void close_()
+    {
+        notifier_.reset(0);
+        ::bmeipc_eclose(sd_);
+        sd_ = -1;
+    }
+
+    int sd_;
+    int mask_;
+    QScopedPointer<QSocketNotifier> notifier_;
+};
+
+
+class EmCurrentMeasurement : public EmHandle<EmCurrentMeasurement>
+{
+    friend class EmHandle<EmCurrentMeasurement>;
+
+public:
+
+    EmCurrentMeasurement(unsigned int period)
+        : EmHandle<EmCurrentMeasurement>(),
+          period_(period),
+          mq_(-1),
+          em_ipc_(new EmIpc())
+    { }
+
+    inline bool is_opened() { return mq_ >= 0; }
+
+    bool measure(int &current)
+    {
+        current = 0;
+
+        if (!is_opened())
+            return false;
+
+        int n;
+        bmeipc_meas_t msg;
+        n = mq_receive(mq_, (char *)&msg, sizeof(msg), 0);
+
+        if (0 > n) {
+            qDebug() << "failed to receive message: "
+                     << strerror(errno);
+        } else if (n != sizeof(msg)) {
+            qDebug() << "bad message size: need "
+                     << sizeof (msg) << ", got " << n;
+        } else if (MEASUREMENTS_ERROR == msg.state) {
+            qDebug() << " error message received";
+        } else if (MEASUREMENTS_OFF == msg.state) {
+            qDebug() << "measurements are off";
+        } else {
+            current = msg.bat_current;
+            return true;
+        }
+        return false;
+    }
+
+    QSocketNotifier const* notifier() const { return notifier_.data(); }
+
+private:
+
+    inline bool request_measurements_(unsigned int period)
+    {
+        struct emsg_measurement_req req;
+        struct emsg_measurement_req_elem req_elem;
+
+        if (!em_ipc_->open()) {
+            qCritical() << "failed to contact bme server: "
+                        << strerror(errno);
+            return false;
+        }
+
+        /* Send message header */
+        req.type = EM_MEASUREMENT_REQ;
+        req.subtype = 0;
+        req.measurement_action = EM_MEASUREMENT_ACTION_START;
+        req.channel_count = 1;
+
+        if (!em_ipc_->query(&req, sizeof(req))) {
+            qCritical() << "failed to request measurments: "
+                        << strerror(errno);
+            return false;
+        }
+
+        req_elem.type = EM_MEASUREMENT_TYPE_CURRENT;
+        req_elem.period = period;
+
+        if (!em_ipc_->query(&req_elem, sizeof(req_elem))) {
+            qCritical() << "failed to request data: " << strerror(errno);
+            return false;
+        }
+
+        return true;
+
+    }
+
+    void open_()
+    {
+        if (!request_measurements_(period_))
+            return;
+
+        mq_ = mq_open(BMEIPC_MQNAME, O_RDONLY);
+        if (!is_opened())
+            return;
+
+        notifier_.reset(new QSocketNotifier(mq_, QSocketNotifier::Read));
+    }
+
+    void close_()
+    {
+        struct emsg_measurement_req req;
+
+        req.type = EM_MEASUREMENT_REQ;
+        req.subtype = 0;
+        req.measurement_action = EM_MEASUREMENT_ACTION_STOP;
+        req.channel_count = 0;
+
+        if (!em_ipc_->query(&req, sizeof(req))) {
+            qCritical() << "failed to stop measurements"
+                        << strerror(errno);
+        }
+
+        em_ipc_->close();
+
+        notifier_.reset(0);
+        ::mq_close(mq_);
+        mq_ = -1;
+    }
+
+    int period_;
+    mqd_t mq_;
+    QScopedPointer<EmIpc> em_ipc_;
+    QScopedPointer<QSocketNotifier> notifier_;
+};
+
+
 QSystemBatteryInfoPrivate::QSystemBatteryInfoPrivate(QSystemBatteryInfoLinuxCommonPrivate *parent)
-    : QSystemBatteryInfoLinuxCommonPrivate(parent)
+    : QSystemBatteryInfoLinuxCommonPrivate(parent),
+      emIpc(new EmIpc()),
+      emEvents(new EmEvents())
 {
 #if !defined(QT_NO_DBUS)
     QHalInterface iface;
@@ -1977,7 +2250,6 @@ QSystemBatteryInfoPrivate::QSystemBatteryInfoPrivate(QSystemBatteryInfoLinuxComm
 
 QSystemBatteryInfoPrivate::~QSystemBatteryInfoPrivate()
 {
-
 }
 
 #if !defined(QT_NO_DBUS)
@@ -2013,6 +2285,91 @@ void QSystemBatteryInfoPrivate::halChangedMaemo(int count,QVariantList map)
     }
 }
 #endif
+
+void QSystemBatteryInfoPrivate::connectNotify(const char *signal)
+{
+    if (QLatin1String(signal) ==
+            QLatin1String(QMetaObject::normalizedSignature(SIGNAL(currentFlowChanged(int))))) {
+        startMeasurements();
+    }
+}
+
+void QSystemBatteryInfoPrivate::disconnectNotify(const char *signal)
+{
+    if (QLatin1String(signal) ==
+            QLatin1String(QMetaObject::normalizedSignature(SIGNAL(currentFlowChanged(int))))) {
+        stopMeasurements();
+    }
+}
+
+void QSystemBatteryInfoPrivate::startMeasurements()
+{
+    emCurrentMeasurements.reset(new EmCurrentMeasurement(2));//every 1 second
+    if (emCurrentMeasurements->open()) {
+        connect(emCurrentMeasurements->notifier(),SIGNAL(activated(int)),this,SLOT(onMeasurement(int)));
+    }
+}
+
+
+void QSystemBatteryInfoPrivate::stopMeasurements()
+{
+    disconnect(emCurrentMeasurements->notifier(),SIGNAL(activated(int)),this,SLOT(onMeasurement(int)));
+    emCurrentMeasurements->close();
+    if (emCurrentMeasurements->is_opened()) {
+        qDebug() << "disconnect failed";
+    } else {
+        emCurrentMeasurements.reset(0);
+    }
+}
+
+void QSystemBatteryInfoPrivate::onMeasurement(int)
+{
+    bool rc;
+    int current;
+
+    if (emCurrentMeasurements.isNull()) {
+        qWarning() << "onMeasurement: null";
+        return;
+    }
+
+    rc = emCurrentMeasurements->measure(current);
+    Q_EMIT currentFlowChanged(current);
+}
+
+int QSystemBatteryInfoPrivate::currentFlow() const
+{
+    QDateTime now(QDateTime::currentDateTime());
+
+    if (!isDataActual || now >= cacheExpire) {
+        if (!emIpc->open()) {
+            return 0;
+        }
+
+        int prevCc = bmeStat[COULOMB_COUNTER];
+
+        bmeipc_msg_t request;
+        request.type = BME_SYSMSG_GETSTAT;
+        request.subtype = 0;
+        if (!emIpc->query(&request, sizeof(request), &bmeStat, sizeof(bmeStat))) {
+            return 0;
+        }
+
+        isDataActual = true;
+        cacheExpire = now.addSecs(5);
+
+        if (prevColoumbCounterRestartCount != emIpc->restart_count()) {
+            coloumbCounterOffset += (prevCc - bmeStat[COULOMB_COUNTER]);
+            qDebug() << "CC reset, prev_cc:" << prevCc
+                     << "new_cc" << bmeStat[COULOMB_COUNTER]
+                     << "new offset:" << coloumbCounterOffset;
+            prevColoumbCounterRestartCount = emIpc->restart_count();
+        }
+    }
+
+    return bmeStat[BATTERY_CURRENT];
+}
+
+
 
 #include "moc_qsysteminfo_maemo_p.cpp"
 

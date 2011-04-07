@@ -101,6 +101,9 @@ void Dialog::changeEvent(QEvent *e)
 
 void Dialog::tabChanged(int index)
 {
+    if (lastTab == 4 && index !=4) {
+        disconnect(bi,SIGNAL(currentFlowChanged(int)),0,0);
+    }
     switch(index) {
     case 0:
         setupGeneral();
@@ -140,6 +143,7 @@ void Dialog::tabChanged(int index)
         break;
     };
 
+    lastTab = index;
 }
 
 void Dialog::setupGeneral()

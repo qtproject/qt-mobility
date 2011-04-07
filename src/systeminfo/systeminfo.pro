@@ -160,6 +160,8 @@ unix:!simulator {
         HEADERS += qsysteminfo_maemo_p.h linux/gconfitem_p.h
         DEFINES += QT_NO_CONNMAN QT_NO_UDISKS  QT_NO_NETWORKMANAGER
 
+        LIBS += -lbmeipc
+
         contains(QT_CONFIG,dbus): {
             QT += dbus
             SOURCES += linux/qhalservice_linux.cpp
