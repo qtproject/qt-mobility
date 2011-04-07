@@ -1369,7 +1369,6 @@ void QMailMessageHeaderFieldPrivate::deserialize(Stream &stream)
     \brief The QMailMessageHeaderField class encapsulates the parsing of message header fields.
 
     \ingroup messaginglibrary
-    \inmodule QtMessaging
 
     QMailMessageHeaderField provides simplified access to the various components of the
     header field, and allows the field content to be extracted in a standardized form.

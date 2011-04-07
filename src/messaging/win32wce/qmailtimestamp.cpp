@@ -340,7 +340,6 @@ bool QMailTimeStampPrivate::operator>= (const QMailTimeStampPrivate& other) cons
     \brief The QMailTimeStamp class manages message time stamps.
     \ingroup messaginglibrary
 
-    \inmodule QtMessaging
 
     QMailTimeStamp provides functions for creating and manipulating the time stamps of messages.
     QMailTimeStamp can be created from time stamp strings, or from QDateTime objects.  The

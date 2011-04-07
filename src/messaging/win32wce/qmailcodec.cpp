@@ -61,7 +61,6 @@ int QTOPIAMAIL_EXPORT QuotedPrintableMaxLineLength = 74;
   and arbitrary octet sequences.
 
   \ingroup messaginglibrary
-  \QtMessaging
 
   Messages transferred via the SMTP protocol must be encoded in 7-bit ASCII characters, even though
   their contents are typically composed in sequences of 8-bit octets.  The QMailCodec class provides
