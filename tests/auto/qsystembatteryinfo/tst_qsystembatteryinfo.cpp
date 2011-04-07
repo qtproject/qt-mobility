@@ -77,6 +77,7 @@ static bool waitForSignal(QObject *obj, const char *signal, int timeout = 0)
     return timeoutSpy.isEmpty();
 }
 
+#ifdef TESTR
 class ChangeBatteryThread : public QThread
 {
 public:
@@ -118,6 +119,7 @@ public:
     int remainingCapacity;
 //    int capBars;
 };
+#endif
 
 class tst_QSystemBatteryInfo : public QObject
 {
