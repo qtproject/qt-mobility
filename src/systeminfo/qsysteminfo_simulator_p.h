@@ -200,7 +200,7 @@ public:
     int batteryLevel() const { return data.batteryLevel; }
     bool isDeviceLocked() const { return data.deviceLocked; }
 
-    bool currentBluetoothPowerState() const { Q_ASSERT(false); return false; }
+    bool currentBluetoothPowerState() const { return false; }
 
     QSystemDeviceInfo::BatteryStatus batteryStatus() const;
 
