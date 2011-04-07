@@ -578,11 +578,12 @@ void QVideoWidgetPrivate::_q_dimensionsChanged()
 
 /*!
     \class QVideoWidget
-    
+
 
     \brief The QVideoWidget class provides a widget which presents video
     produced by a media object.
     \ingroup multimedia
+    \inmodule QtMultimediaKit
 
     Attaching a QVideoWidget to a QMediaObject allows it to display the
     video or image output of that media object.  A QVideoWidget is attached
@@ -725,7 +726,7 @@ void QVideoWidget::setFullScreen(bool fullScreen)
         flags |= Qt::Window;
         flags &= ~Qt::SubWindow;
         setWindowFlags(flags);
-        
+
         showFullScreen();
     } else {
         showNormal();

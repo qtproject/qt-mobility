@@ -49,9 +49,11 @@ QTM_BEGIN_NAMESPACE
 /*!
   \class QOrganizerItemCollectionFilter
   \brief The QOrganizerItemCollectionFilter class provides a filter based around a list of organizeritem ids
- 
+
   \ingroup organizeritems-filters
-  
+
+  \inmodule QtOrganizer
+
   It may be used to select organizeritems whose ids are contained in the given list of ids.
  */
 
