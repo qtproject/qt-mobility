@@ -52,6 +52,8 @@ QT_BEGIN_NAMESPACE
 
     \ingroup camera
 
+    \inmodule QtMultimediaKit
+
     The interface name of QCameraFlashControl is \c com.nokia.Qt.QCameraFlashControl/1.0 as
     defined in QCameraFlashControl_iid.
 

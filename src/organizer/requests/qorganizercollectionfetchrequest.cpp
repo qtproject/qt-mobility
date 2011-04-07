@@ -49,6 +49,8 @@ QTM_BEGIN_NAMESPACE
   \brief The QOrganizerCollectionFetchRequest class allows a client to asynchronously
     request collections from an organizer manager.
 
+  \inmodule QtOrganizer
+
 
   For a QOrganizerCollectionFetchRequest, the resultsAvailable() signal will be emitted when the resultant
   collections (which may be retrieved by calling collections()), are updated, as well as if
