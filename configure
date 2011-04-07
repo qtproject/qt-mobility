@@ -164,10 +164,7 @@ usage()
     echo "                    (default is empty)"
     echo "-qmake-exec <name>  Sets custom binary name for qmake binary"
     echo "                    (default: qmake)"
-<<<<<<< HEAD
     echo "-test-sim           Use simulator backend for testing"
-
-=======
     echo "-no-nfc-symbian     Disables the NFC Sybmian backend."
 >>>>>>> master
 #    echo "-staticconfig <name>"
