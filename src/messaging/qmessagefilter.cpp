@@ -247,6 +247,8 @@ bool QMessageFilter::operator!=(const QMessageFilter& other) const
     \fn QMessageFilter::bySender(const QString &value, QMessageDataComparator::EqualityComparator cmp)
 
     Returns a filter matching messages whose sender matches \a value, according to \a cmp.
+    
+    Not supported on Linux, Maemo 6 (Harmattan) and Meego.com (use InclusionComparator).
 
     \sa QMessage::from()
 */
@@ -289,6 +291,8 @@ bool QMessageFilter::operator!=(const QMessageFilter& other) const
     \fn QMessageFilter::bySubject(const QString &pattern, QMessageDataComparator::EqualityComparator cmp)
 
     Returns a filter matching messages whose subject matches \a pattern, according to \a cmp.
+
+    Not supported on Linux, Maemo 6 (Harmattan) and Meego.com (use InclusionComparator).
 
     \sa QMessage::subject()
 */
