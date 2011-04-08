@@ -560,7 +560,7 @@ void QGraphicsVideoItem::paint(
         view = scene()->views().first();
     d->setCurrentView(view);
     d->setTransform(painter->combinedTransform());
-    if (!widget->window()->testAttribute(Qt::WA_TranslucentBackground)) {
+    if (widget && !widget->window()->testAttribute(Qt::WA_TranslucentBackground)) {
         // On Symbian, setting Qt::WA_TranslucentBackground can cause the
         // current window surface to be replaced.  Because of this, it cannot
         // safely be changed from the context of the viewport paintEvent(), so we

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,44 +39,31 @@
 **
 ****************************************************************************/
 
+#ifndef CAMERABINCAPTUREDESTINATION_H
+#define CAMERABINCAPTUREDESTINATION_H
 
-#ifndef CAMERABINIMAGECAPTURECONTROL_H
-#define CAMERABINIMAGECAPTURECONTROL_H
+#include <qcameraimagecapture.h>
+#include <qcameracapturedestinationcontrol.h>
 
-#include <qcameraimagecapturecontrol.h>
-#include "camerabinsession.h"
+
+class CameraBinSession;
 
 QT_USE_NAMESPACE
 
-class CameraBinImageCapture : public QCameraImageCaptureControl
+class Q_MULTIMEDIA_EXPORT CameraBinCaptureDestination : public QCameraCaptureDestinationControl
 {
     Q_OBJECT
 public:
-    CameraBinImageCapture(CameraBinSession *session);
-    virtual ~CameraBinImageCapture();
+    CameraBinCaptureDestination(CameraBinSession *session);
+    virtual ~CameraBinCaptureDestination();
 
-    QCameraImageCapture::DriveMode driveMode() const { return QCameraImageCapture::SingleImageCapture; }
-    void setDriveMode(QCameraImageCapture::DriveMode) {}
-
-    bool isReadyForCapture() const;
-    int capture(const QString &fileName);
-    void cancelCapture();
-
-private slots:
-    void updateState();
-    void handleBusMessage(const QGstreamerMessage &message);
+    bool isCaptureDestinationSupported(QCameraImageCapture::CaptureDestinations destination) const;
+    QCameraImageCapture::CaptureDestinations captureDestination() const;
+    void setCaptureDestination(QCameraImageCapture::CaptureDestinations destination);
 
 private:
-    static gboolean metadataEventProbe(GstPad *pad, GstEvent *event, CameraBinImageCapture *);
-    static gboolean uncompressedBufferProbe(GstPad *pad, GstBuffer *buffer, CameraBinImageCapture *);
-    static gboolean jpegBufferProbe(GstPad *pad, GstBuffer *buffer, CameraBinImageCapture *);
-    static gboolean handleImageSaved(GstElement *camera, const gchar *filename, CameraBinImageCapture *);
-
     CameraBinSession *m_session;
-    bool m_ready;
-    int m_requestId;
-    GstElement *m_jpegEncoderElement;
-    GstElement *m_metadataMuxerElement;
+    QCameraImageCapture::CaptureDestinations m_destination;
 };
 
-#endif // CAMERABINCAPTURECORNTROL_H
+#endif // CAMERABINFLASHCONTROL_H

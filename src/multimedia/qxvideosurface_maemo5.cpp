@@ -141,7 +141,7 @@ QXVideoSurface::QXVideoSurface(QObject *parent)
     , m_portId(0)
     , m_gc(0)
     , m_image(0)
-    , m_colorKey(16,7,2)
+    , m_colorKey(24,0,24)
 {
 }
 

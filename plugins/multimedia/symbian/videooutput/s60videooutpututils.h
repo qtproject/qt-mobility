@@ -56,7 +56,8 @@ enum NativePaintMode
 {
     Default,
     ZeroFill,
-    BlitWriteAlpha
+    BlitWriteAlpha,
+    Disable
 };
 
 void setIgnoreFocusChanged(QWidget *widget);
