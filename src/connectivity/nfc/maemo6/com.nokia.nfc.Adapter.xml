@@ -36,13 +36,21 @@
             <arg type="v"/>
         </signal>
         <signal name="TargetDetected">
-            <arg type="s"/>
+            <arg type="o"/>
         </signal>
         <signal name="TargetLost">
+            <arg type="o"/>
+        </signal>
+        <signal name="HandoverStarted"/>
+        <signal name="HandoverCarrierSelected">
             <arg type="s"/>
         </signal>
-        <signal name="TargetDetectionError">
-            <arg type="i"/>
+        <signal name="HandoverCompleted">
+            <arg type="s"/>
+            <arg type="v"/>
+        </signal>
+        <signal name="HandoverFailed">
+            <arg type="s"/>
         </signal>
         <property name="State" type="s" access="readwrite"/>
         <property name="Discovering" type="b" access="read"/>

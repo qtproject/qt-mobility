@@ -73,8 +73,8 @@ bool QLlcpServerPrivate::listen(const QString &serviceUri)
     if (!m_socketRequestor) {
         m_socketRequestor = new SocketRequestor(defaultAdapterPath.path(), this);
 
-        connect(m_socketRequestor, SIGNAL(accessFailed(QDBusObjectPath,QString)),
-                this, SLOT(AccessFailed(QDBusObjectPath,QString)));
+        connect(m_socketRequestor, SIGNAL(accessFailed(QDBusObjectPath,QString,QString)),
+                this, SLOT(AccessFailed(QDBusObjectPath,QString,QString)));
         connect(m_socketRequestor, SIGNAL(accessGranted(QDBusObjectPath,QString)),
                 this, SLOT(AccessGranted(QDBusObjectPath,QString)));
         connect(m_socketRequestor, SIGNAL(accept(QDBusVariant,QDBusVariant,int,QVariantMap)),
@@ -148,9 +148,11 @@ QLlcpSocket::SocketError QLlcpServerPrivate::serverError() const
     return QLlcpSocket::UnknownSocketError;
 }
 
-void QLlcpServerPrivate::AccessFailed(const QDBusObjectPath &targetPath, const QString &error)
+void QLlcpServerPrivate::AccessFailed(const QDBusObjectPath &targetPath, const QString &kind,
+                                      const QString &error)
 {
     Q_UNUSED(targetPath);
+    Q_UNUSED(kind);
     Q_UNUSED(error);
 
     m_serviceUri.clear();

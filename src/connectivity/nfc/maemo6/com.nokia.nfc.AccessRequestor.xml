@@ -4,6 +4,7 @@
         <method name="AccessFailed">
             <arg type="o" direction="in"/>
             <arg type="s" direction="in"/>
+            <arg type="s" direction="in"/>
         </method>
         <method name="AccessGranted">
             <arg type="o" direction="in"/>
