@@ -594,7 +594,7 @@ if [ -z "$PLATFORM_CONFIG" ]; then
     compileTest "Maemo5 contacts dependencies" maemo5-contacts
     compileTest "Maemo5 organizer dependencies" maemo5-calendar
     compileTest "Maemo6 landmarks dependencies" maemo6-landmarks
-    compileTest "Maemo bme" bme
+    compileTest "Maemo Battery Managment Entity" bme
     compileTest "Bluez" bluez
     compileTest "Proj.4" proj
     compileTest "Gstreamer Photography" gstreamer-photography
@@ -602,7 +602,7 @@ if [ -z "$PLATFORM_CONFIG" ]; then
     compileTest "Blkid" blkid
     compileTest "Pulse Audio" pulseaudio
     compileTest "udev" udev
-    compileTest "iphb" iphb
+    compileTest "Maemo Heartbeat" iphb
 
     if [ "$NFC_SYMBIAN" = auto ]; then
         compileTest "Symbian NFC" nfc_symbian
