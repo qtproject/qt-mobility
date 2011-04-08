@@ -205,7 +205,7 @@ void CMagnetometerSensorSym::ProcessReading()
         z = iData.iAxisZRaw;
         }
     // Scale adjustments
-    if(iScaleRange && sensor()->outputRanges().count())
+    if(iScaleRange)
         {
         qoutputrangelist rangeList = sensor()->outputRanges();
         int outputRange = sensor()->outputRange();
