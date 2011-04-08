@@ -55,6 +55,7 @@ QTM_BEGIN_NAMESPACE
   of that contact, or a contact and a list of the details of the contact,
   which together should be used by the action.
   \ingroup contacts-actions
+  \inmodule QtContacts
 */
 
 /*!

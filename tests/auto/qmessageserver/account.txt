@@ -1,0 +1,13 @@
+name=
+fromAddress=
+smtpServer=
+smtpPort=
+username=
+password=
+protocol=
+serverAddress=
+serverPort=
+security=
+transportUsername=
+transportPassword=
+

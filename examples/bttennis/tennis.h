@@ -105,6 +105,8 @@ private slots:
     void lagReport(int ms);
 
     void nearFieldHandover();
+    
+    void fps(const QString &f);
 
 private:
 
