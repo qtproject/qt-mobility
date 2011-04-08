@@ -138,7 +138,9 @@ protected:
         sensor()->setProperty(MAX_BUFFER_SIZE, m_maxBufferSize);
         sensor()->setProperty(EFFICIENT_BUFFER_SIZE, m_efficientBufferSize);
 
-        if (sensor()->type()=="QAmbientLightSensor")    return; // SensorFW returns lux values, plugin enumerated values
+        QString type = sensor()->type();
+        if (type=="QAmbientLightSensor")    return;   // SensorFW returns lux values, plugin enumerated values
+        if (type=="QIRProximitySensor")    return;    // SensorFW returns raw reflectance values, plugin % of max reflectance
         if (name=="accelerometersensor") return;      // SensorFW returns milliGs, plugin m/s^2
         if (name=="magnetometersensor") return;       // SensorFW returns nanoTeslas, plugin Teslas
         if (name=="gyroscopesensor") return;          // SensorFW returns DSPs, plugin milliDSPs

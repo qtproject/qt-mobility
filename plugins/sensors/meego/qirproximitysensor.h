@@ -21,7 +21,7 @@
 ** ensure the GNU Lesser General Public License version 2.1 requirements
 ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
-** In addition, as a special exception, Nokia gives you certain additional
+** In addition, as a special excetion, Nokia gives you certain additional
 ** rights.  These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
@@ -39,41 +39,44 @@
 **
 ****************************************************************************/
 
-#include "meegoproximitysensor.h"
+#ifndef QIRPROXIMITYSENSOR_H
+#define QIRPROXIMITYSENSOR_H
 
-char const * const meegoproximitysensor::id("meego.proximitysensor");
-bool meegoproximitysensor::m_initDone = false;
+#include "qsensor.h"
 
-meegoproximitysensor::meegoproximitysensor(QSensor *sensor)
-    : meegosensorbase(sensor)
+QTM_BEGIN_NAMESPACE
+
+class QIRProximityReadingPrivate;
+
+class Q_SENSORS_EXPORT QIRProximityReading : public QSensorReading
 {
-    initSensor<ProximitySensorChannelInterface>(m_initDone);
-    setReading<QProximityReading>(&m_reading);
-    addDataRate(10,10); //TODO: fix this when we know better
-}
+    Q_OBJECT
+    Q_PROPERTY(qreal reflectance READ reflectance)
+    DECLARE_READING(QIRProximityReading)
+public:
+    qreal reflectance() const;
+    void setReflectance(qreal reflectance);
+};
 
-void meegoproximitysensor::start(){
-    Unsigned data(((ProximitySensorChannelInterface*)m_sensorInterface)->proximity());
-    m_reading.setClose(data.x()? true: false);
-    m_reading.setTimestamp(data.UnsignedData().timestamp_);
-    newReadingAvailable();
-    meegosensorbase::start();
-}
-
-
-void meegoproximitysensor::slotDataAvailable(const Unsigned& data)
+class Q_SENSORS_EXPORT QIRProximityFilter : public QSensorFilter
 {
-    m_reading.setClose(data.x()? true: false);
-    m_reading.setTimestamp(data.UnsignedData().timestamp_);
-    newReadingAvailable();
-}
+public:
+    virtual bool filter(QIRProximityReading *reading) = 0;
+private:
+    bool filter(QSensorReading *reading) { return filter(static_cast<QIRProximityReading*>(reading)); }
+};
 
-bool meegoproximitysensor::doConnect(){
-    return (QObject::connect(m_sensorInterface, SIGNAL(dataAvailable(const Unsigned&)),
-                           this, SLOT(slotDataAvailable(const Unsigned&))));
-}
+class Q_SENSORS_EXPORT QIRProximitySensor : public QSensor
+{
+    Q_OBJECT
+public:
+    explicit QIRProximitySensor(QObject *parent = 0) : QSensor(QIRProximitySensor::type, parent) {}
+    virtual ~QIRProximitySensor() {}
+    QIRProximityReading *reading() const { return static_cast<QIRProximityReading*>(QSensor::reading()); }
+    static char const * const type;
+};
 
+QTM_END_NAMESPACE
 
-const QString meegoproximitysensor::sensorName(){
-    return "proximitysensor";
-}
+#endif
+

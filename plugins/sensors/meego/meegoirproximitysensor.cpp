@@ -39,41 +39,41 @@
 **
 ****************************************************************************/
 
-#include "meegoproximitysensor.h"
+#include "meegoirproximitysensor.h"
+#define RM680_PS "/dev/bh1770glc_ps"
 
-char const * const meegoproximitysensor::id("meego.proximitysensor");
-bool meegoproximitysensor::m_initDone = false;
+char const * const meegoirproximitysensor::id("meego.irproximitysensor");
+bool meegoirproximitysensor::m_initDone = false;
 
-meegoproximitysensor::meegoproximitysensor(QSensor *sensor)
+
+
+meegoirproximitysensor::meegoirproximitysensor(QSensor *sensor)
     : meegosensorbase(sensor)
 {
     initSensor<ProximitySensorChannelInterface>(m_initDone);
-    setReading<QProximityReading>(&m_reading);
-    addDataRate(10,10); //TODO: fix this when we know better
-}
-
-void meegoproximitysensor::start(){
-    Unsigned data(((ProximitySensorChannelInterface*)m_sensorInterface)->proximity());
-    m_reading.setClose(data.x()? true: false);
-    m_reading.setTimestamp(data.UnsignedData().timestamp_);
-    newReadingAvailable();
-    meegosensorbase::start();
+    setReading<QIRProximityReading>(&m_reading);
+    setDescription(QLatin1String("reflectance as percentage (%) of maximum"));
+    addOutputRange(0, 100, 1);
+    addDataRate(10,10);
+    rangeMax = QFile::exists(RM680_PS)?255:1023;
 }
 
 
-void meegoproximitysensor::slotDataAvailable(const Unsigned& data)
-{
-    m_reading.setClose(data.x()? true: false);
-    m_reading.setTimestamp(data.UnsignedData().timestamp_);
+void meegoirproximitysensor::slotDataAvailable(const Proximity& proximity){
+    m_reading.setReflectance((float)proximity.reflectance()*100 / rangeMax);
+    m_reading.setTimestamp(proximity.UnsignedData().timestamp_);
     newReadingAvailable();
 }
 
-bool meegoproximitysensor::doConnect(){
-    return (QObject::connect(m_sensorInterface, SIGNAL(dataAvailable(const Unsigned&)),
-                           this, SLOT(slotDataAvailable(const Unsigned&))));
+
+bool meegoirproximitysensor::doConnect(){
+    return QObject::connect(m_sensorInterface, SIGNAL(reflectanceDataAvailable(const Proximity&)),
+                            this, SLOT(slotDataAvailable(const Proximity&)));
 }
 
 
-const QString meegoproximitysensor::sensorName(){
+const QString meegoirproximitysensor::sensorName(){
     return "proximitysensor";
 }
+
+

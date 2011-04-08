@@ -45,6 +45,7 @@
 #include "meegomagnetometer.h"
 #include "meegoorientationsensor.h"
 #include "meegoproximitysensor.h"
+#include "meegoirproximitysensor.h"
 #include "meegorotationsensor.h"
 #include "meegotapsensor.h"
 #include "meegogyroscope.h"
@@ -99,6 +100,8 @@ public:
             return new meegogyroscope(sensor);
         if (sensor->identifier() == meegolightsensor::id)
             return new meegolightsensor(sensor);
+        if (sensor->identifier() == meegoirproximitysensor::id)
+            return new meegoirproximitysensor(sensor);
         return 0;
     }
 };
