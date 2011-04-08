@@ -44,9 +44,9 @@
 
 SensorManagerInterface* meegosensorbase::m_remoteSensorManager = 0;
 
-
-const float meegosensorbase::GRAVITY_EARTH = 9.80665;
-const float meegosensorbase::GRAVITY_EARTH_THOUSANDTH = 0.00980665;
+//According to wikipedia link http://en.wikipedia.org/wiki/Standard_gravity
+//const float meegosensorbase::GRAVITY_EARTH = 9.812865328;
+const float meegosensorbase::GRAVITY_EARTH_THOUSANDTH = 0.009812865328;
 const int meegosensorbase::KErrNotFound=-1;
 const int meegosensorbase::KErrInUse=-14;
 const char* const meegosensorbase::ALWAYS_ON = "alwaysOn";
