@@ -72,4 +72,8 @@ Item {
         anchors.left: button2.right; anchors.leftMargin: 5; y: 3; width: parent.width/3 - anchors.leftMargin; height: 32
         onClicked: toolbar.button3Clicked()
     }
+
+    function disableButton2() {
+        button2.disable();
+    }
 }
