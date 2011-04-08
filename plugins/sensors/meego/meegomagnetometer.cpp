@@ -86,11 +86,9 @@ void meegomagnetometer::slotFrameAvailable(const QVector<MagneticField>&   frame
 }
 
 bool meegomagnetometer::doConnect(){
-    if (m_bufferSize==1?
-                QObject::connect(m_sensorInterface, SIGNAL(dataAvailable(const MagneticField&)), this, SLOT(slotDataAvailable(const MagneticField&))):
-                QObject::connect(m_sensorInterface, SIGNAL(frameAvailable(const QVector<MagneticField>& )),this, SLOT(slotFrameAvailable(const QVector<MagneticField>& ))))
-        return true;
-    return false;
+    if (m_bufferSize==1)
+        return QObject::connect(m_sensorInterface, SIGNAL(dataAvailable(const MagneticField&)), this, SLOT(slotDataAvailable(const MagneticField&)));
+     return QObject::connect(m_sensorInterface, SIGNAL(frameAvailable(const QVector<MagneticField>& )),this, SLOT(slotFrameAvailable(const QVector<MagneticField>& )));
 }
 
 const QString meegomagnetometer::sensorName(){

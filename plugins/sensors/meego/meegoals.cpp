@@ -75,11 +75,8 @@ void meegoals::slotDataAvailable(const Unsigned& data)
 }
 
 bool meegoals::doConnect(){
-    if (!(QObject::connect(m_sensorInterface, SIGNAL(ALSChanged(const Unsigned&)),
-                           this, SLOT(slotDataAvailable(const Unsigned&))))){
-        return false;
-    }
-    return true;
+    return QObject::connect(m_sensorInterface, SIGNAL(ALSChanged(const Unsigned&)),
+                           this, SLOT(slotDataAvailable(const Unsigned&)));
 }
 
 

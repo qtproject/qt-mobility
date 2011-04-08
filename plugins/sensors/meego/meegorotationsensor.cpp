@@ -69,11 +69,9 @@ void meegorotationsensor::slotFrameAvailable(const QVector<XYZ>&  frame)
 }
 
 bool meegorotationsensor::doConnect(){
-    if (m_bufferSize==1?
-                QObject::connect(m_sensorInterface, SIGNAL(dataAvailable(const XYZ&)), this, SLOT(slotDataAvailable(const XYZ&))):
-                QObject::connect(m_sensorInterface, SIGNAL(frameAvailable(const QVector<XYZ>& )),this, SLOT(slotFrameAvailable(const QVector<XYZ>& ))))
-        return true;
-    return false;
+    if (m_bufferSize==1)
+       return QObject::connect(m_sensorInterface, SIGNAL(dataAvailable(const XYZ&)), this, SLOT(slotDataAvailable(const XYZ&)));
+    return QObject::connect(m_sensorInterface, SIGNAL(frameAvailable(const QVector<XYZ>& )),this, SLOT(slotFrameAvailable(const QVector<XYZ>& )));
 }
 
 const QString meegorotationsensor::sensorName(){
