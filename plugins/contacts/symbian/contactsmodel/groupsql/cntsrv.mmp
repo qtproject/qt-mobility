@@ -19,7 +19,7 @@
 
 #include "cntmodel.mmh"
 
-EPOCHEAPSIZE    0x1000 0x200000
+EPOCHEAPSIZE    0x1000 0x800000
 
 #include "../group/cntsrv.mmp"
 
