@@ -82,6 +82,7 @@
 #endif
 
 #include <QDBusInterface>
+#ifdef Q_USE_BME
 extern "C" {
 #include <errno.h>
 #include <time.h>
@@ -89,6 +90,7 @@ extern "C" {
 #include "bme/bmemsg.h"
 #include "bme/em_isi.h"
 }
+#endif
 
 static QString sysinfodValueForKey(const QString& key)
 {
@@ -1956,6 +1958,7 @@ void QSystemScreenSaverPrivate::setScreenSaverInhibited(bool on)
 }
 
 
+#ifdef Q_USE_BME
 ////////////
 // from QmSystem remove if/when QmSystem can be a dependency.
 
@@ -2216,12 +2219,14 @@ private:
     QScopedPointer<EmIpc> em_ipc_;
     QScopedPointer<QSocketNotifier> notifier_;
 };
-
+#endif
 
 QSystemBatteryInfoPrivate::QSystemBatteryInfoPrivate(QSystemBatteryInfoLinuxCommonPrivate *parent)
-    : QSystemBatteryInfoLinuxCommonPrivate(parent),
-      emIpc(new EmIpc()),
+    : QSystemBatteryInfoLinuxCommonPrivate(parent)
+#ifdef Q_USE_BME
+      ,emIpc(new EmIpc()),
       emEvents(new EmEvents())
+#endif
 {
 #if !defined(QT_NO_DBUS)
     QHalInterface iface;
@@ -2283,20 +2288,25 @@ void QSystemBatteryInfoPrivate::halChangedMaemo(int count,QVariantList map)
 
 void QSystemBatteryInfoPrivate::connectNotify(const char *signal)
 {
+#ifdef Q_USE_BME
     if (QLatin1String(signal) ==
             QLatin1String(QMetaObject::normalizedSignature(SIGNAL(currentFlowChanged(int))))) {
         startMeasurements();
     }
+#endif
 }
 
 void QSystemBatteryInfoPrivate::disconnectNotify(const char *signal)
 {
+#ifdef Q_USE_BME
     if (QLatin1String(signal) ==
             QLatin1String(QMetaObject::normalizedSignature(SIGNAL(currentFlowChanged(int))))) {
         stopMeasurements();
     }
+#endif
 }
 
+#ifdef Q_USE_BME
 void QSystemBatteryInfoPrivate::startMeasurements()
 {
     emCurrentMeasurements.reset(new EmCurrentMeasurement(2));//every 1 second
@@ -2330,9 +2340,11 @@ void QSystemBatteryInfoPrivate::onMeasurement(int)
     rc = emCurrentMeasurements->measure(current);
     Q_EMIT currentFlowChanged(current);
 }
+#endif
 
 int QSystemBatteryInfoPrivate::currentFlow() const
 {
+#ifdef Q_USE_BME
     QDateTime now(QDateTime::currentDateTime());
 
     if (!isDataActual || now >= cacheExpire) {
@@ -2362,6 +2374,8 @@ int QSystemBatteryInfoPrivate::currentFlow() const
     }
 
     return bmeStat[BATTERY_CURRENT];
+#endif
+    return 0;
 }
 
 
