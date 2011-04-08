@@ -137,7 +137,8 @@ void CCompassSym::ConstructL()
     InitializeL();
     // Create magnetometer, this is required as in sensor server,
     // calibration data is available only for magnetometer
-    iMagnetometer = CMagnetometerSensorSym::NewL(NULL);
+    // We need to have a QSensor instance for the magnetometer backend or we will crash
+    iMagnetometer = CMagnetometerSensorSym::NewL(new QSensor("QMagnetometer", this));
     // Listen only for property change on magnetometer as we are
     // interested only in calibration property
     iMagnetometer->SetListening(EFalse, ETrue);
