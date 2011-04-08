@@ -42,7 +42,7 @@
 #ifndef QIRPROXIMITYSENSOR_H
 #define QIRPROXIMITYSENSOR_H
 
-#include "qsensor.h"
+#include <qsensor.h>
 
 QTM_BEGIN_NAMESPACE
 

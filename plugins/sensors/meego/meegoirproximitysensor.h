@@ -44,10 +44,7 @@
 
 #include "meegosensorbase.h"
 #include <qirproximitysensor.h>
-
 #include <proximitysensor_i.h>
-#include <unsigned.h>
-#include <QSettings>
 
 
 QTM_USE_NAMESPACE
