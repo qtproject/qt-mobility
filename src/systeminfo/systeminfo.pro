@@ -160,7 +160,10 @@ unix:!simulator {
         HEADERS += qsysteminfo_maemo_p.h linux/gconfitem_p.h
         DEFINES += QT_NO_CONNMAN QT_NO_UDISKS  QT_NO_NETWORKMANAGER
 
-        LIBS += -lbmeipc
+          contains(bme_enabled, yes): {
+              LIBS += -lbmeipc
+              DEFINES += Q_USE_BME
+          }
 
         contains(QT_CONFIG,dbus): {
             QT += dbus

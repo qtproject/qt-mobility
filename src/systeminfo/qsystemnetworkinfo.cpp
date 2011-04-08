@@ -301,10 +301,6 @@ QSystemNetworkInfo::NetworkMode QSystemNetworkInfo::currentMode()
 */
 void QSystemNetworkInfo::connectNotify(const char *signal)
 {
-    // connect only once
-    if (receivers(signal) > 1)
-        return;
-
     //check for networkSignalStrengthChanged() signal connect notification
     //This is not required on all platforms
 #if defined(Q_WS_MAEMO_5)
@@ -314,28 +310,28 @@ void QSystemNetworkInfo::connectNotify(const char *signal)
 #endif // Q_WS_MAEMO_5
     if (QLatin1String(signal) == SIGNAL(currentMobileCountryCodeChanged(QString))) {
         connect(d, SIGNAL(currentMobileCountryCodeChanged(QString)),
-                this, SIGNAL(currentMobileCountryCodeChanged(QString)));
+                this, SIGNAL(currentMobileCountryCodeChanged(QString)),Qt::UniqueConnection);
     } else if (QLatin1String(signal) == SIGNAL(currentMobileNetworkCodeChanged(QString))) {
         connect(d, SIGNAL(currentMobileNetworkCodeChanged(QString)),
-                this, SIGNAL(currentMobileNetworkCodeChanged(QString)));
+                this, SIGNAL(currentMobileNetworkCodeChanged(QString)),Qt::UniqueConnection);
     } else if (QLatin1String(signal) == SIGNAL(networkModeChanged(QSystemNetworkInfo::NetworkMode))) {
         connect(d, SIGNAL(networkModeChanged(QSystemNetworkInfo::NetworkMode)),
-                this, SIGNAL(networkModeChanged(QSystemNetworkInfo::NetworkMode)));
+                this, SIGNAL(networkModeChanged(QSystemNetworkInfo::NetworkMode)),Qt::UniqueConnection);
     } else if (QLatin1String(signal) == SIGNAL(networkNameChanged(QSystemNetworkInfo::NetworkMode,QString))) {
         connect(d, SIGNAL(networkNameChanged(QSystemNetworkInfo::NetworkMode,QString)),
-                this, SIGNAL(networkNameChanged(QSystemNetworkInfo::NetworkMode,QString)));
+                this, SIGNAL(networkNameChanged(QSystemNetworkInfo::NetworkMode,QString)),Qt::UniqueConnection);
     } else if (QLatin1String(signal) == SIGNAL(networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode,int))) {
         connect(d, SIGNAL(networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode,int)),
-                this, SIGNAL(networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode,int)));
+                this, SIGNAL(networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode,int)),Qt::UniqueConnection);
     } else if (QLatin1String(signal) == SIGNAL(networkStatusChanged(QSystemNetworkInfo::NetworkMode,QSystemNetworkInfo::NetworkStatus))) {
         connect(d, SIGNAL(networkStatusChanged(QSystemNetworkInfo::NetworkMode,QSystemNetworkInfo::NetworkStatus)),
-                this, SIGNAL(networkStatusChanged(QSystemNetworkInfo::NetworkMode,QSystemNetworkInfo::NetworkStatus)));
+                this, SIGNAL(networkStatusChanged(QSystemNetworkInfo::NetworkMode,QSystemNetworkInfo::NetworkStatus)),Qt::UniqueConnection);
     } else if (QLatin1String(signal) == SIGNAL(cellIdChanged(int))) {
         connect(d, SIGNAL(cellIdChanged(int)),
-                this, SIGNAL(cellIdChanged(int)));
+                this, SIGNAL(cellIdChanged(int)),Qt::UniqueConnection);
     } else if (QLatin1String(signal) == SIGNAL(cellIdChanged(int))) {
         connect(d, SIGNAL(cellDataTechnologyChanged(QSystemNetworkInfo::CellDataTechnology)),
-                this, SIGNAL(cellDataTechnologyChanged(QSystemNetworkInfo::CellDataTechnology)));
+                this, SIGNAL(cellDataTechnologyChanged(QSystemNetworkInfo::CellDataTechnology)),Qt::UniqueConnection);
     }
 }
 
