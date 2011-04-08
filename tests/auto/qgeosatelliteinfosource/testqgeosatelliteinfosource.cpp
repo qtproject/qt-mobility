@@ -512,7 +512,9 @@ void TestQGeoSatelliteInfoSource::startUpdates()
 {
 
     CHECK_SOURCE_VALID;
-
+#if defined(Q_WS_MAEMO_6)
+    QSKIP("Real GPS not suitable for autotesting, skipping the test.", SkipAll);
+#endif
     QSignalSpy spyView(m_source,
                        SIGNAL(satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &)));
     QSignalSpy spyUse(m_source,
@@ -535,7 +537,9 @@ void TestQGeoSatelliteInfoSource::startUpdates()
 void TestQGeoSatelliteInfoSource::startUpdates_moreThanOnce()
 {
     CHECK_SOURCE_VALID;
-
+#if defined(Q_WS_MAEMO_6)
+    QSKIP("Real GPS not suitable for autotesting, skipping the test.", SkipAll);
+#endif
     QSignalSpy spyView(m_source,
                        SIGNAL(satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &)));
     QSignalSpy spyUse(m_source,
@@ -558,6 +562,9 @@ void TestQGeoSatelliteInfoSource::stopUpdates()
 {
 
     CHECK_SOURCE_VALID;
+#if defined(Q_WS_MAEMO_6)
+    QSKIP("Real GPS not suitable for autotesting, skipping the test.", SkipAll);
+#endif
 
     QSignalSpy spyView(m_source,
                        SIGNAL(satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &)));
@@ -590,6 +597,9 @@ void TestQGeoSatelliteInfoSource::stopUpdates_withoutStart()
 void TestQGeoSatelliteInfoSource::requestUpdate()
 {
     CHECK_SOURCE_VALID;
+#if defined(Q_WS_MAEMO_6)
+    QSKIP("Real GPS not suitable for autotesting, skipping the test.", SkipAll);
+#endif
 
     QFETCH(int, timeout);
     QSignalSpy spy(m_source, SIGNAL(requestTimeout()));
@@ -610,6 +620,9 @@ void TestQGeoSatelliteInfoSource::requestUpdate_data()
 void TestQGeoSatelliteInfoSource::requestUpdate_validTimeout()
 {
     CHECK_SOURCE_VALID;
+#if defined(Q_WS_MAEMO_6)
+    QSKIP("Real GPS not suitable for autotesting, skipping the test.", SkipAll);
+#endif
 
     QSignalSpy spyView(m_source,
                        SIGNAL(satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &)));
@@ -628,6 +641,9 @@ void TestQGeoSatelliteInfoSource::requestUpdate_validTimeout()
 void TestQGeoSatelliteInfoSource::requestUpdate_defaultTimeout()
 {
     CHECK_SOURCE_VALID;
+#if defined(Q_WS_MAEMO_6)
+    QSKIP("Real GPS not suitable for autotesting, skipping the test.", SkipAll);
+#endif
 
     QSignalSpy spyView(m_source,
                        SIGNAL(satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &)));
@@ -647,6 +663,9 @@ void TestQGeoSatelliteInfoSource::requestUpdate_defaultTimeout()
 void TestQGeoSatelliteInfoSource::requestUpdate_repeatedCalls()
 {
     CHECK_SOURCE_VALID;
+#if defined(Q_WS_MAEMO_6)
+    QSKIP("Real GPS not suitable for autotesting, skipping the test.", SkipAll);
+#endif
 
     QSignalSpy spyView(m_source,
                        SIGNAL(satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &)));
@@ -671,6 +690,9 @@ void TestQGeoSatelliteInfoSource::requestUpdate_repeatedCalls()
 void TestQGeoSatelliteInfoSource::requestUpdate_overlappingCalls()
 {
     CHECK_SOURCE_VALID;
+#if defined(Q_WS_MAEMO_6)
+    QSKIP("Real GPS not suitable for autotesting, skipping the test.", SkipAll);
+#endif
 
     QSignalSpy spyView(m_source,
                        SIGNAL(satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &)));
@@ -694,6 +716,9 @@ void TestQGeoSatelliteInfoSource::requestUpdate_overlappingCalls()
 void TestQGeoSatelliteInfoSource::requestUpdate_overlappingCallsWithTimeout()
 {
     CHECK_SOURCE_VALID;
+#if defined(Q_WS_MAEMO_6)
+    QSKIP("Real GPS not suitable for autotesting, skipping the test.", SkipAll);
+#endif
 
     QSignalSpy spyView(m_source,
                        SIGNAL(satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &)));
@@ -721,6 +746,9 @@ void TestQGeoSatelliteInfoSource::requestUpdate_overlappingCallsWithTimeout()
 void TestQGeoSatelliteInfoSource::requestUpdateAfterStartUpdates()
 {
     CHECK_SOURCE_VALID;
+#if defined(Q_WS_MAEMO_6)
+    QSKIP("Real GPS not suitable for autotesting, skipping the test.", SkipAll);
+#endif
 
     QSignalSpy spyView(m_source,
                        SIGNAL(satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &)));
@@ -756,6 +784,9 @@ void TestQGeoSatelliteInfoSource::requestUpdateAfterStartUpdates()
 void TestQGeoSatelliteInfoSource::requestUpdateBeforeStartUpdates()
 {
     CHECK_SOURCE_VALID;
+#if defined(Q_WS_MAEMO_6)
+    QSKIP("Real GPS not suitable for autotesting, skipping the test.", SkipAll);
+#endif
 
     QSignalSpy spyView(m_source,
                        SIGNAL(satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &)));
@@ -785,6 +816,9 @@ void TestQGeoSatelliteInfoSource::requestUpdateBeforeStartUpdates()
 void TestQGeoSatelliteInfoSource::removeSlotForRequestTimeout()
 {
     CHECK_SOURCE_VALID;
+#if defined(Q_WS_MAEMO_6)
+    QSKIP("Real GPS not suitable for autotesting, skipping the test.", SkipAll);
+#endif
 
     bool i = connect(m_source, SIGNAL(requestTimeout()), this, SLOT(test_slot1()));
     QVERIFY(i==true);
@@ -800,6 +834,9 @@ void TestQGeoSatelliteInfoSource::removeSlotForRequestTimeout()
 void TestQGeoSatelliteInfoSource::removeSlotForSatellitesInUseUpdated()
 {
     CHECK_SOURCE_VALID;
+#if defined(Q_WS_MAEMO_6)
+    QSKIP("Real GPS not suitable for autotesting, skipping the test.", SkipAll);
+#endif
 
     bool i = connect(m_source, SIGNAL(satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &)), this, SLOT(test_slot1()));
     QVERIFY(i == true);
@@ -818,6 +855,9 @@ void TestQGeoSatelliteInfoSource::removeSlotForSatellitesInUseUpdated()
 void TestQGeoSatelliteInfoSource::removeSlotForSatellitesInViewUpdated()
 {
     CHECK_SOURCE_VALID;
+#if defined(Q_WS_MAEMO_6)
+    QSKIP("Real GPS not suitable for autotesting, skipping the test.", SkipAll);
+#endif
 
     bool i = connect(m_source, SIGNAL(satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &)), this, SLOT(test_slot1()));
     QVERIFY(i == true);
