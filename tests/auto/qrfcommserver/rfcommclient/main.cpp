@@ -29,10 +29,16 @@
 ** Nokia at qt-info@nokia.com.
 **
 **
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
- 
+
 #include <QCoreApplication>
 #include <QStringList>
 #include "rfcommclient.h"
