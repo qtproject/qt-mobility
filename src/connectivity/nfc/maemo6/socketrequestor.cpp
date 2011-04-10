@@ -331,11 +331,15 @@ bool SocketRequestorPrivate::parseAccessFailed(DBusMessage *message,
     // read DBus Object Path
     QVariant objectPath = getVariantFromDBusMessage(&args);
 
+    // read DBus kind string
+    QVariant kind = getVariantFromDBusMessage(&args);
+
     // read DBus error string
     QVariant errorString = getVariantFromDBusMessage(&args);
 
     QMetaObject::invokeMethod(socketRequestor, "accessFailed",
                               Q_ARG(QDBusObjectPath, QDBusObjectPath(objectPath.toString())),
+                              Q_ARG(QString, kind.toString()),
                               Q_ARG(QString, errorString.toString()));
     return true;
 }

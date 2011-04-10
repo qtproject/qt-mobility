@@ -116,7 +116,8 @@ public:
     void releaseAccess(QNearFieldManager::TargetAccessModes accessModes);
 
     // Access Agent Adaptor
-    Q_INVOKABLE void AccessFailed(const QDBusObjectPath &target, const QString &error);
+    Q_INVOKABLE void AccessFailed(const QDBusObjectPath &target, const QString &kind,
+                                  const QString &error);
     Q_INVOKABLE void AccessGranted(const QDBusObjectPath &target, const QString &kind);
 
 protected:
@@ -124,8 +125,8 @@ protected:
 
 private slots:
     void emitTargetDetected(const QString &targetPath);
-    void _q_targetDetected(const QString &targetPath);
-    void _q_targetLost(const QString &targetPath);
+    void _q_targetDetected(const QDBusObjectPath &targetPath);
+    void _q_targetLost(const QDBusObjectPath &targetPath);
 
 private:
     QDBusConnection m_connection;
