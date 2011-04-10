@@ -145,16 +145,6 @@ public:
     QSystemDisplayInfo::BacklightState backlightStatus(int screen); //1.2
 };
 
-class QSystemStorageInfoPrivate : public QSystemStorageInfoLinuxCommonPrivate
-{
-    Q_OBJECT
-
-public:
-
-    QSystemStorageInfoPrivate(QSystemStorageInfoLinuxCommonPrivate *parent = 0);
-    virtual ~QSystemStorageInfoPrivate();
-};
-
 class QSystemDeviceInfoPrivate : public QSystemDeviceInfoLinuxCommonPrivate
 {
     Q_OBJECT
@@ -193,19 +183,18 @@ private Q_SLOTS:
 };
 
 
-class QSystemScreenSaverPrivate : public QSystemScreenSaverLinuxCommonPrivate
+class QSystemScreenSaverPrivate : public QObject
 {
     Q_OBJECT
 
 public:
-    QSystemScreenSaverPrivate(QSystemScreenSaverLinuxCommonPrivate *parent = 0);
+    QSystemScreenSaverPrivate(QObject *parent = 0);
     ~QSystemScreenSaverPrivate();
 
     bool screenSaverInhibited();
     bool setScreenSaverInhibit();
     bool isScreenLockEnabled();
     bool isScreenSaverActive();
-
     void setScreenSaverInhibited(bool on);
 
 private:

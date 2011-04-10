@@ -55,9 +55,14 @@ Controller::Controller(QObject *parent) :
 
     qsrand(QDateTime::currentDateTime().time().msec());
 
+
     timer->setInterval(1000/FRAME_RATE);
+//    timer->setInterval(0);
     connect(timer, SIGNAL(timeout()), SLOT(tick()));
     srand(QDateTime::currentDateTime().time().msec());
+    
+    fpscntr = new QTime;
+    frames = 0;
 
     timer->start();
     restart_ball();
@@ -69,6 +74,14 @@ void Controller::tick()
         col_x--;
     if(col_y)
         col_y--;
+    
+//    frames++;
+//    if(fpscntr->elapsed() > 1000){
+//        int f = frames/(fpscntr->elapsed()/1000.0);
+//        emit fps(QString("FPS %1").arg(f));
+//        frames = 0;
+//        fpscntr->restart();
+//    }
 
     int msec = elapsed->elapsed();
     elapsed->restart();
@@ -224,6 +237,8 @@ void Controller::stop()
 void Controller::start()
 {
     timer->start();
+    fpscntr->restart();
+    frames = 0;
 }
 
 void Controller::moveLeftPaddle(int y)

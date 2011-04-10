@@ -1924,251 +1924,231 @@ int QSystemDisplayInfoLinuxCommonPrivate::getDPIHeight(int screen)
 #endif
 }
 
-QSystemStorageInfoLinuxCommonPrivate::QSystemStorageInfoLinuxCommonPrivate(QObject *parent)
-    : QObject(parent),storageTimer(0)
+QSystemStorageInfoPrivate::QSystemStorageInfoPrivate(QObject *parent)
+    : QObject(parent)
+    , storageTimer(0)
 {
-    halIsAvailable = halAvailable();
+#if !defined(QT_NO_DBUS)
 #if !defined(QT_NO_UDISKS)
     udisksIsAvailable = udisksAvailable();
-#endif
-
-#if !defined(QT_NO_DBUS)
-    if (halIsAvailable)
-        halIface = new QHalInterface(this);
-#if !defined(QT_NO_CONNMAN)
-#if !defined(QT_NO_UDISKS)
     if (udisksIsAvailable)
         udisksIface = new QUDisksInterface(this);
-#endif
-#endif
-#endif
-    storageChanged = true;
-
-    logicalDrives();
-    storageChanged = false;
-
-    checkAvailableStorage();
+#endif // QT_NO_UDISKS
+#endif // QT_NO_DBUS
 }
 
-QSystemStorageInfoLinuxCommonPrivate::~QSystemStorageInfoLinuxCommonPrivate()
+QSystemStorageInfoPrivate::~QSystemStorageInfoPrivate()
 {
-    ::close(inotifyFD);
+    ::close(inotifyFileDescriptor);
 }
 
-void QSystemStorageInfoLinuxCommonPrivate::connectNotify(const char *signal)
+void QSystemStorageInfoPrivate::connectNotify(const char *signal)
 {
-    if (QLatin1String(signal) ==
-        QLatin1String(QMetaObject::normalizedSignature(SIGNAL(logicalDriveChanged(bool, const QString &))))) {
+    if (QLatin1String(signal) == SIGNAL(logicalDriveChanged(bool,QString))) {
+        updateMountedEntries();
         if (udisksIsAvailable) {
 #if !defined(QT_NO_DBUS)
 #if !defined(QT_NO_UDISKS)
-            connect(udisksIface,SIGNAL(deviceChanged(QDBusObjectPath)),
-                    this,SLOT(udisksDeviceChanged(QDBusObjectPath)));
+            connect(udisksIface, SIGNAL(deviceChanged(QDBusObjectPath)),
+                    this, SLOT(udisksDeviceChanged(QDBusObjectPath)));
 #endif
 #endif
         } else {
-
-            inotifyFD = ::inotify_init();
-            mtabWatchA = ::inotify_add_watch(inotifyFD, "/etc/mtab", IN_MODIFY);
-            if (mtabWatchA > 0) {
-                QSocketNotifier *notifier = new QSocketNotifier
-                                            (inotifyFD, QSocketNotifier::Read, this);
+            inotifyFileDescriptor = ::inotify_init();
+            inotifyWatcher = ::inotify_add_watch(inotifyFileDescriptor, "/etc/mtab", IN_MODIFY);
+            if (inotifyWatcher > 0) {
+                QSocketNotifier *notifier = new QSocketNotifier(inotifyFileDescriptor, QSocketNotifier::Read, this);
                 connect(notifier, SIGNAL(activated(int)), this, SLOT(inotifyActivated()));
             }
         }
-    }
-    if (QLatin1String(signal) ==
-        QLatin1String(QMetaObject::normalizedSignature(SIGNAL(storageStateChanged(const QString &, QSystemStorageInfo::StorageState))))) {
+    } else if (QLatin1String(signal) == SIGNAL(storageStateChanged(QString,QSystemStorageInfo::StorageState))) {
+        foreach (const QString &vol, logicalDrives())
+            storageStates.insert(vol, getStorageState(vol));
         storageTimer = new QTimer(this);
-        storageTimer->setSingleShot(true);
-        connect(storageTimer, SIGNAL(timeout()), this, SLOT(checkFilesystem()));
+        connect(storageTimer, SIGNAL(timeout()), this, SLOT(updateStorageStates()));
         storageTimer->start(STORAGEPOLL);
     }
 }
 
-void QSystemStorageInfoLinuxCommonPrivate::disconnectNotify(const char *signal)
+void QSystemStorageInfoPrivate::disconnectNotify(const char *signal)
 {
-    if (QLatin1String(signal) ==
-        QLatin1String(QMetaObject::normalizedSignature(SIGNAL(logicalDriveChanged(bool, const QString &))))) {
+    if (QLatin1String(signal) == SIGNAL(logicalDriveChanged(bool,QString))) {
         if (udisksIsAvailable) {
 #if !defined(QT_NO_DBUS)
 #if !defined(QT_NO_UDISKS)
-            disconnect(udisksIface,SIGNAL(deviceChanged(QDBusObjectPath)),
-                       this,SLOT(udisksDeviceChanged(QDBusObjectPath)));
-#endif
-#endif
+            disconnect(udisksIface, SIGNAL(deviceChanged(QDBusObjectPath)),
+                       this, SLOT(udisksDeviceChanged(QDBusObjectPath)));
+#endif // QT_NO_UDISKS
+#endif // QT_NO_DBUS
         } else {
-            ::inotify_rm_watch(inotifyFD, mtabWatchA);
+            ::inotify_rm_watch(inotifyFileDescriptor, inotifyWatcher);
         }
     }
 }
 
-
-void QSystemStorageInfoLinuxCommonPrivate::inotifyActivated()
+void QSystemStorageInfoPrivate::inotifyActivated()
 {
     char buffer[1024];
-    struct inotify_event *event;
-    int len = ::read(inotifyFD, (void *)buffer, sizeof(buffer));
+    int len = ::read(inotifyFileDescriptor, (void *)buffer, sizeof(buffer));
     if (len > 0) {
-        event = (struct inotify_event *)buffer;
-        if (event->wd == mtabWatchA /*&& (event->mask & IN_IGNORED) == 0*/) {
-            ::inotify_rm_watch(inotifyFD, mtabWatchA);
-            QTimer::singleShot(1000,this,SLOT(deviceChanged()));//give this time to finish write
-            mtabWatchA = ::inotify_add_watch(inotifyFD, "/etc/mtab", IN_MODIFY);
+        struct inotify_event *event = (struct inotify_event *)buffer;
+        if (event->wd == inotifyWatcher /*&& (event->mask & IN_IGNORED) == 0*/) {
+            ::inotify_rm_watch(inotifyFileDescriptor, inotifyWatcher);
+            QTimer::singleShot(1000, this, SLOT(deviceChanged())); //give this time to finish write
+            inotifyWatcher = ::inotify_add_watch(inotifyFileDescriptor, "/etc/mtab", IN_MODIFY);
         }
     }
 }
 
-void QSystemStorageInfoLinuxCommonPrivate::deviceChanged()
+void QSystemStorageInfoPrivate::deviceChanged()
 {
-    QMap<QString, QString> oldDrives = mountEntriesMap;
-    storageChanged = true;
-    mountEntries();
+    QMap<QString, QString> oldDrives = mountedEntries;
+    updateMountedEntries();
 
-    if (mountEntriesMap.count() < oldDrives.count()) {
+    if (mountedEntries.count() < oldDrives.count()) {
         QMapIterator<QString, QString> i(oldDrives);
         while (i.hasNext()) {
             i.next();
-            if (!mountEntriesMap.contains(i.key())) {
-                emit logicalDriveChanged(false, i.key());
-            }
+            if (!mountedEntries.contains(i.key()))
+                Q_EMIT logicalDriveChanged(false, i.key());
         }
-    } else if (mountEntriesMap.count() > oldDrives.count()) {
-        QMapIterator<QString, QString> i(mountEntriesMap);
+    } else if (mountedEntries.count() > oldDrives.count()) {
+        QMapIterator<QString, QString> i(mountedEntries);
         while (i.hasNext()) {
             i.next();
-
-            if (oldDrives.contains(i.key()))
-                continue;
-            emit logicalDriveChanged(true,i.key());
+            if (!oldDrives.contains(i.key()))
+                Q_EMIT logicalDriveChanged(true, i.key());
         }
     }
-    storageChanged = false;
-
 }
 
 #if !defined(QT_NO_DBUS)
-void QSystemStorageInfoLinuxCommonPrivate::udisksDeviceChanged(const QDBusObjectPath &path)
-{
-    storageChanged = true;
-    if (udisksIsAvailable) {
 #if !defined(QT_NO_UDISKS)
+void QSystemStorageInfoPrivate::udisksDeviceChanged(const QDBusObjectPath &path)
+{
+    if (udisksIsAvailable) {
         QUDisksDeviceInterface devIface(path.path());
         QString mountp;
         if (devIface.deviceMountPaths().count() > 0)
             mountp = devIface.deviceMountPaths().at(0);
 
-        if (devIface.deviceIsMounted()) {
-            emit logicalDriveChanged(true, mountp);
+        if (devIface.deviceIsMounted())
+            Q_EMIT logicalDriveChanged(true, mountp);
+        else
+            Q_EMIT logicalDriveChanged(false, mountedEntries.key(devIface.deviceFilePresentation()));
+    }
+    updateMountedEntries();
+}
+#endif // QT_NO_UDISKS
+#endif // QT_NO_DBUS
+
+qlonglong QSystemStorageInfoPrivate::availableDiskSpace(const QString &driveVolume)
+{
+    if (driveVolume.left(2) == "//")
+        return 0;
+
+    struct statfs fs;
+    if (statfs(driveVolume.toLatin1(), &fs) == 0) {
+        qlonglong blockSize = fs.f_bsize;
+        qlonglong availBlocks = fs.f_bavail;
+        return availBlocks * blockSize;
+    }
+
+    return 0;
+}
+
+qlonglong QSystemStorageInfoPrivate::totalDiskSpace(const QString &driveVolume)
+{
+    if (driveVolume.left(2) == "//")
+        return 0;
+
+    struct statfs fs;
+    if (statfs(driveVolume.toLatin1(), &fs) == 0) {
+        qlonglong blockSize = fs.f_bsize;
+        qlonglong totalBlocks = fs.f_blocks;
+        return totalBlocks * blockSize;
+    }
+
+    return 0;
+}
+
+void QSystemStorageInfoPrivate::updateStorageStates()
+{
+    foreach (const QString &vol, logicalDrives()) {
+        QSystemStorageInfo::StorageState state = getStorageState(vol);
+        if (!storageStates.contains(vol)) {
+            storageStates.insert(vol, state);
+            Q_EMIT storageStateChanged(vol, state);
         } else {
-            emit logicalDriveChanged(false, mountEntriesMap.key(devIface.deviceFilePresentation()));
-        }
-#else
-Q_UNUSED(path);
-#endif
-    }
-    mountEntries();
-}
-#endif
-
-qint64 QSystemStorageInfoLinuxCommonPrivate::availableDiskSpace(const QString &driveVolume)
-{
-    if (driveVolume.left(2) == "//") {
-        return 0;
-    }
-    mountEntries();
-    struct statfs fs;
-    if (statfs(driveVolume.toLatin1(), &fs ) == 0 ) {
-                long blockSize = fs.f_bsize;
-                long availBlocks = fs.f_bavail;
-                return (double)availBlocks * blockSize;
+            if (storageStates.value(vol) != state) {
+                storageStates.insert(vol, state);
+                Q_EMIT storageStateChanged(vol, state);
             }
-    return 0;
-}
-
-qint64 QSystemStorageInfoLinuxCommonPrivate::totalDiskSpace(const QString &driveVolume)
-{
-    if (driveVolume.left(2) == "//") {
-        return 0;
+        }
     }
-    mountEntries();
-    struct statfs fs;
-    if (statfs(driveVolume.toLatin1(), &fs ) == 0 ) {
-        const long blockSize = fs.f_bsize;
-        const long totalBlocks = fs.f_blocks;
-        return (double)totalBlocks * blockSize;
-    }
-    return 0;
 }
 
-void QSystemStorageInfoLinuxCommonPrivate::checkFilesystem()
+QSystemStorageInfo::DriveType QSystemStorageInfoPrivate::typeForDrive(const QString &driveVolume)
 {
-    checkAvailableStorage();
-    storageTimer->start( STORAGEPOLL);
-}
+    updateMountedEntries();
 
-QSystemStorageInfo::DriveType QSystemStorageInfoLinuxCommonPrivate::typeForDrive(const QString &driveVolume)
-{
     if (udisksIsAvailable) {
 #if !defined(QT_NO_DBUS)
 #if !defined(QT_NO_UDISKS)
-        QString udiskdev = mountEntriesMap.value(driveVolume);
+        QString udiskdev = mountedEntries.value(driveVolume);
         udiskdev.chop(1);
         QUDisksDeviceInterface devIfaceParent(udiskdev);
-        QUDisksDeviceInterface devIface(mountEntriesMap.value(driveVolume));
+        QUDisksDeviceInterface devIface(mountedEntries.value(driveVolume));
 
         if (devIface.deviceIsMounted()) {
-            QString chopper = devIface.deviceFile();
-            QString mountp;
             if (devIfaceParent.deviceIsRemovable()) {
                 return QSystemStorageInfo::RemovableDrive;
             } else if (devIfaceParent.deviceIsSystemInternal()) {
-                if (devIfaceParent.driveIsRotational()) {
+                if (devIfaceParent.driveIsRotational())
                     return QSystemStorageInfo::InternalDrive;
-                } else {
+                else
                     return QSystemStorageInfo::InternalFlashDrive;
-                }
             } else {
                 return QSystemStorageInfo::RemoteDrive;
             }
         } else {
             //udisks cannot see mounted samba shares
-            if (mountEntriesMap.value(driveVolume).left(2) == "//") {
+            if (mountedEntries.value(driveVolume).left(2) == "//")
                 return QSystemStorageInfo::RemoteDrive;
-            }
         }
-#endif
-#endif
+#endif // QT_NO_UDISKS
+#endif // QT_NO_DBUS
     }
+
+    if (driveVolume.left(2) == "//")
+        return QSystemStorageInfo::RemoteDrive;
 
     // manually read sys file for block device
     // not perfect, more complete than hal
 
     QString dmFile;
 
-    if (mountEntriesMap.value(driveVolume).contains("mapper")) {
+    if (mountedEntries.value(driveVolume).contains("mapper")) {
         struct stat stat_buf;
-        stat( mountEntriesMap.value(driveVolume).toLatin1(), &stat_buf);
-
+        stat(mountedEntries.value(driveVolume).toLatin1(), &stat_buf);
         dmFile = QString("/sys/block/dm-%1/removable").arg(stat_buf.st_rdev & 0377);
-
     } else {
+        dmFile = mountedEntries.value(driveVolume).section("/", 2, 3);
 
-        dmFile = mountEntriesMap.value(driveVolume).section("/",2,3);
-
-        if (dmFile.left(3) == "mmc") { //assume this dev is removable sd/mmc card.
+        //assume this dev is removable sd/mmc card.
+        if (dmFile.left(3) == "mmc")
             return QSystemStorageInfo::RemovableDrive;
-        }
-        if (dmFile.left(3) == "ram") {
-            return QSystemStorageInfo::RamDrive;
-        }
 
-        if (dmFile.length() > 3) { //if device has number, we need the 'parent' device
+        if (dmFile.left(3) == "ram")
+            return QSystemStorageInfo::RamDrive;
+
+        //if device has number, we need the 'parent' device
+        if (dmFile.length() > 3) {
             dmFile.chop(1);
             if (dmFile.right(1) == "p") //get rid of partition number
                 dmFile.chop(1);
         }
-        dmFile = "/sys/block/"+dmFile+"/removable";
+        dmFile = "/sys/block/" + dmFile + "/removable";
     }
 
     QFile file(dmFile);
@@ -2177,131 +2157,124 @@ QSystemStorageInfo::DriveType QSystemStorageInfoLinuxCommonPrivate::typeForDrive
     } else {
         QTextStream sysinfo(&file);
         QString line = sysinfo.readAll();
-        if (line.contains("1")) {
+        if (line.contains("1"))
             return QSystemStorageInfo::RemovableDrive;
-        }
     }
 
-    if (driveVolume.left(2) == "//") {
-        return QSystemStorageInfo::RemoteDrive;
-    }
     return QSystemStorageInfo::InternalDrive;
 }
 
-QStringList QSystemStorageInfoLinuxCommonPrivate::logicalDrives()
+QStringList QSystemStorageInfoPrivate::logicalDrives()
 {
-
-    mountEntries();
-    return mountEntriesMap.keys();
+    updateMountedEntries();
+    return mountedEntries.keys();
 }
 
-void QSystemStorageInfoLinuxCommonPrivate::mountEntries()
+void QSystemStorageInfoPrivate::updateMountedEntries()
 {
-    if (!storageChanged)
-        return;
-    mountEntriesMap.clear();
+    mountedEntries.clear();
+
 #if !defined(QT_NO_DBUS)
 #if !defined(QT_NO_UDISKS)
     if (udisksAvailable()) {
-        foreach (const QDBusObjectPath &device,udisksIface->enumerateDevices() ) {
+        foreach (const QDBusObjectPath &device, udisksIface->enumerateDevices()) {
             QUDisksDeviceInterface devIface(device.path());
             if (devIface.deviceIsMounted()) {
                 QString fsname = devIface.deviceMountPaths().at(0);
-                if ( !mountEntriesMap.keys().contains(fsname)) {
-                    mountEntriesMap[fsname.toLatin1()] = device.path()/*.section("/")*/;
-                }
+                if (!mountedEntries.keys().contains(fsname))
+                    mountedEntries[fsname.toLatin1()] = device.path()/*.section("/")*/;
             }
         }
     }
-#endif
-#endif
-    FILE *mntfp = setmntent( _PATH_MOUNTED, "r" );
+#endif // QT_NO_UDISKS
+#endif // QT_NO_DBUS
+
+    FILE *mntfp = setmntent(_PATH_MOUNTED, "r");
     mntent *me = getmntent(mntfp);
     bool ok;
-    while(me != NULL) {
+    while (me != NULL) {
         struct statfs fs;
         ok = false;
         if (strcmp(me->mnt_type, "cifs") != 0) { //smb has probs with statfs
             if (statfs(me->mnt_dir, &fs ) ==0 ) {
-                QString num;
                 // weed out a few types
-                if ( fs.f_type != 0x01021994 //tmpfs
-                     && fs.f_type != 0x9fa0 //procfs
-                     && fs.f_type != 0x1cd1 //
-                     && fs.f_type != 0x62656572
-                     && (unsigned)fs.f_type != 0xabababab // ???
-                     && fs.f_type != 0x52654973
-                     && fs.f_type != 0x42494e4d
-                     && fs.f_type != 0x64626720
-                     && fs.f_type != 0x73636673 //securityfs
-                     && fs.f_type != 0x65735543 //fusectl
-                     && fs.f_type != 0x65735546 // fuse.gvfs-fuse-daemon
-
-                     ) {
+                if (fs.f_type != 0x01021994 //tmpfs
+                    && fs.f_type != 0x9fa0 //procfs
+                    && fs.f_type != 0x1cd1 //
+                    && fs.f_type != 0x62656572
+                    && (unsigned)fs.f_type != 0xabababab // ???
+                    && fs.f_type != 0x52654973
+                    && fs.f_type != 0x42494e4d
+                    && fs.f_type != 0x64626720
+                    && fs.f_type != 0x73636673 //securityfs
+                    && fs.f_type != 0x65735543 //fusectl
+                    && fs.f_type != 0x65735546 // fuse.gvfs-fuse-daemon
+                   ) {
                     ok = true;
                 }
             }
         } else {
             ok = true;
         }
-        if (ok && !mountEntriesMap.keys().contains(me->mnt_dir)
+
+        if (ok && !mountedEntries.keys().contains(me->mnt_dir)
             && QString(me->mnt_fsname).left(1) == "/") {
-            mountEntriesMap[me->mnt_dir] = me->mnt_fsname;
+            mountedEntries[me->mnt_dir] = me->mnt_fsname;
         }
 
         me = getmntent(mntfp);
     }
+
     endmntent(mntfp);
 }
 
-QString QSystemStorageInfoLinuxCommonPrivate::getUuid(const QString &vol)
+QString QSystemStorageInfoPrivate::getUuid(const QString &vol)
 {
     QDir uuidDir("/dev/disk/by-uuid");
     if (uuidDir.exists()) {
         QFileInfoList fileList = uuidDir.entryInfoList();
+        updateMountedEntries();
         foreach (const QFileInfo &fi, fileList) {
             if (fi.isSymLink()) {
-                if (fi.symLinkTarget().contains(mountEntriesMap.value(vol).section("/",-1))) {
+                if (fi.symLinkTarget().contains(mountedEntries.value(vol).section("/", -1)))
                     return fi.baseName();
-                }
             }
         }
     }
+
     return QString();
 }
 
-QString QSystemStorageInfoLinuxCommonPrivate::uriForDrive(const QString &driveVolume)
+QString QSystemStorageInfoPrivate::uriForDrive(const QString &driveVolume)
 {
 #if !defined(QT_NO_DBUS)
 #if !defined(QT_NO_UDISKS)
     if (udisksIsAvailable) {
-        QUDisksDeviceInterface devIface(mountEntriesMap.value(driveVolume));
-        if (devIface.deviceIsMounted()) {
+        updateMountedEntries();
+        QUDisksDeviceInterface devIface(mountedEntries.value(driveVolume));
+        if (devIface.deviceIsMounted())
             return devIface.uuid();
-        }
         return QString();
     }
-#endif
-    QByteArray driveuid;
+#endif // QT_NO_UDISKS
+    halIsAvailable = halAvailable();
     if (halIsAvailable) {
         QHalInterface iface;
         QStringList list = iface.findDeviceByCapability("volume");
         if (!list.isEmpty()) {
-            QString lastdev;
             foreach (const QString &dev, list) {
-                halIfaceDevice = new QHalDeviceInterface(dev, this);
-                if (halIfaceDevice->isValid() && (halIfaceDevice->getPropertyString("volume.mount_point") == driveVolume)) {
-                    return halIfaceDevice->getPropertyString("volume.uuid").toLocal8Bit();
-                }
+                QHalDeviceInterface halDeviceInterface(dev);
+                if (halDeviceInterface.isValid() && (halDeviceInterface.getPropertyString("volume.mount_point") == driveVolume))
+                    return halDeviceInterface.getPropertyString("volume.uuid");
             }
         }
     }
+#endif // QT_NO_DBUS
 
-#endif
     QString driveUuid = getUuid(driveVolume);
-    if(!driveUuid.isEmpty()) {
+    if (!driveUuid.isEmpty())
         return  driveUuid;
-    }
+
     //last resort
 #if defined (BLKID_SUPPORTED)
     int fd;
@@ -2311,10 +2284,11 @@ QString QSystemStorageInfoLinuxCommonPrivate::uriForDrive(const QString &driveVo
     char *ret;
     int result = 0;
 
-    QFile dev(mountEntriesMap.value(driveVolume));
-    if(!dev.open(QIODevice::ReadOnly)) {
+    updateMountedEntries();
+    QFile dev(mountedEntries.value(driveVolume));
+    if (!dev.open(QIODevice::ReadOnly))
         return QString();
-    }
+
     fd = dev.handle();
 
     if (fd < 0) {
@@ -2336,45 +2310,27 @@ QString QSystemStorageInfoLinuxCommonPrivate::uriForDrive(const QString &driveVo
         close(fd);
         return label;
     }
-#endif
+#endif // BLKID_SUPPORTED
+
     return QString();
 }
 
-QSystemStorageInfo::StorageState QSystemStorageInfoLinuxCommonPrivate::getStorageState(const QString &driveVolume)
+QSystemStorageInfo::StorageState QSystemStorageInfoPrivate::getStorageState(const QString &driveVolume)
 {
     QSystemStorageInfo::StorageState storState = QSystemStorageInfo::UnknownStorageState;
-    float aspace = availableDiskSpace(driveVolume);
-    float tspace = totalDiskSpace(driveVolume);
-    float percent = (aspace / tspace) * 100;
-    if (percent < 3) {
+    float available = availableDiskSpace(driveVolume);
+    float total = totalDiskSpace(driveVolume);
+    float percent = available / total;
+    if (percent < 0.02)
         storState = QSystemStorageInfo::CriticalStorageState;
-    } else if (percent < 11) {
+    else if (percent < 0.1)
         storState = QSystemStorageInfo::VeryLowStorageState;
-    } else  if (percent < 41) {
+    else if (percent < 0.4)
         storState = QSystemStorageInfo::LowStorageState;
-    } else {
+    else
         storState = QSystemStorageInfo::NormalStorageState;
-    }
+
     return storState;
-}
-
-//QT_LINUXBASE
-
-void QSystemStorageInfoLinuxCommonPrivate::checkAvailableStorage()
-{
-    foreach (const QString &vol, logicalDrives()) {
-        QSystemStorageInfo::StorageState storState = getStorageState(vol);
-        if (!stateMap.contains(vol)) {
-            stateMap.insert(vol,storState);
-            Q_EMIT storageStateChanged(vol, storState);
-        } else {
-
-            if (stateMap.value(vol) != storState) {
-                stateMap.insert(vol,storState);
-                Q_EMIT storageStateChanged(vol, storState);
-            }
-        }
-    }
 }
 
 QSystemDeviceInfoLinuxCommonPrivate::QSystemDeviceInfoLinuxCommonPrivate(QObject *parent)
@@ -3291,17 +3247,6 @@ QSystemDeviceInfo::SimStatus QSystemDeviceInfoLinuxCommonPrivate::simStatus()
 
     return QSystemDeviceInfo::SimNotAvailable;
 }
-
-QSystemScreenSaverLinuxCommonPrivate::QSystemScreenSaverLinuxCommonPrivate(QObject *parent)
-    : QObject(parent)
-{
-
-}
-
-QSystemScreenSaverLinuxCommonPrivate::~QSystemScreenSaverLinuxCommonPrivate()
-{
-}
-
 
 QSystemBatteryInfoLinuxCommonPrivate::QSystemBatteryInfoLinuxCommonPrivate(QObject *parent)
 : QObject(parent), batteryIsPresent(0)

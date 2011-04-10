@@ -57,13 +57,9 @@ QValueSpaceManager::QValueSpaceManager()
 
 void QValueSpaceManager::init(QAbstractValueSpaceLayer::Type type)
 {
-    if (Uninit != this->type
-        && type == QAbstractValueSpaceLayer::Client) {
-        // Clients may call this function multiple times
+    // Both server and clients may call this function multiple times
+    if (Uninit != this->type)
         return;
-    }
-
-    Q_ASSERT(Uninit == this->type);
 
     // Install all the dormant layers
     for (int ii = 0; ii < funcs.count(); ++ii)
