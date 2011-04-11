@@ -211,7 +211,6 @@ class QSystemDisplayInfoLinuxCommonPrivate : public QObject
     Q_OBJECT
 
 public:
-
     QSystemDisplayInfoLinuxCommonPrivate(QObject *parent = 0);
     virtual ~QSystemDisplayInfoLinuxCommonPrivate();
 
@@ -219,7 +218,7 @@ public:
     int colorDepth(int screen);
 
     QSystemDisplayInfo::DisplayOrientation orientation(int screen);
-    float contrast(int /*screen*/) {return 0.0;};
+    float contrast(int screen);
     int getDPIWidth(int screen);
     int getDPIHeight(int screen);
     int physicalHeight(int screen);
@@ -239,6 +238,7 @@ Q_SIGNALS:
 
 private:
     bool isScreenValid(int screen);
+
     QDesktopWidget *wid;
     static QSystemDisplayInfoLinuxCommonPrivate *self;
 };
