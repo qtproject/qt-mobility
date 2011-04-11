@@ -61,6 +61,7 @@
 #include <QtDBus/QDBusPendingCall>
 #endif
 
+#include <QApplication>
 #include <QDesktopWidget>
 
 #include <locale.h>
@@ -1627,10 +1628,8 @@ bool q_XEventFilter(void *message)
 #endif // Q_WS_X11
 
 QSystemDisplayInfoLinuxCommonPrivate::QSystemDisplayInfoLinuxCommonPrivate(QObject *parent)
-    : QObject(parent), wid(0)
+    : QObject(parent)
 {
-    halIsAvailable = halAvailable();
-    wid = new QDesktopWidget();
     if (!self)
         self = this;
 
@@ -1681,7 +1680,7 @@ void QSystemDisplayInfoLinuxCommonPrivate::emitOrientationChanged(int curRotatio
 
 bool QSystemDisplayInfoLinuxCommonPrivate::isScreenValid(int screen)
 {
-    if (screen > wid->screenCount() || screen < 0)
+    if (screen > QApplication::desktop()->screenCount() || screen < 0)
         return false;
 
     return true;
@@ -1702,7 +1701,7 @@ int QSystemDisplayInfoLinuxCommonPrivate::colorDepth(int screen)
 #endif
 
 #ifdef Q_WS_X11
-    return wid->screen(screen)->x11Info().depth();
+    return QApplication::desktop()->screen(screen)->x11Info().depth();
 #endif // Q_WS_X11
 
     // as a last resort, use the default depth
@@ -1715,6 +1714,7 @@ int QSystemDisplayInfoLinuxCommonPrivate::displayBrightness(int screen)
         return -1;
 
 #if !defined(QT_NO_DBUS)
+    halIsAvailable = halAvailable();
     if (halIsAvailable) {
         QHalInterface iface;
         if (iface.isValid()) {
@@ -1824,11 +1824,12 @@ QSystemDisplayInfo::DisplayOrientation QSystemDisplayInfoLinuxCommonPrivate::ori
                 orientation = QSystemDisplayInfo::InvertedPortrait;
                 break;
             };
+            return orientation;
         }
     }
 #endif
 
-    if (wid->width() > wid->height()) {//landscape
+    if (QApplication::desktop()->width() > QApplication::desktop()->height()) {//landscape
         if (orientation == QSystemDisplayInfo::Unknown || orientation == QSystemDisplayInfo::Portrait)
             orientation = QSystemDisplayInfo::Landscape;
     } else { //portrait

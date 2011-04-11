@@ -239,7 +239,6 @@ Q_SIGNALS:
 private:
     bool isScreenValid(int screen);
 
-    QDesktopWidget *wid;
     static QSystemDisplayInfoLinuxCommonPrivate *self;
 };
 
