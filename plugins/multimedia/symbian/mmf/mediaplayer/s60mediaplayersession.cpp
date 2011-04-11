@@ -865,7 +865,9 @@ void S60MediaPlayerSession::setError(int error, const QString &errorString, bool
 
     emit this->error(mediaError, symbianError);
 
-    if (mediaError !=QMediaPlayer::NoError) {
+    if (m_error == KErrInUse) {
+        pause();
+    } else if (mediaError != QMediaPlayer::NoError) {
         m_play_requested = false;
         setMediaStatus(QMediaPlayer::InvalidMedia);
         stop();
