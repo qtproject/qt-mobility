@@ -76,6 +76,7 @@ CamerabinResourcePolicy::CamerabinResourcePolicy(QObject *parent) :
 
 CamerabinResourcePolicy::~CamerabinResourcePolicy()
 {
+#ifdef HAVE_RESOURCE_POLICY
     //ensure the resources are released
     if (m_resourceSet != NoResources)
         setResourceSet(NoResources);
@@ -88,6 +89,7 @@ CamerabinResourcePolicy::~CamerabinResourcePolicy()
         delete m_resource;
         m_resource = 0;
     }
+#endif
 }
 
 CamerabinResourcePolicy::ResourceSet CamerabinResourcePolicy::resourceSet() const
