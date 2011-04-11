@@ -110,6 +110,7 @@ create an instance of the default satellite data source for the platform,
 if one is available. Alternatively, clients can subclass it to provide a
 custom satellite data source.
 
+
 \section2 Requesting location data from data sources
 
 To receive data from a source, connect to its
@@ -484,6 +485,13 @@ is part of QtMobility.  See the section \l{The Nokia plugin} for more details.
         searchManager = serviceProvider.searchManager();
     }
 \endcode
+
+\bold {Important notice:} \i {The map data provided by the offline plug-in is
+place-shifted for the area of the People’s Republic of China. To provide
+un-shifted maps of China in an application, the application developer must
+first obtain permission from Chinese officials. The Qt Mobility Location
+API cannot offer this on the API level.}
+
 
 \section2 Common classes
 
