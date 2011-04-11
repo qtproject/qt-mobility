@@ -251,7 +251,11 @@ QTM_BEGIN_NAMESPACE
 */
 
 QBluetoothDeviceInfoPrivate::QBluetoothDeviceInfoPrivate()
-: valid(false), cached(false)
+    : valid(false), cached(false), rssi(1),
+      serviceClasses(QBluetoothDeviceInfo::NoService),
+      majorDeviceClass(QBluetoothDeviceInfo::MiscellaneousDevice),
+      minorDeviceClass(0),
+      serviceUuidsCompleteness(QBluetoothDeviceInfo::DataUnavailable)
 {
 }
 
