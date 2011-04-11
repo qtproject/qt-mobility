@@ -218,7 +218,7 @@ QString QSystemInfoLinuxCommonPrivate::currentLanguage() const
     QString lang;
 
     if (currentLang.isEmpty()) {
-        QString lang = QLocale::system().name().left(2);
+        lang = QLocale::system().name().left(2);
         if (lang.isEmpty() || lang == QLatin1String("C"))
             lang = QLatin1String("en");
     } else {
