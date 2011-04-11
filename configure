@@ -324,6 +324,11 @@ checkostype()
     if [ `uname -s` = "${match}" ]; then
         OS="darwin"
         QMKSPEC="-spec macx-g++"
+        if [[ `gcc --version` =~ .*llvm.* ]]; then
+            QMKSPEC="-spec macx-llvm"
+        else
+           QMKSPEC="-spec macx-g++"
+        fi
         echo "QMAKESPEC = "$QMKSPEC >> "$CONFIG_IN"
     fi
 }
@@ -339,7 +344,7 @@ findUniversal()
     echo "contains(QT_CONFIG,ppc): system(echo CONFIG+=ppc >> mac.inc)" >> 2.pro
     echo "contains(QT_CONFIG,ppc64): system(echo CONFIG+=ppc64 >> mac.inc)" >> 2.pro
     echo "contains(QT_CONFIG,x86_64): system(echo CONFIG+=x86_64 >> mac.inc)" >> 2.pro
-    SOMETIME=`$QMAKE_EXEC -spec macx-g++ 2.pro 2>&1`
+    SOMETIME=`$QMAKE_EXEC $QMKSPEC 2.pro 2>&1`
     rm 2.pro
     if [ -e "mac.inc" ]; then
          echo "exists(mac.inc): include(mac.inc)" >> "$CONFIG_IN"
@@ -586,7 +591,7 @@ if [ -z "$PLATFORM_CONFIG" ]; then
 #compile tests
     compileTest QMF qmf
     compileTest NetworkManager networkmanager
-    compileTest "CoreWLAN (MacOS 10.6)" corewlan
+    compileTest "CoreWLAN (MacOS >= 10.6)" corewlan
     compileTest Immersion immersion
     compileTest "MeegoTouch Feedback" meegotouchfeedback
     compileTest "Maemo ICD" maemo-icd

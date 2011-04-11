@@ -179,7 +179,8 @@ unix:!simulator {
     }
 
     mac: {
-        SOURCES += qsysteminfo_mac.mm qsystemalignedtimer_stub.cpp
+        OBJECTIVE_SOURCES += qsysteminfo_mac.mm
+        SOURCES += qsystemalignedtimer_stub.cpp
         HEADERS += qsysteminfo_mac_p.h qsystemalignedtimer_stub_p.h
         LIBS += -framework SystemConfiguration -framework CoreFoundation \
             -framework IOKit -framework ApplicationServices -framework Foundation \
@@ -197,9 +198,9 @@ unix:!simulator {
 
             !isEmpty(SDK6) {
                 LIBS += -framework CoreWLAN  -framework CoreLocation
-                DEFINES += MAC_SDK_10_6
             }
         } else {
+            DEFINES += MAC_SDK_10_5
             CONFIG += no_keywords
         }
 
