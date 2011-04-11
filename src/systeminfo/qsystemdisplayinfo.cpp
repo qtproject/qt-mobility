@@ -106,11 +106,8 @@ QSystemDisplayInfo::~QSystemDisplayInfo()
 }
 
 /*!
-    Returns the display brightness of the screen with index \a screenNumber in %, 1 - 100 scale.
-
-    Depending on platform, displayBrightness may not be available due to
-    differing hardware, software or driver implementation. In which case this
-    will return -1.
+    Returns the display brightness of the screen with index \a screenNumber, in 1 - 100 scale.
+    -1 is returned if not available or on error.
 
     \sa QDesktopWidget::screenCount()
 */
@@ -124,8 +121,8 @@ int QSystemDisplayInfo::displayBrightness(int screenNumber)
 }
 
 /*!
-    Returns the color depth of the screen with the index \a screenNumber, in bits per pixel. Will return -1 in
-    the event of an error.
+    Returns the color depth of the screen with the index \a screenNumber, in bits per pixel.
+    -1 is returned if not available or on error.
 
     \sa QDesktopWidget::screenCount()
 */
@@ -148,10 +145,9 @@ QSystemDisplayInfo::DisplayOrientation QSystemDisplayInfo::orientation(int scree
     return displayInfoPrivate()->orientation(screen);
 }
 
-
 /*!
-    Returns the current contrast of the screen \a screen, from 0 to 1.
-    \bold sNOTE: Some platforms do not support detecting the contrast of the display.
+    Returns the current contrast of the screen \a screen, from 0 to 1. -1 is returned if
+    not available or on error.
 
     \sa QDesktopWidget::screenCount()
 */
@@ -161,7 +157,8 @@ float QSystemDisplayInfo::contrast(int screen)
 }
 
 /*!
-    Returns the current dots per inch (DPI) for the width of \a screen.
+    Returns the current dots per inch (DPI) for the width of \a screen. -1 is returned if
+    not available or on error.
 
     \sa QDesktopWidget::screenCount()
 */
@@ -171,7 +168,8 @@ int QSystemDisplayInfo::getDPIWidth(int screen)
 }
 
 /*!
-    Returns the dpi (Dot Per Inch) of the height os \a screen.
+    Returns the dpi (Dot Per Inch) of the height os \a screen. -1 is returned if not available
+    or on error.
 
     \sa QDesktopWidget::screenCount()
 */
@@ -181,7 +179,9 @@ int QSystemDisplayInfo::getDPIHeight(int screen)
 }
 
 /*!
-    Returns the physical height of the \a screen in millimeters.
+    Returns the physical height of the \a screen in millimeters. -1 is returned if not available
+    or on error.
+
     \sa QDesktopWidget::screenCount()
 */
 int QSystemDisplayInfo::physicalHeight(int screen)
@@ -190,7 +190,9 @@ int QSystemDisplayInfo::physicalHeight(int screen)
 }
 
 /*!
-    Returns the physical width of \a screen in millimeters.
+    Returns the physical width of \a screen in millimeters. -1 is returned if not available or
+    on error.
+
     \sa QDesktopWidget::screenCount()
 */
 int QSystemDisplayInfo::physicalWidth(int screen)

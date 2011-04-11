@@ -1787,7 +1787,7 @@ float QSystemDisplayInfoLinuxCommonPrivate::contrast(int screen)
 {
     Q_UNUSED(screen);
 
-    return 0.0;
+    return -1;
 }
 
 QSystemDisplayInfo::BacklightState QSystemDisplayInfoLinuxCommonPrivate::backlightStatus(int screen)
@@ -1844,7 +1844,7 @@ int QSystemDisplayInfoLinuxCommonPrivate::physicalHeight(int screen)
     if (!isScreenValid(screen))
         return -1;
 
-    int height = 0;
+    int height = -1;
 
 #if defined(Q_WS_X11)
     XRRScreenResources *sr;
@@ -1875,7 +1875,7 @@ int QSystemDisplayInfoLinuxCommonPrivate::physicalWidth(int screen)
     if (!isScreenValid(screen))
         return -1;
 
-    int width = 0;
+    int width = -1;
 
 #if defined(Q_WS_X11)
     XRRScreenResources *sr;
@@ -1909,7 +1909,7 @@ int QSystemDisplayInfoLinuxCommonPrivate::getDPIWidth(int screen)
 #if defined(Q_WS_X11)
     return QX11Info::appDpiY(screen);
 #else
-    return 0;
+    return -1;
 #endif
 }
 
@@ -1921,7 +1921,7 @@ int QSystemDisplayInfoLinuxCommonPrivate::getDPIHeight(int screen)
 #if defined(Q_WS_X11)
     return QX11Info::appDpiX(screen);
 #else
-    return 0;
+    return -1;
 #endif
 }
 
