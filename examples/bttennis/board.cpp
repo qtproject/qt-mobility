@@ -155,22 +155,24 @@ void Board::checkBall(int x, int y)
   int ly = leftPaddle->y();
   int ry = rightPaddle->y();
   
-  if (x > 640)
+  if (x > 646)
       emit scored(Right);
-  else if (x < 0)
+  else if (x < -6)
       emit scored(Left);
   
-  if (y < 12)
+  if (y < 18)
       emit ballCollision(Top);
-  else if (y > 360-12)
+  else if (y > 360-18)
       emit ballCollision(Bottom);
-  else if ((x < 12) && 
-          (y > ly) &&
-          (y < ly+Paddle))
+
+  if ((x < 18) &&
+      (y > ly-6) &&
+      (y < ly+Paddle+6))
       emit ballCollision(Left);
-  else if ((x > 640-12) &&
-          (y > ry) &&
-          (y < ry+Paddle))
+
+  if ((x > 640-18) &&
+      (y > ry-6) &&
+      (y < ry+Paddle+6))
       emit ballCollision(Right);
 }
 

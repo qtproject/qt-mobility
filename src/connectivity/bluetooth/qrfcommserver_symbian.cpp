@@ -79,7 +79,8 @@ void QRfcommServer::close()
 bool QRfcommServer::listen(const QBluetoothAddress &address, quint16 port)
 {
     Q_D(QRfcommServer);
-
+    qDebug() << __PRETTY_FUNCTION__ << ">> " << this << address.toString() << port;
+    
     TRfcommSockAddr addr;
     if (!address.isNull())
         addr.SetBTAddr(TBTDevAddr(address.toUInt64()));
@@ -107,10 +108,21 @@ bool QRfcommServer::listen(const QBluetoothAddress &address, quint16 port)
             break;
     }
     addr.SetSecurity(security);
-    d->ds->iSocket->Bind(addr);
-    d->socket->setSocketState(QBluetoothSocket::BoundState);
 
-    d->ds->iSocket->Listen(d->maxPendingConnections);
+    int err;
+    if ((err=d->ds->iSocket->Bind(addr)) == KErrNone) {
+        d->socket->setSocketState(QBluetoothSocket::BoundState);
+    } else {
+        qDebug() << __PRETTY_FUNCTION__ << "Socket bind failed, err=" << err;
+        d->socket->close();
+        return false;
+    }
+
+    if ((err=d->ds->iSocket->Listen(d->maxPendingConnections)) != KErrNone) {
+        qDebug() << __PRETTY_FUNCTION__ << "Socket listen failed, err=" << err;
+        d->socket->close();
+        return false;
+    }
 
     d->pendingSocket = new QBluetoothSocket(QBluetoothSocket::RfcommSocket, this);
 
@@ -184,7 +196,7 @@ void QRfcommServerPrivate::HandleAcceptCompleteL(TInt aErr)
         pendingSocket->setSocketState(QBluetoothSocket::ConnectedState);
         activeSockets.append(pendingSocket);
 
-        QBluetoothSocketPrivate *pd = pendingSocket->d_ptr;
+        QBluetoothSocketPrivate *pd = pendingSocket->d_ptr; // ToDo:  probably need a new socket here
 
         pd->iSocket->Accept(*pd->iBlankSocket);
         emit q->newConnection();
@@ -194,6 +206,8 @@ void QRfcommServerPrivate::HandleAcceptCompleteL(TInt aErr)
         pendingSocket = 0;
         socket->setSocketState(QBluetoothSocket::BoundState);
     } else {
+        // accept failed for unknown reason
+        socket->setSocketState(QBluetoothSocket::BoundState);
         qDebug() << __PRETTY_FUNCTION__ << aErr;
         return;
     }
