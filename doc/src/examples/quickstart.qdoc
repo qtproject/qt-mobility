@@ -200,8 +200,8 @@ on which parts of an API is utilized by an application.
     \o No token requirements known at this stage.
 \row
     \o \l {Document Gallery}
-    \o No capabilities at this stage.
-    \o No token requirements known at this stage.
+    \o ReadDeviceData WriteDeviceData
+    \o TrackerReadAccess TrackerWriteAccess
 \row
     \o \l {Organizer}
     \o ReadUserData WriteUserData
