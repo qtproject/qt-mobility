@@ -1,4 +1,6 @@
 SUBDIRS +=  qserviceinterfacedescriptor \
 	qservicefilter \
-	qservicecontext
+        qservicecontext \
+        qremoteserviceregister \
+        qservicemanager_ipc
 
