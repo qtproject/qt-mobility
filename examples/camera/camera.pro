@@ -26,7 +26,7 @@ FORMS += \
     imagesettings.ui
 
 symbian {
-    TARGET.CAPABILITY = UserEnvironment WriteDeviceData ReadDeviceData
+    TARGET.CAPABILITY = UserEnvironment WriteUserData ReadUserData
     TARGET.EPOCHEAPSIZE = 0x20000 0x3000000
     LIBS += -lavkon -leiksrv -lcone -leikcore
 }
