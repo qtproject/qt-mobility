@@ -69,8 +69,8 @@ QTM_BEGIN_NAMESPACE
     target.
 
     If the target supports NdefAccess, hasNdefMessage() can be called to test if the target has a
-    stored NDEF message, ndefMessages() and setNdefMessages() functions can be used to get and set
-    the NDEF message.
+    stored NDEF message, readNdefMessages() and writeNdefMessages() functions can be used to get
+    and set the NDEF message.
 
     If the target supports TagTypeSpecificAccess, sendCommand() can be used to send a single
     proprietary command to the target and retrieve the response.  sendCommands() can be used to
@@ -101,8 +101,8 @@ QTM_BEGIN_NAMESPACE
 
     This enum describes the access methods a near field target supports.
 
-    \value NdefAccess               The target supports NDEF records using ndefMessages() and
-                                    setNdefMessages().
+    \value NdefAccess               The target supports reading and writing NDEF messages using
+                                    readNdefMessages() and writeNdefMessages().
     \value TagTypeSpecificAccess    The target supports sending tag type specific commands using
                                     sendCommand() and sendCommands().
     \value LlcpAccess               The target supports peer-to-peer LLCP communication.
@@ -307,6 +307,8 @@ bool QNearFieldTarget::hasNdefMessage()
 /*!
     Starts reading NDEF messages stored on the near field target. An ndefMessageRead() signal will
     be emitted for each NDEF message.  If an error occurs the error() signal will be emitted.
+
+    \note Symbian^3 and Maemo 6 only support read one NDEF message.
 */
 void QNearFieldTarget::readNdefMessages()
 {
@@ -317,6 +319,9 @@ void QNearFieldTarget::readNdefMessages()
     Writes the NDEF messages in \a messages to the target. The ndefMessagesWritten() signal will be
     emitted when the write operation completes successfully; otherwise the error() signal is
     emitted.
+
+    \note Symbian^3 and Maemo 6 only support writing one NDEF message.  Only the first NDEF message
+    in the list will be written, others are silently dropped.
 */
 void QNearFieldTarget::writeNdefMessages(const QList<QNdefMessage> &messages)
 {
