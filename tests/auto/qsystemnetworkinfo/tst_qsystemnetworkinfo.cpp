@@ -58,6 +58,7 @@ Q_DECLARE_METATYPE(QSystemNetworkInfo::NetworkMode);
  * \return \p true if the requested signal was received
  *         \p false on timeout
  */
+#ifdef TESTR
 static bool waitForSignal(QObject *obj, const char *signal, int timeout = 0)
 {
     QEventLoop loop;
@@ -73,7 +74,6 @@ static bool waitForSignal(QObject *obj, const char *signal, int timeout = 0)
     return timeoutSpy.isEmpty();
 }
 
-#ifdef TESTR
 class ChangeNetworkThread : public QThread
 {
 public:
@@ -195,9 +195,10 @@ void tst_QSystemNetworkInfo::tst_networkStatus_data()
 {
     tst_mode_data();
 }
+
 void tst_QSystemNetworkInfo::tst_networkStatus()
 {
-    QFETCH(QSystemNetworkInfo::NetworkMode, mode);
+//    QFETCH(QSystemNetworkInfo::NetworkMode, mode);
     QSystemNetworkInfo ni;
     QList<QSystemNetworkInfo::NetworkMode> modeList;
     modeList << QSystemNetworkInfo::GsmMode;
@@ -451,7 +452,7 @@ void tst_QSystemNetworkInfo::tst_interfaceForMode()
 {
     QFETCH(QSystemNetworkInfo::NetworkMode, mode);
     QSystemNetworkInfo ni;
-    QSystemNetworkInfo::NetworkStatus status = ni.networkStatus(mode);
+//    QSystemNetworkInfo::NetworkStatus status = ni.networkStatus(mode);
     if ((mode == ni.currentMode()) && (mode == QSystemNetworkInfo::WlanMode
                                        || mode == QSystemNetworkInfo::EthernetMode
                                        || mode == QSystemNetworkInfo::BluetoothMode)) {

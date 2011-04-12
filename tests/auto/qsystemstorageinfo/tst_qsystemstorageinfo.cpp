@@ -56,6 +56,7 @@ Q_DECLARE_METATYPE(QSystemStorageInfo::StorageState);
  * \return \p true if the requested signal was received
  *         \p false on timeout
  */
+#ifdef TESTR
 static bool waitForSignal(QObject *obj, const char *signal, int timeout = 0)
 {
     QEventLoop loop;
@@ -70,7 +71,7 @@ static bool waitForSignal(QObject *obj, const char *signal, int timeout = 0)
     loop.exec();
     return timeoutSpy.isEmpty();
 }
-
+#endif
 class tst_QSystemStorageInfo : public QObject
 {
     Q_OBJECT

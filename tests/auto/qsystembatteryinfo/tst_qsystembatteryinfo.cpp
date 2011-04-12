@@ -62,6 +62,7 @@ Q_DECLARE_METATYPE(QSystemBatteryInfo::EnergyUnit);
  * \return \p true if the requested signal was received
  *         \p false on timeout
  */
+#ifdef TESTR
 static bool waitForSignal(QObject *obj, const char *signal, int timeout = 0)
 {
     QEventLoop loop;
@@ -77,7 +78,6 @@ static bool waitForSignal(QObject *obj, const char *signal, int timeout = 0)
     return timeoutSpy.isEmpty();
 }
 
-#ifdef TESTR
 class ChangeBatteryThread : public QThread
 {
 public:

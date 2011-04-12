@@ -57,6 +57,8 @@ Q_DECLARE_METATYPE(QSystemInfo::Feature);
  * \return \p true if the requested signal was received
  *         \p false on timeout
  */
+#ifdef TESTR
+
 static bool waitForSignal(QObject *obj, const char *signal, int timeout = 0)
 {
     QEventLoop loop;
@@ -77,7 +79,7 @@ static bool waitForSignal(QObject *obj, const char *signal, int timeout = 0)
 //    QSystemInfoPrivate *s = getSystemInfoPrivate();
 //    s->setCurrentLanguage(lang);
 //}
-#ifdef QT_SIMULATOR
+
 
 class ChangeLanguageThread : public QThread
 {
@@ -92,6 +94,7 @@ public:
      QString lang;
 };
 #endif
+
 class tst_QSystemInfo : public QObject
 {
     Q_OBJECT
@@ -118,27 +121,27 @@ private slots:
 
     void tst_detailFeatures_data();
     void tst_detailFeatures();
-#ifdef QT_SIMULATOR
+#ifdef TESTR
     void currentLanguageChanged();
 
     void slotCurrentLanguageChanged(const QString &);
 #endif
 private:
-#ifdef QT_SIMULATOR
+#ifdef TESTR
     ChangeLanguageThread *changeLangThread;
 #endif
 };
 
 tst_QSystemInfo::tst_QSystemInfo()
 {
-#ifdef QT_SIMULATOR
+#ifdef TESTR
     changeLangThread = new ChangeLanguageThread();
 #endif
 }
 
 tst_QSystemInfo::~tst_QSystemInfo()
 {
-#ifdef QT_SIMULATOR
+#ifdef TESTR
     delete changeLangThread, changeLangThread = 0;
 #endif
 }
@@ -152,7 +155,7 @@ void tst_QSystemInfo::initTestCase()
 void tst_QSystemInfo::tst_currentLanguage()
 {
     QSystemInfo si;
-#ifdef QT_SIMULATOR
+#ifdef TESTR
     SystemInfoConnection sic;
     QSystemInfoPrivate *d = sic.systeminfoPrivate();
     d->setInitialData();
@@ -166,7 +169,7 @@ void tst_QSystemInfo::tst_currentLanguage()
 void tst_QSystemInfo::tst_availableLanguages()
 {
     QSystemInfo si;
-#ifdef QT_SIMULATOR
+#ifdef TESTR
     SystemInfoConnection sic;
     QSystemInfoPrivate *d = sic.systeminfoPrivate();
     d->setInitialData();
@@ -196,7 +199,7 @@ void tst_QSystemInfo::tst_versions()
         QFETCH(QSystemInfo::Version, version);
         QFETCH(QString, parameter);
         QSystemInfo si;
-#ifdef QT_SIMULATOR
+#ifdef TESTR
         SystemInfoConnection sic;
         QSystemInfoPrivate *d = sic.systeminfoPrivate();
         d->setInitialData();
@@ -210,7 +213,7 @@ void tst_QSystemInfo::tst_versions()
 void tst_QSystemInfo::tst_countryCode()
 {
     QSystemInfo si;
-#ifdef QT_SIMULATOR
+#ifdef TESTR
     SystemInfoConnection sic;
     QSystemInfoPrivate *d = sic.systeminfoPrivate();
     d->setInitialData();
@@ -244,7 +247,7 @@ void tst_QSystemInfo::tst_hasFeatures()
     {
         QFETCH(QSystemInfo::Feature, feature);
         QSystemInfo si;
-#ifdef QT_SIMULATOR
+#ifdef TESTR
         SystemInfoConnection sic;
         QSystemInfoPrivate *d = sic.systeminfoPrivate();
         d->setInitialData();
@@ -267,7 +270,7 @@ void tst_QSystemInfo::tst_detailFeatures()
 //        QVERIFY(!si.getDetailOfFeature(feature).isEmpty());
 //    }
 }
-#ifdef QT_SIMULATOR
+#ifdef TESTR
 
 void tst_QSystemInfo::currentLanguageChanged()
 {
