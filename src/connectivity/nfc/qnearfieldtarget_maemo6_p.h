@@ -73,8 +73,10 @@ public:
 
     void addSendCommand(const QDBusPendingReply<QByteArray> &reply,
                         const QNearFieldTarget::RequestId &id);
-    void addReadNdefMessages(const QDBusPendingReply<QList<QByteArray> > &reply);
-    void addWriteNdefMessages(const QDBusPendingReply<> &reply);
+    void addReadNdefMessages(const QDBusPendingReply<QList<QByteArray> > &reply,
+                             const QNearFieldTarget::RequestId &id);
+    void addWriteNdefMessages(const QDBusPendingReply<> &reply,
+                              const QNearFieldTarget::RequestId &id);
 
 private slots:
     void sendCommandFinished(QDBusPendingCallWatcher *watcher);
@@ -83,8 +85,8 @@ private slots:
 
 private:
     QMap<QDBusPendingCallWatcher *, QNearFieldTarget::RequestId> m_pendingCommands;
-    QList<QDBusPendingCallWatcher *> m_pendingNdefReads;
-    QList<QDBusPendingCallWatcher *> m_pendingNdefWrites;
+    QMap<QDBusPendingCallWatcher *, QNearFieldTarget::RequestId> m_pendingNdefReads;
+    QMap<QDBusPendingCallWatcher *, QNearFieldTarget::RequestId> m_pendingNdefWrites;
 };
 
 template <typename T>
@@ -134,21 +136,28 @@ public:
         return true;
     }
 
-    void readNdefMessages()
+    QNearFieldTarget::RequestId readNdefMessages()
     {
+        QNearFieldTarget::RequestId id(new QNearFieldTarget::RequestIdPrivate);
+
         QDBusPendingReply<QList<QByteArray> > reply = m_tag->ReadNDEFData();
-        m_callWatcher->addReadNdefMessages(reply);
+        m_callWatcher->addReadNdefMessages(reply, id);
+
+        return id;
     }
 
-    void writeNdefMessages(const QList<QNdefMessage> &messages)
+    QNearFieldTarget::RequestId writeNdefMessages(const QList<QNdefMessage> &messages)
     {
+        QNearFieldTarget::RequestId id(new QNearFieldTarget::RequestIdPrivate);
         QList<QByteArray> rawMessages;
 
         foreach (const QNdefMessage &message, messages)
             rawMessages.append(message.toByteArray());
 
         QDBusPendingReply<> reply = m_tag->WriteNDEFData(rawMessages);
-        m_callWatcher->addWriteNdefMessages(reply);
+        m_callWatcher->addWriteNdefMessages(reply, id);
+
+        return id;
     }
 
     QNearFieldTarget::RequestId sendCommand(const QByteArray &command)

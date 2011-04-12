@@ -69,8 +69,8 @@ public:
     quint8 version();
 
     bool hasNdefMessage();
-    void readNdefMessages();
-    void writeNdefMessages(const QList<QNdefMessage> &messages);
+    RequestId readNdefMessages();
+    RequestId writeNdefMessages(const QList<QNdefMessage> &messages);
 
     RequestId sendCommand(const QByteArray &command);
     RequestId sendCommands(const QList<QByteArray> &commands);

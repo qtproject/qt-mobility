@@ -101,6 +101,7 @@ private:
 
     QNearFieldManager *m_manager;
     TouchAction m_touchAction;
+    QNearFieldTarget::RequestId m_request;
 };
 
 #endif // MAINWINDOW_H

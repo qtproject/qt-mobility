@@ -229,14 +229,14 @@ void MainWindow::targetDetected(QNearFieldTarget *target)
         connect(target, SIGNAL(error(QNearFieldTarget::Error,QNearFieldTarget::RequestId)),
                 this, SLOT(targetError(QNearFieldTarget::Error,QNearFieldTarget::RequestId)));
 
-        target->readNdefMessages();
+        m_request = target->readNdefMessages();
         break;
     case WriteNdef:
         connect(target, SIGNAL(ndefMessagesWritten()), this, SLOT(ndefMessageWritten()));
         connect(target, SIGNAL(error(QNearFieldTarget::Error,QNearFieldTarget::RequestId)),
                 this, SLOT(targetError(QNearFieldTarget::Error,QNearFieldTarget::RequestId)));
 
-        target->writeNdefMessages(QList<QNdefMessage>() << ndefMessage());
+        m_request = target->writeNdefMessages(QList<QNdefMessage>() << ndefMessage());
         break;
     }
 }
@@ -267,12 +267,16 @@ void MainWindow::ndefMessageRead(const QNdefMessage &message)
 
     ui->status->setStyleSheet(QString());
     m_manager->setTargetAccessModes(QNearFieldManager::NoTargetAccess);
+    m_request = QNearFieldTarget::RequestId();
+    ui->statusBar->clearMessage();
 }
 
 void MainWindow::ndefMessageWritten()
 {
     ui->status->setStyleSheet(QString());
     m_manager->setTargetAccessModes(QNearFieldManager::NoTargetAccess);
+    m_request = QNearFieldTarget::RequestId();
+    ui->statusBar->clearMessage();
 }
 
 void MainWindow::targetError(QNearFieldTarget::Error error, const QNearFieldTarget::RequestId &id)
@@ -280,8 +284,42 @@ void MainWindow::targetError(QNearFieldTarget::Error error, const QNearFieldTarg
     Q_UNUSED(error);
     Q_UNUSED(id);
 
-    ui->status->setStyleSheet(QString());
-    m_manager->setTargetAccessModes(QNearFieldManager::NoTargetAccess);
+    if (m_request == id) {
+        switch (error) {
+        case QNearFieldTarget::NoError:
+            ui->statusBar->clearMessage();
+            break;
+        case QNearFieldTarget::UnsupportedError:
+            ui->statusBar->showMessage(tr("Unsupported tag"));
+            break;
+        case QNearFieldTarget::TargetOutOfRangeError:
+            ui->statusBar->showMessage(tr("Tag removed from field"));
+            break;
+        case QNearFieldTarget::NoResponseError:
+            ui->statusBar->showMessage(tr("No response from tag"));
+            break;
+        case QNearFieldTarget::ChecksumMismatchError:
+            ui->statusBar->showMessage(tr("Checksum mismatch"));
+            break;
+        case QNearFieldTarget::InvalidParametersError:
+            ui->statusBar->showMessage(tr("Invalid parameters"));
+            break;
+        case QNearFieldTarget::NdefReadError:
+            ui->statusBar->showMessage(tr("NDEF read error"));
+            break;
+        case QNearFieldTarget::NdefWriteError:
+            ui->statusBar->showMessage(tr("NDEF write error"));
+            break;
+        default:
+            ui->statusBar->showMessage(tr("Unknown error"));
+        }
+
+        ui->status->setStyleSheet(QString());
+        m_manager->setTargetAccessModes(QNearFieldManager::NoTargetAccess);
+        m_request = QNearFieldTarget::RequestId();
+    } else {
+        ui->statusBar->showMessage(tr("Unknown id"));
+    }
 }
 
 void MainWindow::clearMessage()

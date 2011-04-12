@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -274,7 +274,7 @@ bool QNearFieldTagImplCommon::_hasNdefMessage()
 }
 
 
-void QNearFieldTagImplCommon::_ndefMessages()
+QNearFieldTarget::RequestId QNearFieldTagImplCommon::_ndefMessages()
 {
     BEGIN
     NearFieldTagNdefRequest * readNdefRequest = new NearFieldTagNdefRequest(*this);
@@ -301,13 +301,15 @@ void QNearFieldTagImplCommon::_ndefMessages()
     }
     else
     {
-        EmitError(KErrNoMemory, QNearFieldTarget::RequestId());
+        EmitError(KErrNoMemory, requestId);
     }
     END
+
+    return requestId;
 }
 
 
-void QNearFieldTagImplCommon::_setNdefMessages(const QList<QNdefMessage> &messages)
+QNearFieldTarget::RequestId QNearFieldTagImplCommon::_setNdefMessages(const QList<QNdefMessage> &messages)
 {
     BEGIN
     NearFieldTagNdefRequest * writeNdefRequest = new NearFieldTagNdefRequest(*this);
@@ -335,9 +337,11 @@ void QNearFieldTagImplCommon::_setNdefMessages(const QList<QNdefMessage> &messag
     }
     else
     {
-        EmitError(KErrNoMemory, QNearFieldTarget::RequestId());
+        EmitError(KErrNoMemory, requestId);
     }
     END
+
+    return requestId;
 }
 
 
