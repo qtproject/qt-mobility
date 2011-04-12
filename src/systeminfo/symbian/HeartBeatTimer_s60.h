@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,43 +39,50 @@
 **
 ****************************************************************************/
 
-#ifndef TPSESSIONCHANNEL_H
-#define TPSESSIONCHANNEL_H
+#ifndef HEARTBEATTIMER_S60_H
+#define HEARTBEATTIMER_S60_H
 
+#include <e32base.h>
+#include <e32std.h>
+#include <e32property.h>
+#include <QList>
+#include "trace.h"
+#include <flextimer.h>
 #include <QObject>
-#include <TelepathyQt4/Types>
-#include <TelepathyQt4/Types>
-#include <TelepathyQt4/Message>
-#include <TelepathyQt4/PendingChannel>
-#include <TelepathyQt4/ChannelRequest>
-#include <TelepathyQt4/Channel>
-#include <TelepathyQt4/TextChannel>
-#include <TelepathyQt4/PendingReady>
-#include <TelepathyQt4/ContactManager>
-#include <TelepathyQt4/Connection>
 
-class TpSessionChannel : public QObject
+class MHeartBeatObserver
 {
-    Q_OBJECT
 public:
-    TpSessionChannel(Tp::TextChannelPtr);
-    TpSessionChannel(Tp::ConnectionPtr conn, const Tp::ContactPtr &contact);
-    Tp::PendingSendMessage *sendMessage(const QString &message);
-    QString peerId() const;
-signals:
-    void channelReady(TpSessionChannel *);
-    void channelDestroyed(TpSessionChannel *);
-    void messageReceived(const Tp::ReceivedMessage &, TpSessionChannel *);
-    void messageSent(const Tp::Message &, Tp::MessageSendingFlags, const QString &, TpSessionChannel *);
-public slots:
-    void onChannelCreated(Tp::PendingOperation *op);
-    void onChannelReady(Tp::PendingOperation *op);
-    void onChannelDestroyed(QObject *);
-    void onMessageReceived(const Tp::ReceivedMessage &);
-    void onMessageSent(const Tp::Message &, Tp::MessageSendingFlags, const QString &);
-public:
-    Tp::ContactPtr peerContact;
-    Tp::TextChannelPtr channel;
+    virtual void NotifyheartbeatReceived() = 0;
 };
 
-#endif // TPSESSIONCHANNEL_H
+class CHeartbeatTimer : public CFlexTimer
+{
+public:
+    static CHeartbeatTimer* NewL();
+    ~CHeartbeatTimer();
+
+    void addObserver(MHeartBeatObserver *observer);
+    void removeObserver(MHeartBeatObserver *observer);
+    void StartTimer( TTimeIntervalMicroSeconds aWindow, TTimeIntervalMicroSeconds aInterval);
+    void setsingleShot(bool asingleShot);
+    void StopTimer();
+    void ResetTimer();
+
+protected:  //from CActive
+    virtual void RunL();
+
+private:
+    void ConstructL();
+    CHeartbeatTimer(TInt aPriority);
+
+private:
+    bool m_singleShot;
+    TTimeIntervalMicroSeconds m_interval;
+    QList<MHeartBeatObserver *> m_observers;
+    /*The callback function which is called at the completion of flextimer server requests*/
+    //TCallBack m_callback;
+};
+
+
+#endif //HEARTBEATTIMER_S60_H

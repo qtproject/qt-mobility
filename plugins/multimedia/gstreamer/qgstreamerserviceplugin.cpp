@@ -322,7 +322,7 @@ void QGstreamerServicePlugin::updateSupportedMimeTypes() const
         GstPlugin *plugin = (GstPlugin *) (plugins->data);
         plugins = g_list_next (plugins);
 
-        if (plugin->flags & GST_PLUGIN_FLAG_BLACKLISTED)
+        if (plugin->flags & (1<<1)) //GST_PLUGIN_FLAG_BLACKLISTED
             continue;
 
         orig_features = features = gst_registry_get_feature_list_by_plugin(gst_registry_get_default (),

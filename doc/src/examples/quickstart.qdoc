@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -136,12 +136,10 @@ This can be achieved with a line such as the following:
     TARGET.CAPABILITY = CAPABILITY_A CABAPILITY_B
 \endcode
 
-CAPABILITY_A and CAPABILITY_B are place holders for the appropriate Symbian capabilities.
-A complete list of all Symbian capabilities and their availability to application
-developers can be found at \l {http://wiki.forum.nokia.com/index.php/Capabilities}{Forum Nokia Symbian capability documentation}.
-
-When developing on Harmattan we will need to list the required security tokens in the application's aegis manifest file.
-Please refer to the SDK documentation for the aegis file syntax and its integration with debian packaging.
+CAPABILITY_A and CAPABILITY_B are place holders for the appropriate Symbian
+capabilities. A complete list of all Symbian capabilities and their availability
+to application developers can be found in the
+\l {http://wiki.forum.nokia.com/index.php/Capabilities}{Forum Nokia Symbian capability documentation}.
 
 The subsequent table provides an overview of possibily required security tokens for each QtMobility library.
 Note that not all tokens are always required when using a particular API. The exact list depends
@@ -155,6 +153,14 @@ on which parts of an API is utilized by an application.
 \row
     \o \l {Bearer Management}
     \o ReadUserData NetworkServices (NetworkControl for QNetworkSession::stop())
+    \o No token requirements known at this stage.
+\row
+    \o \l {Connectivity}{Connectivity - NFC}
+    \o LocalServices
+    \o No token requirements known at this stage.
+\row
+    \o \l {Connectivity}{Connectivity - Bluetooth} 
+    \o LocalServices NetworkServices (ReadDeviceData WriteDeviceData for Pairing control)
     \o No token requirements known at this stage.
 \row
     \o \l {Contacts}
@@ -207,7 +213,7 @@ on which parts of an API is utilized by an application.
 \endtable
 
 The complete list of all Symbian capabilities and how they can be obtained can
-be found in the \l {http://wiki.forum.nokia.com/index.php/Capabilities}{Forum Nokia Symbian capability documentation}.
+be found at \l {http://wiki.forum.nokia.com/index.php/Capabilities}{Forum Nokia Symbian capability documentation}.
 
 And we're done.  If you are using the command line simply
 enter:
@@ -235,8 +241,6 @@ To make a release build and SIS package for a device run:
 
 For further details on how to build applications for
 Symbian see \l {http://qt.nokia.com/doc/4.6/symbian-with-qt-introduction.html}
-{The Symbian Platform - Introduction to Qt} and
-\l {http://qt.nokia.com/doc/4.6/symbian-with-qt-introduction.html}
 {The Symbian Platform - Introduction to Qt} and \l {http://wiki.forum.nokia.com/index.php/Category:Qt_for_Symbian}
 {Qt for Symbian}
 */

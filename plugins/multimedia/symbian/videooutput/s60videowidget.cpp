@@ -42,7 +42,6 @@
 #include "s60videowidget.h"
 #include "s60videooutpututils.h"
 
-#include <QtCore/QDebug>
 #include <QtCore/QVariant>
 #include <QtCore/QEvent>
 #include <QtGui/QApplication>
@@ -88,7 +87,7 @@ void S60VideoWidget::paintEvent(QPaintEvent *event)
     if (m_paintingEnabled && m_pixmap) {
         QPainter painter(this);
         if (m_pixmap->size() != m_contentRect.size())
-            qWarning() << "pixmap size does not match expected value";
+            qWarning("pixmap size does not match expected value");
         painter.drawPixmap(m_contentRect.topLeft(), *m_pixmap);
     }
 }
@@ -160,7 +159,7 @@ int S60VideoWidget::ordinalPosition() const
 void S60VideoWidget::updateOrdinalPosition()
 {
     if ((m_ordinalPosition != NullOrdinalPosition) && m_topWinId) {
-        if (WId wid = effectiveWinId()) {
+        if (WId wid = videoWinId()) {
             int topOrdinalPosition = m_topWinId->DrawableWindow()->OrdinalPosition();
             queueReactivateWindow();
             wid->DrawableWindow()->SetOrdinalPosition(m_ordinalPosition + topOrdinalPosition);
@@ -210,6 +209,8 @@ void S60VideoWidget::setPaintingEnabled(bool enabled)
         setAttribute(Qt::WA_NoSystemBackground, false);
         S60VideoOutputUtils::setReceiveNativePaintEvents(this, false);
         S60VideoOutputUtils::setNativePaintMode(this, Default);
+#else
+        S60VideoOutputUtils::setNativePaintMode(this, Default);
 #endif // !VIDEOOUTPUT_GRAPHICS_SURFACES
     } else {
 #ifndef VIDEOOUTPUT_GRAPHICS_SURFACES
@@ -217,6 +218,8 @@ void S60VideoWidget::setPaintingEnabled(bool enabled)
         setAttribute(Qt::WA_NoSystemBackground, true);
         S60VideoOutputUtils::setReceiveNativePaintEvents(this, true);
         S60VideoOutputUtils::setNativePaintMode(this, ZeroFill);
+#else
+        S60VideoOutputUtils::setNativePaintMode(this, Disable);
 #endif // !VIDEOOUTPUT_GRAPHICS_SURFACES
         winId(); // Create native window handle
     }

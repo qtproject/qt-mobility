@@ -651,6 +651,7 @@ find %{buildroot}%{_libdir}/qtmobility -type f -perm /u+x,g+x,o+x \( -false \
 %{_includedir}/QtConnectivity/QBluetoothTransferReply
 %{_includedir}/QtConnectivity/QBluetoothTransferRequest
 %{_includedir}/QtConnectivity/QBluetoothUuid
+%{_includedir}/QtConnectivity/QDeclarativeNdefRecord
 %{_includedir}/QtConnectivity/QL2capServer
 %{_includedir}/QtConnectivity/QL2capSocket
 %{_includedir}/QtConnectivity/QLlcpServer
@@ -886,6 +887,8 @@ find %{buildroot}%{_libdir}/qtmobility -type f -perm /u+x,g+x,o+x \( -false \
 %{_includedir}/QtMultimediaKit/QCameraImageCaptureControl
 %{_includedir}/QtMultimediaKit/QCameraImageProcessing
 %{_includedir}/QtMultimediaKit/QCameraImageProcessingControl
+%{_includedir}/QtMultimediaKit/QCameraCaptureBufferFormatControl
+%{_includedir}/QtMultimediaKit/QCameraCaptureDestinationControl
 %{_includedir}/QtMultimediaKit/QCameraLocksControl
 %{_includedir}/QtMultimediaKit/QCameraViewfinder
 %{_includedir}/QtMultimediaKit/QGraphicsVideoItem

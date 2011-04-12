@@ -45,9 +45,11 @@ Item {
     // value is read/write.
     property int value
     onValueChanged: { handle.x = 2 + (value - minimum) * slider.xMax / (maximum - minimum); }
-    property real maximum: 1	
+    property real maximum: 1
     property real minimum: 1
-    property int xMax: slider.width - handle.width - 4
+    property int xMax: slider.width - handle.width-2
+    property int xMin: 2
+
 
     Rectangle {
         anchors.fill: parent
@@ -60,11 +62,11 @@ Item {
 
     Rectangle {
         id: handle; smooth: true
-	//x: 2 + (value - minimum) * slider.xMax / (maximum - minimum)
-	
-        x: slider.width / 2 - handle.width / 2; 
-	
-	y: 2; width: 30; height: slider.height-4; radius: 6
+        //x: 2 + (value - minimum) * slider.xMax / (maximum - minimum)
+
+        x: slider.width / 2 - handle.width / 2;
+
+        y: 2; width: 30; height: slider.height-4; radius: 6
         gradient: Gradient {
             GradientStop { position: 0.0; color: "lightgray" }
             GradientStop { position: 1.0; color: "gray" }
@@ -72,8 +74,8 @@ Item {
 
         MouseArea {
             anchors.fill: parent; drag.target: parent
-            drag.axis: Drag.XAxis; drag.minimumX: 2; drag.maximumX: slider.xMax+2
-            onPositionChanged: { value = (maximum - minimum) * (handle.x-2) / slider.xMax + minimum; }
+            drag.axis: Drag.XAxis; drag.minimumX: slider.xMin; drag.maximumX: slider.xMax
+            onPositionChanged: { value = (maximum - minimum) * (handle.x-slider.xMin) / (slider.xMax - slider.xMin) + minimum; }
         }
     }
 }

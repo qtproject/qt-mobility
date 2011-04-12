@@ -99,11 +99,12 @@ EXPORT_C CContactLocalView::~CContactLocalView()
 
 	if (&iDb != NULL)
 		{
-        const_cast<CContactDatabase&>(iDb).RemoveObserver(*this);
+        const_cast<CContactDatabase&>(iDb).RemoveObserverV2(*iLocalExtension);
 		}
-		
+
 	delete iAsyncSorter; //Add this though we don't use it in local view any more
 	delete iViewCntMgr;
+    delete iLocalExtension;
 	}
 
 	
@@ -229,6 +230,7 @@ with the "default_data" of all ECOM plugins that support the required interface.
 void CContactLocalView::ConstructL(MContactViewObserver& aObserver,const RContactViewSortOrder& aSortOrder, TBool aUseNamedPlugin, const TDesC8& aSortPluginName)
 	{
 	CContactViewBase::ConstructL();
+	iLocalExtension = CContactLocalViewExtension::NewL(*this);
 	if(iFactory == NULL)
 		{
 		iFactory = const_cast<CContactDatabase&>(iDb).FactoryL();
@@ -262,7 +264,7 @@ void CContactLocalView::ConstructL(MContactViewObserver& aObserver,const RContac
 	
 	if (&iDb != NULL)
 		{
-        const_cast<CContactDatabase&>(iDb).AddObserverL(*this);
+        const_cast<CContactDatabase&>(iDb).AddObserverV2L(*iLocalExtension);
 		}
 	
 	//Doing the sort.
@@ -541,6 +543,38 @@ EXPORT_C void CContactLocalView::CContactLocalView_Reserved_2()
 	{
 	}
 
+/**
+Database version 2 event handler.
+
+@param aEvent the database event.
+*/
+void CContactLocalView::HandleDatabaseEventV2L(TContactDbObserverEventV2 aEvent)
+    {
+    switch(aEvent.iTypeV2)
+        {
+        case EContactDbObserverEventV2ContactsOrGroupsDeleted:
+            if (CContactLocalView::iState == CContactLocalView::EReady)
+                {
+                TInt count = aEvent.iAdditionalContactIds->Count();
+                for(TInt i=0; i<count; i++)
+                    {
+                    TContactViewEvent event;
+                    TContactItemId id = aEvent.iAdditionalContactIds->operator[](i);
+                    event.iInt = CContactLocalView::RemoveL(id);
+                    if (event.iInt != KErrNotFound)
+                        {
+                        event.iEventType = TContactViewEvent::EItemRemoved;
+                        event.iContactId = id;
+                        NotifyObservers(event);
+                        }
+                    }
+                }
+            break;
+        default:
+            HandleDatabaseEventL(STATIC_CAST(TContactDbObserverEvent, aEvent));
+            break;
+        }
+    }
 
 /**
 Database event handler.
@@ -893,3 +927,17 @@ EXPORT_C TAny* CContactLocalView::CContactViewBase_Reserved_1(TFunction aFunctio
 	return CContactViewBase::CContactViewBase_Reserved_1(aFunction,aParams);
 	}
 
+CContactLocalView::CContactLocalViewExtension* CContactLocalView::CContactLocalViewExtension::NewL(CContactLocalView& aLocalView)
+    {
+    return new (ELeave) CContactLocalViewExtension(aLocalView);
+    }
+
+void CContactLocalView::CContactLocalViewExtension::HandleDatabaseEventV2L(TContactDbObserverEventV2 aEvent)
+    {
+    iLocalView.HandleDatabaseEventV2L(aEvent);
+    }
+
+EXPORT_C MContactDbObserverV2& CContactLocalView::ObserverV2() const
+    {
+    return *iLocalExtension;
+    }

@@ -592,7 +592,6 @@ void tst_QGeoMapRectangleObject::contains()
 // public QGeoBoundingBox boundingBox() const
 void tst_QGeoMapRectangleObject::boundingBox()
 {
-
     QGeoCoordinate topLeft(2.0, -1.0, 0);
 
     QGeoCoordinate bottomRight(-2.0, 1.0, 0);
@@ -612,6 +611,30 @@ void tst_QGeoMapRectangleObject::boundingBox()
     QVERIFY2(object->boundingBox().width()>0,"no bounding box");
     QVERIFY2(object->boundingBox().height()>0,"no bounding box");
 
+    double width = object->boundingBox().width();
+    double height = object->boundingBox().height();
+
+    double top = object->boundingBox().topLeft().latitude();
+    double bottom = object->boundingBox().bottomRight().latitude();
+
+    QVERIFY(object->boundingBox().topLeft().longitude() < object->boundingBox().bottomRight().longitude());
+
+    QGeoCoordinate datelineTopLeft(2.0, 179.0, 0.0);
+    QGeoCoordinate datelineBottomRight(-2.0, -179.0, 0.0);
+    QGeoBoundingBox datelineBox(datelineTopLeft, datelineBottomRight);
+
+    object->setBounds(datelineBox);
+
+    QVERIFY2(object->boundingBox().width()!=0,"no bounding box");
+    QVERIFY2(object->boundingBox().height()!=0,"no bounding box");
+
+    QVERIFY(object->boundingBox().width() == width);
+    QVERIFY(object->boundingBox().height() == height);
+
+    QVERIFY(object->boundingBox().topLeft().latitude() == top);
+    QVERIFY(object->boundingBox().bottomRight().latitude() == bottom);
+
+    QVERIFY(object->boundingBox().topLeft().longitude() > object->boundingBox().bottomRight().longitude());
 }
 
 QTEST_MAIN(tst_QGeoMapRectangleObject)

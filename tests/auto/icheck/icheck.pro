@@ -5,6 +5,7 @@ TARGET=tst_icheck
 CONFIG+=testcase
 QT -= gui
 DEFINES += ICHECK_BUILD ICHECK_APP_BUILD
+include(../../../common.pri)
 
 wince*|symbian*: {
     addFiles.sources = testdata/*

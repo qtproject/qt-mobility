@@ -43,6 +43,7 @@
 #define QCAMERAEXPOSURE_H
 
 #include <qmediaobject.h>
+#include <qmediaenumdebug.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -169,5 +170,9 @@ QT_END_NAMESPACE
 Q_DECLARE_METATYPE(QCameraExposure::ExposureMode)
 Q_DECLARE_METATYPE(QCameraExposure::FlashModes)
 Q_DECLARE_METATYPE(QCameraExposure::MeteringMode)
+
+Q_MEDIA_ENUM_DEBUG(QCameraExposure, ExposureMode)
+Q_MEDIA_ENUM_DEBUG(QCameraExposure, FlashMode)
+Q_MEDIA_ENUM_DEBUG(QCameraExposure, MeteringMode)
 
 #endif // QCAMERAEXPOSURE_H

@@ -567,4 +567,24 @@ EXPORTS
 	_ZTVN10QtMobility25QBluetoothTransferManagerE @ 566 NONAME
 	_ZTVN10QtMobility30QBluetoothDeviceDiscoveryAgentE @ 567 NONAME
 	_ZTVN10QtMobility31QBluetoothServiceDiscoveryAgentE @ 568 NONAME
+	_ZNK10QtMobility17QNearFieldManager11isAvailableEv @ 569 NONAME
+	_ZN10QtMobility22QDeclarativeNdefRecord11qt_metacallEN11QMetaObject4CallEiPPv @ 570 NONAME
+	_ZN10QtMobility22QDeclarativeNdefRecord11qt_metacastEPKc @ 571 NONAME
+	_ZN10QtMobility22QDeclarativeNdefRecord13setRecordTypeERK7QString @ 572 NONAME
+	_ZN10QtMobility22QDeclarativeNdefRecord16staticMetaObjectE @ 573 NONAME DATA 16
+	_ZN10QtMobility22QDeclarativeNdefRecord17recordTypeChangedEv @ 574 NONAME
+	_ZN10QtMobility22QDeclarativeNdefRecord19getStaticMetaObjectEv @ 575 NONAME
+	_ZN10QtMobility22QDeclarativeNdefRecord9setRecordERKNS_11QNdefRecordE @ 576 NONAME
+	_ZN10QtMobility22QDeclarativeNdefRecordC1EP7QObject @ 577 NONAME
+	_ZN10QtMobility22QDeclarativeNdefRecordC1ERKNS_11QNdefRecordEP7QObject @ 578 NONAME
+	_ZN10QtMobility22QDeclarativeNdefRecordC2EP7QObject @ 579 NONAME
+	_ZN10QtMobility22QDeclarativeNdefRecordC2ERKNS_11QNdefRecordEP7QObject @ 580 NONAME
+	_ZN10QtMobility29qRegisterNdefRecordTypeHelperEPK11QMetaObjectNS_11QNdefRecord14TypeNameFormatERK10QByteArray @ 581 NONAME
+	_ZN10QtMobility38qNewDeclarativeNdefRecordForNdefRecordERKNS_11QNdefRecordE @ 582 NONAME
+	_ZNK10QtMobility22QDeclarativeNdefRecord10metaObjectEv @ 583 NONAME
+	_ZNK10QtMobility22QDeclarativeNdefRecord10recordTypeEv @ 584 NONAME
+	_ZNK10QtMobility22QDeclarativeNdefRecord6recordEv @ 585 NONAME
+	_ZTIN10QtMobility22QDeclarativeNdefRecordE @ 586 NONAME
+	_ZTVN10QtMobility22QDeclarativeNdefRecordE @ 587 NONAME
+	_ZN10QtMobility31QBluetoothServiceDiscoveryAgent8canceledEv @ 588 NONAME
 

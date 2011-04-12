@@ -456,6 +456,12 @@ void tst_QContactManager::addManagers()
     managers.removeAll("teststaticdummy");
     managers.removeAll("maliciousplugin");
 
+    // "internal" engines
+    managers.removeAll("social");
+    managers.removeAll("simcard");
+    managers.removeAll("com.nokia.messaging.contacts.engines.mail.contactslookup");
+
+
     foreach(QString mgr, managers) {
         QMap<QString, QString> params;
         QTest::newRow(QString("mgr='%1'").arg(mgr).toLatin1().constData()) << QContactManager::buildUri(mgr, params);

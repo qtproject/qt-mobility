@@ -108,6 +108,16 @@ isEmpty(QT_LIBINFIX):symbian {
             "    \"$${EPOCROOT}epoc32/release/$(PLATFORM)/$(TARGET)/QtConnectivity.dll\" - \"!:\\sys\\bin\\QtConnectivity.dll\"" \
             "ENDIF"
 
+        contains(QT_CONFIG, declarative): {
+            qtmobilitydeployment.sources += \
+            $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/declarative_connectivity.dll
+            pluginstubs += \
+            "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\declarative\\connectivity\\qmakepluginstubs\\declarative_connectivity.qtplugin\"  - \"!:\\resource\\qt\\imports\\QtMobility\\connectivity\\declarative_connectivity.qtplugin\""
+            qmldirs += \
+            "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\declarative\\connectivity\\qmldir\"  - \"!:\\resource\\qt\\imports\\QtMobility\\connectivity\\qmldir\""
+        }
+
+
         qtmobilitydeployment.pkg_postrules += connectivity
     }
 

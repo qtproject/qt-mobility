@@ -814,7 +814,7 @@ void CPplContactTable::DeleteMultipleContactsL(const CContactIdArray* aIdArray)
         }
     
     // The contact assigned to own card is being deleted, so set cached own card id to "not found"
-    if (aIdArray->Find(iOwnCardId) > 0)
+    if (aIdArray->Find(iOwnCardId) != KErrNotFound)
         {
         iOwnCardId = KErrNotFound;
         }

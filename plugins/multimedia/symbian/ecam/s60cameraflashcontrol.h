@@ -78,7 +78,7 @@ Q_SIGNALS: // QCameraExposureControl
     void flashReady(bool);
 */
 
-private Q_SLOTS: // Internal Slots
+private slots: // Internal Slots
 
     void resetAdvancedSetting();
 

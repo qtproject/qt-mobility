@@ -106,9 +106,10 @@ Q_DEFINE_LATIN1_CONSTANT(QLandmarkManager::Kmz, "Kmz");
     manager which may be instantiated without having to provide a name like so:
     \snippet doc/src/snippets/qtlandmarksdocsample/qtlandmarksdocsample.cpp Instantiate default QLandmarkManager
 
-    \section1 Retrieval operations
+    \section1 Retrieval Operations
+
     To retrieve a set of landmarks we provide may provide a QLandmarkFilter, QLandmarkSortOrder and limit and offset as necessary.
-    The QLandmarkFilter defines the criteria for selecting landmarks e.g. a QLandmarkCategoryFilter may be used
+    The QLandmarkFilter defines the criteria for selecting landmarks; for example, a QLandmarkCategoryFilter may be used
     to choose landmarks that belong to a certain category.  A QLandmarkSortOrder order defines how the results should
     be sorted.  (Note that if you wish to sort by distance, you should use a proxmity filter, see QLandmarkProximityFilter).
     The limit allows specification of the maximum number of items to
@@ -121,16 +122,17 @@ Q_DEFINE_LATIN1_CONSTANT(QLandmarkManager::Kmz, "Kmz");
     all landmarks, then the appropriate call is:
 
     \snippet doc/src/snippets/qtlandmarksdocsample/qtlandmarksdocsample.cpp Retrieve all landmarks synchronously
-    \bold {Note:} Landmark retrieval is potentially a long operation, the synchronous API provided by the manager
+    \note Landmark retrieval is potentially a long operation, the synchronous API provided by the manager
     is subject to blocking.  It is generally recommended that the QLandmarkFetchRequest be used because
     it behaves asynchronously.
 
     Categories may be retrieved in a similar manner:
     \snippet doc/src/snippets/qtlandmarksdocsample/qtlandmarksdocsample.cpp Retrieve categories synchronously simple
 
-    \section1 Saving and deleting
+    \section1 Saving and Deleting
+
     Saving and deleting landmarks and categories are fairly straightforward.  To add a new landmark or category
-    simply instantiate a QLandmark or QLandmarkCategory, set its data fields(e.g name, coordiante etc) and pass
+    simply instantiate a QLandmark or QLandmarkCategory, set its data fields (e.g., name, coordinate, etc.) and pass
     a pointer to the appropriate save operation.  For example:
 
     \snippet doc/src/snippets/qtlandmarksdocsample/qtlandmarksdocsample.cpp Add landmark synchronously simple
@@ -141,12 +143,17 @@ Q_DEFINE_LATIN1_CONSTANT(QLandmarkManager::Kmz, "Kmz");
     Removal of landmark may be done as follows:
     \snippet doc/src/snippets/qtlandmarksdocsample/qtlandmarksdocsample.cpp Remove landmark synchronously simple
 
-    \section1 Importing and exporting
-    Import and exporting are potentially long operations, to perform these operations asynchronously
+    \section1 Importing and Exporting
+
+    Import and export are potentially long operations, to perform these operations asynchronously
     see QLandmarkImportRequest and QLandmarkExportRequest.  The simplest way to perform an import
-    is to supply a filename while an export will need both a filename and format.
+    is to supply a file name while an export will need both a file name and format.
 
     \snippet doc/src/snippets/qtlandmarksdocsample/qtlandmarksdocsample.cpp ImportExport landmark simple
+
+    The formats supported for import and export can be found by calling the
+    supportedFormats() function with the type of operation to be performed,
+    either ImportOperation or ExportOperation.
 */
 
 /*!

@@ -60,6 +60,7 @@
 #include <QNetworkInterface>
 #include <QString>
 #include <QHostInfo>
+#include <QCryptographicHash>
 
 #include <locale.h>
 
@@ -2151,6 +2152,11 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoPrivate::currentPowerState()
     return state;
 }
 
+QSystemDeviceInfo::ThermalState QSystemDeviceInfoPrivate::currentThermalState()
+{
+    return QSystemDeviceInfo::UnknownThermal;
+}
+
 QString QSystemDeviceInfoPrivate::imei()
 {
     return "";
@@ -2350,18 +2356,20 @@ bool QSystemDeviceInfoPrivate::keypadLightOn(QSystemDeviceInfo::KeypadType type)
     return false;
 }
 
-QUuid QSystemDeviceInfoPrivate::uniqueDeviceID()
+QByteArray QSystemDeviceInfoPrivate::uniqueDeviceID()
 {
     CFStringRef uuidKey = CFSTR(kIOPlatformUUIDKey);
     io_service_t ioService = IOServiceGetMatchingService(kIOMasterPortDefault,
                                                          IOServiceMatching("IOPlatformExpertDevice"));
-
+    QCryptographicHash hash(QCryptographicHash::Sha1);
     if (ioService) {
         CFTypeRef cfStringKey = IORegistryEntryCreateCFProperty(ioService, uuidKey, kCFAllocatorDefault, 0);
 
-        return QUuid(stringFromCFString((const __CFString*)cfStringKey));
+        hash.addData(stringFromCFString((const __CFString*)cfStringKey).toLocal8Bit());
+        return hash.result().toHex();
     }
-    return QUuid(QString::number(gethostid()));
+    hash.addData(QString::number(gethostid()).toLocal8Bit());
+    return hash.result().toHex();
 }
 
 QSystemDeviceInfo::LockTypeFlags QSystemDeviceInfoPrivate::lockStatus()
@@ -2511,7 +2519,7 @@ QSystemBatteryInfo::BatteryStatus QSystemBatteryInfoPrivate::batteryStatus() con
 
 QSystemBatteryInfo::EnergyUnit QSystemBatteryInfoPrivate::energyMeasurementUnit()
 {
-    return QSystemBatteryInfo::UnitmWh;
+    return QSystemBatteryInfo::UnitmAh;
 }
 
 void QSystemBatteryInfoPrivate::getBatteryInfo()
@@ -2604,8 +2612,9 @@ void QSystemBatteryInfoPrivate::getBatteryInfo()
             currentVoltage = cVoltage;
         }
 
-        int amp = [[legacyDict objectForKey:@"Current"] intValue];
-        cEnergy = currentVoltage * amp / 1000;
+        int amp = /*[[legacyDict objectForKey:@"Current"] intValue];
+        capacity =*/ [[(NSDictionary*)batDoctionary objectForKey:@"Current"] intValue];
+        cEnergy = /*currentVoltage * */amp /*/ 1000*/;
         if (cEnergy != curChargeState ) {
             dischargeRate = cEnergy;
             Q_EMIT currentFlowChanged(dischargeRate);
@@ -2616,7 +2625,7 @@ void QSystemBatteryInfoPrivate::getBatteryInfo()
             cTime = 0;
         }
         if (cTime != timeToFull) {
-            timeToFull = cTime;
+            timeToFull = cTime * 60;
             Q_EMIT remainingChargingTimeChanged(timeToFull);
         }
         capacity = [[(NSDictionary*)batDoctionary objectForKey:@"MaxCapacity"] intValue];

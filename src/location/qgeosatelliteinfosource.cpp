@@ -234,6 +234,9 @@ void QGeoSatelliteInfoSourcePrivate::loadStaticPlugins(QHash<QString, QGeoPositi
 
     \warning On Windows CE it is not possible to detect if a device is GPS enabled.
     The default satellite source on a Windows CE device without GPS support will never provide any satellite data.
+
+    \warning On Symbian it is currently only possible to instantiate and use the satellite sources in the main thread
+    of the application.
 */
 
 /*!

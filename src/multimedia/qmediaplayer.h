@@ -46,6 +46,7 @@
 #include "qmediaserviceprovider.h"
 #include "qmediaobject.h"
 #include "qmediacontent.h"
+#include "qmediaenumdebug.h"
 
 #include <QtNetwork/qnetworkconfiguration.h>
 
@@ -78,6 +79,7 @@ class Q_MULTIMEDIA_EXPORT QMediaPlayer : public QMediaObject
     Q_PROPERTY(QString error READ errorString)
     Q_ENUMS(State)
     Q_ENUMS(MediaStatus)
+    Q_ENUMS(Error)
 
 public:
     enum State
@@ -212,6 +214,10 @@ QT_END_NAMESPACE
 Q_DECLARE_METATYPE(QMediaPlayer::State)
 Q_DECLARE_METATYPE(QMediaPlayer::MediaStatus)
 Q_DECLARE_METATYPE(QMediaPlayer::Error)
+
+Q_MEDIA_ENUM_DEBUG(QMediaPlayer, State)
+Q_MEDIA_ENUM_DEBUG(QMediaPlayer, MediaStatus)
+Q_MEDIA_ENUM_DEBUG(QMediaPlayer, Error)
 
 QT_END_HEADER
 

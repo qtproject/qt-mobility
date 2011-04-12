@@ -75,6 +75,13 @@ QVideoWidgetControlBackend::QVideoWidgetControlBackend(
     QBoxLayout *layout = new QVBoxLayout;
     layout->setMargin(0);
     layout->setSpacing(0);
+
+#ifdef Q_OS_SYMBIAN
+    // On some cases the flag is not reset automatically
+    // This would lead to viewfinder not being visible on Symbian
+    control->videoWidget()->setAttribute(Qt::WA_WState_ExplicitShowHide, false);
+#endif // Q_OS_SYMBIAN
+
     layout->addWidget(control->videoWidget());
 
     widget->setLayout(layout);
@@ -578,11 +585,12 @@ void QVideoWidgetPrivate::_q_dimensionsChanged()
 
 /*!
     \class QVideoWidget
-    
+
 
     \brief The QVideoWidget class provides a widget which presents video
     produced by a media object.
     \ingroup multimedia
+    \inmodule QtMultimediaKit
 
     Attaching a QVideoWidget to a QMediaObject allows it to display the
     video or image output of that media object.  A QVideoWidget is attached
@@ -725,7 +733,7 @@ void QVideoWidget::setFullScreen(bool fullScreen)
         flags |= Qt::Window;
         flags &= ~Qt::SubWindow;
         setWindowFlags(flags);
-        
+
         showFullScreen();
     } else {
         showNormal();

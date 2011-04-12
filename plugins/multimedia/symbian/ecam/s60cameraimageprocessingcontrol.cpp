@@ -52,8 +52,8 @@ S60CameraImageProcessingControl::S60CameraImageProcessingControl(QObject *parent
 
 S60CameraImageProcessingControl::S60CameraImageProcessingControl(S60ImageCaptureSession *session, QObject *parent) :
     QCameraImageProcessingControl(parent),
-    m_session(NULL),
-    m_advancedSettings(NULL)
+    m_session(0),
+    m_advancedSettings(0)
 {
     m_session = session;
     m_advancedSettings = m_session->advancedSettings();
@@ -61,7 +61,7 @@ S60CameraImageProcessingControl::S60CameraImageProcessingControl(S60ImageCapture
 
 S60CameraImageProcessingControl::~S60CameraImageProcessingControl()
 {
-    m_advancedSettings = NULL;
+    m_advancedSettings = 0;
 }
 
 void S60CameraImageProcessingControl::resetAdvancedSetting()

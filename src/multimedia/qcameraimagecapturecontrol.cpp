@@ -136,6 +136,29 @@ QCameraImageCaptureControl::~QCameraImageCaptureControl()
     has been captured and a \a preview is available.
 */
 
+/*!
+    \fn QCameraImageCaptureControl::imageMetadataAvailable(int id, QtMultimediaKit::MetaData key, const QVariant &value)
+
+    Signals that a metadata for an image with request \a id is available.
+    This signal is emitted for metadata \a value with a \a key listed in QtMultimediaKit::MetaData enum.
+
+    This signal should be emitted between imageExposed and imageSaved signals.
+*/
+
+/*!
+    \fn QCameraImageCaptureControl::imageMetadataAvailable(int id, const QString &key, const QVariant &value)
+
+    Signals that a metadata for an image with request \a id is available.
+    This signal is emitted for extended metadata \a value with a \a key not listed in QtMultimediaKit::MetaData enum.
+
+    This signal should be emitted between imageExposed and imageSaved signals.
+*/
+
+/*!
+    \fn QCameraImageCaptureControl::imageAvailable(int requestId, const QVideoFrame &buffer)
+
+    Signals that a captured \a buffer with a \a requestId is available.
+*/
 
 /*!
     \fn QCameraImageCaptureControl::imageSaved(int requestId, const QString &fileName)

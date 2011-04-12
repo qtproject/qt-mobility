@@ -59,6 +59,8 @@ QTM_BEGIN_NAMESPACE
   \brief The QOrganizerCollectionId class provides information that uniquely identifies
   a collection in a particular manager.
 
+  \inmodule QtOrganizer
+
   It consists of a manager URI which identifies the manager which manages the collection,
   and the id of the collection in that manager.
 
