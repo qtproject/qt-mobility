@@ -80,7 +80,7 @@ bool meegoals::doConnect(){
 }
 
 
-const QString meegoals::sensorName(){
+QString meegoals::sensorName() const{
     return "alssensor";
 }
 

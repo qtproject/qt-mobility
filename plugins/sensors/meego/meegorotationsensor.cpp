@@ -74,6 +74,6 @@ bool meegorotationsensor::doConnect(){
     return QObject::connect(m_sensorInterface, SIGNAL(frameAvailable(const QVector<XYZ>& )),this, SLOT(slotFrameAvailable(const QVector<XYZ>& )));
 }
 
-const QString meegorotationsensor::sensorName(){
+QString meegorotationsensor::sensorName() const{
     return "rotationsensor";
 }

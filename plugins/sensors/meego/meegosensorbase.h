@@ -70,7 +70,7 @@ protected:
     static const int KErrInUse;
 
     void setRanges(qreal correctionFactor=1);
-    virtual const QString sensorName()=0;
+    virtual QString sensorName() const=0;
 
     template<typename T>
     void initSensor(bool &initDone)
@@ -155,8 +155,8 @@ protected:
 
     AbstractSensorChannelInterface* m_sensorInterface;
     int m_bufferSize;
-    const int bufferSize();
-    virtual const qreal correctionFactor();
+    int bufferSize() const;
+    virtual qreal correctionFactor() const;
 
 private:
     static SensorManagerInterface* m_remoteSensorManager;

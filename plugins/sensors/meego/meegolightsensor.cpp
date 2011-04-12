@@ -64,6 +64,6 @@ bool meegolightsensor::doConnect(){
 }
 
 
-const QString meegolightsensor::sensorName(){
+QString meegolightsensor::sensorName() const{
     return "alssensor";
 }

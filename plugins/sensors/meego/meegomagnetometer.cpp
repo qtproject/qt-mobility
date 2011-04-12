@@ -91,8 +91,8 @@ bool meegomagnetometer::doConnect(){
      return QObject::connect(m_sensorInterface, SIGNAL(frameAvailable(const QVector<MagneticField>& )),this, SLOT(slotFrameAvailable(const QVector<MagneticField>& )));
 }
 
-const QString meegomagnetometer::sensorName(){
+QString meegomagnetometer::sensorName() const{
     return "magnetometersensor";
 }
 
-const qreal meegomagnetometer::correctionFactor(){return meegomagnetometer::NANO;}
+qreal meegomagnetometer::correctionFactor() const{return meegomagnetometer::NANO;}

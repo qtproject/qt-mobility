@@ -91,7 +91,7 @@ void meegosensorbase::start()
         int l = sensor()->outputRanges().size();
         if (l>1){
             if (currentRange != m_prevOutputRange){
-#ifdef Q_WS_MAEMO6
+#ifdef Q_WS_MAEMO_6
                 bool isOk = m_sensorInterface->setDataRangeIndex(currentRange); //NOTE THAT THE CHANGE MIGHT NOT SUCCEED, FIRST COME FIRST SERVED
                 if (!isOk) sensorError(KErrInUse);
                 else m_prevOutputRange = currentRange;
@@ -166,7 +166,7 @@ bool meegosensorbase::doConnectAfterCheck(){
 }
 
 
-const int meegosensorbase::bufferSize(){
+int meegosensorbase::bufferSize() const{
     QVariant bufferVariant = sensor()->property(BUFFER_SIZE);
     int bufferSize = bufferVariant.isValid()?bufferVariant.toInt():1;
     if (bufferSize==1) return 1;
@@ -183,5 +183,5 @@ const int meegosensorbase::bufferSize(){
     return bufferSize;
 }
 
-const qreal meegosensorbase::correctionFactor(){return 1;}
+qreal meegosensorbase::correctionFactor() const{return 1;}
 

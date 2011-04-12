@@ -58,21 +58,25 @@ meegoirproximitysensor::meegoirproximitysensor(QSensor *sensor)
     rangeMax = QFile::exists(RM680_PS)?255:1023;
 }
 
-
+#ifdef Q_WS_MAEMO_6
 void meegoirproximitysensor::slotDataAvailable(const Proximity& proximity){
     m_reading.setReflectance((float)proximity.reflectance()*100 / rangeMax);
     m_reading.setTimestamp(proximity.UnsignedData().timestamp_);
     newReadingAvailable();
 }
+#endif
 
 
 bool meegoirproximitysensor::doConnect(){
+#ifdef Q_WS_MAEMO_6
     return QObject::connect(m_sensorInterface, SIGNAL(reflectanceDataAvailable(const Proximity&)),
                             this, SLOT(slotDataAvailable(const Proximity&)));
+#endif
+    return false;
 }
 
 
-const QString meegoirproximitysensor::sensorName(){
+QString meegoirproximitysensor::sensorName() const{
     return "proximitysensor";
 }
 

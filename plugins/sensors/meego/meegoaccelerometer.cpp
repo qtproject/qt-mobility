@@ -78,9 +78,9 @@ bool meegoaccelerometer::doConnect(){
 }
 
 
-const QString meegoaccelerometer::sensorName(){
+QString meegoaccelerometer::sensorName() const{
     return "accelerometersensor";
 }
 
 
-const qreal meegoaccelerometer::correctionFactor(){return GRAVITY_EARTH_THOUSANDTH;}
+qreal meegoaccelerometer::correctionFactor() const{return GRAVITY_EARTH_THOUSANDTH;}

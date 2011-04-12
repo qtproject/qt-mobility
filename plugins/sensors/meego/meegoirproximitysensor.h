@@ -59,7 +59,7 @@ public:
     meegoirproximitysensor(QSensor *sensor);
 protected:
     virtual bool doConnect();
-    virtual const QString sensorName();
+    virtual QString sensorName() const;
 
 private:
     QIRProximityReading m_reading;
@@ -67,7 +67,9 @@ private:
     int rangeMax;
 
 private slots:
+#ifdef Q_WS_MAEMO_6
     void slotDataAvailable(const Proximity& proximity);
+#endif
 };
 
 #endif

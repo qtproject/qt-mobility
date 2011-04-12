@@ -75,7 +75,7 @@ bool meegoorientationsensor::doConnect(){
                             this, SLOT(slotDataAvailable(const Unsigned&)));
 }
 
-const QString meegoorientationsensor::sensorName(){
+QString meegoorientationsensor::sensorName() const{
     return "orientationsensor";
 }
 

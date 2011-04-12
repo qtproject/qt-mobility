@@ -71,7 +71,7 @@ bool meegocompass::doConnect(){
                             this, SLOT(slotDataAvailable(const Compass&)));
 }
 
-const QString meegocompass::sensorName(){
+QString meegocompass::sensorName() const{
     return "compasssensor";
 }
 

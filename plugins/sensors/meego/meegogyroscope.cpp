@@ -78,8 +78,8 @@ bool meegogyroscope::doConnect(){
     return QObject::connect(m_sensorInterface, SIGNAL(frameAvailable(const QVector<XYZ>& )),this, SLOT(slotFrameAvailable(const QVector<XYZ>& )));
 }
 
-const QString meegogyroscope::sensorName(){
+QString meegogyroscope::sensorName() const{
     return "gyroscopesensor";
 }
 
-const qreal meegogyroscope::correctionFactor(){return MILLI;}
+qreal meegogyroscope::correctionFactor() const{return MILLI;}
