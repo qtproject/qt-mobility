@@ -587,4 +587,10 @@ EXPORTS
 	_ZTIN10QtMobility22QDeclarativeNdefRecordE @ 586 NONAME
 	_ZTVN10QtMobility22QDeclarativeNdefRecordE @ 587 NONAME
 	_ZN10QtMobility31QBluetoothServiceDiscoveryAgent8canceledEv @ 588 NONAME
+	_ZN10QtMobility12QL2capServer11socketErrorENS_16QBluetoothSocket11SocketErrorE @ 589 NONAME
+	_ZN10QtMobility12QL2capServer12disconnectedEv @ 590 NONAME
+	_ZN10QtMobility12QL2capServer9connectedEv @ 591 NONAME
+	_ZN10QtMobility13QRfcommServer11socketErrorENS_16QBluetoothSocket11SocketErrorE @ 592 NONAME
+	_ZN10QtMobility13QRfcommServer12disconnectedEv @ 593 NONAME
+	_ZN10QtMobility13QRfcommServer9connectedEv @ 594 NONAME
 

@@ -637,4 +637,10 @@ EXPORTS
 	?tr@QDeclarativeNdefRecord@QtMobility@@SA?AVQString@@PBD0@Z @ 636 NONAME ; class QString QtMobility::QDeclarativeNdefRecord::tr(char const *, char const *)
 	?d_func@QDeclarativeNdefRecord@QtMobility@@AAEPAVQDeclarativeNdefRecordPrivate@2@XZ @ 637 NONAME ; class QtMobility::QDeclarativeNdefRecordPrivate * QtMobility::QDeclarativeNdefRecord::d_func(void)
 	?canceled@QBluetoothServiceDiscoveryAgent@QtMobility@@IAEXXZ @ 638 NONAME ; void QtMobility::QBluetoothServiceDiscoveryAgent::canceled(void)
+	?socketError@QRfcommServer@QtMobility@@AAEXW4SocketError@QBluetoothSocket@2@@Z @ 639 NONAME ; void QtMobility::QRfcommServer::socketError(enum QtMobility::QBluetoothSocket::SocketError)
+	?disconnected@QRfcommServer@QtMobility@@AAEXXZ @ 640 NONAME ; void QtMobility::QRfcommServer::disconnected(void)
+	?connected@QRfcommServer@QtMobility@@AAEXXZ @ 641 NONAME ; void QtMobility::QRfcommServer::connected(void)
+	?connected@QL2capServer@QtMobility@@AAEXXZ @ 642 NONAME ; void QtMobility::QL2capServer::connected(void)
+	?disconnected@QL2capServer@QtMobility@@AAEXXZ @ 643 NONAME ; void QtMobility::QL2capServer::disconnected(void)
+	?socketError@QL2capServer@QtMobility@@AAEXW4SocketError@QBluetoothSocket@2@@Z @ 644 NONAME ; void QtMobility::QL2capServer::socketError(enum QtMobility::QBluetoothSocket::SocketError)
 

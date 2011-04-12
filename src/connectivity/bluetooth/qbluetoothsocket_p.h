@@ -54,6 +54,7 @@
 #ifdef QTM_SYMBIAN_BLUETOOTH
 #include <es_sock.h>
 #include <bt_sock.h>
+#include <bttypes.h>
 #endif
 
 QT_FORWARD_DECLARE_CLASS(QSocketNotifier)
@@ -125,10 +126,11 @@ public:
     void startReceive();
     void startServerSideReceive();
     void receive();
-    void ensureBlankNativeSocket();
+    bool ensureBlankNativeSocket(QBluetoothSocket::SocketType type);
+    bool tryToSend();
 
     /* MBluetoothSocketNotifier virtual functions */
-    void HandleActivateBasebandEventNotifierCompleteL(TInt aErr, TBTBasebandEventNotification &aEventNotification);
+    void HandleActivateBasebandEventNotifierCompleteL(TInt aErr, TBTBasebandEventNotification& aEventNotification);
     void HandleAcceptCompleteL(TInt aErr);
     void HandleConnectCompleteL(TInt aErr);
     void HandleIoctlCompleteL(TInt aErr);
@@ -139,7 +141,6 @@ public:
 
 public:
     QPrivateLinearBuffer buffer;
-    QPrivateLinearBuffer txBuffer;
     int socket;
     QBluetoothSocket::SocketType socketType;
     QBluetoothSocket::SocketState state;
@@ -154,18 +155,19 @@ public:
 
 //    QByteArray rxBuffer;
 //    qint64 rxOffset;
-//    QByteArray txBuffer;
+    QByteArray txBuffer;
     QString errorString;
 
 #ifdef QTM_SYMBIAN_BLUETOOTH
     CBluetoothSocket *iSocket;
-    CBluetoothSocket *iBlankSocket;
     TPtr8 rxDescriptor;
     TPtrC8 txDescriptor;
     TSockXfrLength rxLength;
-    bool receiving;
     TInt recvMTU;
-    QByteArray txTempBuffer;
+    TInt txMTU;
+    char* bufPtr;
+    bool transmitting;
+    quint64 writeSize;
 #endif
 
     // private slots

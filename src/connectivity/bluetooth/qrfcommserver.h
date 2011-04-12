@@ -48,6 +48,7 @@
 
 #include <qbluetoothaddress.h>
 #include <qbluetooth.h>
+#include <qbluetoothsocket.h>
 
 QT_BEGIN_HEADER
 
@@ -90,6 +91,13 @@ protected:
 private:
     Q_DECLARE_PRIVATE(QRfcommServer)
 
+#ifdef QTM_SYMBIAN_BLUETOOTH
+private slots:
+    void connected();
+    void socketError(QBluetoothSocket::SocketError err);
+    void disconnected();
+#endif //QTM_SYMBIAN_BLUETOOTH    
+    
 #ifndef QT_NO_DBUS
     Q_PRIVATE_SLOT(d_func(), void _q_newConnection())
 #endif
