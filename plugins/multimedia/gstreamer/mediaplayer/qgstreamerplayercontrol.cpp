@@ -166,12 +166,7 @@ bool QGstreamerPlayerControl::isSeekable() const
 
 QMediaTimeRange QGstreamerPlayerControl::availablePlaybackRanges() const
 {
-    QMediaTimeRange ranges;
-
-    if (m_session->isSeekable())
-        ranges.addInterval(0, m_session->duration());
-
-    return ranges;
+    return m_session->availablePlaybackRanges();
 }
 
 qreal QGstreamerPlayerControl::playbackRate() const
@@ -702,4 +697,14 @@ void QGstreamerPlayerControl::handleResourcesLost()
 
     if (m_mediaStatus != oldMediaStatus)
         emit mediaStatusChanged(m_mediaStatus);
+}
+
+bool QGstreamerPlayerControl::isMediaDownloadEnabled() const
+{
+    return m_session->property("mediaDownloadEnabled").toBool();
+}
+
+void QGstreamerPlayerControl::setMediaDownloadEnabled(bool enabled)
+{
+    m_session->setProperty("mediaDownloadEnabled", enabled);
 }
