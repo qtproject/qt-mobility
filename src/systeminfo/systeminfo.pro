@@ -164,7 +164,6 @@ unix:!simulator {
             !embedded:!contains(QT_CONFIG,qpa): LIBS += -lX11 -lXrandr
         }
      }
-  }
 
     maemo5|maemo6: {
         #Qt GConf wrapper added here until a proper place is found for it.
