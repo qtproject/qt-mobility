@@ -191,6 +191,10 @@ void QBluetoothServiceDiscoveryAgentPrivate::AttributeRequestComplete(TSdpServRe
         m_serviceInfo.setDevice(discoveredDevices.at(0));
         discoveredServices.append(m_serviceInfo);
         m_serviceInfo = QBluetoothServiceInfo();
+        if (discoveredServices.last().isValid())
+            {
+            emit q->serviceDiscovered(discoveredServices.last());
+            }
         TRAPD(err, m_sdpAgent->NextRecordRequestL());
         if (err != KErrNone) {
             error = QBluetoothServiceDiscoveryAgent::UnknownError;
@@ -201,9 +205,6 @@ void QBluetoothServiceDiscoveryAgentPrivate::AttributeRequestComplete(TSdpServRe
         emit q->error(error);
     }
 
-    // emit found service.
-    if (discoveredServices.last().isValid())
-        emit q->serviceDiscovered(discoveredServices.last());
     
 }
 
