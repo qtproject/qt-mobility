@@ -82,6 +82,7 @@
 #endif
 
 #include <QDBusInterface>
+#ifdef Q_USE_BME
 extern "C" {
 #include <errno.h>
 #include <time.h>
@@ -89,6 +90,7 @@ extern "C" {
 #include "bme/bmemsg.h"
 #include "bme/em_isi.h"
 }
+#endif
 
 static QString sysinfodValueForKey(const QString& key)
 {
@@ -135,7 +137,7 @@ const QDBusArgument &operator>>(const QDBusArgument &argument, ProfileDataValue 
 QTM_BEGIN_NAMESPACE
 
 QSystemInfoPrivate::QSystemInfoPrivate(QSystemInfoLinuxCommonPrivate *parent)
- : QSystemInfoLinuxCommonPrivate(parent)
+    : QSystemInfoLinuxCommonPrivate(parent)
 {
 }
 
@@ -149,17 +151,17 @@ QStringList QSystemInfoPrivate::availableLanguages() const
 
 #if defined(Q_WS_MAEMO_6)
     QDir langDir("/etc/meego-supported-languages");
-    languages = langDir.entryList(QStringList() <<"??",QDir::Files | QDir::NoDotAndDotDot, QDir::Name);
-#else
+    languages = langDir.entryList(QStringList() << "??", QDir::Files | QDir::NoDotAndDotDot, QDir::Name);
+#else // Q_WS_MAEMO_6
     GConfItem languagesItem("/meegotouch/inputmethods/languages");
     const QStringList locales = languagesItem.value().toStringList();
 
-    foreach(const QString &locale, locales) {
-        languages << locale.mid(0,2);
-    }
+    foreach (const QString &locale, locales)
+        languages << locale.mid(0, 2);
+
     languages << currentLanguage();
     languages.removeDuplicates();
-#endif
+#endif // Q_WS_MAEMO_6
 
     return languages;
 }
@@ -167,109 +169,105 @@ QStringList QSystemInfoPrivate::availableLanguages() const
 QString QSystemInfoPrivate::currentLanguage() const
 {
 #if defined(Q_WS_MAEMO_6)
-    GConfItem langItem("/meegotouch/i18n/language");
-    QString lang = langItem.value().toString();
-    if(lang.count() > 2) lang = lang.left(2);
-    if (lang.isEmpty()) {
-        lang = QString::fromLocal8Bit(qgetenv("LANG")).left(2);
+    QString lang;
+    if (currentLang.isEmpty()) {
+        GConfItem langItem("/meegotouch/i18n/language");
+        lang = langItem.value().toString();
+        if (lang.count() > 2)
+            lang = lang.left(2);
+        if (lang.isEmpty())
+            lang = QString::fromLocal8Bit(qgetenv("LANG")).left(2);
+    } else {
+        lang = currentLang;
     }
-    return lang;
-#else
-    return QSystemInfoLinuxCommonPrivate::currentLanguage();
-#endif
-}
 
+    return lang;
+#else // Q_WS_MAEMO_6
+    return QSystemInfoLinuxCommonPrivate::currentLanguage();
+#endif // Q_WS_MAEMO_6
+}
 
 QString QSystemInfoPrivate::currentCountryCode() const
 {
 #if defined(Q_WS_MAEMO_6)
     GConfItem langItem("/meegotouch/i18n/region");
-     QString langCC = langItem.value().toString().section("_",1,1);
-     if (langCC.isEmpty()) {
-         langCC = QString::fromLocal8Bit(qgetenv("LANG")).section("_",1,1);
-         langCC = langCC.remove(".UTF-8",Qt::CaseSensitive);
-         return langCC;
-     }
-#endif
+    QString langCC = langItem.value().toString().section("_", 1, 1);
+    if (langCC.isEmpty()) {
+        langCC = QString::fromLocal8Bit(qgetenv("LANG")).section("_", 1, 1);
+        langCC = langCC.remove(".UTF-8", Qt::CaseSensitive);
+    }
+    return langCC;
+#else // Q_WS_MAEMO_6
     return QSystemInfoLinuxCommonPrivate::currentCountryCode();
+#endif // Q_WS_MAEMO_6
 }
 
-QString QSystemInfoPrivate::version(QSystemInfo::Version type,const QString &parameter)
+QString QSystemInfoPrivate::version(QSystemInfo::Version type, const QString &parameter)
 {
-    QString errorStr = "Not Available";
-
     switch(type) {
-    case QSystemInfo::Os :
-    {
-        QString sysinfodValue = sysinfodValueForKey("/device/sw-release-ver");//("/device/content-ver");
+    case QSystemInfo::Os: {
+        QString sysinfodValue = sysinfodValueForKey("/device/sw-release-ver"); //("/device/content-ver");
         if (!sysinfodValue.isEmpty()) {
-           sysinfodValue =  sysinfodValue.section("_",2,4);
+            sysinfodValue =  sysinfodValue.section("_", 2, 4);
             return sysinfodValue;
         }
     }
-        break;
-    case QSystemInfo::Firmware :
-    {
+
+    case QSystemInfo::Firmware: {
         QString sysinfodValue = sysinfodValueForKey("/device/sw-release-ver");
-        if (!sysinfodValue.isEmpty()) {
+        if (!sysinfodValue.isEmpty())
             return sysinfodValue;
-        }
     }
 
     default:
         return QSystemInfoLinuxCommonPrivate::version(type, parameter);
-        break;
     };
-    return errorStr;
 }
 
 bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
 {
     bool featureSupported = false;
+
     switch (feature) {
-    case QSystemInfo::SimFeature :
-        {
-            QSystemDeviceInfoPrivate d;
-            featureSupported = (d.simStatus() != QSystemDeviceInfo::SimNotAvailable);
-        }
+    case QSystemInfo::SimFeature: {
+        QSystemDeviceInfoPrivate d;
+        featureSupported = (d.simStatus() != QSystemDeviceInfo::SimNotAvailable);
         break;
-    case QSystemInfo::LocationFeature :
-        {
+    }
+
+    case QSystemInfo::LocationFeature: {
 #if defined(Q_WS_MAEMO_6)
-            GConfItem satellitePositioning("/system/osso/location/settings/satellitePositioning");
-            GConfItem networkPositioning("/system/osso/location/settings/networkPositioning");
+        GConfItem satellitePositioning("/system/osso/location/settings/satellitePositioning");
+        GConfItem networkPositioning("/system/osso/location/settings/networkPositioning");
 
-            bool satellitePositioningAvailable = satellitePositioning.value(false).toBool();
-            bool networkPositioningAvailable   = networkPositioning.value(false).toBool();
+        bool satellitePositioningAvailable = satellitePositioning.value(false).toBool();
+        bool networkPositioningAvailable = networkPositioning.value(false).toBool();
 
-            featureSupported = (satellitePositioningAvailable || networkPositioningAvailable);
-#else /* Maemo 5 */
-            GConfItem locationValues("/system/nokia/location");
-            const QStringList locationKeys = locationValues.listEntries();
-            if(locationKeys.count()) {
-                featureSupported = true;
-            }
-#endif /* Maemo 5 */
-        }
+        featureSupported = (satellitePositioningAvailable || networkPositioningAvailable);
+#else // Q_WS_MAEMO_6
+        GConfItem locationValues("/system/nokia/location");
+        const QStringList locationKeys = locationValues.listEntries();
+        if (locationKeys.count())
+            featureSupported = true;
+#endif // Q_WS_MAEMO_6
         break;
-    case QSystemInfo::HapticsFeature:
-        {
-           // if(halIsAvailable) {
-                QHalInterface iface;
-                const QStringList touchSupport =
-                        iface.findDeviceByCapability("input.touchpad");
-                if(touchSupport.count()) {
-                    featureSupported = true;
-                } else {
-                    featureSupported = false;
-                }
-            }
-      //  }
+    }
+
+    case QSystemInfo::HapticsFeature: {
+        QHalInterface iface;
+        const QStringList touchSupport(iface.findDeviceByCapability("input.touchpad"));
+        if (touchSupport.count())
+            featureSupported = true;
+        else
+            featureSupported = false;
         break;
+    }
+
     default:
         featureSupported = QSystemInfoLinuxCommonPrivate::hasFeatureSupported(feature);
         break;
     };
+
     return featureSupported;
 }
 
@@ -1960,6 +1958,7 @@ void QSystemScreenSaverPrivate::setScreenSaverInhibited(bool on)
 }
 
 
+#ifdef Q_USE_BME
 ////////////
 // from QmSystem remove if/when QmSystem can be a dependency.
 
@@ -2220,12 +2219,14 @@ private:
     QScopedPointer<EmIpc> em_ipc_;
     QScopedPointer<QSocketNotifier> notifier_;
 };
-
+#endif
 
 QSystemBatteryInfoPrivate::QSystemBatteryInfoPrivate(QSystemBatteryInfoLinuxCommonPrivate *parent)
-    : QSystemBatteryInfoLinuxCommonPrivate(parent),
-      emIpc(new EmIpc()),
+    : QSystemBatteryInfoLinuxCommonPrivate(parent)
+#ifdef Q_USE_BME
+      ,emIpc(new EmIpc()),
       emEvents(new EmEvents())
+#endif
 {
 #if !defined(QT_NO_DBUS)
     QHalInterface iface;
@@ -2287,20 +2288,25 @@ void QSystemBatteryInfoPrivate::halChangedMaemo(int count,QVariantList map)
 
 void QSystemBatteryInfoPrivate::connectNotify(const char *signal)
 {
+#ifdef Q_USE_BME
     if (QLatin1String(signal) ==
             QLatin1String(QMetaObject::normalizedSignature(SIGNAL(currentFlowChanged(int))))) {
         startMeasurements();
     }
+#endif
 }
 
 void QSystemBatteryInfoPrivate::disconnectNotify(const char *signal)
 {
+#ifdef Q_USE_BME
     if (QLatin1String(signal) ==
             QLatin1String(QMetaObject::normalizedSignature(SIGNAL(currentFlowChanged(int))))) {
         stopMeasurements();
     }
+#endif
 }
 
+#ifdef Q_USE_BME
 void QSystemBatteryInfoPrivate::startMeasurements()
 {
     emCurrentMeasurements.reset(new EmCurrentMeasurement(2));//every 1 second
@@ -2334,9 +2340,11 @@ void QSystemBatteryInfoPrivate::onMeasurement(int)
     rc = emCurrentMeasurements->measure(current);
     Q_EMIT currentFlowChanged(current);
 }
+#endif
 
 int QSystemBatteryInfoPrivate::currentFlow() const
 {
+#ifdef Q_USE_BME
     QDateTime now(QDateTime::currentDateTime());
 
     if (!isDataActual || now >= cacheExpire) {
@@ -2366,6 +2374,8 @@ int QSystemBatteryInfoPrivate::currentFlow() const
     }
 
     return bmeStat[BATTERY_CURRENT];
+#endif
+    return 0;
 }
 
 

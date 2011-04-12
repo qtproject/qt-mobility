@@ -175,42 +175,56 @@ static struct fb_var_screeninfo* allocFrameBufferInfo(int screen)
 
 QTM_BEGIN_NAMESPACE
 
-QSystemInfoLinuxCommonPrivate::QSystemInfoLinuxCommonPrivate(QObject *parent) : QObject(parent)
+QSystemInfoLinuxCommonPrivate::QSystemInfoLinuxCommonPrivate(QObject *parent)
+    : QObject(parent)
+    , langTimer(0)
 {
-    halIsAvailable = halAvailable();
-    langCached = currentLanguage();
 }
 
 QSystemInfoLinuxCommonPrivate::~QSystemInfoLinuxCommonPrivate()
 {
 }
 
-void QSystemInfoLinuxCommonPrivate::startLanguagePolling()
+void QSystemInfoLinuxCommonPrivate::connectNotify(const char *signal)
 {
-    QString checkLang = QString::fromLocal8Bit(qgetenv("LANG"));
-    if (langCached.isEmpty()) {
-        currentLanguage();
+    if (QLatin1String(signal) == SIGNAL(currentLanguageChanged(QString))) {
+        if (!langTimer) {
+            currentLang = currentLanguage();
+            langTimer = new QTimer(this);
+            connect(langTimer, SIGNAL(timeout()), this, SLOT(pollCurrentLanguage()));
+            langTimer->start(5000);
+        }
     }
-    checkLang = checkLang.left(2);
-    if (checkLang != langCached) {
-        emit currentLanguageChanged(checkLang);
-        langCached = checkLang;
+}
+
+void QSystemInfoLinuxCommonPrivate::disconnectNotify(const char *signal)
+{
+    if (QLatin1String(signal) == SIGNAL(currentLanguageChanged(QString))) {
+        currentLang.clear();
+        langTimer->stop();
     }
-    langTimer = new QTimer(this);
-    QTimer::singleShot(5000, this, SLOT(startLanguagePolling()));
+}
+
+void QSystemInfoLinuxCommonPrivate::pollCurrentLanguage()
+{
+    QString oldLang = currentLang;
+    currentLang = currentLanguage();
+    if (oldLang != currentLang)
+        Q_EMIT currentLanguageChanged(currentLang);
 }
 
 QString QSystemInfoLinuxCommonPrivate::currentLanguage() const
 {
     QString lang;
-    if (langCached.isEmpty()) {
-        lang  = QLocale::system().name().left(2);
-        if (lang.isEmpty() || lang == QLatin1String("C")) {
+
+    if (currentLang.isEmpty()) {
+        lang = QLocale::system().name().left(2);
+        if (lang.isEmpty() || lang == QLatin1String("C"))
             lang = QLatin1String("en");
-        }
     } else {
-        lang = langCached;
+        lang = currentLang;
     }
+
     return lang;
 }
 
@@ -228,323 +242,304 @@ bool QSystemInfoLinuxCommonPrivate::fmTransmitterAvailable()
         memset(&capability, 0, sizeof(struct v4l2_capability));
 
         if (-1 != (fd = open(device, O_RDWR)) &&  (-1 != ioctl(fd, VIDIOC_QUERYCAP, &capability))) {
-            if ((capability.capabilities & (V4L2_CAP_RADIO | V4L2_CAP_MODULATOR)) ==
-                    (V4L2_CAP_RADIO | V4L2_CAP_MODULATOR)) {
+            if ((capability.capabilities & (V4L2_CAP_RADIO | V4L2_CAP_MODULATOR))
+                == (V4L2_CAP_RADIO | V4L2_CAP_MODULATOR)) {
                 available = true;
             }
         }
 
         if (fd != -1) {
-            close(fd), fd = -1;
+            close(fd);
+            fd = -1;
         }
     }
-#endif
+#endif // __LINUX_VIDEODEV2_H
     return available;
 }
 
 bool QSystemInfoLinuxCommonPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
 {
 #if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5) && defined(UDEV_SUPPORTED)
-     QUdevService udevService;
+    QUdevService udevService;
 #endif
-     bool featureSupported = false;
-     switch (feature) {
-     case QSystemInfo::BluetoothFeature :
-         {
+
+    bool featureSupported = false;
+    switch (feature) {
+    case QSystemInfo::BluetoothFeature: {
 #if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5) && defined(UDEV_SUPPORTED)
-             return udevService.isSubsystemAvailable(UDEV_SUBSYSTEM_BLUETOOTH);
+        return udevService.isSubsystemAvailable(UDEV_SUBSYSTEM_BLUETOOTH);
 #endif
-             const QString sysPath = "/sys/class/bluetooth/";
-             const QDir sysDir(sysPath);
-             QStringList filters;
-             filters << "*";
-             const QStringList sysList = sysDir.entryList( filters ,QDir::Dirs | QDir::NoDotAndDotDot, QDir::Name);
-             foreach (const QString &dir, sysList) {
-                 const QFileInfo btFile(sysPath + dir+"/address");
-                 if (btFile.exists()) {
-                     return true;
-                 }
-             }
-         }
-     break;
-     case QSystemInfo::CameraFeature :
-         {
+        const QString sysPath("/sys/class/bluetooth/");
+        const QDir sysDir(sysPath);
+        QStringList filters;
+        filters << "*";
+        const QStringList sysList = sysDir.entryList(filters, QDir::Dirs | QDir::NoDotAndDotDot, QDir::Name);
+        foreach (const QString &dir, sysList) {
+            const QFileInfo btFile(sysPath + dir + "/address");
+            if (btFile.exists())
+                return true;
+        }
+        break;
+    }
+
+    case QSystemInfo::CameraFeature: {
 #if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5) && defined(UDEV_SUPPORTED)
-             return udevService.isPropertyAvailable(UDEV_PROPERTY_V4L_CAP, "*:capture:*");
-#endif
- #if !defined(QT_NO_DBUS)
-             featureSupported = hasHalUsbFeature(0x06); // image
-             if (featureSupported)
-                 return featureSupported;
- #endif
-             featureSupported = hasSysFeature("video");
-         }
-         break;
-     case QSystemInfo::FmradioFeature :
-         {
-#if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5) && defined(UDEV_SUPPORTED)
-             return udevService.isPropertyAvailable(UDEV_PROPERTY_V4L_CAP, "*:radio:*");
-#endif
-             const QString sysPath = "/sys/class/video4linux/";
-             const QDir sysDir(sysPath);
-             QStringList filters;
-             filters << "*";
-             QStringList sysList = sysDir.entryList( filters ,QDir::Dirs, QDir::Name);
-             foreach (const QString &dir, sysList) {
-                if (dir.contains("radio")) {
-                    featureSupported = true;
-                }
-            }
-         }
-         break;
-     case QSystemInfo::IrFeature :
-         {
-#if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5) && defined(UDEV_SUPPORTED)
-         return udevService.isPropertyAvailable(UDEV_PROPERTY_DRIVER, "*irda*");
+        return udevService.isPropertyAvailable(UDEV_PROPERTY_V4L_CAP, "*:capture:*");
 #endif
  #if !defined(QT_NO_DBUS)
-         featureSupported = hasHalUsbFeature(0xFE);
-         if (featureSupported)
-             return featureSupported;
- #endif
-         featureSupported = hasSysFeature("irda"); //?
-     }
-         break;
-     case QSystemInfo::LedFeature :
-         {
+        featureSupported = hasHalUsbFeature(0x06); // image
+        if (featureSupported)
+            return featureSupported;
+ #endif // QT_NO_DBUS
+        featureSupported = hasSysFeature("video");
+        break;
+    }
+
+    case QSystemInfo::FmradioFeature: {
 #if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5) && defined(UDEV_SUPPORTED)
-             return udevService.isSubsystemAvailable(UDEV_SUBSYSTEM_LEDS);
+        return udevService.isPropertyAvailable(UDEV_PROPERTY_V4L_CAP, "*:radio:*");
 #endif
-             featureSupported = hasSysFeature("led"); //?
-         }
-         break;
-     case QSystemInfo::MemcardFeature :
-         {
+        const QString sysPath("/sys/class/video4linux/");
+        const QDir sysDir(sysPath);
+        QStringList filters;
+        filters << "*";
+        QStringList sysList = sysDir.entryList(filters, QDir::Dirs, QDir::Name);
+        foreach (const QString &dir, sysList) {
+            if (dir.contains("radio"))
+                featureSupported = true;
+        }
+        break;
+    }
+
+    case QSystemInfo::IrFeature: {
 #if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5) && defined(UDEV_SUPPORTED)
-         bool ok = udevService.isSubsystemAvailable(UDEV_SUBSYSTEM_MEMCARD);
-         if (!ok) {
+        return udevService.isPropertyAvailable(UDEV_PROPERTY_DRIVER, "*irda*");
+#endif
+#if !defined(QT_NO_DBUS)
+        featureSupported = hasHalUsbFeature(0xFE);
+        if (featureSupported)
+            return featureSupported;
+#endif
+        featureSupported = hasSysFeature("irda"); //?
+        break;
+    }
+
+    case QSystemInfo::LedFeature: {
+#if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5) && defined(UDEV_SUPPORTED)
+        return udevService.isSubsystemAvailable(UDEV_SUBSYSTEM_LEDS);
+#endif
+        featureSupported = hasSysFeature("led"); //?
+        break;
+    }
+
+    case QSystemInfo::MemcardFeature: {
+#if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5) && defined(UDEV_SUPPORTED)
+        bool ok = udevService.isSubsystemAvailable(UDEV_SUBSYSTEM_MEMCARD);
+        if (!ok) {
 #if !defined(QT_NO_DBUS)
 #if !defined(QT_NO_UDISKS)
-             // try harder
-             //this only works when a drive is in
-             if (udisksAvailable()) {
-                 QUDisksInterface udisksIface;
-                 foreach (const QDBusObjectPath &device,udisksIface.enumerateDevices() ) {
-                     QUDisksDeviceInterface devIface(device.path());
-                     if (devIface.deviceIsDrive()) {
-                         if (devIface.driveMedia().contains("flash")) {
-                             return true;
-                         }
-                         // just guess
-                         if (devIface.driveCanDetach() &&
-                                 devIface.deviceIsRemovable()
-                                 && !devIface.driveIsMediaEjectable()) {
-                             return true;
-                         }
-                     }
-                 }
-             }
-#endif
-#endif
-         }
-         return ok;
-#endif
- #if !defined(QT_NO_DBUS)
-             QHalInterface iface;
-             if (iface.isValid()) {
-                 QHalInterface halIface;
-                 const QStringList halDevices = halIface.findDeviceByCapability("mmc_host");
-                 foreach (const QString &device, halDevices) {
-                     QHalDeviceInterface ifaceDevice(device);
-                     if (ifaceDevice.isValid()) {
-                         if (ifaceDevice.getPropertyString("info.subsystem") == "mmc_host") {
-                             return true;
-                         }
-                         if (ifaceDevice.getPropertyBool("storage.removable")) {
-                             return true;
-                         }
-                     }
-                 }
-             }
- #endif
-         }
-         break;
-     case QSystemInfo::UsbFeature :
-         {
-#if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5) && defined(UDEV_SUPPORTED)
-             if (udevService.isPropertyAvailable(UDEV_PROPERTY_DRIVER, UDEV_DRIVER_MUSB))
-                 return true;
-             if(udevService.isPropertyAvailable(UDEV_PROPERTY_DRIVER, UDEV_DRIVER_USB))
-                 return true;
-             if(udevService.isPropertyAvailable(UDEV_PROPERTY_INTERFACE, "usb*"))
-                 return true;
-#endif
- #if !defined(QT_NO_DBUS)
-         featureSupported = hasHalDeviceFeature("usb");
-         if (featureSupported)
-             return featureSupported;
- #endif
-             featureSupported = hasSysFeature("usb_host");
-         }
-         break;
-     case QSystemInfo::VibFeature :
-#if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5) && defined(UDEV_SUPPORTED)
-         if (udevService.isPropertyAvailable(UDEV_PROPERTY_NAME, "*vibra*"))
-            return true;
-         if(udevService.isPropertyAvailable(UDEV_PROPERTY_NAME, "*Vibra*"))
-         return true;
-#endif
- #if !defined(QT_NO_DBUS)
-         if (hasHalDeviceFeature("vibrator") || hasHalDeviceFeature("vib")) {
-             return true;
-     }
-#endif
-         break;
-     case QSystemInfo::WlanFeature :
-         {
-#if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5) && defined(UDEV_SUPPORTED)
-             return udevService.isSubsystemAvailable(UDEV_SUBSYSTEM_WLAN);
-#endif
- #if !defined(QT_NO_DBUS)
-             QHalInterface iface;
-             if (iface.isValid()) {
-                 const QStringList list = iface.findDeviceByCapability("net.80211");
-                 if (!list.isEmpty()) {
-                     featureSupported = true;
-                     break;
-                 }
-             }
- #endif
-             featureSupported = hasSysFeature("80211");
-         }
-         break;
-     case QSystemInfo::SimFeature :
-         {
-#if !defined(QT_NO_CONNMAN)
- if (ofonoAvailable()) {
-     QOfonoManagerInterface ofonoManager(this);
-     QString modempath = ofonoManager.currentModem().path();
-     if (!modempath.isEmpty()) {
-         QOfonoSimInterface simInterface(modempath,this);
-         return simInterface.isValid();
-     }
- }
-#endif
+            // try harder
+            //this only works when a drive is in
+            if (udisksAvailable()) {
+                QUDisksInterface udisksIface;
+                foreach (const QDBusObjectPath &device, udisksIface.enumerateDevices() ) {
+                    QUDisksDeviceInterface devIface(device.path());
+                    if (devIface.deviceIsDrive()) {
+                        if (devIface.driveMedia().contains("flash"))
+                            return true;
 
-         }
-         break;
-     case QSystemInfo::LocationFeature :
-#if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5) && defined(UDEV_SUPPORTED)
-             return udevService.isPropertyAvailable(UDEV_PROPERTY_DRIVER, "*gps*");
+                        // just guess
+                        if (devIface.driveCanDetach() && devIface.deviceIsRemovable() && !devIface.driveIsMediaEjectable())
+                            return true;
+                    }
+                }
+            }
+#endif // QT_NO_UDISKS
+#endif // QT_NO_DBUS
+        }
+        return ok;
 #endif
- #if !defined(QT_NO_DBUS)
-         featureSupported = hasHalDeviceFeature("gps"); //might not always be true
-         if (featureSupported)
-             return featureSupported;
-
- #endif
-         break;
-     case QSystemInfo::VideoOutFeature :
-         {
-#if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5) && defined(UDEV_SUPPORTED)
-             return udevService.isPropertyAvailable(UDEV_PROPERTY_V4L_CAP, "*:video_output:*");
-#endif
-             const QString sysPath = "/sys/class/video4linux/";
-             const QDir sysDir(sysPath);
-             QStringList filters;
-             filters << "*";
-             const QStringList sysList = sysDir.entryList( filters ,QDir::Dirs, QDir::Name);
-             if (sysList.contains("video")) {
-                 featureSupported = true;
-             }
-         }
-         break;
-     case QSystemInfo::HapticsFeature:
-
-         break;
-     case QSystemInfo::FmTransmitterFeature:
-         featureSupported = fmTransmitterAvailable();
-         break;
-     default:
-         featureSupported = false;
-         break;
-     };
-     return featureSupported;
- }
-
- #if !defined(QT_NO_DBUS)
- bool QSystemInfoLinuxCommonPrivate::hasHalDeviceFeature(const QString &param)
- {
-     QHalInterface halIface;
-     const QStringList halDevices = halIface.getAllDevices();
-     foreach (const QString &device, halDevices) {
-         if (device.contains(param)) {
-             return true;
-         }
-     }
-     return false;
- }
-
- bool QSystemInfoLinuxCommonPrivate::hasHalUsbFeature(qint32 usbClass)
- {
-     QHalInterface halIface;
-      const QStringList halDevices = halIface.findDeviceByCapability("usb_device");
-      foreach (const QString &device, halDevices) {
-         QHalDeviceInterface ifaceDevice(device);
-         if (ifaceDevice.isValid()) {
-             if (ifaceDevice.getPropertyString("info.subsystem") == "usb_device") {
-                 if (ifaceDevice.getPropertyInt("usb.interface.class") == usbClass) {
-                     return true;
-                 }
-             }
-         }
-     }
-     return false;
- }
- #endif
-
- QString QSystemInfoLinuxCommonPrivate::version(QSystemInfo::Version type,
-                                                const QString &parameter)
- {
-     QString errorStr = QLatin1String("Not Available");
-
-     bool useDate = false;
-     if (parameter == QLatin1String("versionDate")) {
-         useDate = true;
-     }
-
-     switch(type) {
-     case QSystemInfo::Firmware :
-     {
 #if !defined(QT_NO_DBUS)
-         QHalDeviceInterface iface(QLatin1String("/org/freedesktop/Hal/devices/computer"));
-         QString str;
-         if (iface.isValid()) {
-             str = iface.getPropertyString(QLatin1String("system.kernel.version"));
-             if (!str.isEmpty()) {
-                 return str;
-             }
-             if (useDate) {
-                 str = iface.getPropertyString(QLatin1String("system.firmware.release_date"));
-                 if (!str.isEmpty()) {
-                     return str;
-                 }
-             } else {
-                 str = iface.getPropertyString(QLatin1String("system.firmware.version"));
-                 if (str.isEmpty()) {
-                     if (!str.isEmpty()) {
-                         return str;
-                     }
-                 }
-             }
-         }
-         break;
+        QHalInterface iface;
+        if (iface.isValid()) {
+            QHalInterface halIface;
+            const QStringList halDevices = halIface.findDeviceByCapability("mmc_host");
+            foreach (const QString &device, halDevices) {
+                QHalDeviceInterface ifaceDevice(device);
+                if (ifaceDevice.isValid()) {
+                    if (ifaceDevice.getPropertyString("info.subsystem") == "mmc_host")
+                        return true;
+                    if (ifaceDevice.getPropertyBool("storage.removable"))
+                        return true;
+                }
+            }
+        }
 #endif
-     }
-     case QSystemInfo::Os :
-    {
+        break;
+    }
 
-        if(QFileInfo("/usr/bin/lsb_release").exists()) {
+    case QSystemInfo::UsbFeature: {
+#if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5) && defined(UDEV_SUPPORTED)
+        if (udevService.isPropertyAvailable(UDEV_PROPERTY_DRIVER, UDEV_DRIVER_MUSB))
+            return true;
+        if(udevService.isPropertyAvailable(UDEV_PROPERTY_DRIVER, UDEV_DRIVER_USB))
+            return true;
+        if(udevService.isPropertyAvailable(UDEV_PROPERTY_INTERFACE, "usb*"))
+            return true;
+#endif
+#if !defined(QT_NO_DBUS)
+        featureSupported = hasHalDeviceFeature("usb");
+        if (featureSupported)
+            return featureSupported;
+#endif // QT_NO_DBUS
+        featureSupported = hasSysFeature("usb_host");
+        break;
+    }
+
+    case QSystemInfo::VibFeature:
+#if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5) && defined(UDEV_SUPPORTED)
+        if (udevService.isPropertyAvailable(UDEV_PROPERTY_NAME, "*vibra*"))
+            return true;
+        if(udevService.isPropertyAvailable(UDEV_PROPERTY_NAME, "*Vibra*"))
+            return true;
+#endif
+#if !defined(QT_NO_DBUS)
+        if (hasHalDeviceFeature("vibrator") || hasHalDeviceFeature("vib"))
+            return true;
+#endif // QT_NO_DBUS
+        break;
+
+    case QSystemInfo::WlanFeature: {
+#if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5) && defined(UDEV_SUPPORTED)
+        return udevService.isSubsystemAvailable(UDEV_SUBSYSTEM_WLAN);
+#endif
+#if !defined(QT_NO_DBUS)
+        QHalInterface iface;
+        if (iface.isValid()) {
+            const QStringList list = iface.findDeviceByCapability("net.80211");
+            if (!list.isEmpty()) {
+                featureSupported = true;
+                break;
+            }
+        }
+#endif
+        featureSupported = hasSysFeature("80211");
+        break;
+    }
+
+    case QSystemInfo::SimFeature: {
+#if !defined(QT_NO_CONNMAN)
+        if (ofonoAvailable()) {
+            QOfonoManagerInterface ofonoManager(this);
+            QString modempath = ofonoManager.currentModem().path();
+            if (!modempath.isEmpty()) {
+                QOfonoSimInterface simInterface(modempath, this);
+                return simInterface.isValid();
+            }
+        }
+#endif // QT_NO_CONNMAN
+        break;
+    }
+
+    case QSystemInfo::LocationFeature:
+#if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5) && defined(UDEV_SUPPORTED)
+        return udevService.isPropertyAvailable(UDEV_PROPERTY_DRIVER, "*gps*");
+#endif
+#if !defined(QT_NO_DBUS)
+        featureSupported = hasHalDeviceFeature("gps"); //might not always be true
+        if (featureSupported)
+            return featureSupported;
+
+#endif // QT_NO_DBUS
+        break;
+
+    case QSystemInfo::VideoOutFeature: {
+#if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5) && defined(UDEV_SUPPORTED)
+        return udevService.isPropertyAvailable(UDEV_PROPERTY_V4L_CAP, "*:video_output:*");
+#endif
+        const QString sysPath("/sys/class/video4linux/");
+        const QDir sysDir(sysPath);
+        QStringList filters;
+        filters << "*";
+        const QStringList sysList = sysDir.entryList(filters, QDir::Dirs, QDir::Name);
+        if (sysList.contains("video"))
+            featureSupported = true;
+        break;
+    }
+
+    case QSystemInfo::HapticsFeature:
+        break;
+
+    case QSystemInfo::FmTransmitterFeature:
+        featureSupported = fmTransmitterAvailable();
+        break;
+
+    default:
+        featureSupported = false;
+        break;
+    };
+
+    return featureSupported;
+ }
+
+#if !defined(QT_NO_DBUS)
+bool QSystemInfoLinuxCommonPrivate::hasHalDeviceFeature(const QString &param)
+{
+    QHalInterface halIface;
+    const QStringList halDevices = halIface.getAllDevices();
+    foreach (const QString &device, halDevices) {
+        if (device.contains(param))
+            return true;
+    }
+    return false;
+}
+
+bool QSystemInfoLinuxCommonPrivate::hasHalUsbFeature(qint32 usbClass)
+{
+    QHalInterface halIface;
+    const QStringList halDevices = halIface.findDeviceByCapability("usb_device");
+    foreach (const QString &device, halDevices) {
+        QHalDeviceInterface ifaceDevice(device);
+        if (ifaceDevice.isValid()) {
+            if (ifaceDevice.getPropertyString("info.subsystem") == "usb_device") {
+                if (ifaceDevice.getPropertyInt("usb.interface.class") == usbClass)
+                    return true;
+            }
+        }
+    }
+    return false;
+}
+#endif // QT_NO_DBUS
+
+QString QSystemInfoLinuxCommonPrivate::version(QSystemInfo::Version type, const QString &parameter)
+{
+    switch(type) {
+    case QSystemInfo::Firmware: {
+#if !defined(QT_NO_DBUS)
+        QHalDeviceInterface iface(QLatin1String("/org/freedesktop/Hal/devices/computer"));
+        QString str;
+        if (iface.isValid()) {
+            str = iface.getPropertyString(QLatin1String("system.kernel.version"));
+            if (!str.isEmpty())
+                return str;
+            if (parameter == "versionDate") {
+                str = iface.getPropertyString(QLatin1String("system.firmware.release_date"));
+                if (!str.isEmpty())
+                    return str;
+            } else {
+                str = iface.getPropertyString(QLatin1String("system.firmware.version"));
+                if (str.isEmpty()) {
+                    if (!str.isEmpty())
+                        return str;
+                }
+            }
+        }
+        break;
+#endif
+    }
+
+    case QSystemInfo::Os: {
+        if (QFile::exists("/usr/bin/lsb_release")) {
             QProcess syscall;
             QString program = "/usr/bin/lsb_release";
             QStringList arguments;
@@ -556,8 +551,8 @@ bool QSystemInfoLinuxCommonPrivate::hasFeatureSupported(QSystemInfo::Feature fea
             return desc.simplified();
         }
 
-        QFile versionFile2(QLatin1String("/etc/issue"));
-        if(!versionFile2.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        QFile versionFile2("/etc/issue");
+        if (!versionFile2.open(QIODevice::ReadOnly | QIODevice::Text)) {
             qDebug() << "File not opened";
         } else {
             QString line;
@@ -571,13 +566,12 @@ bool QSystemInfoLinuxCommonPrivate::hasFeatureSupported(QSystemInfo::Feature fea
                 break;
             } while (!line.isNull());
             versionFile2.close();
-            if(!strvalue.isEmpty()) {
+            if(!strvalue.isEmpty())
                 return strvalue;
-            }
         }
 
         QFile versionFile3(QLatin1String("/proc/version"));
-        if(!versionFile3.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        if (!versionFile3.open(QIODevice::ReadOnly | QIODevice::Text)) {
             qDebug() << "File not opened";
         } else {
             QString  strvalue;
@@ -585,15 +579,18 @@ bool QSystemInfoLinuxCommonPrivate::hasFeatureSupported(QSystemInfo::Feature fea
             versionFile3.close();
             return strvalue;
         }
+
         break;
     }
+
     case QSystemInfo::QtCore :
-            return QLatin1String(qVersion());
-            break;
-        default:
-            break;
+        return QString(qVersion());
+
+    default:
+        break;
     };
-    return errorStr;
+
+    return QString("Not Available");
 }
 
 QString QSystemInfoLinuxCommonPrivate::currentCountryCode() const
@@ -603,18 +600,17 @@ QString QSystemInfoLinuxCommonPrivate::currentCountryCode() const
 
 bool QSystemInfoLinuxCommonPrivate::hasSysFeature(const QString &featureStr)
 {
-    const QString sysPath = QLatin1String("/sys/class/");
+    const QString sysPath("/sys/class/");
     const QDir sysDir(sysPath);
     QStringList filters;
     filters << QLatin1String("*");
-    const QStringList sysList = sysDir.entryList( filters ,QDir::Dirs, QDir::Name);
+    const QStringList sysList = sysDir.entryList(filters, QDir::Dirs, QDir::Name);
     foreach (const QString &dir, sysList) {
         const QDir sysDir2(sysPath + dir);
         if (dir.contains(featureStr)) {
-            const QStringList sysList2 = sysDir2.entryList( filters ,QDir::Dirs, QDir::Name);
-            if (!sysList2.isEmpty()) {
+            const QStringList sysList2 = sysDir2.entryList(filters, QDir::Dirs, QDir::Name);
+            if (!sysList2.isEmpty())
                 return true;
-            }
         }
     }
     return false;

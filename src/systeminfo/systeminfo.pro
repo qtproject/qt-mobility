@@ -173,7 +173,10 @@ unix:!simulator {
         HEADERS += qsysteminfo_maemo_p.h linux/gconfitem_p.h
         DEFINES += QT_NO_CONNMAN QT_NO_UDISKS  QT_NO_NETWORKMANAGER
 
-        LIBS += -lbmeipc
+          contains(bme_enabled, yes): {
+              LIBS += -lbmeipc
+              DEFINES += Q_USE_BME
+          }
 
         contains(QT_CONFIG,dbus): {
             QT += dbus
@@ -189,14 +192,9 @@ unix:!simulator {
     }
 
     mac: {
-        contains(build_unit_tests, yes):contains(test_use_sim, yes) {
-            SOURCES += qsysteminfo_simulator.cpp qsysteminfodata_simulator.cpp
-            HEADERS += qsysteminfo_simulator_p.h qsysteminfodata_simulator_p.h
-            DEFINES += TESTR QT_SIMULATOR
-            SOURCES += qsystemalignedtimer_stub.cpp
-            HEADERS += qsystemalignedtimer_stub_p.h
-    } else {
-        SOURCES += qsysteminfo_mac.mm qsystemalignedtimer_stub.cpp
+        OBJECTIVE_SOURCES += qsysteminfo_mac.mm
+        SOURCES += qsystemalignedtimer_stub.cpp
+
         HEADERS += qsysteminfo_mac_p.h qsystemalignedtimer_stub_p.h
         LIBS += -framework SystemConfiguration -framework CoreFoundation \
             -framework IOKit -framework ApplicationServices -framework Foundation \
@@ -214,9 +212,9 @@ unix:!simulator {
 
             !isEmpty(SDK6) {
                 LIBS += -framework CoreWLAN  -framework CoreLocation
-                DEFINES += MAC_SDK_10_6
             }
         } else {
+            DEFINES += MAC_SDK_10_5
             CONFIG += no_keywords
         }
 

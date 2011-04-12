@@ -74,12 +74,12 @@ Q_DECLARE_METATYPE(QList<ProfileDataValue>)
 
 #endif
 
+#ifdef Q_USE_BME
 extern "C" {
 #include "bme/bmeipc.h"
 }
-
 #include <mqueue.h>
-
+#endif
 
 QT_BEGIN_HEADER
 
@@ -96,12 +96,12 @@ class QSystemInfoPrivate : public QSystemInfoLinuxCommonPrivate
     Q_OBJECT
 
 public:
-
     QSystemInfoPrivate(QSystemInfoLinuxCommonPrivate *parent = 0);
     virtual ~QSystemInfoPrivate();
+
     QStringList availableLanguages() const;
     QString version(QSystemInfo::Version,  const QString &parameter = QString());
-    QString currentLanguage() const;
+    virtual QString currentLanguage() const;
     QString currentCountryCode() const;
 
     bool hasFeatureSupported(QSystemInfo::Feature feature);
@@ -345,9 +345,11 @@ private:
 #endif
 };
 
+#ifdef Q_USE_BME
 class EmIpc;
 class EmEvents;
 class EmCurrentMeasurement;
+#endif
 
 class QSystemBatteryInfoPrivate : public QSystemBatteryInfoLinuxCommonPrivate
 {
@@ -362,12 +364,15 @@ private Q_SLOTS:
 #if !defined(QT_NO_DBUS)
     void halChangedMaemo(int,QVariantList);
 #endif
+#ifdef Q_USE_BME
     void onMeasurement(int socket);
+#endif
 
 private:
     void connectNotify(const char *signal);
     void disconnectNotify(const char *signal);
 
+#ifdef Q_USE_BME
     mutable bmestat_t bmeStat;
     mutable bool isDataActual;
     mutable QDateTime cacheExpire;
@@ -381,6 +386,7 @@ private:
     QScopedPointer<EmIpc> emIpc;
     QScopedPointer<EmEvents> emEvents;
     QScopedPointer<EmCurrentMeasurement> emCurrentMeasurements;
+#endif
 };
 
 

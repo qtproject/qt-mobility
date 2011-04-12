@@ -96,12 +96,12 @@ class QSystemInfoLinuxCommonPrivate : public QObject
     Q_OBJECT
 
 public:
-
     QSystemInfoLinuxCommonPrivate(QObject *parent = 0);
     virtual ~QSystemInfoLinuxCommonPrivate();
-    QString currentLanguage() const;
 
-    QString version(QSystemInfo::Version,  const QString &/*parameter*/ = QString());
+    virtual QString currentLanguage() const;
+
+    QString version(QSystemInfo::Version, const QString &parameter = QString());
     QString currentCountryCode() const;
 
     bool fmTransmitterAvailable();
@@ -109,21 +109,24 @@ public:
     bool hasSysFeature(const QString &featureStr);
 
 Q_SIGNALS:
-    void currentLanguageChanged(const QString &);
+    void currentLanguageChanged(const QString &lang);
 
 private:
     QTimer *langTimer;
-    QString langCached;
 
 protected Q_SLOTS:
-    void startLanguagePolling();
+    void pollCurrentLanguage();
 
 protected:
+    QString currentLang;
+
+    void connectNotify(const char *signal);
+    void disconnectNotify(const char *signal);
+
 #if !defined(QT_NO_DBUS)
     bool hasHalDeviceFeature(const QString &param);
     bool hasHalUsbFeature(qint32 usbClass);
-    QHalInterface halIface;
-#endif
+#endif // QT_NO_DBUS
 };
 
 class QNetworkManagerInterface;
