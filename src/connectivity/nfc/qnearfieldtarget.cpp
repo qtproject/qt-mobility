@@ -69,8 +69,8 @@ QTM_BEGIN_NAMESPACE
     target.
 
     If the target supports NdefAccess, hasNdefMessage() can be called to test if the target has a
-    stored NDEF message, ndefMessages() and setNdefMessages() functions can be used to get and set
-    the NDEF message.
+    stored NDEF message, readNdefMessages() and writeNdefMessages() functions can be used to get
+    and set the NDEF message.
 
     If the target supports TagTypeSpecificAccess, sendCommand() can be used to send a single
     proprietary command to the target and retrieve the response.  sendCommands() can be used to
@@ -101,8 +101,8 @@ QTM_BEGIN_NAMESPACE
 
     This enum describes the access methods a near field target supports.
 
-    \value NdefAccess               The target supports NDEF records using ndefMessages() and
-                                    setNdefMessages().
+    \value NdefAccess               The target supports reading and writing NDEF messages using
+                                    readNdefMessages() and writeNdefMessages().
     \value TagTypeSpecificAccess    The target supports sending tag type specific commands using
                                     sendCommand() and sendCommands().
     \value LlcpAccess               The target supports peer-to-peer LLCP communication.
