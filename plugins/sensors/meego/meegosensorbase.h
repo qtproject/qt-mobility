@@ -68,6 +68,7 @@ protected:
     static const float GRAVITY_EARTH_THOUSANDTH;    //for speed
     static const int KErrNotFound;
     static const int KErrInUse;
+    static QStringList m_bufferingSensors;
 
     void setRanges(qreal correctionFactor=1);
     virtual QString sensorName() const=0;
@@ -124,16 +125,21 @@ protected:
         }
 
         //bufferSizes
-        IntegerRangeList sizes = m_sensorInterface->getAvailableBufferSizes();
-        int l = sizes.size();
-        for (int i=0; i<l; i++){
-            int second = sizes.at(i).second;
-            m_maxBufferSize = second>m_bufferSize? second:m_maxBufferSize;
+        if (m_bufferingSensors.contains(sensor()->identifier())){
+
+            IntegerRangeList sizes = m_sensorInterface->getAvailableBufferSizes();
+            int l = sizes.size();
+            for (int i=0; i<l; i++){
+                int second = sizes.at(i).second;
+                m_maxBufferSize = second>m_bufferSize? second:m_maxBufferSize;
+            }
+            m_maxBufferSize = m_maxBufferSize<0?1:m_maxBufferSize;
+            //SensorFW guarantees to provide the most efficient size first
+            //TODO: remove from comments
+            //m_efficientBufferSize  = m_sensorInterface->hwBuffering()? (l>0?sizes.at(0).first:1) : 1;
         }
-        m_maxBufferSize = m_maxBufferSize<0?1:m_maxBufferSize;
-        //SensorFW guarantees to provide the most efficient size first
-        //TODO: remove from comments
-//         m_efficientBufferSize  = m_sensorInterface->hwBuffering()? (l>0?sizes.at(0).first:1) : 1;
+        else
+            m_maxBufferSize = 1;
 
         sensor()->setProperty(MAX_BUFFER_SIZE, m_maxBufferSize);
         sensor()->setProperty(EFFICIENT_BUFFER_SIZE, m_efficientBufferSize);
@@ -159,6 +165,7 @@ protected:
     virtual qreal correctionFactor() const;
 
 private:
+
     static SensorManagerInterface* m_remoteSensorManager;
     int m_prevOutputRange;
     bool doConnectAfterCheck();

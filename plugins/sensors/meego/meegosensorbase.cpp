@@ -53,6 +53,7 @@ const char* const meegosensorbase::ALWAYS_ON = "alwaysOn";
 const char* const meegosensorbase::BUFFER_SIZE = "bufferSize";
 const char* const meegosensorbase::MAX_BUFFER_SIZE = "maxBufferSize";
 const char* const meegosensorbase::EFFICIENT_BUFFER_SIZE = "efficientBufferSize";
+QStringList meegosensorbase::m_bufferingSensors = QStringList()<<"meego.accelerometer"<<"meego.magnetometer"<<"meego.gyroscope"<<"meego.rotationsensor";
 
 meegosensorbase::meegosensorbase(QSensor *sensor)
     : QSensorBackend(sensor), m_sensorInterface(0), m_bufferSize(-1), m_prevOutputRange(0), m_efficientBufferSize(1), m_maxBufferSize(1)
@@ -149,8 +150,14 @@ bool meegosensorbase::doConnectAfterCheck(){
     int size = bufferSize();
     if (size == m_bufferSize) return true;
     
-    m_sensorInterface->setBufferSize(size);
     
+    if (m_bufferingSensors.contains(sensor()->identifier()))
+        m_sensorInterface->setBufferSize(size);
+    else{
+        m_bufferSize = 1;
+        size = 1;
+    }
+
     // if multiple->single or single->multiple or if uninitialized
     if ((m_bufferSize>1 && size==1) || (m_bufferSize==1 && size>1) || m_bufferSize==-1){
         m_bufferSize = size;
