@@ -570,6 +570,9 @@ QMessageAccount QMessageManager::account(const QMessageAccountId& id) const
 
     The \a filter is applied to the state of the data after the occurrence of the event for which 
     a notification may be emitted.
+    
+    On Linux, Maemo 6 (Harmattan) and Meego.com it is only possible to filter messageRemoved()
+    signals with an empty QMessageFilter() that matches all messages.
 
     \sa unregisterNotificationFilter(), messageAdded(), messageRemoved(), messageUpdated()
 */

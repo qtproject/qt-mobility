@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,41 +39,38 @@
 ****************************************************************************/
 
 import Qt 4.7
-import QtMobility.systeminfo 1.1
 
-Rectangle{
-    id: screen
-    color: "gray"
+Item {
+    id: titleBar
+    BorderImage { source: "titlebar.sci"; width: parent.width; height: parent.height + 14; y: -7 }
 
-    DeviceInfo {
-        id: deviceinfo;
-        onThermalStateChanged: updateThermalState()
-        monitorThermalStateChanges: true
-    }
+    Item {
+        id: container
+        width: (parent.width * 2) - 55 ; height: parent.height
 
-    Text {
-        id: thermal
-        text: updateThermalState()
-        color: "white";
-    }
+        Image {
+            id: quitButton
+            anchors.left: parent.left//; anchors.leftMargin: 0
+            anchors.verticalCenter: parent.verticalCenter
+            source: "quit.png"
+            MouseArea {
+                anchors.fill: parent
+                onClicked: Qt.quit()
+            }
+        }
 
-    function updateThermalState() {
-        state = deviceinfo.currentThermalState
-        if (state == DeviceInfo.UnknownThermal) {
-            thermal.text = "ThermalState: UnknownThermal";
-        } else if (state == DeviceInfo.NormalThermal) {
-            thermal.text = "ThermalState: NormalThermal";
-        } else if (state == DeviceInfo.WarningThermal) {
-            thermal.text = "ThermalState: WarningThermal";
-        } else if (state == DeviceInfo.AlertThermal) {
-            thermal.text = "ThermalState: AlertThermal";
-        } else if (state == DeviceInfo.ErrorThermal) {
-            thermal.text = "ThermalState: ErrorThermal";
+        Text {
+            id: categoryText
+            anchors {
+                left: quitButton.right; leftMargin: 10; rightMargin: 10
+                verticalCenter: parent.verticalCenter
+            }
+            elide: Text.ElideLeft
+            text: "Mapviewer example"
+            font.bold: true; color: "White"; style: Text.Raised; styleColor: "Black"
         }
     }
-
-    MouseArea {
-        anchors.fill: parent
-        onClicked: { Qt.quit() }
+    transitions: Transition {
+        NumberAnimation { properties: "x"; easing.type: Easing.InOutQuad }
     }
 }

@@ -173,7 +173,6 @@ void QFeedbackTestPlugin::timerExpired()
 
 void QFeedbackTestPlugin::setLoaded(QFeedbackFileEffect *effect, bool load)
 {
-    Q_UNUSED(effect)
     if (effect->source() == QUrl("load")) {
         // Succeed the load
         if (load) {

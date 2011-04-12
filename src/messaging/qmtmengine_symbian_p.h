@@ -328,6 +328,7 @@ private:
     
     mutable int iOperationIds;
     mutable QList<MessageQueryInfo> iMessageQueries;
+    mutable QMap<QMessageServicePrivate*, CAsynchronousMTMOperation*> m_mtmOperations;
     mutable QList<PendingSend> iPendingSends;
     
     mutable QMessageAccountSortOrder iCurrentAccountOrdering;
@@ -452,6 +453,8 @@ private: // Data
     CMsvOperation*      ipMsvOperation;
     
     bool                isActive;
+
+    friend class CMTMEngine;
 };
 
 QTM_END_NAMESPACE

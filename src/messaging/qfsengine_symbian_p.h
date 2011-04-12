@@ -297,6 +297,10 @@ private:
     static TMailboxId fsMailboxIdFromQMessageAccountId(QMessageAccountId accountId);
     static QMessageAccountId qMessageAccountIdFromFsMailboxId(TMailboxId mailboxId);
 
+    static void convertQMessageAddressToFreestyle(const QString& emailAddress,  QString& qaddress, QString& qname,
+                                                    TPtrC16& address, TPtrC16& displayname);
+    static void convertFreestyleAddressToQString(MEmailAddress* emailAddress, QString& combinedAddress);
+
     static void cleanup();
 
     void notificationL(const TMailboxId& aMailbox, const TMessageId& aMessageId, 
@@ -351,6 +355,7 @@ public:
     ~CFSContentFetchOperation();
 
     bool fetch();
+    void cancelFetch();
 
 protected: // From MEmailFetchObserver
     void DataFetchedL(const TInt aResult);

@@ -221,7 +221,6 @@ void tst_QSystemBatteryInfo::tst_chargingState()
     }
 }
 
-    QSystemBatteryInfo bi;
 void tst_QSystemBatteryInfo::tst_nominalCapacity()
 {
     QSystemBatteryInfo bi;

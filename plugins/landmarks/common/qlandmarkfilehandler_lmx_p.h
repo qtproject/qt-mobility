@@ -62,6 +62,7 @@
 
 class QIODevice;
 
+bool isURIAbsolute(const QString &uri);
 QTM_USE_NAMESPACE
 
 class QLandmarkFileHandlerLmx : public QObject

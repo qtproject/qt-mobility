@@ -225,6 +225,7 @@ void CImageRescaler::ResizeImageL(const TDesC& aSourceFile, const TDesC& aDestFi
     // Cancel any current requests
     Cancel();
     
+    // Reset image file paths
     iSourceFile = aSourceFile;
     iDestFile = aDestFile;
 
@@ -234,6 +235,10 @@ void CImageRescaler::ResizeImageL(const TDesC& aSourceFile, const TDesC& aDestFi
     // Synchronize asynchronous operations (wait loop is finished in RunL when
     // image operations are done, or in RunError if an error occurs)
     iWait->Start();
+    
+    // Reset rescaler after request completion
+    Reset();
+    
     User::LeaveIfError(iErr);
     }
 
@@ -408,3 +413,34 @@ TInt CImageRescaler::RunError( TInt aError )
     StopWait();
     return KErrNone;
     }
+
+/**
+Initialise values to defaults.
+*/
+void CImageRescaler::Reset()
+    {
+    if (iImageDecoder)
+        {
+        delete iImageDecoder;
+        iImageDecoder = NULL;
+        }
+    
+    if (iBitmap)
+        {
+        delete iBitmap;
+        iBitmap = NULL;
+        }
+    
+    if (iScaler)
+        {
+        delete iScaler;
+        iScaler = NULL;
+        }
+    
+    if (iImageEncoder)
+        {
+        delete iImageEncoder; 
+        iImageEncoder = NULL;
+        }
+    }
+

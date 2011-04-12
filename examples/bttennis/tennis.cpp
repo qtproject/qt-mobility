@@ -58,6 +58,7 @@
 #include <qbluetoothdeviceinfo.h>
 #include <qbluetoothsocket.h>
 #include <qbluetoothservicediscoveryagent.h>
+#include <qbluetoothlocaldevice.h>
 
 #include <qnearfieldmanager.h>
 #include <qllcpserver.h>
@@ -67,6 +68,12 @@ Tennis::Tennis(QWidget *parent)
 : QDialog(parent), ui(new Ui_Tennis), board(new Board), controller(new Controller), socket(0),
   m_discoveryAgent(new QBluetoothServiceDiscoveryAgent)
 {
+    // start Bluetooth if not started
+    QBluetoothLocalDevice *device = new QBluetoothLocalDevice();
+    device->powerOn();
+    delete device;
+    device = 0;
+
     //! [Construct UI]
     ui->setupUi(this);
 
@@ -89,6 +96,7 @@ Tennis::Tennis(QWidget *parent)
     connect(this, SIGNAL(moveLeftPaddle(int)), board, SLOT(setLeftPaddle(int)));
     connect(this, SIGNAL(moveRightPaddle(int)), board, SLOT(setRightPaddle(int)));
     connect(controller, SIGNAL(score(int,int)), board, SLOT(setScore(int,int)));
+    connect(controller, SIGNAL(fps(const QString&)), this, SLOT(fps(const QString&)));
 
     setFocusPolicy(Qt::WheelFocus);
 
@@ -412,3 +420,9 @@ void Tennis::nearFieldHandover()
     client->startClient(service);
     board->setStatus(tr("Connecting: %1 %2").arg(m_handover->bluetoothAddress().toString()).arg(m_handover->serverPort()), 100, 25);
 }
+
+void Tennis::fps(const QString &f)
+{
+  board->setStatus(f, 100, 100);
+}
+

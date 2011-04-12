@@ -144,19 +144,19 @@ void QGstreamerVideoEncode::setVideoSettings(const QVideoEncoderSettings &settin
 
 GstElement *QGstreamerVideoEncode::createEncoder()
 {
+    QString codec = m_videoSettings.codec();
+    //qDebug() << "create encoder for video codec" << codec;
+    GstElement *encoderElement = gst_element_factory_make( m_elementNames.value(codec).constData(), "video-encoder");
+    if (!encoderElement)
+        return 0;
+
     GstBin *encoderBin = GST_BIN(gst_bin_new("video-encoder-bin"));
-    Q_ASSERT(encoderBin);
 
     GstElement *capsFilter = gst_element_factory_make("capsfilter", "capsfilter-video");
     gst_bin_add(encoderBin, capsFilter);
 
     GstElement *colorspace = gst_element_factory_make("ffmpegcolorspace", NULL);
     gst_bin_add(encoderBin, colorspace);
-
-    QString codec = m_videoSettings.codec();
-    //qDebug() << "create encoder for video codec" << codec;
-
-    GstElement *encoderElement = gst_element_factory_make( m_elementNames.value(codec).constData(), "video-encoder");
     gst_bin_add(encoderBin, encoderElement);
 
     gst_element_link_many(capsFilter, colorspace, encoderElement, NULL);

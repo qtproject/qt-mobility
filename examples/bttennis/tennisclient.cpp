@@ -86,6 +86,9 @@ void TennisClient::startClient(const QBluetoothServiceInfo &remoteService)
 //! [stopClient]
 void TennisClient::stopClient()
 {
+    if(socket == 0) // already stopped
+        return;
+
     qDebug() << Q_FUNC_INFO << "closing client!";
 
     lagTimer.stop();
@@ -102,7 +105,7 @@ void TennisClient::stopClient()
 void TennisClient::socketDisconnected()
 {
     qDebug() << "Got socketDisconnected";
-    stopClient();
+    stopClient();    
 }
 //! [socketDisconnected]
 

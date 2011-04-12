@@ -118,11 +118,11 @@ void CRotationSensorSym::ProcessReading()
     // This logic maps value to Qt range -180 to 180
     if(iData.iDeviceRotationAboutYAxis >= 0 && iData.iDeviceRotationAboutYAxis <= 180)
         {
-        iReading.setY(iData.iDeviceRotationAboutYAxis);
+        iReading.setY(0 - (180 - iData.iDeviceRotationAboutYAxis));
         }
     else if(iData.iDeviceRotationAboutYAxis > 180 && iData.iDeviceRotationAboutYAxis < 360)
         {
-        iReading.setY(iData.iDeviceRotationAboutYAxis - 360);
+        iReading.setY(iData.iDeviceRotationAboutYAxis - 180);
         }
 
     if(iData.iDeviceRotationAboutZAxis == TSensrvRotationData::KSensrvRotationUndefined)
@@ -136,11 +136,11 @@ void CRotationSensorSym::ProcessReading()
         // This logic maps value to Qt range -180 to 180
         if(iData.iDeviceRotationAboutZAxis >= 0 && iData.iDeviceRotationAboutZAxis <= 180)
             {
-            iReading.setZ(iData.iDeviceRotationAboutZAxis);
+            iReading.setZ(180 - iData.iDeviceRotationAboutZAxis);
             }
         else if(iData.iDeviceRotationAboutZAxis > 180 && iData.iDeviceRotationAboutZAxis < 360)
             {
-            iReading.setZ(iData.iDeviceRotationAboutZAxis - 360);
+            iReading.setZ(0 - (iData.iDeviceRotationAboutZAxis - 180));
             }
         }
     // Set the timestamp

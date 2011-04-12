@@ -38,6 +38,14 @@ SOURCES += \
     nfc/qtlv.cpp \
     nfc/qllcpserver.cpp
 
+contains(QT_CONFIG,declarative) {
+    PUBLIC_HEADERS += \
+        nfc/qdeclarativendefrecord.h
+
+    SOURCES += \
+        nfc/qdeclarativendefrecord.cpp
+}
+
 maemo6|meego {
     NFC_BACKEND_AVAILABLE = yes
 

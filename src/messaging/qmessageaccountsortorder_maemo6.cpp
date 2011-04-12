@@ -98,7 +98,7 @@ bool QMessageAccountSortOrder::operator==(const QMessageAccountSortOrder& other)
 }
 
 QMessageAccountSortOrder& QMessageAccountSortOrder::operator=(const QMessageAccountSortOrder& other)
-                                                             {
+{
     if (&other != this) {
         if (!other.d_ptr) {
             delete d_ptr;
