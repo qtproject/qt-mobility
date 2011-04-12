@@ -55,10 +55,10 @@ QBluetoothServiceDiscoveryAgentPrivate::QBluetoothServiceDiscoveryAgentPrivate(c
     , deviceAddress(address)
     , deviceDiscoveryAgent(0)
     , mode(QBluetoothServiceDiscoveryAgent::MinimalDiscovery)
+    , singleDevice(false)
     , m_sdpAgent(NULL)
     , m_filter(NULL)
     , m_attributes(NULL)
-    , singleDevice(false)
 {
 
 }
