@@ -507,6 +507,25 @@ testcase = {
           }
       },
 
+/*
+    New tests proposed
+      bluewheelMessaging_Email_Add_Attachments
+      bluewheelMessaging_Email_Clear_Attachments
+      bluewheelMessaging_Email_Store_with_Attachments
+      bluewheelMessaging_Email_Send_with_Attachments
+      bluewheelMessaging_Email_Settings_Add_Charsets
+      bluewheelMessaging_Email_Settings_Clear_Charsets
+      bluewheelMessaging_Email_Settings_Change_Bodytype
+      bluewheelMessaging_Email_Send_cross_Charsets
+      bluewheelMessaging_Email_Store_cross_Charsets
+      bluewheelMessaging_Email_Compose_cross_Charsets
+      bluewheelMessaging_Email_Send_cross_Bodytype
+      bluewheelMessaging_Email_Store_cross_Bodytype
+      bluewheelMessaging_Email_Compose_cross_Bodytype
+      bluewheelMessaging_Email_ManageAccounts_Select_Account
+      bluewheelMessaging_Email_ManageAccounts_Delete_Account
+*/
+
       bluewheelMessaging_MMS_Compose : function() {
           if (automatedTestEnvironment()){
           }else{
@@ -554,6 +573,14 @@ testcase = {
           '));
           }
       },
+
+/*
+    New tests proposed
+      bluewheelMessaging_MMS_Add_Attachments
+      bluewheelMessaging_MMS_Clear_Attachments
+      bluewheelMessaging_MMS_Store_with_Attachments
+      bluewheelMessaging_MMS_Send_with_Attachments
+*/
 
       bluewheelMessaging_Search_Accounts_By_Name : function() {
           if (automatedTestEnvironment()){
@@ -606,4 +633,41 @@ testcase = {
           }
       },
 
+*/
+    New tests proposed
+      bluewheelMessaging_Search_Messages_By_Type
+      bluewheelMessaging_Search_Messages_By_Priority
+      bluewheelMessaging_Search_Messages_By_Sender
+      bluewheelMessaging_Search_Messages_By_Receipient_To
+      bluewheelMessaging_Search_Messages_By_Receipient_CC
+      bluewheelMessaging_Search_Messages_By_Receipient_BCC
+      bluewheelMessaging_Search_Messages_By_Receipient_Any
+      bluewheelMessaging_Search_Messages_By_Status
+      bluewheelMessaging_Search_Messages_By_Subject
+      bluewheelMessaging_Search_Messages_By_Timestamp
+      bluewheelMessaging_Search_Messages_By_Receiption_Time
+      bluewheelMessaging_Search_Messages_By_Folder
+      bluewheelMessaging_Search_Messages_By_Account
+
+      bluewheelMessaging_Search_Messages_Wildcard_Search
+      
+      bluewheelMessaging_Search_Messages_Search_SMS
+      bluewheelMessaging_Search_Messages_Search_MMS
+      bluewheelMessaging_Search_Messages_Search_Email
+      bluewheelMessaging_Search_Messages_Search_Cross_Email_Account_Types
+
+      bluewheelMessaging_Synchronize
+      bluewheelMessaging_Send_Receive
+      bluewheelMessaging_Show_Message_In_Native_Client
+      bluewheelMessaging_Show_Message_In_This_App
+      bluewheelMessaging_Show_Message_Attachments
+      bluewheelMessaging_Show_Message_Properties
+      bluewheelMessaging_Show_Message_Unread
+      bluewheelMessaging_Show_Message_Reply
+      bluewheelMessaging_Show_Message_Forward
+      bluewheelMessaging_Show_Message_Edit
+      bluewheelMessaging_Show_Message_Delete
+
+      bluewheelMessaging_Search_Messages_Search_Cross_Email_Account_Types
+*/
 }
