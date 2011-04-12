@@ -112,14 +112,14 @@ base                    = file:../html
 qhp.projects            = QtMobility
 
 qhp.QtMobility.file               = qtmobility.qhp
-qhp.QtMobility.namespace          = com.nokia.qtmobility.120
+qhp.QtMobility.namespace          = com.nokia.qtmobility.114
 qhp.QtMobility.virtualFolder      = mobility
 qhp.QtMobility.indexTitle         = Qt Mobility Project Reference Documentation
 qhp.QtMobility.indexRoot          =
 
-qhp.QtMobility.filterAttributes   = qtmobility 1.1.2
-qhp.QtMobility.customFilters.QtMobility.name = Qt Mobility 1.1.2
-qhp.QtMobility.customFilters.QtMobility.filterAttributes = qtmobility 1.1.2
+qhp.QtMobility.filterAttributes   = qtmobility 1.1.4
+qhp.QtMobility.customFilters.QtMobility.name = Qt Mobility 1.1.4
+qhp.QtMobility.customFilters.QtMobility.filterAttributes = qtmobility 1.1.4
 qhp.QtMobility.subprojects = classes overviews examples
 qhp.QtMobility.subprojects.classes.title = Classes
 qhp.QtMobility.subprojects.classes.indexTitle = All Qt Mobility Project Classes
