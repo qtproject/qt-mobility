@@ -178,4 +178,38 @@ Plugins
  - Declarative plugins containing d suffix in debug build now.
 
 
+QtSysteminfo
+-----
+    - add fm transmitter to QSystemInfo featureSupported
+    - QTMOBILITY-845 QSystemNetworkInfo: MCC and MNC interchanged
+    - Battery level changes fix on symbian.
+    - batteryStatusChanged only works once on symbian.
+    - QTMOBILITY-850 QSystemInfo::version returns wrong info on linux
+    - remove voltageChanged signal from QSystemBatteryInfo
+    - QTMOBILITY-877 setScreenSaverDelayed in qml not working
+    - remove startCurrentMeasurement method from QSystemAlignedTimer
+    - LockType are now flags
+    - QTMOBILITY-969 QSystemDisplayInfo::getOrientation() always returns 
+      QSystemDisplayInfo::Unknown in maemo6
+    - QTMOBILITY-970 QSystemDisplayInfo::backlightStatus() always returns 
+      QSystemDisplayInfo::BacklightStateUnknown in maemo6
+    - QTMOBILITY-973 QSystemDeviceInfo::isKeyboardFlippedOpen() always 
+      returns false in maemo6
+    - QSystemAlignedTimer 
+    - QTMOBILITY-977 new connman service name
+    - QTMOBILITY-978 QSystemDeviceInfo::keypadLightOn() always returns false 
+      in maemo6
+    - QTMOBILITY-979 QSystemDeviceInfo::lockStatus() always returns 
+      QSystemDeviceInfo::UnknownLock in maemo6
+    - QTMOBILITY-985 QSystemDeviceInfo::getActiveProfileDetails() does not 
+      retrieve active profile settings in maemo6
+    - QTMOBILITY-922 devicelocked notification
+    - profileDetails available to QML
+    - uniqueDeviceId to QML
+    - added orientationChanged signal
+    - gsm support for linux desktop in QSYstemNetworkInfo
+    - add cellDataTechnology to QSystemNetworkInfo
+    - lot of fixes for maemo6
+    - updated systeinfo example app.
+
 
