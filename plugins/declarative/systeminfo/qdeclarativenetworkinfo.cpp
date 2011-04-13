@@ -274,7 +274,7 @@ void QDeclarativeNetworkInfo::startSignalStrengthChanged(bool on)
 
 /*!
     \qmlproperty bool NetworkInfo::monitorSignalStrengthChanges
-    \brief Use the monitorSignalStrengthChanges signal.
+    \brief Use the signalStrengthChanged signal.
   */
 bool QDeclarativeNetworkInfo::monitorSignalStrengthChanges()
 {
@@ -300,7 +300,7 @@ void QDeclarativeNetworkInfo::startNameChanged(bool on)
 
 /*!
     \qmlproperty bool NetworkInfo::monitorNameChanges
-    \brief Use the monitorNameChanges signal.
+    \brief Use the nameChanged signal.
   */
 bool QDeclarativeNetworkInfo::monitorNameChanges()
 {
@@ -529,11 +529,21 @@ QSystemNetworkInfo::NetworkMode QDeclarativeNetworkInfo::mode()
 }
 
 
+/*!
+    \qmlproperty bool NetworkInfo::monitoringCellDataTechnologyChanges
+    \brief Use the cellDataTechnologyChanges signal.
+
+   \sa QSystemNetworkInfo::cellDataTechnologyChanged
+  */
 bool QDeclarativeNetworkInfo::monitorCellDataChanges()
 {
     return monitoringCellDataTechnologyChanges;
 }
 
+/*!
+   This function starts the cellDataTechnologyChanges notification
+
+*/
 void QDeclarativeNetworkInfo::startCellDataChanged(bool on)
 {
     monitoringCellDataTechnologyChanges = on;
@@ -546,11 +556,21 @@ void QDeclarativeNetworkInfo::startCellDataChanged(bool on)
     }
 }
 
+/*!
+    \qmlproperty bool NetworkInfo::monitoringCellIdChanges
+    \brief Use the cellIdChanges signal.
+  */
 bool QDeclarativeNetworkInfo::monitorCellIdChanges()
 {
     return monitoringCellIdChanges;
 }
 
+/*!
+   This function starts the cellIdChanges notification
+
+   \sa QSystemNetworkInfo::cellIdChanged
+
+*/
 void QDeclarativeNetworkInfo::startCellIdChanged(bool on)
 {
     monitoringCellIdChanges = on;
