@@ -42,7 +42,7 @@
 
 int main(int, char**)
 {
-	TUint aDynCaps = 0;
+  TUint aDynCaps = 0;
   RPacketService packetService;
   packetService.GetDynamicCaps(aDynCaps);
 }
