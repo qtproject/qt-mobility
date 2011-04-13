@@ -22,9 +22,16 @@ New features
  - Qt Connectivity module
     - Bluetooth and Near-Field-Communication (NFC)
 
+ - MeeGo.com
+    - Added support for this platform
+
  - Contacts
     - Maximum result limit hinting
       http://bugreports.qt.nokia.com/browse/QTMOBILITY-652
+
+ - QtMultimediaKit
+    - Support for choosing the network configuration to use for streaming added
+
 
 Library independent changes
 ------
@@ -38,6 +45,12 @@ Library independent changes
 *                   Important Behavior Changes                             *
 ****************************************************************************
 
+QtVersit
+------
+ - The FN vCard property will now only be generated if a QContactName is
+   provided with a CustomLabel field.
+
+
 
 ****************************************************************************
 *                          Library                                         *
@@ -45,33 +58,45 @@ Library independent changes
 
 QtConnectivity
 -----
-    - The QNearFieldTarget is now asynchronous.
-    - LLCP socket support on Maemo 6
-    - Improved NFC API documentation and example applications.
+ - The QNearFieldTarget is now asynchronous.
+ - LLCP socket support on Maemo 6
+ - Improved NFC API documentation and example applications.
 
 QtLocation
 -----
-   - QGeoCoordinate::atDistanceAndAzimuth
-   - A positioning backend for MeeGo
-   - Support for positioning plugins
-   - Support for map objects based on arbitrary QGraphicsItems
-   - Support for map bearing and tilting added to the API.
-     - The included map plugin doesn't support them yet.
+ - QGeoCoordinate::atDistanceAndAzimuth
+ - A positioning backend for MeeGo
+ - Support for positioning plugins
+ - Support for map objects based on arbitrary QGraphicsItems
+ - Support for map bearing and tilting added to the API.
+   - The included map plugin doesn't support them yet.
    
+   
+QtFeedback
+------
+ - Use newer CHWRMHaptics API on Symbian^3 for more functionality
+ - Several fixes relating to error handling
+
+QtMultimediaKit
+------
+ - Many, many fixes for Symbian audio, video and camera, including support
+   for QtMultimediaKit QML elements
+ - On Symbian, handle missing capabilities gracefully
+ - On Linux with gstreamer, allow QIODevice based streaming
+ - Documentation for QML Camera element was added
+
 QtVersit
-------
- - The FN vCard property will now only be generated if a QContactName is
-   provided with a CustomLabel field.
+-----
+ - vCard birthday/anniversary properties that are just a date (no time)
+   will be stored as dates, not datetimes
 
-   
-****************************************************************************
-*                      Platform Specific Changes                           *
-****************************************************************************
+QtContacts
+-----
+ - Several documentation clarifications
+ - Several new QContactFilter convenience functions {address, presence, favorite etc}
+ - New "time out" error code
 
-Qt Mobility for Meego
-------
-
- - Platform support for Meego added (across all API's)
-
-
-
+QtOrganizer
+-----
+ - Meeting request and attachment support (added in TP) has been removed
+ - New "time out" error code.
