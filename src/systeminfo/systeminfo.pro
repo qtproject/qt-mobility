@@ -248,7 +248,7 @@ message("XXXXXXXXXXXXXXXXXXXXXXX")
             LIBS += -lhwrmfmtxclient
         }
 
-        contains(DiskNotifyClient_tenabled, yes) {
+        contains(DiskNotifyClient_enabled, yes) {
             message("DiskNotiferClient available")
             DEFINES += DISKNOTIFY_SUPPORTED
             LIBS += -ldisknotifyhandler
