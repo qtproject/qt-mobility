@@ -104,6 +104,12 @@ bool CameraBinImageCapture::isReadyForCapture() const
 int CameraBinImageCapture::capture(const QString &fileName)
 {
     m_requestId++;
+
+    if (!m_ready) {
+        emit error(m_requestId, QCameraImageCapture::NotReadyError, tr("Camera not ready"));
+        return m_requestId;
+    }
+
 #ifdef DEBUG_CAPTURE
     qDebug() << Q_FUNC_INFO << m_requestId << fileName;
 #endif
