@@ -309,9 +309,23 @@ QTM_BEGIN_NAMESPACE
 
     The folder must be in the same account as the message. This will move the message on the external server, as well as locally.
 
+    On Windows mobile and desktop platforms this function performs no operation.
+    
     Returns true if the operation can be initiated; otherwise returns false.
 */
     
+/*!
+    \fn QMessageService::synchronize(const QMessageAccountId &id)
+  
+    Initiate synchronization with external server identified by \a id
+
+    On Windows mobile and desktop platforms this function performs no operation.
+
+    Returns true if the operation can be initiated; otherwise returns false.
+    
+    \sa QMessageManager::addMessage(), QMessageManager::updateMessage(), QMessageManager::removeMessage(), QMessageManager::removeMessages()
+*/
+
 /*!
     \fn QMessageService::state() const
   
