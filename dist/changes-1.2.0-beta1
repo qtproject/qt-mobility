@@ -102,6 +102,13 @@ QtOrganizer
  - New "time out" error code.
  - Fixes for maemo5 asynchronous engine
 
+QtServiceFrameWork
+-----
+ - QtMobility has now its own QMetaObjectBuilder
+ - Autotest improvement
+ - Optimisation of Memory usage
+ - Stability improvement of IPC datatransfer
+
 QtSensors
 ------
 
@@ -139,5 +146,10 @@ QtSensors
  - Don't crash when using QCompass on Symbian [QTMOBILITY-1482]
  - Allow slower polling of N900 sensors [QTMOBILITY-1505]
  - N900 proximity sensor cannot run faster than 10Hz [QTMOBILITY-1505]
+
+Plugins
+-----
+ - Declarative plugins containing d suffix in debug build now.
+
 
 
