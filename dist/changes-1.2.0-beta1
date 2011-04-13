@@ -203,6 +203,8 @@ QtSysteminfo
     - QTMOBILITY-985 QSystemDeviceInfo::getActiveProfileDetails() does not
       retrieve active profile settings in maemo6
     - QTMOBILITY-922 devicelocked notification
+    - QTMOBILITY-1148 QSystemDeviceInfo should report on thermal state and
+      changes.
     - profileDetails available to QML
     - uniqueDeviceId to QML
     - added orientationChanged signal
