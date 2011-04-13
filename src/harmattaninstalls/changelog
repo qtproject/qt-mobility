@@ -1,3 +1,58 @@
+qt-mobility (1.2.0-beta0+4173) unstable; urgency=low
+
+  * Fixes: NB#229951
+  * Fixes: NB#226102
+  * Fixes: NB#178454
+  * Fixes: NB#217796
+  * Fixes: NB#229473
+  * Fixes: NB#220654
+  * Fixes: NB#225274
+  * Fixes: NB#169427
+  * Fixes: NB#223444
+  * Fixes: NB#228990
+  * Fixes: NB#242042
+
+ -- Janne Hamalainen <janne.a.hamalainen@nokia.com>  Wed, 06 Apr 2011 12:01:48 +1000
+
+qt-mobility (1.2.0~git20110328) unstable; urgency=low
+
+  * Fixes: NB#238905
+  * Fixes: NB#214642
+  * Fixes: NB#225304
+  * Fixes: NB#228981
+  * Fixes: NB#231517
+  * Fixes: NB#227945
+  * Fixes: NB#171536
+  * Fixes: NB#227809
+  * Fixes: NB#222904
+  * Fixes: NB#220391
+  * Fixes: NB#236535
+  * Fixes: NB#201280
+  * Fixes: NB#217488
+  * Fixes: NB#218428
+  * Fixes: NB#228853
+  * Fixes: NB#220661
+  * Fixes: NB#228065
+
+ -- Sunil Thaha <sunil.thaha@nokia.com>  Mon, 28 Mar 2011 13:59:48 +1000
+
+qt-mobility (1.2.0~git20110314) unstable; urgency=low
+
+  * Fixes: NB#226069
+  * Fixes: NB#232204
+  * Fixes: NB#227734
+
+ -- Sunil Thaha <sunil.thaha@nokia.com>  Mon, 14 Mar 2011 13:59:48 +1000
+
+qt-mobility (1.2.0~git20110310) unstable; urgency=low
+
+  * Fixes: NB#228976
+  * Fixes: NB#228985
+  * Fixes: NB#233485
+  * Fixes: NB#222899
+
+ -- Sunil Thaha <sunil.thaha@nokia.com>  Thu, 10 Mar 2011 13:59:48 +1000
+
 qt-mobility (1.2.0~git20110225) unstable; urgency=low
 
   * Bumped up the version
