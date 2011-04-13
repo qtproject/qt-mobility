@@ -77,6 +77,32 @@ QtFeedback
  - Use newer CHWRMHaptics API on Symbian^3 for more functionality
  - Several fixes relating to error handling
 
+ QtMessaging
+ -----
+ - API additions
+    - QMessageAccountFilter::byName(const QString &pattern, QMessageDataComparator::LikeComparator cmp)
+    - QMessageFilter::byTo(const QString &pattern, QMessageDataComparator::LikeComparator cmp)
+    - QMessageFilter::byCc(const QString &pattern, QMessageDataComparator::LikeComparator cmp)
+    - QMessageFilter::byBcc(const QString &pattern, QMessageDataComparator::LikeComparator cmp)
+    - QMessageFolderFilter::byName(const QString &pattern, QMessageDataComparator::LikeComparator cmp)
+    - QMessageFolderFilter::byPath(const QString &pattern, QMessageDataComparator::LikeComparator cmp)
+    - QMessageManager::removeAccount(const QMessageAccountId &id)
+    - QMessageService::moveMessage(const QMessageId &messageId, const QMessageFolderId &toFolderId)
+    - QMessageManager::accountRemoved(const QMessageAccountId &id);
+ - Many bug fixes (most importan below)
+    - Fix QTMOBILITY-771 queryMessages method produces segmentation fault, environment N900
+    - Fix MOBILITY-2017 queryFolders does not list folders in 'My Folders, environment N8
+    - Fix MOBILITY-2234 Message query crashes when fixed Symbian API is used,  environment Symbian^3 (TB 9.2)
+    - Fix QTMOBILITY-789 Native SMS sending on Symbian gets blocked when listening for SMS messages, environment Nokia XM 5800
+    - Fix MOBILITY-2289 Updating to, cc & bcc fields does not work correctly, environment S60, Symbian^3
+    - Fix MOBILITY-2292 Getting Binary attachment fails sometimes, environment Symbian^3
+    - Fix MOBILITY-2234 Message query crashes when fixed Symbian API is used, environment Symbian^3 (TB 9.2)
+    - Fix MOBILITY-2136 libqtm-messaging depends on libosso, environment Maemo 6
+    - Fix MOBILITY-2322 Crash on call to QMessageService::send(), environment Maemo 6
+    - Fix MOBILITY-2371 QMessageManager::updateMessage() crashes, environment Symbian^3
+    - Fix MOBILITY-2203 Searching Email folders not possible after sending email, environment Maemo 6
+    - Fix MOBILITY-2687 coverity defects, environment Symbian^3
+
 QtMultimediaKit
 ------
  - Many, many fixes for Symbian audio, video and camera, including support
