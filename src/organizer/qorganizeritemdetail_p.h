@@ -154,6 +154,7 @@ public:
 };
 
 uint qHash(const QOrganizerItemStringHolder& key);
+bool compareOrganizerItemDetail(const QOrganizerItemDetail &one, const QOrganizerItemDetail &other);
 
 class QOrganizerItemDetailPrivate : public QSharedData
 {
