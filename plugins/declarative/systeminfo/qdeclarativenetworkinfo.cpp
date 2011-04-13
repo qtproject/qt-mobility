@@ -527,3 +527,39 @@ QSystemNetworkInfo::NetworkMode QDeclarativeNetworkInfo::mode()
 {
     return m_mode;
 }
+
+
+bool QDeclarativeNetworkInfo::monitorCellDataChanges()
+{
+    return monitoringCellDataTechnologyChanges;
+}
+
+void QDeclarativeNetworkInfo::startCellDataChanged(bool on)
+{
+    monitoringCellDataTechnologyChanges = on;
+    if (on) {
+        connect(netInfo(),SIGNAL(cellDataTechnologyChanged(QSystemNetworkInfo::CellDataTechnology)),
+                this,SIGNAL(cellDataTechnologyChanges(QSystemNetworkInfo::CellDataTechnology)),Qt::UniqueConnection);
+    } else {
+        disconnect(netInfo(),SIGNAL(cellDataTechnologyChanged(QSystemNetworkInfo::CellDataTechnology)),
+                   this,SIGNAL(cellDataTechnologyChanges(QSystemNetworkInfo::CellDataTechnology)));
+    }
+}
+
+bool QDeclarativeNetworkInfo::monitorCellIdChanges()
+{
+    return monitoringCellIdChanges;
+}
+
+void QDeclarativeNetworkInfo::startCellIdChanged(bool on)
+{
+    monitoringCellIdChanges = on;
+    if (on) {
+        connect(netInfo(),SIGNAL(cellIdChanged(int)),
+                this,SIGNAL(cellIdChanges(int)),Qt::UniqueConnection);
+    } else {
+        disconnect(netInfo(),SIGNAL(cellIdChanged(int)),
+                   this,SIGNAL(cellIdChanges(int)));
+    }
+}
+
