@@ -50,11 +50,16 @@ iConstructed(EFalse), iObserver(NULL),iDynCaps(0)
     TInt err = 0;
     TRACES(qDebug() << "CNetworkBase::CNetworkBase<---");
     CActiveScheduler::Add(this);
+
     TRAP_IGNORE(
         err = iTelServer.Connect();
         TRACES(qDebug() << "Err val for RTelServer::Connect" << err);
         User::LeaveIfError(err);
-        CleanupClosePushL(iTelServer);
+    )
+
+    CleanupClosePushL(iTelServer);
+
+    TRAP_IGNORE(
         err = iTelServer.GetPhoneInfo( 0, iPhoneInfo );
         TRACES(qDebug() << "Err val for RTelServer::GetPhoneInfo =" << err);
         User::LeaveIfError(err);
