@@ -141,6 +141,7 @@ public:
 
 public:
     QPrivateLinearBuffer buffer;
+    QPrivateLinearBuffer txBuffer;
     int socket;
     QBluetoothSocket::SocketType socketType;
     QBluetoothSocket::SocketState state;
@@ -155,13 +156,13 @@ public:
 
 //    QByteArray rxBuffer;
 //    qint64 rxOffset;
-    QByteArray txBuffer;
     QString errorString;
 
 #ifdef QTM_SYMBIAN_BLUETOOTH
     CBluetoothSocket *iSocket;
     TPtr8 rxDescriptor;
     TPtrC8 txDescriptor;
+    QByteArray txArray;
     TSockXfrLength rxLength;
     TInt recvMTU;
     TInt txMTU;

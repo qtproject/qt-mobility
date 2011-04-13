@@ -320,7 +320,7 @@ void QBluetoothSocketPrivate::HandleSendCompleteL(TInt aErr)
     Q_Q(QBluetoothSocket);
     transmitting = false;
     if (aErr == KErrNone) {
-        txBuffer.remove(0, writeSize);
+        txArray.remove(0, writeSize);
         emit q->bytesWritten(writeSize);
         if (state == QBluetoothSocket::ClosingState)
             {
@@ -510,13 +510,13 @@ qint64 QBluetoothSocketPrivate::writeData(const char *data, qint64 maxSize)
     if(!iSocket || data == 0 || maxSize <= 0 || txMTU <= 0) {
         return -1;
     }
-    if (!txBuffer.isEmpty())
+    if (!txArray.isEmpty())
         {
-        txBuffer.append(QByteArray(data, maxSize));
+        txArray.append(QByteArray(data, maxSize));
         }
     else
         {
-        txBuffer = QByteArray(data, maxSize);
+        txArray = QByteArray(data, maxSize);
         }
     // we try to send the data to the remote device
     if(tryToSend())
@@ -564,16 +564,16 @@ qint64 QBluetoothSocketPrivate::bytesAvailable() const
 
 bool QBluetoothSocketPrivate::tryToSend()
 {
-    if(txBuffer.isEmpty())
+    if(txArray.isEmpty())
         return true;
     
     if(transmitting)
         return transmitting;
 
     // we cannot write more than txMTU otherwise the extra data will just be lost
-    TInt dataLen = qMin(txBuffer.length(),txMTU);
+    TInt dataLen = qMin(txArray.length(),txMTU);
     
-    TRAPD(err, txDescriptor.Set(reinterpret_cast<const unsigned char *>(txBuffer.constData()),dataLen));
+    TRAPD(err, txDescriptor.Set(reinterpret_cast<const unsigned char *>(txArray.constData()),dataLen));
     if(err != KErrNone) 
         {
         transmitting = false;
