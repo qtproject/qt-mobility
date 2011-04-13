@@ -962,7 +962,7 @@ bool DSCameraSession::setProperties()
 
 bool DSCameraSession::openStream()
 {
-    //Opens the stream for reading and allocates any neccesary resources needed
+    //Opens the stream for reading and allocates any necessary resources needed
     //Return true if success, false otherwise
 
     if (opened) {
