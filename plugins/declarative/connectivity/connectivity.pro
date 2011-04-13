@@ -31,18 +31,28 @@ qmldir.path +=  $$[QT_INSTALL_IMPORTS]/$$TARGETPATH
 
 # Input
 HEADERS += \
-    qdeclarativebtdiscoverymodel_p.h \
-    qdeclarativebtimageprovider_p.h \
     qdeclarativebluetoothservice_p.h \
     qdeclarativebluetoothsocket_p.h \
-    qdeclarativenearfieldsocket_p.h
+    qdeclarativenearfieldsocket_p.h \
+    qdeclarativenearfield_p.h \
+    qdeclarativendeffilter_p.h \
+    qdeclarativendeftextrecord_p.h \
+    qdeclarativendefurirecord_p.h \
+    qdeclarativendefmimerecord_p.h \
+    qdeclarativebluetoothimageprovider_p.h \
+    qdeclarativebluetoothdiscoverymodel_p.h
 
 SOURCES += plugin.cpp \ 
-    qdeclarativebtdiscoverymodel.cpp \
-    qdeclarativebtimageprovider.cpp \
     qdeclarativebluetoothservice.cpp \
     qdeclarativebluetoothsocket.cpp \
-    qdeclarativenearfieldsocket.cpp
+    qdeclarativenearfieldsocket.cpp \
+    qdeclarativenearfield.cpp \
+    qdeclarativendeffilter.cpp \
+    qdeclarativendeftextrecord.cpp \
+    qdeclarativendefurirecord.cpp \
+    qdeclarativendefmimerecord.cpp \
+    qdeclarativebluetoothdiscoverymodel.cpp \
+    qdeclarativebluetoothimageprovider.cpp
 
 RESOURCES += connectivity.qrc
 

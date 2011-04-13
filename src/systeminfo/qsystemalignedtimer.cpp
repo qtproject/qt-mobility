@@ -102,7 +102,6 @@ QSystemAlignedTimer::QSystemAlignedTimer(QObject *parent)
   */
 QSystemAlignedTimer::~QSystemAlignedTimer()
 {
-    delete d, d = 0;
 }
 
 /*!

@@ -371,11 +371,17 @@ QList<QOrganizerItem> MKCalEngine::internalItems(const QDateTime& startDate, con
     Q_UNUSED(error);
     // TODO: optimize by using our own filters
 
-    // Just naively get all the incidences between the given startDate and endDate
     d->m_calendarBackendPtr->setFilter(0);
-    KCalCore::Incidence::List incidences = d->m_calendarBackendPtr->incidences(startDate.date(), endDate.date());
+    KCalCore::Incidence::List incidences;
     QList<QOrganizerItem> partiallyFilteredItems;
     QList<QOrganizerItem> ret;
+
+    if (startDate.isNull() && endDate.isNull()) {
+        // Retrieve also incidences without start and end dates
+        incidences = d->m_calendarBackendPtr->incidences();
+    } else {
+        incidences = d->m_calendarBackendPtr->incidences(startDate.date(), endDate.date());
+    }
 
     // Convert them all to QOrganizerItems
     foreach (const KCalCore::Incidence::Ptr& incidence, incidences) {
@@ -404,7 +410,6 @@ QList<QOrganizerItem> MKCalEngine::internalItems(const QDateTime& startDate, con
 
     return ret;
 }
-
 
 bool MKCalEngine::itemHasRecurringChildInInterval(KCalCore::Incidence::Ptr incidence, QOrganizerItem generator, QDateTime startDate, QDateTime endDate, QOrganizerItemFilter filter) const
 {
@@ -1447,30 +1452,45 @@ void MKCalEngine::convertCollectionToNotebook(const QOrganizerCollection& collec
 
 bool MKCalEngine::isIncidenceInInterval(KCalCore::Incidence::Ptr incidence, QDateTime startPeriod, QDateTime endPeriod) const
 {
+    // if period start and end dates are not given, also incidences without start and end dates return true
     if (startPeriod.isNull() && endPeriod.isNull())
         return true;
 
-    QDateTime iStartDate = incidence->dtStart().dateTime();
-    QDateTime iEndDate = iStartDate.addSecs(incidenceDuration(incidence));
+    QDateTime iDateStart = incidence->dtStart().dateTime();
+    QDateTime iDateEnd;
 
-    // if start period is not given, return true is the incidence start date is before the end period
-    if (startPeriod.isNull())
-        return iStartDate < endPeriod;
+    if (incidence->type() == KCalCore::Incidence::TypeEvent) {
+        KCalCore::Event::Ptr ev = incidence.staticCast<KCalCore::Event>();
+        iDateEnd = ev->dtEnd().dateTime();
+    } else if (incidence->type() == KCalCore::Incidence::TypeTodo) {
+        KCalCore::Todo::Ptr todo = incidence.staticCast<KCalCore::Todo>();
+        iDateEnd = todo->dtDue().dateTime();
+    }
 
-    // if end period is missing, return true is the incidence end date is after the start period
-    if (endPeriod.isNull())
-        return iEndDate > startPeriod;
+    // if period start date is not given, check that item is starting or ending before period end
+    if (startPeriod.isNull()) // endPeriod must be non-null because of initial test
+        return (!iDateStart.isNull() && iDateStart <= endPeriod) ||
+               (!iDateEnd.isNull() && iDateEnd <= endPeriod);
 
-    // if the incidence is starting before the period check that it's end date is after the period start
-    if (startPeriod > iStartDate)
-        return iEndDate >= startPeriod;
+    // if period end date is not given, check that item is starting or ending after the period start
+    if (endPeriod.isNull())   // startPeriod must be non-null because of initial test
+        return (!iDateEnd.isNull() && iDateEnd >= startPeriod) ||
+               (!iDateStart.isNull() && iDateStart >= startPeriod);
 
-    // if the incidence is ending after the period check that it's start date is before the period end
-    if (endPeriod < iEndDate)
-        return iStartDate <= endPeriod;
+    // Both startPeriod and endPeriod are not null
+    // check if item start date is between the period start and end date
+    if (!iDateStart.isNull() && iDateStart >= startPeriod && iDateStart <= endPeriod)
+        return true;
 
-    // incidence should be in the given interval, always true
-    return true;
+    // check if item end date is between the period start and end date
+    if (!iDateEnd.isNull() && iDateEnd >= startPeriod && iDateEnd <= endPeriod)
+        return true;
+
+    // check if item interval is including the period interval
+    if (!iDateStart.isNull() && !iDateEnd.isNull() && iDateStart <= startPeriod && iDateEnd >= endPeriod)
+        return true;
+
+    return false;
 }
 
 int MKCalEngine::incidenceDuration(KCalCore::Incidence::Ptr incidence) const
@@ -1478,14 +1498,16 @@ int MKCalEngine::incidenceDuration(KCalCore::Incidence::Ptr incidence) const
     // incidence->hasDuration() is not working so we do it manually
     int duration = 0;
 
-    if (incidence->type() == KCalCore::Incidence::TypeEvent) {
-        KCalCore::Event::Ptr ev = incidence.staticCast<KCalCore::Event>();
-        if (!ev->dtEnd().isNull())
-            duration = ev->dtStart().secsTo(ev->dtEnd());
-    } else if (incidence->type() == KCalCore::Incidence::TypeTodo) {
-        KCalCore::Todo::Ptr todo = incidence.staticCast<KCalCore::Todo>();
-        if (!todo->dtDue().isNull())
-            duration = todo->dtStart().secsTo(todo->dtDue());
+    if (!incidence->dtStart().isNull()) {
+        if (incidence->type() == KCalCore::Incidence::TypeEvent) {
+            KCalCore::Event::Ptr ev = incidence.staticCast<KCalCore::Event>();
+            if (!ev->dtEnd().isNull())
+                duration = ev->dtStart().secsTo(ev->dtEnd());
+        } else if (incidence->type() == KCalCore::Incidence::TypeTodo) {
+            KCalCore::Todo::Ptr todo = incidence.staticCast<KCalCore::Todo>();
+            if (!todo->dtDue().isNull())
+                duration = todo->dtStart().secsTo(todo->dtDue());
+        }
     }
 
     return duration;

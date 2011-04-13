@@ -115,8 +115,10 @@ void QBluetoothServiceDiscoveryAgentPrivate::stop()
         reply.waitForFinished();
 
         discoveredDevices.clear();
-        // with no more device this will stop discovery
-        startServiceDiscovery();
+        setDiscoveryState(Inactive);
+        Q_Q(QBluetoothServiceDiscoveryAgent);
+        emit q->canceled();
+
 //        qDebug() << "Stop done";
     }
 }

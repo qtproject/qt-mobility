@@ -110,15 +110,12 @@ class QSystemNetworkInfoPrivate : public QSystemNetworkInfoLinuxCommonPrivate
     Q_OBJECT
 
 public:
-
     QSystemNetworkInfoPrivate(QSystemNetworkInfoLinuxCommonPrivate *parent = 0);
     virtual ~QSystemNetworkInfoPrivate();
 
-    QMap<QString,QVariant> queryCsdProperties(const QString& service, const QString& servicePath, const QString& interface);
-
-    QSystemNetworkInfo::NetworkStatus networkStatus(QSystemNetworkInfo::NetworkMode mode);
-    qint32 networkSignalStrength(QSystemNetworkInfo::NetworkMode mode);
     int cellId();
+    QSystemNetworkInfo::CellDataTechnology cellDataTechnology();
+
     int locationAreaCode();
 
     QString currentMobileCountryCode();
@@ -127,44 +124,72 @@ public:
     QString homeMobileNetworkCode();
 
     QString networkName(QSystemNetworkInfo::NetworkMode mode);
-    QString macAddress(QSystemNetworkInfo::NetworkMode mode);
-
-    QNetworkInterface interfaceForMode(QSystemNetworkInfo::NetworkMode mode);
     QSystemNetworkInfo::NetworkMode currentMode();
-    void setWlanSignalStrengthCheckEnabled(bool enabled);
-    QSystemNetworkInfo::CellDataTechnology cellDataTechnology();
+    QSystemNetworkInfo::NetworkStatus networkStatus(QSystemNetworkInfo::NetworkMode mode);
 
+#if defined(Q_WS_MAEMO_5)
+    void setWlanSignalStrengthCheckEnabled(bool enabled);
+#endif // Q_WS_MAEMO_5
+    int networkSignalStrength(QSystemNetworkInfo::NetworkMode mode);
+
+#if defined(Q_WS_MAEMO_6)
 protected:
+    void connectNotify(const char *signal);
+    void disconnectNotify(const char *signal);
+#endif // Q_WS_MAEMO_6
 
 private Q_SLOTS:
-    void bluetoothNetworkStatusCheck(QString device);
-    void setupNetworkInfo();
+    void updateAttachedDevices(QString device);
+    void icdStatusChanged(QString,QString,QString,QString);
+    void updateUsbCableStatus();
+    void checkWlanSignalStrength();
+
+#if defined(Q_WS_MAEMO_5)
+    void cellNetworkSignalStrengthChanged(uchar,uchar);
+    void networkModeChanged(int);
+    void operatorNameChanged(uchar,QString,QString,uint,uint);
+    void registrationStatusChanged(uchar,ushort,uint,uint,uint,uchar,uchar);
+#endif // Q_WS_MAEMO_5
+
+#if !defined(QT_NO_DBUS)
 #if defined(Q_WS_MAEMO_6)
-    // Slots only available in Maemo6
     void slotSignalStrengthChanged(int percent, int dbm);
     void slotOperatorChanged(const QString &mnc, const QString &mcc);
     void slotOperatorNameChanged(const QString &name);
     void slotRegistrationChanged(const QString &status);
     void slotCellChanged(const QString &type, int id, int lac);
     void slotCellDataTechnologyChanged(const QString &tech);
-#endif
-
-#if defined(Q_WS_MAEMO_5)
-    // Slots only available in Maemo5
-    void cellNetworkSignalStrengthChanged(uchar,uchar);
-    void networkModeChanged(int);
-    void operatorNameChanged(uchar,QString,QString,uint,uint);
-    void registrationStatusChanged(uchar,ushort,uint,uint,uint,uchar,uchar);
-#endif
-    void icdStatusChanged(QString,QString,QString,QString);
-    void usbCableAction();
-    void wlanSignalStrengthCheck();
-    void networkModeChangeCheck();
+#endif // Q_WS_MAEMO_6
+#endif // QT_NO_DBUS
 
 private:
+    void setupNetworkInfo();
+    void checkNetworkMode();
+    QSystemNetworkInfo::CellDataTechnology csdtToCellDataTechnology(const QString &tech);
+
+    QSystemNetworkInfo::NetworkStatus currentBluetoothNetworkStatus;
+    int currentCellNetworkStatus;
+    QSystemNetworkInfo::NetworkStatus currentWlanNetworkStatus;
+
+    QSystemNetworkInfo::NetworkMode currentNetworkMode;
+
+    int currentCellSignalStrength;
+    int currentEthernetSignalStrength;
+    int currentWlanSignalStrength;
+
+    int currentCellId;
+    int currentLac;
+    int radioAccessTechnology;
+    QSystemNetworkInfo::CellDataTechnology currentCellDataTechnology;
+    QString currentMCC;
+    QString currentMNC;
+    QString currentOperatorName;
+
+    QTimer *wlanSignalStrengthTimer;
+
+#if defined(Q_WS_MAEMO_5)
     // The index of wanted argument in the QDBusMessage which is received as a
     // reply to the sent get_registration_status message via interface Phone.Net
-
     enum {                // In the received QDBusMessage..
         STATUS_INDEX = 0, // the original type of status argument is byte
         LAC_INDEX,        // the original type of lac argument is uint16
@@ -173,27 +198,14 @@ private:
         MCC_INDEX         // the original type of mcc argument is uint32
     };
 
-    int cellSignalStrength;
-    QSystemNetworkInfo::NetworkStatus currentBluetoothNetworkStatus;
-    QSystemNetworkInfo::NetworkStatus currentWlanNetworkStatus;
-    QSystemNetworkInfo::NetworkMode currentNetworkMode;
-    int currentCellId;
-    int currentCellNetworkStatus;
-    int currentEthernetSignalStrength;
-    int currentLac;
-    QString currentEthernetState;
-    QString currentMCC;
-    QString currentMNC;
-    QString currentOperatorName;
-    int currentWlanSignalStrength;
-    int radioAccessTechnology;
     int iWlanStrengthCheckEnabled;
-    QTimer *wlanSignalStrengthTimer;
+#endif // Q_WS_MAEMO_5
 
-    QMap<QString,int> csStatusMaemo6;
+#if defined(Q_WS_MAEMO_6)
+    QMap<QString, QVariant> queryCsdProperties(const QString &service, const QString &servicePath, const QString &interface);
 
-    QSystemNetworkInfo::CellDataTechnology currentCellDataTechnology;
-    QSystemNetworkInfo::CellDataTechnology csdtToCellDataTechnology(const QString &tech);
+    static QMap<QString, int> CellularServiceStatus;
+#endif // Q_WS_MAEMO_6
 };
 
 class QSystemDisplayInfoPrivate : public QSystemDisplayInfoLinuxCommonPrivate
@@ -210,17 +222,6 @@ public:
 Q_SIGNALS:
     void orientationChanged(QSystemDisplayInfo::DisplayOrientation newOrientation);
 
-
-};
-
-class QSystemStorageInfoPrivate : public QSystemStorageInfoLinuxCommonPrivate
-{
-    Q_OBJECT
-
-public:
-
-    QSystemStorageInfoPrivate(QSystemStorageInfoLinuxCommonPrivate *parent = 0);
-    virtual ~QSystemStorageInfoPrivate();
 
 };
 
@@ -263,7 +264,6 @@ protected:
     QHalInterface *halIface;
     QHalDeviceInterface *halIfaceDevice;
     void setupBluetooth();
-    void setupProfile();
 
 private Q_SLOTS:
     void halChanged(int,QVariantList);
@@ -277,14 +277,33 @@ private Q_SLOTS:
 private:
     void connectNotify(const char *signal);
     void disconnectNotify(const char *signal);
+    void registerProfileDataMetaTypes();
 
-    bool flightMode;
-    QString profileName;
-    bool silentProfile;
-    bool vibratingAlertEnabled;
-    bool beepProfile;
-    int ringingAlertVolume;
-    int smsAlertVolume;
+    // profile data
+    bool m_flightMode;
+    QString m_profileName;
+    bool m_silentProfile;
+    bool m_vibratingAlertEnabled;
+    bool m_beepProfile;
+    int m_ringingAlertVolume;
+    int m_smsAlertVolume;
+
+    // profile data lazy-loading status
+    bool m_flightModeQueried;
+    bool m_profileNameQueried;
+    bool m_ringingAlertTypeQueried;
+    bool m_vibratingAlertEnabledQueried;
+    bool m_ringingAlertVolumeQueried;
+    bool m_smsAlertVolumeQueried;
+    bool m_profileDataMetaTypesRegistered;
+
+    // profile data accessors
+    void queryRingingAlertType();
+    bool flightMode();
+    QString profileName();
+    bool silentProfile();
+    bool beepProfile();
+
     QSystemDeviceInfo::BatteryStatus currentBatStatus;
 
     QSystemDeviceInfo::PowerState previousPowerState;
@@ -293,11 +312,10 @@ private:
      QSocketNotifier *notifier;
      int gpioFD;
      int currentBatteryLevel;
-
 };
 
 
-class QSystemScreenSaverPrivate : public QSystemScreenSaverLinuxCommonPrivate
+class QSystemScreenSaverPrivate : public QObject
 {
     Q_OBJECT
 
@@ -307,18 +325,19 @@ public:
 
     bool screenSaverInhibited();
     bool setScreenSaverInhibit();
-    bool isInhibited;
     void setScreenSaverInhibited(bool on);
 
 private Q_SLOTS:
     void wakeUpDisplay();
 
 private:
+    bool isInhibited;
     QTimer *ssTimer;
 #if !defined(QT_NO_DBUS)
     QDBusInterface *mceConnectionInterface;
 #endif
 };
+
 class QSystemBatteryInfoPrivate : public QSystemBatteryInfoLinuxCommonPrivate
 {
     Q_OBJECT

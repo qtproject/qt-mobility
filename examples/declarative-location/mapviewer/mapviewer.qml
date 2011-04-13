@@ -46,6 +46,7 @@ Item {
     height: 500
 
     focus : true
+    TitleBar { id: titleBar; z: 5; width: parent.width; height: 40; opacity: 0.9 }
 
     Map {
         id: map
@@ -61,72 +62,43 @@ Item {
             longitude: -0.11
         }
 
-
         MapCircle {
             id : circle
             center : Coordinate {
-                //latitude: 0
-                //longitude: 0
-                                latitude : 51.5
-                                longitude : -0.11
-                                }
-            color : "red"
+                        latitude : 51.5
+                        longitude : -0.11
+                    }
+            color : "#80FF0000"
             radius : 1000.0
             MapMouseArea {
-//                    onClicked : { console.log('clicked in circle') }
-//                    onDoubleClicked : { console.log('double clicked in circle') }
-//                    onPressed: {console.log('pressed in circle') }
-//                    onReleased: { console.log('released in circle') }
-//                    onPositionChanged: { console.log('moved in circle') }
-
-                property bool mouseDown : false
-                property int lastX : -1
-                property int lastY : -1
-
-                hoverEnabled : true
-
-                onPressed : {
-                    mouseDown = true
-                    lastX = mouse.x
-                    lastY = mouse.y
-                }
-                onReleased : {
-                    mouseDown = false
-                    lastX = -1
-                    lastY = -1
-                }
                 onPositionChanged: {
-                    if (mouseDown) {
+                    if (mouse.button == Qt.LeftButton)
                         circle.center = mouse.coordinate
-                    }
+                    if (mouse.button == Qt.RightButton)
+                        circle.radius = circle.center.distanceTo(mouse.coordinate)
                 }
             }
         }
 
-
         MapMouseArea {
-            property bool mouseDown : false
             property int lastX : -1
             property int lastY : -1
 
-            hoverEnabled : true
-
             onPressed : {
-                mouseDown = true
                 lastX = mouse.x
                 lastY = mouse.y
             }
             onReleased : {
-                mouseDown = false
                 lastX = -1
                 lastY = -1
             }
             onPositionChanged: {
-                console.log(mouse.button)
-                if (mouseDown) {
-                    var dx = mouse.x - lastX
-                    var dy = mouse.y - lastY
-                    map.pan(-dx, -dy)
+                if (mouse.button == Qt.LeftButton) {
+                    if ((lastX != -1) && (lastY != -1)) {
+                        var dx = mouse.x - lastX
+                        var dy = mouse.y - lastY
+                        map.pan(-dx, -dy)
+                    }
                     lastX = mouse.x
                     lastY = mouse.y
                 }
@@ -134,45 +106,12 @@ Item {
             onDoubleClicked: {
                 map.center = mouse.coordinate
                 map.zoomLevel += 1
+                lastX = -1
+                lastY = -1
             }
         }
     }
-/*
-    MouseArea {
 
-        z : 0
-        anchors.fill : parent
-
-        property bool mouseDown : false
-        property int lastX : -1
-        property int lastY : -1
-
-        hoverEnabled : true
-        onPressed : {
-            mouseDown = true 
-            lastX = mouse.x
-            lastY = mouse.y
-        }
-        onReleased : { 
-            mouseDown = false 
-            lastX = -1
-            lastY = -1
-        }
-        onPositionChanged: {
-            if (mouseDown) {
-                var dx = mouse.x - lastX
-                var dy = mouse.y - lastY
-                map.pan(-dx, -dy)
-                lastX = mouse.x
-                lastY = mouse.y
-            }
-        }
-        onDoubleClicked: {
-            map.center = map.toCoordinate(Qt.point(mouse.x, mouse.y))
-            map.zoomLevel += 1
-        }
-    }
-*/
     Keys.onPressed: {
         if (event.key == Qt.Key_Plus) {
             map.zoomLevel += 1

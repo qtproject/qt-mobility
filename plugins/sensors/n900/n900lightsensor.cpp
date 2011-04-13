@@ -52,8 +52,7 @@ n900lightsensor::n900lightsensor(QSensor *sensor)
     setReading<QLightReading>(&m_reading);
     // Sensor takes 12-400ms to complete one reading and is triggered by
     // a read of the /sys file (no interrupt/timing loop/etc. is used).
-    // Since no continuous operation is possible, don't set a data rate.
-    addDataRate(2, 2); // Close enough to 2 Hz
+    addDataRate(1, 2);
     setDescription(QLatin1String("tsl2563"));
 
     sensor->setProperty("fieldOfView", 1); // very narrow field of view.

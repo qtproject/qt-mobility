@@ -49,6 +49,7 @@ Image {
     property int roRotation
     property BluetoothDiscoveryModel mymodel
     property BluetoothSocket socket
+    property BluetoothSocket server_socket
 
     source: "icons/connect.png"
     width: 100
@@ -99,7 +100,7 @@ Image {
     states: [
         State {
             name: "disabled"
-            when: socket.connected
+            when: socket.connected || server_socket.connected
             PropertyChanges { target: connectButton; opacity: 0.0; }
         }
     ]

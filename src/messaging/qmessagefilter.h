@@ -92,7 +92,6 @@ public:
     static QMessageFilter bySender(const QString &value, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
 
     static QMessageFilter byRecipients(const QString &pattern, QMessageDataComparator::LikeComparator cmp);
-    static QMessageFilter byRecipients(const QString &value, QMessageDataComparator::EqualityComparator cmp);
     static QMessageFilter byRecipients(const QString &value, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
 
     static QMessageFilter bySubject(const QString &pattern, QMessageDataComparator::LikeComparator cmp);

@@ -223,6 +223,8 @@ bool QMessageAccountFilter::operator!=(const QMessageAccountFilter& other) const
   
     Returns a filter matching accounts whose name matches \a value, according to \a cmp.
 
+    Not supported on Linux, Maemo 6 (Harmattan) and Meego.com (use InclusionComparator).
+
     \sa QMessageAccount::name()
 */
 

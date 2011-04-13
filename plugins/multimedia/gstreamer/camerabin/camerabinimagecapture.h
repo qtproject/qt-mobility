@@ -64,11 +64,19 @@ public:
 
 private slots:
     void updateState();
+    void handleBusMessage(const QGstreamerMessage &message);
 
 private:
+    static gboolean metadataEventProbe(GstPad *pad, GstEvent *event, CameraBinImageCapture *);
+    static gboolean uncompressedBufferProbe(GstPad *pad, GstBuffer *buffer, CameraBinImageCapture *);
+    static gboolean jpegBufferProbe(GstPad *pad, GstBuffer *buffer, CameraBinImageCapture *);
+    static gboolean handleImageSaved(GstElement *camera, const gchar *filename, CameraBinImageCapture *);
+
     CameraBinSession *m_session;
     bool m_ready;
-    int requestId;
+    int m_requestId;
+    GstElement *m_jpegEncoderElement;
+    GstElement *m_metadataMuxerElement;
 };
 
 #endif // CAMERABINCAPTURECORNTROL_H

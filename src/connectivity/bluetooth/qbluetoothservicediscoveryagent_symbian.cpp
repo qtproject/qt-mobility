@@ -125,6 +125,8 @@ void QBluetoothServiceDiscoveryAgentPrivate::stop()
     m_filter = NULL;
     delete m_attributes;
     m_attributes = NULL;
+    Q_Q(QBluetoothServiceDiscoveryAgent);
+    emit q->canceled();
 }
 
 void QBluetoothServiceDiscoveryAgentPrivate::initL(const QBluetoothAddress &address)

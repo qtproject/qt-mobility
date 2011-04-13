@@ -61,8 +61,8 @@ void n900filebasedsensor::start()
     int dataRate = sensor()->dataRate();
     if (dataRate == 0) {
         if (sensor()->availableDataRates().count())
-            // Use the first available rate when -1 is chosen
-            dataRate = sensor()->availableDataRates().first().first;
+            // Use the faster part of the first available rate by default
+            dataRate = sensor()->availableDataRates().first().second;
         else
             dataRate = 1;
     }

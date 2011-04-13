@@ -153,13 +153,13 @@ QGeoBoundingBox QGeoTiledMapObjectInfo::boundingBox() const
         foreach (QGraphicsItem *item, items) {
             QRectF latLonBounds = item->boundingRect();
             QPointF topLeft = latLonBounds.bottomLeft();
-            if (topLeft.x() > 180.0 * 3600.0)
+            if (topLeft.x() >= 180.0 * 3600.0)
                 topLeft.setX(topLeft.x() - 360.0 * 3600.0);
             if (topLeft.x() < -180.0 * 3600.0)
                 topLeft.setX(topLeft.x() + 360.0 * 3600.0);
 
             QPointF bottomRight = latLonBounds.topRight();
-            if (bottomRight.x() > 180.0 * 3600.0)
+            if (bottomRight.x() >= 180.0 * 3600.0)
                 bottomRight.setX(bottomRight.x() - 360.0 * 3600.0);
             if (bottomRight.x() < -180.0 * 3600.0)
                 bottomRight.setX(bottomRight.x() + 360.0 * 3600.0);
@@ -185,13 +185,13 @@ QGeoBoundingBox QGeoTiledMapObjectInfo::boundingBox() const
 
         QRectF latLonBounds = poly.boundingRect();
         QPointF topLeft = latLonBounds.bottomLeft();
-        if (topLeft.x() > 180.0 * 3600.0)
+        if (topLeft.x() >= 180.0 * 3600.0)
             topLeft.setX(topLeft.x() - 360.0 * 3600.0);
         if (topLeft.x() < -180.0 * 3600.0)
             topLeft.setX(topLeft.x() + 360.0 * 3600.0);
 
         QPointF bottomRight = latLonBounds.topRight();
-        if (bottomRight.x() > 180.0 * 3600.0)
+        if (bottomRight.x() >= 180.0 * 3600.0)
             bottomRight.setX(bottomRight.x() - 360.0 * 3600.0);
         if (bottomRight.x() < -180.0 * 3600.0)
             bottomRight.setX(bottomRight.x() + 360.0 * 3600.0);

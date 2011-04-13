@@ -373,6 +373,9 @@ bool QSensor::isActive() const
     See the sensor_explorer example for an example of how to interpret and use
     this information.
 
+    Note that this information is not mandatory as not all sensors have a rate at which
+    they run. In such cases, the list will be empty.
+
     \sa QSensor::dataRate, qrangelist
 */
 
@@ -593,6 +596,10 @@ QList<QSensorFilter*> QSensor::filters() const
 
     A sensor may have more than one output range. Typically this is done
     to give a greater measurement range at the cost of lowering accuracy.
+
+    Note that this information is not mandatory. This information is typically only
+    available for sensors that have selectable output ranges (such as typical
+    accelerometers).
 
     \sa QSensor::outputRange, qoutputrangelist
 */
