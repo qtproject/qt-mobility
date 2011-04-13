@@ -23,6 +23,14 @@ Contacts
     - Maximum result limit hinting
       http://bugreports.qt.nokia.com/browse/QTMOBILITY-652
 
+Location
+   - QGeoCoordinate::atDistanceAndAzimuth
+   - A positioning backend for MeeGo
+   - Support for positioning plugins
+   - Support for map objects based on arbitrary QGraphicsItems
+   - Support for map bearing and tilting added to the API.
+     - The included map plugin doesn't support them yet.
+
 ****************************************************************************
 *                   Important Behavior Changes                             *
 ****************************************************************************
