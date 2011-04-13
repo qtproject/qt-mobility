@@ -137,7 +137,6 @@ QtServiceFrameWork
 
 QtSensors
 ------
-
  - Add QLightSensor (LUX) [MOBILITY-1268]
  - Add QGyroscope (rotational acceleration) [MOBILITY-1266]
  - Allow sensor backends to be dynamically registered and unregistered.
@@ -209,7 +208,15 @@ QtSysteminfo
     - added orientationChanged signal
     - gsm support for linux desktop in QSYstemNetworkInfo
     - add cellDataTechnology to QSystemNetworkInfo
-    - lot of fixes for maemo6
+    - lot of fixes and performance improvements for maemo6
     - updated systeinfo example app.
 
+QtDocGallery
+-----
+ - Better documents for platform specific properties.
+ - Fixing several bugs.
 
+QtPublishSubscribe
+----
+ - Fix several issues in documents.
+ - Simplify QValueSpaceManager implementation.
