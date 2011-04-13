@@ -319,7 +319,7 @@ QTM_BEGIN_NAMESPACE
   
     Initiate synchronization with external server identified by \a id
 
-    On Windows mobile and desktop platforms this function performs no operation.
+    On Windows mobile and desktop platforms, and Maemo 5 this function performs no operation.
 
     Returns true if the operation can be initiated; otherwise returns false.
     
