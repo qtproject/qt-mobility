@@ -76,6 +76,8 @@ unix:!simulator {
     PRIVATE_HEADERS += linux/qsysteminfo_dbus_p.h
 
         contains(build_unit_tests, yes):contains(test_use_sim, yes) {
+
+message("XXXXXXXXXXXXXXXXXXXXXXX")
             ## for using simulator backend to test frontend signals
             ## configure with -test-sim -tests
 
@@ -87,9 +89,11 @@ unix:!simulator {
 
         } else {
 
-    !maemo5:!maemo6:linux-*: {
 
+        linux-*: {
         contains(bluez_enabled, yes):DEFINES += BLUEZ_SUPPORTED
+
+
         SOURCES += linux/qsysteminfo_linux_common.cpp
         HEADERS += linux/qsysteminfo_linux_common_p.h
 
@@ -116,6 +120,7 @@ unix:!simulator {
     }
 
     !maemo5:!maemo6:linux-*: {
+
         SOURCES += linux/qsysteminfo_linux.cpp
         HEADERS += linux/qsysteminfo_linux_p.h
         contains(QT_CONFIG, dbus): {
@@ -166,6 +171,7 @@ unix:!simulator {
      }
 
     maemo5|maemo6: {
+
         #Qt GConf wrapper added here until a proper place is found for it.
         CONFIG += link_pkgconfig
         SOURCES += qsysteminfo_maemo.cpp linux/gconfitem.cpp

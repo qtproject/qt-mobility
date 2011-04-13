@@ -48,7 +48,6 @@
 #include <QCryptographicHash>
 #include <QVariantMap>
 #include <QProcess>
-
 #if !defined(QT_NO_DBUS)
 #include "qhalservice_linux_p.h"
 #include <QtDBus/QtDBus>
