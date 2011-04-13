@@ -11,4 +11,10 @@ include(../../../common.pri)
 
 CONFIG += mobility
 MOBILITY = connectivity
-symbian: TARGET.CAPABILITY =  LocalServices NetworkControl
+
+symbian: TARGET.CAPABILITY =  LocalServices NetworkControl WriteDeviceData
+
+OTHER_FILES += \
+    README.txt
+
+

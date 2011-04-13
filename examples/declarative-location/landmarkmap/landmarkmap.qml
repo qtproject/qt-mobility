@@ -68,7 +68,7 @@ Item {
          center: myPositionSource.position.coordinate
          radius: 500000
      }
-       
+
     LandmarkModel {
         id: landmarkModelAll
         autoUpdate: true
@@ -78,7 +78,7 @@ Item {
             console.log("All landmark model changed, landmark count: " + count)
         }
     }
-    
+
     LandmarkModel {
         id: landmarkModelNear
         autoUpdate: true
@@ -88,7 +88,7 @@ Item {
             console.log("Near landmark model changed, landmark count: " + count)
         }
     }
-    
+
     Component {
         id: landmarkListDelegate
         Item {
@@ -141,7 +141,7 @@ Item {
     Rectangle {
         id: dataArea
         anchors.top: titleBar.bottom
-        anchors.bottom: toolbar1.bottom
+        anchors.bottom: toolbar2.bottom
         width: parent.width
         color: "#343434"
         //height: toolbar1.y - titleBar.height
@@ -178,40 +178,40 @@ Item {
             anchors.fill: parent
             size.width: parent.width
             size.height: parent.height
-            zoomLevel: 1
-            
-            MapObjectView {
-	        id: allLandmarks
-		model: landmarkModelAll
-		delegate: Component {
-                    //![MapImage]
-		    MapImage {
-	                source:  "landmarkmapmobile/images/landmarkstar.png"
-                        coordinate: landmark.coordinate
-	            }
-                    //![MapImage]
-	        }
-	    }
+            zoomLevel:9
 
-	    MapObjectView {
-	        id: landmarksNearMe
-		model: landmarkModelNear
-		delegate: Component {
+            MapObjectView {
+                id: allLandmarks
+                model: landmarkModelAll
+                delegate: Component {
+                    //![MapImage]
+                    MapImage {
+                        source:  "landmarkmapmobile/images/landmarkstar.png"
+                        coordinate: landmark.coordinate
+                    }
+                    //![MapImage]
+                }
+            }
+
+            MapObjectView {
+                id: landmarksNearMe
+                model: landmarkModelNear
+                delegate: Component {
                     //![MapGroup]
-		    MapGroup {
+                    MapGroup {
                         MapCircle {
                             color: "green"
                             radius: 100
                             center: landmark.coordinate
                         }
-		        MapCircle {
-	                    color: "red"
+                        MapCircle {
+                            color: "red"
                             radius: 30
                             center: landmark.coordinate
-	                }
-	            }
+                        }
+                    }
                     //![MapGroup]
-		}
+                }
             }
             onZoomLevelChanged: {
                 console.log("Zoom changed")
@@ -330,7 +330,7 @@ Item {
 
     Mobile.ToolBar {
         id: toolbar2
-        opacity: toolbar1.opacity
+        opacity: titleBar.opacity
         height: 40; width: parent.width
         anchors.bottom: parent.bottom
         z: 6

@@ -1003,12 +1003,12 @@ CContactLocalView& CViewManager::OpenViewL(const RContactViewSortOrder& aSortOrd
 
 	// Register this view as an observer of database events with the
 	// associated CCntDbManager.
-	iManager.RegisterDatabaseEventObserverL(*viewHandle.iLocalView);
+	iManager.RegisterDatabaseEventObserverL(viewHandle.iLocalView->ObserverV2());
 
 	TInt error = iLocalViews.Append(viewHandle);
 	if (error != KErrNone)
 		{
-		iManager.UnRegisterDatabaseEventObserver(*viewHandle.iLocalView);
+		iManager.UnRegisterDatabaseEventObserver(viewHandle.iLocalView->ObserverV2());
 		viewHandle.iLocalView->Close(aObserver);
 		User::Leave(error);
 		}
@@ -1054,12 +1054,12 @@ CContactNamedLocalView& CViewManager::OpenNamedViewL(const TDesC& aName,const RC
 
 	// Register this view as an observer of database events with the
 	// associated CCntDbManager.
-	iManager.RegisterDatabaseEventObserverL(*newNamedView);
+	iManager.RegisterDatabaseEventObserverL(newNamedView->ObserverV2());
 
 	TInt error = iNamedLocalViews.Append(newNamedView);
 	if (error != KErrNone)
 		{
-		iManager.UnRegisterDatabaseEventObserver(*newNamedView);
+		iManager.UnRegisterDatabaseEventObserver(newNamedView->ObserverV2());
 		newNamedView->Close(aObserver);
 		User::Leave(error);
 		}

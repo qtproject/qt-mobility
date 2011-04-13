@@ -83,6 +83,7 @@ gsm, cdma, ethernet etc.
 
 \section3 \bold{Display Information}
 
+This provides height, width, contrast, and other information of the display.
 
 \section3 \bold{Storage Information}
 The presence of various storage devices. Including: none, internal,
@@ -101,6 +102,7 @@ multitouch etc)
 
 \section3 \bold{Screensaver}
 
+This provides the access to the information of the screen saver.
 
 \section1 Building and compiling
 

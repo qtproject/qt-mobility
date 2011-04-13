@@ -10,6 +10,7 @@ usr/include/qt4/QtConnectivity/QBluetoothTransferManager
 usr/include/qt4/QtConnectivity/QBluetoothTransferReply
 usr/include/qt4/QtConnectivity/QBluetoothTransferRequest
 usr/include/qt4/QtConnectivity/QBluetoothUuid
+usr/include/qt4/QtConnectivity/QDeclarativeNdefRecord
 usr/include/qt4/QtConnectivity/QL2capServer
 usr/include/qt4/QtConnectivity/QL2capSocket
 usr/include/qt4/QtConnectivity/QLlcpServer
@@ -39,6 +40,7 @@ usr/include/qt4/QtConnectivity/qbluetoothtransfermanager.h
 usr/include/qt4/QtConnectivity/qbluetoothtransferreply.h
 usr/include/qt4/QtConnectivity/qbluetoothtransferrequest.h
 usr/include/qt4/QtConnectivity/qbluetoothuuid.h
+usr/include/qt4/QtConnectivity/qdeclarativendefrecord.h
 usr/include/qt4/QtConnectivity/ql2capserver.h
 usr/include/qt4/QtConnectivity/ql2capsocket.h
 usr/include/qt4/QtConnectivity/qllcpserver.h

@@ -58,6 +58,7 @@ usr/lib/qtmobility/examples/qml_mapviewer
 usr/lib/qtmobility/examples/qml_networkinfo
 usr/lib/qtmobility/examples/qmlnotes
 usr/lib/qtmobility/examples/qmlorganizer
+usr/lib/qtmobility/examples/qml_poster
 usr/lib/qtmobility/examples/qml_scanner
 usr/lib/qtmobility/examples/qml_storageinfo
 usr/lib/qtmobility/examples/qml_tennis

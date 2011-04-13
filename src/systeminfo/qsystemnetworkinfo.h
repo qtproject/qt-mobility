@@ -44,17 +44,18 @@
 
 #include "qmobilityglobal.h"
 
-#include <QObject>
-#include <QNetworkInterface>
+#include <QtCore/qobject.h>
+#include <QtNetwork/qnetworkinterface.h>
 
 QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
 
 class QSystemNetworkInfoPrivate;
 
-class  Q_SYSINFO_EXPORT QSystemNetworkInfo : public QObject
+class Q_SYSINFO_EXPORT QSystemNetworkInfo : public QObject
 {
     Q_OBJECT
+
     Q_ENUMS(NetworkStatus)
     Q_ENUMS(NetworkMode)
     Q_ENUMS(CellDataTechnology)
@@ -69,7 +70,6 @@ class  Q_SYSINFO_EXPORT QSystemNetworkInfo : public QObject
     Q_PROPERTY(QSystemNetworkInfo::CellDataTechnology cellDataTechnology READ cellDataTechnology NOTIFY cellDataTechnologyChanged)
 
 public:
-
     explicit QSystemNetworkInfo(QObject *parent = 0);
     ~QSystemNetworkInfo();
 
@@ -86,7 +86,7 @@ public:
     };
 
     enum NetworkMode {
-        UnknownMode=0,
+        UnknownMode = 0,
         GsmMode,
         CdmaMode,
         WcdmaMode, //umts
@@ -121,30 +121,25 @@ public:
     Q_INVOKABLE QNetworkInterface interfaceForMode(QSystemNetworkInfo::NetworkMode mode);
     QSystemNetworkInfo::CellDataTechnology cellDataTechnology();
 
-
 Q_SIGNALS:
-   void networkStatusChanged(QSystemNetworkInfo::NetworkMode, QSystemNetworkInfo::NetworkStatus);
-   void networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode, int);
-   void currentMobileCountryCodeChanged(const QString &);
-   void currentMobileNetworkCodeChanged(const QString &);
-   void networkNameChanged(QSystemNetworkInfo::NetworkMode,const QString &);
-   void networkModeChanged(QSystemNetworkInfo::NetworkMode);
-
-   void cellIdChanged(int); //1.2
-   void cellDataTechnologyChanged(QSystemNetworkInfo::CellDataTechnology); //1.2
+    void networkStatusChanged(QSystemNetworkInfo::NetworkMode mode, QSystemNetworkInfo::NetworkStatus status);
+    void networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode mode, int strength);
+    void currentMobileCountryCodeChanged(const QString &mcc);
+    void currentMobileNetworkCodeChanged(const QString &mnc);
+    void networkNameChanged(QSystemNetworkInfo::NetworkMode mode, const QString &name);
+    void networkModeChanged(QSystemNetworkInfo::NetworkMode mode);
+    void cellIdChanged(int cellId); //1.2
+    void cellDataTechnologyChanged(QSystemNetworkInfo::CellDataTechnology cellTech); //1.2
 
 protected:
     virtual void connectNotify(const char *signal);
     virtual void disconnectNotify(const char *signal);
 
 private:
-       QSystemNetworkInfoPrivate *d;
-
+    QSystemNetworkInfoPrivate *d;
 };
 
-
 QTM_END_NAMESPACE
-
 QT_END_HEADER
 
 #endif // QSYSTEMNETWORKINFO_H

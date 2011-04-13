@@ -81,6 +81,9 @@ void setNativePaintMode(QWidget *widget, NativePaintMode mode)
         widgetMode = QWExtra::BlitWriteAlpha;
 #endif
         break;
+    case Disable:
+        widgetMode = QWExtra::Disable;
+        break;
     }
     widgetPrivate->extraData()->nativePaintMode = widgetMode;
 #else

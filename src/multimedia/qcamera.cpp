@@ -101,6 +101,7 @@ public:
         QMediaObjectPrivate(),
         provider(0),
         control(0),
+        deviceControl(0),
         viewfinder(0),
         capture(0),
         state(QCamera::UnloadedState),
@@ -119,6 +120,7 @@ public:
     QMediaServiceProvider *provider;
 
     QCameraControl *control;
+    QVideoDeviceControl *deviceControl;
     QCameraLocksControl *locksControl;
 
     QCameraExposure *cameraExposure;
@@ -241,6 +243,7 @@ void QCameraPrivate::initControls()
     if (service) {
         control = qobject_cast<QCameraControl *>(service->requestControl(QCameraControl_iid));
         locksControl = qobject_cast<QCameraLocksControl *>(service->requestControl(QCameraLocksControl_iid));
+        deviceControl = qobject_cast<QVideoDeviceControl*>(service->requestControl(QVideoDeviceControl_iid));
 
         if (control) {
             q->connect(control, SIGNAL(stateChanged(QCamera::State)), q, SLOT(_q_updateState(QCamera::State)));
@@ -261,6 +264,7 @@ void QCameraPrivate::initControls()
     } else {
         control = 0;
         locksControl = 0;
+        deviceControl = 0;
 
         error = QCamera::ServiceMissingError;
         errorString = QCamera::tr("The camera service is missing");
@@ -358,15 +362,12 @@ QCamera::QCamera(const QByteArray& device, QObject *parent):
 
     if (d->service != 0) {
         //pass device name to service
-        QVideoDeviceControl *deviceControl =
-                qobject_cast<QVideoDeviceControl*>(d->service->requestControl(QVideoDeviceControl_iid));
-
-        if (deviceControl) {
+        if (d->deviceControl) {
             QString deviceName(device);
 
-            for (int i=0; i<deviceControl->deviceCount(); i++) {
-                if (deviceControl->deviceName(i) == deviceName) {
-                    deviceControl->setSelectedDevice(i);
+            for (int i=0; i<d->deviceControl->deviceCount(); i++) {
+                if (d->deviceControl->deviceName(i) == deviceName) {
+                    d->deviceControl->setSelectedDevice(i);
                     break;
                 }
             }
@@ -397,6 +398,8 @@ QCamera::~QCamera()
             d->service->releaseControl(d->control);
         if (d->locksControl)
             d->service->releaseControl(d->locksControl);
+        if (d->deviceControl)
+            d->service->releaseControl(d->deviceControl);
 
         d->provider->releaseService(d->service);
     }
@@ -408,10 +411,7 @@ QCamera::~QCamera()
 */
 bool QCamera::isAvailable() const
 {
-    if (d_func()->control != NULL)
-        return true;
-    else
-        return false;
+    return availabilityError() == QtMultimediaKit::NoError;
 }
 
 /*!
@@ -420,13 +420,17 @@ bool QCamera::isAvailable() const
 
 QtMultimediaKit::AvailabilityError QCamera::availabilityError() const
 {
-    if (d_func()->control != NULL) {
-        if (d_func()->error == QCamera::NoError)
-            return QtMultimediaKit::NoError;
-        else
-            return QtMultimediaKit::ResourceError;
-    } else
+    Q_D(const QCamera);
+    if (d->control == NULL)
         return QtMultimediaKit::ServiceMissingError;
+
+    if (d->deviceControl && d->deviceControl->deviceCount() == 0)
+        return QtMultimediaKit::ResourceError;
+
+    if (d->error != QCamera::NoError)
+        return QtMultimediaKit::ResourceError;
+
+    return QtMultimediaKit::NoError;
 }
 
 

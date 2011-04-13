@@ -66,6 +66,7 @@ QBluetoothSocketPrivate::QBluetoothSocketPrivate()
     , iSocket(0)
     , iBlankSocket(0)
     , rxDescriptor(0, 0)
+    , txDescriptor(0, 0)
     , receiving(false)
 
 {
@@ -148,21 +149,13 @@ void QBluetoothSocketPrivate::startReceive()
         return;
     }
     receiving = true;
-
-    rxDescriptor.Set(reinterpret_cast<unsigned char *>(buffer.reserve(QPRIVATELINEARBUFFER_BUFFERSIZE)), 0,  QPRIVATELINEARBUFFER_BUFFERSIZE);
-    if (socketType == QBluetoothSocket::RfcommSocket) {
-        if (iSocket->RecvOneOrMore(rxDescriptor, 0, rxLength) != KErrNone) {
-            socketError = QBluetoothSocket::UnknownSocketError;
-            emit q->error(socketError);
-        }
-    } else if (socketType == QBluetoothSocket::L2capSocket) {
-        if (iSocket->Recv(rxDescriptor, 0, rxLength) != KErrNone) {
-            socketError = QBluetoothSocket::UnknownSocketError;
-            emit q->error(socketError);
-        }
-    }
+    TInt err;
+    recvMTU = 0;
+    err = iSocket->GetOpt(KL2CAPInboundMTU, KSolBtL2CAP, recvMTU);
+    if(err != KErrNone)
+        return;
+    receive();
 }
-
 void QBluetoothSocketPrivate::startServerSideReceive()
 {
     Q_Q(QBluetoothSocket);
@@ -170,16 +163,41 @@ void QBluetoothSocketPrivate::startServerSideReceive()
         emit q->error(QBluetoothSocket::UnknownSocketError);
         return;
     }
+    TInt err;
+    recvMTU = 0;
+    err = iBlankSocket->GetOpt(KL2CAPInboundMTU, KSolBtL2CAP, recvMTU);
+    if(err != KErrNone)
+        return;   
+    receive();
+}
 
-    rxDescriptor.Set(reinterpret_cast<unsigned char *>(buffer.reserve(QPRIVATELINEARBUFFER_BUFFERSIZE)), 0,  QPRIVATELINEARBUFFER_BUFFERSIZE);
+void QBluetoothSocketPrivate::receive()
+{
+    Q_Q(QBluetoothSocket);
+    TInt err = KErrNone;
+    if (!iSocket && !iBlankSocket)
+    {
+        emit q->error(QBluetoothSocket::UnknownSocketError);
+        return;
+    }
+    char *bufPtr = buffer.reserve(recvMTU);
+    rxDescriptor.Set(reinterpret_cast<unsigned char *>(bufPtr), 0,recvMTU);
     if (socketType == QBluetoothSocket::RfcommSocket) {
-        if (iBlankSocket->RecvOneOrMore(rxDescriptor, 0, rxLength) != KErrNone) {
-            socketError = QBluetoothSocket::UnknownSocketError;
+        if(iBlankSocket)
+            err = iBlankSocket->RecvOneOrMore(rxDescriptor, 0, rxLength);
+        else
+            err = iSocket->RecvOneOrMore(rxDescriptor, 0, rxLength);
+        if (err != KErrNone) {
+            socketError = QBluetoothSocket::NetworkError;
             emit q->error(socketError);
         }
     } else if (socketType == QBluetoothSocket::L2capSocket) {
-        if (iBlankSocket->Recv(rxDescriptor, 0, rxLength) != KErrNone) {
-            socketError = QBluetoothSocket::UnknownSocketError;
+        if(iBlankSocket)
+            err = iBlankSocket->Recv(rxDescriptor, 0);
+        else
+            err = iSocket->Recv(rxDescriptor, 0);
+        if (err != KErrNone) {
+            socketError = QBluetoothSocket::NetworkError;
             emit q->error(socketError);
         }
     }
@@ -187,7 +205,9 @@ void QBluetoothSocketPrivate::startServerSideReceive()
 
 void QBluetoothSocketPrivate::HandleAcceptCompleteL(TInt aErr)
 {
-    qDebug() << __PRETTY_FUNCTION__;
+    qDebug() << __PRETTY_FUNCTION__ << ">> aErr=" << aErr;
+    Q_Q(QBluetoothSocket);
+    emit q->connected();
 }
 
 void QBluetoothSocketPrivate::HandleActivateBasebandEventNotifierCompleteL(TInt aErr, TBTBasebandEventNotification &aEventNotification)
@@ -197,6 +217,7 @@ void QBluetoothSocketPrivate::HandleActivateBasebandEventNotifierCompleteL(TInt 
 
 void QBluetoothSocketPrivate::HandleConnectCompleteL(TInt aErr)
 {
+    qDebug() << __PRETTY_FUNCTION__ << ">> aErr=" << aErr;
     Q_Q(QBluetoothSocket);
     if (aErr == KErrNone) {
         q->setSocketState(QBluetoothSocket::ConnectedState);
@@ -229,16 +250,8 @@ void QBluetoothSocketPrivate::HandleReceiveCompleteL(TInt aErr)
     receiving = false;
     Q_Q(QBluetoothSocket);
     if (aErr == KErrNone) {
-        if (rxDescriptor.Length() == 0) {
-            emit q->readChannelFinished();
-            emit q->disconnected();
-            return;
-        }
-               
-        buffer.chop(QPRIVATELINEARBUFFER_BUFFERSIZE - (rxDescriptor.Length()));
-
+        buffer.chop(recvMTU-rxDescriptor.Length());
         emit q->readyRead();
-
     } else {
         socketError = QBluetoothSocket::UnknownSocketError;
         emit q->error(socketError);
@@ -249,12 +262,33 @@ void QBluetoothSocketPrivate::HandleSendCompleteL(TInt aErr)
 {
     Q_Q(QBluetoothSocket);
     if (aErr == KErrNone) {
-        qint64 writeSize = txBuffer.length();
-        txBuffer.clear();
+//        qint64 writeSize = txBuffer.size();
+        qint64 writeSize = txDescriptor.Length();        
+        txBuffer.skip(writeSize);
+        txTempBuffer.clear();
         emit q->bytesWritten(writeSize);
+              
+        if (state == QBluetoothSocket::ClosingState && txBuffer.size() == 0) {
+            q->close();        
+        }
+        else if (txBuffer.size()){
+            txTempBuffer = txBuffer.readAll();
 
-        if (state == QBluetoothSocket::ClosingState)
-            q->close();
+            txDescriptor.Set(reinterpret_cast<const unsigned char *>(txTempBuffer.constData()), txTempBuffer.length());
+            TInt err = KErrNone;
+            if(iBlankSocket)
+              err = iBlankSocket->Send(txDescriptor, 0);
+            else
+              err = iSocket->Send(txDescriptor, 0);
+        
+            if (err != KErrNone) {
+                socketError = QBluetoothSocket::UnknownSocketError;
+                Q_Q(QBluetoothSocket);
+                emit q->error(socketError);
+                txTempBuffer.clear();
+                return;
+            }
+        }
     } else {
         socketError = QBluetoothSocket::UnknownSocketError;
         emit q->error(socketError);
@@ -263,6 +297,7 @@ void QBluetoothSocketPrivate::HandleSendCompleteL(TInt aErr)
 
 void QBluetoothSocketPrivate::HandleShutdownCompleteL(TInt aErr)
 {
+    qDebug() << __PRETTY_FUNCTION__ << ">> aErr=" << aErr;
     Q_Q(QBluetoothSocket);
     if (aErr == KErrNone) {
         q->setSocketState(QBluetoothSocket::UnconnectedState);
@@ -310,7 +345,32 @@ quint16 QBluetoothSocketPrivate::localPort() const
 
 QString QBluetoothSocketPrivate::peerName() const
 {
-    return peerAddress().toString();
+    RHostResolver resolver;
+
+    TInt err = resolver.Open(getSocketServer()->socketServer, KBTAddrFamily, KBTLinkManager);
+    if (err==KErrNone) {
+        TNameEntry nameEntry;
+        TBTSockAddr sockAddr;
+        if(iBlankSocket)
+            iBlankSocket->RemoteName(sockAddr);
+        else
+            iSocket->RemoteName(sockAddr);
+        
+        TInquirySockAddr address(sockAddr);
+        address.SetBTAddr(sockAddr.BTAddr());
+        address.SetAction(KHostResName|KHostResIgnoreCache); // ignore name stored in cache
+        err = resolver.GetByAddress(address, nameEntry);
+        if(err == KErrNone) {
+            TNameRecord name = nameEntry();            
+            m_peerName = QString((QChar*)name.iName.Ptr(),name.iName.Length());
+      	}
+    }
+    resolver.Close();
+
+    if (err != KErrNone) {
+        return QString();
+    }
+    return m_peerName;
 }
 
 QBluetoothAddress QBluetoothSocketPrivate::peerAddress() const
@@ -362,17 +422,33 @@ qint64 QBluetoothSocketPrivate::readData(char *data, qint64 maxSize)
 }
 
 qint64 QBluetoothSocketPrivate::writeData(const char *data, qint64 maxSize)
-{
-    if (!txBuffer.isEmpty())
-        return 0;
+{    
+    if(txBuffer.size() > 32768)
+      return 0;
+       
+    if(txBuffer.size()){
+        char *buf = txBuffer.reserve(maxSize);
+        memcpy(buf, data, maxSize);
+        return maxSize;
+    }
 
-    txBuffer = QByteArray(data, maxSize);
+    char *buf = txBuffer.reserve(maxSize);
+    memcpy(buf, data, maxSize);
 
-    if (iSocket->Send(TPtrC8(reinterpret_cast<const unsigned char *>(txBuffer.constData()), txBuffer.length()), 0) != KErrNone) {
-        socketError = QBluetoothSocket::UnknownSocketError;
+    txDescriptor.Set(reinterpret_cast<const unsigned char *>(buf), maxSize);
+    TInt err = KErrNone;
+    if(iBlankSocket)
+      err = iBlankSocket->Send(txDescriptor, 0);
+    else
+      err = iSocket->Send(txDescriptor, 0);
+    
+    if (err != KErrNone) {
+        socketError = QBluetoothSocket::NetworkError;
         Q_Q(QBluetoothSocket);
         emit q->error(socketError);
+        return 0;
     }
+    
     return maxSize;
 }
 
@@ -393,13 +469,14 @@ bool QBluetoothSocketPrivate::setSocketDescriptor(int socketDescriptor, QBluetoo
 
 void QBluetoothSocketPrivate::_q_startReceive()
 {
-    startReceive();
+    receive();
 }
 
 qint64 QBluetoothSocketPrivate::bytesAvailable() const
 {
     return buffer.size();
 }
+
 
 QTM_END_NAMESPACE
 

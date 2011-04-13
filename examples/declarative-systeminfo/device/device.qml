@@ -52,7 +52,7 @@ Rectangle {
     }
     Text {
         id: textinfo2
-        text: devinfo.uniqueID
+        text: devinfo.uniqueDeviceID
         anchors{ top: textinfo.bottom}
     }
     Text {
@@ -70,9 +70,6 @@ Rectangle {
         text: "Sim :" + devinfo.simStatus
         anchors{ top: textinfo2b.bottom}
     }
-
-
-
     Text {
         id: textinfo3
         text: devinfo.primaryKeypadLightOn ? "Primary keypad Light on" : "Primary Keypad Light off"
@@ -118,6 +115,13 @@ Rectangle {
         anchors{ top: textinfo10.bottom}
     }
 
+    Text {
+        id: textinfo12
+        text: updateThermalState()
+        anchors{ top: textinfo11.bottom}
+    }
+
+
     DeviceInfo {
         id: devinfo;
         monitorKeyboardFlips: true
@@ -127,6 +131,7 @@ Rectangle {
         monitorBatteryLevelChanges: true
         monitorPowerStateChanges: true
         monitorBatteryStatusChanges: true
+        monitorThermalStateChanges: true
 
         onBatteryLevelChanged: {
             textinfo9
@@ -166,6 +171,23 @@ Rectangle {
              textinfo11.text = "Power State: Wall power"
          if(devinfo.currentPowerState == 3)
              textinfo11.text = "Power State: Wall power charging"
+        }
+
+        onThermalStateChanged: updateThermalState()
+    }
+
+    function updateThermalState() {
+        state = devinfo.currentThermalState
+        if (state == DeviceInfo.UnknownThermal) {
+            textinfo12.text = "ThermalState: UnknownThermal";
+        } else if (state == DeviceInfo.NormalThermal) {
+            textinfo12.text = "ThermalState: NormalThermal";
+        } else if (state == DeviceInfo.WarningThermal) {
+            textinfo12.text = "ThermalState: WarningThermal";
+        } else if (state == DeviceInfo.AlertThermal) {
+            textinfo12.text = "ThermalState: AlertThermal";
+        } else if (state == DeviceInfo.ErrorThermal) {
+            textinfo12.text = "ThermalState: ErrorThermal";
         }
     }
 

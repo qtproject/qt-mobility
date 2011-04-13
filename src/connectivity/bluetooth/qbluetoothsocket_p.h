@@ -124,6 +124,7 @@ public:
     void _q_startReceive();
     void startReceive();
     void startServerSideReceive();
+    void receive();
     void ensureBlankNativeSocket();
 
     /* MBluetoothSocketNotifier virtual functions */
@@ -138,6 +139,7 @@ public:
 
 public:
     QPrivateLinearBuffer buffer;
+    QPrivateLinearBuffer txBuffer;
     int socket;
     QBluetoothSocket::SocketType socketType;
     QBluetoothSocket::SocketState state;
@@ -152,15 +154,18 @@ public:
 
 //    QByteArray rxBuffer;
 //    qint64 rxOffset;
-    QByteArray txBuffer;
+//    QByteArray txBuffer;
     QString errorString;
 
 #ifdef QTM_SYMBIAN_BLUETOOTH
     CBluetoothSocket *iSocket;
     CBluetoothSocket *iBlankSocket;
     TPtr8 rxDescriptor;
+    TPtrC8 txDescriptor;
     TSockXfrLength rxLength;
     bool receiving;
+    TInt recvMTU;
+    QByteArray txTempBuffer;
 #endif
 
     // private slots

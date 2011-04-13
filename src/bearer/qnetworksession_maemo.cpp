@@ -577,11 +577,11 @@ static QString get_network_interface()
 	return iface;
     }
 
-    const char *address = addr_results.first().ip_info.first().address.toAscii().constData();
+    QByteArray address = addr_results.first().ip_info.first().address.toAscii();
     struct in_addr addr;
-    if (inet_aton(address, &addr) == 0) {
+    if (inet_aton(address.constData(), &addr) == 0) {
 #ifdef BEARER_MANAGEMENT_DEBUG
-	qDebug() << "address" << address << "invalid";
+        qDebug() << "address" << address.constData() << "invalid";
 #endif
 	return iface;
     }

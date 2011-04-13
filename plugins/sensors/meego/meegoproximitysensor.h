@@ -60,6 +60,8 @@ public:
 protected:
     virtual bool doConnect();
     virtual const QString sensorName();
+    virtual void start();
+
 
 private:
     QProximityReading m_reading;

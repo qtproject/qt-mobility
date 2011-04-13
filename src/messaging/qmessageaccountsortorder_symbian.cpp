@@ -99,14 +99,19 @@ bool QMessageAccountSortOrder::operator==(const QMessageAccountSortOrder& other)
 
 QMessageAccountSortOrder& QMessageAccountSortOrder::operator=(const QMessageAccountSortOrder& other)
 {
-	if (&other != this) {
-	    if (!d_ptr) {
-			d_ptr = new QMessageAccountSortOrderPrivate(this);	    
-	    }
-		d_ptr->_order = other.d_ptr->_order;
-	}
-	
-	return *this;
+    if (&other != this) {
+        if (!other.d_ptr) {
+            delete d_ptr;
+            d_ptr = 0;
+        } else {
+            if (!d_ptr) {
+                d_ptr = new QMessageAccountSortOrderPrivate(this);
+            }
+            d_ptr->_order = other.d_ptr->_order;
+        }
+    }
+
+    return *this;
 }
 
 QMessageAccountSortOrder QMessageAccountSortOrder::byName(Qt::SortOrder order)

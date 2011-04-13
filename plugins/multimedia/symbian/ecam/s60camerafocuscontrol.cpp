@@ -53,9 +53,9 @@ S60CameraFocusControl::S60CameraFocusControl(QObject *parent) :
 
 S60CameraFocusControl::S60CameraFocusControl(S60ImageCaptureSession *session, QObject *parent) :
     QCameraFocusControl(parent),
-    m_session(NULL),
-    m_service(NULL),
-    m_advancedSettings(NULL),
+    m_session(0),
+    m_service(0),
+    m_advancedSettings(0),
     m_isFocusLocked(false),
     m_opticalZoomValue(KDefaultOpticalZoom),
     m_digitalZoomValue(KDefaultDigitalZoom),

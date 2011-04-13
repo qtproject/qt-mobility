@@ -58,7 +58,7 @@ QTM_BEGIN_NAMESPACE
 
 QBluetoothServiceDiscoveryAgentPrivate::QBluetoothServiceDiscoveryAgentPrivate(const QBluetoothAddress &address)
 :   error(QBluetoothServiceDiscoveryAgent::NoError), state(Inactive), deviceAddress(address),
-    deviceDiscoveryAgent(0), mode(QBluetoothServiceDiscoveryAgent::MinimalDiscovery), manager(0), device(0)
+    deviceDiscoveryAgent(0), mode(QBluetoothServiceDiscoveryAgent::MinimalDiscovery), manager(0), device(0), singleDevice(false)
 {
     qRegisterMetaType<ServiceMap>("ServiceMap");
     qDBusRegisterMetaType<ServiceMap>();
@@ -84,9 +84,11 @@ void QBluetoothServiceDiscoveryAgentPrivate::start(const QBluetoothAddress &addr
     QDBusPendingReply<QDBusObjectPath> reply = manager->DefaultAdapter();
     reply.waitForFinished();
     if (reply.isError()) {
-        error = QBluetoothServiceDiscoveryAgent::DeviceDiscoveryError;
-        errorString = QBluetoothServiceDiscoveryAgent::tr("Unable to find default adapter");
-        emit q->error(error);
+        if (singleDevice) {
+            error = QBluetoothServiceDiscoveryAgent::DeviceDiscoveryError;
+            errorString = QBluetoothServiceDiscoveryAgent::tr("Unable to find default adapter");
+            emit q->error(error);
+        }
         _q_serviceDiscoveryFinished();
         return;
     }
@@ -113,8 +115,10 @@ void QBluetoothServiceDiscoveryAgentPrivate::stop()
         reply.waitForFinished();
 
         discoveredDevices.clear();
-        // with no more device this will stop discovery
-        startServiceDiscovery();
+        setDiscoveryState(Inactive);
+        Q_Q(QBluetoothServiceDiscoveryAgent);
+        emit q->canceled();
+
 //        qDebug() << "Stop done";
     }
 }
@@ -132,10 +136,6 @@ void QBluetoothServiceDiscoveryAgentPrivate::_q_createdDevice(QDBusPendingCallWa
     QDBusPendingReply<QDBusObjectPath> deviceObjectPath = *watcher;
     if (deviceObjectPath.isError()) {
         if (deviceObjectPath.error().name() != QLatin1String("org.bluez.Error.AlreadyExists")) {
-            // Can't create device, maybe not present, not a fault to report
-            // since this is normal, devices aren't always present
-//            error = QBluetoothServiceDiscoveryAgent::UnknownError;
-//            emit q->error(error);
             _q_serviceDiscoveryFinished();
 #ifdef QTM_SERVICEDISCOVERY_DEBUG
             qDebug() << "Create device failed Error: " << error << deviceObjectPath.error().name();
@@ -146,8 +146,11 @@ void QBluetoothServiceDiscoveryAgentPrivate::_q_createdDevice(QDBusPendingCallWa
         deviceObjectPath = adapter->FindDevice(address.toString());
         deviceObjectPath.waitForFinished();
         if (deviceObjectPath.isError()) {
-            error = QBluetoothServiceDiscoveryAgent::DeviceDiscoveryError;
-            emit q->error(error);
+            if (singleDevice) {
+                error = QBluetoothServiceDiscoveryAgent::DeviceDiscoveryError;
+                errorString = QBluetoothServiceDiscoveryAgent::tr("Unable to access device");
+                emit q->error(error);
+            }
             _q_serviceDiscoveryFinished();
 #ifdef QTM_SERVICEDISCOVERY_DEBUG
             qDebug() << "Can't find device after creation Error: " << error << deviceObjectPath.error().name();
@@ -193,8 +196,12 @@ void QBluetoothServiceDiscoveryAgentPrivate::_q_discoveredServices(QDBusPendingC
         qDebug() << "discoveredServices error: " << error << reply.error().message();
 #endif
         watcher->deleteLater();
-        error = QBluetoothServiceDiscoveryAgent::UnknownError;
-        errorString = reply.error().message();
+        if (singleDevice) {
+            Q_Q(QBluetoothServiceDiscoveryAgent);
+            error = QBluetoothServiceDiscoveryAgent::UnknownError;
+            errorString = reply.error().message();
+            emit q->error(error);
+        }
         _q_serviceDiscoveryFinished();
         return;
     }
