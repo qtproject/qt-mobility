@@ -64,18 +64,23 @@ iConstructed(EFalse), iObserver(NULL),iDynCaps(0)
         err = iMobilePhone.Initialise();
         TRACES(qDebug() << "Err val for RMobilePhone::Initialise =" << err);
         User::LeaveIfError(err);
+    )
+
+#ifdef ETELPACKETSERVICE_SUPPORTED
+    TRAP_IGNORE(
         err = iPacketService.Open(iMobilePhone);
         TRACES(qDebug() << "Err val for iPacketService.Open =" << err);
         User::LeaveIfError(err);
         err = iPacketService.GetStatus(iPacketServiceStatus);
         TRACES(qDebug() << "Err val for iPacketService.GetStatus =" << err);
         User::LeaveIfError(err);
-        CleanupStack::Pop(&iTelServer);
     )
+#endif
     if (!err)
         {
         iConstructed = ETrue;
         }
+    CleanupStack::Pop(&iTelServer);
     TRACES(qDebug() << "CNetworkBase::CNetworkBase--->");
     }
 
@@ -83,7 +88,9 @@ CNetworkBase::~CNetworkBase()
     {
     iMobilePhone.Close();
     iTelServer.Close();
+#ifdef ETELPACKETSERVICE_SUPPORTED
     iPacketService.Close();
+#endif
     }
 
 void CNetworkBase::AddObserver(MNetworkObserver *aObserver)

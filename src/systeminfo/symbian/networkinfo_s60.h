@@ -94,7 +94,9 @@ protected:
     MNetworkObserver *iObserver;
     //For CellData Technology
     RPacketService::TDynamicCapsFlags iDynCaps;
+#ifdef ETELPACKETSERVICE_SUPPORTED
     RPacketService iPacketService;
+#endif
     RPacketService::TStatus iPacketServiceStatus;
     };
 
