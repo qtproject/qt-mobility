@@ -28,7 +28,7 @@ SOURCES += \
 
 PRIVATE_HEADERS += qsysteminfocommon_p.h
 
-DEFINES += QT_MAKEDLL
+DEFINES += QT_MAKEDLL QT_BUILD_SYSINFO_LIB
 
 simulator {
     SOURCES += qsystemalignedtimer_stub.cpp
@@ -359,7 +359,6 @@ simulator {
  #           DEFINES += TESTR QT_SIMULATOR
   # } else {
     INCLUDEPATH += ../mobilitysimulator
-    DEFINES += QT_BUILD_SYSINFO_LIB
     qtAddLibrary(QtMobilitySimulator)
  # }
 
