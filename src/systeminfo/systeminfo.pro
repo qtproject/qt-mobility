@@ -77,7 +77,6 @@ unix:!simulator {
 
         contains(build_unit_tests, yes):contains(test_use_sim, yes) {
 
-message("XXXXXXXXXXXXXXXXXXXXXXX")
             ## for using simulator backend to test frontend signals
             ## configure with -test-sim -tests
 
@@ -225,6 +224,7 @@ message("XXXXXXXXXXXXXXXXXXXXXXX")
 
         TEMPLATE = lib
     }
+  }
 
     symbian: {
         contains(S60_VERSION, 3.1) {
@@ -347,7 +347,6 @@ message("XXXXXXXXXXXXXXXXXXXXXXX")
         QtSystemInfoDeployment.path = /sys/bin
         DEPLOYMENT += QtSystemInfoDeployment
     }
-  }
 }
 
 simulator {
