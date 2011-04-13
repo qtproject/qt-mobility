@@ -19,28 +19,59 @@ Merge Request:  http://qt.gitorious.org
 New features
 ------
 
-Contacts
+ - Qt Connectivity module
+    - Bluetooth and Near-Field-Communication (NFC)
+
+ - Contacts
     - Maximum result limit hinting
       http://bugreports.qt.nokia.com/browse/QTMOBILITY-652
 
-Connectivity
+Library independent changes
+------
+
+ - pkconfig generation fixed
+ - various build system changes required by the newly added Meego platform
+   support
+
+
+****************************************************************************
+*                   Important Behavior Changes                             *
+****************************************************************************
+
+
+****************************************************************************
+*                          Library                                         *
+****************************************************************************
+
+QtConnectivity
+-----
     - The QNearFieldTarget is now asynchronous.
     - LLCP socket support on Maemo 6
     - Improved NFC API documentation and example applications.
 
-Location
+QtLocation
+-----
    - QGeoCoordinate::atDistanceAndAzimuth
    - A positioning backend for MeeGo
    - Support for positioning plugins
    - Support for map objects based on arbitrary QGraphicsItems
    - Support for map bearing and tilting added to the API.
      - The included map plugin doesn't support them yet.
-
-****************************************************************************
-*                   Important Behavior Changes                             *
-****************************************************************************
-
+   
 QtVersit
 ------
  - The FN vCard property will now only be generated if a QContactName is
    provided with a CustomLabel field.
+
+   
+****************************************************************************
+*                      Platform Specific Changes                           *
+****************************************************************************
+
+Qt Mobility for Meego
+------
+
+ - Platform support for Meego added (across all API's)
+
+
+
