@@ -88,6 +88,7 @@ SimulatorCameraService::SimulatorCameraService(const QString &service, Multimedi
     connect(mCaptureSession->settings(), SIGNAL(apertureChanged()), mVideoRendererControl, SLOT(showImage()));
     connect(mCaptureSession->settings(), SIGNAL(shutterSpeedChanged()), mVideoRendererControl, SLOT(showImage()));
     connect(mCaptureSession->settings(), SIGNAL(exposureCompensationChanged()), mVideoRendererControl, SLOT(showImage()));
+    mCaptureSession->setImage(mVideoRendererControl->image());
     mVideoInputDeviceControl->setSelectedDevice(mVideoInputDeviceControl->defaultDevice());
 }
 
