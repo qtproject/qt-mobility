@@ -51,7 +51,6 @@ QtVersit
    provided with a CustomLabel field.
 
 
-
 ****************************************************************************
 *                          Library                                         *
 ****************************************************************************
@@ -70,8 +69,8 @@ QtLocation
  - Support for map objects based on arbitrary QGraphicsItems
  - Support for map bearing and tilting added to the API.
    - The included map plugin doesn't support them yet.
-   
-   
+
+
 QtFeedback
 ------
  - Use newer CHWRMHaptics API on Symbian^3 for more functionality
@@ -100,3 +99,44 @@ QtOrganizer
 -----
  - Meeting request and attachment support (added in TP) has been removed
  - New "time out" error code.
+
+
+****************************************************************************
+*                          Documentation                                   *
+****************************************************************************
+
+   - Partial fix for QML/C++ properties/enums in declarative camera example.
+   - QAudio namespace link problem from Mobility.
+   - Fix missing qml code sample for Sound effect.
+   - Added disclaimer for China position shifting in Maps.
+   - Set inmodule for various classes.
+   - Updates to location qml plugin docs. Example images.
+   - Updates to Multimedia QML plugin doc.
+   - Replaced symbian.org links with valid ones.
+   - Removed intro text left over from beta. (1.1)
+   - Fixed reference to setCheckable in Haptic Square example.
+   - Updated changes to Feedback doc and hapticsquare example.
+   - Qdoc errors in QOrganizer
+   - Qdoc errors in Contacts
+   - Change Mobility name throughout docs.
+   - Heading fix for 1.2 Mobility.
+   - Heading for Quickstart reference.
+   - RVCT make option
+   - Removed preliminary status where not required in Multimedia.
+   - Fixed typos.
+   - Change QML Support heading to Elements
+   - Removed use of qmlmodule keyword prior to supporting qdoc3 version.
+   - Changes for new qdoc3.
+   - Wording changes to Location and Landmarks.
+   - Changes to snippets in SysInfo
+   - Remove Tech Preview from Camera class docs.
+   - Fix broken example links.
+   - Minor changes to display of QtMobility name and fix online docs build.
+   - Image for declarative flickr example.
+   - Remove non-working search bar from side panel.
+   - Changed wording of reference to Phonon.
+   - Change heading for BETA. Update Platform Compatibility table.
+   - Added minimal example docs and images to Connectivity.
+   - Changes to Connectivity docs.
+
+
