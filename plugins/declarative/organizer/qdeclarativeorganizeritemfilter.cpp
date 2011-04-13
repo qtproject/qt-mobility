@@ -364,3 +364,40 @@ QOrganizerItemFilter QDeclarativeOrganizerItemCollectionFilter::filter() const
     f.setCollectionIds(ids);
     return f;
 }
+
+QDeclarativeListProperty<QDeclarativeOrganizerItemFilter> QDeclarativeOrganizerItemCompoundFilter::filters()
+{
+    return QDeclarativeListProperty<QDeclarativeOrganizerItemFilter>(this,
+                                                          0, // opaque data parameter
+                                                          filters_append,
+                                                          filters_count,
+                                                          filters_at,
+                                                          filters_clear);
+}
+
+void QDeclarativeOrganizerItemCompoundFilter::filters_append(QDeclarativeListProperty<QDeclarativeOrganizerItemFilter>* prop, QDeclarativeOrganizerItemFilter* filter)
+{
+    QDeclarativeOrganizerItemCompoundFilter* compoundFilter = static_cast<QDeclarativeOrganizerItemCompoundFilter*>(prop->object);
+    compoundFilter->m_filters.append(filter);
+    QObject::connect(filter, SIGNAL(filterChanged()), compoundFilter, SIGNAL(filterChanged()));
+    emit compoundFilter->filterChanged();
+}
+
+int QDeclarativeOrganizerItemCompoundFilter::filters_count(QDeclarativeListProperty<QDeclarativeOrganizerItemFilter>* prop)
+{
+    // The 'prop' is in a sense 'this' for this static function (as given in filters() function)
+    return static_cast<QDeclarativeOrganizerItemCompoundFilter*>(prop->object)->m_filters.count();
+}
+
+QDeclarativeOrganizerItemFilter* QDeclarativeOrganizerItemCompoundFilter::filters_at(QDeclarativeListProperty<QDeclarativeOrganizerItemFilter>* prop, int index)
+{
+    return static_cast<QDeclarativeOrganizerItemCompoundFilter*>(prop->object)->m_filters.at(index);
+}
+
+void QDeclarativeOrganizerItemCompoundFilter::filters_clear(QDeclarativeListProperty<QDeclarativeOrganizerItemFilter>* prop)
+{
+    QDeclarativeOrganizerItemCompoundFilter* filter = static_cast<QDeclarativeOrganizerItemCompoundFilter*>(prop->object);
+    qDeleteAll(filter->m_filters);
+    filter->m_filters.clear();
+    emit filterChanged();
+}

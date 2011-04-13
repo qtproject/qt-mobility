@@ -854,7 +854,7 @@ void QDeclarativeOrganizerModel::removeItem(const QString& id)
 }
 
 /*!
-  \qmlmethod OrganizerModel::removeItem(list<string> itemId)
+  \qmlmethod OrganizerModel::removeItems(list<string> itemId)
   Removes the organizer items with the given \a ids from the backend.
 
   \since organizer 1.1.1
