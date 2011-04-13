@@ -330,6 +330,12 @@ unix:!simulator {
             message("ETELMM enabled")
         }
 
+        contains(etelpacketservice_symbian_enabled, yes) {
+            message("etel packet service enabled")
+            LIBS += -letelpckt
+            DEFINES += ETELPACKETSERVICE_SUPPORTED
+        }
+
         contains(thermalstatus_symbian_enabled, yes) {
             DEFINES += THERMALSTATUS_SUPPORTED
             SOURCES += thermalstatus_s60.cpp
