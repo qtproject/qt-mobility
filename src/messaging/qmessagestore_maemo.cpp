@@ -290,9 +290,9 @@ bool QMessageStore::removeMessages(const QMessageFilter& filter, QMessageManager
     return true;
 }
 
-bool QMessageStore::removeAccount(const QMessageAccountId &id)
+bool QMessageStore::removeAccount(const QMessageAccountId &)
 {
-#warning TODO: implement
+    // Not implemented
     return false;
 }
 

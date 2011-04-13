@@ -476,7 +476,7 @@ bool QMessageManager::removeMessages(const QMessageFilter& filter, QMessageManag
 
   Remove account \a id and all associated information (folders, messages etc.)
 
-  On Windows mobile and desktop platforms this function performs no operation.
+  On Windows mobile and desktop platforms, and Maemo 5 this function performs no operation.
 */
 bool QMessageManager::removeAccount(const QMessageAccountId &id)
 {
