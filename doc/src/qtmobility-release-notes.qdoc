@@ -70,6 +70,7 @@
     <h3>Location</h3>
     <ul>
     <li>Symbian: QGeoPositionInfoSource and QGeoSatelliteInfoSource can only be instantiated and used in application's main thread. </li>
+    <li>Symbian: QGeoAreaMonitor::createDefaultMonitor() creates generic polling monitor instead of native Symbian monitor. </li>
     </ul>
     <h3>Organizer</h3>
     <ul>
