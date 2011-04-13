@@ -23,6 +23,11 @@ Contacts
     - Maximum result limit hinting
       http://bugreports.qt.nokia.com/browse/QTMOBILITY-652
 
+Connectivity
+    - The QNearFieldTarget is now asynchronous.
+    - LLCP socket support on Maemo 6
+    - Improved NFC API documentation and example applications.
+
 Location
    - QGeoCoordinate::atDistanceAndAzimuth
    - A positioning backend for MeeGo
