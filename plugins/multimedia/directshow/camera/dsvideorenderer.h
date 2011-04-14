@@ -39,60 +39,39 @@
 **
 ****************************************************************************/
 
+#ifndef DSVIDEORENDERER_H
+#define DSVIDEORENDERER_H
 
-#ifndef CAMERABINCONTROL_H
-#define CAMERABINCONTROL_H
+#include <qvideorenderercontrol.h>
+#include "dscamerasession.h"
 
-#include <QHash>
-#include <qcameracontrol.h>
-#include "camerabinsession.h"
+class CameraFormatConverter;
 
-QT_USE_NAMESPACE
+QT_BEGIN_HEADER
 
-class CamerabinResourcePolicy;
+QT_BEGIN_NAMESPACE
 
-class CameraBinControl : public QCameraControl
+
+class DSVideoRendererControl : public QVideoRendererControl
 {
     Q_OBJECT
 public:
-    CameraBinControl( CameraBinSession *session );
-    virtual ~CameraBinControl();
+    DSVideoRendererControl(DSCameraSession* session, QObject *parent = 0);
+    ~DSVideoRendererControl();
 
-    bool isValid() const { return true; }
+    QAbstractVideoSurface *surface() const;
+    void setSurface(QAbstractVideoSurface *surface);
 
-    QCamera::State state() const;
-    void setState(QCamera::State state);
-
-    QCamera::Status status() const { return m_status; }
-
-    QCamera::CaptureMode captureMode() const;
-    void setCaptureMode(QCamera::CaptureMode mode);
-
-    bool isCaptureModeSupported(QCamera::CaptureMode mode) const;
-    bool canChangeProperty(PropertyChangeType changeType, QCamera::Status status) const;
-
-public slots:
-    void reloadLater();
-
-private slots:
-    void updateStatus();
-    void delayedReload();
-
-    void handleResourcesGranted();
-    void handleResourcesLost();
-
-    void handleBusyChanged(bool);
-    void handleCameraError(int error, const QString &errorString);
+    void setSession(DSCameraSession* session);
 
 private:
-    void updateSupportedResolutions(const QString &device);
-
-    CameraBinSession *m_session;
-    QCamera::State m_state;
-    QCamera::Status m_status;
-    CamerabinResourcePolicy *m_resourcePolicy;
-
-    bool m_reloadPending;
+    QAbstractVideoSurface* m_surface;
+    DSCameraSession* m_session;
+    CameraFormatConverter* converter;
 };
 
-#endif // CAMERABINCONTROL_H
+QT_END_NAMESPACE
+
+QT_END_HEADER
+
+#endif // DSVIDEORENDERER_H

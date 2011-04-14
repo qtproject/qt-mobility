@@ -39,60 +39,34 @@
 **
 ****************************************************************************/
 
+#include <QtCore/qdebug.h>
 
-#ifndef CAMERABINCONTROL_H
-#define CAMERABINCONTROL_H
+#include "dsvideorenderer.h"
 
-#include <QHash>
-#include <qcameracontrol.h>
-#include "camerabinsession.h"
+QT_BEGIN_NAMESPACE
 
-QT_USE_NAMESPACE
-
-class CamerabinResourcePolicy;
-
-class CameraBinControl : public QCameraControl
+DSVideoRendererControl::DSVideoRendererControl(DSCameraSession* session, QObject *parent)
+    :QVideoRendererControl(parent),
+    m_surface(0),
+    m_session(session)
 {
-    Q_OBJECT
-public:
-    CameraBinControl( CameraBinSession *session );
-    virtual ~CameraBinControl();
+}
 
-    bool isValid() const { return true; }
+DSVideoRendererControl::~DSVideoRendererControl()
+{
+}
 
-    QCamera::State state() const;
-    void setState(QCamera::State state);
+QAbstractVideoSurface* DSVideoRendererControl::surface() const
+{
+    return m_surface;
+}
 
-    QCamera::Status status() const { return m_status; }
+void DSVideoRendererControl::setSurface(QAbstractVideoSurface *surface)
+{
+    m_surface = surface;
+    if(m_session)
+        m_session->setSurface(m_surface);
+}
 
-    QCamera::CaptureMode captureMode() const;
-    void setCaptureMode(QCamera::CaptureMode mode);
+QT_END_NAMESPACE
 
-    bool isCaptureModeSupported(QCamera::CaptureMode mode) const;
-    bool canChangeProperty(PropertyChangeType changeType, QCamera::Status status) const;
-
-public slots:
-    void reloadLater();
-
-private slots:
-    void updateStatus();
-    void delayedReload();
-
-    void handleResourcesGranted();
-    void handleResourcesLost();
-
-    void handleBusyChanged(bool);
-    void handleCameraError(int error, const QString &errorString);
-
-private:
-    void updateSupportedResolutions(const QString &device);
-
-    CameraBinSession *m_session;
-    QCamera::State m_state;
-    QCamera::Status m_status;
-    CamerabinResourcePolicy *m_resourcePolicy;
-
-    bool m_reloadPending;
-};
-
-#endif // CAMERABINCONTROL_H

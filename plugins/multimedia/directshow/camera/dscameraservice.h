@@ -39,60 +39,50 @@
 **
 ****************************************************************************/
 
+#ifndef DSCAMERASERVICE_H
+#define DSCAMERASERVICE_H
 
-#ifndef CAMERABINCONTROL_H
-#define CAMERABINCONTROL_H
+#include <QtCore/qobject.h>
 
-#include <QHash>
-#include <qcameracontrol.h>
-#include "camerabinsession.h"
+#include <qmediaservice.h>
 
-QT_USE_NAMESPACE
+QT_BEGIN_HEADER
 
-class CamerabinResourcePolicy;
+QT_BEGIN_NAMESPACE
 
-class CameraBinControl : public QCameraControl
+class DSCameraControl;
+class DSCameraSession;
+class DSVideoOutputControl;
+class DSVideoDeviceControl;
+class DSVideoRendererControl;
+class DSImageCaptureControl;
+class DSVideoWidgetControl;
+
+
+class DSCameraService : public QMediaService
 {
     Q_OBJECT
+
 public:
-    CameraBinControl( CameraBinSession *session );
-    virtual ~CameraBinControl();
+    DSCameraService(QObject *parent = 0);
+    ~DSCameraService();
 
-    bool isValid() const { return true; }
-
-    QCamera::State state() const;
-    void setState(QCamera::State state);
-
-    QCamera::Status status() const { return m_status; }
-
-    QCamera::CaptureMode captureMode() const;
-    void setCaptureMode(QCamera::CaptureMode mode);
-
-    bool isCaptureModeSupported(QCamera::CaptureMode mode) const;
-    bool canChangeProperty(PropertyChangeType changeType, QCamera::Status status) const;
-
-public slots:
-    void reloadLater();
-
-private slots:
-    void updateStatus();
-    void delayedReload();
-
-    void handleResourcesGranted();
-    void handleResourcesLost();
-
-    void handleBusyChanged(bool);
-    void handleCameraError(int error, const QString &errorString);
+    virtual QMediaControl* requestControl(const char *name);
+    virtual void releaseControl(QMediaControl *control);
 
 private:
-    void updateSupportedResolutions(const QString &device);
-
-    CameraBinSession *m_session;
-    QCamera::State m_state;
-    QCamera::Status m_status;
-    CamerabinResourcePolicy *m_resourcePolicy;
-
-    bool m_reloadPending;
+    DSCameraControl        *m_control;
+    DSCameraSession        *m_session;
+    DSVideoOutputControl   *m_videoOutput;
+    DSVideoWidgetControl   *m_viewFinderWidget;
+    DSVideoDeviceControl   *m_videoDevice;
+    DSVideoRendererControl *m_videoRenderer;
+    DSImageCaptureControl  *m_imageCapture;
+    QByteArray m_device;
 };
 
-#endif // CAMERABINCONTROL_H
+QT_END_NAMESPACE
+
+QT_END_HEADER
+
+#endif

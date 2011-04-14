@@ -39,60 +39,45 @@
 **
 ****************************************************************************/
 
+#ifndef DSVIDEODEVICECONTROL_H
+#define DSVIDEODEVICECONTROL_H
 
-#ifndef CAMERABINCONTROL_H
-#define CAMERABINCONTROL_H
+#include <qvideodevicecontrol.h>
 
-#include <QHash>
-#include <qcameracontrol.h>
-#include "camerabinsession.h"
+QT_BEGIN_HEADER
 
-QT_USE_NAMESPACE
+QT_BEGIN_NAMESPACE
+class DSCameraSession;
 
-class CamerabinResourcePolicy;
+//QTM_USE_NAMESPACE
 
-class CameraBinControl : public QCameraControl
+class DSVideoDeviceControl : public QVideoDeviceControl
 {
     Q_OBJECT
 public:
-    CameraBinControl( CameraBinSession *session );
-    virtual ~CameraBinControl();
+    DSVideoDeviceControl(QObject *parent = 0);
 
-    bool isValid() const { return true; }
+    int deviceCount() const;
+    QString deviceName(int index) const;
+    QString deviceDescription(int index) const;
+    QIcon deviceIcon(int index) const;
+    int defaultDevice() const;
+    int selectedDevice() const;
 
-    QCamera::State state() const;
-    void setState(QCamera::State state);
-
-    QCamera::Status status() const { return m_status; }
-
-    QCamera::CaptureMode captureMode() const;
-    void setCaptureMode(QCamera::CaptureMode mode);
-
-    bool isCaptureModeSupported(QCamera::CaptureMode mode) const;
-    bool canChangeProperty(PropertyChangeType changeType, QCamera::Status status) const;
-
-public slots:
-    void reloadLater();
-
-private slots:
-    void updateStatus();
-    void delayedReload();
-
-    void handleResourcesGranted();
-    void handleResourcesLost();
-
-    void handleBusyChanged(bool);
-    void handleCameraError(int error, const QString &errorString);
+public Q_SLOTS:
+    void setSelectedDevice(int index);
 
 private:
-    void updateSupportedResolutions(const QString &device);
+    DSCameraSession* m_session;
 
-    CameraBinSession *m_session;
-    QCamera::State m_state;
-    QCamera::Status m_status;
-    CamerabinResourcePolicy *m_resourcePolicy;
+    QList<QString> devices;
+    QList<QString> descriptions;
 
-    bool m_reloadPending;
+    int selected;
 };
 
-#endif // CAMERABINCONTROL_H
+QT_END_NAMESPACE
+
+QT_END_HEADER
+
+#endif

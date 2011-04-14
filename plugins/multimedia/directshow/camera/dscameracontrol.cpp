@@ -39,60 +39,65 @@
 **
 ****************************************************************************/
 
+#include <QtCore/qdebug.h>
 
-#ifndef CAMERABINCONTROL_H
-#define CAMERABINCONTROL_H
+#include "dscameracontrol.h"
+#include "dscameraservice.h"
+#include "dscamerasession.h"
 
-#include <QHash>
-#include <qcameracontrol.h>
-#include "camerabinsession.h"
+QT_BEGIN_NAMESPACE
 
-QT_USE_NAMESPACE
-
-class CamerabinResourcePolicy;
-
-class CameraBinControl : public QCameraControl
+DSCameraControl::DSCameraControl(QObject *parent)
+    :QCameraControl(parent), m_captureMode(QCamera::CaptureStillImage)
 {
-    Q_OBJECT
-public:
-    CameraBinControl( CameraBinSession *session );
-    virtual ~CameraBinControl();
+    m_session = qobject_cast<DSCameraSession*>(parent);
+    connect(m_session, SIGNAL(stateChanged(QCamera::State)),this, SIGNAL(stateChanged(QCamera::State)));
+}
 
-    bool isValid() const { return true; }
+DSCameraControl::~DSCameraControl()
+{
+}
 
-    QCamera::State state() const;
-    void setState(QCamera::State state);
+void DSCameraControl::setState(QCamera::State state)
+{
+    switch (state) {
+        case QCamera::ActiveState:
+            start();
+            break;
+        case QCamera::UnloadedState: /* fall through */
+        case QCamera::LoadedState:
+            stop();
+            break;
+    }
+}
 
-    QCamera::Status status() const { return m_status; }
+bool DSCameraControl::isCaptureModeSupported(QCamera::CaptureMode mode) const
+{
+    bool bCaptureSupported = false;
+    switch (mode) {
+    case QCamera::CaptureStillImage:
+        bCaptureSupported = true;
+        break;
+    case QCamera::CaptureVideo:
+        bCaptureSupported = false;
+        break;
+    }
+    return bCaptureSupported;
+}
 
-    QCamera::CaptureMode captureMode() const;
-    void setCaptureMode(QCamera::CaptureMode mode);
+void DSCameraControl::start()
+{
+    m_session->record();
+}
 
-    bool isCaptureModeSupported(QCamera::CaptureMode mode) const;
-    bool canChangeProperty(PropertyChangeType changeType, QCamera::Status status) const;
+void DSCameraControl::stop()
+{
+    m_session->stop();
+}
 
-public slots:
-    void reloadLater();
+QCamera::State DSCameraControl::state() const
+{
+    return (QCamera::State)m_session->state();
+}
 
-private slots:
-    void updateStatus();
-    void delayedReload();
-
-    void handleResourcesGranted();
-    void handleResourcesLost();
-
-    void handleBusyChanged(bool);
-    void handleCameraError(int error, const QString &errorString);
-
-private:
-    void updateSupportedResolutions(const QString &device);
-
-    CameraBinSession *m_session;
-    QCamera::State m_state;
-    QCamera::Status m_status;
-    CamerabinResourcePolicy *m_resourcePolicy;
-
-    bool m_reloadPending;
-};
-
-#endif // CAMERABINCONTROL_H
+QT_END_NAMESPACE
