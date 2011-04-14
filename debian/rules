@@ -24,7 +24,6 @@ DEB_DH_INSTALL_SOURCEDIR := debian/tmp
 # to DEB_DH_INSTALL_SOURCEDIR is not listed in any of the libqtm*.install files
 # except the *.prl files (-X.prl)
 DEB_DH_INSTALL_ARGS := --fail-missing -X.prl
-DEB_DH_MAKESHLIBS_ARGS_ALL := -V
 
 # bearer location contacts multimedia publishsubscribe versit messaging systeminfo serviceframework sensors gallery organizer feedback connectivity
 QTM_MODULES += connectivity
@@ -76,7 +75,6 @@ QTM_AUTOTESTS_SIMPLE := $(QTM_MAEMO_TESTDIR)/libqtm-sensors-tests.pri \
 			$(QTM_MAEMO_TESTDIR)/libqtm-systeminfo-tests.pri \
 			$(QTM_MAEMO_TESTDIR)/libqtm-serviceframework-tests.pri \
 			$(QTM_MAEMO_TESTDIR)/libqtm-organizer-tests.pri \
-			$(QTM_MAEMO_TESTDIR)/libqtm-connectivity-tests.pri \
 			$(QTM_MAEMO_TESTDIR)/libqtm-versit-tests.pri
 
 
