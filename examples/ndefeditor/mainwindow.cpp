@@ -139,8 +139,6 @@ MainWindow::MainWindow(QWidget *parent)
             this, SLOT(targetDetected(QNearFieldTarget*)));
     connect(m_manager, SIGNAL(targetLost(QNearFieldTarget*)),
             this, SLOT(targetLost(QNearFieldTarget*)));
-
-    m_manager->startTargetDetection();
 }
 
 MainWindow::~MainWindow()
@@ -207,6 +205,7 @@ void MainWindow::touchReceive()
     m_touchAction = ReadNdef;
 
     m_manager->setTargetAccessModes(QNearFieldManager::NdefReadTargetAccess);
+    m_manager->startTargetDetection();
 }
 
 void MainWindow::touchStore()
@@ -216,6 +215,7 @@ void MainWindow::touchStore()
     m_touchAction = WriteNdef;
 
     m_manager->setTargetAccessModes(QNearFieldManager::NdefWriteTargetAccess);
+    m_manager->startTargetDetection();
 }
 
 void MainWindow::targetDetected(QNearFieldTarget *target)
@@ -267,6 +267,7 @@ void MainWindow::ndefMessageRead(const QNdefMessage &message)
 
     ui->status->setStyleSheet(QString());
     m_manager->setTargetAccessModes(QNearFieldManager::NoTargetAccess);
+    m_manager->stopTargetDetection();
     m_request = QNearFieldTarget::RequestId();
     ui->statusBar->clearMessage();
 }
@@ -275,6 +276,7 @@ void MainWindow::ndefMessageWritten()
 {
     ui->status->setStyleSheet(QString());
     m_manager->setTargetAccessModes(QNearFieldManager::NoTargetAccess);
+    m_manager->stopTargetDetection();
     m_request = QNearFieldTarget::RequestId();
     ui->statusBar->clearMessage();
 }
@@ -316,9 +318,8 @@ void MainWindow::targetError(QNearFieldTarget::Error error, const QNearFieldTarg
 
         ui->status->setStyleSheet(QString());
         m_manager->setTargetAccessModes(QNearFieldManager::NoTargetAccess);
+        m_manager->stopTargetDetection();
         m_request = QNearFieldTarget::RequestId();
-    } else {
-        ui->statusBar->showMessage(tr("Unknown id"));
     }
 }
 
