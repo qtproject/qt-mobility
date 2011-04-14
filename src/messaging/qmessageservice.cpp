@@ -311,7 +311,7 @@ QTM_BEGIN_NAMESPACE
 
     The folder must be in the same account as the message. This will move the message on the external server, as well as locally.
 
-    On Windows mobile and desktop platforms this function performs no operation.
+    On Windows mobile and desktop platforms this function is not supported. On Symbian prior to SR1.11 this function is not supported. On Symbian SR1.11 this function is only partially supported.
     
     Returns true if the operation can be initiated; otherwise returns false.
 */
