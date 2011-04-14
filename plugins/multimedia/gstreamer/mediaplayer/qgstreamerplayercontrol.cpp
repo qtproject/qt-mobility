@@ -56,6 +56,8 @@
 #include <fcntl.h>
 #include <unistd.h>
 
+//#define DEBUG_PLAYBIN
+
 QGstreamerPlayerControl::QGstreamerPlayerControl(QGstreamerPlayerSession *session, QObject *parent)
     : QMediaPlayerControl(parent)
     , m_ownStream(false)
@@ -180,6 +182,10 @@ void QGstreamerPlayerControl::setPlaybackRate(qreal rate)
 
 void QGstreamerPlayerControl::setPosition(qint64 pos)
 {
+#ifdef DEBUG_PLAYBIN
+    qDebug() << Q_FUNC_INFO << pos/1000.0;
+#endif
+
     pushState();
 
     if (m_mediaStatus == QMediaPlayer::EndOfMedia) {
@@ -199,11 +205,19 @@ void QGstreamerPlayerControl::setPosition(qint64 pos)
 
 void QGstreamerPlayerControl::play()
 {
+#ifdef DEBUG_PLAYBIN
+    qDebug() << Q_FUNC_INFO;
+#endif
+
     playOrPause(QMediaPlayer::PlayingState);
 }
 
 void QGstreamerPlayerControl::pause()
 {
+#ifdef DEBUG_PLAYBIN
+    qDebug() << Q_FUNC_INFO;
+#endif
+
     playOrPause(QMediaPlayer::PausedState);
 }
 
@@ -263,6 +277,10 @@ void QGstreamerPlayerControl::playOrPause(QMediaPlayer::State newState)
 
 void QGstreamerPlayerControl::stop()
 {
+#ifdef DEBUG_PLAYBIN
+    qDebug() << Q_FUNC_INFO;
+#endif
+
     pushState();
 
     if (m_state != QMediaPlayer::StoppedState) {
@@ -301,6 +319,10 @@ const QIODevice *QGstreamerPlayerControl::mediaStream() const
 
 void QGstreamerPlayerControl::setMedia(const QMediaContent &content, QIODevice *stream)
 {
+#ifdef DEBUG_PLAYBIN
+    qDebug() << Q_FUNC_INFO;
+#endif
+
     pushState();
 
     m_state = QMediaPlayer::StoppedState;
@@ -511,6 +533,9 @@ void QGstreamerPlayerControl::setBufferProgress(int progress)
     if (m_bufferProgress == progress || m_mediaStatus == QMediaPlayer::NoMedia)
         return;
 
+#ifdef DEBUG_PLAYBIN
+    qDebug() << Q_FUNC_INFO << progress;
+#endif
     m_bufferProgress = progress;
 
     if (m_resources->isGranted()) {
@@ -697,10 +722,18 @@ void QGstreamerPlayerControl::popAndNotifyState()
     QMediaPlayer::MediaStatus oldMediaStatus = m_mediaStatusStack.pop();
 
     if (m_stateStack.isEmpty()) {
-        if (m_state != oldState)
+        if (m_state != oldState) {
+#ifdef DEBUG_PLAYBIN
+            qDebug() << "State changed:" << m_state;
+#endif
             emit stateChanged(m_state);
+        }
 
-        if (m_mediaStatus != oldMediaStatus)
+        if (m_mediaStatus != oldMediaStatus) {
+#ifdef DEBUG_PLAYBIN
+            qDebug() << "Media status changed:" << m_mediaStatus;
+#endif
             emit mediaStatusChanged(m_mediaStatus);
+        }
     }
 }
