@@ -96,7 +96,7 @@ S60MediaRecognizer::MediaType S60MediaRecognizer::mediaType(const QUrl &url)
     if (isStream)
         return Url;
     else
-        return identifyMediaType(url.toLocalFile());
+        return identifyMediaType(QDir::cleanPath(url.toLocalFile()));
 }
 
 /*!

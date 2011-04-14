@@ -227,7 +227,7 @@ void S60MediaPlayerSession::load(QUrl url)
         if(m_stream)
             doLoadUrlL(QString2TPtrC(url.toString()));
         else
-            doLoadL(QString2TPtrC(QDir::toNativeSeparators(url.toLocalFile()))));
+            doLoadL(QString2TPtrC(QDir::toNativeSeparators(QDir::cleanPath(url.toLocalFile())))));
     setError(err);
 
     DP0("S60MediaPlayerSession::load ---");
