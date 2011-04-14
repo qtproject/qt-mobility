@@ -2,7 +2,6 @@ INCLUDEPATH+=../../../src/sensors
 
 PLUGIN_TYPE = sensors
 
-include(version.pri)
 include(simulator.pri)
 
 TEMPLATE = lib

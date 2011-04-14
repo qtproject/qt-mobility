@@ -4,7 +4,6 @@ TEMPLATE = lib
 CONFIG += plugin
 PLUGIN_TYPE = sensors
 
-include(version.pri)
 include(dummy.pri)
 include(../../../common.pri)
 
