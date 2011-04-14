@@ -57,12 +57,12 @@ usr/lib/qtmobility/examples/qml_landmarkmap
 usr/lib/qtmobility/examples/qml_location_flickr
 usr/lib/qtmobility/examples/qml_mapviewer
 usr/lib/qtmobility/examples/qml_networkinfo
+usr/lib/qtmobility/examples/qmlnotes
+usr/lib/qtmobility/examples/qmlorganizer
+usr/lib/qtmobility/examples/qml_poster
 usr/lib/qtmobility/examples/qml_scanner
 usr/lib/qtmobility/examples/qml_storageinfo
 usr/lib/qtmobility/examples/qml_tennis
-usr/lib/qtmobility/examples/qmldialer
-usr/lib/qtmobility/examples/qmlnotes
-usr/lib/qtmobility/examples/qmlorganizer
 usr/lib/qtmobility/examples/qsysinfo
 usr/lib/qtmobility/examples/qsystemalignedtimer
 usr/lib/qtmobility/examples/querymessages
@@ -70,9 +70,9 @@ usr/lib/qtmobility/examples/radio
 usr/lib/qtmobility/examples/samplephonebook
 usr/lib/qtmobility/examples/sensor_explorer
 usr/lib/qtmobility/examples/servicebrowser
-usr/lib/qtmobility/examples/sfw-notes
 usr/lib/qtmobility/examples/sfwecho_client
 usr/lib/qtmobility/examples/sfwecho_service
+usr/lib/qtmobility/examples/sfw-notes
 usr/lib/qtmobility/examples/show_acceleration
 usr/lib/qtmobility/examples/show_als
 usr/lib/qtmobility/examples/show_compass

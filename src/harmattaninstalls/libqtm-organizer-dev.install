@@ -59,7 +59,6 @@ usr/include/qt4/QtOrganizer/QOrganizerManager
 usr/include/qt4/QtOrganizer/QOrganizerManagerEngine
 usr/include/qt4/QtOrganizer/QOrganizerManagerEngineV2
 usr/include/qt4/QtOrganizer/QOrganizerManagerEngineFactory
-usr/include/qt4/QtOrganizer/QOrganizerManagerEngineV2
 usr/include/qt4/QtOrganizer/QOrganizerNote
 usr/include/qt4/QtOrganizer/QOrganizerRecurrenceRule
 usr/include/qt4/QtOrganizer/QOrganizerTodo

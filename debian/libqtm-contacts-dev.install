@@ -44,7 +44,6 @@ usr/include/qt4/QtContacts/QContactManagerEngineV2
 usr/include/qt4/QtContacts/QContactName
 usr/include/qt4/QtContacts/QContactNickname
 usr/include/qt4/QtContacts/QContactNote
-usr/include/qt4/QtContacts/QContactObserver
 usr/include/qt4/QtContacts/QContactOnlineAccount
 usr/include/qt4/QtContacts/QContactOrganization
 usr/include/qt4/QtContacts/QContactObserver
