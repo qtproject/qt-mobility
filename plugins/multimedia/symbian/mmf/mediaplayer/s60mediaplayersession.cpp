@@ -227,7 +227,7 @@ void S60MediaPlayerSession::load(QUrl url)
         if(m_stream)
             doLoadUrlL(QString2TPtrC(url.toString()));
         else
-            doLoadL(QString2TPtrC(QDir::toNativeSeparators(url.toLocalFile()))));
+            doLoadL(QString2TPtrC(QDir::toNativeSeparators(QDir::cleanPath(url.toLocalFile())))));
     setError(err);
 
     DP0("S60MediaPlayerSession::load ---");
@@ -330,9 +330,9 @@ void S60MediaPlayerSession::reset()
     stopStalledTimer();
     doStop();
     doClose();
-    setPosition(0);
     setState(QMediaPlayer::StoppedState);
     setMediaStatus(QMediaPlayer::UnknownMediaStatus);
+    setPosition(0);
 
     DP0("S60MediaPlayerSession::reset ---");
 }
@@ -773,6 +773,8 @@ QMediaPlayer::Error S60MediaPlayerSession::fromSymbianErrorToMultimediaError(int
         case KErrServerBusy:
         case KErrCompletion:  
         case KErrBadPower:    
+        case KErrMMInvalidProtocol:
+        case KErrMMInvalidURL:
             return QMediaPlayer::ResourceError;
         
         case KErrMMPartialPlayback:   
@@ -791,8 +793,6 @@ QMediaPlayer::Error S60MediaPlayerSession::fromSymbianErrorToMultimediaError(int
         case KErrMMServerSocket:
         case KErrMMServerNotSupported:
         case KErrMMUDPReceive:
-        case KErrMMInvalidProtocol:
-        case KErrMMInvalidURL:
         case KErrMMMulticast:
         case KErrMMProxyServer:
         case KErrMMProxyServerNotSupported:
@@ -865,7 +865,9 @@ void S60MediaPlayerSession::setError(int error, const QString &errorString, bool
 
     emit this->error(mediaError, symbianError);
 
-    if (mediaError !=QMediaPlayer::NoError) {
+    if (m_error == KErrInUse) {
+        pause();
+    } else if (mediaError != QMediaPlayer::NoError) {
         m_play_requested = false;
         setMediaStatus(QMediaPlayer::InvalidMedia);
         stop();
