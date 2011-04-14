@@ -449,6 +449,15 @@ bool QMessageService::send(QMessage &message)
     // Mark this message as outgoing
     msg->setStatus(QMailMessage::Outbox, true);
 
+#ifdef Q_WS_MEEGO
+    QMessageAccount account(message.parentAccountId());
+    if (account.messageTypes() & QMessage::Sms) {
+        d_ptr->_error = QMessageManager::FrameworkFault;
+        qWarning() << "Sending SMS is not supported on this platform.";
+        return false;
+    }
+#endif
+
     if (msg->id().isValid()) {
         // Update the message
         if (!mailStoreInstance()->updateMessage(msg)) {
