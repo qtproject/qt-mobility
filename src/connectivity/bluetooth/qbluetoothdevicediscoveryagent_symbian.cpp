@@ -57,7 +57,7 @@ QBluetoothDeviceDiscoveryAgentPrivate::QBluetoothDeviceDiscoveryAgentPrivate()
     /* connect to socker server */
     TInt result = m_socketServer.Connect();
     if (result != KErrNone)
-        setError(QBluetoothDeviceDiscoveryAgent::UnknownError, 
+        _q_setError(QBluetoothDeviceDiscoveryAgent::UnknownError, 
                 QString("RSocketServ.Connect() failed with error"));
 }
 
@@ -80,10 +80,10 @@ void QBluetoothDeviceDiscoveryAgentPrivate::allocate()
             QObject::connect(m_deviceDiscovery, SIGNAL(deviceDiscovered(const QBluetoothDeviceInfo&)),
                 q, SLOT(_q_newDeviceFound(const QBluetoothDeviceInfo&)));
             QObject::connect(m_deviceDiscovery, SIGNAL(linkManagerError(QBluetoothDeviceDiscoveryAgent::Error,QString)),
-                q, SLOT(setError(QBluetoothDeviceDiscoveryAgent::Error,QString)));
+                q, SLOT(_q_setError(QBluetoothDeviceDiscoveryAgent::Error,QString)));
             QObject::connect(m_deviceDiscovery, SIGNAL(canceled()), q, SIGNAL(canceled()));
         } else {
-            setError(QBluetoothDeviceDiscoveryAgent::UnknownError, 
+            _q_setError(QBluetoothDeviceDiscoveryAgent::UnknownError, 
                     QString("Cannot allocate BluetoothLinkManagerDeviceDiscoverer: failed with error"));
         }
     } 
@@ -114,7 +114,7 @@ bool QBluetoothDeviceDiscoveryAgentPrivate::isActive() const
     return false;
 }
 
-void QBluetoothDeviceDiscoveryAgentPrivate::setError(QBluetoothDeviceDiscoveryAgent::Error errorCode, 
+void QBluetoothDeviceDiscoveryAgentPrivate::_q_setError(QBluetoothDeviceDiscoveryAgent::Error errorCode, 
         QString errorDescription)
 {
     qDebug() << __PRETTY_FUNCTION__ << errorCode << errorDescription;

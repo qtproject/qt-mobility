@@ -77,11 +77,11 @@ public:
     ~QRfcommServerPrivate();
 
 #ifdef QTM_SYMBIAN_BLUETOOTH
-private slots:
-    void connected();
-    void socketError(QBluetoothSocket::SocketError err);
-    void disconnected();
-#endif
+    // private slots
+    void _q_connected();
+    void _q_socketError(QBluetoothSocket::SocketError err);
+    void _q_disconnected();
+#endif //QTM_SYMBIAN_BLUETOOTH
 
 #ifndef QT_NO_DBUS
     void _q_newConnection();

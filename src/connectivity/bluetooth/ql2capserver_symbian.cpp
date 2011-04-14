@@ -224,31 +224,31 @@ quint16 QL2capServer::serverPort() const
         return 0;
 }
 
-void QL2capServer::connected()
+void QL2capServerPrivate::_q_connected()
 {
-    Q_D(QL2capServer);
-    if(!d->activeSockets.isEmpty())
+    Q_Q(QL2capServer);
+    if(!activeSockets.isEmpty())
         {
         // update state of the pending socket and start receiving
-        (d->activeSockets.last())->setSocketState(QBluetoothSocket::ConnectedState);
-        (d->activeSockets.last())->d_ptr->startReceive();
+        (activeSockets.last())->setSocketState(QBluetoothSocket::ConnectedState);
+        (activeSockets.last())->d_ptr->startReceive();
         }
     else
         return;
-    emit newConnection();
+    emit q->newConnection();
     QBluetoothSocket *pendingSocket = new QBluetoothSocket(QBluetoothSocket::UnknownSocketType);
     if(!pendingSocket)
         {
-        delete d->socket;
-        d->socket = 0;
+        delete socket;
+        socket = 0;
         return;
         }
     QBluetoothSocketPrivate *pd = pendingSocket->d_ptr;
     pd->ensureBlankNativeSocket(QBluetoothSocket::L2capSocket);
-    if (d->ds->iSocket->Accept(*pd->iSocket) == KErrNone)
+    if (ds->iSocket->Accept(*pd->iSocket) == KErrNone)
         {
-        d->socket->setSocketState(QBluetoothSocket::ListeningState);
-        d->activeSockets.append(pendingSocket);
+        socket->setSocketState(QBluetoothSocket::ListeningState);
+        activeSockets.append(pendingSocket);
         return;
         }
     else
@@ -256,24 +256,22 @@ void QL2capServer::connected()
         // we might reach this statement if we have reach
         // maxPendingConnections
         qDebug() << "QL2capServer::connected accept failed";
-        delete d->socket, pendingSocket;
-        d->socket = 0;
+        delete socket, pendingSocket;
+        socket = 0;
         return;
         }
 }
 
-void QL2capServer::disconnected()
+void QL2capServerPrivate::_q_disconnected()
 {
-    Q_D(QL2capServer);
-    delete d->socket;
-    d->socket = 0;
+    delete socket;
+    socket = 0;
 }
 
-void QL2capServer::socketError(QBluetoothSocket::SocketError err)
+void QL2capServerPrivate::_q_socketError(QBluetoothSocket::SocketError err)
 {
-    Q_D(QL2capServer);
-    delete d->socket;
-    d->socket = 0;
+    delete socket;
+    socket = 0;
 }
 
 void QL2capServer::setSecurityFlags(QBluetooth::SecurityFlags security)

@@ -224,55 +224,53 @@ QBluetoothSocket *QRfcommServer::nextPendingConnection()
     return next;
 }
 
-void QRfcommServer::connected()
+void QRfcommServerPrivate::_q_connected()
 {
-    Q_D(QRfcommServer);
-    if(!d->activeSockets.isEmpty())
+    Q_Q(QRfcommServer);
+    if(!activeSockets.isEmpty())
         {
         // update state of the pending socket and start receiving
-        (d->activeSockets.last())->setSocketState(QBluetoothSocket::ConnectedState);
-        (d->activeSockets.last())->d_ptr->startReceive();
+        (activeSockets.last())->setSocketState(QBluetoothSocket::ConnectedState);
+        (activeSockets.last())->d_ptr->startReceive();
         }
     else
         return;
-    emit newConnection();
+    emit q->newConnection();
     QBluetoothSocket *pendingSocket = new QBluetoothSocket(QBluetoothSocket::UnknownSocketType);
     if(!pendingSocket)
         {
-        delete d->socket;
-        d->socket = 0;
+        delete socket;
+        socket = 0;
         return;
         }
     QBluetoothSocketPrivate *pd = pendingSocket->d_ptr;
     pd->ensureBlankNativeSocket(QBluetoothSocket::RfcommSocket);
-    if (d->ds->iSocket->Accept(*pd->iSocket) == KErrNone)
+    if (ds->iSocket->Accept(*pd->iSocket) == KErrNone)
         {
-        d->socket->setSocketState(QBluetoothSocket::ListeningState);
-        d->activeSockets.append(pendingSocket);
+        socket->setSocketState(QBluetoothSocket::ListeningState);
+        activeSockets.append(pendingSocket);
         return;
         }
     else
         {
         // we might reach this statement if we have reach
         // maxPendingConnections
-        delete d->socket, pendingSocket;
-        d->socket = 0;
+        delete socket, pendingSocket;
+        socket = 0;
         return;
         }
 }
 
-void QRfcommServer::disconnected()
+void QRfcommServerPrivate::_q_disconnected()
 {
-    Q_D(QRfcommServer);
-    delete d->socket;
-    d->socket = 0;
+    delete socket;
+    socket = 0;
 }
 
-void QRfcommServer::socketError(QBluetoothSocket::SocketError err)
+void QRfcommServerPrivate::_q_socketError(QBluetoothSocket::SocketError err)
 {
-    Q_D(QRfcommServer);
-    delete d->socket;
-    d->socket = 0;
+    delete socket;
+    socket = 0;
 }
 
 void QRfcommServer::setSecurityFlags(QBluetooth::SecurityFlags security)

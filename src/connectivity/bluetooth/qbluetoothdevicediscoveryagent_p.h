@@ -74,9 +74,9 @@ public:
     bool isActive() const;
 
 #ifdef QTM_SYMBIAN_BLUETOOTH
-public Q_SLOTS:
+// private slots
     void _q_newDeviceFound(const QBluetoothDeviceInfo &device);
-    void setError(QBluetoothDeviceDiscoveryAgent::Error errorCode, 
+    void _q_setError(QBluetoothDeviceDiscoveryAgent::Error errorCode, 
             QString errorDescription);
 #endif
 
