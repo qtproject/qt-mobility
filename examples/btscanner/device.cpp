@@ -94,6 +94,8 @@ void DeviceDiscoveryDialog::addDevice(const QBluetoothDeviceInfo &info)
         QBluetoothLocalDevice::Pairing pairingStatus = localDevice->pairingStatus(info.address());
         if (pairingStatus == QBluetoothLocalDevice::Paired || pairingStatus == QBluetoothLocalDevice::AuthorizedPaired )
             item->setTextColor(QColor(Qt::green));
+        else
+            item->setTextColor(QColor(Qt::black));
 
         ui->list->addItem(item);
     }

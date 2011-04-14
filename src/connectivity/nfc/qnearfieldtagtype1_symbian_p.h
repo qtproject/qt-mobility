@@ -78,8 +78,8 @@ public:
                          WriteMode mode = EraseAndWrite);
 
     bool hasNdefMessage();
-    void readNdefMessages();
-    void writeNdefMessages(const QList<QNdefMessage> &messages);
+    RequestId readNdefMessages();
+    RequestId writeNdefMessages(const QList<QNdefMessage> &messages);
 
     bool isProcessingCommand() const { return _isProcessingRequest(); }
     RequestId sendCommand(const QByteArray &command);

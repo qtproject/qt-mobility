@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -123,7 +123,7 @@ void NearFieldTagNdefRequest::ProcessEmitSignal(TInt aError)
     LOG("error code is "<<aError<<" request type is "<<iType);
     if (aError != KErrNone)
     {
-        iOperator.EmitError(aError, QNearFieldTarget::RequestId());
+        iOperator.EmitError(aError, iId);
     }
     else
     {
@@ -137,10 +137,12 @@ void NearFieldTagNdefRequest::ProcessEmitSignal(TInt aError)
                 LOG("emit signal ndef message read");
                 iOperator.EmitNdefMessageRead(iReadMessages.at(i));
             }
+            iOperator.EmitRequestCompleted(iId);
         }
         else if (EWriteRequest == iType)
         {
             iOperator.EmitNdefMessagesWritten();
+            iOperator.EmitRequestCompleted(iId);
         }
     }
     END
