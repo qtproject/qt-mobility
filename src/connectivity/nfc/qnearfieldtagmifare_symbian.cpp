@@ -52,7 +52,6 @@ QNearFieldTagMifareSymbian::QNearFieldTagMifareSymbian(CNearFieldNdefTarget *tag
 
 QNearFieldTagMifareSymbian::~QNearFieldTagMifareSymbian()
 {
-    delete mTag;
 }
 
 QByteArray QNearFieldTagMifareSymbian::uid() const
