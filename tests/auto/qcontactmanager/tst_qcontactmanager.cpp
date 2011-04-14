@@ -205,6 +205,7 @@ private slots:
     void changeSet();
     void fetchHint();
     void engineDefaultSchema();
+    void errorSemantics();
 
     /* Special test with special data */
     void uriParsing_data();
@@ -3773,6 +3774,60 @@ void tst_QContactManager::lateDeletion()
     QContactManager* cm = QContactManager::fromUri(uri);
 
     cm->setParent(qApp); // now do nothing
+}
+
+class errorSemanticsTester : public QObject {
+    Q_OBJECT;
+public:
+    bool initialErrorWasDoesNotExist;
+    bool slotErrorWasBadArgument;
+    QContactManager* mManager;
+
+    errorSemanticsTester(QContactManager* manager)
+        : initialErrorWasDoesNotExist(false),
+        slotErrorWasBadArgument(false),
+        mManager(manager)
+    {
+        connect(manager, SIGNAL(contactsAdded(QList<QContactLocalId>)), this, SLOT(handleAdded()));
+    }
+
+public slots:
+    void handleAdded()
+    {
+        // Make sure the initial error state is correct
+         initialErrorWasDoesNotExist = mManager->error() == QContactManager::DoesNotExistError;
+        // Now force a different error
+        mManager->removeContacts(QList<QContactLocalId>());
+        slotErrorWasBadArgument = mManager->error() == QContactManager::BadArgumentError;
+        // and return
+    }
+};
+
+void tst_QContactManager::errorSemantics()
+{
+    /*
+        Test to make sure that calling functions in response to signals doesn't upset the correct error results
+        This relies on the memory engine emitting signals before e.g. saveContacts returns
+     */
+
+    QContactManager m("memory");
+    errorSemanticsTester t(&m);
+
+    QVERIFY(m.error() == QContactManager::NoError);
+
+    QContactDetailDefinition nameDef = m.detailDefinition(QContactName::DefinitionName, QContactType::TypeContact);
+    QContact alice = createContact(nameDef, "Alice", "inWonderland", "1234567");
+
+    // Try creating some specific error so we can test it later on
+    QContact a = m.contact(567);
+    QVERIFY(m.error() == QContactManager::DoesNotExistError);
+
+    // Now save something
+    QVERIFY(m.saveContact(&alice));
+
+    QVERIFY(t.initialErrorWasDoesNotExist);
+    QVERIFY(t.slotErrorWasBadArgument);
+    QVERIFY(m.error() == QContactManager::NoError);
 }
 
 QTEST_MAIN(tst_QContactManager)

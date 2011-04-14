@@ -61,18 +61,18 @@ QImage ContactThumbnailImageProvider::requestImage(const QString &id, QSize *siz
     }
 
     /* url format:
-        image://thumbnail/{manager.contactid}
+        image://thumbnail/{managerUri.contactid}
      */
 
-    QString managerName = id.split('.').first();
+    QString managerUri = id.split('.').first();
     QString localId = id.split('.').last();
 
     QContactManager* manager = 0;
-    if (m_managers.contains(managerName)) {
-        manager = m_managers.value(managerName);
+    if (m_managers.contains(managerUri)) {
+        manager = m_managers.value(managerUri);
     } else {
-        manager = new QContactManager(managerName);
-        m_managers.insert(managerName, manager);
+        manager = QContactManager::fromUri(managerUri);
+        m_managers.insert(managerUri, manager);
     }
 
     QContact c = manager->contact(localId.toInt());
