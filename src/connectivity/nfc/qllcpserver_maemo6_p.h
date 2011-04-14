@@ -82,7 +82,8 @@ public:
 
 private slots:
     // com.nokia.nfc.AccessRequestor
-    void AccessFailed(const QDBusObjectPath &targetPath, const QString &error);
+    void AccessFailed(const QDBusObjectPath &targetPath, const QString &kind,
+                      const QString &error);
     void AccessGranted(const QDBusObjectPath &targetPath, const QString &accessKind);
 
     // com.nokia.nfc.LLCPRequestor

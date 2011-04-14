@@ -55,8 +55,14 @@ n900accelerometer::n900accelerometer(QSensor *sensor)
     : n900filebasedsensor(sensor)
 {
     setReading<QAccelerometerReading>(&m_reading);
-    // Details derived from the kernel driver
-    addDataRate(100, 100); // 100Hz
+    // According to the kernel driver, this runs at 100 or 400Hz
+    // but we can't change the rate because we don't run as root.
+    // The hardware seems to run at 100Hz by default so report that.
+    // Report 1-100Hz so the app can poll less frequently if it wants to.
+    addDataRate(1, 100);
+    // According to the kernel driver this reports +- 2G or +- 8G (with lower accuracy)
+    // but we can't change the range because we don't run as root.
+    // The hardware seems to run at +- 2G by default so report that.
     addOutputRange(-22.418, 22.418, 0.17651); // 2G
     setDescription(QLatin1String("lis302dl"));
 }

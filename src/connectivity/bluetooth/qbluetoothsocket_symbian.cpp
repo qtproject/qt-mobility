@@ -205,7 +205,7 @@ void QBluetoothSocketPrivate::receive()
 
 void QBluetoothSocketPrivate::HandleAcceptCompleteL(TInt aErr)
 {
-    qDebug() << __PRETTY_FUNCTION__;
+    qDebug() << __PRETTY_FUNCTION__ << ">> aErr=" << aErr;
     Q_Q(QBluetoothSocket);
     emit q->connected();
 }
@@ -217,6 +217,7 @@ void QBluetoothSocketPrivate::HandleActivateBasebandEventNotifierCompleteL(TInt 
 
 void QBluetoothSocketPrivate::HandleConnectCompleteL(TInt aErr)
 {
+    qDebug() << __PRETTY_FUNCTION__ << ">> aErr=" << aErr;
     Q_Q(QBluetoothSocket);
     if (aErr == KErrNone) {
         q->setSocketState(QBluetoothSocket::ConnectedState);
@@ -296,6 +297,7 @@ void QBluetoothSocketPrivate::HandleSendCompleteL(TInt aErr)
 
 void QBluetoothSocketPrivate::HandleShutdownCompleteL(TInt aErr)
 {
+    qDebug() << __PRETTY_FUNCTION__ << ">> aErr=" << aErr;
     Q_Q(QBluetoothSocket);
     if (aErr == KErrNone) {
         q->setSocketState(QBluetoothSocket::UnconnectedState);
@@ -353,14 +355,14 @@ QString QBluetoothSocketPrivate::peerName() const
             iBlankSocket->RemoteName(sockAddr);
         else
             iSocket->RemoteName(sockAddr);
+        
         TInquirySockAddr address(sockAddr);
         address.SetBTAddr(sockAddr.BTAddr());
         address.SetAction(KHostResName|KHostResIgnoreCache); // ignore name stored in cache
         err = resolver.GetByAddress(address, nameEntry);
         if(err == KErrNone) {
-            TNameRecord name = nameEntry();
-            QString qString((QChar*)name.iName.Ptr(),name.iName.Length());
-            m_peerName = qString;
+            TNameRecord name = nameEntry();            
+            m_peerName = QString((QChar*)name.iName.Ptr(),name.iName.Length());
       	}
     }
     resolver.Close();
@@ -368,7 +370,6 @@ QString QBluetoothSocketPrivate::peerName() const
     if (err != KErrNone) {
         return QString();
     }
-
     return m_peerName;
 }
 
