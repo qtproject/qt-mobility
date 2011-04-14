@@ -453,27 +453,24 @@ void tst_QSystemNetworkInfo::tst_interfaceForMode()
     QFETCH(QSystemNetworkInfo::NetworkMode, mode);
     QSystemNetworkInfo ni;
 //    QSystemNetworkInfo::NetworkStatus status = ni.networkStatus(mode);
-    if ((mode == ni.currentMode()) && (mode == QSystemNetworkInfo::WlanMode
-                                       || mode == QSystemNetworkInfo::EthernetMode
-                                       || mode == QSystemNetworkInfo::BluetoothMode)) {
+    if ((mode == ni.currentMode()) && (mode == QSystemNetworkInfo::EthernetMode
+                                       || mode == QSystemNetworkInfo::WlanMode)) {
         QVERIFY(!ni.interfaceForMode(mode).name().isEmpty());
-    } else {
-        QVERIFY(!ni.interfaceForMode(mode).isValid());
-        QList<QSystemNetworkInfo::NetworkMode> modeList;
-        modeList << QSystemNetworkInfo::GsmMode;
-        modeList << QSystemNetworkInfo::CdmaMode;
-        modeList << QSystemNetworkInfo::WcdmaMode;
-        modeList << QSystemNetworkInfo::WlanMode;
-        modeList << QSystemNetworkInfo::EthernetMode;
-        modeList << QSystemNetworkInfo::BluetoothMode;
-        modeList << QSystemNetworkInfo::WimaxMode;
+    }
 
-        modeList << QSystemNetworkInfo::LteMode;
+    QList<QSystemNetworkInfo::NetworkMode> modeList;
+    modeList << QSystemNetworkInfo::GsmMode;
+    modeList << QSystemNetworkInfo::CdmaMode;
+    modeList << QSystemNetworkInfo::WcdmaMode;
+    modeList << QSystemNetworkInfo::WlanMode;
+    modeList << QSystemNetworkInfo::EthernetMode;
+    modeList << QSystemNetworkInfo::BluetoothMode;
+    modeList << QSystemNetworkInfo::WimaxMode;
+    modeList << QSystemNetworkInfo::LteMode;
 
-        foreach(QSystemNetworkInfo::NetworkMode mode, modeList) {
-            QVERIFY(!ni.interfaceForMode(mode).name().isEmpty()
-                    || !ni.interfaceForMode(mode).isValid());
-        }
+    foreach (QSystemNetworkInfo::NetworkMode mode, modeList) {
+        QVERIFY(!ni.interfaceForMode(mode).name().isEmpty()
+                || !ni.interfaceForMode(mode).isValid());
     }
 }
 
