@@ -30,7 +30,8 @@ SUBDIRS += \
     qaudioinput \
     qaudioformat \
     qvideoframe \
-    qvideosurfaceformat
+    qvideosurfaceformat \
+    qcamerabackend
 
 contains (QT_CONFIG, declarative) {
     SUBDIRS += \

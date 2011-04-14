@@ -53,6 +53,28 @@
 
 QTM_BEGIN_NAMESPACE
 
+#if QT_VERSION >= 0x040800
+#define Q_GLOBAL_STATIC_QAPP_DESTRUCTION(TYPE, NAME)                    \
+    static QGlobalStatic<TYPE> this_##NAME                              \
+                 = { Q_BASIC_ATOMIC_INITIALIZER(0), false };            \
+    static void NAME##_cleanup()                                        \
+    {                                                                   \
+        delete this_##NAME.pointer;                                     \
+        this_##NAME.pointer = 0;                                        \
+        this_##NAME.destroyed = true;                                   \
+    }                                                                   \
+    static TYPE *NAME()                                                 \
+    {                                                                   \
+        if (!this_##NAME.pointer && !this_##NAME.destroyed) {           \
+            TYPE *x = new TYPE;                                         \
+            if (!this_##NAME.pointer.testAndSetOrdered(0, x))           \
+                delete x;                                               \
+            else                                                        \
+                qAddPostRoutine(NAME##_cleanup);                        \
+        }                                                               \
+        return this_##NAME.pointer;                                     \
+    }
+#else
 #define Q_GLOBAL_STATIC_QAPP_DESTRUCTION(TYPE, NAME)                    \
     Q_GLOBAL_STATIC_INIT(TYPE, NAME);                                   \
     static void NAME##_cleanup()                                        \
@@ -72,6 +94,7 @@ QTM_BEGIN_NAMESPACE
         }                                                               \
         return this_##NAME.pointer;                                     \
     }
+#endif
 
 Q_GLOBAL_STATIC_QAPP_DESTRUCTION(QNetworkConfigurationManagerPrivate, connManager);
 

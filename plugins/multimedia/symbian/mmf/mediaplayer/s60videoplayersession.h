@@ -53,6 +53,7 @@
 #include <videoplayer.h>
 #endif // VIDEOOUTPUT_GRAPHICS_SURFACES
 
+#include <QtCore/QCoreApplication>
 #include <QtGui/qwidget.h>
 #include <qvideowidget.h>
 
@@ -65,12 +66,39 @@ class QTimer;
 class S60MediaNetworkAccessControl;
 class S60VideoDisplay;
 
+// Helper classes to pass Symbian events from WServ to the S60VideoPlayerSession
+// so it can control video player on certain events if required
+
+class ApplicationFocusObserver
+{
+public:
+    virtual void applicationGainedFocus() = 0;
+    virtual void applicationLostFocus() = 0;
+};
+
+class S60VideoPlayerEventHandler : public QObject
+{
+public:
+    static S60VideoPlayerEventHandler *instance();
+    static bool filterEvent(void *message, long *result);
+    void addApplicationFocusObserver(ApplicationFocusObserver* observer);
+    void removeApplicationFocusObserver(ApplicationFocusObserver* observer);
+private:
+    S60VideoPlayerEventHandler();
+    ~S60VideoPlayerEventHandler();
+private:
+    static S60VideoPlayerEventHandler *m_instance;
+    static QList<ApplicationFocusObserver *> m_applicationFocusObservers;
+    static QCoreApplication::EventFilter m_eventFilter;
+};
+
 class S60VideoPlayerSession : public S60MediaPlayerSession
                             , public MVideoPlayerUtilityObserver
                             , public MVideoLoadingObserver
 #ifdef HAS_AUDIOROUTING_IN_VIDEOPLAYER
                             , public MAudioOutputObserver
 #endif // HAS_AUDIOROUTING_IN_VIDEOPLAYER
+                            , public ApplicationFocusObserver
 {
     Q_OBJECT
 public:
@@ -96,6 +124,10 @@ public:
     QString activeEndpoint() const;
     QString defaultEndpoint() const;
 
+    // ApplicationFocusObserver
+    void applicationGainedFocus();
+    void applicationLostFocus();
+
 signals:
     void nativeSizeChanged(QSize);
 
@@ -106,9 +138,6 @@ signals:
     void accessPointChanged(int);
 
 protected:
-    // QObject
-    bool eventFilter(QObject *watched, QEvent *event);
-
     // From S60MediaPlayerSession
     void doLoadL(const TDesC &path);
     void doLoadUrlL(const TDesC &path);

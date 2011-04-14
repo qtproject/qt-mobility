@@ -65,6 +65,9 @@ QTM_BEGIN_NAMESPACE
     QMessageAccountFilters can be combined using the overloaded operators (&), (|) and (~) as logical
     operators to create more refined queries.
 
+    Evaluation of filters is delayed until they are used in a QMessageManager function 
+    such as queryAccounts, except where explicitly documented otherwise.
+    
     \sa QMessageManager, QMessageAccount
 */
 
@@ -215,6 +218,8 @@ bool QMessageAccountFilter::operator!=(const QMessageAccountFilter& other) const
 
     Returns a filter matching accounts who name matches \a pattern, according to \a cmp.
 
+    This filter is evaluated when it is constructed.
+    
     \sa QMessageAccount::name()
 */
 
@@ -222,6 +227,8 @@ bool QMessageAccountFilter::operator!=(const QMessageAccountFilter& other) const
     \fn QMessageAccountFilter::byName(const QString &value, QMessageDataComparator::EqualityComparator cmp)
   
     Returns a filter matching accounts whose name matches \a value, according to \a cmp.
+
+    Not supported on Linux, Maemo 6 (Harmattan) and Meego.com (use InclusionComparator).
 
     \sa QMessageAccount::name()
 */

@@ -224,24 +224,37 @@ void CalendarDemo::activateEditPage(const QOrganizerItem &item)
         m_dayPage->dayChanged(event.startDateTime().date()); // edit always comes back to day page
         m_eventEditPage->eventChanged(m_manager, event);
         m_stackedWidget->setCurrentWidget(m_eventEditPage);
-    }
-    else if (item.type() == QOrganizerItemType::TypeTodo) {
+    } else if (item.type() == QOrganizerItemType::TypeTodo) {
         QOrganizerTodo todo = static_cast<QOrganizerTodo>(item);
         m_dayPage->dayChanged(todo.startDateTime().date()); // edit always comes back to day page
         m_todoEditPage->todoChanged(m_manager, todo);
         m_stackedWidget->setCurrentWidget(m_todoEditPage);
-    }
-    else if (item.type() == QOrganizerItemType::TypeJournal) {
+    } else if (item.type() == QOrganizerItemType::TypeJournal) {
         QOrganizerJournal journal = static_cast<QOrganizerJournal>(item);
         m_dayPage->dayChanged(journal.dateTime().date()); // edit always comes back to day page
         m_journalEditPage->journalChanged(m_manager, journal);
         m_stackedWidget->setCurrentWidget(m_journalEditPage);
-    }
-    else if (item.type() == QOrganizerItemType::TypeEventOccurrence) {
+    } else if (item.type() == QOrganizerItemType::TypeEventOccurrence) {
         QOrganizerEventOccurrence eventOccurrence = static_cast<QOrganizerEventOccurrence>(item);
-        m_dayPage->dayChanged(eventOccurrence.startDateTime().date()); // edit always comes back to day page
-        m_eventOccurrenceEditPage->eventOccurrenceChanged(m_manager, eventOccurrence);
-        m_stackedWidget->setCurrentWidget(m_eventOccurrenceEditPage);
+        QMessageBox msgBox;
+        msgBox.setText(tr("This is a recurring event"));
+        msgBox.setInformativeText(tr("Do you want to open this occurrence or the recurring event series?"));
+        QAbstractButton *occurrenceButton = msgBox.addButton(tr("Occurrence"), QMessageBox::ActionRole);
+        QAbstractButton *seriesButton = msgBox.addButton(tr("Series"), QMessageBox::ActionRole);
+
+        msgBox.exec();
+        if (msgBox.clickedButton() == seriesButton) {
+            QOrganizerItemId parentEventId = eventOccurrence.parentId();
+            QOrganizerEvent parentEvent = m_manager->item(parentEventId);
+            m_dayPage->dayChanged(parentEvent.startDateTime().date()); // edit always comes back to day page
+            m_eventEditPage->eventChanged(m_manager, parentEvent);
+            m_stackedWidget->setCurrentWidget(m_eventEditPage);
+        } else if (msgBox.clickedButton() == occurrenceButton) {
+            m_dayPage->dayChanged(eventOccurrence.startDateTime().date()); // edit always comes back to day page
+            m_eventOccurrenceEditPage->eventOccurrenceChanged(m_manager, eventOccurrence);
+            m_stackedWidget->setCurrentWidget(m_eventOccurrenceEditPage);
+        }
+
     }
     // TODO:
     //else if (item.type() == QOrganizerItemType::TypeNote)
