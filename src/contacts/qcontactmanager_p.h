@@ -105,12 +105,15 @@ public:
     static void loadStaticFactories();
 
     // Observer stuff
-    void registerObserver(QContactObserver* observer);
-    void unregisterObserver(QContactObserver* observer);
+    static void registerObserver(QContactManager *m, QContactObserver* observer);
+    static void unregisterObserver(QContactManager *m, QContactObserver* observer);
     void _q_contactsUpdated(const QList<QContactLocalId>& ids);
     void _q_contactsDeleted(const QList<QContactLocalId>& ids);
 
     QMultiHash<QContactLocalId, QContactObserver*> m_observerForContact;
+
+    // Lazy connection stuff - reference counted set
+    QHash<QByteArray, int> m_connectedSignals;
 
 private:
     Q_DISABLE_COPY(QContactManagerData)

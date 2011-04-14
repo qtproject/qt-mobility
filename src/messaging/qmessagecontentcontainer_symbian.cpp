@@ -158,6 +158,7 @@ void QMessageContentContainerPrivate::setContent(const QByteArray &content, cons
     setContentType(type, subType, charset);
 
     _content = content;
+    _size = content.size();
     _available = true;
 }
 
@@ -388,7 +389,19 @@ int QMessageContentContainer::size() const
         CFSEngine::instance()->retrieveMessageContentHeaders(*d_ptr->_message);
     }
 #endif
-    return d_ptr->_size;
+    int size = 0;
+    if (d_ptr->_size != 0) {
+        size = d_ptr->_size;
+    } else {
+        QMessageContentContainerPrivate *container(((QMessageContentContainer *)(this))->d_ptr);
+        if (container->_size != 0) {
+            size += container->_size;
+        }
+        foreach (const QMessageContentContainer &attachment, container->_attachments) {
+            size += attachment.size();
+        }
+    }
+    return size;
 }
 
 QString QMessageContentContainer::textContent() const

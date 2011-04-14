@@ -119,7 +119,7 @@ Item {
 
     Coordinate {
         id: initCoordinate
-        latitude: -37
+        latitude: -27.5
         longitude: 153
     }
 
@@ -179,6 +179,7 @@ Item {
             size.width: parent.width
             size.height: parent.height
             zoomLevel:9
+            center: initCoordinate
 
             MapObjectView {
                 id: allLandmarks
@@ -342,6 +343,7 @@ Item {
         }
         onButton2Clicked: {
             landmarkModelAll.importFile = "mylm.lmx"
+            toolbar2.disableButton2()
         }
         onButton3Clicked: {
             page.state = "Following"

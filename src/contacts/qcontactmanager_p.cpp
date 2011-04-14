@@ -306,16 +306,43 @@ void QContactManagerData::loadFactories()
 
 // Observer stuff
 
-void QContactManagerData::registerObserver(QContactObserver* observer)
+void QContactManagerData::registerObserver(QContactManager* manager, QContactObserver* observer)
 {
-    m_observerForContact.insert(observer->contactLocalId(), observer);
+    if (!manager)
+        return;
+
+    QContactManagerData* d = QContactManagerData::get(manager);
+
+    d->m_observerForContact.insert(observer->contactLocalId(), observer);
+
+    // If this is the first observer, connect to the engine too
+    if (d->m_observerForContact.size() == 1) {
+        // This takes advantage of the manager connectNotify code
+        QObject::connect(manager, SIGNAL(contactsChanged(QList<QContactLocalId>)),
+                manager, SLOT(_q_contactsUpdated(QList<QContactLocalId>)));
+        QObject::connect(manager, SIGNAL(contactsRemoved(QList<QContactLocalId>)),
+                manager, SLOT(_q_contactsDeleted(QList<QContactLocalId>)));
+    }
 }
 
-void QContactManagerData::unregisterObserver(QContactObserver* observer)
+void QContactManagerData::unregisterObserver(QContactManager* manager, QContactObserver* observer)
 {
-    QContactLocalId key = m_observerForContact.key(observer);
+    Q_ASSERT(manager);
+
+    QContactManagerData* d = QContactManagerData::get(manager);
+
+    QContactLocalId key = d->m_observerForContact.key(observer);
     if (key != 0) {
-        m_observerForContact.remove(key, observer);
+        d->m_observerForContact.remove(key, observer);
+
+        // If there are now no more observers, disconnect from the engine
+        if (d->m_observerForContact.size() == 0) {
+            // This takes advantage of the manager disconnectNotify code
+            QObject::disconnect(manager, SIGNAL(contactsChanged(QList<QContactLocalId>)),
+                    manager, SLOT(_q_contactsUpdated(QList<QContactLocalId>)));
+            QObject::disconnect(manager, SIGNAL(contactsRemoved(QList<QContactLocalId>)),
+                    manager, SLOT(_q_contactsDeleted(QList<QContactLocalId>)));
+        }
     }
 }
 

@@ -64,6 +64,9 @@ QTM_BEGIN_NAMESPACE
     QMessageFolderFilters can be combined using the logical operators (&), (|) and (~) to
     create more refined queries.
 
+    Evaluation of filters is delayed until they are used in a QMessageManager function 
+    such as queryFolders, except where explicitly documented otherwise.
+    
     \sa QMessageManager, QMessageFolder
 */
 
@@ -214,6 +217,8 @@ bool QMessageFolderFilter::operator!=(const QMessageFolderFilter& other) const
 
     Returns a filter matching folders whose display name matches \a pattern, according to \a cmp.
 
+    This filter is evaluated when it is constructed.
+
     \sa QMessageFolder::name()
 */
 
@@ -240,6 +245,8 @@ bool QMessageFolderFilter::operator!=(const QMessageFolderFilter& other) const
 
     Returns a filter matching folders whose path matches \a pattern, according to \a cmp.
 
+    This filter is evaluated when it is constructed.
+    
     \sa QMessageFolder::path()
 */
 
