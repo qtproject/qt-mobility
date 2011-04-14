@@ -86,7 +86,7 @@ public:
         setSupportsReverseGeocoding(true);
         setLocale(*(new QLocale (QLocale::German, QLocale::Germany)));
 
-        QLandmarkManager *landmarkmanager = new QLandmarkManager("com.nokia.qt.landmarks.engines.sqlite");
+        QLandmarkManager *landmarkmanager = new QLandmarkManager();
         setDefaultLandmarkManager(landmarkmanager);
 
 
