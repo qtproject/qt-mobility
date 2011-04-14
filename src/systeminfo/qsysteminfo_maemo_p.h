@@ -232,7 +232,6 @@ class QSystemDeviceInfoPrivate : public QSystemDeviceInfoLinuxCommonPrivate
     Q_OBJECT
 
 public:
-
     QSystemDeviceInfoPrivate(QSystemDeviceInfoLinuxCommonPrivate *parent = 0);
     ~QSystemDeviceInfoPrivate();
 
@@ -245,27 +244,23 @@ public:
     QSystemDeviceInfo::ThermalState currentThermalState();
     QString model();
     QString productName();
-    bool isKeyboardFlippedOpen();//1.2
-    bool keypadLightOn(QSystemDeviceInfo::KeypadType type);//1.2
+    bool isKeyboardFlippedOpen(); //1.2
+    bool keypadLightOn(QSystemDeviceInfo::KeypadType type); //1.2
 
-    int messageRingtoneVolume();//1.2
-    int voiceRingtoneVolume();//1.2
-    bool vibrationActive();//1.2
+    int messageRingtoneVolume(); //1.2
+    int voiceRingtoneVolume(); //1.2
+    bool vibrationActive(); //1.2
 
-    QSystemDeviceInfo::LockTypeFlags lockStatus();//1.2
+    QSystemDeviceInfo::LockTypeFlags lockStatus(); //1.2
     QSystemDeviceInfo::KeyboardTypeFlags keyboardTypes(); //1.2
     QByteArray uniqueDeviceID(); //1.2
-
 
 Q_SIGNALS:
     void keyboardFlipped(bool open);
 
-protected:
-
 #if !defined(QT_NO_DBUS)
-    QHalInterface *halIface;
-    QHalDeviceInterface *halIfaceDevice;
-    void setupBluetooth();
+//protected:
+//    void setupBluetooth();
 
 private Q_SLOTS:
     void halChanged(int,QVariantList);
@@ -274,8 +269,8 @@ private Q_SLOTS:
     void profileChanged(bool changed, bool active, QString profile, QList<ProfileDataValue> values);
     void deviceStateChanged(int device, int state);
     void touchAndKeyboardStateChanged(const QString& state);
-
     void socketActivated(int);
+
 private:
     void connectNotify(const char *signal);
     void disconnectNotify(const char *signal);
@@ -310,10 +305,12 @@ private:
 
     QSystemDeviceInfo::PowerState previousPowerState;
     QSystemDeviceInfo::LockTypeFlags  currentLockType;
-#endif
-     QSocketNotifier *notifier;
-     int gpioFD;
-     int currentBatteryLevel;
+#endif // QT_NO_DBUS
+
+private:
+    QSocketNotifier *notifier;
+    int gpioFD;
+    int currentBatteryLevel;
 };
 
 

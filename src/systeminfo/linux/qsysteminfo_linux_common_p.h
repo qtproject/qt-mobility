@@ -296,48 +296,30 @@ class QSystemDeviceInfoLinuxCommonPrivate : public QObject
     Q_OBJECT
 
 public:
-
     QSystemDeviceInfoLinuxCommonPrivate(QObject *parent = 0);
     virtual ~QSystemDeviceInfoLinuxCommonPrivate();
 
-
-    QString imsi();
     QString manufacturer();
-    QString model();
-    QString productName();
-
     QSystemDeviceInfo::InputMethodFlags inputMethodType();
-
-    int  batteryLevel() const ;
-
-    QSystemDeviceInfo::SimStatus simStatus();
-    bool isDeviceLocked() {return false;}
-    QSystemDeviceInfo::Profile currentProfile() {return QSystemDeviceInfo::UnknownProfile;}
-
+    int batteryLevel() const;
     QSystemDeviceInfo::PowerState currentPowerState();
     QSystemDeviceInfo::ThermalState currentThermalState();
-    void setConnection();
     bool currentBluetoothPowerState();
-
     QSystemDeviceInfo::KeyboardTypeFlags keyboardTypes(); //1.2
     bool isWirelessKeyboardConnected(); //1.2
-    bool isKeyboardFlippedOpen();//1.2
-
-    void keyboardConnected(bool connect);//1.2
+    bool isKeyboardFlippedOpen(); //1.2
     bool keypadLightOn(QSystemDeviceInfo::KeypadType type); //1.2
     QByteArray uniqueDeviceID(); //1.2
 
 Q_SIGNALS:
-    void batteryLevelChanged(int);
-    void batteryStatusChanged(QSystemDeviceInfo::BatteryStatus );
-
-    void powerStateChanged(QSystemDeviceInfo::PowerState);
-    void thermalStateChanged(QSystemDeviceInfo::ThermalState);
-    void currentProfileChanged(QSystemDeviceInfo::Profile);
-    void bluetoothStateChanged(bool);
-
-    void wirelessKeyboardConnected(bool connected);//1.2
-    void keyboardFlipped(bool open);//1.2
+    void batteryLevelChanged(int level);
+    void batteryStatusChanged(QSystemDeviceInfo::BatteryStatus status);
+    void powerStateChanged(QSystemDeviceInfo::PowerState state);
+    void thermalStateChanged(QSystemDeviceInfo::ThermalState state);
+    void currentProfileChanged(QSystemDeviceInfo::Profile profile);
+    void bluetoothStateChanged(bool state);
+    void wirelessKeyboardConnected(bool connected); //1.2
+    void keyboardFlipped(bool open); //1.2
     void deviceLocked(bool isLocked); // 1.2
     void lockStatusChanged(QSystemDeviceInfo::LockTypeFlags); //1.2
 
@@ -345,10 +327,7 @@ protected:
     bool btPowered;
 
 #if !defined(QT_NO_DBUS)
-
-    QHalInterface *halIface;
     QHalDeviceInterface *halIfaceDevice;
-    QUDisksInterface *udisksIface;
     bool hasWirelessKeyboardConnected;
     bool connectedBtPower;
     bool connectedWirelessKeyboard;
@@ -363,11 +342,12 @@ private Q_SLOTS:
     void bluezPropertyChanged(const QString&, QDBusVariant);
     virtual void upowerChanged();
     virtual void upowerDeviceChanged();
-#endif
+#endif // QT_NO_DBUS
 
 private:
-    QSystemDeviceInfo::BatteryStatus currentBatStatus;
     void initBatteryStatus();
+
+    QSystemDeviceInfo::BatteryStatus currentBatStatus;
     int currentBatLevel;
     QSystemDeviceInfo::PowerState curPowerState;
     bool currentBatStatusInitialized;

@@ -39,7 +39,6 @@
 **
 ****************************************************************************/
 
-
 #include "qsystembatteryinfo.h"
 #include "qsysteminfocommon_p.h"
 #include <QMetaType>
@@ -50,14 +49,15 @@ Q_GLOBAL_STATIC(QSystemBatteryInfoPrivate, batteryInfoPrivate)
 
 #ifdef QT_SIMULATOR
 QSystemBatteryInfoPrivate *getSystemBatteryInfoPrivate() { return batteryInfoPrivate(); }
-#endif
+#endif // QT_SIMULATOR
 
 /*!
-       \class QSystemBatteryInfo
-       \ingroup systeminfo
-       \inmodule QtSystemInfo
-       \brief The QSystemBatteryInfo class provides access to battery and power information from the system.
+    \class QSystemBatteryInfo
+    \ingroup systeminfo
+    \inmodule QtSystemInfo
+    \brief The QSystemBatteryInfo class provides access to battery and power information from the system.
 */
+
 /*!
     \enum QSystemBatteryInfo::BatteryStatus
     This enum describes the status of the main battery.
@@ -69,15 +69,17 @@ QSystemBatteryInfoPrivate *getSystemBatteryInfoPrivate() { return batteryInfoPri
     \value BatteryLow              Battery level is low 40% or less.
     \value BatteryOk               Battery level is above 40%.
     \value BatteryFull             Battery level is 100%.
-  */
+*/
+
 /*!
     \enum QSystemBatteryInfo::ChargingState
     This enum describes the charging state:
 
-     \value NotCharging           Battery is not charging.
-     \value Charging              Battery is charging.
-     \value ChargingError         Error.
-  */
+    \value NotCharging           Battery is not charging.
+    \value Charging              Battery is charging.
+    \value ChargingError         Error.
+*/
+
 /*!
     \enum QSystemBatteryInfo::ChargerType
     This enum describes the type of charger used.
@@ -89,88 +91,93 @@ QSystemBatteryInfoPrivate *getSystemBatteryInfoPrivate() { return batteryInfoPri
     \value USB_500mACharger         Using USB charger at 500 mA.
     \value USB_100mACharger         Using USB charger at 100 mA.
     \value VariableCurrentCharger   Using variable current charger such as bicycle or solar.
-
-  */
-
-/*!
-      \enum QSystemBatteryInfo::EnergyUnit
-      This enum describes the energy unit used by the system.
-
-      \value UnitUnknown            Energy unit unknown.
-      \value UnitmAh                Energy described in milli Amp hours (mAh)
-      \value UnitmWh                Energy described in milli watt hours (mWh)
 */
-/*!
-  \fn void QSystemBatteryInfo::batteryStatusChanged(QSystemBatteryInfo::BatteryStatus batteryStatus)
-
-  This signal is emitted when battery status has changed.
-  \a batteryStatus is the new battery status.
-
-  \sa QSystemBatteryInfo::ChargingState
- */
 
 /*!
-  \fn void QSystemBatteryInfo::chargingStateChanged(QSystemBatteryInfo::ChargingState chargingState)
+    \enum QSystemBatteryInfo::EnergyUnit
+    This enum describes the energy unit used by the system.
 
-  This signal is emitted when charging state has changed.
-  \a chargingState is the new chargingState.
- */
-/*!
-\fn void QSystemBatteryInfo::chargerTypeChanged(QSystemBatteryInfo::ChargerType chargerType)
-
-This signal is emitted when the charger type has changed, such as when a phone gets plugged in to the wall, or usb.
-\a chargerType is the new charger type.
+    \value UnitUnknown            Energy unit unknown.
+    \value UnitmAh                Energy described in milli Amp hours (mAh)
+    \value UnitmWh                Energy described in milli watt hours (mWh)
 */
-/*!
-  \fn void QSystemBatteryInfo::nominalCapacityChanged(int level)
-
-  This signal is emitted when nominal (maximum) battery level has changed.
-  \a level is the new level.
- */
-/*!
-  \fn void QSystemBatteryInfo::remainingCapacityPercentChanged(int level)
-
-  This signal is emitted when battery capacity in percent has changed.
-  \a level is the new level.
- */
-/*!
-  \fn void QSystemBatteryInfo::remainingCapacityChanged(int level)
-
-  This signal is emitted when battery capacity has changed, reported in QSystemBatteryInfo::EnergyUnit.
-  \a level is the new level.
- */
 
 /*!
-  \fn void QSystemBatteryInfo::remainingChargingTimeChanged(int level)
+    \fn void QSystemBatteryInfo::batteryStatusChanged(QSystemBatteryInfo::BatteryStatus batteryStatus)
 
-  This signal is emitted when remianing charge time has changed.
-  \a level is the new level.
- */
-/*!
-  \fn void QSystemBatteryInfo::currentFlowChanged(int level)
+    This signal is emitted when battery status has changed.
+    \a batteryStatus is the new battery status.
 
-  This signal is emitted when the short term averge battery current has changed,
-  or on some systems at regular intervals.
-
-  On some systems where this can lead to a CPU intensive process, you should disconnect
-  from this signal when you are finished.
-
-  \a level is the new level.
- */
+    \sa QSystemBatteryInfo::ChargingState
+*/
 
 /*!
-  \fn void QSystemBatteryInfo::remainingCapacityBarsChanged(int level)
+    \fn void QSystemBatteryInfo::chargingStateChanged(QSystemBatteryInfo::ChargingState chargingState)
 
-  This signal is emitted when battery level has changed.
-  \a level is the new level.
- */
+    This signal is emitted when charging state has changed.
+    \a chargingState is the new chargingState.
+*/
 
 /*!
-   \fn QSystemBatteryInfo::QSystemBatteryInfo(QObject *parent)
-   Constructs a QSystemBatteryInfo object with the given \a parent.
-  */
-QSystemBatteryInfo::QSystemBatteryInfo(QObject *parent) :
-    QObject(parent),d(batteryInfoPrivate())
+    \fn void QSystemBatteryInfo::chargerTypeChanged(QSystemBatteryInfo::ChargerType chargerType)
+
+    This signal is emitted when the charger type has changed, such as when a phone gets plugged in to the wall, or usb.
+    \a chargerType is the new charger type.
+*/
+
+/*!
+    \fn void QSystemBatteryInfo::nominalCapacityChanged(int level)
+
+    This signal is emitted when nominal (maximum) battery level has changed.
+    \a level is the new level.
+*/
+
+/*!
+    \fn void QSystemBatteryInfo::remainingCapacityPercentChanged(int level)
+
+    This signal is emitted when battery capacity in percent has changed.
+    \a level is the new level.
+*/
+
+/*!
+    \fn void QSystemBatteryInfo::remainingCapacityChanged(int level)
+
+    This signal is emitted when battery capacity has changed, reported in QSystemBatteryInfo::EnergyUnit.
+    \a level is the new level.
+*/
+
+/*!
+    \fn void QSystemBatteryInfo::remainingChargingTimeChanged(int level)
+
+    This signal is emitted when remianing charge time has changed.
+    \a level is the new level.
+*/
+
+/*!
+    \fn void QSystemBatteryInfo::currentFlowChanged(int level)
+
+    This signal is emitted when the short term averge battery current has changed,
+    or on some systems at regular intervals.
+
+    On some systems where this can lead to a CPU intensive process, you should disconnect
+    from this signal when you are finished.
+
+    \a level is the new level.
+*/
+
+/*!
+    \fn void QSystemBatteryInfo::remainingCapacityBarsChanged(int level)
+
+    This signal is emitted when battery level has changed.
+    \a level is the new level.
+*/
+
+/*!
+    Constructs a QSystemBatteryInfo object with the given \a parent.
+*/
+QSystemBatteryInfo::QSystemBatteryInfo(QObject *parent)
+    : QObject(parent)
+    , d(batteryInfoPrivate())
 {
     qRegisterMetaType<QSystemBatteryInfo::BatteryStatus>("QSystemBatteryInfo::BatteryStatus");
     qRegisterMetaType<QSystemBatteryInfo::ChargingState>("QSystemBatteryInfo::ChargingState");
@@ -179,35 +186,37 @@ QSystemBatteryInfo::QSystemBatteryInfo(QObject *parent) :
 }
 
 /*!
-  Destroys the QSystemBatteryInfo object.
- */
+    Destroys the QSystemBatteryInfo object.
+*/
 QSystemBatteryInfo::~QSystemBatteryInfo()
 {
 }
 
 /*!
-  \property QSystemBatteryInfo::chargerType
-  \brief The charger type.
+    \property QSystemBatteryInfo::chargerType
+    \brief The charger type.
+
     Returns the currently used charger type.
-  */
+*/
 QSystemBatteryInfo::ChargerType QSystemBatteryInfo::chargerType() const
 {
     return batteryInfoPrivate()->chargerType();
 }
 
 /*!
-  \property QSystemBatteryInfo::chargingState
-  \brief The charging state.
+    \property QSystemBatteryInfo::chargingState
+    \brief The charging state.
+
     Returns the charging state.
-  */
+*/
 QSystemBatteryInfo::ChargingState QSystemBatteryInfo::chargingState() const
 {
     return batteryInfoPrivate()->chargingState();
 }
 
 /*!
-  \property QSystemBatteryInfo::nominalCapacity
-  \brief The nominal battery capacity.
+    \property QSystemBatteryInfo::nominalCapacity
+    \brief The nominal battery capacity.
 
     Returns the nominal (maximum) capacity of the battery, in QSystemBatteryInfo::EnergyUnit.
     If no battery is found, -1.
@@ -218,50 +227,49 @@ int QSystemBatteryInfo::nominalCapacity() const
 }
 
 /*!
-  \property QSystemBatteryInfo::remainingCapacityPercent
-  \brief The battery level in percent.
+    \property QSystemBatteryInfo::remainingCapacityPercent
+    \brief The battery level in percent.
 
     Returns the remaining battery level of the battery in percent.
     If no battery is found, -1.
-  */
+*/
 int QSystemBatteryInfo::remainingCapacityPercent() const
 {
     return batteryInfoPrivate()->remainingCapacityPercent();
 }
 
 /*!
-  \property QSystemBatteryInfo::remainingCapacity
-  \brief The battery level in QSystemBatteryInfo::EnergyUnit
+    \property QSystemBatteryInfo::remainingCapacity
+    \brief The battery level in QSystemBatteryInfo::EnergyUnit
 
     Returns the remaining battery level of the battery in QSystemBatteryInfo::EnergyUnit.
 
     \sa QSystemBatteryInfo::energyMeasurementUnit()
-  */
+*/
 int QSystemBatteryInfo::remainingCapacity() const
 {
     return batteryInfoPrivate()->remainingCapacity();
 }
 
 /*!
-  \property QSystemBatteryInfo::voltage
-  \brief The battery voltage.
+    \property QSystemBatteryInfo::voltage
+    \brief The battery voltage.
 
     Returns the voltage of the battery, in millivolts (mV).
     If no battery is found, -1.
-  */
+*/
 int QSystemBatteryInfo::voltage() const
 {
     return batteryInfoPrivate()->voltage();
 }
 
 /*!
-  \property QSystemBatteryInfo::remainingChargingTime
-  \brief The remaining time of charging
+    \property QSystemBatteryInfo::remainingChargingTime
+    \brief The remaining time of charging
 
     Returns the remaining time of charging in seconds if charging,
     In the case of battery is full and not charging 0 will be returned. In the case where no battery is found
     or the platform does not provide this information, -1 will be returned.
-
 */
 int QSystemBatteryInfo::remainingChargingTime() const
 {
@@ -269,167 +277,118 @@ int QSystemBatteryInfo::remainingChargingTime() const
 }
 
 /*!
-  \property QSystemBatteryInfo::currentFlow
-  \brief The battery current flow.
+    \property QSystemBatteryInfo::currentFlow
+    \brief The battery current flow.
 
     Returns the amount of current flowing out from the battery (a short term averge), milliapmeres (mA).
     Positive current means discharging and negative current means charging.
-
-  */
+*/
 int QSystemBatteryInfo::currentFlow() const
 {
     return batteryInfoPrivate()->currentFlow();
 }
 
-
 /*!
-  \property QSystemBatteryInfo::remainingCapacityBars
-  \brief The remaining capacity in number of bars.
+    \property QSystemBatteryInfo::remainingCapacityBars
+    \brief The remaining capacity in number of bars.
 
-   Returns the remaining capacity in number of bars.
-   The bar count will not necessarily always reflect one to one on the remaining capacity percentage.
-   */
+    Returns the remaining capacity in number of bars.
+    The bar count will not necessarily always reflect one to one on the remaining capacity percentage.
+*/
 int QSystemBatteryInfo::remainingCapacityBars() const
 {
     return batteryInfoPrivate()->remainingCapacityBars();
 }
 
 /*!
-  \property QSystemBatteryInfo::maxBars
-  \brief The maximum number of bars the system uses.
+    \property QSystemBatteryInfo::maxBars
+    \brief The maximum number of bars the system uses.
 
-   Returns the Maximum number of bars the system uses. In the case that the system has no
-   default number of battery bars, 0 is returned.
-  */
+    Returns the Maximum number of bars the system uses. In the case that the system has no
+    default number of battery bars, 0 is returned.
+*/
 int QSystemBatteryInfo::maxBars() const
 {
     return batteryInfoPrivate()->maxBars();
 }
 
 /*!
-  \internal
-  This function is called when the client connects to signals.
-
-  \sa connectNotify()
+    \internal
 */
-
 void QSystemBatteryInfo::connectNotify(const char *signal)
 {
-    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
-            batteryStatusChanged(QSystemBatteryInfo::BatteryStatus))))) {
-        connect(d,SIGNAL(batteryStatusChanged(QSystemBatteryInfo::BatteryStatus)),
-                this,SIGNAL(batteryStatusChanged(QSystemBatteryInfo::BatteryStatus)),Qt::UniqueConnection);
-    }
-
-    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
-            chargingStateChanged(QSystemBatteryInfo::ChargingState))))) {
-        connect(d,SIGNAL(chargingStateChanged(QSystemBatteryInfo::ChargingState)),
-                this,SIGNAL(chargingStateChanged(QSystemBatteryInfo::ChargingState)),Qt::UniqueConnection);
-    }
-
-    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
-            chargerTypeChanged(QSystemBatteryInfo::ChargerType))))) {
-        connect(d,SIGNAL(chargerTypeChanged(QSystemBatteryInfo::ChargerType)),
-                this,SIGNAL(chargerTypeChanged(QSystemBatteryInfo::ChargerType)),Qt::UniqueConnection);
-    }
-
-    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
-            nominalCapacityChanged(int))))) {
-        connect(d,SIGNAL(nominalCapacityChanged(int)),
-                this,SIGNAL(nominalCapacityChanged(int)),Qt::UniqueConnection);
-    }
-
-    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
-            remainingCapacityPercentChanged(int))))) {
-        connect(d,SIGNAL(remainingCapacityPercentChanged(int)),
-                this,SIGNAL(remainingCapacityPercentChanged(int)),Qt::UniqueConnection);
-    }
-
-    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
-            remainingCapacityChanged(int))))) {
-        connect(d,SIGNAL(remainingCapacityChanged(int)),
-                this,SIGNAL(remainingCapacityChanged(int)),Qt::UniqueConnection);
-    }
-
-    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
-            currentFlowChanged(int))))) {
-        connect(d,SIGNAL(currentFlowChanged(int)),
-                this,SIGNAL(currentFlowChanged(int)),Qt::UniqueConnection);
-    }
-
-    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
-            remainingCapacityBarsChanged(int))))) {
-        connect(d,SIGNAL(remainingCapacityBarsChanged(int)),
-                this,SIGNAL(remainingCapacityBarsChanged(int)),Qt::UniqueConnection);
-    }
-    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
-            remainingChargingTimeChanged(int))))) {
-        connect(d,SIGNAL(remainingChargingTimeChanged(int)),
-                this,SIGNAL(remainingChargingTimeChanged(int)),Qt::UniqueConnection);
+    if (QLatin1String(signal) == SIGNAL(batteryStatusChanged(QSystemBatteryInfo::BatteryStatus))) {
+        connect(d, SIGNAL(batteryStatusChanged(QSystemBatteryInfo::BatteryStatus)),
+                this, SIGNAL(batteryStatusChanged(QSystemBatteryInfo::BatteryStatus)),
+                Qt::UniqueConnection);
+    } else if (QLatin1String(signal) == SIGNAL(chargingStateChanged(QSystemBatteryInfo::ChargingState))) {
+        connect(d, SIGNAL(chargingStateChanged(QSystemBatteryInfo::ChargingState)),
+                this, SIGNAL(chargingStateChanged(QSystemBatteryInfo::ChargingState)),
+                Qt::UniqueConnection);
+    } else if (QLatin1String(signal) == SIGNAL(chargerTypeChanged(QSystemBatteryInfo::ChargerType))) {
+        connect(d, SIGNAL(chargerTypeChanged(QSystemBatteryInfo::ChargerType)),
+                this, SIGNAL(chargerTypeChanged(QSystemBatteryInfo::ChargerType)),
+                Qt::UniqueConnection);
+    } else if (QLatin1String(signal) == SIGNAL(nominalCapacityChanged(int))) {
+        connect(d, SIGNAL(nominalCapacityChanged(int)),
+                this, SIGNAL(nominalCapacityChanged(int)),
+                Qt::UniqueConnection);
+    } else if (QLatin1String(signal) == SIGNAL(remainingCapacityPercentChanged(int))) {
+        connect(d, SIGNAL(remainingCapacityPercentChanged(int)),
+                this, SIGNAL(remainingCapacityPercentChanged(int)),
+                Qt::UniqueConnection);
+    } else if (QLatin1String(signal) == SIGNAL(remainingCapacityChanged(int))) {
+        connect(d, SIGNAL(remainingCapacityChanged(int)),
+                this, SIGNAL(remainingCapacityChanged(int)),
+                Qt::UniqueConnection);
+    } else if (QLatin1String(signal) == SIGNAL(currentFlowChanged(int))) {
+        connect(d, SIGNAL(currentFlowChanged(int)),
+                this, SIGNAL(currentFlowChanged(int)),
+                Qt::UniqueConnection);
+    } else if (QLatin1String(signal) == SIGNAL(remainingCapacityBarsChanged(int))) {
+        connect(d, SIGNAL(remainingCapacityBarsChanged(int)),
+                this, SIGNAL(remainingCapacityBarsChanged(int)),
+                Qt::UniqueConnection);
+    } else if (QLatin1String(signal) == SIGNAL(remainingChargingTimeChanged(int))) {
+        connect(d, SIGNAL(remainingChargingTimeChanged(int)),
+                this, SIGNAL(remainingChargingTimeChanged(int)),
+                Qt::UniqueConnection);
     }
 }
 
 /*!
- \internal
- This function is called when the client disconnects to signals.
-
- \sa connectNotify()
+    \internal
 */
-
 void QSystemBatteryInfo::disconnectNotify(const char *signal)
 {
 
-    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
-            batteryStatusChanged(QSystemBatteryInfo::BatteryStatus))))) {
-        disconnect(d,SIGNAL(batteryStatusChanged(QSystemBatteryInfo::BatteryStatus)),
-                this,SIGNAL(batteryStatusChanged(QSystemBatteryInfo::BatteryStatus)));
-    }
-
-    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
-            chargingStateChanged(QSystemBatteryInfo::ChargingState))))) {
-        disconnect(d,SIGNAL(chargingStateChanged(QSystemBatteryInfo::ChargingState)),
-                this,SIGNAL(chargingStateChanged(QSystemBatteryInfo::ChargingState)));
-    }
-
-    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
-            chargerTypeChanged(QSystemBatteryInfo::ChargerType))))) {
-        disconnect(d,SIGNAL(chargerTypeChanged(QSystemBatteryInfo::ChargerType)),
-                this,SIGNAL(chargerTypeChanged(QSystemBatteryInfo::ChargerType)));
-    }
-
-    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
-            nominalCapacityChanged(int))))) {
-        disconnect(d,SIGNAL(nominalCapacityChanged(int)),
-                this,SIGNAL(nominalCapacityChanged(int)));
-    }
-
-    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
-            remainingCapacityPercentChanged(int))))) {
-        disconnect(d,SIGNAL(remainingCapacityPercentChanged(int)),
-                this,SIGNAL(remainingCapacityPercentChanged(int)));
-    }
-
-    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
-            remainingCapacityChanged(int))))) {
-        disconnect(d,SIGNAL(remainingCapacityChanged(int)),
-                this,SIGNAL(remainingCapacityChanged(int)));
-    }
-
-    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
-            currentFlowChanged(int))))) {
-        disconnect(d,SIGNAL(currentFlowChanged(int)),
-                this,SIGNAL(currentFlowChanged(int)));
-    }
-
-    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
-            remainingCapacityBarsChanged(int))))) {
-        disconnect(d,SIGNAL(remainingCapacityBarsChanged(int)),
-                this,SIGNAL(remainingCapacityBarsChanged(int)));
-    }
-    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
-            remainingChargingTimeChanged(int))))) {
-        disconnect(d,SIGNAL(remainingChargingTimeChanged(int)),
-                this,SIGNAL(remainingChargingTimeChanged(int)));
+    if (QLatin1String(signal) == SIGNAL(batteryStatusChanged(QSystemBatteryInfo::BatteryStatus))) {
+        disconnect(d, SIGNAL(batteryStatusChanged(QSystemBatteryInfo::BatteryStatus)),
+                   this, SIGNAL(batteryStatusChanged(QSystemBatteryInfo::BatteryStatus)));
+    } else if (QLatin1String(signal) == SIGNAL(chargingStateChanged(QSystemBatteryInfo::ChargingState))) {
+        disconnect(d, SIGNAL(chargingStateChanged(QSystemBatteryInfo::ChargingState)),
+                   this, SIGNAL(chargingStateChanged(QSystemBatteryInfo::ChargingState)));
+    } else if (QLatin1String(signal) == SIGNAL(chargerTypeChanged(QSystemBatteryInfo::ChargerType))) {
+        disconnect(d, SIGNAL(chargerTypeChanged(QSystemBatteryInfo::ChargerType)),
+                   this, SIGNAL(chargerTypeChanged(QSystemBatteryInfo::ChargerType)));
+    } else if (QLatin1String(signal) == SIGNAL(nominalCapacityChanged(int))) {
+        disconnect(d, SIGNAL(nominalCapacityChanged(int)),
+                   this, SIGNAL(nominalCapacityChanged(int)));
+    } else if (QLatin1String(signal) == SIGNAL(remainingCapacityPercentChanged(int))) {
+        disconnect(d, SIGNAL(remainingCapacityPercentChanged(int)),
+                   this, SIGNAL(remainingCapacityPercentChanged(int)));
+    } else if (QLatin1String(signal) == SIGNAL(remainingCapacityChanged(int))) {
+        disconnect(d, SIGNAL(remainingCapacityChanged(int)),
+                   this, SIGNAL(remainingCapacityChanged(int)));
+    } else if (QLatin1String(signal) == SIGNAL(currentFlowChanged(int))) {
+        disconnect(d, SIGNAL(currentFlowChanged(int)),
+                   this, SIGNAL(currentFlowChanged(int)));
+    } else if (QLatin1String(signal) == SIGNAL(remainingCapacityBarsChanged(int))) {
+        disconnect(d, SIGNAL(remainingCapacityBarsChanged(int)),
+                   this, SIGNAL(remainingCapacityBarsChanged(int)));
+    } else if (QLatin1String(signal) == SIGNAL(remainingChargingTimeChanged(int))) {
+        disconnect(d, SIGNAL(remainingChargingTimeChanged(int)),
+                   this, SIGNAL(remainingChargingTimeChanged(int)));
     }
 }
 
@@ -438,22 +397,20 @@ void QSystemBatteryInfo::disconnectNotify(const char *signal)
     \brief The battery status.
 
     Returns the battery charge status.
-  */
+*/
 QSystemBatteryInfo::BatteryStatus QSystemBatteryInfo::batteryStatus() const
 {
    return batteryInfoPrivate()->batteryStatus();
 }
 
-
 /*!
     \property QSystemBatteryInfo::energyMeasurementUnit
-        \brief The energy unit used by the system.
-  Returns the QSystemBatteryInfo::EnergyUnit that the system uses.
-  */
+    \brief The energy unit used by the system.
+    Returns the QSystemBatteryInfo::EnergyUnit that the system uses.
+*/
 QSystemBatteryInfo::EnergyUnit QSystemBatteryInfo::energyMeasurementUnit() const
 {
     return batteryInfoPrivate()->energyMeasurementUnit();
-
 }
 
 #include "moc_qsystembatteryinfo.cpp"

@@ -44,7 +44,6 @@
 
 #include "qsystemalignedtimer.h"
 
-#include <QObject>
 #include <QSocketNotifier>
 
 extern "C" {
@@ -79,6 +78,7 @@ public:
 
     bool isActive() const;
     QSystemAlignedTimer::AlignedTimerError m_lastError;
+
 Q_SIGNALS:
     void timeout();
     void error(QSystemAlignedTimer::AlignedTimerError error);
@@ -104,7 +104,6 @@ private Q_SLOTS:
 };
 
 QTM_END_NAMESPACE
-
 QT_END_HEADER
 
 #endif // QSYSTEMALIGNEDTIMER_MEEGO_P_H

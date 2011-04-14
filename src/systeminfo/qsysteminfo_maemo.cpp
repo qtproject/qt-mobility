@@ -1473,34 +1473,34 @@ QSystemDeviceInfo::ThermalState QSystemDeviceInfoPrivate::currentThermalState()
 }
 
 #if !defined(QT_NO_DBUS)
- void QSystemDeviceInfoPrivate::setupBluetooth()
- {
-     QDBusInterface *connectionInterface;
-     connectionInterface = new QDBusInterface("org.bluez",
-                                              "/",
-                                              "org.bluez.Manager",
-                                              QDBusConnection::systemBus(), this);
-     if (connectionInterface->isValid()) {
+// void QSystemDeviceInfoPrivate::setupBluetooth()
+// {
+//     QDBusInterface *connectionInterface;
+//     connectionInterface = new QDBusInterface("org.bluez",
+//                                              "/",
+//                                              "org.bluez.Manager",
+//                                              QDBusConnection::systemBus(), this);
+//     if (connectionInterface->isValid()) {
 
-         QDBusReply<  QDBusObjectPath > reply = connectionInterface->call("DefaultAdapter");
-         if (reply.isValid()) {
-             QDBusInterface *adapterInterface;
-             adapterInterface = new QDBusInterface("org.bluez",
-                                                   reply.value().path(),
-                                                   "org.bluez.Adapter",
-                                                   QDBusConnection::systemBus(), this);
-             if (adapterInterface->isValid()) {
-                 if (!QDBusConnection::systemBus().connect("org.bluez",
-                                           reply.value().path(),
-                                            "org.bluez.Adapter",
-                                            "PropertyChanged",
-                                            this,SLOT(bluezPropertyChanged(QString, QDBusVariant)))) {
-                     qDebug() << "bluez could not connect signal";
-                 }
-             }
-         }
-     }
- }
+//         QDBusReply<  QDBusObjectPath > reply = connectionInterface->call("DefaultAdapter");
+//         if (reply.isValid()) {
+//             QDBusInterface *adapterInterface;
+//             adapterInterface = new QDBusInterface("org.bluez",
+//                                                   reply.value().path(),
+//                                                   "org.bluez.Adapter",
+//                                                   QDBusConnection::systemBus(), this);
+//             if (adapterInterface->isValid()) {
+//                 if (!QDBusConnection::systemBus().connect("org.bluez",
+//                                           reply.value().path(),
+//                                            "org.bluez.Adapter",
+//                                            "PropertyChanged",
+//                                            this,SLOT(bluezPropertyChanged(QString, QDBusVariant)))) {
+//                     qDebug() << "bluez could not connect signal";
+//                 }
+//             }
+//         }
+//     }
+// }
 #endif
 
 #if !defined(QT_NO_DBUS)
