@@ -264,7 +264,6 @@ void QL2capServer::connected()
 
 void QL2capServer::disconnected()
 {
-    qDebug() << __PRETTY_FUNCTION__ << aErr;
     Q_D(QL2capServer);
     delete d->socket;
     d->socket = 0;
@@ -272,7 +271,6 @@ void QL2capServer::disconnected()
 
 void QL2capServer::socketError(QBluetoothSocket::SocketError err)
 {
-    if (aErr == KErrNone)
     Q_D(QL2capServer);
     delete d->socket;
     d->socket = 0;
