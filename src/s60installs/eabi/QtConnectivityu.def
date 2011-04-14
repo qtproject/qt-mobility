@@ -593,4 +593,5 @@ EXPORTS
 	_ZN10QtMobility13QRfcommServer11socketErrorENS_16QBluetoothSocket11SocketErrorE @ 592 NONAME
 	_ZN10QtMobility13QRfcommServer12disconnectedEv @ 593 NONAME
 	_ZN10QtMobility13QRfcommServer9connectedEv @ 594 NONAME
+	_ZNK10QtMobility16QNearFieldTarget9RequestIdneERKS1_ @ 595 NONAME
 
