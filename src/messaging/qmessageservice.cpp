@@ -210,6 +210,8 @@ QTM_BEGIN_NAMESPACE
     action object enters the FinishedState when the message is queued for sending 
     rather than actually sent.
   
+    On the MeeGo.com platform this function is not yet supported for SMS type messages.
+
     Returns true if the operation can be initiated; otherwise returns false.
     
     \sa QMessage, QMessageAccountId
