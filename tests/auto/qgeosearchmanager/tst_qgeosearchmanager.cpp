@@ -97,10 +97,16 @@ void tst_QGeoSearchManager::landmarkManager()
 {
     QVERIFY(qgeosearchmanager->defaultLandmarkManager());
 
-    QString managername = "com.nokia.qt.landmarks.engines.sqlite";
-    QCOMPARE(qgeosearchmanager->defaultLandmarkManager()->managerName(),managername);
+    QString managerName;
+#ifdef Q_OS_SYMBIAN
+    managerName = "com.nokia.qt.landmarks.engines.symbian";
+#elif defined(Q_WS_MAEMO_6) || defined(Q_WS_MEEGO)
+    managerName = "com.nokia.qt.landmarks.engines.qsparql";
+#else
+    managerName = "com.nokia.qt.landmarks.engines.sqlite";
+#endif
 
-
+    QCOMPARE(qgeosearchmanager->defaultLandmarkManager()->managerName(),managerName);
 }
 
 void tst_QGeoSearchManager::locale()
