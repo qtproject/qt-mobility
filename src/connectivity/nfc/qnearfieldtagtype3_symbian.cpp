@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -38,6 +38,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
 #include <nfctag.h>
 #include "qnearfieldtagtype3_symbian_p.h"
 #include <nfctype3connection.h>
@@ -193,14 +194,14 @@ bool QNearFieldTagType3Symbian::hasNdefMessage()
     return _hasNdefMessage();
 }
 
-void QNearFieldTagType3Symbian::readNdefMessages()
+QNearFieldTarget::RequestId QNearFieldTagType3Symbian::readNdefMessages()
 {
-    _ndefMessages();
+    return _ndefMessages();
 }
 
-void QNearFieldTagType3Symbian::writeNdefMessages(const QList<QNdefMessage> &messages)
+QNearFieldTarget::RequestId QNearFieldTagType3Symbian::writeNdefMessages(const QList<QNdefMessage> &messages)
 {
-    _setNdefMessages(messages);
+    return _setNdefMessages(messages);
 }
 
 QNearFieldTarget::RequestId QNearFieldTagType3Symbian::sendCommand(const QByteArray &command)

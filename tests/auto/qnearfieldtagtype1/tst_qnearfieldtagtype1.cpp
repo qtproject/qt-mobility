@@ -401,10 +401,23 @@ void tst_QNearFieldTagType1::ndefMessages()
         QVERIFY(target->hasNdefMessage());
 
         QSignalSpy ndefMessageReadSpy(target, SIGNAL(ndefMessageRead(QNdefMessage)));
+        QSignalSpy requestCompletedSpy(target,
+                                       SIGNAL(requestCompleted(QNearFieldTarget::RequestId)));
+        QSignalSpy errorSpy(target,
+                            SIGNAL(error(QNearFieldTarget::Error,QNearFieldTarget::RequestId)));
 
-        target->readNdefMessages();
+        QNearFieldTarget::RequestId readId = target->readNdefMessages();
 
-        QTRY_VERIFY(!ndefMessageReadSpy.isEmpty());
+        QVERIFY(readId.isValid());
+
+        QNearFieldTarget::RequestId completedId;
+
+        while (completedId != readId) {
+            QTRY_VERIFY(!requestCompletedSpy.isEmpty() && errorSpy.isEmpty());
+
+            completedId =
+                requestCompletedSpy.takeFirst().first().value<QNearFieldTarget::RequestId>();
+        }
 
         QList<QNdefMessage> ndefMessages;
         for (int i = 0; i < ndefMessageReadSpy.count(); ++i)
@@ -427,18 +440,43 @@ void tst_QNearFieldTagType1::ndefMessages()
 
         messages.append(message);
 
-        QSignalSpy ndefMessageWriteSpy(target, SIGNAL(ndefMessagesWritten()));
-        target->writeNdefMessages(messages);
+        requestCompletedSpy.clear();
+        errorSpy.clear();
 
-        QTRY_VERIFY(!ndefMessageWriteSpy.isEmpty());
+        QSignalSpy ndefMessageWriteSpy(target, SIGNAL(ndefMessagesWritten()));
+        QNearFieldTarget::RequestId writeId = target->writeNdefMessages(messages);
+
+        QVERIFY(writeId.isValid());
+
+        completedId = QNearFieldTarget::RequestId();
+
+        while (completedId != writeId) {
+            QTRY_VERIFY(!requestCompletedSpy.isEmpty() && errorSpy.isEmpty());
+
+            completedId =
+                requestCompletedSpy.takeFirst().first().value<QNearFieldTarget::RequestId>();
+        }
+
+        QVERIFY(!ndefMessageWriteSpy.isEmpty());
 
         QVERIFY(target->hasNdefMessage());
 
         ndefMessageReadSpy.clear();
+        requestCompletedSpy.clear();
+        errorSpy.clear();
 
-        target->readNdefMessages();
+        readId = target->readNdefMessages();
 
-        QTRY_VERIFY(!ndefMessageReadSpy.isEmpty());
+        QVERIFY(readId.isValid());
+
+        completedId = QNearFieldTarget::RequestId();
+
+        while (completedId != readId) {
+            QTRY_VERIFY(!requestCompletedSpy.isEmpty() && errorSpy.isEmpty());
+
+            completedId =
+                requestCompletedSpy.takeFirst().first().value<QNearFieldTarget::RequestId>();
+        }
 
         QList<QNdefMessage> storedMessages;
         for (int i = 0; i < ndefMessageReadSpy.count(); ++i)
@@ -446,7 +484,7 @@ void tst_QNearFieldTagType1::ndefMessages()
 
         QVERIFY(ndefMessages != storedMessages);
 
-        QVERIFY(messages == storedMessages);
+        QCOMPARE(messages, storedMessages);
     }
 }
 

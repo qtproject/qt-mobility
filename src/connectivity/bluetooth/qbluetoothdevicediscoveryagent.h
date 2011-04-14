@@ -108,6 +108,7 @@ private:
 
 #ifdef QTM_SYMBIAN_BLUETOOTH
     Q_PRIVATE_SLOT(d_func(), void _q_newDeviceFound(const QBluetoothDeviceInfo &device))
+    Q_PRIVATE_SLOT(d_func(), void _q_setError(QBluetoothDeviceDiscoveryAgent::Error errorCode, QString errorDescription))
 #endif // QTM_SYMBIAN_BLUETOOTH
 };
 
