@@ -3,7 +3,6 @@ CONFIG+=testcase
 
 SOURCES  += tst_qdeclarativebatteryinfo.cpp
 QT = core 
-#DEFINES += TESTR
 
 HEADERS += ../../../plugins/declarative/systeminfo/qdeclarativebatteryinfo_p.h 
 SOURCES += ../../../plugins/declarative/systeminfo/qdeclarativebatteryinfo.cpp 
@@ -18,4 +17,8 @@ MOBILITY = systeminfo
 
 symbian {
     TARGET.CAPABILITY = All -TCB -DRM
+}
+
+contains(test_use_sim, yes) {
+DEFINES += TESTR QT_SIMULATOR
 }

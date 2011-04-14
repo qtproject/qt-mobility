@@ -114,9 +114,8 @@ QSystemStorageInfo::QSystemStorageInfo(QObject *parent)
             this, SIGNAL(logicalDriveChanged(bool,QString)),
             Qt::UniqueConnection);
 
-    connect(d, SIGNAL(storageStateChanged(QString,QSystemStorageInfo::StorageState)),
-            this, SIGNAL(storageStateChanged(QString,QSystemStorageInfo::StorageState)),
-            Qt::UniqueConnection);
+    connect(d,SIGNAL(storageStateChanged(const QString &,QSystemStorageInfo::StorageState)),
+           this,SIGNAL(storageStateChanged(const QString &,QSystemStorageInfo::StorageState)),Qt::UniqueConnection);
 }
 
 /*!

@@ -112,8 +112,8 @@ void tst_QDeclarativeDisplayInfo::tst_orientation()
 void tst_QDeclarativeDisplayInfo::tst_contrast()
 {
     QDeclarativeDisplayInfo di;
-    QVERIFY(di.contrast() >= 0
-            && di.contrast()< 1.0 );
+    QVERIFY((di.contrast() >= 0 && di.contrast()< 1.0)
+            || di.contrast());
     // contrast levels are between 0 and 1.0
 }
 

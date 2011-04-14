@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,44 +39,9 @@
 **
 ****************************************************************************/
 
-#ifndef QSYSTEMINFOCOMMON_H
-#define QSYSTEMINFOCOMMON_H
+#include "bme/bmeipc.h"
 
-#include "qmobilityglobal.h"
-
-#if defined(QT_SIMULATOR) || defined(SIMULATOR_APPLICATION)
-#define SIMULATOR
-#include "qsysteminfo_simulator_p.h"
-#else
-
-#ifndef TESTR
-#ifdef Q_OS_LINUX
-#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
-#include "qsysteminfo_maemo_p.h"
-#else
-#include "linux/qsysteminfo_linux_p.h"
-#endif //Q_WS_MAEMO_5 & Q_WS_MAEMO_6
-#endif //Q_OS_LINUX
-
-#ifdef Q_OS_WIN
-#include "qsysteminfo_win_p.h"
-#endif
-#ifdef Q_OS_MAC
-#include "qsysteminfo_mac_p.h"
-#endif
-#ifdef Q_OS_SYMBIAN
-#include "qsysteminfo_s60_p.h"
-#endif
-#else
-#include "qsysteminfo_simulator_p.h"
-#endif
-
-#endif // QT_SIMULATOR
-
-#if defined(ALIGNEDTIMER_MEEGO)
-#include "qsystemalignedtimer_meego_p.h"
-#else
-#include "qsystemalignedtimer_stub_p.h"
-#endif // ALIGNEDTIMER_MEEGO
-
-#endif // QSYSTEMINFOCOMMON_H
+int main(int, char**)
+{
+    return 0;
+}
