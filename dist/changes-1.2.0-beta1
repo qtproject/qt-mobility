@@ -59,7 +59,13 @@ QtConnectivity
 -----
  - The QNearFieldTarget is now asynchronous.
  - LLCP socket support on Maemo 6
- - Improved NFC API documentation and example applications.
+ - Improved API documentation and example applications.
+ - Added connectivity QML plugin
+ - Added connectivity QML example applications
+ - Bluetooth Symbian backend
+ - Added bluetooth and nfc bttennis example
+ - Added bluetooth file transfer using Obex Push
+
 
 QtLocation
 -----
