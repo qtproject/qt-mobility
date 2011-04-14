@@ -7,7 +7,6 @@ CONFIG += plugin
 
 include(../../../common.pri)
 include(s60_sensor_api.pri)
-include(version.pri)
 
 TARGET = $$qtLibraryTarget(qtsensors_sym)
 TARGET.EPOCALLOWDLLDATA = 1
