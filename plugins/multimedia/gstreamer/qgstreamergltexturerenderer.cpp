@@ -108,7 +108,7 @@ public:
         Q_UNUSED(bytesPerLine);
 
         //acquire_frame should really be called at buffer construction time
-        //but it conflicts with idless implementation of gst texture sink.
+        //but it conflicts with id-less implementation of gst texture sink.
 #if defined(GL_TEXTURE_SINK_DEBUG) && GL_TEXTURE_SINK_DEBUG > 1
         qDebug() << "acquire frame" << m_frameNumber;
 #endif
@@ -139,7 +139,7 @@ public:
             qWarning() << Q_FUNC_INFO << "unbind-frame failed";
 
         //release_frame should really be called in destructor
-        //but this conflicts with idless implementation of gst texture sink.
+        //but this conflicts with id-less implementation of gst texture sink.
 #if defined(GL_TEXTURE_SINK_DEBUG) && GL_TEXTURE_SINK_DEBUG > 1
         qDebug() << "release frame" << m_frameNumber;
 #endif
