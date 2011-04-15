@@ -59,6 +59,7 @@ QTM_BEGIN_NAMESPACE
 
     \inmodule QtPublishSubscribe
     \ingroup publishsubscribe
+    \since 1.0
 
     By default QValueSpaceSubscriber can read values from and report change notifications for all
     available Value Space layers.  Only data from the layer with the highest order and that

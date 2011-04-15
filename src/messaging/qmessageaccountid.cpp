@@ -44,22 +44,23 @@ QTM_BEGIN_NAMESPACE
 
 /*!
     \class QMessageAccountId
-    
-    \inmodule QtMessaging
-    
-    \ingroup messaging
 
-    \brief The QMessageAccountId class provides a unique identifier for a QMessageAccount 
+    \inmodule QtMessaging
+
+    \ingroup messaging
+    \since 1.0
+
+    \brief The QMessageAccountId class provides a unique identifier for a QMessageAccount
     messaging account, within the scope of the messaging store.
 
     A QMessageAccountId can be constructed from a string, or converted to a string with toString().
 
-    A QMessageAccountId instance can be tested for validity with isValid(), and compared to other 
+    A QMessageAccountId instance can be tested for validity with isValid(), and compared to other
     instances for equality.
-    
-    If the message a QMessageAccountId identifies is removed from the messaging store then the 
+
+    If the message a QMessageAccountId identifies is removed from the messaging store then the
     identifier will not be reused.
-    
+
     \sa QMessageAccount
 */
 
@@ -79,13 +80,13 @@ QTM_BEGIN_NAMESPACE
     \fn QMessageAccountId::QMessageAccountId(const QString& id)
 
     Constructs an identifier from \a id.
-    
+
     \sa toString()
 */
 
 /*!
     \fn QMessageAccountId::~QMessageAccountId()
-    
+
     Destroys the identifier.
 */
 
@@ -115,10 +116,10 @@ bool QMessageAccountId::operator!=(const QMessageAccountId &other) const
     \fn bool QMessageAccountId::toString() const
 
     Returns the string representation of this identifier.
-    
+
     A null string should be returned if and only if the identifier is invalid.
 
-    String representations of identifiers should not be used to test for equality, instead 
+    String representations of identifiers should not be used to test for equality, instead
     the equality operator should be used.
 */
 

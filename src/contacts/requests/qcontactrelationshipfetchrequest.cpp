@@ -51,6 +51,7 @@ QTM_BEGIN_NAMESPACE
 
   \brief The QContactRelationshipFetchRequest class allows a client to
   asynchronously request relationships from a contacts store manager.
+  \since 1.0
 
   For a QContactRelationshipFetchRequest, the resultsAvailable() signal will be emitted when the resultant
   relationships (which may be retrieved by calling relationships()), are updated, as well as if
@@ -59,9 +60,10 @@ QTM_BEGIN_NAMESPACE
   Please see the class documentation of QContactAbstractRequest for more information about
   the usage of request classes and ownership semantics.
 
-  
+
   \inmodule QtContacts
-  
+  \since 1.0
+
   \ingroup contacts-requests
  */
 

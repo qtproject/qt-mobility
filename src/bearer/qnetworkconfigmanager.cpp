@@ -106,6 +106,7 @@ Q_GLOBAL_STATIC_QAPP_DESTRUCTION(QNetworkConfigurationManagerPrivate, connManage
 
     \inmodule QtNetwork
     \ingroup bearer
+    \since 1.0
 
     QNetworkConfigurationManager provides access to the network configurations known to the system and
     enables applications to detect the system capabilities (with regards to network sessions) at runtime.
@@ -133,7 +134,7 @@ Q_GLOBAL_STATIC_QAPP_DESTRUCTION(QNetworkConfigurationManagerPrivate, connManage
     \sa QNetworkConfiguration
 */
 
-/*! 
+/*!
     \fn void QNetworkConfigurationManager::configurationAdded(const QNetworkConfiguration& config)
 
     This signal is emitted whenever a new network configuration is added to the system. The new
@@ -224,7 +225,7 @@ QNetworkConfigurationManager::QNetworkConfigurationManager( QObject* parent )
             this, SIGNAL(configurationRemoved(QNetworkConfiguration)));
     connect(priv, SIGNAL(configurationUpdateComplete()),
             this, SIGNAL(updateCompleted()));
-    connect(priv, SIGNAL(onlineStateChanged(bool)), 
+    connect(priv, SIGNAL(onlineStateChanged(bool)),
             this, SIGNAL(onlineStateChanged(bool)));
     connect(priv, SIGNAL(configurationChanged(QNetworkConfiguration)),
             this, SIGNAL(configurationChanged(QNetworkConfiguration)));
@@ -284,7 +285,7 @@ QList<QNetworkConfiguration> QNetworkConfigurationManager::allConfigurations(QNe
 
     //find all InternetAccessPoints
     foreach (const QString &ii, conPriv->accessPointConfigurations.keys()) {
-        QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> p = 
+        QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> p =
             conPriv->accessPointConfigurations.value(ii);
         if ( (p->state & filter) == filter ) {
             QNetworkConfiguration pt;
@@ -295,7 +296,7 @@ QList<QNetworkConfiguration> QNetworkConfigurationManager::allConfigurations(QNe
 
     //find all service networks
     foreach (const QString &ii, conPriv->snapConfigurations.keys()) {
-        QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> p = 
+        QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> p =
             conPriv->snapConfigurations.value(ii);
         if ( (p->state & filter) == filter ) {
             QNetworkConfiguration pt;

@@ -64,6 +64,7 @@ QTM_BEGIN_NAMESPACE
 
     \ingroup systeminfo
    \inmodule QtSystemInfo
+    \since 1.0
 
     \brief The QSystemInfo class provides access to various general information from the system.
 

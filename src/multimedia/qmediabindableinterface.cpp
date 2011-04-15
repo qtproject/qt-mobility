@@ -47,8 +47,9 @@ QT_BEGIN_NAMESPACE
     \class QMediaBindableInterface
     \inmodule QtMultimediaKit
     \ingroup multimedia
+    \since 1.0
 
-    
+
     \brief The QMediaBindableInterface class is the base class for objects extending media objects functionality.
 
     \sa

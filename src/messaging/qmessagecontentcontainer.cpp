@@ -52,47 +52,48 @@ QTM_BEGIN_NAMESPACE
 /*!
     \class QMessageContentContainer
 
-    \brief The QMessageContentContainer class provides an interface for internet media (MIME) 
-    and Transport Neutral Encapsulation Format (TNEF) content that is possibly only 
+    \brief The QMessageContentContainer class provides an interface for internet media (MIME)
+    and Transport Neutral Encapsulation Format (TNEF) content that is possibly only
     partially retrieved.
 
-    
+
     \inmodule QtMessaging
-    
+
     \ingroup messaging
+    \since 1.0
 
-    A QMessageContentContainer object can either directly contain media such as text, 
-    image, audio, video, application or message data, or contain multiple parts of content, 
+    A QMessageContentContainer object can either directly contain media such as text,
+    image, audio, video, application or message data, or contain multiple parts of content,
     but can not contain both media and multiple parts directly.
-    
-    Container objects can be obtained via their QMessageContentContainerId 
-    identifier, using the find() function of the containing QMessage object.
-    
-    For textual content using a recognized charset encoding textContent() will 
-    return the content as a unicode string.
-    
-    For non-multipart content content() will return the content data after decoding any 
-    transfer encoding used to represent binary data using 7-bit ASCII characters, such as 
-    quoted-printable and base64.
-    
-    The internet media (MIME) type of the container is returned by contentType(),
-    the content subtype is returned by contentSubType(), the content type charset parameter 
-    is returned by contentCharset(), and the content suggested filename by suggestedFileName(). 
 
-    The type of a container that contains multiple parts of content must be "multipart" (case 
-    insensitive).  A list of identifiers for directly contained parts of content is returned 
+    Container objects can be obtained via their QMessageContentContainerId
+    identifier, using the find() function of the containing QMessage object.
+
+    For textual content using a recognized charset encoding textContent() will
+    return the content as a unicode string.
+
+    For non-multipart content content() will return the content data after decoding any
+    transfer encoding used to represent binary data using 7-bit ASCII characters, such as
+    quoted-printable and base64.
+
+    The internet media (MIME) type of the container is returned by contentType(),
+    the content subtype is returned by contentSubType(), the content type charset parameter
+    is returned by contentCharset(), and the content suggested filename by suggestedFileName().
+
+    The type of a container that contains multiple parts of content must be "multipart" (case
+    insensitive).  A list of identifiers for directly contained parts of content is returned
     by contentIds().
-    
-    An indication of the size of the container and its contents on the originating server is 
-    given by size(). If the content is entirely available on the device 
+
+    An indication of the size of the container and its contents on the originating server is
+    given by size(). If the content is entirely available on the device
     isContentAvailable() will return true.
 
-    Non-multipart content can be serialized to a QDataStream using 
+    Non-multipart content can be serialized to a QDataStream using
     writeContentTo(), or to a QTextStream using writeTextContentTo().
-  
-    A container also stores name-value pairs known as header fields. Names are ASCII strings, 
-    while values are charset encoded unicode strings.  A list of the header fields present 
-    in a container is returned by headerFields(). The unicode string values associated 
+
+    A container also stores name-value pairs known as header fields. Names are ASCII strings,
+    while values are charset encoded unicode strings.  A list of the header fields present
+    in a container is returned by headerFields(). The unicode string values associated
     with a particular header field name are returned by headerFieldValues().
 
     \sa QMessage, QMessageContentContainerId
@@ -100,7 +101,7 @@ QTM_BEGIN_NAMESPACE
 
 /*!
     \fn QMessageContentContainer::QMessageContentContainer()
-    
+
     Constructs an empty container object.
 */
 
@@ -117,17 +118,17 @@ QTM_BEGIN_NAMESPACE
 
 /*!
     \fn QMessageContentContainer::~QMessageContentContainer()
-    
+
     Destroys the container object.
 */
 
 /*!
     \fn QMessageContentContainer::contentType() const
-    
-    Returns the content type of the container. Common types are "text", "image", "audio", 
+
+    Returns the content type of the container. Common types are "text", "image", "audio",
     "video", "application", "message" and "multipart".
 
-    The internet media (MIME) type of the container is "multipart" if the container directly 
+    The internet media (MIME) type of the container is "multipart" if the container directly
     contains multiple parts rather than directly contains media.
 
     \sa contentSubType(), contentCharset()
@@ -135,7 +136,7 @@ QTM_BEGIN_NAMESPACE
 
 /*!
     \fn QMessageContentContainer::contentSubType() const
-    
+
     Returns the internet media (MIME) subtype of the content.
 
     \sa contentType(), contentCharset()
@@ -143,8 +144,8 @@ QTM_BEGIN_NAMESPACE
 
 /*!
     \fn QMessageContentContainer::contentCharset() const
-    
-    Returns the internet media (MIME) content charset, when defined; 
+
+    Returns the internet media (MIME) content charset, when defined;
     otherwise an empty array is returned.
 
     \sa contentType(), contentSubType()
@@ -152,7 +153,7 @@ QTM_BEGIN_NAMESPACE
 
 /*!
     \fn QMessageContentContainer::suggestedFileName() const
-    
+
     Returns the suggested filename for the attachment, when defined;
     otherwise an empty array is returned.
 
@@ -161,32 +162,32 @@ QTM_BEGIN_NAMESPACE
 
 /*!
     \fn QMessageContentContainer::isContentAvailable() const
-    
-    Returns true if the entirety of the content contained is available on the device; 
+
+    Returns true if the entirety of the content contained is available on the device;
     otherwise returns false.
 */
 
 /*!
     \fn QMessageContentContainer::size() const
-    
-    If the size of the container is known then returns an indication of the size of the container 
+
+    If the size of the container is known then returns an indication of the size of the container
     on the originating server, including contents; otherwise returns 0.
 */
 
 /*!
     \fn QMessageContentContainer::textContent() const
-    
-    For textual content encoded with a recognized charset, returns the content as a unicode string; 
+
+    For textual content encoded with a recognized charset, returns the content as a unicode string;
     otherwise a null string is returned.
 */
 
 /*!
     \fn QMessageContentContainer::content() const
-    
-    Return the content after decoding any transfer encoding used to represent binary data 
+
+    Return the content after decoding any transfer encoding used to represent binary data
     using 7-bit ASCII characters, such as quoted-printable and base64.
-  
-    For textual content any text charset encoding such as Shift-JIS, ISO 2022-JP, KOI8-R, 
+
+    For textual content any text charset encoding such as Shift-JIS, ISO 2022-JP, KOI8-R,
     Windows-1251 etc will not be decoded.
 
     \sa textContent()
@@ -194,22 +195,22 @@ QTM_BEGIN_NAMESPACE
 
 /*!
     \fn QMessageContentContainer::writeTextContent(QTextStream& out) const
-    
-    For a non-multipart container, writes the content as returned by textContent() 
+
+    For a non-multipart container, writes the content as returned by textContent()
     to the stream \a out; otherwise does nothing.
 */
 
 /*!
     \fn QMessageContentContainer::writeContent(QDataStream& out) const
-    
-    For a non-multipart container, writes the content as returned by content() 
+
+    For a non-multipart container, writes the content as returned by content()
     to the stream \a out; otherwise does nothing.
 */
 
 /*!
     \fn QMessageContentContainer::contentIds() const
-    
-    For a multipart container returns a list of identifiers for all content directly contained by 
+
+    For a multipart container returns a list of identifiers for all content directly contained by
     the container; otherwise returns an empty list.
 
     \sa find(), contains()
@@ -217,9 +218,9 @@ QTM_BEGIN_NAMESPACE
 
 /*!
     \fn QMessageContentContainer::find(const QMessageContentContainerId &id) const
-    
-    If the container contains another container with identifier \a id either directly or 
-    recursively, then returns the value of that other container; otherwise returns an 
+
+    If the container contains another container with identifier \a id either directly or
+    recursively, then returns the value of that other container; otherwise returns an
     empty container constructed with the default constructor.
 
     \sa contains(), contentIds()
@@ -227,8 +228,8 @@ QTM_BEGIN_NAMESPACE
 
 /*!
     \fn bool QMessageContentContainer::contains(const QMessageContentContainerId &id) const;
-    
-    If the container contains content with the identifier \a id, either directly or recursively 
+
+    If the container contains content with the identifier \a id, either directly or recursively
     then returns true; otherwise returns false.
 
     \sa find(), contentIds()
@@ -236,7 +237,7 @@ QTM_BEGIN_NAMESPACE
 
 /*!
     \fn QMessageContentContainer::headerFieldValue(const QByteArray &name) const
-    
+
     Returns the value of the first header field of the container with the name \a name, if any;
     otherwise returns a null string.
 
@@ -245,7 +246,7 @@ QTM_BEGIN_NAMESPACE
 
 /*!
     \fn QMessageContentContainer::headerFieldValues(const QByteArray &name) const
-    
+
     Returns a list of values of header fields with the name \a name, if any;
     otherwise returns an empty list.
 
@@ -254,7 +255,7 @@ QTM_BEGIN_NAMESPACE
 
 /*!
     \fn QMessageContentContainer::headerFields() const
-    
+
     Returns a list of names of header fields of the container.
 
     \sa headerFieldValue(), headerFieldValues()

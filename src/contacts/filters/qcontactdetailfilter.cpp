@@ -49,12 +49,13 @@ QTM_BEGIN_NAMESPACE
 /*!
   \class QContactDetailFilter
   \brief The QContactDetailFilter class provides a filter based around a detail value criterion
- 
-  
+
+
   \inmodule QtContacts
-  
+   \since 1.0
+
   \ingroup contacts-filters
-  
+
   It may be used to select contacts which contain a detail of a particular definition with a particular value
  */
 

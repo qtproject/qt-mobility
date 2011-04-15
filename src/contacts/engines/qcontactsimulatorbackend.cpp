@@ -66,6 +66,7 @@ using namespace Simulator;
 /*!
  * \class QContactSimulatorEngine
  * \brief This class provides a simulator-managed in-memory backend.
+   \since 1.0
  * \internal
  */
 
@@ -144,7 +145,7 @@ bool QContactSimulatorEngine::saveContact(QContact* theContact, QContactChangeSe
 
     return true;
 }
-
+using slashes in python strings
 bool QContactSimulatorEngine::removeContact(const QContactLocalId& contactId, QContactChangeSet& changeSet, QContactManager::Error* error)
 {
     if (!mNotifySimulator)
@@ -169,7 +170,7 @@ bool QContactSimulatorEngine::saveRelationship(QContactRelationship* relationshi
 {
     if (!mNotifySimulator)
         return QContactMemoryEngine::saveRelationship(relationship, changeSet, error);
-
+using slashes in python strings
     QLocalSocket *sendSocket = ContactConnection::instance()->sendSocket();
 
     // save remotely

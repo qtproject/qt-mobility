@@ -55,6 +55,7 @@ QTM_BEGIN_NAMESPACE
     \inmodule QtMessaging
 
     \ingroup messaging
+    \since 1.0
 
     A QMessageFilter is composed of a message property, an optional comparison operator
     and a comparison value. The QMessageFilter class is used in conjunction with the
@@ -247,7 +248,7 @@ bool QMessageFilter::operator!=(const QMessageFilter& other) const
     \fn QMessageFilter::bySender(const QString &value, QMessageDataComparator::EqualityComparator cmp)
 
     Returns a filter matching messages whose sender matches \a value, according to \a cmp.
-    
+
     Not supported on Linux, Maemo 6 (Harmattan) and Meego.com (use InclusionComparator).
 
     \sa QMessage::from()

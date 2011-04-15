@@ -52,7 +52,8 @@ QTM_BEGIN_NAMESPACE
   \class QContactDetailDefinition
 
   \inmodule QtContacts
-  
+   \since 1.0
+
   The QContactDetailDefinition class provides the specification for
   a detail that can be included in any particular QContact.
   The definition does not include any data, but defines
