@@ -289,7 +289,9 @@ bool QBluetoothServiceInfo::registerService() const
 bool QBluetoothServiceInfo::unregisterService() const
 {
     Q_D(const QBluetoothServiceInfo);
-
+    if(d->serviceRecord == 0)
+        return true;
+    
     if (!d->ensureSdpConnection())
         return false;
 

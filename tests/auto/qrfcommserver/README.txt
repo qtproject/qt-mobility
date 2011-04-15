@@ -1,7 +1,11 @@
 This test currently can not be run automatically.
 
 To make this test work, manual connections must be started from a client
-machine. Steps to run this test automatically:
+machine.  There are 2 options for doing this, either use the rfcommclient application in the subdirectory,
+or run the test manually as described below. When using rfcommclient, start qrfcommserver first and then 
+start rfcommclient on the other device.  There might be some timing issues, so beware.
+
+Steps to run this test manually:
 
 1. start tst_qrfcommserver
 

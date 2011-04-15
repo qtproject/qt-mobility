@@ -70,8 +70,8 @@ public:
     bool isProcessingCommand() const { return _isProcessingRequest(); }
 
     bool hasNdefMessage();
-    void readNdefMessages();
-    void writeNdefMessages(const QList<QNdefMessage> &messages);
+    RequestId readNdefMessages();
+    RequestId writeNdefMessages(const QList<QNdefMessage> &messages);
 
     void setAccessMethods(const QNearFieldTarget::AccessMethods& accessMethods)
     {

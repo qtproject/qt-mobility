@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>551</width>
+    <width>553</width>
     <height>397</height>
    </rect>
   </property>
@@ -120,8 +120,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>551</width>
-         <height>355</height>
+         <width>553</width>
+         <height>335</height>
         </rect>
        </property>
       </widget>
@@ -129,6 +129,7 @@
     </item>
    </layout>
   </widget>
+  <widget class="QStatusBar" name="statusBar"/>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources/>
