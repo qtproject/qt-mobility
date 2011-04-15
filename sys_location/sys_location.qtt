@@ -204,7 +204,37 @@ testcase = {
     request_landmarks_for_given_coordinate_with_reverse_geocoding: function()
     {
         skip( "Nothing tested", SkipAll );
+    },
+	
+    //TESTED_COMPONENT=plugins/declarative/location
+	
+    qml_display_map: function()
+    {
+        //test case for QTMOBILITY-796: QML for Maps & Navigation:mapping
+        prompt(twiki('---+++ Map is displayed
+    Note that GPS and internet connection is required for this test case
+    | *Step* | *Verification* |
+    | Run the testQtLocation application | |
+    | Select the MapNavigation.qml | |
+    | Tap on Mode button | Verify that map is loaded for current position |
+        ));
+    },
+	
+    qml_zoom_map: function()
+    {
+        //test case for QTMOBILITY-796: QML for Maps & Navigation:mapping
+        prompt(twiki('---+++ Zoom in and out the map
+    Note that GPS and internet connection is required for this test case
+    | *Step* | *Verification* |
+    | Run the testQtLocation application | |
+    | Select the MapNavigation.qml | |
+    | Tap on the Mode button | Verify that map is loaded |
+    | Tap on Plus button | Verify that map is zoomed in |
+    | Tap on Plus button | Verify that zoom level is decreased and map is displayed correctly with new zoom level |
+        ));
     }
+
+	
 }  // end of testcase
 
 
