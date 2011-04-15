@@ -39,47 +39,40 @@
 **
 ****************************************************************************/
 
-#include "meegogyroscope.h"
+#ifndef QIRPROXIMITYSENSOR_P_H
+#define QIRPROXIMITYSENSOR_P_H
 
-char const * const meegogyroscope::id("meego.gyroscope");
-const float meegogyroscope::MILLI = 0.001;
-bool meegogyroscope::m_initDone = false;
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API. It exists purely as an
+// implementation detail. This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
-meegogyroscope::meegogyroscope(QSensor *sensor)
-    : meegosensorbase(sensor)
+QTM_BEGIN_NAMESPACE
+
+class QIRProximityReadingPrivate
 {
-    initSensor<GyroscopeSensorChannelInterface>(m_initDone);
-    setDescription(QLatin1String("angular velocities around x, y, and z axis in degrees per second"));
-    setRanges(MILLI);
-    setReading<QGyroscopeReading>(&m_reading);
-    addDataRate(10, 10);
-    addDataRate(50, 50);
-}
-
-void meegogyroscope::slotDataAvailable(const XYZ& data)
-{
-    m_reading.setX((qreal)(data.x()*MILLI));
-    m_reading.setY((qreal)(data.y()*MILLI));
-    m_reading.setZ((qreal)(data.z()*MILLI));
-    m_reading.setTimestamp(data.XYZData().timestamp_);
-    newReadingAvailable();
-}
-
-void meegogyroscope::slotFrameAvailable(const QVector<XYZ>&  frame)
-{
-    for (int i=0, l=frame.size(); i<l; i++){
-        slotDataAvailable(frame.at(i));
+public:
+    QIRProximityReadingPrivate()
+        : reflectance(0)
+    {
     }
-}
 
-bool meegogyroscope::doConnect(){
-    if (m_bufferSize==1)
-        return QObject::connect(m_sensorInterface, SIGNAL(dataAvailable(const XYZ&)), this, SLOT(slotDataAvailable(const XYZ&)));
-    return QObject::connect(m_sensorInterface, SIGNAL(frameAvailable(const QVector<XYZ>& )),this, SLOT(slotFrameAvailable(const QVector<XYZ>& )));
-}
+    
+    
+    /*
+     * Note that this class is copied so you may need to implement
+     * a copy constructor if you have complex types or pointers
+     * as values.
+     */
+    qreal reflectance;
+};
 
-QString meegogyroscope::sensorName() const{
-    return "gyroscopesensor";
-}
+QTM_END_NAMESPACE
 
-qreal meegogyroscope::correctionFactor() const{return MILLI;}
+#endif

@@ -102,6 +102,6 @@ bool meegotapsensor::doConnect(){
 }
 
 
-const QString meegotapsensor::sensorName(){
+QString meegotapsensor::sensorName() const{
     return "tapsensor";
 }

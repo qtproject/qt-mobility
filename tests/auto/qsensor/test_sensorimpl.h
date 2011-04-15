@@ -49,13 +49,18 @@ QTM_USE_NAMESPACE
 
 class testsensorimpl : public QSensorBackend
 {
+    Q_OBJECT
 public:
     static const char *id;
 
     testsensorimpl(QSensor *sensor);
+    ~testsensorimpl();
 
     void start();
     void stop();
+
+signals:
+    void emitBusyChanged();
 
 private:
     TestSensorReading m_reading;

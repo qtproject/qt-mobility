@@ -44,15 +44,16 @@
 
 SensorManagerInterface* meegosensorbase::m_remoteSensorManager = 0;
 
-
-const float meegosensorbase::GRAVITY_EARTH = 9.80665;
-const float meegosensorbase::GRAVITY_EARTH_THOUSANDTH = 0.00980665;
+//According to wikipedia link http://en.wikipedia.org/wiki/Standard_gravity
+//const float meegosensorbase::GRAVITY_EARTH = 9.812865328;
+const float meegosensorbase::GRAVITY_EARTH_THOUSANDTH = 0.009812865328;
 const int meegosensorbase::KErrNotFound=-1;
 const int meegosensorbase::KErrInUse=-14;
 const char* const meegosensorbase::ALWAYS_ON = "alwaysOn";
 const char* const meegosensorbase::BUFFER_SIZE = "bufferSize";
 const char* const meegosensorbase::MAX_BUFFER_SIZE = "maxBufferSize";
 const char* const meegosensorbase::EFFICIENT_BUFFER_SIZE = "efficientBufferSize";
+QStringList meegosensorbase::m_bufferingSensors = QStringList()<<"meego.accelerometer"<<"meego.magnetometer"<<"meego.gyroscope"<<"meego.rotationsensor";
 
 meegosensorbase::meegosensorbase(QSensor *sensor)
     : QSensorBackend(sensor), m_sensorInterface(0), m_bufferSize(-1), m_prevOutputRange(0), m_efficientBufferSize(1), m_maxBufferSize(1)
@@ -91,7 +92,7 @@ void meegosensorbase::start()
         int l = sensor()->outputRanges().size();
         if (l>1){
             if (currentRange != m_prevOutputRange){
-#ifdef Q_WS_MAEMO6
+#ifdef Q_WS_MAEMO_6
                 bool isOk = m_sensorInterface->setDataRangeIndex(currentRange); //NOTE THAT THE CHANGE MIGHT NOT SUCCEED, FIRST COME FIRST SERVED
                 if (!isOk) sensorError(KErrInUse);
                 else m_prevOutputRange = currentRange;
@@ -149,8 +150,14 @@ bool meegosensorbase::doConnectAfterCheck(){
     int size = bufferSize();
     if (size == m_bufferSize) return true;
     
-    m_sensorInterface->setBufferSize(size);
     
+    if (m_bufferingSensors.contains(sensor()->identifier()))
+        m_sensorInterface->setBufferSize(size);
+    else{
+        m_bufferSize = 1;
+        size = 1;
+    }
+
     // if multiple->single or single->multiple or if uninitialized
     if ((m_bufferSize>1 && size==1) || (m_bufferSize==1 && size>1) || m_bufferSize==-1){
         m_bufferSize = size;
@@ -166,7 +173,7 @@ bool meegosensorbase::doConnectAfterCheck(){
 }
 
 
-const int meegosensorbase::bufferSize(){
+int meegosensorbase::bufferSize() const{
     QVariant bufferVariant = sensor()->property(BUFFER_SIZE);
     int bufferSize = bufferVariant.isValid()?bufferVariant.toInt():1;
     if (bufferSize==1) return 1;
@@ -183,5 +190,5 @@ const int meegosensorbase::bufferSize(){
     return bufferSize;
 }
 
-const qreal meegosensorbase::correctionFactor(){return 1;}
+qreal meegosensorbase::correctionFactor() const{return 1;}
 

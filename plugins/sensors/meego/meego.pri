@@ -8,7 +8,10 @@ HEADERS += meegosensorbase.h \
     meegoproximitysensor.h \
     meegorotationsensor.h \
     meegotapsensor.h    \
-    meegolightsensor.h
+    meegolightsensor.h  \
+    meegoirproximitysensor.h \
+    qirproximitysensor.h \
+    qirproximitysensor_p.h \
 
 SOURCES += meegosensorbase.cpp \
     meegoaccelerometer.cpp \
@@ -18,7 +21,9 @@ SOURCES += meegosensorbase.cpp \
     meegomagnetometer.cpp \
     meegoorientationsensor.cpp \
     meegoproximitysensor.cpp \
+    meegoirproximitysensor.cpp \
     meegorotationsensor.cpp \
     meegotapsensor.cpp \
     meegolightsensor.cpp \
+    qirproximitysensor.cpp \
     main.cpp
