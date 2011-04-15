@@ -55,6 +55,7 @@ QTM_BEGIN_NAMESPACE
     \inmodule QtLocation
 
     \ingroup maps-mapping-objects
+    \since 1.2
 
     Any arbitrary QGraphicsItem can be associated with a QGeoMapCustomObject, and to
     this end it contains support for interpreting the coordinates of the

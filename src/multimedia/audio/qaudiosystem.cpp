@@ -50,6 +50,7 @@ QT_BEGIN_NAMESPACE
     \ingroup multimedia
     \inmodule QtMultimediaKit
     \internal
+    \since 1.0
 
     This class implements the audio functionality for
     QAudioDeviceInfo, i.e., QAudioDeviceInfo keeps a

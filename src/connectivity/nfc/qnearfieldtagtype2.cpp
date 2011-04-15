@@ -53,6 +53,7 @@ QTM_BEGIN_NAMESPACE
     \class QNearFieldTagType2
     \brief The QNearFieldTagType2 class provides an interface for communicating with an NFC Tag
            Type 2 tag.
+    \since 1.2
 
     \ingroup connectivity-nfc
     \inmodule QtConnectivity

@@ -44,6 +44,7 @@
 /*!
     \namespace QBluetooth
     \brief The QBluetooth namespace contains functions and definitions related to Bluetooth.
+    \since 1.2
 
     \ingroup connectivity-bluetooth
     \inmodule QtConnectivity

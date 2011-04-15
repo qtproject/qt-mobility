@@ -100,6 +100,8 @@ QTM_BEGIN_NAMESPACE
 
     \ingroup maps-impl-tiled
 
+    \since 1.2
+
     This class assumes that at a zoom level of z the world is represented as a
     2^z by 2^z grid of tiles, and that the Mercator projection is used to map
     back and forth between coordinate and positions on the map.
@@ -116,7 +118,7 @@ QTM_BEGIN_NAMESPACE
     worldReferenceViewportRect().
 
     NOTE: QGeoTiledMapData blocks property change signals from QGeoMapData by calling
-    QGeoMapData::setBlockPropertyChangeSignals() with true. Changing this in 
+    QGeoMapData::setBlockPropertyChangeSignals() with true. Changing this in
     QGeoTiledMapData subclasses will cause the signals being emitted at wrong time.
 */
 

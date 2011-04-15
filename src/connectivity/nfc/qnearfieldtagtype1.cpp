@@ -55,6 +55,7 @@ QTM_BEGIN_NAMESPACE
     \class QNearFieldTagType1
     \brief The QNearFieldTagType1 class provides an interface for communicating with an NFC Tag
            Type 1 tag.
+    \since 1.2
 
     \ingroup connectivity-nfc
     \inmodule QtConnectivity

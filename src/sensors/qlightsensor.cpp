@@ -49,6 +49,8 @@ IMPLEMENT_READING(QLightReading)
 /*!
     \class QLightReading
     \ingroup sensors_reading
+    
+    \since 1.2
 
     \preliminary
     \brief The QLightReading class represents one reading from the
