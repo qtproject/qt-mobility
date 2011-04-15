@@ -45,6 +45,7 @@
 
 #include "dsserviceplugin.h"
 
+
 #ifdef QMEDIA_DIRECTSHOW_CAMERA
 #include "dscameraservice.h"
 #endif
@@ -57,6 +58,10 @@
 
 
 #ifdef QMEDIA_DIRECTSHOW_CAMERA
+
+extern const CLSID CLSID_VideoInputDeviceCategory;
+
+
 #ifndef _STRSAFE_H_INCLUDED_
 #include <tchar.h>
 #endif
@@ -66,7 +71,10 @@
 #pragma comment(lib, "strmiids.lib")
 #pragma comment(lib, "ole32.lib")
 #include <windows.h>
+#include <ocidl.h>
 #endif
+
+QT_USE_NAMESPACE
 
 QStringList DSServicePlugin::keys() const
 {
@@ -91,7 +99,7 @@ QMediaService* DSServicePlugin::create(QString const& key)
         return new DirectShowPlayerService;
 #endif
 
-    //qDebug() << "unsupported key:" << key;
+    qDebug() << "unsupported key:" << key;
     return 0;
 }
 
@@ -139,11 +147,12 @@ QString DSServicePlugin::deviceDescription(const QByteArray &service, const QByt
 }
 
 #ifdef QMEDIA_DIRECTSHOW_CAMERA
+
 void DSServicePlugin::updateDevices() const
 {
     m_cameraDevices.clear();
     m_cameraDescriptions.clear();
-
+    BOOL bFound = TRUE;
     CoInitialize(NULL);
     ICreateDevEnum* pDevEnum = NULL;
     IEnumMoniker* pEnum = NULL;
@@ -155,36 +164,46 @@ void DSServicePlugin::updateDevices() const
         // Create the enumerator for the video capture category
 	hr = pDevEnum->CreateClassEnumerator(
 	     CLSID_VideoInputDeviceCategory, &pEnum, 0);
-	pEnum->Reset();
-	// go through and find all video capture devices
-	IMoniker* pMoniker = NULL;
-	while(pEnum->Next(1, &pMoniker, NULL) == S_OK) {
-	    IPropertyBag *pPropBag;
-	    hr = pMoniker->BindToStorage(0,0,IID_IPropertyBag,
-	         (void**)(&pPropBag));
-            if(FAILED(hr)) {
-	        pMoniker->Release();
-		continue; // skip this one
-	    }
-	    // Find the description
-	    WCHAR str[120];
-	    VARIANT varName;
-	    varName.vt = VT_BSTR;
-            hr = pPropBag->Read(L"FriendlyName", &varName, 0);
-	    if(SUCCEEDED(hr)) {
-	        StringCchCopyW(str,sizeof(str)/sizeof(str[0]),varName.bstrVal);
-		QString temp(QString::fromUtf16((unsigned short*)str));
-		m_cameraDevices.append(QString("ds:%1").arg(temp).toLocal8Bit().constData());
-	        hr = pPropBag->Read(L"Description", &varName, 0);
-	        StringCchCopyW(str,sizeof(str)/sizeof(str[0]),varName.bstrVal);
-		QString temp2(QString::fromUtf16((unsigned short*)str));
-		m_cameraDescriptions.append(temp2);
-	    }
-	    pPropBag->Release();
-	    pMoniker->Release();
-	}
+        if (S_OK == hr) {
+            pEnum->Reset();
+            // go through and find all video capture devices
+            IMoniker* pMoniker = NULL;
+            while(pEnum->Next(1, &pMoniker, NULL) == S_OK) {
+                IPropertyBag *pPropBag;
+                hr = pMoniker->BindToStorage(0,0,IID_IPropertyBag,
+                     (void**)(&pPropBag));
+                if(FAILED(hr)) {
+                    pMoniker->Release();
+                    continue; // skip this one
+                }
+                bFound = TRUE;
+                // Find the description
+                WCHAR str[120];
+                VARIANT varName;
+                varName.vt = VT_BSTR;
+                hr = pPropBag->Read(L"FriendlyName", &varName, 0);
+                if(SUCCEEDED(hr)) {
+                    wcsncpy(str, varName.bstrVal, sizeof(str)/sizeof(str[0]));
+                    QString temp(QString::fromUtf16((unsigned short*)str));
+                    m_cameraDevices.append(QString("ds:%1").arg(temp).toLocal8Bit().constData());
+                    hr = pPropBag->Read(L"Description", &varName, 0);
+                    wcsncpy(str, varName.bstrVal, sizeof(str)/sizeof(str[0]));
+                    QString temp2(QString::fromUtf16((unsigned short*)str));
+                    m_cameraDescriptions.append(temp2);
+                } else {
+                    qWarning() << "No friendly name";
+                }
+                pPropBag->Release();
+                pMoniker->Release();
+            }
+            pEnum->Release();
+        }
+        pDevEnum->Release();
     }
     CoUninitialize();
+    if (!bFound) {
+        qWarning() << "No camera devices found";
+    }
 }
 #endif
 

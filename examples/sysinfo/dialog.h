@@ -152,6 +152,9 @@ private slots:
     void timeout3();
 
     void timerError(QSystemAlignedTimer::AlignedTimerError error);
+
+private:
+    int lastTab;
 };
 
 #endif // DIALOG_H

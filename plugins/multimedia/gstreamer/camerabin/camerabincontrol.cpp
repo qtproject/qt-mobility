@@ -87,6 +87,8 @@ CameraBinControl::CameraBinControl(CameraBinSession *session)
             SLOT(reloadLater()));
     connect(m_session, SIGNAL(readyChanged(bool)),
             SLOT(reloadLater()));
+    connect(m_session, SIGNAL(error(int,QString)),
+            SLOT(handleCameraError(int,QString)));
 
     m_resourcePolicy = new CamerabinResourcePolicy(this);
     connect(m_resourcePolicy, SIGNAL(resourcesGranted()),
@@ -291,6 +293,12 @@ void CameraBinControl::handleBusyChanged(bool busy)
             QMetaObject::invokeMethod(this, "delayedReload", Qt::QueuedConnection);
         }
     }
+}
+
+void CameraBinControl::handleCameraError(int errorCode, const QString &errorString)
+{
+    emit error(errorCode, errorString);
+    setState(QCamera::UnloadedState);
 }
 
 void CameraBinControl::delayedReload()

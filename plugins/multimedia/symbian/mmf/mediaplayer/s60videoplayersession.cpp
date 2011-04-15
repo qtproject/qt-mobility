@@ -239,8 +239,10 @@ void S60VideoPlayerSession::applicationGainedFocus()
         m_backendInitiatedPause = false;
         play();
     }
-    if (QMediaPlayer::PausedState == state())
-       m_player->RefreshFrameL();
+    if (QMediaPlayer::PausedState == state()) {
+       TRAPD(err, m_player->RefreshFrameL());
+       setError(err);
+    }
 }
 
 void S60VideoPlayerSession::applicationLostFocus()

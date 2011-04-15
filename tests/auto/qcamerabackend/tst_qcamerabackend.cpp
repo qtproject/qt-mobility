@@ -253,19 +253,11 @@ void tst_QCameraBackend::testCameraCapture()
     QSignalSpy savedSignal(&imageCapture, SIGNAL(imageSaved(int,QString)));
     QSignalSpy errorSignal(&imageCapture, SIGNAL(error(int, QCameraImageCapture::Error,QString)));
 
-
     imageCapture.capture();
-    QCOMPARE(capturedSignal.size(), 0);
-#ifdef Q_OS_LINUX
-    QEXPECT_FAIL("", "QTMOBILITY-1480", Continue);
-#endif
-    QCOMPARE(errorSignal.size(), 1);
-#ifdef Q_OS_LINUX
-    QEXPECT_FAIL("", "QTMOBILITY-1480", Continue);
-#endif
+    QTRY_COMPARE(errorSignal.size(), 1);
     QCOMPARE(imageCapture.error(), QCameraImageCapture::NotReadyError);
+    QCOMPARE(capturedSignal.size(), 0);
     errorSignal.clear();
-
 
     camera.start();
 

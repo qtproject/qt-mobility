@@ -87,7 +87,7 @@
 QTM_BEGIN_NAMESPACE
 
 QSystemInfoPrivate::QSystemInfoPrivate(QSystemInfoLinuxCommonPrivate *parent)
- : QSystemInfoLinuxCommonPrivate(parent)
+    : QSystemInfoLinuxCommonPrivate(parent)
 {
 }
 
@@ -100,19 +100,19 @@ QStringList QSystemInfoPrivate::availableLanguages() const
     QDir transDir(QLibraryInfo::location (QLibraryInfo::TranslationsPath));
     QStringList langList;
 
-    if(transDir.exists()) {
-        QStringList localeList = transDir.entryList( QStringList() << QLatin1String("qt_*.qm") ,QDir::Files
-                                                     | QDir::NoDotAndDotDot, QDir::Name);
+    if (transDir.exists()) {
+        QStringList localeList = transDir.entryList(QStringList() << QLatin1String("qt_*.qm"),
+                                                    QDir::Files | QDir::NoDotAndDotDot, QDir::Name);
         foreach (const QString &localeName, localeList) {
-            const QString lang = localeName.mid(3,2);
-            if(!langList.contains(lang) && !lang.isEmpty() && !lang.contains(QLatin1String("help"))) {
+            const QString lang = localeName.mid(3, 2);
+            if (!langList.contains(lang) && !lang.isEmpty() && !lang.contains(QLatin1String("help")))
                 langList <<lang;
-            }
         }
-        if(langList.count() > 0) {
+
+        if (langList.count() > 0)
             return langList;
-        }
     }
+
     return QStringList() << currentLanguage();
 }
 
@@ -461,26 +461,12 @@ QString QSystemNetworkInfoPrivate::networkName(QSystemNetworkInfo::NetworkMode m
 }
 
 QSystemDisplayInfoPrivate::QSystemDisplayInfoPrivate(QSystemDisplayInfoLinuxCommonPrivate *parent)
-        : QSystemDisplayInfoLinuxCommonPrivate(parent)
+    : QSystemDisplayInfoLinuxCommonPrivate(parent)
 {
 }
 
 QSystemDisplayInfoPrivate::~QSystemDisplayInfoPrivate()
 {
-}
-
-float QSystemDisplayInfoPrivate::contrast(int screen)
-{
-    Q_UNUSED(screen);
-
-    return 0.0;
-}
-
-
-QSystemDisplayInfo::BacklightState  QSystemDisplayInfoPrivate::backlightStatus(int screen)
-{
-    Q_UNUSED(screen)
-    return QSystemDisplayInfo::BacklightStateUnknown;
 }
 
 QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QSystemDeviceInfoLinuxCommonPrivate *parent)

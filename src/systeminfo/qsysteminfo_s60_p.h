@@ -153,6 +153,7 @@ Q_SIGNALS:
     void networkNameChanged(QSystemNetworkInfo::NetworkMode,const QString &);
     void networkModeChanged(QSystemNetworkInfo::NetworkMode);
     void cellIdChanged(int);//1.2
+    void cellDataTechnologyChanged(QSystemNetworkInfo::CellDataTechnology);
 
 protected:  //from MTelephonyInfoObserver
     void batteryLevelChanged(){};
@@ -168,6 +169,7 @@ protected:  //from MTelephonyInfoObserver
     void changedCellId(int);
     virtual void changedNetworkStatus();
     virtual void changedNetworkMode();
+    virtual void changedCellDataTechnology();
 
 public slots:
     void wlanNetworkNameChanged();

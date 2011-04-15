@@ -45,13 +45,13 @@
 #include <QMetaType>
 
 QTM_BEGIN_NAMESPACE
-        Q_GLOBAL_STATIC(QSystemDisplayInfoPrivate, displayInfoPrivate)
+
+Q_GLOBAL_STATIC(QSystemDisplayInfoPrivate, displayInfoPrivate)
 
 #ifdef QT_SIMULATOR
 QSystemDisplayInfoPrivate *getSystemDisplayInfoPrivate() { return displayInfoPrivate(); }
-#endif
+#endif // QT_SIMULATOR
 
-// display
 /*!
     \enum QSystemDisplayInfo::DisplayOrientation
     This enum describes the orientation of the default window.
@@ -61,81 +61,77 @@ QSystemDisplayInfoPrivate *getSystemDisplayInfoPrivate() { return displayInfoPri
     \value Portrait                 Portrait is higher than wide.
     \value InvertedLandscape        Landscape that is inverted.
     \value InvertedPortrait         Portrait that is inverted.
-  */
+*/
 
 /*!
-  \enum QSystemDisplayInfo::BacklightState
-  This enum describes the state of the Backlight.
+    \enum QSystemDisplayInfo::BacklightState
+    This enum describes the state of the Backlight.
 
-  \value BacklightStateUnknown     Error, no, or unknown Backlight state.
-  \value BacklightStateOff         Backlight is turned off.
-  \value BacklightStateDimmed      Backlight has been dimmed.
-  \value BacklightStateOn          Backlight is on.
-  */
- /*!
-   \class QSystemDisplayInfo
-   \ingroup systeminfo
-   \inmodule QtSystemInfo
+    \value BacklightStateUnknown     Error, no, or unknown Backlight state.
+    \value BacklightStateOff         Backlight is turned off.
+    \value BacklightStateDimmed      Backlight has been dimmed.
+    \value BacklightStateOn          Backlight is on.
+*/
 
+/*!
+    \class QSystemDisplayInfo
+    \ingroup systeminfo
+    \inmodule QtSystemInfo
     \brief The QSystemDisplayInfo class provides access to display information from the system.
 */
 
-        /*!
-          \fn void QSystemDisplayInfo::orientationChanged(QSystemDisplayInfo::DisplayOrientation orientation)
+/*!
+    \fn void QSystemDisplayInfo::orientationChanged(QSystemDisplayInfo::DisplayOrientation orientation)
 
-          This signal is emitted when QDesktopWidget's orientation has changed.
-                    \a orientation is the new orientation.
-         */
+    This signal is emitted when QDesktopWidget's orientation has changed to \a orientation.
+*/
 
 /*!
-   Constructs a QSystemDisplayInfo object with the given \a parent.
- */
+    Constructs a QSystemDisplayInfo object with the given \a parent.
+*/
 QSystemDisplayInfo::QSystemDisplayInfo(QObject *parent)
     : QObject(parent)
 {
     qRegisterMetaType<QSystemDisplayInfo::DisplayOrientation>("QSystemDisplayInfo::DisplayOrientation");
     qRegisterMetaType<QSystemDisplayInfo::BacklightState>("QSystemDisplayInfo::BacklightState");
-    connect(displayInfoPrivate(),SIGNAL(orientationChanged(QSystemDisplayInfo::DisplayOrientation )),
-            this,SIGNAL(orientationChanged(QSystemDisplayInfo::DisplayOrientation )),Qt::UniqueConnection);
+    connect(displayInfoPrivate(), SIGNAL(orientationChanged(QSystemDisplayInfo::DisplayOrientation)),
+            this, SIGNAL(orientationChanged(QSystemDisplayInfo::DisplayOrientation)), Qt::UniqueConnection);
 }
 
 /*!
-  Destroys the QSystemDisplayInfo object.
- */
+    Destroys the QSystemDisplayInfo object.
+*/
 QSystemDisplayInfo::~QSystemDisplayInfo()
 {
 }
 
 /*!
-    Returns the display brightness of the screen with index \a screenNumber in %, 1 - 100 scale.
-
-    Depending on platform, displayBrightness may not be available due to
-    differing hardware, software or driver implementation. In which case this
-    will return -1.
+    Returns the display brightness of the screen with index \a screenNumber, in 1 - 100 scale.
+    -1 is returned if not available or on error.
 
     \sa QDesktopWidget::screenCount()
 */
 int QSystemDisplayInfo::displayBrightness(int screenNumber)
 {
     QDesktopWidget wid;
-    if(wid.screenCount() < 1 || wid.screenCount() - 1 < screenNumber) {
+    if (wid.screenCount() < 1 || wid.screenCount() - 1 < screenNumber)
         return -1;
-    }
+
     return displayInfoPrivate()->displayBrightness(screenNumber);
 }
 
 /*!
-    Returns the color depth of the screen with the index \a screenNumber, in bits per pixel. Will return -1 in
-    the event of an error.
+    Returns the color depth of the screen with the index \a screenNumber, in bits per pixel.
+    -1 is returned if not available or on error.
 
     \sa QDesktopWidget::screenCount()
 */
 int QSystemDisplayInfo::colorDepth(int screenNumber)
 {
     QDesktopWidget wid;
-    if(wid.screenCount() < 1 || wid.screenCount() - 1 < screenNumber) {
+    if (wid.screenCount() < 1 || wid.screenCount() - 1 < screenNumber)
         return -1;
-    }
+
     return displayInfoPrivate()->colorDepth(screenNumber);
 }
 
@@ -149,54 +145,59 @@ QSystemDisplayInfo::DisplayOrientation QSystemDisplayInfo::orientation(int scree
     return displayInfoPrivate()->orientation(screen);
 }
 
-
 /*!
-    Returns the current contrast of the screen \a screen, from 0 to 1.
-    \bold sNOTE: Some platforms do not support detecting the contrast of the display.
+    Returns the current contrast of the screen \a screen, from 0 to 1. -1 is returned if
+    not available or on error.
 
     \sa QDesktopWidget::screenCount()
 */
 float QSystemDisplayInfo::contrast(int screen)
 {
-        return displayInfoPrivate()->contrast(screen);
+    return displayInfoPrivate()->contrast(screen);
 }
 
 /*!
-    Returns the current dots per inch (DPI) for the width of \a screen.
+    Returns the current dots per inch (DPI) for the width of \a screen. -1 is returned if
+    not available or on error.
 
     \sa QDesktopWidget::screenCount()
 */
 int QSystemDisplayInfo::getDPIWidth(int screen)
 {
-        return displayInfoPrivate()->getDPIWidth(screen);
+    return displayInfoPrivate()->getDPIWidth(screen);
 }
 
 /*!
-    Returns the dpi (Dot Per Inch) of the height os \a screen.
+    Returns the dpi (Dot Per Inch) of the height os \a screen. -1 is returned if not available
+    or on error.
 
     \sa QDesktopWidget::screenCount()
 */
 int QSystemDisplayInfo::getDPIHeight(int screen)
 {
-        return displayInfoPrivate()->getDPIHeight(screen);
+    return displayInfoPrivate()->getDPIHeight(screen);
 }
 
 /*!
-    Returns the physical height of the \a screen in millimeters.
+    Returns the physical height of the \a screen in millimeters. -1 is returned if not available
+    or on error.
+
     \sa QDesktopWidget::screenCount()
 */
 int QSystemDisplayInfo::physicalHeight(int screen)
 {
-        return displayInfoPrivate()->physicalHeight(screen);
+    return displayInfoPrivate()->physicalHeight(screen);
 }
 
 /*!
-    Returns the physical width of \a screen in millimeters.
+    Returns the physical width of \a screen in millimeters. -1 is returned if not available or
+    on error.
+
     \sa QDesktopWidget::screenCount()
 */
 int QSystemDisplayInfo::physicalWidth(int screen)
 {
-        return displayInfoPrivate()->physicalWidth(screen);
+    return displayInfoPrivate()->physicalWidth(screen);
 }
 
 /*!
@@ -206,8 +207,6 @@ QSystemDisplayInfo::BacklightState QSystemDisplayInfo::backlightStatus(int scree
 {
     return displayInfoPrivate()->backlightStatus(screen);
 }
-
-
 
 #include "moc_qsystemdisplayinfo.cpp"
 

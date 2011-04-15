@@ -110,8 +110,8 @@ void tst_QSystemDisplayInfo::tst_orientation()
 void tst_QSystemDisplayInfo::tst_contrast()
 {
     QSystemDisplayInfo di;
-    QVERIFY(di.contrast(0) >= 0
-            && di.contrast(0)< 1.0 );
+    QVERIFY((di.contrast(0) >= 0 && di.contrast(0)< 1.0)
+            || di.contrast(0) == -1);
     // contrast levels are between 0 and 1.0
 }
 
