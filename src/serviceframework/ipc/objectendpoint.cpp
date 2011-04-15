@@ -621,15 +621,9 @@ void ObjectEndPoint::waitForResponse(const QUuid& requestId)
     if (openRequests()->contains(requestId) ) {
         Response* response = openRequests()->value(requestId);
         QEventLoop* loop = new QEventLoop( this );
+        QTimer::singleShot(30000, loop, SLOT(quit()));
         connect(this, SIGNAL(pendingRequestFinished()), loop, SLOT(quit()));
-        QTime timer;
-        timer.start();
-
-        while(!response->isFinished) {
-            loop->processEvents(QEventLoop::AllEvents, 30000);
-            if(timer.elapsed() > 30000)
-                break;
-        }
+        loop->exec();
         delete loop;
         qDebug() << "- response->isFinished: " << response->isFinished;
 
