@@ -74,6 +74,7 @@ QTM_BEGIN_NAMESPACE
   \brief The QOrganizerItem class represents an event, todo, note, or journal entry
 
   \inmodule QtOrganizer
+  \since 1.1
 
   \ingroup organizer-main
 

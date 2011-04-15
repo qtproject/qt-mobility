@@ -51,6 +51,7 @@ QTM_BEGIN_NAMESPACE
     a pixmap on a map.
 
     \inmodule QtLocation
+    \since 1.1
 
     \ingroup maps-mapping-objects
 
@@ -184,7 +185,7 @@ void QGeoMapPixmapObject::setOffset(const QPoint &offset)
 /*!
 \fn void QGeoMapPixmapObject::coordinateChanged(const QGeoCoordinate &coordinate)
 
-    This signal is emitted when the coordinate at which the pixmap 
+    This signal is emitted when the coordinate at which the pixmap
     should be drawn has changed.
 
     The new value will be \a coordinate.
@@ -192,8 +193,8 @@ void QGeoMapPixmapObject::setOffset(const QPoint &offset)
 
 /*!
 \fn void QGeoMapPixmapObject::pixmapChanged(const QPixmap &pixmap)
-    
-    This signal is emitted when the pixmap associated with this 
+
+    This signal is emitted when the pixmap associated with this
     pixmap object has changed.
 
     The new value will be \a pixmap.
@@ -201,8 +202,8 @@ void QGeoMapPixmapObject::setOffset(const QPoint &offset)
 
 /*!
 \fn void QGeoMapPixmapObject::offsetChanged(const QPoint &offset)
-    
-    This signal is emitted when the on-screen offset from the coordinate 
+
+    This signal is emitted when the on-screen offset from the coordinate
     at which this pixmap object should be drawn has changed.
 
     The new value will be \a offset.

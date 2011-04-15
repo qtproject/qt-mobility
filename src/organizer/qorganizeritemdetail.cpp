@@ -75,6 +75,7 @@ Q_DESTRUCTOR_FUNCTION(qClearAllocatedStringHash)
   \brief The QOrganizerItemDetail class represents a single, complete detail about an organizer item.
   \inmodule QtOrganizer
   \ingroup organizer-main
+  \since 1.1
 
   All of the information for an organizer item is stored in one or more QOrganizerItemDetail objects.
 

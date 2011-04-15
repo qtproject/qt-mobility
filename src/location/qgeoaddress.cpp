@@ -76,6 +76,7 @@ QGeoAddressPrivate::~QGeoAddressPrivate()
     \brief The QGeoAddress class represents an address
 
     \inmodule QtLocation
+    \since 1.1
 
     \ingroup location
 

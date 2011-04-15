@@ -52,6 +52,7 @@ QTM_BEGIN_NAMESPACE
     \inmodule QtLocation
 
     \ingroup landmarks-filter
+    \since 1.1
 */
 
 Q_IMPLEMENT_LANDMARKFILTER_PRIVATE(QLandmarkIdFilter)

@@ -53,6 +53,7 @@ QTM_BEGIN_NAMESPACE
     \inmodule QtLocation
 
     \ingroup landmarks-filter
+    \since 1.1
 
     In order to be a valid filter, the region covered by the proximity filter must not cover one of the poles.
     The landmarks are returned in ascending order of distance.  A proximity filter may

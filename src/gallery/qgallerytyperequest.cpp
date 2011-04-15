@@ -108,6 +108,7 @@ public:
     \ingroup gallery-requests
 
     \inmodule QtGallery
+    \since 1.1
 
     \brief The QGalleryTypeRequest class provides an interface for requesting
     the properties of a type from a gallery.

@@ -49,6 +49,7 @@ QTM_BEGIN_NAMESPACE
     \brief The QLandmarkNameFilter class is used to search for landmarks by name.
 
     \inmodule QtLocation
+    \since 1.1
 
     \ingroup landmarks-filter
 

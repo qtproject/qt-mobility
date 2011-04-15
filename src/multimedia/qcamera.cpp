@@ -84,6 +84,7 @@ public:
 
     \inmodule QtMultimediaKit
     \ingroup camera
+    \since 1.1
 
     QCamera can be used with QVideoWidget for viewfinder display,
     QMediaRecorder for video recording and QCameraImageCapture for image taking.
